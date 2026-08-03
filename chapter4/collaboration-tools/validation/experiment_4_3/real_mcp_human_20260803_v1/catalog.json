@@ -1,0 +1,1699 @@
+{
+  "transport": "mcp-stdio",
+  "server_name": "collaboration-tools",
+  "server_version": "1.28.1",
+  "schemas": [
+    {
+      "name": "mcp_browser_navigate",
+      "description": "Navigate to a URL in the virtual browser",
+      "inputSchema": {
+        "properties": {
+          "url": {
+            "description": "The URL to navigate to",
+            "title": "Url",
+            "type": "string"
+          },
+          "new_tab": {
+            "default": false,
+            "description": "Whether to open in a new tab",
+            "title": "New Tab",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "mcp_browser_navigateArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_browser_navigateOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_browser_get_content",
+      "description": "Get content from the current browser page",
+      "inputSchema": {
+        "properties": {
+          "selector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional CSS selector to extract specific content",
+            "title": "Selector"
+          }
+        },
+        "title": "mcp_browser_get_contentArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_browser_get_contentOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_browser_execute_task",
+      "description": "Execute a high-level browser task using AI agent",
+      "inputSchema": {
+        "properties": {
+          "task": {
+            "description": "Natural language description of the task to perform",
+            "title": "Task",
+            "type": "string"
+          },
+          "max_steps": {
+            "default": 20,
+            "description": "Maximum number of steps the agent can take",
+            "title": "Max Steps",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "task"
+        ],
+        "title": "mcp_browser_execute_taskArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_browser_execute_taskOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_browser_screenshot",
+      "description": "Take a screenshot of the current browser page",
+      "inputSchema": {
+        "properties": {
+          "full_page": {
+            "default": false,
+            "description": "Whether to capture the full page or just viewport",
+            "title": "Full Page",
+            "type": "boolean"
+          }
+        },
+        "title": "mcp_browser_screenshotArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_browser_screenshotOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_browser_list_tabs",
+      "description": "List all open browser tabs",
+      "inputSchema": {
+        "properties": {},
+        "title": "mcp_browser_list_tabsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_browser_list_tabsOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_send_email",
+      "description": "Send an email notification",
+      "inputSchema": {
+        "properties": {
+          "to_email": {
+            "description": "Recipient email address",
+            "title": "To Email",
+            "type": "string"
+          },
+          "subject": {
+            "description": "Email subject",
+            "title": "Subject",
+            "type": "string"
+          },
+          "body": {
+            "description": "Email body content",
+            "title": "Body",
+            "type": "string"
+          },
+          "html": {
+            "default": false,
+            "description": "Whether body is HTML formatted",
+            "title": "Html",
+            "type": "boolean"
+          },
+          "cc": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional list of CC recipients",
+            "title": "Cc"
+          }
+        },
+        "required": [
+          "to_email",
+          "subject",
+          "body"
+        ],
+        "title": "mcp_send_emailArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_send_emailOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_send_telegram_message",
+      "description": "Send a Telegram message",
+      "inputSchema": {
+        "properties": {
+          "message": {
+            "description": "Message text to send",
+            "title": "Message",
+            "type": "string"
+          },
+          "chat_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional Telegram chat ID",
+            "title": "Chat Id"
+          },
+          "parse_mode": {
+            "default": "HTML",
+            "description": "Message parse mode (HTML, Markdown, or None)",
+            "title": "Parse Mode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "title": "mcp_send_telegram_messageArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_send_telegram_messageOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_send_slack_message",
+      "description": "Send a Slack message via webhook",
+      "inputSchema": {
+        "properties": {
+          "message": {
+            "description": "Message text to send",
+            "title": "Message",
+            "type": "string"
+          },
+          "webhook_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional Slack webhook URL",
+            "title": "Webhook Url"
+          },
+          "channel": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional channel to post to",
+            "title": "Channel"
+          },
+          "username": {
+            "default": "Collaboration Agent",
+            "description": "Bot username to display",
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "title": "mcp_send_slack_messageArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_send_slack_messageOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_send_discord_message",
+      "description": "Send a Discord message via webhook",
+      "inputSchema": {
+        "properties": {
+          "message": {
+            "description": "Message text to send",
+            "title": "Message",
+            "type": "string"
+          },
+          "webhook_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional Discord webhook URL",
+            "title": "Webhook Url"
+          },
+          "username": {
+            "default": "Collaboration Agent",
+            "description": "Bot username to display",
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "title": "mcp_send_discord_messageArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_send_discord_messageOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_request_admin_approval",
+      "description": "Request approval from a human administrator",
+      "inputSchema": {
+        "properties": {
+          "request_message": {
+            "description": "Message describing what needs approval",
+            "title": "Request Message",
+            "type": "string"
+          },
+          "context": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional context information",
+            "title": "Context"
+          },
+          "timeout_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "How long to wait for response",
+            "title": "Timeout Seconds"
+          },
+          "urgent": {
+            "default": false,
+            "description": "Whether this is an urgent request",
+            "title": "Urgent",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "request_message"
+        ],
+        "title": "mcp_request_admin_approvalArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_request_admin_approvalOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_request_admin_input",
+      "description": "Request input from a human administrator",
+      "inputSchema": {
+        "properties": {
+          "prompt": {
+            "description": "Question or prompt for the admin",
+            "title": "Prompt",
+            "type": "string"
+          },
+          "input_type": {
+            "default": "text",
+            "description": "Type of input expected (text, choice, number)",
+            "title": "Input Type",
+            "type": "string"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "For choice type, list of available options",
+            "title": "Options"
+          },
+          "timeout_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "How long to wait for response",
+            "title": "Timeout Seconds"
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "title": "mcp_request_admin_inputArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_request_admin_inputOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_respond_to_request",
+      "description": "Respond to an admin approval request (admin use)",
+      "inputSchema": {
+        "properties": {
+          "request_id": {
+            "description": "ID of the request to respond to",
+            "title": "Request Id",
+            "type": "string"
+          },
+          "approved": {
+            "description": "Whether the request is approved",
+            "title": "Approved",
+            "type": "boolean"
+          },
+          "admin_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional notes from the admin",
+            "title": "Admin Notes"
+          }
+        },
+        "required": [
+          "request_id",
+          "approved"
+        ],
+        "title": "mcp_respond_to_requestArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_respond_to_requestOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_list_pending_requests",
+      "description": "List all pending admin approval requests",
+      "inputSchema": {
+        "properties": {},
+        "title": "mcp_list_pending_requestsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_list_pending_requestsOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_set_timer",
+      "description": "Set a timer that will notify when completed",
+      "inputSchema": {
+        "properties": {
+          "duration_seconds": {
+            "description": "How long to wait before timer expires",
+            "title": "Duration Seconds",
+            "type": "integer"
+          },
+          "timer_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional name for the timer",
+            "title": "Timer Name"
+          },
+          "callback_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Message to return when timer expires",
+            "title": "Callback Message"
+          },
+          "callback_data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional data to include",
+            "title": "Callback Data"
+          }
+        },
+        "required": [
+          "duration_seconds"
+        ],
+        "title": "mcp_set_timerArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_set_timerOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_set_recurring_timer",
+      "description": "Set a recurring timer that repeats at intervals",
+      "inputSchema": {
+        "properties": {
+          "interval_seconds": {
+            "description": "Time between occurrences",
+            "title": "Interval Seconds",
+            "type": "integer"
+          },
+          "max_occurrences": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of times to repeat",
+            "title": "Max Occurrences"
+          },
+          "timer_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional name for the timer",
+            "title": "Timer Name"
+          },
+          "callback_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Message for each occurrence",
+            "title": "Callback Message"
+          }
+        },
+        "required": [
+          "interval_seconds"
+        ],
+        "title": "mcp_set_recurring_timerArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_set_recurring_timerOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_cancel_timer",
+      "description": "Cancel an active timer",
+      "inputSchema": {
+        "properties": {
+          "timer_id": {
+            "description": "ID of the timer to cancel",
+            "title": "Timer Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "timer_id"
+        ],
+        "title": "mcp_cancel_timerArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_cancel_timerOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_list_timers",
+      "description": "List all timers, optionally filtered by status",
+      "inputSchema": {
+        "properties": {
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional status filter (active, expired, cancelled)",
+            "title": "Status"
+          }
+        },
+        "title": "mcp_list_timersArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_list_timersOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_get_timer_status",
+      "description": "Get status of a specific timer",
+      "inputSchema": {
+        "properties": {
+          "timer_id": {
+            "description": "ID of the timer to check",
+            "title": "Timer Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "timer_id"
+        ],
+        "title": "mcp_get_timer_statusArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_get_timer_statusOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_chess_new_game",
+      "description": "Start a new chess game",
+      "inputSchema": {
+        "properties": {},
+        "title": "mcp_chess_new_gameArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_chess_new_gameOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_chess_load_fen",
+      "description": "Load a chess position from FEN notation",
+      "inputSchema": {
+        "properties": {
+          "fen_string": {
+            "description": "FEN string representing the board state",
+            "title": "Fen String",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fen_string"
+        ],
+        "title": "mcp_chess_load_fenArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_chess_load_fenOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_chess_make_move",
+      "description": "Make a move on the chess board",
+      "inputSchema": {
+        "properties": {
+          "move_str": {
+            "description": "Move in UCI (e.g., 'e2e4') or SAN (e.g., 'e4') format",
+            "title": "Move Str",
+            "type": "string"
+          }
+        },
+        "required": [
+          "move_str"
+        ],
+        "title": "mcp_chess_make_moveArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_chess_make_moveOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_chess_get_legal_moves",
+      "description": "Get all legal moves in the current position",
+      "inputSchema": {
+        "properties": {},
+        "title": "mcp_chess_get_legal_movesArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_chess_get_legal_movesOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_chess_get_board_state",
+      "description": "Get the current chess board state",
+      "inputSchema": {
+        "properties": {},
+        "title": "mcp_chess_get_board_stateArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_chess_get_board_stateOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_chess_get_game_status",
+      "description": "Get the current game status (checkmate, stalemate, etc.)",
+      "inputSchema": {
+        "properties": {},
+        "title": "mcp_chess_get_game_statusArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_chess_get_game_statusOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_chess_undo_move",
+      "description": "Undo the last move",
+      "inputSchema": {
+        "properties": {},
+        "title": "mcp_chess_undo_moveArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_chess_undo_moveOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_chess_get_move_history",
+      "description": "Get the history of moves played",
+      "inputSchema": {
+        "properties": {},
+        "title": "mcp_chess_get_move_historyArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_chess_get_move_historyOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_chess_reset_board",
+      "description": "Reset the chess board to starting position",
+      "inputSchema": {
+        "properties": {},
+        "title": "mcp_chess_reset_boardArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_chess_reset_boardOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_excel_read",
+      "description": "Read data from Excel file",
+      "inputSchema": {
+        "properties": {
+          "file_path": {
+            "description": "Path to Excel file",
+            "title": "File Path",
+            "type": "string"
+          },
+          "sheet_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Sheet name (None for all sheets)",
+            "title": "Sheet Name"
+          },
+          "max_rows": {
+            "default": 1000,
+            "description": "Maximum rows to read",
+            "title": "Max Rows",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "file_path"
+        ],
+        "title": "mcp_excel_readArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_excel_readOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_excel_write",
+      "description": "Write data to Excel file",
+      "inputSchema": {
+        "properties": {
+          "file_path": {
+            "description": "Path to Excel file",
+            "title": "File Path",
+            "type": "string"
+          },
+          "data": {
+            "additionalProperties": {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "description": "Data to write {sheet_name: [rows]}",
+            "title": "Data",
+            "type": "object"
+          },
+          "overwrite": {
+            "default": false,
+            "description": "Overwrite existing file",
+            "title": "Overwrite",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "file_path",
+          "data"
+        ],
+        "title": "mcp_excel_writeArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_excel_writeOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_excel_create_workbook",
+      "description": "Create a new Excel workbook",
+      "inputSchema": {
+        "properties": {
+          "file_path": {
+            "description": "Path for new workbook",
+            "title": "File Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file_path"
+        ],
+        "title": "mcp_excel_create_workbookArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_excel_create_workbookOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_excel_create_worksheet",
+      "description": "Create a new worksheet in Excel",
+      "inputSchema": {
+        "properties": {
+          "file_path": {
+            "description": "Path to Excel file",
+            "title": "File Path",
+            "type": "string"
+          },
+          "sheet_name": {
+            "description": "Name for new worksheet",
+            "title": "Sheet Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file_path",
+          "sheet_name"
+        ],
+        "title": "mcp_excel_create_worksheetArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_excel_create_worksheetOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_excel_apply_formula",
+      "description": "Apply formula to Excel cell",
+      "inputSchema": {
+        "properties": {
+          "file_path": {
+            "description": "Path to Excel file",
+            "title": "File Path",
+            "type": "string"
+          },
+          "sheet_name": {
+            "description": "Worksheet name",
+            "title": "Sheet Name",
+            "type": "string"
+          },
+          "cell": {
+            "description": "Cell reference (e.g., 'A1')",
+            "title": "Cell",
+            "type": "string"
+          },
+          "formula": {
+            "description": "Excel formula (e.g., '=SUM(A1:A10)')",
+            "title": "Formula",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file_path",
+          "sheet_name",
+          "cell",
+          "formula"
+        ],
+        "title": "mcp_excel_apply_formulaArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_excel_apply_formulaOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_excel_get_metadata",
+      "description": "Get Excel file metadata",
+      "inputSchema": {
+        "properties": {
+          "file_path": {
+            "description": "Path to Excel file",
+            "title": "File Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file_path"
+        ],
+        "title": "mcp_excel_get_metadataArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_excel_get_metadataOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_excel_screenshot",
+      "description": "Create screenshot of Excel file",
+      "inputSchema": {
+        "properties": {
+          "file_path": {
+            "description": "Path to Excel file",
+            "title": "File Path",
+            "type": "string"
+          },
+          "sheet_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Sheet name",
+            "title": "Sheet Name"
+          },
+          "output_dir": {
+            "default": ".",
+            "description": "Output directory",
+            "title": "Output Dir",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file_path"
+        ],
+        "title": "mcp_excel_screenshotArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_excel_screenshotOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_intelligence_generate_code",
+      "description": "Generate Python code based on task description",
+      "inputSchema": {
+        "properties": {
+          "task_description": {
+            "description": "Description of coding task",
+            "title": "Task Description",
+            "type": "string"
+          },
+          "requirements": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional requirements",
+            "title": "Requirements"
+          },
+          "temperature": {
+            "default": 0.7,
+            "description": "LLM temperature",
+            "title": "Temperature",
+            "type": "number"
+          }
+        },
+        "required": [
+          "task_description"
+        ],
+        "title": "mcp_intelligence_generate_codeArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_intelligence_generate_codeOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_intelligence_think",
+      "description": "Perform complex problem reasoning with step-by-step thinking",
+      "inputSchema": {
+        "properties": {
+          "problem": {
+            "description": "Problem statement",
+            "title": "Problem",
+            "type": "string"
+          },
+          "context": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional context",
+            "title": "Context"
+          },
+          "reasoning_steps": {
+            "default": 3,
+            "description": "Number of reasoning steps",
+            "title": "Reasoning Steps",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "problem"
+        ],
+        "title": "mcp_intelligence_thinkArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_intelligence_thinkOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_intelligence_guard",
+      "description": "Guard and validate a proposed action for safety",
+      "inputSchema": {
+        "properties": {
+          "proposed_action": {
+            "description": "Proposed action to validate",
+            "title": "Proposed Action",
+            "type": "string"
+          },
+          "context": {
+            "additionalProperties": true,
+            "description": "Context for evaluation",
+            "title": "Context",
+            "type": "object"
+          },
+          "safety_rules": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Safety rules to check",
+            "title": "Safety Rules"
+          }
+        },
+        "required": [
+          "proposed_action",
+          "context"
+        ],
+        "title": "mcp_intelligence_guardArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_intelligence_guardOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_spawn_subagent",
+      "description": "Spawn a sub-agent to handle a delegated task. Supports sync (waits and returns result) and async (returns a task_id immediately) modes, and two context-passing strategies: 'minimal' or 'llm_generated'.",
+      "inputSchema": {
+        "properties": {
+          "task": {
+            "description": "The sub-task to delegate to the sub-agent",
+            "title": "Task",
+            "type": "string"
+          },
+          "context_strategy": {
+            "default": "minimal",
+            "description": "Context-passing strategy: 'minimal' (task + hand-picked slice only) or 'llm_generated' (extra LLM call synthesizes privacy-filtered context)",
+            "title": "Context Strategy",
+            "type": "string"
+          },
+          "mode": {
+            "default": "sync",
+            "description": "'sync' waits and returns the result; 'async' starts in background and returns a task_id",
+            "title": "Mode",
+            "type": "string"
+          },
+          "parent_context": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Parent agent trajectory/state to prepare per the chosen strategy",
+            "title": "Parent Context"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional explicit role for the sub-agent's system prompt",
+            "title": "Role"
+          },
+          "minimal_slice": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "For 'minimal' strategy: hand-picked slice (string, dict, or list of keys into parent_context)",
+            "title": "Minimal Slice"
+          },
+          "business_rules": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "For 'llm_generated' strategy: privacy/compression rules",
+            "title": "Business Rules"
+          }
+        },
+        "required": [
+          "task"
+        ],
+        "title": "mcp_spawn_subagentArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_spawn_subagentOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_send_message_to_subagent",
+      "description": "Send a follow-up message to an existing sub-agent and get its reply",
+      "inputSchema": {
+        "properties": {
+          "subagent_id": {
+            "description": "ID of the sub-agent to message",
+            "title": "Subagent Id",
+            "type": "string"
+          },
+          "message": {
+            "description": "Message to send (labeled [FROM_MAIN_AGENT] to the sub-agent)",
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "subagent_id",
+          "message"
+        ],
+        "title": "mcp_send_message_to_subagentArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_send_message_to_subagentOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_cancel_subagent",
+      "description": "Cancel a sub-agent (cancels the background task for async sub-agents)",
+      "inputSchema": {
+        "properties": {
+          "subagent_id": {
+            "description": "ID of the sub-agent to cancel",
+            "title": "Subagent Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "subagent_id"
+        ],
+        "title": "mcp_cancel_subagentArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_cancel_subagentOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "mcp_get_subagent_status",
+      "description": "Get the status and result of a sub-agent (useful for async sub-agents)",
+      "inputSchema": {
+        "properties": {
+          "subagent_id": {
+            "description": "ID of the sub-agent to inspect",
+            "title": "Subagent Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "subagent_id"
+        ],
+        "title": "mcp_get_subagent_statusArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "mcp_get_subagent_statusOutput",
+        "type": "object"
+      }
+    }
+  ],
+  "schema_sha256": "bed48090eb155741f2de6604113a72c34d7a8e9575801fafead02682cac2b4c6"
+}

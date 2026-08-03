@@ -1,0 +1,21 @@
+{
+  "case": "cancelled_status",
+  "tool": "mcp_get_subagent_status",
+  "arguments": {
+    "subagent_id": "31b85a0e-0cdc-482c-8687-f28dd5f1d586"
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "subagent_id": "31b85a0e-0cdc-482c-8687-f28dd5f1d586",
+    "status": "cancelled",
+    "mode": "async",
+    "context_strategy": "minimal",
+    "context_tokens": 18,
+    "prep_tokens": 0,
+    "result": null,
+    "created_at": "2026-08-03T12:18:24.738757"
+  },
+  "latency_seconds": 0.003
+}

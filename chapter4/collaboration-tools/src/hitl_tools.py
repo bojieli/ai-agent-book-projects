@@ -232,6 +232,19 @@ async def respond_to_request(
             }
         
         request = _pending_requests[request_id]
+        if request.get("status") != "pending":
+            current_status = request.get("status", "unknown")
+            return {
+                "success": False,
+                "approved": False,
+                "request_id": request_id,
+                "current_status": current_status,
+                "error": "Request is no longer pending",
+                "message": (
+                    f"Request {request_id} is already {current_status}; "
+                    "late or duplicate responses cannot change a terminal decision"
+                ),
+            }
         request["status"] = "approved" if approved else "rejected"
         request["admin_notes"] = admin_notes
         request["response_time"] = datetime.now().isoformat()
