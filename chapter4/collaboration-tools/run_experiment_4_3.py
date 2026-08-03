@@ -10,6 +10,7 @@ import hashlib
 import json
 import os
 import re
+import select
 import sys
 import time
 from datetime import datetime, timezone
@@ -25,6 +26,7 @@ VALIDATION = HERE / "validation" / "experiment_4_3"
 CREDENTIAL = re.compile(r"\b(?:sk|gh[opusr])-[A-Za-z0-9_-]{12,}\b")
 SENSITIVE_ENV_NAMES = {
     "ANTHROPIC_API_KEY",
+    "KIMI_API_KEY",
     "MOONSHOT_API_KEY",
     "OPENAI_API_KEY",
     "OPENROUTER_API_KEY",
@@ -55,6 +57,41 @@ def parse_human_decision(value: str) -> tuple[bool, str]:
     approved = match.group(1).upper() == "APPROVE"
     notes = (match.group(2) or "").strip()
     return approved, notes or "No additional notes supplied by the live human operator."
+
+
+def _readline_before_timeout(stream: Any, timeout_seconds: float) -> str:
+    """Read one byte stream line while ensuring the worker exits by its deadline."""
+    descriptor = stream.fileno()
+    encoding = getattr(stream, "encoding", None) or "utf-8"
+    deadline = time.monotonic() + timeout_seconds
+    data = bytearray()
+    while True:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise TimeoutError
+        readable, _, _ = select.select([descriptor], [], [], remaining)
+        if not readable:
+            raise TimeoutError
+        chunk = os.read(descriptor, 1)
+        if not chunk:
+            return data.decode(encoding, errors="replace")
+        data.extend(chunk)
+        if chunk == b"\n":
+            return data.decode(encoding, errors="replace")
+
+
+async def read_human_decision_line(stream: Any, timeout_seconds: float) -> str:
+    """Read a live decision without leaving a permanently blocked stdin worker."""
+    try:
+        return await asyncio.to_thread(
+            _readline_before_timeout,
+            stream,
+            timeout_seconds,
+        )
+    except TimeoutError as exc:
+        raise RuntimeError(
+            f"live human decision input timed out after {timeout_seconds} seconds"
+        ) from exc
 
 
 def notification_readiness(env: dict[str, str]) -> dict[str, bool]:
@@ -296,7 +333,9 @@ async def run(
                         "context": approval_context,
                         "reply_format": "APPROVE[: notes] or REJECT[: notes]",
                     }, ensure_ascii=False), flush=True)
-                    raw_decision = await asyncio.to_thread(sys.stdin.readline)
+                    raw_decision = await read_human_decision_line(
+                        sys.stdin, human_timeout_seconds
+                    )
                     if not raw_decision:
                         raise RuntimeError("live human decision input closed before a response")
                     approved, notes = parse_human_decision(raw_decision)

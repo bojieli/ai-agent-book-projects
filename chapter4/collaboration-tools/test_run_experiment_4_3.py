@@ -1,6 +1,7 @@
 """Focused tests for the Experiment 4-3 campaign controls."""
 
 import json
+import os
 import sys
 import unittest
 from datetime import datetime
@@ -13,11 +14,13 @@ import hitl_tools
 import subagent_tools
 
 from run_experiment_4_3 import (
+    SENSITIVE_ENV_NAMES,
     classify_status,
     human_decision_accepted,
     notification_readiness,
     parse_human_decision,
     publication_is_authorized,
+    read_human_decision_line,
     redact_material,
 )
 
@@ -78,6 +81,9 @@ class CampaignControlTests(unittest.TestCase):
                 "nested": ["sent via [REDACTED]", {"chat_id": "[REDACTED]"}],
             },
         )
+
+    def test_kimi_api_key_is_in_receipt_redaction_inputs(self) -> None:
+        self.assertIn("KIMI_API_KEY", SENSITIVE_ENV_NAMES)
 
     def test_late_human_approval_does_not_authorize_publication(self) -> None:
         decision = {"request_id": "request-1", "approved": True}
@@ -182,6 +188,32 @@ class HitlTerminalStateTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(duplicate["success"])
         self.assertEqual(duplicate["current_status"], "rejected")
         self.assertEqual(hitl_tools._pending_requests[request_id]["status"], "rejected")
+
+
+class HumanInputTimeoutTests(unittest.IsolatedAsyncioTestCase):
+    async def test_reads_one_available_line(self) -> None:
+        read_descriptor, write_descriptor = os.pipe()
+        try:
+            os.write(write_descriptor, b"APPROVE: low risk\n")
+            with os.fdopen(read_descriptor, encoding="utf-8") as stream:
+                line = await read_human_decision_line(stream, 1)
+            self.assertEqual(line, "APPROVE: low risk\n")
+        finally:
+            os.close(write_descriptor)
+
+    async def test_times_out_without_leaving_a_blocked_read(self) -> None:
+        read_descriptor, write_descriptor = os.pipe()
+        try:
+            with (
+                os.fdopen(read_descriptor, encoding="utf-8") as stream,
+                self.assertRaisesRegex(
+                    RuntimeError,
+                    "live human decision input timed out after 0.01 seconds",
+                ),
+            ):
+                await read_human_decision_line(stream, 0.01)
+        finally:
+            os.close(write_descriptor)
 
 
 class SubagentTimestampTests(unittest.IsolatedAsyncioTestCase):
