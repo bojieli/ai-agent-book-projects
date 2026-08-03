@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "experiment": "10-4",
+  "kind": "credential_free_external_authentication_preflight",
+  "generated_at_utc": "2026-08-02T18:34:59Z",
+  "status": "blocked",
+  "completion_gate_pass": false,
+  "source": {
+    "repository": "https://github.com/19PINE-AI/TalkAct.git",
+    "commit_expected": "7d70007f72d45ddfc1a14e8e229b6d444e4919a2",
+    "commit_observed": "7d70007f72d45ddfc1a14e8e229b6d444e4919a2",
+    "file_sha256": {
+      "requirements.txt": "18a53ec32240d9a141728eee0f223530761ca55c6fc4cc5c60570802a6248dc8",
+      "src/cuv/runner.py": "81408c9fc69494bd30a28926bcafb965537f21b82a1fa43436ab94a5577c89a9",
+      "src/cuv/fast_agent.py": "d001df3846cf3f79faff08cb61edc9b902f480f7e7fa3af3621440f6d658bdf7",
+      "src/cuv/slow_agent.py": "8932fd50c91d2581a054bf84652405d2da806bb7363c813977bcf96d716bb5ca",
+      "envs/app.py": "8918f11ad7642a6c5cfba80edcdd3848303aac177959bf759a71a9fb1b61047b",
+      "bench/run_bench.py": "397b8f29c2494dab4946f7503a1cd16106fcb6badd37205a317701f223a8764d"
+    }
+  },
+  "host": {
+    "python_3_12_available": true,
+    "python_3_12_version": "3.12.11"
+  },
+  "required_campaign": {
+    "tasks": [
+      "forms-insurance",
+      "booking-flight",
+      "webmail-report",
+      "meeting-helper"
+    ],
+    "conditions": [
+      "duplex",
+      "strawman"
+    ],
+    "seeds": 2,
+    "required_episode_count": 16
+  },
+  "provider_preflight": {
+    "anthropic_credential_environment_variable": "ANTHROPIC_API_KEY",
+    "anthropic_credential_present": true,
+    "anthropic_credential_has_expected_prefix": true,
+    "anthropic_credential_has_plausible_length": true,
+    "anthropic_credential_contains_whitespace": false,
+    "gemini_credential_present_for_simulated_caller": true,
+    "credential_values_retained": false,
+    "authorization_header_retained": false,
+    "endpoint": "https://api.anthropic.com/v1/messages",
+    "requested_model": "claude-haiku-4-5",
+    "anthropic_version": "2023-06-01",
+    "http_status": 401,
+    "response": {
+      "type": "error",
+      "error": {
+        "type": "authentication_error",
+        "message": "API key is invalid."
+      },
+      "response_id": null,
+      "usage": null
+    }
+  },
+  "execution": {
+    "source_checkout_verified": true,
+    "dependencies_installed": false,
+    "hermetic_environment_started": false,
+    "playwright_started": false,
+    "episodes_attempted": 0,
+    "external_mutation_attempted": false
+  },
+  "blockers": [
+    "The configured ANTHROPIC_API_KEY was rejected by the official Anthropic endpoint before either TalkAct agent tier could run."
+  ],
+  "resume_condition": "Configure valid funded Anthropic access, then retain the complete 16-episode duplex-versus-strawman campaign and its receipts."
+}
