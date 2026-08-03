@@ -14,7 +14,7 @@
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | [정식 학습 보고서](continued-pretraining/validation/runs/exp7-5-training-report-20260731-v1/report.md)는 RTX 4090 3단계 원시 출력, 15개 생성, 5회 익명 ARK 심사, 소스 해시와 현재 재현 revision을 결합합니다. 최종 한국어는 +1.7777, 영어는 -0.8333이었고 김치 사실 오류도 명시했습니다. 체크포인트는 배포하지 않으며 승인 요건이 아닙니다. |
 | 7-6 | [sesame](sesame/) · [orpheus](orpheus/) | 🚧 | 준언어 태그 모델링과 문장 간 음색 일관성을 다루는 두 가지 실제 음성 SFT 트랙입니다. 학습 후 어댑터, 음성 결과물, 수동·자동 비교 증거가 있어야 완료로 봅니다. |
 | 7-7 | [MultilingualReasoning](MultilingualReasoning/) | 🚧 | 다국어 사고 SFT 구현입니다. 학습 체크포인트와 언어 간 벤치마크의 학습 전후 비교가 있어야 완료로 봅니다. |
-| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | 교사 모델의 프롬프트·응답 생성, 학생 모델 학습, 품질·비용 비교를 다루는 장 간 연계 구현입니다. 예시 생성이나 프롬프트 메커니즘만으로는 완료로 보지 않습니다. |
+| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | ✅ | 교사 모델의 프롬프트·응답 생성, 학생 모델 학습, 품질·비용 비교를 다루는 장 간 연계 구현입니다. 예시 생성이나 프롬프트 메커니즘만으로는 완료로 보지 않습니다. |
 | 7-9 | [cot-distillation](cot-distillation/) | 🚧 | 실제 교사 CoT 궤적을 생성하고 규칙으로 필터링했습니다. 학생 모델을 학습하고 수학·코딩 성능 향상과 성찰·되돌아가기·검증 행동을 확인해야 합니다. |
 | 7-10 | [AdaptThink 연계 설명](AdaptThink/) · `AdaptThink-original/` | 📖 | 외부 `bojieli/AdaptThink` 학습 코드로, 문제 난이도에 따라 Thinking 또는 NoThinking을 선택하도록 모델을 학습합니다. |
 | 7-11 | `SFTvsRL/` | 📖 | `bojieli/SFTvsRL`의 GeneralPoints-L/VL로, 동일한 예산에서 SFT와 PPO의 ID/OOD 기억·일반화 성능을 비교합니다. |

@@ -14,7 +14,7 @@
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | Tartományspecifikus adatokon folytatja az előképzést. |
 | 7-6 | [sesame](sesame/) · [orpheus](orpheus/) | 🚧 | Két beszéd-SFT útvonalat vizsgál paralingvisztikai címkékhez és mondatok közötti hangszínkonzisztenciához. |
 | 7-7 | [MultilingualReasoning](MultilingualReasoning/) | 🚧 | Több nyelven tanítja a modell következtetési képességét. |
-| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | Tanáradatot készít, diákmodellt képez, majd minőséget és költséget hasonlít össze. |
+| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | ✅ | Tanáradatot készít, diákmodellt képez, majd minőséget és költséget hasonlít össze. |
 | 7-9 | [cot-distillation](cot-distillation/) | 🚧 | Helyes CoT-nyomvonalakat szűr, és SFT-adattá alakítja őket. |
 | 7-10 | [AdaptThink](AdaptThink/) · `AdaptThink-original/` | 📖 | A feladat nehézsége alapján tanítja meg a modellt a Thinking és NoThinking mód közötti választásra. |
 | 7-11 | `SFTvsRL/` | 📖 | Azonos költségkeret mellett hasonlítja össze az SFT memorizálását és az RL általánosítását. |
