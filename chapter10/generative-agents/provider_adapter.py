@@ -18,6 +18,14 @@ _SECRET_PATTERNS = (
     re.compile(r"sk-[A-Za-z0-9_-]{20,}"),
     re.compile(r"AIza[A-Za-z0-9_-]{20,}"),
 )
+_TRANSIENT_ERROR_NAMES = {
+    "APIConnectionError",
+    "APITimeoutError",
+    "RateLimitError",
+    "ServiceUnavailableError",
+    "Timeout",
+}
+_MAX_TRANSPORT_ATTEMPTS = 5
 
 
 def _sha256_json(value: Any) -> str:
@@ -69,6 +77,7 @@ class ReceiptRecorder:
         started: float,
         response: Any | None = None,
         error: BaseException | None = None,
+        transport_retries: list[dict[str, Any]] | None = None,
     ) -> None:
         if self._path is None:
             return
@@ -95,6 +104,7 @@ class ReceiptRecorder:
             "response": response_plain,
             "latency_seconds": round(time.perf_counter() - started, 3),
             "success": error is None,
+            "transport_retries": transport_retries or [],
             "error": (
                 None
                 if error is None
@@ -133,23 +143,54 @@ def install(
     original_embedding_create = openai.Embedding.create
     RECORDER.set_path(receipt_path)
 
+    def call_with_transient_retries(
+        *, kind: str, request: dict[str, Any], function: Any
+    ) -> Any:
+        started = time.perf_counter()
+        retries: list[dict[str, Any]] = []
+        for attempt in range(1, _MAX_TRANSPORT_ATTEMPTS + 1):
+            try:
+                response = function()
+            except BaseException as exc:
+                transient = type(exc).__name__ in _TRANSIENT_ERROR_NAMES
+                if transient and attempt < _MAX_TRANSPORT_ATTEMPTS:
+                    retries.append(
+                        {
+                            "attempt": attempt,
+                            "type": type(exc).__name__,
+                            "message": _redact_text(str(exc))[:1000],
+                        }
+                    )
+                    time.sleep(min(4.0, 0.5 * (2 ** (attempt - 1))))
+                    continue
+                RECORDER.record(
+                    kind=kind,
+                    request=request,
+                    started=started,
+                    error=exc,
+                    transport_retries=retries,
+                )
+                raise
+            RECORDER.record(
+                kind=kind,
+                request=request,
+                started=started,
+                response=response,
+                transport_retries=retries,
+            )
+            return response
+        raise AssertionError("unreachable provider retry loop")
+
     def chat_create(**kwargs: Any) -> Any:
         actual = dict(kwargs)
         actual["model"] = chat_model
         actual["enable_thinking"] = False
         request = _plain(actual)
-        started = time.perf_counter()
-        try:
-            response = original_chat_create(**actual)
-        except BaseException as exc:
-            RECORDER.record(
-                kind="chat", request=request, started=started, error=exc
-            )
-            raise
-        RECORDER.record(
-            kind="chat", request=request, started=started, response=response
+        return call_with_transient_retries(
+            kind="chat",
+            request=request,
+            function=lambda: original_chat_create(**actual),
         )
-        return response
 
     def completion_create(**kwargs: Any) -> Any:
         prompt = kwargs.get("prompt", "")
@@ -166,16 +207,10 @@ def install(
         if kwargs.get("stop"):
             actual["stop"] = kwargs["stop"]
         request = _plain(actual)
-        started = time.perf_counter()
-        try:
-            response = original_chat_create(**actual)
-        except BaseException as exc:
-            RECORDER.record(
-                kind="chat", request=request, started=started, error=exc
-            )
-            raise
-        RECORDER.record(
-            kind="chat", request=request, started=started, response=response
+        response = call_with_transient_retries(
+            kind="chat",
+            request=request,
+            function=lambda: original_chat_create(**actual),
         )
         content = response["choices"][0]["message"]["content"]
         return SimpleNamespace(choices=[SimpleNamespace(text=content)])
@@ -185,18 +220,11 @@ def install(
         actual["model"] = embedding_model
         actual["dimensions"] = 1024
         request = _plain(actual)
-        started = time.perf_counter()
-        try:
-            response = original_embedding_create(**actual)
-        except BaseException as exc:
-            RECORDER.record(
-                kind="embedding", request=request, started=started, error=exc
-            )
-            raise
-        RECORDER.record(
-            kind="embedding", request=request, started=started, response=response
+        return call_with_transient_retries(
+            kind="embedding",
+            request=request,
+            function=lambda: original_embedding_create(**actual),
         )
-        return response
 
     openai.ChatCompletion.create = staticmethod(chat_create)
     openai.Completion.create = staticmethod(completion_create)

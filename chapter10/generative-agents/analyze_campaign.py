@@ -153,19 +153,21 @@ def action_summary(sim_dir: Path) -> dict:
 
 
 def provider_summary(status: dict) -> dict:
-    calls = errors = 0
+    calls = errors = transport_retries = 0
     usage = collections.Counter()
     latency = wall = 0.0
     for checkpoint in status.get("checkpoints", []):
         receipt = checkpoint["receipt_summary"]
         calls += int(receipt.get("calls", 0))
         errors += int(receipt.get("errors", 0))
+        transport_retries += int(receipt.get("transport_retries", 0))
         usage.update(receipt.get("usage", {}))
         latency += float(receipt.get("provider_latency_seconds", 0))
         wall += float(checkpoint.get("wall_seconds", 0))
     return {
         "calls": calls,
         "errors": errors,
+        "transport_retries": transport_retries,
         "usage": dict(usage),
         "provider_latency_seconds": round(latency, 3),
         "checkpoint_wall_seconds": round(wall, 3),
@@ -218,4 +220,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

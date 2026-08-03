@@ -37,6 +37,7 @@ def test_receipt_summary_counts_calls_usage_and_errors(tmp_path):
         "calls": 2,
         "by_kind": {"chat": 1, "embedding": 1},
         "errors": 1,
+        "transport_retries": 0,
         "usage": {"prompt_tokens": 4, "completion_tokens": 2, "total_tokens": 6},
         "provider_latency_seconds": 1.75,
     }

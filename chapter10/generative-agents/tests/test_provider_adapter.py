@@ -86,3 +86,68 @@ def test_adapter_overrides_legacy_models_and_compacts_embeddings(tmp_path, monke
     assert compact["embedding_dimensions"] == 2
     assert "embedding" not in compact
     assert "test-key-not-retained" not in receipt.read_text()
+
+
+def test_adapter_retries_transient_connection_and_records_one_logical_call(
+    tmp_path, monkeypatch
+):
+    attempts = 0
+
+    class APIConnectionError(Exception):
+        pass
+
+    class ChatCompletion:
+        @classmethod
+        def create(cls, **kwargs):
+            nonlocal attempts
+            attempts += 1
+            if attempts == 1:
+                raise APIConnectionError("connection closed")
+            return Response(
+                id="retry-success",
+                model=kwargs["model"],
+                choices=[{"message": {"content": "ok"}}],
+                usage={"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2},
+            )
+
+    class Completion:
+        @classmethod
+        def create(cls, **kwargs):
+            raise AssertionError("legacy completion endpoint should not be called")
+
+    class Embedding:
+        @classmethod
+        def create(cls, **kwargs):
+            raise AssertionError("embedding endpoint should not be called")
+
+    fake_openai = SimpleNamespace(
+        api_key=None,
+        api_base=None,
+        ChatCompletion=ChatCompletion,
+        Completion=Completion,
+        Embedding=Embedding,
+    )
+    monkeypatch.setitem(sys.modules, "openai", fake_openai)
+    monkeypatch.setattr("provider_adapter.time.sleep", lambda _: None)
+    receipt = tmp_path / "retry.jsonl"
+    install(
+        api_key="test-key-not-retained",
+        api_base="https://example.invalid/v1",
+        chat_model="current-chat",
+        embedding_model="current-embedding",
+        receipt_path=receipt,
+    )
+
+    response = fake_openai.ChatCompletion.create(model="legacy", messages=[])
+    rows = [json.loads(line) for line in receipt.read_text().splitlines()]
+    assert response["id"] == "retry-success"
+    assert attempts == 2
+    assert len(rows) == 1
+    assert rows[0]["success"] is True
+    assert rows[0]["transport_retries"] == [
+        {
+            "attempt": 1,
+            "type": "APIConnectionError",
+            "message": "connection closed",
+        }
+    ]

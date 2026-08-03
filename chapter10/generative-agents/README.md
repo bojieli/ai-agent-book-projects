@@ -46,6 +46,14 @@ requests/responses, provider IDs, token usage, latency, and errors. Embedding
 vectors remain in the simulation memory state; receipts retain their dimension
 and content hash instead of duplicating every float.
 
+Transient transport failures (`APIConnectionError`, timeout, rate limit, or
+service unavailable) are retried up to five times inside the same logical
+provider call with bounded exponential backoff. The successful logical receipt
+retains every failed transport attempt in `transport_retries`; an exhausted or
+non-transient failure remains `success: false`. Any checkpoint containing a
+failed logical call is quarantined as `.failed-*` and replayed from the last
+clean checkpoint instead of advancing canonical status.
+
 The runtime overlay also contains one narrow compatibility correction for the
 legacy action-arena prompt. Upstream asks for `{arena}` but removes only the
 closing brace before looking up the arena. The overlay strips response-only

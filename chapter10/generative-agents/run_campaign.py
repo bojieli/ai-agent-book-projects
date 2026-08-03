@@ -187,6 +187,7 @@ def receipt_summary(path: Path) -> dict[str, Any]:
     counts: dict[str, int] = {}
     usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
     calls = errors = 0
+    transport_retries = 0
     latency = 0.0
     with opener(path, "rt", encoding="utf-8") as handle:
         for line in handle:
@@ -195,6 +196,7 @@ def receipt_summary(path: Path) -> dict[str, Any]:
             kind = row.get("kind", "unknown")
             counts[kind] = counts.get(kind, 0) + 1
             errors += not row.get("success", False)
+            transport_retries += len(row.get("transport_retries") or [])
             latency += float(row.get("latency_seconds", 0))
             response_usage = (row.get("response") or {}).get("usage") or {}
             for key in usage:
@@ -203,6 +205,7 @@ def receipt_summary(path: Path) -> dict[str, Any]:
         "calls": calls,
         "by_kind": counts,
         "errors": errors,
+        "transport_retries": transport_retries,
         "usage": usage,
         "provider_latency_seconds": round(latency, 3),
     }
