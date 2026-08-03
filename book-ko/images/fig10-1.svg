@@ -3,49 +3,65 @@
 
 <rect x="20" y="55" width="350" height="480" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
 <text x="32" y="73" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">공유 컨텍스트 (상속형 협업)</text>
+<g transform="translate(0 4)">
 <rect x="35" y="82" width="320" height="100" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
 <text x="43" y="96" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">단계 1: 요구 사항 분석가</text>
 <text x="47" y="114" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">sys: &quot;요구 사항을 충분히 이해...&quot;</text>
 <text x="47" y="132" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">tools: [ask_question, save_req]</text>
 <text x="47" y="150" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">user: &quot;CSV 분석 스크립트를 작성해 줘&quot;</text>
 <text x="47" y="168" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">agent: &quot;어떤 파일 형식을 처리해야 하나요?&quot;</text>
+<g transform="translate(0 10)">
 <rect x="35" y="184" width="320" height="100" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="43" y="198" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">단계 2: 소프트웨어 엔지니어</text>
 <text x="47" y="216" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">sys: &quot;확정된 요구 사항대로 코드 작성...&quot;</text>
 <text x="47" y="234" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">tools: [write_file, execute_code]</text>
 <text x="47" y="252" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">agent: write_file(&quot;analyze.py&quot;, ...)</text>
 <text x="47" y="270" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">agent: execute_code(&quot;python test.py&quot;)</text>
+</g>
+<g transform="translate(0 20)">
 <rect x="35" y="286" width="320" height="100" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="43" y="300" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">단계 3: 코드 검토자</text>
 <text x="47" y="318" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">sys: &quot;코드 품질과 보안을 검토...&quot;</text>
 <text x="47" y="336" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">tools: [run_linter, run_tests]</text>
 <text x="47" y="354" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">agent: run_linter → 경고 2건</text>
 <text x="47" y="372" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">agent: approve_code()</text>
+</g>
+<g transform="translate(0 38)">
 <rect x="35" y="388" width="320" height="28" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
 <text x="195" y="402" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">↑ 모든 단계가 같은 대화 기록 공유</text>
 <text x="195" y="434" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ 전체 작업 이력</text>
 <text x="195" y="456" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ 컨텍스트 급속 팽창</text>
+</g>
+</g>
 <rect x="410" y="55" width="350" height="480" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
 <text x="422" y="73" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">비공유 컨텍스트 (격리형 협업)</text>
+<g transform="translate(0 4)">
 <rect x="425" y="82" width="320" height="80" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="433" y="96" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">용어집 에이전트</text>
 <text x="437" y="114" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">sys: &quot;용어를 식별하고 번역...&quot;</text>
 <text x="437" y="132" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">tools: [search_dict, write_file]</text>
 <text x="437" y="150" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">→ glossary.json</text>
+<g transform="translate(0 10)">
 <rect x="425" y="170" width="320" height="80" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="433" y="184" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">번역 에이전트</text>
 <text x="437" y="202" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">sys: &quot;이 장의 내용을 번역...&quot;</text>
 <text x="437" y="220" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">tools: [read_file, write_file]</text>
 <text x="437" y="238" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">→ chapter1_zh.md</text>
+</g>
+<g transform="translate(0 20)">
 <rect x="425" y="258" width="320" height="80" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="433" y="272" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">교정 에이전트</text>
 <text x="437" y="290" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">sys: &quot;용어 일관성을 점검...&quot;</text>
 <text x="437" y="308" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">tools: [read_file, write_file]</text>
 <text x="437" y="326" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">→ review_report.md</text>
+</g>
+<g transform="translate(0 39)">
 <rect x="425" y="351" width="320" height="65" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
 <text x="585" y="367" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">공유 파일 시스템</text>
 <text x="437" y="389" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">glossary.json  chapter1_zh.md  review_report.md</text>
 <text x="585" y="406" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">+ 도구 매개변수로 구조화 데이터 전달</text>
 <text x="585" y="433" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ 모듈화 · 확장성 · 병렬성</text>
 <text x="585" y="455" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ 정보 동기화가 복잡함</text>
+</g>
+</g>
 </svg>
