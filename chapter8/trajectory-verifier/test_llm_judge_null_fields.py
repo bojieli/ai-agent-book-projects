@@ -20,6 +20,10 @@ class _FakeClient:
 
 
 def test_quality_judge_tolerates_null_score_confidence_evidence():
+    """Contract: OpenAIQualityJudge coerces explicit JSON null score, confidence, and evidence fields to safe defaults.
+
+    Locks out TypeError/ValueError when an LLM judge emits JSON null values for score, confidence, or evidence.
+    """
     payload = {
         "dimensions": [
             {
@@ -46,3 +50,28 @@ def test_quality_judge_tolerates_null_score_confidence_evidence():
     assert eq.score == 0.5
     assert eq.confidence == 0.5
     assert eq.evidence == ["LLM returned no evidence"]
+
+
+def test_quality_judge_tolerates_null_dimensions_array_and_non_dict_payload():
+    """Contract: OpenAIQualityJudge handles explicit JSON null dimensions array, non-dict payloads, and null items.
+
+    Locks out TypeError ('NoneType' object is not iterable) and AttributeError when LLM response
+    payload has null dimensions or non-dict structure.
+    """
+    # Test explicit JSON null dimensions array
+    judge_null_dims = OpenAIQualityJudge(evidence_client=_FakeClient({"dimensions": None}))
+    results1 = list(judge_null_dims.evaluate({"messages": [], "process_facts": None}))
+    assert len(results1) == 2
+    for res in results1:
+        assert res.verdict == "uncertain"
+        assert res.score == 0.5
+
+    # Test non-dict JSON response payload (e.g. JSON list)
+    judge_list_payload = OpenAIQualityJudge(evidence_client=_FakeClient([{"dimension": "expression_quality"}]))
+    results2 = list(judge_list_payload.evaluate({"messages": []}))
+    assert len(results2) == 2
+
+    # Test dimensions array with null item
+    judge_null_item = OpenAIQualityJudge(evidence_client=_FakeClient({"dimensions": [None]}))
+    results3 = list(judge_null_item.evaluate({"messages": []}))
+    assert len(results3) == 2

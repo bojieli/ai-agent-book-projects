@@ -39,11 +39,23 @@ class OpenAIQualityJudge:
         self.model = evidence_client.model
 
     def evaluate(self, trajectory: Dict[str, Any]) -> Iterable[DimensionResult]:
+        facts = trajectory.get("process_facts")
+        if not isinstance(facts, dict):
+            facts = {}
+        messages = trajectory.get("messages")
+        if not isinstance(messages, list):
+            messages = []
+        tool_calls = trajectory.get("tool_calls")
+        if not isinstance(tool_calls, list):
+            tool_calls = []
+        checked_rules = facts.get("checked_rules")
+        if not isinstance(checked_rules, list):
+            checked_rules = []
         evidence = {
             "user_request": trajectory.get("user_request"),
-            "messages": trajectory.get("messages", []),
-            "tool_calls": trajectory.get("tool_calls", []),
-            "checked_rules": trajectory.get("process_facts", {}).get("checked_rules", []),
+            "messages": messages,
+            "tool_calls": tool_calls,
+            "checked_rules": checked_rules,
         }
         prompt = f"""You are calibrating a customer-service Agent trajectory.
 
@@ -66,10 +78,19 @@ Trajectory evidence:
             response_format={"type": "json_object"},
         )
         payload = _json_object(response.choices[0].message.content or "{}")
-        by_name = {item.get("dimension"): item for item in payload.get("dimensions", [])}
+        if not isinstance(payload, dict):
+            payload = {}
+        raw_dims = payload.get("dimensions")
+        if not isinstance(raw_dims, list):
+            raw_dims = []
+        by_name = {
+            item.get("dimension"): item
+            for item in raw_dims
+            if isinstance(item, dict) and item.get("dimension")
+        }
         results = []
         for name in ("expression_quality", "compliant_flexibility"):
-            item = by_name.get(name, {})
+            item = by_name.get(name) or {}
             verdict = item.get("verdict", UNCERTAIN)
             if verdict not in {PASS, FAIL, UNCERTAIN}:
                 verdict = UNCERTAIN
