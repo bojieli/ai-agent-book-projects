@@ -1,0 +1,39 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "id": "msg_011Cdf2aNjZdY5MkG88r58wb",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Good, I've started Firefox using the bash command. Let me wait a moment for it to load and then take a screenshot."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01UAawAvH6atAVSXkWDPzgSQ",
+      "name": "computer",
+      "input": {
+        "action": "wait",
+        "duration": 3
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 7,
+    "cache_creation_input_tokens": 155,
+    "cache_read_input_tokens": 5691,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 155,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 95,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "experiment": "9-6",
+  "run_dir": "exp9-6-anthropic-native-20260803-v2",
+  "passed": true,
+  "gates": {
+    "source_commit": true,
+    "dockerfile_sha256": true,
+    "immutable_image_id": true,
+    "base_image_digest": true,
+    "model_finished": true,
+    "action_ceiling": true,
+    "sequential_action_indexes": true,
+    "unique_tool_use_ids": true,
+    "native_tools_retained": true,
+    "all_actions_executed": true,
+    "all_provider_calls_succeeded": true,
+    "provider_model_match": true,
+    "unique_message_ids": true,
+    "unique_request_ids": true,
+    "receipt_count": true,
+    "screenshots_exist_and_match": true,
+    "grounded_weather_answer": true,
+    "no_captcha_interaction": true,
+    "no_credential_material": true
+  },
+  "counts": {
+    "api_calls": 16,
+    "actions": 15,
+    "screenshots": 15,
+    "files_hashed": 33
+  }
+}

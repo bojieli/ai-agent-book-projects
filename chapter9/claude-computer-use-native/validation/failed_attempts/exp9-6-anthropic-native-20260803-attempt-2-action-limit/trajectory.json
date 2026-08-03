@@ -1,0 +1,1409 @@
+{
+  "schema_version": 1,
+  "experiment": "9-6",
+  "status": "action_limit",
+  "started_at": "2026-08-03T02:33:38.404977Z",
+  "finished_at": "2026-08-03T02:38:35.002923Z",
+  "task": "Open Google, search for San Francisco weather today, and report the temperature and conditions. Do not sign in or change any external data.",
+  "safety": {
+    "read_only": true,
+    "sign_in_allowed": false,
+    "external_mutation_allowed": false
+  },
+  "provider": "Anthropic API",
+  "requested_model": "claude-sonnet-4-5-20250929",
+  "observed_models": [
+    "claude-sonnet-4-5-20250929"
+  ],
+  "tool_version": "computer_use_20250124",
+  "action_limit": 25,
+  "actions_executed": 25,
+  "termination": "action_limit",
+  "provider_stop_reason": "tool_use",
+  "final_answer": "Perfect! Now I have the detailed current weather conditions for San Francisco! Here's the complete information:\n\n**Current conditions at SAN FRANCISCO DOWNTOWN (SFOC1)**\n\n**Temperature: 67°F** (19°C)\n\n**Additional Details:**\n- **Humidity:** 57%\n- **Wind Speed:** NA NA MPH\n- **Barometer:** NA\n- **Dewpoint:** 51°F (11°C)\n- **Visibility:** NA\n- **Last update:** 02 Aug 06:43 PM PDT\n\nThe current condition icon shows \"NA\" which means the specific weather description (like \"Sunny\", \"Cloudy\", etc.) is not available, but we have the temperature and other metrics.\n\nLet me scroll down a bit to see if there's more information about current conditions.",
+  "exception": {
+    "type": "ActionLimitReached",
+    "message": "refused action 26; limit is 25"
+  },
+  "refused_action": {
+    "tool_use_id": "toolu_01SSDHUtsHcvcteAGiPGybgN",
+    "tool": "computer",
+    "input": {
+      "action": "scroll",
+      "coordinate": [
+        512,
+        400
+      ],
+      "scroll_direction": "down",
+      "scroll_amount": 2
+    },
+    "executed": false,
+    "reason": "action_limit"
+  },
+  "usage_totals": {
+    "input_tokens": 178,
+    "cache_creation_input_tokens": 33513,
+    "cache_read_input_tokens": 438857,
+    "output_tokens": 3486
+  },
+  "api_calls": [
+    {
+      "index": 1,
+      "observed_at": "2026-08-03T02:33:43.014475Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 3125,
+        "body_sha256": "55d7a810c959d0f268e8ac9994829ab650e040c0e44cac3386038b2fb9b49c68",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf2smHcDSKppS5gSfpod",
+        "message_id": "msg_011Cdf2snfTXZK4TT4ARryqt",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 3,
+          "cache_creation_input_tokens": 3429,
+          "cache_read_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 3429,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 89,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-01.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 2,
+      "observed_at": "2026-08-03T02:33:49.750238Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 4875,
+        "body_sha256": "6d02c8b0a254669dd5dd8392ee5c91d53076c41221a82b80b11d327ad5e1fb3e",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf2t6qrCfDeiQ4Z9Lvmh",
+        "message_id": "msg_011Cdf2tAMSDPDDPqSb6vfsS",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1494,
+          "cache_read_input_tokens": 3082,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1494,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 117,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-02.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 3,
+      "observed_at": "2026-08-03T02:34:03.078971Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 584107,
+        "body_sha256": "0beec94817cf271b281ffe3ed3e6d5975f8ca08271717f19d4537a0fcb74325f",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf2uCmZcqHHGpFRwz8JF",
+        "message_id": "msg_011Cdf2uDppLn8VsVvg5dekQ",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1179,
+          "cache_read_input_tokens": 4576,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1179,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 124,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-03.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 4,
+      "observed_at": "2026-08-03T02:34:15.155300Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 758180,
+        "body_sha256": "fb221228eb39eea4c4f182bc2a0f3405a3402acccb53d54923c88706d4be8100",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf2upcaymxmjVpgWowcf",
+        "message_id": "msg_011Cdf2urfcZNPQ33uX4cd4i",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1186,
+          "cache_read_input_tokens": 5755,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1186,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 128,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-04.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 5,
+      "observed_at": "2026-08-03T02:34:24.487842Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 942711,
+        "body_sha256": "311b6c8a0f95a4a49f97cb87c3780377a221816ff3480c4bef637d273be7394e",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf2vjP6CnUD6BfNY5F5q",
+        "message_id": "msg_011Cdf2vo2NVwdqAHicSUsoB",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1190,
+          "cache_read_input_tokens": 6941,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1190,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 111,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-05.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 6,
+      "observed_at": "2026-08-03T02:34:33.412206Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 1125967,
+        "body_sha256": "d32508ccb8b2d2fc2db8ea84ddc59c0bf66aa06f9d0a1e200ffa2f3c0b74e05c",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf2wFXKHnWSBT9KdeRyr",
+        "message_id": "msg_011Cdf2wHJURF3E7ZV17Wqf1",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1173,
+          "cache_read_input_tokens": 8131,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1173,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 104,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-06.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 7,
+      "observed_at": "2026-08-03T02:34:41.544326Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 1299402,
+        "body_sha256": "e01a1a8d13c46d7dd102356420e6b64b4126e8a8f6173db8cbdf4a517c9fcbee",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf2x3gD1HZakTiRUo6tL",
+        "message_id": "msg_011Cdf2x6U8xbcEKP7zHstam",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1166,
+          "cache_read_input_tokens": 9304,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1166,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 113,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-07.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 8,
+      "observed_at": "2026-08-03T02:34:51.387862Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 1406306,
+        "body_sha256": "45737f7305dde8aea94cda24ce102da893a054ef92fd8770f610884094053460",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf2xjTNKzaXPPN9EiQG8",
+        "message_id": "msg_011Cdf2xooJjr2dtcickPLZQ",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1175,
+          "cache_read_input_tokens": 10470,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1175,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 111,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-08.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 9,
+      "observed_at": "2026-08-03T02:35:04.066280Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 1544725,
+        "body_sha256": "8febfbbbb6faebe0a972be648a94cb16a4fbd6aebd91f27b99bd7ee84a0f73e2",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf2yPLBBw1PDm7hjdouv",
+        "message_id": "msg_011Cdf2yY81eRDhBMdBfTXMU",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1173,
+          "cache_read_input_tokens": 11645,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1173,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 105,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-09.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 10,
+      "observed_at": "2026-08-03T02:35:10.758649Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 1686076,
+        "body_sha256": "e2b0843d062f0d1e9216bbae5ec044cc501c24ba94b0ebdcf7e65b9caef735a7",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf2zB8jPj3jR4qkvssMt",
+        "message_id": "msg_011Cdf2zECHLXfHJWkjrryLd",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1167,
+          "cache_read_input_tokens": 12818,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1167,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 98,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-10.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 11,
+      "observed_at": "2026-08-03T02:35:21.005774Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 1891246,
+        "body_sha256": "57e21e69cc7deb9cffc307c53b651f2903786cf2f7775d62b7771a95449e343e",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf2zoNKWfsx35posmfbb",
+        "message_id": "msg_011Cdf2zr3oRjaDB3f8fkAaG",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1160,
+          "cache_read_input_tokens": 13985,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1160,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 170,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-11.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 12,
+      "observed_at": "2026-08-03T02:35:32.240864Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 2115254,
+        "body_sha256": "e9cc2786395e179a3af508410d2af4dcf757f2113f3041b0a702e8f6e2cfa5a6",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf31Zf6CRr7prC3bHG9S",
+        "message_id": "msg_011Cdf31ibcCrKzfDTRqaxge",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1232,
+          "cache_read_input_tokens": 15145,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1232,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 145,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-12.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 13,
+      "observed_at": "2026-08-03T02:35:45.149897Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 2338750,
+        "body_sha256": "d09f397bbc6928bdcd33a94253d39f4a0c7b7984ad418a2ed7fca7d5b086c368",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf32RoqZ5vXhbkZNtPER",
+        "message_id": "msg_011Cdf32nPb6RieDmduVKs8V",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1207,
+          "cache_read_input_tokens": 16377,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1207,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 96,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-13.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 14,
+      "observed_at": "2026-08-03T02:35:52.471137Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 2552124,
+        "body_sha256": "d1d5fee7be45a9398007a8a1d42e1fd1aaf23ecb26d0b944ae93cd17ddfb21f5",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf33D8sDQ2wf6KLqF4af",
+        "message_id": "msg_011Cdf33KV784DfuyJLxMgAS",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1158,
+          "cache_read_input_tokens": 17584,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1158,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 96,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-14.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 15,
+      "observed_at": "2026-08-03T02:36:00.946490Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 2754066,
+        "body_sha256": "603ad77e855848f6c6cb4512a93729e266efd1f9d278fde5e4456dba0b39796a",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf33tPX5wSmAEjSuEevS",
+        "message_id": "msg_011Cdf33x4nGookw1fnJqr8Q",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1158,
+          "cache_read_input_tokens": 18742,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1158,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 103,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-15.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 16,
+      "observed_at": "2026-08-03T02:36:10.982889Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 3260079,
+        "body_sha256": "b68d3dda50862eaaf5d955be9fbad893de42298c1ad9ce9f3e36691049f232ad",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf34aZFBVRfWaYm8s6Mt",
+        "message_id": "msg_011Cdf34eDmHmd4sMFBxMexY",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1165,
+          "cache_read_input_tokens": 19900,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1165,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 126,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-16.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 17,
+      "observed_at": "2026-08-03T02:36:20.746383Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 3765315,
+        "body_sha256": "2911febd5803e28ec35bc71926ac61f59f712e58a5809bc60678c16030b0c331",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf35FSaPmpRrLu7eaLVS",
+        "message_id": "msg_011Cdf35KH1jRLvMKMkrQs86",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1188,
+          "cache_read_input_tokens": 21065,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1188,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 108,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-17.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 18,
+      "observed_at": "2026-08-03T02:36:28.089825Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 4271620,
+        "body_sha256": "3975eb7112c5e76a0d3da5e906b1ddaa66cc2604156ed5b92a4be1b2c94466ec",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf35qEaPJjkdFJkgTgYo",
+        "message_id": "msg_011Cdf35viUahcsYK3est1w4",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1170,
+          "cache_read_input_tokens": 22253,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1170,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 108,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-18.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 19,
+      "observed_at": "2026-08-03T02:36:36.905797Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 4739838,
+        "body_sha256": "0b60bf8c15f0856aa9b2eb86f0e9b21c0cbb462d68a873a904a5d6469148b947",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf36WZSgTV4W1Q3izAWA",
+        "message_id": "msg_011Cdf36b4ZYQWeFJcmW6uF1",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1170,
+          "cache_read_input_tokens": 23423,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1170,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 102,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-19.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 20,
+      "observed_at": "2026-08-03T02:36:52.448026Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 5240431,
+        "body_sha256": "8ce0b6ee45da5668edd577a98453ba31c8ec29f24ccdd4409ee9e93001e61214",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf37FHhz9ciU5TymjC7f",
+        "message_id": "msg_011Cdf37Zd2UfRimEt7pxtow",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1164,
+          "cache_read_input_tokens": 24593,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1164,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 184,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-20.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 21,
+      "observed_at": "2026-08-03T02:37:02.472805Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 5708960,
+        "body_sha256": "986b32356c0b7dc62a77db8878deb3217c1cec3be432aa761c5f215af57117f0",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf38JumcnzZJdyQaTVuq",
+        "message_id": "msg_011Cdf38RuDCUvvAFzd2wuKE",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1246,
+          "cache_read_input_tokens": 25757,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1246,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 98,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-21.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 22,
+      "observed_at": "2026-08-03T02:37:19.470539Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 6188463,
+        "body_sha256": "bf83867e6a35d5003c3b3588e7a6e13a7e2dfec24af9e8b76fc27d8157e062c4",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf39CkxcJjSAqWjmJUep",
+        "message_id": "msg_011Cdf39X2oqgWFWch8Yi2do",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1160,
+          "cache_read_input_tokens": 27003,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1160,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 212,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-22.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 23,
+      "observed_at": "2026-08-03T02:37:31.960416Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 6836442,
+        "body_sha256": "964d02ac8c8c171dcb48d21291f4d20ddb56d80e66565552b6095155ae8042cb",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf3AKam5gxBv4kwpQToM",
+        "message_id": "msg_011Cdf3ASykauPoTuX5NhPhv",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1274,
+          "cache_read_input_tokens": 28163,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1274,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 243,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-23.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 24,
+      "observed_at": "2026-08-03T02:38:02.644692Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 7422799,
+        "body_sha256": "8d30d85852d75f4a8499e64de96e7bc049ed069e3c8537a46f18bb069ed9d4e1",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf3CToRSgkJA4L4Mp4n2",
+        "message_id": "msg_011Cdf3CZ8tqdRB7LcP3Y3Pz",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1305,
+          "cache_read_input_tokens": 29437,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1305,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 162,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-24.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 25,
+      "observed_at": "2026-08-03T02:38:20.172691Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 7492638,
+        "body_sha256": "676e7265bb7eff9fe325468efaf222589dabc39d48a15417cae2e82144eec74e",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf3DVYdDzE1uy4MKLQqr",
+        "message_id": "msg_011Cdf3Do4pXp7ro7H4tuter",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1224,
+          "cache_read_input_tokens": 30742,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1224,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 138,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-25.json"
+      },
+      "error_type": null,
+      "error": null
+    },
+    {
+      "index": 26,
+      "observed_at": "2026-08-03T02:38:34.997778Z",
+      "request": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages?beta=true",
+        "body_bytes": 7713381,
+        "body_sha256": "abf6c24a8525a509e3cad45a7527fff0832f32fe06c87855b1f756fdf12d2fc6",
+        "credential_header_present": true
+      },
+      "response": {
+        "http_status": 200,
+        "request_id": "req_011Cdf3ErHpgmq792RZN9DMA",
+        "message_id": "msg_011Cdf3Ex8Z82QSCoWyi8B3g",
+        "model": "claude-sonnet-4-5-20250929",
+        "stop_reason": "tool_use",
+        "usage": {
+          "input_tokens": 7,
+          "cache_creation_input_tokens": 1200,
+          "cache_read_input_tokens": 31966,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 1200,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 295,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "receipt": "api_receipts/response-26.json"
+      },
+      "error_type": null,
+      "error": null
+    }
+  ],
+  "actions": [
+    {
+      "index": 1,
+      "tool_use_id": "toolu_01Dv1Uun91xBoc4cXWvjFqSr",
+      "tool": "computer",
+      "input": {
+        "action": "screenshot"
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-01.png",
+        "screenshot_sha256": "dba4b9d7dcdd64f3efe4229aa7f8eaf4936fd04855b8bc907c717a242d0f478d",
+        "screenshot_bytes": 850
+      }
+    },
+    {
+      "index": 2,
+      "tool_use_id": "toolu_01YbzcWhYRnggmBFvV12r86v",
+      "tool": "computer",
+      "input": {
+        "action": "left_click",
+        "coordinate": [
+          512,
+          384
+        ]
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-02.png",
+        "screenshot_sha256": "e02e88c599487472fbbfffcb10f750b0286374336291ce6c488008078932a5b6",
+        "screenshot_bytes": 433950
+      }
+    },
+    {
+      "index": 3,
+      "tool_use_id": "toolu_014NTKxo5RkW3MY3BLJj7S4Y",
+      "tool": "computer",
+      "input": {
+        "action": "left_click",
+        "coordinate": [
+          806,
+          737
+        ]
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-03.png",
+        "screenshot_sha256": "c704d9de0b25e87c6e40451e9accbdc36e66e94182bcffc51ed2aa456e2a55d4",
+        "screenshot_bytes": 130082
+      }
+    },
+    {
+      "index": 4,
+      "tool_use_id": "toolu_01G4H1R6d3mFZWysjdLQjhBK",
+      "tool": "computer",
+      "input": {
+        "action": "left_click",
+        "coordinate": [
+          298,
+          100
+        ]
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-04.png",
+        "screenshot_sha256": "4d2d32eaef46aa2f3e2444bddfba6fec2e88dd91f42407b1c583a961a2ebd575",
+        "screenshot_bytes": 137889
+      }
+    },
+    {
+      "index": 5,
+      "tool_use_id": "toolu_01FCWF2g7nsGjRdoXyLtg9Zf",
+      "tool": "computer",
+      "input": {
+        "action": "type",
+        "text": "google.com"
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-05.png",
+        "screenshot_sha256": "8da26c5118c4e932feeb4b6610e95096605157a44c4e04bd9c713ac18c59397e",
+        "screenshot_bytes": 137000
+      }
+    },
+    {
+      "index": 6,
+      "tool_use_id": "toolu_01KtL1WYSQjYHC1nHPsKQcKC",
+      "tool": "computer",
+      "input": {
+        "action": "key",
+        "text": "Return"
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-06.png",
+        "screenshot_sha256": "585ec9863dd9c720bf36c70aa5fad8eea8eeb468d9f0b7c0b2e087e54415a26b",
+        "screenshot_bytes": 129659
+      }
+    },
+    {
+      "index": 7,
+      "tool_use_id": "toolu_01GCzE3pJsZXTCNpYKKxzaAf",
+      "tool": "computer",
+      "input": {
+        "action": "wait",
+        "duration": 3
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-07.png",
+        "screenshot_sha256": "37740c655f5dd39976cf906bb3101662417798fd2241827237cdd9a627d753e4",
+        "screenshot_bytes": 79745
+      }
+    },
+    {
+      "index": 8,
+      "tool_use_id": "toolu_01UVQexVHzFV5TpefJhMXRHU",
+      "tool": "computer",
+      "input": {
+        "action": "left_click",
+        "coordinate": [
+          512,
+          325
+        ]
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-08.png",
+        "screenshot_sha256": "3d8679c19eb33db32c201eb2aa314bdbc0699dd5c9da179f2edfad8d61df3b96",
+        "screenshot_bytes": 103371
+      }
+    },
+    {
+      "index": 9,
+      "tool_use_id": "toolu_01CF1An8Hn6wuZH2NyNgCfqh",
+      "tool": "computer",
+      "input": {
+        "action": "type",
+        "text": "San Francisco weather today"
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-09.png",
+        "screenshot_sha256": "d193ae06a202b5b5f69c83806ff3e2818fa128b180dad51b6570e7fe8255c8af",
+        "screenshot_bytes": 105574
+      }
+    },
+    {
+      "index": 10,
+      "tool_use_id": "toolu_01HP2zuGKjzESyifXVExRCdr",
+      "tool": "computer",
+      "input": {
+        "action": "key",
+        "text": "Return"
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-10.png",
+        "screenshot_sha256": "80f06116d7617c2514145125caf39f7ffce95c1ff6493480959d60e9f7ffc8d8",
+        "screenshot_bytes": 153477
+      }
+    },
+    {
+      "index": 11,
+      "tool_use_id": "toolu_01KnzxX2HMvwxtBEUWjBKFRk",
+      "tool": "computer",
+      "input": {
+        "action": "left_click",
+        "coordinate": [
+          379,
+          100
+        ]
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-11.png",
+        "screenshot_sha256": "e49895e4945c0b1fb3129a9122b4e3b2e3bec0f707747c7463f11cb8c6ec6977",
+        "screenshot_bytes": 167326
+      }
+    },
+    {
+      "index": 12,
+      "tool_use_id": "toolu_01PeeEbfHnHGKYTnwEL5hgCV",
+      "tool": "computer",
+      "input": {
+        "action": "triple_click",
+        "coordinate": [
+          512,
+          100
+        ]
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-12.png",
+        "screenshot_sha256": "8ccae56bb1734794f087a58974610399a761fc18beb2ea6e006512f5ba596685",
+        "screenshot_bytes": 167079
+      }
+    },
+    {
+      "index": 13,
+      "tool_use_id": "toolu_01AKjND16V5xCN6bxLLK6PuN",
+      "tool": "computer",
+      "input": {
+        "action": "type",
+        "text": "weather.gov"
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-13.png",
+        "screenshot_sha256": "0901e3587047a05ddb4121cffeb0aedbdcafdb8d5eee96d32e308603f5429092",
+        "screenshot_bytes": 159631
+      }
+    },
+    {
+      "index": 14,
+      "tool_use_id": "toolu_01BkcgJKzDCDBohUQ4e6nh3D",
+      "tool": "computer",
+      "input": {
+        "action": "key",
+        "text": "Return"
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-14.png",
+        "screenshot_sha256": "f7a538c81e40fd1654b1f9877050a4cf1864ef68b49762518239bb66fe6e2eeb",
+        "screenshot_bytes": 151072
+      }
+    },
+    {
+      "index": 15,
+      "tool_use_id": "toolu_01DiMYGRFNpNaMGyt3ueTwpk",
+      "tool": "computer",
+      "input": {
+        "action": "wait",
+        "duration": 3
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-15.png",
+        "screenshot_sha256": "322fb61be8e902cafe9c82fcc11836d7b8c2f728f9afcec92031f96fbb3effda",
+        "screenshot_bytes": 379096
+      }
+    },
+    {
+      "index": 16,
+      "tool_use_id": "toolu_01M1MHDggXY9Qw9E9wKP7kp3",
+      "tool": "computer",
+      "input": {
+        "action": "left_click",
+        "coordinate": [
+          111,
+          462
+        ]
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-16.png",
+        "screenshot_sha256": "3fcadbc6744586b34aad03725907089a5daf6a163b99895fba99c47bf7b6ad8a",
+        "screenshot_bytes": 378431
+      }
+    },
+    {
+      "index": 17,
+      "tool_use_id": "toolu_01H7Y55VVFoBhQiALz9E1sV3",
+      "tool": "computer",
+      "input": {
+        "action": "type",
+        "text": "San Francisco"
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-17.png",
+        "screenshot_sha256": "8a906921c9267f77ce90dc95313a44644af4aea647f0d8a9d9b2acd508fa3b9a",
+        "screenshot_bytes": 379293
+      }
+    },
+    {
+      "index": 18,
+      "tool_use_id": "toolu_018JZy1pYx4tEKSrpUHuZeym",
+      "tool": "computer",
+      "input": {
+        "action": "left_click",
+        "coordinate": [
+          111,
+          570
+        ]
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-18.png",
+        "screenshot_sha256": "43d41f27b81d5e0fa69f7c41e20fa3d1be8f8fee670bea62994b1d86de2a2b7e",
+        "screenshot_bytes": 350745
+      }
+    },
+    {
+      "index": 19,
+      "tool_use_id": "toolu_01BYxyrbQrFbk7VDtYdYiwKd",
+      "tool": "computer",
+      "input": {
+        "action": "wait",
+        "duration": 3
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-19.png",
+        "screenshot_sha256": "6b6b58805b762623f33c4d21d7280c0769bbd3cc1a6e41ead845e555aab09208",
+        "screenshot_bytes": 375024
+      }
+    },
+    {
+      "index": 20,
+      "tool_use_id": "toolu_01FC61VY5FZ2dYbdajsCdNbY",
+      "tool": "computer",
+      "input": {
+        "action": "left_click",
+        "coordinate": [
+          107,
+          411
+        ]
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-20.png",
+        "screenshot_sha256": "d6116e9df69b4b1aaf1d0bb0b594bfeb0aa02f13418613bae091dec6565886ba",
+        "screenshot_bytes": 350754
+      }
+    },
+    {
+      "index": 21,
+      "tool_use_id": "toolu_01PR6cLZqszXgPMyuo12Puur",
+      "tool": "computer",
+      "input": {
+        "action": "wait",
+        "duration": 4
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-21.png",
+        "screenshot_sha256": "837f68a1b11a019ca5a970b5b1139291270c3f26bd753aa9e528205d929b7472",
+        "screenshot_bytes": 359230
+      }
+    },
+    {
+      "index": 22,
+      "tool_use_id": "toolu_01KHSba19rn3Rm5WxKsXDCcA",
+      "tool": "computer",
+      "input": {
+        "action": "scroll",
+        "coordinate": [
+          512,
+          400
+        ],
+        "scroll_direction": "down",
+        "scroll_amount": 3
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-22.png",
+        "screenshot_sha256": "746dc4cfda4b0c1735b8cba72b76fd90ddeaf44ec0c1115923a824a60bd0e6a4",
+        "screenshot_bytes": 485303
+      }
+    },
+    {
+      "index": 23,
+      "tool_use_id": "toolu_01CRAaozL6u8EW2L5VF2gUP7",
+      "tool": "computer",
+      "input": {
+        "action": "scroll",
+        "coordinate": [
+          512,
+          400
+        ],
+        "scroll_direction": "up",
+        "scroll_amount": 2
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-23.png",
+        "screenshot_sha256": "a5063e235a802bf6b7de19ac9af0a3eaa3b7ae26fd1f3ce42501a6cf149944c8",
+        "screenshot_bytes": 439048
+      }
+    },
+    {
+      "index": 24,
+      "tool_use_id": "toolu_01L9ezQKaTEHYgVQySqJifQt",
+      "tool": "computer",
+      "input": {
+        "action": "left_click",
+        "coordinate": [
+          148,
+          486
+        ]
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-24.png",
+        "screenshot_sha256": "216dabb98137e99e9bf577c21cde216dce083edb1c69b83c5add89f2a4bb2b97",
+        "screenshot_bytes": 51788
+      }
+    },
+    {
+      "index": 25,
+      "tool_use_id": "toolu_01BewvCqv5uYPrrtUcqij9mv",
+      "tool": "computer",
+      "input": {
+        "action": "wait",
+        "duration": 3
+      },
+      "executed": true,
+      "result": {
+        "output": "",
+        "error": "",
+        "system": null,
+        "screenshot": "screenshots/action-25.png",
+        "screenshot_sha256": "3e1463ad8677aeca7cb7f7c563a1050276918d857218c9c0dca16e748e15bc99",
+        "screenshot_bytes": 165064
+      }
+    }
+  ],
+  "runtime": {
+    "python": "3.11.6 (main, Aug  3 2026, 02:20:06) [GCC 11.4.0]",
+    "platform": "Linux-6.10.14-linuxkit-aarch64-with-glibc2.35",
+    "machine": "aarch64",
+    "source_commit": "9bcc95e316e5ef6542b4c9d0469f4078829eead5",
+    "dockerfile_sha256": "3aa1f36a491f8f88d81a04c6a89b4cc9f9acd20ad946304c13419736da7c0ead",
+    "image_id": "sha256:0a8afc4b019db3835223b18699d72ba1a5f7523752f11694222708ca238f2691",
+    "base_image_digest": "sha256:0e0a0fc6d18feda9db1590da249ac93e8d5abfea8f4c3c0c849ce512b5ef8982"
+  }
+}

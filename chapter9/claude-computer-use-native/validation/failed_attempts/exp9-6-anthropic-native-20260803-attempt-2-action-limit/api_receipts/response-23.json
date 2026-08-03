@@ -1,0 +1,44 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "id": "msg_011Cdf3ASykauPoTuX5NhPhv",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Perfect! Now I can see more detailed weather information for San Francisco:\n\n**Current Conditions:**\n- **Temperature: 67°F** (19°C)\n- **Conditions: NA** (Not Available - the specific condition description isn't showing)\n\n**Tonight:**\n- **Mostly Clear**\n- **Low: 57°F**\n\n**Monday:**\n- **Sunny**\n- **High: 76°F**\n\nThe page shows the current temperature is 67°F. Let me scroll back up to see if there's more specific information about the current conditions that might be visible."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01CRAaozL6u8EW2L5VF2gUP7",
+      "name": "computer",
+      "input": {
+        "action": "scroll",
+        "coordinate": [
+          512,
+          400
+        ],
+        "scroll_direction": "up",
+        "scroll_amount": 2
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 7,
+    "cache_creation_input_tokens": 1274,
+    "cache_read_input_tokens": 28163,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 1274,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 243,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

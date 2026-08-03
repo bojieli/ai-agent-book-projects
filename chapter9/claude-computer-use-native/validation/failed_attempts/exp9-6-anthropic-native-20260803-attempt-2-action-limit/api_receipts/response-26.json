@@ -1,0 +1,44 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "id": "msg_011Cdf3Ex8Z82QSCoWyi8B3g",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Perfect! Now I have the detailed current weather conditions for San Francisco! Here's the complete information:\n\n**Current conditions at SAN FRANCISCO DOWNTOWN (SFOC1)**\n\n**Temperature: 67°F** (19°C)\n\n**Additional Details:**\n- **Humidity:** 57%\n- **Wind Speed:** NA NA MPH\n- **Barometer:** NA\n- **Dewpoint:** 51°F (11°C)\n- **Visibility:** NA\n- **Last update:** 02 Aug 06:43 PM PDT\n\nThe current condition icon shows \"NA\" which means the specific weather description (like \"Sunny\", \"Cloudy\", etc.) is not available, but we have the temperature and other metrics.\n\nLet me scroll down a bit to see if there's more information about current conditions."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01SSDHUtsHcvcteAGiPGybgN",
+      "name": "computer",
+      "input": {
+        "action": "scroll",
+        "coordinate": [
+          512,
+          400
+        ],
+        "scroll_direction": "down",
+        "scroll_amount": 2
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 7,
+    "cache_creation_input_tokens": 1200,
+    "cache_read_input_tokens": 31966,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 1200,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 295,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "id": "msg_011Cdf3MAnUkw7vV2Jtps6by",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "I can see a desktop with a dark background. I need to open Firefox to access Google. Let me look for the Firefox icon on the screen."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01VQkJ7ARzmrUNJVhsJbT9za",
+      "name": "computer",
+      "input": {
+        "action": "left_click",
+        "coordinate": [
+          512,
+          384
+        ]
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 7,
+    "cache_creation_input_tokens": 1486,
+    "cache_read_input_tokens": 3193,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 1486,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 106,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}
