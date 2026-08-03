@@ -317,6 +317,7 @@ def run_arm(
         failures: "queue.Queue[BaseException]" = queue.Queue()
         with open(os.devnull, "w") as sink, redirect_stdout(sink):
             server = ReverieServer(status["current_sim"], sim_code)
+            (target_dir / "movement").mkdir(exist_ok=True)
             if server.step != start_step:
                 raise RuntimeError(
                     f"checkpoint step mismatch: expected {start_step}, got {server.step}"
@@ -403,4 +404,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

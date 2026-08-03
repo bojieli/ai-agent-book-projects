@@ -39,6 +39,11 @@ def main() -> int:
     if launch_path.exists():
         launch = json.loads(launch_path.read_text())
         launch_by_arm = {row["arm"]: row for row in launch.get("launches", [])}
+    supervisor_path = output / "supervisor_status.json"
+    if supervisor_path.exists():
+        supervisor = json.loads(supervisor_path.read_text())
+        for arm, pid in supervisor.get("pids", {}).items():
+            launch_by_arm.setdefault(arm, {})["pid"] = pid
     result = {"seed": None, "arms": {}}
     seed_path = output / "seed_status.json"
     if seed_path.exists():
@@ -61,7 +66,15 @@ def main() -> int:
         status["pid"] = launch.get("pid")
         status["process_alive"] = process_alive(launch.get("pid"))
         receipt_dir = output / "receipts" / arm
-        live = sorted(receipt_dir.glob("*.jsonl")) if receipt_dir.exists() else []
+        live = (
+            sorted(
+                path
+                for path in receipt_dir.glob("*.jsonl")
+                if ".failed-" not in path.name
+            )
+            if receipt_dir.exists()
+            else []
+        )
         status["live_receipt_calls"] = sum(receipt_rows(path) for path in live)
         result["arms"][arm] = status
     print(json.dumps(result, indent=2, ensure_ascii=False))
@@ -70,4 +83,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
