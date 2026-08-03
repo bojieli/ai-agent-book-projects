@@ -1,0 +1,42 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "id": "msg_011Cdf3CZ8tqdRB7LcP3Y3Pz",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Good! I can see the weather forecast page for San Francisco, CA. The current conditions show:\n- **Temperature: 67°F** (19°C)\n- The current condition description shows \"NA\" which means it's not available\n\nHowever, I notice there's a \"Get Detailed info\" link. Let me click on that to see if I can get more specific information about the current conditions."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01L9ezQKaTEHYgVQySqJifQt",
+      "name": "computer",
+      "input": {
+        "action": "left_click",
+        "coordinate": [
+          148,
+          486
+        ]
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 7,
+    "cache_creation_input_tokens": 1305,
+    "cache_read_input_tokens": 29437,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 1305,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 162,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

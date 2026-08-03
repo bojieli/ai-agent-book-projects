@@ -1,0 +1,39 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "id": "msg_011Cdf2fuB313YpvLYpujoKz",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Good! I can see \"San Francisco weather tod\" has been typed in the search bar (it appears the full text \"San Francisco weather today\" was entered). Now I'll press Enter to perform the search."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01TvQbwEZnZYJ1YAiriBZsGq",
+      "name": "computer",
+      "input": {
+        "action": "key",
+        "text": "Return"
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 7,
+    "cache_creation_input_tokens": 1175,
+    "cache_read_input_tokens": 12912,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 1175,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 112,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

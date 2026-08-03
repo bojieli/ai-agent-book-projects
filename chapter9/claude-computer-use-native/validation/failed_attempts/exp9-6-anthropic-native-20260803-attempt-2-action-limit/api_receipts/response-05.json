@@ -1,0 +1,39 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "id": "msg_011Cdf2vo2NVwdqAHicSUsoB",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Good! The address bar is now active and showing some quick access suggestions. I can see the cursor is in the address bar. Now I'll type \"google.com\" to navigate to Google."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01FCWF2g7nsGjRdoXyLtg9Zf",
+      "name": "computer",
+      "input": {
+        "action": "type",
+        "text": "google.com"
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 7,
+    "cache_creation_input_tokens": 1190,
+    "cache_read_input_tokens": 6941,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 1190,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 111,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "id": "msg_011Cdf38RuDCUvvAFzd2wuKE",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Good! The page is loading again - I can see \"LOADING...\" text. Let me wait for the San Francisco weather page to load."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01PR6cLZqszXgPMyuo12Puur",
+      "name": "computer",
+      "input": {
+        "action": "wait",
+        "duration": 4
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 7,
+    "cache_creation_input_tokens": 1246,
+    "cache_read_input_tokens": 25757,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 1246,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 98,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "id": "msg_011Cdf2snfTXZK4TT4ARryqt",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "I'll help you search for San Francisco weather on Google. Let me start by taking a screenshot to see the current state of the screen, then open a browser and perform the search."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01Dv1Uun91xBoc4cXWvjFqSr",
+      "name": "computer",
+      "input": {
+        "action": "screenshot"
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 3,
+    "cache_creation_input_tokens": 3429,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 3429,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 89,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}
