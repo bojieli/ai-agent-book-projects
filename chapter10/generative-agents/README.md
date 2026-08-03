@@ -46,6 +46,16 @@ requests/responses, provider IDs, token usage, latency, and errors. Embedding
 vectors remain in the simulation memory state; receipts retain their dimension
 and content hash instead of duplicating every float.
 
+The runtime overlay also contains one narrow compatibility correction for the
+legacy action-arena prompt. Upstream asks for `{arena}` but removes only the
+closing brace before looking up the arena. The overlay strips response-only
+braces, quotes, and whitespace, then matches case-insensitively to an exact
+arena returned by the persona's spatial memory. Invalid output stays in the
+current arena when that arena is accessible in the selected sector, otherwise
+it uses the first accessible arena in upstream order. It can never return an
+arena outside that accessible list. Every changed output is retained in a
+credential-free per-checkpoint JSONL compatibility receipt.
+
 ## Run and resume
 
 Prepare the identical history seed once:
@@ -80,4 +90,3 @@ python -m pytest tests
 
 Generated campaigns belong under `outputs/` and are ignored until a completed,
 validated evidence package is deliberately selected for retention.
-

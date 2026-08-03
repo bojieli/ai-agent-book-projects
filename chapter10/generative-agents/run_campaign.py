@@ -189,6 +189,13 @@ def receipt_summary(path: Path) -> dict[str, Any]:
     }
 
 
+def jsonl_rows(path: Path) -> int:
+    if not path.exists():
+        return 0
+    with path.open(encoding="utf-8") as handle:
+        return sum(1 for line in handle if line.strip())
+
+
 def ensure_base(upstream: Path, storage: Path) -> None:
     source = (
         upstream / "environment" / "frontend_server" / "storage" / BASE_SIM
@@ -272,6 +279,9 @@ def run_arm(
     max_chunks: int | None,
 ) -> None:
     from reverie import ReverieServer
+    from action_arena_compat import install as install_action_arena_compat
+
+    correction_recorder = install_action_arena_compat()
 
     seed_status = json.loads((output / "seed_status.json").read_text())
     if not seed_status.get("complete"):
@@ -312,7 +322,20 @@ def run_arm(
                     f"{receipt_path.stem}.failed-{int(time.time())}.jsonl"
                 )
             )
+        correction_path = (
+            output
+            / "compatibility"
+            / arm
+            / f"steps_{start_step:05d}_{end_step:05d}.jsonl"
+        )
+        if correction_path.exists():
+            correction_path.rename(
+                correction_path.with_name(
+                    f"{correction_path.stem}.failed-{int(time.time())}.jsonl"
+                )
+            )
         set_receipt_path(receipt_path)
+        correction_recorder.set_path(correction_path)
         started = time.perf_counter()
         failures: "queue.Queue[BaseException]" = queue.Queue()
         with open(os.devnull, "w") as sink, redirect_stdout(sink):
@@ -346,6 +369,12 @@ def run_arm(
             "sim_code": sim_code,
             "receipt": str(compressed.relative_to(output)),
             "receipt_summary": receipt_summary(compressed),
+            "compatibility_receipt": (
+                str(correction_path.relative_to(output))
+                if correction_path.exists()
+                else None
+            ),
+            "compatibility_corrections": jsonl_rows(correction_path),
             "wall_seconds": round(time.perf_counter() - started, 3),
         }
         previous_sim = status["current_sim"]
