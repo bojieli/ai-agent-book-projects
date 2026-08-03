@@ -4,9 +4,12 @@
 -- at the corresponding directory on GitHub before Pandoc packages the book.
 
 function Link(link)
-  local project_path = link.target:match("^%.%./(chapter%d+/.*)$")
+  local project_path = link.target:match("^%.%./(chapter%d+.*)$")
   if project_path then
-    link.target = "https://github.com/bojieli/ai-agent-book/tree/main/" .. project_path
+    local clean_path = project_path:gsub("/+$", "")
+    local is_file = clean_path:match("%.%w+$") ~= nil
+    local type_path = is_file and "blob" or "tree"
+    link.target = "https://github.com/bojieli/ai-agent-book/" .. type_path .. "/main/" .. clean_path
     return link
   end
 end

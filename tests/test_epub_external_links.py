@@ -1,0 +1,44 @@
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+
+
+ROOT = Path(__file__).parents[1]
+
+
+def run_lua_link(target: str) -> str:
+    lua_script_path = (ROOT / "epub_external_links.lua").as_posix()
+    lua_code = f"""
+dofile("{lua_script_path}")
+local link = {{ target = "{target}" }}
+Link(link)
+print(link.target)
+"""
+    with tempfile.NamedTemporaryFile("w", suffix=".lua", delete=False) as f:
+        f.write(lua_code)
+        f_path = f.name
+    try:
+        lua_bin = shutil.which("texlua") or shutil.which("lua") or "texlua"
+        res = subprocess.run(
+            [lua_bin, f_path], capture_output=True, text=True, check=True
+        )
+        return res.stdout.strip()
+    finally:
+        Path(f_path).unlink(missing_ok=True)
+
+
+def test_epub_external_links_transforms_chapter_dirs_without_trailing_slash():
+    """Contract: Lua Link filter must match chapter targets without a trailing slash (e.g. '../chapter8')
+    and convert them to tree URLs on GitHub main branch.
+    """
+    url = run_lua_link("../chapter8")
+    assert url == "https://github.com/bojieli/ai-agent-book/tree/main/chapter8"
+
+
+def test_epub_external_links_uses_blob_for_file_links():
+    """Contract: Lua Link filter must detect file targets with file extensions and use GitHub 'blob' path
+    instead of 'tree' path.
+    """
+    url = run_lua_link("../chapter7/AdaptThink/TRAINING_REPORT.md")
+    assert url == "https://github.com/bojieli/ai-agent-book/blob/main/chapter7/AdaptThink/TRAINING_REPORT.md"
