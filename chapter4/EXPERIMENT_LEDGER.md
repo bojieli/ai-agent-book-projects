@@ -6,7 +6,7 @@ This ledger separates execution coverage from the manuscript hypothesis and from
 | --- | --- | --- | --- | --- |
 | 4-1 | `perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T070000Z` | blocked | false | `1863389c1e0dff0c2b085744436a3e499e8699cd8164b1d43915b9d886018121` |
 | 4-2 | `execution-tools/validation/experiment_4_2/real_mcp_gui_20260802T093657Z` | blocked | false | `52c1e29a4e429a34d8b05a7e875d31529436afd433aee187fd53793be38a4ff1` |
-| 4-3 | `collaboration-tools/validation/experiment_4_3/real_mcp_kimi_20260730T065500Z` | blocked | false | `b3a06d0a2db68128a0cd3d659157f85bc6e541f3b992dafefb1641c7688837b3` |
+| 4-3 | `collaboration-tools/validation/experiment_4_3/real_mcp_human_20260803_v2` | blocked | false | `8c8186e45c1620be5f1de0ca4ba35bea1aaf09540f0048514ef76651670e6bf9` |
 | 4-4 | `agent-with-event-trigger/validation/experiment_4_4/credential_probe_20260730T064500Z` | blocked | false | `5c9f15094dbab0151539818522ccf71d88ec2ba2e7f0654f373db365a9992dd9` |
 | 4-5 | `async-agent/validation/experiment_4_5/real_subprocess_20260730T052500Z` | passed | true | `03d87ae52985b2b7c2deb434539b86c57aafc8840663cb98761d7e753be0ff96` |
 | 4-6 | `active-tool-discovery/validation/experiment_4_6/qwen3_4b_exact_v2_20260730T130600Z` | passed | true | `88d622db4981207a9980c30abea4eb8dc2621161ded80be0cb2bb8582833153c` |
@@ -31,9 +31,9 @@ Manuscript gates: verified file write/edit, terminal timeout and dangerous-comma
 
 Manuscript gates: sync/async sub-agent lifecycle, messages, cancellation/status, two context-passing strategies, HITL requests with timeout/default behavior, and real multi-channel notification.
 
-- Passed: real Kimi K3 minimal and LLM-generated handoffs, privacy filtering, raw model receipts, synchronous completion, asynchronous completion/status, follow-up messages, cancellation, a pending approval resolved through the admin MCP primitive, and a conservative timeout.
-- Blocked: the validation operator is explicitly not claimed to be a human decision, and no real SMTP/Telegram/Slack credentials are configured. Placeholder `.env` values are forced empty by the campaign and cannot satisfy a gate.
-- Failed provenance retained: the first live run polled the async task for only five seconds; the model completed after that window. The accepted blocked-evidence run uses a bounded twenty-second poll and passes the lifecycle gate.
+- Passed: the canonical v2 run retains six unique Kimi K3 response/usage/latency receipts; real minimal and LLM-generated handoffs; privacy filtering; synchronous and asynchronous completion/status; follow-up messages; cancellation; a conservative timeout; and a live repository-user approval delivered to the same pending MCP request in 1,423.272 seconds within its four-hour response window. The independent validator checks the human/MCP IDs and decision, 55 tool receipts, all 61 manifest hashes, and credential absence.
+- Blocked only on delivery: no real SMTP/SendGrid, Telegram, or Slack configuration exists. Credential-free preflights fail explicitly, so `official_complete` remains false even though the human-decision gate is now closed.
+- Failed provenance retained: `real_mcp_human_20260803_v1` used a 30-minute live window; the response arrived just after timeout and exposed that an expired request could still be mutated. The failed run preserves the timeout and late-response receipts. The production HITL primitive now rejects late or duplicate responses to terminal requests, with focused regression tests. The earlier `real_mcp_kimi_20260730T063500Z` run also preserves the original too-short async polling failure.
 
 ## Experiment 4-4 — event-driven mailbox agent
 
