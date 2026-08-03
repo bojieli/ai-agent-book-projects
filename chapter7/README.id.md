@@ -14,7 +14,7 @@
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | Melanjutkan pre-training pada data domain tertentu. |
 | 7-6 | [sesame](sesame/) · [orpheus](orpheus/) | 🚧 | Dua jalur SFT suara untuk tag paralinguistik dan konsistensi timbre lintas kalimat. |
 | 7-7 | [MultilingualReasoning](MultilingualReasoning/) | 🚧 | Melatih kemampuan penalaran dalam beberapa bahasa. |
-| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | Membangun data guru, melatih siswa, dan membandingkan kualitas serta biaya. |
+| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | ✅ | Membangun data guru, melatih siswa, dan membandingkan kualitas serta biaya. |
 | 7-9 | [cot-distillation](cot-distillation/) | 🚧 | Menyaring trajectory CoT yang benar dan menyiapkannya sebagai data SFT. |
 | 7-10 | [AdaptThink](AdaptThink/) · `AdaptThink-original/` | 📖 | Mengajarkan model memilih mode Thinking atau NoThinking sesuai kesulitan. |
 | 7-11 | `SFTvsRL/` | 📖 | Membandingkan memori dan generalisasi SFT dengan RL pada anggaran yang sama. |

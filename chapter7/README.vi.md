@@ -9,7 +9,7 @@
 | Thí nghiệm | Project | Type | Description |
 | :--: | --- | :--: | --- |
 | 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | Chạy Q-learning và LLM Agent trong cùng môi trường săn kho báu để học từ kinh nghiệm. |
-| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | Chưng cất ví dụ của giáo viên thành prompt học viên và so sánh chất lượng với chi phí. |
+| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | ✅ | Chưng cất ví dụ của giáo viên thành prompt học viên và so sánh chất lượng với chi phí. |
 | 7-3, 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | Tiền huấn luyện mô hình ngôn ngữ nhỏ từ con số 0, hiểu toàn bộ quy trình và kỹ thuật then chốt của tiền huấn luyện. |
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | Tiếp tục tiền huấn luyện trên dữ liệu miền cụ thể để nâng cao biểu hiện của mô hình trong miền mục tiêu. |
 | 7-6 | [sesame](sesame/) | ✅ | Sesame CSM speech SFT: tinh chỉnh LoRA mô hình TTS 1B, điều khiển biểu cảm bằng các thẻ cận ngôn ngữ như `<laugh>`, `<sigh>` |
