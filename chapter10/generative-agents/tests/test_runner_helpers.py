@@ -8,8 +8,10 @@ import pytest
 from action_arena_compat import normalize_action_arena
 from run_campaign import (
     CUSTOM_CURRENTLY,
+    normalize_task_decomp_response,
     quarantine_artifact,
     receipt_summary,
+    safe_task_decomp_generate,
     validated_receipt_summary,
 )
 
@@ -47,6 +49,70 @@ def test_custom_goal_is_specific_and_time_bounded():
     assert "climate-resilience workshop" in CUSTOM_CURRENTLY
     assert "February 14th, 2023" in CUSTOM_CURRENTLY
     assert "5pm to 7pm" in CUSTOM_CURRENTLY
+
+
+def test_task_decomp_normalization_discards_prose_and_bounds_duration():
+    prompt = "Describe subtasks in 5 min increments. (total duration in minutes 10):"
+    response = """The prompt is contradictory.
+1) Wolfgang is resting. (duration in minutes: 5, minutes left: 5)
+2) Wolfgang is resting. (duration in minutes: 5, minutes left: 0)
+Here is an alternative.
+1) Wolfgang is studying. (duration in minutes: 10, minutes left: 0)"""
+
+    assert normalize_task_decomp_response(response, prompt) == (
+        "1) Wolfgang is resting. (duration in minutes: 5, minutes left: 5)\n"
+        "2) Wolfgang is resting. (duration in minutes: 5, minutes left: 0)"
+    )
+
+
+def test_task_decomp_generation_cleans_malformed_response_without_requery():
+    calls = 0
+    prompt = "Describe subtasks in 5 min increments. (total duration in minutes 10):"
+    response = """Commentary.
+1) Wolfgang is resting. (duration in minutes: 5, minutes left: 5)
+2) Wolfgang is resting. (duration in minutes: 5, minutes left: 0)"""
+
+    def request(prompt, parameters):
+        nonlocal calls
+        calls += 1
+        return response
+
+    def clean_up(value, prompt):
+        if value.startswith("Commentary"):
+            raise IndexError("missing duration")
+        return value.splitlines()
+
+    result = safe_task_decomp_generate(
+        request, prompt, {}, 5, ["asleep"], lambda value, prompt: value, clean_up
+    )
+
+    assert len(result) == 2
+    assert calls == 1
+
+
+def test_task_decomp_generation_raises_after_five_unparseable_responses():
+    calls = 0
+
+    def request(prompt, parameters):
+        nonlocal calls
+        calls += 1
+        return "unstructured prose"
+
+    def clean_up(value, prompt):
+        raise ValueError("invalid duration")
+
+    with pytest.raises(ValueError, match="invalid duration"):
+        safe_task_decomp_generate(
+            request,
+            "Describe subtasks in 5 min increments. (total duration in minutes 60):",
+            {},
+            5,
+            ["asleep"],
+            lambda value, prompt: value,
+            clean_up,
+        )
+
+    assert calls == 5
 
 
 def test_action_arena_strips_legacy_leading_brace():

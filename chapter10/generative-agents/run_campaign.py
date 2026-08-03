@@ -10,6 +10,7 @@ import gzip
 import json
 import os
 import queue
+import re
 import shutil
 import subprocess
 import sys
@@ -17,7 +18,7 @@ import threading
 import time
 from contextlib import redirect_stdout
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 
 SOURCE_COMMIT = "fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4"
@@ -31,6 +32,11 @@ CUSTOM_CURRENTLY = (
     "at Hobbs Cafe on February 14th, 2023, from 5pm to 7pm. She is gathering "
     "workshop materials, recruiting helpers, and inviting everyone she meets."
 )
+TASK_DECOMP_MARKER = "Describe subtasks in 5 min increments."
+TASK_DECOMP_DURATION = re.compile(r"\(duration in minutes:\s*(\d+)\s*,")
+TASK_DECOMP_TOTAL = re.compile(r"total duration in minutes:?\s*(\d+)")
+TASK_DECOMP_PARSE_ERRORS = (IndexError, TypeError, ValueError)
+TASK_DECOMP_ATTEMPTS = 5
 
 
 def atomic_json(path: Path, value: Any) -> None:
@@ -75,6 +81,103 @@ def install_provider(receipt_path: Path) -> None:
         ),
         receipt_path=receipt_path,
     )
+
+
+def normalize_task_decomp_response(response: str, prompt: str) -> str | None:
+    """Keep only parseable duration rows, bounded by the requested total."""
+
+    total_match = TASK_DECOMP_TOTAL.search(prompt)
+    if not total_match:
+        return None
+    expected = int(total_match.group(1))
+    accumulated = 0
+    rows = []
+    for line in response.splitlines():
+        stripped = line.strip()
+        duration_match = TASK_DECOMP_DURATION.search(stripped)
+        if not duration_match:
+            continue
+        rows.append(stripped)
+        accumulated += int(duration_match.group(1))
+        if accumulated >= expected:
+            break
+    return "\n".join(rows) if rows else None
+
+
+def safe_task_decomp_generate(
+    request: Callable[[str, dict[str, Any]], str],
+    prompt: str,
+    parameters: dict[str, Any],
+    repeat: int,
+    fail_safe: Any,
+    validate: Callable[..., Any],
+    clean_up: Callable[..., Any],
+) -> Any:
+    """Use raw output when valid, otherwise clean deterministic task rows."""
+
+    last_parse_error: BaseException | None = None
+    for _ in range(repeat):
+        response = request(prompt, parameters)
+        try:
+            if validate(response, prompt=prompt):
+                return clean_up(response, prompt=prompt)
+        except TASK_DECOMP_PARSE_ERRORS as exc:
+            last_parse_error = exc
+        normalized = normalize_task_decomp_response(response, prompt)
+        if normalized and normalized != response:
+            try:
+                return clean_up(normalized, prompt=prompt)
+            except TASK_DECOMP_PARSE_ERRORS as exc:
+                last_parse_error = exc
+    if last_parse_error is not None:
+        raise last_parse_error
+    return fail_safe
+
+
+def install_task_decomp_compat() -> None:
+    """Repair task-decomposition parser input without editing upstream."""
+
+    from persona.prompt_template import gpt_structure, run_gpt_prompt
+
+    current = run_gpt_prompt.safe_generate_response
+    if getattr(current, "_exp10_7_task_decomp_compat", False):
+        return
+
+    def guarded(
+        prompt: str,
+        parameters: dict[str, Any],
+        repeat: int = TASK_DECOMP_ATTEMPTS,
+        fail_safe_response: Any = "error",
+        func_validate: Callable[..., Any] | None = None,
+        func_clean_up: Callable[..., Any] | None = None,
+        verbose: bool = False,
+    ) -> Any:
+        if (
+            TASK_DECOMP_MARKER not in prompt
+            or func_validate is None
+            or func_clean_up is None
+        ):
+            return current(
+                prompt,
+                parameters,
+                repeat,
+                fail_safe_response,
+                func_validate,
+                func_clean_up,
+                verbose,
+            )
+        return safe_task_decomp_generate(
+            gpt_structure.GPT_request,
+            prompt,
+            parameters,
+            repeat,
+            fail_safe_response,
+            func_validate,
+            func_clean_up,
+        )
+
+    guarded._exp10_7_task_decomp_compat = True  # type: ignore[attr-defined]
+    run_gpt_prompt.safe_generate_response = guarded
 
 
 def set_receipt_path(path: Path) -> None:
@@ -321,6 +424,7 @@ def run_arm(
     from action_arena_compat import install as install_action_arena_compat
 
     correction_recorder = install_action_arena_compat()
+    install_task_decomp_compat()
 
     seed_status = json.loads((output / "seed_status.json").read_text())
     if not seed_status.get("complete"):

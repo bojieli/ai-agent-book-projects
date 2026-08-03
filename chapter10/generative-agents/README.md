@@ -56,6 +56,19 @@ clean checkpoint instead of advancing canonical status. Each physical request
 has a 90-second client timeout by default; `GA_PROVIDER_TIMEOUT_SECONDS` is an
 explicit override.
 
+The legacy task-decomposition helper intends to retry malformed model output
+five times, but its validator accepts every nonempty response before cleanup;
+an otherwise successful response can therefore crash the worker while parsing
+a missing or nonnumeric duration field. For this prompt only, the runtime
+overlay first keeps the raw output when upstream can parse it. On a parser-shape
+failure (`IndexError`, `TypeError`, or `ValueError`), it removes commentary and
+keeps formatted duration rows in response order, bounded by the requested total,
+before passing them through the unchanged upstream cleanup. The raw provider
+response remains in the receipt. Output with no parseable rows is requested
+again up to the original five-attempt budget; exhaustion still raises, causing
+the checkpoint and its receipt to be quarantined and replayed from the last
+durable state.
+
 The runtime overlay also contains one narrow compatibility correction for the
 legacy action-arena prompt. Upstream asks for `{arena}` but removes only the
 closing brace before looking up the arena. The overlay strips response-only
