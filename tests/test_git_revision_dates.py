@@ -84,7 +84,51 @@ def test_git_commit_range_returns_distinct_creation_and_update_dates(tmp_path: P
     assert created[1] == 1704067200
     assert latest[0] != created[0]
 
+def test_git_commit_range_ignores_commits_for_creation_date(tmp_path: Path):
+    """Verify git_commit_range filters ignored_commits when determining creation date.
 
+    Contract: If the initial creation commit of a file matches an ignored commit hash,
+    git_commit_range must ignore it and return the earliest non-ignored commit date.
+    Locks out returning an ignored commit as the file creation date.
+    """
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    subprocess.run(
+        ["git", "-C", str(tmp_path), "config", "user.email", "test@example.com"],
+        check=True,
+    )
+    subprocess.run(
+        ["git", "-C", str(tmp_path), "config", "user.name", "Test"],
+        check=True,
+    )
+
+    page = tmp_path / "page.md"
+    page.write_text("created\n", encoding="utf-8")
+    _commit(tmp_path, "create", "1704067200 +0000")
+
+    creation_hash = subprocess.run(
+        ["git", "-C", str(tmp_path), "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+
+    page.write_text("updated\n", encoding="utf-8")
+    _commit(tmp_path, "update", "1706745600 +0000")
+
+    latest_hash = subprocess.run(
+        ["git", "-C", str(tmp_path), "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+
+    latest, created = git_commit_range(
+        page, tmp_path, ignored_commits=(creation_hash,)
+    )
+
+    assert created[0] == latest_hash
+    assert created[0] != creation_hash
+    assert created[1] == 1706745600
 def _commit(repository: Path, message: str, date: str) -> None:
     subprocess.run(["git", "-C", str(repository), "add", "page.md"], check=True)
     subprocess.run(
