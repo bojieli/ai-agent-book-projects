@@ -7,7 +7,6 @@ import argparse
 import hashlib
 import json
 import re
-from datetime import UTC, datetime
 from pathlib import Path
 
 
@@ -135,7 +134,6 @@ def main() -> int:
     acceptance = {
         "schema_version": 1,
         "experiment": "9-6",
-        "validated_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
         "run_dir": run_dir.name,
         "passed": all(gates.values()),
         "gates": gates,

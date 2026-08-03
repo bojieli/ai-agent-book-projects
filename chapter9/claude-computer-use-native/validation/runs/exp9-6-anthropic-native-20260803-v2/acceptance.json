@@ -1,7 +1,6 @@
 {
   "schema_version": 1,
   "experiment": "9-6",
-  "validated_at": "2026-08-03T02:43:12.702198Z",
   "run_dir": "exp9-6-anthropic-native-20260803-v2",
   "passed": true,
   "gates": {
