@@ -9,7 +9,7 @@
 | Exp. | Project | Type | Description |
 | :--: | --- | :--: | --- |
 | 4-1 | [perception-tools](perception-tools/) | ✅ | Build a comprehensive set of perception tools, providing capabilities for web search, multimodal understanding, file system operations, and access to public data sources. Most features are based on free, open APIs (DuckDuckGo, Open-Meteo, Yahoo Finance, OpenStreetMap, etc.) and require no API key. |
-| 4-2 | [execution-tools](execution-tools/) | ✅ | Implement a set of execution tools with safety mechanisms, including file operations, a code interpreter, a virtual terminal, and external system integration. Prevent dangerous operations through a secondary LLM approval mechanism, automatically summarize complex outputs, and perform syntax validation on code. |
+| 4-2 | [execution-tools](execution-tools/) | ✅ | The canonical 20-call campaign passes 13/15 gates, including safe execution, a real GitHub PR, Xvfb desktop Computer Use, and KVM-backed Android actions; only authorized Calendar and email mutations remain blocked. |
 | 4-3 | [collaboration-tools](collaboration-tools/) | ✅ | Provide comprehensive collaboration capabilities, including browser automation (browser-use framework), Human-in-the-Loop, multi-channel notifications (Email, Telegram, Slack, Discord), and timer management. Supports admin approval for sensitive operations and scheduled task dispatching. |
 | 4-4 | [agent-with-event-trigger](agent-with-event-trigger/) | ✅ | A modern event-driven Agent built with FastAPI, integrating all tools from the first three MCP servers by default. It uses a native asynchronous architecture for clean MCP tool loading and receives multi-source events (Web, Instant Messaging, GitHub, Timers, etc.) via HTTP API. Provides automatic API documentation (Swagger UI) and background monitoring capabilities. |
 | 4-5 | [async-agent](async-agent/) | ✅ | Implement the core of an event-driven asynchronous Agent framework (Flux) based on a single-threaded asyncio model: an inbox event queue dispatches tasks by urgency (interrupt/immediate/queue), supports parallel execution of asynchronous tools, allows interrupting the current turn during execution, and provides cancellation and status querying for simulated long-running tasks. Decision-making is performed by a real LLM (function calling). |
@@ -18,8 +18,9 @@
 
 Runnable-project status is separate from manuscript acceptance. Experiments
 4-1 through 4-4 have substantial real execution coverage but remain officially
-incomplete because authorized private-data, external-mutation, human-decision,
-notification, Android/Computer Use, or real-mailbox gates are still blocked.
+incomplete because authorized private-data, Calendar/email mutation,
+human-decision, notification, or real-mailbox gates are still blocked. The
+Android and Computer Use gates for 4-2 now have substantive retained execution.
 See the [experiment ledger](EXPERIMENT_LEDGER.md) for the exact boundary.
 
 > Additionally, `chapter4/docker-compose.yml` and `chapter4/DOCKER_DEPLOYMENT.md` provide a reference solution for containerizing and deploying the aforementioned MCP tool servers.

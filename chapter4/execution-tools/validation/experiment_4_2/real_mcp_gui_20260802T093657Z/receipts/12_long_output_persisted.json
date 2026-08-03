@@ -1,0 +1,36 @@
+{
+  "case": "long_output_persisted",
+  "tool": "code_interpreter",
+  "arguments": {
+    "language": "python",
+    "timeout": 30,
+    "code": "for i in range(260): print(f'LINE-{i:03d}')\n"
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "status": "success",
+    "language": "python",
+    "stdout": "LINE-000\nLINE-001\nLINE-002\nLINE-003\nLINE-004\nLINE-005\nLINE-006\nLINE-007\nLINE-008\nLINE-009\nLINE-010\nLINE-011\nLINE-012\nLINE-013\nLINE-014\nLINE-015\nLINE-016\nLINE-017\nLINE-018\nLINE-019\nLINE-020\nLINE-021\nLINE-022\nLINE-023\nLINE-024\nLINE-025\nLINE-026\nLINE-027\nLINE-028\nLINE-029\nLINE-030\nLINE-031\nLINE-032\nLINE-033\nLINE-034\nLINE-035\nLINE-036\nLINE-037\nLINE-038\nLINE-039\nLINE-040\nLINE-041\nLINE-042\nLINE-043\nLINE-044\nLINE-045\nLINE-046\nLINE-047\nLINE-048\nLINE-049\n... [省略 161 行，完整输出已保存至 /tmp/code_interpreter_output_cnbli3bg.txt] ...\nLINE-211\nLINE-212\nLINE-213\nLINE-214\nLINE-215\nLINE-216\nLINE-217\nLINE-218\nLINE-219\nLINE-220\nLINE-221\nLINE-222\nLINE-223\nLINE-224\nLINE-225\nLINE-226\nLINE-227\nLINE-228\nLINE-229\nLINE-230\nLINE-231\nLINE-232\nLINE-233\nLINE-234\nLINE-235\nLINE-236\nLINE-237\nLINE-238\nLINE-239\nLINE-240\nLINE-241\nLINE-242\nLINE-243\nLINE-244\nLINE-245\nLINE-246\nLINE-247\nLINE-248\nLINE-249\nLINE-250\nLINE-251\nLINE-252\nLINE-253\nLINE-254\nLINE-255\nLINE-256\nLINE-257\nLINE-258\nLINE-259\n\n[如需完整输出，请使用 read_file 工具读取 /tmp/code_interpreter_output_cnbli3bg.txt]",
+    "stderr": "",
+    "stdout_file": "/tmp/code_interpreter_output_cnbli3bg.txt",
+    "stderr_file": null,
+    "returncode": 0,
+    "error": null,
+    "compile_output": null,
+    "phase": null,
+    "execution_time": 0.2170872688293457,
+    "sandbox": {
+      "kind": "docker",
+      "image": "python:3.11-slim",
+      "network": "none",
+      "rootfs": "read-only",
+      "memory": "256m",
+      "cpus": 1,
+      "pids_limit": 64
+    },
+    "verification": "passed"
+  },
+  "latency_seconds": 0.221
+}

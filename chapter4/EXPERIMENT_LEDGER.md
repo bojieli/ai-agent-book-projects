@@ -5,7 +5,7 @@ This ledger separates execution coverage from the manuscript hypothesis and from
 | Experiment | Canonical run | Status | `official_complete` | Manifest SHA-256 |
 | --- | --- | --- | --- | --- |
 | 4-1 | `perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T070000Z` | blocked | false | `1863389c1e0dff0c2b085744436a3e499e8699cd8164b1d43915b9d886018121` |
-| 4-2 | `execution-tools/validation/experiment_4_2/real_mcp_20260730T070500Z` | blocked | false | `f1743d28e763d79d7a8690fc118c62ffaf124270e062eb3236542fca9636f5ab` |
+| 4-2 | `execution-tools/validation/experiment_4_2/real_mcp_gui_20260802T093657Z` | blocked | false | `52c1e29a4e429a34d8b05a7e875d31529436afd433aee187fd53793be38a4ff1` |
 | 4-3 | `collaboration-tools/validation/experiment_4_3/real_mcp_kimi_20260730T065500Z` | blocked | false | `b3a06d0a2db68128a0cd3d659157f85bc6e541f3b992dafefb1641c7688837b3` |
 | 4-4 | `agent-with-event-trigger/validation/experiment_4_4/credential_probe_20260730T064500Z` | blocked | false | `5c9f15094dbab0151539818522ccf71d88ec2ba2e7f0654f373db365a9992dd9` |
 | 4-5 | `async-agent/validation/experiment_4_5/real_subprocess_20260730T052500Z` | passed | true | `03d87ae52985b2b7c2deb434539b86c57aafc8840663cb98761d7e753be0ff96` |
@@ -23,8 +23,9 @@ Manuscript gates: a real MCP catalog covering search, multimodal understanding, 
 
 Manuscript gates: verified file write/edit, terminal timeout and dangerous-command review, sandboxed Python, long-output persistence, Excel operations, external system mutations, and browser/desktop/mobile execution.
 
-- Passed: deterministic Python compiler and Node `--check` linter; structured invalid-code responses; workspace escape rejection; timeout; Kimi K3 dangerous-command rejection with raw usage/latency receipts; Docker Python sandbox (`--network none`, read-only root, memory/CPU/PID limits); immutable full long-output retention; XLSX formulas rendered through LibreOffice and PyMuPDF; real HTTPS webhook; real Chromium navigation and screenshot.
-- Blocked: no Google Calendar/SMTP credentials or active Android/Computer Use session. The execution server has no environment GitHub token; an unrelated local CLI login was not silently repurposed for mutation.
+- Passed: deterministic Python compiler and Node `--check` linter; structured invalid-code responses; workspace escape rejection; timeout; OpenRouter GPT-4.1-mini dangerous-command rejection with raw usage/latency receipts; Docker Python sandbox (`--network none`, read-only root, memory/CPU/PID limits); immutable full long-output retention; XLSX formulas rendered through LibreOffice and PyMuPDF; real HTTPS webhook; real headless Chromium navigation and screenshot; PR #605 created through the GitHub execution tool and then safely reused through query-before-mutation idempotency; headful Chromium on Xvfb driven through OS keyboard events with a hashed framebuffer; and a KVM-backed AndroidWorld API-33 emulator that opened Wi-Fi Settings, verified focus, captured pixels, and returned home through ADB input.
+- Blocked: no Google Calendar or real email-provider credentials. Android, Computer Use, and GitHub are no longer blockers. The canonical run passes 13/15 gates while retaining `official_complete: false` for the two absent external mutations.
+- Failed provenance retained: `real_mcp_gui_20260802T093348Z` established the GitHub/desktop/mobile gates but failed the spreadsheet gate because LibreOffice and the Chapter 4 PyMuPDF dependency were missing. The corrected canonical run installs/declares both and passes the spreadsheet gate; it reuses the already-open PR instead of creating a duplicate.
 
 ## Experiment 4-3 — collaboration MCP
 
