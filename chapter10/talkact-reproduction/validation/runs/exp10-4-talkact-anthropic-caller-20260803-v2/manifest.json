@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "experiment": "10-4",
+  "run_dir": "exp10-4-talkact-anthropic-caller-20260803-v2",
+  "files": [
+    {
+      "path": "aggregate.json",
+      "bytes": 505,
+      "sha256": "18e10e0a060c5b47c96f372aad7501561fb4360f3f45b14e970b772c7e6edebd"
+    },
+    {
+      "path": "analyze.log",
+      "bytes": 1074,
+      "sha256": "2d1a3631fb99b094d3dbca3d9a7a4e5bf963611d38759a958f141a163626c48f"
+    },
+    {
+      "path": "campaign.log",
+      "bytes": 16664,
+      "sha256": "d5d3ce1a3dea930e10028c3133a949a7e8945ea2ba3bd359cfe152e2130e324c"
+    },
+    {
+      "path": "environment.json",
+      "bytes": 511,
+      "sha256": "c7f1d36c1565d259f87ddd7e722a345577a0c7a0de594c59c52f5bfb498a9e6d"
+    },
+    {
+      "path": "episodes/booking-flight__duplex__s0.json",
+      "bytes": 26154,
+      "sha256": "eb1c71835e09067e2a1769db13059fb4730947e90f05557a5de1c78d0e307fa8"
+    },
+    {
+      "path": "episodes/booking-flight__duplex__s1.json",
+      "bytes": 23015,
+      "sha256": "669fa5c237b2353f68ae0ffbe9a771305d475f673c4304f20bf4e0828a7b8dba"
+    },
+    {
+      "path": "episodes/booking-flight__strawman__s0.json",
+      "bytes": 15568,
+      "sha256": "815ae542eed8793308bffe9bf076f5f313e3c8d07208b8c30369a79926963f48"
+    },
+    {
+      "path": "episodes/booking-flight__strawman__s1.json",
+      "bytes": 12503,
+      "sha256": "d25e532f9aa6618904a88746ebc3d298db090501b3dbd8fbdd86c25361a38bc9"
+    },
+    {
+      "path": "episodes/forms-insurance__duplex__s0.json",
+      "bytes": 26950,
+      "sha256": "66069acfbd6c2fc75c3eba1e5bbdca52727e0e402f5ad3ec3703ca2afdd140e7"
+    },
+    {
+      "path": "episodes/forms-insurance__duplex__s1.json",
+      "bytes": 29846,
+      "sha256": "50ff4e4a40c4087d28dfef9de2e4203f0774bbf41ab516577a9a02a35d803639"
+    },
+    {
+      "path": "episodes/forms-insurance__strawman__s0.json",
+      "bytes": 14865,
+      "sha256": "eacd47366574997925601edf08ad80925c66f4168ba3642a4d1f095ee2ca01a1"
+    },
+    {
+      "path": "episodes/forms-insurance__strawman__s1.json",
+      "bytes": 19374,
+      "sha256": "ee88a6258f4e448d8b22beb0ba53b373ede9dcc85e59bad2608cc26c3a86d0e2"
+    },
+    {
+      "path": "episodes/meeting-helper__duplex__s0.json",
+      "bytes": 15319,
+      "sha256": "14c52842f75e8a6a1968d96bb8d2e4d797af78ce790d6af9414d6ded09fc09fd"
+    },
+    {
+      "path": "episodes/meeting-helper__duplex__s1.json",
+      "bytes": 17234,
+      "sha256": "c4275caaa5d0c1839430b839e8648fe5627433376f613fd3a2c0c68017ebf44b"
+    },
+    {
+      "path": "episodes/meeting-helper__strawman__s0.json",
+      "bytes": 14279,
+      "sha256": "50ef02f99a8eed45f5152b2f2a7e5c76dfc350809814af7df395a563e86dbfda"
+    },
+    {
+      "path": "episodes/meeting-helper__strawman__s1.json",
+      "bytes": 14764,
+      "sha256": "9cba9d4a3c2859235b12fe05e826c62eb0652106ef6498ad7dcce82e758d53df"
+    },
+    {
+      "path": "episodes/webmail-report__duplex__s0.json",
+      "bytes": 16887,
+      "sha256": "73df6eb4a1c7715b3ca1c17c66c470afbc2c5f96ff119fe7187228e653516b96"
+    },
+    {
+      "path": "episodes/webmail-report__duplex__s1.json",
+      "bytes": 17455,
+      "sha256": "6d834c788ba2a0e7214af024bd7b8ab541b6a1ac572fde7f9c8ee0a5599644ae"
+    },
+    {
+      "path": "episodes/webmail-report__strawman__s0.json",
+      "bytes": 10234,
+      "sha256": "bd6d1318245540e28ee30b5786ee0c68e62395a4c1e02b859569ed144f389c4a"
+    },
+    {
+      "path": "episodes/webmail-report__strawman__s1.json",
+      "bytes": 10346,
+      "sha256": "d27f0fbbaff5760d0e4215f2b1a9673a6721cc65e9072f8c37dace909962b1b0"
+    },
+    {
+      "path": "per_episode.json",
+      "bytes": 13872,
+      "sha256": "5f44015a5456e587b4f1eca596833ea06e5bdbd18d58505bbf8f59e65734d849"
+    },
+    {
+      "path": "protocol.json",
+      "bytes": 4075,
+      "sha256": "47ba3e317a85e73d1ebc38515b938c214e0b9da5ffbce8b696ea8c532468fd97"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 14758,
+      "sha256": "81284d7a57ca85b40b125d37727e4f45ab0c4d7d7d747287752406dc11f0167b"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+[
+ {
+  "condition": "duplex",
+  "n_episodes": 8,
+  "task_success": 1.0,
+  "partial_credit": 1.0,
+  "probe_correct": 0.833,
+  "voice_lat_p50": 2.32,
+  "voice_lat_p90": 2.85,
+  "voice_lat_max": 4.03,
+  "wall_time_mean": 207.2,
+  "n_lat_samples": 47
+ },
+ {
+  "condition": "strawman",
+  "n_episodes": 8,
+  "task_success": 1.0,
+  "partial_credit": 1.0,
+  "probe_correct": 0.917,
+  "voice_lat_p50": 12.52,
+  "voice_lat_p90": 21.14,
+  "voice_lat_max": 37.29,
+  "wall_time_mean": 178.0,
+  "n_lat_samples": 44
+ }
+]

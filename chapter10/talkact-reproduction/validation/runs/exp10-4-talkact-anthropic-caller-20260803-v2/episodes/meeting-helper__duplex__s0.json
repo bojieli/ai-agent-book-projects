@@ -1,0 +1,359 @@
+{
+ "task": "meeting-helper",
+ "condition": "duplex",
+ "slow_model": "claude-opus-4-8",
+ "fast_model": "claude-haiku-4-5",
+ "user_model": "anthropic:claude-sonnet-4-5-20250929",
+ "wall_time": 130.1,
+ "error": null,
+ "env_state": {
+  "bookings": [],
+  "form_submissions": [],
+  "meeting_speed": 3.0,
+  "meeting_start": 1785726701.3374028,
+  "sent_emails": []
+ },
+ "slow_usage": {
+  "input_tokens": 2154,
+  "output_tokens": 2546,
+  "cache_read_input_tokens": 37295,
+  "cache_creation_input_tokens": 83583
+ },
+ "fast_usage": {
+  "input_tokens": 6086,
+  "output_tokens": 422
+ },
+ "transcript": [
+  {
+   "role": "agent",
+   "text": "Hi there! You're all set\u2014I'm watching your meeting for you. What would you like to know about what's happening?",
+   "t": 3.255
+  },
+  {
+   "role": "user",
+   "text": "Hey, it's Jordan. I had to step out of the product review meeting - can you give me a quick rundown of what's been covered so far?",
+   "t": 23.248
+  },
+  {
+   "role": "agent",
+   "text": "Hey Jordan! So far they've covered the Q3 roadmap, the Atlas launch date, and budget. The big news is that Atlas is confirmed for September 18th\u2014Dana just announced that. On the engineering side, Marcus said the backend migration is eighty percent done, with just the billing service left to wrap up, which should take about two weeks. They're currently on the kickoff slide, so it sounds like they're just getting started.",
+   "t": 26.76
+  },
+  {
+   "role": "user",
+   "text": "Oh great, September 18th for Atlas - got it. What about the onboarding A/B test? Did they mention how that turned out?",
+   "t": 51.104
+  },
+  {
+   "role": "agent",
+   "text": "Yes, they did mention it! Priya shared that the onboarding drop-off improved significantly\u2014it went down from thirty-four percent to nineteen percent. So that's really solid progress.",
+   "t": 54.052
+  },
+  {
+   "role": "user",
+   "text": "Nice, that's a huge improvement! Do you know who's handling the CDN contract renewal? I remember we had a deadline coming up for that.",
+   "t": 76.516
+  },
+  {
+   "role": "agent",
+   "text": "Yeah, Marcus is owning the CDN renewal. The contract expires August 30th, and he's got an internal deadline of August 15th to get it sorted, so there's a couple weeks to work with there.",
+   "t": 79.181
+  },
+  {
+   "role": "agent",
+   "text": "Okay, so the meeting just wrapped up. Here's the full picture: Atlas is locked in for September 18th, the backend is eighty percent done with about two weeks left on billing, and Priya's onboarding redesign brought that drop-off down from thirty-four to nineteen percent. Marketing's getting an extra one-fifty K for the launch campaign. On the action items side, Marcus has the CDN renewal with an August 15th deadline before the August 30th contract expiration, and Priya's shipping the onboarding v2 by August 1st. They also approved hiring two more engineers in Q4, and user research is scheduled for July 28th and 29th. Dana closed it out and the notes will be shared after.",
+   "t": 96.272
+  },
+  {
+   "role": "user",
+   "text": "Perfect, that's exactly what I needed! Thanks for keeping me in the loop - sounds like everything's on track. Talk to you later!",
+   "t": 122.165
+  },
+  {
+   "role": "agent",
+   "text": "Sounds good, Jordan! Happy to help. You're all caught up\u2014enjoy the rest of your day.",
+   "t": 125.08
+  }
+ ],
+ "digest": "Task complete. Meeting ended, final recap delivered to user. All key facts captured and relayed.",
+ "slow_done": true,
+ "slow_result": "Monitored the live Q3 Product Review meeting to completion. Meeting ended at 03:45 with Dana saying \"thanks everyone.\" Delivered a full recap to the user covering: Atlas launch confirmed Sept 18; backend migration 80% done (billing service ~2 weeks); onboarding drop-off improved 34%\u219219%; marketing +$150K budget; CDN vendor contract risk (expires Aug 30); action items (Marcus CDN renewal by Aug 15, Priya onboarding v2 by Aug 1); user research moved to July 28-29; approved to hire 2 more engineers in Q4. Notes to be shared after the call.",
+ "events": [
+  {
+   "t": 0.352,
+   "kind": "episode_start",
+   "condition": "duplex",
+   "task": "meeting-helper",
+   "user_model": "anthropic:claude-sonnet-4-5-20250929"
+  },
+  {
+   "t": 3.255,
+   "kind": "fast_turn",
+   "trigger": "The call just connected. Greet the user briefly.",
+   "first_token": 2.493,
+   "total": 2.904,
+   "spoken": "Hi there! You're all set\u2014I'm watching your meeting for you. What would you like to know about what's happening?",
+   "to_slow": [],
+   "end_call": false
+  },
+  {
+   "t": 3.255,
+   "kind": "utterance",
+   "role": "agent",
+   "text": "Hi there! You're all set\u2014I'm watching your meeting for you. What would you like to know about what's happening?"
+  },
+  {
+   "t": 4.766,
+   "kind": "slow_step",
+   "step": 0,
+   "tool": "wait",
+   "args": {
+    "seconds": 5
+   },
+   "model_latency": 4.376
+  },
+  {
+   "t": 14.151,
+   "kind": "slow_step",
+   "step": 1,
+   "tool": "reload_page",
+   "args": {},
+   "model_latency": 4.361
+  },
+  {
+   "t": 17.963,
+   "kind": "slow_step",
+   "step": 2,
+   "tool": "wait",
+   "args": {
+    "seconds": 6
+   },
+   "model_latency": 3.788
+  },
+  {
+   "t": 23.248,
+   "kind": "utterance",
+   "role": "user",
+   "text": "Hey, it's Jordan. I had to step out of the product review meeting - can you give me a quick rundown of what's been covered so far?"
+  },
+  {
+   "t": 26.76,
+   "kind": "fast_turn",
+   "trigger": "The user just spoke (last USER line). Respond.",
+   "first_token": 2.428,
+   "total": 3.512,
+   "spoken": "Hey Jordan! So far they've covered the Q3 roadmap, the Atlas launch date, and budget. The big news is that Atlas is confirmed for September 18th\u2014Dana just announced that. On the engineering side, Marcus said the backend migration is eighty percent done, with just the billing service left to wrap up, which should take about two weeks. They're currently on the kickoff slide, so it sounds like they're just getting started.",
+   "to_slow": [],
+   "end_call": false
+  },
+  {
+   "t": 26.76,
+   "kind": "voice_latency",
+   "latency": 2.428,
+   "measure": "fast_first_token"
+  },
+  {
+   "t": 26.76,
+   "kind": "utterance",
+   "role": "agent",
+   "text": "Hey Jordan! So far they've covered the Q3 roadmap, the Atlas launch date, and budget. The big news is that Atlas is confirmed for September 18th\u2014Dana just announced that. On the engineering side, Marcus said the backend migration is eighty percent done, with just the billing service left to wrap up, which should take about two weeks. They're currently on the kickoff slide, so it sounds like they're just getting started."
+  },
+  {
+   "t": 29.916,
+   "kind": "slow_step",
+   "step": 3,
+   "tool": "reload_page",
+   "args": {},
+   "model_latency": 5.937
+  },
+  {
+   "t": 34.173,
+   "kind": "slow_step",
+   "step": 4,
+   "tool": "wait",
+   "args": {
+    "seconds": 6
+   },
+   "model_latency": 4.23
+  },
+  {
+   "t": 45.633,
+   "kind": "slow_step",
+   "step": 5,
+   "tool": "reload_page",
+   "args": {},
+   "model_latency": 5.44
+  },
+  {
+   "t": 49.951,
+   "kind": "slow_step",
+   "step": 6,
+   "tool": "wait",
+   "args": {
+    "seconds": 6
+   },
+   "model_latency": 4.291
+  },
+  {
+   "t": 51.104,
+   "kind": "utterance",
+   "role": "user",
+   "text": "Oh great, September 18th for Atlas - got it. What about the onboarding A/B test? Did they mention how that turned out?"
+  },
+  {
+   "t": 54.052,
+   "kind": "fast_turn",
+   "trigger": "The user just spoke (last USER line). Respond.",
+   "first_token": 2.436,
+   "total": 2.948,
+   "spoken": "Yes, they did mention it! Priya shared that the onboarding drop-off improved significantly\u2014it went down from thirty-four percent to nineteen percent. So that's really solid progress.",
+   "to_slow": [],
+   "end_call": false
+  },
+  {
+   "t": 54.052,
+   "kind": "voice_latency",
+   "latency": 2.436,
+   "measure": "fast_first_token"
+  },
+  {
+   "t": 54.052,
+   "kind": "utterance",
+   "role": "agent",
+   "text": "Yes, they did mention it! Priya shared that the onboarding drop-off improved significantly\u2014it went down from thirty-four percent to nineteen percent. So that's really solid progress."
+  },
+  {
+   "t": 63.455,
+   "kind": "slow_step",
+   "step": 7,
+   "tool": "reload_page",
+   "args": {},
+   "model_latency": 7.481
+  },
+  {
+   "t": 67.713,
+   "kind": "slow_step",
+   "step": 8,
+   "tool": "wait",
+   "args": {
+    "seconds": 6
+   },
+   "model_latency": 4.229
+  },
+  {
+   "t": 76.516,
+   "kind": "utterance",
+   "role": "user",
+   "text": "Nice, that's a huge improvement! Do you know who's handling the CDN contract renewal? I remember we had a deadline coming up for that."
+  },
+  {
+   "t": 79.181,
+   "kind": "fast_turn",
+   "trigger": "The user just spoke (last USER line). Respond.",
+   "first_token": 2.103,
+   "total": 2.665,
+   "spoken": "Yeah, Marcus is owning the CDN renewal. The contract expires August 30th, and he's got an internal deadline of August 15th to get it sorted, so there's a couple weeks to work with there.",
+   "to_slow": [],
+   "end_call": false
+  },
+  {
+   "t": 79.181,
+   "kind": "voice_latency",
+   "latency": 2.103,
+   "measure": "fast_first_token"
+  },
+  {
+   "t": 79.181,
+   "kind": "utterance",
+   "role": "agent",
+   "text": "Yeah, Marcus is owning the CDN renewal. The contract expires August 30th, and he's got an internal deadline of August 15th to get it sorted, so there's a couple weeks to work with there."
+  },
+  {
+   "t": 79.972,
+   "kind": "slow_step",
+   "step": 9,
+   "tool": "reload_page",
+   "args": {},
+   "model_latency": 6.244
+  },
+  {
+   "t": 87.364,
+   "kind": "slow_step",
+   "step": 10,
+   "tool": "tell_user",
+   "args": {
+    "text": "The meeting just ended. Here's the full recap of the Q3 Product Review:\n\n1. Atlas launch is CONFIRMED for September 18th.\n2. Engineering: backend migration is 80% done; remaining work is the billing service, about 2 weeks (Marcus).\n3. Design: the new onboarding flow cut drop-off from 34% to 19% in the A/B test (Priya).\n4. Budget: marketing gets an additional $150,000 for the Atlas launch campaign.\n5. Risk: the CDN vendor contract expires August 30 \u2014 renewal must be signed before launch.\n6. Action items: Marcus owns the CDN renewal, deadline August 15; Priya ships onboarding v2 by August 1.\n7. User research sessions moved to July 28 and 29.\n8. Headcount decision: approved to hire two more engineers in Q4.\n\nDana closed with \"thanks everyone\" \u2014 notes will be shared after the call."
+   },
+   "model_latency": 7.364
+  },
+  {
+   "t": 87.364,
+   "kind": "slow_tell_user",
+   "text": "The meeting just ended. Here's the full recap of the Q3 Product Review:\n\n1. Atlas launch is CONFIRMED for September 18th.\n2. Engineering: backend migration is 80% done; remaining work is the billing service, about 2 weeks (Marcus).\n3. Design: the new onboarding flow cut drop-off from 34% to 19% in the A/B test (Priya).\n4. Budget: marketing gets an additional $150,000 for the Atlas launch campaign.\n5. Risk: the CDN vendor contract expires August 30 \u2014 renewal must be signed before launch.\n6. Action items: Marcus owns the CDN renewal, deadline August 15; Priya ships onboarding v2 by August 1.\n7. User research sessions moved to July 28 and 29.\n8. Headcount decision: approved to hire two more engineers in Q4.\n\nDana closed with \"thanks everyone\" \u2014 notes will be shared after the call."
+  },
+  {
+   "t": 93.449,
+   "kind": "slow_step",
+   "step": 11,
+   "tool": "task_done",
+   "args": {
+    "result": "Monitored the live Q3 Product Review meeting to completion. Meeting ended at 03:45 with Dana saying \"thanks everyone.\" Delivered a full recap to the user covering: Atlas launch confirmed Sept 18; backend migration 80% done (billing service ~2 weeks); onboarding drop-off improved 34%\u219219%; marketing +$150K budget; CDN vendor contract risk (expires Aug 30); action items (Marcus CDN renewal by Aug 15, Priya onboarding v2 by Aug 1); user research moved to July 28-29; approved to hire 2 more engineers in Q4. Notes to be shared after the call."
+   },
+   "model_latency": 6.07
+  },
+  {
+   "t": 93.449,
+   "kind": "slow_done",
+   "result": "Monitored the live Q3 Product Review meeting to completion. Meeting ended at 03:45 with Dana saying \"thanks everyone.\" Delivered a full recap to the user covering: Atlas launch confirmed Sept 18; backend migration 80% done (billing service ~2 weeks); onboarding drop-off improved 34%\u219219%; marketing +$150K budget; CDN vendor contract risk (expires Aug 30); action items (Marcus CDN renewal by Aug 15, Priya onboarding v2 by Aug 1); user research moved to July 28-29; approved to hire 2 more engineers in Q4. Notes to be shared after the call."
+  },
+  {
+   "t": 96.272,
+   "kind": "fast_turn",
+   "trigger": "The computer agent sent a message for the user (tell_user): \"The meeting just ended. Here's the full recap of the Q3 Pro",
+   "first_token": 2.403,
+   "total": 4.088,
+   "spoken": "Okay, so the meeting just wrapped up. Here's the full picture: Atlas is locked in for September 18th, the backend is eighty percent done with about two weeks left on billing, and Priya's onboarding redesign brought that drop-off down from thirty-four to nineteen percent. Marketing's getting an extra one-fifty K for the launch campaign. On the action items side, Marcus has the CDN renewal with an August 15th deadline before the August 30th contract expiration, and Priya's shipping the onboarding v2 by August 1st. They also approved hiring two more engineers in Q4, and user research is scheduled for July 28th and 29th. Dana closed it out and the notes will be shared after.",
+   "to_slow": [],
+   "end_call": false
+  },
+  {
+   "t": 96.272,
+   "kind": "utterance",
+   "role": "agent",
+   "text": "Okay, so the meeting just wrapped up. Here's the full picture: Atlas is locked in for September 18th, the backend is eighty percent done with about two weeks left on billing, and Priya's onboarding redesign brought that drop-off down from thirty-four to nineteen percent. Marketing's getting an extra one-fifty K for the launch campaign. On the action items side, Marcus has the CDN renewal with an August 15th deadline before the August 30th contract expiration, and Priya's shipping the onboarding v2 by August 1st. They also approved hiring two more engineers in Q4, and user research is scheduled for July 28th and 29th. Dana closed it out and the notes will be shared after."
+  },
+  {
+   "t": 122.165,
+   "kind": "utterance",
+   "role": "user",
+   "text": "Perfect, that's exactly what I needed! Thanks for keeping me in the loop - sounds like everything's on track. Talk to you later!"
+  },
+  {
+   "t": 125.08,
+   "kind": "fast_turn",
+   "trigger": "The user just spoke (last USER line). Respond.",
+   "first_token": 2.382,
+   "total": 2.915,
+   "spoken": "Sounds good, Jordan! Happy to help. You're all caught up\u2014enjoy the rest of your day.",
+   "to_slow": [],
+   "end_call": true
+  },
+  {
+   "t": 125.08,
+   "kind": "voice_latency",
+   "latency": 2.382,
+   "measure": "fast_first_token"
+  },
+  {
+   "t": 125.08,
+   "kind": "utterance",
+   "role": "agent",
+   "text": "Sounds good, Jordan! Happy to help. You're all caught up\u2014enjoy the rest of your day."
+  },
+  {
+   "t": 130.438,
+   "kind": "end_call",
+   "by": "fast"
+  }
+ ]
+}

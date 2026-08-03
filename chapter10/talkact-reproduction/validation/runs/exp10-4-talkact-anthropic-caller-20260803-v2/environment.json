@@ -1,0 +1,18 @@
+{
+  "python": "3.12.11 (main, Jun  3 2025, 15:41:47) [Clang 17.0.0 (clang-1700.0.13.3)]",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "machine": "arm64",
+  "packages": {
+    "anthropic": "0.116.0",
+    "google-genai": "2.11.0",
+    "flask": "3.1.3",
+    "playwright": "1.61.0",
+    "aiohttp": "3.14.1",
+    "numpy": "2.5.1",
+    "torch": "2.13.0",
+    "torchaudio": "2.11.0"
+  },
+  "playwright_chromium": "149.0.7827.55",
+  "task_server": "hermetic Flask app on 127.0.0.1:8321",
+  "speech_simulation": true
+}

@@ -1,0 +1,677 @@
+[
+ {
+  "task": "booking-flight",
+  "condition": "duplex",
+  "wall_time": 239.0,
+  "error": null,
+  "n_user_turns": 6,
+  "n_slow_steps": 22,
+  "latencies": [
+   1.837,
+   1.462,
+   1.516,
+   1.857,
+   2.43,
+   2.039
+  ],
+  "slow_done": true,
+  "success": true,
+  "partial": 1.0,
+  "details": {
+   "flight": {
+    "airline": "Cirrus",
+    "arrive": "13:05",
+    "date": "2026-07-21",
+    "depart": "09:45",
+    "from": "SFO",
+    "id": "FL110",
+    "price": 385,
+    "stops": 0,
+    "to": "JFK"
+   },
+   "passenger": "Daniel Ortiz",
+   "checks": {
+    "date": true,
+    "depart": true,
+    "stops": true,
+    "price": true,
+    "passenger": true
+   }
+  },
+  "probe_correct": 0.5,
+  "probe_grades": [
+   {
+    "q": 0,
+    "grade": "wrong",
+    "evidence": "Agent said only two nonstop morning flights (FL110 $385, Delta $420); gold says there are 4 nonstop options total. Agent incorrectly claimed those are the only nonstop flights."
+   },
+   {
+    "q": 1,
+    "grade": "correct",
+    "evidence": "'the total is $385 for your flight'"
+   }
+  ]
+ },
+ {
+  "task": "booking-flight",
+  "condition": "duplex",
+  "wall_time": 201.8,
+  "error": null,
+  "n_user_turns": 5,
+  "n_slow_steps": 20,
+  "latencies": [
+   1.605,
+   2.164,
+   1.508,
+   1.887,
+   1.385
+  ],
+  "slow_done": true,
+  "success": true,
+  "partial": 1.0,
+  "details": {
+   "flight": {
+    "airline": "Cirrus",
+    "arrive": "13:05",
+    "date": "2026-07-21",
+    "depart": "09:45",
+    "from": "SFO",
+    "id": "FL110",
+    "price": 385,
+    "stops": 0,
+    "to": "JFK"
+   },
+   "passenger": "Daniel Ortiz",
+   "checks": {
+    "date": true,
+    "depart": true,
+    "stops": true,
+    "price": true,
+    "passenger": true
+   }
+  },
+  "probe_correct": 0.5,
+  "probe_grades": [
+   {
+    "q": 0,
+    "grade": "wrong",
+    "evidence": "Agent said 'three options' for nonstop morning flights under $400, but the gold says 4 nonstop options total (06:15 $420, 09:45 $385, 13:00 $455, 17:25 $340). Agent missed the 17:25 $340 option and framed the count incorrectly."
+   },
+   {
+    "q": 1,
+    "grade": "correct",
+    "evidence": "'yes, three eighty five is the final price' - matches gold $385."
+   }
+  ]
+ },
+ {
+  "task": "booking-flight",
+  "condition": "strawman",
+  "wall_time": 235.6,
+  "error": null,
+  "n_user_turns": 5,
+  "n_slow_steps": 25,
+  "latencies": [
+   4.89,
+   18.848,
+   20.629,
+   21.142,
+   12.779,
+   30.82
+  ],
+  "slow_done": true,
+  "success": true,
+  "partial": 1.0,
+  "details": {
+   "flight": {
+    "airline": "Cirrus",
+    "arrive": "13:05",
+    "date": "2026-07-21",
+    "depart": "09:45",
+    "from": "SFO",
+    "id": "FL110",
+    "price": 385,
+    "stops": 0,
+    "to": "JFK"
+   },
+   "passenger": "Daniel Ortiz",
+   "checks": {
+    "date": true,
+    "depart": true,
+    "stops": true,
+    "price": true,
+    "passenger": true
+   }
+  },
+  "probe_correct": 1.0,
+  "probe_grades": [
+   {
+    "q": 0,
+    "grade": "correct",
+    "evidence": "There are four nonstops: FL108 Delta at 06:15 for $420, FL110 Cirrus at 09:45 for $385, FL112 Blue Sky at 13:00 for $455, and FL114 Acme at 17:25 for $340."
+   },
+   {
+    "q": 1,
+    "grade": "correct",
+    "evidence": "Yes, FL110 is listed at $385, and it's the cheapest nonstop that departs before noon."
+   }
+  ]
+ },
+ {
+  "task": "booking-flight",
+  "condition": "strawman",
+  "wall_time": 181.1,
+  "error": null,
+  "n_user_turns": 4,
+  "n_slow_steps": 21,
+  "latencies": [
+   5.975,
+   20.544,
+   15.665,
+   11.454,
+   31.622
+  ],
+  "slow_done": true,
+  "success": true,
+  "partial": 1.0,
+  "details": {
+   "flight": {
+    "airline": "Cirrus",
+    "arrive": "13:05",
+    "date": "2026-07-21",
+    "depart": "09:45",
+    "from": "SFO",
+    "id": "FL110",
+    "price": 385,
+    "stops": 0,
+    "to": "JFK"
+   },
+   "passenger": "Daniel Ortiz",
+   "checks": {
+    "date": true,
+    "depart": true,
+    "stops": true,
+    "price": true,
+    "passenger": true
+   }
+  },
+  "probe_correct": 0.5,
+  "probe_grades": [
+   {
+    "q": 0,
+    "grade": "wrong",
+    "evidence": "Agent only discussed morning nonstops under $400, saying FL110 is 'the only nonstop that leaves before noon and stays under $400' and mentioned FL108. Did not convey there are 4 nonstop options total."
+   },
+   {
+    "q": 1,
+    "grade": "correct",
+    "evidence": "Agent stated FL110 for $385 before booking."
+   }
+  ]
+ },
+ {
+  "task": "forms-insurance",
+  "condition": "duplex",
+  "wall_time": 274.9,
+  "error": null,
+  "n_user_turns": 9,
+  "n_slow_steps": 30,
+  "latencies": [
+   2.854,
+   2.52,
+   2.847,
+   2.419,
+   2.451,
+   3.601,
+   2.172,
+   2.324,
+   2.091
+  ],
+  "slow_done": true,
+  "success": true,
+  "partial": 1.0,
+  "details": {
+   "full_name": "Sarah Mitchell",
+   "dob": "1989-04-12",
+   "email": "sarah.mitchell89@gmail.com",
+   "phone": "415-555-0173",
+   "street": "2847 Fillmore Street",
+   "city": "San Francisco",
+   "zip": "94123",
+   "vehicle_make": "Toyota",
+   "vehicle_model": "RAV4",
+   "vehicle_year": "2021",
+   "coverage": "full",
+   "prior_claims": "no"
+  },
+  "probe_correct": null
+ },
+ {
+  "task": "forms-insurance",
+  "condition": "duplex",
+  "wall_time": 321.8,
+  "error": null,
+  "n_user_turns": 9,
+  "n_slow_steps": 33,
+  "latencies": [
+   3.387,
+   2.325,
+   2.681,
+   2.284,
+   2.189,
+   2.39,
+   2.4,
+   2.254,
+   2.863
+  ],
+  "slow_done": true,
+  "success": true,
+  "partial": 1.0,
+  "details": {
+   "full_name": "Sarah Mitchell",
+   "dob": "1989-04-12",
+   "email": "sarah.mitchell89@gmail.com",
+   "phone": "415-555-0173",
+   "street": "2847 Fillmore Street",
+   "city": "San Francisco",
+   "zip": "94123",
+   "vehicle_make": "Toyota",
+   "vehicle_model": "RAV4",
+   "vehicle_year": "2021",
+   "coverage": "full",
+   "prior_claims": "no"
+  },
+  "probe_correct": null
+ },
+ {
+  "task": "forms-insurance",
+  "condition": "strawman",
+  "wall_time": 225.9,
+  "error": null,
+  "n_user_turns": 6,
+  "n_slow_steps": 31,
+  "latencies": [
+   5.621,
+   18.296,
+   22.962,
+   11.963,
+   13.51,
+   19.892,
+   37.29
+  ],
+  "slow_done": true,
+  "success": true,
+  "partial": 1.0,
+  "details": {
+   "full_name": "Sarah Mitchell",
+   "dob": "1989-04-12",
+   "email": "sarah.mitchell89@gmail.com",
+   "phone": "415-555-0173",
+   "street": "2847 Fillmore Street",
+   "city": "San Francisco",
+   "zip": "94123",
+   "vehicle_make": "Toyota",
+   "vehicle_model": "RAV4",
+   "vehicle_year": "2021",
+   "coverage": "full",
+   "prior_claims": "no"
+  },
+  "probe_correct": null
+ },
+ {
+  "task": "forms-insurance",
+  "condition": "strawman",
+  "wall_time": 247.3,
+  "error": null,
+  "n_user_turns": 10,
+  "n_slow_steps": 36,
+  "latencies": [
+   7.577,
+   13.924,
+   9.495,
+   8.934,
+   12.52,
+   13.592,
+   12.517,
+   11.43,
+   10.862,
+   10.619,
+   0.0
+  ],
+  "slow_done": true,
+  "success": true,
+  "partial": 1.0,
+  "details": {
+   "full_name": "Sarah Mitchell",
+   "dob": "1989-04-12",
+   "email": "sarah.mitchell89@gmail.com",
+   "phone": "415-555-0173",
+   "street": "2847 Fillmore Street",
+   "city": "San Francisco",
+   "zip": "94123",
+   "vehicle_make": "Toyota",
+   "vehicle_model": "RAV4",
+   "vehicle_year": "2021",
+   "coverage": "full",
+   "prior_claims": "no"
+  },
+  "probe_correct": null
+ },
+ {
+  "task": "meeting-helper",
+  "condition": "duplex",
+  "wall_time": 130.1,
+  "error": null,
+  "n_user_turns": 4,
+  "n_slow_steps": 12,
+  "latencies": [
+   2.428,
+   2.436,
+   2.103,
+   2.382
+  ],
+  "slow_done": true,
+  "success": null,
+  "partial": null,
+  "details": "judged via probe answers",
+  "probe_correct": 1.0,
+  "probe_grades": [
+   {
+    "q": 0,
+    "grade": "correct",
+    "evidence": "Atlas is confirmed for September 18th"
+   },
+   {
+    "q": 1,
+    "grade": "correct",
+    "evidence": "drop-off improved from thirty-four percent to nineteen percent"
+   },
+   {
+    "q": 2,
+    "grade": "correct",
+    "evidence": "Marcus is owning the CDN renewal...August 15th deadline before the August 30th contract expiration"
+   },
+   {
+    "q": 3,
+    "grade": "correct",
+    "evidence": "Marketing's getting an extra one-fifty K for the launch campaign"
+   }
+  ]
+ },
+ {
+  "task": "meeting-helper",
+  "condition": "duplex",
+  "wall_time": 148.2,
+  "error": null,
+  "n_user_turns": 4,
+  "n_slow_steps": 12,
+  "latencies": [
+   2.368,
+   2.217,
+   1.581,
+   1.906
+  ],
+  "slow_done": true,
+  "success": null,
+  "partial": null,
+  "details": "judged via probe answers",
+  "probe_correct": 1.0,
+  "probe_grades": [
+   {
+    "q": 0,
+    "grade": "correct",
+    "evidence": "Atlas launch is confirmed for September eighteenth"
+   },
+   {
+    "q": 1,
+    "grade": "correct",
+    "evidence": "improved the drop-off rate from thirty-four percent down to nineteen percent"
+   },
+   {
+    "q": 2,
+    "grade": "correct",
+    "evidence": "Marcus has taken ownership of that with an August 15th deadline"
+   },
+   {
+    "q": 3,
+    "grade": "correct",
+    "evidence": "Marketing's also getting an extra one hundred fifty thousand dollars"
+   }
+  ]
+ },
+ {
+  "task": "meeting-helper",
+  "condition": "strawman",
+  "wall_time": 123.8,
+  "error": null,
+  "n_user_turns": 3,
+  "n_slow_steps": 14,
+  "latencies": [
+   12.009,
+   12.44,
+   0.0
+  ],
+  "slow_done": true,
+  "success": null,
+  "partial": null,
+  "details": "judged via probe answers",
+  "probe_correct": 1.0,
+  "probe_grades": [
+   {
+    "q": 0,
+    "grade": "correct",
+    "evidence": "Atlas launch is confirmed for September 18th"
+   },
+   {
+    "q": 1,
+    "grade": "correct",
+    "evidence": "onboarding flow cut drop-off from 34% down to 19%"
+   },
+   {
+    "q": 2,
+    "grade": "correct",
+    "evidence": "Marcus owns the CDN renewal with a deadline of August 15, contract expires August 30"
+   },
+   {
+    "q": 3,
+    "grade": "correct",
+    "evidence": "marketing gets an additional $150,000 for the Atlas launch campaign"
+   }
+  ]
+ },
+ {
+  "task": "meeting-helper",
+  "condition": "strawman",
+  "wall_time": 128.7,
+  "error": null,
+  "n_user_turns": 3,
+  "n_slow_steps": 14,
+  "latencies": [
+   10.903,
+   12.405,
+   0.0
+  ],
+  "slow_done": true,
+  "success": null,
+  "partial": null,
+  "details": "judged via probe answers",
+  "probe_correct": 1.0,
+  "probe_grades": [
+   {
+    "q": 0,
+    "grade": "correct",
+    "evidence": "Atlas launch is confirmed for September 18th"
+   },
+   {
+    "q": 1,
+    "grade": "correct",
+    "evidence": "cut drop-off from 34% to 19% in the A/B test"
+   },
+   {
+    "q": 2,
+    "grade": "correct",
+    "evidence": "Marcus owns the CDN renewal, due August 15; contract expires August 30"
+   },
+   {
+    "q": 3,
+    "grade": "correct",
+    "evidence": "marketing gets an extra $150,000 for the Atlas launch campaign"
+   }
+  ]
+ },
+ {
+  "task": "webmail-report",
+  "condition": "duplex",
+  "wall_time": 169.7,
+  "error": null,
+  "n_user_turns": 4,
+  "n_slow_steps": 19,
+  "latencies": [
+   4.027,
+   2.325,
+   2.837,
+   2.503
+  ],
+  "slow_done": true,
+  "success": true,
+  "partial": 1.0,
+  "details": {
+   "email": {
+    "attachment": "Q3_financial_report_final.pdf",
+    "body": "Hi,\r\n\r\nPlease find attached the Q3 financial report (final).\r\n\r\nThanks.",
+    "subject": "Q3 Report",
+    "to": "maria.lopez@acctfirm.com"
+   },
+   "checks": {
+    "to": true,
+    "attachment": true,
+    "subject": true
+   }
+  },
+  "probe_correct": 1.0,
+  "probe_grades": [
+   {
+    "q": 0,
+    "grade": "correct",
+    "evidence": "I'm attaching the Q3_financial_report_final.pdf\u2014that's the final version, not the draft."
+   }
+  ]
+ },
+ {
+  "task": "webmail-report",
+  "condition": "duplex",
+  "wall_time": 172.1,
+  "error": null,
+  "n_user_turns": 6,
+  "n_slow_steps": 18,
+  "latencies": [
+   2.58,
+   2.533,
+   1.395,
+   1.758,
+   1.592,
+   1.436
+  ],
+  "slow_done": true,
+  "success": true,
+  "partial": 1.0,
+  "details": {
+   "email": {
+    "attachment": "Q3_financial_report_final.pdf",
+    "body": "Hi Maria,\r\n\r\nPlease find attached the final Q3 financial report.\r\n\r\nBest regards",
+    "subject": "Q3 Report",
+    "to": "maria.lopez@acctfirm.com"
+   },
+   "checks": {
+    "to": true,
+    "attachment": true,
+    "subject": true
+   }
+  },
+  "probe_correct": 1.0,
+  "probe_grades": [
+   {
+    "q": 0,
+    "grade": "correct",
+    "evidence": "The file I'm attaching is Q3_financial_report_final.pdf \u2014 so yes, that's the final version, not the draft."
+   }
+  ]
+ },
+ {
+  "task": "webmail-report",
+  "condition": "strawman",
+  "wall_time": 143.8,
+  "error": null,
+  "n_user_turns": 4,
+  "n_slow_steps": 19,
+  "latencies": [
+   5.05,
+   19.451,
+   19.75,
+   10.542,
+   20.445
+  ],
+  "slow_done": true,
+  "success": true,
+  "partial": 1.0,
+  "details": {
+   "email": {
+    "attachment": "Q3_financial_report_final.pdf",
+    "body": "Hi Maria,\r\n\r\nPlease find attached the final Q3 financial report.\r\n\r\nThank you.",
+    "subject": "Q3 Financial Report (Final)",
+    "to": "maria.lopez@acctfirm.com"
+   },
+   "checks": {
+    "to": true,
+    "attachment": true,
+    "subject": true
+   }
+  },
+  "probe_correct": 1.0,
+  "probe_grades": [
+   {
+    "q": 0,
+    "grade": "correct",
+    "evidence": "Confirmed \u2014 the attachment is Q3_financial_report_final.pdf, the final version, not the draft."
+   }
+  ]
+ },
+ {
+  "task": "webmail-report",
+  "condition": "strawman",
+  "wall_time": 138.0,
+  "error": null,
+  "n_user_turns": 3,
+  "n_slow_steps": 17,
+  "latencies": [
+   6.893,
+   16.128,
+   23.737,
+   18.852
+  ],
+  "slow_done": true,
+  "success": true,
+  "partial": 1.0,
+  "details": {
+   "email": {
+    "attachment": "Q3_financial_report_final.pdf",
+    "body": "Hi Maria,\r\n\r\nPlease find attached the final Q3 financial report. Let me know if you have any questions.\r\n\r\nBest regards",
+    "subject": "Q3 Report",
+    "to": "maria.lopez@acctfirm.com"
+   },
+   "checks": {
+    "to": true,
+    "attachment": true,
+    "subject": true
+   }
+  },
+  "probe_correct": 1.0,
+  "probe_grades": [
+   {
+    "q": 0,
+    "grade": "correct",
+    "evidence": "with Q3_financial_report_final.pdf attached... the final Q3 financial report PDF attached"
+   }
+  ]
+ }
+]
