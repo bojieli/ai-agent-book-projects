@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "experiment": "9-6",
+  "kind": "credential_free_external_authentication_preflight",
+  "generated_at_utc": "2026-08-02T18:25:43Z",
+  "status": "blocked",
+  "completion_gate_pass": false,
+  "source": {
+    "repository": "https://github.com/anthropics/claude-quickstarts.git",
+    "commit_expected": "9bcc95e316e5ef6542b4c9d0469f4078829eead5",
+    "commit_observed": "9bcc95e316e5ef6542b4c9d0469f4078829eead5",
+    "project_path": "computer-use-demo",
+    "dockerfile_sha256_expected": "3aa1f36a491f8f88d81a04c6a89b4cc9f9acd20ad946304c13419736da7c0ead",
+    "dockerfile_sha256_observed": "3aa1f36a491f8f88d81a04c6a89b4cc9f9acd20ad946304c13419736da7c0ead"
+  },
+  "host": {
+    "docker_available": true,
+    "docker_client_version": "24.0.7",
+    "docker_server_version": "27.3.1",
+    "docker_server_os": "linux",
+    "docker_server_arch": "arm64"
+  },
+  "authentication_probe": {
+    "attempted": true,
+    "endpoint": "https://api.anthropic.com/v1/messages",
+    "method": "POST",
+    "anthropic_version": "2023-06-01",
+    "requested_model": "claude-sonnet-4-5-20250929",
+    "max_tokens": 4,
+    "prompt": "Reply OK",
+    "credential_environment_variable": "ANTHROPIC_API_KEY",
+    "credential_present": true,
+    "credential_has_expected_prefix": true,
+    "credential_has_plausible_length": true,
+    "credential_contains_whitespace": false,
+    "credential_value_retained": false,
+    "authorization_header_retained": false,
+    "http_status": 401,
+    "response": {
+      "type": "error",
+      "error": {
+        "type": "authentication_error",
+        "message": "API key is invalid."
+      },
+      "response_id": null,
+      "usage": null
+    }
+  },
+  "execution": {
+    "container_build_attempted": false,
+    "container_started": false,
+    "native_computer_tool_call_attempted": false,
+    "read_only_weather_task_attempted": false,
+    "external_mutation_attempted": false
+  },
+  "blockers": [
+    "The configured ANTHROPIC_API_KEY was rejected by the official Anthropic endpoint before model or native tool access."
+  ],
+  "resume_condition": "Configure a valid, funded Anthropic credential, then run the pinned local Demo and retain one complete bounded read-only native-tool trajectory."
+}

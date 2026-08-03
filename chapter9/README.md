@@ -13,7 +13,7 @@
 | 9-3 | [streaming-speech](streaming-speech/) | ✅ | [同一次 canonical 本地验收](streaming-speech/validation/runs/exp9-3-qwen2audio-whisper-provenance-20260730-v3/manifest.json)严格运行 Qwen2-Audio 递增前缀与 600ms VAD + Whisper：8/8 执行/溯源门禁通过，13 份原始模型输出、5 个源码、4 个音频、Whisper checkpoint 与完整 6.56GB 模型权重均有已复核 hash；正文结果仅复现 2/6，实测前缀 8.4–11.3s，pause 漏报 silence，noise 仍误报 cough/laughter |
 | 9-4 | [end-to-end-speech](end-to-end-speech/) | ✅ | [真实本地运行](end-to-end-speech/validation/runs/exp9-4-minicpmo45-20260801-v1/evidence.json)在单张 RTX PRO 6000 上执行固定 revision 的 MiniCPM-o 4.5：端到端与自级联均为 3/4，但语义/副语言失败互补；真实 24kHz 语音输出及 [11/11 验收](end-to-end-speech/validation/runs/exp9-4-minicpmo45-20260801-v1/acceptance.json)已保留 |
 | 9-5 | [controllable-tts](controllable-tts/) | ✅ | 真实 Fish Audio S1 4×3×2=24 条参考音库与 A/B/C 媒体齐全；三次位置平衡的真实 Voxtral 音频盲评中 C 组最高且真人客服感 4.67/5，但 B>A 未复现；[验收](controllable-tts/validation/acceptance.json)将完成状态与负结果分开报告 |
-| 9-6 | `claude-quickstarts/computer-use-demo/` + [computer-use-open-model](computer-use-open-model/) | 📖 | Anthropic Demo 保留为原生 `computer` 工具参考路径；读者无需 Anthropic API，可用开放权重 Qwen3-VL 的托管 API 或自托管 OpenAI-compatible 端点跑同一只读任务与证据契约 |
+| 9-6 | [Anthropic 原生 Computer Use 记录](claude-computer-use-native/) + `claude-quickstarts/computer-use-demo/` | 📖 | 固定源码和 Dockerfile hash 已复核，Docker 可用；但 2026-08-03 的官方 Anthropic 端点探测返回 HTTP 401 `authentication_error`，原生 `computer` 工具臂在模型调用前被外部凭据阻塞，未声称完成 |
 | 9-7 | [computer-use-open-model](computer-use-open-model/) + `browser-use/` | ✅ | [正式开放模型运行](computer-use-open-model/validation/latest.json)使用 `qwen/qwen3-vl-32b-instruct`：Google CAPTCHA 后转 weather.com，16 步完成；16/16 API 响应模型一致、15 张截图、只读动作和答案 grounding 全部通过确定性验收 |
 | 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | 外部复现轨：XLeRobot [官方仓库固定提交](https://github.com/Vector-Wangel/XLeRobot/tree/3d14695e40c9c68229c0aacffca6053c75cd3eb6)的键盘/Xbox/Joy-Con/VR 遥操作；当前仅通过源码与非致动预检，尚无真机四模式及取放擦任务证据 |
 | 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 外部复现轨：[XLeRobot 固定提交](https://github.com/Vector-Wangel/XLeRobot/tree/3d14695e40c9c68229c0aacffca6053c75cd3eb6) + [RoboCrew v0.3.1 固定提交](https://github.com/Grigorij-Dudnik/RoboCrew/tree/c749148f29bd14e61347f9fc3530c343fff0d994)，严格使用 `gemini-robotics-er-1.5-preview`、角度标注和前进/左转/右转三工具；当前无模型 API 或真机导航证据 |
@@ -50,7 +50,7 @@ python main.py \
 
 ## 实验 9-6 至 9-10 外部复现锚点
 
-9-6/9-7 的上游 SHA 来自 2026-07-30 工作区 checkout 的 `origin` 与 `HEAD`；那次源码审计没有启动容器、浏览器或模型调用。此后 9-7 的[开放模型正式运行](computer-use-open-model/validation/latest.json)已经用真实 Qwen3-VL API 与 Chromium 关闭了 browser-use 路径，但 9-6 的 Anthropic 原生工具臂仍未运行。9-8 至 9-10 仍只有保存的上游 lock 与只读远端审计，对应三个源码 checkout 当前不存在，也没有训练、模型规划或机器人动作。
+9-6/9-7 的上游 SHA 来自 2026-07-30 工作区 checkout 的 `origin` 与 `HEAD`。此后 9-7 的[开放模型正式运行](computer-use-open-model/validation/latest.json)已经用真实 Qwen3-VL API 与 Chromium 关闭了 browser-use 路径。9-6 在 2026-08-03 再次核对固定源码、Dockerfile hash 与本机 Docker，并向官方 Anthropic 端点发送最小认证探测；配置的凭据被返回 HTTP 401，故[原生工具记录](claude-computer-use-native/)仍为外部凭据阻塞，未启动容器或冒充任务完成。9-8 至 9-10 仍受各自的硬件、模型或 GPU 外部资源约束。
 
 | 实验 | 权威上游 → 本地路径 | 固定提交 | 锁与入口 |
 | :--: | --- | --- | --- |
