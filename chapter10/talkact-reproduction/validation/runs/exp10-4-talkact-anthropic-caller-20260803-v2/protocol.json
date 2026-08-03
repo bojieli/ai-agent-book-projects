@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "experiment": "10-4",
+  "status": "completed",
+  "started_at": "2026-08-03T02:28:29Z",
+  "finished_at": "2026-08-03T03:20:52Z",
+  "source_repository": "https://github.com/19PINE-AI/TalkAct",
+  "source_commit": "7d70007f72d45ddfc1a14e8e229b6d444e4919a2",
+  "source_hashes": {
+    "requirements.txt": "18a53ec32240d9a141728eee0f223530761ca55c6fc4cc5c60570802a6248dc8",
+    "bench/run_bench.py": "397b8f29c2494dab4946f7503a1cd16106fcb6badd37205a317701f223a8764d",
+    "bench/analyze.py": "431f18fcf1037073285d184cfa7b1e7d38604be07b5d38218cd090c11f92ee4c",
+    "bench/checkers.py": "dd37efc09bd6da0b16c709a4e5f43d067d926d7626fa86f291db685230edf657",
+    "bench/tasks.py": "9fd0df7316ae7f5fa343b59f339c087a8b10d35091e66c1b05841f1f845068aa",
+    "envs/app.py": "8918f11ad7642a6c5cfba80edcdd3848303aac177959bf759a71a9fb1b61047b",
+    "src/cuv/runner.py": "81408c9fc69494bd30a28926bcafb965537f21b82a1fa43436ab94a5577c89a9",
+    "src/cuv/slow_agent.py": "8932fd50c91d2581a054bf84652405d2da806bb7363c813977bcf96d716bb5ca",
+    "src/cuv/fast_agent.py": "d001df3846cf3f79faff08cb61edc9b902f480f7e7fa3af3621440f6d658bdf7",
+    "src/cuv/simuser.py": "d5faf3f7fbaf1e014b1d97456f98a1d034002af2852547ce60701805be908a64",
+    "src/cuv/browser.py": "71eaf8eac9cd208057a2028430aafe334f9c1bfe1c23a07254ce7a8db603f9a7",
+    "src/cuv/shared.py": "88b2b1d09b4596bd713c21919cd1c878311213d88988e2f404645bb11cd3f88c"
+  },
+  "command": [
+    "python",
+    "bench/run_bench.py",
+    "--tasks",
+    "forms-insurance",
+    "booking-flight",
+    "webmail-report",
+    "meeting-helper",
+    "--conditions",
+    "duplex",
+    "strawman",
+    "--seeds",
+    "2"
+  ],
+  "campaign": {
+    "tasks": [
+      "forms-insurance",
+      "booking-flight",
+      "webmail-report",
+      "meeting-helper"
+    ],
+    "conditions": [
+      "duplex",
+      "strawman"
+    ],
+    "repetitions_labeled_as_seeds": 2,
+    "expected_episodes": 16,
+    "attempted_episodes": 16,
+    "retained_episode_logs": 16,
+    "fresh_results_directory": true,
+    "skipped_preexisting_episodes": 0
+  },
+  "providers": {
+    "fast_agent": {
+      "provider": "Anthropic API",
+      "requested_model": "claude-haiku-4-5",
+      "preflight_observed_model": "claude-haiku-4-5-20251001",
+      "preflight_message_id": "msg_011Cdf29passvJo1sqZSq35c",
+      "preflight_usage": {
+        "input_tokens": 9,
+        "output_tokens": 4
+      }
+    },
+    "slow_agent": {
+      "provider": "Anthropic API",
+      "requested_model": "claude-opus-4-8",
+      "preflight_observed_model": "claude-opus-4-8",
+      "preflight_message_id": "msg_011Cdf29tYkYFEzenyAT11t1",
+      "preflight_usage": {
+        "input_tokens": 11,
+        "output_tokens": 4
+      }
+    }
+  },
+  "caller_deviation": {
+    "reason": "The configured Gemini API key returned 400 API_KEY_INVALID during preflight.",
+    "environment_override": "CUV_USER_MODEL",
+    "provider": "Anthropic API",
+    "model": "claude-sonnet-4-5-20250929",
+    "impact": "This source-supported override preserves the benchmark topology but removes the default cross-provider caller and may introduce same-family bias. Results must not be silently pooled with the upstream default-Gemini configuration."
+  },
+  "postprocessing": {
+    "script": "bench/analyze.py",
+    "judge_cache_source": "The probe grades produced during the exact run_bench.py campaign were mapped to the corresponding episode filenames before running analyze.py, avoiding a second nondeterministic judge pass.",
+    "aggregate": "aggregate.json",
+    "per_episode": "per_episode.json"
+  },
+  "limitations": [
+    "The pinned runner uses --seeds to label repeated episodes but does not pass a deterministic random seed into EpisodeRunner or provider calls.",
+    "The pinned source retains fast/slow model labels and aggregate token usage per episode, but not individual provider response IDs.",
+    "The pinned source does not retain simulated-caller token usage.",
+    "meeting-helper success and partial fields are intentionally null; its four answers are evaluated by the retained probe judge."
+  ]
+}

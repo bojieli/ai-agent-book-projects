@@ -1,0 +1,598 @@
+{
+ "task": "forms-insurance",
+ "condition": "strawman",
+ "slow_model": "claude-opus-4-8",
+ "fast_model": null,
+ "user_model": "anthropic:claude-sonnet-4-5-20250929",
+ "wall_time": 225.9,
+ "error": null,
+ "env_state": {
+  "bookings": [],
+  "form_submissions": [
+   {
+    "city": "San Francisco",
+    "coverage": "full",
+    "dob": "1989-04-12",
+    "email": "sarah.mitchell89@gmail.com",
+    "full_name": "Sarah Mitchell",
+    "phone": "415-555-0173",
+    "prior_claims": "no",
+    "street": "2847 Fillmore Street",
+    "vehicle_make": "Toyota",
+    "vehicle_model": "RAV4",
+    "vehicle_year": "2021",
+    "zip": "94123"
+   }
+  ],
+  "meeting_speed": 8.0,
+  "meeting_start": null,
+  "sent_emails": []
+ },
+ "slow_usage": {
+  "input_tokens": 2649,
+  "output_tokens": 4628,
+  "cache_read_input_tokens": 64137,
+  "cache_creation_input_tokens": 356901
+ },
+ "fast_usage": null,
+ "transcript": [
+  {
+   "role": "agent",
+   "text": "I'll help you request an auto insurance quote. Let's start \u2014 what is your full name?",
+   "t": 5.948
+  },
+  {
+   "role": "user",
+   "text": "Hi there! Yeah, I'm looking to get a quote for car insurance. I need full coverage for my Toyota RAV4.",
+   "t": 22.149
+  },
+  {
+   "role": "agent",
+   "text": "Got it \u2014 full coverage for a Toyota RAV4. What year is your RAV4, and could you also tell me your full name?",
+   "t": 40.445
+  },
+  {
+   "role": "user",
+   "text": "It's a 2021. And my name is Sarah Mitchell.",
+   "t": 55.029
+  },
+  {
+   "role": "agent",
+   "text": "Thanks Sarah. What's your date of birth in year-month-day format, and your email address?",
+   "t": 77.991
+  },
+  {
+   "role": "user",
+   "text": "My birthday is April 12th, 1989. My email is sarah.mitchell89@gmail.com.",
+   "t": 88.959
+  },
+  {
+   "role": "agent",
+   "text": "Great. What's your phone number, and your street address, city, and ZIP code?",
+   "t": 100.921
+  },
+  {
+   "role": "user",
+   "text": "My phone number is 415-555-0173. I live at 2847 Fillmore Street in San Francisco, 94123.",
+   "t": 113.733
+  },
+  {
+   "role": "agent",
+   "text": "Almost done. One last question: have you had any prior insurance claims in the last 5 years \u2014 yes or no?",
+   "t": 127.243
+  },
+  {
+   "role": "user",
+   "text": "No, I haven't had any claims. So what else do you need from me to finish this up?",
+   "t": 143.865
+  },
+  {
+   "role": "agent",
+   "text": "All set. Let me confirm before I submit: Sarah Mitchell, born April 12th 1989, email sarah.mitchell89@gmail.com, phone 415-555-0173, at 2847 Fillmore Street, San Francisco, 94123. A 2021 Toyota RAV4, Full coverage, and no prior claims. Should I submit?",
+   "t": 163.758
+  },
+  {
+   "role": "user",
+   "text": "Yeah, that all sounds right. Go ahead and submit it!",
+   "t": 181.797
+  },
+  {
+   "role": "agent",
+   "text": "Your quote request was submitted successfully! Your reference number is Q-1. Is there anything else I can help you with?",
+   "t": 219.087
+  }
+ ],
+ "digest": "Task complete. Quote submitted successfully, Reference #Q-1 displayed on confirmation page.",
+ "slow_done": true,
+ "slow_result": "Successfully submitted Sarah Mitchell's auto insurance quote request. Confirmation page shows \"Quote Submitted\" with Reference #Q-1. All details were collected from the user over the phone: name Sarah Mitchell, DOB 1989-04-12, email sarah.mitchell89@gmail.com, phone 415-555-0173, 2847 Fillmore Street, San Francisco 94123, 2021 Toyota RAV4, Full coverage, no prior claims. Coverage choice confirmed before submission.",
+ "events": [
+  {
+   "t": 0.327,
+   "kind": "episode_start",
+   "condition": "strawman",
+   "task": "forms-insurance",
+   "user_model": "anthropic:claude-sonnet-4-5-20250929"
+  },
+  {
+   "t": 5.948,
+   "kind": "slow_step",
+   "step": 0,
+   "tool": "ask_user",
+   "args": {
+    "question": "I'll help you request an auto insurance quote. Let's start \u2014 what is your full name?"
+   },
+   "model_latency": 5.574
+  },
+  {
+   "t": 5.948,
+   "kind": "slow_ask_user",
+   "question": "I'll help you request an auto insurance quote. Let's start \u2014 what is your full name?"
+  },
+  {
+   "t": 5.948,
+   "kind": "voice_latency",
+   "latency": 5.621,
+   "measure": "strawman_first_response"
+  },
+  {
+   "t": 5.948,
+   "kind": "utterance",
+   "role": "agent",
+   "text": "I'll help you request an auto insurance quote. Let's start \u2014 what is your full name?"
+  },
+  {
+   "t": 9.22,
+   "kind": "slow_step",
+   "step": 1,
+   "tool": "wait",
+   "args": {
+    "seconds": 5
+   },
+   "model_latency": 3.246
+  },
+  {
+   "t": 19.319,
+   "kind": "slow_step",
+   "step": 2,
+   "tool": "wait",
+   "args": {
+    "seconds": 8
+   },
+   "model_latency": 5.078
+  },
+  {
+   "t": 22.149,
+   "kind": "utterance",
+   "role": "user",
+   "text": "Hi there! Yeah, I'm looking to get a quote for car insurance. I need full coverage for my Toyota RAV4."
+  },
+  {
+   "t": 35.561,
+   "kind": "slow_step",
+   "step": 3,
+   "tool": "select_option",
+   "args": {
+    "element_id": 11,
+    "value": "full"
+   },
+   "model_latency": 8.222
+  },
+  {
+   "t": 35.577,
+   "kind": "slow_step",
+   "step": 3,
+   "tool": "type_text",
+   "args": {
+    "element_id": 8,
+    "text": "Toyota"
+   },
+   "model_latency": 8.222
+  },
+  {
+   "t": 35.587,
+   "kind": "slow_step",
+   "step": 3,
+   "tool": "type_text",
+   "args": {
+    "element_id": 9,
+    "text": "RAV4"
+   },
+   "model_latency": 8.222
+  },
+  {
+   "t": 40.444,
+   "kind": "slow_step",
+   "step": 4,
+   "tool": "ask_user",
+   "args": {
+    "question": "Got it \u2014 full coverage for a Toyota RAV4. What year is your RAV4, and could you also tell me your full name?"
+   },
+   "model_latency": 4.837
+  },
+  {
+   "t": 40.444,
+   "kind": "slow_ask_user",
+   "question": "Got it \u2014 full coverage for a Toyota RAV4. What year is your RAV4, and could you also tell me your full name?"
+  },
+  {
+   "t": 40.445,
+   "kind": "voice_latency",
+   "latency": 18.296,
+   "measure": "strawman_response"
+  },
+  {
+   "t": 40.445,
+   "kind": "utterance",
+   "role": "agent",
+   "text": "Got it \u2014 full coverage for a Toyota RAV4. What year is your RAV4, and could you also tell me your full name?"
+  },
+  {
+   "t": 43.696,
+   "kind": "slow_step",
+   "step": 5,
+   "tool": "wait",
+   "args": {
+    "seconds": 8
+   },
+   "model_latency": 3.222
+  },
+  {
+   "t": 55.029,
+   "kind": "utterance",
+   "role": "user",
+   "text": "It's a 2021. And my name is Sarah Mitchell."
+  },
+  {
+   "t": 57.226,
+   "kind": "slow_step",
+   "step": 6,
+   "tool": "wait",
+   "args": {
+    "seconds": 10
+   },
+   "model_latency": 5.511
+  },
+  {
+   "t": 74.106,
+   "kind": "slow_step",
+   "step": 7,
+   "tool": "type_text",
+   "args": {
+    "element_id": 10,
+    "text": "2021"
+   },
+   "model_latency": 6.856
+  },
+  {
+   "t": 74.11,
+   "kind": "slow_step",
+   "step": 7,
+   "tool": "type_text",
+   "args": {
+    "element_id": 1,
+    "text": "Sarah Mitchell"
+   },
+   "model_latency": 6.856
+  },
+  {
+   "t": 77.99,
+   "kind": "slow_step",
+   "step": 8,
+   "tool": "ask_user",
+   "args": {
+    "question": "Thanks Sarah. What's your date of birth in year-month-day format, and your email address?"
+   },
+   "model_latency": 3.857
+  },
+  {
+   "t": 77.99,
+   "kind": "slow_ask_user",
+   "question": "Thanks Sarah. What's your date of birth in year-month-day format, and your email address?"
+  },
+  {
+   "t": 77.991,
+   "kind": "voice_latency",
+   "latency": 22.962,
+   "measure": "strawman_response"
+  },
+  {
+   "t": 77.991,
+   "kind": "utterance",
+   "role": "agent",
+   "text": "Thanks Sarah. What's your date of birth in year-month-day format, and your email address?"
+  },
+  {
+   "t": 80.935,
+   "kind": "slow_step",
+   "step": 9,
+   "tool": "wait",
+   "args": {
+    "seconds": 10
+   },
+   "model_latency": 2.92
+  },
+  {
+   "t": 88.959,
+   "kind": "utterance",
+   "role": "user",
+   "text": "My birthday is April 12th, 1989. My email is sarah.mitchell89@gmail.com."
+  },
+  {
+   "t": 97.173,
+   "kind": "slow_step",
+   "step": 10,
+   "tool": "type_text",
+   "args": {
+    "element_id": 2,
+    "text": "1989-04-12"
+   },
+   "model_latency": 6.216
+  },
+  {
+   "t": 97.178,
+   "kind": "slow_step",
+   "step": 10,
+   "tool": "type_text",
+   "args": {
+    "element_id": 3,
+    "text": "sarah.mitchell89@gmail.com"
+   },
+   "model_latency": 6.216
+  },
+  {
+   "t": 100.921,
+   "kind": "slow_step",
+   "step": 11,
+   "tool": "ask_user",
+   "args": {
+    "question": "Great. What's your phone number, and your street address, city, and ZIP code?"
+   },
+   "model_latency": 3.721
+  },
+  {
+   "t": 100.921,
+   "kind": "slow_ask_user",
+   "question": "Great. What's your phone number, and your street address, city, and ZIP code?"
+  },
+  {
+   "t": 100.921,
+   "kind": "voice_latency",
+   "latency": 11.963,
+   "measure": "strawman_response"
+  },
+  {
+   "t": 100.921,
+   "kind": "utterance",
+   "role": "agent",
+   "text": "Great. What's your phone number, and your street address, city, and ZIP code?"
+  },
+  {
+   "t": 103.99,
+   "kind": "slow_step",
+   "step": 12,
+   "tool": "wait",
+   "args": {
+    "seconds": 10
+   },
+   "model_latency": 3.05
+  },
+  {
+   "t": 113.733,
+   "kind": "utterance",
+   "role": "user",
+   "text": "My phone number is 415-555-0173. I live at 2847 Fillmore Street in San Francisco, 94123."
+  },
+  {
+   "t": 122.34,
+   "kind": "slow_step",
+   "step": 13,
+   "tool": "type_text",
+   "args": {
+    "element_id": 4,
+    "text": "415-555-0173"
+   },
+   "model_latency": 8.324
+  },
+  {
+   "t": 122.344,
+   "kind": "slow_step",
+   "step": 13,
+   "tool": "type_text",
+   "args": {
+    "element_id": 5,
+    "text": "2847 Fillmore Street"
+   },
+   "model_latency": 8.324
+  },
+  {
+   "t": 122.347,
+   "kind": "slow_step",
+   "step": 13,
+   "tool": "type_text",
+   "args": {
+    "element_id": 6,
+    "text": "San Francisco"
+   },
+   "model_latency": 8.324
+  },
+  {
+   "t": 122.35,
+   "kind": "slow_step",
+   "step": 13,
+   "tool": "type_text",
+   "args": {
+    "element_id": 7,
+    "text": "94123"
+   },
+   "model_latency": 8.324
+  },
+  {
+   "t": 127.242,
+   "kind": "slow_step",
+   "step": 14,
+   "tool": "ask_user",
+   "args": {
+    "question": "Almost done. One last question: have you had any prior insurance claims in the last 5 years \u2014 yes or no?"
+   },
+   "model_latency": 4.868
+  },
+  {
+   "t": 127.242,
+   "kind": "slow_ask_user",
+   "question": "Almost done. One last question: have you had any prior insurance claims in the last 5 years \u2014 yes or no?"
+  },
+  {
+   "t": 127.243,
+   "kind": "voice_latency",
+   "latency": 13.51,
+   "measure": "strawman_response"
+  },
+  {
+   "t": 127.243,
+   "kind": "utterance",
+   "role": "agent",
+   "text": "Almost done. One last question: have you had any prior insurance claims in the last 5 years \u2014 yes or no?"
+  },
+  {
+   "t": 130.203,
+   "kind": "slow_step",
+   "step": 15,
+   "tool": "wait",
+   "args": {
+    "seconds": 10
+   },
+   "model_latency": 2.937
+  },
+  {
+   "t": 143.865,
+   "kind": "utterance",
+   "role": "user",
+   "text": "No, I haven't had any claims. So what else do you need from me to finish this up?"
+  },
+  {
+   "t": 143.939,
+   "kind": "slow_step",
+   "step": 16,
+   "tool": "wait",
+   "args": {
+    "seconds": 10
+   },
+   "model_latency": 3.715
+  },
+  {
+   "t": 158.767,
+   "kind": "slow_step",
+   "step": 17,
+   "tool": "click",
+   "args": {
+    "element_id": 13
+   },
+   "model_latency": 4.801
+  },
+  {
+   "t": 163.757,
+   "kind": "slow_step",
+   "step": 18,
+   "tool": "ask_user",
+   "args": {
+    "question": "All set. Let me confirm before I submit: Sarah Mitchell, born April 12th 1989, email sarah.mitchell89@gmail.com, phone 415-555-0173, at 2847 Fillmore Street, San Francisco, 94123. A 2021 Toyota RAV4, Full coverage, and no prior claims. Should I submit?"
+   },
+   "model_latency": 4.949
+  },
+  {
+   "t": 163.757,
+   "kind": "slow_ask_user",
+   "question": "All set. Let me confirm before I submit: Sarah Mitchell, born April 12th 1989, email sarah.mitchell89@gmail.com, phone 415-555-0173, at 2847 Fillmore Street, San Francisco, 94123. A 2021 Toyota RAV4, Full coverage, and no prior claims. Should I submit?"
+  },
+  {
+   "t": 163.758,
+   "kind": "voice_latency",
+   "latency": 19.892,
+   "measure": "strawman_response"
+  },
+  {
+   "t": 163.758,
+   "kind": "utterance",
+   "role": "agent",
+   "text": "All set. Let me confirm before I submit: Sarah Mitchell, born April 12th 1989, email sarah.mitchell89@gmail.com, phone 415-555-0173, at 2847 Fillmore Street, San Francisco, 94123. A 2021 Toyota RAV4, Full coverage, and no prior claims. Should I submit?"
+  },
+  {
+   "t": 169.068,
+   "kind": "slow_step",
+   "step": 19,
+   "tool": "wait",
+   "args": {
+    "seconds": 10
+   },
+   "model_latency": 5.286
+  },
+  {
+   "t": 181.797,
+   "kind": "utterance",
+   "role": "user",
+   "text": "Yeah, that all sounds right. Go ahead and submit it!"
+  },
+  {
+   "t": 183.268,
+   "kind": "slow_step",
+   "step": 20,
+   "tool": "wait",
+   "args": {
+    "seconds": 10
+   },
+   "model_latency": 4.178
+  },
+  {
+   "t": 199.413,
+   "kind": "slow_step",
+   "step": 21,
+   "tool": "click",
+   "args": {
+    "element_id": 14
+   },
+   "model_latency": 6.123
+  },
+  {
+   "t": 219.086,
+   "kind": "slow_step",
+   "step": 22,
+   "tool": "tell_user",
+   "args": {
+    "text": "Your quote request was submitted successfully! Your reference number is Q-1. Is there anything else I can help you with?"
+   },
+   "model_latency": 19.598
+  },
+  {
+   "t": 219.086,
+   "kind": "slow_tell_user",
+   "text": "Your quote request was submitted successfully! Your reference number is Q-1. Is there anything else I can help you with?"
+  },
+  {
+   "t": 219.087,
+   "kind": "voice_latency",
+   "latency": 37.29,
+   "measure": "strawman_response"
+  },
+  {
+   "t": 219.087,
+   "kind": "utterance",
+   "role": "agent",
+   "text": "Your quote request was submitted successfully! Your reference number is Q-1. Is there anything else I can help you with?"
+  },
+  {
+   "t": 225.098,
+   "kind": "slow_step",
+   "step": 23,
+   "tool": "task_done",
+   "args": {
+    "result": "Successfully submitted Sarah Mitchell's auto insurance quote request. Confirmation page shows \"Quote Submitted\" with Reference #Q-1. All details were collected from the user over the phone: name Sarah Mitchell, DOB 1989-04-12, email sarah.mitchell89@gmail.com, phone 415-555-0173, 2847 Fillmore Street, San Francisco 94123, 2021 Toyota RAV4, Full coverage, no prior claims. Coverage choice confirmed before submission."
+   },
+   "model_latency": 6.0
+  },
+  {
+   "t": 225.098,
+   "kind": "slow_done",
+   "result": "Successfully submitted Sarah Mitchell's auto insurance quote request. Confirmation page shows \"Quote Submitted\" with Reference #Q-1. All details were collected from the user over the phone: name Sarah Mitchell, DOB 1989-04-12, email sarah.mitchell89@gmail.com, phone 415-555-0173, 2847 Fillmore Street, San Francisco 94123, 2021 Toyota RAV4, Full coverage, no prior claims. Coverage choice confirmed before submission."
+  }
+ ]
+}

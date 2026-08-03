@@ -1,0 +1,14 @@
+condition | n_episodes | task_success | partial_credit | probe_correct | voice_lat_p50 | voice_lat_p90 | wall_time_mean
+----------+------------+--------------+----------------+---------------+---------------+---------------+---------------
+duplex    | 8          | 1.0          | 1.0            | 0.833         | 2.32          | 2.85          | 207.2
+strawman  | 8          | 1.0          | 1.0            | 0.917         | 12.52         | 21.14         | 178.0
+
+Per task:
+  booking-flight     duplex         n=2 success=2/2 probe=0.5 lat_p50=1.84
+  booking-flight     strawman       n=2 success=2/2 probe=0.75 lat_p50=18.85
+  forms-insurance    duplex         n=2 success=2/2 probe=- lat_p50=2.41
+  forms-insurance    strawman       n=2 success=2/2 probe=- lat_p50=12.24
+  meeting-helper     duplex         n=2 success=0/0 probe=1.0 lat_p50=2.29
+  meeting-helper     strawman       n=2 success=0/0 probe=1.0 lat_p50=11.46
+  webmail-report     duplex         n=2 success=2/2 probe=1.0 lat_p50=2.41
+  webmail-report     strawman       n=2 success=2/2 probe=1.0 lat_p50=18.85
