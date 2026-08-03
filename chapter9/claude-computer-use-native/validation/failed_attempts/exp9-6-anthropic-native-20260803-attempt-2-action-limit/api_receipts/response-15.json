@@ -1,0 +1,39 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "id": "msg_011Cdf33x4nGookw1fnJqr8Q",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "I see that the page is still loading weather.gov, but it's still showing the Google CAPTCHA page. Let me wait for the page to load completely."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01DiMYGRFNpNaMGyt3ueTwpk",
+      "name": "computer",
+      "input": {
+        "action": "wait",
+        "duration": 3
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 7,
+    "cache_creation_input_tokens": 1158,
+    "cache_read_input_tokens": 18742,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 1158,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 103,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "id": "msg_011Cdf2f1WkjQkF8bmACqJu6",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Perfect! The search bar is now active and showing trending searches. I can see the cursor is in the search field. Now I'll type \"San Francisco weather today\" to search for the weather information."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01PabADjuQDnnXiscnSeVos1",
+      "name": "computer",
+      "input": {
+        "action": "type",
+        "text": "San Francisco weather today"
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 7,
+    "cache_creation_input_tokens": 1184,
+    "cache_read_input_tokens": 11728,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 1184,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 113,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

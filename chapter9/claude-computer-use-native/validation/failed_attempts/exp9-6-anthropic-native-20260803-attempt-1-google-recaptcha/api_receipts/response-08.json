@@ -1,0 +1,39 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "id": "msg_011Cdf2dGJhHKxQehLqxicd6",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Good! The browser is loading google.com (I can see \"http://google.com\" in the address bar). The page is still loading as indicated by the stop button (X) next to the refresh button. Let me wait a moment for Google to fully load."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_013KHUuWZJ19r9f98B2msvBL",
+      "name": "computer",
+      "input": {
+        "action": "wait",
+        "duration": 3
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 7,
+    "cache_creation_input_tokens": 1162,
+    "cache_read_input_tokens": 9379,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 1162,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 125,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

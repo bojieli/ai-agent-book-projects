@@ -1,0 +1,39 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "id": "msg_011Cdf3QKDa7Fx8sibDFu599",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "I can see the page is loading (the URL shows \"http://google.com\" in the address bar). The page is still loading as indicated by the X button in the address bar. Let me wait a moment for Google to fully load."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01Y49iWBnkuRpToViCqoeLdj",
+      "name": "computer",
+      "input": {
+        "action": "wait",
+        "duration": 3
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 7,
+    "cache_creation_input_tokens": 1163,
+    "cache_read_input_tokens": 9387,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 1163,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 119,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "id": "msg_011Cdf2x6U8xbcEKP7zHstam",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "The page is loading - I can see \"http://google.com\" in the address bar and \"google.com\" at the bottom of the screen. Let me wait a moment for the page to fully load."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01GCzE3pJsZXTCNpYKKxzaAf",
+      "name": "computer",
+      "input": {
+        "action": "wait",
+        "duration": 3
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 7,
+    "cache_creation_input_tokens": 1166,
+    "cache_read_input_tokens": 9304,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 1166,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 113,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

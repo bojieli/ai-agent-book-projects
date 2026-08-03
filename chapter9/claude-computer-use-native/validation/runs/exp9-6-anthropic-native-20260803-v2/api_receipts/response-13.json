@@ -1,0 +1,39 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "id": "msg_011Cdf3TqGB9PX76VN32HUbT",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Good, the text in the address bar is selected. Now I'll type the Open-Meteo API URL for San Francisco weather."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_015HDZP7gLYsxauVKBudENT6",
+      "name": "computer",
+      "input": {
+        "action": "type",
+        "text": "https://api.open-meteo.com/v1/forecast?latitude=37.7749&longitude=-122.4194&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=America%2FLos_Angeles"
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 7,
+    "cache_creation_input_tokens": 1205,
+    "cache_read_input_tokens": 16447,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 1205,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 154,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}
