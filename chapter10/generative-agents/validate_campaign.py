@@ -86,6 +86,10 @@ def compatibility_correction_valid(row: dict) -> bool:
     )
 
 
+def canonical_provider_receipt(path: Path) -> bool:
+    return path.name.endswith(".jsonl.gz") and ".failed-" not in path.name
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("run_dir", type=Path)
@@ -113,6 +117,8 @@ def main() -> int:
     }
     provider_rows = []
     for path in sorted((run_dir / "receipts").rglob("*.jsonl.gz")):
+        if not canonical_provider_receipt(path):
+            continue
         provider_rows.extend(jsonl_rows(path))
     provider_ids = [
         row.get("response", {}).get("id")

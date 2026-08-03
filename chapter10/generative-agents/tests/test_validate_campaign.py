@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from validate_campaign import (
+    canonical_provider_receipt,
     compatibility_correction_valid,
     positive_provider_usage,
 )
@@ -31,3 +32,10 @@ def test_compatibility_correction_must_resolve_to_accessible_arena():
     assert compatibility_correction_valid(row) is True
     row["normalized_output"] = "private vault"
     assert compatibility_correction_valid(row) is False
+
+
+def test_failed_compressed_receipts_are_not_canonical(tmp_path):
+    assert canonical_provider_receipt(tmp_path / "steps_00000_00360.jsonl.gz")
+    assert not canonical_provider_receipt(
+        tmp_path / "steps_00000_00360.failed-123.jsonl.gz"
+    )

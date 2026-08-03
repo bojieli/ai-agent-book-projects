@@ -163,6 +163,25 @@ def compress_receipt(path: Path) -> Path:
     return target
 
 
+def quarantine_artifact(path: Path) -> Path | None:
+    """Move a non-canonical attempt aside without changing its file format."""
+
+    if not path.exists():
+        return None
+    name = path.name
+    for ending in (".jsonl.gz", ".jsonl"):
+        if name.endswith(ending):
+            stem = name[: -len(ending)]
+            target = path.with_name(
+                f"{stem}.failed-{time.time_ns()}{ending}"
+            )
+            path.rename(target)
+            return target
+    target = path.with_name(f"{name}.failed-{time.time_ns()}")
+    path.rename(target)
+    return target
+
+
 def receipt_summary(path: Path) -> dict[str, Any]:
     opener = gzip.open if path.suffix == ".gz" else open
     counts: dict[str, int] = {}
@@ -187,6 +206,23 @@ def receipt_summary(path: Path) -> dict[str, Any]:
         "usage": usage,
         "provider_latency_seconds": round(latency, 3),
     }
+
+
+def validated_receipt_summary(
+    receipt_path: Path, correction_path: Path
+) -> dict[str, Any]:
+    """Reject recovered checkpoints whose canonical receipt contains errors."""
+
+    summary = receipt_summary(receipt_path)
+    if summary["errors"]:
+        failed_receipt = quarantine_artifact(receipt_path)
+        failed_correction = quarantine_artifact(correction_path)
+        raise RuntimeError(
+            "provider errors make checkpoint non-canonical: "
+            f"errors={summary['errors']}, receipt={failed_receipt}, "
+            f"compatibility={failed_correction}"
+        )
+    return summary
 
 
 def jsonl_rows(path: Path) -> int:
@@ -316,24 +352,15 @@ def run_arm(
         if target_dir.exists():
             shutil.rmtree(target_dir)
         receipt_path = output / "receipts" / arm / f"steps_{start_step:05d}_{end_step:05d}.jsonl"
-        if receipt_path.exists():
-            receipt_path.rename(
-                receipt_path.with_name(
-                    f"{receipt_path.stem}.failed-{int(time.time())}.jsonl"
-                )
-            )
+        quarantine_artifact(receipt_path)
+        quarantine_artifact(receipt_path.with_suffix(receipt_path.suffix + ".gz"))
         correction_path = (
             output
             / "compatibility"
             / arm
             / f"steps_{start_step:05d}_{end_step:05d}.jsonl"
         )
-        if correction_path.exists():
-            correction_path.rename(
-                correction_path.with_name(
-                    f"{correction_path.stem}.failed-{int(time.time())}.jsonl"
-                )
-            )
+        quarantine_artifact(correction_path)
         set_receipt_path(receipt_path)
         correction_recorder.set_path(correction_path)
         started = time.perf_counter()
@@ -361,6 +388,7 @@ def run_arm(
                 raise failures.get()
             server.save()
         compressed = compress_receipt(receipt_path)
+        provider_summary = validated_receipt_summary(compressed, correction_path)
         checkpoint = {
             "start_step": start_step,
             "end_step": end_step,
@@ -368,7 +396,7 @@ def run_arm(
             "end_time": server.curr_time.isoformat(),
             "sim_code": sim_code,
             "receipt": str(compressed.relative_to(output)),
-            "receipt_summary": receipt_summary(compressed),
+            "receipt_summary": provider_summary,
             "compatibility_receipt": (
                 str(correction_path.relative_to(output))
                 if correction_path.exists()

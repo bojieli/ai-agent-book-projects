@@ -3,8 +3,15 @@ from __future__ import annotations
 import gzip
 import json
 
+import pytest
+
 from action_arena_compat import normalize_action_arena
-from run_campaign import CUSTOM_CURRENTLY, receipt_summary
+from run_campaign import (
+    CUSTOM_CURRENTLY,
+    quarantine_artifact,
+    receipt_summary,
+    validated_receipt_summary,
+)
 
 
 def test_receipt_summary_counts_calls_usage_and_errors(tmp_path):
@@ -72,3 +79,38 @@ def test_action_arena_invalid_output_falls_back_only_within_accessible_arenas():
     assert first_result.value == "common room"
     assert first_result.value in allowed
     assert first_result.fallback is True
+
+
+def test_provider_error_checkpoint_is_quarantined_with_compatibility_receipt(tmp_path):
+    receipt = tmp_path / "steps_00000_00360.jsonl.gz"
+    with gzip.open(receipt, "wt", encoding="utf-8") as handle:
+        handle.write(
+            json.dumps(
+                {
+                    "kind": "chat",
+                    "success": False,
+                    "latency_seconds": 1,
+                    "response": None,
+                }
+            )
+            + "\n"
+        )
+    compatibility = tmp_path / "steps_00000_00360.jsonl"
+    compatibility.write_text("{}\n", encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match="provider errors make checkpoint"):
+        validated_receipt_summary(receipt, compatibility)
+
+    assert not receipt.exists()
+    assert not compatibility.exists()
+    assert len(list(tmp_path.glob("steps_00000_00360.failed-*.jsonl.gz"))) == 1
+    assert len(list(tmp_path.glob("steps_00000_00360.failed-*.jsonl"))) == 1
+
+
+def test_quarantine_preserves_non_receipt_suffix(tmp_path):
+    artifact = tmp_path / "state.bin"
+    artifact.write_bytes(b"state")
+    target = quarantine_artifact(artifact)
+    assert target is not None
+    assert target.read_bytes() == b"state"
+    assert target.name.startswith("state.bin.failed-")
