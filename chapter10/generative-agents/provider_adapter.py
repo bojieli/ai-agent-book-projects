@@ -141,6 +141,7 @@ def install(
     openai.api_base = api_base
     original_chat_create = openai.ChatCompletion.create
     original_embedding_create = openai.Embedding.create
+    request_timeout = float(os.environ.get("GA_PROVIDER_TIMEOUT_SECONDS", "90"))
     RECORDER.set_path(receipt_path)
 
     def call_with_transient_retries(
@@ -185,6 +186,7 @@ def install(
         actual = dict(kwargs)
         actual["model"] = chat_model
         actual["enable_thinking"] = False
+        actual["request_timeout"] = request_timeout
         request = _plain(actual)
         return call_with_transient_retries(
             kind="chat",
@@ -203,6 +205,7 @@ def install(
             "frequency_penalty": kwargs.get("frequency_penalty", 0),
             "presence_penalty": kwargs.get("presence_penalty", 0),
             "enable_thinking": False,
+            "request_timeout": request_timeout,
         }
         if kwargs.get("stop"):
             actual["stop"] = kwargs["stop"]
@@ -219,6 +222,7 @@ def install(
         actual = dict(kwargs)
         actual["model"] = embedding_model
         actual["dimensions"] = 1024
+        actual["request_timeout"] = request_timeout
         request = _plain(actual)
         return call_with_transient_retries(
             kind="embedding",

@@ -79,6 +79,7 @@ def test_adapter_overrides_legacy_models_and_compacts_embeddings(tmp_path, monke
         "current-chat",
         "current-embedding",
     ]
+    assert all(call[1]["request_timeout"] == 90 for call in calls)
     rows = [json.loads(line) for line in receipt.read_text().splitlines()]
     assert len(rows) == 3
     assert all(row["success"] for row in rows)

@@ -52,7 +52,9 @@ provider call with bounded exponential backoff. The successful logical receipt
 retains every failed transport attempt in `transport_retries`; an exhausted or
 non-transient failure remains `success: false`. Any checkpoint containing a
 failed logical call is quarantined as `.failed-*` and replayed from the last
-clean checkpoint instead of advancing canonical status.
+clean checkpoint instead of advancing canonical status. Each physical request
+has a 90-second client timeout by default; `GA_PROVIDER_TIMEOUT_SECONDS` is an
+explicit override.
 
 The runtime overlay also contains one narrow compatibility correction for the
 legacy action-arena prompt. Upstream asks for `{arena}` but removes only the
