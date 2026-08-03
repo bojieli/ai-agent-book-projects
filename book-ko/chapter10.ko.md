@@ -303,6 +303,16 @@ OpenAI는 한때 AI 능력을 다섯 단계로 분류했습니다. 1단계 대�
 
 [^loop-engineering-2026]: Osmani, Addy. "Loop Engineering: Designing Loops that Prompt Coding Agents", 2026. https://addyosmani.com/blog/loop-engineering/
 
+**구체적인 프레임워크: LoopX.** LoopX는 루프를 모델의 프롬프트와 채팅 기록에서 꺼내 에이전트 런타임에 종속되지 않는 지속형 제어 평면에 둡니다. 목표와 경계는 ‘왜 하는가’를 설명하고, 게이트와 할 일은 ‘지금 무엇을 해도 되는가’를 정하며, 증거와 쿼터는 ‘계속해도 되는가’를 판단하고, 인계는 이후 턴이나 다른 에이전트가 작업을 이어받게 합니다. 하나의 통제된 실행은 다음의 명확한 프로토콜로 압축됩니다.
+
+```text
+LoopX 결정 → 에이전트 실행 → 독립 검증기 증명 → LoopX 커밋
+```
+
+에이전트는 계속 추론하고 도구를 사용하며 후보 산출물을 만듭니다. LoopX는 에이전트 런타임을 대체하지 않고 턴 사이의 연속성을 관리합니다. 독립 검증을 통과한 결과만 지속형 진행 상태를 갱신하고 쿼터를 소비할 수 있습니다. 검증 실패는 복구나 재계획으로 라우팅되고, 사람의 게이트, 대기 상태, 예산 한도는 실행 전에 루프를 멈춥니다. 이 경계는 루프 엔지니어링 원칙을 검사 가능한 시스템 불변 조건으로 바꿉니다. **모델은 ‘완료’를 제안할 수 있지만 자신의 ‘완료’를 승인할 수는 없습니다.** LoopX v0.4.0은 통제된 Turn 경로를 아직 실험적이라고 명시하므로, 여기서는 일반적인 작업 품질 향상의 증거가 아니라 ‘루프 + 검증 + 종료 조건’의 구체적인 프레임워크로 사용합니다.[^loopx-framework]
+
+[^loopx-framework]: LoopX, "The local control plane for long-running AI agent work", v0.4.0, 안정 커밋 `a893d221db0b8e028997cefc303f7ec9fa7dbe0a`. https://github.com/huangruiteng/loopx/tree/a893d221db0b8e028997cefc303f7ec9fa7dbe0a
+
 **제안자-검토자 패러다임.**
 
 ![그림 10-4: 제안자-검토자 루프](images/fig10-4.svg)

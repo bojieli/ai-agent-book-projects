@@ -299,6 +299,16 @@ Agent 間の協調関係と制御フローの特徴に応じて、コンテキ�
 
 [^loop-engineering-2026]: Osmani, Addy. "Loop Engineering: Designing Loops that Prompt Coding Agents", 2026. https://addyosmani.com/blog/loop-engineering/
 
+**具体的なフレームワーク：LoopX。** LoopX は、ループをモデルのプロンプトやチャット履歴から切り離し、Agent ランタイムに依存しない永続的なコントロールプレーンへ移します。目標と境界が「なぜ行うか」を示し、ゲートと Todo が「今何をしてよいか」を決め、証拠とクォータが「続行してよいか」を決め、引き継ぎによって後続のターンや別の Agent が作業を再開できます。1 回の統制された実行は、次の明確なプロトコルに集約されます。
+
+```text
+LoopX が決定 → Agent が実行 → 独立した検証器が証明 → LoopX がコミット
+```
+
+Agent は引き続き推論し、ツールを使い、候補成果物を生成します。LoopX は Agent ランタイムを置き換えるのではなく、ターンをまたぐ連続性を管理します。独立した検証を通った結果だけが永続的な進捗を書き込み、クォータを消費できます。検証失敗は修復または再計画へ送られ、人間のゲート、待機状態、予算上限は実行前にループを止めます。この境界は Loop Engineering の原則を検査可能なシステム不変条件にします。**モデルは「完了」を提案できても、自分の「完了」を承認することはできません。** LoopX v0.4.0 では統制 Turn の経路がまだ実験的と明記されているため、ここでは一般的なタスク品質向上の証拠ではなく、「ループ＋検証＋終了条件」の具体的なフレームワークとして扱います。[^loopx-framework]
+
+[^loopx-framework]: LoopX, "The local control plane for long-running AI agent work", v0.4.0、安定版コミット `a893d221db0b8e028997cefc303f7ec9fa7dbe0a`。 https://github.com/huangruiteng/loopx/tree/a893d221db0b8e028997cefc303f7ec9fa7dbe0a
+
 **提議者・審査者パラダイム。**
 
 

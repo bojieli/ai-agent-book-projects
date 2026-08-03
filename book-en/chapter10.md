@@ -303,6 +303,16 @@ Turning claims into proofs is precisely the business of **Loop Engineering**, th
 
 [^loop-engineering-2026]: Osmani, Addy. "Loop Engineering: Designing Loops that Prompt Coding Agents", 2026. https://addyosmani.com/blog/loop-engineering/
 
+**Concrete framework: LoopX.** LoopX takes the loop out of the model's prompt and chat history and places it in a durable, agent-runtime-neutral control plane: the objective and boundary explain why the work exists; gates and todos determine what may happen now; evidence and quota determine whether it may continue; and handoffs let a later turn or another Agent resume it. It compresses one governed execution into a clear protocol:
+
+```text
+LoopX decides → Agent executes → independent verifier proves → LoopX commits
+```
+
+The Agent still reasons, uses tools, and produces candidate artifacts. LoopX does not replace the Agent runtime; it governs continuity across turns. Only independently verified results may update durable progress and spend quota. Failed validation routes to repair or replanning, while human gates, wait states, and budget limits stop the loop before execution. This boundary turns a Loop Engineering principle into an inspectable system invariant: **the model may propose “done,” but it cannot approve its own “done.”** LoopX v0.4.0 still labels the governed-Turn path experimental, so it is used here as a concrete framework for “loop + verification + stop conditions,” not as evidence of general task-quality uplift.[^loopx-framework]
+
+[^loopx-framework]: LoopX, "The local control plane for long-running AI agent work", v0.4.0, stable commit `a893d221db0b8e028997cefc303f7ec9fa7dbe0a`. https://github.com/huangruiteng/loopx/tree/a893d221db0b8e028997cefc303f7ec9fa7dbe0a
+
 **Proposer-Reviewer Paradigm.**
 
 ![Figure 10-4: Proposer-Reviewer Loop](images/fig10-4.svg)

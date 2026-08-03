@@ -292,6 +292,16 @@ Convertir una afirmación en una prueba es precisamente el objeto de la **Ingeni
 
 [^loop-engineering-2026]: Osmani, Addy. "Loop Engineering: Designing Loops that Prompt Coding Agents", 2026. https://addyosmani.com/blog/loop-engineering/
 
+**Marco concreto: LoopX.** LoopX extrae el bucle del prompt del modelo y del historial del chat y lo sitúa en un plano de control persistente e independiente del entorno de ejecución del Agente: el objetivo y los límites explican por qué existe el trabajo; las puertas de decisión y las tareas pendientes determinan qué puede suceder ahora; las evidencias y la cuota determinan si puede continuar; y los traspasos permiten que una iteración posterior u otro Agente lo reanuden. Una ejecución gobernada queda condensada en un protocolo claro:
+
+```text
+LoopX decide → el Agente ejecuta → un verificador independiente demuestra → LoopX confirma
+```
+
+El Agente sigue razonando, utilizando herramientas y produciendo artefactos candidatos. LoopX no sustituye al entorno de ejecución del Agente; gobierna la continuidad entre iteraciones. Solo los resultados verificados de forma independiente pueden actualizar el progreso persistente y consumir cuota. Una verificación fallida conduce a reparación o replanificación, mientras que las puertas humanas, los estados de espera y los límites de presupuesto detienen el bucle antes de la ejecución. Este límite convierte un principio de la Ingeniería de Bucles en una invariante del sistema que puede inspeccionarse: **el modelo puede proponer «terminado», pero no puede aprobar su propio «terminado».** LoopX v0.4.0 todavía califica como experimental la ruta Turn gobernada, por lo que aquí se emplea como marco concreto para «bucle + verificación + condiciones de parada», no como prueba de una mejora general de la calidad de las tareas.[^loopx-framework]
+
+[^loopx-framework]: LoopX, "The local control plane for long-running AI agent work", v0.4.0, commit estable `a893d221db0b8e028997cefc303f7ec9fa7dbe0a`. https://github.com/huangruiteng/loopx/tree/a893d221db0b8e028997cefc303f7ec9fa7dbe0a
+
 **Paradigma proponente-revisor.**
 
 

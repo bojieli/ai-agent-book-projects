@@ -291,6 +291,8 @@ Agent 執行任務的核心模式叫做 **ReAct**（Reasoning + Acting）。雖�
 
 **軟體工程**（Software Engineering）是基礎——傳統的系統設計、架構、測試和部署實踐。**提示工程**（Prompt Engineering）是第一波創新——透過最佳化輸入給模型的自然語言指令來提升輸出質量。**上下文工程**（Context Engineering）是第二波——人們認識到單純最佳化提示詞還不夠，需要系統性地管理模型能看到的所有資訊（系統指令、工具定義、對話歷史、外部知識）。**Harness 工程**是第三波——它將視野從「模型能看到什麼」進一步擴充套件到「模型在什麼樣的系統中執行」，涵蓋了約束機制、驗證手段、回饋迴圈和錯誤恢復等模型之外的全部基礎設施。隨後出現的 **Loop 工程**（Loop Engineering）又把視野從單次執行擴充套件到跨輪次的持續自主運轉：誰來發現下一件該做的事、何時驗證、何時才算真正完成（第十章將結合多 Agent 協作系統展開）。
 
+LoopX 是這一理念的一個具體框架：它把目標、閘門、待辦、證據、配額、移交、驗證與終止條件放進模型和聊天之外的持久控制面，讓不同執行環境中的 Agent 都能在同一條可恢復、可審查的迴圈上工作。第十章將以它說明 Loop 工程如何落到真實系統中。
+
 2026 年 7 月，業界又開始用 **Graph 工程**（Graph Engineering）描述一種更高層的編排視角：把 Agent 迴圈、確定性程式和人工審批組織成顯式的執行圖，其中節點承擔具體能力，邊規定路由與依賴，結構化狀態沿邊傳遞並在關鍵邊界處持久化[^ch1-graph-engineering-zhtw]。不過，Graph 工程並不是 Loop 工程的替代品，也不宜簡單視為上述演進鏈條中的「第六層」——迴圈本身就是帶有回邊的圖，而圖中的單個節點仍然可以執行 ReAct 或其他 Agent 迴圈。這個名稱目前尚未穩定，本書將其視為對既有編排與 Harness 實踐的新稱呼；其中涉及多 Agent 協作的部分將在第十章展開。這裡的「圖」指控制流或執行圖，不是 GraphRAG 所使用的知識圖譜。
 
 [^ch1-graph-engineering-zhtw]: Josh C. Simmons 在 2026 年 7 月 4 日的文章 *We Are Entering the Graph Engineering Phase* 中較早明確使用這一名稱，並將其概括為節點、型別化邊和可檢查點狀態；7 月 18 日，Peter Steinberger 關於「是否已從 loops 轉向 graphs」的討論進一步推動了該名稱傳播。需要注意的是，相關實踐早於這個名稱：LangGraph、Microsoft Agent Framework 和 Google ADK 的官方文件分別稱其為圖編排或 graph-based workflow。參見 https://www.drjoshcsimmons.com/writing/we-are-entering-the-graph-engineering-phase、https://x.com/steipete/status/2078277297791189132、https://docs.langchain.com/oss/python/langgraph/overview、https://learn.microsoft.com/en-us/agent-framework/workflows/、https://adk.dev/workflows/。

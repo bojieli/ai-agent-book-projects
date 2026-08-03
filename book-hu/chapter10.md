@@ -299,6 +299,16 @@ Az állítások bizonyítékokká alakítása pontosan a "Hurok-mérnökség" (L
 
 [^loop-engineering-2026]: Osmani, Addy. "Loop Engineering: Designing Loops that Prompt Coding Agents", 2026. https://addyosmani.com/blog/loop-engineering/
 
+**Konkrét keretrendszer: LoopX.** A LoopX kiemeli a hurkot a modell promptjából és a csevegési előzményekből, és egy tartós, az Ügynök futtatókörnyezetétől független vezérlési síkra helyezi: a cél és a határ megmagyarázza, miért létezik a munka; a kapuk és a teendők meghatározzák, mi történhet most; a bizonyítékok és a kvóta eldöntik, folytatódhat-e; az átadások pedig lehetővé teszik, hogy egy későbbi kör vagy másik Ügynök folytassa. Egy szabályozott végrehajtást világos protokollá tömörít:
+
+```text
+LoopX dönt → Ügynök végrehajt → független ellenőrző bizonyít → LoopX véglegesít
+```
+
+Az Ügynök továbbra is következtet, eszközöket használ és jelölt eredményeket készít. A LoopX nem helyettesíti az Ügynök futtatókörnyezetét; a körök közötti folytonosságot irányítja. Csak a függetlenül ellenőrzött eredmények frissíthetik a tartós előrehaladást és használhatnak fel kvótát. A sikertelen ellenőrzés javításhoz vagy újratervezéshez vezet, míg az emberi kapuk, várakozási állapotok és költségvetési korlátok már végrehajtás előtt megállítják a hurkot. Ez a határ a Loop Engineering egyik elvét ellenőrizhető rendszerinvariánssá teszi: **a modell javasolhatja, hogy „kész”, de a saját „kész” állítását nem hagyhatja jóvá.** A LoopX v0.4.0 a szabályozott Turn útvonalat még kísérletiként jelöli, ezért itt a „hurok + ellenőrzés + leállási feltételek” konkrét keretrendszereként szerepel, nem pedig az általános feladatminőség javulásának bizonyítékaként.[^loopx-framework]
+
+[^loopx-framework]: LoopX, "The local control plane for long-running AI agent work", v0.4.0, stabil commit: `a893d221db0b8e028997cefc303f7ec9fa7dbe0a`. https://github.com/huangruiteng/loopx/tree/a893d221db0b8e028997cefc303f7ec9fa7dbe0a
+
 "Javasló-Ellenőrző Paradigma."
 
 ![10-4. ábra: Javasló-Ellenőrző Hurok](images/fig10-4.svg)

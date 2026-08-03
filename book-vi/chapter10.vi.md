@@ -301,6 +301,16 @@ Biến lời tuyên bố thành bằng chứng chính là bài toán của **Loo
 
 [^loop-engineering-2026]: Osmani, Addy. "Loop Engineering: Designing Loops that Prompt Coding Agents", 2026. https://addyosmani.com/blog/loop-engineering/
 
+**Framework cụ thể: LoopX.** LoopX đưa vòng lặp ra khỏi prompt của mô hình và lịch sử trò chuyện, đặt nó vào một mặt phẳng điều khiển bền vững, trung lập với runtime của Agent: mục tiêu và ranh giới giải thích vì sao công việc tồn tại; cổng quyết định và việc cần làm xác định điều gì được phép diễn ra lúc này; bằng chứng và hạn mức quyết định có được tiếp tục hay không; còn bàn giao cho phép lượt sau hoặc một Agent khác tiếp nối. Một lần thực thi có quản trị được cô đọng thành giao thức rõ ràng:
+
+```text
+LoopX quyết định → Agent thực thi → bộ xác minh độc lập chứng minh → LoopX ghi nhận
+```
+
+Agent vẫn suy luận, sử dụng công cụ và tạo ra sản phẩm ứng viên. LoopX không thay thế runtime của Agent; nó quản trị tính liên tục giữa các lượt. Chỉ kết quả được xác minh độc lập mới có thể cập nhật tiến độ bền vững và tiêu tốn hạn mức. Xác minh thất bại sẽ chuyển sang sửa chữa hoặc lập kế hoạch lại, còn cổng con người, trạng thái chờ và giới hạn ngân sách dừng vòng lặp trước khi thực thi. Ranh giới này biến một nguyên tắc của Loop Engineering thành bất biến hệ thống có thể kiểm tra: **mô hình có thể đề xuất “xong”, nhưng không thể tự phê duyệt chữ “xong” của mình.** LoopX v0.4.0 vẫn đánh dấu đường Turn có quản trị là thử nghiệm, vì vậy ở đây nó được dùng như framework cụ thể cho “vòng lặp + xác minh + điều kiện dừng”, không phải bằng chứng về mức tăng chất lượng tác vụ nói chung.[^loopx-framework]
+
+[^loopx-framework]: LoopX, "The local control plane for long-running AI agent work", v0.4.0, commit ổn định `a893d221db0b8e028997cefc303f7ec9fa7dbe0a`. https://github.com/huangruiteng/loopx/tree/a893d221db0b8e028997cefc303f7ec9fa7dbe0a
+
 **Mô hình người đề xuất-người đánh giá.**
 
 
