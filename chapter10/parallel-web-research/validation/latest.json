@@ -2,6 +2,6 @@
   "schema_version": 1,
   "run_id": "exp10-6-real-receipts-20260730-v2",
   "run_directory": "validation/runs/exp10-6-real-receipts-20260730-v2",
-  "manifest_sha256": "eb14b0cec06c8d3940d25ede320662883e9e90a464bdce7663418206afe685df",
+  "manifest_sha256": "97a6a145ef73782986d183956192814ec3f69c6e1ff2e9aea55920e7b8acafa8",
   "overall_status": "pass"
 }

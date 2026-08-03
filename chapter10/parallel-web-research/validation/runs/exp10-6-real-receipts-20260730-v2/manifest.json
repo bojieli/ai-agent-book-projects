@@ -7,7 +7,7 @@
   "runtime_source_sha256": {
     "run_official_experiment.py": "29c273af4fea372b564cf47f2a39da47ab7f765b608630ac4b78993283a9d4fb",
     "demo.py": "5a0bdc99a6aa6634fe1607e83d0afce4fb71ebce9be7050c4a402b7e5361153c",
-    "agents.py": "5b0e6750a925b89085e9b7ba82ead61e0a02b476329e9ecd627893aecce3cd90",
+    "agents.py": "ec05ff0b882539adfd0537a430e78750bf8324e63bf50b5a4b0d715492b37d1d",
     "llm.py": "b7d820398a3e5be6f3cf6fde833f20036ec8039cc9c62aa7560f091dc0ae60a0",
     "message_bus.py": "bfcd6f1bee81b7cf0db8135b4374838cc4737c356455672fa9d27e04882fa32e",
     "sources.py": "136cb07a722b31eec28cb16f61b5c51676a10006fcef8eca52459ef5be3495f4",

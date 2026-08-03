@@ -274,7 +274,7 @@ class Coordinator:
         for error in self.errors.values():
             kind = error.split(":", 1)[0]
             failure_types[kind] = failure_types.get(kind, 0) + 1
-        expected_acks = {worker.id for worker in self.workers}
+        expected_acks = ({worker.id for worker in self.workers} - set(self.not_found.keys()) - set(self.errors.keys()))
         if self.winner:
             expected_acks.discard(self.winner)
         else:
