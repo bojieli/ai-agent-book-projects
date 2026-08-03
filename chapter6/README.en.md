@@ -8,7 +8,7 @@
 
 | Exp. | Project | Type | Description |
 | :--: | --- | :--: | --- |
-| 6-1 | `tau2-bench/` | 📖 | Focuses on evaluating an agent's ability to use tools for complex reasoning, including scenarios such as computation, search, and data processing. |
+| 6-1 | [tau2-bench-eval](tau2-bench-eval/) | ✅ | Retains a pinned five-task telecom campaign (4/5 passed), raw trajectories, costs, hashes, and analysis of the wrong-line failure that skipped data refueling. |
 | 6-2 | `tau2-bench/` | 📖 | Manually completes graded τ²-bench tasks and records their trajectories. |
 | 6-3 | [user-memory-evaluation](../chapter3/user-memory-evaluation/) | ✅ | Runs the four-level rubric over 180 structured judgments with evidence and a hallucination veto. |
 | 6-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | Runs 60 cases across three systems with complete cost accounting. |

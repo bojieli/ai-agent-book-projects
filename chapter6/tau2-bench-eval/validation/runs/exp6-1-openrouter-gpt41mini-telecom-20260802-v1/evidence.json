@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "experiment": "6-1",
+  "status": "complete_bounded_campaign",
+  "generated_at_utc": "2026-08-02T09:15:41.750622Z",
+  "source": {
+    "repository": "https://github.com/sierra-research/tau2-bench",
+    "git_commit": "8d005b0e5b9e4af0bc055886fa7f95fc86d1710e"
+  },
+  "configuration": {
+    "domain": "telecom",
+    "agent_model": "openrouter/openai/gpt-4.1-mini",
+    "user_simulator_model": "openrouter/openai/gpt-4.1-mini",
+    "agent_temperature": 0.0,
+    "user_simulator_temperature": 0.0,
+    "seed": 300,
+    "num_tasks": 5,
+    "num_trials": 1,
+    "max_concurrency": 3
+  },
+  "summary": {
+    "tasks_completed": 5,
+    "tasks_passed": 4,
+    "tasks_failed": 1,
+    "average_reward": 0.8,
+    "pass_at_1": 0.8,
+    "provider_errors": 0,
+    "termination_reasons": {
+      "user_stop": 5
+    },
+    "agent_cost_usd": 0.112672,
+    "user_simulator_cost_usd": 0.0386396,
+    "total_cost_usd": 0.1513116
+  },
+  "task_outcomes": [
+    {
+      "task_id": "[mobile_data_issue]airplane_mode_on|user_abroad_roaming_enabled_off[PERSONA:None]",
+      "reward": 1.0,
+      "duration_seconds": 45.657303331419826,
+      "termination_reason": "user_stop"
+    },
+    {
+      "task_id": "[mobile_data_issue]airplane_mode_on|data_mode_off[PERSONA:None]",
+      "reward": 1.0,
+      "duration_seconds": 55.878302780911326,
+      "termination_reason": "user_stop"
+    },
+    {
+      "task_id": "[mobile_data_issue]data_mode_off|data_usage_exceeded[PERSONA:None]",
+      "reward": 1.0,
+      "duration_seconds": 64.09661028999835,
+      "termination_reason": "user_stop"
+    },
+    {
+      "task_id": "[mobile_data_issue]data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+      "reward": 1.0,
+      "duration_seconds": 45.86838342156261,
+      "termination_reason": "user_stop"
+    },
+    {
+      "task_id": "[mobile_data_issue]data_saver_mode_on|data_usage_exceeded[PERSONA:Easy]",
+      "reward": 0.0,
+      "duration_seconds": 96.15721444413066,
+      "termination_reason": "user_stop"
+    }
+  ],
+  "failed_task_analysis": {
+    "task_id": "[mobile_data_issue]data_saver_mode_on|data_usage_exceeded[PERSONA:Easy]",
+    "messages": 71,
+    "customer_phone": "555-123-2002",
+    "incorrect_line_id": "L1001",
+    "incorrect_line_phone": "555-123-2001",
+    "required_line_id": "L1002",
+    "observed_wrong_line_usage_gb": 3.2,
+    "observed_wrong_line_limit_gb": 5.0,
+    "required_refuel_gb": 2.0,
+    "passed_action_checks": [
+      "toggle_data_saver_mode"
+    ],
+    "failed_action_checks": [
+      "refuel_data"
+    ],
+    "failed_environment_assertions": [
+      "assert_mobile_data_status",
+      "assert_internet_speed",
+      "assert_data_refueling_amount"
+    ],
+    "root_cause": "The Agent failed to map the supplied phone number to its matching line, continued after tool output exposed the mismatch, and therefore missed the required data-refuel path.",
+    "secondary_policy_defect": "The Agent emitted get_customer_by_phone and get_customer_by_name in one turn despite the one-tool-call-at-a-time telecom policy."
+  },
+  "upstream_public_verification": {
+    "command": ".venv/bin/tau2 submit verify-trajs ../tau2-bench-eval/validation/runs/exp6-1-openrouter-gpt41mini-telecom-20260802-v1/trajectories.json",
+    "format_validation": "passed",
+    "trial_count_validation": "passed",
+    "task_validation": "failed_expected_bounded_campaign",
+    "task_validation_reason": "The verifier requires full-domain leaderboard coverage; this manuscript experiment deliberately runs five telecom tasks."
+  },
+  "acceptance_boundary": "Complete for the manuscript's bounded five-task Experiment 6-1 campaign; not a full-domain tau2-bench leaderboard submission."
+}
