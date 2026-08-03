@@ -15,12 +15,8 @@ from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
 from datetime import datetime, timedelta
-import requests
 from openai import OpenAI
 import traceback
-import tempfile
-import shutil
-from pathlib import Path
 
 try:
     from dotenv import load_dotenv
@@ -589,7 +585,7 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                             "file_path": file_path,
                             "is_binary": True
                         }
-            except Exception as e:
+            except Exception:
                 # If we can't read it as binary, probably permission issue
                 raise
             
@@ -601,9 +597,32 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                     total_lines = len(all_lines)
                     
                     # Calculate line range
-                    start_line = (begin_line - 1) if begin_line is not None else 0
+                    if begin_line is not None:
+                        try:
+                            begin_line = int(begin_line)
+                        except (ValueError, TypeError):
+                            pass
+                    if number_lines is not None:
+                        try:
+                            number_lines = int(number_lines)
+                        except (ValueError, TypeError):
+                            pass
+
+                    start_line = (begin_line - 1) if isinstance(begin_line, int) else 0
                     if start_line < 0:
                         start_line = 0
+                    if total_lines == 0 and start_line == 0:
+                        return {
+                            "success": True,
+                            "file_path": file_path,
+                            "content": "",
+                            "size_bytes": 0,
+                            "total_lines": 0,
+                            "begin_line": 1,
+                            "end_line": 0,
+                            "lines_read": 0,
+                            "partial_read": True
+                        }
                     if start_line >= total_lines:
                         return {
                             "success": False,
@@ -650,7 +669,7 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                         "lines": len(content.splitlines()),
                         "partial_read": False
                     }
-        except Exception as e:
+        except Exception:
             raise
     
     def _tool_write_file(self, file_path: str, content: str) -> Dict[str, Any]:
@@ -672,7 +691,7 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                 "bytes_written": len(content.encode('utf-8')),
                 "lines_written": len(content.splitlines())
             }
-        except Exception as e:
+        except Exception:
             raise
     
     def _tool_code_interpreter(self, code: str) -> Dict[str, Any]:
@@ -702,7 +721,7 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                 "stdout": stdout,
                 "stderr": stderr,
             }
-        except Exception as e:
+        except Exception:
             raise
     
     def _tool_execute_command(self, command: str, working_dir: Optional[str] = None) -> Dict[str, Any]:
@@ -756,7 +775,7 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
             }
         except subprocess.TimeoutExpired:
             raise TimeoutError(f"Command timed out after 30 seconds: {command}")
-        except Exception as e:
+        except Exception:
             raise
     
     def _tool_rewrite_todo_list(self, items: List[str]) -> Dict[str, Any]:
@@ -949,7 +968,7 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                                     elif 'file_path' in result:
                                         logger.info(f"  ✅ Success: File operation on {result['file_path']}")
                                     else:
-                                        logger.info(f"  ✅ Success: Operation completed")
+                                        logger.info("  ✅ Success: Operation completed")
                                 elif result.get('success') is False:
                                     # Handle explicit failures (like binary file detection)
                                     if result.get('is_binary'):
@@ -957,7 +976,7 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                                     else:
                                         logger.info(f"  ⚠️ Failed: {result.get('error', 'Unknown error')[:100]}")
                                 else:
-                                    logger.info(f"  ✅ Success: Operation completed")
+                                    logger.info("  ✅ Success: Operation completed")
                             else:
                                 result_preview = str(result).replace('\n', ' ')[:150]
                                 logger.info(f"  ✅ Result: {result_preview}")
