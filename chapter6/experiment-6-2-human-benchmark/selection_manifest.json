@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "experiment": "6-2",
+  "title": "Human-operator benchmark trajectories",
+  "operator": {
+    "identity": "Codex",
+    "role": "human operator",
+    "disclosure": "These are Codex's hands-on trajectories, not work performed by the repository owner or user."
+  },
+  "selection_locked_at_utc": "2026-08-03T13:44:00Z",
+  "selection_status": "locked_before_solving_and_before_gold-answer inspection",
+  "replacement_policy": "No outcome-based replacement. Environment or evaluator failures are recorded as failures or infrastructure-blocked results for the selected ID.",
+  "difficulty_policy": {
+    "GAIA": "Upstream Level 1, Level 2, and Level 3 map to easy, medium, and hard.",
+    "AndroidWorld": "Upstream task_metadata.json labels easy, medium, and hard.",
+    "SWE-bench Verified": "Upstream <15 min fix, 15 min - 1 hour, and >4 hours labels map to easy, medium, and hard.",
+    "tau2-bench": "The upstream telecom generator calls composed-subtask count its difficulty axis. Two, three, and nine subtasks are used as easy, medium, and hard.",
+    "Terminal-Bench": "Upstream task.yaml labels easy, medium, and hard.",
+    "OSWorld-Verified": "Upstream has no difficulty field. Preregistered operational tiers are: one persistent setting in one app (easy), one structured artifact transformation in one app (medium), and a cross-app artifact transformation (hard)."
+  },
+  "sources": {
+    "GAIA": {
+      "repository": "https://huggingface.co/datasets/gaia-benchmark/GAIA",
+      "commit": "682dd723ee1e1697e00360edccf2366dc8418dd9"
+    },
+    "AndroidWorld": {
+      "repository": "https://github.com/google-research/android_world",
+      "commit": "0e95d641e244504c22087cc29b013f3b2428a261",
+      "inventory_sha256": "fd3cf23ebb26e461a961dd60ff3f011d7e6ec78c992c10babbbdb86f9dd591e1"
+    },
+    "SWE-bench Verified": {
+      "repository": "https://github.com/SWE-bench/SWE-bench",
+      "commit": "5cd4be9fb23971679cbbafe5a0ecade27cef99be",
+      "dataset": "SWE-bench/SWE-bench_Verified:test"
+    },
+    "tau2-bench": {
+      "repository": "https://github.com/sierra-research/tau2-bench",
+      "commit": "8d005b0e5b9e4af0bc055886fa7f95fc86d1710e",
+      "inventory_sha256": "192a2c143b3b512c37c3775fdf6c5040c33717388620c38b140c731dc6153cd7"
+    },
+    "Terminal-Bench": {
+      "repository": "https://github.com/laude-institute/terminal-bench",
+      "commit": "8384a179b1b8688f6ea5233a4d9d51218df1ac96"
+    },
+    "OSWorld-Verified": {
+      "repository": "https://github.com/xlang-ai/OSWorld",
+      "commit": "8365edc975efd0477a0d62444a5beed562ab5a7b",
+      "inventory_sha256": "fc673eefcd28dbdfeb690fedd852736ee2a69bc52ed4cd869f2dc1a0db25a719"
+    }
+  },
+  "tasks": [
+    {"benchmark": "GAIA", "tier": "easy", "upstream_difficulty": "Level 1", "task_id": "2d83110e-a098-4ebb-9987-066c06fa42d0"},
+    {"benchmark": "GAIA", "tier": "medium", "upstream_difficulty": "Level 2", "task_id": "7dd30055-0198-452e-8c25-f73dbe27dcb8", "attachment": "7dd30055-0198-452e-8c25-f73dbe27dcb8.pdb"},
+    {"benchmark": "GAIA", "tier": "hard", "upstream_difficulty": "Level 3", "task_id": "56db2318-640f-477a-a82f-bc93ad13e882"},
+
+    {"benchmark": "AndroidWorld", "tier": "easy", "upstream_difficulty": "easy", "task_id": "ContactsAddContact"},
+    {"benchmark": "AndroidWorld", "tier": "medium", "upstream_difficulty": "medium", "task_id": "CameraTakeVideo"},
+    {"benchmark": "AndroidWorld", "tier": "hard", "upstream_difficulty": "hard", "task_id": "BrowserMultiply"},
+
+    {"benchmark": "SWE-bench Verified", "tier": "easy", "upstream_difficulty": "<15 min fix", "task_id": "django__django-11133"},
+    {"benchmark": "SWE-bench Verified", "tier": "medium", "upstream_difficulty": "15 min - 1 hour", "task_id": "astropy__astropy-13033"},
+    {"benchmark": "SWE-bench Verified", "tier": "hard", "upstream_difficulty": ">4 hours", "task_id": "sphinx-doc__sphinx-7590"},
+
+    {"benchmark": "tau2-bench", "tier": "easy", "upstream_difficulty": "2 composed subtasks", "task_id": "[mobile_data_issue]data_mode_off|data_usage_exceeded[PERSONA:None]"},
+    {"benchmark": "tau2-bench", "tier": "medium", "upstream_difficulty": "3 composed subtasks", "task_id": "[mobile_data_issue]bad_vpn|data_saver_mode_on|user_abroad_roaming_disabled_on[PERSONA:None]"},
+    {"benchmark": "tau2-bench", "tier": "hard", "upstream_difficulty": "9 composed subtasks", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_sms_permission|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_on[PERSONA:None]"},
+
+    {"benchmark": "Terminal-Bench", "tier": "easy", "upstream_difficulty": "easy", "task_id": "fix-permissions"},
+    {"benchmark": "Terminal-Bench", "tier": "medium", "upstream_difficulty": "medium", "task_id": "simple-sheets-put"},
+    {"benchmark": "Terminal-Bench", "tier": "hard", "upstream_difficulty": "hard", "task_id": "dna-assembly"},
+
+    {"benchmark": "OSWorld-Verified", "tier": "easy", "upstream_difficulty": null, "derived_difficulty": "one persistent setting in one app", "task_id": "2cd43775-7085-45d8-89fa-9e35c0a915cf"},
+    {"benchmark": "OSWorld-Verified", "tier": "medium", "upstream_difficulty": null, "derived_difficulty": "one structured artifact transformation in one app", "task_id": "7e429b8d-a3f0-4ed0-9b58-08957d00b127"},
+    {"benchmark": "OSWorld-Verified", "tier": "hard", "upstream_difficulty": null, "derived_difficulty": "cross-app artifact transformation", "task_id": "51f5801c-18b3-4f25-b0c3-02f85507a078"}
+  ]
+}
