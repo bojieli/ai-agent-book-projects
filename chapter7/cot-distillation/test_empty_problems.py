@@ -51,6 +51,15 @@ def test_nonempty_pass_rate_still_computes():
     assert pass_rate == 100.0
 
 
+def test_native_moonshot_reasoning_effort_uses_supported_top_level_control():
+    assert gd.reasoning_extra_body("https://api.moonshot.cn/v1", "low", 0) == {
+        "reasoning_effort": "low"
+    }
+    assert gd.reasoning_extra_body("https://openrouter.ai/api/v1", "low", 0) == {
+        "reasoning": {"effort": "low"}
+    }
+
+
 def test_targeted_resume_preserves_verified_rows_and_retries_failure(tmp_path, monkeypatch):
     problems = tmp_path / "problems.jsonl"
     raw = tmp_path / "raw.jsonl"

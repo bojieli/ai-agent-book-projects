@@ -111,6 +111,19 @@ def get_reasoning(message) -> str:
     return "\n".join(p for p in parts if p)
 
 
+def reasoning_extra_body(base_url: str, effort: str, max_tokens: int) -> dict:
+    """Build the provider-specific reasoning control without silently ignoring it."""
+    if effort:
+        if "api.moonshot.cn" in base_url:
+            # Moonshot's native OpenAI-compatible endpoint accepts the same
+            # top-level control used by the Experiment 7-8 Kimi campaign.
+            return {"reasoning_effort": effort}
+        return {"reasoning": {"effort": effort}}
+    if max_tokens:
+        return {"reasoning": {"max_tokens": max_tokens}}
+    return {}
+
+
 async def distill_one(client: AsyncOpenAI, problem: dict, args, semaphore) -> dict:
     """对单道题调用教师模型，返回完整轨迹记录。"""
     record = {
@@ -129,12 +142,11 @@ async def distill_one(client: AsyncOpenAI, problem: dict, args, semaphore) -> di
         for attempt in range(args.max_retries + 1):
             try:
                 kwargs = {}
-                if args.reasoning_effort:
-                    # OpenRouter 风格：按 effort 请求思维链（Claude Opus 4.8 等自适应思考模型）
-                    kwargs["extra_body"] = {"reasoning": {"effort": args.reasoning_effort}}
-                elif args.reasoning_max_tokens:
-                    # OpenRouter 风格：按 token 预算请求思维链（Claude Sonnet 4.5 等手动预算模型）
-                    kwargs["extra_body"] = {"reasoning": {"max_tokens": args.reasoning_max_tokens}}
+                reasoning_body = reasoning_extra_body(
+                    args.base_url, args.reasoning_effort, args.reasoning_max_tokens
+                )
+                if reasoning_body:
+                    kwargs["extra_body"] = reasoning_body
                 resp = await asyncio.wait_for(
                     client.chat.completions.create(
                         model=args.model,

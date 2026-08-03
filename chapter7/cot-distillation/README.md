@@ -184,16 +184,17 @@ python evaluate_student.py \
 | `train_student.py` | 真实 SFT 参数更新；提示 token mask、LoRA/全参训练和训练 manifest |
 | `evaluate_student.py` | 同题三臂评测、配对显著性与教师式行为验收 |
 
-当前仓库保存的 23/24 Kimi K3 AIME 轨迹完成了第一步（`aime-2016-9-I` 因三次超时
-未采集）。第二步与第三步已在 RTX PRO 6000 Blackwell Workstation Edition 上完成
+当前仓库保存了 24/24 Kimi K3 AIME 完整轨迹。规则验证器接受其中 23 条进入 SFT；
+`aime-2016-9-I` 在原生 low-reasoning 控制下完成，但答案错误，因此被正确拒绝。
+第二步与第三步已在 RTX PRO 6000 Blackwell Workstation Edition 上完成
 真实 CUDA 训练：[`student_sft_preflight_20260801_gpu.json`](validation/student_sft_preflight_20260801_gpu.json)
 证明训练栈可用；[`training_manifest.json`](checkpoints/exp7-9-qwen25-1.5b-kimi-k3-20260801-v1/training_manifest.json)
 记录了 Qwen2.5-1.5B-Instruct + LoRA 的真实参数更新（3 epochs，约 27 秒，最终 loss
-2.17）；[`experiment_7_9_gpu_20260801_v1.json`](validation/experiment_7_9_gpu_20260801_v1.json)
+2.17）；[`experiment_7_9_complete_20260803_v2.json`](validation/experiment_7_9_complete_20260803_v2.json)
 给出同题三臂对照：基线 1/24、学生 2/24、教师 23/24，配对检验 p=1.0 不显著，能力
 恢复比例约 4.5%。学生输出中确实出现了少量反思/验算行为，但总体与基线接近。
-实验状态仍是 **incomplete**：教师轨迹未补齐，且学生在 23 条样本上的提升未达到
-统计显著。下一步可重试缺失轨迹并扩大训练数据，再评估蒸馏效果。
+实验执行与证据状态为 **complete**；配对提升不显著是本次实验的负结果，而不是缺失门禁。
+若要检验更强的蒸馏效果，下一轮应扩大已验证训练集后重新训练，而不是把负结果改写成成功。
 
 ## AIME 实测：三位教师的对照（24 题）
 
