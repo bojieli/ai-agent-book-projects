@@ -108,6 +108,10 @@ def main() -> int:
         sim = output / "storage" / statuses[arm]["current_sim"]
         export_state(sim, destination / "states" / arm)
     shutil.copytree(output / "receipts", destination / "receipts")
+    compatibility = output / "compatibility"
+    if not compatibility.is_dir():
+        raise SystemExit("missing action-arena compatibility receipts")
+    shutil.copytree(compatibility, destination / "compatibility")
     shutil.copytree(output / "analysis", destination / "analysis")
     upstream_commit = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=args.upstream, text=True
@@ -159,4 +163,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

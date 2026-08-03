@@ -11,3 +11,10 @@ def test_runner_creates_movement_directory_after_fork():
     assert constructor in text
     assert mkdir in text
     assert text.index(constructor) < text.index(mkdir)
+
+
+def test_packager_retains_action_arena_compatibility_receipts():
+    source = Path(__file__).resolve().parents[1] / "package_evidence.py"
+    text = source.read_text(encoding="utf-8")
+    assert 'compatibility = output / "compatibility"' in text
+    assert 'shutil.copytree(compatibility, destination / "compatibility")' in text

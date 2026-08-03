@@ -52,6 +52,40 @@ def contains_secret(path: Path) -> bool:
     return False
 
 
+def positive_provider_usage(row: dict) -> bool:
+    """Accept provider usage objects even when they contain nested details."""
+
+    usage = (row.get("response") or {}).get("usage") or {}
+    total = usage.get("total_tokens")
+    if isinstance(total, (int, float)) and not isinstance(total, bool):
+        return total > 0
+    return any(
+        isinstance(value, (int, float))
+        and not isinstance(value, bool)
+        and value > 0
+        for value in usage.values()
+    )
+
+
+def compatibility_correction_valid(row: dict) -> bool:
+    allowed = row.get("accessible_arenas")
+    return (
+        row.get("kind") == "action_arena_compatibility_correction"
+        and isinstance(allowed, list)
+        and bool(allowed)
+        and row.get("normalized_output") in allowed
+        and row.get("raw_output") != row.get("normalized_output")
+        and isinstance(row.get("fallback"), bool)
+        and row.get("reason")
+        in {
+            "stripped_response_wrappers",
+            "case_insensitive_exact_match",
+            "invalid_output_current_arena_fallback",
+            "invalid_output_first_accessible_fallback",
+        }
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("run_dir", type=Path)
@@ -90,6 +124,36 @@ def main() -> int:
         for row in provider_rows
         if row.get("success") and row.get("response")
     )
+    compatibility_rows = []
+    compatibility_receipts_valid = True
+    for arm, status in statuses.items():
+        for checkpoint in status.get("checkpoints", []):
+            relative = checkpoint.get("compatibility_receipt")
+            expected = checkpoint.get("compatibility_corrections")
+            if not isinstance(expected, int) or expected < 0:
+                compatibility_receipts_valid = False
+                continue
+            if expected == 0 and relative is None:
+                continue
+            if not isinstance(relative, str):
+                compatibility_receipts_valid = False
+                continue
+            relative_path = Path(relative)
+            if (
+                not relative_path.parts
+                or relative_path.parts[0] != "compatibility"
+                or ".." in relative_path.parts
+            ):
+                compatibility_receipts_valid = False
+                continue
+            path = run_dir / relative_path
+            if not path.is_file():
+                compatibility_receipts_valid = False
+                continue
+            rows = list(jsonl_rows(path))
+            if len(rows) != expected:
+                compatibility_receipts_valid = False
+            compatibility_rows.extend(rows)
     judge_rows = list(jsonl_rows(run_dir / "analysis" / "plausibility_judgments.jsonl"))
     judge_ids = [row.get("response", {}).get("id") for row in judge_rows if row.get("success")]
     no_reflection_memory = analysis["arms"]["no_reflection"]["memory"]
@@ -139,11 +203,10 @@ def main() -> int:
         and all(provider_ids)
         and provider_models["qwen3.7-flash"] > 0
         and provider_models["text-embedding-v4"] > 0
-        and all(
-            sum((row.get("response") or {}).get("usage", {}).values()) > 0
-            for row in provider_rows
-            if row.get("success")
-        ),
+        and all(positive_provider_usage(row) for row in provider_rows),
+        "action_arena_compatibility_bounded": compatibility_receipts_valid
+        and len(compatibility_rows) > 0
+        and all(compatibility_correction_valid(row) for row in compatibility_rows),
         "deterministic_analysis_complete": set(analysis.get("arms", {})) == set(ARMS)
         and all(
             analysis["arms"][arm]["simulation"]["steps"] == 17_280 for arm in ARMS
@@ -172,6 +235,7 @@ def main() -> int:
             "steps_per_arm": 17_280,
             "provider_receipts": len(provider_rows),
             "provider_response_ids": len(provider_ids),
+            "action_arena_compatibility_corrections": len(compatibility_rows),
             "judge_response_ids": len(judge_ids),
             "movement_rows": movement_counts,
             "memory_rows": {arm: len(rows) for arm, rows in memory_rows.items()},
@@ -195,4 +259,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
