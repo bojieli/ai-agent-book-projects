@@ -421,6 +421,8 @@ class Judge:
         否则返回 None（继续游戏）。"""
         w = len(self.wolves(alive_only=True))
         g = len([p for p in self.alive() if p.role != Role.WEREWOLF])
+        if w == 0 and g == 0:
+            return Faction.UNDECIDED
         if w == 0:
             return Faction.GOOD
         if w >= g:  # 狼人数不少于好人数 → 狼人胜（屠边简化规则）
