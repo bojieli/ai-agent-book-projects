@@ -94,6 +94,14 @@ async def read_human_decision_line(stream: Any, timeout_seconds: float) -> str:
         ) from exc
 
 
+def remaining_before_deadline(deadline: float, *, now: float | None = None) -> float:
+    """Return a positive remaining duration for a shared approval deadline."""
+    remaining = deadline - (time.monotonic() if now is None else now)
+    if remaining <= 0:
+        raise RuntimeError("live human decision input timed out before presentation")
+    return remaining
+
+
 def notification_readiness(env: dict[str, str]) -> dict[str, bool]:
     """Report whether all inputs for each real notification gate are present."""
     email_service = bool(
@@ -158,6 +166,18 @@ def redact_material(value: Any, sensitive_values: tuple[str, ...]) -> Any:
             redacted = redacted.replace(sensitive, "[REDACTED]")
         return redacted
     return value
+
+
+def retain_human_decision(
+    human_decision: dict[str, Any],
+    mcp_result: dict[str, Any],
+    sensitive_values: tuple[str, ...],
+) -> dict[str, Any]:
+    """Build a redacted decision record without changing the in-memory decision."""
+    return redact_material(
+        {**human_decision, "mcp_result": mcp_result},
+        sensitive_values,
+    )
 
 
 def sha(path: Path) -> str:
@@ -314,6 +334,10 @@ async def run(
                 "artifact": "validation-only",
                 "consequence": "An approval authorizes publishing this run in a GitHub pull request; a rejection keeps it local.",
             }
+            approval_deadline = (
+                time.monotonic() + human_timeout_seconds
+                if interactive_human else None
+            )
             approval_task = asyncio.create_task(call("hitl_approval", "mcp_request_admin_approval", {
                 "request_message": approval_message,
                 "context": approval_context,
@@ -326,6 +350,7 @@ async def run(
             human_decision = None
             if request_id:
                 if interactive_human:
+                    assert approval_deadline is not None
                     presented_at = datetime.now(timezone.utc).isoformat()
                     print("HITL_REQUEST=" + json.dumps({
                         "request_id": request_id,
@@ -333,9 +358,16 @@ async def run(
                         "context": approval_context,
                         "reply_format": "APPROVE[: notes] or REJECT[: notes]",
                     }, ensure_ascii=False), flush=True)
-                    raw_decision = await read_human_decision_line(
-                        sys.stdin, human_timeout_seconds
-                    )
+                    try:
+                        raw_decision = await read_human_decision_line(
+                            sys.stdin,
+                            remaining_before_deadline(approval_deadline),
+                        )
+                    except RuntimeError:
+                        if not approval_task.done():
+                            approval_task.cancel()
+                        await asyncio.gather(approval_task, return_exceptions=True)
+                        raise
                     if not raw_decision:
                         raise RuntimeError("live human decision input closed before a response")
                     approved, notes = parse_human_decision(raw_decision)
@@ -362,8 +394,14 @@ async def run(
                         "admin_notes": "Approved by the automated validation operator; not a claimed human judgment."})
             approval = await approval_task
             if human_decision is not None:
-                human_decision["mcp_result"] = approval["payload"]
-                write_json(run_dir / "human_decision.json", human_decision)
+                write_json(
+                    run_dir / "human_decision.json",
+                    retain_human_decision(
+                        human_decision,
+                        approval["payload"],
+                        sensitive_values,
+                    ),
+                )
             timeout = await call("hitl_timeout", "mcp_request_admin_approval", {
                 "request_message": "No operator will answer this timeout probe.",
                 "context": {"probe": True}, "timeout_seconds": 1, "urgent": False})

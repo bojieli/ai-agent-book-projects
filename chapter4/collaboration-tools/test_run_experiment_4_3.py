@@ -22,6 +22,8 @@ from run_experiment_4_3 import (
     publication_is_authorized,
     read_human_decision_line,
     redact_material,
+    remaining_before_deadline,
+    retain_human_decision,
 )
 
 
@@ -84,6 +86,28 @@ class CampaignControlTests(unittest.TestCase):
 
     def test_kimi_api_key_is_in_receipt_redaction_inputs(self) -> None:
         self.assertIn("KIMI_API_KEY", SENSITIVE_ENV_NAMES)
+
+    def test_retained_human_decision_redacts_free_form_notes(self) -> None:
+        secret = "kimi-secret-value"
+        retained = retain_human_decision(
+            {
+                "request_id": "request-1",
+                "approved": True,
+                "admin_notes": f"approved with {secret}",
+            },
+            {
+                "success": True,
+                "request_id": "request-1",
+                "approved": True,
+                "admin_notes": f"approved with {secret}",
+            },
+            (secret,),
+        )
+        self.assertEqual(retained["admin_notes"], "approved with [REDACTED]")
+        self.assertEqual(
+            retained["mcp_result"]["admin_notes"],
+            "approved with [REDACTED]",
+        )
 
     def test_late_human_approval_does_not_authorize_publication(self) -> None:
         decision = {"request_id": "request-1", "approved": True}
@@ -214,6 +238,14 @@ class HumanInputTimeoutTests(unittest.IsolatedAsyncioTestCase):
                 await read_human_decision_line(stream, 0.01)
         finally:
             os.close(write_descriptor)
+
+    def test_shared_approval_deadline_rejects_an_expired_window(self) -> None:
+        self.assertEqual(remaining_before_deadline(10, now=4), 6)
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "live human decision input timed out before presentation",
+        ):
+            remaining_before_deadline(10, now=10)
 
 
 class SubagentTimestampTests(unittest.IsolatedAsyncioTestCase):
