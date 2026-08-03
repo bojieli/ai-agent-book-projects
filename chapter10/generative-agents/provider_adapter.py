@@ -56,6 +56,9 @@ class ReceiptRecorder:
 
     def set_path(self, path: Path) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
+        # A checkpoint with no model calls is valid. Materialize its receipt
+        # now so the runner can still compress and retain an empty JSONL file.
+        path.touch(exist_ok=True)
         self._path = path
 
     def record(
@@ -198,4 +201,3 @@ def install(
     openai.ChatCompletion.create = staticmethod(chat_create)
     openai.Completion.create = staticmethod(completion_create)
     openai.Embedding.create = staticmethod(embedding_create)
-

@@ -4,12 +4,20 @@ import json
 import sys
 from types import SimpleNamespace
 
-from provider_adapter import install
+from provider_adapter import ReceiptRecorder, install
 
 
 class Response(dict):
     def to_dict_recursive(self):
         return dict(self)
+
+
+def test_recorder_materializes_zero_call_checkpoint(tmp_path):
+    receipt = tmp_path / "nested" / "empty.jsonl"
+    recorder = ReceiptRecorder()
+    recorder.set_path(receipt)
+    assert receipt.is_file()
+    assert receipt.read_bytes() == b""
 
 
 def test_adapter_overrides_legacy_models_and_compacts_embeddings(tmp_path, monkeypatch):
@@ -78,4 +86,3 @@ def test_adapter_overrides_legacy_models_and_compacts_embeddings(tmp_path, monke
     assert compact["embedding_dimensions"] == 2
     assert "embedding" not in compact
     assert "test-key-not-retained" not in receipt.read_text()
-
