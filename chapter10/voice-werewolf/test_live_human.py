@@ -1,5 +1,4 @@
-from werewolf.game import Judge, create_players
-from werewolf.human import HumanPlayerAgent
+import json
 import sys
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -9,9 +8,10 @@ import pytest
 
 import demo
 from werewolf.agent import PlayerAgent
-from werewolf.human import LiveVoiceSession
+from werewolf.game import Judge, create_players
+from werewolf.human import HumanPlayerAgent, LiveVoiceSession
 from werewolf.roles import Faction, Role
-from werewolf.strategy_audit import strategy_acceptance_passes, validate_strategy_result
+from werewolf.strategy_audit import evaluate_strategy, strategy_acceptance_passes, validate_strategy_result
 
 
 class NoAudio:
@@ -171,6 +171,59 @@ def test_strategy_acceptance_requires_all_named_criteria_and_evidence():
     assert checked["schema_valid"] is False
     assert checked["overall_pass"] is False
     assert not strategy_acceptance_passes(checked)
+
+
+def test_strategy_audit_retains_invalid_schema_and_tries_next_backend(monkeypatch):
+    from werewolf import strategy_audit as audit_module
+
+    criteria = {
+        name: {"status": "pass", "evidence": f"quoted evidence for {name}"}
+        for name in (
+            "werewolf_concealment", "seer_timing_and_evidence",
+            "villager_logical_reasoning", "role_consistency",
+        )
+    }
+    malformed = {
+        "criteria": dict(list(criteria.items())[:3]),
+        "role_consistency": criteria["role_consistency"],
+    }
+    valid = {"criteria": criteria, "overall_pass": True}
+
+    class Completion:
+        def __init__(self, payload, response_id):
+            self.payload = payload
+            self.response_id = response_id
+
+        def create(self, **kwargs):
+            return SimpleNamespace(
+                id=self.response_id,
+                model="reported-model",
+                usage=SimpleNamespace(model_dump=lambda: {"prompt_tokens": 10, "completion_tokens": 5}),
+                choices=[SimpleNamespace(message=SimpleNamespace(content=__import__("json").dumps(self.payload)))],
+            )
+
+    def client(payload, response_id):
+        return SimpleNamespace(chat=SimpleNamespace(completions=Completion(payload, response_id)))
+
+    monkeypatch.setattr(audit_module, "_backends", lambda: [
+        (client(malformed, "bad-schema"), "judge-a", "provider-a"),
+        (client(valid, "valid-schema"), "judge-b", "provider-b"),
+    ])
+    judge = SimpleNamespace(
+        players=[SimpleNamespace(name="P1", role=Role.VILLAGER)],
+        action_history=[{"actor": "P1", "role": "村民", "action": "vote", "target": "P2"}],
+    )
+    result = evaluate_strategy(judge)
+    assert result["schema_valid"] is True
+    assert result["overall_pass"] is True
+    assert result["provider"] == "provider-b"
+    assert [attempt["response_id"] for attempt in result["judge_attempts"]] == [
+        "bad-schema", "valid-schema"
+    ]
+    assert result["judge_attempts"][0]["schema_valid"] is False
+    # Invalid-attempt provenance must remain acyclic when attached to the
+    # accepted result so the retained acceptance report can be serialized.
+    json.dumps(result)
 
 
 def test_barge_in_cancels_playback_and_transcribes_without_real_audio(monkeypatch, tmp_path):
