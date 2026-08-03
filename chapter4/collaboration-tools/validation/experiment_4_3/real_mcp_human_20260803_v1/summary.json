@@ -25,7 +25,7 @@
   "tool_call_count": 79,
   "model_call_count": 6,
   "interactive_human": true,
-  "publication_authorized": true,
+  "publication_authorized": false,
   "real_notifications_enabled": false,
   "notification_readiness": {
     "email": false,

@@ -172,7 +172,12 @@ preflights. Use `--interactive-human` to pause on a real pending MCP approval
 and accept exactly one live `APPROVE` or `REJECT` line from standard input. Use
 `--real-notifications` only when email, Telegram, and Slack are all configured;
 the runner fails before creating a run directory if any channel is missing and
-redacts credentials and delivery identifiers from retained receipts.
+redacts credentials and delivery identifiers from retained receipts. The
+context comparison deliberately retains a hard-coded, non-secret privacy canary
+in its input receipt so the validator can prove that it is absent from both
+prepared handoffs. `publication_authorized` records only whether MCP accepted a
+live approval to publish that run's validation artifact; it does not imply that
+the experiment passed or that `official_complete` is true.
 
 ```bash
 python run_experiment_4_3.py \

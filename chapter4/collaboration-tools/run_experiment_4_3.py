@@ -39,6 +39,12 @@ SENSITIVE_ENV_NAMES = {
     "HITL_ADMIN_EMAIL",
     "HITL_WEBHOOK_URL",
 }
+DELIVERY_GATES = {
+    "real_email_notification",
+    "real_im_notification",
+    "real_slack_notification",
+}
+SYNTHETIC_PRIVACY_CANARY = "PRIVATE-MARKER-MUST-BE-FILTERED"
 
 
 def parse_human_decision(value: str) -> tuple[bool, str]:
@@ -65,6 +71,42 @@ def notification_readiness(env: dict[str, str]) -> dict[str, bool]:
         ),
         "slack": bool(env.get("SLACK_WEBHOOK_URL")),
     }
+
+
+def human_decision_accepted(
+    human_decision: dict[str, Any] | None,
+    mcp_result: dict[str, Any],
+) -> bool:
+    """Return whether MCP accepted the live decision for the same request."""
+    return bool(
+        human_decision
+        and mcp_result.get("success") is True
+        and mcp_result.get("timeout") is not True
+        and mcp_result.get("approved") is human_decision.get("approved")
+        and mcp_result.get("request_id") == human_decision.get("request_id")
+    )
+
+
+def publication_is_authorized(
+    human_decision: dict[str, Any] | None,
+    mcp_result: dict[str, Any],
+) -> bool:
+    """Return whether an accepted live decision explicitly approved publication."""
+    return bool(
+        human_decision_accepted(human_decision, mcp_result)
+        and human_decision.get("approved") is True
+    )
+
+
+def classify_status(gates: dict[str, bool], *, interactive_human: bool) -> str:
+    """Classify a run while reserving ``blocked`` for unavailable external gates."""
+    if all(gates.values()):
+        return "passed"
+    exempt_gates = set(DELIVERY_GATES)
+    if not interactive_human:
+        exempt_gates.add("real_human_decision")
+    core_gates = (value for name, value in gates.items() if name not in exempt_gates)
+    return "blocked" if all(core_gates) else "failed"
 
 
 def redact_material(value: Any, sensitive_values: tuple[str, ...]) -> Any:
@@ -188,7 +230,9 @@ async def run(
                 "customer": "Ada", "request": "Refund an item bought 3 days ago for SGD 80",
                 "policy": "Refunds within 7 days and below SGD 100 may be approved",
                 "irrelevant_history": ["weather chat", "shipping FAQ", "newsletter"],
-                "private_note": "PRIVATE-MARKER-MUST-BE-FILTERED",
+                # This is a non-secret canary retained in the input receipt so
+                # the filtered handoff can be checked independently.
+                "private_note": SYNTHETIC_PRIVACY_CANARY,
             }
             minimal = await call("minimal_sync", "mcp_spawn_subagent", {
                 "task": "Decide whether the refund meets the supplied policy and explain.",
@@ -317,7 +361,7 @@ async def run(
             and by_case["minimal_sync"].get("context_strategy") == "minimal"
             and by_case["llm_generated_sync"].get("context_strategy") == "llm_generated"
             and by_case["llm_generated_sync"].get("prep_tokens", 0) > 0
-            and "PRIVATE-MARKER-MUST-BE-FILTERED" not in
+            and SYNTHETIC_PRIVACY_CANARY not in
                 by_case["llm_generated_sync"].get("prepared_context", "")),
         "raw_model_usage_latency_receipts": bool(llm_receipts) and all(
             row.get("response", {}).get("id") and row.get("usage", {}).get("total_tokens") is not None
@@ -332,18 +376,14 @@ async def run(
             and approval["payload"].get("timeout") is not True
             and timeout["payload"].get("timeout") is True
             and timeout["payload"].get("approved") is False),
-        "real_human_decision": bool(
-            human_decision
-            and approval["payload"].get("approved") == human_decision["approved"]
-            and approval["payload"].get("request_id") == human_decision["request_id"]
+        "real_human_decision": human_decision_accepted(
+            human_decision, approval["payload"]
         ),
         "real_email_notification": email["payload"].get("success") is True,
         "real_im_notification": telegram["payload"].get("success") is True,
         "real_slack_notification": slack["payload"].get("success") is True,
     }
-    core = [name for name in gates if name not in {
-        "real_human_decision", "real_email_notification", "real_im_notification", "real_slack_notification"}]
-    status = "passed" if all(gates.values()) else ("blocked" if all(gates[name] for name in core) else "failed")
+    status = classify_status(gates, interactive_human=interactive_human)
     summary = {"experiment": "4-3", "campaign_id": campaign_id,
                "generated_at": datetime.now(timezone.utc).isoformat(),
                "status": status, "official_complete": status == "passed", "gates": gates,
@@ -351,7 +391,9 @@ async def run(
                "tool_call_count": len(receipts), "model_call_count": len(llm_receipts),
                "interactive_human": interactive_human,
                "human_timeout_seconds": human_timeout_seconds if interactive_human else None,
-               "publication_authorized": bool(human_decision and human_decision["approved"]),
+               "publication_authorized": publication_is_authorized(
+                   human_decision, approval["payload"]
+               ),
                "real_notifications_enabled": real_notifications,
                "notification_readiness": readiness}
     write_json(run_dir / "summary.json", summary)

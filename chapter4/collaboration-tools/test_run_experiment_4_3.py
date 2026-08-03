@@ -1,16 +1,23 @@
 """Focused tests for the Experiment 4-3 campaign controls."""
 
+import json
 import sys
 import unittest
+from datetime import datetime
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 
 import hitl_tools
+import subagent_tools
 
 from run_experiment_4_3 import (
+    classify_status,
+    human_decision_accepted,
     notification_readiness,
     parse_human_decision,
+    publication_is_authorized,
     redact_material,
 )
 
@@ -72,6 +79,65 @@ class CampaignControlTests(unittest.TestCase):
             },
         )
 
+    def test_late_human_approval_does_not_authorize_publication(self) -> None:
+        decision = {"request_id": "request-1", "approved": True}
+        timed_out = {
+            "success": True,
+            "request_id": "request-1",
+            "approved": False,
+            "timeout": True,
+        }
+        self.assertFalse(human_decision_accepted(decision, timed_out))
+        self.assertFalse(publication_is_authorized(decision, timed_out))
+
+    def test_accepted_rejection_is_a_real_decision_but_not_publication_approval(self) -> None:
+        decision = {"request_id": "request-1", "approved": False}
+        rejected = {
+            "success": True,
+            "request_id": "request-1",
+            "approved": False,
+        }
+        self.assertTrue(human_decision_accepted(decision, rejected))
+        self.assertFalse(publication_is_authorized(decision, rejected))
+
+    def test_interactive_human_failure_is_not_mislabeled_as_blocked(self) -> None:
+        gates = {
+            "core": True,
+            "real_human_decision": False,
+            "real_email_notification": False,
+            "real_im_notification": False,
+            "real_slack_notification": False,
+        }
+        self.assertEqual(
+            classify_status(gates, interactive_human=True),
+            "failed",
+        )
+        self.assertEqual(
+            classify_status(gates, interactive_human=False),
+            "blocked",
+        )
+
+    def test_retained_publication_authorization_matches_accepted_mcp_result(self) -> None:
+        validation = Path(__file__).resolve().parent / "validation" / "experiment_4_3"
+        expected = {
+            "real_mcp_human_20260803_v1": False,
+            "real_mcp_human_20260803_v2": True,
+        }
+        for campaign_id, authorized in expected.items():
+            with self.subTest(campaign_id=campaign_id):
+                run_dir = validation / campaign_id
+                decision = json.loads(
+                    (run_dir / "human_decision.json").read_text(encoding="utf-8")
+                )
+                summary = json.loads(
+                    (run_dir / "summary.json").read_text(encoding="utf-8")
+                )
+                self.assertEqual(summary["publication_authorized"], authorized)
+                self.assertEqual(
+                    publication_is_authorized(decision, decision["mcp_result"]),
+                    authorized,
+                )
+
 
 class HitlTerminalStateTests(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self) -> None:
@@ -116,6 +182,30 @@ class HitlTerminalStateTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(duplicate["success"])
         self.assertEqual(duplicate["current_status"], "rejected")
         self.assertEqual(hitl_tools._pending_requests[request_id]["status"], "rejected")
+
+
+class SubagentTimestampTests(unittest.IsolatedAsyncioTestCase):
+    async def asyncTearDown(self) -> None:
+        subagent_tools._subagents.clear()
+
+    async def test_created_at_is_timezone_aware_utc(self) -> None:
+        prepared = {
+            "context_text": "test context",
+            "context_tokens": 2,
+            "prep_tokens": 0,
+            "notes": "test",
+        }
+        turn = {"reply": "done", "prompt_tokens": 2, "total_tokens": 3}
+        with (
+            patch.object(subagent_tools, "_prepare_context", return_value=prepared),
+            patch.object(subagent_tools, "_run_turn", return_value=turn),
+        ):
+            result = await subagent_tools.spawn_subagent("test task")
+        created_at = datetime.fromisoformat(
+            subagent_tools._subagents[result["subagent_id"]]["created_at"]
+        )
+        self.assertIsNotNone(created_at.utcoffset())
+        self.assertEqual(created_at.utcoffset().total_seconds(), 0)
 
 
 if __name__ == "__main__":

@@ -16,6 +16,7 @@ EXPECTED_BLOCKERS = [
     "real_im_notification",
     "real_slack_notification",
 ]
+SYNTHETIC_PRIVACY_CANARY = "PRIVATE-MARKER-MUST-BE-FILTERED"
 REQUIRED_TRUE_GATES = {
     "real_mcp_catalog_has_required_primitives",
     "two_real_context_strategies_compared",
@@ -101,6 +102,13 @@ def main() -> int:
             and row.get("usage", {}).get("total_tokens", 0) > 0
             and row.get("latency_seconds", 0) > 0
             for row in model_receipts
+        ),
+        "synthetic_privacy_canary_filtered": all(
+            SYNTHETIC_PRIVACY_CANARY
+            in by_case[case]["arguments"]["parent_context"].get("private_note", "")
+            and SYNTHETIC_PRIVACY_CANARY
+            not in by_case[case]["payload"].get("prepared_context", "")
+            for case in ("minimal_sync", "llm_generated_sync")
         ),
         "manifest_exact_and_valid": set(manifest_files) == actual_files
         and all(
