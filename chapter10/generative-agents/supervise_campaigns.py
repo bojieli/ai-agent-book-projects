@@ -110,7 +110,12 @@ def main() -> int:
     if status_path.exists():
         previous = json.loads(status_path.read_text())
         for arm, pid in previous.get("pids", {}).items():
-            if arm in ARMS and pid:
+            if (
+                arm in ARMS
+                and pid
+                and process_alive(pid)
+                and not process_alive(pids.get(arm))
+            ):
                 pids[arm] = pid
         for arm, count in previous.get("attempts", {}).items():
             if arm in ARMS:
