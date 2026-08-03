@@ -1,0 +1,64 @@
+{
+  "benchmark": "GAIA",
+  "operator": "Codex acting as the human operator",
+  "source_commit": "682dd723ee1e1697e00360edccf2366dc8418dd9",
+  "gold_inspected_when_recorded": false,
+  "official_evaluator": "GAIA validation answer checker from the pinned dataset metadata",
+  "cases": [
+    {
+      "tier": "easy",
+      "task_id": "2d83110e-a098-4ebb-9987-066c06fa42d0",
+      "about": "Interpret a sentence written in reverse and provide the opposite of the word left.",
+      "trajectory": [
+        "Read the string from right to left.",
+        "Recovered the instruction: If you understand this sentence, write the opposite of the word left as the answer.",
+        "Mapped left to its directional opposite."
+      ],
+      "submitted_answer": "right",
+      "official_answer": "right",
+      "official_reward": 1.0,
+      "result": "passed",
+      "evaluation_explanation": "The submitted word exactly matched the stored validation answer."
+    },
+    {
+      "tier": "medium",
+      "task_id": "7dd30055-0198-452e-8c25-f73dbe27dcb8",
+      "about": "Parse the attached 5wb7 PDB with Biopython and measure the first two listed atoms, rounded to the nearest picometer.",
+      "trajectory": [
+        "Fetched only the selected LFS attachment and verified it was 2,897,289 bytes.",
+        "Attempted an isolated Python environment; creation failed because ensurepip/python3.10-venv was missing.",
+        "Installed python3.10-venv with apt and created /home/ubuntu/.venvs/exp6-2-gaia-v2.",
+        "Installed biopython==1.85.",
+        "Parsed the structure with Bio.PDB.PDBParser(QUIET=True), iterated get_atoms(), and selected atom N then atom CA of chain A residue 2.",
+        "Computed first - second through Biopython: 1.4564234018325806 Angstrom.",
+        "Rounded to 0.01 Angstrom because one picometer is 0.01 Angstrom."
+      ],
+      "observed_atoms": {
+        "first": "('5wb7', 0, 'A', (' ', 2, ' '), ('N', ' '))",
+        "second": "('5wb7', 0, 'A', (' ', 2, ' '), ('CA', ' '))"
+      },
+      "submitted_answer": "1.46",
+      "official_answer": "1.456",
+      "official_reward": 0.0,
+      "result": "failed",
+      "evaluation_explanation": "The prompt requested rounding to the nearest picometer, for which 1.46 Angstrom is the requested presentation. The pinned reference checker nevertheless compared numeric values exactly to the stored 1.456, so the official result is a failure; the answer was not revised after inspection."
+    },
+    {
+      "tier": "hard",
+      "task_id": "56db2318-640f-477a-a82f-bc93ad13e882",
+      "about": "Infer an unknown alternating checksum weight and an adjacent transposed column from ten ISBN-like records.",
+      "trajectory": [
+        "Removed hyphens and converted each 13-digit row to integers.",
+        "Enumerated alternate weights 2 through 9.",
+        "Enumerated allowed adjacent swaps with smaller indices 3 through 10, excluding the first three positions and final checksum position.",
+        "For every candidate, applied weights 1,w,1,w,... across all 13 digits and required every row's weighted sum modulo 10 to equal zero.",
+        "Observed exactly one solution: (7, 9)."
+      ],
+      "submitted_answer": "7, 9",
+      "official_answer": "7, 9",
+      "official_reward": 1.0,
+      "result": "passed",
+      "evaluation_explanation": "The unique enumerated candidate exactly matched the stored validation answer."
+    }
+  ]
+}

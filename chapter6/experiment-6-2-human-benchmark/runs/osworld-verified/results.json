@@ -1,0 +1,75 @@
+{
+  "benchmark": "OSWorld-Verified",
+  "operator": "Codex acting as the human operator",
+  "source_commit": "8365edc975efd0477a0d62444a5beed562ab5a7b",
+  "environment": "Upstream Docker/KVM Ubuntu VM with Ubuntu.qcow2; all computer interaction used visible pyautogui actions through the benchmark environment.",
+  "artifact_policy": "Full-resolution step screenshots remain outside Git. The adjacent easy-, medium-, and hard-trajectory.jsonl files preserve every exact pyautogui action submitted before evaluation; this file preserves the readable trajectory and first official result.",
+  "cases": [
+    {
+      "tier": "easy",
+      "task_id": "2cd43775-7085-45d8-89fa-9e35c0a915cf",
+      "about": "Enable LibreOffice AutoRecovery and set its interval to three minutes.",
+      "trajectory": [
+        {"step": 1, "note": "Open LibreOffice Options with its keyboard shortcut.", "action": "pyautogui.hotkey('alt','f12')"},
+        {"step": 2, "note": "Select the Load/Save settings category.", "action": "pyautogui.click(575,580)"},
+        {"step": 3, "note": "Expand the Load/Save subtree.", "action": "pyautogui.click(519,579)"},
+        {"step": 4, "note": "Open Load/Save > General.", "action": "pyautogui.click(578,602)"},
+        {"step": 5, "note": "Enable AutoRecovery and replace 10 with 3 minutes.", "action": "pyautogui.click(827,398); pyautogui.click(1121,398); pyautogui.hotkey('ctrl','a'); pyautogui.write('3')"},
+        {"step": 6, "note": "Commit the settings and reopen Options to verify persistence.", "action": "pyautogui.click(1437,859); pyautogui.hotkey('alt','f12')"},
+        {"step": 7, "note": "Close the verified dialog without changing it.", "action": "pyautogui.click(1421,858)"}
+      ],
+      "frozen_before_evaluation": true,
+      "official_result": 1,
+      "result": "passed",
+      "evaluation_explanation": "The official LibreOffice configuration evaluator found AutoRecovery enabled with a three-minute interval."
+    },
+    {
+      "tier": "medium",
+      "task_id": "7e429b8d-a3f0-4ed0-9b58-08957d00b127",
+      "about": "Use a branch/officer lookup table in Calc to fill officer names for every row in a second table.",
+      "trajectory": [
+        {"step": 1, "note": "Enter a VLOOKUP in F2 against the fixed A2:B7 lookup table.", "action": "Select F2; enter =VLOOKUP(E2;$A$2:$B$7;2;0); press Enter"},
+        {"step": 2, "note": "Fill the formula through all destination rows.", "action": "Select F2:F12; press Ctrl+D"},
+        {"step": 3, "note": "Save the completed workbook in place.", "action": "pyautogui.hotkey('ctrl','s')"}
+      ],
+      "frozen_before_evaluation": true,
+      "official_result": 1.0,
+      "result": "passed",
+      "evaluation_explanation": "The official spreadsheet evaluator found the correct officer for every branch row. The absolute lookup range remained fixed while E2 changed by row."
+    },
+    {
+      "tier": "hard",
+      "task_id": "51f5801c-18b3-4f25-b0c3-02f85507a078",
+      "about": "Extract all real presenter notes from an Impress presentation into an unformatted Word document named notes.docx on the Desktop.",
+      "trajectory": [
+        {"step": 1, "note": "Open Impress's View menu.", "action": "pyautogui.click(175,75)"},
+        {"step": 2, "note": "Switch to Notes view.", "action": "pyautogui.click(207,151)"},
+        {"step": 3, "note": "Advance to slide 2 and read its note.", "action": "pyautogui.press('pagedown')"},
+        {"step": 4, "note": "Advance to slide 3 and read its note.", "action": "pyautogui.press('pagedown')"},
+        {"step": 5, "note": "Advance to slide 4 and read its note.", "action": "pyautogui.press('pagedown')"},
+        {"step": 6, "note": "Advance to slide 5 and read its note.", "action": "pyautogui.press('pagedown')"},
+        {"step": 7, "note": "Advance to slide 6 and read its note.", "action": "pyautogui.press('pagedown')"},
+        {"step": 8, "note": "Advance to slide 7; observe only the empty Click to add Notes placeholder.", "action": "pyautogui.press('pagedown')"},
+        {"step": 9, "note": "Advance to slide 8 and read its note.", "action": "pyautogui.press('pagedown')"},
+        {"step": 10, "note": "Advance to slide 9 and read its note.", "action": "pyautogui.press('pagedown')"},
+        {"step": 11, "note": "Open LibreOffice Writer from the visible launcher.", "action": "pyautogui.click(35,336)"},
+        {"step": 12, "note": "Type only the eight real note texts in slide order and open Save As.", "action": "Type eight plain paragraphs; press Ctrl+Shift+S"},
+        {"step": 13, "note": "Choose Desktop, name the file notes.docx, and save as Word 2007-365.", "action": "Select Desktop; type notes.docx; click Save"}
+      ],
+      "extracted_text": [
+        "This is opening slide.",
+        "Cover slide option #1",
+        "Cover slide option #3",
+        "This is a graph.",
+        "This is a table.",
+        "This is item lists.",
+        "This is an inserted image.",
+        "Blank ending slide"
+      ],
+      "frozen_before_evaluation": true,
+      "official_result": 1,
+      "result": "passed",
+      "evaluation_explanation": "The official artifact evaluator accepted Desktop/notes.docx. It contained the eight actual presenter notes in order, omitted slide 7's empty placeholder, and added no slide numbers or formatting."
+    }
+  ]
+}
