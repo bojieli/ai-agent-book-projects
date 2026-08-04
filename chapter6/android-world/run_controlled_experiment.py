@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run a real, evidence-producing Experiment 6-10 T3A ablation.
+"""Run a real, evidence-producing Experiment 6-11 T3A ablation.
 
 This companion runner imports the adjacent, unmodified AndroidWorld checkout.
 It supports a paired control/treatment experiment and a subsequent candidate
@@ -17,6 +17,8 @@ import json
 import os
 from pathlib import Path
 import random
+import re
+import sqlite3
 import subprocess
 import sys
 import tempfile
@@ -127,6 +129,40 @@ SCOPE_CAVEAT = (
     "deployment approval, and a subset must never be reported as full-suite success."
 )
 
+EXPERIMENT_ID = "6-11"
+LEGACY_EXPERIMENT_IDS = {"6-10"}
+
+REQUIRED_APP_PACKAGES = {
+    "android world": "com.example.androidworld",
+    "audio recorder": "com.dimowner.audiorecorder",
+    "camera": "com.android.camera2",
+    "chrome": "com.android.chrome",
+    "clipper": "ca.zgrs.clipper",
+    "clock": "com.google.android.deskclock",
+    "contacts": "com.google.android.contacts",
+    "dialer": "com.google.android.dialer",
+    "files": "com.google.android.documentsui",
+    "joplin": "net.cozic.joplin",
+    "markor": "net.gsantner.markor",
+    "miniwob": "com.google.androidenv.miniwob",
+    "open tracks": "de.dennisguse.opentracks",
+    "osmand": "net.osmand",
+    "pro expense": "com.arduia.expense",
+    "recipe": "com.flauschcode.broccoli",
+    "retro music": "code.name.monkey.retromusic",
+    "settings": "com.android.settings",
+    "simple calendar pro": "com.simplemobiletools.calendar.pro",
+    "simple draw pro": "com.simplemobiletools.draw.pro",
+    "simple gallery pro": "com.simplemobiletools.gallery.pro",
+    "simple sms messenger": "com.simplemobiletools.smsmessenger",
+    "tasks": "org.tasks",
+    "vlc": "org.videolan.vlc",
+}
+
+_CONTEXT_LIMIT_ERROR = re.compile(
+    r"maximum context length is (\d+).*prompt contains at least (\d+)"
+)
+
 
 def _utc_now() -> str:
   return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
@@ -209,9 +245,326 @@ def _read_evidence(path: Path, *, purpose: str) -> dict[str, Any]:
     evidence = json.loads(path.read_text(encoding="utf-8"))
   except (OSError, json.JSONDecodeError) as error:
     raise RuntimeError(f"Could not read {purpose} evidence {path}: {error}") from error
-  if evidence.get("experiment") != "6-10" or not evidence.get("run_id"):
-    raise RuntimeError(f"Invalid {purpose} evidence: not an Experiment 6-10 artifact")
+  if (
+      evidence.get("experiment") not in {EXPERIMENT_ID, *LEGACY_EXPERIMENT_IDS}
+      or not evidence.get("run_id")
+  ):
+    raise RuntimeError(f"Invalid {purpose} evidence: not an Experiment 6-11 artifact")
   return evidence
+
+
+def _collect_app_provenance(adb_path: str, console_port: int) -> dict[str, Any]:
+  """Records the exact official app-package state visible to the benchmark."""
+  installed_output = _adb(adb_path, console_port, "shell", "pm", "list", "packages")
+  installed_packages = {
+      line.removeprefix("package:").strip()
+      for line in installed_output.splitlines()
+      if line.startswith("package:")
+  }
+  rows = []
+  missing = []
+  for app_name, package_name in REQUIRED_APP_PACKAGES.items():
+    installed = package_name in installed_packages
+    if not installed:
+      missing.append(package_name)
+    row: dict[str, Any] = {
+        "app": app_name,
+        "package": package_name,
+        "installed": installed,
+        "version_code": None,
+        "version_name": None,
+        "apk_paths": [],
+    }
+    if installed:
+      package_dump = _adb(
+          adb_path, console_port, "shell", "dumpsys", "package", package_name
+      )
+      version_code = re.search(r"\bversionCode=(\d+)", package_dump)
+      version_name = re.search(r"\bversionName=([^\s]+)", package_dump)
+      row["version_code"] = int(version_code.group(1)) if version_code else None
+      row["version_name"] = version_name.group(1) if version_name else None
+      paths = _adb(adb_path, console_port, "shell", "pm", "path", package_name)
+      row["apk_paths"] = sorted(
+          line.removeprefix("package:").strip()
+          for line in paths.splitlines()
+          if line.startswith("package:")
+      )
+    rows.append(row)
+  return {
+      "source": "direct adb package-manager query at run start",
+      "required_package_count": len(REQUIRED_APP_PACKAGES),
+      "installed_required_package_count": len(REQUIRED_APP_PACKAGES) - len(missing),
+      "complete": not missing,
+      "missing_packages": missing,
+      "apps": rows,
+  }
+
+
+def _context_safe_output_cap(message: str, requested: int) -> int | None:
+  """Returns a one-token-headroom cap from an OpenAI-style context error."""
+  context_match = _CONTEXT_LIMIT_ERROR.search(message)
+  if not context_match:
+    return None
+  # vLLM's lower-bound estimate shifted by two tokens between identical
+  # retries in the observed Notes prompts. Reserve bounded headroom rather
+  # than chasing the moving lower bound one token at a time.
+  available = (
+      int(context_match.group(1))
+      - int(context_match.group(2))
+      - 32
+  )
+  return available if 0 < available < requested else None
+
+
+def _truncate_current_ui_section(
+    prompt: str, *, max_ui_chars: int = 12000
+) -> tuple[str, int] | None:
+  """Truncates only middles of T3A action or summary UI sections."""
+  def compact_middle(
+      section: str, retained_chars: int, label: str
+  ) -> tuple[str, int] | None:
+    if len(section) <= retained_chars:
+      return None
+    front_chars = retained_chars * 2 // 3
+    back_chars = retained_chars - front_chars
+    marker = (
+        f"\n[Middle {label} UI elements omitted after the model's native "
+        "context limit was reached; original element indices are preserved.]\n"
+    )
+    compact = section[:front_chars] + marker + section[-back_chars:]
+    return compact, len(section) - len(compact)
+
+  start_marker = (
+      "\n\nHere is a list of descriptions for some UI elements on the current"
+      " screen:\n"
+  )
+  end_marker = "\nHere are some useful guidelines you need to follow:\n"
+  start = prompt.find(start_marker)
+  if start >= 0:
+    start += len(start_marker)
+    end = prompt.find(end_marker, start)
+    if end >= 0:
+      result = compact_middle(prompt[start:end], max_ui_chars, "current-screen")
+      if result is not None:
+        compact, removed = result
+        return prompt[:start] + compact + prompt[end:], removed
+
+  before_marker = "Here is the description for the before screenshot:\n"
+  after_marker = "\nHere is the description for the after screenshot:\n"
+  action_marker = "\nThis is the action you picked:"
+  before_start = prompt.find(before_marker)
+  if before_start < 0:
+    return None
+  before_start += len(before_marker)
+  before_end = prompt.find(after_marker, before_start)
+  if before_end < 0:
+    return None
+  after_start = before_end + len(after_marker)
+  after_end = prompt.find(action_marker, after_start)
+  if after_end < 0:
+    return None
+  before_result = compact_middle(
+      prompt[before_start:before_end], max_ui_chars // 2, "before-screen"
+  )
+  after_result = compact_middle(
+      prompt[after_start:after_end], max_ui_chars // 2, "after-screen"
+  )
+  if before_result is None or after_result is None:
+    return None
+  compact_before, removed_before = before_result
+  compact_after, removed_after = after_result
+  compact_prompt = (
+      prompt[:before_start]
+      + compact_before
+      + after_marker
+      + compact_after
+      + prompt[after_end:]
+  )
+  return compact_prompt, removed_before + removed_after
+
+
+def _install_uiautomator_evaluator_compatibility() -> dict[str, Any]:
+  """Keeps the official contact-draft predicate usable without a gRPC forest."""
+  from android_world.task_evals import task_eval
+  from android_world.task_evals.single import contacts
+
+  original = contacts.ContactsNewContactDraft.is_successful
+
+  def is_successful(self: Any, env: Any) -> float:
+    state = env.get_state()
+    if state.forest is not None:
+      return original(self, env)
+    task_eval.TaskEval.is_successful(self, env)
+    return float(contacts._contact_info_is_entered(  # pylint: disable=protected-access
+        ui_elements=state.ui_elements,
+        first=self.params["first"],
+        last=self.params["last"],
+        phone=self.params["phone"],
+        phone_label=self.params["phone_label"],
+    ))
+
+  contacts.ContactsNewContactDraft.is_successful = is_successful
+  return {
+      "task": "ContactsNewContactDraft",
+      "reason": "The upstream evaluator assumes state.forest, which is None for UIAutomator.",
+      "change": (
+          "When forest is None, pass state.ui_elements to the evaluator's unchanged "
+          "_contact_info_is_entered predicate."
+      ),
+      "official_predicate_preserved": True,
+  }
+
+
+def _missing_retro_queue_as_empty(get_queue: Any) -> Any:
+  """Maps the pinned Retro APK's absent queue schema to an empty observation."""
+
+  def compatible_get_queue(env: Any) -> list[str]:
+    try:
+      return get_queue(env)
+    except sqlite3.OperationalError as error:
+      if str(error) != "no such table: playing_queue":
+        raise
+      return []
+
+  return compatible_get_queue
+
+
+def _read_nonempty_with_retry(
+    read: Any, *, attempts: int = 6, delay_s: float = 1.0
+) -> list[Any]:
+  """Polls an asynchronously populated Android content provider."""
+  if attempts < 1:
+    raise ValueError("attempts must be positive")
+  result: list[Any] = []
+  for attempt in range(attempts):
+    result = read()
+    if result or attempt == attempts - 1:
+      return result
+    time.sleep(delay_s)
+  return result
+
+
+def _retry_clipper_foreground(call: Any, *args: Any, delay_s: float = 1.0) -> Any:
+  """Retries once only for AndroidWorld's documented Clipper foreground race."""
+  try:
+    return call(*args)
+  except RuntimeError as error:
+    if not str(error).startswith(
+        "Clipper app must be in the foreground to access clipboard."
+    ):
+      raise
+    time.sleep(delay_s)
+    return call(*args)
+
+
+def _install_clipper_timing_compatibility() -> dict[str, Any]:
+  """Retries the unchanged clipboard operation after a foreground race."""
+  from android_world.env import adb_utils
+
+  original_get = adb_utils.get_clipboard_contents
+  original_set = adb_utils.set_clipboard_contents
+
+  def get_clipboard_contents(env: Any) -> str:
+    return _retry_clipper_foreground(original_get, env)
+
+  def set_clipboard_contents(content: str, env: Any) -> None:
+    _retry_clipper_foreground(original_set, content, env)
+
+  adb_utils.get_clipboard_contents = get_clipboard_contents
+  adb_utils.set_clipboard_contents = set_clipboard_contents
+  return {
+      "task": "clipboard-dependent tasks",
+      "reason": (
+          "The official Clipper app intermittently returns its documented "
+          "foreground-access RuntimeError immediately after launch."
+      ),
+      "change": (
+          "Retry the unchanged clipboard get/set operation once after one second, "
+          "only for the exact Clipper foreground-access error."
+      ),
+      "task_data_and_evaluator_preserved": True,
+  }
+
+
+def _install_sms_inbox_timing_compatibility() -> dict[str, Any]:
+  """Waits for an emulator-injected SMS to appear before upstream indexes it."""
+  from android_world.env import adb_utils
+  from android_world.task_evals.single import sms
+
+  original = sms.SimpleSmsReplyMostRecent._get_received_messages  # pylint: disable=protected-access
+  original_text_emulator = adb_utils.text_emulator
+  latest_injected: dict[int, tuple[str, str]] = {}
+
+  def text_emulator(
+      env: Any, phone_number: str, message: str, timeout_sec: float = 20.0
+  ) -> Any:
+    response = original_text_emulator(env, phone_number, message, timeout_sec)
+    latest_injected[id(env)] = (phone_number, message)
+    return response
+
+  def get_received_messages(self: Any, env: Any) -> list[str]:
+    rows = _read_nonempty_with_retry(lambda: original(self, env))
+    if rows:
+      return rows
+    injected = latest_injected.get(id(env))
+    if injected is None:
+      return rows
+    phone_number, message = injected
+    address_hex = phone_number.encode("utf-8").hex()
+    body_hex = message.encode("utf-8").hex()
+    adb_utils.execute_sql_command(
+        "/data/data/com.android.providers.telephony/databases/mmssms.db",
+        (
+            "INSERT INTO sms(address,date,read,type,body,seen) VALUES("
+            f"CAST(X'{address_hex}' AS TEXT),{int(time.time() * 1000)},1,1,"
+            f"CAST(X'{body_hex}' AS TEXT),1);"
+        ),
+        env,
+    )
+    return _read_nonempty_with_retry(
+        lambda: original(self, env), attempts=3, delay_s=1.0
+    )
+
+  adb_utils.text_emulator = text_emulator
+  sms.SimpleSmsReplyMostRecent._get_received_messages = get_received_messages  # pylint: disable=protected-access
+  return {
+      "task": "SimpleSmsReplyMostRecent",
+      "reason": (
+          "The emulator inbox can remain empty after the upstream fixed five-second "
+          "wait; upstream documents the resulting list-index error in "
+          "scripts/run_suite_on_docker.py."
+      ),
+      "change": (
+          "Poll the unchanged received-message query for five additional seconds; "
+          "if the emulator console still failed to populate the inbox, insert the "
+          "exact last injected address/body into the same SMS SQLite database that "
+          "upstream already clears directly, then rerun the unchanged query."
+      ),
+      "task_data_and_evaluator_preserved": True,
+  }
+
+
+def _install_retro_queue_evaluator_compatibility() -> dict[str, Any]:
+  """Lets the official queue equality predicate score a known absent schema."""
+  from android_world.task_evals.single import retro_music
+
+  retro_music._get_playing_queue = _missing_retro_queue_as_empty(  # pylint: disable=protected-access
+      retro_music._get_playing_queue  # pylint: disable=protected-access
+  )
+  return {
+      "task": "RetroPlayingQueue",
+      "reason": (
+          "The pinned official Retro Music APK does not create the "
+          "music_playback_state.playing_queue table; upstream documents the same "
+          "runtime error in scripts/run_suite_on_docker.py."
+      ),
+      "change": (
+          "Map only sqlite3.OperationalError('no such table: playing_queue') to an "
+          "empty observed queue, then retain the official exact queue comparison."
+      ),
+      "official_predicate_preserved": True,
+      "missing_schema_scores_as_evaluator_failure": True,
+  }
 
 
 def _validate_phase1_source(evidence: dict[str, Any]) -> None:
@@ -349,6 +702,8 @@ class OpenAICompatibleLlm:
       max_tokens: int,
       timeout_s: float,
       retries: int,
+      input_cost_per_million_usd: float,
+      output_cost_per_million_usd: float,
   ):
     from openai import OpenAI
 
@@ -357,21 +712,34 @@ class OpenAICompatibleLlm:
     self.seed = seed
     self.max_tokens = max_tokens
     self.retries = retries
+    self.input_cost_per_million_usd = input_cost_per_million_usd
+    self.output_cost_per_million_usd = output_cost_per_million_usd
     self.calls = 0
     self.input_tokens = 0
     self.output_tokens = 0
     self.reasoning_tokens = 0
     self.total_latency_s = 0.0
     self.system_fingerprints: set[str] = set()
+    self.context_cap_adjustments = 0
+    self.context_prompt_truncations = 0
+    self.context_prompt_chars_removed = 0
 
   def snapshot(self) -> dict[str, Any]:
     return {
         "calls": self.calls,
         "input_tokens": self.input_tokens,
         "output_tokens": self.output_tokens,
-        "reasoning_tokens": self.reasoning_tokens,
+      "reasoning_tokens": self.reasoning_tokens,
+      "estimated_cost_usd": round(
+          self.input_tokens * self.input_cost_per_million_usd / 1_000_000
+          + self.output_tokens * self.output_cost_per_million_usd / 1_000_000,
+          9,
+      ),
         "latency_s": self.total_latency_s,
-        "system_fingerprints": sorted(self.system_fingerprints),
+      "system_fingerprints": sorted(self.system_fingerprints),
+      "context_cap_adjustments": self.context_cap_adjustments,
+      "context_prompt_truncations": self.context_prompt_truncations,
+      "context_prompt_chars_removed": self.context_prompt_chars_removed,
     }
 
   @staticmethod
@@ -380,22 +748,38 @@ class OpenAICompatibleLlm:
         "calls": after["calls"] - before["calls"],
         "input_tokens": after["input_tokens"] - before["input_tokens"],
         "output_tokens": after["output_tokens"] - before["output_tokens"],
-        "reasoning_tokens": after["reasoning_tokens"] - before["reasoning_tokens"],
+      "reasoning_tokens": after["reasoning_tokens"] - before["reasoning_tokens"],
+      "estimated_cost_usd": round(
+          after["estimated_cost_usd"] - before["estimated_cost_usd"], 9
+      ),
         "latency_s": round(after["latency_s"] - before["latency_s"], 6),
-        "system_fingerprints": after["system_fingerprints"],
+      "system_fingerprints": after["system_fingerprints"],
+      "context_cap_adjustments": (
+          after["context_cap_adjustments"] - before["context_cap_adjustments"]
+      ),
+      "context_prompt_truncations": (
+          after["context_prompt_truncations"]
+          - before["context_prompt_truncations"]
+      ),
+      "context_prompt_chars_removed": (
+          after["context_prompt_chars_removed"]
+          - before["context_prompt_chars_removed"]
+      ),
     }
 
   def predict(self, text_prompt: str) -> tuple[str, None, Any]:
     last_error = None
+    request_max_tokens = self.max_tokens
+    request_prompt = text_prompt
     for attempt in range(1, self.retries + 1):
       started = time.monotonic()
       try:
         response = self._client.chat.completions.create(
             model=self.model,
-            messages=[{"role": "user", "content": text_prompt}],
+            messages=[{"role": "user", "content": request_prompt}],
             temperature=0,
             seed=self.seed,
-            max_tokens=self.max_tokens,
+            max_tokens=request_max_tokens,
         )
         self.total_latency_s += time.monotonic() - started
         self.calls += 1
@@ -415,6 +799,19 @@ class OpenAICompatibleLlm:
       except Exception as error:  # noqa: BLE001 - API surface is provider-specific.
         self.total_latency_s += time.monotonic() - started
         last_error = error
+        message = str(error)
+        available = _context_safe_output_cap(message, request_max_tokens)
+        if available is not None:
+          request_max_tokens = available
+          self.context_cap_adjustments += 1
+          continue
+        if _CONTEXT_LIMIT_ERROR.search(message):
+          truncation = _truncate_current_ui_section(request_prompt)
+          if truncation is not None:
+            request_prompt, removed = truncation
+            self.context_prompt_truncations += 1
+            self.context_prompt_chars_removed += removed
+            continue
         if attempt < self.retries:
           time.sleep(2 ** (attempt - 1))
     raise RuntimeError(f"Real model API failed after {self.retries} attempts: {last_error}")
@@ -459,7 +856,21 @@ def _generate_llm_analysis(
       }
       for row in evidence.get("episodes", [])
   ]
+  episode_sample_strategy = "all episodes"
+  if len(episode_summary) > 200:
+    failures = [
+        row
+        for row in episode_summary
+        if row.get("status") != "completed" or row.get("success") is not True
+    ]
+    episode_summary = failures[:100]
+    episode_sample_strategy = (
+        f"first {len(episode_summary)} negative/error episodes in canonical order; "
+        "aggregate metrics cover every episode"
+    )
   analysis_input = {
+      "episode_count": len(evidence.get("episodes", [])),
+      "episode_sample_strategy": episode_sample_strategy,
       "scope": evidence.get("scope"),
       "hypothesis": evidence.get("hypothesis"),
       "phase": evidence.get("phase"),
@@ -470,7 +881,7 @@ def _generate_llm_analysis(
       "environment_boundaries": evidence.get("environment_boundaries"),
   }
   prompt = (
-      "Analyze the following real Experiment 6-10 AndroidWorld evidence. Return exactly one "
+      "Analyze the following real Experiment 6-11 AndroidWorld evidence. Return exactly one "
       "JSON object with keys summary (string), observed_failure_pattern (array of strings), "
       "cost_benefit_interpretation (string), and next_hypothesis (object with id, layer, idea, "
       "target, verification). Do not invent results, extrapolate the four-task subset to 116 "
@@ -532,6 +943,11 @@ def _parse_args() -> argparse.Namespace:
   parser.add_argument("--tasks", default=",".join(WIFI_TASKS))
   parser.add_argument("--full-suite", action="store_true")
   parser.add_argument("--trials", type=int, default=1)
+  parser.add_argument(
+      "--trial-indices",
+      help="Optional comma-separated 1-based trial shard; --trials still declares total scope.",
+  )
+  parser.add_argument("--execution-shard")
   parser.add_argument("--seed", type=int, default=42)
   parser.add_argument("--model-seed", type=int, default=42)
   parser.add_argument("--max-steps", type=int, default=10)
@@ -543,6 +959,12 @@ def _parse_args() -> argparse.Namespace:
   parser.add_argument("--max-model-tokens", type=int, default=1024)
   parser.add_argument("--model-timeout-s", type=float, default=90.0)
   parser.add_argument("--model-retries", type=int, default=3)
+  parser.add_argument("--input-cost-per-million-usd", type=float, default=0.0)
+  parser.add_argument("--output-cost-per-million-usd", type=float, default=0.0)
+  parser.add_argument("--model-source", default="hosted_api")
+  parser.add_argument("--model-revision")
+  parser.add_argument("--model-runtime")
+  parser.add_argument("--accelerator")
   parser.add_argument(
       "--adb-path",
       default=str(Path.home() / "Library/Android/sdk/platform-tools/adb"),
@@ -571,9 +993,29 @@ def _parse_args() -> argparse.Namespace:
       action="store_true",
       help="Continue missing arms from an existing output-dir evidence checkpoint.",
   )
+  parser.add_argument(
+      "--retry-errors",
+      action="store_true",
+      help="With --resume, discard checkpointed error episodes and execute them again.",
+  )
   args = parser.parse_args()
   if args.trials <= 0 or args.max_steps <= 0:
     parser.error("--trials and --max-steps must be positive")
+  if args.input_cost_per_million_usd < 0 or args.output_cost_per_million_usd < 0:
+    parser.error("model token prices cannot be negative")
+  if args.trial_indices:
+    try:
+      args.trial_indices = sorted(
+          {int(value.strip()) for value in args.trial_indices.split(",") if value.strip()}
+      )
+    except ValueError:
+      parser.error("--trial-indices must contain only comma-separated integers")
+    if not args.trial_indices or any(
+        trial < 1 or trial > args.trials for trial in args.trial_indices
+    ):
+      parser.error("--trial-indices must be between 1 and --trials")
+  else:
+    args.trial_indices = list(range(1, args.trials + 1))
   if args.full_suite and args.mode != "candidate-rerun":
     parser.error("--full-suite is only valid with --mode candidate-rerun")
   if args.mode == "candidate-rerun" and not args.source_paired_evidence:
@@ -584,6 +1026,8 @@ def _parse_args() -> argparse.Namespace:
     parser.error("paired H5C runs require --source-phase2-evidence")
   if args.resume and not args.output_dir:
     parser.error("--resume requires --output-dir")
+  if args.retry_errors and not args.resume:
+    parser.error("--retry-errors requires --resume")
   return args
 
 
@@ -738,7 +1182,7 @@ def _base_evidence(args: argparse.Namespace, run_id: str) -> dict[str, Any]:
     layered_hypotheses.append(row)
   return {
       "schema_version": 1,
-      "experiment": "6-10",
+      "experiment": EXPERIMENT_ID,
       "run_id": run_id,
       "generated_at_utc": _utc_now(),
       "command": [Path(sys.argv[0]).name, *sys.argv[1:]],
@@ -794,6 +1238,12 @@ def _base_evidence(args: argparse.Namespace, run_id: str) -> dict[str, Any]:
           "temperature": 0,
           "seed": args.model_seed,
           "max_tokens": args.max_model_tokens,
+          "source": args.model_source,
+          "revision": args.model_revision,
+          "runtime": args.model_runtime,
+          "accelerator": args.accelerator,
+          "input_cost_per_million_usd": args.input_cost_per_million_usd,
+          "output_cost_per_million_usd": args.output_cost_per_million_usd,
       },
       "environment": {},
       "environment_boundaries": [],
@@ -801,6 +1251,7 @@ def _base_evidence(args: argparse.Namespace, run_id: str) -> dict[str, Any]:
           "mode": args.mode.replace("-", "_"),
           "tasks": [],
           "trials_per_task": args.trials,
+          "selected_trials": args.trial_indices,
           "max_steps": args.max_steps,
           "base_pair_seed": args.seed,
           "transition_pause_s": args.transition_pause,
@@ -817,8 +1268,13 @@ def _base_evidence(args: argparse.Namespace, run_id: str) -> dict[str, Any]:
 
 
 def _validate_resume_evidence(evidence: dict[str, Any], args: argparse.Namespace) -> None:
-  expected_tasks = [name.strip() for name in args.tasks.split(",") if name.strip()]
   scope = evidence.get("scope", {})
+  if getattr(args, "full_suite", False):
+    expected_tasks = list(scope.get("tasks", []))
+    if len(expected_tasks) != BASELINE_TASK_COUNT:
+      raise RuntimeError("Full-suite resume checkpoint does not contain 116 tasks")
+  else:
+    expected_tasks = [name.strip() for name in args.tasks.split(",") if name.strip()]
   recorded_transition_pause = scope.get("transition_pause_s")
   if recorded_transition_pause is None:
     original_command = evidence.get("command", [])
@@ -830,13 +1286,17 @@ def _validate_resume_evidence(evidence: dict[str, Any], args: argparse.Namespace
         raise RuntimeError(
             "Resume checkpoint has an invalid original --transition-pause value"
         ) from None
-  if evidence.get("experiment") != "6-10":
-    raise RuntimeError("Resume checkpoint is not Experiment 6-10 evidence")
+  if evidence.get("experiment") not in {EXPERIMENT_ID, *LEGACY_EXPERIMENT_IDS}:
+    raise RuntimeError("Resume checkpoint is not Experiment 6-11 evidence")
   checks = {
       "hypothesis": (evidence.get("hypothesis", {}).get("id"), args.hypothesis),
       "mode": (scope.get("mode"), args.mode.replace("-", "_")),
       "tasks": (scope.get("tasks"), expected_tasks),
       "trials": (scope.get("trials_per_task"), args.trials),
+      "selected_trials": (
+          scope.get("selected_trials", list(range(1, args.trials + 1))),
+          getattr(args, "trial_indices", list(range(1, args.trials + 1))),
+      ),
       "max_steps": (scope.get("max_steps"), args.max_steps),
       "model": (evidence.get("model", {}).get("model"), args.model),
       "model_seed": (evidence.get("model", {}).get("seed"), args.model_seed),
@@ -844,6 +1304,30 @@ def _validate_resume_evidence(evidence: dict[str, Any], args: argparse.Namespace
       "base_url": (evidence.get("model", {}).get("base_url"), args.base_url),
       "max_model_tokens": (
           evidence.get("model", {}).get("max_tokens"), args.max_model_tokens
+      ),
+      "model_source": (
+          evidence.get("model", {}).get("source", "hosted_api"),
+          getattr(args, "model_source", "hosted_api"),
+      ),
+      "model_revision": (
+          evidence.get("model", {}).get("revision"),
+          getattr(args, "model_revision", None),
+      ),
+      "model_runtime": (
+          evidence.get("model", {}).get("runtime"),
+          getattr(args, "model_runtime", None),
+      ),
+      "accelerator": (
+          evidence.get("model", {}).get("accelerator"),
+          getattr(args, "accelerator", None),
+      ),
+      "input_cost": (
+          evidence.get("model", {}).get("input_cost_per_million_usd", 0.0),
+          getattr(args, "input_cost_per_million_usd", 0.0),
+      ),
+      "output_cost": (
+          evidence.get("model", {}).get("output_cost_per_million_usd", 0.0),
+          getattr(args, "output_cost_per_million_usd", 0.0),
       ),
       "transition_pause": (recorded_transition_pause, args.transition_pause),
       "skip_device_time": (
@@ -856,6 +1340,10 @@ def _validate_resume_evidence(evidence: dict[str, Any], args: argparse.Namespace
       ),
       "grpc_port": (
           evidence.get("environment", {}).get("grpc_port"), args.grpc_port
+      ),
+      "execution_shard": (
+          evidence.get("environment", {}).get("execution_shard"),
+          getattr(args, "execution_shard", None),
       ),
   }
   mismatches = [
@@ -903,6 +1391,7 @@ def _choose_paired_decision(
 
 def main() -> int:
   args = _parse_args()
+  retry_error_params: dict[tuple[str, int], Any] = {}
   if args.resume:
     output_dir = args.output_dir
     evidence = _read_evidence(
@@ -913,6 +1402,38 @@ def main() -> int:
     evidence.setdefault("resume_commands", []).append(
         [Path(sys.argv[0]).name, *sys.argv[1:]]
     )
+    if args.retry_errors:
+      error_episodes = [
+          copy.deepcopy(row)
+          for row in evidence.get("episodes", [])
+          if row.get("status") != "completed"
+      ]
+      error_count = sum(
+          row.get("status") != "completed" for row in evidence.get("episodes", [])
+      )
+      for row in error_episodes:
+        key = (str(row.get("task")), int(row.get("trial", 0)))
+        if key in retry_error_params and retry_error_params[key] != row.get("params"):
+          raise RuntimeError(
+              f"Error checkpoint contains inconsistent paired params for {key}"
+          )
+        retry_error_params[key] = copy.deepcopy(row.get("params"))
+      evidence["episodes"] = [
+          row for row in evidence.get("episodes", []) if row.get("status") == "completed"
+      ]
+      evidence.setdefault("retry_history", []).append({
+          "at_utc": _utc_now(),
+          "discarded_error_episodes": error_count,
+          "reused_checkpoint_params": len(retry_error_params),
+          "error_episode_keys": [
+              {
+                  "task": row.get("task"),
+                  "trial": row.get("trial"),
+                  "arm": row.get("arm"),
+              }
+              for row in error_episodes
+          ],
+      })
     # Upgrade interrupted schema-v1 checkpoints with the exact active policy.
     evidence["hypothesis"]["guardrails"] = (
         HYPOTHESIS_GUARDRAILS[args.hypothesis] + SCOPE_CAVEAT
@@ -922,13 +1443,17 @@ def main() -> int:
     evidence["llm_analysis"] = {"status": "pending"}
     evidence.pop("fatal_error", None)
   else:
-    run_id = "exp6-10-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_id = "exp6-11-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     output_dir = args.output_dir or Path(__file__).resolve().parent / "validation" / run_id
     output_dir.mkdir(parents=True, exist_ok=False)
     evidence = _base_evidence(args, run_id)
   secret_values = [value for key, value in os.environ.items() if "KEY" in key or "TOKEN" in key]
   env = None
   active_a11y_method = None
+  emulator_setup_completed = bool(
+      args.resume
+      and evidence.get("environment", {}).get("emulator_setup_completed") is True
+  )
   llm = None
   fatal_error = None
 
@@ -981,6 +1506,16 @@ def main() -> int:
           "source_paired_decision": paired_source.get("decision"),
           "reason": "The source paired run passed success/cost guardrails; direct candidate rerun evidence is still required.",
       }
+      evidence["decision"]["source_paired_model"] = paired_source.get("model")
+      source_model = paired_source.get("model", {}).get("model")
+      if source_model and source_model != args.model:
+        _append_boundary(
+            evidence,
+            "The full-suite candidate uses model "
+            f"{args.model}, while the promoted paired H5C source used {source_model}. "
+            "This local-GPU campaign evaluates the promoted observation treatment but is "
+            "not a same-model extension of the paired result.",
+        )
 
     api_level = int(_adb(args.adb_path, args.console_port, "shell", "getprop", "ro.build.version.sdk"))
     evidence["environment"] = {
@@ -995,7 +1530,9 @@ def main() -> int:
         "api_level": api_level,
         "physical_size": _adb(args.adb_path, args.console_port, "shell", "wm", "size"),
         "grpc_port": args.grpc_port,
+        "execution_shard": args.execution_shard,
         "perform_emulator_setup": args.perform_emulator_setup,
+        "emulator_setup_completed": emulator_setup_completed,
         "skip_device_time": args.skip_device_time,
         "a11y_method": (
             "varies_by_arm:a11y_forwarder_app_vs_uiautomator"
@@ -1006,13 +1543,74 @@ def main() -> int:
         ),
         "protobuf_bootstrap": bootstrap,
     }
+    app_provisioning = _collect_app_provenance(
+        args.adb_path, args.console_port
+    )
+    evidence["environment"]["app_provisioning"] = app_provisioning
+    if args.hypothesis in ("H5", "H5C") or args.a11y_method == "uiautomator":
+      evidence["environment"]["evaluator_compatibility"] = [
+          _install_uiautomator_evaluator_compatibility(),
+          _install_clipper_timing_compatibility(),
+          _install_sms_inbox_timing_compatibility(),
+          _install_retro_queue_evaluator_compatibility(),
+      ]
+      evidence["environment"]["model_context_compatibility"] = {
+          "trigger": "provider context-limit error after compact UIAutomator",
+          "change": (
+              "Retain at most 12,000 characters from the ends of the indexed "
+              "current-screen UI section, or 6,000 characters from the ends of each "
+              "before/after UI section in the summary prompt. Preserve prompt prefix, goal, history, "
+              "leading/trailing UI elements with original indices, chosen action, "
+              "reason, guidance, and output format; retry once."
+          ),
+          "per_episode_counters": (
+              "llm.context_prompt_truncations and "
+              "llm.context_prompt_chars_removed"
+          ),
+      }
+      _append_boundary(
+          evidence,
+          "ContactsNewContactDraft's official success predicate was fed the upstream "
+          "UIAutomator state.ui_elements because that observation mode does not populate "
+          "state.forest; the predicate and requested contact fields were not changed.",
+      )
+      _append_boundary(
+          evidence,
+          "Clipboard get/set retries once after the exact Clipper foreground-access "
+          "runtime error; the operation, content, task, and evaluator are unchanged.",
+      )
+      _append_boundary(
+          evidence,
+          "SimpleSmsReplyMostRecent polls the unchanged inbox query for up to five "
+          "additional seconds because emulator-injected SMS delivery can lag past "
+          "upstream's fixed wait. If the inbox remains empty, the exact last injected "
+          "address/body is inserted into the same SMS database that upstream clears "
+          "directly; task data and the evaluator are unchanged.",
+      )
+      _append_boundary(
+          evidence,
+          "The pinned official Retro Music APK omits the playing_queue table, a known "
+          "upstream runtime error. Only that exact missing-table condition was mapped "
+          "to an empty observed queue so the unchanged exact queue predicate records "
+          "an evaluator failure instead of losing the episode.",
+      )
+      _append_boundary(
+          evidence,
+          "If compact UIAutomator still exceeds the pinned model's native 32,768-token "
+          "context, the retry removes a bounded middle span only from indexed UI "
+          "descriptions: at most 12,000 retained characters for action selection or "
+          "6,000 for each before/after summary screen. Prompt prefix, goal, history, action, reason, "
+          "leading/trailing UI elements and indices, guidance, and output format remain; "
+          "per-episode removal counters are retained.",
+      )
     if api_level != 33:
       _append_boundary(evidence,
           f"The available AVD is API {api_level}, while upstream is tested on Pixel 6 / API 33. Results are real but not reference-environment comparable."
       )
-    if not args.perform_emulator_setup:
+    if not app_provisioning["complete"]:
       _append_boundary(evidence,
-          "The full third-party AndroidWorld app bundle was not provisioned. This run is restricted to system Settings tasks."
+          "The official AndroidWorld app bundle is incomplete; missing packages: "
+          + ", ".join(app_provisioning["missing_packages"])
       )
     if args.hypothesis in ("H5", "H5C") or args.a11y_method == "uiautomator":
       _append_boundary(evidence,
@@ -1021,6 +1619,13 @@ def main() -> int:
     if args.hypothesis == "H5C":
       _append_boundary(evidence,
           "Compact UIAutomator removes only non-semantic container nodes; observations, coordinates, Android actions, and AndroidWorld evaluators remain real."
+      )
+    if retry_error_params:
+      _append_boundary(
+          evidence,
+          "Runtime-error retries reuse the exact task parameters retained in the "
+          "discarded error checkpoints; upstream parameter-generator drift cannot "
+          "silently change the retried task.",
       )
     if args.skip_device_time:
       task_eval.TaskEval.initialize_device_time = lambda self, environment: None
@@ -1044,6 +1649,8 @@ def main() -> int:
         max_tokens=args.max_model_tokens,
         timeout_s=args.model_timeout_s,
         retries=args.model_retries,
+        input_cost_per_million_usd=args.input_cost_per_million_usd,
+        output_cost_per_million_usd=args.output_cost_per_million_usd,
     )
     checkpoint_arm_keys = {
         (row["task"], int(row["trial"]), row["arm"])
@@ -1051,17 +1658,39 @@ def main() -> int:
     }
     for task_index, task_name in enumerate(task_names):
       task_type = registry_map[task_name]
-      for trial in range(args.trials):
+      for trial in (index - 1 for index in args.trial_indices):
         pair_seed = args.seed + task_index * 1009 + trial
         random.seed(pair_seed)
         params = task_type.generate_random_params()
         pair_id = f"{task_name}:trial-{trial + 1}:seed-{pair_seed}"
+        retry_key = (task_name, trial + 1)
+        if retry_key in retry_error_params:
+          generated_params = _jsonable(params)
+          params = copy.deepcopy(retry_error_params[retry_key])
+          if generated_params != _jsonable(params):
+            evidence.setdefault("retry_parameter_drift", []).append({
+                "pair_id": pair_id,
+                "reason": (
+                    "The upstream generator drifted on resume; the exact parameters "
+                    "from the runtime-error checkpoint were reused."
+                ),
+            })
         for checkpoint_episode in evidence.get("episodes", []):
           if checkpoint_episode.get("pair_id") == pair_id:
             if checkpoint_episode.get("params") != _jsonable(params):
-              raise RuntimeError(
-                  f"Generated params do not match checkpoint for {pair_id}"
-              )
+              if args.mode == "candidate-rerun" and checkpoint_episode.get("arm") == "candidate":
+                evidence.setdefault("resume_parameter_drift", []).append({
+                    "pair_id": pair_id,
+                    "reason": (
+                        "The upstream parameter generator is not fully controlled by "
+                        "Python random.seed; the completed checkpoint remains canonical "
+                        "and was skipped rather than rerun."
+                    ),
+                })
+              else:
+                raise RuntimeError(
+                    f"Generated params do not match checkpoint for {pair_id}"
+                )
         if args.mode == "paired":
           arms = ["control", "treatment"]
           if (task_index + trial) % 2:
@@ -1079,7 +1708,17 @@ def main() -> int:
               env.close()
               env = None
               active_a11y_method = None
-            env = _load_android_env(args, arm_a11y_method)
+            load_args = copy.copy(args)
+            load_args.perform_emulator_setup = bool(
+                args.perform_emulator_setup and not emulator_setup_completed
+            )
+            env = _load_android_env(load_args, arm_a11y_method)
+            if load_args.perform_emulator_setup:
+              emulator_setup_completed = True
+              evidence["environment"]["emulator_setup_completed"] = True
+              evidence["environment"]["app_provisioning"] = _collect_app_provenance(
+                  args.adb_path, args.console_port
+              )
             active_a11y_method = arm_a11y_method
           print(f"\n=== {pair_id} / {arm} ({order_position}/{len(arms)}) ===", flush=True)
           episode = _run_episode(
@@ -1115,6 +1754,10 @@ def main() -> int:
             )
           enforce_scope_claims(evidence)
           (output_dir / "evidence.json").write_text(dumps_json(evidence), encoding="utf-8")
+          if episode["status"] != "completed" and env is not None:
+            env.close()
+            env = None
+            active_a11y_method = None
 
   except Exception as error:  # noqa: BLE001 - always persist an external blocker.
     fatal_error = redact_text(error, secret_values)[:4000]
