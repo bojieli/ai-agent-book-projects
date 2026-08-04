@@ -121,7 +121,7 @@ MCP 的生态价值在于**一次开发，处处可用**。一个 MCP 服务器�
 
 MCP 在实践中面临三个递进的挑战——同步调用的限制、工具过多时的上下文开销、以及如何将工具能力沉淀为可复用的知识。
 
-**MCP 的局限性**。MCP 的工具调用主体上仍是**请求-响应式**——客户端发起调用，等待服务器返回结果。协议本身已提供若干扩展原语：资源更新通知（notifications）让服务器告知客户端资源发生了变化，执行进度（progress）让长任务持续汇报进展，采样（sampling）允许服务器反向请求客户端的模型进行补全，征询（elicitation）允许工具在执行过程中向用户请求补充输入。但这些原语都作用于**保持连接的单个会话之内**——通知能告诉客户端“资源变了”，却没有标准方式触发 Agent 的思考循环，更无法唤醒一个当下没有运行的 Agent。跨会话、多事件源、离线唤醒的事件驱动 Agent 架构——新邮件随时可能到达、外部系统随时可能回调、Agent 需要在没有任何会话保持时被唤醒——仍需要在协议之上另行构建，这正是本章后半部分讨论事件驱动架构的原因。构建方式是分层的：MCP 负责单次工具调用的标准化交互，Agent 框架在其上通过事件队列管理多个调用的调度、并发与外部事件源的接入，本章后续的异步实验正是基于这种分层设计。
+**MCP 的局限性**。MCP 的重点是标准化 Agent 与外部能力之间的交互，而不是提供一个完整的事件运行时。协议已经能够支持多轮交互、变化订阅和长任务等复杂流程，但这些机制解决的是“一次工作流如何继续”，并不负责让 Agent 始终在线。跨会话、多事件源、离线唤醒的事件驱动架构——例如新邮件到达时启动 Agent、外部系统回调时恢复任务——仍需要在协议之上另行构建[^ch4-mcp-current]。构建方式是分层的：MCP 负责能力调用的标准化，Agent 框架负责事件接入、调度、并发和唤醒。本章后半部分讨论的正是后一层问题。
 
 **MCP 工具的上下文开销管理**。MCP 生态的快速扩张带来了一个工程问题：仅仅 5 个 MCP 服务器就可能引入数万 token 量级的工具定义开销（约 55,000 token，视具体服务器而定），在 200K 的上下文窗口里还没开始对话就用掉了近三成。Cursor 在实践中验证了一种缓解方案：将工具描述同步到文件夹中，Agent 默认只看到工具名称的索引，需要时再查询具体的定义。A/B 测试显示，这种方式使 MCP 工具相关任务的总 token 消耗减少了 46.9%。这种“文件系统作为上下文接口”的思路，与第二章讨论的 KV Cache 友好设计原则（合理组织输入格式以复用之前的计算结果、降低推理成本）和 Skills 的渐进式披露机制（不把所有信息一次性展示给模型，而是按需逐步提供）一脉相承——默认少给，按需加载。
 
@@ -129,6 +129,7 @@ Pi Coding Agent 把这一思路落实为更激进的架构取舍：核心刻意�
 
 [^ch4-pi-no-mcp]: Pi Coding Agent, “Philosophy: No MCP,” https://github.com/earendil-works/pi/tree/main/packages/coding-agent#philosophy；Mario Zechner, “What if you don’t need MCP at all?”, 2025-11-02. https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/；Pi 介绍中的相关讨论见 21:25 起：https://www.youtube.com/watch?v=Dli5slNaJu0&t=1285s（国内镜像：https://www.bilibili.com/video/BV1M7796VEHj/）
 [^ch4-pi-mcp-adapter]: `pi-mcp-adapter`, “Why This Exists” 与 “Quick Start,” https://github.com/nicobailon/pi-mcp-adapter
+[^ch4-mcp-current]: Model Context Protocol, “2026-07-28 Specification”. https://modelcontextprotocol.io/specification/2026-07-28
 
 **层次化组织与动态工具发现**。除了按需加载工具描述，当工具的数量增长到上百个时，层次化的组织方式也比扁平列表更有效。一种有效的方式是**按信息源的性质分类**：
 
@@ -139,7 +140,9 @@ Pi Coding Agent 把这一思路落实为更激进的架构取舍：核心刻意�
 
 在系统提示词中显式说明分类结构，可以帮助 LLM 快速定位到相关的工具组。更进一步的方案是前文“工具设计的演进”预告的**动态工具发现**：不把全部工具定义一次性注入上下文，而是让 Agent 通过搜索按需发现工具定义（详见本章“主动工具发现”一节）。当可用工具达到上百个时，平铺到上下文中既浪费 token 又干扰决策。Anthropic 的实验显示，这种按需检索的方式使 Opus 4 在工具使用基准上的准确率从 49% 提升到 74%。
 
-**从 MCP 到 Skills：解决工具过多的问题**。MCP 解决的是**互操作**（一次开发，处处可用），Skills 解决的是**选择过载**：当可用工具从十几个增长到数百个时，模型面对平铺的工具列表越来越难以做出正确选择。第二章介绍的 Agent Skills 用少量通用工具加可按需加载的知识文档替代大量专用工具，在根本上把“工具选择”问题转化为“知识检索”问题——后者正是大语言模型擅长的。至于一项具体能力应该做成专用 MCP 工具还是 Skill + 通用执行器，本章开头“能力表达形式的选择”一节给出的三维决策框架（参数复杂度、变更频率、模型能力）仍然适用。
+**从 MCP 到 Skills：解决工具过多的问题**。MCP 解决的是**互操作**（一次开发，处处可用），Skills 解决的是**选择过载**：当可用工具从十几个增长到数百个时，模型面对平铺的工具列表越来越难以做出正确选择。第二章介绍的 Agent Skills 用少量通用工具加可按需加载的知识文档替代大量专用工具，在根本上把“工具选择”问题转化为“知识检索”问题——后者正是大语言模型擅长的。两者并不是非此即彼：Skills 负责组织和披露能力，也可以通过 MCP 被发现和传递；MCP 则提供跨客户端的互操作[^ch4-skills-over-mcp]。至于一项具体能力应该做成专用 MCP 工具还是 Skill + 通用执行器，本章开头“能力表达形式的选择”一节给出的三维决策框架（参数复杂度、变更频率、模型能力）仍然适用。
+
+[^ch4-skills-over-mcp]: Model Context Protocol, “Build an MCP server with Agent Skills” 与 “Skills over MCP Working Group”. https://modelcontextprotocol.io/docs/2026-07-28/develop/build-with-agent-skills；https://modelcontextprotocol.io/community/working-groups/skills-over-mcp
 
 **MCP 的信任模型与安全风险**。MCP 让接入第三方工具变得前所未有的容易，但每接入一个 MCP 服务器，就等于把一段不受自己控制的文本注入了 Agent 的上下文，往往还把一份凭证交到了别人手里。主要风险有四类。
 
