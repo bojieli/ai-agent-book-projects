@@ -22,10 +22,11 @@ import subprocess
 import sys
 import time
 from datetime import datetime, timezone
+from importlib.metadata import version as package_version
 from pathlib import Path
 from typing import Any
 
-from mcp import ClientSession, StdioServerParameters
+from mcp import Client, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 HERE = Path(__file__).resolve().parent
@@ -385,7 +386,7 @@ def substantive_observation(case: str, payload: Any, paths: dict[str, Path]) -> 
 
 
 async def call_case(
-    session: ClientSession,
+    client: Client,
     case: str,
     arguments: dict[str, Any],
     paths: dict[str, Path],
@@ -393,7 +394,7 @@ async def call_case(
     tool = CASE_TO_TOOL[case]
     started = time.perf_counter()
     try:
-        result = await session.call_tool(tool, arguments=arguments)
+        result = await client.call_tool(tool, arguments=arguments)
         payload = unwrap_mcp_result(result)
         mcp_is_error = bool(getattr(result, "isError", False) or getattr(result, "is_error", False))
         success = _tool_success(payload, mcp_is_error)
@@ -508,6 +509,8 @@ def derive_acceptance(
         "catalog_from_real_mcp": (
             catalog.get("transport") == "mcp-stdio"
             and catalog.get("tools_list_received") is True
+            and catalog.get("protocol_version") == "2026-07-28"
+            and str(catalog.get("mcp_sdk_version", "")).split(".", 1)[0] == "2"
             and catalog.get("tool_count") == catalog.get("unique_tool_count")
             and catalog.get("tool_count", 0) >= 120
         ),
@@ -601,59 +604,60 @@ async def run(campaign_id: str | None = None) -> Path:
         env=server_env,
     )
     receipts: list[dict[str, Any]] = []
-    async with stdio_client(parameters) as (read, write):
-        async with ClientSession(read, write) as session:
-            initialized = await session.initialize()
-            listed = await session.list_tools()
-            schemas = [tool.model_dump(by_alias=True, exclude_none=True, mode="json") for tool in listed.tools]
-            names = [schema["name"] for schema in schemas]
-            catalog = {
-                "transport": "mcp-stdio",
-                "tools_list_received": True,
-                "server_name": initialized.serverInfo.name,
-                "server_version": initialized.serverInfo.version,
-                "tool_count": len(names),
-                "unique_tool_count": len(set(names)),
-                "tool_names": names,
-                "schemas_sha256": sha256_bytes(canonical_json(schemas).encode()),
-                "schemas": schemas,
-            }
-            write_json(campaign_dir / "catalog_receipt.json", catalog)
+    async with Client(stdio_client(parameters)) as client:
+        listed = await client.list_tools()
+        schemas = [tool.model_dump(by_alias=True, exclude_none=True, mode="json") for tool in listed.tools]
+        names = [schema["name"] for schema in schemas]
+        server_info = client.server_info
+        catalog = {
+            "transport": "mcp-stdio",
+            "tools_list_received": True,
+            "mcp_sdk_version": package_version("mcp"),
+            "protocol_version": client.protocol_version,
+            "server_name": server_info.name if server_info else None,
+            "server_version": server_info.version if server_info else None,
+            "tool_count": len(names),
+            "unique_tool_count": len(set(names)),
+            "tool_names": names,
+            "schemas_sha256": sha256_bytes(canonical_json(schemas).encode()),
+            "schemas": schemas,
+        }
+        write_json(campaign_dir / "catalog_receipt.json", catalog)
 
-            calls = [
-                ("web_search", {"query": "Model Context Protocol official specification", "num_results": 3}),
-                ("knowledge_base_search", {"query": MARKER, "knowledge_base_path": str(paths["knowledge"]), "top_k": 3}),
-                ("download", {"url": "https://www.iana.org/help/example-domains", "output_path": str(paths["downloads"] / "iana-example.html"), "timeout": 60}),
-                ("webpage_reader", {"url": "https://example.com", "extract_text": True, "extract_links": True}),
-                ("document_reader_pdf", {"file_path": str(paths["pdf"])}),
-                ("document_reader_docx", {"file_path": str(paths["docx"])}),
-                ("document_reader_pptx", {"file_path": str(paths["pptx"])}),
-                ("image_ocr", {"image_path": str(paths["image"]), "language": "eng"}),
-                ("image_analyze", {"image_path": str(paths["image"]), "prompt": "Read the prominent text and describe the simple image."}),
-                ("audio_transcribe", {"file_path": str(paths["audio"]), "model_size": "tiny", "language": "en"}),
-                ("video_parser", {"video_path": str(paths["video"]), "extract_frames": False}),
-                ("video_analyze", {"video_path": str(paths["video"]), "num_frames": 1, "prompt": "Read the text shown in this frame."}),
-                ("file_reader", {"file_path": str(paths["note"]), "max_length": 2000}),
-                ("grep", {"pattern": MARKER, "directory": str(paths["knowledge"]), "file_pattern": "*.md", "max_results": 10}),
-                ("directory_list", {"query": str(paths["mutation"]), "options_json": "{\"limit\": 20}"}),
-                ("filesystem_copy", {"source_path": "seed.txt", "destination_path": "copied.txt"}),
-                ("filesystem_move", {"source_path": "copied.txt", "destination_path": "moved.txt"}),
-                ("filesystem_delete", {"path": "moved.txt"}),
-                ("reject_parent_traversal", {"source_path": "seed.txt", "destination_path": "../escaped.txt"}),
-                ("reject_absolute_path", {"path": "/tmp"}),
-                ("reject_escaping_symlink", {"path": "escape-link"}),
-                ("weather", {"location": "Singapore"}),
-                ("yfinance_quote", {"symbol": "AAPL"}),
-                ("currency_converter", {"amount": 10, "from_currency": "USD", "to_currency": "SGD"}),
-                ("wikipedia_search", {"query": "Model Context Protocol", "language": "en", "sentences": 3}),
-                ("arxiv_search", {"query": "agentic artificial intelligence", "max_results": 2, "sort_by": "relevance"}),
-                ("calendar_events", {"calendar_id": "primary", "max_results": 5}),
-                ("notion_search", {"query": "Experiment 4-1", "page_size": 5}),
-            ]
-            for case, arguments in calls:
-                receipt = await call_case(session, case, arguments, paths)
-                receipts.append(receipt)
-                write_json(campaign_dir / "receipts" / f"{len(receipts):02d}_{case}.json", receipt)
+        calls = [
+            ("web_search", {"query": "Model Context Protocol official specification", "num_results": 3}),
+            ("knowledge_base_search", {"query": MARKER, "knowledge_base_path": str(paths["knowledge"]), "top_k": 3}),
+            ("download", {"url": "https://www.iana.org/help/example-domains", "output_path": str(paths["downloads"] / "iana-example.html"), "timeout": 60}),
+            ("webpage_reader", {"url": "https://example.com", "extract_text": True, "extract_links": True}),
+            ("document_reader_pdf", {"file_path": str(paths["pdf"])}),
+            ("document_reader_docx", {"file_path": str(paths["docx"])}),
+            ("document_reader_pptx", {"file_path": str(paths["pptx"])}),
+            ("image_ocr", {"image_path": str(paths["image"]), "language": "eng"}),
+            ("image_analyze", {"image_path": str(paths["image"]), "prompt": "Read the prominent text and describe the simple image."}),
+            ("audio_transcribe", {"file_path": str(paths["audio"]), "model_size": "tiny", "language": "en"}),
+            ("video_parser", {"video_path": str(paths["video"]), "extract_frames": False}),
+            ("video_analyze", {"video_path": str(paths["video"]), "num_frames": 1, "prompt": "Read the text shown in this frame."}),
+            ("file_reader", {"file_path": str(paths["note"]), "max_length": 2000}),
+            ("grep", {"pattern": MARKER, "directory": str(paths["knowledge"]), "file_pattern": "*.md", "max_results": 10}),
+            ("directory_list", {"query": str(paths["mutation"]), "options_json": "{\"limit\": 20}"}),
+            ("filesystem_copy", {"source_path": "seed.txt", "destination_path": "copied.txt"}),
+            ("filesystem_move", {"source_path": "copied.txt", "destination_path": "moved.txt"}),
+            ("filesystem_delete", {"path": "moved.txt"}),
+            ("reject_parent_traversal", {"source_path": "seed.txt", "destination_path": "../escaped.txt"}),
+            ("reject_absolute_path", {"path": "/tmp"}),
+            ("reject_escaping_symlink", {"path": "escape-link"}),
+            ("weather", {"location": "Singapore"}),
+            ("yfinance_quote", {"symbol": "AAPL"}),
+            ("currency_converter", {"amount": 10, "from_currency": "USD", "to_currency": "SGD"}),
+            ("wikipedia_search", {"query": "Model Context Protocol", "language": "en", "sentences": 3}),
+            ("arxiv_search", {"query": "agentic artificial intelligence", "max_results": 2, "sort_by": "relevance"}),
+            ("calendar_events", {"calendar_id": "primary", "max_results": 5}),
+            ("notion_search", {"query": "Experiment 4-1", "page_size": 5}),
+        ]
+        for case, arguments in calls:
+            receipt = await call_case(client, case, arguments, paths)
+            receipts.append(receipt)
+            write_json(campaign_dir / "receipts" / f"{len(receipts):02d}_{case}.json", receipt)
 
     outside_after = file_receipt(paths["outside_witness"])
     outside_unchanged = outside_before == outside_after

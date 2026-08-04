@@ -9,7 +9,7 @@ import pytest
 
 
 def _stub():
-    for name in ["dotenv", "requests", "mcp", "mcp.types", "mcp.server", "mcp.server.fastmcp"]:
+    for name in ["dotenv", "requests", "mcp", "mcp.types", "mcp.server"]:
         sys.modules.setdefault(name, types.ModuleType(name))
     sys.modules["dotenv"].load_dotenv = lambda *a, **k: None
     class TextContent:
@@ -17,12 +17,12 @@ def _stub():
             self.type = type
             self.text = text
     sys.modules["mcp.types"].TextContent = TextContent
-    class FastMCP:
+    class MCPServer:
         def __init__(self, *a, **k): pass
         def tool(self, *a, **k):
             def deco(fn): return fn
             return deco
-    sys.modules["mcp.server.fastmcp"].FastMCP = FastMCP
+    sys.modules["mcp.server"].MCPServer = MCPServer
 
 
 _stub()
