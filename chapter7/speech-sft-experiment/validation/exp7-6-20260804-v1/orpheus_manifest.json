@@ -1,0 +1,264 @@
+{
+  "experiment": "7-6",
+  "track": "orpheus_cross_sentence_voice_consistency",
+  "status": "trained_and_generated",
+  "seed": 7601,
+  "base_model": "unsloth/orpheus-3b-0.1-ft",
+  "base_model_revision": "eae2b6e5e429c81b95ac42a883ac64f126583d43",
+  "dataset": "maxbsoft/mrdragonfox-elise",
+  "dataset_revision": "2cc657c3f94a83df18fcd968b7531ca1a19c7f88",
+  "source_dataset_note": "Public non-disabled mirror of the disabled MrDragonFox/Elise dataset named by the upstream notebook.",
+  "train_examples_requested": 128,
+  "train_examples_encoded": 128,
+  "eval_examples_requested": 16,
+  "eval_examples_encoded": 16,
+  "train_failures": [],
+  "eval_failures": [],
+  "max_audio_seconds": 4.0,
+  "optimizer_steps": 60,
+  "effective_batch_size": 4,
+  "lora_rank": 16,
+  "pre_eval": {
+    "eval_loss": 5.237792491912842,
+    "eval_model_preparation_time": 0.0093,
+    "eval_runtime": 0.7249,
+    "eval_samples_per_second": 22.072,
+    "eval_steps_per_second": 22.072
+  },
+  "train_metrics": {
+    "train_runtime": 24.1374,
+    "train_samples_per_second": 9.943,
+    "train_steps_per_second": 2.486,
+    "total_flos": 1303634560167936.0,
+    "train_loss": 4.880102078119914,
+    "epoch": 1.875
+  },
+  "post_eval": {
+    "eval_loss": 4.86582088470459,
+    "eval_model_preparation_time": 0.0093,
+    "eval_runtime": 0.3247,
+    "eval_samples_per_second": 49.269,
+    "eval_steps_per_second": 49.269,
+    "epoch": 1.875
+  },
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+  "peak_gpu_memory_bytes": 9277800448,
+  "wall_seconds": 202.15462517738342,
+  "adapter_local_files": [
+    {
+      "path": "adapters/orpheus/README.md",
+      "bytes": 5214,
+      "sha256": "d62b94e4ab068c9379c9d6a92fa73dc9468f85ce204615543fa20db6e453e4fb"
+    },
+    {
+      "path": "adapters/orpheus/adapter_config.json",
+      "bytes": 1238,
+      "sha256": "40bd5beba0cbeb72bbe0acf0371d0ab64f1217722d3590ee165f5f9d2f745ca9"
+    },
+    {
+      "path": "adapters/orpheus/adapter_model.safetensors",
+      "bytes": 97307544,
+      "sha256": "fbd43cd5287a4b69398c29f88286e60146e9328cb48e3c22e15a2a305b25b29f"
+    },
+    {
+      "path": "adapters/orpheus/chat_template.jinja",
+      "bytes": 3827,
+      "sha256": "5816fce10444e03c2e9ee1ef8a4a1ea61ae7e69e438613f3b17b69d0426223a4"
+    },
+    {
+      "path": "adapters/orpheus/special_tokens_map.json",
+      "bytes": 508,
+      "sha256": "f17390e64274b3117a7f99afa87eb1de93097b820842c68bd626aff53d73d7f5"
+    },
+    {
+      "path": "adapters/orpheus/tokenizer.json",
+      "bytes": 22849547,
+      "sha256": "fc3fecb199b4170636dbfab986d25f628157268d37b861f9cadaca60b1353bce"
+    },
+    {
+      "path": "adapters/orpheus/tokenizer_config.json",
+      "bytes": 5403483,
+      "sha256": "e2d66c40996da379756a3209c42283e7a8203b1238b54920b070ea384fdc3a9f"
+    }
+  ],
+  "adapter_huggingface_repo": "https://huggingface.co/bojieli/exp7-6-orpheus-elise-lora",
+  "adapter_huggingface_revision": "536092e9479fa1717e2b8f9cc1be52728b273e95",
+  "audio": [
+    {
+      "prompt_id": 0,
+      "prompt": "The morning train crossed the bridge just before sunrise.",
+      "seed": 7601,
+      "path": "audio/orpheus/base/prompt_00.wav",
+      "sha256": "04e89b14b5aed1dfd9ccd11ba50eb8ab6d9d4282995ca48cebc77256ecb90216",
+      "samples": 73728,
+      "seconds": 3.072,
+      "decoded_frames": 36,
+      "first_invalid_frame": null
+    },
+    {
+      "prompt_id": 1,
+      "prompt": "Please leave the blue notebook beside the kitchen window.",
+      "seed": 7602,
+      "path": "audio/orpheus/base/prompt_01.wav",
+      "sha256": "7980d7b59dccc9b2dea59581280823586b69ca1d48862d6fac2e74a7a9bfabc2",
+      "samples": 69632,
+      "seconds": 2.9013333333333335,
+      "decoded_frames": 34,
+      "first_invalid_frame": null
+    },
+    {
+      "prompt_id": 2,
+      "prompt": "A patient astronomer mapped every bright star in the winter sky.",
+      "seed": 7603,
+      "path": "audio/orpheus/base/prompt_02.wav",
+      "sha256": "b98b50173b0a0964eedcfd1286b9e258bf5c0d304b6dcd881ac10c8bf9709918",
+      "samples": 110592,
+      "seconds": 4.608,
+      "decoded_frames": 54,
+      "first_invalid_frame": null
+    },
+    {
+      "prompt_id": 3,
+      "prompt": "We walked home slowly while the last shops turned off their lights.",
+      "seed": 7604,
+      "path": "audio/orpheus/base/prompt_03.wav",
+      "sha256": "b91552513a2ed17fab55c484e16cffd70d917a360b4735b2aea250845563b4c3",
+      "samples": 90112,
+      "seconds": 3.7546666666666666,
+      "decoded_frames": 44,
+      "first_invalid_frame": null
+    },
+    {
+      "prompt_id": 4,
+      "prompt": "Could you read the final paragraph one more time for the group?",
+      "seed": 7605,
+      "path": "audio/orpheus/base/prompt_04.wav",
+      "sha256": "45421df4a7cec956ec603fbb64811cc87fe6947afc3a0335dd8b32d40ec9ccd8",
+      "samples": 81920,
+      "seconds": 3.4133333333333336,
+      "decoded_frames": 40,
+      "first_invalid_frame": null
+    },
+    {
+      "prompt_id": 5,
+      "prompt": "The small garden stayed green even through the hottest week of July.",
+      "seed": 7606,
+      "path": "audio/orpheus/base/prompt_05.wav",
+      "sha256": "a2431d6ef66a4a798a528d185d0707f430d608764acda9586e91f82215544afb",
+      "samples": 104448,
+      "seconds": 4.352,
+      "decoded_frames": 51,
+      "first_invalid_frame": null
+    },
+    {
+      "prompt_id": 6,
+      "prompt": "I packed a warm coat, two apples, and a compass for the long hike.",
+      "seed": 7607,
+      "path": "audio/orpheus/base/prompt_06.wav",
+      "sha256": "16af5a42ac769e4194002ea1465f0666e0990d4a231e370808cc2f9057665b7d",
+      "samples": 92160,
+      "seconds": 3.84,
+      "decoded_frames": 45,
+      "first_invalid_frame": null
+    },
+    {
+      "prompt_id": 7,
+      "prompt": "Tomorrow's meeting begins at nine, so I will arrive a little early.",
+      "seed": 7608,
+      "path": "audio/orpheus/base/prompt_07.wav",
+      "sha256": "143f28842c83448b8fcea73017526274be7ac061f0aa3b727ea623f9839bcaad",
+      "samples": 98304,
+      "seconds": 4.096,
+      "decoded_frames": 48,
+      "first_invalid_frame": null
+    },
+    {
+      "prompt_id": 0,
+      "prompt": "The morning train crossed the bridge just before sunrise.",
+      "seed": 7601,
+      "path": "audio/orpheus/adapted/prompt_00.wav",
+      "sha256": "24470415a507117b9f2b6a4b3f13350a453febca782f542e592ea6d41678f9da",
+      "samples": 110592,
+      "seconds": 4.608,
+      "decoded_frames": 54,
+      "first_invalid_frame": null
+    },
+    {
+      "prompt_id": 1,
+      "prompt": "Please leave the blue notebook beside the kitchen window.",
+      "seed": 7602,
+      "path": "audio/orpheus/adapted/prompt_01.wav",
+      "sha256": "f31e8572ef2509e4537328d1b080e92f9a4d833a859068ce991220df790cf884",
+      "samples": 122880,
+      "seconds": 5.12,
+      "decoded_frames": 60,
+      "first_invalid_frame": null
+    },
+    {
+      "prompt_id": 2,
+      "prompt": "A patient astronomer mapped every bright star in the winter sky.",
+      "seed": 7603,
+      "path": "audio/orpheus/adapted/prompt_02.wav",
+      "sha256": "4ec5e55e4aa7b085f61961340a701dd2e784787e98ef4d03111a2fddc1aab457",
+      "samples": 98304,
+      "seconds": 4.096,
+      "decoded_frames": 48,
+      "first_invalid_frame": null
+    },
+    {
+      "prompt_id": 3,
+      "prompt": "We walked home slowly while the last shops turned off their lights.",
+      "seed": 7604,
+      "path": "audio/orpheus/adapted/prompt_03.wav",
+      "sha256": "07e7c5b0b9d37cc2e87cc70c31dee0adf55db8e76772e28661a33d8b14f1afe9",
+      "samples": 94208,
+      "seconds": 3.925333333333333,
+      "decoded_frames": 46,
+      "first_invalid_frame": null
+    },
+    {
+      "prompt_id": 4,
+      "prompt": "Could you read the final paragraph one more time for the group?",
+      "seed": 7605,
+      "path": "audio/orpheus/adapted/prompt_04.wav",
+      "sha256": "9033e23dcb4a31f4deb2108b04674b811c7c3c8a4b3fc638e8076675fec428ce",
+      "samples": 77824,
+      "seconds": 3.2426666666666666,
+      "decoded_frames": 38,
+      "first_invalid_frame": null
+    },
+    {
+      "prompt_id": 5,
+      "prompt": "The small garden stayed green even through the hottest week of July.",
+      "seed": 7606,
+      "path": "audio/orpheus/adapted/prompt_05.wav",
+      "sha256": "1de6449d583fb48f0db9d1ba19bbfefda60016f32b246d9562d34a6a9bd7e322",
+      "samples": 90112,
+      "seconds": 3.7546666666666666,
+      "decoded_frames": 44,
+      "first_invalid_frame": null
+    },
+    {
+      "prompt_id": 6,
+      "prompt": "I packed a warm coat, two apples, and a compass for the long hike.",
+      "seed": 7607,
+      "path": "audio/orpheus/adapted/prompt_06.wav",
+      "sha256": "0b54348eb7b0d46cbcbd1869afa0b96fde6997d79036b19e11b2b7854261e468",
+      "samples": 98304,
+      "seconds": 4.096,
+      "decoded_frames": 48,
+      "first_invalid_frame": null
+    },
+    {
+      "prompt_id": 7,
+      "prompt": "Tomorrow's meeting begins at nine, so I will arrive a little early.",
+      "seed": 7608,
+      "path": "audio/orpheus/adapted/prompt_07.wav",
+      "sha256": "e71ca35cf0c12b1fb40d30cb26a285d0207ce9f845239c5ecfdd246e605f7903",
+      "samples": 102400,
+      "seconds": 4.266666666666667,
+      "decoded_frames": 50,
+      "first_invalid_frame": null
+    }
+  ]
+}

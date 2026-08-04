@@ -1,0 +1,320 @@
+[
+  {
+    "path": "adapters/orpheus/README.md",
+    "bytes": 5214,
+    "sha256": "d62b94e4ab068c9379c9d6a92fa73dc9468f85ce204615543fa20db6e453e4fb"
+  },
+  {
+    "path": "adapters/orpheus/adapter_config.json",
+    "bytes": 1238,
+    "sha256": "40bd5beba0cbeb72bbe0acf0371d0ab64f1217722d3590ee165f5f9d2f745ca9"
+  },
+  {
+    "path": "adapters/orpheus/chat_template.jinja",
+    "bytes": 3827,
+    "sha256": "5816fce10444e03c2e9ee1ef8a4a1ea61ae7e69e438613f3b17b69d0426223a4"
+  },
+  {
+    "path": "adapters/orpheus/special_tokens_map.json",
+    "bytes": 508,
+    "sha256": "f17390e64274b3117a7f99afa87eb1de93097b820842c68bd626aff53d73d7f5"
+  },
+  {
+    "path": "adapters/sesame/README.md",
+    "bytes": 5183,
+    "sha256": "65a8c53feecbfc1e7a8cd64bc6a79baedbffd1ef6b9cc17b1ea0a5529e4d74ec"
+  },
+  {
+    "path": "adapters/sesame/adapter_config.json",
+    "bytes": 1091,
+    "sha256": "44c3053b5037214ea8862003dfeea867554c9fbb83df5728ea80e9a0915e3ee2"
+  },
+  {
+    "path": "adapters/sesame/chat_template.jinja",
+    "bytes": 2002,
+    "sha256": "b43753fbbc23be93160cccf825d2cf97dec39538cb274350216940e7acbc0fe7"
+  },
+  {
+    "path": "adapters/sesame/preprocessor_config.json",
+    "bytes": 271,
+    "sha256": "8648040cda0469976874c733acbec88c0ef094cd95628ab63b32950f01872af9"
+  },
+  {
+    "path": "adapters/sesame/special_tokens_map.json",
+    "bytes": 459,
+    "sha256": "32f404d626cf7b1b6eea36c241ae7cbd6ec29c777a8701ea48c0fe9ebb94c9b1"
+  },
+  {
+    "path": "analysis.json",
+    "bytes": 19921,
+    "sha256": "958f7bb5188233867f50ee4920a4bc8d4ae46b1af1eb46ca8eef74cde88e3f1c"
+  },
+  {
+    "path": "audio/orpheus/adapted/prompt_00.wav",
+    "bytes": 221228,
+    "sha256": "24470415a507117b9f2b6a4b3f13350a453febca782f542e592ea6d41678f9da"
+  },
+  {
+    "path": "audio/orpheus/adapted/prompt_01.wav",
+    "bytes": 245804,
+    "sha256": "f31e8572ef2509e4537328d1b080e92f9a4d833a859068ce991220df790cf884"
+  },
+  {
+    "path": "audio/orpheus/adapted/prompt_02.wav",
+    "bytes": 196652,
+    "sha256": "4ec5e55e4aa7b085f61961340a701dd2e784787e98ef4d03111a2fddc1aab457"
+  },
+  {
+    "path": "audio/orpheus/adapted/prompt_03.wav",
+    "bytes": 188460,
+    "sha256": "07e7c5b0b9d37cc2e87cc70c31dee0adf55db8e76772e28661a33d8b14f1afe9"
+  },
+  {
+    "path": "audio/orpheus/adapted/prompt_04.wav",
+    "bytes": 155692,
+    "sha256": "9033e23dcb4a31f4deb2108b04674b811c7c3c8a4b3fc638e8076675fec428ce"
+  },
+  {
+    "path": "audio/orpheus/adapted/prompt_05.wav",
+    "bytes": 180268,
+    "sha256": "1de6449d583fb48f0db9d1ba19bbfefda60016f32b246d9562d34a6a9bd7e322"
+  },
+  {
+    "path": "audio/orpheus/adapted/prompt_06.wav",
+    "bytes": 196652,
+    "sha256": "0b54348eb7b0d46cbcbd1869afa0b96fde6997d79036b19e11b2b7854261e468"
+  },
+  {
+    "path": "audio/orpheus/adapted/prompt_07.wav",
+    "bytes": 204844,
+    "sha256": "e71ca35cf0c12b1fb40d30cb26a285d0207ce9f845239c5ecfdd246e605f7903"
+  },
+  {
+    "path": "audio/orpheus/base/prompt_00.wav",
+    "bytes": 147500,
+    "sha256": "04e89b14b5aed1dfd9ccd11ba50eb8ab6d9d4282995ca48cebc77256ecb90216"
+  },
+  {
+    "path": "audio/orpheus/base/prompt_01.wav",
+    "bytes": 139308,
+    "sha256": "7980d7b59dccc9b2dea59581280823586b69ca1d48862d6fac2e74a7a9bfabc2"
+  },
+  {
+    "path": "audio/orpheus/base/prompt_02.wav",
+    "bytes": 221228,
+    "sha256": "b98b50173b0a0964eedcfd1286b9e258bf5c0d304b6dcd881ac10c8bf9709918"
+  },
+  {
+    "path": "audio/orpheus/base/prompt_03.wav",
+    "bytes": 180268,
+    "sha256": "b91552513a2ed17fab55c484e16cffd70d917a360b4735b2aea250845563b4c3"
+  },
+  {
+    "path": "audio/orpheus/base/prompt_04.wav",
+    "bytes": 163884,
+    "sha256": "45421df4a7cec956ec603fbb64811cc87fe6947afc3a0335dd8b32d40ec9ccd8"
+  },
+  {
+    "path": "audio/orpheus/base/prompt_05.wav",
+    "bytes": 208940,
+    "sha256": "a2431d6ef66a4a798a528d185d0707f430d608764acda9586e91f82215544afb"
+  },
+  {
+    "path": "audio/orpheus/base/prompt_06.wav",
+    "bytes": 184364,
+    "sha256": "16af5a42ac769e4194002ea1465f0666e0990d4a231e370808cc2f9057665b7d"
+  },
+  {
+    "path": "audio/orpheus/base/prompt_07.wav",
+    "bytes": 196652,
+    "sha256": "143f28842c83448b8fcea73017526274be7ac061f0aa3b727ea623f9839bcaad"
+  },
+  {
+    "path": "audio/sesame/adapted/giggle_0_neutral.wav",
+    "bytes": 96044,
+    "sha256": "16cbff670bebf59188345a79fcc99952ee5f7ba925e214874c71399b8b684fb6"
+  },
+  {
+    "path": "audio/sesame/adapted/giggle_0_tagged.wav",
+    "bytes": 130604,
+    "sha256": "e0d7ef91ff0c52b71a8630aa598bfbc30971149f36915fd3252511cbeb3d9a2c"
+  },
+  {
+    "path": "audio/sesame/adapted/giggle_1_neutral.wav",
+    "bytes": 157484,
+    "sha256": "653c1ed9cf6e11412cc935dee7dff90f0d059a72137faec5a63c795459658e15"
+  },
+  {
+    "path": "audio/sesame/adapted/giggle_1_tagged.wav",
+    "bytes": 234284,
+    "sha256": "9b72e5252d8b6f7a6f4c7ec3bbbf0f45e39bb2a9e6a16db8e140a9c6e9f32c2c"
+  },
+  {
+    "path": "audio/sesame/adapted/laugh_0_neutral.wav",
+    "bytes": 188204,
+    "sha256": "464bbcf2b6292d8a259cbb594e3c14a0e5ba8ca531bcac391e6a6495f9a7420c"
+  },
+  {
+    "path": "audio/sesame/adapted/laugh_0_tagged.wav",
+    "bytes": 172844,
+    "sha256": "00cf9a83ce1694de4ddab137b668306acce45c5459cee81fa3702a3a5cc94359"
+  },
+  {
+    "path": "audio/sesame/adapted/laugh_1_neutral.wav",
+    "bytes": 119084,
+    "sha256": "4cba912639254c066d906b318531574ed1c2d664c2ece8e8b2f185fa85298e88"
+  },
+  {
+    "path": "audio/sesame/adapted/laugh_1_tagged.wav",
+    "bytes": 180524,
+    "sha256": "0b25fc0881603af5831526dd4fcfcfb7dfe1539b3185ddd4358b230d16b50ea8"
+  },
+  {
+    "path": "audio/sesame/adapted/sigh_0_neutral.wav",
+    "bytes": 130604,
+    "sha256": "1cbb54147d1375513821f170b229379c8285d264d7ba4b4c568fcdb75bf3c7f0"
+  },
+  {
+    "path": "audio/sesame/adapted/sigh_0_tagged.wav",
+    "bytes": 188204,
+    "sha256": "d432582bfebcd4961ca2d3dfcfd944df252ed4826172f5987325172bcb23fd4e"
+  },
+  {
+    "path": "audio/sesame/adapted/sigh_1_neutral.wav",
+    "bytes": 111404,
+    "sha256": "b00babd0052826c46bc90a4d1e5335069ad26f6670ad7e90669f71320f715a8a"
+  },
+  {
+    "path": "audio/sesame/adapted/sigh_1_tagged.wav",
+    "bytes": 161324,
+    "sha256": "6da2951a4629a2a809e8595bd3940d5da3fe494e4e89cec5c728dcc0fd9d22d9"
+  },
+  {
+    "path": "audio/sesame/base/giggle_0_neutral.wav",
+    "bytes": 80684,
+    "sha256": "b3a6df7fe20a4e713f19f961772e908477962b335419ac5289b05fea2d9adebd"
+  },
+  {
+    "path": "audio/sesame/base/giggle_0_tagged.wav",
+    "bytes": 142124,
+    "sha256": "fe8a33bf80d471d1812c6d37586e5989eadcc10ae61c48ed02e4e516eafd2dc3"
+  },
+  {
+    "path": "audio/sesame/base/giggle_1_neutral.wav",
+    "bytes": 142124,
+    "sha256": "73b02cd34995eb75549fd5941a67c1b621b7d4f613d140f83693955d9529cd44"
+  },
+  {
+    "path": "audio/sesame/base/giggle_1_tagged.wav",
+    "bytes": 284204,
+    "sha256": "c1f7efac3892a907c7e08ecef5c013fa83db23879a1a5d1d055f81ec7efd4348"
+  },
+  {
+    "path": "audio/sesame/base/laugh_0_neutral.wav",
+    "bytes": 130604,
+    "sha256": "beb4be0e62fa63ca5c81facb5f82f7a565e027f51e0df489d8f361664b49460f"
+  },
+  {
+    "path": "audio/sesame/base/laugh_0_tagged.wav",
+    "bytes": 288044,
+    "sha256": "1a475df9255e256277a1a4fc66fee780c604977381059a04f09b33f46ebc00ce"
+  },
+  {
+    "path": "audio/sesame/base/laugh_1_neutral.wav",
+    "bytes": 99884,
+    "sha256": "85f7ed5500add23a6d5a4e51df5c0c01e00ecb2c740863b0155cb22d547bf701"
+  },
+  {
+    "path": "audio/sesame/base/laugh_1_tagged.wav",
+    "bytes": 184364,
+    "sha256": "46f2c99ca4fd65fff0c724900e9baa1f7bfab25fbc6246c669c9678c463def96"
+  },
+  {
+    "path": "audio/sesame/base/sigh_0_neutral.wav",
+    "bytes": 111404,
+    "sha256": "661c54d5ffba92518ef690cade4d3338a7d5c6f8e67882bf024d557e2b5eeeff"
+  },
+  {
+    "path": "audio/sesame/base/sigh_0_tagged.wav",
+    "bytes": 288044,
+    "sha256": "90cbd9c00b4f27ce71723bc022d3a5a0503ea6039ed7456a2b50785d86986f30"
+  },
+  {
+    "path": "audio/sesame/base/sigh_1_neutral.wav",
+    "bytes": 107564,
+    "sha256": "eb79e2600f5c4c0d571ae6e6ba5dc26c84c1547a6fb5225a9467833789c61b8a"
+  },
+  {
+    "path": "audio/sesame/base/sigh_1_tagged.wav",
+    "bytes": 161324,
+    "sha256": "3e5b8de26910376f0906253ae1effff657b927efb6382a7ff4aaeea3080d0c58"
+  },
+  {
+    "path": "compatibility_failures.json",
+    "bytes": 2089,
+    "sha256": "b63d17feb8f4fa6d77b0930c27c2b5a11593c5f76e1e7681acbd4fc118f89725"
+  },
+  {
+    "path": "failure_comparisons.json",
+    "bytes": 1838,
+    "sha256": "4ca79650a568e6164c37fe2a76577b398245f9d372cbf7d640373d3eecfdb224"
+  },
+  {
+    "path": "orpheus_manifest.json",
+    "bytes": 9215,
+    "sha256": "ea5df497cb092ba6520cbe41d82209a0e688ae7f9ea74e7764132ff05b324d6a"
+  },
+  {
+    "path": "sesame_manifest.json",
+    "bytes": 12199,
+    "sha256": "86499cd9d2bcc89823432bb54b59072044bf232ccc47f34be5079e9289ed1542"
+  },
+  {
+    "path": "adapters/orpheus/adapter_model.safetensors",
+    "bytes": 97307544,
+    "sha256": "fbd43cd5287a4b69398c29f88286e60146e9328cb48e3c22e15a2a305b25b29f",
+    "storage": "huggingface",
+    "repository": "https://huggingface.co/bojieli/exp7-6-orpheus-elise-lora",
+    "revision": "536092e9479fa1717e2b8f9cc1be52728b273e95"
+  },
+  {
+    "path": "adapters/orpheus/tokenizer.json",
+    "bytes": 22849547,
+    "sha256": "fc3fecb199b4170636dbfab986d25f628157268d37b861f9cadaca60b1353bce",
+    "storage": "huggingface",
+    "repository": "https://huggingface.co/bojieli/exp7-6-orpheus-elise-lora",
+    "revision": "536092e9479fa1717e2b8f9cc1be52728b273e95"
+  },
+  {
+    "path": "adapters/orpheus/tokenizer_config.json",
+    "bytes": 5403483,
+    "sha256": "e2d66c40996da379756a3209c42283e7a8203b1238b54920b070ea384fdc3a9f",
+    "storage": "huggingface",
+    "repository": "https://huggingface.co/bojieli/exp7-6-orpheus-elise-lora",
+    "revision": "536092e9479fa1717e2b8f9cc1be52728b273e95"
+  },
+  {
+    "path": "adapters/sesame/adapter_model.safetensors",
+    "bytes": 58125112,
+    "sha256": "23994b467b319f99bbc642f4dc2ba4d39718838cd7cbfe949311a42ebcb5480e",
+    "storage": "huggingface",
+    "repository": "https://huggingface.co/bojieli/exp7-6-sesame-elise-tags-lora",
+    "revision": "f2e042be0f38d6078976ef7e16cf49b91097f756"
+  },
+  {
+    "path": "adapters/sesame/tokenizer.json",
+    "bytes": 17210159,
+    "sha256": "92487a7224af2e53dc421a3f73056078acea66f0e86734f8d41babce66bad5cc",
+    "storage": "huggingface",
+    "repository": "https://huggingface.co/bojieli/exp7-6-sesame-elise-tags-lora",
+    "revision": "f2e042be0f38d6078976ef7e16cf49b91097f756"
+  },
+  {
+    "path": "adapters/sesame/tokenizer_config.json",
+    "bytes": 50577,
+    "sha256": "eb03e82f89eebfd9b9e2c1a2741dfc34c8982c3c14d132b0ec42fed737b832d3",
+    "storage": "huggingface",
+    "repository": "https://huggingface.co/bojieli/exp7-6-sesame-elise-tags-lora",
+    "revision": "f2e042be0f38d6078976ef7e16cf49b91097f756"
+  }
+]
