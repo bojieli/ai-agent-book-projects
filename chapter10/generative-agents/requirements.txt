@@ -1,0 +1,8 @@
+openai==0.27.10
+numpy==1.25.2
+scipy==1.11.1
+scikit-learn==1.3.0
+pandas==2.0.3
+nltk==3.6.5
+selenium==4.8.2
+pytest==8.4.2
