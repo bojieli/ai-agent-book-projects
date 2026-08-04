@@ -25,7 +25,7 @@
 | 6-7 | [model-action-threshold](model-action-threshold/) | ✅ | 同一中性 Coding Harness 下完成 GPT-5.6-sol / Claude Sonnet 5 × 三任务 × 三次重复的 18/18 单元实测；[manifest](model-action-threshold/results/exp6-7-action-threshold-20260731-v1/manifest.json)零 API 错误并绑定完整轨迹与汇总哈希 |
 | 6-8 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | 多轮 Agent 任务（客服退款）全链路成本拆解 + KV-cache 友好设计/上下文压缩的 A/B 节省量化 |
 | 6-9 | [model-benchmark](model-benchmark/) | 🚧 | 完整 8K/32K/128K × 512/2048、限流爬坡、Agent 成本与 168 小时可用性 campaign 已实现；现有[验收清单](model-benchmark/results/manifest.json)只有真实 smoke/readiness，不能替代完整长期实验 |
-| 6-11 | [android-world](android-world/) | 📖 | 本书对 T3A Agent 在 AndroidWorld 上的评估报告与失败分析笔记（实验 6-11 起点；非基准源码） |
+| 6-11 | [android-world](android-world/) | ✅ | [完整候选实验证据](android-world/validation/candidate_h5c_api33_local_qwen_20260804/evidence.json)保留 116 任务 × 5 轮的 580/580 条唯一 episode（包括评估失败），运行时错误为零：严格 T3A 成功 26 条（4.4828%），平均 evaluator reward 0.133621，由 77 条满分状态与 1 条 `0.5` 部分 reward 组成。实验在完成官方初始化且配齐 24/24 应用的 Pixel 6/API-33 上执行，本地 Qwen2.5-7B（revision `a09a35458c702b33eeacc393d103063234e8bc28`）通过 vLLM 0.19.0 运行于 RTX PRO 6000 Blackwell 96 GB。执行与证据已完成，但未批准部署；候选 Qwen 与配对源 Doubao 不同，因而不支持同模型提升或非劣性结论 |
 | 6-12 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | [正式单卡运行](openvla-robotwin2-eval/validation/runs/exp6-12-localgpu-20260803-v1/manifest.json)完成 chunk 1/25 各 128 IID + 128 OOD episodes，严格门禁及 512 个 rollout hash 全通过；chunk 1 为 0/256、chunk 25 为 26/256，低绝对成功率作为真实结果保留 |
 | — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | 基于合成 DHIS2 风格汇总数据，客观评估公共卫生报告 Agent 的工具调用、计算准确性、证据引用与无依据声明 |
 

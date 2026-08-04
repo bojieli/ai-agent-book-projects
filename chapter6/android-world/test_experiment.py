@@ -1,8 +1,9 @@
-"""Focused, offline checks for Experiment 6-10 evidence/reporting."""
+"""Focused, offline checks for Experiment 6-11 evidence/reporting."""
 
 from __future__ import annotations
 
 from argparse import Namespace
+import sqlite3
 
 import pytest
 
@@ -16,7 +17,14 @@ from experiment_core import (
     redact_text,
     render_report,
 )
-from run_controlled_experiment import _validate_resume_evidence
+from run_controlled_experiment import (
+    _context_safe_output_cap,
+    _missing_retro_queue_as_empty,
+    _read_nonempty_with_retry,
+    _retry_clipper_foreground,
+    _truncate_current_ui_section,
+    _validate_resume_evidence,
+)
 
 
 def _episode(arm: str, task: str, success: bool, latency: float) -> dict:
@@ -44,6 +52,100 @@ def test_redaction_covers_explicit_and_pattern_credentials() -> None:
   assert "abcdefghijk" not in text
   assert "sk-example123456789" not in text
   assert text.count("[REDACTED]") >= 3
+
+
+def test_retro_missing_queue_schema_becomes_empty_observation() -> None:
+  def missing_queue(_env: object) -> list[str]:
+    raise sqlite3.OperationalError("no such table: playing_queue")
+
+  assert _missing_retro_queue_as_empty(missing_queue)(object()) == []
+
+
+def test_retro_compatibility_does_not_hide_other_sqlite_errors() -> None:
+  def corrupt_database(_env: object) -> list[str]:
+    raise sqlite3.OperationalError("database disk image is malformed")
+
+  with pytest.raises(sqlite3.OperationalError, match="malformed"):
+    _missing_retro_queue_as_empty(corrupt_database)(object())
+
+
+def test_context_cap_keeps_headroom_for_provider_lower_bound() -> None:
+  error = (
+      "This model's maximum context length is 32768 tokens. However, you "
+      "requested 1024 output tokens and your prompt contains at least 31745 "
+      "input tokens."
+  )
+  assert _context_safe_output_cap(error, 1024) == 991
+  assert _context_safe_output_cap("unrelated provider error", 1024) is None
+
+
+def test_context_truncation_is_limited_to_middle_of_current_ui() -> None:
+  prefix = "prefix and goal"
+  ui = "A" * 9000 + "M" * 16384 + "Z" * 9000
+  suffix = "guidance and output format"
+  prompt = (
+      prefix
+      + "\n\nHere is a list of descriptions for some UI elements on the current screen:\n"
+      + ui
+      + "\nHere are some useful guidelines you need to follow:\n"
+      + suffix
+  )
+  result = _truncate_current_ui_section(prompt)
+  assert result is not None
+  truncated, removed = result
+  assert prefix in truncated and suffix in truncated
+  assert "A" * 1000 in truncated and "Z" * 1000 in truncated
+  assert removed > 0
+  assert len(truncated) < len(prompt)
+
+
+def test_context_truncation_handles_before_and_after_summary_ui() -> None:
+  before = "B" * 12000
+  after = "A" * 12000
+  prompt = (
+      "goal and summary rules\n"
+      "Here is the description for the before screenshot:\n"
+      + before
+      + "\nHere is the description for the after screenshot:\n"
+      + after
+      + "\nThis is the action you picked: click\nBased on the reason: test"
+  )
+  result = _truncate_current_ui_section(prompt)
+  assert result is not None
+  truncated, removed = result
+  assert "goal and summary rules" in truncated
+  assert "This is the action you picked: click" in truncated
+  assert "B" * 500 in truncated and "A" * 500 in truncated
+  assert removed > 0
+
+
+def test_sms_inbox_poll_preserves_empty_then_observed_result() -> None:
+  reads = iter([[], [], ["Row: 0, address=123, body=hello"]])
+  assert _read_nonempty_with_retry(
+      lambda: next(reads), attempts=3, delay_s=0
+  ) == ["Row: 0, address=123, body=hello"]
+
+
+def test_clipper_retry_is_limited_to_exact_foreground_error() -> None:
+  attempts = iter([
+      RuntimeError(
+          "Clipper app must be in the foreground to access clipboard. "
+          "Additionally, app privileges must be granted manually."
+      ),
+      "clipboard value",
+  ])
+
+  def flaky_call() -> str:
+    result = next(attempts)
+    if isinstance(result, Exception):
+      raise result
+    return result
+
+  assert _retry_clipper_foreground(flaky_call, delay_s=0) == "clipboard value"
+  with pytest.raises(RuntimeError, match="unrelated"):
+    _retry_clipper_foreground(
+        lambda: (_ for _ in ()).throw(RuntimeError("unrelated")), delay_s=0
+    )
 
 
 def test_paired_comparison_and_conservative_candidate_decision() -> None:
@@ -104,10 +206,49 @@ def test_full_suite_gate_requires_direct_116_by_5_evidence() -> None:
       },
       "episodes": episodes,
       "decision": {"source_paired_run_id": "paired-real"},
+      "environment": {
+          "api_level": 33,
+          "emulator_setup_completed": True,
+          "app_provisioning": {"complete": True},
+      },
   }
   enforce_scope_claims(evidence)
   assert evidence["scope"]["full_suite_completed"] is True
   assert evidence["experiment_complete"] is True
+
+
+def test_full_suite_gate_requires_reference_api_and_apps() -> None:
+  tasks = [f"task-{index}" for index in range(BASELINE_TASK_COUNT)]
+  episodes = [
+      {
+          "task": task,
+          "trial": trial,
+          "pair_seed": task_index * 1009 + trial,
+          "arm": "candidate",
+          "status": "completed",
+          "evaluator_reward": 0.0,
+      }
+      for task_index, task in enumerate(tasks)
+      for trial in range(1, 6)
+  ]
+  evidence = {
+      "scope": {
+          "mode": "candidate_rerun",
+          "tasks": tasks,
+          "trials_per_task": 5,
+      },
+      "episodes": episodes,
+      "decision": {"source_paired_run_id": "paired-real"},
+      "environment": {
+          "api_level": 35,
+          "emulator_setup_completed": False,
+          "app_provisioning": {"complete": False},
+      },
+  }
+  enforce_scope_claims(evidence)
+  assert evidence["scope"]["direct_episode_gate_completed"] is True
+  assert evidence["scope"]["full_suite_completed"] is False
+  assert evidence["experiment_complete"] is False
 
 
 def test_full_suite_gate_rejects_counters_without_direct_episodes() -> None:

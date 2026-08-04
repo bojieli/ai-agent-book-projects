@@ -1,4 +1,4 @@
-"""Pure reporting helpers for the Experiment 6-10 AndroidWorld loop.
+"""Pure reporting helpers for the Experiment 6-11 AndroidWorld loop.
 
 The runtime runner deliberately keeps AndroidWorld imports out of this module so
 the evidence checks and report generation can be tested without an emulator.
@@ -89,6 +89,13 @@ def aggregate_episodes(episodes: Iterable[Mapping[str, Any]]) -> dict[str, dict[
             int(row.get("llm", {}).get("input_tokens", 0))
             + int(row.get("llm", {}).get("output_tokens", 0))
             for row in completed
+        ),
+        "estimated_cost_usd": round(
+            sum(
+                float(row.get("llm", {}).get("estimated_cost_usd", 0.0))
+                for row in completed
+            ),
+            9,
         ),
     }
   return output
@@ -362,6 +369,11 @@ def enforce_scope_claims(evidence: dict[str, Any]) -> None:
       and distinct_tasks == BASELINE_TASK_COUNT
       and configured_trials >= 5
       and direct_episode_gate
+      and evidence.get("environment", {}).get("api_level") == 33
+      and evidence.get("environment", {}).get("emulator_setup_completed") is True
+      and evidence.get("environment", {})
+      .get("app_provisioning", {})
+      .get("complete")
   )
   scope["direct_episode_gate_completed"] = direct_episode_gate
   scope["full_suite_completed"] = full_suite
@@ -390,9 +402,16 @@ def render_report(evidence: Mapping[str, Any]) -> str:
   hypotheses = evidence.get("diagnosis", {}).get("layered_hypotheses", [])
   phase = evidence.get("phase", {})
   llm_analysis = evidence.get("llm_analysis", {})
+  controls = (
+      "same checkout, model, task parameters, generated seed policy, step budget, "
+      "Pixel 6/API-33 device class, upstream setup, and app versions across isolated shards."
+      if environment.get("shard_devices")
+      else "same checkout, model, task parameters, generated seed, step budget, and "
+      "emulator; arm order alternates by pair."
+  )
 
   lines = [
-      "# Experiment 6-10 AndroidWorld iteration report",
+      "# Experiment 6-11 AndroidWorld iteration report",
       "",
       f"- Run ID: `{evidence['run_id']}`",
       f"- Generated (UTC): `{evidence['generated_at_utc']}`",
@@ -402,6 +421,12 @@ def render_report(evidence: Mapping[str, Any]) -> str:
       f"`{environment.get('upstream_tested_api_level', 33)}`)",
       f"- Observation method: `{environment.get('a11y_method', 'a11y_forwarder_app')}`",
       f"- Provider/model: `{evidence['model']['provider']}` / `{evidence['model']['model']}`",
+      f"- Model source/runtime: `{evidence['model'].get('source', 'not recorded')}` / "
+      f"`{evidence['model'].get('runtime', 'not recorded')}`",
+      f"- Accelerator: `{evidence['model'].get('accelerator', 'not recorded')}`",
+      f"- Required apps: "
+      f"`{environment.get('app_provisioning', {}).get('installed_required_package_count', 'not reached')}/"
+      f"{environment.get('app_provisioning', {}).get('required_package_count', 'not reached')}`",
       f"- Scope: {len(scope['tasks'])} task(s), {scope['trials_per_task']} trial(s), "
       f"mode `{scope['mode']}`",
       f"- Full 116-task × 5-seed suite completed: **{str(scope['full_suite_completed']).lower()}**",
@@ -444,11 +469,10 @@ def render_report(evidence: Mapping[str, Any]) -> str:
       f"- Phase: `{phase.get('id', 'phase_1_surface')}` — "
       f"{phase.get('description', 'low-cost surface prompt ablation')}",
       f"- Independent variable: {phase.get('independent_variable', 'task-specific T3A guidelines')}",
-      "- Controls: same checkout, model, task parameters, generated seed, step budget, and "
-      "emulator; arm order alternates by pair.",
+      f"- Controls: {controls}",
       "",
-      "| Arm | Episodes | Success | Reward | Steps | Latency (s) | LLM calls | Mean tokens | Input / output tokens |",
-      "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+      "| Arm | Episodes | Success | Reward | Steps | Latency (s) | LLM calls | Mean tokens | Input / output tokens | Est. cost (USD) |",
+      "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
   ])
   for arm, row in sorted(arm_summary.items()):
     lines.append(
@@ -456,7 +480,8 @@ def render_report(evidence: Mapping[str, Any]) -> str:
         f"{_fmt(row['success_rate'])} | {_fmt(row['mean_evaluator_reward'])} | "
         f"{_fmt(row['mean_steps'])} | {_fmt(row['mean_latency_s'])} | "
         f"{_fmt(row['mean_llm_calls'])} | {_fmt(row.get('mean_total_tokens'))} | "
-        f"{row['total_input_tokens']} / {row['total_output_tokens']} |"
+        f"{row['total_input_tokens']} / {row['total_output_tokens']} | "
+        f"{row.get('estimated_cost_usd', 0.0):.6f} |"
     )
 
   if pairs:
