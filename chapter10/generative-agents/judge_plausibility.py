@@ -194,6 +194,30 @@ def call_anthropic(prompt: str, api_key: str, model: str) -> tuple[dict, dict, f
     return request_body, raw, latency
 
 
+def load_canonical_judgments(receipts_path: Path) -> list[dict]:
+    """Keep failed judge attempts as evidence without polluting canonical rows."""
+
+    if not receipts_path.exists():
+        return []
+    rows = [json.loads(line) for line in receipts_path.read_text().splitlines() if line]
+    failed = [row for row in rows if not row.get("success")]
+    if not failed:
+        return rows
+    failed_path = receipts_path.with_name(
+        f"{receipts_path.stem}.failed-{time.time_ns()}{receipts_path.suffix}"
+    )
+    failed_path.write_text(
+        "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in failed),
+        encoding="utf-8",
+    )
+    successful = [row for row in rows if row.get("success")]
+    receipts_path.write_text(
+        "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in successful),
+        encoding="utf-8",
+    )
+    return successful
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("output", type=Path)
@@ -209,11 +233,8 @@ def main() -> int:
     analysis = output / "analysis"
     analysis.mkdir(parents=True, exist_ok=True)
     receipts_path = analysis / "plausibility_judgments.jsonl"
-    completed = set()
-    rows = []
-    if receipts_path.exists():
-        rows = [json.loads(line) for line in receipts_path.read_text().splitlines() if line]
-        completed = {row["persona"] for row in rows if row.get("success")}
+    rows = load_canonical_judgments(receipts_path)
+    completed = {row["persona"] for row in rows}
     for persona in personas:
         if persona in completed:
             continue
@@ -253,10 +274,16 @@ def main() -> int:
                 "success": False,
                 "error": {"type": type(exc).__name__, "message": str(exc)[:1000]},
             }
+        if not row["success"]:
+            failed_path = receipts_path.with_name(
+                f"{receipts_path.stem}.failed-{time.time_ns()}{receipts_path.suffix}"
+            )
+            failed_path.write_text(
+                json.dumps(row, ensure_ascii=False) + "\n", encoding="utf-8"
+            )
+            raise RuntimeError(row["error"])
         with receipts_path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(row, ensure_ascii=False) + "\n")
-        if not row["success"]:
-            raise RuntimeError(row["error"])
         rows.append(row)
 
     successful = [row for row in rows if row.get("success") and row["persona"] in personas]
@@ -299,4 +326,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
