@@ -1,0 +1,66 @@
+{
+  "benchmark": "SWE-bench Verified",
+  "operator": "Codex acting as the human operator",
+  "source_commit": "5cd4be9fb23971679cbbafe5a0ecade27cef99be",
+  "dataset": "SWE-bench/SWE-bench_Verified:test",
+  "official_run_id": "exp6-2-human-20260803",
+  "reference_patches_inspected": false,
+  "summary": {"submitted": 3, "resolved": 2, "unresolved": 1, "errors": 0},
+  "cases": [
+    {
+      "tier": "easy",
+      "task_id": "django__django-11133",
+      "base_commit": "879cc3da6249e920b8d54518a0ae06de835d7373",
+      "about": "Make HttpResponse preserve the bytes represented by a memoryview instead of serializing the memoryview object's repr.",
+      "trajectory": [
+        "Read the issue statement and hint, then located HttpResponseBase.make_bytes and HttpResponse.content's iterator handling.",
+        "Observed that make_bytes handled bytes atomically but that the content setter classified memoryview as an iterable.",
+        "Changed make_bytes to cast bytes or memoryview with bytes(value).",
+        "Excluded memoryview from the content setter's generic iterable path.",
+        "Added constructor and property-assignment regression assertions.",
+        "Installed the missing local sqlparse/pytz test dependencies and ran HttpResponseTests: 12 passed.",
+        "Froze the diff and submitted it to the official SWE-bench harness."
+      ],
+      "result": "passed",
+      "official_resolved": true,
+      "official_tests": {"fail_to_pass": {"passed": 1, "failed": 0}, "pass_to_pass": {"passed": 64, "failed": 0}},
+      "evaluation_explanation": "The official memoryview regression test passed and all selected existing HTTP wrapper tests remained green. Both atomic conversion and iterable dispatch had to change for constructor input to work."
+    },
+    {
+      "tier": "medium",
+      "task_id": "astropy__astropy-13033",
+      "base_commit": "298ccb478e6bf092953bca67a3d29dc6c35f6752",
+      "about": "Make TimeSeries required-column errors identify the complete expected and observed prefixes when more than one column is mandatory.",
+      "trajectory": [
+        "Read the issue, maintainer hint, and the required-column checker in astropy/timeseries/core.py.",
+        "Kept the established quoted scalar messages when only one column is required.",
+        "For multiple required columns, formatted the entire required list and the observed prefix of equal maximum length.",
+        "Added the reported time/flux removal regression case with the exact informative message.",
+        "Attempted the targeted local test; the old source checkout lacked its compiled/version build stack, so did not treat that setup failure as evaluation.",
+        "Froze the diff and submitted it to the official SWE-bench image."
+      ],
+      "result": "passed",
+      "official_resolved": true,
+      "official_tests": {"fail_to_pass": {"passed": 1, "failed": 0}, "pass_to_pass": {"passed": 20, "failed": 0}},
+      "evaluation_explanation": "The official reported-issue test and all selected sampled-TimeSeries regressions passed in Astropy's benchmark image."
+    },
+    {
+      "tier": "hard",
+      "task_id": "sphinx-doc__sphinx-7590",
+      "base_commit": "2e506c5ab457cba743bb47eb5b8c8eb9dd51d23d",
+      "about": "Teach Sphinx's C++ expression parser to handle numeric user-defined literal suffixes such as q_J and q_s.",
+      "trajectory": [
+        "Reproduced the parser path where a float was consumed but the adjacent q_J suffix remained and caused Expected end of definition.",
+        "Added a suffix regex without a leading word-boundary requirement because a UDL identifier is lexically adjacent to a digit.",
+        "Consumed that suffix as part of ASTNumberLiteral and added decimal and integer UDL tests.",
+        "Installed compatible local Sphinx test dependencies after two setup-only failures (Jinja API and roman module).",
+        "Ran the full local C++ expression-parser test successfully and separately parsed the exact planck_constant declaration.",
+        "Froze the diff and submitted it once to the official SWE-bench harness."
+      ],
+      "result": "failed",
+      "official_resolved": false,
+      "official_tests": {"fail_to_pass": {"passed": 0, "failed": 1}, "pass_to_pass": {"passed": 24, "failed": 0}},
+      "evaluation_explanation": "The patch recognized and rendered UDLs, but the official test also required their expression ID to use the Itanium ABI form for a call to the literal operator. The patch produced plain-literal ID IE1CIAL5_udlE_1aE instead of IE1CIAclL_Zli4_udlEL5EE_1aE, so test_expressions failed; all 24 other official groups passed."
+    }
+  ]
+}

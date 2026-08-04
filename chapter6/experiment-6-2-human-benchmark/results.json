@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "experiment": "6-2",
+  "title": "Codex human-operator benchmark trajectories",
+  "operator": "Codex acting as the human operator",
+  "selection_manifest_sha256": "0fa3f6f890e69c0e51db6ea50d46186af999c5ad0a24284055bbebd667fa15b7",
+  "selection_locked_at_utc": "2026-08-03T13:44:00Z",
+  "completed_at_utc": "2026-08-03T15:43:37.689368Z",
+  "attempt_policy": "One preregistered attempt per task; answers and artifacts were frozen before gold/reference evaluation, and failed cases were not rerun or revised.",
+  "summary": {
+    "benchmarks": 6,
+    "cases": 18,
+    "passed": 13,
+    "failed": 5,
+    "infrastructure_blocked": 0,
+    "pass_rate": 0.7222222222
+  },
+  "by_benchmark": [
+    {"benchmark": "GAIA", "passed": 2, "failed": 1, "cases": 3},
+    {"benchmark": "AndroidWorld", "passed": 2, "failed": 1, "cases": 3},
+    {"benchmark": "SWE-bench Verified", "passed": 2, "failed": 1, "cases": 3},
+    {"benchmark": "tau2-bench", "passed": 2, "failed": 1, "cases": 3},
+    {"benchmark": "Terminal-Bench", "passed": 2, "failed": 1, "cases": 3},
+    {"benchmark": "OSWorld-Verified", "passed": 3, "failed": 0, "cases": 3}
+  ],
+  "cases": [
+    {"benchmark": "GAIA", "tier": "easy", "task_id": "2d83110e-a098-4ebb-9987-066c06fa42d0", "result": "passed", "official_reward": 1.0, "evidence": "runs/gaia/operator_answers.json"},
+    {"benchmark": "GAIA", "tier": "medium", "task_id": "7dd30055-0198-452e-8c25-f73dbe27dcb8", "result": "failed", "official_reward": 0.0, "evidence": "runs/gaia/operator_answers.json"},
+    {"benchmark": "GAIA", "tier": "hard", "task_id": "56db2318-640f-477a-a82f-bc93ad13e882", "result": "passed", "official_reward": 1.0, "evidence": "runs/gaia/operator_answers.json"},
+    {"benchmark": "AndroidWorld", "tier": "easy", "task_id": "ContactsAddContact", "result": "passed", "official_reward": 1.0, "evidence": "runs/androidworld/results.json"},
+    {"benchmark": "AndroidWorld", "tier": "medium", "task_id": "CameraTakeVideo", "result": "passed", "official_reward": 1.0, "evidence": "runs/androidworld/results.json"},
+    {"benchmark": "AndroidWorld", "tier": "hard", "task_id": "BrowserMultiply", "result": "failed", "official_reward": 0.0, "evidence": "runs/androidworld/results.json"},
+    {"benchmark": "SWE-bench Verified", "tier": "easy", "task_id": "django__django-11133", "result": "passed", "official_reward": 1.0, "evidence": "runs/swe-bench-verified/results.json"},
+    {"benchmark": "SWE-bench Verified", "tier": "medium", "task_id": "astropy__astropy-13033", "result": "passed", "official_reward": 1.0, "evidence": "runs/swe-bench-verified/results.json"},
+    {"benchmark": "SWE-bench Verified", "tier": "hard", "task_id": "sphinx-doc__sphinx-7590", "result": "failed", "official_reward": 0.0, "evidence": "runs/swe-bench-verified/results.json"},
+    {"benchmark": "tau2-bench", "tier": "easy", "task_id": "[mobile_data_issue]data_mode_off|data_usage_exceeded[PERSONA:None]", "result": "passed", "official_reward": 1.0, "evidence": "runs/tau2-bench/results.json"},
+    {"benchmark": "tau2-bench", "tier": "medium", "task_id": "[mobile_data_issue]bad_vpn|data_saver_mode_on|user_abroad_roaming_disabled_on[PERSONA:None]", "result": "passed", "official_reward": 1.0, "evidence": "runs/tau2-bench/results.json"},
+    {"benchmark": "tau2-bench", "tier": "hard", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_sms_permission|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_on[PERSONA:None]", "result": "failed", "official_reward": 0.0, "evidence": "runs/tau2-bench/results.json"},
+    {"benchmark": "Terminal-Bench", "tier": "easy", "task_id": "fix-permissions", "result": "passed", "official_reward": 1.0, "evidence": "runs/terminal-bench/results.json"},
+    {"benchmark": "Terminal-Bench", "tier": "medium", "task_id": "simple-sheets-put", "result": "passed", "official_reward": 1.0, "evidence": "runs/terminal-bench/results.json"},
+    {"benchmark": "Terminal-Bench", "tier": "hard", "task_id": "dna-assembly", "result": "failed", "official_reward": 0.0, "evidence": "runs/terminal-bench/results.json"},
+    {"benchmark": "OSWorld-Verified", "tier": "easy", "task_id": "2cd43775-7085-45d8-89fa-9e35c0a915cf", "result": "passed", "official_reward": 1.0, "evidence": "runs/osworld-verified/results.json"},
+    {"benchmark": "OSWorld-Verified", "tier": "medium", "task_id": "7e429b8d-a3f0-4ed0-9b58-08957d00b127", "result": "passed", "official_reward": 1.0, "evidence": "runs/osworld-verified/results.json"},
+    {"benchmark": "OSWorld-Verified", "tier": "hard", "task_id": "51f5801c-18b3-4f25-b0c3-02f85507a078", "result": "passed", "official_reward": 1.0, "evidence": "runs/osworld-verified/results.json"}
+  ]
+}
