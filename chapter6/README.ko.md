@@ -24,7 +24,7 @@
 | 6-8 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | 전형적인 다중 턴 에이전트 작업(고객 서비스 환불)의 전체 비용을 단계별로 분석합니다. 맞춤형 경량 추적 시스템으로 LLM 호출마다 입력·출력·캐시 토큰, 지연 시간, 비용을 기록하고 집계해 가장 비싼 단계를 찾습니다. 이어 A/B 테스트로 KV Cache 친화적 설계와 컨텍스트 압축의 실제 절감 효과를 정량화합니다. |
 | 6-9 | [model-benchmark](model-benchmark/) | ✅ | 여러 OpenAI 호환 LLM API 제공자를 나란히 벤치마크합니다. 스트리밍 인터페이스로 첫 토큰까지 걸린 시간(TTFT)을 정밀 측정하고, 동시 실행 환경에서 엔드투엔드 지연 시간 백분위수(p50/p95), 처리량, 성공률을 계산합니다. 명령 하나로 다차원 비교표를 만들어 모델 선택이 단순한 순위표 이상의 복합적인 절충임을 보여 줍니다. |
 | 6-11 | [android-world](android-world/) | 📖 | 이 저장소에 포함된 AndroidWorld T3A 평가 보고서와 실패 분석 노트입니다. 실험 6-11의 출발점이며 벤치마크 원본은 아닙니다. |
-| 6-12 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | 🚧 | OpenVLA + RoboTwin2 구성과 업스트림 버전, 사전 점검·증거 게이트를 고정합니다. 완료하려면 실제 체크포인트와 RoboTwin2 환경, GPU 8개를 사용한 시뮬레이션 평가가 필요합니다. |
+| 6-12 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | 단일 GPU 공식 실험에서 action-chunk 군별 256개 에피소드를 완료했습니다. chunk 1은 0/256, chunk 25는 26/256이며 512개 rollout 해시를 보존합니다. |
 | — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | 합성 DHIS2 형식 집계 데이터로 공중보건 보고 에이전트의 도구 호출, 계산 정확도, 근거 인용, 근거 없는 주장을 객관적으로 평가합니다. |
 
 > 백틱으로 표기한 외부 벤치마크는 별도로 clone해야 합니다. 하이픈이 들어간 [`android-world/`](android-world/)는 이 저장소의 **T3A 평가 분석 노트**([README](android-world/README.md) 참고)이며, 외부 `android_world/` 벤치마크 원본과는 다른 경로입니다.

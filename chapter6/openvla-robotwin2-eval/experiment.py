@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exact companion for manuscript Experiment 6-11.
+"""Exact companion for manuscript Experiment 6-12.
 
 The runner deliberately separates three things:
 1. a non-destructive host/upstream preflight;
@@ -154,10 +154,55 @@ def preflight(cfg: dict[str, Any]) -> dict[str, Any]:
 
     checkpoint_raw = os.environ.get(cfg["checkpoint_env"], "")
     checkpoint = Path(checkpoint_raw).expanduser() if checkpoint_raw else None
+    checkpoint_metadata: dict[str, Any] = {
+        "environment": cfg["checkpoint_env"],
+        "path": checkpoint_raw or None,
+        "checkpoint_id": cfg["checkpoint_id"],
+        "expected_revision": cfg["expected_checkpoint_revision"],
+    }
+    checkpoint_ready = bool(checkpoint and checkpoint.is_dir())
+    if checkpoint_ready and checkpoint is not None:
+        metadata_dir = checkpoint / ".cache/huggingface/download"
+        primary_names = [
+            "config.json",
+            "model-00001-of-00004.safetensors",
+            "model-00002-of-00004.safetensors",
+            "model-00003-of-00004.safetensors",
+            "model-00004-of-00004.safetensors",
+            "proprio_projector--20000_checkpoint.pt",
+            "lora_adapter/adapter_model.safetensors",
+        ]
+        artifact_metadata = {}
+        observed_revisions = set()
+        missing_artifacts = []
+        for name in primary_names:
+            artifact = checkpoint / name
+            metadata = metadata_dir / f"{name}.metadata"
+            if not artifact.is_file() or not metadata.is_file():
+                missing_artifacts.append(name)
+                continue
+            lines = metadata.read_text(encoding="utf-8").splitlines()
+            if len(lines) < 2:
+                missing_artifacts.append(name)
+                continue
+            observed_revisions.add(lines[0])
+            artifact_metadata[name] = {
+                "bytes": artifact.stat().st_size,
+                "huggingface_etag": lines[1],
+            }
+        checkpoint_metadata.update({
+            "observed_revisions": sorted(observed_revisions),
+            "artifact_metadata": artifact_metadata,
+            "missing_artifacts": missing_artifacts,
+        })
+        checkpoint_ready = (
+            not missing_artifacts
+            and observed_revisions == {cfg["expected_checkpoint_revision"]}
+        )
     check(
         "pretrained_checkpoint",
-        bool(checkpoint and checkpoint.is_dir()),
-        {"environment": cfg["checkpoint_env"], "path": checkpoint_raw or None},
+        checkpoint_ready,
+        checkpoint_metadata,
     )
 
     robotwin_raw = os.environ.get(cfg["robotwin2_env"], "")
@@ -167,6 +212,16 @@ def preflight(cfg: dict[str, Any]) -> dict[str, Any]:
         "robotwin2_checkout",
         bool(robotwin and robotwin.is_dir() and all((robotwin / marker).exists() for marker in robotwin_markers)),
         {"environment": cfg["robotwin2_env"], "path": robotwin_raw or None, "markers": robotwin_markers},
+    )
+    robotwin_code, robotwin_commit = (
+        run_capture(["git", "rev-parse", "HEAD"], cwd=robotwin)
+        if robotwin and robotwin.is_dir()
+        else (1, "")
+    )
+    check(
+        "pinned_robotwin2_commit",
+        robotwin_code == 0 and robotwin_commit == cfg["expected_robotwin2_commit"],
+        {"observed": robotwin_commit or None, "expected": cfg["expected_robotwin2_commit"]},
     )
 
     align_raw = os.environ.get(cfg["align_path_env"], "")
@@ -184,7 +239,7 @@ def preflight(cfg: dict[str, Any]) -> dict[str, Any]:
         {"observed": len(gpus), "required": cfg["gpus_required"], "gpus": gpus, "error": gpu_error},
     )
 
-    custom_task_config = HERE / "task_config_exp6_11_three_view.yml"
+    custom_task_config = HERE / "task_config_exp6_12_three_view.yml"
     task_config_text = custom_task_config.read_text(encoding="utf-8") if custom_task_config.is_file() else ""
     check(
         "three_rgb_view_config",
@@ -208,7 +263,7 @@ def preflight(cfg: dict[str, Any]) -> dict[str, Any]:
         "checks": checks,
         "ready_for_real_validation": not required_failures,
         "blocking_checks": required_failures,
-        "acceptance_note": "Preflight readiness is necessary but never sufficient for Experiment 6-11 completion.",
+        "acceptance_note": "Preflight readiness is necessary but never sufficient for Experiment 6-12 completion.",
     }
 
 
@@ -217,7 +272,7 @@ def hydra_command(cfg: dict[str, Any], arm: str, run_dir: Path, worktree: Path) 
     checkpoint = str(Path(os.environ[cfg["checkpoint_env"]]).expanduser().resolve())
     align_raw = os.environ.get(cfg["align_path_env"])
     align_path = Path(align_raw).expanduser().resolve() if align_raw else worktree / "align.json"
-    experiment_name = f"exp6_11_{cfg['task']}_{arm}"
+    experiment_name = f"exp6_12_{cfg['task']}_{arm}"
     return [
         sys.executable,
         "-u",
@@ -228,7 +283,7 @@ def hydra_command(cfg: dict[str, Any], arm: str, run_dir: Path, worktree: Path) 
         "data.n_samples=1",
         "data.filter_accuracy=False",
         "data.train_batch_size=64",
-        "data.val_batch_size=256",
+        "data.val_batch_size=8",
         "data.max_prompt_length=256",
         "data.max_response_length=128",
         f"actor_rollout_ref.model.path={checkpoint}",
@@ -247,6 +302,7 @@ def hydra_command(cfg: dict[str, Any], arm: str, run_dir: Path, worktree: Path) 
         f"actor_rollout_ref.rollout.twin2_task_config={cfg['task_config']}",
         "actor_rollout_ref.rollout.twin2_instruction_type=seen",
         f"actor_rollout_ref.rollout.num_images_in_input={cfg['rgb_views']}",
+        f"+actor_rollout_ref.rollout.action_token_len={cfg['action_token_length']}",
         "actor_rollout_ref.rollout.use_proprio=True",
         "actor_rollout_ref.rollout.val_micro_batch_size=8",
         "actor_rollout_ref.rollout.temperature=1.6",
@@ -264,8 +320,10 @@ def hydra_command(cfg: dict[str, Any], arm: str, run_dir: Path, worktree: Path) 
         "actor_rollout_ref.rollout.gpu_memory_utilization=0.9",
         "actor_rollout_ref.ref.log_prob_micro_batch_size=32",
         "actor_rollout_ref.ref.fsdp_config.param_offload=True",
+        "algorithm.adv_estimator=grpo",
+        "algorithm.kl_ctrl.kl_coef=0.0",
         "trainer.logger=['console']",
-        "trainer.project_name=AI-Agent-Book-Experiment-6-11",
+        "trainer.project_name=AI-Agent-Book-Experiment-6-12",
         f"trainer.experiment_name={experiment_name}",
         f"trainer.default_local_dir={str((run_dir / arm / 'checkpoints').resolve())}",
         f"trainer.n_gpus_per_node={cfg['gpus_required']}",
@@ -307,14 +365,13 @@ def prepare_worktree(cfg: dict[str, Any], run_dir: Path) -> Path:
         raise RuntimeError(f"RoboTwin2 overlay setup failed with exit {setup.returncode}")
     task_config_dest = worktree / "verl/utils/envs/robotwin2/task_config" / f"{cfg['task_config']}.yml"
     task_config_dest.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(HERE / "task_config_exp6_11_three_view.yml", task_config_dest)
+    shutil.copy2(HERE / "task_config_exp6_12_three_view.yml", task_config_dest)
     patch_proc = subprocess.run(
-        ["git", "apply", str(HERE / "instrumentation.patch")],
-        cwd=worktree,
+        [sys.executable, str(HERE / "instrument_upstream.py"), str(worktree)],
         check=False,
     )
     if patch_proc.returncode != 0:
-        raise RuntimeError(f"instrumentation patch failed with exit {patch_proc.returncode}")
+        raise RuntimeError(f"upstream instrumentation failed with exit {patch_proc.returncode}")
     return worktree
 
 
@@ -325,18 +382,19 @@ def write_launch_manifest(cfg: dict[str, Any], run_dir: Path, worktree: Path) ->
         argv = hydra_command(cfg, arm, run_dir, worktree)
         episode_path = (run_dir / arm / "episodes.jsonl").resolve()
         env = {
-            "EXP6_11_EPISODE_JSONL": str(episode_path),
-            "EXP6_11_ARM": arm,
-            "EXP6_11_UPSTREAM_COMMIT": cfg["expected_upstream_commit"],
+            "EXP6_12_EPISODE_JSONL": str(episode_path),
+            "EXP6_12_ARM": arm,
+            "EXP6_12_UPSTREAM_COMMIT": cfg["expected_upstream_commit"],
             "HYDRA_FULL_ERROR": "1",
             "TOKENIZERS_PARALLELISM": "true",
             "NCCL_DEBUG": "WARN",
             "ROBOT_PLATFORM": "ALOHA",
+            "VERL_DISABLE_VLLM_IMPORT": "1",
         }
         arms[arm] = {
             "action_chunk_length": chunk,
             "episode_evidence": str(episode_path),
-            "rollout_directory": str((worktree / "rollouts" / f"exp6_11_{cfg['task']}_{arm}").resolve()),
+            "rollout_directory": str((worktree / "rollouts" / f"exp6_12_{cfg['task']}_{arm}").resolve()),
             "environment": env,
             "argv": argv,
             "shell_command": " ".join(
@@ -429,11 +487,30 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
-def video_index(directory: Path) -> dict[tuple[str, bool], list[str]]:
+def video_index(
+    directory: Path,
+    *,
+    started_at_utc: str | None = None,
+    ended_at_utc: str | None = None,
+) -> dict[tuple[str, bool], list[str]]:
+    """Index rollout videos, optionally restricting them to one process window.
+
+    Upstream names videos with a random ``ran`` suffix and does not clear an
+    existing rollout directory.  A bounded resume can therefore leave two
+    files for the same task/result key.  Process timestamps let the evidence
+    reader reject those stale files without guessing from the random suffix.
+    """
     index: dict[tuple[str, bool], list[str]] = {}
     if not directory.is_dir():
         return index
+    started = datetime.fromisoformat(started_at_utc) if started_at_utc else None
+    ended = datetime.fromisoformat(ended_at_utc) if ended_at_utc else None
     for path in directory.rglob("*.mp4"):
+        modified = datetime.fromtimestamp(path.stat().st_mtime, timezone.utc)
+        if started is not None and modified < started:
+            continue
+        if ended is not None and modified > ended:
+            continue
         match = VIDEO_RE.match(path.name)
         if not match:
             continue
@@ -483,7 +560,13 @@ def analyze(cfg: dict[str, Any], run_dir: Path, annotations_path: Path | None) -
             strict_errors.append(f"{arm}: incomplete OOD seed coverage")
 
         video_dir = Path(manifest["arms"][arm]["rollout_directory"]) if manifest else Path()
-        videos = video_index(video_dir)
+        process_path = run_dir / arm / "process.json"
+        process_data = load_json(process_path) if process_path.is_file() else {}
+        videos = video_index(
+            video_dir,
+            started_at_utc=process_data.get("started_at_utc"),
+            ended_at_utc=process_data.get("ended_at_utc"),
+        )
         unmatched_videos = 0
         failure_counts: Counter[str] = Counter()
         unclassified_failures = []
@@ -624,7 +707,7 @@ def analyze(cfg: dict[str, Any], run_dir: Path, annotations_path: Path | None) -
     }
     dump_json(run_dir / "report.json", report)
     lines = [
-        "# Experiment 6-11 OpenVLA + RoboTwin2 evaluation",
+        "# Experiment 6-12 OpenVLA + RoboTwin2 evaluation",
         "",
         f"Official completion: **{report['strict_completion']['complete']}**",
         "",
