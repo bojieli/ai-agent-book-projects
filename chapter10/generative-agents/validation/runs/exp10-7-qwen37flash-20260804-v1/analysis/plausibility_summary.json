@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "experiment": "10-7",
+  "model": "claude-sonnet-4-5-20250929",
+  "judgments": 25,
+  "preferences": {
+    "baseline": 17,
+    "no_reflection": 8,
+    "tie": 0
+  },
+  "mean_scores": {
+    "temporal_coherence": {
+      "baseline": 2.12,
+      "no_reflection": 1.56
+    },
+    "personality_consistency": {
+      "baseline": 3.2,
+      "no_reflection": 2.2
+    },
+    "memory_continuity": {
+      "baseline": 2.72,
+      "no_reflection": 1.52
+    },
+    "social_responsiveness": {
+      "baseline": 3.44,
+      "no_reflection": 2.48
+    }
+  },
+  "raw_receipts": "analysis/plausibility_judgments.jsonl"
+}

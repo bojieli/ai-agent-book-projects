@@ -1,0 +1,1134 @@
+{
+  "schema_version": 1,
+  "experiment": "10-7",
+  "source_commit": "fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4",
+  "seed_memory_nodes_by_persona": {
+    "Abigail Chen": 5,
+    "Adam Smith": 12,
+    "Arthur Burton": 14,
+    "Ayesha Khan": 5,
+    "Carlos Gomez": 9,
+    "Carmen Ortiz": 9,
+    "Eddy Lin": 17,
+    "Francisco Lopez": 7,
+    "Giorgio Rossi": 12,
+    "Hailey Johnson": 9,
+    "Isabella Rodriguez": 16,
+    "Jane Moreno": 9,
+    "Jennifer Moore": 11,
+    "John Lin": 13,
+    "Klaus Mueller": 8,
+    "Latoya Williams": 8,
+    "Maria Lopez": 8,
+    "Mei Lin": 13,
+    "Rajiv Patel": 8,
+    "Ryan Park": 9,
+    "Sam Moore": 12,
+    "Tamara Taylor": 3,
+    "Tom Moreno": 15,
+    "Wolfgang Schulz": 7,
+    "Yuriko Yamamoto": 9
+  },
+  "arms": {
+    "baseline": {
+      "simulation": {
+        "sim_code": "exp10_7_baseline_17280",
+        "personas": 25,
+        "steps": 17280,
+        "current_time": "February 15, 2023, 00:00:00",
+        "sec_per_step": 10
+      },
+      "provider": {
+        "calls": 56762,
+        "errors": 0,
+        "transport_retries": 17,
+        "usage": {
+          "prompt_tokens": 21172004,
+          "completion_tokens": 1344663,
+          "total_tokens": 22516667
+        },
+        "provider_latency_seconds": 63446.953,
+        "checkpoint_wall_seconds": 67575.83
+      },
+      "memory": {
+        "all_nodes_by_type": {
+          "event": 15667,
+          "thought": 1661,
+          "chat": 141
+        },
+        "new_nodes_by_type": {
+          "event": 15667,
+          "thought": 1413,
+          "chat": 141
+        },
+        "new_nodes_by_persona": {
+          "Abigail Chen": {
+            "event": 609,
+            "thought": 59,
+            "chat": 7
+          },
+          "Adam Smith": {
+            "event": 370,
+            "thought": 32
+          },
+          "Arthur Burton": {
+            "event": 192,
+            "thought": 2
+          },
+          "Ayesha Khan": {
+            "event": 997,
+            "thought": 104,
+            "chat": 13
+          },
+          "Carlos Gomez": {
+            "event": 365,
+            "thought": 26
+          },
+          "Carmen Ortiz": {
+            "event": 459,
+            "thought": 38,
+            "chat": 3
+          },
+          "Eddy Lin": {
+            "event": 678,
+            "thought": 65,
+            "chat": 9
+          },
+          "Francisco Lopez": {
+            "event": 584,
+            "thought": 67,
+            "chat": 8
+          },
+          "Giorgio Rossi": {
+            "event": 770,
+            "thought": 53
+          },
+          "Hailey Johnson": {
+            "event": 703,
+            "thought": 79,
+            "chat": 9
+          },
+          "Isabella Rodriguez": {
+            "event": 511,
+            "thought": 50
+          },
+          "Jane Moreno": {
+            "event": 329,
+            "thought": 16
+          },
+          "Jennifer Moore": {
+            "event": 1026,
+            "thought": 101,
+            "chat": 5
+          },
+          "John Lin": {
+            "event": 605,
+            "thought": 63,
+            "chat": 7
+          },
+          "Klaus Mueller": {
+            "event": 814,
+            "thought": 79,
+            "chat": 14
+          },
+          "Latoya Williams": {
+            "event": 477,
+            "thought": 40,
+            "chat": 7
+          },
+          "Maria Lopez": {
+            "event": 1115,
+            "thought": 104,
+            "chat": 16
+          },
+          "Mei Lin": {
+            "event": 753,
+            "thought": 68,
+            "chat": 7
+          },
+          "Rajiv Patel": {
+            "event": 636,
+            "thought": 62,
+            "chat": 10
+          },
+          "Ryan Park": {
+            "event": 277,
+            "thought": 21
+          },
+          "Sam Moore": {
+            "event": 874,
+            "thought": 73,
+            "chat": 5
+          },
+          "Tamara Taylor": {
+            "event": 327,
+            "thought": 17,
+            "chat": 3
+          },
+          "Tom Moreno": {
+            "event": 510,
+            "thought": 41,
+            "chat": 1
+          },
+          "Wolfgang Schulz": {
+            "event": 1033,
+            "thought": 103,
+            "chat": 17
+          },
+          "Yuriko Yamamoto": {
+            "event": 653,
+            "thought": 50
+          }
+        },
+        "new_thoughts_with_evidence": 1363,
+        "maximum_thought_depth": 7,
+        "unique_chat_edges": 23,
+        "chat_nodes_by_edge": {
+          "Abigail Chen | Francisco Lopez": 6,
+          "Abigail Chen | Hailey Johnson": 4,
+          "Abigail Chen | Latoya Williams": 2,
+          "Abigail Chen | Rajiv Patel": 2,
+          "Ayesha Khan | Klaus Mueller": 6,
+          "Ayesha Khan | Maria Lopez": 10,
+          "Ayesha Khan | Wolfgang Schulz": 10,
+          "Carmen Ortiz | Tamara Taylor": 6,
+          "Eddy Lin | John Lin": 8,
+          "Eddy Lin | Mei Lin": 8,
+          "Eddy Lin | Tom Moreno": 2,
+          "Francisco Lopez | Hailey Johnson": 2,
+          "Francisco Lopez | Latoya Williams": 4,
+          "Francisco Lopez | Rajiv Patel": 5,
+          "Hailey Johnson | Jennifer Moore": 2,
+          "Hailey Johnson | Latoya Williams": 2,
+          "Hailey Johnson | Rajiv Patel": 8,
+          "Jennifer Moore | Sam Moore": 9,
+          "John Lin | Mei Lin": 6,
+          "Klaus Mueller | Maria Lopez": 11,
+          "Klaus Mueller | Wolfgang Schulz": 13,
+          "Latoya Williams | Rajiv Patel": 5,
+          "Maria Lopez | Wolfgang Schulz": 10
+        }
+      },
+      "seeded_event_diffusion": {
+        "terms": [
+          "valentine",
+          "party"
+        ],
+        "aware_agents": 3,
+        "first_mention_by_agent": {
+          "Isabella Rodriguez": "2023-02-13 00:00:00",
+          "Jennifer Moore": "2023-02-14 05:01:20",
+          "Sam Moore": "2023-02-14 05:01:20"
+        },
+        "memory_mentions_by_agent": {
+          "Isabella Rodriguez": 36,
+          "Jennifer Moore": 5,
+          "Sam Moore": 5
+        }
+      },
+      "election_diffusion": {
+        "terms": [
+          "mayor",
+          "election"
+        ],
+        "aware_agents": 11,
+        "first_mention_by_agent": {
+          "Adam Smith": "2023-02-13 00:00:00",
+          "Carmen Ortiz": "2023-02-13 00:00:00",
+          "Francisco Lopez": "2023-02-13 07:36:20",
+          "Giorgio Rossi": "2023-02-13 07:15:10",
+          "Jennifer Moore": "2023-02-13 00:00:00",
+          "John Lin": "2023-02-13 00:00:00",
+          "Latoya Williams": "2023-02-13 00:00:00",
+          "Rajiv Patel": "2023-02-13 00:00:00",
+          "Sam Moore": "2023-02-13 00:00:00",
+          "Tom Moreno": "2023-02-13 00:00:00",
+          "Yuriko Yamamoto": "2023-02-13 00:00:00"
+        },
+        "memory_mentions_by_agent": {
+          "Adam Smith": 24,
+          "Carmen Ortiz": 6,
+          "Francisco Lopez": 5,
+          "Giorgio Rossi": 3,
+          "Jennifer Moore": 21,
+          "John Lin": 7,
+          "Latoya Williams": 13,
+          "Rajiv Patel": 4,
+          "Sam Moore": 19,
+          "Tom Moreno": 17,
+          "Yuriko Yamamoto": 6
+        }
+      },
+      "actions": {
+        "steps": 17280,
+        "persona_action_summary": {
+          "Latoya Williams": {
+            "unique_descriptions": 77,
+            "description_changes": 82,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Rajiv Patel": {
+            "unique_descriptions": 85,
+            "description_changes": 87,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Abigail Chen": {
+            "unique_descriptions": 102,
+            "description_changes": 105,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Francisco Lopez": {
+            "unique_descriptions": 74,
+            "description_changes": 75,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Hailey Johnson": {
+            "unique_descriptions": 101,
+            "description_changes": 103,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Arthur Burton": {
+            "unique_descriptions": 39,
+            "description_changes": 42,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Ryan Park": {
+            "unique_descriptions": 62,
+            "description_changes": 63,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Isabella Rodriguez": {
+            "unique_descriptions": 125,
+            "description_changes": 125,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Giorgio Rossi": {
+            "unique_descriptions": 113,
+            "description_changes": 114,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Carlos Gomez": {
+            "unique_descriptions": 76,
+            "description_changes": 76,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Klaus Mueller": {
+            "unique_descriptions": 118,
+            "description_changes": 120,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Maria Lopez": {
+            "unique_descriptions": 142,
+            "description_changes": 146,
+            "hobbs_cafe_event_window_descriptions": [
+              "conversing about Maria Lopez and Ayesha Khan coordinating to meet at Hobbs Cafe for a study session with Klaus and Wolfgang after Maria finishes her stream. @ <persona> Ayesha Khan"
+            ]
+          },
+          "Ayesha Khan": {
+            "unique_descriptions": 108,
+            "description_changes": 115,
+            "hobbs_cafe_event_window_descriptions": [
+              "conversing about Maria Lopez and Ayesha Khan coordinating to meet at Hobbs Cafe for a study session with Klaus and Wolfgang after Maria finishes her stream. @ <persona> Maria Lopez"
+            ]
+          },
+          "Wolfgang Schulz": {
+            "unique_descriptions": 145,
+            "description_changes": 153,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Mei Lin": {
+            "unique_descriptions": 111,
+            "description_changes": 116,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "John Lin": {
+            "unique_descriptions": 121,
+            "description_changes": 125,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Eddy Lin": {
+            "unique_descriptions": 133,
+            "description_changes": 138,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Tom Moreno": {
+            "unique_descriptions": 105,
+            "description_changes": 105,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Jane Moreno": {
+            "unique_descriptions": 60,
+            "description_changes": 59,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Tamara Taylor": {
+            "unique_descriptions": 88,
+            "description_changes": 89,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Carmen Ortiz": {
+            "unique_descriptions": 127,
+            "description_changes": 127,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Sam Moore": {
+            "unique_descriptions": 74,
+            "description_changes": 74,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Jennifer Moore": {
+            "unique_descriptions": 90,
+            "description_changes": 91,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Yuriko Yamamoto": {
+            "unique_descriptions": 100,
+            "description_changes": 100,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Adam Smith": {
+            "unique_descriptions": 73,
+            "description_changes": 79,
+            "hobbs_cafe_event_window_descriptions": []
+          }
+        },
+        "hobbs_cafe_event_window_agents": [
+          "Ayesha Khan",
+          "Maria Lopez"
+        ],
+        "hobbs_cafe_event_window_agent_count": 2,
+        "median_unique_descriptions": 101,
+        "median_description_changes": 103
+      }
+    },
+    "custom_goal": {
+      "simulation": {
+        "sim_code": "exp10_7_custom_goal_17280",
+        "personas": 25,
+        "steps": 17280,
+        "current_time": "February 15, 2023, 00:00:00",
+        "sec_per_step": 10
+      },
+      "provider": {
+        "calls": 46967,
+        "errors": 0,
+        "transport_retries": 21,
+        "usage": {
+          "prompt_tokens": 17189390,
+          "completion_tokens": 1033542,
+          "total_tokens": 18222932
+        },
+        "provider_latency_seconds": 52020.326,
+        "checkpoint_wall_seconds": 55595.801
+      },
+      "memory": {
+        "all_nodes_by_type": {
+          "event": 12640,
+          "thought": 1275,
+          "chat": 93
+        },
+        "new_nodes_by_type": {
+          "event": 12640,
+          "thought": 1027,
+          "chat": 93
+        },
+        "new_nodes_by_persona": {
+          "Abigail Chen": {
+            "event": 508,
+            "thought": 45,
+            "chat": 12
+          },
+          "Adam Smith": {
+            "event": 393,
+            "thought": 31
+          },
+          "Arthur Burton": {
+            "event": 723,
+            "thought": 51
+          },
+          "Ayesha Khan": {
+            "event": 1039,
+            "thought": 78,
+            "chat": 10
+          },
+          "Carlos Gomez": {
+            "event": 168,
+            "thought": 2
+          },
+          "Carmen Ortiz": {
+            "event": 363,
+            "thought": 20
+          },
+          "Eddy Lin": {
+            "event": 327,
+            "thought": 22,
+            "chat": 1
+          },
+          "Francisco Lopez": {
+            "event": 715,
+            "thought": 76,
+            "chat": 15
+          },
+          "Giorgio Rossi": {
+            "event": 575,
+            "thought": 46
+          },
+          "Hailey Johnson": {
+            "event": 482,
+            "thought": 58,
+            "chat": 11
+          },
+          "Isabella Rodriguez": {
+            "event": 244,
+            "thought": 17
+          },
+          "Jane Moreno": {
+            "event": 170,
+            "thought": 20
+          },
+          "Jennifer Moore": {
+            "event": 687,
+            "thought": 51
+          },
+          "John Lin": {
+            "event": 229,
+            "thought": 11
+          },
+          "Klaus Mueller": {
+            "event": 827,
+            "thought": 62,
+            "chat": 9
+          },
+          "Latoya Williams": {
+            "event": 917,
+            "thought": 93,
+            "chat": 17
+          },
+          "Maria Lopez": {
+            "event": 891,
+            "thought": 82,
+            "chat": 9
+          },
+          "Mei Lin": {
+            "event": 338,
+            "thought": 19,
+            "chat": 1
+          },
+          "Rajiv Patel": {
+            "event": 361,
+            "thought": 39,
+            "chat": 5
+          },
+          "Ryan Park": {
+            "event": 133,
+            "thought": 2
+          },
+          "Sam Moore": {
+            "event": 797,
+            "thought": 82,
+            "chat": 1
+          },
+          "Tamara Taylor": {
+            "event": 84,
+            "thought": 2
+          },
+          "Tom Moreno": {
+            "event": 887,
+            "thought": 62
+          },
+          "Wolfgang Schulz": {
+            "event": 261,
+            "thought": 18,
+            "chat": 1
+          },
+          "Yuriko Yamamoto": {
+            "event": 521,
+            "thought": 38,
+            "chat": 1
+          }
+        },
+        "new_thoughts_with_evidence": 977,
+        "maximum_thought_depth": 7,
+        "unique_chat_edges": 15,
+        "chat_nodes_by_edge": {
+          "Abigail Chen | Francisco Lopez": 8,
+          "Abigail Chen | Hailey Johnson": 6,
+          "Abigail Chen | Latoya Williams": 10,
+          "Ayesha Khan | Klaus Mueller": 8,
+          "Ayesha Khan | Maria Lopez": 10,
+          "Ayesha Khan | Wolfgang Schulz": 2,
+          "Eddy Lin | Mei Lin": 2,
+          "Francisco Lopez | Hailey Johnson": 4,
+          "Francisco Lopez | Latoya Williams": 14,
+          "Francisco Lopez | Rajiv Patel": 4,
+          "Hailey Johnson | Latoya Williams": 8,
+          "Hailey Johnson | Rajiv Patel": 4,
+          "Klaus Mueller | Maria Lopez": 9,
+          "Latoya Williams | Rajiv Patel": 2,
+          "Sam Moore | Yuriko Yamamoto": 2
+        }
+      },
+      "seeded_event_diffusion": {
+        "terms": [
+          "climate",
+          "resilience",
+          "workshop"
+        ],
+        "aware_agents": 1,
+        "first_mention_by_agent": {
+          "Isabella Rodriguez": "2023-02-13 08:30:10"
+        },
+        "memory_mentions_by_agent": {
+          "Isabella Rodriguez": 5
+        }
+      },
+      "election_diffusion": {
+        "terms": [
+          "mayor",
+          "election"
+        ],
+        "aware_agents": 14,
+        "first_mention_by_agent": {
+          "Abigail Chen": "2023-02-13 18:09:10",
+          "Adam Smith": "2023-02-13 00:00:00",
+          "Carmen Ortiz": "2023-02-13 00:00:00",
+          "Francisco Lopez": "2023-02-13 08:49:00",
+          "Giorgio Rossi": "2023-02-13 00:00:00",
+          "Hailey Johnson": "2023-02-13 15:13:00",
+          "Jane Moreno": "2023-02-13 23:35:10",
+          "Jennifer Moore": "2023-02-13 00:00:00",
+          "John Lin": "2023-02-13 00:00:00",
+          "Latoya Williams": "2023-02-13 00:00:00",
+          "Rajiv Patel": "2023-02-13 00:00:00",
+          "Sam Moore": "2023-02-13 00:00:00",
+          "Tom Moreno": "2023-02-13 00:00:00",
+          "Yuriko Yamamoto": "2023-02-13 00:00:00"
+        },
+        "memory_mentions_by_agent": {
+          "Abigail Chen": 5,
+          "Adam Smith": 4,
+          "Carmen Ortiz": 3,
+          "Francisco Lopez": 6,
+          "Giorgio Rossi": 10,
+          "Hailey Johnson": 1,
+          "Jane Moreno": 1,
+          "Jennifer Moore": 12,
+          "John Lin": 8,
+          "Latoya Williams": 24,
+          "Rajiv Patel": 2,
+          "Sam Moore": 23,
+          "Tom Moreno": 29,
+          "Yuriko Yamamoto": 16
+        }
+      },
+      "actions": {
+        "steps": 17280,
+        "persona_action_summary": {
+          "Latoya Williams": {
+            "unique_descriptions": 143,
+            "description_changes": 147,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Rajiv Patel": {
+            "unique_descriptions": 70,
+            "description_changes": 73,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Abigail Chen": {
+            "unique_descriptions": 82,
+            "description_changes": 96,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Francisco Lopez": {
+            "unique_descriptions": 128,
+            "description_changes": 131,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Hailey Johnson": {
+            "unique_descriptions": 68,
+            "description_changes": 77,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Arthur Burton": {
+            "unique_descriptions": 113,
+            "description_changes": 117,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Ryan Park": {
+            "unique_descriptions": 27,
+            "description_changes": 30,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Isabella Rodriguez": {
+            "unique_descriptions": 67,
+            "description_changes": 69,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Giorgio Rossi": {
+            "unique_descriptions": 88,
+            "description_changes": 88,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Carlos Gomez": {
+            "unique_descriptions": 41,
+            "description_changes": 41,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Klaus Mueller": {
+            "unique_descriptions": 139,
+            "description_changes": 141,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Maria Lopez": {
+            "unique_descriptions": 122,
+            "description_changes": 126,
+            "hobbs_cafe_event_window_descriptions": [
+              "[(ID:SDY6sA) Tuesday February 14 -- 06:00 PM] Activity: Maria is continuing her physics study session at Hobbs Cafe, reviewing quantum mechanics problems with intense focus as she tries to push aside (1) Maria is reviewing quantum mechanics problems with intense focus) @ the Ville:Dorm for Oak Hill College:Maria Lopez's room:blackboard",
+              "[(ID:SDY6sA) Tuesday February 14 -- 06:00 PM] Activity: Maria is continuing her physics study session at Hobbs Cafe, reviewing quantum mechanics problems with intense focus as she tries to push aside (continuing to review quantum mechanics problems) @ the Ville:Dorm for Oak Hill College:Maria Lopez's room:blackboard",
+              "[(ID:SDY6sA) Tuesday February 14 -- 06:00 PM] Activity: Maria is continuing her physics study session at Hobbs Cafe, reviewing quantum mechanics problems with intense focus as she tries to push aside (taking a brief mental break to reset her focus) @ the Ville:Dorm for Oak Hill College:kitchen:kitchen sink",
+              "[(ID:SDY6sA) Tuesday February 14 -- 06:00 PM] Activity: Maria is continuing her physics study session at Hobbs Cafe, reviewing quantum mechanics problems with intense focus as she tries to push aside (trying to push aside thoughts of Klaus Mueller) @ the Ville:Dorm for Oak Hill College:kitchen:cooking area"
+            ]
+          },
+          "Ayesha Khan": {
+            "unique_descriptions": 124,
+            "description_changes": 128,
+            "hobbs_cafe_event_window_descriptions": [
+              "[(ID:RBQWlW) Tuesday February 14 -- 05:00 PM] Activity: Ayesha is having dinner (eating her dinner) @ the Ville:Hobbs Cafe:cafe:cafe customer seating"
+            ]
+          },
+          "Wolfgang Schulz": {
+            "unique_descriptions": 45,
+            "description_changes": 46,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Mei Lin": {
+            "unique_descriptions": 65,
+            "description_changes": 67,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "John Lin": {
+            "unique_descriptions": 56,
+            "description_changes": 56,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Eddy Lin": {
+            "unique_descriptions": 66,
+            "description_changes": 68,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Tom Moreno": {
+            "unique_descriptions": 200,
+            "description_changes": 200,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Jane Moreno": {
+            "unique_descriptions": 38,
+            "description_changes": 37,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Tamara Taylor": {
+            "unique_descriptions": 46,
+            "description_changes": 46,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Carmen Ortiz": {
+            "unique_descriptions": 90,
+            "description_changes": 90,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Sam Moore": {
+            "unique_descriptions": 67,
+            "description_changes": 67,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Jennifer Moore": {
+            "unique_descriptions": 70,
+            "description_changes": 70,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Yuriko Yamamoto": {
+            "unique_descriptions": 85,
+            "description_changes": 85,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Adam Smith": {
+            "unique_descriptions": 78,
+            "description_changes": 81,
+            "hobbs_cafe_event_window_descriptions": []
+          }
+        },
+        "hobbs_cafe_event_window_agents": [
+          "Ayesha Khan",
+          "Maria Lopez"
+        ],
+        "hobbs_cafe_event_window_agent_count": 2,
+        "median_unique_descriptions": 70,
+        "median_description_changes": 77
+      }
+    },
+    "no_reflection": {
+      "simulation": {
+        "sim_code": "exp10_7_no_reflection_17280",
+        "personas": 25,
+        "steps": 17280,
+        "current_time": "February 15, 2023, 00:00:00",
+        "sec_per_step": 10
+      },
+      "provider": {
+        "calls": 44063,
+        "errors": 0,
+        "transport_retries": 17,
+        "usage": {
+          "prompt_tokens": 15184409,
+          "completion_tokens": 725161,
+          "total_tokens": 15909570
+        },
+        "provider_latency_seconds": 44644.173,
+        "checkpoint_wall_seconds": 48043.125
+      },
+      "memory": {
+        "all_nodes_by_type": {
+          "event": 13687,
+          "thought": 298,
+          "chat": 68
+        },
+        "new_nodes_by_type": {
+          "event": 13687,
+          "thought": 50,
+          "chat": 68
+        },
+        "new_nodes_by_persona": {
+          "Abigail Chen": {
+            "event": 276,
+            "thought": 2,
+            "chat": 1
+          },
+          "Adam Smith": {
+            "event": 641,
+            "thought": 2
+          },
+          "Arthur Burton": {
+            "event": 622,
+            "thought": 2,
+            "chat": 2
+          },
+          "Ayesha Khan": {
+            "event": 726,
+            "thought": 2,
+            "chat": 2
+          },
+          "Carlos Gomez": {
+            "event": 198,
+            "thought": 2
+          },
+          "Carmen Ortiz": {
+            "event": 741,
+            "chat": 8,
+            "thought": 2
+          },
+          "Eddy Lin": {
+            "event": 676,
+            "chat": 8,
+            "thought": 2
+          },
+          "Francisco Lopez": {
+            "event": 796,
+            "chat": 6,
+            "thought": 2
+          },
+          "Giorgio Rossi": {
+            "event": 340,
+            "thought": 2
+          },
+          "Hailey Johnson": {
+            "event": 515,
+            "chat": 4,
+            "thought": 2
+          },
+          "Isabella Rodriguez": {
+            "event": 368,
+            "thought": 2
+          },
+          "Jane Moreno": {
+            "event": 879,
+            "chat": 5,
+            "thought": 2
+          },
+          "Jennifer Moore": {
+            "event": 629,
+            "thought": 2,
+            "chat": 1
+          },
+          "John Lin": {
+            "event": 1038,
+            "chat": 7,
+            "thought": 2
+          },
+          "Klaus Mueller": {
+            "event": 477,
+            "thought": 2,
+            "chat": 3
+          },
+          "Latoya Williams": {
+            "event": 232,
+            "thought": 2,
+            "chat": 2
+          },
+          "Maria Lopez": {
+            "event": 306,
+            "thought": 2,
+            "chat": 1
+          },
+          "Mei Lin": {
+            "event": 505,
+            "thought": 2,
+            "chat": 2
+          },
+          "Rajiv Patel": {
+            "event": 684,
+            "chat": 5,
+            "thought": 2
+          },
+          "Ryan Park": {
+            "event": 537,
+            "thought": 2,
+            "chat": 1
+          },
+          "Sam Moore": {
+            "event": 678,
+            "thought": 2,
+            "chat": 1
+          },
+          "Tamara Taylor": {
+            "event": 500,
+            "chat": 5,
+            "thought": 2
+          },
+          "Tom Moreno": {
+            "event": 626,
+            "chat": 4,
+            "thought": 2
+          },
+          "Wolfgang Schulz": {
+            "event": 279,
+            "thought": 2
+          },
+          "Yuriko Yamamoto": {
+            "event": 418,
+            "thought": 2
+          }
+        },
+        "new_thoughts_with_evidence": 0,
+        "maximum_thought_depth": 1,
+        "unique_chat_edges": 17,
+        "chat_nodes_by_edge": {
+          "Abigail Chen | Rajiv Patel": 2,
+          "Arthur Burton | Carmen Ortiz": 4,
+          "Ayesha Khan | Klaus Mueller": 4,
+          "Carmen Ortiz | Jane Moreno": 2,
+          "Carmen Ortiz | Tamara Taylor": 10,
+          "Eddy Lin | John Lin": 12,
+          "Eddy Lin | Mei Lin": 2,
+          "Eddy Lin | Ryan Park": 2,
+          "Francisco Lopez | Hailey Johnson": 4,
+          "Francisco Lopez | Latoya Williams": 2,
+          "Francisco Lopez | Rajiv Patel": 6,
+          "Hailey Johnson | Latoya Williams": 2,
+          "Hailey Johnson | Rajiv Patel": 2,
+          "Jane Moreno | Tom Moreno": 8,
+          "Jennifer Moore | Sam Moore": 2,
+          "John Lin | Mei Lin": 2,
+          "Klaus Mueller | Maria Lopez": 2
+        }
+      },
+      "seeded_event_diffusion": {
+        "terms": [
+          "valentine",
+          "party"
+        ],
+        "aware_agents": 3,
+        "first_mention_by_agent": {
+          "Carmen Ortiz": "2023-02-14 07:09:50",
+          "Isabella Rodriguez": "2023-02-13 00:00:00",
+          "Tamara Taylor": "2023-02-14 07:09:50"
+        },
+        "memory_mentions_by_agent": {
+          "Carmen Ortiz": 13,
+          "Isabella Rodriguez": 19,
+          "Tamara Taylor": 12
+        }
+      },
+      "election_diffusion": {
+        "terms": [
+          "mayor",
+          "election"
+        ],
+        "aware_agents": 13,
+        "first_mention_by_agent": {
+          "Adam Smith": "2023-02-13 00:00:00",
+          "Carmen Ortiz": "2023-02-13 00:00:00",
+          "Eddy Lin": "2023-02-13 07:25:00",
+          "Francisco Lopez": "2023-02-13 07:16:40",
+          "Giorgio Rossi": "2023-02-13 00:00:00",
+          "Jennifer Moore": "2023-02-13 00:00:00",
+          "John Lin": "2023-02-13 00:00:00",
+          "Latoya Williams": "2023-02-13 00:00:00",
+          "Mei Lin": "2023-02-13 07:25:00",
+          "Rajiv Patel": "2023-02-13 00:00:00",
+          "Sam Moore": "2023-02-13 00:00:00",
+          "Tom Moreno": "2023-02-13 00:00:00",
+          "Yuriko Yamamoto": "2023-02-13 00:00:00"
+        },
+        "memory_mentions_by_agent": {
+          "Adam Smith": 10,
+          "Carmen Ortiz": 3,
+          "Eddy Lin": 31,
+          "Francisco Lopez": 6,
+          "Giorgio Rossi": 2,
+          "Jennifer Moore": 1,
+          "John Lin": 34,
+          "Latoya Williams": 13,
+          "Mei Lin": 17,
+          "Rajiv Patel": 2,
+          "Sam Moore": 2,
+          "Tom Moreno": 9,
+          "Yuriko Yamamoto": 4
+        }
+      },
+      "actions": {
+        "steps": 17280,
+        "persona_action_summary": {
+          "Latoya Williams": {
+            "unique_descriptions": 57,
+            "description_changes": 58,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Rajiv Patel": {
+            "unique_descriptions": 85,
+            "description_changes": 88,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Abigail Chen": {
+            "unique_descriptions": 46,
+            "description_changes": 46,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Francisco Lopez": {
+            "unique_descriptions": 112,
+            "description_changes": 114,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Hailey Johnson": {
+            "unique_descriptions": 87,
+            "description_changes": 89,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Arthur Burton": {
+            "unique_descriptions": 107,
+            "description_changes": 107,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Ryan Park": {
+            "unique_descriptions": 106,
+            "description_changes": 107,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Isabella Rodriguez": {
+            "unique_descriptions": 91,
+            "description_changes": 91,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Giorgio Rossi": {
+            "unique_descriptions": 53,
+            "description_changes": 54,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Carlos Gomez": {
+            "unique_descriptions": 46,
+            "description_changes": 46,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Klaus Mueller": {
+            "unique_descriptions": 95,
+            "description_changes": 96,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Maria Lopez": {
+            "unique_descriptions": 46,
+            "description_changes": 46,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Ayesha Khan": {
+            "unique_descriptions": 105,
+            "description_changes": 107,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Wolfgang Schulz": {
+            "unique_descriptions": 49,
+            "description_changes": 50,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Mei Lin": {
+            "unique_descriptions": 42,
+            "description_changes": 43,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "John Lin": {
+            "unique_descriptions": 207,
+            "description_changes": 208,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Eddy Lin": {
+            "unique_descriptions": 114,
+            "description_changes": 118,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Tom Moreno": {
+            "unique_descriptions": 95,
+            "description_changes": 97,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Jane Moreno": {
+            "unique_descriptions": 155,
+            "description_changes": 164,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Tamara Taylor": {
+            "unique_descriptions": 112,
+            "description_changes": 115,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Carmen Ortiz": {
+            "unique_descriptions": 167,
+            "description_changes": 168,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Sam Moore": {
+            "unique_descriptions": 71,
+            "description_changes": 73,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Jennifer Moore": {
+            "unique_descriptions": 45,
+            "description_changes": 49,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Yuriko Yamamoto": {
+            "unique_descriptions": 73,
+            "description_changes": 73,
+            "hobbs_cafe_event_window_descriptions": []
+          },
+          "Adam Smith": {
+            "unique_descriptions": 142,
+            "description_changes": 142,
+            "hobbs_cafe_event_window_descriptions": []
+          }
+        },
+        "hobbs_cafe_event_window_agents": [],
+        "hobbs_cafe_event_window_agent_count": 0,
+        "median_unique_descriptions": 91,
+        "median_description_changes": 91
+      }
+    }
+  }
+}

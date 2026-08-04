@@ -7,8 +7,9 @@ official `joonspk-research/generative_agents` source at commit
 the obsolete GPT-3 API surface with current OpenAI-compatible chat and
 embedding endpoints at runtime. The upstream checkout is not modified.
 
-Status: **campaign running**. Completion requires three equal 17,280-step
-(two-virtual-day) arms and retained analysis:
+Status: **complete**. The retained campaign has three equal 17,280-step
+(two-virtual-day) arms, complete analysis, and an independently passing
+[acceptance report](validation/runs/exp10-7-qwen37flash-20260804-v1/acceptance.json):
 
 - `baseline`: the original Isabella Rodriguez Valentine's party and Sam Moore
   mayoral-election seeds;
@@ -22,6 +23,33 @@ Status: **campaign running**. Completion requires three equal 17,280-step
 All three arms fork one shared history-loaded step-zero seed. This controls for
 the 248 relationship memories in upstream `agent_history_init_n25.csv` and for
 their generated thought/event-triple/poignancy/embedding representations.
+
+## Retained results
+
+Every arm reached exactly `February 15, 2023, 00:00:00` with 25 personas,
+17,280 movement rows, and 48 durable checkpoints. The package retains 148,856
+canonical provider calls with an equal number of unique response IDs, no
+logical errors, positive usage on every response, 231 bounded action-arena
+corrections, 25 independent Anthropic judgments, and 321 manifest-bound files.
+All 14 acceptance gates pass, including the credential scan.
+
+The findings are mixed, as allowed by the preregistered interpretation rule:
+
+- the baseline Valentine's event reached three agents, while the custom
+  climate-resilience workshop appeared only in Isabella Rodriguez's memory and
+  did not diffuse beyond its originator;
+- the baseline and custom arms created 1,363 and 977 evidence-linked reflection
+  thoughts respectively; the reflection-disabled arm created exactly zero;
+- the blind judge preferred baseline for 17 of 25 personas and preferred the
+  reflection-disabled arm for eight. Baseline scored higher on temporal
+  coherence (2.12 vs 1.56), personality consistency (3.20 vs 2.20), memory
+  continuity (2.72 vs 1.52), and social responsiveness (3.44 vs 2.48).
+
+The full deterministic analysis is retained in
+[`deterministic_analysis.json`](validation/runs/exp10-7-qwen37flash-20260804-v1/analysis/deterministic_analysis.json),
+and the raw blind-judge receipts and summary are under the same package's
+`analysis/` directory. Failed and interrupted attempts remain separately named
+and manifest-bound; they are not counted as canonical evidence.
 
 ## Environment
 
