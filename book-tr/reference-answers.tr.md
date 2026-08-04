@@ -124,7 +124,7 @@ Bu dosya, kitabın on bölümündeki düşünce sorularına verilen örnek cevap
 
 **1. (★★) MCP standardı, araç tanımlarını Agent çerçevesinden ayırır. Ancak standartlaştırma aynı zamanda karmaşık araç etkileşim kalıplarının (örn. akış çıktısı, çift yönlü iletişim, durumlu oturumlar) standart bir protokol içinde ifade edilmesinin zor olabileceği anlamına gelir. MCP'nin gelecekte en çok hangi yeteneği genişletmesi gerektiğini düşünüyorsunuz?**
 
-> En çok ihtiyaç duyulan şey, oturumlar arası çalışan event-driven yetenektir. MCP özünde istek-yanıt tabanlıdır; notifications, progress, sampling ve elicitation gibi ilkel yapıların hepsi bağlantısı açık kalan tek bir oturumla sınırlıdır. Bir bildirim yalnızca "bir kaynak değişti" diyebilir; Agent'ın düşünme döngüsünü tetiklemenin standart bir yolu yoktur, çevrimdışı bir Agent'ı uyandırmak ise büsbütün mümkün değildir.
+> En çok gereken genişletme, oturumlar arası olay güdümlü yetenektir. MCP çok turlu etkileşimleri, değişiklik aboneliklerini ve uzun süren görevleri zaten destekler; ancak özü Agent'ı sürekli çevrimiçi tutmak değil, bir yetenek çağrısını standartlaştırmaktır. Yeni e-posta veya dış geri çağrı için Agent'ı uyandırmak; birden çok olayı sıraya almak, sürdürmek ve yeniden denemek hâlâ Agent çerçevesinin sorumluluğundadır. Bu orkestrasyon için daha birleşik kurallar, protokolün sadeliğinden ödün vermeden MCP'nin kapsamını genişletebilir.
 
 **2. (★★) Asenkron bir Agent mimarisinde, olay kuyruğu için öncelik stratejisi tasarım zamanında belirlenmelidir. Ama öncelik yargısının kendisi semantik anlayış gerektiriyorsa (örn. yeni bir mesajın mevcut görevden daha acil olup olmadığını belirlemek), bu yargıyı kim vermelidir — bir kural motoru mu yoksa başka bir LLM çağrısı mı? Her birinin maliyeti nedir?**
 

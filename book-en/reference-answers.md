@@ -124,7 +124,7 @@ This file collects reference-answer outlines for the thought questions across al
 
 **1. (★★) The MCP standard decouples tool definitions from the Agent framework. However, standardization also means that complex tool interaction patterns (e.g., streaming output, bidirectional communication, stateful sessions) may be difficult to express within a standard protocol. What capability do you think MCP most needs to extend in the future?**
 
-> What is most needed is cross-session, event-driven capability. MCP is request-response at its core; primitives such as notifications, progress, sampling, and elicitation are all confined to a single connected session—a notification can only say "a resource changed"; there is no standard way to trigger an Agent's thinking loop, let alone wake an offline Agent.
+> The most needed extension is cross-session, event-driven capability. MCP already supports multi-turn interaction, change subscriptions, and long-running tasks, but its core remains the standardization of a capability call rather than keeping an Agent continuously online. Waking an Agent for new email or external callbacks, and queuing, resuming, and retrying multiple events, still belongs to the Agent framework. More unified conventions for this orchestration would broaden MCP without sacrificing protocol simplicity.
 
 **2. (★★) In an asynchronous Agent architecture, the priority strategy for the event queue must be determined at design time. But if priority judgment itself requires semantic understanding (e.g., determining whether a new message is more urgent than the current task), who should make this judgment—a rules engine or another LLM call? What are the costs of each?**
 
