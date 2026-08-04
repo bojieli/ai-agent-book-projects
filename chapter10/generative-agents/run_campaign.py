@@ -37,6 +37,24 @@ TASK_DECOMP_DURATION = re.compile(r"\(duration in minutes:\s*(\d+)\s*,")
 TASK_DECOMP_TOTAL = re.compile(r"total duration in minutes:?\s*(\d+)")
 TASK_DECOMP_PARSE_ERRORS = (IndexError, TypeError, ValueError)
 TASK_DECOMP_ATTEMPTS = 5
+POIGNANCY_SCALE_INSTRUCTION = "scale of 1 to 10"
+
+
+class ValidatedZero(int):
+    """Keep a parsed integer zero distinct from the legacy False sentinel."""
+
+    def __new__(cls) -> "ValidatedZero":
+        return super().__new__(cls, 0)
+
+    def __eq__(self, other: object) -> bool:
+        if other is False:
+            return False
+        return super().__eq__(other)
+
+    def __ne__(self, other: object) -> bool:
+        if other is False:
+            return True
+        return super().__ne__(other)
 
 
 def atomic_json(path: Path, value: Any) -> None:
@@ -178,6 +196,41 @@ def install_task_decomp_compat() -> None:
 
     guarded._exp10_7_task_decomp_compat = True  # type: ignore[attr-defined]
     run_gpt_prompt.safe_generate_response = guarded
+
+
+def install_validated_zero_compat() -> None:
+    """Preserve validated zero poignancy instead of treating it as failure."""
+
+    from persona.prompt_template import run_gpt_prompt
+
+    current = run_gpt_prompt.ChatGPT_safe_generate_response
+    if getattr(current, "_exp10_7_validated_zero_compat", False):
+        return
+
+    def guarded(
+        prompt: str,
+        example_output: Any,
+        special_instruction: str,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Any:
+        output = current(
+            prompt,
+            example_output,
+            special_instruction,
+            *args,
+            **kwargs,
+        )
+        if (
+            type(output) is int
+            and output == 0
+            and POIGNANCY_SCALE_INSTRUCTION in special_instruction
+        ):
+            return ValidatedZero()
+        return output
+
+    guarded._exp10_7_validated_zero_compat = True  # type: ignore[attr-defined]
+    run_gpt_prompt.ChatGPT_safe_generate_response = guarded
 
 
 def set_receipt_path(path: Path) -> None:
@@ -425,6 +478,7 @@ def run_arm(
 
     correction_recorder = install_action_arena_compat()
     install_task_decomp_compat()
+    install_validated_zero_compat()
 
     seed_status = json.loads((output / "seed_status.json").read_text())
     if not seed_status.get("complete"):

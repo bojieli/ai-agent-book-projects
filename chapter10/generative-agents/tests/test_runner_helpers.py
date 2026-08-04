@@ -8,6 +8,7 @@ import pytest
 from action_arena_compat import normalize_action_arena
 from run_campaign import (
     CUSTOM_CURRENTLY,
+    ValidatedZero,
     normalize_task_decomp_response,
     quarantine_artifact,
     receipt_summary,
@@ -49,6 +50,15 @@ def test_custom_goal_is_specific_and_time_bounded():
     assert "climate-resilience workshop" in CUSTOM_CURRENTLY
     assert "February 14th, 2023" in CUSTOM_CURRENTLY
     assert "5pm to 7pm" in CUSTOM_CURRENTLY
+
+
+def test_validated_zero_is_numeric_but_not_the_false_sentinel():
+    value = ValidatedZero()
+
+    assert value == 0
+    assert value != False  # noqa: E712 - verifies the upstream comparison exactly
+    assert int(value) == 0
+    assert json.dumps({"poignancy": value}) == '{"poignancy": 0}'
 
 
 def test_task_decomp_normalization_discards_prose_and_bounds_duration():
