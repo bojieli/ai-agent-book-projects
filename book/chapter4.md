@@ -119,13 +119,9 @@ MCP 采用客户端-服务器架构：**MCP 服务器**暴露一组工具，**MC
 
 MCP 的生态价值在于**一次开发，处处可用**。一个 MCP 服务器可以同时被 Cursor、Claude Desktop、OpenClaw 等任何兼容的客户端使用，工具开发者无需关心上游 Agent 框架的差异。MCP 已被多个主流 Agent 框架和 IDE 采纳，正在成为工具互操作的重要标准。本章的所有实验均基于 MCP 协议构建工具。
 
-这里还要区分两个协议时代。2025 年版 MCP 使用 `initialize` / `notifications/initialized` 完成握手，并可用 `Mcp-Session-Id` 维持协议级会话；当前稳定版 **2026-07-28** 已删除这套握手和协议级 session，改为无状态请求：每个请求都在 `_meta` 中携带协议版本、客户端信息与客户端能力，服务器不得从上一次请求推断能力。客户端可先调用 `server/discover` 获取服务器支持的版本与能力，也可以直接在业务请求中协商；列表结果还通过 `ttlMs` 和 `cacheScope` 给出缓存语义[^ch4-mcp-2026]。因此，“一个传输连接仍可承载多条消息”和“协议依赖一个有状态会话”是两件不同的事，不能混为一谈。
-
 MCP 在实践中面临三个递进的挑战——同步调用的限制、工具过多时的上下文开销、以及如何将工具能力沉淀为可复用的知识。
 
-**MCP 的局限性**。MCP 的工具调用主体上仍是**请求-响应式**——客户端发起调用，服务器返回完整结果或 `input_required` 等中间结果。2026-07-28 用多轮往返请求（MRTR）替代了服务器直接反向调用客户端的模式：服务器把“需要用户补充输入”等状态作为 `InputRequiredResult` 交还客户端，由客户端取得输入后携不透明的 `requestState` 和 `inputResponses` 重试原请求；资源变化则通过 `subscriptions/listen` 订阅流传递。长任务还可以采用 Tasks 扩展，以持久任务句柄进行轮询和恢复。与之相对，Roots、Sampling、Logging 已进入弃用状态，不应再作为新架构的基础[^ch4-mcp-async]。
-
-这些机制解决了**一次 MCP 工作流内部**的多轮交互、订阅和长任务恢复，却没有定义谁来持续运行 Agent 的事件循环，也不能凭空唤醒一个已经离线的 Agent。新邮件、外部 webhook 和系统告警如何汇入统一队列，如何决定并发、优先级与重试，仍属于 Agent 框架或部署基础设施的责任。这正是本章后半部分讨论事件驱动架构的原因：MCP 标准化能力调用及其延续句柄，Agent 框架负责跨来源、跨时间的调度与唤醒。
+**MCP 的局限性**。MCP 的重点是标准化 Agent 与外部能力之间的交互，而不是提供一个完整的事件运行时。协议已经能够支持多轮交互、变化订阅和长任务等复杂流程，但这些机制解决的是“一次工作流如何继续”，并不负责让 Agent 始终在线。跨会话、多事件源、离线唤醒的事件驱动架构——例如新邮件到达时启动 Agent、外部系统回调时恢复任务——仍需要在协议之上另行构建[^ch4-mcp-current]。构建方式是分层的：MCP 负责能力调用的标准化，Agent 框架负责事件接入、调度、并发和唤醒。本章后半部分讨论的正是后一层问题。
 
 **MCP 工具的上下文开销管理**。MCP 生态的快速扩张带来了一个工程问题：仅仅 5 个 MCP 服务器就可能引入数万 token 量级的工具定义开销（约 55,000 token，视具体服务器而定），在 200K 的上下文窗口里还没开始对话就用掉了近三成。Cursor 在实践中验证了一种缓解方案：将工具描述同步到文件夹中，Agent 默认只看到工具名称的索引，需要时再查询具体的定义。A/B 测试显示，这种方式使 MCP 工具相关任务的总 token 消耗减少了 46.9%。这种“文件系统作为上下文接口”的思路，与第二章讨论的 KV Cache 友好设计原则（合理组织输入格式以复用之前的计算结果、降低推理成本）和 Skills 的渐进式披露机制（不把所有信息一次性展示给模型，而是按需逐步提供）一脉相承——默认少给，按需加载。
 
@@ -133,8 +129,7 @@ Pi Coding Agent 把这一思路落实为更激进的架构取舍：核心刻意�
 
 [^ch4-pi-no-mcp]: Pi Coding Agent, “Philosophy: No MCP,” https://github.com/earendil-works/pi/tree/main/packages/coding-agent#philosophy；Mario Zechner, “What if you don’t need MCP at all?”, 2025-11-02. https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/；Pi 介绍中的相关讨论见 21:25 起：https://www.youtube.com/watch?v=Dli5slNaJu0&t=1285s（国内镜像：https://www.bilibili.com/video/BV1M7796VEHj/）
 [^ch4-pi-mcp-adapter]: `pi-mcp-adapter`, “Why This Exists” 与 “Quick Start,” https://github.com/nicobailon/pi-mcp-adapter
-[^ch4-mcp-2026]: Model Context Protocol, “2026-07-28 Key Changes” 与 “Discovery”. https://modelcontextprotocol.io/specification/2026-07-28/changelog；https://modelcontextprotocol.io/specification/2026-07-28/server/discover
-[^ch4-mcp-async]: Model Context Protocol, “Multi-Round-Trip Requests”, “Subscriptions”, “Tasks” 与 “Deprecated Features”. https://modelcontextprotocol.io/specification/2026-07-28/basic/patterns/mrtr；https://modelcontextprotocol.io/specification/2026-07-28/basic/patterns/subscriptions；https://modelcontextprotocol.io/extensions/tasks/overview；https://modelcontextprotocol.io/specification/2026-07-28/deprecated
+[^ch4-mcp-current]: Model Context Protocol, “2026-07-28 Specification”. https://modelcontextprotocol.io/specification/2026-07-28
 
 **层次化组织与动态工具发现**。除了按需加载工具描述，当工具的数量增长到上百个时，层次化的组织方式也比扁平列表更有效。一种有效的方式是**按信息源的性质分类**：
 
@@ -145,7 +140,7 @@ Pi Coding Agent 把这一思路落实为更激进的架构取舍：核心刻意�
 
 在系统提示词中显式说明分类结构，可以帮助 LLM 快速定位到相关的工具组。更进一步的方案是前文“工具设计的演进”预告的**动态工具发现**：不把全部工具定义一次性注入上下文，而是让 Agent 通过搜索按需发现工具定义（详见本章“主动工具发现”一节）。当可用工具达到上百个时，平铺到上下文中既浪费 token 又干扰决策。Anthropic 的实验显示，这种按需检索的方式使 Opus 4 在工具使用基准上的准确率从 49% 提升到 74%。
 
-**从 MCP 到 Skills：解决工具过多的问题**。MCP 解决的是**互操作**（一次开发，处处可用），Skills 解决的是**选择过载**：当可用工具从十几个增长到数百个时，模型面对平铺的工具列表越来越难以做出正确选择。第二章介绍的 Agent Skills 用少量通用工具加可按需加载的知识文档替代大量专用工具，在根本上把“工具选择”问题转化为“知识检索”问题——后者正是大语言模型擅长的。两者并不是只能二选一：Skills 可以独立放在本地文件系统或代码仓库中，也可以通过官方正在推进的 **Skills over MCP** 方式发现和传递，由 MCP 提供跨客户端互操作，由 Skill 保留渐进式披露与配套脚本[^ch4-skills-over-mcp]。至于一项具体能力应该做成专用 MCP 工具还是 Skill + 通用执行器，本章开头“能力表达形式的选择”一节给出的三维决策框架（参数复杂度、变更频率、模型能力）仍然适用。
+**从 MCP 到 Skills：解决工具过多的问题**。MCP 解决的是**互操作**（一次开发，处处可用），Skills 解决的是**选择过载**：当可用工具从十几个增长到数百个时，模型面对平铺的工具列表越来越难以做出正确选择。第二章介绍的 Agent Skills 用少量通用工具加可按需加载的知识文档替代大量专用工具，在根本上把“工具选择”问题转化为“知识检索”问题——后者正是大语言模型擅长的。两者并不是非此即彼：Skills 负责组织和披露能力，也可以通过 MCP 被发现和传递；MCP 则提供跨客户端的互操作[^ch4-skills-over-mcp]。至于一项具体能力应该做成专用 MCP 工具还是 Skill + 通用执行器，本章开头“能力表达形式的选择”一节给出的三维决策框架（参数复杂度、变更频率、模型能力）仍然适用。
 
 [^ch4-skills-over-mcp]: Model Context Protocol, “Build an MCP server with Agent Skills” 与 “Skills over MCP Working Group”. https://modelcontextprotocol.io/docs/2026-07-28/develop/build-with-agent-skills；https://modelcontextprotocol.io/community/working-groups/skills-over-mcp
 
@@ -174,7 +169,7 @@ Pi Coding Agent 把这一思路落实为更激进的架构取舍：核心刻意�
 > **实验 4-1 ★★：感知工具 MCP 服务器**
 >
 >
-> ![图4-1 MCP 2026-07-28 无状态协议交互时序](images/fig4-1.svg)
+> ![图4-1 MCP 协议交互时序](images/fig4-1.svg)
 >
 >
 > 本实验构建一套感知工具 MCP 服务器，覆盖以下五类感知场景：
@@ -678,7 +673,7 @@ PineClaw 的解决方案是引入 **Channel 机制**——在 OpenClaw 的 Gatew
 
 ## 思考题
 
-1. ★★ MCP 2026-07-28 已提供 MRTR、订阅，并可通过 Tasks 扩展表达长任务；但协议仍不能自行唤醒离线 Agent。你认为下一步最需要标准化的是哪一层能力：更多工作流原语，还是跨事件源的调度、持久化与离线唤醒？为什么？
+1. ★★ MCP 标准将工具定义从 Agent 框架中解耦了出来。但标准化也意味着复杂的工具交互模式（如流式输出、双向通信、有状态会话）可能难以在标准协议中表达。你认为 MCP 未来最需要扩展的能力是什么？
 2. ★★ 在异步 Agent 架构中，事件队列的优先级策略需要在设计时确定。但如果优先级判断本身需要语义理解（比如判断一条新消息是否比当前任务更紧急），这个判断应该由谁来做——规则引擎还是另一个 LLM 调用？各有什么代价？
 3. ★★ 在 MCP 生态中，不同的 MCP 服务器可能提供功能高度重叠的工具。当 Agent 面对多个来源不同但功能相似的工具时，应该如何选择？如果不同来源的同名工具在行为上略有差异（比如一个返回摘要，另一个返回全文），Agent 是否有能力感知并利用这种差异？
 4. ★★★ Agent 代表用户与外部世界交互时，本质上面临一个身份选择：是用独立的虚拟身份（专属邮箱和电话号码）以第三方身份行动，还是直接以用户本人的身份操作其个人账号？前者可以在后台自主操作，但第三方可能不信任一个非真人的身份；后者拥有更完整的上下文和权限，但引入了信任授权和安全边界的问题。你认为在什么场景下应该选择哪种模式？

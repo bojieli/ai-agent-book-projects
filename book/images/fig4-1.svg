@@ -1,53 +1,44 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 650" width="880" height="650" style="background:#ffffff">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 580" width="880" height="580">
 <defs>
-<marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker>
-<style>text[font-family*="Courier New"] { font-size: 11px; } .small-code { font-size: 8px !important; }</style>
+  <marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto">
+    <polygon points="0 0, 12 4, 0 8" fill="#333333"/>
+  </marker>
 </defs>
-<rect x="0" y="40" width="880" height="650" fill="#ffffff"/>
+<rect x="0" y="40" width="880" height="580" fill="#ffffff"/>
+
 <rect x="120" y="50" width="160" height="44" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
 <text x="200" y="72" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">MCP Client</text>
 <rect x="600" y="50" width="160" height="44" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
 <text x="680" y="72" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">MCP Server</text>
-<line x1="200" y1="94" x2="200" y2="675" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
-<line x1="680" y1="94" x2="680" y2="675" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="200" y1="94" x2="200" y2="600" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="680" y1="94" x2="680" y2="600" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
 
-<line x1="204" y1="130" x2="676" y2="130" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<text x="440" y="116" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="19" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">server/discover</text>
-<rect x="222" y="137" width="436" height="66" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="232" y="155" font-family="'Courier New', monospace" font-size="13" fill="#333333">{&quot;method&quot;:&quot;server/discover&quot;, &quot;params&quot;:{&quot;_meta&quot;:{</text>
-<text x="232" y="174" font-family="'Courier New', monospace" font-size="13" fill="#333333"> &quot;io.modelcontextprotocol/protocolVersion&quot;:&quot;2026-07-28&quot;,</text>
-<text x="232" y="193" font-family="'Courier New', monospace" font-size="13" fill="#333333"> &quot;io.modelcontextprotocol/clientCapabilities&quot;:{}}}}</text>
-<line x1="676" y1="225" x2="204" y2="225" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
-<text x="440" y="214" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">supportedVersions + capabilities</text>
-<rect x="222" y="232" width="436" height="46" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="232" y="250" font-family="'Courier New', monospace" font-size="13" fill="#333333">{&quot;supportedVersions&quot;:[&quot;2026-07-28&quot;], &quot;capabilities&quot;:{...},</text>
-<text x="232" y="269" font-family="'Courier New', monospace" font-size="13" fill="#333333"> &quot;resultType&quot;:&quot;complete&quot;, &quot;ttlMs&quot;:3600000, &quot;cacheScope&quot;:&quot;public&quot;}</text>
+<line x1="204" y1="140" x2="676" y2="140" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="440" y="120" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" font-weight="bold">发现服务器能力（可选）</text>
+<text x="440" y="162" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#777777" text-anchor="middle">server/discover</text>
+<line x1="676" y1="205" x2="204" y2="205" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
+<text x="440" y="191" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" font-weight="bold">返回能力说明</text>
+<rect x="285" y="218" width="310" height="42" rx="5" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="440" y="244" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#555555" text-anchor="middle">服务器支持哪些能力、如何交互</text>
 
-<line x1="204" y1="318" x2="676" y2="318" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<text x="440" y="304" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="19" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">tools/list（每个请求自描述，无会话握手）</text>
-<rect x="222" y="325" width="436" height="46" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="232" y="343" font-family="'Courier New', monospace" font-size="13" fill="#333333">{&quot;method&quot;:&quot;tools/list&quot;, &quot;params&quot;:{&quot;_meta&quot;:{</text>
-<text class="small-code" x="232" y="362" font-family="'Courier New', monospace" fill="#333333"> &quot;.../protocolVersion&quot;:&quot;2026-07-28&quot;, &quot;.../clientCapabilities&quot;:{}}}}</text>
-<line x1="676" y1="397" x2="204" y2="397" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
-<text x="440" y="386" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">tools/list result</text>
-<rect x="205" y="404" width="470" height="66" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="215" y="422" font-family="'Courier New', monospace" font-size="13" fill="#333333">{&quot;tools&quot;:[{&quot;name&quot;:&quot;get_weather&quot;, &quot;inputSchema&quot;:{&quot;type&quot;:&quot;object&quot;,</text>
-<text x="215" y="441" font-family="'Courier New', monospace" font-size="13" fill="#333333"> &quot;properties&quot;:{&quot;city&quot;:{&quot;type&quot;:&quot;string&quot;}}, &quot;required&quot;:[&quot;city&quot;]}}],</text>
-<text x="215" y="460" font-family="'Courier New', monospace" font-size="13" fill="#333333"> &quot;resultType&quot;:&quot;complete&quot;, &quot;ttlMs&quot;:0, &quot;cacheScope&quot;:&quot;private&quot;}</text>
+<line x1="204" y1="305" x2="676" y2="305" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="440" y="285" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" font-weight="bold">获取工具清单</text>
+<text x="440" y="327" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#777777" text-anchor="middle">tools/list</text>
+<line x1="676" y1="370" x2="204" y2="370" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
+<text x="440" y="356" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" font-weight="bold">返回标准化工具定义</text>
+<rect x="255" y="383" width="370" height="58" rx="5" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="440" y="406" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#444444" text-anchor="middle" font-weight="bold">get_weather — 查询指定城市天气</text>
+<text x="440" y="428" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle">输入：城市　　输出：天气信息</text>
 
-<line x1="204" y1="510" x2="676" y2="510" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<text x="440" y="496" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="19" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">tools/call</text>
-<rect x="222" y="517" width="436" height="66" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="232" y="535" font-family="'Courier New', monospace" font-size="13" fill="#333333">{&quot;method&quot;:&quot;tools/call&quot;, &quot;params&quot;:{&quot;name&quot;:&quot;get_weather&quot;,</text>
-<text x="232" y="554" font-family="'Courier New', monospace" font-size="13" fill="#333333"> &quot;arguments&quot;:{&quot;city&quot;:&quot;Beijing&quot;}, &quot;_meta&quot;:{</text>
-<text class="small-code" x="232" y="573" font-family="'Courier New', monospace" fill="#333333"> &quot;.../protocolVersion&quot;:&quot;2026-07-28&quot;, &quot;.../clientCapabilities&quot;:{}}}}</text>
-<line x1="676" y1="610" x2="204" y2="610" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
-<text x="440" y="598" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">tools/call result</text>
-<rect x="222" y="617" width="436" height="46" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="232" y="635" font-family="'Courier New', monospace" font-size="13" fill="#333333">{&quot;content&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:&quot;Beijing: 22°C, sunny&quot;}],</text>
-<text x="232" y="654" font-family="'Courier New', monospace" font-size="13" fill="#333333"> &quot;resultType&quot;:&quot;complete&quot;}</text>
+<line x1="204" y1="485" x2="676" y2="485" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="440" y="465" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" font-weight="bold">调用选定工具</text>
+<text x="440" y="507" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#777777" text-anchor="middle">tools/call：get_weather（Beijing）</text>
+<line x1="676" y1="550" x2="204" y2="550" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
+<text x="440" y="536" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" font-weight="bold">返回工具结果</text>
+<rect x="300" y="563" width="280" height="38" rx="5" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="440" y="587" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#555555" text-anchor="middle">Beijing：22°C，晴</text>
 
-<text x="55" y="205" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" font-weight="bold">① 发现</text>
-<text x="55" y="390" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" font-weight="bold">② 列表</text>
-<text x="55" y="575" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" font-weight="bold">③ 调用</text>
+<text x="55" y="205" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" font-weight="bold">① 能力发现</text>
+<text x="55" y="370" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" font-weight="bold">② 工具发现</text>
+<text x="55" y="550" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" font-weight="bold">③ 工具调用</text>
 </svg>
