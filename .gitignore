@@ -52,3 +52,11 @@ ablation_study_results.png
 # External benchmark checkout used by Experiment 6-1; retained evidence lives
 # in chapter6/tau2-bench-eval instead.
 /chapter6/tau2-bench/
+
+# Experiment 7-6 publishes full adapters to Hugging Face and retains their
+# hashes/configs in Git without duplicating the large binary blobs.
+/chapter7/speech-sft-experiment/validation/*/adapters/*/adapter_model.safetensors
+/chapter7/speech-sft-experiment/validation/*/adapters/*/tokenizer.json
+/chapter7/speech-sft-experiment/validation/*/adapters/*/tokenizer_config.json
+!/chapter7/speech-sft-experiment/validation/*/audio/**/*.wav
+/unsloth_compiled_cache/

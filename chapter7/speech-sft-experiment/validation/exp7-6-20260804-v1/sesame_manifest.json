@@ -1,0 +1,369 @@
+{
+  "experiment": "7-6",
+  "track": "sesame_paralinguistic_tags",
+  "status": "trained_and_generated",
+  "seed": 7602,
+  "base_model": "unsloth/csm-1b",
+  "base_model_revision": "39e8c756bec133ad7eb9ea1097c84a2bd891c949",
+  "dataset": "maxbsoft/mrdragonfox-elise",
+  "dataset_revision": "2cc657c3f94a83df18fcd968b7531ca1a19c7f88",
+  "source_dataset_note": "Public non-disabled mirror of the disabled MrDragonFox/Elise dataset named by the upstream notebook.",
+  "train_examples_selected": 168,
+  "train_examples_preprocessed": 168,
+  "train_category_counts": {
+    "laugh": 48,
+    "giggle": 32,
+    "sigh": 48,
+    "neutral": 40
+  },
+  "eval_examples_selected": 24,
+  "eval_examples_preprocessed": 24,
+  "eval_category_counts": {
+    "laugh": 8,
+    "giggle": 0,
+    "sigh": 8,
+    "neutral": 8
+  },
+  "train_failures": [],
+  "eval_failures": [],
+  "max_audio_seconds": 8.0,
+  "optimizer_steps": 60,
+  "effective_batch_size": 4,
+  "lora_rank": 16,
+  "pre_eval": {
+    "eval_loss": 128.2307586669922,
+    "eval_model_preparation_time": 0.0114,
+    "eval_runtime": 1.3794,
+    "eval_samples_per_second": 17.398,
+    "eval_steps_per_second": 17.398
+  },
+  "train_metrics": {
+    "train_runtime": 26.4676,
+    "train_samples_per_second": 9.068,
+    "train_steps_per_second": 2.267,
+    "total_flos": 460628125655040.0,
+    "train_loss": 124.45613021850586,
+    "epoch": 1.4285714285714286
+  },
+  "post_eval": {
+    "eval_loss": 124.34239959716797,
+    "eval_model_preparation_time": 0.0114,
+    "eval_runtime": 1.8573,
+    "eval_samples_per_second": 12.922,
+    "eval_steps_per_second": 12.922,
+    "epoch": 1.4285714285714286
+  },
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+  "peak_gpu_memory_bytes": 10242490368,
+  "wall_seconds": 182.60698008537292,
+  "adapter_local_files": [
+    {
+      "path": "adapters/sesame/README.md",
+      "bytes": 5183,
+      "sha256": "65a8c53feecbfc1e7a8cd64bc6a79baedbffd1ef6b9cc17b1ea0a5529e4d74ec"
+    },
+    {
+      "path": "adapters/sesame/adapter_config.json",
+      "bytes": 1091,
+      "sha256": "44c3053b5037214ea8862003dfeea867554c9fbb83df5728ea80e9a0915e3ee2"
+    },
+    {
+      "path": "adapters/sesame/adapter_model.safetensors",
+      "bytes": 58125112,
+      "sha256": "23994b467b319f99bbc642f4dc2ba4d39718838cd7cbfe949311a42ebcb5480e"
+    },
+    {
+      "path": "adapters/sesame/chat_template.jinja",
+      "bytes": 2002,
+      "sha256": "b43753fbbc23be93160cccf825d2cf97dec39538cb274350216940e7acbc0fe7"
+    },
+    {
+      "path": "adapters/sesame/preprocessor_config.json",
+      "bytes": 271,
+      "sha256": "8648040cda0469976874c733acbec88c0ef094cd95628ab63b32950f01872af9"
+    },
+    {
+      "path": "adapters/sesame/special_tokens_map.json",
+      "bytes": 459,
+      "sha256": "32f404d626cf7b1b6eea36c241ae7cbd6ec29c777a8701ea48c0fe9ebb94c9b1"
+    },
+    {
+      "path": "adapters/sesame/tokenizer.json",
+      "bytes": 17210159,
+      "sha256": "92487a7224af2e53dc421a3f73056078acea66f0e86734f8d41babce66bad5cc"
+    },
+    {
+      "path": "adapters/sesame/tokenizer_config.json",
+      "bytes": 50577,
+      "sha256": "eb03e82f89eebfd9b9e2c1a2741dfc34c8982c3c14d132b0ec42fed737b832d3"
+    }
+  ],
+  "adapter_huggingface_repo": "https://huggingface.co/bojieli/exp7-6-sesame-elise-tags-lora",
+  "adapter_huggingface_revision": "f2e042be0f38d6078976ef7e16cf49b91097f756",
+  "audio": [
+    {
+      "pair_id": "laugh_0",
+      "tag": "laugh",
+      "condition": "neutral",
+      "text": "I finally found the missing keys in my other pocket.",
+      "seed": 7602,
+      "path": "audio/sesame/base/laugh_0_neutral.wav",
+      "sha256": "beb4be0e62fa63ca5c81facb5f82f7a565e027f51e0df489d8f361664b49460f",
+      "samples": 65280,
+      "seconds": 2.72
+    },
+    {
+      "pair_id": "laugh_0",
+      "tag": "laugh",
+      "condition": "tagged",
+      "text": "I finally found the missing keys <laughs> in my other pocket.",
+      "seed": 7602,
+      "path": "audio/sesame/base/laugh_0_tagged.wav",
+      "sha256": "1a475df9255e256277a1a4fc66fee780c604977381059a04f09b33f46ebc00ce",
+      "samples": 144000,
+      "seconds": 6.0
+    },
+    {
+      "pair_id": "laugh_1",
+      "tag": "laugh",
+      "condition": "neutral",
+      "text": "That was the strangest joke I heard all week.",
+      "seed": 7603,
+      "path": "audio/sesame/base/laugh_1_neutral.wav",
+      "sha256": "85f7ed5500add23a6d5a4e51df5c0c01e00ecb2c740863b0155cb22d547bf701",
+      "samples": 49920,
+      "seconds": 2.08
+    },
+    {
+      "pair_id": "laugh_1",
+      "tag": "laugh",
+      "condition": "tagged",
+      "text": "That was the strangest joke <laughs> I heard all week.",
+      "seed": 7603,
+      "path": "audio/sesame/base/laugh_1_tagged.wav",
+      "sha256": "46f2c99ca4fd65fff0c724900e9baa1f7bfab25fbc6246c669c9678c463def96",
+      "samples": 92160,
+      "seconds": 3.84
+    },
+    {
+      "pair_id": "giggle_0",
+      "tag": "giggle",
+      "condition": "neutral",
+      "text": "You remembered the secret code after all.",
+      "seed": 7604,
+      "path": "audio/sesame/base/giggle_0_neutral.wav",
+      "sha256": "b3a6df7fe20a4e713f19f961772e908477962b335419ac5289b05fea2d9adebd",
+      "samples": 40320,
+      "seconds": 1.68
+    },
+    {
+      "pair_id": "giggle_0",
+      "tag": "giggle",
+      "condition": "tagged",
+      "text": "You remembered the secret code <giggles> after all.",
+      "seed": 7604,
+      "path": "audio/sesame/base/giggle_0_tagged.wav",
+      "sha256": "fe8a33bf80d471d1812c6d37586e5989eadcc10ae61c48ed02e4e516eafd2dc3",
+      "samples": 71040,
+      "seconds": 2.96
+    },
+    {
+      "pair_id": "giggle_1",
+      "tag": "giggle",
+      "condition": "neutral",
+      "text": "The tiny puppy tried to carry the enormous slipper.",
+      "seed": 7605,
+      "path": "audio/sesame/base/giggle_1_neutral.wav",
+      "sha256": "73b02cd34995eb75549fd5941a67c1b621b7d4f613d140f83693955d9529cd44",
+      "samples": 71040,
+      "seconds": 2.96
+    },
+    {
+      "pair_id": "giggle_1",
+      "tag": "giggle",
+      "condition": "tagged",
+      "text": "The tiny puppy <giggles> tried to carry the enormous slipper.",
+      "seed": 7605,
+      "path": "audio/sesame/base/giggle_1_tagged.wav",
+      "sha256": "c1f7efac3892a907c7e08ecef5c013fa83db23879a1a5d1d055f81ec7efd4348",
+      "samples": 142080,
+      "seconds": 5.92
+    },
+    {
+      "pair_id": "sigh_0",
+      "tag": "sigh",
+      "condition": "neutral",
+      "text": "The last bus left before we reached the corner.",
+      "seed": 7606,
+      "path": "audio/sesame/base/sigh_0_neutral.wav",
+      "sha256": "661c54d5ffba92518ef690cade4d3338a7d5c6f8e67882bf024d557e2b5eeeff",
+      "samples": 55680,
+      "seconds": 2.32
+    },
+    {
+      "pair_id": "sigh_0",
+      "tag": "sigh",
+      "condition": "tagged",
+      "text": "The last bus left <sighs> before we reached the corner.",
+      "seed": 7606,
+      "path": "audio/sesame/base/sigh_0_tagged.wav",
+      "sha256": "90cbd9c00b4f27ce71723bc022d3a5a0503ea6039ed7456a2b50785d86986f30",
+      "samples": 144000,
+      "seconds": 6.0
+    },
+    {
+      "pair_id": "sigh_1",
+      "tag": "sigh",
+      "condition": "neutral",
+      "text": "I suppose we need to finish the paperwork again.",
+      "seed": 7607,
+      "path": "audio/sesame/base/sigh_1_neutral.wav",
+      "sha256": "eb79e2600f5c4c0d571ae6e6ba5dc26c84c1547a6fb5225a9467833789c61b8a",
+      "samples": 53760,
+      "seconds": 2.24
+    },
+    {
+      "pair_id": "sigh_1",
+      "tag": "sigh",
+      "condition": "tagged",
+      "text": "I suppose <sighs> we need to finish the paperwork again.",
+      "seed": 7607,
+      "path": "audio/sesame/base/sigh_1_tagged.wav",
+      "sha256": "3e5b8de26910376f0906253ae1effff657b927efb6382a7ff4aaeea3080d0c58",
+      "samples": 80640,
+      "seconds": 3.36
+    },
+    {
+      "pair_id": "laugh_0",
+      "tag": "laugh",
+      "condition": "neutral",
+      "text": "I finally found the missing keys in my other pocket.",
+      "seed": 7602,
+      "path": "audio/sesame/adapted/laugh_0_neutral.wav",
+      "sha256": "464bbcf2b6292d8a259cbb594e3c14a0e5ba8ca531bcac391e6a6495f9a7420c",
+      "samples": 94080,
+      "seconds": 3.92
+    },
+    {
+      "pair_id": "laugh_0",
+      "tag": "laugh",
+      "condition": "tagged",
+      "text": "I finally found the missing keys <laughs> in my other pocket.",
+      "seed": 7602,
+      "path": "audio/sesame/adapted/laugh_0_tagged.wav",
+      "sha256": "00cf9a83ce1694de4ddab137b668306acce45c5459cee81fa3702a3a5cc94359",
+      "samples": 86400,
+      "seconds": 3.6
+    },
+    {
+      "pair_id": "laugh_1",
+      "tag": "laugh",
+      "condition": "neutral",
+      "text": "That was the strangest joke I heard all week.",
+      "seed": 7603,
+      "path": "audio/sesame/adapted/laugh_1_neutral.wav",
+      "sha256": "4cba912639254c066d906b318531574ed1c2d664c2ece8e8b2f185fa85298e88",
+      "samples": 59520,
+      "seconds": 2.48
+    },
+    {
+      "pair_id": "laugh_1",
+      "tag": "laugh",
+      "condition": "tagged",
+      "text": "That was the strangest joke <laughs> I heard all week.",
+      "seed": 7603,
+      "path": "audio/sesame/adapted/laugh_1_tagged.wav",
+      "sha256": "0b25fc0881603af5831526dd4fcfcfb7dfe1539b3185ddd4358b230d16b50ea8",
+      "samples": 90240,
+      "seconds": 3.76
+    },
+    {
+      "pair_id": "giggle_0",
+      "tag": "giggle",
+      "condition": "neutral",
+      "text": "You remembered the secret code after all.",
+      "seed": 7604,
+      "path": "audio/sesame/adapted/giggle_0_neutral.wav",
+      "sha256": "16cbff670bebf59188345a79fcc99952ee5f7ba925e214874c71399b8b684fb6",
+      "samples": 48000,
+      "seconds": 2.0
+    },
+    {
+      "pair_id": "giggle_0",
+      "tag": "giggle",
+      "condition": "tagged",
+      "text": "You remembered the secret code <giggles> after all.",
+      "seed": 7604,
+      "path": "audio/sesame/adapted/giggle_0_tagged.wav",
+      "sha256": "e0d7ef91ff0c52b71a8630aa598bfbc30971149f36915fd3252511cbeb3d9a2c",
+      "samples": 65280,
+      "seconds": 2.72
+    },
+    {
+      "pair_id": "giggle_1",
+      "tag": "giggle",
+      "condition": "neutral",
+      "text": "The tiny puppy tried to carry the enormous slipper.",
+      "seed": 7605,
+      "path": "audio/sesame/adapted/giggle_1_neutral.wav",
+      "sha256": "653c1ed9cf6e11412cc935dee7dff90f0d059a72137faec5a63c795459658e15",
+      "samples": 78720,
+      "seconds": 3.28
+    },
+    {
+      "pair_id": "giggle_1",
+      "tag": "giggle",
+      "condition": "tagged",
+      "text": "The tiny puppy <giggles> tried to carry the enormous slipper.",
+      "seed": 7605,
+      "path": "audio/sesame/adapted/giggle_1_tagged.wav",
+      "sha256": "9b72e5252d8b6f7a6f4c7ec3bbbf0f45e39bb2a9e6a16db8e140a9c6e9f32c2c",
+      "samples": 117120,
+      "seconds": 4.88
+    },
+    {
+      "pair_id": "sigh_0",
+      "tag": "sigh",
+      "condition": "neutral",
+      "text": "The last bus left before we reached the corner.",
+      "seed": 7606,
+      "path": "audio/sesame/adapted/sigh_0_neutral.wav",
+      "sha256": "1cbb54147d1375513821f170b229379c8285d264d7ba4b4c568fcdb75bf3c7f0",
+      "samples": 65280,
+      "seconds": 2.72
+    },
+    {
+      "pair_id": "sigh_0",
+      "tag": "sigh",
+      "condition": "tagged",
+      "text": "The last bus left <sighs> before we reached the corner.",
+      "seed": 7606,
+      "path": "audio/sesame/adapted/sigh_0_tagged.wav",
+      "sha256": "d432582bfebcd4961ca2d3dfcfd944df252ed4826172f5987325172bcb23fd4e",
+      "samples": 94080,
+      "seconds": 3.92
+    },
+    {
+      "pair_id": "sigh_1",
+      "tag": "sigh",
+      "condition": "neutral",
+      "text": "I suppose we need to finish the paperwork again.",
+      "seed": 7607,
+      "path": "audio/sesame/adapted/sigh_1_neutral.wav",
+      "sha256": "b00babd0052826c46bc90a4d1e5335069ad26f6670ad7e90669f71320f715a8a",
+      "samples": 55680,
+      "seconds": 2.32
+    },
+    {
+      "pair_id": "sigh_1",
+      "tag": "sigh",
+      "condition": "tagged",
+      "text": "I suppose <sighs> we need to finish the paperwork again.",
+      "seed": 7607,
+      "path": "audio/sesame/adapted/sigh_1_tagged.wav",
+      "sha256": "6da2951a4629a2a809e8595bd3940d5da3fe494e4e89cec5c728dcc0fd9d22d9",
+      "samples": 80640,
+      "seconds": 3.36
+    }
+  ]
+}
