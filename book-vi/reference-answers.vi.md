@@ -130,7 +130,7 @@ Tài liệu này tổng hợp đề cương đáp án tham khảo cho các câu 
 
 **1. (★★) Chuẩn MCP tách định nghĩa công cụ ra khỏi framework Agent. Nhưng tiêu chuẩn hóa cũng có nghĩa các mô thức tương tác công cụ phức tạp (như đầu ra streaming, giao tiếp hai chiều, phiên có trạng thái) có thể khó biểu đạt trong giao thức chuẩn. Bạn cho rằng năng lực MCP tương lai cần mở rộng nhất là gì?**
 
-> Cần nhất là năng lực điều khiển theo sự kiện xuyên phiên. Chủ thể MCP là kiểu request-response, các primitive như notifications, progress, sampling, elicitation đều giới hạn trong một phiên đơn lẻ giữ kết nối, thông báo chỉ nói được "tài nguyên đã thay đổi", không có cách chuẩn để kích hoạt vòng lặp suy nghĩ của Agent, càng không thể đánh thức Agent offline.
+> Phần mở rộng cần thiết nhất là năng lực hướng sự kiện xuyên phiên. MCP đã hỗ trợ tương tác nhiều lượt, đăng ký thay đổi và tác vụ chạy dài, nhưng cốt lõi của nó vẫn là chuẩn hóa một lần gọi năng lực chứ không phải giữ Agent luôn trực tuyến. Việc đánh thức Agent khi có email mới hoặc callback bên ngoài, cũng như xếp hàng, tiếp tục và thử lại nhiều sự kiện, vẫn thuộc trách nhiệm của khung Agent. Các quy ước thống nhất hơn cho việc điều phối này sẽ mở rộng phạm vi của MCP mà không làm mất đi sự đơn giản của giao thức.
 
 **2. (★★) Trong kiến trúc Agent bất đồng bộ, chiến lược ưu tiên hàng đợi sự kiện cần xác định lúc thiết kế. Nhưng nếu bản thân phán đoán ưu tiên cần hiểu ngữ nghĩa (ví dụ phán đoán một tin nhắn mới có khẩn cấp hơn nhiệm vụ hiện tại không), phán đoán này nên do ai làm — bộ máy luật hay một lần gọi LLM khác? Mỗi cách có cái giá gì?**
 
