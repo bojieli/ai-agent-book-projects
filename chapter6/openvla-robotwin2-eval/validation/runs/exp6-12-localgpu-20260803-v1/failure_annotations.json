@@ -1,0 +1,1946 @@
+{
+  "chunk_1|robotwin2_move_can_pot_train_iid|100007": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100007_seed_100007--success=False--ran=9417.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100152": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100152_seed_100152--success=False--ran=436.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100122": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100122_seed_100122--success=False--ran=582.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100043": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100043_seed_100100043--success=False--ran=3602.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100061": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100061_seed_100061--success=False--ran=9907.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100031": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100031_seed_100100031--success=False--ran=8672.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100019": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100019_seed_100100019--success=False--ran=3369.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100123": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100123_seed_100100123--success=False--ran=2591.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100061": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100061_seed_100100061--success=False--ran=6382.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100025": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100025_seed_100100025--success=False--ran=10000.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100000": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100000_seed_100000--success=False--ran=9889.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100079": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100079_seed_100079--success=False--ran=3671.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100124": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100124_seed_100124--success=False--ran=4661.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100034": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100034_seed_100100034--success=False--ran=162.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100142": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100142_seed_100142--success=False--ran=4760.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100097": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100097_seed_100100097--success=False--ran=8665.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100009": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100009_seed_100009--success=False--ran=2539.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100047": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100047_seed_100047--success=False--ran=7718.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100113": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100113_seed_100113--success=False--ran=5555.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100143": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100143_seed_100143--success=False--ran=9823.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100012": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100012_seed_100012--success=False--ran=2207.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100086": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100086_seed_100100086--success=False--ran=7065.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100043": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100043_seed_100043--success=False--ran=723.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100052": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100052_seed_100052--success=False--ran=9376.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100137": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100137_seed_100137--success=False--ran=581.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100097": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100097_seed_100097--success=False--ran=6682.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100127": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100127_seed_100100127--success=False--ran=2950.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100044": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100044_seed_100100044--success=False--ran=2203.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100029": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100029_seed_100029--success=False--ran=9332.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100108": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100108_seed_100108--success=False--ran=8726.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100081": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100081_seed_100081--success=False--ran=2202.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100084": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100084_seed_100084--success=False--ran=3482.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100058": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100058_seed_100100058--success=False--ran=9636.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100138": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100138_seed_100138--success=False--ran=7484.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100038": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100038_seed_100038--success=False--ran=6753.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100060": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100060_seed_100060--success=False--ran=9265.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100003": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100003_seed_100003--success=False--ran=5617.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100025": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100025_seed_100025--success=False--ran=1290.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100105": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100105_seed_100100105--success=False--ran=2137.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100033": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100033_seed_100033--success=False--ran=9348.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100147": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100147_seed_100147--success=False--ran=4507.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100147": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100147_seed_100100147--success=False--ran=4367.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100038": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100038_seed_100100038--success=False--ran=7283.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100055": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100055_seed_100100055--success=False--ran=7711.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100048": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100048_seed_100100048--success=False--ran=8049.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100054": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100054_seed_100100054--success=False--ran=3399.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100012": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100012_seed_100100012--success=False--ran=389.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100121": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100121_seed_100121--success=False--ran=9957.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100119": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100119_seed_100119--success=False--ran=2513.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100005": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100005_seed_100100005--success=False--ran=153.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100027": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100027_seed_100100027--success=False--ran=44.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100017": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100017_seed_100100017--success=False--ran=7904.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100086": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100086_seed_100086--success=False--ran=5153.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100059": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100059_seed_100100059--success=False--ran=6142.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100073": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100073_seed_100073--success=False--ran=7075.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100015": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100015_seed_100015--success=False--ran=7375.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100046": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100046_seed_100046--success=False--ran=9004.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100034": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100034_seed_100034--success=False--ran=7346.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100106": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100106_seed_100100106--success=False--ran=6975.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100001": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100001_seed_100100001--success=False--ran=6307.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100091": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100091_seed_100091--success=False--ran=2274.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100136": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100136_seed_100100136--success=False--ran=6367.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100015": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100015_seed_100100015--success=False--ran=7882.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100156": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100156_seed_100156--success=False--ran=6644.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100001": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100001_seed_100001--success=False--ran=362.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100088": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100088_seed_100100088--success=False--ran=9519.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100076": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100076_seed_100100076--success=False--ran=4085.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100079": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100079_seed_100100079--success=False--ran=4698.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100094": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100094_seed_100100094--success=False--ran=2172.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100140": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100140_seed_100100140--success=False--ran=2461.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100139": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100139_seed_100139--success=False--ran=8797.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100019": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100019_seed_100019--success=False--ran=8838.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100149": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100149_seed_100100149--success=False--ran=1788.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100100": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100_seed_100100--success=False--ran=7314.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100018": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100018_seed_100018--success=False--ran=1829.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100068": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100068_seed_100068--success=False--ran=252.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100162": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100162_seed_100100162--success=False--ran=8185.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100039": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100039_seed_100100039--success=False--ran=3386.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100084": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100084_seed_100100084--success=False--ran=2430.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100154": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100154_seed_100154--success=False--ran=434.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100160": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100160_seed_100100160--success=False--ran=2494.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100085": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100085_seed_100100085--success=False--ran=3305.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100075": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100075_seed_100075--success=False--ran=767.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100122": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100122_seed_100100122--success=False--ran=6268.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100135": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100135_seed_100100135--success=False--ran=6255.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100055": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100055_seed_100055--success=False--ran=6762.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100153": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100153_seed_100153--success=False--ran=8869.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100150": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100150_seed_100150--success=False--ran=9250.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100119": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100119_seed_100100119--success=False--ran=7413.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100044": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100044_seed_100044--success=False--ran=510.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100148": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100148_seed_100100148--success=False--ran=5934.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100059": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100059_seed_100059--success=False--ran=445.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100002": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100002_seed_100002--success=False--ran=7383.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100135": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100135_seed_100135--success=False--ran=8158.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100071": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100071_seed_100100071--success=False--ran=5047.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100021": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100021_seed_100100021--success=False--ran=6308.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100123": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100123_seed_100123--success=False--ran=7145.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100033": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100033_seed_100100033--success=False--ran=9761.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100099": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100099_seed_100100099--success=False--ran=7109.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100150": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100150_seed_100100150--success=False--ran=4645.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100057": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100057_seed_100057--success=False--ran=6215.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100120": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100120_seed_100100120--success=False--ran=3717.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100092": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100092_seed_100092--success=False--ran=1840.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100042": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100042_seed_100100042--success=False--ran=558.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100030": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100030_seed_100100030--success=False--ran=1060.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100028": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100028_seed_100028--success=False--ran=2689.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100053": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100053_seed_100100053--success=False--ran=6993.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100110": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100110_seed_100110--success=False--ran=2337.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100080": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100080_seed_100080--success=False--ran=7169.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100064": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100064_seed_100100064--success=False--ran=3377.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100099": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100099_seed_100099--success=False--ran=8637.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100115": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100115_seed_100115--success=False--ran=3217.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100009": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100009_seed_100100009--success=False--ran=1178.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100036": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100036_seed_100036--success=False--ran=7470.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100074": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100074_seed_100074--success=False--ran=2670.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100027": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100027_seed_100027--success=False--ran=6930.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100113": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100113_seed_100100113--success=False--ran=8050.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100125": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100125_seed_100125--success=False--ran=4982.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100010": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100010_seed_100010--success=False--ran=1188.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100089": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100089_seed_100089--success=False--ran=3409.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100054": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100054_seed_100054--success=False--ran=3693.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100008": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100008_seed_100008--success=False--ran=8114.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100090": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100090_seed_100100090--success=False--ran=6140.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100106": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100106_seed_100106--success=False--ran=7987.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100036": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100036_seed_100100036--success=False--ran=8924.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100014": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100014_seed_100014--success=False--ran=5516.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100037": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100037_seed_100037--success=False--ran=5310.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100077": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100077_seed_100100077--success=False--ran=4886.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100126": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100126_seed_100100126--success=False--ran=6027.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100004": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100004_seed_100004--success=False--ran=6770.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100035": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100035_seed_100035--success=False--ran=3303.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100056": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100056_seed_100056--success=False--ran=4279.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100105": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100105_seed_100105--success=False--ran=348.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100078": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100078_seed_100100078--success=False--ran=2935.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100073": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100073_seed_100100073--success=False--ran=7772.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100056": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100056_seed_100100056--success=False--ran=3470.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100070": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100070_seed_100070--success=False--ran=3232.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100065": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100065_seed_100065--success=False--ran=6107.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100158": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100158_seed_100100158--success=False--ran=244.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100007": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100007_seed_100100007--success=False--ran=5792.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100126": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100126_seed_100126--success=False--ran=3017.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100096": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100096_seed_100100096--success=False--ran=8316.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100121": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100121_seed_100100121--success=False--ran=9197.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100053": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100053_seed_100053--success=False--ran=2798.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100046": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100046_seed_100100046--success=False--ran=9503.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100023": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100023_seed_100023--success=False--ran=830.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100098": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100098_seed_100098--success=False--ran=5083.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100140": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100140_seed_100140--success=False--ran=5137.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100101": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100101_seed_100100101--success=False--ran=3394.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100041": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100041_seed_100100041--success=False--ran=3075.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100014": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100014_seed_100100014--success=False--ran=8846.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100117": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100117_seed_100100117--success=False--ran=2024.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100066": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100066_seed_100066--success=False--ran=2189.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100062": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100062_seed_100100062--success=False--ran=995.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100026": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100026_seed_100026--success=False--ran=915.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100083": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100083_seed_100100083--success=False--ran=1688.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100088": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100088_seed_100088--success=False--ran=4733.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100049": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100049_seed_100100049--success=False--ran=4224.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100102": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100102_seed_100100102--success=False--ran=6944.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100131": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100131_seed_100131--success=False--ran=1263.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100146": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100146_seed_100100146--success=False--ran=7081.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100000": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100000_seed_100100000--success=False--ran=5199.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100008": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100008_seed_100100008--success=False--ran=2425.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100080": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100080_seed_100100080--success=False--ran=9819.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100103": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100103_seed_100100103--success=False--ran=2039.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100022": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100022_seed_100022--success=False--ran=4502.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100128": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100128_seed_100128--success=False--ran=5165.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100085": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100085_seed_100085--success=False--ran=8912.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100111": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100111_seed_100111--success=False--ran=3019.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100026": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100026_seed_100100026--success=False--ran=5156.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100063": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100063_seed_100063--success=False--ran=6816.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100022": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100022_seed_100100022--success=False--ran=4469.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100090": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100090_seed_100090--success=False--ran=7896.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100142": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100142_seed_100100142--success=False--ran=2013.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100065": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100065_seed_100100065--success=False--ran=9521.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100017": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100017_seed_100017--success=False--ran=4400.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100118": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100118_seed_100118--success=False--ran=9212.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100130": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100130_seed_100100130--success=False--ran=2669.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100074": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100074_seed_100100074--success=False--ran=6871.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100098": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100098_seed_100100098--success=False--ran=8242.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100151": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100151_seed_100151--success=False--ran=5007.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100081": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100081_seed_100100081--success=False--ran=9277.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100051": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100051_seed_100100051--success=False--ran=9484.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100133": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100133_seed_100100133--success=False--ran=7471.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100109": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100109_seed_100109--success=False--ran=5264.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100163": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100163_seed_100100163--success=False--ran=4974.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100120": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100120_seed_100120--success=False--ran=2060.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100041": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100041_seed_100041--success=False--ran=8243.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100145": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100145_seed_100145--success=False--ran=5476.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100112": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100112_seed_100100112--success=False--ran=3082.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100013": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100013_seed_100100013--success=False--ran=1579.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100116": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100116_seed_100116--success=False--ran=9509.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100141": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100141_seed_100141--success=False--ran=3800.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100028": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100028_seed_100100028--success=False--ran=4520.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100020": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100020_seed_100020--success=False--ran=4381.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100067": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100067_seed_100067--success=False--ran=8994.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100078": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100078_seed_100078--success=False--ran=8599.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100138": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100138_seed_100100138--success=False--ran=2055.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100072": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100072_seed_100072--success=False--ran=7378.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100127": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100127_seed_100127--success=False--ran=8309.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100139": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100139_seed_100100139--success=False--ran=4816.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100129": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100129_seed_100129--success=False--ran=9021.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100057": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100057_seed_100100057--success=False--ran=3601.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100100": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100100_seed_100100100--success=False--ran=2636.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100104": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100104_seed_100100104--success=False--ran=2830.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100110": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100110_seed_100100110--success=False--ran=5975.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100051": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100051_seed_100051--success=False--ran=1717.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100068": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100068_seed_100100068--success=False--ran=5124.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100125": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100125_seed_100100125--success=False--ran=5217.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100131": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100131_seed_100100131--success=False--ran=4860.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100024": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100024_seed_100100024--success=False--ran=9472.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100094": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100094_seed_100094--success=False--ran=7474.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100050": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100050_seed_100050--success=False--ran=5791.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100155": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100155_seed_100100155--success=False--ran=4499.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100006": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100006_seed_100006--success=False--ran=2999.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100071": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100071_seed_100071--success=False--ran=2569.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100062": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100062_seed_100062--success=False--ran=5361.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100021": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100021_seed_100021--success=False--ran=6863.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100130": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100130_seed_100130--success=False--ran=2904.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100003": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100003_seed_100100003--success=False--ran=7212.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100002": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100002_seed_100100002--success=False--ran=1590.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100070": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100070_seed_100100070--success=False--ran=5806.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100069": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100069_seed_100069--success=False--ran=6929.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100082": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100082_seed_100082--success=False--ran=1785.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100112": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100112_seed_100112--success=False--ran=3334.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100132": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100132_seed_100100132--success=False--ran=8909.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100066": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100066_seed_100100066--success=False--ran=5960.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100143": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100143_seed_100100143--success=False--ran=7455.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100149": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100149_seed_100149--success=False--ran=1901.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100040": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100040_seed_100100040--success=False--ran=3568.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100039": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100039_seed_100039--success=False--ran=3883.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100109": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100109_seed_100100109--success=False--ran=7556.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100048": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100048_seed_100048--success=False--ran=1339.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100111": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100111_seed_100100111--success=False--ran=5096.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100141": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100141_seed_100100141--success=False--ran=6016.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100064": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100064_seed_100064--success=False--ran=6743.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100096": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100096_seed_100096--success=False--ran=5278.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100152": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100152_seed_100100152--success=False--ran=4433.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100095": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100095_seed_100095--success=False--ran=3827.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100104": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100104_seed_100104--success=False--ran=5226.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100161": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100161_seed_100100161--success=False--ran=9617.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100093": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100093_seed_100100093--success=False--ran=6.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100089": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100089_seed_100100089--success=False--ran=4984.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100095": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100095_seed_100100095--success=False--ran=1397.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100151": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100151_seed_100100151--success=False--ran=1953.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100035": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100035_seed_100100035--success=False--ran=3641.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100115": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100115_seed_100100115--success=False--ran=1879.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100018": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100018_seed_100100018--success=False--ran=2639.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100107": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100107_seed_100100107--success=False--ran=7708.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100137": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100137_seed_100100137--success=False--ran=3062.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100153": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100153_seed_100100153--success=False--ran=9031.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100133": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100133_seed_100133--success=False--ran=1847.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100006": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100006_seed_100100006--success=False--ran=1114.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_eval_ood|100100023": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100023_seed_100100023--success=False--ran=920.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100157": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100157_seed_100157--success=False--ran=3241.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_1|robotwin2_move_can_pot_train_iid|100049": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100049_seed_100049--success=False--ran=1906.mp4 is a 320x240 MP4 with 201 frames over 6.700s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100035": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100035_seed_100035--success=False--ran=955.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100041": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100041_seed_100041--success=False--ran=7410.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100012": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100012_seed_100100012--success=False--ran=2691.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100013": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100013_seed_100100013--success=False--ran=2110.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100131": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100131_seed_100131--success=False--ran=8104.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100046": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100046_seed_100100046--success=False--ran=8269.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100057": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100057_seed_100057--success=False--ran=3854.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100080": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100080_seed_100100080--success=False--ran=8894.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100034": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100034_seed_100100034--success=False--ran=947.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100034": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100034_seed_100034--success=False--ran=117.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100122": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100122_seed_100100122--success=False--ran=1034.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100023": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100023_seed_100100023--success=False--ran=527.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100050": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100050_seed_100050--success=False--ran=5883.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100047": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100047_seed_100047--success=False--ran=8104.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100122": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100122_seed_100122--success=False--ran=6804.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100088": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100088_seed_100100088--success=False--ran=3020.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100084": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100084_seed_100100084--success=False--ran=3411.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100153": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100153_seed_100100153--success=False--ran=1529.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100112": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100112_seed_100100112--success=False--ran=2492.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100116": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100116_seed_100116--success=False--ran=37.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100147": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100147_seed_100100147--success=False--ran=6818.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100044": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100044_seed_100044--success=False--ran=2219.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100111": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100111_seed_100100111--success=False--ran=3117.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100156": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100156_seed_100156--success=False--ran=8656.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100021": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100021_seed_100021--success=False--ran=9639.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100049": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100049_seed_100049--success=False--ran=7434.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100007": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100007_seed_100007--success=False--ran=9315.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100132": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100132_seed_100100132--success=False--ran=3198.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100160": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100160_seed_100100160--success=False--ran=1152.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100151": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100151_seed_100100151--success=False--ran=3570.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100110": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100110_seed_100110--success=False--ran=7969.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100055": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100055_seed_100100055--success=False--ran=5918.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100066": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100066_seed_100066--success=False--ran=178.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100142": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100142_seed_100142--success=False--ran=547.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100105": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100105_seed_100100105--success=False--ran=1322.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100157": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100157_seed_100157--success=False--ran=1711.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100141": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100141_seed_100100141--success=False--ran=7378.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100015": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100015_seed_100015--success=False--ran=3267.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100061": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100061_seed_100100061--success=False--ran=1087.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100055": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100055_seed_100055--success=False--ran=8689.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100095": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100095_seed_100100095--success=False--ran=9601.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100095": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100095_seed_100095--success=False--ran=3517.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100039": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100039_seed_100039--success=False--ran=3435.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100111": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100111_seed_100111--success=False--ran=9469.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100120": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100120_seed_100100120--success=False--ran=7862.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100135": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100135_seed_100135--success=False--ran=9989.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100138": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100138_seed_100138--success=False--ran=8479.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100090": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100090_seed_100100090--success=False--ran=8226.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100109": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100109_seed_100100109--success=False--ran=3565.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100026": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100026_seed_100100026--success=False--ran=9314.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100107": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100107_seed_100100107--success=False--ran=1076.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100085": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100085_seed_100085--success=False--ran=8772.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100007": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100007_seed_100100007--success=False--ran=7600.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100037": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100037_seed_100037--success=False--ran=3065.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100051": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100051_seed_100051--success=False--ran=1285.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100120": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100120_seed_100120--success=False--ran=1948.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100094": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100094_seed_100094--success=False--ran=5518.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100068": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100068_seed_100068--success=False--ran=7202.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100018": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100018_seed_100100018--success=False--ran=2950.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100149": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100149_seed_100100149--success=False--ran=4532.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100129": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100129_seed_100129--success=False--ran=7061.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100102": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100102_seed_100100102--success=False--ran=6360.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100158": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100158_seed_100100158--success=False--ran=3870.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100028": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100028_seed_100028--success=False--ran=1931.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100150": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100150_seed_100100150--success=False--ran=6769.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100104": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100104_seed_100104--success=False--ran=7575.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100040": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100040_seed_100100040--success=False--ran=8874.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100015": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100015_seed_100100015--success=False--ran=7995.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100096": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100096_seed_100100096--success=False--ran=490.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100036": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100036_seed_100036--success=False--ran=5263.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100002": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100002_seed_100002--success=False--ran=8688.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100069": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100069_seed_100069--success=False--ran=1199.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100147": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100147_seed_100147--success=False--ran=3760.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100053": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100053_seed_100100053--success=False--ran=6061.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100008": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100008_seed_100100008--success=False--ran=6321.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100073": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100073_seed_100100073--success=False--ran=6937.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100043": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100043_seed_100043--success=False--ran=4863.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100123": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100123_seed_100123--success=False--ran=893.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100017": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100017_seed_100017--success=False--ran=3371.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100155": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100155_seed_100100155--success=False--ran=4962.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100006": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100006_seed_100100006--success=False--ran=7760.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100018": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100018_seed_100018--success=False--ran=4475.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100019": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100019_seed_100019--success=False--ran=1483.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100041": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100041_seed_100100041--success=False--ran=906.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100150": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100150_seed_100150--success=False--ran=6810.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100080": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100080_seed_100080--success=False--ran=5149.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100128": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100128_seed_100128--success=False--ran=3041.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100131": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100131_seed_100100131--success=False--ran=8828.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100020": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100020_seed_100020--success=False--ran=653.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100130": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100130_seed_100130--success=False--ran=9570.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100149": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100149_seed_100149--success=False--ran=3012.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100104": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100104_seed_100100104--success=False--ran=493.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100086": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100086_seed_100100086--success=False--ran=8061.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100141": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100141_seed_100141--success=False--ran=4445.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100026": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100026_seed_100026--success=False--ran=3917.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100022": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100022_seed_100100022--success=False--ran=5614.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100021": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100021_seed_100100021--success=False--ran=6966.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100143": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100143_seed_100143--success=False--ran=2175.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100139": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100139_seed_100139--success=False--ran=6718.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100043": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100043_seed_100100043--success=False--ran=2479.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100097": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100097_seed_100097--success=False--ran=1839.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100058": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100058_seed_100100058--success=False--ran=9101.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100033": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100033_seed_100100033--success=False--ran=4373.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100119": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100119_seed_100119--success=False--ran=9982.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100065": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100065_seed_100065--success=False--ran=3760.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100002": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100002_seed_100100002--success=False--ran=1741.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100163": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100163_seed_100100163--success=False--ran=7217.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100121": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100121_seed_100100121--success=False--ran=9621.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100042": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100042_seed_100100042--success=False--ran=7607.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100115": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100115_seed_100100115--success=False--ran=8983.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100023": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100023_seed_100023--success=False--ran=6349.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100064": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100064_seed_100064--success=False--ran=4884.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100137": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100137_seed_100137--success=False--ran=1046.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100090": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100090_seed_100090--success=False--ran=2951.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100064": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100064_seed_100100064--success=False--ran=4407.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100100": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100100_seed_100100100--success=False--ran=4914.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100014": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100014_seed_100100014--success=False--ran=701.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100006": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100006_seed_100006--success=False--ran=9512.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100089": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100089_seed_100100089--success=False--ran=9559.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100140": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100140_seed_100140--success=False--ran=2755.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100161": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100161_seed_100100161--success=False--ran=9819.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100035": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100035_seed_100100035--success=False--ran=5717.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100048": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100048_seed_100100048--success=False--ran=3109.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100003": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100003_seed_100100003--success=False--ran=9425.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100137": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100137_seed_100100137--success=False--ran=7112.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100094": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100094_seed_100100094--success=False--ran=6645.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100096": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100096_seed_100096--success=False--ran=9577.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100103": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100103_seed_100100103--success=False--ran=9215.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100067": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100067_seed_100067--success=False--ran=7480.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100048": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100048_seed_100048--success=False--ran=6680.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100003": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100003_seed_100003--success=False--ran=3321.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100073": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100073_seed_100073--success=False--ran=6289.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100085": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100085_seed_100100085--success=False--ran=4494.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100109": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100109_seed_100109--success=False--ran=9072.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100081": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100081_seed_100100081--success=False--ran=7138.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100139": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100139_seed_100100139--success=False--ran=2525.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100127": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100127_seed_100100127--success=False--ran=4800.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100079": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100079_seed_100100079--success=False--ran=6358.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100125": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100125_seed_100125--success=False--ran=5667.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100010": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100010_seed_100010--success=False--ran=6435.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100030": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100030_seed_100100030--success=False--ran=8016.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100081": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100081_seed_100081--success=False--ran=7618.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100113": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100113_seed_100113--success=False--ran=3120.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100033": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100033_seed_100033--success=False--ran=7942.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100031": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100031_seed_100100031--success=False--ran=1348.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100101": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100101_seed_100100101--success=False--ran=6265.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100077": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100077_seed_100100077--success=False--ran=6458.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100000": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100000_seed_100000--success=False--ran=3163.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100000": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100000_seed_100100000--success=False--ran=2817.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100153": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100153_seed_100153--success=False--ran=5433.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100025": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100025_seed_100100025--success=False--ran=4336.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100027": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100027_seed_100100027--success=False--ran=3914.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100036": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100036_seed_100100036--success=False--ran=5008.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100142": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100142_seed_100100142--success=False--ran=3603.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100099": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100099_seed_100100099--success=False--ran=2317.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100070": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100070_seed_100070--success=False--ran=6364.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100001": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100001_seed_100100001--success=False--ran=2478.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100138": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100138_seed_100100138--success=False--ran=6143.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100100": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100_seed_100100--success=False--ran=1418.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100008": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100008_seed_100008--success=False--ran=1654.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100054": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100054_seed_100054--success=False--ran=2054.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100106": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100106_seed_100106--success=False--ran=7478.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100059": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100059_seed_100059--success=False--ran=6187.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100052": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100052_seed_100052--success=False--ran=2798.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100099": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100099_seed_100099--success=False--ran=6582.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100133": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100133_seed_100100133--success=False--ran=5108.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100117": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100117_seed_100100117--success=False--ran=8983.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100056": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100056_seed_100056--success=False--ran=6826.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100009": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100009_seed_100100009--success=False--ran=1554.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100136": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100136_seed_100100136--success=False--ran=214.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100022": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100022_seed_100022--success=False--ran=5646.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100098": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100098_seed_100098--success=False--ran=5074.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100074": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100074_seed_100074--success=False--ran=3107.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100066": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100066_seed_100100066--success=False--ran=3266.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100097": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100097_seed_100100097--success=False--ran=4281.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100061": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100061_seed_100061--success=False--ran=223.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100140": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100140_seed_100100140--success=False--ran=1206.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100146": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100146_seed_100100146--success=False--ran=1721.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100065": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100065_seed_100100065--success=False--ran=5180.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100093": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100093_seed_100100093--success=False--ran=8986.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100091": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100091_seed_100091--success=False--ran=8237.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100127": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100127_seed_100127--success=False--ran=3597.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100029": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100029_seed_100029--success=False--ran=5204.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100075": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100075_seed_100075--success=False--ran=5321.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100135": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100135_seed_100100135--success=False--ran=4374.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100089": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100089_seed_100089--success=False--ran=4242.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100070": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100070_seed_100100070--success=False--ran=4012.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100148": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100148_seed_100100148--success=False--ran=5126.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100113": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100113_seed_100100113--success=False--ran=3868.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100162": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100162_seed_100100162--success=False--ran=2634.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100071": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100071_seed_100100071--success=False--ran=2720.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100098": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100098_seed_100100098--success=False--ran=8652.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100151": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100151_seed_100151--success=False--ran=738.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100072": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100072_seed_100072--success=False--ran=9280.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100038": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100038_seed_100100038--success=False--ran=8133.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100154": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100154_seed_100154--success=False--ran=2425.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100106": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100106_seed_100100106--success=False--ran=707.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100046": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100046_seed_100046--success=False--ran=5954.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100068": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100068_seed_100100068--success=False--ran=1392.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100005": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100005_seed_100100005--success=False--ran=3038.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100019": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100019_seed_100100019--success=False--ran=3811.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100143": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100143_seed_100100143--success=False--ran=9215.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100027": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100027_seed_100027--success=False--ran=8073.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100056": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100056_seed_100100056--success=False--ran=1720.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100053": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100053_seed_100053--success=False--ran=7405.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100044": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100044_seed_100100044--success=False--ran=9594.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100051": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100051_seed_100100051--success=False--ran=2511.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100084": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100084_seed_100084--success=False--ran=361.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100118": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100118_seed_100118--success=False--ran=1553.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100086": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100086_seed_100086--success=False--ran=279.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100074": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100074_seed_100100074--success=False--ran=5738.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100063": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100063_seed_100063--success=False--ran=9506.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100079": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100079_seed_100079--success=False--ran=2476.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100119": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100119_seed_100100119--success=False--ran=250.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100092": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100092_seed_100092--success=False--ran=7084.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100105": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100105_seed_100105--success=False--ran=6479.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100082": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100082_seed_100082--success=False--ran=1970.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100017": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100017_seed_100100017--success=False--ran=7148.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100049": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100049_seed_100100049--success=False--ran=8352.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100078": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100078_seed_100078--success=False--ran=8799.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100062": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100062_seed_100062--success=False--ran=7295.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100083": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100083_seed_100100083--success=False--ran=7631.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100001": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100001_seed_100001--success=False--ran=3694.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100108": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100108_seed_100108--success=False--ran=7300.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100038": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100038_seed_100038--success=False--ran=9865.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100014": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100014_seed_100014--success=False--ran=5364.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100125": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100125_seed_100100125--success=False--ran=1045.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100071": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100071_seed_100071--success=False--ran=4206.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_train_iid|100124": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100124_seed_100124--success=False--ran=6437.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  },
+  "chunk_25|robotwin2_move_can_pot_eval_ood|100100059": {
+    "failure_mode": "timeout",
+    "evidence": "Exact rollout step=0--task=move_can_pot_trial_100100059_seed_100100059--success=False--ran=6730.mp4 is a 320x240 MP4 with 9 frames over 0.300s. The paired upstream episode recorder reports failure after 200/200 action steps (4.000s at 50 Hz) without eval_success."
+  }
+}

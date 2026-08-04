@@ -1,0 +1,723 @@
+{
+  "experiment": "7-6",
+  "execution_acceptance": "PASS",
+  "execution_gates": {
+    "orpheus_128_train_examples": true,
+    "orpheus_16_held_out_examples": true,
+    "orpheus_60_optimizer_steps": true,
+    "orpheus_remote_adapter_sha256_verified": true,
+    "orpheus_16_valid_comparison_files": true,
+    "sesame_128_train_examples": true,
+    "sesame_tag_categories_present": true,
+    "sesame_60_optimizer_steps": true,
+    "sesame_remote_adapter_sha256_verified": true,
+    "sesame_24_valid_comparison_files": true
+  },
+  "hypothesis_results": {
+    "orpheus_held_out_loss_decreased": true,
+    "orpheus_cross_sentence_timbre_proxy_improved": false,
+    "sesame_held_out_loss_decreased": true,
+    "sesame_adapted_mean_tag_score_is_positive": true,
+    "sesame_tag_sensitivity_improved_over_base": true
+  },
+  "quality_claim": "No human naturalness or voice-identity quality claim; automatic metrics are reproducible proxies only.",
+  "remote_adapter_verification": {
+    "orpheus": {
+      "repository": "https://huggingface.co/bojieli/exp7-6-orpheus-elise-lora",
+      "revision": "536092e9479fa1717e2b8f9cc1be52728b273e95",
+      "expected_sha256": "fbd43cd5287a4b69398c29f88286e60146e9328cb48e3c22e15a2a305b25b29f",
+      "downloaded_sha256": "fbd43cd5287a4b69398c29f88286e60146e9328cb48e3c22e15a2a305b25b29f",
+      "verified": true
+    },
+    "sesame": {
+      "repository": "https://huggingface.co/bojieli/exp7-6-sesame-elise-tags-lora",
+      "revision": "f2e042be0f38d6078976ef7e16cf49b91097f756",
+      "expected_sha256": "23994b467b319f99bbc642f4dc2ba4d39718838cd7cbfe949311a42ebcb5480e",
+      "downloaded_sha256": "23994b467b319f99bbc642f4dc2ba4d39718838cd7cbfe949311a42ebcb5480e",
+      "verified": true
+    }
+  },
+  "orpheus": {
+    "base": {
+      "audio_count": 8,
+      "valid_audio_count": 8,
+      "mean_pairwise_mfcc_cosine": 0.9886267249073301,
+      "min_pairwise_mfcc_cosine": 0.9738007187843323,
+      "pairwise": [
+        {
+          "prompt_a": 1,
+          "prompt_b": 7,
+          "cosine": 0.9738007187843323
+        },
+        {
+          "prompt_a": 3,
+          "prompt_b": 7,
+          "cosine": 0.9751747846603394
+        },
+        {
+          "prompt_a": 5,
+          "prompt_b": 7,
+          "cosine": 0.9768423438072205
+        },
+        {
+          "prompt_a": 1,
+          "prompt_b": 6,
+          "cosine": 0.9821145534515381
+        },
+        {
+          "prompt_a": 5,
+          "prompt_b": 6,
+          "cosine": 0.9832608699798584
+        },
+        {
+          "prompt_a": 0,
+          "prompt_b": 7,
+          "cosine": 0.9844203591346741
+        },
+        {
+          "prompt_a": 3,
+          "prompt_b": 4,
+          "cosine": 0.9847696423530579
+        },
+        {
+          "prompt_a": 4,
+          "prompt_b": 5,
+          "cosine": 0.985227644443512
+        },
+        {
+          "prompt_a": 2,
+          "prompt_b": 7,
+          "cosine": 0.9852697849273682
+        },
+        {
+          "prompt_a": 1,
+          "prompt_b": 4,
+          "cosine": 0.9852963089942932
+        },
+        {
+          "prompt_a": 3,
+          "prompt_b": 6,
+          "cosine": 0.9860416650772095
+        },
+        {
+          "prompt_a": 0,
+          "prompt_b": 6,
+          "cosine": 0.9888354539871216
+        },
+        {
+          "prompt_a": 0,
+          "prompt_b": 1,
+          "cosine": 0.9906319379806519
+        },
+        {
+          "prompt_a": 0,
+          "prompt_b": 5,
+          "cosine": 0.9906508326530457
+        },
+        {
+          "prompt_a": 0,
+          "prompt_b": 4,
+          "cosine": 0.991395890712738
+        },
+        {
+          "prompt_a": 3,
+          "prompt_b": 5,
+          "cosine": 0.9918218851089478
+        },
+        {
+          "prompt_a": 1,
+          "prompt_b": 3,
+          "cosine": 0.9923202395439148
+        },
+        {
+          "prompt_a": 1,
+          "prompt_b": 2,
+          "cosine": 0.9923385977745056
+        },
+        {
+          "prompt_a": 2,
+          "prompt_b": 3,
+          "cosine": 0.9924396276473999
+        },
+        {
+          "prompt_a": 4,
+          "prompt_b": 7,
+          "cosine": 0.9930636882781982
+        },
+        {
+          "prompt_a": 2,
+          "prompt_b": 4,
+          "cosine": 0.9931535124778748
+        },
+        {
+          "prompt_a": 2,
+          "prompt_b": 5,
+          "cosine": 0.9931651949882507
+        },
+        {
+          "prompt_a": 6,
+          "prompt_b": 7,
+          "cosine": 0.9940599799156189
+        },
+        {
+          "prompt_a": 2,
+          "prompt_b": 6,
+          "cosine": 0.9941393136978149
+        },
+        {
+          "prompt_a": 0,
+          "prompt_b": 3,
+          "cosine": 0.9943145513534546
+        },
+        {
+          "prompt_a": 0,
+          "prompt_b": 2,
+          "cosine": 0.994386613368988
+        },
+        {
+          "prompt_a": 4,
+          "prompt_b": 6,
+          "cosine": 0.9950653314590454
+        },
+        {
+          "prompt_a": 1,
+          "prompt_b": 5,
+          "cosine": 0.9975469708442688
+        }
+      ]
+    },
+    "adapted": {
+      "audio_count": 8,
+      "valid_audio_count": 8,
+      "mean_pairwise_mfcc_cosine": 0.9867024081093925,
+      "min_pairwise_mfcc_cosine": 0.9688550233840942,
+      "pairwise": [
+        {
+          "prompt_a": 1,
+          "prompt_b": 5,
+          "cosine": 0.9688550233840942
+        },
+        {
+          "prompt_a": 0,
+          "prompt_b": 5,
+          "cosine": 0.9705199003219604
+        },
+        {
+          "prompt_a": 3,
+          "prompt_b": 5,
+          "cosine": 0.9741944670677185
+        },
+        {
+          "prompt_a": 5,
+          "prompt_b": 6,
+          "cosine": 0.9782752990722656
+        },
+        {
+          "prompt_a": 4,
+          "prompt_b": 5,
+          "cosine": 0.9795999526977539
+        },
+        {
+          "prompt_a": 5,
+          "prompt_b": 7,
+          "cosine": 0.9798238277435303
+        },
+        {
+          "prompt_a": 0,
+          "prompt_b": 7,
+          "cosine": 0.9805128574371338
+        },
+        {
+          "prompt_a": 1,
+          "prompt_b": 2,
+          "cosine": 0.9849662184715271
+        },
+        {
+          "prompt_a": 0,
+          "prompt_b": 6,
+          "cosine": 0.9854229688644409
+        },
+        {
+          "prompt_a": 0,
+          "prompt_b": 2,
+          "cosine": 0.9863125681877136
+        },
+        {
+          "prompt_a": 0,
+          "prompt_b": 4,
+          "cosine": 0.9869258999824524
+        },
+        {
+          "prompt_a": 1,
+          "prompt_b": 4,
+          "cosine": 0.9872470498085022
+        },
+        {
+          "prompt_a": 2,
+          "prompt_b": 3,
+          "cosine": 0.9892308115959167
+        },
+        {
+          "prompt_a": 0,
+          "prompt_b": 1,
+          "cosine": 0.9895753860473633
+        },
+        {
+          "prompt_a": 2,
+          "prompt_b": 7,
+          "cosine": 0.9899733662605286
+        },
+        {
+          "prompt_a": 3,
+          "prompt_b": 6,
+          "cosine": 0.9900691509246826
+        },
+        {
+          "prompt_a": 0,
+          "prompt_b": 3,
+          "cosine": 0.9903662800788879
+        },
+        {
+          "prompt_a": 1,
+          "prompt_b": 3,
+          "cosine": 0.9910094141960144
+        },
+        {
+          "prompt_a": 3,
+          "prompt_b": 4,
+          "cosine": 0.9911966323852539
+        },
+        {
+          "prompt_a": 2,
+          "prompt_b": 6,
+          "cosine": 0.9914029836654663
+        },
+        {
+          "prompt_a": 2,
+          "prompt_b": 5,
+          "cosine": 0.9914451241493225
+        },
+        {
+          "prompt_a": 1,
+          "prompt_b": 7,
+          "cosine": 0.9918804168701172
+        },
+        {
+          "prompt_a": 4,
+          "prompt_b": 6,
+          "cosine": 0.9921923279762268
+        },
+        {
+          "prompt_a": 2,
+          "prompt_b": 4,
+          "cosine": 0.9927540421485901
+        },
+        {
+          "prompt_a": 1,
+          "prompt_b": 6,
+          "cosine": 0.992949903011322
+        },
+        {
+          "prompt_a": 3,
+          "prompt_b": 7,
+          "cosine": 0.993278980255127
+        },
+        {
+          "prompt_a": 6,
+          "prompt_b": 7,
+          "cosine": 0.9935612678527832
+        },
+        {
+          "prompt_a": 4,
+          "prompt_b": 7,
+          "cosine": 0.9941253066062927
+        }
+      ]
+    },
+    "adapted_minus_base_mean_pairwise_mfcc_cosine": -0.0019243167979375864
+  },
+  "sesame": {
+    "classifier": "MIT/ast-finetuned-audioset-10-10-0.4593",
+    "labels": {
+      "laugh": {
+        "id": 16,
+        "name": "Laughter"
+      },
+      "giggle": {
+        "id": 18,
+        "name": "Giggle"
+      },
+      "sigh": {
+        "id": 26,
+        "name": "Sigh"
+      }
+    },
+    "base": {
+      "audio_count": 12,
+      "valid_audio_count": 12,
+      "mean_tagged_minus_neutral": 0.00013129252571767816,
+      "positive_pair_count": 3,
+      "pairs": [
+        {
+          "pair_id": "giggle_0",
+          "tag": "giggle",
+          "neutral_score": 0.0009356054943054914,
+          "tagged_score": 0.0006116584991104901,
+          "tagged_minus_neutral": -0.00032394699519500136
+        },
+        {
+          "pair_id": "giggle_1",
+          "tag": "giggle",
+          "neutral_score": 0.0008636609418317676,
+          "tagged_score": 0.0005855335621163249,
+          "tagged_minus_neutral": -0.00027812737971544266
+        },
+        {
+          "pair_id": "laugh_0",
+          "tag": "laugh",
+          "neutral_score": 0.0003021236334461719,
+          "tagged_score": 0.0003340380499139428,
+          "tagged_minus_neutral": 3.1914416467770934e-05
+        },
+        {
+          "pair_id": "laugh_1",
+          "tag": "laugh",
+          "neutral_score": 0.0002934956573881209,
+          "tagged_score": 0.0007533965981565416,
+          "tagged_minus_neutral": 0.0004599009407684207
+        },
+        {
+          "pair_id": "sigh_0",
+          "tag": "sigh",
+          "neutral_score": 0.0034571753349155188,
+          "tagged_score": 0.006142919883131981,
+          "tagged_minus_neutral": 0.002685744548216462
+        },
+        {
+          "pair_id": "sigh_1",
+          "tag": "sigh",
+          "neutral_score": 0.0024482603184878826,
+          "tagged_score": 0.0006605299422517419,
+          "tagged_minus_neutral": -0.0017877303762361407
+        }
+      ]
+    },
+    "adapted": {
+      "audio_count": 12,
+      "valid_audio_count": 12,
+      "mean_tagged_minus_neutral": 0.001097210906057929,
+      "positive_pair_count": 4,
+      "pairs": [
+        {
+          "pair_id": "giggle_0",
+          "tag": "giggle",
+          "neutral_score": 0.001688887132331729,
+          "tagged_score": 0.0017779936315491796,
+          "tagged_minus_neutral": 8.910649921745062e-05
+        },
+        {
+          "pair_id": "giggle_1",
+          "tag": "giggle",
+          "neutral_score": 0.003269059816375375,
+          "tagged_score": 0.0007443267968483269,
+          "tagged_minus_neutral": -0.002524733019527048
+        },
+        {
+          "pair_id": "laugh_0",
+          "tag": "laugh",
+          "neutral_score": 0.00026441123918630183,
+          "tagged_score": 0.0012162356870248914,
+          "tagged_minus_neutral": 0.0009518244478385895
+        },
+        {
+          "pair_id": "laugh_1",
+          "tag": "laugh",
+          "neutral_score": 0.00033708245609886944,
+          "tagged_score": 0.0003236289485357702,
+          "tagged_minus_neutral": -1.3453507563099265e-05
+        },
+        {
+          "pair_id": "sigh_0",
+          "tag": "sigh",
+          "neutral_score": 0.0017972267232835293,
+          "tagged_score": 0.006373145151883364,
+          "tagged_minus_neutral": 0.0045759184285998344
+        },
+        {
+          "pair_id": "sigh_1",
+          "tag": "sigh",
+          "neutral_score": 0.0010693982476368546,
+          "tagged_score": 0.004574000835418701,
+          "tagged_minus_neutral": 0.0035046025877818465
+        }
+      ]
+    },
+    "adapted_minus_base_mean_tag_sensitivity": 0.0009659183803402508,
+    "scores": [
+      {
+        "arm": "base",
+        "pair_id": "laugh_0",
+        "condition": "neutral",
+        "tag": "laugh",
+        "audioset_label": "Laughter",
+        "audioset_score": 0.0003021236334461719,
+        "seconds": 2.72,
+        "rms": 0.06748455762863159,
+        "path": "audio/sesame/base/laugh_0_neutral.wav"
+      },
+      {
+        "arm": "base",
+        "pair_id": "laugh_0",
+        "condition": "tagged",
+        "tag": "laugh",
+        "audioset_label": "Laughter",
+        "audioset_score": 0.0003340380499139428,
+        "seconds": 6.0,
+        "rms": 0.06531786173582077,
+        "path": "audio/sesame/base/laugh_0_tagged.wav"
+      },
+      {
+        "arm": "base",
+        "pair_id": "laugh_1",
+        "condition": "neutral",
+        "tag": "laugh",
+        "audioset_label": "Laughter",
+        "audioset_score": 0.0002934956573881209,
+        "seconds": 2.08,
+        "rms": 0.23473648726940155,
+        "path": "audio/sesame/base/laugh_1_neutral.wav"
+      },
+      {
+        "arm": "base",
+        "pair_id": "laugh_1",
+        "condition": "tagged",
+        "tag": "laugh",
+        "audioset_label": "Laughter",
+        "audioset_score": 0.0007533965981565416,
+        "seconds": 3.84,
+        "rms": 0.03746151924133301,
+        "path": "audio/sesame/base/laugh_1_tagged.wav"
+      },
+      {
+        "arm": "base",
+        "pair_id": "giggle_0",
+        "condition": "neutral",
+        "tag": "giggle",
+        "audioset_label": "Giggle",
+        "audioset_score": 0.0009356054943054914,
+        "seconds": 1.68,
+        "rms": 0.14035280048847198,
+        "path": "audio/sesame/base/giggle_0_neutral.wav"
+      },
+      {
+        "arm": "base",
+        "pair_id": "giggle_0",
+        "condition": "tagged",
+        "tag": "giggle",
+        "audioset_label": "Giggle",
+        "audioset_score": 0.0006116584991104901,
+        "seconds": 2.96,
+        "rms": 0.08793672919273376,
+        "path": "audio/sesame/base/giggle_0_tagged.wav"
+      },
+      {
+        "arm": "base",
+        "pair_id": "giggle_1",
+        "condition": "neutral",
+        "tag": "giggle",
+        "audioset_label": "Giggle",
+        "audioset_score": 0.0008636609418317676,
+        "seconds": 2.96,
+        "rms": 0.049566783010959625,
+        "path": "audio/sesame/base/giggle_1_neutral.wav"
+      },
+      {
+        "arm": "base",
+        "pair_id": "giggle_1",
+        "condition": "tagged",
+        "tag": "giggle",
+        "audioset_label": "Giggle",
+        "audioset_score": 0.0005855335621163249,
+        "seconds": 5.92,
+        "rms": 0.0142013905569911,
+        "path": "audio/sesame/base/giggle_1_tagged.wav"
+      },
+      {
+        "arm": "base",
+        "pair_id": "sigh_0",
+        "condition": "neutral",
+        "tag": "sigh",
+        "audioset_label": "Sigh",
+        "audioset_score": 0.0034571753349155188,
+        "seconds": 2.32,
+        "rms": 0.06743967533111572,
+        "path": "audio/sesame/base/sigh_0_neutral.wav"
+      },
+      {
+        "arm": "base",
+        "pair_id": "sigh_0",
+        "condition": "tagged",
+        "tag": "sigh",
+        "audioset_label": "Sigh",
+        "audioset_score": 0.006142919883131981,
+        "seconds": 6.0,
+        "rms": 0.05658983066678047,
+        "path": "audio/sesame/base/sigh_0_tagged.wav"
+      },
+      {
+        "arm": "base",
+        "pair_id": "sigh_1",
+        "condition": "neutral",
+        "tag": "sigh",
+        "audioset_label": "Sigh",
+        "audioset_score": 0.0024482603184878826,
+        "seconds": 2.24,
+        "rms": 0.014161595143377781,
+        "path": "audio/sesame/base/sigh_1_neutral.wav"
+      },
+      {
+        "arm": "base",
+        "pair_id": "sigh_1",
+        "condition": "tagged",
+        "tag": "sigh",
+        "audioset_label": "Sigh",
+        "audioset_score": 0.0006605299422517419,
+        "seconds": 3.36,
+        "rms": 0.010387708432972431,
+        "path": "audio/sesame/base/sigh_1_tagged.wav"
+      },
+      {
+        "arm": "adapted",
+        "pair_id": "laugh_0",
+        "condition": "neutral",
+        "tag": "laugh",
+        "audioset_label": "Laughter",
+        "audioset_score": 0.00026441123918630183,
+        "seconds": 3.92,
+        "rms": 0.0402710996568203,
+        "path": "audio/sesame/adapted/laugh_0_neutral.wav"
+      },
+      {
+        "arm": "adapted",
+        "pair_id": "laugh_0",
+        "condition": "tagged",
+        "tag": "laugh",
+        "audioset_label": "Laughter",
+        "audioset_score": 0.0012162356870248914,
+        "seconds": 3.6,
+        "rms": 0.06890808790922165,
+        "path": "audio/sesame/adapted/laugh_0_tagged.wav"
+      },
+      {
+        "arm": "adapted",
+        "pair_id": "laugh_1",
+        "condition": "neutral",
+        "tag": "laugh",
+        "audioset_label": "Laughter",
+        "audioset_score": 0.00033708245609886944,
+        "seconds": 2.48,
+        "rms": 0.13957583904266357,
+        "path": "audio/sesame/adapted/laugh_1_neutral.wav"
+      },
+      {
+        "arm": "adapted",
+        "pair_id": "laugh_1",
+        "condition": "tagged",
+        "tag": "laugh",
+        "audioset_label": "Laughter",
+        "audioset_score": 0.0003236289485357702,
+        "seconds": 3.76,
+        "rms": 0.051783934235572815,
+        "path": "audio/sesame/adapted/laugh_1_tagged.wav"
+      },
+      {
+        "arm": "adapted",
+        "pair_id": "giggle_0",
+        "condition": "neutral",
+        "tag": "giggle",
+        "audioset_label": "Giggle",
+        "audioset_score": 0.001688887132331729,
+        "seconds": 2.0,
+        "rms": 0.11314665526151657,
+        "path": "audio/sesame/adapted/giggle_0_neutral.wav"
+      },
+      {
+        "arm": "adapted",
+        "pair_id": "giggle_0",
+        "condition": "tagged",
+        "tag": "giggle",
+        "audioset_label": "Giggle",
+        "audioset_score": 0.0017779936315491796,
+        "seconds": 2.72,
+        "rms": 0.07838206738233566,
+        "path": "audio/sesame/adapted/giggle_0_tagged.wav"
+      },
+      {
+        "arm": "adapted",
+        "pair_id": "giggle_1",
+        "condition": "neutral",
+        "tag": "giggle",
+        "audioset_label": "Giggle",
+        "audioset_score": 0.003269059816375375,
+        "seconds": 3.28,
+        "rms": 0.10014152526855469,
+        "path": "audio/sesame/adapted/giggle_1_neutral.wav"
+      },
+      {
+        "arm": "adapted",
+        "pair_id": "giggle_1",
+        "condition": "tagged",
+        "tag": "giggle",
+        "audioset_label": "Giggle",
+        "audioset_score": 0.0007443267968483269,
+        "seconds": 4.88,
+        "rms": 0.07103203237056732,
+        "path": "audio/sesame/adapted/giggle_1_tagged.wav"
+      },
+      {
+        "arm": "adapted",
+        "pair_id": "sigh_0",
+        "condition": "neutral",
+        "tag": "sigh",
+        "audioset_label": "Sigh",
+        "audioset_score": 0.0017972267232835293,
+        "seconds": 2.72,
+        "rms": 0.09723222255706787,
+        "path": "audio/sesame/adapted/sigh_0_neutral.wav"
+      },
+      {
+        "arm": "adapted",
+        "pair_id": "sigh_0",
+        "condition": "tagged",
+        "tag": "sigh",
+        "audioset_label": "Sigh",
+        "audioset_score": 0.006373145151883364,
+        "seconds": 3.92,
+        "rms": 0.1117464229464531,
+        "path": "audio/sesame/adapted/sigh_0_tagged.wav"
+      },
+      {
+        "arm": "adapted",
+        "pair_id": "sigh_1",
+        "condition": "neutral",
+        "tag": "sigh",
+        "audioset_label": "Sigh",
+        "audioset_score": 0.0010693982476368546,
+        "seconds": 2.32,
+        "rms": 0.15041208267211914,
+        "path": "audio/sesame/adapted/sigh_1_neutral.wav"
+      },
+      {
+        "arm": "adapted",
+        "pair_id": "sigh_1",
+        "condition": "tagged",
+        "tag": "sigh",
+        "audioset_label": "Sigh",
+        "audioset_score": 0.004574000835418701,
+        "seconds": 3.36,
+        "rms": 0.07697359472513199,
+        "path": "audio/sesame/adapted/sigh_1_tagged.wav"
+      }
+    ]
+  }
+}

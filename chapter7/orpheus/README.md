@@ -76,7 +76,7 @@ python orpheus_sft_unsloth.py
 The training script will:
 1. Load the pre-trained Orpheus 3B model
 2. Apply LoRA adapters for efficient fine-tuning
-3. Train on the MrDragonFox/Elise dataset (or your custom dataset)
+3. Train on the public Elise mirror (or your custom dataset)
 4. Save the fine-tuned LoRA adapters to `lora_model/`
 
 **Training Parameters:**
@@ -175,7 +175,7 @@ The training script expects datasets with the following structure:
 - `text`: The text to be spoken
 - `audio`: Audio file with `array` and `sampling_rate` fields
 
-Example dataset: [MrDragonFox/Elise](https://huggingface.co/datasets/MrDragonFox/Elise)
+Example dataset: [maxbsoft/mrdragonfox-elise](https://huggingface.co/datasets/maxbsoft/mrdragonfox-elise). The original `MrDragonFox/Elise` repository named by the notebook is now disabled.
 
 ## Model Architecture
 

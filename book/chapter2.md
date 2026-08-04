@@ -643,7 +643,7 @@ Step 5: Verification
 
 从 Claude Code 的工具定义中可以观察到，每个工具描述都精心设计了使用边界（“NEVER invoke grep or rg as a Bash command”）、具体示例（`timezone: 'America/New_York'`）、性能提示（“Batch your tool calls together”）以及工具间的协作关系（“Use the Read tool at least once before editing”）。工具定义的设计原则和最佳实践将在第四章详细展开。
 
-最后需要补充的是，“工具定义与系统提示词一起构成静态前缀”描述的是基础模式，也是多数 LLM API 的默认行为——`tools` 字段随请求发送，由服务商随前缀一起缓存。但 2026 年以来，工具定义本身也在向本章 Skills 式的“渐进式披露”演进，且已经是 API 层的原生能力而非框架补丁：OpenAI Responses API 提供 `tool_search` 工具和 `defer_loading: true` 标记[^ch2-toolsearch-oai]，模型通过 `tool_search_call` → `tool_search_output` 按需加载工具的完整 schema；Anthropic 侧的对应物是 Tool Search（`tool_reference` blocks），Claude Code 对 MCP 工具默认延迟加载——会话启动时只注入工具名称和服务器说明，完整 schema 待模型搜索到之后才注入[^ch2-toolsearch-cc]；Codex CLI 的 `tool_search`（BM25 检索）则不是可选特性，而是默认开启的架构[^ch2-toolsearch-codex]。这些机制的共同点与 Skills 的“方式三”完全一致：静态前缀里只保留工具的名称和简述，完整 schema 在模型按需请求后**追加到上下文末尾**，成为轨迹的一部分。
+最后需要补充的是，“工具定义与系统提示词一起构成静态前缀”描述的是基础模式，也是多数 LLM API 的默认行为——`tools` 字段随请求发送，由服务商随前缀一起缓存。但 2026 年以来，工具定义本身也在向本章 Skills 式的“渐进式披露”演进，且已经是 API 层的原生能力而非框架补丁：OpenAI Responses API 提供 `tool_search` 工具和 `defer_loading: true` 标记[^ch2-toolsearch-oai]，模型通过 `tool_search_call` → `tool_search_output` 按需加载工具的完整 schema；Anthropic 侧的对应物是 Tool Search（`tool_reference` blocks），Claude Code 对 MCP 工具默认延迟加载——会话启动时只注入工具名称和服务器说明，完整 schema 待模型搜索到之后才注入[^ch2-toolsearch-cc]；Codex CLI 的 `tool_search`（BM25 检索）则不是可选特性，而是默认开启的架构[^ch2-toolsearch-codex]。这些机制的共同点与 Skills 的渐进式披露思路一致：静态前缀里只保留工具的名称和简述，完整 schema 在模型按需请求后**追加到上下文末尾**，成为轨迹的一部分。
 
 [^ch2-toolsearch-oai]: OpenAI, "Tool search", Responses API 文档. https://developers.openai.com/api/docs/guides/tools-tool-search
 [^ch2-toolsearch-cc]: Anthropic, "Scale with MCP tool search", Claude Code 文档. https://code.claude.com/docs/en/mcp
@@ -720,13 +720,13 @@ Step 5: Verification
 
 Agent Skills 的核心思想是将 Agent 的能力模块化为独立的、可按需加载的知识包[^ch2-3]。每个 Skill 本质上是一套包含专业领域指导的提示词集合，就像为新员工准备的某个专项任务的操作手册。与传统的将所有指令塞入单一系统提示词的做法不同，Skills 采用了渐进式披露（Progressive Disclosure）的设计哲学——先给 Agent 看一份目录摘要，需要时再加载完整内容，就像你不会把公司所有部门的操作手册都堆到新员工桌上，而是先给一份总目录，需要哪本再去取。
 
-[^ch2-3]: Anthropic, "Equipping Agents for the Real World with Agent Skills", 2025.
+[^ch2-3]: Anthropic, ["Equipping Agents for the Real World with Agent Skills"](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills), 2025；Claude Code Docs, ["How Claude Code uses prompt caching"](https://code.claude.com/docs/en/prompt-caching), “Invoking skills and commands”；Agent Skills, ["How to add skills support to your agent"](https://agentskills.io/client-implementation/adding-skills-support), “Where to place the catalog”.
 
-**第一层（元数据）**：每个 Skill 必须包含一个 `SKILL.md` 文件，开头是 YAML frontmatter（即文件顶部用 `---` 分隔的元数据块，类似书籍的版权页），包含 `name` 和 `description` 两个字段。Agent 框架在启动时扫描所有已安装的 Skill，将它们的 `name` 和 `description`（仅占数百个 token）注入到对话上下文中（注入位置的设计权衡见下一小节），使 Agent 在不消耗大量上下文的前提下知晓自己拥有哪些专业能力。
+**第一层（元数据）**：每个 Skill 必须包含一个 `SKILL.md` 文件，开头是 YAML frontmatter（即文件顶部用 `---` 分隔的元数据块，类似书籍的版权页），包含 `name` 和 `description` 两个字段。在 Anthropic 公开描述的实现和 Claude Code 默认配置中，Agent 启动时会扫描可用 Skill，将它们的 `name` 和 `description`（仅占数百个 token）预加载到 system prompt，使 Agent 在不加载所有 Skill 正文的前提下知晓自己拥有哪些专业能力。Agent Skills 开放标准并不强制这一消息位置：其他运行时也可以把目录放进专用激活工具的 description。
 
 元数据中的 `description` 字段是路由决策的关键——它应当足够短（控制常驻的 token 量），但写法要像路由条件而非功能介绍。最直接的写法是 “Use when / Don't use when” 加上几条**反例**（即明确列出“不该触发此 Skill”的场景）。实践中，缺少反例的 Skill 描述会让路由准确率明显下降——宽泛的描述会在不相关的任务上频繁误触发；补上反例后，路由准确率会显著回升。反例不是可选项，而是 Skill 路由能否准确触发的关键。描述太宽泛（如 “help with backend”）等于任何后端相关的工作都能触发，路由就会失准；真正有效的描述是路由条件——“何时该用我”比“我能做什么”重要得多。
 
-**第二层（核心流程）**：当 Agent 判断某个任务需要特定的 Skill 时，通过专用的 Skill 工具加载完整的 `SKILL.md`，内容作为 tool result 出现在对话历史中。以 PPTX Skill[^ch2-4] 为例，其中包含处理 PowerPoint 文件的核心流程：如何通过 markitdown（Microsoft 开源的文档转 Markdown 工具）提取文本，如何解压 PPTX 文件访问原始的 XML 结构，以及关键文件的路径约定。
+**第二层（核心流程）**：当 Agent 判断某个任务需要特定的 Skill 时，运行时才加载完整的 `SKILL.md`。Claude Code 会在调用位置把 Skill 指令作为 user message 加入会话；采用文件读取或专用激活工具的其他运行时，也可以把内容作为 tool result 返回。以 PPTX Skill[^ch2-4] 为例，其中包含处理 PowerPoint 文件的核心流程：如何通过 markitdown（Microsoft 开源的文档转 Markdown 工具）提取文本，如何解压 PPTX 文件访问原始的 XML 结构，以及关键文件的路径约定。
 
 [^ch2-4]: Anthropic, "PPTX Skill", 2025. https://github.com/anthropics/skills/
 
@@ -738,23 +738,14 @@ Skills 的价值不仅在于优雅的上下文管理，更在于为领域知识�
 
 这揭示了一个对 Agent 开发者很重要的原则：**选择 Agent 交互模式时应对齐模型厂商的训练方法论**。使用 Claude 构建 Agent 时，应充分利用 Skills 和结构化系统提示；使用其他模型时，应采用该模型厂商专门优化过的交互约定。基础模型公司推行的 Agent 用法，本质上是它们专门训练过的模式，这使得同一生态内的模型天然具有最优的表现。
 
-### Skills 的实现方式与权衡
+### Skills 在上下文中的位置
 
-理解了 Skills 是什么之后，接下来是一个更具体的工程问题：Skill 内容放在上下文的什么位置？这是一个根本性的设计决策，直接关系到 KV Cache 效率和模型的指令遵循效果。理论上有两种朴素方案，但都存在明显的代价；生产实现（如 Claude Code）采用的是一种回避了两者痛点的第三种方案。
+理解 Skills 的上下文成本时，必须把“元数据目录”和“完整 Skill 指令”分开：
 
-**方式一：注入系统提示词（system 消息）**。将 Skill 内容直接追加到 system prompt 中。模型对 system 位置的指令遵循能力最强（因为训练时大量使用了这个位置的指令），所以 Skill 的执行效果最好。但问题在于：每次加载新的 Skill 都会改变 system 消息的内容，导致 KV Cache 前缀失效。如果 Agent 频繁切换 Skill（比如一个任务需要先用搜索 Skill，再用文档 Skill），缓存会反复失效，延迟和成本显著增加。
+- **Claude Code 的元数据目录位于启动时的 system prompt**。Anthropic 对 Agent Skills 的说明明确指出，运行时会在启动时把所有已安装 Skill 的 `name` 与 `description` 预加载进 system prompt。Claude Code 的上下文文档也将其描述为“会话启动时加载、每次请求可见”。只要会话内的 Skill 集合不变，这部分就是稳定前缀，可以持续复用 Prompt Cache。Agent Skills 开放标准也允许把目录放进专用激活工具的 description；这是另一种固定前缀位置，而不是运行时状态栏。
+- **完整 Skill 指令在调用时进入会话历史**。模型根据元数据选中 Skill 后，运行时才加载 `SKILL.md` 正文。当前 Claude Code 将指令作为 user message 注入调用位置；其他兼容 Agent Skills 的运行时也可以通过文件读取或专用激活工具返回正文。无论采用哪种激活方式，都不需要回头修改已经缓存的 system prompt。
 
-**方式二：作为普通文件读取，内容出现在上下文中间**。Agent 通过通用文件读取工具读取 Skill 文件，文件内容作为 tool result 出现在对话历史中——也就是上下文的中间位置。这种方式完全不影响 KV Cache（system prompt 不变），但对模型的**指令遵循（instruction following）**能力提出了更高要求：模型需要在长上下文的中间位置准确识别并遵循 Skill 中的指令，而不是把它当作普通的工具输出来“参考”。实践中，不同模型对这种模式的支持差异很大——Claude 因为在训练中大量使用了中间位置的指令遵循数据，表现最为可靠；而其他模型在遵循上下文中间注入的指令时往往会打折扣。
-
-**方式三（生产实现）：元数据作为动态上下文提供，完整内容通过专用工具按需加载**。Claude Code 的核心思路是将 Skill 的“路由”和“执行”分离：模型首先获得可用 Skill 的元数据，用于判断当前任务是否需要某个 Skill；只有在 Skill 被选中后，才进一步加载完整的 `SKILL.md`。这种设计兼顾了上下文开销、Prompt Cache 复用和指令遵循能力。
-
-- **元数据列表**——所有已安装 Skill 的 `name` + `description`（通常只有数百个 token）会提前提供给模型，使模型能够判断当前任务与哪些 Skill 相关。需要注意的是，**这些元数据具体以什么消息角色注入上下文，属于 Claude Code Agent Harness 的实现细节，而不是 Agent Skills 机制本身的固定要求**。在 Claude Code 的部分历史版本中，这类动态上下文曾以 `<system-reminder>` 包装的 user-role 内容块出现；在支持 mid-conversation system message 的较新实现路径中，也可以使用追加的 system-role context block。无论采用哪种表示方式，其共同目的都是在不反复改写稳定上下文前缀的情况下，让模型感知当前可用的 Skills。
-
-- **完整内容**——当模型根据元数据判断某个 Skill 适合当前任务时，再通过 Skill 工具按需读取对应的 `SKILL.md`，其内容随后进入当前执行上下文。这样可以避免在会话开始时一次性加载所有 Skill 的完整说明，从而减少无关上下文占用。
-
-因此，需要区分两个层次：**“Skill 元数据需要提前对模型可见”是较稳定的机制设计，而“使用 user role、system role，还是 `<system-reminder>` 等包装形式”属于具体版本的实现方式。** `<system-reminder>` 也不是 Agent Skills 专用的协议格式，而是 Claude Code Agent Harness 用于注入动态系统上下文的一种实现形式。
-
-值得注意的是，**这种“在会话过程中动态向模型补充系统上下文”的机制并非 Skills 独有**。除了可用 Skill 的元数据，Agent 还可能需要持续向模型提供当前任务状态、运行环境或其他动态信息。下一节的 **Agent 状态栏（Agent Status Bar）** 将进一步展开这一机制，Skill 元数据列表可以看作其中一个具体例子。
+这种“少量目录常驻、完整正文按需加载”的两层设计，才是 Skills 兼顾可发现性与上下文开销的关键。**Skill 元数据不是运行时状态，也不属于下一节的 Agent 状态栏**：前者描述 Agent “具备哪些能力”，后者描述任务“当前进行到哪里、环境现在是什么状态”。
 
 为了直观感受这一设计的效果，下面两张图分别从两个视角追踪 Skills 在轨迹中的位置和 KV Cache 的演化。
 
@@ -762,7 +753,7 @@ Skills 的价值不仅在于优雅的上下文管理，更在于为领域知识�
 
 ![图2-13 KV Cache 随 Agent Trajectory 增长的演化](images/fig2-13.svg)
 
-需要厘清一个常见误解：“对 KV Cache 友好”并非“零成本”——首次 emit 那几百到几千 token 终归要付一次写入代价（如前所述，Prompt Cache 的缓存写入还是加价计费的）。它的准确含义是**一次性写入、永久受益**：要让模型知道某个 skill 的存在或某段文档的内容，至少得让它进缓存一次；Claude Code 做到的就是只付这一次，之后整个会话都不再重复。对比方案——把同样的信息塞进 system prompt——每次更新都会让其下游的整条 trajectory 失效进入 cache_creation（量级是数万到数十万 token），那才是真正的不友好。
+需要厘清一个常见误解：“对 KV Cache 友好”并非“零成本”。Skill 元数据目录作为 system prompt 的一部分，需要在会话开始时完成一次 prefill；后续请求可以按缓存读取计费。完整 Skill 正文首次加载时也需要计算，之后才随稳定的会话前缀一起复用缓存。收益来自两点：无需在启动时加载所有 Skill 正文，也无需在每次调用新 Skill 时改写已有前缀。
 
 ### Skills 与工具的关系
 
@@ -774,9 +765,9 @@ Skills 的价值不仅在于优雅的上下文管理，更在于为领域知识�
 >
 > 使用 Claude Code（或任意支持 SKILL.md 渐进式披露的等价 Agent 运行时，如 Kimi Code）+ Anthropic 官方 PPTX Skill，从一篇学术论文的 PDF 生成一份 10-15 页的演示文稿。Skill 的内容是实验对象，运行时可以替换——并非每位读者都有 Anthropic 凭证，只要运行时具备「元数据目录 + 按需加载」的 Skills 机制即可。Agent 的执行流程体现了渐进式加载的过程：
 >
-> 1. 在上下文末尾的 Skill 元数据列表中看到 PPTX Skill 的描述
+> 1. 在 system prompt 的 Skill 元数据目录中看到 PPTX Skill 的描述
 > 2. 识别出任务需要该 Skill
-> 3. 通过 Skill 工具加载完整的 `SKILL.md` 获得核心流程
+> 3. 调用 Skill（或读取 `SKILL.md`）加载完整指令，获得核心流程
 > 4. 选择性加载 `html2pptx.md` 获取详细方法
 > 5. 使用捆绑的工具脚本（如 `scripts/thumbnail.py`）生成预览，使用模板文件作为设计的起点
 >
@@ -787,7 +778,7 @@ Skills 的价值不仅在于优雅的上下文管理，更在于为领域知识�
 
 ![图2-14 Agent 状态栏架构](images/fig2-14.svg)
 
-上一节在介绍 Skills 的方式三时已经提到：“上下文末尾的 user-role meta 消息”是一条通用的元信息注入通道——Skill 元数据列表只是它的一个使用场景。本节将系统地展开这一通道：它是 Agent 框架向模型同步各种动态状态的统一机制，称为 **Agent 状态栏（Agent Status Bar）**。
+上一节的 Skills 解决的是“Agent 具备哪些可按需加载的能力”；本节讨论另一个独立问题：如何让 Agent 随时看到任务进度、环境变化和工具调用计数等**运行时状态**。Agent 框架把这些动态信息整理成结构化摘要并注入上下文，这种机制称为 **Agent 状态栏（Agent Status Bar）**。
 
 前面讨论的提示工程解决了“给模型什么样的静态指令”的问题。但在实际执行过程中，Agent 还需要动态地感知自身的状态和任务的进展——这就是 Agent 状态栏的用武之地。
 
@@ -874,9 +865,7 @@ Agent 状态栏正是这条原理最日常的落地：Harness 就是那台“仪
 
 **环境的当前状态**：包括动态的环境信息（系统时间、工作目录等）、异常操作提醒（“该工具已被重复调用 N 次”）、以及从隐式状态到显式状态的转换。这一设计原则同样适用于人类界面——命令行（CLI）和图形界面（GUI）都致力于让用户清晰地感知系统的当前状态。
 
-**可用能力清单**：当 Agent 框架支持插件化的能力扩展（如上一节的 Skills 系统）时，所有已安装 Skill 的元数据列表也走这条同一的末尾注入通道，相当于告诉模型“你现在拥有哪些可调用的专业能力”。它变化频率最低（仅在用户安装/卸载 Skill 时才变），其增量发送机制已在上一节 Skills 中详述，此处不再重复。
-
-侧信道信息和可用能力清单一经添加就不再改变，对 KV Cache 很友好（因为不会破坏已缓存的前缀）。而任务规划和环境状态是动态变化的，需要以特殊的用户消息追加到上下文末尾，并随任务推进不断更新——更新方式的选择直接关系到 KV Cache 的代价，下面结合具体的消息结构展开讨论。
+事件的侧信道信息通常随对应事件一起追加；任务规划和环境状态则会随任务推进不断更新。这些动态信息如何写入会话历史，直接关系到 KV Cache 的代价，下面结合具体的消息结构展开讨论。
 
 ### Agent 状态栏在上下文中的具体位置
 
@@ -1091,7 +1080,7 @@ Andrej Karpathy 提出了一个深刻的洞察：模型的“记忆差”在某�
 
 这些技术的共同点是显式的、工程化的信息管理——不要让模型被动地在海量上下文中寻找线索，而要主动提供经过提炼的结构化状态。回到 Rich Sutton 的《苦涩的教训》：那些能更有效地利用更多算力的通用方法将最终胜出。本章展示的每一项技术——从 KV Cache 友好的上下文布局到上下文感知压缩——都是在当前模型能力边界下，用工程手段最大化信息利用效率的具体实践。需要明确的是，本章处理的是**一次任务之内**的状态更新与上下文腐化；第八章“Agent 的持续进化”处理的是另一时间尺度的问题：如何评价跨任务轨迹，并把其中的共性转化为会改变未来版本的持久更新。
 
-回到第一章的 Harness 框架，本章的每一项技术都是 Harness “上下文与工具”层面的具体实现——它们共同决定了 Agent 在每个决策点能否获得充分的、精炼的、结构化的信息支撑。值得注意的是，本章引入的所有新概念在语义层面仍然服务于第一章定义的上下文五个组成部分的框架：Skills 通过文件读取进入工具执行结果，压缩则是对轨迹中已有消息的精炼替换。Agent 状态栏稍有特殊——它在 API 层面使用了 user 角色（因为 API 并没有提供专门的“元信息”角色），但在语义上它承载的是环境状态和任务进度等元信息，本质上是对五个组成部分的补充注解，而非独立于框架之外的新类别。五个部分的骨架没变，本章做的是在这个骨架上填充血肉。
+回到第一章的 Harness 框架，本章的每一项技术都是 Harness “上下文与工具”层面的具体实现——它们共同决定了 Agent 在每个决策点能否获得充分的、精炼的、结构化的信息支撑。值得注意的是，本章引入的所有新概念在语义层面仍然服务于第一章定义的上下文五个组成部分的框架：Skill 的完整指令在调用时进入轨迹——Claude Code 将其作为 user message 注入，其他运行时也可通过文件读取或激活工具将其作为 tool result 返回；压缩则是对轨迹中已有消息的精炼替换。Agent 状态栏稍有特殊——它在 API 层面使用了 user 角色（因为 API 并没有提供专门的“元信息”角色），但在语义上它承载的是环境状态和任务进度等元信息，本质上是对五个组成部分的补充注解，而非独立于框架之外的新类别。五个部分的骨架没变，本章做的是在这个骨架上填充血肉。
 
 下一章将从上下文窗口内的信息管理，延伸到跨越会话的持久化知识体系——用户记忆和知识库，使 Agent 能够在实践中不断积累经验，逐步成为真正的领域专家。
 

@@ -90,7 +90,11 @@ We will use the `MrDragonFox/Elise`, which is designed for training TTS models. 
 """
 
 from datasets import load_dataset
-dataset = load_dataset("MrDragonFox/Elise", split = "train")
+dataset = load_dataset(
+    "maxbsoft/mrdragonfox-elise",
+    revision="2cc657c3f94a83df18fcd968b7531ca1a19c7f88",
+    split="train",
+)
 
 #@title Tokenization Function
 
