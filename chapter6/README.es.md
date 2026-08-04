@@ -26,7 +26,7 @@ Los requisitos, la evidencia directa y los límites de cada experimento se detal
 | 6-8 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | Desglose integral de costos para una tarea multirronda de reembolso, con diseño compatible con caché KV y cuantificación A/B del ahorro por compresión de contexto |
 | 6-9 | [model-benchmark](model-benchmark/) | 🚧 | Están implementadas las campañas 8K/32K/128K × 512/2048, rampas por límites, costos del Agent y disponibilidad durante 168 horas; el [manifiesto](model-benchmark/results/manifest.json) actual solo contiene pruebas reales de humo y disponibilidad |
 | 6-11 | [android-world](android-world/) | 📖 | Informe y notas de análisis de fallos de la evaluación de T3A Agent en AndroidWorld (punto de partida de 6-11, no código fuente del benchmark) |
-| 6-12 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | 🚧 | Fija la configuración OpenVLA + RoboTwin2, las versiones externas y las puertas de prevalidación/evidencia; completarlo requiere un checkpoint real, RoboTwin2 y una evaluación simulada con 8 GPU |
+| 6-12 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | La campaña oficial con una GPU completó 256 episodios por brazo: chunk 1 obtuvo 0/256 y chunk 25 obtuvo 26/256, con hashes de los 512 rollouts. |
 | — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | Evalúa objetivamente las llamadas a herramientas, la exactitud de los cálculos, las citas de evidencia y las afirmaciones sin fundamento sobre datos agregados sintéticos al estilo DHIS2 |
 
 > Los benchmarks externos entre comillas invertidas deben clonarse por separado. [`android-world/`](android-world/) (con guion) contiene las notas internas sobre la evaluación de T3A; no es la misma ruta que el código externo `android_world/`.

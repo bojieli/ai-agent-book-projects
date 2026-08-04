@@ -13,7 +13,7 @@
 | 6-3 | [user-memory-evaluation](../chapter3/user-memory-evaluation/) | ✅ | 4段階 Rubric を180件の構造化判定に適用し、根拠とハルシネーション拒否を記録する。 |
 | 6-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | 60ケースを3システムで実行し、コストを完全に集計する。 |
 | 6-10 | [user-memory-system-evaluation](user-memory-system-evaluation/) | 🚧 | コンポーネント・モデル・評価器の 4×3×2×60 完全マトリクスは未完了。 |
-| 6-12 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | 🚧 | OpenVLA と RoboTwin2 の構成を固定する。完了には checkpoint、シミュレータ、8 GPU が必要。 |
+| 6-12 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | 単一 GPU の正式実験で各 action-chunk 群 256 エピソードを完了。chunk 1 は 0/256、chunk 25 は 26/256 で、512 rollout のハッシュを保存。 |
 | 6-2 | `terminal-bench/` | 📖 | Terminal-Bench は、実際のターミナル環境における AI Agent の性能をテストするためのベンチマークである。コードのコンパイルからモデルの訓練、サーバーのセットアップまで、Agent が実際のエンドツーエンドタスクをどう処理するかを評価する。約 100 タスクのデータセットと実行フレームワークを含み、さまざまな Agent 実装をサポートする。 |
 | 6-2 | `SWE-bench/` | 📖 | SWE-bench は、大規模言語モデルが実際の GitHub issue を解決する能力を評価するためのベンチマークである。コードベースと issue の説明が与えられると、モデルは問題を解決するパッチを生成しなければならない。SWE-bench、SWE-bench Lite、SWE-bench Verified、SWE-bench Multimodal という複数のバージョンを含む。 |
 | 6-2 | `GAIA/` | 📖 | GAIA は次世代の LLM（ツール拡張、効率的なプロンプティング、検索アクセスなどを備えたもの）を評価することを目的としている。さまざまな程度のツール利用と自律性を必要とし、曖昧さのない回答を持つ 450 以上の非自明な問題を含む。3 つの難易度レベルに分かれている。 |
