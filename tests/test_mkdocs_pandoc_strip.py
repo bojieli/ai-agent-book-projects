@@ -57,6 +57,12 @@ def test_pandoc_strip_does_not_mutate_json_data():
     assert on_page_markdown(content) == content
 
 
+def test_pandoc_strip_preserves_non_pandoc_braces_after_links():
+    """Only recognized Pandoc attributes may be removed after a link."""
+    content = "Literal: [link](https://example.com){not a Pandoc attribute}"
+    assert on_page_markdown(content) == content
+
+
 def test_pandoc_strip_handles_nested_inline_backticks():
     """Prove that double backticks wrapping single backticks (e.g. ``foo `bar` baz {.unnumbered}``)
 

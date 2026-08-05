@@ -10,7 +10,6 @@ understand and would otherwise render as literal text:
 import re
 
 _CODE_PATTERN = re.compile(r"(?P<fence>```+|~~~+|`+)([\s\S]*?)(?P=fence)")
-_TRAILING_LINK_ATTR = re.compile(r"\)\{[^{}]*\}")
 _PANDOC_ATTR = re.compile(
     r"[ \t]*\{(?:\s*#[a-zA-Z0-9_.:-]+|\s*\.[a-zA-Z0-9_-]+|\s*[a-zA-Z0-9_-]+=[^{}]*)+\s*\}"
 )
@@ -24,14 +23,12 @@ def on_page_markdown(markdown, **kwargs):
         start, end = match.span()
         if start > last_end:
             non_code = markdown[last_end:start]
-            non_code = _TRAILING_LINK_ATTR.sub(")", non_code)
             non_code = _PANDOC_ATTR.sub("", non_code)
             out.append(non_code)
         out.append(match.group(0))
         last_end = end
     if last_end < len(markdown):
         non_code = markdown[last_end:]
-        non_code = _TRAILING_LINK_ATTR.sub(")", non_code)
         non_code = _PANDOC_ATTR.sub("", non_code)
         out.append(non_code)
     return "".join(out)
