@@ -597,18 +597,7 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                     total_lines = len(all_lines)
                     
                     # Calculate line range
-                    if begin_line is not None:
-                        try:
-                            begin_line = int(begin_line)
-                        except (ValueError, TypeError):
-                            pass
-                    if number_lines is not None:
-                        try:
-                            number_lines = int(number_lines)
-                        except (ValueError, TypeError):
-                            pass
-
-                    start_line = (begin_line - 1) if isinstance(begin_line, int) else 0
+                    start_line = (begin_line - 1) if begin_line is not None else 0
                     if start_line < 0:
                         start_line = 0
                     if total_lines == 0 and start_line == 0:

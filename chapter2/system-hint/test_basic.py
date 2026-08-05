@@ -4,6 +4,9 @@ Basic test to verify System-Hint Agent functionality
 
 import os
 import sys
+
+import pytest
+
 from agent import SystemHintAgent, SystemHintConfig, TodoStatus
 
 def test_basic_functionality():
@@ -165,6 +168,17 @@ def test_read_file_empty_file_line_range():
     finally:
         if os.path.exists(empty_file):
             os.remove(empty_file)
+
+
+def test_read_file_rejects_invalid_line_arguments(tmp_path):
+    """Invalid schema inputs must not silently become a read from line one."""
+    config = SystemHintConfig(enable_detailed_errors=True)
+    agent = SystemHintAgent(api_key="test-key", provider="kimi", config=config, verbose=False)
+    agent.current_directory = str(tmp_path)
+    agent._tool_write_file("sample.txt", "one\ntwo\n")
+
+    with pytest.raises(TypeError):
+        agent._tool_read_file("sample.txt", begin_line="invalid")
 
 if __name__ == "__main__":
     print("="*60)
