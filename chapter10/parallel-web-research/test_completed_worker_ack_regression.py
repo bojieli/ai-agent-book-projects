@@ -48,4 +48,35 @@ async def test_worker_completing_before_winner_is_not_reported_as_missing_ack():
     result = await coordinator.run()
     
     assert result["winner"] == "worker-2"
+    assert result["expected_loser_acks"] == ["worker-3"]
     assert result["missing_loser_acks"] == []
+
+
+@pytest.mark.asyncio
+async def test_worker_completing_after_winner_still_owes_ack():
+    """The expected ACK set is a snapshot taken when the winner settles."""
+    bus = MessageBus(verbose=False)
+    coordinator = Coordinator(bus, "target")
+
+    class FakeWorker:
+        timeout = 10
+
+        def __init__(self, wid):
+            self.id = wid
+            self.site = Website(wid, f"https://{wid}.edu", wid)
+
+        async def run(self):
+            pass
+
+    for worker_id in ("worker-1", "worker-2"):
+        coordinator.add_worker(FakeWorker(worker_id))
+
+    await bus.send("worker-2", "coordinator", "target_found", {"data": {"found": True}})
+    await bus.send("worker-1", "coordinator", "not_found", {"reason": "finished after settlement"})
+    for worker_id in ("worker-1", "worker-2"):
+        await bus.send(worker_id, "coordinator", "resource_closed", {"browser_context_closed": True})
+
+    result = await coordinator.run()
+
+    assert result["expected_loser_acks"] == ["worker-1"]
+    assert result["missing_loser_acks"] == ["worker-1"]
