@@ -129,6 +129,36 @@ def test_git_commit_range_ignores_commits_for_creation_date(tmp_path: Path):
     assert created[0] == latest_hash
     assert created[0] != creation_hash
     assert created[1] == 1706745600
+
+def test_git_commit_range_handles_all_ignored_commits(tmp_path: Path):
+    """Contract: If all commits for a file are ignored, git_commit_range must return fallback commit."""
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    subprocess.run(
+        ["git", "-C", str(tmp_path), "config", "user.email", "test@example.com"],
+        check=True,
+    )
+    subprocess.run(
+        ["git", "-C", str(tmp_path), "config", "user.name", "Test"],
+        check=True,
+    )
+
+    page = tmp_path / "page.md"
+    page.write_text("created\n", encoding="utf-8")
+    _commit(tmp_path, "create", "1704067200 +0000")
+
+    commit_hash = subprocess.run(
+        ["git", "-C", str(tmp_path), "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+
+    latest, created = git_commit_range(
+        page, tmp_path, ignored_commits=(commit_hash,)
+    )
+
+    assert latest[0] == ""
+    assert created[0] == ""
 def _commit(repository: Path, message: str, date: str) -> None:
     subprocess.run(["git", "-C", str(repository), "add", "page.md"], check=True)
     subprocess.run(
