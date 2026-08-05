@@ -42,3 +42,22 @@ def test_epub_external_links_uses_blob_for_file_links():
     """
     url = run_lua_link("../chapter7/AdaptThink/TRAINING_REPORT.md")
     assert url == "https://github.com/bojieli/ai-agent-book/blob/main/chapter7/AdaptThink/TRAINING_REPORT.md"
+
+
+def test_epub_external_links_markdown_and_subdir_targets():
+    """Contract: Lua Link filter handles markdown file targets, chapter dirs with trailing slash, and non-chapter targets correctly."""
+    # Markdown file target uses /blob/
+    url_md = run_lua_link("../chapter7/README.md")
+    assert url_md == "https://github.com/bojieli/ai-agent-book/blob/main/chapter7/README.md"
+
+    # Directory target with trailing slash uses /tree/ and strips trailing slash
+    url_dir_slash = run_lua_link("../chapter8/")
+    assert url_dir_slash == "https://github.com/bojieli/ai-agent-book/tree/main/chapter8"
+
+    # Chapter sub-directory target uses /tree/
+    url_subdir = run_lua_link("../chapter7/speech-sft-experiment")
+    assert url_subdir == "https://github.com/bojieli/ai-agent-book/tree/main/chapter7/speech-sft-experiment"
+
+    # Non-matching link target remains unchanged
+    url_external = run_lua_link("https://example.com")
+    assert url_external == "https://example.com"
