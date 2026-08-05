@@ -77,6 +77,19 @@ class TestToolRegistry(unittest.TestCase):
         result_formatted = tools.convert_currency("$1,000.00", "USD", "EUR")
         self.assertEqual(result_formatted["converted_amount"], 920.0)
         self.assertEqual(result_formatted["original_amount"], 1000.0)
+
+        result_us_dollar = tools.convert_currency("US$100", "USD", "EUR")
+        self.assertEqual(result_us_dollar["converted_amount"], 92.0)
+        self.assertEqual(result_us_dollar["original_amount"], 100.0)
+
+        result_comma_large = tools.convert_currency("1,234,567.89", "USD", "EUR")
+        self.assertEqual(result_comma_large["original_amount"], 1234567.89)
+
+        result_euro_sym = tools.convert_currency("€ 500.25", "EUR", "USD")
+        self.assertIn("converted_amount", result_euro_sym)
+
+        result_invalid_str = tools.convert_currency("invalid_str", "USD", "EUR")
+        self.assertIn("error", result_invalid_str)
     
     def test_pdf_parser_structure(self):
         """Test PDF parser structure (without actual PDF)"""
