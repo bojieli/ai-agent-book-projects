@@ -53,10 +53,10 @@ def test_quality_judge_tolerates_null_score_confidence_evidence():
 
 
 def test_quality_judge_tolerates_null_dimensions_array_and_non_dict_payload():
-    """Contract: OpenAIQualityJudge handles explicit JSON null dimensions array, non-dict payloads, and null items.
+    """Contract: OpenAIQualityJudge handles explicit JSON null dimensions array, non-dict payloads, null items, and invalid trajectories.
 
     Locks out TypeError ('NoneType' object is not iterable) and AttributeError when LLM response
-    payload has null dimensions or non-dict structure.
+    payload or trajectory input has null, non-dict, or malformed structure.
     """
     # Test explicit JSON null dimensions array
     judge_null_dims = OpenAIQualityJudge(evidence_client=_FakeClient({"dimensions": None}))
@@ -71,7 +71,30 @@ def test_quality_judge_tolerates_null_dimensions_array_and_non_dict_payload():
     results2 = list(judge_list_payload.evaluate({"messages": []}))
     assert len(results2) == 2
 
-    # Test dimensions array with null item
-    judge_null_item = OpenAIQualityJudge(evidence_client=_FakeClient({"dimensions": [None]}))
+    # Test dimensions array with null item or non-dict items
+    judge_null_item = OpenAIQualityJudge(evidence_client=_FakeClient({"dimensions": [None, "invalid", 123]}))
     results3 = list(judge_null_item.evaluate({"messages": []}))
     assert len(results3) == 2
+
+    # Test evidence containing null items
+    payload_null_ev = {
+        "dimensions": [
+            {
+                "dimension": "expression_quality",
+                "verdict": "pass",
+                "score": 1.0,
+                "confidence": 0.9,
+                "evidence": [None, "turn 1"],
+            }
+        ]
+    }
+    judge_null_ev = OpenAIQualityJudge(evidence_client=_FakeClient(payload_null_ev))
+    results4 = list(judge_null_ev.evaluate({"messages": []}))
+    eq = next(r for r in results4 if r.dimension == "expression_quality")
+    assert eq.evidence == ["turn 1"]
+
+    # Test null or non-dict trajectory input
+    results_null_traj = list(judge_null_dims.evaluate(None))
+    assert len(results_null_traj) == 2
+    results_str_traj = list(judge_null_dims.evaluate("invalid_trajectory"))
+    assert len(results_str_traj) == 2

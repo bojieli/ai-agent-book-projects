@@ -39,6 +39,8 @@ class OpenAIQualityJudge:
         self.model = evidence_client.model
 
     def evaluate(self, trajectory: Dict[str, Any]) -> Iterable[DimensionResult]:
+        if not isinstance(trajectory, dict):
+            trajectory = {}
         facts = trajectory.get("process_facts")
         if not isinstance(facts, dict):
             facts = {}
@@ -102,12 +104,13 @@ Trajectory evidence:
             score = item.get("score")
             confidence = item.get("confidence")
             evidence = item.get("evidence")
+            clean_evidence = [str(v) for v in evidence if v is not None] if isinstance(evidence, list) else []
             results.append(DimensionResult(
                 dimension=name,
                 layer="llm_rubric",
                 verdict=verdict,
                 score=float(score) if isinstance(score, (int, float)) and not isinstance(score, bool) else 0.5,
-                evidence=[str(value) for value in evidence] if isinstance(evidence, list) and evidence else ["LLM returned no evidence"],
+                evidence=clean_evidence if clean_evidence else ["LLM returned no evidence"],
                 confidence=float(confidence) if isinstance(confidence, (int, float)) and not isinstance(confidence, bool) else 0.5,
             ))
         return results
