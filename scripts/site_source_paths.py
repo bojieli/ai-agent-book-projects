@@ -74,7 +74,12 @@ def git_commit_range(
         return latest, latest
 
     creation_lines = _git_log(common + ["--diff-filter=A", "--", relative])
-    created = _parse_commit(creation_lines[-1]) if creation_lines else _fallback_commit()
+    valid_creation_commits = [
+        commit
+        for commit in map(_parse_commit, creation_lines)
+        if not any(commit[0].startswith(prefix) for prefix in ignored_commits)
+    ]
+    created = valid_creation_commits[-1] if valid_creation_commits else latest
     return latest, created
 
 
