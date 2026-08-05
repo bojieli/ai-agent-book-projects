@@ -82,6 +82,10 @@ class TestToolRegistry(unittest.TestCase):
         self.assertEqual(result_us_dollar["converted_amount"], 92.0)
         self.assertEqual(result_us_dollar["original_amount"], 100.0)
 
+        result_currency_code = tools.convert_currency("USD$1,000", "USD$", "EUR")
+        self.assertEqual(result_currency_code["converted_amount"], 920.0)
+        self.assertEqual(result_currency_code["original_amount"], 1000.0)
+
         result_comma_large = tools.convert_currency("1,234,567.89", "USD", "EUR")
         self.assertEqual(result_comma_large["original_amount"], 1234567.89)
 

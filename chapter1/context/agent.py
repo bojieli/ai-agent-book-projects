@@ -143,7 +143,17 @@ class ToolRegistry:
         try:
             if isinstance(amount, str):
                 clean_amt = amount.replace(",", "").strip()
-                symbols_to_strip = sorted(["$", "US$", "U.S.$", "S$", "A$", "C$", "€", "£", "₹"], key=len, reverse=True)
+                symbols_to_strip = sorted(
+                    [
+                        "USD$", "U.S.$", "US$", "$",
+                        "SGD$", "SG$", "S$",
+                        "AUD$", "AU$", "A$",
+                        "CAD$", "CA$", "C$",
+                        "€", "£", "₹",
+                    ],
+                    key=len,
+                    reverse=True,
+                )
                 for sym in symbols_to_strip:
                     clean_amt = clean_amt.replace(sym, "")
                 amount = float(clean_amt.strip())
