@@ -87,9 +87,14 @@ def canonical_nav_labels(config_text: str) -> list[str]:
         raise CatalogError("mkdocs.yml: could not find nav")
 
     labels: list[str] = []
-    pattern = re.compile(r'''(?m)^\s*-\s+(?:"([^"\n]+)"|'([^'\n]+)'|([^:\n]+)):(?:\s|$)''')
+    pattern = re.compile(r'''(?m)^\s*-\s+(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|''|\\.)*)'|([^:\n]+)):(?:\s|$)''')
     for double_q, single_q, unquoted in pattern.findall(match.group("body")):
-        label = (double_q or single_q or unquoted or "").strip().strip("\"'")
+        if double_q:
+            label = double_q.replace(r'\"', '"').replace(r'\\', '\\').strip()
+        elif single_q:
+            label = single_q.replace(r"\'", "'").replace("''", "'").replace(r'\\', '\\').strip()
+        else:
+            label = (unquoted or "").strip().strip("\"'")
         if label and label not in labels:
             labels.append(label)
     if not labels:

@@ -43,3 +43,20 @@ nav:
     labels = canonical_nav_labels(config)
 
     assert labels == ["Overview", "Experiments"]
+
+def test_canonical_nav_labels_multiple_colons_and_escaped_quotes():
+    """Prove that quoted nav labels with multiple colons and escaped quotes are properly parsed."""
+    config = r"""
+nav:
+  - "Part 1: Chapter 2: Deep Dive: Context": index.md
+  - 'Section A: Part B: Overview: Details': intro.md
+  - "Chapter 1: \"Agent\" Architecture: Overview": chapter1.md
+  - 'Chapter 2: \'Context\' & \'Prompts\': Details': chapter2.md
+  - 'Chapter 3: ''Memory'' Management': chapter3.md
+"""
+    labels = canonical_nav_labels(config)
+    assert "Part 1: Chapter 2: Deep Dive: Context" in labels
+    assert "Section A: Part B: Overview: Details" in labels
+    assert 'Chapter 1: "Agent" Architecture: Overview' in labels
+    assert "Chapter 2: 'Context' & 'Prompts': Details" in labels
+    assert "Chapter 3: 'Memory' Management" in labels
