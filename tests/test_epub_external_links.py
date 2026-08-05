@@ -65,3 +65,14 @@ def test_epub_external_links_markdown_and_subdir_targets():
     # Non-matching link target remains unchanged
     url_external = run_lua_link("https://example.com")
     assert url_external == "https://example.com"
+
+
+def test_epub_external_links_preserves_fragments_and_requires_chapter_boundary():
+    url = run_lua_link("../chapter7/AdaptThink/TRAINING_REPORT.md#results")
+    assert url == (
+        "https://github.com/bojieli/ai-agent-book/blob/main/"
+        "chapter7/AdaptThink/TRAINING_REPORT.md#results"
+    )
+
+    invalid = run_lua_link("../chapter7-not-a-directory")
+    assert invalid == "../chapter7-not-a-directory"
