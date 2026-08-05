@@ -32,6 +32,8 @@ class QualityJudge(Protocol):
 
 
 def _successful_calls(trajectory: Dict[str, Any]) -> List[Dict[str, Any]]:
+    if not isinstance(trajectory, dict):
+        trajectory = {}
     calls = trajectory.get("tool_calls")
     if not isinstance(calls, list):
         calls = []
@@ -58,6 +60,8 @@ def _precedes(call: Dict[str, Any], promise: Dict[str, Any]) -> bool:
 
 
 def _assistant_text(trajectory: Dict[str, Any]) -> str:
+    if not isinstance(trajectory, dict):
+        trajectory = {}
     messages = trajectory.get("messages")
     if not isinstance(messages, list):
         messages = []
@@ -72,6 +76,8 @@ class ResultVerifier:
     """Checks the final environment state instead of trusting the reply."""
 
     def evaluate(self, trajectory: Dict[str, Any]) -> List[DimensionResult]:
+        if not isinstance(trajectory, dict):
+            trajectory = {}
         expected = trajectory.get("expected_outcome")
         if not isinstance(expected, dict):
             expected = {}
@@ -214,8 +220,14 @@ class HeuristicQualityJudge:
     """
 
     def evaluate(self, trajectory: Dict[str, Any]) -> List[DimensionResult]:
-        facts = trajectory.get("quality_facts", {})
-        expression_issues = facts.get("expression_issues", [])
+        if not isinstance(trajectory, dict):
+            trajectory = {}
+        facts = trajectory.get("quality_facts")
+        if not isinstance(facts, dict):
+            facts = {}
+        expression_issues = facts.get("expression_issues")
+        if not isinstance(expression_issues, list):
+            expression_issues = []
         if expression_issues:
             expression = DimensionResult(
                 "expression_quality", "llm_rubric", FAIL, 0.0,
@@ -254,6 +266,8 @@ class TrajectoryVerifier:
         self.review_confidence = review_confidence
 
     def evaluate(self, trajectory: Dict[str, Any]) -> Dict[str, Any]:
+        if not isinstance(trajectory, dict):
+            trajectory = {}
         dimensions = [
             *self.result_verifier.evaluate(trajectory),
             *self.process_verifier.evaluate(trajectory),
@@ -307,11 +321,15 @@ class TrajectoryVerifier:
 
 def scalar_baseline(report: Dict[str, Any]) -> Dict[str, Any]:
     """Simulates the information loss of returning one overall number."""
-    return {"trajectory_id": report["trajectory_id"], "score": report["overall_score"]}
+    if not isinstance(report, dict):
+        report = {}
+    return {"trajectory_id": report.get("trajectory_id"), "score": report.get("overall_score")}
 
 
 def diagnostic_utility(report: Dict[str, Any]) -> float:
     """Fraction of failed dimensions that include actionable evidence."""
+    if not isinstance(report, dict):
+        report = {}
     dims = report.get("dimensions")
     if not isinstance(dims, list):
         dims = []
