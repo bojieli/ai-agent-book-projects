@@ -5,22 +5,30 @@ understand and would otherwise render as literal text:
 
     ## 标题 {.unnumbered}        ->  ## 标题
     ![图](x.svg){height=55%}     ->  ![图](x.svg)
-    [文本](#sec:foo){.unnumbered}
+    [文本](#sec:foo){.unnumbered} ->  [文本](#sec:foo)
 """
 import re
 
-# Patterns are intentionally strict: they only match real Pandoc attribute
-# syntax so that inline code and code blocks (e.g. JSON `{"data": {...}}` or
-# JS `catch (e) {...}`) are never touched.
-_ID_ATTR = re.compile(r"\{#[\w:.-]+\}")
-_CLASS_ATTR = re.compile(r"\{\.[\w-]+(?:\s+\.[\w-]+)*\}")
-_TRAILING_ATTR = re.compile(
-    r"\)\{(?:#[\w:.-]+|\.[\w-]+(?:\s+\.[\w-]+)*|[\w-]+=[^{}]*)\}"
+_CODE_PATTERN = re.compile(r"(?P<fence>```+|~~~+|`+)([\s\S]*?)(?P=fence)")
+_PANDOC_ATTR = re.compile(
+    r"[ \t]*\{(?:\s*#[a-zA-Z0-9_.:-]+|\s*\.[a-zA-Z0-9_-]+|\s*[a-zA-Z0-9_-]+=[^{}]*)+\s*\}"
 )
 
 
 def on_page_markdown(markdown, **kwargs):
-    markdown = _ID_ATTR.sub("", markdown)
-    markdown = _CLASS_ATTR.sub("", markdown)
-    markdown = _TRAILING_ATTR.sub(")", markdown)
-    return markdown
+    """MkDocs hook to strip Pandoc attributes outside code blocks and inline code."""
+    out = []
+    last_end = 0
+    for match in _CODE_PATTERN.finditer(markdown):
+        start, end = match.span()
+        if start > last_end:
+            non_code = markdown[last_end:start]
+            non_code = _PANDOC_ATTR.sub("", non_code)
+            out.append(non_code)
+        out.append(match.group(0))
+        last_end = end
+    if last_end < len(markdown):
+        non_code = markdown[last_end:]
+        non_code = _PANDOC_ATTR.sub("", non_code)
+        out.append(non_code)
+    return "".join(out)
