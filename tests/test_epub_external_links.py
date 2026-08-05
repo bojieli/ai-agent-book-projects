@@ -4,6 +4,10 @@ import subprocess
 import tempfile
 
 
+import pytest
+
+HAS_LUA = shutil.which("texlua") is not None or shutil.which("lua") is not None
+pytestmark = pytest.mark.skipif(not HAS_LUA, reason="texlua or lua executable not found in PATH")
 ROOT = Path(__file__).parents[1]
 
 
