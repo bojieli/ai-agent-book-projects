@@ -51,7 +51,7 @@ Sumber naskah Bahasa Indonesia berada di [`book-id/`](../../book-id/). Edisi ini
 | 2 | 🎯 **Rekayasa Konteks** | KV Cache, rekayasa prompt, Agent Skills, dan kompresi konteks | [Baca](../../book-id/chapter2.md) | [8](../../chapter2/README.id.md) |
 | 3 | 📚 **Memori Pengguna dan Basis Pengetahuan** | Memori lintas sesi, RAG, indeks terstruktur, dan graf pengetahuan | [Baca](../../book-id/chapter3.md) | [14](../../chapter3/README.id.md) |
 | 4 | 🛠️ **Alat** | MCP, alat persepsi/eksekusi/kolaborasi, Agent asinkron berbasis peristiwa | [Baca](../../book-id/chapter4.md) | [7](../../chapter4/README.id.md) |
-| 5 | 💻 **Coding Agent dan Pembuatan Kode** | Kode sebagai alat yang dapat membuat alat baru; implementasi Coding Agent tingkat produksi | [Baca](../../book-id/chapter5.md) | [12](../../chapter5/README.id.md) |
+| 5 | 💻 **Coding Agent dan Pembuatan Kode** | Kode sebagai alat yang dapat membuat alat baru; implementasi Coding Agent tingkat produksi | [Baca](../../book-id/chapter5.md) | [13](../../chapter5/README.id.md) |
 | 6 | 🎯 **Evaluasi Agent** | Lingkungan evaluasi, metrik, signifikansi statistik, dan pemilihan berbasis evaluasi | [Baca](../../book-id/chapter6.md) | [17](../../chapter6/README.id.md) |
 | 7 | 🧠 **Pascapelatihan Model** | Prapelatihan, SFT, RL, internalisasi pemanggilan alat, dan efisiensi sampel | [Baca](../../book-id/chapter7.md) | [18](../../chapter7/README.id.md) |
 | 8 | 🔄 **Evolusi Berkelanjutan Agent** | Belajar dari jejak eksekusi dan memperbarui pengetahuan, instruksi, program, serta parameter | [Baca](../../book-id/chapter8.md) | [7](../../chapter8/README.id.md) |
