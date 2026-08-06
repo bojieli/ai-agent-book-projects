@@ -120,10 +120,10 @@ code_interpreter 实际执行，不得口算或声称运行了代码。"""
     def _output_text(response: Dict[str, Any]) -> str:
         chunks: List[str] = []
         for item in response.get("output") or []:
-            if item.get("type") != "message":
+            if not isinstance(item, dict) or item.get("type") != "message":
                 continue
             for content in item.get("content") or []:
-                if content.get("type") == "output_text" and content.get("text"):
+                if isinstance(content, dict) and content.get("type") == "output_text" and content.get("text"):
                     chunks.append(content["text"])
         return "\n".join(chunks).strip()
 
@@ -132,7 +132,8 @@ code_interpreter 实际执行，不得口算或声称运行了代码。"""
         return [
             item
             for item in response.get("output") or []
-            if item.get("type") in {
+            if isinstance(item, dict)
+            and item.get("type") in {
                 "web_search_call",
                 "code_interpreter_call",
                 "hosted_tool_call",
@@ -143,9 +144,13 @@ code_interpreter 实际执行，不得口算或声称运行了代码。"""
     def _citations(response: Dict[str, Any]) -> List[Dict[str, Any]]:
         citations = []
         for item in response.get("output") or []:
+            if not isinstance(item, dict):
+                continue
             for content in item.get("content") or []:
+                if not isinstance(content, dict):
+                    continue
                 for annotation in content.get("annotations") or []:
-                    if annotation.get("type") in {
+                    if isinstance(annotation, dict) and annotation.get("type") in {
                         "url_citation",
                         "container_file_citation",
                     }:
@@ -153,12 +158,13 @@ code_interpreter 实际执行，不得口算或声称运行了代码。"""
             # DashScope reports sources on the web_search_call item itself
             # instead of url_citation annotations; normalize them here.
             if item.get("type") == "web_search_call":
-                action = item.get("action") or {}
-                for source in action.get("sources") or []:
-                    if source.get("url"):
-                        citations.append(
-                            {"type": "url_citation", "url": source["url"]}
-                        )
+                action = item.get("action")
+                if isinstance(action, dict):
+                    for source in action.get("sources") or []:
+                        if isinstance(source, dict) and source.get("url"):
+                            citations.append(
+                                {"type": "url_citation", "url": source["url"]}
+                            )
         return citations
 
     def _post_responses(

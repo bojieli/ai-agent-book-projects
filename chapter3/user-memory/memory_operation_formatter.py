@@ -32,10 +32,11 @@ def format_memory_operations(operations: List[Dict[str, Any]], verbose: bool = F
             'update': '📝',
             'delete': '🗑️'
         }
-        icon = icon_map.get(op['action'], '❓')
+        action = str(op.get('action') or 'unknown').lower()
+        icon = icon_map.get(action, '❓')
         
         # Main operation line
-        lines.append(f"{i}. {icon} {op['action'].upper()}")
+        lines.append(f"{i}. {icon} {action.upper()}")
         
         # Content or memory ID
         if op.get('content'):
