@@ -1,0 +1,33 @@
+{
+  "experiment": "4-4",
+  "authority": "book/chapter4.md:319",
+  "subagent_primitives": [
+    "spawn_subagent",
+    "send_message_to_subagent",
+    "cancel_subagent",
+    "get_subagent_status"
+  ],
+  "modes": [
+    "sync",
+    "async"
+  ],
+  "context_strategies": [
+    "minimal",
+    "llm_generated"
+  ],
+  "human_tools": [
+    "request_human_approval",
+    "request_human_input"
+  ],
+  "human_requirements": [
+    "timeout",
+    "conservative_default",
+    "active_confirmation"
+  ],
+  "notification_channels": [
+    "im",
+    "email",
+    "slack"
+  ],
+  "completion_rule": "All lifecycle, context, HITL, timeout, and real multi-channel notification gates must pass. Missing channel credentials is blocked, not simulated."
+}

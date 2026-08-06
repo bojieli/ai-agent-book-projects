@@ -4,7 +4,7 @@
     "advice": "匹配依据：待预测案件与训练集原型“盗窃罪-prototype-1”共享部分定义特征，包括“theft_target=现金”“theft_location=公共场所”。但存在多处特征不匹配，如待预测案件中“theft_tool”“disposal_of_stolen_property”“stolen_property_disposal”“stolen_property_recovery”“return_of_stolen_property”等关键特征信息缺失或与原型定义特征（如“theft_tool=筷子”“disposal_of_stolen_property=全部发还”等）不一致，匹配距离为0.535。统计区间：该原型案件量为1，刑期统计区间为4.0个月（min=4.0，max=4.0，q25=4.0，q75=4.0，median=4.0）。不确定性：由于待预测案件与原型存在多个定义特征差异，且原型样本量较小（n=1），统计结果可能存在局限性，刑期预测存在不确定性。"
   },
   "receipt": {
-    "purpose": "3-13 held-out prototype-grounded advice cail2018-08f56c05f4baae51",
+    "purpose": "3-12 held-out prototype-grounded advice cail2018-08f56c05f4baae51",
     "provider": "ark",
     "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
     "started_at": "2026-07-30T04:41:43.942009+00:00",

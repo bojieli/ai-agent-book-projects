@@ -1,0 +1,140 @@
+{
+  "schema_version": "chapter3-evidence-v1",
+  "experiment": "3-12",
+  "run_id": "20260730T044309Z-3_12-3ab8ec7b",
+  "created_at": "2026-07-30T04:43:09.657787+00:00",
+  "status": "passed",
+  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/structured-knowledge-extraction/validation/runs/20260730T044309Z-3_12-3ab8ec7b",
+  "artifacts": {
+    "evidence.json": "91fd64540ce55419105f77c67f372edb3026e6f29c553e76d95eba8cea6d111f",
+    "receipts.json": "5115f893bf1f138309aded74de8c0fc059b00df1999646e81137e5ff583702d0"
+  },
+  "inputs": [
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/structured-knowledge-extraction/campaign.py",
+      "sha256": "d095661f80c091c8624a9add830ea3abd0a29c5a58d99f4e20a8c4361c8591e1",
+      "bytes": 38712
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/structured-knowledge-extraction/data/official/CAIL2018_ALL_DATA.zip",
+      "sha256": "3c05dfdade742f8b0d5e782d174475e7769448a5f407bfb7f14f0aed72d61d4a",
+      "bytes": 984551626
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/structured-knowledge-extraction/data/official/cail2018_sample_seed37.jsonl",
+      "sha256": "cdc5c44902b7a321e52b96ff6df2c522b26b5bcdc901eae692a33e7140b323b9",
+      "bytes": 564151
+    }
+  ],
+  "summary": {
+    "schema": {
+      "core_factors": 16,
+      "extension_factors": {
+        "盗窃罪": 12,
+        "故意伤害罪": 12,
+        "诈骗罪": 11
+      }
+    },
+    "clustering": {
+      "盗窃罪": {
+        "n": 120,
+        "candidates": [
+          {
+            "k": 2,
+            "silhouette": 0.055282737063116594
+          },
+          {
+            "k": 3,
+            "silhouette": 0.03972701197191193
+          },
+          {
+            "k": 4,
+            "silhouette": 0.05774984479270547
+          },
+          {
+            "k": 5,
+            "silhouette": 0.06135051269189759
+          }
+        ],
+        "selected_k": 5,
+        "selected_silhouette": 0.06135051269189759
+      },
+      "故意伤害罪": {
+        "n": 120,
+        "candidates": [
+          {
+            "k": 2,
+            "silhouette": 0.19414503497994334
+          },
+          {
+            "k": 3,
+            "silhouette": 0.06397112295025512
+          },
+          {
+            "k": 4,
+            "silhouette": 0.2174184498493351
+          },
+          {
+            "k": 5,
+            "silhouette": 0.18815962696351274
+          }
+        ],
+        "selected_k": 4,
+        "selected_silhouette": 0.2174184498493351
+      },
+      "诈骗罪": {
+        "n": 120,
+        "candidates": [
+          {
+            "k": 2,
+            "silhouette": 0.14269671395800465
+          },
+          {
+            "k": 3,
+            "silhouette": 0.11429764715608941
+          },
+          {
+            "k": 4,
+            "silhouette": 0.0807308294912691
+          },
+          {
+            "k": 5,
+            "silhouette": 0.09275116600967648
+          }
+        ],
+        "selected_k": 2,
+        "selected_silhouette": 0.14269671395800465
+      }
+    },
+    "prototypes": 11,
+    "heldout_judge_means": {
+      "prototype_grounding": 3.75,
+      "numeric_fidelity": 3.5833333333333335,
+      "uncertainty_and_caution": 3.75,
+      "heldout_usefulness": 3.5833333333333335
+    },
+    "api_calls": 117,
+    "token_usage": {
+      "prompt_tokens": 521611,
+      "completion_tokens": 436579,
+      "total_tokens": 958190
+    },
+    "errors": 0
+  },
+  "acceptance": {
+    "official_cail_url_revision_archive_hash": true,
+    "hundreds_real_training_samples": true,
+    "balanced_train_heldout_split": true,
+    "live_bottom_up_discovery": true,
+    "modular_schema_discovered": true,
+    "live_extraction_train_and_heldout": true,
+    "cluster_diagnostics_all_charges": true,
+    "importance_model": true,
+    "heldout_advice_only_prototype_statistics": true,
+    "independent_external_judge": true,
+    "legal_disclaimer": true,
+    "raw_request_response_receipts": true,
+    "all_calls_succeeded": true,
+    "passed": true
+  }
+}

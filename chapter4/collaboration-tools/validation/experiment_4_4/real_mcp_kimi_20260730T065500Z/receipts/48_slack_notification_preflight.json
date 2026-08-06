@@ -1,0 +1,15 @@
+{
+  "case": "slack_notification_preflight",
+  "tool": "mcp_send_slack_message",
+  "arguments": {
+    "message": "Experiment 4-4 credential preflight"
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": false,
+    "error": "Slack webhook URL not configured",
+    "message": "Please provide webhook_url or set SLACK_WEBHOOK_URL"
+  },
+  "latency_seconds": 0.001
+}

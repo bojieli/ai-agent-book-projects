@@ -1,0 +1,183 @@
+{
+  "experiment": "4-3",
+  "campaign_id": "real_mcp_gui_20260802T093657Z",
+  "status": "blocked",
+  "official_complete": false,
+  "files": [
+    {
+      "path": "artifacts/long_output.full.txt",
+      "bytes": 2340,
+      "sha256": "86b815da715192ef997d8a8d0c6adcaa8b1fdf9aa349889a4fc46462e4c02cb1"
+    },
+    {
+      "path": "catalog.json",
+      "bytes": 8201,
+      "sha256": "6836ecd7eb29c0ec721e42677a22c6778943eeb3a4f8339764c8722f78b856de"
+    },
+    {
+      "path": "llm_receipts.checkpoint.json",
+      "bytes": 6711,
+      "sha256": "3345b669c5237491e9a22127c2c6043e468c77ad78edfa13a58f09783958ea6b"
+    },
+    {
+      "path": "llm_receipts.json",
+      "bytes": 6712,
+      "sha256": "bc7f38d879d21bbc35b8f622b5c1e89d4fc1925b255be1fcf0cfd8b8f7fdb74c"
+    },
+    {
+      "path": "outside-witness.txt",
+      "bytes": 16,
+      "sha256": "de6e8ea7f35c8a0261f7fb9eb75022a92311cfd84248567104f5c9e7d3ddf782"
+    },
+    {
+      "path": "protocol.json",
+      "bytes": 1067,
+      "sha256": "f8ca33de720405502a7f0df26a2c9a4bf3988a6eee235500a1355d258ebaebc0"
+    },
+    {
+      "path": "receipts/01_python_valid_write.json",
+      "bytes": 505,
+      "sha256": "deeb188f1c413f4bad207d5b264ff3c4e2f2276f48878a22b695f69a3fcdde09"
+    },
+    {
+      "path": "receipts/02_python_invalid_rejected.json",
+      "bytes": 417,
+      "sha256": "b42060e04825d24bb20bb646ab0c8a5b11663ff4d25409b1d784d12881831590"
+    },
+    {
+      "path": "receipts/03_javascript_valid_write.json",
+      "bytes": 517,
+      "sha256": "a3f4faa50477bcbb7beca182feac531d20ed96c057fed57aba3f42615a3c3738"
+    },
+    {
+      "path": "receipts/04_javascript_invalid_rejected.json",
+      "bytes": 897,
+      "sha256": "2f82da93ba72a804a8956a58f73fc8f6a84ebbe50023de1db2c47a136820437b"
+    },
+    {
+      "path": "receipts/05_verified_edit.json",
+      "bytes": 520,
+      "sha256": "808cee8a3614afd02227cd32978c09a27d49301a220c3c27e4e9dce94a2e9169"
+    },
+    {
+      "path": "receipts/06_path_escape_rejected.json",
+      "bytes": 369,
+      "sha256": "8f778b3d855f06b85c6d81f23d4e905dc46c438a3669d841324e1578e094b678"
+    },
+    {
+      "path": "receipts/07_terminal_safe.json",
+      "bytes": 495,
+      "sha256": "53cb6de389bcc86cb88d3b9bacd565b87ac7c57fd9d7634d996c0cba9ac3178b"
+    },
+    {
+      "path": "receipts/08_terminal_timeout.json",
+      "bytes": 307,
+      "sha256": "78b093f1abbc2ab7e133a11298340a300216fe0e9ad100da0b1dea98ca7a5afe"
+    },
+    {
+      "path": "receipts/09_terminal_danger_rejected.json",
+      "bytes": 534,
+      "sha256": "81a1ba416a8dd3efebd6ce4ba96d249d2410f23a6745f0c2697e383345cbf919"
+    },
+    {
+      "path": "receipts/10_python_docker_sandbox.json",
+      "bytes": 1136,
+      "sha256": "1794ef87e1d800185dd338673faf700f10aee9758927620218f58d71c4d590c5"
+    },
+    {
+      "path": "receipts/11_python_network_denied.json",
+      "bytes": 1009,
+      "sha256": "2521a46c06051f43cf12abc3cd06a3e1d0a57289ff753572a562ddbc0d363994"
+    },
+    {
+      "path": "receipts/12_long_output_persisted.json",
+      "bytes": 2043,
+      "sha256": "e8187bfbebc801209c73e157ab647effcf6ffa2d007fde16cd228d794bb5f7c3"
+    },
+    {
+      "path": "receipts/13_excel_formula_screenshot.json",
+      "bytes": 1469,
+      "sha256": "99a399eed406fb0d395377f0ddf2ff9f10b13340f9baa4caefe37bd7580931a5"
+    },
+    {
+      "path": "receipts/14_real_webhook.json",
+      "bytes": 1150,
+      "sha256": "bc4b335ae9513e4e2d5fe7818d625bc4db722a07043b6758c89045ba522b062d"
+    },
+    {
+      "path": "receipts/15_real_browser.json",
+      "bytes": 884,
+      "sha256": "594e70690a54314d707448c78a46cc1c93b747edfd55e7b0e464c1643673a563"
+    },
+    {
+      "path": "receipts/16_calendar_preflight.json",
+      "bytes": 442,
+      "sha256": "25fa0aa7f4ef6e3e14d81c6c1d6d708854ae0056a634682891a1ef9b4d325171"
+    },
+    {
+      "path": "receipts/17_github_pr_preflight.json",
+      "bytes": 770,
+      "sha256": "f40f1987d27d2ad4d612371604023c4fdc8cbc5fe4c5618644c1dbdf333bd508"
+    },
+    {
+      "path": "receipts/18_real_virtual_desktop.json",
+      "bytes": 1475,
+      "sha256": "4631c4fa85ea4aed82656e870f895a831dc22813412983e3f72f7e8c2cf544ab"
+    },
+    {
+      "path": "receipts/19_real_virtual_mobile.json",
+      "bytes": 1703,
+      "sha256": "5adface10e39254f18982799822bda32149a99c690c0b22d6e2e801115503b23"
+    },
+    {
+      "path": "receipts/20_desktop_mobile_capabilities.json",
+      "bytes": 749,
+      "sha256": "30b9f3e8456d4ffb31759747cfa71457dd61c2dd3283e7c312a6fe9c1ceebebf"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 1222,
+      "sha256": "7a3ec64401ae1d76cd8f290ad72fe0bfce84a97316f5394b460a890c38fe552a"
+    },
+    {
+      "path": "workspace/android-wifi-settings.png",
+      "bytes": 98134,
+      "sha256": "2594cb1b80d4748fce263687ffc951d52a03e11db4e89e8edc733845bbb9c939"
+    },
+    {
+      "path": "workspace/browser-example.png",
+      "bytes": 17117,
+      "sha256": "bc7cf1f419af36be6d190e8559333b0915d7fc0ec66c41414bdb22b65932e4d2"
+    },
+    {
+      "path": "workspace/computer-use-example.png",
+      "bytes": 28115,
+      "sha256": "a7c80edd2f11004e3261b2d9a66bf56aec610defd9c003e88ce9d3edbfb3a934"
+    },
+    {
+      "path": "workspace/invoice.pdf",
+      "bytes": 13301,
+      "sha256": "e8a105f1500bc3796bc5d8ec8b53eb5dc252dc2bfb0929d89c76a76d642c1326"
+    },
+    {
+      "path": "workspace/invoice.png",
+      "bytes": 14133,
+      "sha256": "7f9d816378f34036b390626488608843f8915eac344093a63af39c245ebf5d05"
+    },
+    {
+      "path": "workspace/invoice.xlsx",
+      "bytes": 5079,
+      "sha256": "37be2f859e0b1478c6c79ab2ccbf214b1e54a55abeb75acfe83079859529d721"
+    },
+    {
+      "path": "workspace/valid.js",
+      "bytes": 40,
+      "sha256": "799574240050acc326491093ba5641e3eb6ec281fc8f7a0a259b80a0a51724cd"
+    },
+    {
+      "path": "workspace/valid.py",
+      "bytes": 32,
+      "sha256": "e1a894022d1a082987b87adecb623438c9e386d86b2b621cff4a5fe7fdf7edc8"
+    }
+  ]
+}

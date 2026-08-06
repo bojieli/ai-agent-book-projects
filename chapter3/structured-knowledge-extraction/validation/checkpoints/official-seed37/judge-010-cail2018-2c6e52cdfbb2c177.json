@@ -10,7 +10,7 @@
     "reasoning": "生成建议中明确指出了匹配依据，包括诈骗金额、诈骗目标、诈骗次数、诈骗被害人数量和犯罪金额等因素，这些因素与训练原型的特征存在关联，符合原型统计的要求。同时，建议中提到了刑期统计区间，包括中位数、四分位区间、最小值和最大值，这与原型统计数据一致。此外，建议中也提到了退赃情况、坦白、赔偿谅解等情节未知，以及诈骗方法与原型定义特征中的不完全一致，体现了对不确定性的考虑和谨慎态度。最后，建议中包含了明确的法律免责声明，符合要求。"
   },
   "receipt": {
-    "purpose": "3-13 independent held-out judge cail2018-2c6e52cdfbb2c177",
+    "purpose": "3-12 independent held-out judge cail2018-2c6e52cdfbb2c177",
     "provider": "moonshot",
     "endpoint": "https://api.moonshot.cn/v1",
     "started_at": "2026-07-30T04:43:04.209375+00:00",

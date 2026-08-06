@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-07-29T21:17:21.956016+00:00",
+  "files": [
+    {
+      "path": "protocol.json",
+      "bytes": 1924,
+      "sha256": "1826c3aa1c2ce0af96277e13adb237f4c37b005c8708a113159ed768c296fbc1"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 3995,
+      "sha256": "3c8aa1272f9ddbb44ae9614af7183943c1bb39ea60d4ce0de21d923c3ee9cba3"
+    }
+  ]
+}

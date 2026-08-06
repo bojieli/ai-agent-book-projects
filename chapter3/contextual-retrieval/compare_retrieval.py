@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""上下文感知检索对比评测（实验 3-11）
+"""上下文感知检索对比评测（实验 3-10）
 
 本脚本用可控的对比实验量化“上下文感知检索”相较传统分块的检索召回提升：
 同一批文本块分别以两种方式建立 BM25 索引——
@@ -242,7 +242,7 @@ def embedding_unavailable_notice(method: str):
 
 def build_arg_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        description="上下文感知检索对比评测：量化上下文前缀对检索召回（recall@k）的提升（实验 3-11）",
+        description="上下文感知检索对比评测：量化上下文前缀对检索召回（recall@k）的提升（实验 3-10）",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="示例:\n"
                "  python compare_retrieval.py\n"

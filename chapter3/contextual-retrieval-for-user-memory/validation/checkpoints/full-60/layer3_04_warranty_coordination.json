@@ -1173,7 +1173,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_04_warranty_coordination attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_04_warranty_coordination attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:22:26.939035+00:00",
@@ -1256,7 +1256,7 @@
       "response_id": "02178536014716165a9bdff76a2fbd6d7791d2335c6a998f45a04"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_04_warranty_coordination iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_04_warranty_coordination iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:24:47.934976+00:00",
@@ -1367,7 +1367,7 @@
       "response_id": "02178536028812165a9bdff76a2fbd6d7791d2335c6a998c7dad1"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_04_warranty_coordination iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_04_warranty_coordination iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:24:49.080058+00:00",
@@ -1498,7 +1498,7 @@
       "response_id": "02178536028926765a9bdff76a2fbd6d7791d2335c6a998bae64d"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_04_warranty_coordination iteration 3",
+      "purpose": "3-9 live ReAct search planner layer3_04_warranty_coordination iteration 3",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:25:04.729775+00:00",
@@ -1648,7 +1648,7 @@
       "response_id": "02178536030491865a9bdff76a2fbd6d7791d2335c6a998828dc0"
     },
     {
-      "purpose": "3-12 grounded answer layer3_04_warranty_coordination plain",
+      "purpose": "3-11 grounded answer layer3_04_warranty_coordination plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:25:22.120801+00:00",
@@ -1728,7 +1728,7 @@
       "response_id": "02178536032230765a9bdff76a2fbd6d7791d2335c6a998f0b453"
     },
     {
-      "purpose": "3-12 grounded answer layer3_04_warranty_coordination contextual",
+      "purpose": "3-11 grounded answer layer3_04_warranty_coordination contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:25:57.414110+00:00",
@@ -1808,7 +1808,7 @@
       "response_id": "02178536035761465a9bdff76a2fbd6d7791d2335c6a9984979e8"
     },
     {
-      "purpose": "3-12 grounded answer layer3_04_warranty_coordination dual_layer",
+      "purpose": "3-11 grounded answer layer3_04_warranty_coordination dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:26:34.429985+00:00",
@@ -1888,7 +1888,7 @@
       "response_id": "02178536039461765a9bdff76a2fbd6d7791d2335c6a998e37d4a"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_04_warranty_coordination",
+      "purpose": "3-9/3-11 independent judge layer3_04_warranty_coordination",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:27:20.333836+00:00",

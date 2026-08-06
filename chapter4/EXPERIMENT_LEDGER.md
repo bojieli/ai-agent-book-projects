@@ -4,12 +4,13 @@ This ledger separates execution coverage from the manuscript hypothesis and from
 
 | Experiment | Canonical run | Status | `official_complete` | Manifest SHA-256 |
 | --- | --- | --- | --- | --- |
-| 4-1 | `perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T070000Z` | blocked | false | `1863389c1e0dff0c2b085744436a3e499e8699cd8164b1d43915b9d886018121` |
-| 4-2 | `execution-tools/validation/experiment_4_2/real_mcp_gui_20260802T093657Z` | blocked | false | `52c1e29a4e429a34d8b05a7e875d31529436afd433aee187fd53793be38a4ff1` |
-| 4-3 | `collaboration-tools/validation/experiment_4_3/real_mcp_human_20260803_v2` | blocked | false | `8c8186e45c1620be5f1de0ca4ba35bea1aaf09540f0048514ef76651670e6bf9` |
-| 4-4 | `agent-with-event-trigger/validation/experiment_4_4/credential_probe_20260730T064500Z` | blocked | false | `5c9f15094dbab0151539818522ccf71d88ec2ba2e7f0654f373db365a9992dd9` |
-| 4-5 | `async-agent/validation/experiment_4_5/real_subprocess_20260730T052500Z` | passed | true | `03d87ae52985b2b7c2deb434539b86c57aafc8840663cb98761d7e753be0ff96` |
-| 4-6 | `active-tool-discovery/validation/experiment_4_6/qwen3_4b_exact_v2_20260730T130600Z` | passed | true | `88d622db4981207a9980c30abea4eb8dc2621161ded80be0cb2bb8582833153c` |
+| 4-1 | `perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T070000Z` | blocked | false | `f93ee0ad9bd1121ed9e7c9d730bbaf85847d03e89c9024487cfdf9f62b8557ab` |
+| 4-2 | `multimodal-agent/validation/runs/20260729T185433Z-4_2-e028c9db` | passed | true | `1a9cc7bfd48717e73a03ebbde7fd786c7da2811a15267715a3794c0f1220362e` |
+| 4-3 | `execution-tools/validation/experiment_4_3/real_mcp_gui_20260802T093657Z` | blocked | false | `fde8976b91b149a61b7d468f4c825c1bdfdc9da3062cbfa66aaa1fd0f3d1966f` |
+| 4-4 | `collaboration-tools/validation/experiment_4_4/real_mcp_human_20260803_v2` | blocked | false | `9fae8eadec1f9583ba03e21df5c8bc660cc8bec2ba328cf304bcaa0039bd97a3` |
+| 4-5 | `agent-with-event-trigger/validation/experiment_4_5/credential_probe_20260730T064500Z` | blocked | false | `3f689dfee915503f61ca30e9b590e24c8950496ca90fbf365def83805e877d0a` |
+| 4-6 | `async-agent/validation/experiment_4_6/real_subprocess_20260730T052500Z` | passed | true | `fff6b43a2e3a0b706fdd68bca289119f726d3f827f3f4d837e97321f7d48a825` |
+| 4-7 | `active-tool-discovery/validation/experiment_4_7/qwen3_4b_exact_v2_20260730T130600Z` | passed | true | `ce9d6eda2237938e9ed7bf63a950d1b261526897c0597f2908b705e6d6430d0e` |
 
 ## Experiment 4-1 — perception MCP
 
@@ -19,7 +20,11 @@ Manuscript gates: a real MCP catalog covering search, multimodal understanding, 
 - Blocked: Google Calendar and Notion. No usable OAuth token or Notion integration credential exists in the environment. The failed calls and credential-free preflight are retained.
 - Failed provenance retained: the first DashScope attempt used the mainland endpoint with an international-region key and received 401; the corrected run uses `dashscope-intl.aliyuncs.com`.
 
-## Experiment 4-2 — execution MCP
+## Experiment 4-2 — multimodal processing
+
+Manuscript gates: run the same nontrivial image/PDF and questions through native multimodal, extract-to-text, and tool-on-demand paradigms, retaining real vision calls, tool-use traces, exact-answer quality, latency, usage, and an external judge for free-form output. The canonical run is retained under `multimodal-agent/validation/runs/20260729T185433Z-4_2-e028c9db/`.
+
+## Experiment 4-3 — execution MCP
 
 Manuscript gates: verified file write/edit, terminal timeout and dangerous-command review, sandboxed Python, long-output persistence, Excel operations, external system mutations, and browser/desktop/mobile execution.
 
@@ -27,7 +32,7 @@ Manuscript gates: verified file write/edit, terminal timeout and dangerous-comma
 - Blocked: no Google Calendar or real email-provider credentials. Android, Computer Use, and GitHub are no longer blockers. The canonical run passes 13/15 gates while retaining `official_complete: false` for the two absent external mutations.
 - Failed provenance retained: `real_mcp_gui_20260802T093348Z` established the GitHub/desktop/mobile gates but failed the spreadsheet gate because LibreOffice and the Chapter 4 PyMuPDF dependency were missing. The corrected canonical run installs/declares both and passes the spreadsheet gate; it reuses the already-open PR instead of creating a duplicate.
 
-## Experiment 4-3 — collaboration MCP
+## Experiment 4-4 — collaboration MCP
 
 Manuscript gates: sync/async sub-agent lifecycle, messages, cancellation/status, two context-passing strategies, HITL requests with timeout/default behavior, and real multi-channel notification.
 
@@ -35,14 +40,14 @@ Manuscript gates: sync/async sub-agent lifecycle, messages, cancellation/status,
 - Blocked only on delivery: no real SMTP/SendGrid, Telegram, or Slack configuration exists. Credential-free preflights fail explicitly, so `official_complete` remains false even though the human-decision gate is now closed.
 - Failed provenance retained: `real_mcp_human_20260803_v1` used a 30-minute live window; the response arrived just after timeout and exposed that an expired request could still be mutated. The failed run preserves the timeout and late-response receipts. The production HITL primitive now rejects late or duplicate responses to terminal requests, with focused regression tests. The earlier `real_mcp_kimi_20260730T063500Z` run also preserves the original too-short async polling failure.
 
-## Experiment 4-4 — event-driven mailbox agent
+## Experiment 4-5 — event-driven mailbox agent
 
 Manuscript gates: three real inbound test-mailbox events processed FIFO: meeting/calendar conflict plus draft, complaint extraction plus high-priority notification, and marketing archive plus provider verification.
 
 - The campaign fetched and hashed all eight official Unipile Email/Calendar schema documents and made credential-redacted live API probes.
 - Blocked before mailbox mutation: the configured Unipile credential returns 401 with both documented `X-API-KEY` and diagnostic Bearer authentication. Therefore zero local/synthetic mail objects were substituted and no three-email success is claimed.
 
-## Experiment 4-5 — interruptible asynchronous agent
+## Experiment 4-6 — interruptible asynchronous agent
 
 All four exact manuscript scenarios passed with real OS subprocesses: a 3–5
 second command remained non-blocking while the time question was answered;
@@ -51,9 +56,9 @@ an interrupt terminated the real child process and the runtime recovered; and
 the 3%/2%/1% parallel jobs triggered exactly one status query after the fast
 job, preserved the >50% job, cancelled only the <=50% job, and produced a
 hashed integrated report. The canonical summary is
-`async-agent/validation/experiment_4_5/real_subprocess_20260730T052500Z/summary.json`.
+`async-agent/validation/experiment_4_6/real_subprocess_20260730T052500Z/summary.json`.
 
-## Experiment 4-6 — active tool discovery
+## Experiment 4-7 — active tool discovery
 
 The canonical campaign uses local Ollama `qwen3:4b`, 126 complete schemas
 listed by the real perception MCP server, a 50,120-token schema catalog, a

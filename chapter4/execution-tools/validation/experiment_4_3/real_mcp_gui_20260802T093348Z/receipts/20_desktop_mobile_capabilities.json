@@ -1,0 +1,20 @@
+{
+  "case": "desktop_mobile_capabilities",
+  "tool": "environment_capabilities",
+  "arguments": {},
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "computer_use_container_image_present": false,
+    "computer_use_host_stack_present": true,
+    "computer_use_active_session": false,
+    "android_world_container": "exp4-3-android-20260802",
+    "android_world_adb_present": true,
+    "android_active_devices": [
+      "emulator-5554          device product:sdk_gphone64_x86_64 model:sdk_gphone64_x86_64 device:emu64x transport_id:2"
+    ],
+    "note": "Availability probe only; execution gates are established by the dedicated desktop and mobile action receipts."
+  },
+  "latency_seconds": 0.06
+}

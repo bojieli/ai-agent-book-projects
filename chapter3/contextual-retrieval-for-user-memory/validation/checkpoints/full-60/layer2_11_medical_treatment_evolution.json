@@ -1259,7 +1259,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer2_11_medical_treatment_evolution attempt 1",
+      "purpose": "3-11 live contextual prefixes layer2_11_medical_treatment_evolution attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:09:34.874727+00:00",
@@ -1342,7 +1342,7 @@
       "response_id": "021785359375112fef52c4b25b30e28d151ef041e4abfe57102d9"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_11_medical_treatment_evolution iteration 1",
+      "purpose": "3-9 live ReAct search planner layer2_11_medical_treatment_evolution iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:11:33.343565+00:00",
@@ -1453,7 +1453,7 @@
       "response_id": "021785359493535fef52c4b25b30e28d151ef041e4abfe56f84fa"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_11_medical_treatment_evolution iteration 2",
+      "purpose": "3-9 live ReAct search planner layer2_11_medical_treatment_evolution iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:11:34.427021+00:00",
@@ -1584,7 +1584,7 @@
       "response_id": "021785359494618fef52c4b25b30e28d151ef041e4abfe5829cc7"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_11_medical_treatment_evolution iteration 3",
+      "purpose": "3-9 live ReAct search planner layer2_11_medical_treatment_evolution iteration 3",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:11:54.567018+00:00",
@@ -1734,7 +1734,7 @@
       "response_id": "021785359514760fef52c4b25b30e28d151ef041e4abfe5bd84fc"
     },
     {
-      "purpose": "3-12 grounded answer layer2_11_medical_treatment_evolution plain",
+      "purpose": "3-11 grounded answer layer2_11_medical_treatment_evolution plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:12:16.428588+00:00",
@@ -1814,7 +1814,7 @@
       "response_id": "021785359536619fef52c4b25b30e28d151ef041e4abfe5764e89"
     },
     {
-      "purpose": "3-12 grounded answer layer2_11_medical_treatment_evolution contextual",
+      "purpose": "3-11 grounded answer layer2_11_medical_treatment_evolution contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:12:39.075658+00:00",
@@ -1894,7 +1894,7 @@
       "response_id": "021785359559266fef52c4b25b30e28d151ef041e4abfe59402c1"
     },
     {
-      "purpose": "3-12 grounded answer layer2_11_medical_treatment_evolution dual_layer",
+      "purpose": "3-11 grounded answer layer2_11_medical_treatment_evolution dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:13:00.247167+00:00",
@@ -1974,7 +1974,7 @@
       "response_id": "021785359580437fef52c4b25b30e28d151ef041e4abfe52c5ce7"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer2_11_medical_treatment_evolution",
+      "purpose": "3-9/3-11 independent judge layer2_11_medical_treatment_evolution",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:13:29.807030+00:00",

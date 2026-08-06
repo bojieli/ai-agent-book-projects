@@ -1,6 +1,6 @@
 """Sub-agent management tools for the Collaboration Tools MCP Server.
 
-Implements the 子 Agent 管理 primitives described in 实验 4-3:
+Implements the 子 Agent 管理 primitives described in 实验 4-4:
 
     - spawn_subagent            create a sub-agent (sync or async)
     - send_message_to_subagent  send a follow-up message to a sub-agent

@@ -1179,7 +1179,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_06_business_expansion_coordination attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_06_business_expansion_coordination attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:24:04.438002+00:00",
@@ -1262,7 +1262,7 @@
       "response_id": "021785360244667d3c2e618d7484aa1e725a14aca115cd7f714e5"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_06_business_expansion_coordination iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_06_business_expansion_coordination iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:25:48.966172+00:00",
@@ -1373,7 +1373,7 @@
       "response_id": "021785360349155d3c2e618d7484aa1e725a14aca115cd7811241"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_06_business_expansion_coordination iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_06_business_expansion_coordination iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:25:50.532771+00:00",
@@ -1536,7 +1536,7 @@
       "response_id": "021785360350722d3c2e618d7484aa1e725a14aca115cd7409823"
     },
     {
-      "purpose": "3-12 grounded answer layer3_06_business_expansion_coordination plain",
+      "purpose": "3-11 grounded answer layer3_06_business_expansion_coordination plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:26:09.955258+00:00",
@@ -1616,7 +1616,7 @@
       "response_id": "021785360370144d3c2e618d7484aa1e725a14aca115cd7d96bd6"
     },
     {
-      "purpose": "3-12 grounded answer layer3_06_business_expansion_coordination contextual",
+      "purpose": "3-11 grounded answer layer3_06_business_expansion_coordination contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:26:39.943068+00:00",
@@ -1696,7 +1696,7 @@
       "response_id": "021785360400132d3c2e618d7484aa1e725a14aca115cd75b8e68"
     },
     {
-      "purpose": "3-12 grounded answer layer3_06_business_expansion_coordination dual_layer",
+      "purpose": "3-11 grounded answer layer3_06_business_expansion_coordination dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:27:10.795239+00:00",
@@ -1776,7 +1776,7 @@
       "response_id": "021785360430985d3c2e618d7484aa1e725a14aca115cd740a016"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_06_business_expansion_coordination",
+      "purpose": "3-9/3-11 independent judge layer3_06_business_expansion_coordination",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:27:42.163143+00:00",

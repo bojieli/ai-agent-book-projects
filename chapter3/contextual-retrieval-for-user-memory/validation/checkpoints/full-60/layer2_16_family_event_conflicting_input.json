@@ -1298,7 +1298,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer2_16_family_event_conflicting_input attempt 1",
+      "purpose": "3-11 live contextual prefixes layer2_16_family_event_conflicting_input attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:14:01.529289+00:00",
@@ -1381,7 +1381,7 @@
       "response_id": "021785359641752364b82a1aa80edf2ab0d4c0dee12c63c8bcf5d"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_16_family_event_conflicting_input iteration 1",
+      "purpose": "3-9 live ReAct search planner layer2_16_family_event_conflicting_input iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:15:46.807609+00:00",
@@ -1492,7 +1492,7 @@
       "response_id": "021785359746994364b82a1aa80edf2ab0d4c0dee12c63c5a6abe"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_16_family_event_conflicting_input iteration 2",
+      "purpose": "3-9 live ReAct search planner layer2_16_family_event_conflicting_input iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:15:48.212923+00:00",
@@ -1631,7 +1631,7 @@
       "response_id": "021785359748401364b82a1aa80edf2ab0d4c0dee12c63cd004d1"
     },
     {
-      "purpose": "3-12 grounded answer layer2_16_family_event_conflicting_input plain",
+      "purpose": "3-11 grounded answer layer2_16_family_event_conflicting_input plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:16:22.673179+00:00",
@@ -1711,7 +1711,7 @@
       "response_id": "021785359782859364b82a1aa80edf2ab0d4c0dee12c63cc0b9ef"
     },
     {
-      "purpose": "3-12 grounded answer layer2_16_family_event_conflicting_input contextual",
+      "purpose": "3-11 grounded answer layer2_16_family_event_conflicting_input contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:16:53.673874+00:00",
@@ -1791,7 +1791,7 @@
       "response_id": "021785359813859364b82a1aa80edf2ab0d4c0dee12c63c6327bf"
     },
     {
-      "purpose": "3-12 grounded answer layer2_16_family_event_conflicting_input dual_layer",
+      "purpose": "3-11 grounded answer layer2_16_family_event_conflicting_input dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:17:34.343052+00:00",
@@ -1871,7 +1871,7 @@
       "response_id": "021785359854529364b82a1aa80edf2ab0d4c0dee12c63caa6ceb"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer2_16_family_event_conflicting_input",
+      "purpose": "3-9/3-11 independent judge layer2_16_family_event_conflicting_input",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:18:34.680936+00:00",

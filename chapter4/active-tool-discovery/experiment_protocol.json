@@ -1,5 +1,5 @@
 {
-  "experiment": "4-6",
+  "experiment": "4-7",
   "title": "Active tool discovery with Qwen3-4B and the perception MCP server",
   "authority": "book/chapter4.md:624",
   "model": "qwen3:4b",

@@ -633,7 +633,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_06_credit_card_app attempt 1",
+      "purpose": "3-11 live contextual prefixes layer1_06_credit_card_app attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:54:19.003461+00:00",
@@ -716,7 +716,7 @@
       "response_id": "021785358459244beda032d6cecb5226208c9b0c90a95c9f74d6d"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_06_credit_card_app iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_06_credit_card_app iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:07.770859+00:00",
@@ -827,7 +827,7 @@
       "response_id": "021785358507962beda032d6cecb5226208c9b0c90a95c91c742d"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_06_credit_card_app iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_06_credit_card_app iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:09.039310+00:00",
@@ -949,7 +949,7 @@
       "response_id": "021785358509231beda032d6cecb5226208c9b0c90a95c93bccd6"
     },
     {
-      "purpose": "3-12 grounded answer layer1_06_credit_card_app plain",
+      "purpose": "3-11 grounded answer layer1_06_credit_card_app plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:14.979997+00:00",
@@ -1029,7 +1029,7 @@
       "response_id": "021785358515173beda032d6cecb5226208c9b0c90a95c9e8818d"
     },
     {
-      "purpose": "3-12 grounded answer layer1_06_credit_card_app contextual",
+      "purpose": "3-11 grounded answer layer1_06_credit_card_app contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:22.736280+00:00",
@@ -1109,7 +1109,7 @@
       "response_id": "021785358522928beda032d6cecb5226208c9b0c90a95c9b04aa1"
     },
     {
-      "purpose": "3-12 grounded answer layer1_06_credit_card_app dual_layer",
+      "purpose": "3-11 grounded answer layer1_06_credit_card_app dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:33.409183+00:00",
@@ -1189,7 +1189,7 @@
       "response_id": "021785358533602beda032d6cecb5226208c9b0c90a95c9832841"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_06_credit_card_app",
+      "purpose": "3-9/3-11 independent judge layer1_06_credit_card_app",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T20:55:42.220368+00:00",

@@ -4,7 +4,7 @@
     "advice": "匹配依据：待分析案件的核心特征“injury_result=重伤”“serious_injury_count=1.0”“injury_degree=重伤二级”与训练集原型“故意伤害罪-prototype-0”的关键定义特征（z值较高的伤情相关特征）高度匹配，匹配距离为0.209，表明两者特征相似度较高。统计区间：该原型包含18个案件，刑期中位数为36个月，四分位区间（Q25-Q75）为24.0-38.25个月，刑期范围为9.0-96.0个月。不确定性：待分析案件存在“全额赔偿”“被害人谅解”“被害人过错”等因素，但原型的定义特征中未突出体现这些因素的影响，可能导致实际刑期与原型统计区间存在差异。"
   },
   "receipt": {
-    "purpose": "3-13 held-out prototype-grounded advice cail2018-1ff92ea20164c817",
+    "purpose": "3-12 held-out prototype-grounded advice cail2018-1ff92ea20164c817",
     "provider": "ark",
     "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
     "started_at": "2026-07-30T04:42:07.832489+00:00",

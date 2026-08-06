@@ -10,7 +10,7 @@
     "reasoning": "建议忠实于给定原型统计，正确地将统计数据作为不确定的参考而非承诺，并指出了刑期预测存在的不确定性。对留出案件有用，包含了明确的法律免责声明。"
   },
   "receipt": {
-    "purpose": "3-13 independent held-out judge cail2018-13dd35638f8b54b0",
+    "purpose": "3-12 independent held-out judge cail2018-13dd35638f8b54b0",
     "provider": "moonshot",
     "endpoint": "https://api.moonshot.cn/v1",
     "started_at": "2026-07-30T04:43:02.882933+00:00",

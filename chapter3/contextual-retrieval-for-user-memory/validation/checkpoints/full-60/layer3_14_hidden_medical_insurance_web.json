@@ -1180,7 +1180,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_14_hidden_medical_insurance_web attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_14_hidden_medical_insurance_web attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:33:56.863420+00:00",
@@ -1263,7 +1263,7 @@
       "response_id": "021785360837088bdf0d8876ec55e469c432250c926544c2c0258"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_14_hidden_medical_insurance_web iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_14_hidden_medical_insurance_web iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:35:20.960986+00:00",
@@ -1374,7 +1374,7 @@
       "response_id": "021785360921149bdf0d8876ec55e469c432250c926544c348935"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_14_hidden_medical_insurance_web iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_14_hidden_medical_insurance_web iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:35:22.244232+00:00",
@@ -1505,7 +1505,7 @@
       "response_id": "021785360922432bdf0d8876ec55e469c432250c926544c524d4b"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_14_hidden_medical_insurance_web iteration 3",
+      "purpose": "3-9 live ReAct search planner layer3_14_hidden_medical_insurance_web iteration 3",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:35:35.813432+00:00",
@@ -1655,7 +1655,7 @@
       "response_id": "021785360936001bdf0d8876ec55e469c432250c926544cf92e44"
     },
     {
-      "purpose": "3-12 grounded answer layer3_14_hidden_medical_insurance_web plain",
+      "purpose": "3-11 grounded answer layer3_14_hidden_medical_insurance_web plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:35:58.254864+00:00",
@@ -1735,7 +1735,7 @@
       "response_id": "021785360958442bdf0d8876ec55e469c432250c926544c689956"
     },
     {
-      "purpose": "3-12 grounded answer layer3_14_hidden_medical_insurance_web contextual",
+      "purpose": "3-11 grounded answer layer3_14_hidden_medical_insurance_web contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:36:23.398653+00:00",
@@ -1815,7 +1815,7 @@
       "response_id": "021785360983587bdf0d8876ec55e469c432250c926544c29d391"
     },
     {
-      "purpose": "3-12 grounded answer layer3_14_hidden_medical_insurance_web dual_layer",
+      "purpose": "3-11 grounded answer layer3_14_hidden_medical_insurance_web dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:36:47.224185+00:00",
@@ -1895,7 +1895,7 @@
       "response_id": "021785361007412bdf0d8876ec55e469c432250c926544c54ea6a"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_14_hidden_medical_insurance_web",
+      "purpose": "3-9/3-11 independent judge layer3_14_hidden_medical_insurance_web",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:37:10.102872+00:00",

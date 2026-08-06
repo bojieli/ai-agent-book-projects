@@ -1,4 +1,4 @@
-"""Contract tests for real subprocess-backed Experiment 4-5 tasks."""
+"""Contract tests for real subprocess-backed Experiment 4-6 tasks."""
 
 from __future__ import annotations
 

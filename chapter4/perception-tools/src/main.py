@@ -687,7 +687,7 @@ async def notion_search(
 # catalog. The implementations and native parameter schemas remain unchanged.
 enrich_existing_tools(mcp)
 
-# Experiment 4-6 requires 120+ tools from this perception MCP server.  The
+# Experiment 4-7 requires 120+ tools from this perception MCP server.  The
 # 56 native tools plus 70 additional real-backed, read-mostly tools bring the
 # server catalog to 126 tools. Registration is dynamic only to avoid repetitive
 # wrapper functions; tools/list still

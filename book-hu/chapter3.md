@@ -63,7 +63,7 @@ A LoCoMóra és társaira, valamint a kereskedelmi memóriatermékek gyakorlatá
 - "Időbeli tudatosság": Dátumok megjegyzése, relatív idő megértése, időszámítások végrehajtása
 - "Konfliktusfeloldás": Memóriák közötti ellentmondások azonosítása és kezelése
 
-Ezekre építve egy háromszintű, az Ágens-forgatókönyvekhez jobban illeszkedő értékelési keretrendszert terveztünk, amely a memóriaképességeket progresszív szintekre bontja. Ez a keretrendszer végigvonul ezen a fejezeten – a 3-10. és 3-12. kísérletek később ezt használják annak mérésére, hogy a visszakeresési technikák hogyan javítják a memóriaképességeket.
+Ezekre építve egy háromszintű, az Ágens-forgatókönyvekhez jobban illeszkedő értékelési keretrendszert terveztünk, amely a memóriaképességeket progresszív szintekre bontja. Ez a keretrendszer végigvonul ezen a fejezeten – a 3-9. és 3-11. kísérletek később ezt használják annak mérésére, hogy a visszakeresési technikák hogyan javítják a memóriaképességeket.
 
 **1. szint: Alapvető visszaemlékezés** — Ez a memóriarendszer legalapvetőbb képessége, amely megköveteli, hogy az Ágens pontosan tárolja és visszaadja azokat az információkat, amelyeket a felhasználó közvetlenül, strukturált és egyértelmű formában adott meg. Például "A tagsági számom 12345" pontosan visszaadandó, amikor később szükség van rá. Ez a szint biztosítja a memóriarendszer alapvető megbízhatóságát, és alapul szolgál az összetettebb képességekhez.
 
@@ -488,7 +488,7 @@ Azonban "általános célú" tárolási megoldásként a felhasználói memória
 
 Ezért a gyakorlatban javasolt stratégia "egy réteges, kiegészítő kialakítás": a lényegi információk megőrzése teljes, természetes nyelvű formában (a szemantikai integritás megőrzése), kiegészítve strukturált metaadatokkal az indexeléshez és visszakereséshez (a lekérdezési hatékonyság egyensúlyba hozása); a többugrásos következtetést és pontos kétértelműség-feloldást igénylő speciális területeken (pl. orvosi konzultáció, jogi esetelemzés, családi kapcsolatok kezelése) használjuk a tudásgráfokat speciális indexelő eszközként, a természetes nyelvű memóriával együttműködve.
 
-> **3-8. kísérlet ★★★: Strukturált indexelés: A RAPTOR és GraphRAG tudásszervezési filozófiája**
+> **3-7. kísérlet ★★★: Strukturált indexelés: A RAPTOR és GraphRAG tudásszervezési filozófiája**
 >
 > A `structured-index` projekt mindkét módszert teljes egészében implementálja egy egységes keretrendszerben, egy Intel CPU architektúrával foglalkozó, több ezer oldalas műszaki kézikönyv indexelésére és lekérdezésére alkalmazva – ez a magasan strukturált, hierarchikus és relációs tudás kvintesszenciális példája.
 >
@@ -576,7 +576,7 @@ Az Ágens RAG összeolvasztja a visszakeresést és a következtetést az Ágens
 
 ![3-13. ábra: Egy Agentic RAG-rendszer architektúrája](images/fig3-13.svg)
 
-> **3-9. kísérlet ★★: Az Ágens RAG és a Nem-Ágens RAG összehasonlító vizsgálata**
+> **3-8. kísérlet ★★: Az Ágens RAG és a Nem-Ágens RAG összehasonlító vizsgálata**
 >
 > Az `agentic-rag` projekt egy teljes Ágens rendszert épít, amely szabadon válthat a két mód között, és különböző tudásbázis háttérrendszerekhez csatlakozhat (beleértve a `retrieval-pipeline`, `structured-index` stb.-t), lehetővé téve egy átfogó abláció vizsgálatot (azaz egy komponens szisztematikus eltávolítását vagy letiltását annak megfigyelésére, hogy mennyivel járul hozzá a teljes hatáshoz). A kísérlet egy speciálisan összeállított kínai jogi kérdés-felelet adathalmaz köré épül, amely egyszerűtől összetettig terjedő jogi kérdéseket tartalmaz.
 >
@@ -591,7 +591,7 @@ Az Ágens RAG összeolvasztja a visszakeresést és a következtetést az Ágens
 
 Ez a fejezet és az előző egyaránt a Kontextussal foglalkozik – az egyik egyetlen szekción belül, a másik több szekción keresztül. Amit ez a fejezet elsősorban konszolidál, az a deklaratív tudás a felhasználókról és a világról. A 8. fejezet újra felhasználja ugyanazt a kinyerési és visszakeresési infrastruktúrát, de a műveleti sikerek és kudarcok által alátámasztott viselkedési tudásra alkalmazza: "milyen feltételek mellett mit tegyen az Ágens?" A következő fejezet az Eszközökre tér át: hogyan lépnek kapcsolatba az Ágensek a külvilággal eszköztervezésen, az MCP interoperabilitási szabványon és eseményvezérelt architektúrákon keresztül.
 
-> **3-10. kísérlet ★★: Felhasználói memória építése Ágens RAG segítségével**
+> **3-9. kísérlet ★★: Felhasználói memória építése Ágens RAG segítségével**
 >
 > Az Ágens RAG alkalmazása az Ágens saját beszélgetési előzményeire, nem pedig külső dokumentumtudásbázisokra, lehetővé teszi egy erőteljes, visszakereshető hosszú távú memória felépítését az Ágens számára. A központi ötlet: kezeljük az Ágens teljes beszélgetési előzményét a felhasználóval egy önálló tudásbázisként. Ily módon az Ágens "emlékezhet" a múltbeli interakciókra, és szükség esetén aktívan visszakeresheti ezeket az "emlékeket", hogy jobban megértse az aktuális kontextust és személyre szabott szolgáltatásokat nyújtson. Ellentétben a fejezet korábbi részében tárgyalt memória "reprezentációs és kezelési stratégiáival" (mint a Haladó JSON kártyák strukturált kialakítása), ez a kísérlet arra összpontosít, **hogy a visszakeresési technológia hogyan javítja a memória felidézési képességeit**.
 >
@@ -606,7 +606,7 @@ Ez a fejezet és az előző egyaránt a Kontextussal foglalkozik – az egyik eg
 >
 > Az összetettebb második szintű feladatok esetében azonban ennek a megközelítésnek a korlátai is megmutatkoznak. A `layer2` könyvtár `12_contradictory_financial_instructions.yaml` használati esetében a feleség először beállít egy átutalást, a férj ezután egy másik hívásban módosítja az összeget és a dátumot, végül a feleség visszahív, hogy visszaváltoztassa. Mivel az indexelt beszélgetési darabok elszigeteltek és hiányzik belőlük a kontextus, a rendszer három "független, de ellentmondó" átutalási utasítást láthat a visszakeresés során, ami megnehezíti annak meghatározását, hogy melyik az érvényes, és potenciálisan zavaró vagy helytelen információkat jeleníthet meg a felhasználónak. A "harmadik szint (proaktív szolgáltatás)" eléréséhez – egy szekció információi (pl. egy újonnan foglalt járat) és egy másik, hónapokkal ezelőtti szekció információi (pl. egy lejáró útlevél) közötti rejtett összefüggések felfedezéséhez – a puszta beszélgetési előzmények töredékes visszakeresése korántsem elegendő.
 
-E korlátozások gyökere a hagyományos darabolási módszerek belső hibáiban rejlik. A következő szakasz egy olyan technikát mutat be, amely ezt a problémát a gyökerénél kezeli – a Kontextuális visszakeresést –, amelyet aztán a 3-12. kísérletben alkalmazunk a felhasználói memória forgatókönyvre.
+E korlátozások gyökere a hagyományos darabolási módszerek belső hibáiban rejlik. A következő szakasz egy olyan technikát mutat be, amely ezt a problémát a gyökerénél kezeli – a Kontextuális visszakeresést –, amelyet aztán a 3-11. kísérletben alkalmazunk a felhasználói memória forgatókönyvre.
 
 ### RAG Technika: Kontextuális visszakeresés
 
@@ -622,7 +622,7 @@ Ezt egyértelműen meg kell különböztetni a 2. fejezet "Kontextuális tömör
 
 A módszer eleganciája, hogy egyszerre erősíti mindkét visszakeresési módot. Ritka visszakeresés, mint a BM25 esetében a kontextus előtag gazdag, pontosan illeszthető kulcsszavakat ad hozzá ("ACME", "2025 Q2"). A sűrű visszakereséshez vektoros beágyazásokon keresztül az előtag beinjektálja a kulcsfontosságú szemantikai hátteret, így az eredményül kapott vektor sokkal pontosabban tükrözi a darab valódi jelentését.
 
-> **3-11. kísérlet ★★: Kontextuális visszakeresés: A kontextusvesztési probléma megoldása a RAG-ben**
+> **3-10. kísérlet ★★: Kontextuális visszakeresés: A kontextusvesztési probléma megoldása a RAG-ben**
 >
 > A `contextual-retrieval` projekt kontrollált összehasonlítással számszerűsíti, hogy a Kontextuális visszakeresés mennyivel javít a hagyományos daraboláshoz képest. Párhuzamosan épít két tudásbázist: az egyik hagyományos, kontextus nélküli darabolást használ, a másik egy fejlett, LLM által generált kontextus előtagokon alapuló módszert. A `compare_retrieval_methods` függvény lehetővé teszi, hogy ugyanazzal a lekérdezéssel egyidejűleg mindkét tudásbázisban keressünk, és egymás mellett hasonlítsuk össze az eredmények különbségeit.
 >
@@ -632,9 +632,9 @@ A módszer eleganciája, hogy egyszerre erősíti mindkét visszakeresési módo
 
 Ez igazolja a Kontextuális visszakeresést a dokumentumtudásbázisokon. Ugyanezt a technikát a felhasználói memória forgatókönyvre alkalmazva kapjuk a következő kísérletet.
 
-> **3-12. kísérlet ★★★: A felhasználói memória javítása Kontextuális visszakereséssel**
+> **3-11. kísérlet ★★★: A felhasználói memória javítása Kontextuális visszakereséssel**
 >
-> A Kontextuális visszakeresés alkalmazása a felhasználói memóriára közvetlenül kezeli a darabolt beszélgetési előzmények fájdalmas pontjait. Egy elszigetelt "Rendben, foglaljuk le" semmilyen információt nem hordoz; csak akkor van jelentése, ha ismerjük az előzmény kontextust: "egy 500 dolláros egyirányú jegy Sanghajból Seattle-be". Ez a kísérlet a 3-10. kísérlet keretrendszerére épít, hozzáadva egy kritikus "kontextus generálási" lépést a beszélgetési előzmények indexelése előtt – minden beszélgetési darabhoz meghív egy LLM-et, hogy egy kulcsfontosságú háttérinformációkat tartalmazó előtag összefoglalót generáljon.
+> A Kontextuális visszakeresés alkalmazása a felhasználói memóriára közvetlenül kezeli a darabolt beszélgetési előzmények fájdalmas pontjait. Egy elszigetelt "Rendben, foglaljuk le" semmilyen információt nem hordoz; csak akkor van jelentése, ha ismerjük az előzmény kontextust: "egy 500 dolláros egyirányú jegy Sanghajból Seattle-be". Ez a kísérlet a 3-9. kísérlet keretrendszerére épít, hozzáadva egy kritikus "kontextus generálási" lépést a beszélgetési előzmények indexelése előtt – minden beszélgetési darabhoz meghív egy LLM-et, hogy egy kulcsfontosságú háttérinformációkat tartalmazó előtag összefoglalót generáljon.
 >
 > Ez a kontextussal javított memória bázis döntő előnyt mutat a "ténybeli konfliktusok" kezelésekor. Visszatérve a `layer2` könyvtár `12_contradictory_financial_instructions.yaml` forgatókönyvéhez, a kontextus javítás után a három releváns beszélgetési darab olyan előtagokkal rendelkezne, mint `[Patricia Thompson feleség beállítja a kezdeti banki átutalást]`, `[James Thompson férj módosítja az előző banki átutalást]` és `[A feleség ismét módosítja az átutalást a férj változtatása után]`. A kontextus, beleértve az időt, a személyt és a szándékot, kritikus támpontokat ad az Ágens számára az utasítás prioritásának és a végső érvényességének meghatározásához.
 >
@@ -663,7 +663,7 @@ A folyamat két fázisból áll:
 
 ![3-15. ábra: A strukturált tudáskinyerés folyamata](images/fig3-15.svg)
 
-> **3-13. kísérlet ★★★: Hallgatólagos tudás kinyerése strukturált adatokból: Jogi precedenselemzés esettanulmány**
+> **3-12. kísérlet ★★★: Hallgatólagos tudás kinyerése strukturált adatokból: Jogi precedenselemzés esettanulmány**
 >
 > A `structured-knowledge-extraction` projekt a nagyméretű CAIL2018 kínai büntetőítélkezési adathalmaz alapján egy intelligens jogi tanácsadót épít, amely a precedensekből tanulja meg az "ítélkezési tapasztalatot".
 >

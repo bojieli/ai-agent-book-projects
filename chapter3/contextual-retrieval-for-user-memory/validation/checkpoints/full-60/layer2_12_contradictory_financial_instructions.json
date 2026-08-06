@@ -868,7 +868,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer2_12_contradictory_financial_instructions attempt 1",
+      "purpose": "3-11 live contextual prefixes layer2_12_contradictory_financial_instructions attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:10:55.395588+00:00",
@@ -951,7 +951,7 @@
       "response_id": "0217853594556222abf1227a14b352d5dc70daecccf2aa583c723"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_12_contradictory_financial_instructions iteration 1",
+      "purpose": "3-9 live ReAct search planner layer2_12_contradictory_financial_instructions iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:12:24.715244+00:00",
@@ -1062,7 +1062,7 @@
       "response_id": "0217853595449022abf1227a14b352d5dc70daecccf2aa55750a5"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_12_contradictory_financial_instructions iteration 2",
+      "purpose": "3-9 live ReAct search planner layer2_12_contradictory_financial_instructions iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:12:26.006483+00:00",
@@ -1201,7 +1201,7 @@
       "response_id": "0217853595461932abf1227a14b352d5dc70daecccf2aa5f948dd"
     },
     {
-      "purpose": "3-12 grounded answer layer2_12_contradictory_financial_instructions plain",
+      "purpose": "3-11 grounded answer layer2_12_contradictory_financial_instructions plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:12:55.697398+00:00",
@@ -1281,7 +1281,7 @@
       "response_id": "0217853595758852abf1227a14b352d5dc70daecccf2aa579cd7a"
     },
     {
-      "purpose": "3-12 grounded answer layer2_12_contradictory_financial_instructions contextual",
+      "purpose": "3-11 grounded answer layer2_12_contradictory_financial_instructions contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:13:13.324444+00:00",
@@ -1361,7 +1361,7 @@
       "response_id": "0217853595935122abf1227a14b352d5dc70daecccf2aa5707678"
     },
     {
-      "purpose": "3-12 grounded answer layer2_12_contradictory_financial_instructions dual_layer",
+      "purpose": "3-11 grounded answer layer2_12_contradictory_financial_instructions dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:13:27.353931+00:00",
@@ -1441,7 +1441,7 @@
       "response_id": "0217853596075412abf1227a14b352d5dc70daecccf2aa59aaf7f"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer2_12_contradictory_financial_instructions",
+      "purpose": "3-9/3-11 independent judge layer2_12_contradictory_financial_instructions",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:13:55.404695+00:00",

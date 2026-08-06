@@ -870,7 +870,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer2_14_product_order_modifications attempt 1",
+      "purpose": "3-11 live contextual prefixes layer2_14_product_order_modifications attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:11:26.626499+00:00",
@@ -953,7 +953,7 @@
       "response_id": "0217853594868624b9bc39337c792d38f4e57e23b62aa4aca034e"
     },
     {
-      "purpose": "3-12 live contextual prefixes layer2_14_product_order_modifications attempt 2",
+      "purpose": "3-11 live contextual prefixes layer2_14_product_order_modifications attempt 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:12:51.690233+00:00",
@@ -1036,7 +1036,7 @@
       "response_id": "0217853595718804b9bc39337c792d38f4e57e23b62aa4af1e46f"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_14_product_order_modifications iteration 1",
+      "purpose": "3-9 live ReAct search planner layer2_14_product_order_modifications iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:13:16.823916+00:00",
@@ -1147,7 +1147,7 @@
       "response_id": "0217853595970144b9bc39337c792d38f4e57e23b62aa4ad4854b"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_14_product_order_modifications iteration 2",
+      "purpose": "3-9 live ReAct search planner layer2_14_product_order_modifications iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:13:18.087177+00:00",
@@ -1278,7 +1278,7 @@
       "response_id": "0217853595982784b9bc39337c792d38f4e57e23b62aa4a784834"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_14_product_order_modifications iteration 3",
+      "purpose": "3-9 live ReAct search planner layer2_14_product_order_modifications iteration 3",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:13:38.809379+00:00",
@@ -1444,7 +1444,7 @@
       "response_id": "0217853596190004b9bc39337c792d38f4e57e23b62aa4a7f7059"
     },
     {
-      "purpose": "3-12 grounded answer layer2_14_product_order_modifications plain",
+      "purpose": "3-11 grounded answer layer2_14_product_order_modifications plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:13:57.412571+00:00",
@@ -1524,7 +1524,7 @@
       "response_id": "0217853596376024b9bc39337c792d38f4e57e23b62aa4a9ed466"
     },
     {
-      "purpose": "3-12 grounded answer layer2_14_product_order_modifications contextual",
+      "purpose": "3-11 grounded answer layer2_14_product_order_modifications contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:14:25.069375+00:00",
@@ -1604,7 +1604,7 @@
       "response_id": "0217853596652604b9bc39337c792d38f4e57e23b62aa4ac97e51"
     },
     {
-      "purpose": "3-12 grounded answer layer2_14_product_order_modifications dual_layer",
+      "purpose": "3-11 grounded answer layer2_14_product_order_modifications dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:14:54.718859+00:00",
@@ -1684,7 +1684,7 @@
       "response_id": "0217853596949104b9bc39337c792d38f4e57e23b62aa4a202446"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer2_14_product_order_modifications",
+      "purpose": "3-9/3-11 independent judge layer2_14_product_order_modifications",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:15:46.324537+00:00",

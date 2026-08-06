@@ -1144,7 +1144,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_09_vehicle_accident_cascade attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_09_vehicle_accident_cascade attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:27:52.104309+00:00",
@@ -1227,7 +1227,7 @@
       "response_id": "021785360472327b4c7dc41d8e0aa292bda4569b24ec25aea29cb"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_09_vehicle_accident_cascade iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_09_vehicle_accident_cascade iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:29:02.625499+00:00",
@@ -1338,7 +1338,7 @@
       "response_id": "021785360542812b4c7dc41d8e0aa292bda4569b24ec25a220e93"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_09_vehicle_accident_cascade iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_09_vehicle_accident_cascade iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:29:04.160945+00:00",
@@ -1469,7 +1469,7 @@
       "response_id": "021785360544348b4c7dc41d8e0aa292bda4569b24ec25a4da040"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_09_vehicle_accident_cascade iteration 3",
+      "purpose": "3-9 live ReAct search planner layer3_09_vehicle_accident_cascade iteration 3",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:29:22.056158+00:00",
@@ -1635,7 +1635,7 @@
       "response_id": "021785360562244b4c7dc41d8e0aa292bda4569b24ec25af74d1b"
     },
     {
-      "purpose": "3-12 grounded answer layer3_09_vehicle_accident_cascade plain",
+      "purpose": "3-11 grounded answer layer3_09_vehicle_accident_cascade plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:29:35.987830+00:00",
@@ -1715,7 +1715,7 @@
       "response_id": "021785360576175b4c7dc41d8e0aa292bda4569b24ec25a57d109"
     },
     {
-      "purpose": "3-12 grounded answer layer3_09_vehicle_accident_cascade contextual",
+      "purpose": "3-11 grounded answer layer3_09_vehicle_accident_cascade contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:30:21.290971+00:00",
@@ -1795,7 +1795,7 @@
       "response_id": "021785360621478b4c7dc41d8e0aa292bda4569b24ec25af2681d"
     },
     {
-      "purpose": "3-12 grounded answer layer3_09_vehicle_accident_cascade dual_layer",
+      "purpose": "3-11 grounded answer layer3_09_vehicle_accident_cascade dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:31:14.611783+00:00",
@@ -1875,7 +1875,7 @@
       "response_id": "021785360674799b4c7dc41d8e0aa292bda4569b24ec25a91db3d"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_09_vehicle_accident_cascade",
+      "purpose": "3-9/3-11 independent judge layer3_09_vehicle_accident_cascade",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:32:14.367080+00:00",

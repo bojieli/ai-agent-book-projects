@@ -753,7 +753,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer2_01_multiple_vehicles attempt 1",
+      "purpose": "3-11 live contextual prefixes layer2_01_multiple_vehicles attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:01:11.061376+00:00",
@@ -836,7 +836,7 @@
       "response_id": "0217853588712812f9349bea7dcfdfeb5ceeba9779d3bab966992"
     },
     {
-      "purpose": "3-12 live contextual prefixes layer2_01_multiple_vehicles attempt 2",
+      "purpose": "3-11 live contextual prefixes layer2_01_multiple_vehicles attempt 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:02:36.973970+00:00",
@@ -919,7 +919,7 @@
       "response_id": "0217853589571602f9349bea7dcfdfeb5ceeba9779d3bab1e5141"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_01_multiple_vehicles iteration 1",
+      "purpose": "3-9 live ReAct search planner layer2_01_multiple_vehicles iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:02:47.586962+00:00",
@@ -1030,7 +1030,7 @@
       "response_id": "0217853589677732f9349bea7dcfdfeb5ceeba9779d3babadf084"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_01_multiple_vehicles iteration 2",
+      "purpose": "3-9 live ReAct search planner layer2_01_multiple_vehicles iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:02:48.542152+00:00",
@@ -1152,7 +1152,7 @@
       "response_id": "0217853589687302f9349bea7dcfdfeb5ceeba9779d3bab203f42"
     },
     {
-      "purpose": "3-12 grounded answer layer2_01_multiple_vehicles plain",
+      "purpose": "3-11 grounded answer layer2_01_multiple_vehicles plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:03:00.559753+00:00",
@@ -1232,7 +1232,7 @@
       "response_id": "0217853589807462f9349bea7dcfdfeb5ceeba9779d3bab975753"
     },
     {
-      "purpose": "3-12 grounded answer layer2_01_multiple_vehicles contextual",
+      "purpose": "3-11 grounded answer layer2_01_multiple_vehicles contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:03:12.629557+00:00",
@@ -1312,7 +1312,7 @@
       "response_id": "0217853589928162f9349bea7dcfdfeb5ceeba9779d3baba0a0bd"
     },
     {
-      "purpose": "3-12 grounded answer layer2_01_multiple_vehicles dual_layer",
+      "purpose": "3-11 grounded answer layer2_01_multiple_vehicles dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:03:26.989720+00:00",
@@ -1392,7 +1392,7 @@
       "response_id": "0217853590071762f9349bea7dcfdfeb5ceeba9779d3babd8c2dd"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer2_01_multiple_vehicles",
+      "purpose": "3-9/3-11 independent judge layer2_01_multiple_vehicles",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:03:42.720896+00:00",

@@ -1,0 +1,129 @@
+{
+  "schema_version": "chapter3-evidence-v1",
+  "experiment": "3-10",
+  "run_id": "20260729T205807Z-3_10-35531780",
+  "created_at": "2026-07-29T20:58:07.546305+00:00",
+  "status": "passed",
+  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/contextual-retrieval/validation/runs/20260729T205807Z-3_10-35531780",
+  "artifacts": {
+    "evidence.json": "e8d2ea403646d0ed0041a5849f38bf16d43481ea8b622a30ae9bdf774b60b11b",
+    "receipts.json": "8cf26248f9fd99206784831992e03d67895e51d92f3a2d4223ed56e22b8a6ca2"
+  },
+  "inputs": [
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/contextual-retrieval/campaign.py",
+      "sha256": "2e61651942f869a2374f24fe40e92aaf332a5bd5abf9c3dbc951fff3a31d9e28",
+      "bytes": 13270
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/contextual-retrieval/compare_retrieval.py",
+      "sha256": "5cb1213c44c94a875e14475c3f371799dd750c00001a9ab36b49034b460f94ef",
+      "bytes": 15372
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/contextual-retrieval/document_store.json",
+      "sha256": "1fe9c0a7096fc9fcf50c2c5c8ea2008b001243932043ab8882cff436671f8d48",
+      "bytes": 154529
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/contextual-retrieval/evaluation/retrieval_eval.json",
+      "sha256": "7df53f5877ac6a8ec96aa3b2dc575e8cc556e1c9a3eb0ce28800ddd20d0f4a99",
+      "bytes": 4426
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/1-宪法/宪法.md",
+      "sha256": "4cbc5d5d8a4632eb5587ab6377ae5251ce21a149716690864db0b0ab6cd4b386",
+      "bytes": 52540
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/检察官法（2019-04-23）.md",
+      "sha256": "16285739d98e9661208bf8b1f334d40d902af794dcef322605bc93ffbfb7c530",
+      "bytes": 20824
+    }
+  ],
+  "summary": {
+    "methods": {
+      "plain_bm25": {
+        "n": 15,
+        "recall_at_k": {
+          "1": 0.6,
+          "3": 0.8666666666666667,
+          "5": 0.9333333333333333
+        },
+        "mrr": 0.7508333333333334
+      },
+      "contextual_bm25": {
+        "n": 15,
+        "recall_at_k": {
+          "1": 0.8,
+          "3": 0.8666666666666667,
+          "5": 0.9333333333333333
+        },
+        "mrr": 0.8555555555555555
+      },
+      "plain_dense": {
+        "n": 15,
+        "recall_at_k": {
+          "1": 0.8666666666666667,
+          "3": 1.0,
+          "5": 1.0
+        },
+        "mrr": 0.9222222222222223
+      },
+      "contextual_dense": {
+        "n": 15,
+        "recall_at_k": {
+          "1": 0.9333333333333333,
+          "3": 1.0,
+          "5": 1.0
+        },
+        "mrr": 0.9666666666666667
+      },
+      "plain_hybrid": {
+        "n": 15,
+        "recall_at_k": {
+          "1": 0.7333333333333333,
+          "3": 0.9333333333333333,
+          "5": 0.9333333333333333
+        },
+        "mrr": 0.8444444444444444
+      },
+      "contextual_hybrid": {
+        "n": 15,
+        "recall_at_k": {
+          "1": 0.8666666666666667,
+          "3": 0.9333333333333333,
+          "5": 1.0
+        },
+        "mrr": 0.9133333333333333
+      }
+    },
+    "index_time": {
+      "context_generation_ms": 61804.353,
+      "embedding_ms": 365453.495,
+      "usage": {
+        "prompt_tokens": 219888,
+        "completion_tokens": 8846,
+        "total_tokens": 228734
+      },
+      "estimated_cost_usd": 0.033918,
+      "pricing_assumption": {
+        "input_per_million_usd": 0.11,
+        "output_per_million_usd": 1.1
+      }
+    },
+    "errors": 0
+  },
+  "acceptance": {
+    "live_prefix_for_every_chunk": true,
+    "full_source_document_and_target_chunk_in_requests": true,
+    "same_chunks_and_queries": true,
+    "plain_contextual_bm25_dense_hybrid": true,
+    "recall_and_mrr_measured": true,
+    "real_dense_model": true,
+    "index_usage_and_cost_measured": true,
+    "raw_request_response_receipts": true,
+    "all_calls_succeeded": true,
+    "passed": true
+  }
+}

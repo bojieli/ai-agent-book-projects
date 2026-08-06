@@ -1340,7 +1340,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_10_education_financing_maze attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_10_education_financing_maze attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:29:32.947207+00:00",
@@ -1423,7 +1423,7 @@
       "response_id": "021785360573178ed36e414884cda3f1f4a934ca6621dbbf47863"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_10_education_financing_maze iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_10_education_financing_maze iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:31:13.190013+00:00",
@@ -1534,7 +1534,7 @@
       "response_id": "021785360673379ed36e414884cda3f1f4a934ca6621dbbde7da7"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_10_education_financing_maze iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_10_education_financing_maze iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:31:15.065788+00:00",
@@ -1681,7 +1681,7 @@
       "response_id": "021785360675256ed36e414884cda3f1f4a934ca6621dbb2c15bb"
     },
     {
-      "purpose": "3-12 grounded answer layer3_10_education_financing_maze plain",
+      "purpose": "3-11 grounded answer layer3_10_education_financing_maze plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:31:33.523962+00:00",
@@ -1761,7 +1761,7 @@
       "response_id": "021785360693714ed36e414884cda3f1f4a934ca6621dbb7b1b7e"
     },
     {
-      "purpose": "3-12 grounded answer layer3_10_education_financing_maze contextual",
+      "purpose": "3-11 grounded answer layer3_10_education_financing_maze contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:32:12.836032+00:00",
@@ -1841,7 +1841,7 @@
       "response_id": "021785360733026ed36e414884cda3f1f4a934ca6621dbbffcede"
     },
     {
-      "purpose": "3-12 grounded answer layer3_10_education_financing_maze dual_layer",
+      "purpose": "3-11 grounded answer layer3_10_education_financing_maze dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:32:53.551365+00:00",
@@ -1921,7 +1921,7 @@
       "response_id": "021785360773741ed36e414884cda3f1f4a934ca6621dbbd34af2"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_10_education_financing_maze",
+      "purpose": "3-9/3-11 independent judge layer3_10_education_financing_maze",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:33:47.102079+00:00",

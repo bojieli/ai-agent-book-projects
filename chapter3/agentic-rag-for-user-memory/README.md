@@ -11,8 +11,8 @@
 
 ### Canonical live campaign
 
-`python campaign.py` launches the shared controlled Experiment 3-10/3-12
-campaign over all 60 authoritative YAML cases. Experiment 3-10 uses fixed-round
+`python campaign.py` launches the shared controlled Experiment 3-9/3-11
+campaign over all 60 authoritative YAML cases. Experiment 3-9 uses fixed-round
 windows and a live `search_user_memory` ReAct trajectory; raw retrieved chunks,
 agent-generated searches, layer scores, and independent judge receipts are
 retained. Canonical evidence is `validation/latest.json`.

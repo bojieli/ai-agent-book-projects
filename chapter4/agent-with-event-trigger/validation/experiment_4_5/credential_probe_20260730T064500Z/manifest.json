@@ -1,0 +1,19 @@
+{
+  "experiment": "4-5",
+  "campaign_id": "credential_probe_20260730T064500Z",
+  "generated_at": "2026-07-29T22:23:37.271474+00:00",
+  "status": "blocked",
+  "official_complete": false,
+  "files": [
+    {
+      "path": "protocol.json",
+      "bytes": 1924,
+      "sha256": "1826c3aa1c2ce0af96277e13adb237f4c37b005c8708a113159ed768c296fbc1"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 4027,
+      "sha256": "413f8d00bf0d82fd4bf86913988f2b09907a9bc8b3bec2da2ffadab2f969f45c"
+    }
+  ]
+}

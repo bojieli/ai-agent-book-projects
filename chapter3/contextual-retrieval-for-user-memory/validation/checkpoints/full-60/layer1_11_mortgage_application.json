@@ -629,7 +629,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_11_mortgage_application attempt 1",
+      "purpose": "3-11 live contextual prefixes layer1_11_mortgage_application attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:42.152159+00:00",
@@ -712,7 +712,7 @@
       "response_id": "021785358542389c929fb24726b230d1858d8337483a3c0b501f7"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_11_mortgage_application iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_11_mortgage_application iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:56:40.760156+00:00",
@@ -823,7 +823,7 @@
       "response_id": "021785358600952c929fb24726b230d1858d8337483a3c0f9f2cd"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_11_mortgage_application iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_11_mortgage_application iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:56:41.857470+00:00",
@@ -945,7 +945,7 @@
       "response_id": "021785358602049c929fb24726b230d1858d8337483a3c08529ab"
     },
     {
-      "purpose": "3-12 grounded answer layer1_11_mortgage_application plain",
+      "purpose": "3-11 grounded answer layer1_11_mortgage_application plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:56:53.398451+00:00",
@@ -1025,7 +1025,7 @@
       "response_id": "021785358613589c929fb24726b230d1858d8337483a3c03d5774"
     },
     {
-      "purpose": "3-12 grounded answer layer1_11_mortgage_application contextual",
+      "purpose": "3-11 grounded answer layer1_11_mortgage_application contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:57:07.637343+00:00",
@@ -1105,7 +1105,7 @@
       "response_id": "021785358627829c929fb24726b230d1858d8337483a3c0e28f2b"
     },
     {
-      "purpose": "3-12 grounded answer layer1_11_mortgage_application dual_layer",
+      "purpose": "3-11 grounded answer layer1_11_mortgage_application dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:57:20.208532+00:00",
@@ -1185,7 +1185,7 @@
       "response_id": "021785358640400c929fb24726b230d1858d8337483a3c0dbef97"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_11_mortgage_application",
+      "purpose": "3-9/3-11 independent judge layer1_11_mortgage_application",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T20:57:40.673165+00:00",

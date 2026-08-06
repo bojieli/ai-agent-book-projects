@@ -1137,7 +1137,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer2_20_healthcare_coverage_changes attempt 1",
+      "purpose": "3-11 live contextual prefixes layer2_20_healthcare_coverage_changes attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:18:41.616019+00:00",
@@ -1220,7 +1220,7 @@
       "response_id": "021785359921848a6e6152fe8f1450b334d037097633603c9a1ad"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_20_healthcare_coverage_changes iteration 1",
+      "purpose": "3-9 live ReAct search planner layer2_20_healthcare_coverage_changes iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:20:10.143184+00:00",
@@ -1331,7 +1331,7 @@
       "response_id": "021785360010330a6e6152fe8f1450b334d03709763360317a223"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_20_healthcare_coverage_changes iteration 2",
+      "purpose": "3-9 live ReAct search planner layer2_20_healthcare_coverage_changes iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:20:11.427716+00:00",
@@ -1470,7 +1470,7 @@
       "response_id": "021785360011617a6e6152fe8f1450b334d03709763360341b0af"
     },
     {
-      "purpose": "3-12 grounded answer layer2_20_healthcare_coverage_changes plain",
+      "purpose": "3-11 grounded answer layer2_20_healthcare_coverage_changes plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:20:27.332483+00:00",
@@ -1550,7 +1550,7 @@
       "response_id": "021785360027521a6e6152fe8f1450b334d037097633603e16eb8"
     },
     {
-      "purpose": "3-12 grounded answer layer2_20_healthcare_coverage_changes contextual",
+      "purpose": "3-11 grounded answer layer2_20_healthcare_coverage_changes contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:21:02.140548+00:00",
@@ -1630,7 +1630,7 @@
       "response_id": "021785360062328a6e6152fe8f1450b334d037097633603acffee"
     },
     {
-      "purpose": "3-12 grounded answer layer2_20_healthcare_coverage_changes dual_layer",
+      "purpose": "3-11 grounded answer layer2_20_healthcare_coverage_changes dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:21:34.676943+00:00",
@@ -1710,7 +1710,7 @@
       "response_id": "021785360094865a6e6152fe8f1450b334d0370976336038dc05e"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer2_20_healthcare_coverage_changes",
+      "purpose": "3-9/3-11 independent judge layer2_20_healthcare_coverage_changes",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:22:18.766692+00:00",

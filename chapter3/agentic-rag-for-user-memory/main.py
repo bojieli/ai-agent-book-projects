@@ -606,7 +606,7 @@ def _apply_cli_overrides(config: Config, args) -> Config:
 def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(
-        description="实验 3-10 · 智能体化 RAG 用户记忆评估系统",
+        description="实验 3-9 · 智能体化 RAG 用户记忆评估系统",
         epilog=(
             "示例:\n"
             "  python main.py                              # 交互式菜单（默认）\n"

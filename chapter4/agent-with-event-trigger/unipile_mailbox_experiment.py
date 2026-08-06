@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run Chapter 4 Experiment 4-4 against a real Unipile mailbox.
+"""Run Chapter 4 Experiment 4-5 against a real Unipile mailbox.
 
 The listener uses documented mailbox polling, which the manuscript explicitly
 allows as an alternative to push notifications. It never substitutes local
@@ -25,7 +25,7 @@ import httpx
 
 HERE = Path(__file__).resolve().parent
 PROTOCOL_PATH = HERE / "experiment_protocol.json"
-VALIDATION_ROOT = HERE / "validation" / "experiment_4_4"
+VALIDATION_ROOT = HERE / "validation" / "experiment_4_5"
 UTC = timezone.utc
 SIMULATION_PATTERN = re.compile(
     r"\b(mock(?:ed)?|placeholder|synthetic|simulat(?:ed|ion))\b", re.IGNORECASE
@@ -227,7 +227,7 @@ class UnipileClient:
         payload = self.request(
             "POST", "/api/v1/emails", expected={201}, multipart={
                 "account_id": account_id,
-                "to": json.dumps([{"display_name": "Experiment 4-4 mailbox",
+                "to": json.dumps([{"display_name": "Experiment 4-5 mailbox",
                                    "identifier": recipient}]),
                 "subject": subject,
                 "body": body,
@@ -466,18 +466,18 @@ def seed_messages(client: UnipileClient, sender_account_id: str, recipient: str,
     end = start + timedelta(hours=1)
     messages = [
         (
-            f"[EXP4-4 {campaign_id}] Meeting invitation: design review",
+            f"[EXP4-5 {campaign_id}] Meeting invitation: design review",
             "Meeting invitation for the agent experiment.\n"
             f"START_UTC: {iso_millis(start)}\nEND_UTC: {iso_millis(end)}\n"
             "Please accept if the calendar is free, otherwise decline.",
         ),
         (
-            f"[EXP4-4 {campaign_id}] Customer complaint: delayed order",
+            f"[EXP4-5 {campaign_id}] Customer complaint: delayed order",
             f"Customer complaint for order #{campaign_id[-8:]}. The delivery is overdue and "
             "support has not resolved it. Please arrange urgent human follow-up.",
         ),
         (
-            f"[EXP4-4 {campaign_id}] Marketing newsletter",
+            f"[EXP4-5 {campaign_id}] Marketing newsletter",
             "Marketing newsletter: save 20 percent on productivity software. "
             "This bulk promotion includes an unsubscribe link.",
         ),
@@ -502,7 +502,7 @@ def poll_campaign_emails(client: UnipileClient, account_id: str, campaign_id: st
     folder = inbox_folder(client, account_id)
     deadline = time.monotonic() + timeout
     found: dict[str, dict[str, Any]] = {}
-    marker = f"[EXP4-4 {campaign_id}]"
+    marker = f"[EXP4-5 {campaign_id}]"
     while time.monotonic() < deadline and len(found) < 3:
         for reference in client.list_emails(account_id, after=after, folder=folder):
             if marker not in str(reference.get("subject", "")):
@@ -627,7 +627,7 @@ def build_manifest(campaign_dir: Path, summary: dict[str, Any]) -> dict[str, Any
             files.append({"path": str(path.relative_to(campaign_dir)),
                           "bytes": len(data), "sha256": sha256(data)})
     return {
-        "experiment": "4-4", "campaign_id": summary.get("campaign_id"),
+        "experiment": "4-5", "campaign_id": summary.get("campaign_id"),
         "generated_at": datetime.now(UTC).isoformat(),
         "status": summary.get("status"),
         "official_complete": summary.get("status") == "passed",
@@ -659,7 +659,7 @@ def run(args: argparse.Namespace) -> Path:
     dsn = os.getenv("UNIPILE_DSN", "")
     token = os.getenv("UNIPILE_ACCESS_TOKEN", "")
     summary: dict[str, Any] = {
-        "experiment": "4-4", "campaign_id": campaign_id,
+        "experiment": "4-5", "campaign_id": campaign_id,
         "generated_at": datetime.now(UTC).isoformat(),
         "provider": "unipile", "base_url_sha256": sha256(dsn) if dsn else None,
         "official_schema_receipts": docs,
@@ -731,7 +731,7 @@ def run(args: argparse.Namespace) -> Path:
         write_json(campaign_dir / "summary.json", summary)
         write_json(campaign_dir / "manifest.json", build_manifest(campaign_dir, summary))
         write_json(VALIDATION_ROOT / "latest.json", {
-            "experiment": "4-4", "campaign_id": campaign_id,
+            "experiment": "4-5", "campaign_id": campaign_id,
             "status": summary.get("status"),
             "official_complete": summary.get("status") == "passed",
             "manifest": str((campaign_dir / "manifest.json").relative_to(HERE)),

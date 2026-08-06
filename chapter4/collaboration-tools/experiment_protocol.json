@@ -1,5 +1,5 @@
 {
-  "experiment": "4-3",
+  "experiment": "4-4",
   "authority": "book/chapter4.md:319",
   "subagent_primitives": ["spawn_subagent", "send_message_to_subagent", "cancel_subagent", "get_subagent_status"],
   "modes": ["sync", "async"],

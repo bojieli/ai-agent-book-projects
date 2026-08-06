@@ -1247,7 +1247,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_17_environmental_contamination_cascade attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_17_environmental_contamination_cascade attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:36:43.948005+00:00",
@@ -1330,7 +1330,7 @@
       "response_id": "021785361004181a78e4bf9e905a6c19d35dac8ed03e6bed33fed"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_17_environmental_contamination_cascade iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_17_environmental_contamination_cascade iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:38:17.092446+00:00",
@@ -1441,7 +1441,7 @@
       "response_id": "021785361097282a78e4bf9e905a6c19d35dac8ed03e6beabc723"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_17_environmental_contamination_cascade iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_17_environmental_contamination_cascade iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:38:18.641449+00:00",
@@ -1596,7 +1596,7 @@
       "response_id": "021785361098833a78e4bf9e905a6c19d35dac8ed03e6be622798"
     },
     {
-      "purpose": "3-12 grounded answer layer3_17_environmental_contamination_cascade plain",
+      "purpose": "3-11 grounded answer layer3_17_environmental_contamination_cascade plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:38:37.703216+00:00",
@@ -1676,7 +1676,7 @@
       "response_id": "021785361117894a78e4bf9e905a6c19d35dac8ed03e6be27a87b"
     },
     {
-      "purpose": "3-12 grounded answer layer3_17_environmental_contamination_cascade contextual",
+      "purpose": "3-11 grounded answer layer3_17_environmental_contamination_cascade contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:39:06.451694+00:00",
@@ -1756,7 +1756,7 @@
       "response_id": "021785361146643a78e4bf9e905a6c19d35dac8ed03e6be46fb86"
     },
     {
-      "purpose": "3-12 grounded answer layer3_17_environmental_contamination_cascade dual_layer",
+      "purpose": "3-11 grounded answer layer3_17_environmental_contamination_cascade dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:39:30.724522+00:00",
@@ -1836,7 +1836,7 @@
       "response_id": "021785361170915a78e4bf9e905a6c19d35dac8ed03e6be95c998"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_17_environmental_contamination_cascade",
+      "purpose": "3-9/3-11 independent judge layer3_17_environmental_contamination_cascade",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:40:00.292194+00:00",

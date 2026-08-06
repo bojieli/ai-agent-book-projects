@@ -1,0 +1,24 @@
+{
+  "case": "hitl_approval",
+  "tool": "mcp_request_admin_approval",
+  "arguments": {
+    "request_message": "Approve publishing the Experiment 4-4 result?",
+    "context": {
+      "risk": "low",
+      "artifact": "validation-only",
+      "consequence": "An approval authorizes publishing this run in a GitHub pull request; a rejection keeps it local."
+    },
+    "timeout_seconds": 1800,
+    "urgent": false
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "approved": false,
+    "request_id": "da283443-6d26-4c93-9664-f86d4b1e5c63",
+    "timeout": true,
+    "message": "Admin response timeout after 1800 seconds"
+  },
+  "latency_seconds": 1801.52
+}

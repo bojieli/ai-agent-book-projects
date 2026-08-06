@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Shared canonical campaign for Experiments 3-10 and 3-12.
+"""Shared canonical campaign for Experiments 3-9 and 3-11.
 
-Experiment 3-10 is the plain fixed-window, agent-searched arm.  Experiment
-3-12 replays the exact same live agent-generated queries against plain and
+Experiment 3-9 is the plain fixed-window, agent-searched arm.  Experiment
+3-11 replays the exact same live agent-generated queries against plain and
 live-contextualized indexes, then adds the live Advanced JSON Cards produced by
 Experiment 3-1 as the dual-layer ablation.  This keeps the retrieval plan and
-answer/judge models fixed across the three 3-12 arms.
+answer/judge models fixed across the three 3-11 arms.
 """
 
 from __future__ import annotations

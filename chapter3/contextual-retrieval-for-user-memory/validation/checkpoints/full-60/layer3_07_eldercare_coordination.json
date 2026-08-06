@@ -1384,7 +1384,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_07_eldercare_coordination attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_07_eldercare_coordination attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:25:28.303851+00:00",
@@ -1467,7 +1467,7 @@
       "response_id": "02178536032853298c470d32e326dd7109413e831d170d8b6357e"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_07_eldercare_coordination iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_07_eldercare_coordination iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:27:11.015970+00:00",
@@ -1578,7 +1578,7 @@
       "response_id": "02178536043120398c470d32e326dd7109413e831d170d88f811c"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_07_eldercare_coordination iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_07_eldercare_coordination iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:27:12.382349+00:00",
@@ -1709,7 +1709,7 @@
       "response_id": "02178536043257098c470d32e326dd7109413e831d170d83fc880"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_07_eldercare_coordination iteration 3",
+      "purpose": "3-9 live ReAct search planner layer3_07_eldercare_coordination iteration 3",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:27:21.902839+00:00",
@@ -1867,7 +1867,7 @@
       "response_id": "02178536044209198c470d32e326dd7109413e831d170d8cc356d"
     },
     {
-      "purpose": "3-12 grounded answer layer3_07_eldercare_coordination plain",
+      "purpose": "3-11 grounded answer layer3_07_eldercare_coordination plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:27:35.939356+00:00",
@@ -1947,7 +1947,7 @@
       "response_id": "02178536045612798c470d32e326dd7109413e831d170d85133b2"
     },
     {
-      "purpose": "3-12 grounded answer layer3_07_eldercare_coordination contextual",
+      "purpose": "3-11 grounded answer layer3_07_eldercare_coordination contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:28:19.082404+00:00",
@@ -2027,7 +2027,7 @@
       "response_id": "02178536049927098c470d32e326dd7109413e831d170d88f6ed7"
     },
     {
-      "purpose": "3-12 grounded answer layer3_07_eldercare_coordination dual_layer",
+      "purpose": "3-11 grounded answer layer3_07_eldercare_coordination dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:29:03.190324+00:00",
@@ -2107,7 +2107,7 @@
       "response_id": "02178536054337898c470d32e326dd7109413e831d170d885e2e5"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_07_eldercare_coordination",
+      "purpose": "3-9/3-11 independent judge layer3_07_eldercare_coordination",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:29:45.000065+00:00",

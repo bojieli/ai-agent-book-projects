@@ -1092,7 +1092,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer2_08_multiple_rental_properties attempt 1",
+      "purpose": "3-11 live contextual prefixes layer2_08_multiple_rental_properties attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:06:07.467587+00:00",
@@ -1175,7 +1175,7 @@
       "response_id": "0217853591677026fdba12e18648ff4577e64dddd76d2e7b5d5c2"
     },
     {
-      "purpose": "3-12 live contextual prefixes layer2_08_multiple_rental_properties attempt 2",
+      "purpose": "3-11 live contextual prefixes layer2_08_multiple_rental_properties attempt 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:08:28.107395+00:00",
@@ -1258,7 +1258,7 @@
       "response_id": "0217853593082976fdba12e18648ff4577e64dddd76d2e7eb1b48"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_08_multiple_rental_properties iteration 1",
+      "purpose": "3-9 live ReAct search planner layer2_08_multiple_rental_properties iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:08:56.873689+00:00",
@@ -1369,7 +1369,7 @@
       "response_id": "0217853593370646fdba12e18648ff4577e64dddd76d2e773d44b"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_08_multiple_rental_properties iteration 2",
+      "purpose": "3-9 live ReAct search planner layer2_08_multiple_rental_properties iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:08:58.058340+00:00",
@@ -1500,7 +1500,7 @@
       "response_id": "0217853593382496fdba12e18648ff4577e64dddd76d2e78ef822"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_08_multiple_rental_properties iteration 3",
+      "purpose": "3-9 live ReAct search planner layer2_08_multiple_rental_properties iteration 3",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:09:12.440049+00:00",
@@ -1641,7 +1641,7 @@
       "response_id": "0217853593526316fdba12e18648ff4577e64dddd76d2e7135616"
     },
     {
-      "purpose": "3-12 grounded answer layer2_08_multiple_rental_properties plain",
+      "purpose": "3-11 grounded answer layer2_08_multiple_rental_properties plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:09:29.797864+00:00",
@@ -1721,7 +1721,7 @@
       "response_id": "0217853593699886fdba12e18648ff4577e64dddd76d2e74e3c45"
     },
     {
-      "purpose": "3-12 grounded answer layer2_08_multiple_rental_properties contextual",
+      "purpose": "3-11 grounded answer layer2_08_multiple_rental_properties contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:10:01.915102+00:00",
@@ -1801,7 +1801,7 @@
       "response_id": "0217853594021066fdba12e18648ff4577e64dddd76d2e7cc0e44"
     },
     {
-      "purpose": "3-12 grounded answer layer2_08_multiple_rental_properties dual_layer",
+      "purpose": "3-11 grounded answer layer2_08_multiple_rental_properties dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:10:35.158809+00:00",
@@ -1881,7 +1881,7 @@
       "response_id": "0217853594353506fdba12e18648ff4577e64dddd76d2e72e0ef2"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer2_08_multiple_rental_properties",
+      "purpose": "3-9/3-11 independent judge layer2_08_multiple_rental_properties",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:11:20.245986+00:00",

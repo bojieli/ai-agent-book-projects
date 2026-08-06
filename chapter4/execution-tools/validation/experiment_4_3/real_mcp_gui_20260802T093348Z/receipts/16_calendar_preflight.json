@@ -1,0 +1,16 @@
+{
+  "case": "calendar_preflight",
+  "tool": "google_calendar_add",
+  "arguments": {
+    "summary": "Experiment 4-3",
+    "start_time": "2026-08-01T10:00:00+00:00",
+    "end_time": "2026-08-01T10:30:00+00:00"
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": false,
+    "error": "Failed to initialize Google Calendar: Credentials file not found: credentials.json"
+  },
+  "latency_seconds": 0.003
+}

@@ -1,0 +1,48 @@
+{
+  "case": "excel_formula_screenshot",
+  "tool": "excel_create_with_formula_and_screenshot",
+  "arguments": {
+    "output_path": "invoice.xlsx",
+    "rows": [
+      {
+        "item": "Compute",
+        "quantity": 2,
+        "unit_price": 12.5
+      },
+      {
+        "item": "Storage",
+        "quantity": 3,
+        "unit_price": 7.0
+      }
+    ]
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "xlsx": {
+      "path": "/Users/boj/book/ai-agent-book/chapter4/execution-tools/validation/experiment_4_3/real_mcp_20260730T062500Z/workspace/invoice.xlsx",
+      "bytes": 5059,
+      "sha256": "621c89e193243ab849d1d20df53c9deaaabe2e8909712edd87d6c137f5551470"
+    },
+    "pdf": {
+      "path": "/Users/boj/book/ai-agent-book/chapter4/execution-tools/validation/experiment_4_3/real_mcp_20260730T062500Z/workspace/invoice.pdf",
+      "bytes": 19487,
+      "sha256": "a398997cace6b14ee4cd8575124a3be4fd0f1c125958c2e99cbd6ae9f91dbbf5"
+    },
+    "screenshot": {
+      "path": "/Users/boj/book/ai-agent-book/chapter4/execution-tools/validation/experiment_4_3/real_mcp_20260730T062500Z/workspace/invoice.png",
+      "bytes": 14315,
+      "sha256": "b97c76df59cc7972772341ea3a391bb4dba8907b65000f1b360005804d39986d"
+    },
+    "formula_cells": [
+      "D2",
+      "D3",
+      "D4"
+    ],
+    "rows": 2,
+    "renderer": "LibreOffice headless + PyMuPDF",
+    "latency_seconds": 10.029
+  },
+  "latency_seconds": 10.136
+}

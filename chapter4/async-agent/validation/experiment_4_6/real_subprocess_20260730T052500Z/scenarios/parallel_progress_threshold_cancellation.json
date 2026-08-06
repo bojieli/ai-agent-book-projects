@@ -1,0 +1,286 @@
+{
+  "id": "parallel_progress_threshold_cancellation",
+  "first_completed": "T1",
+  "query_receipts": [
+    {
+      "task_id": "T2",
+      "status": "running",
+      "progress": 68.0,
+      "queried_at": 5.345
+    },
+    {
+      "task_id": "T3",
+      "status": "running",
+      "progress": 34.0,
+      "queried_at": 5.345
+    }
+  ],
+  "cancelled_ids": [
+    "T3"
+  ],
+  "completed_results": {
+    "T1": {
+      "async_mentions": 69,
+      "bytes": 106193,
+      "error_keyword_count": 20,
+      "experiment_mentions": 37,
+      "heading_count": 27,
+      "input_path": "/Users/boj/book/ai-agent-book/book/chapter4.md",
+      "input_sha256": "4184460334544d326bb7ad4db349b8c583790195d51efc28ef325284c41d7fdd",
+      "job": "fast",
+      "lines": 679
+    },
+    "T2": {
+      "async_mentions": 69,
+      "bytes": 106193,
+      "error_keyword_count": 20,
+      "experiment_mentions": 37,
+      "heading_count": 27,
+      "input_path": "/Users/boj/book/ai-agent-book/book/chapter4.md",
+      "input_sha256": "4184460334544d326bb7ad4db349b8c583790195d51efc28ef325284c41d7fdd",
+      "job": "mid",
+      "lines": 679
+    }
+  },
+  "events": [
+    {
+      "elapsed_seconds": 0.0,
+      "source": "TASK",
+      "text": "启动真实子进程任务 T1: `python analyze_fast.py` (速度 3%/逻辑秒)"
+    },
+    {
+      "elapsed_seconds": 0.001,
+      "source": "TASK",
+      "text": "启动真实子进程任务 T2: `python analyze_mid.py` (速度 2%/逻辑秒)"
+    },
+    {
+      "elapsed_seconds": 0.001,
+      "source": "TASK",
+      "text": "启动真实子进程任务 T3: `python analyze_slow.py` (速度 1%/逻辑秒)"
+    },
+    {
+      "elapsed_seconds": 1.121,
+      "source": "TASK",
+      "text": "T1 `python analyze_fast.py` 进度 21% (pid=92132)"
+    },
+    {
+      "elapsed_seconds": 1.605,
+      "source": "TASK",
+      "text": "T2 `python analyze_mid.py` 进度 20% (pid=92133)"
+    },
+    {
+      "elapsed_seconds": 2.219,
+      "source": "TASK",
+      "text": "T1 `python analyze_fast.py` 进度 42% (pid=92132)"
+    },
+    {
+      "elapsed_seconds": 3.133,
+      "source": "TASK",
+      "text": "T3 `python analyze_slow.py` 进度 20% (pid=92134)"
+    },
+    {
+      "elapsed_seconds": 3.144,
+      "source": "TASK",
+      "text": "T1 `python analyze_fast.py` 进度 60% (pid=92132)"
+    },
+    {
+      "elapsed_seconds": 3.145,
+      "source": "TASK",
+      "text": "T2 `python analyze_mid.py` 进度 40% (pid=92133)"
+    },
+    {
+      "elapsed_seconds": 4.235,
+      "source": "TASK",
+      "text": "T1 `python analyze_fast.py` 进度 81% (pid=92132)"
+    },
+    {
+      "elapsed_seconds": 4.699,
+      "source": "TASK",
+      "text": "T2 `python analyze_mid.py` 进度 60% (pid=92133)"
+    },
+    {
+      "elapsed_seconds": 5.332,
+      "source": "TASK",
+      "text": "T1 `python analyze_fast.py` 进度 100% (pid=92132)"
+    },
+    {
+      "elapsed_seconds": 5.345,
+      "source": "TASK",
+      "text": "T1 完成 ✅ (pid=92132, returncode=0)"
+    },
+    {
+      "elapsed_seconds": 5.345,
+      "source": "SYSTEM",
+      "event": "async_result_injected",
+      "task_id": "T1"
+    },
+    {
+      "elapsed_seconds": 5.345,
+      "source": "TOOL",
+      "event": "query_task",
+      "task_id": "T2",
+      "progress": 68.0
+    },
+    {
+      "elapsed_seconds": 5.345,
+      "source": "TOOL",
+      "event": "query_task",
+      "task_id": "T3",
+      "progress": 34.0
+    },
+    {
+      "elapsed_seconds": 5.345,
+      "source": "TOOL",
+      "event": "cancel_task",
+      "task_id": "T3",
+      "progress": 34.0
+    },
+    {
+      "elapsed_seconds": 5.347,
+      "source": "TASK",
+      "text": "T3 子进程已终止 🛑 (pid=92134, 进度 34%)"
+    },
+    {
+      "elapsed_seconds": 6.254,
+      "source": "TASK",
+      "text": "T2 `python analyze_mid.py` 进度 80% (pid=92133)"
+    },
+    {
+      "elapsed_seconds": 7.815,
+      "source": "TASK",
+      "text": "T2 `python analyze_mid.py` 进度 100% (pid=92133)"
+    },
+    {
+      "elapsed_seconds": 7.829,
+      "source": "TASK",
+      "text": "T2 完成 ✅ (pid=92133, returncode=0)"
+    },
+    {
+      "elapsed_seconds": 7.829,
+      "source": "SYSTEM",
+      "event": "async_result_injected",
+      "task_id": "T2"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T1",
+      "command": "python analyze_fast.py",
+      "status": "completed",
+      "progress": 100.0,
+      "pid": 92132,
+      "returncode": 0,
+      "started_at": 1785360517.401463,
+      "completed_at": 1785360522.7459211,
+      "elapsed_seconds": 5.344,
+      "stdout_sha256": "cc880975410f2730b3a60c08b446abc561361940b173aa8241ab22f3d23be937",
+      "stderr_tail": "",
+      "result": {
+        "async_mentions": 69,
+        "bytes": 106193,
+        "error_keyword_count": 20,
+        "experiment_mentions": 37,
+        "heading_count": 27,
+        "input_path": "/Users/boj/book/ai-agent-book/book/chapter4.md",
+        "input_sha256": "4184460334544d326bb7ad4db349b8c583790195d51efc28ef325284c41d7fdd",
+        "job": "fast",
+        "lines": 679
+      },
+      "executable": {
+        "mode": "real_subprocess",
+        "shell": false,
+        "worker": "/Users/boj/book/ai-agent-book/chapter4/async-agent/analysis_worker.py",
+        "worker_sha256": "ab700e034f63e4b8f83dfb4a6156745b7ab7c9352750c63a900f2632acb134c7",
+        "input": "/Users/boj/book/ai-agent-book/book/chapter4.md",
+        "input_sha256": "4184460334544d326bb7ad4db349b8c583790195d51efc28ef325284c41d7fdd",
+        "job": "fast",
+        "rate_percent_per_logical_second": 3.0,
+        "tick_real_seconds": 0.15,
+        "argv_sha256": "7261f0de1acd2bbe527657a61c48b925528ac99524a349ac91d350581830780e",
+        "pid": 92132,
+        "returncode": 0,
+        "stdout_sha256": "cc880975410f2730b3a60c08b446abc561361940b173aa8241ab22f3d23be937",
+        "stdout_lines": 35,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "elapsed_seconds": 5.344
+      }
+    },
+    {
+      "task_id": "T2",
+      "command": "python analyze_mid.py",
+      "status": "completed",
+      "progress": 100.0,
+      "pid": 92133,
+      "returncode": 0,
+      "started_at": 1785360517.4036,
+      "completed_at": 1785360525.229522,
+      "elapsed_seconds": 7.826,
+      "stdout_sha256": "a4257b9e774792d2df2f286f29d683ac24d90a766da66069fc5c4654e89ed003",
+      "stderr_tail": "",
+      "result": {
+        "async_mentions": 69,
+        "bytes": 106193,
+        "error_keyword_count": 20,
+        "experiment_mentions": 37,
+        "heading_count": 27,
+        "input_path": "/Users/boj/book/ai-agent-book/book/chapter4.md",
+        "input_sha256": "4184460334544d326bb7ad4db349b8c583790195d51efc28ef325284c41d7fdd",
+        "job": "mid",
+        "lines": 679
+      },
+      "executable": {
+        "mode": "real_subprocess",
+        "shell": false,
+        "worker": "/Users/boj/book/ai-agent-book/chapter4/async-agent/analysis_worker.py",
+        "worker_sha256": "ab700e034f63e4b8f83dfb4a6156745b7ab7c9352750c63a900f2632acb134c7",
+        "input": "/Users/boj/book/ai-agent-book/book/chapter4.md",
+        "input_sha256": "4184460334544d326bb7ad4db349b8c583790195d51efc28ef325284c41d7fdd",
+        "job": "mid",
+        "rate_percent_per_logical_second": 2.0,
+        "tick_real_seconds": 0.15,
+        "argv_sha256": "3f8854dc260b11c7d00cbf44f3770cbe6eaf45da0ca6677108a485acd69faf4f",
+        "pid": 92133,
+        "returncode": 0,
+        "stdout_sha256": "a4257b9e774792d2df2f286f29d683ac24d90a766da66069fc5c4654e89ed003",
+        "stdout_lines": 51,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "elapsed_seconds": 7.826
+      }
+    },
+    {
+      "task_id": "T3",
+      "command": "python analyze_slow.py",
+      "status": "cancelled",
+      "progress": 34.0,
+      "pid": 92134,
+      "returncode": -15,
+      "started_at": 1785360517.4054961,
+      "completed_at": 1785360522.74722,
+      "elapsed_seconds": 5.342,
+      "stdout_sha256": null,
+      "stderr_tail": "",
+      "result": null,
+      "executable": {
+        "mode": "real_subprocess",
+        "shell": false,
+        "worker": "/Users/boj/book/ai-agent-book/chapter4/async-agent/analysis_worker.py",
+        "worker_sha256": "ab700e034f63e4b8f83dfb4a6156745b7ab7c9352750c63a900f2632acb134c7",
+        "input": "/Users/boj/book/ai-agent-book/book/chapter4.md",
+        "input_sha256": "4184460334544d326bb7ad4db349b8c583790195d51efc28ef325284c41d7fdd",
+        "job": "slow",
+        "rate_percent_per_logical_second": 1.0,
+        "tick_real_seconds": 0.15,
+        "argv_sha256": "45f0bfa2cdbd6f54216af52a0d35e71b53de6c9a67f2ddbee1b56594cb1a4f67",
+        "pid": 92134,
+        "returncode": -15,
+        "cancelled": true,
+        "elapsed_seconds": 5.342
+      }
+    }
+  ],
+  "artifact": {
+    "path": "/Users/boj/book/ai-agent-book/chapter4/async-agent/validation/experiment_4_6/real_subprocess_20260730T052500Z/artifacts/scenario_4_report.json",
+    "bytes": 1071,
+    "sha256": "7bc8f53d28a8ec058424beb24ee1fcf9e36dd6c8b01e16fbea8dcc8d5b5dead7"
+  }
+}

@@ -768,7 +768,7 @@
     ]
   },
   "receipt": {
-    "purpose": "3-13 consolidate bottom-up factors",
+    "purpose": "3-12 consolidate bottom-up factors",
     "provider": "ark",
     "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
     "started_at": "2026-07-29T20:51:14.949098+00:00",

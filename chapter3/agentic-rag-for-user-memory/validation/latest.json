@@ -1,14 +1,14 @@
 {
   "schema_version": "chapter3-evidence-v1",
-  "experiment": "3-10",
-  "run_id": "20260729T214519Z-3_10-1bbf4623",
+  "experiment": "3-9",
+  "run_id": "20260729T214519Z-3_9-1bbf4623",
   "created_at": "2026-07-29T21:45:19.517360+00:00",
   "status": "passed",
-  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag-for-user-memory/validation/runs/20260729T214519Z-3_10-1bbf4623",
+  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag-for-user-memory/validation/runs/20260729T214519Z-3_9-1bbf4623",
   "artifacts": {
-    "evidence.json": "2a149918629ee580071fede5e591f702b0752da1ca41c7ee80cd59339621845a",
-    "receipts.json": "a6ddaba2de78dc1eff2f88b4e693a36a12b89c5197d213ba14aef6f59c11f4c6",
-    "manifest.json": "9ff52b0558ddbb9147472e6bebdbd592291ce6add65c8197e07fa60d3d33be10"
+    "evidence.json": "569c72db7e04eae6f2354b82c4c21c6d83f13a738839d01b64932ec9e0c69e1d",
+    "receipts.json": "25fea7edfb86bc80377160464bd4323559238eb68a3af82fec1df4f9d2d64389",
+    "manifest.json": "a935c7542b6830a078ee70d78891cf1981f9ee70d0d41c661fd4d95cce9e817c"
   },
   "inputs": [
     {
@@ -18,8 +18,8 @@
     },
     {
       "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag-for-user-memory/campaign.py",
-      "sha256": "ebfd987c64c2c6ce55453601df0fac15a6fc33b2779930f2f1d9d3a46a9e74e3",
-      "bytes": 295
+      "sha256": "36b917d64e02aa3a75bbe7c323e9dfcb8d4db1a6b6fe2b8f34a6bd20e0b55d01",
+      "bytes": 294
     },
     {
       "path": "/Users/boj/book/ai-agent-book/chapter3/user-memory-evaluation/test_cases/layer1/01_bank_account_setup.yaml",

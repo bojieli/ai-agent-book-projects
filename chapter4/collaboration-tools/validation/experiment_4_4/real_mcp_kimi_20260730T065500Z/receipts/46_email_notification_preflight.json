@@ -1,0 +1,17 @@
+{
+  "case": "email_notification_preflight",
+  "tool": "mcp_send_email",
+  "arguments": {
+    "to_email": "nobody@example.invalid",
+    "subject": "Experiment 4-4",
+    "body": "Credential preflight only"
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": false,
+    "error": "No email service configured",
+    "message": "Please configure SendGrid API key or SMTP credentials"
+  },
+  "latency_seconds": 0.004
+}

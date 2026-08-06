@@ -1088,7 +1088,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_16_cryptocurrency_inheritance_puzzle attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_16_cryptocurrency_inheritance_puzzle attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:36:14.303485+00:00",
@@ -1171,7 +1171,7 @@
       "response_id": "0217853609745215bd2f0b9e6315ce45b86fb4e22ec7496e24709"
     },
     {
-      "purpose": "3-12 live contextual prefixes layer3_16_cryptocurrency_inheritance_puzzle attempt 2",
+      "purpose": "3-11 live contextual prefixes layer3_16_cryptocurrency_inheritance_puzzle attempt 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:37:31.394164+00:00",
@@ -1254,7 +1254,7 @@
       "response_id": "0217853610515825bd2f0b9e6315ce45b86fb4e22ec74969e2c11"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_16_cryptocurrency_inheritance_puzzle iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_16_cryptocurrency_inheritance_puzzle iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:37:43.643400+00:00",
@@ -1365,7 +1365,7 @@
       "response_id": "0217853610638295bd2f0b9e6315ce45b86fb4e22ec7496a7eff2"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_16_cryptocurrency_inheritance_puzzle iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_16_cryptocurrency_inheritance_puzzle iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:37:44.668937+00:00",
@@ -1496,7 +1496,7 @@
       "response_id": "0217853610648555bd2f0b9e6315ce45b86fb4e22ec749632e639"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_16_cryptocurrency_inheritance_puzzle iteration 3",
+      "purpose": "3-9 live ReAct search planner layer3_16_cryptocurrency_inheritance_puzzle iteration 3",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:38:00.752563+00:00",
@@ -1654,7 +1654,7 @@
       "response_id": "0217853610809515bd2f0b9e6315ce45b86fb4e22ec74963ade16"
     },
     {
-      "purpose": "3-12 grounded answer layer3_16_cryptocurrency_inheritance_puzzle plain",
+      "purpose": "3-11 grounded answer layer3_16_cryptocurrency_inheritance_puzzle plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:38:18.255125+00:00",
@@ -1734,7 +1734,7 @@
       "response_id": "0217853610984425bd2f0b9e6315ce45b86fb4e22ec74961ca79d"
     },
     {
-      "purpose": "3-12 grounded answer layer3_16_cryptocurrency_inheritance_puzzle contextual",
+      "purpose": "3-11 grounded answer layer3_16_cryptocurrency_inheritance_puzzle contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:38:48.907899+00:00",
@@ -1814,7 +1814,7 @@
       "response_id": "0217853611290945bd2f0b9e6315ce45b86fb4e22ec74961378e6"
     },
     {
-      "purpose": "3-12 grounded answer layer3_16_cryptocurrency_inheritance_puzzle dual_layer",
+      "purpose": "3-11 grounded answer layer3_16_cryptocurrency_inheritance_puzzle dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:39:17.811102+00:00",
@@ -1894,7 +1894,7 @@
       "response_id": "0217853611579975bd2f0b9e6315ce45b86fb4e22ec7496f72748"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_16_cryptocurrency_inheritance_puzzle",
+      "purpose": "3-9/3-11 independent judge layer3_16_cryptocurrency_inheritance_puzzle",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:39:47.625775+00:00",

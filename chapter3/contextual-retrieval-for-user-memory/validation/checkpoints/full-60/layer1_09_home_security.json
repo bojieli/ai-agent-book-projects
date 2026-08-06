@@ -554,7 +554,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_09_home_security attempt 1",
+      "purpose": "3-11 live contextual prefixes layer1_09_home_security attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:54:37.817328+00:00",
@@ -637,7 +637,7 @@
       "response_id": "021785358478049387079dd26c99e87d331bd24b7eb1a4ce4af06"
     },
     {
-      "purpose": "3-12 live contextual prefixes layer1_09_home_security attempt 2",
+      "purpose": "3-11 live contextual prefixes layer1_09_home_security attempt 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:19.134314+00:00",
@@ -720,7 +720,7 @@
       "response_id": "021785358519326387079dd26c99e87d331bd24b7eb1a4cdc8f26"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_09_home_security iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_09_home_security iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:34.274364+00:00",
@@ -831,7 +831,7 @@
       "response_id": "021785358534464387079dd26c99e87d331bd24b7eb1a4c1d677e"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_09_home_security iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_09_home_security iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:35.427820+00:00",
@@ -953,7 +953,7 @@
       "response_id": "021785358535618387079dd26c99e87d331bd24b7eb1a4cd80ca9"
     },
     {
-      "purpose": "3-12 grounded answer layer1_09_home_security plain",
+      "purpose": "3-11 grounded answer layer1_09_home_security plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:42.233479+00:00",
@@ -1033,7 +1033,7 @@
       "response_id": "021785358542422387079dd26c99e87d331bd24b7eb1a4c6ff51a"
     },
     {
-      "purpose": "3-12 grounded answer layer1_09_home_security contextual",
+      "purpose": "3-11 grounded answer layer1_09_home_security contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:53.153394+00:00",
@@ -1113,7 +1113,7 @@
       "response_id": "021785358553342387079dd26c99e87d331bd24b7eb1a4c749482"
     },
     {
-      "purpose": "3-12 grounded answer layer1_09_home_security dual_layer",
+      "purpose": "3-11 grounded answer layer1_09_home_security dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:56:02.713190+00:00",
@@ -1193,7 +1193,7 @@
       "response_id": "021785358562902387079dd26c99e87d331bd24b7eb1a4cbe1660"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_09_home_security",
+      "purpose": "3-9/3-11 independent judge layer1_09_home_security",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T20:56:16.549516+00:00",

@@ -15,13 +15,12 @@
 | 3-4 | [dense-embedding](dense-embedding/) | ✅ | Az ANNOY és HNSW közelítő legközelebbi szomszéd indexeket hasonlítja össze. |
 | 3-5 | [sparse-embedding](sparse-embedding/) | ✅ | Ritka vektoros, BM25-alapú keresőmotort valósít meg az alapoktól. |
 | 3-6 | [retrieval-pipeline](retrieval-pipeline/) | ✅ | A sűrű és ritka visszakeresést neurális újrarangsorolással egyesíti. |
-| 3-7 | [multimodal-agent](multimodal-agent/) | ✅ | Három multimodális feldolgozási stratégiát hasonlít össze egységes keretrendszerben. |
-| 3-8 | [structured-index](structured-index/) | ✅ | A RAPTOR és GraphRAG strukturált indexelési megközelítéseit veti össze. |
-| 3-9 | [agentic-rag](agentic-rag/) | ✅ | A hagyományos RAG-ot hasonlítja össze az iteratív visszakeresést végző Agentic RAG-gal. |
-| 3-10 | [agentic-rag-for-user-memory](agentic-rag-for-user-memory/) | ✅ | Agentic RAG-ot alkalmaz munkameneteken átívelő beszélgetési előzmények visszakeresésére. |
-| 3-11 | [contextual-retrieval](contextual-retrieval/) | ✅ | Kontextuselőtagot ad a szövegrészletekhez a visszakeresési hibák csökkentésére. |
-| 3-12 | [contextual-retrieval-for-user-memory](contextual-retrieval-for-user-memory/) | ✅ | Az Advanced JSON Cards és Contextual RAG megoldásokat kétrétegű memóriává egyesíti. |
-| 3-13 | [structured-knowledge-extraction](structured-knowledge-extraction/) | ✅ | Döntési tényezőket és esetprototípusokat nyer ki bírósági határozatok adathalmazából. |
+| 3-7 | [structured-index](structured-index/) | ✅ | A RAPTOR és GraphRAG strukturált indexelési megközelítéseit veti össze. |
+| 3-8 | [agentic-rag](agentic-rag/) | ✅ | A hagyományos RAG-ot hasonlítja össze az iteratív visszakeresést végző Agentic RAG-gal. |
+| 3-9 | [agentic-rag-for-user-memory](agentic-rag-for-user-memory/) | ✅ | Agentic RAG-ot alkalmaz munkameneteken átívelő beszélgetési előzmények visszakeresésére. |
+| 3-10 | [contextual-retrieval](contextual-retrieval/) | ✅ | Kontextuselőtagot ad a szövegrészletekhez a visszakeresési hibák csökkentésére. |
+| 3-11 | [contextual-retrieval-for-user-memory](contextual-retrieval-for-user-memory/) | ✅ | Az Advanced JSON Cards és Contextual RAG megoldásokat kétrétegű memóriává egyesíti. |
+| 3-12 | [structured-knowledge-extraction](structured-knowledge-extraction/) | ✅ | Döntési tényezőket és esetprototípusokat nyer ki bírósági határozatok adathalmazából. |
 
 ## Projekttípusok
 

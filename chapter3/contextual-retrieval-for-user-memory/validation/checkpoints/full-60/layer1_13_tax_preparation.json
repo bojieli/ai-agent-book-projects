@@ -1011,7 +1011,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_13_tax_preparation attempt 1",
+      "purpose": "3-11 live contextual prefixes layer1_13_tax_preparation attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:56:22.484682+00:00",
@@ -1094,7 +1094,7 @@
       "response_id": "02178535858270545323167f444566161ccbd236f48bec5b822e9"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_13_tax_preparation iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_13_tax_preparation iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:57:18.063536+00:00",
@@ -1205,7 +1205,7 @@
       "response_id": "02178535863825245323167f444566161ccbd236f48bec55eb56c"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_13_tax_preparation iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_13_tax_preparation iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:57:19.271752+00:00",
@@ -1336,7 +1336,7 @@
       "response_id": "02178535863946245323167f444566161ccbd236f48bec54f8128"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_13_tax_preparation iteration 3",
+      "purpose": "3-9 live ReAct search planner layer1_13_tax_preparation iteration 3",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:57:29.673629+00:00",
@@ -1477,7 +1477,7 @@
       "response_id": "02178535864986445323167f444566161ccbd236f48bec52fc041"
     },
     {
-      "purpose": "3-12 grounded answer layer1_13_tax_preparation plain",
+      "purpose": "3-11 grounded answer layer1_13_tax_preparation plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:57:42.755576+00:00",
@@ -1557,7 +1557,7 @@
       "response_id": "02178535866294445323167f444566161ccbd236f48bec5babbc6"
     },
     {
-      "purpose": "3-12 grounded answer layer1_13_tax_preparation contextual",
+      "purpose": "3-11 grounded answer layer1_13_tax_preparation contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:58:02.051740+00:00",
@@ -1637,7 +1637,7 @@
       "response_id": "02178535868224045323167f444566161ccbd236f48bec549a105"
     },
     {
-      "purpose": "3-12 grounded answer layer1_13_tax_preparation dual_layer",
+      "purpose": "3-11 grounded answer layer1_13_tax_preparation dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:58:21.195920+00:00",
@@ -1717,7 +1717,7 @@
       "response_id": "02178535870138645323167f444566161ccbd236f48bec5fd115a"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_13_tax_preparation",
+      "purpose": "3-9/3-11 independent judge layer1_13_tax_preparation",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T20:58:41.051459+00:00",

@@ -1,4 +1,4 @@
-"""Focused validation for Experiment 4-2 desktop/mobile execution tools."""
+"""Focused validation for Experiment 4-3 desktop/mobile execution tools."""
 
 from __future__ import annotations
 

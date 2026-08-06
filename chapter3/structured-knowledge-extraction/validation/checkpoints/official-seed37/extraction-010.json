@@ -309,7 +309,7 @@
     ]
   },
   "receipt": {
-    "purpose": "3-13 modular extraction batch 10",
+    "purpose": "3-12 modular extraction batch 10",
     "provider": "ark",
     "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
     "started_at": "2026-07-29T21:07:52.105984+00:00",

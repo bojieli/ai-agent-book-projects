@@ -4,7 +4,7 @@
     "advice": "匹配依据为本案诈骗金额（130000元）、诈骗目标（个人）、诈骗次数（1次）、诈骗被害人数量（1人）、犯罪金额（130000元）等因素与训练原型“诈骗罪-prototype-1”的高权重特征（z值较高）存在关联。该原型包含98个案件，其刑期统计区间为：中位数18个月，四分位区间8-37.5个月，最小值4个月，最大值180个月。需注意，本案退赃情况、坦白、赔偿谅解等情节未知，且诈骗方法（伪造证件）与原型定义特征中的“虚构事实”不完全一致，刑期存在不确定性。"
   },
   "receipt": {
-    "purpose": "3-13 held-out prototype-grounded advice cail2018-2c6e52cdfbb2c177",
+    "purpose": "3-12 held-out prototype-grounded advice cail2018-2c6e52cdfbb2c177",
     "provider": "ark",
     "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
     "started_at": "2026-07-30T04:42:30.206458+00:00",

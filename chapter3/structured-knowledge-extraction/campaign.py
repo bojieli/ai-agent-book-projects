@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Canonical official-CAIL2018 campaign for Experiment 3-13."""
+"""Canonical official-CAIL2018 campaign for Experiment 3-12."""
 
 from __future__ import annotations
 
@@ -195,7 +195,7 @@ def discovery_batch(cache: CachedCalls, rows: List[Dict[str, Any]], index: int):
     cases = [{"id": row["id"], "charge": row["charge"], "fact": row["fact"]} for row in rows]
     return cache.json_call(
         provider="ark",
-        purpose=f"3-13 bottom-up factor discovery batch {index}",
+        purpose=f"3-12 bottom-up factor discovery batch {index}",
         messages=[{"role": "system", "content": DISCOVERY_SYSTEM}, {"role": "user", "content": json.dumps(cases, ensure_ascii=False)}],
         max_tokens=3500,
         key=f"discovery-{index:03d}",
@@ -232,7 +232,7 @@ key,name_cn,kind(numeric|bool|categorical),values,direction(aggravating|mitigati
 只返回 JSON：{{"core":[],"extensions":{{"盗窃罪":[],"故意伤害罪":[],"诈骗罪":[]}}}}。"""
     parsed, receipt = cache.json_call(
         provider="ark",
-        purpose="3-13 consolidate bottom-up factors",
+        purpose="3-12 consolidate bottom-up factors",
         messages=[{"role": "system", "content": system}, {"role": "user", "content": json.dumps(raw_factors, ensure_ascii=False)}],
         max_tokens=5000,
         key="schema-consolidation",
@@ -256,7 +256,7 @@ numeric 输出数值，bool 输出 true/false，categorical 取 schema 值；文
 保持每个 id 与 charge。只返回 JSON：{"cases":[{"id":"...","charge":"...","factors":{...}},...]}。"""
     return cache.json_call(
         provider="ark",
-        purpose=f"3-13 modular extraction batch {index}",
+        purpose=f"3-12 modular extraction batch {index}",
         messages=[
             {"role": "system", "content": system},
             {"role": "user", "content": f"DISCOVERED SCHEMA:\n{json.dumps(schema, ensure_ascii=False)}\n\nCASES:\n{json.dumps(cases, ensure_ascii=False)}"},
@@ -276,7 +276,7 @@ def extraction_case(cache: CachedCalls, schema: Dict[str, Any], row: Dict[str, A
     """
     return cache.json_call(
         provider="ark",
-        purpose=f"3-13 modular extraction case {row['id']}",
+        purpose=f"3-12 modular extraction case {row['id']}",
         messages=[
             {
                 "role": "system",
@@ -482,7 +482,7 @@ def advice_one(cache: CachedCalls, row: Dict[str, Any], prototype: Dict[str, Any
         },
         {"role": "user", "content": f"HELDOUT EXTRACTED FACTORS:\n{json.dumps(row['extracted'], ensure_ascii=False)}\n\nMATCHED TRAINING PROTOTYPE ONLY:\n{json.dumps(allowed, ensure_ascii=False)}"},
     ]
-    parsed, receipt = cache.json_call(provider="ark", purpose=f"3-13 held-out prototype-grounded advice {row['id']}", messages=messages, max_tokens=900, key=f"advice-{index:03d}-{row['id']}")
+    parsed, receipt = cache.json_call(provider="ark", purpose=f"3-12 held-out prototype-grounded advice {row['id']}", messages=messages, max_tokens=900, key=f"advice-{index:03d}-{row['id']}")
     advice = str(parsed.get("advice") or "").strip() + "\n\n" + DISCLAIMER
     return {"id": row["id"], "charge": row["charge"], "extracted": row["extracted"], "prototype": allowed, "advice": advice, "source_fact": row["fact"], "actual_label_months": row["label_months"], "advice_request_excludes_label": "label_months" not in json.dumps(receipt.get("request", {}), ensure_ascii=False)}, receipt
 
@@ -507,7 +507,7 @@ def judge_one(cache: CachedCalls, result: Dict[str, Any], index: int):
 "disclaimer_present":true,"unsupported_claim":false,"reasoning":"..."}}；分数 1-4。""",
         },
     ]
-    parsed, receipt = cache.json_call(provider="moonshot", purpose=f"3-13 independent held-out judge {result['id']}", messages=messages, max_tokens=700, key=f"judge-{index:03d}-{result['id']}")
+    parsed, receipt = cache.json_call(provider="moonshot", purpose=f"3-12 independent held-out judge {result['id']}", messages=messages, max_tokens=700, key=f"judge-{index:03d}-{result['id']}")
     result["judge"] = parsed
     return result, receipt
 
@@ -735,7 +735,7 @@ def main() -> int:
         "prototype_model": model,
         "heldout_advice": heldout_results,
     }
-    manifest = write_campaign_evidence(HERE, "3-13", evidence, receipts, input_paths=[HERE / "campaign.py", archive, sample_path])
+    manifest = write_campaign_evidence(HERE, "3-12", evidence, receipts, input_paths=[HERE / "campaign.py", archive, sample_path])
     print(json.dumps(manifest["summary"], ensure_ascii=False, indent=2))
     print(f"Canonical evidence: {HERE / 'validation' / 'latest.json'}")
     return 0 if acceptance["passed"] else 1

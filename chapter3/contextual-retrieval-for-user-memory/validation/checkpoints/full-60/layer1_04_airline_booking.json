@@ -586,7 +586,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_04_airline_booking attempt 1",
+      "purpose": "3-11 live contextual prefixes layer1_04_airline_booking attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:52:31.230445+00:00",
@@ -669,7 +669,7 @@
       "response_id": "0217853583515961f1c2502e2c4024a5d577df8bf366bf3a423a4"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_04_airline_booking iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_04_airline_booking iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:53:34.727298+00:00",
@@ -780,7 +780,7 @@
       "response_id": "0217853584149181f1c2502e2c4024a5d577df8bf366bf33d2e59"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_04_airline_booking iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_04_airline_booking iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:53:36.218149+00:00",
@@ -902,7 +902,7 @@
       "response_id": "0217853584164091f1c2502e2c4024a5d577df8bf366bf38c08b9"
     },
     {
-      "purpose": "3-12 grounded answer layer1_04_airline_booking plain",
+      "purpose": "3-11 grounded answer layer1_04_airline_booking plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:53:44.509135+00:00",
@@ -982,7 +982,7 @@
       "response_id": "0217853584246991f1c2502e2c4024a5d577df8bf366bf3a2d431"
     },
     {
-      "purpose": "3-12 grounded answer layer1_04_airline_booking contextual",
+      "purpose": "3-11 grounded answer layer1_04_airline_booking contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:53:59.024202+00:00",
@@ -1062,7 +1062,7 @@
       "response_id": "0217853584392141f1c2502e2c4024a5d577df8bf366bf34f3d3d"
     },
     {
-      "purpose": "3-12 grounded answer layer1_04_airline_booking dual_layer",
+      "purpose": "3-11 grounded answer layer1_04_airline_booking dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:54:09.115537+00:00",
@@ -1142,7 +1142,7 @@
       "response_id": "0217853584493061f1c2502e2c4024a5d577df8bf366bf3c7926e"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_04_airline_booking",
+      "purpose": "3-9/3-11 independent judge layer1_04_airline_booking",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T20:54:18.589508+00:00",

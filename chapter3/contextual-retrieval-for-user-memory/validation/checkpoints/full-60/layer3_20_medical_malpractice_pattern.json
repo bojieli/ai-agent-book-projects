@@ -1235,7 +1235,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_20_medical_malpractice_pattern attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_20_medical_malpractice_pattern attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:39:55.714854+00:00",
@@ -1318,7 +1318,7 @@
       "response_id": "0217853611959475132ef2fc362c0fde720570d7def1b4f2bd911"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_20_medical_malpractice_pattern iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_20_medical_malpractice_pattern iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:41:47.612074+00:00",
@@ -1429,7 +1429,7 @@
       "response_id": "0217853613077995132ef2fc362c0fde720570d7def1b4f8ad73c"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_20_medical_malpractice_pattern iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_20_medical_malpractice_pattern iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:41:48.941043+00:00",
@@ -1576,7 +1576,7 @@
       "response_id": "0217853613091315132ef2fc362c0fde720570d7def1b4f27eed1"
     },
     {
-      "purpose": "3-12 grounded answer layer3_20_medical_malpractice_pattern plain",
+      "purpose": "3-11 grounded answer layer3_20_medical_malpractice_pattern plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:42:12.260392+00:00",
@@ -1656,7 +1656,7 @@
       "response_id": "0217853613324475132ef2fc362c0fde720570d7def1b4f1dd71f"
     },
     {
-      "purpose": "3-12 grounded answer layer3_20_medical_malpractice_pattern contextual",
+      "purpose": "3-11 grounded answer layer3_20_medical_malpractice_pattern contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:42:54.978326+00:00",
@@ -1736,7 +1736,7 @@
       "response_id": "0217853613751675132ef2fc362c0fde720570d7def1b4fdc2dac"
     },
     {
-      "purpose": "3-12 grounded answer layer3_20_medical_malpractice_pattern dual_layer",
+      "purpose": "3-11 grounded answer layer3_20_medical_malpractice_pattern dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:43:33.578680+00:00",
@@ -1816,7 +1816,7 @@
       "response_id": "0217853614137675132ef2fc362c0fde720570d7def1b4fefdd98"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_20_medical_malpractice_pattern",
+      "purpose": "3-9/3-11 independent judge layer3_20_medical_malpractice_pattern",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:44:08.595388+00:00",

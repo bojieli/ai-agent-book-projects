@@ -1014,7 +1014,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer2_09_multiple_children_schools attempt 1",
+      "purpose": "3-11 live contextual prefixes layer2_09_multiple_children_schools attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:07:06.573724+00:00",
@@ -1097,7 +1097,7 @@
       "response_id": "021785359226808ffa263910bfaab0198f27d0234753c499f7a10"
     },
     {
-      "purpose": "3-12 live contextual prefixes layer2_09_multiple_children_schools attempt 2",
+      "purpose": "3-11 live contextual prefixes layer2_09_multiple_children_schools attempt 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:08:26.385911+00:00",
@@ -1180,7 +1180,7 @@
       "response_id": "021785359306577ffa263910bfaab0198f27d0234753c49731112"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_09_multiple_children_schools iteration 1",
+      "purpose": "3-9 live ReAct search planner layer2_09_multiple_children_schools iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:08:52.062855+00:00",
@@ -1299,7 +1299,7 @@
       "response_id": "021785359332254ffa263910bfaab0198f27d0234753c49c875a5"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_09_multiple_children_schools iteration 2",
+      "purpose": "3-9 live ReAct search planner layer2_09_multiple_children_schools iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:08:53.477045+00:00",
@@ -1443,7 +1443,7 @@
       "response_id": "021785359333669ffa263910bfaab0198f27d0234753c4968b6e1"
     },
     {
-      "purpose": "3-12 grounded answer layer2_09_multiple_children_schools plain",
+      "purpose": "3-11 grounded answer layer2_09_multiple_children_schools plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:09:18.326035+00:00",
@@ -1523,7 +1523,7 @@
       "response_id": "021785359358518ffa263910bfaab0198f27d0234753c49e43f3f"
     },
     {
-      "purpose": "3-12 grounded answer layer2_09_multiple_children_schools contextual",
+      "purpose": "3-11 grounded answer layer2_09_multiple_children_schools contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:09:43.702938+00:00",
@@ -1603,7 +1603,7 @@
       "response_id": "021785359383894ffa263910bfaab0198f27d0234753c491e9cc0"
     },
     {
-      "purpose": "3-12 grounded answer layer2_09_multiple_children_schools dual_layer",
+      "purpose": "3-11 grounded answer layer2_09_multiple_children_schools dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:10:13.934102+00:00",
@@ -1683,7 +1683,7 @@
       "response_id": "021785359414126ffa263910bfaab0198f27d0234753c49493166"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer2_09_multiple_children_schools",
+      "purpose": "3-9/3-11 independent judge layer2_09_multiple_children_schools",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:10:46.553297+00:00",

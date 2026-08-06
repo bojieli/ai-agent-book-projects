@@ -634,7 +634,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_12_gym_membership attempt 1",
+      "purpose": "3-11 live contextual prefixes layer1_12_gym_membership attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:49.787857+00:00",
@@ -717,7 +717,7 @@
       "response_id": "0217853585500079ccb9afc7f062b2675deaa60a1d1ba87399b26"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_12_gym_membership iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_12_gym_membership iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:56:46.743550+00:00",
@@ -828,7 +828,7 @@
       "response_id": "0217853586069329ccb9afc7f062b2675deaa60a1d1ba872abaec"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_12_gym_membership iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_12_gym_membership iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:56:48.226170+00:00",
@@ -950,7 +950,7 @@
       "response_id": "0217853586084169ccb9afc7f062b2675deaa60a1d1ba87b2504d"
     },
     {
-      "purpose": "3-12 grounded answer layer1_12_gym_membership plain",
+      "purpose": "3-11 grounded answer layer1_12_gym_membership plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:56:58.693694+00:00",
@@ -1030,7 +1030,7 @@
       "response_id": "0217853586188829ccb9afc7f062b2675deaa60a1d1ba8754fc0a"
     },
     {
-      "purpose": "3-12 grounded answer layer1_12_gym_membership contextual",
+      "purpose": "3-11 grounded answer layer1_12_gym_membership contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:57:15.341623+00:00",
@@ -1110,7 +1110,7 @@
       "response_id": "0217853586355299ccb9afc7f062b2675deaa60a1d1ba87f2470f"
     },
     {
-      "purpose": "3-12 grounded answer layer1_12_gym_membership dual_layer",
+      "purpose": "3-11 grounded answer layer1_12_gym_membership dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:57:32.966171+00:00",
@@ -1190,7 +1190,7 @@
       "response_id": "0217853586531549ccb9afc7f062b2675deaa60a1d1ba87605ecd"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_12_gym_membership",
+      "purpose": "3-9/3-11 independent judge layer1_12_gym_membership",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T20:57:47.595697+00:00",

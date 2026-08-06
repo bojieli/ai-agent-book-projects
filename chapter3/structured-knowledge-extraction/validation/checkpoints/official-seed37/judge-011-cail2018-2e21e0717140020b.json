@@ -10,7 +10,7 @@
     "reasoning": "生成建议与原型统计数据紧密匹配，明确指出了待预测案件与原型案件在关键特征上的一致性，如'proceeds_use=挥霍'、'booty_squandered=true'等，这与原型定义特征高度相关。同时，建议中也提到了案件中某些特征与原型存在差异，如'fraud_victim_count'、'fraud_amount'等，这可能影响刑期预测，体现了对统计数据的准确理解和应用。建议中还强调了刑期预测的不确定性，提醒可能落在统计区间内，体现了对统计数据的谨慎态度。此外，建议中包含了明确的法律免责声明，符合要求。"
   },
   "receipt": {
-    "purpose": "3-13 independent held-out judge cail2018-2e21e0717140020b",
+    "purpose": "3-12 independent held-out judge cail2018-2e21e0717140020b",
     "provider": "moonshot",
     "endpoint": "https://api.moonshot.cn/v1",
     "started_at": "2026-07-30T04:43:02.894728+00:00",

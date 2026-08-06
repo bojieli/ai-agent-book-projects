@@ -1134,7 +1134,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer2_19_investment_market_response attempt 1",
+      "purpose": "3-11 live contextual prefixes layer2_19_investment_market_response attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:17:15.679290+00:00",
@@ -1217,7 +1217,7 @@
       "response_id": "021785359835910387079dd26c99e87d331bd24b7eb1a4c2dcbb9"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_19_investment_market_response iteration 1",
+      "purpose": "3-9 live ReAct search planner layer2_19_investment_market_response iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:19:11.590357+00:00",
@@ -1336,7 +1336,7 @@
       "response_id": "021785359951778387079dd26c99e87d331bd24b7eb1a4ce0ddf1"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_19_investment_market_response iteration 2",
+      "purpose": "3-9 live ReAct search planner layer2_19_investment_market_response iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:19:13.010688+00:00",
@@ -1471,7 +1471,7 @@
       "response_id": "021785359953198387079dd26c99e87d331bd24b7eb1a4cdae13a"
     },
     {
-      "purpose": "3-12 grounded answer layer2_19_investment_market_response plain",
+      "purpose": "3-11 grounded answer layer2_19_investment_market_response plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:19:34.440206+00:00",
@@ -1551,7 +1551,7 @@
       "response_id": "021785359974627387079dd26c99e87d331bd24b7eb1a4c47bff3"
     },
     {
-      "purpose": "3-12 grounded answer layer2_19_investment_market_response contextual",
+      "purpose": "3-11 grounded answer layer2_19_investment_market_response contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:20:09.132785+00:00",
@@ -1631,7 +1631,7 @@
       "response_id": "021785360009321387079dd26c99e87d331bd24b7eb1a4c6edb98"
     },
     {
-      "purpose": "3-12 grounded answer layer2_19_investment_market_response dual_layer",
+      "purpose": "3-11 grounded answer layer2_19_investment_market_response dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:20:40.428604+00:00",
@@ -1711,7 +1711,7 @@
       "response_id": "021785360040616387079dd26c99e87d331bd24b7eb1a4c4be20a"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer2_19_investment_market_response",
+      "purpose": "3-9/3-11 independent judge layer2_19_investment_market_response",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:21:21.940519+00:00",

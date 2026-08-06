@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""执行工具统一命令行入口（实验 4-2：执行工具 MCP 服务器）。
+"""执行工具统一命令行入口（实验 4-3：执行工具 MCP 服务器）。
 
 本文件提供一个 argparse 命令行界面，用于列出、单独调用每个执行工具，并运行
 一个端到端的离线演示。它复用 server.py 背后的同一批工具实现，因此命令行的
@@ -313,7 +313,7 @@ def cmd_demo(args: argparse.Namespace) -> int:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="cli.py",
-        description="执行工具统一命令行入口（实验 4-2：执行工具 MCP 服务器）。",
+        description="执行工具统一命令行入口（实验 4-3：执行工具 MCP 服务器）。",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=textwrap.dedent("""\
             示例：

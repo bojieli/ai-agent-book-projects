@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real Intel SDM RAPTOR-vs-GraphRAG campaign for Experiment 3-8.
+"""Real Intel SDM RAPTOR-vs-GraphRAG campaign for Experiment 3-7.
 
 This campaign deliberately does not use the hand-authored offline demo.  It
 extracts a bounded, pinned set of pages from Intel's current Volume 1 PDF,
@@ -398,7 +398,7 @@ def call_totals(calls: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Experiment 3-8 real Intel structured-index campaign")
+    parser = argparse.ArgumentParser(description="Experiment 3-7 real Intel structured-index campaign")
     parser.add_argument("--pdf", type=Path, default=PROJECT_DIR / "data" / "intel-sdm-volume-1.pdf")
     parser.add_argument("--model", default=os.getenv("ARK_MODEL", "doubao-seed-1-6-250615"))
     parser.add_argument("--judge-model", default=os.getenv("STRUCTURED_INDEX_JUDGE", "moonshot-v1-32k"))
@@ -546,7 +546,7 @@ def main() -> int:
         "checkpoint_files": [str(ark.checkpoint), str(judge.checkpoint)],
     }
     manifest = write_campaign_evidence(
-        PROJECT_DIR, "3-8", evidence,
+        PROJECT_DIR, "3-7", evidence,
         receipts=ark.recorder.calls + judge.recorder.calls,
         input_paths=[__file__, args.pdf, PROJECT_DIR / "config.py", PROJECT_DIR / "raptor_indexer.py", PROJECT_DIR / "graphrag_indexer.py"],
     )

@@ -1,4 +1,4 @@
-"""Acceptance-ledger regression tests for the durable Experiment 4-5 run."""
+"""Acceptance-ledger regression tests for the durable Experiment 4-6 run."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 PATH = HERE / "run_real_experiment.py"
-SPEC = importlib.util.spec_from_file_location("experiment_4_5_real", PATH)
+SPEC = importlib.util.spec_from_file_location("experiment_4_6_real", PATH)
 runner = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
 sys.modules[SPEC.name] = runner
@@ -19,9 +19,9 @@ SPEC.loader.exec_module(runner)
 
 
 def _campaign() -> tuple[list[dict], dict]:
-    root = HERE / "validation" / "experiment_4_5"
+    root = HERE / "validation" / "experiment_4_6"
     campaigns = sorted(path for path in root.iterdir() if path.is_dir())
-    assert campaigns, "a durable Experiment 4-5 campaign is required"
+    assert campaigns, "a durable Experiment 4-6 campaign is required"
     campaign = campaigns[-1]
     scenarios = [json.loads(path.read_text(encoding="utf-8"))
                  for path in sorted((campaign / "scenarios").glob("*.json"))]

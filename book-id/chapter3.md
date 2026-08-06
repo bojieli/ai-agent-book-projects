@@ -61,7 +61,7 @@ Mengacu pada LoCoMo dan sejenisnya, serta praktik produk memori komersial, kemam
 - **Kesadaran Waktu**: Mengingat tanggal, paham waktu relatif, melakukan hitungan waktu
 - **Penyelesaian Konflik**: Mengetahui dan mengatasi pertentangan informasi memori
 
-Berdasarkan hal ini, kami menyusun kerangka evaluasi tiga tingkat yang lebih sesuai untuk skenario Agent, dengan memecah kemampuan memori menjadi tingkat-tingkat berurutan. Kerangka ini akan terus muncul di bab ini—Eksperimen 3-10 dan 3-12 nanti akan memakainya guna mengukur efek teknik retrieval terhadap memori.
+Berdasarkan hal ini, kami menyusun kerangka evaluasi tiga tingkat yang lebih sesuai untuk skenario Agent, dengan memecah kemampuan memori menjadi tingkat-tingkat berurutan. Kerangka ini akan terus muncul di bab ini—Eksperimen 3-9 dan 3-11 nanti akan memakainya guna mengukur efek teknik retrieval terhadap memori.
 
 **Tingkat 1: Pengingatan Dasar (Basic Recall)** — Ini adalah kemampuan paling dasar sistem memori, yang meminta Agent menyimpan dan menemukan kembali informasi terstruktur yang pengguna berikan langsung. Contoh, "Nomor keanggotaan saya 12345" harus dibalikkan persis seperti itu. Tingkat ini menjamin sistem memori bisa diandalkan secara dasar dan menjadi fondasi untuk kemampuan yang lebih rumit.
 
@@ -484,7 +484,7 @@ Namun, sebagai solusi penyimpanan **tujuan umum** untuk User Memory, grafik peng
 
 Oleh karena itu, strategi yang direkomendasikan dalam praktiknya adalah **desain yang berlapis dan saling melengkapi**: pertahankan informasi inti dalam bahasa alami yang lengkap (mempertahankan integritas semantik), dilengkapi dengan metadata terstruktur untuk pengindeksan dan retrieval (menyeimbangkan efisiensi kueri); di domain khusus yang membutuhkan penalaran multi-hop dan disambiguasi yang tepat (misalnya, konsultasi medis, analisis kasus hukum, manajemen hubungan keluarga), gunakan grafik pengetahuan sebagai alat pengindeksan khusus, yang bekerja selaras dengan memori bahasa alami.
 
-> **Eksperimen 3-8 ★★★: Pengindeksan Terstruktur: Filosofi Organisasi Pengetahuan RAPTOR dan GraphRAG**
+> **Eksperimen 3-7 ★★★: Pengindeksan Terstruktur: Filosofi Organisasi Pengetahuan RAPTOR dan GraphRAG**
 >
 > Proyek `structured-index` mengimplementasikan sepenuhnya kedua metode tersebut dalam kerangka kerja terpadu, diterapkan pada pengindeksan dan pencarian kueri manual teknis untuk arsitektur CPU Intel yang mencakup ribuan halaman—sebuah contoh klasik dari pengetahuan yang sangat terstruktur, hierarkis, dan relasional.
 >
@@ -572,7 +572,7 @@ Agentic RAG menggabungkan retrieval dan penalaran melalui keputusan Agent itu se
 
 ![Gambar 3-13: Arsitektur Sistem Agentic RAG](images/fig3-13.svg)
 
-> **Eksperimen 3-9 ★★: Studi Banding Agentic RAG dan Non-Agentic RAG**
+> **Eksperimen 3-8 ★★: Studi Banding Agentic RAG dan Non-Agentic RAG**
 >
 > Proyek `agentic-rag` membangun sistem Agent yang utuh dan dapat dengan bebas beralih di antara kedua mode serta terhubung ke berbagai backend Knowledge Base (termasuk `retrieval-pipeline`, `structured-index`, dsb.), yang memungkinkan studi ablasi yang komprehensif (yaitu, secara sistematis mengganti atau menonaktifkan suatu komponen untuk mengamati kontribusinya pada efek keseluruhan). Eksperimen ini berpusat di sekitar set data Q&A peradilan Tiongkok yang dikonstruksi secara khusus, yang berisi pertanyaan-pertanyaan hukum mulai dari yang sederhana hingga kompleks.
 
@@ -587,7 +587,7 @@ Agentic RAG menggabungkan retrieval dan penalaran melalui keputusan Agent itu se
 
 Bab ini dan bab sebelumnya keduanya membahas Context—satu di dalam *single session*, yang lainnya melintasi *multiple sessions*. Apa yang terutama dikonsolidasikan oleh bab ini adalah pengetahuan deklaratif tentang pengguna dan dunia. Bab 8 menggunakan kembali infrastruktur ekstraksi dan *retrieval* yang sama, tetapi menerapkannya pada pengetahuan perilaku yang didukung oleh keberhasilan dan kegagalan operasional: "di bawah kondisi apa Agent harus melakukan apa?" Bab berikutnya beralih ke Tools: bagaimana Agents berinteraksi dengan dunia luar melalui desain *tool*, standar interoperabilitas MCP, dan arsitektur *event-driven*.
 
-> **Eksperimen 3-10 ★★: Membangun Memori Pengguna dengan Agentic RAG**
+> **Eksperimen 3-9 ★★: Membangun Memori Pengguna dengan Agentic RAG**
 >
 > Menerapkan agentic RAG ke dalam riwayat percakapan Agent itu sendiri, alih-alih pada Knowledge Base dokumen eksternal, memungkinkan kita membangun memori jangka panjang yang kuat dan dapat diambil (*retrievable*) untuk Agent. Gagasan utamanya: perlakukan seluruh riwayat percakapan Agent dengan pengguna sebagai sebuah Knowledge Base tersendiri. Dengan cara ini, Agent dapat "mengingat" interaksi masa lalu dan secara aktif melakukan *retrieve* terhadap "memori" ini saat dibutuhkan, untuk lebih memahami *context* saat ini dan memberikan layanan yang dipersonalisasi. Berbeda dengan **strategi representasi dan manajemen** untuk memori (seperti desain terstruktur dari Advanced JSON Cards) yang dibahas sebelumnya di bab ini, eksperimen ini berfokus pada **bagaimana teknologi *retrieval* meningkatkan kemampuan *recall* memori**.
 >
@@ -602,7 +602,7 @@ Bab ini dan bab sebelumnya keduanya membahas Context—satu di dalam *single ses
 >
 > Namun, untuk tugas tingkat kedua yang lebih kompleks, keterbatasan pendekatan ini menjadi jelas. Pada *use case* `12_contradictory_financial_instructions.yaml` di direktori `layer2`, sang istri pertama kali mengatur transfer, sang suami lalu mengubah jumlah dan tanggal di panggilan lain, dan akhirnya sang istri menelepon kembali untuk mengubahnya seperti semula. Karena *chunk* percakapan yang di-*index* terisolasi dan kurang *context*, sistem mungkin akan melihat tiga instruksi transfer yang **independen namun kontradiktif** selama *retrieval*, sehingga sulit menentukan mana yang pada akhirnya valid, dan berpotensi menyajikan informasi yang membingungkan atau salah kepada pengguna. Untuk mencapai **tingkat ketiga (*proactive service*)**—menemukan koneksi tersembunyi antara informasi di satu sesi (misalnya, penerbangan yang baru dipesan) dan informasi dari sesi lain beberapa bulan yang lalu (misalnya, paspor yang akan kedaluwarsa)—sekadar melakukan *retrieve* pada riwayat percakapan yang terfragmentasi tidaklah cukup.
 
-Akar penyebab keterbatasan ini terletak pada kelemahan bawaan metode *chunking* tradisional. Bagian selanjutnya memperkenalkan teknik yang mengatasi masalah ini dari akarnya—Contextual Retrieval—yang kemudian akan diterapkan pada skenario User Memory dalam Experiment 3-12.
+Akar penyebab keterbatasan ini terletak pada kelemahan bawaan metode *chunking* tradisional. Bagian selanjutnya memperkenalkan teknik yang mengatasi masalah ini dari akarnya—Contextual Retrieval—yang kemudian akan diterapkan pada skenario User Memory dalam Experiment 3-11.
 
 ### Teknik RAG: Contextual Retrieval
 
@@ -618,7 +618,7 @@ Ini harus dibedakan dengan jelas dari "Contextual Compression" pada Bab 2. Kedua
 
 Keanggunan metode ini adalah memperkuat kedua mode *retrieval* sekaligus. Untuk *sparse retrieval* seperti BM25, *context prefix* menambahkan kata kunci yang kaya dan dapat dicocokkan secara presisi ("ACME", "2025 Q2"). Untuk *dense retrieval* melalui *vector embeddings*, *prefix* menyuntikkan latar belakang semantik utama, sehingga vektor yang dihasilkan mencerminkan makna sebenarnya dari *chunk* tersebut jauh lebih akurat.
 
-> **Eksperimen 3-11 ★★: Contextual Retrieval—Mengatasi Hilangnya Konteks dalam RAG**
+> **Eksperimen 3-10 ★★: Contextual Retrieval—Mengatasi Hilangnya Konteks dalam RAG**
 >
 > Proyek `contextual-retrieval` mengukur, melalui perbandingan terkontrol, seberapa besar Contextual Retrieval meningkatkan *chunking* tradisional. Proyek ini membangun dua Knowledge Base secara paralel: satu menggunakan *context-free chunking* tradisional, dan yang lainnya menggunakan metode lanjutan berbasis *context prefixes* yang dihasilkan oleh LLM. Fungsi `compare_retrieval_methods` memungkinkan *retrieval* simultan di kedua Knowledge Base dengan kueri yang sama dan perbandingan perbedaan hasil secara berdampingan.
 >
@@ -628,9 +628,9 @@ Keanggunan metode ini adalah memperkuat kedua mode *retrieval* sekaligus. Untuk 
 
 Hal itu memvalidasi Contextual Retrieval pada Knowledge Base dokumen. Menerapkan teknik yang sama pada skenario User Memory memberi kita eksperimen berikutnya.
 
-> **Eksperimen 3-12 ★★★: Meningkatkan Memori Pengguna dengan Contextual Retrieval**
+> **Eksperimen 3-11 ★★★: Meningkatkan Memori Pengguna dengan Contextual Retrieval**
 >
-> Menerapkan Contextual Retrieval ke dalam User Memory secara langsung mengatasi titik kelemahan dari riwayat percakapan yang di-*chunk*. Kalimat terisolasi "Oke, mari pesan ini" tidak membawa informasi apa pun; itu hanya bermakna jika Anda tahu *context* sebelumnya adalah "tiket satu arah seharga $500 dari Shanghai ke Seattle." Eksperimen ini dibangun berdasarkan kerangka kerja Experiment 3-10, menambahkan langkah "pembuatan *context*" yang krusial sebelum mengindeks riwayat percakapan—memanggil LLM untuk setiap *chunk* percakapan untuk menghasilkan *prefix summary* yang berisi informasi latar belakang utama.
+> Menerapkan Contextual Retrieval ke dalam User Memory secara langsung mengatasi titik kelemahan dari riwayat percakapan yang di-*chunk*. Kalimat terisolasi "Oke, mari pesan ini" tidak membawa informasi apa pun; itu hanya bermakna jika Anda tahu *context* sebelumnya adalah "tiket satu arah seharga $500 dari Shanghai ke Seattle." Eksperimen ini dibangun berdasarkan kerangka kerja Experiment 3-9, menambahkan langkah "pembuatan *context*" yang krusial sebelum mengindeks riwayat percakapan—memanggil LLM untuk setiap *chunk* percakapan untuk menghasilkan *prefix summary* yang berisi informasi latar belakang utama.
 >
 > Basis memori yang ditingkatkan dengan *context* ini menunjukkan keunggulan yang menentukan saat menangani **konflik faktual**. Kembali ke skenario dalam `12_contradictory_financial_instructions.yaml` di direktori `layer2`, setelah peningkatan *context*, ketiga *chunk* percakapan yang relevan akan memiliki *prefixes* seperti `[Istri Patricia Thompson sedang mengatur wire transfer awal]`, `[Suami James Thompson sedang mengubah wire transfer sebelumnya]`, dan `[Istri mengubah wire transfer lagi setelah perubahan sang suami]`. *Context*, termasuk waktu, orang, dan maksud, memberi Agent petunjuk krusial untuk menentukan prioritas instruksi dan validitas akhir.
 >
@@ -659,7 +659,7 @@ Proses ini terdiri dari dua fase:
 
 ![Gambar 3-15: Pipeline Ekstraksi Pengetahuan Terstruktur](images/fig3-15.svg)
 
-> **Eksperimen 3-13 ★★★: Mengekstraksi Pengetahuan Tersirat dari Data Terstruktur—Studi Kasus Analisis Preseden Hukum**
+> **Eksperimen 3-12 ★★★: Mengekstraksi Pengetahuan Tersirat dari Data Terstruktur—Studi Kasus Analisis Preseden Hukum**
 >
 > Proyek `structured-knowledge-extraction`, berdasarkan dataset peradilan pidana Tiongkok berskala besar CAIL2018, membangun penasihat hukum cerdas yang mempelajari "pengalaman penilaian" dari preseden-preseden.
 >

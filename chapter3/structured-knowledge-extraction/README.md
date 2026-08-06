@@ -1,4 +1,4 @@
-# Experiment 3-13: Extracting Latent Knowledge from Structured Data / 实验 3-13：从结构化数据中提取隐性知识
+# Experiment 3-12: Extracting Latent Knowledge from Structured Data / 实验 3-12：从结构化数据中提取隐性知识
 
 > Companion material for *AI Agents in Depth*, Chapter 3 — judicial case analysis pipeline: bottom-up factor discovery → structured extraction → archetype clustering → conversational advisory Agent.  
 > 配套《深入理解 AI Agent》第 3 章——以司法判例分析为例：因子发现 → 结构化抽取 → 案件原型聚类 → 对话式建议 Agent。
@@ -28,7 +28,7 @@ the deterministic sample and validation evidence are versionable.
 The files described below predate the canonical official-data campaign. They
 remain useful for a fast local walkthrough, but their synthetic cases and
 hand-sized run are mechanism illustrations only; they do not satisfy
-Experiment 3-13. Only `campaign.py` and `validation/latest.json` can close the
+Experiment 3-12. Only `campaign.py` and `validation/latest.json` can close the
 manuscript experiment.
 
 ### What this legacy demo is
@@ -146,7 +146,7 @@ The **intended real dataset is CAIL2018** (Chinese criminal judgments, millions 
 ### 旧版合成教学路径（不属于验收证据）
 
 以下文件早于本页开头的正式 CAIL2018 campaign，仅保留用于快速本地教学。
-合成案例与小规模运行只能说明机制，不能验收实验 3-13；正文验收只认
+合成案例与小规模运行只能说明机制，不能验收实验 3-12；正文验收只认
 `campaign.py` 及 `validation/latest.json`。
 
 ### 这个旧版 demo 是什么

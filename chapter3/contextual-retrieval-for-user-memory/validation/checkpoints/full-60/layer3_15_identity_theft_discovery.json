@@ -1210,7 +1210,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_15_identity_theft_discovery attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_15_identity_theft_discovery attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:34:18.910825+00:00",
@@ -1293,7 +1293,7 @@
       "response_id": "0217853608591401b8c9f69a83502ac57f9e97e4a3cfb74d1968d"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_15_identity_theft_discovery iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_15_identity_theft_discovery iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:36:46.746795+00:00",
@@ -1404,7 +1404,7 @@
       "response_id": "0217853610069351b8c9f69a83502ac57f9e97e4a3cfb742f77a1"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_15_identity_theft_discovery iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_15_identity_theft_discovery iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:36:48.097595+00:00",
@@ -1543,7 +1543,7 @@
       "response_id": "0217853610082861b8c9f69a83502ac57f9e97e4a3cfb74c29d8c"
     },
     {
-      "purpose": "3-12 grounded answer layer3_15_identity_theft_discovery plain",
+      "purpose": "3-11 grounded answer layer3_15_identity_theft_discovery plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:37:00.170863+00:00",
@@ -1623,7 +1623,7 @@
       "response_id": "0217853610203591b8c9f69a83502ac57f9e97e4a3cfb74f18585"
     },
     {
-      "purpose": "3-12 grounded answer layer3_15_identity_theft_discovery contextual",
+      "purpose": "3-11 grounded answer layer3_15_identity_theft_discovery contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:37:28.760768+00:00",
@@ -1703,7 +1703,7 @@
       "response_id": "0217853610489481b8c9f69a83502ac57f9e97e4a3cfb74cc2cf1"
     },
     {
-      "purpose": "3-12 grounded answer layer3_15_identity_theft_discovery dual_layer",
+      "purpose": "3-11 grounded answer layer3_15_identity_theft_discovery dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:37:52.161690+00:00",
@@ -1783,7 +1783,7 @@
       "response_id": "0217853610723491b8c9f69a83502ac57f9e97e4a3cfb74c73002"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_15_identity_theft_discovery",
+      "purpose": "3-9/3-11 independent judge layer3_15_identity_theft_discovery",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:38:16.597663+00:00",

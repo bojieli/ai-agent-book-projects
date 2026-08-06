@@ -1,7 +1,7 @@
 # Execution Tools MCP Server / 执行工具 MCP 服务器
 
-> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-2 ★★**. MCP execution tools with LLM approval, auto-verification, and long-output truncation/persist.  
-> 配套《深入理解 AI Agent》第 4 章 **实验 4-2 ★★**。带 LLM 事前审批、自动校验、长输出截断与持久化的执行工具 MCP 服务器。
+> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-3 ★★**. MCP execution tools with LLM approval, auto-verification, and long-output truncation/persist.  
+> 配套《深入理解 AI Agent》第 4 章 **实验 4-3 ★★**。带 LLM 事前审批、自动校验、长输出截断与持久化的执行工具 MCP 服务器。
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
 
@@ -11,7 +11,7 @@
 
 An MCP (Model Context Protocol) server that provides comprehensive execution tools with built-in safety mechanisms for AI agents.
 
-This project corresponds to Experiment 4-2 in the book’s “Execution Tools” section. It focuses on layered safety (input validation, permission control, LLM pre-approval), automatic syntax verification and feedback loops, and truncation plus persistence of long outputs. Recommended start: `python cli.py demo`.
+This project corresponds to Experiment 4-3 in the book’s “Execution Tools” section. It focuses on layered safety (input validation, permission control, LLM pre-approval), automatic syntax verification and feedback loops, and truncation plus persistence of long outputs. Recommended start: `python cli.py demo`.
 
 ### Features
 
@@ -210,7 +210,7 @@ The server implements a layered architecture:
 
 ### Real desktop and Android environments
 
-The exact Experiment 4-2 runner includes two action probes instead of treating
+The exact Experiment 4-3 runner includes two action probes instead of treating
 installed packages as execution evidence:
 
 - `virtual_desktop_execute` starts a bounded Xvfb display and headful Chromium,
@@ -225,11 +225,11 @@ The AndroidWorld image is external and is not vendored. With a populated image
 available locally, start an API-33 emulator with KVM and run the campaign:
 
 ```bash
-docker run -d --name exp4-2-android --privileged --device /dev/kvm \
+docker run -d --name exp4-3-android --privileged --device /dev/kvm \
   -p 127.0.0.1:5000:5000 android_world_patched:populated3
 
-python run_experiment_4_2.py \
-  --android-container exp4-2-android \
+python run_experiment_4_3.py \
+  --android-container exp4-3-android \
   --github-head-branch <pushed-experiment-branch> \
   --github-base-branch <base-branch>
 ```
@@ -251,7 +251,7 @@ See `examples.py` for comprehensive usage examples.
 
 为 AI Agent 提供带内置安全机制的综合执行工具 MCP（Model Context Protocol）服务器。
 
-本项目对应书中第 4 章「执行工具」一节的实验 4-2，聚焦执行工具的安全机制：
+本项目对应书中第 4 章「执行工具」一节的实验 4-3，聚焦执行工具的安全机制：
 分层安全防护（输入验证、权限控制、LLM 事前审批）、自动语法验证与反馈闭环、
 以及长输出的截断与持久化。推荐从 `python cli.py demo` 开始。
 

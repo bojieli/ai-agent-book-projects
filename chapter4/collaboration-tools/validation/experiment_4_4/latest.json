@@ -1,0 +1,8 @@
+{
+  "experiment": "4-4",
+  "campaign_id": "real_mcp_human_20260803_v2",
+  "status": "blocked",
+  "official_complete": false,
+  "manifest": "validation/experiment_4_4/real_mcp_human_20260803_v2/manifest.json",
+  "manifest_sha256": "9fae8eadec1f9583ba03e21df5c8bc660cc8bec2ba328cf304bcaa0039bd97a3"
+}

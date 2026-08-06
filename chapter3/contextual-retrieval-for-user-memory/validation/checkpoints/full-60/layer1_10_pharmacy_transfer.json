@@ -561,7 +561,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_10_pharmacy_transfer attempt 1",
+      "purpose": "3-11 live contextual prefixes layer1_10_pharmacy_transfer attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:42.019181+00:00",
@@ -644,7 +644,7 @@
       "response_id": "02178535854225060fde4f85d3ced80a85c9996730272b236ac9c"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_10_pharmacy_transfer iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_10_pharmacy_transfer iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:56:28.746205+00:00",
@@ -755,7 +755,7 @@
       "response_id": "02178535858893860fde4f85d3ced80a85c9996730272b211e3d6"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_10_pharmacy_transfer iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_10_pharmacy_transfer iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:56:29.811582+00:00",
@@ -877,7 +877,7 @@
       "response_id": "02178535859000460fde4f85d3ced80a85c9996730272b28168e1"
     },
     {
-      "purpose": "3-12 grounded answer layer1_10_pharmacy_transfer plain",
+      "purpose": "3-11 grounded answer layer1_10_pharmacy_transfer plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:56:35.428457+00:00",
@@ -957,7 +957,7 @@
       "response_id": "02178535859562060fde4f85d3ced80a85c9996730272b2f6fc46"
     },
     {
-      "purpose": "3-12 grounded answer layer1_10_pharmacy_transfer contextual",
+      "purpose": "3-11 grounded answer layer1_10_pharmacy_transfer contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:56:43.775972+00:00",
@@ -1037,7 +1037,7 @@
       "response_id": "02178535860396860fde4f85d3ced80a85c9996730272b2d8212c"
     },
     {
-      "purpose": "3-12 grounded answer layer1_10_pharmacy_transfer dual_layer",
+      "purpose": "3-11 grounded answer layer1_10_pharmacy_transfer dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:56:51.762277+00:00",
@@ -1117,7 +1117,7 @@
       "response_id": "02178535861195460fde4f85d3ced80a85c9996730272b23eb5e0"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_10_pharmacy_transfer",
+      "purpose": "3-9/3-11 independent judge layer1_10_pharmacy_transfer",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T20:57:02.583508+00:00",

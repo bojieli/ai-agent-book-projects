@@ -1154,7 +1154,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_02_medical_insurance_coordination attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_02_medical_insurance_coordination attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:19:51.974605+00:00",
@@ -1237,7 +1237,7 @@
       "response_id": "0217853599922037e77ed289647c83a4aab1892556246c5dca83a"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_02_medical_insurance_coordination iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_02_medical_insurance_coordination iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:21:40.513969+00:00",
@@ -1348,7 +1348,7 @@
       "response_id": "0217853601007017e77ed289647c83a4aab1892556246c5a0f173"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_02_medical_insurance_coordination iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_02_medical_insurance_coordination iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:21:41.683904+00:00",
@@ -1487,7 +1487,7 @@
       "response_id": "0217853601018707e77ed289647c83a4aab1892556246c5668f90"
     },
     {
-      "purpose": "3-12 grounded answer layer3_02_medical_insurance_coordination plain",
+      "purpose": "3-11 grounded answer layer3_02_medical_insurance_coordination plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:21:52.734551+00:00",
@@ -1567,7 +1567,7 @@
       "response_id": "0217853601129227e77ed289647c83a4aab1892556246c5644f4e"
     },
     {
-      "purpose": "3-12 grounded answer layer3_02_medical_insurance_coordination contextual",
+      "purpose": "3-11 grounded answer layer3_02_medical_insurance_coordination contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:22:24.060009+00:00",
@@ -1647,7 +1647,7 @@
       "response_id": "0217853601442467e77ed289647c83a4aab1892556246c5e9925a"
     },
     {
-      "purpose": "3-12 grounded answer layer3_02_medical_insurance_coordination dual_layer",
+      "purpose": "3-11 grounded answer layer3_02_medical_insurance_coordination dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:22:57.853083+00:00",
@@ -1727,7 +1727,7 @@
       "response_id": "0217853601780407e77ed289647c83a4aab1892556246c5af0708"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_02_medical_insurance_coordination",
+      "purpose": "3-9/3-11 independent judge layer3_02_medical_insurance_coordination",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:23:51.688182+00:00",

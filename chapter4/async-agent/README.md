@@ -1,7 +1,7 @@
 # Asynchronous Agent with Parallel Execution and Interruption / 带并行执行和打断能力的异步 Agent
 
-> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-5 ★★★**. Event-driven async Agent framework (Flux): parallel tools, interrupt/cancel, state checkpoints.  
-> 配套《深入理解 AI Agent》第 4 章 **实验 4-5 ★★★**。事件驱动异步 Agent 框架（Flux）：并行工具、打断取消、状态检查点。
+> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-6 ★★★**. Event-driven async Agent framework (Flux): parallel tools, interrupt/cancel, state checkpoints.  
+> 配套《深入理解 AI Agent》第 4 章 **实验 4-6 ★★★**。事件驱动异步 Agent 框架（Flux）：并行工具、打断取消、状态检查点。
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
 
@@ -9,9 +9,9 @@
 
 ## English
 
-This directory is the runnable code for Experiment 4-5. It implements the core of the event-driven asynchronous Agent framework (Flux) described in [`agent_framework_design.md`](./agent_framework_design.md).
+This directory is the runnable code for Experiment 4-6. It implements the core of the event-driven asynchronous Agent framework (Flux) described in [`agent_framework_design.md`](./agent_framework_design.md).
 
-Building on the simple event queue of 4-4, this experiment goes deeper into async Agents and focuses on four things: **async tool execution, event queues and batching, interruption, and cancel/status query for parallel tools**. The Agent must manage concurrent tasks, handle interrupt and recovery, and decide from real-time state.
+Building on the simple event queue of 4-5, this experiment goes deeper into async Agents and focuses on four things: **async tool execution, event queues and batching, interruption, and cancel/status query for parallel tools**. The Agent must manage concurrent tasks, handle interrupt and recovery, and decide from real-time state.
 
 Two usage paths:
 
@@ -91,7 +91,7 @@ pytest -q test_tasks_env.py test_real_tasks.py
 
 The campaign takes about 20 seconds and writes per-scenario receipts, Japanese
 HTML, the integrated report, acceptance gates, and a hash manifest under
-`validation/experiment_4_5/`.
+`validation/experiment_4_6/`.
 
 #### Offline demos (no API key, out of the box)
 
@@ -303,10 +303,10 @@ User: “run these three scripts at once; when the first finishes, query the oth
 
 ## 中文
 
-本目录是《深入理解 AI Agent》实验 4-5 的配套可运行代码，实现了设计文档
+本目录是《深入理解 AI Agent》实验 4-6 的配套可运行代码，实现了设计文档
 [`agent_framework_design.md`](./agent_framework_design.md) 中描述的事件驱动异步 Agent 框架（Flux）的核心部分。
 
-在 4-4 的简单事件队列之上，本实验进入异步 Agent 的深水区，聚焦四件事：
+在 4-5 的简单事件队列之上，本实验进入异步 Agent 的深水区，聚焦四件事：
 **异步工具执行、事件队列与批量处理、打断机制、并行工具的取消与状态查询**。
 Agent 需要同时管理多个并发任务，处理打断与恢复，并根据实时状态动态决策。
 

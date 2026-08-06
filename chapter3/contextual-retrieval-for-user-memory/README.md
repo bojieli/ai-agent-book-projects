@@ -1,4 +1,4 @@
-# Experiment 3-12: Contextual Retrieval for User Memory / 实验 3-12：利用上下文感知检索增强用户记忆
+# Experiment 3-11: Contextual Retrieval for User Memory / 实验 3-11：利用上下文感知检索增强用户记忆
 
 > Companion material for *AI Agents in Depth*, Chapter 3 — dual-layer memory: Contextual RAG + Advanced JSON Cards.  
 > 配套《深入理解 AI Agent》第 3 章——双层记忆：上下文感知 RAG + Advanced JSON Cards。

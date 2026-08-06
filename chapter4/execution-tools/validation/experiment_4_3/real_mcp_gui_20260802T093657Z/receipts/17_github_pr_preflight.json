@@ -1,0 +1,23 @@
+{
+  "case": "github_pr_preflight",
+  "tool": "github_create_pr",
+  "arguments": {
+    "repo_name": "bojieli/ai-agent-book",
+    "title": "feat(ch4): build Experiment 4-3 GUI environments",
+    "body": "Experiment 4-3 evidence: real Android and X11 Computer Use execution.",
+    "head_branch": "exp/4-3-gui-environments",
+    "base_branch": "docs/reconcile-experiment-status-20260802"
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "pr_number": 605,
+    "pr_url": "https://github.com/bojieli/ai-agent-book/pull/605",
+    "title": "feat(ch4): build Experiment 4-3 GUI environments",
+    "state": "open",
+    "created_at": "2026-08-02T09:34:02+00:00",
+    "idempotent_reuse": true
+  },
+  "latency_seconds": 3.464
+}

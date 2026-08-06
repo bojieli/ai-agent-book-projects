@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run all four Experiment 4-5 scenarios with real child processes."""
+"""Run all four Experiment 4-6 scenarios with real child processes."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from tasks import TaskManager, TaskState
 
 HERE = Path(__file__).resolve().parent
 PROTOCOL_PATH = HERE / "experiment_protocol.json"
-VALIDATION_ROOT = HERE / "validation" / "experiment_4_5"
+VALIDATION_ROOT = HERE / "validation" / "experiment_4_6"
 UTC = timezone.utc
 
 
@@ -357,7 +357,7 @@ async def run(campaign_id: str | None, tick_real: float) -> Path:
     for scenario in scenarios:
         write_json(campaign_dir / "scenarios" / f"{scenario['id']}.json", scenario)
     acceptance = derive_acceptance(scenarios, protocol)
-    summary = {"experiment": "4-5", "campaign_id": campaign_id,
+    summary = {"experiment": "4-6", "campaign_id": campaign_id,
                "generated_at": datetime.now(UTC).isoformat(),
                "tick_real_seconds": tick_real,
                "elapsed_seconds": round(time.perf_counter() - started, 3),

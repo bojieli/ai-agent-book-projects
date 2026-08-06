@@ -1120,7 +1120,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer2_03_multiple_credit_cards attempt 1",
+      "purpose": "3-11 live contextual prefixes layer2_03_multiple_credit_cards attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:02:06.777577+00:00",
@@ -1203,7 +1203,7 @@
       "response_id": "0217853589270064bf1de078d3c9f56d53aa0b4387efdeb250509"
     },
     {
-      "purpose": "3-12 live contextual prefixes layer2_03_multiple_credit_cards attempt 2",
+      "purpose": "3-11 live contextual prefixes layer2_03_multiple_credit_cards attempt 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:03:37.132636+00:00",
@@ -1286,7 +1286,7 @@
       "response_id": "0217853590173234bf1de078d3c9f56d53aa0b4387efdeb240e53"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_03_multiple_credit_cards iteration 1",
+      "purpose": "3-9 live ReAct search planner layer2_03_multiple_credit_cards iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:03:48.218710+00:00",
@@ -1397,7 +1397,7 @@
       "response_id": "0217853590284094bf1de078d3c9f56d53aa0b4387efdeb7f9be5"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_03_multiple_credit_cards iteration 2",
+      "purpose": "3-9 live ReAct search planner layer2_03_multiple_credit_cards iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:03:49.379921+00:00",
@@ -1528,7 +1528,7 @@
       "response_id": "0217853590295714bf1de078d3c9f56d53aa0b4387efdebf2760f"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_03_multiple_credit_cards iteration 3",
+      "purpose": "3-9 live ReAct search planner layer2_03_multiple_credit_cards iteration 3",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:04:05.644113+00:00",
@@ -1678,7 +1678,7 @@
       "response_id": "0217853590458334bf1de078d3c9f56d53aa0b4387efdeb7ae18d"
     },
     {
-      "purpose": "3-12 grounded answer layer2_03_multiple_credit_cards plain",
+      "purpose": "3-11 grounded answer layer2_03_multiple_credit_cards plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:04:22.069497+00:00",
@@ -1758,7 +1758,7 @@
       "response_id": "0217853590622594bf1de078d3c9f56d53aa0b4387efdebf4d98f"
     },
     {
-      "purpose": "3-12 grounded answer layer2_03_multiple_credit_cards contextual",
+      "purpose": "3-11 grounded answer layer2_03_multiple_credit_cards contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:04:44.479988+00:00",
@@ -1838,7 +1838,7 @@
       "response_id": "0217853590846704bf1de078d3c9f56d53aa0b4387efdeb8c9770"
     },
     {
-      "purpose": "3-12 grounded answer layer2_03_multiple_credit_cards dual_layer",
+      "purpose": "3-11 grounded answer layer2_03_multiple_credit_cards dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:05:08.736296+00:00",
@@ -1918,7 +1918,7 @@
       "response_id": "0217853591089274bf1de078d3c9f56d53aa0b4387efdeb788862"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer2_03_multiple_credit_cards",
+      "purpose": "3-9/3-11 independent judge layer2_03_multiple_credit_cards",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:05:34.343768+00:00",

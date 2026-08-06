@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Entry point for the shared Experiment 3-10/3-12 controlled campaign."""
+"""Entry point for the shared Experiment 3-9/3-11 controlled campaign."""
 
 import sys
 from pathlib import Path

@@ -4,7 +4,7 @@
     "advice": "匹配依据：待匹配案件的“fraud_target=个人”与训练原型“诈骗罪-prototype-0”的定义特征“cat:fraud_target=个人”相匹配。该原型统计的刑期区间为：最小值3.0个月，25%分位数11.25个月，中位数45.0个月，75%分位数58.5个月，最大值168.0个月。不确定性：待匹配案件中，原型的其他定义特征（如proceeds_use=挥霍、booty_squandered、disposal_of_stolen_property=挥霍、restitution_situation=部分退赃、fraud_victim_count、fraud_amount、return_of_stolen_property=部分退赃等）均无对应因素（显示为null），仅单一特征匹配，匹配度有限，刑期预测存在不确定性。"
   },
   "receipt": {
-    "purpose": "3-13 held-out prototype-grounded advice cail2018-13dd35638f8b54b0",
+    "purpose": "3-12 held-out prototype-grounded advice cail2018-13dd35638f8b54b0",
     "provider": "ark",
     "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
     "started_at": "2026-07-30T04:42:26.558117+00:00",

@@ -63,7 +63,7 @@ Sintetizando diversos benchmarks de memoria como LoCoMo y la práctica de produc
 - **Conciencia temporal**: recordar fechas, entender el tiempo relativo y realizar cálculos temporales.
 - **Resolución de conflictos**: identificar y resolver inconsistencias entre memorias.
 
-Con esta base, diseñamos un marco de evaluación de tres niveles orientado a escenarios de Agentes, descomponiendo la capacidad de memoria en niveles progresivos. Este marco atravesará todo el capítulo: los experimentos 3-10 y 3-12 lo utilizarán para medir cómo la tecnología de búsqueda mejora la memoria.
+Con esta base, diseñamos un marco de evaluación de tres niveles orientado a escenarios de Agentes, descomponiendo la capacidad de memoria en niveles progresivos. Este marco atravesará todo el capítulo: los experimentos 3-9 y 3-11 lo utilizarán para medir cómo la tecnología de búsqueda mejora la memoria.
 
 **Primer Nivel: Recordatorio Básico**: Es la capacidad más fundamental del sistema de memoria, que exige al Agente almacenar y recuperar con precisión información directa, estructurada y sin ambigüedades proporcionada por el usuario (como "Mi número de socio es 12345") cuando se requiera. Este nivel garantiza la confiabilidad básica del sistema de memoria y es la base de capacidades más complejas.
 
@@ -505,7 +505,7 @@ Sin embargo, como solución de almacenamiento **genérica** para la memoria del 
 
 Por ello, la estrategia recomendada en la práctica es la **complementariedad por capas**: conservar la información central en lenguaje natural completo (preservando la integridad semántica), complementada con metadatos estructurados para la indexación y búsqueda (optimizando la eficiencia); mientras que en escenarios verticales que exigen razonamiento multisalto y desambiguación precisa (como consultas médicas, análisis de casos legales o gestión de relaciones familiares), se emplea el grafo de conocimiento como índice especializado que trabaja en sinergia con la memoria en lenguaje natural.
 
-> **Experimento 3-8 ★★★: Indexación estructurada: la filosofía de organización del conocimiento de RAPTOR y GraphRAG**
+> **Experimento 3-7 ★★★: Indexación estructurada: la filosofía de organización del conocimiento de RAPTOR y GraphRAG**
 >
 > El proyecto `structured-index` implementa ambos métodos en un marco unificado, aplicándolos a la indexación y consulta de un manual de arquitectura de CPU Intel de miles de páginas, ejemplo típico de conocimiento altamente estructurado, jerárquico y relacionado.
 >
@@ -597,7 +597,7 @@ El RAG agentizado integra la búsqueda y el razonamiento mediante decisiones aut
 ![Figura 3-13: Arquitectura del sistema RAG Agentizado](images/fig3-13.svg)
 
 
-> **Experimento 3-9 ★★: Estudio comparativo entre RAG agentizado y RAG no agentizado**
+> **Experimento 3-8 ★★: Estudio comparativo entre RAG agentizado y RAG no agentizado**
 >
 > El proyecto `agentic-rag` construye un sistema de Agente completo capaz de alternar entre ambos modos y conectarse a diversos motores traseros de conocimiento (`retrieval-pipeline`, `structured-index`), permitiendo realizar experimentos de ablación (sustituir o desactivar componentes para medir su contribución). Las pruebas se basan en un conjunto de datos de preguntas y respuestas jurídicas en chino con problemas de diversa complejidad.
 >
@@ -610,9 +610,9 @@ El RAG agentizado integra la búsqueda y el razonamiento mediante decisiones aut
 >
 > Este experimento demuestra que el valor del RAG agentizado reside en su capacidad para "resolver problemas" en lugar de limitarse a "responder preguntas". Al asumir un ligero costo en tiempo de respuesta, gana una robustez superior y mayor calidad en la resolución de problemas complejos. Esta transición de "canalización pasiva" a "explorador activo" se refleja directamente en el incremento de precisión en consultas multisalto en escenarios jurídicos.
 
-Hasta aquí hemos cubierto la tecnología desde la búsqueda básica hasta la indexación estructurada y el RAG agentizado. Retomando la cuestión planteada al inicio del capítulo: cuando los recuerdos del usuario se acumulan por millares, ¿cómo recuperar con precisión las entradas relevantes y distinguir registros contradictorios? Aplicaremos ahora estas tecnologías de base de conocimiento **de forma inversa** a la memoria del usuario. Los experimentos 3-10 y 3-12 utilizarán el marco de evaluación de tres niveles definido al inicio para verificar cómo estas técnicas resuelven la precisión y los conflictos en la memoria del usuario.
+Hasta aquí hemos cubierto la tecnología desde la búsqueda básica hasta la indexación estructurada y el RAG agentizado. Retomando la cuestión planteada al inicio del capítulo: cuando los recuerdos del usuario se acumulan por millares, ¿cómo recuperar con precisión las entradas relevantes y distinguir registros contradictorios? Aplicaremos ahora estas tecnologías de base de conocimiento **de forma inversa** a la memoria del usuario. Los experimentos 3-9 y 3-11 utilizarán el marco de evaluación de tres niveles definido al inicio para verificar cómo estas técnicas resuelven la precisión y los conflictos en la memoria del usuario.
 
-> **Experimento 3-10 ★★: Construcción de memoria del usuario mediante RAG agentizado**
+> **Experimento 3-9 ★★: Construcción de memoria del usuario mediante RAG agentizado**
 >
 > Orientando la aplicación del RAG agentizado desde bases de conocimiento de documentos hacia el propio Agente, podemos construir un sistema de memoria a largo plazo potente y consultable. La idea central es tratar el historial completo de conversaciones entre el Agente y el usuario como una base de conocimiento. De este modo, el Agente "recuerda" interacciones pasadas y busca activamente en sus "recuerdos" cuando lo requiere para comprender el contexto actual y brindar servicios personalizados. A diferencia de las secciones previas enfocadas en la **representación y gestión** de memorias (como el diseño estructurado de Advanced JSON Cards), este experimento evalúa cómo **la tecnología de búsqueda fortalece la capacidad de recuperación de la memoria**.
 >
@@ -627,7 +627,7 @@ Hasta aquí hemos cubierto la tecnología desde la búsqueda básica hasta la in
 >
 > Sin embargo, para tareas más complejas del segundo nivel, las limitaciones de este enfoque quedan al descubierto. En el caso `12_contradictory_financial_instructions.yaml` de `layer2`, la esposa programa primero una transferencia, el esposo modifica luego el monto y la fecha en otra llamada, y finalmente la esposa vuelve a llamar para modificarla nuevamente. Al estar indexados los bloques de diálogo de forma aislada y sin contexto, el sistema puede recuperar tres instrucciones de transferencia **independientes y contradictorias**, resultando incapaz de determinar cuál es la válida y ofreciendo información errónea al usuario. Para alcanzar el **Tercer Nivel (Servicio Proactivo)**: descubrir conexiones ocultas entre información de una sesión (un nuevo vuelo) e información de meses atrás (un pasaporte a punto de caducar), la simple búsqueda en historiales fragmentados resulta insuficiente.
 
-Estas limitaciones se deben a los defectos inherentes de la fragmentación tradicional. La siguiente sección presentará una técnica para resolver este problema (la recuperación consciente del contexto), aplicándola posteriormente a la memoria del usuario en el Experimento 3-12.
+Estas limitaciones se deben a los defectos inherentes de la fragmentación tradicional. La siguiente sección presentará una técnica para resolver este problema (la recuperación consciente del contexto), aplicándola posteriormente a la memoria del usuario en el Experimento 3-11.
 
 ### Técnica RAG: Recuperación Consciente del Contexto
 
@@ -644,7 +644,7 @@ Conviene distinguir este concepto de la "compresión consciente del contexto" de
 
 La elegancia de este método radica en que potencia simultáneamente la búsqueda dispersa y la densa. En la búsqueda dispersa como BM25, el prefijo añade palabras clave precisas ("ACME", "Q2 2025"). En la búsqueda densa por embeddings, el prefijo aporta el fondo semántico necesario para que el vector represente con exactitud el significado real del bloque.
 
-> **Experimento 3-11 ★★: Recuperación consciente del contexto: resolución de la pérdida de contexto en RAG**
+> **Experimento 3-10 ★★: Recuperación consciente del contexto: resolución de la pérdida de contexto en RAG**
 >
 > El proyecto `contextual-retrieval` realiza experimentos comparativos controlados para cuantificar la mejora de rendimiento de la recuperación consciente del contexto frente a la fragmentación tradicional. Construye en paralelo dos bases de conocimiento: una con fragmentación tradicional sin contexto y otra con prefijos contextuales generados por LLM. La función `compare_retrieval_methods` permite realizar una misma consulta en ambas bases y comparar los resultados lado a lado.
 >
@@ -654,9 +654,9 @@ La elegancia de este método radica en que potencia simultáneamente la búsqued
 
 Habiendo validado la recuperación consciente del contexto en bases de conocimiento documentales, aplicaremos esta misma técnica a la memoria del usuario en el siguiente experimento.
 
-> **Experimento 3-12 ★★★: Potenciando la memoria del usuario con recuperación consciente del contexto**
+> **Experimento 3-11 ★★★: Potenciando la memoria del usuario con recuperación consciente del contexto**
 >
-> Aplicar la recuperación consciente del contexto a la memoria del usuario resuelve el problema principal de la fragmentación de historiales de diálogo. Un fragmento aislado como "De acuerdo, reserva ese" carece de información, y solo cobra sentido sabiendo que el contexto previo era "Un billete de ida de Shanghai a Seattle por $500". Este experimento utiliza el marco del Experimento 3-10, añadiendo antes de indexar el historial la fase de "generación de contexto": invocar al LLM para generar un prefijo con los datos de fondo clave de cada bloque de diálogo.
+> Aplicar la recuperación consciente del contexto a la memoria del usuario resuelve el problema principal de la fragmentación de historiales de diálogo. Un fragmento aislado como "De acuerdo, reserva ese" carece de información, y solo cobra sentido sabiendo que el contexto previo era "Un billete de ida de Shanghai a Seattle por $500". Este experimento utiliza el marco del Experimento 3-9, añadiendo antes de indexar el historial la fase de "generación de contexto": invocar al LLM para generar un prefijo con los datos de fondo clave de cada bloque de diálogo.
 >
 > Esta base de memoria enriquecida demuestra una ventaja decisiva al gestionar **conflictos de hechos**. Retomando el escenario `12_contradictory_financial_instructions.yaml` del directorio `layer2`, tras enriquecer con contexto, los tres bloques de diálogo contienen respectivamente los prefijos `[La esposa Patricia Thompson establece la transferencia inicial]`, `[El esposo James Thompson modifica la transferencia previa]` y `[La esposa vuelve a modificar la transferencia tras el cambio del esposo]`. Este contexto con datos de tiempo, personajes e intenciones proporciona al Agente las pistas clave para determinar la prioridad y validez final de las instrucciones.
 >
@@ -687,7 +687,7 @@ El proceso consta de dos fases:
 ![Figura 3-15: Pipeline de extracción de conocimiento estructurado](images/fig3-15.svg)
 
 
-> **Experimento 3-13 ★★★: Extracción de conocimiento implícito desde datos estructurados: caso de estudio en análisis de precedentes judiciales**
+> **Experimento 3-12 ★★★: Extracción de conocimiento implícito desde datos estructurados: caso de estudio en análisis de precedentes judiciales**
 >
 > El proyecto `structured-knowledge-extraction` utiliza el conjunto de datos de sentencias penales chinas CAIL2018 para construir un asesor legal inteligente que aprende la "experiencia judicial" a partir de precedentes.
 >

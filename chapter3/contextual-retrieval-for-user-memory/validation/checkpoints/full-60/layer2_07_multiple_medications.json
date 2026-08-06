@@ -701,7 +701,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer2_07_multiple_medications attempt 1",
+      "purpose": "3-11 live contextual prefixes layer2_07_multiple_medications attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:05:41.068524+00:00",
@@ -784,7 +784,7 @@
       "response_id": "021785359141298081222809c6b24dcd35df0bef1acd71dede311"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_07_multiple_medications iteration 1",
+      "purpose": "3-9 live ReAct search planner layer2_07_multiple_medications iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:07:28.705242+00:00",
@@ -895,7 +895,7 @@
       "response_id": "021785359248893081222809c6b24dcd35df0bef1acd71de82b69"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_07_multiple_medications iteration 2",
+      "purpose": "3-9 live ReAct search planner layer2_07_multiple_medications iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:07:29.807107+00:00",
@@ -1017,7 +1017,7 @@
       "response_id": "021785359249996081222809c6b24dcd35df0bef1acd71d968269"
     },
     {
-      "purpose": "3-12 grounded answer layer2_07_multiple_medications plain",
+      "purpose": "3-11 grounded answer layer2_07_multiple_medications plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:07:50.763473+00:00",
@@ -1097,7 +1097,7 @@
       "response_id": "021785359270951081222809c6b24dcd35df0bef1acd71d6350e1"
     },
     {
-      "purpose": "3-12 grounded answer layer2_07_multiple_medications contextual",
+      "purpose": "3-11 grounded answer layer2_07_multiple_medications contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:08:22.140821+00:00",
@@ -1177,7 +1177,7 @@
       "response_id": "021785359302329081222809c6b24dcd35df0bef1acd71dccd1c5"
     },
     {
-      "purpose": "3-12 grounded answer layer2_07_multiple_medications dual_layer",
+      "purpose": "3-11 grounded answer layer2_07_multiple_medications dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:08:56.787140+00:00",
@@ -1257,7 +1257,7 @@
       "response_id": "021785359336975081222809c6b24dcd35df0bef1acd71dcc1ae1"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer2_07_multiple_medications",
+      "purpose": "3-9/3-11 independent judge layer2_07_multiple_medications",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:09:25.329400+00:00",

@@ -1,0 +1,55 @@
+{
+  "experiment": "4-5",
+  "title": "Real event-driven mailbox workflow",
+  "authority": "book/chapter4.md:466",
+  "mail_provider": "Unipile Email API",
+  "listener": {
+    "mode": "polling",
+    "endpoint": "GET /api/v1/emails",
+    "event_channel": "unipile_mailbox_poll",
+    "queue": "FIFO by provider timestamp then email id"
+  },
+  "scenarios": [
+    {
+      "classification": "meeting_invitation",
+      "required_actions": [
+        "live_calendar_conflict_check",
+        "accept_or_decline_draft"
+      ]
+    },
+    {
+      "classification": "customer_complaint",
+      "required_actions": [
+        "key_information_extraction",
+        "high_priority_notification"
+      ]
+    },
+    {
+      "classification": "marketing",
+      "required_actions": [
+        "provider_archive_update",
+        "post_update_verification"
+      ]
+    }
+  ],
+  "official_schema_sources": [
+    "https://developer.unipile.com/reference/accountscontroller_listaccounts.md",
+    "https://developer.unipile.com/reference/mailscontroller_listmails.md",
+    "https://developer.unipile.com/reference/mailscontroller_getmail.md",
+    "https://developer.unipile.com/reference/mailscontroller_updatemail.md",
+    "https://developer.unipile.com/reference/folderscontroller_listfolders.md",
+    "https://developer.unipile.com/reference/calendarscontroller_listcalendars.md",
+    "https://developer.unipile.com/reference/calendarscontroller_listcalendareventsbycalendar.md",
+    "https://developer.unipile.com/docs/new-emails-webhook.md"
+  ],
+  "acceptance": {
+    "no_local_or_mock_mailbox_substitute": true,
+    "three_real_inbound_email_objects": true,
+    "calendar_query_receipted": true,
+    "draft_artifact_hashed": true,
+    "high_priority_notification_delivered": true,
+    "marketing_email_archived_and_verified": true,
+    "identifiers_and_credentials_redacted": true,
+    "fail_closed_on_missing_or_invalid_credentials": true
+  }
+}

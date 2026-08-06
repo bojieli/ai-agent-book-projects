@@ -681,7 +681,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_16_home_renovation attempt 1",
+      "purpose": "3-11 live contextual prefixes layer1_16_home_renovation attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:57:53.135899+00:00",
@@ -764,7 +764,7 @@
       "response_id": "0217853586733641c4c28e26c266d30c807e3f14d371f95d633a2"
     },
     {
-      "purpose": "3-12 live contextual prefixes layer1_16_home_renovation attempt 2",
+      "purpose": "3-11 live contextual prefixes layer1_16_home_renovation attempt 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:58:28.036853+00:00",
@@ -847,7 +847,7 @@
       "response_id": "0217853587082271c4c28e26c266d30c807e3f14d371f951b08ed"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_16_home_renovation iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_16_home_renovation iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:58:40.962503+00:00",
@@ -958,7 +958,7 @@
       "response_id": "0217853587211521c4c28e26c266d30c807e3f14d371f95a71f76"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_16_home_renovation iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_16_home_renovation iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:58:42.114273+00:00",
@@ -1080,7 +1080,7 @@
       "response_id": "0217853587223051c4c28e26c266d30c807e3f14d371f95d893e9"
     },
     {
-      "purpose": "3-12 grounded answer layer1_16_home_renovation plain",
+      "purpose": "3-11 grounded answer layer1_16_home_renovation plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:58:49.649323+00:00",
@@ -1160,7 +1160,7 @@
       "response_id": "0217853587298391c4c28e26c266d30c807e3f14d371f95d78035"
     },
     {
-      "purpose": "3-12 grounded answer layer1_16_home_renovation contextual",
+      "purpose": "3-11 grounded answer layer1_16_home_renovation contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:59:01.118765+00:00",
@@ -1240,7 +1240,7 @@
       "response_id": "0217853587413081c4c28e26c266d30c807e3f14d371f95a05389"
     },
     {
-      "purpose": "3-12 grounded answer layer1_16_home_renovation dual_layer",
+      "purpose": "3-11 grounded answer layer1_16_home_renovation dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:59:11.350427+00:00",
@@ -1320,7 +1320,7 @@
       "response_id": "0217853587515391c4c28e26c266d30c807e3f14d371f95cd7fc7"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_16_home_renovation",
+      "purpose": "3-9/3-11 independent judge layer1_16_home_renovation",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T20:59:24.954389+00:00",

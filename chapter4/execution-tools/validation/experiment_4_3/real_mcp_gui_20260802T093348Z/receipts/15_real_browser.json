@@ -1,0 +1,25 @@
+{
+  "case": "real_browser",
+  "tool": "browser_navigate",
+  "arguments": {
+    "url": "https://example.com",
+    "screenshot_path": "browser-example.png"
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "url": "https://example.com",
+    "status": 200,
+    "title": "Example Domain",
+    "body_text": "Example Domain\n\nThis domain is for use in documentation examples without needing permission. Avoid use in operations.\n\nLearn more",
+    "screenshot": {
+      "path": "/home/ubuntu/ai-agent-book/chapter4/execution-tools/validation/experiment_4_3/real_mcp_gui_20260802T093348Z/workspace/browser-example.png",
+      "bytes": 17117,
+      "sha256": "bc7cf1f419af36be6d190e8559333b0915d7fc0ec66c41414bdb22b65932e4d2"
+    },
+    "browser": "Chromium via Playwright",
+    "latency_seconds": 0.937
+  },
+  "latency_seconds": 0.94
+}

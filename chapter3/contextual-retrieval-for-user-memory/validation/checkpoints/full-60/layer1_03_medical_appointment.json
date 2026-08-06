@@ -733,7 +733,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_03_medical_appointment attempt 1",
+      "purpose": "3-11 live contextual prefixes layer1_03_medical_appointment attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:52:31.228606+00:00",
@@ -816,7 +816,7 @@
       "response_id": "021785358351595fc70b79e699e1a6fcafbbefdc4fb041255752f"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_03_medical_appointment iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_03_medical_appointment iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:53:58.007496+00:00",
@@ -927,7 +927,7 @@
       "response_id": "021785358438195fc70b79e699e1a6fcafbbefdc4fb0412b36a17"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_03_medical_appointment iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_03_medical_appointment iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:53:59.435374+00:00",
@@ -1049,7 +1049,7 @@
       "response_id": "021785358439625fc70b79e699e1a6fcafbbefdc4fb041272118c"
     },
     {
-      "purpose": "3-12 grounded answer layer1_03_medical_appointment plain",
+      "purpose": "3-11 grounded answer layer1_03_medical_appointment plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:54:05.645003+00:00",
@@ -1129,7 +1129,7 @@
       "response_id": "021785358445833fc70b79e699e1a6fcafbbefdc4fb04124f00bc"
     },
     {
-      "purpose": "3-12 grounded answer layer1_03_medical_appointment contextual",
+      "purpose": "3-11 grounded answer layer1_03_medical_appointment contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:54:12.350799+00:00",
@@ -1209,7 +1209,7 @@
       "response_id": "021785358452539fc70b79e699e1a6fcafbbefdc4fb0412f1ab66"
     },
     {
-      "purpose": "3-12 grounded answer layer1_03_medical_appointment dual_layer",
+      "purpose": "3-11 grounded answer layer1_03_medical_appointment dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:54:20.659958+00:00",
@@ -1289,7 +1289,7 @@
       "response_id": "021785358460848fc70b79e699e1a6fcafbbefdc4fb0412221f06"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_03_medical_appointment",
+      "purpose": "3-9/3-11 independent judge layer1_03_medical_appointment",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T20:54:30.254653+00:00",

@@ -779,7 +779,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer2_04_multiple_subscriptions attempt 1",
+      "purpose": "3-11 live contextual prefixes layer2_04_multiple_subscriptions attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:03:17.292601+00:00",
@@ -862,7 +862,7 @@
       "response_id": "021785358997522dd742fe08f96381a9e3cd447cf1b9ac33e96d2"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_04_multiple_subscriptions iteration 1",
+      "purpose": "3-9 live ReAct search planner layer2_04_multiple_subscriptions iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:04:57.669506+00:00",
@@ -973,7 +973,7 @@
       "response_id": "021785359097860dd742fe08f96381a9e3cd447cf1b9ac39f22b8"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_04_multiple_subscriptions iteration 2",
+      "purpose": "3-9 live ReAct search planner layer2_04_multiple_subscriptions iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:04:58.782246+00:00",
@@ -1112,7 +1112,7 @@
       "response_id": "021785359098973dd742fe08f96381a9e3cd447cf1b9ac3ed82ec"
     },
     {
-      "purpose": "3-12 grounded answer layer2_04_multiple_subscriptions plain",
+      "purpose": "3-11 grounded answer layer2_04_multiple_subscriptions plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:05:10.703185+00:00",
@@ -1192,7 +1192,7 @@
       "response_id": "021785359110894dd742fe08f96381a9e3cd447cf1b9ac390e469"
     },
     {
-      "purpose": "3-12 grounded answer layer2_04_multiple_subscriptions contextual",
+      "purpose": "3-11 grounded answer layer2_04_multiple_subscriptions contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:05:27.083640+00:00",
@@ -1272,7 +1272,7 @@
       "response_id": "021785359127274dd742fe08f96381a9e3cd447cf1b9ac38ca7a7"
     },
     {
-      "purpose": "3-12 grounded answer layer2_04_multiple_subscriptions dual_layer",
+      "purpose": "3-11 grounded answer layer2_04_multiple_subscriptions dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:05:43.917561+00:00",
@@ -1352,7 +1352,7 @@
       "response_id": "021785359144109dd742fe08f96381a9e3cd447cf1b9ac3c0f4ff"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer2_04_multiple_subscriptions",
+      "purpose": "3-9/3-11 independent judge layer2_04_multiple_subscriptions",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:06:01.972244+00:00",

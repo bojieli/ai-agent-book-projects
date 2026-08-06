@@ -1359,7 +1359,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_01_travel_coordination attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_01_travel_coordination attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:19:48.296441+00:00",
@@ -1442,7 +1442,7 @@
       "response_id": "021785359988529c3e452fc13d1575f4c4fc19c0a06ce1894ee09"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_01_travel_coordination iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_01_travel_coordination iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:21:46.478197+00:00",
@@ -1553,7 +1553,7 @@
       "response_id": "021785360106674c3e452fc13d1575f4c4fc19c0a06ce18d5d23e"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_01_travel_coordination iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_01_travel_coordination iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:21:48.223613+00:00",
@@ -1700,7 +1700,7 @@
       "response_id": "021785360108412c3e452fc13d1575f4c4fc19c0a06ce18eb48e5"
     },
     {
-      "purpose": "3-12 grounded answer layer3_01_travel_coordination plain",
+      "purpose": "3-11 grounded answer layer3_01_travel_coordination plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:22:14.407930+00:00",
@@ -1780,7 +1780,7 @@
       "response_id": "021785360134595c3e452fc13d1575f4c4fc19c0a06ce18db744f"
     },
     {
-      "purpose": "3-12 grounded answer layer3_01_travel_coordination contextual",
+      "purpose": "3-11 grounded answer layer3_01_travel_coordination contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:22:42.229931+00:00",
@@ -1860,7 +1860,7 @@
       "response_id": "021785360162417c3e452fc13d1575f4c4fc19c0a06ce18b2a9dd"
     },
     {
-      "purpose": "3-12 grounded answer layer3_01_travel_coordination dual_layer",
+      "purpose": "3-11 grounded answer layer3_01_travel_coordination dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:23:11.137570+00:00",
@@ -1940,7 +1940,7 @@
       "response_id": "021785360191325c3e452fc13d1575f4c4fc19c0a06ce18e4758f"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_01_travel_coordination",
+      "purpose": "3-9/3-11 independent judge layer3_01_travel_coordination",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:23:56.891972+00:00",

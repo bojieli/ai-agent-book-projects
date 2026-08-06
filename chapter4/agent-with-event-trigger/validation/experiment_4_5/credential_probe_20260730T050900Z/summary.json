@@ -1,0 +1,117 @@
+{
+  "experiment": "4-5",
+  "campaign_id": "credential_probe_20260730T050900Z",
+  "generated_at": "2026-07-29T21:17:18.847328+00:00",
+  "provider": "unipile",
+  "base_url_sha256": "28b52f572e99947db7fa2192ba95435ed4d01404e53a40c2b4f6de2274513a9b",
+  "official_schema_receipts": [
+    {
+      "url": "https://developer.unipile.com/reference/accountscontroller_listaccounts.md",
+      "status": 200,
+      "bytes": 151069,
+      "sha256": "e63a180008549782b9b946734aea82bc2b91e50d12029f21617b1944e50368fd",
+      "retrieved_at": "2026-07-29T21:17:14.234772+00:00"
+    },
+    {
+      "url": "https://developer.unipile.com/reference/mailscontroller_listmails.md",
+      "status": 200,
+      "bytes": 102744,
+      "sha256": "6cefdb5ae883c8573b5c5d5b4cc3b6f2168909e224afed419209578ae7bf6b25",
+      "retrieved_at": "2026-07-29T21:17:14.881533+00:00"
+    },
+    {
+      "url": "https://developer.unipile.com/reference/mailscontroller_getmail.md",
+      "status": 200,
+      "bytes": 88581,
+      "sha256": "c3b5c98505a1dbb4433f67651796124dd3eb7b044a264581dc86cf31ae994d86",
+      "retrieved_at": "2026-07-29T21:17:15.567230+00:00"
+    },
+    {
+      "url": "https://developer.unipile.com/reference/mailscontroller_updatemail.md",
+      "status": 200,
+      "bytes": 16690,
+      "sha256": "26d1c3f2c6e0d75fb1445a220a90c701e95790ba33e31a0c89088c13ac393647",
+      "retrieved_at": "2026-07-29T21:17:16.643818+00:00"
+    },
+    {
+      "url": "https://developer.unipile.com/reference/folderscontroller_listfolders.md",
+      "status": 200,
+      "bytes": 22162,
+      "sha256": "d35d2042bd261314af6597ffdf9613d2e3df799e062e1f598708e07cdca1b957",
+      "retrieved_at": "2026-07-29T21:17:17.272871+00:00"
+    },
+    {
+      "url": "https://developer.unipile.com/reference/calendarscontroller_listcalendars.md",
+      "status": 200,
+      "bytes": 20671,
+      "sha256": "cf35a6a277b9390bf937dfe8300788c348999652903ee91ca07b2f9ff86cf8da",
+      "retrieved_at": "2026-07-29T21:17:17.902366+00:00"
+    },
+    {
+      "url": "https://developer.unipile.com/reference/calendarscontroller_listcalendareventsbycalendar.md",
+      "status": 200,
+      "bytes": 36444,
+      "sha256": "7f4b3414f9d4a78a23bf4a87aa3d82f05eea2e00b101063cc82694c8335d96e3",
+      "retrieved_at": "2026-07-29T21:17:18.521682+00:00"
+    },
+    {
+      "url": "https://developer.unipile.com/docs/new-emails-webhook.md",
+      "status": 200,
+      "bytes": 1729,
+      "sha256": "50c4808b875df5d71a3734ff4621b557d6fd40380e253cb690cc70d61148ee6a",
+      "retrieved_at": "2026-07-29T21:17:18.847210+00:00"
+    }
+  ],
+  "alternate_auth_diagnostic": {
+    "method": "GET",
+    "path": "/api/v1/accounts",
+    "credential_scheme": "Authorization: Bearer <redacted>",
+    "status": 401,
+    "error_type": "errors/invalid_credentials",
+    "error_title": "Invalid credentials",
+    "response_sha256": "35feddea5acbb597bdd6395c36c393c077bf94090fb311652a85e10e464c6b59",
+    "latency_seconds": 1.57
+  },
+  "status": "blocked",
+  "blocker_or_error": {
+    "type": "UnipileAPIError",
+    "message": "GET /api/v1/accounts returned 401: errors/missing_credentials"
+  },
+  "credentials_present": {
+    "UNIPILE_DSN": true,
+    "UNIPILE_ACCESS_TOKEN": true
+  },
+  "api_calls": [
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts",
+      "request": {
+        "params": {
+          "limit": 100
+        },
+        "json": null,
+        "multipart": null
+      },
+      "credential_scheme": "X-API-KEY",
+      "status": 401,
+      "success": false,
+      "latency_seconds": 1.522,
+      "response_sha256": "47c9318169e1bdccdcd71fb77189991e092db3344b06c1f59b8e1e426296babc",
+      "response_bytes": 80,
+      "response_shape": [
+        "status",
+        "title",
+        "type"
+      ],
+      "error_type": "errors/missing_credentials",
+      "error_title": "Missing credentials"
+    }
+  ],
+  "acceptance": {
+    "status": "failed",
+    "gates": {
+      "valid_unipile_credentials": false,
+      "real_mailbox_campaign_completed": false
+    }
+  }
+}

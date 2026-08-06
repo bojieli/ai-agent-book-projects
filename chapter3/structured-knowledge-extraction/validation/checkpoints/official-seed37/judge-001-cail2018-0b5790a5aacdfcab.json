@@ -10,7 +10,7 @@
     "reasoning": "生成建议与原型统计特征高度匹配，并且明确指出了原型统计刑期区间和中位数，符合原型统计的忠实性。同时，建议中提到了坦白情节和盗窃地点与原型特征的差异，体现了对不确定性的考虑和谨慎态度。此外，建议对留出案件有用，因为它提供了与原型匹配的刑期评估参考。最后，包含了明确的法律免责声明，符合要求。"
   },
   "receipt": {
-    "purpose": "3-13 independent held-out judge cail2018-0b5790a5aacdfcab",
+    "purpose": "3-12 independent held-out judge cail2018-0b5790a5aacdfcab",
     "provider": "moonshot",
     "endpoint": "https://api.moonshot.cn/v1",
     "started_at": "2026-07-30T04:42:55.391903+00:00",

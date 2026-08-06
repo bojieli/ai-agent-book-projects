@@ -4,7 +4,7 @@
     "advice": "匹配依据：待匹配案件与训练集原型“盗窃罪-prototype-1”共享“theft_location=公共场所”“theft_method=趁人不备”两个关键特征，这两个特征在原型定义特征中具有较高z值（分别为3.096、2.789），表明与原型关联性较强。统计区间：该原型样本量为1，刑期中位数、四分位距（q25、q75）、最小值及最大值均为4.0个月。不确定性：待匹配案件存在“joint_crime=true”“crime_count=2.0”“crime_amount=11304.0”等原型未包含的因素，且原型关键特征如“theft_tool=筷子”“disposal_of_stolen_property=全部发还”等在待匹配案件中缺失或未提及，同时原型样本量较小，可能导致刑期参考存在偏差。"
   },
   "receipt": {
-    "purpose": "3-13 held-out prototype-grounded advice cail2018-1db01ff755764d92",
+    "purpose": "3-12 held-out prototype-grounded advice cail2018-1db01ff755764d92",
     "provider": "ark",
     "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
     "started_at": "2026-07-30T04:41:43.941253+00:00",
