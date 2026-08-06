@@ -54,7 +54,7 @@
 | 2 | 🎯 **컨텍스트 엔지니어링** | KV Cache, 프롬프트 엔지니어링, Agent Skills, 컨텍스트 압축 | [읽기](../../book-ko/chapter2.ko.md) | [8](../../chapter2/README.ko.md) |
 | 3 | 📚 **사용자 메모리와 지식 베이스** | 세션 간 사용자 메모리, RAG, 구조화 색인, 지식 그래프 | [읽기](../../book-ko/chapter3.ko.md) | [12](../../chapter3/README.ko.md) |
 | 4 | 🛠️ **도구** | MCP, 인식·실행·협업 도구, 이벤트 기반 비동기 에이전트, 능동적 도구 탐색 | [읽기](../../book-ko/chapter4.ko.md) | [8](../../chapter4/README.ko.md) |
-| 5 | 💻 **코딩 에이전트와 코드 생성** | 코드는 새 도구를 만들 수 있는 도구. 프로덕션급 코딩 에이전트의 전체 구조 | [읽기](../../book-ko/chapter5.ko.md) | [12](../../chapter5/README.ko.md) |
+| 5 | 💻 **코딩 에이전트와 코드 생성** | 코드는 새 도구를 만들 수 있는 도구. 프로덕션급 코딩 에이전트의 전체 구조 | [읽기](../../book-ko/chapter5.ko.md) | [13](../../chapter5/README.ko.md) |
 | 6 | 🎯 **에이전트 평가** | 평가 환경, 지표, 통계적 유의성, 평가 기반 선택 | [읽기](../../book-ko/chapter6.ko.md) | [17](../../chapter6/README.ko.md) |
 | 7 | 🧠 **모델 사후 학습** | 사전 학습·SFT·RL, 도구 호출 내재화, 샘플 효율성 | [읽기](../../book-ko/chapter7.ko.md) | [18](../../chapter7/README.ko.md) |
 | 8 | 🔄 **에이전트의 지속적 진화** | 실행 궤적에서 학습 신호를 얻고 지식·지침·프로그램·파라미터 갱신 | [읽기](../../book-ko/chapter8.ko.md) | [7](../../chapter8/README.ko.md) |

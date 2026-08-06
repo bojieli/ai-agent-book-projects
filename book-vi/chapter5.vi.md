@@ -466,6 +466,8 @@ now = server_clock.now() # Đồng hồ máy chủ, không được mô hình cu
         return {"success": False, "reason": "Cannot cancel with used segments"}
 
     hours_since_booking = (now - r.booking_time).total_seconds() / 3600
+    if hours_since_booking < 0:
+        return {"success": False, "reason": "Booking time is in the future"}
     if hours_since_booking <= 24:
         execute_cancellation(reservation_id)
         return {"success": True, "reason": "Cancelled within 24-hour window"}
@@ -652,6 +654,8 @@ Truy vấn cơ sở dữ liệu là một tình huống trong đó việc tạo 
 
 Giải pháp đầu tiên có vẻ “thông minh” hơn nhưng lại cực kỳ kém hiệu quả – kết quả truy vấn có thể chứa hàng nghìn hàng bảng lớn, và yêu cầu LLM mô tả bằng văn bản sau khi đọc không chỉ tiêu tốn nhiều token và mất nhiều thời gian mà nghiêm trọng hơn, LLM rất dễ mắc lỗi khi “sao chép” dữ liệu. Một giải pháp tốt hơn là **chế độ artifact**. Hình 5-9 cho thấy quy trình làm việc của SQL truy vấn Agent: Agent không tự đọc dữ liệu mà tạo ra một đoạn mã truy vấn SQL và gửi mã này đến hệ thống dưới dạng một "artifact" độc lập. Hệ thống lấy phần SQL này và truy vấn trực tiếp cơ sở dữ liệu, hiển thị dữ liệu tìm thấy vào một bảng mà người dùng có thể nhìn thấy. Trong toàn bộ quá trình, dữ liệu đi thẳng từ cơ sở dữ liệu đến giao diện người dùng, hoàn toàn bỏ qua "người trung gian" LLM - LLM chỉ chịu trách nhiệm viết câu lệnh truy vấn. Không cần phải trực tiếp đọc hàng nghìn hàng dữ liệu rồi lặp lại cho người dùng. Nó nhanh và chính xác.
 
+SQL và mã trực quan được tạo ra không được thực thi trực tiếp. Tầng thực thi phải dùng thông tin xác thực cơ sở dữ liệu chỉ-đọc, phân tích SQL, chỉ cho phép các câu lệnh `SELECT` đã được phê duyệt và từ chối DDL, DML cũng như truy vấn nhiều câu lệnh. Các giá trị do người dùng cung cấp phải được liên kết bằng tham số phía máy chủ, đồng thời giới hạn thời gian truy vấn, số hàng trả về, các bảng có thể truy cập và khoảng ngày. Mã trực quan phải chạy trong sandbox tách biệt khỏi mạng và hệ thống tệp, chỉ tạo ra định dạng kết quả được phê duyệt. Mẫu Artifact rút ngắn đường đi của dữ liệu nhưng không thay thế kiểm tra ủy quyền hay cô lập thực thi.
+
 ![Hình 5-9 Quy trình tác nhân truy vấn SQL ](images/fig5-9.svg)
 
 
@@ -685,7 +689,22 @@ Tuy nhiên, mẫu được tạo hoàn toàn động này có chi phí và độ
 > **Mục tiêu thử nghiệm**: Để cho phép người dùng tùy chỉnh ngay lập tức giao diện phần mềm thông qua đối thoại bằng ngôn ngữ tự nhiên và để xác minh tính hiệu quả của việc tạo mã được hỗ trợ bởi cơ chế tải nóng trong việc cung cấp trải nghiệm người dùng được cá nhân hóa.
 >
 > **Giải pháp kỹ thuật**: Xây dựng ứng dụng chatbot cơ bản (React front-end + FastAPI back-end). Cả mặt trước và mặt sau đều chạy ở chế độ phát triển và hỗ trợ tải nóng (HMR của React, reload của FastAPI). Người dùng đưa ra các yêu cầu tùy chỉnh giao diện người dùng (màu sắc, phông chữ, bố cục, vị trí thành phần, v.v.) trong cuộc trò chuyện và Agent sẽ sửa đổi mã một cách độc lập. Cơ chế tải nóng tự động phát hiện các thay đổi của tệp, giao diện người dùng được biên dịch lại và làm mới, đồng thời người dùng thấy các thay đổi giao diện trong thời gian thực. Hỗ trợ nhiều vòng tùy chỉnh lặp đi lặp lại.
+
+Phần mềm động thay đổi tiền đề bảo mật truyền thống cùng với tính linh hoạt của nó. Trước đây, mã nghiệp vụ của ứng dụng được phát triển, xem xét, kiểm thử và triển khai rồi duy trì tương đối ổn định, vì vậy các kiểm tra ủy quyền thường nằm ở tầng ứng dụng. Khi một Agent có thể tạo hoặc viết lại giao diện, quy trình và thậm chí mã truy cập dữ liệu bất cứ lúc nào, tầng này không còn ổn định. Mã mới có thể bỏ sót một kiểm tra tinh vi, để lộ trường từng bị ẩn hoặc đi vòng qua kiểm tra hiện có bằng một đường gọi khác. Dù nguyên nhân là lỗi sinh mã thông thường hay mã nguy hiểm được tạo sau prompt injection, kết quả đều giống nhau: ranh giới quyền mà mã nghiệp vụ phải duy trì có thể bị phá vỡ âm thầm.
+
+Vì vậy, mục tiêu bảo mật của phần mềm động không thể là “bảo đảm AI viết đúng mọi kiểm tra ủy quyền”. Mục tiêu phải là **các ràng buộc quyền vẫn không thể bị vượt qua ngay cả khi AI viết mã sai**. Nếu kiểm tra ủy quyền nằm trong logic nghiệp vụ được tạo động, chúng cùng miền tin cậy với mã mà chúng phải hạn chế. Prompt, kiểm thử và review mã làm giảm tỷ lệ lỗi nhưng không thể bao phủ hết mọi đường thực thi do các thế hệ tương lai tạo ra, cũng không thể là ranh giới bảo mật cuối cùng.
+
+Kiến trúc bền vững hơn **hạ ranh giới tin cậy xuống tầng dữ liệu**. Mã ứng dụng được tạo động xử lý phần trình bày, quy trình và điều phối nghiệp vụ; một cơ chế ổn định đã được con người xem xét sẽ thực thi quy tắc ai được làm gì với dữ liệu nào. Bảo mật cấp hàng của cơ sở dữ liệu có thể giới hạn người dùng ở các bản ghi của tenant mình; ràng buộc và trình xác thực từ chối trạng thái bất hợp lệ; view, thủ tục lưu trữ hoặc dịch vụ truy cập dữ liệu được kiểm soát chỉ công khai thao tác được phép. Mọi lần đọc và ghi cũng phải mang **ngữ cảnh truy cập** do runtime tin cậy ràng buộc, gồm người dùng, tenant, vai trò hoặc danh tính Agent. Mã sinh chỉ nhận danh tính trong phạm vi này: không thể giả mạo hay lấy thông tin xác thực đặc quyền để vượt quy tắc. Dù bỏ qua kiểm tra riêng, tầng dữ liệu vẫn từ chối thao tác trái phép.
+
+Hạ quyền xuống không có nghĩa đưa toàn bộ logic nghiệp vụ vào cơ sở dữ liệu. Tầng ứng dụng vẫn có thể kiểm tra trước để phản hồi nhanh, nhưng tầng dữ liệu phải giữ quyền quyết định cuối cùng. Cùng một quy tắc có thể cải thiện trải nghiệm ở trên và tạo bảo đảm ở dưới. Mọi đường truy cập dữ liệu phải đi qua tầng dữ liệu tin cậy; mã sinh không được kết nối trực tiếp để đi vòng. Nhờ đó tầng trên có thể liên tục thay đổi, còn ràng buộc quyền không thể thương lượng nằm ở tầng không bị sinh lại theo mỗi yêu cầu.
+
+> **Thử nghiệm 5-12 ★★★: Đối tượng dữ liệu nhúng quyền cho phần mềm động**
 >
+> **Mục tiêu thử nghiệm**: Xây dựng kho đối tượng cho phép mã ứng dụng được tạo hoặc viết lại động nhưng vẫn thực thi ủy quyền và toàn vẹn dữ liệu ở tầng dữ liệu. Xác minh mã sinh không thể vượt ranh giới ổn định bằng cách bỏ qua chuyển trạng thái, ghi giá trị ngoài phạm vi hoặc đọc xuyên tenant.
+>
+> **Giải pháp kỹ thuật**: Dùng triển khai từ dự án `PermissionEmbeddedDataObjects` để cung cấp middleware kho đối tượng Python trên PostgreSQL. Kiểu dữ liệu khai báo quy tắc quyền, ngữ cảnh truy cập, trình xác thực, quan hệ đối tượng và phản ứng. Mọi lần đọc/ghi đi qua kiểm tra quyền và xác thực, lưu trữ và toàn vẹn tham chiếu, rồi các phản ứng bất đồng bộ có kiểm soát. Trước hết chạy bản demo quy trình tuyển dụng quyết định không dùng LLM; tùy chọn yêu cầu mô hình sinh các thao tác đối nghịch với SQL thô và API PEDO rồi so sánh trạng thái cơ sở dữ liệu. So sánh cốt lõi không phải handler sinh có `if` đúng hay không, mà là cùng một yêu cầu có được chấp nhận hoặc từ chối nhất quán khi tới tầng dữ liệu ổn định hay không.
+>
+> **Tiêu chí chấp nhận**: Cập nhật quy trình tuyển dụng hợp lệ phải thành công; tầng dữ liệu từ chối bỏ qua chuyển trạng thái ứng viên, ghi mức lương ngoài phạm vi vị trí và đọc xuyên tenant. Các kiểm thử quyền, xác thực, cô lập tenant, toàn vẹn tham chiếu và phản ứng phải đạt. Mã nguồn nằm trong dự án đi kèm Chương 5 `permission-embedded-data-objects`.
 
 ### Mã tạo mã: Agent Bootstrap
 
@@ -724,7 +743,7 @@ Cách hiệu quả nhất để giải quyết những vấn đề này không p
 
 Khi Agent nhận nhiệm vụ phát triển Agent mới, trước tiên bạn nên sao chép mã của riêng mình (hoặc cách triển khai chất lượng cao đã được chứng minh khác), sau đó thực hiện các sửa đổi có mục tiêu: điều chỉnh các system prompt để phù hợp với vai trò mới, thay thế hoặc thêm hoặc xóa các công cụ để thích ứng với các chức năng mới, sửa đổi logic nghiệp vụ nhưng vẫn giữ nguyên khung kiến trúc. Mô hình “tự sao chép và sửa đổi thích ứng” này không chỉ đảm bảo Agent mới kế thừa những ưu điểm kỹ thuật cốt lõi mà còn cho phép phân biệt theo các chiều cụ thể - giống như sao chép và đột biến gen trong sinh học.
 
-> **Thử nghiệm 5-12 ★★★: Phát triển Agent tạo ra Agent**
+> **Thử nghiệm 5-13 ★★★: Phát triển Agent tạo ra Agent**
 >
 > **Mục tiêu thử nghiệm**: Xây dựng Coding Agent với khả năng lập trình siêu dữ liệu (tức là viết chương trình có thể tạo hoặc sửa đổi các chương trình khác) và có thể tự động tạo hệ thống Agent mới theo nhu cầu của người dùng để đảm bảo tuân thủ các phương pháp hay nhất.
 >
