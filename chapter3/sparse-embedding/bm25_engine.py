@@ -147,6 +147,20 @@ class InvertedIndex:
         logger.info(f"Adding document {doc_id} to index")
         logger.debug(f"Document text: {text[:100]}..." if len(text) > 100 else f"Document text: {text}")
         
+        is_update = doc_id in self.documents
+        if is_update:
+            # Clean up old term frequencies and postings
+            old_terms = set(self.term_frequency.get(doc_id, Counter()).keys())
+            for term in old_terms:
+                if term in self.index and doc_id in self.index[term]:
+                    self.index[term].remove(doc_id)
+                    if not self.index[term]:
+                        del self.index[term]
+                if term in self.document_frequency:
+                    self.document_frequency[term] -= 1
+                    if self.document_frequency[term] <= 0:
+                        del self.document_frequency[term]
+
         # Store original document
         self.documents[doc_id] = text
         if metadata:
@@ -164,16 +178,13 @@ class InvertedIndex:
         
         logger.debug(f"Document {doc_id}: {len(tokens)} tokens, {len(term_freq)} unique terms")
         
-        # Update inverted index and document frequency.  The previous version
-        # checked membership only after inserting the document, so the
-        # educational ``document_frequency`` view was always zero even though
-        # search happened to use posting-list lengths directly.
         for term in term_freq:
             if doc_id not in self.index[term]:
-                self.document_frequency[term] += 1
+                self.document_frequency[term] = self.document_frequency.get(term, 0) + 1
             self.index[term].add(doc_id)
         
-        self.total_documents += 1
+        if not is_update:
+            self.total_documents += 1
         self._update_statistics()
         
         logger.info(f"Document {doc_id} indexed successfully")
