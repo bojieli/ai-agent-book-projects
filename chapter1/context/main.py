@@ -28,6 +28,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
+def _completed(result: Dict[str, Any]) -> bool:
+    """Return terminal-response status with compatibility for old results."""
+    return bool(result.get("completed", result.get("success", False)))
+
 # Load .env so API keys configured there are available via os.getenv.
 # (config.py calls load_dotenv() too, but main.py only imports agent, which
 #  does not import config, so we must trigger it here.)
@@ -125,6 +130,7 @@ Present a detailed financial analysis with all conversions and calculations."""
         start_time = time.time()
         result = agent.execute_task(task)
         execution_time = time.time() - start_time
+        completed = _completed(result)
 
         # Analyze the result
         test_result = {
@@ -134,7 +140,12 @@ Present a detailed financial analysis with all conversions and calculations."""
             "execution_time": round(execution_time, 2),
             "iterations": result.get("iterations", 0),
             "num_tool_calls": len(result["trajectory"].tool_calls),
-            "success": result.get("success", False),
+            # This legacy suite has no task-specific correctness rubric. Keep
+            # ``success`` as a compatibility alias, but report completion
+            # separately so a refusal is not presented as task success.
+            "completed": completed,
+            "success": completed,
+            "task_success": None,
             "has_final_answer": result.get("final_answer") is not None,
             "error": result.get("error"),
             "reasoning_steps": len(result["trajectory"].reasoning_steps),
@@ -143,7 +154,7 @@ Present a detailed financial analysis with all conversions and calculations."""
         
         # Log summary
         logger.info(f"Test completed in {test_result['execution_time']}s")
-        logger.info(f"Success: {test_result['success']}")
+        logger.info(f"Terminal response completed: {test_result['completed']}")
         logger.info(f"Tool calls made: {test_result['num_tool_calls']}")
         logger.info(f"Iterations: {test_result['iterations']}")
         
@@ -206,7 +217,9 @@ Present a detailed financial analysis with all conversions and calculations."""
                         "case_name": case_name,
                         "context_mode": context_mode.value,
                         "error": str(e),
-                        "success": False
+                        "completed": False,
+                        "success": False,
+                        "task_success": False,
                     })
 
         return results
@@ -223,7 +236,10 @@ Present a detailed financial analysis with all conversions and calculations."""
         """
         analysis = {
             "total_tests": len(results),
-            "successful_tests": sum(1 for r in results if r.get("success", False)),
+            "completed_tests": sum(1 for r in results if _completed(r)),
+            # Compatibility key for existing report consumers. It now counts
+            # terminal responses, not verified task successes.
+            "successful_tests": sum(1 for r in results if _completed(r)),
             "context_mode_impact": {}
         }
         
@@ -234,7 +250,8 @@ Present a detailed financial analysis with all conversions and calculations."""
             for result in results:
                 if result["context_mode"] != "full":
                     mode_analysis = {
-                        "success_maintained": result.get("success", False),
+                        "completion_maintained": _completed(result),
+                        "success_maintained": _completed(result),
                         "execution_time_delta": result.get("execution_time", 0) - baseline.get("execution_time", 0),
                         "iteration_delta": result.get("iterations", 0) - baseline.get("iterations", 0),
                         "tool_call_delta": result.get("num_tool_calls", 0) - baseline.get("num_tool_calls", 0),
@@ -242,7 +259,7 @@ Present a detailed financial analysis with all conversions and calculations."""
                     }
                     
                     # Identify failure reasons
-                    if not result.get("success", False):
+                    if not _completed(result):
                         if result["context_mode"] == "no_tool_calls":
                             mode_analysis["failure_reason"] = "Cannot execute tools without tool call capability"
                         elif result["context_mode"] == "no_tool_results":
@@ -269,7 +286,7 @@ Present a detailed financial analysis with all conversions and calculations."""
             table_data.append([
                 result.get("case_name", "default"),
                 result["context_mode"],
-                "✓" if result.get("success", False) else "✗",
+                "✓" if _completed(result) else "✗",
                 f"{result.get('execution_time', 0)}s",
                 result.get("iterations", 0),
                 result.get("num_tool_calls", 0),
@@ -277,7 +294,7 @@ Present a detailed financial analysis with all conversions and calculations."""
                 "Yes" if result.get("has_final_answer", False) else "No"
             ])
 
-        headers = ["Case", "Context Mode", "Success", "Time", "Iterations", "Tool Calls", "Reasoning Steps", "Final Answer"]
+        headers = ["Case", "Context Mode", "Completed", "Time", "Iterations", "Tool Calls", "Reasoning Steps", "Final Answer"]
 
         print("\n" + "="*80)
         print("ABLATION STUDY RESULTS")
@@ -314,7 +331,7 @@ Present a detailed financial analysis with all conversions and calculations."""
                 r = by_key.get((mode, case))
                 if r is None:
                     row.append("-")
-                elif r.get("success", False):
+                elif _completed(r):
                     row.append(f"✓ {r.get('iterations', 0)}it/{r.get('num_tool_calls', 0)}tc")
                 else:
                     row.append(f"✗ {r.get('iterations', 0)}it/{r.get('num_tool_calls', 0)}tc")
@@ -322,7 +339,7 @@ Present a detailed financial analysis with all conversions and calculations."""
 
         headers = ["Context Mode"] + cases
         print("\n" + "="*80)
-        print("COMPARISON MATRIX (rows = context mode, cols = case; cell = success it=iterations tc=tool calls)")
+        print("COMPARISON MATRIX (rows = context mode, cols = case; cell = completion it=iterations tc=tool calls)")
         print("="*80)
         print(tabulate(table_data, headers=headers, tablefmt="grid"))
     
@@ -342,16 +359,16 @@ Present a detailed financial analysis with all conversions and calculations."""
         iterations = [r.get("iterations", 0) for r in results]
         tool_calls = [r.get("num_tool_calls", 0) for r in results]
         exec_times = [r.get("execution_time", 0) for r in results]
-        success = [1 if r.get("success", False) else 0 for r in results]
+        success = [1 if _completed(r) else 0 for r in results]
         
         # Create subplots
         fig, axes = plt.subplots(2, 2, figsize=(12, 10))
         fig.suptitle("Ablation Study: Impact of Context Components", fontsize=16)
         
-        # Plot 1: Success Rate
+        # Plot 1: terminal-response completion rate
         axes[0, 0].bar(modes, success, color=['green' if s else 'red' for s in success])
-        axes[0, 0].set_title("Task Success by Context Mode")
-        axes[0, 0].set_ylabel("Success (1) / Failure (0)")
+        axes[0, 0].set_title("Terminal Responses by Context Mode")
+        axes[0, 0].set_ylabel("Completed (1) / No response (0)")
         axes[0, 0].tick_params(axis='x', rotation=45)
         
         # Plot 2: Iterations Required
@@ -391,7 +408,10 @@ Present a detailed financial analysis with all conversions and calculations."""
 # Context Ablation Study Report
 
 ## Executive Summary
-This ablation study explores the critical importance of different context components in AI agent behavior.
+This ablation study explores the effect of different context components on AI
+agent behavior. This legacy suite reports terminal-response completion and
+tool-use behavior; it does not claim task correctness without a task-specific
+rubric.
 
 ## Test Configuration
 - **Provider**: {provider}
@@ -414,29 +434,34 @@ This ablation study explores the critical importance of different context compon
 - **Critical for**: Complex tasks requiring logical decomposition
 
 ### 3. Lack of Tool Call Commands (NO_TOOL_CALLS)
-**Impact**: Agent cannot execute any external tools, rendering it unable to complete the task.
-- **Behavior**: Complete failure - agent can only describe what it would do, not actually do it
+**Impact**: Agent cannot execute any external tools.
+- **Behavior**: The model may return a refusal or describe the missing tools;
+  a terminal response is not evidence that the financial task was completed.
 - **Performance**: {no_tool_calls_perf}
 - **Critical for**: Any task requiring external data or computation
 
 ### 4. Lack of Tool Call Results (NO_TOOL_RESULTS)
 **Impact**: Agent operates blind to the outcomes of its actions.
-- **Behavior**: Cannot adapt based on results, leading to incorrect conclusions
+- **Behavior**: The model may stop with a warning, repeat actions, or produce an
+  incorrect conclusion; correctness must be checked by a task-specific rubric.
 - **Performance**: {no_tool_results_perf}
 - **Critical for**: Tasks requiring iterative refinement or result validation
 
 ## Statistical Summary
 - **Total Tests Run**: {total_tests}
-- **Successful Completions**: {successful_tests}
+- **Terminal Responses**: {successful_tests}
 - **Average Execution Time (Full Context)**: {avg_exec_time}s
 - **Average Tool Calls (Full Context)**: {avg_tool_calls}
 
 ## Conclusion
-The ablation study clearly demonstrates that each context component plays a vital role:
-1. **Tool calls** are fundamental - without them, the agent cannot interact with the world
-2. **Tool results** provide essential feedback for decision-making
-3. **Reasoning** enables strategic planning and efficient execution
-4. **History** prevents redundancy and maintains task coherence
+The ablation study records how each context component changes execution behavior:
+1. **Tool calls** determine whether the agent can interact with external tools
+2. **Tool results** provide feedback for decision-making
+3. **Reasoning** can affect planning and execution efficiency
+4. **History** can prevent redundant actions and maintain task coherence
+
+Task-level claims require a separate evaluator, such as the canonical numeric
+rubric used by `run_experiment_1_1.py`.
 
 ## Recommendations
 - Always maintain complete context for production agents
@@ -448,7 +473,7 @@ The ablation study clearly demonstrates that each context component plays a vita
         def get_perf_string(mode):
             mode_result = next((r for r in results if r["context_mode"] == mode), None)
             if mode_result:
-                return f"{'SUCCESS' if mode_result.get('success', False) else 'FAILURE'} - {mode_result.get('iterations', 0)} iterations, {mode_result.get('execution_time', 0)}s"
+                return f"{'COMPLETED' if _completed(mode_result) else 'NO TERMINAL RESPONSE'} - {mode_result.get('iterations', 0)} iterations, {mode_result.get('execution_time', 0)}s"
             return "N/A"
         
         # Calculate baseline metrics
@@ -513,7 +538,7 @@ def run_single_task(api_key: str, task: str, context_mode: str = "full", provide
     print("TASK EXECUTION RESULT")
     print("="*60)
     print(f"Context Mode: {context_mode}")
-    print(f"Success: {result.get('success', False)}")
+    print(f"Terminal response completed: {_completed(result)}")
     print(f"Iterations: {result.get('iterations', 0)}")
     print(f"Tool Calls: {len(result['trajectory'].tool_calls)}")
     
@@ -530,7 +555,10 @@ def run_single_task(api_key: str, task: str, context_mode: str = "full", provide
     with open(output_file, 'w') as f:
         # Convert trajectory to serializable format
         serializable_result = {
-            "success": result.get("success", False),
+            "completed": _completed(result),
+            "task_success": result.get("task_success"),
+            # Backwards-compatible alias for older result readers.
+            "success": _completed(result),
             "iterations": result.get("iterations", 0),
             "final_answer": result.get("final_answer"),
             "error": result.get("error"),
@@ -777,11 +805,11 @@ def run_ablation_study(api_key: str, provider: str = "siliconflow", model: str =
     print("\n" + "="*80)
     print("ANALYSIS SUMMARY")
     print("="*80)
-    print(f"Success Rate: {analysis['successful_tests']}/{analysis['total_tests']}")
+    print(f"Terminal Response Rate: {analysis['completed_tests']}/{analysis['total_tests']}")
     print("\nContext Mode Impacts:")
     for mode, impact in analysis["context_mode_impact"].items():
         print(f"\n{mode.upper()}:")
-        print(f"  - Success Maintained: {impact['success_maintained']}")
+        print(f"  - Completion Maintained: {impact['completion_maintained']}")
         print(f"  - Execution Time Delta: {impact['execution_time_delta']:.2f}s")
         print(f"  - Iteration Delta: {impact['iteration_delta']}")
         print(f"  - Tool Call Delta: {impact['tool_call_delta']}")
@@ -886,7 +914,7 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                         result = agent.execute_task(sample['task'])
                         
                         print(f"\n{'='*40}")
-                        print(f"Success: {result.get('success', False)}")
+                        print(f"Terminal response completed: {_completed(result)}")
                         print(f"Iterations: {result.get('iterations', 0)}")
                         print(f"Tool Calls: {len(result['trajectory'].tool_calls)}")
                         
@@ -1021,7 +1049,7 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                 result = agent.execute_task(user_input)
                 
                 print(f"\n{'='*40}")
-                print(f"Success: {result.get('success', False)}")
+                print(f"Terminal response completed: {_completed(result)}")
                 print(f"Iterations: {result.get('iterations', 0)}")
                 print(f"Tool Calls: {len(result['trajectory'].tool_calls)}")
                 

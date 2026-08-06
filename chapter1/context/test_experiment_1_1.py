@@ -1,4 +1,9 @@
-from run_experiment_1_1 import evaluate_context_contract
+from agent import AgentTrajectory, ContextMode
+from run_experiment_1_1 import (
+    canonical_answer_correct,
+    evaluate_context_contract,
+    summarize_arm,
+)
 
 
 def turn(messages, *, tools=True, reasoning="reason"):
@@ -67,3 +72,54 @@ def test_no_tool_results_requires_literal_hidden_observations():
 def test_no_tool_definitions_requires_absent_request_fields():
     result = evaluate_context_contract("no_tool_calls", [turn([SYSTEM, USER], tools=False)])
     assert result["passed"] is True
+
+
+def _arm_result(final_answer, *, mode=ContextMode.NO_TOOL_CALLS, iterations=1):
+    completed = final_answer is not None
+    return {
+        "trajectory": AgentTrajectory(context_mode=mode),
+        "final_answer": final_answer,
+        "completed": completed,
+        "success": completed,
+        "iterations": iterations,
+        "provider": "test",
+        "model": "test-model",
+    }
+
+
+def test_canonical_answer_rubric_rejects_refusal_and_hallucinated_markup():
+    refusal = "I cannot compute the exchange rates without tools."
+    hallucinated = "<request_tool>currency_converter(...)</request_tool>"
+    assert canonical_answer_correct(refusal) is False
+    assert canonical_answer_correct(hallucinated) is False
+
+
+def test_summarize_arm_separates_completion_from_task_success():
+    result = summarize_arm(
+        ContextMode.NO_TOOL_CALLS,
+        _arm_result("I cannot compute the exchange rates without tools."),
+        elapsed=0.1,
+    )
+
+    # The model did return a terminal response, but it did not complete the
+    # canonical financial task. A mode-independent evaluator must preserve
+    # that distinction instead of forcing the mode to fail.
+    assert result["completed"] is True
+    assert result["success"] is True  # compatibility alias
+    assert result["task_success"] is False
+    assert result["behavior"]["canonical_answer_correct"] is False
+
+
+def test_summarize_arm_accepts_correct_answer_even_in_an_ablated_arm():
+    answer = "Annual total: $9,602,895.73; quarterly average: $2,400,723.93"
+    result = summarize_arm(
+        ContextMode.NO_TOOL_RESULTS,
+        _arm_result(answer, mode=ContextMode.NO_TOOL_RESULTS),
+        elapsed=0.1,
+    )
+
+    # Correctness is an observed task result. The experiment may separately
+    # report that tool feedback was hidden; it must not manufacture failure.
+    assert result["completed"] is True
+    assert result["task_success"] is True
+    assert result["behavior"]["canonical_answer_correct"] is True
