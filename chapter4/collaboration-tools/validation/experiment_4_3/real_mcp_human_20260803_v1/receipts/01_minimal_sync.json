@@ -1,0 +1,40 @@
+{
+  "case": "minimal_sync",
+  "tool": "mcp_spawn_subagent",
+  "arguments": {
+    "task": "Decide whether the refund meets the supplied policy and explain.",
+    "context_strategy": "minimal",
+    "mode": "sync",
+    "parent_context": {
+      "customer": "Ada",
+      "request": "Refund an item bought 3 days ago for SGD 80",
+      "policy": "Refunds within 7 days and below SGD 100 may be approved",
+      "irrelevant_history": [
+        "weather chat",
+        "shipping FAQ",
+        "newsletter"
+      ],
+      "private_note": "PRIVATE-MARKER-MUST-BE-FILTERED"
+    },
+    "role": "refund policy specialist",
+    "minimal_slice": [
+      "policy"
+    ]
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "subagent_id": "ed9ffe25-d36d-4c17-bf0e-3daed6cf5e0f",
+    "mode": "sync",
+    "status": "completed",
+    "context_strategy": "minimal",
+    "context_tokens": 56,
+    "prep_tokens": 0,
+    "prompt_tokens": 328,
+    "prepared_context": "[FROM_MAIN_AGENT] 子任务：Decide whether the refund meets the supplied policy and explain.\n[FROM_MAIN_AGENT] 手动挑选的必要信息：{\"policy\": \"Refunds within 7 days and below SGD 100 may be approved\"}",
+    "context_notes": "只传任务参数与手动挑选的最小切片，不转发主 Agent 完整轨迹",
+    "result": "```json\n{\n  \"status\": \"need_info\",\n  \"result\": \"无法判定。所提供政策为“购买后 7 天内且金额低于 SGD 100 的退款可获批准”，一笔退款需同时满足两个条件方可批准：(1) 退款请求在购买之日起 7 天内提出；(2) 退款金额低于 100 新加坡元。目前移交的信息中仅有政策文本，未包含该笔退款请求的任何具体信息，两个条件均无法核对，因此不能臆造结论，需上报补充信息后再行判定。\",\n  \"missing\": \"该笔退款的金额（SGD）、购买日期以及退款申请日期（用于核实是否在 7 天窗口内）\"\n}\n```"
+  },
+  "latency_seconds": 25.417
+}

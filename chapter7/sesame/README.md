@@ -142,7 +142,7 @@ With context (for voice consistency using dataset indices):
 ]
 ```
 
-**Note**: `dataset_context_idx` refers to the index in the training dataset (e.g., `MrDragonFox/Elise`). Indices 3 and 4 are used in the training script examples.
+**Note**: `dataset_context_idx` refers to the index in the training dataset. The original `MrDragonFox/Elise` repository is now disabled, so the runnable defaults use its public `maxbsoft/mrdragonfox-elise` mirror. Indices 3 and 4 are used in the training script examples.
 
 **Plain text format** (one sentence per line, no context support):
 ```
@@ -166,7 +166,7 @@ This is the third sentence.
 - `--output`: Output audio file path (default: `output.wav`)
 - `--max-tokens`: Maximum tokens to generate (125 ≈ 10 seconds of audio)
 - `--dataset-context-idx`: Dataset index to use for voice consistency (e.g., 3 or 4 from training examples)
-- `--dataset-name`: Dataset name to load context from (default: `MrDragonFox/Elise`)
+- `--dataset-name`: Dataset name to load context from (default: `maxbsoft/mrdragonfox-elise`)
 
 ### Batch Inference Parameters
 
@@ -197,7 +197,7 @@ generate_speech(
     processor=processor,
     text="Sesame is a super cool TTS model which can be fine tuned with Unsloth.",
     dataset_context_idx=3,
-    dataset_name="MrDragonFox/Elise",
+    dataset_name="maxbsoft/mrdragonfox-elise",
     output_path="output_with_context.wav"
 )
 ```

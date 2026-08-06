@@ -1,0 +1,26 @@
+{
+  "case": "async_spawn",
+  "tool": "mcp_spawn_subagent",
+  "arguments": {
+    "task": "Return a JSON summary of the number 17 and whether it is prime.",
+    "context_strategy": "minimal",
+    "mode": "async",
+    "role": "math specialist"
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "subagent_id": "b100e805-e63b-4cd7-ac59-2f05bcbd3305",
+    "task_id": "ccf225cf-b492-42d7-8981-bc87d9e76ce7",
+    "mode": "async",
+    "status": "running",
+    "context_strategy": "minimal",
+    "context_tokens": 24,
+    "prep_tokens": 0,
+    "prepared_context": "[FROM_MAIN_AGENT] 子任务：Return a JSON summary of the number 17 and whether it is prime.",
+    "context_notes": "只传任务参数与手动挑选的最小切片，不转发主 Agent 完整轨迹",
+    "message": "子 Agent 已在后台启动，完成后可用 get_subagent_status 查询结果"
+  },
+  "latency_seconds": 0.003
+}

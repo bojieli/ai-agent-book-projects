@@ -10,7 +10,7 @@ This MCP server provides comprehensive perception capabilities including:
 """
 import logging
 from dotenv import load_dotenv
-from mcp.server import FastMCP
+from mcp.server import MCPServer
 from pydantic import Field
 
 # Import all tool functions
@@ -50,7 +50,7 @@ logging.basicConfig(
 load_dotenv()
 
 # Initialize MCP server
-mcp = FastMCP(
+mcp = MCPServer(
     "perception-tools",
     instructions="""
 Perception Tools MCP Server

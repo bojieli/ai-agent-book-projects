@@ -1,4 +1,4 @@
-"""Experiment 5-12: an Agent that creates and validates another Agent."""
+"""Experiment 5-13: an Agent that creates and validates another Agent."""
 
 from __future__ import annotations
 
@@ -162,8 +162,8 @@ class GenerationStats:
 def load_protocol(path: Path = DEFAULT_PROTOCOL) -> tuple[dict[str, Any], str]:
     raw = path.read_bytes()
     value = json.loads(raw)
-    if not isinstance(value, dict) or value.get("experiment") != "5-12":
-        raise ValueError("experiment protocol must be an Experiment 5-12 object")
+    if not isinstance(value, dict) or value.get("experiment") != "5-13":
+        raise ValueError("experiment protocol must be an Experiment 5-13 object")
     return value, hashlib.sha256(raw).hexdigest()
 
 
@@ -572,7 +572,7 @@ specific remediation action for each one.
         }
         readme = f"""# {spec['name']}
 
-This Agent was produced by adapting the proven Experiment 5-12 reference Agent.
+This Agent was produced by adapting the proven Experiment 5-13 reference Agent.
 Its model-generated artifact is the compact `domain_spec.json`; the bounded Agent
 loop, standard tool protocol, dispatcher, CLI, and contract tests are inherited.
 
@@ -865,7 +865,7 @@ entire blueprint below 900 tokens.
         else:
             state = {
                 "schema_version": "1.0",
-                "experiment": "5-12",
+                "experiment": "5-13",
                 "strategy": "scratch",
                 "requirements_sha256": requirements_sha256,
                 "model": self.model,
@@ -898,7 +898,7 @@ entire blueprint below 900 tokens.
                 calls_path,
                 {
                     "schema_version": "1.0",
-                    "experiment": "5-12",
+                    "experiment": "5-13",
                     "strategy": "scratch",
                     "model": self.model,
                     "checkpoint_status": status,
@@ -1707,7 +1707,7 @@ def run_experiment(
                 destination / "live_evidence.json",
                 {
                     "schema_version": "2.0",
-                    "experiment": "5-12",
+                    "experiment": "5-13",
                     "strategy": strategy,
                     "protocol_sha256": protocol_sha256,
                     "provider": backend.provider,
@@ -1723,7 +1723,7 @@ def run_experiment(
                 destination / "creator_calls.json",
                 {
                     "schema_version": "1.0",
-                    "experiment": "5-12",
+                    "experiment": "5-13",
                     "strategy": strategy,
                     "protocol_sha256": protocol_sha256,
                     "calls": calls,
@@ -1778,7 +1778,7 @@ def run_experiment(
                     calls_path,
                     {
                         "schema_version": "1.0",
-                        "experiment": "5-12",
+                        "experiment": "5-13",
                         "strategy": strategy,
                         "protocol_sha256": protocol_sha256,
                         "calls": calls,
@@ -1926,7 +1926,7 @@ def run_experiment(
 
     result = {
         "schema_version": "2.0",
-        "experiment": "5-12",
+        "experiment": "5-13",
         "generated_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "requirements": requirements,
         "provider": backend.provider,

@@ -1,0 +1,68 @@
+[
+  {
+    "track": "orpheus",
+    "arm": "base",
+    "reason": "lowest_cross_sentence_timbre_proxy",
+    "prompt_a": 1,
+    "prompt_b": 7,
+    "cosine": 0.9738007187843323
+  },
+  {
+    "track": "orpheus",
+    "arm": "adapted",
+    "reason": "lowest_cross_sentence_timbre_proxy",
+    "prompt_a": 1,
+    "prompt_b": 5,
+    "cosine": 0.9688550233840942
+  },
+  {
+    "track": "sesame",
+    "arm": "base",
+    "reason": "tag_did_not_raise_matching_audioset_score",
+    "pair_id": "giggle_0",
+    "tag": "giggle",
+    "neutral_score": 0.0009356054943054914,
+    "tagged_score": 0.0006116584991104901,
+    "tagged_minus_neutral": -0.00032394699519500136
+  },
+  {
+    "track": "sesame",
+    "arm": "base",
+    "reason": "tag_did_not_raise_matching_audioset_score",
+    "pair_id": "giggle_1",
+    "tag": "giggle",
+    "neutral_score": 0.0008636609418317676,
+    "tagged_score": 0.0005855335621163249,
+    "tagged_minus_neutral": -0.00027812737971544266
+  },
+  {
+    "track": "sesame",
+    "arm": "base",
+    "reason": "tag_did_not_raise_matching_audioset_score",
+    "pair_id": "sigh_1",
+    "tag": "sigh",
+    "neutral_score": 0.0024482603184878826,
+    "tagged_score": 0.0006605299422517419,
+    "tagged_minus_neutral": -0.0017877303762361407
+  },
+  {
+    "track": "sesame",
+    "arm": "adapted",
+    "reason": "tag_did_not_raise_matching_audioset_score",
+    "pair_id": "giggle_1",
+    "tag": "giggle",
+    "neutral_score": 0.003269059816375375,
+    "tagged_score": 0.0007443267968483269,
+    "tagged_minus_neutral": -0.002524733019527048
+  },
+  {
+    "track": "sesame",
+    "arm": "adapted",
+    "reason": "tag_did_not_raise_matching_audioset_score",
+    "pair_id": "laugh_1",
+    "tag": "laugh",
+    "neutral_score": 0.00033708245609886944,
+    "tagged_score": 0.0003236289485357702,
+    "tagged_minus_neutral": -1.3453507563099265e-05
+  }
+]

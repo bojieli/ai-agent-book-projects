@@ -153,6 +153,9 @@ class ConversationHistory:
         Returns:
             List of matching conversation turns
         """
+        if limit <= 0 or not self.conversations:
+            return []
+
         # Try vector search with Dify if available
         if self.dify_client:
             return self.dify_client.search_conversations(query, self.user_id, limit)

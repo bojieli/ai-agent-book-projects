@@ -44,7 +44,7 @@ def load_model(base_model_name: str, lora_path: str = None, load_in_4bit: bool =
     return model, processor
 
 
-def load_dataset_for_context(dataset_name: str = "MrDragonFox/Elise", split: str = "train"):
+def load_dataset_for_context(dataset_name: str = "maxbsoft/mrdragonfox-elise", split: str = "train"):
     """
     Load the dataset for voice context examples.
     
@@ -71,7 +71,7 @@ def generate_speech(
     max_new_tokens: int = 125,
     output_path: str = "output.wav",
     dataset_context_idx: int = None,
-    dataset_name: str = "MrDragonFox/Elise",
+    dataset_name: str = "maxbsoft/mrdragonfox-elise",
 ):
     """
     Generate speech from text.
@@ -200,8 +200,8 @@ def main():
     parser.add_argument(
         "--dataset-name",
         type=str,
-        default="MrDragonFox/Elise",
-        help="Dataset name to load context from (default: MrDragonFox/Elise)"
+        default="maxbsoft/mrdragonfox-elise",
+        help="Dataset name to load context from (default: public Elise mirror)"
     )
     
     args = parser.parse_args()
@@ -228,4 +228,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

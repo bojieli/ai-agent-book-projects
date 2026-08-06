@@ -1,0 +1,1243 @@
+{
+  "schema_version": 1,
+  "experiment": "10-7",
+  "source_commit": "fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4",
+  "arm": "baseline",
+  "personas": 25,
+  "target_steps": 17280,
+  "sec_per_step": 10,
+  "current_sim": "exp10_7_baseline_17280",
+  "completed_steps": 17280,
+  "checkpoints": [
+    {
+      "start_step": 0,
+      "end_step": 360,
+      "start_time": "2023-02-13T00:00:00",
+      "end_time": "2023-02-13T01:00:00",
+      "sim_code": "exp10_7_baseline_00360",
+      "receipt": "receipts/baseline/steps_00000_00360.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1151,
+        "by_kind": {
+          "embedding": 229,
+          "chat": 922
+        },
+        "errors": 0,
+        "transport_retries": 4,
+        "usage": {
+          "prompt_tokens": 804624,
+          "completion_tokens": 34304,
+          "total_tokens": 838928
+        },
+        "provider_latency_seconds": 1526.079
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_00000_00360.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 1615.126
+    },
+    {
+      "start_step": 360,
+      "end_step": 720,
+      "start_time": "2023-02-13T01:00:00",
+      "end_time": "2023-02-13T02:00:00",
+      "sim_code": "exp10_7_baseline_00720",
+      "receipt": "receipts/baseline/steps_00360_00720.jsonl.gz",
+      "receipt_summary": {
+        "calls": 0,
+        "by_kind": {},
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        },
+        "provider_latency_seconds": 0.0
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 5.052
+    },
+    {
+      "start_step": 720,
+      "end_step": 1080,
+      "start_time": "2023-02-13T02:00:00",
+      "end_time": "2023-02-13T03:00:00",
+      "sim_code": "exp10_7_baseline_01080",
+      "receipt": "receipts/baseline/steps_00720_01080.jsonl.gz",
+      "receipt_summary": {
+        "calls": 0,
+        "by_kind": {},
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        },
+        "provider_latency_seconds": 0.0
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 5.164
+    },
+    {
+      "start_step": 1080,
+      "end_step": 1440,
+      "start_time": "2023-02-13T03:00:00",
+      "end_time": "2023-02-13T04:00:00",
+      "sim_code": "exp10_7_baseline_01440",
+      "receipt": "receipts/baseline/steps_01080_01440.jsonl.gz",
+      "receipt_summary": {
+        "calls": 0,
+        "by_kind": {},
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        },
+        "provider_latency_seconds": 0.0
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 5.287
+    },
+    {
+      "start_step": 1440,
+      "end_step": 1800,
+      "start_time": "2023-02-13T04:00:00",
+      "end_time": "2023-02-13T05:00:00",
+      "sim_code": "exp10_7_baseline_01800",
+      "receipt": "receipts/baseline/steps_01440_01800.jsonl.gz",
+      "receipt_summary": {
+        "calls": 98,
+        "by_kind": {
+          "chat": 88,
+          "embedding": 10
+        },
+        "errors": 0,
+        "transport_retries": 1,
+        "usage": {
+          "prompt_tokens": 20705,
+          "completion_tokens": 538,
+          "total_tokens": 21243
+        },
+        "provider_latency_seconds": 146.629
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 157.777
+    },
+    {
+      "start_step": 1800,
+      "end_step": 2160,
+      "start_time": "2023-02-13T05:00:00",
+      "end_time": "2023-02-13T06:00:00",
+      "sim_code": "exp10_7_baseline_02160",
+      "receipt": "receipts/baseline/steps_01800_02160.jsonl.gz",
+      "receipt_summary": {
+        "calls": 354,
+        "by_kind": {
+          "chat": 315,
+          "embedding": 39
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 94679,
+          "completion_tokens": 3035,
+          "total_tokens": 97714
+        },
+        "provider_latency_seconds": 317.174
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 342.676
+    },
+    {
+      "start_step": 2160,
+      "end_step": 2520,
+      "start_time": "2023-02-13T06:00:00",
+      "end_time": "2023-02-13T07:00:00",
+      "sim_code": "exp10_7_baseline_02520",
+      "receipt": "receipts/baseline/steps_02160_02520.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1367,
+        "by_kind": {
+          "chat": 1141,
+          "embedding": 226
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 391397,
+          "completion_tokens": 34134,
+          "total_tokens": 425531
+        },
+        "provider_latency_seconds": 1526.232
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_02160_02520.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 1607.477
+    },
+    {
+      "start_step": 2520,
+      "end_step": 2880,
+      "start_time": "2023-02-13T07:00:00",
+      "end_time": "2023-02-13T08:00:00",
+      "sim_code": "exp10_7_baseline_02880",
+      "receipt": "receipts/baseline/steps_02520_02880.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1944,
+        "by_kind": {
+          "chat": 1575,
+          "embedding": 369
+        },
+        "errors": 0,
+        "transport_retries": 2,
+        "usage": {
+          "prompt_tokens": 580637,
+          "completion_tokens": 55020,
+          "total_tokens": 635657
+        },
+        "provider_latency_seconds": 2382.673
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_02520_02880.jsonl",
+      "compatibility_corrections": 5,
+      "wall_seconds": 2493.153
+    },
+    {
+      "start_step": 2880,
+      "end_step": 3240,
+      "start_time": "2023-02-13T08:00:00",
+      "end_time": "2023-02-13T09:00:00",
+      "sim_code": "exp10_7_baseline_03240",
+      "receipt": "receipts/baseline/steps_02880_03240.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1095,
+        "by_kind": {
+          "chat": 934,
+          "embedding": 161
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 319719,
+          "completion_tokens": 21591,
+          "total_tokens": 341310
+        },
+        "provider_latency_seconds": 1241.096
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 1312.546
+    },
+    {
+      "start_step": 3240,
+      "end_step": 3600,
+      "start_time": "2023-02-13T09:00:00",
+      "end_time": "2023-02-13T10:00:00",
+      "sim_code": "exp10_7_baseline_03600",
+      "receipt": "receipts/baseline/steps_03240_03600.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1310,
+        "by_kind": {
+          "chat": 1169,
+          "embedding": 141
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 363346,
+          "completion_tokens": 23355,
+          "total_tokens": 386701
+        },
+        "provider_latency_seconds": 1353.176
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_03240_03600.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 1441.845
+    },
+    {
+      "start_step": 3600,
+      "end_step": 3960,
+      "start_time": "2023-02-13T10:00:00",
+      "end_time": "2023-02-13T11:00:00",
+      "sim_code": "exp10_7_baseline_03960",
+      "receipt": "receipts/baseline/steps_03600_03960.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1800,
+        "by_kind": {
+          "chat": 1589,
+          "embedding": 211
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 505597,
+          "completion_tokens": 32204,
+          "total_tokens": 537801
+        },
+        "provider_latency_seconds": 1888.138
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_03600_03960.jsonl",
+      "compatibility_corrections": 3,
+      "wall_seconds": 2014.385
+    },
+    {
+      "start_step": 3960,
+      "end_step": 4320,
+      "start_time": "2023-02-13T11:00:00",
+      "end_time": "2023-02-13T12:00:00",
+      "sim_code": "exp10_7_baseline_04320",
+      "receipt": "receipts/baseline/steps_03960_04320.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1042,
+        "by_kind": {
+          "chat": 936,
+          "embedding": 106
+        },
+        "errors": 0,
+        "transport_retries": 1,
+        "usage": {
+          "prompt_tokens": 302926,
+          "completion_tokens": 17218,
+          "total_tokens": 320144
+        },
+        "provider_latency_seconds": 1113.994
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_03960_04320.jsonl",
+      "compatibility_corrections": 1,
+      "wall_seconds": 1192.79
+    },
+    {
+      "start_step": 4320,
+      "end_step": 4680,
+      "start_time": "2023-02-13T12:00:00",
+      "end_time": "2023-02-13T13:00:00",
+      "sim_code": "exp10_7_baseline_04680",
+      "receipt": "receipts/baseline/steps_04320_04680.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1762,
+        "by_kind": {
+          "chat": 1484,
+          "embedding": 278
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 579948,
+          "completion_tokens": 44435,
+          "total_tokens": 624383
+        },
+        "provider_latency_seconds": 1984.659
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_04320_04680.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 2103.912
+    },
+    {
+      "start_step": 4680,
+      "end_step": 5040,
+      "start_time": "2023-02-13T13:00:00",
+      "end_time": "2023-02-13T14:00:00",
+      "sim_code": "exp10_7_baseline_05040",
+      "receipt": "receipts/baseline/steps_04680_05040.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1376,
+        "by_kind": {
+          "chat": 1197,
+          "embedding": 179
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 414885,
+          "completion_tokens": 29505,
+          "total_tokens": 444390
+        },
+        "provider_latency_seconds": 1483.238
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_04680_05040.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 1578.028
+    },
+    {
+      "start_step": 5040,
+      "end_step": 5400,
+      "start_time": "2023-02-13T14:00:00",
+      "end_time": "2023-02-13T15:00:00",
+      "sim_code": "exp10_7_baseline_05400",
+      "receipt": "receipts/baseline/steps_05040_05400.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1489,
+        "by_kind": {
+          "chat": 1321,
+          "embedding": 168
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 457930,
+          "completion_tokens": 29798,
+          "total_tokens": 487728
+        },
+        "provider_latency_seconds": 1674.92
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_05040_05400.jsonl",
+      "compatibility_corrections": 3,
+      "wall_seconds": 1782.253
+    },
+    {
+      "start_step": 5400,
+      "end_step": 5760,
+      "start_time": "2023-02-13T15:00:00",
+      "end_time": "2023-02-13T16:00:00",
+      "sim_code": "exp10_7_baseline_05760",
+      "receipt": "receipts/baseline/steps_05400_05760.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1621,
+        "by_kind": {
+          "chat": 1380,
+          "embedding": 241
+        },
+        "errors": 0,
+        "transport_retries": 3,
+        "usage": {
+          "prompt_tokens": 555136,
+          "completion_tokens": 62229,
+          "total_tokens": 617365
+        },
+        "provider_latency_seconds": 2291.79
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 2405.845
+    },
+    {
+      "start_step": 5760,
+      "end_step": 6120,
+      "start_time": "2023-02-13T16:00:00",
+      "end_time": "2023-02-13T17:00:00",
+      "sim_code": "exp10_7_baseline_06120",
+      "receipt": "receipts/baseline/steps_05760_06120.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1757,
+        "by_kind": {
+          "chat": 1504,
+          "embedding": 253
+        },
+        "errors": 0,
+        "transport_retries": 3,
+        "usage": {
+          "prompt_tokens": 576360,
+          "completion_tokens": 48623,
+          "total_tokens": 624983
+        },
+        "provider_latency_seconds": 2666.26
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_05760_06120.jsonl",
+      "compatibility_corrections": 1,
+      "wall_seconds": 2790.065
+    },
+    {
+      "start_step": 6120,
+      "end_step": 6480,
+      "start_time": "2023-02-13T17:00:00",
+      "end_time": "2023-02-13T18:00:00",
+      "sim_code": "exp10_7_baseline_06480",
+      "receipt": "receipts/baseline/steps_06120_06480.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1881,
+        "by_kind": {
+          "chat": 1587,
+          "embedding": 294
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 675348,
+          "completion_tokens": 54125,
+          "total_tokens": 729473
+        },
+        "provider_latency_seconds": 2527.086
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_06120_06480.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 2652.892
+    },
+    {
+      "start_step": 6480,
+      "end_step": 6840,
+      "start_time": "2023-02-13T18:00:00",
+      "end_time": "2023-02-13T19:00:00",
+      "sim_code": "exp10_7_baseline_06840",
+      "receipt": "receipts/baseline/steps_06480_06840.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1384,
+        "by_kind": {
+          "chat": 1207,
+          "embedding": 177
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 458100,
+          "completion_tokens": 46315,
+          "total_tokens": 504415
+        },
+        "provider_latency_seconds": 1194.935
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_06480_06840.jsonl",
+      "compatibility_corrections": 4,
+      "wall_seconds": 1292.516
+    },
+    {
+      "start_step": 6840,
+      "end_step": 7200,
+      "start_time": "2023-02-13T19:00:00",
+      "end_time": "2023-02-13T20:00:00",
+      "sim_code": "exp10_7_baseline_07200",
+      "receipt": "receipts/baseline/steps_06840_07200.jsonl.gz",
+      "receipt_summary": {
+        "calls": 2393,
+        "by_kind": {
+          "chat": 2029,
+          "embedding": 364
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 873200,
+          "completion_tokens": 65499,
+          "total_tokens": 938699
+        },
+        "provider_latency_seconds": 2057.036
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_06840_07200.jsonl",
+      "compatibility_corrections": 3,
+      "wall_seconds": 2207.222
+    },
+    {
+      "start_step": 7200,
+      "end_step": 7560,
+      "start_time": "2023-02-13T20:00:00",
+      "end_time": "2023-02-13T21:00:00",
+      "sim_code": "exp10_7_baseline_07560",
+      "receipt": "receipts/baseline/steps_07200_07560.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1659,
+        "by_kind": {
+          "chat": 1495,
+          "embedding": 164
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 509737,
+          "completion_tokens": 24322,
+          "total_tokens": 534059
+        },
+        "provider_latency_seconds": 1426.077
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_07200_07560.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 1548.552
+    },
+    {
+      "start_step": 7560,
+      "end_step": 7920,
+      "start_time": "2023-02-13T21:00:00",
+      "end_time": "2023-02-13T22:00:00",
+      "sim_code": "exp10_7_baseline_07920",
+      "receipt": "receipts/baseline/steps_07560_07920.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1318,
+        "by_kind": {
+          "chat": 1204,
+          "embedding": 114
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 438600,
+          "completion_tokens": 32057,
+          "total_tokens": 470657
+        },
+        "provider_latency_seconds": 1185.451
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_07560_07920.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 1289.145
+    },
+    {
+      "start_step": 7920,
+      "end_step": 8280,
+      "start_time": "2023-02-13T22:00:00",
+      "end_time": "2023-02-13T23:00:00",
+      "sim_code": "exp10_7_baseline_08280",
+      "receipt": "receipts/baseline/steps_07920_08280.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1366,
+        "by_kind": {
+          "chat": 1264,
+          "embedding": 102
+        },
+        "errors": 0,
+        "transport_retries": 1,
+        "usage": {
+          "prompt_tokens": 391004,
+          "completion_tokens": 11748,
+          "total_tokens": 402752
+        },
+        "provider_latency_seconds": 1383.52
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_07920_08280.jsonl",
+      "compatibility_corrections": 1,
+      "wall_seconds": 1490.385
+    },
+    {
+      "start_step": 8280,
+      "end_step": 8640,
+      "start_time": "2023-02-13T23:00:00",
+      "end_time": "2023-02-14T00:00:00",
+      "sim_code": "exp10_7_baseline_08640",
+      "receipt": "receipts/baseline/steps_08280_08640.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1402,
+        "by_kind": {
+          "chat": 1266,
+          "embedding": 136
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 411652,
+          "completion_tokens": 21607,
+          "total_tokens": 433259
+        },
+        "provider_latency_seconds": 1135.861
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 1243.897
+    },
+    {
+      "start_step": 8640,
+      "end_step": 9000,
+      "start_time": "2023-02-14T00:00:00",
+      "end_time": "2023-02-14T01:00:00",
+      "sim_code": "exp10_7_baseline_09000",
+      "receipt": "receipts/baseline/steps_08640_09000.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1006,
+        "by_kind": {
+          "chat": 926,
+          "embedding": 80
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 1060248,
+          "completion_tokens": 47524,
+          "total_tokens": 1107772
+        },
+        "provider_latency_seconds": 1029.63
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 1130.799
+    },
+    {
+      "start_step": 9000,
+      "end_step": 9360,
+      "start_time": "2023-02-14T01:00:00",
+      "end_time": "2023-02-14T02:00:00",
+      "sim_code": "exp10_7_baseline_09360",
+      "receipt": "receipts/baseline/steps_09000_09360.jsonl.gz",
+      "receipt_summary": {
+        "calls": 0,
+        "by_kind": {},
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        },
+        "provider_latency_seconds": 0.0
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 10.311
+    },
+    {
+      "start_step": 9360,
+      "end_step": 9720,
+      "start_time": "2023-02-14T02:00:00",
+      "end_time": "2023-02-14T03:00:00",
+      "sim_code": "exp10_7_baseline_09720",
+      "receipt": "receipts/baseline/steps_09360_09720.jsonl.gz",
+      "receipt_summary": {
+        "calls": 0,
+        "by_kind": {},
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        },
+        "provider_latency_seconds": 0.0
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 10.362
+    },
+    {
+      "start_step": 9720,
+      "end_step": 10080,
+      "start_time": "2023-02-14T03:00:00",
+      "end_time": "2023-02-14T04:00:00",
+      "sim_code": "exp10_7_baseline_10080",
+      "receipt": "receipts/baseline/steps_09720_10080.jsonl.gz",
+      "receipt_summary": {
+        "calls": 0,
+        "by_kind": {},
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        },
+        "provider_latency_seconds": 0.0
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 10.452
+    },
+    {
+      "start_step": 10080,
+      "end_step": 10440,
+      "start_time": "2023-02-14T04:00:00",
+      "end_time": "2023-02-14T05:00:00",
+      "sim_code": "exp10_7_baseline_10440",
+      "receipt": "receipts/baseline/steps_10080_10440.jsonl.gz",
+      "receipt_summary": {
+        "calls": 17,
+        "by_kind": {
+          "chat": 17
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 5546,
+          "completion_tokens": 103,
+          "total_tokens": 5649
+        },
+        "provider_latency_seconds": 13.105
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 25.277
+    },
+    {
+      "start_step": 10440,
+      "end_step": 10800,
+      "start_time": "2023-02-14T05:00:00",
+      "end_time": "2023-02-14T06:00:00",
+      "sim_code": "exp10_7_baseline_10800",
+      "receipt": "receipts/baseline/steps_10440_10800.jsonl.gz",
+      "receipt_summary": {
+        "calls": 438,
+        "by_kind": {
+          "chat": 346,
+          "embedding": 92
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 221991,
+          "completion_tokens": 14707,
+          "total_tokens": 236698
+        },
+        "provider_latency_seconds": 386.91
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 425.004
+    },
+    {
+      "start_step": 10800,
+      "end_step": 11160,
+      "start_time": "2023-02-14T06:00:00",
+      "end_time": "2023-02-14T07:00:00",
+      "sim_code": "exp10_7_baseline_11160",
+      "receipt": "receipts/baseline/steps_10800_11160.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1536,
+        "by_kind": {
+          "chat": 1335,
+          "embedding": 201
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 596742,
+          "completion_tokens": 29172,
+          "total_tokens": 625914
+        },
+        "provider_latency_seconds": 1274.816
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_10800_11160.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 1382.741
+    },
+    {
+      "start_step": 11160,
+      "end_step": 11520,
+      "start_time": "2023-02-14T07:00:00",
+      "end_time": "2023-02-14T08:00:00",
+      "sim_code": "exp10_7_baseline_11520",
+      "receipt": "receipts/baseline/steps_11160_11520.jsonl.gz",
+      "receipt_summary": {
+        "calls": 2496,
+        "by_kind": {
+          "chat": 2147,
+          "embedding": 349
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 1019937,
+          "completion_tokens": 84899,
+          "total_tokens": 1104836
+        },
+        "provider_latency_seconds": 2233.237
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_11160_11520.jsonl",
+      "compatibility_corrections": 12,
+      "wall_seconds": 2404.473
+    },
+    {
+      "start_step": 11520,
+      "end_step": 11880,
+      "start_time": "2023-02-14T08:00:00",
+      "end_time": "2023-02-14T09:00:00",
+      "sim_code": "exp10_7_baseline_11880",
+      "receipt": "receipts/baseline/steps_11520_11880.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1856,
+        "by_kind": {
+          "chat": 1590,
+          "embedding": 266
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 705242,
+          "completion_tokens": 36095,
+          "total_tokens": 741337
+        },
+        "provider_latency_seconds": 2667.903
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_11520_11880.jsonl",
+      "compatibility_corrections": 5,
+      "wall_seconds": 2792.969
+    },
+    {
+      "start_step": 11880,
+      "end_step": 12240,
+      "start_time": "2023-02-14T09:00:00",
+      "end_time": "2023-02-14T10:00:00",
+      "sim_code": "exp10_7_baseline_12240",
+      "receipt": "receipts/baseline/steps_11880_12240.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1889,
+        "by_kind": {
+          "chat": 1610,
+          "embedding": 279
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 765093,
+          "completion_tokens": 57003,
+          "total_tokens": 822096
+        },
+        "provider_latency_seconds": 2727.511
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 2858.966
+    },
+    {
+      "start_step": 12240,
+      "end_step": 12600,
+      "start_time": "2023-02-14T10:00:00",
+      "end_time": "2023-02-14T11:00:00",
+      "sim_code": "exp10_7_baseline_12600",
+      "receipt": "receipts/baseline/steps_12240_12600.jsonl.gz",
+      "receipt_summary": {
+        "calls": 2600,
+        "by_kind": {
+          "chat": 2172,
+          "embedding": 428
+        },
+        "errors": 0,
+        "transport_retries": 1,
+        "usage": {
+          "prompt_tokens": 1187810,
+          "completion_tokens": 93781,
+          "total_tokens": 1281591
+        },
+        "provider_latency_seconds": 3515.663
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 3670.667
+    },
+    {
+      "start_step": 12600,
+      "end_step": 12960,
+      "start_time": "2023-02-14T11:00:00",
+      "end_time": "2023-02-14T12:00:00",
+      "sim_code": "exp10_7_baseline_12960",
+      "receipt": "receipts/baseline/steps_12600_12960.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1562,
+        "by_kind": {
+          "chat": 1402,
+          "embedding": 160
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 605145,
+          "completion_tokens": 20808,
+          "total_tokens": 625953
+        },
+        "provider_latency_seconds": 1644.223
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_12600_12960.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 1756.837
+    },
+    {
+      "start_step": 12960,
+      "end_step": 13320,
+      "start_time": "2023-02-14T12:00:00",
+      "end_time": "2023-02-14T13:00:00",
+      "sim_code": "exp10_7_baseline_13320",
+      "receipt": "receipts/baseline/steps_12960_13320.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1122,
+        "by_kind": {
+          "chat": 1003,
+          "embedding": 119
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 423065,
+          "completion_tokens": 18127,
+          "total_tokens": 441192
+        },
+        "provider_latency_seconds": 1153.414
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_12960_13320.jsonl",
+      "compatibility_corrections": 1,
+      "wall_seconds": 1237.821
+    },
+    {
+      "start_step": 13320,
+      "end_step": 13680,
+      "start_time": "2023-02-14T13:00:00",
+      "end_time": "2023-02-14T14:00:00",
+      "sim_code": "exp10_7_baseline_13680",
+      "receipt": "receipts/baseline/steps_13320_13680.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1620,
+        "by_kind": {
+          "chat": 1407,
+          "embedding": 213
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 691224,
+          "completion_tokens": 46681,
+          "total_tokens": 737905
+        },
+        "provider_latency_seconds": 1683.734
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_13320_13680.jsonl",
+      "compatibility_corrections": 3,
+      "wall_seconds": 1797.734
+    },
+    {
+      "start_step": 13680,
+      "end_step": 14040,
+      "start_time": "2023-02-14T14:00:00",
+      "end_time": "2023-02-14T15:00:00",
+      "sim_code": "exp10_7_baseline_14040",
+      "receipt": "receipts/baseline/steps_13680_14040.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1207,
+        "by_kind": {
+          "chat": 1075,
+          "embedding": 132
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 487609,
+          "completion_tokens": 22497,
+          "total_tokens": 510106
+        },
+        "provider_latency_seconds": 1234.095
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_13680_14040.jsonl",
+      "compatibility_corrections": 3,
+      "wall_seconds": 1324.411
+    },
+    {
+      "start_step": 14040,
+      "end_step": 14400,
+      "start_time": "2023-02-14T15:00:00",
+      "end_time": "2023-02-14T16:00:00",
+      "sim_code": "exp10_7_baseline_14400",
+      "receipt": "receipts/baseline/steps_14040_14400.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1448,
+        "by_kind": {
+          "chat": 1285,
+          "embedding": 163
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 575973,
+          "completion_tokens": 44385,
+          "total_tokens": 620358
+        },
+        "provider_latency_seconds": 1684.072
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 1796.072
+    },
+    {
+      "start_step": 14400,
+      "end_step": 14760,
+      "start_time": "2023-02-14T16:00:00",
+      "end_time": "2023-02-14T17:00:00",
+      "sim_code": "exp10_7_baseline_14760",
+      "receipt": "receipts/baseline/steps_14400_14760.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1407,
+        "by_kind": {
+          "chat": 1307,
+          "embedding": 100
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 504546,
+          "completion_tokens": 13744,
+          "total_tokens": 518290
+        },
+        "provider_latency_seconds": 1564.2
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_14400_14760.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 1668.531
+    },
+    {
+      "start_step": 14760,
+      "end_step": 15120,
+      "start_time": "2023-02-14T17:00:00",
+      "end_time": "2023-02-14T18:00:00",
+      "sim_code": "exp10_7_baseline_15120",
+      "receipt": "receipts/baseline/steps_14760_15120.jsonl.gz",
+      "receipt_summary": {
+        "calls": 756,
+        "by_kind": {
+          "chat": 710,
+          "embedding": 46
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 253458,
+          "completion_tokens": 5063,
+          "total_tokens": 258521
+        },
+        "provider_latency_seconds": 760.237
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_14760_15120.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 826.52
+    },
+    {
+      "start_step": 15120,
+      "end_step": 15480,
+      "start_time": "2023-02-14T18:00:00",
+      "end_time": "2023-02-14T19:00:00",
+      "sim_code": "exp10_7_baseline_15480",
+      "receipt": "receipts/baseline/steps_15120_15480.jsonl.gz",
+      "receipt_summary": {
+        "calls": 939,
+        "by_kind": {
+          "chat": 811,
+          "embedding": 128
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 398509,
+          "completion_tokens": 21970,
+          "total_tokens": 420479
+        },
+        "provider_latency_seconds": 1126.067
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 1200.686
+    },
+    {
+      "start_step": 15480,
+      "end_step": 15840,
+      "start_time": "2023-02-14T19:00:00",
+      "end_time": "2023-02-14T20:00:00",
+      "sim_code": "exp10_7_baseline_15840",
+      "receipt": "receipts/baseline/steps_15480_15840.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1132,
+        "by_kind": {
+          "chat": 1012,
+          "embedding": 120
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 421772,
+          "completion_tokens": 17504,
+          "total_tokens": 439276
+        },
+        "provider_latency_seconds": 1470.723
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_15480_15840.jsonl",
+      "compatibility_corrections": 1,
+      "wall_seconds": 1558.299
+    },
+    {
+      "start_step": 15840,
+      "end_step": 16200,
+      "start_time": "2023-02-14T20:00:00",
+      "end_time": "2023-02-14T21:00:00",
+      "sim_code": "exp10_7_baseline_16200",
+      "receipt": "receipts/baseline/steps_15840_16200.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1137,
+        "by_kind": {
+          "chat": 998,
+          "embedding": 139
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 474435,
+          "completion_tokens": 27200,
+          "total_tokens": 501635
+        },
+        "provider_latency_seconds": 1419.834
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_15840_16200.jsonl",
+      "compatibility_corrections": 3,
+      "wall_seconds": 1506.869
+    },
+    {
+      "start_step": 16200,
+      "end_step": 16560,
+      "start_time": "2023-02-14T21:00:00",
+      "end_time": "2023-02-14T22:00:00",
+      "sim_code": "exp10_7_baseline_16560",
+      "receipt": "receipts/baseline/steps_16200_16560.jsonl.gz",
+      "receipt_summary": {
+        "calls": 970,
+        "by_kind": {
+          "chat": 871,
+          "embedding": 99
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 344737,
+          "completion_tokens": 12830,
+          "total_tokens": 357567
+        },
+        "provider_latency_seconds": 975.925
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_16200_16560.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 1056.857
+    },
+    {
+      "start_step": 16560,
+      "end_step": 16920,
+      "start_time": "2023-02-14T22:00:00",
+      "end_time": "2023-02-14T23:00:00",
+      "sim_code": "exp10_7_baseline_16920",
+      "receipt": "receipts/baseline/steps_16560_16920.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1306,
+        "by_kind": {
+          "chat": 1165,
+          "embedding": 141
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 478245,
+          "completion_tokens": 31297,
+          "total_tokens": 509542
+        },
+        "provider_latency_seconds": 1525.094
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 1626.367
+    },
+    {
+      "start_step": 16920,
+      "end_step": 17280,
+      "start_time": "2023-02-14T23:00:00",
+      "end_time": "2023-02-15T00:00:00",
+      "sim_code": "exp10_7_baseline_17280",
+      "receipt": "receipts/baseline/steps_16920_17280.jsonl.gz",
+      "receipt_summary": {
+        "calls": 749,
+        "by_kind": {
+          "chat": 704,
+          "embedding": 45
+        },
+        "errors": 0,
+        "transport_retries": 1,
+        "usage": {
+          "prompt_tokens": 225147,
+          "completion_tokens": 7611,
+          "total_tokens": 232758
+        },
+        "provider_latency_seconds": 850.536
+      },
+      "compatibility_receipt": "compatibility/baseline/steps_16920_17280.jsonl",
+      "compatibility_corrections": 1,
+      "wall_seconds": 918.815
+    }
+  ],
+  "complete": true
+}

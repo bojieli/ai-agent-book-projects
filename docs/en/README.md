@@ -103,14 +103,14 @@ It is recommended to apply for API keys from several platforms for convenient le
 | **Zhipu GLM** | <https://open.bigmodel.cn/> | GLM-4.6 etc., strong Chinese ability, cost-effective | Mainland China |
 | **Siliconflow** | <https://siliconflow.cn/> | Various open-source models (DeepSeek, Qwen, etc.), fast access from mainland China | Mainland China |
 | **DeepSeek** | <https://platform.deepseek.com/> | Official DeepSeek API | Global + Mainland China |
-| **Krill AI** | [www.krill-ai.com](https://www.krill-ai.com/register?invite=Q8D3L35725) | One-stop access to major global and China-domestic models (OpenAI, Claude, Gemini, Grok, Kimi, GLM, DeepSeek, Qwen, Minimax) | Global + Mainland China |
+| **Krill AI** | [www.krill-ai.net](https://www.krill-ai.net/register?invite=Q8D3L35725) | One-stop access to major global and China-domestic models (OpenAI, Claude, Gemini, Grok, Kimi, GLM, DeepSeek, Qwen, Minimax) | Global + Mainland China |
 | **OpenRouter** | <https://openrouter.ai/> | One-stop access to major global and China-domestic models (GPT, Claude, Gemini, Kimi, GLM, DeepSeek, Qwen, etc.) | Global |
 
 ## 💎 Sponsors
 
 Thanks to **Krill AI** for sponsoring this project! Krill provides an official, stable, and ultra-fast API relay for GPT / Claude / Gemini and many Chinese models, with enterprise-grade customization, invoicing, and 7×16h dedicated technical support, plus an exclusively adapted WebSocket connection for blazing-fast time to first token.
 
-Krill offers a special deal for readers of this book: register via [this link](https://www.krill-ai.com/register?invite=Q8D3L35725) and enter the promo code "ai-agent-book" when topping up to get 23% off your first Codex plan!
+Krill offers a special deal for readers of this book: register via [this link](https://www.krill-ai.net/register?invite=Q8D3L35725) and enter the promo code "ai-agent-book" when topping up to get 23% off your first Codex plan!
 
 > 🧪 Experiment execution status, evidence, and outstanding gates are tracked separately in [`EXPERIMENT_STATUS.md`](../EXPERIMENT_STATUS.md); cloning or installing source code does not establish completion.
 

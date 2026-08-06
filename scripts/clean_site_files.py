@@ -28,7 +28,13 @@ class LinkCollector(HTMLParser):
         self.targets: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        attribute = "src" if tag == "img" else "href" if tag == "a" else None
+        attribute = (
+            "src"
+            if tag in ("img", "script", "iframe", "source", "embed", "audio", "video")
+            else "href"
+            if tag in ("a", "link")
+            else None
+        )
         if attribute is None:
             return
         values = dict(attrs)

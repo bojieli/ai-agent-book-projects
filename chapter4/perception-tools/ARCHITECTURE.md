@@ -9,7 +9,7 @@
                                 │ stdio
                                 │
 ┌───────────────────────────────▼─────────────────────────────────┐
-│                        main.py (FastMCP)                         │
+│                       main.py (MCPServer)                        │
 │  ┌──────────────────────────────────────────────────────────┐   │
 │  │              Tool Registration (@mcp.tool)                │   │
 │  └──────────────────────────────────────────────────────────┘   │
@@ -75,7 +75,7 @@ main.py
 ```
 1. MCP Client sends tool request via stdio
    ↓
-2. FastMCP server receives and validates request
+2. MCPServer receives and validates the request
    ↓
 3. Appropriate tool function is called
    ↓
@@ -114,7 +114,7 @@ main.py
 ### main.py
 - **Role**: MCP server initialization and tool registration
 - **Responsibilities**:
-  - Initialize FastMCP server
+  - Construct the MCPServer
   - Register all tool functions with decorators
   - Provide server-level instructions
   - Run stdio transport loop

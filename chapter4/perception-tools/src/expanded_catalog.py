@@ -997,7 +997,7 @@ def _parameter_descriptions(spec: ExpandedToolSpec) -> tuple[str, str]:
 
 
 def register_expanded_tools(mcp) -> None:
-    """Register all 70 real-backed tools on a FastMCP instance."""
+    """Register all 70 real-backed tools on an MCPServer instance."""
     for spec in EXPANDED_SPECS:
         mcp.add_tool(_make_mcp_function(spec), name=spec.name,
                      description=full_description(spec))

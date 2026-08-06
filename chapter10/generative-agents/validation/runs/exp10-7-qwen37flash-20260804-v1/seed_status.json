@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "experiment": "10-7",
+  "complete": true,
+  "source_commit": "fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4",
+  "seed_sim": "exp10_7_history_seed",
+  "personas": 25,
+  "step": 0,
+  "current_time": "2023-02-13T00:00:00",
+  "history": {
+    "rows": 25,
+    "whispers": 248,
+    "thought_nodes": 248
+  },
+  "receipt": "receipts/seed_history.jsonl.gz",
+  "receipt_summary": {
+    "calls": 1064,
+    "by_kind": {
+      "chat": 816,
+      "embedding": 248
+    },
+    "errors": 0,
+    "usage": {
+      "prompt_tokens": 162012,
+      "completion_tokens": 8051,
+      "total_tokens": 170063
+    },
+    "provider_latency_seconds": 1034.864
+  },
+  "wall_seconds": 1094.782
+}
