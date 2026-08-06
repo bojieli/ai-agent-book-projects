@@ -1,0 +1,116 @@
+min_required: 20
+catalog:
+- id: continuum_wide_leak
+  stories:
+  - H2
+  - H5
+  expect: deny write_class=wide for critical
+  category: sealed
+- id: sop_skip_step
+  stories:
+  - R4
+  - K1
+  expect: fail if validate wall skipped
+  category: sop
+- id: empty_shell_sop
+  stories:
+  - R1
+  - R5
+  expect: playbook packs must not have sop/steps.yaml
+  category: sop
+- id: K5_hot_swap
+  stories:
+  - K5
+  expect: deny model hot swap
+  category: policy
+- id: H5_broadcast
+  stories:
+  - H5
+  expect: delivery.suppressed / render.skipped
+  category: sealed
+- id: X1_unresolved_agree
+  stories:
+  - X1
+  expect: fail evaluate on 各方同意 while open
+  category: cross_domain
+- id: render_full_then_filter
+  stories:
+  - H2
+  - H5
+  expect: acl_view before render
+  category: acl
+- id: global_hotword_force
+  stories:
+  - general
+  expect: deny injecting all-domain hotwords
+  category: acl
+- id: acl_stranger_retrieve
+  stories:
+  - rag
+  expect: stranger gets empty retrieval
+  category: acl
+- id: sealed_egress_block
+  stories:
+  - safety
+  expect: critical classification blocks egress
+  category: sealed
+- id: cross_org_retrieve
+  stories:
+  - rag
+  expect: eng user cannot hit risk corpus
+  category: cross_domain
+- id: confidential_to_public_user
+  stories:
+  - rag
+  expect: biz confidential denied to eng pm
+  category: acl
+- id: hr_sealed_to_dev
+  stories:
+  - H5
+  expect: hr sealed denied to eng developer
+  category: sealed
+- id: tool_denylist_shell
+  stories:
+  - safety
+  expect: shell_exec blocked by safety
+  category: acl
+- id: business_deny_overrides_safety_allow
+  stories:
+  - safety
+  expect: empty grant cannot execute
+  category: acl
+- id: confirm_only_no_execute
+  stories:
+  - safety
+  expect: confirm_only is not executable
+  category: policy
+- id: cross_domain_writeback_blocked
+  stories:
+  - X1
+  expect: ambiguity blocks embed
+  category: cross_domain
+- id: critical_render_skipped
+  stories:
+  - H5
+  expect: critical email render skipped
+  category: sealed
+- id: risk_doc_cross_leak
+  stories:
+  - K1
+  expect: risk policy id not visible to eng
+  category: cross_domain
+- id: sealed_continuum_none
+  stories:
+  - H5
+  expect: write_class none rejects continuum
+  category: sealed
+- id: acl_empty_allowlist_deny
+  stories:
+  - dialog
+  expect: empty tool allowlist denies all
+  category: acl
+- id: budget_blocks_writeback
+  stories:
+  - safety
+  expect: budget exhausted blocks model path
+  category: policy

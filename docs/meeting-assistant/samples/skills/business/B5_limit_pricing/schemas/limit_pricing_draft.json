@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jiyaojun.local/schemas/business/limit_pricing_draft.json",
+  "title": "limit_pricing_draft",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["product_id", "recommended_action", "summary"],
+  "properties": {
+    "product_id": { "type": "string" },
+    "recommended_action": { "enum": ["hold", "pilot_draft", "reject"] },
+    "summary": { "type": "string", "minLength": 1 },
+    "proposed_limit": { "type": "string" },
+    "owners": { "type": "array", "items": { "type": "string" } }
+  }
+}

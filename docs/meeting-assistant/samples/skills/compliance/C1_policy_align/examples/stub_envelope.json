@@ -1,0 +1,29 @@
+{
+  "artifact_id": "art_c1_stub",
+  "meeting_id": "mtg_c1_stub",
+  "org_domains": [
+    "compliance"
+  ],
+  "scenario_type": "policy_align",
+  "skill_pack_id": "compliance/C1_policy_align@0.1.0",
+  "artifact_kind": "draft",
+  "schema_id": "stub_notes",
+  "schema_version": "1.0.0",
+  "payload": {
+    "summary": "C1 stub placeholder",
+    "notes": []
+  },
+  "confidence": "low",
+  "unresolved": [
+    {
+      "code": "backlog",
+      "message": "stub only",
+      "blocking_embed": true
+    }
+  ],
+  "source_spans": [],
+  "references": [],
+  "classification": "confidential",
+  "continuum_write_class": "domain",
+  "created_by_stage": "artifact"
+}

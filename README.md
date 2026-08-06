@@ -155,3 +155,114 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 </a>
 
 <sub>由 [`scripts/gen_star_history.py`](scripts/gen_star_history.py) 生成，[GitHub Actions](.github/workflows/star-history.yml) 每日自动更新 · 点击图片查看实时数据</sub>
+
+---
+
+## 附录 · 本仓库工程子项目（非书稿正文）
+
+| 目录 | 说明 |
+|------|------|
+| [`jiyaojun/`](jiyaojun/) | **纪要君生产架构脱敏重建**（Meeting Work Unit）：Skill Pack、Bounded Agent Loop、Session Journal、ACL-first Hybrid RAG、Dialog/Pipeline。详见 [`jiyaojun/README.md`](jiyaojun/README.md) · [`docs/meeting-assistant/`](docs/meeting-assistant/) |
+| [`llm-safety-platform/`](llm-safety-platform/) | **LLM 安全控制面脱敏重建**：L1–L4、五态决策、Dual-Gate、发布审批与审计哈希链；与纪要君独立。 |
+| `jiyaojun-preview/` | 原始预览，**只读参考** |
+
+### 纪要君 M4 R1 旗舰闭环（2026-08-06）
+
+- `jiyaojun/app/connectors/jira_simulator.py`：Jira 确定性模拟（幂等 / timeout / fail / transition / webhook 回调）。
+- `jiyaojun/app/demo/r1_flagship_loop.py`：技术评审 → HITL → 缺陷 → 企微 msgid → webhook 关闭 Continuum → 下一场 briefing 不召回已关闭项。
+- `jiyaojun/app/api/bff.py`：`internal_connector_webhook` 同步关闭 `SeriesContinuumBridge` open item。
+- `jiyaojun/app/scheduler/celery_tasks.py`：默认 `JIYAOJUN_CELERY_PIPELINE=orchestrator` 走真实 `Orchestrator.bind_and_run`；`stub` 保留占位。
+- 验收：`cd jiyaojun && python -m app.demo.r1_flagship_loop`；`run_all` 默认无 env 全绿。
+
+### 纪要君 RAG（2026-08-06）
+
+- 真分块：`app/knowledge/chunking.py`（标题/说话人轮次 + 可配置 overlap）
+- 测评：`python -m app.eval.retrieval_quality` → Hit@k / MRR / nDCG / Faithfulness
+- 问答接地：Dialog/BFF 知识问题返回 citation，不再空回声
+
+### P7 简历事实收口（2026-08-06）
+
+已对照两个脱敏重建工程的代码、架构文档和全量门禁，重写 [`简历_new/个人简历.md`](简历_new/个人简历.md) 与 [`简历_new/个人简历_纪要君架构版.md`](简历_new/个人简历_纪要君架构版.md)：
+
+- **纪要君**：补齐技术负责人角色、Meeting Work Unit、Skill Pack、Bounded Agent Loop、Session Journal / Context Compaction、Continuum、ACL-first Hybrid RAG、HITL 与统一写回运行时。
+- **安全控制面**：补齐 L1–L4、五态 SafetyDecision、Dual-Gate、publish profile、critical 双人审批、审计哈希链与私有化 SPI 边界。
+- **口径约束**：生产结果与脱敏回归指标分开陈述；shim/static 语料通过不表述为生产零事故；进程内调度、Mock Planner、single-writer 等边界保留在架构材料中。
+- **证据索引**：新增 [`简历_new/简历事实证据映射.md`](简历_new/简历事实证据映射.md)，逐项标明生产监控口径、代码证据、测试命令和面试边界。
+
+### 本轮代码修正与验证（2026-08-06）
+
+- `jiyaojun/app/eval/retrieval_quality.py`：修正 source 级 nDCG 重复 chunk 计分，避免指标大于 1；新增回归测试并更新项目 README。修正后 Hit@5=1.0、MRR=0.9286、nDCG@5=0.9473、Faithfulness=0.932。
+- `llm-safety-platform/app/api/main.py`：FastAPI 启动初始化从废弃的 `on_event` 迁移到 `lifespan`；更新项目 README。
+- 全量门禁：纪要君 117 项 pytest 与 `run_all` 通过；安全控制面 pytest 103 项、`run_all`、dual_gate ci/release/full 通过。
+
+### Agent Skills 切换（2026-08-06）
+
+- **卸载 Superpowers**：已删除 Cursor 插件缓存 `~/.cursor/plugins/cache/cursor-public/superpowers`（注册表 `installedIds` 本已为空）。本机若仍保留参考仓库 `~/Projects/superpowers`，与 Cursor 插件无关，可按需自行删除。
+- **安装 mattpocock/skills**：通过 `npx skills@latest add mattpocock/skills -g -a cursor --skill '*' -y` 全局安装全部 **35** 个 skills，主目录为 `~/.agents/skills/`，并软链到 `~/.cursor/skills` 方便 Cursor 发现。
+- **常用入口**：`/ask-matt`、`/grill-with-docs`（口语里常叫 grill-me-doc，和 `/grill-me` 是一对：后者纯追问不落文档，前者会边问边写 ADR/`CONTEXT.md`）、`/setup-matt-pocock-skills`（每个仓库建议先跑一次做 issue tracker / triage / domain docs 配置）、`/tdd`、`/implement`。
+- **更新方式**：`npx skills update`（需本机 Node；已放在 `~/.local/node`，可按需把该路径加入 `PATH`）。
+- **2026-08-06 补充**：确认 `grill-me-doc` = 官方名 `grill-with-docs`，已在上一轮 35 个 skills 中安装于 `~/.agents/skills/grill-with-docs/`，无需重复安装。
+
+### 项目升级领域共识（2026-08-06）
+
+- 新增 [`CONTEXT-MAP.md`](CONTEXT-MAP.md)，明确“会议工作管理”与“AI 安全治理”两个上下文及单向依赖。
+- 新增 [`jiyaojun/CONTEXT.md`](jiyaojun/CONTEXT.md) 与 [`llm-safety-platform/CONTEXT.md`](llm-safety-platform/CONTEXT.md)，统一会议工作单元、跨会连续体、安全判决、攻击门/正常业务门等领域语言。
+- 两个项目统一定位为**生产架构脱敏重建**；目标是求职展示与企业二次接入，后续投入按纪要君 70% / 安全平台 30%，单人周期 8～12 周。
+- 最终形态：本地真实开源基础设施替换核心存储/调度 Mock，模型通过外部 OpenAI-compatible 商业 API 接入；纪要君单向接入安全控制面；提供一键启动、正常路径、故障路径和指标看板。
+- 架构决策：[`ADR-0001`](docs/adr/0001-meeting-agent-depends-on-safety-control-plane.md) 固化单向安全依赖与“更严格结果生效”；[`ADR-0002`](docs/adr/0002-openai-compatible-commercial-model-api.md) 固化商业模型 API 的 OpenAI-compatible 接入、凭据外置与离线确定性替身。
+- 外部模型安全边界：[`ADR-0003`](docs/adr/0003-commercial-model-data-egress-and-budget.md) 规定只允许脱敏后的 public/internal 内容出站，商业 Judge 仅处理灰区，并设置 token、每日调用和月度费用上限。
+- 本地验证栈采用分层 Compose：Core（PostgreSQL/Redis/SeaweedFS/Qdrant）、Worker（Celery）、Identity（Keycloak）、Secrets（OpenBao）和 Observability（OpenTelemetry/Prometheus/Grafana/Tempo）；Jira/企微仅实现确定性契约模拟。MinIO 社区仓库已归档，不作为新增依赖。
+- 连接协议：[`ADR-0004`](docs/adr/0004-safety-integration-protocol.md) 规定模型代理与工具授权使用两条安全接口；完整阶段、故障矩阵和验收线见 [`docs/PROJECT-UPGRADE-ROADMAP.md`](docs/PROJECT-UPGRADE-ROADMAP.md)，任务依赖与验收命令见 [`docs/PROJECT-UPGRADE-TASKS.md`](docs/PROJECT-UPGRADE-TASKS.md)。
+
+### 升级第一阶段实施（2026-08-06）
+
+- 新增 [`deploy/local/docker-compose.yml`](deploy/local/docker-compose.yml)：本地 Core 使用 PostgreSQL 16、Redis 7、SeaweedFS 4.40 和 Qdrant 1.18.2；两个项目共享实例但隔离数据库/Redis DB。
+- MinIO 社区仓库已归档，因此对象存储改为仍维护、Apache 2.0、支持 ARM64 的 SeaweedFS；业务只依赖 S3-compatible 契约。
+- 新增 [`deploy/local/.env.example`](deploy/local/.env.example) 与 [`scripts/verify_local_stack.py`](scripts/verify_local_stack.py)，商业模型凭据默认空，Docker/服务异常输出机器可读 JSON 和非零退出码。
+- 纪要君新增基础设施配置契约 `jiyaojun/app/config.py`；安全平台扩展 OpenAI-compatible 模型地址、模型名、超时、token、每日调用和月预算契约，`ModelProxy` 使用配置化超时与输出 token 上限。
+- 修正 `ModelProxy` 白名单判定：`mock-llm` 在白名单中不再意外放行任意真实模型，真实模型必须逐项授权。
+- 新增 9 项离线配置/健康检查单测；Compose `config`、四容器运行态健康、双数据库初始化、Qdrant API 与“停止单服务后明确失败、恢复后全绿”均已验证。
+
+### M2.1 纪要君持久化（2026-08-06）
+
+- `jiyaojun/migrations/002_app_runtime.sql`：应用运行时表（`app_meeting`、`app_session_journal_entry`、`app_task_projection`、`app_work_link`）。
+- `jiyaojun/app/persistence/`：PostgreSQL 连接、幂等迁移、任务投影、`python -m app.persistence.migrate`。
+- `PostgresJournalRepository` / `PostgresMeetingStore` / Redis `SessionProjectionCache` + `IdempotencyCache`；`app/runtime/factory.py` 按 env 切换。
+- postgres 模式下 `DialogSessionService.with_settings` 通过 `TaskProjectionJournalHook` 同步写 `app_task_projection`，并按配置装配调度器。
+- 默认 `storage_backend=memory`、`redis_backend=memory`；离线门禁全绿，集成测试在 Core 起来后跑。
+
+### M2.2 Celery Worker（2026-08-06）
+
+- `JIYAOJUN_SCHEDULER_BACKEND=memory|celery`（默认 memory）；`build_scheduler` 切换 `InProcessScheduler` / `CeleryScheduler`。
+- Celery broker/result 使用 Redis DB2（`JIYAOJUN_CELERY_BROKER_URL=redis://127.0.0.1:56379/2`）；纪要君缓存仍用 DB1。
+- `run_pipeline_job` 长流水线任务；`IdempotencyCache` 防重复写回；`app_task_projection` 可选持久化。
+- Compose 可选 profile `worker`；`DialogSessionService.with_settings` 已按配置切换调度器。
+- **边界**：`DialogSessionService` 默认进程内调度；Celery 生产需独立 Worker。M3 安全接入已完成。
+
+### M2.3 Qdrant / SeaweedFS（2026-08-06）
+
+- `JIYAOJUN_VECTOR_BACKEND=memory|qdrant`、`JIYAOJUN_OBJECT_BACKEND=mock|s3`；factory 提供 `build_vector_index` / `build_object_store`。
+- `QdrantHybridIndex`：ACL-first payload 过滤 + dense 检索 + sparse 应用侧重排；`S3ObjectStore` 对接 SeaweedFS path-style。
+- 集成测试覆盖重启后可检索、ACL 负例空召回、对象上传下载一致性。
+
+### M3 纪要君单向接入安全控制面（2026-08-06）
+
+- `jiyaojun/app/safety/`：出站门禁、预算、离线/HTTP 网关、双重授权、`SafetyRoutedLLMClient`。
+- 模型只走 `/v1/chat/completions`；工具在业务授权后走 **`/v1/tools/authorize`（干跑）**，本地再执行；取更严格结果（ADR-0001/0004）。
+- `confidential/critical` 出站时 `external_provider_calls=0`；网关不可用 fail-closed，不得扩大业务权限。
+- 默认无 `JIYAOJUN_SAFETY_GATEWAY_URL` → `OfflineSafetyGateway`；`run_all` 全绿。
+- 安全平台：`ToolRuntime.authorize` + `POST /v1/tools/authorize`。
+- 验收：`pytest jiyaojun/tests/safety/test_m3_safety_gateway.py`、`llm-safety-platform/tests/test_tools_authorize.py`。
+
+### M5 身份 / 密钥 / 观测 / 故障矩阵（2026-08-06）
+
+- Compose 可选 profile：`identity`（Keycloak）、`secrets`（OpenBao）、`observability`（OTel/Prometheus/Grafana/Tempo）。
+- `jiyaojun/app/observability/telemetry.py`：模型 / RAG / HITL / 工具授权 / 写回 span；可选 `JIYAOJUN_OTEL_ENDPOINT` OTLP 导出。
+- `python -m app.eval.fault_matrix`：7 类强制故障（超时、Qdrant、Worker 重启、重复 webhook、PG 不可用、安全阻断、预算耗尽），各含终态/审计/指标/恢复说明；已纳入 `run_all`。
+- 安全平台：`audit_lock.simulate_dual_writer_fork` 证明双副本分叉可检测；可选 `SAFETY_AUDIT_ADVISORY_LOCK=1`。
+
+### M6 质量与交付（2026-08-06）
+
+- RAG 黄金集 **70** 条、Agent 故事 **30**、ACL/密封/跨域负例 **22**；`python -m app.eval.m6_quality_gates` 校验规模 + 性能（安全 P99≤80ms、RAG P95≤500ms、流水线 P95≤120s）。
+- 一键：`scripts/demo_one_click.sh` / `scripts/demo_faults.sh`；手册 [`docs/ops/OPERATOR-MANUAL.md`](docs/ops/OPERATOR-MANUAL.md)；证据模板 [`docs/ops/EVIDENCE-REPORT.md`](docs/ops/EVIDENCE-REPORT.md)；kind+Helm [`docs/ops/KIND-HELM.md`](docs/ops/KIND-HELM.md)。
+- 商业 Judge：`sample_limit=100`，发布前 `SAFETY_JUDGE_SAMPLE_LIMIT=300`；无 URL 时 skip。

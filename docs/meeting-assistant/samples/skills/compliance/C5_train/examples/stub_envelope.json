@@ -1,0 +1,29 @@
+{
+  "artifact_id": "art_c5_stub",
+  "meeting_id": "mtg_c5_stub",
+  "org_domains": [
+    "compliance"
+  ],
+  "scenario_type": "compliance_train",
+  "skill_pack_id": "compliance/C5_train@0.1.0",
+  "artifact_kind": "draft",
+  "schema_id": "stub_notes",
+  "schema_version": "1.0.0",
+  "payload": {
+    "summary": "C5 stub placeholder",
+    "notes": []
+  },
+  "confidence": "low",
+  "unresolved": [
+    {
+      "code": "backlog",
+      "message": "stub only",
+      "blocking_embed": true
+    }
+  ],
+  "source_spans": [],
+  "references": [],
+  "classification": "internal",
+  "continuum_write_class": "domain",
+  "created_by_stage": "artifact"
+}

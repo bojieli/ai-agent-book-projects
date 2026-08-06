@@ -1,0 +1,77 @@
+# Default Playbook — platform contract (mode=playbook)
+# Source of truth with 03 §2.8 / 05 §5.2
+# Scenes may tighten (extra HITL, disable notify); must NOT remove schema_validate / policy_hooks / evaluate
+
+version: "1.0"
+id: playbook.default
+orchestration_mode: playbook
+
+budget:
+  max_llm_calls: 40
+  max_retrieve_hops: 6
+  max_embed_attempts: 3
+  max_render_variants: 5
+  max_wall_clock_sec: 600
+
+on_fail:
+  asr_low_quality: degraded_minutes_only
+  evaluate_fail: awaiting_hitl
+  budget_exhausted: failed
+  connector_timeout: failed  # idempotent retry then failed
+
+steps:
+  - id: understand
+    type: understand
+    description: Transcript quality, domain glossary, unknown terms
+
+  - id: retrieve
+    type: retrieve
+    skip_if: "no series_id and no project_id"
+    description: Docs + Continuum (ACL first)
+
+  - id: extract
+    type: extract
+    description: Slot fill from transcript into draft fields
+
+  - id: artifact
+    type: artifact
+    description: Emit ArtifactEnvelope + scenario payload
+
+  - id: schema_validate
+    type: validate
+    hook: schema_validate
+    wall: true
+    description: JSON Schema / Envelope required fields
+
+  - id: policy_hooks
+    type: validate
+    hook: policy_hooks
+    wall: true
+    description: production_effect_cap, classification, delivery bans
+
+  - id: evaluate
+    type: evaluate
+    wall: true
+    description: Fresh-context evaluator vs success criteria + schema
+
+  - id: hitl
+    type: hitl
+    default: required  # L1/L2
+    description: Human confirm before embed when embed_gate requires
+
+  - id: embed
+    type: embed
+    skip_if: "maturity == L0 or embed_gate == block"
+    description: WorkEmbed via ToolRuntime; idempotent
+
+  - id: continuum_index
+    type: index
+    description: continuum.write_decided by write_class (independent of delivery)
+
+  - id: render
+    type: render
+    description: Materialize acl_view then render; critical allowlist-only
+
+  - id: notify
+    type: notify
+    description: Deliver rendered packs only; respect delivery_scope

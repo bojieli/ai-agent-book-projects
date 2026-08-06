@@ -1,0 +1,9 @@
+apiVersion: 1
+providers:
+  - name: meeting-assistant
+    orgId: 1
+    folder: Meeting Assistant
+    type: file
+    disableDeletion: false
+    options:
+      path: /var/lib/grafana/dashboards

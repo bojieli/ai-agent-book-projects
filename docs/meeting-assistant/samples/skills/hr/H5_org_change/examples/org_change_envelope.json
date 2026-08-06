@@ -1,0 +1,39 @@
+{
+  "artifact_id": "art_h5_org_demo",
+  "meeting_id": "mtg_h5_001",
+  "org_domains": [
+    "hr"
+  ],
+  "scenario_type": "org_change",
+  "skill_pack_id": "hr/H5_org_change@0.1.0",
+  "artifact_kind": "draft",
+  "schema_id": "org_change_analysis",
+  "schema_version": "1.0.0",
+  "payload": {
+    "case_id": "oc_2026_07",
+    "decision_status": "analyzing",
+    "summary_for_authorized": "方案仍在分析，未经法务前不外传",
+    "next_steps_authorized_only": [
+      "法务复核材料包 v2"
+    ]
+  },
+  "confidence": "med",
+  "unresolved": [
+    {
+      "code": "legal_pending",
+      "message": "法务未复核",
+      "blocking_embed": true
+    }
+  ],
+  "source_spans": [
+    {
+      "start_ms": 80000,
+      "end_ms": 90000,
+      "quote": "先别外传，法务还没看"
+    }
+  ],
+  "references": [],
+  "classification": "critical",
+  "continuum_write_class": "sealed",
+  "created_by_stage": "artifact"
+}

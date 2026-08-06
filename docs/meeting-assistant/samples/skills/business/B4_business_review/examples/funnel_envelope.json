@@ -1,0 +1,72 @@
+{
+  "artifact_id": "art_b4_funnel_demo",
+  "meeting_id": "mtg_b4_001",
+  "org_domains": [
+    "business"
+  ],
+  "scenario_type": "business_review",
+  "skill_pack_id": "business/B4_business_review@0.1.0",
+  "artifact_kind": "metrics",
+  "schema_id": "funnel_review",
+  "schema_version": "1.0.0",
+  "payload": {
+    "period": "2026-W30",
+    "prior_actions_recalled": true,
+    "metrics": [
+      {
+        "name": "apply_to_pass",
+        "value": 0.42,
+        "unit": "ratio",
+        "source": "bi.funnel.weekly"
+      }
+    ],
+    "insights": [
+      "客群 A 通过率下行，对齐上期促活动作效果"
+    ]
+  },
+  "chart_series": [
+    {
+      "series_id": "funnel_weekly",
+      "label": "申请→通过",
+      "unit": "ratio",
+      "points": [
+        {
+          "x": "W28",
+          "y": 0.48
+        },
+        {
+          "x": "W29",
+          "y": 0.45
+        },
+        {
+          "x": "W30",
+          "y": 0.42
+        }
+      ]
+    }
+  ],
+  "confidence": "high",
+  "unresolved": [],
+  "source_spans": [
+    {
+      "start_ms": 20000,
+      "end_ms": 28000,
+      "quote": "通过率掉到百分之四十二"
+    }
+  ],
+  "references": [
+    {
+      "corpus": "continuum",
+      "id": "mtg_b4_prev_action",
+      "span": "promo_cohort_a"
+    },
+    {
+      "corpus": "docs",
+      "id": "doc_bi_funnel_def",
+      "span": "指标口径"
+    }
+  ],
+  "classification": "confidential",
+  "continuum_write_class": "domain",
+  "created_by_stage": "artifact"
+}

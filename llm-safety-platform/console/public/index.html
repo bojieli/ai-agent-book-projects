@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LLM Safety Platform · 治理控制台</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --panel: #1a2332;
+      --ink: #e7ecf3;
+      --muted: #8b9bb4;
+      --accent: #3d8bfd;
+      --ok: #3dd68c;
+      --bad: #f07178;
+      --line: #2a3548;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", "Source Han Sans SC", system-ui, sans-serif;
+      background: radial-gradient(1200px 600px at 10% -10%, #1b2a44, var(--bg));
+      color: var(--ink);
+      min-height: 100vh;
+    }
+    header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+    }
+    header h1 { margin: 0; font-size: 1.25rem; letter-spacing: 0.02em; }
+    header p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+    main { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 72px); }
+    nav { border-right: 1px solid var(--line); padding: 1rem; }
+    nav button {
+      display: block; width: 100%; text-align: left;
+      background: transparent; border: 0; color: var(--muted);
+      padding: 0.65rem 0.75rem; border-radius: 8px; cursor: pointer; margin-bottom: 0.25rem;
+    }
+    nav button.active, nav button:hover { background: var(--panel); color: var(--ink); }
+    section { padding: 1.25rem 1.5rem; }
+    .card {
+      background: color-mix(in srgb, var(--panel) 92%, black);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; }
+    .stat { font-size: 1.6rem; font-weight: 600; }
+    .muted { color: var(--muted); font-size: 0.85rem; }
+    input, textarea, select {
+      width: 100%; background: #0c1118; color: var(--ink);
+      border: 1px solid var(--line); border-radius: 8px; padding: 0.55rem 0.7rem; margin: 0.35rem 0 0.75rem;
+    }
+    button.action {
+      background: var(--accent); color: white; border: 0; border-radius: 8px;
+      padding: 0.55rem 0.9rem; cursor: pointer; font-weight: 600;
+    }
+    button.ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid var(--line); }
+    pre { white-space: pre-wrap; background: #0c1118; padding: 0.75rem; border-radius: 8px; overflow: auto; }
+    .ok { color: var(--ok); } .bad { color: var(--bad); }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>LLM Safety Platform</h1>
+      <p>治理控制台 · 策略 / VK / 审计 / 审批 / 红队</p>
+    </div>
+    <div>
+      <label class="muted">Admin Token</label>
+      <input id="adminToken" value="admin-dev-token" style="width: 220px; margin: 0;" />
+    </div>
+  </header>
+  <main>
+    <nav>
+      <button class="active" data-tab="dash">Dashboard</button>
+      <button data-tab="vk">Virtual Keys</button>
+      <button data-tab="policy">策略发布</button>
+      <button data-tab="audit">审计</button>
+      <button data-tab="approvals">审批</button>
+      <button data-tab="redteam">红队</button>
+    </nav>
+    <section>
+      <div id="dash" class="tab">
+        <div class="card grid" id="dashStats"></div>
+      </div>
+      <div id="vk" class="tab hidden">
+        <div class="card">
+          <h3>创建 Virtual Key</h3>
+          <input id="vkTenant" placeholder="tenant_id" value="t_demo" />
+          <input id="vkApp" placeholder="app_id" value="customer_bot" />
+          <input id="vkName" placeholder="name" value="console-key" />
+          <button class="action" onclick="createVk()">创建</button>
+          <pre id="vkOut"></pre>
+        </div>
+        <div class="card"><h3>密钥列表</h3><div id="vkList"></div></div>
+      </div>
+      <div id="policy" class="tab hidden">
+        <div class="card">
+          <h3>发布策略（须过 ReleaseEvaluator）</h3>
+          <input id="pTenant" value="t_demo" />
+          <input id="pApp" value="customer_bot" />
+          <input id="pReason" value="threshold_tune" />
+          <button class="action" onclick="publishPolicy()">Publish</button>
+          <pre id="pOut"></pre>
+        </div>
+      </div>
+      <div id="audit" class="tab hidden">
+        <div class="card"><button class="action" onclick="loadAudit()">刷新</button><div id="auditList"></div></div>
+      </div>
+      <div id="approvals" class="tab hidden">
+        <div class="card"><button class="action" onclick="loadApprovals()">刷新</button><div id="aprList"></div></div>
+      </div>
+      <div id="redteam" class="tab hidden">
+        <div class="card">
+          <button class="action" onclick="runRedteam('shim')">Run shim</button>
+          <button class="ghost action" onclick="runRedteam('promptfoo')">promptfoo</button>
+          <button class="ghost action" onclick="runRedteam('garak')">garak</button>
+          <button class="ghost action" onclick="runRedteam('pyrit')">PyRIT</button>
+          <pre id="rtOut"></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const api = (path, opts = {}) => {
+      const headers = Object.assign({
+        "Authorization": "Bearer " + document.getElementById("adminToken").value,
+        "Content-Type": "application/json",
+        "X-Roles": "Admin,Security,AppOwner,Auditor"
+      }, opts.headers || {});
+      return fetch(path, Object.assign({}, opts, { headers })).then(async r => {
+        const text = await r.text();
+        let data; try { data = JSON.parse(text); } catch { data = text; }
+        if (!r.ok) throw data;
+        return data;
+      });
+    };
+    document.querySelectorAll("nav button").forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        document.querySelectorAll(".tab").forEach(t => t.classList.add("hidden"));
+        document.getElementById(btn.dataset.tab).classList.remove("hidden");
+      };
+    });
+    async function loadDash() {
+      const d = await api("/v1/admin/dashboard");
+      document.getElementById("dashStats").innerHTML = [
+        ["审计", d.audit_count],
+        ["VK", d.vk_count],
+        ["待审批", d.pending_approvals],
+        ["红队", d.redteam_runs]
+      ].map(([k,v]) => `<div class="card"><div class="muted">${k}</div><div class="stat">${v}</div></div>`).join("");
+    }
+    async function createVk() {
+      const body = {
+        tenant_id: vkTenant.value, app_id: vkApp.value, name: vkName.value,
+        model_allowlist: ["mock-llm"]
+      };
+      const out = await api("/v1/admin/virtual-keys", { method: "POST", body: JSON.stringify(body) });
+      vkOut.textContent = JSON.stringify(out, null, 2);
+      loadVk();
+    }
+    async function loadVk() {
+      const rows = await api("/v1/admin/virtual-keys");
+      vkList.innerHTML = `<table><tr><th>key_id</th><th>app</th><th>spent</th><th>revoked</th></tr>` +
+        rows.map(r => `<tr><td>${r.key_id}</td><td>${r.app_id}</td><td>${r.spent_tokens}/${r.budget_tokens}</td><td>${r.revoked}</td></tr>`).join("") +
+        `</table>`;
+    }
+    async function publishPolicy() {
+      try {
+        const out = await api(`/v1/admin/policies/${pTenant.value}/${pApp.value}/publish`, {
+          method: "POST",
+          body: JSON.stringify({ reason: pReason.value })
+        });
+        pOut.textContent = JSON.stringify(out, null, 2);
+      } catch (e) {
+        pOut.textContent = "ERROR " + JSON.stringify(e, null, 2);
+      }
+    }
+    async function loadAudit() {
+      const rows = await api("/v1/admin/audit");
+      auditList.innerHTML = `<table><tr><th>request</th><th>decision</th><th>chain</th></tr>` +
+        rows.map(r => `<tr><td>${r.request_id}</td><td>${r.decision}</td><td class="muted">${(r.chain_hash||"").slice(0,12)}</td></tr>`).join("") +
+        `</table>`;
+    }
+    async function loadApprovals() {
+      const rows = await api("/v1/approvals");
+      aprList.innerHTML = rows.map(r =>
+        `<div class="card"><div>${r.approval_id} · ${r.app_id}</div>
+         <pre>${JSON.stringify(r.action,null,2)}</pre>
+         <button class="action" onclick="decide('${r.approval_id}', true)">Approve</button>
+         <button class="ghost action" onclick="decide('${r.approval_id}', false)">Deny</button></div>`
+      ).join("") || "<p class='muted'>无待审批</p>";
+    }
+    async function decide(id, approve) {
+      await api(`/v1/approvals/${id}/decide`, { method: "POST", body: JSON.stringify({ approve }) });
+      loadApprovals();
+    }
+    async function runRedteam(suite) {
+      const out = await api(`/v1/redteam/run?suite=${suite}`, { method: "POST" });
+      rtOut.textContent = JSON.stringify(out, null, 2);
+    }
+    loadDash().catch(console.error);
+    loadVk().catch(() => {});
+  </script>
+</body>
+</html>

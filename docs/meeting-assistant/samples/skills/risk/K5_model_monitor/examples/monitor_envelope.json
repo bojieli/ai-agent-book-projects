@@ -1,0 +1,29 @@
+{
+  "artifact_id": "art_k5_mon_demo",
+  "meeting_id": "mtg_k5_001",
+  "org_domains": ["risk"],
+  "scenario_type": "model_monitor",
+  "skill_pack_id": "risk/K5_model_monitor@0.1.0",
+  "artifact_kind": "metrics",
+  "schema_id": "model_monitor_board",
+  "schema_version": "1.0.0",
+  "payload": {
+    "model_id": "mdl_fraud_v3",
+    "period": "2026-W30",
+    "recommended_action": "observe",
+    "metrics": [
+      { "name": "psi", "value": 0.18, "threshold": 0.2 }
+    ]
+  },
+  "confidence": "high",
+  "unresolved": [],
+  "source_spans": [
+    { "start_ms": 15000, "end_ms": 22000, "quote": "PSI 还没破线，先观察" }
+  ],
+  "references": [
+    { "corpus": "docs", "id": "doc_model_slo", "span": "PSI" }
+  ],
+  "classification": "confidential",
+  "continuum_write_class": "domain",
+  "created_by_stage": "artifact"
+}

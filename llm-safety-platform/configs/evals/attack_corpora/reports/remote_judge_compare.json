@@ -1,0 +1,8 @@
+{
+  "suite": "remote_judge_compare",
+  "status": "skipped",
+  "reason": "no_classifier_url_or_credentials",
+  "passed": true,
+  "blocking": false,
+  "note": "Set SAFETY_CLASSIFIER_URL to run; garak/PyRIT remain REDTEAM_EXTERNAL=1 opt-in"
+}

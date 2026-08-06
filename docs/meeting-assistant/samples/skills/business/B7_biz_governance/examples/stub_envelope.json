@@ -1,0 +1,29 @@
+{
+  "artifact_id": "art_b7_stub",
+  "meeting_id": "mtg_b7_stub",
+  "org_domains": [
+    "business"
+  ],
+  "scenario_type": "biz_governance",
+  "skill_pack_id": "business/B7_biz_governance@0.1.0",
+  "artifact_kind": "draft",
+  "schema_id": "stub_notes",
+  "schema_version": "1.0.0",
+  "payload": {
+    "summary": "B7 stub placeholder",
+    "notes": []
+  },
+  "confidence": "low",
+  "unresolved": [
+    {
+      "code": "backlog",
+      "message": "stub only",
+      "blocking_embed": true
+    }
+  ],
+  "source_spans": [],
+  "references": [],
+  "classification": "confidential",
+  "continuum_write_class": "domain",
+  "created_by_stage": "artifact"
+}

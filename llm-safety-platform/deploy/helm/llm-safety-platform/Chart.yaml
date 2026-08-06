@@ -1,0 +1,6 @@
+apiVersion: v2
+name: llm-safety-platform
+description: Enterprise LLM Safety Platform (on-prem)
+type: application
+version: 2.0.0
+appVersion: "2.0.0"

@@ -1,0 +1,29 @@
+{
+  "artifact_id": "art_c6_stub",
+  "meeting_id": "mtg_c6_stub",
+  "org_domains": [
+    "compliance"
+  ],
+  "scenario_type": "vendor_compliance",
+  "skill_pack_id": "compliance/C6_vendor@0.1.0",
+  "artifact_kind": "draft",
+  "schema_id": "stub_notes",
+  "schema_version": "1.0.0",
+  "payload": {
+    "summary": "C6 stub placeholder",
+    "notes": []
+  },
+  "confidence": "low",
+  "unresolved": [
+    {
+      "code": "backlog",
+      "message": "stub only",
+      "blocking_embed": true
+    }
+  ],
+  "source_spans": [],
+  "references": [],
+  "classification": "confidential",
+  "continuum_write_class": "domain",
+  "created_by_stage": "artifact"
+}

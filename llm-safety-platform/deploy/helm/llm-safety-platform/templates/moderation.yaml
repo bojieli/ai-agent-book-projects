@@ -1,0 +1,55 @@
+{{- if .Values.moderation.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "llm-safety.name" . }}-moderation
+  labels:
+    app: {{ include "llm-safety.name" . }}-moderation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "llm-safety.name" . }}-moderation
+  template:
+    metadata:
+      labels:
+        app: {{ include "llm-safety.name" . }}-moderation
+    spec:
+      containers:
+        - name: moderation
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["uvicorn", "workers.moderation.app:app", "--host", "0.0.0.0", "--port", "{{ .Values.moderation.port }}"]
+          ports:
+            - containerPort: {{ .Values.moderation.port }}
+          env:
+            - name: MODERATION_MOCK
+              value: {{ if .Values.moderation.mock }}"1"{{ else }}"0"{{ end }}
+            - name: MODERATION_ONPREM_MOCK
+              value: {{ if .Values.moderation.onpremMock }}"1"{{ else }}"0"{{ end }}
+            - name: MODERATION_UPSTREAM_URL
+              value: {{ .Values.moderation.upstreamUrl | quote }}
+            - name: MODERATION_MODEL
+              value: {{ .Values.moderation.model | quote }}
+            - name: MODERATION_FUSE_RULES
+              value: "1"
+            - name: MODERATION_PORT
+              value: {{ .Values.moderation.port | quote }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.moderation.port }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: moderation
+  labels:
+    app: {{ include "llm-safety.name" . }}-moderation
+spec:
+  selector:
+    app: {{ include "llm-safety.name" . }}-moderation
+  ports:
+    - port: {{ .Values.moderation.port }}
+      targetPort: {{ .Values.moderation.port }}
+{{- end }}

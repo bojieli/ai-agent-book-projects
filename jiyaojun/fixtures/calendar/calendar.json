@@ -1,0 +1,28 @@
+{
+  "events": [
+    {
+      "event_id": "cal_eng_001",
+      "title": "支付接口需求澄清",
+      "organizer": "u_pm",
+      "attendees": ["u_pm", "u_dev_a", "u_dev_b"],
+      "start": "2026-08-04T10:00:00+08:00",
+      "end": "2026-08-04T11:00:00+08:00"
+    },
+    {
+      "event_id": "cal_hr_001",
+      "title": "绩效校准会 L5",
+      "organizer": "u_hrbp",
+      "attendees": ["u_hrbp", "u_mgr"],
+      "start": "2026-08-04T14:00:00+08:00",
+      "end": "2026-08-04T16:00:00+08:00"
+    },
+    {
+      "event_id": "cal_x1_001",
+      "title": "业务科技灰度对齐",
+      "organizer": "u_pm",
+      "attendees": ["u_pm", "u_biz", "u_dev_a"],
+      "start": "2026-08-05T09:30:00+08:00",
+      "end": "2026-08-05T10:30:00+08:00"
+    }
+  ]
+}

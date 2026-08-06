@@ -1,0 +1,70 @@
+{
+  "skills": [
+    {
+      "skill_pack_id": "platform/general@0.1.0",
+      "story_id": "general",
+      "orchestration_mode": "playbook",
+      "maturity_level": "L0",
+      "status": "approved",
+      "note": "platform fallback only"
+    },
+    {
+      "skill_pack_id": "eng/R1_req_sync@0.1.0",
+      "story_id": "R1",
+      "orchestration_mode": "playbook",
+      "maturity_level": "L2",
+      "status": "draft",
+      "note": "Phase0 smoke may force-load draft under DEMO_ALLOW_DRAFT=1"
+    },
+    {
+      "skill_pack_id": "eng/R4_release_review@0.1.0",
+      "story_id": "R4",
+      "status": "draft"
+    },
+    {
+      "skill_pack_id": "eng/R5_delivery_sync@0.1.0",
+      "story_id": "R5",
+      "status": "draft"
+    },
+    {
+      "skill_pack_id": "business/B4_business_review@0.1.0",
+      "story_id": "B4",
+      "status": "draft"
+    },
+    {
+      "skill_pack_id": "business/B5_limit_pricing@0.1.0",
+      "story_id": "B5",
+      "status": "draft"
+    },
+    {
+      "skill_pack_id": "hr/H2_perf_calibration@0.1.0",
+      "story_id": "H2",
+      "status": "draft"
+    },
+    {
+      "skill_pack_id": "hr/H5_org_change@0.1.0",
+      "story_id": "H5",
+      "status": "draft"
+    },
+    {
+      "skill_pack_id": "risk/K1_policy_review@0.1.0",
+      "story_id": "K1",
+      "status": "draft"
+    },
+    {
+      "skill_pack_id": "risk/K5_model_monitor@0.1.0",
+      "story_id": "K5",
+      "status": "draft"
+    },
+    {
+      "skill_pack_id": "compliance/C2_remediation@0.1.0",
+      "story_id": "C2",
+      "status": "draft"
+    },
+    {
+      "skill_pack_id": "cross/X1_gray_ambiguity@0.1.0",
+      "story_id": "X1",
+      "status": "draft"
+    }
+  ]
+}

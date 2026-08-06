@@ -1,0 +1,38 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "title": "纪要君故障矩阵事件（演示说明）",
+      "type": "text",
+      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 0 },
+      "options": {
+        "mode": "markdown",
+        "content": "## Meeting Assistant 观测演示\n\n- Trace：模型 / RAG / HITL / 工具授权 / 写回（OTLP → Tempo）\n- Metrics：故障矩阵计数与安全平台 `/metrics`\n- 默认 Core 不启动本栈；`docker compose --profile observability up -d`\n- 离线验收：`python -m app.eval.fault_matrix`（不依赖本看板）"
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "title": "OTel Collector 抓取状态",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 6 },
+      "targets": [
+        {
+          "expr": "up{job=\"otel-collector\"}",
+          "legendFormat": "otel-up"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["meeting-assistant", "m5"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "title": "Meeting Assistant M5 Demo",
+  "uid": "meeting-assistant-m5",
+  "version": 1
+}

@@ -1,0 +1,73 @@
+version: "1.0"
+story_id: R4
+orchestration_mode: sop
+
+budget:
+  max_llm_calls: 50
+  max_retrieve_hops: 6
+  max_embed_attempts: 3
+  max_render_variants: 3
+  max_wall_clock_sec: 600
+
+steps:
+  - id: retrieve_docs
+    type: retrieve
+    tools: [knowledge.search_docs]
+    description: 拉发布清单 / 变更说明文档
+
+  - id: retrieve_continuum
+    type: retrieve
+    tools: [knowledge.search_continuum]
+    description: 召回同系列上次 Go 条件与未关闭项
+
+  - id: extract
+    type: extract
+    description: 抽风险、依赖、回滚、观察窗口
+
+  - id: decide
+    type: decide
+    description: 拟定 go_nogo 与条件项
+
+  - id: checklist
+    type: validate
+    hook: release_gate_checklist
+    wall: true
+    checklist: sop/checklists/release_gate.yaml
+    description: 发布门禁清单全绿？
+
+  - id: schema_validate
+    type: validate
+    hook: schema_validate
+    wall: true
+
+  - id: policy_hooks
+    type: validate
+    hook: policy_hooks
+    wall: true
+    description: 禁止 production 生效写回
+
+  - id: evaluate
+    type: evaluate
+    wall: true
+    llm_evaluator: required  # L3 高风险
+
+  - id: hitl
+    type: hitl
+    default: required
+
+  - id: embed
+    type: embed
+    tools: [connector.change_draft.create, connector.task.create]
+    description: 仅草稿 / 任务；幂等键必填
+
+  - id: continuum_index
+    type: index
+    write_class: wide
+
+  - id: render
+    type: render
+    templates: [render/email_html.j2]
+
+  - id: notify
+    type: notify
+    delivery_scope: participants_min

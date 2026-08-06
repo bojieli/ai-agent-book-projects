@@ -1,0 +1,44 @@
+{
+  "passed": true,
+  "total": 6,
+  "failed": [],
+  "results": [
+    {
+      "gate_id": "R5_must_recall_open_blockers",
+      "story_id": "R5",
+      "passed": true,
+      "detail": "must_recall:step retrieve hits=5 briefing_hits=6; briefing_series:briefing_open_count=1 need>=1"
+    },
+    {
+      "gate_id": "R4_sop_wall",
+      "story_id": "R4",
+      "passed": true,
+      "detail": "sop_wall:missing set(); pipeline_path:path=sop expect=sop; sop_wall_blocks_on_failure:StepEngine terminal=failed checklist={'step_id': 'checklist', 'status': 'failed', 'detail': 'forced_fail:release_gate_checklist'}"
+    },
+    {
+      "gate_id": "H5_must_not_leak",
+      "story_id": "H5",
+      "passed": true,
+      "detail": "must_not_leak:series_leak=0 rag_leak=0 max=0; embed_gate:work_objects=0"
+    },
+    {
+      "gate_id": "K1_sop_block_embed",
+      "story_id": "K1",
+      "passed": true,
+      "detail": "pipeline_path:path=sop expect=sop; embed_gate:work_objects=0"
+    },
+    {
+      "gate_id": "X1_cross_req_align_no_writeback",
+      "story_id": "X1",
+      "passed": true,
+      "detail": "x1_unresolved_no_writeback:eval_passed=False orch=terminal=failed wos=0 embed={'step_id': 'embed', 'status': 'failed', 'detail': 'ambiguity_open'}"
+    },
+    {
+      "gate_id": "general_unknown_fallback",
+      "story_id": "general",
+      "passed": true,
+      "detail": "unknown_fallback:path=fallback wos=0"
+    }
+  ],
+  "report_path": null
+}

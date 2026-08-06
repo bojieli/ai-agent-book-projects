@@ -1,0 +1,15 @@
+version: "1.0"
+id: no_production_effect
+all_must_pass: true
+
+items:
+  - id: no_production_tool
+    description: 本场未请求 production 级策略写回工具
+  - id: effect_cap
+    description: work_object.production_effect ≤ draft_only
+  - id: action_not_prod
+    description: payload.recommended_action ≠ production_enable
+  - id: has_doc_ref
+    description: references 至少一条 corpus=docs
+  - id: rollback_or_hold
+    description: 若 gray/shadow 则 rollback_plan 或 observe_metrics 非空

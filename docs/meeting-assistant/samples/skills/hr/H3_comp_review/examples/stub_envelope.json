@@ -1,0 +1,29 @@
+{
+  "artifact_id": "art_h3_stub",
+  "meeting_id": "mtg_h3_stub",
+  "org_domains": [
+    "hr"
+  ],
+  "scenario_type": "comp_review",
+  "skill_pack_id": "hr/H3_comp_review@0.1.0",
+  "artifact_kind": "draft",
+  "schema_id": "stub_notes",
+  "schema_version": "1.0.0",
+  "payload": {
+    "summary": "H3 stub placeholder",
+    "notes": []
+  },
+  "confidence": "low",
+  "unresolved": [
+    {
+      "code": "backlog",
+      "message": "stub only",
+      "blocking_embed": true
+    }
+  ],
+  "source_spans": [],
+  "references": [],
+  "classification": "critical",
+  "continuum_write_class": "sealed",
+  "created_by_stage": "artifact"
+}

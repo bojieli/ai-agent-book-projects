@@ -1,0 +1,1 @@
+{"event_type": "safety.decision", "request_id": "r_siem", "decision": "block", "chain_hash": "3222e3bf3293dd8ebb240931653bc84415bc50f2e27172e4afbb5b58cb3c4523", "prev_chain_hash": "GENESIS", "source": "llm-safety-platform", "audit_integrity": "hash_chain"}

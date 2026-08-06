@@ -1,0 +1,12 @@
+"""Domain event type catalog (see docs/08)."""
+
+SAFETY_BLOCKED = "safety.blocked"
+SAFETY_REDACTED = "safety.redacted"
+SAFETY_ALERT = "safety.alert"
+SAFETY_CONFIRM = "safety.confirm_required"
+TOOL_DENIED = "tool.denied"
+TOOL_EXECUTED = "tool.executed"
+TOOL_RISK_FLAGGED = "tool.risk_flagged"
+POLICY_PUBLISHED = "policy.published"
+EVAL_FAILED = "eval.failed"
+EVAL_PASSED = "eval.passed"

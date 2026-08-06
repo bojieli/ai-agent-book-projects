@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jiyaojun.local/schemas/eng/action_items.json",
+  "title": "action_items",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["items"],
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "status"],
+        "properties": {
+          "title": { "type": "string", "minLength": 1 },
+          "owner": { "type": "string" },
+          "due_date": { "type": "string" },
+          "status": { "enum": ["open", "committed", "unresolved"] },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+# Release gate checklist — Hook wall (model cannot skip)
+version: "1.0"
+id: release_gate_checklist
+all_must_pass: true
+
+items:
+  - id: rollback_plan
+    description: 回滚方案已明确或标注 N/A 且有责任人
+    source: payload.rollback_plan or unresolved
+  - id: blast_radius
+    description: 影响面 / 灰度范围已填写
+    source: payload.blast_radius
+  - id: prior_conditions_reviewed
+    description: Continuum 上次未关闭条件已对照（references 含 continuum）
+    source: references[corpus=continuum]
+  - id: go_nogo_set
+    description: go_nogo ∈ {go, no_go, conditional_go}
+    source: payload.go_nogo
+  - id: conditional_has_actions
+    description: conditional_go 时 action_items 非空
+    when: payload.go_nogo == conditional_go
+  - id: no_production_effect
+    description: 无 production 级写回请求
+    source: work_object.production_effect <= draft_only

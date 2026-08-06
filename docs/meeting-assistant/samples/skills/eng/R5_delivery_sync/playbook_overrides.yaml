@@ -1,0 +1,8 @@
+# R5 overrides Default Playbook: Continuum retrieve required
+version: "1.0"
+extends: playbook.default
+steps_patch:
+  - id: retrieve
+    required: true
+    skip_if: null
+    description: Continuum open blockers MUST load when series_id present; else unresolved

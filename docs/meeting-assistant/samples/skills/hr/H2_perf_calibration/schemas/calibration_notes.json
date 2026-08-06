@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jiyaojun.local/schemas/hr/calibration_notes.json",
+  "title": "calibration_notes",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["session_label", "items"],
+  "properties": {
+    "session_label": { "type": "string" },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["subject_ref", "proposed_band", "status"],
+        "properties": {
+          "subject_ref": { "type": "string", "description": "opaque employee ref, not email blast" },
+          "proposed_band": { "type": "string" },
+          "status": { "enum": ["proposed", "held", "unresolved"] },
+          "rationale_short": { "type": "string" }
+        }
+      }
+    }
+  }
+}

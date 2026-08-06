@@ -1,0 +1,40 @@
+{
+  "artifact_id": "art_r4_verdict_demo",
+  "meeting_id": "mtg_demo_001",
+  "org_domains": ["eng"],
+  "scenario_type": "release_review",
+  "skill_pack_id": "eng/R4_release_review@0.1.0",
+  "artifact_kind": "verdict",
+  "schema_id": "release_verdict",
+  "schema_version": "1.0.0",
+  "payload": {
+    "go_nogo": "conditional_go",
+    "summary": "核心路径可发；依赖支付回调延迟监控未关闭。",
+    "blast_radius": "支付结果页 10% 灰度",
+    "rollback_plan": "一键回滚至 build-2026.07.20",
+    "observe_window": "发布后 2h",
+    "owners": ["u_alice"]
+  },
+  "confidence": "med",
+  "unresolved": [
+    {
+      "code": "prior_condition_open",
+      "message": "上次评审条件「回调延迟 P99 达标」仍 open",
+      "blocking_embed": false
+    }
+  ],
+  "source_spans": [
+    {
+      "start_ms": 120000,
+      "end_ms": 150000,
+      "quote": "那就有条件发，回调监控先挂着"
+    }
+  ],
+  "references": [
+    { "corpus": "docs", "id": "doc_release_checklist_pay", "span": "§3 灰度" },
+    { "corpus": "continuum", "id": "mtg_prev_cond_delay", "span": "open_condition" }
+  ],
+  "classification": "confidential",
+  "continuum_write_class": "wide",
+  "created_by_stage": "artifact"
+}

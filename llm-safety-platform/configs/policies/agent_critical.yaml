@@ -1,0 +1,61 @@
+policy_binding_id: pb_agent_critical
+tenant_id: t_demo
+app_id: agent_critical
+version: 1
+reason: initial
+risk_tier: critical
+fail_mode: fail_closed
+effect_cap: draft_only
+scanner_bundle_id: bundle_shim_v1
+grounding_required: true
+daily_token_budget: 100000
+max_concurrency: 8
+tool_allowlist:
+  - search_kb
+tool_denylist:
+  - shell_exec
+  - send_email
+model_allowlist:
+  - mock-llm
+email_domain_allowlist:
+  - webank.com
+tool_risk_rules:
+  - id: kb_exfil_query
+    tool_id: search_kb
+    field: query
+    type: regex
+    pattern: "(?i)(exfiltrat|ignore previous|system prompt|api[_-]?key)"
+    op_risk_tier: high
+    decision: block
+input_scanners:
+  - id: secrets
+    threshold: 0.5
+  - id: hidden_ascii
+    threshold: 0.75
+  - id: prompt_injection
+    threshold: 0.6
+  - id: system_leak
+    threshold: 0.6
+  - id: rag_gate
+    threshold: 0.6
+  - id: anonymize
+    threshold: 0.0
+  - id: token_limit
+    max_tokens: 2048
+  - id: indirect_injection
+    threshold: 0.6
+  - id: session_risk
+    threshold: 0.6
+output_scanners:
+  - id: sensitive
+    threshold: 0.4
+  - id: output_exfil
+    threshold: 0.7
+  - id: secrets
+    threshold: 0.4
+  - id: system_leak
+    threshold: 0.4
+  - id: grounding
+    threshold: 0.15
+retention: hash_only
+require_dual_publish: true

@@ -1,0 +1,14 @@
+[project]
+name = "jiyaojun"
+version = "0.0.1"
+description = "Enterprise meeting work-unit assistant (greenfield Phase 0)"
+requires-python = ">=3.11"
+dependencies = [
+  "PyYAML>=6.0",
+  "jsonschema>=4.20",
+  "Jinja2>=3.1",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]

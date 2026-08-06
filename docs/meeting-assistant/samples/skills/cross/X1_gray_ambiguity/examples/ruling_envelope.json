@@ -1,0 +1,40 @@
+{
+  "artifact_id": "art_x1_ruling_demo",
+  "meeting_id": "mtg_x1_001",
+  "org_domains": ["business", "eng"],
+  "scenario_type": "cross_req_align",
+  "skill_pack_id": "cross/X1_gray_ambiguity@0.1.0",
+  "artifact_kind": "verdict",
+  "schema_id": "disambiguation_ruling",
+  "schema_version": "1.0.0",
+  "payload": {
+    "term": "灰度",
+    "status": "resolved",
+    "candidate_senses": [
+      {
+        "sense_id": "eng_release_canary",
+        "org_domain": "eng",
+        "gloss": "发布灰度 / canary 流量"
+      },
+      {
+        "sense_id": "biz_cohort_gray",
+        "org_domain": "business",
+        "gloss": "客群灰度 / 名单试点"
+      }
+    ],
+    "resolved_sense": "eng_release_canary",
+    "resolver_user_id": "u_pm",
+    "blocks_embed": false
+  },
+  "confidence": "high",
+  "unresolved": [],
+  "source_spans": [
+    { "start_ms": 33000, "end_ms": 40000, "quote": "我说的灰度是发布灰度，不是客群" }
+  ],
+  "references": [
+    { "corpus": "continuum", "id": "mtg_eng_canary_hist", "span": "灰度" }
+  ],
+  "classification": "internal",
+  "continuum_write_class": "wide",
+  "created_by_stage": "artifact"
+}

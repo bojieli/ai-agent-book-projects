@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jiyaojun.local/schemas/hr/org_change_analysis.json",
+  "title": "org_change_analysis",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["case_id", "decision_status", "summary_for_authorized"],
+  "properties": {
+    "case_id": { "type": "string" },
+    "decision_status": {
+      "enum": ["analyzing", "approved_pending_legal", "held", "rejected"]
+    },
+    "summary_for_authorized": { "type": "string" },
+    "next_steps_authorized_only": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

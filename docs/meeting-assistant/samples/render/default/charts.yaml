@@ -1,0 +1,9 @@
+# Default chart bindings — only declared series; missing => "数据不足"
+version: "1.0"
+
+charts: []
+# Scenes opt-in, e.g. B4:
+# - id: funnel
+#   title: 转化漏斗
+#   series_from: artifact.chart_series[series_id=funnel]
+#   on_missing: show_placeholder

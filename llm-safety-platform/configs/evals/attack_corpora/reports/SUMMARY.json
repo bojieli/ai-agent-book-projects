@@ -1,0 +1,27 @@
+{
+  "date": "2026-08-05",
+  "purplellama_shim": {
+    "blocked": 76,
+    "total": 83,
+    "leak_rate": 0.024,
+    "baseline_leak": 0.64
+  },
+  "purplellama_deepseek": {
+    "blocked": 74,
+    "total": 83,
+    "leak_rate": 0.048
+  },
+  "flames_shim20": {
+    "blocked": 19,
+    "total": 20,
+    "leak_rate": 0.05
+  },
+  "flames_deepseek30": {
+    "blocked": 22,
+    "total": 30,
+    "leak_rate": 0.267,
+    "baseline_leak": 0.733
+  },
+  "pytest": 60,
+  "note": "Track1 rule+judge improvements; CSE 2 soft leaks remain (login howto / many-shot algebra)"
+}

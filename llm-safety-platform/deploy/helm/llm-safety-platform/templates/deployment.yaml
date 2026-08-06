@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "llm-safety.name" . }}
+  labels:
+    app: {{ include "llm-safety.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "llm-safety.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "llm-safety.name" . }}
+    spec:
+      containers:
+        - name: gateway
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SAFETY_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "llm-safety.name" . }}-secrets
+                  key: databaseUrl
+            - name: SAFETY_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "llm-safety.name" . }}-secrets
+                  key: redisUrl
+            - name: SAFETY_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "llm-safety.name" . }}-secrets
+                  key: masterKey
+            - name: SAFETY_ADMIN_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "llm-safety.name" . }}-secrets
+                  key: adminToken
+            - name: SAFETY_SCANNER_MODE
+              value: {{ .Values.env.SAFETY_SCANNER_MODE | quote }}
+            - name: SAFETY_OIDC_DISABLED
+              value: {{ .Values.env.SAFETY_OIDC_DISABLED | quote }}
+            - name: OIDC_REQUIRED
+              value: {{ .Values.env.OIDC_REQUIRED | default "0" | quote }}
+            - name: SAFETY_OIDC_JWKS_URL
+              value: {{ .Values.env.SAFETY_OIDC_JWKS_URL | default "" | quote }}
+            - name: SAFETY_OIDC_ISSUER
+              value: {{ .Values.env.SAFETY_OIDC_ISSUER | default "" | quote }}
+            - name: SAFETY_OIDC_AUDIENCE
+              value: {{ .Values.env.SAFETY_OIDC_AUDIENCE | default "llm-safety" | quote }}
+            - name: SAFETY_KMS_PROVIDER
+              value: {{ .Values.env.SAFETY_KMS_PROVIDER | default "env" | quote }}
+            - name: SAFETY_SIEM_SINK
+              value: {{ .Values.env.SAFETY_SIEM_SINK | default "log" | quote }}
+            - name: SAFETY_SIEM_WEBHOOK_URL
+              value: {{ .Values.env.SAFETY_SIEM_WEBHOOK_URL | default "" | quote }}
+            - name: SAFETY_CLASSIFIER_URL
+              value: {{ .Values.env.SAFETY_CLASSIFIER_URL | default "" | quote }}
+            - name: SAFETY_SESSION_STORE
+              value: {{ .Values.env.SAFETY_SESSION_STORE | default "memory" | quote }}
+            - name: SAFETY_DUAL_LLM
+              value: {{ .Values.env.SAFETY_DUAL_LLM | default "0" | quote }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

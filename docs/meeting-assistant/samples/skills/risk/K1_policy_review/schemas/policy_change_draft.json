@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jiyaojun.local/schemas/risk/policy_change_draft.json",
+  "title": "policy_change_draft",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["policy_id", "recommended_action", "summary", "observe_metrics"],
+  "properties": {
+    "policy_id": { "type": "string" },
+    "recommended_action": {
+      "enum": ["shadow", "gray", "hold", "rollback_plan_only"]
+    },
+    "summary": { "type": "string", "minLength": 1 },
+    "observe_metrics": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "rollback_plan": { "type": "string" },
+    "gray_ratio": { "type": "string" },
+    "owners": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

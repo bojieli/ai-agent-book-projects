@@ -1,0 +1,30 @@
+{
+  "artifact_id": "art_general_demo",
+  "meeting_id": "mtg_gen_001",
+  "org_domains": [
+    "eng"
+  ],
+  "scenario_type": "unknown",
+  "skill_pack_id": "platform/general@0.1.0",
+  "artifact_kind": "summary_view",
+  "schema_id": "minutes_only",
+  "schema_version": "1.0.0",
+  "payload": {
+    "summary": "场景未绑定，仅生成可读摘要，未写入工作系统。",
+    "embed_disabled": true,
+    "hint": "请在会前选择已批准的 Scenario Skill Pack"
+  },
+  "confidence": "low",
+  "unresolved": [
+    {
+      "code": "no_skill",
+      "message": "未绑定场景",
+      "blocking_embed": true
+    }
+  ],
+  "source_spans": [],
+  "references": [],
+  "classification": "internal",
+  "continuum_write_class": "none",
+  "created_by_stage": "artifact"
+}

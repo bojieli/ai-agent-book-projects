@@ -1,0 +1,56 @@
+replicaCount: 2
+
+image:
+  repository: llm-safety-platform
+  tag: "2.0.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 512Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+
+env:
+  SAFETY_SCANNER_MODE: shim
+  SAFETY_OIDC_DISABLED: "1"
+  OIDC_REQUIRED: "0"
+  SAFETY_OIDC_JWKS_URL: ""
+  SAFETY_OIDC_ISSUER: ""
+  SAFETY_OIDC_AUDIENCE: llm-safety
+  SAFETY_KMS_PROVIDER: env
+  SAFETY_SIEM_SINK: log
+  SAFETY_SIEM_WEBHOOK_URL: ""
+  SAFETY_CLASSIFIER_URL: ""
+  SAFETY_SESSION_STORE: memory
+  SAFETY_DUAL_LLM: "0"
+
+moderation:
+  enabled: false
+  mock: true
+  onpremMock: false
+  upstreamUrl: ""
+  model: qwen2.5-7b-instruct
+  port: 8091
+
+secrets:
+  databaseUrl: postgresql+psycopg://safety:safety@postgres:5432/safety
+  redisUrl: redis://redis:6379/0
+  masterKey: change-me-in-sealed-secret
+  adminToken: change-me-admin-token
+
+ingress:
+  enabled: false
+  host: llm-safety.internal
+
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 8
+  targetCPUUtilizationPercentage: 70

@@ -1,0 +1,54 @@
+version: "1.0"
+story_id: K5
+orchestration_mode: sop
+
+budget:
+  max_llm_calls: 40
+  max_retrieve_hops: 6
+  max_embed_attempts: 2
+  max_render_variants: 3
+  max_wall_clock_sec: 600
+
+steps:
+  - id: retrieve_docs
+    type: retrieve
+    tools: [knowledge.search_docs]
+  - id: retrieve_continuum
+    type: retrieve
+    tools: [knowledge.search_continuum]
+  - id: extract
+    type: extract
+  - id: decide
+    type: decide
+  - id: no_hot_swap
+    type: validate
+    hook: no_hot_swap
+    wall: true
+    checklist: sop/checklists/no_hot_swap.yaml
+  - id: schema_validate
+    type: validate
+    hook: schema_validate
+    wall: true
+  - id: policy_hooks
+    type: validate
+    hook: policy_hooks
+    wall: true
+  - id: evaluate
+    type: evaluate
+    wall: true
+    llm_evaluator: required
+  - id: hitl
+    type: hitl
+    default: required
+  - id: embed
+    type: embed
+    tools: [connector.observe_task.create, connector.rollback_plan.draft]
+    skip_if: "embed_gate == block and not hitl_passed"
+  - id: continuum_index
+    type: index
+    write_class: domain
+  - id: render
+    type: render
+  - id: notify
+    type: notify
+    delivery_scope: participants_min

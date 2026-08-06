@@ -1,0 +1,70 @@
+# LLM Safety Platform — local full stack (on-prem style)
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: safety
+      POSTGRES_PASSWORD: safety
+      POSTGRES_DB: safety
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./migrations/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U safety -d safety"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  gateway:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SAFETY_DATABASE_URL: postgresql+psycopg://safety:safety@postgres:5432/safety
+      SAFETY_REDIS_URL: redis://redis:6379/0
+      SAFETY_MASTER_KEY: compose-dev-master-key-32b!!
+      SAFETY_SCANNER_MODE: remote
+      SAFETY_CLASSIFIER_URL: http://moderation:8091/v1/classify
+      SAFETY_OIDC_DISABLED: "1"
+      SAFETY_ADMIN_TOKEN: admin-dev-token
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      moderation:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # LLM-as-Judge worker (default mock=rules). Point MODERATION_UPSTREAM_* at vLLM/行内模型即启用真审核.
+  moderation:
+    build: .
+    command: ["uvicorn", "workers.moderation.app:app", "--host", "0.0.0.0", "--port", "8091"]
+    ports:
+      - "8091:8091"
+    environment:
+      MODERATION_MOCK: "1"
+      MODERATION_FUSE_RULES: "1"
+      # MODERATION_UPSTREAM_URL: http://host.docker.internal:8000/v1
+      # MODERATION_UPSTREAM_KEY: ""
+      # MODERATION_MODEL: qwen2.5-7b-instruct
+      # MODERATION_MOCK: "0"
+
+volumes:
+  pgdata:

@@ -1,0 +1,34 @@
+{
+  "artifact_id": "art_r5_board_demo",
+  "meeting_id": "mtg_r5_001",
+  "org_domains": ["eng"],
+  "scenario_type": "delivery_sync",
+  "skill_pack_id": "eng/R5_delivery_sync@0.1.0",
+  "artifact_kind": "metrics",
+  "schema_id": "milestone_board",
+  "schema_version": "1.0.0",
+  "payload": {
+    "open_blockers_recalled": true,
+    "milestones": [
+      {
+        "id": "ms_pay_cutover",
+        "name": "支付切流",
+        "status": "red",
+        "owner": "u_pm",
+        "note": "依赖网关容量未关闭"
+      }
+    ],
+    "commitments_next_week": ["网关压测结论会前发出"]
+  },
+  "confidence": "high",
+  "unresolved": [],
+  "source_spans": [
+    { "start_ms": 5000, "end_ms": 9000, "quote": "切流还是红的，阻塞还在" }
+  ],
+  "references": [
+    { "corpus": "continuum", "id": "mtg_r5_prev_blocker", "span": "gateway_capacity" }
+  ],
+  "classification": "internal",
+  "continuum_write_class": "wide",
+  "created_by_stage": "artifact"
+}

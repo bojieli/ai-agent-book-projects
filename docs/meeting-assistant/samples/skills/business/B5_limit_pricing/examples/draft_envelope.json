@@ -1,0 +1,28 @@
+{
+  "artifact_id": "art_b5_draft_demo",
+  "meeting_id": "mtg_b5_001",
+  "org_domains": ["business"],
+  "scenario_type": "limit_pricing_review",
+  "skill_pack_id": "business/B5_limit_pricing@0.1.0",
+  "artifact_kind": "draft",
+  "schema_id": "limit_pricing_draft",
+  "schema_version": "1.0.0",
+  "payload": {
+    "product_id": "prd_cash_a",
+    "recommended_action": "pilot_draft",
+    "summary": "小流量试点草稿，不对全量客群生效",
+    "proposed_limit": "8000",
+    "owners": ["u_biz_pm"]
+  },
+  "confidence": "high",
+  "unresolved": [],
+  "source_spans": [
+    { "start_ms": 40000, "end_ms": 48000, "quote": "先出试点草稿，别全量" }
+  ],
+  "references": [
+    { "corpus": "docs", "id": "doc_limit_policy", "span": "§试点" }
+  ],
+  "classification": "confidential",
+  "continuum_write_class": "domain",
+  "created_by_stage": "artifact"
+}

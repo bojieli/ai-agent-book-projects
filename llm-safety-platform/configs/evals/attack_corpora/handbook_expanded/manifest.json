@@ -1,0 +1,394 @@
+{
+  "version": 1,
+  "source": "handbook-expanded",
+  "seed": 42,
+  "cases_per_scenario": 100,
+  "smoke_per_scenario": 5,
+  "total_scenarios": 25,
+  "total_cases": 2500,
+  "constraints": [
+    "no_context_overflow",
+    "max_text_chars_4000",
+    "violence_at_request_level",
+    "unique_text_ratio_target_0.95"
+  ],
+  "scenarios": [
+    {
+      "name": "direct_injection",
+      "file": "handbook_expanded/direct_injection.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 349
+    },
+    {
+      "name": "system_prompt_exfil",
+      "file": "handbook_expanded/system_prompt_exfil.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 292
+    },
+    {
+      "name": "privilege_framework",
+      "file": "handbook_expanded/privilege_framework.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 269
+    },
+    {
+      "name": "social_engineering",
+      "file": "handbook_expanded/social_engineering.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 320
+    },
+    {
+      "name": "jailbreak_roleplay",
+      "file": "handbook_expanded/jailbreak_roleplay.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 293
+    },
+    {
+      "name": "hypothetical_framework",
+      "file": "handbook_expanded/hypothetical_framework.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 252
+    },
+    {
+      "name": "task_hijack_doc",
+      "file": "handbook_expanded/task_hijack_doc.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 262
+    },
+    {
+      "name": "task_hijack_support",
+      "file": "handbook_expanded/task_hijack_support.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 299
+    },
+    {
+      "name": "encoding_obfuscation",
+      "file": "handbook_expanded/encoding_obfuscation.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 401
+    },
+    {
+      "name": "context_wrapping",
+      "file": "handbook_expanded/context_wrapping.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 302
+    },
+    {
+      "name": "indirect_rag",
+      "file": "handbook_expanded/indirect_rag.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 286
+    },
+    {
+      "name": "echoleak_style",
+      "file": "handbook_expanded/echoleak_style.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 319
+    },
+    {
+      "name": "tool_mcp_poison",
+      "file": "handbook_expanded/tool_mcp_poison.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 299
+    },
+    {
+      "name": "output_format_bypass",
+      "file": "handbook_expanded/output_format_bypass.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 268
+    },
+    {
+      "name": "classifier_evasion",
+      "file": "handbook_expanded/classifier_evasion.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 288
+    },
+    {
+      "name": "adversarial_suffix",
+      "file": "handbook_expanded/adversarial_suffix.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 274
+    },
+    {
+      "name": "multi_turn_approx",
+      "file": "handbook_expanded/multi_turn_approx.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 330
+    },
+    {
+      "name": "guardrail_exfil",
+      "file": "handbook_expanded/guardrail_exfil.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 273
+    },
+    {
+      "name": "translation_attack",
+      "file": "handbook_expanded/translation_attack.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 216
+    },
+    {
+      "name": "benign_controls",
+      "file": "handbook_expanded/benign_controls.yaml",
+      "count": 100,
+      "expect_block": 0,
+      "expect_allow": 100,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 223
+    },
+    {
+      "name": "agent_tool_abuse",
+      "file": "handbook_expanded/agent_tool_abuse.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 267
+    },
+    {
+      "name": "pii_extraction",
+      "file": "handbook_expanded/pii_extraction.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 322
+    },
+    {
+      "name": "policy_bypass_finance",
+      "file": "handbook_expanded/policy_bypass_finance.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 276
+    },
+    {
+      "name": "rag_authority_spoof",
+      "file": "handbook_expanded/rag_authority_spoof.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 298
+    },
+    {
+      "name": "many_shot_jailbreak",
+      "file": "handbook_expanded/many_shot_jailbreak.yaml",
+      "count": 100,
+      "expect_block": 100,
+      "expect_allow": 0,
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 1006
+    }
+  ],
+  "uniqueness": {
+    "direct_injection": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 349
+    },
+    "system_prompt_exfil": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 292
+    },
+    "privilege_framework": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 269
+    },
+    "social_engineering": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 320
+    },
+    "jailbreak_roleplay": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 293
+    },
+    "hypothetical_framework": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 252
+    },
+    "task_hijack_doc": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 262
+    },
+    "task_hijack_support": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 299
+    },
+    "encoding_obfuscation": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 401
+    },
+    "context_wrapping": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 302
+    },
+    "indirect_rag": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 286
+    },
+    "echoleak_style": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 319
+    },
+    "tool_mcp_poison": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 299
+    },
+    "output_format_bypass": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 268
+    },
+    "classifier_evasion": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 288
+    },
+    "adversarial_suffix": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 274
+    },
+    "multi_turn_approx": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 330
+    },
+    "guardrail_exfil": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 273
+    },
+    "translation_attack": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 216
+    },
+    "benign_controls": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 223
+    },
+    "agent_tool_abuse": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 267
+    },
+    "pii_extraction": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 322
+    },
+    "policy_bypass_finance": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 276
+    },
+    "rag_authority_spoof": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 298
+    },
+    "many_shot_jailbreak": {
+      "unique_text_ratio": 1.0,
+      "unique_normalized_ratio": 1.0,
+      "max_len": 1006
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jiyaojun.local/schemas/cross/disambiguation_ruling.json",
+  "title": "disambiguation_ruling",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["term", "status", "candidate_senses"],
+  "properties": {
+    "term": { "type": "string" },
+    "status": { "enum": ["open", "resolved", "escalated"] },
+    "candidate_senses": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["sense_id", "org_domain", "gloss"],
+        "properties": {
+          "sense_id": { "type": "string" },
+          "org_domain": { "type": "string" },
+          "gloss": { "type": "string" }
+        }
+      }
+    },
+    "resolved_sense": { "type": "string" },
+    "resolver_user_id": { "type": "string" },
+    "blocks_embed": { "type": "boolean" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "open" } }, "required": ["status"] },
+      "then": { "properties": { "blocks_embed": { "const": true } }, "required": ["blocks_embed"] }
+    }
+  ]
+}

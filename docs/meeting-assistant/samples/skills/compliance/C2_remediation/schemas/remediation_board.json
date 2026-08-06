@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jiyaojun.local/schemas/compliance/remediation_board.json",
+  "title": "remediation_board",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["items"],
+  "properties": {
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["remediation_id", "title", "status", "owner"],
+        "properties": {
+          "remediation_id": { "type": "string" },
+          "title": { "type": "string" },
+          "status": {
+            "enum": ["open", "in_progress", "done", "deferred"]
+          },
+          "owner": { "type": "string" },
+          "due_date": { "type": "string" },
+          "evidence_ref": { "type": "string" },
+          "note": { "type": "string" }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": { "status": { "const": "done" } },
+              "required": ["status"]
+            },
+            "then": { "required": ["evidence_ref"] }
+          }
+        ]
+      }
+    }
+  }
+}

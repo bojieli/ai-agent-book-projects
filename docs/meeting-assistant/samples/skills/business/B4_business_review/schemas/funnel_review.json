@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jiyaojun.local/schemas/business/funnel_review.json",
+  "title": "funnel_review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["period", "metrics", "prior_actions_recalled"],
+  "properties": {
+    "period": { "type": "string" },
+    "prior_actions_recalled": { "type": "boolean" },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "value", "unit"],
+        "properties": {
+          "name": { "type": "string" },
+          "value": { "type": "number" },
+          "unit": { "type": "string" },
+          "source": { "type": "string" }
+        }
+      }
+    },
+    "insights": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

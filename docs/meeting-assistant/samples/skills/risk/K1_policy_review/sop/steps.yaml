@@ -1,0 +1,73 @@
+version: "1.0"
+story_id: K1
+orchestration_mode: sop
+
+budget:
+  max_llm_calls: 45
+  max_retrieve_hops: 6
+  max_embed_attempts: 2
+  max_render_variants: 3
+  max_wall_clock_sec: 600
+
+steps:
+  - id: retrieve_policy_docs
+    type: retrieve
+    tools: [knowledge.search_docs]
+    description: 拉策略说明 / 模型卡 / 灰度规范
+
+  - id: retrieve_continuum
+    type: retrieve
+    tools: [knowledge.search_continuum]
+    description: 同策略历史 Shadow 结论
+
+  - id: extract
+    type: extract
+    description: 抽建议动作、客群、观察指标、回滚条件
+
+  - id: decide
+    type: decide
+    description: 拟定 shadow/gray/hold；禁止默认 production
+
+  - id: no_production
+    type: validate
+    hook: no_production_effect
+    wall: true
+    checklist: sop/checklists/no_production_effect.yaml
+
+  - id: schema_validate
+    type: validate
+    hook: schema_validate
+    wall: true
+
+  - id: policy_hooks
+    type: validate
+    hook: policy_hooks
+    wall: true
+    description: production_effect_cap + tool_allowlist
+
+  - id: evaluate
+    type: evaluate
+    wall: true
+    llm_evaluator: required
+
+  - id: hitl
+    type: hitl
+    default: required
+
+  - id: embed
+    type: embed
+    tools: [connector.policy_draft.create, connector.observe_task.create]
+    skip_if: "embed_gate == block and not hitl_passed"
+    description: 仅草稿/观察任务
+
+  - id: continuum_index
+    type: index
+    write_class: domain
+
+  - id: render
+    type: render
+    templates: [render/email_html.j2]
+
+  - id: notify
+    type: notify
+    delivery_scope: participants_min

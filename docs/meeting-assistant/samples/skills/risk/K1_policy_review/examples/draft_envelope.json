@@ -1,0 +1,29 @@
+{
+  "artifact_id": "art_k1_draft_demo",
+  "meeting_id": "mtg_k1_001",
+  "org_domains": ["risk"],
+  "scenario_type": "risk_policy_review",
+  "skill_pack_id": "risk/K1_policy_review@0.1.0",
+  "artifact_kind": "draft",
+  "schema_id": "policy_change_draft",
+  "schema_version": "1.0.0",
+  "payload": {
+    "policy_id": "pol_fraud_rule_88",
+    "recommended_action": "shadow",
+    "summary": "先 Shadow 一周看误杀，不直接全量。",
+    "observe_metrics": ["false_positive_rate", "coverage"],
+    "rollback_plan": "一键关闭 Shadow 开关",
+    "owners": ["u_risk_pm"]
+  },
+  "confidence": "high",
+  "unresolved": [],
+  "source_spans": [
+    { "start_ms": 60000, "end_ms": 90000, "quote": "先 Shadow 吧，别直接上" }
+  ],
+  "references": [
+    { "corpus": "docs", "id": "doc_policy_fraud_88", "span": "§上线流程" }
+  ],
+  "classification": "confidential",
+  "continuum_write_class": "domain",
+  "created_by_stage": "artifact"
+}

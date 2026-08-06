@@ -1,0 +1,12 @@
+version: "1.0"
+id: no_production_effect
+all_must_pass: true
+items:
+  - id: no_production_tool
+    description: 未请求生产额度/定价生效工具
+  - id: effect_cap
+    description: production_effect ≤ draft_only
+  - id: action_not_prod
+    description: recommended_action ≠ production_enable
+  - id: has_doc_ref
+    description: references 含 docs

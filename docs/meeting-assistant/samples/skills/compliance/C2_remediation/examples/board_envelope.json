@@ -1,0 +1,41 @@
+{
+  "artifact_id": "art_c2_board_demo",
+  "meeting_id": "mtg_c2_001",
+  "org_domains": ["compliance"],
+  "scenario_type": "remediation_tracking",
+  "skill_pack_id": "compliance/C2_remediation@0.1.0",
+  "artifact_kind": "metrics",
+  "schema_id": "remediation_board",
+  "schema_version": "1.0.0",
+  "payload": {
+    "items": [
+      {
+        "remediation_id": "rem_2026_014",
+        "title": "客户告知书版本留痕",
+        "status": "done",
+        "owner": "u_comp_ops",
+        "evidence_ref": "doc_evidence_notice_v3",
+        "due_date": "2026-07-01"
+      },
+      {
+        "remediation_id": "rem_2026_021",
+        "title": "合作方尽调材料补齐",
+        "status": "in_progress",
+        "owner": "u_comp_ops",
+        "due_date": "2026-08-15"
+      }
+    ]
+  },
+  "confidence": "high",
+  "unresolved": [],
+  "source_spans": [
+    { "start_ms": 30000, "end_ms": 45000, "quote": "014 的告知书已经归档了" }
+  ],
+  "references": [
+    { "corpus": "continuum", "id": "mtg_c2_prev_open", "span": "rem_2026_014" },
+    { "corpus": "docs", "id": "doc_evidence_notice_v3", "span": "归档页" }
+  ],
+  "classification": "confidential",
+  "continuum_write_class": "domain",
+  "created_by_stage": "artifact"
+}

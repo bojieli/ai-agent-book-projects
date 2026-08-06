@@ -1,0 +1,15 @@
+# Override: wire moderation worker to DeepSeek (or any OpenAI-compatible API).
+# Usage:
+#   cp deploy/.env.deepseek.example deploy/.env.moderation
+#   # fill MODERATION_UPSTREAM_KEY
+#   docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.deepseek.yml \
+#     --env-file deploy/.env.moderation up --build
+services:
+  moderation:
+    environment:
+      MODERATION_MOCK: "0"
+      MODERATION_FUSE_RULES: "1"
+      MODERATION_UPSTREAM_URL: ${MODERATION_UPSTREAM_URL:-https://api.deepseek.com/v1}
+      MODERATION_MODEL: ${MODERATION_MODEL:-deepseek-v4-pro}
+      MODERATION_UPSTREAM_KEY: ${MODERATION_UPSTREAM_KEY:?set MODERATION_UPSTREAM_KEY}
+      MODERATION_TIMEOUT_SEC: ${MODERATION_TIMEOUT_SEC:-30}

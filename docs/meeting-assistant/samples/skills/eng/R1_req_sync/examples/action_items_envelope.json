@@ -1,0 +1,44 @@
+{
+  "artifact_id": "art_r1_actions_demo",
+  "meeting_id": "mtg_r1_001",
+  "org_domains": [
+    "eng"
+  ],
+  "scenario_type": "tech_review",
+  "skill_pack_id": "eng/R1_req_sync@0.1.0",
+  "artifact_kind": "action_items",
+  "schema_id": "action_items",
+  "schema_version": "1.0.0",
+  "payload": {
+    "items": [
+      {
+        "title": "补齐接口超时与重试约定",
+        "owner": "u_dev_a",
+        "status": "committed",
+        "due_date": "2026-08-10"
+      }
+    ],
+    "open_questions": [
+      "限流阈值是否与网关统一？"
+    ]
+  },
+  "confidence": "med",
+  "unresolved": [
+    {
+      "code": "open_question",
+      "message": "限流阈值未拍板",
+      "blocking_embed": false
+    }
+  ],
+  "source_spans": [
+    {
+      "start_ms": 12000,
+      "end_ms": 18000,
+      "quote": "超时和重试你补一下文档"
+    }
+  ],
+  "references": [],
+  "classification": "internal",
+  "continuum_write_class": "wide",
+  "created_by_stage": "artifact"
+}

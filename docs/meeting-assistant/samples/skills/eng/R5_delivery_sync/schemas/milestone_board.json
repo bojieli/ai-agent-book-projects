@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jiyaojun.local/schemas/eng/milestone_board.json",
+  "title": "milestone_board",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["milestones", "open_blockers_recalled"],
+  "properties": {
+    "open_blockers_recalled": { "type": "boolean" },
+    "milestones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "status"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "status": { "enum": ["green", "yellow", "red"] },
+          "owner": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "commitments_next_week": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

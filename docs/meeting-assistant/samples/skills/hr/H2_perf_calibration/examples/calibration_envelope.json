@@ -1,0 +1,36 @@
+{
+  "artifact_id": "art_h2_cal_demo",
+  "meeting_id": "mtg_h2_001",
+  "org_domains": [
+    "hr"
+  ],
+  "scenario_type": "perf_calibration",
+  "skill_pack_id": "hr/H2_perf_calibration@0.1.0",
+  "artifact_kind": "verdict",
+  "schema_id": "calibration_notes",
+  "schema_version": "1.0.0",
+  "payload": {
+    "session_label": "2026H1-L5",
+    "items": [
+      {
+        "subject_ref": "emp_opaque_9182",
+        "proposed_band": "M",
+        "status": "proposed",
+        "rationale_short": "对照同级分布"
+      }
+    ]
+  },
+  "confidence": "med",
+  "unresolved": [],
+  "source_spans": [
+    {
+      "start_ms": 100000,
+      "end_ms": 110000,
+      "quote": "这个先放到 M"
+    }
+  ],
+  "references": [],
+  "classification": "critical",
+  "continuum_write_class": "sealed",
+  "created_by_stage": "artifact"
+}

@@ -1,0 +1,72 @@
+version: "1.0"
+story_id: C2
+orchestration_mode: sop
+
+budget:
+  max_llm_calls: 40
+  max_retrieve_hops: 8
+  max_embed_attempts: 3
+  max_render_variants: 3
+  max_wall_clock_sec: 600
+
+steps:
+  - id: retrieve_continuum
+    type: retrieve
+    tools: [knowledge.search_continuum]
+    required: true
+    description: 拉本系列未关闭整改项（open_artifacts / open_work_links）
+
+  - id: retrieve_evidence_docs
+    type: retrieve
+    tools: [knowledge.search_docs]
+    description: 相关制度 / 验收标准
+
+  - id: extract
+    type: extract
+    description: 对照转写更新每条整改状态与证据线索
+
+  - id: decide
+    type: decide
+    description: 拟定 board 状态；done 必须带证据引用
+
+  - id: evidence_gate
+    type: validate
+    hook: evidence_required
+    wall: true
+    checklist: sop/checklists/evidence_required.yaml
+
+  - id: schema_validate
+    type: validate
+    hook: schema_validate
+    wall: true
+
+  - id: policy_hooks
+    type: validate
+    hook: policy_hooks
+    wall: true
+
+  - id: evaluate
+    type: evaluate
+    wall: true
+    llm_evaluator: required
+
+  - id: hitl
+    type: hitl
+    default: required
+
+  - id: embed
+    type: embed
+    tools: [connector.remediation_ledger.upsert]
+    description: 更新整改台账；幂等按 remediation_id
+
+  - id: continuum_index
+    type: index
+    write_class: domain
+
+  - id: render
+    type: render
+    templates: [render/email_html.j2]
+
+  - id: notify
+    type: notify
+    delivery_scope: participants_min

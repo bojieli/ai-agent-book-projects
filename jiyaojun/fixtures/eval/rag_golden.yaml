@@ -1,0 +1,730 @@
+k: 5
+thresholds:
+  hit_rate: 0.75
+  recall_at_k: 0.75
+  mrr: 0.55
+  faithfulness: 0.45
+corpus:
+- id: doc_api_timeout
+  kind: doc
+  org_domain: eng
+  classification: internal
+  acl:
+  - u_pm
+  - u_dev_a
+  title: 接口超时规范
+  body: '# 接口超时与重试
+
+
+    ## 超时阈值
+
+    网关对外接口超时阈值为 3 秒。
+
+
+    ## 重试策略
+
+    最多重试 2 次，仅对幂等 GET。
+
+    半成功场景必须写入补偿任务队列。
+
+
+    ## 监控
+
+    超时率超过 1% 触发告警。'
+- id: doc_pol_fraud
+  kind: doc
+  org_domain: risk
+  classification: confidential
+  acl:
+  - u_risk_pm
+  title: 策略 pol_fraud_rule_88
+  body: '策略 pol_fraud_rule_88 上线前必须 Shadow 观察误杀率。
+
+    生产热切换禁止在未完成 Shadow 报告时执行。'
+- id: doc_gateway_sla
+  kind: doc
+  org_domain: eng
+  classification: internal
+  acl:
+  - u_pm
+  - u_dev_a
+  title: 网关 SLA 规范
+  body: 网关容量规划每季度复盘。支付切流前须完成压测，红灯条件不得上线。
+- id: doc_hr_sealed
+  kind: doc
+  org_domain: hr
+  classification: critical
+  acl:
+  - u_hrbp
+  write_class: sealed
+  title: 组织调整密封纪要
+  body: 组织调整分析摘要（密封），仅限 HRBP 查阅。
+- id: doc_deploy_checklist
+  kind: doc
+  org_domain: eng
+  classification: internal
+  acl:
+  - u_pm
+  - u_dev_a
+  title: 发布检查清单
+  body: 发布前核对回滚方案、监控看板、值班通讯录。灰度比例默认 5%。
+- id: doc_biz_pricing
+  kind: doc
+  org_domain: business
+  classification: confidential
+  acl:
+  - u_biz_pm
+  title: 限价策略说明
+  body: 限价活动需业务与风控双签。跨域不得直接引用工程密钥。
+- id: mtg_pay_review_transcript
+  kind: transcript
+  meeting_id: mtg_pay_review
+  org_domain: eng
+  classification: internal
+  acl:
+  - u_pm
+  - u_dev_a
+  title: 支付切流评审转写
+  write_class: domain
+  series_id: series_pay
+  segments:
+  - speaker: 张三
+    text: 本周支付切流压测还没出结论，网关容量是红灯。
+    start_ms: 0
+    end_ms: 4200
+    section: 压测
+  - speaker: 李四
+    text: 建议先灰度 5% 流量，观察超时与重试指标。
+    start_ms: 4300
+    end_ms: 9100
+    section: 讨论
+  - speaker: 王五
+    text: 上次会议决议是压测通过前不切流，这条要继续跟进。
+    start_ms: 9200
+    end_ms: 14000
+    section: 决议
+  - speaker: 张三
+    text: 补偿任务队列本周已补齐，半成功不会再丢单。
+    start_ms: 14100
+    end_ms: 18500
+    section: 补偿
+- id: c_open_blocker
+  kind: continuum
+  org_domain: eng
+  classification: internal
+  write_class: wide
+  acl:
+  - u_pm
+  - u_dev_a
+  meeting_id: mtg_r5_prev
+  series_id: series_pay
+  open: true
+  body: 网关容量未关闭，支付切流红灯。责任人：张三。截止：本周五。
+- id: doc_retry_jitter
+  kind: doc
+  org_domain: eng
+  classification: internal
+  acl:
+  - u_pm
+  title: 重试抖动
+  body: 指数退避与抖动避免雪崩。
+- id: doc_circuit_breaker
+  kind: doc
+  org_domain: eng
+  classification: internal
+  acl:
+  - u_pm
+  title: 熔断器
+  body: 错误率超阈值打开熔断，半开探测。
+- id: doc_idempotency
+  kind: doc
+  org_domain: eng
+  classification: internal
+  acl:
+  - u_pm
+  - u_dev_a
+  title: 幂等键
+  body: 写回必须携带幂等键，重复请求不重复建单。
+- id: doc_hitl_policy
+  kind: doc
+  org_domain: eng
+  classification: internal
+  acl:
+  - u_pm
+  title: 人工确认
+  body: 高风险写回需 HITL 通过后方可 embed。
+- id: doc_rag_acl
+  kind: doc
+  org_domain: eng
+  classification: internal
+  acl:
+  - u_pm
+  title: 检索 ACL
+  body: 检索必须先 ACL 过滤再 dense/sparse。
+- id: doc_sealed_meeting
+  kind: doc
+  org_domain: hr
+  classification: critical
+  acl:
+  - u_hrbp
+  title: 密封会议规则
+  body: critical 会议产物不得出站到商业模型。
+- id: doc_cross_domain
+  kind: doc
+  org_domain: business
+  classification: confidential
+  acl:
+  - u_biz_pm
+  title: 跨域协作
+  body: 跨域会议未消歧不得写回。
+- id: doc_webhook_idem
+  kind: doc
+  org_domain: eng
+  classification: internal
+  acl:
+  - u_pm
+  title: Webhook 幂等
+  body: 重复 webhook 按 external_id 忽略。
+cases:
+- id: acl_denied_eng_doc
+  query: 超时重试
+  user_id: stranger
+  org_domains:
+  - eng
+  expect_empty: true
+- id: doc_timeout_recall
+  query: 超时重试
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_api_timeout
+  must_hit: true
+- id: policy_id_sparse
+  query: pol_fraud_rule_88
+  user_id: u_risk_pm
+  org_domains:
+  - risk
+  relevant_ids:
+  - doc_pol_fraud
+  must_hit: true
+- id: transcript_speaker_topic
+  query: 压测结论 网关容量
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - mtg_pay_review_transcript
+  must_hit: true
+- id: continuum_open_item
+  query: 支付切流 红灯
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - c_open_blocker
+  must_hit: true
+- id: agentic_rewrite_timeout
+  query: 那个乱七八糟的超时事情怎么办呀
+  user_id: u_pm
+  org_domains:
+  - eng
+  max_hops: 3
+  min_score: 0.0
+  relevant_ids:
+  - doc_api_timeout
+  must_hit: true
+- id: cross_chunk_compensation
+  query: 补偿任务 半成功
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_api_timeout
+  must_hit: true
+- id: hr_sealed_acl
+  query: 组织调整
+  user_id: u_hrbp
+  org_domains:
+  - hr
+  relevant_ids:
+  - doc_hr_sealed
+  must_hit: true
+- id: hr_sealed_denied
+  query: 组织调整
+  user_id: u_pm
+  org_domains:
+  - hr
+  expect_empty: true
+- id: pos_doc_api_timeout_0
+  query: 超时阈值
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_api_timeout
+  must_hit: true
+- id: pos_doc_api_timeout_1
+  query: 3秒超时
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_api_timeout
+  must_hit: true
+- id: pos_doc_api_timeout_2
+  query: GET 重试
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_api_timeout
+  must_hit: true
+- id: pos_doc_api_timeout_3
+  query: 超时告警
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_api_timeout
+  must_hit: true
+- id: pos_doc_api_timeout_4
+  query: 补偿队列
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_api_timeout
+  must_hit: true
+- id: pos_doc_gateway_sla_0
+  query: 网关容量
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_gateway_sla
+  must_hit: true
+- id: pos_doc_gateway_sla_1
+  query: 压测红灯
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_gateway_sla
+  must_hit: true
+- id: pos_doc_gateway_sla_2
+  query: 季度复盘
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_gateway_sla
+  must_hit: true
+- id: pos_doc_gateway_sla_3
+  query: 支付切流
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_gateway_sla
+  must_hit: true
+- id: pos_doc_gateway_sla_4
+  query: SLA
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_gateway_sla
+  must_hit: true
+- id: pos_doc_deploy_checklist_0
+  query: 回滚方案
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_deploy_checklist
+  must_hit: true
+- id: pos_doc_deploy_checklist_1
+  query: 灰度 5%
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_deploy_checklist
+  must_hit: true
+- id: pos_doc_deploy_checklist_2
+  query: 值班通讯录
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_deploy_checklist
+  must_hit: true
+- id: pos_doc_deploy_checklist_3
+  query: 发布检查
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_deploy_checklist
+  must_hit: true
+- id: pos_doc_deploy_checklist_4
+  query: 监控看板
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_deploy_checklist
+  must_hit: true
+- id: pos_doc_retry_jitter_0
+  query: 指数退避
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_retry_jitter
+  must_hit: true
+- id: pos_doc_retry_jitter_1
+  query: 抖动
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_retry_jitter
+  must_hit: true
+- id: pos_doc_retry_jitter_2
+  query: 雪崩
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_retry_jitter
+  must_hit: true
+- id: pos_doc_retry_jitter_3
+  query: 重试抖动
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_retry_jitter
+  must_hit: true
+- id: pos_doc_circuit_breaker_0
+  query: 熔断
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_circuit_breaker
+  must_hit: true
+- id: pos_doc_circuit_breaker_1
+  query: 半开探测
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_circuit_breaker
+  must_hit: true
+- id: pos_doc_circuit_breaker_2
+  query: 错误率阈值
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_circuit_breaker
+  must_hit: true
+- id: pos_doc_idempotency_0
+  query: 幂等键
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_idempotency
+  must_hit: true
+- id: pos_doc_idempotency_1
+  query: 重复建单
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_idempotency
+  must_hit: true
+- id: pos_doc_idempotency_2
+  query: 写回幂等
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_idempotency
+  must_hit: true
+- id: pos_doc_hitl_policy_0
+  query: HITL
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_hitl_policy
+  must_hit: true
+- id: pos_doc_hitl_policy_1
+  query: 人工确认
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_hitl_policy
+  must_hit: true
+- id: pos_doc_hitl_policy_2
+  query: 高风险写回
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_hitl_policy
+  must_hit: true
+- id: pos_doc_rag_acl_0
+  query: ACL 过滤
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_rag_acl
+  must_hit: true
+- id: pos_doc_rag_acl_1
+  query: 检索必须先 ACL
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_rag_acl
+  must_hit: true
+- id: pos_doc_rag_acl_2
+  query: 检索 ACL
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_rag_acl
+  must_hit: true
+- id: pos_doc_webhook_idem_0
+  query: webhook 幂等
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_webhook_idem
+  must_hit: true
+- id: pos_doc_webhook_idem_1
+  query: external_id
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_webhook_idem
+  must_hit: true
+- id: pos_doc_webhook_idem_2
+  query: 重复 webhook
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - doc_webhook_idem
+  must_hit: true
+- id: pos_doc_pol_fraud_0
+  query: Shadow
+  user_id: u_risk_pm
+  org_domains:
+  - risk
+  relevant_ids:
+  - doc_pol_fraud
+  must_hit: true
+- id: pos_doc_pol_fraud_1
+  query: 误杀率
+  user_id: u_risk_pm
+  org_domains:
+  - risk
+  relevant_ids:
+  - doc_pol_fraud
+  must_hit: true
+- id: pos_doc_pol_fraud_2
+  query: 热切换禁止
+  user_id: u_risk_pm
+  org_domains:
+  - risk
+  relevant_ids:
+  - doc_pol_fraud
+  must_hit: true
+- id: pos_doc_pol_fraud_3
+  query: pol_fraud
+  user_id: u_risk_pm
+  org_domains:
+  - risk
+  relevant_ids:
+  - doc_pol_fraud
+  must_hit: true
+- id: pos_doc_biz_pricing_0
+  query: 限价
+  user_id: u_biz_pm
+  org_domains:
+  - business
+  relevant_ids:
+  - doc_biz_pricing
+  must_hit: true
+- id: pos_doc_biz_pricing_1
+  query: 双签
+  user_id: u_biz_pm
+  org_domains:
+  - business
+  relevant_ids:
+  - doc_biz_pricing
+  must_hit: true
+- id: pos_doc_biz_pricing_2
+  query: 风控
+  user_id: u_biz_pm
+  org_domains:
+  - business
+  relevant_ids:
+  - doc_biz_pricing
+  must_hit: true
+- id: pos_doc_cross_domain_0
+  query: 跨域
+  user_id: u_biz_pm
+  org_domains:
+  - business
+  relevant_ids:
+  - doc_cross_domain
+  must_hit: true
+- id: pos_doc_cross_domain_1
+  query: 消歧
+  user_id: u_biz_pm
+  org_domains:
+  - business
+  relevant_ids:
+  - doc_cross_domain
+  must_hit: true
+- id: pos_doc_cross_domain_2
+  query: 未消歧不得写回
+  user_id: u_biz_pm
+  org_domains:
+  - business
+  relevant_ids:
+  - doc_cross_domain
+  must_hit: true
+- id: pos_doc_sealed_meeting_0
+  query: 密封会议
+  user_id: u_hrbp
+  org_domains:
+  - hr
+  relevant_ids:
+  - doc_sealed_meeting
+  must_hit: true
+- id: pos_doc_sealed_meeting_1
+  query: 不得出站
+  user_id: u_hrbp
+  org_domains:
+  - hr
+  relevant_ids:
+  - doc_sealed_meeting
+  must_hit: true
+- id: pos_doc_sealed_meeting_2
+  query: critical 产物
+  user_id: u_hrbp
+  org_domains:
+  - hr
+  relevant_ids:
+  - doc_sealed_meeting
+  must_hit: true
+- id: pos_c_open_blocker_0
+  query: 未关闭红灯
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - c_open_blocker
+  must_hit: true
+- id: pos_c_open_blocker_1
+  query: 责任人张三
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - c_open_blocker
+  must_hit: true
+- id: pos_c_open_blocker_2
+  query: 本周五截止
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - c_open_blocker
+  must_hit: true
+- id: pos_mtg_pay_review_transcript_0
+  query: 灰度 5%
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - mtg_pay_review_transcript
+  must_hit: true
+- id: pos_mtg_pay_review_transcript_1
+  query: 不切流
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - mtg_pay_review_transcript
+  must_hit: true
+- id: pos_mtg_pay_review_transcript_2
+  query: 补偿不丢单
+  user_id: u_pm
+  org_domains:
+  - eng
+  relevant_ids:
+  - mtg_pay_review_transcript
+  must_hit: true
+- id: neg_eng_user_on_risk
+  query: Shadow 误杀
+  user_id: u_pm
+  org_domains:
+  - risk
+  expect_empty: true
+- id: neg_eng_user_on_biz
+  query: 限价双签
+  user_id: u_pm
+  org_domains:
+  - business
+  expect_empty: true
+- id: neg_eng_to_hr
+  query: 密封会议
+  user_id: u_pm
+  org_domains:
+  - hr
+  expect_empty: true
+- id: neg_stranger_sla
+  query: 网关容量
+  user_id: stranger
+  org_domains:
+  - eng
+  expect_empty: true
+- id: neg_dev_hr
+  query: 组织调整
+  user_id: u_dev_a
+  org_domains:
+  - hr
+  expect_empty: true
+- id: neg_biz_risk
+  query: pol_fraud_rule_88
+  user_id: u_biz_pm
+  org_domains:
+  - risk
+  expect_empty: true
+- id: neg_hr_eng_timeout
+  query: 超时重试
+  user_id: u_hrbp
+  org_domains:
+  - eng
+  expect_empty: true
+- id: neg_cross_org_domains
+  query: 限价
+  user_id: u_pm
+  org_domains:
+  - business
+  expect_empty: true

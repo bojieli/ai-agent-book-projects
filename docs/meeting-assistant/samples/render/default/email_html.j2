@@ -1,0 +1,35 @@
+# Default email body (Jinja2-like; engine binds ArtifactEnvelope fields only)
+# Input: view.artifacts[], meeting.purpose, meeting.id — already ACL-filtered
+
+主题：【纪要君】{{ meeting.purpose | default("会议纪要") }}
+
+你好，
+
+本邮件由已确认产物渲染，请勿当作工作系统终态。
+
+## 结论摘要
+{% for a in artifacts if a.artifact_kind in ['verdict', 'decision', 'summary_view'] %}
+- [{{ a.artifact_kind }}] {{ a.payload.summary | default(a.payload.go_nogo) | default("(见结构化字段)") }}
+  置信度：{{ a.confidence }}
+{% else %}
+- （本视图无结论类产物）
+{% endfor %}
+
+## 行动项
+{% for a in artifacts if a.artifact_kind == 'action_items' %}
+{# use bracket key: attribute `.items` collides with dict.items in Jinja #}
+{% for item in a.payload['items'] | default([]) %}
+- {{ item.title }} {% if item.owner %}(@{{ item.owner }}){% endif %}
+{% endfor %}
+{% else %}
+- （无）
+{% endfor %}
+
+## 未决
+{% for a in artifacts %}
+{% for u in a.unresolved %}
+- {{ u.message }}
+{% endfor %}
+{% endfor %}
+
+会议 ID：{{ meeting.id }}

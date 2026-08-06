@@ -1,0 +1,29 @@
+# On-prem profile overlay — private moderation + OIDC/KMS/SIEM knobs
+# helm upgrade --install llm-safety ./deploy/helm/llm-safety-platform \
+#   -f values.yaml -f values-onprem.yaml -n llm-safety
+
+replicaCount: 2
+
+env:
+  SAFETY_SCANNER_MODE: remote
+  SAFETY_CLASSIFIER_URL: http://moderation:8091/v1/classify
+  SAFETY_REMOTE_FAIL_CLOSED: "1"
+  SAFETY_OIDC_DISABLED: "0"
+  OIDC_REQUIRED: "1"
+  SAFETY_OIDC_JWKS_URL: https://idp.bank.internal/realms/llm/protocol/openid-connect/certs
+  SAFETY_OIDC_ISSUER: https://idp.bank.internal/realms/llm
+  SAFETY_OIDC_AUDIENCE: llm-safety
+  SAFETY_KMS_PROVIDER: http_kms
+  SAFETY_KMS_HTTP_URL: http://vault-transit.internal/v1/transit/decrypt/llm-safety
+  SAFETY_SIEM_SINK: http
+  SAFETY_SIEM_WEBHOOK_URL: https://siem.bank.internal/ingest/llm-safety
+  SAFETY_SESSION_STORE: redis
+  SAFETY_DUAL_LLM: "0"
+
+moderation:
+  enabled: true
+  mock: false
+  onpremMock: false  # set true to simulate private GPU with rules-only
+  upstreamUrl: http://vllm.gpu.svc.cluster.local:8000/v1
+  model: qwen2.5-7b-instruct
+  port: 8091

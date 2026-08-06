@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jiyaojun.local/schemas/eng/release_verdict.json",
+  "title": "release_verdict",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["go_nogo", "summary", "blast_radius", "rollback_plan"],
+  "properties": {
+    "go_nogo": { "enum": ["go", "no_go", "conditional_go"] },
+    "summary": { "type": "string", "minLength": 1 },
+    "blast_radius": { "type": "string" },
+    "rollback_plan": { "type": "string" },
+    "observe_window": { "type": "string" },
+    "owners": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

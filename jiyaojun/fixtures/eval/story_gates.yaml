@@ -1,0 +1,61 @@
+# Story family gates (Ch6) — 故事族门禁
+version: "1.0"
+
+gates:
+  - id: R5_must_recall_open_blockers
+    story_id: R5
+    scenario_code: delivery_sync
+    checks:
+      - type: must_recall
+        field: pipeline.sop_steps
+        contains_step: retrieve
+      - type: briefing_series
+        series_id: series_pay
+        min_open_count: 1
+
+  - id: R4_sop_wall
+    story_id: R4
+    scenario_code: release_review
+    checks:
+      - type: sop_wall
+        required_steps: [checklist, schema_validate, evaluate]
+      - type: pipeline_path
+        expect: sop
+      - type: sop_wall_blocks_on_failure
+        skill_dir: app/skills/eng/R4_release_review
+
+  - id: H5_must_not_leak
+    story_id: H5
+    scenario_code: org_change
+    checks:
+      - type: must_not_leak
+        user_id: u_pm
+        org_domains: [hr]
+        series_id: series_h5_test
+        max_open_count: 0
+      - type: embed_gate
+        expect_no_work_objects: true
+
+  - id: K1_sop_block_embed
+    story_id: K1
+    scenario_code: risk_policy_review
+    checks:
+      - type: pipeline_path
+        expect: sop
+      - type: embed_gate
+        expect_no_work_objects: true
+
+  - id: X1_cross_req_align_no_writeback
+    story_id: X1
+    scenario_code: cross_req_align
+    checks:
+      - type: x1_unresolved_no_writeback
+        meeting_id: mtg_x1_gate
+
+  - id: general_unknown_fallback
+    story_id: general
+    scenario_code: not_a_real_code
+    checks:
+      - type: unknown_fallback
+        pipeline_path: fallback
+        expect_no_work_objects: true

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jiyaojun.local/schemas/risk/model_monitor_board.json",
+  "title": "model_monitor_board",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["model_id", "period", "recommended_action", "metrics"],
+  "properties": {
+    "model_id": { "type": "string" },
+    "period": { "type": "string" },
+    "recommended_action": {
+      "enum": ["observe", "hold", "rollback_plan_draft"]
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "value"],
+        "properties": {
+          "name": { "type": "string" },
+          "value": { "type": "number" },
+          "threshold": { "type": "number" }
+        }
+      }
+    }
+  }
+}

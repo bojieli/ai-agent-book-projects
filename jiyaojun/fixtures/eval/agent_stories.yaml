@@ -1,0 +1,153 @@
+version: '1.0'
+min_required: 30
+stories:
+- id: R1_happy
+  story_family: R1
+  kind: success
+  title: 技术评审生成结构化产物
+  automated: true
+- id: R1_hitl_then_defect
+  story_family: R1
+  kind: success
+  title: HITL 通过后建缺陷
+  automated: true
+- id: R1_webhook_close
+  story_family: R1
+  kind: success
+  title: webhook 关闭 Continuum
+  automated: true
+- id: R1_briefing_recall
+  story_family: R1
+  kind: success
+  title: 下场 briefing 召回 open item
+  automated: true
+- id: R1_idempotent_defect
+  story_family: R1
+  kind: success
+  title: 同幂等键不重复建单
+  automated: true
+- id: R5_recall_blockers
+  story_family: R5
+  kind: success
+  title: 交付同步召回未关闭 blocker
+  automated: true
+- id: R4_sop_path
+  story_family: R4
+  kind: success
+  title: 发布评审走 SOP 路径
+  automated: true
+- id: K1_policy_sop
+  story_family: K1
+  kind: success
+  title: 策略评审 SOP 且不写回
+  automated: true
+- id: dialog_create_task
+  story_family: dialog
+  kind: success
+  title: 对话建任务
+  automated: true
+- id: dialog_create_defect
+  story_family: dialog
+  kind: success
+  title: 对话建缺陷
+  automated: true
+- id: dialog_answer_only
+  story_family: dialog
+  kind: success
+  title: 无工具意图直接回答
+  automated: true
+- id: pipeline_playbook
+  story_family: general
+  kind: success
+  title: 未知场景 playbook/fallback
+  automated: true
+- id: safety_dual_authz_allow
+  story_family: safety
+  kind: success
+  title: 业务∩安全允许后写回
+  automated: true
+- id: rag_grounded_answer
+  story_family: rag
+  kind: success
+  title: 带 citation 的接地回答
+  automated: true
+- id: worker_resume
+  story_family: worker
+  kind: success
+  title: orphaned 任务可 resume
+  automated: true
+- id: R4_checklist_fail
+  story_family: R4
+  kind: failure
+  title: checklist 失败阻断 SOP
+  automated: true
+- id: H5_no_leak
+  story_family: H5
+  kind: failure
+  title: HR 密封不向工程泄露
+  automated: true
+- id: X1_ambiguity_block
+  story_family: X1
+  kind: failure
+  title: 未消歧禁止写回
+  automated: true
+- id: K5_no_hot_swap
+  story_family: K5
+  kind: failure
+  title: 禁止模型热切换
+  automated: true
+- id: safety_block_critical
+  story_family: safety
+  kind: failure
+  title: critical 出站阻断
+  automated: true
+- id: safety_budget_exhausted
+  story_family: safety
+  kind: failure
+  title: 预算耗尽 fail-closed
+  automated: true
+- id: safety_gateway_timeout
+  story_family: safety
+  kind: failure
+  title: 网关超时不写回
+  automated: true
+- id: tool_business_deny
+  story_family: safety
+  kind: failure
+  title: 业务拒绝安全不可放权
+  automated: true
+- id: embed_effect_cap
+  story_family: pipeline
+  kind: failure
+  title: effect_cap 超限拒绝
+  automated: true
+- id: hitl_reject
+  story_family: dialog
+  kind: failure
+  title: HITL 拒绝终止写回
+  automated: true
+- id: acl_stranger
+  story_family: rag
+  kind: failure
+  title: 陌生人检索为空
+  automated: true
+- id: cross_domain_deny
+  story_family: rag
+  kind: failure
+  title: 跨域越权检索为空
+  automated: true
+- id: postgres_down
+  story_family: infra
+  kind: failure
+  title: PG 不可用明确失败
+  automated: true
+- id: qdrant_pause
+  story_family: infra
+  kind: failure
+  title: Qdrant 暂停检索降级
+  automated: true
+- id: duplicate_webhook_noop
+  story_family: webhook
+  kind: failure
+  title: 重复 webhook 无额外副作用
+  automated: true

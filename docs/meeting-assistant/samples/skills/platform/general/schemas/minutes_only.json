@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jiyaojun.local/schemas/platform/minutes_only.json",
+  "title": "minutes_only",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["summary", "embed_disabled"],
+  "properties": {
+    "summary": { "type": "string", "minLength": 1 },
+    "embed_disabled": { "const": true },
+    "hint": { "type": "string" }
+  }
+}

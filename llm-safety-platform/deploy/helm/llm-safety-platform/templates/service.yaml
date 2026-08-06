@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "llm-safety.name" . }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: {{ include "llm-safety.name" . }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 8080

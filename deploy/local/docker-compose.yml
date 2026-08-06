@@ -1,0 +1,244 @@
+name: meeting-assistant-local
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${PLATFORM_POSTGRES_USER:-platform}
+      POSTGRES_PASSWORD: ${PLATFORM_POSTGRES_PASSWORD:-platform-dev-only}
+      POSTGRES_DB: ${PLATFORM_POSTGRES_DB:-platform}
+    ports:
+      - "${PLATFORM_POSTGRES_PORT:-55432}:5432"
+    volumes:
+      - platform_postgres_data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${PLATFORM_POSTGRES_USER:-platform} -d ${PLATFORM_POSTGRES_DB:-platform}",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+    networks:
+      - platform
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "${PLATFORM_REDIS_PORT:-56379}:6379"
+    volumes:
+      - platform_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 3s
+    networks:
+      - platform
+
+  seaweedfs:
+    image: chrislusf/seaweedfs:4.40
+    restart: unless-stopped
+    command:
+      [
+        "mini",
+        "-dir=/data",
+        "-bucket=${PLATFORM_S3_BUCKET:-jiyaojun}",
+      ]
+    ports:
+      - "${PLATFORM_SEAWEED_MASTER_PORT:-59333}:9333"
+      - "${PLATFORM_SEAWEED_FILER_PORT:-58888}:8888"
+      - "${PLATFORM_S3_PORT:-58333}:8333"
+      - "${PLATFORM_SEAWEED_ADMIN_PORT:-53646}:23646"
+    volumes:
+      - platform_seaweed_data:/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "--fail",
+          "--silent",
+          "http://127.0.0.1:9333/cluster/healthz",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    networks:
+      - platform
+
+  qdrant:
+    image: qdrant/qdrant:v1.18.2
+    restart: unless-stopped
+    ports:
+      - "${PLATFORM_QDRANT_HTTP_PORT:-56333}:6333"
+      - "${PLATFORM_QDRANT_GRPC_PORT:-56334}:6334"
+    volumes:
+      - platform_qdrant_data:/qdrant/storage
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "bash",
+          "-c",
+          ": >/dev/tcp/127.0.0.1/6333",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+    networks:
+      - platform
+
+  # 可选 Worker profile：docker compose --profile worker up -d
+  # 亦可在宿主机：cd jiyaojun && celery -A app.scheduler.celery_app.celery_app worker -l info
+  celery-worker:
+    profiles: ["worker"]
+    image: python:3.13-slim-bookworm
+    working_dir: /workspace/jiyaojun
+    volumes:
+      - ../../jiyaojun:/workspace/jiyaojun
+    environment:
+      JIYAOJUN_SCHEDULER_BACKEND: celery
+      JIYAOJUN_CELERY_BROKER_URL: redis://redis:6379/2
+      JIYAOJUN_REDIS_URL: redis://redis:6379/1
+      JIYAOJUN_REDIS_BACKEND: redis
+    command:
+      - bash
+      - -c
+      - |
+        pip install -q -r requirements-core.txt &&
+        celery -A app.scheduler.celery_app.celery_app worker -l info
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - platform
+
+  # ---------- Identity profile：Keycloak（OIDC 演示，不进默认 Core）----------
+  # docker compose --profile identity -f deploy/local/docker-compose.yml up -d
+  keycloak:
+    profiles: ["identity"]
+    image: quay.io/keycloak/keycloak:26.0
+    command: ["start-dev", "--http-port=8080"]
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin-dev-only}
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "${PLATFORM_KEYCLOAK_PORT:-58080}:8080"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "exec 3<>/dev/tcp/127.0.0.1/8080",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+    networks:
+      - platform
+
+  # ---------- Secrets profile：OpenBao 开发模式（凭据外置演示）----------
+  # docker compose --profile secrets -f deploy/local/docker-compose.yml up -d
+  openbao:
+    profiles: ["secrets"]
+    image: openbao/openbao:2.1.0
+    cap_add: ["IPC_LOCK"]
+    environment:
+      BAO_DEV_ROOT_TOKEN_ID: ${OPENBAO_ROOT_TOKEN:-local-dev-root-token}
+      BAO_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    command: ["server", "-dev"]
+    ports:
+      - "${PLATFORM_OPENBAO_PORT:-58200}:8200"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "bao",
+          "status",
+          "-address=http://127.0.0.1:8200",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+    networks:
+      - platform
+
+  # ---------- Observability profile：OTel + Prometheus + Grafana + Tempo ----------
+  # docker compose --profile observability -f deploy/local/docker-compose.yml up -d
+  tempo:
+    profiles: ["observability"]
+    image: grafana/tempo:2.6.1
+    command: ["-config.file=/etc/tempo/tempo.yaml"]
+    volumes:
+      - ./observability/tempo.yaml:/etc/tempo/tempo.yaml:ro
+    ports:
+      - "${PLATFORM_TEMPO_HTTP_PORT:-53200}:3200"
+    networks:
+      - platform
+
+  otel-collector:
+    profiles: ["observability"]
+    image: otel/opentelemetry-collector-contrib:0.113.0
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./observability/otel-collector.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "${PLATFORM_OTEL_HTTP_PORT:-54318}:4318"
+      - "${PLATFORM_OTEL_GRPC_PORT:-54317}:4317"
+    depends_on:
+      - tempo
+    networks:
+      - platform
+
+  prometheus:
+    profiles: ["observability"]
+    image: prom/prometheus:v2.55.1
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "${PLATFORM_PROMETHEUS_PORT:-59090}:9090"
+    depends_on:
+      - otel-collector
+    networks:
+      - platform
+
+  grafana:
+    profiles: ["observability"]
+    image: grafana/grafana:11.3.1
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin-dev-only}
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "${PLATFORM_GRAFANA_PORT:-53000}:3000"
+    depends_on:
+      - prometheus
+      - tempo
+    networks:
+      - platform
+
+networks:
+  platform:
+    name: meeting-assistant-platform
+
+volumes:
+  platform_postgres_data:
+  platform_redis_data:
+  platform_seaweed_data:
+  platform_qdrant_data:

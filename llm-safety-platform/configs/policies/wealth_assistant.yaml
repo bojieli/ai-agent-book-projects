@@ -1,0 +1,135 @@
+# Second-tenant bank wealth assistant — realistic VK / policy binding example
+policy_binding_id: pb_wealth_assistant
+tenant_id: t_bank_retail
+app_id: wealth_assistant
+version: 1
+reason: initial
+risk_tier: high
+fail_mode: fail_closed
+effect_cap: draft_only
+scanner_bundle_id: bundle_shim_v1
+grounding_required: true
+daily_token_budget: 200000
+max_concurrency: 16
+tool_allowlist:
+  - search_kb
+  - send_email
+tool_denylist:
+  - shell_exec
+  - fetch_url
+model_allowlist:
+  - mock-llm
+email_domain_allowlist:
+  - bank.internal
+  - webank.com
+tool_risk_rules:
+  - id: email_evil
+    tool_id: send_email
+    field: to
+    type: regex
+    pattern: "@evil\\.com$"
+    op_risk_tier: critical
+    decision: block
+  - id: email_external
+    tool_id: send_email
+    field: to
+    type: domain_not_in_allowlist
+    op_risk_tier: high
+    decision: confirm_only
+  - id: email_investment_push
+    tool_id: send_email
+    field: body
+    type: regex
+    pattern: "(?i)(必涨|保证收益|内幕|荐股)"
+    op_risk_tier: critical
+    decision: block
+  - id: email_pii_exfil
+    tool_id: send_email
+    field: body
+    type: regex
+    pattern: "(?i)(api[_-]?key|password\\s*[:=]|secret\\s*key|身份证|银行卡号|账户余额明细)"
+    op_risk_tier: critical
+    decision: block
+  - id: email_transfer_lure
+    tool_id: send_email
+    field: body
+    type: regex
+    pattern: "(?i)(立即转账|wire\\s*transfer|把钱打到|收款账号)"
+    op_risk_tier: high
+    decision: confirm_only
+  - id: search_kb_injection
+    tool_id: search_kb
+    field: query
+    type: regex
+    pattern: "(?i)(ignore\\s+previous|system\\s*prompt|制作炸弹|secret\\s*key)"
+    op_risk_tier: high
+    decision: block
+input_scanners:
+  - id: secrets
+    threshold: 0.5
+  - id: hidden_ascii
+    threshold: 0.8
+  - id: prompt_injection
+    threshold: 0.65
+  - id: system_leak
+    threshold: 0.65
+  - id: content_safety
+    threshold: 0.65
+    categories:
+      - sexual
+      - violence
+      - political
+      - self_harm
+      - harassment
+      - fraud
+      - privacy
+      - disinformation
+      - expert_advice
+      - jailbreak
+  - id: anonymize
+    threshold: 0.0
+  - id: token_limit
+    max_tokens: 3072
+  - id: ban_topics
+    topics:
+      - 股票推荐
+      - 买哪只
+      - 荐股
+      - 必涨的股票
+      - 内幕消息
+      - 保证收益
+  - id: indirect_injection
+    threshold: 0.65
+  - id: rag_gate
+    threshold: 0.65
+  - id: session_risk
+    threshold: 0.6
+output_scanners:
+  - id: schema
+    threshold: 0.0
+  - id: content_safety
+    threshold: 0.65
+    categories:
+      - sexual
+      - violence
+      - political
+      - self_harm
+      - harassment
+      - fraud
+      - privacy
+      - disinformation
+      - expert_advice
+      - jailbreak
+  - id: system_leak
+    threshold: 0.65
+  - id: sensitive
+    threshold: 0.5
+  - id: output_exfil
+    threshold: 0.7
+  - id: toxicity
+    threshold: 0.75
+  - id: secrets
+    threshold: 0.5
+  - id: grounding
+    threshold: 0.12
+retention: hash_only

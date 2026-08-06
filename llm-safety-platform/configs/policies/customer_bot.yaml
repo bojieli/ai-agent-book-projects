@@ -1,0 +1,147 @@
+policy_binding_id: pb_customer_bot
+tenant_id: t_demo
+app_id: customer_bot
+version: 1
+reason: initial
+risk_tier: medium
+fail_mode: fail_closed
+effect_cap: draft_only
+scanner_bundle_id: bundle_shim_v1
+grounding_required: false
+daily_token_budget: 500000
+max_concurrency: 32
+tool_allowlist:
+  - search_kb
+  - send_email
+  - fetch_url
+tool_denylist:
+  - shell_exec
+model_allowlist:
+  - mock-llm
+email_domain_allowlist:
+  - company.internal
+  - webank.com
+tool_risk_rules:
+  - id: email_evil
+    tool_id: send_email
+    field: to
+    type: regex
+    pattern: "@evil\\.com$"
+    op_risk_tier: critical
+    decision: block
+  - id: email_external
+    tool_id: send_email
+    field: to
+    type: domain_not_in_allowlist
+    op_risk_tier: high
+    decision: confirm_only
+  - id: fetch_insecure
+    tool_id: fetch_url
+    field: url
+    type: url_is_ip_or_non_https
+    op_risk_tier: medium
+    decision: alert_only
+  # Agentic tool-abuse (AgentDojo / awesome-list inspired)
+  - id: fetch_exfil_host
+    tool_id: fetch_url
+    field: url
+    type: regex
+    pattern: "(evil\\.|webhook\\.site|ngrok\\.|requestbin\\.|burpcollaborator)"
+    op_risk_tier: critical
+    decision: block
+  - id: email_secret_body
+    tool_id: send_email
+    field: body
+    type: regex
+    pattern: "(?i)(api[_-]?key|system\\s*prompt|password\\s*[:=]|secret\\s*key)"
+    op_risk_tier: high
+    decision: confirm_only
+  - id: email_phishing_lure
+    tool_id: send_email
+    field: body
+    type: regex
+    pattern: "(?i)(click\\s+here\\s+to\\s+reset|验证码发给|紧急冻结账户|bit\\.ly/)"
+    op_risk_tier: high
+    decision: confirm_only
+  - id: fetch_ssrf_meta
+    tool_id: fetch_url
+    field: url
+    type: regex
+    pattern: "(?i)(169\\.254\\.169\\.254|metadata\\.google|localhost|127\\.0\\.0\\.1)"
+    op_risk_tier: critical
+    decision: block
+  - id: search_kb_injection
+    tool_id: search_kb
+    field: query
+    type: regex
+    pattern: "(?i)(ignore\\s+previous|system\\s*prompt|exfiltrat|制作炸弹)"
+    op_risk_tier: high
+    decision: block
+input_scanners:
+  - id: secrets
+    threshold: 0.5
+  - id: hidden_ascii
+    threshold: 0.8
+  - id: prompt_injection
+    threshold: 0.7
+  - id: system_leak
+    threshold: 0.7
+  - id: content_safety
+    threshold: 0.7
+    categories:
+      - sexual
+      - violence
+      - political
+      - self_harm
+      - harassment
+      - fraud
+      - privacy
+      - disinformation
+      - expert_advice
+      - jailbreak
+  - id: anonymize
+    threshold: 0.0
+  - id: token_limit
+    max_tokens: 4096
+  - id: ban_topics
+    topics:
+      - 股票推荐
+      - 买哪只
+      - 荐股
+      - 必涨的股票
+      - 股票代码
+  - id: indirect_injection
+    threshold: 0.7
+  - id: rag_gate
+    threshold: 0.7
+  - id: session_risk
+    threshold: 0.7
+output_scanners:
+  - id: schema
+    threshold: 0.0
+  - id: content_safety
+    threshold: 0.7
+    categories:
+      - sexual
+      - violence
+      - political
+      - self_harm
+      - harassment
+      - fraud
+      - privacy
+      - disinformation
+      - expert_advice
+      - jailbreak
+  - id: system_leak
+    threshold: 0.7
+  - id: sensitive
+    threshold: 0.5
+  - id: output_exfil
+    threshold: 0.75
+  - id: toxicity
+    threshold: 0.8
+  - id: secrets
+    threshold: 0.5
+  - id: grounding
+    threshold: 0.12
+retention: hash_only

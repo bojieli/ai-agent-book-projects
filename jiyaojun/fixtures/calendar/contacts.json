@@ -1,0 +1,11 @@
+{
+  "contacts": [
+    {"user_id": "u_pm", "name": "产品经理", "org_domain": "eng", "email": "pm@example.com"},
+    {"user_id": "u_dev_a", "name": "研发A", "org_domain": "eng", "email": "deva@example.com"},
+    {"user_id": "u_dev_b", "name": "研发B", "org_domain": "eng", "email": "devb@example.com"},
+    {"user_id": "u_hrbp", "name": "HRBP", "org_domain": "hr", "email": "hrbp@example.com"},
+    {"user_id": "u_mgr", "name": "业务经理", "org_domain": "business", "email": "mgr@example.com"},
+    {"user_id": "u_biz", "name": "业务同学", "org_domain": "business", "email": "biz@example.com"},
+    {"user_id": "u_risk_pm", "name": "风控", "org_domain": "risk", "email": "risk@example.com"}
+  ]
+}

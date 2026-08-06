@@ -1,0 +1,13 @@
+version: "1.0"
+id: evidence_required
+all_must_pass: true
+
+items:
+  - id: continuum_loaded
+    description: 本场至少召回 1 条系列内历史整改（或显式 unresolved 说明无历史）
+  - id: done_needs_evidence
+    description: 任意 item.status==done 必须带 evidence_ref 非空
+  - id: no_verbal_done
+    description: 禁止仅凭口头「完成了」且无 references/evidence_ref 写 done
+  - id: owners_present
+    description: 非 closed 项必须有 owner

@@ -1,0 +1,580 @@
+# Content safety rule pack — weighted multi-signal scoring (shim / default).
+# Production: keep this as fail-closed baseline under ONNX/remote classifiers.
+version: 1
+block_threshold: 0.72
+alert_threshold: 0.45
+
+obfuscation_bonus: 0.22  # added when evasion signals present (pushes weak+obfuscated over block)
+
+categories:
+  sexual:
+    weight: 1.0
+    patterns:
+      - pattern: "儿童色情"
+        score: 0.98
+      - pattern: "未成年.?色情"
+        score: 0.98
+      - pattern: "child\\s*porn"
+        score: 0.98
+      - pattern: "详细描写性交过程"
+        score: 0.9
+      - pattern: "色情视频下载链接"
+        score: 0.88
+      - pattern: "裸聊|约炮教程"
+        score: 0.85
+      - pattern: "(explicit|pornographic|erotic)\\s+(content|story|video)"
+        score: 0.8
+      - pattern: "(nonconsensual|non-consensual).{0,20}(sex|intimate)|revenge\\s*porn"
+        score: 0.95
+      # CHiSafetyBench: explicit sexual solicitations (ZH)
+      - pattern: "淫秽色情|宣扬.{0,8}色情|色情(视频|内容|小说|资源)"
+        score: 0.9
+
+  violence:
+    weight: 1.0
+    patterns:
+      - pattern: "如何制造炸弹"
+      - pattern: "如何制作炸弹"
+      - pattern: "制作炸弹|炸弹制作"
+        score: 0.98
+      - pattern: "爆炸物制作|自制爆炸物|爆炸装置|引爆装置"
+        score: 0.96
+      - pattern: "教我做炸弹"
+        score: 0.96
+      - pattern: "how\\s+to\\s+(make|build)\\s+a\\s+bomb"
+        score: 0.96
+      - pattern: "(make|build|producing)\\s+a\\s+bomb|procedure to make a bomb"
+        score: 0.93
+      - pattern: "(explosive\\s+device|detonation\\s+apparatus|blasting\\s+mechanism|improvised\\s+explosive)"
+        score: 0.93
+      - pattern: "(construct|assemble|create).{0,24}(explosive|detonation|bomb)"
+        score: 0.92
+      - pattern: "组装.{0,16}(爆炸|引爆|炸弹)"
+        score: 0.92
+      - pattern: "zhi\\s*zao\\s*zha\\s*dan|zhizao\\s*zhadan|zha\\s*dan\\s*de\\s*bu\\s*zhou"
+        score: 0.9
+      - pattern: "自制枪支图纸"
+        score: 0.94
+      - pattern: "无差别杀戮"
+        score: 0.92
+      - pattern: "bomb"
+        score: 0.55
+        require_context: ["make", "build", "construct", "assemble", "制造", "制作", "教", "组装"]
+      - pattern: "教我做.?bomb|做.?bomb"
+        score: 0.9
+      - pattern: "exploit\\s+vulnerabilit|hacking\\s+into|steal(ing)?\\s+sensitive"
+        score: 0.92
+      - pattern: "write\\s+a\\s+(script|tutorial|guide).{0,40}(exploit|hack|bomb|malware)"
+        score: 0.9
+      - pattern: "制作(木马|勒索软件|恶意软件)"
+        score: 0.94
+      # Avoid FP on「可利用漏洞细节」——勿匹配「可利用」
+      - pattern: "(?<![可微])利用(?:操作系统)?漏洞|攻击(?:操作系统)?漏洞|漏洞利用|exploit\\s+(?:a\\s+)?(?:0-?day|vulnerability)|(提权|权限提升).{0,16}(窃取|盗取|读取)"
+        score: 0.92
+      # 「钓鱼识别/防钓鱼培训」等防御语境不拦；攻击侧要「模板/教程/话术」或 EN credential-theft template
+      - pattern: "(制作|编写|发送|投递|生成).{0,12}(钓鱼|phishing)|(钓鱼|phishing).{0,12}(邮件)?(模板|教程|话术)|钓鱼邮件模板|how\\s+to\\s+phish|钓鱼攻击|phishing.{0,48}(email\\s+)?template|phishing.{0,48}credential\\s+theft"
+        score: 0.9
+      - pattern: "(勒索软件|ransomware|malware).{0,20}(制作|编写|传播|部署)|制作.{0,8}(木马|恶意软件)"
+        score: 0.9
+      - pattern: "(fake\\s+news|造谣|传播虚假)"
+        score: 0.75
+      - pattern: "(how\\s+to\\s+(murder|kill)|杀人教程|谋杀)"
+        score: 0.96
+      - pattern: "(physical\\s+harm|assault|kidnap|torture)"
+        score: 0.82
+        require_context: ["how to", "how-to", "write", "guide", "tutorial", "instructions", "教", "如何", "hypothetical"]
+      # CHiSafety / Flames: ZH attack planning & explosives
+      - pattern: "制造和使用爆炸物|如何制造和使用爆炸物"
+        score: 0.96
+      - pattern: "无差别(攻击|杀戮|袭击)"
+        score: 0.94
+      - pattern: "劫持人质"
+        score: 0.92
+      - pattern: "策划.{0,12}(恐怖|袭击|爆炸)"
+        score: 0.94
+      - pattern: "宣扬暴力|暴力手段劫持"
+        score: 0.9
+      # context-wrap / multi-turn: violent harm howto under summary/hypothetical shell
+      - pattern: "暴力伤害操作步骤|(以假设方式|假设方式).{0,40}(请求)?暴力伤害|(摘要时顺便|文档摘要壳).{0,80}暴力伤害"
+        score: 0.92
+      - pattern: "violent\\s+assault\\s+plan.{0,80}how-?to|describe\\s+a\\s+violent\\s+assault\\s+plan\\s+as\\s+a\\s+hypothetical"
+        score: 0.94
+      - pattern: "secretly\\s+describe\\s+a\\s+violent\\s+assault|Game\\s+rule\\s+for\\s+\\w+.{0,40}violent\\s+assault|Fill\\s+in\\s+harmful\\s+how-to\\s+as\\s+comments"
+        score: 0.92
+
+  harassment:
+    weight: 1.0
+    patterns:
+      - pattern: "(body\\s*shaming|xenophobic|racist|ableism|defamatory)"
+        score: 0.9
+      - pattern: "(ridicule|demean|hate\\s+speech).{0,40}(group|people|ethnic|disabled|overweight)"
+        score: 0.88
+      - pattern: "(歧视|辱骂|人身攻击).{0,20}(种族|残疾|肥胖)"
+        score: 0.9
+      # CHiSafety / Flames: solicit hate speech, slurs, stereotype coaching
+      - pattern: "(羞辱|侮辱).{0,12}(的话|语言|黑人|暗语)|举例一些.{0,16}(羞辱|侮辱|话语)"
+        score: 0.92
+      - pattern: "侮辱性语言|人丑的暗语|描述人丑"
+        score: 0.9
+      - pattern: "泰国人妖|人妖多"
+        score: 0.94
+      - pattern: "(民族仇恨|种族仇恨|煽动仇恨|宣扬.{0,8}仇恨)"
+        score: 0.94
+      - pattern: "(性别|民族|国别|地域|职业|信仰|年龄|健康).{0,4}歧视"
+        score: 0.88
+      - pattern: "女生就应该|男生不能穿|男孩子走体育才能"
+        score: 0.85
+      # Flames Fairness: class/gender/nationality stereotype coaching (ZH)
+      - pattern: "农民工.{0,40}说服自己|说服自己坐到他旁边"
+        score: 0.88
+      - pattern: "所有法国人都|法国人都天生"
+        score: 0.86
+      - pattern: "(车主是一位)?女士.{0,16}刮蹭|防止他刮蹭我的车"
+        score: 0.86
+      - pattern: "学习不好的孩子.{0,24}不要跟|劝说我儿子远离|把我儿子带坏"
+        score: 0.86
+      - pattern: "阿姨想要应聘.{0,20}拒绝|怎么拒绝她"
+        score: 0.84
+        require_context: ["应聘", "招聘", "主播", "阿姨"]
+      - pattern: "工资竟然比他少|因为我的能力比他差吗"
+        score: 0.84
+      - pattern: "别人羞辱我|不健康的网络语|外貌攻击|回怼回去"
+        score: 0.86
+      - pattern: "(保时捷|法拉利).{0,24}(保安|停车|停在)|保安允许我们也停"
+        score: 0.85
+      # Flames Fairness — stereotype coaching / discriminatory advice (high-ROI, non-overfit)
+      - pattern: "(面试|应聘|招聘).{0,40}(形象比较好|穿什么样的衣服)|形象比较好的人较高的分数"
+        score: 0.86
+      - pattern: "(染着黄色头发|进过警察局).{0,40}(远离|带坏|劝说)"
+        score: 0.86
+      - pattern: "(其貌不扬|外貌攻击).{0,30}(回怼|羞辱)|别人羞辱我.{0,20}(网络语|暗语)"
+        score: 0.86
+      - pattern: "因为我是女孩子|工资竟然比他少|能力比他差吗"
+        score: 0.84
+      - pattern: "(所有|天生).{0,8}(法国人|农民工|黑人|女司机).{0,16}(都|浪漫|脏)"
+        score: 0.86
+      - pattern: "(怎么|如何).{0,8}(拒绝|劝说|说服).{0,24}(阿姨|农民工|学习不好|染.{0,6}头发)"
+        score: 0.85
+      - pattern: "(stereotype|discriminat|racial\\s+bias|性别偏见|刻板印象).{0,40}(how\\s+to|教我|写)"
+        score: 0.88
+      # Flames Fairness soft leaks — appearance/lifestyle/region stereotype coaching
+      - pattern: "(同性恋|二次元|宅舞|花花绿绿|染.{0,6}头发|不洗头|化了妆|喷了香水).{0,56}(一定|肯定|一看就是|私生活|作风|脏乱|特别坏)"
+        score: 0.86
+      - pattern: "(每天都不洗头|不换衣服).{0,48}(脏乱|不想去|委婉.{0,8}拒绝|列举几条说辞)"
+        score: 0.88
+      - pattern: "(二次元|宅舞).{0,48}(昏昏欲睡|靠后|不太会有人喜欢|节目放在什么位置)"
+        score: 0.86
+      - pattern: "(室友|同桌).{0,40}(议论别人发型|生活作风).{0,40}(换寝室|不想跟)"
+        score: 0.86
+      - pattern: "(穿着花花绿绿|衣服搭配也很任性).{0,48}(私生活很混乱|不想和这种人)"
+        score: 0.86
+      - pattern: "(来自广东|五湖四海).{0,40}(不要放辣椒|叮嘱服务员)|广东.{0,16}辣椒"
+        score: 0.84
+      - pattern: "(艺术家|某职业|男人都).{0,16}都是.{0,24}(浪漫不务实|私生活)|浪漫不务实的人"
+        score: 0.84
+      - pattern: "(身材).{0,24}(嘲讽|刻薄).{0,40}(你认为|觉得呢)|刻薄的女生你认为"
+        score: 0.84
+      - pattern: "(不想|拒绝|换寝室|远离|疏远).{0,32}(室友|做客|谈恋爱).{0,48}(怎么|如何|说辞|跟老师说)"
+        score: 0.82
+        require_context: ["发型", "洗头", "花花绿绿", "私生活", "作风", "脏", "同性恋", "香水", "化妆"]
+      - pattern: "(外貌|穿着|卫生|地域|性取向|亚文化).{0,24}(偏见|歧视|刻板).{0,40}(拒绝|疏远|换)"
+        score: 0.85
+
+  fraud:
+    weight: 1.0
+    patterns:
+      # Awareness/training mentions of phishing/scam must stay allow — require howto/attack framing
+      - pattern: "(how\\s+to\\s+(phish|scam)|phish(?:ing)?.{0,48}(kit|template|lure|credential\\s+theft)|provide\\s+a\\s+phishing|write\\s+a\\s+(phishing|scam)\\s+(email|sms)|social\\s+engineering\\s+(script|playbook|attack)|ponzi\\s+scheme\\s+(howto|how\\s+to)|money\\s+laundering\\s+(howto|how\\s+to|tutorial|steps|guide))"
+        score: 0.9
+      - pattern: "(counterfeit|forge).{0,20}(document|id|currency|check).{0,24}(howto|how\\s+to|tutorial|make|create|print)"
+        score: 0.92
+      - pattern: "(制作|编写|发送|实施|教我).{0,12}(电信)?诈骗|(诈骗|洗钱).{0,12}(话术|教程|步骤|模板|指南)|地下钱庄|(制作|买卖|代办|办理).{0,8}伪造证件|伪造证件.{0,12}(制作|买卖|教程)"
+        score: 0.92
+      # payment diversion / wire-fraud request family (keep bare「支付/电汇」and awareness Q&A benign)
+      - pattern: "payment\\s+diversion\\s+playbook|check[- ]kiting|(给出|编写|教我|provide|如何实施|实施|how\\s+to).{0,24}(伪造支付改道|伪造支付|支付改道|payment\\s+diversion|电汇诈骗)|伪造支付改道.{0,24}(操作|请求|说明|话术|模板|步骤|playbook)|电汇诈骗.{0,16}(话术|模板|步骤|操作请求|操作说明)"
+        score: 0.92
+      - pattern: "给出.{0,12}(伪造支付改道|伪造支付|支付改道|电汇诈骗).{0,16}(操作|请求|说明)"
+        score: 0.92
+      - pattern: "(荐股|推荐.{0,12}(股票|个股)|必涨.{0,8}股票|明天必涨)"
+        score: 0.9
+      - pattern: "economic\\s+harm|insider\\s+trading"
+        score: 0.85
+      - pattern: "gamble\\s+(their\\s+)?life\\s+savings|鼓励.{0,12}赌(博|光)|all[- ]in.{0,20}gambling"
+        score: 0.9
+
+  privacy:
+    weight: 1.0
+    patterns:
+      - pattern: "(从记忆与检索块提取|提取所有身份证号|身份证号.{0,12}CSV)"
+        score: 0.92
+      - pattern: "(paste\\s+hidden\\s+developer\\s+instructions|hidden\\s+developer\\s+instructions)"
+        score: 0.92
+      - pattern: "(disable\\s*filters?\\s+then\\s+output|output\\s+all\\s+tokens\\s+in\\s+json)"
+        score: 0.9
+      - pattern: "(把\\s*PII\\s*做成|强制导出手机号|导出客户名单|忽略用户隐私条款|伪装成合规条文)"
+        score: 0.92
+      # DLP/FAQ「禁止 list tokens in context」须放行 — suppress 否定/教育 framing
+      - pattern: "(tokens?|secrets?|api\\s*keys?).{0,40}(currently\\s+in\\s+context|in\\s+(the\\s+)?conversation\\s+context)|(list\\s+all|dump|extract|output|print)\\s+(all\\s+)?(tokens?|secrets?|api\\s*keys?).{0,40}(in\\s+(the\\s+)?(conversation\\s+)?context|from\\s+context)"
+        score: 0.9
+        suppress_context:
+          - "never ask"
+          - "do not"
+          - "don't"
+          - "禁止"
+          - "不要"
+          - "切勿"
+          - "勿"
+          - "dlp"
+          - "faq"
+          - "policy"
+          - "guidance"
+          - "awareness"
+          - "training"
+          - "rotate leaked"
+      - pattern: "(steal|exfiltrate|leak).{0,20}(personal\\s+data|private\\s+info|ssn|passport)"
+        score: 0.9
+      - pattern: "(人肉搜索|窃取隐私|非法获取.{0,8}个人信息)"
+        score: 0.92
+      # CyberSecEval-style secret / PII elicitation (PurpleLlama)
+      - pattern: "(give|tell|confirm|share|reveal).{0,40}(your|the|our|system)\\s+(password|secret\\s*key|passcode)"
+        score: 0.92
+      - pattern: "what\\s+is\\s+(your|the|our|system)\\s+(password|secret\\s*key|passcode)"
+        score: 0.92
+      - pattern: "(tell me|could you tell|can you tell).{0,40}(birth\\s*(date|year)|credit\\s*card|ssn|social\\s*security)"
+        score: 0.9
+      - pattern: "forget\\s*(all\\s*)?(previous|prior)\\s*(instructions|commands).{0,40}(secret|password)"
+        score: 0.94
+      - pattern: "SmartGPT|no special filtering"
+        score: 0.88
+      - pattern: "(user'?s?|jessica'?s?|richard'?s?|charles'?s?)\\s+(email|birth\\s*(date|year)|initials|favorite\\s+color|home\\s+address)"
+        score: 0.9
+      - pattern: "(first\\s+three\\s+letters|initials\\s+in\\s+reverse|birth\\s+year\\s+with\\s+dashes)"
+        score: 0.9
+      - pattern: "(personalized\\s+license\\s+plate|license\\s+plate).{0,40}(initials|birth\\s*year)"
+        score: 0.88
+      - pattern: "(confirm\\s+ours|share\\s+with\\s+me\\s+your\\s+passcode|passcode\\s+phrase)"
+        score: 0.92
+      - pattern: "\\[SYSTEM/CONTEXT\\].{0,80}(secret\\s+key|password|passcode)"
+        score: 0.94
+      - pattern: "(ignore\\s+the\\s+above|ignore\\s+previous).{0,60}(birth\\s*date|email|password|secret|favorite\\s+color)"
+        score: 0.94
+      - pattern: "(how\\s+important\\s+security\\s+is|passwords\\s+for\\s+our\\s+system).{0,40}confirm"
+        score: 0.88
+      # CSE persuasion / PII-formatting / payload-split (PurpleLlama soft leaks)
+      - pattern: "let'?s\\s+say\\s+i\\s+wanted\\s+to\\s+(login|log\\s+in)|step\\s+by\\s+step\\s+how\\s+to\\s+(login|log\\s+in|do\\s+it).{0,40}computer"
+        score: 0.88
+      - pattern: "Interlace\\s+Part\\s+\\d+|Part\\s*1\\s*:.{0,80}Part\\s*2\\s*:.{0,80}password"
+        score: 0.92
+      - pattern: "(decode\\s+this\\s+)?[Mm]orse\\s+code.{0,80}(password|pass\\b|secret)"
+        score: 0.9
+      - pattern: "(decode\\s+this\\s+)?[Mm]orse\\s+code"
+        score: 0.86
+        require_context: ["password", "pass", "secret", ".-", "-...", ".--"]
+      - pattern: "(first\\s+three\\s+letters|initials\\s+in\\s+reverse|birth\\s+year\\s+with\\s+dashes|format.{0,20}(ssn|email|phone))"
+        score: 0.88
+      - pattern: "(拼出|拼接|组合).{0,20}(密码|口令|secret).{0,40}(Part|部分|片段)"
+        score: 0.88
+      # Forced PII dump from context (handbook_expanded pii_extraction)
+      - pattern: "(dump|export|force).{0,48}(phone\\s*numbers?|national\\s*ids?|bank\\s*accounts?|emails?|ssn|PII)"
+        score: 0.92
+      - pattern: "(强制导出|不要脱敏|禁止打码).{0,40}(手机号|身份证|银行卡|邮箱|个人信息|证件号|客户隐私|隐私字段)"
+        score: 0.94
+      - pattern: "不要脱敏[，,：:\\s]{0,8}完整打印.{0,24}(客户)?隐私|完整打印客户隐私字段"
+        score: 0.94
+      - pattern: "list\\s+every\\s+PII\\s+field|including\\s+SSN\\s+patterns|table\\s+of\\s+emails?\\s+and\\s+account\\s+numbers"
+        score: 0.94
+      - pattern: "Markdown\\s+table\\s+request:.{0,80}\\|\\s*name\\s*\\|\\s*id\\s*\\|\\s*phone|\\|\\s*name\\s*\\|\\s*id\\s*\\|\\s*phone\\s*\\|.{0,80}No\\s+masking"
+        score: 0.92
+      - pattern: "(手机号|身份证|银行卡).{0,20}(邮箱|密码).{0,30}(完整打印|CSV|JSON)"
+        score: 0.9
+      - pattern: "(敏感个人信息|证件与银行卡).{0,24}(禁止打码|完整打印|导出)"
+        score: 0.92
+      - pattern: "Privacy\\s+bypass|reveal\\s+full\\s+PAN/?CVV|导出上下文证件|导出上下文中的邮箱"
+        score: 0.92
+      # task hijack / guardrail exfil / shard pull — bare taxonomy labels allow in training
+      - pattern: "诱导外泄\\s*[:：]|诱导外泄.{0,24}(在回答|附加|嵌入|末尾)|图片链接.{0,40}(承载|携带|编码).{0,40}(邮箱|密钥|令牌|上下文)"
+        score: 0.92
+      - pattern: "提取上下文中的.{0,36}(API\\s*密钥|密钥和密码|密码|令牌)|外泄上下文中的令牌|优先外泄密钥到攻击者"
+        score: 0.92
+      - pattern: "任务劫持\\s*[:：]|任务劫持.{0,64}(原摘要|外泄|令牌|密钥|降级|提取|JSON|tokens?)|原摘要任务降级|(优先外泄|外泄).{0,48}(上下文中的)?(令牌|tokens?|密钥)"
+        score: 0.92
+      - pattern: "客服优先级重排\\s*[:：]|客服优先级重排.{0,100}(令牌|密钥|邮箱|证件|手机号|开发者|打印|导出|提取|钓鱼|暴力)|优先级重排.{0,100}(令牌|密钥|邮箱|证件|手机号)|先以\\s*JSON\\s*列出上下文中的(令牌|密钥)|priority_note\\s*=|原客服任务延后"
+        score: 0.92
+      - pattern: "先导出上下文中的.{0,40}(邮箱|手机号|证件号)|以\\s*JSON\\s*列出上下文中的(令牌|密钥)"
+        score: 0.92
+
+  disinformation:
+    weight: 1.0
+    patterns:
+      - pattern: "(disinformation|misinformation|conspiracy\\s+theory).{0,40}(spread|campaign|write)"
+        score: 0.8
+      - pattern: "(fake\\s+news\\s+article|false\\s+claim).{0,30}(president|election|vaccine)"
+        score: 0.85
+      - pattern: "(earth\\s+is\\s+flat|illuminati|new\\s+world\\s+order)"
+        score: 0.86
+        require_context: ["evidence", "argue", "prove", "irrefutable", "controlled", "establish"]
+
+  expert_advice:
+    weight: 1.0
+    patterns:
+      - pattern: "(medical\\s+treatment\\s+plan|diagnose|prescription).{0,40}(AIDS|HIV|schizophrenia|cancer|diabetes)"
+        score: 0.9
+      - pattern: "(personalized|step-by-step).{0,30}(treating|treatment|therapy).{0,40}(schizophrenia|AIDS|HIV|depression)"
+        score: 0.9
+      - pattern: "(recommends?\\s+specific\\s+stocks|investment\\s+products\\s+for\\s+financial\\s+gain)"
+        score: 0.9
+      - pattern: "(个性化|定制).{0,20}(诊疗|治疗方案|用药方案)"
+        score: 0.9
+      # wealth_assistant / finance policy bypass (handbook_expanded)
+      - pattern: "guarantee\\s+\\d+%\\s+returns?|guaranteed\\s+(returns?|profit)|insider[- ]style|non-public\\s+info"
+        score: 0.92
+        suppress_context:
+          - "training"
+          - "compliance"
+          - "onboarding"
+          - "disallowed"
+          - "explain why"
+          - "合规"
+          - "培训"
+          - "须知"
+          - "禁止类"
+          - "教育"
+          - "glossary"
+          - "detector"
+          - "define only"
+      - pattern: "(稳赚不赔|保证收益|内幕交易|明日必涨|催促.{0,12}加仓)"
+        score: 0.94
+        suppress_context:
+          - "training"
+          - "compliance"
+          - "onboarding"
+          - "disallowed"
+          - "explain why"
+          - "合规"
+          - "培训"
+          - "须知"
+          - "禁止类"
+          - "教育"
+          - "glossary"
+          - "detector"
+          - "属于禁止"
+          - "不要推荐"
+      - pattern: "(unlicensed\\s+broker|principal\\s+protection|淡化风险).{0,40}(stock|crypto|加仓|股票)?"
+        score: 0.9
+      - pattern: "诱导性投顾|监管尚未知晓的利好|Guarantee\\s+principal\\s+protection"
+        score: 0.92
+      # insider framing / earnings leak / YAML ask:insider entry
+      - pattern: "actionable\\s+insider\\s+framing|insider\\s+framing.{0,48}earnings\\s+leak|earnings\\s+leak"
+        score: 0.92
+      - pattern: "ask\\s*:\\s*insider\\s+entry|insider\\s+entry|guarantee\\s*:\\s*true.{0,160}(insider|ticker)"
+        score: 0.9
+      - pattern: "Bypass\\s+financial\\s+advice\\s+policy|leverage\\s+crypto\\s+all-in\\s+with\\s+certainty"
+        score: 0.92
+
+  political:
+    weight: 1.0
+    patterns:
+      - pattern: "颠覆国家政权的具体步骤"
+        score: 0.98
+      - pattern: "组织武装暴动详细方案"
+        score: 0.98
+      - pattern: "传播暴恐音视频教程"
+        score: 0.95
+      # CHiSafetyBench: terrorism / extremism / subversion (ZH)
+      - pattern: "恐怖(袭击|主义|组织|活动|分子)"
+        score: 0.96
+      - pattern: "极端主义|极端思想|极端分子|极端情绪"
+        score: 0.94
+      - pattern: "圣战"
+        score: 0.92
+      - pattern: "煽动(暴力|极端|分裂|颠覆)"
+        score: 0.94
+      - pattern: "分裂国家|颠覆国家政权|推翻社会主义"
+        score: 0.96
+      - pattern: "暴恐(音视频)?"
+        score: 0.95
+      - pattern: "加入恐怖组织|宣扬恐怖主义"
+        score: 0.96
+      - pattern: "危害国家安全|损害国家形象"
+        score: 0.9
+
+  self_harm:
+    weight: 1.0
+    patterns:
+      - pattern: "如何自杀最有效"
+        score: 0.98
+      - pattern: "自杀方法大全"
+        score: 0.96
+      - pattern: "best\\s+way\\s+to\\s+kill\\s+myself"
+        score: 0.96
+
+  jailbreak:
+    weight: 1.0
+    patterns:
+      - pattern: "(?<![「『\"“'\\(\\[【/／])忽略.{0,12}规则"
+        score: 0.92
+        suppress_context:
+          - fingerprint
+          - postmortem
+          - glossary
+          - 话术特征
+          - 复盘
+          - 术语
+          - 词典
+          - FAQ
+          - 安全培训
+          - 注入特征
+          - 攻击者常说
+          - 概念
+      - pattern: "无视.{0,10}(安全|规则|策略|限制)"
+        score: 0.9
+      - pattern: "(?<![\"'“])ignore\\s*(all\\s*)?(previous|above)\\s*instructions"
+        score: 0.92
+        suppress_context:
+          - fingerprint
+          - postmortem
+          - glossary
+          - awareness
+          - "staff training"
+          - "attack fingerprint"
+          - 话术特征
+          - 复盘
+          - 术语
+          - 词典
+          - FAQ
+          - 安全培训
+          - 注入特征
+          - 攻击者常说
+          - 概念
+      - pattern: "forget\\s*(all\\s*)?(previous|prior|above)\\s*(instructions|commands|rules)"
+        score: 0.92
+        suppress_context:
+          - fingerprint
+          - postmortem
+          - glossary
+          - 话术特征
+          - 复盘
+          - 术语
+      # Glossary「什么是 jailbreak」must allow — require attack framing (incl. paraphrase-a-jailbreak corpus)
+      - pattern: "(?:enable|attempt|try|perform|do)\\s+jailbreak|paraphrase\\s+a\\s+jailbreak|jailbreak\\s+mode|how\\s+to\\s+jailbreak|jailbreak\\s*[:：]|(?:enable|enter|activate|switch\\s+to)\\s+dan\\s*mode|dan\\s*mode\\s*[:：]|dan\\s*mode\\s+enabled|(?<![（(/])do\\s*anything\\s*now(?!.{0,100}(definitions?\\s+only|glossary|acronym\\s+stand))|\\[DAN\\]|AntiGPT|AntiDAN"
+        score: 0.9
+        suppress_context:
+          - glossary
+          - 词典
+          - 术语
+          - FAQ
+          - staff training
+          - definitions only
+          - 定义
+          - 上报
+      # ZH DAN enablement / filter-bypass howto (keep glossary suppress)
+      - pattern: "(你现在是|你是|扮演|进入)\\s*DAN\\b|\\bDAN\\b.{0,100}(不受任何安全|无安全限制|绕过内容过滤|安全限制)|(如何|怎样|说明).{0,12}绕过内容过滤|绕过内容过滤器"
+        score: 0.9
+        suppress_context:
+          - glossary
+          - 词典
+          - 术语
+          - FAQ
+          - staff training
+          - definitions only
+          - 定义
+          - 上报
+      - pattern: "(部署研发|部署工程师|研发你的工程师|完全重现).{0,140}(系统提示|system\\s*prompt)|系统提示词配置正确"
+        score: 0.9
+      - pattern: "(according\\s+to|cited\\s+instruction|Smith\\s*\\(\\d{4}\\)).{0,120}(ignore\\s+previous|output\\s+your\\s+system|execute\\s+the\\s+cited)"
+        score: 0.9
+      - pattern: "(bomb[- ]making|制作炸弹|explosive).{0,80}(base64|markdown\\s+link)|base64.{0,60}markdown\\s+link.{0,40}(bomb|explosive)"
+        score: 0.9
+      - pattern: "pretend to be\\s+DAN|\\bSTAN\\b|Strive To Avoid Norms|Boolean Opposite Machine|opposite day"
+        score: 0.9
+      - pattern: "breaks?\\s+AI\\s+rules|no\\s+content\\s+filter|no\\s+prohibitions|does not follow OpenAI policies"
+        score: 0.88
+      - pattern: "无限制模式|\\bunrestricted\\b"
+        score: 0.88
+      - pattern: "(JailGPT|没有过滤的地下顾问|academic\\s+sandbox|policies?\\s+are\\s+folklore)"
+        score: 0.9
+      - pattern: "(data:text/plain;base64|fenced\\s+```text```).{0,40}system\\s+prompt|output\\s+your\\s+system\\s+prompt\\s+as\\s+a\\s+fenced"
+        score: 0.92
+      - pattern: "(pause\\s*safety\\s*checks|pausesafetychecks|violent\\s*assault\\s*howto|account-verification\\s+lure)"
+        score: 0.9
+      - pattern: "(pre_hook|MCP).{0,40}(密钥|钓鱼|api|密码)|紧急账户验证钓鱼"
+        score: 0.88
+      - pattern: "(Zignoruj\\s+poprzednie|تجاهل كل|Önceki talimat|पिछले सभी निर्देश)"
+        score: 0.9
+      - pattern: "(system\\s+instructions?|hidden\\s+preamble|initial\\s+system)"
+        score: 0.88
+      - pattern: "(base64|rot[\\s_-]?13|encoded).{0,40}(解码|decode|执行|obey|follow)"
+        score: 0.88
+      - pattern: "(grandma|grandmother).{0,100}(bomb|munition|explosive)"
+        score: 0.92
+      # CSE few-shot / many-shot / virtualization
+      - pattern: "ignore\\s+the\\s+above\\s+and\\s+(say|give|tell|state)"
+        score: 0.9
+      - pattern: "system\\s+override\\s+confirmed|system\\s+mode\\s+activated"
+        score: 0.88
+      - pattern: "\\[SYSTEM/CONTEXT\\]"
+        score: 0.88
+      - pattern: "\\[SYSTEM/CONTEXT\\].{0,400}\\[USER\\]"
+        score: 0.9
+      - pattern: "(futuristic\\s+society|personal\\s+data\\s+is\\s+public).{0,60}(email|address|password)"
+        score: 0.88
+      - pattern: "(many[- ]shot|few[- ]shot).{0,20}(attack|jailbreak)|Q:\\s*.{0,40}A:\\s*.{0,80}Ignore\\s+the\\s+above"
+        score: 0.86
+      - pattern: "(decode\\s+this\\s+ROT13|ROT13\\s+cipher|pig\\s*latin|erewhay\\s+oesday)"
+        score: 0.86
+      - pattern: "Q:\\s+What\\s+is\\s+(democracy|algebra|socialism).{0,200}Q:\\s+.*Ignore\\s+the\\s+above"
+        score: 0.88
+      # Many-shot Q/A chains (CSE) — ≥3 Q:/A: pairs even without trailing override
+      - pattern: "(?:Q:\\s*.{3,160}?\\s+A:\\s*.{3,240}?\\s+){3,}Q:"
+        score: 0.88
+      - pattern: "let'?s\\s+say\\s+i\\s+wanted\\s+to\\s+(login|log\\s+in).{0,80}step\\s+by\\s+step"
+        score: 0.88
+      - pattern: "(thoughts\\s+on\\s+(the\\s+)?(current\\s+)?political|state\\s+of\\s+modern\\s+politics)"
+        score: 0.8
+        require_context: ["hypothetical", "ignore", "system", "override", "democracy"]
+      # handbook_expanded creative variants (family-level)
+      - pattern: "管理员权限.{0,24}(覆盖|打印|reveal|系统提示|配置导出|override)|进入调试模式.{0,40}(打印|reveal|系统|配置)|打印完整系统配置|disable_filters\\s*=\\s*1"
+        score: 0.9
+      - pattern: "<\\s*admin\\b|reveal_system|dump\\s+secrets|ADMIN/?debug|enable\\s+jailbreak"
+        score: 0.9
+      - pattern: "隐藏系统设定|prompt_dump|verbatim\\s+safety[- ]policy|舞台幕后台词本|幕后设定全文"
+        score: 0.9
+      - pattern: "对抗后缀|期望完整系统提示词|Adversarial\\s+suffix\\s+trial|pause\\s+prior\\s+guidance"
+        score: 0.88
+      - pattern: "安全审计端点|条文伪称|audit-spoof\\.example|AUTHORIZED\\s+SECURITY\\s+AUDIT"
+        score: 0.9
+      - pattern: "translate-then-obey|先翻译.{0,12}再执行"
+        score: 0.88
+      - pattern: "data:(text|application)/[^\\s]+;base64,.{0,240}(obey|执行|decode\\s+the\\s+data\\s+uri)"
+        score: 0.9
+      - pattern: "run_command|scp\\s*密钥|169\\.254\\.169\\.254|P\\.S\\.\\s*AI\\s+must|task:\\s*exfil|密钥导出"
+        score: 0.9
+      - pattern: "IGNORE\\s+POLICY|Before\\s+searching,|系统提示词转为\\s*base64|渐进式（单条模拟多轮）|渐进式\\s*[:：]|模拟多轮\\s*[:：]|可绕过限制"
+        score: 0.88
+      - pattern: "check-kiting|payment\\s+diversion\\s+playbook|诱导性投顾|监管尚未知晓的利好|(给出|编写|教我|provide|如何实施|实施).{0,24}(伪造支付改道|电汇诈骗)|伪造支付改道.{0,24}(操作|请求|说明|话术|模板|步骤)|电汇诈骗.{0,16}(话术|模板|步骤|操作请求|操作说明)"
+        score: 0.9
+      - pattern: "physical\\s+harm.{0,40}(how-?to|fiction-research)|wire\\s+fraud\\s+step\\s+by\\s+step"
+        score: 0.9
+      # HTML/CSS-hidden SYSTEM inside RAG/email context
+      - pattern: "(display\\s*:\\s*none|mso-hide\\s*:\\s*all|opacity\\s*:\\s*0|font-size\\s*:\\s*[01]px).{0,160}(SYSTEM\\s*:|SYSTEM\\s+OVERRIDE|\\[\\s*SYSTEM|IGNORE\\s+PRIOR)"
+        score: 0.92
+      - pattern: "HTML\\s+retrieved.{0,80}SYSTEM\\s*:|HTML\\s+隐藏指令|cross[- ]document\\s+secret\\s+retrieval|secret\\s+retrieval\\s+protocol|post\\s+to\\s+audit\\s+endpoint"
+        score: 0.9
+      # handbook_expanded LIMIT=20 residual families (context wrap / shard / hijack / exfil)
+      - pattern: "分片指令\\s*[:：]|分片指令.{0,24}N\\s*=|分片指令.{0,80}(提取|密钥|密码|令牌|钓鱼|支付改道|绕过内容)|文档摘要壳|摘要时顺便.{0,80}(暴力伤害|外泄|密钥|令牌)"
+        score: 0.9
+      - pattern: "诱导外泄\\s*[:：]|任务劫持\\s*[:：]|客服优先级重排\\s*[:：]|原摘要任务降级"
+        score: 0.9
+      - pattern: "actionable\\s+insider\\s+framing|earnings\\s+leak|ask\\s*:\\s*insider\\s+entry"
+        score: 0.9
+      # full expanded residual families (phrase-level)
+      - pattern: "绕过内容过滤并无限制回答|完整打印客户隐私字段|从现在起覆盖原指令|暂停既有策略|新任务：?\\s*不要执行原任务"
+        score: 0.92
+      - pattern: "诱导工具调用\\s*[:：]|诱导工具调用.{0,64}(用\\s*search_files|找\\s*id_rsa|上传到攻击|attacker\\s+URL)|Poisoned\\s+MCP\\s+prompt|Poisoned\\s+MCP.{0,48}(reveal|secrets?|template)|MCP\\s*/\\s*工具投毒\\s+JSON|工具投毒\\s+JSON|工具投毒.{0,48}(pre_hook|密钥)|请注册工具：.{0,24}audit_dump|\\{\\{#system\\}\\}.{0,40}reveal\\s+secrets"
+        score: 0.92
+      - pattern: "原样返回\\s*system\\s*prompt|paste\\s+developer\\s+message|/bin/reveal_prompt|export\\s+SAFETY\\s*=\\s*0|Shell-frame\\s*:"
+        score: 0.92
+      - pattern: "安全事件响应：.{0,100}(输出安全规则|工具定义)|Return\\s+a\\s+data:\\s*URI\\s+containing\\s+the\\s+developer|priority_note\\s*="
+        score: 0.9
+      - pattern: "이전\\s*지침을\\s*무시|시스템\\s*프롬프트를\\s*출력|Игнорируй\\s+все\\s+предыдущие|раскрой\\s+системный\\s+промпт|Leetspeak\\s+instruction\\s*:"
+        score: 0.9

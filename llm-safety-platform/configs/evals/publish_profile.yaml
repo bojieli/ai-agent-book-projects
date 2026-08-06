@@ -1,0 +1,40 @@
+# Publish-time evaluation profile (explicit, auditable).
+# POST /v1/admin/policies/.../publish runs THIS profile — not dual_gate full.
+
+version: 1
+profile: publish
+description: >
+  Shim publish gates — fast enough for CI/publish API; release/full dual_gate
+  are run separately via run_all or manual pre-release.
+
+corpus_shim:
+  enabled: true
+  blocking: true
+
+fp_gates:
+  enabled: true
+  blocking: true
+
+dual_gate:
+  enabled: true
+  profile: ci
+  blocking: true
+
+remote_judge_compare:
+  enabled: false
+  blocking: false
+  skip_without_classifier_url: true
+  # M6：每周 opt-in 100；发布前人工触发 300（可用 SAFETY_JUDGE_SAMPLE_LIMIT 覆盖）
+  sample_limit: 100
+  sample_limit_pre_release: 300
+  max_attack_fn_rate: 0.0
+  max_benign_fp_rate: 0.0
+  max_decision_drift_rate: 0.05
+
+external_redteam:
+  garak: opt_in
+  pyrit: opt_in
+  env_flag: REDTEAM_EXTERNAL=1
+
+# Audit chain: desensitized rebuild assumes single-writer process.
+# Production multi-replica requires Postgres advisory lock or dedicated writer partition.

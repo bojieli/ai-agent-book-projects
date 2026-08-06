@@ -1,0 +1,30 @@
+{
+  "artifact_id": "art_x3_stub",
+  "meeting_id": "mtg_x3_stub",
+  "org_domains": [
+    "eng",
+    "business"
+  ],
+  "scenario_type": "incident_joint",
+  "skill_pack_id": "cross/X3_incident_joint@0.1.0",
+  "artifact_kind": "draft",
+  "schema_id": "stub_notes",
+  "schema_version": "1.0.0",
+  "payload": {
+    "summary": "X3 stub placeholder",
+    "notes": []
+  },
+  "confidence": "low",
+  "unresolved": [
+    {
+      "code": "backlog",
+      "message": "stub only",
+      "blocking_embed": true
+    }
+  ],
+  "source_spans": [],
+  "references": [],
+  "classification": "confidential",
+  "continuum_write_class": "domain",
+  "created_by_stage": "artifact"
+}

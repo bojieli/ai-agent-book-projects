@@ -1,0 +1,12 @@
+# Phase 0 runtime deps (keep minimal)
+PyYAML>=6.0
+jsonschema>=4.20
+Jinja2>=3.1
+pytest>=8.0
+pytest-cov>=5.0
+
+# M2.1 PostgreSQL / Redis 持久化（可选，见 requirements-core.txt）
+# pip install -r requirements-core.txt
+
+# Optional: real BGE-M3 (ADR-011). Install when JIYAOJUN_EMBEDDING=bge-m3
+# FlagEmbedding>=1.2.0

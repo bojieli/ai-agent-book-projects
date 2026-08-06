@@ -1,0 +1,6 @@
+# PostgreSQL + Redis + Qdrant + S3 + Celery 运行时依赖（M2.1 / M2.2 / M2.3）
+psycopg[binary]>=3.2
+redis>=5.0
+celery[redis]>=5.4
+qdrant-client>=1.12
+boto3>=1.35

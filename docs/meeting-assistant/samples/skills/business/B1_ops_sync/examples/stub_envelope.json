@@ -1,0 +1,29 @@
+{
+  "artifact_id": "art_b1_stub",
+  "meeting_id": "mtg_b1_stub",
+  "org_domains": [
+    "business"
+  ],
+  "scenario_type": "ops_sync",
+  "skill_pack_id": "business/B1_ops_sync@0.1.0",
+  "artifact_kind": "draft",
+  "schema_id": "stub_notes",
+  "schema_version": "1.0.0",
+  "payload": {
+    "summary": "B1 stub placeholder",
+    "notes": []
+  },
+  "confidence": "low",
+  "unresolved": [
+    {
+      "code": "backlog",
+      "message": "stub only",
+      "blocking_embed": true
+    }
+  ],
+  "source_spans": [],
+  "references": [],
+  "classification": "internal",
+  "continuum_write_class": "domain",
+  "created_by_stage": "artifact"
+}

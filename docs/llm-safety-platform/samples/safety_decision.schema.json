@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://llm-safety.local/schemas/safety_decision.json",
+  "title": "SafetyDecision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decision_id",
+    "request_id",
+    "tenant_id",
+    "app_id",
+    "policy_binding_id",
+    "policy_version",
+    "risk_tier",
+    "layer",
+    "decision",
+    "reason_codes",
+    "scanner_results",
+    "content_hash",
+    "retention",
+    "latency_ms",
+    "created_at"
+  ],
+  "properties": {
+    "decision_id": { "type": "string", "minLength": 1 },
+    "request_id": { "type": "string", "minLength": 1 },
+    "tenant_id": { "type": "string", "minLength": 1 },
+    "app_id": { "type": "string", "minLength": 1 },
+    "policy_binding_id": { "type": "string", "minLength": 1 },
+    "policy_version": { "type": "integer", "minimum": 1 },
+    "risk_tier": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+    "layer": { "type": "string", "enum": ["L1", "L2", "L3", "L4", "gateway"] },
+    "decision": {
+      "type": "string",
+      "enum": ["allow", "redact", "block", "confirm_only", "alert_only"]
+    },
+    "reason_codes": { "type": "array", "items": { "type": "string" } },
+    "scanner_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["scanner_id", "decision", "risk_score", "reasons"],
+        "properties": {
+          "scanner_id": { "type": "string" },
+          "decision": {
+            "type": "string",
+            "enum": ["allow", "redact", "block", "confirm_only", "alert_only"]
+          },
+          "risk_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reasons": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "content_hash": { "type": "string", "minLength": 1 },
+    "retention": { "type": "string", "enum": ["hash_only", "encrypted_full", "none"] },
+    "latency_ms": { "type": "number", "minimum": 0 },
+    "created_at": { "type": "string", "minLength": 1 }
+  }
+}
