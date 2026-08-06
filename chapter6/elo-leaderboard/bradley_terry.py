@@ -120,7 +120,8 @@ def compute_mle_elo(df: pd.DataFrame,
     
     # Calibrate to reference model if provided
     if calibration_model and calibration_model in models.index:
-        elo_scores += calibration_rating - elo_scores[models[calibration_model]]
+        target_rating = INIT_RATING if calibration_rating is None else calibration_rating
+        elo_scores += target_rating - elo_scores[models[calibration_model]]
     
     return pd.Series(elo_scores, index=models.index).sort_values(ascending=False)
 
