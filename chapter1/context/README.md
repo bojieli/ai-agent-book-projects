@@ -267,11 +267,17 @@ Observed results (these are not the expected-behavior labels below):
 | no tool definitions | 1 | 0 | no | no; the model explicitly declined to invent rates |
 | no tool results | 5 | 7 | yes | no; the model eventually reported that observations were hidden |
 
-Here `success` in an individual raw arm means that the API/agent loop returned
-a final response, not that the task or the manuscript hypothesis passed. The
-canonical behavioral booleans are under `analysis.manuscript_behavior_claims`;
-`all_manuscript_behavior_claims_observed` is false. This distinction prevents a
-graceful refusal in an ablated arm from being mislabeled as task success.
+In an individual raw arm, `completed` means that the API/agent loop returned a
+terminal response. It does not mean that the requested task was correct. The
+legacy `success` field is retained as an alias for `completed` so older result
+readers continue to work; new readers should use `completed` explicitly.
+`task_success` is the task-specific correctness result. For this experiment it
+is computed by the canonical numeric rubric, while the generic agent cannot
+infer correctness from arbitrary natural-language prompts. The canonical
+behavioral booleans are under `analysis.manuscript_behavior_claims`;
+`all_manuscript_behavior_claims_observed` is false. This separation prevents a
+graceful refusal or hallucinated tool markup in an ablated arm from being
+mislabeled as task success, without forcing any ablation outcome in advance.
 
 The ablation studies systematically remove context components to understand their importance.
 
@@ -330,7 +336,8 @@ Manual provider/API smoke scripts live under `tests/manual/` and require the cor
 
 #### Performance Metrics
 
-- **Success Rate**: Whether the task was completed correctly
+- **Terminal Response Rate**: Whether the agent returned a terminal response
+- **Task Success**: Correctness under the task-specific rubric (when one is available)
 - **Execution Time**: Total time to complete the task
 - **Iterations**: Number of agent-model interactions
 - **Tool Calls**: Number of external tool invocations
@@ -768,7 +775,8 @@ python -m pytest tests
 
 #### 性能指标
 
-- **Success Rate**：任务是否正确完成
+- **Terminal Response Rate**：Agent 是否返回了终止响应
+- **Task Success**：在存在任务专用评分标准时，任务是否正确完成
 - **Execution Time**：完成任务总耗时
 - **Iterations**：Agent 与模型交互次数
 - **Tool Calls**：外部工具调用次数

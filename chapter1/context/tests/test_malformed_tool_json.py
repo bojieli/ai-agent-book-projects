@@ -50,8 +50,25 @@ def test_execute_task_survives_malformed_tool_arguments_json():
     result = agent.execute_task("compute", max_iterations=5)
 
     assert result.get("error") is None
+    assert result["completed"] is True
+    assert result["task_success"] is None
+    assert result["success"] is True  # backwards-compatible completion alias
     assert "recovered" in (result.get("final_answer") or result.get("answer") or "")
     tool_roles = [m for m in agent.conversation_history if m.get("role") == "tool"]
     assert tool_roles
     assert "Invalid tool arguments" in tool_roles[0]["content"]
     assert agent.client.chat.completions.create.call_count == 2
+
+
+def test_execute_task_does_not_complete_on_empty_terminal_content():
+    agent = ContextAwareAgent("test-key", ContextMode.NO_TOOL_CALLS, verbose=False)
+    empty_turn = SimpleNamespace(choices=[_choice(content="")])
+    agent.client = MagicMock()
+    agent.client.chat.completions.create = MagicMock(return_value=empty_turn)
+
+    result = agent.execute_task("say something", max_iterations=5)
+
+    assert result["final_answer"] is None
+    assert result["completed"] is False
+    assert result["task_success"] is None
+    assert result["success"] is False

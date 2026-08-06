@@ -234,12 +234,25 @@ def normalized_number_text(value: str | None) -> str:
     return (value or "").replace(",", "").replace("$", "").replace(" ", "")
 
 
+def canonical_answer_correct(final_answer: str | None) -> bool:
+    """Evaluate the known numeric rubric for the canonical Experiment 1-1 task.
+
+    This is deliberately kept outside ``ContextAwareAgent``.  A generic agent
+    cannot infer correctness from an arbitrary natural-language task, while
+    this experiment has an explicit answer rubric.
+    """
+    normalized = normalized_number_text(final_answer)
+    return bool(final_answer) and all(number in normalized for number in EXPECTED_NUMBERS)
+
+
 def summarize_arm(mode: ContextMode, result: Dict[str, Any], elapsed: float) -> Dict[str, Any]:
     trajectory = result["trajectory"]
     tool_calls = [tool_call_dict(call) for call in trajectory.tool_calls]
     signatures = call_signatures(tool_calls)
     repeats = len(signatures) - len(set(signatures))
     final_answer = result.get("final_answer")
+    completed = bool(result.get("completed", result.get("success", False)))
+    task_success = canonical_answer_correct(final_answer)
     arm = {
         "mode": mode.value,
         "provider": result.get("provider"),
@@ -248,7 +261,11 @@ def summarize_arm(mode: ContextMode, result: Dict[str, Any], elapsed: float) -> 
         "using_openrouter": result.get("using_openrouter", False),
         "started_at": None,
         "elapsed_seconds": round(elapsed, 6),
-        "success": result.get("success", False),
+        # ``success`` is retained for compatibility with existing evidence;
+        # it means terminal response/completion, not task correctness.
+        "success": completed,
+        "completed": completed,
+        "task_success": task_success,
         "iterations": result.get("iterations", 0),
         "error": result.get("error"),
         "final_answer": final_answer,
@@ -262,10 +279,8 @@ def summarize_arm(mode: ContextMode, result: Dict[str, Any], elapsed: float) -> 
     arm["behavior"] = {
         "tool_action_count": len(tool_calls),
         "has_repeated_tool_action": repeats > 0,
-        "hit_iteration_ceiling": result.get("iterations") >= 5 and not result.get("success"),
-        "canonical_answer_correct": all(
-            number in normalized_number_text(final_answer) for number in EXPECTED_NUMBERS
-        ),
+        "hit_iteration_ceiling": result.get("iterations") >= 5 and not completed,
+        "canonical_answer_correct": task_success,
     }
     return arm
 
@@ -310,7 +325,7 @@ def analyze(arms: List[Dict[str, Any]]) -> Dict[str, Any]:
     )
     behavior = {
         "full_baseline_correct": by_mode.get("full", {}).get("behavior", {}).get(
-            "canonical_answer_correct", False
+            "canonical_answer_correct", by_mode.get("full", {}).get("task_success", False)
         ),
         "without_tool_definitions_no_tool_action": by_mode.get(
             "no_tool_calls", {}
