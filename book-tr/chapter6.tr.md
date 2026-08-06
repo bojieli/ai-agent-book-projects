@@ -64,6 +64,33 @@ Bu test durumu geçti. Ama iyi bir değerlendirme yalnızca başarı senaryolar�
 
 Yukarıdaki akış — test durumlarını tanımlamak, Agent'ı çalıştırmak, Rubric ile puanlamak, sonuçları analiz etmek — değerlendirmenin temel iskeletidir. Bu bölümün geri kalanı her adımın tasarım yöntemini sırasıyla açacak.
 
+## Değerlendirme metrikleri sistemi: güncellenmiş ölçütler
+
+Ortamı veya veri kümesini kurmadan önce “başarı”nın ne olduğunu belirlemek gerekir: bir kez çalışan bir yol bulmak yeterli mi, yoksa her çalıştırma hatasız mı olmalı? Tanım değişince mühendislik kararı da değişebilir.
+
+### Teknik harika: Pass@k ile yetenek tavanı
+
+Birçok model ve Agent hâlâ **teknik harika** aşamasındadır: çok sayıda deneme, uzun süre ve insan seçimi sonunda tek bir çığır açan trajectory, görevin ilke olarak yapılabildiğini gösterir. **Pass@k**, aynı görevi $k$ kez çalıştırıp en az biri başarılıysa geçer; sürekli puanlarda en iyi sonuç **Best@k** olur. Anthropic'in uzun süreli Agent örnekleri, Manus ve OpenClaw; bilimsel keşif, güvenlik açığı arama ve açık uçlu üretimde yararlı olan bu yetenek tavanını gösterir.
+
+### İş güvenilirliği: Pass^k
+
+İş sistemleri genellikle tersini ister: ardışık denemelerde tek hata bile olmaması. **Pass^k** (“Pass consecutive k”), $k$ çalıştırmanın hepsinin başarılı olmasını ve güvenlik, uyum ya da halüsinasyon vetosu doğurmamasını ister. Tek çalıştırma başarısı $p$ ise,
+
+$$
+\mathrm{Pass@k}=1-(1-p)^k,\qquad
+\mathrm{Pass}^{k}=p^k.
+$$
+
+$p=0.6$, $k=5$ için Pass@5 yaklaşık %99,0 iken Pass consecutive@5 yalnızca %7,8'dir. İlki keşif tavanını, ikincisi ödeme, iade, yetki değişikliği ve üretim dağıtımı için gereken istikrarı ölçer. Rapor $k$'nın bağımsız örnekler mi yoksa ardışık üretim görevleri mi olduğunu açıklamalı; yan etkili işlemler sandbox ya da geri alınabilir ortamda, bütün başarısızlıklar sayılarak test edilmelidir.
+
+### Süreç, güvenlik ve sağlamlık metrikleri
+
+Sonuç tek başına yetmez. Geçerli ve yetkili eylem oranı, araç argümanlarının anlamsal doğruluğu, yol verimliliği (adımlar, tekrarlar, geri dönüşler), retrieval kapsamı ve maliyet/gecikme, Agent'ın nerede bozulduğunu gösterir. Hassas işlemler, veri sızıntısı ve yasak içerik için **sıfır tolerans** uygulanır. Sağlamlık seed, arayüz değişikliği, API dalgalanması ve eski bellek girişimini kapsar; Agent'ın **trajectory**'si ile sistemin gerçek **outcome**'u birlikte doğrulanmalıdır.
+
+### İnsan örneklemesi ve adversarial inceleme
+
+Başarıları, hataları ve sınır puanları düzenli olarak insanlara denetletin. LLM hâkimlerini ölçeklemeden önce 100–200 insan etiketli gold case üzerinde (örneğin Cohen's kappa > 0,7) kalibre edin ve hâkim ya da Rubric değişince yineleyin. Red teaming gizli hata, anahtar sözcük doldurma ve hâkim önyargısı sömürüsünü aramalı; ciddi hâkim uyuşmazlıkları insan incelemesine gitmelidir.
+
 ## Otomatik Değerlendirme Ortamı
 
 Agent değerlendirmesi, tekrar tekrar çalıştırılabilen otomatik bir ortam gerektirir — geliştirme aşamasında değişikliklerin etkisini hızlıca test edebilen bir ortam. Böyle bir ortamı kurmak üç soruyu yanıtlamayı gerektirir: ne değerlendirilecek (görev tanımı ve doğrulama ölçütleri), kime karşı değerlendirilecek (Agent'ın etkileşimde bulunduğu tarafın nasıl simüle edileceği) ve hangi ölçütle puanlanacak.
@@ -398,7 +425,19 @@ Hafifletme stratejisi **çok kaynaklı ve heterojen değerlendirmedir** — fark
 - **UI değerlendirmesi**: **Proposer-Reviewer** (önerici-inceleyici) mekanizması kullanılarak metin taşması, renk kontrastı, düğme konumu gibi sorunlar denetlenir. Buradaki Proposer-Reviewer bir **değerlendirme yöntemi** olarak kullanılır; Bölüm 5'teki **üretim sistemi bileşeni** kullanımından farklıdır, ama temel mekanizma aynıdır — bir model üretir, başka bir model bağımsız olarak inceler.
 - **Video kurgu değerlendirmesi**: anahtar kareler üzerinden kesme başlangıç/bitiş noktalarının ve efekt uygulamalarının doğru olup olmadığı doğrulanır.
 
-> **Deney 6-5 ★★: Tam Otomatik Bir TTS Kalite Değerlendirme Boru Hattı Kurmak**
+### Hata atfı ve trajectory-prefix regresyon görevleri
+
+Uçtan uca değerlendirme çoğu zaman yalnızca “başarılı/başarısız” der. Sonucu düzeltmeye dönüştürmek için her başarısız trajectory'de kategori, kabul edilemez davranışın ilk adımı, ilgili araç çağrısı veya model çıktısı ve denetlenebilir kanıt kaydedilmelidir. Bad case'ler kullanıcı düzeltmesi, olumsuz geri bildirim veya sonradan yapılan durum/kural kontrolünden gelebilir. LLM yardımcı olur, ancak kök neden genellikle ürün sorunu da olabileceğinden insan analizi gereklidir.
+
+Coding Agent için başlangıç sınıfları süreç/depo kuralı eksikliği, araç/biçim hatası, anormal sonlanma ve tamamlama/mantık hatasıdır. Adım numarası, araç, gözlem, kök neden ve sonuç, kurtarılabilirlik ve güveni JSON/YAML olarak; ortam durumu, sürümler ve tam trajectory ile birlikte saklayın.
+
+**Uçtan uca regresyon** bütün akışı çalıştırır; **trajectory-prefix regresyonu** ilk hatadan hemen önceki bağlamı, konuşmayı, araç dönüşlerini ve durumu dondurup yalnızca sonraki gözlemlenebilir eylemi sınar. Tek bir kanonik cevap yerine izin verilen eylemler kümesini (kuralları okuma, kullanıcıya sorma, tehlikeli işlemi reddetme) ve yasakları tanımlayın. Değerlendirme ve eğitim verileri ayrılmalıdır.
+
+> **Deney 6-5 ★★: Birden çok gösterimle trajectory-prefix sınır değerlendirmesi**
+>
+> Modele bilinen kullanıcı belleği, güncel talimat, trajectory prefix, araç dönüşleri ve ortam durumu verilir; yalnızca sonraki gözlemlenebilir eylem istenir. 11 vaka JSON Cards, Markdown ve Python-like biçimlerinde kodlanıp deterministik kurallarla denetlendi. 33/33 hücre API hatasız tamamlandı ve her gösterim 6/11 geçti; gösterimi değiştirmek tek başına kullanım politikasını düzeltmez.
+
+> **Deney 6-6 ★★: Tam Otomatik Bir TTS Kalite Değerlendirme Boru Hattı Kurmak**
 >
 > Bu deney, eksiksiz bir çok modlu LLM-as-a-Judge TTS kalite değerlendirme sistemini sıfırdan tasarlayıp uygulamanızı ister.
 >
@@ -427,7 +466,7 @@ Chatbot Arena anonim rastgele karşılaşmalar kullanır — kullanıcılar mode
 
 **Değerlendirmeden eğitime: ikili karşılaştırma sinyalinin aktarımı.** İkili karşılaştırma yalnızca bir değerlendirme aracı değil, post-training için de önemli bir sinyal kaynağıdır. Bölüm 7'de tanıtılacak olan **GRPO** (Group Relative Policy Optimization, grup göreli politika optimizasyonu) algoritması, tam da "hangisi daha iyi" biçimindeki yargılamayı model eğitimine taşır — temel fikri, aynı soru için birden çok aday yanıt örneklemek ve avantajı bunların mutlak puanlarından değil birbirlerine göre üstünlüklerinden kestirmektir; böylece PPO'da ayrıca eğitilmesi gereken değer ağının (critic; temel çizgiyi kestirmek için kullanılır) zahmetinden kurtulur. Dikkat: GRPO'nun elediği şey değer ağıdır, ödül sinyalinin kendisi değil; her adayın iyi mi kötü mü olduğunu yargılamak için hâlâ bir ödül modeline veya doğrulanabilir ödül kurallarına dayanır. Burada yalnızca bir işaret bırakıyoruz; algoritmanın tam türetimi, PPO/DPO ile karşılaştırması ve Agent post-training'inde hayata geçirilmesinin ayrıntıları Bölüm 7'ye kalıyor.
 
-> **Deney 6-6 ★★: İkili Karşılaştırma Verisinden Model Sıralaması Oluşturmak**
+> **Deney 6-7 ★★: İkili Karşılaştırma Verisinden Model Sıralaması Oluşturmak**
 >
 > Bu deney, sıfırdan bir Elo rating hesaplama sistemi kurarak Bradley-Terry modelinin çok sayıda ikili karşılaştırmadan göreli yetenek puanlarını nasıl çıkardığını derinlemesine anlamayı amaçlar. Chatbot Arena'nın açık kaynak gerçek oy veri kümesi kullanılır (milyonlarca kullanıcı kör oyu içerir).
 >
@@ -469,7 +508,7 @@ Bir eğilim Harness değiştiğinde de modeli izliyor ve sabit bir Harness için
 
 Eşlik eden deney, tek bir **tarafsız ve sabit Harness** içinde `openai/gpt-5.6-sol` ile `anthropic/claude-sonnet-5` modellerini karşılaştırır. İki model aynı OpenRouter endpoint'ini kullanır ve aynı sistem prompt'unu, görevi, depoyu, araç adlarını, JSON Schema'larını ve araç sonuçlarını görür. Harness ne keşfi ne de erken düzenlemeyi şart koşar. Üç küçük depo; yerel bir hata, modüller arası kimlik normalleştirmesi ve herkese açık bir sözleşmeye duyarlı önbellek düzeltmesini kapsar. Her model her görevi bağımsız olarak üç kez çalıştırmış ve 18 yörünge üretmiştir. İlk düzenlemeden önce GPT-5.6-sol ortalama 6,89 araç çağrısı yapıp 4,67 dosya okurken Claude Sonnet 5, 4,56 çağrı ve 3,56 dosya ortalamasına ulaşmıştır. Fark yerel görevlerde en büyük, açıkça modüller arası görevde ise neredeyse yoktur (7,00'a karşı 6,67 dosya). Her iki model de ilk test edilen yamada ve son testlerde %100 başarı sağlamıştır. Dolayısıyla bu küçük deney “eylem politikası modelle birlikte değişir” sonucunu destekler; “daha çok okumak” ya da “daha erken düzenlemek” her zaman daha iyidir sonucunu değil. İlk düzenlemeye kadar geçen süre de neredeyse aynıdır (15,01'e karşı 14,48 saniye); araç adımları, paralel çağrılar ve model gecikmesi ayrı değerlendirilmelidir.
 
-> **Deney 6-7 ★★: Sabit Bir Coding Harness İçinde Model Eylem Eşiklerini Ölçmek**
+> **Deney 6-8 ★★: Sabit Bir Coding Harness İçinde Model Eylem Eşiklerini Ölçmek**
 >
 > **Amaç**: model etkenini yalıtmak, Coding modellerinin bilgi toplamaya devam etmekle düzenlemeye başlamak arasındaki varsayılan tercihini nicelleştirmek ve yol verimliliğini sonuç kalitesiyle birlikte değerlendirmek.
 >
@@ -520,7 +559,7 @@ Girdi tarafında önce denenmesi gereken üç kaldıraç şunlardır: **KV Cache
 
 Üretim ortamında gerçek zamanlı bir maliyet izleme düzeni kurulmalıdır: token tüketimi ve API ücretleri görev türü, model, kullanıcı gibi boyutlara göre takip edilir. Aynı zamanda her görev için bir maliyet üst sınırı konmalıdır — Agent bir döngüye takıldığında veya fazla derine daldığında otomatik olarak sonlandırılır ve tek bir görevin anormal derecede yüksek ücret üretmesi engellenir.
 
-> **Deney 6-8 ★: Agent Görevlerinin Uçtan Uca Maliyet Analizi**
+> **Deney 6-9 ★: Agent Görevlerinin Uçtan Uca Maliyet Analizi**
 >
 > **Deney amacı**: Yukarıdaki sekiz turluk maliyet ayrıştırmasını yeniden üretmek, ardından aynı optimizasyon kaldıraçlarını kendi iş yükünüzde sınamak.
 >
@@ -538,7 +577,7 @@ Diyelim ki Agent sisteminiz şu anda Claude üzerine kurulu ve tool calling ile 
 
 Sağlam bir değerlendirme sistemine sahip bir ekip yanıtı birkaç saat içinde verebilir: yeni modeli kendi değerlendirme veri kümesinde çalıştırır; görev başarı oranını, tool calling doğruluğunu, gecikmeyi ve maliyeti karşılaştırır. Yeni modelin basit görevlerde gerçekten daha iyi ve daha ucuz olduğunu, ama karmaşık çok turlu araç orkestrasyonu içeren çekirdek senaryolarda başarı oranının %5 düştüğünü görebilirsiniz. Bu farkın gürültü bandını aştığını doğruladıktan sonra (aşağıdaki "Değerlendirme Sonuçlarının İstatistiksel Anlamlılığı" bölümüne bakın), kararınız körlemesine bir toptan geçiş değil, "maliyeti düşürmek için basit görevleri yeni modele taşı, kaliteyi güvenceye almak için karmaşık görevleri eski modelde tut" biçiminde farklılaştırılmış bir stratejiye dönüşür. Bu incelikte, veri güdümlü kararlar ancak önceden kurulmuş bir değerlendirme sistemiyle mümkündür.
 
-> **Deney 6-9 ★★: Çok Boyutlu Model Performans Kıyaslaması**
+> **Deney 6-10 ★★: Çok Boyutlu Model Performans Kıyaslaması**
 >
 > Yaygın LLM'ler ve farklı API sağlayıcıları üzerinde kapsamlı bir benchmark çalışması yaparak çok boyutlu bir model seçimi karar veritabanı oluşturun.
 >
@@ -548,7 +587,7 @@ Sağlam bir değerlendirme sistemine sahip bir ekip yanıtı birkaç saat içind
 >
 > API'nin erişilebilirliğini ve kararlılığını değerlendirin: bir hafta boyunca saatte bir yoklama yapın; başarı oranını, hata türlerini ve arıza sürelerini kaydedin. Arıza oranını, MTTR'yi (ortalama kurtarma süresi) ve en uzun kesintisiz erişilebilirlik süresini hesaplayın. Hız limitlerinin gerçek eşiklerini test edin — eşzamanlılığı kademeli olarak artırarak kısıtlama noktasını bulun ve RPM/TPM üst sınırlarını kaydedin. Bileşik maliyeti hesaplayın: fiyatlandırma bilgilerini toplayın (girdi/çıktı/önbellek token'larının birim fiyatları), KV Cache'in etkisini göz önüne alın ve tipik çok turlu Agent görevlerinin ortalama maliyetini hesaplayın.
 >
-> **Deney 6-10 ★★: Kullanıcı Bellek Sistemlerinin Uçtan Uca Seçim Değerlendirmesi**
+> **Deney 6-11 ★★: Kullanıcı Bellek Sistemlerinin Uçtan Uca Seçim Değerlendirmesi**
 >
 > **Ön koşul**: Bölüm 3'teki bağlamsal retrieval veya agentic RAG deneyinin tamamlanmış olması gerekir.
 >
@@ -644,7 +683,7 @@ H5C'nin dört görevde başarılı olması yalnızca daha büyük bir testi hak 
 
 Sürekli yineleme pratikte budur: bir turun kanıtı yalnızca kapsamının desteklediği sonraki eyleme izin verir. H1 daha fazla prompt yığmayı durdurdu; H5 doğru mekanizmayı bulup bir maliyet sorunu açığa çıkardı; H5C bu sorunu çözdü ve daha geniş teste hak kazandı. İyi bir benchmark raporu yalnızca puan vermez; sonucun nerede geçerli olduğunu, hangi guardrail'lerin başarısız olduğunu ve sırada neyin sınanacağını söyler.
 
-> **Deney 6-11 ★★★: AndroidWorld'de Değerlendirme ve İyileştirme**
+> **Deney 6-12 ★★★: AndroidWorld'de Değerlendirme ve İyileştirme**
 >
 > Bu deney, değerlendirme raporundan sistem iyileştirmesine kadar olan yolu uygular. `chapter6/android-world` içindeki tarihsel rapor ve saklanmış üç eşleştirilmiş koşuyla başlayın.
 >
@@ -719,7 +758,7 @@ Bu köprünün iki ucu şöyle birleşir. Değerlendirme tarafında biriken varl
 
 **Bedenlenmiş ortamlar** tarafında RoboTwin2, bir fizik motoru üzerine çift kollu manipülasyon görevleri kurar; genelleme yeteneğini artırmak için nesnelerin konumunu, yönelimini ve görünümünü rastgeleleştirir. Gözlem alanı çok kameralı görüntüyü ve eklem durumlarını içerir; gerçek zamanlı denetim, **eylem parçalama (Action Chunking)** ile — yani modelin birden çok ardışık eylemi tek seferde planlamasıyla — gerçekleştirilir (ayrıntısı Bölüm 9'da). OSWorld sanal makine anlık görüntüleriyle sıfırlanabilirliği sağlar, AndroidWorld ise mobil uygulama otomasyonuna odaklanır. İster dijital ister bedenlenmiş olsun, simülasyon ortamları da Bölüm 4'te tartışılan izole yürütme ortamlarına ve sanal kimlik mekanizmalarına (VM/konteyner izolasyonu, konut proxy'leri, Human-in-the-Loop kimlik doğrulama, paylaşılan dosya sistemleri) ihtiyaç duyar; burada tekrarlanmayacak.
 
-> **Deney 6-12 ★★: OpenVLA ve RoboTwin2 ile Bedenlenmiş Zeka Ortamını Yapılandırmak**
+> **Deney 6-13 ★★: OpenVLA ve RoboTwin2 ile Bedenlenmiş Zeka Ortamını Yapılandırmak**
 >
 > Robot manipülasyonu için bir simülasyon ortamı kurun. `ch7/SimpleVLA-RL` ile OpenVLA belgelerini okuyup görme-dil-eylem modelinin mimarisini anlayın (görme kodlayıcı + dil modeli + eylem kod çözücünün uçtan uca bütünleştirilmesi; görüntü ve metin ortak bir semantik uzaya izdüşürülür). RoboTwin2 ortamını yapılandırın; gözlem alanını (üç açılı RGB + 14 boyutlu eklem durumu) ve eylem alanını (14 boyutlu denetim vektörü) kavrayın. `move_can_pot` içindeki ortam rastgeleleştirme mekanizmasını ve uzamsal kısıt mantığını inceleyin. Önceden eğitilmiş modeli çalıştırıp değerlendirin; başarı oranını, tamamlanma süresini ve başarısızlık biçimlerini kaydedin, özellikle eylem parçalama mekanizmasının etkisine odaklanın.
 >

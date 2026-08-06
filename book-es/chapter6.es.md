@@ -63,6 +63,37 @@ Este caso de prueba se ha aprobado. Sin embargo, una buena evaluación no solo p
 
 El flujo anterior (definir el caso de prueba, ejecutar el Agente, puntuar con Rúbrica y analizar los resultados) constituye la estructura básica de la evaluación. A continuación, este capítulo desplegará gradualmente los métodos de diseño para cada una de sus etapas.
 
+## Sistema de métricas de evaluación: nuevos criterios
+
+Antes de construir el entorno o el dataset hay que definir qué significa «éxito»: ¿basta con encontrar un camino viable una vez o cada ejecución debe ser correcta? Las dos respuestas producen decisiones de ingeniería distintas.
+
+### Maravilla técnica: el techo de capacidad con Pass@k
+
+Muchos modelos y Agents se encuentran en una fase de **maravilla técnica**: tras muchos intentos, tiempo suficiente y selección humana, una sola trayectoria excepcional demuestra que la tarea es posible. Esa es la lógica de **Pass@k**: ejecutar la misma tarea $k$ veces y aprobar si al menos una ejecución pasa; con puntuaciones continuas se conserva la mejor como **Best@k**. Los ejemplos de Agents de larga duración de Anthropic, Manus y OpenClaw ilustran este techo de capacidad: descubrimiento científico, búsqueda de vulnerabilidades y creación abierta pueden beneficiarse de escoger la mejor de $k$ trayectorias.
+
+### Fiabilidad empresarial: Pass^k
+
+Los sistemas de negocio suelen exigir lo contrario: ningún error durante intentos repetidos. **Pass^k** (léase «Pass consecutive k») exige que las $k$ ejecuciones consecutivas pasen y que ninguna active un veto de seguridad, cumplimiento o alucinación. Si la tasa de éxito de una ejecución es $p$, entonces
+
+$$
+\mathrm{Pass@k}=1-(1-p)^k,\qquad
+\mathrm{Pass}^{k}=p^k.
+$$
+
+Con $p=0.6$ y $k=5$, Pass@5 es aproximadamente 99,0 %, mientras que Pass consecutive@5 es 7,8 %. El primer valor mide el techo exploratorio y el segundo se acerca a la fiabilidad necesaria para pagos, reembolsos, cambios de permisos y despliegues. El informe debe aclarar si $k$ son muestras independientes o tareas consecutivas de producción; las acciones con efectos secundarios deben probarse en un sandbox o entorno reversible y cada fallo cuenta.
+
+### Del proceso de caja negra a caja blanca
+
+No basta el resultado final. La tasa de acciones válidas y autorizadas, la corrección semántica de las llamadas a herramientas, la eficiencia de la ruta (pasos, acciones redundantes y retrocesos), la cobertura de recuperación y el coste/latencia revelan dónde falla el Agent.
+
+### Seguridad, robustez y cobertura doble
+
+Las operaciones sensibles, la fuga de datos y el contenido prohibido siguen un principio de **tolerancia cero**: una infracción grave invalida la evaluación. La robustez cubre sensibilidad a semillas, cambios de interfaz, fallos temporales de API e interferencia de memoria obsoleta. Hay que evaluar tanto la **trayectoria** (lo que el Agent dijo e hizo) como el **resultado final** (el estado real del sistema); afirmar «reserva completada» no prueba que exista una reserva.
+
+### Muestreo humano y revisión adversarial
+
+Hay que revisar periódicamente éxitos, fallos y puntuaciones límite. Antes de usar jueces LLM a escala, calibra su acuerdo con un conjunto dorado humano de 100–200 casos (por ejemplo, kappa de Cohen > 0,7) y recalibra al cambiar el juez o la Rubric. El red teaming debe buscar errores ocultos, respuestas que hacen trampa con palabras clave y ataques contra los sesgos del juez; los desacuerdos graves entre varios jueces pasan a revisión humana.
+
 ## Entornos de Evaluación Automatizados
 
 La evaluación de Agentes requiere un entorno automatizado y ejecutable de forma repetible para evaluar rápidamente el impacto de las modificaciones durante la fase de desarrollo. Construir dicho entorno requiere responder a tres preguntas: qué evaluar (definición de tareas y criterios de verificación), contra quién evaluar (cómo simular los objetos con los que interactúa el Agente) y qué criterios utilizar para puntuar.
@@ -392,7 +423,19 @@ La evaluación multimodal extiende el concepto de LLM-as-a-Judge a los dominios 
 - **Evaluación de UI**: Adoptar un mecanismo de **proponente-revisor (Proposer-Reviewer)** para detectar desbordamientos de texto, contraste de color, ubicación de botones, etc. Aquí el esquema proponente-revisor se utiliza como **método de evaluación**, difiriendo de su uso como **componente del sistema de generación** en el Capítulo 5, aunque el mecanismo central sea idéntico: un modelo genera y otro revisa de forma independiente.
 - **Evaluación de edición de vídeo**: Verificar mediante fotogramas clave si los puntos de inicio y fin de corte y la aplicación de efectos especiales son correctos.
 
-> **Experimento 6-5 ★★: Construcción de una Tubería de Evaluación Automatizada de Calidad TTS**
+### Atribución de fallos y regresiones de prefijo de trayectoria
+
+Una evaluación extremo a extremo suele decir solo «aprobado» o «fallido». Para convertir el resultado en una reparación, cada trayectoria fallida debe registrar la categoría, el primer paso inaceptable, la llamada a herramienta o salida asociada y evidencia auditable. Las señales habituales son una corrección explícita del usuario, un voto negativo o una comprobación posterior que detecta una acción indebida. El LLM puede ayudar, pero la lectura humana sigue siendo necesaria porque el fallo suele revelar un problema de producto.
+
+Para un Coding Agent, clasifica la falta de proceso, los errores de herramientas/formato, la terminación anómala del modelo y los problemas de lógica o completitud. Guarda la atribución en JSON/YAML con número de paso, herramienta, observación, causa raíz frente a consecuencia, recuperabilidad y confianza, junto con el estado y las versiones del experimento.
+
+Una **regresión extremo a extremo** ejecuta todo el flujo. Una **regresión de prefijo de trayectoria** congela el contexto, las conversaciones, las respuestas de herramientas y el estado justo antes del primer error, y comprueba solo la siguiente acción. La respuesta debe ser un conjunto de acciones aceptables (leer las reglas, preguntar o rechazar una operación peligrosa), no una única cadena canónica. Los casos de prefijo son especialmente valiosos para Agents de producción de alta fiabilidad y deben permanecer separados de los datos de entrenamiento.
+
+> **Experimento 6-5 ★★: Evaluación de límites de prefijos con varias codificaciones**
+>
+> Se proporcionan al modelo memoria conocida, instrucción actual, prefijo de trayectoria, respuestas de herramientas y estado del entorno; debe devolver solo la siguiente acción observable. Se prueban conflictos de alcance, preferencias obsoletas, inferencias de baja confianza, confirmación antes de borrar y previsualización antes de publicar. Los mismos 11 casos se codifican como JSON Cards, Markdown y Python-like, con comprobaciones deterministas de acciones permitidas, seguridad, evidencia y acciones prohibidas. Las 33 celdas se completaron sin errores de API y cada codificación aprobó 6/11; cambiar la representación por sí solo no arregla la política de la aplicación.
+
+> **Experimento 6-6 ★★: Construcción de una Tubería de Evaluación Automatizada de Calidad TTS**
 >
 > Este experimento exige diseñar e implementar desde cero un sistema completo de evaluación de calidad TTS basado en LLM-as-a-Judge multimodal.
 >
@@ -420,7 +463,7 @@ Cuando la evaluación por pares se realiza mediante un LLM en lugar de votos hum
 
 **De la evaluación al entrenamiento: transferencia de señales de comparación por pares**. La comparación por pares no es solo un medio de evaluación, sino una fuente clave de señales para el post-entrenamiento. El algoritmo **GRPO** (Group Relative Policy Optimization, optimización de política relativa de grupo) que se presentará en el Capítulo 7 introduce precisamente este enfoque de "comparar cuál es mejor" en el entrenamiento del modelo: su idea central consiste en muestrear múltiples respuestas candidatas para una misma pregunta, utilizando su ventaja relativa (en lugar de la puntuación absoluta) para estimar la ganancia, ahorrando la molestia de entrenar una red de valor adicional (critic, usada para estimar la línea base) como en PPO. Cabe destacar que GRPO ahorra la red de valor, no la señal de recompensa en sí, ya que sigue dependiendo de un modelo de recompensa o de reglas de recompensa verificables para juzgar la calidad de cada candidato. Esto sienta una base cuyos desarrollos matemáticos, comparaciones con PPO/DPO y detalles de aplicación en Agentes se desplegarán por completo en el Capítulo 7.
 
-> **Experimento 6-6 ★★: Construcción de una Tabla de Clasificación de Modelos a partir de Datos de Comparación por Pares**
+> **Experimento 6-7 ★★: Construcción de una Tabla de Clasificación de Modelos a partir de Datos de Comparación por Pares**
 >
 > Este experimento permite comprender en profundidad cómo el modelo Bradley-Terry extrae puntuaciones de capacidad relativa a partir de comparaciones por pares mediante la implementación desde cero de un sistema de cálculo de Elo rating. Se utiliza el dataset de votación real publicado por Chatbot Arena (que contiene millones de votos a ciegas de usuarios).
 >
@@ -461,7 +504,7 @@ Cuando una tendencia sigue al modelo al cambiar de Harness y cambia al sustituir
 
 El experimento asociado compara `openai/gpt-5.6-sol` y `anthropic/claude-sonnet-5` en un **Harness neutral y fijo**. Ambos modelos usan el mismo endpoint de OpenRouter y reciben el mismo prompt del sistema, tarea, repositorio, nombres de herramientas, JSON Schemas y resultados. El Harness no exige explorar ni editar pronto. Tres repositorios pequeños cubren un bug localizado, una normalización de identidad entre módulos y una corrección de caché sensible a un contrato público. Cada modelo ejecuta cada tarea tres veces de forma independiente, produciendo 18 trayectorias. GPT-5.6-sol realizó en promedio 6,89 llamadas a herramientas y leyó 4,67 archivos antes de su primera edición; Claude Sonnet 5 promedió 4,56 llamadas y 3,56 archivos. La diferencia fue mayor en las tareas localizadas y casi desapareció en la tarea explícitamente transversal (7,00 frente a 6,67 archivos). Ambos modelos lograron un 100 % de éxito tanto en el primer parche probado como en las pruebas finales. Por ello, este pequeño experimento respalda que «la política de acción cambia con el modelo», no que «leer más» o «editar antes» sea siempre mejor. El tiempo hasta la primera edición también fue casi idéntico (15,01 frente a 14,48 segundos), lo que recuerda que hay que separar pasos de herramienta, llamadas paralelas y latencia del modelo.
 
-> **Experimento 6-7 ★★: Medir los umbrales de acción de los modelos en un Coding Harness fijo**
+> **Experimento 6-8 ★★: Medir los umbrales de acción de los modelos en un Coding Harness fijo**
 >
 > **Objetivo**: aislar el factor modelo, cuantificar cómo distintos modelos de programación equilibran seguir recopilando información frente a empezar a editar y evaluar conjuntamente la eficiencia de la trayectoria y la calidad final.
 >
@@ -512,7 +555,7 @@ El **procesamiento por lotes asincrónico (Async Batching)** acumula tareas no e
 
 En producción se debe establecer un sistema de monitoreo de costos en tiempo real: rastreando el consumo de tokens y gastos de API por tipo de tarea, modelo y usuario. Asimismo, se deben fijar límites superiores de costo por tarea, terminando automáticamente la ejecución si el Agente entra en bucles o exploraciones excesivas para evitar cobros anormalmente elevados en una sola ejecución.
 
-> **Experimento 6-8 ★: Análisis de Costos de Extremo a Extremo en Tareas de Agentes**
+> **Experimento 6-9 ★: Análisis de Costos de Extremo a Extremo en Tareas de Agentes**
 >
 > **Objetivo**: Reproducir el desglose de la tarea de ocho turnos y validar las optimizaciones con cargas de trabajo propias.
 >
@@ -528,7 +571,7 @@ Supongamos que tu sistema de Agentes está construido actualmente sobre Claude, 
 
 Un equipo con un sistema de evaluación maduro puede obtener la respuesta en pocas horas: ejecutando el nuevo modelo sobre su propio dataset de evaluación y comparando la tasa de éxito en tareas, corrección en llamadas a herramientas, latencia y costo. Es posible descubrir que el nuevo modelo es superior y más económico en tareas simples, pero que en escenarios centrales con orquestaciones multiturno complejas la tasa de éxito cae un 5%. Tras confirmar que esta diferencia supera el ancho de banda del ruido (véase a continuación "Significatividad Estadística de los Resultados de Evaluación"), la decisión pasa a ser una estrategia diferenciada: "migrar tareas simples al nuevo modelo para reducir costos y mantener el modelo original en tareas complejas para garantizar la calidad", en lugar de una migración ciega y total. Esta toma de decisiones precisa e impulsada por datos solo es posible contando previamente con un sistema de evaluación construido.
 
-> **Experimento 6-9 ★★: Benchmarking Multidimensional de Rendimiento de Modelos**
+> **Experimento 6-10 ★★: Benchmarking Multidimensional de Rendimiento de Modelos**
 >
 > Realizar benchmarking exhaustivo sobre LLMs principales y diversos proveedores de API para construir una base de datos de decisiones de selección de modelos multidimensional.
 >
@@ -538,7 +581,7 @@ Un equipo con un sistema de evaluación maduro puede obtener la respuesta en poc
 >
 > Evaluar la disponibilidad y estabilidad de las APIs: realizar sondeos cada hora durante una semana, registrando la tasa de éxito, tipos de error y duración de fallos. Calcular la tasa de fallos, MTTR (tiempo medio de recuperación) y el tiempo máximo de disponibilidad continua. Probar los umbrales reales de límite de tasa incrementando gradualmente la concurrencia hasta hallar el punto de restricción, registrando los límites de RPM/TPM. Calcular el costo consolidado: recopilar precios (unidad de token de entrada/salida/caché), considerando el impacto de KV Cache para calcular el costo promedio en tareas multiturno típicas de Agentes.
 
-> **Experimento 6-10 ★★: Evaluación de Selección de Extremo a Extremo para Sistemas de Memoria de Usuario**
+> **Experimento 6-11 ★★: Evaluación de Selección de Extremo a Extremo para Sistemas de Memoria de Usuario**
 >
 > **Prerrequisito**: Haber completado los experimentos de recuperación contextual o RAG con Agentes del Capítulo 3.
 >
@@ -633,7 +676,7 @@ Superar las cuatro tareas con H5C solo autoriza la siguiente prueba; no autoriza
 
 Esa es la disciplina de la iteración: cada evidencia solo justifica el paso siguiente que su escala permite. H1 descartó seguir acumulando prompts; H5 encontró la dirección correcta, pero descubrió un problema de costo; H5C resolvió ese costo y obtuvo el derecho a una prueba mayor. Un buen informe de benchmark no solo da una puntuación: delimita dónde vale la conclusión, qué barreras no se han superado y qué debe comprobar la ronda siguiente.
 
-> **Experimento 6-11 ★★★: Evaluación y Mejora en AndroidWorld**
+> **Experimento 6-12 ★★★: Evaluación y Mejora en AndroidWorld**
 >
 > Este experimento practica el recorrido desde el reporte hasta la mejora del sistema. Partir de los reportes históricos y las tres comparaciones guardadas en `chapter6/android-world`.
 >
@@ -707,7 +750,7 @@ En los **entornos digitales**, el framework AWorld construyó un sandbox de serv
 
 En los **entornos encarnados**, RoboTwin2 construye tareas de manipulación con doble brazo sobre motores físicos, aleatorizando la posición, orientación y apariencia de los objetos en el entorno para elevar la capacidad de generalización. El espacio de observación incluye visión multicámara y estados articulares, logrando control en tiempo real mediante **chunking de acciones (Action Chunking)**, donde el modelo planifica múltiples acciones continuas de una sola vez (detallado en el Capítulo 9). OSWorld logra la capacidad de restablecimiento mediante instantáneas de máquinas virtuales, y AndroidWorld se enfoca en la automatización de aplicaciones móviles. Ya sean entornos digitales o encarnados, los entornos de simulación requieren de igual modo los mecanismos de aislamiento y virtualización de identidad analizados en el Capítulo 4 (aislamiento por VM/contenedor, proxies residenciales, autenticación Human-in-the-Loop, sistemas de archivos compartidos), los cuales no se repetirán aquí.
 
-> **Experimento 6-12 ★★: Configuración del Entorno de Inteligencia Encarnada para OpenVLA y RoboTwin2**
+> **Experimento 6-13 ★★: Configuración del Entorno de Inteligencia Encarnada para OpenVLA y RoboTwin2**
 >
 > Configurar un entorno de simulación para manipulación robótica. Leer `ch7/SimpleVLA-RL` y la documentación de OpenVLA para comprender la arquitectura de modelos de visión-lenguaje-acción (integración de extremo a extremo de codificador visual + modelo de lenguaje + decodificador de acciones, proyectando imágenes y texto a un espacio semántico compartido). Configurar el entorno RoboTwin2, comprendiendo el espacio de observación (RGB de tres perspectivas + estado articular de 14 dimensiones) y el espacio de acciones (vector de control de 14 dimensiones). Estudiar el mecanismo de aleatorización del entorno y la lógica de restricciones espaciales en move_can_pot. Ejecutar la evaluación de modelos preentrenados, registrando la tasa de éxito, tiempo de finalización y patrones de fallo, prestando especial atención al impacto del mecanismo de chunking de acciones.
 >
