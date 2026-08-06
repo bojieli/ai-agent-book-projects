@@ -1,5 +1,5 @@
 import pytest
-pytest.importorskip(chess)
+pytest.importorskip("chess")
 """
 Regression test suite for chess get_game_status covering rule-based draws,
 stalemate, insufficient material, checkmate, and game in progress.
