@@ -458,6 +458,8 @@ def cancel_reservation(
         return {"success": False, "reason": "No se puede cancelar con tramos usados"}
 
     hours_since_booking = (now - r.booking_time).total_seconds() / 3600
+    if hours_since_booking < 0:
+        return {"success": False, "reason": "Booking time is in the future"}
     if hours_since_booking <= 24:
         execute_cancellation(reservation_id)
         return {"success": True, "reason": "Cancelado dentro de la ventana de 24 horas"}
@@ -633,6 +635,8 @@ Mediante la generación de código, el Agente puede crear interfaces de interacc
 Las consultas a bases de datos representan un escenario donde la generación de código puede elevar significativamente la experiencia de interacción. El acceso tradicional a bases de datos depende de herramientas GUI o código SQL escrito a mano, siendo el primero laborioso en operaciones y el segundo exigente en conocimientos profesionales. El Agente puede traducir el lenguaje natural a SQL, pero aquí se plantea una decisión de diseño clave: ¿debe el Agente ejecutar el SQL y describir el resultado en lenguaje natural, o debe generar el código SQL como un artefacto (Artifact) para que el frontend lo ejecute directamente?
 
 La primera opción parece más "inteligente", pero es sumamente ineficiente: los resultados de una consulta pueden contener tablas de miles de filas, y hacer que el LLM las lea para describirlas en texto no solo consume una gran cantidad de tokens y tiempo, sino que al "copiar" datos el LLM es muy propenso a cometer errores. La mejor solución es el **Modo Artifact**. La Figura 5-9 muestra el flujo de trabajo de un Agente de consultas SQL: el Agente no lee los datos por sí mismo, sino que genera un fragmento de código de consulta SQL y lo entrega al sistema como un **producto ejecutable independiente** (Artifact). El sistema toma ese SQL, consulta directamente la base de datos y renderiza los datos obtenidos en una tabla visible para el usuario. En todo el proceso, los datos van directamente desde la base de datos a la interfaz de usuario, omitiendo por completo al LLM como "intermediario": el LLM solo se encarga de escribir la consulta sin tener que leer ni retransmitir miles de filas de datos, logrando una operación rápida y precisa.
+
+El SQL y el código de visualización generados no deben ejecutarse directamente. La capa de ejecución debe usar credenciales de base de datos de solo lectura, analizar el SQL, permitir únicamente sentencias `SELECT` aprobadas y rechazar DDL, DML y consultas con varias sentencias. Los valores proporcionados por el usuario deben enlazarse mediante parámetros del lado del servidor, con límites para el tiempo de consulta, las filas devueltas, las tablas accesibles y los rangos de fechas. El código de visualización debe ejecutarse en un sandbox aislado de la red y del sistema de archivos y producir únicamente un formato de resultado aprobado. El patrón Artifact acorta el recorrido de los datos, pero no sustituye las comprobaciones de autorización ni el aislamiento de la ejecución.
 
 ![Figura 5-9: Flujo de trabajo de un Agente de consultas SQL](images/fig5-9.svg)
 

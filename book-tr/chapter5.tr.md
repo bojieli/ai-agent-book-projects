@@ -466,6 +466,8 @@ def cancel_reservation(
         return {"success": False, "reason": "Kullanılmış segmentlerle iptal edilemez"}
 
     hours_since_booking = (now - r.booking_time).total_seconds() / 3600
+    if hours_since_booking < 0:
+        return {"success": False, "reason": "Booking time is in the future"}
     if hours_since_booking <= 24:
         execute_cancellation(reservation_id)
         return {"success": True, "reason": "24 saatlik pencere içinde iptal edildi"}
@@ -654,6 +656,8 @@ Kod üretimi aracılığıyla, Agent metin tabanlı soru-cevabın yerini almak i
 Veritabanı sorgulama, kod üretiminin etkileşim deneyimini önemli ölçüde iyileştirebileceği bir senaryodur. Geleneksel veritabanı erişimi GUI araçlarına veya elle yazılmış SQL'e dayanır; birincisi işletmesi hantaldır, ikincisi kullanıcının özelleşmiş bilgiye sahip olmasını gerektirir. Bir Agent doğal dili SQL'e çevirebilir, ama burada kilit bir tasarım seçimi var: Agent SQL'i yürütüp sonuçları doğal dilde mi açıklamalı, yoksa Agent SQL kodunu frontend'in doğrudan yürütmesi için bir artifact olarak mı üretmeli?
 
 Birinci yaklaşım daha "akıllı" görünür ama son derece verimsizdir—büyük bir tabloya karşı bir sorgu binlerce satır döndürebilir. LLM'in tüm bunu okuyup metin olarak açıklamasını sağlamak token ve zaman yakar ve daha kötüsü, LLM'ler veriyi "kopyalarken" meşhur biçimde hataya açıktır. Daha iyi bir yaklaşım **artifact kalıbıdır**. Şekil 5-9, bir SQL sorgusu Agent'ının iş akışını gösterir: Agent verinin kendisini okumaz. Bunun yerine, bir SQL sorgu kodu parçası üretir ve bu kodu sisteme bağımsız bir "artifact" olarak verir. Sistem bu SQL'i alır ve veritabanını doğrudan sorgular, getirilen veriyi kullanıcıya görünür bir tabloya render eder. Bu süreç boyunca, veri doğrudan veritabanından kullanıcı arayüzüne akar, LLM "aracısını" tamamen atlar—LLM yalnızca sorgu ifadesini yazmaktan sorumludur, binlerce satır veriyi okuyup kullanıcıya yeniden anlatmaktan değil. Bu hem hızlı hem de doğrudur.
+
+Üretilen SQL ve görselleştirme kodu doğrudan çalıştırılmamalıdır. Yürütme katmanı salt okunur veritabanı kimlik bilgileri kullanmalı, SQL'i ayrıştırmalı, yalnızca onaylanmış `SELECT` ifadelerine izin vermeli ve DDL, DML ile birden çok ifadeli sorguları reddetmelidir. Kullanıcı değerleri sunucu tarafı parametreleri olarak bağlanmalı; sorgu süresi, döndürülen satır sayısı, erişilebilir tablolar ve tarih aralıkları sınırlandırılmalıdır. Görselleştirme kodu ağdan ve dosya sisteminden yalıtılmış bir sandbox'ta çalışmalı ve yalnızca onaylanmış bir sonuç biçimi üretmelidir. Artifact kalıbı veri yolunu kısaltır, ancak yetkilendirme kontrollerinin veya yürütme yalıtımının yerini tutmaz.
 
 ![Şekil 5-9: SQL Sorgusu Agent'ı İş Akışı](images/fig5-9.svg)
 

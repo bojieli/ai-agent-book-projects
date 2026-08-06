@@ -466,6 +466,8 @@ now = server_clock.now() # Đồng hồ máy chủ, không được mô hình cu
         return {"success": False, "reason": "Cannot cancel with used segments"}
 
     hours_since_booking = (now - r.booking_time).total_seconds() / 3600
+    if hours_since_booking < 0:
+        return {"success": False, "reason": "Booking time is in the future"}
     if hours_since_booking <= 24:
         execute_cancellation(reservation_id)
         return {"success": True, "reason": "Cancelled within 24-hour window"}
@@ -651,6 +653,8 @@ Thông qua việc tạo mã, Agent có thể tạo các giao diện tương tác
 Truy vấn cơ sở dữ liệu là một tình huống trong đó việc tạo mã có thể cải thiện đáng kể trải nghiệm tương tác. Truy cập cơ sở dữ liệu truyền thống dựa vào công cụ GUI hoặc chữ viết tay SQL. Cái trước thì cồng kềnh để vận hành và cái sau đòi hỏi người dùng phải có kiến thức chuyên môn. Agent có thể chuyển đổi ngôn ngữ tự nhiên thành SQL, nhưng có một lựa chọn thiết kế quan trọng ở đây: để Agent thực thi SQL rồi mô tả kết quả bằng ngôn ngữ tự nhiên hoặc để Agent tạo mã SQL dưới dạng một artifact và được giao diện người dùng thực thi trực tiếp?
 
 Giải pháp đầu tiên có vẻ “thông minh” hơn nhưng lại cực kỳ kém hiệu quả – kết quả truy vấn có thể chứa hàng nghìn hàng bảng lớn, và yêu cầu LLM mô tả bằng văn bản sau khi đọc không chỉ tiêu tốn nhiều token và mất nhiều thời gian mà nghiêm trọng hơn, LLM rất dễ mắc lỗi khi “sao chép” dữ liệu. Một giải pháp tốt hơn là **chế độ artifact**. Hình 5-9 cho thấy quy trình làm việc của SQL truy vấn Agent: Agent không tự đọc dữ liệu mà tạo ra một đoạn mã truy vấn SQL và gửi mã này đến hệ thống dưới dạng một "artifact" độc lập. Hệ thống lấy phần SQL này và truy vấn trực tiếp cơ sở dữ liệu, hiển thị dữ liệu tìm thấy vào một bảng mà người dùng có thể nhìn thấy. Trong toàn bộ quá trình, dữ liệu đi thẳng từ cơ sở dữ liệu đến giao diện người dùng, hoàn toàn bỏ qua "người trung gian" LLM - LLM chỉ chịu trách nhiệm viết câu lệnh truy vấn. Không cần phải trực tiếp đọc hàng nghìn hàng dữ liệu rồi lặp lại cho người dùng. Nó nhanh và chính xác.
+
+SQL và mã trực quan được tạo ra không được thực thi trực tiếp. Tầng thực thi phải dùng thông tin xác thực cơ sở dữ liệu chỉ-đọc, phân tích SQL, chỉ cho phép các câu lệnh `SELECT` đã được phê duyệt và từ chối DDL, DML cũng như truy vấn nhiều câu lệnh. Các giá trị do người dùng cung cấp phải được liên kết bằng tham số phía máy chủ, đồng thời giới hạn thời gian truy vấn, số hàng trả về, các bảng có thể truy cập và khoảng ngày. Mã trực quan phải chạy trong sandbox tách biệt khỏi mạng và hệ thống tệp, chỉ tạo ra định dạng kết quả được phê duyệt. Mẫu Artifact rút ngắn đường đi của dữ liệu nhưng không thay thế kiểm tra ủy quyền hay cô lập thực thi.
 
 ![Hình 5-9 Quy trình tác nhân truy vấn SQL ](images/fig5-9.svg)
 

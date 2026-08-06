@@ -466,6 +466,8 @@ def cancel_reservation(
         return {"success": False, "reason": "Cannot cancel with used segments"}
 
     hours_since_booking = (now - r.booking_time).total_seconds() / 3600
+    if hours_since_booking < 0:
+        return {"success": False, "reason": "Booking time is in the future"}
     if hours_since_booking <= 24:
         execute_cancellation(reservation_id)
         return {"success": True, "reason": "Cancelled within 24-hour window"}
@@ -654,6 +656,8 @@ Agent 系統的可觀測性依賴於對執行流程的視覺化。一個複雜�
 資料庫查詢是程式碼生成能顯著提升互動體驗的場景。傳統的資料庫訪問依賴 GUI 工具或手寫 SQL，前者操作繁瑣，後者要求使用者具備專業知識。Agent 可以將自然語言轉為 SQL，但這裡有一個關鍵的設計選擇：是讓 Agent 執行 SQL 後用自然語言描述結果，還是讓 Agent 生成 SQL 程式碼作為 artifact 由前端直接執行？
 
 第一種方案看似更「智慧」，但效率極低——查詢結果可能包含數千行大表格，讓 LLM 閱讀後用文字描述不僅消耗大量 token、耗時長，更嚴重的是 LLM「抄寫」資料時非常容易出錯。更好的方案是 **Artifact 模式**。圖 5-9 展示了 SQL 查詢 Agent 的工作流程：Agent 不自己讀資料，而是生成一段 SQL 查詢程式碼，把這段程式碼作為一個獨立的**可執行產物**（artifact）交給系統。系統拿著這段 SQL 直接去資料庫查詢，把查到的資料渲染成使用者能看到的表格。整個過程中，資料從資料庫直達使用者介面，完全繞過了 LLM 這個「中間人」——LLM 只負責寫查詢語句，不需要親自去讀成千上萬行資料再複述給使用者，既快速又準確。
+
+生成的 SQL 和視覺化程式碼不得直接執行。執行層應使用唯讀資料庫憑證，解析 SQL，只允許核准的 `SELECT` 語句，並拒絕 DDL、DML 與多語句查詢。使用者提供的值應由伺服器端參數繫結，同時限制查詢時間、返回行數、可存取的資料表和日期範圍。視覺化程式碼應在與網路和檔案系統隔離的沙盒中執行，且只能產生核准的結果格式。Artifact 模式縮短了資料路徑，但不能取代授權檢查與執行隔離。
 
 ![圖 5-9 SQL 查詢 Agent 流程](images/fig5-9.svg)
 

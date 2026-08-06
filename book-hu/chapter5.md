@@ -480,6 +480,8 @@ def cancel_reservation(
         return {"success": False, "reason": "Cannot cancel with used segments"}
 
     hours_since_booking = (now - r.booking_time).total_seconds() / 3600
+    if hours_since_booking < 0:
+        return {"success": False, "reason": "Booking time is in the future"}
     if hours_since_booking <= 24:
         execute_cancellation(reservation_id)
         return {"success": True, "reason": "Cancelled within 24-hour window"}
@@ -650,6 +652,8 @@ Kódgeneráláson keresztül az Ágens strukturált interaktív felületeket hoz
 Az adatbázis-lekérdezés egy olyan forgatókönyv, ahol a kódgenerálás jelentősen javíthatja az interakciós élményt. A hagyományos adatbázis-elérés GUI eszközökre vagy kézzel írt SQL-re támaszkodik; az előbbi nehézkesen kezelhető, az utóbbi speciális tudást igényel a felhasználótól. Egy Ágens lefordíthatja a természetes nyelvet SQL-re, de van egy kulcsfontosságú tervezési választás: az Ágens hajtsa-e végre a lekérdezést és írja le az eredményeket természetes nyelven, vagy generálja az SQL-t artefaktumként a rendszer számára a végrehajtáshoz és a frontend számára a megjelenítéshez?
 
 Az első megközelítés "intelligensebbnek" tűnik, de rendkívül hatástalan — egy nagy táblán végzett lekérdezés több ezer sort adhat vissza. Ha az LLM mindezt elolvassa és prózában leírja, az égeti a tokeneket és az időt, és ami még rosszabb, az LLM-ek hírhedten hibásak az adatok "átírásában". Jobb megközelítés az "Artefaktum minta". Az 5-9. ábra egy SQL lekérdező Ágens munkafolyamatát mutatja be: ahelyett, hogy maga olvasná az adatokat, az Ágens egy SQL lekérdezést generál, és független "végrehajtható artefaktumként" adja át a rendszernek. A rendszer végrehajtja a lekérdezést az adatbázison, és az eredményeket táblázatban jeleníti meg a felhasználónak. Az adatok így közvetlenül az adatbázisból a felületbe kerülnek, anélkül, hogy áthaladnának az LLM-en; az LLM megírja a lekérdezést, de soha nem kell több ezer sort elolvasnia és újra közölnie. Ez a megközelítés gyorsabb és pontosabb.
+
+A generált SQL-t és vizualizációs kódot nem szabad közvetlenül végrehajtani. A végrehajtási réteg csak olvasási jogosultságú adatbázis-hitelesítést használjon, elemezze az SQL-t, kizárólag jóváhagyott `SELECT` utasításokat engedjen át, és utasítsa el a DDL-, DML- és többutasításos lekérdezéseket. A felhasználó által megadott értékeket szerveroldali paraméterként kell kötni, korlátozva a lekérdezési időt, a visszaadott sorok számát, az elérhető táblákat és a dátumtartományt. A vizualizációs kód hálózattól és fájlrendszertől elszigetelt sandboxban fusson, és csak jóváhagyott eredményformátumot állítson elő. Az Artefaktum minta lerövidíti az adat útját, de nem helyettesíti az engedélyezési ellenőrzéseket vagy a végrehajtás elszigetelését.
 
 ![5-9. ábra: SQL-lekérdező ágens munkafolyamata](images/fig5-9.svg)
 

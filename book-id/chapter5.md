@@ -461,6 +461,8 @@ def cancel_reservation(
         return {"success": False, "reason": "Cannot cancel with used segments"}
 
     hours_since_booking = (now - r.booking_time).total_seconds() / 3600
+    if hours_since_booking < 0:
+        return {"success": False, "reason": "Booking time is in the future"}
     if hours_since_booking <= 24:
         execute_cancellation(reservation_id)
         return {"success": True, "reason": "Cancelled within 24-hour window"}
@@ -649,6 +651,8 @@ Melalui code generation, Agent dapat membuat antarmuka interaktif yang terstrukt
 Query database adalah skenario di mana code generation dapat secara signifikan meningkatkan pengalaman interaksi. Akses database tradisional bergantung pada alat GUI atau SQL yang ditulis tangan; yang pertama merepotkan untuk dioperasikan, dan yang kedua mengharuskan pengguna memiliki pengetahuan khusus. Sebuah Agent dapat menerjemahkan bahasa alami ke SQL, tetapi ada pilihan desain utama: haruskah Agent mengeksekusi query dan mendeskripsikan hasilnya dalam natural-language, atau haruskah ia menghasilkan SQL sebagai artefak bagi sistem untuk mengeksekusi dan frontend untuk menampilkannya?
 
 Pendekatan pertama tampak lebih "cerdas" tetapi sangat tidak efisien—query terhadap tabel besar dapat mengembalikan ribuan baris. Menyuruh LLM membaca semua itu dan mendeskripsikannya dalam bentuk prosa akan menghabiskan token dan waktu, dan lebih buruknya lagi, LLM terkenal rentan terhadap kesalahan saat "mentranskripsi" data. Pendekatan yang lebih baik adalah **Artifact pattern**. Gambar 5-9 menunjukkan alur kerja dari SQL Query Agent: daripada membaca data itu sendiri, Agent menghasilkan SQL query dan meneruskannya ke sistem sebagai **executable artifact** yang berdiri sendiri. Sistem mengeksekusi query tersebut terhadap database dan me-render hasilnya dalam tabel untuk pengguna. Oleh karena itu, data mengalir langsung dari database ke antarmuka tanpa melewati LLM; LLM menulis query tetapi tidak pernah harus membaca dan menyatakan kembali ribuan baris. Pendekatan ini lebih cepat dan lebih akurat.
+
+SQL dan kode visualisasi yang dihasilkan tidak boleh dieksekusi secara langsung. Lapisan eksekusi harus menggunakan kredensial basis data read-only, mengurai SQL, hanya mengizinkan pernyataan `SELECT` yang disetujui, serta menolak DDL, DML, dan kueri multi-pernyataan. Nilai dari pengguna harus diikat sebagai parameter di sisi server, dengan batas waktu kueri, jumlah baris yang dikembalikan, tabel yang dapat diakses, dan rentang tanggal. Kode visualisasi harus berjalan dalam sandbox yang diisolasi dari jaringan dan sistem berkas serta hanya menghasilkan format hasil yang disetujui. Pola Artifact memperpendek jalur data, tetapi tidak menggantikan pemeriksaan otorisasi atau isolasi eksekusi.
 
 ![Gambar 5-9: Alur Kerja Agent Kueri SQL](images/fig5-9.svg)
 

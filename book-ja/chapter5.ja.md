@@ -466,6 +466,8 @@ def cancel_reservation(
         return {"success": False, "reason": "Cannot cancel with used segments"}
 
     hours_since_booking = (now - r.booking_time).total_seconds() / 3600
+    if hours_since_booking < 0:
+        return {"success": False, "reason": "Booking time is in the future"}
     if hours_since_booking <= 24:
         execute_cancellation(reservation_id)
         return {"success": True, "reason": "Cancelled within 24-hour window"}
@@ -654,6 +656,8 @@ Agent が直接 HTML と JavaScript のコードを UI として生成すると�
 データベースクエリは、コード生成がインタラクション体験を著しく高められる場面です。従来のデータベースアクセスは GUI ツールまたは手書きの SQL に依存し、前者は操作が煩雑、後者はユーザーに専門知識を要求します。Agent は自然言語を SQL に変換できますが、ここに一つ鍵となる設計上の選択があります。Agent に SQL を実行させてから結果を自然言語で記述させるのか、それとも Agent に SQL コードを artifact として生成させてフロントエンドに直接実行させるのか。
 
 第一の方案は一見より「賢い」ように見えますが、効率がきわめて低いのです。クエリ結果は数千行の大きな表を含み得て、LLM に読ませてから文字で記述させるのは大量の token を消費し時間がかかるだけでなく、より深刻なのは LLM がデータを「書き写す」ときに非常に間違えやすいことです。より良い方案は **artifact モード**です。図5-9 は SQL クエリ Agent の作業フローを示します。Agent は自らデータを読まず、一段の SQL クエリコードを生成し、このコードを一つの独立した「制作物」（artifact）としてシステムに引き渡します。システムはこの SQL を持って直接データベースに照会し、照会したデータをユーザーが見られる表にレンダリングします。全体の過程で、データはデータベースからユーザーインターフェースへ直達し、LLM というこの「仲介者」を完全に迂回します。LLM はクエリ文を書くことだけを担い、自ら何千何万行ものデータを読んでユーザーに復唱する必要がなく、高速かつ正確なのです。
+
+生成された SQL と可視化コードをそのまま実行してはいけません。実行層では読み取り専用のデータベース資格情報を使い、SQL を解析して承認済みの `SELECT` 文だけを許可し、DDL・DML・複数文クエリを拒否します。ユーザーが指定した値はサーバー側のパラメータとしてバインドし、クエリ時間、返却行数、アクセス可能なテーブル、日付範囲に上限を設けます。可視化コードはネットワークとファイルシステムから隔離したサンドボックスで実行し、承認済みの結果形式だけを生成させます。Artifact パターンはデータの経路を短くしますが、認可チェックや実行分離の代わりにはなりません。
 
 ![図5-9 SQL クエリ Agent のフロー](images/fig5-9.svg)
 
