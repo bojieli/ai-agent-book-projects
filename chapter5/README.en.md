@@ -19,7 +19,8 @@
 | 5-9 | [dynamic-form](dynamic-form/) | ✅ | When faced with an incomplete request, the Agent doesn't ask questions one by one. Instead, it dynamically generates a self-contained HTML form with cascading logic, allowing the user to fill in all missing information at once. The frontend aggregates the form data into JSON and returns it to the Agent to continue the task. |
 | 5-10 | [erp-agent](erp-agent/) | ✅ | Translate Chinese natural language queries into SQL for database execution, directly presenting the resulting table. The core is the artifact pattern: the LLM only generates the SQL artifact without moving the data itself, saving tokens and avoiding manual calculation errors. Even result sets with tens of thousands of rows can be returned instantly. |
 | 5-11 | [conversational-ui](conversational-ui/) | ✅ | Users propose UI customization requests (color/font/text/layout) in natural language. The Agent autonomously locates and modifies the React frontend source code. Leveraging Vite's Hot Module Replacement (HMR), changes take effect instantly, supporting multi-turn iterative customization. |
-| 5-12 | [agent-creator](agent-creator/) | ✅ | A metaprogramming Agent compares creating a new Agent from a validated reference implementation with generating one from scratch; both arms are compiled, tested, and exercised through a real Kimi K3 tool-calling API campaign. |
+| 5-12 | [permission-embedded-data-objects](permission-embedded-data-objects/) | ✅ | A PostgreSQL-backed object store keeps authorization, validation, referential integrity, and controlled reactions below dynamically generated application code. |
+| 5-13 | [agent-creator](agent-creator/) | ✅ | A metaprogramming Agent compares creating a new Agent from a validated reference implementation with generating one from scratch; both arms are compiled, tested, and exercised through a real Kimi K3 tool-calling API campaign. |
 ## Project Types
 
 | Icon | Type | Meaning |
