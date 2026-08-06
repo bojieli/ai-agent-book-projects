@@ -303,10 +303,17 @@ def scalar_baseline(report: Dict[str, Any]) -> Dict[str, Any]:
     return {"trajectory_id": report["trajectory_id"], "score": report["overall_score"]}
 
 
+def _item_get(item: Any, key: str, default: Any = None) -> Any:
+    if isinstance(item, dict):
+        return item.get(key, default)
+    return getattr(item, key, default)
+
+
 def diagnostic_utility(report: Dict[str, Any]) -> float:
     """Fraction of failed dimensions that include actionable evidence."""
-    failures = [item for item in report.get("dimensions", []) if item.get("verdict") == FAIL]
+    dims = report.get("dimensions", []) if isinstance(report, dict) else []
+    failures = [item for item in dims if _item_get(item, "verdict") == FAIL]
     if not failures:
         return 1.0
-    actionable = sum(bool(item.get("evidence")) for item in failures)
+    actionable = sum(bool(_item_get(item, "evidence")) for item in failures)
     return actionable / len(failures)
