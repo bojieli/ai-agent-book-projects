@@ -25,9 +25,9 @@ def validate(evidence_path: Path) -> dict:
         "thinking_not_claimed": evidence.get("protocol", {}).get("enable_thinking") is False,
         "four_cases": len(evidence.get("cases", [])) == 4,
         "both_arms_complete": all(
-            case.get("direct", {}).get("response")
-            and case.get("self_cascade", {}).get("response")
-            and case.get("self_cascade", {}).get("transcript")
+            (case.get("direct") or {}).get("response")
+            and (case.get("self_cascade") or {}).get("response")
+            and (case.get("self_cascade") or {}).get("transcript")
             for case in evidence.get("cases", [])
         ),
         "speech_waveform_recorded": False,
