@@ -77,14 +77,14 @@ Se recomienda solicitar claves de API en varias plataformas para facilitar el ap
 | **Zhipu GLM** | <https://open.bigmodel.cn/> | GLM-4.6 etc., gran capacidad en chino, rentable | China continental |
 | **Siliconflow** | <https://siliconflow.cn/> | Diversos modelos de código abierto (DeepSeek, Qwen, etc.), acceso rápido desde China continental | China continental |
 | **DeepSeek** | <https://platform.deepseek.com/> | API oficial de DeepSeek | Global + China continental |
-| **Krill AI** | [www.krill-ai.com](https://www.krill-ai.com/register?invite=Q8D3L35725) | Acceso integral a los principales modelos globales y de China (OpenAI, Claude, Gemini, Grok, Kimi, GLM, DeepSeek, Qwen, Minimax) | Global + China continental |
+| **Krill AI** | [www.krill-ai.net](https://www.krill-ai.net/register?invite=Q8D3L35725) | Acceso integral a los principales modelos globales y de China (OpenAI, Claude, Gemini, Grok, Kimi, GLM, DeepSeek, Qwen, Minimax) | Global + China continental |
 | **OpenRouter** | <https://openrouter.ai/> | Acceso integral a los principales modelos globales y de China (GPT, Claude, Gemini, Kimi, GLM, DeepSeek, Qwen, etc.) | Global |
 
 ## 💎 Patrocinadores
 
 ¡Gracias a **Krill AI** por patrocinar este proyecto! Krill proporciona un servicio de retransmisión de API oficial, estable y ultrarrápido para GPT / Claude / Gemini y muchos modelos chinos, con personalización de nivel empresarial, facturación y soporte técnico dedicado de 7×16h, además de una conexión WebSocket adaptada exclusivamente para un tiempo hasta el primer token extremadamente rápido.
 
-Krill ofrece una oferta especial para los lectores de este libro: regístrate mediante [este enlace](https://www.krill-ai.com/register?invite=Q8D3L35725) e ingresa el código de promoción "ai-agent-book" al recargar para obtener un 23% de descuento en tu primer plan Codex.
+Krill ofrece una oferta especial para los lectores de este libro: regístrate mediante [este enlace](https://www.krill-ai.net/register?invite=Q8D3L35725) e ingresa el código de promoción "ai-agent-book" al recargar para obtener un 23% de descuento en tu primer plan Codex.
 
 > 🧪 El estado de ejecución de los experimentos, sus evidencias y los criterios pendientes se registran por separado en [`EXPERIMENT_STATUS.md`](../EXPERIMENT_STATUS.md); clonar o instalar el código fuente no demuestra que un experimento esté completo.
 

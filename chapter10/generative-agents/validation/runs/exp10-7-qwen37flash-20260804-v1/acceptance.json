@@ -1,0 +1,216 @@
+{
+  "schema_version": 1,
+  "experiment": "10-7",
+  "run_id": "exp10-7-qwen37flash-20260804-v1",
+  "passed": true,
+  "gates": {
+    "pinned_clean_source": true,
+    "shared_history_seed": true,
+    "exact_three_arm_shape": true,
+    "exact_two_virtual_days": true,
+    "complete_movement_streams": true,
+    "complete_memory_streams": true,
+    "custom_goal_applied": true,
+    "reflection_ablation_effective": true,
+    "provider_receipts_real_and_complete": true,
+    "action_arena_compatibility_bounded": true,
+    "deterministic_analysis_complete": true,
+    "blind_plausibility_judgments": true,
+    "manifest_complete_and_valid": true,
+    "credential_scan_clean": true
+  },
+  "counts": {
+    "arms": 3,
+    "personas_per_arm": 25,
+    "steps_per_arm": 17280,
+    "provider_receipts": 148856,
+    "provider_response_ids": 148856,
+    "action_arena_compatibility_corrections": 231,
+    "judge_response_ids": 25,
+    "movement_rows": {
+      "baseline": 17280,
+      "custom_goal": 17280,
+      "no_reflection": 17280
+    },
+    "memory_rows": {
+      "baseline": 17469,
+      "custom_goal": 14008,
+      "no_reflection": 14053
+    },
+    "manifest_files": 321
+  },
+  "results": {
+    "baseline_event_diffusion": {
+      "terms": [
+        "valentine",
+        "party"
+      ],
+      "aware_agents": 3,
+      "first_mention_by_agent": {
+        "Isabella Rodriguez": "2023-02-13 00:00:00",
+        "Jennifer Moore": "2023-02-14 05:01:20",
+        "Sam Moore": "2023-02-14 05:01:20"
+      },
+      "memory_mentions_by_agent": {
+        "Isabella Rodriguez": 36,
+        "Jennifer Moore": 5,
+        "Sam Moore": 5
+      }
+    },
+    "custom_event_diffusion": {
+      "terms": [
+        "climate",
+        "resilience",
+        "workshop"
+      ],
+      "aware_agents": 1,
+      "first_mention_by_agent": {
+        "Isabella Rodriguez": "2023-02-13 08:30:10"
+      },
+      "memory_mentions_by_agent": {
+        "Isabella Rodriguez": 5
+      }
+    },
+    "election_diffusion": {
+      "baseline": {
+        "terms": [
+          "mayor",
+          "election"
+        ],
+        "aware_agents": 11,
+        "first_mention_by_agent": {
+          "Adam Smith": "2023-02-13 00:00:00",
+          "Carmen Ortiz": "2023-02-13 00:00:00",
+          "Francisco Lopez": "2023-02-13 07:36:20",
+          "Giorgio Rossi": "2023-02-13 07:15:10",
+          "Jennifer Moore": "2023-02-13 00:00:00",
+          "John Lin": "2023-02-13 00:00:00",
+          "Latoya Williams": "2023-02-13 00:00:00",
+          "Rajiv Patel": "2023-02-13 00:00:00",
+          "Sam Moore": "2023-02-13 00:00:00",
+          "Tom Moreno": "2023-02-13 00:00:00",
+          "Yuriko Yamamoto": "2023-02-13 00:00:00"
+        },
+        "memory_mentions_by_agent": {
+          "Adam Smith": 24,
+          "Carmen Ortiz": 6,
+          "Francisco Lopez": 5,
+          "Giorgio Rossi": 3,
+          "Jennifer Moore": 21,
+          "John Lin": 7,
+          "Latoya Williams": 13,
+          "Rajiv Patel": 4,
+          "Sam Moore": 19,
+          "Tom Moreno": 17,
+          "Yuriko Yamamoto": 6
+        }
+      },
+      "custom_goal": {
+        "terms": [
+          "mayor",
+          "election"
+        ],
+        "aware_agents": 14,
+        "first_mention_by_agent": {
+          "Abigail Chen": "2023-02-13 18:09:10",
+          "Adam Smith": "2023-02-13 00:00:00",
+          "Carmen Ortiz": "2023-02-13 00:00:00",
+          "Francisco Lopez": "2023-02-13 08:49:00",
+          "Giorgio Rossi": "2023-02-13 00:00:00",
+          "Hailey Johnson": "2023-02-13 15:13:00",
+          "Jane Moreno": "2023-02-13 23:35:10",
+          "Jennifer Moore": "2023-02-13 00:00:00",
+          "John Lin": "2023-02-13 00:00:00",
+          "Latoya Williams": "2023-02-13 00:00:00",
+          "Rajiv Patel": "2023-02-13 00:00:00",
+          "Sam Moore": "2023-02-13 00:00:00",
+          "Tom Moreno": "2023-02-13 00:00:00",
+          "Yuriko Yamamoto": "2023-02-13 00:00:00"
+        },
+        "memory_mentions_by_agent": {
+          "Abigail Chen": 5,
+          "Adam Smith": 4,
+          "Carmen Ortiz": 3,
+          "Francisco Lopez": 6,
+          "Giorgio Rossi": 10,
+          "Hailey Johnson": 1,
+          "Jane Moreno": 1,
+          "Jennifer Moore": 12,
+          "John Lin": 8,
+          "Latoya Williams": 24,
+          "Rajiv Patel": 2,
+          "Sam Moore": 23,
+          "Tom Moreno": 29,
+          "Yuriko Yamamoto": 16
+        }
+      },
+      "no_reflection": {
+        "terms": [
+          "mayor",
+          "election"
+        ],
+        "aware_agents": 13,
+        "first_mention_by_agent": {
+          "Adam Smith": "2023-02-13 00:00:00",
+          "Carmen Ortiz": "2023-02-13 00:00:00",
+          "Eddy Lin": "2023-02-13 07:25:00",
+          "Francisco Lopez": "2023-02-13 07:16:40",
+          "Giorgio Rossi": "2023-02-13 00:00:00",
+          "Jennifer Moore": "2023-02-13 00:00:00",
+          "John Lin": "2023-02-13 00:00:00",
+          "Latoya Williams": "2023-02-13 00:00:00",
+          "Mei Lin": "2023-02-13 07:25:00",
+          "Rajiv Patel": "2023-02-13 00:00:00",
+          "Sam Moore": "2023-02-13 00:00:00",
+          "Tom Moreno": "2023-02-13 00:00:00",
+          "Yuriko Yamamoto": "2023-02-13 00:00:00"
+        },
+        "memory_mentions_by_agent": {
+          "Adam Smith": 10,
+          "Carmen Ortiz": 3,
+          "Eddy Lin": 31,
+          "Francisco Lopez": 6,
+          "Giorgio Rossi": 2,
+          "Jennifer Moore": 1,
+          "John Lin": 34,
+          "Latoya Williams": 13,
+          "Mei Lin": 17,
+          "Rajiv Patel": 2,
+          "Sam Moore": 2,
+          "Tom Moreno": 9,
+          "Yuriko Yamamoto": 4
+        }
+      }
+    },
+    "plausibility": {
+      "schema_version": 1,
+      "experiment": "10-7",
+      "model": "claude-sonnet-4-5-20250929",
+      "judgments": 25,
+      "preferences": {
+        "baseline": 17,
+        "no_reflection": 8,
+        "tie": 0
+      },
+      "mean_scores": {
+        "temporal_coherence": {
+          "baseline": 2.12,
+          "no_reflection": 1.56
+        },
+        "personality_consistency": {
+          "baseline": 3.2,
+          "no_reflection": 2.2
+        },
+        "memory_continuity": {
+          "baseline": 2.72,
+          "no_reflection": 1.52
+        },
+        "social_responsiveness": {
+          "baseline": 3.44,
+          "no_reflection": 2.48
+        }
+      },
+      "raw_receipts": "analysis/plausibility_judgments.jsonl"
+    }
+  }
+}

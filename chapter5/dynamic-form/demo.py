@@ -539,7 +539,7 @@ def summarize_offline(submitted):
     if submitted.get("cabin_class"):
         cabin = _CABIN_CN.get(submitted["cabin_class"], submitted["cabin_class"])
         bag = submitted.get("baggage_count")
-        bag_txt = f"，免费托运 {bag} 件" if bag not in (None, "", "0") else "，无免费托运"
+        bag_txt = f"，免费托运 {bag} 件" if bag not in (None, "", "0", 0) else "，无免费托运"
         lines.append(f"舱位：{cabin}{bag_txt}。")
     lines.append("正在为您检索航班...")
     return "\n".join(lines)

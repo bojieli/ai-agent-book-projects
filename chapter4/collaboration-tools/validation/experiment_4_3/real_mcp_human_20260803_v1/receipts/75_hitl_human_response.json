@@ -1,0 +1,18 @@
+{
+  "case": "hitl_human_response",
+  "tool": "mcp_respond_to_request",
+  "arguments": {
+    "request_id": "da283443-6d26-4c93-9664-f86d4b1e5c63",
+    "approved": true,
+    "admin_notes": "The risk is low, and the artifact is validation evidence only, so we can approve it"
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "request_id": "da283443-6d26-4c93-9664-f86d4b1e5c63",
+    "approved": true,
+    "message": "Request approved successfully"
+  },
+  "latency_seconds": 0.003
+}

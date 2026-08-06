@@ -40,9 +40,15 @@ This file collects reference-answer outlines for the thought questions across al
 
 > Fail-safe: pause high-risk operations when no confirmation arrives rather than executing by default; do the reversible low-risk parts first and document the high-risk parts so a human can decide and the Agent can resume; notify via asynchronous communication tools (messages, email) with a timeout policy; use intent clarification when instructions are vague.
 
-**10. (★★★) The introduction states that "good design principles should transcend model iteration cycles." Give an example of a current Agent design principle that you believe might become obsolete as models improve, and explain your reasoning.**
+**10. (★★★) The introduction states that "good design principles should transcend model iteration cycles," but the concrete engineering methods used to implement those principles may become obsolete as model capabilities improve. Give an example of such an Agent engineering method and explain why.**
 
-> Examples: few-shot prompting and meticulous prompt engineering—diminishing returns once zero-shot generalization improves; strict tool-call formats enforced through constrained sampling—tool-call formats of current SOTA models are already fairly stable; manually orchestrated multi-step workflows—no longer needed once the model's instruction-following ability improves.
+> Example 1: Use constrained sampling to force tool calls into a strict format. This is a reliability patch for models that often emit invalid JSON or omit parameters. Its benefit may diminish as models become better at following formats, although high-risk scenarios should still retain deterministic format validation.
+>
+> Example 2: Introduce an external knowledge base to compensate for a model's inability to continually absorb new knowledge. If models eventually acquire reliable continual-learning capabilities, some knowledge maintenance may move from external systems into model parameters. External knowledge bases will still have independent value for real-time updates, exact retrieval, access control, and source traceability, so their scope is more likely to shrink than disappear entirely.
+>
+> Example 3: Require every capability to be exposed through the model API's standard tool-calling interface and prohibit custom calling formats. Skills demonstrate another path: describe a capability and its operating procedure in text, then let the model execute it through a general-purpose command-line tool. From the model's perspective, this amounts to understanding and following a custom textual calling protocol layered over a general executor. As models become better at understanding arbitrary interfaces, "always use the standard tool-calling format" is no longer a universal principle. Standard formats remain useful for interoperability, structured validation, and less capable models, but they should be a context-dependent engineering choice.
+>
+> Example 4: Require prompts and all tool definitions to appear at the beginning of the context. This practice arose because early models had limited instruction-following ability and often failed to recognize or execute prompts and tool definitions outside familiar fixed positions. Skills load prompts into the middle of the context on demand, while dynamic tool discovery appends newly found tool definitions after the existing trajectory. As instruction following improves and models receive post-training specifically for these dynamic-loading patterns, prompts and tool definitions no longer have to be fixed at the beginning of the context.
 
 ## Chapter 2: Context Engineering
 
@@ -124,7 +130,7 @@ This file collects reference-answer outlines for the thought questions across al
 
 **1. (★★) The MCP standard decouples tool definitions from the Agent framework. However, standardization also means that complex tool interaction patterns (e.g., streaming output, bidirectional communication, stateful sessions) may be difficult to express within a standard protocol. What capability do you think MCP most needs to extend in the future?**
 
-> What is most needed is cross-session, event-driven capability. MCP is request-response at its core; primitives such as notifications, progress, sampling, and elicitation are all confined to a single connected session—a notification can only say "a resource changed"; there is no standard way to trigger an Agent's thinking loop, let alone wake an offline Agent.
+> The most needed extension is cross-session, event-driven capability. MCP already supports multi-turn interaction, change subscriptions, and long-running tasks, but its core remains the standardization of a capability call rather than keeping an Agent continuously online. Waking an Agent for new email or external callbacks, and queuing, resuming, and retrying multiple events, still belongs to the Agent framework. More unified conventions for this orchestration would broaden MCP without sacrificing protocol simplicity.
 
 **2. (★★) In an asynchronous Agent architecture, the priority strategy for the event queue must be determined at design time. But if priority judgment itself requires semantic understanding (e.g., determining whether a new message is more urgent than the current task), who should make this judgment—a rules engine or another LLM call? What are the costs of each?**
 

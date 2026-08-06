@@ -24,7 +24,7 @@
 | 6-8 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | Felbontja a teljes költséget, és méri a cache-barát tervezés és tömörítés megtakarítását. |
 | 6-9 | [model-benchmark](model-benchmark/) | 🚧 | TTFT-t, késleltetést, áteresztőképességet, megbízhatóságot és költséget mér; a hosszú kampány még nem teljes. |
 | 6-11 | [android-world](android-world/) | 📖 | Repository-n belüli T3A-értékelési jelentés és AndroidWorld-hibaelemzés. |
-| 6-12 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | 🚧 | Rögzíti az OpenVLA + RoboTwin2 konfigurációját és a szimulációs értékelés bizonyítékkapuit. |
+| 6-12 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | Az egy GPU-s hivatalos futás karonként 256 epizódot teljesített: chunk 1 0/256, chunk 25 26/256; mind az 512 rollout hash-e megmaradt. |
 | — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | Közegészségügyi jelentések eszközhívásait, számításait, hivatkozásait és állításait értékeli. |
 
 > A kódformázással jelölt benchmarkokat külön kell klónozni. Az `android-world/` helyi elemzési jegyzet, nem az `android_world/` benchmark forrása.

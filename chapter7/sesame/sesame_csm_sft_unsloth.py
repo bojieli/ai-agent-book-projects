@@ -99,7 +99,11 @@ import os
 from transformers import AutoProcessor
 processor = AutoProcessor.from_pretrained("unsloth/csm-1b")
 
-raw_ds = load_dataset("MrDragonFox/Elise", split="train")
+raw_ds = load_dataset(
+    "maxbsoft/mrdragonfox-elise",
+    revision="2cc657c3f94a83df18fcd968b7531ca1a19c7f88",
+    split="train",
+)
 
 # Getting the speaker id is important for multi-speaker models and speaker consistency
 speaker_key = "source"

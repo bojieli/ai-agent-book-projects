@@ -11,12 +11,12 @@
 | 编号 | 项目 | 类型 | 一句话说明 |
 | :--: | --- | :--: | --- |
 | 6-1 | [tau2-bench-eval](tau2-bench-eval/) | ✅ | 已在固定上游提交上完成 5 个 telecom 双控任务：4/5 通过；保存原始轨迹、成本、内容哈希及错选线路导致漏做流量加油的失败分析 |
-| 6-2 | `tau2-bench/` | 📖 | 人工完成 τ²-bench 的分级任务并记录轨迹；它只是 6-2 要抽样的六类基准之一 |
-| 6-2 | `terminal-bench/` | 📖 | 测试 Agent 在真实终端环境的端到端能力（编译/训练/部署），约 100 任务 + 执行框架 |
-| 6-2 | `SWE-bench/` | 📖 | 评估 LLM 解决真实 GitHub 问题的能力，含 SWE-bench/Lite/Verified/Multimodal 多个版本 |
-| 6-2 | `GAIA/` | 📖 | 评估下一代 LLM 的工具/搜索/自主能力，450+ 个答案明确的非平凡问题，分 3 级难度 |
-| 6-2 | `OSWorld/` | 📖 | 评估 Agent 在完整 OS 环境执行复杂任务的能力：文件管理、应用操作、系统配置 |
-| 6-2, 6-11 | `android_world/` | 📖 | 评估 Agent 在 Android 环境的应用导航、UI 交互与任务完成能力（外部基准仓库） |
+| 6-2 | [experiment-6-2-human-benchmark](experiment-6-2-human-benchmark/) | ✅ | Codex 作为人工操作员，预注册并完成 GAIA、AndroidWorld、SWE-bench Verified、τ²-bench、Terminal-Bench、OSWorld-Verified 各简单/中等/困难一题，共 18/18 个首轮正式结果：13 通过、5 失败；逐题保留任务、轨迹、官方评估及成败解释 |
+| 6-2 | `terminal-bench/` | 📖 | Terminal-Bench 外部任务与执行框架；6-2 的三档人工操作结果与失败分析已收录于上行案例集 |
+| 6-2 | `SWE-bench/` | 📖 | SWE-bench Verified 外部代码修复基准；6-2 的三档补丁轨迹与官方 harness 结果已收录于上行案例集 |
+| 6-2 | `GAIA/` | 📖 | GAIA 外部数据集；6-2 的 Level 1/2/3 作答、核验与舍入失败边界已收录于上行案例集 |
+| 6-2 | `OSWorld/` | 📖 | OSWorld-Verified 外部桌面环境；6-2 的三档 GUI 操作轨迹与官方结果已收录于上行案例集 |
+| 6-2, 6-11 | `android_world/` | 📖 | 评估 Agent 在 Android 环境的应用导航、UI 交互与任务完成能力（外部基准仓库；6-2 的实际结果见上行） |
 | 6-3 | [user-memory-evaluation](../chapter3/user-memory-evaluation/) | ✅ | 四档多维 Rubric 已在 60 用例 × 3 系统的 180/180 条真实评判记录上完整执行；[独立验收索引](user-memory-system-evaluation/results/full_6_3_structured_rubric_evidence.json)验证逐维理由/证据或边界案例及幻觉一票否决，状态为 `complete` |
 | 6-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | 60 用例 × 3 系统共 180/180 条真实轨迹，零错误且原生币种定价完整；[验收结果](user-memory-system-evaluation/results/full_6_4_60_cases_costed.json)状态为 `complete` |
 | 6-10 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | [全矩阵验收](user-memory-system-evaluation/results/full_6_9_60_case_matrix.json)完成 60 用例 × 24 单元（4 嵌入 × 3 reranker × 2 主模型）共 1,440/1,440 条真实轨迹，零错误、零未定价用量，检索/任务指标与交互分析完整；[独立验证器](user-memory-system-evaluation/validation/verify_full_matrix_20260731.py)复核通过（ALL CHECKS PASSED），后端替代方案如实记录于 [readiness 证据](user-memory-system-evaluation/results/full_matrix_backend_readiness_20260731.json) |
@@ -25,15 +25,15 @@
 | 6-7 | [model-action-threshold](model-action-threshold/) | ✅ | 同一中性 Coding Harness 下完成 GPT-5.6-sol / Claude Sonnet 5 × 三任务 × 三次重复的 18/18 单元实测；[manifest](model-action-threshold/results/exp6-7-action-threshold-20260731-v1/manifest.json)零 API 错误并绑定完整轨迹与汇总哈希 |
 | 6-8 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | 多轮 Agent 任务（客服退款）全链路成本拆解 + KV-cache 友好设计/上下文压缩的 A/B 节省量化 |
 | 6-9 | [model-benchmark](model-benchmark/) | 🚧 | 完整 8K/32K/128K × 512/2048、限流爬坡、Agent 成本与 168 小时可用性 campaign 已实现；现有[验收清单](model-benchmark/results/manifest.json)只有真实 smoke/readiness，不能替代完整长期实验 |
-| 6-11 | [android-world](android-world/) | 📖 | 本书对 T3A Agent 在 AndroidWorld 上的评估报告与失败分析笔记（实验 6-11 起点；非基准源码） |
-| 6-12 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | 🚧 | 固定 OpenVLA + RoboTwin2 配置、上游版本与预检/证据门禁；完成需要真实 checkpoint、RoboTwin2 环境和 8-GPU 仿真评估 |
+| 6-11 | [android-world](android-world/) | ✅ | [完整候选实验证据](android-world/validation/candidate_h5c_api33_local_qwen_20260804/evidence.json)保留 116 任务 × 5 轮的 580/580 条唯一 episode（包括评估失败），运行时错误为零：严格 T3A 成功 26 条（4.4828%），平均 evaluator reward 0.133621，由 77 条满分状态与 1 条 `0.5` 部分 reward 组成。实验在完成官方初始化且配齐 24/24 应用的 Pixel 6/API-33 上执行，本地 Qwen2.5-7B（revision `a09a35458c702b33eeacc393d103063234e8bc28`）通过 vLLM 0.19.0 运行于 RTX PRO 6000 Blackwell 96 GB。执行与证据已完成，但未批准部署；候选 Qwen 与配对源 Doubao 不同，因而不支持同模型提升或非劣性结论 |
+| 6-12 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | [正式单卡运行](openvla-robotwin2-eval/validation/runs/exp6-12-localgpu-20260803-v1/manifest.json)完成 chunk 1/25 各 128 IID + 128 OOD episodes，严格门禁及 512 个 rollout hash 全通过；chunk 1 为 0/256、chunk 25 为 26/256，低绝对成功率作为真实结果保留 |
 | — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | 基于合成 DHIS2 风格汇总数据，客观评估公共卫生报告 Agent 的工具调用、计算准确性、证据引用与无依据声明 |
 
 > 📖 表中带反引号的外部基准需自行克隆。[`android-world/`](android-world/)（连字符）是本仓库内的 **T3A 评估分析笔记**（见该目录 [README](android-world/README.md)），与外部 `android_world/` 基准源码不是同一路径。
 
 ## 实验 6-1 / 6-2 外部复现锚点
 
-以下映射以[正文](../book/chapter6.md)为准。SHA 来自对应 checkout 的 `origin` 与 `HEAD`。其中 6-1 已保留五任务正式运行的[验收证据](tau2-bench-eval/validation/runs/exp6-1-openrouter-gpt41mini-telecom-20260802-v1/manifest.json)；其余行仍只核验来源、路径和入口，不代表相应实验完成。
+以下映射以[正文](../book/chapter6.md)为准。SHA 来自对应 checkout 的 `origin` 与 `HEAD`。6-1 已保留五任务正式运行的[验收证据](tau2-bench-eval/validation/runs/exp6-1-openrouter-gpt41mini-telecom-20260802-v1/manifest.json)；6-2 的 18 个分级人工操作案例、正式结果与兼容边界见[独立报告](experiment-6-2-human-benchmark/README.md)。下表继续保留复现来源、路径和入口。
 
 | 实验 | 上游与本地路径 | 固定提交 | 正文对应入口 |
 | :--: | --- | --- | --- |
@@ -58,7 +58,7 @@ git clone https://github.com/xlang-ai/OSWorld.git chapter6/OSWorld && git -C cha
 
 原始 τ-bench 行只用于复核 6-1 的历史设计差异，不在本仓库的 checkout 清单中。其当前 README 已明确警告：该仓库的 airline/retail 任务版本过时，应使用后续的 [`tau2-bench`](https://github.com/sierra-research/tau2-bench)（现已继续演进为 τ³-bench）获取修订任务与新领域。因此，不应把历史 τ-bench 的 retail 命令当成当前 τ²/τ³-bench 的推荐运行入口。
 
-实验 6-2 是**读者亲自执行并记录轨迹**，不是把六套 Agent harness 全跑一遍。各基准应分别挑选简单、中等、困难任务；记录任务 ID、环境版本、人工步骤、最终答案/状态与标准验证结果，不能把仓库能安装或 quickstart 能启动写成 6-2 已完成。
+实验 6-2 是**操作员亲自执行并记录轨迹**，不是把六套 Agent harness 全跑一遍。本仓库的[已完成案例集](experiment-6-2-human-benchmark/)由 Codex 明确署名为人工操作员，并分别记录每个基准的简单、中等、困难任务 ID、环境版本、步骤、最终答案/状态与标准验证结果；失败案例未在评估后修改或重跑。
 
 ## 项目类型说明
 

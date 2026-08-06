@@ -1,0 +1,11 @@
+{
+  "chunk_length_s": null,
+  "feature_extractor_type": "EncodecFeatureExtractor",
+  "feature_size": 1,
+  "overlap": null,
+  "padding_side": "right",
+  "padding_value": 0.0,
+  "processor_class": "CsmProcessor",
+  "return_attention_mask": true,
+  "sampling_rate": 24000
+}

@@ -24,7 +24,7 @@
 | 6-8 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | Mengurai biaya end-to-end dan mengukur penghematan desain ramah cache serta kompresi. |
 | 6-9 | [model-benchmark](model-benchmark/) | 🚧 | Mengukur TTFT, latensi, throughput, reliabilitas, dan biaya model; kampanye panjang belum selesai. |
 | 6-11 | [android-world](android-world/) | 📖 | Laporan evaluasi T3A dan analisis kegagalan AndroidWorld di dalam repositori. |
-| 6-12 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | 🚧 | Mengunci konfigurasi OpenVLA + RoboTwin2 dan gerbang bukti untuk evaluasi simulasi. |
+| 6-12 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | Kampanye resmi satu GPU menyelesaikan 256 episode per lengan; chunk 1 mendapat 0/256 dan chunk 25 mendapat 26/256, dengan hash untuk seluruh 512 rollout. |
 | — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | Mengevaluasi panggilan tool, kalkulasi, sitasi, dan klaim laporan kesehatan publik. |
 
 > Benchmark dengan nama berformat kode harus dikloning secara terpisah. `android-world/` adalah catatan analisis lokal, bukan sumber benchmark `android_world/`.

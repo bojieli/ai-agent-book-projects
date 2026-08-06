@@ -2,50 +2,66 @@
 <defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333" /></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999" /></marker></defs>
 
 <rect x="20" y="55" width="350" height="480" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" />
-<text x="32" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold"><tspan x="32" dy="286.36">Bối cảnh được chia sẻ (cộng tác kế</tspan><tspan x="32" dy="17.28">thừa)</tspan></text>
+<text x="32" y="73" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">Bối cảnh được chia sẻ (cộng tác kế thừa)</text>
+<g transform="translate(0 4)">
 <rect x="35" y="82" width="320" height="100" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
-<text x="43" y="99.6" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Giai đoạn 1: Nhà phân tích yêu cầu</text>
-<text x="47" y="0" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"><tspan x="47" dy="114.72">sys: "Trách nhiệm của bạn là hiểu đầy đủ các</tspan><tspan x="47" dy="12.96">yêu cầu..."</tspan></text>
-<text x="47" y="140.64" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">tools: [ask_question, save_req]</text>
-<text x="47" y="153.6" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">user: "Viết tập lệnh phân tích CSV"</text>
-<text x="47" y="166.56" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">agent: "Loại tệp nào cần được xử lý?"</text>
+<text x="43" y="96" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Giai đoạn 1: Nhà phân tích yêu cầu</text>
+<text x="47" y="114" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central"><tspan x="47" y="114">sys: "Trách nhiệm của bạn là hiểu đầy đủ các</tspan><tspan x="47" y="127">yêu cầu..."</tspan></text>
+<text x="47" y="142" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">tools: [ask_question, save_req]</text>
+<text x="47" y="155" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">user: "Viết tập lệnh phân tích CSV"</text>
+<text x="47" y="168" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">agent: "Loại tệp nào cần được xử lý?"</text>
+<g transform="translate(0 10)">
 <rect x="35" y="184" width="320" height="100" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="43" y="201.6" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Giai đoạn 2: Kỹ sư phần mềm</text>
-<text x="47" y="0" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"><tspan x="47" dy="216.72">sys: "Viết mã dựa trên yêu cầu đã được xác</tspan><tspan x="47" dy="12.96">nhận..."</tspan></text>
-<text x="47" y="242.64" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">tools: [write_file, execute_code]</text>
-<text x="47" y="255.6" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">agent: write_file("analyze.py", ...)</text>
-<text x="47" y="268.56" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">agent: execute_code("python test.py")</text>
+<text x="43" y="198" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Giai đoạn 2: Kỹ sư phần mềm</text>
+<text x="47" y="216" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central"><tspan x="47" y="216">sys: "Viết mã dựa trên yêu cầu đã được xác</tspan><tspan x="47" y="229">nhận..."</tspan></text>
+<text x="47" y="244" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">tools: [write_file, execute_code]</text>
+<text x="47" y="258" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">agent: write_file("analyze.py", ...)</text>
+<text x="47" y="271" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">agent: execute_code("python test.py")</text>
+</g>
+<g transform="translate(0 20)">
 <rect x="35" y="286" width="320" height="100" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
 <text x="43" y="300" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Giai đoạn 3: Người đánh giá mã</text>
-<text x="47" y="318" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">sys: "Đánh giá chất lượng và bảo mật mã..."</text>
+<text x="47" y="318" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">sys: "Đánh giá chất lượng và bảo mật mã..."</text>
 <text x="47" y="336" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">tools: [run_linter, run_tests]</text>
 <text x="47" y="354" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">agent: run_linter → 2 warnings</text>
 <text x="47" y="372" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">agent: approve_code()</text>
+</g>
+<g transform="translate(0 38)">
 <rect x="35" y="388" width="320" height="28" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2" />
-<text x="195" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="195" dy="396.6">↑ Tất cả các giai đoạn đều có chung lịch</tspan><tspan x="195" dy="10.8">sử trò chuyện</tspan></text>
-<text x="195" y="286.36" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ Hoàn thành đường đua</text>
-<text x="195" y="303.64" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ Mở rộng nhanh chóng bối cảnh</text>
+<text x="195" y="397" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="195" y="397">↑ Tất cả các giai đoạn đều có chung lịch</tspan><tspan x="195" y="407">sử trò chuyện</tspan></text>
+</g>
+<text x="195" y="472" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ Hoàn thành đường đua</text>
+<text x="195" y="494" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ Mở rộng nhanh chóng bối cảnh</text>
+</g>
 <rect x="410" y="55" width="350" height="480" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" />
-<text x="422" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold"><tspan x="422" dy="286.36">Không có bối cảnh chung (cộng tác biệt</tspan><tspan x="422" dy="17.28">lập)</tspan></text>
+<text x="422" y="73" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">Không có bối cảnh chung (cộng tác biệt lập)</text>
+<g transform="translate(0 4)">
 <rect x="425" y="82" width="320" height="80" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
 <text x="433" y="96" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Glossary Agent</text>
 <text x="437" y="114" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">sys: "Nhận dạng thuật ngữ và dịch..."</text>
 <text x="437" y="132" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">tools: [search_dict, write_file]</text>
 <text x="437" y="150" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">→ glossary.json</text>
+<g transform="translate(0 10)">
 <rect x="425" y="170" width="320" height="80" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
 <text x="433" y="184" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Translation Agent</text>
 <text x="437" y="202" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">sys: "Dịch chương này..."</text>
 <text x="437" y="220" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">tools: [read_file, write_file]</text>
 <text x="437" y="238" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">→ chapter1_zh.md</text>
+</g>
+<g transform="translate(0 20)">
 <rect x="425" y="258" width="320" height="80" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
 <text x="433" y="272" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Proofreading Agent</text>
-<text x="437" y="290" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">sys: "Kiểm tra tính nhất quán của thuật ngữ..."</text>
+<text x="437" y="290" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">sys: "Kiểm tra tính nhất quán của thuật ngữ..."</text>
 <text x="437" y="308" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">tools: [read_file, write_file]</text>
 <text x="437" y="326" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">→ review_report.md</text>
+</g>
+<g transform="translate(0 39)">
 <rect x="425" y="351" width="320" height="65" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
-<text x="585" y="368.38" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Hệ thống tập tin được chia sẻ</text>
-<text x="437" y="383.5" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">glossary.json  chapter1_zh.md  review_report.md</text>
-<text x="585" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="585" dy="384.58">+ Tham số lệnh gọi tool truyền dữ liệu có</tspan><tspan x="585" dy="15.12">cấu trúc</tspan></text>
-<text x="585" y="286.36" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ Mô-đun · Có thể mở rộng · Song song</text>
-<text x="585" y="303.64" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ Đồng bộ hóa thông tin phức tạp</text>
+<text x="585" y="367" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Hệ thống tập tin được chia sẻ</text>
+<text x="437" y="384" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central">glossary.json  chapter1_zh.md  review_report.md</text>
+<text x="585" y="399" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="585" y="399">+ Tham số lệnh gọi tool truyền dữ liệu có</tspan><tspan x="585" y="410">cấu trúc</tspan></text>
+</g>
+<text x="585" y="472" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ Mô-đun · Có thể mở rộng · Song song</text>
+<text x="585" y="494" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ Đồng bộ hóa thông tin phức tạp</text>
+</g>
 </svg>

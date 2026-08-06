@@ -19,7 +19,8 @@
 | 5-9 | [dynamic-form](dynamic-form/) | ✅ | 資訊不全時動態生成含級聯邏輯的 HTML 表單讓使用者一次性補全，彙總 JSON 交回 Agent |
 | 5-10 | [erp-agent](erp-agent/) | ✅ | 中文自然語言轉 SQL 由 DB 執行，artifact 模式讓 LLM 只生成 SQL 製品不搬運資料，省 token 又防錯 |
 | 5-11 | [conversational-ui](conversational-ui/) | ✅ | 自然語言提 UI 客製需求（顏色/字型/文案/佈局），Agent 改 React 原始碼借 Vite HMR 即時生效 |
-| 5-12 | [agent-creator](agent-creator/) | ✅ | 比較「複製已驗證範例後修改」與「從零生成」兩種 Agent 建立方式；兩臂均完成編譯、測試與真實 Kimi K3 工具呼叫驗證 |
+| 5-12 | [permission-embedded-data-objects](permission-embedded-data-objects/) | ✅ | PostgreSQL 之上的物件儲存，在動態生成的應用程式碼之下強制執行授權、驗證與參照完整性 |
+| 5-13 | [agent-creator](agent-creator/) | ✅ | 比較「複製已驗證範例後修改」與「從零生成」兩種 Agent 建立方式；兩臂均完成編譯、測試與真實 Kimi K3 工具呼叫驗證 |
 
 ## 專案型別說明
 

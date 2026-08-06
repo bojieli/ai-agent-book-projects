@@ -23,17 +23,17 @@
 <rect x="445" y="260" width="160" height="40" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="525" y="280" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">user: &quot;날씨는 어때?&quot;</text>
 <rect x="610" y="260" width="170" height="40" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
-<text x="695" y="280" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">→ 전체 재계산 ✗</text>
+<text x="695" y="280" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">→ 접미부 재계산 ✗</text>
 <rect x="80" y="330" width="660" height="130" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
 <text x="410" y="355" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">성능 비교(전체 컨텍스트 3,000 tokens)</text>
 <line x1="100" y1="370" x2="720" y2="370" stroke="#999999" stroke-width="2"/>
 <text x="230" y="390" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">캐시 적중</text>
-<text x="490" y="390" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">캐시 무효화</text>
+<text x="490" y="390" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">접미부 캐시 무효화</text>
 <line x1="100" y1="405" x2="720" y2="405" stroke="#999999" stroke-width="2"/>
 <text x="130" y="425" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">TTFT</text>
 <text x="230" y="425" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">약 0.5초</text>
 <text x="490" y="425" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">3~5초</text>
 <text x="130" y="450" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">비용</text>
 <text x="230" y="450" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">새 토큰만 과금</text>
-<text x="490" y="450" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">모든 토큰 재과금</text>
+<text x="490" y="450" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">변경 지점 이후 토큰 재처리</text>
 </svg>

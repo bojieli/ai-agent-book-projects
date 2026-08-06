@@ -1,6 +1,6 @@
-# Experiment 5-12: An Agent That Creates Agents
+# Experiment 5-13: An Agent That Creates Agents
 
-This is the runnable companion for Chapter 5, Experiment 5-12. It implements the
+This is the runnable companion for Chapter 5, Experiment 5-13. It implements the
 book's complete comparison rather than merely pointing at `coding-agent` as a
 possible starting point.
 

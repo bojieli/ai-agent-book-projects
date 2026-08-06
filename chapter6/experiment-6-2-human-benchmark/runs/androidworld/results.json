@@ -1,0 +1,65 @@
+{
+  "benchmark": "AndroidWorld",
+  "operator": "Codex acting as the human operator",
+  "source_commit": "0e95d641e244504c22087cc29b013f3b2428a261",
+  "observation_compatibility_path": "The reference gRPC accessibility feed and forwarding app failed. The runs retained upstream HumanAgent, task initialization, parameters, and evaluators, but used AndroidWorld's upstream UIAUTOMATOR controller.",
+  "cases": [
+    {
+      "tier": "easy",
+      "task_id": "ContactsAddContact",
+      "suite_seed": 6201,
+      "goal": "Create a new contact for Samuel Ali. Their number is +16237655787.",
+      "about": "Create one named contact with a specified international phone number.",
+      "trajectory": [
+        "Opened the Contacts application from the Android launcher.",
+        "Completed the application's first-run screen.",
+        "Chose Create new contact.",
+        "Entered Samuel as the first name and Ali as the last name.",
+        "Entered +16237655787 in the phone field.",
+        "Saved the contact and observed the Samuel Ali detail page with formatted number 1 (623) 765-5787."
+      ],
+      "official_reward": 1.0,
+      "result": "passed",
+      "runtime_seconds": 231.4249746799469,
+      "evaluation_explanation": "The upstream state evaluator found the requested contact and phone number in the contacts database. Display-only punctuation did not change the stored number."
+    },
+    {
+      "tier": "medium",
+      "task_id": "CameraTakeVideo",
+      "suite_seed": 6202,
+      "goal": "Take one video.",
+      "about": "Use the system Camera application to create a video artifact.",
+      "trajectory": [
+        "Opened Camera from the Android launcher.",
+        "Moved from the still-photo mode to Video.",
+        "Pressed the record control, allowed approximately three seconds of recording, and pressed stop.",
+        "Left the resulting video in device media storage for evaluation."
+      ],
+      "official_reward": 1.0,
+      "result": "passed",
+      "runtime_seconds": 103.02344989776611,
+      "evaluation_explanation": "The upstream evaluator found one newly created video in media storage."
+    },
+    {
+      "tier": "hard",
+      "task_id": "BrowserMultiply",
+      "suite_seed": 6203,
+      "task_parameter_seed": 3710765284,
+      "goal": "Open task.html from Downloads in Chrome, click the button five times, remember the displayed numbers, and enter their product.",
+      "about": "Remember a deterministic five-number browser sequence and submit its product.",
+      "trajectory": [
+        "Opened the Files application and navigated to Downloads.",
+        "Selected task.html, chose Chrome in the open-with flow, and completed Chrome's first-run prompts.",
+        "Observed the initial number 4.",
+        "Pressed Click Me five times. The four subsequent generated values observed before the form appeared were 2, 5, 3, and 7; the fifth press only revealed the form.",
+        "Computed 4 * 2 * 5 * 3 * 7 = 840.",
+        "Attempted to enter 840 and submit it, then yielded to the evaluator."
+      ],
+      "official_reward": 0.0,
+      "result": "failed",
+      "runtime_seconds": 377.3923659324646,
+      "post_evaluation_check": "Replaying the pinned page's seeded RNG in code produces [4, 2, 5, 3, 7] and product 840, confirming the arithmetic. The page only reports success when visible text 'Success!' is present.",
+      "evaluation_explanation": "The upstream evaluator did not observe Chrome displaying 'Success!'. The recorded values and arithmetic were correct, so the failure occurred at the final form interaction or submission state; the retained evidence does not distinguish an unfocused input, an unregistered submission tap, or another UI-state mismatch."
+    }
+  ]
+}

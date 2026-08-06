@@ -18,7 +18,7 @@ DEFAULT_REQUIREMENTS = load_protocol()[0]["requirements"]
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Experiment 5-12: compare an Agent created from scratch with one adapted from a proven Agent"
+        description="Experiment 5-13: compare an Agent created from scratch with one adapted from a proven Agent"
     )
     parser.add_argument("--requirements", default=DEFAULT_REQUIREMENTS)
     parser.add_argument("--output", type=Path, default=Path("runs/latest"))
