@@ -19,7 +19,8 @@
 | 5-9 | [dynamic-form](dynamic-form/) | ✅ | Generación dinámica de formularios HTML interactivos para completar información faltante |
 | 5-10 | [erp-agent](erp-agent/) | ✅ | Conversión de lenguaje natural a SQL en modo artefacto para evitar transferencia innecesaria de datos |
 | 5-11 | [conversational-ui](conversational-ui/) | ✅ | Personalización de UI por lenguaje natural modificando código React con actualización HMR vía Vite |
-| 5-12 | [coding-agent](coding-agent/) | ✅ | Asistente de código basado en Claude con 17 herramientas implementadas en Python puro sin dependencias de CLI |
+| 5-12 | [permission-embedded-data-objects](permission-embedded-data-objects/) | ✅ | Almacén de objetos sobre PostgreSQL que aplica autorización, validación e integridad referencial bajo código de aplicación generado dinámicamente |
+| 5-13 | [coding-agent](coding-agent/) | ✅ | Asistente de código basado en Claude con 17 herramientas implementadas en Python puro sin dependencias de CLI |
 
 ## Tipos de Proyectos
 

@@ -1,0 +1,30 @@
+{
+  "experiment": "7-6",
+  "status": "resolved_without_reducing_campaign",
+  "failures": [
+    {
+      "stage": "dataset_load",
+      "component": "datasets 3.6.0 / Hugging Face Hub",
+      "attempted_source": "MrDragonFox/Elise",
+      "exception_type": "FileNotFoundError",
+      "message": "The dataset repository exists but Hugging Face marks it disabled, so load_dataset could not resolve its data files.",
+      "resolution": "Pinned the public non-disabled maxbsoft/mrdragonfox-elise mirror at revision 2cc657c3f94a83df18fcd968b7531ca1a19c7f88. Both training manifests record the substitution."
+    },
+    {
+      "stage": "sesame_model_load",
+      "component": "Unsloth 2026.8.2",
+      "exception_type": "RuntimeError",
+      "message": "Unsloth: Could not find a valid pad token for unsloth/csm-1b - please inspect the tokenizer. A temporary '<｜PAD▁TOKEN｜>' was added.",
+      "root_cause": "The upstream tokenizer aliases pad to EOS while CSM config declares existing token 128004 (<|finetune_right_pad_id|>) as padding; the 2026.8 safety guard also interprets CSM's audio-codebook vocab_size during validation.",
+      "resolution": "Used standard Transformers + PEFT LoRA for Sesame, with a temporary tokenizer metadata snapshot pointing pad_token to the existing model-configured token 128004. No vocabulary item or model weight was added."
+    },
+    {
+      "stage": "sesame_pre_training_evaluation",
+      "component": "Transformers 4.57.6 CsmForConditionalGeneration",
+      "exception_type": "RuntimeError",
+      "message": "Index put requires the source and destination dtypes match, got BFloat16 for the destination and Float for the source.",
+      "root_cause": "CSM's audio codec returned float32 audio embeddings while bf16 autocast produced bf16 text embedding slots in _merge_input_ids_with_input_values.",
+      "resolution": "Ran the 1B Sesame model and its LoRA campaign in float32 (bf16 disabled). The final campaign retained the same 168 training examples, 24 held-out examples, 60 optimizer steps, and 24 base/adapted comparison WAVs."
+    }
+  ]
+}

@@ -88,7 +88,7 @@ def map_model_to_openrouter(model: str, *, substitute_unknown: bool = False) -> 
     * ``claude-*`` becomes the matching Anthropic id
     * ``kimi-*`` becomes ``moonshotai/kimi-k2.6`` (kimi-k3 is not hosted)
     * ``deepseek-*`` becomes ``deepseek/<id>``
-
+    * ``qwen-*`` / ``qwen2*`` / ``qwen3*`` becomes ``qwen/<id>``
     What to do with an unmapped id -- a native one such as ``doubao-*`` or
     ``glm-*``, which OpenRouter does not reliably host -- depends on why the
     caller is mapping, so it is the caller's decision rather than a fixed rule
@@ -125,6 +125,8 @@ def map_model_to_openrouter(model: str, *, substitute_unknown: bool = False) -> 
         return "moonshotai/kimi-k2.6"
     if ml.startswith("deepseek"):
         return "deepseek/" + m
+    if ml.startswith("qwen"):
+        return "qwen/" + m
     if substitute_unknown:
-        return os.getenv("OPENROUTER_MODEL", OPENROUTER_DEFAULT_MODEL)
+        return os.getenv("OPENROUTER_MODEL", "").strip() or OPENROUTER_DEFAULT_MODEL
     return m

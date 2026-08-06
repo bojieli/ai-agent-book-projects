@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "experiment": "10-7",
+  "title": "Stanford Generative Agents two-day society reproduction and ablations",
+  "preregistered_before_arm_execution": true,
+  "upstream": {
+    "repository": "https://github.com/joonspk-research/generative_agents",
+    "commit": "fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4",
+    "license": "Apache-2.0",
+    "base_simulation": "base_the_ville_n25",
+    "history_file": "environment/frontend_server/static_dirs/assets/the_ville/agent_history_init_n25.csv"
+  },
+  "provider": {
+    "api_style": "OpenAI-compatible",
+    "endpoint": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "credential_environment_variable": "DASHSCOPE_API_KEY",
+    "chat_model": "qwen3.7-flash",
+    "chat_thinking": false,
+    "embedding_model": "text-embedding-v4",
+    "embedding_dimensions": 1024
+  },
+  "shared_seed": {
+    "simulation_step": 0,
+    "personas": 25,
+    "history_rows": 25,
+    "history_whispers": 248,
+    "rule": "Generate and persist the upstream relationship-history memories once, then fork all arms from the identical saved memory state."
+  },
+  "world": {
+    "start": "2023-02-13T00:00:00",
+    "end": "2023-02-15T00:00:00",
+    "seconds_per_step": 10,
+    "steps_per_arm": 17280,
+    "checkpoint_steps": 360
+  },
+  "arms": {
+    "baseline": {
+      "goal": "Retain the original Valentine's party and mayoral-election seeds.",
+      "treatment": "none"
+    },
+    "custom_goal": {
+      "goal": "Replace Isabella Rodriguez's party goal with a community climate-resilience workshop at Hobbs Cafe on February 14 from 5pm to 7pm.",
+      "treatment": "Mutate only Isabella Rodriguez's initial currently field before the first world step; retain the shared relationship memories and every other persona field."
+    },
+    "no_reflection": {
+      "goal": "Measure behavior without newly generated reflection thoughts.",
+      "treatment": "Disable Persona.reflect for the full run and raise importance triggers defensively; retain perception, retrieval, planning, execution, and chat-memory creation."
+    }
+  },
+  "retained_evidence": [
+    "credential-free raw chat request and response receipts with provider IDs, usage, and latency",
+    "embedding request and response metadata with vector dimension and SHA-256",
+    "all checkpoint status records",
+    "complete per-step movement logs",
+    "complete final associative-memory nodes and scratch state",
+    "deterministic diffusion, memory, reflection, social-network, action-continuity, and attendance analysis",
+    "blind plausibility judgments with raw independent-model receipts",
+    "artifact hashes and credential scan"
+  ],
+  "primary_observations": {
+    "baseline_event_diffusion": "Number and first timestamp of agents whose memories mention the Valentine's party.",
+    "election_diffusion": "Number and first timestamp of agents whose memories mention the mayoral election.",
+    "custom_event_diffusion": "Number and first timestamp of agents whose memories mention the climate-resilience workshop.",
+    "reflection": "New thought nodes, evidence-linked thought nodes, and maximum thought depth relative to the shared seed.",
+    "social_network": "Unique chat edges and chat-node counts.",
+    "behavior": "Action diversity, action transitions, and Hobbs Cafe event-window attendance.",
+    "plausibility": "Blind rubric scores for temporal coherence, personality consistency, memory continuity, and social responsiveness."
+  },
+  "hypotheses": [
+    "The seeded baseline event and election information will diffuse beyond their originating agents.",
+    "Changing Isabella's initial goal will change the focal event that diffuses and the event-window behavior at Hobbs Cafe.",
+    "Disabling reflection will eliminate new reflection thoughts and reduce at least one blinded behavioral-plausibility dimension relative to baseline."
+  ],
+  "interpretation_rule": "Completion depends on executing and retaining all arms and analyses, not on confirming any hypothesis. Null or contrary results remain complete negative findings.",
+  "acceptance_gates": [
+    "exact pinned upstream commit",
+    "one identical 25-persona history seed",
+    "three arms with exactly 17280 ten-second steps each",
+    "final time exactly 2023-02-15T00:00:00 in every arm",
+    "provider receipts with real unique response IDs and positive usage",
+    "complete final movement and memory evidence",
+    "custom goal present before the custom arm's first plan",
+    "no new reflection thoughts in the no-reflection arm",
+    "deterministic and blind plausibility analyses retained",
+    "all retained-file hashes valid and credential scan clean"
+  ]
+}

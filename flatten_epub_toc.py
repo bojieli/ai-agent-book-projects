@@ -40,9 +40,6 @@ def flatten_nav(data, title_label, toc_label, rtl=False):
         if element.get(f"{{{EPUB}}}type") == "toc"
     )
     top_list = next(child for child in nav if child.tag == f"{{{XHTML}}}ol")
-    # 正文目录页保留扉页、目录两个条目（这里不动）。
-    top_list.insert(0, toc_item("toc-li-contents", "nav.xhtml#toc", toc_label))
-    top_list.insert(0, toc_item("toc-li-title-page", "text/title_page.xhtml", title_label))
 
     # 先删掉所有 section-header-number（让目录只显示标题文字，不带 1.1 / 1.1.1 编号）
     # 关键：pandoc 把编号放在 <span class="section-header-number">1.1</span> 里，
@@ -77,6 +74,10 @@ def flatten_nav(data, title_label, toc_label, rtl=False):
                     sub_classes.append("subsection")
                     sub_li.set("class", " ".join(sub_classes))
 
+    top_list.insert(0, toc_item("toc-li-contents", "nav.xhtml#toc", toc_label))
+    top_list.insert(0, toc_item("toc-li-title-page", "text/title_page.xhtml", title_label))
+    ET.register_namespace("", XHTML)
+    ET.register_namespace("epub", EPUB)
     return ET.tostring(root, encoding="utf-8", xml_declaration=True)
 
 

@@ -1,0 +1,22 @@
+{
+  "case": "hitl_timeout",
+  "tool": "mcp_request_admin_approval",
+  "arguments": {
+    "request_message": "No operator will answer this timeout probe.",
+    "context": {
+      "probe": true
+    },
+    "timeout_seconds": 1,
+    "urgent": false
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "approved": false,
+    "request_id": "480a61a9-b1a3-4dea-af3a-b50d561502d0",
+    "timeout": true,
+    "message": "Admin response timeout after 1 seconds"
+  },
+  "latency_seconds": 2.003
+}

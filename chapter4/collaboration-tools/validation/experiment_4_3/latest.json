@@ -1,8 +1,8 @@
 {
   "experiment": "4-3",
-  "campaign_id": "real_mcp_kimi_20260730T065500Z",
+  "campaign_id": "real_mcp_human_20260803_v2",
   "status": "blocked",
   "official_complete": false,
-  "manifest": "validation/experiment_4_3/real_mcp_kimi_20260730T065500Z/manifest.json",
-  "manifest_sha256": "b3a06d0a2db68128a0cd3d659157f85bc6e541f3b992dafefb1641c7688837b3"
+  "manifest": "validation/experiment_4_3/real_mcp_human_20260803_v2/manifest.json",
+  "manifest_sha256": "8c8186e45c1620be5f1de0ca4ba35bea1aaf09540f0048514ef76651670e6bf9"
 }

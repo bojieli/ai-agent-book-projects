@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "experiment": "10-7",
+  "source_commit": "fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4",
+  "source_clean": true,
+  "source_status": [],
+  "python": "3.11.13 (main, Jun  3 2025, 18:38:25) [Clang 17.0.0 (clang-1700.0.13.3)]",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "machine": "arm64",
+  "chat_model": "qwen3.7-flash",
+  "embedding_model": "text-embedding-v4",
+  "credential_environment_variables": [
+    "DASHSCOPE_API_KEY",
+    "ANTHROPIC_API_KEY"
+  ]
+}

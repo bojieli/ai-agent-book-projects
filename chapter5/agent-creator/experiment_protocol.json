@@ -1,8 +1,8 @@
 {
   "schema_version": "2.0",
-  "experiment": "5-12",
+  "experiment": "5-13",
   "frozen_at_utc": "2026-07-30T00:00:00Z",
-  "manuscript_source": "book/chapter5.md#experiment-5-12",
+  "manuscript_source": "book/chapter5.md#experiment-5-13",
   "requirements": "Create a release-readiness Agent. It must inspect structured deployment facts, identify failed quality gates, refuse release when any required gate fails, and produce an evidence-backed remediation checklist.",
   "backend_requirement": {
     "provider": "moonshot",

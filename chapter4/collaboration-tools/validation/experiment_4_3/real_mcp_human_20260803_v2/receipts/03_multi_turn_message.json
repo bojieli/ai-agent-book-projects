@@ -1,0 +1,17 @@
+{
+  "case": "multi_turn_message",
+  "tool": "mcp_send_message_to_subagent",
+  "arguments": {
+    "subagent_id": "d8a9e703-b7ac-4357-930a-c8b2ce6f3bd4",
+    "message": "Additional fact: the item is unused. Re-evaluate using only supplied facts."
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "subagent_id": "d8a9e703-b7ac-4357-930a-c8b2ce6f3bd4",
+    "reply": "```json\n{\n  \"status\": \"need_info\",\n  \"result\": \"仍无法判定。新增事实『商品未使用』与所给政策的两个审批条件无关——政策仅要求：(1) 退款在购买后 7 天内提出；(2) 退款金额低于 SGD 100。该事实不影响政策符合性的判断，而这两项关键信息依然缺失，因此无法做出批准或拒绝的结论。\",\n  \"missing\": \"需要：(1) 退款金额（核对是否低于 SGD 100）；(2) 购买日期或距今申请天数（核对是否在 7 天之内）。\"\n}\n```",
+    "prompt_tokens": 510
+  },
+  "latency_seconds": 7.763
+}

@@ -1,4 +1,4 @@
-"""Fixed structural and real-run validation for Experiment 5-12."""
+"""Fixed structural and real-run validation for Experiment 5-13."""
 
 from __future__ import annotations
 

@@ -5,7 +5,6 @@ Validates installation and basic functionality
 """
 
 import sys
-import json
 from agent import ContextAwareAgent, ContextMode, ToolRegistry
 import unittest
 from unittest.mock import MagicMock, patch
@@ -56,12 +55,45 @@ class TestToolRegistry(unittest.TestCase):
         result_c = tools.convert_currency(100, "C$", "USD")
         self.assertEqual(result_c["from_currency"], "CAD")
         self.assertIn("converted_amount", result_c)
-
         # Invalid currency
         result = tools.convert_currency(100, "XXX", "YYY")
         self.assertIn("error", result)
         result_invalid_s = tools.convert_currency(100, "S$INVALID", "USD")
         self.assertIn("error", result_invalid_s)
+
+    def test_convert_currency_string_and_formatted_amounts(self):
+        """
+        Prove that convert_currency accepts string and formatted numeric amounts.
+        
+        LLM tool calls frequently pass numeric arguments as strings (e.g., "100", "$1,000.00").
+        Previously, passing a string raised a TypeError during float division. This test locks
+        out regressions by asserting that numeric strings and formatted currency strings convert correctly.
+        """
+        tools = ToolRegistry()
+        result_str = tools.convert_currency("100", "USD", "EUR")
+        self.assertEqual(result_str["converted_amount"], 92.0)
+        self.assertEqual(result_str["original_amount"], 100.0)
+
+        result_formatted = tools.convert_currency("$1,000.00", "USD", "EUR")
+        self.assertEqual(result_formatted["converted_amount"], 920.0)
+        self.assertEqual(result_formatted["original_amount"], 1000.0)
+
+        result_us_dollar = tools.convert_currency("US$100", "USD", "EUR")
+        self.assertEqual(result_us_dollar["converted_amount"], 92.0)
+        self.assertEqual(result_us_dollar["original_amount"], 100.0)
+
+        result_currency_code = tools.convert_currency("USD$1,000", "USD$", "EUR")
+        self.assertEqual(result_currency_code["converted_amount"], 920.0)
+        self.assertEqual(result_currency_code["original_amount"], 1000.0)
+
+        result_comma_large = tools.convert_currency("1,234,567.89", "USD", "EUR")
+        self.assertEqual(result_comma_large["original_amount"], 1234567.89)
+
+        result_euro_sym = tools.convert_currency("€ 500.25", "EUR", "USD")
+        self.assertIn("converted_amount", result_euro_sym)
+
+        result_invalid_str = tools.convert_currency("invalid_str", "USD", "EUR")
+        self.assertIn("error", result_invalid_str)
     
     def test_pdf_parser_structure(self):
         """Test PDF parser structure (without actual PDF)"""
@@ -190,7 +222,7 @@ def run_integration_test():
             result = agent.execute_task(simple_task, max_iterations=3)
             signal.alarm(0)  # Cancel alarm
             
-            print(f"\n✅ Integration test completed!")
+            print("\n✅ Integration test completed!")
             print(f"Success: {result.get('success', False)}")
             print(f"Tool calls: {len(result['trajectory'].tool_calls)}")
             
