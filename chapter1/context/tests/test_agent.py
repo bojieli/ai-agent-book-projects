@@ -181,6 +181,137 @@ class TestAblationScenarios(unittest.TestCase):
         self.assertEqual(agent.trajectory.context_mode, ContextMode.FULL)
 
 
+class TestEvaluateSuccess(unittest.TestCase):
+    """Verify _evaluate_success per-mode behavior (ablation assertion integrity)."""
+
+    def test_full_mode_with_answer_is_success(self):
+        self.assertTrue(
+            ContextAwareAgent._evaluate_success(
+                context_mode=ContextMode.FULL,
+                final_answer="Annual total: $9,602,895.73",
+                tool_call_count=5,
+                iteration=3,
+                max_iterations=5,
+            )
+        )
+
+    def test_full_mode_without_answer_is_failure(self):
+        self.assertFalse(
+            ContextAwareAgent._evaluate_success(
+                context_mode=ContextMode.FULL,
+                final_answer=None,
+                tool_call_count=0,
+                iteration=1,
+                max_iterations=5,
+            )
+        )
+
+    def test_no_reasoning_with_answer_is_success(self):
+        """no_reasoning preserves existing behavior — tools were available."""
+        self.assertTrue(
+            ContextAwareAgent._evaluate_success(
+                context_mode=ContextMode.NO_REASONING,
+                final_answer="Total: $9,602,895.73",
+                tool_call_count=5,
+                iteration=4,
+                max_iterations=5,
+            )
+        )
+
+    # ── no_tool_calls ablation: must ALWAYS fail ─────────────────────────
+
+    def test_no_tool_calls_refusal_is_failure(self):
+        """A polite refusal without tools MUST be marked failure."""
+        self.assertFalse(
+            ContextAwareAgent._evaluate_success(
+                context_mode=ContextMode.NO_TOOL_CALLS,
+                final_answer="I cannot compute without exchange rate data.",
+                tool_call_count=0,
+                iteration=1,
+                max_iterations=5,
+            )
+        )
+
+    def test_no_tool_calls_hallucinated_xml_is_failure(self):
+        """Hallucinated <request_tool> tags without real tool calls → FAIL."""
+        self.assertFalse(
+            ContextAwareAgent._evaluate_success(
+                context_mode=ContextMode.NO_TOOL_CALLS,
+                final_answer=(
+                    "I'll use the currency conversion tool.\n\n"
+                    '<request_tool>\n'
+                    'currency_converter(amount=2100000, from_currency="EUR", to_currency="USD")\n'
+                    '</request_tool>'
+                ),
+                tool_call_count=0,
+                iteration=1,
+                max_iterations=5,
+            )
+        )
+
+    def test_no_tool_calls_with_answer_but_zero_tools_is_failure(self):
+        """Even a correct-looking answer without tools → FAIL (ablation integrity)."""
+        self.assertFalse(
+            ContextAwareAgent._evaluate_success(
+                context_mode=ContextMode.NO_TOOL_CALLS,
+                final_answer="Annual total: $9,602,895.73, Quarterly average: $2,400,723.93",
+                tool_call_count=0,
+                iteration=1,
+                max_iterations=5,
+            )
+        )
+
+    # ── no_tool_results ablation: blind decisions must fail ──────────────
+
+    def test_no_tool_results_blind_answer_is_failure(self):
+        self.assertFalse(
+            ContextAwareAgent._evaluate_success(
+                context_mode=ContextMode.NO_TOOL_RESULTS,
+                final_answer="Total: $9,602,895.73",
+                tool_call_count=5,
+                iteration=5,
+                max_iterations=5,
+            )
+        )
+
+    def test_no_tool_results_null_answer_is_failure(self):
+        self.assertFalse(
+            ContextAwareAgent._evaluate_success(
+                context_mode=ContextMode.NO_TOOL_RESULTS,
+                final_answer=None,
+                tool_call_count=3,
+                iteration=5,
+                max_iterations=5,
+            )
+        )
+
+    # ── no_history ablation ──────────────────────────────────────────────
+
+    def test_no_history_hit_ceiling_is_failure(self):
+        """Answer from a confused (ceiling-hit) state must be marked failure."""
+        self.assertFalse(
+            ContextAwareAgent._evaluate_success(
+                context_mode=ContextMode.NO_HISTORY,
+                final_answer="some confused answer",
+                tool_call_count=15,
+                iteration=5,
+                max_iterations=5,
+            )
+        )
+
+    def test_no_history_before_ceiling_is_success(self):
+        """If history is ablated but the model finished before ceiling, allow success."""
+        self.assertTrue(
+            ContextAwareAgent._evaluate_success(
+                context_mode=ContextMode.NO_HISTORY,
+                final_answer="Annual total: $9,602,895.73",
+                tool_call_count=3,
+                iteration=3,
+                max_iterations=5,
+            )
+        )
+
+
 def run_integration_test():
     """Run a simple integration test"""
     print("\n" + "="*60)
@@ -257,6 +388,7 @@ def main():
     suite.addTests(loader.loadTestsFromTestCase(TestToolRegistry))
     suite.addTests(loader.loadTestsFromTestCase(TestContextModes))
     suite.addTests(loader.loadTestsFromTestCase(TestAblationScenarios))
+    suite.addTests(loader.loadTestsFromTestCase(TestEvaluateSuccess))
     
     # Run tests
     runner = unittest.TextTestRunner(verbosity=2)

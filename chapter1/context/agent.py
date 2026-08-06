@@ -681,6 +681,56 @@ Important: When you have gathered all necessary information and computed the fin
             return None
         return content.split("FINAL ANSWER:", 1)[1].strip()
 
+    @staticmethod
+    def _evaluate_success(
+        context_mode: 'ContextMode',
+        final_answer: Optional[str],
+        tool_call_count: int,
+        iteration: int,
+        max_iterations: int,
+    ) -> bool:
+        """Return True only when the task genuinely succeeded under *context_mode*.
+
+        This replaces the previous ``final_answer is not None`` heuristic with
+        mode-aware checks that align the success signal with the ablation claims
+        documented in README.md § Expected Behaviors.
+        """
+        # ── Universal precondition: no text output → failure ──
+        if final_answer is None:
+            return False
+
+        # ── no_tool_calls: tool definitions were not sent ──
+        # README claim: "Complete failure — Cannot interact with external world"
+        # Any non-empty text response (polite refusal / hallucinated XML /
+        # parametric guess) must be marked failure, otherwise the ablation
+        # cannot rule out the competing hypothesis that the model can bypass
+        # tools via pre-trained knowledge.
+        if context_mode == ContextMode.NO_TOOL_CALLS:
+            if tool_call_count == 0:
+                return False  # zero tool calls on a tool-dependent task → FAIL
+            # Defensive: tool definitions were stripped so >0 calls should be
+            # impossible, but if it somehow happens the arm still fails.
+            return False
+
+        # ── no_tool_results: every tool result was replaced with a placeholder ──
+        # README claim: "Incorrect conclusions — makes decisions without feedback"
+        # The model acted blind.  Even if it coincidentally produced a plausible
+        # answer, the arm must be marked failure to prove feedback is indispensable.
+        if context_mode == ContextMode.NO_TOOL_RESULTS:
+            return False
+
+        # ── no_history: only a sliding window was sent, earlier steps forgotten ──
+        # README claim: "Redundant operations, inefficiency — may repeat tool calls"
+        # If the iteration ceiling was hit, the answer came from a confused state.
+        if context_mode == ContextMode.NO_HISTORY:
+            if iteration >= max_iterations:
+                return False
+
+        # ── full / no_reasoning: preserve existing semantics ──
+        # With full context or when only reasoning is removed, a non-None
+        # final_answer constitutes provisional success.
+        return True
+
     def execute_task(self, task: str, max_iterations: Optional[int] = None) -> Dict[str, Any]:
         """
         Execute a task using available tools (ReAct loop).
@@ -904,11 +954,18 @@ Important: When you have gathered all necessary information and computed the fin
                     "iterations": iteration
                 }
         
+        success = self._evaluate_success(
+            context_mode=self.context_mode,
+            final_answer=final_answer,
+            tool_call_count=len(self.trajectory.tool_calls),
+            iteration=iteration,
+            max_iterations=max_iterations,
+        )
         return {
             "final_answer": final_answer,
             "trajectory": self.trajectory,
             "iterations": iteration,
-            "success": final_answer is not None,
+            "success": success,
             "provider": self.provider,
             "model": self.model,
             "base_url": self.base_url,
