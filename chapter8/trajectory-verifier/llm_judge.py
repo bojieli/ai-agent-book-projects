@@ -80,9 +80,12 @@ Trajectory evidence:
             response_format={"type": "json_object"},
         )
         payload = _json_object(response.choices[0].message.content or "{}")
-        if not isinstance(payload, dict):
-            payload = {}
-        raw_dims = payload.get("dimensions")
+        if isinstance(payload, list):
+            raw_dims = payload
+        elif isinstance(payload, dict):
+            raw_dims = payload.get("dimensions")
+        else:
+            raw_dims = []
         if not isinstance(raw_dims, list):
             raw_dims = []
         by_name = {

@@ -94,13 +94,17 @@ def generate_speech_batch(
     
     # Load dataset once if any item needs context
     raw_ds = None
-    needs_context = any(item.get("dataset_context_idx") is not None for item in texts)
+    needs_context = any(isinstance(item, dict) and item.get("dataset_context_idx") is not None for item in texts)
     if needs_context:
         print(f"Loading dataset: {dataset_name}")
         raw_ds = load_dataset_for_context(dataset_name)
         print(f"Loaded {len(raw_ds)} examples from dataset")
     
     for item in tqdm(texts, desc="Generating speech"):
+        if isinstance(item, str):
+            item = {"text": item}
+        elif not isinstance(item, dict):
+            raise ValueError(f"Each item must be a string or dict, got: {item}")
         text = item.get("text")
         if not text:
             raise ValueError(f"Each item must have a non-empty 'text' field, got: {item}")
