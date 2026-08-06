@@ -56,7 +56,7 @@ Sách xoay quanh công thức cốt lõi **Agent = LLM + Context + Tools**, mư�
 | 2 | 🎯 **Kỹ thuật ngữ cảnh** | Ngữ cảnh quyết định trần năng lực: KV Cache, prompt engineering, Agent Skills, nén ngữ cảnh | [Đọc](../../book-vi/chapter2.vi.md) | [9](../../chapter2/README.vi.md) |
 | 3 | 📚 **Bộ nhớ người dùng và kho tri thức** | Ghi nhớ người dùng qua phiên + tri thức ngoài: bộ nhớ người dùng, RAG, chỉ mục cấu trúc, đồ thị tri thức | [Đọc](../../book-vi/chapter3.vi.md) | [12](../../chapter3/README.vi.md) |
 | 4 | 🛠️ **Công cụ** | Công cụ là đôi tay Agent: giao thức MCP, cảm nhận/thực thi/cộng tác, Agent bất đồng bộ hướng sự kiện, khám phá công cụ tích cực | [Đọc](../../book-vi/chapter4.vi.md) | [8](../../chapter4/README.vi.md) |
-| 5 | 💻 **Coding Agent và sinh mã** | Mã là "công cụ tạo ra công cụ mới"; Coding Agent cấp sản xuất đầy đủ | [Đọc](../../book-vi/chapter5.vi.md) | [12](../../chapter5/README.vi.md) |
+| 5 | 💻 **Coding Agent và sinh mã** | Mã là "công cụ tạo ra công cụ mới"; Coding Agent cấp sản xuất đầy đủ | [Đọc](../../book-vi/chapter5.vi.md) | [13](../../chapter5/README.vi.md) |
 | 6 | 🎯 **Đánh giá Agent** | Biến biểu hiện thành tín hiệu so sánh được: môi trường, chỉ số, ý nghĩa thống kê, chọn mô hình dựa trên đánh giá | [Đọc](../../book-vi/chapter6.vi.md) | [12](../../chapter6/README.vi.md) |
 | 7 | 🧠 **Hậu huấn luyện mô hình** | Tiền huấn luyện/SFT/RL ba giai đoạn: khi nào SFT, khi nào RL, nội tại hóa gọi công cụ, hiệu quả mẫu | [Đọc](../../book-vi/chapter7.vi.md) | [16](../../chapter7/README.vi.md) |
 | 8 | 🔄 **Tự tiến hóa của Agent** | Trưởng thành không cần sửa trọng số: học từ kinh nghiệm, từ người dùng thành người tạo | [Đọc](../../book-vi/chapter8.vi.md) | [7](../../chapter8/README.vi.md) |

@@ -56,7 +56,7 @@ A magyar kézirat forrása a [`book-hu/`](../../book-hu/) könyvtárban találha
 | 2 | 🎯 **Kontextustervezés** | KV Cache, prompttervezés, Agent Skills és kontextustömörítés | [Olvasás](../../book-hu/chapter2.md) | [8](../../chapter2/README.hu.md) |
 | 3 | 📚 **Felhasználói memória és tudásbázis** | Munkameneteken átívelő memória, RAG, strukturált indexek és tudásgráfok | [Olvasás](../../book-hu/chapter3.md) | [12](../../chapter3/README.hu.md) |
 | 4 | 🛠️ **Eszközök** | MCP, érzékelési, végrehajtási és együttműködési eszközök, eseményvezérelt aszinkron ágensek | [Olvasás](../../book-hu/chapter4.md) | [8](../../chapter4/README.hu.md) |
-| 5 | 💻 **Kódoló ágens és kódgenerálás** | A kód mint új eszközöket létrehozó eszköz; éles környezetre kész kódoló ágensek | [Olvasás](../../book-hu/chapter5.md) | [12](../../chapter5/README.hu.md) |
+| 5 | 💻 **Kódoló ágens és kódgenerálás** | A kód mint új eszközöket létrehozó eszköz; éles környezetre kész kódoló ágensek | [Olvasás](../../book-hu/chapter5.md) | [13](../../chapter5/README.hu.md) |
 | 6 | 🎯 **Ügynökök kiértékelése** | Értékelési környezetek, mérőszámok, statisztikai szignifikancia és értékelésvezérelt kiválasztás | [Olvasás](../../book-hu/chapter6.md) | [17](../../chapter6/README.hu.md) |
 | 7 | 🧠 **Modell-utóképzés** | Előképzés, SFT és RL; eszközhívások internalizálása és mintahatékonyság | [Olvasás](../../book-hu/chapter7.md) | [18](../../chapter7/README.hu.md) |
 | 8 | 🔄 **Az ágensek folyamatos evolúciója** | Tanulás a végrehajtási nyomvonalakból; tudás, utasítások, programok és paraméterek frissítése | [Olvasás](../../book-hu/chapter8.md) | [7](../../chapter8/README.hu.md) |
