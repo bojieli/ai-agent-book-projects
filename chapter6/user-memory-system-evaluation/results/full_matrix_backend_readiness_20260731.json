@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0",
-  "experiment": "6-4/6-9 provider readiness",
+  "experiment": "6-4/6-11 provider readiness",
   "generated_at_utc": "2026-07-31T17:36:29Z",
   "config_file": "default_config.yaml",
   "execution_config_fingerprint": "52dda0533016f6c980fc1922ee0d8a5822e671976a2cac5c7191219da97b4b4a",

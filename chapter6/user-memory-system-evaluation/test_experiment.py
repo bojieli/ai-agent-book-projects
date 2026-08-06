@@ -124,7 +124,7 @@ def test_rag_agent_executes_real_tool_loop_shape_and_tracks_metrics():
     assert result.usage.cost_usd >= 0.031
 
 
-def test_69_agent_can_make_followup_searches_and_exposes_tool_efficiency():
+def test_611_agent_can_make_followup_searches_and_exposes_tool_efficiency():
     chunks = [Chunk("a", "c", "checking account routing number", 1, 1)]
     index = VectorMemoryIndex(chunks, FakeEmbedder())
     result = MemoryAgent(FakeMultiSearchChat()).rag(
@@ -232,7 +232,7 @@ def record(**overrides):
     from experiment import RunRecord
 
     data = dict(
-        experiment="6-9", test_id="t", layer="layer1", system="rag", embedding="e1",
+        experiment="6-11", test_id="t", layer="layer1", system="rag", embedding="e1",
         reranker="none", main_model="m1", success=True, reward=0.8, steps=2,
         tool_calls=1, latency_ms=100, cost_usd=0.01, input_tokens=10, output_tokens=2,
         unpriced_tokens=0, retrieval_hit_at_5=1.0, retrieval_recall_at_5=0.5,
@@ -295,9 +295,9 @@ def test_pricing_requires_dated_source_and_three_letter_currency():
             TokenPricing.from_dict(base | override)
 
 
-def exact_69_config(readiness=True):
+def exact_611_config(readiness=True):
     return {
-        "experiment_6_9": {
+        "experiment_6_11": {
             "embeddings": ["e1", "e2", "e3", "e4"],
             "rerankers": ["none", "r1", "r2"],
             "main_models": ["m1", "m2"],
@@ -306,7 +306,7 @@ def exact_69_config(readiness=True):
     }
 
 
-def exact_69_records():
+def exact_611_records():
     return [
         record(
             test_id=f"case-{case:02d}",
@@ -323,35 +323,35 @@ def exact_69_records():
     ]
 
 
-def assess_69(rows, readiness=True):
+def assess_611(rows, readiness=True):
     return completion_assessment(
-        "6-9", rows, exact_69_config(readiness), pricing_coverage(rows)
+        "6-11", rows, exact_611_config(readiness), pricing_coverage(rows)
     )
 
 
-def test_exact_69_gate_requires_all_1440_real_priced_successes_and_readiness():
-    rows = exact_69_records()
-    complete = assess_69(rows)
+def test_exact_611_gate_requires_all_1440_real_priced_successes_and_readiness():
+    rows = exact_611_records()
+    complete = assess_611(rows)
     assert complete["evidence_complete"] is True
     assert complete["expected_full_trajectory_count"] == 1440
     assert interaction_analysis(rows, complete)["analysis_scope"]["selection_conclusions_allowed"] is True
 
-    assert assess_69(rows[:-1])["evidence_complete"] is False
+    assert assess_611(rows[:-1])["evidence_complete"] is False
 
     failed = list(rows)
     failed[0] = record(**({
         **vars(rows[0]), "status": "error", "success": False, "error": "provider failed",
     }))
-    assert assess_69(failed)["evidence_complete"] is False
+    assert assess_611(failed)["evidence_complete"] is False
 
     unpriced = list(rows)
     unpriced[0] = record(**({**vars(rows[0]), "unpriced_tokens": 1}))
-    assert assess_69(unpriced)["cost_accounting_complete"] is False
+    assert assess_611(unpriced)["cost_accounting_complete"] is False
 
     non_api = list(rows)
     non_api[0] = record(**({**vars(rows[0]), "evidence_mode": "mock"}))
-    assert assess_69(non_api)["real_api_evidence_only"] is False
-    assert assess_69(rows, readiness=False)["backend_readiness_complete"] is False
+    assert assess_611(non_api)["real_api_evidence_only"] is False
+    assert assess_611(rows, readiness=False)["backend_readiness_complete"] is False
 
 
 def test_pricing_coverage_recovers_schema1_fixed_query_usd():

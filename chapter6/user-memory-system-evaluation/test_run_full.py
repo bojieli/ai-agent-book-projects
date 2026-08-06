@@ -2,7 +2,7 @@
 
 import json
 
-from run_full import required_69_cells, valid_checkpoint
+from run_full import required_611_cells, valid_checkpoint
 
 
 def record(experiment="6-4", status="ok", system="advanced_json_cards"):
@@ -56,26 +56,26 @@ def test_64_checkpoint_requires_successful_full_rubric_rows(tmp_path):
     assert not valid_checkpoint(path, "case-1", "6-4", 3, expected_cells=expected)
 
 
-def test_69_checkpoint_preserves_explicit_provider_errors(tmp_path):
+def test_611_checkpoint_preserves_explicit_provider_errors(tmp_path):
     path = tmp_path / "case.json"
-    rows = [record("6-9"), record("6-9", status="error")]
+    rows = [record("6-11"), record("6-11", status="error")]
     rows[1]["embedding"] = "blocked"
-    write_checkpoint(path, "6-9", rows)
-    assert valid_checkpoint(path, "case-1", "6-9", 2, {("e", "none", "m")})
+    write_checkpoint(path, "6-11", rows)
+    assert valid_checkpoint(path, "case-1", "6-11", 2, {("e", "none", "m")})
 
     rows[1]["error"] = None
-    write_checkpoint(path, "6-9", rows)
-    assert not valid_checkpoint(path, "case-1", "6-9", 2, {("e", "none", "m")})
+    write_checkpoint(path, "6-11", rows)
+    assert not valid_checkpoint(path, "case-1", "6-11", 2, {("e", "none", "m")})
 
     rows[1]["error"] = "transient"
     rows[1]["embedding"] = "e"
-    write_checkpoint(path, "6-9", rows)
-    assert not valid_checkpoint(path, "case-1", "6-9", 2, {("e", "none", "m")})
+    write_checkpoint(path, "6-11", rows)
+    assert not valid_checkpoint(path, "case-1", "6-11", 2, {("e", "none", "m")})
 
 
-def test_required_69_cells_excludes_only_preflight_failures():
+def test_required_611_cells_excludes_only_preflight_failures():
     config = {
-        "experiment_6_9": {
+        "experiment_6_11": {
             "embeddings": ["e-good", "e-bad"],
             "rerankers": ["none", "r-bad"],
             "main_models": ["m-good", "m-bad"],
@@ -88,4 +88,4 @@ def test_required_69_cells_excludes_only_preflight_failures():
             {"component": "chat", "name": "m-bad", "status": "error"},
         ]
     }
-    assert required_69_cells(config, readiness) == {("e-good", "none", "m-good")}
+    assert required_611_cells(config, readiness) == {("e-good", "none", "m-good")}

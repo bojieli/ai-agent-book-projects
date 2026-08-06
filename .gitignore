@@ -60,3 +60,20 @@ ablation_study_results.png
 /chapter7/speech-sft-experiment/validation/*/adapters/*/tokenizer_config.json
 !/chapter7/speech-sft-experiment/validation/*/audio/**/*.wav
 /unsloth_compiled_cache/
+
+# Canonical Chapter 6 evidence. Keep ad-hoc run outputs ignored while making
+# the renamed complete matrix and the bounded memory-policy campaign visible
+# to normal `git add` workflows.
+!/chapter6/user-memory-policy-eval/results/
+/chapter6/user-memory-policy-eval/results/*
+!/chapter6/user-memory-policy-eval/results/manifest.json
+!/chapter6/user-memory-policy-eval/results/policy_prefix_live.json
+
+!/chapter6/user-memory-system-evaluation/results/
+/chapter6/user-memory-system-evaluation/results/*
+!/chapter6/user-memory-system-evaluation/results/full_6_11_60_case_matrix.json
+!/chapter6/user-memory-system-evaluation/results/live_6_11_matrix_layer1.json
+!/chapter6/user-memory-system-evaluation/results/checkpoints/
+/chapter6/user-memory-system-evaluation/results/checkpoints/*
+!/chapter6/user-memory-system-evaluation/results/checkpoints/6_11/
+!/chapter6/user-memory-system-evaluation/results/checkpoints/6_11/**

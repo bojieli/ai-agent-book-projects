@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Add complete 6-3 rubric evidence to saved 6-4/6-9 case checkpoints."""
+"""Add complete 6-3 rubric evidence to saved 6-4/6-11 case checkpoints."""
 
 from __future__ import annotations
 
