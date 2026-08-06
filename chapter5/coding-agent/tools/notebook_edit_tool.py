@@ -58,10 +58,10 @@ class NotebookEditTool(BaseTool):
                     new_cell["execution_count"] = None
                 
                 # Find insertion point
-                if cell_id:
+                if cell_id is not None:
                     # Insert after cell with given ID
                     for i, cell in enumerate(cells):
-                        if cell.get('id') == cell_id:
+                        if str(cell.get('id')) == str(cell_id):
                             cells.insert(i + 1, new_cell)
                             break
                     else:
@@ -74,9 +74,9 @@ class NotebookEditTool(BaseTool):
                 
             elif edit_mode == "delete":
                 # Delete cell
-                if cell_id:
+                if cell_id is not None:
                     for i, cell in enumerate(cells):
-                        if cell.get('id') == cell_id:
+                        if str(cell.get('id')) == str(cell_id):
                             cells.pop(i)
                             break
                     else:
@@ -90,9 +90,9 @@ class NotebookEditTool(BaseTool):
                 if new_source is None:
                     return {"error": "new_source required for replace mode"}
                 # Replace cell contents
-                if cell_id:
+                if cell_id is not None:
                     for cell in cells:
-                        if cell.get('id') == cell_id:
+                        if str(cell.get('id')) == str(cell_id):
                             cell["source"] = new_source.splitlines(keepends=True)
                             if cell_type:
                                 cell["cell_type"] = cell_type

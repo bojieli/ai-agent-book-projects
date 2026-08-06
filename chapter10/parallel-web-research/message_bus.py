@@ -69,7 +69,7 @@ class Subscription:
     def __init__(self, owner_id: str, types: Optional[List[str]]):
         self.owner_id = owner_id
         # types 为 None 表示订阅所有类型
-        self.types = set(types) if types else None
+        self.types = set(types) if types is not None else None
         self.inbox: "asyncio.Queue[Envelope]" = asyncio.Queue()
 
     def accepts(self, env: Envelope) -> bool:

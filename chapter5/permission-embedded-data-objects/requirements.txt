@@ -1,0 +1,5 @@
+psycopg2-binary>=2.9
+google-genai>=1.0
+pytest>=7.0
+numpy>=1.24
+tabulate>=0.9

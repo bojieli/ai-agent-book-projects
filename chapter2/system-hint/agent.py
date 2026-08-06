@@ -963,7 +963,8 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                                     if result.get('is_binary'):
                                         logger.info(f"  ⚠️ Binary file detected: {result.get('file_path', 'unknown')}")
                                     else:
-                                        logger.info(f"  ⚠️ Failed: {result.get('error', 'Unknown error')[:100]}")
+                                        err_msg = str(result.get('error') or 'Unknown error')
+                                        logger.info(f"  ⚠️ Failed: {err_msg[:100]}")
                                 else:
                                     logger.info("  ✅ Success: Operation completed")
                             else:

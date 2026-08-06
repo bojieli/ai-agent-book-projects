@@ -53,8 +53,20 @@ def parse_response(raw: str) -> tuple[str, list[str]]:
             payload = {"transcript": cleaned, "acoustic_events": []}
     transcript = str(payload.get("transcript") or "")
     events: list[str] = []
-    for event in payload.get("acoustic_events") or []:
-        normalized = EVENT_ALIASES.get(str(event).strip().lower(), str(event).strip())
+    raw_events = payload.get("acoustic_events")
+    if isinstance(raw_events, str):
+        event_list = [raw_events]
+    elif isinstance(raw_events, (list, tuple, set)):
+        event_list = list(raw_events)
+    else:
+        event_list = []
+    for event in event_list:
+        if event is None:
+            continue
+        text = str(event).strip()
+        if not text:
+            continue
+        normalized = EVENT_ALIASES.get(text.lower(), text)
         if normalized and normalized not in events:
             events.append(normalized)
     # Qwen may place an event token next to the transcription rather than in JSON.

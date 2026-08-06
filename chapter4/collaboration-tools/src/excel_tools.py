@@ -93,9 +93,11 @@ async def write_excel_data(
     try:
         path = Path(file_path).resolve()
         
+        if not data:
+            return {"success": False, "error": "Cannot write Excel file: data dictionary is empty"}
+        
         if path.exists() and not overwrite:
             return {"success": False, "error": "File exists, use overwrite=True"}
-        
         # Create Excel writer
         with pd.ExcelWriter(path, engine='openpyxl') as writer:
             for sheet_name, rows in data.items():
