@@ -66,7 +66,19 @@ Trajectory evidence:
             response_format={"type": "json_object"},
         )
         payload = _json_object(response.choices[0].message.content or "{}")
-        by_name = {item.get("dimension"): item for item in payload.get("dimensions", [])}
+        if isinstance(payload, list):
+            dimensions_list = payload
+        elif isinstance(payload, dict):
+            dimensions_list = payload.get("dimensions", [])
+        else:
+            dimensions_list = []
+        if not isinstance(dimensions_list, list):
+            dimensions_list = []
+        by_name = {
+            item.get("dimension"): item
+            for item in dimensions_list
+            if isinstance(item, dict)
+        }
         results = []
         for name in ("expression_quality", "compliant_flexibility"):
             item = by_name.get(name, {})
