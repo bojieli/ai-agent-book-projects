@@ -1,13 +1,8 @@
 # Alat
 
-Dalam film fiksi ilmiah *Her*, asisten AI Samantha dapat secara proaktif mengatur email, mengidentifikasi pesan yang kompleks secara emosional dan menyarankan balasan yang lebih baik, mewakili protagonis dalam urusan penerbitan, dan beralih secara mulus di antara berbagai saluran komunikasi. Kecerdasannya sangat meyakinkan karena ia memiliki **Tools** (alat) yang kuat—"tangan, kaki, dan indra" yang menghubungkan "otak" bahasa ke dunia digital nyata.
+Dalam film fiksi ilmiah *Her*, asisten AI Samantha dapat secara proaktif mengatur email, mengenali pesan yang kompleks secara emosional dan menyarankan balasan yang lebih baik, mewakili protagonis dalam urusan penerbitan, serta beralih mulus di antara berbagai saluran komunikasi. Kecerdasannya meyakinkan karena ia memiliki **alat** yang kuat—“tangan, kaki, dan indra” yang menghubungkan “otak” bahasa dengan dunia digital nyata. Agent serbaguna masa kini, seperti Manus dan OpenClaw, telah mewujudkan sebagian besar kemampuan yang dibutuhkan Samantha dalam *Her*.
 
-Membangun asisten seperti itu dengan teknologi saat ini, bagaimanapun juga, berarti memecahkan dua tantangan inti:
-
-1.  **Tantangan Pemilihan Alat**: Ketika dokumentasi untuk ribuan alat dapat melampaui context window, bagaimana Agent menemukan alat yang tepat secara akurat dan efisien? Bagaimana Agent berkembang dari sekadar "memilih" alat menjadi aktif "menemukannya"? Bab ini berfokus pada prinsip desain alat, ekosistem saat ini, dan penemuan proaktif dalam skala besar; cara Agent membuat, mengubah, dan menghentikan alat berdasarkan pengalaman operasional dibahas pada Bab 8.
-2.  **Tantangan Asinkroni dan Peristiwa**: Bagaimana Agent mengelola tugas jangka panjang, menangani interupsi dari pengguna atau sistem kapan pun, dan merespons peristiwa eksternal seperti email, kalender, serta peringatan sistem tanpa terjebak dalam penantian sinkron?
-
-Bab ini mengembangkan dua tantangan tersebut. Dimulai dengan gambaran umum tentang lima kategori Tool, kemudian membahas prinsip desain yang umum untuk semua Tools dan bagaimana protokol MCP menyatukan ekosistem Tool. Di atas fondasi ini, ia menggunakan organisasi hierarkis, penemuan dinamis, dan Skills untuk mengatasi tantangan pemilihan Tool. Kemudian menguji secara rinci tiga kategori Tools yang dipanggil Agent secara proaktif—Perception, Execution, dan Collaboration—sebelum beralih ke arsitektur Agent asinkron yang digerakkan oleh event (event-driven) dan Event-Triggered serta User Communication Tools yang dibangun di atasnya. Bab ini diakhiri dengan “Proactive Tool Discovery,” yang secara sistematis membahas penemuan ketika jumlah Tools mencapai ratusan atau ribuan. Bagaimana sebuah Agent mengubah lintasan penggunaan Tool (tool-use trajectories) yang dievaluasi menjadi kemampuan baru dibahas secara sistematis di Bab 8, “Continuous Agent Evolution.”
+Bab ini dimulai dengan gambaran umum lima kategori alat, lalu membahas prinsip desain umum dan cara protokol MCP menyatukan ekosistem alat. Di atas fondasi ini, organisasi hierarkis, penemuan dinamis, dan Skills digunakan untuk mengatasi tantangan pemilihan alat. Selanjutnya dibahas secara rinci alat Persepsi, Eksekusi, dan Kolaborasi yang dipanggil Agent secara proaktif, lalu arsitektur Agent asinkron berbasis peristiwa beserta alat Pemicu Peristiwa dan Komunikasi Pengguna. Bab ditutup dengan penemuan proaktif ketika jumlah alat mencapai ratusan atau ribuan.
 
 ## Klasifikasi Alat
 
@@ -176,7 +171,15 @@ Tool persepsi sering menghadapi tantangan untuk mengembalikan jauh lebih banyak 
 >
 > Sebagian besar tool ini didasarkan pada API terbuka yang gratis dan dapat digunakan tanpa pendaftaran. Sudah ada banyak server tool persepsi siap pakai yang tersedia di ekosistem MCP. Bab 5 akan mendemonstrasikan bahwa sebagian besar kemampuan ini dapat dicakup oleh tujuh tool inti yang dikombinasikan dengan dokumen Skill.
 
+### Persepsi Multimodal
+
+Untuk memahami gambar, video, audio, dan PDF, Agent memerlukan persepsi multimodal. Ada tiga jalur: pemrosesan multimodal asli oleh model, ekstraksi otomatis menjadi teks, dan membungkus model multimodal sebagai tool.
+
+Pemrosesan asli memiliki batas kemampuan tertinggi; encoder seperti Vision Transformer memetakan berbagai data ke ruang semantik bersama. Ekstraksi teks cocok untuk model tanpa dukungan asli dan biasanya lebih hemat token pada PDF yang didominasi teks, tetapi kehilangan tata letak, bagan, dan gambar. Jika model utama tidak multimodal, tool seperti `analyze_image`, `analyze_pdf`, dan `analyze_audio` dapat meneruskan berkas serta pertanyaan ke model khusus dan mengembalikan ringkasan singkat, sehingga konteks tetap kecil.
+
 ## Tool Eksekusi
+
+Revisi ini juga membedakan isolasi tingkat proses untuk Agent berisiko rendah, container atau microVM untuk input tak tepercaya, serta kuota sumber daya di setiap tingkat. Sidecar ringan memeriksa bidang terstruktur setiap panggilan sebagai gerbang keamanan; setelah penolakan berulang, gunakan pemutus sirkuit dan minta keputusan pengguna. Operasi yang tidak idempoten memakai alur “pra-pemeriksaan lalu konfirmasi”.
 
 Jika tool persepsi adalah "indra" Agent, tool eksekusi adalah "tangan dan kaki"-nya. Namun berbeda dengan tool persepsi, tool eksekusi bisa gagal dengan harga mahal: file yang terhapus secara tidak sengaja akan hilang selamanya, perintah sistem yang buruk bisa melumpuhkan layanan, panggilan API yang salah perhitungan bisa menghabiskan uang nyata. Oleh karena itu, desain mereka harus mencapai keseimbangan yang rapuh antara **keterbukaan kemampuan** dan **batasan keamanan**.
 
@@ -346,7 +349,9 @@ Untuk mengatasinya, kita memerlukan **arsitektur Agent asinkron berbasis peristi
 
 ![Gambar 4-2: Arsitektur Event-Driven Asynchronous Agent](images/fig4-2.svg)
 
-### OpenClaw dan Kebutuhan Dunia Nyata akan Arsitektur Event-Driven
+### Implementasi Mekanisme Berbasis Peristiwa di OpenClaw
+
+Versi baru menegaskan bahwa Hooks berasal dari siklus hidup internal OpenClaw, sedangkan Cron dan Heartbeat digerakkan oleh waktu. Email dan callback API eksternal memerlukan jalur masuk segera seperti Channel pada PineClaw.
 
 Kerangka kerja (*framework*) *open-source* OpenClaw (arsitekturnya akan dirinci di Bab 5) menerima pesan multi-saluran melalui bidang kendali (*control plane*) Gateway dan merutekannya ke *runtime* Agent. Kerangka kerja ini menyediakan tiga mekanisme otomatisasi bawaan:
 
@@ -382,6 +387,8 @@ Dari perspektif desain, *event-triggered tools* harus menetapkan kondisi pemicu 
 
 ### Alat Komunikasi Pengguna
 
+Di OpenClaw, sesi transparan bagi pengguna: pengguna dan Agent dapat mengirim pesan kapan saja melalui tool khusus yang mendukung gambar, berkas, notifikasi push, komunikasi multimodal, dan Generative UI.
+
 User communication tools (alat komunikasi pengguna) muncul dari peningkatan keragaman saluran komunikasi antara Agent dan pengguna. Banyak Agent (seperti Claude Code, Manus, Genspark) menggunakan loop ReAct asli, di mana setiap hal yang Agent "katakan" (yakni, pesan asisten) dikirim langsung ke pengguna, yang mana pengguna harus membuka sesi spesifik di aplikasi untuk bercakap-cakap dengan Agent. OpenClaw adalah salah satu Agent multiguna yang paling berpengaruh yang mematahkan paradigma komunikasi interaksi manusia-komputer ini: sesinya transparan bagi pengguna—pengguna tidak perlu menyadari keberadaan sesi tersebut atau peduli terhadap detail panggilan alat Agent; baik pengguna maupun Agent dapat saling mengirimkan pesan kapan saja, alih-alih menggunakan pola pesan pengguna/tanggapan Agent yang ketat. Konsekuensinya, banyak pengguna merasa OpenClaw memiliki "kehadiran layaknya manusia," mengirimkan pesan kepada mereka secara asinkron seperti yang dilakukan seorang sekretaris. Pesan teks ini bukanlah pesan asisten model yang disalurkan langsung ke pengguna; pesan tersebut dikirim melalui alat khusus, dapat membawa lampiran gambar dan file, dan dapat memicu *push notification* bergantung pada urgensinya.
 
 Lebih dari sekadar komunikasi berbasis teks, semakin banyak Agent yang memiliki kemampuan komunikasi multimodal, seperti mengirim pesan kartu terstruktur atau email pengingat. Beberapa Agent telah mulai bereksperimen dengan UI generatif, menggunakan HTML atau metode lain untuk membuat antarmuka interaktif yang menyajikan informasi kepada pengguna dengan cara yang lebih ramah pengguna. Dari perspektif desain, *user communication tools* harus mendukung pengiriman pesan asinkron (pengguna mungkin tidak sedang *online*), menyediakan pelacakan status baca/belum dibaca, dan mempertahankan konsistensi pesan di berbagai saluran.
@@ -397,6 +404,8 @@ Untuk tugas yang berjalan lama, Agent perlu secara proaktif memberi tahu penggun
 *User communication tools* menyelesaikan masalah mengenai "bagaimana menjangkau pengguna." Namun demikian, identitas yang diadopsi oleh Agent di saluran-saluran tersebut dan lingkungan tempat Agent melakukan tindakan atas nama pengguna memerlukan suatu lapisan identitas serta infrastruktur lingkungan eksekusi, yang mana hal ini merupakan topik di bagian berikutnya.
 
 ### Identitas Virtual dan Lingkungan Eksekusi Terisolasi
+
+Komputer virtual dapat berjalan 24/7, membatasi akses Agent ke berkas lokal, dan memastikan kesalahan paling jauh hanya merusak lingkungan virtual. Pertukaran data memakai sistem berkas bersama dan referensi path.
 
 Sedikit tentang penempatan bagian ini: identitas virtual dan lingkungan eksekusi yang terisolasi pada dasarnya adalah infrastruktur lingkungan eksekusi, satu kesatuan dengan *sandbox* yang didiskusikan pada bagian alat eksekusi. Bagian-bagian ini muncul di sini, pada bagian arsitektur asinkron, karena Agent yang paling membutuhkan hal tersebut adalah mereka yang berjalan secara mandiri, tetap menetap, dan bertindak atas nama pengguna setiap saat.
 
@@ -590,11 +599,13 @@ Namun paruh yang lebih kritis dari penelitian ini berkaitan dengan **pelatihan (
 > **4. Pembatalan dan Kueri Status untuk Tool Paralel**: Setelah tool asinkron selesai, hasil nyata disuntikkan ke dalam percakapan melalui event baru. Mendukung pembatalan atau kueri kemajuan melalui task ID. **Skenario Validasi**: Pengguna meminta, "Jalankan ketiga skrip ini secara bersamaan untuk saya. Mana saja yang selesai lebih dulu, periksa kemajuan skrip yang tersisa. Jika ada yang belum melebihi 50%, batalkan." Ketiga skrip mensimulasikan proses analisis, mengeluarkan kemajuan terus menerus dengan kecepatan masing-masing 3%, 2%, dan 1% per detik. Agent memulai tiga perintah terminal asinkron secara bersamaan. Ketika skrip pada 3% per detik selesai dalam sekitar 33 detik, Agent melakukan kueri status dari dua terminal yang tersisa, menemukan satu sekitar 66% dan yang lainnya sekitar 33%. Agent kemudian membatalkan yang belum melebihi 50%. Setelah kedua terminal selesai, Agent mengintegrasikan hasil untuk menghasilkan laporan lengkap.
 >
 
-## Penemuan Tool Secara Proaktif
+## Penemuan Tool Secara Proaktif dan Pengungkapan Progresif Berbasis Skill
 
 Diskusi sejauh ini telah mencakup prinsip-prinsip desain untuk tool individual dan ekosistem tool. Namun seiring dengan bertambahnya tool yang tersedia dari belasan menjadi ratusan atau ribuan, sebuah masalah baru muncul—bagaimana Anda secara efisien menemukan yang Anda butuhkan dalam sebuah pustaka yang luas? Bagian ini mengulas secara singkat metode penemuan tool yang ada (pra-pemfilteran berbasis pengambilan (retrieval-based pre-filtering), deklarasi proaktif, pencocokan hierarkis), kemudian beralih ke pendekatan yang lebih baru dan lebih ringan: pengungkapan progresif (progressive disclosure) melalui Skills.
 
-### Metode Penemuan Tool yang Ada
+### Penemuan Tool Native Model
+
+Cara penemuan bergantung pada representasi tool di framework Agent: sebagian memakai tool native model, sebagian memakai Skill. Ketika ada kesenjangan kemampuan, Agent menyatakan kebutuhannya dalam bahasa alami dan sistem mencocokkan serta menyuntikkan tool sesuai permintaan.
 
 Pendekatan tradisional menyuntikkan setiap skema tool ke dalam System Prompt sekaligus, dan ini akan cepat rusak begitu jumlah tool mencapai ribuan: konteks akan tersumbat dengan manual tool, dan akurasi pemilihan menurun. Pra-pemfilteran berbasis pengambilan (retrieval-based pre-filtering) (yang dibahas dalam bagian "Ekosistem Tool" di atas), yang menyaring kandidat berdasarkan kesamaan semantik terlebih dahulu, meringankan masalah ini tetapi membawa batasan yang melekat—pendekatan ini mencocokkan **satu kali**, terhadap kueri awal pengguna. Sebuah permintaan yang tampak sederhana seperti "debug file tersebut" mungkin menarik rantai tool lintas domain dengan multi-langkah—akses file, analisis kode, eksekusi perintah—yang tidak ada seorang pun yang dapat memprediksi saat tugas tersebut dimulai.
 
@@ -634,6 +645,8 @@ Jelas, seluruh mekanisme deklarasi-pencocokan-injeksi ini berfungsi, tetapi memb
 > **Observasi yang Diharapkan**: Peningkatan signifikan dalam akurasi dan tingkat penyelesaian tugas. Penemuan tool proaktif tidak hanya membantu LLM yang mumpuni menangani skenario dengan ribuan tool, tetapi juga menjaga model kecil tetap dapat digunakan dalam skenario dengan ratusan tool.
 
 ### Skills: Mengubah Penemuan Tool Menjadi "Pencarian Sesuai Permintaan"
+
+**Pengungkapan progresif.** Saat mulai, Agent hanya melihat katalog tipis berisi `name` dan `description` Skill, lalu membaca sub-Skill dan berkas rujukannya ketika konteks memerlukannya—seperti berkonsultasi dengan buku referensi atau Wikipedia. Tool native lebih ramah model karena JSON, sedangkan Skill lebih ramah penulis manusia dan kesalahan lokal biasanya tidak melumpuhkan seluruh Agent.
 
 Alur pemikiran yang belakangan ini mendapat tempat berasal dari mekanisme Skills. Bab 2 memperkenalkan **Progressive Disclosure** pada Skills sebagai rekayasa konteks; di sini kita memperlakukannya sebagai paradigma penemuan tool—dan perbedaan utamanya dari bagian sebelumnya adalah infrastruktur "indeks *embedding* + pencocokan semantik" dihilangkan sama sekali.
 

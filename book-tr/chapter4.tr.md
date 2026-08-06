@@ -1,6 +1,6 @@
 # Araçlar
 
-Bilim kurgu filmi *Her*'de, yapay zeka asistanı Samantha e-postaları proaktif olarak organize edebilir, duygusal açıdan karmaşık mesajları tanıyıp inceltilmiş yanıtlar önerebilir, yayıncılık konularında baş karakteri temsil edebilir ve farklı iletişim kanalları arasında sorunsuzca geçiş yapabilir. Zekası ikna edicidir çünkü güçlü **araçlara** sahiptir—dil "beynini" gerçek dijital dünyaya bağlayan "el, ayak ve duyular".
+Bilim kurgu filmi *Her*'de, yapay zekâ asistanı Samantha e-postaları proaktif biçimde düzenler, duygusal açıdan karmaşık mesajları tanıyıp yanıtları iyileştirir, yayıncılık işlerinde baş karakteri temsil eder ve iletişim kanalları arasında sorunsuzca geçiş yapar. Zekâsını etkileyici kılan, dil “beynini” gerçek dijital dünyaya bağlayan “eller, ayaklar ve duyular” olan güçlü **araçlarıdır**. Manus ve OpenClaw gibi günümüzün genel amaçlı Agent'ları, *Her*'de Samantha'nın ihtiyaç duyduğu yeteneklerin çoğunu şimdiden gerçekleştirmiştir.
 
 Ancak günümüz teknolojisiyle böyle bir asistan inşa etmek, iki temel zorluğu çözmek anlamına gelir:
 
@@ -183,7 +183,15 @@ Algı araçları sıklıkla, Agent'ın işleyebileceğinden çok daha fazla bilg
 >
 > Bu araçların çoğu ücretsiz, açık API'lere dayanır ve kayıt olmadan kullanılabilir. MCP ekosisteminde zaten birçok hazır algı aracı sunucusu mevcuttur. Bölüm 5, bu işlevselliklerin çoğunun yedi temel araç ile Skill dokümanlarının birleşimiyle kapsanabileceğini gösterecek.
 
+### Çok Modlu Algı
+
+Görüntüleri, videoyu, sesi ve PDF'leri anlayabilmek için Agent'ın çok modlu algıya ihtiyacı vardır. Üç yol vardır: modelin yerel çok modlu işlemesi, içeriği otomatik olarak metne çıkarmak ve çok modlu modeli araç olarak sarmalamak.
+
+Yerel işleme en yüksek yetenek tavanına sahiptir; Vision Transformer gibi kodlayıcılar farklı verileri ortak bir anlamsal uzaya eşler. Metin çıkarma, yerel desteği olmayan modeller ve metin ağırlıklı PDF'ler için daha az token kullanır, ancak düzeni, grafikleri ve görüntüleri kaybeder. Ana model çok modlu değilse `analyze_image`, `analyze_pdf` ve `analyze_audio` gibi araçlar dosyayı ve soruyu uzman bir modele aktararak bağlamda yalnızca kısa bir sonuç tutabilir.
+
 ## Yürütme Araçları
+
+Güncellenen güvenlik tasarımı düşük riskli Agent'lar için süreç düzeyi izolasyonu, güvenilmeyen girdiler için container veya microVM'i ve her katmanda kaynak kotalarını kullanır. Hafif Sidecar, yapılandırılmış araç çağrısını yürütme geçidi olarak denetler; art arda retlerde devre kesici çalıştırılıp kullanıcı kararına dönülmelidir. İdempotent olmayan işlemler “ön kontrol–onay” olmak üzere iki aşamalıdır.
 
 Algı araçları Agent'ın "duyularıysa", yürütme araçları onun "el ve ayaklarıdır". Ama algı araçlarından farklı olarak, yürütme araçları pahalı biçimde başarısız olabilir: yanlışlıkla silinen bir dosya sonsuza dek gider, kötü bir sistem komutu bir servisi çökertebilir, yanlış değerlendirilmiş bir API çağrısı gerçek para kaybettirebilir. Bu yüzden tasarımları **yetenek açıklığı** ile **güvenlik kısıtları** arasında hassas bir denge kurmalıdır.
 
@@ -353,7 +361,9 @@ Bunun için, bir **olay güdümlü asenkron Agent mimarisine** ihtiyacımız var
 
 ![Şekil 4-2: Olay Güdümlü Asenkron Agent Mimarisi](images/fig4-2.svg)
 
-### OpenClaw'dan Olay Güdümlü Mimarinin Gerçek Dünya İhtiyacını Anlamak
+### OpenClaw'da Olay Güdümlü Mekanizmaların Uygulanması
+
+Güncellenen metin, Hooks'un OpenClaw'ın iç yaşam döngüsünden geldiğini, Cron ve Heartbeat'in ise zaman güdümlü olduğunu açıklar. Harici e-posta ve API geri çağrıları için PineClaw'daki Channel gibi anlık bir giriş yolu gerekir.
 
 Açık kaynak çerçevesi OpenClaw (mimarisi Bölüm 5'te ayrıntılı olarak ele alınacak), bir Gateway kontrol düzlemi aracılığıyla çok kanallı mesajları alır ve bunları Agent çalışma zamanına yönlendirir. Üç yerleşik otomasyon mekanizması sağlar:
 
@@ -389,6 +399,8 @@ Tasarım açısından, olay tetikleyici araçlar ilgisiz olayların Agent'ı uya
 
 ### Kullanıcı İletişim Araçları
 
+OpenClaw'da oturumlar kullanıcıya şeffaftır; kullanıcı ve Agent özel araçlarla görüntü, dosya, push bildirimi, çok modlu içerik ve Generative UI içeren mesajları her zaman paylaşabilir.
+
 Kullanıcı iletişim araçları, Agent ile kullanıcı arasındaki iletişim kanallarının giderek çeşitlenmesinden doğar. Birçok Agent (Claude Code, Manus, Genspark gibi) yerleşik bir ReAct döngüsü kullanır, burada Agent'ın "söylediği" her şey (yani asistan mesajları) doğrudan kullanıcıya gönderilir, kullanıcının Agent ile konuşmak için uygulamada belirli bir oturum açması gerekir. OpenClaw, bu insan-bilgisayar iletişim paradigmasını bozan en etkili genel amaçlı Agent'lardan biridir: oturumları kullanıcı için şeffaftır—kullanıcının oturumun varlığından haberdar olmasına veya Agent'ın tool call'larının ayrıntılarını umursamasına gerek yoktur; hem kullanıcı hem de Agent her an birbirine mesaj gönderebilir, katı bir kullanıcı-mesajı, Agent-yanıtı kalıbı yerine. Sonuç olarak, birçok kullanıcı OpenClaw'ın bir sekreterin yapacağı gibi asenkron olarak mesaj gönderen "insan benzeri bir varlığa" sahip olduğunu hissediyor. Bu metin mesajları modelin asistan mesajlarının doğrudan kullanıcıya aktarılması değildir; özel araçlar aracılığıyla gönderilir, görüntü ve dosya ekleri taşıyabilir ve aciliyete göre push bildirimlerini tetikleyebilir.
 
 Metin tabanlı iletişimin ötesinde, giderek artan sayıda Agent, yapılandırılmış kart mesajları veya hatırlatma e-postaları gönderme gibi çok modlu iletişim yeteneklerine sahiptir. Bazı Agent'lar, bilgiyi kullanıcılara daha kullanıcı dostu bir şekilde sunmak için HTML veya diğer yöntemleri kullanarak etkileşimli arayüzler oluşturan üretici UI ile deneyler yapmaya başladı. Tasarım açısından, kullanıcı iletişim araçları asenkron mesajlaşmayı desteklemeli (kullanıcı çevrimiçi olmayabilir), okundu/okunmadı durumu izlemesi sağlamalı ve birden fazla kanal arasında mesaj tutarlılığını korumalıdır.
@@ -404,6 +416,8 @@ Uzun süren görevler için, Agent tamamlandığında kullanıcının dikkatini 
 Kullanıcı iletişim araçları "kullanıcıya nasıl ulaşılacağı" sorununu çözer. Ancak, Agent'ın bu kanallarda üstlendiği kimlik ve kullanıcı adına eylemleri gerçekleştirdiği ortam, bir sonraki bölümün konusu olan bir kimlik ve ortam altyapısı katmanı gerektirir.
 
 ### Sanal Kimlik ve İzole Yürütme Ortamı
+
+Sanal bilgisayar 7/24 çalışabilir, Agent'ın yerel dosyalara serbest erişimini sınırlar ve bir hata en fazla sanal ortamı etkiler. Veriler paylaşılan dosya sistemi ve yol referanslarıyla aktarılır.
 
 Bu bölümün konumu hakkında bir not: sanal kimlik ve izole yürütme ortamları özünde yürütme araçları altında tartışılan sandbox'larla aynı özün parçası olan yürütme ortamı altyapısıdır. Burada, asenkron mimari bölümünde görünmelerinin nedeni, bunlara en acil ihtiyaç duyan Agent'ların bağımsız çalışan, yerleşik kalan ve her an kullanıcı adına hareket eden Agent'lar olmasıdır.
 
@@ -597,11 +611,13 @@ Ama bu araştırmanın daha kritik yarısı **eğitimle** ilgilidir ve yukarıda
 > **4. Paralel Araçlar için İptal ve Durum Sorgusu**: Bir asenkron araç tamamlandıktan sonra, gerçek sonuç yeni bir olay aracılığıyla konuşmaya enjekte edilir. Görev ID'si aracılığıyla iptal veya ilerleme sorgusunu destekler. **Doğrulama Senaryosu**: Kullanıcı "Bu üç betiği benim için eş zamanlı çalıştır. Hangisi önce biterse, kalan betiklerin ilerlemesini kontrol et. Herhangi biri %50'yi aşmadıysa, iptal et" diye ister. Üç betik, sırasıyla saniyede %3, %2 ve %1 hızlarında sürekli ilerleme çıktısı vererek analiz süreçlerini simüle eder. Agent, üç asenkron terminal komutunu eş zamanlı olarak başlatır. Saniyede %3'lük betik yaklaşık 33 saniyede bittiğinde, Agent kalan iki terminalin durumunu sorgular, birinin yaklaşık %66'da, diğerinin ise yaklaşık %33'te olduğunu bulur. Ardından %50'yi aşmayanı iptal eder. Her iki terminal de tamamlandıktan sonra, sonuçları eksiksiz bir rapor üretmek için entegre eder.
 >
 
-## Proaktif Araç Keşfi
+## Proaktif Araç Keşfi ve Skill Tabanlı Aşamalı Açıklama
 
 Şimdiye kadarki tartışma, tek tek araçlar ve araç ekosistemi için tasarım ilkelerini kapsadı. Ama mevcut araçlar bir düzineden yüzlere veya binlere büyüdükçe, yeni bir sorun ortaya çıkar—devasa bir kütüphanede ihtiyacınız olanı verimli biçimde nasıl bulursunuz? Bu bölüm önce mevcut araç keşfi yöntemlerini (retrieval tabanlı ön filtreleme, proaktif bildirim, hiyerarşik eşleştirme) kısaca gözden geçirir, ardından daha yeni, daha hafif bir yaklaşıma döner: Skills aracılığıyla kademeli açığa çıkarma.
 
-### Mevcut Araç Keşfi Yöntemleri
+### Model-Yerel Araç Keşfi
+
+Keşif yöntemi, Agent çerçevesinin araçları nasıl temsil ettiğine bağlıdır: bazı çerçeveler model-yerel araçlar, bazıları Skill tabanlı temsil kullanır. Bir yetenek boşluğu oluştuğunda Agent ihtiyacını doğal dille belirtir ve sistem aracı gerektiğinde eşleştirip yükler.
 
 Geleneksel yaklaşım her aracın şemasını bir kerede system prompt'a enjekte eder ve araçlar binlere ulaştığında hızla çöker: context araç el kitaplarıyla tıkanır ve seçim doğruluğu düşer. Önce adayları semantik benzerliğe göre eleyen retrieval tabanlı ön filtreleme (yukarıdaki "Araç Ekosistemi" bölümünde tartışıldı), sorunu hafifletir ama doğasında olan bir sınırlama taşır—yalnızca **bir kez**, kullanıcının başlangıç sorgusuna karşı eşleştirir. "Dosyayı hata ayıkla" kadar masum görünen bir istek, görev başladığında kimsenin öngöremeyeceği çok adımlı, çok alanlı bir araç zincirini—dosya erişimi, kod analizi, komut yürütme—gerektirebilir.
 
@@ -641,6 +657,8 @@ Açıkçası, tüm bildir-eşleştir-enjekte mekanizması çalışır, ama çok 
 > **Beklenen Gözlemler**: Doğruluk ve görev tamamlama oranında önemli iyileşme. Proaktif araç keşfi yalnızca yetenekli LLM'lerin binlerce araçlı senaryoları ele almasına yardımcı olmakla kalmaz, aynı zamanda küçük modelleri yüzlerce araçlı senaryolarda kullanılabilir tutar.
 
 ### Skills: Araç Keşfini "İhtiyaç Halinde Arama"ya Dönüştürmek
+
+**Aşamalı açıklama.** Başlangıçta Agent yalnızca her Skill'in `name` ve `description` alanlarından oluşan ince bir katalog görür; bağlam ihtiyaç duyduğunda alt Skill'i ve başvurulan dosyaları okur. Bu, bir başvuru kitabına veya Wikipedia'ya gerektiğinde bakmaya benzer. JSON kullanan model-yerel araçlar modele, doğal dilli Skill'ler ise insan yazarlarına daha uygundur.
 
 Son zamanlarda ivme kazanan düşünce hattı Skills mekanizmasından gelir. Bölüm 2, Skills'in **Kademeli Açığa Çıkarmasını** context engineering olarak tanıttı; burada bunu bir araç keşfi paradigması olarak ele alıyoruz—ve önceki bölümden ayırt edici farkı, "embedding indeksi + semantik eşleştirme" altyapısının tamamen ortadan kalkmasıdır.
 

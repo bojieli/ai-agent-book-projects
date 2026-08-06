@@ -1,13 +1,8 @@
 # Capítulo 4: Integración de Herramientas y Protocolos MCP
 
-En la película de ciencia ficción *Her*, la asistente de IA Samantha organiza correos electrónicos de forma proactiva, identifica mensajes emocionalmente complejos y propone respuestas retocadas, representa al protagonista en asuntos de publicación y conmuta sin problemas entre diferentes canales de comunicación. Su inteligencia es convincente porque posee potentes **herramientas**: las "manos, pies y sentidos" que conectan un "cerebro" de lenguaje con el mundo digital real.
+En la película de ciencia ficción *Her*, la asistente de IA Samantha organiza correos electrónicos de forma proactiva, identifica mensajes emocionalmente complejos y propone respuestas retocadas, representa al protagonista en asuntos de publicación y conmuta sin problemas entre diferentes canales de comunicación. Su inteligencia es convincente porque posee potentes **herramientas**: las «manos, pies y sentidos» que conectan un «cerebro» lingüístico con el mundo digital real. Los Agentes de propósito general actuales, como Manus y OpenClaw, ya han implementado la mayoría de las capacidades que Samantha necesita en *Her*.
 
-Sin embargo, para construir un asistente semejante con la tecnología actual, necesitamos resolver dos desafíos centrales:
-
-1. **El desafío de la selección de herramientas**: Cuando la documentación de miles de herramientas supera la ventana de contexto, ¿cómo puede un Agente encontrar de forma precisa y eficiente la herramienta necesaria para completar una tarea? ¿Cómo evoluciona de "seleccionar" herramientas pasivamente a "descubrir" herramientas proactivamente? Este capítulo se centra en los principios de diseño de herramientas, el estado actual del ecosistema y el descubrimiento proactivo a gran escala. Permitir que el Agente cree, modifique y elimine herramientas de forma autónoma basándose en la experiencia de ejecución se pospone para el Capítulo 8.
-2. **El desafío de la asincronía y los eventos**: ¿Cómo puede un Agente gestionar tareas de larga duración, manejar interrupciones del usuario o del sistema en cualquier momento y responder a eventos externos de múltiples canales como correo electrónico, calendario y alertas del sistema sin quedar atrapado en un punto muerto de espera síncrona?
-
-Este capítulo se desarrolla en torno a estos dos desafíos. En primer lugar, ofrece una visión general de la clasificación de cinco categorías de herramientas. A continuación, analiza los principios de diseño universales aplicables a todas las herramientas, así como la forma en que el protocolo MCP unifica el ecosistema de herramientas y aborda el desafío de la selección mediante la organización jerárquica, el descubrimiento dinámico y las Skills. Posteriormente, profundiza en las tres categorías de herramientas invocadas activamente por el Agente: percepción, ejecución y colaboración. Luego, analiza la arquitectura de Agentes asíncronos orientados a eventos, junto con las herramientas disparadas por eventos y de comunicación con el usuario basadas en esta arquitectura. Finalmente, concluye con el "descubrimiento proactivo de herramientas", respondiendo sistemáticamente al problema del descubrimiento cuando la escala de herramientas alcanza cientos o miles. Sobre esta base, la forma en que un Agente convierte las trayectorias evaluadas de uso de herramientas en nuevas capacidades se analizará sistemáticamente en el Capítulo 8 (La evolución continua del Agente).
+Este capítulo ofrece primero una visión general de cinco categorías de herramientas. A continuación analiza los principios de diseño aplicables a todas ellas, la forma en que el protocolo MCP unifica su ecosistema y cómo la organización jerárquica, el descubrimiento dinámico y las Skills abordan el desafío de la selección. Después profundiza en las tres categorías invocadas activamente por el Agente —percepción, ejecución y colaboración— y examina la arquitectura asíncrona orientada a eventos, junto con las herramientas disparadas por eventos y de comunicación con el usuario. Finalmente concluye con el descubrimiento proactivo de herramientas a escalas de cientos o miles.
 
 ## Clasificación de herramientas
 
@@ -183,7 +178,15 @@ Las herramientas de percepción enfrentan a menudo el desafío de que la cantida
 >
 > La mayoría de estas herramientas se basan en API gratuitas y abiertas que se pueden utilizar sin registro. En el ecosistema MCP existe una gran cantidad de servidores de herramientas de percepción listos para usar. El Capítulo 5 demostrará que la mayoría de estas funciones se pueden cubrir con siete herramientas núcleo combinadas con documentos de Skill.
 
+### Percepción multimodal
+
+Para comprender imágenes, vídeo, audio y PDF, un Agente necesita percepción multimodal. Hay tres vías: procesamiento multimodal nativo del modelo, extracción automática del contenido a texto y modelos multimodales envueltos como herramientas.
+
+El procesamiento nativo ofrece el techo de capacidad más alto: codificadores como el Vision Transformer asignan cada tipo de dato a un espacio semántico común. La extracción de texto es una alternativa para modelos sin soporte nativo y suele ahorrar tokens en PDF dominados por texto, aunque pierde diseño, gráficos e imágenes. Cuando el modelo principal no es multimodal, herramientas como `analyze_image`, `analyze_pdf` y `analyze_audio` pueden enviar el archivo y una pregunta a un modelo especializado y devolver una descripción breve, evitando que los datos multimodales ocupen el contexto.
+
 ## Herramientas de ejecución
+
+La revisión también distingue el aislamiento a nivel de proceso para Agentes de bajo riesgo, contenedores o microVM para entradas no confiables y cuotas de recursos en todos los niveles. Un Sidecar ligero revisa los campos estructurados de cada llamada como puerta de seguridad; tras varios rechazos debe activar un interruptor de circuito y pedir la decisión del usuario. Las operaciones no idempotentes siguen un flujo de «precomprobación y confirmación».
 
 Si las herramientas de percepción son los "sentidos" del Agente, las herramientas de ejecución son sus "manos y pies". Sin embargo, a diferencia de las herramientas de percepción, el costo de los errores en las herramientas de ejecución puede ser extremadamente alto: los archivos eliminados por error no se pueden recuperar, comandos de sistema incorrectos pueden causar interrupciones en el servicio y llamadas a API indebidas pueden generar pérdidas financieras reales. Por lo tanto, el diseño de las herramientas de ejecución requiere lograr un sutil equilibrio entre la **apertura de capacidades** y las **restricciones de seguridad**.
 
@@ -353,7 +356,9 @@ Para ello necesitamos una **arquitectura de Agentes asíncrona orientada a event
 
 ![Figura 4-2 Arquitectura de Agente asíncrono orientado a eventos](images/fig4-2.svg)
 
-### De OpenClaw a la necesidad real del enfoque orientado a eventos
+### Implementación de mecanismos orientados a eventos en OpenClaw
+
+La revisión aclara que Hooks proceden del ciclo de vida interno de OpenClaw, mientras Cron y Heartbeat son mecanismos impulsados por el tiempo. Los correos y callbacks de API externos necesitan una entrada inmediata, como el Channel de PineClaw.
 
 El framework de código abierto OpenClaw (cuya arquitectura se detallará en el Capítulo 5) recibe mensajes multicanal a través del plano de control Gateway y los enruta al tiempo de ejecución del Agente. Proporciona tres mecanismos de automatización integrados:
 
@@ -389,6 +394,8 @@ A nivel de diseño, las herramientas disparadas por eventos deben definir condic
 
 ### Herramientas de comunicación con el usuario
 
+En OpenClaw las sesiones son transparentes: usuario y Agente pueden enviarse mensajes en cualquier momento mediante herramientas dedicadas, con imágenes, archivos, notificaciones push, comunicación multimodal y Generative UI.
+
 Las herramientas de comunicación con el usuario surgen a medida que los canales de comunicación entre el Agente y el usuario se diversifican cada vez más. Muchos Agentes (como Claude Code, Manus o Genspark) adoptan un bucle ReAct nativo, donde todas las palabras que "dice" el Agente —es decir, mensajes de tipo assistant) se envían directamente al usuario, y el usuario debe abrir una sesión específica en la aplicación para conversar con el Agente. OpenClaw es uno de los representantes más influyentes de Agentes generales que rompen este paradigma de interacción persona-ordenador: sus sesiones son transparentes para el usuario (el usuario no necesita percibir la existencia de la sesión ni preocuparse por los detalles de las llamadas a herramientas del Agente); tanto el usuario como el Agente pueden enviarse mensajes mutuamente en cualquier momento, en lugar de seguir un esquema rígido donde el usuario envía uno y el Agente responde otro. Por ello, muchas personas evalúan que OpenClaw posee una "sensación de presencia humana", comunicándose de forma asíncrona con el usuario mediante mensajes de texto al igual que una secretaria. En este caso, dichos mensajes de texto no consisten en volcar directamente la salida assistant del modelo al usuario, sino en utilizar herramientas dedicadas para enviar mensajes, los cuales pueden incluir imágenes y archivos adjuntos, además de notificaciones de alerta según el nivel de urgencia.
 
 Además de comunicarse mediante texto, cada vez más Agentes poseen capacidades de comunicación multimodal, como enviar tarjetas de mensajes estructuradas o correos de recordatorio. Algunos Agentes han comenzado a experimentar con UI generativa, utilizando HTML y otros medios para generar interfaces interactivas que presentan la información al usuario de forma más amigable. A nivel de diseño, las herramientas de comunicación con el usuario deben admitir el modo de mensajes asíncronos (el usuario no necesariamente está en línea), ofrecer seguimiento del estado leído/no leído y mantener la coherencia del mensaje en escenarios multicanal.
@@ -404,6 +411,8 @@ Para tareas de larga duración, el Agente necesita notificar activamente al usua
 Las herramientas de comunicación con el usuario resuelven "cómo contactar al usuario". Sin embargo, la identidad con la que el Agente aparece en estos canales y el entorno en el que ejecuta operaciones en nombre del usuario requieren una infraestructura de identidad y entorno, que es el tema de la siguiente sección.
 
 ### Identidad virtual y entorno de ejecución aislado
+
+Un ordenador virtual puede funcionar 24/7, aislar los archivos locales del usuario y limitar los daños a la máquina virtual si el Agente se equivoca. El intercambio usa un sistema de archivos compartido y rutas, no copias completas de contenido.
 
 Es necesario aclarar primero la posición de esta sección: la identidad virtual y el entorno de ejecución aislado constituyen esencialmente una infraestructura de entorno de ejecución alineada con los sandboxes discutidos en la sección de herramientas de ejecución; la razón por la que se desarrollan en esta sección de arquitectura asíncrona es porque solo un Agente capaz de ejecutarse de forma independiente, permanente y de actuar en nombre del usuario en cualquier momento los requiere con máxima urgencia.
 
@@ -596,11 +605,13 @@ Sin embargo, la otra mitad más crítica de esta investigación versa sobre el *
 >
 > **4. Cancelación de herramientas paralelas y consulta de estado**: Una vez completadas las herramientas asíncronas, se inyectan los resultados reales en la conversación mediante nuevos eventos, admitiendo la cancelación o consulta de avance mediante el ID de la tarea. **Escenario de verificación**: El usuario solicita "ayúdame a ejecutar estos tres scripts simultáneamente; cuando el primero termine, comprueba el avance de los restantes y, si alguno no supera el 50%, cancélalo". Tres scripts simulan procesos de análisis emitiendo avances continuamente mientras se ejecutan, a velocidades del 3%, 2% y 1% por segundo respectivamente. El Agente inicia simultáneamente los tres comandos de terminal asíncronos; cuando el script del 3% por segundo se completa en unos 33 segundos, el Agente consulta el estado de los otros dos terminales, descubriendo que uno se ha ejecutado hasta aproximadamente el 66% y el otro hasta el 33%, cancelando este último por no superar el 50%. Una vez completados ambos terminales, integra los resultados generando el informe completo.
 
-## Descubrimiento proactivo de herramientas
+## Descubrimiento proactivo y divulgación progresiva basada en Skills
 
 En las secciones anteriores se analizaron los principios de diseño de herramientas individuales y el ecosistema de herramientas. Sin embargo, cuando las herramientas disponibles pasan de una docena a cientos o miles, surge un nuevo problema: ¿cómo encontrar de forma eficiente la herramienta necesaria en un catálogo tan extenso? Esta sección repasa primero brevemente los métodos existentes de descubrimiento de herramientas (pre-filtrado por recuperación, declaración activa y coincidencia jerárquica), para presentar a continuación la idea más popular y ligera de revelación progresiva mediante Skills.
 
-### Métodos existentes de descubrimiento de herramientas
+### Descubrimiento de herramientas nativas del modelo
+
+La representación elegida por el marco determina el descubrimiento: algunos marcos usan herramientas nativas del modelo y otros usan Skills. Cuando aparece una carencia de capacidad, el Agente la declara en lenguaje natural y el sistema busca e inyecta la herramienta bajo demanda.
 
 La práctica tradicional consiste en inyectar los schemas de todas las herramientas en el prompt del sistema de una sola vez, pero cuando el número de herramientas alcanza miles, este método falla rápidamente: el contexto se llena con "manuales de instrucciones de herramientas" y la precisión de selección del modelo se degrada. El pre-filtrado por recuperación analizado en la sección "Ecosistema de herramientas" (filtrar primero un grupo de herramientas candidatas por similitud semántica) mitiga este problema, pero presenta una limitación intrínseca: realiza la coincidencia de **una sola vez** basándose en la consulta inicial del usuario, mientras que peticiones aparentemente simples como "debug el archivo" pueden desencadenar cadenas de herramientas de múltiples pasos y dominios (acceso a archivos, análisis de código, ejecución de comandos), siendo imposible prever todas las necesidades al inicio de la tarea.
 
@@ -640,6 +651,8 @@ Se observa fácilmente que todo este mecanismo de "declaración activa -> coinci
 > **Observación esperada**: La tasa de precisión y de finalización de tareas aumentan significativamente. El descubrimiento proactivo de herramientas no solo ayuda a los grandes modelos de alta capacidad a gestionar escenarios de miles de herramientas, sino que permite que modelos pequeños con pocos parámetros sigan siendo utilizables en escenarios de más de cien herramientas.
 
 ### Skills: Convirtiendo el descubrimiento en "consulta bajo demanda"
+
+**Divulgación progresiva.** Al iniciar, una Skill solo muestra un catálogo ligero con su `name` y `description`; el Agente lee la sub-Skill y sus referencias únicamente cuando el contexto lo necesita, como quien consulta un manual o Wikipedia. Las herramientas nativas son más amigables para el modelo gracias a JSON; las Skills son más amigables para los autores humanos y un error local no suele inutilizar todo el Agente.
 
 Una idea más popular recientemente proviene del mecanismo de Skills. El Capítulo 2 presentó la **revelación progresiva (Progressive Disclosure)** de las Skills desde la perspectiva de la ingeniería de contexto; aquí cambiamos de ángulo para considerarlo como un paradigma de descubrimiento de herramientas, cuya diferencia principal con la sección anterior radica en que ya no requiere la infraestructura de "índice de embeddings + coincidencia semántica".
 
