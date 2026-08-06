@@ -28,33 +28,33 @@ class FieldSpec:
         allowed = {f.name for f in cls.__dataclass_fields__.values()}
         return cls(**{k: v for k, v in value.items() if k in allowed})
 
-    def validate(self, value: str) -> tuple[bool, str]:
-        value = value.strip()
-        if self.required and not value:
+    def validate(self, value: Optional[str]) -> tuple[bool, str]:
+        val = (str(value) if value is not None else "").strip()
+        if self.required and not val:
             return False, "该项为必填项，不能留空"
-        if not value:
+        if not val:
             return True, ""
-        if self.options and value not in self.options:
+        if self.options and val not in self.options:
             lowered = {o.casefold(): o for o in self.options}
-            if value.casefold() not in lowered:
+            if val.casefold() not in lowered:
                 return False, f"请选择以下选项之一：{', '.join(self.options)}"
         if self.pattern:
             try:
-                if re.fullmatch(self.pattern, value) is None:
+                if re.fullmatch(self.pattern, val) is None:
                     return False, self.format_hint or f"格式应匹配 {self.pattern}"
             except re.error:
                 # A malformed pattern from a web page must not crash the call.
                 pass
         kind = self.input_type.lower()
-        if kind == "email" and re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", value) is None:
+        if kind == "email" and re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", val) is None:
             return False, self.format_hint or "请输入有效邮箱，例如 name@example.com"
-        if kind in {"tel", "phone"} and re.fullmatch(r"[+()\d][+()\d .-]{5,24}", value) is None:
+        if kind in {"tel", "phone"} and re.fullmatch(r"[+()\d][+()\d .-]{5,24}", val) is None:
             return False, self.format_hint or "请输入包含区号的有效电话号码"
-        if kind == "date" and re.fullmatch(r"\d{4}-\d{2}-\d{2}", value) is None:
+        if kind == "date" and re.fullmatch(r"\d{4}-\d{2}-\d{2}", val) is None:
             return False, self.format_hint or "日期格式应为 YYYY-MM-DD"
         if kind == "number":
             try:
-                float(value)
+                float(val)
             except ValueError:
                 return False, self.format_hint or "请输入数字"
         return True, ""
