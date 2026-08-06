@@ -50,10 +50,29 @@ def _catalog() -> dict:
     return {
         "transport": "mcp-stdio",
         "tools_list_received": True,
+        "mcp_sdk_version": "2.0.0",
+        "protocol_version": "2026-07-28",
         "tool_count": len(names),
         "unique_tool_count": len(names),
         "tool_names": sorted(names),
     }
+
+
+def test_catalog_gate_requires_v2_sdk_and_current_protocol():
+    catalog = _catalog()
+    assert runner.derive_acceptance(
+        _protocol(), catalog, _all_receipts(), outside_witness_unchanged=True
+    )["gates"]["catalog_from_real_mcp"]
+
+    catalog["protocol_version"] = "2025-11-25"
+    assert not runner.derive_acceptance(
+        _protocol(), catalog, _all_receipts(), outside_witness_unchanged=True
+    )["gates"]["catalog_from_real_mcp"]
+
+    catalog.update(protocol_version="2026-07-28", mcp_sdk_version="1.29.0")
+    assert not runner.derive_acceptance(
+        _protocol(), catalog, _all_receipts(), outside_witness_unchanged=True
+    )["gates"]["catalog_from_real_mcp"]
 
 
 def test_protocol_covers_every_manuscript_category_and_mutation():

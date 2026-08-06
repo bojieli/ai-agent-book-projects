@@ -8,7 +8,6 @@ import re
 import logging
 from collections import defaultdict, Counter
 from typing import List, Dict, Set, Tuple, Optional
-import json
 
 # Configure logging for educational purposes
 logging.basicConfig(
@@ -149,17 +148,16 @@ class InvertedIndex:
         
         is_update = doc_id in self.documents
         if is_update:
-            # Clean up old term frequencies and postings
             old_terms = set(self.term_frequency.get(doc_id, Counter()).keys())
             for term in old_terms:
                 if term in self.index and doc_id in self.index[term]:
                     self.index[term].remove(doc_id)
                     if not self.index[term]:
                         del self.index[term]
-                if term in self.document_frequency:
-                    self.document_frequency[term] -= 1
-                    if self.document_frequency[term] <= 0:
-                        del self.document_frequency[term]
+                    if term in self.document_frequency:
+                        self.document_frequency[term] -= 1
+                        if self.document_frequency[term] <= 0:
+                            del self.document_frequency[term]
 
         # Store original document
         self.documents[doc_id] = text
@@ -179,7 +177,7 @@ class InvertedIndex:
         logger.debug(f"Document {doc_id}: {len(tokens)} tokens, {len(term_freq)} unique terms")
         
         for term in term_freq:
-            if doc_id not in self.index[term]:
+            if term not in self.index or doc_id not in self.index[term]:
                 self.document_frequency[term] = self.document_frequency.get(term, 0) + 1
             self.index[term].add(doc_id)
         

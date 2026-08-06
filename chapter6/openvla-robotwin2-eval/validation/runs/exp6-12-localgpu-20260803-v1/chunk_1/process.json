@@ -1,0 +1,7 @@
+{
+  "arm": "chunk_1",
+  "started_at_utc": "2026-08-03T12:15:30.744717+00:00",
+  "ended_at_utc": "2026-08-03T14:22:58.087854+00:00",
+  "exit_code": 0,
+  "log": "/home/ubuntu/ai-agent-book/chapter6/openvla-robotwin2-eval/runs/exp6-12-localgpu-20260803-v1/chunk_1/upstream.log"
+}

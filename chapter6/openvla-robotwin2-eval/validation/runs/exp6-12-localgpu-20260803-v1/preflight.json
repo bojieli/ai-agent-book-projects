@@ -1,0 +1,204 @@
+{
+  "schema_version": 1,
+  "experiment": "6-12",
+  "generated_at_utc": "2026-08-03T13:03:13.433843+00:00",
+  "host": {
+    "platform": "linux",
+    "python": "3.10.12",
+    "cwd": "/home/ubuntu/ai-agent-book/chapter6/openvla-robotwin2-eval"
+  },
+  "configuration": {
+    "experiment": "6-12",
+    "upstream_path": "/home/ubuntu/ai-agent-book/chapter7/SimpleVLA-RL/SimpleVLA-RL",
+    "expected_upstream_commit": "7c51662df27b586f9e8a1ab35fcf849f2b8852f9",
+    "expected_robotwin2_commit": "13c3c47ff4312dd62484bcd51be034af55c062d1",
+    "checkpoint_id": "Haozhan72/twin2_move_can_pot_seed1k_sft_single_20k",
+    "expected_checkpoint_revision": "a1f0ac0aa32d31ffab7131b0eda3e11719f39ee5",
+    "task": "move_can_pot",
+    "task_suite": "robotwin2_move_can_pot",
+    "task_config": "exp6_12_three_view",
+    "checkpoint_env": "OPENVLA_CHECKPOINT",
+    "robotwin2_env": "ROBOTWIN2_PATH",
+    "align_path_env": "SIMPLEVLA_ALIGN_PATH",
+    "model_family": "openvla",
+    "vla": "openvla-oft",
+    "action_dimension": 14,
+    "action_token_length": 14,
+    "action_chunks": [
+      1,
+      25
+    ],
+    "rgb_views": 3,
+    "proprio_dimension": 14,
+    "control_hz": 50,
+    "iid_validation_seeds": 128,
+    "ood_validation_seeds": 128,
+    "gpus_required": 1,
+    "failure_modes": [
+      "grasp_failure",
+      "transport_collision",
+      "placement_position_error",
+      "placement_orientation_error",
+      "gripper_release_failure",
+      "timeout",
+      "environment_error",
+      "other_observed_failure"
+    ]
+  },
+  "checks": {
+    "upstream_checkout": {
+      "ok": true,
+      "required": true,
+      "evidence": "/home/ubuntu/ai-agent-book/chapter7/SimpleVLA-RL/SimpleVLA-RL"
+    },
+    "pinned_upstream_commit": {
+      "ok": true,
+      "required": true,
+      "evidence": {
+        "observed": "7c51662df27b586f9e8a1ab35fcf849f2b8852f9",
+        "expected": "7c51662df27b586f9e8a1ab35fcf849f2b8852f9"
+      }
+    },
+    "required_upstream_files": {
+      "ok": true,
+      "required": true,
+      "evidence": {
+        "missing": [],
+        "required": [
+          "examples/run_openvla_oft_rl_twin2.sh",
+          "examples/robotwin2_tasks_info.txt",
+          "verl/trainer/main_ppo.py",
+          "verl/trainer/ppo/ray_trainer.py",
+          "verl/utils/dataset/rob_dataset.py",
+          "verl/workers/rollout/rob_rollout.py",
+          "modified_codes/robotwin2/envs/move_can_pot.py",
+          "modified_codes/robotwin2/task_config/demo_randomized.yml",
+          "verl/utils/envs/robotwin2/seeds/robotwin2_eval_seeds.json"
+        ]
+      }
+    },
+    "move_can_pot_supported": {
+      "ok": true,
+      "required": true,
+      "evidence": "/home/ubuntu/ai-agent-book/chapter7/SimpleVLA-RL/SimpleVLA-RL/examples/robotwin2_tasks_info.txt"
+    },
+    "ood_seed_inventory": {
+      "ok": true,
+      "required": true,
+      "evidence": {
+        "observed": 150,
+        "required": 128
+      }
+    },
+    "source_invariants": {
+      "ok": true,
+      "required": true,
+      "evidence": {
+        "three_view_branch": true,
+        "left_wrist": true,
+        "right_wrist": true,
+        "proprio_vector": true,
+        "environment_success": true,
+        "validation_video": true
+      }
+    },
+    "pretrained_checkpoint": {
+      "ok": true,
+      "required": true,
+      "evidence": {
+        "environment": "OPENVLA_CHECKPOINT",
+        "path": "/home/ubuntu/checkpoints/exp6-12-openvla-move-can-pot",
+        "checkpoint_id": "Haozhan72/twin2_move_can_pot_seed1k_sft_single_20k",
+        "expected_revision": "a1f0ac0aa32d31ffab7131b0eda3e11719f39ee5",
+        "observed_revisions": [
+          "a1f0ac0aa32d31ffab7131b0eda3e11719f39ee5"
+        ],
+        "artifact_metadata": {
+          "config.json": {
+            "bytes": 60780,
+            "huggingface_etag": "56ff07f8ec5e64e8089ac0d1f1b865f4fd0332af"
+          },
+          "model-00001-of-00004.safetensors": {
+            "bytes": 4925122448,
+            "huggingface_etag": "c0b8cfb630e0d2ee54a44509b486a646986027d161be2b74ff53768d4956e42a"
+          },
+          "model-00002-of-00004.safetensors": {
+            "bytes": 4947392496,
+            "huggingface_etag": "b66c86f626581ed1be6c375d1216f0a9ad4a213d2f23ae4e1fb6bf19275ca8bb"
+          },
+          "model-00003-of-00004.safetensors": {
+            "bytes": 4947417456,
+            "huggingface_etag": "8698602e336e8f878e874ce98a29d1e372dd9db45373a3e48582f7385d81084a"
+          },
+          "model-00004-of-00004.safetensors": {
+            "bytes": 262668432,
+            "huggingface_etag": "9217e88595542b26c9f8f5895c494c8d6575832c6027326a7f91bbec26c59943"
+          },
+          "proprio_projector--20000_checkpoint.pt": {
+            "bytes": 67373488,
+            "huggingface_etag": "c75b0605131db6ad99667ad7a865c9e99425f2f6c3412770ec28e3b2df9c00c3"
+          },
+          "lora_adapter/adapter_model.safetensors": {
+            "bytes": 484458600,
+            "huggingface_etag": "3212e2704dede9e65a7f0f13239bd67419120fa99c59b63400ca1bbc18cec80b"
+          }
+        },
+        "missing_artifacts": []
+      }
+    },
+    "robotwin2_checkout": {
+      "ok": true,
+      "required": true,
+      "evidence": {
+        "environment": "ROBOTWIN2_PATH",
+        "path": "/home/ubuntu/RoboTwin2",
+        "markers": [
+          "envs",
+          "task_config",
+          "script"
+        ]
+      }
+    },
+    "pinned_robotwin2_commit": {
+      "ok": true,
+      "required": true,
+      "evidence": {
+        "observed": "13c3c47ff4312dd62484bcd51be034af55c062d1",
+        "expected": "13c3c47ff4312dd62484bcd51be034af55c062d1"
+      }
+    },
+    "ray_runtime_environment": {
+      "ok": true,
+      "required": true,
+      "evidence": {
+        "environment": "SIMPLEVLA_ALIGN_PATH",
+        "path": "/home/ubuntu/ai-agent-book/chapter7/SimpleVLA-RL/SimpleVLA-RL/align.json"
+      }
+    },
+    "nvidia_gpu_count": {
+      "ok": true,
+      "required": true,
+      "evidence": {
+        "observed": 1,
+        "required": 1,
+        "gpus": [
+          {
+            "index": 0,
+            "name": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+            "memory_mib": 97887,
+            "driver": "595.71.05"
+          }
+        ],
+        "error": null
+      }
+    },
+    "three_rgb_view_config": {
+      "ok": true,
+      "required": true,
+      "evidence": "/home/ubuntu/ai-agent-book/chapter6/openvla-robotwin2-eval/task_config_exp6_12_three_view.yml"
+    }
+  },
+  "ready_for_real_validation": true,
+  "blocking_checks": [],
+  "acceptance_note": "Preflight readiness is necessary but never sufficient for Experiment 6-12 completion."
+}

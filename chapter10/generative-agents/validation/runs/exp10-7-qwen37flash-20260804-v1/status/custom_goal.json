@@ -1,0 +1,1243 @@
+{
+  "schema_version": 1,
+  "experiment": "10-7",
+  "source_commit": "fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4",
+  "arm": "custom_goal",
+  "personas": 25,
+  "target_steps": 17280,
+  "sec_per_step": 10,
+  "current_sim": "exp10_7_custom_goal_17280",
+  "completed_steps": 17280,
+  "checkpoints": [
+    {
+      "start_step": 0,
+      "end_step": 360,
+      "start_time": "2023-02-13T00:00:00",
+      "end_time": "2023-02-13T01:00:00",
+      "sim_code": "exp10_7_custom_goal_00360",
+      "receipt": "receipts/custom_goal/steps_00000_00360.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1177,
+        "by_kind": {
+          "embedding": 233,
+          "chat": 944
+        },
+        "errors": 0,
+        "transport_retries": 5,
+        "usage": {
+          "prompt_tokens": 826809,
+          "completion_tokens": 39788,
+          "total_tokens": 866597
+        },
+        "provider_latency_seconds": 1408.852
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_00000_00360.jsonl",
+      "compatibility_corrections": 1,
+      "wall_seconds": 1500.249
+    },
+    {
+      "start_step": 360,
+      "end_step": 720,
+      "start_time": "2023-02-13T01:00:00",
+      "end_time": "2023-02-13T02:00:00",
+      "sim_code": "exp10_7_custom_goal_00720",
+      "receipt": "receipts/custom_goal/steps_00360_00720.jsonl.gz",
+      "receipt_summary": {
+        "calls": 0,
+        "by_kind": {},
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        },
+        "provider_latency_seconds": 0.0
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 5.036
+    },
+    {
+      "start_step": 720,
+      "end_step": 1080,
+      "start_time": "2023-02-13T02:00:00",
+      "end_time": "2023-02-13T03:00:00",
+      "sim_code": "exp10_7_custom_goal_01080",
+      "receipt": "receipts/custom_goal/steps_00720_01080.jsonl.gz",
+      "receipt_summary": {
+        "calls": 0,
+        "by_kind": {},
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        },
+        "provider_latency_seconds": 0.0
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 5.183
+    },
+    {
+      "start_step": 1080,
+      "end_step": 1440,
+      "start_time": "2023-02-13T03:00:00",
+      "end_time": "2023-02-13T04:00:00",
+      "sim_code": "exp10_7_custom_goal_01440",
+      "receipt": "receipts/custom_goal/steps_01080_01440.jsonl.gz",
+      "receipt_summary": {
+        "calls": 0,
+        "by_kind": {},
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        },
+        "provider_latency_seconds": 0.0
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 5.325
+    },
+    {
+      "start_step": 1440,
+      "end_step": 1800,
+      "start_time": "2023-02-13T04:00:00",
+      "end_time": "2023-02-13T05:00:00",
+      "sim_code": "exp10_7_custom_goal_01800",
+      "receipt": "receipts/custom_goal/steps_01440_01800.jsonl.gz",
+      "receipt_summary": {
+        "calls": 108,
+        "by_kind": {
+          "chat": 97,
+          "embedding": 11
+        },
+        "errors": 0,
+        "transport_retries": 2,
+        "usage": {
+          "prompt_tokens": 23007,
+          "completion_tokens": 649,
+          "total_tokens": 23656
+        },
+        "provider_latency_seconds": 234.425
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 246.012
+    },
+    {
+      "start_step": 1800,
+      "end_step": 2160,
+      "start_time": "2023-02-13T05:00:00",
+      "end_time": "2023-02-13T06:00:00",
+      "sim_code": "exp10_7_custom_goal_02160",
+      "receipt": "receipts/custom_goal/steps_01800_02160.jsonl.gz",
+      "receipt_summary": {
+        "calls": 211,
+        "by_kind": {
+          "chat": 188,
+          "embedding": 23
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 54489,
+          "completion_tokens": 1491,
+          "total_tokens": 55980
+        },
+        "provider_latency_seconds": 186.972
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 203.828
+    },
+    {
+      "start_step": 2160,
+      "end_step": 2520,
+      "start_time": "2023-02-13T06:00:00",
+      "end_time": "2023-02-13T07:00:00",
+      "sim_code": "exp10_7_custom_goal_02520",
+      "receipt": "receipts/custom_goal/steps_02160_02520.jsonl.gz",
+      "receipt_summary": {
+        "calls": 806,
+        "by_kind": {
+          "chat": 714,
+          "embedding": 92
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 220655,
+          "completion_tokens": 8475,
+          "total_tokens": 229130
+        },
+        "provider_latency_seconds": 739.597
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_02160_02520.jsonl",
+      "compatibility_corrections": 1,
+      "wall_seconds": 795.158
+    },
+    {
+      "start_step": 2520,
+      "end_step": 2880,
+      "start_time": "2023-02-13T07:00:00",
+      "end_time": "2023-02-13T08:00:00",
+      "sim_code": "exp10_7_custom_goal_02880",
+      "receipt": "receipts/custom_goal/steps_02520_02880.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1383,
+        "by_kind": {
+          "chat": 1181,
+          "embedding": 202
+        },
+        "errors": 0,
+        "transport_retries": 1,
+        "usage": {
+          "prompt_tokens": 343624,
+          "completion_tokens": 23245,
+          "total_tokens": 366869
+        },
+        "provider_latency_seconds": 1577.446
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_02520_02880.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 1664.077
+    },
+    {
+      "start_step": 2880,
+      "end_step": 3240,
+      "start_time": "2023-02-13T08:00:00",
+      "end_time": "2023-02-13T09:00:00",
+      "sim_code": "exp10_7_custom_goal_03240",
+      "receipt": "receipts/custom_goal/steps_02880_03240.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1134,
+        "by_kind": {
+          "chat": 1017,
+          "embedding": 117
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 309296,
+          "completion_tokens": 16553,
+          "total_tokens": 325849
+        },
+        "provider_latency_seconds": 1284.166
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 1360.551
+    },
+    {
+      "start_step": 3240,
+      "end_step": 3600,
+      "start_time": "2023-02-13T09:00:00",
+      "end_time": "2023-02-13T10:00:00",
+      "sim_code": "exp10_7_custom_goal_03600",
+      "receipt": "receipts/custom_goal/steps_03240_03600.jsonl.gz",
+      "receipt_summary": {
+        "calls": 728,
+        "by_kind": {
+          "chat": 659,
+          "embedding": 69
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 188432,
+          "completion_tokens": 5878,
+          "total_tokens": 194310
+        },
+        "provider_latency_seconds": 745.504
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 800.644
+    },
+    {
+      "start_step": 3600,
+      "end_step": 3960,
+      "start_time": "2023-02-13T10:00:00",
+      "end_time": "2023-02-13T11:00:00",
+      "sim_code": "exp10_7_custom_goal_03960",
+      "receipt": "receipts/custom_goal/steps_03600_03960.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1604,
+        "by_kind": {
+          "chat": 1367,
+          "embedding": 237
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 467125,
+          "completion_tokens": 40185,
+          "total_tokens": 507310
+        },
+        "provider_latency_seconds": 1911.911
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_03600_03960.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 2015.393
+    },
+    {
+      "start_step": 3960,
+      "end_step": 4320,
+      "start_time": "2023-02-13T11:00:00",
+      "end_time": "2023-02-13T12:00:00",
+      "sim_code": "exp10_7_custom_goal_04320",
+      "receipt": "receipts/custom_goal/steps_03960_04320.jsonl.gz",
+      "receipt_summary": {
+        "calls": 800,
+        "by_kind": {
+          "chat": 695,
+          "embedding": 105
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 224610,
+          "completion_tokens": 17336,
+          "total_tokens": 241946
+        },
+        "provider_latency_seconds": 876.989
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 935.215
+    },
+    {
+      "start_step": 4320,
+      "end_step": 4680,
+      "start_time": "2023-02-13T12:00:00",
+      "end_time": "2023-02-13T13:00:00",
+      "sim_code": "exp10_7_custom_goal_04680",
+      "receipt": "receipts/custom_goal/steps_04320_04680.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1303,
+        "by_kind": {
+          "chat": 1159,
+          "embedding": 144
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 409238,
+          "completion_tokens": 29343,
+          "total_tokens": 438581
+        },
+        "provider_latency_seconds": 1352.644
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 1448.633
+    },
+    {
+      "start_step": 4680,
+      "end_step": 5040,
+      "start_time": "2023-02-13T13:00:00",
+      "end_time": "2023-02-13T14:00:00",
+      "sim_code": "exp10_7_custom_goal_05040",
+      "receipt": "receipts/custom_goal/steps_04680_05040.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1182,
+        "by_kind": {
+          "chat": 1075,
+          "embedding": 107
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 355312,
+          "completion_tokens": 15193,
+          "total_tokens": 370505
+        },
+        "provider_latency_seconds": 1254.988
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 1345.287
+    },
+    {
+      "start_step": 5040,
+      "end_step": 5400,
+      "start_time": "2023-02-13T14:00:00",
+      "end_time": "2023-02-13T15:00:00",
+      "sim_code": "exp10_7_custom_goal_05400",
+      "receipt": "receipts/custom_goal/steps_05040_05400.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1458,
+        "by_kind": {
+          "chat": 1304,
+          "embedding": 154
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 452867,
+          "completion_tokens": 29680,
+          "total_tokens": 482547
+        },
+        "provider_latency_seconds": 1523.896
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_05040_05400.jsonl",
+      "compatibility_corrections": 3,
+      "wall_seconds": 1631.856
+    },
+    {
+      "start_step": 5400,
+      "end_step": 5760,
+      "start_time": "2023-02-13T15:00:00",
+      "end_time": "2023-02-13T16:00:00",
+      "sim_code": "exp10_7_custom_goal_05760",
+      "receipt": "receipts/custom_goal/steps_05400_05760.jsonl.gz",
+      "receipt_summary": {
+        "calls": 2133,
+        "by_kind": {
+          "chat": 1875,
+          "embedding": 258
+        },
+        "errors": 0,
+        "transport_retries": 1,
+        "usage": {
+          "prompt_tokens": 678405,
+          "completion_tokens": 42996,
+          "total_tokens": 721401
+        },
+        "provider_latency_seconds": 2450.18
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_05400_05760.jsonl",
+      "compatibility_corrections": 8,
+      "wall_seconds": 2598.783
+    },
+    {
+      "start_step": 5760,
+      "end_step": 6120,
+      "start_time": "2023-02-13T16:00:00",
+      "end_time": "2023-02-13T17:00:00",
+      "sim_code": "exp10_7_custom_goal_06120",
+      "receipt": "receipts/custom_goal/steps_05760_06120.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1672,
+        "by_kind": {
+          "chat": 1477,
+          "embedding": 195
+        },
+        "errors": 0,
+        "transport_retries": 5,
+        "usage": {
+          "prompt_tokens": 520655,
+          "completion_tokens": 37943,
+          "total_tokens": 558598
+        },
+        "provider_latency_seconds": 2182.726
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_05760_06120.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 2298.914
+    },
+    {
+      "start_step": 6120,
+      "end_step": 6480,
+      "start_time": "2023-02-13T17:00:00",
+      "end_time": "2023-02-13T18:00:00",
+      "sim_code": "exp10_7_custom_goal_06480",
+      "receipt": "receipts/custom_goal/steps_06120_06480.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1241,
+        "by_kind": {
+          "chat": 1134,
+          "embedding": 107
+        },
+        "errors": 0,
+        "transport_retries": 1,
+        "usage": {
+          "prompt_tokens": 391443,
+          "completion_tokens": 16981,
+          "total_tokens": 408424
+        },
+        "provider_latency_seconds": 1747.044
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_06120_06480.jsonl",
+      "compatibility_corrections": 3,
+      "wall_seconds": 1844.282
+    },
+    {
+      "start_step": 6480,
+      "end_step": 6840,
+      "start_time": "2023-02-13T18:00:00",
+      "end_time": "2023-02-13T19:00:00",
+      "sim_code": "exp10_7_custom_goal_06840",
+      "receipt": "receipts/custom_goal/steps_06480_06840.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1337,
+        "by_kind": {
+          "chat": 1099,
+          "embedding": 238
+        },
+        "errors": 0,
+        "transport_retries": 3,
+        "usage": {
+          "prompt_tokens": 477459,
+          "completion_tokens": 39753,
+          "total_tokens": 517212
+        },
+        "provider_latency_seconds": 2294.633
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_06480_06840.jsonl",
+      "compatibility_corrections": 4,
+      "wall_seconds": 2385.585
+    },
+    {
+      "start_step": 6840,
+      "end_step": 7200,
+      "start_time": "2023-02-13T19:00:00",
+      "end_time": "2023-02-13T20:00:00",
+      "sim_code": "exp10_7_custom_goal_07200",
+      "receipt": "receipts/custom_goal/steps_06840_07200.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1174,
+        "by_kind": {
+          "chat": 1068,
+          "embedding": 106
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 368327,
+          "completion_tokens": 14449,
+          "total_tokens": 382776
+        },
+        "provider_latency_seconds": 1294.998
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_06840_07200.jsonl",
+      "compatibility_corrections": 4,
+      "wall_seconds": 1388.593
+    },
+    {
+      "start_step": 7200,
+      "end_step": 7560,
+      "start_time": "2023-02-13T20:00:00",
+      "end_time": "2023-02-13T21:00:00",
+      "sim_code": "exp10_7_custom_goal_07560",
+      "receipt": "receipts/custom_goal/steps_07200_07560.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1084,
+        "by_kind": {
+          "chat": 980,
+          "embedding": 104
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 327553,
+          "completion_tokens": 18059,
+          "total_tokens": 345612
+        },
+        "provider_latency_seconds": 911.274
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_07200_07560.jsonl",
+      "compatibility_corrections": 1,
+      "wall_seconds": 994.573
+    },
+    {
+      "start_step": 7560,
+      "end_step": 7920,
+      "start_time": "2023-02-13T21:00:00",
+      "end_time": "2023-02-13T22:00:00",
+      "sim_code": "exp10_7_custom_goal_07920",
+      "receipt": "receipts/custom_goal/steps_07560_07920.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1156,
+        "by_kind": {
+          "chat": 1026,
+          "embedding": 130
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 363744,
+          "completion_tokens": 27462,
+          "total_tokens": 391206
+        },
+        "provider_latency_seconds": 967.532
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_07560_07920.jsonl",
+      "compatibility_corrections": 5,
+      "wall_seconds": 1057.711
+    },
+    {
+      "start_step": 7920,
+      "end_step": 8280,
+      "start_time": "2023-02-13T22:00:00",
+      "end_time": "2023-02-13T23:00:00",
+      "sim_code": "exp10_7_custom_goal_08280",
+      "receipt": "receipts/custom_goal/steps_07920_08280.jsonl.gz",
+      "receipt_summary": {
+        "calls": 806,
+        "by_kind": {
+          "chat": 753,
+          "embedding": 53
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 226635,
+          "completion_tokens": 9117,
+          "total_tokens": 235752
+        },
+        "provider_latency_seconds": 626.244
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_07920_08280.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 694.434
+    },
+    {
+      "start_step": 8280,
+      "end_step": 8640,
+      "start_time": "2023-02-13T23:00:00",
+      "end_time": "2023-02-14T00:00:00",
+      "sim_code": "exp10_7_custom_goal_08640",
+      "receipt": "receipts/custom_goal/steps_08280_08640.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1188,
+        "by_kind": {
+          "chat": 1105,
+          "embedding": 83
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 324046,
+          "completion_tokens": 9908,
+          "total_tokens": 333954
+        },
+        "provider_latency_seconds": 913.3
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 1005.526
+    },
+    {
+      "start_step": 8640,
+      "end_step": 9000,
+      "start_time": "2023-02-14T00:00:00",
+      "end_time": "2023-02-14T01:00:00",
+      "sim_code": "exp10_7_custom_goal_09000",
+      "receipt": "receipts/custom_goal/steps_08640_09000.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1019,
+        "by_kind": {
+          "chat": 935,
+          "embedding": 84
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 1088532,
+          "completion_tokens": 50042,
+          "total_tokens": 1138574
+        },
+        "provider_latency_seconds": 1171.344
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 1271.382
+    },
+    {
+      "start_step": 9000,
+      "end_step": 9360,
+      "start_time": "2023-02-14T01:00:00",
+      "end_time": "2023-02-14T02:00:00",
+      "sim_code": "exp10_7_custom_goal_09360",
+      "receipt": "receipts/custom_goal/steps_09000_09360.jsonl.gz",
+      "receipt_summary": {
+        "calls": 0,
+        "by_kind": {},
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        },
+        "provider_latency_seconds": 0.0
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 9.702
+    },
+    {
+      "start_step": 9360,
+      "end_step": 9720,
+      "start_time": "2023-02-14T02:00:00",
+      "end_time": "2023-02-14T03:00:00",
+      "sim_code": "exp10_7_custom_goal_09720",
+      "receipt": "receipts/custom_goal/steps_09360_09720.jsonl.gz",
+      "receipt_summary": {
+        "calls": 0,
+        "by_kind": {},
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        },
+        "provider_latency_seconds": 0.0
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 10.006
+    },
+    {
+      "start_step": 9720,
+      "end_step": 10080,
+      "start_time": "2023-02-14T03:00:00",
+      "end_time": "2023-02-14T04:00:00",
+      "sim_code": "exp10_7_custom_goal_10080",
+      "receipt": "receipts/custom_goal/steps_09720_10080.jsonl.gz",
+      "receipt_summary": {
+        "calls": 0,
+        "by_kind": {},
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        },
+        "provider_latency_seconds": 0.0
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 9.913
+    },
+    {
+      "start_step": 10080,
+      "end_step": 10440,
+      "start_time": "2023-02-14T04:00:00",
+      "end_time": "2023-02-14T05:00:00",
+      "sim_code": "exp10_7_custom_goal_10440",
+      "receipt": "receipts/custom_goal/steps_10080_10440.jsonl.gz",
+      "receipt_summary": {
+        "calls": 17,
+        "by_kind": {
+          "chat": 17
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 5304,
+          "completion_tokens": 98,
+          "total_tokens": 5402
+        },
+        "provider_latency_seconds": 14.279
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 25.853
+    },
+    {
+      "start_step": 10440,
+      "end_step": 10800,
+      "start_time": "2023-02-14T05:00:00",
+      "end_time": "2023-02-14T06:00:00",
+      "sim_code": "exp10_7_custom_goal_10800",
+      "receipt": "receipts/custom_goal/steps_10440_10800.jsonl.gz",
+      "receipt_summary": {
+        "calls": 320,
+        "by_kind": {
+          "chat": 279,
+          "embedding": 41
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 125800,
+          "completion_tokens": 5508,
+          "total_tokens": 131308
+        },
+        "provider_latency_seconds": 278.277
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 306.564
+    },
+    {
+      "start_step": 10800,
+      "end_step": 11160,
+      "start_time": "2023-02-14T06:00:00",
+      "end_time": "2023-02-14T07:00:00",
+      "sim_code": "exp10_7_custom_goal_11160",
+      "receipt": "receipts/custom_goal/steps_10800_11160.jsonl.gz",
+      "receipt_summary": {
+        "calls": 587,
+        "by_kind": {
+          "chat": 535,
+          "embedding": 52
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 196213,
+          "completion_tokens": 8919,
+          "total_tokens": 205132
+        },
+        "provider_latency_seconds": 513.495
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_10800_11160.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 565.083
+    },
+    {
+      "start_step": 11160,
+      "end_step": 11520,
+      "start_time": "2023-02-14T07:00:00",
+      "end_time": "2023-02-14T08:00:00",
+      "sim_code": "exp10_7_custom_goal_11520",
+      "receipt": "receipts/custom_goal/steps_11160_11520.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1588,
+        "by_kind": {
+          "chat": 1379,
+          "embedding": 209
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 633062,
+          "completion_tokens": 42923,
+          "total_tokens": 675985
+        },
+        "provider_latency_seconds": 1622.033
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_11160_11520.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 1735.535
+    },
+    {
+      "start_step": 11520,
+      "end_step": 11880,
+      "start_time": "2023-02-14T08:00:00",
+      "end_time": "2023-02-14T09:00:00",
+      "sim_code": "exp10_7_custom_goal_11880",
+      "receipt": "receipts/custom_goal/steps_11520_11880.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1587,
+        "by_kind": {
+          "chat": 1382,
+          "embedding": 205
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 603053,
+          "completion_tokens": 41708,
+          "total_tokens": 644761
+        },
+        "provider_latency_seconds": 1359.177
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_11520_11880.jsonl",
+      "compatibility_corrections": 5,
+      "wall_seconds": 1475.06
+    },
+    {
+      "start_step": 11880,
+      "end_step": 12240,
+      "start_time": "2023-02-14T09:00:00",
+      "end_time": "2023-02-14T10:00:00",
+      "sim_code": "exp10_7_custom_goal_12240",
+      "receipt": "receipts/custom_goal/steps_11880_12240.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1644,
+        "by_kind": {
+          "chat": 1426,
+          "embedding": 218
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 669717,
+          "completion_tokens": 42834,
+          "total_tokens": 712551
+        },
+        "provider_latency_seconds": 1383.604
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_11880_12240.jsonl",
+      "compatibility_corrections": 3,
+      "wall_seconds": 1500.438
+    },
+    {
+      "start_step": 12240,
+      "end_step": 12600,
+      "start_time": "2023-02-14T10:00:00",
+      "end_time": "2023-02-14T11:00:00",
+      "sim_code": "exp10_7_custom_goal_12600",
+      "receipt": "receipts/custom_goal/steps_12240_12600.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1276,
+        "by_kind": {
+          "chat": 1112,
+          "embedding": 164
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 477136,
+          "completion_tokens": 31540,
+          "total_tokens": 508676
+        },
+        "provider_latency_seconds": 1073.819
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_12240_12600.jsonl",
+      "compatibility_corrections": 1,
+      "wall_seconds": 1168.595
+    },
+    {
+      "start_step": 12600,
+      "end_step": 12960,
+      "start_time": "2023-02-14T11:00:00",
+      "end_time": "2023-02-14T12:00:00",
+      "sim_code": "exp10_7_custom_goal_12960",
+      "receipt": "receipts/custom_goal/steps_12600_12960.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1260,
+        "by_kind": {
+          "chat": 1094,
+          "embedding": 166
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 531453,
+          "completion_tokens": 43922,
+          "total_tokens": 575375
+        },
+        "provider_latency_seconds": 1192.197
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_12600_12960.jsonl",
+      "compatibility_corrections": 3,
+      "wall_seconds": 1286.476
+    },
+    {
+      "start_step": 12960,
+      "end_step": 13320,
+      "start_time": "2023-02-14T12:00:00",
+      "end_time": "2023-02-14T13:00:00",
+      "sim_code": "exp10_7_custom_goal_13320",
+      "receipt": "receipts/custom_goal/steps_12960_13320.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1132,
+        "by_kind": {
+          "chat": 1011,
+          "embedding": 121
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 443677,
+          "completion_tokens": 26688,
+          "total_tokens": 470365
+        },
+        "provider_latency_seconds": 952.834
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_12960_13320.jsonl",
+      "compatibility_corrections": 3,
+      "wall_seconds": 1043.416
+    },
+    {
+      "start_step": 13320,
+      "end_step": 13680,
+      "start_time": "2023-02-14T13:00:00",
+      "end_time": "2023-02-14T14:00:00",
+      "sim_code": "exp10_7_custom_goal_13680",
+      "receipt": "receipts/custom_goal/steps_13320_13680.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1136,
+        "by_kind": {
+          "chat": 1014,
+          "embedding": 122
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 443529,
+          "completion_tokens": 25330,
+          "total_tokens": 468859
+        },
+        "provider_latency_seconds": 956.395
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_13320_13680.jsonl",
+      "compatibility_corrections": 3,
+      "wall_seconds": 1044.611
+    },
+    {
+      "start_step": 13680,
+      "end_step": 14040,
+      "start_time": "2023-02-14T14:00:00",
+      "end_time": "2023-02-14T15:00:00",
+      "sim_code": "exp10_7_custom_goal_14040",
+      "receipt": "receipts/custom_goal/steps_13680_14040.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1488,
+        "by_kind": {
+          "chat": 1326,
+          "embedding": 162
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 558652,
+          "completion_tokens": 36161,
+          "total_tokens": 594813
+        },
+        "provider_latency_seconds": 1272.758
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_13680_14040.jsonl",
+      "compatibility_corrections": 2,
+      "wall_seconds": 1383.542
+    },
+    {
+      "start_step": 14040,
+      "end_step": 14400,
+      "start_time": "2023-02-14T15:00:00",
+      "end_time": "2023-02-14T16:00:00",
+      "sim_code": "exp10_7_custom_goal_14400",
+      "receipt": "receipts/custom_goal/steps_14040_14400.jsonl.gz",
+      "receipt_summary": {
+        "calls": 816,
+        "by_kind": {
+          "chat": 790,
+          "embedding": 26
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 270432,
+          "completion_tokens": 6066,
+          "total_tokens": 276498
+        },
+        "provider_latency_seconds": 760.179
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_14040_14400.jsonl",
+      "compatibility_corrections": 1,
+      "wall_seconds": 835.564
+    },
+    {
+      "start_step": 14400,
+      "end_step": 14760,
+      "start_time": "2023-02-14T16:00:00",
+      "end_time": "2023-02-14T17:00:00",
+      "sim_code": "exp10_7_custom_goal_14760",
+      "receipt": "receipts/custom_goal/steps_14400_14760.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1130,
+        "by_kind": {
+          "chat": 948,
+          "embedding": 182
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 505080,
+          "completion_tokens": 36110,
+          "total_tokens": 541190
+        },
+        "provider_latency_seconds": 1834.703
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 1920.465
+    },
+    {
+      "start_step": 14760,
+      "end_step": 15120,
+      "start_time": "2023-02-14T17:00:00",
+      "end_time": "2023-02-14T18:00:00",
+      "sim_code": "exp10_7_custom_goal_15120",
+      "receipt": "receipts/custom_goal/steps_14760_15120.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1725,
+        "by_kind": {
+          "chat": 1432,
+          "embedding": 293
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 707568,
+          "completion_tokens": 58754,
+          "total_tokens": 766322
+        },
+        "provider_latency_seconds": 2784.926
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_14760_15120.jsonl",
+      "compatibility_corrections": 3,
+      "wall_seconds": 2900.319
+    },
+    {
+      "start_step": 15120,
+      "end_step": 15480,
+      "start_time": "2023-02-14T18:00:00",
+      "end_time": "2023-02-14T19:00:00",
+      "sim_code": "exp10_7_custom_goal_15480",
+      "receipt": "receipts/custom_goal/steps_15120_15480.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1306,
+        "by_kind": {
+          "chat": 1138,
+          "embedding": 168
+        },
+        "errors": 0,
+        "transport_retries": 1,
+        "usage": {
+          "prompt_tokens": 518653,
+          "completion_tokens": 33216,
+          "total_tokens": 551869
+        },
+        "provider_latency_seconds": 1982.758
+      },
+      "compatibility_receipt": null,
+      "compatibility_corrections": 0,
+      "wall_seconds": 2078.443
+    },
+    {
+      "start_step": 15480,
+      "end_step": 15840,
+      "start_time": "2023-02-14T19:00:00",
+      "end_time": "2023-02-14T20:00:00",
+      "sim_code": "exp10_7_custom_goal_15840",
+      "receipt": "receipts/custom_goal/steps_15480_15840.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1024,
+        "by_kind": {
+          "chat": 932,
+          "embedding": 92
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 383534,
+          "completion_tokens": 15401,
+          "total_tokens": 398935
+        },
+        "provider_latency_seconds": 1241.838
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_15480_15840.jsonl",
+      "compatibility_corrections": 1,
+      "wall_seconds": 1322.493
+    },
+    {
+      "start_step": 15840,
+      "end_step": 16200,
+      "start_time": "2023-02-14T20:00:00",
+      "end_time": "2023-02-14T21:00:00",
+      "sim_code": "exp10_7_custom_goal_16200",
+      "receipt": "receipts/custom_goal/steps_15840_16200.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1167,
+        "by_kind": {
+          "chat": 1027,
+          "embedding": 140
+        },
+        "errors": 0,
+        "transport_retries": 2,
+        "usage": {
+          "prompt_tokens": 413460,
+          "completion_tokens": 31492,
+          "total_tokens": 444952
+        },
+        "provider_latency_seconds": 1643.099
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_15840_16200.jsonl",
+      "compatibility_corrections": 3,
+      "wall_seconds": 1730.889
+    },
+    {
+      "start_step": 16200,
+      "end_step": 16560,
+      "start_time": "2023-02-14T21:00:00",
+      "end_time": "2023-02-14T22:00:00",
+      "sim_code": "exp10_7_custom_goal_16560",
+      "receipt": "receipts/custom_goal/steps_16200_16560.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1359,
+        "by_kind": {
+          "chat": 1196,
+          "embedding": 163
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 499077,
+          "completion_tokens": 35040,
+          "total_tokens": 534117
+        },
+        "provider_latency_seconds": 1714.284
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_16200_16560.jsonl",
+      "compatibility_corrections": 6,
+      "wall_seconds": 1814.95
+    },
+    {
+      "start_step": 16560,
+      "end_step": 16920,
+      "start_time": "2023-02-14T22:00:00",
+      "end_time": "2023-02-14T23:00:00",
+      "sim_code": "exp10_7_custom_goal_16920",
+      "receipt": "receipts/custom_goal/steps_16560_16920.jsonl.gz",
+      "receipt_summary": {
+        "calls": 1031,
+        "by_kind": {
+          "chat": 924,
+          "embedding": 107
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 371513,
+          "completion_tokens": 13023,
+          "total_tokens": 384536
+        },
+        "provider_latency_seconds": 1156.115
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_16560_16920.jsonl",
+      "compatibility_corrections": 3,
+      "wall_seconds": 1234.726
+    },
+    {
+      "start_step": 16920,
+      "end_step": 17280,
+      "start_time": "2023-02-14T23:00:00",
+      "end_time": "2023-02-15T00:00:00",
+      "sim_code": "exp10_7_custom_goal_17280",
+      "receipt": "receipts/custom_goal/steps_16920_17280.jsonl.gz",
+      "receipt_summary": {
+        "calls": 670,
+        "by_kind": {
+          "chat": 655,
+          "embedding": 15
+        },
+        "errors": 0,
+        "transport_retries": 0,
+        "usage": {
+          "prompt_tokens": 190214,
+          "completion_tokens": 4283,
+          "total_tokens": 194497
+        },
+        "provider_latency_seconds": 626.891
+      },
+      "compatibility_receipt": "compatibility/custom_goal/steps_16920_17280.jsonl",
+      "compatibility_corrections": 1,
+      "wall_seconds": 690.928
+    }
+  ],
+  "complete": true
+}

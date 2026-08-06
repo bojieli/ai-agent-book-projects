@@ -19,7 +19,8 @@
 | 5-9 | [dynamic-form](dynamic-form/) | ✅ | Dinamikus HTML-űrlapot készít a hiányos kérés összes szükséges adatának egyszeri tisztázására. |
 | 5-10 | [erp-agent](erp-agent/) | ✅ | SQL-artefaktumot készít ERP-lekérdezésekhez anélkül, hogy a teljes adathalmazt átvezetné az LLM-en. |
 | 5-11 | [conversational-ui](conversational-ui/) | ✅ | Természetes nyelv alapján módosít React-felületet, és HMR-rel azonnal alkalmazza a változásokat. |
-| 5-12 | [agent-creator](agent-creator/) | ✅ | Egy ellenőrzött referencia alapján, illetve nulláról létrehozott ágenseket hasonlít össze. |
+| 5-12 | [permission-embedded-data-objects](permission-embedded-data-objects/) | ✅ | PostgreSQL-alapú objektumtár, amely a dinamikusan generált alkalmazáskód alatt kényszeríti ki a jogosultságot, az ellenőrzést és a referenciális integritást. |
+| 5-13 | [agent-creator](agent-creator/) | ✅ | Egy ellenőrzött referencia alapján, illetve nulláról létrehozott ágenseket hasonlít össze. |
 
 ## Projekttípusok
 

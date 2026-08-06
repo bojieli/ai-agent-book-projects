@@ -79,14 +79,14 @@
 | **Zhipu GLM** | <https://open.bigmodel.cn/> | نماذج GLM، ومنها GLM-4.6، قوية في الصينية ومنافسة من حيث الكلفة | البر الرئيسي للصين |
 | **SiliconFlow** | <https://siliconflow.cn/> | مجموعة واسعة من النماذج المفتوحة، مثل DeepSeek وQwen، مع وصول سريع من الصين | البر الرئيسي للصين |
 | **DeepSeek** | <https://platform.deepseek.com/> | واجهة DeepSeek الرسمية | عالمي + البر الرئيسي للصين |
-| **Krill AI** | [www.krill-ai.com](https://www.krill-ai.com/register?invite=Q8D3L35725) | وصول موحد إلى نماذج عالمية وصينية، منها OpenAI وClaude وGemini وKimi وGLM وDeepSeek وQwen | عالمي + البر الرئيسي للصين |
+| **Krill AI** | [www.krill-ai.net](https://www.krill-ai.net/register?invite=Q8D3L35725) | وصول موحد إلى نماذج عالمية وصينية، منها OpenAI وClaude وGemini وKimi وGLM وDeepSeek وQwen | عالمي + البر الرئيسي للصين |
 | **OpenRouter** | <https://openrouter.ai/> | وصول موحد إلى عدد كبير من النماذج العالمية والمفتوحة | عالمي |
 
 ## 💎 الرعاة
 
 شكرًا لـ **Krill AI** على رعاية المشروع. توفر المنصة بوابة API مستقرة وسريعة لنماذج GPT وClaude وGemini وعدد من النماذج الصينية، إلى جانب خيارات للمؤسسات والفوترة والدعم الفني واتصال WebSocket محسّن لخفض زمن وصول الرمز الأول.
 
-تقدم Krill عرضًا لقراء الكتاب: سجّل عبر [هذا الرابط](https://www.krill-ai.com/register?invite=Q8D3L35725)، ثم أدخل الرمز الترويجي `ai-agent-book` عند إضافة الرصيد للحصول على خصم 23% على أول خطة Codex.
+تقدم Krill عرضًا لقراء الكتاب: سجّل عبر [هذا الرابط](https://www.krill-ai.net/register?invite=Q8D3L35725)، ثم أدخل الرمز الترويجي `ai-agent-book` عند إضافة الرصيد للحصول على خصم 23% على أول خطة Codex.
 
 > 🧪 تُسجَّل حالة تنفيذ التجارب والأدلة والبوابات المتبقية بصورة منفصلة في [`EXPERIMENT_STATUS.md`](../EXPERIMENT_STATUS.md)؛ ولا يُعد استنساخ الشفرة أو تثبيتها دليلاً على اكتمال التجربة.
 

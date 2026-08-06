@@ -1,10 +1,13 @@
-# Core MCP dependencies
-mcp>=0.9.0
+# Core MCP dependencies. The server and experiment runner use the v2 API and
+# the stateless 2026-07-28 protocol; do not silently resolve the legacy v1 SDK.
+mcp>=2,<3
 pydantic>=2.0.0
 python-dotenv>=1.0.0
+tiktoken>=0.7.0
 
 # HTTP and web scraping
 requests>=2.31.0
+httpx>=0.27,<1
 beautifulsoup4>=4.12.0
 lxml>=5.0.0
 

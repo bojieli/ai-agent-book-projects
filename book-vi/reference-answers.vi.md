@@ -40,9 +40,15 @@ Tài liệu này tổng hợp đề cương đáp án tham khảo cho các câu 
 
 > Fail-safe: thao tác rủi ro cao khi không có xác nhận thì tạm dừng chứ không mặc định thực thi; làm trước phần rủi ro thấp có thể đảo ngược, ghi chép tài liệu phần rủi ro cao, thuận tiện cho con người quyết định và Agent khôi phục; dùng công cụ giao tiếp bất đồng bộ (tin nhắn, email) để thông báo và đặt chiến lược timeout; khi chỉ dẫn mơ hồ thì làm rõ ý định.
 
-**10. (★★★) Phần mở đầu chỉ ra "nguyên tắc thiết kế tốt nên vượt qua các chu kỳ lặp của mô hình". Hãy nêu một ví dụ về nguyên tắc thiết kế Agent hiện tại mà bạn cho rằng có thể lỗi thời khi mô hình tiến bộ, và giải thích lý do.**
+**10. (★★★) Phần mở đầu chỉ ra "nguyên tắc thiết kế tốt nên vượt qua các chu kỳ lặp của mô hình", nhưng những biện pháp kỹ thuật cụ thể dùng để thực hiện các nguyên tắc đó có thể trở nên lỗi thời khi năng lực mô hình tiến bộ. Hãy nêu một biện pháp kỹ thuật Agent như vậy và giải thích lý do.**
 
-> Ví dụ: few-shot prompting, prompt engineering tinh vi — khi khả năng tổng quát hóa zero-shot của mô hình tăng lên thì lợi ích giảm dần; định dạng gọi công cụ nghiêm ngặt thông qua giới hạn sampling — các mô hình SOTA hiện nay đã khá ổn định về định dạng gọi công cụ; workflow nhiều bước do con người điều phối — khi khả năng tuân theo chỉ dẫn của mô hình tăng lên thì không còn cần thiết.
+> Ví dụ 1: dùng constrained sampling để buộc lời gọi công cụ tuân theo một định dạng nghiêm ngặt. Đây là biện pháp vá độ tin cậy cho những mô hình thường xuất JSON không hợp lệ hoặc bỏ sót tham số. Lợi ích của nó có thể giảm khi khả năng tuân thủ định dạng của mô hình tăng lên, dù các tình huống rủi ro cao vẫn nên giữ bước kiểm tra định dạng mang tính tất định.
+>
+> Ví dụ 2: đưa vào một cơ sở tri thức bên ngoài để bù đắp việc mô hình không thể liên tục hấp thụ kiến thức mới. Nếu trong tương lai mô hình có năng lực học liên tục đáng tin cậy, một phần công việc duy trì tri thức có thể chuyển từ hệ thống bên ngoài vào tham số mô hình. Tuy nhiên, cơ sở tri thức bên ngoài vẫn có giá trị riêng đối với cập nhật thời gian thực, truy xuất chính xác, kiểm soát truy cập và truy vết nguồn; vì vậy phạm vi sử dụng của chúng có thể thu hẹp hơn là biến mất hoàn toàn.
+>
+> Ví dụ 3: yêu cầu mọi năng lực phải được cung cấp qua giao diện gọi công cụ tiêu chuẩn của API mô hình và cấm định dạng gọi tùy chỉnh. Skills cho thấy một hướng khác: mô tả năng lực và cách sử dụng bằng văn bản, rồi để mô hình thực thi qua công cụ dòng lệnh đa dụng. Từ góc nhìn của mô hình, điều này tương đương với việc hiểu và tuân theo một giao thức gọi bằng văn bản tùy chỉnh nằm trên một bộ thực thi chung. Khi mô hình hiểu các giao diện tùy ý tốt hơn, “luôn phải dùng định dạng gọi công cụ tiêu chuẩn” không còn là nguyên tắc phổ quát. Định dạng tiêu chuẩn vẫn hữu ích cho khả năng tương tác, kiểm tra có cấu trúc và các mô hình yếu hơn, nhưng nên là lựa chọn kỹ thuật tùy theo bối cảnh.
+>
+> Ví dụ 4: yêu cầu prompt và toàn bộ định nghĩa công cụ phải được đặt sẵn ở đầu context. Cách làm này xuất phát từ việc các mô hình ban đầu còn hạn chế về khả năng tuân theo chỉ dẫn và thường không nhận diện hoặc thực thi đúng prompt hay định nghĩa công cụ nằm ngoài vị trí cố định quen thuộc. Skills nạp prompt vào giữa context khi cần, còn cơ chế khám phá công cụ động nối định nghĩa công cụ mới tìm thấy vào sau trajectory hiện có. Khi khả năng tuân theo chỉ dẫn tăng lên và mô hình được post-training chuyên biệt cho các kiểu nạp động này, prompt và định nghĩa công cụ không còn bắt buộc phải nằm cố định ở đầu context.
 
 ## Chương 2 Context Engineering (kỹ thuật ngữ cảnh)
 
@@ -124,7 +130,7 @@ Tài liệu này tổng hợp đề cương đáp án tham khảo cho các câu 
 
 **1. (★★) Chuẩn MCP tách định nghĩa công cụ ra khỏi framework Agent. Nhưng tiêu chuẩn hóa cũng có nghĩa các mô thức tương tác công cụ phức tạp (như đầu ra streaming, giao tiếp hai chiều, phiên có trạng thái) có thể khó biểu đạt trong giao thức chuẩn. Bạn cho rằng năng lực MCP tương lai cần mở rộng nhất là gì?**
 
-> Cần nhất là năng lực điều khiển theo sự kiện xuyên phiên. Chủ thể MCP là kiểu request-response, các primitive như notifications, progress, sampling, elicitation đều giới hạn trong một phiên đơn lẻ giữ kết nối, thông báo chỉ nói được "tài nguyên đã thay đổi", không có cách chuẩn để kích hoạt vòng lặp suy nghĩ của Agent, càng không thể đánh thức Agent offline.
+> Phần mở rộng cần thiết nhất là năng lực hướng sự kiện xuyên phiên. MCP đã hỗ trợ tương tác nhiều lượt, đăng ký thay đổi và tác vụ chạy dài, nhưng cốt lõi của nó vẫn là chuẩn hóa một lần gọi năng lực chứ không phải giữ Agent luôn trực tuyến. Việc đánh thức Agent khi có email mới hoặc callback bên ngoài, cũng như xếp hàng, tiếp tục và thử lại nhiều sự kiện, vẫn thuộc trách nhiệm của khung Agent. Các quy ước thống nhất hơn cho việc điều phối này sẽ mở rộng phạm vi của MCP mà không làm mất đi sự đơn giản của giao thức.
 
 **2. (★★) Trong kiến trúc Agent bất đồng bộ, chiến lược ưu tiên hàng đợi sự kiện cần xác định lúc thiết kế. Nhưng nếu bản thân phán đoán ưu tiên cần hiểu ngữ nghĩa (ví dụ phán đoán một tin nhắn mới có khẩn cấp hơn nhiệm vụ hiện tại không), phán đoán này nên do ai làm — bộ máy luật hay một lần gọi LLM khác? Mỗi cách có cái giá gì?**
 

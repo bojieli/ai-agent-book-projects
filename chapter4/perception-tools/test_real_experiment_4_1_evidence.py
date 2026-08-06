@@ -34,7 +34,7 @@ def test_real_campaign_has_honest_category_statuses_and_exact_receipts():
     assert not summary["acceptance"]["gates"]["multimodal_category_passed"]
 
 
-def test_catalog_came_from_mcp_and_retains_the_126_tool_contract():
+def test_legacy_catalog_came_from_mcp_and_retains_the_126_tool_contract():
     catalog = _json(CAMPAIGN / "catalog_receipt.json")
     assert catalog["transport"] == "mcp-stdio"
     assert catalog["tools_list_received"] is True
@@ -46,6 +46,13 @@ def test_catalog_came_from_mcp_and_retains_the_126_tool_contract():
         "filesystem_copy", "filesystem_move", "filesystem_delete",
         "weather", "calendar_events", "notion_search", "code_interpreter",
     } <= names
+
+
+def test_retained_2026_07_29_campaign_is_explicitly_legacy_evidence():
+    """The old receipt must not be mistaken for SDK v2/current-protocol proof."""
+    catalog = _json(CAMPAIGN / "catalog_receipt.json")
+    assert "mcp_sdk_version" not in catalog
+    assert "protocol_version" not in catalog
 
 
 def test_mutations_have_hash_receipts_and_escape_attempts_failed_closed():

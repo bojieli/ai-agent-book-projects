@@ -61,6 +61,29 @@ async def search_web(
     try:
         if not query or not query.strip():
             raise ValueError("Search query cannot be empty")
+
+        if num_results <= 0:
+            metadata = SearchMetadata(
+                query=query,
+                search_engine="none",
+                total_results=0,
+                search_time=0.0,
+                language="en",
+                country=region,
+            )
+            action_response = ActionResponse(
+                success=True,
+                message={
+                    "query": query,
+                    "results": [],
+                    "count": 0,
+                },
+                metadata=metadata.model_dump(),
+            )
+            return TextContent(
+                type="text",
+                text=json.dumps(action_response.model_dump()),
+            )
         
         validated_num_results = max(1, min(num_results, 10))
         

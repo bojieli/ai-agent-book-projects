@@ -104,14 +104,14 @@ uv run python chapter1/context/main.py
 | **Zhipu GLM** | <https://open.bigmodel.cn/> | GLM-4.6 и др., сильный китайский, выгодная цена | Материковый Китай |
 | **Siliconflow** | <https://siliconflow.cn/> | Разные открытые модели (DeepSeek, Qwen и др.), быстрый доступ из материкового Китая | Материковый Китай |
 | **DeepSeek** | <https://platform.deepseek.com/> | Официальный API DeepSeek | Весь мир + материковый Китай |
-| **Krill AI** | [www.krill-ai.com](https://www.krill-ai.com/register?invite=Q8D3L35725) | Единый доступ к основным мировым и китайским моделям (OpenAI, Claude, Gemini, Grok, Kimi, GLM, DeepSeek, Qwen, Minimax) | Весь мир + материковый Китай |
+| **Krill AI** | [www.krill-ai.net](https://www.krill-ai.net/register?invite=Q8D3L35725) | Единый доступ к основным мировым и китайским моделям (OpenAI, Claude, Gemini, Grok, Kimi, GLM, DeepSeek, Qwen, Minimax) | Весь мир + материковый Китай |
 | **OpenRouter** | <https://openrouter.ai/> | Единый доступ к основным мировым и китайским моделям (GPT, Claude, Gemini, Kimi, GLM, DeepSeek, Qwen и др.) | Весь мир |
 
 ## 💎 Спонсоры
 
 Благодарим **Krill AI** за спонсорство проекта! Krill предоставляет официальный, стабильный и сверхбыстрый API-шлюз для GPT / Claude / Gemini и множества китайских моделей, с корпоративной настройкой, счетами для возмещения расходов, выделенной технической поддержкой 7×16 ч, а также эксклюзивным подключением по WebSocket для молниеносного времени до первого токена.
 
-Krill предлагает читателям книги специальную скидку: зарегистрируйтесь по [этой ссылке](https://www.krill-ai.com/register?invite=Q8D3L35725) и укажите промокод «ai-agent-book» при пополнении счёта, чтобы получить скидку 23% на первую покупку пакета Codex!
+Krill предлагает читателям книги специальную скидку: зарегистрируйтесь по [этой ссылке](https://www.krill-ai.net/register?invite=Q8D3L35725) и укажите промокод «ai-agent-book» при пополнении счёта, чтобы получить скидку 23% на первую покупку пакета Codex!
 
 > 🧪 Статус выполнения экспериментов, доказательства и невыполненные критерии приёмки отслеживаются отдельно в [`EXPERIMENT_STATUS.md`](../EXPERIMENT_STATUS.md); клонирование или установка исходного кода сами по себе не подтверждают завершение эксперимента.
 

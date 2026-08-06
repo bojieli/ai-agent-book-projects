@@ -1,6 +1,5 @@
 """Document store for the retrieval pipeline."""
 
-import json
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 import logging
@@ -16,20 +15,29 @@ class DocumentStore:
         
     def add_document(self, doc_id: str, text: str, metadata: Optional[Dict[str, Any]] = None) -> None:
         """Add a document to the store."""
+        new_metadata = metadata or {}
+        if doc_id in self.documents:
+            old_metadata = self.documents[doc_id].get("metadata") or {}
+            for key in list(old_metadata.keys()):
+                if key not in new_metadata:
+                    if key in self.metadata_index and doc_id in self.metadata_index[key]:
+                        self.metadata_index[key].remove(doc_id)
+                        if not self.metadata_index[key]:
+                            del self.metadata_index[key]
+
         self.documents[doc_id] = {
             "doc_id": doc_id,
             "text": text,
-            "metadata": metadata or {},
+            "metadata": new_metadata,
             "indexed_at": datetime.now().isoformat()
         }
         
         # Update metadata index
-        if metadata:
-            for key, value in metadata.items():
-                if key not in self.metadata_index:
-                    self.metadata_index[key] = []
-                if doc_id not in self.metadata_index[key]:
-                    self.metadata_index[key].append(doc_id)
+        for key in new_metadata:
+            if key not in self.metadata_index:
+                self.metadata_index[key] = []
+            if doc_id not in self.metadata_index[key]:
+                self.metadata_index[key].append(doc_id)
                     
         logger.debug(f"Added document {doc_id} to store")
         

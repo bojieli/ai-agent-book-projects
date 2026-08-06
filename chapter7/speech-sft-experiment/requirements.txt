@@ -1,0 +1,10 @@
+unsloth==2026.8.2
+datasets==3.6.0
+transformers==4.57.6
+trl==0.24.0
+peft==0.19.0
+snac==1.2.1
+soundfile==0.13.1
+librosa==0.11.0
+torch>=2.10,<2.11
+torchaudio>=2.10,<2.11

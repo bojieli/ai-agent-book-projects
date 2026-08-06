@@ -204,7 +204,7 @@ Potential additions:
 
 ## MCP Integration
 
-The server uses FastMCP with stdio transport, making it compatible with:
+The server uses the MCP SDK v2 `MCPServer` with stdio transport, making it compatible with:
 - Claude Desktop
 - Other MCP-compatible clients
 - Custom integration via stdio communication

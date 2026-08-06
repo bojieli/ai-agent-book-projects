@@ -13,7 +13,7 @@
 | 6-3 | [user-memory-evaluation](../chapter3/user-memory-evaluation/) | ✅ | 四級 Rubric 已在 180 條結構化評判上執行，保留證據並設置幻覺一票否決。 |
 | 6-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | 在三個系統上執行 60 個案例，並完成成本核算。 |
 | 6-10 | [user-memory-system-evaluation](user-memory-system-evaluation/) | 🚧 | 元件、模型與評估器的 4×3×2×60 完整矩陣仍待完成。 |
-| 6-12 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | 🚧 | 固定 OpenVLA 與 RoboTwin2 設定；完成仍需 checkpoint、模擬器與 8 張 GPU。 |
+| 6-12 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | 單 GPU 正式實驗完成每個 action-chunk 組 256 回合；chunk 1 為 0/256、chunk 25 為 26/256，並保留 512 個 rollout 雜湊。 |
 | 6-2 | `terminal-bench/` | 📖 | 測試 Agent 在真實終端機環境的端到端能力（編譯/訓練/部署），約 100 任務 + 執行框架 |
 | 6-2 | `SWE-bench/` | 📖 | 評估 LLM 解決真實 GitHub 問題的能力，含 SWE-bench/Lite/Verified/Multimodal 多個版本 |
 | 6-2 | `GAIA/` | 📖 | 評估下一代 LLM 的工具/搜尋/自主能力，450+ 個答案明確的非平凡問題，分 3 級難度 |

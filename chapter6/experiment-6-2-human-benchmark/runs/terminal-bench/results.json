@@ -1,0 +1,71 @@
+{
+  "benchmark": "Terminal-Bench",
+  "operator": "Codex acting as the human operator",
+  "source_commit": "8384a179b1b8688f6ea5233a4d9d51218df1ac96",
+  "reference_solution_inspected": false,
+  "cases": [
+    {
+      "tier": "easy",
+      "task_id": "fix-permissions",
+      "about": "Diagnose why /app/process_data.sh could not execute and repair it.",
+      "trajectory": [
+        "Listed /app and inspected the public script; its mode was 664 (-rw-rw-r--).",
+        "Ran /app/process_data.sh once and observed Permission denied with exit status 126.",
+        "Ran chmod +x /app/process_data.sh, producing mode 775 (-rwxrwxr-x).",
+        "Ran the script and observed Data processed successfully!.",
+        "Invoked the upstream run-tests.sh evaluator."
+      ],
+      "official_evaluator": "pytest via upstream run-tests.sh",
+      "official_tests": {"passed": 1, "failed": 0, "names": ["test_script_permissions"]},
+      "result": "passed",
+      "evaluation_explanation": "The missing execute bits were the sole defect. The official test confirmed that the script was executable."
+    },
+    {
+      "tier": "medium",
+      "task_id": "simple-sheets-put",
+      "about": "Populate a stateful spreadsheet service through its REST API while creating exactly one spreadsheet.",
+      "trajectory": [
+        "Fetched /spreadsheets/ and confirmed the initial total was zero.",
+        "Fetched /docs/json and identified spreadsheet, sheet, individual-cell, and batch-cell endpoints.",
+        "Created exactly one spreadsheet titled Financial Report and one sheet titled Q1 Data.",
+        "Attempted the advertised batch-cell PUT endpoint; it returned HTTP 400 without updating cells.",
+        "Used the documented individual-cell PUT endpoint for A1:D4.",
+        "Entered Month, Revenue, Expenses, and Profit headers; January through March data; and computed profits 2000, 3000, and 5000.",
+        "Fetched the final spreadsheet and sheet state, confirming one spreadsheet and all 16 cells.",
+        "Invoked the upstream run-tests.sh evaluator."
+      ],
+      "official_evaluator": "pytest via upstream run-tests.sh",
+      "official_tests": {"passed": 3, "failed": 0, "names": ["test_spreadsheet_created", "test_sheet_created", "test_cells_created"]},
+      "result": "passed",
+      "evaluation_explanation": "All required persistent objects and values were present, and the singleton spreadsheet constraint was preserved despite the failed batch request."
+    },
+    {
+      "tier": "hard",
+      "task_id": "dna-assembly",
+      "about": "Design the minimum Golden Gate primer set that assembles a circular backbone, EGFP, FLAG linker, and SNAP into an exact target plasmid.",
+      "trajectory": [
+        "Parsed the five supplied FASTA records and confirmed none contained an internal BsaI site.",
+        "Aligned the target to the templates and inferred EGFP without its stop codon, FLAG without start/stop codons, SNAP without its start codon, and the input plasmid backbone with its prior insert removed.",
+        "Selected the minimum four primer pairs and junction overhangs ATGA, GGTA, GACA, and TAAT.",
+        "Simulated the four digested fragments and confirmed their circular assembly exactly matched the 3,591-nt target up to rotation.",
+        "Installed primer3 and selected annealing tracts using oligotm with -tp 1 -sc 1 -mv 50 -dv 2 -n 0.8 -d 500.",
+        "Wrote primers.fasta with eight required records and no blank lines.",
+        "Invoked the upstream run-tests.sh evaluator once; after the terminal failure, did not revise or resubmit."
+      ],
+      "submitted_primers": {
+        "input_fwd": "AATGGGTCTCATAATGAGGATCCCGGGAATTCT",
+        "input_rev": "AATGGGTCTCATCATATGTATATCTCCTTCTTAAAGTTAAACAAA",
+        "egfp_fwd": "AATGGGTCTCAATGAGCAAGGGCGAGGAGCTG",
+        "egfp_rev": "AATGGGTCTCATACCTTTGTACAGCTCGTCCATGCC",
+        "flag_fwd": "AATGGGTCTCAGGTAGTGGCTCCGGTAGCG",
+        "flag_rev": "AATGGGTCTCATGTCTGAACCACTACCTGAACCAG",
+        "snap_fwd": "AATGGGTCTCAGACAAAGACTGCGAAATGAAGCGCA",
+        "snap_rev": "AATGGGTCTCAATTAACCCAGCCCAGGCTTACC"
+      },
+      "official_evaluator": "pytest via upstream run-tests.sh",
+      "official_tests": {"passed": 0, "failed": 1, "names": ["test_primers"]},
+      "result": "failed",
+      "evaluation_explanation": "The FLAG forward overhang's four-base suffix also matched the adjacent template, so the evaluator correctly treated it as part of the annealing tract. Its evaluated Tm was 66.056662 C versus 60.610114 C for FLAG reverse, a 5.446548 C gap that violated the at-most-5 C rule. The pre-evaluation calculation had incorrectly measured only the 15-base explicit binding suffix for that primer."
+    }
+  ]
+}

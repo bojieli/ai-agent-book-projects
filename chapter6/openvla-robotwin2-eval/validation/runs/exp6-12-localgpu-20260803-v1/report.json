@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "experiment": "6-12",
+  "generated_at_utc": "2026-08-04T04:38:22.151984+00:00",
+  "evidence_policy": {
+    "paper_numbers_accepted": false,
+    "historical_rollouts_accepted": false,
+    "dry_run_commands_accepted": false,
+    "required_source": "instrumented upstream val-only execution"
+  },
+  "configuration": {
+    "experiment": "6-12",
+    "upstream_path": "/tmp/ai-agent-book-exp6-12-pr/chapter7/SimpleVLA-RL/SimpleVLA-RL",
+    "expected_upstream_commit": "7c51662df27b586f9e8a1ab35fcf849f2b8852f9",
+    "expected_robotwin2_commit": "13c3c47ff4312dd62484bcd51be034af55c062d1",
+    "checkpoint_id": "Haozhan72/twin2_move_can_pot_seed1k_sft_single_20k",
+    "expected_checkpoint_revision": "a1f0ac0aa32d31ffab7131b0eda3e11719f39ee5",
+    "task": "move_can_pot",
+    "task_suite": "robotwin2_move_can_pot",
+    "task_config": "exp6_12_three_view",
+    "checkpoint_env": "OPENVLA_CHECKPOINT",
+    "robotwin2_env": "ROBOTWIN2_PATH",
+    "align_path_env": "SIMPLEVLA_ALIGN_PATH",
+    "model_family": "openvla",
+    "vla": "openvla-oft",
+    "action_dimension": 14,
+    "action_token_length": 14,
+    "action_chunks": [
+      1,
+      25
+    ],
+    "rgb_views": 3,
+    "proprio_dimension": 14,
+    "control_hz": 50,
+    "iid_validation_seeds": 128,
+    "ood_validation_seeds": 128,
+    "gpus_required": 1,
+    "failure_modes": [
+      "grasp_failure",
+      "transport_collision",
+      "placement_position_error",
+      "placement_orientation_error",
+      "gripper_release_failure",
+      "timeout",
+      "environment_error",
+      "other_observed_failure"
+    ]
+  },
+  "arms": {
+    "chunk_1": {
+      "action_chunk_length": 1,
+      "episodes": 256,
+      "successes": 0,
+      "success_rate": 0.0,
+      "by_split": {
+        "iid": {
+          "episodes": 128,
+          "successes": 0,
+          "success_rate": 0.0
+        },
+        "ood": {
+          "episodes": 128,
+          "successes": 0,
+          "success_rate": 0.0
+        }
+      },
+      "completion_action_steps": {
+        "count": 256,
+        "mean": 200.0,
+        "std": 0.0,
+        "min": 200.0,
+        "p50": 200.0,
+        "p95": 200.0,
+        "max": 200.0
+      },
+      "completion_control_seconds_at_50hz": {
+        "count": 256,
+        "mean": 4.0,
+        "std": 0.0,
+        "min": 4.0,
+        "p50": 4.0,
+        "p95": 4.0,
+        "max": 4.0
+      },
+      "failure_modes": {
+        "timeout": 256
+      },
+      "unclassified_failure_count": 0,
+      "missing_video_count": 0,
+      "unmatched_video_count": 0
+    },
+    "chunk_25": {
+      "action_chunk_length": 25,
+      "episodes": 256,
+      "successes": 26,
+      "success_rate": 0.1015625,
+      "by_split": {
+        "iid": {
+          "episodes": 128,
+          "successes": 13,
+          "success_rate": 0.1015625
+        },
+        "ood": {
+          "episodes": 128,
+          "successes": 13,
+          "success_rate": 0.1015625
+        }
+      },
+      "completion_action_steps": {
+        "count": 256,
+        "mean": 190.13671875,
+        "std": 29.939405918177442,
+        "min": 50.0,
+        "p50": 200.0,
+        "p95": 200.0,
+        "max": 200.0
+      },
+      "completion_control_seconds_at_50hz": {
+        "count": 256,
+        "mean": 3.802734375,
+        "std": 0.5987881183635488,
+        "min": 1.0,
+        "p50": 4.0,
+        "p95": 4.0,
+        "max": 4.0
+      },
+      "failure_modes": {
+        "timeout": 230
+      },
+      "unclassified_failure_count": 0,
+      "missing_video_count": 0,
+      "unmatched_video_count": 0
+    }
+  },
+  "controlled_action_chunk_comparison": {
+    "complete_pairs": 256,
+    "chunk_25_wins": 26,
+    "chunk_1_wins": 0,
+    "ties": 230,
+    "mean_paired_success_delta": 0.1015625,
+    "unpaired_rows": 0
+  },
+  "strict_completion": {
+    "complete": true,
+    "errors": []
+  }
+}

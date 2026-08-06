@@ -16,7 +16,6 @@ import base64
 import hashlib
 import json
 import os
-import re
 import shutil
 import subprocess
 import time
@@ -338,7 +337,10 @@ def char_error_rate(reference: str, hypothesis: str) -> ErrorRate:
     ref = normalize(reference)
     hyp = normalize(hypothesis)
     if not ref:
-        return ErrorRate(0.0, 1.0, 0, 0)
+        if not hyp:
+            return ErrorRate(0.0, 1.0, 0, 0)
+        dist = len(hyp)
+        return ErrorRate(cer=float(dist), accuracy=0.0, edits=dist, ref_len=0)
     dist = _edit_distance(ref, hyp)
     cer = dist / len(ref)
     return ErrorRate(cer=cer, accuracy=max(0.0, 1.0 - cer), edits=dist, ref_len=len(ref))

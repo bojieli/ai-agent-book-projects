@@ -188,7 +188,16 @@ CODE_SYSTEM = (
 
 def parse_answer(text, names):
     """从模型输出里提取最后一个形如 {name: knight/knave} 的 JSON 答案。"""
-    norm = {"knight": "knight", "knave": "knave", "骑士": "knight", "无赖": "knave"}
+    norm = {
+        "knight": "knight",
+        "knave": "knave",
+        "骑士": "knight",
+        "无赖": "knave",
+        "true": "knight",
+        "false": "knave",
+        "1": "knight",
+        "0": "knave",
+    }
     # 找出所有 {...} 片段，从后往前尝试解析
     for m in reversed(list(re.finditer(r"\{[^{}]*\}", text))):
         try:
