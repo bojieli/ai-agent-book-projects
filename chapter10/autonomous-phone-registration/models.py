@@ -29,7 +29,10 @@ class FieldSpec:
         return cls(**{k: v for k, v in value.items() if k in allowed})
 
     def validate(self, value: str) -> tuple[bool, str]:
-        value = value.strip()
+        if value is None:
+            value = ""
+        else:
+            value = str(value).strip()
         if self.required and not value:
             return False, "该项为必填项，不能留空"
         if not value:
