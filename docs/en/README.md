@@ -56,7 +56,7 @@ The book revolves around the core formula **Agent = LLM + Context + Tools**, wit
 | 2 | 🎯 **Context Engineering** | Context caps Agent ability: KV Cache, prompt engineering, Agent Skills, context compression | [Read](../../book-en/chapter2.md) | [9](../../chapter2/README.en.md) |
 | 3 | 📚 **User Memory & Knowledge Bases** | Cross-session user memory + external knowledge: user memory, RAG, structured indexes, knowledge graphs | [Read](../../book-en/chapter3.md) | [13](../../chapter3/README.en.md) |
 | 4 | 🛠️ **Tools** | Tools are the Agent's hands: MCP protocol, perception/execution/collaboration tools, event-driven async Agents, proactive tool discovery | [Read](../../book-en/chapter4.md) | [7](../../chapter4/README.en.md) |
-| 5 | 💻 **Coding Agent & Code Generation** | Code is a "tool that creates new tools"; production-grade Coding Agent in full | [Read](../../book-en/chapter5.md) | [12](../../chapter5/README.en.md) |
+| 5 | 💻 **Coding Agent & Code Generation** | Code is a "tool that creates new tools"; production-grade Coding Agent in full | [Read](../../book-en/chapter5.md) | [13](../../chapter5/README.en.md) |
 | 6 | 🎯 **Agent Evaluation** | Turn performance into comparable signals: environments, metrics, statistical significance, evaluation-driven selection | [Read](../../book-en/chapter6.md) | [12](../../chapter6/README.en.md) |
 | 7 | 🧠 **Model Post-Training** | Pre-training/SFT/RL three stages: when to choose SFT vs. RL, internalizing tool calls, sample efficiency | [Read](../../book-en/chapter7.md) | [16](../../chapter7/README.en.md) |
 | 8 | 🔄 **Agent Self-Evolution** | Growth without changing weights: learning from experience, from tool user to tool creator | [Read](../../book-en/chapter8.md) | [7](../../chapter8/README.en.md) |
