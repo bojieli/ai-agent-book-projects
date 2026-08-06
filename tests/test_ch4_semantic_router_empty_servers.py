@@ -1,5 +1,5 @@
 import pytest
-pytest.importorskip(numpy)
+pytest.importorskip("numpy")
 """Regression test for SemanticRouter initialization with empty servers list."""
 import sys
 from pathlib import Path
