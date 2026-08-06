@@ -1,6 +1,6 @@
 # công cụ
 
-Trong bộ phim khoa học viễn tưởng “Her”, trợ lý AI Samantha có thể chủ động sắp xếp email, xác định những bức thư phức tạp về mặt cảm xúc và đề xuất những câu trả lời trau chuốt. Cô ấy có thể thay mặt nhân vật chính xử lý các vấn đề xuất bản và có thể chuyển đổi liền mạch giữa các kênh liên lạc khác nhau. Sở dĩ trí thông minh của cô ấn tượng là vì cô sở hữu những **công cụ** mạnh mẽ - “tay, chân và giác quan” kết nối “bộ não” ngôn ngữ với thế giới kỹ thuật số thực sự.
+Trong bộ phim khoa học viễn tưởng “Her”, trợ lý AI Samantha có thể chủ động sắp xếp email, xác định những bức thư phức tạp về mặt cảm xúc và đề xuất những câu trả lời trau chuốt, thay mặt nhân vật chính xử lý việc xuất bản, đồng thời chuyển đổi liền mạch giữa các kênh liên lạc khác nhau. Sở dĩ trí thông minh của cô ấn tượng là vì cô sở hữu những **công cụ** mạnh mẽ - “tay, chân và giác quan” kết nối “bộ não” ngôn ngữ với thế giới kỹ thuật số thực sự. Các Agent đa dụng ngày nay như Manus và OpenClaw đã hiện thực hóa phần lớn năng lực mà Samantha cần trong *Her*.
 
 Tuy nhiên, để xây dựng một trợ lý như vậy từ công nghệ ngày nay, chúng ta cần giải quyết hai thách thức cốt lõi:
 
@@ -183,7 +183,15 @@ Các công cụ nhận biết thường phải đối mặt với thách thức 
 >
 > Hầu hết các công cụ này đều dựa trên API mở và miễn phí và có thể được sử dụng mà không cần đăng ký. Có một số lượng lớn máy chủ công cụ nhận thức được tạo sẵn trong hệ sinh thái MCP. Chương 5 sẽ chứng minh rằng hầu hết các chức năng này có thể được thực hiện bằng bảy công cụ cốt lõi kết hợp với tài liệu Kỹ năng.
 
+### Nhận thức đa phương thức
+
+Để hiểu hình ảnh, video, âm thanh và PDF, Agent cần khả năng nhận thức đa phương thức. Có ba cách: xử lý đa phương thức gốc của mô hình, tự động trích xuất nội dung thành văn bản, hoặc đóng gói mô hình đa phương thức thành một công cụ.
+
+Xử lý gốc có trần năng lực cao nhất; các bộ mã hóa như Vision Transformer ánh xạ nhiều loại dữ liệu vào không gian ngữ nghĩa chung. Trích xuất văn bản tiết kiệm token cho mô hình không hỗ trợ gốc và PDF nhiều chữ, nhưng làm mất bố cục, biểu đồ và hình ảnh. Nếu mô hình chính không đa phương thức, các công cụ như `analyze_image`, `analyze_pdf`, `analyze_audio` có thể gửi tệp và câu hỏi tới mô hình chuyên dụng rồi chỉ giữ kết quả ngắn trong ngữ cảnh.
+
 ## Công cụ thực thi
+
+Thiết kế bảo mật được cập nhật dùng cô lập cấp tiến trình cho Agent rủi ro thấp, container hoặc microVM cho đầu vào không đáng tin cậy và hạn ngạch tài nguyên ở mọi tầng. Sidecar nhẹ kiểm tra các trường có cấu trúc của lệnh gọi như một cổng trước khi thực thi; nếu bị từ chối liên tiếp, bộ ngắt mạch sẽ chuyển sang yêu cầu người dùng quyết định. Tác vụ không idempotent dùng hai bước “kiểm tra trước–xác nhận”.
 
 Nếu công cụ nhận thức là “giác quan” của Agent thì công cụ thực thi là “tay chân” của Agent. Nhưng không giống như các công cụ nhận thức, lỗi trong công cụ thực thi có thể cực kỳ tốn kém: không thể khôi phục các tệp vô tình bị xóa, các lệnh hệ thống không chính xác có thể gây gián đoạn dịch vụ và các lệnh gọi API không đúng cách có thể gây ra tổn thất tài chính thực sự. Do đó, việc thiết kế các công cụ thực thi đòi hỏi sự cân bằng tinh tế giữa **sự bộc lộ khả năng** và **các ràng buộc bảo mật**.
 
@@ -353,7 +361,9 @@ Mâu thuẫn cơ bản gặp phải khi triển khai mô hình không đồng b�
 
 ![Hình 4-2 Kiến trúc tác nhân không đồng bộ hướng sự kiện ](images/fig4-2.svg)
 
-### Xem xét nhu cầu thực sự theo sự kiện từ OpenClaw
+### Triển khai cơ chế hướng sự kiện trong OpenClaw
+
+Bản cập nhật làm rõ rằng Hooks phát sinh từ vòng đời nội bộ của OpenClaw, còn Cron và Heartbeat được điều khiển theo thời gian. Email và callback API bên ngoài cần đường vào tức thời như Channel của PineClaw.
 
 Khung công tác nguồn mở OpenClaw (có kiến trúc sẽ được mô tả chi tiết trong Chương 5) nhận các tin nhắn đa kênh thông qua mặt phẳng điều khiển Gateway và định tuyến chúng đến thời gian chạy Agent. Nó cung cấp ba cơ chế tự động hóa tích hợp:
 
@@ -389,6 +399,8 @@ Công cụ kích hoạt sự kiện là lối vào cho các hành động Agent 
 
 ### Công cụ giao tiếp với người dùng
 
+Trong OpenClaw, session không lộ ra với người dùng; người dùng và Agent có thể nhắn tin bất cứ lúc nào bằng công cụ chuyên dụng, kèm ảnh, tệp, thông báo đẩy, nội dung đa phương thức và Generative UI.
+
 Công cụ giao tiếp người dùng được ra đời khi các kênh giao tiếp của Agent với người dùng ngày càng đa dạng. Nhiều Agent (chẳng hạn như Claude Code, Manus, Genspark) áp dụng vòng lặp ReAct gốc. Tất cả các từ được Agent "nói" (tức là tin nhắn trợ lý) đều được gửi trực tiếp đến người dùng. Người dùng phải mở một phiên được chỉ định trong Ứng dụng để nói chuyện với Agent. OpenClaw là một trong những đại diện có ảnh hưởng nhất của Agent nói chung đã phá vỡ mô hình giao tiếp giữa người và máy tính này: phiên của nó là minh bạch đối với người dùng - người dùng không cần biết về sự tồn tại của phiên và không cần quan tâm đến các chi tiết của công cụ gọi điện Agent; cả người dùng và Agent đều có thể gửi tin nhắn cho nhau bất kỳ lúc nào, thay vì người dùng gửi một tin nhắn và Agent trả lời một tin nhắn. Vì vậy, nhiều người nhận xét OpenClaw có "cảm giác sống động" và giao tiếp không đồng bộ với người dùng thông qua tin nhắn giống như một thư ký. Tại thời điểm này, các tin nhắn văn bản này không trực tiếp xuất ra các tin nhắn trợ lý do mô hình xuất ra cho người dùng mà sử dụng các công cụ đặc biệt để gửi tin nhắn. Những tin nhắn này cũng có thể được đính kèm với hình ảnh và tệp đính kèm, đồng thời có thể kèm theo lời nhắc thông báo đẩy tùy theo mức độ khẩn cấp.
 
 Ngoài việc giao tiếp với người dùng qua văn bản, Agent ngày càng có khả năng giao tiếp đa phương thức, chẳng hạn như gửi tin nhắn thẻ có cấu trúc và gửi email nhắc nhở. Một số Agent đã bắt đầu thử nghiệm giao diện người dùng tổng quát, nghĩa là sử dụng HTML và các phương pháp khác để tạo giao diện tương tác nhằm hiển thị thông tin cho người dùng theo cách thân thiện hơn. Ở cấp độ thiết kế, các công cụ giao tiếp với người dùng phải hỗ trợ chế độ nhắn tin không đồng bộ (người dùng không nhất thiết phải trực tuyến), cung cấp tính năng theo dõi trạng thái đã đọc/chưa đọc và duy trì tính nhất quán của tin nhắn trong các tình huống đa kênh.
@@ -404,6 +416,8 @@ Ngoài việc giao tiếp với người dùng qua văn bản, Agent ngày càng
 Công cụ giao tiếp với người dùng giải quyết vấn đề “làm thế nào để tiếp cận người dùng”. Tuy nhiên, Agent xuất hiện với khả năng nào trên các kênh này và nó thực hiện các hoạt động thay mặt cho người dùng trong môi trường nào, thì cũng cần có một lớp nhận dạng và cơ sở hạ tầng môi trường, đây là chủ đề của phần tiếp theo.
 
 ### Nhận dạng ảo và môi trường thực thi biệt lập
+
+Máy tính ảo có thể chạy 24/7, hạn chế Agent truy cập tự do vào tệp cục bộ và cô lập lỗi trong môi trường ảo. Dữ liệu được trao đổi bằng đường dẫn trong hệ thống tệp dùng chung.
 
 Trước tiên, cần phải giải thích vị trí của phần này: danh tính ảo và môi trường thực thi biệt lập về cơ bản là cơ sở hạ tầng môi trường thực thi, giống như hộp cát đã thảo luận trong phần trước về các công cụ thực thi; Lý do tại sao nó được mở rộng sang phần kiến trúc không đồng bộ là vì chỉ Agent, có thể chạy độc lập, thường trú và hoạt động thay mặt người dùng bất cứ lúc nào, cần nó nhất.
 
@@ -597,11 +611,13 @@ Nhưng phần quan trọng hơn của nghiên cứu này là về **đào tạo*
 > **4. Hủy và truy vấn trạng thái của các công cụ song song**: Sau khi hoàn thành công cụ không đồng bộ, kết quả thực sẽ được đưa vào cuộc trò chuyện thông qua các sự kiện mới và hỗ trợ hủy hoặc truy vấn tiến trình thông qua ID tác vụ. **Tình huống xác minh**: Người dùng yêu cầu "Giúp tôi chạy ba tập lệnh này cùng lúc. Cái nào hoàn thành trước, hãy xem tiến độ của các tập lệnh còn lại như thế nào. Nếu chưa vượt quá 50% thì hãy hủy nó." Ba tập lệnh mô phỏng quá trình phân tích và liên tục xuất ra tiến trình khi chạy. Tốc độ lần lượt là 3%, 2% và 1% mỗi giây. Agent khởi động ba lệnh đầu cuối không đồng bộ cùng một lúc. Khi 3% tập lệnh mỗi giây được hoàn thành trong khoảng 33 giây, Agent truy vấn trạng thái của hai thiết bị đầu cuối còn lại và nhận thấy rằng một thiết bị đầu cuối được thực thi ở khoảng 66% và thiết bị kia ở khoảng 33%, do đó, thiết bị đầu cuối không vượt quá 50% sẽ bị hủy. Sau khi cả hai thiết bị đầu cuối được hoàn thành, kết quả sẽ được kết hợp để tạo ra một báo cáo đầy đủ.
 >
 
-## Khám phá công cụ tích cực
+## Khám phá công cụ tích cực và tiết lộ dần dựa trên Skill
 
 Phần trước đã thảo luận các nguyên tắc thiết kế của từng công cụ riêng lẻ và hệ sinh thái công cụ. Nhưng khi số công cụ có sẵn tăng từ hàng chục lên hàng trăm, thậm chí hàng nghìn, một vấn đề mới nảy sinh - làm thế nào để tìm được một cách hiệu quả công cụ cần thiết hiện tại từ thư viện công cụ khổng lồ? Phần này trước tiên xem xét ngắn gọn các phương pháp khám phá công cụ hiện có (sàng lọc trước bằng truy xuất, khai báo chủ động, đối sánh phân cấp), sau đó giới thiệu ý tưởng tiết lộ lũy tiến của Kỹ năng vốn phổ biến hơn và nhẹ nhàng hơn gần đây.
 
-### Các phương pháp khám phá công cụ hiện có
+### Khám phá công cụ gốc của mô hình
+
+Cách khám phá phụ thuộc vào cách framework biểu diễn công cụ: một số dùng công cụ gốc của mô hình, số khác dùng biểu diễn dựa trên Skill. Khi thiếu năng lực, Agent tuyên bố nhu cầu bằng ngôn ngữ tự nhiên và hệ thống ghép rồi nạp công cụ theo yêu cầu.
 
 Cách tiếp cận truyền thống là đưa lược đồ của tất cả các công cụ vào system prompt cùng một lúc, nhưng nó nhanh chóng trở nên không hiệu quả khi số lượng công cụ lên tới hàng nghìn: ngữ cảnh chứa đầy "hướng dẫn công cụ" và độ chính xác của việc lựa chọn mô hình giảm xuống. Việc sàng lọc trước truy xuất được thảo luận trong phần "Hệ sinh thái công cụ" của chương này (sàng lọc một loạt công cụ ứng cử viên dựa trên sự tương đồng về ngữ nghĩa) làm giảm bớt vấn đề này, nhưng nó có một hạn chế cố hữu - nó thực hiện đối sánh **một lần** dựa trên truy vấn ban đầu của người dùng và các yêu cầu có vẻ đơn giản như "Gỡ lỗi tệp" thực sự có thể liên quan đến chuỗi công cụ đa miền, nhiều bước như truy cập tệp, phân tích mã và thực thi lệnh. Không thể lường trước được tất cả các yêu cầu khi bắt đầu nhiệm vụ.
 
@@ -641,6 +657,8 @@ Không khó để nhận thấy rằng mặc dù toàn bộ cơ chế "khai báo
 > **Quan sát dự kiến**: Độ chính xác và tỷ lệ hoàn thành nhiệm vụ được cải thiện đáng kể. Khám phá công cụ tích cực không chỉ giúp các mô hình lớn có khả năng mạnh mẽ đối phó với các tình huống với hàng nghìn công cụ mà còn cho phép các mô hình tham số nhỏ vẫn có thể sử dụng được trong các tình huống với hàng trăm công cụ.
 
 ### Kỹ năng: Biến việc khám phá công cụ thành “truy cập theo yêu cầu”
+
+**Tiết lộ dần.** Lúc khởi động, Agent chỉ thấy danh mục mỏng gồm `name` và `description` của mỗi Skill; khi ngữ cảnh cần, nó mới đọc sub-Skill và các tệp được tham chiếu, giống như tra sách hướng dẫn hay Wikipedia. Công cụ gốc với JSON thân thiện với mô hình hơn, còn Skill bằng ngôn ngữ tự nhiên thân thiện với người viết hơn.
 
 Một trong những ý tưởng phổ biến gần đây đến từ cơ chế Kỹ năng. Chương 2 đã giới thiệu Công bố Kỹ năng Tiến bộ từ góc độ Context Engineering (kỹ thuật ngữ cảnh); ở đây, từ một góc độ khác, hãy coi nó như một mô hình khám phá công cụ - điểm khác biệt lớn nhất so với phần trước là nó không còn yêu cầu cơ sở hạ tầng "chỉ mục nhúng + khớp ngữ nghĩa" nữa.
 

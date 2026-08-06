@@ -1,13 +1,8 @@
 # Eszközök
 
-A *Her* sci-fi filmben Samantha, az MI-asszisztens képes proaktívan rendezni az e-maileket, azonosítani az érzelmileg összetett üzeneteket és finomított válaszokat javasolni, képviselni a főszereplőt kiadói ügyekben, és zökkenőmentesen váltani a különböző kommunikációs csatornák között. Intelligenciája azért lenyűgöző, mert hatalmas "eszközökkel" rendelkezik – ezek a "kezek, lábak és érzékek", amelyek egy nyelvi "agyat" a valódi digitális világhoz kapcsolnak.
+A *Her* sci-fi filmben Samantha, az MI-asszisztens képes proaktívan rendezni az e-maileket, azonosítani az érzelmileg összetett üzeneteket és finomított válaszokat javasolni, képviselni a főszereplőt kiadói ügyekben, és zökkenőmentesen váltani a különböző kommunikációs csatornák között. Intelligenciája azért lenyűgöző, mert erős **eszközökkel** rendelkezik – ezek a „kezek, lábak és érzékek”, amelyek egy nyelvi „agyat” a valódi digitális világhoz kapcsolnak. A mai általános célú Agentek, például a Manus és az OpenClaw, már megvalósították a *Her* Samanthájához szükséges képességek többségét.
 
-Egy ilyen asszisztens kiépítése a mai technológiával azonban két alapvető kihívás megoldását jelenti:
-
-1.  "Az eszközkiválasztás kihívása": Amikor több ezer eszköz dokumentációja túlcsordíthatja a kontextusablakot, hogyan találhatja meg egy Agent pontosan és hatékonyan a feladathoz szükséges eszközt? Hogyan fejlődhet a passzív "eszközkiválasztástól" az aktív "eszközfelfedezésig"? Ez a fejezet az eszköztervezési elvekre, a jelenlegi ökoszisztémára és a nagyméretű proaktív felfedezésre összpontosít; azt, hogy egy Agent hogyan hoz létre, módosít és von ki önállóan eszközöket a működési tapasztalatok alapján, a 8. fejezet tárgyalja.
-2.  "Az aszinkronitás és események kihívása": Hogyan kezelhet egy Agent hosszan futó feladatokat, hogyan reagálhat a felhasználó vagy a rendszer bármikor érkező megszakításaira, és hogyan válaszolhat külső eseményekre olyan csatornákról, mint az e-mail, naptárak és rendszerriasztások anélkül, hogy szinkron várakozások csapdájába esne?
-
-Ez a fejezet ezt a két kihívást bontja ki. Az öt eszközkategória áttekintésével kezd, majd tárgyalja az összes eszközre vonatkozó általános tervezési elveket és azt, hogy az MCP protokoll hogyan egységesíti az eszközök ökoszisztémáját. Erre az alapra építve hierarchikus szerveződéssel, dinamikus felfedezéssel és Skill-ekkel kezeli az eszközkiválasztás kihívásait. Ezt követően részletesen megvizsgálja az Agent által proaktívan meghívott három eszközkategóriát – Észlelés, Végrehajtás és Együttműködés –, mielőtt az eseményvezérelt aszinkron Agent architektúrákra, valamint az ezekre épülő Eseményindított és Felhasználói Kommunikációs eszközökre térne át. Végül a "Proaktív Eszközfelfedezéssel" zár, amely szisztematikusan kezeli a felfedezést, amikor az eszközök száma eléri a százakat vagy ezreket. Azt, hogy egy Agent hogyan alakítja át a kiértékelt eszközhasználati trajektóriákat új képességekké, a 8. fejezet, "Folyamatos Agent Evolúció" tárgyalja szisztematikusan.
+A fejezet az öt eszközkategória áttekintésével kezd, majd tárgyalja az összes eszközre vonatkozó tervezési elveket és azt, hogy az MCP protokoll hogyan egységesíti az eszközök ökoszisztémáját. Erre az alapra építve hierarchikus szerveződéssel, dinamikus felfedezéssel és Skill-ekkel kezeli az eszközkiválasztás kihívásait. Ezután részletesen megvizsgálja az Agent által proaktívan meghívott Észlelési, Végrehajtási és Együttműködési eszközöket, majd az eseményvezérelt aszinkron architektúrát, az Eseményindított és Felhasználói Kommunikációs eszközöket. Végül a több száz vagy ezer eszköz közötti proaktív felfedezéssel zár.
 
 ## Eszközök Osztályozása
 
@@ -181,7 +176,15 @@ Az észlelő eszközök gyakran szembesülnek azzal a kihívással, hogy sokkal 
 >
 > A legtöbb ilyen eszköz ingyenes, nyílt API-kon alapul, és regisztráció nélkül használható. Az MCP ökoszisztémában már sok kész észlelő eszköz szerver érhető el. Az 5. fejezet bemutatja, hogy a legtöbb ilyen képesség lefedhető hét mag-eszközzel, Skill dokumentumokkal kombinálva.
 
+### Multimodális észlelés
+
+Képek, videók, hangok és PDF-ek megértéséhez az Agentnek multimodális észlelésre van szüksége. Három út létezik: a modell natív multimodális feldolgozása, a tartalom automatikus szöveggé alakítása, valamint egy multimodális modell eszközként való becsomagolása.
+
+A natív feldolgozás adja a legmagasabb képességplafont; a Vision Transformerhez hasonló kódolók közös szemantikai térbe vetítik az adatokat. A szövegkinyerés jó megoldás nem multimodális modelleknél és szövegközpontú PDF-eknél takarékosabb, de elveszíti az elrendezést, ábrákat és képeket. Ha a fő modell nem multimodális, az `analyze_image`, `analyze_pdf` és `analyze_audio` eszközök egy szakosodott modellnek adhatják át a fájlt és a kérdést, rövid eredményt tartva a kontextusban.
+
 ## Végrehajtó Eszközök
+
+A frissített biztonsági réteg alacsony kockázatnál folyamat-szintű izolációt, megbízhatatlan bemenetnél konténert vagy microVM-et, minden szinten pedig erőforrás-kvótákat használ. A könnyű Sidecar strukturált mezőkön kapuzza az eszközhívást; ismételt elutasításkor megszakítót kell aktiválni és emberi döntésre visszatérni. A nem idempotens műveletek „előzetes ellenőrzés–megerősítés” kétlépcsős folyamatot igényelnek.
 
 Ha az észlelő eszközök az Agent "érzékszervei", akkor a végrehajtó eszközök a "kezei és lábai". De az észlelő eszközökkel ellentétben a végrehajtó eszközök drágán hibázhatnak: egy véletlenül törölt fájl örökre eltűnik, egy rossz rendszerparancs leállíthat egy szolgáltatást, egy rosszul megítélt API hívás valódi pénzbe kerülhet. Tervezésüknek ezért finom egyensúlyt kell teremtenie a "képesség nyitottsága" és a "biztonsági korlátozások" között.
 
@@ -343,7 +346,9 @@ Ennek megoldásához egy "eseményvezérelt aszinkron Agent architektúrára" va
 
 ![4-2. ábra: Eseményvezérelt Aszinkron Agent Architektúra](images/fig4-2.svg)
 
-### OpenClaw és az Eseményvezérelt Architektúra Valós Igénye
+### Eseményvezérelt mechanizmusok megvalósítása az OpenClawban
+
+A frissített leírás szerint a Hooks az OpenClaw belső életciklusából származik, míg a Cron és a Heartbeat idővezérelt. A külső e-mailek és API-visszahívások azonnali csatornát, például a PineClaw Channel mechanizmusát igénylik.
 
 A nyílt forráskódú OpenClaw keretrendszer (architektúráját az 5. fejezet részletezi) egy Gateway vezérlősíkon keresztül fogadja a többcsatornás üzeneteket, és irányítja azokat az Agent futásidejű környezetébe. Három beépített automatizálási mechanizmust kínál:
 
@@ -379,6 +384,8 @@ Tervezési szempontból az eseményindított eszközöknek egyértelmű trigger-
 
 ### Felhasználói Kommunikációs Eszközök
 
+Az OpenClawban a munkamenetek átláthatók: a felhasználó és az Agent bármikor üzenhet egymásnak dedikált eszközökkel, képekkel, fájlokkal, push-értesítéssel, multimodális üzenetekkel és Generative UI-val.
+
 A felhasználói kommunikációs eszközök az Agent és a felhasználó közötti kommunikációs csatornák egyre növekvő diverzifikációjából erednek. Sok Agent (mint a Claude Code, Manus, Genspark) natív ReAct hurkot használ, ahol minden, amit az Agent "mond" (azaz asszisztens üzenetek), közvetlenül a felhasználóhoz kerül, akinek meg kell nyitnia egy adott munkamenetet az alkalmazásban, hogy beszélgethessen az Agenttel. Az OpenClaw az egyik legbefolyásosabb általános célú Agent, amely megtöri ezt az ember-számítógép kommunikációs paradigmát: a munkamenetei átláthatóak a felhasználó számára – a felhasználónak nem kell tudnia a munkamenet létezéséről, vagy törődnie az Agent eszközhívásainak részleteivel; a felhasználó és az Agent bármikor küldhet egymásnak üzeneteket, ahelyett, hogy szigorú felhasználói üzenet / Agent válasz minta lenne. Ennek következtében sok felhasználó úgy érzi, hogy az OpenClaw "ember-szerű jelenléttel" rendelkezik, aszinkron módon üzenve nekik, ahogy egy titkár tenné. Ezek a szöveges üzenetek nem a modell asszisztens üzenetei, amelyeket egyenesen a felhasználóhoz irányítanak; dedikált eszközökön keresztül küldik őket, hordozhatnak kép- és fájlmellékleteket, és push értesítéseket indíthatnak a sürgősség szerint.
 
 A szöveges kommunikáción túl egyre több Agent rendelkezik multimodális kommunikációs képességekkel, például strukturált kártyaüzenetek vagy emlékeztető e-mailek küldésével. Néhány Agent elkezdett kísérletezni a generatív UI-val, HTML-t vagy más módszereket használva interaktív felületek létrehozására az információk felhasználóbarátabb bemutatásához. Tervezési szempontból a felhasználói kommunikációs eszközöknek támogatniuk kell az aszinkron üzenetküldést (a felhasználó nem biztos, hogy online van), olvasott/olvasatlan állapot követést kell biztosítaniuk, és fenn kell tartaniuk az üzenetek konzisztenciáját a több csatornán keresztül.
@@ -394,6 +401,8 @@ Hosszan futó feladatok esetén az Agentnek proaktívan értesítenie kell a fel
 A felhasználói kommunikációs eszközök megoldják "hogyan érjük el a felhasználót" problémát. Az Agent által ezeken a csatornákon felvett identitás és a környezet, amelyben a felhasználó nevében cselekszik, azonban egy identitás- és végrehajtási környezet infrastruktúra réteget igényel, amely a következő szakasz témája.
 
 ### Virtuális Identitás és Izolált Végrehajtási Környezet
+
+A virtuális számítógép éjjel-nappal futhat, nem fér hozzá szabadon a helyi fájlokhoz, és egy hiba legfeljebb a virtuális környezetet érinti. Az adatcsere megosztott fájlrendszeren és útvonalakon történik.
 
 Egy megjegyzés e szakasz elhelyezéséről: a virtuális identitás és az izolált végrehajtási környezet alapvetően végrehajtási környezet infrastruktúra, összhangban a végrehajtó eszközöknél tárgyalt sandboxokkal. Azért jelennek meg itt, az aszinkron architektúra szakaszban, mert az Agentek, amelyeknek a legégetőbben szükségük van rájuk, azok, amelyek függetlenül futnak, állandóan jelen vannak és bármikor cselekszenek a felhasználó nevében.
 
@@ -584,11 +593,13 @@ De a kutatás kritikusabb fele a "képzést" érinti, és ez válaszol a fenti "
 >
 > **4. Párhuzamos Eszközök Lemondása és Állapotlekérdezése**: Miután egy aszinkron eszköz befejeződött, a valódi eredmény egy új eseményen keresztül kerül a beszélgetésbe. Támogatja a lemondást vagy az előrehaladás lekérdezését feladat azonosító alapján. "Validációs Forgatókönyv": A felhasználó kéri: "Futtasd nekem ezt a három szkriptet egyszerre. Amelyik előbb befejeződik, ellenőrizd a maradék szkriptek előrehaladását. Ha valamelyik nem haladta meg az 50%-ot, mondd le." A három szkript elemzési folyamatokat szimulál, folyamatosan 3%, 2% és 1% sebességgel adva ki az előrehaladást másodpercenként. Az Agent három aszinkron terminálparancsot indít egyszerre. Amikor a 3%/másodperc sebességű szkript körülbelül 33 másodperc alatt befejeződik, az Agent lekérdezi a maradék két terminál állapotát, az egyiket körülbelül 66%-os, a másikat körülbelül 33%-os előrehaladással találva. Ezután lemondja azt, amelyik nem haladta meg az 50%-ot. Miután mindkét terminál befejeződött, integrálja az eredményeket egy teljes jelentés létrehozásához.
 
-## Proaktív Eszközfelfedezés
+## Proaktív eszközfelfedezés és Skill-alapú fokozatos közzététel
 
 Az eddigi tárgyalás lefedte az egyes eszközök tervezési elveit és az eszközök ökoszisztémáját. De ahogy az elérhető eszközök egy tucatról százra vagy ezerre nőnek, egy új probléma jelenik meg – hogyan találja meg hatékonyan a szükséges eszközt egy hatalmas könyvtárban? Ez a szakasz röviden áttekinti a meglévő eszközfelfedezési módszereket (visszakeresés-alapú előszűrés, proaktív deklaráció, hierarchikus egyeztetés), majd a modernebb, könnyebb súlyú megközelítésre tér: a progresszív közzétételre Skill-eken keresztül.
 
-### Meglévő Eszközfelfedezési Módszerek
+### Modellnatív eszközfelfedezés
+
+Az eszközfelfedezés módját az Agent-keretrendszer reprezentációja határozza meg: egyes keretrendszerek modellnatív eszközöket, mások Skill-alapú ábrázolást használnak. Képességhiány esetén az Agent természetes nyelven jelzi az igényt, a rendszer pedig szükség szerint illeszti és tölti be az eszközt.
 
 A hagyományos megközelítés minden eszköz sémáját egyszerre injektálja a rendszer promptba, és gyorsan összeomlik, amint az eszközök száma eléri az ezret: a kontextus eltömődik az eszközkézikönyvekkel, és a kiválasztási pontosság csökken. A visszakeresés-alapú előszűrés (amelyet fent az "Eszköz Ökoszisztéma" szakaszban tárgyaltunk), amely először szemantikai hasonlóság alapján szűri a jelölteket, enyhíti a problémát, de van egy eredendő korlátja – "egyszer" egyeztet, a felhasználó kezdeti lekérdezése alapján. Egy olyan ártatlannak tűnő kérés, mint a "fájl hibakeresése", maga után vonhat egy többlépcsős, domének közötti eszközláncot – fájlhozzáférés, kódelemzés, parancsvégrehajtás –, amelyet senki sem láthat előre a feladat kezdetekor.
 
@@ -628,6 +639,8 @@ A 4-9. ábra mutatja a teljes képet a dinamikus felfedezés több körét köve
 > "Várható Megfigyelések": Jelentős javulás a pontosságban és a feladat befejezési arányában. A proaktív eszközfelfedezés nemcsak a képzett LLM-eket segíti több ezer eszközzel rendelkező forgatókönyvek kezelésében, hanem a kis modelleket is használhatóvá teszi több száz eszközzel rendelkező forgatókönyvekben.
 
 ### Skill-ek: Az Eszközfelfedezés Átalakítása "Igény Szerinti Kikereséssé"
+
+**Fokozatos közzététel.** Induláskor az Agent csak a Skill `name` és `description` mezőiből álló vékony katalógust látja, majd az aktuális kontextus igénye szerint olvassa be a rész-Skilleket és a hivatkozott fájlokat, mint amikor egy kézikönyvben vagy a Wikipédián keres. A natív eszközök JSON-formátuma a modellnek, a természetes nyelvű Skillek pedig az emberi szerzőknek kedveznek.
 
 A legújabban teret nyerő gondolatmenet a Skill mechanizmusból származik. A 2. fejezet bevezette a Skill-ek "Progresszív Közzétételét" kontextus-mérnökségként; itt eszközfelfedezési paradigmaként kezeljük – és a meghatározó különbség az előző szakasztól, hogy a "beágyazási index + szemantikai egyeztetés" infrastruktúra teljesen eltűnik.
 
