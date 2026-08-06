@@ -1,5 +1,5 @@
 import pytest
-pytest.importorskip(pandas)
+pytest.importorskip("pandas")
 """
 Test suite for compute_mle_elo calibration model and calibration rating handling.
 """
