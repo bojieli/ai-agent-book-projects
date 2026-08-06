@@ -15,12 +15,8 @@ from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
 from datetime import datetime, timedelta
-import requests
 from openai import OpenAI
 import traceback
-import tempfile
-import shutil
-from pathlib import Path
 
 try:
     from dotenv import load_dotenv
@@ -589,7 +585,7 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                             "file_path": file_path,
                             "is_binary": True
                         }
-            except Exception as e:
+            except Exception:
                 # If we can't read it as binary, probably permission issue
                 raise
             
@@ -650,7 +646,7 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                         "lines": len(content.splitlines()),
                         "partial_read": False
                     }
-        except Exception as e:
+        except Exception:
             raise
     
     def _tool_write_file(self, file_path: str, content: str) -> Dict[str, Any]:
@@ -672,7 +668,7 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                 "bytes_written": len(content.encode('utf-8')),
                 "lines_written": len(content.splitlines())
             }
-        except Exception as e:
+        except Exception:
             raise
     
     def _tool_code_interpreter(self, code: str) -> Dict[str, Any]:
@@ -702,7 +698,7 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                 "stdout": stdout,
                 "stderr": stderr,
             }
-        except Exception as e:
+        except Exception:
             raise
     
     def _tool_execute_command(self, command: str, working_dir: Optional[str] = None) -> Dict[str, Any]:
@@ -756,7 +752,7 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
             }
         except subprocess.TimeoutExpired:
             raise TimeoutError(f"Command timed out after 30 seconds: {command}")
-        except Exception as e:
+        except Exception:
             raise
     
     def _tool_rewrite_todo_list(self, items: List[str]) -> Dict[str, Any]:
@@ -949,15 +945,16 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                                     elif 'file_path' in result:
                                         logger.info(f"  ✅ Success: File operation on {result['file_path']}")
                                     else:
-                                        logger.info(f"  ✅ Success: Operation completed")
+                                        logger.info("  ✅ Success: Operation completed")
                                 elif result.get('success') is False:
                                     # Handle explicit failures (like binary file detection)
                                     if result.get('is_binary'):
                                         logger.info(f"  ⚠️ Binary file detected: {result.get('file_path', 'unknown')}")
                                     else:
-                                        logger.info(f"  ⚠️ Failed: {result.get('error', 'Unknown error')[:100]}")
+                                        err_msg = str(result.get('error') or 'Unknown error')
+                                        logger.info(f"  ⚠️ Failed: {err_msg[:100]}")
                                 else:
-                                    logger.info(f"  ✅ Success: Operation completed")
+                                    logger.info("  ✅ Success: Operation completed")
                             else:
                                 result_preview = str(result).replace('\n', ' ')[:150]
                                 logger.info(f"  ✅ Result: {result_preview}")
