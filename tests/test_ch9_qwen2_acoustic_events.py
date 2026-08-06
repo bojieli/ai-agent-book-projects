@@ -1,5 +1,5 @@
 import pytest
-pytest.importorskip(librosa)
+pytest.importorskip("librosa")
 import importlib
 import sys
 from pathlib import Path
