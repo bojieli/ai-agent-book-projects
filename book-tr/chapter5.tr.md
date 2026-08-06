@@ -466,6 +466,8 @@ def cancel_reservation(
         return {"success": False, "reason": "Kullanılmış segmentlerle iptal edilemez"}
 
     hours_since_booking = (now - r.booking_time).total_seconds() / 3600
+    if hours_since_booking < 0:
+        return {"success": False, "reason": "Booking time is in the future"}
     if hours_since_booking <= 24:
         execute_cancellation(reservation_id)
         return {"success": True, "reason": "24 saatlik pencere içinde iptal edildi"}
@@ -655,6 +657,8 @@ Veritabanı sorgulama, kod üretiminin etkileşim deneyimini önemli ölçüde i
 
 Birinci yaklaşım daha "akıllı" görünür ama son derece verimsizdir—büyük bir tabloya karşı bir sorgu binlerce satır döndürebilir. LLM'in tüm bunu okuyup metin olarak açıklamasını sağlamak token ve zaman yakar ve daha kötüsü, LLM'ler veriyi "kopyalarken" meşhur biçimde hataya açıktır. Daha iyi bir yaklaşım **artifact kalıbıdır**. Şekil 5-9, bir SQL sorgusu Agent'ının iş akışını gösterir: Agent verinin kendisini okumaz. Bunun yerine, bir SQL sorgu kodu parçası üretir ve bu kodu sisteme bağımsız bir "artifact" olarak verir. Sistem bu SQL'i alır ve veritabanını doğrudan sorgular, getirilen veriyi kullanıcıya görünür bir tabloya render eder. Bu süreç boyunca, veri doğrudan veritabanından kullanıcı arayüzüne akar, LLM "aracısını" tamamen atlar—LLM yalnızca sorgu ifadesini yazmaktan sorumludur, binlerce satır veriyi okuyup kullanıcıya yeniden anlatmaktan değil. Bu hem hızlı hem de doğrudur.
 
+Üretilen SQL ve görselleştirme kodu doğrudan çalıştırılmamalıdır. Yürütme katmanı salt okunur veritabanı kimlik bilgileri kullanmalı, SQL'i ayrıştırmalı, yalnızca onaylanmış `SELECT` ifadelerine izin vermeli ve DDL, DML ile birden çok ifadeli sorguları reddetmelidir. Kullanıcı değerleri sunucu tarafı parametreleri olarak bağlanmalı; sorgu süresi, döndürülen satır sayısı, erişilebilir tablolar ve tarih aralıkları sınırlandırılmalıdır. Görselleştirme kodu ağdan ve dosya sisteminden yalıtılmış bir sandbox'ta çalışmalı ve yalnızca onaylanmış bir sonuç biçimi üretmelidir. Artifact kalıbı veri yolunu kısaltır, ancak yetkilendirme kontrollerinin veya yürütme yalıtımının yerini tutmaz.
+
 ![Şekil 5-9: SQL Sorgusu Agent'ı İş Akışı](images/fig5-9.svg)
 
 
@@ -689,7 +693,22 @@ Ancak tam dinamik üretim maliyetlidir ve yavaştır—üretimden çok neyin mü
 > **Deney Amacı**: Kullanıcıların doğal dil diyaloğu yoluyla yazılım arayüzünü anında özelleştirme yeteneğini uygulamak, sıcak yeniden yükleme mekanizmalarıyla desteklenen kod üretiminin kişiselleştirilmiş kullanıcı deneyimleri sunmadaki etkinliğini doğrulamak.
 >
 > **Teknik Yaklaşım**: Temel bir chatbot uygulaması (React frontend + FastAPI backend) inşa edin, hem frontend hem de backend sıcak yeniden yüklemeyi (React'ın HMR'si, FastAPI'nin reload'u) destekleyen geliştirme modunda çalışır. Kullanıcılar konuşma sırasında UI özelleştirme gereksinimleri (renkler, yazı tipleri, düzen, bileşen konumları vb.) önerir. Agent kodu otonom olarak değiştirir. Sıcak yeniden yükleme mekanizması dosya değişikliklerini otomatik olarak tespit eder, frontend yeniden derlenir ve yenilenir ve kullanıcı arayüz değişikliklerini gerçek zamanlı olarak görür. Birden fazla yinelemeli özelleştirme turunu destekler.
+
+Dinamik yazılım, esnekliğiyle birlikte geleneksel güvenlik varsayımını da değiştirir. Geçmişte uygulamanın iş kodu geliştirilir, incelenir, test edilir ve dağıtılır, ardından görece sabit kalırdı; bu nedenle yetkilendirme kontrolleri çoğunlukla uygulama katmanında yer alırdı. Bir Agent arayüzleri, iş akışlarını ve hatta veri erişim kodunu her an üretebilir veya yeniden yazabilirse bu katman artık sabit değildir. Yeni kod ince bir yetkilendirme kontrolünü atlayabilir, daha önce gizlenmiş bir alanı açığa çıkarabilir veya başka bir çağrı yoluyla mevcut kontrolü atlatabilir. Nedeni sıradan bir üretim hatası da olsa, prompt injection sonrasında üretilen tehlikeli kod da olsa sonuç aynıdır: iş kodunun koruması gereken yetki sınırı sessizce bozulabilir.
+
+Bu nedenle dinamik yazılımın güvenlik hedefi “AI'ın her yetkilendirme kontrolünü doğru yazmasını sağlamak” olamaz. Hedef, **AI yanlış kod yazsa bile izin kısıtlarının aşılamaz kalmasıdır**. Yetkilendirme kontrolleri dinamik olarak üretilen iş mantığının içinde yaşarsa, kısıtlamaları gereken kodla aynı güven alanını paylaşır. İstemler, testler ve kod incelemesi hata oranını düşürür, ancak gelecekteki üretimlerin ekleyeceği tüm yürütme yollarını eksiksiz kapsayamaz ve nihai güvenlik sınırı olamaz.
+
+Daha sağlam bir mimari **güven sınırını veri katmanına indirir**. Dinamik olarak üretilen uygulama kodu sunum, iş akışları ve iş orkestrasyonunu yönetirken, insanlarca incelenmiş sabit bir mekanizma hangi kullanıcının hangi veri üzerinde ne yapabileceğini uygular. Veritabanı satır düzeyi güvenliği kullanıcıyı kendi kiracısının kayıtlarıyla sınırlayabilir; kısıtlar ve doğrulayıcılar geçersiz durumları reddedebilir; kontrollü görünümler, saklı yordamlar veya veri erişim servisleri yalnızca onaylı işlemleri açığa çıkarabilir. Her okuma ve yazma, güvenilir bir çalışma zamanı tarafından bağlanan ve kullanıcı, kiracı, rol veya Agent kimliğini içeren bir **erişim bağlamı** taşımalıdır. Üretilen kod yalnızca bu kapsamlı kimliği alır; kimliği taklit edemez veya kuralları aşan ayrıcalıklı veritabanı kimlik bilgileri edinemez. Kendi kontrolünü atlasa bile veri katmanı yetkisiz işlemi reddeder.
+
+Yetkilendirmeyi aşağı taşımak tüm iş mantığını veritabanına koymak anlamına gelmez. Uygulama katmanı hızlı geri bildirim için ön kontroller yapabilir, fakat nihai karar yetkisi veri katmanında kalmalıdır. Aynı kural üstte deneyimi iyileştirirken altta garanti sağlayabilir. Bunun için her veri erişim yolu güvenilir veri katmanından geçmeli ve üretilen kod doğrudan bağlanarak bu katmanı aşamamalıdır. Böylece üst katman sürekli değişebilir; pazarlık konusu olmayan izin kısıtları ise her üretimde yeniden yazılmayan bir katmanda kalır.
+
+> **Deney 5-12 ★★★: Dinamik Yazılım için İzin Gömülü Veri Nesneleri**
 >
+> **Deney Amacı**: Uygulama kodunun dinamik olarak üretilmesine veya yeniden yazılmasına izin veren, ancak yetkilendirme ve veri bütünlüğünü veri katmanında zorlayan bir nesne deposu kurmak. Üretilen kodun durum geçişini atlayarak, aralık dışı değer yazarak veya kiracılar arası okuyarak sabit veri sınırını geçemediğini doğrulamak.
+>
+> **Teknik Yaklaşım**: `PermissionEmbeddedDataObjects` projesinin uygulamasını PostgreSQL üzerinde bir Python nesne deposu ara katmanı olarak kullanın. Veri türleri izin kurallarını, erişim bağlamını, doğrulayıcıları, nesne ilişkilerini ve tepkileri bildirir. Her okuma ve yazma izin/doğrulama kontrollerinden, kalıcılık ve referans bütünlüğü işlemlerinden, ardından denetimli eşzamansız tepkilerden geçer. Önce LLM olmadan deterministik işe alım hattı demosunu çalıştırın; isteğe bağlı olarak modellerden ham SQL ve PEDO API'ye karşı saldırgan işlemler üretmesini isteyin ve ortaya çıkan veritabanı durumlarını karşılaştırın. Temel karşılaştırma, üretilen işleyicide doğru `if` olup olmadığı değil, aynı isteğin sabit veri katmanına ulaştığında güvenilir biçimde kabul veya reddedilip reddedilmediğidir.
+>
+> **Kabul Kriterleri**: Geçerli bir işe alım hattı güncellemesi başarılı olur; aday durum geçişini atlama, pozisyon aralığı dışında maaş yazma ve kiracılar arası okuma veri katmanı tarafından reddedilir. İzin, doğrulama, kiracı izolasyonu, referans bütünlüğü ve tepki testleri geçmelidir. Uygulama, Bölüm 5 eşlik eden projesi `permission-embedded-data-objects` içinde yer alır.
 
 ### Kodun Kod Yaratması: Agent Bootstrapping
 
@@ -728,7 +747,7 @@ Bu sorunları çözmenin en etkili yolu tüm kuralları prompt'ta kapsamlı biç
 
 Bir Agent yeni bir Agent geliştirme görevi aldığında, önce kendi kodunu (veya diğer doğrulanmış, yüksek kaliteli uygulamaları) kopyalamalı, ardından hedefe yönelik değişiklikler yapmalıdır: yeni role uyacak şekilde system prompt'u ayarlamak, yeni işlevlere uyacak şekilde araçları değiştirmek veya eklemek, mimari çerçeveyi korurken iş mantığını değiştirmek. Bu "uyarlanabilir değişiklikle kendi kendini çoğaltma" kalıbı, yeni Agent'ın temel teknik avantajları miras almasını sağlarken belirli boyutlarda farklılaşmaya izin verir—biyolojideki mutasyonlu gen replikasyonuna çok benzer.
 
-> **Deney 5-12 ★★★: Agent'lar Yaratabilen Bir Agent Geliştirmek**
+> **Deney 5-13 ★★★: Agent'lar Yaratabilen Bir Agent Geliştirmek**
 >
 > **Deney Amacı**: Metaprogramlama (diğer programları üreten veya değiştiren programlar yazma yeteneği) yeteneklerine sahip bir Kodlama Agent'ı inşa etmek, en iyi uygulamalara uyumu sağlarken kullanıcı gereksinimlerine dayanarak yeni Agent sistemlerini otomatik olarak yaratmasını sağlamak.
 >

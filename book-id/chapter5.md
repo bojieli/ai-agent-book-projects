@@ -461,6 +461,8 @@ def cancel_reservation(
         return {"success": False, "reason": "Cannot cancel with used segments"}
 
     hours_since_booking = (now - r.booking_time).total_seconds() / 3600
+    if hours_since_booking < 0:
+        return {"success": False, "reason": "Booking time is in the future"}
     if hours_since_booking <= 24:
         execute_cancellation(reservation_id)
         return {"success": True, "reason": "Cancelled within 24-hour window"}
@@ -650,6 +652,8 @@ Query database adalah skenario di mana code generation dapat secara signifikan m
 
 Pendekatan pertama tampak lebih "cerdas" tetapi sangat tidak efisien—query terhadap tabel besar dapat mengembalikan ribuan baris. Menyuruh LLM membaca semua itu dan mendeskripsikannya dalam bentuk prosa akan menghabiskan token dan waktu, dan lebih buruknya lagi, LLM terkenal rentan terhadap kesalahan saat "mentranskripsi" data. Pendekatan yang lebih baik adalah **Artifact pattern**. Gambar 5-9 menunjukkan alur kerja dari SQL Query Agent: daripada membaca data itu sendiri, Agent menghasilkan SQL query dan meneruskannya ke sistem sebagai **executable artifact** yang berdiri sendiri. Sistem mengeksekusi query tersebut terhadap database dan me-render hasilnya dalam tabel untuk pengguna. Oleh karena itu, data mengalir langsung dari database ke antarmuka tanpa melewati LLM; LLM menulis query tetapi tidak pernah harus membaca dan menyatakan kembali ribuan baris. Pendekatan ini lebih cepat dan lebih akurat.
 
+SQL dan kode visualisasi yang dihasilkan tidak boleh dieksekusi secara langsung. Lapisan eksekusi harus menggunakan kredensial basis data read-only, mengurai SQL, hanya mengizinkan pernyataan `SELECT` yang disetujui, serta menolak DDL, DML, dan kueri multi-pernyataan. Nilai dari pengguna harus diikat sebagai parameter di sisi server, dengan batas waktu kueri, jumlah baris yang dikembalikan, tabel yang dapat diakses, dan rentang tanggal. Kode visualisasi harus berjalan dalam sandbox yang diisolasi dari jaringan dan sistem berkas serta hanya menghasilkan format hasil yang disetujui. Pola Artifact memperpendek jalur data, tetapi tidak menggantikan pemeriksaan otorisasi atau isolasi eksekusi.
+
 ![Gambar 5-9: Alur Kerja Agent Kueri SQL](images/fig5-9.svg)
 
 
@@ -684,7 +688,22 @@ Namun, fully dynamic generation membutuhkan biaya besar dan lambat—lebih cocok
 > **Tujuan Eksperimen**: Memungkinkan pengguna menyesuaikan antarmuka perangkat lunak secara instan melalui dialog bahasa alami, lalu mengevaluasi apakah pembuatan kode dengan hot reload dapat memberikan pengalaman yang dipersonalisasi secara efektif.
 >
 > **Technical Approach**: Bangun aplikasi chatbot dasar (frontend React dan backend FastAPI), dan jalankan kedua komponen dalam development mode dengan hot reload diaktifkan (React HMR dan FastAPI reload). Pengguna mengusulkan persyaratan penyesuaian UI (warna, font, tata letak, posisi komponen, dll.) selama percakapan. Agent secara otonom memodifikasi kode. Mekanisme hot reload secara otomatis mendeteksi perubahan file, frontend melakukan kompilasi ulang dan refresh, dan pengguna melihat perubahan antarmuka secara real time. Sistem mendukung beberapa putaran iterative customization.
+
+Perangkat lunak dinamis mengubah asumsi keamanan tradisional seiring dengan fleksibilitasnya. Dahulu, kode bisnis aplikasi dikembangkan, ditinjau, diuji, dan diterapkan, lalu relatif stabil; karena itu pemeriksaan otorisasi biasanya berada di lapisan aplikasi. Ketika Agent dapat membuat atau menulis ulang antarmuka, alur kerja, bahkan kode akses data kapan saja, lapisan tersebut tidak lagi stabil. Kode baru dapat melewatkan pemeriksaan yang rumit, membuka field yang sebelumnya tersembunyi, atau melewati pemeriksaan yang ada melalui jalur pemanggilan lain. Baik penyebabnya kesalahan generasi biasa maupun kode berbahaya akibat prompt injection, hasilnya sama: batas izin yang seharusnya dijaga kode bisnis dapat rusak secara diam-diam.
+
+Tujuan keamanan perangkat lunak dinamis bukanlah “memastikan AI menulis setiap pemeriksaan otorisasi dengan benar”. Tujuannya adalah **membuat batasan izin tetap mustahil dilewati meskipun AI menghasilkan kode yang salah**. Jika pemeriksaan otorisasi berada di dalam logika bisnis yang dibuat secara dinamis, pemeriksaan itu berbagi domain kepercayaan dengan kode yang seharusnya dibatasi. Prompt, pengujian, dan tinjauan kode memang mengurangi tingkat kesalahan, tetapi tidak dapat mencakup semua jalur eksekusi yang mungkin diperkenalkan oleh generasi berikutnya dan bukan batas keamanan terakhir.
+
+Arsitektur yang lebih kuat **memindahkan batas kepercayaan ke lapisan data**. Kode aplikasi yang dibuat secara dinamis menangani presentasi, alur kerja, dan orkestrasi bisnis, sedangkan mekanisme stabil yang ditinjau manusia menegakkan aturan tentang siapa yang boleh melakukan apa terhadap data mana. Keamanan tingkat baris pada basis data dapat membatasi pengguna pada record tenant-nya sendiri; constraint dan validator menolak state ilegal; view, stored procedure, atau layanan akses data terkontrol hanya mengekspos operasi yang disetujui. Setiap pembacaan dan penulisan juga harus membawa **konteks akses** yang diikat runtime tepercaya, berisi identitas pengguna, tenant, peran, atau Agent. Kode yang dihasilkan hanya menerima identitas terbatas ini: ia tidak dapat memalsukannya atau memperoleh kredensial basis data istimewa untuk melewati aturan. Walaupun pemeriksaan di level aplikasi dihilangkan, lapisan data tetap menolak operasi yang tidak berwenang.
+
+Memindahkan otorisasi ke bawah bukan berarti menaruh seluruh logika bisnis di basis data. Lapisan aplikasi tetap dapat melakukan pemeriksaan awal untuk memberikan umpan balik cepat, tetapi lapisan data harus mempertahankan kewenangan keputusan akhir. Aturan yang sama dapat memperbaiki pengalaman di atas dan memberi jaminan di bawah. Semua jalur akses data harus melewati lapisan data tepercaya; kode yang dihasilkan tidak boleh terhubung langsung untuk mengitarinya. Hasilnya, lapisan atas dapat terus berubah, sedangkan batas izin yang tidak dapat dinegosiasikan tetap berada di lapisan yang tidak dibuat ulang pada setiap permintaan.
+
+> **Eksperimen 5-12 ★★★: Objek Data Tertanam-Izin untuk Perangkat Lunak Dinamis**
 >
+> **Tujuan Eksperimen**: Bangun object store yang memungkinkan kode aplikasi dibuat atau ditulis ulang secara dinamis, namun otorisasi dan integritas data tetap ditegakkan di lapisan data. Verifikasi bahwa kode yang dihasilkan tidak dapat menembus batas stabil dengan melewati transisi state, menulis nilai di luar rentang, atau membaca lintas tenant.
+>
+> **Pendekatan Teknis**: Gunakan implementasi proyek `PermissionEmbeddedDataObjects` sebagai middleware object store Python di atas PostgreSQL. Tipe data mendeklarasikan aturan izin, konteks akses, validator, relasi objek, dan reaction. Setiap pembacaan atau penulisan melewati pemeriksaan izin dan validasi, persistensi serta integritas referensial, kemudian reaction asinkron terkontrol. Jalankan demo pipeline perekrutan deterministik tanpa LLM terlebih dahulu; secara opsional minta model menghasilkan operasi adversarial terhadap SQL mentah dan API PEDO, lalu bandingkan state basis data. Perbandingan utama bukan apakah handler yang dihasilkan berisi `if` yang benar, melainkan apakah permintaan yang sama diterima atau ditolak secara konsisten ketika mencapai lapisan data stabil.
+>
+> **Kriteria Penerimaan**: Pembaruan pipeline perekrutan yang valid berhasil; lapisan data menolak lompatan state kandidat, gaji di luar rentang posisi, dan pembacaan lintas tenant. Pengujian izin, validasi, isolasi tenant, integritas referensial, dan reaction harus lulus. Implementasi disertakan dalam proyek pendamping Bab 5 di `permission-embedded-data-objects`.
 
 ### Kode yang Membuat Kode: Bootstrapping Agent
 
@@ -723,7 +742,7 @@ Keuntungan dari pembuatan berbasis contoh sangat jelas: kode contoh itu sendiri 
 
 Ketika Agent menerima tugas untuk mengembangkan Agent baru, ia pertama-tama harus menyalin kodenya sendiri (atau implementasi tervalidasi dan berkualitas tinggi lainnya) dan kemudian melakukan modifikasi yang terarah: menyesuaikan System Prompt agar sesuai dengan peran baru, mengganti atau menambahkan *tools* yang sesuai dengan fungsi baru, mengubah logika bisnis sembari mempertahankan kerangka arsitektur. Pola "replikasi mandiri dengan modifikasi adaptif" ini memastikan Agent baru mewarisi keunggulan teknis inti sambil memungkinkan diferensiasi dalam dimensi tertentu—sangat mirip dengan replikasi gen yang disertai mutasi dalam biologi.
 
-> **Eksperimen 5-12 ★★★: Mengembangkan Agent yang Dapat Membuat Agent**
+> **Eksperimen 5-13 ★★★: Mengembangkan Agent yang Dapat Membuat Agent**
 >
 > **Tujuan Eksperimen**: Membangun Coding Agent dengan kemampuan *metaprogramming*—kemampuan untuk menulis program yang menghasilkan atau memodifikasi program lain—sehingga dapat secara otomatis menciptakan sistem Agent baru dari persyaratan pengguna sambil mematuhi praktik terbaik.
 >

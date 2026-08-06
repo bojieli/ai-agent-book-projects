@@ -480,6 +480,8 @@ def cancel_reservation(
         return {"success": False, "reason": "Cannot cancel with used segments"}
 
     hours_since_booking = (now - r.booking_time).total_seconds() / 3600
+    if hours_since_booking < 0:
+        return {"success": False, "reason": "Booking time is in the future"}
     if hours_since_booking <= 24:
         execute_cancellation(reservation_id)
         return {"success": True, "reason": "Cancelled within 24-hour window"}
@@ -651,6 +653,8 @@ Az adatbázis-lekérdezés egy olyan forgatókönyv, ahol a kódgenerálás jele
 
 Az első megközelítés "intelligensebbnek" tűnik, de rendkívül hatástalan — egy nagy táblán végzett lekérdezés több ezer sort adhat vissza. Ha az LLM mindezt elolvassa és prózában leírja, az égeti a tokeneket és az időt, és ami még rosszabb, az LLM-ek hírhedten hibásak az adatok "átírásában". Jobb megközelítés az "Artefaktum minta". Az 5-9. ábra egy SQL lekérdező Ágens munkafolyamatát mutatja be: ahelyett, hogy maga olvasná az adatokat, az Ágens egy SQL lekérdezést generál, és független "végrehajtható artefaktumként" adja át a rendszernek. A rendszer végrehajtja a lekérdezést az adatbázison, és az eredményeket táblázatban jeleníti meg a felhasználónak. Az adatok így közvetlenül az adatbázisból a felületbe kerülnek, anélkül, hogy áthaladnának az LLM-en; az LLM megírja a lekérdezést, de soha nem kell több ezer sort elolvasnia és újra közölnie. Ez a megközelítés gyorsabb és pontosabb.
 
+A generált SQL-t és vizualizációs kódot nem szabad közvetlenül végrehajtani. A végrehajtási réteg csak olvasási jogosultságú adatbázis-hitelesítést használjon, elemezze az SQL-t, kizárólag jóváhagyott `SELECT` utasításokat engedjen át, és utasítsa el a DDL-, DML- és többutasításos lekérdezéseket. A felhasználó által megadott értékeket szerveroldali paraméterként kell kötni, korlátozva a lekérdezési időt, a visszaadott sorok számát, az elérhető táblákat és a dátumtartományt. A vizualizációs kód hálózattól és fájlrendszertől elszigetelt sandboxban fusson, és csak jóváhagyott eredményformátumot állítson elő. Az Artefaktum minta lerövidíti az adat útját, de nem helyettesíti az engedélyezési ellenőrzéseket vagy a végrehajtás elszigetelését.
+
 ![5-9. ábra: SQL-lekérdező ágens munkafolyamata](images/fig5-9.svg)
 
 
@@ -685,7 +689,22 @@ A teljesen dinamikus generálás azonban költséges és lassú — inkább a le
 > "Kísérlet Célja": Lehetővé tenni a felhasználók számára a szoftverfelület azonnali testreszabását természetes nyelvű párbeszéden keresztül, és kiértékelni, hogy a kódgenerálás gyors újratöltéssel hatékonyan tud-e személyre szabott felhasználói élményeket nyújtani.
 >
 > "Műszaki Megközelítés": Építs egy alap chatbot alkalmazást (React frontend és FastAPI backend), és futtasd mindkét komponenst fejlesztői módban, gyors újratöltéssel (React HMR és FastAPI reload). A felhasználók UI testreszabási követelményeket (színek, betűtípusok, elrendezés, komponenspozíciók stb.) javasolnak a beszélgetés során. Az Ágens önállóan módosítja a kódot. A gyors újratöltési mechanizmus automatikusan érzékeli a fájlváltozásokat, a frontend újrafordít és frissül, a felhasználó valós időben látja a felület változásait. A rendszer több körös iteratív testreszabást támogat.
+
+A dinamikus szoftver rugalmasságával együtt a hagyományos biztonsági feltevést is megváltoztatja. Korábban az alkalmazás üzleti kódját fejlesztették, felülvizsgálták, tesztelték és telepítették, majd viszonylag stabil maradt; ezért az engedélyezési ellenőrzések többnyire az alkalmazási rétegben helyezkedtek el. Ha egy Ágens bármikor generálhatja vagy átírhatja a felületeket, a munkafolyamatokat, sőt az adatelérési kódot is, ez a réteg többé nem stabil. Az új kód kihagyhat egy finom ellenőrzést, felfedhet egy korábban rejtett mezőt, vagy egy másik hívási útvonalon megkerülhet egy meglévő ellenőrzést. Akár egyszerű generálási hiba, akár promptinjekció után létrehozott veszélyes kód az ok, az eredmény ugyanaz: az üzleti kód által fenntartani kívánt jogosultsági határ észrevétlenül sérülhet.
+
+Ezért a dinamikus szoftver biztonsági célja nem lehet az, hogy „az MI minden engedélyezési ellenőrzést helyesen írjon meg”. A cél az, hogy **a jogosultsági korlátok akkor is megkerülhetetlenek maradjanak, ha az MI hibás kódot ír**. Ha az engedélyezési ellenőrzések a dinamikusan generált üzleti logikában élnek, ugyanahhoz a bizalmi tartományhoz tartoznak, mint a korlátozni kívánt kód. A promptok, tesztek és kódellenőrzések csökkentik a hibák arányát, de nem fedhetik le kimerítően a jövőbeli generációk minden új végrehajtási útját, és nem jelenthetik a végső biztonsági határt.
+
+Robusztusabb architektúra **a bizalmi határt az adatrétegbe helyezi át**. A dinamikusan generált alkalmazási kód kezelheti a megjelenítést, a munkafolyamatokat és az üzleti összehangolást, miközben egy stabil, ember által felülvizsgált mechanizmus érvényesíti, hogy ki mit tehet az egyes adatokkal. Az adatbázis sor szintű biztonsága a felhasználót a saját bérlőjének rekordjaira korlátozhatja; a megszorítások és validátorok elutasíthatják a törvénytelen állapotokat; a vezérelt nézetek, tárolt eljárások vagy adatelérési szolgáltatások pedig csak jóváhagyott műveleteket tehetnek láthatóvá. Minden olvasásnak és írásnak tartalmaznia kell egy megbízható futtatókörnyezet által kötött **hozzáférési kontextust**, amely tartalmazza a felhasználót, a bérlőt, a szerepkört vagy az Ágens identitását. A generált kód csak ezt a korlátozott identitást kapja meg: nem hamisíthatja meg, és nem szerezhet a szabályokat megkerülő privilegizált adatbázis-hitelesítést. Ha kihagyja is a saját ellenőrzését, az adatréteg elutasítja a jogosulatlan műveletet.
+
+A jogosultság lefelé helyezése nem jelenti az összes üzleti logika adatbázisba költöztetését. Az alkalmazási réteg továbbra is végezhet előzetes ellenőrzéseket a gyors visszajelzésért, de a végső döntési jogkört az adatrétegnek kell megtartania. Ugyanaz a szabály javíthatja a felső réteg felhasználói élményét, és garanciát adhat az alsó rétegben. Ehhez minden adatelérési útvonalnak a megbízható adatrétegen kell áthaladnia; a generált kód nem kerülheti meg közvetlen adatbázis-kapcsolattal. Így a felső réteg folyamatosan változhat, miközben a nem alkuképes jogosultsági korlátok egy olyan rétegben maradnak, amelyet nem generálunk újra minden kérésnél.
+
+> **Kísérlet 5-12 ★★★: Jogosultságot beágyazó adatobjektumok dinamikus szoftverhez**
 >
+> **Kísérlet célja**: Olyan objektumtároló építése, amely lehetővé teszi az alkalmazási kód dinamikus generálását vagy átírását, miközben az engedélyezést és az adatintegritást az adatréteg kényszeríti ki. Ellenőrizze, hogy a generált kód nem lépheti át a stabil határt állapotátmenet kihagyásával, határon kívüli érték írásával vagy bérlők közötti olvasással.
+>
+> **Műszaki megközelítés**: A `PermissionEmbeddedDataObjects` projekt implementációját használja PostgreSQL fölött működő Python objektumtároló middleware-rétegként. Az adattípusok deklarálják a jogosultsági szabályokat, a hozzáférési kontextust, a validátorokat, az objektumkapcsolatokat és a reakciókat. Minden olvasás és írás jogosultsági és validációs ellenőrzéseken, perzisztencián és referenciális integritáskezelésen, valamint szabályozott aszinkron reakciókon halad át. Először futtassa az LLM nélküli, determinisztikus felvételi folyamat demóját; opcionálisan kérjen a modellektől ellenséges műveleteket nyers SQL és a PEDO API ellen, majd hasonlítsa össze az adatbázis állapotait. A döntő összehasonlítás nem az, hogy a generált kezelőben szerepel-e a megfelelő `if`, hanem hogy ugyanaz a kérés megbízhatóan elfogadásra vagy elutasításra kerül-e a stabil adatrétegben.
+>
+> **Elfogadási kritériumok**: Egy érvényes felvételi folyamat-frissítés sikeres; az adatréteg elutasítja a jelölt állapotának átugrását, a pozíció tartományán kívüli fizetést és a bérlők közötti olvasást. A jogosultsági, validációs, bérlő-izolációs, referenciális integritási és reakcióteszteknek át kell menniük. Az implementáció a Chapter 5 kísérőprojektjében, a `permission-embedded-data-objects` könyvtárban található.
 
 ### Kód Kódot Hoz Létre: Ágens Bootstrapping
 
@@ -724,7 +743,7 @@ A példa alapú generálás előnye nyilvánvaló: a példakód magában hordozz
 
 Amikor egy Ágens feladatot kap egy új Ágens kifejlesztésére, először másolja le a saját kódját (vagy más validált, kiváló minőségű implementációkat), majd végezzen célzott módosításokat: igazítsa a rendszer promptot az új szerephez, cserélje ki vagy adjon hozzá eszközöket az új funkciókhoz, módosítsa az üzleti logikát az architekturális keret megőrzése mellett. Ez az "önreplikáció adaptív módosítással" minta biztosítja, hogy az új Ágens örökölje a mag technikai előnyöket, miközben lehetővé teszi a differenciálódást specifikus dimenziókban — akárcsak a génreplikáció mutációval a biológiában.
 
-> **Kísérlet 5-12 ★★★: Fejlessz Egy Ágenst, Amely Képes Ágenseket Létrehozni**
+> **Kísérlet 5-13 ★★★: Fejlessz Egy Ágenst, Amely Képes Ágenseket Létrehozni**
 >
 > "Kísérlet Célja": Építs egy Kódoló Ágenst metaprogramozási képességekkel — olyan képességgel, hogy olyan programokat írjon, amelyek más programokat generálnak vagy módosítanak —, hogy automatikusan létre tudjon hozni új Ágens rendszereket a felhasználói követelményekből, miközben betartja a legjobb gyakorlatokat.
 >
