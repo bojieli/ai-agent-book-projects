@@ -81,7 +81,7 @@ def valid_checkpoint(
                 return False
         else:
             return False
-        if experiment == "6-9":
+        if experiment == "6-11":
             observed_cells.append((row.get("embedding"), row.get("reranker"), row.get("main_model")))
         else:
             observed_cells.append((row.get("system"),))
@@ -92,9 +92,9 @@ def valid_checkpoint(
     return True
 
 
-def required_69_cells(config: Dict[str, Any], readiness: Optional[Dict[str, Any]]) -> Set[Cell]:
+def required_611_cells(config: Dict[str, Any], readiness: Optional[Dict[str, Any]]) -> Set[Cell]:
     """Return matrix cells whose backends passed preflight and must complete live."""
-    matrix = config["experiment_6_9"]
+    matrix = config["experiment_6_11"]
     blocked = {
         (row["component"], row["name"])
         for row in (readiness or {}).get("probes", [])
@@ -144,7 +144,7 @@ def run_case(
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("experiment", choices=["6-4", "6-9"])
+    parser.add_argument("experiment", choices=["6-4", "6-11"])
     parser.add_argument("--config", type=Path, default=HERE / "default_config.yaml")
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--checkpoint-dir", type=Path)
@@ -160,9 +160,9 @@ def main() -> int:
         json.loads(args.readiness.resolve().read_text(encoding="utf-8"))
         if args.readiness else None
     )
-    if args.experiment == "6-9":
+    if args.experiment == "6-11":
         if readiness_data is None:
-            parser.error("exact Experiment 6-9 requires --readiness from probe_backends.py")
+            parser.error("exact Experiment 6-11 requires --readiness from probe_backends.py")
         readiness_errors = validate_readiness(config, readiness_data)
         if readiness_errors:
             parser.error("invalid readiness evidence: " + "; ".join(readiness_errors))
@@ -175,7 +175,7 @@ def main() -> int:
         }
         if not readiness_data.get("summary", {}).get("all_required_backends_ready"):
             parser.error(
-                "exact Experiment 6-9 campaign is blocked: every required real backend "
+                "exact Experiment 6-11 campaign is blocked: every required real backend "
                 "must pass probe_backends.py before launch"
             )
     framework = UserMemoryEvaluationFramework(str(EVAL_DIR / "test_cases"))
@@ -192,12 +192,12 @@ def main() -> int:
             ("hybrid",),
         }
     else:
-        matrix = config["experiment_6_9"]
+        matrix = config["experiment_6_11"]
         shape = (len(matrix["embeddings"]), len(matrix["rerankers"]), len(matrix["main_models"]))
         if shape != (4, 3, 2):
-            parser.error(f"exact Experiment 6-9 requires a 4x3x2 matrix, found {shape}")
+            parser.error(f"exact Experiment 6-11 requires a 4x3x2 matrix, found {shape}")
         expected_records = len(matrix["embeddings"]) * len(matrix["rerankers"]) * len(matrix["main_models"])
-        required_ok_cells = required_69_cells(config, readiness_data)
+        required_ok_cells = required_611_cells(config, readiness_data)
         all_matrix_cells = {
             (embedding, reranker, main_model)
             for embedding in matrix["embeddings"]
@@ -283,7 +283,7 @@ def main() -> int:
         "legacy_6_4_repricing": repricing,
     }
     # A complete experiment requires exact case/cell coverage, real successful
-    # trajectories, explicit readiness (6-9), and zero unpriced usage.
+    # trajectories, explicit readiness (6-11), and zero unpriced usage.
     complete = bool(merged["completion"]["evidence_complete"]) and not failures
     if failures:
         merged["completion"]["evidence_complete"] = False

@@ -1,0 +1,17 @@
+{
+  "experiment": "6-5",
+  "report": "results/policy_prefix_live.json",
+  "report_sha256": "7ac64c7f6e8c3414e05f890065be77054fcae9def275ef88b2c260f452cf0785",
+  "runner": "runner.py",
+  "runner_sha256": "3d98310917044b133db9a375c822289fb1487d7d7222d7df70bc4798cd2e641f",
+  "cases": "cases.json",
+  "case_sha256": "b77f45653719f788601b0d73e9a8e1cc9b75eb9c7963fe8cb630144193a48f1a",
+  "model": "openai/gpt-5.6-sol",
+  "formats": [
+    "json",
+    "markdown",
+    "python"
+  ],
+  "records": 33,
+  "api_errors": 0
+}

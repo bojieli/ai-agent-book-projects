@@ -54,7 +54,7 @@ experiment_6_4:
   rounds_per_chunk: 6
   overlap: 2
 
-experiment_6_9:
+experiment_6_11:
   embeddings: [mistral, codestral]
   rerankers: [none, kimi-semantic]
   main_models: [kimi, doubao]

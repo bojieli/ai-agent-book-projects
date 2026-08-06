@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exploratory backend probes for Experiment 6-9 readiness (2026-07-31).
+"""Exploratory backend probes for Experiment 6-11 readiness (2026-07-31).
 
 Probes candidate substitutions with minimal real calls (1-line embed, 1-token
 chat, tiny rerank) and records sanitized, credential-free receipts. Secrets are
@@ -160,7 +160,7 @@ def main():
 
     payload = {
         "schema_version": "1.0",
-        "purpose": "Experiment 6-9 readiness substitution probes",
+        "purpose": "Experiment 6-11 readiness substitution probes",
         "generated_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "credentials_redacted": True,
         "probes": results,
