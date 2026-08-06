@@ -1258,7 +1258,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_03_home_purchase_coordination attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_03_home_purchase_coordination attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:21:30.578430+00:00",
@@ -1341,7 +1341,7 @@
       "response_id": "0217853600908027079f7997bde53da02e3efd0b6b68d8dea2713"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_03_home_purchase_coordination iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_03_home_purchase_coordination iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:23:18.491584+00:00",
@@ -1452,7 +1452,7 @@
       "response_id": "0217853601986787079f7997bde53da02e3efd0b6b68d8dd8c3c6"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_03_home_purchase_coordination iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_03_home_purchase_coordination iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:23:19.812101+00:00",
@@ -1599,7 +1599,7 @@
       "response_id": "0217853602000007079f7997bde53da02e3efd0b6b68d8da0b343"
     },
     {
-      "purpose": "3-12 grounded answer layer3_03_home_purchase_coordination plain",
+      "purpose": "3-11 grounded answer layer3_03_home_purchase_coordination plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:23:37.126847+00:00",
@@ -1679,7 +1679,7 @@
       "response_id": "0217853602173147079f7997bde53da02e3efd0b6b68d8d47cc5a"
     },
     {
-      "purpose": "3-12 grounded answer layer3_03_home_purchase_coordination contextual",
+      "purpose": "3-11 grounded answer layer3_03_home_purchase_coordination contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:24:08.323502+00:00",
@@ -1759,7 +1759,7 @@
       "response_id": "0217853602485127079f7997bde53da02e3efd0b6b68d8d3fc4fc"
     },
     {
-      "purpose": "3-12 grounded answer layer3_03_home_purchase_coordination dual_layer",
+      "purpose": "3-11 grounded answer layer3_03_home_purchase_coordination dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:24:38.711148+00:00",
@@ -1839,7 +1839,7 @@
       "response_id": "0217853602788977079f7997bde53da02e3efd0b6b68d8d21b19f"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_03_home_purchase_coordination",
+      "purpose": "3-9/3-11 independent judge layer3_03_home_purchase_coordination",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:25:19.801751+00:00",

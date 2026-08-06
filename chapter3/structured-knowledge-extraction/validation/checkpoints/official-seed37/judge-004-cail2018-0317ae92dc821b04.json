@@ -10,7 +10,7 @@
     "reasoning": "生成建议与原型统计数据紧密对应，明确指出了案件事实与原型定义特征的匹配程度，并提供了原型的刑期统计区间。同时，建议中提到了自首、全额赔偿、被害人谅解、认罪认罚等从轻情节未被纳入原型定义特征，这显示了对统计数据局限性的认识，并提醒了不确定性。此外，建议包含了明确的法律免责声明，符合要求。"
   },
   "receipt": {
-    "purpose": "3-13 independent held-out judge cail2018-0317ae92dc821b04",
+    "purpose": "3-12 independent held-out judge cail2018-0317ae92dc821b04",
     "provider": "moonshot",
     "endpoint": "https://api.moonshot.cn/v1",
     "started_at": "2026-07-30T04:42:58.706662+00:00",

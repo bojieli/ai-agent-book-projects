@@ -451,7 +451,7 @@ Please give a short succinct context to situate this chunk within the overall do
 
         Educational Note:
         This is the ``compare_retrieval_methods`` capability referenced in
-        实验 3-11. It builds two BM25 indexes fully offline (no API / server):
+        实验 3-10. It builds two BM25 indexes fully offline (no API / server):
           * contextual index over ``contextualized_text`` (前缀 + 原文)
           * plain index over the original chunk ``text``
         and returns the top-k ranked chunks under each, so the caller can see

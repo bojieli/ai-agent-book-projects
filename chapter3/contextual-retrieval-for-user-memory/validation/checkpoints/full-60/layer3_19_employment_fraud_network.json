@@ -1092,7 +1092,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_19_employment_fraud_network attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_19_employment_fraud_network attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:38:24.056036+00:00",
@@ -1175,7 +1175,7 @@
       "response_id": "0217853611042839d3331a59ba1b3963d68ff5ec76c85c4ea3da6"
     },
     {
-      "purpose": "3-12 live contextual prefixes layer3_19_employment_fraud_network attempt 2",
+      "purpose": "3-11 live contextual prefixes layer3_19_employment_fraud_network attempt 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:39:51.986289+00:00",
@@ -1258,7 +1258,7 @@
       "response_id": "0217853611921729d3331a59ba1b3963d68ff5ec76c85c413d3ef"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_19_employment_fraud_network iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_19_employment_fraud_network iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:39:59.498921+00:00",
@@ -1369,7 +1369,7 @@
       "response_id": "0217853611996869d3331a59ba1b3963d68ff5ec76c85c4aed004"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_19_employment_fraud_network iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_19_employment_fraud_network iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:40:00.549773+00:00",
@@ -1516,7 +1516,7 @@
       "response_id": "0217853612007369d3331a59ba1b3963d68ff5ec76c85c426039b"
     },
     {
-      "purpose": "3-12 grounded answer layer3_19_employment_fraud_network plain",
+      "purpose": "3-11 grounded answer layer3_19_employment_fraud_network plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:40:29.832040+00:00",
@@ -1596,7 +1596,7 @@
       "response_id": "0217853612300189d3331a59ba1b3963d68ff5ec76c85c4e86dce"
     },
     {
-      "purpose": "3-12 grounded answer layer3_19_employment_fraud_network contextual",
+      "purpose": "3-11 grounded answer layer3_19_employment_fraud_network contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:40:57.287901+00:00",
@@ -1676,7 +1676,7 @@
       "response_id": "0217853612574749d3331a59ba1b3963d68ff5ec76c85c43912cf"
     },
     {
-      "purpose": "3-12 grounded answer layer3_19_employment_fraud_network dual_layer",
+      "purpose": "3-11 grounded answer layer3_19_employment_fraud_network dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:41:28.592740+00:00",
@@ -1756,7 +1756,7 @@
       "response_id": "0217853612887789d3331a59ba1b3963d68ff5ec76c85c4418dd3"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_19_employment_fraud_network",
+      "purpose": "3-9/3-11 independent judge layer3_19_employment_fraud_network",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:42:06.745705+00:00",

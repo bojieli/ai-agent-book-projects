@@ -1,14 +1,14 @@
 # Active Tool Discovery / 主动工具发现
 
-> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-6 ★★★: Proactive Tool Discovery**. Compares full injection, retrieval prefilter, and active discovery on a 126-tool library.  
-> 配套《深入理解 AI Agent》第 4 章 **实验 4-6 ★★★：主动工具发现**。在 126 个跨领域工具上对比全量注入、检索预筛选与主动发现。
+> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-7 ★★★: Proactive Tool Discovery**. Compares full injection, retrieval prefilter, and active discovery on a 126-tool library.  
+> 配套《深入理解 AI Agent》第 4 章 **实验 4-7 ★★★：主动工具发现**。在 126 个跨领域工具上对比全量注入、检索预筛选与主动发现。
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
 
 ## Canonical manuscript campaign / 正式实验活动
 
 `run_exact_experiment.py` replaces the mechanism-only demo for formal
-Experiment 4-6 acceptance. It obtains all 126 complete schemas from the real
+Experiment 4-7 acceptance. It obtains all 126 complete schemas from the real
 perception MCP server, proves the full-catalog control exceeds 50K measured
 tokens, uses local Ollama `qwen3:4b` for both arms, retrieves five candidates
 with `all-MiniLM-L6-v2`, and executes every selected tool through MCP against
@@ -26,7 +26,7 @@ python run_exact_experiment.py --campaign-id my-qwen3-4b-run --resume
 lightweight tool outputs and scripted model do not count as formal evidence.
 
 The completed canonical evidence is
-[`validation/experiment_4_6/qwen3_4b_exact_v2_20260730T130600Z/summary.json`](validation/experiment_4_6/qwen3_4b_exact_v2_20260730T130600Z/summary.json),
+[`validation/experiment_4_7/qwen3_4b_exact_v2_20260730T130600Z/summary.json`](validation/experiment_4_7/qwen3_4b_exact_v2_20260730T130600Z/summary.json),
 with manifest SHA-256
 `88d622db4981207a9980c30abea4eb8dc2621161ded80be0cb2bb8582833153c`.
 All twelve gates passed. Control and treatment both selected every required
@@ -46,14 +46,14 @@ retains real 429/503/disconnect receipts under `failed_attempts/`; a single
 bounded resume archived it and retried only that incomplete task. Completed
 receipts are never replayed, and a third real attempt is refused.
 
-`run_exact_experiment.py` 是实验 4-6 的正式运行器：从真实感知 MCP 读取 126 个完整
+`run_exact_experiment.py` 是实验 4-7 的正式运行器：从真实感知 MCP 读取 126 个完整
 schema，验证控制组超过 50K token，两组都使用本地 Ollama `qwen3:4b`，实验组用
 `all-MiniLM-L6-v2` 每次检索五个候选，并通过 MCP 调用真实公共 API 或本地进程执行所选
 工具。mock 结果不能通过正式门禁；中断后可用 `--resume` 续跑。`demo.py` 与离线后端仅作
 教学/CI 机制自检，不是正式验收证据。
 
 正式证据为
-[`validation/experiment_4_6/qwen3_4b_exact_v2_20260730T130600Z/summary.json`](validation/experiment_4_6/qwen3_4b_exact_v2_20260730T130600Z/summary.json)，
+[`validation/experiment_4_7/qwen3_4b_exact_v2_20260730T130600Z/summary.json`](validation/experiment_4_7/qwen3_4b_exact_v2_20260730T130600Z/summary.json)，
 manifest SHA-256 为
 `88d622db4981207a9980c30abea4eb8dc2621161ded80be0cb2bb8582833153c`。
 12 项门禁全部通过；对照组与实验组均完成 3/3 任务，准确率均为 100%，因此正文

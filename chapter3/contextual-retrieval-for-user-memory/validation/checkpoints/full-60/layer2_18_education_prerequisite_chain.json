@@ -968,7 +968,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer2_18_education_prerequisite_chain attempt 1",
+      "purpose": "3-11 live contextual prefixes layer2_18_education_prerequisite_chain attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:15:54.833459+00:00",
@@ -1051,7 +1051,7 @@
       "response_id": "0217853597550575758257d42a91c1c96a520305082a02d8b3f97"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_18_education_prerequisite_chain iteration 1",
+      "purpose": "3-9 live ReAct search planner layer2_18_education_prerequisite_chain iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:17:10.886953+00:00",
@@ -1162,7 +1162,7 @@
       "response_id": "0217853598310735758257d42a91c1c96a520305082a02ddf1806"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_18_education_prerequisite_chain iteration 2",
+      "purpose": "3-9 live ReAct search planner layer2_18_education_prerequisite_chain iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:17:12.054644+00:00",
@@ -1309,7 +1309,7 @@
       "response_id": "0217853598322425758257d42a91c1c96a520305082a02d739031"
     },
     {
-      "purpose": "3-12 grounded answer layer2_18_education_prerequisite_chain plain",
+      "purpose": "3-11 grounded answer layer2_18_education_prerequisite_chain plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:17:48.051878+00:00",
@@ -1389,7 +1389,7 @@
       "response_id": "0217853598682385758257d42a91c1c96a520305082a02dd99b87"
     },
     {
-      "purpose": "3-12 grounded answer layer2_18_education_prerequisite_chain contextual",
+      "purpose": "3-11 grounded answer layer2_18_education_prerequisite_chain contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:18:17.734444+00:00",
@@ -1469,7 +1469,7 @@
       "response_id": "0217853598979205758257d42a91c1c96a520305082a02d3f9745"
     },
     {
-      "purpose": "3-12 grounded answer layer2_18_education_prerequisite_chain dual_layer",
+      "purpose": "3-11 grounded answer layer2_18_education_prerequisite_chain dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:18:56.186295+00:00",
@@ -1549,7 +1549,7 @@
       "response_id": "0217853599363725758257d42a91c1c96a520305082a02d197ccc"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer2_18_education_prerequisite_chain",
+      "purpose": "3-9/3-11 independent judge layer2_18_education_prerequisite_chain",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:19:40.963638+00:00",

@@ -1163,7 +1163,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_11_immigration_status_complexity attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_11_immigration_status_complexity attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:29:53.975119+00:00",
@@ -1246,7 +1246,7 @@
       "response_id": "021785360594210831aa2c3f6dc2e82214a35999678cd03628775"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_11_immigration_status_complexity iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_11_immigration_status_complexity iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:31:40.949342+00:00",
@@ -1357,7 +1357,7 @@
       "response_id": "021785360701140831aa2c3f6dc2e82214a35999678cd03c5bbeb"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_11_immigration_status_complexity iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_11_immigration_status_complexity iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:31:42.444256+00:00",
@@ -1504,7 +1504,7 @@
       "response_id": "021785360702634831aa2c3f6dc2e82214a35999678cd03100322"
     },
     {
-      "purpose": "3-12 grounded answer layer3_11_immigration_status_complexity plain",
+      "purpose": "3-11 grounded answer layer3_11_immigration_status_complexity plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:32:06.748633+00:00",
@@ -1584,7 +1584,7 @@
       "response_id": "021785360726940831aa2c3f6dc2e82214a35999678cd03135db1"
     },
     {
-      "purpose": "3-12 grounded answer layer3_11_immigration_status_complexity contextual",
+      "purpose": "3-11 grounded answer layer3_11_immigration_status_complexity contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:32:48.870519+00:00",
@@ -1664,7 +1664,7 @@
       "response_id": "021785360769061831aa2c3f6dc2e82214a35999678cd03ab73cc"
     },
     {
-      "purpose": "3-12 grounded answer layer3_11_immigration_status_complexity dual_layer",
+      "purpose": "3-11 grounded answer layer3_11_immigration_status_complexity dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:33:24.018825+00:00",
@@ -1744,7 +1744,7 @@
       "response_id": "021785360804209831aa2c3f6dc2e82214a35999678cd0395366e"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_11_immigration_status_complexity",
+      "purpose": "3-9/3-11 independent judge layer3_11_immigration_status_complexity",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:34:10.301319+00:00",

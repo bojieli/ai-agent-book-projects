@@ -1260,7 +1260,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_12_real_estate_investment_tangle attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_12_real_estate_investment_tangle attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:32:22.954757+00:00",
@@ -1343,7 +1343,7 @@
       "response_id": "0217853607431805899493ffacda83a911dd5c9cf3f5ba8f5b322"
     },
     {
-      "purpose": "3-12 live contextual prefixes layer3_12_real_estate_investment_tangle attempt 2",
+      "purpose": "3-11 live contextual prefixes layer3_12_real_estate_investment_tangle attempt 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:33:59.252263+00:00",
@@ -1426,7 +1426,7 @@
       "response_id": "0217853608394415899493ffacda83a911dd5c9cf3f5ba894f471"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_12_real_estate_investment_tangle iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_12_real_estate_investment_tangle iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:34:22.022561+00:00",
@@ -1537,7 +1537,7 @@
       "response_id": "0217853608622095899493ffacda83a911dd5c9cf3f5ba84c38d7"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_12_real_estate_investment_tangle iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_12_real_estate_investment_tangle iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:34:23.120146+00:00",
@@ -1684,7 +1684,7 @@
       "response_id": "0217853608633095899493ffacda83a911dd5c9cf3f5ba8228ebf"
     },
     {
-      "purpose": "3-12 grounded answer layer3_12_real_estate_investment_tangle plain",
+      "purpose": "3-11 grounded answer layer3_12_real_estate_investment_tangle plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:34:41.058740+00:00",
@@ -1764,7 +1764,7 @@
       "response_id": "0217853608812475899493ffacda83a911dd5c9cf3f5ba8d25301"
     },
     {
-      "purpose": "3-12 grounded answer layer3_12_real_estate_investment_tangle contextual",
+      "purpose": "3-11 grounded answer layer3_12_real_estate_investment_tangle contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:35:14.238943+00:00",
@@ -1844,7 +1844,7 @@
       "response_id": "0217853609144275899493ffacda83a911dd5c9cf3f5ba834db27"
     },
     {
-      "purpose": "3-12 grounded answer layer3_12_real_estate_investment_tangle dual_layer",
+      "purpose": "3-11 grounded answer layer3_12_real_estate_investment_tangle dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:35:53.914185+00:00",
@@ -1924,7 +1924,7 @@
       "response_id": "0217853609541025899493ffacda83a911dd5c9cf3f5ba841bbb2"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_12_real_estate_investment_tangle",
+      "purpose": "3-9/3-11 independent judge layer3_12_real_estate_investment_tangle",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:36:35.282081+00:00",

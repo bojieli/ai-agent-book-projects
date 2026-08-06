@@ -1,7 +1,7 @@
 # Structured Indexing: RAPTOR & GraphRAG / 结构化索引：RAPTOR 与 GraphRAG
 
-> Companion material for *AI Agents in Depth*, Chapter 3 — **Experiment 3-8**: hierarchical RAPTOR trees vs GraphRAG knowledge graphs, plus offline structured-vs-flat demo.  
-> 配套《深入理解 AI Agent》第 3 章 **实验 3-8**：RAPTOR 层次树 vs GraphRAG 知识图谱，含离线「结构化 vs 扁平」演示。
+> Companion material for *AI Agents in Depth*, Chapter 3 — **Experiment 3-7**: hierarchical RAPTOR trees vs GraphRAG knowledge graphs, plus offline structured-vs-flat demo.  
+> 配套《深入理解 AI Agent》第 3 章 **实验 3-7**：RAPTOR 层次树 vs GraphRAG 知识图谱，含离线「结构化 vs 扁平」演示。
 
 ← [Chapter 3 index / 返回第 3 章目录](../README.md)
 

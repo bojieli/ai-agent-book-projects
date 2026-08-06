@@ -1,0 +1,93 @@
+{
+  "schema_version": "chapter3-evidence-v1",
+  "experiment": "3-7",
+  "run_id": "20260729T200642Z-3_7-4d2d5f9c",
+  "created_at": "2026-07-29T20:06:42.648599+00:00",
+  "status": "passed",
+  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/structured-index/validation/runs/20260729T200642Z-3_7-4d2d5f9c",
+  "artifacts": {
+    "evidence.json": "89b3c03fbbd8e32304ed2639537a229c006ecf422bd8e9292bedf9201ee5810e",
+    "receipts.json": "907dff07a0ee5496cfc2693cbd75ece8a7dc6f78eb76c928127cc98fba04c5e4"
+  },
+  "inputs": [
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/structured-index/campaign.py",
+      "sha256": "2d525c2b2ccfaf6a5a1cc53be3517b0a2dcb7658d5831365f71929ad38f9365c",
+      "bytes": 27215
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/structured-index/data/intel-sdm-volume-1.pdf",
+      "sha256": "9d862bd7592d9fdd9f747c91d5e85be23ae3103f77185d1dcf7c5eb7277e5bdb",
+      "bytes": 3645716
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/structured-index/config.py",
+      "sha256": "429a8b8991ce4b7548b3475009febc21710d846b707432f1b71b177b621834ff",
+      "bytes": 6045
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/structured-index/raptor_indexer.py",
+      "sha256": "a8169f187a4324a7aab74dcdc9dd28c42a40f9414fb20e5cfa35e3b6802483b2",
+      "bytes": 12699
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/structured-index/graphrag_indexer.py",
+      "sha256": "20fafbdb26ae1755c03af0af0bbcad1fd1663ae2e9235bdaad669721366c4862",
+      "bytes": 25225
+    }
+  ],
+  "summary": {
+    "raptor": {
+      "concept-detail": {
+        "n": 4,
+        "mean_citation_recall": 1.0,
+        "mean_judge_score": 4.0,
+        "mean_query_latency_ms": 10825.52175
+      },
+      "relationship-multi-hop": {
+        "n": 4,
+        "mean_citation_recall": 0.9166666666666666,
+        "mean_judge_score": 4.0,
+        "mean_query_latency_ms": 16744.6045
+      },
+      "overall": {
+        "n": 8,
+        "mean_citation_recall": 0.9583333333333334,
+        "mean_judge_score": 4.0,
+        "mean_query_latency_ms": 13785.063125
+      }
+    },
+    "graphrag": {
+      "concept-detail": {
+        "n": 4,
+        "mean_citation_recall": 1.0,
+        "mean_judge_score": 3.0,
+        "mean_query_latency_ms": 11719.119749999998
+      },
+      "relationship-multi-hop": {
+        "n": 4,
+        "mean_citation_recall": 0.9166666666666666,
+        "mean_judge_score": 4.0,
+        "mean_query_latency_ms": 15248.592
+      },
+      "overall": {
+        "n": 8,
+        "mean_citation_recall": 0.9583333333333334,
+        "mean_judge_score": 3.5,
+        "mean_query_latency_ms": 13483.855875000001
+      }
+    }
+  },
+  "acceptance": {
+    "official_intel_pdf_pinned": true,
+    "bounded_real_pages_extracted": true,
+    "live_hierarchical_leaf_parent_root_summaries": true,
+    "live_entity_relationship_extraction": true,
+    "graph_communities_summarized": true,
+    "concept_detail_and_relationship_multihop_sets": true,
+    "both_indexes_answered_identical_queries": true,
+    "actual_graph_paths_retained": true,
+    "external_judge_complete": true,
+    "raw_live_receipts_checkpointed": true
+  }
+}

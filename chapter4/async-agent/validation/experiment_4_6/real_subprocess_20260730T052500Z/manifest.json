@@ -1,0 +1,45 @@
+{
+  "generated_at": "2026-07-29T21:28:45.233367+00:00",
+  "files": [
+    {
+      "path": "artifacts/scenario_2_report.html",
+      "bytes": 257,
+      "sha256": "e468c5a2c05f5fe74b2c41ca123676ab2f325fda41869a615545221b7d1c7a2f"
+    },
+    {
+      "path": "artifacts/scenario_4_report.json",
+      "bytes": 1071,
+      "sha256": "7bc8f53d28a8ec058424beb24ee1fcf9e36dd6c8b01e16fbea8dcc8d5b5dead7"
+    },
+    {
+      "path": "protocol.json",
+      "bytes": 1130,
+      "sha256": "2d15d0bfd8314d4ae141dfb72539703fdcd9fa6aed9bd34082a54df6694b42d3"
+    },
+    {
+      "path": "scenarios/async_command_and_immediate_question.json",
+      "bytes": 3438,
+      "sha256": "24677cf6db74cfefee1f6a856254ee6b4d7bbde2de03f3015966bb86aa473f8d"
+    },
+    {
+      "path": "scenarios/interrupt_terminates_and_recovers.json",
+      "bytes": 4995,
+      "sha256": "d355ea15acc9b85d789460a215f7cd36b4ee9549194b87a328515f17de8bbcac"
+    },
+    {
+      "path": "scenarios/parallel_progress_threshold_cancellation.json",
+      "bytes": 9035,
+      "sha256": "3e6ec09e98703ef4309d55d2386700de8f6ea8c7daeda660ee49ee14c8bbedf4"
+    },
+    {
+      "path": "scenarios/queued_batch_to_japanese_html.json",
+      "bytes": 4089,
+      "sha256": "796bf2d2878a6681d897d42938836f29e301d0c4fe6e6fbb78975427dae4aca9"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 1097,
+      "sha256": "913b5b9b73d61bcf02c51a44c5ed204dbb6ca5abbe8f133503fd88690ae5f788"
+    }
+  ]
+}

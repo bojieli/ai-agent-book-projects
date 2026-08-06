@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Canonical live campaign for Experiment 3-9.
+"""Canonical live campaign for Experiment 3-8.
 
 The comparison keeps the corpus, cases, BM25 implementation, retrieval depth,
 answer model, and independent judge fixed.  The only changed factor is whether
@@ -122,7 +122,7 @@ class Campaign:
 
     def answer_once(self, recorder: ChatRecorder, case: Dict[str, Any], retrieved: List[Dict[str, Any]]) -> str:
         response = recorder.create(
-            purpose=f"3-9 baseline grounded answer {case['id']}",
+            purpose=f"3-8 baseline grounded answer {case['id']}",
             model=self.args.answer_model,
             messages=[
                 {
@@ -181,7 +181,7 @@ class Campaign:
                 "max_tokens": 900,
             }
             response = recorder.create(
-                purpose=f"3-9 agentic react {case['id']} iteration {iteration}",
+                purpose=f"3-8 agentic react {case['id']} iteration {iteration}",
                 **request,
             )
             message = response.choices[0].message
@@ -217,7 +217,7 @@ class Campaign:
             trajectory.append(step)
         if not final:
             response = recorder.create(
-                purpose=f"3-9 agentic forced final {case['id']}",
+                purpose=f"3-8 agentic forced final {case['id']}",
                 model=self.args.answer_model,
                 messages=messages + [{"role": "system", "content": "搜索预算已用完。现在仅根据已返回证据给出带引用的最终回答。"}],
                 temperature=0,
@@ -247,7 +247,7 @@ class Campaign:
             ("agentic", agent_answer, agent_results, agent_ms, sum(len(s["searches"]) for s in trajectory)),
         ):
             response = judge_recorder.create(
-                purpose=f"3-9 independent judge {case['id']} {name}",
+                purpose=f"3-8 independent judge {case['id']} {name}",
                 model=self.args.judge_model,
                 messages=judge_prompt(case, name, answer, rows),
                 temperature=0,
@@ -364,7 +364,7 @@ def main() -> int:
     }
     manifest = write_campaign_evidence(
         HERE,
-        "3-9",
+        "3-8",
         evidence,
         receipts,
         input_paths=[HERE / "campaign.py", HERE / "offline_retriever.py", dataset_path, *corpus_files],

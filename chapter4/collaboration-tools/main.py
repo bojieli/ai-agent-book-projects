@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""协作工具 —— 统一命令行入口 (实验 4-3)
+"""协作工具 —— 统一命令行入口 (实验 4-4)
 
-《深入理解 AI Agent》第 4 章 实验 4-3「协作工具 MCP 服务器」的命令行界面。
+《深入理解 AI Agent》第 4 章 实验 4-4「协作工具 MCP 服务器」的命令行界面。
 在不启动 MCP 服务器的前提下，直接列出、单独调用各协作工具，并运行端到端演示。
 
 协作工具分三类（对应书中"协作工具"一节）：
@@ -81,7 +81,7 @@ COLLAB_TOOLS = {
 
 
 def cmd_list(args) -> None:
-    print("协作工具清单（实验 4-3）\n" + "=" * 60)
+    print("协作工具清单（实验 4-4）\n" + "=" * 60)
     for category, tools in COLLAB_TOOLS.items():
         print(f"\n【{category}】")
         for name, desc in tools:
@@ -267,7 +267,7 @@ def cmd_demo(args) -> None:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="main.py",
-        description="协作工具命令行入口（实验 4-3）：子 Agent 管理 / 人类协作 / 多渠道通知",
+        description="协作工具命令行入口（实验 4-4）：子 Agent 管理 / 人类协作 / 多渠道通知",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "示例：\n"

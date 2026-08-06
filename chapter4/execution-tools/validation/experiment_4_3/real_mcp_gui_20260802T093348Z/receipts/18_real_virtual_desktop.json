@@ -1,0 +1,49 @@
+{
+  "case": "real_virtual_desktop",
+  "tool": "virtual_desktop_execute",
+  "arguments": {
+    "url": "https://example.com",
+    "screenshot_path": "computer-use-example.png",
+    "expected_title": "Example Domain"
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "backend": "Xvfb + headful Chromium + xdotool",
+    "versions": {
+      "chromium": "Chromium 150.0.7871.128 snap",
+      "xdotool": "xdotool version 3.20160805.1",
+      "ffmpeg": "ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers"
+    },
+    "display": ":90",
+    "window_id": "2097155",
+    "url_entered_via_os_keyboard": "https://example.com",
+    "window_title": "Example Domain - Chromium",
+    "expected_title": "Example Domain",
+    "expected_title_matched": true,
+    "input_receipts": [
+      {
+        "operation": "key",
+        "returncode": 0
+      },
+      {
+        "operation": "type",
+        "returncode": 0
+      },
+      {
+        "operation": "key",
+        "returncode": 0
+      }
+    ],
+    "screenshot": {
+      "path": "/home/ubuntu/ai-agent-book/chapter4/execution-tools/validation/experiment_4_3/real_mcp_gui_20260802T093348Z/workspace/computer-use-example.png",
+      "bytes": 28115,
+      "sha256": "a7c80edd2f11004e3261b2d9a66bf56aec610defd9c003e88ce9d3edbfb3a934"
+    },
+    "capture_returncode": 0,
+    "capture_error": null,
+    "latency_seconds": 1.252
+  },
+  "latency_seconds": 1.376
+}

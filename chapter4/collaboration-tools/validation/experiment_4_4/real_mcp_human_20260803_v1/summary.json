@@ -1,0 +1,35 @@
+{
+  "experiment": "4-4",
+  "campaign_id": "real_mcp_human_20260803_v1",
+  "generated_at": "2026-08-03T04:49:45.003950+00:00",
+  "status": "failed",
+  "official_complete": false,
+  "gates": {
+    "real_mcp_catalog_has_required_primitives": true,
+    "two_real_context_strategies_compared": true,
+    "raw_model_usage_latency_receipts": true,
+    "sync_async_message_cancel_status_lifecycle": true,
+    "hitl_pending_response_and_conservative_timeout": false,
+    "real_human_decision": false,
+    "real_email_notification": false,
+    "real_im_notification": false,
+    "real_slack_notification": false
+  },
+  "blockers": [
+    "hitl_pending_response_and_conservative_timeout",
+    "real_human_decision",
+    "real_email_notification",
+    "real_im_notification",
+    "real_slack_notification"
+  ],
+  "tool_call_count": 79,
+  "model_call_count": 6,
+  "interactive_human": true,
+  "publication_authorized": false,
+  "real_notifications_enabled": false,
+  "notification_readiness": {
+    "email": false,
+    "telegram": false,
+    "slack": false
+  }
+}

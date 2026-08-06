@@ -13,7 +13,7 @@ import pytest
 
 HERE = Path(__file__).resolve().parent
 MODULE_PATH = HERE / "unipile_mailbox_experiment.py"
-SPEC = importlib.util.spec_from_file_location("experiment_4_4_unipile", MODULE_PATH)
+SPEC = importlib.util.spec_from_file_location("experiment_4_5_unipile", MODULE_PATH)
 experiment = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
 sys.modules[SPEC.name] = experiment

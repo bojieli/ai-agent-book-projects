@@ -63,7 +63,7 @@ Dựa trên thực tiễn của các tiêu chuẩn bộ nhớ khác nhau như Lo
 - **Nhận thức về thời gian**: Ghi nhớ ngày tháng, hiểu thời gian tương đối và thực hiện các phép tính thời gian
 - **Giải quyết xung đột**: Xác định và giải quyết những mâu thuẫn giữa các ký ức
 
-Trên cơ sở đó, chúng tôi đã thiết kế khung đánh giá ba cấp độ phù hợp hơn với kịch bản Agent, chia khả năng bộ nhớ thành các cấp độ lũy tiến. Khung này sẽ được sử dụng trong suốt chương này - các thí nghiệm sau 3-10 và 3-12 sẽ sử dụng nó để đo lường sự cải thiện khả năng bộ nhớ bằng công nghệ truy xuất.
+Trên cơ sở đó, chúng tôi đã thiết kế khung đánh giá ba cấp độ phù hợp hơn với kịch bản Agent, chia khả năng bộ nhớ thành các cấp độ lũy tiến. Khung này sẽ được sử dụng trong suốt chương này - các thí nghiệm sau 3-9 và 3-11 sẽ sử dụng nó để đo lường sự cải thiện khả năng bộ nhớ bằng công nghệ truy xuất.
 
 **Cấp độ 1: Thu hồi cơ bản** - Đây là khả năng cơ bản nhất của hệ thống bộ nhớ, yêu cầu Agent có khả năng lưu trữ và truy xuất chính xác thông tin có cấu trúc, rõ ràng do người dùng trực tiếp cung cấp. Ví dụ: "Mã thành viên của tôi là 12345", số này sẽ được trả về chính xác khi cần sau này. Mức này đảm bảo độ tin cậy cơ bản của hệ thống bộ nhớ và là cơ sở cho các khả năng phức tạp hơn tiếp theo.
 
@@ -501,7 +501,7 @@ Tuy nhiên, là một giải pháp lưu trữ **phổ quát** cho bộ nhớ ng�
 
 Do đó, chiến lược được đề xuất trong thực tế là **bổ sung theo lớp**: lưu giữ thông tin cốt lõi bằng ngôn ngữ tự nhiên hoàn chỉnh (bảo toàn tính toàn vẹn ngữ nghĩa), được bổ sung bằng siêu dữ liệu có cấu trúc để lập chỉ mục và truy xuất (có tính đến hiệu quả truy vấn); trong các tình huống theo chiều dọc yêu cầu lập luận nhiều bước và phân định chính xác (chẳng hạn như tư vấn y tế, phân tích trường hợp pháp lý, quản lý quan hệ gia đình), hãy sử dụng biểu đồ tri thức làm phương pháp lập chỉ mục đặc biệt để hoạt động cùng với bộ nhớ ngôn ngữ tự nhiên.
 
-> **Thử nghiệm 3-8 ★★★: Lập chỉ mục có cấu trúc: Triết lý tổ chức tri thức của RAPTOR và GraphRAG**
+> **Thử nghiệm 3-7 ★★★: Lập chỉ mục có cấu trúc: Triết lý tổ chức tri thức của RAPTOR và GraphRAG**
 >
 > Dự án `structured-index` thực hiện đầy đủ hai phương pháp trong một khuôn khổ thống nhất và được áp dụng để lập chỉ mục và truy vấn hàng nghìn trang sổ tay kỹ thuật kiến trúc CPU Intel - một đại diện điển hình của kiến thức có tính cấu trúc cao, phân cấp và phù hợp.
 >
@@ -593,7 +593,7 @@ RAG thông minh tích hợp một cách hữu cơ khả năng tìm kiếm và t�
 ![Hình 3-13 Kiến trúc hệ thống RAG thông minh ](images/fig3-13.svg)
 
 
-> **Thí nghiệm 3-9 ★★: Nghiên cứu so sánh RAG thông minh và RAG không thông minh**
+> **Thí nghiệm 3-8 ★★: Nghiên cứu so sánh RAG thông minh và RAG không thông minh**
 >
 > Dự án `agentic-rag` xây dựng một hệ thống Agent hoàn chỉnh có thể tự do chuyển đổi giữa hai chế độ và kết nối với nhiều phần phụ trợ cơ sở kiến thức khác nhau (bao gồm `retrieval-pipeline`, `structured-index`, v.v.) để tiến hành thử nghiệm cắt bỏ toàn diện (nghĩa là thay thế hoặc tắt từng thành phần một để quan sát sự đóng góp của nó vào hiệu ứng tổng thể). Thí nghiệm xoay quanh bộ dữ liệu hỏi-đáp tư pháp Trung Quốc được xây dựng riêng, bao gồm nhiều câu hỏi pháp lý khác nhau từ đơn giản đến phức tạp.
 >
@@ -606,9 +606,9 @@ RAG thông minh tích hợp một cách hữu cơ khả năng tìm kiếm và t�
 >
 > Thí nghiệm so sánh này chứng minh một cách mạnh mẽ rằng giá trị của RAG thông minh nằm ở khả năng “giải quyết vấn đề” hơn là “trả lời câu hỏi”. Nó hy sinh tốc độ phản hồi nhất định để đổi lấy độ tin cậy cao hơn cho các câu hỏi phức tạp và chất lượng câu trả lời cao hơn. Sự thay đổi mô hình này từ “đường dẫn thụ động” sang “trình khám phá chủ động” được phản ánh trực tiếp qua sự cải thiện đáng kể về độ chính xác của các vấn đề nhiều bước nhảy trong kịch bản tuyên án của thử nghiệm này.
 
-Tại thời điểm này, chúng tôi đã làm chủ được kho công nghệ hoàn chỉnh từ truy xuất cơ bản đến lập chỉ mục có cấu trúc cho đến RAG thông minh. Hãy nhớ lại những câu hỏi còn sót lại ở nửa đầu chương này: khi trí nhớ của người dùng tích lũy đến hàng nghìn mục, làm thế nào để truy xuất chính xác những mục có liên quan và làm cách nào để phân biệt các bản ghi xung đột? Bây giờ hãy lật lại các kỹ thuật cơ sở tri thức này và áp dụng chúng vào bộ nhớ người dùng đã thảo luận ở đầu chương này. Thử nghiệm sau đây 3-10 và thử nghiệm 3-12 sẽ tuân theo khung đánh giá ba cấp độ được thiết lập ở đầu chương này (và bộ đánh giá của thử nghiệm 3-1) để kiểm tra xem các công nghệ này có thể giải quyết các vấn đề về độ chính xác và xung đột trong việc truy xuất bộ nhớ người dùng theo từng lớp hay không.
+Tại thời điểm này, chúng tôi đã làm chủ được kho công nghệ hoàn chỉnh từ truy xuất cơ bản đến lập chỉ mục có cấu trúc cho đến RAG thông minh. Hãy nhớ lại những câu hỏi còn sót lại ở nửa đầu chương này: khi trí nhớ của người dùng tích lũy đến hàng nghìn mục, làm thế nào để truy xuất chính xác những mục có liên quan và làm cách nào để phân biệt các bản ghi xung đột? Bây giờ hãy lật lại các kỹ thuật cơ sở tri thức này và áp dụng chúng vào bộ nhớ người dùng đã thảo luận ở đầu chương này. Thử nghiệm sau đây 3-9 và thử nghiệm 3-11 sẽ tuân theo khung đánh giá ba cấp độ được thiết lập ở đầu chương này (và bộ đánh giá của thử nghiệm 3-1) để kiểm tra xem các công nghệ này có thể giải quyết các vấn đề về độ chính xác và xung đột trong việc truy xuất bộ nhớ người dùng theo từng lớp hay không.
 
-> **Thử nghiệm 3-10 ★★: Sử dụng RAG thông minh để xây dựng trí nhớ người dùng**
+> **Thử nghiệm 3-9 ★★: Sử dụng RAG thông minh để xây dựng trí nhớ người dùng**
 >
 > Bằng cách chuyển ứng dụng RAG thông minh từ cơ sở kiến thức tài liệu bên ngoài sang chính Agent, chúng ta có thể xây dựng một hệ thống bộ nhớ dài hạn mạnh mẽ, có thể truy xuất cho nó. Ý tưởng cốt lõi là: coi toàn bộ lịch sử trò chuyện của Agent với người dùng như một cơ sở kiến thức. Bằng cách này, Agent có thể “ghi nhớ” các tương tác trong quá khứ và chủ động truy xuất những “ký ức” này khi cần để hiểu rõ hơn về ngữ cảnh hiện tại và cung cấp các dịch vụ được cá nhân hóa. Không giống như các **chiến lược biểu diễn và quản lý** bộ nhớ ở phần trước của chương này (chẳng hạn như thiết kế có cấu trúc của Thẻ JSON nâng cao), thử nghiệm này tập trung vào **cách các kỹ thuật truy xuất nâng cao khả năng thu hồi bộ nhớ**.
 >
@@ -623,7 +623,7 @@ Tại thời điểm này, chúng tôi đã làm chủ được kho công nghệ
 >
 > Tuy nhiên, đối với các nhiệm vụ cấp hai phức tạp hơn, những hạn chế của phương pháp này sẽ bộc lộ. Trong trường hợp sử dụng `12_contradictory_financial_instructions.yaml` trong thư mục `layer2`, người vợ thiết lập chuyển khoản trước, người chồng sau đó thay đổi số tiền và ngày trong một cuộc gọi điện thoại khác và cuối cùng người vợ gọi lại để thay đổi. Do các khối hội thoại được lập chỉ mục bị cô lập và thiếu ngữ cảnh nên hệ thống có thể thấy ba hướng dẫn chuyển độc lập nhưng xung đột nhau trong quá trình truy xuất và không thể dễ dàng xác định hướng dẫn nào cuối cùng là hợp lệ và có thể hiển thị thông tin sai lệch hoặc gây nhầm lẫn cho người dùng. Để đạt được cấp độ 3 (dịch vụ chủ động) - khám phá các kết nối ẩn giữa thông tin trong một cuộc trò chuyện (chẳng hạn như chuyến bay mới đặt) và thông tin trong một cuộc trò chuyện khác vài tháng trước (chẳng hạn như hộ chiếu hết hạn) - việc truy xuất lịch sử cuộc trò chuyện bị phân mảnh là chưa đủ.
 
-Những hạn chế này bắt nguồn từ những thiếu sót cố hữu của các phương pháp chunking truyền thống. Phần tiếp theo sẽ giới thiệu một công nghệ có thể giải quyết cơ bản vấn đề này - truy xuất nhận biết ngữ cảnh, sau đó áp dụng nó vào các kịch bản bộ nhớ người dùng trong thử nghiệm 3-12.
+Những hạn chế này bắt nguồn từ những thiếu sót cố hữu của các phương pháp chunking truyền thống. Phần tiếp theo sẽ giới thiệu một công nghệ có thể giải quyết cơ bản vấn đề này - truy xuất nhận biết ngữ cảnh, sau đó áp dụng nó vào các kịch bản bộ nhớ người dùng trong thử nghiệm 3-11.
 
 ### Mẹo RAG: Truy xuất theo ngữ cảnh
 
@@ -641,7 +641,7 @@ Ngay cả với khung RAG thông minh tiên tiến, các sai sót cơ bản tron
 
 Điểm thông minh của phương pháp này là nó tăng cường cả hai chế độ truy xuất thưa thớt và truy xuất dày đặc. Đối với các tìm kiếm thưa thớt như BM25, tiền tố theo ngữ cảnh sẽ thêm các từ khóa khớp chính xác, phong phú ("ACME", "Quý II năm 2025"). Đối với truy xuất dày đặc chẳng hạn như nhúng vectơ, tiền tố sẽ chèn ngữ cảnh ngữ nghĩa quan trọng để biểu diễn vectơ được tạo phản ánh chính xác hơn ý nghĩa thực sự của khối văn bản.
 
-> **Thử nghiệm 3-11 ★★: Truy xuất theo ngữ cảnh: Giải quyết vấn đề mất ngữ cảnh của RAG**
+> **Thử nghiệm 3-10 ★★: Truy xuất theo ngữ cảnh: Giải quyết vấn đề mất ngữ cảnh của RAG**
 >
 > Dự án `contextual-retrieval` nhằm mục đích đánh giá định lượng mức độ cải thiện hiệu suất của truy xuất nhận biết ngữ cảnh so với các phương pháp phân đoạn truyền thống thông qua các thử nghiệm so sánh có kiểm soát. Dự án xây dựng song song hai cơ sở kiến thức: một cơ sở sử dụng phương pháp phân đoạn không ngữ cảnh truyền thống và cơ sở kia sử dụng phương pháp nâng cao dựa trên tiền tố ngữ cảnh được tạo LLM. Tính năng `compare_retrieval_methods` cho phép truy xuất đồng thời cùng một truy vấn trong hai cơ sở kiến thức để so sánh sự khác biệt giữa các kết quả.
 >
@@ -651,9 +651,9 @@ Ngay cả với khung RAG thông minh tiên tiến, các sai sót cơ bản tron
 
 Việc xác minh trên là hiệu quả của việc truy xuất nhận biết ngữ cảnh trên cơ sở tri thức tài liệu. Áp dụng kỹ thuật tương tự ngược lại với các kịch bản bộ nhớ người dùng và bạn sẽ có được thử nghiệm tiếp theo.
 
-> **Thử nghiệm 3-12 ★★★: Sử dụng truy xuất theo ngữ cảnh để nâng cao trí nhớ người dùng**
+> **Thử nghiệm 3-11 ★★★: Sử dụng truy xuất theo ngữ cảnh để nâng cao trí nhớ người dùng**
 >
-> Áp dụng khả năng truy xuất theo ngữ cảnh để xây dựng bộ nhớ người dùng là chìa khóa để giải quyết các điểm yếu của việc phân chia lịch sử hội thoại truyền thống. Một câu nói riêng biệt “Được rồi, hãy đặt chỗ này” hoàn toàn không có nhiều thông tin và chỉ có ý nghĩa nếu bạn biết đó là “vé một chiều trị giá 500 đô la từ Thượng Hải đến Seattle”. Thử nghiệm này dựa trên khung của thử nghiệm 3-10 và thêm bước "tạo ngữ cảnh" chính trước khi lập chỉ mục lịch sử cuộc trò chuyện - gọi LLM cho mỗi khối cuộc trò chuyện để tạo bản tóm tắt tiền tố chứa thông tin cơ bản chính.
+> Áp dụng khả năng truy xuất theo ngữ cảnh để xây dựng bộ nhớ người dùng là chìa khóa để giải quyết các điểm yếu của việc phân chia lịch sử hội thoại truyền thống. Một câu nói riêng biệt “Được rồi, hãy đặt chỗ này” hoàn toàn không có nhiều thông tin và chỉ có ý nghĩa nếu bạn biết đó là “vé một chiều trị giá 500 đô la từ Thượng Hải đến Seattle”. Thử nghiệm này dựa trên khung của thử nghiệm 3-9 và thêm bước "tạo ngữ cảnh" chính trước khi lập chỉ mục lịch sử cuộc trò chuyện - gọi LLM cho mỗi khối cuộc trò chuyện để tạo bản tóm tắt tiền tố chứa thông tin cơ bản chính.
 >
 > Ngân hàng bộ nhớ được tăng cường theo ngữ cảnh này có thể hiện những ưu điểm mang tính quyết định trong công việc xử lý **xung đột thực tế**. Ngữ cảnh, bao gồm thời gian, con người và mục tiêu, cung cấp cho Agent những manh mối then chốt về mức độ ưu tiên và hiệu quả cuối cùng của hướng dẫn.
 >
@@ -684,7 +684,7 @@ Quá trình này được chia thành hai giai đoạn:
 ![Hình 3-15 Quy trình trích xuất kiến thức có cấu trúc ](images/fig3-15.svg)
 
 
-> **Thử nghiệm 3-13 ★★★: Trích xuất kiến thức ngầm từ dữ liệu có cấu trúc: lấy phân tích vụ án tư pháp làm ví dụ**
+> **Thử nghiệm 3-12 ★★★: Trích xuất kiến thức ngầm từ dữ liệu có cấu trúc: lấy phân tích vụ án tư pháp làm ví dụ**
 >
 > Dự án `structured-knowledge-extraction` dựa trên bộ dữ liệu phán quyết hình sự CAIL2018 quy mô lớn của Trung Quốc để xây dựng một cố vấn pháp lý thông minh học hỏi "kinh nghiệm phán xét" từ các vụ án.
 >

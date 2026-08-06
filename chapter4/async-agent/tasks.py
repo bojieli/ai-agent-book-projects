@@ -1,4 +1,4 @@
-"""Real, bounded asynchronous terminal jobs for Experiment 4-5.
+"""Real, bounded asynchronous terminal jobs for Experiment 4-6.
 
 Commands are parsed without a shell and resolved through an explicit allowlist
 to ``analysis_worker.py``. Each job is a real child process whose stdout drives

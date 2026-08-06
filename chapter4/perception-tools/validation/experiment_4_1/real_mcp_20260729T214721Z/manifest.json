@@ -77,8 +77,8 @@
     {
       "path": "fixtures/mutation_workspace/escape-link",
       "kind": "symlink-target",
-      "bytes": 136,
-      "sha256": "b52374f2d80d2b7c2e6c876926fee23f0df221324c8bfb8818392ff8c2693989"
+      "bytes": 28,
+      "sha256": "59049c8e49e561bbe617bd612757e0c83d5623857aeb123338d573e01b4c9120"
     },
     {
       "path": "fixtures/mutation_workspace/nested/entry.txt",

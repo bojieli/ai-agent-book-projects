@@ -1,0 +1,18 @@
+{
+  "case": "python_valid_write",
+  "tool": "file_write",
+  "arguments": {
+    "path": "valid.py",
+    "content": "def add(a, b):\n    return a + b\n",
+    "overwrite": true
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "path": "/Users/boj/book/ai-agent-book/chapter4/execution-tools/validation/experiment_4_3/real_mcp_20260730T062500Z/workspace/valid.py",
+    "bytes_written": 32,
+    "verification": "passed"
+  },
+  "latency_seconds": 0.002
+}

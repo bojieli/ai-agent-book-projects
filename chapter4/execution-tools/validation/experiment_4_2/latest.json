@@ -1,8 +1,0 @@
-{
-  "experiment": "4-2",
-  "campaign_id": "real_mcp_gui_20260802T093657Z",
-  "status": "blocked",
-  "official_complete": false,
-  "manifest": "validation/experiment_4_2/real_mcp_gui_20260802T093657Z/manifest.json",
-  "manifest_sha256": "52c1e29a4e429a34d8b05a7e875d31529436afd433aee187fd53793be38a4ff1"
-}

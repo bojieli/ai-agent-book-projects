@@ -10,7 +10,7 @@
     "reasoning": "生成建议中明确指出了待匹配案件与匹配原型的特征相符之处，并且提供了原型的详细统计数据，包括中位数、四分位数、最小值和最大值，这显示了高度的原型依据和数值忠实度。同时，建议中也提到了待匹配案件中某些特征为null可能影响匹配准确性，体现了不确定性和谨慎性。此外，建议对留出案件具有实际用途，因为它提供了一个基于统计的量刑范围。最后，建议包含了明确的法律免责声明，符合要求。"
   },
   "receipt": {
-    "purpose": "3-13 independent held-out judge cail2018-00d660cf28f916f3",
+    "purpose": "3-12 independent held-out judge cail2018-00d660cf28f916f3",
     "provider": "moonshot",
     "endpoint": "https://api.moonshot.cn/v1",
     "started_at": "2026-07-30T04:43:02.096300+00:00",

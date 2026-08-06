@@ -10,7 +10,7 @@
     "reasoning": "生成建议忠实于给定原型统计，明确指出待预测案件与原型案件在核心特征上的不匹配，如伤害结果、伤害程度和抓捕方式等，这些特征在原型中对刑期影响显著。同时，建议中也把统计区间作为不确定参考而非承诺，对留出案件的预测结果存在较大不确定性进行了说明，这符合对留出案件的有用性。此外，包含了明确的法律免责声明，指出本结果不构成法律意见或量刑承诺。"
   },
   "receipt": {
-    "purpose": "3-13 independent held-out judge cail2018-264bc811294ca62f",
+    "purpose": "3-12 independent held-out judge cail2018-264bc811294ca62f",
     "provider": "moonshot",
     "endpoint": "https://api.moonshot.cn/v1",
     "started_at": "2026-07-30T04:43:00.584663+00:00",

@@ -603,7 +603,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_20_daycare_enrollment attempt 1",
+      "purpose": "3-11 live contextual prefixes layer1_20_daycare_enrollment attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:00:57.222776+00:00",
@@ -686,7 +686,7 @@
       "response_id": "0217853588574605132ef2fc362c0fde720570d7def1b4f4100c3"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_20_daycare_enrollment iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_20_daycare_enrollment iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:01:37.836118+00:00",
@@ -797,7 +797,7 @@
       "response_id": "0217853588980275132ef2fc362c0fde720570d7def1b4fb68169"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_20_daycare_enrollment iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_20_daycare_enrollment iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:01:39.083725+00:00",
@@ -919,7 +919,7 @@
       "response_id": "0217853588992735132ef2fc362c0fde720570d7def1b4fa8ff26"
     },
     {
-      "purpose": "3-12 grounded answer layer1_20_daycare_enrollment plain",
+      "purpose": "3-11 grounded answer layer1_20_daycare_enrollment plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:02:17.075707+00:00",
@@ -999,7 +999,7 @@
       "response_id": "0217853589372665132ef2fc362c0fde720570d7def1b4ffdcc3d"
     },
     {
-      "purpose": "3-12 grounded answer layer1_20_daycare_enrollment contextual",
+      "purpose": "3-11 grounded answer layer1_20_daycare_enrollment contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:02:30.329309+00:00",
@@ -1079,7 +1079,7 @@
       "response_id": "0217853589505205132ef2fc362c0fde720570d7def1b4f73a288"
     },
     {
-      "purpose": "3-12 grounded answer layer1_20_daycare_enrollment dual_layer",
+      "purpose": "3-11 grounded answer layer1_20_daycare_enrollment dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:02:51.232061+00:00",
@@ -1159,7 +1159,7 @@
       "response_id": "0217853589714235132ef2fc362c0fde720570d7def1b4f47abc5"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_20_daycare_enrollment",
+      "purpose": "3-9/3-11 independent judge layer1_20_daycare_enrollment",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:03:11.269078+00:00",

@@ -799,7 +799,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_15_college_enrollment attempt 1",
+      "purpose": "3-11 live contextual prefixes layer1_15_college_enrollment attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:57:46.095921+00:00",
@@ -882,7 +882,7 @@
       "response_id": "021785358666329556a0b139fa45462562de62a2b19e081cfc646"
     },
     {
-      "purpose": "3-12 live contextual prefixes layer1_15_college_enrollment attempt 2",
+      "purpose": "3-11 live contextual prefixes layer1_15_college_enrollment attempt 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:58:46.810491+00:00",
@@ -965,7 +965,7 @@
       "response_id": "021785358727001556a0b139fa45462562de62a2b19e081121815"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_15_college_enrollment iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_15_college_enrollment iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:59:04.065300+00:00",
@@ -1084,7 +1084,7 @@
       "response_id": "021785358744255556a0b139fa45462562de62a2b19e0812a9fb8"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_15_college_enrollment iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_15_college_enrollment iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:59:05.291438+00:00",
@@ -1219,7 +1219,7 @@
       "response_id": "021785358745483556a0b139fa45462562de62a2b19e081756615"
     },
     {
-      "purpose": "3-12 grounded answer layer1_15_college_enrollment plain",
+      "purpose": "3-11 grounded answer layer1_15_college_enrollment plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:59:25.926206+00:00",
@@ -1299,7 +1299,7 @@
       "response_id": "021785358766116556a0b139fa45462562de62a2b19e081bb0ccf"
     },
     {
-      "purpose": "3-12 grounded answer layer1_15_college_enrollment contextual",
+      "purpose": "3-11 grounded answer layer1_15_college_enrollment contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:59:55.506223+00:00",
@@ -1379,7 +1379,7 @@
       "response_id": "021785358795697556a0b139fa45462562de62a2b19e08115b618"
     },
     {
-      "purpose": "3-12 grounded answer layer1_15_college_enrollment dual_layer",
+      "purpose": "3-11 grounded answer layer1_15_college_enrollment dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:00:30.538742+00:00",
@@ -1459,7 +1459,7 @@
       "response_id": "021785358830729556a0b139fa45462562de62a2b19e08156333a"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_15_college_enrollment",
+      "purpose": "3-9/3-11 independent judge layer1_15_college_enrollment",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:01:07.065638+00:00",

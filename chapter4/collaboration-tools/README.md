@@ -1,7 +1,7 @@
 # Collaboration Tools MCP Server / 协作工具 MCP 服务器
 
-> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-3 ★★**. MCP server: browser automation, sub-agents, HITL, multi-channel notifications, timers.  
-> 配套《深入理解 AI Agent》第 4 章 **实验 4-3 ★★**。协作 MCP 服务器：浏览器、子 Agent、HITL、多渠道通知、定时器。
+> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-4 ★★**. MCP server: browser automation, sub-agents, HITL, multi-channel notifications, timers.  
+> 配套《深入理解 AI Agent》第 4 章 **实验 4-4 ★★**。协作 MCP 服务器：浏览器、子 Agent、HITL、多渠道通知、定时器。
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
 
@@ -167,7 +167,7 @@ python main.py hitl approve --message "删除 1000 条记录？" --timeout 5 --a
 python main.py notify slack --message "部署完成"
 ```
 
-The formal Experiment 4-3 runner defaults to credential-free notification
+The formal Experiment 4-4 runner defaults to credential-free notification
 preflights. Use `--interactive-human` to pause on a real pending MCP approval
 and accept exactly one live `APPROVE` or `REJECT` line from standard input. Use
 `--real-notifications` only when email, Telegram, and Slack are all configured;
@@ -180,13 +180,13 @@ live approval to publish that run's validation artifact; it does not imply that
 the experiment passed or that `official_complete` is true.
 
 ```bash
-python run_experiment_4_3.py \
+python run_experiment_4_4.py \
   --campaign-id real_mcp_human_example \
   --interactive-human \
   --human-timeout-seconds 14400
 
-python validate_experiment_4_3.py \
-  validation/experiment_4_3/real_mcp_human_example
+python validate_experiment_4_4.py \
+  validation/experiment_4_4/real_mcp_human_example
 ```
 
 `demo` chains three collaboration tool types: (1) delegate a sub-agent for refund approval and compare context strategies; (2) large action triggers HITL (approve-before-timeout vs conservative default-on-timeout); (3) multi-channel notify collaborators. **HITL and notify paths run fully offline**; real sub-agent execution and `llm_generated` need `OPENAI_API_KEY` (if unset, the command still parses and runs with a clear prompt).

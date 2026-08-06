@@ -1,7 +1,7 @@
 # Agentic RAG System / Agentic RAG 系统
 
-> Companion material for *AI Agents in Depth*, Chapter 3 — **Experiment 3-9**: ReAct agentic vs non-agentic RAG on Chinese legal Q&A; offline multi-hop evidence recall.  
-> 配套《深入理解 AI Agent》第 3 章 **实验 3-9**：ReAct 式 Agentic vs 非 Agent 式 RAG 司法问答；离线多跳证据召回对比。
+> Companion material for *AI Agents in Depth*, Chapter 3 — **Experiment 3-8**: ReAct agentic vs non-agentic RAG on Chinese legal Q&A; offline multi-hop evidence recall.  
+> 配套《深入理解 AI Agent》第 3 章 **实验 3-8**：ReAct 式 Agentic vs 非 Agent 式 RAG 司法问答；离线多跳证据召回对比。
 
 ← [Chapter 3 index / 返回第 3 章目录](../README.md)
 
@@ -102,7 +102,7 @@ Real output (measured; 21372 law chunks / 288 docs):
   复杂题                              8%          100%        1.0 → 1.5
 ```
 
-Reading (aligned with Exp. 3-9): **easy questions ~tied at 100%**; **hard/poorly phrased: 8% → 100%**. Metric is pure retrieval **evidence recall** (upper bound on answer quality). Gold statutes are confirmed present in `laws/`.
+Reading (aligned with Exp. 3-8): **easy questions ~tied at 100%**; **hard/poorly phrased: 8% → 100%**. Metric is pure retrieval **evidence recall** (upper bound on answer quality). Gold statutes are confirmed present in `laws/`.
 
 > Offline mode uses pre-labeled `subqueries` for “agent decomposed search” to isolate **retrieval strategy**; real systems generate subqueries in the ReAct loop. End-to-end answer quality: `evaluation/evaluate.py` (needs API key).
 

@@ -63,7 +63,7 @@ LoCoMo ve benzerlerinden, ticari bellek ürünlerinin pratiğiyle birlikte yarar
 - **Zamansal Farkındalık**: Tarihleri hatırlamak, göreceli zamanı anlamak, zaman hesaplamaları yapmak
 - **Çelişki Çözümü**: Bellekler arasındaki tutarsızlıkları belirlemek ve ele almak
 
-Buna dayanarak, bellek yeteneklerini kademeli seviyelere ayrıştıran, Agent senaryolarına daha uygun üç seviyeli bir değerlendirme çerçevesi tasarladık. Bu çerçeve bu bölüm boyunca kullanılacak—sonraki Deney 3-10 ve 3-12, retrieval tekniklerinin bellek yeteneklerini nasıl iyileştirdiğini ölçmek için bunu kullanacak.
+Buna dayanarak, bellek yeteneklerini kademeli seviyelere ayrıştıran, Agent senaryolarına daha uygun üç seviyeli bir değerlendirme çerçevesi tasarladık. Bu çerçeve bu bölüm boyunca kullanılacak—sonraki Deney 3-9 ve 3-11, retrieval tekniklerinin bellek yeteneklerini nasıl iyileştirdiğini ölçmek için bunu kullanacak.
 
 **Seviye 1: Temel Hatırlama** — Bu, bir bellek sisteminin en temel yeteneğidir; Agent'ın kullanıcı tarafından doğrudan sağlanan, yapılandırılmış ve belirsizliksiz bilgiyi doğru biçimde depolayıp getirmesini gerektirir. Örneğin, "Üyelik numaram 12345" ifadesi, daha sonra ihtiyaç duyulduğunda tam olarak döndürülmelidir. Bu seviye, bellek sisteminin temel güvenilirliğini sağlar ve daha karmaşık yeteneklerin temeli olarak hizmet eder.
 
@@ -501,7 +501,7 @@ Ancak, kullanıcı belleği için **genel amaçlı** bir depolama çözümü ola
 
 Bu yüzden, pratikte önerilen strateji **katmanlı tamamlayıcılıktır**: temel bilgiyi eksiksiz doğal dilde koruyun (semantik bütünlüğü koruyarak), indeksleme ve retrieval için yapılandırılmış meta veriyle tamamlayın (sorgu verimliliğini dengeleyerek); çok sıçramalı reasoning ve hassas belirsizlik giderme gerektiren dikey senaryolarda (örn. tıbbi teşhis, hukuki dava analizi, aile ilişkisi yönetimi), doğal dil belleğiyle uyum içinde çalışan özel bir indeksleme aracı olarak bilgi graflarını kullanın.
 
-> **Deney 3-8 ★★★: Yapılandırılmış İndeksleme: RAPTOR ve GraphRAG'ın Bilgi Organizasyonu Felsefesi**
+> **Deney 3-7 ★★★: Yapılandırılmış İndeksleme: RAPTOR ve GraphRAG'ın Bilgi Organizasyonu Felsefesi**
 >
 > `structured-index` projesi, her iki yöntemi de birleşik bir çerçeve içinde tam olarak uygular, binlerce sayfaya yayılan bir Intel CPU mimarisi teknik el kitabını indekslemeye ve sorgulamaya uygulanır—yüksek düzeyde yapılandırılmış, hiyerarşik ve ilişkisel bilginin tipik bir örneği.
 >
@@ -593,7 +593,7 @@ Agentic RAG, Agent'ın kendi kararları aracılığıyla arama ile düşünmeyi 
 ![Şekil 3-13: Agentic RAG Sistem Mimarisi](images/fig3-13.svg)
 
 
-> **Deney 3-9 ★★: Agentic RAG ve Non-Agentic RAG'ın Karşılaştırmalı Çalışması**
+> **Deney 3-8 ★★: Agentic RAG ve Non-Agentic RAG'ın Karşılaştırmalı Çalışması**
 >
 > `agentic-rag` projesi, iki mod arasında serbestçe geçiş yapabilen ve çeşitli bilgi tabanı backend'lerine (`retrieval-pipeline`, `structured-index` vb. dahil) bağlanabilen eksiksiz bir Agent sistemi inşa eder, kapsamlı bir ablation study'yi (yani bir bileşeni sistematik olarak değiştirip devre dışı bırakarak genel etkiye katkısını gözlemlemek) mümkün kılar. Deney, basitten karmaşığa uzanan hukuki sorular içeren özel olarak inşa edilmiş bir Çin hukuki soru-cevap veri kümesi etrafında döner.
 >
@@ -606,9 +606,9 @@ Agentic RAG, Agent'ın kendi kararları aracılığıyla arama ile düşünmeyi 
 >
 > Karşılaştırma, agentic RAG'ın değerinin yalnızca "soruları yanıtlamakta" değil "problemleri çözmekte" yattığını güçlü biçimde ortaya koyar. Zor problemlerde sağlamlık ve yanıt kalitesi için bir miktar yanıt hızından ödün verir—ve bu deneyin cezalandırma senaryosunda, pasif boru hattından aktif kaşife geçiş, çok sıçramalı doğrulukta önemli bir kazanç olarak doğrudan kendini gösterir.
 
-Artık temel retrieval'dan yapılandırılmış indekslemeye ve agentic RAG'a kadar eksiksiz yığını elimizde tutuyoruz. Bu bölümün ilk yarısının açık bıraktığı soruları hatırlayın: kullanıcı bellekleri binlere biriktiğinde, tam olarak ilgili birkaçını nasıl getiririz ve çelişkili kayıtları nasıl ayırt ederiz? Şimdi **bu bilgi tabanı tekniklerini geri döndürüp** bölümün başındaki kullanıcı belleğine yöneltme zamanı. Aşağıdaki Deney 3-10 ve 3-12, bu bölümün başında kurulan üç seviyeli değerlendirme çerçevesini (ve Deney 3-1'deki değerlendirme kümesini) kullanarak bu tekniklerin kullanıcı belleği retrieval'ındaki isabet ve çelişki sorunlarını seviye seviye çözüp çözemediğini test edecek.
+Artık temel retrieval'dan yapılandırılmış indekslemeye ve agentic RAG'a kadar eksiksiz yığını elimizde tutuyoruz. Bu bölümün ilk yarısının açık bıraktığı soruları hatırlayın: kullanıcı bellekleri binlere biriktiğinde, tam olarak ilgili birkaçını nasıl getiririz ve çelişkili kayıtları nasıl ayırt ederiz? Şimdi **bu bilgi tabanı tekniklerini geri döndürüp** bölümün başındaki kullanıcı belleğine yöneltme zamanı. Aşağıdaki Deney 3-9 ve 3-11, bu bölümün başında kurulan üç seviyeli değerlendirme çerçevesini (ve Deney 3-1'deki değerlendirme kümesini) kullanarak bu tekniklerin kullanıcı belleği retrieval'ındaki isabet ve çelişki sorunlarını seviye seviye çözüp çözemediğini test edecek.
 
-> **Deney 3-10 ★★: Agentic RAG ile Kullanıcı Belleği İnşa Etmek**
+> **Deney 3-9 ★★: Agentic RAG ile Kullanıcı Belleği İnşa Etmek**
 >
 > Agentic RAG'ı dış doküman bilgi tabanlarından uzaklaştırıp Agent'ın kendisine yönlendirin, ve ona güçlü, getirilebilir bir uzun vadeli bellek inşa edebilirsiniz. Temel fikir: Agent'ın kullanıcıyla eksiksiz konuşma geçmişini kendi başına bir bilgi tabanı olarak ele almak. Bu şekilde, Agent geçmiş etkileşimleri "hatırlayabilir" ve gerektiğinde bu "bellekleri" aktif olarak getirerek mevcut bağlamı daha iyi anlayabilir ve kişiselleştirilmiş hizmetler sunabilir. Bu bölümde daha önce tartışılan bellek için **temsil ve yönetim stratejilerinden** (Advanced JSON Cards'ın yapılandırılmış tasarımı gibi) farklı olarak, bu deney **retrieval teknolojisinin bellek hatırlama yeteneklerini nasıl güçlendirdiğine** odaklanır.
 >
@@ -623,7 +623,7 @@ Artık temel retrieval'dan yapılandırılmış indekslemeye ve agentic RAG'a ka
 >
 > Ancak, daha karmaşık ikinci seviye görevler için, bu yaklaşımın sınırlamaları ortaya çıkar. `layer2` dizinindeki `12_contradictory_financial_instructions.yaml` kullanım durumunda, eş önce bir transfer ayarlar, koca daha sonra başka bir aramada tutarı ve tarihi değiştirir ve son olarak eş tekrar arayıp değiştirir. İndekslenmiş konuşma chunk'ları izole ve bağlamdan yoksun olduğundan, sistem retrieval sırasında üç **bağımsız ama çelişkili** transfer talimatı görebilir, bu da hangisinin nihayetinde geçerli olduğunu belirlemeyi zorlaştırır, kullanıcıya kafa karıştırıcı veya yanlış bilgi sunma potansiyeli taşır. **Üçüncü seviyeye (proaktif hizmet)** ulaşmak için—bir oturumdaki bilgi (örn. yeni ayırtılan bir uçuş) ile aylar önceki başka bir oturumdaki bilgi (örn. süresi dolmak üzere olan bir pasaport) arasındaki gizli bağlantıları keşfetmek—yalnızca parçalanmış konuşma geçmişini getirmek yeterinden çok uzaktır.
 
-Bu sınırlamaların kök nedeni, geleneksel chunking yöntemlerinin doğasında olan kusurlarda yatar. Bir sonraki bölüm, bu sorunu temelden çözebilecek bir teknolojiyi—Contextual Retrieval'ı—tanıtır; bu daha sonra Deney 3-12'de kullanıcı belleği senaryosuna uygulanacaktır.
+Bu sınırlamaların kök nedeni, geleneksel chunking yöntemlerinin doğasında olan kusurlarda yatar. Bir sonraki bölüm, bu sorunu temelden çözebilecek bir teknolojiyi—Contextual Retrieval'ı—tanıtır; bu daha sonra Deney 3-11'de kullanıcı belleği senaryosuna uygulanacaktır.
 
 ### RAG Tekniği: Contextual Retrieval
 
@@ -641,7 +641,7 @@ Bu, Bölüm 2'deki "Contextual Compression"dan net biçimde ayırt edilmelidir. 
 
 Yöntemin zarafeti, her iki retrieval modunu da aynı anda güçlendirmesidir. BM25 gibi sparse retrieval için, bağlam ön eki zengin, hassas biçimde eşleştirilebilir anahtar kelimeler ekler ("ACME", "2025 2. Çeyrek"). Vektör embedding'leri aracılığıyla dense retrieval için, ön ek kilit semantik arka planı enjekte eder, böylece ortaya çıkan vektör chunk'ın gerçek anlamını çok daha isabetli biçimde yansıtır.
 
-> **Deney 3-11 ★★: Contextual Retrieval: RAG'da Bağlam Kaybı Sorununu Çözmek**
+> **Deney 3-10 ★★: Contextual Retrieval: RAG'da Bağlam Kaybı Sorununu Çözmek**
 >
 > `contextual-retrieval` projesi, kontrollü bir karşılaştırma yoluyla, Contextual Retrieval'ın geleneksel chunking üzerinde ne kadar iyileşme sağladığını nicelleştirir. Paralel olarak iki bilgi tabanı inşa eder: biri geleneksel bağlamsız chunking kullanır, diğeri LLM tarafından üretilen bağlam ön eklerine dayalı gelişmiş bir yöntem kullanır. `compare_retrieval_methods` fonksiyonu, aynı sorguyla her iki bilgi tabanında eş zamanlı retrieval yapılmasına ve sonuç farklarının yan yana karşılaştırılmasına izin verir.
 >
@@ -651,9 +651,9 @@ Yöntemin zarafeti, her iki retrieval modunu da aynı anda güçlendirmesidir. B
 
 Bu, Contextual Retrieval'ı doküman bilgi tabanlarında doğrular. Aynı tekniği kullanıcı belleği senaryosuna döndürmek bize bir sonraki deneyi verir.
 
-> **Deney 3-12 ★★★: Contextual Retrieval ile Kullanıcı Belleğini Güçlendirmek**
+> **Deney 3-11 ★★★: Contextual Retrieval ile Kullanıcı Belleğini Güçlendirmek**
 >
-> Contextual Retrieval'ı kullanıcı belleğine uygulamak, parçalanmış konuşma geçmişinin acı noktalarının anahtarıdır. İzole bir "Tamam, bunu ayırtalım" hiçbir bilgi taşımaz; yalnızca öncesindeki bağlamın "Şangay'dan Seattle'a 500 dolarlık tek yönlü bir bilet" olduğunu bildiğinizde bir anlam kazanır. Bu deney, Deney 3-10'un çerçevesi üzerine inşa edilir, konuşma geçmişini indekslemeden önce kritik bir "bağlam üretimi" adımı ekler—her konuşma chunk'ı için kilit arka plan bilgisi içeren bir ön ek özeti üretmek üzere bir LLM çağırmak.
+> Contextual Retrieval'ı kullanıcı belleğine uygulamak, parçalanmış konuşma geçmişinin acı noktalarının anahtarıdır. İzole bir "Tamam, bunu ayırtalım" hiçbir bilgi taşımaz; yalnızca öncesindeki bağlamın "Şangay'dan Seattle'a 500 dolarlık tek yönlü bir bilet" olduğunu bildiğinizde bir anlam kazanır. Bu deney, Deney 3-9'un çerçevesi üzerine inşa edilir, konuşma geçmişini indekslemeden önce kritik bir "bağlam üretimi" adımı ekler—her konuşma chunk'ı için kilit arka plan bilgisi içeren bir ön ek özeti üretmek üzere bir LLM çağırmak.
 >
 > Bu bağlamla güçlendirilmiş bellek deposu, **gerçek çelişkileri** ele alırken kesin bir avantaj gösterir. `layer2` dizinindeki `12_contradictory_financial_instructions.yaml`'daki senaryoya dönersek, bağlam güçlendirmesinden sonra, üç ilgili konuşma chunk'ı `[Eş Patricia Thompson ilk banka transferini ayarlıyor]`, `[Koca James Thompson önceki banka transferini değiştiriyor]` ve `[Eş, kocanın değişikliğinden sonra transferi tekrar değiştiriyor]` gibi ön eklere sahip olur. Zaman, kişi ve niyeti içeren bağlam, Agent'a talimat önceliğini ve nihai geçerliliği değerlendirmek için kritik ipuçları sağlar.
 >
@@ -684,7 +684,7 @@ Süreç iki aşamadan oluşur:
 ![Şekil 3-15: Yapılandırılmış Bilgi Çıkarımı Boru Hattı](images/fig3-15.svg)
 
 
-> **Deney 3-13 ★★★: Yapılandırılmış Veriden Örtük Bilgi Çıkarmak: Bir Hukuki Emsal Analizi Vaka Çalışması**
+> **Deney 3-12 ★★★: Yapılandırılmış Veriden Örtük Bilgi Çıkarmak: Bir Hukuki Emsal Analizi Vaka Çalışması**
 >
 > `structured-knowledge-extraction` projesi, büyük ölçekli CAIL2018 Çin ceza kararı veri kümesine dayanarak, emsallerden "karar deneyimi" öğrenen akıllı bir hukuki danışman inşa eder.
 >

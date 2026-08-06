@@ -1,0 +1,58 @@
+{
+  "experiment": "4-7",
+  "title": "Active tool discovery with Qwen3-4B and the perception MCP server",
+  "authority": "book/chapter4.md:624",
+  "model": "qwen3:4b",
+  "model_runtime": "ollama",
+  "minimum_mcp_tools": 120,
+  "minimum_control_schema_tokens": 50000,
+  "control": {
+    "system_tools": "all complete schemas returned by perception MCP tools/list",
+    "required_behavior": "plan and execute using the full catalog"
+  },
+  "treatment": {
+    "system_tools": [
+      "web_search",
+      "code_interpreter",
+      "discover_tools"
+    ],
+    "discovery_top_k": 5,
+    "schema_injection_role": "user",
+    "status_bar_updates": true
+  },
+  "tasks": [
+    {
+      "id": "apple_stock_news",
+      "prompt": "Query Apple's latest stock price and search related current news to explain the movement.",
+      "required_capabilities": [
+        "specialized_stock_quote",
+        "current_web_news"
+      ]
+    },
+    {
+      "id": "transformer_arxiv_download",
+      "prompt": "Find the latest transformer papers on arXiv and download the top three PDFs.",
+      "required_capabilities": [
+        "arxiv_search",
+        "file_download"
+      ],
+      "required_downloads": 3
+    },
+    {
+      "id": "github_contributors_visualization",
+      "prompt": "Analyze contributor statistics for openai/openai-python and generate a visualization report.",
+      "required_capabilities": [
+        "github_contributors",
+        "code_interpreter"
+      ],
+      "required_visualizations": 1
+    }
+  ],
+  "acceptance": {
+    "catalog_from_mcp": true,
+    "no_mock_tool_results": true,
+    "all_receipts_machine_readable": true,
+    "raw_schema_catalog_gzipped_and_hashed": true,
+    "compare_accuracy_and_completion_honestly": true
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "case": "hitl_approval",
+  "tool": "mcp_request_admin_approval",
+  "arguments": {
+    "request_message": "Approve publishing the Experiment 4-4 result?",
+    "context": {
+      "risk": "low",
+      "artifact": "validation-only"
+    },
+    "timeout_seconds": 8,
+    "urgent": false
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "approved": true,
+    "request_id": "a4e9ce1c-5483-44ea-bf01-94f410963b85",
+    "admin_notes": "Approved by the automated validation operator; not a claimed human judgment.",
+    "message": "Request approved by administrator"
+  },
+  "latency_seconds": 2.599
+}

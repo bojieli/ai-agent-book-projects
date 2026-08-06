@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the exact Chapter 4 Experiment 4-6 contract.
+"""Run the exact Chapter 4 Experiment 4-7 contract.
 
 Unlike the original mechanism demo, this runner:
 
@@ -42,7 +42,7 @@ CHAPTER4 = HERE.parent
 REPO = CHAPTER4.parent
 PROTOCOL_PATH = HERE / "experiment_protocol.json"
 MCP_SERVER = CHAPTER4 / "perception-tools" / "src" / "main.py"
-VALIDATION_ROOT = HERE / "validation" / "experiment_4_6"
+VALIDATION_ROOT = HERE / "validation" / "experiment_4_7"
 
 MODEL = "qwen3:4b"
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434")
@@ -1178,7 +1178,7 @@ async def run(campaign_id: str | None = None, *, resume: bool = False) -> Path:
                 records, schemas, catalog, protocol, comparison, embedding_receipt
             )
             summary = {
-                "experiment": "4-6", "campaign_id": campaign_id,
+                "experiment": "4-7", "campaign_id": campaign_id,
                 "generated_at": datetime.now(timezone.utc).isoformat(),
                 "model": MODEL, "catalog": catalog,
                 "embedding": embedding_receipt,

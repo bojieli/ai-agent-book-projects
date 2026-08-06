@@ -641,7 +641,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_18_retirement_planning attempt 1",
+      "purpose": "3-11 live contextual prefixes layer1_18_retirement_planning attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:58:54.077391+00:00",
@@ -724,7 +724,7 @@
       "response_id": "021785358734299ed42e8978f7887761870c2af59029dd729a9d0"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_18_retirement_planning iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_18_retirement_planning iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:59:50.770266+00:00",
@@ -835,7 +835,7 @@
       "response_id": "021785358790959ed42e8978f7887761870c2af59029dd764c109"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_18_retirement_planning iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_18_retirement_planning iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:59:52.725396+00:00",
@@ -957,7 +957,7 @@
       "response_id": "021785358792914ed42e8978f7887761870c2af59029dd73f938a"
     },
     {
-      "purpose": "3-12 grounded answer layer1_18_retirement_planning plain",
+      "purpose": "3-11 grounded answer layer1_18_retirement_planning plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:00:00.901160+00:00",
@@ -1037,7 +1037,7 @@
       "response_id": "021785358801089ed42e8978f7887761870c2af59029dd7210e2d"
     },
     {
-      "purpose": "3-12 grounded answer layer1_18_retirement_planning contextual",
+      "purpose": "3-11 grounded answer layer1_18_retirement_planning contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:00:16.291246+00:00",
@@ -1117,7 +1117,7 @@
       "response_id": "021785358816480ed42e8978f7887761870c2af59029dd7bb7582"
     },
     {
-      "purpose": "3-12 grounded answer layer1_18_retirement_planning dual_layer",
+      "purpose": "3-11 grounded answer layer1_18_retirement_planning dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:00:31.071284+00:00",
@@ -1197,7 +1197,7 @@
       "response_id": "021785358831259ed42e8978f7887761870c2af59029dd7b2dee4"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_18_retirement_planning",
+      "purpose": "3-9/3-11 independent judge layer1_18_retirement_planning",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:00:50.622987+00:00",

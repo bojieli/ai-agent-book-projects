@@ -1,5 +1,5 @@
 {
-  "description": "上下文感知检索 vs. 传统分块的检索召回评测集（对应实验 3-11）。gold_chunk_id 为人工标注的相关文本块，标注依据见 note 字段。语料为 document_store.json 中已建好索引的《宪法》与《检察官法》分块。",
+  "description": "上下文感知检索 vs. 传统分块的检索召回评测集（对应实验 3-10）。gold_chunk_id 为人工标注的相关文本块，标注依据见 note 字段。语料为 document_store.json 中已建好索引的《宪法》与《检察官法》分块。",
   "corpus": "document_store.json",
   "queries": [
     {

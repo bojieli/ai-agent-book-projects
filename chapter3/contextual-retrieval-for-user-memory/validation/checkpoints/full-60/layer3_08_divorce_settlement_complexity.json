@@ -1357,7 +1357,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_08_divorce_settlement_complexity attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_08_divorce_settlement_complexity attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:27:27.791583+00:00",
@@ -1440,7 +1440,7 @@
       "response_id": "021785360448011b6ab61b028b46eec1be4b86a7f38a82b3f88f7"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_08_divorce_settlement_complexity iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_08_divorce_settlement_complexity iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:29:43.249329+00:00",
@@ -1551,7 +1551,7 @@
       "response_id": "021785360583435b6ab61b028b46eec1be4b86a7f38a82bc4e83b"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_08_divorce_settlement_complexity iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_08_divorce_settlement_complexity iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:29:44.528821+00:00",
@@ -1698,7 +1698,7 @@
       "response_id": "021785360584716b6ab61b028b46eec1be4b86a7f38a82b751edc"
     },
     {
-      "purpose": "3-12 grounded answer layer3_08_divorce_settlement_complexity plain",
+      "purpose": "3-11 grounded answer layer3_08_divorce_settlement_complexity plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:29:59.795666+00:00",
@@ -1778,7 +1778,7 @@
       "response_id": "021785360599982b6ab61b028b46eec1be4b86a7f38a82b4f9a5d"
     },
     {
-      "purpose": "3-12 grounded answer layer3_08_divorce_settlement_complexity contextual",
+      "purpose": "3-11 grounded answer layer3_08_divorce_settlement_complexity contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:30:45.452112+00:00",
@@ -1858,7 +1858,7 @@
       "response_id": "021785360645638b6ab61b028b46eec1be4b86a7f38a82ba8f5f2"
     },
     {
-      "purpose": "3-12 grounded answer layer3_08_divorce_settlement_complexity dual_layer",
+      "purpose": "3-11 grounded answer layer3_08_divorce_settlement_complexity dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:31:37.181831+00:00",
@@ -1938,7 +1938,7 @@
       "response_id": "021785360697368b6ab61b028b46eec1be4b86a7f38a82bc62f54"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_08_divorce_settlement_complexity",
+      "purpose": "3-9/3-11 independent judge layer3_08_divorce_settlement_complexity",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:32:25.245396+00:00",

@@ -63,7 +63,7 @@ Drawing on LoCoMo and its peers, together with the practice of commercial memory
 - **Temporal Awareness**: Remembering dates, understanding relative time, performing time calculations
 - **Conflict Resolution**: Identifying and handling inconsistencies between memories
 
-Building on this, we designed a three-level evaluation framework more tailored to Agent scenarios, decomposing memory capabilities into progressive levels. This framework recurs throughout this chapter—Experiments 3-10 and 3-12 later will use it to measure how retrieval techniques improve memory capabilities.
+Building on this, we designed a three-level evaluation framework more tailored to Agent scenarios, decomposing memory capabilities into progressive levels. This framework recurs throughout this chapter—Experiments 3-9 and 3-11 later will use it to measure how retrieval techniques improve memory capabilities.
 
 **Level 1: Basic Recall** — This is the most fundamental capability of a memory system, requiring the Agent to accurately store and retrieve information that the user provides directly and that is structured and unambiguous. For example, "My membership number is 12345" should be precisely returned when needed later. This level ensures the basic reliability of the memory system and serves as the foundation for more complex capabilities.
 
@@ -487,7 +487,7 @@ However, as a **general-purpose** storage solution for user memory, knowledge gr
 
 Therefore, the recommended strategy in practice is **a layered, complementary design**: preserve core information in complete natural language (retaining semantic integrity), supplemented by structured metadata for indexing and retrieval (balancing query efficiency); in specialized domains requiring multi-hop reasoning and precise disambiguation (e.g., medical consultation, legal case analysis, family relationship management), use knowledge graphs as a specialized indexing tool, working in concert with natural language memory.
 
-> **Experiment 3-8 ★★★: Structured Indexing: The Knowledge Organization Philosophy of RAPTOR and GraphRAG**
+> **Experiment 3-7 ★★★: Structured Indexing: The Knowledge Organization Philosophy of RAPTOR and GraphRAG**
 >
 > The `structured-index` project fully implements both methods within a unified framework, applied to indexing and querying a technical manual for Intel CPU architecture spanning thousands of pages—a quintessential example of highly structured, hierarchical, and relational knowledge.
 >
@@ -575,7 +575,7 @@ Agentic RAG fuses retrieval and reasoning through the Agent's own decisions: it 
 
 ![Figure 3-13: Agentic RAG System Architecture](images/fig3-13.svg)
 
-> **Experiment 3-9 ★★: Comparative Study of Agentic RAG and Non-Agentic RAG**
+> **Experiment 3-8 ★★: Comparative Study of Agentic RAG and Non-Agentic RAG**
 >
 > The `agentic-rag` project builds a complete Agent system that can freely switch between the two modes and connect to various knowledge base backends (including `retrieval-pipeline`, `structured-index`, etc.), enabling a comprehensive ablation study (i.e., systematically replacing or disabling a component to observe its contribution to the overall effect). The experiment revolves around a specially constructed Chinese judicial Q&A dataset, containing legal questions ranging from simple to complex.
 >
@@ -590,7 +590,7 @@ Agentic RAG fuses retrieval and reasoning through the Agent's own decisions: it 
 
 This chapter and the preceding one both address Context—one within a single session, the other across multiple sessions. What this chapter primarily consolidates is declarative knowledge about users and the world. Chapter 8 reuses the same extraction and retrieval infrastructure, but applies it to behavioral knowledge supported by operational successes and failures: “under what conditions should the Agent do what?” The next chapter turns to Tools: how Agents interact with the external world through tool design, the MCP interoperability standard, and event-driven architectures.
 
-> **Experiment 3-10 ★★: Building User Memory with Agentic RAG**
+> **Experiment 3-9 ★★: Building User Memory with Agentic RAG**
 >
 > Applying agentic RAG to the Agent's own conversation history, rather than to external document knowledge bases, lets us build a powerful, retrievable long-term memory for the Agent. The core idea: treat the Agent's complete conversation history with the user as a knowledge base in its own right. In this way, the Agent can "remember" past interactions and actively retrieve these "memories" when needed, to better understand the current context and provide personalized services. Unlike the **representation and management strategies** for memory (such as the structured design of Advanced JSON Cards) discussed earlier in this chapter, this experiment focuses on **how retrieval technology enhances memory recall capabilities**.
 >
@@ -605,7 +605,7 @@ This chapter and the preceding one both address Context—one within a single se
 >
 > However, for more complex second-level tasks, the limitations of this approach become apparent. In the `12_contradictory_financial_instructions.yaml` use case in the `layer2` directory, the wife first sets up a transfer, the husband then modifies the amount and date in another call, and finally the wife calls back to change it back. Because the indexed conversation chunks are isolated and lack context, the system might see three **independent but contradictory** transfer instructions during retrieval, making it difficult to determine which one is ultimately valid, potentially presenting confusing or incorrect information to the user. To achieve the **third level (proactive service)**—discovering hidden connections between information in one session (e.g., a newly booked flight) and information from another session months ago (e.g., an expiring passport)—merely retrieving fragmented conversation history is far from sufficient.
 
-The root cause of these limitations lies in the inherent flaws of traditional chunking methods. The next section introduces a technique that addresses this problem at the root—Contextual Retrieval—which will then be applied to the user memory scenario in Experiment 3-12.
+The root cause of these limitations lies in the inherent flaws of traditional chunking methods. The next section introduces a technique that addresses this problem at the root—Contextual Retrieval—which will then be applied to the user memory scenario in Experiment 3-11.
 
 ### RAG Technique: Contextual Retrieval
 
@@ -621,7 +621,7 @@ This should be clearly distinguished from the "Contextual Compression" in Chapte
 
 The elegance of the method is that it strengthens both retrieval modes at once. For sparse retrieval like BM25, the context prefix adds rich, precisely matchable keywords ("ACME", "2025 Q2"). For dense retrieval via vector embeddings, the prefix injects the key semantic background, so the resulting vector reflects the chunk's true meaning far more accurately.
 
-> **Experiment 3-11 ★★: Contextual Retrieval: Solving the Context Loss Problem in RAG**
+> **Experiment 3-10 ★★: Contextual Retrieval: Solving the Context Loss Problem in RAG**
 >
 > The `contextual-retrieval` project quantifies, through controlled comparison, how much Contextual Retrieval improves on traditional chunking. It builds two knowledge bases in parallel: one using traditional context-free chunking, and the other using an advanced method based on LLM-generated context prefixes. The `compare_retrieval_methods` function allows simultaneous retrieval in both knowledge bases with the same query and side-by-side comparison of result differences.
 >
@@ -631,9 +631,9 @@ The elegance of the method is that it strengthens both retrieval modes at once. 
 
 That validates Contextual Retrieval on document knowledge bases. Applying the same technique to the user memory scenario gives us the next experiment.
 
-> **Experiment 3-12 ★★★: Enhancing User Memory with Contextual Retrieval**
+> **Experiment 3-11 ★★★: Enhancing User Memory with Contextual Retrieval**
 >
-> Applying Contextual Retrieval to user memory directly addresses the pain points of chunked conversation history. An isolated "Okay, let's book this" carries no information; it means something only once you know the preceding context was "a $500 one-way ticket from Shanghai to Seattle." This experiment builds on the framework of Experiment 3-10, adding a crucial "context generation" step before indexing the conversation history—calling an LLM for each conversation chunk to generate a prefix summary containing key background information.
+> Applying Contextual Retrieval to user memory directly addresses the pain points of chunked conversation history. An isolated "Okay, let's book this" carries no information; it means something only once you know the preceding context was "a $500 one-way ticket from Shanghai to Seattle." This experiment builds on the framework of Experiment 3-9, adding a crucial "context generation" step before indexing the conversation history—calling an LLM for each conversation chunk to generate a prefix summary containing key background information.
 >
 > This context-enhanced memory base demonstrates a decisive advantage when handling **factual conflicts**. Returning to the scenario in `12_contradictory_financial_instructions.yaml` in the `layer2` directory, after context enhancement, the three relevant conversation chunks would have prefixes like `[Wife Patricia Thompson is setting up the initial wire transfer]`, `[Husband James Thompson is modifying the previous wire transfer]`, and `[Wife is modifying the wire transfer again after the husband's change]`. The context, including time, person, and intent, provides the Agent with crucial clues for determining instruction priority and final validity.
 >
@@ -662,7 +662,7 @@ The process consists of two phases:
 
 ![Figure 3-15: Structured Knowledge Extraction Pipeline](images/fig3-15.svg)
 
-> **Experiment 3-13 ★★★: Extracting Tacit Knowledge from Structured Data: A Case Study of Judicial Precedent Analysis**
+> **Experiment 3-12 ★★★: Extracting Tacit Knowledge from Structured Data: A Case Study of Judicial Precedent Analysis**
 >
 > The `structured-knowledge-extraction` project, based on the large-scale CAIL2018 Chinese criminal judgment dataset, builds an intelligent legal advisor that learns "judgment experience" from precedents.
 >

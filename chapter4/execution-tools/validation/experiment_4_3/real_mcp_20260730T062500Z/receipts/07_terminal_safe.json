@@ -1,0 +1,19 @@
+{
+  "case": "terminal_safe",
+  "tool": "virtual_terminal",
+  "arguments": {
+    "command": "pwd && printf SAFE",
+    "timeout": 10
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "/Users/boj/book/ai-agent-book/chapter4/execution-tools/validation/experiment_4_3/real_mcp_20260730T062500Z/workspace\nSAFE",
+    "stderr": "",
+    "stdout_file": null,
+    "stderr_file": null
+  },
+  "latency_seconds": 0.007
+}

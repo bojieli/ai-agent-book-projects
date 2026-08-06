@@ -1,0 +1,45 @@
+{
+  "experiment": "4-3",
+  "authority": "book/chapter4.md:274",
+  "required_categories": {
+    "file_write_edit": [
+      "python_linter",
+      "javascript_linter",
+      "structured_errors"
+    ],
+    "terminal": [
+      "timeout",
+      "dangerous_command_review",
+      "history_or_receipt"
+    ],
+    "code_interpreter": [
+      "real_sandbox",
+      "dangerous_operation_gate",
+      "long_output_persisted"
+    ],
+    "data": [
+      "excel_write",
+      "formula",
+      "screenshot"
+    ],
+    "external": [
+      "calendar",
+      "github_pr",
+      "email",
+      "webhook"
+    ],
+    "gui": [
+      "browser",
+      "virtual_desktop",
+      "virtual_mobile"
+    ]
+  },
+  "safety": {
+    "workspace_confinement": true,
+    "automatic_linter": true,
+    "llm_driven_danger_review": true,
+    "long_output_head_tail_and_full_file": true,
+    "credential_free_receipts": true
+  },
+  "completion_rule": "Every named manuscript category must have substantive real execution evidence; missing credentials or active GUI backends produce blocked, never passed."
+}

@@ -1,0 +1,8 @@
+{
+  "experiment": "4-5",
+  "campaign_id": "credential_probe_20260730T064500Z",
+  "status": "blocked",
+  "official_complete": false,
+  "manifest": "validation/experiment_4_5/credential_probe_20260730T064500Z/manifest.json",
+  "manifest_sha256": "3f689dfee915503f61ca30e9b590e24c8950496ca90fbf365def83805e877d0a"
+}

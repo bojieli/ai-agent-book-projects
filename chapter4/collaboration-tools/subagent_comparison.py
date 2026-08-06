@@ -1,4 +1,4 @@
-"""Compare the two sub-agent context-passing strategies (实验 4-3「对比效果」).
+"""Compare the two sub-agent context-passing strategies (实验 4-4「对比效果」).
 
 Spawns a sub-agent under BOTH `minimal` and `llm_generated` strategies on the
 SAME task and prints the difference (context tokens handed off, extra

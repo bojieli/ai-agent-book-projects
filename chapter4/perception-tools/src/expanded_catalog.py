@@ -9,7 +9,7 @@ contract.  The long contracts make the full-schema control condition exceed
 50K tokens without padding it with fake tools or fake parameters.
 
 Only ``code_interpreter`` is not read-only.  It executes Python in a temporary
-directory with a timeout and is included because Experiment 4-6 explicitly
+directory with a timeout and is included because Experiment 4-7 explicitly
 keeps it as a base tool for visualization.
 """
 

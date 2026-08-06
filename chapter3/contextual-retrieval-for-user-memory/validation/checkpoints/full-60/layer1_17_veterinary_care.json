@@ -753,7 +753,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_17_veterinary_care attempt 1",
+      "purpose": "3-11 live contextual prefixes layer1_17_veterinary_care attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:58:46.895987+00:00",
@@ -836,7 +836,7 @@
       "response_id": "021785358727129d7de4542f2cb4665397a3eedddf0de616f22d8"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_17_veterinary_care iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_17_veterinary_care iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:59:33.264880+00:00",
@@ -947,7 +947,7 @@
       "response_id": "021785358773461d7de4542f2cb4665397a3eedddf0de6175e0fa"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_17_veterinary_care iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_17_veterinary_care iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:59:34.428501+00:00",
@@ -1078,7 +1078,7 @@
       "response_id": "021785358774623d7de4542f2cb4665397a3eedddf0de6170af66"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_17_veterinary_care iteration 3",
+      "purpose": "3-9 live ReAct search planner layer1_17_veterinary_care iteration 3",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:59:46.066608+00:00",
@@ -1219,7 +1219,7 @@
       "response_id": "021785358786259d7de4542f2cb4665397a3eedddf0de61bf326f"
     },
     {
-      "purpose": "3-12 grounded answer layer1_17_veterinary_care plain",
+      "purpose": "3-11 grounded answer layer1_17_veterinary_care plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:00:01.244689+00:00",
@@ -1299,7 +1299,7 @@
       "response_id": "021785358801437d7de4542f2cb4665397a3eedddf0de61d89b66"
     },
     {
-      "purpose": "3-12 grounded answer layer1_17_veterinary_care contextual",
+      "purpose": "3-11 grounded answer layer1_17_veterinary_care contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:00:24.139336+00:00",
@@ -1379,7 +1379,7 @@
       "response_id": "021785358824332d7de4542f2cb4665397a3eedddf0de61baa8fd"
     },
     {
-      "purpose": "3-12 grounded answer layer1_17_veterinary_care dual_layer",
+      "purpose": "3-11 grounded answer layer1_17_veterinary_care dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:00:48.098989+00:00",
@@ -1459,7 +1459,7 @@
       "response_id": "021785358848290d7de4542f2cb4665397a3eedddf0de61a2999b"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_17_veterinary_care",
+      "purpose": "3-9/3-11 independent judge layer1_17_veterinary_care",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:01:04.587259+00:00",

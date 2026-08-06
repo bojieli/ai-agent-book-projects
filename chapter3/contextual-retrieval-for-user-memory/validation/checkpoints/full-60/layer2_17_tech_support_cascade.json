@@ -1018,7 +1018,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer2_17_tech_support_cascade attempt 1",
+      "purpose": "3-11 live contextual prefixes layer2_17_tech_support_cascade attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:15:31.987027+00:00",
@@ -1101,7 +1101,7 @@
       "response_id": "02178535973221445323167f444566161ccbd236f48bec5d9782f"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_17_tech_support_cascade iteration 1",
+      "purpose": "3-9 live ReAct search planner layer2_17_tech_support_cascade iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:17:15.318445+00:00",
@@ -1212,7 +1212,7 @@
       "response_id": "02178535983550445323167f444566161ccbd236f48bec51bd5db"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_17_tech_support_cascade iteration 2",
+      "purpose": "3-9 live ReAct search planner layer2_17_tech_support_cascade iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:17:16.778005+00:00",
@@ -1351,7 +1351,7 @@
       "response_id": "02178535983696645323167f444566161ccbd236f48bec58ab7b2"
     },
     {
-      "purpose": "3-12 grounded answer layer2_17_tech_support_cascade plain",
+      "purpose": "3-11 grounded answer layer2_17_tech_support_cascade plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:17:29.737612+00:00",
@@ -1431,7 +1431,7 @@
       "response_id": "02178535984992345323167f444566161ccbd236f48bec5c35a4d"
     },
     {
-      "purpose": "3-12 grounded answer layer2_17_tech_support_cascade contextual",
+      "purpose": "3-11 grounded answer layer2_17_tech_support_cascade contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:18:10.843026+00:00",
@@ -1511,7 +1511,7 @@
       "response_id": "02178535989102945323167f444566161ccbd236f48bec542ddf0"
     },
     {
-      "purpose": "3-12 grounded answer layer2_17_tech_support_cascade dual_layer",
+      "purpose": "3-11 grounded answer layer2_17_tech_support_cascade dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:18:46.527390+00:00",
@@ -1591,7 +1591,7 @@
       "response_id": "02178535992671345323167f444566161ccbd236f48bec5413680"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer2_17_tech_support_cascade",
+      "purpose": "3-9/3-11 independent judge layer2_17_tech_support_cascade",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:19:44.027935+00:00",

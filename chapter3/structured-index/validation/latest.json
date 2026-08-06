@@ -1,19 +1,19 @@
 {
   "schema_version": "chapter3-evidence-v1",
-  "experiment": "3-8",
-  "run_id": "20260729T200642Z-3_8-4d2d5f9c",
+  "experiment": "3-7",
+  "run_id": "20260729T200642Z-3_7-4d2d5f9c",
   "created_at": "2026-07-29T20:06:42.648599+00:00",
   "status": "passed",
-  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/structured-index/validation/runs/20260729T200642Z-3_8-4d2d5f9c",
+  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/structured-index/validation/runs/20260729T200642Z-3_7-4d2d5f9c",
   "artifacts": {
-    "evidence.json": "b4fc745f1e64a7ddf26866cc51d1aad70c41af0da311a0eccc1d5ea0d3e7cbee",
-    "receipts.json": "691fe94f64010b517ebff5425d8e4252bee0dd6c83aa4d978273addde3114133",
-    "manifest.json": "7f6f2774f7f93676f4471c0f087028202f0a2b0a6692fd644f2686360e17920b"
+    "evidence.json": "89b3c03fbbd8e32304ed2639537a229c006ecf422bd8e9292bedf9201ee5810e",
+    "receipts.json": "907dff07a0ee5496cfc2693cbd75ece8a7dc6f78eb76c928127cc98fba04c5e4",
+    "manifest.json": "438f2a73543dd019ac047623b73ec94646ccd20b7dd31ae7b636fedca4e70c25"
   },
   "inputs": [
     {
       "path": "/Users/boj/book/ai-agent-book/chapter3/structured-index/campaign.py",
-      "sha256": "bc877515ad11f36f14d1bf6b7ad13c4e9493e6e7046379aebc20c05e6303195b",
+      "sha256": "2d525c2b2ccfaf6a5a1cc53be3517b0a2dcb7658d5831365f71929ad38f9365c",
       "bytes": 27215
     },
     {
@@ -33,8 +33,8 @@
     },
     {
       "path": "/Users/boj/book/ai-agent-book/chapter3/structured-index/graphrag_indexer.py",
-      "sha256": "3c134c138852261d22377928eb727cb83410e6afa9b1dc9d25afba899f032f95",
-      "bytes": 25180
+      "sha256": "20fafbdb26ae1755c03af0af0bbcad1fd1663ae2e9235bdaad669721366c4862",
+      "bytes": 25225
     }
   ],
   "summary": {

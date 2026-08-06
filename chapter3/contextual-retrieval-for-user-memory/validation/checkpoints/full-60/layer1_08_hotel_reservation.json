@@ -507,7 +507,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_08_hotel_reservation attempt 1",
+      "purpose": "3-11 live contextual prefixes layer1_08_hotel_reservation attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:54:24.797925+00:00",
@@ -590,7 +590,7 @@
       "response_id": "0217853584650219ccb9afc7f062b2675deaa60a1d1ba87f2caa5"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_08_hotel_reservation iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_08_hotel_reservation iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:00.510435+00:00",
@@ -701,7 +701,7 @@
       "response_id": "0217853585006989ccb9afc7f062b2675deaa60a1d1ba87972da6"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_08_hotel_reservation iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_08_hotel_reservation iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:01.716889+00:00",
@@ -823,7 +823,7 @@
       "response_id": "0217853585019079ccb9afc7f062b2675deaa60a1d1ba87ad8837"
     },
     {
-      "purpose": "3-12 grounded answer layer1_08_hotel_reservation plain",
+      "purpose": "3-11 grounded answer layer1_08_hotel_reservation plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:06.918621+00:00",
@@ -903,7 +903,7 @@
       "response_id": "0217853585071079ccb9afc7f062b2675deaa60a1d1ba87e9d6e9"
     },
     {
-      "purpose": "3-12 grounded answer layer1_08_hotel_reservation contextual",
+      "purpose": "3-11 grounded answer layer1_08_hotel_reservation contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:16.209417+00:00",
@@ -983,7 +983,7 @@
       "response_id": "0217853585163999ccb9afc7f062b2675deaa60a1d1ba87cb5ad0"
     },
     {
-      "purpose": "3-12 grounded answer layer1_08_hotel_reservation dual_layer",
+      "purpose": "3-11 grounded answer layer1_08_hotel_reservation dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:24.959108+00:00",
@@ -1063,7 +1063,7 @@
       "response_id": "0217853585251479ccb9afc7f062b2675deaa60a1d1ba875f877d"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_08_hotel_reservation",
+      "purpose": "3-9/3-11 independent judge layer1_08_hotel_reservation",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T20:55:35.690749+00:00",

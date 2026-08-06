@@ -10,7 +10,7 @@
     "reasoning": "生成建议中明确指出了待预测案件与原型案件在多个定义特征上存在不匹配，并且指出了原型样本量较小导致的统计结果局限性，这显示了对原型统计的忠实性和不确定性的考虑。同时，建议中包含了明确的法律免责声明，符合要求。"
   },
   "receipt": {
-    "purpose": "3-13 independent held-out judge cail2018-08f56c05f4baae51",
+    "purpose": "3-12 independent held-out judge cail2018-08f56c05f4baae51",
     "provider": "moonshot",
     "endpoint": "https://api.moonshot.cn/v1",
     "started_at": "2026-07-30T04:42:55.389837+00:00",

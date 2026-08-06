@@ -1,0 +1,1535 @@
+{
+  "schema_version": "chapter3-evidence-v1",
+  "experiment": "3-8",
+  "run_id": "20260729T202422Z-3_8-ab3a2340",
+  "created_at": "2026-07-29T20:24:22.589024+00:00",
+  "status": "passed",
+  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/validation/runs/20260729T202422Z-3_8-ab3a2340",
+  "artifacts": {
+    "evidence.json": "80c92c79449fc8143625e140cbffe838e4d1d2d82bb4b4a1b667ce3bf91a713c",
+    "receipts.json": "43944097daa32f7bfb49c819d0ca476616a299d7266508acbd7b6e88340e0b0f"
+  },
+  "inputs": [
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/evaluation/offline_qa.json",
+      "sha256": "76b5d75b6d65cc22151ae70568caac22c9588efe98513534b4e722cab2fb7823",
+      "bytes": 3052
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/1-宪法/宪法.md",
+      "sha256": "4cbc5d5d8a4632eb5587ab6377ae5251ce21a149716690864db0b0ab6cd4b386",
+      "bytes": 52540
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/专属经济区和大陆架法（1998-06-26）.md",
+      "sha256": "d2c432f7dc4fa2e55f5977031ca4bd64d877bfa8d877031cfc8f3b2fd3f414ee",
+      "bytes": 5614
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/中国人民解放军选举全国人民代表大会和县级以上地方各级人民代表大会代表的办法（2021-04-29）.md",
+      "sha256": "7005d17195508f8fee1c5e64df0dab88e88754ff66670224132ceeaab275552d",
+      "bytes": 15404
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/人民检察院组织法（2018-10-26）.md",
+      "sha256": "082b60ee30af3814718bb3024a2ece865b03d5b713c10cac0d7a2e547f6b0bf1",
+      "bytes": 13048
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/人民法院组织法（2018-10-26）.md",
+      "sha256": "25c7477060b8e88b0fd8d72d83dd3ea3bf9a4f44291c6f6ff555141860e8fd13",
+      "bytes": 14358
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/人民陪审员法（2018-04-27）.md",
+      "sha256": "b497eff134df2ac564b56add42f25d1e0d546fc7e3d669180de895abee0e56ce",
+      "bytes": 9184
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/全国人民代表大会和地方各级人民代表大会代表法（2015-08-29）.md",
+      "sha256": "4cdea8283f40303417a3975cbf6556179ad8147ce4cfcef8114ea1ab68d19c4c",
+      "bytes": 19825
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/全国人民代表大会和地方各级人民代表大会选举法（2020-10-17）.md",
+      "sha256": "e9a377e2aee0afcd2ab46b8401179d752327cf6b03288de260aeef4c9f878146",
+      "bytes": 28729
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/全国人民代表大会常务委员会关于县级以下人民代表大会代表直接选举的若干规定（1983-03-05）.md",
+      "sha256": "9cdf6ef57fb1282a37fb393188294bfdfcc9f471a3c1e267dadeb82965502f10",
+      "bytes": 3866
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/全国人民代表大会常务委员会议事规则（2009-04-24）.md",
+      "sha256": "57b03456488735aadaa50e8f45c08ac1ce583541cae33f83bccdcbd77240846c",
+      "bytes": 9861
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/全国人民代表大会组织法（2021-03-11）.md",
+      "sha256": "4cd4edbd241d54327ce6bd5fb09a13bca48c66247b6e141c0a8fef50fce58ec7",
+      "bytes": 19142
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/全国人民代表大会议事规则（2021-03-11）.md",
+      "sha256": "0eb8a90ac86f9443ff72fa8222003ff72c6c7d7268a381d252dd0bd36cf1f282",
+      "bytes": 25092
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/公职人员政务处分法（2020-06-20）.md",
+      "sha256": "2a4c6a32fa130f9cc7dfdba5e972bec4558c26404f830f25a0767f9007c2843a",
+      "bytes": 26933
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/军人地位和权益保障法（2021-06-10）.md",
+      "sha256": "e267197033c0ce31e1623fd9f986a60e9b6797270d8738df7d2e56afb48d3c95",
+      "bytes": 21360
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/反分裂国家法（2005-03-14）.md",
+      "sha256": "9eb1507fbda8153abe456f2d278589b45445d06114fc5f7516fa3095e68e69c6",
+      "bytes": 3325
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/反外国制裁法（2021-06-10）.md",
+      "sha256": "3c4e99f1ca9bec6cbca0d892bba7637f559cf8c2b4ca3cd5450546cb45e5fb46",
+      "bytes": 3931
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/反恐怖主义法（2018-04-27）.md",
+      "sha256": "cab0433248eb89038fe7a1ed124409c1908b0a22c9062ef8a687999f91fb60ee",
+      "bytes": 44794
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/反有组织犯罪法（2021-12-24）.md",
+      "sha256": "b09f64ae4364b7db442798aa6d2035d5ef1fc2923bc1ea3f7d69f31bbc492890",
+      "bytes": 27836
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/各级人民代表大会常务委员会监督法（2006-08-27）.md",
+      "sha256": "dbb37140edd2bf366de2923741ecdfcdb1414dbd6ce0635fe39a57999e47cb0c",
+      "bytes": 19723
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/国务院组织法（1982-12-10）.md",
+      "sha256": "86e66ad422785daeaa55551476b7e743827374a419dccadc9888dc92ef1f6bb8",
+      "bytes": 2593
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/国家勋章和国家荣誉称号法（2015-12-27）.md",
+      "sha256": "ee169dfab1da425d8bf8972e01ce5053d381629a5e73e6e81e5ac8e2164264b6",
+      "bytes": 4404
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/国家安全法（2015-07-01）.md",
+      "sha256": "9e62ebbf0ea2aa17dc31623c02fb7824fe40970d242ee02f4a7f84abfcf84c3e",
+      "bytes": 20788
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/国家赔偿法（2012-10-26）.md",
+      "sha256": "0ef9a5d3a68b8db7d271418df951f8ac0c3e5fa5d032be470ec6a323afc7f236",
+      "bytes": 19445
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/国徽法（2020-10-17）.md",
+      "sha256": "cc9cae4e603761511304c3d16280e03f74eea85a677c686621bc9abe73cdb27e",
+      "bytes": 7789
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/国旗法（2020-10-17）.md",
+      "sha256": "361deff9db72f33a28a1660a0d44f9292013b5b34563a0633a739bfb20ec5fcd",
+      "bytes": 10745
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/国歌法（2017-09-01）.md",
+      "sha256": "1f7e34c53f55787f8c452f015b6305b17e89fe2122d87772f8880e86559f61de",
+      "bytes": 3543
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/国籍法（1980-09-10）.md",
+      "sha256": "966133d3feffc98d9bf80c81cd852f0b8dae502fc9fc9143ac6ed247f8d5d008",
+      "bytes": 2470
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/国防法（2020-12-26）.md",
+      "sha256": "8649790c726803896b13f49a2116296f20c6c2697baf83eedb3159c55b7e8a25",
+      "bytes": 22867
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/地方各级人民代表大会和地方各级人民政府组织法（2022-03-11）.md",
+      "sha256": "5e7f36df0218d210de319d5a18c2494d1b6d3673493b628320b0b050e117f534",
+      "bytes": 53066
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/城市居民委员会组织法（2018-12-29）.md",
+      "sha256": "fa001895f081119272c4b7a48f503d2dac681d1a2a8cfe33e8613e706212ca02",
+      "bytes": 7047
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/外交特权与豁免条例（1986-09-05）.md",
+      "sha256": "d0afbc98903cb5d01fa14784d36e09f4e3e05b2f6efa3ce835353770581ab6e8",
+      "bytes": 9008
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/外国中央银行财产司法强制措施豁免法（2005-10-25）.md",
+      "sha256": "42a534a75f8a47bf0eaa04c15a630b0c117e5e7b16271bae43e2e34fea1370a6",
+      "bytes": 1142
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/居民身份证法（2011-10-29）.md",
+      "sha256": "b35aa5e31d62fe42d62d8472f6ba2cc13bb8ac012dae481e0663d53fe4eb2eaf",
+      "bytes": 9811
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/戒严法（1996-03-01）.md",
+      "sha256": "aaf18d2798d05d81f05b70c993c56f07b470e1b189b5b348d099a6e5c48a062b",
+      "bytes": 9908
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/村民委员会组织法（2018-12-29）.md",
+      "sha256": "dec67d05cf91b0e933199b082ec3f2ba4d4a6f6674424b61fe8c627c663a50f1",
+      "bytes": 18225
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/检察官法（2019-04-23）.md",
+      "sha256": "16285739d98e9661208bf8b1f334d40d902af794dcef322605bc93ffbfb7c530",
+      "bytes": 20824
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/民族区域自治法（2001-02-28）.md",
+      "sha256": "c36fd22076d44bf2ad67332914202ff76f7224ff09fbfeb9f2522b8e86ea0069",
+      "bytes": 27972
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/法官法（2019-04-23）.md",
+      "sha256": "579dda1bab2609f43b93aa99968e8e0754a66301f03e42ca4e3eb53449c1cca0",
+      "bytes": 19577
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/澳门特别行政区基本法（1993-03-31）.md",
+      "sha256": "47f6c508c5518adc3c54898c291eda0bc0dcb6c202d8d9ce319ccd0fc960fc5b",
+      "bytes": 44925
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/澳门特别行政区驻军法（1999-06-28）.md",
+      "sha256": "1d161bfdd40f17ed36c4e87edc74fc01d80d5911f6f85bfff7e38520b194ad3a",
+      "bytes": 9407
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/监察官法（2021-08-20）.md",
+      "sha256": "4b3fa7cb6395adfc72268d12f127bbc97bc00b8e5970f111604b2d44701c68c8",
+      "bytes": 19449
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/监察法（2018-03-20）.md",
+      "sha256": "143917da9bf6c683ae2ac9e1d4cffd6ac8ce9e16860ab7f8627b051135d279b2",
+      "bytes": 26896
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/立法法（2015-03-15）.md",
+      "sha256": "431736eed8133f1dec81649d07c98a3b29b6690ce6149d2bec794423026a542f",
+      "bytes": 42651
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/缔结条约程序法（1990-12-28）.md",
+      "sha256": "fb7e3a1d348960f749237c7de732c880b82afdca340224b2ad3833bb0913e39d",
+      "bytes": 9163
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/英雄烈士保护法（2018-04-27）.md",
+      "sha256": "dbf090c751493d0a4d0147cd2aaf7d77dde427836174b55d341beacb8d7fa133",
+      "bytes": 10934
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/陆地国界法（2021-10-23）.md",
+      "sha256": "d5dd366b42a457f2bb97a8f186c52f1ff7e29dd7d73a1338e1cca0018cd61ea8",
+      "bytes": 18216
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/集会游行示威法（2009-08-27）.md",
+      "sha256": "46bf77dc7ca4350b28e569e716aaad6aa96063816dbc552371afb4076c2c72dc",
+      "bytes": 11254
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/领事特权与豁免条例（1990-10-30）.md",
+      "sha256": "74f2618510cfc53b54422807ae99ffd2f780fbbd85c786a71b4883ac482b563a",
+      "bytes": 10156
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/领海及毗连区法（1992-02-25）.md",
+      "sha256": "67877bef93d50587b8cf5e4044a7d38bf363317685efa4c087af50b294811151",
+      "bytes": 4937
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/香港特别行政区基本法（1990-04-04）.md",
+      "sha256": "3c2e227e4b405c08053fc8dbd082a01343a7f87b128b9e07a028b5ea777c3ca3",
+      "bytes": 55493
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/香港特别行政区维护国家安全法（2020-06-30）.md",
+      "sha256": "7c3ef72643f3e25c2a45fbce2a090ca16e6a7b903afe638fb92261b00817b70a",
+      "bytes": 28766
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/2-宪法相关法/香港特别行政区驻军法（1996-12-30）.md",
+      "sha256": "d0398d0e928dd2de08468981b5fbc8aa13f50da7430f1d470e9749d93b2ca6a7",
+      "bytes": 9036
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法典/民法典.md",
+      "sha256": "e60916ac1c71b99ff4026708090c86dba4111247ff4e96dc65da5c83050601da",
+      "bytes": 325435
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/专利法（2020-10-17）.md",
+      "sha256": "c3d7809bafbe7574158b049a46d941beb56be8429328ffe6322cc5b32106aee3",
+      "bytes": 33148
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/个人独资企业法（1999-08-30）.md",
+      "sha256": "479d1ba4cf795d87b86ef73c8bbe0c2e99f48c2447c4b4cf44de786b51ebad29",
+      "bytes": 11249
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/企业破产法（2006-08-27）.md",
+      "sha256": "a3f73d40af9c8d134652d76dc8cc9ec2c1a81742771224207dbce2c3d70c5fe4",
+      "bytes": 44223
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/保险法（2015-04-24）.md",
+      "sha256": "9d4c7924df942ec36c892a98bec0efe61a5fa25edd8da1d32131a549ca5ddbfe",
+      "bytes": 64050
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/信托法（2001-04-28）.md",
+      "sha256": "d6f6cd716a61ce0ca008bfb1a8d3d50c3fa0a61568fd4cc0d5ffa04a2a7113be",
+      "bytes": 19129
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/全民所有制工业企业法（2009-08-27）.md",
+      "sha256": "faead76bcffb5477145182f19d7ec3862a42176bb4be1262a958a63d00aa9db5",
+      "bytes": 16695
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/公司法（2018-10-26）.md",
+      "sha256": "a98f263e51f8c867c519383c40148e1abb5d9d64373b50a4890556d7afe40c8d",
+      "bytes": 76132
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/农村土地承包法（2018-12-29）.md",
+      "sha256": "d69d0d9168c05cd0bbf4e25c76ce592b10f0f9671a903be0980cd07332402564",
+      "bytes": 20406
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/农民专业合作社法（2017-12-27）.md",
+      "sha256": "f0badc4175e8d66aa2b8b7ddc2f5c9b154bb0fb4f28f680e6dc82365db8fc0c2",
+      "bytes": 24001
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/合伙企业法（2006-08-27）.md",
+      "sha256": "02518693c0432c535d2446d865414598b94759927500533343d269e347696b32",
+      "bytes": 29667
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/商业银行法（2015-08-29）.md",
+      "sha256": "bab214aaf06c1603707c44bec4387e98544087deffd6808dda1ba7cef21010d3",
+      "bytes": 29612
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/商标法（2019-04-23）.md",
+      "sha256": "a98ae00cd70d1e303a5f5d5b4477261d867442f096ea2d143cc96a4402fd4167",
+      "bytes": 34872
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/外商投资法（2019-03-15）.md",
+      "sha256": "d15bb46cd2e2ca87a706e3009a32f05b62799cea17a45897ddbdb87e0f3ba2cc",
+      "bytes": 12365
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/拍卖法（2015-04-24）.md",
+      "sha256": "6fc47353f514f9fc22a466de8d56889e4016c7d2844ce028e997da5a7d20605d",
+      "bytes": 14102
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/招标投标法（2017-12-27）.md",
+      "sha256": "8fbed06595302fed5c4e6f45b6cc7a5e85b414ca5abdcd03c981a94c1f7cd4f3",
+      "bytes": 22665
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/海商法（1992-11-07）.md",
+      "sha256": "eca5ff0bd84e46808aa02fb49dfc46c7289d99a76e513bee2eb5a7d745ab7c62",
+      "bytes": 91945
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/消费者权益保护法（2013-10-25）.md",
+      "sha256": "3d1687b11a74304ef2c732dc5bd629d3a51f6780f6729efd88a5768f548c5a56",
+      "bytes": 23792
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/涉外民事关系法律适用法（2010-10-28）.md",
+      "sha256": "7d212eea19ceef15523275a55da1b00537a3bdd63d8cac7c989b61f872b77dc0",
+      "bytes": 8973
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/电子商务法（2018-08-31）.md",
+      "sha256": "32683ce963a80d04cc43a4e5789bac88a788b383759f72de9bff79fd97c32432",
+      "bytes": 30094
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/电子签名法（2019-04-23）.md",
+      "sha256": "96b2155b9a16e33882e6e4ecd549dd1a9c7e8719b49f700726f8dac920ae3764",
+      "bytes": 12207
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/票据法（2004-08-28）.md",
+      "sha256": "caf0b88731dce9c5c97c78d11dd2b8d9f830ce5f3277d72c5dc637d2c0e23900",
+      "bytes": 26605
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/著作权法（2020-11-11）.md",
+      "sha256": "acf7d0bc269f104a83eb6a4a27085540a679d8c31392b8e434a167c9dafb36d3",
+      "bytes": 32181
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/证券投资基金法（2015-04-24）.md",
+      "sha256": "e53ee4e1942e6b06f013c64494ffb88778368f9b9613bb11074fa7d10a28f9bd",
+      "bytes": 63453
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/3-民法商法/证券法（2019-12-28）.md",
+      "sha256": "806512672efa9460f2c5ed8f87f86cc558778b090177e4dea04742b16da6beec",
+      "bytes": 101283
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/个人信息保护法（2021-08-20）.md",
+      "sha256": "b7d506ba2351568cc1ed1e59b571775e1503000a8dac74f5b521611883abe6a6",
+      "bytes": 27323
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/中医药法（2016-12-25）.md",
+      "sha256": "9ae208a8090f0fce0d1ce8ec6441f6967eb1e6c00ff2630a852a98d83bde3f86",
+      "bytes": 21216
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/中国人民解放军军官军衔条例（1994-05-12）.md",
+      "sha256": "63547ebf34d6a041bf6c1b6ac8f36a80a12a3632f0308ddfab0dabd8215dd731",
+      "bytes": 9000
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/义务教育法（2018-12-29）.md",
+      "sha256": "fcd3bfcdf59688e02286e8f50e0a92a2fa5b31898c7d5a1ccaf031a7556051bc",
+      "bytes": 19023
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/人口与计划生育法（2021-08-20）.md",
+      "sha256": "a7ffd5c8d15cf837c58e60c7b3c48cc13d2287489e55251f672ada7a7cbbc6c2",
+      "bytes": 13437
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/人民武装警察法（2020-06-20）.md",
+      "sha256": "0ff0b62284c4a579b2d3fa03ded01ad0a48c2ce0b91b223b850517bc594c312f",
+      "bytes": 15935
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/人民警察法（2012-10-26）.md",
+      "sha256": "739d921b49958dd1814933aaac12a313e0bc40a0b8ade0418ff6f8ee204e34ab",
+      "bytes": 15324
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/人民警察警衔条例（2009-08-27）.md",
+      "sha256": "e2d3195fb50c549b435cc7fd7ee1014b33517053b0c589e9e135bb7d64f1e03d",
+      "bytes": 6545
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/人民防空法（2009-08-27）.md",
+      "sha256": "a29d0a8e384090e79d71072e00135918836f61ab31680c039f0516c4e1362793",
+      "bytes": 12630
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/传染病防治法（2013-06-29）.md",
+      "sha256": "a9296b05da08c33606dadfee2232dc29fab44c435ea9d870315d9310c27b5824",
+      "bytes": 39966
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/体育法（2016-11-07）.md",
+      "sha256": "a042ad904a545cffb241aeef4110fd5c926ac76276033572c29bd5bca09b6459",
+      "bytes": 11191
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/体育法（2022-06-24）.md",
+      "sha256": "e6ce75c3950bad1e0b02078fab4489a3c2683e45f6c22f89371d054c2daa5966",
+      "bytes": 32206
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/促进科技成果转化法（2015-08-29）.md",
+      "sha256": "fd6a3e02cfd50351bbf7e0835717619e2f1ddb238c3b799e6b5c3285abc8d8a6",
+      "bytes": 19602
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/保守国家秘密法（2010-04-29）.md",
+      "sha256": "5f9ff08c5fcfbb3107f62243971611d086720ffe44e84e0de093ec16553a90df",
+      "bytes": 17772
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/公共图书馆法（2018-10-26）.md",
+      "sha256": "b3ee49861c98d252b003222d647684a1f7ce365f79d35c71a2215a0eb3f8039d",
+      "bytes": 15529
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/公共文化服务保障法（2016-12-25）.md",
+      "sha256": "3d4011740f26aff095c377e7b2d93ba92fb55d4b2d42851a06d183a7cde4dbc9",
+      "bytes": 18684
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/公务员法（2018-12-29）.md",
+      "sha256": "9fdfee1b5cf209e32af4975a9a4d176ebb235e1bad2cc9212027b2579e386f7d",
+      "bytes": 35696
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/公证法（2017-09-01）.md",
+      "sha256": "93ee4b3065692acdd0dd166aaf8505972a7ab39d200433180ac63b224bacbf64",
+      "bytes": 15904
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/兵役法（2021-08-20）.md",
+      "sha256": "9a59769a1af8c27020c4aabf7bcc43792f50620bb6e27709ad2157989d94286f",
+      "bytes": 21098
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/军事设施保护法（2021-06-10）.md",
+      "sha256": "61627d1d59880dbbf955af51450a3ee97957af76e9969e46998edc2b5a62f3eb",
+      "bytes": 29010
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/出境入境管理法（2012-06-30）.md",
+      "sha256": "751f97e4476f62d119e775836e2521720185339e1c7f162928ec389eebbbbc87",
+      "bytes": 36636
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/医师法（2021-08-20）.md",
+      "sha256": "d723910e7b5f026b2c59568f0cf9dbd81ec84341c42a04afe8d143a40fc401f6",
+      "bytes": 28418
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/反间谍法（2014-11-01）.md",
+      "sha256": "82fa06febd727b76221be388ea7c63ec5964b8e9466d0b9fd71a4920597717ad",
+      "bytes": 11465
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/噪声污染防治法（2021-12-24）.md",
+      "sha256": "a627ba68050e370d8336e6b97d42e8f1d986b3a2cabf2a8d2c5dfdcd605c66fd",
+      "bytes": 34758
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/固体废物污染环境防治法（2020-04-29）.md",
+      "sha256": "244f241daf564eb939f9e5e4e62f332e654a1cf79f17882399045b7084e955dd",
+      "bytes": 55850
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/国境卫生检疫法（2018-04-27）.md",
+      "sha256": "aceda20ac34977bf5c8d92da6e58d17cddaa6ee7231a7cd645ce45f7fd597d95",
+      "bytes": 8286
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/国家情报法（2018-04-27）.md",
+      "sha256": "5c2448fd57fe244617b1a58934272331478cfd24104fb12a3a92a1c154c44c05",
+      "bytes": 8304
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/国家通用语言文字法（2000-10-31）.md",
+      "sha256": "ff8faa0a5343f0336c84b113a4f514d3908d1f612b49c2a1aef4e3b7185a6177",
+      "bytes": 6112
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/国防交通法（2016-09-03）.md",
+      "sha256": "252fec29b56b5daef5061538719de7468352be9e7bf662d9f51beb6325753883",
+      "bytes": 21375
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/国防动员法（2010-02-26）.md",
+      "sha256": "060114b72fd89ac0c9d78fc6a6b9138ab4653e105488fc147b9938330d62311c",
+      "bytes": 22386
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/国防教育法（2018-04-27）.md",
+      "sha256": "b9ddf154da3ef5f3ab5e2868427cffe93c430aa8741bf462dd48a99c60a6b5dc",
+      "bytes": 11913
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/土地管理法（2019-08-26）.md",
+      "sha256": "7279cd922b684e9f40dec1e363cabc81480304c3b45cf1e6aaea878719336d5d",
+      "bytes": 39628
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/土壤污染防治法（2018-08-31）.md",
+      "sha256": "555e523f545edaa05a0662cf49f9179f5f8c82bc0d172b6cfbf139143ab6ce50",
+      "bytes": 42220
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/城乡规划法（2019-04-23）.md",
+      "sha256": "72bc040881020ee0c924e9d75c6aa576c3295ac5c8517a268233d360df49dea0",
+      "bytes": 28524
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/城市房地产管理法（2019-08-26）.md",
+      "sha256": "52be7cc0dd8357c05776c296b69a1efb7c3ad23bf2e733ab803f5414f6eb6629",
+      "bytes": 20844
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/基本医疗卫生与健康促进法（2019-12-28）.md",
+      "sha256": "2a639512ccb269aab9fe07a17496b77e35b35ab67118f7a721deaec0567d6c7f",
+      "bytes": 39120
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/境外非政府组织境内活动管理法（2017-11-04）.md",
+      "sha256": "320218adc8c7fe8ead315cb7c4c9c343ee27d80b282aea4ba855bdfa90ae53b1",
+      "bytes": 19402
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/大气污染防治法（2018-10-26）.md",
+      "sha256": "56caa97300755351758cd4fc7f96829f287f0a3e92c9252f8faec4f9cac15026",
+      "bytes": 54252
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/学位条例（2004-08-28）.md",
+      "sha256": "1d28bf63d05dfec707873decab868795dcbf7106b22bae526b6375d0d5cbfea9",
+      "bytes": 5190
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/密码法（2019-10-26）.md",
+      "sha256": "494a9b24dc682412a9808dcd5da255f06f8ab957b255346344d8e144d5de37ed",
+      "bytes": 15013
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/居民身份证法（2011-10-29）.md",
+      "sha256": "b35aa5e31d62fe42d62d8472f6ba2cc13bb8ac012dae481e0663d53fe4eb2eaf",
+      "bytes": 9811
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/广告法（2021-04-29）.md",
+      "sha256": "6e58d52e77249e2d0075180fb9b63fc5cb6b3ea1dfcb1ba379ed89a9f55ff465",
+      "bytes": 32628
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/律师法（2017-09-01）.md",
+      "sha256": "7a482b089fcea8d34445dacde7fc378600f96254a86b026d8b83829a9dc5b2c8",
+      "bytes": 22058
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/户口登记条例（1958-01-09）.md",
+      "sha256": "a90374c25bc68471aa08fcca007c47b29e4dadb2022a12259617a0e7629e1410",
+      "bytes": 7266
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/护照法（2006-04-29）.md",
+      "sha256": "f1bc49bdb37ef956501849f2f7109aa8f4bbe856166e3a73a7ff81e4007e4cc5",
+      "bytes": 8516
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/放射性污染防治法（2003-06-28）.md",
+      "sha256": "de4bf3037fe4a622f1d6854c44e68a1b715a6762ce842d3b92bca04beb88cb4c",
+      "bytes": 23017
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/教师法（2009-08-27）.md",
+      "sha256": "22295f3161f946161cb19cf07bdcbf071f63fe336a8f0f709d517c63d6696f2e",
+      "bytes": 12742
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/教育法（2021-04-29）.md",
+      "sha256": "1165936acf83290fa32925737c0dfb1cb2db513206dca4205f807a3148526cfe",
+      "bytes": 26266
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/数据安全法（2021-06-10）.md",
+      "sha256": "d11dfa0ef543e1f3ed8e28cc8a1a946c0f237da19a897cb4288330756962f93c",
+      "bytes": 16489
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/文物保护法（2017-11-04）.md",
+      "sha256": "a8b001831196238de5238cda4e4834ce6e7be267eb9dc611b8fce0a8c43b219c",
+      "bytes": 36994
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/枪支管理法（2015-04-24）.md",
+      "sha256": "ee8d587085381d7add7aaeed31c75c3186fc06560487b9c3a9253367d1899ade",
+      "bytes": 17276
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/核安全法（2017-09-01）.md",
+      "sha256": "87ff06796a1b0d7c18de840961c99c09539a42d66dd790696177a54f163b488b",
+      "bytes": 38636
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/档案法（2020-06-20）.md",
+      "sha256": "05e2f1ee9cb6a39b761b794e624f71cdd33feba8b6e0e3a97b365947e23b769e",
+      "bytes": 18043
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/母婴保健法（2017-11-04）.md",
+      "sha256": "f5b2ba926feb4ace09b029075f0103c8ddb4c46926f600bbe2edd4b7abe90c8f",
+      "bytes": 9970
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/民办教育促进法（2018-12-29）.md",
+      "sha256": "36d4f5745ea5211107421de239cf08935ab3af9918c613c0e32385024dbd3718",
+      "bytes": 18252
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/气象法（2016-11-07）.md",
+      "sha256": "a2f291934dfd0a1763952577829460b6da687e4ea220d45b13bc4c4ecfc35c3d",
+      "bytes": 17517
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/水污染防治法（2017-06-27）.md",
+      "sha256": "152f56b21140dac52390fc29ea34a3925da4901c4d86315571af9e0e014229f3",
+      "bytes": 45097
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/治安管理处罚法（2012-10-26）.md",
+      "sha256": "4689b87867fb4d28f312715b36b0b81a7626ef21340b5aa94c61622fe7fbf45e",
+      "bytes": 41949
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/法律援助法（2021-08-20）.md",
+      "sha256": "d953ec1748058512350c2a56901b44ca12c1ae6532ccc94bba5b1e455d2fd12f",
+      "bytes": 20464
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/测绘法（2017-04-27）.md",
+      "sha256": "3c0636c59eb55ff6c3d4b8aa2a19fd76be7311702f32e1334f4cf7d9a47ce7b4",
+      "bytes": 26676
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/海上交通安全法（2021-04-29）.md",
+      "sha256": "08281a9bda5dd54af074deb6b5796640ad5b0d05964f29cfce413c36a6538b46",
+      "bytes": 55467
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/海关关衔条例（2003-02-28）.md",
+      "sha256": "fe121cfec57aa0ecc257d057fd0639e29b3967edb3ba0f6c855f202196ecca60",
+      "bytes": 5223
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/海关法（2021-04-29）.md",
+      "sha256": "749e09b8603a2facf7d0dd2dd5e4508d55473eb9e060bde0bee74bab35c9bf95",
+      "bytes": 37511
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/海岛保护法（2009-12-26）.md",
+      "sha256": "19ada4ea1ba70fde2b6c543e0035a24c66c8b2de80facc3d0e29cfdc6785f701",
+      "bytes": 19026
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/海洋环境保护法（2017-11-04）.md",
+      "sha256": "310d26759149e94fb97ddcc3a86d6ed6a646d242f1494f27a788654ad0f22ba4",
+      "bytes": 36494
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/海警法（2021-01-22）.md",
+      "sha256": "3ea21f59144496f0e171fde14da6e3c25498ea3c377d76024c2a2fa354d4c8c3",
+      "bytes": 30165
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/消防救援衔条例（2018-10-26）.md",
+      "sha256": "1aeda662fbf1b02909500d86c88af9cc2ee6c7397303990efcf4a7e44cf96e58",
+      "bytes": 9754
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/消防法（2021-04-29）.md",
+      "sha256": "34ac4eade49c90a191f6da236e7873f173c608719c726e0cdfd72ecee071e5fb",
+      "bytes": 32862
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/献血法（1997-12-29）.md",
+      "sha256": "4ed74c9932bcb1f20f8d64487de3da79bc9f23fd0cce38b0f660b6cc3d1c38a1",
+      "bytes": 6377
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/环境保护法（2014-04-24）.md",
+      "sha256": "8980565ae92b1ca880295a57f9b8fa7a6ac4db625fb53563ddc1e4ccd4e55a64",
+      "bytes": 24723
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/环境噪声污染防治法（2018-12-29）.md",
+      "sha256": "467df4f43f3efa6c702de6967c2cf6b1f14db919e4816d50bcf6d81d1fcf850f",
+      "bytes": 18980
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/环境影响评价法（2018-12-29）.md",
+      "sha256": "20354ce8861dda17aa2029e25971e7a9c108a41a170e074cf47d1afec131df3a",
+      "bytes": 17802
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/现役军官法（2000-12-28）.md",
+      "sha256": "4ac184d19daa38cb126b4e3af75025403a11b58017ed3587be6e6e14c3c0473a",
+      "bytes": 17564
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/生物安全法（2020-10-17）.md",
+      "sha256": "b75c87a0034c0a0b9b88a7983228d1894fd9bda30611d2c00b97590d71098d97",
+      "bytes": 37067
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/电影产业促进法（2016-11-07）.md",
+      "sha256": "540dbb028672efa4aea60474fb404490af85319ca65d54628aeb28ceedf5cf1e",
+      "bytes": 24180
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/疫苗管理法（2019-06-29）.md",
+      "sha256": "53c8512ac93fda4e3171cdca9b0cf661c3f01740a7e9603f3329d84d8e5993eb",
+      "bytes": 53531
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/监狱法（2012-10-26）.md",
+      "sha256": "427a809a61c69601ddfd672989d3be42f9337c1b98dfa94d132e3d9eab35ec22",
+      "bytes": 17714
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/社区矫正法（2019-12-28）.md",
+      "sha256": "7f734d78c1a231be73afc17933f34806755f910616ac0e7cc209cdb41cfc1926",
+      "bytes": 21276
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/禁毒法（2007-12-29）.md",
+      "sha256": "1153d112725362e3a87a641f1aac4170b9cd0847148aa81ffca9db191ac04959",
+      "bytes": 22241
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/科学技术普及法（2002-06-29）.md",
+      "sha256": "764986484017094465ce0f288ee08506d5211d41b945c42c5975b6d4d580d353",
+      "bytes": 8338
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/科学技术进步法（2021-12-24）.md",
+      "sha256": "587d57ce3d3ee88f0b72911618e419aac818aee6643997f8553a7f1628edc7af",
+      "bytes": 47488
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/突发事件应对法（2007-08-30）.md",
+      "sha256": "f650b5eee0087b3b5ca661dd6b61eb6408ee5f8fd02dad651eae00d965cb7aee",
+      "bytes": 29855
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/精神卫生法（2018-04-27）.md",
+      "sha256": "adfe0abfe656b4a5b74aa47b747ff17d8846f6cc3eb0214e9dd8af6ed08ec41e",
+      "bytes": 32031
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/网络安全法（2016-11-07）.md",
+      "sha256": "ac4b45ee50ab1d00bd57f9d4fb2b966431782d0ebfa2860c9267447c887739d1",
+      "bytes": 30161
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/职业教育法（1996-05-15）.md",
+      "sha256": "9cfd30a0e566f108293826e53c192f253cbbc8666ad67588cafbcc5259fa1a55",
+      "bytes": 10506
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/职业教育法（2022-04-20）.md",
+      "sha256": "5b23f485be09606bec539ccad72f639ccc5740da0e0ab7ac1a903e1cc1a693cc",
+      "bytes": 30998
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/药品管理法（2019-08-26）.md",
+      "sha256": "31e6a98d5d29cd2ce4a56dc9f10a59f6372415d28c03550d5aa9fb5d210dcfd4",
+      "bytes": 62499
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/行政处罚法（2021-01-22）.md",
+      "sha256": "253d14a580f6840b3dca7b859f6b4e830572f70e4bd8bcd7399e3057966ff34a",
+      "bytes": 30399
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/行政复议法（2017-09-01）.md",
+      "sha256": "f56f4cacb5763b5e8a6e4f3bba6a7e819ae47323cdd2f99dec7952579f72bc30",
+      "bytes": 19758
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/行政强制法（2011-06-30）.md",
+      "sha256": "d9b36901a354879728f51c3dfd8b61ee32ace35394bf116d9f31cdc75d540b94",
+      "bytes": 26859
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/行政许可法（2019-04-23）.md",
+      "sha256": "8df31662b84878a894391102746fb9c5584017a77ce5b0be6567f977b7ca6210",
+      "bytes": 32797
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/道路交通安全法（2021-04-29）.md",
+      "sha256": "65dba5893a60669dec34e009d16a908cbf9bbf45c7209ab554dfce63bb80c903",
+      "bytes": 47592
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/防沙治沙法（2018-10-26）.md",
+      "sha256": "f4e47ccf3fc85a8a6db23aa31b47f9074dc128c1e5e53549e47686466e9cc6f0",
+      "bytes": 19712
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/防震减灾法（2008-12-27）.md",
+      "sha256": "b39cb8bc9d0b0770694255b05a5a70c4af51f28cbe77f7c68b77b6ff326269f7",
+      "bytes": 37599
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/非物质文化遗产法（2011-02-25）.md",
+      "sha256": "6ff5cc9d938dfd2434f4184fb83297ed7667cf443471d3c07c21a14d4606bd40",
+      "bytes": 14220
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/预备役军官法（2010-08-28）.md",
+      "sha256": "45b891b08ea5b823739abc99674545caf5daa7b36ddb79d2ef174b2614a8948a",
+      "bytes": 22080
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/食品安全法（2021-04-29）.md",
+      "sha256": "e61aa68b40a69ed8ee6e9b2fdcb0e055f6f683484755defbc306378e02c8d93e",
+      "bytes": 88424
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/驻外外交人员法（2009-10-31）.md",
+      "sha256": "c5693973fe628e87bb0e2ac2864bce65ccda5b3aeee64f651960aebf672391e9",
+      "bytes": 13916
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/高等教育法（2018-12-29）.md",
+      "sha256": "5cdc9c2640b62a54cc01fca15e949573c7b7fa8dde0bf5b19637245222d5a8d8",
+      "bytes": 21157
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/4-行政法/黑土地保护法（2022-06-24）.md",
+      "sha256": "cf8e67d74240527d675691b375542363d2f108812717b97cc5c6444a60122033",
+      "bytes": 15608
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/个人所得税法（2018-08-31）.md",
+      "sha256": "2c5798104243202a7a684976826794a168e9cfbe860d90f6e106f250a5f28cb3",
+      "bytes": 13121
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/中国人民银行法（2003-12-27）.md",
+      "sha256": "c3ef98e74f5f3608c384c85ef061b534e7c910c55949b2755764bc0dd179bf77",
+      "bytes": 13958
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/中小企业促进法（2017-09-01）.md",
+      "sha256": "552317c9a80631d9ead1aa1a6de9f7730a667c5aee561c3b2584f00a87343ffb",
+      "bytes": 18075
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/乡村振兴促进法（2021-04-29）.md",
+      "sha256": "532f1aa02b661f73cd624d1a43a72175dc5a3189d5e24458731460d7721bc66d",
+      "bytes": 31251
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/乡镇企业法（1996-10-29）.md",
+      "sha256": "d7bb5612cfa0acfbaabae8fb89eeca0ad430f9946064188783cb57abee5e3b1e",
+      "bytes": 13264
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/产品质量法（2018-12-29）.md",
+      "sha256": "113d660420266c6fb8dd6d63b2f0b177a7e63d95ea0d91074166d0b906a3d204",
+      "bytes": 24486
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/价格法（1997-12-29）.md",
+      "sha256": "d07154e242950c4a46854d3972555a5e5bdebf9d3ce44b0017397a2cb12b944e",
+      "bytes": 14084
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/企业国有资产法（2008-10-28）.md",
+      "sha256": "3ce686ab8a37d4a52b3daef4c11061b84a4850f9c26760e37626299ea7419b34",
+      "bytes": 24952
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/企业所得税法（2018-12-29）.md",
+      "sha256": "c85462127d30a9e6155f222eff9cce1f85f2a25f30898c81d7bdcfc87e98a642",
+      "bytes": 16842
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/会计法（2017-11-04）.md",
+      "sha256": "3b862caab64726c1754f2c8bb7c4bdbd005fce7d6a9eeb79907a34c871187266",
+      "bytes": 19206
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/公路法（2017-11-04）.md",
+      "sha256": "64812e7fcc199e268596ca20085ccae57a78b96822a433f039d3c3794570c7d1",
+      "bytes": 27495
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/农业技术推广法（2012-08-31）.md",
+      "sha256": "119606d686b3b6e625ae75907a1f58d1e3c65c40c305310c70d5bef678a87582",
+      "bytes": 13999
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/农业机械化促进法（2018-10-26）.md",
+      "sha256": "425e6ccda86c2dc36c979d5fd79649d086fa6b61afee9407367eae7aed445bf6",
+      "bytes": 12451
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/农业法（2012-12-28）.md",
+      "sha256": "a912578e399814ee5723c157ed5bf41bfc8bda156e998dd357f856eb1fa63701",
+      "bytes": 39123
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/农产品质量安全法（2018-10-26）.md",
+      "sha256": "a7e775be84594a6bf5501c6322c5c1337bfbe5256934a304a30b03e28fe08ef4",
+      "bytes": 16653
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/出口管制法（2020-10-17）.md",
+      "sha256": "3ee6fa711d70723e7ffbeddb07c95c149608a8aa1236d67b6e9a87141a264541",
+      "bytes": 18272
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/动物防疫法（2021-01-22）.md",
+      "sha256": "ead2d6d761c233823d2401ec522d9319af1f8d6a750e47009fb7e28127a939ff",
+      "bytes": 48443
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/印花税法（2021-06-10）.md",
+      "sha256": "9dfc4bae8d5ae16ff5bb22a71492965d6e4632f7fc320530e27991a7a366e809",
+      "bytes": 5946
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/反不正当竞争法（2019-04-23）.md",
+      "sha256": "00c40d8050f08445c919c83bc2e603b589aa197257727c17ba4aa43905e49e0d",
+      "bytes": 13357
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/反垄断法（2007-08-30）.md",
+      "sha256": "48fb4cba91dc48f659d4e1af3c350fe626abb5af51f2d0c1b2a25d9c9ba1debb",
+      "bytes": 19793
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/反洗钱法（2006-10-31）.md",
+      "sha256": "ce7ef7e570327d2bffff70b3f685d8d4c93a9ee9e623fafc9da5748c8fa6fb06",
+      "bytes": 13656
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/反食品浪费法（2021-04-29）.md",
+      "sha256": "a08184533e93412041ce8b3f9db3550e5bca11998da94e2dbb746d2aa18c2f4a",
+      "bytes": 13475
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/可再生能源法（2009-12-26）.md",
+      "sha256": "0120843bff5b80548c7d1f3fa078c793920f7d078c4f208de9138fc6f0d85f0b",
+      "bytes": 14038
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/台湾同胞投资保护法（2019-12-28）.md",
+      "sha256": "ef15c00e9692366298c788c980159dd9839a2157d2e203d51da1121bf0c88bc6",
+      "bytes": 3212
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/城市维护建设税法（2020-08-11）.md",
+      "sha256": "c518e3c06248bc22d3d2978f10013c66182dae433c0642713f806ff89c5da1c6",
+      "bytes": 2554
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/契税法（2020-08-11）.md",
+      "sha256": "10be81aa35f6d0600f6be780ea9ba559b6badb6d03ad611f78b7c6a9eb1dee07",
+      "bytes": 5487
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/审计法（2021-10-23）.md",
+      "sha256": "a1041206f748b856212dd62571c36346de67724c5a8387a5338b16d79d57bc1c",
+      "bytes": 19362
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/对外贸易法（2016-11-07）.md",
+      "sha256": "24e73f41f005c9d15189465343fc301aacc394db7fce0dd40444ac38d9ca83f3",
+      "bytes": 22579
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/广告法（2021-04-29）.md",
+      "sha256": "5e44a461a1cebb353b045ab364da5a8d872add248476e566c43f9c6ea700a0b5",
+      "bytes": 32606
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/建筑法（2019-04-23）.md",
+      "sha256": "3f4fb9107e8ef7452f569de9efe46d05fc5ee7c6366b65497f50a4c4fb688551",
+      "bytes": 25629
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/循环经济促进法（2018-10-26）.md",
+      "sha256": "cec790e01b5a45f76e3f165cf7a0f48039b5d68b24e82573a6a996d2e14be96f",
+      "bytes": 24011
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/政府采购法（2014-08-31）.md",
+      "sha256": "36f63a12ac673f983a6f58ec6932edb15a2308224651917277b4594d74b815f8",
+      "bytes": 27454
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/旅游法（2018-10-26）.md",
+      "sha256": "71d79e2fdf56a16645a4a77b3933008588fef0fba4197dde87ad6e1801c05e39",
+      "bytes": 37469
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/期货和衍生品法（2022-04-20）.md",
+      "sha256": "67bcbbf3b363beb8856989b6d7aa81cc6537d81e6f15ae2af174132dddfdb6a2",
+      "bytes": 68158
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/标准化法（2017-11-04）.md",
+      "sha256": "72cb9c8a9179edbbc7bc9226570d100a56360166f434f477cdd000593e5511d4",
+      "bytes": 14908
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/森林法（2019-12-28）.md",
+      "sha256": "976f1bd82c3a24735f96f7486aa0c422209f6131cfeed59c2b9306939de6cf45",
+      "bytes": 30753
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/民用航空法（2021-04-29）.md",
+      "sha256": "9f62f0906c4edf42b60e2667c8a5026b8f7f8d3c7ac41676c48b51d83d116249",
+      "bytes": 71979
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/水土保持法（2010-12-25）.md",
+      "sha256": "a04f2a82ba8b829f876fd4ddc7eba240287407c04e3549a799ba87cc3c1c15b2",
+      "bytes": 21694
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/水法（2016-07-02）.md",
+      "sha256": "58176b12c46e3c5009c9649b2a9c13b41bb8f11b1ecfce89fdcf590c96dd451b",
+      "bytes": 31944
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/注册会计师法（2014-08-31）.md",
+      "sha256": "ea1a435780c9f1c900ed48f3e8a3c535053f61cd3fc359d37966ab62343e7daf",
+      "bytes": 13645
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/海南自由贸易港法（2021-06-10）.md",
+      "sha256": "e9b7809a8e28ddb2da4a548dff699074f496e2d653911fb434a5812ea6956af5",
+      "bytes": 19631
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/海域使用管理法（2001-10-27）.md",
+      "sha256": "f7b747170ab180a1a543b7a3b4f1d72e8c8352a117022cc7d2455e0993c47fa3",
+      "bytes": 16037
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/深海海底区域资源勘探开发法（2016-02-26）.md",
+      "sha256": "f384ea8ce108300803dbbaf79222619ac2538b43497c9efc6a9c32e1036354da",
+      "bytes": 9748
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/清洁生产促进法（2012-02-29）.md",
+      "sha256": "287056a88181cf3781e4969c60a0515c00d69c3e8380f8b0950fd47617773f56",
+      "bytes": 14625
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/渔业法（2013-12-28）.md",
+      "sha256": "9d4d9f7adc7e34e3f5a9733f3a0a5aa3051f9beb16717286184c34bb3340b3be",
+      "bytes": 17283
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/港口法（2018-12-29）.md",
+      "sha256": "7fa2ab5c4a05c7827cc4340d17431fd46d875c0a8a6f04a1eb019ea9888d65ca",
+      "bytes": 21340
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/湿地保护法（2021-12-24）.md",
+      "sha256": "59dc63b3ed5dc8fda8a29556916a27cef213d56a7692803edc6b9854a7c12c27",
+      "bytes": 26033
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/烟叶税法（2017-12-27）.md",
+      "sha256": "ad0d1e12b772f71c95e83e2e6b92d1c1c8ebee0116919df8d488cd1919863514",
+      "bytes": 1245
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/烟草专卖法（2015-04-24）.md",
+      "sha256": "3c83d6739e476fd985ff60ea9ae9f8413a80cfce81948b796e4b5f1b238ee91a",
+      "bytes": 13280
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/煤炭法（2016-11-07）.md",
+      "sha256": "850b41b748c70ea36e7c3a703f63ad54ea4747c94622ea555af50932aa40ce2f",
+      "bytes": 15640
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/环境保护税法（2018-10-26）.md",
+      "sha256": "7629fe73b6372328d3839c78181fc2089b70328fd06f7f8962a4909724a1cef9",
+      "bytes": 10893
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/电力法（2018-12-29）.md",
+      "sha256": "4adacc7ff1c0af226268eca09e006bae1a0150878bb51a99f8807fd6ec1a2f9d",
+      "bytes": 20051
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/畜牧法（2015-04-24）.md",
+      "sha256": "6ed713e6025525b77640f42738d815080e0dc0a43049521ad37e54e20ad5d4d4",
+      "bytes": 26843
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/石油天然气管道保护法（2010-06-25）.md",
+      "sha256": "93d7a0afc38e7b6f26aa2dae53c7fb8fe3e7b777575ca1f4c916fbc57a9ef0ac",
+      "bytes": 23678
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/矿产资源法（2009-08-27）.md",
+      "sha256": "e3f20e52b45b1a92fe93c173eeb0d20ca80671aa43845c796cd98bcf8bd45fc0",
+      "bytes": 17676
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/种子法（2021-12-24）.md",
+      "sha256": "d0721add715424924bf12c14fd0a481a6328933906447b956b4112e680572b13",
+      "bytes": 43526
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/税收征收管理法（2015-04-24）.md",
+      "sha256": "c755dcdab47e8e19909cb8987cf204b225b4283c840c7da736d037e52dbb7180",
+      "bytes": 33879
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/统计法（2009-06-27）.md",
+      "sha256": "dbfab99726d566fe2ea0983c4154c2e7f9cb2c99c0cccaebeabf26ffa20604f7",
+      "bytes": 18362
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/耕地占用税法（2018-12-29）.md",
+      "sha256": "71b78fe1d8c63df0983d82fd1e662344ad3be021be945a1525a4223a204d3241",
+      "bytes": 5959
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/职业病防治法（2018-12-29）.md",
+      "sha256": "042f0b0a5a4013dee8cb24cb9806894ecce068683accc9b05d22957ee835ec29",
+      "bytes": 42094
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/航道法（2016-07-02）.md",
+      "sha256": "1f1e1a616db93891edaa96780d7fe4e4c942c0799eab24df1d85a3beb0859734",
+      "bytes": 19221
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/船舶吨税法（2018-10-26）.md",
+      "sha256": "4d00d18278bcc0b0101eb2411b248259cafb47b6b4a115fd559784f106ed5f82",
+      "bytes": 7541
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/节约能源法（2018-10-26）.md",
+      "sha256": "82a961be354d46853ff64ce197aedc6605f573acc5aa98c1e2b633896679fc9c",
+      "bytes": 26831
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/草原法（2021-04-29）.md",
+      "sha256": "ca078b8cd998ae1e15940bcc615fdd976d3780ec31e9e21d21601a03102e79d0",
+      "bytes": 26004
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/计量法（2018-10-26）.md",
+      "sha256": "1fe7207728a9189bd5b1abd8ce23307d2ed25f0f2b87f5b42a9bd22be7e78a52",
+      "bytes": 8151
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/资产评估法（2016-07-02）.md",
+      "sha256": "7d1d2c042349d780f077b07e4c5c0246cd5894b11cecac7597795e46c3822bb5",
+      "bytes": 18303
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/资源税法（2019-08-26）.md",
+      "sha256": "0cd4315377bab58d2f47e140cc6158cab47d230c03e7a3d7f40081936d060dce",
+      "bytes": 7413
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/车船税法（2019-04-23）.md",
+      "sha256": "1b8d683b95a0f2d69c032f4fcd5255e7656acb64c4a11a98665e1d938190caab",
+      "bytes": 3344
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/车辆购置税法（2018-12-29）.md",
+      "sha256": "72ca823a79ec98bf913d29614b75449e113ee720a4d028125d1d35c26acc0fba",
+      "bytes": 4613
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/进出口商品检验法（2021-04-29）.md",
+      "sha256": "d1a461334349b0a9f4e60de6d3430294342e5d494af922822131cbe9e0426986",
+      "bytes": 10554
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/进出境动植物检疫法（2009-08-27）.md",
+      "sha256": "033b99b2e491e2da745b69027927233a7c53984b905856247b9f7562b5cda08b",
+      "bytes": 15500
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/邮政法（2015-04-24）.md",
+      "sha256": "51b5c8a52b6fbc12af0126ee3e91c9898e42632530e1a567b68d25d603084b20",
+      "bytes": 31663
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/野生动物保护法（2018-10-26）.md",
+      "sha256": "efa6388151805198ecc731742ae7e11c439e68c64ca6a99ab00c2f045775213f",
+      "bytes": 26571
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/铁路法（2015-04-24）.md",
+      "sha256": "89ee299e33339d88da6abc43fc15fa5762365663ec377641112ee5afd48b31a8",
+      "bytes": 20720
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/银行业监督管理法（2006-10-31）.md",
+      "sha256": "d43a8682ba58c5f1a297f01088eabb8d5b944bfb67fc56b0048bd8396091331c",
+      "bytes": 18315
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/长江保护法（2020-12-26）.md",
+      "sha256": "a52f60814c0cc4ebcd7f59845bca6c6681991f2f53690840330a989f354f0b54",
+      "bytes": 35292
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/防洪法（2016-07-02）.md",
+      "sha256": "d961d70b8d91421fbf01aba75c72ea04d7d5bd2cc6224070e86dc35bebb15a70",
+      "bytes": 30139
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/5-经济法/预算法（2018-12-29）.md",
+      "sha256": "e8edd1c55243be51da8ba5e73150ce368a42558102d3f78df6d4244f5f43b762",
+      "bytes": 43603
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/公益事业捐赠法（1999-06-28）.md",
+      "sha256": "8f821558e2327528c40d9671d60cc3064b7b173a47a71cb7160f20d2ce478979",
+      "bytes": 8780
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/军人保险法（2012-04-27）.md",
+      "sha256": "c28684b18c0af36b77dc79d095501ff0dd3b341adae5c5fce4275c892c785cea",
+      "bytes": 12532
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/劳动合同法（2012-12-28）.md",
+      "sha256": "0546154cc4a3fce514f6e7d488a432ce43a8c2e5d9d1be2a2cfc8d3c1f69113b",
+      "bytes": 34984
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/劳动法（2018-12-29）.md",
+      "sha256": "b262fab9c61cfdc73812b07e6f148e4fa282422cde5f22773e01863aba61d8e0",
+      "bytes": 25056
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/反家庭暴力法（2015-12-27）.md",
+      "sha256": "c9125623fa4703b0d30a8e34ada870698c18456f2cd62ef84028b135d10a9989",
+      "bytes": 9558
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/妇女权益保障法（2018-10-26）.md",
+      "sha256": "59d03dfb276af870e28a03ccfd066c45a398fc516a76f88a994ac2775472f185",
+      "bytes": 16779
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/安全生产法（2021-06-10）.md",
+      "sha256": "989056c747ffaaaa671c687a834362538f2718337cb1a6fb0f2ee9c3db856cb3",
+      "bytes": 59691
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/家庭教育促进法（2021-10-23）.md",
+      "sha256": "f1b14c2518ca7389ffec57347a7f017cbc92f66a4c3cc7445e0e266f4c0f1b30",
+      "bytes": 17714
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/就业促进法（2015-04-24）.md",
+      "sha256": "8934d84278ef68802f7bb40314bb2c55aa56410eedc858fd2029d1206b411570",
+      "bytes": 18168
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/工会法（2021-12-24）.md",
+      "sha256": "8eb937f04e7b2a510217ca07c2e0cdc11dc192819c265ff9e8b88ddd849cc70d",
+      "bytes": 19789
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/归侨侨眷权益保护法（2009-08-27）.md",
+      "sha256": "4ecc3aef345b2579c02309194697151cd7e6170636ae6de54811fc32f067df90",
+      "bytes": 6636
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/慈善法（2016-03-16）.md",
+      "sha256": "067372691345272f0f4897e45dafdd1a418a1ed0c92934c6f2a5d3276c599cf1",
+      "bytes": 33857
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/未成年人保护法（2020-10-17）.md",
+      "sha256": "9623fc26a17138a98e234aa93379cce704548b83fde3b77c0ffd5846bf6a17eb",
+      "bytes": 50370
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/残疾人保障法（2018-10-26）.md",
+      "sha256": "890ef1155565f5a4163c75433fb1be96b0aee230ea8d36de95f058a0799115cc",
+      "bytes": 22937
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/特种设备安全法（2013-06-29）.md",
+      "sha256": "222fc915a6ae886f143ca1e57ddb72c311f7bfbd197eb3d0e7386e6cef162bc0",
+      "bytes": 41245
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/矿山安全法（2009-08-27）.md",
+      "sha256": "323630de9d60a0c07b0afd339d2b68b33759eabdeb15d00705a74d8e65b8fb70",
+      "bytes": 12905
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/社会保险法（2018-12-29）.md",
+      "sha256": "a03cd8fa14bb7f37f7f652c381cb21933d1b8457a4082ac27229f4726644e2ed",
+      "bytes": 30848
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/红十字会法（2017-02-24）.md",
+      "sha256": "788ed5bcde8753c1768978fb7e49ba8333bd82388d04e467461b3cae7690fc7b",
+      "bytes": 10460
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/老年人权益保障法（2018-12-29）.md",
+      "sha256": "8fc97a5fabb206be0d3454cdc278a1c762eac4f9daa560de3668e30bda414a67",
+      "bytes": 23475
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/职业病防治法（2018-12-29）.md",
+      "sha256": "042f0b0a5a4013dee8cb24cb9806894ecce068683accc9b05d22957ee835ec29",
+      "bytes": 42094
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/退役军人保障法（2020-11-11）.md",
+      "sha256": "a3ae28e4bbfe4e906c327f767336bc501642384c1f800e693757140d3d6919a5",
+      "bytes": 25582
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/6-社会法/预防未成年人犯罪法（2020-12-26）.md",
+      "sha256": "38947e345f8eaeb16424fc3c9af3ad47f53fca878e5727e64322ff3bd0badb21",
+      "bytes": 22833
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/7-刑法/刑法.md",
+      "sha256": "0f94a21c2e86ede0a589250b4a2b92cc0f94bc20e91e634c1dbbe7a79dac48d2",
+      "bytes": 217091
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/8-诉讼与非诉讼程序法/人民调解法（2010-08-28）.md",
+      "sha256": "6c8e62a1723d6d81dd834f0e608e242d5550204273711c3a9d9d6669208106bc",
+      "bytes": 8672
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/8-诉讼与非诉讼程序法/仲裁法（2017-09-01）.md",
+      "sha256": "7f596929d82b49c9520da2de4872d4c865735215bfc12a718aadd5d1a396f8d2",
+      "bytes": 18810
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/8-诉讼与非诉讼程序法/农村土地承包经营纠纷调解仲裁法（2009-06-27）.md",
+      "sha256": "7fd879beeaa8f4d3fd74dc07ba2423e9a41b2b0270a38116fa3c7e7348a6840a",
+      "bytes": 16757
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/8-诉讼与非诉讼程序法/刑事诉讼法（2018-10-26）.md",
+      "sha256": "61ca2bc279511f0a3ca61c323f7ba543271c0eb1acebb453f4be36c8d05473f5",
+      "bytes": 115435
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/8-诉讼与非诉讼程序法/劳动争议调解仲裁法（2007-12-29）.md",
+      "sha256": "6b5582d24ed618d8888e6ee34bf416f8ffc6513ef95014beb1b8b890757351b9",
+      "bytes": 16675
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/8-诉讼与非诉讼程序法/国际刑事司法协助法（2018-10-26）.md",
+      "sha256": "4152a0cc4730393741eccd1130ad220d0d779dd3c4ff730da613f3f6910348a1",
+      "bytes": 29723
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/8-诉讼与非诉讼程序法/引渡法（2000-12-28）.md",
+      "sha256": "66355651e3f6beefaa35a02afd7ae03825569472d3df31289a9e7ae49db49c96",
+      "bytes": 20271
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/8-诉讼与非诉讼程序法/民事诉讼法（2021-12-24）.md",
+      "sha256": "226f404519414e81cabd46840f88977c3ec23cbbaeb8e2cc7aad503596b2773a",
+      "bytes": 94679
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/8-诉讼与非诉讼程序法/海事诉讼特别程序法（1999-12-25）.md",
+      "sha256": "00f67dbfca54f21da33f25a4b242c4dcaeafeed706da809854356042c970e619",
+      "bytes": 35828
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/agentic-rag/laws/8-诉讼与非诉讼程序法/行政诉讼法（2017-06-27）.md",
+      "sha256": "4a20e04c4b93c7f12763219e9c27a76fdb878f439a8ebca7c1296af61009dd67",
+      "bytes": 34914
+    }
+  ],
+  "summary": {
+    "metrics": {
+      "baseline": {
+        "complex": {
+          "n": 4,
+          "evidence_recall": 0.08333333333333333,
+          "judge_correctness": 1.0,
+          "citation_valid_rate": 0.25,
+          "mean_search_count": 1,
+          "mean_latency_ms": 8106.144
+        },
+        "simple": {
+          "n": 3,
+          "evidence_recall": 1.0,
+          "judge_correctness": 1.0,
+          "citation_valid_rate": 1.0,
+          "mean_search_count": 1,
+          "mean_latency_ms": 21355.736333333334
+        },
+        "overall": {
+          "n": 7,
+          "evidence_recall": 0.47619047619047616,
+          "judge_correctness": 1.0,
+          "citation_valid_rate": 0.5714285714285714,
+          "mean_search_count": 1,
+          "mean_latency_ms": 13784.540714285715
+        }
+      },
+      "agentic": {
+        "complex": {
+          "n": 4,
+          "evidence_recall": 0.9166666666666666,
+          "judge_correctness": 1.25,
+          "citation_valid_rate": 1.0,
+          "mean_search_count": 3.5,
+          "mean_latency_ms": 65656.88825
+        },
+        "simple": {
+          "n": 3,
+          "evidence_recall": 1.0,
+          "judge_correctness": 1.0,
+          "citation_valid_rate": 1.0,
+          "mean_search_count": 1,
+          "mean_latency_ms": 22209.607666666667
+        },
+        "overall": {
+          "n": 7,
+          "evidence_recall": 0.9523809523809523,
+          "judge_correctness": 1.1428571428571428,
+          "citation_valid_rate": 1.0,
+          "mean_search_count": 2.4285714285714284,
+          "mean_latency_ms": 47036.62514285714
+        }
+      }
+    },
+    "api_calls": 45,
+    "token_usage": {
+      "prompt_tokens": 67977,
+      "completion_tokens": 19762,
+      "total_tokens": 87739
+    },
+    "errors": 0
+  },
+  "acceptance": {
+    "real_law_corpus": true,
+    "labeled_simple_and_complex": true,
+    "identical_cases_and_corpus": true,
+    "one_shot_baseline": true,
+    "live_agent_generated_searches": true,
+    "evidence_recall_measured": true,
+    "citations_checked": true,
+    "independent_external_judge": true,
+    "raw_request_response_receipts": true,
+    "all_cases_succeeded": true,
+    "passed": true
+  }
+}

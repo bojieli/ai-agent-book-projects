@@ -1,0 +1,17 @@
+{
+  "case": "github_pr_preflight",
+  "tool": "github_create_pr",
+  "arguments": {
+    "repo_name": "bojieli/ai-agent-book",
+    "title": "Experiment 4-3 preflight",
+    "body": "Credential-gated preflight",
+    "head_branch": "nonexistent-exp4-3"
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": false,
+    "error": "Failed to initialize GitHub client: GitHub token not configured"
+  },
+  "latency_seconds": 0.002
+}

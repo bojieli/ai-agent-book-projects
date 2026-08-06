@@ -566,7 +566,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_01_bank_account",
+      "purpose": "3-11 live contextual prefixes layer1_01_bank_account",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:49:57.737734+00:00",
@@ -649,7 +649,7 @@
       "response_id": "02178535819809877b7e892e9721221f8ca1a94f85371e5805359"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_01_bank_account iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_01_bank_account iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:50:44.075418+00:00",
@@ -760,7 +760,7 @@
       "response_id": "02178535824426577b7e892e9721221f8ca1a94f85371e5b4f0b4"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_01_bank_account iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_01_bank_account iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:50:45.105914+00:00",
@@ -882,7 +882,7 @@
       "response_id": "02178535824529877b7e892e9721221f8ca1a94f85371e5b27b85"
     },
     {
-      "purpose": "3-12 grounded answer layer1_01_bank_account plain",
+      "purpose": "3-11 grounded answer layer1_01_bank_account plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:50:52.892242+00:00",
@@ -962,7 +962,7 @@
       "response_id": "02178535825308377b7e892e9721221f8ca1a94f85371e574835b"
     },
     {
-      "purpose": "3-12 grounded answer layer1_01_bank_account contextual",
+      "purpose": "3-11 grounded answer layer1_01_bank_account contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:51:02.332729+00:00",
@@ -1042,7 +1042,7 @@
       "response_id": "02178535826252377b7e892e9721221f8ca1a94f85371e5138276"
     },
     {
-      "purpose": "3-12 grounded answer layer1_01_bank_account dual_layer",
+      "purpose": "3-11 grounded answer layer1_01_bank_account dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:51:12.229095+00:00",
@@ -1122,7 +1122,7 @@
       "response_id": "02178535827241977b7e892e9721221f8ca1a94f85371e521e9d1"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_01_bank_account",
+      "purpose": "3-9/3-11 independent judge layer1_01_bank_account",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T20:51:24.203939+00:00",

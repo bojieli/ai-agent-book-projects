@@ -4,7 +4,7 @@
     "advice": "匹配依据：HELDOUT案件的伤害结果（轻伤）、轻伤数量（1.0）、伤害程度（轻伤二级）、犯罪原因（琐事争执）等特征与训练集原型“故意伤害罪-prototype-1”的关键定义特征（如cat:injury_result=轻伤、num:minor_injury_count、cat:injury_degree=轻伤二级、cat:criminal_cause=琐事争执）高度匹配。统计区间：该原型刑期中位数为8个月，四分位区间（Q25-Q75）为6-12个月，刑期范围3-36个月。因可能存在未纳入统计的其他影响因素，实际刑期存在不确定性。"
   },
   "receipt": {
-    "purpose": "3-13 held-out prototype-grounded advice cail2018-14123b59cc7ff466",
+    "purpose": "3-12 held-out prototype-grounded advice cail2018-14123b59cc7ff466",
     "provider": "ark",
     "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
     "started_at": "2026-07-30T04:42:07.708747+00:00",

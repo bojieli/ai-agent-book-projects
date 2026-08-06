@@ -1241,7 +1241,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_18_genetic_testing_revelation attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_18_genetic_testing_revelation attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:37:18.715376+00:00",
@@ -1324,7 +1324,7 @@
       "response_id": "0217853610389455d839246d2861887beb3833f2300102781ebb8"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_18_genetic_testing_revelation iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_18_genetic_testing_revelation iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:38:54.103890+00:00",
@@ -1435,7 +1435,7 @@
       "response_id": "0217853611342935d839246d2861887beb3833f23001027160339"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_18_genetic_testing_revelation iteration 2",
+      "purpose": "3-9 live ReAct search planner layer3_18_genetic_testing_revelation iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:38:55.437344+00:00",
@@ -1566,7 +1566,7 @@
       "response_id": "0217853611356255d839246d2861887beb3833f23001027cccf85"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_18_genetic_testing_revelation iteration 3",
+      "purpose": "3-9 live ReAct search planner layer3_18_genetic_testing_revelation iteration 3",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:39:07.460082+00:00",
@@ -1716,7 +1716,7 @@
       "response_id": "0217853611476505d839246d2861887beb3833f23001027a72e1a"
     },
     {
-      "purpose": "3-12 grounded answer layer3_18_genetic_testing_revelation plain",
+      "purpose": "3-11 grounded answer layer3_18_genetic_testing_revelation plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:39:19.251461+00:00",
@@ -1796,7 +1796,7 @@
       "response_id": "0217853611594395d839246d2861887beb3833f230010274569b7"
     },
     {
-      "purpose": "3-12 grounded answer layer3_18_genetic_testing_revelation contextual",
+      "purpose": "3-11 grounded answer layer3_18_genetic_testing_revelation contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:39:27.936923+00:00",
@@ -1876,7 +1876,7 @@
       "response_id": "0217853611681275d839246d2861887beb3833f2300102767f7ad"
     },
     {
-      "purpose": "3-12 grounded answer layer3_18_genetic_testing_revelation dual_layer",
+      "purpose": "3-11 grounded answer layer3_18_genetic_testing_revelation dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:39:37.076126+00:00",
@@ -1956,7 +1956,7 @@
       "response_id": "0217853611772655d839246d2861887beb3833f2300102721502a"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_18_genetic_testing_revelation",
+      "purpose": "3-9/3-11 independent judge layer3_18_genetic_testing_revelation",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:39:50.424267+00:00",

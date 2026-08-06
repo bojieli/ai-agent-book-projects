@@ -4,7 +4,7 @@
     "advice": "匹配依据：待预测案件罪名“故意伤害罪”与训练集原型“故意伤害罪-prototype-0”罪名一致。但待预测案件缺失该原型的核心定义特征，包括“injury_result=重伤”“serious_injury_count”“injury_degree=重伤二级”“injury_degree=重伤”“weapon_type=卡刀”等（上述特征在原型中z值均较高，对刑期影响显著），且待预测案件的“arrest_method=被抓获”与原型中具有正向影响的“arrest_method=自首”特征不匹配。统计区间：该原型案件的刑期中位数为36.0个月，四分位区间（Q25-Q75）为24.0-38.25个月，刑期范围为9.0-96.0个月。不确定性：由于待预测案件缺失对刑期影响显著的核心伤害结果及程度相关特征，且关键情节特征（如抓捕方式）与原型存在差异，上述统计区间可能无法准确反映其实际刑期，预测结果存在较大不确定性。"
   },
   "receipt": {
-    "purpose": "3-13 held-out prototype-grounded advice cail2018-264bc811294ca62f",
+    "purpose": "3-12 held-out prototype-grounded advice cail2018-264bc811294ca62f",
     "provider": "ark",
     "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
     "started_at": "2026-07-30T04:42:10.235103+00:00",

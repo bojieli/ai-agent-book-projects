@@ -1,4 +1,4 @@
-"""离线对比：上下文化记忆块 vs 原始记忆块对『用户事实召回』的影响（实验 3-12）。
+"""离线对比：上下文化记忆块 vs 原始记忆块对『用户事实召回』的影响（实验 3-11）。
 
 本模块是一个**完全离线、无需 API/外部服务**的对照实验，用于量化本章核心论点：
 在把对话记忆块送入索引/嵌入之前，先为每个块生成一段『上下文前缀』（情境锚定），
@@ -142,7 +142,7 @@ def run_comparison(dataset_path: str, output_path: str = None, verbose: bool = T
 
     if verbose:
         print("=" * 68)
-        print("实验 3-12 · 上下文化记忆块对用户事实召回的影响（离线 BM25 代理）")
+        print("实验 3-11 · 上下文化记忆块对用户事实召回的影响（离线 BM25 代理）")
         print(f"数据集: {dataset_path}")
         print(f"记忆块: {len(chunks)}  查询: {len(queries)}")
         print("=" * 68)
@@ -226,7 +226,7 @@ def single_query(dataset_path: str, query: str, top_k: int = 3, verbose: bool = 
 
 def build_arg_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        description="离线对比上下文化记忆块 vs 原始记忆块的用户事实召回（实验 3-12，无需 API）",
+        description="离线对比上下文化记忆块 vs 原始记忆块的用户事实召回（实验 3-11，无需 API）",
     )
     p.add_argument("--dataset", default=DEFAULT_DATASET,
                    help="记忆问答对照集 JSON 路径（默认：memory_qa_eval.json）")

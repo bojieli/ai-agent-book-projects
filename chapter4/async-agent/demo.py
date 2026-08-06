@@ -1,4 +1,4 @@
-"""实验 4-5 命令行入口：带并行执行、打断/取消与状态管理的异步 Agent。
+"""实验 4-6 命令行入口：带并行执行、打断/取消与状态管理的异步 Agent。
 
 本脚本提供两类演示，用子命令区分：
 
@@ -215,7 +215,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="demo.py",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description="实验 4-5：带并行执行、打断/取消与状态管理的异步 Agent 演示。",
+        description="实验 4-6：带并行执行、打断/取消与状态管理的异步 Agent 演示。",
         epilog=(
             "示例：\n"
             "  python demo.py                     # 默认：依次运行三个离线演示（无需 API key）\n"

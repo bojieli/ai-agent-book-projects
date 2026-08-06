@@ -1,24 +1,24 @@
 {
   "schema_version": "chapter3-evidence-v1",
-  "experiment": "3-11",
-  "run_id": "20260729T205807Z-3_11-35531780",
+  "experiment": "3-10",
+  "run_id": "20260729T205807Z-3_10-35531780",
   "created_at": "2026-07-29T20:58:07.546305+00:00",
   "status": "passed",
-  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/contextual-retrieval/validation/runs/20260729T205807Z-3_11-35531780",
+  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/contextual-retrieval/validation/runs/20260729T205807Z-3_10-35531780",
   "artifacts": {
-    "evidence.json": "2a274262fd8bd4f20e69c530ee33b320683568452d240d87ca43c752707946e5",
-    "receipts.json": "cc2149ef186085443c9790b36f2eb6a639dcd392c75492f7fead148465b6b53d",
-    "manifest.json": "e3a86ff74d4fa7100c1b9f4b8f92f2974261ffd32ea41ec2964d40d048df4bf8"
+    "evidence.json": "e8d2ea403646d0ed0041a5849f38bf16d43481ea8b622a30ae9bdf774b60b11b",
+    "receipts.json": "8cf26248f9fd99206784831992e03d67895e51d92f3a2d4223ed56e22b8a6ca2",
+    "manifest.json": "fa3b31815a1155db02c1ad4057bccbbe1bd83fb2f14310b5963c0d7949ccb61c"
   },
   "inputs": [
     {
       "path": "/Users/boj/book/ai-agent-book/chapter3/contextual-retrieval/campaign.py",
-      "sha256": "77b65a9d123ab8e54b461ca8c2b4267673a90a7dacd1ac11ec597cf049fa1441",
+      "sha256": "2e61651942f869a2374f24fe40e92aaf332a5bd5abf9c3dbc951fff3a31d9e28",
       "bytes": 13270
     },
     {
       "path": "/Users/boj/book/ai-agent-book/chapter3/contextual-retrieval/compare_retrieval.py",
-      "sha256": "578d7b584293783f69a35c56857a3cbf3c696ac1cca52860060219874608cc55",
+      "sha256": "5cb1213c44c94a875e14475c3f371799dd750c00001a9ab36b49034b460f94ef",
       "bytes": 15372
     },
     {
@@ -28,7 +28,7 @@
     },
     {
       "path": "/Users/boj/book/ai-agent-book/chapter3/contextual-retrieval/evaluation/retrieval_eval.json",
-      "sha256": "6d29780ddc6a5158a3f5c840a094ecc713b9e9828241f382127dfc689402f61c",
+      "sha256": "7df53f5877ac6a8ec96aa3b2dc575e8cc556e1c9a3eb0ce28800ddd20d0f4a99",
       "bytes": 4426
     },
     {

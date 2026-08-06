@@ -1,14 +1,14 @@
 {
   "schema_version": "chapter3-evidence-v1",
-  "experiment": "3-12",
-  "run_id": "20260729T214519Z-3_12-9b99feb4",
+  "experiment": "3-11",
+  "run_id": "20260729T214519Z-3_11-9b99feb4",
   "created_at": "2026-07-29T21:45:19.745234+00:00",
   "status": "passed",
-  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/contextual-retrieval-for-user-memory/validation/runs/20260729T214519Z-3_12-9b99feb4",
+  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/contextual-retrieval-for-user-memory/validation/runs/20260729T214519Z-3_11-9b99feb4",
   "artifacts": {
-    "evidence.json": "70f3246134820e8c85bfdcbe353fffec87b5ba6a469617ab30d89f49de05bd1a",
-    "receipts.json": "ba9f42314fd40f12a9b1f7fe5c9cc99a4cc2515f637a4a1a77f506fb3dd355fc",
-    "manifest.json": "18acf70cdc84c951d88b2ebe1d423ed1254cd7102811ea3b116e41833b2ef43e"
+    "evidence.json": "5e0f54572408dcb2cbc8aed7df42234bcbc1b6e4c35ef02de3c5e2b1825e1745",
+    "receipts.json": "9c78550bdc334fd53c4ec06df7f9ad0036d1a98828c547b2d65d0052387257e0",
+    "manifest.json": "e767e44634a99a43ecdab9533b41649043e8ef136868bb28aa5f8498ba8784d2"
   },
   "inputs": [
     {
@@ -18,8 +18,8 @@
     },
     {
       "path": "/Users/boj/book/ai-agent-book/chapter3/contextual-retrieval-for-user-memory/campaign.py",
-      "sha256": "ebfd987c64c2c6ce55453601df0fac15a6fc33b2779930f2f1d9d3a46a9e74e3",
-      "bytes": 295
+      "sha256": "36b917d64e02aa3a75bbe7c323e9dfcb8d4db1a6b6fe2b8f34a6bd20e0b55d01",
+      "bytes": 294
     },
     {
       "path": "/Users/boj/book/ai-agent-book/chapter3/user-memory-evaluation/test_cases/layer1/01_bank_account_setup.yaml",

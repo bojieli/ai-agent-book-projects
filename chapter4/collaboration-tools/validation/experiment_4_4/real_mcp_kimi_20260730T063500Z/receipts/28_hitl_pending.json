@@ -1,0 +1,28 @@
+{
+  "case": "hitl_pending",
+  "tool": "mcp_list_pending_requests",
+  "arguments": {},
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "count": 1,
+    "requests": [
+      {
+        "request_id": "a4e9ce1c-5483-44ea-bf01-94f410963b85",
+        "message": "Approve publishing the Experiment 4-4 result?",
+        "context": {
+          "risk": "low",
+          "artifact": "validation-only"
+        },
+        "timestamp": "2026-07-30T06:23:16.699111",
+        "urgent": false,
+        "status": "pending",
+        "response": null,
+        "admin_notes": null
+      }
+    ],
+    "message": "Found 1 pending requests"
+  },
+  "latency_seconds": 0.007
+}

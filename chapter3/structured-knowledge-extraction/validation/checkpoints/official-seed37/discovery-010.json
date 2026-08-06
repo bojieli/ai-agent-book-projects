@@ -273,7 +273,7 @@
     ]
   },
   "receipt": {
-    "purpose": "3-13 bottom-up factor discovery batch 10",
+    "purpose": "3-12 bottom-up factor discovery batch 10",
     "provider": "ark",
     "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
     "started_at": "2026-07-29T20:43:03.942158+00:00",

@@ -4,7 +4,7 @@
     "advice": "匹配依据：待预测案件的“proceeds_use=挥霍”“booty_squandered=true”“disposal_of_stolen_property=挥霍”“fraud_target=个人”等特征与匹配原型“诈骗罪-prototype-0”的关键定义特征（z值较高）相符。该原型包含22个案件，刑期统计区间为四分位区间11.25个月至58.5个月，中位数为45.0个月。需注意，案件中“restitution_situation”“return_of_stolen_property”等特征为null，与原型中部分定义特征（如“restitution_situation=部分退赃”）存在差异，可能影响刑期预测，故最终刑期存在不确定性，可能落在上述统计区间内。"
   },
   "receipt": {
-    "purpose": "3-13 held-out prototype-grounded advice cail2018-2e21e0717140020b",
+    "purpose": "3-12 held-out prototype-grounded advice cail2018-2e21e0717140020b",
     "provider": "ark",
     "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
     "started_at": "2026-07-30T04:42:35.925809+00:00",

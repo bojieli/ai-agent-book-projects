@@ -585,7 +585,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_07_car_rental attempt 1",
+      "purpose": "3-11 live contextual prefixes layer1_07_car_rental attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:54:20.457345+00:00",
@@ -668,7 +668,7 @@
       "response_id": "02178535846068199f913e5b3ccf9b27055ed446253232952c564"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_07_car_rental iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_07_car_rental iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:01.536186+00:00",
@@ -779,7 +779,7 @@
       "response_id": "02178535850172599f913e5b3ccf9b27055ed4462532329244bcb"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_07_car_rental iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_07_car_rental iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:02.522034+00:00",
@@ -901,7 +901,7 @@
       "response_id": "02178535850271099f913e5b3ccf9b27055ed4462532329ca44ab"
     },
     {
-      "purpose": "3-12 grounded answer layer1_07_car_rental plain",
+      "purpose": "3-11 grounded answer layer1_07_car_rental plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:07.545641+00:00",
@@ -981,7 +981,7 @@
       "response_id": "02178535850773399f913e5b3ccf9b27055ed4462532329e4f905"
     },
     {
-      "purpose": "3-12 grounded answer layer1_07_car_rental contextual",
+      "purpose": "3-11 grounded answer layer1_07_car_rental contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:15.987537+00:00",
@@ -1061,7 +1061,7 @@
       "response_id": "02178535851617599f913e5b3ccf9b27055ed4462532329d274b9"
     },
     {
-      "purpose": "3-12 grounded answer layer1_07_car_rental dual_layer",
+      "purpose": "3-11 grounded answer layer1_07_car_rental dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:55:25.069300+00:00",
@@ -1141,7 +1141,7 @@
       "response_id": "02178535852525799f913e5b3ccf9b27055ed4462532329a610a3"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_07_car_rental",
+      "purpose": "3-9/3-11 independent judge layer1_07_car_rental",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T20:55:35.248419+00:00",

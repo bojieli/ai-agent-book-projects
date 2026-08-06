@@ -1,0 +1,36 @@
+{
+  "case": "real_virtual_mobile",
+  "tool": "virtual_mobile_execute",
+  "arguments": {
+    "container_name": "exp4-3-android-20260802",
+    "screenshot_path": "android-wifi-settings.png"
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "backend": "AndroidWorld Docker emulator + ADB",
+    "container": "exp4-3-android-20260802",
+    "container_image_id": "sha256:c3a39cd7d829649b4c109a5ad1f6e21e115749482b3e5d6e7de8379f6581009c",
+    "devices": [
+      "List of devices attached",
+      "emulator-5554          device product:sdk_gphone64_x86_64 model:sdk_gphone64_x86_64 device:emu64x transport_id:2"
+    ],
+    "boot_completed": "1",
+    "model": "sdk_gphone64_x86_64",
+    "api_level": "33",
+    "focus_before": "mCurrentFocus=Window{bf3f2e9 u0 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}",
+    "settings_launch_returncode": 0,
+    "settings_activity": "Activity: com.android.settings/.Settings$WifiSettingsActivity",
+    "settings_focus": "mCurrentFocus=Window{a8fe20c u0 com.android.settings/com.android.settings.Settings$WifiSettingsActivity}",
+    "home_input_returncode": 0,
+    "home_focus": "mCurrentFocus=Window{bf3f2e9 u0 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}",
+    "screenshot": {
+      "path": "/home/ubuntu/ai-agent-book/chapter4/execution-tools/validation/experiment_4_3/real_mcp_gui_20260802T093348Z/workspace/android-wifi-settings.png",
+      "bytes": 98150,
+      "sha256": "ae482ee313497235c986a5beeb6ad89f6b84f2cfda69903e629596d6fa72dba1"
+    },
+    "latency_seconds": 0.746
+  },
+  "latency_seconds": 0.749
+}

@@ -599,7 +599,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer1_14_cellphone_upgrade attempt 1",
+      "purpose": "3-11 live contextual prefixes layer1_14_cellphone_upgrade attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:57:08.401182+00:00",
@@ -682,7 +682,7 @@
       "response_id": "021785358628632beda032d6cecb5226208c9b0c90a95c95908d7"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_14_cellphone_upgrade iteration 1",
+      "purpose": "3-9 live ReAct search planner layer1_14_cellphone_upgrade iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:57:46.925412+00:00",
@@ -793,7 +793,7 @@
       "response_id": "021785358667115beda032d6cecb5226208c9b0c90a95c9d01c6a"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer1_14_cellphone_upgrade iteration 2",
+      "purpose": "3-9 live ReAct search planner layer1_14_cellphone_upgrade iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:57:48.810438+00:00",
@@ -915,7 +915,7 @@
       "response_id": "021785358669001beda032d6cecb5226208c9b0c90a95c9f84a38"
     },
     {
-      "purpose": "3-12 grounded answer layer1_14_cellphone_upgrade plain",
+      "purpose": "3-11 grounded answer layer1_14_cellphone_upgrade plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:58:00.880010+00:00",
@@ -995,7 +995,7 @@
       "response_id": "021785358681069beda032d6cecb5226208c9b0c90a95c9bb86e6"
     },
     {
-      "purpose": "3-12 grounded answer layer1_14_cellphone_upgrade contextual",
+      "purpose": "3-11 grounded answer layer1_14_cellphone_upgrade contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:58:16.255493+00:00",
@@ -1075,7 +1075,7 @@
       "response_id": "021785358696446beda032d6cecb5226208c9b0c90a95c951c552"
     },
     {
-      "purpose": "3-12 grounded answer layer1_14_cellphone_upgrade dual_layer",
+      "purpose": "3-11 grounded answer layer1_14_cellphone_upgrade dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T20:58:34.361611+00:00",
@@ -1155,7 +1155,7 @@
       "response_id": "021785358714551beda032d6cecb5226208c9b0c90a95c94dd7b0"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer1_14_cellphone_upgrade",
+      "purpose": "3-9/3-11 independent judge layer1_14_cellphone_upgrade",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T20:58:48.221143+00:00",

@@ -114,7 +114,7 @@ async def query_indexes(query: str, index_type: str = "both", top_k: int = 5,
 def main():
     parser = argparse.ArgumentParser(
         description="结构化索引工具：在统一框架下构建并查询 RAPTOR（树状层次）与 "
-                    "GraphRAG（实体关系图）索引，对应本书实验 3-8。",
+                    "GraphRAG（实体关系图）索引，对应本书实验 3-7。",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     subparsers = parser.add_subparsers(dest="command", help="要执行的子命令")

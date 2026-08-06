@@ -15,13 +15,12 @@
 | 3-4 | [dense-embedding](dense-embedding/) | ✅ | Servicio de búsqueda por similitud vectorial comparando algoritmos ANN (ANNOY y HNSW) |
 | 3-5 | [sparse-embedding](sparse-embedding/) | ✅ | Motor de búsqueda de vectores dispersos basado en BM25 construido desde cero |
 | 3-6 | [retrieval-pipeline](retrieval-pipeline/) | ✅ | Pipeline completo de recuperación densa + dispersa + reordenamiento neuronal |
-| 3-7 | [multimodal-agent](multimodal-agent/) | ✅ | Comparación de estrategias multimodales nativas, extracción de texto y análisis mediante herramientas |
-| 3-8 | [structured-index](structured-index/) | ✅ | Comparación de índices estructurados RAPTOR (árbol de abstracción recursiva) y GraphRAG (grafo de conocimiento) |
-| 3-9 | [agentic-rag](agentic-rag/) | ✅ | Comparación entre RAG no agente y RAG agente iterativo guiado por ReAct |
-| 3-10 | [agentic-rag-for-user-memory](agentic-rag-for-user-memory/) | ✅ | Gestión del historial de conversaciones del usuario mediante Agentic RAG |
-| 3-11 | [contextual-retrieval](contextual-retrieval/) | ✅ | Recuperación sensible al contexto de Anthropic generando resúmenes de prefijo para fragmentos |
-| 3-12 | [contextual-retrieval-for-user-memory](contextual-retrieval-for-user-memory/) | ✅ | Estructura de memoria de dos capas combinando JSON Cards avanzadas y RAG sensible al contexto |
-| 3-13 | [structured-knowledge-extraction](structured-knowledge-extraction/) | ✅ | Extracción de conocimiento estructurado en tres etapas: descubrimiento de factores, prototipos y recomendaciones |
+| 3-7 | [structured-index](structured-index/) | ✅ | Comparación de índices estructurados RAPTOR (árbol de abstracción recursiva) y GraphRAG (grafo de conocimiento) |
+| 3-8 | [agentic-rag](agentic-rag/) | ✅ | Comparación entre RAG no agente y RAG agente iterativo guiado por ReAct |
+| 3-9 | [agentic-rag-for-user-memory](agentic-rag-for-user-memory/) | ✅ | Gestión del historial de conversaciones del usuario mediante Agentic RAG |
+| 3-10 | [contextual-retrieval](contextual-retrieval/) | ✅ | Recuperación sensible al contexto de Anthropic generando resúmenes de prefijo para fragmentos |
+| 3-11 | [contextual-retrieval-for-user-memory](contextual-retrieval-for-user-memory/) | ✅ | Estructura de memoria de dos capas combinando JSON Cards avanzadas y RAG sensible al contexto |
+| 3-12 | [structured-knowledge-extraction](structured-knowledge-extraction/) | ✅ | Extracción de conocimiento estructurado en tres etapas: descubrimiento de factores, prototipos y recomendaciones |
 
 ## Tipos de Proyectos
 

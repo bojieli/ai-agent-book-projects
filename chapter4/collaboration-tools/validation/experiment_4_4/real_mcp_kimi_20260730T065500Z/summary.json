@@ -1,0 +1,26 @@
+{
+  "experiment": "4-4",
+  "campaign_id": "real_mcp_kimi_20260730T065500Z",
+  "generated_at": "2026-07-29T22:25:44.784008+00:00",
+  "status": "blocked",
+  "official_complete": false,
+  "gates": {
+    "real_mcp_catalog_has_required_primitives": true,
+    "two_real_context_strategies_compared": true,
+    "raw_model_usage_latency_receipts": true,
+    "sync_async_message_cancel_status_lifecycle": true,
+    "hitl_pending_response_and_conservative_timeout": true,
+    "real_human_decision": false,
+    "real_email_notification": false,
+    "real_im_notification": false,
+    "real_slack_notification": false
+  },
+  "blockers": [
+    "real_human_decision",
+    "real_email_notification",
+    "real_im_notification",
+    "real_slack_notification"
+  ],
+  "tool_call_count": 48,
+  "model_call_count": 5
+}

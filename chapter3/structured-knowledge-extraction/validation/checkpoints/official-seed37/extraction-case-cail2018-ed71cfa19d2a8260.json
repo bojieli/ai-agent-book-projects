@@ -38,7 +38,7 @@
     ]
   },
   "receipt": {
-    "purpose": "3-13 modular extraction case cail2018-ed71cfa19d2a8260",
+    "purpose": "3-12 modular extraction case cail2018-ed71cfa19d2a8260",
     "provider": "ark",
     "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
     "started_at": "2026-07-30T04:32:52.081710+00:00",

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""实验 3-10 离线演示：智能体化记忆检索 vs. 朴素单次检索
+"""实验 3-9 离线演示：智能体化记忆检索 vs. 朴素单次检索
 
 本脚本完全离线运行（不需要 port 4242 检索服务，也不需要任何 LLM API Key），
-用来直观展示书中实验 3-10 的核心论点：
+用来直观展示书中实验 3-9 的核心论点：
 
   把用户的跨会话对话历史当作知识库、赋予 Agent「多轮迭代检索」能力后，
   它能主动发现单次检索会遗漏的关键信息，从而在「第二层次·多会话检索」
@@ -143,7 +143,7 @@ def run_demo(args) -> Dict:
         test_cases_dir = (Path(__file__).parent / test_cases_dir).resolve()
 
     console.print(Panel.fit(
-        "[bold cyan]实验 3-10 离线演示[/bold cyan]\n"
+        "[bold cyan]实验 3-9 离线演示[/bold cyan]\n"
         "智能体化记忆检索 vs. 朴素单次检索（本地 BM25，无需 API / port 4242）",
         border_style="cyan"))
 
@@ -258,7 +258,7 @@ def run_demo(args) -> Dict:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="实验 3-10 离线演示：智能体化记忆检索 vs. 朴素单次检索（本地 BM25，无需 API）",
+        description="实验 3-9 离线演示：智能体化记忆检索 vs. 朴素单次检索（本地 BM25，无需 API）",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("--test-id", default=DEFAULT_TEST_ID,

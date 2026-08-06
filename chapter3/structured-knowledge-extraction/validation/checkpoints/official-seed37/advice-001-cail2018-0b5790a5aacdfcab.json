@@ -4,7 +4,7 @@
     "advice": "匹配依据为案件的盗窃方法（趁人不备）、盗窃目标（手机）、利用特殊便利情况（无）、盗窃金额及盗窃次数等关键特征与训练原型“盗窃罪-prototype-4”的核心定义特征高度匹配（匹配距离0.1839）。该原型包含53个案件，统计刑期区间为6个月（Q25）至9个月（Q75），中位数为7个月。需注意，案件中存在的坦白情节（truthful_confession=true）未被该原型的定义特征显著纳入，且盗窃地点（网吧）与原型部分特征（户外）存在差异，可能对刑期评估产生不确定性。"
   },
   "receipt": {
-    "purpose": "3-13 held-out prototype-grounded advice cail2018-0b5790a5aacdfcab",
+    "purpose": "3-12 held-out prototype-grounded advice cail2018-0b5790a5aacdfcab",
     "provider": "ark",
     "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
     "started_at": "2026-07-30T04:41:43.938034+00:00",

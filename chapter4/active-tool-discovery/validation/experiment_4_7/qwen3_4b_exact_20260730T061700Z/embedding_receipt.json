@@ -1,0 +1,12 @@
+{
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "backend": "local-transformers-mean-pooling",
+  "device": "cpu",
+  "local_files_only": true,
+  "catalog_text_count": 126,
+  "texts_sha256": "3da0897f88acbd0d32a3a77578bd135a91d631a8b85775ff12232eb5aafe3b9d",
+  "cache_path": "/Users/boj/book/ai-agent-book/chapter4/active-tool-discovery/validation/experiment_4_7/qwen3_4b_exact_20260730T061700Z/index/embeddings-all-MiniLM-L6-v2-3da0897f88acbd0d32a3.json",
+  "cache_sha256": "23051857081c61e9dfc184d868fdaecd0bc816360133eeb951cbb6593fdda9c9",
+  "vector_count": 126,
+  "vector_dimensions": 384
+}

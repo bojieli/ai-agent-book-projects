@@ -846,7 +846,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer2_06_multiple_insurance_policies attempt 1",
+      "purpose": "3-11 live contextual prefixes layer2_06_multiple_insurance_policies attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:04:14.619493+00:00",
@@ -929,7 +929,7 @@
       "response_id": "0217853590548518c659c8327facc063a7d5497326797b252fda9"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_06_multiple_insurance_policies iteration 1",
+      "purpose": "3-9 live ReAct search planner layer2_06_multiple_insurance_policies iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:05:41.581055+00:00",
@@ -1040,7 +1040,7 @@
       "response_id": "0217853591417698c659c8327facc063a7d5497326797b2c172f8"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer2_06_multiple_insurance_policies iteration 2",
+      "purpose": "3-9 live ReAct search planner layer2_06_multiple_insurance_policies iteration 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:05:42.949901+00:00",
@@ -1179,7 +1179,7 @@
       "response_id": "0217853591431388c659c8327facc063a7d5497326797b272c37e"
     },
     {
-      "purpose": "3-12 grounded answer layer2_06_multiple_insurance_policies plain",
+      "purpose": "3-11 grounded answer layer2_06_multiple_insurance_policies plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:05:53.932017+00:00",
@@ -1259,7 +1259,7 @@
       "response_id": "0217853591541208c659c8327facc063a7d5497326797b2653309"
     },
     {
-      "purpose": "3-12 grounded answer layer2_06_multiple_insurance_policies contextual",
+      "purpose": "3-11 grounded answer layer2_06_multiple_insurance_policies contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:06:19.329049+00:00",
@@ -1339,7 +1339,7 @@
       "response_id": "0217853591795168c659c8327facc063a7d5497326797b2df5ed5"
     },
     {
-      "purpose": "3-12 grounded answer layer2_06_multiple_insurance_policies dual_layer",
+      "purpose": "3-11 grounded answer layer2_06_multiple_insurance_policies dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:06:36.757505+00:00",
@@ -1419,7 +1419,7 @@
       "response_id": "0217853591969458c659c8327facc063a7d5497326797b2a8c98d"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer2_06_multiple_insurance_policies",
+      "purpose": "3-9/3-11 independent judge layer2_06_multiple_insurance_policies",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:06:59.246161+00:00",

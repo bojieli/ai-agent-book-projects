@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Canonical live plain-vs-contextual retrieval campaign (Experiment 3-11)."""
+"""Canonical live plain-vs-contextual retrieval campaign (Experiment 3-10)."""
 
 from __future__ import annotations
 
@@ -87,7 +87,7 @@ def prefix_one(args: argparse.Namespace, chunk: Dict[str, Any], source: Dict[str
     client = OpenAI(api_key=os.environ["ARK_API_KEY"], base_url=args.endpoint, timeout=args.timeout, max_retries=3)
     recorder = ChatRecorder(client, "ark", args.endpoint)
     response = recorder.create(
-        purpose=f"3-11 live contextual prefix {chunk['chunk_id']}",
+        purpose=f"3-10 live contextual prefix {chunk['chunk_id']}",
         model=args.context_model,
         messages=[
             {
@@ -269,7 +269,7 @@ def main() -> int:
     }
     manifest = write_campaign_evidence(
         HERE,
-        "3-11",
+        "3-10",
         evidence,
         receipts,
         input_paths=[HERE / "campaign.py", HERE / "compare_retrieval.py", corpus_path, eval_path, *[data["path"] for data in docs.values()]],

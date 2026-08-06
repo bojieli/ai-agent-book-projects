@@ -1,0 +1,65 @@
+{
+  "schema_version": "chapter3-evidence-v1",
+  "experiment": "4-2",
+  "run_id": "20260729T185433Z-4_2-e028c9db",
+  "created_at": "2026-07-29T18:54:33.367744+00:00",
+  "status": "passed",
+  "run_dir": "/Users/boj/book/ai-agent-book/chapter4/multimodal-agent/validation/runs/20260729T185433Z-4_2-e028c9db",
+  "artifacts": {
+    "evidence.json": "024358e7b58266eedbedda3cc880a61462c119a89c58e475f4c007dbcb8ff144",
+    "receipts.json": "2aa961a1f7527417dd0d25ac6e542aaad9dc2ffaa7b40a4a450cb5fffe86ceac",
+    "manifest.json": "1a9cc7bfd48717e73a03ebbde7fd786c7da2811a15267715a3794c0f1220362e"
+  },
+  "inputs": [
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter4/multimodal-agent/campaign.py",
+      "sha256": "6f8162a0e124cef1acada4fbfadc6a1427aa487be24670aaceba2d668820ee3c",
+      "bytes": 16104
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter4/multimodal-agent/create_sample.py",
+      "sha256": "1f4fcd0e119a76a74c06744a585d31bc4bd4f755f813f8b2518f77127eaa1e72",
+      "bytes": 4846
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter4/multimodal-agent/test_files/sample_chart.png",
+      "sha256": "eaf8ac53fbc65a4e6ce0611d441cd12ddd2ed48ef8a727a9d6f22aef70605f39",
+      "bytes": 38417
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter4/multimodal-agent/test_files/sample_report.pdf",
+      "sha256": "db4828a20a12ad70dab5c196d23e4fa407f75c4e3cff2bda22c401de65cb9c2e",
+      "bytes": 46368
+    }
+  ],
+  "summary": {
+    "native-multimodal": {
+      "cases": 4,
+      "exact_accuracy": 1.0,
+      "judge_accuracy": 1.0,
+      "mean_latency_ms": 8011.01425
+    },
+    "extract-to-text": {
+      "cases": 4,
+      "exact_accuracy": 0.0,
+      "judge_accuracy": 0.0,
+      "mean_latency_ms": 10867.427
+    },
+    "tool-on-demand": {
+      "cases": 4,
+      "exact_accuracy": 1.0,
+      "judge_accuracy": 1.0,
+      "mean_latency_ms": 29794.60875
+    }
+  },
+  "acceptance": {
+    "same_two_questions_all_paradigms_and_artifacts": true,
+    "png_and_pdf_used": true,
+    "chart_answers_absent_from_pdf_body_text": true,
+    "real_native_vision_calls": true,
+    "tool_selected_on_demand": true,
+    "real_tool_vision_calls": true,
+    "external_moonshot_judge": true,
+    "all_calls_checkpointed": true
+  }
+}

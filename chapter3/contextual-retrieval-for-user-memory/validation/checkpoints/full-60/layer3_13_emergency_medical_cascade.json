@@ -1065,7 +1065,7 @@
   },
   "receipts": [
     {
-      "purpose": "3-12 live contextual prefixes layer3_13_emergency_medical_cascade attempt 1",
+      "purpose": "3-11 live contextual prefixes layer3_13_emergency_medical_cascade attempt 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:32:34.102018+00:00",
@@ -1148,7 +1148,7 @@
       "response_id": "0217853607543322f9349bea7dcfdfeb5ceeba9779d3bab5e36f7"
     },
     {
-      "purpose": "3-12 live contextual prefixes layer3_13_emergency_medical_cascade attempt 2",
+      "purpose": "3-11 live contextual prefixes layer3_13_emergency_medical_cascade attempt 2",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:33:54.611724+00:00",
@@ -1231,7 +1231,7 @@
       "response_id": "0217853608348002f9349bea7dcfdfeb5ceeba9779d3bab5f5ef6"
     },
     {
-      "purpose": "3-10 live ReAct search planner layer3_13_emergency_medical_cascade iteration 1",
+      "purpose": "3-9 live ReAct search planner layer3_13_emergency_medical_cascade iteration 1",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:34:07.409596+00:00",
@@ -1374,7 +1374,7 @@
       "response_id": "0217853608475982f9349bea7dcfdfeb5ceeba9779d3bab6adf3e"
     },
     {
-      "purpose": "3-12 grounded answer layer3_13_emergency_medical_cascade plain",
+      "purpose": "3-11 grounded answer layer3_13_emergency_medical_cascade plain",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:34:10.940265+00:00",
@@ -1454,7 +1454,7 @@
       "response_id": "0217853608511302f9349bea7dcfdfeb5ceeba9779d3bab569681"
     },
     {
-      "purpose": "3-12 grounded answer layer3_13_emergency_medical_cascade contextual",
+      "purpose": "3-11 grounded answer layer3_13_emergency_medical_cascade contextual",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:34:49.612001+00:00",
@@ -1534,7 +1534,7 @@
       "response_id": "0217853608898012f9349bea7dcfdfeb5ceeba9779d3bab4ac1e5"
     },
     {
-      "purpose": "3-12 grounded answer layer3_13_emergency_medical_cascade dual_layer",
+      "purpose": "3-11 grounded answer layer3_13_emergency_medical_cascade dual_layer",
       "provider": "ark",
       "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
       "started_at": "2026-07-29T21:35:27.808582+00:00",
@@ -1614,7 +1614,7 @@
       "response_id": "0217853609279982f9349bea7dcfdfeb5ceeba9779d3babf17856"
     },
     {
-      "purpose": "3-10/3-12 independent judge layer3_13_emergency_medical_cascade",
+      "purpose": "3-9/3-11 independent judge layer3_13_emergency_medical_cascade",
       "provider": "moonshot",
       "endpoint": "https://api.moonshot.cn/v1",
       "started_at": "2026-07-29T21:36:05.724220+00:00",
