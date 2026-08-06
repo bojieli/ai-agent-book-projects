@@ -187,7 +187,7 @@ Algı araçları sıklıkla, Agent'ın işleyebileceğinden çok daha fazla bilg
 
 Görüntüleri, videoyu, sesi ve PDF'leri anlayabilmek için Agent'ın çok modlu algıya ihtiyacı vardır. Üç yol vardır: modelin yerel çok modlu işlemesi, içeriği otomatik olarak metne çıkarmak ve çok modlu modeli araç olarak sarmalamak.
 
-Yerel işleme en y��ksek yetenek tavanına sahiptir; Vision Transformer gibi kodlayıcılar farklı verileri ortak bir anlamsal uzaya eşler. Metin çıkarma, yerel desteği olmayan modeller ve metin ağırlıklı PDF'ler için daha az token kullanır, ancak düzeni, grafikleri ve görüntüleri kaybeder. Ana model çok modlu değilse `analyze_image`, `analyze_pdf` ve `analyze_audio` gibi araçlar dosyayı ve soruyu uzman bir modele aktararak bağlamda yalnızca kısa bir sonuç tutabilir.
+Yerel işleme en yüksek yetenek tavanına sahiptir; Vision Transformer gibi kodlayıcılar farklı verileri ortak bir anlamsal uzaya eşler. Metin çıkarma, yerel desteği olmayan modeller ve metin ağırlıklı PDF'ler için daha az token kullanır, ancak düzeni, grafikleri ve görüntüleri kaybeder. Ana model çok modlu değilse `analyze_image`, `analyze_pdf` ve `analyze_audio` gibi araçlar dosyayı ve soruyu uzman bir modele aktararak bağlamda yalnızca kısa bir sonuç tutabilir.
 
 ## Yürütme Araçları
 
