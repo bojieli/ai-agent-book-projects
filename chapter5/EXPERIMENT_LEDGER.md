@@ -18,7 +18,8 @@ a complete experiment and is reported as such.
 | 5-9 | `dynamic-form/validation/runs/20260729T212542Z-5_9-live-browser/manifest.json` | passed | true | supported | `6e6b2cc9c31071c880f2c66a7f172d4933a1ee2f51ac7206b89a1cd89dca08a7` |
 | 5-10 | `erp-agent/validation/runs/20260729T210334Z-5_10-postgresql/manifest.json` | passed | true | supported | `5b167f34d18cca867b6fa5fe2d61cd1bf4324f618d6e21221fe9131e56aaed16` |
 | 5-11 | `conversational-ui/validation/runs/20260729T212933Z-5_11-hmr/manifest.json` | passed | true | supported | `34d6d8f325ac598b8e55a8a93763dda2bdb019020aa0cf67aa421e861be9279c` |
-| 5-12 | `agent-creator/runs/exp5-12-kimi-k3-20260730-v1/comparison.json` | passed | true | strict joint advantage not observed | `dee9c74c6b89d2563cd78752b75e96293a33159439d87133add220f7d80782ed` |
+| 5-12 | `permission-embedded-data-objects/README.md` and `demo.py` | available | false | data-layer authorization and integrity remain enforceable under dynamic application code | — |
+| 5-13 | `agent-creator/runs/exp5-12-kimi-k3-20260730-v1/comparison.json` | passed | true | strict joint advantage not observed | `dee9c74c6b89d2563cd78752b75e96293a33159439d87133add220f7d80782ed` |
 
 ## Contract observations
 
@@ -64,8 +65,17 @@ a complete experiment and is reported as such.
 - **5-11:** three real-model customization turns changed color, typography,
   layout and component placement in a React/FastAPI app; Vite HMR was observed
   in-browser after every source mutation and a production build passed.
-- **5-12:** both generated Agents passed structure, compilation, tests,
+- **5-12:** the copied PEDO implementation includes a deterministic PostgreSQL
+  demo and core/scenario tests. A live Agent-generated-code campaign remains an
+  optional reader run rather than completed evidence.
+- **5-13:** both generated Agents passed structure, compilation, tests,
   standard tool protocol, real Kimi K3 tasks and multi-turn state gates. The
   template arm tied deterministic quality (39/39 each) while using 1,181
   creator tokens versus 381,814 and 24.7 seconds versus 5,412.8 seconds; it was
   more efficient but not strictly higher quality.
+
+The retained 5-13 comparison directory is named `exp5-12-...` because that
+campaign ran before the manuscript renumbered the Agent-creator experiment.
+The protocol, source code, chapter text, and current index all identify it as
+Experiment 5-13; the historical directory name is intentionally preserved so
+the evidence hash and provenance remain stable.
