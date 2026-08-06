@@ -2,13 +2,12 @@
 Chess game tools for game management and analysis.
 Based on AWorld MCP server implementation.
 """
-import json
 import logging
 import traceback
 from typing import Dict, Any
 
 import chess
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 logger = logging.getLogger(__name__)
@@ -132,7 +131,7 @@ async def load_fen(fen_string: str) -> Dict[str, Any]:
         
         return {
             "success": True,
-            "message": f"Loaded position from FEN",
+            "message": "Loaded position from FEN",
             "board_state": state.model_dump()
         }
         
@@ -159,7 +158,6 @@ async def make_move(move_str: str) -> Dict[str, Any]:
     try:
         global _game_board
         
-        fen_before = _game_board.fen()
         move = None
         
         # Try parsing as UCI first, then SAN
@@ -168,7 +166,7 @@ async def make_move(move_str: str) -> Dict[str, Any]:
         except ValueError:
             try:
                 move = _game_board.parse_san(move_str)
-            except ValueError as e:
+            except ValueError:
                 raise ValueError(f"Invalid move format: {move_str}")
         
         if move not in _game_board.legal_moves:
@@ -285,6 +283,7 @@ async def get_game_status() -> Dict[str, Any]:
     try:
         state = _get_current_board_state()
         
+        is_draw = state.is_stalemate or state.is_insufficient_material or (state.is_game_over and not state.is_checkmate)
         status_message = "Game in progress"
         winner = None
         
@@ -295,6 +294,8 @@ async def get_game_status() -> Dict[str, Any]:
             status_message = "Stalemate! The game is a draw"
         elif state.is_insufficient_material:
             status_message = "Draw by insufficient material"
+        elif state.is_game_over:
+            status_message = "Game over! The game is a draw"
         elif state.is_check:
             status_message = f"{state.turn.capitalize()} is in check"
         
@@ -304,7 +305,7 @@ async def get_game_status() -> Dict[str, Any]:
             "is_check": state.is_check,
             "is_checkmate": state.is_checkmate,
             "is_stalemate": state.is_stalemate,
-            "is_draw": state.is_stalemate or state.is_insufficient_material,
+            "is_draw": is_draw,
             "winner": winner,
             "current_turn": state.turn
         }
