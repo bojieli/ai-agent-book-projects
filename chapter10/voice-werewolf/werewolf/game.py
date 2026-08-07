@@ -313,8 +313,8 @@ class Judge:
         else:
             self.private_send(witch, "女巫夜间信息", f"第{self.round_no}回合是平安夜（无人被狼人击杀，或你无从得知）")
 
-        # 毒药：是否毒一人
-        if self.witch_poison_available:
+        # 毒药：被狼人击杀且未救活的女巫今晚无法使用毒药
+        if self.witch_poison_available and not (killed == witch.name and not saved):
             candidates = [p.name for p in self.alive() if p.name != witch.name]
             dec = witch.choose_target(
                 "你是否使用【毒药】毒死一名你怀疑是狼人的玩家？（毒则填玩家名，不毒填 none）",
