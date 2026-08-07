@@ -235,7 +235,7 @@ class Judge:
         tally = Counter(votes)
         top = tally.most_common()
         best = [n for n, c in top if c == top[0][1]]
-        killed = votes[0] if len(best) > 1 else top[0][0]
+        killed = next((v for v in votes if v in best), best[0]) if len(best) > 1 else top[0][0]
         # 把「今晚狼人共识」写进狼人共享上下文（只有狼人看得到）
         self.wolves_send("狼人夜间共识", f"第{self.round_no}回合夜晚，狼人决定击杀 {killed}")
         self._print_private(
