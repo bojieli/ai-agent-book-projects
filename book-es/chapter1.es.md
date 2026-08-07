@@ -468,7 +468,7 @@ Las siguientes preguntas de reflexión tienen como objetivo ayudar a los lectore
 ## Preguntas de Reflexión
 
 1. ★★ Si solo pudieras añadir una capacidad a un sistema de Agente (un modelo más fuerte, un contexto más rico o más herramientas), ¿cuál elegirías? ¿En qué condiciones cambiaría tu elección?
-2. ★★★ En el bucle ReAct, cada llamada al LLM recibe la trayectoria completa, por lo que el costo crece cuadráticamente con la longitud de la trayectoria. ¿Se puede romper este crecimiento cuadrático sin perder información crítica?
+2. ★★★ En un bucle ReAct, el volumen acumulado de lecturas de caché crece aproximadamente de forma cuadrática con el número de rondas. ¿Cómo puede reducirse este crecimiento?
 3. ★★ El paradigma "El Modelo como Agente" significa que los modelos son cada vez más autónomos en sus decisiones de llamadas a herramientas. Sin embargo, este capítulo sostiene que la importancia de la ingeniería de Harness está aumentando. ¿Cómo pueden coexistir estas dos tendencias?
 4. ★★ En el experimento de ablación, la ausencia de "retroalimentación de resultados de herramientas" hizo que el Agente cayera en un bucle infinito. En un entorno de producción, ¿qué otras situaciones podrían causar que un Agente entre en un bucle? ¿Qué mecanismos de detección y terminación diseñarías?
 5. ★ Este capítulo analizó cinco productos de Agentes en tres dimensiones: contexto de trabajo, interfaces de acción y estrategia. Elige un producto de IA que uses a diario, analízalo en esas tres dimensiones y juzga si su arquitectura es adecuada.
