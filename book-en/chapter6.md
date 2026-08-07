@@ -10,17 +10,17 @@ When building an Agent system, developers face numerous design choices that ofte
 - What constraints need to be added to the Harness?
 - How should evaluation results be transformed into learning signals for the Agent's continuous evolution?
 
-Evaluation puts these decisions on a scientific footing. Through systematic comparative experiments (change one variable at a time and observe the effect) and ablation experiments (disable one component at a time and observe how overall performance changes), you can distinguish genuine capability gains from superficial fluctuations — and avoid being penny wise and pound foolish. Software engineering has a saying: you can't improve what you don't measure. Without a repeatable evaluation system, an Agent can only be iterated on intuition.
+Evaluation puts these decisions on a scientific footing. Through systematic comparative experiments (change one variable at a time and observe the effect) and ablation experiments (disable one component at a time and observe how overall performance changes), you can distinguish genuine capability gains from superficial fluctuations—and avoid being penny wise and pound foolish. Software engineering has a saying: you can't improve what you don't measure. Without a repeatable evaluation system, an Agent can only be iterated on intuition.
 
 From the perspective of Harness engineering introduced in Chapter 1, evaluation plays the core role of "verification" within the Harness. A key insight is: **the object of evaluation should not be just the model, but the combination of the model and the Harness**. The same model can perform wildly differently in different Harnesses — some teams have significantly improved the same model's performance on terminal tasks purely by optimizing the Harness (see Chapter 5). So when an Agent evaluates poorly, the fix may not be a different model but a better Harness component (prompts, tool design, feedback loops). A sound evaluation system should be able to tell apart two fundamentally different problems: "insufficient model capability" and "Harness design flaws." **A common way to tell them apart is the model swap experiment**: fix the Harness, swap in a stronger or weaker model, and watch how much the score moves. If a stronger model doesn't raise the score, the bottleneck is the Harness. If a weaker model tanks the score and results swing sharply with model capability, the most direct reading is that the model itself is the bottleneck and current performance is dominated by the model. Whether this is because the task is inherently hard or because the Harness relies too heavily on the model's prior knowledge requires further analysis. Note that this differs from the ablation experiment above: ablation **disables a Harness component** to see how overall performance changes; model swapping **fixes the Harness and changes only the model**. The former locates which part inside the Harness matters; the latter tells you whether the bottleneck is the model or the Harness.
 
-An evaluation system is worth even more in an era of rapid model evolution. Models keep improving, but a new model that scores higher on public benchmarks will not necessarily do better on your task — it may even regress (perform worse than the old version in some respects). Only a full run on your own evaluation dataset lets you make a data-driven upgrade decision. A solid evaluation system even makes "building products for future models" a viable strategy: if the current model isn't good enough for commercial deployment, finish the product anyway, build the evaluation set, track each new model's performance, and launch the moment one clears the bar.
+An evaluation system is worth even more in an era of rapid model evolution. Models keep improving, but a new model that scores higher on public benchmarks will not necessarily do better on your task—it may even regress (perform worse than the old version in some respects). Only a full run on your own evaluation dataset lets you make a data-driven upgrade decision. A solid evaluation system even makes **"building products for future models"** a viable strategy: if the current model isn't good enough for commercial deployment, finish the product anyway, build the evaluation set, track each new model's performance, and launch the moment one clears the bar.
 
 > **Chapter Guide**
 >
-> This chapter builds a complete evaluation system on three levels. The first level is the **Evaluation Environment** ("where to test"): how to set up an automated, reproducible testing environment, covering two paradigms: tool calling and human-computer interaction. The second level is **Evaluation Methods** ("how to judge"): from dataset design principles and the evaluation metrics system (what to measure), to LLM-as-a-Judge (using large language models as judges) for automated evaluation, and then to pairwise comparison and model ranking. The third level is **Evaluation-Driven Decision Making** ("what to do after testing"): turning evaluation results into actionable guidance for model selection, architecture optimization, and continuous iteration, with statistical significance to judge whether an observed score difference is real. The chapter also covers observability and the internal evaluation infrastructure of production-grade Agents, and closes with the simulation environments that connect to post-training in Chapter 7.
+> This chapter builds a complete evaluation system on three levels. The first level is **Evaluation Design**: to avoid discussing tools and data first and defining "success" last, the chapter starts by defining what counts as success, distinguishing the capability ceiling of technical wonders from the consecutive reliability required by business scenarios; it then develops evaluation environments and datasets (where to test and what to test). The second level is **Evaluation Methods** (how to judge): LLM-as-a-Judge, pairwise comparison, and model ranking. The third level is **Evaluation-Driven Decision Making** (what to do after testing): turning results into actionable guidance for model selection, architecture optimization, and continuous iteration, with statistical significance to judge whether an observed score difference is real. The chapter also covers observability and the internal evaluation infrastructure of production-grade Agents, and closes with the simulation environments that connect to post-training in Chapter 7.
 >
-> The idea running through the whole chapter: **an evaluation system's primary value is not scoring the current system, but letting you keep up with model evolution quickly and reliably.** When a stronger or cheaper model ships, a team with a robust evaluation system can decide within hours whether to switch; a team without one can only trust intuition or wait for community feedback — and in the fiercely competitive Agent market, that difference in speed can decide who wins.
+> The idea running through the whole chapter: **an evaluation system's primary value is not scoring the current system, but letting you keep up with model evolution quickly and reliably.** When a stronger or cheaper model ships, a team with a robust evaluation system can decide within hours whether to switch; a team without one can only trust intuition or wait for community feedback. In the fiercely competitive Agent market, that difference in speed can decide who wins.
 
 ![Figure 6-1: Three Levels of the Evaluation System](images/fig6-1.svg)
 
@@ -56,13 +56,50 @@ Table 6-1 Rubric Scoring Example for Customer Service Refund Task
 | Operational Correctness | Is the refund amount and order number correct? | 4 | Correctly queried and initiated a ¥299 full refund |
 | Policy Compliance | Does it follow the 7-day refund policy? | 4 | Order is within the refund period, complies with policy |
 | Information Completeness | Does it provide the amount, arrival time, and refund ID? | 4 | All three key pieces of information were provided |
-| Hallucination Detection (Veto Item) | Does it fabricate non-existent information? | Pass | All information comes from tool outputs |
+| Hallucination Detection (Veto) | Does it fabricate non-existent information? | Pass | All information comes from tool outputs |
 
-Hallucination is listed as a **veto item** rather than a graded scoring dimension because it is orthogonal to quality — a fluent, detailed, and polite response containing false information is far more harmful to the user than a brief but accurate one. (For the general design of the veto mechanism, see the "Four Rubric Principles" section later.)
+Hallucination is listed as a **veto** rather than a graded scoring dimension because it is orthogonal to quality. A fluent, detailed, and polite response containing false information is far more harmful to the user than a brief but accurate one.
 
-This test case passed. But a good evaluation doesn't just test success scenarios; it also probes boundaries and traps — when a user wants to return an order from 15 days ago (beyond the refund period), can the Agent correctly refuse? When a user claims "a customer service representative already approved the refund," will the Agent believe it without a system record? These boundary scenarios are what truly separate strong Agents from weak ones.
+This test case passed. But a good evaluation doesn't just test success scenarios; it also probes boundaries and traps—when a user wants to return an order from 15 days ago (beyond the refund period), can the Agent correctly refuse? When a user claims "a customer service representative already approved the refund," will the Agent believe it without a system record? These boundary scenarios are what truly separate strong Agents from weak ones.
 
 The process above — defining test cases, running the Agent, scoring with a Rubric, and analyzing results — is the basic skeleton of evaluation. The rest of this chapter fleshes out the design of each step.
+
+## Evaluation Metrics System
+
+Before building an environment or dataset, define what "success" means: is one workable path enough, or must every run be correct? Different definitions can reverse the engineering decision. This section establishes the vocabulary used by the rest of the chapter.
+
+### Technical Wonders: Capability Ceilings with Pass@k
+
+Many current models and Agents operate in a **technical-wonder** phase: after many attempts, a long time budget, and human selection, one breakthrough trajectory is enough to show that a task is possible in principle. That is the logic of **Pass@k**—run the same task $k$ times and count it as passed if at least one attempt passes; for continuous scores, keep the best attempt as **Best@k**.
+
+Anthropic's long-running-Agent examples—writing a C compiler over a week, searching for a counterexample to an important conjecture, or repeatedly auditing open-source software until a decades-old vulnerability is found—illustrate this capability ceiling. Research discovery, vulnerability hunting, and open-ended creation can all benefit from selecting the best of $k$ candidate trajectories.
+
+Manus made this ceiling visible by giving people a virtual computer on which an Agent could work for half an hour or an hour. OpenClaw made the experience feel more like a person who can be assigned work through messaging, access files and online services, report progress, ask for information, and wake itself to process mail. Early versions were expensive and unreliable on any single attempt, but their generality made high Pass@k possible—and the resulting technical wonders spread widely on social networks.
+
+### Business Reliability: Focus on Pass^k
+
+Business systems usually care about the opposite: no mistake across repeated attempts. We call this **Pass^k** (read "Pass consecutive k"): run a task consecutively $k$ times, require every run to pass, and veto any safety, compliance, or hallucination violation. It asks whether an Agent can deliver reliably, not whether it can occasionally create a miracle.
+
+If runs are independent and the single-run success rate is $p$,
+
+$$
+\mathrm{Pass@k}=1-(1-p)^k,\qquad
+\mathrm{Pass}^{k}=p^k.
+$$
+
+At $p=0.6$ and $k=5$, Pass@5 is about 99.0%, while Pass consecutive@5 is about 7.8%. The first is useful for capability exploration; the second is closer to the reliability required for payments, refunds, permission changes, and production deployment. Reports must state whether $k$ means independent samples of one task or consecutive production tasks. Side-effecting actions must be sampled in a sandbox or rollback-capable environment, with every failure counted.
+
+### Process Metrics: From Black Box to White Box
+
+Final outcomes alone are insufficient. **Action validity and authorization rate** measures the share of valid, authorized operations; **tool-call correctness** additionally asks whether arguments are semantically appropriate. **Path efficiency** covers steps, redundant actions, and backtracking against a human or heuristic baseline. **Retrieval coverage** asks whether the Agent explored enough of the information space; **cost and latency** track requests, input/output tokens, KV-cache reuse, tool time, and network delay.
+
+### Safety, Robustness, and Trajectory Coverage
+
+Safety and compliance follow a **zero-tolerance** rule for sensitive operations, data leakage, and prohibited content: one serious violation vetoes the evaluation. Robustness covers seed sensitivity, UI changes, API jitter, and stale-memory interference. Evaluation must cover both the execution **trajectory** (what the Agent said and did) and the final **outcome** (what the system became); a booking claim in the dialogue is not proof that a booking exists.
+
+### Human Spot Checks and Adversarial Review
+
+Regularly sample successes, failures, and borderline scores and audit the judge's rationale. Before deploying LLM judges at scale, calibrate against a human-labeled gold set of roughly 100–200 cases and require a preset agreement threshold such as Cohen's kappa above 0.7; recalibrate whenever the judge or Rubric changes. Red-team hidden errors, keyword stuffing, and judge-specific exploits, and use multiple independent judges with human review for serious disagreement.
 
 ## Automated Evaluation Environment
 
@@ -83,6 +120,8 @@ An evaluation environment consists of five elements — the following sections w
 **Interaction Protocol**: Specifies the interaction mode and termination conditions.
 
 ![Figure 6-2: Tool-Calling and Human-Computer Interaction Evaluation Environments](images/fig6-2.svg)
+
+Depending on the task, evaluation environments can be roughly divided into tool-calling and human-computer interaction types.
 
 ### Tool-Calling Evaluation Environment
 
@@ -340,6 +379,26 @@ rubric:
 
 **Good Rubric vs. Bad Rubric**: Each scoring level above specifies verifiable, concrete behavior ("Correctly answers Dr. Chen") rather than descriptions that cannot be judged objectively, like "demonstrates a deep understanding of memory." The veto item sets the bottom line: even if every other dimension scores full marks, a single instance of hallucination results in an automatic zero.
 
+### Failure Attribution: Locate the First Error in a Trajectory
+
+End-to-end evaluation often says only "pass" or "fail". To make results drive fixes, perform **failure attribution** for every failed trajectory: record the main error class, the first step at which unacceptable behavior appeared, the relevant tool call or model output, and evidence that can be audited. Attribute the first error that sent the task off course; later errors are often just the chain reaction.
+
+Production bad cases usually come from three signals: an explicit user correction ("do not do that"), a downvote or other negative feedback, or a later state check, rule verifier, or LLM judge showing that the Agent did something it should not have done. LLMs can help with this work, but cannot replace careful human reading because failure attribution often reveals product problems, not only technical bugs.
+
+An initial Coding-Agent taxonomy can include missing process or repository rules, tool-call and format errors, abnormal model termination, and task-completion or logic failures. The first violating action—not the final error message—should be recorded. Store a structured JSON or YAML attribution with step number, tool name, observation evidence, root cause versus consequence, recoverability, and confidence, together with the task goal, environment state, version identities, and complete trajectory.
+
+### End-to-End and Trajectory-Prefix Regression Tasks
+
+Once the first error is known, turn the repair target into a repeatable **regression task**. End-to-end regression starts from the initial state and user request, runs the whole workflow, and checks final state, required output, and safety. A **trajectory-prefix regression task** freezes the context, conversation, tool returns, and environment state just before the first error, then tests only the next one or few observable actions. It is cheaper and isolates one decision boundary, so it is especially important for high-reliability production Agents.
+
+Prefix tasks should define an **acceptable action set**, not one canonical answer: reading repository rules, asking the user, or refusing a dangerous operation may all be valid, while prohibited actions are listed explicitly. Process omissions become end-to-end tasks with Plans, required documents, and acceptance tests; tool errors become prefix tasks that test formatting, escaping, or tool choice; abnormal execution becomes truncation, timeout, and tool-failure recovery; and completion or logic errors become multi-goal and "not yet proved impossible" cases. The first error is also a possible process-supervision signal for Chapter 7, but evaluation and training data must remain isolated.
+
+> **Experiment 6-5 ★★: Trajectory-Prefix Boundary Evaluation with Multiple Encodings**
+>
+> This experiment supplies the Agent with known user memory, the current instruction, a trajectory prefix, tool returns, and environment state, then asks for only the next observable action. It covers production bad cases such as scope conflicts, stale preferences overriding current instructions, low-confidence inferences, confirmation before high-risk deletion, and preview before external publication. The same cases are encoded as JSON Cards, Markdown, and Python-like memory; deterministic checks score the allowed decision category, safety, required evidence, and forbidden actions.
+>
+> With GPT-5.6-sol through OpenRouter, all 33 cells (11 cases × 3 encodings) completed without API errors. Each encoding passed 6/11 cases, but their failure locations differed, showing that changing the representation alone does not repair application policy.
+
 Give the judge both the Rubric and the Agent's response. It will score each dimension and explain why. Once results from dozens of cases are grouped by dimension and the low-scoring traces are replayed, a vague drop in success rate becomes a concrete diagnosis: retrieval missed a fact, the model linked the wrong people or events, or it added an unsupported claim. A useful Rubric tells the team not only how the system scored, but where to look next.
 
 > **Experiment 6-3 ★★: Building a Rubric-Based User Memory Evaluation System**
@@ -358,12 +417,12 @@ Give the judge both the Rubric and the Agent's response. It will score each dime
 >
 > **Objective**: Fairly compare the advantages and boundaries of structured memory versus unstructured retrieval on the same evaluation set. Reuse the two Chapter 3 projects and compare three configurations on the 60 test cases from `chapter3/user-memory-evaluation`—Pure Advanced JSON Cards (structured cards kept in context, with no retrieval needed), Pure RAG (conversation chunks embedded in a vector store, retrieval required), Hybrid System (core facts resident + original conversations retrieved on demand).
 >
-> **Acceptance Criteria**: Record success rate, average steps, number of tool calls, latency, and cost across three complexity levels (basic recall / multi-session disambiguation / cross-session hidden associations). Clearly describe the failure boundaries for each approach—what structured memory misses, what retrieval misses, and whether the hybrid truly achieves synergy. Configuration details and test cases are available in the companion repository.
+> **Acceptance Criteria**: Record success rate, average steps, number of tool calls, latency, and cost across three complexity levels (basic recall / multi-session disambiguation / cross-session hidden associations). Clearly describe the failure boundaries for each approach—what structured memory misses, what retrieval misses, and whether the hybrid truly achieves synergy. This is an **end-to-end regression layer**: it checks that the complete task still works, but cannot by itself show whether the Agent correctly scopes a memory once it has been supplied. Configuration details and test cases are available in the companion repository.
 >
 
-The companion experiment ran all three systems on the same 60 questions and retained 180 real API trajectories. Table 6-4 reports both the rates and the underlying success counts.
+The companion experiment ran all three systems on the same 60 questions and retained 180 real API trajectories. Table 6-3 reports both the rates and the underlying success counts.
 
-Table 6-4 Success Rate by Memory System and Task Level
+Table 6-3 Success Rate by Memory System and Task Level
 
 | System | Basic Recall | Multi-Session Disambiguation | Hidden Cross-Session Links | Overall |
 |---|---:|---:|---:|---:|
@@ -373,7 +432,7 @@ Table 6-4 Success Rate by Memory System and Task Level
 
 The hybrid did not win by default. It uniquely solved three cases that neither single approach solved, but regressed on eight cases relative to the better single approach; its mean reward was 0.092 below the per-case best single system. Pure RAG nearly matched structured cards on basic recall, then fell to 15% on hidden cross-session links. Retrieving a relevant passage is only the first step—the Agent still has to reconstruct the right relationships among people, events, and time.
 
-The hallucination veto also fired in 28 of 180 judgments. It was not a decorative safety clause; it materially changed the results. In practice, do not assume that "structured memory + RAG" creates synergy. First inspect how each approach fails at each difficulty level, then decide which facts should remain resident and which questions should trigger retrieval. This was one campaign on synthetic cases with one model-and-judge configuration. It explains failure mechanisms, not a universal ranking of memory architectures.
+The hallucination veto also fired in 28 of 180 judgments. It was not a decorative safety clause; it materially changed the results.
 
 That conclusion, in turn, depends on the judge being trustworthy. If the Agent and judge come from the same model family, they may share exactly the same preferences and blind spots.
 
@@ -398,7 +457,7 @@ Multimodal judging extends LLM-as-a-Judge to the domains of speech, images, and 
 - **UI Evaluation**: Uses a **Proposer-Reviewer** mechanism to check for issues like text overflow, color contrast, and button placement. Here, the proposer-reviewer is used as an **evaluation method**, differing from its use as a **generation system component** in Chapter 5, but the core mechanism is the same—one model generates, another independently reviews.
 - **Video Editing Evaluation**: Verifies the correctness of clip start/end points and effect application through keyframes.
 
-> **Experiment 6-5 ★★: Building a Fully Automated TTS Quality Evaluation Pipeline**
+> **Experiment 6-6 ★★: Building a Fully Automated TTS Quality Evaluation Pipeline**
 >
 > This experiment requires designing and implementing a complete multimodal LLM-as-a-Judge TTS quality evaluation system from scratch.
 >
@@ -427,7 +486,7 @@ When pairwise judging is performed by an LLM rather than human voting, one must 
 
 **From Evaluation to Training: Transfer of Pairwise Comparison Signals.** Pairwise comparison is not only an evaluation tool but also an important source of signals for post-training. The **GRPO** (Group Relative Policy Optimization) algorithm, which will be introduced in Chapter 7, incorporates the "compare which is better" judging approach into model training—its core idea is to sample multiple candidate answers for the same question and estimate advantages from their relative merits (rather than absolute scores), thereby avoiding the need for the extra value network (critic, used to estimate baselines) that PPO must train. Note that GRPO drops the value network, not the reward signal: it still relies on a reward model or verifiable reward rules to judge each candidate. This is only a foreshadowing—the full derivation, the comparison with PPO/DPO, and the implementation details for Agent post-training all come in Chapter 7.
 
-> **Experiment 6-6 ★★: Building a Model Leaderboard from Pairwise Comparison Data**
+> **Experiment 6-7 ★★: Building a Model Leaderboard from Pairwise Comparison Data**
 >
 > This experiment aims to deeply understand how the Bradley-Terry model extracts relative ability scores from a large number of pairwise comparisons by implementing an Elo rating calculation system from scratch. Use the real open-source voting dataset from Chatbot Arena (containing millions of anonymous user blind votes).
 >
@@ -469,7 +528,7 @@ When a tendency continues to follow the model across harnesses, and changes when
 
 The accompanying experiment compares `openai/gpt-5.6-sol` and `anthropic/claude-sonnet-5` in one **neutral, fixed harness**. Both models use the same OpenRouter endpoint and receive the same system prompt, task, repository, tool names, JSON Schemas, and results. The harness requires neither exploration nor early editing. Three miniature repositories cover a localized bug, cross-module identity normalization, and a cache fix sensitive to a public contract. Each model runs each task independently three times, producing 18 trajectories. GPT-5.6-sol averaged 6.89 tool calls and 4.67 files read before its first edit; Claude Sonnet 5 averaged 4.56 calls and 3.56 files. The gap was largest on localized tasks and nearly vanished on the explicitly cross-cutting task (7.00 versus 6.67 files). Both models achieved 100% first-tested-patch and final-test success, so this small experiment supports “the action policy changes with the model,” not “reading more” or “editing earlier” as universally better. Time to first edit was also nearly identical (15.01 versus 14.48 seconds), a reminder to separate tool steps, parallel calls, and model latency.
 
-> **Experiment 6-7 ★★: Measuring Model Action Thresholds in a Fixed Coding Harness**
+> **Experiment 6-8 ★★: Measuring Model Action Thresholds in a Fixed Coding Harness**
 >
 > **Objective**: Isolate the model factor, quantify how Coding models trade off continued information gathering against starting to edit, and evaluate path efficiency together with outcome quality.
 >
@@ -520,7 +579,7 @@ The first input-side levers to test are **KV Cache Reuse** (keep the prefix stab
 
 In a production environment, a real-time cost monitoring system should be established: track token consumption and API costs by task type, model, user, etc. Also, set a cost cap for each task—automatically terminate the Agent when it falls into a loop or explores too deeply, preventing a single task from incurring abnormally high costs.
 
-> **Experiment 6-8 ★: End-to-End Cost Analysis of Agent Tasks**
+> **Experiment 6-9 ★: End-to-End Cost Analysis of Agent Tasks**
 >
 > **Experiment Goal**: Reproduce the eight-turn cost breakdown above, then test the same optimization levers on your own workload.
 >
@@ -538,7 +597,7 @@ Suppose your Agent system is currently built on Claude, excelling in tool callin
 
 A team with a solid evaluation system can answer this in hours: run the new model on its own evaluation dataset and compare task success rate, tool call accuracy, latency, and cost. You might find the new model really is better and cheaper on simple tasks—but in the core scenarios involving complex multi-round tool orchestration, its success rate drops by 5%. Once you confirm the difference exceeds the estimated sampling noise (see "Statistical Significance of Evaluation Results" below), your decision becomes a differentiated strategy—migrate simple tasks to the new model to cut costs, keep the original model on complex tasks to protect quality—rather than a blind wholesale switch. Decisions this granular and data-driven are only possible with an evaluation system built in advance.
 
-> **Experiment 6-9 ★★: Multi-Dimensional Model Performance Benchmarking**
+> **Experiment 6-10 ★★: Multi-Dimensional Model Performance Benchmarking**
 >
 > Conduct a comprehensive benchmark of mainstream LLMs and different API providers to build a multi-dimensional model selection decision database.
 >
@@ -548,7 +607,7 @@ A team with a solid evaluation system can answer this in hours: run the new mode
 >
 > Evaluate API availability and stability: Probe once per hour for a week, recording success rate, error types, and failure duration. Calculate failure rate, MTTR (Mean Time to Recovery), and longest continuous uptime. Test the actual thresholds of rate limits—gradually increase concurrency to find the throttling point, recording RPM/TPM limits. Calculate comprehensive cost: Collect pricing information (unit prices for input/output/cache tokens), consider the impact of KV Cache, and calculate the average cost for typical multi-round Agent tasks.
 >
-> **Experiment 6-10 ★★: End-to-End Selection Evaluation of User Memory Systems**
+> **Experiment 6-11 ★★: End-to-End Selection Evaluation of User Memory Systems**
 >
 > **Prerequisites**: Must complete the contextual retrieval or agentic RAG experiment from Chapter 3.
 >
@@ -644,7 +703,7 @@ Passing H5C on four tasks only earns it a larger test; it does not authorize dep
 
 That is what continuous iteration means in practice: evidence from one round should authorize only the next action that its scope can support. H1 stopped further prompt piling; H5 found the right mechanism and revealed a cost problem; H5C fixed that problem and qualified for broader testing. A good benchmark report contains more than a score. It states where the conclusion applies, which guardrails failed, and what must be tested next.
 
-> **Experiment 6-11 ★★★: Evaluation and Improvement on AndroidWorld**
+> **Experiment 6-12 ★★★: Evaluation and Improvement on AndroidWorld**
 >
 > This experiment practices the full path from evaluation report to system improvement. Start with the historical report and three saved paired runs in `chapter6/android-world`.
 >
@@ -719,7 +778,7 @@ On the **digital environment** side, the AWorld framework builds a controllable 
 
 On the **embodied environment** side, RoboTwin2 builds dual-arm manipulation tasks based on a physics engine, randomizing object positions, orientations, and appearances to improve generalization. The observation space includes multi-camera visuals and joint states, achieving real-time control through **Action Chunking**—where the model plans multiple consecutive actions at once (detailed in Chapter 9). OSWorld provides reset capability through virtual machine snapshots, and AndroidWorld focuses on mobile application automation. Whether digital or embodied, simulation environments also require the isolated execution environments and virtual identity mechanisms discussed in Chapter 4 (VM/container isolation, residential proxies, Human-in-the-Loop authentication, shared file systems), which will not be repeated here.
 
-> **Experiment 6-12 ★★: Configure the Embodied Intelligence Environment for OpenVLA and RoboTwin2**
+> **Experiment 6-13 ★★: Configure the Embodied Intelligence Environment for OpenVLA and RoboTwin2**
 >
 > Set up a simulation environment for robot manipulation. Read `ch7/SimpleVLA-RL` and the OpenVLA documentation to understand the architecture of the Vision-Language-Action model (end-to-end integration of a vision encoder, language model, and action decoder, projecting images and text into a shared semantic space). Configure the RoboTwin2 environment, understanding the observation space (three-view RGB + 14-dimensional joint state) and action space (14-dimensional control vector). Study the environment randomization mechanism and spatial constraint logic in `move_can_pot`. Evaluate the pretrained model, recording its success rate, completion time, and failure modes, with a focus on the impact of the action chunking mechanism.
 >

@@ -64,6 +64,33 @@ Ez a teszteset sikeres volt. De egy jó kiértékelés nem csak sikeres forgató
 
 A fenti folyamat — tesztesetek meghatározása, Ügynök futtatása, pontozás Rubricával, eredmények elemzése — a kiértékelés alapvető váza. A fejezet hátralévő része az egyes lépések tervezését részletezi.
 
+## Kiértékelési metrikák: frissített szemlélet
+
+A környezet és az adathalmaz megépítése előtt tisztázni kell, mit jelent a siker: egyetlen működő út elég, vagy minden futásnak hibamentesnek kell lennie? A definíció megváltoztathatja a mérnöki döntést.
+
+### Technikai csoda: a képességplafon Pass@k-val
+
+Sok modell és Ügynök a **technikai csoda** szakaszában van: sok próbálkozás, hosszú időkeret és emberi kiválasztás után egy áttörő pálya bizonyítja, hogy a feladat elvben megoldható. A **Pass@k** ugyanazon feladat $k$ futtatásából akkor ad sikert, ha legalább egy átmegy; folyamatos pontszámnál a legjobbat, **Best@k**-t tartjuk meg. A hosszú ideig futó Anthropic-ügynökök, Manus és OpenClaw példái ezt a képességplafont mutatják, amely kutatási felfedezésnél, hibakeresésnél és nyílt végű alkotásnál értékes.
+
+### Üzleti megbízhatóság: Pass^k
+
+Az üzleti rendszerek inkább azt követelik, hogy ismételt futások során egyszer se legyen hiba. A **Pass^k** (»Pass consecutive k«) azt jelenti, hogy $k$ egymást követő futás mind sikeres, és egyik sem vált ki biztonsági, megfelelési vagy hallucinációs vétót. Egy futás $p$ sikerességi valószínűsége mellett
+
+$$
+\mathrm{Pass@k}=1-(1-p)^k,\qquad
+\mathrm{Pass}^{k}=p^k.
+$$
+
+$p=0{,}6$, $k=5$ esetén Pass@5 körülbelül 99,0%, a Pass consecutive@5 viszont 7,8%. Az első a felfedezési képességplafont, a második a fizetésekhez, visszatérítésekhez és éles telepítéshez szükséges stabilitást méri. A jelentésben meg kell adni, mit jelent $k$; mellékhatásos műveleteket sandboxban vagy visszagörgethető környezetben kell mintázni, minden hibát beszámítva.
+
+### Folyamat-, biztonsági és robusztussági metrikák
+
+Nem elég a végső állapot: a jogos és engedélyezett műveletek aránya, az eszközhívások szemantikai helyessége, az útvonal hatékonysága (lépések, redundancia, visszalépés), a visszakeresési lefedettség és a költség/késleltetés megmutatja, hol hibázik az Ügynök. Az érzékeny műveletekre, adatszivárgásra és tiltott tartalomra **zéró tolerancia** vonatkozik. A robusztusság a seed-, felület-, API- és elavult memóriahatásokat fedi le; a pályát és a tényleges végső eredményt együtt kell ellenőrizni.
+
+### Emberi mintavétel és ellenféllel szembeni felülvizsgálat
+
+Rendszeresen ellenőrizd a sikereket, kudarcokat és határeseteket. Az LLM-bírák skálázása előtt kalibráld őket 100–200 ember által címkézett aranyeseten (például Cohen-kappa > 0,7), és változáskor kalibrálj újra. A red teaming rejtett hibákat, kulcsszó-csalást és bírókihasználást keres; a komoly bírói eltéréseket ember vizsgálja felül.
+
 ## Automatizált Kiértékelési Környezet
 
 Az Ügynök-kiértékeléshez ismételhető, automatizált környezetre van szükség — amely gyorsan képes tesztelni a változtatások hatásait a fejlesztés során. Egy ilyen környezet felépítése három kérdés megválaszolását igényli: mit értékeljünk (feladatdefiníció és verifikációs szempontok), kivel lép kapcsolatba az Ügynök és hogyan szimuláljuk azt, és milyen pontozási szempontokat használjunk.
@@ -399,7 +426,19 @@ A multimodális bíráskodás az LLM-mint-bírót a beszéd, kép és videó tar
 - "UI Kiértékelés": "Javaslattevő-Felülvizsgáló" mechanizmus használata olyan problémák észlelésére, mint a szövegtúlcsordulás, színkontraszt, gombelhelyezés. Itt a javaslattevő-felülvizsgáló "kiértékelési módszerként" szolgál, eltérően az 5. fejezetben "generációs rendszer-összetevőként" való használatától, de az alapmechanizmus ugyanaz — egy modell generál, egy másik függetlenül felülvizsgál.
 - "Videószerkesztés Kiértékelése": A vágás kezdő/végpontjainak és a hatás alkalmazásának helyességét ellenőrzi kulcskockákon keresztül.
 
-> **6-5. kísérlet ★★: Teljesen Automatizált TTS Minőségi Kiértékelő Csővezeték Építése**
+### Hibaattribúció és pálya-előtag regressziós tesztek
+
+Az end-to-end kiértékelés gyakran csak „siker” vagy „kudarc” eredményt ad. A javításhoz minden hibás pályán rögzíteni kell a kategóriát, az első elfogadhatatlan lépést, az eszközhívást vagy modellkimenetet, valamint az auditálható bizonyítékot. A rossz esetek felhasználói korrekcióból, negatív visszajelzésből vagy későbbi állapotellenőrzésből származhatnak. Az LLM segíthet, de az emberi olvasás szükséges, mert a gyökér gyakran termékprobléma.
+
+Egy Coding Agent kezdeti kategóriái: hiányzó folyamat vagy szabály, eszköz- és formátumhiba, rendellenes leállás, illetve logikai vagy teljességi hiba. JSON/YAML rekordban tárold a lépésszámot, eszközt, megfigyelést, okot és következményt, helyreállíthatóságot és bizalmat, továbbá a környezet állapotát és verzióit.
+
+Az **end-to-end regresszió** a teljes munkafolyamatot futtatja; a **pálya-előtag regresszió** a kontextust, beszélgetést, eszközválaszokat és állapotot az első hiba előtt rögzíti, majd csak a következő műveletet teszteli. Elfogadható műveletek halmazát kell megadni (szabályolvasás, kérdezés vagy veszélyes művelet elutasítása), nem egyetlen kanonikus választ. Az értékelési és tanítási adatokat el kell különíteni.
+
+> **6-5. kísérlet ★★: Pálya-előtag határainak értékelése több kódolással**
+>
+> A modell ismert memóriát, aktuális utasítást, pálya-előtagot, eszközválaszokat és környezeti állapotot kap, és csak a következő megfigyelhető műveletet adhatja vissza. Tizenegy esetet JSON Cards, Markdown és Python-szerű formában kódoltunk; mindhárom 6/11-et teljesített, a 33 cella API-hiba nélkül futott. A reprezentáció megváltoztatása önmagában nem javítja az alkalmazási szabályt.
+
+> **6-6. kísérlet ★★: Teljesen Automatizált TTS Minőségi Kiértékelő Csővezeték Építése**
 >
 > Ez a kísérlet egy teljes multimodális LLM-mint-bíró TTS minőségi kiértékelő rendszer tervezését és implementálását igényli a semmiből.
 >
@@ -432,7 +471,7 @@ A modellek nem állandóak. Ugyanaz a modellesalád különböző verziókban é
 
 A modellkiértékelés ezért nem egy alkalom, hanem folyamatos tevékenység. Ajánlott gyakorlat: tartani egy "globális ranglistát", amelyen a megcélzott feladattartományban használt összes modell szerepel (több API-szolgáltatóra és modellesaládra kiterjedően). Rendszeres időközönként futtasd le a teljes tesztkészletet, és jegyezd fel az időbélyeget; ha egy modell hirtelen pontszámesést mutat, az valószínűleg API-szintű változásra, nem a modell képességének valódi csökkenésére utal.
 
-> **6-6. kísérlet ★: Globális Modell Ranglista Felállítása és Karbantartása**
+> **6-7. kísérlet ★: Globális Modell Ranglista Felállítása és Karbantartása**
 >
 > Hozz létre és tarts karban egy folyamatosan frissülő globális modell ranglistát. Válassz ki 5-10 reprezentatív tesztesetet minden feladattípushoz (kódolás, eszközhívás, multimodális, keresés, hosszú szöveges Q&A, egyszerű utasításkövetés). Futtasd ezt a készletet az összes elérhető modellen (beleértve ugyanazon modell különböző API-szolgáltatóktól származó verzióit), és rendszeresen (pl. hetente) ismételd meg. Jegyezd fel a pontszámok történeti trendjeit — amikor egy modell pontszáma hirtelen csökken (pl. Claude Sonnet 4.5 pontszáma egyik hétről a másikra 92%-ról 80%-ra esik), először ellenőrizd az API változási naplóját; ha nincs bejelentett változás, valószínűleg külső ok van (időzítési torzítás, nagy terhelés, driftsújtotta szerververzió). Rendszeres időközönként frissítsd a ranglistát, törölve az elavult modelleket és hozzáadva újakat.
 >
@@ -470,7 +509,7 @@ Ha egy hajlam Harness-váltáskor is a modellt követi, és egy rögzített Harn
 
 A kísérlet az `openai/gpt-5.6-sol` és az `anthropic/claude-sonnet-5` modellt egyetlen **semleges, rögzített Harnessben** hasonlítja össze. Mindkettő ugyanazt az OpenRouter endpointot használja, és azonos rendszerpromptot, feladatot, tárolót, eszközneveket, JSON Schemákat és eszközeredményeket kap. A Harness sem a felderítést, sem a korai szerkesztést nem írja elő. Három miniatűr tároló egy lokális hibát, modulokon átívelő identitásnormalizálást és nyilvános szerződésre érzékeny gyorsítótár-javítást fed le. Mindkét modell minden feladatot háromszor, egymástól függetlenül futtatott, összesen 18 trajektóriát létrehozva. Az első szerkesztés előtt a GPT-5.6-sol átlagosan 6,89 eszközhívást végzett és 4,67 fájlt olvasott; a Claude Sonnet 5 átlaga 4,56 hívás és 3,56 fájl volt. A különbség a lokális feladatoknál volt a legnagyobb, a kifejezetten több modult érintő feladatnál pedig szinte eltűnt (7,00 kontra 6,67 fájl). Mindkét modell 100%-os eredményt ért el az első tesztelt javítással és a végső teszteken is. Ez a kis kísérlet tehát azt támasztja alá, hogy „a cselekvési policy a modellel együtt változik”, nem pedig azt, hogy a több olvasás vagy a korábbi szerkesztés mindig jobb. Az első szerkesztésig eltelt idő is szinte azonos volt (15,01 kontra 14,48 másodperc), ezért külön kell kezelni az eszközlépések számát, a párhuzamos hívásokat és a modell késleltetését.
 
-> **6-7. kísérlet ★★: A modell cselekvési küszöbének mérése rögzített Coding Harnessben**
+> **6-8. kísérlet ★★: A modell cselekvési küszöbének mérése rögzített Coding Harnessben**
 >
 > **Cél**: a modelltényező elkülönítése, annak számszerűsítése, hogyan választanak a Coding modellek alapértelmezés szerint a további információgyűjtés és a szerkesztés megkezdése között, valamint az útvonal-hatékonyság és a végső minőség együttes értékelése.
 >
@@ -521,7 +560,7 @@ Az **Aszinkron kötegelt feldolgozás** nem valós idejű feladatokat halmoz fel
 
 Éles környezetben valós idejű költségfigyelő rendszert kell létrehozni: nyomon követni a token felhasználást és az API-költségeket feladattípus, modell, felhasználó stb. szerint. Ezenkívül minden feladathoz állítson be költségplafont – automatikusan leállítja az ügynököt, ha hurokba esik, vagy túl mélyre megy, így megakadályozva, hogy egyetlen feladat abnormálisan magas költségekkel járjon.
 
-> **6-8. kísérlet ★: Az ügynöki feladatok végpontok közötti költségelemzése**
+> **6-9. kísérlet ★: Az ügynöki feladatok végpontok közötti költségelemzése**
 >
 > **Kísérlet célja**: Ismételje meg a fenti nyolcfordulós költségbontást, majd vizsgálja meg ugyanezeket az optimalizálásokat a saját munkaterhelésén.
 >
@@ -539,7 +578,7 @@ Tegyük fel, hogy az Ügynökrendszer jelenleg Claude-ra épül, és kiváló az
 
 Egy megbízható kiértékelő rendszerrel rendelkező csapat órákon belül választ adhat: lefuttatja az új modellt a saját kiértékelési adatkészletén, majd összehasonlítja a feladatok sikerarányát, az eszközhívások pontosságát, a késleltetést és a költséget. Elképzelhető, hogy az új modell az egyszerű feladatoknál valóban jobb és olcsóbb, miközben az összetett, többfordulós eszközvezénylést igénylő alapforgatókönyvekben 5%-kal csökken a sikerarány. Ha a különbség meghaladja a becsült mintavételi zajt (lásd alább „A kiértékelési eredmények statisztikai szignifikanciája” című szakaszt), árnyalt stratégia választható: az egyszerű feladatokat az olcsóbb új modellre irányítjuk, az összetetteknél pedig a minőség megőrzése érdekében megtartjuk az eredetit. Az ilyen részletes, adatvezérelt döntéshez előre felépített kiértékelő rendszer szükséges.
 
-> **6-9. kísérlet ★★: Többdimenziós modell teljesítmény-benchmarking**
+> **6-10. kísérlet ★★: Többdimenziós modell teljesítmény-benchmarking**
 >
 > Végezze el a főbb LLM-ek és a különböző API-szolgáltatók átfogó összehasonlítását egy többdimenziós modellkiválasztási döntési adatbázis felépítéséhez.
 >
@@ -549,7 +588,7 @@ Egy megbízható kiértékelő rendszerrel rendelkező csapat órákon belül v�
 >
 > Értékelje az API rendelkezésre állását és stabilitását: Egy héten keresztül óránként egyszer vizsgálja meg, rögzíti a sikerarányt, a hibatípusokat és a hiba időtartamát. Számítsa ki a hibaarányt, az MTTR-t (átlagos helyreállítási időt) és a leghosszabb folyamatos üzemidőt. Tesztelje a sebességkorlátok tényleges küszöbértékeit – fokozatosan növelje az egyidejűséget a fojtópont megtalálásához, rögzítve az RPM/TPM határértékeket. Átfogó költség kiszámítása: Gyűjtse össze az árinformációkat (az input/output/cache tokenek egységárai), mérlegelje a KV Cache hatását, és számítsa ki a tipikus többfordulós ügynöki feladatok átlagos költségét.
 >
-> **6-10. kísérlet ★★: Felhasználói memóriarendszerek végpontok közötti kiválasztási kiértékelése**
+> **6-11. kísérlet ★★: Felhasználói memóriarendszerek végpontok közötti kiválasztási kiértékelése**
 >
 > **Előfeltételek**: Be kell fejeznie a 3. fejezetben található kontextuális visszakeresési vagy ügynöki RAG-kísérletet.
 >
@@ -645,7 +684,7 @@ H5C négy feladatos sikere csak nagyobb tesztet engedélyez, telepítést nem. A
 
 A folyamatos iteráció ezt jelenti: minden kör bizonyítéka csak a hatókörével igazolt következő lépést engedélyezi. H1 leállította a prompt további bővítését; H5 megtalálta a mechanizmust és feltárt egy költségproblémát; H5C megoldotta azt, így nagyobb tesztre jutott. A jó benchmark jelentés nemcsak pontszámot, hanem érvényességi kört, megsértett guardraileket és következő tesztet is közöl.
 
-> **6-11. kísérlet ★★★: Kiértékelés és Fejlesztés AndroidWorldön**
+> **6-12. kísérlet ★★★: Kiértékelés és Fejlesztés AndroidWorldön**
 >
 > Ez a kísérlet a kiértékelési jelentéstől a rendszerfejlesztésig vezető teljes utat gyakorolja. Kezdd a történeti jelentéssel és a `chapter6/android-world` három mentett páros futásával.
 >
@@ -720,7 +759,7 @@ A "digitális környezet" oldalán az AWorld keretrendszer egy irányítható MC
 
 A "megtestesült környezet" oldalán a RoboTwin2 egy fizikai motoron alapuló kétkaros manipulációs feladatokat épít, véletlenszerűsítve az objektumok pozícióit, orientációit és megjelenését az általánosítás javítására. A megfigyelési tér többkamerás vizuális és ízületi állapotokat tartalmaz, valós idejű vezérlést érve el az "Akció Darabolás" révén — ahol a modell egyszerre több egymást követő akciót tervez (részletesen a 9. fejezetben). Az OSWorld visszaállítási képességet biztosít virtuális gép pillanatképeken keresztül, az AndroidWorld pedig a mobil alkalmazás-automatizálásra összpontosít. Akár digitális, akár megtestesült, a szimulációs környezeteknek szükségük van a 4. fejezetben tárgyalt izolált végrehajtási környezetekre és virtuális identitás mechanizmusokra is (VM/konténer izoláció, rezidens proxy-k, Human-in-the-Loop hitelesítés, megosztott fájlrendszerek), amelyeket itt nem ismétlünk meg.
 
-> **6-12. kísérlet ★★: A Megtestesült Intelligencia Környezet Konfigurálása OpenVLA és RoboTwin2 Számára**
+> **6-13. kísérlet ★★: A Megtestesült Intelligencia Környezet Konfigurálása OpenVLA és RoboTwin2 Számára**
 >
 > Állíts be egy szimulációs környezetet robotmanipulációhoz. Olvasd el a `ch7/SimpleVLA-RL` fájlt és az OpenVLA dokumentációt a Vízió-Nyelv-Akció modell architektúrájának megértéséhez (végpontok közötti integrációja egy vízió kódolónak, nyelvi modellnek és akció dekódolónak, amely a képeket és szövegeket egy közös szemantikai térbe vetíti). Konfiguráld a RoboTwin2 környezetet, értsd meg a megfigyelési teret (háromnézetű RGB + 14-dimenziós ízületi állapot) és az akcióteret (14-dimenziós vezérlővektor). Tanulmányozd a környezet randomizálási mechanizmusát és a térbeli korlátok logikáját a `move_can_pot`-ban. Értékeld az előre tanított modellt, rögzítve a sikerességi arányát, befejezési idejét és hibamódjait, különös figyelemmel az akció darabolás mechanizmusának hatására.
 >
