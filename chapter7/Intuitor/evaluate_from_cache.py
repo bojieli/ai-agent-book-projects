@@ -80,20 +80,25 @@ def normalize_number(text: str) -> Optional[str]:
     # 确保是字符串
     text = str(text)
 
+    # Strip LaTeX formatting, currency, thin spaces, and units before fraction parsing.
+    cleaned = re.sub(r'\\(?:text|mathrm|mathbf)\s*\{[^}]*\}', '', text)
+    cleaned = cleaned.replace("\\$", "").replace("$", "").replace("\\,", "").replace("\\text", "")
+    cleaned = cleaned.replace(",", "")
+
     # Evaluate \frac{a}{b} before brace stripping (else "\frac{6}{2}" becomes "frac62").
-    frac = re.search(r'(-)?\s*\\(?:d)?frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}', text)
+    frac = re.search(r'(-)?\s*\\(?:d)?frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}', cleaned)
     if frac:
         try:
             sign = -1.0 if frac.group(1) else 1.0
-            num = float(frac.group(2).replace(",", "").replace("$", "").replace("\\$", "").strip())
-            den = float(frac.group(3).replace(",", "").replace("$", "").replace("\\$", "").strip())
+            num = float(frac.group(2).strip())
+            den = float(frac.group(3).strip())
             if den != 0:
                 return _format_normalized_number(sign * (num / den))
         except ValueError:
             pass
 
-    # Plain a/b (e.g. boxed "6/2") before taking the first digit run alone.
-    slash = re.fullmatch(r'\s*(-?\d+(?:\.\d+)?)\s*/\s*(-?\d+(?:\.\d+)?)\s*', text)
+    # Plain a/b (e.g. boxed "6/2" or "6/2 kg") before taking the first digit run alone.
+    slash = re.search(r'(-?\d+(?:\.\d+)?)\s*/\s*(-?\d+(?:\.\d+)?)', cleaned)
     if slash:
         try:
             num = float(slash.group(1))
