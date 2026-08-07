@@ -80,8 +80,8 @@ def normalize_number(text: str) -> Optional[str]:
     # 确保是字符串
     text = str(text)
 
-    # Strip LaTeX formatting, currency, thin spaces, and units before fraction parsing.
-    cleaned = re.sub(r'\\(?:text|mathrm|mathbf)\s*\{[^}]*\}', '', text)
+    # Unwrap LaTeX formatting before parsing; the wrapped content may itself be numeric.
+    cleaned = re.sub(r'\\(?:text|mathrm|mathbf)\s*\{([^}]*)\}', r'\1', text)
     cleaned = cleaned.replace("\\$", "").replace("$", "").replace("\\,", "").replace("\\text", "")
     cleaned = cleaned.replace(",", "")
 
@@ -90,8 +90,12 @@ def normalize_number(text: str) -> Optional[str]:
     if frac:
         try:
             sign = -1.0 if frac.group(1) else 1.0
-            num = float(frac.group(2).strip())
-            den = float(frac.group(3).strip())
+            num_match = re.match(r'\s*(-?\s*\d+(?:\.\d+)?)', frac.group(2))
+            den_match = re.match(r'\s*(-?\s*\d+(?:\.\d+)?)', frac.group(3))
+            if not num_match or not den_match:
+                raise ValueError("fraction component does not start with a number")
+            num = float(num_match.group(1).replace(" ", ""))
+            den = float(den_match.group(1).replace(" ", ""))
             if den != 0:
                 return _format_normalized_number(sign * (num / den))
         except ValueError:
@@ -322,4 +326,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
