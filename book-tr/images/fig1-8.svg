@@ -1,34 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 400" width="820" height="400" style="background:#ffffff">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 320" width="820" height="320" style="background:#ffffff">
 <defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
-<rect x="260" y="60" width="300" height="95" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="410" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Orkestratör LLM</text>
-<rect x="270" y="105" width="280" height="38" rx="4" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
-<text x="410" y="124" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;Sorunu Analiz Et → Dosyaları Bul → Alt Görevleri Ata&quot;</text>
-<rect x="40" y="220" width="230" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="155.0" y="239.05" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">İşçi 1：auth.py dosyasını değiştir</text>
-<text x="155.0" y="255.95000000000002" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">OAuth2 desteği ekle</text>
-<rect x="60" y="285" width="190" height="40" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="155.0" y="296.55" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Read/Edit</text>
-<text x="155.0" y="313.45" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Dosya aracı</text>
-<line x1="410" y1="157" x2="155.0" y2="218" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="290" y="220" width="230" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="405.0" y="238.725" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">İşçi 2：api.py dosyasını değiştir</text>
-<text x="405.0" y="256.275" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Yeni endpoint ekle</text>
-<rect x="310" y="285" width="190" height="40" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="405.0" y="296.55" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Read/Edit</text>
-<text x="405.0" y="313.45" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Dosya aracı</text>
-<line x1="410" y1="157" x2="405.0" y2="218" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="540" y="220" width="230" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="655.0" y="237.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">İşçi 3：test_auth.py yaz</text>
-<text x="655.0" y="257.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Test senaryoları</text>
-<rect x="560" y="285" width="190" height="40" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="655.0" y="296.55" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Testleri çalıştır</text>
-<text x="655.0" y="313.45" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Aracı</text>
-<line x1="410" y1="157" x2="655.0" y2="218" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="260" y="370" width="300" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="410.0" y="387.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Orkestratör: sonuçları birleştir →</text>
-<text x="410.0" y="407.90000000000003" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">tutarlılığı doğrula</text>
-<line x1="155.0" y1="327" x2="410" y2="368" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<line x1="405.0" y1="327" x2="410" y2="368" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<line x1="655.0" y1="327" x2="410" y2="368" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="30" y="130" width="150" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="105.0" y="147.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Kod Commit'i</text>
+<text x="105.0" y="167.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Pull Request</text>
+<text x="220" y="157" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Bölümleme</text>
+<rect x="290" y="70" width="155" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="367.5" y="87.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Güvenlik</text>
+<text x="367.5" y="107.89999999999999" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">İnceleme LLM₁</text>
+<rect x="450" y="70" width="130" height="55" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="515.0" y="81.25" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">SQL Enjeksiyonu</text>
+<text x="515.0" y="97.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">XSS</text>
+<text x="515.0" y="113.75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Yetki Sızıntısı</text>
+<line x1="180" y1="157" x2="288" y2="98" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="290" y="155" width="155" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="367.5" y="172.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Stil İnceleme</text>
+<text x="367.5" y="192.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM₂</text>
+<rect x="450" y="155" width="130" height="55" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="515.0" y="168.85" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">İsimlendirme Kuralları</text>
+<text x="515.0" y="182.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Kod Tekrarı</text>
+<text x="515.0" y="196.15" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Karmaşıklık</text>
+<line x1="180" y1="157" x2="288" y2="183" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="290" y="240" width="155" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="367.5" y="257.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Mantık İnceleme</text>
+<text x="367.5" y="277.90000000000003" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM₃</text>
+<rect x="450" y="240" width="130" height="55" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="515.0" y="255.15" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Sınır Koşulları</text>
+<text x="515.0" y="267.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Null Göstericiler</text>
+<text x="515.0" y="279.85" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Eşzamanlılık Sorunları</text>
+<line x1="180" y1="157" x2="288" y2="268" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="640" y="130" width="150" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="715.0" y="141.25" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Sonuçları Birleştir</text>
+<text x="715.0" y="157.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Kapsamlı İnceleme</text>
+<text x="715.0" y="173.75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Raporu</text>
+<line x1="582" y1="98" x2="638" y2="157" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="582" y1="183" x2="638" y2="157" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="582" y1="268" x2="638" y2="157" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 </svg>

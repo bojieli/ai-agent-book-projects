@@ -18,13 +18,21 @@ Bản chất của hệ thống Agent hiện đại có thể được thể hi�
 
 Nói một cách trực quan hơn: **Agent = não + mắt + tay chân**. Bộ não chịu trách nhiệm suy nghĩ và ra quyết định, đôi mắt cung cấp tất cả thông tin cần thiết cho việc suy nghĩ, còn tay chân biến các quyết định thành những thay đổi trong thế giới thực.
 
-Ba thành phần này tương ứng chính xác với ba khái niệm cốt lõi trong RL (học tăng cường; xem Chương 7 để biết chi tiết).
+Theo góc nhìn cổ điển của học tăng cường và lý thuyết điều khiển, Agent và Môi trường là hai phía của một tương tác vòng kín, không phải là thành phần của nhau. Môi trường trả về một quan sát, Agent dùng ngữ cảnh để chọn hành động tiếp theo, và hành động đó làm thay đổi trạng thái Môi trường, tạo ra quan sát kế tiếp.
+
+![Hình 1-1: Vòng lặp tương tác Agent–Môi trường và cấu trúc Model–Harness bên trong Agent](images/fig1-1.svg)
+
+Hình 1-1 cho thấy hai cấp độ trừu tượng. Cấp độ bên ngoài là **tương tác giữa Agent và Môi trường**: Môi trường bao gồm hệ thống tệp, cơ sở dữ liệu, trang web, người dùng, Agent khác và thế giới vật lý hoặc mô phỏng. Cấp độ bên trong là **cấu trúc Model–Harness bên trong Agent**: Model đưa ra quyết định chính sách; Harness là lớp chạy và quản trị trong ranh giới Agent, chịu trách nhiệm xây dựng ngữ cảnh, cung cấp giao diện công cụ, duy trì vòng lặp và trạng thái, đồng thời áp dụng quyền hạn, xác minh và sửa lỗi. Harness có thể tạo, cô lập hoặc làm trung gian cho một môi trường nhưng không chứa trạng thái và quy tắc chuyển tiếp của Môi trường.
+
+Công thức kỹ thuật có thể được triển khai như sau: LLM tương ứng với Model, Context + Tools tạo thành Harness tối thiểu; hệ thống sản xuất bổ sung ràng buộc, xác minh và sửa lỗi bên trong ranh giới đó. Phần còn lại của chương này tuân theo ranh giới này.
+
+Ba thành phần này liên quan đến ba khái niệm cốt lõi trong RL (học tăng cường; xem Chương 7), nhưng không tương đương một-một nghiêm ngặt: context là biểu diễn bên trong Agent của các quan sát và lịch sử, còn tools định nghĩa giao diện quan sát/hành động; các đối tượng phía sau chúng vẫn thuộc về Môi trường.
 
 | Hiểu biết trực quan | Thành phần triển khai | Khái niệm học thuật | Ý nghĩa |
 |---------|---------|---------|------|
 |**Bộ não**| LLM |**Policy**(Chính sách) | Logic ra quyết định "làm gì tiếp theo" của Agent - đối mặt với thông tin hiện đang nhìn thấy, chọn hành động phù hợp nhất trong số tất cả các hành động có sẵn |
-|**Mắt**| Ngữ cảnh |**Observation Space**(Observation Space) | Tất cả thông tin Agent có thể nhìn thấy - những gì có thể nhìn thấy, những gì có thể đọc được, những gì có thể ghi nhớ và những hệ thống nào có thể truy cập |
-|**Tay và chân**| Công cụ |**Action Space**(Action Space) | Bộ sưu tập mọi thứ Agent có thể làm - những "phương tiện" có sẵn, từ gửi tin nhắn đến thực thi mã đến điều khiển giao diện |
+|**Mắt**| Xây dựng ngữ cảnh |**Quan sát và lịch sử** | Tổ chức các quan sát từ Môi trường và lịch sử hiện có thành thông tin cần thiết cho quyết định hiện tại |
+|**Tay và chân**| Giao diện công cụ |**Giao diện quan sát/hành động** | Xác định Agent có thể đọc quan sát nào, gửi hành động nào và định dạng của giao diện |
 
 ### Không gian quan sát và không gian hành động: Giao diện giữa mô hình và thế giới
 
@@ -116,9 +124,9 @@ Nhưng ở đây còn treo lơ lửng một câu hỏi sâu hơn: nếu mô hìn
 
 #### Cơ chế học tập của Agent: post-training, In-Context Learning (học trong ngữ cảnh) và học từ bên ngoài
 
-Trước đây chúng ta đã đề cập rằng mô hình có thể nội hóa chiến lược quyết định gọi công cụ thành khả năng gốc thông qua học tăng cường. Nhưng việc học của Agent không chỉ diễn ra ở giai đoạn huấn luyện - một số độc giả cho rằng mô hình phải được huấn luyện khi Agent học hỏi kinh nghiệm. Trên thực tế, post-training không phải là cách duy nhất Agent học hỏi kinh nghiệm. Cơ chế học tập của Agent có thể được tóm tắt thành ba mô hình bổ sung (Hình 1-1):
+Trước đây chúng ta đã đề cập rằng mô hình có thể nội hóa chiến lược quyết định gọi công cụ thành khả năng gốc thông qua học tăng cường. Nhưng việc học của Agent không chỉ diễn ra ở giai đoạn huấn luyện - một số độc giả cho rằng mô hình phải được huấn luyện khi Agent học hỏi kinh nghiệm. Trên thực tế, post-training không phải là cách duy nhất Agent học hỏi kinh nghiệm. Cơ chế học tập của Agent có thể được tóm tắt thành ba mô hình bổ sung (Hình 1-2):
 
-![Hình 1-1: Ba mô hình học tập của Đặc vụ ](images/fig1-1.svg)
+![Hình 1-2: Ba mô hình học tập của Đặc vụ ](images/fig1-2.svg)
 
 - **Post-training**: Củng cố kinh nghiệm về các tham số của mô hình thông qua học tăng cường, mang lại tính linh hoạt giữa các tác vụ mạnh nhất nhưng chi phí cập nhật cao (xem Chương 7 để biết chi tiết).
 - **In-Context Learning (học trong ngữ cảnh)**: Điều chỉnh nhanh chóng công thức truy xuất mẫu trong ngữ cảnh thông qua cơ chế chú ý (Cơ chế chú ý, tức là cơ chế mà mô hình quyết định "thông tin nào cần chú ý" khi xử lý đầu vào). Ví dụ: nếu bạn hiển thị cho mô hình một số ví dụ về xử lý các cuộc hội thoại dịch vụ khách hàng bằng các từ gợi ý (chẳng hạn như "Khiếu nại của người dùng → Kế hoạch xoa dịu + bồi thường"), mô hình sẽ có thể xử lý các cuộc hội thoại dịch vụ khách hàng mới theo cách tương tự - đây là In-Context Learning (học trong ngữ cảnh). Thích ứng nhanh chóng nhưng chỉ là tạm thời và biến mất vào cuối phiên. Cần lưu ý rằng mặc dù tên là "học tập" nhưng cơ chế bên trong của nó gần với việc khớp mẫu hơn là học thực sự. Ví dụ: nếu bạn được xem ba câu hỏi và câu trả lời toán cùng loại, sau đó được đưa ra câu hỏi thứ tư, rất có thể bạn sẽ làm theo cùng một khuôn mẫu - đây là điều mà việc In-Context Learning (học trong ngữ cảnh) đang thực hiện. Nhưng nếu câu hỏi thứ tư đòi hỏi một cách giải quyết vấn đề mới thì việc chỉ nhìn vào câu trả lời cho ba câu hỏi đầu tiên là chưa đủ. Nói cách khác, In-Context Learning (học trong ngữ cảnh) cho phép mô hình **áp dụng các mẫu mà nó đã thấy**, nhưng nó không thể **khám phá các quy tắc mới** - điều này về cơ bản khác với post-training (Chương 2 sẽ mở rộng chi tiết về lập luận này từ góc độ của cơ chế chú ý).
@@ -144,9 +152,9 @@ Hai mục đầu tiên (lời nhắc hệ thống + định nghĩa công cụ) l
 
 > **Thí nghiệm 1.1 ★★: Vai trò quan trọng của ngữ cảnh**
 >
-> Thông qua Nghiên cứu cắt bỏ có hệ thống, chúng tôi đã khám phá tác động của các thành phần theo ngữ cảnh khác nhau đối với hoạt động của Agent. Thí nghiệm đã chọn bốn thành phần từ năm phần trên để thử nghiệm - các từ nhắc nhở của hệ thống, là định nghĩa nhận dạng cơ bản của Agent, không tham gia vào quá trình cắt bỏ, bởi vì nếu không có các từ nhắc nhở của hệ thống, Agent thậm chí không có nhận thức vai trò cơ bản và thử nghiệm là vô nghĩa. Như được hiển thị trong Hình 1-2, năm nhóm thử nghiệm kiểm soát bao gồm: một nhóm giữ lại đường cơ sở hoàn chỉnh của tất cả các thành phần, cộng với bốn nhóm, mỗi nhóm thiếu một thành phần để quan sát tác động của từng thành phần đến hiệu suất của Agent.
+> Thông qua Nghiên cứu cắt bỏ có hệ thống, chúng tôi đã khám phá tác động của các thành phần theo ngữ cảnh khác nhau đối với hoạt động của Agent. Thí nghiệm đã chọn bốn thành phần từ năm phần trên để thử nghiệm - các từ nhắc nhở của hệ thống, là định nghĩa nhận dạng cơ bản của Agent, không tham gia vào quá trình cắt bỏ, bởi vì nếu không có các từ nhắc nhở của hệ thống, Agent thậm chí không có nhận thức vai trò cơ bản và thử nghiệm là vô nghĩa. Như được hiển thị trong Hình 1-3, năm nhóm thử nghiệm kiểm soát bao gồm: một nhóm giữ lại đường cơ sở hoàn chỉnh của tất cả các thành phần, cộng với bốn nhóm, mỗi nhóm thiếu một thành phần để quan sát tác động của từng thành phần đến hiệu suất của Agent.
 >
-> ![Hình 1-2: Thí nghiệm 1.1—Thiết kế thử nghiệm cắt bỏ ngữ cảnh ](images/fig1-2.svg)
+> ![Hình 1-3: Thí nghiệm 1.1—Thiết kế thử nghiệm cắt bỏ ngữ cảnh ](images/fig1-3.svg)
 >
 > Kết quả thực nghiệm cho thấy vai trò không thể thay thế của từng thành phần ngữ cảnh. **Định nghĩa công cụ** (một phần của tiền tố tĩnh) là cơ sở cho khả năng hành động của Agent. Nếu không có nó, Agent không thể nhận dạng và gọi bất kỳ công cụ nào. **Kết quả công cụ** là chìa khóa để điều khiển vòng kín. Thiếu nó sẽ khiến Agent bị thực thi một cách "mù quáng" và rơi vào vòng lặp vô hạn. **Quy trình tư duy**(phần lý luận trong phản hồi mô hình) giữ nguyên lý do Agent đưa ra các quyết định trước đó, giúp quá trình tư duy mạch lạc hơn và tránh các quyết định thiếu nhất quán. **Thông báo lịch sử**(thông báo của người dùng, phản hồi mô hình và kết quả thực thi công cụ của các vòng trước) ngăn chặn các hoạt động dư thừa, duy trì tính liên tục của quá trình thực thi tác vụ và tránh lặp lại các lỗi tương tự.
 >
@@ -158,9 +166,9 @@ Sau khi hiểu ba thành phần chính của Agent, một câu hỏi tự nhiên
 
 Chế độ cốt lõi của tác vụ thực thi Agent được gọi là **ReAct**(Lý luận + Hành động). Mặc dù tên chỉ phản ánh hai từ "Lý luận" và "Hành động", chu trình thực tế chứa ba liên kết: đầu tiên mô hình **suy nghĩ** những gì nên làm hiện tại, sau đó gọi công cụ **hành động**, sau đó **quan sát** kết quả do công cụ trả về và tiếp tục suy nghĩ về bước tiếp theo. Chu kỳ "suy nghĩ → làm → nhìn → suy nghĩ → làm → nhìn thấy" này được lặp lại cho đến khi nhiệm vụ được hoàn thành.
 
-Hãy cùng tìm hiểu trajectory của Agent thông qua một ví dụ cụ thể về tổng hợp doanh thu bằng nhiều loại tiền tệ. Trajectory là lịch sử thông báo mà Agent liên tục tích lũy trong quá trình thực hiện các tác vụ - thông báo của người dùng, phản hồi của mô hình (bao gồm quá trình tư duy và lệnh gọi công cụ) và kết quả thực thi công cụ. Mỗi lần LLM được gọi, ngữ cảnh hoàn chỉnh mà nó nhận được bao gồm hai phần: **tiền tố tĩnh**(system prompt + định nghĩa công cụ) và **trajectory**(lịch sử tin nhắn động) (Hình 1-3). Điều này tiết lộ một sự thật quan trọng: **ngữ cảnh của Agent = tiền tố tĩnh + trajectory**. Cụ thể, tiền tố tĩnh tương ứng với hai thành phần đầu tiên trong số năm thành phần được đề cập ở trên (system prompt + định nghĩa công cụ) và trajectory tương ứng với ba thành phần cuối cùng (thông báo người dùng + trả lời mô hình + kết quả thực thi công cụ, tiếp tục phát triển cùng với sự tương tác). Dựa trên ngữ cảnh hoàn chỉnh này, LLM tạo ra phản hồi tiếp theo, sau đó được thêm vào trajectory cho cuộc gọi tiếp theo.
+Hãy cùng tìm hiểu trajectory của Agent thông qua một ví dụ cụ thể về tổng hợp doanh thu bằng nhiều loại tiền tệ. Trajectory là lịch sử thông báo mà Agent liên tục tích lũy trong quá trình thực hiện các tác vụ - thông báo của người dùng, phản hồi của mô hình (bao gồm quá trình tư duy và lệnh gọi công cụ) và kết quả thực thi công cụ. Mỗi lần LLM được gọi, ngữ cảnh hoàn chỉnh mà nó nhận được bao gồm hai phần: **tiền tố tĩnh**(system prompt + định nghĩa công cụ) và **trajectory**(lịch sử tin nhắn động) (Hình 1-4). Điều này tiết lộ một sự thật quan trọng: **ngữ cảnh của Agent = tiền tố tĩnh + trajectory**. Cụ thể, tiền tố tĩnh tương ứng với hai thành phần đầu tiên trong số năm thành phần được đề cập ở trên (system prompt + định nghĩa công cụ) và trajectory tương ứng với ba thành phần cuối cùng (thông báo người dùng + trả lời mô hình + kết quả thực thi công cụ, tiếp tục phát triển cùng với sự tương tác). Dựa trên ngữ cảnh hoàn chỉnh này, LLM tạo ra phản hồi tiếp theo, sau đó được thêm vào trajectory cho cuộc gọi tiếp theo.
 
-![Hình 1-3: Trajectory tác nhân - Vòng lặp ReAct của nhiệm vụ tóm tắt đa tiền tệ ](images/fig1-3.svg)
+![Hình 1-4: Trajectory tác nhân - Vòng lặp ReAct của nhiệm vụ tóm tắt đa tiền tệ ](images/fig1-4.svg)
 
 Hãy cùng chúng tôi tìm hiểu cấu trúc trajectory Agent thông qua mã giả:
 
@@ -233,9 +241,9 @@ Sau khi hiểu được vòng lặp đang chạy của Agent, chúng ta hãy s�
 >
 > Cần lưu ý rằng thí nghiệm này không bị ràng buộc với một nhà cung cấp cụ thể. Độc giả không có tín dụng OpenAI vẫn có thể tái lập bằng nhà cung cấp có các công cụ được quản lý tương đương. Chẳng hạn, Responses API của qwen3.7-plus trên Alibaba Cloud Bailian cũng tích hợp sẵn `web_search` và `code_interpreter`; tìm kiếm được quản lý bởi Formula và `code_runner` của Kimi K3 cũng cung cấp cùng loại năng lực.
 >
-> Hình 1-4 hiển thị kiến trúc hoàn chỉnh của các lệnh gọi công cụ gốc theo mô hình "model is Agent", cũng như quy trình thực thi ReAct của Kimi K3 / GPT-5.6 trong các tác vụ thực tế.
+> Hình 1-5 hiển thị kiến trúc hoàn chỉnh của các lệnh gọi công cụ gốc theo mô hình "model is Agent", cũng như quy trình thực thi ReAct của Kimi K3 / GPT-5.6 trong các tác vụ thực tế.
 >
-> ![Hình 1-4: Kiến trúc "Model is Agent" - lệnh gọi công cụ gốc ](images/fig1-4.svg)
+> ![Hình 1-5: Kiến trúc "Model is Agent" - lệnh gọi công cụ gốc ](images/fig1-5.svg)
 
 ## Harness Engineering (kỹ thuật Harness): Năng lực vượt xa các mô hình
 
@@ -245,7 +253,11 @@ Các phần trước đã thiết lập công thức cốt lõi của **Agent = 
 
 Sử dụng các phương trình để mở rộng thành phần hoàn chỉnh ở dạng sản xuất:
 
-> **Agent = LLM + [Context + Tools + Ràng buộc + Xác thực + Chỉnh sửa] = Mô hình + Harness**
+> **Agent = Mô hình + Harness**
+>
+> **Harness = quản lý ngữ cảnh + giao diện công cụ + ràng buộc + xác minh + sửa lỗi**
+>
+> **Agent ↔ Môi trường**
 
 Agent hoạt động nhỏ nhất chỉ cần LLM, ngữ cảnh và công cụ để chạy; nhưng để làm cho nó chạy đáng tin cậy trong môi trường sản xuất trong thời gian dài, nó cũng cần hoàn thiện lớp vỏ kỹ thuật ba lớp gồm các ràng buộc, xác minh và sửa chữa - các ràng buộc để ngăn chặn các trường hợp vượt quá giới hạn, xác minh để phát hiện lỗi cũng như sửa chữa và phục hồi các trường hợp ngoại lệ. Nói cách khác, công thức tối thiểu là bối cảnh demo và công thức mở rộng là bối cảnh sản xuất; cái sau hoàn toàn bao gồm cái trước và bổ sung thêm một mạng lưới an toàn xung quanh vùng ngoại vi.
 
@@ -255,7 +267,7 @@ Sử dụng một ví dụ cụ thể để hiểu giá trị của Harness. Gi�
 
 Quay trở lại với phép ẩn dụ về dây nịt được đưa ra ở đầu chương này: một mô hình không có dây nịt giống như một con ngựa hoang đang chạy trốn, có khả năng đáng kinh ngạc nhưng không thể hoàn thành nhiệm vụ một cách đáng tin cậy.
 
-Chính xác hơn, tất cả cơ sở hạ tầng bên ngoài mô hình đều thuộc về Harness. Cốt lõi của Harness là ngữ cảnh và công cụ, xung quanh đó ba loại cơ chế đảm bảo kỹ thuật được xây dựng:
+Chính xác hơn, Harness không phải là mọi thứ bên ngoài mô hình; đó là **lớp chạy và quản trị nằm trong ranh giới Agent nhưng bên ngoài Model**. Harness trung gian cho tương tác giữa Model và Môi trường nhưng không bao gồm chính Môi trường. Định nghĩa công cụ, bộ chuyển đổi lệnh gọi, quyền sandbox và cơ chế đặt lại thuộc về Harness; các tệp và tiến trình thay đổi trong sandbox, cơ sở dữ liệu bên ngoài, trang web, người dùng và thế giới vật lý thuộc về Môi trường. Vị trí triển khai không làm thay đổi ranh giới khái niệm này. Cốt lõi của Harness là quản lý ngữ cảnh và giao diện công cụ, xung quanh đó ba loại cơ chế đảm bảo kỹ thuật được xây dựng:
 
 | Chức năng | Trách nhiệm trong một câu | Mối quan hệ với ngữ cảnh/công cụ |
 |------|-----------|-------------------|
@@ -376,7 +388,7 @@ Vẫn lấy việc đặt vé máy bay làm ví dụ: Agent tự động không 
 
 Từ góc độ triển khai, Agent tự trị về cơ bản là LLM sử dụng công cụ trong vòng lặp để thúc đẩy nhiệm vụ bằng cách liên tục nhận phản hồi từ môi trường - đây là vòng lặp ReAct đã được giới thiệu trước đó. Các điều kiện thoát phổ biến bao gồm gọi công cụ đầu ra cuối cùng, mô hình trả về phản hồi mà không có bất kỳ lệnh gọi công cụ nào hoặc gặp phải lỗi hoặc đạt đến số vòng tối đa.
 
-![Hình 1-5: Vòng lặp thực thi của Tác nhân tự trị ](images/fig1-5.svg)
+![Hình 1-6: Vòng lặp thực thi của Tác nhân tự trị ](images/fig1-6.svg)
 
 Agent tự trị đặc biệt hữu ích cho các bài toán mở—các bài toán khó dự đoán số bước cần thiết. Các kịch bản ứng dụng điển hình bao gồm: Coding Agent giải quyết các tác vụ SWE-bench (Điểm chuẩn kỹ thuật phần mềm, một bài kiểm tra điểm chuẩn đánh giá khả năng của Agent trong việc tự động sửa chữa các vấn đề GitHub thực tế), "Sử dụng máy tính" (Computer Use) Agent vận hành các giao diện máy tính như con người và thực hiện các nhiệm vụ nghiên cứu đòi hỏi phải tìm kiếm và phân tích lặp đi lặp lại.
 
@@ -386,7 +398,7 @@ Tuy nhiên, quyền tự chủ cũng đi kèm với chi phí cao hơn và nguy c
 
 Trong thực tế, quy trình làm việc và quyền tự chủ Agent không phải là quan hệ chọn một trong hai - nhiều hệ thống sẽ sử dụng kết hợp hai chế độ: các quy trình quan trọng với yêu cầu tuân thủ nghiêm ngặt sử dụng quy trình làm việc để đảm bảo độ tin cậy và các bộ phận yêu cầu ra quyết định linh hoạt sẽ chuyển sang chế độ tự động. Ví dụ: n8n là một khung nguồn mở hoàn thiện để tự động hóa quy trình làm việc. Các nhà phát triển kéo và thả các thành phần chức năng thông qua giao diện trực quan để xây dựng Agent và có thể sử dụng cả nút quy trình làm việc và nút Agent tự trị trong cùng một hệ thống.
 
-![Hình 1-6: Giao diện soạn thảo quy trình công việc n8n ](images/n8n-workflow.png)
+![Hình 1-7: Giao diện soạn thảo quy trình công việc n8n ](images/n8n-workflow.png)
 
 #### So sánh ngắn gọn về các framework Agent chính thống
 

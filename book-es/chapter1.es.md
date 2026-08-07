@@ -18,13 +18,21 @@ La esencia de un sistema de Agente moderno se resume en una fórmula concisa: **
 
 Dicho de forma más intuitiva: **Agente = Motor de Razonamiento + Contexto de Trabajo + Interfaces de Acción**. El modelo razona y decide, el contexto proporciona el conjunto de información de trabajo del que dependen esas decisiones, y las herramientas proporcionan las interfaces a través de las cuales las decisiones afectan al mundo exterior.
 
-Estos tres componentes corresponden exactamente a tres conceptos clave del RL (aprendizaje por refuerzo; véase el capítulo 7).
+Desde la perspectiva clásica del aprendizaje por refuerzo y la teoría de control, el Agente y el Entorno son las dos partes de una interacción en bucle cerrado, no componentes el uno del otro. El Entorno devuelve una observación, el Agente utiliza su contexto para elegir la siguiente acción y esa acción modifica el estado del Entorno, que produce la observación siguiente.
+
+![Figura 1-1: Bucle de interacción entre el Agente y el Entorno, y estructura Modelo–Harness dentro del Agente](images/fig1-1.svg)
+
+La Figura 1-1 muestra dos niveles de abstracción. El nivel exterior es la interacción entre el **Agente y el Entorno**: el Entorno incluye sistemas de archivos, bases de datos, páginas web, usuarios, otros Agentes y mundos físicos o simulados. El nivel interior es la **estructura Modelo–Harness dentro del Agente**: el Modelo toma decisiones de política; el Harness es la capa de ejecución y gobernanza dentro de los límites del Agente que construye el contexto, expone interfaces de herramientas, mantiene bucles y estados y aplica permisos, verificación y corrección. Un Harness puede crear, aislar o representar un entorno sin contener su estado ni sus reglas de transición.
+
+La fórmula de ingeniería puede ampliarse así: el LLM corresponde al Modelo y Contexto + Herramientas forman el Harness mínimo; los sistemas de producción añaden restricciones, verificación y corrección dentro de esos límites. El resto de este capítulo mantiene esta frontera.
+
+Estos tres componentes corresponden a tres conceptos clave del RL (aprendizaje por refuerzo; véase el capítulo 7), pero no son equivalentes estrictos uno a uno: el contexto es la representación interna que el Agente construye de las observaciones y el historial, mientras que las herramientas definen interfaces de observación y acción cuyos objetos subyacentes siguen perteneciendo al Entorno.
 
 | Intuición | Componente del Agente | Concepto en RL | Rol |
 |---------------|----------------|------------------|---------------------------------------------|
 | **Motor de Razonamiento** | LLM | **Política (Policy)** | La lógica de toma de decisiones que determina "qué hacer a continuación": dada la información actual, elige la acción más adecuada entre todas las opciones disponibles. |
-| **Contexto de Trabajo** | Contexto | **Espacio de Observación** | Toda la información disponible para el Agente: lo que puede observar, leer, recordar y a qué sistemas puede acceder. |
-| **Interfaces de Acción** | Herramientas | **Espacio de Acción** | El conjunto completo de cosas que el Agente puede hacer: qué "medios" tiene a su disposición, desde enviar mensajes hasta ejecutar código o controlar interfaces. |
+| **Contexto de Trabajo** | Construcción del contexto | **Observaciones e historial** | Organiza las observaciones del Entorno y el historial existente para la decisión actual. |
+| **Interfaces de Acción** | Interfaces de herramientas | **Interfaces de observación/acción** | Define qué observaciones puede leer el Agente, qué acciones puede emitir y en qué formato. |
 
 ### Espacio de observación y espacio de acción: la interfaz entre el modelo y el mundo
 
@@ -114,9 +122,9 @@ Sin embargo, surge una pregunta más profunda: si los modelos se vuelven cada ve
 
 #### Mecanismos de Aprendizaje de los Agentes: De la Adaptación Contextual a las Actualizaciones Persistentes
 
-Las modificaciones en el comportamiento de un Agente no ocurren únicamente durante el entrenamiento. Según dónde ocurre la actualización y cuánto tiempo persiste, estos cambios pueden entenderse a través de tres vías complementarias (Figura 1-1): adaptación contextual intra-tarea, actualizaciones entre tareas en artefactos externos y actualizaciones de parámetros durante ciclos de entrenamiento.
+Las modificaciones en el comportamiento de un Agente no ocurren únicamente durante el entrenamiento. Según dónde ocurre la actualización y cuánto tiempo persiste, estos cambios pueden entenderse a través de tres vías complementarias (Figura 1-2): adaptación contextual intra-tarea, actualizaciones entre tareas en artefactos externos y actualizaciones de parámetros durante ciclos de entrenamiento.
 
-![Figura 1-1: Tres niveles de actualización de capacidades del Agente](images/fig1-1.svg)
+![Figura 1-2: Tres niveles de actualización de capacidades del Agente](images/fig1-2.svg)
 
 La **adaptación contextual** ocurre dentro de la tarea actual. Una vez que los ejemplos, el estado y los resultados de recuperación ingresan al contexto, el modelo puede ajustar su comportamiento de inmediato, pero esto no cambia el estado persistente de la siguiente sesión. Sus ventajas son la velocidad y el bajo costo; sus limitaciones provienen de la ventana de contexto. El Capítulo 2 explica en detalle este tipo de adaptación.
 
@@ -140,9 +148,9 @@ Para comprobar si cada componente es realmente indispensable, el método más di
 
 > **Experimento 1-1 ★★: El Papel Crítico del Contexto**
 >
-> Examinamos cómo influye cada componente del contexto en el comportamiento del Agente mediante un **estudio de ablación** sistemático. Como muestra la Figura 1-2, el experimento ejecutó cinco grupos controlados: una línea base completa y cuatro grupos a los que les faltaba un componente.
+> Examinamos cómo influye cada componente del contexto en el comportamiento del Agente mediante un **estudio de ablación** sistemático. Como muestra la Figura 1-3, el experimento ejecutó cinco grupos controlados: una línea base completa y cuatro grupos a los que les faltaba un componente.
 >
-> ![Figura 1-2: Experimento 1-1, Diseño del estudio de ablación de contexto](images/fig1-2.svg)
+> ![Figura 1-3: Experimento 1-1, Diseño del estudio de ablación de contexto](images/fig1-3.svg)
 >
 > Los resultados revelaron el papel irremplazable de cada componente. Las **Definiciones de Herramientas** son la base de la capacidad de acción; sin ellas, el Agente no reconoce ni puede llamar a ninguna herramienta. Los **Resultados de Herramientas** son clave para el control de bucle cerrado; su ausencia priva al Agente de retroalimentación y provoca que caiga en bucles infinitos. El **proceso de razonamiento** mantiene la coherencia de las decisiones anteriores. El **historial de mensajes** evita operaciones redundantes y mantiene la continuidad de la tarea.
 >
@@ -152,9 +160,9 @@ Para comprobar si cada componente es realmente indispensable, el método más di
 
 El patrón central mediante el cual un Agente ejecuta una tarea se llama **ReAct** (Reasoning + Acting). El bucle consta de tres etapas: el modelo **razona** sobre qué hacer a continuación, llama a una herramienta para **actuar**, y **observa** el resultado para volver a razonar. Este bucle "razonar → actuar → observar" se repite hasta completar la tarea.
 
-Consideremos la **trayectoria**: el historial de mensajes que se acumula a medida que el Agente trabaja. En cada llamada al LLM, el contexto completo es el **prefijo estático** más la **trayectoria** (historial dinámico) (Figura 1-3). De aquí se deriva una verdad clave: **Contexto del Agente = Prefijo Estático + Trayectoria**.
+Consideremos la **trayectoria**: el historial de mensajes que se acumula a medida que el Agente trabaja. En cada llamada al LLM, el contexto completo es el **prefijo estático** más la **trayectoria** (historial dinámico) (Figura 1-4). De aquí se deriva una verdad clave: **Contexto del Agente = Prefijo Estático + Trayectoria**.
 
-![Figura 1-3: Trayectoria del Agente, Bucle ReAct para una tarea de agregación multimoneda](images/fig1-3.svg)
+![Figura 1-4: Trayectoria del Agente, Bucle ReAct para una tarea de agregación multimoneda](images/fig1-4.svg)
 
 Estructura de una trayectoria en pseudocódigo:
 
@@ -218,9 +226,9 @@ En este diseño básico, el contexto que ve el modelo se amplía mediante anexos
 >
 > Conviene señalar que este experimento no está ligado a un proveedor concreto. Quienes no tengan créditos de OpenAI pueden reproducirlo con proveedores que ofrezcan herramientas gestionadas equivalentes. Por ejemplo, la Responses API de qwen3.7-plus de Alibaba Cloud Bailian también incorpora `web_search` y `code_interpreter`; la búsqueda gestionada por Formula y `code_runner` de Kimi K3 ofrecen capacidades de la misma clase.
 >
-> La figura 1-4 muestra la arquitectura completa de las invocaciones nativas de herramientas bajo el paradigma «el modelo es el Agente», así como el proceso de ejecución ReAct de Kimi K3 / GPT-5.6 en tareas reales.
+> La figura 1-5 muestra la arquitectura completa de las invocaciones nativas de herramientas bajo el paradigma «el modelo es el Agente», así como el proceso de ejecución ReAct de Kimi K3 / GPT-5.6 en tareas reales.
 >
-> ![Figura 1-4 Arquitectura de «el modelo es el Agente»—invocación nativa de herramientas](images/fig1-4.svg)
+> ![Figura 1-5 Arquitectura de «el modelo es el Agente»—invocación nativa de herramientas](images/fig1-5.svg)
 
 ## Ingeniería de Harness: la competitividad más allá del modelo
 
@@ -230,7 +238,11 @@ Las secciones anteriores establecieron la fórmula fundamental **Agente = LLM + 
 
 Si expresamos mediante una ecuación la composición completa de un sistema de producción:
 
-> **Agente = LLM + [contexto + herramientas + restricción + verificación + corrección] = Model + Harness**
+> **Agente = Model + Harness**
+>
+> **Harness = gestión del contexto + interfaces de herramientas + restricción + verificación + corrección**
+>
+> **Agente ↔ Entorno**
 
 Un Agente mínimo funcional solo necesita un LLM, contexto y herramientas para ponerse en marcha; sin embargo, para que funcione de manera fiable y duradera en un entorno de producción también es necesario completar la envoltura de ingeniería con los tres niveles de restricción, verificación y corrección—la restricción impide que se sobrepasen los límites, la verificación detecta errores y la corrección permite recuperarse de las anomalías. En otras palabras, la fórmula mínima corresponde a la perspectiva de una demostración, mientras que la fórmula ampliada corresponde a la perspectiva de producción; la segunda contiene por completo a la primera y añade a su alrededor una red de seguridad.
 
@@ -240,7 +252,7 @@ Veamos un ejemplo concreto para comprender el valor del Harness. Supongamos que 
 
 Volvamos a la metáfora del arnés presentada al principio del capítulo: un modelo sin Harness es como un caballo salvaje desbocado, con capacidades asombrosas, pero incapaz de completar tareas de forma fiable.
 
-Para ser más precisos, toda la infraestructura externa al modelo forma parte del Harness. El núcleo del Harness está constituido por el contexto y las herramientas, alrededor de los cuales se construyen tres tipos de mecanismos de garantía de ingeniería:
+Para ser más precisos, el Harness no es todo lo que queda fuera del modelo: es la capa de ejecución y gobernanza **dentro de los límites del Agente y fuera del Modelo**. Media la interacción entre Modelo y Entorno, pero no incluye el Entorno. Las definiciones de herramientas, los adaptadores de llamadas y los mecanismos de permisos y reinicio del sandbox pertenecen al Harness; los archivos y procesos que cambian dentro del sandbox, las bases de datos externas, las páginas web, los usuarios y el mundo físico pertenecen al Entorno. La ubicación del despliegue no cambia esta frontera conceptual. El núcleo del Harness es la gestión del contexto y las interfaces de herramientas, alrededor de las cuales se construyen tres tipos de mecanismos de garantía de ingeniería:
 
 | Función | Responsabilidad en una frase | Relación con el contexto/las herramientas |
 |--------------------|----------------------------------------|-----------------------------------|
@@ -361,7 +373,7 @@ Esto significa que un Agente autónomo debe tener capacidad de planificación au
 
 Desde la perspectiva de la implementación, un Agente autónomo es esencialmente un LLM que utiliza herramientas dentro de un bucle y hace avanzar la tarea obteniendo continuamente retroalimentación del entorno—esto es precisamente el bucle ReAct presentado anteriormente. Entre las condiciones de salida habituales se encuentran: invocar la herramienta de salida final, que el modelo devuelva una respuesta sin ninguna invocación de herramienta, encontrar un error o alcanzar el número máximo de rondas.
 
-![Figura 1-5 Bucle de ejecución de un Agente autónomo](images/fig1-5.svg)
+![Figura 1-6 Bucle de ejecución de un Agente autónomo](images/fig1-6.svg)
 
 Los Agentes autónomos son especialmente adecuados para problemas abiertos—problemas en los que es difícil predecir el número de pasos necesarios. Entre los escenarios de aplicación típicos se incluyen: un Coding Agent que resuelve tareas de SWE-bench (Software Engineering Benchmark, una prueba de referencia que evalúa la capacidad de un Agente para corregir automáticamente GitHub Issues reales), un Agente de «uso del ordenador» (Computer Use) que maneja una interfaz informática como lo haría una persona y tareas de investigación que requieren búsquedas y análisis iterativos.
 
@@ -369,7 +381,7 @@ No obstante, la autonomía también conlleva mayores costes y un posible riesgo 
 #### Selección y Mezcla de Ambos Patrones
 Muchos sistemas combinan ambos: los procesos críticos funcionan como workflows, mientras que los pasos dinámicos se delegan a Agentes autónomos (ejemplo: n8n).
 
-![Figura 1-6: Interfaz del editor de flujos de trabajo n8n](images/n8n-workflow.png)
+![Figura 1-7: Interfaz del editor de flujos de trabajo n8n](images/n8n-workflow.png)
 
 #### Breve comparativa de los principales frameworks de Agentes
 

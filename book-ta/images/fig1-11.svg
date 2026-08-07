@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 260" width="820" height="260" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="55.0" y="65" width="130" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="120.0" y="82.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Requirements</text>
+<text x="120.0" y="102.89999999999999" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">document</text>
+<rect x="200.0" y="65" width="130" height="55" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="265.0" y="82.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM: Generate</text>
+<text x="265.0" y="102.89999999999999" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">outline</text>
+<line x1="187.0" y1="92.5" x2="198.0" y2="92.5" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="345.0" y="65" width="130" height="55" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="410.0" y="82.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM: Write</text>
+<text x="410.0" y="102.89999999999999" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">body</text>
+<line x1="332.0" y1="92.5" x2="343.0" y2="92.5" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="490.0" y="65" width="130" height="55" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="555.0" y="82.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM:</text>
+<text x="555.0" y="102.89999999999999" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Translation</text>
+<line x1="477.0" y1="92.5" x2="488.0" y2="92.5" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="635.0" y="65" width="130" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="700.0" y="82.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Multilingual</text>
+<text x="700.0" y="102.89999999999999" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Documentation</text>
+<line x1="622.0" y1="92.5" x2="633.0" y2="92.5" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<polygon points="265.0,137.0 295.0,157 265.0,177.0 235.0,157" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="265.0" y="157" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.0" fill="#333333" text-anchor="middle" dominant-baseline="central">Gating</text>
+<line x1="265.0" y1="120" x2="265.0" y2="137" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<polygon points="410.0,137.0 440.0,157 410.0,177.0 380.0,157" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="410.0" y="157" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.0" fill="#333333" text-anchor="middle" dominant-baseline="central">Gating</text>
+<line x1="410.0" y1="120" x2="410.0" y2="137" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="70.0" y="195" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">&quot;Product Release Notes&quot;</text>
+<text x="215.0" y="195" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">→ 5-Section Outline</text>
+<text x="360.0" y="195" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">→ 3000-Word Document</text>
+<text x="505.0" y="195" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">→ EN / JP / KR</text>
+</svg>

@@ -18,13 +18,21 @@ The essence of a modern Agent system fits into one concise formula: **Agent = LL
 
 Put more intuitively: **Agent = Reasoning Engine + Working Context + Action Interfaces**. The model reasons and decides, the context provides the working set of information those decisions depend on, and the tools provide the interfaces through which decisions affect the outside world.
 
-These three components correspond exactly to three core concepts in RL (reinforcement learning; see Chapter 7).
+From the classical reinforcement-learning and control perspective, the Agent and the Environment are two sides of a closed-loop interaction, not components of one another. The Environment returns an observation, the Agent uses its context to choose the next action, and that action changes the Environment's state, producing the next observation.
+
+![Figure 1-1: The Agent–Environment interaction loop and the Model–Harness structure inside the Agent](images/fig1-1.svg)
+
+Figure 1-1 shows two levels of abstraction. The outer level is the interaction between the **Agent and the Environment**: the Environment includes file systems, databases, web pages, users, other Agents, and physical or simulated worlds. The inner level is the **Model–Harness structure inside the Agent**: the Model makes policy decisions; the Harness is the runtime and governance layer inside the Agent boundary that builds context, exposes tool interfaces, maintains loops and state, and applies permissions, verification, and correction. A Harness can create, isolate, or proxy an environment without containing the Environment's state or transition rules.
+
+The engineering formula can therefore be expanded as follows: the LLM is the Model, while Context + Tools form the minimum Harness; production systems add constraints, verification, and correction inside that boundary. The rest of this chapter follows this boundary.
+
+These three components correspond exactly to three core concepts in RL (reinforcement learning; see Chapter 7), but they are not strict one-to-one equivalents: context is the Agent's internal representation of observations and history, while tools define observation/action interfaces whose underlying objects remain in the Environment.
 
 | Intuition | Agent Component | RL Concept | Role |
 |---------------|----------------|------------------|---------------------------------------------|
 | **Reasoning Engine** | LLM | **Policy** | The decision-making logic that determines "what to do next"—given the current information, choose the most appropriate action from all available options |
-| **Working Context** | Context | **Observation Space** | All the information available to the Agent—what it can observe, read, remember, and which systems it can access |
-| **Action Interfaces** | Tools | **Action Space** | The complete set of things the Agent can do—what "means" are available, from sending messages to executing code to controlling interfaces |
+| **Working Context** | Context construction | **Observations and history** | Organizes Environment observations and existing history into the information needed for the current decision |
+| **Action Interfaces** | Tool interfaces | **Observation/action interfaces** | Defines which observations the Agent can read, which actions it can issue, and the format of those interfaces |
 
 ### Observation and Action Spaces: The Interface Between Model and World
 
@@ -116,9 +124,9 @@ But a deeper question follows: if models keep getting stronger, will today's Har
 
 #### Agent Learning Mechanisms: From Contextual Adaptation to Persistent Updates
 
-The preceding discussion noted that a model can internalize tool-use policies as native capabilities through reinforcement learning. But changes in an Agent's behavior do not occur only during training. Based on where an update occurs and how long it persists, these changes can be understood as three complementary paths (Figure 1-1): within-task contextual adaptation, cross-task updates to external artifacts, and parameter updates during training cycles.
+The preceding discussion noted that a model can internalize tool-use policies as native capabilities through reinforcement learning. But changes in an Agent's behavior do not occur only during training. Based on where an update occurs and how long it persists, these changes can be understood as three complementary paths (Figure 1-2): within-task contextual adaptation, cross-task updates to external artifacts, and parameter updates during training cycles.
 
-![Figure 1-1: Three Levels of Agent Capability Updates](images/fig1-1.svg)
+![Figure 1-2: Three Levels of Agent Capability Updates](images/fig1-2.svg)
 
 **Contextual adaptation** occurs within the current task. Once examples, state, and retrieval results enter the context, the model can adjust its behavior immediately, but this does not change the persistent state of the next session. Its advantages are speed and low cost; its limitations arise from the context window and the way information is organized. Chapter 2 explains in detail how this form of adaptation works.
 
@@ -142,9 +150,9 @@ Is every component truly indispensable? The most direct way to find out is an **
 
 > **Experiment 1-1 ★★: The Critical Role of Context**
 >
-> We probed how each context component shapes Agent behavior with a systematic **ablation study**. Of the five components above, four were tested—the system prompt, as the Agent’s basic identity definition, was exempt: without it the Agent has no role awareness at all, and the test would be meaningless. As Figure 1-2 shows, the experiment ran five controlled groups: a complete baseline retaining every component, plus four groups each missing one, to observe each component’s effect on Agent performance.
+> We probed how each context component shapes Agent behavior with a systematic **ablation study**. Of the five components above, four were tested—the system prompt, as the Agent’s basic identity definition, was exempt: without it the Agent has no role awareness at all, and the test would be meaningless. As Figure 1-3 shows, the experiment ran five controlled groups: a complete baseline retaining every component, plus four groups each missing one, to observe each component’s effect on Agent performance.
 >
-> ![Figure 1-2: Experiment 1-1—Context ablation study design](images/fig1-2.svg)
+> ![Figure 1-3: Experiment 1-1—Context ablation study design](images/fig1-3.svg)
 >
 > The experimental results revealed the irreplaceable role of each context component. **Tool Definitions** (part of the static prefix) are the foundation of the Agent’s action capability; without them, the Agent cannot recognize or call any tools. **Tool Results** are key to closed-loop control; their absence deprives the Agent of execution feedback and causes it to fall into an infinite loop. The **reasoning process** (the reasoning part of assistant messages) preserves the reasons for the Agent’s previous decisions, making the overall reasoning more coherent and preventing contradictory decisions. **Message history** (user messages, assistant messages, and tool results from previous rounds) prevents redundant operations, maintains task execution coherence, and avoids repeating the same mistakes.
 >
@@ -156,9 +164,9 @@ With the three components in hand, a natural question follows: how do they work 
 
 The core pattern by which an Agent executes a task is called **ReAct** (Reasoning + Acting). The name mentions only reasoning and acting, but the actual loop has three stages: the model first **reasons** about what to do next, then calls a tool to **act**, then **observes** the tool’s result and reasons about the subsequent step. This “reason → act → observe → reason → act → observe” loop repeats until the task is done.
 
-Consider a concrete example—aggregating revenue across multiple currencies—to understand an Agent’s **trajectory**: the message history that accumulates as the Agent works, comprising user messages, assistant messages (with their reasoning and tool calls), and tool results. On every LLM call, the complete context the model receives is the **static prefix** (system prompt + tool definitions) plus the **trajectory** (dynamic message history) (Figure 1-3). This shows a key fact: **Agent context = static prefix + trajectory**. Concretely, the static prefix is the first two of the five components above (system prompt + tool definitions); the trajectory is the last three (user messages + assistant messages + tool results, growing with each interaction). From this complete context the LLM generates its next response, which is then appended to the trajectory for the subsequent call.
+Consider a concrete example—aggregating revenue across multiple currencies—to understand an Agent’s **trajectory**: the message history that accumulates as the Agent works, comprising user messages, assistant messages (with their reasoning and tool calls), and tool results. On every LLM call, the complete context the model receives is the **static prefix** (system prompt + tool definitions) plus the **trajectory** (dynamic message history) (Figure 1-4). This shows a key fact: **Agent context = static prefix + trajectory**. Concretely, the static prefix is the first two of the five components above (system prompt + tool definitions); the trajectory is the last three (user messages + assistant messages + tool results, growing with each interaction). From this complete context the LLM generates its next response, which is then appended to the trajectory for the subsequent call.
 
-![Figure 1-3: Agent trajectory—ReAct loop for a multi-currency aggregation task](images/fig1-3.svg)
+![Figure 1-4: Agent trajectory—ReAct loop for a multi-currency aggregation task](images/fig1-4.svg)
 
 Here is the structure of a trajectory, in pseudocode:
 
@@ -230,9 +238,9 @@ Now that we understand the Agent's operating loop, we examine two experiments to
 >
 > It is important to note that this experiment is not tied to any one vendor. Readers without OpenAI credits can reproduce it with providers that offer equivalent managed tools. For example, Alibaba Cloud Bailian's qwen3.7-plus Responses API also includes built-in `web_search` and `code_interpreter`; Kimi K3's Formula-managed search and `code_runner` provide the same class of capability.
 >
-> Figure 1-4 illustrates the complete architecture of native tool calling under the "Model as Agent" paradigm, along with the ReAct execution process of Kimi K3 and GPT-5.6 in real-world tasks.
+> Figure 1-5 illustrates the complete architecture of native tool calling under the "Model as Agent" paradigm, along with the ReAct execution process of Kimi K3 and GPT-5.6 in real-world tasks.
 >
-> ![Figure 1-4: "Model as Agent" Architecture—Native Tool Calling](images/fig1-4.svg)
+> ![Figure 1-5: "Model as Agent" Architecture—Native Tool Calling](images/fig1-5.svg)
 
 ## Harness Engineering: Competitiveness Beyond the Model
 
@@ -242,7 +250,11 @@ The preceding sections established the core formula: **Agent = LLM + Context + T
 
 Expanded as an equation, the complete production-grade composition is:
 
-> **Agent = LLM + [Context + Tools + Constrain + Verify + Correct] = Model + Harness**
+> **Agent = Model + Harness**
+>
+> **Harness = Context management + Tool interfaces + Constrain + Verify + Correct**
+>
+> **Agent ↔ Environment**
 
 A minimal working Agent runs on LLM, context, and tools alone. To keep running reliably in long-running production workloads, it needs the three outer engineering layers as well—constrain to prevent overreach, verify to catch errors, correct to recover from failures. Put differently: the minimal formula is the demo view, and the expanded formula is the production view—the latter contains the former entirely and adds a safety net around it.
 
@@ -252,7 +264,7 @@ A concrete example shows the value of the Harness. Suppose you ask an Agent to r
 
 In short, a model without a Harness may be highly capable, but it lacks the surrounding controls needed for reliable task completion.
 
-More precisely, all infrastructure outside the model belongs to the Harness. The core of the Harness is Context and Tools, around which three types of engineering safeguards are built:
+More precisely, the Harness is not everything outside the model: it is the runtime and governance layer **inside the Agent boundary and outside the Model**. It mediates the Model–Environment interaction but does not include the Environment itself. Tool definitions, call adapters, sandbox permissions and reset mechanisms belong to the Harness; files and processes that change inside the sandbox, external databases, web pages, users and the physical world belong to the Environment. Deployment location does not change this conceptual boundary. The core of the Harness is context management and tool interfaces, around which three types of engineering safeguards are built:
 
 | Function | One-Sentence Responsibility | Relationship with Context/Tools |
 |----------|-------------------------------------------|------------------------------------------|
@@ -371,7 +383,7 @@ An autonomous Agent therefore has to plan for itself—choose its own execution 
 
 From an implementation perspective, an autonomous Agent is essentially an LLM using tools in a loop, continuously obtaining environmental feedback to make progress on the task—this is the ReAct loop introduced earlier. Common exit conditions include: calling a final output tool, the model returning a response without any tool calls, or encountering an error or reaching the maximum number of rounds.
 
-![Figure 1-5: Execution loop of an autonomous Agent](images/fig1-5.svg)
+![Figure 1-6: Execution loop of an autonomous Agent](images/fig1-6.svg)
 
 Autonomous Agents are well suited to open-ended problems—those where it is difficult to predict the number of steps required. Typical use cases include: Coding Agents solving SWE-bench (Software Engineering Benchmark, a benchmark for evaluating an Agent's ability to automatically fix real GitHub issues) tasks, "Computer Use" Agents operating computer interfaces like a human, and research tasks requiring iterative search and analysis.
 
@@ -381,7 +393,7 @@ Autonomy also costs more and lets errors compound. Deploying an autonomous Agent
 
 In practice, workflows and autonomous Agents are not mutually exclusive—many systems mix the two: critical processes with strict compliance requirements run as workflows for reliability, while the parts that need flexible decisions switch to autonomous mode. n8n, for example, is a mature open-source workflow automation framework in which developers build Agents by arranging functional components on a visual canvas—and workflow nodes and autonomous Agent nodes can coexist in the same system.
 
-![Figure 1-6: n8n workflow editor interface](images/n8n-workflow.png)
+![Figure 1-7: n8n workflow editor interface](images/n8n-workflow.png)
 
 #### Brief Comparison of Mainstream Agent Frameworks
 

@@ -1,34 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 460" width="820" height="460" style="background:#ffffff">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 340" width="820" height="340" style="background:#ffffff">
 <defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
-<rect x="80" y="60" width="500" height="380" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="330" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">while not done:</text>
-<rect x="120" y="100" width="420" height="60" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
-<text x="130" y="115" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">① 思考（Reasoning）</text>
-<rect x="130" y="125" width="400" height="28" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="140" y="140" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;検索結果を分析中...情報が不十分、さらに検索が必要&quot;</text>
-<rect x="120" y="175" width="420" height="60" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="130" y="190" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">② 行動</text>
-<rect x="130" y="200" width="400" height="28" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="140" y="215" font-family="'Courier New', Courier, monospace" font-size="13.5" fill="#333333" text-anchor="start" dominant-baseline="central">web_search(&quot;Agent RL training techniques 2025&quot;)</text>
-<line x1="330" y1="162" x2="330" y2="173" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="120" y="250" width="420" height="60" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="130" y="265" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">③ 観察</text>
-<rect x="130" y="275" width="400" height="28" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="140" y="290" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">tool_result: &quot;関連する論文を3件発見...&quot;</text>
-<line x1="330" y1="237" x2="330" y2="248" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<path d="M 540,280 Q 500.0,200.0 540,120" fill="none" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<text x="520.0" y="190.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">ループを継続</text>
-<rect x="610" y="60" width="190" height="190" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="622" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">終了条件</text>
-<text x="620" y="100" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">① タスク完了</text>
-<text x="620" y="132" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">② final_answer を呼び出し</text>
-<text x="620" y="164" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">③ ツール呼び出しが返されない</text>
-<text x="620" y="196" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">④ 最大ラウンド数に到達</text>
-<text x="620" y="228" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">⑤ エラー回数の超過</text>
-<rect x="80" y="360" width="500" height="70" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="330" y="380" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">実行例：SWE-bench のコード修正</text>
-<text x="330" y="405" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">コード検索 → バグ特定 → ファイル編集 → テスト実行 → 修正失敗 → 再編集 → テスト成功 → 完了</text>
-<text x="330" y="425" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">（5ラウンドの反復、12回のツール呼び出し）</text>
-<line x1="330" y1="312" x2="330" y2="358" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<text x="330.0" y="325.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">done = True</text>
+<rect x="50" y="100" width="200" height="65" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="150.0" y="122.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">生成器 LLM</text>
+<text x="150.0" y="142.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">初期翻訳を生成</text>
+<rect x="50" y="185" width="200" height="45" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="150" y="208" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;春眠暁を覚えず&quot; → v1 翻訳</text>
+<line x1="150" y1="167" x2="150" y2="183" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="330" y="100" width="200" height="65" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="430.0" y="122.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">評価者 LLM</text>
+<text x="430.0" y="142.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">多次元のスコアリング</text>
+<line x1="252" y1="207" x2="330" y2="160" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="330" y="185" width="200" height="80" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="340" y="205" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">正確性：4/5</text>
+<text x="340" y="225" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">流暢さ：3/5 ← 要改善</text>
+<text x="340" y="245" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">文化的適応：4/5</text>
+<line x1="430" y1="167" x2="430" y2="183" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M 430,267 Q 331.339380517819,114.0087186687023 150,98" fill="none" stroke="#999999" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah-light)"/>
+<text x="290" y="90" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">フィードバック + 改善提案</text>
+<rect x="610" y="100" width="170" height="55" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="695.0" y="127.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">反復回数：n</text>
+<text x="695" y="170" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">終了条件：</text>
+<text x="695" y="195" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">① 全次元が 4/5 以上</text>
+<text x="695" y="218" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">② 最大ラウンド数に到達</text>
+<rect x="220" y="310" width="380" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="410.0" y="337.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">最終出力：3回の反復を経た高品質な翻訳</text>
 </svg>
