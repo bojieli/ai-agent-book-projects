@@ -469,7 +469,10 @@ async def _load_timers():
                 else:
                     # Timer already expired
                     timer_data["status"] = "expired"
+                    timer_data["completed_at"] = datetime.now().isoformat()
                     _active_timers[timer_id] = timer_data
+                    state_changed = True
+                    await _trigger_timer_callback(timer_data)
             else:
                 _active_timers[timer_id] = timer_data
 
