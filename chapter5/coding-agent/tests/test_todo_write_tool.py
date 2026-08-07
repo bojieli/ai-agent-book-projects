@@ -133,4 +133,10 @@ class TestTodoWriteTool:
         assert result.success
         assert "error" not in result.data
         assert result.data["total_todos"] == 0
+    def test_todo_validation_non_dict_item(self, system_state):
+        """Test validation handles non-dict items in todos list gracefully."""
+        tool = TodoWriteTool(system_state)
+        result = tool.execute({"todos": [123]})
+        assert "error" in result.data
+        assert "Each todo must be a dict" in result.data["error"]
 
