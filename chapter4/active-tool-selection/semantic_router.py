@@ -255,11 +255,13 @@ class StructuredRequestParser:
         
         Returns dict with 'server' and 'tool' fields, or None if not found.
         """
-        if '<tool_request>' not in text or '</tool_request>' not in text:
+        if '<tool_request>' not in text:
             return None
         
         start = text.find('<tool_request>')
-        end = text.find('</tool_request>')
+        end = text.find('</tool_request>', start + len('<tool_request>'))
+        if end == -1:
+            return None
         request_text = text[start + len('<tool_request>'):end].strip()
         
         result = {}
