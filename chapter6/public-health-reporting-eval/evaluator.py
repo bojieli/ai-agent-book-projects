@@ -70,9 +70,17 @@ def score_prediction(
     details["evidence"] = int(_same_evidence(actual_evidence, expected_evidence))
 
     claims = prediction.get("claims", [])
-    details["grounding_and_safety"] = int(
-        isinstance(claims, list) and set(claims).issubset(set(expected["supported_claims"]))
-    )
+    supported = expected.get("supported_claims", []) if isinstance(expected, dict) else []
+    if not isinstance(supported, list):
+        supported = []
+    if not isinstance(claims, list):
+        grounding = 0
+    else:
+        try:
+            grounding = int(set(claims).issubset(set(supported)))
+        except TypeError:
+            grounding = int(all(item in supported for item in claims))
+    details["grounding_and_safety"] = grounding
     return {
         "task_id": expected["task_id"],
         "score": sum(details.values()),
