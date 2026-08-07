@@ -67,3 +67,14 @@ def test_search_arxiv_bounds_client_page_size(monkeypatch):
     }
     assert payload["success"] is True
     assert payload["message"]["count"] == 1
+def test_download_paper_case_insensitive_arxiv_prefix():
+    import arxiv_enhanced
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        result = loop.run_until_complete(arxiv_enhanced.download_paper("arXiv:2301.07041"))
+        payload = json.loads(result.text)
+        assert payload["success"] is True or "Invalid arXiv paper ID" not in payload["message"]
+        assert "Invalid arXiv paper ID: arXiv:2301.07041" not in payload["message"]
+    finally:
+        loop.close()
