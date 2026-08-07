@@ -183,9 +183,12 @@ def _turn_precedes(candidate: Any, turn: Any) -> bool:
 
 def _derive_claims_and_promises(messages: list[dict[str, Any]], tool_calls: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     successful_turns: dict[str, list[int]] = {}
-    for item in tool_calls:
-        if item["result"].get("success"):
-            successful_turns.setdefault(item["name"], []).append(item["turn"])
+    if isinstance(tool_calls, list):
+        for item in tool_calls:
+            if isinstance(item, dict):
+                res = item.get("result")
+                if isinstance(res, dict) and res.get("success") and item.get("name") and item.get("turn") is not None:
+                    successful_turns.setdefault(item["name"], []).append(item["turn"])
     claims: list[dict[str, Any]] = []
     promises: list[dict[str, Any]] = []
     for message in messages:
