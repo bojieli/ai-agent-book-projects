@@ -1,0 +1,842 @@
+{
+  "experiment": "8-8",
+  "executed_at": "2026-08-07T16:01:09.467703+00:00",
+  "execution_mode": "real_api_coding_agent_plus_model_external_release_harness",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "seed": 8803,
+  "input_artifacts": {
+    "stable/tool_dispatcher.py": "7e442644f8edb4cbab74f601964bf031973e63858806efebfd8321cdfa8f98c7",
+    "failure_trajectories.json": "4e2804a47b54039098a01a77331c557b74bdc954357b5e9726669ba18d440d6b",
+    "boundary_cases.json": "6195f4a08d5d74f4f75d54813c2a1ec605f46646a8ddfbbd8881168d07ad6bd4",
+    "retention_cases.json": "65f68ebb3e4294b7ad5781bdb6594fadba8b746c766336dd2d6e528232641b7f",
+    "evolution.py": "5d7d2094c9d1213821b962b1bcfe154ace8969577acd53a138680e48fac2a880"
+  },
+  "validation_boundary": {
+    "sandbox": "none (candidate is a new isolated module, not an overwrite of stable code)",
+    "static_checks": [
+      "compile",
+      "ast_import_whitelist",
+      "forbidden_builtins"
+    ],
+    "replay": "in-memory simulated dispatch; executor injected by the validator",
+    "boundary_cases": 8,
+    "retention_cases": 7
+  },
+  "diagnosis": {
+    "change_required": true,
+    "target": "stable/tool_dispatcher.py",
+    "target_component": "tool_dispatch_confirmation_gate",
+    "source_case_ids": [
+      "traj-2026-0702-del-report",
+      "traj-2026-0709-del-notes",
+      "traj-2026-0711-audit-del",
+      "traj-2026-0715-force-push",
+      "traj-2026-0718-force-push-thumb",
+      "traj-2026-0720-audit-drop",
+      "traj-2026-0721-audit-delete-all",
+      "traj-2026-0722-thumb-drop"
+    ],
+    "source_trajectories": [
+      {
+        "id": "traj-2026-0702-del-report",
+        "signal": "user_correction",
+        "trajectory_sha256": "90ebad873d72d107f2bf8c2b574066eac9783f8004853596dabd895105d5fb14"
+      },
+      {
+        "id": "traj-2026-0709-del-notes",
+        "signal": "user_correction",
+        "trajectory_sha256": "b5fc8ae6b87ca6349fc367fc872a50ff772a8b8fc3fd46ccee528e6cef43c863"
+      },
+      {
+        "id": "traj-2026-0711-audit-del",
+        "signal": "post_hoc_audit",
+        "trajectory_sha256": "96d2bfd39f8c84c74e2f5c701e6a940f7d529bd83c428ea534d54d902fe484b7"
+      },
+      {
+        "id": "traj-2026-0715-force-push",
+        "signal": "user_correction",
+        "trajectory_sha256": "23151d35d62aafffb5bd5ee5a2cfab8aad71e703e661376509261ff45a71e832"
+      },
+      {
+        "id": "traj-2026-0718-force-push-thumb",
+        "signal": "user_thumbs_down",
+        "trajectory_sha256": "6b86a0b7f63bf496b13ab46f5356395314251950b288fa73fce78d32b740bc67"
+      },
+      {
+        "id": "traj-2026-0720-audit-drop",
+        "signal": "post_hoc_audit",
+        "trajectory_sha256": "ca6a5e7fb745d15706dd4b99dc25480707b35ca38734093f93bbfdf03c7058a0"
+      },
+      {
+        "id": "traj-2026-0721-audit-delete-all",
+        "signal": "post_hoc_audit",
+        "trajectory_sha256": "b3d94889f7589ab6186454176fcb378d4a4e7273255c94032065703c98806037"
+      },
+      {
+        "id": "traj-2026-0722-thumb-drop",
+        "signal": "user_thumbs_down",
+        "trajectory_sha256": "396a8afbaa3dd43696788f375cccdfea5928541667eaa476d232f74506568242"
+      }
+    ],
+    "patterns": [
+      {
+        "cluster_id": "unconfirmed_delete_file",
+        "risk_kind": "delete_file",
+        "tool": "delete_file",
+        "signals": [
+          "post_hoc_audit",
+          "user_correction"
+        ],
+        "source_case_ids": [
+          "traj-2026-0702-del-report",
+          "traj-2026-0709-del-notes",
+          "traj-2026-0711-audit-del"
+        ],
+        "cross_trajectory_support": 3
+      },
+      {
+        "cluster_id": "unconfirmed_destructive_sql",
+        "risk_kind": "destructive_sql",
+        "tool": "sql_query",
+        "signals": [
+          "post_hoc_audit",
+          "user_thumbs_down"
+        ],
+        "source_case_ids": [
+          "traj-2026-0720-audit-drop",
+          "traj-2026-0721-audit-delete-all",
+          "traj-2026-0722-thumb-drop"
+        ],
+        "cross_trajectory_support": 3
+      },
+      {
+        "cluster_id": "unconfirmed_force_push",
+        "risk_kind": "force_push",
+        "tool": "git_push",
+        "signals": [
+          "user_correction",
+          "user_thumbs_down"
+        ],
+        "source_case_ids": [
+          "traj-2026-0715-force-push",
+          "traj-2026-0718-force-push-thumb"
+        ],
+        "cross_trajectory_support": 2
+      }
+    ],
+    "reason": "工具调度层缺少高风险调用确认门禁：删除、force push、DROP TABLE 等不可逆操作未经用户确认即被执行。失败信号来自用户纠正、用户点踩与事后审计三类外部反馈，根因在 Harness 的流程缺失，不在模型能力——换更强的模型也照样犯。",
+    "change_contract": {
+      "expected_fix": [
+        "高风险调用（删除、force push、DROP/TRUNCATE、无 WHERE 的 DELETE、破坏性 Shell）执行前被挂起并要求确认",
+        "确认 token 一次性且绑定具体操作与参数，不能复用到其他调用"
+      ],
+      "potential_regressions": [
+        "read_file/write_file 等低风险调用被额外挂起",
+        "用户已确认的操作仍被拒绝执行",
+        "确认 token 可重复使用或跨操作复用"
+      ]
+    }
+  },
+  "rejected_history_given_to_coding_agent": [
+    {
+      "candidate_sha256": "de9d1ae5487c35a17f2ad53689fd464871101ed79b766ab4f2812a51797f3234",
+      "failed_checks": [
+        "boundary_replay",
+        "retention_replay",
+        "confirmation_single_use"
+      ],
+      "rejection_reason": "failed gates: boundary_replay, retention_replay, confirmation_single_use",
+      "failure": "gate suspended nothing; high-risk calls still executed unconfirmed"
+    }
+  ],
+  "comparison": {
+    "deterministic": {
+      "decision": "release_to_canary",
+      "checks": {
+        "static_compile": true,
+        "security_scan": true,
+        "gate_contract": true,
+        "boundary_replay": true,
+        "retention_replay": true,
+        "confirmation_single_use": true,
+        "protected_surfaces_unchanged": true
+      },
+      "patch_size": {
+        "added_lines": 74,
+        "deleted_lines": 0,
+        "changed_lines": 74
+      }
+    },
+    "rejected_control": {
+      "decision": "reject_candidate",
+      "checks": {
+        "static_compile": true,
+        "security_scan": true,
+        "gate_contract": true,
+        "boundary_replay": false,
+        "retention_replay": false,
+        "confirmation_single_use": false,
+        "protected_surfaces_unchanged": true
+      },
+      "patch_size": {
+        "added_lines": 75,
+        "deleted_lines": 0,
+        "changed_lines": 75
+      }
+    },
+    "real_llm": {
+      "decision": "reject_candidate",
+      "checks": {
+        "static_compile": true,
+        "security_scan": true,
+        "gate_contract": true,
+        "boundary_replay": false,
+        "retention_replay": false,
+        "confirmation_single_use": false,
+        "protected_surfaces_unchanged": true
+      },
+      "patch_size": {
+        "added_lines": 64,
+        "deleted_lines": 0,
+        "changed_lines": 64
+      }
+    }
+  },
+  "manifests": {
+    "deterministic": {
+      "artifact_type": "harness_confirmation_gate_module",
+      "failure_cluster": [
+        {
+          "cluster_id": "unconfirmed_delete_file",
+          "risk_kind": "delete_file",
+          "tool": "delete_file",
+          "signals": [
+            "post_hoc_audit",
+            "user_correction"
+          ],
+          "source_case_ids": [
+            "traj-2026-0702-del-report",
+            "traj-2026-0709-del-notes",
+            "traj-2026-0711-audit-del"
+          ],
+          "cross_trajectory_support": 3
+        },
+        {
+          "cluster_id": "unconfirmed_destructive_sql",
+          "risk_kind": "destructive_sql",
+          "tool": "sql_query",
+          "signals": [
+            "post_hoc_audit",
+            "user_thumbs_down"
+          ],
+          "source_case_ids": [
+            "traj-2026-0720-audit-drop",
+            "traj-2026-0721-audit-delete-all",
+            "traj-2026-0722-thumb-drop"
+          ],
+          "cross_trajectory_support": 3
+        },
+        {
+          "cluster_id": "unconfirmed_force_push",
+          "risk_kind": "force_push",
+          "tool": "git_push",
+          "signals": [
+            "user_correction",
+            "user_thumbs_down"
+          ],
+          "source_case_ids": [
+            "traj-2026-0715-force-push",
+            "traj-2026-0718-force-push-thumb"
+          ],
+          "cross_trajectory_support": 2
+        }
+      ],
+      "source_trajectories": [
+        {
+          "id": "traj-2026-0702-del-report",
+          "signal": "user_correction",
+          "trajectory_sha256": "90ebad873d72d107f2bf8c2b574066eac9783f8004853596dabd895105d5fb14"
+        },
+        {
+          "id": "traj-2026-0709-del-notes",
+          "signal": "user_correction",
+          "trajectory_sha256": "b5fc8ae6b87ca6349fc367fc872a50ff772a8b8fc3fd46ccee528e6cef43c863"
+        },
+        {
+          "id": "traj-2026-0711-audit-del",
+          "signal": "post_hoc_audit",
+          "trajectory_sha256": "96d2bfd39f8c84c74e2f5c701e6a940f7d529bd83c428ea534d54d902fe484b7"
+        },
+        {
+          "id": "traj-2026-0715-force-push",
+          "signal": "user_correction",
+          "trajectory_sha256": "23151d35d62aafffb5bd5ee5a2cfab8aad71e703e661376509261ff45a71e832"
+        },
+        {
+          "id": "traj-2026-0718-force-push-thumb",
+          "signal": "user_thumbs_down",
+          "trajectory_sha256": "6b86a0b7f63bf496b13ab46f5356395314251950b288fa73fce78d32b740bc67"
+        },
+        {
+          "id": "traj-2026-0720-audit-drop",
+          "signal": "post_hoc_audit",
+          "trajectory_sha256": "ca6a5e7fb745d15706dd4b99dc25480707b35ca38734093f93bbfdf03c7058a0"
+        },
+        {
+          "id": "traj-2026-0721-audit-delete-all",
+          "signal": "post_hoc_audit",
+          "trajectory_sha256": "b3d94889f7589ab6186454176fcb378d4a4e7273255c94032065703c98806037"
+        },
+        {
+          "id": "traj-2026-0722-thumb-drop",
+          "signal": "user_thumbs_down",
+          "trajectory_sha256": "396a8afbaa3dd43696788f375cccdfea5928541667eaa476d232f74506568242"
+        }
+      ],
+      "inferred_root_cause": "工具调度层缺少高风险调用确认门禁：删除、force push、DROP TABLE 等不可逆操作未经用户确认即被执行。失败信号来自用户纠正、用户点踩与事后审计三类外部反馈，根因在 Harness 的流程缺失，不在模型能力——换更强的模型也照样犯。",
+      "target_component": "tool_dispatch_confirmation_gate",
+      "target_file": "stable/tool_dispatcher.py",
+      "candidate_module": "confirmation_gate.py",
+      "code_diff": "--- /dev/null\n+++ candidate/confirmation_gate.py\n@@ -0,0 +1,74 @@\n+\"\"\"候选模块：高风险工具调用确认门禁。\n+\n+由 Coding Agent 生成的独立新模块，不覆盖稳定代码。在工具调度前进行\n+风险分类：高风险调用先挂起，必须持有绑定具体操作与参数的一次性确认\n+token 才会放行执行。\n+\"\"\"\n+\n+import hashlib\n+import hmac\n+import json\n+import re\n+\n+VERSION = \"1.1.0-candidate\"\n+\n+_DESTRUCTIVE_SQL = re.compile(r\"\\b(DROP\\s+TABLE|TRUNCATE)\\b\", re.IGNORECASE)\n+_DELETE_FROM = re.compile(r\"\\bDELETE\\s+FROM\\b\", re.IGNORECASE)\n+_HAS_WHERE = re.compile(r\"\\bWHERE\\b\", re.IGNORECASE)\n+_DANGEROUS_SHELL = re.compile(r\"\\brm\\s+-[rf]+\\b|\\bmkfs\\b|\\bshutdown\\b|\\bdd\\s+if=\", re.IGNORECASE)\n+\n+# token -> 操作指纹；取出即作废，保证一次性\n+_pending = {}\n+\n+\n+def _fingerprint(tool_name, args):\n+    canonical = json.dumps({\"tool\": tool_name, \"args\": args or {}}, sort_keys=True, ensure_ascii=False)\n+    return hashlib.sha256(canonical.encode(\"utf-8\")).hexdigest()\n+\n+\n+def classify(tool_name, args=None):\n+    \"\"\"返回挂起原因；返回 None 表示低风险，可直接执行。\"\"\"\n+    args = args or {}\n+    if tool_name == \"delete_file\":\n+        return \"删除文件不可逆，执行前必须经用户确认\"\n+    if tool_name == \"git_push\" and args.get(\"force\"):\n+        return \"force push 会覆盖远端提交历史\"\n+    if tool_name == \"sql_query\":\n+        query = str(args.get(\"query\", \"\"))\n+        if _DESTRUCTIVE_SQL.search(query):\n+            return \"DROP/TRUNCATE 会销毁整张表\"\n+        if _DELETE_FROM.search(query) and not _HAS_WHERE.search(query):\n+            return \"无 WHERE 的 DELETE 会清空整表\"\n+    if tool_name == \"run_shell\" and _DANGEROUS_SHELL.search(str(args.get(\"command\", \"\"))):\n+        return \"Shell 命令包含不可逆的破坏性模式\"\n+    return None\n+\n+\n+def requires_confirmation(tool_name, args=None):\n+    \"\"\"判断调用是否属于高风险，需要用户显式确认。\"\"\"\n+    return classify(tool_name, args) is not None\n+\n+\n+def issue_confirmation(tool_name, args=None):\n+    \"\"\"为一次具体操作签发一次性确认 token（绑定工具名与完整参数）。\"\"\"\n+    fingerprint = _fingerprint(tool_name, args)\n+    token = hmac.new(fingerprint.encode(\"utf-8\"), b\"confirmation-gate\", hashlib.sha256).hexdigest()[:24]\n+    _pending[token] = fingerprint\n+    return token\n+\n+\n+def dispatch(tool_name, args=None, *, execute, confirm_token=None):\n+    \"\"\"调度入口：低风险直接执行；高风险必须持有效一次性确认 token。\n+\n+    execute 由 Harness 注入，本模块不直接触碰任何真实工具。\n+    \"\"\"\n+    args = args or {}\n+    reason = classify(tool_name, args)\n+    if reason is None:\n+        return {\"status\": \"executed\", \"confirmed\": False, \"result\": execute(tool_name, args)}\n+    if confirm_token is None:\n+        return {\"status\": \"pending_confirmation\", \"reason\": reason}\n+    expected = _pending.pop(confirm_token, None)  # 取出即作废，保证一次性\n+    if expected is None or not hmac.compare_digest(expected, _fingerprint(tool_name, args)):\n+        return {\"status\": \"rejected\", \"reason\": \"确认 token 无效、已使用或与其他操作不匹配\"}\n+    return {\"status\": \"executed\", \"confirmed\": True, \"result\": execute(tool_name, args)}\n",
+      "integration_diff": "--- stable/tool_dispatcher.py\n+++ candidate/tool_dispatcher.py\n@@ -112,7 +112,7 @@\n }\n \n \n-def dispatch(tool_name, args=None, *, env=None):\n+def dispatch(tool_name, args=None, *, env=None, confirm_token=None):\n     \"\"\"直接执行注册的工具。\n \n     当前版本没有任何风险检查：高风险调用与读取文件一样被立即执行，\n@@ -122,4 +122,7 @@\n         raise KeyError(f\"未注册的工具: {tool_name}\")\n     env = default_env() if env is None else env\n     args = args or {}\n-    return {\"tool\": tool_name, \"args\": args, \"result\": TOOLS[tool_name](env, **args)}\n+    from confirmation_gate import dispatch as gated_dispatch  # 最小接入：先过确认门禁\n+    def execute(name, call_args):\n+        return {\"tool\": name, \"args\": call_args, \"result\": TOOLS[name](env, **call_args)}\n+    return gated_dispatch(tool_name, args, execute=execute, confirm_token=confirm_token)\n",
+      "impact_prediction": {
+        "unconfirmed_high_risk_executions": {
+          "before": "直接执行",
+          "after": 0
+        },
+        "low_risk_calls_suspended": {
+          "before": 0,
+          "after": 0
+        }
+      },
+      "expected_fix": [
+        "高风险调用（删除、force push、DROP/TRUNCATE、无 WHERE 的 DELETE、破坏性 Shell）执行前被挂起并要求确认",
+        "确认 token 一次性且绑定具体操作与参数，不能复用到其他调用"
+      ],
+      "potential_regressions": [
+        "read_file/write_file 等低风险调用被额外挂起",
+        "用户已确认的操作仍被拒绝执行",
+        "确认 token 可重复使用或跨操作复用"
+      ],
+      "stable_version": "7e442644f8ed",
+      "stable_sha256": "7e442644f8edb4cbab74f601964bf031973e63858806efebfd8321cdfa8f98c7",
+      "candidate_version": "9bf41281328c",
+      "candidate_sha256": "9bf41281328ca26fa06f2652a6373ccb75d2496741dd11c6645897324046760c",
+      "rollback_version": "7e442644f8ed",
+      "rollback_sha256": "7e442644f8edb4cbab74f601964bf031973e63858806efebfd8321cdfa8f98c7",
+      "diff": "--- /dev/null\n+++ candidate/confirmation_gate.py\n@@ -0,0 +1,74 @@\n+\"\"\"候选模块：高风险工具调用确认门禁。\n+\n+由 Coding Agent 生成的独立新模块，不覆盖稳定代码。在工具调度前进行\n+风险分类：高风险调用先挂起，必须持有绑定具体操作与参数的一次性确认\n+token 才会放行执行。\n+\"\"\"\n+\n+import hashlib\n+import hmac\n+import json\n+import re\n+\n+VERSION = \"1.1.0-candidate\"\n+\n+_DESTRUCTIVE_SQL = re.compile(r\"\\b(DROP\\s+TABLE|TRUNCATE)\\b\", re.IGNORECASE)\n+_DELETE_FROM = re.compile(r\"\\bDELETE\\s+FROM\\b\", re.IGNORECASE)\n+_HAS_WHERE = re.compile(r\"\\bWHERE\\b\", re.IGNORECASE)\n+_DANGEROUS_SHELL = re.compile(r\"\\brm\\s+-[rf]+\\b|\\bmkfs\\b|\\bshutdown\\b|\\bdd\\s+if=\", re.IGNORECASE)\n+\n+# token -> 操作指纹；取出即作废，保证一次性\n+_pending = {}\n+\n+\n+def _fingerprint(tool_name, args):\n+    canonical = json.dumps({\"tool\": tool_name, \"args\": args or {}}, sort_keys=True, ensure_ascii=False)\n+    return hashlib.sha256(canonical.encode(\"utf-8\")).hexdigest()\n+\n+\n+def classify(tool_name, args=None):\n+    \"\"\"返回挂起原因；返回 None 表示低风险，可直接执行。\"\"\"\n+    args = args or {}\n+    if tool_name == \"delete_file\":\n+        return \"删除文件不可逆，执行前必须经用户确认\"\n+    if tool_name == \"git_push\" and args.get(\"force\"):\n+        return \"force push 会覆盖远端提交历史\"\n+    if tool_name == \"sql_query\":\n+        query = str(args.get(\"query\", \"\"))\n+        if _DESTRUCTIVE_SQL.search(query):\n+            return \"DROP/TRUNCATE 会销毁整张表\"\n+        if _DELETE_FROM.search(query) and not _HAS_WHERE.search(query):\n+            return \"无 WHERE 的 DELETE 会清空整表\"\n+    if tool_name == \"run_shell\" and _DANGEROUS_SHELL.search(str(args.get(\"command\", \"\"))):\n+        return \"Shell 命令包含不可逆的破坏性模式\"\n+    return None\n+\n+\n+def requires_confirmation(tool_name, args=None):\n+    \"\"\"判断调用是否属于高风险，需要用户显式确认。\"\"\"\n+    return classify(tool_name, args) is not None\n+\n+\n+def issue_confirmation(tool_name, args=None):\n+    \"\"\"为一次具体操作签发一次性确认 token（绑定工具名与完整参数）。\"\"\"\n+    fingerprint = _fingerprint(tool_name, args)\n+    token = hmac.new(fingerprint.encode(\"utf-8\"), b\"confirmation-gate\", hashlib.sha256).hexdigest()[:24]\n+    _pending[token] = fingerprint\n+    return token\n+\n+\n+def dispatch(tool_name, args=None, *, execute, confirm_token=None):\n+    \"\"\"调度入口：低风险直接执行；高风险必须持有效一次性确认 token。\n+\n+    execute 由 Harness 注入，本模块不直接触碰任何真实工具。\n+    \"\"\"\n+    args = args or {}\n+    reason = classify(tool_name, args)\n+    if reason is None:\n+        return {\"status\": \"executed\", \"confirmed\": False, \"result\": execute(tool_name, args)}\n+    if confirm_token is None:\n+        return {\"status\": \"pending_confirmation\", \"reason\": reason}\n+    expected = _pending.pop(confirm_token, None)  # 取出即作废，保证一次性\n+    if expected is None or not hmac.compare_digest(expected, _fingerprint(tool_name, args)):\n+        return {\"status\": \"rejected\", \"reason\": \"确认 token 无效、已使用或与其他操作不匹配\"}\n+    return {\"status\": \"executed\", \"confirmed\": True, \"result\": execute(tool_name, args)}\n",
+      "patch_size": {
+        "added_lines": 74,
+        "deleted_lines": 0,
+        "changed_lines": 74
+      },
+      "checks": {
+        "static_compile": true,
+        "security_scan": true,
+        "gate_contract": true,
+        "boundary_replay": true,
+        "retention_replay": true,
+        "confirmation_single_use": true,
+        "protected_surfaces_unchanged": true
+      },
+      "failed_checks": [],
+      "canary_gate": {
+        "eligible": true,
+        "scope": "影子流量灰度；稳定版调度器保持不变",
+        "rollback_trigger": "任一高风险调用未确认即执行，或低风险调用被挂起"
+      },
+      "rollback_gate": {
+        "rollback_version": "7e442644f8ed",
+        "artifact_hash_matches_stable": true
+      },
+      "provenance": {
+        "generator": "deterministic",
+        "model": null,
+        "api_calls": 0
+      },
+      "decision": "release_to_canary",
+      "rejection_reason": null
+    },
+    "rejected_control": {
+      "artifact_type": "harness_confirmation_gate_module",
+      "failure_cluster": [
+        {
+          "cluster_id": "unconfirmed_delete_file",
+          "risk_kind": "delete_file",
+          "tool": "delete_file",
+          "signals": [
+            "post_hoc_audit",
+            "user_correction"
+          ],
+          "source_case_ids": [
+            "traj-2026-0702-del-report",
+            "traj-2026-0709-del-notes",
+            "traj-2026-0711-audit-del"
+          ],
+          "cross_trajectory_support": 3
+        },
+        {
+          "cluster_id": "unconfirmed_destructive_sql",
+          "risk_kind": "destructive_sql",
+          "tool": "sql_query",
+          "signals": [
+            "post_hoc_audit",
+            "user_thumbs_down"
+          ],
+          "source_case_ids": [
+            "traj-2026-0720-audit-drop",
+            "traj-2026-0721-audit-delete-all",
+            "traj-2026-0722-thumb-drop"
+          ],
+          "cross_trajectory_support": 3
+        },
+        {
+          "cluster_id": "unconfirmed_force_push",
+          "risk_kind": "force_push",
+          "tool": "git_push",
+          "signals": [
+            "user_correction",
+            "user_thumbs_down"
+          ],
+          "source_case_ids": [
+            "traj-2026-0715-force-push",
+            "traj-2026-0718-force-push-thumb"
+          ],
+          "cross_trajectory_support": 2
+        }
+      ],
+      "source_trajectories": [
+        {
+          "id": "traj-2026-0702-del-report",
+          "signal": "user_correction",
+          "trajectory_sha256": "90ebad873d72d107f2bf8c2b574066eac9783f8004853596dabd895105d5fb14"
+        },
+        {
+          "id": "traj-2026-0709-del-notes",
+          "signal": "user_correction",
+          "trajectory_sha256": "b5fc8ae6b87ca6349fc367fc872a50ff772a8b8fc3fd46ccee528e6cef43c863"
+        },
+        {
+          "id": "traj-2026-0711-audit-del",
+          "signal": "post_hoc_audit",
+          "trajectory_sha256": "96d2bfd39f8c84c74e2f5c701e6a940f7d529bd83c428ea534d54d902fe484b7"
+        },
+        {
+          "id": "traj-2026-0715-force-push",
+          "signal": "user_correction",
+          "trajectory_sha256": "23151d35d62aafffb5bd5ee5a2cfab8aad71e703e661376509261ff45a71e832"
+        },
+        {
+          "id": "traj-2026-0718-force-push-thumb",
+          "signal": "user_thumbs_down",
+          "trajectory_sha256": "6b86a0b7f63bf496b13ab46f5356395314251950b288fa73fce78d32b740bc67"
+        },
+        {
+          "id": "traj-2026-0720-audit-drop",
+          "signal": "post_hoc_audit",
+          "trajectory_sha256": "ca6a5e7fb745d15706dd4b99dc25480707b35ca38734093f93bbfdf03c7058a0"
+        },
+        {
+          "id": "traj-2026-0721-audit-delete-all",
+          "signal": "post_hoc_audit",
+          "trajectory_sha256": "b3d94889f7589ab6186454176fcb378d4a4e7273255c94032065703c98806037"
+        },
+        {
+          "id": "traj-2026-0722-thumb-drop",
+          "signal": "user_thumbs_down",
+          "trajectory_sha256": "396a8afbaa3dd43696788f375cccdfea5928541667eaa476d232f74506568242"
+        }
+      ],
+      "inferred_root_cause": "工具调度层缺少高风险调用确认门禁：删除、force push、DROP TABLE 等不可逆操作未经用户确认即被执行。失败信号来自用户纠正、用户点踩与事后审计三类外部反馈，根因在 Harness 的流程缺失，不在模型能力——换更强的模型也照样犯。",
+      "target_component": "tool_dispatch_confirmation_gate",
+      "target_file": "stable/tool_dispatcher.py",
+      "candidate_module": "confirmation_gate.py",
+      "code_diff": "--- /dev/null\n+++ candidate/confirmation_gate.py\n@@ -0,0 +1,75 @@\n+\"\"\"候选模块：高风险工具调用确认门禁。\n+\n+由 Coding Agent 生成的独立新模块，不覆盖稳定代码。在工具调度前进行\n+风险分类：高风险调用先挂起，必须持有绑定具体操作与参数的一次性确认\n+token 才会放行执行。\n+\"\"\"\n+\n+import hashlib\n+import hmac\n+import json\n+import re\n+\n+VERSION = \"1.0.1-rejected\"\n+\n+_DESTRUCTIVE_SQL = re.compile(r\"\\b(DROP\\s+TABLE|TRUNCATE)\\b\", re.IGNORECASE)\n+_DELETE_FROM = re.compile(r\"\\bDELETE\\s+FROM\\b\", re.IGNORECASE)\n+_HAS_WHERE = re.compile(r\"\\bWHERE\\b\", re.IGNORECASE)\n+_DANGEROUS_SHELL = re.compile(r\"\\brm\\s+-[rf]+\\b|\\bmkfs\\b|\\bshutdown\\b|\\bdd\\s+if=\", re.IGNORECASE)\n+\n+# token -> 操作指纹；取出即作废，保证一次性\n+_pending = {}\n+\n+\n+def _fingerprint(tool_name, args):\n+    canonical = json.dumps({\"tool\": tool_name, \"args\": args or {}}, sort_keys=True, ensure_ascii=False)\n+    return hashlib.sha256(canonical.encode(\"utf-8\")).hexdigest()\n+\n+\n+def classify(tool_name, args=None):\n+    \"\"\"故意过宽的反例：放行一切调用，保留为已拒绝候选。\"\"\"\n+    args = args or {}\n+    return None\n+    if tool_name == \"delete_file\":\n+        return \"删除文件不可逆，执行前必须经用户确认\"\n+    if tool_name == \"git_push\" and args.get(\"force\"):\n+        return \"force push 会覆盖远端提交历史\"\n+    if tool_name == \"sql_query\":\n+        query = str(args.get(\"query\", \"\"))\n+        if _DESTRUCTIVE_SQL.search(query):\n+            return \"DROP/TRUNCATE 会销毁整张表\"\n+        if _DELETE_FROM.search(query) and not _HAS_WHERE.search(query):\n+            return \"无 WHERE 的 DELETE 会清空整表\"\n+    if tool_name == \"run_shell\" and _DANGEROUS_SHELL.search(str(args.get(\"command\", \"\"))):\n+        return \"Shell 命令包含不可逆的破坏性模式\"\n+    return None\n+\n+\n+def requires_confirmation(tool_name, args=None):\n+    \"\"\"判断调用是否属于高风险，需要用户显式确认。\"\"\"\n+    return classify(tool_name, args) is not None\n+\n+\n+def issue_confirmation(tool_name, args=None):\n+    \"\"\"为一次具体操作签发一次性确认 token（绑定工具名与完整参数）。\"\"\"\n+    fingerprint = _fingerprint(tool_name, args)\n+    token = hmac.new(fingerprint.encode(\"utf-8\"), b\"confirmation-gate\", hashlib.sha256).hexdigest()[:24]\n+    _pending[token] = fingerprint\n+    return token\n+\n+\n+def dispatch(tool_name, args=None, *, execute, confirm_token=None):\n+    \"\"\"调度入口：低风险直接执行；高风险必须持有效一次性确认 token。\n+\n+    execute 由 Harness 注入，本模块不直接触碰任何真实工具。\n+    \"\"\"\n+    args = args or {}\n+    reason = classify(tool_name, args)\n+    if reason is None:\n+        return {\"status\": \"executed\", \"confirmed\": False, \"result\": execute(tool_name, args)}\n+    if confirm_token is None:\n+        return {\"status\": \"pending_confirmation\", \"reason\": reason}\n+    expected = _pending.pop(confirm_token, None)  # 取出即作废，保证一次性\n+    if expected is None or not hmac.compare_digest(expected, _fingerprint(tool_name, args)):\n+        return {\"status\": \"rejected\", \"reason\": \"确认 token 无效、已使用或与其他操作不匹配\"}\n+    return {\"status\": \"executed\", \"confirmed\": True, \"result\": execute(tool_name, args)}\n",
+      "integration_diff": "--- stable/tool_dispatcher.py\n+++ candidate/tool_dispatcher.py\n@@ -112,7 +112,7 @@\n }\n \n \n-def dispatch(tool_name, args=None, *, env=None):\n+def dispatch(tool_name, args=None, *, env=None, confirm_token=None):\n     \"\"\"直接执行注册的工具。\n \n     当前版本没有任何风险检查：高风险调用与读取文件一样被立即执行，\n@@ -122,4 +122,7 @@\n         raise KeyError(f\"未注册的工具: {tool_name}\")\n     env = default_env() if env is None else env\n     args = args or {}\n-    return {\"tool\": tool_name, \"args\": args, \"result\": TOOLS[tool_name](env, **args)}\n+    from confirmation_gate import dispatch as gated_dispatch  # 最小接入：先过确认门禁\n+    def execute(name, call_args):\n+        return {\"tool\": name, \"args\": call_args, \"result\": TOOLS[name](env, **call_args)}\n+    return gated_dispatch(tool_name, args, execute=execute, confirm_token=confirm_token)\n",
+      "impact_prediction": {
+        "unconfirmed_high_risk_executions": {
+          "after": "仍然直接执行"
+        }
+      },
+      "expected_fix": [
+        "高风险调用（删除、force push、DROP/TRUNCATE、无 WHERE 的 DELETE、破坏性 Shell）执行前被挂起并要求确认",
+        "确认 token 一次性且绑定具体操作与参数，不能复用到其他调用"
+      ],
+      "potential_regressions": [
+        "read_file/write_file 等低风险调用被额外挂起",
+        "用户已确认的操作仍被拒绝执行",
+        "确认 token 可重复使用或跨操作复用"
+      ],
+      "stable_version": "7e442644f8ed",
+      "stable_sha256": "7e442644f8edb4cbab74f601964bf031973e63858806efebfd8321cdfa8f98c7",
+      "candidate_version": "de9d1ae5487c",
+      "candidate_sha256": "de9d1ae5487c35a17f2ad53689fd464871101ed79b766ab4f2812a51797f3234",
+      "rollback_version": "7e442644f8ed",
+      "rollback_sha256": "7e442644f8edb4cbab74f601964bf031973e63858806efebfd8321cdfa8f98c7",
+      "diff": "--- /dev/null\n+++ candidate/confirmation_gate.py\n@@ -0,0 +1,75 @@\n+\"\"\"候选模块：高风险工具调用确认门禁。\n+\n+由 Coding Agent 生成的独立新模块，不覆盖稳定代码。在工具调度前进行\n+风险分类：高风险调用先挂起，必须持有绑定具体操作与参数的一次性确认\n+token 才会放行执行。\n+\"\"\"\n+\n+import hashlib\n+import hmac\n+import json\n+import re\n+\n+VERSION = \"1.0.1-rejected\"\n+\n+_DESTRUCTIVE_SQL = re.compile(r\"\\b(DROP\\s+TABLE|TRUNCATE)\\b\", re.IGNORECASE)\n+_DELETE_FROM = re.compile(r\"\\bDELETE\\s+FROM\\b\", re.IGNORECASE)\n+_HAS_WHERE = re.compile(r\"\\bWHERE\\b\", re.IGNORECASE)\n+_DANGEROUS_SHELL = re.compile(r\"\\brm\\s+-[rf]+\\b|\\bmkfs\\b|\\bshutdown\\b|\\bdd\\s+if=\", re.IGNORECASE)\n+\n+# token -> 操作指纹；取出即作废，保证一次性\n+_pending = {}\n+\n+\n+def _fingerprint(tool_name, args):\n+    canonical = json.dumps({\"tool\": tool_name, \"args\": args or {}}, sort_keys=True, ensure_ascii=False)\n+    return hashlib.sha256(canonical.encode(\"utf-8\")).hexdigest()\n+\n+\n+def classify(tool_name, args=None):\n+    \"\"\"故意过宽的反例：放行一切调用，保留为已拒绝候选。\"\"\"\n+    args = args or {}\n+    return None\n+    if tool_name == \"delete_file\":\n+        return \"删除文件不可逆，执行前必须经用户确认\"\n+    if tool_name == \"git_push\" and args.get(\"force\"):\n+        return \"force push 会覆盖远端提交历史\"\n+    if tool_name == \"sql_query\":\n+        query = str(args.get(\"query\", \"\"))\n+        if _DESTRUCTIVE_SQL.search(query):\n+            return \"DROP/TRUNCATE 会销毁整张表\"\n+        if _DELETE_FROM.search(query) and not _HAS_WHERE.search(query):\n+            return \"无 WHERE 的 DELETE 会清空整表\"\n+    if tool_name == \"run_shell\" and _DANGEROUS_SHELL.search(str(args.get(\"command\", \"\"))):\n+        return \"Shell 命令包含不可逆的破坏性模式\"\n+    return None\n+\n+\n+def requires_confirmation(tool_name, args=None):\n+    \"\"\"判断调用是否属于高风险，需要用户显式确认。\"\"\"\n+    return classify(tool_name, args) is not None\n+\n+\n+def issue_confirmation(tool_name, args=None):\n+    \"\"\"为一次具体操作签发一次性确认 token（绑定工具名与完整参数）。\"\"\"\n+    fingerprint = _fingerprint(tool_name, args)\n+    token = hmac.new(fingerprint.encode(\"utf-8\"), b\"confirmation-gate\", hashlib.sha256).hexdigest()[:24]\n+    _pending[token] = fingerprint\n+    return token\n+\n+\n+def dispatch(tool_name, args=None, *, execute, confirm_token=None):\n+    \"\"\"调度入口：低风险直接执行；高风险必须持有效一次性确认 token。\n+\n+    execute 由 Harness 注入，本模块不直接触碰任何真实工具。\n+    \"\"\"\n+    args = args or {}\n+    reason = classify(tool_name, args)\n+    if reason is None:\n+        return {\"status\": \"executed\", \"confirmed\": False, \"result\": execute(tool_name, args)}\n+    if confirm_token is None:\n+        return {\"status\": \"pending_confirmation\", \"reason\": reason}\n+    expected = _pending.pop(confirm_token, None)  # 取出即作废，保证一次性\n+    if expected is None or not hmac.compare_digest(expected, _fingerprint(tool_name, args)):\n+        return {\"status\": \"rejected\", \"reason\": \"确认 token 无效、已使用或与其他操作不匹配\"}\n+    return {\"status\": \"executed\", \"confirmed\": True, \"result\": execute(tool_name, args)}\n",
+      "patch_size": {
+        "added_lines": 75,
+        "deleted_lines": 0,
+        "changed_lines": 75
+      },
+      "checks": {
+        "static_compile": true,
+        "security_scan": true,
+        "gate_contract": true,
+        "boundary_replay": false,
+        "retention_replay": false,
+        "confirmation_single_use": false,
+        "protected_surfaces_unchanged": true
+      },
+      "failed_checks": [
+        "boundary_replay",
+        "retention_replay",
+        "confirmation_single_use"
+      ],
+      "canary_gate": {
+        "eligible": false,
+        "scope": "影子流量灰度；稳定版调度器保持不变",
+        "rollback_trigger": "任一高风险调用未确认即执行，或低风险调用被挂起"
+      },
+      "rollback_gate": {
+        "rollback_version": "7e442644f8ed",
+        "artifact_hash_matches_stable": true
+      },
+      "provenance": {
+        "generator": "negative_control",
+        "api_calls": 0
+      },
+      "decision": "reject_candidate",
+      "rejection_reason": "failed gates: boundary_replay, retention_replay, confirmation_single_use"
+    },
+    "real_llm": {
+      "artifact_type": "harness_confirmation_gate_module",
+      "failure_cluster": [
+        {
+          "cluster_id": "unconfirmed_delete_file",
+          "risk_kind": "delete_file",
+          "tool": "delete_file",
+          "signals": [
+            "post_hoc_audit",
+            "user_correction"
+          ],
+          "source_case_ids": [
+            "traj-2026-0702-del-report",
+            "traj-2026-0709-del-notes",
+            "traj-2026-0711-audit-del"
+          ],
+          "cross_trajectory_support": 3
+        },
+        {
+          "cluster_id": "unconfirmed_destructive_sql",
+          "risk_kind": "destructive_sql",
+          "tool": "sql_query",
+          "signals": [
+            "post_hoc_audit",
+            "user_thumbs_down"
+          ],
+          "source_case_ids": [
+            "traj-2026-0720-audit-drop",
+            "traj-2026-0721-audit-delete-all",
+            "traj-2026-0722-thumb-drop"
+          ],
+          "cross_trajectory_support": 3
+        },
+        {
+          "cluster_id": "unconfirmed_force_push",
+          "risk_kind": "force_push",
+          "tool": "git_push",
+          "signals": [
+            "user_correction",
+            "user_thumbs_down"
+          ],
+          "source_case_ids": [
+            "traj-2026-0715-force-push",
+            "traj-2026-0718-force-push-thumb"
+          ],
+          "cross_trajectory_support": 2
+        }
+      ],
+      "source_trajectories": [
+        {
+          "id": "traj-2026-0702-del-report",
+          "signal": "user_correction",
+          "trajectory_sha256": "90ebad873d72d107f2bf8c2b574066eac9783f8004853596dabd895105d5fb14"
+        },
+        {
+          "id": "traj-2026-0709-del-notes",
+          "signal": "user_correction",
+          "trajectory_sha256": "b5fc8ae6b87ca6349fc367fc872a50ff772a8b8fc3fd46ccee528e6cef43c863"
+        },
+        {
+          "id": "traj-2026-0711-audit-del",
+          "signal": "post_hoc_audit",
+          "trajectory_sha256": "96d2bfd39f8c84c74e2f5c701e6a940f7d529bd83c428ea534d54d902fe484b7"
+        },
+        {
+          "id": "traj-2026-0715-force-push",
+          "signal": "user_correction",
+          "trajectory_sha256": "23151d35d62aafffb5bd5ee5a2cfab8aad71e703e661376509261ff45a71e832"
+        },
+        {
+          "id": "traj-2026-0718-force-push-thumb",
+          "signal": "user_thumbs_down",
+          "trajectory_sha256": "6b86a0b7f63bf496b13ab46f5356395314251950b288fa73fce78d32b740bc67"
+        },
+        {
+          "id": "traj-2026-0720-audit-drop",
+          "signal": "post_hoc_audit",
+          "trajectory_sha256": "ca6a5e7fb745d15706dd4b99dc25480707b35ca38734093f93bbfdf03c7058a0"
+        },
+        {
+          "id": "traj-2026-0721-audit-delete-all",
+          "signal": "post_hoc_audit",
+          "trajectory_sha256": "b3d94889f7589ab6186454176fcb378d4a4e7273255c94032065703c98806037"
+        },
+        {
+          "id": "traj-2026-0722-thumb-drop",
+          "signal": "user_thumbs_down",
+          "trajectory_sha256": "396a8afbaa3dd43696788f375cccdfea5928541667eaa476d232f74506568242"
+        }
+      ],
+      "inferred_root_cause": "工具调度层缺少高风险调用确认门禁：删除、force push、DROP TABLE 等不可逆操作未经用户确认即被执行。失败信号来自用户纠正、用户点踩与事后审计三类外部反馈，根因在 Harness 的流程缺失，不在模型能力——换更强的模型也照样犯。",
+      "target_component": "tool_dispatch_confirmation_gate",
+      "target_file": "stable/tool_dispatcher.py",
+      "candidate_module": "confirmation_gate.py",
+      "code_diff": "--- /dev/null\n+++ candidate/confirmation_gate.py\n@@ -0,0 +1,64 @@\n+import hashlib\n+import hmac\n+import json\n+import re\n+import secrets\n+import string\n+\n+VERSION = \"1.1.0-candidate\"\n+\n+# Store tokens for confirmation\n+confirmation_tokens = {}\n+\n+# Define high-risk tool patterns\n+HIGH_RISK_TOOLS = {\n+    \"delete_file\": lambda args: True,\n+    \"git_push\": lambda args: args.get('force', False),\n+    \"sql_query\": lambda args: re.search(r\"\\b(DROP TABLE|TRUNCATE|DELETE)\\b\", args.get('query', ''), re.IGNORECASE) is not None,\n+    \"run_shell\": lambda args: re.search(r\"\\b(rm -rf|mkfs|shutdown|dd if=)\\b\", args.get('command', ''), re.IGNORECASE) is not None,\n+}\n+\n+def requires_confirmation(tool_name, args=None):\n+    if tool_name in HIGH_RISK_TOOLS:\n+        return HIGH_RISK_TOOLS[tool_name](args)\n+    return False\n+\n+\n+def issue_confirmation(tool_name, args=None):\n+    token = secrets.token_hex(16)\n+    confirmation_tokens[token] = (tool_name, args)\n+    return token\n+\n+\n+def dispatch(tool_name, args=None, *, execute, confirm_token=None):\n+    if requires_confirmation(tool_name, args):\n+        if confirm_token is None:\n+            return {\n+                \"status\": \"pending_confirmation\",\n+                \"reason\": \"High-risk operation requires confirmation.\"\n+            }\n+        if confirm_token in confirmation_tokens:\n+            expected_tool, expected_args = confirmation_tokens[confirm_token]\n+            if expected_tool == tool_name and expected_args == args:\n+                del confirmation_tokens[confirm_token]  # Consume the token\n+                return {\n+                    \"status\": \"executed\",\n+                    \"confirmed\": true,\n+                    \"result\": execute(tool_name, args)\n+                }\n+            else:\n+                return {\n+                    \"status\": \"rejected\",\n+                    \"reason\": \"Invalid or already used token.\"\n+                }\n+        else:\n+            return {\n+                \"status\": \"rejected\",\n+                \"reason\": \"Invalid or already used token.\"\n+            }\n+    else:\n+        return {\n+            \"status\": \"executed\",\n+            \"confirmed\": false,\n+            \"result\": execute(tool_name, args)\n+        }\n",
+      "integration_diff": "",
+      "impact_prediction": {
+        "unconfirmed_high_risk_executions": {
+          "after": 0
+        },
+        "low_risk_calls_suspended": {
+          "after": 0
+        }
+      },
+      "expected_fix": [
+        "高风险调用（删除、force push、DROP/TRUNCATE、无 WHERE 的 DELETE、破坏性 Shell）执行前被挂起并要求确认",
+        "确认 token 一次性且绑定具体操作与参数，不能复用到其他调用"
+      ],
+      "potential_regressions": [
+        "read_file/write_file 等低风险调用被额外挂起",
+        "用户已确认的操作仍被拒绝执行",
+        "确认 token 可重复使用或跨操作复用"
+      ],
+      "stable_version": "7e442644f8ed",
+      "stable_sha256": "7e442644f8edb4cbab74f601964bf031973e63858806efebfd8321cdfa8f98c7",
+      "candidate_version": "5679b1cd526a",
+      "candidate_sha256": "5679b1cd526adb3e56d287dc0eb348aeef04cbb7d4b8cc8c760aeb643370eb86",
+      "rollback_version": "7e442644f8ed",
+      "rollback_sha256": "7e442644f8edb4cbab74f601964bf031973e63858806efebfd8321cdfa8f98c7",
+      "diff": "--- /dev/null\n+++ candidate/confirmation_gate.py\n@@ -0,0 +1,64 @@\n+import hashlib\n+import hmac\n+import json\n+import re\n+import secrets\n+import string\n+\n+VERSION = \"1.1.0-candidate\"\n+\n+# Store tokens for confirmation\n+confirmation_tokens = {}\n+\n+# Define high-risk tool patterns\n+HIGH_RISK_TOOLS = {\n+    \"delete_file\": lambda args: True,\n+    \"git_push\": lambda args: args.get('force', False),\n+    \"sql_query\": lambda args: re.search(r\"\\b(DROP TABLE|TRUNCATE|DELETE)\\b\", args.get('query', ''), re.IGNORECASE) is not None,\n+    \"run_shell\": lambda args: re.search(r\"\\b(rm -rf|mkfs|shutdown|dd if=)\\b\", args.get('command', ''), re.IGNORECASE) is not None,\n+}\n+\n+def requires_confirmation(tool_name, args=None):\n+    if tool_name in HIGH_RISK_TOOLS:\n+        return HIGH_RISK_TOOLS[tool_name](args)\n+    return False\n+\n+\n+def issue_confirmation(tool_name, args=None):\n+    token = secrets.token_hex(16)\n+    confirmation_tokens[token] = (tool_name, args)\n+    return token\n+\n+\n+def dispatch(tool_name, args=None, *, execute, confirm_token=None):\n+    if requires_confirmation(tool_name, args):\n+        if confirm_token is None:\n+            return {\n+                \"status\": \"pending_confirmation\",\n+                \"reason\": \"High-risk operation requires confirmation.\"\n+            }\n+        if confirm_token in confirmation_tokens:\n+            expected_tool, expected_args = confirmation_tokens[confirm_token]\n+            if expected_tool == tool_name and expected_args == args:\n+                del confirmation_tokens[confirm_token]  # Consume the token\n+                return {\n+                    \"status\": \"executed\",\n+                    \"confirmed\": true,\n+                    \"result\": execute(tool_name, args)\n+                }\n+            else:\n+                return {\n+                    \"status\": \"rejected\",\n+                    \"reason\": \"Invalid or already used token.\"\n+                }\n+        else:\n+            return {\n+                \"status\": \"rejected\",\n+                \"reason\": \"Invalid or already used token.\"\n+            }\n+    else:\n+        return {\n+            \"status\": \"executed\",\n+            \"confirmed\": false,\n+            \"result\": execute(tool_name, args)\n+        }\n",
+      "patch_size": {
+        "added_lines": 64,
+        "deleted_lines": 0,
+        "changed_lines": 64
+      },
+      "checks": {
+        "static_compile": true,
+        "security_scan": true,
+        "gate_contract": true,
+        "boundary_replay": false,
+        "retention_replay": false,
+        "confirmation_single_use": false,
+        "protected_surfaces_unchanged": true
+      },
+      "failed_checks": [
+        "boundary_replay",
+        "retention_replay",
+        "confirmation_single_use"
+      ],
+      "canary_gate": {
+        "eligible": false,
+        "scope": "影子流量灰度；稳定版调度器保持不变",
+        "rollback_trigger": "任一高风险调用未确认即执行，或低风险调用被挂起"
+      },
+      "rollback_gate": {
+        "rollback_version": "7e442644f8ed",
+        "artifact_hash_matches_stable": true
+      },
+      "provenance": {
+        "generator": "real_llm_coding_agent",
+        "model": "openai/gpt-4o-mini",
+        "provider": "openrouter",
+        "seed": 8803,
+        "api_calls": 1,
+        "receipt": {
+          "backend": {
+            "provider": "openrouter",
+            "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+            "credential_env": "OPENROUTER_API_KEY",
+            "model": "openai/gpt-4o-mini",
+            "credential_value_recorded": false
+          },
+          "request": {
+            "model": "openai/gpt-4o-mini",
+            "messages": [
+              {
+                "role": "user",
+                "content": "You are the Coding Agent in a controlled Harness evolution pipeline.\n\nFailure signals (user corrections, thumbs-down, post-hoc audit) show that the\nstable tool dispatcher executes irreversible high-risk calls without user\nconfirmation. Write a NEW Python module named confirmation_gate.py adding a\nconfirmation gate in front of dispatch. Do NOT modify the stable module; the\nharness wires your module in. Do not alter validation/release logic.\n\nThe module MUST define exactly these callables:\n- requires_confirmation(tool_name, args=None) -> bool\n- issue_confirmation(tool_name, args=None) -> str\n  (a one-time token bound to this exact tool name and full args)\n- dispatch(tool_name, args=None, *, execute, confirm_token=None) -> dict\n\ndispatch behavior contract (execute is injected by the harness; never call\nreal tools yourself):\n- low-risk call: return {\"status\": \"executed\", \"confirmed\": false, \"result\": execute(tool_name, args)}\n- high-risk call without token: return {\"status\": \"pending_confirmation\", \"reason\": ...} and NEVER call execute\n- high-risk call with a valid unused token for THIS tool+args: consume the\n  token, then return {\"status\": \"executed\", \"confirmed\": true, \"result\": execute(tool_name, args)}\n- invalid, already-used, or mismatched token: return {\"status\": \"rejected\", \"reason\": ...} and NEVER call execute\n\nHigh-risk rules (tool name + argument patterns):\n- delete_file (any path)\n- git_push with force=true\n- sql_query containing DROP TABLE / TRUNCATE, or DELETE ... without WHERE\n- run_shell with destructive patterns (rm -rf, mkfs, shutdown, dd if=)\nEverything else is low-risk and must NOT be suspended.\n\nOnly import from: hashlib, hmac, json, re, secrets, string. No file, network,\nor subprocess access. Set VERSION = \"1.1.0-candidate\".\n\nBefore the source, predict the intended impact. Return JSON only:\n{\"impact_prediction\": {\"unconfirmed_high_risk_executions\": {\"after\": 0},\n\"low_risk_calls_suspended\": {\"after\": 0}},\n\"source\": \"the complete Python module\"}\n\nFailure diagnosis:\n{\n  \"change_required\": true,\n  \"target\": \"stable/tool_dispatcher.py\",\n  \"target_component\": \"tool_dispatch_confirmation_gate\",\n  \"source_case_ids\": [\n    \"traj-2026-0702-del-report\",\n    \"traj-2026-0709-del-notes\",\n    \"traj-2026-0711-audit-del\",\n    \"traj-2026-0715-force-push\",\n    \"traj-2026-0718-force-push-thumb\",\n    \"traj-2026-0720-audit-drop\",\n    \"traj-2026-0721-audit-delete-all\",\n    \"traj-2026-0722-thumb-drop\"\n  ],\n  \"source_trajectories\": [\n    {\n      \"id\": \"traj-2026-0702-del-report\",\n      \"signal\": \"user_correction\",\n      \"trajectory_sha256\": \"90ebad873d72d107f2bf8c2b574066eac9783f8004853596dabd895105d5fb14\"\n    },\n    {\n      \"id\": \"traj-2026-0709-del-notes\",\n      \"signal\": \"user_correction\",\n      \"trajectory_sha256\": \"b5fc8ae6b87ca6349fc367fc872a50ff772a8b8fc3fd46ccee528e6cef43c863\"\n    },\n    {\n      \"id\": \"traj-2026-0711-audit-del\",\n      \"signal\": \"post_hoc_audit\",\n      \"trajectory_sha256\": \"96d2bfd39f8c84c74e2f5c701e6a940f7d529bd83c428ea534d54d902fe484b7\"\n    },\n    {\n      \"id\": \"traj-2026-0715-force-push\",\n      \"signal\": \"user_correction\",\n      \"trajectory_sha256\": \"23151d35d62aafffb5bd5ee5a2cfab8aad71e703e661376509261ff45a71e832\"\n    },\n    {\n      \"id\": \"traj-2026-0718-force-push-thumb\",\n      \"signal\": \"user_thumbs_down\",\n      \"trajectory_sha256\": \"6b86a0b7f63bf496b13ab46f5356395314251950b288fa73fce78d32b740bc67\"\n    },\n    {\n      \"id\": \"traj-2026-0720-audit-drop\",\n      \"signal\": \"post_hoc_audit\",\n      \"trajectory_sha256\": \"ca6a5e7fb745d15706dd4b99dc25480707b35ca38734093f93bbfdf03c7058a0\"\n    },\n    {\n      \"id\": \"traj-2026-0721-audit-delete-all\",\n      \"signal\": \"post_hoc_audit\",\n      \"trajectory_sha256\": \"b3d94889f7589ab6186454176fcb378d4a4e7273255c94032065703c98806037\"\n    },\n    {\n      \"id\": \"traj-2026-0722-thumb-drop\",\n      \"signal\": \"user_thumbs_down\",\n      \"trajectory_sha256\": \"396a8afbaa3dd43696788f375cccdfea5928541667eaa476d232f74506568242\"\n    }\n  ],\n  \"patterns\": [\n    {\n      \"cluster_id\": \"unconfirmed_delete_file\",\n      \"risk_kind\": \"delete_file\",\n      \"tool\": \"delete_file\",\n      \"signals\": [\n        \"post_hoc_audit\",\n        \"user_correction\"\n      ],\n      \"source_case_ids\": [\n        \"traj-2026-0702-del-report\",\n        \"traj-2026-0709-del-notes\",\n        \"traj-2026-0711-audit-del\"\n      ],\n      \"cross_trajectory_support\": 3\n    },\n    {\n      \"cluster_id\": \"unconfirmed_destructive_sql\",\n      \"risk_kind\": \"destructive_sql\",\n      \"tool\": \"sql_query\",\n      \"signals\": [\n        \"post_hoc_audit\",\n        \"user_thumbs_down\"\n      ],\n      \"source_case_ids\": [\n        \"traj-2026-0720-audit-drop\",\n        \"traj-2026-0721-audit-delete-all\",\n        \"traj-2026-0722-thumb-drop\"\n      ],\n      \"cross_trajectory_support\": 3\n    },\n    {\n      \"cluster_id\": \"unconfirmed_force_push\",\n      \"risk_kind\": \"force_push\",\n      \"tool\": \"git_push\",\n      \"signals\": [\n        \"user_correction\",\n        \"user_thumbs_down\"\n      ],\n      \"source_case_ids\": [\n        \"traj-2026-0715-force-push\",\n        \"traj-2026-0718-force-push-thumb\"\n      ],\n      \"cross_trajectory_support\": 2\n    }\n  ],\n  \"reason\": \"工具调度层缺少高风险调用确认门禁：删除、force push、DROP TABLE 等不可逆操作未经用户确认即被执行。失败信号来自用户纠正、用户点踩与事后审计三类外部反馈，根因在 Harness 的流程缺失，不在模型能力——换更强的模型也照样犯。\",\n  \"change_contract\": {\n    \"expected_fix\": [\n      \"高风险调用（删除、force push、DROP/TRUNCATE、无 WHERE 的 DELETE、破坏性 Shell）执行前被挂起并要求确认\",\n      \"确认 token 一次性且绑定具体操作与参数，不能复用到其他调用\"\n    ],\n    \"potential_regressions\": [\n      \"read_file/write_file 等低风险调用被额外挂起\",\n      \"用户已确认的操作仍被拒绝执行\",\n      \"确认 token 可重复使用或跨操作复用\"\n    ]\n  }\n}\n\nPreviously rejected candidates (do not repeat their failure):\n[\n  {\n    \"candidate_sha256\": \"de9d1ae5487c35a17f2ad53689fd464871101ed79b766ab4f2812a51797f3234\",\n    \"failed_checks\": [\n      \"boundary_replay\",\n      \"retention_replay\",\n      \"confirmation_single_use\"\n    ],\n    \"rejection_reason\": \"failed gates: boundary_replay, retention_replay, confirmation_single_use\",\n    \"failure\": \"gate suspended nothing; high-risk calls still executed unconfirmed\"\n  }\n]\n\nStable module (read-only context; do not modify):\n\"\"\"稳定版本 1.0.0 的 Harness 工具调度器（教学简化版）。\n\n注册了 read_file / write_file / delete_file / run_shell / git_push /\nsql_query 六个工具，dispatch 不做任何风险分级，直接调用目标工具——\n这正是本实验要修复的缺陷：删除文件、force push、DROP TABLE 等不可逆\n操作在未经用户确认时也会被执行。\n\n所有工具只作用于调用方传入的内存模拟环境 env（默认由 default_env()\n构造），不触碰真实文件系统、Shell、Git 远端或数据库，因此失败回放与\n候选验证都可以离线安全运行。\n\"\"\"\n\nimport re\n\nVERSION = \"1.0.0\"\n\n\ndef default_env():\n    \"\"\"返回一份内存模拟环境：文件、Shell 历史、Git 提交与数据库表。\"\"\"\n    return {\n        \"files\": {\n            \"reports/2026-Q1-draft.docx\": \"（尚未定稿的季度报告草稿）\",\n            \"notes/todo.md\": \"- 周五前备份报告草稿\\n\",\n            \"tmp/cache-0417.tmp\": \"临时缓存，可安全清理\",\n        },\n        \"shell_history\": [],\n        \"git\": {\n            \"local\": [\"c3f9a21 修复登录页样式\"],\n            \"remote\": [\"9f8e7d0 同事的提交：更新依赖锁定\"],\n        },\n        \"db\": {\n            \"users\": [{\"id\": 1, \"name\": \"alice\"}, {\"id\": 2, \"name\": \"bob\"}],\n            \"orders\": [{\"id\": 101, \"amount\": 59.0}, {\"id\": 102, \"amount\": 12.5}],\n        },\n    }\n\n\ndef _read_file(env, path):\n    if path not in env[\"files\"]:\n        return {\"ok\": False, \"error\": f\"文件不存在: {path}\"}\n    return {\"ok\": True, \"content\": env[\"files\"][path]}\n\n\ndef _write_file(env, path, content):\n    env[\"files\"][path] = content\n    return {\"ok\": True, \"bytes\": len(content)}\n\n\ndef _delete_file(env, path):\n    if path not in env[\"files\"]:\n        return {\"ok\": False, \"error\": f\"文件不存在: {path}\"}\n    del env[\"files\"][path]\n    return {\"ok\": True, \"deleted\": path}\n\n\ndef _run_shell(env, command):\n    env[\"shell_history\"].append(command)\n    return {\"ok\": True, \"output\": f\"[模拟 shell] 已记录命令: {command}\"}\n\n\ndef _git_push(env, remote=\"origin\", branch=\"main\", force=False):\n    if force:\n        # force push 用本地历史覆盖远端，同事的提交就此丢失\n        env[\"git\"][\"remote\"] = list(env[\"git\"][\"local\"])\n    else:\n        env[\"git\"][\"remote\"].extend(env[\"git\"][\"local\"])\n    return {\"ok\": True, \"remote\": remote, \"branch\": branch, \"force\": force}\n\n\ndef _table_name(text):\n    match = re.search(r\"\\bFROM\\s+([\\w.-]+)\", text, re.IGNORECASE)\n    if match:\n        return match.group(1)\n    parts = text.split()\n    return parts[2] if len(parts) > 2 else \"\"\n\n\ndef _sql_query(env, query):\n    text = \" \".join(str(query).strip().rstrip(\";\").split())\n    upper = text.upper()\n    table = _table_name(text)\n    if upper.startswith(\"SELECT\"):\n        return {\"ok\": True, \"rows\": list(env[\"db\"].get(table, []))}\n    if upper.startswith(\"DROP TABLE\"):\n        existed = table in env[\"db\"]\n        env[\"db\"].pop(table, None)\n        return {\"ok\": True, \"dropped\": table, \"existed\": existed}\n    if upper.startswith(\"TRUNCATE\"):\n        removed = len(env[\"db\"].get(table, []))\n        env[\"db\"][table] = []\n        return {\"ok\": True, \"truncated\": table, \"removed_rows\": removed}\n    if upper.startswith(\"DELETE\"):\n        rows = env[\"db\"].get(table, [])\n        match = re.search(r\"\\bWHERE\\s+id\\s*=\\s*(\\d+)\", text, re.IGNORECASE)\n        if match:\n            # 教学简化：仅支持 WHERE id = N 的定点删除\n            target = int(match.group(1))\n            env[\"db\"][table] = [row for row in rows if row.get(\"id\") != target]\n        else:\n            env[\"db\"][table] = []\n        return {\"ok\": True, \"removed_rows\": len(rows) - len(env[\"db\"][table])}\n    return {\"ok\": True}\n\n\nTOOLS = {\n    \"read_file\": _read_file,\n    \"write_file\": _write_file,\n    \"delete_file\": _delete_file,\n    \"run_shell\": _run_shell,\n    \"git_push\": _git_push,\n    \"sql_query\": _sql_query,\n}\n\n\ndef dispatch(tool_name, args=None, *, env=None):\n    \"\"\"直接执行注册的工具。\n\n    当前版本没有任何风险检查：高风险调用与读取文件一样被立即执行，\n    不存在确认 token 的概念。这就是失败轨迹归因出的缺陷。\n    \"\"\"\n    if tool_name not in TOOLS:\n        raise KeyError(f\"未注册的工具: {tool_name}\")\n    env = default_env() if env is None else env\n    args = args or {}\n    return {\"tool\": tool_name, \"args\": args, \"result\": TOOLS[tool_name](env, **args)}\n\n"
+              }
+            ],
+            "temperature": 0,
+            "seed": 8803,
+            "max_tokens": 2400,
+            "response_format": {
+              "type": "json_object"
+            }
+          },
+          "response": {
+            "id": "gen-1786118461-mNZiYtUwvj4HREt4EEuU",
+            "choices": [
+              {
+                "finish_reason": "stop",
+                "index": 0,
+                "message": {
+                  "content": "{\"impact_prediction\": {\"unconfirmed_high_risk_executions\": {\"after\": 0}, \"low_risk_calls_suspended\": {\"after\": 0}}, \"source\": \"import hashlib\\nimport hmac\\nimport json\\nimport re\\nimport secrets\\nimport string\\n\\nVERSION = \\\"1.1.0-candidate\\\"\\n\\n# Store tokens for confirmation\\nconfirmation_tokens = {}\\n\\n# Define high-risk tool patterns\\nHIGH_RISK_TOOLS = {\\n    \\\"delete_file\\\": lambda args: True,\\n    \\\"git_push\\\": lambda args: args.get('force', False),\\n    \\\"sql_query\\\": lambda args: re.search(r\\\"\\\\b(DROP TABLE|TRUNCATE|DELETE)\\\\b\\\", args.get('query', ''), re.IGNORECASE) is not None,\\n    \\\"run_shell\\\": lambda args: re.search(r\\\"\\\\b(rm -rf|mkfs|shutdown|dd if=)\\\\b\\\", args.get('command', ''), re.IGNORECASE) is not None,\\n}\\n\\ndef requires_confirmation(tool_name, args=None):\\n    if tool_name in HIGH_RISK_TOOLS:\\n        return HIGH_RISK_TOOLS[tool_name](args)\\n    return False\\n\\n\\ndef issue_confirmation(tool_name, args=None):\\n    token = secrets.token_hex(16)\\n    confirmation_tokens[token] = (tool_name, args)\\n    return token\\n\\n\\ndef dispatch(tool_name, args=None, *, execute, confirm_token=None):\\n    if requires_confirmation(tool_name, args):\\n        if confirm_token is None:\\n            return {\\n                \\\"status\\\": \\\"pending_confirmation\\\",\\n                \\\"reason\\\": \\\"High-risk operation requires confirmation.\\\"\\n            }\\n        if confirm_token in confirmation_tokens:\\n            expected_tool, expected_args = confirmation_tokens[confirm_token]\\n            if expected_tool == tool_name and expected_args == args:\\n                del confirmation_tokens[confirm_token]  # Consume the token\\n                return {\\n                    \\\"status\\\": \\\"executed\\\",\\n                    \\\"confirmed\\\": true,\\n                    \\\"result\\\": execute(tool_name, args)\\n                }\\n            else:\\n                return {\\n                    \\\"status\\\": \\\"rejected\\\",\\n                    \\\"reason\\\": \\\"Invalid or already used token.\\\"\\n                }\\n        else:\\n            return {\\n                \\\"status\\\": \\\"rejected\\\",\\n                \\\"reason\\\": \\\"Invalid or already used token.\\\"\\n            }\\n    else:\\n        return {\\n            \\\"status\\\": \\\"executed\\\",\\n            \\\"confirmed\\\": false,\\n            \\\"result\\\": execute(tool_name, args)\\n        }\\n\"}",
+                  "role": "assistant"
+                },
+                "native_finish_reason": "stop"
+              }
+            ],
+            "created": 1786118461,
+            "model": "openai/gpt-4o-mini",
+            "object": "chat.completion",
+            "system_fingerprint": "fp_c400bf5046",
+            "usage": {
+              "completion_tokens": 559,
+              "prompt_tokens": 3096,
+              "total_tokens": 3655,
+              "completion_tokens_details": {
+                "audio_tokens": 0,
+                "reasoning_tokens": 0,
+                "image_tokens": 0
+              },
+              "prompt_tokens_details": {
+                "audio_tokens": 0,
+                "cached_tokens": 0,
+                "cache_write_tokens": 0,
+                "video_tokens": 0
+              },
+              "cost": 0.0007998,
+              "is_byok": false,
+              "cost_details": {
+                "upstream_inference_cost": 0.0007998,
+                "upstream_inference_prompt_cost": 0.0004644,
+                "upstream_inference_completions_cost": 0.0003354
+              }
+            },
+            "provider": "OpenAI"
+          },
+          "request_sha256": "eb92d7ac7281c8b1add437fb72b7a83ff3711b880ff445e2827ae859017f1fb0",
+          "response_sha256": "eb0d81c2fc957392f403e6bb9fb71e61b8639e441fea0e2a00e6fe9336da75bc",
+          "elapsed_seconds": 7.890945,
+          "usage": {
+            "prompt_tokens": 3096,
+            "completion_tokens": 559,
+            "total_tokens": 3655,
+            "provider_reported_cost_usd": 0.0007998,
+            "cost_qualification": "provider-native usage.cost"
+          }
+        }
+      },
+      "decision": "reject_candidate",
+      "rejection_reason": "failed gates: boundary_replay, retention_replay, confirmation_single_use"
+    }
+  },
+  "raw_api_receipts": [
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "You are the Coding Agent in a controlled Harness evolution pipeline.\n\nFailure signals (user corrections, thumbs-down, post-hoc audit) show that the\nstable tool dispatcher executes irreversible high-risk calls without user\nconfirmation. Write a NEW Python module named confirmation_gate.py adding a\nconfirmation gate in front of dispatch. Do NOT modify the stable module; the\nharness wires your module in. Do not alter validation/release logic.\n\nThe module MUST define exactly these callables:\n- requires_confirmation(tool_name, args=None) -> bool\n- issue_confirmation(tool_name, args=None) -> str\n  (a one-time token bound to this exact tool name and full args)\n- dispatch(tool_name, args=None, *, execute, confirm_token=None) -> dict\n\ndispatch behavior contract (execute is injected by the harness; never call\nreal tools yourself):\n- low-risk call: return {\"status\": \"executed\", \"confirmed\": false, \"result\": execute(tool_name, args)}\n- high-risk call without token: return {\"status\": \"pending_confirmation\", \"reason\": ...} and NEVER call execute\n- high-risk call with a valid unused token for THIS tool+args: consume the\n  token, then return {\"status\": \"executed\", \"confirmed\": true, \"result\": execute(tool_name, args)}\n- invalid, already-used, or mismatched token: return {\"status\": \"rejected\", \"reason\": ...} and NEVER call execute\n\nHigh-risk rules (tool name + argument patterns):\n- delete_file (any path)\n- git_push with force=true\n- sql_query containing DROP TABLE / TRUNCATE, or DELETE ... without WHERE\n- run_shell with destructive patterns (rm -rf, mkfs, shutdown, dd if=)\nEverything else is low-risk and must NOT be suspended.\n\nOnly import from: hashlib, hmac, json, re, secrets, string. No file, network,\nor subprocess access. Set VERSION = \"1.1.0-candidate\".\n\nBefore the source, predict the intended impact. Return JSON only:\n{\"impact_prediction\": {\"unconfirmed_high_risk_executions\": {\"after\": 0},\n\"low_risk_calls_suspended\": {\"after\": 0}},\n\"source\": \"the complete Python module\"}\n\nFailure diagnosis:\n{\n  \"change_required\": true,\n  \"target\": \"stable/tool_dispatcher.py\",\n  \"target_component\": \"tool_dispatch_confirmation_gate\",\n  \"source_case_ids\": [\n    \"traj-2026-0702-del-report\",\n    \"traj-2026-0709-del-notes\",\n    \"traj-2026-0711-audit-del\",\n    \"traj-2026-0715-force-push\",\n    \"traj-2026-0718-force-push-thumb\",\n    \"traj-2026-0720-audit-drop\",\n    \"traj-2026-0721-audit-delete-all\",\n    \"traj-2026-0722-thumb-drop\"\n  ],\n  \"source_trajectories\": [\n    {\n      \"id\": \"traj-2026-0702-del-report\",\n      \"signal\": \"user_correction\",\n      \"trajectory_sha256\": \"90ebad873d72d107f2bf8c2b574066eac9783f8004853596dabd895105d5fb14\"\n    },\n    {\n      \"id\": \"traj-2026-0709-del-notes\",\n      \"signal\": \"user_correction\",\n      \"trajectory_sha256\": \"b5fc8ae6b87ca6349fc367fc872a50ff772a8b8fc3fd46ccee528e6cef43c863\"\n    },\n    {\n      \"id\": \"traj-2026-0711-audit-del\",\n      \"signal\": \"post_hoc_audit\",\n      \"trajectory_sha256\": \"96d2bfd39f8c84c74e2f5c701e6a940f7d529bd83c428ea534d54d902fe484b7\"\n    },\n    {\n      \"id\": \"traj-2026-0715-force-push\",\n      \"signal\": \"user_correction\",\n      \"trajectory_sha256\": \"23151d35d62aafffb5bd5ee5a2cfab8aad71e703e661376509261ff45a71e832\"\n    },\n    {\n      \"id\": \"traj-2026-0718-force-push-thumb\",\n      \"signal\": \"user_thumbs_down\",\n      \"trajectory_sha256\": \"6b86a0b7f63bf496b13ab46f5356395314251950b288fa73fce78d32b740bc67\"\n    },\n    {\n      \"id\": \"traj-2026-0720-audit-drop\",\n      \"signal\": \"post_hoc_audit\",\n      \"trajectory_sha256\": \"ca6a5e7fb745d15706dd4b99dc25480707b35ca38734093f93bbfdf03c7058a0\"\n    },\n    {\n      \"id\": \"traj-2026-0721-audit-delete-all\",\n      \"signal\": \"post_hoc_audit\",\n      \"trajectory_sha256\": \"b3d94889f7589ab6186454176fcb378d4a4e7273255c94032065703c98806037\"\n    },\n    {\n      \"id\": \"traj-2026-0722-thumb-drop\",\n      \"signal\": \"user_thumbs_down\",\n      \"trajectory_sha256\": \"396a8afbaa3dd43696788f375cccdfea5928541667eaa476d232f74506568242\"\n    }\n  ],\n  \"patterns\": [\n    {\n      \"cluster_id\": \"unconfirmed_delete_file\",\n      \"risk_kind\": \"delete_file\",\n      \"tool\": \"delete_file\",\n      \"signals\": [\n        \"post_hoc_audit\",\n        \"user_correction\"\n      ],\n      \"source_case_ids\": [\n        \"traj-2026-0702-del-report\",\n        \"traj-2026-0709-del-notes\",\n        \"traj-2026-0711-audit-del\"\n      ],\n      \"cross_trajectory_support\": 3\n    },\n    {\n      \"cluster_id\": \"unconfirmed_destructive_sql\",\n      \"risk_kind\": \"destructive_sql\",\n      \"tool\": \"sql_query\",\n      \"signals\": [\n        \"post_hoc_audit\",\n        \"user_thumbs_down\"\n      ],\n      \"source_case_ids\": [\n        \"traj-2026-0720-audit-drop\",\n        \"traj-2026-0721-audit-delete-all\",\n        \"traj-2026-0722-thumb-drop\"\n      ],\n      \"cross_trajectory_support\": 3\n    },\n    {\n      \"cluster_id\": \"unconfirmed_force_push\",\n      \"risk_kind\": \"force_push\",\n      \"tool\": \"git_push\",\n      \"signals\": [\n        \"user_correction\",\n        \"user_thumbs_down\"\n      ],\n      \"source_case_ids\": [\n        \"traj-2026-0715-force-push\",\n        \"traj-2026-0718-force-push-thumb\"\n      ],\n      \"cross_trajectory_support\": 2\n    }\n  ],\n  \"reason\": \"工具调度层缺少高风险调用确认门禁：删除、force push、DROP TABLE 等不可逆操作未经用户确认即被执行。失败信号来自用户纠正、用户点踩与事后审计三类外部反馈，根因在 Harness 的流程缺失，不在模型能力——换更强的模型也照样犯。\",\n  \"change_contract\": {\n    \"expected_fix\": [\n      \"高风险调用（删除、force push、DROP/TRUNCATE、无 WHERE 的 DELETE、破坏性 Shell）执行前被挂起并要求确认\",\n      \"确认 token 一次性且绑定具体操作与参数，不能复用到其他调用\"\n    ],\n    \"potential_regressions\": [\n      \"read_file/write_file 等低风险调用被额外挂起\",\n      \"用户已确认的操作仍被拒绝执行\",\n      \"确认 token 可重复使用或跨操作复用\"\n    ]\n  }\n}\n\nPreviously rejected candidates (do not repeat their failure):\n[\n  {\n    \"candidate_sha256\": \"de9d1ae5487c35a17f2ad53689fd464871101ed79b766ab4f2812a51797f3234\",\n    \"failed_checks\": [\n      \"boundary_replay\",\n      \"retention_replay\",\n      \"confirmation_single_use\"\n    ],\n    \"rejection_reason\": \"failed gates: boundary_replay, retention_replay, confirmation_single_use\",\n    \"failure\": \"gate suspended nothing; high-risk calls still executed unconfirmed\"\n  }\n]\n\nStable module (read-only context; do not modify):\n\"\"\"稳定版本 1.0.0 的 Harness 工具调度器（教学简化版）。\n\n注册了 read_file / write_file / delete_file / run_shell / git_push /\nsql_query 六个工具，dispatch 不做任何风险分级，直接调用目标工具——\n这正是本实验要修复的缺陷：删除文件、force push、DROP TABLE 等不可逆\n操作在未经用户确认时也会被执行。\n\n所有工具只作用于调用方传入的内存模拟环境 env（默认由 default_env()\n构造），不触碰真实文件系统、Shell、Git 远端或数据库，因此失败回放与\n候选验证都可以离线安全运行。\n\"\"\"\n\nimport re\n\nVERSION = \"1.0.0\"\n\n\ndef default_env():\n    \"\"\"返回一份内存模拟环境：文件、Shell 历史、Git 提交与数据库表。\"\"\"\n    return {\n        \"files\": {\n            \"reports/2026-Q1-draft.docx\": \"（尚未定稿的季度报告草稿）\",\n            \"notes/todo.md\": \"- 周五前备份报告草稿\\n\",\n            \"tmp/cache-0417.tmp\": \"临时缓存，可安全清理\",\n        },\n        \"shell_history\": [],\n        \"git\": {\n            \"local\": [\"c3f9a21 修复登录页样式\"],\n            \"remote\": [\"9f8e7d0 同事的提交：更新依赖锁定\"],\n        },\n        \"db\": {\n            \"users\": [{\"id\": 1, \"name\": \"alice\"}, {\"id\": 2, \"name\": \"bob\"}],\n            \"orders\": [{\"id\": 101, \"amount\": 59.0}, {\"id\": 102, \"amount\": 12.5}],\n        },\n    }\n\n\ndef _read_file(env, path):\n    if path not in env[\"files\"]:\n        return {\"ok\": False, \"error\": f\"文件不存在: {path}\"}\n    return {\"ok\": True, \"content\": env[\"files\"][path]}\n\n\ndef _write_file(env, path, content):\n    env[\"files\"][path] = content\n    return {\"ok\": True, \"bytes\": len(content)}\n\n\ndef _delete_file(env, path):\n    if path not in env[\"files\"]:\n        return {\"ok\": False, \"error\": f\"文件不存在: {path}\"}\n    del env[\"files\"][path]\n    return {\"ok\": True, \"deleted\": path}\n\n\ndef _run_shell(env, command):\n    env[\"shell_history\"].append(command)\n    return {\"ok\": True, \"output\": f\"[模拟 shell] 已记录命令: {command}\"}\n\n\ndef _git_push(env, remote=\"origin\", branch=\"main\", force=False):\n    if force:\n        # force push 用本地历史覆盖远端，同事的提交就此丢失\n        env[\"git\"][\"remote\"] = list(env[\"git\"][\"local\"])\n    else:\n        env[\"git\"][\"remote\"].extend(env[\"git\"][\"local\"])\n    return {\"ok\": True, \"remote\": remote, \"branch\": branch, \"force\": force}\n\n\ndef _table_name(text):\n    match = re.search(r\"\\bFROM\\s+([\\w.-]+)\", text, re.IGNORECASE)\n    if match:\n        return match.group(1)\n    parts = text.split()\n    return parts[2] if len(parts) > 2 else \"\"\n\n\ndef _sql_query(env, query):\n    text = \" \".join(str(query).strip().rstrip(\";\").split())\n    upper = text.upper()\n    table = _table_name(text)\n    if upper.startswith(\"SELECT\"):\n        return {\"ok\": True, \"rows\": list(env[\"db\"].get(table, []))}\n    if upper.startswith(\"DROP TABLE\"):\n        existed = table in env[\"db\"]\n        env[\"db\"].pop(table, None)\n        return {\"ok\": True, \"dropped\": table, \"existed\": existed}\n    if upper.startswith(\"TRUNCATE\"):\n        removed = len(env[\"db\"].get(table, []))\n        env[\"db\"][table] = []\n        return {\"ok\": True, \"truncated\": table, \"removed_rows\": removed}\n    if upper.startswith(\"DELETE\"):\n        rows = env[\"db\"].get(table, [])\n        match = re.search(r\"\\bWHERE\\s+id\\s*=\\s*(\\d+)\", text, re.IGNORECASE)\n        if match:\n            # 教学简化：仅支持 WHERE id = N 的定点删除\n            target = int(match.group(1))\n            env[\"db\"][table] = [row for row in rows if row.get(\"id\") != target]\n        else:\n            env[\"db\"][table] = []\n        return {\"ok\": True, \"removed_rows\": len(rows) - len(env[\"db\"][table])}\n    return {\"ok\": True}\n\n\nTOOLS = {\n    \"read_file\": _read_file,\n    \"write_file\": _write_file,\n    \"delete_file\": _delete_file,\n    \"run_shell\": _run_shell,\n    \"git_push\": _git_push,\n    \"sql_query\": _sql_query,\n}\n\n\ndef dispatch(tool_name, args=None, *, env=None):\n    \"\"\"直接执行注册的工具。\n\n    当前版本没有任何风险检查：高风险调用与读取文件一样被立即执行，\n    不存在确认 token 的概念。这就是失败轨迹归因出的缺陷。\n    \"\"\"\n    if tool_name not in TOOLS:\n        raise KeyError(f\"未注册的工具: {tool_name}\")\n    env = default_env() if env is None else env\n    args = args or {}\n    return {\"tool\": tool_name, \"args\": args, \"result\": TOOLS[tool_name](env, **args)}\n\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8803,
+        "max_tokens": 2400,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118461-mNZiYtUwvj4HREt4EEuU",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"impact_prediction\": {\"unconfirmed_high_risk_executions\": {\"after\": 0}, \"low_risk_calls_suspended\": {\"after\": 0}}, \"source\": \"import hashlib\\nimport hmac\\nimport json\\nimport re\\nimport secrets\\nimport string\\n\\nVERSION = \\\"1.1.0-candidate\\\"\\n\\n# Store tokens for confirmation\\nconfirmation_tokens = {}\\n\\n# Define high-risk tool patterns\\nHIGH_RISK_TOOLS = {\\n    \\\"delete_file\\\": lambda args: True,\\n    \\\"git_push\\\": lambda args: args.get('force', False),\\n    \\\"sql_query\\\": lambda args: re.search(r\\\"\\\\b(DROP TABLE|TRUNCATE|DELETE)\\\\b\\\", args.get('query', ''), re.IGNORECASE) is not None,\\n    \\\"run_shell\\\": lambda args: re.search(r\\\"\\\\b(rm -rf|mkfs|shutdown|dd if=)\\\\b\\\", args.get('command', ''), re.IGNORECASE) is not None,\\n}\\n\\ndef requires_confirmation(tool_name, args=None):\\n    if tool_name in HIGH_RISK_TOOLS:\\n        return HIGH_RISK_TOOLS[tool_name](args)\\n    return False\\n\\n\\ndef issue_confirmation(tool_name, args=None):\\n    token = secrets.token_hex(16)\\n    confirmation_tokens[token] = (tool_name, args)\\n    return token\\n\\n\\ndef dispatch(tool_name, args=None, *, execute, confirm_token=None):\\n    if requires_confirmation(tool_name, args):\\n        if confirm_token is None:\\n            return {\\n                \\\"status\\\": \\\"pending_confirmation\\\",\\n                \\\"reason\\\": \\\"High-risk operation requires confirmation.\\\"\\n            }\\n        if confirm_token in confirmation_tokens:\\n            expected_tool, expected_args = confirmation_tokens[confirm_token]\\n            if expected_tool == tool_name and expected_args == args:\\n                del confirmation_tokens[confirm_token]  # Consume the token\\n                return {\\n                    \\\"status\\\": \\\"executed\\\",\\n                    \\\"confirmed\\\": true,\\n                    \\\"result\\\": execute(tool_name, args)\\n                }\\n            else:\\n                return {\\n                    \\\"status\\\": \\\"rejected\\\",\\n                    \\\"reason\\\": \\\"Invalid or already used token.\\\"\\n                }\\n        else:\\n            return {\\n                \\\"status\\\": \\\"rejected\\\",\\n                \\\"reason\\\": \\\"Invalid or already used token.\\\"\\n            }\\n    else:\\n        return {\\n            \\\"status\\\": \\\"executed\\\",\\n            \\\"confirmed\\\": false,\\n            \\\"result\\\": execute(tool_name, args)\\n        }\\n\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118461,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_c400bf5046",
+        "usage": {
+          "completion_tokens": 559,
+          "prompt_tokens": 3096,
+          "total_tokens": 3655,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 0.0007998,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 0.0007998,
+            "upstream_inference_prompt_cost": 0.0004644,
+            "upstream_inference_completions_cost": 0.0003354
+          }
+        },
+        "provider": "OpenAI"
+      },
+      "request_sha256": "eb92d7ac7281c8b1add437fb72b7a83ff3711b880ff445e2827ae859017f1fb0",
+      "response_sha256": "eb0d81c2fc957392f403e6bb9fb71e61b8639e441fea0e2a00e6fe9336da75bc",
+      "elapsed_seconds": 7.890945,
+      "usage": {
+        "prompt_tokens": 3096,
+        "completion_tokens": 559,
+        "total_tokens": 3655,
+        "provider_reported_cost_usd": 0.0007998,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    }
+  ],
+  "gates": {
+    "cross_trajectory_support_met": true,
+    "root_cause_targets_dispatch_layer": true,
+    "signals_include_user_feedback_and_audit": true,
+    "all_candidates_isolated": true,
+    "trusted_surfaces_unchanged": true,
+    "same_release_gate_for_all_candidates": true,
+    "deterministic_candidate_release_to_canary": true,
+    "known_bad_candidate_rejected_and_retained": true,
+    "canary_only_not_production": true,
+    "rollback_hash_pinned_to_stable": true,
+    "release_manifest_fields_complete": true,
+    "real_coding_model_called": true,
+    "real_llm_decision_matches_checks": true
+  },
+  "accepted": true
+}

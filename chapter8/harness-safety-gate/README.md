@@ -38,14 +38,14 @@ python run_experiment_8_8.py --provider ark --model doubao-seed-1-6-250615 --see
 
 发布门槛（全部通过才 `release_to_canary`，否则 `reject_candidate`）：
 
-- `boundary_replay`：`boundary_cases.json` 8 条——高风险调用必须被挂起、确认后才执行、伪造/错配/复用 token 必须被拒绝且绝不执行（含第六章实验 6-5 的"高风险删除前确认"场景）；
-- `retention_replay`：`retention_cases.json` 7 条——`read_file`/`write_file`/普通 push/SELECT/带 WHERE 的 DELETE 等正常操作不受影响，用户已确认的操作正常放行；
+- `boundary_replay`（未完成任务回放）：`boundary_cases.json` 8 条——高风险调用必须被挂起、确认后才执行、伪造/错配/复用 token 必须被拒绝且绝不执行（含第六章实验 6-5 的"高风险删除前确认"场景）；
+- `retention_replay`（正常操作回放）：`retention_cases.json` 7 条——`read_file`/`write_file`/普通 push/SELECT/带 WHERE 的 DELETE 等正常操作不受影响，用户已确认的操作正常放行；
 - `confirmation_single_use`：确认 token 一次性、绑定具体工具名与完整参数。
 
-`release_manifest.json` 记录失败簇、逐条来源轨迹及哈希、根因、目标文件、候选 diff 与对 dispatcher 的最小接入 diff（仅提案，不落盘）、全部检查、候选哈希与回滚版本。生成前后还会对 `stable/`、三份 JSON 数据与 `evolution.py` 做 SHA-256 快照比对，证明 Coding Agent 没有越权修改可信根。真实 LLM 路径的原始请求、原始响应、Token 用量、延迟与请求/响应哈希保存在 `validation/<run>/evidence.json`，`validation/latest.json` 指向最近一次完整证据。
+`release_manifest.json` 记录同一类失败、逐条来源轨迹及哈希、问题原因、目标文件、候选 diff 与对 dispatcher 的最小接入 diff（仅提案，不落盘）、全部检查、候选哈希与回滚版本。生成前后还会对 `stable/`、三份 JSON 数据与 `evolution.py` 做 SHA-256 快照比对，证明 Coding Agent 没有越权修改可信根。真实 LLM 路径的原始请求、原始响应、Token 用量、延迟与请求/响应哈希保存在 `validation/<run>/evidence.json`，`validation/latest.json` 指向最近一次完整证据。
 
 ## 当前证据状态
 
-本仓库内已实际跑通的是离线路径：`test_evolution.py` 18 项测试全部通过；`demo.py` 与 `run_experiment_8_8.py --quick` 输出确定性候选 `release_to_canary`、反例 `reject_candidate`（失败于 `boundary_replay`）。**真实 LLM 路径尚未在本仓库运行**，需要配置 `env.example` 中的凭据后执行上述完整命令；跑通后 `validation/latest.json` 会保留真实回执，本段也应相应更新。
+本地离线路径和真实 Coding Agent 路径都已跑通：`test_evolution.py` 18 项测试全部通过；确定性候选得到 `release_to_canary`，放行一切的反例得到 `reject_candidate`。真实 OpenRouter `gpt-4o-mini` 运行（2026-08-07）中，模型生成的候选没有通过未完成任务回放、正常操作回放和一次性令牌检查，因此被模型外门槛拒绝；这属于安全的预期结果，而不是绕过检查强行发布。该次运行的确定性候选仍通过，整体验收为 `accepted=true`。证据见 `validation/real_20260807T160109Z/evidence.json`，`validation/latest.json` 已指向该次运行。
 
 确定性补丁只用于可复现对照；真实验收必须包含真实 Coding Agent 的 API 回执。候选生成、失败回放与发布门槛不交给生成补丁的模型自行批准；稳定代码、审计数据与发布验证器属于可信根，不在普通自我修改权限之内。

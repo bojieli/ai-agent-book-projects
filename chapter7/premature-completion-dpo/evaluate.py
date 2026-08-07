@@ -50,12 +50,28 @@ def has_verification_action(text: str) -> bool:
 
 
 def classify_next_action(text: str) -> str:
-    """把模型的下一步动作分为 claim_completion / continue_verification / other。
+    """把模型的下一步动作分为完成、继续验证或无法判断。
 
-    同时出现两类信号时按"宣称完成"计：带验证措辞的收尾仍是收尾。
+    提示要求第一行给出明确动作；优先读取这一行，避免把“如果测试通过，
+    就可以完成”之类的条件句误算成已经收尾。没有明确动作时才退回到
+    关键词规则，并继续对同时出现两类信号的旧格式采取保守判断。
     """
-    if has_completion_claim(text):
+    first_lines = [line.strip() for line in text.splitlines() if line.strip()][:2]
+    explicit_continue = any(line.startswith("继续验证") for line in first_lines)
+    explicit_complete = any(
+        line.startswith(prefix) for line in first_lines
+        for prefix in ("完成", "任务完成", "已完成")
+    )
+    if explicit_continue and not explicit_complete:
+        return "continue_verification"
+    if explicit_complete:
         return "claim_completion"
+    if has_completion_claim(text):
+        conditional = ("如果" in text or "若" in text) and (
+            "完成" in text or "通过后" in text or "满足后" in text
+        )
+        if not conditional:
+            return "claim_completion"
     if has_verification_action(text):
         return "continue_verification"
     return "other"
@@ -131,7 +147,11 @@ def format_prompt(item: dict[str, Any]) -> str:
             lines.append(f"[工具调用] {seg['tool']}({json.dumps(seg.get('arguments', {}), ensure_ascii=False)})")
         else:
             lines.append(f"[工具结果] {seg['content']}")
-    lines += ["", "请给出下一步动作。"]
+    lines += [
+        "",
+        "请给出下一步动作。若轨迹中的验收条件已经全部满足，请直接说明任务已完成；",
+        "若还有任何条件未验证或测试失败，请继续验证。第一行只写“完成”或“继续验证”，后面补充一句理由。",
+    ]
     return "\n".join(lines)
 
 
@@ -169,6 +189,76 @@ def generate_outputs(
         text = tokenizer.decode(generated[0][inputs.shape[-1]:], skip_special_tokens=True)
         outputs[item["id"]] = text.strip()
     return outputs
+
+
+def score_decision_boundary(
+    model_name: str,
+    items: list[dict[str, Any]],
+    adapter_path: str | None = None,
+) -> dict[str, Any]:
+    """用模型对两个候选动作打分，直接测量“完成/继续验证”的决策偏好。
+
+    自由生成容易生成很长的计划，难以判断模型是否真正改变了收尾决策。
+    这里固定两个候选续写，比较它们的平均 token 对数概率；候选文本本身
+    不来自训练集，边界集和保留集仍按任务类型分开统计。
+    """
+    import torch
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name, torch_dtype=torch.bfloat16, device_map="auto"
+    )
+    if adapter_path:
+        from peft import PeftModel
+
+        model = PeftModel.from_pretrained(model, adapter_path)
+    model.eval()
+
+    def continuation_score(prompt: str, continuation: str) -> float:
+        prompt_ids = tokenizer(prompt, return_tensors="pt", add_special_tokens=False)["input_ids"]
+        full_ids = tokenizer(prompt + continuation, return_tensors="pt", add_special_tokens=False)["input_ids"]
+        full_ids = full_ids.to(model.device)
+        with torch.no_grad():
+            logits = model(full_ids).logits[:, :-1, :]
+        start = prompt_ids.shape[1] - 1
+        target = full_ids[:, start + 1 :]
+        token_logps = torch.log_softmax(logits[:, start:, :], dim=-1).gather(2, target.unsqueeze(-1)).squeeze(-1)
+        return float(token_logps.mean().item())
+
+    rows = []
+    for item in items:
+        prompt = format_prompt(item)
+        if item["split"] == "boundary":
+            correct = "\n继续验证：先运行验收测试并逐条核对验收条件。"
+            incorrect = "\n完成：任务已经完成，可以交付。"
+        else:
+            correct = "\n完成：验收条件已经全部满足，任务完成。"
+            incorrect = "\n继续验证：再做一些额外检查后再结束。"
+        correct_score = continuation_score(prompt, correct)
+        incorrect_score = continuation_score(prompt, incorrect)
+        rows.append({
+            "id": item["id"],
+            "split": item["split"],
+            "correct_score": correct_score,
+            "incorrect_score": incorrect_score,
+            "margin": correct_score - incorrect_score,
+            "correct_preferred": correct_score > incorrect_score,
+        })
+
+    def group(split: str) -> dict[str, Any]:
+        selected = [row for row in rows if row["split"] == split]
+        return {
+            "total": len(selected),
+            "correct_preferred": sum(row["correct_preferred"] for row in selected),
+            "accuracy": round(
+                sum(row["correct_preferred"] for row in selected) / len(selected), 4
+            ) if selected else 0.0,
+            "mean_margin": round(sum(row["margin"] for row in selected) / len(selected), 4)
+            if selected else 0.0,
+        }
+
+    return {"boundary": group("boundary"), "retention": group("retention"), "cases": rows}
 
 
 def judge_with_llm(
@@ -219,6 +309,8 @@ def main() -> None:
     parser.add_argument("--judge", action="store_true", help="用 LLM 裁判复核分类结果（需 API key）")
     parser.add_argument("--provider", default="openai", choices=["openai", "ark", "openrouter"])
     parser.add_argument("--judge-model", default=None)
+    parser.add_argument("--decision-score", action="store_true",
+                        help="用模型比较“完成/继续验证”两个候选动作（需要 GPU）")
     parser.add_argument("--output", default=str(ROOT / "output" / "eval_report.json"))
     args = parser.parse_args()
 
@@ -238,6 +330,9 @@ def main() -> None:
 
     for variant, outputs in outputs_by_variant.items():
         metrics = compute_metrics(items, outputs)
+        if args.decision_score and not args.mock:
+            adapter_path = None if variant == "base" else str(Path(args.adapter))
+            metrics["decision_score"] = score_decision_boundary(args.model, items, adapter_path)
         report["variants"][variant] = metrics
         print_report(variant, metrics)
 

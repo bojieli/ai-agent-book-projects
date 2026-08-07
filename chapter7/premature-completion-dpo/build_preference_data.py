@@ -28,19 +28,19 @@ OUTPUT_PATH = ROOT / "output" / "preference_pairs.jsonl"
 # 离线确定性 chosen 模板：统一结构为"先指出不能收尾 → 给出缺失的验证动作"。
 CHOSEN_TEMPLATES = {
     "no_test_run": (
-        "现在还不能下结论：代码改动尚未经过测试验证。"
+        "继续验证：代码改动尚未经过测试验证。"
         "下一步动作：{missing_verification}。验证通过后再汇报结果。"
     ),
     "partial_multi_objective": (
-        "任务的多项目标尚未全部达成，不能提前收尾。"
+        "继续验证：任务的多项目标尚未全部达成，不能提前收尾。"
         "下一步动作：{missing_verification}。全部目标达成并验证后再总结。"
     ),
     "unmet_acceptance": (
-        "验收条件尚未满足，需要继续验证而不是宣称完成。"
+        "继续验证：验收条件尚未满足，需要继续验证而不是直接收尾。"
         "下一步动作：{missing_verification}。验收标准逐条满足后再收尾。"
     ),
     "give_up_on_error": (
-        "遇到错误不能直接放弃，更不能伪造通过。"
+        "继续验证：遇到错误不能直接放弃，更不能伪造通过。"
         "下一步动作：{missing_verification}。定位并修复根因后再重新验证。"
     ),
 }
@@ -67,7 +67,11 @@ def build_prompt(case: dict[str, Any]) -> str:
             lines.append(f"[工具调用] {seg['tool']}({json.dumps(seg.get('arguments', {}), ensure_ascii=False)})")
         else:
             lines.append(f"[工具结果] {seg['content']}")
-    lines += ["", "请给出下一步动作。"]
+    lines += [
+        "",
+        "请给出下一步动作。若轨迹中的验收条件已经全部满足，请直接说明任务已完成；",
+        "若还有任何条件未验证或测试失败，请继续验证。第一行只写“完成”或“继续验证”，后面补充一句理由。",
+    ]
     return "\n".join(lines)
 
 

@@ -57,7 +57,7 @@ def chat(
     provider: str,
     model: str | None = None,
     seed: int = 8901,
-    max_tokens: int = 2000,
+    max_tokens: int = 5000,
 ) -> Tuple[str, Dict[str, Any]]:
     """发起一次真实调用，返回 (文本内容, 证据回执)。"""
     client, backend = make_client(provider)

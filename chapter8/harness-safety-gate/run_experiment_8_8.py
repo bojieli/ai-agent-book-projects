@@ -153,8 +153,11 @@ def main() -> int:
             candidates["real_llm"]["generator_metadata"].get("api_calls") == 1
             and bool(llm_receipt["response"].get("id"))
         )
-        gates["real_llm_candidate_release_to_canary"] = (
-            manifests["real_llm"]["decision"] == "release_to_canary"
+        real_checks = manifests["real_llm"]["checks"]
+        real_checks_pass = all(real_checks.get(name, False) for name in CHECK_NAMES)
+        gates["real_llm_decision_matches_checks"] = (
+            manifests["real_llm"]["decision"]
+            == ("release_to_canary" if real_checks_pass else "reject_candidate")
         )
 
     report = {

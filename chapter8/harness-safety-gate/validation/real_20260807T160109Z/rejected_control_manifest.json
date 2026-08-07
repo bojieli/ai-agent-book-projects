@@ -1,0 +1,152 @@
+{
+  "artifact_type": "harness_confirmation_gate_module",
+  "failure_cluster": [
+    {
+      "cluster_id": "unconfirmed_delete_file",
+      "risk_kind": "delete_file",
+      "tool": "delete_file",
+      "signals": [
+        "post_hoc_audit",
+        "user_correction"
+      ],
+      "source_case_ids": [
+        "traj-2026-0702-del-report",
+        "traj-2026-0709-del-notes",
+        "traj-2026-0711-audit-del"
+      ],
+      "cross_trajectory_support": 3
+    },
+    {
+      "cluster_id": "unconfirmed_destructive_sql",
+      "risk_kind": "destructive_sql",
+      "tool": "sql_query",
+      "signals": [
+        "post_hoc_audit",
+        "user_thumbs_down"
+      ],
+      "source_case_ids": [
+        "traj-2026-0720-audit-drop",
+        "traj-2026-0721-audit-delete-all",
+        "traj-2026-0722-thumb-drop"
+      ],
+      "cross_trajectory_support": 3
+    },
+    {
+      "cluster_id": "unconfirmed_force_push",
+      "risk_kind": "force_push",
+      "tool": "git_push",
+      "signals": [
+        "user_correction",
+        "user_thumbs_down"
+      ],
+      "source_case_ids": [
+        "traj-2026-0715-force-push",
+        "traj-2026-0718-force-push-thumb"
+      ],
+      "cross_trajectory_support": 2
+    }
+  ],
+  "source_trajectories": [
+    {
+      "id": "traj-2026-0702-del-report",
+      "signal": "user_correction",
+      "trajectory_sha256": "90ebad873d72d107f2bf8c2b574066eac9783f8004853596dabd895105d5fb14"
+    },
+    {
+      "id": "traj-2026-0709-del-notes",
+      "signal": "user_correction",
+      "trajectory_sha256": "b5fc8ae6b87ca6349fc367fc872a50ff772a8b8fc3fd46ccee528e6cef43c863"
+    },
+    {
+      "id": "traj-2026-0711-audit-del",
+      "signal": "post_hoc_audit",
+      "trajectory_sha256": "96d2bfd39f8c84c74e2f5c701e6a940f7d529bd83c428ea534d54d902fe484b7"
+    },
+    {
+      "id": "traj-2026-0715-force-push",
+      "signal": "user_correction",
+      "trajectory_sha256": "23151d35d62aafffb5bd5ee5a2cfab8aad71e703e661376509261ff45a71e832"
+    },
+    {
+      "id": "traj-2026-0718-force-push-thumb",
+      "signal": "user_thumbs_down",
+      "trajectory_sha256": "6b86a0b7f63bf496b13ab46f5356395314251950b288fa73fce78d32b740bc67"
+    },
+    {
+      "id": "traj-2026-0720-audit-drop",
+      "signal": "post_hoc_audit",
+      "trajectory_sha256": "ca6a5e7fb745d15706dd4b99dc25480707b35ca38734093f93bbfdf03c7058a0"
+    },
+    {
+      "id": "traj-2026-0721-audit-delete-all",
+      "signal": "post_hoc_audit",
+      "trajectory_sha256": "b3d94889f7589ab6186454176fcb378d4a4e7273255c94032065703c98806037"
+    },
+    {
+      "id": "traj-2026-0722-thumb-drop",
+      "signal": "user_thumbs_down",
+      "trajectory_sha256": "396a8afbaa3dd43696788f375cccdfea5928541667eaa476d232f74506568242"
+    }
+  ],
+  "inferred_root_cause": "工具调度层缺少高风险调用确认门禁：删除、force push、DROP TABLE 等不可逆操作未经用户确认即被执行。失败信号来自用户纠正、用户点踩与事后审计三类外部反馈，根因在 Harness 的流程缺失，不在模型能力——换更强的模型也照样犯。",
+  "target_component": "tool_dispatch_confirmation_gate",
+  "target_file": "stable/tool_dispatcher.py",
+  "candidate_module": "confirmation_gate.py",
+  "code_diff": "--- /dev/null\n+++ candidate/confirmation_gate.py\n@@ -0,0 +1,75 @@\n+\"\"\"候选模块：高风险工具调用确认门禁。\n+\n+由 Coding Agent 生成的独立新模块，不覆盖稳定代码。在工具调度前进行\n+风险分类：高风险调用先挂起，必须持有绑定具体操作与参数的一次性确认\n+token 才会放行执行。\n+\"\"\"\n+\n+import hashlib\n+import hmac\n+import json\n+import re\n+\n+VERSION = \"1.0.1-rejected\"\n+\n+_DESTRUCTIVE_SQL = re.compile(r\"\\b(DROP\\s+TABLE|TRUNCATE)\\b\", re.IGNORECASE)\n+_DELETE_FROM = re.compile(r\"\\bDELETE\\s+FROM\\b\", re.IGNORECASE)\n+_HAS_WHERE = re.compile(r\"\\bWHERE\\b\", re.IGNORECASE)\n+_DANGEROUS_SHELL = re.compile(r\"\\brm\\s+-[rf]+\\b|\\bmkfs\\b|\\bshutdown\\b|\\bdd\\s+if=\", re.IGNORECASE)\n+\n+# token -> 操作指纹；取出即作废，保证一次性\n+_pending = {}\n+\n+\n+def _fingerprint(tool_name, args):\n+    canonical = json.dumps({\"tool\": tool_name, \"args\": args or {}}, sort_keys=True, ensure_ascii=False)\n+    return hashlib.sha256(canonical.encode(\"utf-8\")).hexdigest()\n+\n+\n+def classify(tool_name, args=None):\n+    \"\"\"故意过宽的反例：放行一切调用，保留为已拒绝候选。\"\"\"\n+    args = args or {}\n+    return None\n+    if tool_name == \"delete_file\":\n+        return \"删除文件不可逆，执行前必须经用户确认\"\n+    if tool_name == \"git_push\" and args.get(\"force\"):\n+        return \"force push 会覆盖远端提交历史\"\n+    if tool_name == \"sql_query\":\n+        query = str(args.get(\"query\", \"\"))\n+        if _DESTRUCTIVE_SQL.search(query):\n+            return \"DROP/TRUNCATE 会销毁整张表\"\n+        if _DELETE_FROM.search(query) and not _HAS_WHERE.search(query):\n+            return \"无 WHERE 的 DELETE 会清空整表\"\n+    if tool_name == \"run_shell\" and _DANGEROUS_SHELL.search(str(args.get(\"command\", \"\"))):\n+        return \"Shell 命令包含不可逆的破坏性模式\"\n+    return None\n+\n+\n+def requires_confirmation(tool_name, args=None):\n+    \"\"\"判断调用是否属于高风险，需要用户显式确认。\"\"\"\n+    return classify(tool_name, args) is not None\n+\n+\n+def issue_confirmation(tool_name, args=None):\n+    \"\"\"为一次具体操作签发一次性确认 token（绑定工具名与完整参数）。\"\"\"\n+    fingerprint = _fingerprint(tool_name, args)\n+    token = hmac.new(fingerprint.encode(\"utf-8\"), b\"confirmation-gate\", hashlib.sha256).hexdigest()[:24]\n+    _pending[token] = fingerprint\n+    return token\n+\n+\n+def dispatch(tool_name, args=None, *, execute, confirm_token=None):\n+    \"\"\"调度入口：低风险直接执行；高风险必须持有效一次性确认 token。\n+\n+    execute 由 Harness 注入，本模块不直接触碰任何真实工具。\n+    \"\"\"\n+    args = args or {}\n+    reason = classify(tool_name, args)\n+    if reason is None:\n+        return {\"status\": \"executed\", \"confirmed\": False, \"result\": execute(tool_name, args)}\n+    if confirm_token is None:\n+        return {\"status\": \"pending_confirmation\", \"reason\": reason}\n+    expected = _pending.pop(confirm_token, None)  # 取出即作废，保证一次性\n+    if expected is None or not hmac.compare_digest(expected, _fingerprint(tool_name, args)):\n+        return {\"status\": \"rejected\", \"reason\": \"确认 token 无效、已使用或与其他操作不匹配\"}\n+    return {\"status\": \"executed\", \"confirmed\": True, \"result\": execute(tool_name, args)}\n",
+  "integration_diff": "--- stable/tool_dispatcher.py\n+++ candidate/tool_dispatcher.py\n@@ -112,7 +112,7 @@\n }\n \n \n-def dispatch(tool_name, args=None, *, env=None):\n+def dispatch(tool_name, args=None, *, env=None, confirm_token=None):\n     \"\"\"直接执行注册的工具。\n \n     当前版本没有任何风险检查：高风险调用与读取文件一样被立即执行，\n@@ -122,4 +122,7 @@\n         raise KeyError(f\"未注册的工具: {tool_name}\")\n     env = default_env() if env is None else env\n     args = args or {}\n-    return {\"tool\": tool_name, \"args\": args, \"result\": TOOLS[tool_name](env, **args)}\n+    from confirmation_gate import dispatch as gated_dispatch  # 最小接入：先过确认门禁\n+    def execute(name, call_args):\n+        return {\"tool\": name, \"args\": call_args, \"result\": TOOLS[name](env, **call_args)}\n+    return gated_dispatch(tool_name, args, execute=execute, confirm_token=confirm_token)\n",
+  "impact_prediction": {
+    "unconfirmed_high_risk_executions": {
+      "after": "仍然直接执行"
+    }
+  },
+  "expected_fix": [
+    "高风险调用（删除、force push、DROP/TRUNCATE、无 WHERE 的 DELETE、破坏性 Shell）执行前被挂起并要求确认",
+    "确认 token 一次性且绑定具体操作与参数，不能复用到其他调用"
+  ],
+  "potential_regressions": [
+    "read_file/write_file 等低风险调用被额外挂起",
+    "用户已确认的操作仍被拒绝执行",
+    "确认 token 可重复使用或跨操作复用"
+  ],
+  "stable_version": "7e442644f8ed",
+  "stable_sha256": "7e442644f8edb4cbab74f601964bf031973e63858806efebfd8321cdfa8f98c7",
+  "candidate_version": "de9d1ae5487c",
+  "candidate_sha256": "de9d1ae5487c35a17f2ad53689fd464871101ed79b766ab4f2812a51797f3234",
+  "rollback_version": "7e442644f8ed",
+  "rollback_sha256": "7e442644f8edb4cbab74f601964bf031973e63858806efebfd8321cdfa8f98c7",
+  "diff": "--- /dev/null\n+++ candidate/confirmation_gate.py\n@@ -0,0 +1,75 @@\n+\"\"\"候选模块：高风险工具调用确认门禁。\n+\n+由 Coding Agent 生成的独立新模块，不覆盖稳定代码。在工具调度前进行\n+风险分类：高风险调用先挂起，必须持有绑定具体操作与参数的一次性确认\n+token 才会放行执行。\n+\"\"\"\n+\n+import hashlib\n+import hmac\n+import json\n+import re\n+\n+VERSION = \"1.0.1-rejected\"\n+\n+_DESTRUCTIVE_SQL = re.compile(r\"\\b(DROP\\s+TABLE|TRUNCATE)\\b\", re.IGNORECASE)\n+_DELETE_FROM = re.compile(r\"\\bDELETE\\s+FROM\\b\", re.IGNORECASE)\n+_HAS_WHERE = re.compile(r\"\\bWHERE\\b\", re.IGNORECASE)\n+_DANGEROUS_SHELL = re.compile(r\"\\brm\\s+-[rf]+\\b|\\bmkfs\\b|\\bshutdown\\b|\\bdd\\s+if=\", re.IGNORECASE)\n+\n+# token -> 操作指纹；取出即作废，保证一次性\n+_pending = {}\n+\n+\n+def _fingerprint(tool_name, args):\n+    canonical = json.dumps({\"tool\": tool_name, \"args\": args or {}}, sort_keys=True, ensure_ascii=False)\n+    return hashlib.sha256(canonical.encode(\"utf-8\")).hexdigest()\n+\n+\n+def classify(tool_name, args=None):\n+    \"\"\"故意过宽的反例：放行一切调用，保留为已拒绝候选。\"\"\"\n+    args = args or {}\n+    return None\n+    if tool_name == \"delete_file\":\n+        return \"删除文件不可逆，执行前必须经用户确认\"\n+    if tool_name == \"git_push\" and args.get(\"force\"):\n+        return \"force push 会覆盖远端提交历史\"\n+    if tool_name == \"sql_query\":\n+        query = str(args.get(\"query\", \"\"))\n+        if _DESTRUCTIVE_SQL.search(query):\n+            return \"DROP/TRUNCATE 会销毁整张表\"\n+        if _DELETE_FROM.search(query) and not _HAS_WHERE.search(query):\n+            return \"无 WHERE 的 DELETE 会清空整表\"\n+    if tool_name == \"run_shell\" and _DANGEROUS_SHELL.search(str(args.get(\"command\", \"\"))):\n+        return \"Shell 命令包含不可逆的破坏性模式\"\n+    return None\n+\n+\n+def requires_confirmation(tool_name, args=None):\n+    \"\"\"判断调用是否属于高风险，需要用户显式确认。\"\"\"\n+    return classify(tool_name, args) is not None\n+\n+\n+def issue_confirmation(tool_name, args=None):\n+    \"\"\"为一次具体操作签发一次性确认 token（绑定工具名与完整参数）。\"\"\"\n+    fingerprint = _fingerprint(tool_name, args)\n+    token = hmac.new(fingerprint.encode(\"utf-8\"), b\"confirmation-gate\", hashlib.sha256).hexdigest()[:24]\n+    _pending[token] = fingerprint\n+    return token\n+\n+\n+def dispatch(tool_name, args=None, *, execute, confirm_token=None):\n+    \"\"\"调度入口：低风险直接执行；高风险必须持有效一次性确认 token。\n+\n+    execute 由 Harness 注入，本模块不直接触碰任何真实工具。\n+    \"\"\"\n+    args = args or {}\n+    reason = classify(tool_name, args)\n+    if reason is None:\n+        return {\"status\": \"executed\", \"confirmed\": False, \"result\": execute(tool_name, args)}\n+    if confirm_token is None:\n+        return {\"status\": \"pending_confirmation\", \"reason\": reason}\n+    expected = _pending.pop(confirm_token, None)  # 取出即作废，保证一次性\n+    if expected is None or not hmac.compare_digest(expected, _fingerprint(tool_name, args)):\n+        return {\"status\": \"rejected\", \"reason\": \"确认 token 无效、已使用或与其他操作不匹配\"}\n+    return {\"status\": \"executed\", \"confirmed\": True, \"result\": execute(tool_name, args)}\n",
+  "patch_size": {
+    "added_lines": 75,
+    "deleted_lines": 0,
+    "changed_lines": 75
+  },
+  "checks": {
+    "static_compile": true,
+    "security_scan": true,
+    "gate_contract": true,
+    "boundary_replay": false,
+    "retention_replay": false,
+    "confirmation_single_use": false,
+    "protected_surfaces_unchanged": true
+  },
+  "failed_checks": [
+    "boundary_replay",
+    "retention_replay",
+    "confirmation_single_use"
+  ],
+  "canary_gate": {
+    "eligible": false,
+    "scope": "影子流量灰度；稳定版调度器保持不变",
+    "rollback_trigger": "任一高风险调用未确认即执行，或低风险调用被挂起"
+  },
+  "rollback_gate": {
+    "rollback_version": "7e442644f8ed",
+    "artifact_hash_matches_stable": true
+  },
+  "provenance": {
+    "generator": "negative_control",
+    "api_calls": 0
+  },
+  "decision": "reject_candidate",
+  "rejection_reason": "failed gates: boundary_replay, retention_replay, confirmation_single_use"
+}
