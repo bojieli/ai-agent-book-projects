@@ -33,6 +33,12 @@ RankedList = Sequence[Tuple[str, float]]
 DEFAULT_RRF_K = 60
 
 
+def _ranked_to_score_map(ranked: RankedList) -> Dict[str, float]:
+    scores: Dict[str, float] = {}
+    for doc_id, score in ranked:
+        if doc_id not in scores:
+            scores[doc_id] = score
+    return scores
 def min_max_normalize(scores: Dict[str, float]) -> Dict[str, float]:
     """Min-max normalize a mapping of doc_id -> score into the [0, 1] range.
 
@@ -104,7 +110,7 @@ def weighted_score_fusion(
     """
     weights = weights or {}
     normalized_by_source = {
-        source: min_max_normalize(dict(ranked))
+        source: min_max_normalize(_ranked_to_score_map(ranked))
         for source, ranked in ranked_lists.items()
     }
 
