@@ -205,6 +205,12 @@ def test_shim_falls_back_to_openrouter(monkeypatch):
     assert base_url == "https://openrouter.ai/api/v1"
 
 
+def test_shim_falls_back_to_openrouter_default_model_when_model_is_none(monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-key-6")
+    key, base_url, model, using = resolve_llm_backend("", "https://example/v1", None)
+    assert (key, using, model) == ("test-openrouter-key-6", True, OPENROUTER_DEFAULT_MODEL)
+    assert base_url == "https://openrouter.ai/api/v1"
+
 def test_shim_raises_without_any_key():
     with pytest.raises(ValueError, match="OPENROUTER_API_KEY"):
         resolve_llm_backend("", "https://example/v1", "kimi-k3")
