@@ -519,6 +519,52 @@ Bu bölümde asıl tamamlanması gereken şey, domain randomization'ı gerçek b
 > ![Şekil 9-13: Deney 9-10 zero-shot RGB Sim2Real hattı](images/fig9-13.svg)
 >
 
+## 2026 Güncellemesi: Akışkan Planlama ve Dünya Modelleri
+
+Robotik bölümü “VLM bir plan yazar, VLA da uygular” cümlesinde bitmemeli. **“Masayı düzenle”** görevini düşünelim. Uzun ufuklu planlayıcı önce yarısı dolu bir fincanı, kâğıt parçalarını, üç kitabı, açık bir dizüstü bilgisayarı, çöp kutusunu ve bir saklama kutusunu içeren durum listesini çıkarır; ardından önkoşulları ve başarı kontrolleri olan komutlar üretir:
+
+1. “Masaya git ve kenardan 30 cm uzakta dur.”
+2. “İki kâğıt parçasını çöp kutusuna koy; hiç kâğıt kalmadığını doğrula.”
+3. “Fincanı dik tutup tepsiye yerleştir; sıvı hareket ederse yavaşla.”
+4. “Dizüstü bilgisayarı kapatıp arka sola taşı; güç kablosunu çekme.”
+5. “Kitapları boyutlarına göre istifle ve kalemleri saklama kutusuna koy.”
+6. “Kırılabilir ve elektriğe bağlı eşyalar kaldırıldıktan sonra masayı sil.”
+7. “Geri çekil, yeniden gözlemle ve son durumu doğrula.”
+
+Bu bir düzyazı paragrafı değil, bir bağımlılık grafiğidir. Kullanıcı “dizüstünü önce kaldır” derse sistem hedef önceliğini günceller. Fincan devrilirse robot güvenli bir noktada durur, `cup.orientation=fallen` ve `laptop.at_risk=true` gibi olguları kaydeder, eskimiş planın kuyruğunu geçersiz kılar ve yeniden planlar: dizüstünü koru, dökülen sıvıyı kontrol altına al, tekrar gözlemle, sonra yalnızca etkilenmeyen görevleri sürdür. Tamamlanmış eylemler tekrarlanmaz. Acil olaylar mevcut parçayı iptal eder; sıradan güncellemeler bir sonraki güvenli noktayı bekler.
+
+### Akışkan yürütme
+
+Planlama ile yürütme üst üste bindirilebilir. Güvenli bir önek hazır olur olmaz planlayıcı, kuyruğun geri kalanını planlamaya devam ederken eksiksiz bir komutu yürütücüye akıtır. Komut olayı eksiksiz ve denetlenebilir olmalıdır:
+
+~~~json
+{"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
+~~~
+
+Yürütücü `started`, `succeeded`, `cancelled` veya `failed` durumlarından birini bildirir. Planlayıcı bu gözlemlerle bağımlılıkları günceller; kuyruk eskimiş ya da doluysa backpressure uygular. Akışkan yürütme ilk güvenli eyleme kadar geçen süreyi kısaltır; eksik JSON’un veya doğrulanmamış model düşüncelerinin çalıştırılmasına izin vermez.
+
+### Güncel VLA’lar neden kötü genelleme yapıyor?
+
+OpenVLA tam anlamıyla yalnızca projector güncellenerek eğitilmiş değildir: özgün çalışma tam fine-tuning’in yanı sıra dondurulmuş vision encoder, yalnızca son katman ve LoRA varyantlarını da raporlar. Yine de temel eleştiri geçerlidir. Çok büyük bir metin/görüntü ön eğitim külliyatı, çok daha küçük bir robot veri kümesine dar bir uyarlama yoluyla bağlanır; düşük maliyetli uyarlama yeni davranışı çoğu zaman projector, LoRA modülleri veya action head üzerinde yoğunlaştırır. Behavior cloning “gözlem + talimat → action chunk” eşlemesini öğrenir, karşı-olgusal fiziksel sonuçları değil. Embodiment’e özgü eylem uzayları ve eskimiş action chunk’lar aktarımı daha da sınırlar. Dil backbone’u “fincan” kelimesini bilse de sürtünme, sıvı, temas ve güç kablosunun nasıl davranacağını bu yüzden bilmez.
+
+### Dünya modelleri
+
+Bir dünya modeli eyleme dönüştürülebilir bir geçiş öğrenir:
+
+~~~text
+durum + aday eylem -> tahmin edilen gelecek durum -> eylemi seç ve doğrula
+~~~
+
+Bu kavram yalnızca V-JEPA’dan ibaret değildir. Aile; latent predictive model’leri (V-JEPA 2), etkileşimli üretici modelleri (Genie 3 ve Cosmos), World-Action Model’leri (GeniWorld ve Robust-WAM), etiketsiz videodan latent action öğrenimini (LAWM-3D) ve model tabanlı RL’yi (Dreamer ve MuZero) kapsar. Değeri; büyük ölçekte gözlemden öğrenmek, eylemleri gerçekleştirmeden önce karşı-olgusal sonuçlarını sınamak, ortak dinamikleri embodiment’e özgü kontrolden ayırmak ve tahmin gerçeklikten saptığında yeniden planlamaktır.
+
+2026 tarihli yeni preprint’ler ortak dinamik öncüllerini ve embodiment’e özgü head’leri (DyPES-VLA), dağılım dışı kapalı çevrim manipülasyon için görsel-eylem temsillerini (GeniWorld), insan videolarından 3B farkındalıklı latent action’ları (LAWM-3D), semantic foresight alignment’ı (Robust-WAM) ve eşzamansız gerçek zamanlı dağıtımı inceliyor. Bunlar umut verici araştırma sonuçlarıdır; genellemenin çözüldüğünü göstermezler.
+
+### Computer Use için dünya modelleri
+
+Masaüstü de dinamik bir sistemdir: ekran durumu + click/type/scroll/wait -> sonraki durum. Induction Labs’ın Temmuz 2026’da duyurduğu Photon-1, büyük ölçekli Computer Use videolarından latent sonraki durum tahmini yapar; ardından eylem biçimlendirmesini fine-tune eder ve online RL uygular. Şirketin benchmark ve maliyet rakamları şirket içi değerlendirmelerdir; henüz bağımsız olarak yeniden üretilmemiştir. Pratik bir tasarım yan yardımcı bir predictor kullanır: VLM anlamı ve araçları seçer, predictor aday sonraki durumları önbelleğe alır, riskli eylemleri süzer ve gerçek ekran görüntüleri uyuşmadığında eskimiş rollout’ları atar. Ağ, kimlik doğrulama, CAPTCHA ve sunucunun gizli durumu, geri alınamaz her eylemin gerçek ortamda doğrulanmasını zorunlu kılar.
+
+Kaynaklar: [OpenVLA](https://arxiv.org/abs/2406.09246), [V-JEPA 2](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/), [Genie 3](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/), [Photon-1](https://www.inductionlabs.com/news/scaling-video-pretraining), [DyPES-VLA](https://arxiv.org/abs/2608.06374), [GeniWorld](https://arxiv.org/abs/2608.06332), [LAWM-3D](https://arxiv.org/abs/2608.05706), [Robust-WAM](https://arxiv.org/abs/2608.05903).
+
 ## Bölüm Özeti
 
 Üç senaryo yüzeyde birbirinden çok farklı görünüyor, ama gecikme ve çok modluluk biçimindeki iki engel hepsinin peşini hiç bırakmıyor. Ses; seri boru hattından uçtan uca ve full-duplex mimarilere, birbirinden ayrı hızlı-yavaş düşünmeden "düşünürken konuşma"ya uzanan bir evrim yolunu şimdiden katetti. Computer Use'un OSWorld gibi benchmark'lardaki doğruluğu insan seviyesine yaklaştı, ama işlem adımlarının insandan belirgin biçimde fazla olması ve adım sürelerinin görev ilerledikçe sürekli artması biçimindeki verimlilik farkının sistematik bir çözümü hâlâ yok. Robotikte ise ağırlıklı olarak görsel geri bildirime dayanan manipülasyon görevlerinde darboğaz donanımdan VLA kontrol katmanının görevler arası genelleme yeteneğine kaydı (dokunsal algılama, becerikli eller vb. hâlâ aşılamamış donanım eksiklikleridir). Bir sonraki bölüm bakış açısını birden fazla Agent arasındaki iş birliğine çevirecek; orası bambaşka bir boyutun zorluğudur.

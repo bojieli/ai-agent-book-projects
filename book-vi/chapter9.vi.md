@@ -525,6 +525,52 @@ Có nhiều trường hợp thành công trên lộ trình này: hoạt động 
 > ![Hình 9-13 Thí nghiệm 9-10 Đường ống Sim2Real RGB không mẫu ](images/fig9-13.svg)
 >
 
+## Cập nhật năm 2026: Lập kế hoạch dạng luồng và mô hình thế giới
+
+Phần robot không nên dừng ở câu “VLM viết kế hoạch và VLA thực thi”. Hãy xét ví dụ **“dọn bàn làm việc”**. Bộ lập kế hoạch dài hạn trước hết lập danh sách trạng thái—một chiếc cốc còn một nửa, giấy vụn, ba quyển sách, một chiếc laptop đang mở, thùng rác và hộp đựng—rồi phát ra các lệnh có điều kiện tiên quyết và kiểm tra thành công:
+
+1. “Di chuyển đến bàn và dừng cách mép bàn 30 cm.”
+2. “Bỏ hai mẩu giấy vào thùng rác; xác nhận không còn mẩu giấy nào.”
+3. “Giữ cốc thẳng đứng và đặt lên khay; giảm tốc nếu chất lỏng chuyển động.”
+4. “Đóng laptop và chuyển nó ra phía sau bên trái; không kéo dây nguồn.”
+5. “Xếp sách theo kích thước và cho bút vào hộp đựng.”
+6. “Chỉ lau mặt bàn sau khi đã dọn các vật dễ vỡ và thiết bị đang có điện.”
+7. “Lùi lại, quan sát lần nữa và xác nhận trạng thái cuối cùng.”
+
+Đây là một đồ thị phụ thuộc, không phải một đoạn văn mô tả. Nếu người dùng nói “cất laptop trước”, hệ thống cập nhật độ ưu tiên của mục tiêu. Nếu cốc bị đổ, robot dừng ở điểm an toàn, ghi nhận các sự kiện như `cup.orientation=fallen` và `laptop.at_risk=true`, vô hiệu hóa phần đuôi kế hoạch đã lỗi thời rồi lập kế hoạch lại: bảo vệ laptop, khống chế chỗ đổ, quan sát lại, sau đó chỉ tiếp tục những việc không bị ảnh hưởng. Các hành động đã hoàn tất không bị lặp lại. Sự cố khẩn cấp hủy chunk hiện tại; các cập nhật thông thường chờ đến điểm an toàn kế tiếp.
+
+### Thực thi theo luồng
+
+Lập kế hoạch và thực thi có thể chồng lấn. Khi một tiền tố an toàn đã sẵn sàng, bộ lập kế hoạch truyền một command hoàn chỉnh cho executor trong lúc tiếp tục lập kế hoạch phần đuôi. Mỗi command phải đầy đủ và có thể kiểm toán:
+
+~~~json
+{"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
+~~~
+
+Executor báo các trạng thái `started`, `succeeded`, `cancelled` hoặc `failed`. Bộ lập kế hoạch dùng các quan sát này để cập nhật phụ thuộc và áp dụng backpressure khi hàng đợi đã đầy hoặc trở nên lỗi thời. Thực thi theo luồng rút ngắn thời gian đến hành động an toàn đầu tiên; nó không cho phép chạy JSON chưa hoàn chỉnh hay suy nghĩ của mô hình chưa được kiểm chứng.
+
+### Vì sao VLA hiện nay khái quát hóa kém
+
+OpenVLA không thực sự được huấn luyện chỉ bằng cách cập nhật projector: công trình gốc cũng báo cáo các biến thể fine-tuning toàn phần, đóng băng vision encoder, chỉ huấn luyện lớp cuối và LoRA. Tuy vậy, phê bình sâu hơn vẫn đúng: một kho dữ liệu tiền huấn luyện văn bản/hình ảnh khổng lồ được nối với tập dữ liệu robot nhỏ hơn nhiều qua một con đường thích nghi hẹp; các phương pháp thích nghi ít tốn kém thường dồn hành vi mới vào projector, các mô-đun LoRA hoặc action head. Behavior cloning học ánh xạ “quan sát + chỉ dẫn → action chunk”, chứ không học các hệ quả vật lý phản thực. Không gian hành động phụ thuộc embodiment và những chunk đã lỗi thời càng hạn chế khả năng chuyển giao. Backbone ngôn ngữ biết từ “cốc”, nhưng không vì thế mà biết ma sát, chất lỏng, tiếp xúc hay dây nguồn sẽ hành xử ra sao.
+
+### Mô hình thế giới
+
+Mô hình thế giới học một chuyển tiếp có thể hành động:
+
+~~~text
+trạng thái + hành động ứng viên -> trạng thái tương lai dự đoán -> chọn và xác minh hành động
+~~~
+
+Khái niệm này rộng hơn riêng V-JEPA. Họ mô hình bao gồm mô hình dự đoán tiềm ẩn (V-JEPA 2), mô hình sinh tương tác (Genie 3 và Cosmos), World-Action Model (GeniWorld và Robust-WAM), học latent action từ video không gắn nhãn (LAWM-3D), và model-based RL (Dreamer và MuZero). Giá trị của chúng là học từ quan sát ở quy mô lớn, thử các hành động phản thực trước khi thực thi, tách động lực học dùng chung khỏi điều khiển đặc thù của từng robot, và lập kế hoạch lại khi dự đoán lệch khỏi thực tế.
+
+Các preprint năm 2026 nghiên cứu prior động lực học dùng chung và các head đặc thù cho từng embodiment (DyPES-VLA), biểu diễn hành động-thị giác cho thao tác vòng kín ngoài phân phối (GeniWorld), latent action 3D từ video con người (LAWM-3D), căn chỉnh semantic foresight (Robust-WAM) và triển khai bất đồng bộ theo thời gian thực. Đây là các kết quả hứa hẹn, chưa phải lời giải hoàn chỉnh cho bài toán khái quát hóa.
+
+### Mô hình thế giới cho Computer Use
+
+Máy tính để bàn cũng là một hệ động lực: trạng thái màn hình + click/type/scroll/wait -> trạng thái kế tiếp. Photon-1, được Induction Labs công bố vào tháng 7 năm 2026, dự đoán trạng thái kế tiếp trong không gian tiềm ẩn từ video sử dụng máy tính quy mô lớn, sau đó tinh chỉnh định dạng hành động và áp dụng RL trực tuyến. Các con số benchmark và chi phí do công ty tự đánh giá, chưa được tái lập độc lập. Một thiết kế thực tế là predictor phụ trợ: VLM chọn ngữ nghĩa và công cụ, còn predictor lưu các trạng thái kế tiếp ứng viên, sàng lọc hành động rủi ro và loại bỏ rollout lỗi thời khi ảnh chụp màn hình thực tế không khớp. Mạng, xác thực, CAPTCHA và trạng thái ẩn phía máy chủ vẫn khiến mọi hành động không thể hoàn tác phải được xác minh trong môi trường thật.
+
+Nguồn: [OpenVLA](https://arxiv.org/abs/2406.09246), [V-JEPA 2](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/), [Genie 3](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/), [Photon-1](https://www.inductionlabs.com/news/scaling-video-pretraining), [DyPES-VLA](https://arxiv.org/abs/2608.06374), [GeniWorld](https://arxiv.org/abs/2608.06332), [LAWM-3D](https://arxiv.org/abs/2608.05706), [Robust-WAM](https://arxiv.org/abs/2608.05903).
+
 ## Tóm tắt chương này
 
 Ba cảnh nhìn bề ngoài rất khác nhau, nhưng hai trở ngại về sự chậm trễ và đa phương thức luôn song hành với nhau. Voice đã bắt đầu một con đường phát triển từ đường dẫn nối tiếp đến đầu cuối và song công hoàn toàn, từ tư duy nhanh và chậm tách biệt sang "suy nghĩ và nói"; Độ chính xác của Computer Use trên các điểm chuẩn như OSWorld gần bằng mức con người, nhưng có nhiều bước vận hành hơn đáng kể so với con người và mức tiêu thụ thời gian của từng bước tăng theo tiến độ của nhiệm vụ. Không có giải pháp mang tính hệ thống cho khoảng cách hiệu quả; đối với robot, trong các tác vụ vận hành dựa trên phản hồi trực quan, nút cổ chai đã chuyển từ phần cứng sang khả năng khái quát hóa chéo tác vụ của lớp điều khiển VLA (cảm ứng, khéo léo, v.v. vẫn là những thiếu sót về phần cứng chưa được khắc phục). Chương tiếp theo sẽ tập trung vào sự cộng tác giữa nhiều Agent, đây là một thách thức ở một khía cạnh khác.

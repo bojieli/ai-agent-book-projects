@@ -510,6 +510,52 @@ What this chapter adds are the two engineering steps you cannot skip when taking
 > ![Figure 9-13: Experiment 9-10 Zero-Shot RGB Sim2Real Pipeline](images/fig9-13.svg)
 >
 
++## 2026 Update: Streaming Planning and World Models
+
+The robot section should not stop at “a VLM writes a plan and a VLA executes it.” Consider **“tidy the desk.”** A long-horizon planner first builds a state list—half-full cup, waste paper, three books, an open laptop, a bin, and a storage box—and emits commands with preconditions and success checks:
+
+1. “Move to the desk and stop 30 cm from its edge.”
+2. “Put the two paper scraps in the bin; verify that no scraps remain.”
+3. “Keep the cup upright and place it on the tray; slow down if the liquid moves.”
+4. “Close the laptop and move it to the rear-left; do not pull its power cable.”
+5. “Stack the books by size and put the pens in the storage box.”
+6. “Only after fragile and powered objects are clear, wipe the desk.”
+7. “Step back, observe again, and verify the final state.”
+
+This is a dependency graph, not a paragraph of prose. If the user says “put the laptop away first,” the system updates the goal priority. If the cup falls, it stops at a safe point, records facts such as cup.orientation=fallen and laptop.at_risk=true, invalidates the stale suffix, and replans: protect the laptop, contain the spill, re-observe, then resume only the unaffected tasks. Completed actions are not repeated. Emergency events cancel the current chunk; ordinary updates wait for the next safe point.
+
+### Streaming execution
+
+Planning and execution can overlap. Once a safe prefix is complete, the planner streams a complete command to the executor while continuing to plan the suffix. A command event must be complete and auditable:
+
+~~~json
+{"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
+~~~
+
+The executor reports started, succeeded, cancelled, or failed. The planner uses these observations to update dependencies and applies backpressure when the queue is stale or full. Streaming reduces time to the first safe action; it does not authorize executing partial JSON or unverified model thoughts.
+
+### Why current VLAs generalize poorly
+
+OpenVLA is not literally trained by updating only its projector: the original work reports full fine-tuning as well as frozen-vision, last-layer, and LoRA variants. The deeper criticism remains valid. A huge text/image pretraining corpus is connected to a much smaller robot dataset through a narrow adaptation path, and downstream low-cost adaptation often concentrates new behavior in a projector, LoRA modules, or an action head. Behavior cloning learns “observation + instruction → action chunk,” not counterfactual physical consequences. Embodiment-specific action spaces and stale action chunks further limit transfer. A language backbone knows the word “cup”; it does not thereby know how friction, liquid, contact, and power cables behave.
+
+### World models
+
+A world model learns an actionable transition:
+
+~~~text
+state + candidate action -> predicted future state -> select and verify an action
+~~~
+
+It is broader than V-JEPA alone. The family includes latent predictive models (V-JEPA 2), interactive generative models (Genie 3 and Cosmos), World-Action Models (GeniWorld and Robust-WAM), latent-action learning from unlabeled video (LAWM-3D), and model-based RL (Dreamer and MuZero). The value is to learn from observation at scale, test counterfactual actions before execution, separate shared dynamics from embodiment-specific control, and replan when prediction and reality diverge.
+
+Recent 2026 preprints explore shared dynamics priors and embodiment-specific heads (DyPES-VLA), visual-action representations for OOD closed-loop manipulation (GeniWorld), 3D-aware latent actions from human video (LAWM-3D), semantic foresight alignment (Robust-WAM), and asynchronous real-time deployment. These are promising research results, not solved generalization.
+
+### World models for Computer Use
+
+A desktop is also a dynamical system: screen state + click/type/scroll/wait -> next state. Induction Labs’ July 2026 Photon-1 uses latent next-state prediction from large-scale computer-use video, then fine-tunes action formatting and applies online RL. The company reports internal benchmark and cost results; these have not been independently reproduced. A practical design is a sidecar predictor: the VLM chooses semantics and tools, while the predictor caches candidate next states, screens risky actions, and discards stale rollouts after real screenshots disagree. Network, authentication, CAPTCHA, and hidden server state remain reasons to verify every irreversible action in the real environment.
+
+Sources: [OpenVLA](https://arxiv.org/abs/2406.09246), [V-JEPA 2](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/), [Genie 3](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/), [Photon-1](https://www.inductionlabs.com/news/scaling-video-pretraining), [DyPES-VLA](https://arxiv.org/abs/2608.06374), [GeniWorld](https://arxiv.org/abs/2608.06332), [LAWM-3D](https://arxiv.org/abs/2608.05706), [Robust-WAM](https://arxiv.org/abs/2608.05903).
+
 ## Chapter Summary
 
 On the surface the three scenarios could hardly differ more, yet the twin hurdles of latency and multimodality shadow them all. Voice Agents have evolved from serial pipelines to end-to-end and full-duplex systems, and from separate fast and slow thinking to thinking while speaking. Computer Use now approaches human accuracy on benchmarks like OSWorld, but it takes far more steps than a human, and each step takes longer as the task progresses—an efficiency gap with no systematic solution yet. For robots performing visually guided manipulation tasks, the bottleneck has moved from hardware to the VLA control layer's ability to generalize across tasks (tactile sensing and dexterous hands remain unresolved hardware limitations). The next chapter turns to collaboration among multiple Agents—a challenge of a different dimension.
