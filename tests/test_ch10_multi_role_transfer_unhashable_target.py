@@ -8,7 +8,11 @@ ch10_mrt = Path(__file__).resolve().parent.parent / "chapter10" / "multi-role-tr
 if str(ch10_mrt) not in sys.path:
     sys.path.insert(0, str(ch10_mrt))
 
+tools_backup = sys.modules.pop("tools", None)
 from orchestrator import MultiRoleOrchestrator
+sys.modules.pop("tools", None)
+if tools_backup is not None:
+    sys.modules["tools"] = tools_backup
 
 FINAL_TEXT = "处理完毕。"
 
