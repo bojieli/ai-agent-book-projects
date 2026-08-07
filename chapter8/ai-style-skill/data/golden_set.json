@@ -1,0 +1,52 @@
+[
+  {
+    "id": "g1",
+    "labels": {"rule-hollow-metaphor": true},
+    "text": "这款音箱仿佛一位懂你的智者，总能在恰当的时刻送上恰当的音乐。"
+  },
+  {
+    "id": "g2",
+    "labels": {"rule-hollow-metaphor": true},
+    "text": "时间宛如一位公正的导师，教会我们珍惜每一个当下。"
+  },
+  {
+    "id": "g3",
+    "labels": {"rule-hollow-metaphor": true},
+    "text": "这款产品宛如一座灯塔，为迷茫的航行者指引方向。"
+  },
+  {
+    "id": "g4",
+    "labels": {"rule-hollow-metaphor": true},
+    "text": "数据仿佛一位沉默的守护者，默默记录着每一次选择。"
+  },
+  {
+    "id": "g5",
+    "labels": {"rule-hollow-metaphor": true},
+    "text": "她的文字犹如一盏明灯，照亮了无数读者前行的道路。"
+  },
+  {
+    "id": "g6",
+    "labels": {"rule-hollow-metaphor": false},
+    "text": "这款音箱能根据时间段自动切换歌单，早上放轻音乐，晚上放白噪音。"
+  },
+  {
+    "id": "g7",
+    "labels": {"rule-hollow-metaphor": false},
+    "text": "他讲话很快，但逻辑清楚，三分钟就把方案说透了。"
+  },
+  {
+    "id": "g8",
+    "labels": {"rule-hollow-metaphor": false},
+    "text": "这座灯塔建于 1903 年，至今仍是港口的主要导航设施。"
+  },
+  {
+    "id": "g9",
+    "labels": {"rule-hollow-metaphor": false},
+    "text": "新的客服系统上线后，平均响应时间从 4 小时降到 20 分钟。"
+  },
+  {
+    "id": "g10",
+    "labels": {"rule-hollow-metaphor": false},
+    "text": "导师改完稿子只留了一句话：删掉所有不传递信息的句子。"
+  }
+]

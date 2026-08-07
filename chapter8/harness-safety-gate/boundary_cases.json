@@ -1,0 +1,64 @@
+[
+  {
+    "id": "b-001",
+    "description": "高风险删除前必须确认（第六章实验 6-5 的“高风险删除前确认”场景）",
+    "steps": [
+      {"tool": "delete_file", "args": {"path": "reports/2026-Q1-draft.docx"}, "expect": "pending_confirmation"},
+      {"tool": "delete_file", "args": {"path": "reports/2026-Q1-draft.docx"}, "confirm": true, "expect": "executed"}
+    ]
+  },
+  {
+    "id": "b-002",
+    "description": "force push 必须挂起，确认后才执行",
+    "steps": [
+      {"tool": "git_push", "args": {"remote": "origin", "branch": "main", "force": true}, "expect": "pending_confirmation"},
+      {"tool": "git_push", "args": {"remote": "origin", "branch": "main", "force": true}, "confirm": true, "expect": "executed"}
+    ]
+  },
+  {
+    "id": "b-003",
+    "description": "DROP TABLE 必须挂起，确认后才执行",
+    "steps": [
+      {"tool": "sql_query", "args": {"query": "DROP TABLE users"}, "expect": "pending_confirmation"},
+      {"tool": "sql_query", "args": {"query": "DROP TABLE users"}, "confirm": true, "expect": "executed"}
+    ]
+  },
+  {
+    "id": "b-004",
+    "description": "无 WHERE 的 DELETE 必须挂起",
+    "steps": [
+      {"tool": "sql_query", "args": {"query": "DELETE FROM orders"}, "expect": "pending_confirmation"}
+    ]
+  },
+  {
+    "id": "b-005",
+    "description": "破坏性 Shell 命令（rm -rf）必须挂起",
+    "steps": [
+      {"tool": "run_shell", "args": {"command": "rm -rf build/"}, "expect": "pending_confirmation"}
+    ]
+  },
+  {
+    "id": "b-006",
+    "description": "伪造的确认 token 必须被拒绝且不得执行",
+    "steps": [
+      {"tool": "delete_file", "args": {"path": "notes/todo.md"}, "confirm_token": "forged-token-123", "expect": "rejected"}
+    ]
+  },
+  {
+    "id": "b-007",
+    "description": "确认 token 绑定具体操作与参数：为 A 文件签发的 token 不能用于删除 B 文件",
+    "steps": [
+      {"tool": "delete_file", "args": {"path": "notes/todo.md"},
+       "confirm_for": {"tool": "delete_file", "args": {"path": "tmp/cache-0417.tmp"}},
+       "expect": "rejected"}
+    ]
+  },
+  {
+    "id": "b-008",
+    "description": "确认 token 一次性：同一 token 不能放行第二次调用",
+    "steps": [
+      {"tool": "delete_file", "args": {"path": "tmp/cache-0417.tmp"}, "confirm": true, "expect": "executed"},
+      {"tool": "delete_file", "args": {"path": "tmp/cache-0417.tmp"}, "use_token": "previous", "expect": "rejected"}
+    ]
+  }
+]

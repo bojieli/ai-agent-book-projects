@@ -1,0 +1,52 @@
+[
+  {
+    "id": "r-001",
+    "description": "read_file 是低风险调用，不得被门禁挂起",
+    "steps": [
+      {"tool": "read_file", "args": {"path": "reports/2026-Q1-draft.docx"}, "expect": "executed"}
+    ]
+  },
+  {
+    "id": "r-002",
+    "description": "write_file 是低风险调用，直接执行",
+    "steps": [
+      {"tool": "write_file", "args": {"path": "reports/weekly.md", "content": "# 周报"}, "expect": "executed"}
+    ]
+  },
+  {
+    "id": "r-003",
+    "description": "非 force 的普通 git push 直接执行",
+    "steps": [
+      {"tool": "git_push", "args": {"remote": "origin", "branch": "main", "force": false}, "expect": "executed"}
+    ]
+  },
+  {
+    "id": "r-004",
+    "description": "SELECT 查询直接执行",
+    "steps": [
+      {"tool": "sql_query", "args": {"query": "SELECT * FROM users"}, "expect": "executed"}
+    ]
+  },
+  {
+    "id": "r-005",
+    "description": "带 WHERE 的定点 DELETE 直接执行",
+    "steps": [
+      {"tool": "sql_query", "args": {"query": "DELETE FROM users WHERE id = 2"}, "expect": "executed"}
+    ]
+  },
+  {
+    "id": "r-006",
+    "description": "无害 Shell 命令（ls）直接执行",
+    "steps": [
+      {"tool": "run_shell", "args": {"command": "ls -la reports/"}, "expect": "executed"}
+    ]
+  },
+  {
+    "id": "r-007",
+    "description": "用户已确认的高风险删除正常放行（先挂起、确认后执行）",
+    "steps": [
+      {"tool": "delete_file", "args": {"path": "tmp/cache-0417.tmp"}, "expect": "pending_confirmation"},
+      {"tool": "delete_file", "args": {"path": "tmp/cache-0417.tmp"}, "confirm": true, "expect": "executed"}
+    ]
+  }
+]

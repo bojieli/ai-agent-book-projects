@@ -1,0 +1,4 @@
+# 真实 LLM 路径（OpenAI 兼容 Chat Completions API）才需要安装依赖；
+# 离线确定性路径（demo.py / evaluate.py / pytest）只用标准库。
+openai>=1.68
+pytest>=8.3.0

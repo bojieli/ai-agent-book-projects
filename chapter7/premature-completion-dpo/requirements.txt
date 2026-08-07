@@ -1,0 +1,8 @@
+torch>=2.4
+transformers>=4.55,<6
+trl>=0.22
+peft>=0.17
+datasets>=3.4
+accelerate>=0.30
+openai>=1.68
+pytest>=8.3

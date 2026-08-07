@@ -1,0 +1,202 @@
+[
+  {
+    "id": "rule-dash-density",
+    "name": "破折号使用过多",
+    "definition": "频繁用破折号（——）串联句子、代替正常的停顿和连接，一段里出现三处以上，是典型的 AI 腔。",
+    "detector": {
+      "type": "density",
+      "pattern": "——",
+      "min_occurrences": 3,
+      "threshold": 6
+    },
+    "bad_example": "我们隆重推出全新智能笔记应用——一款真正懂你的效率神器——它不仅能记录灵感——还能自动整理、智能归类、跨端同步——让你的每一条想法都不再流失——现在下载，即刻开启高效人生——限时免费，错过再等一年！",
+    "good_example": "新版智能笔记应用上线了。它能记录灵感，自动整理和归类，支持多设备同步。现在下载可以免费试用一个月。",
+    "rewrite_hint": "把多数破折号改成逗号或句号，或直接拆成两句；一处必要的补充说明可以保留。",
+    "scope": [
+      "产品发布稿",
+      "公众号文章",
+      "邮件"
+    ],
+    "source_ids": [
+      "fp-001",
+      "fp-008",
+      "fp-017"
+    ],
+    "status": "active",
+    "last_confirmed_batch": 3
+  },
+  {
+    "id": "rule-not-but",
+    "name": "「不是……而是……」句式滥用",
+    "definition": "同一篇里连用两处以上「不是 X，而是 Y」的对仗句式。单独一次真实对比不算违规。",
+    "detector": {
+      "type": "regex",
+      "pattern": "不是[^。！？；：\\n]{0,30}?而是",
+      "min_occurrences": 2
+    },
+    "bad_example": "真正的成长，不是年龄的增加，而是认知的升级；不是知识的堆砌，而是思维的重构；不是经验的重复，而是边界的突破。",
+    "good_example": "真正的成长，往往体现在认知的变化上：看问题的角度变了，做事的方法跟着变，最后连自己能做什么的边界都被重新画了一遍。",
+    "rewrite_hint": "保留真正有对比意义的一处，其余改成直接陈述「它是什么」。",
+    "scope": [
+      "README 段落",
+      "产品发布稿",
+      "公众号文章"
+    ],
+    "source_ids": [
+      "fp-002",
+      "fp-009",
+      "fp-015"
+    ],
+    "status": "active",
+    "last_confirmed_batch": 3
+  },
+  {
+    "id": "rule-parallelism",
+    "name": "排比堆砌",
+    "definition": "连续三个以上结构高度相似的分句（同开头或同结尾），读起来像口号。",
+    "detector": {
+      "type": "structure",
+      "kind": "parallelism",
+      "min_run": 3
+    },
+    "bad_example": "让我们共同见证这个激动人心的时刻！让我们一起开启数字化转型的全新篇章。让我们携手并进，共创辉煌明天。",
+    "good_example": "新版本今天上线了，期待大家试用之后多提意见。",
+    "rewrite_hint": "把排比拆开，用长短不一的句子各说一件事；保留最多两句对仗。",
+    "scope": [
+      "README 段落",
+      "产品发布稿",
+      "公众号文章",
+      "邮件"
+    ],
+    "source_ids": [
+      "fp-003",
+      "fp-007",
+      "fp-010",
+      "fp-014",
+      "fp-017"
+    ],
+    "status": "active",
+    "last_confirmed_batch": 3
+  },
+  {
+    "id": "rule-lets-start",
+    "name": "「让我们」口号式开头",
+    "definition": "连续用「让我们」领起句子，像动员演讲而不是在写文案。",
+    "detector": {
+      "type": "regex",
+      "pattern": "让我们",
+      "min_occurrences": 2
+    },
+    "bad_example": "让我们共同见证这个激动人心的时刻！让我们一起开启数字化转型的全新篇章。让我们携手并进，共创辉煌明天。",
+    "good_example": "新版本今天上线了，期待大家试用之后多提意见。",
+    "rewrite_hint": "删掉口号句，直接陈述事实或发出一次具体邀请。",
+    "scope": [
+      "README 段落",
+      "产品发布稿",
+      "邮件"
+    ],
+    "source_ids": [
+      "fp-003",
+      "fp-010",
+      "fp-018"
+    ],
+    "status": "active",
+    "last_confirmed_batch": 3
+  },
+  {
+    "id": "rule-template-sequence",
+    "name": "「首先/其次/最后」模板序列",
+    "definition": "堆叠「首先、其次、再次、然后、最后、总而言之」等连接词，把文案写成公文提纲。",
+    "detector": {
+      "type": "regex",
+      "pattern": "首先|其次|再次|然后|接下来|最后|总而言之|综上所述|总的来说",
+      "min_occurrences": 3
+    },
+    "bad_example": "首先，克隆本仓库到本地。其次，安装所需依赖。再次，配置环境变量。然后，运行初始化脚本。最后，启动开发服务器即可。",
+    "good_example": "克隆仓库后安装依赖，把 .env.example 复制为 .env 并填好密钥，再运行 init.sh 初始化，最后 make dev 启动服务。",
+    "rewrite_hint": "去掉连接词标签，让句子按自然顺序衔接；两处的「首先/其次」可以接受。",
+    "scope": [
+      "README 段落",
+      "产品发布稿",
+      "邮件"
+    ],
+    "source_ids": [
+      "fp-004",
+      "fp-012",
+      "fp-019"
+    ],
+    "status": "active",
+    "last_confirmed_batch": 3
+  },
+  {
+    "id": "rule-era-opening",
+    "name": "「在……的今天/时代」开头",
+    "definition": "用「在……的今天」「在这个……的时代」「在……的当下」这类空泛宏大开头的套话。",
+    "detector": {
+      "type": "regex",
+      "pattern": "在[^，。！？；\\n]{2,24}?(?:的今天|的时代|的当下|的时代背景下)",
+      "min_occurrences": 1
+    },
+    "bad_example": "在人工智能飞速发展的今天，每个人都面临前所未有的机遇与挑战。在这个信息爆炸的时代，如何保持独立思考显得尤为重要。",
+    "good_example": "这两年 AI 工具更新得飞快，很多人一边兴奋一边焦虑。信息越多，越需要自己能做判断。",
+    "rewrite_hint": "删掉宏大开头，第一句直接说具体的事。",
+    "scope": [
+      "产品发布稿",
+      "公众号文章",
+      "邮件"
+    ],
+    "source_ids": [
+      "fp-005",
+      "fp-010",
+      "fp-016"
+    ],
+    "status": "active",
+    "last_confirmed_batch": 3
+  },
+  {
+    "id": "rule-emoji-density",
+    "name": "emoji 泛滥",
+    "definition": "一段文案里 emoji 出现三次以上，或密度超过每千字 5 个；正式稿件应基本不用。",
+    "detector": {
+      "type": "density",
+      "pattern": "[☀-➿⬀-⯿⌀-⏿\\U0001F000-\\U0001FAFF]",
+      "min_occurrences": 3,
+      "threshold": 5
+    },
+    "bad_example": "🎉 重磅来袭！🔥 全新智能手表正式发布！⌚ 超长续航 14 天 🔋，心率血氧全天候监测 ❤️，50 米防水 🏊，现在下单立减 200 元 💰，错过再等一年 ⏰！",
+    "good_example": "新款智能手表发布：续航 14 天，支持心率血氧监测和 50 米防水，首发价立减 200 元。",
+    "rewrite_hint": "正式稿件全部删掉；生活化随笔最多保留一两个。",
+    "scope": [
+      "产品发布稿",
+      "公众号文章"
+    ],
+    "source_ids": [
+      "fp-006",
+      "fp-011"
+    ],
+    "status": "active",
+    "last_confirmed_batch": 2
+  },
+  {
+    "id": "rule-hollow-metaphor",
+    "name": "空洞比喻与假拟人",
+    "definition": "用「仿佛一位智者」「宛如一盏明灯」这类不传递任何具体信息的比喻和拟人抒情。",
+    "detector": {
+      "type": "llm",
+      "judge_prompt": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。"
+    },
+    "bad_example": "这款耳机仿佛一位贴心的智者，在你喧嚣的世界里低语；它的降噪功能宛如一道温柔的屏障，将浮躁隔绝在外。",
+    "good_example": "这款耳机的降噪效果确实好，地铁里戴上能安静不少，报站的人声也能压得住。",
+    "rewrite_hint": "删掉比喻，改写为可验证的具体事实、数据或体验描述。",
+    "scope": [
+      "公众号文章",
+      "邮件"
+    ],
+    "source_ids": [
+      "fp-013",
+      "fp-020"
+    ],
+    "status": "active",
+    "last_confirmed_batch": 3
+  }
+]
