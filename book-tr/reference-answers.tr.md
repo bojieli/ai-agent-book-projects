@@ -8,9 +8,9 @@ Bu dosya, kitabın on bölümündeki düşünce sorularına verilen örnek cevap
 
 > "Beyin/gözler/el ve ayaklar" formülüne göre önce zayıf halkayı bulun: genellikle önceliği context almalıdır, yani gözlem alanını (observation space) genişletmek. Görev modelin akıl yürütme kapasitesini aşıyorsa daha güçlü bir modele geçin. Eylem alanı yetersizse (örneğin şirketin iç sistemlerine erişim yoksa) araç ekleyin. Karar ölçütü, başarısız trajectory'leri analiz edip darboğazın algıda mı, karar almada mı, yoksa eylemde mi olduğunu saptamaktır.
 
-**2. (★★★) ReAct döngüsünde, Agent'ın her bir LLM çağrısı eksiksiz geçmiş trajectory'yi görür. Trajectory büyüdükçe bu tasarımın maliyeti karesel olarak büyür. Bu karesel büyüme, kritik bilgi kaybedilmeden kırılabilir mi?**
+**2. (★★★) Bir ReAct döngüsünde toplam cache okuma miktarı, tur sayısıyla yaklaşık karesel olarak büyür. Bu büyüme nasıl azaltılabilir?**
 
-> Uygulanabilir yöntemler: context sıkıştırma — erken trajectory'yi özetleyip yalnızca sonuçları ve kritik durumu tutmak (Bölüm 2'deki çok katmanlı sıkıştırma); externalized learning — ara sonuçları dosyalara veya bilgi tabanına yazmak ve context'te sürekli tutmak yerine ihtiyaç oldukça getirmek; işi alt Agent'lara bölmek.
+> i. turda okunan cache önekinin uzunluğu yaklaşık i ile orantılıdır; dolayısıyla toplam okuma miktarı 1 + 2 + ... + n = O(n²) olur. Karesel büyüyen, toplam cache okuma ücretidir; trajectory uzunluğu ve KV Cache kullanımı ise yaklaşık doğrusal büyür. Token eşiğine ulaşıldığında eski trajectory topluca sıkıştırılıp yalnızca sonuçlar ve kritik durum tutulabilir; büyük ara sonuçlar gerektiğinde getirilmek üzere dışarı alınabilir veya alt Agent'larda yalıtılabilir. Her turda sıkıştırma yapılmamalıdır: bu, Agent performansını düşürebilir ve ek sıkıştırma çağrıları ile cache yeniden oluşturma maliyeti getirir.
 
 **3. (★★) "Model as Agent" paradigması, modellerin tool calling kararlarında giderek daha otonom hale geldiği anlamına gelir. Ancak bu bölüm, Harness Engineering'in öneminin aksine arttığını savunuyor. Bu iki eğilim nasıl bir arada var olabilir? Agent çerçevelerinin gelecekteki temel değeri hangi yönlerde ortaya çıkar?**
 

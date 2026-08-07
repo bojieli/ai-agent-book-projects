@@ -486,7 +486,7 @@ Az alábbi gondolkodtató kérdések célja, hogy a fejezet alapfogalmait egy sz
 ## Gondolkodtató kérdések
 
 1. ★★ Ha csak egy képességet adhatnál egy ügynökrendszerhez – egy erősebb modellt, gazdagabb kontextust vagy több eszközt –, melyiket választanád? Milyen körülmények között változna meg a választásod?
-2. ★★★ A ReAct ciklusban az ügynök minden egyes LLM-hívása megkapja a teljes előzmény-trajektóriát, így a trajektória növekedésével ennek a tervezésnek a költsége négyzetesen nő. Megtörhető ez a négyzetes növekedés anélkül, hogy kritikus információ veszne el?
+2. ★★★ Egy ReAct ciklusban az összesített cache-olvasási mennyiség a körök számával közel négyzetesen nő. Hogyan csökkenthető ez a növekedés?
 3. ★★ A "Model as Agent" paradigma azt jelenti, hogy a modellek egyre autonómabbak az eszközhívási döntésekben. Ez a fejezet azonban azt állítja, hogy a Harness engineering fontossága valójában növekszik. Hogyan létezhet együtt ez a két trend? Hol van az ügynökkeretrendszerek jövőbeli alapvető értéke?
 4. ★★ Az abláció vizsgálatban az "eszközeredmények visszajelzésének" hiánya végtelen ciklusba taszította az ügynököt. Éles üzemi környezetben az eszközeredmények hiányán kívül milyen más helyzetek okozhatják, hogy egy ügynök ciklusba kerüljön? Milyen észlelési és megszakítási mechanizmusokat terveznél?
 5. ★ Ez a fejezet öt ügynökterméket elemzett három dimenzió mentén: aktuális információhalmaz, cselekvési interfészek és stratégia. Válassz ki egy általad naponta használt AI-terméket, elemezd ugyanezen három dimenzió mentén, és ítéld meg, hogy az architektúrája megfelelő-e. Ha te terveznéd, min javítanál?

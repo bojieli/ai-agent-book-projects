@@ -8,9 +8,9 @@ This file collects reference-answer outlines for the thought questions across al
 
 > Following the "brain/eyes/hands and feet" formula, find the weak link first: usually the priority is to enrich context—that is, to expand the observation space. If the task exceeds the model's reasoning ability, switch to a stronger model. If the action space is insufficient (for example, no access to internal company systems), add tools. The way to judge is to analyze failure trajectories and locate whether the bottleneck lies in perception, decision-making, or action.
 
-**2. (★★★) In the ReAct loop, each of the Agent's LLM calls receives the full history trajectory, so as the trajectory grows, the cost of this design grows quadratically. Can that quadratic growth be broken without losing critical information?**
+**2. (★★★) In a ReAct loop, cumulative cache reads grow approximately quadratically with the number of rounds. How can this growth be reduced?**
 
-> Viable approaches: context compression—summarize the early trajectory and keep only conclusions and key state (the multi-layer compression of Chapter 2); externalized learning—write intermediate results to files or a knowledge base and retrieve them on demand instead of keeping them resident in context; split the work into sub-agents.
+> At round i, the cached prefix length is roughly proportional to i, so cumulative reads are 1 + 2 + ... + n = O(n²). The quadratic growth is in cumulative cache-read charges, not trajectory length or KV Cache footprint, which grow roughly linearly. Batch-compress the early trajectory at token thresholds, retaining conclusions and key state; externalize large intermediate results for on-demand retrieval, or isolate them in sub-agents. Do not compress every round: it can hurt Agent performance and adds compression calls and cache-rebuild overhead.
 
 **3. (★★) The "Model as Agent" paradigm means models are becoming more autonomous in tool-calling decisions. However, this chapter argues that the importance of Harness engineering is actually increasing. How can these two trends coexist? Where does the future core value of Agent frameworks lie?**
 

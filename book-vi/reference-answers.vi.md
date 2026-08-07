@@ -8,9 +8,9 @@ Tài liệu này tổng hợp đề cương đáp án tham khảo cho các câu 
 
 > Theo công thức "bộ não/mắt/tay chân", trước tiên hãy tìm mắt xích yếu nhất: thường ưu tiên bổ sung ngữ cảnh, tức mở rộng observation space (không gian quan sát). Nếu nhiệm vụ vượt quá khả năng suy luận của mô hình, hãy đổi sang mô hình mạnh hơn. Nếu action space không đủ (ví dụ không truy cập được hệ thống nội bộ công ty), hãy thêm công cụ. Cơ sở phán đoán là phân tích các trajectory thất bại, xác định nút thắt nằm ở nhận thức, ra quyết định hay hành động.
 
-**2. (★★★) Trong vòng lặp ReAct, mỗi lần gọi LLM của Agent đều nhìn thấy toàn bộ trajectory lịch sử. Khi trajectory lớn dần, chi phí của thiết kế này tăng theo hàm bậc hai. Có cách nào phá vỡ hàm bậc hai này mà không mất thông tin quan trọng không?**
+**2. (★★★) Trong vòng lặp ReAct, tổng lượng đọc cache tăng gần theo bậc hai với số vòng. Làm thế nào để giảm mức tăng này?**
 
-> Các phương án khả thi: nén ngữ cảnh — tóm tắt trajectory giai đoạn đầu, chỉ giữ lại kết luận và trạng thái then chốt (cơ chế nén nhiều tầng ở Chương 2); học bên ngoài tham số mô hình — ghi kết quả trung gian vào file/cơ sở tri thức, truy xuất khi cần thay vì lưu trú trong ngữ cảnh; tách thành các Agent con.
+> Ở vòng i, độ dài prefix trong cache xấp xỉ tỷ lệ với i, nên tổng lượng đọc là 1 + 2 + ... + n = O(n²). Phần tăng theo bậc hai là chi phí đọc cache tích lũy, không phải độ dài trajectory hay dung lượng KV Cache; hai đại lượng sau tăng gần tuyến tính. Khi đạt ngưỡng token, có thể nén theo lô phần trajectory cũ và chỉ giữ kết luận cùng trạng thái then chốt; các kết quả trung gian lớn có thể được lưu bên ngoài để truy xuất khi cần hoặc cô lập trong Agent con. Không nên nén ở mọi vòng vì có thể làm giảm hiệu năng của Agent, đồng thời phát sinh thêm lệnh gọi nén và chi phí dựng lại cache.
 
 **3. (★★) Mô thức "mô hình chính là Agent" có nghĩa là mô hình ngày càng tự chủ trong các quyết định gọi công cụ. Nhưng chương này lập luận rằng tầm quan trọng của kỹ thuật Harness ngược lại đang tăng lên. Hai xu hướng này cùng tồn tại như thế nào? Giá trị cốt lõi tương lai của các framework Agent thể hiện ở những mặt nào?**
 

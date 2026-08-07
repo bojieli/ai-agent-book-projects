@@ -8,9 +8,9 @@ Ez a fájl a könyv mind a tíz fejezetének gondolatébresztő kérdéseihez gy
 
 > Az "agy/szemek/kezek és lábak" formulát követve először a gyenge láncszemet keresd: általában a prioritás a kontextus gazdagítása – vagyis a megfigyelési tér kiterjesztése. Ha a feladat meghaladja a modell érvelési képességét, válts erősebb modellre. Ha a cselekvési tér nem elégséges (például nincs hozzáférés belső vállalati rendszerekhez), adj hozzá eszközöket. A megítélés módja a hibapályák elemzése és annak meghatározása, hogy a szűk keresztmetszet az észlelésben, a döntéshozatalban vagy a cselekvésben rejlik.
 
-**2. (★★★) A ReAct hurokban az Agent minden egyes LLM-hívása megkapja a teljes előzménytrajektóriát, így a trajektória növekedésével a tervezés költsége négyzetesen nő. Megtörhető ez a négyzetes növekedés anélkül, hogy kritikus információ veszne el?**
+**2. (★★★) Egy ReAct hurokban az összesített cache-olvasási mennyiség a körök számával közel négyzetesen nő. Hogyan csökkenthető ez a növekedés?**
 
-> Életképes megközelítések: kontextus-tömörítés – a korai trajektória összegzése, csak a következtetések és a kulcsfontosságú állapot megtartása (a 2. fejezet többrétegű tömörítése); externalizált tanulás – köztes eredmények fájlokba vagy tudásbázisba írása, majd igény szerinti lekérése a kontextusban tartás helyett; a munka felosztása alügynökökre.
+> Az i. körben olvasott cache-előtag hossza megközelítőleg arányos i-vel, ezért az összesített olvasási mennyiség 1 + 2 + ... + n = O(n²). A négyzetes növekedés az összesített cache-olvasási díjra vonatkozik, nem a trajektória hosszára vagy a KV Cache méretére; ezek közel lineárisan nőnek. Egy tokenküszöb elérésekor a korai trajektória kötegelve tömöríthető úgy, hogy csak a következtetések és a kulcsállapot maradjon meg; a nagy köztes eredmények külső tárba helyezhetők és igény szerint lekérhetők, vagy alügynökökbe izolálhatók. Nem érdemes minden körben tömöríteni: ez ronthatja az Agent teljesítményét, és további tömörítési hívásokkal, illetve cache-újraépítési költséggel jár.
 
 **3. (★★) A "Model as Agent" paradigma szerint a modellek egyre autonómabbá válnak az eszközhívási döntésekben. Ez a fejezet azonban azt állítja, hogy a Harness tervezés fontossága valójában növekszik. Hogyan fér meg ez a két trend egymás mellett? Hol van az Agent-keretrendszerek jövőbeli magjának értéke?**
 

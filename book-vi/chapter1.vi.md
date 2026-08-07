@@ -489,7 +489,7 @@ Các câu hỏi phản ánh sau đây được thiết kế để giúp người
 ### Câu hỏi tư duy
 
 1. ★★ Nếu bạn chỉ có thể thêm một khả năng vào hệ thống Agent—một mô hình mạnh hơn, ngữ cảnh phong phú hơn hoặc nhiều công cụ hơn—bạn sẽ chọn cái nào? Trong những điều kiện nào sự lựa chọn của bạn sẽ thay đổi?
-2. ★★★ Trong vòng lặp ReAct, mỗi lệnh gọi LLM của Agent sẽ thấy toàn bộ trajectory lịch sử. Chi phí của thiết kế này tăng theo phương trình bậc hai khi trajectory tăng lên. Có cách nào để phá vỡ phương trình bậc hai này mà không làm mất thông tin quan trọng không?
+2. ★★★ Trong vòng lặp ReAct, tổng lượng đọc cache tăng gần theo bậc hai với số vòng. Làm thế nào để giảm mức tăng này?
 3. ★★ Mô hình “Mô hình là Agent” có nghĩa là mô hình ngày càng trở nên tự chủ hơn trong các quyết định gọi công cụ. Nhưng chương này chứng tỏ rằng Harness Engineering lại ngày càng trở nên quan trọng. Làm thế nào để hai xu hướng này cùng tồn tại? Giá trị cốt lõi trong tương lai của khung Agent sẽ được phản ánh ở những khía cạnh nào?
 4. ★★ Việc thiếu “phản hồi kết quả công cụ” trong thí nghiệm cắt bỏ đã khiến Agent rơi vào một vòng lặp vô hạn. Trong môi trường sản xuất, ngoài kết quả công cụ bị thiếu, tình huống nào khác có thể gây ra vòng lặp vô hạn cho Agent? Bạn sẽ thiết kế cơ chế phát hiện và chấm dứt nào?
 5. ★ Chương này phân tích năm sản phẩm Agent sử dụng ba khía cạnh: nhận thức, hành động và chiến lược. Vui lòng chọn một sản phẩm AI mà bạn sử dụng hàng ngày, phân tích nó bằng ba chiều này và suy nghĩ xem thiết kế kiến trúc của nó có hợp lý hay không. Nếu bạn thiết kế sản phẩm AI này, thì sẽ có chỗ nào để cải thiện?
