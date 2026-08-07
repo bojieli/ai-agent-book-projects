@@ -254,8 +254,10 @@ async def get_timer_status(timer_id: str) -> Dict[str, Any]:
         
         # Recurring timers have an interval rather than a fixed expiry time.
         if timer["status"] == "active" and timer.get("type") != "recurring":
-            expiry = datetime.fromisoformat(timer["expiry_time"])
-            remaining = (expiry - datetime.now()).total_seconds()
+            expiry_str = timer["expiry_time"].replace("Z", "+00:00")
+            expiry = datetime.fromisoformat(expiry_str)
+            now = datetime.now(expiry.tzinfo) if expiry.tzinfo is not None else datetime.now()
+            remaining = (expiry - now).total_seconds()
             timer["remaining_seconds"] = max(0, int(remaining))
         
         return {
@@ -457,8 +459,10 @@ async def _load_timers():
                     continue
 
                 # Calculate remaining time
-                expiry = datetime.fromisoformat(timer_data["expiry_time"])
-                remaining = (expiry - datetime.now()).total_seconds()
+                expiry_str = timer_data["expiry_time"].replace("Z", "+00:00")
+                expiry = datetime.fromisoformat(expiry_str)
+                now = datetime.now(expiry.tzinfo) if expiry.tzinfo is not None else datetime.now()
+                remaining = (expiry - now).total_seconds()
                 
                 if remaining > 0:
                     # Timer still active, restart it
