@@ -23,19 +23,37 @@ class KillBashTool(BaseTool):
         """
         shell_id = params["shell_id"]
         
-        if shell_id not in self.state.shell_sessions:
-            return {"error": f"Shell session not found: {shell_id}"}
-        
-        try:
-            session = self.state.shell_sessions[shell_id]
-            session.kill()
-            del self.state.shell_sessions[shell_id]
-            
-            return {
-                "shell_id": shell_id,
-                "status": "terminated"
-            }
-            
-        except Exception as e:
-            return {"error": f"Error killing shell: {str(e)}"}
+        if shell_id in self.state.shell_sessions:
+            try:
+                session = self.state.shell_sessions[shell_id]
+                session.kill()
+                del self.state.shell_sessions[shell_id]
+                return {
+                    "shell_id": shell_id,
+                    "status": "terminated"
+                }
+            except Exception as e:
+                return {"error": f"Error killing shell: {str(e)}"}
+
+        for session in self.state.shell_sessions.values():
+            if shell_id in session.background_processes:
+                try:
+                    proc = session.background_processes.pop(shell_id)
+                    if isinstance(proc, int):
+                        import os
+                        import signal
+                        try:
+                            os.kill(proc, signal.SIGTERM)
+                        except ProcessLookupError:
+                            pass
+                    else:
+                        session._terminate_process(proc)
+                    return {
+                        "shell_id": shell_id,
+                        "status": "terminated"
+                    }
+                except Exception as e:
+                    return {"error": f"Error killing shell: {str(e)}"}
+
+        return {"error": f"Shell session not found: {shell_id}"}
 

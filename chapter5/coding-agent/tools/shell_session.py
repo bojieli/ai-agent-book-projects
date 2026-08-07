@@ -388,7 +388,9 @@ class ShellSession:
             if exit_code != 0:
                 raise RuntimeError(f"Unable to start background command: {output}")
             try:
-                return int(output.strip().splitlines()[-1])
+                pid = int(output.strip().splitlines()[-1])
+                self.background_processes[job_id] = pid
+                return pid
             except (IndexError, ValueError) as exc:
                 raise RuntimeError(
                     f"Unable to determine background command PID: {output}"
