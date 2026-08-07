@@ -57,7 +57,7 @@ def extract_answer_from_gsm8k_format(text: str) -> Optional[str]:
     if "####" in text:
         parts = text.split("####")
         if len(parts) > 1:
-            return parts[1].strip()
+            return parts[-1].strip()
     
     return None
 

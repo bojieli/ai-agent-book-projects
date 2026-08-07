@@ -73,6 +73,29 @@ def test_dashscope_citations_from_web_search_sources():
         {"type": "url_citation", "url": "https://asean.test/two"},
     ]
 
+def test_dashscope_citations_from_web_search_string_url_sources():
+    agent = GPT5NativeAgent("key", base_url=DASHSCOPE_URL, model="qwen3.7-plus")
+    response = {
+        "output": [
+            {
+                "type": "web_search_call",
+                "status": "completed",
+                "action": {
+                    "query": "ASEAN capitals",
+                    "sources": [
+                        "https://asean.test/one",
+                        "https://asean.test/two",
+                    ],
+                },
+            }
+        ]
+    }
+    citations = agent._citations(response)
+    assert citations == [
+        {"type": "url_citation", "url": "https://asean.test/one"},
+        {"type": "url_citation", "url": "https://asean.test/two"},
+    ]
+
 
 def test_independent_asean_reference_is_kuala_lumpur_singapore():
     reference = independent_asean_reference()

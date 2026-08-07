@@ -120,7 +120,10 @@ def compare_win_rates(elo_system: EloRatingSystem, empirical_df: pd.DataFrame) -
                         'error': error
                     })
     
-    comparison_df = pd.DataFrame(comparisons)
+    cols = ['model_a', 'model_b', 'empirical', 'predicted', 'error']
+    if not comparisons:
+        return pd.DataFrame(columns=cols)
+    comparison_df = pd.DataFrame(comparisons, columns=cols)
     return comparison_df
 
 

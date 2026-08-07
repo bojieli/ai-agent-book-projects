@@ -119,6 +119,14 @@ class WorkerAgent:
     async def run(self):
         assigned = await self.sub.get()
         while assigned.type != "task_assigned":
+            if assigned.type == "terminate":
+                self._termination_reason = assigned.payload.get("reason", "cascade")
+                self.terminate.set()
+                await self.report(TaskState.TERMINATED, f"安全点响应终止：{self._termination_reason}")
+                await self.bus.send(self.id, "coordinator", "ack", {
+                    "acked": "terminate", "source": self.site.name,
+                })
+                return
             assigned = await self.sub.get()
         signal_task = asyncio.create_task(self._signals())
         try:

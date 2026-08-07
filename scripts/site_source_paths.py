@@ -15,7 +15,7 @@ Commit = tuple[str, int]
 def source_path_for_page(src_uri: str, root: Path = REPO_ROOT) -> Path:
     """Return the tracked source represented by an assembled page URI."""
     relative = PurePosixPath(src_uri)
-    parts = relative.parts
+    parts = [p for p in relative.parts if p != "/"]
 
     # build_site.sh promotes book/chapterN.md to book/chapterN/index.md so
     # navigation.indexes can make the chapter section itself clickable.
