@@ -68,8 +68,9 @@ def solve(names, structs):
 
     # 对每位说话者加一条双条件约束：t[X] == (X 的话为真)
     for speaker in names:
-        stmt = structs[speaker]
-
+        stmt = structs.get(speaker)
+        if stmt is None:
+            continue
         def make_constraint(speaker=speaker, stmt=stmt):
             def constraint(*values):
                 t = dict(zip(names, values))
