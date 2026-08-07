@@ -14,6 +14,7 @@ import importlib.metadata
 import importlib.util
 import json
 import os
+import re
 import platform
 import subprocess
 from dataclasses import dataclass
@@ -45,7 +46,7 @@ def load_verified_messages(path: Path) -> list[list[dict[str, str]]]:
                 raise ValueError(f"{path}:{line_number}: expected user then assistant")
             if not all(isinstance(m.get("content"), str) and m["content"].strip() for m in messages):
                 raise ValueError(f"{path}:{line_number}: empty message content")
-            if "Final Answer:" not in messages[1]["content"]:
+            if not re.search(r"Final Answer[:：]", messages[1]["content"], re.IGNORECASE):
                 raise ValueError(f"{path}:{line_number}: assistant lacks verified Final Answer")
             rows.append(messages)
     if not rows:
