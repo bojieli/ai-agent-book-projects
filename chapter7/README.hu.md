@@ -20,9 +20,9 @@
 | 7-11 | `SFTvsRL/` | 📖 | Azonos költségkeret mellett hasonlítja össze az SFT memorizálását és az RL általánosítását. |
 | 7-12 | [SpatialReasoning](SpatialReasoning/) · `SFTvsRL/` | 📖 | Belső és eloszláson kívüli térbeli következtetést tanít és értékel. |
 | 7-13 | [SimpleVLA-RL](SimpleVLA-RL/) · `SimpleVLA-RL/SimpleVLA-RL/` | 📖 | A látást, nyelvet és cselekvést megerősítéses tanulásban kapcsolja össze. |
-| 7-14 | [RLVP](RLVP/) · `RLVP/rlvp/` | 📖 | Az RLVP-kutatást reprodukálja: jutalmazza az eredményt, és bünteti az útvonalat. |
-| 7-15 | [retool](retool/) · `verl/` · `SandboxFusion/` | 📖 | Kódértelmező használatára tanít veRL háttérrendszerrel és végrehajtási sandboxszal. |
-| 7-16 | [AWorld-train](AWorld-train/) · `AWorld/` | 📖 | AWorld-alapú GAIA-környezetben tanít eszközhasználó ágenst. |
+| 7-14 | [retool](retool/) · `verl/` · `SandboxFusion/` | 📖 | Kódértelmező használatára tanít veRL háttérrendszerrel és végrehajtási sandboxszal. |
+| 7-15 | [AWorld-train](AWorld-train/) · `AWorld/` | 📖 | AWorld-alapú GAIA-környezetben tanít eszközhasználó ágenst. |
+| 7-16 | [RLVP](RLVP/) · `RLVP/rlvp/` | 📖 | Az RLVP-kutatást reprodukálja: jutalmazza az eredményt, és bünteti az útvonalat. |
 | — | `verl/` | 📖 | Hatékony RLHF-keretrendszer PPO, GRPO, DAPO és további algoritmusok számára. |
 | — | [Intuitor](Intuitor/) | ✅ | Hosszú gondolatmenet nélkül tanít intuitív következtetést. |
 | — | `tinker-cookbook/` | 📖 | Modellképzési receptek és bevált gyakorlatok gyűjteménye. |

@@ -1,6 +1,6 @@
 ## English
 
-# Experiment 7-16 reproduction anchor
+# Experiment 7-15 reproduction anchor
 
 This directory is the book-owned training guide. The executable GAIA/MCP environment and training integration are in [`bojieli/AWorld`](https://github.com/bojieli/AWorld) at `chapter7/AWorld`, verified at commit `a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec`. The veRL backend is [`bojieli/verl`](https://github.com/bojieli/verl) at `chapter7/verl`, verified at `1593fc3a8cf894debdc3dece2a23ed739c282789`.
 

@@ -1,4 +1,4 @@
-# Experiment 7-15 reproduction anchor
+# Experiment 7-14 reproduction anchor
 
 `chapter7/retool` is the book-owned guide, not the executable source tree. The ReTool recipe is in [`bojieli/verl`](https://github.com/bojieli/verl) at `chapter7/verl` (verified commit `1593fc3a8cf894debdc3dece2a23ed739c282789`). Live code execution additionally requires [`bojieli/SandboxFusion`](https://github.com/bojieli/SandboxFusion) at `chapter7/SandboxFusion`; that checkout is currently absent, but a read-only upstream audit fixed it to `4a0d573ebd64c98234c190a9d1d49e4276199a0c`. No sandbox service or ReTool training was started.
 
