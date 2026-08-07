@@ -1,0 +1,696 @@
+{
+  "experiment": "8-9",
+  "executed_at": "2026-08-07T16:02:39.324320+00:00",
+  "execution_mode": "real_llm",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "growth_curve": [
+    {
+      "batch": 1,
+      "new_candidates": 6,
+      "added": [
+        "rule-excessive-em-dash",
+        "rule-repetitive-structure",
+        "rule-repetitive-phrase",
+        "rule-template-phrases",
+        "rule-avoid-cliché-openings",
+        "rule-emoji-overuse"
+      ],
+      "merged": 0,
+      "conflicts": [],
+      "rule_count": 6
+    },
+    {
+      "batch": 2,
+      "new_candidates": 6,
+      "added": [
+        "rule-avoid-repetitive-structure",
+        "rule-use-standard-punctuation",
+        "rule-avoid-negative-contrasts",
+        "rule-avoid-cliché-phrases",
+        "rule-limit-emoji-usage",
+        "rule-avoid-formal-structure-in-internal-emails"
+      ],
+      "merged": 0,
+      "conflicts": [],
+      "rule_count": 12
+    },
+    {
+      "batch": 3,
+      "new_candidates": 8,
+      "added": [
+        "rule-empty-metaphor",
+        "rule-parallel-structure",
+        "rule-avoid-cliché-phrases",
+        "rule-avoid-abstract-introductions",
+        "rule-avoid-excessive-emphasis",
+        "rule-avoid-calls-to-action",
+        "rule-avoid-formulaic-phrases",
+        "rule-avoid-pretentious-language"
+      ],
+      "merged": 0,
+      "conflicts": [],
+      "rule_count": 20
+    }
+  ],
+  "total_candidates": 20,
+  "final_rule_count": 20,
+  "active_rules": [
+    "rule-excessive-em-dash",
+    "rule-repetitive-structure",
+    "rule-repetitive-phrase",
+    "rule-template-phrases",
+    "rule-avoid-cliché-openings",
+    "rule-emoji-overuse",
+    "rule-avoid-repetitive-structure",
+    "rule-use-standard-punctuation",
+    "rule-avoid-negative-contrasts",
+    "rule-avoid-cliché-phrases",
+    "rule-limit-emoji-usage",
+    "rule-avoid-formal-structure-in-internal-emails",
+    "rule-empty-metaphor",
+    "rule-parallel-structure",
+    "rule-avoid-cliché-phrases",
+    "rule-avoid-abstract-introductions",
+    "rule-avoid-excessive-emphasis",
+    "rule-avoid-calls-to-action",
+    "rule-avoid-formulaic-phrases",
+    "rule-avoid-pretentious-language"
+  ],
+  "archived_rules": [],
+  "calibration": [],
+  "skill_path": "skill/SKILL.md",
+  "archive_path": null,
+  "metrics": {
+    "per_rule": {
+      "rule-excessive-em-dash": {
+        "tp": 0,
+        "fp": 2,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "rule-repetitive-structure": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "rule-repetitive-phrase": {
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "rule-template-phrases": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "rule-avoid-cliché-openings": {
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "rule-emoji-overuse": {
+        "tp": 0,
+        "fp": 5,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "rule-avoid-repetitive-structure": {
+        "tp": 0,
+        "fp": 2,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "rule-use-standard-punctuation": {
+        "tp": 0,
+        "fp": 5,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "rule-avoid-negative-contrasts": {
+        "tp": 0,
+        "fp": 4,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "rule-avoid-cliché-phrases": {
+        "tp": 0,
+        "fp": 14,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "rule-limit-emoji-usage": {
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "rule-avoid-formal-structure-in-internal-emails": {
+        "tp": 0,
+        "fp": 2,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "rule-empty-metaphor": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "rule-parallel-structure": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "rule-avoid-abstract-introductions": {
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "rule-avoid-excessive-emphasis": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "rule-avoid-calls-to-action": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "rule-avoid-formulaic-phrases": {
+        "tp": 0,
+        "fp": 2,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "rule-avoid-pretentious-language": {
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 1.0
+      }
+    },
+    "boundary_detection_rate": 0.0,
+    "boundary_detected": 0,
+    "boundary_total": 8,
+    "retention_harm_rate": 0.875,
+    "retention_harmed": 7,
+    "retention_total": 8,
+    "boundary_details": [
+      {
+        "id": "b1",
+        "expected": [
+          "rule-dash-density"
+        ],
+        "fired": [
+          "rule-emoji-overuse",
+          "rule-excessive-em-dash",
+          "rule-use-standard-punctuation"
+        ]
+      },
+      {
+        "id": "b2",
+        "expected": [
+          "rule-not-but"
+        ],
+        "fired": [
+          "rule-avoid-cliché-phrases",
+          "rule-avoid-negative-contrasts",
+          "rule-avoid-repetitive-structure"
+        ]
+      },
+      {
+        "id": "b3",
+        "expected": [
+          "rule-parallelism"
+        ],
+        "fired": []
+      },
+      {
+        "id": "b4",
+        "expected": [
+          "rule-lets-start"
+        ],
+        "fired": [
+          "rule-avoid-cliché-phrases",
+          "rule-repetitive-phrase"
+        ]
+      },
+      {
+        "id": "b5",
+        "expected": [
+          "rule-template-sequence"
+        ],
+        "fired": [
+          "rule-avoid-cliché-phrases",
+          "rule-avoid-formal-structure-in-internal-emails",
+          "rule-avoid-formulaic-phrases"
+        ]
+      },
+      {
+        "id": "b6",
+        "expected": [
+          "rule-emoji-density",
+          "rule-parallelism"
+        ],
+        "fired": [
+          "rule-emoji-overuse",
+          "rule-limit-emoji-usage"
+        ]
+      },
+      {
+        "id": "b7",
+        "expected": [
+          "rule-era-opening"
+        ],
+        "fired": [
+          "rule-avoid-abstract-introductions",
+          "rule-avoid-cliché-openings",
+          "rule-avoid-cliché-phrases",
+          "rule-avoid-pretentious-language"
+        ]
+      },
+      {
+        "id": "b8",
+        "expected": [
+          "rule-dash-density",
+          "rule-not-but"
+        ],
+        "fired": [
+          "rule-avoid-cliché-phrases",
+          "rule-avoid-negative-contrasts",
+          "rule-excessive-em-dash",
+          "rule-use-standard-punctuation"
+        ]
+      }
+    ],
+    "retention_details": [
+      {
+        "id": "r1",
+        "fired": [
+          "rule-emoji-overuse",
+          "rule-use-standard-punctuation"
+        ]
+      },
+      {
+        "id": "r2",
+        "fired": [
+          "rule-avoid-cliché-phrases",
+          "rule-avoid-negative-contrasts",
+          "rule-avoid-repetitive-structure"
+        ]
+      },
+      {
+        "id": "r3",
+        "fired": []
+      },
+      {
+        "id": "r4",
+        "fired": [
+          "rule-avoid-cliché-phrases",
+          "rule-avoid-formal-structure-in-internal-emails",
+          "rule-avoid-formulaic-phrases",
+          "rule-emoji-overuse"
+        ]
+      },
+      {
+        "id": "r5",
+        "fired": [
+          "rule-emoji-overuse"
+        ]
+      },
+      {
+        "id": "r6",
+        "fired": [
+          "rule-avoid-cliché-phrases"
+        ]
+      },
+      {
+        "id": "r7",
+        "fired": [
+          "rule-use-standard-punctuation"
+        ]
+      },
+      {
+        "id": "r8",
+        "fired": [
+          "rule-avoid-cliché-phrases",
+          "rule-avoid-negative-contrasts",
+          "rule-use-standard-punctuation"
+        ]
+      }
+    ]
+  },
+  "rewrite_demo": {
+    "mode": "real_llm",
+    "original": "在这个效率至上的时代，让我们一起重新认识这款笔记工具——它不是简单的记录软件——而是你的第二大脑。首先，它能自动整理灵感；其次，它让检索快如闪电；最后，它让分享毫无门槛——仿佛一位永不疲倦的管家。总而言之，让我们从现在开始，把每一条灵感都安顿好 🚀✨💡。",
+    "rewritten": "在效率至上的时代，这款笔记工具值得重新认识。它不仅是记录软件，更是你的第二大脑。它能自动整理灵感，检索速度极快，分享也非常方便，仿佛一位永不疲倦的管家。从现在开始，让每一条灵感都得到妥善安置。",
+    "applied_rules": [
+      "rule-avoid-cliché-phrases",
+      "rule-template-phrases",
+      "rule-emoji-overuse",
+      "rule-avoid-calls-to-action"
+    ]
+  },
+  "raw_api_receipts": [
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "你是写作规范的提炼助手。下面是用户纠正 AI 生成文案的 before/after 对。\n请归纳出可检查的规则，每条规则必须能落地为确定性检测或校准过的 LLM judge。\n\n返回 JSON：{\"rules\": [{\"id\": \"rule-<英文短横线命名>\", \"name\": \"...\", \"definition\": \"...\",\n\"detector\": {\"type\": \"regex 或 density 或 llm\", \"pattern\": \"正则（regex/density 必填）\",\n\"min_occurrences\": 数字, \"threshold\": 每千字次数（density 必填）, \"judge_prompt\": \"llm 类型必填\"},\n\"bad_example\": \"取自 before 的原文片段\", \"good_example\": \"对应的 after 原文片段\",\n\"scope\": [\"适用场景\"], \"source_ids\": [\"支撑的反馈对 id\"]}]}\n\n要求：规则必须具体到可检查（不要「写得自然」这种空话）；每条规则至少有一条 source_ids；\nbad_example / good_example 必须是原文片段，不要自己编。\n\n反馈对：\n[\n  {\n    \"id\": \"fp-001\",\n    \"scene\": \"产品发布稿\",\n    \"before\": \"我们隆重推出全新智能笔记应用——一款真正懂你的效率神器——它不仅能记录灵感——还能自动整理、智能归类、跨端同步——让你的每一条想法都不再流失——现在下载，即刻开启高效人生——限时免费，错过再等一年！\",\n    \"after\": \"新版智能笔记应用上线了。它能记录灵感，自动整理和归类，支持多设备同步。现在下载可以免费试用一个月。\",\n    \"correction\": \"破折号太多了，一句话里五六个，读起来喘不过气，全改掉\"\n  },\n  {\n    \"id\": \"fp-002\",\n    \"scene\": \"公众号文章\",\n    \"before\": \"真正的成长，不是年龄的增加，而是认知的升级；不是知识的堆砌，而是思维的重构；不是经验的重复，而是边界的突破。\",\n    \"after\": \"真正的成长，往往体现在认知的变化上：看问题的角度变了，做事的方法跟着变，最后连自己能做什么的边界都被重新画了一遍。\",\n    \"correction\": \"不要「不是……而是……」的句式，连用三次太 AI 了\"\n  },\n  {\n    \"id\": \"fp-003\",\n    \"scene\": \"邮件\",\n    \"before\": \"让我们共同见证这个激动人心的时刻！让我们一起开启数字化转型的全新篇章。让我们携手并进，共创辉煌明天。\",\n    \"after\": \"新版本今天上线了，期待大家试用之后多提意见。\",\n    \"correction\": \"邮件里别连用「让我们」开头，像机器人演讲\"\n  },\n  {\n    \"id\": \"fp-004\",\n    \"scene\": \"README 段落\",\n    \"before\": \"首先，克隆本仓库到本地。其次，安装所需依赖。再次，配置环境变量。然后，运行初始化脚本。最后，启动开发服务器即可。\",\n    \"after\": \"克隆仓库后安装依赖，把 .env.example 复制为 .env 并填好密钥，再运行 init.sh 初始化，最后 make dev 启动服务。\",\n    \"correction\": \"首先其次再次然后最后，模板腔太重，连成句子写\"\n  },\n  {\n    \"id\": \"fp-005\",\n    \"scene\": \"公众号文章\",\n    \"before\": \"在人工智能飞速发展的今天，每个人都面临前所未有的机遇与挑战。在这个信息爆炸的时代，如何保持独立思考显得尤为重要。\",\n    \"after\": \"这两年 AI 工具更新得飞快，很多人一边兴奋一边焦虑。信息越多，越需要自己能做判断。\",\n    \"correction\": \"「在……的今天」「在……的时代」这种开头直接删掉\"\n  },\n  {\n    \"id\": \"fp-006\",\n    \"scene\": \"产品发布稿\",\n    \"before\": \"🎉 重磅来袭！🔥 全新智能手表正式发布！⌚ 超长续航 14 天 🔋，心率血氧全天候监测 ❤️，50 米防水 🏊，现在下单立减 200 元 💰，错过再等一年 ⏰！\",\n    \"after\": \"新款智能手表发布：续航 14 天，支持心率血氧监测和 50 米防水，首发价立减 200 元。\",\n    \"correction\": \"emoji 泛滥，正式稿件里一个都别放\"\n  }\n]\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8903,
+        "max_tokens": 2000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118480-PHzzvp4cK3Lz87A3pjpa",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\n  \"rules\": [\n    {\n      \"id\": \"rule-excessive-em-dash\",\n      \"name\": \"过多破折号\",\n      \"definition\": \"一段文字中连续使用破折号的次数超过 2 次。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"——.*?——.*?——\",\n        \"min_occurrences\": 1,\n        \"threshold\": null,\n        \"judge_prompt\": \"请判断这段文字中是否存在过多的破折号。\"\n      },\n      \"bad_example\": \"我们隆重推出全新智能笔记应用——一款真正懂你的效率神器——它不仅能记录灵感——还能自动整理、智能归类、跨端同步——让你的每一条想法都不再流失——现在下载，即刻开启高效人生——限时免费，错过再等一年！\",\n      \"good_example\": \"新版智能笔记应用上线了。它能记录灵感，自动整理和归类，支持多设备同步。现在下载可以免费试用一个月。\",\n      \"scope\": [\"产品发布稿\"],\n      \"source_ids\": [\"fp-001\"]\n    },\n    {\n      \"id\": \"rule-repetitive-structure\",\n      \"name\": \"重复句式\",\n      \"definition\": \"在一段文字中，使用「不是……而是……」的句式超过 2 次。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"不是.*?而是.*?(?:；|。|，).*?不是.*?而是.*?(?:；|。|，).*?不是.*?而是\",\n        \"min_occurrences\": 1,\n        \"threshold\": null,\n        \"judge_prompt\": \"请判断这段文字中是否存在重复的句式结构。\"\n      },\n      \"bad_example\": \"真正的成长，不是年龄的增加，而是认知的升级；不是知识的堆砌，而是思维的重构；不是经验的重复，而是边界的突破。\",\n      \"good_example\": \"真正的成长，往往体现在认知的变化上：看问题的角度变了，做事的方法跟着变，最后连自己能做什么的边界都被重新画了一遍。\",\n      \"scope\": [\"公众号文章\"],\n      \"source_ids\": [\"fp-002\"]\n    },\n    {\n      \"id\": \"rule-repetitive-phrase\",\n      \"name\": \"重复开头短语\",\n      \"definition\": \"在一段文字中，连续使用「让我们」开头的句子超过 1 次。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"让我们.*?(?:。|！|？).*?让我们\",\n        \"min_occurrences\": 1,\n        \"threshold\": null,\n        \"judge_prompt\": \"请判断这段文字中是否存在重复的开头短语。\"\n      },\n      \"bad_example\": \"让我们共同见证这个激动人心的时刻！让我们一起开启数字化转型的全新篇章。让我们携手并进，共创辉煌明天。\",\n      \"good_example\": \"新版本今天上线了，期待大家试用之后多提意见。\",\n      \"scope\": [\"邮件\"],\n      \"source_ids\": [\"fp-003\"]\n    },\n    {\n      \"id\": \"rule-template-phrases\",\n      \"name\": \"模板腔句式\",\n      \"definition\": \"在一段文字中，使用「首先、其次、再次、然后、最后」等模板句式超过 1 次。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"首先.*?其次.*?再次.*?然后.*?最后\",\n        \"min_occurrences\": 1,\n        \"threshold\": null,\n        \"judge_prompt\": \"请判断这段文字中是否存在模板腔句式。\"\n      },\n      \"bad_example\": \"首先，克隆本仓库到本地。其次，安装所需依赖。再次，配置环境变量。然后，运行初始化脚本。最后，启动开发服务器即可。\",\n      \"good_example\": \"克隆仓库后安装依赖，把 .env.example 复制为 .env 并填好密钥，再运行 init.sh 初始化，最后 make dev 启动服务。\",\n      \"scope\": [\"README 段落\"],\n      \"source_ids\": [\"fp-004\"]\n    },\n    {\n      \"id\": \"rule-avoid-cliché-openings\",\n      \"name\": \"避免陈词滥调开头\",\n      \"definition\": \"在一段文字中，使用「在……的今天」或「在……的时代」的句式超过 1 次。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"在.*?的今天|在.*?的时代\",\n        \"min_occurrences\": 1,\n        \"threshold\": null,\n        \"judge_prompt\": \"请判断这段文字中是否存在陈词滥调的开头句式。\"\n      },\n      \"bad_example\": \"在人工智能飞速发展的今天，每个人都面临前所未有的机遇与挑战。在这个信息爆炸的时代，如何保持独立思考显得尤为重要。\",\n      \"good_example\": \"这两年 AI 工具更新得飞快，很多人一边兴奋一边焦虑。信息越多，越需要自己能做判断。\",\n      \"scope\": [\"公众号文章\"],\n      \"source_ids\": [\"fp-005\"]\n    },\n    {\n      \"id\": \"rule-emoji-overuse\",\n      \"name\": \"过度使用 emoji\",\n      \"definition\": \"在一段文字中，使用 emoji 的数量超过 0 个。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"[\\u0010-\\u007F\\u0000-\\u001F\\u0000-\\u001F]\",\n        \"min_occurrences\": 1,\n        \"threshold\": null,\n        \"judge_prompt\": \"请判断这段文字中是否存在 emoji 的使用。\"\n      },\n      \"bad_example\": \"🎉 重磅来袭！🔥 全新智能手表正式发布！⌚ 超长续航 14 天 🔋，心率血氧全天候监测 ❤️，50 米防水 🏊，现在下单立减 200 元 💰，错过再等一年 ⏰！\",\n      \"good_example\": \"新款智能手表发布：续航 14 天，支持心率血氧监测和 50 米防水，首发价立减 200 元。\",\n      \"scope\": [\"产品发布稿\"],\n      \"source_ids\": [\"fp-006\"]\n    }\n  ]\n}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118480,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 1470,
+          "prompt_tokens": 1089,
+          "total_tokens": 2559,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 0.00104535,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 0.00104535,
+            "upstream_inference_prompt_cost": 0.00016335,
+            "upstream_inference_completions_cost": 0.000882
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "2ef0af1ce46ceb496813719a93472783e3a8a54633a244e90707436162dc9890",
+      "response_sha256": "15b62a47e44598a8ee6e0c601025eb2c82c4db87a8441e544de13a3f4c40119f",
+      "elapsed_seconds": 28.171865,
+      "usage": {
+        "prompt_tokens": 1089,
+        "completion_tokens": 1470,
+        "total_tokens": 2559,
+        "provider_reported_cost_usd": 0.00104535,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "你是写作规范的提炼助手。下面是用户纠正 AI 生成文案的 before/after 对。\n请归纳出可检查的规则，每条规则必须能落地为确定性检测或校准过的 LLM judge。\n\n返回 JSON：{\"rules\": [{\"id\": \"rule-<英文短横线命名>\", \"name\": \"...\", \"definition\": \"...\",\n\"detector\": {\"type\": \"regex 或 density 或 llm\", \"pattern\": \"正则（regex/density 必填）\",\n\"min_occurrences\": 数字, \"threshold\": 每千字次数（density 必填）, \"judge_prompt\": \"llm 类型必填\"},\n\"bad_example\": \"取自 before 的原文片段\", \"good_example\": \"对应的 after 原文片段\",\n\"scope\": [\"适用场景\"], \"source_ids\": [\"支撑的反馈对 id\"]}]}\n\n要求：规则必须具体到可检查（不要「写得自然」这种空话）；每条规则至少有一条 source_ids；\nbad_example / good_example 必须是原文片段，不要自己编。\n\n反馈对：\n[\n  {\n    \"id\": \"fp-007\",\n    \"scene\": \"公众号文章\",\n    \"before\": \"读书可以拓宽视野，读书可以沉淀心灵，读书可以启迪智慧，读书可以点亮人生。\",\n    \"after\": \"读书的好处很多：视野会变宽，心能静下来，看问题也会多几个角度。\",\n    \"correction\": \"四连排比太刻意了，写散一点\"\n  },\n  {\n    \"id\": \"fp-008\",\n    \"scene\": \"邮件\",\n    \"before\": \"关于季度复盘会议——时间定于本周五下午三点——地点在三号会议室——请提前准备数据报表——如有冲突请及时告知——谢谢配合。\",\n    \"after\": \"季度复盘定在这周五下午三点，三号会议室。请提前准备好数据报表，时间冲突的话提前跟我说。\",\n    \"correction\": \"把破折号当逗号用是吧？全部改成正常标点\"\n  },\n  {\n    \"id\": \"fp-009\",\n    \"scene\": \"README 段落\",\n    \"before\": \"本项目不是简单的爬虫框架，而是一套完整的数据采集解决方案；不是一次性的脚本集合，而是可长期维护的工程化平台。\",\n    \"after\": \"本项目提供一套可扩展的数据采集方案，支持插件化开发，适合作为长期维护的工程使用。\",\n    \"correction\": \"不要「不是……而是……」的对仗，直接说它是什么就行\"\n  },\n  {\n    \"id\": \"fp-010\",\n    \"scene\": \"产品发布稿\",\n    \"before\": \"在这个万物互联的时代，让我们共同拥抱智能家居的美好未来！让我们一起，让科技温暖每一个家庭。\",\n    \"after\": \"智能家居新品系列今天发布，覆盖灯光、安防和环境控制，希望能让家更省心。\",\n    \"correction\": \"开头「在这个……的时代」和连喊「让我们」都去掉\"\n  },\n  {\n    \"id\": \"fp-011\",\n    \"scene\": \"公众号文章\",\n    \"before\": \"早餐这样吃才健康 🍞🥛！营养师推荐的三餐搭配来了 🍚🥗，坚持一个月，气色肉眼可见变好 ✨✨，姐妹们快收藏 💖！\",\n    \"after\": \"早餐怎么吃更健康？整理了一份营养师的三餐搭配建议，坚持一段时间会有改善，需要的可以收藏。\",\n    \"correction\": \"emoji 收一收，一整段全是表情没法看\"\n  },\n  {\n    \"id\": \"fp-012\",\n    \"scene\": \"邮件\",\n    \"before\": \"首先感谢各位本季度的付出。其次，需要指出交付节奏仍有优化空间。再次，请各组提交改进方案。最后，期待下季度再创佳绩。\",\n    \"after\": \"感谢大家这个季度的付出。交付节奏上还有改进空间，请各组本周内提交改进方案，我们下个季度接着努力。\",\n    \"correction\": \"「首先/其次/再次/最后」公文八股味，内部邮件别这么写\"\n  }\n]\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 2000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118508-61TNVudpeRDLiLGZ7aXr",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\n  \"rules\": [\n    {\n      \"id\": \"rule-avoid-repetitive-structure\",\n      \"name\": \"避免重复结构\",\n      \"definition\": \"避免使用过于刻意的排比或对仗结构，建议使用更自然的表达方式。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"(读书可以|不是.*而是).*?(，|；)\",\n        \"min_occurrences\": 1,\n        \"threshold\": 5,\n        \"judge_prompt\": \"请判断文本中是否存在过于刻意的排比或对仗结构。\"\n      },\n      \"bad_example\": \"读书可以拓宽视野，读书可以沉淀心灵，读书可以启迪智慧，读书可以点亮人生。\",\n      \"good_example\": \"读书的好处很多：视野会变宽，心能静下来，看问题也会多几个角度。\",\n      \"scope\": [\"公众号文章\"],\n      \"source_ids\": [\"fp-007\"]\n    },\n    {\n      \"id\": \"rule-use-standard-punctuation\",\n      \"name\": \"使用标准标点\",\n      \"definition\": \"在书写中使用标准的标点符号，避免使用破折号代替逗号等。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"——\",\n        \"min_occurrences\": 1,\n        \"threshold\": 5,\n        \"judge_prompt\": \"请判断文本中是否存在不当使用的破折号。\"\n      },\n      \"bad_example\": \"关于季度复盘会议——时间定于本周五下午三点——地点在三号会议室——请提前准备数据报表——如有冲突请及时告知——谢谢配合。\",\n      \"good_example\": \"季度复盘定在这周五下午三点，三号会议室。请提前准备好数据报表，时间冲突的话提前跟我说。\",\n      \"scope\": [\"邮件\"],\n      \"source_ids\": [\"fp-008\"]\n    },\n    {\n      \"id\": \"rule-avoid-negative-contrasts\",\n      \"name\": \"避免使用否定对比\",\n      \"definition\": \"避免使用‘不是……而是……’的结构，直接说明事物的特性。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"不是.*而是.*\",\n        \"min_occurrences\": 1,\n        \"threshold\": 5,\n        \"judge_prompt\": \"请判断文本中是否存在否定对比的结构。\"\n      },\n      \"bad_example\": \"本项目不是简单的爬虫框架，而是一套完整的数据采集解决方案；不是一次性的脚本集合，而是可长期维护的工程化平台。\",\n      \"good_example\": \"本项目提供一套可扩展的数据采集方案，支持插件化开发，适合作为长期维护的工程使用。\",\n      \"scope\": [\"README 段落\"],\n      \"source_ids\": [\"fp-009\"]\n    },\n    {\n      \"id\": \"rule-avoid-cliché-phrases\",\n      \"name\": \"避免陈词滥调\",\n      \"definition\": \"避免使用‘在这个……的时代’和类似的陈词滥调，直接表达主题。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"在这个.*的时代|让我们\",\n        \"min_occurrences\": 1,\n        \"threshold\": 5,\n        \"judge_prompt\": \"请判断文本中是否存在陈词滥调的表达。\"\n      },\n      \"bad_example\": \"在这个万物互联的时代，让我们共同拥抱智能家居的美好未来！让我们一起，让科技温暖每一个家庭。\",\n      \"good_example\": \"智能家居新品系列今天发布，覆盖灯光、安防和环境控制，希望能让家更省心。\",\n      \"scope\": [\"产品发布稿\"],\n      \"source_ids\": [\"fp-010\"]\n    },\n    {\n      \"id\": \"rule-limit-emoji-usage\",\n      \"name\": \"限制表情符号使用\",\n      \"definition\": \"在正式文本中限制表情符号的使用，确保内容的可读性。\",\n      \"detector\": {\n        \"type\": \"density\",\n        \"pattern\": \"[\\u0010-FFFF]\",\n        \"min_occurrences\": 5,\n        \"threshold\": 10,\n        \"judge_prompt\": \"请判断文本中表情符号的使用频率是否过高。\"\n      },\n      \"bad_example\": \"早餐这样吃才健康 🍞🥛！营养师推荐的三餐搭配来了 🍚🥗，坚持一个月，气色肉眼可见变好 ✨✨，姐妹们快收藏 💖！\",\n      \"good_example\": \"早餐怎么吃更健康？整理了一份营养师的三餐搭配建议，坚持一段时间会有改善，需要的可以收藏。\",\n      \"scope\": [\"公众号文章\"],\n      \"source_ids\": [\"fp-011\"]\n    },\n    {\n      \"id\": \"rule-avoid-formal-structure-in-internal-emails\",\n      \"name\": \"避免在内部邮件中使用正式结构\",\n      \"definition\": \"在内部邮件中避免使用‘首先/其次/再次/最后’等正式结构，采用更自然的表达方式。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"首先|其次|再次|最后\",\n        \"min_occurrences\": 1,\n        \"threshold\": 5,\n        \"judge_prompt\": \"请判断文本中是否存在正式的结构表达。\"\n      },\n      \"bad_example\": \"首先感谢各位本季度的付出。其次，需要指出交付节奏仍有优化空间。再次，请各组提交改进方案。最后，期待下季度再创佳绩。\",\n      \"good_example\": \"感谢大家这个季度的付出。交付节奏上还有改进空间，请各组本周内提交改进方案，我们下个季度接着努力。\",\n      \"scope\": [\"邮件\"],\n      \"source_ids\": [\"fp-012\"]\n    }\n  ]\n}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118508,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_c881474fd1",
+        "usage": {
+          "completion_tokens": 1332,
+          "prompt_tokens": 993,
+          "total_tokens": 2325,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 0.00094815,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 0.00094815,
+            "upstream_inference_prompt_cost": 0.00014895,
+            "upstream_inference_completions_cost": 0.0007992
+          }
+        },
+        "provider": "OpenAI"
+      },
+      "request_sha256": "45a65891d4acdcea39c283356e4931d93f7063aadf247bc6be82be6e5c8c532c",
+      "response_sha256": "ae954f26d8b2d75836131c17b68b7bd91f615e5b6f016f66f2ad9867cb2023d0",
+      "elapsed_seconds": 20.18167,
+      "usage": {
+        "prompt_tokens": 993,
+        "completion_tokens": 1332,
+        "total_tokens": 2325,
+        "provider_reported_cost_usd": 0.00094815,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "你是写作规范的提炼助手。下面是用户纠正 AI 生成文案的 before/after 对。\n请归纳出可检查的规则，每条规则必须能落地为确定性检测或校准过的 LLM judge。\n\n返回 JSON：{\"rules\": [{\"id\": \"rule-<英文短横线命名>\", \"name\": \"...\", \"definition\": \"...\",\n\"detector\": {\"type\": \"regex 或 density 或 llm\", \"pattern\": \"正则（regex/density 必填）\",\n\"min_occurrences\": 数字, \"threshold\": 每千字次数（density 必填）, \"judge_prompt\": \"llm 类型必填\"},\n\"bad_example\": \"取自 before 的原文片段\", \"good_example\": \"对应的 after 原文片段\",\n\"scope\": [\"适用场景\"], \"source_ids\": [\"支撑的反馈对 id\"]}]}\n\n要求：规则必须具体到可检查（不要「写得自然」这种空话）；每条规则至少有一条 source_ids；\nbad_example / good_example 必须是原文片段，不要自己编。\n\n反馈对：\n[\n  {\n    \"id\": \"fp-013\",\n    \"scene\": \"公众号文章\",\n    \"before\": \"这款耳机仿佛一位贴心的智者，在你喧嚣的世界里低语；它的降噪功能宛如一道温柔的屏障，将浮躁隔绝在外。\",\n    \"after\": \"这款耳机的降噪效果确实好，地铁里戴上能安静不少，报站的人声也能压得住。\",\n    \"correction\": \"「仿佛一位智者」这种空洞比喻删掉，说人话\"\n  },\n  {\n    \"id\": \"fp-014\",\n    \"scene\": \"README 段落\",\n    \"before\": \"它让配置更简单，它让部署更快速，它让监控更全面，它让运维更安心。\",\n    \"after\": \"配置、部署、监控和告警都内置了默认方案，运维成本明显更低。\",\n    \"correction\": \"「它让……它让……」排比改掉，平铺直叙\"\n  },\n  {\n    \"id\": \"fp-015\",\n    \"scene\": \"产品发布稿\",\n    \"before\": \"这不是一次简单的版本更新，而是一次体验的全面革新；不是功能的堆砌，而是对用户需求的深度回应。\",\n    \"after\": \"这次版本更新改动很大：界面重做，核心流程缩短了两步，都来自上一版用户反馈里最高频的问题。\",\n    \"correction\": \"「不是……而是……」连用两句，AI 味很重\"\n  },\n  {\n    \"id\": \"fp-016\",\n    \"scene\": \"邮件\",\n    \"before\": \"在这个快节奏的时代，高效的沟通显得尤为珍贵。在这个充满变化的时代，稳定的协作关系更值得珍惜。\",\n    \"after\": \"最近项目节奏快，咱们沟通尽量简短高效；也希望协作关系保持稳定，有问题随时同步。\",\n    \"correction\": \"别用「在这个……的时代」起头，直接说事\"\n  },\n  {\n    \"id\": \"fp-017\",\n    \"scene\": \"公众号文章\",\n    \"before\": \"成长是一场修行——它教会我们坚持——教会我们取舍——教会我们感恩。每一次跌倒都是财富，每一次爬起都是勋章，每一次坚持都是胜利。\",\n    \"after\": \"成长是场慢功夫。能坚持下来的人，多半都慢慢学会了取舍，也开始记得感谢路上帮过自己的人。摔过跤的地方，印象总是最深。\",\n    \"correction\": \"破折号加「每一次……都是……」排比，都太浓了\"\n  },\n  {\n    \"id\": \"fp-018\",\n    \"scene\": \"README 段落\",\n    \"before\": \"让我们一起构建更好的开源生态！让我们从 star 本项目开始，共同参与这场技术盛宴。\",\n    \"after\": \"如果这个项目对你有帮助，欢迎 star；也欢迎提 issue 和 PR。\",\n    \"correction\": \"README 里别喊「让我们」口号\"\n  },\n  {\n    \"id\": \"fp-019\",\n    \"scene\": \"产品发布稿\",\n    \"before\": \"首先，全新设计语言带来视觉革新。其次，性能提升高达 40%。再次，续航焦虑彻底解决。总而言之，这是迄今为止最值得升级的一代。\",\n    \"after\": \"这一代换了全新的外观设计，性能比上代提升 40%，电池也够用一整天了。如果是老用户，这次值得升级。\",\n    \"correction\": \"「首先其次再次总而言之」八股味，删掉套话\"\n  },\n  {\n    \"id\": \"fp-020\",\n    \"scene\": \"邮件\",\n    \"before\": \"您的建议宛如一盏明灯，照亮了我们产品改进的前路；您的信任仿佛一座灯塔，指引着我们不断前行。\",\n    \"after\": \"您提的建议很具体，我们已经记进需求池，下个版本会先改其中两条。谢谢您的信任。\",\n    \"correction\": \"「明灯」「灯塔」这种假抒情删掉，回邮件说正事\"\n  }\n]\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8905,
+        "max_tokens": 2000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118529-k8Wk1lQsKmDqTLEmWDvK",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\n  \"rules\": [\n    {\n      \"id\": \"rule-empty-metaphor\",\n      \"name\": \"避免空洞比喻\",\n      \"definition\": \"文中不应使用空洞的比喻或形象化的表达，需直接描述事物的特性或效果。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"仿佛|宛如|如同|似乎|像是\",\n        \"min_occurrences\": 1,\n        \"threshold\": 10,\n        \"judge_prompt\": \"请判断文本中是否存在空洞比喻的表达。\"\n      },\n      \"bad_example\": \"这款耳机仿佛一位贴心的智者，在你喧嚣的世界里低语；它的降噪功能宛如一道温柔的屏障，将浮躁隔绝在外。\",\n      \"good_example\": \"这款耳机的降噪效果确实好，地铁里戴上能安静不少，报站的人声也能压得住。\",\n      \"scope\": [\"公众号文章\"],\n      \"source_ids\": [\"fp-013\"]\n    },\n    {\n      \"id\": \"rule-parallel-structure\",\n      \"name\": \"避免重复排比结构\",\n      \"definition\": \"避免使用重复的排比结构，需采用平铺直叙的方式表达信息。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"它让.*?；\",\n        \"min_occurrences\": 1,\n        \"threshold\": 10,\n        \"judge_prompt\": \"请判断文本中是否存在重复的排比结构。\"\n      },\n      \"bad_example\": \"它让配置更简单，它让部署更快速，它让监控更全面，它让运维更安心。\",\n      \"good_example\": \"配置、部署、监控和告警都内置了默认方案，运维成本明显更低。\",\n      \"scope\": [\"README 段落\"],\n      \"source_ids\": [\"fp-014\"]\n    },\n    {\n      \"id\": \"rule-avoid-cliché-phrases\",\n      \"name\": \"避免使用陈词滥调\",\n      \"definition\": \"避免使用陈词滥调或过于公式化的表达，需用更直接的语言传达信息。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"首先|其次|再次|总而言之|不是.*?而是\",\n        \"min_occurrences\": 1,\n        \"threshold\": 10,\n        \"judge_prompt\": \"请判断文本中是否存在陈词滥调或公式化的表达。\"\n      },\n      \"bad_example\": \"这不是一次简单的版本更新，而是一次体验的全面革新；不是功能的堆砌，而是对用户需求的深度回应。\",\n      \"good_example\": \"这次版本更新改动很大：界面重做，核心流程缩短了两步，都来自上一版用户反馈里最高频的问题。\",\n      \"scope\": [\"产品发布稿\"],\n      \"source_ids\": [\"fp-015\"]\n    },\n    {\n      \"id\": \"rule-avoid-abstract-introductions\",\n      \"name\": \"避免抽象的开场白\",\n      \"definition\": \"避免使用抽象的开场白，需直接进入主题。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"在这个.*?的时代\",\n        \"min_occurrences\": 1,\n        \"threshold\": 10,\n        \"judge_prompt\": \"请判断文本中是否存在抽象的开场白。\"\n      },\n      \"bad_example\": \"在这个快节奏的时代，高效的沟通显得尤为珍贵。在这个充满变化的时代，稳定的协作关系更值得珍惜。\",\n      \"good_example\": \"最近项目节奏快，咱们沟通尽量简短高效；也希望协作关系保持稳定，有问题随时同步。\",\n      \"scope\": [\"邮件\"],\n      \"source_ids\": [\"fp-016\"]\n    },\n    {\n      \"id\": \"rule-avoid-excessive-emphasis\",\n      \"name\": \"避免过度强调\",\n      \"definition\": \"避免使用过度强调的表达方式，需用简洁的语言传达信息。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"每一次.*?都是|教会我们.*?；\",\n        \"min_occurrences\": 1,\n        \"threshold\": 10,\n        \"judge_prompt\": \"请判断文本中是否存在过度强调的表达方式。\"\n      },\n      \"bad_example\": \"成长是一场修行——它教会我们坚持——教会我们取舍——教会我们感恩。每一次跌倒都是财富，每一次爬起都是勋章，每一次坚持都是胜利。\",\n      \"good_example\": \"成长是场慢功夫。能坚持下来的人，多半都慢慢学会了取舍，也开始记得感谢路上帮过自己的人。摔过跤的地方，印象总是最深。\",\n      \"scope\": [\"公众号文章\"],\n      \"source_ids\": [\"fp-017\"]\n    },\n    {\n      \"id\": \"rule-avoid-calls-to-action\",\n      \"name\": \"避免口号式的号召\",\n      \"definition\": \"在 README 中避免使用口号式的号召，需用具体的行动指引代替。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"让我们.*?！\",\n        \"min_occurrences\": 1,\n        \"threshold\": 10,\n        \"judge_prompt\": \"请判断文本中是否存在口号式的号召。\"\n      },\n      \"bad_example\": \"让我们一起构建更好的开源生态！让我们从 star 本项目开始，共同参与这场技术盛宴。\",\n      \"good_example\": \"如果这个项目对你有帮助，欢迎 star；也欢迎提 issue 和 PR。\",\n      \"scope\": [\"README 段落\"],\n      \"source_ids\": [\"fp-018\"]\n    },\n    {\n      \"id\": \"rule-avoid-formulaic-phrases\",\n      \"name\": \"避免公式化的表达\",\n      \"definition\": \"避免使用公式化的表达方式，需用更自然的语言传达信息。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"首先|其次|再次|总而言之|这不是.*?而是\",\n        \"min_occurrences\": 1,\n        \"threshold\": 10,\n        \"judge_prompt\": \"请判断文本中是否存在公式化的表达。\"\n      },\n      \"bad_example\": \"首先，全新设计语言带来视觉革新。其次，性能提升高达 40%。再次，续航焦虑彻底解决。总而言之，这是迄今为止最值得升级的一代。\",\n      \"good_example\": \"这一代换了全新的外观设计，性能比上代提升 40%，电池也够用一整天了。如果是老用户，这次值得升级。\",\n      \"scope\": [\"产品发布稿\"],\n      \"source_ids\": [\"fp-019\"]\n    },\n    {\n      \"id\": \"rule-avoid-pretentious-language\",\n      \"name\": \"避免矫揉造作的语言\",\n      \"definition\": \"避免使用矫揉造作的语言，需用直接的方式表达信息。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"宛如|仿佛|照亮|指引|珍贵|值得珍惜\",\n        \"min_occurrences\": 1,\n        \"threshold\": 10,\n        \"judge_prompt\": \"请判断文本中是否存在矫揉造作的语言。\"\n      },\n      \"bad_example\": \"您的建议宛如一盏明灯，照亮了我们产品改进的前路；您的信任仿佛一座灯塔，指引着我们不断前行。\",\n      \"good_example\": \"您提的建议很具体，我们已经记进需求池，下个版本会先改其中两条。谢谢您的信任。\",\n      \"scope\": [\"邮件\"],\n      \"source_ids\": [\"fp-020\"]\n    }\n  ]\n}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118529,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_c881474fd1",
+        "usage": {
+          "completion_tokens": 1797,
+          "prompt_tokens": 1244,
+          "total_tokens": 3041,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 0.0012648,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 0.0012648,
+            "upstream_inference_prompt_cost": 0.0001866,
+            "upstream_inference_completions_cost": 0.0010782
+          }
+        },
+        "provider": "OpenAI"
+      },
+      "request_sha256": "07ad6f359714153564f8f8ccb74c3576d9dc890fdb000ceaf93c96f9dd85446a",
+      "response_sha256": "b511bc5485bc0039b8e7a80b387723ce8e01cbe32669d23db2093ea5a792fb4f",
+      "elapsed_seconds": 26.467809,
+      "usage": {
+        "prompt_tokens": 1244,
+        "completion_tokens": 1797,
+        "total_tokens": 3041,
+        "provider_reported_cost_usd": 0.0012648,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "你是中文文案改写助手。请按下面的写作规则改写给出的文案，消除所有违规之处，\n保持原意，不要增加新事实。只返回 JSON：{\"rewritten\": \"改写后的全文\",\n\"applied_rules\": [\"实际应用的规则 id\"]}\n\n写作规则：\n[\n  {\n    \"id\": \"rule-excessive-em-dash\",\n    \"name\": \"过多破折号\",\n    \"definition\": \"一段文字中连续使用破折号的次数超过 2 次。\",\n    \"bad_example\": \"我们隆重推出全新智能笔记应用——一款真正懂你的效率神器——它不仅能记录灵感——还能自动整理、智能归类、跨端同步——让你的每一条想法都不再流失——现在下载，即刻开启高效人生——限时免费，错过再等一年！\",\n    \"good_example\": \"新版智能笔记应用上线了。它能记录灵感，自动整理和归类，支持多设备同步。现在下载可以免费试用一个月。\"\n  },\n  {\n    \"id\": \"rule-repetitive-structure\",\n    \"name\": \"重复句式\",\n    \"definition\": \"在一段文字中，使用「不是……而是……」的句式超过 2 次。\",\n    \"bad_example\": \"真正的成长，不是年龄的增加，而是认知的升级；不是知识的堆砌，而是思维的重构；不是经验的重复，而是边界的突破。\",\n    \"good_example\": \"真正的成长，往往体现在认知的变化上：看问题的角度变了，做事的方法跟着变，最后连自己能做什么的边界都被重新画了一遍。\"\n  },\n  {\n    \"id\": \"rule-repetitive-phrase\",\n    \"name\": \"重复开头短语\",\n    \"definition\": \"在一段文字中，连续使用「让我们」开头的句子超过 1 次。\",\n    \"bad_example\": \"让我们共同见证这个激动人心的时刻！让我们一起开启数字化转型的全新篇章。让我们携手并进，共创辉煌明天。\",\n    \"good_example\": \"新版本今天上线了，期待大家试用之后多提意见。\"\n  },\n  {\n    \"id\": \"rule-template-phrases\",\n    \"name\": \"模板腔句式\",\n    \"definition\": \"在一段文字中，使用「首先、其次、再次、然后、最后」等模板句式超过 1 次。\",\n    \"bad_example\": \"首先，克隆本仓库到本地。其次，安装所需依赖。再次，配置环境变量。然后，运行初始化脚本。最后，启动开发服务器即可。\",\n    \"good_example\": \"克隆仓库后安装依赖，把 .env.example 复制为 .env 并填好密钥，再运行 init.sh 初始化，最后 make dev 启动服务。\"\n  },\n  {\n    \"id\": \"rule-avoid-cliché-openings\",\n    \"name\": \"避免陈词滥调开头\",\n    \"definition\": \"在一段文字中，使用「在……的今天」或「在……的时代」的句式超过 1 次。\",\n    \"bad_example\": \"在人工智能飞速发展的今天，每个人都面临前所未有的机遇与挑战。在这个信息爆炸的时代，如何保持独立思考显得尤为重要。\",\n    \"good_example\": \"这两年 AI 工具更新得飞快，很多人一边兴奋一边焦虑。信息越多，越需要自己能做判断。\"\n  },\n  {\n    \"id\": \"rule-emoji-overuse\",\n    \"name\": \"过度使用 emoji\",\n    \"definition\": \"在一段文字中，使用 emoji 的数量超过 0 个。\",\n    \"bad_example\": \"🎉 重磅来袭！🔥 全新智能手表正式发布！⌚ 超长续航 14 天 🔋，心率血氧全天候监测 ❤️，50 米防水 🏊，现在下单立减 200 元 💰，错过再等一年 ⏰！\",\n    \"good_example\": \"新款智能手表发布：续航 14 天，支持心率血氧监测和 50 米防水，首发价立减 200 元。\"\n  },\n  {\n    \"id\": \"rule-avoid-repetitive-structure\",\n    \"name\": \"避免重复结构\",\n    \"definition\": \"避免使用过于刻意的排比或对仗结构，建议使用更自然的表达方式。\",\n    \"bad_example\": \"读书可以拓宽视野，读书可以沉淀心灵，读书可以启迪智慧，读书可以点亮人生。\",\n    \"good_example\": \"读书的好处很多：视野会变宽，心能静下来，看问题也会多几个角度。\"\n  },\n  {\n    \"id\": \"rule-use-standard-punctuation\",\n    \"name\": \"使用标准标点\",\n    \"definition\": \"在书写中使用标准的标点符号，避免使用破折号代替逗号等。\",\n    \"bad_example\": \"关于季度复盘会议——时间定于本周五下午三点——地点在三号会议室——请提前准备数据报表——如有冲突请及时告知——谢谢配合。\",\n    \"good_example\": \"季度复盘定在这周五下午三点，三号会议室。请提前准备好数据报表，时间冲突的话提前跟我说。\"\n  },\n  {\n    \"id\": \"rule-avoid-negative-contrasts\",\n    \"name\": \"避免使用否定对比\",\n    \"definition\": \"避免使用‘不是……而是……’的结构，直接说明事物的特性。\",\n    \"bad_example\": \"本项目不是简单的爬虫框架，而是一套完整的数据采集解决方案；不是一次性的脚本集合，而是可长期维护的工程化平台。\",\n    \"good_example\": \"本项目提供一套可扩展的数据采集方案，支持插件化开发，适合作为长期维护的工程使用。\"\n  },\n  {\n    \"id\": \"rule-avoid-cliché-phrases\",\n    \"name\": \"避免陈词滥调\",\n    \"definition\": \"避免使用‘在这个……的时代’和类似的陈词滥调，直接表达主题。\",\n    \"bad_example\": \"在这个万物互联的时代，让我们共同拥抱智能家居的美好未来！让我们一起，让科技温暖每一个家庭。\",\n    \"good_example\": \"智能家居新品系列今天发布，覆盖灯光、安防和环境控制，希望能让家更省心。\"\n  },\n  {\n    \"id\": \"rule-limit-emoji-usage\",\n    \"name\": \"限制表情符号使用\",\n    \"definition\": \"在正式文本中限制表情符号的使用，确保内容的可读性。\",\n    \"bad_example\": \"早餐这样吃才健康 🍞🥛！营养师推荐的三餐搭配来了 🍚🥗，坚持一个月，气色肉眼可见变好 ✨✨，姐妹们快收藏 💖！\",\n    \"good_example\": \"早餐怎么吃更健康？整理了一份营养师的三餐搭配建议，坚持一段时间会有改善，需要的可以收藏。\"\n  },\n  {\n    \"id\": \"rule-avoid-formal-structure-in-internal-emails\",\n    \"name\": \"避免在内部邮件中使用正式结构\",\n    \"definition\": \"在内部邮件中避免使用‘首先/其次/再次/最后’等正式结构，采用更自然的表达方式。\",\n    \"bad_example\": \"首先感谢各位本季度的付出。其次，需要指出交付节奏仍有优化空间。再次，请各组提交改进方案。最后，期待下季度再创佳绩。\",\n    \"good_example\": \"感谢大家这个季度的付出。交付节奏上还有改进空间，请各组本周内提交改进方案，我们下个季度接着努力。\"\n  },\n  {\n    \"id\": \"rule-empty-metaphor\",\n    \"name\": \"避免空洞比喻\",\n    \"definition\": \"文中不应使用空洞的比喻或形象化的表达，需直接描述事物的特性或效果。\",\n    \"bad_example\": \"这款耳机仿佛一位贴心的智者，在你喧嚣的世界里低语；它的降噪功能宛如一道温柔的屏障，将浮躁隔绝在外。\",\n    \"good_example\": \"这款耳机的降噪效果确实好，地铁里戴上能安静不少，报站的人声也能压得住。\"\n  },\n  {\n    \"id\": \"rule-parallel-structure\",\n    \"name\": \"避免重复排比结构\",\n    \"definition\": \"避免使用重复的排比结构，需采用平铺直叙的方式表达信息。\",\n    \"bad_example\": \"它让配置更简单，它让部署更快速，它让监控更全面，它让运维更安心。\",\n    \"good_example\": \"配置、部署、监控和告警都内置了默认方案，运维成本明显更低。\"\n  },\n  {\n    \"id\": \"rule-avoid-cliché-phrases\",\n    \"name\": \"避免使用陈词滥调\",\n    \"definition\": \"避免使用陈词滥调或过于公式化的表达，需用更直接的语言传达信息。\",\n    \"bad_example\": \"这不是一次简单的版本更新，而是一次体验的全面革新；不是功能的堆砌，而是对用户需求的深度回应。\",\n    \"good_example\": \"这次版本更新改动很大：界面重做，核心流程缩短了两步，都来自上一版用户反馈里最高频的问题。\"\n  },\n  {\n    \"id\": \"rule-avoid-abstract-introductions\",\n    \"name\": \"避免抽象的开场白\",\n    \"definition\": \"避免使用抽象的开场白，需直接进入主题。\",\n    \"bad_example\": \"在这个快节奏的时代，高效的沟通显得尤为珍贵。在这个充满变化的时代，稳定的协作关系更值得珍惜。\",\n    \"good_example\": \"最近项目节奏快，咱们沟通尽量简短高效；也希望协作关系保持稳定，有问题随时同步。\"\n  },\n  {\n    \"id\": \"rule-avoid-excessive-emphasis\",\n    \"name\": \"避免过度强调\",\n    \"definition\": \"避免使用过度强调的表达方式，需用简洁的语言传达信息。\",\n    \"bad_example\": \"成长是一场修行——它教会我们坚持——教会我们取舍——教会我们感恩。每一次跌倒都是财富，每一次爬起都是勋章，每一次坚持都是胜利。\",\n    \"good_example\": \"成长是场慢功夫。能坚持下来的人，多半都慢慢学会了取舍，也开始记得感谢路上帮过自己的人。摔过跤的地方，印象总是最深。\"\n  },\n  {\n    \"id\": \"rule-avoid-calls-to-action\",\n    \"name\": \"避免口号式的号召\",\n    \"definition\": \"在 README 中避免使用口号式的号召，需用具体的行动指引代替。\",\n    \"bad_example\": \"让我们一起构建更好的开源生态！让我们从 star 本项目开始，共同参与这场技术盛宴。\",\n    \"good_example\": \"如果这个项目对你有帮助，欢迎 star；也欢迎提 issue 和 PR。\"\n  },\n  {\n    \"id\": \"rule-avoid-formulaic-phrases\",\n    \"name\": \"避免公式化的表达\",\n    \"definition\": \"避免使用公式化的表达方式，需用更自然的语言传达信息。\",\n    \"bad_example\": \"首先，全新设计语言带来视觉革新。其次，性能提升高达 40%。再次，续航焦虑彻底解决。总而言之，这是迄今为止最值得升级的一代。\",\n    \"good_example\": \"这一代换了全新的外观设计，性能比上代提升 40%，电池也够用一整天了。如果是老用户，这次值得升级。\"\n  },\n  {\n    \"id\": \"rule-avoid-pretentious-language\",\n    \"name\": \"避免矫揉造作的语言\",\n    \"definition\": \"避免使用矫揉造作的语言，需用直接的方式表达信息。\",\n    \"bad_example\": \"您的建议宛如一盏明灯，照亮了我们产品改进的前路；您的信任仿佛一座灯塔，指引着我们不断前行。\",\n    \"good_example\": \"您提的建议很具体，我们已经记进需求池，下个版本会先改其中两条。谢谢您的信任。\"\n  }\n]\n\n待改写文案：\n在这个效率至上的时代，让我们一起重新认识这款笔记工具——它不是简单的记录软件——而是你的第二大脑。首先，它能自动整理灵感；其次，它让检索快如闪电；最后，它让分享毫无门槛——仿佛一位永不疲倦的管家。总而言之，让我们从现在开始，把每一条灵感都安顿好 🚀✨💡。\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8902,
+        "max_tokens": 2000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118555-nxDN4E22vlOMW3M48bLY",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"rewritten\":\"在效率至上的时代，这款笔记工具值得重新认识。它不仅是记录软件，更是你的第二大脑。它能自动整理灵感，检索速度极快，分享也非常方便，仿佛一位永不疲倦的管家。从现在开始，让每一条灵感都得到妥善安置。\",\"applied_rules\":[\"rule-avoid-cliché-phrases\",\"rule-template-phrases\",\"rule-emoji-overuse\",\"rule-avoid-calls-to-action\"]}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118555,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 115,
+          "prompt_tokens": 3003,
+          "total_tokens": 3118,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 0.00051945,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 0.00051945,
+            "upstream_inference_prompt_cost": 0.00045045,
+            "upstream_inference_completions_cost": 6.9e-05
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "15b9d771f77edbc8caefae83535a05e74e7af4632fdedf90d2c73945ed9b44b6",
+      "response_sha256": "741e4329c8f20ba4476d725f677f5a22739922983c2edc1a47fe360851ac98f7",
+      "elapsed_seconds": 3.674376,
+      "usage": {
+        "prompt_tokens": 3003,
+        "completion_tokens": 115,
+        "total_tokens": 3118,
+        "provider_reported_cost_usd": 0.00051945,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    }
+  ],
+  "gates": {
+    "boundary_detection_rate >= 0.85": false,
+    "retention_harm_rate <= 0.15": false,
+    "merged_rules_fewer_than_candidates": false,
+    "llm_rules_calibrated_before_activation": true,
+    "real_llm_called_with_receipts": true
+  },
+  "accepted": false
+}

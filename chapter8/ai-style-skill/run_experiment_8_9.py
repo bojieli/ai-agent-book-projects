@@ -28,7 +28,7 @@ from evaluate import evaluate_rules, load_eval_texts
 from extract_rules import extract_deterministic, extract_with_llm, load_pairs, write_candidates
 from judge import calibrate, llm_judge, load_golden_set, proxy_judge
 from rewrite_demo import SAMPLE_TEXT, rewrite_deterministic, rewrite_with_llm
-from skill_manager import merge_rules, prune_rules, write_archive, write_skill
+from skill_manager import detector_signature, merge_rules, prune_rules, write_archive, write_skill
 
 ROOT = Path(__file__).resolve().parent
 
@@ -55,15 +55,25 @@ def run_pipeline(
     curve = []
     total_candidates = 0
     all_candidates: List[Dict[str, Any]] = []
+    fallback_batches: List[int] = []
     for batch_no in range(1, batches + 1):
         batch_pairs = [p for p in pairs if p.get("batch") == batch_no]
+        deterministic_candidates = extract_deterministic(batch_pairs)
         if real:
-            candidates, receipt = extract_with_llm(
+            llm_candidates, receipt = extract_with_llm(
                 batch_pairs, provider=provider, model=model, seed=seed + batch_no
             )
             receipts.append(receipt)
+            # LLM 只提出候选，模型外代码负责决定是否接纳。保留能映射到
+            # 内置检测器的候选；若整批都无法映射，退回确定性模式库，
+            # 避免一批含糊规则污染正式 Skill。
+            allowed = {detector_signature(c["detector"]) for c in deterministic_candidates}
+            candidates = [c for c in llm_candidates if detector_signature(c.get("detector", {})) in allowed]
+            if not candidates:
+                candidates = deterministic_candidates
+                fallback_batches.append(batch_no)
         else:
-            candidates = extract_deterministic(batch_pairs)
+            candidates = deterministic_candidates
         total_candidates += len(candidates)
         all_candidates.extend(candidates)
         rules, report = merge_rules(rules, candidates)
@@ -154,6 +164,7 @@ def run_pipeline(
         "metrics": metrics,
         "rewrite_demo": rewrite,
         "raw_api_receipts": receipts,
+        "deterministic_fallback_batches": fallback_batches,
         "gates": gates,
         "accepted": all(gates.values()),
     }
