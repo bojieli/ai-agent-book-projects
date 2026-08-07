@@ -503,6 +503,52 @@ Amit ez a fejezet hozzáad, az a két mérnöki lépés, amelyet nem lehet kihag
 > ![9-13. ábra: 9-10. kísérlet Nullszoros RGB Sim2Real Csővezeték](images/fig9-13.svg)
 >
 
+## 2026-os frissítés: Folyamatos tervezés és világmodellek
+
+A robotikai résznek nem szabad ott véget érnie, hogy „a VLM megírja a tervet, a VLA pedig végrehajtja”. Vegyük a **„rendezd el az íróasztalt”** példáját. A hosszú horizontú tervező először állapotlistát készít — félig teli csésze, papírfecnik, három könyv, nyitott laptop, szemetes és tárolódoboz —, majd előfeltételeket és sikerességi ellenőrzéseket tartalmazó parancsokat ad ki:
+
+1. „Menj az asztalhoz, és állj meg a szélétől 30 cm-re.”
+2. „Tedd a két papírfecnit a szemetesbe; ellenőrizd, hogy nem maradt papír.”
+3. „Tartsd függőlegesen a csészét, és tedd a tálcára; lassíts, ha megmozdul a folyadék.”
+4. „Csukd be a laptopot, és tedd hátra-balra; ne húzd meg a tápkábelt.”
+5. „Rakd egymásra a könyveket méret szerint, a tollakat pedig tedd a tárolódobozba.”
+6. „Csak a törékeny és áram alatt lévő tárgyak elpakolása után töröld le az asztalt.”
+7. „Lépj hátra, figyeld meg újra a környezetet, és ellenőrizd a végső állapotot.”
+
+Ez függőségi gráf, nem prózai bekezdés. Ha a felhasználó azt mondja, hogy „a laptopot tedd el először”, a rendszer frissíti a cél prioritását. Ha a csésze felborul, a robot biztonságos ponton megáll, olyan tényeket rögzít, mint `cup.orientation=fallen` és `laptop.at_risk=true`, érvényteleníti az elavult tervszeletet, majd újratervez: védd meg a laptopot, határold be a kiömlött folyadékot, figyeld meg újra a helyzetet, és csak a nem érintett feladatokat folytasd. A már befejezett műveleteket nem ismétli meg. A vészhelyzetek megszakítják az aktuális chunkot; a szokásos frissítések a következő biztonságos pontig várnak.
+
+### Folyamatos végrehajtás
+
+A tervezés és a végrehajtás átfedhet. Amint elkészül egy biztonságos előtag, a tervező teljes parancsot továbbít a végrehajtónak, miközben a terv hátralévő részét tovább tervezi. A parancseseménynek teljesnek és auditálhatónak kell lennie:
+
+~~~json
+{"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
+~~~
+
+A végrehajtó `started`, `succeeded`, `cancelled` vagy `failed` állapotot jelent. A tervező ezek alapján frissíti a függőségeket, és backpressure-t alkalmaz, ha a sor megtelt vagy elavult. A folyamatos végrehajtás lerövidíti az első biztonságos műveletig tartó időt; nem engedi meg hiányos JSON vagy ellenőrizetlen modellgondolatok végrehajtását.
+
+### Miért általánosítanak rosszul a jelenlegi VLA-k?
+
+Az OpenVLA-t nem szó szerint csak a projector frissítésével tanították: az eredeti munka teljes fine-tuningot, befagyasztott vision encodert, csak az utolsó réteg frissítését és LoRA-változatokat is vizsgál. A mélyebb kritika azonban továbbra is érvényes. A hatalmas szöveg-/kép-előtanítási korpuszt egy sokkal kisebb robotikai adathalmazzal szűk adaptációs út köti össze, ezért az olcsó utólagos adaptáció gyakran a projectorban, LoRA-modulokban vagy az action headben koncentrálja az új viselkedést. A behavior cloning a „megfigyelés + utasítás → action chunk” leképezést tanulja, nem a kontrafaktuális fizikai következményeket. A robot-testhez kötött akciótér és az elavult action chunkok szintén korlátozzák az átvitelt. Attól, hogy a nyelvi backbone ismeri a „csésze” szót, még nem tudja, hogyan viselkedik a súrlódás, a folyadék, az érintkezés vagy a tápkábel.
+
+### Világmodellek
+
+Egy világmodell cselekvésre alkalmas átmenetet tanul:
+
+~~~text
+állapot + jelölt akció -> előre jelzett jövőbeli állapot -> akció kiválasztása és ellenőrzése
+~~~
+
+Ez tágabb fogalom, mint a V-JEPA önmagában. Ide tartoznak a látens prediktív modellek (V-JEPA 2), az interaktív generatív modellek (Genie 3 és Cosmos), a World-Action Modellek (GeniWorld és Robust-WAM), a címkézetlen videóból végzett látensakció-tanulás (LAWM-3D), valamint a modellalapú RL (Dreamer és MuZero). Értékük, hogy nagy léptékben tanulnak megfigyelésekből, végrehajtás előtt kipróbálják a kontrafaktuális akciók következményeit, szétválasztják a közös dinamikát a testfüggő vezérléstől, és újraterveznek, amikor az előrejelzés eltér a valóságtól.
+
+A 2026-os új preprintek közös dinamikai priorokat és testfüggő headeket (DyPES-VLA), eloszláson kívüli zárt hurkú manipulációhoz készült vizuális-akció reprezentációkat (GeniWorld), emberi videóból nyert 3D-tudatos látens akciókat (LAWM-3D), szemantikai előrelátás-illesztést (Robust-WAM) és aszinkron, valós idejű telepítést vizsgálnak. Ezek ígéretes kutatási eredmények, nem pedig a generalizáció végleges megoldásai.
+
+### Világmodellek a Computer Use-hoz
+
+Az asztali számítógép szintén dinamikus rendszer: képernyőállapot + click/type/scroll/wait -> következő állapot. Az Induction Labs által 2026 júliusában bejelentett Photon-1 nagyméretű számítógép-használati videókból látens következőállapot-előrejelzést tanul, majd finomhangolja az akciók formátumát és online RL-t alkalmaz. A vállalat benchmark- és költségadatai belső értékelésekből származnak, független reprodukciójuk még nem történt meg. Gyakorlati megoldás egy oldalkocsi-prediktor: a VLM választja ki a jelentést és az eszközöket, a prediktor pedig gyorsítótárba teszi a jelölt következő állapotokat, kiszűri a kockázatos műveleteket, és eldobja az elavult rolloutokat, ha a valós képernyőképek eltérnek. A hálózat, a hitelesítés, a CAPTCHA és a szerver rejtett állapota miatt minden visszafordíthatatlan műveletet a valódi környezetben kell ellenőrizni.
+
+Források: [OpenVLA](https://arxiv.org/abs/2406.09246), [V-JEPA 2](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/), [Genie 3](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/), [Photon-1](https://www.inductionlabs.com/news/scaling-video-pretraining), [DyPES-VLA](https://arxiv.org/abs/2608.06374), [GeniWorld](https://arxiv.org/abs/2608.06332), [LAWM-3D](https://arxiv.org/abs/2608.05706), [Robust-WAM](https://arxiv.org/abs/2608.05903).
+
 ## Fejezet Összefoglaló
 
 A felszínen a három forgatókönyv aligha lehetne különbözőbb, mégis a késleltetés és a multimodalitás kettős akadálya mindegyiket árnyékolja. A hangügynökök a soros csővezetékektől a végponti és teljes duplex rendszerekig, valamint a különálló gyors és lassú gondolkodástól a gondolkodva beszélésig fejlődtek. A Computer Use most megközelíti az emberi pontosságot az olyan benchmarkokon, mint az OSWorld, de sokkal több lépést igényel, mint egy ember, és minden lépés tovább tart a feladat előrehaladtával — egy hatékonysági rés, amelyre még nincs szisztematikus megoldás. A vizuálisan vezérelt manipulációs feladatokat végző robotok esetében a szűk keresztmetszet a hardverről a VLA vezérlési réteg azon képességére tevődött át, hogy általánosítson a feladatok között (a tapintási érzékelés és az ügyes kezek továbbra is megoldatlan hardverkorlátok). A következő fejezet a több ügynök közötti együttműködésre tér át — egy más dimenziójú kihívásra.

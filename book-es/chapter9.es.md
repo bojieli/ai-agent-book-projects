@@ -496,6 +496,46 @@ Lo que realmente debe aportar este capítulo son los dos pasos de ingeniería in
 >
 > ![Figura 9-13: Pipeline del Experimento 9-10 Sim2Real RGB Zero-Shot](images/fig9-13.svg)
 
++## Actualización 2026: planificación en streaming y modelos del mundo
+
+La sección de robótica no debe terminar en «un VLM escribe un plan y un VLA lo ejecuta». Consideremos **«ordenar el escritorio»**. El planificador de horizonte largo construye primero una lista del estado: una taza medio llena, papeles, tres libros, un portátil abierto, una papelera y una caja organizadora. Después emite comandos con precondiciones y comprobaciones:
+
+1. «Ve al escritorio y detente a 30 cm del borde».
+2. «Pon los dos papeles en la papelera y verifica que no quede ninguno».
+3. «Mantén la taza vertical y colócala en la bandeja; reduce la velocidad si el líquido se mueve».
+4. «Cierra el portátil y muévelo a la esquina posterior izquierda; no tires del cable».
+5. «Apila los libros por tamaño y guarda los bolígrafos en la caja».
+6. «Solo cuando se hayan retirado los objetos frágiles y eléctricos, limpia la superficie».
+7. «Retrocede, observa de nuevo y verifica el estado final».
+
+Esto es un grafo de dependencias, no un párrafo de prosa. Si el usuario dice «guarda primero el portátil», cambia la prioridad. Si se vuelca la taza, el robot se detiene en un punto seguro, registra cup.orientation=fallen y laptop.at_risk=true, invalida el sufijo obsoleto y vuelve a planificar: proteger el portátil, contener el líquido, observar de nuevo y reanudar solo las tareas no afectadas. Las acciones ya verificadas no se repiten; los eventos urgentes cancelan el bloque actual y las actualizaciones normales esperan al siguiente punto seguro.
+
+### Ejecución en streaming
+
+La planificación y la ejecución pueden solaparse. Cuando existe un prefijo seguro, el planificador envía un comando completo al ejecutor mientras continúa planificando el sufijo. El comando debe ser completo y auditable:
+
+~~~json
+{"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
+~~~
+
+El ejecutor devuelve started, succeeded, cancelled o failed. El planificador actualiza las dependencias y aplica backpressure si la cola está llena o quedó obsoleta. El streaming reduce el tiempo hasta la primera acción segura; no permite ejecutar JSON parcial ni pensamientos no verificados.
+
+### Por qué los VLA actuales generalizan mal
+
+OpenVLA no se entrenó literalmente modificando solo el projector: el trabajo original también estudia fine-tuning completo, visión congelada, última capa y LoRA. La crítica estructural sigue siendo válida: un corpus enorme de texto e imágenes se conecta con un conjunto mucho menor de datos robóticos mediante una vía de adaptación estrecha; las adaptaciones baratas suelen concentrar la conducta nueva en el projector, módulos LoRA o la cabeza de acciones. El cloning de comportamiento aprende «observación + instrucción → bloque de acciones», no consecuencias físicas contrafactuales. Las acciones dependen del cuerpo del robot y los bloques obsoletos limitan la transferencia.
+
+### Modelos del mundo
+
+Un modelo del mundo aprende una transición accionable: estado + acción candidata → estado futuro predicho → seleccionar y verificar una acción. Es más amplio que V-JEPA: incluye modelos predictivos latentes (V-JEPA 2), modelos generativos interactivos (Genie 3 y Cosmos), World-Action Models (GeniWorld y Robust-WAM), acciones latentes aprendidas de vídeo sin etiquetas (LAWM-3D) y RL basado en modelos (Dreamer y MuZero). Su función es aprender de observaciones a escala, probar acciones contrafactuales antes de ejecutarlas, separar dinámicas compartidas del control específico del robot y replanificar cuando la predicción difiere de la realidad.
+
+Los preprints de 2026 estudian priors dinámicos compartidos (DyPES-VLA), acciones visuales para manipulación cerrada fuera de distribución (GeniWorld), acciones latentes 3D desde vídeo humano (LAWM-3D), alineación semántica del futuro (Robust-WAM) y despliegue asíncrono en tiempo real. Son resultados prometedores, no una solución definitiva a la generalización.
+
+### Modelos del mundo para Computer Use
+
+Un escritorio también es un sistema dinámico: estado de pantalla + click/type/scroll/wait → siguiente estado. Photon-1, anunciado por Induction Labs en julio de 2026, predice estados latentes a partir de vídeo de uso del ordenador, y después aprende el formato de acciones y aplica RL online. Sus cifras de benchmark y coste son internas y aún no tienen reproducción independiente. Una arquitectura práctica usa un predictor auxiliar: el VLM decide la semántica y las herramientas, mientras el predictor guarda estados candidatos, filtra acciones peligrosas y descarta rollouts obsoletos cuando las capturas reales no coinciden. La red, la autenticación, los CAPTCHA y el estado oculto del servidor obligan a verificar toda acción irreversible en el entorno real.
+
+Fuentes: [OpenVLA](https://arxiv.org/abs/2406.09246), [V-JEPA 2](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/), [Genie 3](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/), [Photon-1](https://www.inductionlabs.com/news/scaling-video-pretraining), [DyPES-VLA](https://arxiv.org/abs/2608.06374), [GeniWorld](https://arxiv.org/abs/2608.06332), [LAWM-3D](https://arxiv.org/abs/2608.05706), [Robust-WAM](https://arxiv.org/abs/2608.05903).
+
 ## Resumen del capítulo
 
 Aunque los tres escenarios parecen muy diferentes en la superficie, los dos obstáculos de la latencia y la multimodalidad siempre están presentes. La voz ha recorrido un camino evolutivo desde pipelines seriales hacia extremo a extremo y full-duplex, y desde el pensamiento rápido/lento separado hacia "pensar mientras se habla"; Computer Use ha alcanzado una precisión cercana a la humana en benchmarks como OSWorld, pero la brecha de eficiencia manifestada en una cantidad notablemente mayor de pasos de operación y en el crecimiento continuo del tiempo consumido por paso aún no cuenta con una solución sistemática; en el caso de los robots en tareas de manipulación basadas principalmente en retroalimentación visual, el cuello de botella ha pasado del hardware a la capacidad de generalización multitarea de la capa de control VLA (siendo el tacto y las manos diestras deficiencias de hardware aún no conquistadas). El siguiente capítulo ampliará la perspectiva a la colaboración entre múltiples Agentes, lo que constituye un desafío en otra dimensión.

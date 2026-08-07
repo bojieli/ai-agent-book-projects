@@ -502,6 +502,46 @@ Apa yang ditambahkan bab ini adalah dua langkah rekayasa yang tidak dapat Anda l
 >
 > ![Gambar 9-13: Eksperimen 9-10 Zero-Shot RGB Sim2Real Pipeline](images/fig9-13.svg)
 
++## Pembaruan 2026: Perencanaan Streaming dan World Model
+
+Bagian robot tidak boleh berhenti pada “VLM menulis rencana dan VLA menjalankannya”. Ambil contoh **“merapikan meja”**. Perencana jangka panjang membuat daftar keadaan—cangkir setengah penuh, kertas bekas, tiga buku, laptop terbuka, tempat sampah, dan kotak penyimpanan—lalu mengirim perintah dengan prasyarat dan pemeriksaan keberhasilan:
+
+1. “Bergerak ke meja dan berhenti 30 cm dari tepinya.”
+2. “Masukkan dua kertas ke tempat sampah; pastikan tidak ada kertas tersisa.”
+3. “Jaga cangkir tetap tegak dan letakkan di nampan; perlambat jika cairan bergerak.”
+4. “Tutup laptop dan pindahkan ke kiri belakang; jangan menarik kabel daya.”
+5. “Susun buku berdasarkan ukuran dan masukkan pena ke kotak.”
+6. “Setelah benda rapuh dan perangkat berdaya dipindahkan, lap meja.”
+7. “Mundur, amati lagi, lalu verifikasi keadaan akhir.”
+
+Ini adalah graf dependensi, bukan paragraf biasa. Jika pengguna berkata “simpan laptop terlebih dahulu”, prioritas tujuan diperbarui. Jika cangkir jatuh, robot berhenti di titik aman, mencatat cup.orientation=fallen dan laptop.at_risk=true, membatalkan sufiks yang sudah basi, lalu merencanakan ulang: lindungi laptop, tahan tumpahan, amati ulang, dan lanjutkan hanya tugas yang tidak terdampak. Aksi yang sudah diverifikasi tidak diulang; kejadian darurat membatalkan chunk saat ini, sedangkan pembaruan biasa menunggu titik aman berikutnya.
+
+### Eksekusi streaming
+
+Perencanaan dan eksekusi dapat berjalan tumpang tindih. Setelah awalan yang aman tersedia, planner mengirim command lengkap kepada executor sambil terus merencanakan sisanya:
+
+~~~json
+{"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
+~~~
+
+Executor mengembalikan started, succeeded, cancelled, atau failed. Planner memperbarui dependensi dan menerapkan backpressure jika antrean penuh atau sudah kedaluwarsa. Streaming mempercepat aksi aman pertama; streaming bukan izin untuk menjalankan JSON yang belum lengkap atau pikiran model yang belum diverifikasi.
+
+### Mengapa VLA saat ini sulit melakukan generalisasi
+
+OpenVLA tidak secara harfiah hanya memperbarui projector: karya aslinya juga menguji full fine-tuning, visual encoder yang dibekukan, lapisan terakhir, dan LoRA. Kritik strukturalnya tetap berlaku. Korpus teks/gambar yang sangat besar dihubungkan dengan data robot yang jauh lebih kecil melalui jalur adaptasi yang sempit; adaptasi murah sering memusatkan perilaku baru pada projector, modul LoRA, atau action head. Behavior cloning mempelajari “observasi + instruksi → action chunk”, bukan konsekuensi fisik kontrafaktual. Ruang aksi yang bergantung pada embodiment dan chunk yang sudah basi semakin membatasi transfer.
+
+### World model
+
+World model mempelajari transisi yang dapat ditindaklanjuti: keadaan + aksi kandidat → keadaan masa depan yang diprediksi → pilih dan verifikasi aksi. Cakupannya lebih luas daripada V-JEPA: model prediktif laten (V-JEPA 2), model generatif interaktif (Genie 3 dan Cosmos), World-Action Model (GeniWorld dan Robust-WAM), latent action dari video tanpa label (LAWM-3D), dan model-based RL (Dreamer dan MuZero). Nilainya adalah belajar dari observasi dalam skala besar, menguji aksi kontrafaktual sebelum eksekusi, memisahkan dinamika bersama dari kontrol khusus robot, serta merencanakan ulang saat prediksi berbeda dari kenyataan.
+
+Preprint 2026 mengeksplorasi shared dynamics prior dan action head khusus embodiment (DyPES-VLA), visual action untuk manipulasi closed-loop di luar distribusi (GeniWorld), latent action 3D dari video manusia (LAWM-3D), semantic foresight alignment (Robust-WAM), dan deployment asinkron waktu nyata. Ini hasil riset yang menjanjikan, bukan solusi generalisasi yang sudah tuntas.
+
+### World model untuk Computer Use
+
+Desktop juga merupakan sistem dinamis: screen state + click/type/scroll/wait → next state. Photon-1, yang diumumkan Induction Labs pada Juli 2026, memprediksi next state laten dari video penggunaan komputer, lalu mempelajari format aksi dan menerapkan online RL. Angka benchmark dan biaya mereka berasal dari evaluasi internal dan belum direplikasi secara independen. Desain praktisnya adalah predictor pendamping: VLM memilih semantik dan tool, predictor menyimpan kandidat next state, menyaring aksi berisiko, lalu membuang rollout yang basi jika screenshot nyata tidak cocok. Jaringan, autentikasi, CAPTCHA, dan state server tersembunyi membuat setiap aksi yang tidak dapat dibatalkan tetap harus diverifikasi di lingkungan nyata.
+
+Sumber: [OpenVLA](https://arxiv.org/abs/2406.09246), [V-JEPA 2](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/), [Genie 3](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/), [Photon-1](https://www.inductionlabs.com/news/scaling-video-pretraining), [DyPES-VLA](https://arxiv.org/abs/2608.06374), [GeniWorld](https://arxiv.org/abs/2608.06332), [LAWM-3D](https://arxiv.org/abs/2608.05706), [Robust-WAM](https://arxiv.org/abs/2608.05903).
+
 ## Ringkasan Bab
 
 Secara kasat mata, ketiga skenario tersebut mungkin terlihat sangat berbeda, namun tantangan kembar berupa latensi dan multimodalitas membayangi semuanya. Voice Agents telah berevolusi dari serial pipelines menjadi sistem end-to-end dan full-duplex, serta dari fast dan slow thinking yang terpisah menjadi thinking while speaking. Computer Use kini mendekati akurasi manusia pada benchmark seperti OSWorld, namun membutuhkan langkah yang jauh lebih banyak daripada manusia, dan setiap langkah memakan waktu lebih lama seiring berjalannya tugas—sebuah celah efisiensi yang belum memiliki solusi sistematis. Untuk robot yang melakukan tugas manipulasi dengan panduan visual, hambatannya telah bergeser dari perangkat keras ke kemampuan lapisan kontrol VLA untuk melakukan generalisasi di berbagai tugas (tactile sensing dan dexterous hands tetap menjadi keterbatasan perangkat keras yang belum terselesaikan). Bab berikutnya akan membahas kolaborasi di antara beberapa Agents—sebuah tantangan dengan dimensi yang berbeda.

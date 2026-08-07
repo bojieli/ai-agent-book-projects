@@ -525,6 +525,46 @@ Computer Use 也在向移動端擴充套件。移動端與桌面在技術上確�
 > ![圖 9-13 實驗 9-10 零樣本 RGB Sim2Real 流水線](images/fig9-13.svg)
 >
 
++## 2026 更新：串流規劃與世界模型
+
+機器人部分不應只停在「VLM 寫出計畫、VLA 執行計畫」。以**整理桌面**為例，長程規劃器先建立狀態清單：半杯水、廢紙、三本書、打開的筆電、垃圾桶與收納盒，再輸出帶有前置條件和完成檢查的命令：
+
+1.「移動到桌前，在距離桌沿 30 公分處停下。」
+2.「把兩張廢紙放入垃圾桶，確認桌面沒有剩餘紙屑。」
+3.「保持杯子直立並放到托盤；如果液體晃動就降低速度。」
+4.「合上筆電並移到左後方，不要拉扯電源線。」
+5.「按大小疊好書本，把筆放入收納盒。」
+6.「確認易碎物和通電設備都已移開後，再擦拭桌面。」
+7.「後退一步重新觀察，核對最後狀態。」
+
+這是一張依賴圖，而不是一段散文。如果使用者說「先把筆電收起來」，系統更新目標優先級。如果杯子倒了，機器人在安全點停止，記錄 cup.orientation=fallen、laptop.at_risk=true，使失效的計畫後綴作廢，再重新規劃：保護筆電、控制液體、重新觀察，只恢復未受影響的任務。已驗證的動作不會重複；緊急事件取消目前的 action chunk，一般更新則等待下一個安全點。
+
+### 串流執行
+
+規劃與執行可以重疊。安全前綴確認後，規劃器一邊繼續產生後綴，一邊把完整 command 串流給執行器：
+
+~~~json
+{"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
+~~~
+
+執行器回傳 started、succeeded、cancelled 或 failed；規劃器以這些觀察更新依賴，當佇列過滿或命令已過時時施加 backpressure。串流執行縮短的是第一個安全動作的等待，不代表可以執行不完整 JSON 或未驗證的模型思考。
+
+### 為什麼目前 VLA 的泛化有限
+
+OpenVLA 並非只更新 projector；原始研究也比較了完整微調、凍結視覺編碼器、只訓練最後一層及 LoRA。真正的結構性問題仍存在：龐大的文字／影像預訓練資料，透過狹窄的適配通道連接到少量機器人資料；低成本適配時，新增行為常被集中到 projector、LoRA 模組或 action head。行為克隆學到的是「觀察 + 指令 → action chunk」，而不是反事實的物理後果。具身專屬動作空間與過時的動作分塊也限制了跨機器人遷移。
+
+### 世界模型
+
+世界模型學習可行動的狀態轉移：狀態 + 候選動作 → 預測的未來狀態 → 選擇並驗證動作。它不只是 V-JEPA：還包括潛表示預測模型（V-JEPA 2）、互動式生成模型（Genie 3、Cosmos）、World-Action Model（GeniWorld、Robust-WAM）、從無標註影片學習潛在動作（LAWM-3D），以及模型式強化學習（Dreamer、MuZero）。它讓系統能從大規模觀察學習，在執行前比較反事實動作，將共享動力學與具身專屬控制分離，並在預測與現實不一致時重新規劃。
+
+2026 年預印本正研究共享動力學先驗與具身專屬 action head（DyPES-VLA）、分布外閉環操作的視覺動作表示（GeniWorld）、從人類影片學習 3D 潛在動作（LAWM-3D）、語義未來對齊（Robust-WAM）及即時非同步部署。這些是值得追蹤的研究結果，並非已經解決泛化。
+
+### Computer Use 的世界模型
+
+桌面同樣是動態系統：螢幕狀態 + click/type/scroll/wait → 下一狀態。Induction Labs 於 2026 年 7 月公布 Photon-1，以大規模電腦操作影片預測潛在下一狀態，再微調動作格式並使用線上 RL。其 benchmark 和成本數字來自公司內部評測，尚無獨立複現。實用架構可以採用旁路預測器：VLM 決定語義與工具，預測器快取候選下一狀態、篩查高風險動作，並在真實截圖不一致時丟棄過時 rollout。網路、驗證、CAPTCHA 與隱藏伺服器狀態意味著所有不可逆操作仍須在真實環境中重新核驗。
+
+來源：[OpenVLA](https://arxiv.org/abs/2406.09246)、[V-JEPA 2](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/)、[Genie 3](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/)、[Photon-1](https://www.inductionlabs.com/news/scaling-video-pretraining)、[DyPES-VLA](https://arxiv.org/abs/2608.06374)、[GeniWorld](https://arxiv.org/abs/2608.06332)、[LAWM-3D](https://arxiv.org/abs/2608.05706)、[Robust-WAM](https://arxiv.org/abs/2608.05903)。
+
 ## 本章小結
 
 三個場景表面差異懸殊，但延遲和多模態這兩道坎始終如影隨形。語音已走出了一條從序列流水線到端和全雙工、從分離的快慢思考到「邊想邊說」的演進路徑；Computer Use 在 OSWorld 等基準上的準確率已接近人類水平，但操作步驟明顯多於人類、步驟耗時隨任務推進不斷增長的效率差距還沒有系統性的解法；機器人在以視覺回饋為主的操作任務上，瓶頸已從硬體轉到 VLA 控制層的跨任務泛化能力（觸覺、靈巧手等仍是尚未攻克的硬體短板）。下一章會把視角拉到多個 Agent 之間的協作，那是另一個維度的挑戰。
