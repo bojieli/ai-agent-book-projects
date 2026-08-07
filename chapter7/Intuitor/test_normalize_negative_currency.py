@@ -24,3 +24,8 @@ def test_negative_latex_frac():
 def test_extract_gsm8k_multiple_hash_markers():
     assert extract_answer_from_gsm8k_format("#### step 1 #### 42") == "42"
     assert extract_and_normalize_answer("#### step 1 #### 42") == "42"
+
+
+def test_negative_fraction_with_space():
+    assert normalize_number("- 1/2") == "-0.5"
+    assert extract_and_normalize_answer(r"\boxed{- 1/2}") == "-0.5"
