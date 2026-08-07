@@ -1,0 +1,51 @@
+[
+  {
+    "id": "grpo-01",
+    "task": "工作目录里有 solution.py，其中的 fib(n) 对 n>=2 返回错误结果。请修复它，使 fib(0)=0, fib(1)=1, fib(n)=fib(n-1)+fib(n-2)。",
+    "workspace_files": {
+      "solution.py": "def fib(n):\n    if n <= 1:\n        return n\n    return fib(n - 1) + fib(n - 3)  # bug: 应为 n - 2\n"
+    },
+    "hidden_check": "python -c \"from solution import fib; assert [fib(i) for i in range(8)] == [0,1,1,2,3,5,8,13]\""
+  },
+  {
+    "id": "grpo-02",
+    "task": "工作目录里有 app/calc.py，discount(total, coupon) 在 coupon 大于 total 时返回负数。请修复为最低收 0 元，并保证原有正常路径不变。",
+    "workspace_files": {
+      "app/__init__.py": "",
+      "app/calc.py": "def discount(total, coupon):\n    return total - coupon\n"
+    },
+    "hidden_check": "python -c \"from app.calc import discount; assert discount(100, 30) == 70; assert discount(20, 50) == 0\""
+  },
+  {
+    "id": "grpo-03",
+    "task": "工作目录里有 text.py，slugify(s) 没有把连续空白折叠成单个连字符。请修复，使 'Hello   World 2026' 变为 'hello-world-2026'。",
+    "workspace_files": {
+      "text.py": "def slugify(s):\n    return s.lower().replace(' ', '-')\n"
+    },
+    "hidden_check": "python -c \"from text import slugify; assert slugify('Hello   World 2026') == 'hello-world-2026'; assert slugify(' a  b ') == 'a-b'\""
+  },
+  {
+    "id": "grpo-04",
+    "task": "工作目录里有 config_loader.py，load() 在配置文件缺少 retries 字段时抛 KeyError。请修复为缺省返回 3，其它字段行为不变。",
+    "workspace_files": {
+      "config_loader.py": "def load(cfg):\n    return {'host': cfg['host'], 'retries': cfg['retries']}\n"
+    },
+    "hidden_check": "python -c \"from config_loader import load; assert load({'host': 'h'})['retries'] == 3; assert load({'host': 'h', 'retries': 9})['retries'] == 9\""
+  },
+  {
+    "id": "grpo-05",
+    "task": "工作目录里有 rates.py，cagr(begin, end, years) 对 begin=0 抛除零异常。请修复为 begin=0 时返回 0.0，正常情形公式不变。",
+    "workspace_files": {
+      "rates.py": "def cagr(begin, end, years):\n    return (end / begin) ** (1 / years) - 1\n"
+    },
+    "hidden_check": "python -c \"from rates import cagr; assert cagr(0, 100, 3) == 0.0; assert abs(cagr(100, 121, 2) - 0.1) < 1e-9\""
+  },
+  {
+    "id": "grpo-06",
+    "task": "工作目录里有 queue_sim.py，Worker.run() 处理空队列时陷入死循环。请修复为空队列时立即返回已处理任务数。",
+    "workspace_files": {
+      "queue_sim.py": "class Worker:\n    def __init__(self, queue):\n        self.queue = queue\n    def run(self):\n        done = 0\n        while True:\n            if self.queue:\n                self.queue.pop(0)\n                done += 1\n        return done\n"
+    },
+    "hidden_check": "timeout 10 python -c \"from queue_sim import Worker; assert Worker([]).run() == 0; assert Worker([1, 2, 3]).run() == 3\""
+  }
+]

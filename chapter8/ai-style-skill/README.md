@@ -1,0 +1,59 @@
+# 实验 8-9：把「AI 味」反馈内化为写作 Skill
+
+本项目演示持续进化中最难的一类问题：用户说「这段文字 AI 味太重」，这是一条模糊的主观反馈，Agent 没法直接执行。本实验把它走完整个循环——收集用户纠正的 before/after 对，把「AI 味」提炼成可检查的具体规则（破折号密度、「不是……而是……」句式、排比堆砌、「让我们」开头、「首先/其次/最后」模板、emoji 密度、「在……的今天」开头、空洞比喻），沉淀为写作 Skill，并用评估集防止规则膨胀与误伤。
+
+机制单元测试与真实验收是两条不同路径：
+
+```bash
+python -m pytest -q test_pipeline.py
+python demo.py                      # 离线教学演示全流程
+python run_experiment_8_9.py        # 离线验收入口
+python run_experiment_8_9.py \
+  --provider ark --model doubao-seed-1-6-250615   # 真实 LLM 路径
+```
+
+离线路径不需要 API key：规则提炼走确定性模式库匹配（before 命中、after 消除的模式聚合成候选），空洞比喻这条 llm 类规则用确定性代理 judge 演示校准机制。真实 LLM 路径把规则提炼、judge 校准和改写都交给 OpenAI 兼容 API：
+
+```bash
+# 从仓库根目录开始：使用共享的第 8 章环境
+uv sync --locked --python 3.12 --extra ch8
+source .venv/bin/activate
+
+cd chapter8/ai-style-skill
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -r requirements.txt
+
+export ARK_API_KEY=your_api_key_here
+python run_experiment_8_9.py --provider ark --model doubao-seed-1-6-250615
+
+# 也可改用 OpenAI 直连或 OpenRouter：
+# python run_experiment_8_9.py --provider openai --model gpt-4o-mini
+```
+
+真实模式的原始请求、原始响应、Token 用量、延迟、请求/响应哈希保存在 `validation/<run>/evidence.json`，`validation/latest.json` 指向最近一次完整证据。**当前仓库尚未包含真实 LLM 运行**——上面的真实路径需要在有凭据的机器上执行，离线路径的所有数字都是真实跑出来的。
+
+## 完整循环
+
+1. **收集**（`data/feedback_pairs.json`）：20 条用户纠正的 before/after 对，覆盖产品发布稿、公众号文章、邮件、README 段落，每条附用户原话（「破折号太多了」「不要不是而是的句式」）。
+2. **提炼**（`extract_rules.py`）：双路径。确定性路径用预置模式库检测 before 命中、after 消除的模式；LLM 路径让模型对比归纳规则并要求原文证据。候选规则带完整 schema（定义、检测器、坏例、好例、作用域、来源），写入 `data/candidate_rules.json`。
+3. **合并**（`skill_manager.py`）：相同检测模式的候选合并来源而不是追加——这是防膨胀的关键。阈值矛盾时报冲突并保留现有值；长期未触发或被证据推翻的规则归档到 `skill/archive/`。合并、激活、归档全部由模型外部代码决定，LLM 只能产出候选（可信根隔离）。
+4. **校准**（`judge.py`）：空洞比喻这类微妙模式没有确定性检测器，走 LLM judge；judge 上线前必须用 `data/golden_set.json`（10 条人工标注）校准，一致率低于 0.8 拒绝激活该规则——呼应第六章「评判者本身也要被评判」。
+5. **评估**（`evaluate.py`、`data/eval_texts.json`）：boundary 集（8 条明显 AI 味文本，应检出）与 retention 集（8 条合法使用这些模式的好文本，不应误伤——技术文档里一处必要的破折号、真正构成对比的单次「不是……而是……」、人类作者的克制两句对仗）。
+6. **改写**（`rewrite_demo.py`）：确定性路径定位命中并给出预置换写建议；LLM 路径真实改写。
+
+## 离线路径的真实运行结果
+
+以下是本仓库离线确定性路径实际跑出的数字（`python run_experiment_8_9.py` 与 `python evaluate.py`）：
+
+- 规则增长曲线（3 批反馈顺序进入）：批次 1 提炼 7 条候选 → 7 条规则；批次 2 提炼 7 条候选 → 全部合并进已有规则，仍 7 条；批次 3 提炼 7 条候选 → 新增 1 条（空洞比喻），共 8 条。**21 条原始候选合并为 8 条规则**，规则数不随反馈条数线性膨胀。
+- boundary 检出率 8/8，retention 误伤率 0/8，八条规则在评估集上的精确率与召回率均为 1.0。
+- 空洞比喻规则的 judge 校准：离线代理 judge 与金标集一致率 10/10 = 1.00，允许上线。注意这是确定性代理的演示数字；真实 LLM judge 的一致率要在有凭据的机器上重跑，不达标会拒绝上线。
+
+## 防误伤的设计细节
+
+「可检查」不等于「一刀切」。每条规则都区分滥用与合法使用：单次「不是……而是……」不触发（两处以上才算滥用），一处破折号补充说明不触发（三处以上且密度超标才算），两处「首先/其次」不触发（三处以上才算模板腔），两个 emoji 不触发，两句对仗不触发（连续三个结构相似分句才算排比）。retention 集就是用来守住这条线的——新增或修改规则后必须重跑评估，误伤率升高就该 prune 或收紧规则。
+
+## 什么时候该升级为参数级训练
+
+规则路线有天花板：规则条数持续增长、彼此冲突变多、judge 校准频繁不达标，或者 Agent 对规则的遵循率开始下降时，说明「AI 味」这类风格知识更适合沉淀进模型参数而不是外挂清单——把 feedback_pairs 的 before/after 对整理成偏好数据，走第七章的蒸馏/微调路线。规则集此时仍有价值：它是训练数据的来源，也是训练后行为的回归测试集。

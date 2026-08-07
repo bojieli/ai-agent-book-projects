@@ -1,0 +1,440 @@
+[
+  {
+    "id": "rule-dash-density",
+    "name": "破折号使用过多",
+    "definition": "频繁用破折号（——）串联句子、代替正常的停顿和连接，一段里出现三处以上，是典型的 AI 腔。",
+    "detector": {
+      "type": "density",
+      "pattern": "——",
+      "min_occurrences": 3,
+      "threshold": 6
+    },
+    "bad_example": "我们隆重推出全新智能笔记应用——一款真正懂你的效率神器——它不仅能记录灵感——还能自动整理、智能归类、跨端同步——让你的每一条想法都不再流失——现在下载，即刻开启高效人生——限时免费，错过再等一年！",
+    "good_example": "新版智能笔记应用上线了。它能记录灵感，自动整理和归类，支持多设备同步。现在下载可以免费试用一个月。",
+    "rewrite_hint": "把多数破折号改成逗号或句号，或直接拆成两句；一处必要的补充说明可以保留。",
+    "scope": [
+      "产品发布稿"
+    ],
+    "source_ids": [
+      "fp-001"
+    ],
+    "status": "candidate",
+    "last_confirmed_batch": 1
+  },
+  {
+    "id": "rule-not-but",
+    "name": "「不是……而是……」句式滥用",
+    "definition": "同一篇里连用两处以上「不是 X，而是 Y」的对仗句式。单独一次真实对比不算违规。",
+    "detector": {
+      "type": "regex",
+      "pattern": "不是[^。！？；：\\n]{0,30}?而是",
+      "min_occurrences": 2
+    },
+    "bad_example": "真正的成长，不是年龄的增加，而是认知的升级；不是知识的堆砌，而是思维的重构；不是经验的重复，而是边界的突破。",
+    "good_example": "真正的成长，往往体现在认知的变化上：看问题的角度变了，做事的方法跟着变，最后连自己能做什么的边界都被重新画了一遍。",
+    "rewrite_hint": "保留真正有对比意义的一处，其余改成直接陈述「它是什么」。",
+    "scope": [
+      "公众号文章"
+    ],
+    "source_ids": [
+      "fp-002"
+    ],
+    "status": "candidate",
+    "last_confirmed_batch": 1
+  },
+  {
+    "id": "rule-parallelism",
+    "name": "排比堆砌",
+    "definition": "连续三个以上结构高度相似的分句（同开头或同结尾），读起来像口号。",
+    "detector": {
+      "type": "structure",
+      "kind": "parallelism",
+      "min_run": 3
+    },
+    "bad_example": "让我们共同见证这个激动人心的时刻！让我们一起开启数字化转型的全新篇章。让我们携手并进，共创辉煌明天。",
+    "good_example": "新版本今天上线了，期待大家试用之后多提意见。",
+    "rewrite_hint": "把排比拆开，用长短不一的句子各说一件事；保留最多两句对仗。",
+    "scope": [
+      "邮件"
+    ],
+    "source_ids": [
+      "fp-003"
+    ],
+    "status": "candidate",
+    "last_confirmed_batch": 1
+  },
+  {
+    "id": "rule-lets-start",
+    "name": "「让我们」口号式开头",
+    "definition": "连续用「让我们」领起句子，像动员演讲而不是在写文案。",
+    "detector": {
+      "type": "regex",
+      "pattern": "让我们",
+      "min_occurrences": 2
+    },
+    "bad_example": "让我们共同见证这个激动人心的时刻！让我们一起开启数字化转型的全新篇章。让我们携手并进，共创辉煌明天。",
+    "good_example": "新版本今天上线了，期待大家试用之后多提意见。",
+    "rewrite_hint": "删掉口号句，直接陈述事实或发出一次具体邀请。",
+    "scope": [
+      "邮件"
+    ],
+    "source_ids": [
+      "fp-003"
+    ],
+    "status": "candidate",
+    "last_confirmed_batch": 1
+  },
+  {
+    "id": "rule-template-sequence",
+    "name": "「首先/其次/最后」模板序列",
+    "definition": "堆叠「首先、其次、再次、然后、最后、总而言之」等连接词，把文案写成公文提纲。",
+    "detector": {
+      "type": "regex",
+      "pattern": "首先|其次|再次|然后|接下来|最后|总而言之|综上所述|总的来说",
+      "min_occurrences": 3
+    },
+    "bad_example": "首先，克隆本仓库到本地。其次，安装所需依赖。再次，配置环境变量。然后，运行初始化脚本。最后，启动开发服务器即可。",
+    "good_example": "克隆仓库后安装依赖，把 .env.example 复制为 .env 并填好密钥，再运行 init.sh 初始化，最后 make dev 启动服务。",
+    "rewrite_hint": "去掉连接词标签，让句子按自然顺序衔接；两处的「首先/其次」可以接受。",
+    "scope": [
+      "README 段落"
+    ],
+    "source_ids": [
+      "fp-004"
+    ],
+    "status": "candidate",
+    "last_confirmed_batch": 1
+  },
+  {
+    "id": "rule-era-opening",
+    "name": "「在……的今天/时代」开头",
+    "definition": "用「在……的今天」「在这个……的时代」「在……的当下」这类空泛宏大开头的套话。",
+    "detector": {
+      "type": "regex",
+      "pattern": "在[^，。！？；\\n]{2,24}?(?:的今天|的时代|的当下|的时代背景下)",
+      "min_occurrences": 1
+    },
+    "bad_example": "在人工智能飞速发展的今天，每个人都面临前所未有的机遇与挑战。在这个信息爆炸的时代，如何保持独立思考显得尤为重要。",
+    "good_example": "这两年 AI 工具更新得飞快，很多人一边兴奋一边焦虑。信息越多，越需要自己能做判断。",
+    "rewrite_hint": "删掉宏大开头，第一句直接说具体的事。",
+    "scope": [
+      "公众号文章"
+    ],
+    "source_ids": [
+      "fp-005"
+    ],
+    "status": "candidate",
+    "last_confirmed_batch": 1
+  },
+  {
+    "id": "rule-emoji-density",
+    "name": "emoji 泛滥",
+    "definition": "一段文案里 emoji 出现三次以上，或密度超过每千字 5 个；正式稿件应基本不用。",
+    "detector": {
+      "type": "density",
+      "pattern": "[☀-➿⬀-⯿⌀-⏿\\U0001F000-\\U0001FAFF]",
+      "min_occurrences": 3,
+      "threshold": 5
+    },
+    "bad_example": "🎉 重磅来袭！🔥 全新智能手表正式发布！⌚ 超长续航 14 天 🔋，心率血氧全天候监测 ❤️，50 米防水 🏊，现在下单立减 200 元 💰，错过再等一年 ⏰！",
+    "good_example": "新款智能手表发布：续航 14 天，支持心率血氧监测和 50 米防水，首发价立减 200 元。",
+    "rewrite_hint": "正式稿件全部删掉；生活化随笔最多保留一两个。",
+    "scope": [
+      "产品发布稿"
+    ],
+    "source_ids": [
+      "fp-006"
+    ],
+    "status": "candidate",
+    "last_confirmed_batch": 1
+  },
+  {
+    "id": "rule-parallelism",
+    "name": "排比堆砌",
+    "definition": "连续三个以上结构高度相似的分句（同开头或同结尾），读起来像口号。",
+    "detector": {
+      "type": "structure",
+      "kind": "parallelism",
+      "min_run": 3
+    },
+    "bad_example": "读书可以拓宽视野，读书可以沉淀心灵，读书可以启迪智慧，读书可以点亮人生。",
+    "good_example": "读书的好处很多：视野会变宽，心能静下来，看问题也会多几个角度。",
+    "rewrite_hint": "把排比拆开，用长短不一的句子各说一件事；保留最多两句对仗。",
+    "scope": [
+      "产品发布稿",
+      "公众号文章"
+    ],
+    "source_ids": [
+      "fp-007",
+      "fp-010"
+    ],
+    "status": "candidate"
+  },
+  {
+    "id": "rule-dash-density",
+    "name": "破折号使用过多",
+    "definition": "频繁用破折号（——）串联句子、代替正常的停顿和连接，一段里出现三处以上，是典型的 AI 腔。",
+    "detector": {
+      "type": "density",
+      "pattern": "——",
+      "min_occurrences": 3,
+      "threshold": 6
+    },
+    "bad_example": "关于季度复盘会议——时间定于本周五下午三点——地点在三号会议室——请提前准备数据报表——如有冲突请及时告知——谢谢配合。",
+    "good_example": "季度复盘定在这周五下午三点，三号会议室。请提前准备好数据报表，时间冲突的话提前跟我说。",
+    "rewrite_hint": "把多数破折号改成逗号或句号，或直接拆成两句；一处必要的补充说明可以保留。",
+    "scope": [
+      "邮件"
+    ],
+    "source_ids": [
+      "fp-008"
+    ],
+    "status": "candidate"
+  },
+  {
+    "id": "rule-not-but",
+    "name": "「不是……而是……」句式滥用",
+    "definition": "同一篇里连用两处以上「不是 X，而是 Y」的对仗句式。单独一次真实对比不算违规。",
+    "detector": {
+      "type": "regex",
+      "pattern": "不是[^。！？；：\\n]{0,30}?而是",
+      "min_occurrences": 2
+    },
+    "bad_example": "本项目不是简单的爬虫框架，而是一套完整的数据采集解决方案；不是一次性的脚本集合，而是可长期维护的工程化平台。",
+    "good_example": "本项目提供一套可扩展的数据采集方案，支持插件化开发，适合作为长期维护的工程使用。",
+    "rewrite_hint": "保留真正有对比意义的一处，其余改成直接陈述「它是什么」。",
+    "scope": [
+      "README 段落"
+    ],
+    "source_ids": [
+      "fp-009"
+    ],
+    "status": "candidate"
+  },
+  {
+    "id": "rule-lets-start",
+    "name": "「让我们」口号式开头",
+    "definition": "连续用「让我们」领起句子，像动员演讲而不是在写文案。",
+    "detector": {
+      "type": "regex",
+      "pattern": "让我们",
+      "min_occurrences": 2
+    },
+    "bad_example": "在这个万物互联的时代，让我们共同拥抱智能家居的美好未来！让我们一起，让科技温暖每一个家庭。",
+    "good_example": "智能家居新品系列今天发布，覆盖灯光、安防和环境控制，希望能让家更省心。",
+    "rewrite_hint": "删掉口号句，直接陈述事实或发出一次具体邀请。",
+    "scope": [
+      "产品发布稿"
+    ],
+    "source_ids": [
+      "fp-010"
+    ],
+    "status": "candidate"
+  },
+  {
+    "id": "rule-era-opening",
+    "name": "「在……的今天/时代」开头",
+    "definition": "用「在……的今天」「在这个……的时代」「在……的当下」这类空泛宏大开头的套话。",
+    "detector": {
+      "type": "regex",
+      "pattern": "在[^，。！？；\\n]{2,24}?(?:的今天|的时代|的当下|的时代背景下)",
+      "min_occurrences": 1
+    },
+    "bad_example": "在这个万物互联的时代，让我们共同拥抱智能家居的美好未来！让我们一起，让科技温暖每一个家庭。",
+    "good_example": "智能家居新品系列今天发布，覆盖灯光、安防和环境控制，希望能让家更省心。",
+    "rewrite_hint": "删掉宏大开头，第一句直接说具体的事。",
+    "scope": [
+      "产品发布稿"
+    ],
+    "source_ids": [
+      "fp-010"
+    ],
+    "status": "candidate"
+  },
+  {
+    "id": "rule-emoji-density",
+    "name": "emoji 泛滥",
+    "definition": "一段文案里 emoji 出现三次以上，或密度超过每千字 5 个；正式稿件应基本不用。",
+    "detector": {
+      "type": "density",
+      "pattern": "[☀-➿⬀-⯿⌀-⏿\\U0001F000-\\U0001FAFF]",
+      "min_occurrences": 3,
+      "threshold": 5
+    },
+    "bad_example": "早餐这样吃才健康 🍞🥛！营养师推荐的三餐搭配来了 🍚🥗，坚持一个月，气色肉眼可见变好 ✨✨，姐妹们快收藏 💖！",
+    "good_example": "早餐怎么吃更健康？整理了一份营养师的三餐搭配建议，坚持一段时间会有改善，需要的可以收藏。",
+    "rewrite_hint": "正式稿件全部删掉；生活化随笔最多保留一两个。",
+    "scope": [
+      "公众号文章"
+    ],
+    "source_ids": [
+      "fp-011"
+    ],
+    "status": "candidate"
+  },
+  {
+    "id": "rule-template-sequence",
+    "name": "「首先/其次/最后」模板序列",
+    "definition": "堆叠「首先、其次、再次、然后、最后、总而言之」等连接词，把文案写成公文提纲。",
+    "detector": {
+      "type": "regex",
+      "pattern": "首先|其次|再次|然后|接下来|最后|总而言之|综上所述|总的来说",
+      "min_occurrences": 3
+    },
+    "bad_example": "首先感谢各位本季度的付出。其次，需要指出交付节奏仍有优化空间。再次，请各组提交改进方案。最后，期待下季度再创佳绩。",
+    "good_example": "感谢大家这个季度的付出。交付节奏上还有改进空间，请各组本周内提交改进方案，我们下个季度接着努力。",
+    "rewrite_hint": "去掉连接词标签，让句子按自然顺序衔接；两处的「首先/其次」可以接受。",
+    "scope": [
+      "邮件"
+    ],
+    "source_ids": [
+      "fp-012"
+    ],
+    "status": "candidate"
+  },
+  {
+    "id": "rule-hollow-metaphor",
+    "name": "空洞比喻与假拟人",
+    "definition": "用「仿佛一位智者」「宛如一盏明灯」这类不传递任何具体信息的比喻和拟人抒情。",
+    "detector": {
+      "type": "llm",
+      "judge_prompt": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。"
+    },
+    "bad_example": "这款耳机仿佛一位贴心的智者，在你喧嚣的世界里低语；它的降噪功能宛如一道温柔的屏障，将浮躁隔绝在外。",
+    "good_example": "这款耳机的降噪效果确实好，地铁里戴上能安静不少，报站的人声也能压得住。",
+    "rewrite_hint": "删掉比喻，改写为可验证的具体事实、数据或体验描述。",
+    "scope": [
+      "公众号文章",
+      "邮件"
+    ],
+    "source_ids": [
+      "fp-013",
+      "fp-020"
+    ],
+    "status": "candidate",
+    "last_confirmed_batch": 3
+  },
+  {
+    "id": "rule-parallelism",
+    "name": "排比堆砌",
+    "definition": "连续三个以上结构高度相似的分句（同开头或同结尾），读起来像口号。",
+    "detector": {
+      "type": "structure",
+      "kind": "parallelism",
+      "min_run": 3
+    },
+    "bad_example": "它让配置更简单，它让部署更快速，它让监控更全面，它让运维更安心。",
+    "good_example": "配置、部署、监控和告警都内置了默认方案，运维成本明显更低。",
+    "rewrite_hint": "把排比拆开，用长短不一的句子各说一件事；保留最多两句对仗。",
+    "scope": [
+      "README 段落",
+      "公众号文章"
+    ],
+    "source_ids": [
+      "fp-014",
+      "fp-017"
+    ],
+    "status": "candidate"
+  },
+  {
+    "id": "rule-not-but",
+    "name": "「不是……而是……」句式滥用",
+    "definition": "同一篇里连用两处以上「不是 X，而是 Y」的对仗句式。单独一次真实对比不算违规。",
+    "detector": {
+      "type": "regex",
+      "pattern": "不是[^。！？；：\\n]{0,30}?而是",
+      "min_occurrences": 2
+    },
+    "bad_example": "这不是一次简单的版本更新，而是一次体验的全面革新；不是功能的堆砌，而是对用户需求的深度回应。",
+    "good_example": "这次版本更新改动很大：界面重做，核心流程缩短了两步，都来自上一版用户反馈里最高频的问题。",
+    "rewrite_hint": "保留真正有对比意义的一处，其余改成直接陈述「它是什么」。",
+    "scope": [
+      "产品发布稿"
+    ],
+    "source_ids": [
+      "fp-015"
+    ],
+    "status": "candidate"
+  },
+  {
+    "id": "rule-era-opening",
+    "name": "「在……的今天/时代」开头",
+    "definition": "用「在……的今天」「在这个……的时代」「在……的当下」这类空泛宏大开头的套话。",
+    "detector": {
+      "type": "regex",
+      "pattern": "在[^，。！？；\\n]{2,24}?(?:的今天|的时代|的当下|的时代背景下)",
+      "min_occurrences": 1
+    },
+    "bad_example": "在这个快节奏的时代，高效的沟通显得尤为珍贵。在这个充满变化的时代，稳定的协作关系更值得珍惜。",
+    "good_example": "最近项目节奏快，咱们沟通尽量简短高效；也希望协作关系保持稳定，有问题随时同步。",
+    "rewrite_hint": "删掉宏大开头，第一句直接说具体的事。",
+    "scope": [
+      "邮件"
+    ],
+    "source_ids": [
+      "fp-016"
+    ],
+    "status": "candidate"
+  },
+  {
+    "id": "rule-dash-density",
+    "name": "破折号使用过多",
+    "definition": "频繁用破折号（——）串联句子、代替正常的停顿和连接，一段里出现三处以上，是典型的 AI 腔。",
+    "detector": {
+      "type": "density",
+      "pattern": "——",
+      "min_occurrences": 3,
+      "threshold": 6
+    },
+    "bad_example": "成长是一场修行——它教会我们坚持——教会我们取舍——教会我们感恩。每一次跌倒都是财富，每一次爬起都是勋章，每一次坚持都是胜利。",
+    "good_example": "成长是场慢功夫。能坚持下来的人，多半都慢慢学会了取舍，也开始记得感谢路上帮过自己的人。摔过跤的地方，印象总是最深。",
+    "rewrite_hint": "把多数破折号改成逗号或句号，或直接拆成两句；一处必要的补充说明可以保留。",
+    "scope": [
+      "公众号文章"
+    ],
+    "source_ids": [
+      "fp-017"
+    ],
+    "status": "candidate"
+  },
+  {
+    "id": "rule-lets-start",
+    "name": "「让我们」口号式开头",
+    "definition": "连续用「让我们」领起句子，像动员演讲而不是在写文案。",
+    "detector": {
+      "type": "regex",
+      "pattern": "让我们",
+      "min_occurrences": 2
+    },
+    "bad_example": "让我们一起构建更好的开源生态！让我们从 star 本项目开始，共同参与这场技术盛宴。",
+    "good_example": "如果这个项目对你有帮助，欢迎 star；也欢迎提 issue 和 PR。",
+    "rewrite_hint": "删掉口号句，直接陈述事实或发出一次具体邀请。",
+    "scope": [
+      "README 段落"
+    ],
+    "source_ids": [
+      "fp-018"
+    ],
+    "status": "candidate"
+  },
+  {
+    "id": "rule-template-sequence",
+    "name": "「首先/其次/最后」模板序列",
+    "definition": "堆叠「首先、其次、再次、然后、最后、总而言之」等连接词，把文案写成公文提纲。",
+    "detector": {
+      "type": "regex",
+      "pattern": "首先|其次|再次|然后|接下来|最后|总而言之|综上所述|总的来说",
+      "min_occurrences": 3
+    },
+    "bad_example": "首先，全新设计语言带来视觉革新。其次，性能提升高达 40%。再次，续航焦虑彻底解决。总而言之，这是迄今为止最值得升级的一代。",
+    "good_example": "这一代换了全新的外观设计，性能比上代提升 40%，电池也够用一整天了。如果是老用户，这次值得升级。",
+    "rewrite_hint": "去掉连接词标签，让句子按自然顺序衔接；两处的「首先/其次」可以接受。",
+    "scope": [
+      "产品发布稿"
+    ],
+    "source_ids": [
+      "fp-019"
+    ],
+    "status": "candidate"
+  }
+]
