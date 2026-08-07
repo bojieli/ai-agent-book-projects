@@ -1,5 +1,11 @@
 # Post-training mô hình
 
+> **Cập nhật năm 2026.** Bản sửa đổi làm rõ rằng “SFT ghi nhớ, RL khái quát hóa” là quan sát từ các so sánh có kiểm soát GeneralPoints/V-IRL, không phải quy luật phổ quát. Bản này cũng tách việc mô phỏng kết quả trả về của công cụ khỏi việc mô phỏng động lực của toàn bộ môi trường, đồng thời xem độ lệch của bộ mô phỏng là trần của quá trình huấn luyện.
+>
+> Hai hướng nâng cao hiệu quả mẫu được nhấn mạnh: On-Policy Distillation biến phần thưởng cuối của một rollout thành hướng dẫn theo từng token; RLVP biến phản hồi đường đi vốn bị lãng phí thành tín hiệu có thể học. Khi không có giáo viên mạnh hơn, OPSD dùng thông tin đặc quyền và để cùng một mô hình đóng vai giáo viên lẫn học sinh.
+>
+> Thứ tự thí nghiệm trong bản này: 7-13 SimpleVLA-RL; 7-14 ReTool; 7-15 AWorld-train; 7-16 RLVP.
+
 Công thức cốt lõi của cuốn sách này là Agent = LLM + context + tools. Chương này tập trung vào việc tối ưu hóa "bộ não" của LLM - cho phép mô hình tận dụng tốt hơn ngữ cảnh và công cụ thông qua post-training, từ đó cải thiện khả năng của toàn bộ hệ thống Agent. Cuối Chương 6 đã chỉ ra rằng hệ thống đánh giá và môi trường mô phỏng là hai nền tảng của quá trình post-training: môi trường đánh giá cung cấp nền tảng thực hành cho đào tạo và các chỉ số đánh giá xác định mục tiêu đào tạo. Chương này xây dựng trên hai nền tảng này và thảo luận cách thực sự thay đổi trọng số của mô hình và kết nạp các khả năng thành các tham số.
 
 Chương này dành cho những độc giả chưa có nền tảng về học tăng cường hoặc đào tạo mô hình. Chúng tôi không cho rằng bạn hiểu độ dốc và tối ưu hóa chính sách, nhưng chúng tôi bắt đầu từ chủ đề "cách đào tạo một mô hình" và giải thích rõ ràng mục đích, nguyên tắc và vấn đề mà nó giải quyết ở mỗi bước. Sau khi đọc chương này, bạn sẽ có thể trả lời: Cần bao nhiêu bước để phát triển các khả năng của mô hình, mỗi bước làm gì, tại sao nó phải theo thứ tự này và bạn nên thực hiện bước nào trong dự án của riêng mình.
@@ -663,7 +669,7 @@ Tóm lại: **Tín hiệu dày đặc chỉ hữu ích nếu nó có thể bù �
 
 **Mối quan hệ với RLVR (nhân tiện, chỉ ra một điểm khó hiểu).** Chỉ có một sự khác biệt về chữ cái giữa RLVP và RLVR (Học tăng cường với Phần thưởng có thể xác minh) xuất hiện nhiều lần trong chương này, chỉ ra chính xác tính bổ sung: **RLVR xác minh kết quả, RLVP xác minh thêm quy trình**. Khi cả hai được đặt chồng lên nhau, bạn sẽ nhận được tín hiệu huấn luyện tập trung vào cả "hoàn thành công việc" và "làm việc không thường xuyên" - đây chính xác là những gì Agent cần để có thể trực tuyến an toàn.
 
-> **Thí nghiệm 7-14 ★★★: RLVP - kết quả thưởng, lộ trình trừng phạt `[Thử nghiệm mở rộng]`**
+> **Thí nghiệm 7-16 ★★★: RLVP - kết quả thưởng, lộ trình trừng phạt `[Thử nghiệm mở rộng]`**
 >
 > **Mục tiêu thử nghiệm**: Xác minh xem liệu "tín hiệu đường dẫn xác minh + phần thưởng kết quả" có thể một mặt giảm bớt các vi phạm ràng buộc (sử dụng hình phạt) và cải thiện hiệu quả mẫu (sử dụng một phần phần thưởng) mà không làm giảm tỷ lệ thành công của nhiệm vụ hay không.
 >
@@ -685,7 +691,7 @@ Hiện tại có hai tuyến đang hoạt động xung quanh công cụ gọi Ag
 
 Có một chi tiết kỹ thuật khác không thể tránh khỏi với công cụ RL: **Chống mất mát đối với mã thông báo phản hồi môi trường**. Dấu vết lệnh gọi công cụ chứa cả mã thông báo do chính mô hình tạo ra (suy nghĩ, tham số lệnh gọi công cụ) và mã thông báo do môi trường trả về (đầu ra của trình thông dịch mã, kết quả tìm kiếm, phản hồi dịch vụ khách hàng). Cái sau không phải do chính sách tạo ra mà do môi trường đưa ra - nếu chúng cũng được bao gồm trong gradient chính sách, mô hình sẽ được đào tạo để "dự đoán hộp cát sẽ xuất ra gì", điều này không chỉ đi chệch khỏi mục tiêu tối ưu hóa mà còn làm cho quá trình đào tạo không ổn định. Cách tiếp cận tiêu chuẩn là chặn mã thông báo phản hồi môi trường khi tính toán tổn thất và chỉ trả về độ dốc cho mã thông báo do chính mô hình tạo ra. Đây là một trong những điểm kỹ thuật cốt lõi của ReTool (che chắn độ dốc của mã thông báo phản hồi trong thẻ `<interpreter>`) và đó cũng là điều Search-R1 đã nói "che chắn mã thông báo được truy xuất để ổn định quá trình đào tạo". Các khung đào tạo chính thống như verRL và AWorld đã tích hợp sẵn cơ chế này.
 
-> **Thử nghiệm 7-15 ★★★: ReTool - Giải bài toán nâng cao bằng trình thông dịch mã**
+> **Thử nghiệm 7-14 ★★★: ReTool - Giải bài toán nâng cao bằng trình thông dịch mã**
 >
 >
 > ![Hình 7-19 ReTool đan xen tư duy mã văn bản và vòng phản hồi thực thi hộp cát ](images/fig7-19.svg)
@@ -710,7 +716,7 @@ Có một chi tiết kỹ thuật khác không thể tránh khỏi với công c
 >
 > Sự khác biệt về thời gian giữa SFT và RL bắt nguồn từ sự khác biệt về mật độ thông tin: SFT có tín hiệu giám sát cho từng mã thông báo, trong khi RL chỉ nhận được tín hiệu thành công hoặc thất bại cho mỗi tập. Trong quá trình đào tạo thực tế, thời gian dành cho một bước sẽ tăng lên khi độ dài của phản hồi tăng lên và một số phản hồi cực kỳ dài sẽ kéo dài đáng kể toàn bộ chu trình đào tạo.
 >
-> **Thử nghiệm 7-16 ★★★: AWorld-train – Học cách sử dụng các công cụ trong hộp cát**
+> **Thử nghiệm 7-15 ★★★: AWorld-train – Học cách sử dụng các công cụ trong hộp cát**
 >
 >
 > ![Hình 7-20 AWorld-train MCP sandbox đào tạo kiến trúc và hệ sinh thái công cụ ](images/fig7-20.svg)

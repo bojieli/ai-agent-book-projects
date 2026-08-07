@@ -1,5 +1,11 @@
 # Pascapelatihan Model
 
+> **Pembaruan 2026.** Edisi revisi memperjelas bahwa “SFT menghafal, RL menggeneralisasi” adalah pengamatan dari perbandingan terkontrol GeneralPoints/V-IRL, bukan hukum universal. Edisi ini juga memisahkan simulasi keluaran tool dari simulasi dinamika lingkungan secara menyeluruh, serta memperlakukan bias simulator sebagai batas atas pelatihan.
+>
+> Dua jalur untuk meningkatkan efisiensi sampel ditonjolkan: On-Policy Distillation mengubah reward akhir sebuah rollout menjadi panduan per token; RLVP mengubah umpan balik jalur yang biasanya terbuang menjadi sinyal yang dapat dipelajari. Jika tidak ada guru yang lebih kuat, OPSD menggunakan informasi istimewa dengan model yang sama sebagai guru dan siswa.
+>
+> Urutan eksperimen dalam edisi ini: 7-13 SimpleVLA-RL; 7-14 ReTool; 7-15 AWorld-train; 7-16 RLVP.
+
 Formula inti dari buku ini adalah Agent = LLM + Context + Tools. Bab ini beralih ke LLM itu sendiri—"otak"-nya—dan menguji bagaimana post-training dapat membantu model menggunakan context dan tools secara lebih efektif, sehingga meningkatkan kapabilitas dari seluruh sistem Agent. Akhir dari Bab 6 menunjukkan bahwa sistem evaluasi dan lingkungan simulasi adalah dua batu loncatan dari post-training: lingkungan evaluasi memberikan tempat latihan untuk training, dan metrik evaluasi memberikan targetnya. Bab ini dibangun di atas batu loncatan tersebut dan membahas bagaimana cara yang sebenarnya untuk mengubah bobot model—bagaimana menanamkan kapabilitas ke dalam parameter.
 
 Bab ini mengasumsikan tidak adanya latar belakang tentang reinforcement learning atau model training. Kami tidak mengharapkan Anda mengetahui gradien atau policy optimization. Alih-alih, kami memulai dari pertanyaan tentang bagaimana sebuah model dilatih pada awalnya, memperjelas apa tujuan setiap langkah, bagaimana cara kerjanya, dan masalah apa yang dipecahkannya. Pada akhir bab ini, Anda seharusnya dapat menjawab pertanyaan-pertanyaan berikut: Berapa banyak tahapan yang terlibat dalam membentuk kapabilitas model? Apa yang dilakukan pada setiap tahap? Mengapa mereka harus terjadi dalam urutan ini? Dan di mana Anda harus memfokuskan upaya dalam proyek Anda sendiri?
@@ -661,7 +667,7 @@ Ringkasnya: **Sinyal padat (dense signals) berguna hanya jika mereka dapat memul
 
 **Hubungan dengan RLVR (mengklarifikasi titik kebingungan yang umum).** RLVP dan RLVR (Reinforcement Learning with Verifiable Rewards), yang berulang kali disebutkan dalam bab ini, hanya berbeda satu huruf, yang dengan rapi menyoroti sifat komplementernya: **RLVR memverifikasi hasil; RLVP juga memverifikasi proses.** Menggabungkan keduanya menghasilkan sinyal pelatihan yang berfokus pada "menyelesaikan pekerjaan" dan "melakukannya dengan benar"—tepat seperti yang dibutuhkan untuk Agent yang dapat di-deploy dengan aman.
 
-> **Eksperimen 7-14 ★★★: RLVP—Hargai Hasilnya, Hukum Jalurnya `[Eksperimen Diperluas]`**
+> **Eksperimen 7-16 ★★★: RLVP—Hargai Hasilnya, Hukum Jalurnya `[Eksperimen Diperluas]`**
 >
 > **Tujuan Eksperimen**: Menentukan apakah "outcome rewards + sinyal jalur yang dapat diverifikasi" keduanya dapat mengurangi pelanggaran kendala melalui hukuman dan meningkatkan efisiensi sampel melalui kredit sebagian (partial credit), tanpa mengorbankan tingkat keberhasilan tugas.
 >
@@ -683,7 +689,7 @@ Saat ini terdapat dua jalur penelitian yang aktif seputar Agent RL untuk Tool Ca
 
 Tool RL juga memiliki detail rekayasa yang tidak dapat dihindari: **loss masking untuk token umpan balik lingkungan**. Trajectory dari Tool Call berisi token yang dihasilkan oleh model itu sendiri (thinking, parameter pemanggilan tool) dan token yang dikembalikan oleh lingkungan (output Code Interpreter, hasil pencarian, balasan layanan pelanggan). Yang terakhir tidak dihasilkan oleh policy melainkan diberikan oleh lingkungan—jika mereka disertakan dalam policy gradient, model akan dilatih untuk "memprediksi apa yang akan dikeluarkan (output) oleh Code Sandbox," yang menyimpang dari tujuan pengoptimalan dan membuat pelatihan menjadi tidak stabil. Praktik standarnya adalah menutupi (mask) token umpan balik lingkungan ketika menghitung kerugian (loss), melakukan propagasi balik (backpropagating) gradien hanya untuk token yang dihasilkan oleh model. Ini adalah salah satu poin teknis inti dari ReTool (menutupi gradien untuk token umpan balik (feedback tokens) di dalam tag `<interpreter>`), dan ini adalah apa yang disebut oleh Search-R1 sebagai "masking retrieved tokens to stabilize training." Framework pelatihan utama seperti veRL dan AWorld memiliki mekanisme bawaan ini.
 
-> **Eksperimen 7-15 ★★★: ReTool—Penyelesaian Soal Matematika yang Ditingkatkan Code Interpreter**
+> **Eksperimen 7-14 ★★★: ReTool—Penyelesaian Soal Matematika yang Ditingkatkan Code Interpreter**
 >
 >
 > ![Gambar 7-19: Loop Umpan Balik Pemikiran Teks-Kode ReTool yang Disisipkan dan Eksekusi Code Sandbox](images/fig7-19.svg)
@@ -708,7 +714,7 @@ Tool RL juga memiliki detail rekayasa yang tidak dapat dihindari: **loss masking
 >
 > Perbedaan mendasar dalam biaya waktu (time cost) antara SFT dan RL berasal dari perbedaan kepadatan informasi: SFT memberikan sinyal pengawasan (supervisory signal) untuk setiap token, sedangkan RL hanya memberikan sinyal sukses/gagal per episode. Dalam praktiknya, waktu per langkah meningkat dengan panjang respons, dan beberapa respons yang sangat panjang dapat memperpanjang seluruh siklus pelatihan secara signifikan.
 >
-> **Eksperimen 7-16 ★★★: AWorld-train—Belajar Menggunakan Tool di Code Sandbox**
+> **Eksperimen 7-15 ★★★: AWorld-train—Belajar Menggunakan Tool di Code Sandbox**
 >
 >
 > ![Gambar 7-20: Ekosistem Tool dan Arsitektur Pelatihan Code Sandbox MCP AWorld-train](images/fig7-20.svg)

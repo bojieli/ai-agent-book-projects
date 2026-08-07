@@ -1,5 +1,11 @@
 # Model Post-Training
 
+> **2026 güncellemesi.** Gözden geçirilen bölüm, “SFT ezberler, RL geneller” ifadesinin GeneralPoints/V-IRL kontrollü karşılaştırmalarında gözlenen bir eğilim olduğunu, evrensel bir yasa olmadığını açıkça belirtir. Araç dönüşlerinin modelle simüle edilmesi ile tüm ortam dinamiklerinin simüle edilmesini ayırır ve simülatör yanlılığını eğitimin tavanı olarak ele alır.
+>
+> Örnek verimliliğini artıran iki yol öne çıkarılır: On-Policy Distillation bir rollout’un son ödülünü token düzeyinde rehberliğe dönüştürür; RLVP normalde boşa giden yol geri bildirimini öğrenilebilir bir sinyale çevirir. Daha güçlü bir öğretmen yoksa OPSD ayrıcalıklı bilgiyi kullanır ve aynı model öğretmen ile öğrenci rollerini üstlenir.
+>
+> Bu sürümde deney sırası: 7-13 SimpleVLA-RL; 7-14 ReTool; 7-15 AWorld-train; 7-16 RLVP.
+
 Bu kitabın temel formülü Agent = LLM + Context + Tools'tur. Bu bölüm, LLM denen o "beyni" optimize etmeye odaklanıyor: post-training yoluyla modelin context'i ve araçları daha iyi kullanmasını sağlayarak Agent sisteminin bütününün yeteneğini yükseltmek. Bölüm 6'nın sonunda belirtildiği gibi, değerlendirme sistemi ile simülasyon ortamı post-training'in iki temel taşıdır: değerlendirme ortamı eğitime bir alıştırma sahası sunar, değerlendirme metrikleri ise eğitimin hedefini tanımlar. Bu bölüm işte o iki temel taşın üzerine kuruluyor ve model ağırlıklarının gerçekten nasıl değiştirileceğini, yeteneğin parametrelere nasıl çökeltileceğini tartışıyor.
 
 Bu bölüm, pekiştirmeli öğrenme ya da model eğitimi konusunda hiçbir arka planı olmayan okurlar için yazıldı. Gradyanları veya policy optimizasyonunu bildiğinizi varsaymıyoruz; bunun yerine "bir model nasıl eğitilir" sorusunun kendisinden başlayıp her adımın amacını, çalışma ilkesini ve çözdüğü problemi açık açık anlatıyoruz. Bu bölümü bitirdiğinizde şunlara yanıt verebilmelisiniz: Bir modelin yeteneği kaç adımda dövülür, her adım ne yapar, neden bu sıraya uyulması zorunludur ve kendi projenizde hangi adıma emek harcamalısınız?
@@ -663,7 +669,7 @@ Yani **saf sonuç ödülü, başarı oranının her iki ucunda da "kördür"**. 
 
 **RLVR ile ilişkisi (bu arada karıştırılan bir noktayı da açalım).** RLVP ile bu bölümde defalarca geçen RLVR (doğrulanabilir ödüllü pekiştirmeli öğrenme) arasında yalnızca bir harf fark var ve bu fark tam da birbirlerini tamamladıklarını gösteriyor: **RLVR sonucu doğrular, RLVP ek olarak süreci doğrular.** İkisi üst üste bindiğinde hem "işi bitirmeye" hem de "kurallara uygun bitirmeye" bakan bir eğitim sinyali elde edilir — güvenle canlıya çıkabilecek bir Agent'ın ihtiyacı tam olarak budur.
 
-> **Deney 7-14 ★★★: RLVP — Sonucu Ödüllendir, Yolu Cezalandır `[genişletilmiş deney]`**
+> **Deney 7-16 ★★★: RLVP — Sonucu Ödüllendir, Yolu Cezalandır `[genişletilmiş deney]`**
 >
 > **Deney amacı**: "Sonuç ödülü + doğrulanmış yol sinyali" bileşiminin, görev başarı oranından ödün vermeden bir yandan kısıt ihlallerini düşürüp düşüremeyeceğini (ceza kullanımı), diğer yandan örnek verimliliğini artırıp artıramayacağını (kısmi ödül kullanımı) doğrulamak.
 >
@@ -685,7 +691,7 @@ Tool calling etrafındaki Agent RL çalışmalarında şu anda iki etkin hat var
 
 Araç RL'inde kaçınılmaz bir mühendislik ayrıntısı daha var: **ortam geri bildirimi token'larına kayıp maskeleme (loss masking) uygulamak**. Bir tool calling trajectory'sinde hem modelin kendi ürettiği token'lar (düşünme, araç çağrısı parametreleri) hem de ortamın döndürdüğü token'lar (kod yorumlayıcı çıktısı, arama sonuçları, müşteri temsilcisinin yanıtı) bulunur. İkinciler politika tarafından üretilmemiştir, ortam tarafından verilmiştir — bunları da policy gradient'e katarsanız model "sandbox'ın ne çıktı vereceğini tahmin etmeye" doğru eğitilir; bu hem optimizasyon hedefinden sapar hem de eğitimi kararsızlaştırır. Standart uygulama, kayıp hesaplanırken ortam geri bildirimi token'larını maskelemek ve gradyanı yalnızca modelin kendi ürettiği token'lara geri yaymaktır. ReTool'un çekirdek teknik noktalarından biri tam olarak budur (`<interpreter>` etiketleri içindeki geri bildirim token'larına gradyan maskesi uygulamak); Search-R1'in "eğitimi kararlı kılmak için retrieval edilen token'ları maskelemek" dediği şey de budur. veRL, AWorld gibi yaygın eğitim çerçevelerinin hepsinde bu mekanizma yerleşiktir.
 
-> **Deney 7-15 ★★★: ReTool — Kod Yorumlayıcıyla Güçlendirilmiş Matematik Problemi Çözme**
+> **Deney 7-14 ★★★: ReTool — Kod Yorumlayıcıyla Güçlendirilmiş Matematik Problemi Çözme**
 >
 >
 > ![Şekil 7-19: ReTool'un Metin-Kod Düşünmeyi İç İçe Geçiren Sandbox Yürütme Geri Bildirim Döngüsü](images/fig7-19.svg)
@@ -710,7 +716,7 @@ Araç RL'inde kaçınılmaz bir mühendislik ayrıntısı daha var: **ortam geri
 >
 > SFT ile RL arasındaki süre farkının kökeni bilgi yoğunluğunun farklı olmasıdır: SFT'de her token'ın bir denetim sinyali vardır, RL'de ise her episode yalnızca tek bir başarı/başarısızlık sinyali alır. Gerçek eğitimde tek adımın süresi yanıt uzunluğu arttıkça uzar ve az sayıdaki aşırı uzun yanıt, tüm eğitim döngüsünü belirgin biçimde geciktirir.
 >
-> **Deney 7-16 ★★★: AWorld-train — Sandbox'ta Araç Kullanmayı Öğrenmek**
+> **Deney 7-15 ★★★: AWorld-train — Sandbox'ta Araç Kullanmayı Öğrenmek**
 >
 >
 > ![Şekil 7-20: AWorld-train MCP Sandbox Eğitim Mimarisi ve Araç Ekosistemi](images/fig7-20.svg)

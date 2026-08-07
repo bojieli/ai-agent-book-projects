@@ -1,5 +1,11 @@
 # Modell poszt-tréning
 
+> **2026-os frissítés.** A fejezet pontosítja, hogy az „SFT memorizál, az RL általánosít” állítás a GeneralPoints/V-IRL kontrollált összehasonlításainak megfigyelése, nem egyetemes törvény. Különválasztja az eszközválaszok modellalapú és a teljes környezeti dinamika szimulációját is, és a szimulátor torzítását a tréning plafonjaként kezeli.
+>
+> Két, a minta-hatékonyságot javító út kap hangsúlyt: az On-Policy Distillation egy rollout végső jutalmát tokenenkénti útmutatássá alakítja, az RLVP pedig a különben elvesző útvonal-visszajelzést tanulható jellé teszi. Erősebb tanár hiányában az OPSD privilegizált információt használ, miközben ugyanaz a modell tölti be a tanár és a tanuló szerepét.
+>
+> A kísérletek sorrendje ebben a kiadásban: 7-13 SimpleVLA-RL; 7-14 ReTool; 7-15 AWorld-train; 7-16 RLVP.
+
 A könyv alapképlete: Ágens = LLM + Kontextus + Eszközök. Ez a fejezet magára az LLM-re – az "agyra" – összpontosít, és azt vizsgálja, hogy a poszt-tréning hogyan segíthet a modellnek hatékonyabban használni a kontextust és az eszközöket, ezáltal javítva az egész Ágensrendszer képességeit. A 6. fejezet vége rámutatott, hogy az értékelő rendszer és a szimulációs környezet a poszt-tréning két sarokköve: az értékelő környezet adja a gyakorlóterepet, az értékelési metrikák pedig a célt. Ez a fejezet ezekre a sarokkövekre építve tárgyalja, hogyan lehet ténylegesen megváltoztatni a modell súlyait – hogyan lehet képességeket a paraméterekbe sütni.
 
 Ez a fejezet nem feltételez semmilyen előzetes ismeretet a megerősítéses tanulásról vagy modelltréningről. Nem várjuk el, hogy ismerd a gradienseket vagy a policy-optimalizálást. Ehelyett abból a kérdésből indulunk ki, hogy hogyan tanul egy modell egyáltalán, világossá téve, hogy az egyes lépések mire valók, hogyan működnek, és milyen problémát oldanak meg. A fejezet végére képesnek kell lenned megválaszolni a következő kérdéseket: Hány szakaszból áll egy modell képességeinek kialakítása? Mit csinál az egyes szakaszok? Miért kell ebben a sorrendben történniük? És hova érdemes koncentrálnod a saját projektjeidben?
@@ -676,7 +682,7 @@ Más szóval, **a tiszta eredmény jutalmak vakok a sikerarány mindkét véglet
 
 **Kapcsolat az RLVR-rel (egy gyakori zavar tisztázása).** Az RLVP és az RLVR (Reinforcement Learning with Verifiable Rewards), amelyet többször említettünk ebben a fejezetben, csak egy betűben különböznek, ami szépen kiemeli a komplementaritásukat: **az RLVR eredményeket verifikál; az RLVP ezen felül folyamatokat is verifikál.** A kettő kombinálásával olyan tréning jelet kapunk, amely egyszerre összpontosít a "feladat elvégzésére" és a "megfelelő elvégzésére" – pontosan erre van szüksége egy biztonságosan telepíthető Ágensnek.
 
-> **7-14. kísérlet ★★★: RLVP – Jutalmazd az eredményt, büntesd az utat `[Kiterjesztett kísérlet]`**
+> **7-16. kísérlet ★★★: RLVP – Jutalmazd az eredményt, büntesd az utat `[Kiterjesztett kísérlet]`**
 >
 > "Kísérleti cél": Annak meghatározása, hogy az "eredmény jutalmak + verifikálható út jelek" együttesen képesek-e csökkenteni a korlátsértéseket büntetéseken keresztül és javítani a mintahatékonyságot részleges hitelen keresztül, anélkül hogy a feladat sikerarányát feláldoznák.
 >
@@ -698,7 +704,7 @@ Jelenleg két aktív kutatási irány van az Ágens RL körül az eszközhívás
 
 Az eszköz RL-nek van egy elkerülhetetlen mérnöki részlete is: "loss maszkolás a környezeti visszajelzés tokenekhez". Egy eszközhívási pálya tartalmazza a modell által generált tokeneket (gondolkodás, eszközhívási paraméterek) és a környezet által visszaadott tokeneket (kódinterpretátor kimenet, keresési eredmények, ügyfélszolgálati válaszok). Utóbbiakat nem az irányelv generálja, hanem a környezet adja – ha szerepelnek a policy gradientben, a modellt arra tréningeznénk, hogy "megjósolja, mit fog kiadni a sandbox", ami eltér az optimalizációs céltól, és instabillá teszi a tréninget. A standard gyakorlat a környezeti visszajelzés tokenek maszkolása a loss számításakor, a gradiensek visszapropagálása csak a modell által generált tokenekre. Ez a ReTool egyik alapvető technikai pontja (gradiensek maszkolása a `<interpreter>` címkékben lévő visszajelzési tokenekhez), és erre utal a Search-R1 "maszkolt visszakeresett tokenek a tréning stabilizálásához" kifejezés. A nagy tréning keretrendszereknek, mint a veRL és az AWorld, ez a mechanizmus be van építve.
 
-> **7-15. kísérlet ★★★: ReTool – Kód interpretátorral fokozott matematikai probléma megoldás**
+> **7-14. kísérlet ★★★: ReTool – Kód interpretátorral fokozott matematikai probléma megoldás**
 >
 > ![7-19. ábra: A ReTool szöveg-kód gondolkodási és sandbox-végrehajtási visszacsatolási ciklusa](images/fig7-19.svg)
 >
@@ -721,7 +727,7 @@ Az eszköz RL-nek van egy elkerülhetetlen mérnöki részlete is: "loss maszkol
 >
 > Az SFT és az RL közötti időbeli költség alapvető különbsége az eltérő információsűrűségből fakad: az SFT minden tokenhez felügyeleti jelet ad, míg az RL csak egy siker/kudarc jelet ad epizódonként. A gyakorlatban a lépésenkénti idő a válasz hosszával nő, és néhány rendkívül hosszú válasz jelentősen meghosszabbíthatja a teljes tréning ciklust.
 >
-> **7-16. kísérlet ★★★: AWorld-train – Eszközhasználat tanulása sandboxban**
+> **7-15. kísérlet ★★★: AWorld-train – Eszközhasználat tanulása sandboxban**
 >
 > ![7-20. ábra: Az AWorld-train MCP-sandbox tréningarchitektúrája és eszköz-ökoszisztémája](images/fig7-20.svg)
 >
