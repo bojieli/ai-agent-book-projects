@@ -138,6 +138,9 @@ extra_javascript:
   - extras/nav-collapse.js
   - https://unpkg.com/mermaid@11/dist/mermaid.min.js
   - extras/mermaid-init.js
+  # mathjax.js must load first: it sets the `window.MathJax` config that
+  # the MathJax bundle reads at startup (see the file header).
+  - extras/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 
 extra_css:
