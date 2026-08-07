@@ -30,6 +30,17 @@ def test_promoted_chapter_index_maps_back_to_chapter_source(tmp_path: Path):
     source.touch()
 
     assert source_path_for_page("book/chapter10/index.md", tmp_path) == source
+def test_source_path_for_page_strips_leading_slashes(tmp_path: Path):
+    """Contract: Leading slashes in page URIs must be normalized to relative repository paths.
+
+    If a page URI carries a leading slash (e.g. /book/chapter1/index.md), source_path_for_page
+    must strip it so path joining resolves under root instead of filesystem root /.
+    """
+    source = tmp_path / "book" / "chapter1.md"
+    source.parent.mkdir(parents=True)
+    source.touch()
+
+    assert source_path_for_page("/book/chapter1/index.md", tmp_path) == source
 
 
 def test_original_source_map_uses_tracked_sources_and_skips_missing_files(tmp_path: Path):
