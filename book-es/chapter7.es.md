@@ -1,5 +1,11 @@
 # Post-entrenamiento de Modelos
 
+> **Revisión de 2026.** La edición revisada aclara que «el SFT memoriza y el RL generaliza» es una observación de las comparaciones controladas GeneralPoints/V-IRL, no una ley universal. También distingue entre simular las respuestas de herramientas y simular la dinámica completa del entorno, y considera el sesgo del simulador como el techo del entrenamiento.
+>
+> Se destacan dos vías para mejorar la eficiencia de muestras: la Destilación en la Política convierte la recompensa final de un rollout en orientación token a token; RLVP convierte la retroalimentación de la trayectoria que normalmente se desperdicia en una señal aprendible. Cuando no existe un profesor más fuerte, OPSD usa información privilegiada y el mismo modelo asume los papeles de profesor y estudiante.
+>
+> Orden de los experimentos en esta edición: 7-13 SimpleVLA-RL; 7-14 ReTool; 7-15 AWorld-train; 7-16 RLVP.
+
 La fórmula central de este libro es Agente = LLM + Contexto + Herramientas. Este capítulo se centra en optimizar el LLM, el "cerebro" del sistema: a través del post-entrenamiento, el modelo aprende a aprovechar el contexto y las herramientas de manera más efectiva, elevando así la capacidad de todo el sistema de Agentes. Al final del Capítulo 6 se señaló que el sistema de evaluación y el entorno de simulación son las dos piedras angulares del post-entrenamiento: el entorno de evaluación proporciona el campo de práctica y las métricas de evaluación definen el objetivo. Este capítulo se construye sobre esas dos piedras angulares y analiza cómo modificar realmente los pesos del modelo para consolidar las capacidades directamente en los parámetros.
 
 Este capítulo está dirigido a lectores sin experiencia previa en aprendizaje por refuerzo o entrenamiento de modelos. No asumimos que entiendas de gradientes o de optimización de políticas; en cambio, explicamos desde cero cómo se entrena un modelo, aclarando el propósito, el principio y el problema que resuelve cada paso. Al terminar de leer este capítulo, deberías poder responder a las siguientes preguntas: en cuántas etapas se forjan las capacidades de un modelo, qué se hace en cada etapa, por qué deben seguir este orden estricto y en qué etapa debes enfocar tus esfuerzos según las necesidades de tu propio proyecto.
@@ -655,7 +661,7 @@ En resumen: **Las señales densas solo son efectivas cuando aportan la varianza 
 
 **Relación con RLVR.** RLVP y RLVR (Aprendizaje por Refuerzo con Recompensas Verificables) se complementan: **RLVR verifica el resultado y RLVP verifica además el proceso**. Su superposición genera una señal de entrenamiento que atiende a "completar la tarea" y a "hacerlo respetando las reglas", necesario para desplegar Agentes en entornos reales.
 
-> **Experimento 7-14 ★★★: RLVP: Recompensar el Resultado, Penalizar la Ruta `[Experimento Extendido]`**
+> **Experimento 7-16 ★★★: RLVP: Recompensar el Resultado, Penalizar la Ruta `[Experimento Extendido]`**
 >
 > **Objetivo del experimento**: Verificar si la combinación de "recompensa de resultado + señal de ruta verificada" logra reducir las violaciones de restricciones (uso de penalización) y mejorar la eficiencia de muestra (uso de recompensa parcial) sin degradar la tasa de éxito en la tarea.
 >
@@ -677,7 +683,7 @@ Actualmente existen dos rutas activas en RL para herramientas. Una es la **búsq
 
 Existe un detalle de ingeniería indispensable en RL para herramientas: el **enmascaramiento de pérdida (loss masking) sobre la retroalimentación del entorno**. Una trayectoria de llamada a herramientas contiene tokens generados por el modelo (pensamiento, parámetros de herramientas) y tokens retornados por el entorno (salidas del intérprete de código, resultados de búsqueda, respuestas de atención al cliente). Estos últimos no son generados por la política sino dados por el entorno; si se incluyen en el gradiente de política, se entrenaría al modelo para "predecir la salida del sandbox", desviando el objetivo de optimización y desestabilizando el entrenamiento. La práctica estándar consiste en enmascarar los tokens de retroalimentación del entorno al calcular la pérdida, retropropagando gradientes únicamente sobre los tokens generados por el propio modelo. Este es un punto técnico central en ReTool (enmascarando gradientes en tokens dentro de la etiqueta `<interpreter>`) y en Search-R1 ("enmascarar tokens recuperados para estabilizar el entrenamiento"), estando integrado en frameworks de entrenamiento como veRL o AWorld.
 
-> **Experimento 7-15 ★★★: ReTool: Intérprete de Código para Resolver Problemas Matemáticos**
+> **Experimento 7-14 ★★★: ReTool: Intérprete de Código para Resolver Problemas Matemáticos**
 >
 > ![Figura 7-19 ReTool entrelazando texto-código de pensamiento y bucle de retroalimentación de ejecución en sandbox](images/fig7-19.svg)
 >
@@ -700,7 +706,7 @@ Existe un detalle de ingeniería indispensable en RL para herramientas: el **enm
 >
 > La diferencia en tiempo entre SFT y RL proviene de la densidad de información: el SFT posee supervisión en cada token, mientras el RL recibe un único señal de éxito/fracaso por episodio. En el entrenamiento real, el tiempo por paso se incrementa con la longitud de la respuesta, y unas pocas respuestas excesivamente largas pueden prolongar sustancialmente el ciclo global.
 >
-> **Experimento 7-16 ★★★: AWorld-train: Aprender a Usar Herramientas en un Entorno de Pruebas**
+> **Experimento 7-15 ★★★: AWorld-train: Aprender a Usar Herramientas en un Entorno de Pruebas**
 >
 > ![Figura 7-20 Arquitectura de entrenamiento en sandbox MCP de AWorld-train y ecosistema de herramientas](images/fig7-20.svg)
 >
