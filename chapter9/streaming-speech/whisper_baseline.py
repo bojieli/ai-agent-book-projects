@@ -6,9 +6,13 @@ import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-import librosa
+try:
+    import librosa
+    import soundfile as sf
+except ImportError:
+    librosa = None
+    sf = None
 import numpy as np
-import soundfile as sf
 
 
 @dataclass
@@ -44,6 +48,8 @@ def energy_vad_events(audio: np.ndarray, sr: int, silence_ms: int = 600) -> list
     from the acoustic endpoint prevents a 4-second utterance position from being
     mislabeled as a 600 ms VAD latency.
     """
+    if len(audio) == 0:
+        return []
     frame = max(1, int(sr * 0.02))
     energies = np.array([np.sqrt(np.mean(audio[i:i + frame] ** 2) + 1e-12) for i in range(0, len(audio), frame)])
     # A conservative fixed-relative threshold keeps a long silent gap distinct
