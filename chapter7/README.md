@@ -1,6 +1,6 @@
 # 第 7 章 · 模型后训练
 
-> 预训练/SFT/RL 三阶段：何时选 SFT、何时选 RL，工具调用内化、样本效率
+> 预训练/SFT/RL 三阶段：SFT 数据合成、RL 模拟环境、单轮到多轮与工具调用、奖励设计和样本效率
 
 ← [返回主目录](../README.md) · 📖 [读本章正文](../book/chapter7.md)
 
@@ -22,9 +22,9 @@
 | 7-11 | `SFTvsRL/` | 📖 | `bojieli/SFTvsRL` 的 GeneralPoints-L/VL：同预算 SFT 与 PPO 的 ID/OOD 记忆—泛化对照 |
 | 7-12 | [SpatialReasoning 配套说明](SpatialReasoning/) · `SFTvsRL/` | 📖 | 同一 `bojieli/SFTvsRL` checkout 的 V-IRL-L/VL 训练与跨城市/规则 OOD 评估，不是独立 SpatialReasoning 代码仓库 |
 | 7-13 | [SimpleVLA-RL 配套说明](SimpleVLA-RL/) · `SimpleVLA-RL/SimpleVLA-RL/` | 📖 | `PRIME-RL/SimpleVLA-RL` 主仓与内嵌 `verl/` 已固定；OpenVLA-OFT、LIBERO/RoboTwin、checkpoint、Flash Attention、CUDA/driver 和 simulator assets 仍未形成经验证的完整依赖锁 |
-| 7-14 | [RLVP 配套说明](RLVP/) · `RLVP/rlvp/` | 📖 | 完整训练/评估代码来自固定到 `1ad30bc…` 的 `19PINE-AI/rlvp`；当前 checkout 缺失，训练未运行 |
-| 7-15 | [retool 配套说明](retool/) · `verl/` · `SandboxFusion/` | 📖 | ReTool 配方来自 `bojieli/verl`，实时代码执行依赖 `bojieli/SandboxFusion`；不是一个名为 `retool` 的独立源码仓库 |
-| 7-16 | [AWorld-train 配套说明](AWorld-train/) · `AWorld/` | 📖 | `bojieli/AWorld` 中的 GAIA MCP 沙盒与训练入口，`bojieli/verl` 为训练后端 |
+| 7-14 | [retool 配套说明](retool/) · `verl/` · `SandboxFusion/` | 📖 | ReTool 配方来自 `bojieli/verl`，实时代码执行依赖 `bojieli/SandboxFusion`；不是一个名为 `retool` 的独立源码仓库 |
+| 7-15 | [AWorld-train 配套说明](AWorld-train/) · `AWorld/` | 📖 | `bojieli/AWorld` 中的 GAIA MCP 沙盒与训练入口，`bojieli/verl` 为训练后端 |
+| 7-16 | [RLVP 配套说明](RLVP/) · `RLVP/rlvp/` | 📖 | 完整训练/评估代码来自固定到 `1ad30bc…` 的 `19PINE-AI/rlvp`；当前 checkout 缺失，训练未运行 |
 | — | `verl/` | 📖 | 为 LLM RLHF 设计的高效 RL 框架，支持 PPO/GRPO/DAPO 等 |
 | — | [Intuitor](Intuitor/) | ✅ | 训练模型的直觉推理，快速做出合理判断而不依赖详细思考链 |
 | — | `tinker-cookbook/` | 📖 | 收集各种模型训练的实用技巧与最佳实践 |
@@ -41,9 +41,9 @@
 | 7-11 | [`bojieli/SFTvsRL`](https://github.com/bojieli/SFTvsRL) → `chapter7/SFTvsRL` | `fef0a4a3367260a0934be1e40b01e4021698e023` | GeneralPoints：`bash scripts/gp_training/language_train.sh` / `bash scripts/gp_training/vl_train.sh`；评估在 `scripts/gp_evaluation/*.sh` |
 | 7-12 | 同一 [`bojieli/SFTvsRL`](https://github.com/bojieli/SFTvsRL) → `chapter7/SFTvsRL`；说明在 `chapter7/SpatialReasoning` | `fef0a4a3367260a0934be1e40b01e4021698e023` | V-IRL：`bash scripts/virl_training/vl_train.sh`；ID/规则 OOD/视觉 OOD 分别运行 `scripts/virl_evaluation/vl_{indist,rule_ood,visual_ood}_eval.sh` |
 | 7-13 | [论文](https://arxiv.org/abs/2509.09674) · [`PRIME-RL/SimpleVLA-RL`](https://github.com/PRIME-RL/SimpleVLA-RL/tree/7c51662df27b586f9e8a1ab35fcf849f2b8852f9) → `chapter7/SimpleVLA-RL/SimpleVLA-RL` | 主仓及内嵌 `verl/`：`7c51662df27b586f9e8a1ab35fcf849f2b8852f9`；外部栈没有作者给出的兼容 SHA，详见[依赖契约](SimpleVLA-RL/README.md#dependency-contract-and-lock-state) | `bash examples/run_openvla_oft_rl_libero.sh`；RoboTwin2 为 `bash examples/run_openvla_oft_rl_twin2.sh`；两者的 `SFT_MODEL_PATH` 仍是占位符 |
-| 7-14 | [`19PINE-AI/rlvp`](https://github.com/19PINE-AI/rlvp) → `chapter7/RLVP/rlvp` | `1ad30bc7e338911fb733739393d92c420f4d8bee` | 规则/credit 测试 → `scripts/phase0_baseline.py` → `scripts/run_all.sh` → `scripts/eval_checkpoint.py`；完整训练需 CUDA |
-| 7-15 | [`bojieli/verl`](https://github.com/bojieli/verl) → `chapter7/verl`；[`bojieli/SandboxFusion`](https://github.com/bojieli/SandboxFusion) → `chapter7/SandboxFusion` | veRL：`1593fc3a8cf894debdc3dece2a23ed739c282789`；SandboxFusion：`4a0d573ebd64c98234c190a9d1d49e4276199a0c` | 启动沙箱 `make run-online`；在 veRL 根目录运行 `bash recipe/retool/run_qwen2-32b_dapo.sh` |
-| 7-16 | [`bojieli/AWorld`](https://github.com/bojieli/AWorld) → `chapter7/AWorld`；训练后端 `chapter7/verl` | AWorld：`a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec`；veRL：`1593fc3a8cf894debdc3dece2a23ed739c282789` | `cd chapter7/AWorld/env && bash run-local.sh`；数据准备后在 `train/examples/train_gaia_with_aworld_verl` 运行 `bash run.sh` |
+| 7-14 | [`bojieli/verl`](https://github.com/bojieli/verl) → `chapter7/verl`；[`bojieli/SandboxFusion`](https://github.com/bojieli/SandboxFusion) → `chapter7/SandboxFusion` | veRL：`1593fc3a8cf894debdc3dece2a23ed739c282789`；SandboxFusion：`4a0d573ebd64c98234c190a9d1d49e4276199a0c` | 启动沙箱 `make run-online`；在 veRL 根目录运行 `bash recipe/retool/run_qwen2-32b_dapo.sh` |
+| 7-15 | [`bojieli/AWorld`](https://github.com/bojieli/AWorld) → `chapter7/AWorld`；训练后端 `chapter7/verl` | AWorld：`a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec`；veRL：`1593fc3a8cf894debdc3dece2a23ed739c282789` | `cd chapter7/AWorld/env && bash run-local.sh`；数据准备后在 `train/examples/train_gaia_with_aworld_verl` 运行 `bash run.sh` |
+| 7-16 | [`19PINE-AI/rlvp`](https://github.com/19PINE-AI/rlvp) → `chapter7/RLVP/rlvp` | `1ad30bc7e338911fb733739393d92c420f4d8bee` | 规则/credit 测试 → `scripts/phase0_baseline.py` → `scripts/run_all.sh` → `scripts/eval_checkpoint.py`；完整训练需 CUDA |
 
 从仓库根目录获取当前可固定的版本：
 

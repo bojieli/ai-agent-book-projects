@@ -139,11 +139,11 @@ git clone https://github.com/bojieli/minimind.git chapter7/MiniMind-pretrain/min
 git clone https://github.com/bojieli/minimind-v.git chapter7/MiniMind-pretrain/minimind-v && git -C chapter7/MiniMind-pretrain/minimind-v fetch origin ead791c530fa5f9a3549dbfe9e11ec732d18d2e5 && git -C chapter7/MiniMind-pretrain/minimind-v checkout --detach ead791c530fa5f9a3549dbfe9e11ec732d18d2e5 && test "$(git -C chapter7/MiniMind-pretrain/minimind-v rev-parse HEAD)" = "ead791c530fa5f9a3549dbfe9e11ec732d18d2e5"  # 实验 7-4
 git clone https://github.com/bojieli/AdaptThink.git chapter7/AdaptThink-original && git -C chapter7/AdaptThink-original checkout --detach 0033ad172dd53ac64004b763477407014f21b838  # 实验 7-10
 git clone https://github.com/bojieli/SFTvsRL.git chapter7/SFTvsRL && git -C chapter7/SFTvsRL checkout --detach fef0a4a3367260a0934be1e40b01e4021698e023  # 实验 7-11、7-12
-git clone https://github.com/bojieli/AWorld.git chapter7/AWorld && git -C chapter7/AWorld checkout --detach a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec  # 实验 7-16
-git clone https://github.com/bojieli/verl.git chapter7/verl && git -C chapter7/verl checkout --detach 1593fc3a8cf894debdc3dece2a23ed739c282789  # 实验 7-15 ReTool 配方；7-16 训练后端
-git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # 实验 7-15 代码沙箱
+git clone https://github.com/bojieli/AWorld.git chapter7/AWorld && git -C chapter7/AWorld checkout --detach a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec  # 实验 7-15
+git clone https://github.com/bojieli/verl.git chapter7/verl && git -C chapter7/verl checkout --detach 1593fc3a8cf894debdc3dece2a23ed739c282789  # 实验 7-14 ReTool 配方；7-15 训练后端
+git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # 实验 7-14 代码沙箱
 git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook && git -C chapter7/tinker-cookbook checkout --detach fc8449187041cf102905f3f751e6d2eac7f9f754
-git clone https://github.com/19PINE-AI/rlvp.git chapter7/RLVP/rlvp && git -C chapter7/RLVP/rlvp fetch origin 1ad30bc7e338911fb733739393d92c420f4d8bee && git -C chapter7/RLVP/rlvp checkout --detach 1ad30bc7e338911fb733739393d92c420f4d8bee && test "$(git -C chapter7/RLVP/rlvp rev-parse HEAD)" = "1ad30bc7e338911fb733739393d92c420f4d8bee"  # 实验 7-14
+git clone https://github.com/19PINE-AI/rlvp.git chapter7/RLVP/rlvp && git -C chapter7/RLVP/rlvp fetch origin 1ad30bc7e338911fb733739393d92c420f4d8bee && git -C chapter7/RLVP/rlvp checkout --detach 1ad30bc7e338911fb733739393d92c420f4d8bee && test "$(git -C chapter7/RLVP/rlvp rev-parse HEAD)" = "1ad30bc7e338911fb733739393d92c420f4d8bee"  # 实验 7-16
 git clone https://github.com/PRIME-RL/SimpleVLA-RL.git chapter7/SimpleVLA-RL/SimpleVLA-RL && git -C chapter7/SimpleVLA-RL/SimpleVLA-RL checkout --detach 7c51662df27b586f9e8a1ab35fcf849f2b8852f9  # 实验 7-13
 
 # 第 9 章 · GUI 与机器人外部复现轨道
@@ -158,7 +158,7 @@ git clone https://github.com/19PINE-AI/TalkAct.git chapter10/use-computer-while-
 git clone https://github.com/joonspk-research/generative_agents.git chapter10/generative_agents && git -C chapter10/generative_agents fetch origin fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4 && git -C chapter10/generative_agents checkout --detach fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4 && test "$(git -C chapter10/generative_agents rev-parse HEAD)" = "fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4"  # 实验 10-7
 ```
 
-> 上述九个当前缺失的 checkout（7-3、7-4、7-14、7-15 的 SandboxFusion、9-8/9-9 共用的 XLeRobot、9-9 的 RoboCrew、9-10 的 `lerobot-sim2real`、10-4、10-7）也已固定到不可变 SHA；命令会 detached checkout 并用 `rev-parse HEAD` 做相等性校验。第 10 章 `use-computer-while-calling` 已发展为独立维护的 [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)。源码存在或安装成功都不是实验完成声明。
+> 上述九个当前缺失的 checkout（7-3、7-4、7-16、7-14 的 SandboxFusion、9-8/9-9 共用的 XLeRobot、9-9 的 RoboCrew、9-10 的 `lerobot-sim2real`、10-4、10-7）也已固定到不可变 SHA；命令会 detached checkout 并用 `rev-parse HEAD` 做相等性校验。第 10 章 `use-computer-while-calling` 已发展为独立维护的 [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)。源码存在或安装成功都不是实验完成声明。
 
 </details>
 

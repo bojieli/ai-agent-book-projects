@@ -22,9 +22,9 @@ Los límites de implementación, código externo y evidencia directa de cada exp
 | 7-11 | `SFTvsRL/` | 📖 | GeneralPoints-L/VL de `bojieli/SFTvsRL`: comparación memoria-generalización ID/OOD entre SFT y PPO con el mismo presupuesto |
 | 7-12 | [documentación de SpatialReasoning](SpatialReasoning/) · `SFTvsRL/` | 📖 | Entrenamiento V-IRL-L/VL y evaluación OOD entre ciudades/reglas en el mismo *checkout* de `bojieli/SFTvsRL`; no es un repositorio SpatialReasoning independiente |
 | 7-13 | [documentación de SimpleVLA-RL](SimpleVLA-RL/) · `SimpleVLA-RL/SimpleVLA-RL/` | 📖 | Repositorio `PRIME-RL/SimpleVLA-RL` y `verl/` integrado fijados; OpenVLA-OFT, LIBERO/RoboTwin, checkpoints, Flash Attention, CUDA/controlador y recursos del simulador aún no forman un bloqueo de dependencias completamente validado |
-| 7-14 | [documentación de RLVP](RLVP/) · `RLVP/rlvp/` | 📖 | El código completo de entrenamiento/evaluación procede de `19PINE-AI/rlvp` fijado a `1ad30bc…`; el *checkout* no está presente y el entrenamiento no se ejecutó |
-| 7-15 | [documentación de retool](retool/) · `verl/` · `SandboxFusion/` | 📖 | La receta ReTool procede de `bojieli/verl` y la ejecución de código en tiempo real depende de `bojieli/SandboxFusion`; no existe un repositorio de código independiente llamado `retool` |
-| 7-16 | [documentación de AWorld-train](AWorld-train/) · `AWorld/` | 📖 | Sandbox MCP y entrada de entrenamiento de GAIA en `bojieli/AWorld`, con `bojieli/verl` como backend de entrenamiento |
+| 7-14 | [documentación de retool](retool/) · `verl/` · `SandboxFusion/` | 📖 | La receta ReTool procede de `bojieli/verl` y la ejecución de código en tiempo real depende de `bojieli/SandboxFusion`; no existe un repositorio de código independiente llamado `retool` |
+| 7-15 | [documentación de AWorld-train](AWorld-train/) · `AWorld/` | 📖 | Sandbox MCP y entrada de entrenamiento de GAIA en `bojieli/AWorld`, con `bojieli/verl` como backend de entrenamiento |
+| 7-16 | [documentación de RLVP](RLVP/) · `RLVP/rlvp/` | 📖 | El código completo de entrenamiento/evaluación procede de `19PINE-AI/rlvp` fijado a `1ad30bc…`; el *checkout* no está presente y el entrenamiento no se ejecutó |
 | — | `verl/` | 📖 | Marco eficiente de RLHF para LLM compatible con PPO, GRPO, DAPO y otros algoritmos |
 | — | [Intuitor](Intuitor/) | ✅ | Entrena razonamiento intuitivo para obtener decisiones plausibles con rapidez sin depender de una cadena de pensamiento detallada |
 | — | `tinker-cookbook/` | 📖 | Colección de técnicas prácticas y mejores prácticas para entrenar modelos |

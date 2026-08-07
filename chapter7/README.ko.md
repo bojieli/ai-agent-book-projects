@@ -20,9 +20,9 @@
 | 7-11 | `SFTvsRL/` | 📖 | `bojieli/SFTvsRL`의 GeneralPoints-L/VL로, 동일한 예산에서 SFT와 PPO의 ID/OOD 기억·일반화 성능을 비교합니다. |
 | 7-12 | [SpatialReasoning 연계 설명](SpatialReasoning/) · `SFTvsRL/` | 📖 | 동일한 `bojieli/SFTvsRL` 체크아웃에서 V-IRL-L/VL 학습과 도시 간·규칙 OOD 평가를 수행하며, 별도의 SpatialReasoning 코드 저장소가 아닙니다. |
 | 7-13 | [SimpleVLA-RL 연계 설명](SimpleVLA-RL/) · `SimpleVLA-RL/SimpleVLA-RL/` | 📖 | `PRIME-RL/SimpleVLA-RL` 주 저장소와 내부 `verl/`은 고정되어 있습니다. OpenVLA-OFT, LIBERO/RoboTwin, 체크포인트, Flash Attention, CUDA/드라이버, 시뮬레이터 자산을 아우르는 완전한 의존성 잠금 상태는 아직 검증되지 않았습니다. |
-| 7-14 | [RLVP 연계 설명](RLVP/) · `RLVP/rlvp/` | 📖 | 전체 학습·평가 코드는 `1ad30bc…`에 고정된 `19PINE-AI/rlvp`에서 가져옵니다. 현재 체크아웃이 없어 학습은 실행하지 않았습니다. |
-| 7-15 | [retool 연계 설명](retool/) · `verl/` · `SandboxFusion/` | 📖 | ReTool 레시피는 `bojieli/verl`에서 가져오며 실시간 코드 실행은 `bojieli/SandboxFusion`에 의존합니다. `retool`이라는 별도의 소스 저장소는 없습니다. |
-| 7-16 | [AWorld-train 연계 설명](AWorld-train/) · `AWorld/` | 📖 | `bojieli/AWorld`의 GAIA MCP 샌드박스와 학습 진입점을 사용하며, 학습 백엔드는 `bojieli/verl`입니다. |
+| 7-14 | [retool 연계 설명](retool/) · `verl/` · `SandboxFusion/` | 📖 | ReTool 레시피는 `bojieli/verl`에서 가져오며 실시간 코드 실행은 `bojieli/SandboxFusion`에 의존합니다. `retool`이라는 별도의 소스 저장소는 없습니다. |
+| 7-15 | [AWorld-train 연계 설명](AWorld-train/) · `AWorld/` | 📖 | `bojieli/AWorld`의 GAIA MCP 샌드박스와 학습 진입점을 사용하며, 학습 백엔드는 `bojieli/verl`입니다. |
+| 7-16 | [RLVP 연계 설명](RLVP/) · `RLVP/rlvp/` | 📖 | 전체 학습·평가 코드는 `1ad30bc…`에 고정된 `19PINE-AI/rlvp`에서 가져옵니다. 현재 체크아웃이 없어 학습은 실행하지 않았습니다. |
 | — | `verl/` | 📖 | verl은 대규모 언어 모델의 RLHF 학습을 위해 설계된 효율적인 강화 학습 프레임워크로, PPO, GRPO, DAPO 등 여러 알고리즘을 지원합니다. |
 | — | [Intuitor](Intuitor/) | ✅ | 모델의 직관적 사고 능력을 학습해 상세한 사고 사슬 없이도 빠르고 합리적인 판단을 내릴 수 있게 합니다. |
 | — | `tinker-cookbook/` | 📖 | 모델 학습을 위한 여러 실전 팁과 모범 사례를 모았습니다. |

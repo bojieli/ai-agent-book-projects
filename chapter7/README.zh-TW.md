@@ -20,9 +20,9 @@
 | 7-11 | `SFTvsRL/` | 📖 | 系統性對比監督微調與強化學習在不同任務上的效果與適用場景 |
 | 7-12 | [SpatialReasoning](SpatialReasoning/) | 📖 | 訓練模型的空間推理能力，處理位置、方向、距離等空間關係 |
 | 7-13 | [SimpleVLA-RL](SimpleVLA-RL/) | 📖 | 視覺-語言-動作 RL，讓模型理解視覺輸入並執行相應動作 |
-| 7-14 | [RLVP](RLVP/) | 📖 | 獎勵結果、懲罰路徑（RLVP）後訓練研究（實驗 7-14 配套）；完整訓練/評估程式碼在獨立論文倉庫 `19PINE-AI/rlvp`，需自行克隆 |
-| 7-15 | [retool](retool/) | 📖 | 多輪對話 + 程式碼沙箱提升數學推理，SFT→RL 兩階段；Qwen2.5-32B + AIME 2024 + DAPO + SandboxFusion |
-| 7-16 | `AWorld/` · [AWorld-train](AWorld-train/) | 📖 | 基於 AWorld 框架訓練具身 Agent，在虛擬環境中執行任務並從經驗中學習 |
+| 7-14 | [retool](retool/) | 📖 | 多輪對話 + 程式碼沙箱提升數學推理，SFT→RL 兩階段；Qwen2.5-32B + AIME 2024 + DAPO + SandboxFusion |
+| 7-15 | `AWorld/` · [AWorld-train](AWorld-train/) | 📖 | 基於 AWorld 框架訓練具身 Agent，在虛擬環境中執行任務並從經驗中學習 |
+| 7-16 | [RLVP](RLVP/) | 📖 | 獎勵結果、懲罰路徑（RLVP）後訓練研究（實驗 7-16 配套）；完整訓練/評估程式碼在獨立論文倉庫 `19PINE-AI/rlvp`，需自行克隆 |
 | — | `verl/` | 📖 | 為 LLM RLHF 設計的高效 RL 框架，支援 PPO/GRPO/DAPO 等 |
 | — | [Intuitor](Intuitor/) | ✅ | 訓練模型的直覺推理，快速做出合理判斷而不依賴詳細思考鏈 |
 | — | `tinker-cookbook/` | 📖 | 收集各種模型訓練的實用技巧與最佳實踐 |

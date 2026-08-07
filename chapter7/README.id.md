@@ -20,9 +20,9 @@
 | 7-11 | `SFTvsRL/` | 📖 | Membandingkan memori dan generalisasi SFT dengan RL pada anggaran yang sama. |
 | 7-12 | [SpatialReasoning](SpatialReasoning/) · `SFTvsRL/` | 📖 | Melatih serta mengevaluasi spatial reasoning ID dan OOD. |
 | 7-13 | [SimpleVLA-RL](SimpleVLA-RL/) · `SimpleVLA-RL/SimpleVLA-RL/` | 📖 | Menggabungkan visi, bahasa, dan tindakan dalam pelatihan RL. |
-| 7-14 | [RLVP](RLVP/) · `RLVP/rlvp/` | 📖 | Mereproduksi riset RLVP: memberi reward pada hasil dan penalti pada jalur. |
-| 7-15 | [retool](retool/) · `verl/` · `SandboxFusion/` | 📖 | Melatih penggunaan code interpreter dengan backend veRL dan sandbox eksekusi. |
-| 7-16 | [AWorld-train](AWorld-train/) · `AWorld/` | 📖 | Melatih Agent menggunakan tool pada lingkungan GAIA berbasis AWorld. |
+| 7-14 | [retool](retool/) · `verl/` · `SandboxFusion/` | 📖 | Melatih penggunaan code interpreter dengan backend veRL dan sandbox eksekusi. |
+| 7-15 | [AWorld-train](AWorld-train/) · `AWorld/` | 📖 | Melatih Agent menggunakan tool pada lingkungan GAIA berbasis AWorld. |
+| 7-16 | [RLVP](RLVP/) · `RLVP/rlvp/` | 📖 | Mereproduksi riset RLVP: memberi reward pada hasil dan penalti pada jalur. |
 | — | `verl/` | 📖 | Framework RLHF efisien untuk PPO, GRPO, DAPO, dan algoritme lain. |
 | — | [Intuitor](Intuitor/) | ✅ | Melatih penalaran intuitif tanpa chain-of-thought panjang. |
 | — | `tinker-cookbook/` | 📖 | Kumpulan resep dan praktik terbaik pelatihan model. |
