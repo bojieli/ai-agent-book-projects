@@ -334,7 +334,7 @@ rubric:
       weight: essential        # Essential item
       scoring:
         4_Excellent: "Correctly answers Dr. Chen, and links to daughter Lily"
-         3_Good: "Correctly answers Dr. Chen but does not mention that Dr. Chen is Lily's doctor"
+        3_Good: "Correctly answers Dr. Chen but does not mention that Dr. Chen is Lily's doctor"
         2_Passable: "Gives the correct doctor but with additional uncertain information"
         1_Fail: "Gives an incorrect doctor's name, or answers 'I don't know'"
 
