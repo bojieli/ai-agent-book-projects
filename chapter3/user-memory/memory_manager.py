@@ -310,6 +310,7 @@ class NotesMemoryManager(BaseMemoryManager):
             # Duplicate found - keep whichever is newer, union the tags.
             keeper, dropped = (existing, note) if existing.updated_at >= note.updated_at else (note, existing)
             keeper.tags = sorted(set(keeper.tags) | set(dropped.tags))
+            keeper.created_at = min(existing.created_at, note.created_at)
             keeper.updated_at = max(existing.updated_at, note.updated_at)
             if keeper is note:  # replace the reference we already stored
                 idx = deduped.index(existing)
