@@ -80,20 +80,29 @@ def normalize_number(text: str) -> Optional[str]:
     # 确保是字符串
     text = str(text)
 
+    # Unwrap LaTeX formatting before parsing; the wrapped content may itself be numeric.
+    cleaned = re.sub(r'\\(?:text|mathrm|mathbf)\s*\{([^}]*)\}', r'\1', text)
+    cleaned = cleaned.replace("\\$", "").replace("$", "").replace("\\,", "").replace("\\text", "")
+    cleaned = cleaned.replace(",", "")
+
     # Evaluate \frac{a}{b} before brace stripping (else "\frac{6}{2}" becomes "frac62").
-    frac = re.search(r'(-)?\s*\\(?:d)?frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}', text)
+    frac = re.search(r'(-)?\s*\\(?:d)?frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}', cleaned)
     if frac:
         try:
             sign = -1.0 if frac.group(1) else 1.0
-            num = float(frac.group(2).replace(",", "").replace("$", "").replace("\\$", "").strip())
-            den = float(frac.group(3).replace(",", "").replace("$", "").replace("\\$", "").strip())
+            num_match = re.match(r'\s*(-?\s*\d+(?:\.\d+)?)', frac.group(2))
+            den_match = re.match(r'\s*(-?\s*\d+(?:\.\d+)?)', frac.group(3))
+            if not num_match or not den_match:
+                raise ValueError("fraction component does not start with a number")
+            num = float(num_match.group(1).replace(" ", ""))
+            den = float(den_match.group(1).replace(" ", ""))
             if den != 0:
                 return _format_normalized_number(sign * (num / den))
         except ValueError:
             pass
 
-    # Plain a/b (e.g. boxed "6/2") before taking the first digit run alone.
-    slash = re.fullmatch(r'\s*(-?\s*\d+(?:\.\d+)?)\s*/\s*(-?\s*\d+(?:\.\d+)?)\s*', text)
+    # Plain a/b before taking the first digit run alone; allow spaces and units.
+    slash = re.search(r'(-?\s*\d+(?:\.\d+)?)\s*/\s*(-?\s*\d+(?:\.\d+)?)', cleaned)
     if slash:
         try:
             num = float(slash.group(1).replace(" ", ""))
@@ -317,4 +326,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
