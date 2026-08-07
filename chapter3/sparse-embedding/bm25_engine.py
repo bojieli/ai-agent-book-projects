@@ -60,14 +60,16 @@ class TextProcessor:
             r'#[0-9A-Fa-f]{3,8}\b|0x[0-9A-Fa-f]+\b',
             # Numbers (including decimals)
             r'\b\d+(?:\.\d+)?\b',
+            # Words with apostrophes
+            r"\b[a-zA-Z]+'[a-zA-Z]+\b",
             # Acronyms and uppercase words (USA, NASA, API)
             r'\b[A-Z]{2,}\b',
             # Mixed case words (JavaScript, PyTorch)
             r'\b[A-Z][a-z]+[A-Z][a-zA-Z]*\b',
             # Alphanumeric combinations (Python3, ES6, 3DS)
             r'\b[A-Za-z]+\d+\b|\b\d+[A-Za-z]+\b',
-            # Regular words (including apostrophes)
-            r"\b[a-zA-Z]+(?:'[a-z]+)?\b",
+            # Regular words
+            r"\b[a-zA-Z]+\b",
         ]
         
         # Combine all patterns
