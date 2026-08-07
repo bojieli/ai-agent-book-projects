@@ -19,6 +19,10 @@ def prepare_animation_data(history_df: pd.DataFrame, top_n: int = 15) -> dict:
     Returns:
         Dictionary with animation data
     """
+    # Convert date column to Timestamp to support ISO date strings and date objects
+    if history_df is not None and len(history_df) > 0 and 'date' in history_df.columns:
+        history_df = history_df.copy()
+        history_df['date'] = pd.to_datetime(history_df['date'])
     # Get all unique dates
     dates = sorted(history_df['date'].unique())
     if len(dates) == 0:

@@ -57,7 +57,7 @@ def extract_answer_from_gsm8k_format(text: str) -> Optional[str]:
     if "####" in text:
         parts = text.split("####")
         if len(parts) > 1:
-            return parts[1].strip()
+            return parts[-1].strip()
     
     return None
 
@@ -101,12 +101,12 @@ def normalize_number(text: str) -> Optional[str]:
         except ValueError:
             pass
 
-    # Plain a/b (e.g. boxed "6/2" or "6/2 kg") before taking the first digit run alone.
-    slash = re.search(r'(-?\d+(?:\.\d+)?)\s*/\s*(-?\d+(?:\.\d+)?)', cleaned)
+    # Plain a/b before taking the first digit run alone; allow spaces and units.
+    slash = re.search(r'(-?\s*\d+(?:\.\d+)?)\s*/\s*(-?\s*\d+(?:\.\d+)?)', cleaned)
     if slash:
         try:
-            num = float(slash.group(1))
-            den = float(slash.group(2))
+            num = float(slash.group(1).replace(" ", ""))
+            den = float(slash.group(2).replace(" ", ""))
             if den != 0:
                 return _format_normalized_number(num / den)
         except ValueError:

@@ -187,14 +187,14 @@ class MultiRoleOrchestrator:
             if name == "transfer_to_agent":
                 target = args.get("target_role", "")
                 reason = args.get("reason", "")
-                if target == self.current_role:
+                if isinstance(target, str) and target == self.current_role:
                     # 拒绝自我移交：让模型改用自己的工具或选别的角色
                     result = (
                         f"移交失败：你已经是 {target} 角色，不能移交给自己。"
                         "请直接使用你自己的工具完成当前部分，或移交给其他角色。"
                     )
                     self._log(f"{C.RED}└── transfer 被拒: 不能移交给自己 ({target}){C.RESET}")
-                elif target in ROLES:
+                elif isinstance(target, str) and target in ROLES:
                     pending_transfer = Handoff(self.current_role, target, reason)
                     self.activity.append((self.current_role, "transfer", target))
                     result = f"已移交给 {target}。对方将继承完整对话历史并继续处理。"
