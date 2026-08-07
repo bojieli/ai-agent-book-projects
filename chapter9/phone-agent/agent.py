@@ -340,8 +340,8 @@ def conversation_turn(
     if should_complete and not explicit:
         raise ValueError("model attempted completion without explicit confirmation")
     if should_complete and (
-        not str(completion.get("appointment_time", "")).strip()
-        or not str(completion.get("confirmation_number", "")).strip()
+        not str(completion.get("appointment_time") or "").strip()
+        or not str(completion.get("confirmation_number") or "").strip()
     ):
         raise ValueError("model attempted completion without both critical fields")
     if should_complete and (
