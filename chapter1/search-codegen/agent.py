@@ -161,9 +161,10 @@ code_interpreter 实际执行，不得口算或声称运行了代码。"""
                 action = item.get("action")
                 if isinstance(action, dict):
                     for source in action.get("sources") or []:
-                        if isinstance(source, dict) and source.get("url"):
+                        url = source if isinstance(source, str) else (source.get("url") if isinstance(source, dict) else None)
+                        if url:
                             citations.append(
-                                {"type": "url_citation", "url": source["url"]}
+                                {"type": "url_citation", "url": url}
                             )
         return citations
 
