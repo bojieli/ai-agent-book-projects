@@ -36,3 +36,24 @@ def test_search_web_handles_null_page_content():
     res = tool.search_web("test query", num_results=1)
     assert res['num_results'] == 1
     assert res['results'][0]['content_length'] == 0
+
+def test_fetch_webpage_title_with_nested_elements():
+    """
+    Ensure fetch_webpage extracts title text correctly when title tag has nested HTML elements.
+    """
+    html_content = "<html><head><title>Report <span>2026</span></title></head><body><p>Test content</p></body></html>"
+    mock_resp = MagicMock()
+    mock_resp.status_code = 200
+    mock_resp.text = html_content
+    mock_resp.raise_for_status = MagicMock()
+
+    import requests
+    requests.get = MagicMock(return_value=mock_resp)
+
+    tool = WebTools.__new__(WebTools)
+    tool.page_cache = {}
+    tool.html_converter = MagicMock()
+    tool.html_converter.handle.return_value = "Test content"
+
+    res = tool.fetch_webpage("http://example.com/report")
+    assert res['title'] == "Report 2026"

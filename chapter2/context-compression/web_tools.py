@@ -3,6 +3,8 @@ Web tools for searching and fetching web pages
 """
 
 import json
+import html
+import re
 import logging
 import requests
 from typing import List, Dict, Any, Optional
@@ -159,9 +161,16 @@ class WebTools:
             if len(cleaned_text) > Config.MAX_WEBPAGE_LENGTH:
                 cleaned_text = cleaned_text[:Config.MAX_WEBPAGE_LENGTH] + "\n\n[Content truncated...]"
             
+            title = 'No title'
+            if soup.title:
+                raw_title = soup.title.get_text()
+                cleaned_title = html.unescape(re.sub(r'<[^>]+>', '', raw_title)).strip()
+                if cleaned_title:
+                    title = cleaned_title
+
             result = {
                 'url': url,
-                'title': soup.title.string if soup.title else 'No title',
+                'title': title,
                 'content': cleaned_text,
                 'content_length': len(cleaned_text),
                 'success': True,
