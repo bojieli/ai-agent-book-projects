@@ -93,11 +93,11 @@ def normalize_number(text: str) -> Optional[str]:
             pass
 
     # Plain a/b (e.g. boxed "6/2") before taking the first digit run alone.
-    slash = re.fullmatch(r'\s*(-?\d+(?:\.\d+)?)\s*/\s*(-?\d+(?:\.\d+)?)\s*', text)
+    slash = re.fullmatch(r'\s*(-?\s*\d+(?:\.\d+)?)\s*/\s*(-?\s*\d+(?:\.\d+)?)\s*', text)
     if slash:
         try:
-            num = float(slash.group(1))
-            den = float(slash.group(2))
+            num = float(slash.group(1).replace(" ", ""))
+            den = float(slash.group(2).replace(" ", ""))
             if den != 0:
                 return _format_normalized_number(num / den)
         except ValueError:
