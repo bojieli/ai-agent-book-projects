@@ -411,3 +411,15 @@ def test_markdown_tolerates_null_percentage_fields() -> None:
     assert "| openai | 8192 | 512 | 0 | — | —/—/— | —/—/— | — | — | — | — | — |" in result
     assert "| openai | 0 | — | 0 | — | 0.00 |" in result
     assert "| openai | 1 | — | — | — | — |" in result
+
+def test_export_campaign_summary_returns_report_and_markdown(tmp_path: Path) -> None:
+    from analysis import export_campaign_summary
+
+    store = CampaignStore(tmp_path / "summary.sqlite3")
+    store.bind_campaign("exp-test", {"providers": [], "workload": {}, "availability": {}, "rate_limit": {}, "agent_cost": {}})
+    store.close()
+
+    exported = export_campaign_summary(tmp_path / "summary.sqlite3", campaign_id="exp-test")
+    assert "report" in exported
+    assert "markdown" in exported
+    assert exported["official_complete"] is False

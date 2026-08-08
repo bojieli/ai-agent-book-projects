@@ -828,6 +828,18 @@ def markdown(report: dict[str, Any]) -> str:
         "```", "",
     ])
     return "\n".join(lines)
+def export_campaign_summary(
+    db_path: Path, config_path: Path | None = None, campaign_id: str = "experiment-6-8"
+) -> dict[str, Any]:
+    """Export structured JSON and Markdown summary metrics for a campaign database."""
+    cfg = config_path or DEFAULT_CONFIG
+    report = analyze(db_path, cfg, campaign_id)
+    md_text = markdown(report)
+    return {
+        "report": report,
+        "markdown": md_text,
+        "official_complete": report["completion_audit"]["official_complete"],
+    }
 
 
 def main() -> int:
