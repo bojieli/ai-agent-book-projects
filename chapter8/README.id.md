@@ -16,7 +16,7 @@
 | 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Memberi Hermes seluruh buku dan source-nya sendiri; ia memilih peningkatan, mengubah dirinya, dan menjadikan tiap penolakan Reviewer sebagai putaran belajar baru sampai diterima. |
 | 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | Eksperimen 8-7 mengevaluasi pembelajaran, transfer, perubahan aturan, dan retensi jangka panjang. |
 | 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | Gerbang konfirmasi operasi berisiko tinggi |
-| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | Mengubah umpan balik tulisan menjadi Skill yang dapat diverifikasi |
+| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | Mengubah umpan balik tulisan menjadi Skill yang dapat diverifikasi; bab ini menghubungkan Skill tanda kutip lengkung dengan data sintetis yang diaudit dan post-training, serta memisahkan kegagalan tokenizer/Harness pada penyalinan eksak |
 
 Semua eksperimen menyediakan entry point offline dan unit test tanpa API Key; jalur yang membutuhkan model nyata atau browser dijelaskan dalam README proyek.
 

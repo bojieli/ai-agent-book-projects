@@ -15,8 +15,8 @@
 | `AWorld/` · [AWorld-train](AWorld-train/) | 📖 | AWorld çerçevesine dayalı olarak somutlaşmış (embodied) ajanları eğitir; ajanların sanal bir ortamda karmaşık görevleri yerine getirmesini ve deneyimden öğrenmesini sağlar. |
 | `SFTvsRL/` | 📖 | Denetimli İnce Ayar (SFT) ve Pekiştirmeli Öğrenmenin (RL) farklı görevlerdeki etkinliğini sistematik olarak karşılaştırır; her iki yöntemin güçlü yanlarını, zayıf yanlarını ve uygun uygulama senaryolarını analiz eder. |
 | [premature-completion-dpo](premature-completion-dpo/) (7-17) | ✅ | GPU üzerinde erken tamamlama bad case için DPO düzeltmesi. |
-| [curly-quote-sft](curly-quote-sft/) (7-18) | ✅ | Açık Qwen3-8B ile GPU üzerinde kapsam duyarlı Çince kıvrımlı tırnak SFT'si. |
-| [exact-copy-sft](exact-copy-sft/) (7-19) | ✅ | Açık Qwen3-8B ile GPU üzerinde byte-exact özel dize kopyalama SFT'si. |
+| [curly-quote-sft](curly-quote-sft/) (7-18) | ✅ | Denetimli kapsam duyarlı Çince kıvrımlı tırnak SFT'si: 10 belge türü ve 9 programlama dilinde 1024/256/256 train/holdout/sınır örneği; Qwen3-8B exact 96,9%/97,7%, korunan alan 100%. |
+| [exact-copy-sft](exact-copy-sft/) (7-19) | ✅ | Denetimli byte-exact özel dize kopyalama SFT'si: 1024/256/256 örnek; Qwen3-8B holdout 78,9%, sınır 80,1%, Qwen3/Qwen2.5/Mistral tokenizer denetimiyle. |
 | `verl/` | 📖 | verl, büyük dil modellerinin RLHF eğitimi için özel olarak tasarlanmış verimli bir pekiştirmeli öğrenme çerçevesidir; PPO, GRPO ve DAPO gibi çeşitli algoritmaları destekler. |
 | [Intuitor](Intuitor/) | ✅ | Modellerin sezgisel muhakeme yeteneğini eğitir; ayrıntılı düşünce zincirleri gerektirmeden hızlı, makul kararlar vermelerini sağlar. |
 | [MultilingualReasoning](MultilingualReasoning/) | ✅ | Modellerin çok dilli ortamlardaki muhakeme yeteneğini eğitir; diller arası görevlerdeki performansı artırır. |
