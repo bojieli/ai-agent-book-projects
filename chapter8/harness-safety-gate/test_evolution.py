@@ -143,6 +143,14 @@ class CandidateGateTest(unittest.TestCase):
                                  execute=execute, confirm_token=token)
         self.assertEqual("rejected", third["status"])
         self.assertEqual(1, len(calls))
+    def test_generate_synthetic_perturbations_creates_edge_cases(self):
+        from evolution import generate_synthetic_perturbations
+        sample = [{"id": "t1", "tool_name": "delete_file", "args": {"path": "/tmp/a"}}]
+        perturbed = generate_synthetic_perturbations(sample)
+        self.assertEqual(3, len(perturbed))
+        self.assertIsNone(perturbed[0]["args"])
+        self.assertEqual("  ", perturbed[1]["tool_name"])
+        self.assertIsInstance(perturbed[2]["args"], list)
 
     def test_suspended_call_never_reaches_executor(self):
         case = self.boundary[0]  # 第六章实验 6-5 的"高风险删除前确认"场景
