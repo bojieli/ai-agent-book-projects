@@ -140,3 +140,34 @@ def test_model_errors_propagate_without_fallback():
     client = SimpleNamespace(chat=SimpleNamespace(completions=BrokenCompletions()))
     with pytest.raises(RuntimeError, match="provider unavailable"):
         react_plan("Call Jane and ask for the missing time", client=client, model="planner-test")
+def test_conversation_turn_rejects_none_critical_completion_fields():
+    plan = direct_plan(
+        callee_name="Jane",
+        goal="Confirm a time",
+        context="Tuesday afternoon",
+        instructions="Ask and confirm",
+    )
+    client = FakeClient(
+        [
+            {
+                "assistant_message": "Thanks.",
+                "explicit_confirmation_observed": True,
+                "should_complete": True,
+                "completion": {
+                    "result": "Local confirmation recorded.",
+                    "appointment_time": None,
+                    "confirmation_number": "MAPLE-7",
+                    "notes": "No external organization was contacted or booking made.",
+                },
+            }
+        ]
+    )
+    with pytest.raises(ValueError, match="without both critical fields"):
+        conversation_turn(
+            plan,
+            [],
+            "I explicitly confirm Maple seven.",
+            client=client,
+            model="planner-test",
+            provider_name="injected-test",
+        )
