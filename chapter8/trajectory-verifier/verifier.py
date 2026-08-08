@@ -66,7 +66,7 @@ def _assistant_text(trajectory: Dict[str, Any]) -> str:
     if not isinstance(messages, list):
         messages = []
     return "\n".join(
-        str(message.get("content", ""))
+        str(message.get("content") or "")
         for message in messages
         if isinstance(message, dict) and message.get("role") == "assistant"
     )
