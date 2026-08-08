@@ -377,6 +377,10 @@ Continual evolution harus memisahkan eksekusi online dari pembelajaran offline: 
 
 ## Pertanyaan Refleksi
 
+### Hasil Eksperimen Terbaru
+
+Eksperimen 8-8 dan 8-9 juga dijalankan dengan panggilan model/API nyata. Pada 8-8, pemeriksaan keamanan eksternal dengan benar menolak kandidat model yang tidak aman. Pada 8-9, proses pertama hanya mendeteksi 0/8 dan salah menandai 7/8 teks normal; setelah penyaringan di luar model dan fallback deterministik, proses akhir mendeteksi 8/8, tidak merusak 0/8 teks normal, dan menggabungkan 21 kandidat menjadi 8 aturan.
+
 1. ★★ Sebuah experience document didukung oleh tiga trajectories yang berhasil dan satu trajectory yang gagal. Kegagalan terjadi dengan versi API yang lebih baru. Bagaimana sistem harus menentukan apakah pengalaman tersebut telah ditiadakan (invalidated) atau applicability conditions-nya telah berubah?
 2. ★★ Kepuasan pengguna Agent layanan pelanggan meningkat, tetapi tingkat pelanggaran aturannya juga meningkat. Mengapa kepuasan tidak dapat berfungsi sebagai satu-satunya learning signal? Bagaimana Anda akan merancang guardrail metrics?
 3. ★★★ Masalah "false promise" yang sama dapat dikurangi melalui sebuah Prompt, pemeriksaan Harness, atau parameter training. Bukti apa yang akan Anda gunakan untuk memilih di mana modifikasi harus dilakukan?

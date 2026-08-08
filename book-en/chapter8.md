@@ -377,6 +377,10 @@ Continual evolution should separate online execution from offline learning: reco
 
 ## Questions for Reflection
 
+### Recent Experiment Results
+
+Experiments 8-8 and 8-9 were also run with real model/API calls. In 8-8, the real model’s unsafe candidate was correctly rejected by the external safety gates. In 8-9, the first run produced 0/8 detection and 7/8 false positives; after model-external filtering and deterministic fallback, the final run detected 8/8, harmed 0/8 normal texts, and merged 21 candidates into 8 rules.
+
 1. ★★ An experience document is supported by three successful trajectories and one failed trajectory. The failure occurred with a newer API version. How should the system determine whether the experience has been invalidated or its applicability conditions have changed?
 2. ★★ A customer-service Agent’s user satisfaction increases, but its rate of rule violations also rises. Why can satisfaction not serve as the sole learning signal? How would you design guardrail metrics?
 3. ★★★ The same “false promise” problem can be mitigated through a Prompt, Harness checks, or parameter training. What evidence would you use to choose where to make the modification?

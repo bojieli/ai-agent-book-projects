@@ -377,6 +377,10 @@ Tiến hóa liên tục cần tách thực thi trực tuyến khỏi học ngo�
 
 ## Câu hỏi suy ngẫm
 
+### Kết quả thí nghiệm mới nhất
+
+Các thí nghiệm 8-8 và 8-9 cũng được chạy với lời gọi model/API thực. Ở 8-8, các cổng an toàn bên ngoài đã đúng khi từ chối candidate không an toàn do model tạo ra. Ở 8-9, lần chạy đầu chỉ phát hiện 0/8 và đánh dấu nhầm 7/8 văn bản bình thường; sau khi lọc bên ngoài model và thêm fallback xác định, lần chạy cuối đạt phát hiện 8/8, nhầm 0/8 và gộp 21 candidate thành 8 quy tắc.
+
 1. ★★ Một tài liệu kinh nghiệm được ba quỹ đạo thành công và một quỹ đạo thất bại hỗ trợ. Thất bại xảy ra trên phiên bản API mới hơn. Hệ thống nên xác định đây là kinh nghiệm đã bị bác bỏ hay điều kiện áp dụng đã thay đổi như thế nào?
 2. ★★ Mức độ hài lòng của người dùng với Agent chăm sóc khách hàng tăng lên, nhưng tỷ lệ vi phạm quy tắc cũng tăng. Tại sao không thể dùng mức độ hài lòng làm tín hiệu học tập duy nhất? Bạn sẽ thiết kế các chỉ số rào chắn như thế nào?
 3. ★★★ Cùng một vấn đề “cam kết sai sự thật” có thể được giảm nhẹ bằng Prompt, kiểm tra Harness hoặc huấn luyện tham số. Bạn sẽ dựa trên những bằng chứng nào để chọn vị trí sửa đổi?

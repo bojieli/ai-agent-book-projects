@@ -377,6 +377,10 @@ A folyamatos evolúciónak el kell választania az online végrehajtást az offl
 
 ## Elgondolkodtató kérdések
 
+### Friss kísérleti eredmények
+
+A 8-8. és 8-9. kísérlet valódi modell- és API-hívásokkal is lefutott. A 8-8-ban a külső biztonsági ellenőrzések helyesen elutasították a modell nem biztonságos jelöltjét. A 8-9 első futása 0/8 felismerést és 7/8 téves riasztást adott; külső szűrés és determinisztikus tartalékút után a végső futás 8/8 felismerést, 0/8 téves riasztást és 21 jelöltből 8 szabályt ért el.
+
 1. ★★ Egy tapasztalati dokumentumot három sikeres trajektória és egy sikertelen trajektória támaszt alá. A sikertelen egy újabb API-verzióval történt. Hogyan határozza meg a rendszer, hogy a tapasztalat érvénytelenné vált, vagy az alkalmazási feltételei változtak meg?
 2. ★★ Egy ügyfélszolgálati ágens felhasználói elégedettsége nő, de a szabálysértések aránya is emelkedik. Miért nem szolgálhat az elégedettség az egyetlen tanulási jelként? Hogyan tervezne védőkorlát-mérőszámokat?
 3. ★★★ Ugyanaz a „hamis ígéret" probléma enyhíthető Prompt-pal, Harness-ellenőrzéssel vagy paramétertanítással. Milyen bizonyítékokat használna a módosítás helyének kiválasztásához?

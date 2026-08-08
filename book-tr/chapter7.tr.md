@@ -819,6 +819,10 @@ Bu bölüm, parametre güncellemesinde "nasıl eğitilir" sorusunu yanıtladı. 
 
 ## Düşünce Soruları
 
+### Güncel Deney Sonucu
+
+7-17 deneyinde 24 coding agent hatalı örneğiyle Qwen2.5-7B için bir LoRA bağdaştırıcısı eğitildi. Sabit “tamamla” ve “doğrulamaya devam et” karşılaştırmasında tamamlanmamış görevlerde doğru karar 3/12’den 11/12’ye çıktı; tamamlanmış görevlerin ayrılmış kümesi 8/8 kaldı. Serbest üretim aşırı temkinli olduğundan ana sonuç sabit karşılaştırmadır; bu, üretimdeki genel başarı oranının arttığını göstermez.
+
 1. ★★ Felaket unutma — belirli bir göreve yönelik bir ince ayarın modelin var olan genel yeteneklerini (örneğin genel tool calling'i) bozması — Agent senaryolarında özellikle çetrefillidir. Tüm parametrelerin ince ayarına kıyasla LoRA taban ağırlıkları dondurur ve unutma riski daha düşüktür, ama bağışık değildir. İnce ayarın getirdiği yetenek kaybını daha da hafifletmek için hangi stratejiler kullanılabilir?
 2. ★★ Post-training yeteneği model ağırlıklarına sabitler ("kas hafızası"), in-context learning ise bilgiyi çıkarım zamanındaki girdiye koyar. Ama bazı yetenekler (örneğin alan bilgisi) hem post-training ile öğrenilebilir hem de few-shot örneklerle sağlanabilir. Bir yeteneğin hangi yoldan gitmesi gerektiğine karar verirken hangi ölçütleri kullanırsınız?
 3. ★★ Model damıtma, küçük modelin büyük modelin davranışını öğrenmesini sağlar. Yetenek katmanlarına göre damıtılan modeller kabaca üç seviyeye ayrılır: **Chat modelleri** (tek turlu diyalog, doğrudan yanıt), **Reasoning modelleri** (uzun zincirli düşünmeden sonra yanıt), **Agentic modeller** (çok turlu araç çağırma, ortamla etkileşim). Bu üç türü ayrı ayrı damıtırken zorluklar nasıl farklılaşır? (İpucu: "asıl damıtılan şey nedir" sorusundan başlayın — çıktının üslubu mu, eksiksiz düşünme trajectory'si mi, yoksa ortamla etkileşimin karar politikası mı; trajectory'deki hangi token'lar öğrenilmeli, hangileri ortamın döndürdüğü ve öğrenilmemesi gerekenler; ayrıca başarı/başarısızlık sinyali ne kadar geç ve ne kadar seyrek ortaya çıkıyor.)

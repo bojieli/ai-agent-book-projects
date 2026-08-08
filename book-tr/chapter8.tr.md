@@ -377,6 +377,10 @@ Sürekli evrim, çevrimiçi yürütmeyi çevrimdışı öğrenmeden ayırmayı g
 
 ## Düşünce Soruları
 
+### Güncel Deney Sonuçları
+
+8-8 ve 8-9 deneyleri gerçek model/API çağrılarıyla da çalıştırıldı. 8-8’de dış güvenlik kontrolleri modelin güvenli olmayan adayını doğru biçimde reddetti. 8-9’un ilk çalışması 0/8 tespit ve normal metinlerde 7/8 yanlış işaretleme üretti; model dışı filtreleme ve belirlenimci geri dönüşten sonra son çalışma 8/8 tespit, 0/8 yanlış işaretleme sağladı ve 21 adayı 8 kurala birleştirdi.
+
 1. ★★ Bir deneyim dokümanı üç başarılı ve bir başarısız trajectory tarafından destekleniyor. Başarısızlık, API'nin daha yeni bir sürümünde gerçekleşmiş. Sistem bunun deneyimin çürütülmesi mi, yoksa uygulanabilirlik koşullarının değişmesi mi olduğuna nasıl karar vermelidir?
 2. ★★ Müşteri hizmetleri Agent'ının kullanıcı memnuniyeti yükseliyor, ama kural ihlali oranı da yükseliyor. Memnuniyet neden tek başına öğrenme sinyali olarak kullanılamaz? Guardrail metriklerini nasıl tasarlardınız?
 3. ★★★ Aynı "asılsız söz" sorunu Prompt ile, Harness denetimiyle veya parametre eğitimiyle hafifletilebilir. Değişikliğin nereye yapılacağını hangi kanıtlara dayanarak seçerdiniz?

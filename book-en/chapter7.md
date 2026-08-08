@@ -822,6 +822,10 @@ This chapter has answered the parameter-update question of “how to train.” T
 
 ## Thought Questions
 
+### Recent Experiment Result
+
+Experiment 7-17 trained a Qwen2.5-7B LoRA adapter on 24 coding-agent bad cases. In the fixed “complete” versus “continue verification” comparison, unfinished-task correctness improved from 3/12 to 11/12, while the completed-task holdout stayed at 8/8. Open-ended generation became overcautious, so the fixed comparison is the primary result rather than a claim of overall online success.
+
 1. ★★ Catastrophic forgetting—where fine-tuning for a specific task destroys the model's original general capabilities, such as general tool calling—is particularly troublesome in Agent scenarios. Compared with full-parameter fine-tuning, LoRA freezes the base weights and carries a lower risk of forgetting, but it is not immune. What strategies can further mitigate capability forgetting during fine-tuning?
 2. ★★ Post-training solidifies capabilities into model weights, or “muscle memory,” while in-context learning places knowledge in the input at inference time. Some capabilities, such as domain knowledge, can be learned through post-training or supplied through few-shot examples. What criteria would you use to decide which path a capability should take?
 3. ★★ Model distillation allows a small model to learn the behavior of a large model. By capability level, the models being distilled can be divided roughly into three tiers—**Chat models** (single-turn dialogue and direct answers), **Reasoning models** (long chains of thought before answering), and **Agentic models** (multi-turn tool calls and interaction with the environment). What different challenges arise in distilling each type? (Hint: Begin with “what exactly is being distilled”—the style of the output, the complete reasoning trajectory, or the policy for interacting with the environment; which tokens in the trajectory should be learned and which environmental returns should not; and how delayed and sparse the success/failure signals are.)
