@@ -829,6 +829,10 @@ Ez a fejezet megválaszolta a "hogyan tréningezzünk" paraméterfrissítési k�
 
 ## Gondolatkérdések
 
+### Friss kísérleti eredmény
+
+A 7-17. kísérlet 24 kódoló ügynökös hibás esetből tanított Qwen2.5-7B LoRA-adaptert. A rögzített „befejezés” és „további ellenőrzés” összehasonlításban a befejezetlen feladatok helyes döntése 3/12-ről 11/12-re nőtt, a már befejezett feladatok tartott készlete pedig 8/8 maradt. A szabad szöveges válaszok túl óvatossá váltak, ezért a rögzített összehasonlítás a fő eredmény, nem pedig általános élesbeli javulásra vonatkozó állítás.
+
 1. ★★ Katasztrofális felejtés – amikor a finomhangolás egy adott feladatra elpusztítja a modell eredeti általános képességeit, mint az általános eszközhívás – különösen problémás az Ágens forgatókönyvekben. A teljes paraméteres finomhangoláshoz képest a LoRA befagyasztja az alap súlyokat, és kisebb a felejtés kockázata, de nem immunis. Milyen stratégiák csökkenthetik tovább a képességfelejtést a finomhangolás során?
 2. ★★ A poszt-tréning a képességeket a modell súlyaiba (vagy "izommemóriába") rögzíti, míg a kontextusban tanulás (in-context learning) a következtetéskor a bemenetbe helyezi a tudást. Egyes képességek, mint a domain ismeretek, megtanulhatók poszt-tréningen keresztül vagy néhány példán keresztül is betáplálhatók. Milyen kritériumokat használnál annak eldöntésére, hogy egy képesség melyik utat kövesse?
 3. ★★ A modell desztilláció lehetővé teszi, hogy egy kis modell megtanulja egy nagy modell viselkedését. A képesség szint szerint a desztillált modellek nagyjából három szintre oszthatók – "Chat modellek" (egymenetes párbeszéd és közvetlen válaszok), "Érvelő modellek" (hosszú gondolkodási láncok a válasz előtt), és "Ágens modellek" (többlépéses eszközhívások és interakció a környezettel). Milyen különböző kihívások merülnek fel az egyes típusok desztillálásakor? (Tipp: Kezdd azzal, hogy "mi is kerül pontosan desztillálásra" – a kimenet stílusa, a teljes érvelési pálya, vagy a környezettel való interakció irányelve; mely tokeneket kell megtanulni a pályában és mely környezeti visszatéréseket nem; és mennyire késleltetettek és ritkák a siker/kudarc jelek.)

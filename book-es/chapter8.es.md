@@ -377,6 +377,10 @@ La evolución continua requiere separar la ejecución en línea del aprendizaje 
 
 ## Preguntas de Reflexión
 
+### Resultados experimentales recientes
+
+Los experimentos 8-8 y 8-9 también se ejecutaron con llamadas reales al modelo y a la API. En 8-8, las puertas de seguridad externas rechazaron correctamente la propuesta insegura del modelo. En 8-9, la primera ejecución detectó 0/8 casos y dañó 7/8 textos normales; tras filtrar fuera del modelo y aplicar un respaldo determinista, la ejecución final detectó 8/8, no dañó 0/8 textos normales y fusionó 21 candidatos en 8 reglas.
+
 1. ★★ Un documento de conocimiento de experiencia cuenta con el respaldo de tres trayectorias exitosas y una fallida. La falla ocurrió en una versión de API más reciente. ¿Cómo debe determinar el sistema si la experiencia fue refutada o si cambiaron sus condiciones de aplicación?
 2. ★★ La satisfacción del usuario de un Agente de atención al cliente aumentó, pero también se incrementó la tasa de infracción de reglas. ¿Por qué no se puede tomar la satisfacción como única señal de aprendizaje? ¿Cómo diseñaría los indicadores de salvaguarda (guardrails)?
 3. ★★★ Un mismo problema de "falsa promesa" se puede mitigar mediante Prompts, verificaciones en el Harness o entrenamiento de parámetros. ¿En qué evidencias se basaría para elegir la ubicación de la modificación?
