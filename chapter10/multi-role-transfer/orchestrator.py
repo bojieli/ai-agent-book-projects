@@ -181,7 +181,9 @@ class MultiRoleOrchestrator:
             name = tc.function.name
             try:
                 args = json.loads(tc.function.arguments or "{}")
-            except json.JSONDecodeError:
+                if not isinstance(args, dict):
+                    args = {}
+            except (json.JSONDecodeError, TypeError):
                 args = {}
 
             if name == "transfer_to_agent":
