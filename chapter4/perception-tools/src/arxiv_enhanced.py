@@ -34,7 +34,7 @@ async def get_paper_details(
         TextContent with paper details
     """
     try:
-        clean_id = paper_id.replace("arxiv:", "").strip()
+        clean_id = re.sub(r"^arxiv:", "", paper_id, flags=re.IGNORECASE).strip()
         
         logging.info(f"📄 Getting paper details: {clean_id}")
         
@@ -104,7 +104,7 @@ async def download_paper(
     try:
         from pathlib import Path
         
-        clean_id = paper_id.replace("arxiv:", "").strip()
+        clean_id = re.sub(r"^arxiv:", "", paper_id, flags=re.IGNORECASE).strip()
         
         logging.info(f"📥 Downloading paper: {clean_id}")
         
