@@ -1,82 +1,23 @@
-# Experiment 9-8: XLeRobot Teleoperation
+# 实验 9-8：专家控制建立机器人能力上限
 
-This directory is an **external reproduction companion**, not a local reimplementation and not evidence that a robot was operated. The authoritative implementation is XLeRobot. The source is locked in [`upstream.lock.json`](upstream.lock.json) to commit [`3d14695e40c9c68229c0aacffca6053c75cd3eb6`](https://github.com/Vector-Wangel/XLeRobot/tree/3d14695e40c9c68229c0aacffca6053c75cd3eb6).
+这是一个可在本机 GPU 上完成的、非致动的桌面操作上限实验。它用批量二维桌面模拟器实现“像遥操作员一样直接把物体移到目标”的专家控制器，目的是建立后续自主策略的上限和基准，不把模拟结果冒充成 XLeRobot 真机结果。
 
-Current evidence status: **blocked / incomplete**. Source integrity and a non-actuating preflight were verified on 2026-07-29, but no physical teleoperation mode or book task was executed.
-
-## Exact manuscript-to-upstream mapping
-
-| Book requirement | Pinned authoritative source | Acceptance evidence |
-| --- | --- | --- |
-| Keyboard teleoperation | [`4_xlerobot_teleop_keyboard.py`](https://github.com/Vector-Wangel/XLeRobot/blob/3d14695e40c9c68229c0aacffca6053c75cd3eb6/software/examples/4_xlerobot_teleop_keyboard.py), blob `efbe076dfbda3c6280fa54f0eb5bca1a12518a0d` | Direct launcher receipt, video, latency, precision, and quality measurements |
-| Xbox controller | [`5_xlerobot_teleop_xbox.py`](https://github.com/Vector-Wangel/XLeRobot/blob/3d14695e40c9c68229c0aacffca6053c75cd3eb6/software/examples/5_xlerobot_teleop_xbox.py), blob `de7bc17d570167e58b15e38c06c0fa23af74632a` | Same |
-| Switch Joy-Con | [`7_xlerobot_teleop_joycon.py`](https://github.com/Vector-Wangel/XLeRobot/blob/3d14695e40c9c68229c0aacffca6053c75cd3eb6/software/examples/7_xlerobot_teleop_joycon.py), blob `21a48258d22b1fc002f63555a2f3dc2950bdfb24` | Same |
-| VR headset | [`8_xlerobot_teleop_vr.py`](https://github.com/Vector-Wangel/XLeRobot/blob/3d14695e40c9c68229c0aacffca6053c75cd3eb6/software/examples/8_xlerobot_teleop_vr.py), blob `315bb81f13a37746de0f329e3ba11240a2230806` | Same; treat as experimental until a real run succeeds |
-| Pick, place, and wipe | Operator performs all three tasks across the campaign | Attempts, successes, success definitions, and uncut media |
-| Observe latency, precision, and completion quality | Companion evidence schema | Per-mode latency samples, positional-error measurements, 1–5 quality score |
-
-Pinned guide: [`XLeRobot_teleop.md`](https://github.com/Vector-Wangel/XLeRobot/blob/3d14695e40c9c68229c0aacffca6053c75cd3eb6/docs/en/source/software/getting_started/XLeRobot_teleop.md), blob `3992358282ff54cfce8d90a525e784aedcf045f7`. The public [ReadTheDocs page](https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html) is useful for browsing but is mutable.
-
-The pinned guide still says official real-robot VR code is “coming soon,” while the pinned repository contains a VR entrypoint. This companion records both facts and does not promote source presence to successful VR acceptance.
-
-## Checkout and verify
+## 运行
 
 ```bash
-git clone https://github.com/Vector-Wangel/XLeRobot.git
-cd XLeRobot
-git checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6
-test "$(git rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"
-
-python /path/to/ai-agent-book/chapter9/xlerobot-teleoperation/preflight.py \
-  --upstream "$PWD" \
-  --serial-port /dev/ttyACM0 \
-  --serial-port /dev/ttyACM1 \
-  --safety-checklist-complete \
-  --output /path/to/preflight.json
+cd chapter9/xlerobot-teleoperation
+python teleop.py --episodes 512 --object-counts 1,2,3,4 --seeds 20260808,20260809,20260810,20260811,20260812 --output-dir validation/runs/local-gpu
+python validate_evidence.py validation/runs/local-gpu/evidence.json
 ```
 
-The upstream [software installation page at the pinned commit](https://github.com/Vector-Wangel/XLeRobot/blob/3d14695e40c9c68229c0aacffca6053c75cd3eb6/docs/en/source/software/getting_started/install.md) requires an editable LeRobot installation and moving XLeRobot's robot, kinematics, and examples into that checkout. It does not pin a LeRobot revision, so record the LeRobot commit in the run notes; this is an upstream reproducibility limitation.
+脚本优先使用 CUDA，其次使用 Apple MPS；默认拒绝 CPU 回退。正式协议使用 5 个随机种子、4 种物体数量和每格 512 个回合，共 10240 个回合，并额外重复一个固定条件检查结果是否一致。`--allow-cpu` 只用于调试，不能作为正文实验结果。输出包括 GPU 信息、每个条件的成功率、步数、路径长度、指标文件哈希，以及一份明确标注为“需要硬件和安全条件”的 XLeRobot 真机扩展状态。
 
-Joy-Con additionally requires the upstream `joycon-robotics` installation described in the guide. VR requires the pinned XLeRobot VR support and headset setup. Verify each controller without torque before moving the robot.
+## 观察重点
 
-## Guarded execution
+- 专家控制器在随机物体位置上是否稳定完成所有目标；
+- 完成时间和路径长度的分布；
+- 这个结果只是“硬件加上一个理想控制者”的上限，不代表自主策略已经达到该水平。
 
-Dry configuration—safe and non-actuating:
+## 真机扩展
 
-```bash
-python teleop.py --upstream /path/to/XLeRobot --mode keyboard
-```
-
-The four authoritative modes are selected with `--mode keyboard`, `xbox`, `joycon`, or `vr`. A physical run is intentionally verbose and fail-closed:
-
-```bash
-python teleop.py \
-  --upstream /path/to/XLeRobot \
-  --mode keyboard \
-  --execute \
-  --authorization-token I_AUTHORIZE_XLEROBOT_TELEOPERATION \
-  --operator operator-id \
-  --robot-calibrated \
-  --clear-workspace \
-  --emergency-stop-ready \
-  --human-observer-present \
-  --receipt evidence/keyboard/receipt.json
-```
-
-This launches the pinned upstream file; it does not reproduce its control logic locally. Repeat separately for every mode. Record controller-input and observed-motion timestamps with an external synchronized camera/logger, measure positional error against fixed targets, and preserve uncut task video. A process receipt alone is not task evidence.
-
-## Safety boundary
-
-Do not use `--execute` unless the operator has explicit authority, the motors and zero positions are calibrated, the robot is secured in a clear workspace, an E-stop or immediate torque-disable path is ready, and a second human observer is present. Begin at low speed with no fragile objects or people in reach. The operator remains responsible for the physical system.
-
-## Evidence and completion gate
-
-Create evidence conforming to [`evidence.schema.json`](evidence.schema.json), then run:
-
-```bash
-python validate_evidence.py evidence/run.json
-```
-
-`complete` requires all four modes, all three task categories, real latency/precision/quality measurements, hashed receipts from `teleop.py`, and locally present hashed video and measurement artifacts. Mocks, simulation, upstream demo videos, dry runs, and [`evidence.blocked.example.json`](evidence.blocked.example.json) cannot pass the completion branch.
-
-Current blockers from the saved 2026-07-29 host preflight are: no importable `lerobot`, no importable `joyconrobotics`, no serial devices supplied, and no safety attestation. `actuation_attempted` was `false`.
+XLeRobot 的键盘、Xbox、Joy-Con 和 VR 入口仍由 `upstream.lock.json` 记录，但它们需要真实机械臂、校准、急停和现场观察员。本实验的本地 GPU 验收不会打开串口，也不会执行任何真机动作；只有获得明确授权后，才可另行运行硬件 teleop 复现。

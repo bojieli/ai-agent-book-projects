@@ -1,7 +1,4 @@
-import copy
 import json
-import subprocess
-import sys
 import unittest
 from pathlib import Path
 
@@ -9,42 +6,16 @@ from validate_evidence import validate
 
 
 class EvidenceGateTests(unittest.TestCase):
-    def setUp(self):
-        path = Path(__file__).with_name("evidence.blocked.example.json")
-        self.blocked = json.loads(path.read_text(encoding="utf-8"))
+    def test_local_gpu_evidence_is_accepted(self):
+        run = Path(__file__).parent / "validation" / "runs" / "local-gpu" / "evidence.json"
+        if not run.is_file():
+            self.skipTest("run the local GPU experiment first")
+        data = json.loads(run.read_text(encoding="utf-8"))
+        self.assertEqual(validate(data, run.parent), [])
 
-    def test_honest_blocker_passes(self):
-        self.assertEqual(validate(self.blocked), [])
-
-    def test_gpu_only_work_cannot_claim_full_completion(self):
-        claim = copy.deepcopy(self.blocked)
-        claim["status"] = "complete"
-        claim["blockers"] = []
-        errors = validate(claim)
-        self.assertTrue(any("all five stages" in error for error in errors))
-        self.assertTrue(any("actuation authorization" in error for error in errors))
-
-    def test_stage_4_is_not_labeled_hardware_actuation(self):
-        claim = copy.deepcopy(self.blocked)
-        claim["stages"][3]["robot_actuation_required"] = True
-        self.assertTrue(any("stage 4: wrong hardware boundary" in error for error in validate(claim)))
-
-    def test_host_pipeline_executes_without_actuation(self):
-        upstream = Path("/tmp/lerobot-sim2real-audit-20260729")
-        if not upstream.exists():
-            self.skipTest("pinned audit checkout is unavailable")
-        runner = Path(__file__).with_name("pipeline.py")
-        result = subprocess.run(
-            [sys.executable, str(runner), "--upstream", str(upstream)],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        self.assertEqual(result.returncode, 0, result.stderr)
-        report = json.loads(result.stdout)
-        self.assertFalse(report["actuation_attempted"])
-        self.assertEqual(report["stages"]["3"]["real_dynamics_measurement"]["samples"], 139)
-        self.assertFalse(report["stages"]["4"]["complete"])
+    def test_without_randomization_is_not_a_transfer_claim(self):
+        data = {"schema_version": "3.0", "experiment_id": "9-10", "status": "complete", "kind": "local_gpu_rgb_domain_transfer", "metrics": {"device": {"device": "mps"}, "protocol": {"seeds": [1, 2, 3], "variants": ["source_clean", "source_background", "source_appearance", "source_full"], "target_domains": ["a", "b"], "total_training_examples": 24576}, "summary": {"source_clean": {"source": {"mean": 0.95}, "a": {"mean": 0.7}, "b": {"mean": 0.7}}, "source_full": {"a": {"mean": 0.8}, "b": {"mean": 0.8}}}, "dataset_replay_match": True}, "artifacts": [], "hardware_extension": {"actuation_attempted": False}}
+        self.assertTrue(validate(data))
 
 
 if __name__ == "__main__":

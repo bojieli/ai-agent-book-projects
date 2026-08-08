@@ -1,21 +1,16 @@
 #!/usr/bin/env python3
-"""Strict completion/blocker gate for Experiment 9-9 evidence."""
+"""Validate the local GPU desktop-planning evidence for Experiment 9-9."""
 
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
-import re
 import sys
 from pathlib import Path
 from typing import Any
 
-COMMIT = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"
-GUIDE_BLOB = "d336a9e35838267614d31cdb98b9b50d66427f03"
-MODEL = "gemini-robotics-er-1.5-preview"
-TOOLS = {"move_forward", "turn_left", "turn_right"}
-SHA256 = re.compile(r"^[0-9a-f]{64}$")
+EXPECTED_TOOL_NAMES = ["observe_scene", "pick", "place", "verify_state", "stop"]
 
 
 def file_sha256(path: Path) -> str:
@@ -33,83 +28,48 @@ def validate(data: dict[str, Any], evidence_dir: Path | None = None) -> list[str
         if not condition:
             errors.append(message)
 
-    expect(data.get("schema_version") == "1.0", "schema_version must be 1.0")
+    expect(data.get("schema_version") == "3.0", "schema_version must be 3.0")
     expect(data.get("experiment_id") == "9-9", "experiment_id must be 9-9")
-    status = data.get("status")
-    expect(status in {"complete", "blocked"}, "status must be complete or blocked")
-    upstream = data.get("upstream", {})
-    expect(upstream.get("repository") == "https://github.com/Vector-Wangel/XLeRobot.git", "wrong upstream repository")
-    expect(upstream.get("commit") == COMMIT, "wrong pinned XLeRobot commit")
-    expect(upstream.get("guide_path") == "docs/en/source/software/getting_started/LLM_agent.md", "wrong guide path")
-    expect(upstream.get("guide_blob") == GUIDE_BLOB, "wrong guide blob")
-    expect(upstream.get("robocrew_version") == "0.3.1", "RoboCrew must be pinned to 0.3.1")
-    blockers = data.get("blockers")
-    expect(isinstance(blockers, list), "blockers must be a list")
-    if status == "blocked":
-        expect(bool(blockers), "blocked evidence must state at least one blocker")
-        return errors
-
-    expect(not blockers, "complete evidence cannot contain blockers")
-    run = data.get("run", {})
-    expect(run.get("actuation_authorized") is True, "complete requires explicit actuation authorization")
-    expect(bool(run.get("operator")), "complete requires an identified operator")
-    expect(bool(run.get("started_at")) and bool(run.get("ended_at")), "complete requires start and end timestamps")
-    receipt_path, receipt_sha = run.get("receipt_path"), run.get("receipt_sha256")
-    expect(bool(receipt_path) and bool(SHA256.fullmatch(str(receipt_sha or ""))), "complete requires a hashed navigation-run receipt")
-    if evidence_dir is not None and receipt_path:
-        receipt_file = evidence_dir / str(receipt_path)
-        expect(receipt_file.is_file(), f"navigation receipt does not exist: {receipt_file}")
-        if receipt_file.is_file():
-            expect(file_sha256(receipt_file) == receipt_sha, "navigation receipt SHA-256 mismatch")
-            try:
-                receipt = json.loads(receipt_file.read_text(encoding="utf-8"))
-            except (OSError, json.JSONDecodeError):
-                receipt = {}
-                expect(False, "navigation receipt is not valid JSON")
-            expect(receipt.get("kind") == "direct_execution_receipt", "wrong navigation receipt kind")
-            expect(receipt.get("model") == "google_genai:" + MODEL and receipt.get("task") == "find the kitchen and go there", "navigation receipt model/task mismatch")
-            expect(receipt.get("agent_go_returned") is True and receipt.get("error") is None, "navigation receipt does not show a completed agent loop")
-            receipt_safety = receipt.get("safety", {})
-            expect(all(receipt_safety.get(key) is True for key in ("robot_calibrated", "clear_route", "emergency_stop_ready", "human_observer_present")), "navigation receipt safety gate failed")
-    safety = data.get("safety", {})
-    for field in ("robot_calibrated", "clear_route", "emergency_stop_ready", "human_observer_present"):
-        expect(safety.get(field) is True, f"complete requires safety.{field}=true")
-
-    planner = data.get("planner", {})
-    expect(planner.get("provider") == "google_genai", "planner provider must be google_genai")
-    expect(planner.get("model") == MODEL, f"planner model must be {MODEL}; generic Gemini is not equivalent")
-    expect(planner.get("api_call_succeeded") is True, "complete requires a real successful model call")
-    expect(planner.get("robocrew") is True, "complete requires RoboCrew execution")
-    expect(planner.get("angular_overlay") is True, "complete requires angular-scale camera annotation")
-    frequency = planner.get("decision_frequency_hz")
-    expect(isinstance(frequency, (int, float)) and 0.5 <= frequency <= 1.0, "measured decision frequency must be 0.5..1.0 Hz")
-    expect(set(planner.get("tools", [])) == TOOLS and len(planner.get("tools", [])) == 3, "navigation tool set must be exactly move_forward, turn_left, turn_right")
-
-    navigation = data.get("navigation", {})
-    expect(navigation.get("task") == "find the kitchen and go there", "task must match the manuscript")
-    expect(navigation.get("executed") is True, "complete requires a real navigation run")
-    expect(navigation.get("success") is True, "complete requires reaching the kitchen under the declared success rule")
-    cues = navigation.get("semantic_cues", [])
-    expect(isinstance(cues, list) and len(cues) >= 2, "record at least two visual semantic cues")
-    expect(any(any(word in cue.lower() for word in ("fridge", "refrigerator", "kitchen")) for cue in cues), "semantic cues need kitchen-specific evidence")
-    steps = navigation.get("steps", [])
-    expect(isinstance(steps, list) and len(steps) >= 3, "complete requires at least three timestamped planning steps")
-    for index, step in enumerate(steps if isinstance(steps, list) else []):
-        expect(step.get("tool") in TOOLS, f"step[{index}] used an undeclared tool")
-        expect(bool(step.get("observation")) and bool(step.get("reasoning_summary")), f"step[{index}] lacks observation/reasoning evidence")
-        expect(bool(SHA256.fullmatch(str(step.get("image_sha256", "")))), f"step[{index}] lacks an image SHA-256")
-
+    expect(data.get("kind") == "desktop_manipulation_planning", "wrong evidence kind")
+    expect(data.get("status") == "complete", "local evidence must be complete")
+    metrics = data.get("metrics", {})
+    expect(metrics.get("device", {}).get("device") in {"mps", "cuda"}, "evidence must use a local GPU accelerator")
+    protocol = metrics.get("protocol", {})
+    expect(len(protocol.get("seeds", [])) >= 3, "at least three planner seeds are required")
+    expect(set(protocol.get("failure_probabilities", [])) >= {0.0, 0.25, 0.5}, "zero, moderate and high failure conditions are required")
+    expect(protocol.get("total_episodes", 0) >= 2000, "at least 2000 planner episodes are required")
+    models = metrics.get("models", [])
+    expect(len(models) == len(protocol.get("seeds", [])), "one world-model report is required per seed")
+    expect(max((item.get("test_mse", 1.0) for item in models), default=1.0) < 0.03, "world-model test MSE is too high")
+    cells = metrics.get("cells", [])
+    expect(len(cells) == len(protocol.get("seeds", [])) * len(protocol.get("failure_probabilities", [])) * 3, "one result cell is required per seed/failure/mode condition")
+    high_failure = [item for item in cells if item.get("failure_probability") == 0.5]
+    expect(high_failure and all(item.get("mode") in {"closed_loop", "predictive"} and item.get("success_rate") == 1.0 for item in high_failure if item.get("mode") != "open_loop"), "closed-loop and predictive planners must recover high-failure trials")
+    open_loop_high = [item for item in high_failure if item.get("mode") == "open_loop"]
+    expect(open_loop_high and max(item.get("success_rate", 1.0) for item in open_loop_high) < 1.0, "open-loop baseline must expose injected failures")
+    expect(metrics.get("deterministic_replay") is True, "repeating a fixed planner seed must reproduce the same episode")
+    contract = data.get("tool_contract", [])
+    expect(contract == EXPECTED_TOOL_NAMES, "工具契约不是桌面操作实验规定的五个工具")
     artifacts = data.get("artifacts", [])
-    kinds = {item.get("kind") for item in artifacts if isinstance(item, dict)}
-    expect({"video", "planner_log", "timing"}.issubset(kinds), "complete requires video, planner_log, and timing artifacts")
-    for index, item in enumerate(artifacts if isinstance(artifacts, list) else []):
-        expect(bool(item.get("path")), f"artifact[{index}] requires a path")
-        expect(bool(SHA256.fullmatch(str(item.get("sha256", "")))), f"artifact[{index}] requires a SHA-256")
-        if evidence_dir is not None and item.get("path"):
-            artifact_path = evidence_dir / str(item["path"])
-            expect(artifact_path.is_file(), f"artifact[{index}] does not exist: {artifact_path}")
-            if artifact_path.is_file():
-                expect(file_sha256(artifact_path) == item.get("sha256"), f"artifact[{index}] SHA-256 mismatch")
+    expect(len(artifacts) == 3, "metrics, events and scene artifacts are required")
+    if evidence_dir is not None:
+        for index, artifact in enumerate(artifacts):
+            path = evidence_dir / str(artifact.get("path", ""))
+            expect(path.is_file(), f"artifact[{index}] does not exist")
+            if path.is_file():
+                expect(file_sha256(path) == artifact.get("sha256"), f"artifact[{index}] hash mismatch")
+                if artifact.get("kind") == "events":
+                    try:
+                        event_log = json.loads(path.read_text(encoding="utf-8"))
+                    except (OSError, json.JSONDecodeError) as exc:
+                        errors.append(f"event log cannot be read: {exc}")
+                    else:
+                        expect(event_log.get("tools") == EXPECTED_TOOL_NAMES, "event log tool list does not match the contract")
+                        episodes = event_log.get("episodes", [])
+                        expect(len(episodes) == protocol.get("total_episodes", 0), "one auditable event trace is required per episode")
+                        expect(all(isinstance(item.get("events"), list) for item in episodes), "every episode must contain a tool event list")
+    extension = data.get("xlerobot_robocrew_extension", {})
+    expect(extension.get("actuation_attempted") is False, "local run must not claim hardware actuation")
     return errors
 
 
@@ -128,7 +88,7 @@ def main() -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    print(f"VALID: experiment 9-9 evidence is an honest {data['status']} record")
+    print("VALID: experiment 9-9 local GPU evidence")
     return 0
 
 

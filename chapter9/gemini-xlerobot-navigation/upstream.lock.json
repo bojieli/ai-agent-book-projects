@@ -24,12 +24,12 @@
     }
   },
   "required_model": "gemini-robotics-er-1.5-preview",
-  "required_navigation_api_key_env": "GOOGLE_API_KEY",
+  "required_api_key_env": "GOOGLE_API_KEY",
   "reference_frame": {
     "source_url": "https://github.com/user-attachments/assets/296f6f60-52a4-4fa0-9a77-a113b4868f83",
     "referenced_by": "docs/en/source/software/getting_started/LLM_agent.md",
     "sha256": "2dae44dd2dbd9259f9448095f09e064ade50d485e8d0dcab7a3ca2a73435bcc1",
-    "role": "upstream reference input for non-actuating API validation; not navigation evidence"
+    "role": "historical upstream reference input only; not desktop-manipulation evidence"
   },
   "verified_at": "2026-07-30"
 }
