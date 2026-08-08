@@ -694,6 +694,18 @@ O는 원래의 **결과 보상**으로 희소하며 여전히 진짜 목표입�
 >
 > 학습 전후 경계 세트와 보류 세트는 서로 겹치지 않습니다. ‘완료’와 ‘계속 검증’의 고정 비교에서 경계 세트 정답은 3/12(25.0%)에서 11/12(91.7%)로 올랐고, 보류 세트는 8/8(100%)을 유지했습니다. 자유 생성은 지나치게 신중해졌으므로 고정 비교가 주 결과이며, 온라인 전체 성공률 향상을 뜻하지 않습니다. 자세한 자료는 [`premature-completion-dpo`](../chapter7/premature-completion-dpo/)에 있습니다.
 
+> **실험 7-18 ★★: 범위 민감 곡선 따옴표 SFT**
+>
+> 중국어 직따옴표 Bad Case를 먼저 양의/음의 범위 규칙을 담은 Skill로 정리합니다. 중국어 본문과 주석은 곡선 따옴표로 바꿀 수 있지만, 영어 인용·코드 문자열·JSON·경로·식별자·실행 문법은 byte 단위로 그대로 유지해야 합니다. 10개 문서 유형과 9개 프로그래밍 언어를 감사하고 train/holdout/boundary를 1024/256/256개로 분리했습니다.
+>
+> RTX PRO 6000의 Qwen3-8B bf16 LoRA는 holdout exact 96.9%, boundary 97.7%와 보호 영역 보존 100%를 기록했습니다. Python, JavaScript, Java, Go, Rust, SQL, Shell, YAML, Markdown은 모두 100%였지만 JSON은 68.8%로 별도의 구조화 데이터 트랙이 필요합니다.
+
+> **실험 7-19 ★★: 특수 문자열 exact-copy SFT**
+>
+> `old_string` 실패를 원본 파일 byte, 도구 반환, Harness 직렬화, 모델 출력, tokenizer, 도구 매칭 순으로 분리 진단합니다. 모델이 만든 drift만 copy-focused SFT에 넣고, 1024/256/256개 다언어 문맥, hard negative, 공백, escape, Unicode, zero-width 문자와 tool JSON을 사용합니다.
+>
+> Qwen3-8B bf16 LoRA는 holdout byte-exact를 37.5%에서 78.9%로, boundary를 80.1%로 높였습니다. 512 probe tokenizer 감사에서 Qwen3/Qwen2.5 round-trip은 80.1%, Mistral은 100%였으므로 tokenizer/Harness 오류와 모델 복사 능력을 별도로 보고해야 합니다.
+
 ## RL로 도구 호출 학습하기
 
 앞선 다중 턴 실험에서는 에이전트의 행동 공간이 이동과 관찰 같은 내장 조작으로 제한되었습니다. 현실의 에이전트는 검색 엔진, 코드 인터프리터, 문서 파서 등 다양한 외부 도구도 호출해야 하며, 이는 RL 학습에 새로운 과제를 더합니다.

@@ -133,6 +133,8 @@ Skill öğrenmesi aynı ilkeyi izler, ama etki alanı daha yereldir. Skill'i, ih
 >
 > Eksik görev sınır kümesindeki tespit, normal metinlerdeki yanlış alarm ve kural sayısının büyümesi birlikte raporlanır. İlk gerçek çalışma 0/8 tespit ve 7/8 yanlış alarm verdi; model dışı filtre ve deterministik fallback sonrası 8/8, 0/8 ve 21 adaydan 8 kural elde edildi. Uygulama [`ai-style-skill`](../chapter8/ai-style-skill/) içindedir.
 
+Kıvrımlı tırnak vakası, Skill'in küresel bir değiştirme kuralı değil, veri sözleşmesi olması gerektiğini gösterir: SFT'den önce sentetik örnekler belge türü, kapsam ve programlama diline göre katmanlandırılmalı; kod/JSON/korunan alan kapılarından ve manuel denetimden geçmelidir. Exact-copy vakasında tokenizer encode→decode round-trip'i, modelin byte-exact kopyası, Harness serileştirmesi ve araç eşleşmesi ayrı regresyon katmanlarıdır.
+
 > **Deney 8-3 ★★: Başarısız Trajectory'lere Dayanarak System Prompt'u İyileştirmek**
 >
 > **Deney Amacı**: Havayolu müşteri hizmetleri Agent'ının "kullanıcı politikayı sorguladığında fazla erken insana devretme" başarısızlık trajectory'lerinden öğrenmesini sağlamak ve aynı zamanda yeni kuralın gerçekten devretme gerektiren eski senaryoları bozmadığını kanıtlamak.

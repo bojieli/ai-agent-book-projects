@@ -691,6 +691,18 @@ O 是原來的**結果獎勵**（稀疏，仍是真正的目標）；Φ 是**路
 >
 > 訓練前後使用互不重疊的邊界集與保留集。在「完成／繼續驗證」固定比較中，邊界集由 3/12（25.0%）提升到 11/12（91.7%），保留集維持 8/8（100%）。自由生成變得過度謹慎，因此固定比較才是主要結果，不能宣稱線上整體成功率提升。完整回執見 [`premature-completion-dpo`](../chapter7/premature-completion-dpo/)。
 
+> **實驗 7-18 ★★：作用域敏感的彎引號 SFT**
+>
+> 先將中文直引號 bad case 提煉成包含正反作用域規則的 Skill。中文正文與中文註解可以改用彎引號；英文引文、程式字串、JSON、路徑、識別符和可執行語法必須逐 byte 保持。資料涵蓋 10 種文章體裁與 9 種程式語言，train/holdout/boundary 分別為 1024/256/256 筆。
+>
+> RTX PRO 6000 上的 Qwen3-8B bf16 LoRA，在 holdout 與 boundary 的 exact 分別達 96.9% 和 97.7%，保護區保留率為 100%。Python、JavaScript、Java、Go、Rust、SQL、Shell、YAML、Markdown 均為 100%，JSON 仍為 68.8%，因此需要獨立的結構化資料軌道。
+
+> **實驗 7-19 ★★：特殊字串的 exact-copy SFT**
+>
+> 將 `old_string` 失敗沿著原始檔案 byte、工具回傳、Harness 序列化、模型輸出、tokenizer 和工具比對逐層定位；只有模型造成的漂移才加入 copy-focused SFT。擴充資料包含 1024/256/256 筆、多種語言上下文、hard negative、空白、escape、Unicode、零寬字元和工具 JSON 參數。
+>
+> Qwen3-8B bf16 LoRA 將 holdout byte-exact 從 37.5% 提升至 78.9%，boundary 達 80.1%。512 筆 probe 的 tokenizer 審核顯示 Qwen3/Qwen2.5 round-trip 為 80.1%，Mistral 為 100%；tokenizer/Harness 問題必須與模型複製能力分開回報。
+
 ## RL 學習工具呼叫
 
 前面的多輪實驗中，Agent 的動作空間僅限於移動、觀察等內建操作。現實中的 Agent 還需要呼叫各種外部工具——搜尋引擎、程式碼直譯器、文件解析器等——這為 RL 訓練帶來了新的挑戰。

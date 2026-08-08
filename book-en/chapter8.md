@@ -133,6 +133,8 @@ Skill learning follows the same principle, but with a more localized scope. A Sk
 >
 > Report detection on the unfinished-task boundary set, false positives on the normal-text holdout, and rule-count growth together. The first real run produced 0/8 detection and 7/8 false positives; after model-external filtering and deterministic fallback it produced 8/8, 0/8, and merged 21 candidates into 8 rules. Implementation: [`ai-style-skill`](../chapter8/ai-style-skill/).
 
+The curved-quote case shows why a Skill should become a data contract rather than a global replacement rule: synthetic examples must be stratified by article type, scope, and programming language, pass code/JSON/protected-region gates, and receive manual audits before SFT. The exact-string case adds a tokenizer audit: encode→decode round-trip, model byte-exact copying, Harness serialization, and tool matching are separate regression layers.
+
 > **Experiment 8-3 ★★: Optimizing System Prompts from Failure Trajectories**
 >
 > **Objective:** Teach an airline customer-service Agent from trajectories in which it escalates too quickly when a user challenges a policy, while demonstrating that the new rule does not break older scenarios that genuinely require escalation.

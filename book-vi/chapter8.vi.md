@@ -133,6 +133,8 @@ Học Skill tuân theo cùng nguyên tắc nhưng có phạm vi tác động c�
 >
 > Báo cáo đồng thời tỷ lệ phát hiện trên tập nhiệm vụ chưa hoàn thành, tỷ lệ báo nhầm trên văn bản bình thường và số quy tắc tăng. Lần chạy thật đầu tiên đạt 0/8 phát hiện và nhầm 7/8; sau bộ lọc ngoài mô hình và fallback xác định, đạt 8/8, nhầm 0/8, gộp 21 ứng viên thành 8 quy tắc. Xem [`ai-style-skill`](../chapter8/ai-style-skill/).
 
+Trường hợp dấu ngoặc kép cong cho thấy Skill phải trở thành hợp đồng dữ liệu thay vì quy tắc thay thế toàn cục: trước SFT, các ví dụ tổng hợp được phân tầng theo thể loại bài, phạm vi và ngôn ngữ lập trình, vượt qua gate mã/JSON/vùng bảo vệ và được kiểm tra thủ công. Với exact-copy, round-trip encode→decode của tokenizer, sao chép byte-exact của mô hình, tuần tự hóa Harness và đối sánh công cụ phải được kiểm toán như các lớp hồi quy riêng.
+
 > **Thí nghiệm 8-3 ★★: Tối ưu Prompt hệ thống dựa trên quỹ đạo thất bại**
 >
 > **Mục tiêu thí nghiệm**: Giúp Agent chăm sóc khách hàng hàng không học từ quỹ đạo thất bại “chuyển sang nhân viên quá sớm khi người dùng chất vấn chính sách”, đồng thời chứng minh quy tắc mới không phá hỏng các tình huống cũ thật sự cần chuyển tiếp.

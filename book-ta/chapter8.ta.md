@@ -133,6 +133,8 @@ Skill learning-உம் இதே கோட்பாட்டைப் பி�
 >
 > முடியாத task set detection, சாதாரண text false-positive, rule count growth ஆகியவற்றை ஒருசேர report செய்யவும். முதல் real run 0/8 detection, 7/8 false-positive; வெளிப்புற filtering மற்றும் deterministic fallback பிறகு 8/8, 0/8, 21 candidate-கள் 8 rule-களாக இணைந்தன. Implementation [`ai-style-skill`](../chapter8/ai-style-skill/) இல் உள்ளது.
 
+வளைந்த மேற்கோள் வழக்கு, Skill ஒரு global replacement rule அல்ல; data contract ஆக இருக்க வேண்டும் என்பதை காட்டுகிறது. SFTக்கு முன் synthetic example-களை article type, scope, programming language படி பிரித்து, code/JSON/protected-region gate மற்றும் manual audit மூலம் சரிபார்க்க வேண்டும். Exact-copy வழக்கில் tokenizer encode→decode round-trip, model byte-exact copy, Harness serialization, tool matching ஆகியவை தனித்தனி regression layer-களாக audit செய்யப்பட வேண்டும்.
+
 > **பரிசோதனை 8-3 ★★: தோல்வி trajectory-களை அடிப்படையாகக் கொண்டு system Prompt-ஐ மேம்படுத்துதல்**
 >
 > **பரிசோதனை இலக்கு**: பயனர் policy-ஐக் கேள்வி கேட்கும்போது மிக விரைவாக மனிதரிடம் transfer செய்த தோல்வி trajectory-இலிருந்து விமான வாடிக்கையாளர் சேவை Agent கற்றுக்கொள்ளச் செய்வதோடு, உண்மையில் transfer தேவைப்படும் பழைய scenario-களைப் புதிய விதி பாதிக்கவில்லை என நிரூபித்தல்.

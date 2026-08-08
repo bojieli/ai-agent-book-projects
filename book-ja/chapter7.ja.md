@@ -687,6 +687,18 @@ O はもとの**結果報酬**（疎で、なお本当の目標）です。Φ �
 >
 > 訓練前後で未完了タスクの境界集合と完了タスクの保留集合は重ならない。「完了」と「検証を続ける」の固定比較では、境界集合の正解が 3/12（25.0%）から 11/12（91.7%）に上がり、保留集合は 8/8（100%）を維持した。自由生成は慎重になりすぎたため、主結果は固定比較であり、オンライン全体の成功率向上を意味しない。詳細は [`premature-completion-dpo`](../chapter7/premature-completion-dpo/) を参照。
 
+> **実験 7-18 ★★：スコープ依存の曲線引用符 SFT**
+>
+> 中国語の直引用符 bad case を、正例と反例を含むスコープ規則 Skill に変換する。中国語の本文とコメントは曲線引用符にできるが、英語引用、コード文字列、JSON、パス、識別子、実行構文は byte 単位で保持する。10 文書ジャンルと 9 言語を監査し、train/holdout/boundary を 1024/256/256 件に分離した。
+>
+> RTX PRO 6000 上の Qwen3-8B bf16 LoRA は holdout 96.9%、boundary 97.7% の exact を達成し、保護領域保持率は 100% だった。Python、JavaScript、Java、Go、Rust、SQL、Shell、YAML、Markdown は各 100% だが、JSON は 68.8% に留まり、専用の構造化データ軌道が必要である。
+
+> **実験 7-19 ★★：特殊文字列の exact-copy SFT**
+>
+> `old_string` の失敗を、元ファイルの byte、ツール返却、Harness のシリアライズ、モデル出力、tokenizer、ツール照合の順に切り分ける。モデル由来の漂移だけを copy-focused SFT に入れ、1,024/256/256 件の多言語文脈、hard negative、空白、escape、Unicode、ゼロ幅文字、Tool JSON を用いる。
+>
+> Qwen3-8B bf16 LoRA は holdout の byte-exact を 37.5% から 78.9%、boundary を 80.1% に改善した。512 probe の tokenizer 監査では Qwen3/Qwen2.5 の round-trip が 80.1%、Mistral が 100% であり、tokenizer/Harness の失敗をモデルのコピー能力と分けて報告する必要がある。
+
 ## RL でツール呼び出しを学ぶ
 
 これまでのマルチターンの実験では、Agent の行動空間は移動、観察などの内蔵操作に限られていました。現実の Agent はさまざまな外部ツール――検索エンジン、コードインタプリタ、文書パーサーなど――も呼び出す必要があり、これが RL 訓練に新しい課題をもたらします。

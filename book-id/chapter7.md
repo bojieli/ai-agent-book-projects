@@ -689,6 +689,18 @@ Ringkasnya: **Sinyal padat (dense signals) berguna hanya jika mereka dapat memul
 >
 > Akurasi perbandingan tetap pada tugas belum selesai naik dari 3/12 (25,0%) menjadi 11/12 (91,7%), sedangkan tugas selesai tetap 8/8 (100%). Generasi bebas terlalu berhati-hati, jadi hasil utama adalah perbandingan tetap, bukan klaim keberhasilan produksi secara umum. Implementasi: [`premature-completion-dpo`](../chapter7/premature-completion-dpo/).
 
+> **Eksperimen 7-18 ★★: SFT tanda kutip lengkung berbasis cakupan**
+>
+> Bad case tanda kutip lurus Tionghoa terlebih dahulu dirumuskan sebagai Skill dengan aturan cakupan positif dan negatif. Kutip pada prosa dan komentar Tionghoa boleh diubah menjadi kutip lengkung; kutip bahasa Inggris, string kode, JSON, path, identifier, dan sintaks yang dapat dieksekusi harus tetap byte-exact. Data diaudit pada 10 jenis artikel dan 9 bahasa pemrograman, dengan 1024/256/256 sampel train/holdout/batas.
+>
+> LoRA bf16 Qwen3-8B di RTX PRO 6000 mencapai exact 96,9% pada holdout dan 97,7% pada batas, dengan preservasi area terlindungi 100%. Python, JavaScript, Java, Go, Rust, SQL, Shell, YAML, dan Markdown mencapai 100%; JSON masih 68,8% dan memerlukan jalur data terstruktur tersendiri.
+
+> **Eksperimen 7-19 ★★: SFT exact-copy untuk string khusus**
+>
+> Kegagalan `old_string` dilokalisasi berlapis: byte file asli, respons tool, serialisasi Harness, keluaran model, tokenizer, lalu pencocokan tool. Hanya drift yang berasal dari model yang dijadikan data SFT. Korpus yang diperluas berisi 1024/256/256 sampel, konteks banyak bahasa, hard negative, whitespace, escape, Unicode, karakter zero-width, dan argumen JSON tool.
+>
+> LoRA bf16 Qwen3-8B meningkatkan byte-exact holdout dari 37,5% menjadi 78,9% dan batas menjadi 80,1%. Audit 512 probe mengukur round-trip 80,1% pada Qwen3/Qwen2.5 dan 100% pada Mistral; kegagalan tokenizer/Harness harus dipisahkan dari kemampuan penyalinan model.
+
 ## RL untuk Mempelajari Tool Calling
 
 Dalam eksperimen multi-giliran (multi-turn) sebelumnya, ruang aksi Agent terbatas pada operasi bawaan seperti bergerak dan mengamati. Agent dunia nyata juga perlu memanggil berbagai tool eksternal—mesin pencari, Code Interpreter, parser dokumen, dll.—yang memperkenalkan tantangan baru untuk pelatihan RL.

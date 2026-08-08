@@ -704,6 +704,18 @@ Más szóval, **a tiszta eredmény jutalmak vakok a sikerarány mindkét véglet
 >
 > A határkészlet eredménye 3/12-ről (25,0%) 11/12-re (91,7%) javult, a befejezett feladatok tartaléka 8/8 (100%) maradt. A szabad generálás túl óvatossá vált, ezért ez a rögzített összehasonlítás a fő eredmény, nem általános élesbeli javulási állítás. Részletek: [`premature-completion-dpo`](../chapter7/premature-completion-dpo/).
 
+> **7-18. ★★ kísérlet: Hatókörérzékeny görbeidézőjel-SFT**
+>
+> A kínai egyenes idézőjel hibáját először pozitív és negatív hatóköri szabályokat tartalmazó Skill foglalja össze. A kínai próza és kommentár idézőjelei görbére válthatók, az angol idézetek, kódstringek, JSON, útvonalak, azonosítók és végrehajtható szintaxis byte-szinten változatlan marad. Az auditált korpusz 10 műfajt és 9 programnyelvet fed le, 1024/256/256 tanító/holdout/perem mintával.
+>
+> A Qwen3-8B bf16 LoRA futása RTX PRO 6000-en 96,9% exact pontosságot ért el holdouton és 97,7%-ot a peremen, a védett részek megőrzése 100% lett. Python, JavaScript, Java, Go, Rust, SQL, Shell, YAML és Markdown 100%, a JSON viszont 68,8%, ezért külön strukturált adatpálya szükséges.
+
+> **7-19. ★★ kísérlet: Exact-copy SFT speciális karakterláncokra**
+>
+> Az `old_string` hibát rétegenként kell lokalizálni: fájlbyte-ok, eszközválasz, Harness-sorosítás, modellkimenet, tokenizer és eszközillesztés. Csak a modell okozta eltérés kerül copy-focused SFT-be. A bővített korpusz 1024/256/256 mintát, több nyelvi környezetet, hard negative-eket, whitespace-t, escape-eket, Unicode-ot, nulla szélességű karaktereket és tool JSON-t tartalmaz.
+>
+> A Qwen3-8B bf16 LoRA a holdout byte-exact pontosságát 37,5%-ról 78,9%-ra, a peremét 80,1%-ra javította. Az 512 probe-os tokenizer-audit Qwen3/Qwen2.5 esetén 80,1%, Mistral esetén 100% round-tripet mért; a tokenizer/Harness hibáit külön kell jelenteni a modell másolási képességétől.
+
 ## RL eszközhívás tanulásához
 
 Az előző többlépéses kísérletekben az Ágens akciótere a beépített műveletekre, például mozgásra és megfigyelésre korlátozódott. A valós Ágenseknek különféle külső eszközöket is kell hívniuk – keresőmotorokat, kódinterpretátorokat, dokumentum elemzőket stb. –, ami új kihívásokat vezet be az RL tréning számára.

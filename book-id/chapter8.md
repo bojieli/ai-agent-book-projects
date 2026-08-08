@@ -134,6 +134,8 @@ Agent Skills learning mengikuti prinsip yang sama, tetapi dengan ruang lingkup y
 >
 > Laporkan deteksi pada kumpulan tugas belum selesai, false positive pada teks normal, dan pertumbuhan jumlah aturan. Proses nyata pertama menghasilkan 0/8 deteksi dan 7/8 false positive; setelah filter eksternal dan fallback deterministik hasilnya 8/8, 0/8, serta 21 kandidat digabung menjadi 8 aturan. Implementasi: [`ai-style-skill`](../chapter8/ai-style-skill/).
 
+Kasus tanda kutip lengkung menunjukkan bahwa Skill harus menjadi kontrak data, bukan aturan penggantian global: sebelum SFT, contoh sintetis distratifikasi menurut jenis artikel, cakupan, dan bahasa pemrograman, lalu melewati gate kode/JSON/area terlindungi serta audit manual. Kasus string eksak menambahkan audit tokenizer; round-trip encode→decode, penyalinan byte-exact oleh model, serialisasi Harness, dan pencocokan tool adalah lapisan regresi yang terpisah.
+
 > **Eksperimen 8-3 ★★: Mengoptimalkan System Prompts dari Trajektori Kegagalan**
 >
 > **Tujuan (Objective):** Mengajari Agent layanan pelanggan maskapai penerbangan dari trajektori di mana ia melakukan eskalasi terlalu cepat ketika pengguna menantang suatu kebijakan, sekaligus mendemonstrasikan bahwa aturan baru tersebut tidak merusak skenario lama yang benar-benar membutuhkan eskalasi.

@@ -133,6 +133,8 @@ El aprendizaje de Skills sigue los mismos principios, aunque su alcance es más 
 >
 > Se informan a la vez la detección en el conjunto límite de tareas incompletas, los falsos positivos en el conjunto de reserva de textos normales y el crecimiento del número de reglas. La primera ejecución real dio 0/8 detecciones y 7/8 falsos positivos; tras el filtrado externo y el respaldo determinista, dio 8/8, 0/8 y fusionó 21 candidatos en 8 reglas. Implementación en [`ai-style-skill`](../chapter8/ai-style-skill/).
 
+El caso de las comillas curvas muestra que una Skill debe convertirse en un contrato de datos, no en una regla de sustitución global: los ejemplos sintéticos se estratifican por género, ámbito y lenguaje de programación, pasan controles de código/JSON/regiones protegidas y se auditan manualmente antes del SFT. El caso de cadenas exactas añade una auditoría del tokenizer: el round-trip encode→decode, la copia byte-exacta del modelo, la serialización del Harness y la coincidencia de la herramienta son capas de regresión separadas.
+
 > **Experimento 8-3 ★★: Optimizar prompts del sistema a partir de trayectorias de falla**
 >
 > **Objetivo del experimento**: Permitir que un Agente de atención al cliente de aerolíneas aprenda de las trayectorias de falla de "transferir prematuramente a un humano cuando el usuario cuestiona la política", demostrando al mismo tiempo que la nueva regla no destruye los escenarios antiguos que realmente requieren transferencia.

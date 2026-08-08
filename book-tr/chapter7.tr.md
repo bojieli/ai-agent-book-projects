@@ -689,6 +689,18 @@ Yani **saf sonuç ödülü, başarı oranının her iki ucunda da "kördür"**. 
 >
 > Sınır kümesindeki doğru karar 3/12’den (25,0%) 11/12’ye (91,7%) çıktı; tamamlanmış görev kümesi 8/8 (100%) kaldı. Serbest üretim fazla temkinli olduğundan ana sonuç sabit karşılaştırmadır, genel üretim başarısı iddiası değildir. Ayrıntılar [`premature-completion-dpo`](../chapter7/premature-completion-dpo/) içindedir.
 
+> **Deney 7-18 ★★: Kapsama duyarlı kıvrımlı tırnak SFT'si**
+>
+> Çince düz tırnak bad case'i önce pozitif ve negatif kapsam kuralları içeren bir Skill'e dönüştürülür. Çince düzyazı ve yorumlar kıvrımlı tırnak kullanabilir; İngilizce alıntılar, kod dizeleri, JSON, yollar, tanımlayıcılar ve çalıştırılabilir sözdizimi byte düzeyinde korunmalıdır. Denetlenen veri 10 belge türünü ve 9 programlama dilini, 1024/256/256 train/holdout/sınır örneğini kapsar.
+>
+> RTX PRO 6000 üzerindeki Qwen3-8B bf16 LoRA, holdout exact 96,9%, sınır 97,7% ve korunan alan 100% sonuçlarını verdi. Python, JavaScript, Java, Go, Rust, SQL, Shell, YAML ve Markdown 100% olurken JSON 68,8% kaldı; bu nedenle ayrı bir yapılandırılmış veri hattı gerekir.
+
+> **Deney 7-19 ★★: Özel dizeler için exact-copy SFT**
+>
+> `old_string` hatası dosya byte'ları, araç dönüşü, Harness serileştirmesi, model çıktısı, tokenizer ve araç eşleşmesi boyunca katmanlı biçimde teşhis edilir. Yalnızca model kaynaklı drift copy-focused SFT'ye alınır. Genişletilmiş corpus 1024/256/256 örnek, çoklu dil bağlamı, hard negative, boşluk, escape, Unicode, zero-width karakter ve tool JSON içerir.
+>
+> Qwen3-8B bf16 LoRA holdout byte-exact değerini 37,5%'ten 78,9%'a, sınırı 80,1%'e yükseltti. 512 probe tokenizer denetimi Qwen3/Qwen2.5 için 80,1%, Mistral için 100% round-trip verdi; tokenizer/Harness hataları modelin kopyalama yeteneğinden ayrı raporlanmalıdır.
+
 ## RL ile Tool Calling Öğrenmek
 
 Önceki çok turlu deneylerde Agent'ın action space'i hareket etme, gözlemleme gibi yerleşik işlemlerle sınırlıydı. Gerçek hayattaki bir Agent ise çeşitli dış araçları — arama motorları, kod yorumlayıcıları, doküman ayrıştırıcıları vb. — çağırmak zorundadır; bu da RL eğitimine yeni zorluklar getirir.

@@ -694,6 +694,18 @@ To summarize: **Dense signals are useful only when they can restore the within-g
 >
 > Before and after training, the unfinished-task boundary set and completed-task holdout are disjoint. In a fixed comparison between “complete” and “continue verification,” the boundary set improved from 3/12 (25.0%) to 11/12 (91.7%), while the holdout stayed at 8/8 (100%). Open-ended generation became overcautious, so the fixed comparison is the primary result; it is not a claim of higher overall online success. Full receipts and limitations are in [`premature-completion-dpo`](../chapter7/premature-completion-dpo/).
 
+> **Experiment 7-18 ★★: Scope-sensitive curved-quote SFT**
+>
+> The Chinese straight-quote bad case is first converted into a Skill with positive and negative scope rules. Chinese prose and Chinese comments may use curved quotes; English quotations, code strings, JSON, paths, identifiers, and executable syntax must remain byte-for-byte unchanged. The corpus is audited across 10 article types and 9 programming languages, with 1,024/256/256 train/holdout/boundary examples.
+>
+> On the RTX PRO 6000, Qwen3-8B bf16 LoRA reaches 96.9% exact on the holdout and 97.7% on the boundary set, with 100% protected-region preservation. Python, JavaScript, Java, Go, Rust, SQL, Shell, YAML, and Markdown each reach 100%; JSON remains 68.8%, so structured-data cases need a dedicated track. The result demonstrates that explicit, audited boundaries matter more than simply adding epochs.
+
+> **Experiment 7-19 ★★: Exact-copy SFT for special strings**
+>
+> Diagnose `old_string` failures layer by layer: original file bytes, tool return, Harness serialization, model output, tokenizer, and tool matching. Only model-side drift becomes copy-focused SFT data. The expanded corpus contains 1,024/256/256 examples, multiple language contexts, hard negatives, whitespace, escapes, Unicode, zero-width characters, and tool JSON arguments.
+>
+> Qwen3-8B bf16 LoRA improves byte-exact accuracy from 37.5% to 78.9% on the holdout and reaches 80.1% on the boundary set. A separate 512-probe audit finds 80.1% encode-decode round-trip for Qwen3 and Qwen2.5 tokenizers, versus 100% for Mistral. Tokenizer/Harness failures must therefore be reported separately from model copying.
+
 ## RL for Learning Tool Calling
 
 In the preceding multi-turn experiments, the Agent's action space was limited to built-in operations like moving and observing. Real-world Agents also need to call various external tools—search engines, code interpreters, document parsers, etc.—which introduces new challenges for RL training.

@@ -689,6 +689,18 @@ Tóm lại: **Tín hiệu dày đặc chỉ hữu ích nếu nó có thể bù �
 >
 > Quyết định đúng trên tập ranh giới tăng từ 3/12 (25,0%) lên 11/12 (91,7%), còn tập giữ lại của nhiệm vụ đã hoàn thành giữ 8/8 (100%). Sinh tự do quá thận trọng, nên đây là kết quả so sánh cố định chứ không phải tuyên bố cải thiện thành công tổng thể khi vận hành. Xem [`premature-completion-dpo`](../chapter7/premature-completion-dpo/).
 
+> **Thí nghiệm 7-18 ★★: SFT dấu ngoặc kép cong theo phạm vi**
+>
+> Bad case dấu ngoặc kép thẳng tiếng Trung trước hết được chuyển thành Skill với quy tắc phạm vi dương và âm. Dấu ngoặc trong văn xuôi và chú thích tiếng Trung được đổi thành dạng cong; trích dẫn tiếng Anh, chuỗi mã, JSON, đường dẫn, định danh và cú pháp thực thi phải giữ nguyên từng byte. Bộ dữ liệu được kiểm toán trên 10 thể loại bài viết và 9 ngôn ngữ lập trình, với 1024/256/256 mẫu train/holdout/biên.
+>
+> LoRA bf16 Qwen3-8B trên RTX PRO 6000 đạt exact 96,9% ở holdout và 97,7% ở biên, bảo toàn vùng được bảo vệ 100%. Python, JavaScript, Java, Go, Rust, SQL, Shell, YAML và Markdown đều đạt 100%; JSON còn 68,8% nên cần một nhánh dữ liệu có cấu trúc riêng.
+
+> **Thí nghiệm 7-19 ★★: SFT exact-copy cho chuỗi đặc biệt**
+>
+> Lỗi `old_string` được định vị theo từng lớp: byte tệp gốc, phản hồi công cụ, tuần tự hóa Harness, đầu ra mô hình, tokenizer và đối sánh công cụ. Chỉ drift do mô hình mới được đưa vào SFT. Corpus mở rộng có 1024/256/256 mẫu, nhiều ngữ cảnh ngôn ngữ, hard negative, khoảng trắng, escape, Unicode, ký tự zero-width và JSON của công cụ.
+>
+> LoRA bf16 Qwen3-8B nâng byte-exact holdout từ 37,5% lên 78,9% và biên lên 80,1%. Kiểm toán 512 probe cho round-trip 80,1% với Qwen3/Qwen2.5 và 100% với Mistral; lỗi tokenizer/Harness phải được báo cáo tách khỏi năng lực sao chép của mô hình.
+
 ## Gọi công cụ học tập RL
 
 Trong các vòng thử nghiệm trước, không gian hành động của Agent bị giới hạn ở các hoạt động tích hợp sẵn như chuyển động và quan sát. Trên thực tế, Agent cũng cần gọi nhiều công cụ bên ngoài khác nhau - công cụ tìm kiếm, trình thông dịch mã, trình phân tích cú pháp tài liệu, v.v. - điều này mang lại những thách thức mới cho việc đào tạo RL.
