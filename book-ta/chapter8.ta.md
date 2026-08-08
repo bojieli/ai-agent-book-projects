@@ -50,16 +50,10 @@ LLM verifier-உம் calibration செய்யப்பட வேண்ட�
 
 > **பரிசோதனை 8-1 ★★: வாடிக்கையாளர் சேவை Agent-க்கான trajectory verifier-ஐ உருவாக்குதல்**
 >
-> **பரிசோதனை இலக்கு**: ஒரு வாடிக்கையாளர் சேவை இயக்க trajectory-ஐ அடுத்தடுத்த கற்றலுக்குப் பயன்படும் கட்டமைக்கப்பட்ட diagnosis-ஆக மாற்றி, “சான்றுகளுடன் கூடிய பல்பரிமாண முடிவு” ஒரே மொத்த மதிப்பெண்ணைவிட root cause-ஐச் சிறப்பாகக் கண்டறிகிறதா எனச் சரிபார்த்தல்.
+> **நோக்கம்:** இந்தச் சோதனை பிரதிபலிக்கும் திறனைத் தனியாக அளந்து, பொருத்தமான baseline உடன் ஒப்பிடுதல்.
 >
-> **தரவும் செயல்முறையும்**: சாதாரண refund, பொய்யான உறுதி, privacy leak மற்றும் அளவுக்கு மீறிய மறுப்பு என்ற நான்கு வகை, நிபுணர் label செய்த trajectory-களைத் தயாரிக்க வேண்டும். முதல் அடுக்கு order-இன் இறுதி state மற்றும் tool log-களைப் படித்து, refund அல்லது rebooking உண்மையில் நடந்ததா எனத் தீர்மானிக்கிறது. இரண்டாம் அடுக்கு வணிகக் கொள்கையுடன் ஒவ்வொரு படியையும் ஒப்பிட்டு permission, அவசியமான process, privacy, உண்மை ஆதாரம் மற்றும் உறுதி—செயல் ஒற்றுமையைச் சோதிக்கிறது. மூன்றாம் அடுக்கு அட்டவணை 8-1 Rubric-ஐப் பயன்படுத்தி வெளிப்பாட்டுத் தரத்தையும் இணக்கமான மாற்றுவழியையும் மதிப்பிட்டு, தோல்வி முடிவுகளுக்கு ஆதாரமாக உரையாடல் சுற்றுகளைப் பாதுகாக்கிறது. இயல்புநிலை quality Judge deterministic rule-களைப் பயன்படுத்துகிறது; உண்மையான LLM Judge-உம் வழங்கப்படுகிறது. மேலடுக்கில் எந்த மாதிரி பயன்படுத்தப்பட்டாலும், result layer மற்றும் rule layer மொழி மாதிரியின் ஊகத்திற்கு விடப்படக்கூடாது.
+> **கொள்கை நிலை முடிவு:** பின்னடைவு இல்லாமல் இலக்கு நடத்தை மேம்பட்டு, மாற்றத்தைத் தடமறிந்து சரிபார்த்து மீட்டெடுக்க முடிந்தால் மட்டுமே அதை ஏற்கவும்; இந்தப் புத்தகம் வடிவமைப்பையும் முடிவையும் சொல்கிறது, குறிப்பிட்ட run அளவுருக்களை அல்ல.
 >
-> **ஒப்பீடும் metrics-உம்**: baseline ஒரே மொத்த மதிப்பெண்ணை மட்டும் வெளியிடுகிறது; பரிசோதனைக் குழு ஒவ்வொரு பரிமாணத்திற்கும் `pass`, `fail` அல்லது `uncertain`, சான்று மற்றும் confidence-ஐ வெளியிடுகிறது. Calibration கட்டத்தில் failure detection-இன் precision மற்றும் recall ஒவ்வொரு பரிமாணத்திற்கும் கணக்கிடப்பட்டு, expert label-உடனான exact-match rate-உம் தெரிவிக்கப்படுகிறது. பொய்யான உறுதி போன்ற தோல்விகளுக்கு வெறும் முடிவு மட்டுமல்லாமல், காலியில்லாத சான்று வழங்கப்பட்டுள்ளதா என்பதும் சோதிக்கப்படுகிறது.
->
-> **ஏற்றுக்கொள்ளும் நிபந்தனைகள்**: முக்கிய விதிமீறல், பொய்யான உறுதி மற்றும் அளவுக்கு மீறிய மறுப்பு ஆகியவற்றை verifier நிலையாகக் கண்டறிய வேண்டும். உயர்ந்த மொத்த மதிப்பெண் privacy அல்லது rule பரிமாணத் தோல்வியை மறைக்கக்கூடாது. குறைந்த confidence அல்லது அதிக ஆபத்து கொண்ட case-கள் தானாக learning signal-ஆக மாறாமல், இரண்டாவது verifier அல்லது மனித review-க்கு அனுப்பப்பட வேண்டும்.
->
-> தொடர்புடைய implementation [`trajectory-verifier`](../chapter8/trajectory-verifier/) இல் உள்ளது. இயல்புநிலையில் offline-ஆக மறுஉருவாக்கக்கூடிய quality Judge பயன்படுத்தப்படுகிறது; ஏற்கனவே செயல்படுத்தப்பட்ட உண்மையான LLM verifier-ஐ இயக்க `--judge llm` பயன்படுத்தலாம்.
-
 ## Agent தொடர்ச்சியான பரிணாமத்தின் நான்கு முறைகள்
 
 Learning signal Agent மாற வேண்டும் என்பதைச் சொல்கிறது; ஆனால் மாற்றம் எங்கு நிகழ வேண்டும் என்பதைச் சொல்லாது. Update முறையைத் தேர்ந்தெடுப்பதற்கான முதன்மை அடிப்படை, ஒரு அனுபவம் எவ்வளவு காலமாக உள்ளது என்பதல்ல; இலக்கு திறனை எந்த carrier இயல்பாக வெளிப்படுத்த முடியும் என்பதே ஆகும். உண்மைகளும் அனுபவங்களும் அறிவு ஆவணங்களாக எழுதப்பட ஏற்றவை; மொழியில் தெளிவாக வெளிப்படுத்தக்கூடிய உத்திகள் Prompt அல்லது Skill-இல் எழுதப்பட ஏற்றவை; துல்லியமாகச் செயல்படுத்தக்கூடிய செயல்முறைகளும் கட்டுப்பாடுகளும் program-ஆக எழுதப்பட ஏற்றவை; perception, மொழிப் பாணி, implicit strategy போன்ற உயர்-பரிமாணத் திறன்கள் model parameters-இல் நுழைய வேண்டும். படம் 8-3 இந்த நான்கு முறைகளையும் அவற்றின் உறவையும் காட்டுகிறது.
@@ -95,16 +89,10 @@ GAIA அனுபவக் கற்றல் இதற்கான நேரட
 
 > **பரிசோதனை 8-2 ★★: GAIA trajectory-களிலிருந்து அனுபவ அறிவு ஆவணங்களைப் பிரித்தெடுத்தல்**
 >
-> **பரிசோதனை இலக்கு**: “பல trajectory-களிலிருந்து உருவான knowledge document”, “ஒரே வெற்றியின் summary-ஐ நினைவில் வைத்தல்” என்பதைக் காட்டிலும் சிறப்பாக transfer ஆகிறதா; மேலும் தற்செயலான வெற்றி மற்றும் தவறான அனுபவத்தால் ஏற்படும் negative transfer-ஐக் குறைக்கிறதா எனச் சோதித்தல்.
+> **நோக்கம்:** இந்தச் சோதனை பிரதிபலிக்கும் திறனைத் தனியாக அளந்து, பொருத்தமான baseline உடன் ஒப்பிடுதல்.
 >
-> **தரவும் செயல்முறையும்**: `gaia-experience` முதலில் ஒவ்வொரு run-இன் முழு trajectory மற்றும் வெளிப்புற `environment_score`-ஐச் சேமித்து, பின்னர் அவற்றை `task_family`, தேவையான `capabilities`, `applies_when`, காணப்பட்ட strategy, error, exception மற்றும் source trajectory ID கொண்ட minimal learning record-ஆக மாற்றுகிறது. Result verifier run-ஐ வெற்றி, பகுதி வெற்றி அல்லது தோல்வி எனப் பிரிக்கிறது. Learning module ஒரே task family-இன் பாதைகளை ஒப்பிடுகிறது. LLM candidate generalization-ஐ முன்வைக்கலாம்; ஆனால் ஒரு recommended strategy குறைந்தபட்சம் இரண்டு தோல்வியல்லாத trajectory-களின் ஆதரவைப் பெற வேண்டும். இறுதி Markdown ஆவணத்தில் applicable context, recommended strategy, common mistake, exception condition, source மற்றும் last-verified time இடம்பெறும். Application கட்டத்தில் இவ்வாவணங்கள் மட்டுமே retrieval செய்யப்பட வேண்டும்; நீண்ட மூல trajectory நேரடியாக context-இல் வைக்கப்படக்கூடாது.
+> **கொள்கை நிலை முடிவு:** பின்னடைவு இல்லாமல் இலக்கு நடத்தை மேம்பட்டு, மாற்றத்தைத் தடமறிந்து சரிபார்த்து மீட்டெடுக்க முடிந்தால் மட்டுமே அதை ஏற்கவும்; இந்தப் புத்தகம் வடிவமைப்பையும் முடிவையும் சொல்கிறது, குறிப்பிட்ட run அளவுருக்களை அல்ல.
 >
-> **மூன்று ஒப்பீட்டுக் குழுக்கள்**: முதல் குழு வரலாற்று அனுபவத்தைப் பயன்படுத்தாது; இரண்டாவது தற்போதைய பணிக்கு மிகவும் ஒத்த ஒரே trajectory summary-ஐ retrieval செய்கிறது; மூன்றாவது பல trajectory-கள் இணைந்து ஆதரிக்கும் knowledge document-ஐ retrieval செய்கிறது. ஒரே GAIA கேள்வியின் பதில் “அனுபவம்” என்ற பெயரில் evaluation-க்கு கசியாதபடி learning set மற்றும் transfer set ஒன்றுடன் ஒன்று overlap ஆகக்கூடாது.
->
-> **Metrics மற்றும் acceptance**: transfer task success rate, சராசரி retrieval character அல்லது Token எண்ணிக்கை, negative-transfer rate ஆகியவை ஒன்றாக அறிக்கையிடப்பட வேண்டும்; ஒவ்வொரு formal conclusion-உம் source trajectory-ஐப் பட்டியலிடுகிறதா எனச் சோதிக்க வேண்டும். Cross-trajectory document context-ஐச் சுருக்கினாலும் புதிய task performance-ஐ மேம்படுத்தவில்லை என்றால், அமைப்பு அனுபவத்திலிருந்து கற்றது என நிரூபிக்க முடியாது. ஒரே தற்செயலான வெற்றி formal knowledge-ஆக உயர்த்தப்படுமானாலும், ஆவணத்தை மூல trajectory வரை trace செய்ய முடியாவிட்டாலும் acceptance தோல்வியடையும்.
->
-> தொடர்புடைய implementation [`gaia-experience`](../chapter8/gaia-experience/) இல் உள்ளது. `demo_documents.py` இயல்புநிலையில் offline-ஆக இயங்குகிறது; `--extractor llm` பயன்படுத்தினால் உண்மையான LLM பல trajectory-களைக் கடக்கும் அனுபவ candidate-களை முன்வைக்கலாம்.
-
 [^reflexion-2023]: Shinn, N., et al. *Reflexion: Language Agents with Verbal Reinforcement Learning.* arXiv:2303.11366, 2023.
 
 [^gaia-2023]: Mialon, G., et al. *GAIA: a benchmark for General AI Assistants.* arXiv:2311.12983, 2023.
@@ -129,24 +117,18 @@ Skill learning-உம் இதே கோட்பாட்டைப் பி�
 
 > **பரிசோதனை 8-9 ★★: feedback-ஐ writing Skill ஆக மாற்றுதல்**
 >
-> `data/feedback_pairs.json` இன் 20 before/after ஜோடிகளை மூன்று batch-களாக ஏற்று, candidate rule-களைப் பிரித்தெடுத்து, duplicate pattern-களை இணைத்து, threshold conflict-களைச் சரிபார்த்து, source/scope உடன் `SKILL.md` உருவாக்கவும். Deterministic rule-களை code-ல் சரிபார்க்கவும்; LLM rule-களை 10 gold sample-களில் calibrate செய்யவும்.
+> **நோக்கம்:** இந்தச் சோதனை பிரதிபலிக்கும் திறனைத் தனியாக அளந்து, பொருத்தமான baseline உடன் ஒப்பிடுதல்.
 >
-> முடியாத task set detection, சாதாரண text false-positive, rule count growth ஆகியவற்றை ஒருசேர report செய்யவும். முதல் real run 0/8 detection, 7/8 false-positive; வெளிப்புற filtering மற்றும் deterministic fallback பிறகு 8/8, 0/8, 21 candidate-கள் 8 rule-களாக இணைந்தன. Implementation [`ai-style-skill`](../chapter8/ai-style-skill/) இல் உள்ளது.
-
+> **கொள்கை நிலை முடிவு:** பின்னடைவு இல்லாமல் இலக்கு நடத்தை மேம்பட்டு, மாற்றத்தைத் தடமறிந்து சரிபார்த்து மீட்டெடுக்க முடிந்தால் மட்டுமே அதை ஏற்கவும்; இந்தப் புத்தகம் வடிவமைப்பையும் முடிவையும் சொல்கிறது, குறிப்பிட்ட run அளவுருக்களை அல்ல.
+>
 வளைந்த மேற்கோள் வழக்கு, Skill ஒரு global replacement rule அல்ல; data contract ஆக இருக்க வேண்டும் என்பதை காட்டுகிறது. SFTக்கு முன் synthetic example-களை article type, scope, programming language படி பிரித்து, code/JSON/protected-region gate மற்றும் manual audit மூலம் சரிபார்க்க வேண்டும். Exact-copy வழக்கில் tokenizer encode→decode round-trip, model byte-exact copy, Harness serialization, tool matching ஆகியவை தனித்தனி regression layer-களாக audit செய்யப்பட வேண்டும்.
 
 > **பரிசோதனை 8-3 ★★: தோல்வி trajectory-களை அடிப்படையாகக் கொண்டு system Prompt-ஐ மேம்படுத்துதல்**
 >
-> **பரிசோதனை இலக்கு**: பயனர் policy-ஐக் கேள்வி கேட்கும்போது மிக விரைவாக மனிதரிடம் transfer செய்த தோல்வி trajectory-இலிருந்து விமான வாடிக்கையாளர் சேவை Agent கற்றுக்கொள்ளச் செய்வதோடு, உண்மையில் transfer தேவைப்படும் பழைய scenario-களைப் புதிய விதி பாதிக்கவில்லை என நிரூபித்தல்.
+> **நோக்கம்:** இந்தச் சோதனை பிரதிபலிக்கும் திறனைத் தனியாக அளந்து, பொருத்தமான baseline உடன் ஒப்பிடுதல்.
 >
-> **செயல்முறை**: முதலில் பழைய task retention set மற்றும் over-transfer boundary set தனித்தனியாக இயக்கப்படுகின்றன. `learning_signal.py` தோல்வியை rule compliance, task resolution மற்றும் compliant workaround என்ற மூன்று பரிமாணங்களாகப் பிரித்து, source case ID-ஐப் பாதுகாக்கிறது. Coding Agent பின்னர் தற்போதைய Prompt-ஐப் படித்து, ஒரே audit செய்யக்கூடிய `old_str → new_str` minimal edit-ஐ மட்டும் உருவாக்குகிறது: முதலில் policy-ஐ விளக்கி, உண்மையான இலக்கை அடையாளம் கண்டு, இணக்கமான மாற்றுவழியைத் தேட வேண்டும்; அதே நேரத்தில் பயனர் வெளிப்படையாக மனிதரை வேண்டும்போதும் safety incident ஏற்பட்டாலும் transfer path பாதுகாக்கப்பட வேண்டும். Patch, source, target rule மற்றும் change reason candidate manifest-இல் எழுதப்படுகின்றன.
+> **கொள்கை நிலை முடிவு:** பின்னடைவு இல்லாமல் இலக்கு நடத்தை மேம்பட்டு, மாற்றத்தைத் தடமறிந்து சரிபார்த்து மீட்டெடுக்க முடிந்தால் மட்டுமே அதை ஏற்கவும்; இந்தப் புத்தகம் வடிவமைப்பையும் முடிவையும் சொல்கிறது, குறிப்பிட்ட run அளவுருக்களை அல்ல.
 >
-> **மூன்று ஒப்பீட்டுக் குழுக்கள்**: initial Prompt, தானாக உருவான candidate Prompt மற்றும் மனிதர் ஒருமுறை tune செய்த Prompt. மூன்றும் ஒரே model மற்றும் ஒரே retention/boundary task-களைப் பயன்படுத்துகின்றன. `--quick` case எண்ணிக்கையை மட்டுமே குறைக்கிறது; task Agent, LLM Judge மற்றும் Coding Agent உண்மையாக அழைக்கப்படுகின்றன. எனவே அது offline simulation result அல்ல.
->
-> **Release threshold மற்றும் metrics**: patch காலியல்ல, source trace செய்யக்கூடியது, boundary-set performance உண்மையில் மேம்பட்டது, retention set சிதையவில்லை என்ற நான்கு நிபந்தனைகளையும் candidate பூர்த்தி செய்ய வேண்டும். Boundary-task accuracy, retention-task accuracy, Prompt growth length, அறிமுகமான regression எண்ணிக்கை, failure கண்டறிந்ததிலிருந்து candidate உருவான நேரம் ஆகியவை ஒப்பிடப்படுகின்றன. Threshold கடந்தாலும் `release_to_canary` மட்டுமே கிடைக்கும்; stable Prompt நேரடியாக overwrite செய்யப்படாது. எந்த ஒரு நிபந்தனை தோல்வியடைந்தாலும் `reject_candidate` திரும்ப வேண்டும்.
->
-> தொடர்புடைய implementation [`prompt-auto-optimization`](../chapter8/prompt-auto-optimization/) இல் உள்ளது. Offline test-கள் diagnosis மற்றும் release threshold-ஐ உள்ளடக்குகின்றன; `--quick` உண்மையான task Agent, LLM Judge மற்றும் Coding Agent-ஐ அழைக்கும்.
-
 [^dspy-2023]: Khattab, O., et al. *DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines.* arXiv:2310.03714, 2023.
 
 [^opro-2023]: Yang, C., et al. *Large Language Models as Optimizers.* arXiv:2309.03409, 2023.
@@ -178,16 +160,10 @@ Email அனுப்பும் எடுத்துக்காட்டி�
 
 > **பரிசோதனை 8-4 ★★★: browser trajectory-இலிருந்து சரிபார்க்கக்கூடிய workflow-ஐ உருவாக்குதல்**
 >
-> **பரிசோதனை இலக்கு**: ஒரு செலவான exploration-ஐ Web Agent மறுபயன்படுத்தக்கூடிய workflow-ஆக மாற்றுகிறதா; web page மாறும்போது “எல்லா action-களும் ஓடின” என்பதை success எனத் தவறாக அறிவிக்காமல் incorrect replay-ஐ நிராகரிக்கிறதா எனச் சோதித்தல்.
+> **நோக்கம்:** இந்தச் சோதனை பிரதிபலிக்கும் திறனைத் தனியாக அளந்து, பொருத்தமான baseline உடன் ஒப்பிடுதல்.
 >
-> **நான்கு கட்ட scenario**: முதல் கட்டத்தில் test mail site அல்லது simulated message page-இல் “`test@example.com`-க்கு ‘சோதனை மின்னஞ்சல்’ subject கொண்ட message அனுப்பு” என்ற பணி இயக்கப்படுகிறது. Full Agent explore செய்கிறது; wrapper action, parameter மற்றும் page state-ஐப் பதிவு செய்து `candidate` உருவாக்குகிறது. இரண்டாம் கட்டத்தில் `validation_reset` sandbox-ஐ மீட்டமைத்து, candidate தனியாக முழுமையாக replay செய்யப்படுகிறது. Pre-action, post-action மற்றும் final-state check அனைத்தையும் கடந்தால் மட்டுமே formal capability library-இல் சேரும். மூன்றாம் கட்டத்தில் recipient, subject, body அனைத்தும் மாறிய அதேவகைப் பணி இயக்கப்படுகிறது; validated workflow match செய்யப்பட்டு, புதிய parameter நிரப்பப்பட்டு, step-by-step LLM loop இல்லாமல் Playwright replay செய்ய வேண்டும். நான்காம் கட்டத்தில் button locator, page text அல்லது final state மாற்றப்பட்டு, பழைய workflow உடனடியாக `invalid` ஆகி `fallback_required=True` தருகிறதா எனச் சோதிக்க வேண்டும்.
+> **கொள்கை நிலை முடிவு:** பின்னடைவு இல்லாமல் இலக்கு நடத்தை மேம்பட்டு, மாற்றத்தைத் தடமறிந்து சரிபார்த்து மீட்டெடுக்க முடிந்தால் மட்டுமே அதை ஏற்கவும்; இந்தப் புத்தகம் வடிவமைப்பையும் முடிவையும் சொல்கிறது, குறிப்பிட்ட run அளவுருக்களை அல்ல.
 >
-> **ஒப்பீட்டு வடிவமைப்பு**: எளிய baseline click, input போன்ற action exception இல்லாமல் முடிந்ததா என்பதை மட்டும் எண்ணுகிறது. பரிசோதனைக் குழு கூடுதலாக pre-action page, post-action page மற்றும் task final state-ஐச் சரிபார்க்கிறது. இரு குழுக்களுக்கும் ஒரே trajectory மற்றும் page change வழங்கப்பட்டு, “field காலியாக இருந்தாலும் Send button click செய்யப்பட்டது”, “Save click ஆனாலும் data database-இல் எழுதப்படவில்லை” போன்ற false-success case-களின் misclassification rate ஒப்பிடப்படுகிறது.
->
-> **Metrics மற்றும் acceptance**: முதல் exploration மற்றும் replay-இன் end-to-end நேரம், LLM call எண்ணிக்கை, success rate, false-success rate, workflow-match rate, page-change detection rate மற்றும் fallback relearning எண்ணிக்கை பதிவு செய்யப்பட வேண்டும். Reset callback இல்லையெனில் workflow candidate பகுதியில் இருக்க வேண்டும்; verification தோல்வியடைந்த version retrieval ஆகக்கூடாது; parameterized replay முதல் run recipient அல்லது content-ஐ மீண்டும் பயன்படுத்தக்கூடாது; page மாறியபின் ஆபத்தான அடுத்த action நிறுத்தப்பட வேண்டும். இந்த நிபந்தனைகள் அனைத்தும் பூர்த்தியானால் மட்டுமே speedup அர்த்தமுள்ளதாகும்.
->
-> தொடர்புடைய implementation [`browser-use-rpa`](../chapter8/browser-use-rpa/) இல் உள்ளது; deterministic state-machine demo மற்றும் உண்மையான browser Agent-ஐ அழைக்கும் execution path இரண்டும் வழங்கப்படுகின்றன.
-
 Agent தனது code-ஐ மாற்றுவது, இயங்கிக்கொண்டிருக்கும் process தன்னைத்தானே நேரடியாக overwrite செய்வதைக் குறிக்காது. Production அமைப்பு தற்போதைய stable version-இலிருந்து candidate branch உருவாக்கி, Coding Agent மூலம் minimal patch உருவாக்க வேண்டும்; பின்னர் static check, unit test, security scan, failure-trajectory replay மற்றும் பழைய task regression ஆகியவற்றை வரிசையாகக் கடந்து, canary deployment செய்யக்கூடிய புதிய version-ஐ உருவாக்க வேண்டும். இது “self-modification” என்பதை audit செய்யக்கூடிய software release process-ஆக மாற்றுகிறது. இதுவே எட்டாம் அத்தியாயத்திற்கும் ஐந்தாம் அத்தியாயத்திற்கும் இடையிலான எல்லையாகும்: ஐந்தாம் அத்தியாயம் அமைப்பை மாற்றும் திறனை வழங்குகிறது; இவ்வத்தியாயம் அனுபவத்தால் தூண்டப்பட்டு, verification loop-ஆல் கட்டுப்படுத்தப்படும் self-modification முறையை வழங்குகிறது.
 
 Patch சிறியதாக இருப்பது மட்டும் நம்பகமான attribution-க்குப் போதாது. ஒவ்வொரு modification request-உம் failure evidence, ஊகிக்கப்பட்ட root cause, பொறுப்பான Harness component, candidate change, மேம்பட வேண்டிய behavior, பின்னடையக்கூடிய பழைய behavior மற்றும் இரண்டிற்குமான test-களைப் பதிவு செய்யும் **falsifiable change contract**-ஆக இருக்க வேண்டும். Agentic Harness Engineering இதை component, experience மற்றும் decision level observability என விவரிக்கிறது: திருத்தக்கூடிய ஒவ்வொரு component-க்கும் file-level representation உள்ளது; பெரும் trajectory collection படிப்படியாக விரிவாக ஆய்வு செய்யக்கூடிய evidence-ஆகச் சுருக்கப்படுகிறது; ஒவ்வொரு edit-உம் செயல்படுத்துவதற்கு முன் impact prediction-ஐ அறிவிக்கிறது, அதை அடுத்த சுற்று result சோதிக்கிறது[^ahe-2026]. இதனால் உயர்ந்த score-ஐ ஒரு குறிப்பிட்ட mechanism-உடன் இணைக்க முடியும்; அது விளக்கமற்ற trial-ஆக மட்டும் இருக்காது.
@@ -198,16 +174,10 @@ Tool creation-உம் இதே protocol-ஐப் பின்பற்று
 
 > **பரிசோதனை 8-5 ★★★: தோல்வி trajectory மூலம் Agent self-modification-ஐத் தூண்டுதல்**
 >
-> **பரிசோதனை இலக்கு**: `retryable=false` error தொடர்ந்து அழைக்கப்பட்ட பல trajectory-களிலிருந்து root cause retry மற்றும் circuit-breaker code-இல் உள்ளதா எனக் கண்டறிந்து, temporary-failure retry capability-ஐ பாதிக்காமல் candidate fix உருவாக்குகிறதா எனச் சோதித்தல்.
+> **நோக்கம்:** இந்தச் சோதனை பிரதிபலிக்கும் திறனைத் தனியாக அளந்து, பொருத்தமான baseline உடன் ஒப்பிடுதல்.
 >
-> **செயல்முறை**: Diagnosis module முதலில் வேறுபட்ட task-களில் ஏற்பட்ட ஒரே failure-ஐத் தொகுக்கிறது. Cross-trajectory support threshold அடைந்த பிறகே modification request உருவாக்கி, stable version-இன் `retry_policy.py`-ஐ target செய்கிறது. Candidate generator failure diagnosis, பாதுகாக்க வேண்டிய transient-failure recovery behavior, முன்பு reject செய்யப்பட்ட change-கள் மற்றும் stable source code-ஐப் படிக்கிறது. Minimal code diff-ஐ வெளியிடுவதற்கு முன், non-retryable error-க்கு பிந்தைய call-கள் குறைய வேண்டும்; transient-timeout recovery பின்னடையக்கூடாது என்று impact prediction செய்கிறது. Deterministic generator அல்லது உண்மையான LLM Coding Agent எதுவாக இருந்தாலும், result தனிமைப்படுத்தப்பட்ட candidate directory-இல் மட்டுமே எழுதப்பட வேண்டும். Verification Harness பின்னர் candidate-ஐ compile செய்து, மூல failure trajectory-ஐ replay செய்து, non-retryable error உடனடியாக நிறுத்தப்பட்டு circuit breaker திறக்கிறதா எனச் சோதித்து, temporary timeout பழைய threshold வரை மீண்டும் retry ஆகிறதா என மீள்சோதிக்கிறது.
+> **கொள்கை நிலை முடிவு:** பின்னடைவு இல்லாமல் இலக்கு நடத்தை மேம்பட்டு, மாற்றத்தைத் தடமறிந்து சரிபார்த்து மீட்டெடுக்க முடிந்தால் மட்டுமே அதை ஏற்கவும்; இந்தப் புத்தகம் வடிவமைப்பையும் முடிவையும் சொல்கிறது, குறிப்பிட்ட run அளவுருக்களை அல்ல.
 >
-> **Diagnosis ஒப்பீடும் metrics-உம்**: “Prompt-இல் மீண்டும் அழைக்காதே என்று ஒரு வரி மட்டும் சேர்” என்பது தவறான layer localization-க்கான conceptual baseline. Deterministic retry constraint ஏன் program-இல் இருக்க வேண்டும் என்பதை இது காட்டுகிறது. இயங்கக்கூடிய பரிசோதனையில் deterministic patch generator மற்றும் LLM generator ஒப்பிடப்படுகின்றன; இரண்டும் ஒரே release threshold-ஐப் பயன்படுத்துகின்றன. Non-retryable call எண்ணிக்கை, temporary-error recovery rate, பழைய task regression எண்ணிக்கை, patch size மற்றும் candidate acceptance rate பதிவு செய்யப்படுகின்றன.
->
-> **ஏற்றுக்கொள்ளும் நிபந்தனைகள்**: எல்லா check-களும் கடந்த பிறகும் `release_to_canary` மட்டுமே உருவாகும். Static check, failure replay அல்லது பழைய task regression ஏதேனும் தோல்வியடைந்தால் `reject_candidate` திரும்ப வேண்டும். `release_manifest.json` failure cluster, source trajectory-கள், inferred root cause, target component மற்றும் file, code diff, expected repair, potential regression, check result, candidate version மற்றும் rollback version-ஐப் பதிவு செய்ய வேண்டும். Reject செய்யப்பட்ட candidate-களின் failure reason அடுத்த generation round-க்காகப் பாதுகாக்கப்பட வேண்டும். Patch உருவாக்கும் Agent stable code, verifier, audit log அல்லது தனது release-ஐ அங்கீகரிக்கும் threshold-ஐ மாற்ற முடியாது.
->
-> தொடர்புடைய implementation [`self-modifying-agent`](../chapter8/self-modifying-agent/) இல் உள்ளது. Deterministic candidate generator அல்லது உண்மையான LLM Coding Agent ஆகியவற்றில் ஒன்றைத் தேர்ந்தெடுக்கலாம்; இரு பாதைகளும் ஒரே release threshold-ஐப் பகிர்கின்றன.
-
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
 [^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
@@ -216,8 +186,10 @@ Tool creation-உம் இதே protocol-ஐப் பின்பற்று
 
 > **பரிசோதனை 8-8 ★★: user feedback-இலிருந்து high-risk operation confirmation gate**
 >
-> `failure_trajectories.json` இன் மூன்று signal மற்றும் control trajectory-களைப் பயன்படுத்தவும். உண்மையான `gpt-4o-mini` candidate incomplete task, normal operation, one-time token check-களை கடக்காததால் security gate நிராகரித்தது. Deterministic candidate அனைத்தையும் கடந்து `release_to_canary` பெற்றது; check, decision, stable directory hash பதிவு செய்யவும். Implementation [`harness-safety-gate`](../chapter8/harness-safety-gate/) இல் உள்ளது.
-
+> **நோக்கம்:** இந்தச் சோதனை பிரதிபலிக்கும் திறனைத் தனியாக அளந்து, பொருத்தமான baseline உடன் ஒப்பிடுதல்.
+>
+> **கொள்கை நிலை முடிவு:** பின்னடைவு இல்லாமல் இலக்கு நடத்தை மேம்பட்டு, மாற்றத்தைத் தடமறிந்து சரிபார்த்து மீட்டெடுக்க முடிந்தால் மட்டுமே அதை ஏற்கவும்; இந்தப் புத்தகம் வடிவமைப்பையும் முடிவையும் சொல்கிறது, குறிப்பிட்ட run அளவுருக்களை அல்ல.
+>
 ### அனுபவத்தை parameters-இல் எழுதுதல்
 
 அறிவு, அறிவுறுத்தல் மற்றும் program ஆகிய அனைத்தும் ஒரு முன்நிபந்தனையை அடிப்படையாகக் கொண்டுள்ளன: இலக்கு திறனை வெளிப்புறக் குறியீடுகள் மூலம் ஒப்பீட்டளவில் முழுமையாக வெளிப்படுத்த முடியும். ஆனால் மருத்துவப் படவியல் புரிதல், இயல்பான speech prosody, உரையின் வார்ப்புருவாத “AI தன்மை” நீக்கம், long-horizon planning போன்ற திறன்களை சில விதிகள் அல்லது workflow-களாகச் சுருக்குவது கடினம். இத்தகைய திறன்கள் post-training மூலம் model parameters-இல் எழுதப்பட வேண்டும்.
@@ -242,14 +214,10 @@ Parameter learning பொதுவாக வெளிப்புற முற�
 
 > **பரிசோதனை 8-6 ★★★: இந்தப் புத்தகத்தை Hermes-க்கு கொடுத்தால், அது தன்னையே upgrade செய்யுமா?**
 >
-> **பரிசோதனை நோக்கம்**: வெளிப்புற அறிவை Agent தனது திறனுக்கான உண்மையான update-ஆக மாற்ற முடியுமா என்பதைச் சோதிக்கிறது. சரிசெய்ய வேண்டிய பிரச்சினையோ feature பட்டியலோ கொடுக்கப்படாது. பத்து chapter-களும் Hermes-ன் source code-உம் கொடுக்கப்பட்டு, principles-ஐ புரிந்து தனது implementation-ஐ ஆய்வு செய்து ஒரு பயனுள்ள மேம்பாட்டைத் தானே தேர்ந்தெடுக்க வேண்டும்.
+> **நோக்கம்:** இந்தச் சோதனை பிரதிபலிக்கும் திறனைத் தனியாக அளந்து, பொருத்தமான baseline உடன் ஒப்பிடுதல்.
 >
-> **வடிவமைப்பு**: புத்தகமும் source-உம் படிக்கக்கூடிய context; ஆனால் stable version, independent Reviewer, acceptance tests ஆகியவை Hermes மாற்றக்கூடிய எல்லைக்கு வெளியே இருக்கும். அது **படி → ஒப்பிடு → தேர்ந்தெடு → மாற்று → சரிபார்** என்ற சுற்றை முடிக்க வேண்டும். Candidate நிராகரிக்கப்பட்டால் review அடுத்த learning round-க்கான input ஆகும்; gate-ஐ தாண்டி வெற்றியை அறிவிக்க முடியாது.
+> **கொள்கை நிலை முடிவு:** பின்னடைவு இல்லாமல் இலக்கு நடத்தை மேம்பட்டு, மாற்றத்தைத் தடமறிந்து சரிபார்த்து மீட்டெடுக்க முடிந்தால் மட்டுமே அதை ஏற்கவும்; இந்தப் புத்தகம் வடிவமைப்பையும் முடிவையும் சொல்கிறது, குறிப்பிட்ட run அளவுருக்களை அல்ல.
 >
-> **உண்மையான run**: புத்தகத்தைப் படித்த பிறகு, சேமிக்கப்பட்ட execution trajectory-களில் அடுத்த learning-க்கு நேரடியாகப் பயன்படும் structured evidence இல்லை என்பதை Hermes தானே கண்டது. Execution result-களை conservative learning signal-களாக மாற்றத் தேர்ந்து, தனது code-ஐ மாற்றி tests சேர்த்தது. முதல் மூன்று independent review-கள் real data format, persistence path, counting semantics ஆகியவற்றில் முரண்பாடுகளை கண்டன. ஒவ்வொரு finding-உம் அசல் Hermes session-க்கு திரும்பியது; நான்காவது review candidate-ஐ ஏற்றது.
->
-> **கூற்றின் எல்லை**: நீண்ட அறிவிலிருந்து principles-ஐ எடுத்துத் தனது code-உடன் இணைத்து, external verification-ன் கீழ் Agent self-update-ஐ முடிக்க முடியும் என்பதை இந்த run காட்டுகிறது. Downstream task வெற்றி மேம்பட்டது என்பதை இது நிரூபிக்காது; அதற்கு தனி ablation experiment தேவை. இந்த experiment idea-ஐ வாசகர் Grace வழங்கினார்.
-
 ## நீண்டகாலம் இயங்கக்கூடிய தொடர்ச்சியான பரிணாமச் சுற்றை உருவாக்குதல்
 
 நான்கு update முறைகளும் ஒரே தன்னாட்சி loop-இல் நுழைந்தால்தான் single optimization-இலிருந்து தொடர்ச்சியான பரிணாமமாக மாறும். படம் 8-5 production அமைப்பிற்கான மேலும் நம்பகமான இரட்டை-loop கட்டமைப்பைக் காட்டுகிறது: online execution loop பணியை முடித்து சான்றுகளை மட்டும் பதிவு செய்கிறது; முறையான Agent-ஐ நேரடியாக மாற்றாது. Offline evolution loop trajectory-களைத் தொகுத்து, root cause-ஐ diagnosis செய்து, candidate modification-களை உருவாக்கி, பின்னர் verification threshold-ஐத் தாண்டி புதிய version-ஐ வெளியிடுகிறது. Version செய்யப்பட்ட experience library மற்றும் evaluation set மூலம் இவை இணைக்கப்படுகின்றன.
@@ -345,16 +313,10 @@ Hermes மேலும் முழுமையான background evolution எ�
 
 > **பரிசோதனை 8-7 ★★★: Agent தொடர்ச்சியாகப் பரிணமிக்கிறதா என்பதை மதிப்பிடுதல்**
 >
-> **பரிசோதனை இலக்கு**: “ஒருமுறை feedback-ஐச் சேமிக்கக்கூடியது”, “append மட்டும் செய்யக்கூடியது”, “capability-ஐ update, transfer மற்றும் retain செய்யக்கூடியது” என்ற மூன்று நீண்டகால நடத்தைகளை வேறுபடுத்தி, ஒரே கேள்வித் தொகுப்பை மீண்டும் இயக்குவதை continual learning எனக் காட்டுவதைத் தவிர்த்தல்.
+> **நோக்கம்:** இந்தச் சோதனை பிரதிபலிக்கும் திறனைத் தனியாக அளந்து, பொருத்தமான baseline உடன் ஒப்பிடுதல்.
 >
-> **நான்கு கட்ட task flow**: Learning கட்டத்தில் refund, identity verification மற்றும் baggage policy போன்ற பகிரப்பட்ட latent rule கொண்ட task-கள் வழங்கப்படுகின்றன. Transfer கட்டத்தில் wording, user மற்றும் local environment மாற்றப்பட்டு, பழைய அனுபவம் புதிய task-க்கு பயன்படுகிறதா எனச் சோதிக்கப்படுகிறது. Rule-change கட்டத்தில் baggage limit 20kg-இலிருந்து 23kg-ஆக மாற்றப்பட்டு, பழைய knowledge replace அல்லது retire செய்யப்பட வேண்டும். Retention கட்டத்தில் மாறாத capability மற்றும் தற்போதைய valid rule மீண்டும் சோதிக்கப்பட்டு, update forgetting ஏற்படுத்தியதா என அளவிடப்படுகிறது. Feedback கொண்ட ஒவ்வொரு task முடிந்த பிறகே external memory update அனுமதிக்கப்படும்; தற்போதைய கேள்வியின் expected action முன்கூட்டியே Agent-க்கு leak ஆகக்கூடாது.
+> **கொள்கை நிலை முடிவு:** பின்னடைவு இல்லாமல் இலக்கு நடத்தை மேம்பட்டு, மாற்றத்தைத் தடமறிந்து சரிபார்த்து மீட்டெடுக்க முடிந்தால் மட்டுமே அதை ஏற்கவும்; இந்தப் புத்தகம் வடிவமைப்பையும் முடிவையும் சொல்கிறது, குறிப்பிட்ட run அளவுருக்களை அல்ல.
 >
-> **ஒப்பீட்டுக் குழுக்கள்**: `static` feedback-ஐ persist செய்யாது; `append_only` முதல் version rule-ஐ நினைவில் வைக்கும், ஆனால் conflict-ஐத் தீர்க்கவோ obsolete rule-ஐ நீக்கவோ முடியாது; `evolving` version-ஐச் சேமித்து புதிய evidence மூலம் பழைய rule-ஐ மாற்றுகிறது. Reference implementation evaluation Harness இவ்விதமான நடத்தைகளை வேறுபடுத்துகிறதா எனச் சோதிக்கிறது. உண்மையான பரிசோதனையில் LLM அதே 14-question sequential task flow-ஐ அனுபவிக்கலாம்; ஆனால் result model-க்கு வெளியே உள்ள Harness மூலம் கணக்கிடப்பட வேண்டும்.
->
-> **Metrics மற்றும் acceptance**: ஒவ்வொரு கட்டத்திற்கும் accuracy மற்றும் learning curve தெரிவிக்கப்பட வேண்டும்; transfer accuracy, புதிய rule பெற்ற பிறகு சரியான பதிலுக்கு மீளத் தேவையான task எண்ணிக்கை, old-capability retention rate, negative-transfer rate, safety-Rubric pass rate, Token, latency மற்றும் storage cost தனித்தனியாகக் கணக்கிடப்பட வேண்டும். Prompt, Skill அல்லது Harness-ஐ update செய்யும் உண்மையான system-களில் candidate-change validity, artifact activation rate மற்றும் successful adherence rate ஆகியவற்றையும் பதிவு செய்ய வேண்டும்; இதனால் “update சரியாக இருந்தது, ஆனால் load செய்யப்படவில்லை” என்பது update failure எனத் தவறாக வகைப்படுத்தப்படாது. Final accuracy உயர்ந்திருந்தாலும் obsolete rule-ஐத் தொடர்ந்து மேற்கோள் காட்டினால், விதிமீறிய shortcut மூலம் task முடித்தால், அல்லது update-க்கு பின் பழைய capability-ஐ மறந்தால், அந்த Agent தொடர்ச்சியாகப் பரிணமிக்கிறது எனக் கருத முடியாது.
->
-> தொடர்புடைய implementation [`self-evolution-eval`](../chapter8/self-evolution-eval/) இல் உள்ளது. இயல்புநிலையில் update செய்யக்கூடிய, append-only மற்றும் static ஆகிய மூன்று reference Agent-கள் ஒப்பிடப்படுகின்றன; `--profile llm` பயன்படுத்தினால் உண்மையான LLM அதே நீண்டகால task flow-ஐ அனுபவிக்கலாம்.
-
 [^claude-code-memory]: Anthropic, “How Claude remembers your project”, 2026. https://code.claude.com/docs/en/memory
 
 [^hermes-memory]: Nous Research, *Hermes Agent Documentation: Persistent Memory, Skills System, and Curator*, 2026. https://hermes-agent.nousresearch.com/docs/user-guide/features/memory ; https://hermes-agent.nousresearch.com/docs/user-guide/features/skills ; https://hermes-agent.nousresearch.com/docs/user-guide/features/curator

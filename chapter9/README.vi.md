@@ -15,9 +15,11 @@
 | 9-5 | [controllable-tts](controllable-tts/) | 🚧 | Thư viện Fish Audio S1 thật 4×3×2 và media A/B/C đạt cổng cấu trúc; còn thiếu nghiên cứu nghe định tính và đánh giá “gần người thật”. |
 | 9-6 | `claude-quickstarts/computer-use-demo/` | 📖 | `anthropics/claude-quickstarts` bên ngoài ghim tại `9bcc95e…`; nội dung sách dùng Computer Use demo với desktop Ubuntu＋vòng Claude agent trong container, không phải toàn bộ quickstarts. |
 | 9-7 | `browser-use/` | 📖 | `browser-use/browser-use` bên ngoài ghim tại `ec9277c…`; visual CLI (`use_vision=True`) tìm thời tiết San Francisco trên Google và lưu trajectory action/screenshot. |
-| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | XLeRobot bên ngoài `3d14695…` cho keyboard/Xbox/Joy-Con/VR. Chỉ có source/non-actuating preflight; chưa có run phần cứng bốn mode được phép hoặc bằng chứng pick/place/wipe. |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | XLeRobot bên ngoài `3d14695…`＋RoboCrew, dùng đúng `gemini-robotics-er-1.5-preview`, angle annotation và forward/left/right tools. Chưa có run robot navigation được phép. |
-| 9-10 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | `lerobot-sim2real` bên ngoài `87d6c1d…`, pipeline năm giai đoạn RGB→PPO→SO-100. Máy thiếu ManiSkill/NVIDIA và chưa có run robot vật lý được phép. |
+| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | Teleoperation XLeRobot thật cho cùng một nhiệm vụ dọn bàn: đặt cốc đỏ vào khay, giấy vàng vào thùng rác, rồi quan sát lại và xác minh trạng thái. |
+| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Đo giới hạn trên của điều khiển lý tưởng cho cùng nhiệm vụ trong simulator; không có nghĩa robot thật đã được chạy. |
+| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Gemini Robotics-ER 1.5 tự chủ điều khiển XLeRobot thật để hoàn thành cùng nhiệm vụ dọn bàn. |
+| 9-11 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | So sánh open-loop, kiểm tra từng bước và closed-loop dự đoán trong simulator cho cùng nhiệm vụ. |
+| 9-12 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | Kiểm thử RGB xuyên môi trường cho cùng nhiệm vụ với nền, ngoại hình vật thể, ánh sáng và nhiễu thị giác thay đổi. |
 
 ## Phân loại dự án
 

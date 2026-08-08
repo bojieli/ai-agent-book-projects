@@ -50,16 +50,10 @@ El propio verificador LLM requiere calibración. Los sistemas de producción sue
 
 > **Experimento 8-1 ★★: Construir un verificador de trayectorias para un Agente de atención al cliente**
 >
-> **Objetivo del experimento**: Convertir una trayectoria de ejecución de atención al cliente en un diagnóstico estructurado utilizable para el aprendizaje posterior, y verificar si "conclusiones multidimensionales más evidencia" permiten localizar la causa raíz mejor que una puntuación global única.
+> **Objetivo:** Aislar la capacidad que representa este experimento y compararla con una línea base adecuada.
 >
-> **Datos y proceso**: El experimento prepara cuatro tipos de trayectorias etiquetadas por expertos: reembolso normal, falsa promesa, fuga de privacidad y rechazo excesivo. La primera capa lee el estado final del pedido y los registros de herramientas para determinar si el reembolso o cambio ocurrió realmente; la segunda capa coteja paso a paso las políticas del negocio, comprobando permisos, procesos necesarios, privacidad, base factual y consistencia promesa-acción; la tercera capa evalúa la calidad de expresión y las alternativas cumplidoras según la Rubric de la Tabla 8-1, reservando los turnos de evidencia para las conclusiones fallidas. El Judge de calidad predeterminado utiliza reglas deterministas, ofreciéndose además un LLM Judge real; independientemente del modelo usado en la capa superior, las capas de resultados y reglas no se dejan a la conjetura del modelo de lenguaje.
+> **Conclusión de principio:** Acepta un cambio solo si mejora el comportamiento objetivo sin regresiones y sigue siendo atribuible, verificable y reversible; el libro presenta el diseño y la conclusión, no los parámetros de una ejecución concreta.
 >
-> **Contraste e indicadores**: La línea base solo emite una puntuación global; el grupo experimental emite `pass`, `fail` o `uncertain` para cada dimensión, junto con la evidencia y la confianza. En la fase de calibración se calcula la precisión y cobertura de identificación de fallas por dimensión, reportando la tasa de coincidencia exacta con las etiquetas de los expertos; asimismo, se verifica que fallas como las falsas promesas entreguen evidencias no vacías y no solo una conclusión.
->
-> **Criterios de aceptación**: El verificador debe identificar de forma estable infracciones clave, falsas promesas y rechazos excesivos; una puntuación global alta no debe ocultar fallos en dimensiones de privacidad o reglas; los casos de baja confianza y alto riesgo deben pasar a un segundo verificador o a revisión humana, en lugar de convertirse automáticamente en señales de aprendizaje.
->
-> La implementación correspondiente se encuentra en [`trajectory-verifier`](../chapter8/trajectory-verifier/), utilizando por defecto un Judge de calidad reproducible sin conexión; con `--judge llm` se puede ejecutar el verificador LLM real implementado.
-
 ## Cuatro Métodos para la Evolución Continua del Agente
 
 La señal de aprendizaje indica que el Agente debe cambiar, pero no especifica dónde debe ocurrir dicho cambio. El criterio primario para elegir el método de actualización no es cuánto tiempo hace que apareció la experiencia, sino si la capacidad objetivo se puede expresar de forma natural en un soporte determinado. Los hechos y las experiencias son adecuados para redactarse como documentos de conocimiento; las estrategias que se pueden verbalizar claramente son aptas para incorporarse en prompts o Skills; los procesos y restricciones que se pueden ejecutar con precisión son adecuados para escribirse como programas; mientras que las capacidades de alta dimensión como la percepción, el estilo del lenguaje y las estrategias implícitas deben ingresar en los parámetros del modelo. La Figura 8-3 muestra estos cuatro métodos y sus relaciones.
@@ -95,16 +89,10 @@ El aprendizaje de experiencia en GAIA proporciona un ejemplo intuitivo. GAIA[^ga
 
 > **Experimento 8-2 ★★: Extraer documentos de conocimiento de experiencia a partir de trayectorias de GAIA**
 >
-> **Objetivo del experimento**: Verificar si los "documentos de conocimiento entre trayectorias" son más fáciles de transferir que "recordar el resumen de un solo éxito", reduciendo la transferencia negativa provocada por éxitos casuales y experiencias erróneas.
+> **Objetivo:** Aislar la capacidad que representa este experimento y compararla con una línea base adecuada.
 >
-> **Datos y proceso**: `gaia-experience` guarda primero la trayectoria completa y el `environment_score` externo de cada ejecución, convirtiéndolos luego en un registro de aprendizaje mínimo: `task_family`, `capabilities` requeridas, `applies_when`, estrategias observadas, errores, excepciones e ID de trayectorias de origen. El verificador de resultados clasifica las ejecuciones en éxito, éxito parcial y fracaso; el módulo de aprendizaje compara las rutas dentro de la misma familia de tareas; el LLM puede proponer inducciones candidatas, pero una estrategia recomendada debe contar al menos con el respaldo de dos trayectorias no fallidas. Los documentos Markdown finales incluyen escenarios aplicables, estrategias recomendadas, errores comunes, condiciones de excepción, fuentes y fecha de última verificación. La fase de aplicación solo recupera estos documentos, sin introducir trayectorias originales extensas directamente en el contexto.
+> **Conclusión de principio:** Acepta un cambio solo si mejora el comportamiento objetivo sin regresiones y sigue siendo atribuible, verificable y reversible; el libro presenta el diseño y la conclusión, no los parámetros de una ejecución concreta.
 >
-> **Tres grupos de contraste**: El primer grupo no utiliza experiencia histórica; el segundo recupera el resumen de la trayectoria más similar a la tarea actual; el tercer grupo recupera documentos de conocimiento respaldados conjuntamente por múltiples trayectorias. Los conjuntos de aprendizaje y de transferencia deben ser estrictamente disjuntos para evitar filtrar las respuestas de una misma pregunta de GAIA como "experiencia" a la evaluación.
->
-> **Indicadores y aceptación**: Se reportan simultáneamente la tasa de éxito en tareas de transferencia, el promedio de caracteres o tokens recuperados y la tasa de transferencia negativa, comprobando si cada conclusión formal enumera sus trayectorias de origen. Si los documentos entre trayectorias solo acortan el contexto sin mejorar el rendimiento en nuevas tareas, no se demuestra que el sistema haya aprendido de la experiencia; si un éxito fortuito se promociona a conocimiento formal o si los documentos no se pueden rastrear hasta la trayectoria original, la prueba no se considera superada.
->
-> La implementación correspondiente se encuentra en [`gaia-experience`](../chapter8/gaia-experience/). `demo_documents.py` se ejecuta por defecto sin conexión; utilizando `--extractor llm` un LLM real puede proponer candidatos de experiencia entre trayectorias.
-
 [^reflexion-2023]: Shinn, N., et al. *Reflexion: Language Agents with Verbal Reinforcement Learning.* arXiv:2303.11366, 2023.
 
 [^gaia-2023]: Mialon, G., et al. *GAIA: a benchmark for General AI Assistants.* arXiv:2311.12983, 2023.
@@ -129,24 +117,18 @@ El aprendizaje de Skills sigue los mismos principios, aunque su alcance es más 
 
 > **Experimento 8-9 ★★: Convertir el feedback en un Skill de escritura**
 >
-> Se incorporan en tres lotes los 20 pares before/after de `data/feedback_pairs.json`, se extraen reglas candidatas, se fusionan patrones repetidos, se detectan conflictos de umbral y se genera un `SKILL.md` con fuente y alcance. Las reglas deterministas se comprueban con código y las reglas basadas en LLM se calibran con diez ejemplos de referencia.
+> **Objetivo:** Aislar la capacidad que representa este experimento y compararla con una línea base adecuada.
 >
-> Se informan a la vez la detección en el conjunto límite de tareas incompletas, los falsos positivos en el conjunto de reserva de textos normales y el crecimiento del número de reglas. La primera ejecución real dio 0/8 detecciones y 7/8 falsos positivos; tras el filtrado externo y el respaldo determinista, dio 8/8, 0/8 y fusionó 21 candidatos en 8 reglas. Implementación en [`ai-style-skill`](../chapter8/ai-style-skill/).
-
+> **Conclusión de principio:** Acepta un cambio solo si mejora el comportamiento objetivo sin regresiones y sigue siendo atribuible, verificable y reversible; el libro presenta el diseño y la conclusión, no los parámetros de una ejecución concreta.
+>
 El caso de las comillas curvas muestra que una Skill debe convertirse en un contrato de datos, no en una regla de sustitución global: los ejemplos sintéticos se estratifican por género, ámbito y lenguaje de programación, pasan controles de código/JSON/regiones protegidas y se auditan manualmente antes del SFT. El caso de cadenas exactas añade una auditoría del tokenizer: el round-trip encode→decode, la copia byte-exacta del modelo, la serialización del Harness y la coincidencia de la herramienta son capas de regresión separadas.
 
 > **Experimento 8-3 ★★: Optimizar prompts del sistema a partir de trayectorias de falla**
 >
-> **Objetivo del experimento**: Permitir que un Agente de atención al cliente de aerolíneas aprenda de las trayectorias de falla de "transferir prematuramente a un humano cuando el usuario cuestiona la política", demostrando al mismo tiempo que la nueva regla no destruye los escenarios antiguos que realmente requieren transferencia.
+> **Objetivo:** Aislar la capacidad que representa este experimento y compararla con una línea base adecuada.
 >
-> **Proceso**: En primer lugar, se ejecutan por separado el conjunto de retención de tareas antiguas y el conjunto límite de transferencia excesiva; `learning_signal.py` divide la falla en tres dimensiones: cumplimiento de reglas, resolución de tareas y alternativas cumplidoras, conservando los ID de caso de origen. A continuación, el Coding Agent lee el prompt existente y genera únicamente una edición mínima auditable `old_str → new_str`: exigiendo que el Agente explique primero la política, identifique el objetivo real y busque alternativas válidas, conservando las rutas de transferencia cuando el usuario lo solicite explícitamente o ante eventos de seguridad. El parche se escribe en el manifest candidato junto con la fuente, las reglas objetivo y la justificación.
+> **Conclusión de principio:** Acepta un cambio solo si mejora el comportamiento objetivo sin regresiones y sigue siendo atribuible, verificable y reversible; el libro presenta el diseño y la conclusión, no los parámetros de una ejecución concreta.
 >
-> **Tres grupos de contraste**: Prompt inicial, Prompt candidato generado automáticamente y Prompt ajustado manualmente de una sola vez. Los tres utilizan el mismo modelo y el mismo lote de tareas retenidas/límite; `--quick` solo reduce la cantidad de casos, manteniendo llamadas reales al Agente de tareas, LLM Judge y Coding Agent, por lo que no debe tomarse como un resultado de simulación fuera de línea.
->
-> **Umbral de publicación e indicadores**: El candidato debe cumplir cuatro condiciones: parche no vacío, fuente trazable, mejora confirmada en el conjunto límite y sin degradación en el conjunto de retención. Se comparan la precisión en tareas límite, la precisión en tareas retenidas, el incremento de longitud del prompt, el número de regresiones introducidas y el tiempo transcurrido desde la detección de la falla hasta la generación del candidato. Superar el umbral solo otorga `release_to_canary`, sin sobrescribir directamente el Prompt estable; si falla cualquiera de las condiciones, se debe retornar `reject_candidate`.
->
-> La implementación correspondiente se encuentra en [`prompt-auto-optimization`](../chapter8/prompt-auto-optimization/). Las pruebas fuera de línea cubren el diagnóstico y los umbrales de publicación, mientras que `--quick` realiza llamadas reales al Agente de tareas, LLM Judge y Coding Agent.
-
 [^dspy-2023]: Khattab, O., et al. *DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines.* arXiv:2310.03714, 2023.
 
 [^opro-2023]: Yang, C., et al. *Large Language Models as Optimizers.* arXiv:2309.03409, 2023.
@@ -178,16 +160,10 @@ Tomando como ejemplo el envío de correos, el resultado compilado no es simpleme
 
 > **Experimento 8-4 ★★★: Generar flujos de trabajo verificables a partir de trayectorias del navegador**
 >
-> **Objetivo del experimento**: Verificar si un Agente web puede transformar una exploración costosa en un flujo de trabajo reutilizable y rechazar reproducciones erróneas cuando la página cambia, en lugar de reportar falsamente éxito solo porque "se ejecutaron todas las acciones".
+> **Objetivo:** Aislar la capacidad que representa este experimento y compararla con una línea base adecuada.
 >
-> **Escenario en cuatro fases**: La primera fase ejecuta en un sitio de correo de prueba o página de mensajes simulada la instrucción "enviar a `test@example.com` un mensaje con asunto 'Correo de prueba'", donde el Agente completo se encarga de explorar y la capa de encapsulamiento captura acciones, parámetros y estados de página para generar un `candidate`. La segunda fase llama a `validation_reset` para restaurar el sandbox y reproduce de forma independiente el flujo completo; solo si se aprueban las verificaciones previas, posteriores y de estado final, el candidato ingresa a la biblioteca formal de capacidades. La tercera fase ejecuta tareas similares con destinatarios, asuntos y cuerpos diferentes; el sistema debe coincidir con el flujo verificado, rellenar los nuevos parámetros y reproducir mediante Playwright sin ingresar al bucle gradual del LLM. La cuarta fase modifica la localización de botones, textos de la página o el estado final, verificando si el flujo antiguo pasa de inmediato a `invalid` y retorna `fallback_required=True`.
+> **Conclusión de principio:** Acepta un cambio solo si mejora el comportamiento objetivo sin regresiones y sigue siendo atribuible, verificable y reversible; el libro presenta el diseño y la conclusión, no los parámetros de una ejecución concreta.
 >
-> **Diseño de contraste**: La línea base simplificada solo contabiliza si acciones como clics o entradas no lanzaron excepciones; el grupo experimental verifica adicionalmente la página previa a la acción, la página posterior y el estado final de la tarea. Ambos grupos usan las mismas trayectorias y cambios de página, comparando la tasa de falsos positivos en escenarios de falso éxito como "campo vacío pero botón de enviar presionado" o "Save presionado pero datos no guardados en base de datos".
->
-> **Indicadores y aceptación**: Se registran los tiempos de extremo a extremo de la exploración inicial y reproducción, el número de llamadas a LLM, la tasa de éxito, la tasa de éxito erróneo, la tasa de coincidencia de flujos de trabajo, la tasa de detección de cambios en la página y el número de retrocesos para re-aprendizaje. Sin callback de restablecimiento, el flujo debe permanecer en la zona candidata; las versiones con fallos de validación no se pueden recuperar; la reproducción parametrizada no debe reutilizar los destinatarios o contenidos de la primera ejecución; tras cambios en la página se deben detener las acciones posteriores peligrosas. Solo al cumplir simultáneamente estas condiciones tienen sentido los resultados de aceleración.
->
-> La implementación correspondiente se encuentra en [`browser-use-rpa`](../chapter8/browser-use-rpa/), ofreciendo tanto una demostración determinista de máquina de estados como una ruta de ejecución que llama al Agente de navegador real.
-
 Que un Agente modifique su propio código no significa que el proceso en ejecución se sobrescriba directamente a sí mismo. Un sistema de producción debe crear una rama candidata a partir de la versión estable actual, donde un Coding Agent genera un parche mínimo que pasa sucesivamente por verificaciones estáticas, pruebas unitarias, escaneos de seguridad, reproducción de trayectorias fallidas y regresión de tareas antiguas, antes de generar una nueva versión desplegable de forma gradual. Esto convierte la "auto-modificación" en un proceso de publicación de software auditable, marcando la frontera entre el Capítulo 8 y el Capítulo 5: el Capítulo 5 proporciona la capacidad de modificar el sistema, mientras que este capítulo proporciona el método de auto-modificación activado por la experiencia y restringido por el bucle cerrado de verificación.
 
 Contar únicamente con "parches lo más pequeños posible" no basta para respaldar una atribución confiable. Cada solicitud de modificación debe ser además un **contrato de cambio falsable**: detallando la evidencia de la falla, la causa raíz inferida, el componente del Harness perteneciente, la modificación candidata, el comportamiento que se espera reparar, el comportamiento existente que podría verse afectado y los casos de prueba para verificar ambos aspectos. Agentic Harness Engineering resume esta práctica como una observabilidad de tres capas: componentes, experiencia y decisiones: los componentes editables cuentan con representación a nivel de archivo; las trayectorias masivas se organizan en evidencia profundizable paso a paso; y cada edición declara su predicción de impacto antes de la ejecución, siendo verificada por los resultados de la siguiente ronda[^ahe-2026]. De este modo, el aumento de puntuación puede vincularse a un mecanismo específico en lugar de ser un ensayo y error ininterpretable.
@@ -198,16 +174,10 @@ La creación de herramientas sigue el mismo protocolo. El caso presentado por Al
 
 > **Experimento 8-5 ★★★: Auto-modificación del Agente activada por trayectorias de falla**
 >
-> **Objetivo del experimento**: Dado un conjunto de trayectorias donde errores de tipo `retryable=false` siguen siendo invocados continuamente, verificar si el sistema puede ubicar la causa raíz en el código de reintento e interruptor de circuito, generando un arreglo candidato sin destruir la capacidad de reintento ante fallos temporales.
+> **Objetivo:** Aislar la capacidad que representa este experimento y compararla con una línea base adecuada.
 >
-> **Proceso**: El módulo de diagnóstico agrupa primero los mismos fallos en diferentes tareas, creando una solicitud de modificación solo al alcanzar el umbral de soporte entre trayectorias y fijando el objetivo en la versión estable de `retry_policy.py`. El generador de candidatos lee el diagnóstico de fallas, los comportamientos de recuperación de fallos temporales que deben conservarse, las modificaciones rechazadas previamente y el código fuente estable, enviando primero una predicción de impacto ("las llamadas por errores no reintentables deben reducirse y la tasa de recuperación de timeouts temporales no debe disminuir") antes de emitir un diff de código mínimo; independientemente de si se usa un generador determinista o un LLM Coding Agent real, los resultados solo pueden escribirse en el directorio candidato aislado. A continuación, el Harness de verificación compila el candidato, reproduce las trayectorias fallidas originales, comprueba si los errores no reintentables se detienen de inmediato y abren el interruptor de circuito, y vuelve a probar si los timeouts temporales se reintentan según el umbral original.
+> **Conclusión de principio:** Acepta un cambio solo si mejora el comportamiento objetivo sin regresiones y sigue siendo atribuible, verificable y reversible; el libro presenta el diseño y la conclusión, no los parámetros de una ejecución concreta.
 >
-> **Contraste de diagnóstico e indicadores**: Se utiliza "añadir simplemente una instrucción en el Prompt de no repetir llamadas" como contraste conceptual de localización en la capa de error, explicando por qué las restricciones de reintento ejecutables de forma determinista deben ingresar al programa. El experimento ejecutable compara el generador de parches determinista con el generador LLM, compartiendo ambos el mismo umbral de publicación; se registran el número de invocaciones no reintentables, la tasa de recuperación de errores temporales, el número de regresiones en tareas antiguas, el tamaño del parche y la tasa de aceptación de candidatos.
->
-> **Criterios de aceptación**: Tras aprobar todas las comprobaciones solo se genera `release_to_canary`; si falla cualquier verificación estática, reproducción de fallos o regresión de tareas antiguas, se retorna `reject_candidate`. `release_manifest.json` debe registrar el clúster de fallos, las trayectorias de origen, la causa raíz inferida, los componentes y archivos objetivo, el diff de código, la reparación esperada, los posibles retrocesos, los resultados de las verificaciones, la versión candidata y la versión de reversión; los candidatos rechazados también deben conservar sus razones de falla para consulta en la siguiente ronda de generación. El Agente que genera los parches no puede modificar el código estable, los verificadores, los registros de auditoría ni los umbrales que aprueban su propia publicación.
->
-> La implementación correspondiente se encuentra en [`self-modifying-agent`](../chapter8/self-modifying-agent/), pudiendo elegir un generador candidato determinista o un LLM Coding Agent real, compartiendo ambas rutas el mismo umbral de publicación.
-
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
 [^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
@@ -216,8 +186,10 @@ El experimento 8-8 aplica el mismo protocolo a la capa de verificación. Solo cu
 
 > **Experimento 8-8 ★★: Puerta de confirmación para operaciones de alto riesgo activada por feedback**
 >
-> Se usan las tres señales y las trayectorias de control de `failure_trajectories.json`. El candidato real de `gpt-4o-mini` no superó la reproducción de tareas incompletas, operaciones normales y tokens de un solo uso, y fue rechazado por la puerta de seguridad. El candidato determinista superó todo y obtuvo `release_to_canary`; se registran las comprobaciones, la decisión y el hash del directorio estable. Implementación en [`harness-safety-gate`](../chapter8/harness-safety-gate/).
-
+> **Objetivo:** Aislar la capacidad que representa este experimento y compararla con una línea base adecuada.
+>
+> **Conclusión de principio:** Acepta un cambio solo si mejora el comportamiento objetivo sin regresiones y sigue siendo atribuible, verificable y reversible; el libro presenta el diseño y la conclusión, no los parámetros de una ejecución concreta.
+>
 ### Codificación de la Experiencia en Parámetros
 
 El conocimiento, las instrucciones y los programas se basan en una premisa: la capacidad objetivo se puede expresar de forma relativamente completa mediante símbolos externos. Sin embargo, capacidades como la comprensión de imágenes médicas, la prosodia natural de la voz, la eliminación del tono estandarizado de "sabor a IA" en textos y la planificación a largo plazo son difíciles de comprimir en unas pocas reglas o flujos de trabajo. Este tipo de capacidades se debe incorporar en los parámetros del modelo a través del post-entrenamiento.
@@ -242,14 +214,10 @@ Los niveles de optimización no son mejores cuanto más altos sean. Buscar una r
 
 > **Experimento 8-6 ★★★: Dale este libro a Hermes: ¿puede mejorarse a sí mismo?**
 >
-> **Objetivo**: Comprobar si un Agent puede convertir conocimiento externo en una actualización real de sus propias capacidades. El experimento no plantea un problema ni ofrece una lista de funciones: entrega a Hermes los diez capítulos y su código, y le pide entender los principios, revisar su implementación y elegir por sí mismo una mejora valiosa.
+> **Objetivo:** Aislar la capacidad que representa este experimento y compararla con una línea base adecuada.
 >
-> **Diseño**: El libro y el código forman el contexto legible, mientras que la versión estable, el Reviewer independiente y las pruebas de aceptación quedan fuera del alcance editable de Hermes. Debe completar **leer → comparar → elegir → cambiar → verificar**. Si un candidato es rechazado, la revisión pasa a ser la señal de aprendizaje de la ronda siguiente; Hermes no puede saltarse la puerta y declarar éxito.
+> **Conclusión de principio:** Acepta un cambio solo si mejora el comportamiento objetivo sin regresiones y sigue siendo atribuible, verificable y reversible; el libro presenta el diseño y la conclusión, no los parámetros de una ejecución concreta.
 >
-> **Ejecución real**: Tras leer el libro, Hermes detectó por sí mismo que sus trayectorias guardadas carecían de evidencia estructurada que el aprendizaje posterior pudiera usar directamente. Eligió convertir los resultados de ejecución en señales de aprendizaje conservadoras, modificó su código y añadió pruebas. Las tres primeras revisiones independientes hallaron diferencias con los formatos reales, las rutas de persistencia y la semántica del conteo. Cada hallazgo volvió a la sesión original de Hermes; la cuarta revisión aceptó el candidato.
->
-> **Límite de la conclusión**: La ejecución demuestra que un Agent puede extraer principios de conocimiento extenso, llevarlos a su propio código y completar una autoactualización bajo verificación externa. No demuestra que la actualización ya mejore las tareas posteriores; eso requiere otro experimento de ablación. La lectora Grace aportó la idea del experimento.
-
 ## Construcción de un Bucle Cerrado de Evolución Continua para Operaciones a Largo Plazo
 
 Los cuatro métodos de actualización se convierten en una evolución continua solo al ingresar en el mismo bucle autónomo. La Figura 8-5 muestra una estructura de doble bucle más sólida en sistemas de producción: el bucle de ejecución en línea únicamente completa tareas y registra evidencias, sin reescribir directamente el Agente formal; el bucle de evolución fuera de línea agrega trayectorias, diagnostica causas raíz, genera modificaciones candidatas y publica nuevas versiones tras superar umbrales de validación. Ambos se conectan a través de bases de experiencia e historiales de evaluación versionados.
@@ -345,16 +313,10 @@ La evolución continua tampoco consiste en dejar crecer indefinidamente el conoc
 
 > **Experimento 8-7 ★★★: Evaluar si un Agente se encuentra en evolución continua**
 >
-> **Objetivo del experimento**: Distinguir entre tres comportamientos a largo plazo: "guardar una retroalimentación", "limitarse a añadir continuamente" y "ser capaz de actualizar, transferir y conservar capacidades", evitando simular un aprendizaje continuo mediante la ejecución repetida del mismo lote de preguntas.
+> **Objetivo:** Aislar la capacidad que representa este experimento y compararla con una línea base adecuada.
 >
-> **Flujo de tareas en cuatro fases**: La fase de aprendizaje entrega tareas con patrones subyacentes compartidos sobre reembolsos, verificación de identidad y políticas de equipaje; la fase de transferencia modifica redacciones, usuarios y entorno local, comprobando si la experiencia antigua sirve en nuevas tareas; la fase de cambio de reglas actualiza el límite de equipaje de 20 kg a 23 kg, exigiendo al sistema reemplazar o retirar el conocimiento antiguo; la fase de mantenimiento vuelve a probar capacidades sin cambios y reglas actualmente válidas, midiendo si las actualizaciones causaron olvido. Se permite actualizar la memoria externa únicamente al finalizar cada tarea con retroalimentación, sin filtrar por adelantado las acciones esperadas de la pregunta actual al Agente.
+> **Conclusión de principio:** Acepta un cambio solo si mejora el comportamiento objetivo sin regresiones y sigue siendo atribuible, verificable y reversible; el libro presenta el diseño y la conclusión, no los parámetros de una ejecución concreta.
 >
-> **Grupos de contraste**: `static` no deforma la retroalimentación; `append_only` recuerda la primera versión de la regla pero no maneja conflictos ni retiros; `evolving` conserva versiones y reemplaza reglas antiguas con nueva evidencia. Las implementaciones de referencia sirven para verificar si el Harness de evaluación distingue estos comportamientos; los experimentos reales permiten que un LLM recorra el mismo flujo ordenado de 14 tareas, calculando los resultados forzosamente mediante el Harness externo al modelo.
->
-> **Indicadores y aceptación**: Se reportan la precisión y la curva de aprendizaje fase por fase, calculando de forma independiente la precisión de transferencia, el número de tareas requeridas para recuperar la exactitud tras recibir nuevas reglas, la tasa de retención de capacidades antiguas, la tasa de transferencia negativa, la tasa de aprobación de la Rubric de seguridad y los costos de tokens, latencia y almacenamiento. Para sistemas reales que emplean actualizaciones de Prompt, Skill o Harness, se deben registrar por separado la validez de modificaciones candidatas, la tasa de activación de artefactos y la tasa de cumplimiento exitoso, evitando diagnosticar erróneamente un fallo de actualización cuando esta fue correcta pero no se cargó. Un Agente no se considerará en evolución continua si cita reglas derogadas, completa tareas mediante atajos violatorios o sufre olvidos de capacidades previas tras actualizarse, aun si su precisión final es alta.
->
-> La implementación correspondiente se encuentra en [`self-evolution-eval`](../chapter8/self-evolution-eval/), comparando por defecto tres Agentes de referencia: actualizable, solo adición y estático; con `--profile llm` un LLM real puede recorrer el mismo flujo de tareas a largo plazo.
-
 [^claude-code-memory]: Anthropic, “How Claude remembers your project”, 2026. https://code.claude.com/docs/en/memory
 
 [^hermes-memory]: Nous Research, *Hermes Agent Documentation: Persistent Memory, Skills System, and Curator*, 2026. https://hermes-agent.nousresearch.com/docs/user-guide/features/memory ; https://hermes-agent.nousresearch.com/docs/user-guide/features/skills ; https://hermes-agent.nousresearch.com/docs/user-guide/features/curator

@@ -15,9 +15,11 @@
 | 9-5 | [controllable-tts](controllable-tts/) | 🚧 | Реальная библиотека Fish Audio S1 4×3×2 и A/B/C-медиа проходят структурные gate; не завершены качественное прослушивание и оценка «почти как живой оператор». |
 | 9-6 | `claude-quickstarts/computer-use-demo/` | 📖 | Внешний `anthropics/claude-quickstarts` зафиксирован на `9bcc95e…`; текст относится к контейнерному Ubuntu desktop＋Claude agent loop Computer Use demo, а не ко всему quickstarts. |
 | 9-7 | `browser-use/` | 📖 | Внешний `browser-use/browser-use` зафиксирован на `ec9277c…`; visual CLI (`use_vision=True`) ищет погоду San Francisco в Google и сохраняет траекторию действий/скриншотов. |
-| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | Внешний XLeRobot `3d14695…` для keyboard/Xbox/Joy-Con/VR. Есть лишь source/non-actuating preflight; нет авторизованного четырёхрежимного запуска на роботе и pick/place/wipe. |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Внешние XLeRobot `3d14695…` и RoboCrew с точным `gemini-robotics-er-1.5-preview`, угловой разметкой и forward/left/right tools. Авторизованного запуска навигации нет. |
-| 9-10 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | Внешний `lerobot-sim2real` `87d6c1d…`, пять стадий RGB→PPO→SO-100. На хосте нет ManiSkill/NVIDIA и нет авторизованного физического запуска. |
+| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | Дистанционное управление реальным XLeRobot для одной задачи уборки стола: красную чашку в поднос, жёлтую бумагу в урну, затем повторно наблюдать и проверить состояние. |
+| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | В симуляторе измеряется верхняя граница идеального управления для той же задачи; это не означает запуска реального робота. |
+| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Gemini Robotics-ER 1.5 автономно управляет реальным XLeRobot в той же задаче уборки стола. |
+| 9-11 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | В симуляторе сравниваются открытый цикл, пошаговая проверка и предиктивный замкнутый цикл для той же задачи. |
+| 9-12 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | RGB-тест между средами для той же задачи с изменением фона, внешнего вида предметов, освещения и визуального шума. |
 ## Типы проектов
 
 | Значок | Тип | Значение |

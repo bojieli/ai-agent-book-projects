@@ -15,9 +15,11 @@
 | 9-5 | [controllable-tts](controllable-tts/) | 🚧 | 真實 Fish Audio S1 4×3×2 參考音庫與 A/B/C 媒體通過結構門禁；仍缺定性聽測與「接近真人客服」評估。 |
 | 9-6 | `claude-quickstarts/computer-use-demo/` | 📖 | 外部 `anthropics/claude-quickstarts` 固定於 `9bcc95e…`；正文對應容器化 Ubuntu 桌面＋Claude agent loop 的 Computer Use demo，不是整個 quickstarts。 |
 | 9-7 | `browser-use/` | 📖 | 外部 `browser-use/browser-use` 固定於 `ec9277c…`；正文用 `use_vision=True` 視覺 CLI 在 Google 查舊金山天氣並保留動作/截圖軌跡。 |
-| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | 外部 XLeRobot 固定於 `3d14695…`，涵蓋鍵盤/Xbox/Joy-Con/VR 遙操作；目前只有源碼與非致動預檢，沒有獲授權四模式真機與取放擦證據。 |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 外部 XLeRobot `3d14695…`＋RoboCrew，精確使用 `gemini-robotics-er-1.5-preview`、角度標註與前進/左轉/右轉工具；尚無獲授權真機導航證據。 |
-| 9-10 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | 外部 `lerobot-sim2real` 固定於 `87d6c1d…` 的五階段 RGB→PPO→SO-100 流程；本機缺 ManiSkill/NVIDIA，亦無獲授權實體機器人執行。 |
+| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | 真機 XLeRobot 遙操作同一個整理桌面任務：把紅色杯子放入托盤、黃色廢紙放入垃圾盒，最後重新觀察並確認狀態。 |
+| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 在模擬器中測量同一桌面任務的理想控制上限；不代表真機已經執行。 |
+| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 使用 Gemini Robotics-ER 1.5 自主控制真機 XLeRobot 完成同一整理桌面任務。 |
+| 9-11 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 在模擬器中比較同一任務的開環、逐步檢查與預測式閉環策略。 |
+| 9-12 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | 改變背景、物體外觀、光照與視覺雜訊，對同一桌面任務進行 RGB 跨環境測試。 |
 
 ## 專案型別說明
 

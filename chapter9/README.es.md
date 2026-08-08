@@ -15,9 +15,11 @@
 | 9-5 | [controllable-tts](controllable-tts/) | ✅ | Biblioteca real Fish Audio S1 con 4×3×2=24 audios de referencia y medios A/B/C; tres evaluaciones reales ciegas y equilibradas de Voxtral sitúan a C en primer lugar y separan el estado de aceptación de los resultados negativos |
 | 9-6 | `claude-quickstarts/computer-use-demo/` | 📖 | Corresponde a Anthropic Computer Use Demo, no a toda la colección de *quickstarts*: escritorio Ubuntu en contenedor y bucle de Agent con Computer Use de Claude |
 | 9-7 | `browser-use/` | 📖 | *Checkout* externo de `browser-use/browser-use`; la tarea abre Google, consulta el clima de San Francisco e inspecciona la trayectoria de acciones del Agent visual |
-| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | Ruta externa de reproducción del [commit fijado de XLeRobot](https://github.com/Vector-Wangel/XLeRobot/tree/3d14695e40c9c68229c0aacffca6053c75cd3eb6) para teleoperación con teclado, Xbox, Joy-Con y VR; solo se validaron el código y una prevalidación sin actuadores |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Ruta externa con [XLeRobot fijado](https://github.com/Vector-Wangel/XLeRobot/tree/3d14695e40c9c68229c0aacffca6053c75cd3eb6) y [RoboCrew v0.3.1 fijado](https://github.com/Grigorij-Dudnik/RoboCrew/tree/c749148f29bd14e61347f9fc3530c343fff0d994), usando estrictamente `gemini-robotics-er-1.5-preview`, anotaciones angulares y tres herramientas de movimiento |
-| 9-10 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | Ruta externa del flujo RGB→PPO→SO-100 de cinco etapas del [commit fijado de `lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real/tree/87d6c1d969f6e0ca4dc5697940804e231118a63a); las etapas 3–4 pueden ejecutarse solo con GPU, mientras que la etapa 1 reinicia el robot real |
+| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | Teleoperación del XLeRobot real para una misma tarea de ordenar el escritorio: poner la taza roja en la bandeja, el papel amarillo en el cubo de basura y volver a observar para verificar el estado |
+| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Medición en simulador del límite superior de control ideal para la misma tarea; no implica que se haya ejecutado el robot real |
+| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Gemini Robotics-ER 1.5 controla de forma autónoma el XLeRobot real para completar la misma tarea de ordenar el escritorio |
+| 9-11 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Comparación en simulador de ejecución abierta, comprobación paso a paso y control cerrado predictivo para la misma tarea |
+| 9-12 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | Prueba RGB entre entornos para la misma tarea, variando fondo, apariencia, iluminación y ruido visual |
 
 ## Tipos de Proyectos
 

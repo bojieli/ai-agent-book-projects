@@ -15,9 +15,11 @@
 | 9-5 | [controllable-tts](controllable-tts/) | 🚧 | Real Fish Audio S1 4×3×2 reference library மற்றும் A/B/C media structure gates கடக்கின்றன; qualitative listening study மற்றும் “near-human” மதிப்பீடு இன்னும் இல்லை. |
 | 9-6 | `claude-quickstarts/computer-use-demo/` | 📖 | வெளிப்புற `anthropics/claude-quickstarts` `9bcc95e…`-இல் pin செய்யப்பட்டது; புத்தகத்தில் கேட்கப்பட்ட இலக்கு Ubuntu desktop＋Claude agent loop கொண்ட containerized Computer Use demo ஆகும். |
 | 9-7 | `browser-use/` | 📖 | வெளிப்புற `browser-use/browser-use` `ec9277c…`-இல் pin செய்யப்பட்டது; `use_vision=True` visual CLI Google-ல் San Francisco weather தேடி action/screenshot trajectory-ஐ வைத்திருக்க வேண்டும். |
-| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | வெளிப்புற XLeRobot `3d14695…` keyboard/Xbox/Joy-Con/VR teleoperation. Source/non-actuating preflight மட்டும்; அனுமதியுள்ள 4-mode hardware மற்றும் pick/place/wipe evidence இல்லை. |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | வெளிப்புற XLeRobot `3d14695…`＋RoboCrew; சரியாக `gemini-robotics-er-1.5-preview`, angle annotation, forward/left/right tools. அனுமதியுள்ள robot navigation evidence இல்லை. |
-| 9-10 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | வெளிப்புற `lerobot-sim2real` `87d6c1d…` ஐந்து-stage RGB→PPO→SO-100 pipeline. ManiSkill/NVIDIA மற்றும் அனுமதியுள்ள physical run இல்லை. |
+| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | ஒரே மேசை ஒழுங்குபடுத்தும் பணிக்கான உண்மையான XLeRobot தொலை இயக்கம்: சிவப்பு கோப்பையைத் தட்டில், மஞ்சள் காகிதத்தை குப்பைத்தொட்டியில் வைத்து, இறுதியில் மீண்டும் கவனித்து நிலையைச் சரிபார்க்கிறது. |
+| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | அதே மேசைப் பணிக்கான சிறந்த கட்டுப்பாட்டு உச்சவரம்பை simulator-ல் அளவிடுகிறது; உண்மையான robot ஓட்டப்பட்டது என்று பொருள் இல்லை. |
+| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Gemini Robotics-ER 1.5 அதே மேசை ஒழுங்குபடுத்தும் பணியில் உண்மையான XLeRobot-ஐ தன்னாட்சியாக இயக்குகிறது. |
+| 9-11 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | அதே பணிக்கான open-loop, படிப்படியான சரிபார்ப்பு, prediction-based closed-loop ஆகியவற்றை simulator-ல் ஒப்பிடுகிறது. |
+| 9-12 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | பின்னணி, பொருளின் தோற்றம், ஒளி மற்றும் காட்சி noise-ஐ மாற்றி அதே பணியை RGB சூழல்களுக்கு இடையில் சோதிக்கிறது. |
 
 ## திட்ட வகைகள்
 

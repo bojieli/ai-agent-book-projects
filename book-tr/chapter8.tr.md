@@ -50,16 +50,10 @@ LLM doğrulayıcısının kendisi de kalibrasyon gerektirir. Üretim sistemleri 
 
 > **Deney 8-1 ★★: Müşteri Hizmetleri Agent'ı için Trajectory Doğrulayıcısı İnşa Etmek**
 >
-> **Deney Amacı**: Bir müşteri hizmetleri çalışma trajectory'sini sonraki öğrenmede kullanılabilecek yapılandırılmış bir tanıya dönüştürmek ve "kanıtla birlikte çok boyutlu sonuç"un tek bir toplam puandan daha iyi kök neden bulup bulmadığını doğrulamak.
+> **Amaç:** Bu deneyin temsil ettiği yeteneği ayırıp uygun bir temel çizgiyle karşılaştırmak.
 >
-> **Veri ve Akış**: Deney; normal iade, asılsız söz, gizlilik ihlali ve aşırı reddetme olmak üzere dört sınıfta uzman etiketli trajectory'ler hazırlar. Birinci katman siparişin nihai durumunu ve araç log'larını okuyarak iadenin ya da bilet değişikliğinin gerçekten olup olmadığını belirler; ikinci katman adım adım iş politikalarıyla karşılaştırarak yetkileri, zorunlu süreçleri, gizliliği, olgusal dayanağı ve söz—eylem tutarlılığını denetler; üçüncü katman Tablo 8-1'deki Rubric'e göre ifade kalitesini ve kurallara uygun alternatifi değerlendirir ve başarısızlık sonuçları için kanıt turlarını saklar. Varsayılan kalite Judge'ı deterministik kurallar kullanır, ayrıca gerçek bir LLM Judge de sunulur; üst katman hangi modeli kullanırsa kullansın, sonuç katmanı ile kural katmanı bir dil modelinin tahminine bırakılmaz.
+> **İlke düzeyinde sonuç:** Bir değişikliği yalnızca hedef davranışı gerileme olmadan iyileştiriyor ve izlenebilir, doğrulanabilir, geri alınabilir kalıyorsa kabul edin; kitap tasarımı ve sonucu anlatır, tek bir çalıştırmanın parametrelerini değil.
 >
-> **Karşılaştırma ve Metrikler**: Baseline yalnızca tek bir toplam puan verir; deney grubu her boyut için `pass`, `fail` veya `uncertain` değerini, kanıtı ve güven düzeyini üretir. Kalibrasyon aşamasında boyut bazında başarısızlık tespitinin kesinliği (precision) ve duyarlılığı (recall) hesaplanır ve uzman etiketleriyle tam örtüşme oranı raporlanır; ayrıca asılsız söz gibi başarısızlıkların yalnızca bir sonuçtan ibaret kalmayıp boş olmayan kanıt içerdiği kontrol edilir.
->
-> **Kabul Kriterleri**: Doğrulayıcı kritik ihlalleri, asılsız sözleri ve aşırı reddetmeleri kararlı biçimde tespit etmelidir; yüksek bir toplam puan, gizlilik veya kural boyutundaki bir başarısızlığı örtemez; düşük güvenli ve yüksek riskli vakalar otomatik olarak öğrenme sinyaline dönüşmek yerine ikinci bir doğrulayıcıya veya insan incelemesine gitmelidir.
->
-> Eşlik eden uygulama için bkz. [`trajectory-verifier`](../chapter8/trajectory-verifier/); varsayılan olarak çevrimdışı yeniden üretilebilen kalite Judge'ı kullanılır, `--judge llm` ile hâlihazırda uygulanmış gerçek LLM doğrulayıcısı çalıştırılabilir.
-
 ## Agent'ın Sürekli Evrimi için Dört Yöntem
 
 Öğrenme sinyali, Agent'ın değişmesi gerektiğini söyler; ama değişimin nerede gerçekleşmesi gerektiğini söylemez. Güncelleme biçimini seçerken birincil ölçüt, deneyimin ne kadar süredir var olduğu değil, hedeflenen yeteneğin belirli bir taşıyıcıyla doğal biçimde ifade edilip edilemeyeceğidir. Olgular ve deneyimler bilgi dokümanına yazılmaya uygundur; dille açıkça anlatılabilen stratejiler prompt'a veya Skill'e yazılmaya uygundur; kesin biçimde yürütülebilen süreçler ve kısıtlar programa yazılmaya uygundur; algı, dil üslubu ve örtük stratejiler gibi yüksek boyutlu yetenekler ise model parametrelerine girmek zorundadır. Şekil 8-3 bu dört yolu ve aralarındaki ilişkiyi gösteriyor.
@@ -95,16 +89,10 @@ GAIA deneyim öğrenmesi bunun sezgisel bir örneğini veriyor. GAIA[^gaia-2023]
 
 > **Deney 8-2 ★★: GAIA Trajectory'lerinden Deneyim Bilgi Dokümanı Damıtmak**
 >
-> **Deney Amacı**: "Trajectory'ler arası bilgi dokümanı"nın "tek bir başarının özetini hatırlamak"tan daha kolay aktarılıp aktarılmadığını sınamak ve tesadüfi başarıların ve hatalı deneyimin yol açtığı negatif aktarımı azaltmak.
+> **Amaç:** Bu deneyin temsil ettiği yeteneği ayırıp uygun bir temel çizgiyle karşılaştırmak.
 >
-> **Veri ve Akış**: `gaia-experience` önce her çalışmanın eksiksiz trajectory'sini ve dışarıdan gelen `environment_score` değerini saklar, sonra bunları asgari öğrenme kayıtlarına dönüştürür: `task_family`, gereken `capabilities`, `applies_when`, gözlenen stratejiler, hatalar, istisnalar ve kaynak trajectory kimlikleri. Sonuç doğrulayıcısı çalışmaları başarılı, kısmen başarılı ve başarısız olarak ayırır; öğrenme modülü aynı görev ailesi içinde yolları karşılaştırır. LLM aday genellemeler önerebilir, ama önerilen bir stratejinin en az iki başarısız olmayan trajectory tarafından desteklenmesi gerekir. Sonuçta üretilen Markdown dokümanı uygulanabilir senaryoyu, önerilen stratejileri, sık yapılan hataları, istisna koşullarını, kaynağı ve en son doğrulama zamanını içerir. Uygulama aşamasında yalnızca bu dokümanlar retrieval ile getirilir; uzun ham trajectory'ler doğrudan context'e tıkıştırılmaz.
+> **İlke düzeyinde sonuç:** Bir değişikliği yalnızca hedef davranışı gerileme olmadan iyileştiriyor ve izlenebilir, doğrulanabilir, geri alınabilir kalıyorsa kabul edin; kitap tasarımı ve sonucu anlatır, tek bir çalıştırmanın parametrelerini değil.
 >
-> **Üç Karşılaştırma Grubu**: Birinci grup geçmiş deneyimi hiç kullanmaz; ikinci grup mevcut göreve en çok benzeyen tek bir trajectory özetini getirir; üçüncü grup birden çok trajectory tarafından ortaklaşa desteklenen bilgi dokümanını getirir. Öğrenme kümesi ile aktarım kümesi kesinlikle örtüşmemelidir; aksi hâlde aynı GAIA sorusunun cevabı "deneyim" adı altında değerlendirmeye sızar.
->
-> **Metrikler ve Kabul**: Aktarım görevlerindeki başarı oranı, ortalama getirilen karakter veya Token sayısı ve negatif aktarım oranı birlikte raporlanır; ayrıca her resmî sonucun kaynak trajectory'leri listeleyip listelemediği denetlenir. Trajectory'ler arası doküman yalnızca context'i kısaltıyor ama yeni görevlerdeki başarımı yükseltmiyorsa, sistemin deneyimi öğrendiği kanıtlanmış olmaz; tek bir tesadüfi başarı resmî bilgiye terfi edebiliyorsa ya da doküman ham trajectory'ye kadar izlenemiyorsa da kabul geçilmez.
->
-> Eşlik eden uygulama için bkz. [`gaia-experience`](../chapter8/gaia-experience/). `demo_documents.py` varsayılan olarak çevrimdışı çalışır; `--extractor llm` ile trajectory'ler arası deneyim adaylarını gerçek bir LLM önerebilir.
-
 [^reflexion-2023]: Shinn, N., et al. *Reflexion: Language Agents with Verbal Reinforcement Learning.* arXiv:2303.11366, 2023.
 
 [^gaia-2023]: Mialon, G., et al. *GAIA: a benchmark for General AI Assistants.* arXiv:2311.12983, 2023.
@@ -129,24 +117,18 @@ Skill öğrenmesi aynı ilkeyi izler, ama etki alanı daha yereldir. Skill'i, ih
 
 > **Deney 8-9 ★★: Geri bildirimi yazma Skill'ine dönüştürmek**
 >
-> `data/feedback_pairs.json` içindeki 20 before/after çifti üç partide işlenir; aday kurallar çıkarılır, tekrarlar birleştirilir, eşik çakışmaları bulunur ve kaynak/kapsam içeren `SKILL.md` üretilir. Deterministik kurallar kodla, LLM kuralları 10 altın örnekle kalibre edilir.
+> **Amaç:** Bu deneyin temsil ettiği yeteneği ayırıp uygun bir temel çizgiyle karşılaştırmak.
 >
-> Eksik görev sınır kümesindeki tespit, normal metinlerdeki yanlış alarm ve kural sayısının büyümesi birlikte raporlanır. İlk gerçek çalışma 0/8 tespit ve 7/8 yanlış alarm verdi; model dışı filtre ve deterministik fallback sonrası 8/8, 0/8 ve 21 adaydan 8 kural elde edildi. Uygulama [`ai-style-skill`](../chapter8/ai-style-skill/) içindedir.
-
+> **İlke düzeyinde sonuç:** Bir değişikliği yalnızca hedef davranışı gerileme olmadan iyileştiriyor ve izlenebilir, doğrulanabilir, geri alınabilir kalıyorsa kabul edin; kitap tasarımı ve sonucu anlatır, tek bir çalıştırmanın parametrelerini değil.
+>
 Kıvrımlı tırnak vakası, Skill'in küresel bir değiştirme kuralı değil, veri sözleşmesi olması gerektiğini gösterir: SFT'den önce sentetik örnekler belge türü, kapsam ve programlama diline göre katmanlandırılmalı; kod/JSON/korunan alan kapılarından ve manuel denetimden geçmelidir. Exact-copy vakasında tokenizer encode→decode round-trip'i, modelin byte-exact kopyası, Harness serileştirmesi ve araç eşleşmesi ayrı regresyon katmanlarıdır.
 
 > **Deney 8-3 ★★: Başarısız Trajectory'lere Dayanarak System Prompt'u İyileştirmek**
 >
-> **Deney Amacı**: Havayolu müşteri hizmetleri Agent'ının "kullanıcı politikayı sorguladığında fazla erken insana devretme" başarısızlık trajectory'lerinden öğrenmesini sağlamak ve aynı zamanda yeni kuralın gerçekten devretme gerektiren eski senaryoları bozmadığını kanıtlamak.
+> **Amaç:** Bu deneyin temsil ettiği yeteneği ayırıp uygun bir temel çizgiyle karşılaştırmak.
 >
-> **Akış**: Önce eski görevlerden oluşan saklı küme ile aşırı devretme sınır kümesi ayrı ayrı çalıştırılır; `learning_signal.py` başarısızlığı kural uyumu, görev çözümü ve kurallara uygun alternatif olmak üzere üç boyuta ayırır ve kaynak vaka kimliklerini saklar. Ardından Kodlama Agent'ı mevcut Prompt'u okur ve denetlenebilir tek bir asgari `old_str → new_str` düzenlemesi üretir: Agent'tan önce politikayı açıklaması, gerçek hedefi belirlemesi ve kurallara uygun alternatifler bulması istenir; kullanıcının açıkça insan talep ettiği ya da bir güvenlik olayının ortaya çıktığı durumlar için devretme yolu korunur. Yama; kaynağı, hedef kuralı ve değişiklik gerekçesiyle birlikte aday manifest'e yazılır.
+> **İlke düzeyinde sonuç:** Bir değişikliği yalnızca hedef davranışı gerileme olmadan iyileştiriyor ve izlenebilir, doğrulanabilir, geri alınabilir kalıyorsa kabul edin; kitap tasarımı ve sonucu anlatır, tek bir çalıştırmanın parametrelerini değil.
 >
-> **Üç Karşılaştırma Grubu**: Başlangıç Prompt'u, otomatik üretilen aday Prompt ve insan eliyle tek seferde ayarlanmış Prompt. Üçü de aynı modeli ve aynı saklı/sınır görev kümesini kullanır; `--quick` yalnızca vaka sayısını azaltır, görev Agent'ını, LLM Judge'ı ve Kodlama Agent'ını yine gerçekten çağırır, dolayısıyla çevrimdışı bir benzetim sonucu sayılamaz.
->
-> **Yayım Eşiği ve Metrikler**: Aday dört koşulu birden sağlamalıdır: yama boş olmamalı, kaynağı izlenebilmeli, sınır kümesindeki başarım gerçekten iyileşmeli ve saklı kümede gerileme olmamalı. Sınır görevlerindeki doğruluk, saklı görevlerdeki doğruluk, Prompt'un uzama miktarı, ortaya çıkan regresyon sayısı ve başarısızlığın fark edilmesinden adayın üretilmesine kadar geçen süre karşılaştırılır. Eşiği geçmek yalnızca `release_to_canary` sonucunu verir, kararlı Prompt'un üzerine doğrudan yazılmaz; koşullardan herhangi biri sağlanmazsa `reject_candidate` döndürülmelidir.
->
-> Eşlik eden uygulama için bkz. [`prompt-auto-optimization`](../chapter8/prompt-auto-optimization/). Çevrimdışı testler tanıyı ve yayım eşiğini kapsar; `--quick` ise görev Agent'ını, LLM Judge'ı ve Kodlama Agent'ını gerçekten çağırır.
-
 [^dspy-2023]: Khattab, O., et al. *DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines.* arXiv:2310.03714, 2023.
 
 [^opro-2023]: Yang, C., et al. *Large Language Models as Optimizers.* arXiv:2309.03409, 2023.
@@ -178,16 +160,10 @@ E-posta göndermeyi ele alalım: derlemenin sonucu yalnızca "şu düğmelere s�
 
 > **Deney 8-4 ★★★: Tarayıcı Trajectory'lerinden Doğrulanabilir İş Akışı Üretmek**
 >
-> **Deney Amacı**: Web Agent'ının pahalı bir keşfi yeniden kullanılabilir bir iş akışına dönüştürüp dönüştüremediğini ve sayfa değiştiğinde hatalı yeniden oynatmayı reddedip reddetmediğini, yani "eylemlerin hepsi yürütüldü" durumunu başarı diye raporlamadığını doğrulamak.
+> **Amaç:** Bu deneyin temsil ettiği yeteneği ayırıp uygun bir temel çizgiyle karşılaştırmak.
 >
-> **Dört Aşamalı Senaryo**: Birinci aşamada test e-posta sitesinde veya benzetilmiş bir mesaj sayfasında "`test@example.com` adresine konusu 'Test e-postası' olan bir mesaj gönder" görevi yürütülür; keşfi tam Agent yapar, sarmalayıcı katman eylemleri, parametreleri ve sayfa durumunu yakalayarak bir `candidate` üretir. İkinci aşamada `validation_reset` çağrılarak sandbox geri yüklenir ve aday bağımsız olarak baştan sona yeniden oynatılır; yalnızca yürütme öncesi kontrol, yürütme sonrası kontrol ve nihai durum kontrolü tümüyle geçerse aday resmî yetenek kütüphanesine girer. Üçüncü aşamada alıcısı, konusu ve gövdesi farklı olan aynı türden bir görev yürütülür; sistemin doğrulanmış iş akışını eşleştirmesi, yeni parametreleri doldurması ve adım adım LLM döngüsüne girmeden Playwright ile yeniden oynatması beklenir. Dördüncü aşamada düğme konumu, sayfa metni veya nihai durum değiştirilir ve eski iş akışının anında `invalid` hâline gelip `fallback_required=True` döndürüp döndürmediği doğrulanır.
+> **İlke düzeyinde sonuç:** Bir değişikliği yalnızca hedef davranışı gerileme olmadan iyileştiriyor ve izlenebilir, doğrulanabilir, geri alınabilir kalıyorsa kabul edin; kitap tasarımı ve sonucu anlatır, tek bir çalıştırmanın parametrelerini değil.
 >
-> **Karşılaştırma Tasarımı**: Basitleştirilmiş baseline yalnızca tıklama, metin girme gibi eylemlerin istisna fırlatmadan tamamlanıp tamamlanmadığını sayar; deney grubu ayrıca eylem öncesi sayfayı, eylem sonrası sayfayı ve görevin nihai durumunu doğrular. İki grup aynı trajectory'leri ve aynı sayfa değişikliklerini kullanır; "alan boşken gönder düğmesine tıklandı" ve "Save'e tıklandı ama veri kaydedilmedi" gibi sahte başarı senaryolarındaki yanlış karar oranları karşılaştırılır.
->
-> **Metrikler ve Kabul**: İlk keşfin ve yeniden oynatmanın uçtan uca süresi, LLM çağrısı sayısı, başarı oranı, hatalı başarı oranı, iş akışı eşleşme oranı, sayfa değişikliği tespit oranı ve yeniden öğrenmeye geri dönüş sayısı kaydedilir. Sıfırlama geri çağrısı yokken iş akışı aday bölgesinde kalmalıdır; doğrulamayı geçemeyen sürümler retrieval ile getirilememelidir; parametreli yeniden oynatma ilk çalışmanın alıcısını veya içeriğini yeniden kullanmamalıdır; sayfa değiştikten sonra tehlikeli olabilecek sonraki eylemler durdurulmalıdır. Hızlanma sonucu ancak bütün bu koşullar birlikte sağlandığında anlamlıdır.
->
-> Eşlik eden uygulama için bkz. [`browser-use-rpa`](../chapter8/browser-use-rpa/); hem deterministik durum makinesi gösterimi hem de gerçek tarayıcı Agent'ını çağıran çalışma yolu sunulur.
-
 Agent'ın kendi kodunu değiştirmesi, çalışan sürecin doğrudan kendi üzerine yazması anlamına gelmez. Üretim sistemi mevcut kararlı sürümden bir aday dal oluşturmalı, Kodlama Agent'ına asgari bir yama ürettirmeli, ardından sırasıyla statik denetimden, birim testlerinden, güvenlik taramasından, başarısız trajectory'nin yeniden oynatılmasından ve eski görev regresyonundan geçirerek kademeli yayıma (canary) uygun yeni bir sürüm üretmelidir. Bu, "kendini değiştirme"yi denetlenebilir bir yazılım yayım sürecine dönüştürür ve tam da Bölüm 8 ile Bölüm 5 arasındaki sınırı çizer: Bölüm 5 sistemi değiştirme yeteneğini sağlar, bu bölüm ise deneyimle tetiklenen ve doğrulama döngüsüyle kısıtlanan kendini değiştirme yöntemini sağlar.
 
 Yalnızca "yama olabildiğince küçük olsun" demek güvenilir bir nedensellik atfı için yeterli değildir. Her değişiklik isteği aynı zamanda **yanlışlanabilir bir değişiklik sözleşmesi** olmalıdır: başarısızlık kanıtını, çıkarsanan kök nedeni, sorumlu tutulan Harness bileşenini, aday değişikliği, düzelmesi beklenen davranışı, zarar görebilecek mevcut davranışı ve bu ikisini ayrı ayrı doğrulayan test durumlarını listelemelidir. Agentic Harness Engineering bu yaklaşımı bileşen, deneyim ve karar olmak üzere üç katmanlı gözlemlenebilirlik olarak özetler: düzenlenebilir bileşenlerin hepsinin dosya düzeyinde bir temsili vardır; çok sayıda trajectory önce katman katman derinleşilebilen kanıta dönüştürülür; her düzenleme yürütülmeden önce bir etki tahmini bildirir ve bu tahmin bir sonraki turun sonuçlarıyla sınanır[^ahe-2026]. Ancak böyle olduğunda puandaki artış belirli bir mekanizmayla ilişkilendirilebilir; aksi hâlde açıklanamayan bir deneme yanılmadan ibaret kalır.
@@ -198,16 +174,10 @@ Araç yaratma da aynı protokolü izler. Alita'nın[^alita-2025] verdiği örnek
 
 > **Deney 8-5 ★★★: Başarısız Trajectory'lerle Agent'ın Kendini Değiştirmesini Tetiklemek**
 >
-> **Deney Amacı**: "`retryable=false` olan hataların art arda çağrılmayı sürdürdüğü" birden çok trajectory verildiğinde, sistemin kök nedeni yeniden deneme ve circuit breaker koduna kadar götürüp götüremediğini ve geçici arızalarda yeniden deneme yeteneğini bozmadan aday bir düzeltme üretip üretemediğini sınamak.
+> **Amaç:** Bu deneyin temsil ettiği yeteneği ayırıp uygun bir temel çizgiyle karşılaştırmak.
 >
-> **Akış**: Tanı modülü önce farklı görevlerdeki aynı arızayı bir araya toplar; yalnızca trajectory'ler arası destek eşiğine ulaşıldığında bir değişiklik isteği oluşturur ve hedefi kararlı sürümdeki `retry_policy.py` dosyasına yerleştirir. Aday üreteci; başarısızlık tanısını, korunması gereken geçici arıza kurtarma davranışını, daha önce reddedilmiş değişiklikleri ve kararlı kaynak kodu okur; önce "yeniden denenemeyen hataların çağrılma sayısı düşmeli, geçici zaman aşımı kurtarma oranı düşmemeli" biçiminde bir etki tahmini sunar, sonra asgari kod diff'ini çıkarır. Deterministik bir üreteç de kullanılsa gerçek bir LLM Kodlama Agent'ı da kullanılsa, sonuç yalnızca yalıtılmış aday dizinine yazılabilir. Doğrulama Harness'i ardından sırasıyla adayı derler, özgün başarısızlık trajectory'lerini yeniden oynatır, yeniden denenemeyen hatalarda hemen durulup circuit breaker'ın açılıp açılmadığını denetler, sonra geçici zaman aşımlarının hâlâ eski eşiğe göre yeniden denenip denenmediğini yeniden ölçer.
+> **İlke düzeyinde sonuç:** Bir değişikliği yalnızca hedef davranışı gerileme olmadan iyileştiriyor ve izlenebilir, doğrulanabilir, geri alınabilir kalıyorsa kabul edin; kitap tasarımı ve sonucu anlatır, tek bir çalıştırmanın parametrelerini değil.
 >
-> **Tanı Karşılaştırması ve Metrikler**: "Prompt'a yalnızca 'aynı çağrıyı tekrarlama' cümlesini eklemek", hata katmanında konumlandırmanın kavramsal karşılaştırma grubu olarak kullanılır ve kesin biçimde yürütülebilen yeniden deneme kısıtlarının neden programa girmesi gerektiğini gösterir. Çalıştırılabilir deney ise deterministik yama üretecini LLM üreteciyle karşılaştırır; ikisi de aynı yayım eşiğini paylaşır. Yeniden denenemeyen çağrı sayısı, geçici hata kurtarma oranı, eski görev regresyon sayısı, yama büyüklüğü ve aday kabul oranı kaydedilir.
->
-> **Kabul Kriterleri**: Bütün denetimler geçtiğinde yalnızca `release_to_canary` üretilir; statik denetimlerden, başarısızlık yeniden oynatmasından veya eski görev regresyonundan herhangi biri başarısız olursa `reject_candidate` döndürülür. `release_manifest.json` dosyası; başarısızlık kümesini, kaynak trajectory'leri, çıkarsanan kök nedeni, hedef bileşeni ve dosyayı, kod diff'ini, beklenen düzeltmeyi, olası gerilemeleri, denetim sonuçlarını, aday sürümü ve geri alma sürümünü kaydetmek zorundadır; reddedilen adaylar da bir sonraki üretim turunda başvurulmak üzere ret gerekçelerini saklamalıdır. Yamayı üreten Agent; kararlı kodu, doğrulayıcıları, denetim log'larını veya kendi yayımını onaylayan eşiği değiştiremez.
->
-> Eşlik eden uygulama için bkz. [`self-modifying-agent`](../chapter8/self-modifying-agent/); deterministik aday üreteci ya da gerçek bir LLM Kodlama Agent'ı seçilebilir, iki yol da aynı yayım eşiğini paylaşır.
-
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
 [^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
@@ -216,8 +186,10 @@ Deney 8-8 aynı protokolü doğrulama katmanına uygular. Kullanıcı düzeltmel
 
 > **Deney 8-8 ★★: Kullanıcı geri bildirimiyle yüksek riskli işlem onay kapısı**
 >
-> `failure_trajectories.json` içindeki üç sinyal ve kontrol trajectory'leri kullanılır. Gerçek `gpt-4o-mini` adayı eksik görev, normal işlem ve tek kullanımlık token kontrollerini geçemediği için güvenlik kapısı tarafından reddedildi. Deterministik aday bütün kontrolleri geçip `release_to_canary` oldu; kontroller, karar ve kararlı dizinin hash'i kaydedilir. Uygulama [`harness-safety-gate`](../chapter8/harness-safety-gate/) içindedir.
-
+> **Amaç:** Bu deneyin temsil ettiği yeteneği ayırıp uygun bir temel çizgiyle karşılaştırmak.
+>
+> **İlke düzeyinde sonuç:** Bir değişikliği yalnızca hedef davranışı gerileme olmadan iyileştiriyor ve izlenebilir, doğrulanabilir, geri alınabilir kalıyorsa kabul edin; kitap tasarımı ve sonucu anlatır, tek bir çalıştırmanın parametrelerini değil.
+>
 ### Deneyimi Parametrelere Yazmak
 
 Bilgi, talimat ve program bir ön kabule dayanır: hedeflenen yetenek dış simgelerle görece eksiksiz biçimde ifade edilebilir. Oysa tıbbi görüntü anlama, doğal konuşma ezgisi, metindeki şablonlaşmış "yapay zeka kokusu"nun giderilmesi ve uzun erimli planlama gibi yetenekleri birkaç kurala ya da iş akışına sıkıştırmak çok güçtür. Bu tür yetenekler post-training yoluyla model parametrelerine yazılmak zorundadır.
@@ -242,14 +214,10 @@ Optimizasyon katmanı ne kadar yüksekse o kadar iyi değildir. Yerel bir kural�
 
 > **Deney 8-6 ★★★: Bu Kitabı Hermes'e Verirsek Kendini Yükseltebilir mi?**
 >
-> **Amaç**: Bir Agent'ın dış bilgiyi kendi yeteneklerinde gerçek bir güncellemeye dönüştürüp dönüştüremediğini sınamak. Deney bir sorun ya da özellik listesi vermez; Hermes'e on bölüm ve kendi kaynak kodu verilir, ilkeleri anlaması, uygulamasını incelemesi ve değerli bir iyileştirmeyi kendisinin seçmesi beklenir.
+> **Amaç:** Bu deneyin temsil ettiği yeteneği ayırıp uygun bir temel çizgiyle karşılaştırmak.
 >
-> **Tasarım**: Kitap ve kaynak kod okunabilir bağlamı oluşturur; kararlı sürüm, bağımsız Reviewer ve kabul testleri ise Hermes'in değiştirebildiği alanın dışında kalır. Hermes **oku → karşılaştır → seç → değiştir → doğrula** döngüsünü tamamlamalıdır. Aday reddedilirse inceleme bir sonraki öğrenme turunun girdisi olur; kapı atlanarak başarı ilan edilemez.
+> **İlke düzeyinde sonuç:** Bir değişikliği yalnızca hedef davranışı gerileme olmadan iyileştiriyor ve izlenebilir, doğrulanabilir, geri alınabilir kalıyorsa kabul edin; kitap tasarımı ve sonucu anlatır, tek bir çalıştırmanın parametrelerini değil.
 >
-> **Gerçek çalıştırma**: Kitabı okuyan Hermes, kaydedilmiş yürütme trajectory'lerinde sonraki öğrenmenin doğrudan kullanabileceği yapılandırılmış kanıt bulunmadığını kendi başına fark etti. Yürütme sonuçlarını ihtiyatlı öğrenme sinyallerine dönüştürmeyi seçti, kendi kodunu değiştirdi ve testler ekledi. İlk üç bağımsız inceleme gerçek veri biçimleri, kalıcılık yolları ve sayım anlamlarıyla uyumsuzluklar buldu. Her bulgu özgün Hermes oturumuna döndü; dördüncü inceleme adayı kabul etti.
->
-> **İddianın sınırı**: Bu çalıştırma, bir Agent'ın uzun bilgiden ilkeler çıkarıp bunları kendi koduna eşleyebildiğini ve dış doğrulama altında bir öz güncellemeyi tamamlayabildiğini gösterir. Downstream görev başarısının arttığını kanıtlamaz; bunun için ayrı bir ablation deneyi gerekir. Deney fikrini okur Grace sağlamıştır.
-
 ## Uzun Süre Çalışabilen Sürekli Evrim Döngüsünü Kurmak
 
 Dört güncelleme biçimi ancak aynı otonom döngüye girdiğinde tek seferlik bir optimizasyon olmaktan çıkıp sürekli evrime dönüşür. Şekil 8-5, üretim sistemlerinde daha sağlam olan çift döngülü yapıyı gösteriyor: çevrimiçi yürütme döngüsü yalnızca görevi tamamlar ve kanıtı kaydeder, resmî Agent'ı doğrudan değiştirmez; çevrimdışı evrim döngüsü ise trajectory'leri bir araya toplar, kök nedene tanı koyar, aday değişiklikleri üretir ve ancak doğrulama eşiklerini geçtikten sonra yeni sürümü yayımlar. İki döngü, sürümlenmiş deneyim deposu ve değerlendirme kümeleri aracılığıyla birbirine bağlanır.
@@ -345,16 +313,10 @@ Sürekli evrim, bilginin, Prompt'un ve araçların sınırsızca büyümesi deme
 
 > **Deney 8-7 ★★★: Agent'ın Gerçekten Sürekli Evrilip Evrilmediğini Değerlendirmek**
 >
-> **Deney Amacı**: "Tek bir geri bildirimi saklayabilme", "yalnızca durmadan ekleme yapma" ve "güncelleyebilme, aktarabilme ve yeteneği koruyabilme" biçimindeki üç uzun vadeli davranışı birbirinden ayırmak ve aynı soru kümesini tekrar tekrar çalıştırmayı sürekli öğrenme diye göstermeyi önlemek.
+> **Amaç:** Bu deneyin temsil ettiği yeteneği ayırıp uygun bir temel çizgiyle karşılaştırmak.
 >
-> **Dört Aşamalı Görev Akışı**: Öğrenme aşaması; iade, kimlik doğrulama ve bagaj politikası gibi ortak örtük örüntüler taşıyan görevler sunar. Aktarım aşaması ifadeyi, kullanıcıyı ve yerel ortamı değiştirerek eski deneyimin yeni görevlerde kullanılıp kullanılamadığını denetler. Kural değişikliği aşaması bagaj üst sınırını 20 kg'dan 23 kg'a çıkarır ve sistemden eski bilgiyi değiştirmesini ya da elemesini ister. Koruma aşaması ise değişmemiş yetenekleri ve o an geçerli olan kuralları yeniden test ederek güncellemenin unutmaya yol açıp açmadığını ölçer. Geri bildirimli her görev bittikten sonra dış belleğin güncellenmesine izin verilir; o anki sorunun beklenen eylemi Agent'a önceden sızdırılamaz.
+> **İlke düzeyinde sonuç:** Bir değişikliği yalnızca hedef davranışı gerileme olmadan iyileştiriyor ve izlenebilir, doğrulanabilir, geri alınabilir kalıyorsa kabul edin; kitap tasarımı ve sonucu anlatır, tek bir çalıştırmanın parametrelerini değil.
 >
-> **Karşılaştırma Grupları**: `static` geri bildirimi kalıcı hâle getirmez; `append_only` kuralın ilk sürümünü hatırlayabilir, ama çatışmayı ele almaz ve eskiyen bilgiyi elemez; `evolving` sürümleri saklar ve eski kuralı yeni kanıtla değiştirir. Referans uygulama, değerlendirme Harness'inin bu davranışları ayırt edip edemediğini doğrulamak içindir; gerçek deneyde LLM aynı 14 soruluk sıralı görev akışından geçirilebilir, ama sonucun model dışındaki Harness tarafından hesaplanması zorunludur.
->
-> **Metrikler ve Kabul**: Doğruluk ve öğrenme eğrisi aşama aşama raporlanır; ayrıca aktarım doğruluğu, yeni kural alındıktan sonra doğruya dönmek için gereken görev sayısı, eski yetenek koruma oranı, negatif aktarım oranı, güvenlik Rubric'i geçme oranı ve Token, gecikme ile depolama maliyeti ayrı ayrı hesaplanır. Prompt, Skill veya Harness güncellemesi kullanan gerçek sistemlerde aday değişiklik etkinliği, artifact etkinleşme oranı ve uyum başarı oranı da ayrı ayrı kaydedilmelidir; böylece "güncelleme doğru ama yüklenmemiş" durumunun güncelleme başarısızlığı sayılması önlenir. Bir Agent'ın nihai doğruluğu görece yüksek olsa bile; yürürlükten kalkmış kurallara başvurmayı sürdürüyorsa, görevi kural dışı kestirmelerle tamamlıyorsa ya da güncellemeden sonra eski yeteneklerini unutuyorsa, sürekli evrim gerçekleştirdiğine hükmedilemez.
->
-> Eşlik eden uygulama için bkz. [`self-evolution-eval`](../chapter8/self-evolution-eval/); varsayılan olarak güncellenebilir, yalnızca ekleyen ve statik olmak üzere üç referans Agent karşılaştırılır; `--profile llm` ile gerçek bir LLM aynı uzun vadeli görev akışından geçirilebilir.
-
 [^claude-code-memory]: Anthropic, “How Claude remembers your project”, 2026. https://code.claude.com/docs/en/memory
 
 [^hermes-memory]: Nous Research, *Hermes Agent Documentation: Persistent Memory, Skills System, and Curator*, 2026. https://hermes-agent.nousresearch.com/docs/user-guide/features/memory ; https://hermes-agent.nousresearch.com/docs/user-guide/features/skills ; https://hermes-agent.nousresearch.com/docs/user-guide/features/curator

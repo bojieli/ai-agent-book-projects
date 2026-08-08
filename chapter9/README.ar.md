@@ -15,9 +15,11 @@
 | 9-5 | [تحويل النص إلى كلام قابل للتحكم](controllable-tts/) | 🚧 | تمر مكتبة Fish Audio S1 الحقيقية 4×3×2 ووسائط A/B/C بوابات البنية؛ ما زالت دراسة الاستماع النوعية وتقييم «قريب من موظف بشري» ناقصين. |
 | 9-6 | `claude-quickstarts/computer-use-demo/` | 📖 | المستودع الخارجي `anthropics/claude-quickstarts` مثبت عند `9bcc95e…`؛ المقصود هو Computer Use demo بسطح Ubuntu وحلقة Claude agent داخل container، لا مجموعة quickstarts كلها. |
 | 9-7 | `browser-use/` | 📖 | المستودع الخارجي `browser-use/browser-use` مثبت عند `ec9277c…`؛ يستخدم visual CLI مع `use_vision=True` للبحث في Google عن طقس San Francisco وحفظ مسار الأفعال/الصور. |
-| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | XLeRobot الخارجي `3d14695…` للتحكم keyboard/Xbox/Joy-Con/VR. لا يوجد إلا source/non-actuating preflight؛ ولا تشغيل حقيقي مخوّل بأوضاعه الأربعة أو دليل pick/place/wipe. |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | XLeRobot الخارجي `3d14695…` مع RoboCrew، وبالضبط `gemini-robotics-er-1.5-preview` وتعليم الزوايا وأدوات forward/left/right. لا يوجد تشغيل تنقل مخوّل. |
-| 9-10 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | `lerobot-sim2real` الخارجي `87d6c1d…` لمسار RGB→PPO→SO-100 ذي خمس مراحل. يفتقد المضيف ManiSkill/NVIDIA ولا يوجد تشغيل روبوت حقيقي مخوّل. |
+| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | تشغيل XLeRobot الحقيقي عن بُعد لمهمة واحدة لترتيب المكتب: ضع الكوب الأحمر في الصينية، والورقة الصفراء في سلة المهملات، ثم أعد الملاحظة وتحقق من الحالة. |
+| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | قياس الحد الأعلى للتحكم المثالي في المهمة نفسها داخل المحاكي؛ ولا يعني ذلك تشغيل الروبوت الحقيقي. |
+| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | يتحكم Gemini Robotics-ER 1.5 ذاتيًا في XLeRobot الحقيقي لتنفيذ مهمة ترتيب المكتب نفسها. |
+| 9-11 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | مقارنة التنفيذ المفتوح، والتحقق خطوة بخطوة، والحلقة المغلقة التنبؤية للمهمة نفسها داخل المحاكي. |
+| 9-12 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | اختبار RGB عبر البيئات للمهمة نفسها مع تغيير الخلفية ومظهر الأشياء والإضاءة والضجيج البصري. |
 
 ## أنواع المشاريع
 
