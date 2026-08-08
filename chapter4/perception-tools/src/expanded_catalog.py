@@ -480,7 +480,14 @@ def _options(raw: str) -> dict[str, Any]:
 
 
 def _limit(options: dict[str, Any], default: int = 10) -> int:
-    return max(1, min(int(options.get("limit", default)), 100))
+    raw = options.get("limit")
+    if raw is None:
+        raw = default
+    try:
+        val = int(raw)
+    except (TypeError, ValueError):
+        val = default
+    return max(1, min(val, 100))
 
 
 async def _http_json(url: str, *, params: dict[str, Any] | None = None,
