@@ -28,8 +28,8 @@ class TodoWriteTool(BaseTool):
 
         # Validate todo format
         for todo in todos:
-            if not all(k in todo for k in ["id", "content", "status"]):
-                return {"error": "Each todo must have id, content, and status"}
+            if not isinstance(todo, dict) or not all(k in todo for k in ["id", "content", "status"]):
+                return {"error": "Each todo must be a dict and must have id, content, and status"}
             if todo["status"] not in ["pending", "in_progress", "completed"]:
                 return {"error": f"Invalid status: {todo['status']}"}
         
