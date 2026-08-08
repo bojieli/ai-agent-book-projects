@@ -16,7 +16,7 @@
 | 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Da a Hermes el libro y su propio código; elige una mejora, se modifica y convierte cada rechazo del Reviewer en otra ronda de aprendizaje hasta ser aceptado |
 | 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | Evaluación 8-7 de evolución a largo plazo en cuatro etapas: aprendizaje, transferencia, reglas y retención |
 | 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | Puerta de confirmación para operaciones de alto riesgo |
-| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | Convierte comentarios de escritura en un Skill verificable |
+| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | Convierte comentarios de escritura en un Skill verificable; el capítulo conecta la Skill de comillas curvas con datos sintéticos auditados y posentrenamiento, y separa los fallos de tokenizer/Harness en la copia exacta |
 
 ## Casos Complementarios
 

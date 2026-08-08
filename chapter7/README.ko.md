@@ -24,8 +24,8 @@
 | 7-15 | [AWorld-train 연계 설명](AWorld-train/) · `AWorld/` | 📖 | `bojieli/AWorld`의 GAIA MCP 샌드박스와 학습 진입점을 사용하며, 학습 백엔드는 `bojieli/verl`입니다. |
 | 7-16 | [RLVP 연계 설명](RLVP/) · `RLVP/rlvp/` | 📖 | 전체 학습·평가 코드는 `1ad30bc…`에 고정된 `19PINE-AI/rlvp`에서 가져옵니다. 현재 체크아웃이 없어 학습은 실행하지 않았습니다. |
 | 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | GPU에서 조기 완료 bad case를 DPO로 수정합니다. |
-| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | 오픈 Qwen3-8B GPU로 범위 민감 중국어 곡선 따옴표 SFT를 수행합니다. |
-| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | 오픈 Qwen3-8B GPU로 특수 문자열 byte-exact 복사 SFT를 수행합니다. |
+| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | 감사된 범위 민감 중국어 곡선 따옴표 SFT: 10개 문서 유형·9개 프로그래밍 언어에서 train/holdout/boundary 1024/256/256개; Qwen3-8B exact 96.9%/97.7%, 보호 영역 보존 100%. |
+| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | 감사된 특수 문자열 byte-exact 복사 SFT: 1024/256/256개; Qwen3-8B holdout 78.9%, boundary 80.1%, Qwen3/Qwen2.5/Mistral tokenizer 감사 포함. |
 | — | `verl/` | 📖 | verl은 대규모 언어 모델의 RLHF 학습을 위해 설계된 효율적인 강화 학습 프레임워크로, PPO, GRPO, DAPO 등 여러 알고리즘을 지원합니다. |
 | — | [Intuitor](Intuitor/) | ✅ | 모델의 직관적 사고 능력을 학습해 상세한 사고 사슬 없이도 빠르고 합리적인 판단을 내릴 수 있게 합니다. |
 | — | `tinker-cookbook/` | 📖 | 모델 학습을 위한 여러 실전 팁과 모범 사례를 모았습니다. |

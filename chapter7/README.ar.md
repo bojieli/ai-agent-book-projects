@@ -24,8 +24,8 @@
 | 7-15 | `AWorld/` · [تدريب AWorld](AWorld-train/) | 📖 | يدرّب الوكلاء المتجسدين باستخدام إطار AWorld، بما يمكّنهم من أداء مهام معقدة في بيئة افتراضية والتعلم من الخبرة. |
 | 7-16 | [RLVP](RLVP/) | 📖 | بحث ما بعد التدريب لـ RLVP - مكافأة النتيجة، ومعاقبة المسار (مصاحب للتجربة 7-16)؛ يوجد رمز التدريب/التقييم الكامل في مستودع الورق المنفصل `19PINE-AI/rlvp`، والذي تحتاج إلى استنساخه بنفسك. |
 | 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | Bad-case DPO repair for premature completion on GPU. |
-| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | Scope-sensitive Chinese curved-quote SFT on open Qwen3-8B GPU. |
-| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | Byte-exact special-string SFT on open Qwen3-8B GPU. |
+| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | تدريب SFT مدقّق للاقتباسات الصينية المنحنية الحساسة للنطاق: 1024/256/256 عينة تدريب/حجز/حدود عبر 10 أنواع مقالات و9 لغات برمجة؛ حقق Qwen3-8B دقة exact قدرها 96.9%/97.7% وحفظ المناطق المحمية 100% على GPU. |
+| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | تدريب SFT مدقّق للنسخ byte-exact للسلاسل الخاصة: 1024/256/256 عينة؛ حقق Qwen3-8B نسبة 78.9% في مجموعة الحجز و80.1% في الحدود، مع تدقيق tokenizers ‏Qwen3/Qwen2.5/Mistral. |
 | — | `verl/` | 📖 | verl هو إطار تعليمي معزز فعال مصمم خصيصًا لتدريب نماذج اللغات الكبيرة RLHF، ويدعم خوارزميات مختلفة مثل PPO وGRPO وDAPO. |
 | — | [الحدس](Intuitor/) | ✅ | يدرب قدرة النماذج على التفكير البديهي، مما يمكنها من إصدار أحكام سريعة ومعقولة دون الحاجة إلى سلاسل تفكير مفصلة. |
 | — | `tinker-cookbook/` | 📖 | يجمع العديد من النصائح العملية وأفضل الممارسات للتدريب النموذجي. |

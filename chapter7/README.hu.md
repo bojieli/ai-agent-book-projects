@@ -24,8 +24,8 @@
 | 7-15 | [AWorld-train](AWorld-train/) · `AWorld/` | 📖 | AWorld-alapú GAIA-környezetben tanít eszközhasználó ágenst. |
 | 7-16 | [RLVP](RLVP/) · `RLVP/rlvp/` | 📖 | Az RLVP-kutatást reprodukálja: jutalmazza az eredményt, és bünteti az útvonalat. |
 | 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | Korai befejezési bad case DPO-javítása GPU-n. |
-| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | Hatókörérzékeny kínai idézőjel-SFT nyílt Qwen3-8B GPU-futással. |
-| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | Bájt-pontos speciális karakterlánc-SFT nyílt Qwen3-8B GPU-futással. |
+| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | Auditált, hatókörérzékeny kínai görbe idézőjel-SFT: 1024/256/256 tanító/holdout/perem eset 10 műfajban és 9 programnyelven; a Qwen3-8B 96,9%/97,7% exact és 100% védett-rész megőrzést ért el GPU-n. |
+| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | Auditált bájt-pontos speciális karakterlánc-SFT: 1024/256/256 eset; a Qwen3-8B holdout 78,9%, perem 80,1%, Qwen3/Qwen2.5/Mistral tokenizer-audittal. |
 | — | `verl/` | 📖 | Hatékony RLHF-keretrendszer PPO, GRPO, DAPO és további algoritmusok számára. |
 | — | [Intuitor](Intuitor/) | ✅ | Hosszú gondolatmenet nélkül tanít intuitív következtetést. |
 | — | `tinker-cookbook/` | 📖 | Modellképzési receptek és bevált gyakorlatok gyűjteménye. |

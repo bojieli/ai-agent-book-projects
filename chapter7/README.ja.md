@@ -24,8 +24,8 @@
 | 7-15 | `AWorld/` · [AWorld-train](AWorld-train/) | 📖 | AWorld フレームワークに基づいて身体化された Agent を訓練し、Agent が仮想環境で複雑なタスクを実行し、経験から学習できるようにする。 |
 | 7-16 | [RLVP](RLVP/) | 📖 | 結果に報酬を与え、経路にペナルティを課す（RLVP）事後学習の研究（実験 7-16 対応）。完全な訓練・評価コードは独立した論文リポジトリ `19PINE-AI/rlvp` にあり、各自でクローンが必要 |
 | 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | GPU 上の早期完了 bad case に対する DPO 修正。 |
-| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | オープンな Qwen3-8B を GPU で学習するスコープ依存の中国語曲線引用符 SFT。 |
-| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | オープンな Qwen3-8B を GPU で学習する byte-exact 特殊文字列コピー SFT。 |
+| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | 監査済みスコープ依存中国語曲線引用符 SFT：10 文書ジャンル・9 プログラミング言語で train/holdout/boundary=1024/256/256、Qwen3-8B は exact 96.9%/97.7%、保護領域保持率 100%。 |
+| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | 監査済み byte-exact 特殊文字列コピー SFT：1024/256/256 件、Qwen3-8B は holdout 78.9%、boundary 80.1%、Qwen3/Qwen2.5/Mistral tokenizer 監査付き。 |
 | — | `verl/` | 📖 | verl は、大規模言語モデルの RLHF 訓練のために特別に設計された効率的な強化学習フレームワークで、PPO、GRPO、DAPO などのさまざまなアルゴリズムをサポートする。 |
 | — | [Intuitor](Intuitor/) | ✅ | モデルの直感的推論能力を訓練し、詳細な思考連鎖を必要とせずに迅速かつ合理的な判断を下せるようにする。 |
 | — | `tinker-cookbook/` | 📖 | モデル訓練のためのさまざまな実践的なコツとベストプラクティスを収集する。 |

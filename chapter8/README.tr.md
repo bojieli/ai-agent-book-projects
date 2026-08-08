@@ -16,7 +16,7 @@
 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Deney 8-6: Hermes'e kitabın tamamını ve kendi kaynağını verir; bir iyileştirme seçip kendini değiştirir ve her Reviewer reddini kabul edilene kadar yeni bir öğrenme turuna dönüştürür. |
 | [self-evolution-eval](self-evolution-eval/) | ✅ | Deney 8-7: öğrenme, aktarım, kural değişimi ve korumayı kapsayan uzun vadeli üç kollu değerlendirme; 3 seed × 14 sıralı görev boyunca 126 gerçek çağrının kanıtını saklar. |
 | [harness-safety-gate](harness-safety-gate/) | ✅ | Yüksek riskli işlemler için onay kapısı (8-8). |
-| [ai-style-skill](ai-style-skill/) | ✅ | Yazım geri bildirimini doğrulanabilir Skill'e dönüştürür (8-9). |
+| [ai-style-skill](ai-style-skill/) | ✅ | Yazım geri bildirimini doğrulanabilir Skill'e dönüştürür (8-9); bölüm, kıvrımlı tırnak Skill'ini denetlenmiş sentetik veri ve sonradan eğitimle ilişkilendirir, exact-copy tokenizer/Harness hatalarını ayırır. |
 
 ## Proje Türleri
 

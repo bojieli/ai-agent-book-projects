@@ -16,7 +16,7 @@
 | 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Gives Hermes the whole book and its own source; it chooses an improvement, changes itself, and turns each Reviewer rejection into another learning round until accepted |
 | 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | Experiment 8-7: evaluates long-term evolution across four phases — learning, transfer, rule change, and retention |
 | 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | High-risk operation confirmation gate |
-| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | Turns writing feedback into a verifiable Skill |
+| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | Turns writing feedback into a verifiable Skill; the chapter also connects the curved-quote Skill to audited synthetic data and post-training, and separates tokenizer/Harness failures for exact-copy cases |
 
 All experiments above offer offline entry points and unit tests that require no API Key; extension paths that need real models or a browser are documented in each project's README.
 

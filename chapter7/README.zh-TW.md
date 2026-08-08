@@ -24,8 +24,8 @@
 | 7-15 | `AWorld/` · [AWorld-train](AWorld-train/) | 📖 | 基於 AWorld 框架訓練具身 Agent，在虛擬環境中執行任務並從經驗中學習 |
 | 7-16 | [RLVP](RLVP/) | 📖 | 獎勵結果、懲罰路徑（RLVP）後訓練研究（實驗 7-16 配套）；完整訓練/評估程式碼在獨立論文倉庫 `19PINE-AI/rlvp`，需自行克隆 |
 | 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | 在 GPU 上以 DPO 修復過早完成 bad case |
-| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | 使用開源 Qwen3-8B GPU 進行作用域敏感的中文彎引號 SFT |
-| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | 使用開源 Qwen3-8B GPU 進行特殊字串 byte-exact 複製 SFT |
+| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | 經資料審核的作用域敏感中文彎引號 SFT：10 種文章體裁、9 種程式語言，train/holdout/boundary=1024/256/256；Qwen3-8B exact 96.9%/97.7%，保護區保留率 100% |
+| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | 經資料審核的特殊字串 byte-exact 複製 SFT：1024/256/256 筆；Qwen3-8B holdout 78.9%、boundary 80.1%，另有 Qwen3/Qwen2.5/Mistral tokenizer 審核 |
 | — | `verl/` | 📖 | 為 LLM RLHF 設計的高效 RL 框架，支援 PPO/GRPO/DAPO 等 |
 | — | [Intuitor](Intuitor/) | ✅ | 訓練模型的直覺推理，快速做出合理判斷而不依賴詳細思考鏈 |
 | — | `tinker-cookbook/` | 📖 | 收集各種模型訓練的實用技巧與最佳實踐 |
