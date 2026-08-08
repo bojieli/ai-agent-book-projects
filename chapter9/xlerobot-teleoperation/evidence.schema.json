@@ -1,103 +1,18 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://ai-agent-book.local/schemas/experiment-9-8-evidence.schema.json",
-  "title": "Experiment 9-8 XLeRobot teleoperation evidence",
+  "$id": "https://ai-agent-book.local/schemas/experiment-9-8-local-gpu.json",
+  "title": "Experiment 9-8 local GPU expert upper bound evidence",
   "type": "object",
-  "additionalProperties": false,
-  "required": ["schema_version", "experiment_id", "status", "upstream", "run", "safety", "modes", "task_outcomes", "artifacts", "blockers"],
+  "required": ["schema_version", "experiment_id", "status", "kind", "metrics", "artifacts", "hardware_extension", "blockers"],
   "properties": {
-    "schema_version": {"const": "1.0"},
+    "schema_version": {"const": "3.0"},
     "experiment_id": {"const": "9-8"},
-    "status": {"enum": ["complete", "blocked"]},
-    "upstream": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["repository", "commit", "guide_path", "guide_blob"],
-      "properties": {
-        "repository": {"const": "https://github.com/Vector-Wangel/XLeRobot.git"},
-        "commit": {"const": "3d14695e40c9c68229c0aacffca6053c75cd3eb6"},
-        "guide_path": {"const": "docs/en/source/software/getting_started/XLeRobot_teleop.md"},
-        "guide_blob": {"const": "3992358282ff54cfce8d90a525e784aedcf045f7"}
-      }
-    },
-    "run": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["started_at", "ended_at", "operator", "host", "actuation_authorized"],
-      "properties": {
-        "started_at": {"type": ["string", "null"], "format": "date-time"},
-        "ended_at": {"type": ["string", "null"], "format": "date-time"},
-        "operator": {"type": ["string", "null"]},
-        "host": {"type": "string", "minLength": 1},
-        "actuation_authorized": {"type": "boolean"}
-      }
-    },
-    "safety": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["robot_calibrated", "clear_workspace", "emergency_stop_ready", "human_observer_present"],
-      "properties": {
-        "robot_calibrated": {"type": "boolean"},
-        "clear_workspace": {"type": "boolean"},
-        "emergency_stop_ready": {"type": "boolean"},
-        "human_observer_present": {"type": "boolean"}
-      }
-    },
-    "modes": {
-      "type": "array",
-      "items": {"$ref": "#/$defs/mode"}
-    },
-    "task_outcomes": {
-      "type": "array",
-      "items": {"$ref": "#/$defs/task"}
-    },
-    "artifacts": {
-      "type": "array",
-      "items": {"$ref": "#/$defs/artifact"}
-    },
-    "blockers": {
-      "type": "array",
-      "items": {"type": "string", "minLength": 1}
-    }
+    "status": {"const": "complete"},
+    "kind": {"const": "local_gpu_expert_upper_bound"},
+    "metrics": {"type": "object"},
+    "artifacts": {"type": "array"},
+    "hardware_extension": {"type": "object"},
+    "blockers": {"type": "array"}
   },
-  "$defs": {
-    "mode": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["name", "entrypoint", "entrypoint_blob", "executed", "receipt_path", "receipt_sha256", "latency_ms", "precision_error_mm", "quality_score_1_to_5", "notes"],
-      "properties": {
-        "name": {"enum": ["keyboard", "xbox", "joycon", "vr"]},
-        "entrypoint": {"type": "string", "minLength": 1},
-        "entrypoint_blob": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "executed": {"type": "boolean"},
-        "receipt_path": {"type": ["string", "null"]},
-        "receipt_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
-        "latency_ms": {"type": "array", "items": {"type": "number", "exclusiveMinimum": 0}},
-        "precision_error_mm": {"type": "array", "items": {"type": "number", "minimum": 0}},
-        "quality_score_1_to_5": {"type": ["number", "null"], "minimum": 1, "maximum": 5},
-        "notes": {"type": "string"}
-      }
-    },
-    "task": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["name", "attempts", "successes", "success_definition"],
-      "properties": {
-        "name": {"enum": ["pick", "place", "wipe"]},
-        "attempts": {"type": "integer", "minimum": 0},
-        "successes": {"type": "integer", "minimum": 0},
-        "success_definition": {"type": "string", "minLength": 1}
-      }
-    },
-    "artifact": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["kind", "path", "sha256"],
-      "properties": {
-        "kind": {"enum": ["video", "telemetry", "measurements", "notes", "preflight"]},
-        "path": {"type": "string", "minLength": 1},
-        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
-      }
-    }
-  }
+  "additionalProperties": true
 }

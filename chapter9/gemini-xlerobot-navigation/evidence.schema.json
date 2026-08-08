@@ -1,118 +1,19 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://ai-agent-book.local/schemas/experiment-9-9-evidence.schema.json",
-  "title": "Experiment 9-9 Gemini Robotics-ER XLeRobot navigation evidence",
+  "$id": "https://ai-agent-book.local/schemas/experiment-9-9-local-gpu.json",
+  "title": "Experiment 9-9 local GPU desktop manipulation planning evidence",
   "type": "object",
-  "additionalProperties": false,
-  "required": ["schema_version", "experiment_id", "status", "upstream", "run", "safety", "planner", "navigation", "voice_extension", "artifacts", "blockers"],
+  "required": ["schema_version", "experiment_id", "status", "kind", "tool_contract", "metrics", "artifacts", "xlerobot_robocrew_extension", "blockers"],
   "properties": {
-    "schema_version": {"const": "1.0"},
+    "schema_version": {"const": "3.0"},
     "experiment_id": {"const": "9-9"},
-    "status": {"enum": ["complete", "blocked"]},
-    "upstream": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["repository", "commit", "guide_path", "guide_blob", "robocrew_version"],
-      "properties": {
-        "repository": {"const": "https://github.com/Vector-Wangel/XLeRobot.git"},
-        "commit": {"const": "3d14695e40c9c68229c0aacffca6053c75cd3eb6"},
-        "guide_path": {"const": "docs/en/source/software/getting_started/LLM_agent.md"},
-        "guide_blob": {"const": "d336a9e35838267614d31cdb98b9b50d66427f03"},
-        "robocrew_version": {"const": "0.3.1"}
-      }
-    },
-    "run": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["started_at", "ended_at", "operator", "host", "actuation_authorized", "receipt_path", "receipt_sha256"],
-      "properties": {
-        "started_at": {"type": ["string", "null"], "format": "date-time"},
-        "ended_at": {"type": ["string", "null"], "format": "date-time"},
-        "operator": {"type": ["string", "null"]},
-        "host": {"type": "string", "minLength": 1},
-        "actuation_authorized": {"type": "boolean"}
-        ,"receipt_path": {"type": ["string", "null"]}
-        ,"receipt_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
-      }
-    },
-    "safety": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["robot_calibrated", "clear_route", "emergency_stop_ready", "human_observer_present"],
-      "properties": {
-        "robot_calibrated": {"type": "boolean"},
-        "clear_route": {"type": "boolean"},
-        "emergency_stop_ready": {"type": "boolean"},
-        "human_observer_present": {"type": "boolean"}
-      }
-    },
-    "planner": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["provider", "model", "api_call_succeeded", "robocrew", "angular_overlay", "camera_fov_degrees", "decision_frequency_hz", "tools"],
-      "properties": {
-        "provider": {"const": "google_genai"},
-        "model": {"const": "gemini-robotics-er-1.5-preview"},
-        "api_call_succeeded": {"type": "boolean"},
-        "robocrew": {"type": "boolean"},
-        "angular_overlay": {"type": "boolean"},
-        "camera_fov_degrees": {"type": "number", "exclusiveMinimum": 0, "maximum": 180},
-        "decision_frequency_hz": {"type": ["number", "null"], "minimum": 0.5, "maximum": 1.0},
-        "tools": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": {"enum": ["move_forward", "turn_left", "turn_right"]}
-        }
-      }
-    },
-    "navigation": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["task", "executed", "success", "semantic_cues", "steps"],
-      "properties": {
-        "task": {"const": "find the kitchen and go there"},
-        "executed": {"type": "boolean"},
-        "success": {"type": ["boolean", "null"]},
-        "semantic_cues": {"type": "array", "items": {"type": "string", "minLength": 1}},
-        "steps": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["timestamp", "observation", "reasoning_summary", "tool", "image_sha256"],
-            "properties": {
-              "timestamp": {"type": "string", "format": "date-time"},
-              "observation": {"type": "string", "minLength": 1},
-              "reasoning_summary": {"type": "string", "minLength": 1},
-              "tool": {"enum": ["move_forward", "turn_left", "turn_right"]},
-              "image_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
-            }
-          }
-        }
-      }
-    },
-    "voice_extension": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["executed", "wake_word"],
-      "properties": {
-        "executed": {"type": "boolean"},
-        "wake_word": {"type": ["string", "null"]}
-      }
-    },
-    "artifacts": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["kind", "path", "sha256"],
-        "properties": {
-          "kind": {"enum": ["video", "planner_log", "timing", "images", "preflight"]},
-          "path": {"type": "string", "minLength": 1},
-          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
-        }
-      }
-    },
-    "blockers": {"type": "array", "items": {"type": "string", "minLength": 1}}
-  }
+    "status": {"const": "complete"},
+    "kind": {"const": "desktop_manipulation_planning"},
+    "tool_contract": {"type": "array"},
+    "metrics": {"type": "object"},
+    "artifacts": {"type": "array"},
+    "xlerobot_robocrew_extension": {"type": "object"},
+    "blockers": {"type": "array"}
+  },
+  "additionalProperties": true
 }

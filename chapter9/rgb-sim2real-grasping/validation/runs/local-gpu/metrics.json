@@ -1,0 +1,270 @@
+{
+  "dataset_replay_match": true,
+  "device": {
+    "device": "mps",
+    "name": "Apple Metal Performance Shaders",
+    "torch": "2.7.0"
+  },
+  "protocol": {
+    "epochs": 10,
+    "seeds": [
+      20260808,
+      20260809,
+      20260810
+    ],
+    "target_domains": [
+      "target_realistic",
+      "target_bright"
+    ],
+    "test_size_per_domain": 1024,
+    "total_training_examples": 49152,
+    "train_size_per_variant": 4096,
+    "variants": [
+      "source_clean",
+      "source_background",
+      "source_appearance",
+      "source_full"
+    ]
+  },
+  "rows": [
+    {
+      "final_loss": 0.18679947033524513,
+      "seed": 20260808,
+      "source_accuracy": 0.921875,
+      "target_accuracy": {
+        "target_bright": 0.798828125,
+        "target_realistic": 0.8095703125
+      },
+      "variant": "source_clean"
+    },
+    {
+      "final_loss": 0.24417539592832327,
+      "seed": 20260808,
+      "source_accuracy": 0.908203125,
+      "target_accuracy": {
+        "target_bright": 0.533203125,
+        "target_realistic": 0.4169921875
+      },
+      "variant": "source_background"
+    },
+    {
+      "final_loss": 0.22985628596507013,
+      "seed": 20260808,
+      "source_accuracy": 0.90234375,
+      "target_accuracy": {
+        "target_bright": 0.857421875,
+        "target_realistic": 0.7880859375
+      },
+      "variant": "source_appearance"
+    },
+    {
+      "final_loss": 0.4308899687603116,
+      "seed": 20260808,
+      "source_accuracy": 0.857421875,
+      "target_accuracy": {
+        "target_bright": 0.771484375,
+        "target_realistic": 0.7578125
+      },
+      "variant": "source_full"
+    },
+    {
+      "final_loss": 0.11670511157717556,
+      "seed": 20260809,
+      "source_accuracy": 0.939453125,
+      "target_accuracy": {
+        "target_bright": 0.2880859375,
+        "target_realistic": 0.248046875
+      },
+      "variant": "source_clean"
+    },
+    {
+      "final_loss": 0.20411560125648975,
+      "seed": 20260809,
+      "source_accuracy": 0.921875,
+      "target_accuracy": {
+        "target_bright": 0.478515625,
+        "target_realistic": 0.353515625
+      },
+      "variant": "source_background"
+    },
+    {
+      "final_loss": 0.23631400940939784,
+      "seed": 20260809,
+      "source_accuracy": 0.876953125,
+      "target_accuracy": {
+        "target_bright": 0.8046875,
+        "target_realistic": 0.7568359375
+      },
+      "variant": "source_appearance"
+    },
+    {
+      "final_loss": 0.4168223310261965,
+      "seed": 20260809,
+      "source_accuracy": 0.9072265625,
+      "target_accuracy": {
+        "target_bright": 0.8212890625,
+        "target_realistic": 0.796875
+      },
+      "variant": "source_full"
+    },
+    {
+      "final_loss": 0.13805983471684158,
+      "seed": 20260810,
+      "source_accuracy": 0.9296875,
+      "target_accuracy": {
+        "target_bright": 0.609375,
+        "target_realistic": 0.5869140625
+      },
+      "variant": "source_clean"
+    },
+    {
+      "final_loss": 0.29387020831927657,
+      "seed": 20260810,
+      "source_accuracy": 0.8955078125,
+      "target_accuracy": {
+        "target_bright": 0.576171875,
+        "target_realistic": 0.3359375
+      },
+      "variant": "source_background"
+    },
+    {
+      "final_loss": 0.21353492327034473,
+      "seed": 20260810,
+      "source_accuracy": 0.8974609375,
+      "target_accuracy": {
+        "target_bright": 0.8310546875,
+        "target_realistic": 0.6865234375
+      },
+      "variant": "source_appearance"
+    },
+    {
+      "final_loss": 0.35220852866768837,
+      "seed": 20260810,
+      "source_accuracy": 0.8603515625,
+      "target_accuracy": {
+        "target_bright": 0.8134765625,
+        "target_realistic": 0.728515625
+      },
+      "variant": "source_full"
+    }
+  ],
+  "summary": {
+    "source_appearance": {
+      "source": {
+        "mean": 0.8922526041666666,
+        "std": 0.011000485187966017,
+        "values": [
+          0.90234375,
+          0.876953125,
+          0.8974609375
+        ]
+      },
+      "target_bright": {
+        "mean": 0.8310546875,
+        "std": 0.021528718442430275,
+        "values": [
+          0.857421875,
+          0.8046875,
+          0.8310546875
+        ]
+      },
+      "target_realistic": {
+        "mean": 0.7438151041666666,
+        "std": 0.04247267299557315,
+        "values": [
+          0.7880859375,
+          0.7568359375,
+          0.6865234375
+        ]
+      }
+    },
+    "source_background": {
+      "source": {
+        "mean": 0.9085286458333334,
+        "std": 0.010766819927435695,
+        "values": [
+          0.908203125,
+          0.921875,
+          0.8955078125
+        ]
+      },
+      "target_bright": {
+        "mean": 0.529296875,
+        "std": 0.03996356576360106,
+        "values": [
+          0.533203125,
+          0.478515625,
+          0.576171875
+        ]
+      },
+      "target_realistic": {
+        "mean": 0.3688151041666667,
+        "std": 0.03481399276640658,
+        "values": [
+          0.4169921875,
+          0.353515625,
+          0.3359375
+        ]
+      }
+    },
+    "source_clean": {
+      "source": {
+        "mean": 0.9303385416666666,
+        "std": 0.007190990245564624,
+        "values": [
+          0.921875,
+          0.939453125,
+          0.9296875
+        ]
+      },
+      "target_bright": {
+        "mean": 0.5654296875,
+        "std": 0.21081237849663584,
+        "values": [
+          0.798828125,
+          0.2880859375,
+          0.609375
+        ]
+      },
+      "target_realistic": {
+        "mean": 0.5481770833333334,
+        "std": 0.23087162072123282,
+        "values": [
+          0.8095703125,
+          0.248046875,
+          0.5869140625
+        ]
+      }
+    },
+    "source_full": {
+      "source": {
+        "mean": 0.875,
+        "std": 0.022818987198335788,
+        "values": [
+          0.857421875,
+          0.9072265625,
+          0.8603515625
+        ]
+      },
+      "target_bright": {
+        "mean": 0.8020833333333334,
+        "std": 0.02187054301073024,
+        "values": [
+          0.771484375,
+          0.8212890625,
+          0.8134765625
+        ]
+      },
+      "target_realistic": {
+        "mean": 0.7610677083333334,
+        "std": 0.02800236089532105,
+        "values": [
+          0.7578125,
+          0.796875,
+          0.728515625
+        ]
+      }
+    }
+  },
+  "wall_time_ms": 29262.792
+}

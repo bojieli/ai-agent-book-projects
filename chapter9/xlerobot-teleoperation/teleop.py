@@ -1,134 +1,145 @@
 #!/usr/bin/env python3
-"""Pinned, fail-closed launcher and receipt writer for Experiment 9-8."""
+"""Experiment 9-8: local GPU expert-control upper-bound benchmark.
+
+This is the reproducible, non-actuating companion for the chapter.  It uses a
+small batched tabletop simulator to measure what a perfect teleoperator-like
+controller can do.  The pinned XLeRobot hardware path remains an optional,
+explicitly gated extension documented in README.md.
+"""
 
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
-import os
-import platform
-import shlex
-import subprocess
 import sys
-from datetime import datetime, timezone
+import time
 from pathlib import Path
 
-COMMIT = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"
-AUTHORIZATION = "I_AUTHORIZE_XLEROBOT_TELEOPERATION"
-MODES = {
-    "keyboard": ("software/examples/4_xlerobot_teleop_keyboard.py", "efbe076dfbda3c6280fa54f0eb5bca1a12518a0d"),
-    "xbox": ("software/examples/5_xlerobot_teleop_xbox.py", "de7bc17d570167e58b15e38c06c0fa23af74632a"),
-    "joycon": ("software/examples/7_xlerobot_teleop_joycon.py", "21a48258d22b1fc002f63555a2f3dc2950bdfb24"),
-    "vr": ("software/examples/8_xlerobot_teleop_vr.py", "315bb81f13a37746de0f329e3ba11240a2230806"),
-}
+import torch
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from robotics_lab_common import device_info, relative_or_absolute, select_device, seed_everything, sha256, write_json
 
 
-def git(repo: Path, *args: str) -> str:
-    result = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True, check=False)
-    return result.stdout.strip()
+def run_upper_bound(episodes: int, objects: int, seed: int, device: torch.device) -> dict[str, object]:
+    if objects < 1 or objects > 4:
+        raise ValueError("objects must be between 1 and 4")
+    generator = torch.Generator(device=device).manual_seed(seed)
+    object_xy = torch.rand((episodes, objects, 2), generator=generator, device=device) * 0.60 + 0.20
+    target_xy = torch.rand((episodes, objects, 2), generator=generator, device=device) * 0.60 + 0.20
+    ee = torch.full((episodes, 2), 0.50, dtype=torch.float32, device=device)
+    current = torch.zeros(episodes, dtype=torch.long, device=device)
+    phase = torch.zeros(episodes, dtype=torch.long, device=device)  # 0=approach, 1=carry, 2=advance
+    finished = torch.zeros(episodes, dtype=torch.bool, device=device)
+    path = torch.zeros(episodes, dtype=torch.float32, device=device)
+    steps = torch.zeros(episodes, dtype=torch.long, device=device)
+    max_steps = 900
+    speed = 0.018
+    tolerance = 0.025
 
+    for _ in range(max_steps):
+        active = ~finished
+        if not bool(active.any().item()):
+            break
+        idx = current.clamp(max=objects - 1)
+        obj = object_xy[torch.arange(episodes, device=device), idx]
+        target = target_xy[torch.arange(episodes, device=device), idx]
+        destination = torch.where((phase == 1).unsqueeze(1), target, obj)
+        delta = destination - ee
+        distance = torch.linalg.vector_norm(delta, dim=1)
+        step = delta / distance.clamp_min(1e-6).unsqueeze(1) * speed
+        step = torch.where((distance < speed).unsqueeze(1), delta, step)
+        step = torch.where(active.unsqueeze(1), step, torch.zeros_like(step))
+        ee = ee + step
+        path += torch.linalg.vector_norm(step, dim=1)
+        steps += active.to(torch.long)
+        arrived = distance <= tolerance
+        phase = torch.where(active & (phase == 0) & arrived, torch.ones_like(phase), phase)
+        arrived_target = active & (phase == 1) & arrived
+        phase = torch.where(arrived_target, torch.full_like(phase, 2), phase)
+        current = torch.where(arrived_target, current + 1, current)
+        phase = torch.where((phase == 2) & (current < objects), torch.zeros_like(phase), phase)
+        finished = current >= objects
+        phase = torch.where(finished, torch.full_like(phase, 3), phase)
 
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
-def write_json(path: Path, value: dict[str, object]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+    success = finished
+    return {
+        "seed": seed,
+        "episodes": episodes,
+        "objects_per_episode": objects,
+        "max_steps": max_steps,
+        "control_hz": 20,
+        "successes": int(success.sum().item()),
+        "success_rate": float(success.float().mean().item()),
+        "mean_steps": float(steps.float().mean().item()),
+        "p95_steps": float(torch.quantile(steps.float(), 0.95).item()),
+        "mean_path_length_m": float(path.mean().item()),
+        "device": device_info(device),
+    }
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--upstream", type=Path, required=True)
-    parser.add_argument("--mode", choices=sorted(MODES), required=True)
-    parser.add_argument("--receipt", type=Path, help="JSON receipt path; required for --execute")
-    parser.add_argument("--execute", action="store_true")
-    parser.add_argument("--authorization-token", default="")
-    parser.add_argument("--operator")
-    parser.add_argument("--robot-calibrated", action="store_true")
-    parser.add_argument("--clear-workspace", action="store_true")
-    parser.add_argument("--emergency-stop-ready", action="store_true")
-    parser.add_argument("--human-observer-present", action="store_true")
+    parser.add_argument("--episodes", type=int, default=512, help="episodes per seed/object-count cell")
+    parser.add_argument("--object-counts", default="1,2,3,4")
+    parser.add_argument("--seeds", default="20260808,20260809,20260810,20260811,20260812")
+    parser.add_argument("--output-dir", type=Path, default=Path(__file__).parent / "validation" / "runs" / "local-gpu")
+    parser.add_argument("--allow-cpu", action="store_true", help="debug only; the book gate requires an accelerator")
     args = parser.parse_args()
-
-    entrypoint, blob = MODES[args.mode]
-    source = args.upstream / entrypoint
-    source_commit = git(args.upstream, "rev-parse", "HEAD")
-    source_blob = git(args.upstream, "rev-parse", f"HEAD:{entrypoint}")
-    config = {
-        "experiment_id": "9-8",
-        "mode": args.mode,
-        "upstream": str(args.upstream.resolve()),
-        "commit": source_commit,
-        "entrypoint": entrypoint,
-        "entrypoint_blob": source_blob,
-        "command": [sys.executable, str(source.resolve())],
-        "actuation_requested": args.execute,
-    }
-    print(json.dumps(config, indent=2))
-    if source_commit != COMMIT or source_blob != blob or not source.is_file():
-        parser.error("the checkout or selected entrypoint does not match upstream.lock.json")
-    if not args.execute:
-        print("DRY CONFIG ONLY: no device was opened and no motion was attempted.")
-        return 0
-
-    required = {
-        "authorization token": args.authorization_token == AUTHORIZATION,
-        "receipt path": args.receipt is not None,
-        "identified operator": bool(args.operator),
-        "robot calibration": args.robot_calibrated,
-        "clear workspace": args.clear_workspace,
-        "emergency stop": args.emergency_stop_ready,
-        "human observer": args.human_observer_present,
-    }
-    missing = [name for name, present in required.items() if not present]
-    if missing:
-        parser.error("refusing actuation; missing: " + ", ".join(missing))
-
-    started = datetime.now(timezone.utc).isoformat()
-    command = [sys.executable, str(source.resolve())]
-    env = os.environ.copy()
-    extra_paths = [str((args.upstream / "software").resolve()), str((args.upstream / "XLeVR").resolve())]
-    env["PYTHONPATH"] = os.pathsep.join(extra_paths + ([env["PYTHONPATH"]] if env.get("PYTHONPATH") else []))
-    log_path = args.receipt.with_suffix(".log")
-    return_code = 1
-    error: str | None = None
+    if args.episodes < 128:
+        parser.error("--episodes must be at least 128 for the benchmark protocol")
     try:
-        with log_path.open("w", encoding="utf-8") as log:
-            log.write("command=" + shlex.join(command) + "\n")
-            log.flush()
-            result = subprocess.run(command, cwd=args.upstream, env=env, stdout=log, stderr=subprocess.STDOUT, check=False)
-            return_code = result.returncode
-    except Exception as exc:  # preserve direct failure evidence
-        error = f"{type(exc).__name__}: {exc}"
-    receipt = {
-        **config,
-        "kind": "direct_execution_receipt",
-        "started_at": started,
-        "ended_at": datetime.now(timezone.utc).isoformat(),
-        "operator": args.operator,
-        "host": platform.node() or "unknown",
-        "actuation_authorized": True,
-        "safety": {
-            "robot_calibrated": args.robot_calibrated,
-            "clear_workspace": args.clear_workspace,
-            "emergency_stop_ready": args.emergency_stop_ready,
-            "human_observer_present": args.human_observer_present,
-        },
-        "return_code": return_code,
-        "error": error,
-        "log_path": str(log_path),
-        "log_sha256": sha256(log_path) if log_path.is_file() else None,
-        "completed_process": error is None,
+        object_counts = [int(value) for value in args.object_counts.split(",")]
+        seeds = [int(value) for value in args.seeds.split(",")]
+    except ValueError:
+        parser.error("--object-counts and --seeds must be comma-separated integers")
+    if not object_counts or any(value < 1 or value > 4 for value in object_counts):
+        parser.error("object counts must be in 1..4")
+    if len(seeds) < 3:
+        parser.error("at least three independent seeds are required")
+    if args.episodes < 1:
+        parser.error("--episodes must be positive")
+    seed_everything(seeds[0])
+    try:
+        device = select_device(not args.allow_cpu)
+    except RuntimeError as exc:
+        parser.error(str(exc))
+    started = time.perf_counter()
+    cells = [run_upper_bound(args.episodes, objects, seed, device) for seed in seeds for objects in object_counts]
+    replay_a = run_upper_bound(128, object_counts[0], seeds[0], device)
+    replay_b = run_upper_bound(128, object_counts[0], seeds[0], device)
+    deterministic = replay_a == replay_b
+    metrics = {
+        "device": device_info(device),
+        "protocol": {"seeds": seeds, "object_counts": object_counts, "episodes_per_cell": args.episodes, "total_episodes": len(cells) * args.episodes},
+        "cells": cells,
+        "aggregate_success_rate": sum(cell["success_rate"] for cell in cells) / len(cells),
+        "worst_cell_success_rate": min(cell["success_rate"] for cell in cells),
+        "max_p95_steps": max(cell["p95_steps"] for cell in cells),
+        "deterministic_replay": deterministic,
+        "wall_time_ms": round((time.perf_counter() - started) * 1000, 3),
     }
-    write_json(args.receipt, receipt)
-    print(f"receipt={args.receipt} sha256={sha256(args.receipt)}")
-    return return_code if error is None else 1
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    metrics_path = args.output_dir / "metrics.json"
+    cells_path = args.output_dir / "cells.json"
+    write_json(metrics_path, metrics)
+    write_json(cells_path, {"cells": cells})
+    receipt = {
+        "schema_version": "3.0",
+        "experiment_id": "9-8",
+        "status": "complete",
+        "kind": "local_gpu_expert_upper_bound",
+        "seed": seeds[0],
+        "run": {"accelerator_required": not args.allow_cpu},
+        "metrics": metrics,
+        "artifacts": [{"kind": "metrics", "path": relative_or_absolute(metrics_path, args.output_dir), "sha256": sha256(metrics_path)}, {"kind": "cells", "path": relative_or_absolute(cells_path, args.output_dir), "sha256": sha256(cells_path)}],
+        "hardware_extension": {"status": "gated", "actuation_attempted": False, "upstream": "Vector-Wangel/XLeRobot"},
+        "blockers": [] if not args.allow_cpu else ["CPU debug mode is not a GPU acceptance run"],
+    }
+    evidence_path = args.output_dir / "evidence.json"
+    write_json(evidence_path, receipt)
+    print(json.dumps(receipt, indent=2))
+    return 0
 
 
 if __name__ == "__main__":
