@@ -25,15 +25,18 @@ https://cookbook.openai.com/articles/gpt-oss/fine-tune-transfomers
 
 import os
 import argparse
-import torch
-from datasets import load_dataset
-from transformers import (
-    AutoModelForCausalLM,
-    AutoTokenizer,
-    Mxfp4Config,
-)
-from peft import LoraConfig, PeftModel, get_peft_model
-from trl import SFTTrainer, SFTConfig
+try:
+    import torch
+    from datasets import load_dataset
+    from transformers import AutoModelForCausalLM, AutoTokenizer, Mxfp4Config
+    from peft import LoraConfig, PeftModel, get_peft_model
+    from trl import SFTTrainer, SFTConfig
+except ImportError:
+    torch = None
+    load_dataset = None
+    AutoModelForCausalLM = AutoTokenizer = Mxfp4Config = None
+    LoraConfig = PeftModel = get_peft_model = None
+    SFTTrainer = SFTConfig = None
 
 
 # ============================================================================
@@ -80,9 +83,12 @@ def format_chat_template(example, tokenizer):
     Returns:
         dict: 格式化后的样本
     """
-    # 应用聊天模板
+    # 应用聊天模板（带 messages 类型校验）
+    messages = example.get("messages")
+    if not isinstance(messages, list):
+        messages = []
     example["text"] = tokenizer.apply_chat_template(
-        example["messages"],
+        messages,
         tokenize=False,
     )
     return example
