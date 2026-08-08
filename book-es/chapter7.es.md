@@ -313,6 +313,10 @@ Antes de poner en práctica el SFT, surge una pregunta operativa inevitable: **�
 
 Estos cuatro experimentos comparten un rasgo común: "escribir mapeos y protocolos estables en los parámetros". El SFT de voz consolida el protocolo de control de estilo, el SFT multilingüe consolida la plantilla de organización del pensamiento, y el SFT de destilación consolida el mapeo directo de entrada a salida. Su punto común es un objetivo claro, un formato preciso y un estándar de evaluación estable, lo que permite al SFT obtener ganancias con una eficiencia de muestra extremadamente alta; sin embargo, al cambiar la distribución, la tendencia a memorizar se manifiesta en una caída de rendimiento. Esta es la plasmación experimental de la división entre memorización y generalización explicada en la Sección 7.1.
 
+Los bad cases del capítulo 6 también pueden convertirse en datos de entrenamiento. Para un agente de código que termina demasiado pronto, se recorta el prefijo de la trayectoria justo antes de declarar la finalización: esa declaración es la acción rechazada y «ejecutar las pruebas, comprobar cada condición de aceptación y luego concluir» es la elegida. Esto encaja mejor con DPO o con una demostración del límite de decisión que con SFT normal. La causa del fallo, las condiciones de aplicación y el verificador deben conservarse junto a cada muestra. `build_preference_data.py`, del experimento 7-17, ofrece una plantilla determinista y una ruta con modelo profesor, manteniendo separados los conjuntos de entrenamiento y evaluación.
+
+Las mismas tareas pueden formar un entorno de práctica para RL: SFT usa trayectorias ya verificadas; RL hace que la política actual repita la tarea y un verificador externo juzgue el resultado. Así, el bad case define el límite de decisión que debe mejorar el modelo, en lugar de ser solo algo que memorizar.
+
 ## Cuándo Elegir SFT y Cuándo Elegir RL
 
 La Sección 7.1 aclaró la **diferencia esencial** entre SFT y RL; esta sección responde a una pregunta operativa más concreta: **ante una tarea específica, ¿cuál de los dos se debe utilizar?** Algunas conclusiones del marco de decisión posterior se verificarán en los experimentos de RL (Experimento 7-10 y 7-11), por lo que el lector puede construir un juicio preliminar y volver a contrastarlo tras leer la sección de RL.
@@ -519,6 +523,8 @@ No se trata de que el algoritmo carezca por completo de importancia, sino de su 
 
 ## De Un Solo Turno a Multiturno: Asignación de Crédito y Diseño de Recompensa
 
+La «finalización prematura» es un ejemplo concreto. Cuando el modelo dice que terminó, el Harness ejecuta las pruebas de aceptación en un espacio de trabajo aislado que el modelo no puede ver; solo un aprobado recibe recompensa positiva y un fallo recibe recompensa negativa. Las pruebas deben leer archivos o estados reales, no solo la frase «completado». Se separan el conjunto límite de tareas incompletas y el conjunto de reserva de tareas realmente terminadas: el primero mide los finales prematuros y el segundo comprueba que el modelo aún sabe cerrar una tarea normalmente.
+
 ### El desafío central de las tareas multiturno
 
 ![Figura 7-14 Comparación entre RL de un solo turno y RL multiturno](images/fig7-14.svg)
@@ -671,6 +677,12 @@ En resumen: **Las señales densas solo son efectivas cuando aportan la varianza 
 >
 > **Observaciones esperadas**: En TerminalBench (Qwen3-4B, 5 semillas aleatorias), el promedio de violaciones por partida descendió de 3,71 con recompensa pura de resultado a 0,66 (una reducción de aproximadamente 6 veces), mientras la tasa de éxito se mantuvo equivalente dentro del margen de ruido, demostrando que el cumplimiento de reglas se obtiene de forma casi gratuita y que el Agente ejecuta más acciones efectivas en lugar de abstenerse de actuar. En miniF2F (donde el avance es alcanzable), las iteraciones requeridas para alcanzar una tasa de éxito de 0,9 descendieron de 7,0 a 4,4 (modelo 4B), siendo la diferencia aún mayor en modelos grandes (30B: 8,5 → 5,4, donde la recompensa de resultado pura llegó a divergir en algunas semillas). En operaciones de archivos en cadena, la proporción de "grupos de fracaso total" (muestras desperdiciadas sin gradiente) descendió del 65% al 8%. Como contraejemplo, en la configuración de reparación de software "donde el avance era inalcanzable" (donde batches enteros no pasaban prueba alguna), la recompensa densa de avance permaneció en cero sin aportar beneficios, respaldando el principio de que la alcanzabilidad es el requisito indispensable.
 
+> **Experimento 7-17 ★★: De los bad cases de «finalización prematura» a DPO y GRPO**
+>
+> El experimento conecta los fallos del capítulo 6 con dos rutas de entrenamiento. `build_preference_data.py` convierte 24 casos en pares de preferencia de prefijo de trayectoria: la declaración original es rechazada y la acción elegida verifica primero y concluye después. `train_dpo.py` ofrece DPO con LoRA para Qwen2.5-7B-Instruct; `train_grpo_optional.py` usa pruebas de aceptación ocultas para comparar una recompensa verificable en línea.
+>
+> Los conjuntos límite (tarea incompleta) y de reserva (tarea completa) no se solapan. En la comparación fija «completar» frente a «seguir verificando», el conjunto límite pasó de 3/12 (25,0 %) a 11/12 (91,7 %), mientras que la reserva se mantuvo en 8/8 (100 %). La generación libre se volvió demasiado cautelosa; por eso la comparación fija es el resultado principal y no una afirmación de mejora global en producción. Véanse los recibos en [`premature-completion-dpo`](../chapter7/premature-completion-dpo/).
+
 ## RL para el Aprendizaje de Llamada a Herramientas
 
 En los experimentos multiturno anteriores, el espacio de acciones del Agente se limitaba a operaciones internas como desplazarse u observar. Los Agentes reales deben invocar herramientas externas (motores de búsqueda, intérpretes de código, procesadores de documentos), lo que introduce nuevos desafíos en el entrenamiento de RL.
@@ -807,10 +819,6 @@ Existen dos valoraciones centrales a lo largo del capítulo que conviene retener
 Este capítulo ha respondido a cómo actualizar parámetros durante el entrenamiento. El siguiente capítulo reubica los parámetros del modelo dentro del sistema completo de Agentes: los parámetros constituyen uno de los cuatro soportes de actualización junto al conocimiento, las instrucciones y los programas, siendo su desafío específico obtener señales de aprendizaje confiables desde las trayectorias de despliegue, seleccionar la ubicación de actualización correcta y gestionar la verificación, publicación y reversión de versiones candidatas. Al abordar algoritmos de entrenamiento específicos, el Capítulo 8 hará referencia directa a este capítulo sin repetirlos.
 
 ## Preguntas de Reflexión
-
-### Resultado experimental reciente
-
-El experimento 7-17 entrenó un adaptador LoRA de Qwen2.5-7B con 24 casos problemáticos de agentes de código. En la comparación fija entre «completar» y «seguir verificando», la corrección en tareas incompletas pasó de 3/12 a 11/12, mientras que el conjunto de tareas completadas se mantuvo en 8/8. La generación abierta se volvió demasiado cautelosa; por eso la comparación fija es el resultado principal y no una afirmación de mejora global en producción.
 
 1. ★★ El olvido catastrófico (donde un ajuste fino para una tarea específica degrada capacidades generales previas como la llamada a herramientas) resulta crítico en Agentes. Frente al ajuste completo, LoRA congela los pesos base reduciendo el riesgo, aunque sin ser inmune. ¿Qué estrategias adicionales permiten mitigar el olvido de capacidades durante el ajuste fino?
 2. ★★ El post-entrenamiento consolida capacidades en los pesos del modelo ("memoria muscular"), mientras que el aprendizaje en contexto coloca el conocimiento en la entrada durante la inferencia. Sin embargo, algunas capacidades (como el conocimiento de dominio) pueden aprenderse por post-entrenamiento o suministrarse mediante ejemplos few-shot. ¿Qué criterios utilizarías para decidir qué ruta debe seguir una capacidad específica?

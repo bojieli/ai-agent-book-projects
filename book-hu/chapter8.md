@@ -127,6 +127,12 @@ Például egy légitársasági ügyfélszolgálati ágens túl korán eszkalálh
 
 A Skill-tanulás ugyanezt az elvet követi, de lokalizáltabb hatókörrel. Egy Skill felfogható egy adott munka igény szerinti használati útmutatójaként: ha több tapasztalat együtt egy teljes biztosítási kárfolyamatot alkot, a rendszer generálhatja vagy felülvizsgálhatja a megfelelő Skill-t. Egy jelölt Skill nem foglalhat össze csupán egyetlen beszélgetést; minimum meg kell adnia, hogy mikor kell betölteni, az előfeltételeket, a műveleti lépéseket, az ismert buktatókat, az érvényesítési módszereket és a forrás trajektóriákat. A rendszer először a meglévő Skill-könyvtárat keresi hasonló képességekre, előnyben részesítve a lokális javítást, ha ugyanaz a folyamat már létezik, és csak egy valóban független képességhez hoz létre új könyvtárat. Ez megakadályozza, hogy a könyvtár megteljen olyan kézikönyvekkel, amelyek névben különböznek, de tartalmilag duplikálják egymást. Az Anthropic Skill Creator[^anthropic-skill-creator] egy vázlat–teszt–kiértékelés–felülvizsgálat ciklust mutat be. Azt tárgyalja, hogyan kell létrehozni és fejleszteni egy Skill-t; a nehezebb kérdések azok, hogy milyen működési bizonyíték elegendő a létrehozás kiváltásához, hogyan kell feloldani az ütközéseket, és hogy a felülvizsgálat átmegy-e a domain-specifikus és a régi feladatok regressziós tesztjein.
 
+> **8-9. ★★ kísérlet: Visszajelzésből írási Skill**
+>
+> A `data/feedback_pairs.json` 20 before/after párját három adagban dolgozzuk fel, jelölteket nyerünk ki, egyesítjük az ismétlődéseket, ellenőrizzük a küszöbütközéseket, majd forrással és hatókörrel rendelkező `SKILL.md` készül. A determinisztikus szabályokat kód, az LLM-szabályokat 10 aranypélda kalibrálja.
+>
+> A befejezetlen feladatok és a normál szövegek külön készletén együtt mérjük a felismerést, a téves riasztást és a szabályszám növekedését. Az első valós futás 0/8 felismerést és 7/8 téves riasztást adott; külső szűrés és determinisztikus tartalékút után 8/8, 0/8 és 21 jelöltből 8 szabály lett. Megvalósítás: [`ai-style-skill`](../chapter8/ai-style-skill/).
+
 > **8-3. ★★ kísérlet: Rendszer Promptok optimalizálása sikertelen trajektóriákból**
 >
 > "Cél:" Egy légitársasági ügyfélszolgálati ágens tanítása olyan trajektóriákból, ahol túl gyorsan eszkalál, amikor egy felhasználó megkérdőjelez egy irányelvet, miközben bizonyítja, hogy az új szabály nem töri el a régebbi forgatókönyveket, amelyek valóban eszkalációt igényelnek.
@@ -203,6 +209,12 @@ Az eszközlétrehozás ugyanezt a protokollt követi. Az Alita[^alita-2025] egy 
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
 [^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
+
+A 8-8. kísérlet ugyanezt a protokollt a verifikációs rétegre alkalmazza. Csak több felhasználói javítás, negatív értékelés és audit után készül módosítási kérés a megerősítés nélküli veszélyes műveletekre; a jelölt elszigetelt könyvtárba kerül. Az eszköz neve és argumentumai alapján veszélyes törléseket és `git push --force`-t keresünk, az egyszer használatos tokent a konkrét művelethez kötjük. AST/statikus ellenőrzés, határ- és tartalékkészlet-visszajátszás után engedhető ki.
+
+> **8-8. ★★ kísérlet: Magas kockázatú műveletek megerősítési kapuja felhasználói visszajelzésből**
+>
+> A `failure_trajectories.json` három jelzést és kontrollpályákat ad. A valós `gpt-4o-mini` jelölt nem ment át a befejezetlen feladatok, normál műveletek és egyszer használatos tokenek ellenőrzésén, ezért a biztonsági kapu elutasította. A determinisztikus jelölt minden ellenőrzést teljesített és `release_to_canary` lett; rögzítjük a döntést és a stabil könyvtár hashét. Megvalósítás: [`harness-safety-gate`](../chapter8/harness-safety-gate/).
 
 ### Tapasztalatok kódolása paraméterekben
 
@@ -376,10 +388,6 @@ Egy ágens tanulási jeleket szerez az interakcióból és a kiértékelésből,
 A folyamatos evolúciónak el kell választania az online végrehajtást az offline tanulástól: rögzítsük a bizonyítékokat online; generáljuk és érvényesítsük a jelölt frissítéseket offline; majd fokozatosan adjuk ki, konszolidáljuk vagy vonjuk vissza azokat. Ez a hurok a legmegbízhatóbb, ha az eredmények automatikusan ellenőrizhetők. Nyílt végű, kétértelmű célkitűzésekkel és késleltetett visszajelzéssel rendelkező feladatok esetén az embereknek továbbra is részt kell venniük a probléma meghatározásában és az értékelési kritériumok tervezésében.
 
 ## Elgondolkodtató kérdések
-
-### Friss kísérleti eredmények
-
-A 8-8. és 8-9. kísérlet valódi modell- és API-hívásokkal is lefutott. A 8-8-ban a külső biztonsági ellenőrzések helyesen elutasították a modell nem biztonságos jelöltjét. A 8-9 első futása 0/8 felismerést és 7/8 téves riasztást adott; külső szűrés és determinisztikus tartalékút után a végső futás 8/8 felismerést, 0/8 téves riasztást és 21 jelöltből 8 szabályt ért el.
 
 1. ★★ Egy tapasztalati dokumentumot három sikeres trajektória és egy sikertelen trajektória támaszt alá. A sikertelen egy újabb API-verzióval történt. Hogyan határozza meg a rendszer, hogy a tapasztalat érvénytelenné vált, vagy az alkalmazási feltételei változtak meg?
 2. ★★ Egy ügyfélszolgálati ágens felhasználói elégedettsége nő, de a szabálysértések aránya is emelkedik. Miért nem szolgálhat az elégedettség az egyetlen tanulási jelként? Hogyan tervezne védőkorlát-mérőszámokat?

@@ -334,6 +334,10 @@ Mielőtt az SFT gyakorlati alkalmazásába kezdünk, van egy gyakorlati kérdés
 
 Ennek a négy kísérletnek közös jellemzője – "stabil leképezések és protokollok írása a paraméterekbe": a hang SFT stílusvezérlési protokollokat rögzít, a többnyelvű SFT gondolkodásszervezési sablonokat rögzít, a desztillációs SFT pedig a bemenet-kimenet közvetlen leképezését rögzíti. Világos céljaik, tiszta formátumaik és stabil értékelési kritériumaik vannak, így az SFT rendkívül magas mintahatékonysággal tud javulást elérni; amint azonban az eloszlás eltolódik, a memorizálásra való hajlama romló teljesítményben nyilvánul meg. Ez a 7.1 szakasz "Az SFT és az RL lényegi különbsége" részében tárgyalt memória-általánosítás megoszlásának kísérleti megnyilvánulása.
 
+A 6. fejezet bad case-ei tanítási adattá alakíthatók. A túl korán befejező kódoló ügynöknél a befejezés előtti pályaelőtagot vágjuk ki: az eredeti kijelentés a rejected, a tesztfuttatás és minden elfogadási feltétel ellenőrzése utáni következtetés a chosen. Ez DPO-hoz vagy döntési határ-demonstrációhoz illik jobban, mint a sima SFT. A hibát, az alkalmazási feltételeket és az ellenőrzőt minden mintával együtt kell megőrizni.
+
+Ugyanez a feladathalmaz RL-gyakorlókörnyezetté alakítható: az SFT ellenőrzött pályákat használ, az RL pedig újra lefuttatja a feladatot, és külső ellenőrző ítéli meg az eredményt. Így a bad case javítandó döntési határ, nem pusztán memorizálandó példa.
+
 ## Mikor válassz SFT-t és mikor RL-t?
 
 A 7.1 szakasz tisztázta az SFT és az RL "lényegi különbségét". Ez a szakasz egy gyakorlatiasabb kérdésre ad választ: "Egy adott feladatra melyiket használd?" Az alábbi döntési keretrendszer néhány következtetését a későbbi RL kísérletek (7-10., 7-11. kísérlet) tovább erősítik. Az olvasók először kialakíthatnak egy előzetes ítéletet, majd az RL szakasz elolvasása után visszatérhetnek ellenőrzésre.
@@ -540,6 +544,8 @@ Az algoritmusok nem fontosak – csak később jönnek. Az erőfeszítés éssze
 
 ## Egymenetestől a többlépésesig: Hitelkiosztás és jutalomtervezés
 
+A „korai befejezés” konkrét példa. Amikor a modell késznek mondja a feladatot, a Harness elkülönített, a modell elől rejtett munkatérben futtatja az elfogadási teszteket; csak siker esetén jár pozitív jutalom. A teszteknek valódi fájlokat vagy környezeti állapotot kell olvasniuk. A befejezetlen határkészletet és a valóban befejezett feladatok tartalékkészletét külön kell mérni.
+
 ### A többlépéses feladatok alapvető kihívása
 
 ![7-14. ábra: Az egymenetes és a többlépéses RL összehasonlítása](images/fig7-14.svg)
@@ -692,6 +698,12 @@ Más szóval, **a tiszta eredmény jutalmak vakok a sikerarány mindkét véglet
 >
 > "Várható megfigyelések": A Terminal-Bench-en (Qwen3-4B, 5 véletlen mag) a jogsértések epizódonként 3,71-ről 0,66-ra csökkennek (körülbelül 6-szoros csökkenés), miközben a feladat sikeraránya a zajszinten belül marad – a megfelelés szinte ingyen jön, és az Ágens valójában *több* hatékony akciót hajt végre, nem kevesebbet; nem egyszerűen "kevesebbet csinál, hogy kevesebbet törjön". A miniF2F algebrai problémákon (előrehaladás elérhető) a 0,9 sikerarány eléréséhez szükséges iterációk száma 7,0-ről 4,4-re csökken (4B modell), még nagyobb különbséggel nagyobb modelleken (30B: 8,5 → 5,4, és a tiszta eredmény jutalmak néhány magon divergálnak). Egy láncolt fájlműveleti feladaton a "minden-kudarc csoportok" (elpazarolt minták, amelyek nem tanulnak semmit) aránya 65%-ról 8%-ra csökken. Ellenpéldaként egy szoftverjavítási környezetben, ahol az előrehaladás elérhetetlen, egy teljes köteg rollout gyakran nem tud egyetlen tesztet sem átvinni; a sűrű előrehaladási jutalom ezért mindenhol nulla, és nem nyújt előnyt, megerősítve hogy "az elérhetőség a küszöb".
 
+> **7-17. kísérlet ★★: „Korai befejezés” bad case-ekből DPO és GRPO**
+>
+> A kísérlet a 6. fejezet hibáit két tanítási úthoz kapcsolja. A `build_preference_data.py` 24 esetből pályaprefix-preferenciapárokat készít: az eredeti befejezés rejected, az előbb ellenőrző, majd következtető lépés chosen. A `train_dpo.py` Qwen2.5-7B-Instruct LoRA-DPO útvonalat ad, az opcionális GRPO rejtett elfogadási teszteket használ.
+>
+> A határkészlet eredménye 3/12-ről (25,0%) 11/12-re (91,7%) javult, a befejezett feladatok tartaléka 8/8 (100%) maradt. A szabad generálás túl óvatossá vált, ezért ez a rögzített összehasonlítás a fő eredmény, nem általános élesbeli javulási állítás. Részletek: [`premature-completion-dpo`](../chapter7/premature-completion-dpo/).
+
 ## RL eszközhívás tanulásához
 
 Az előző többlépéses kísérletekben az Ágens akciótere a beépített műveletekre, például mozgásra és megfigyelésre korlátozódott. A valós Ágenseknek különféle külső eszközöket is kell hívniuk – keresőmotorokat, kódinterpretátorokat, dokumentum elemzőket stb. –, ami új kihívásokat vezet be az RL tréning számára.
@@ -828,10 +840,6 @@ Két megítélés húzódik végig ezen a fejezeten, és érdemes jobban megjegy
 Ez a fejezet megválaszolta a "hogyan tréningezzünk" paraméterfrissítési kérdését. A következő fejezet visszahelyezi a modell paramétereket a teljes Ágens rendszerbe: a paraméterek csak egy a négy frissítési hordozó közül, az ismeretek, utasítások és programok mellett. A sajátos kihívásuk az, hogy hogyan nyerjünk megbízható tanulási jeleket a telepítési pályákból, válasszuk ki a helyes frissítési helyet, és irányítsuk minden jelölt verzió validálását, kiadását és visszavonását. A konkrét tréning algoritmusok tekintetében a 8. fejezet közvetlenül erre a fejezetre hivatkozik, ahelyett hogy megismételné az anyagot.
 
 ## Gondolatkérdések
-
-### Friss kísérleti eredmény
-
-A 7-17. kísérlet 24 kódoló ügynökös hibás esetből tanított Qwen2.5-7B LoRA-adaptert. A rögzített „befejezés” és „további ellenőrzés” összehasonlításban a befejezetlen feladatok helyes döntése 3/12-ről 11/12-re nőtt, a már befejezett feladatok tartott készlete pedig 8/8 maradt. A szabad szöveges válaszok túl óvatossá váltak, ezért a rögzített összehasonlítás a fő eredmény, nem pedig általános élesbeli javulásra vonatkozó állítás.
 
 1. ★★ Katasztrofális felejtés – amikor a finomhangolás egy adott feladatra elpusztítja a modell eredeti általános képességeit, mint az általános eszközhívás – különösen problémás az Ágens forgatókönyvekben. A teljes paraméteres finomhangoláshoz képest a LoRA befagyasztja az alap súlyokat, és kisebb a felejtés kockázata, de nem immunis. Milyen stratégiák csökkenthetik tovább a képességfelejtést a finomhangolás során?
 2. ★★ A poszt-tréning a képességeket a modell súlyaiba (vagy "izommemóriába") rögzíti, míg a kontextusban tanulás (in-context learning) a következtetéskor a bemenetbe helyezi a tudást. Egyes képességek, mint a domain ismeretek, megtanulhatók poszt-tréningen keresztül vagy néhány példán keresztül is betáplálhatók. Milyen kritériumokat használnál annak eldöntésére, hogy egy képesség melyik utat kövesse?

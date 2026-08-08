@@ -128,6 +128,12 @@ Sebagai contoh, Agent layanan pelanggan maskapai penerbangan mungkin melakukan e
 
 Agent Skills learning mengikuti prinsip yang sama, tetapi dengan ruang lingkup yang lebih terlokalisasi. Sebuah Skill dapat dipahami sebagai manual operasi *on-demand* untuk pekerjaan tertentu: jika beberapa pengalaman secara kolektif membentuk proses klaim asuransi yang lengkap, sistem dapat menghasilkan atau merevisi Skill yang sesuai. Skill kandidat tidak boleh sekadar meringkas satu percakapan; minimal, ia harus menentukan kapan harus dimuat, prasyarat, langkah operasi, jebakan yang diketahui, metode validasi, dan trajektori sumber. Sistem pertama-tama mencari *library* Skill yang ada untuk kemampuan serupa, lebih memilih `patch` lokal ketika proses yang sama sudah ada dan membuat direktori baru hanya untuk kemampuan yang benar-benar mandiri. Ini mencegah *library* terisi oleh manual yang berbeda nama tetapi menduplikasi satu sama lain. Skill Creator dari Anthropic[^anthropic-skill-creator] mendemonstrasikan *loop draft–test–evaluate–revise*. Ia menjawab cara membuat dan menyempurnakan Skill; pertanyaan yang lebih sulit yang tersisa adalah bukti operasional apa yang cukup untuk memicu pembuatan, bagaimana menyelesaikan konflik, dan apakah revisi tersebut lulus tes regresi tugas-lama dan spesifik-domain.
 
+> **Eksperimen 8-9 ★★: Mengubah umpan balik menjadi Skill penulisan**
+>
+> Dua puluh pasangan before/after dari `data/feedback_pairs.json` diproses dalam tiga batch. Sistem mengekstrak aturan, menggabungkan pola duplikat, memeriksa konflik ambang, lalu membuat `SKILL.md` dengan sumber dan cakupan. Aturan deterministik diperiksa dengan kode; aturan LLM dikalibrasi pada 10 contoh emas.
+>
+> Laporkan deteksi pada kumpulan tugas belum selesai, false positive pada teks normal, dan pertumbuhan jumlah aturan. Proses nyata pertama menghasilkan 0/8 deteksi dan 7/8 false positive; setelah filter eksternal dan fallback deterministik hasilnya 8/8, 0/8, serta 21 kandidat digabung menjadi 8 aturan. Implementasi: [`ai-style-skill`](../chapter8/ai-style-skill/).
+
 > **Eksperimen 8-3 ★★: Mengoptimalkan System Prompts dari Trajektori Kegagalan**
 >
 > **Tujuan (Objective):** Mengajari Agent layanan pelanggan maskapai penerbangan dari trajektori di mana ia melakukan eskalasi terlalu cepat ketika pengguna menantang suatu kebijakan, sekaligus mendemonstrasikan bahwa aturan baru tersebut tidak merusak skenario lama yang benar-benar membutuhkan eskalasi.
@@ -205,6 +211,12 @@ Pembuatan alat (tool creation) mengikuti protokol yang sama. Alita[^alita-2025] 
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
 [^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
+
+Eksperimen 8-8 menerapkan protokol yang sama pada lapisan verifikasi. Permintaan perubahan dibuat hanya setelah koreksi pengguna, penilaian negatif, dan audit berulang menunjuk operasi berisiko tanpa konfirmasi; kandidat ditulis ke direktori terisolasi. Klasifikasikan penghapusan berbahaya dan `git push --force` dari nama serta argumen alat, dan ikat token sekali pakai ke operasi tertentu. Kandidat harus lulus pemeriksaan AST/statis, replay kasus batas (termasuk token palsu dan pemakaian ulang), serta replay kumpulan retensi.
+
+> **Eksperimen 8-8 ★★: Gerbang konfirmasi operasi berisiko tinggi dari umpan balik pengguna**
+>
+> Gunakan tiga sinyal dan trajectory kontrol dari `failure_trajectories.json`. Kandidat `gpt-4o-mini` nyata gagal pada replay tugas belum selesai, operasi normal, dan token sekali pakai sehingga ditolak gerbang keamanan. Kandidat deterministik lulus dan mendapat `release_to_canary`; catat pemeriksaan, keputusan, dan hash direktori stabil. Implementasi: [`harness-safety-gate`](../chapter8/harness-safety-gate/).
 
 ### Mengodekan Pengalaman dalam Parameter
 
@@ -376,10 +388,6 @@ Sebuah Agent memperoleh learning signals dari interaksi dan evaluasi, kemudian m
 Continual evolution harus memisahkan eksekusi online dari pembelajaran offline: merekam bukti secara online; membuat dan memvalidasi pembaruan kandidat secara offline; kemudian merilis, mengonsolidasikan, atau membatalkannya (roll them back) secara bertahap. Putaran ini paling andal ketika hasil dapat diverifikasi secara otomatis. Untuk tugas-tugas open-ended dengan tujuan ambigu dan feedback yang tertunda, manusia masih harus berpartisipasi dalam definisi masalah dan perancangan kriteria evaluasi.
 
 ## Pertanyaan Refleksi
-
-### Hasil Eksperimen Terbaru
-
-Eksperimen 8-8 dan 8-9 juga dijalankan dengan panggilan model/API nyata. Pada 8-8, pemeriksaan keamanan eksternal dengan benar menolak kandidat model yang tidak aman. Pada 8-9, proses pertama hanya mendeteksi 0/8 dan salah menandai 7/8 teks normal; setelah penyaringan di luar model dan fallback deterministik, proses akhir mendeteksi 8/8, tidak merusak 0/8 teks normal, dan menggabungkan 21 kandidat menjadi 8 aturan.
 
 1. ★★ Sebuah experience document didukung oleh tiga trajectories yang berhasil dan satu trajectory yang gagal. Kegagalan terjadi dengan versi API yang lebih baru. Bagaimana sistem harus menentukan apakah pengalaman tersebut telah ditiadakan (invalidated) atau applicability conditions-nya telah berubah?
 2. ★★ Kepuasan pengguna Agent layanan pelanggan meningkat, tetapi tingkat pelanggaran aturannya juga meningkat. Mengapa kepuasan tidak dapat berfungsi sebagai satu-satunya learning signal? Bagaimana Anda akan merancang guardrail metrics?

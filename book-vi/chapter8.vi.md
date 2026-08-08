@@ -127,6 +127,12 @@ Ví dụ, Agent chăm sóc khách hàng hàng không thường chuyển sang nh�
 
 Học Skill tuân theo cùng nguyên tắc nhưng có phạm vi tác động cục bộ hơn. Có thể xem Skill là sổ tay nghiệp vụ được mở khi cần. Nếu nhiều kinh nghiệm cùng hình thành một quy trình yêu cầu bồi thường bảo hiểm hoàn chỉnh, hệ thống có thể tạo hoặc sửa Skill tương ứng. Skill ứng viên không nên chỉ là bản tóm tắt một hội thoại; tối thiểu nó phải nêu khi nào cần nạp, điều kiện tiên quyết, các bước thao tác, bẫy đã biết và cách xác minh, đồng thời lưu quỹ đạo nguồn. Hệ thống trước tiên tìm năng lực gần giống trong kho Skill hiện có: nếu đã có cùng quy trình thì ưu tiên `patch` cục bộ; chỉ tạo thư mục mới khi thật sự xuất hiện một năng lực độc lập mới, tránh để kho chứa đầy các sổ tay khác tên nhưng gần giống nội dung. Skill Creator của Anthropic[^anthropic-skill-creator] minh họa vòng tạo “soạn thảo — kiểm thử — đánh giá — sửa đổi”. Nó giải quyết cách tạo và cải thiện Skill; phần khó thực sự vẫn là bằng chứng vận hành nào đủ để kích hoạt, xử lý xung đột thế nào và sau sửa đổi có vượt qua nhiệm vụ lĩnh vực cùng hồi quy nhiệm vụ cũ hay không.
 
+> **Thí nghiệm 8-9 ★★: Chuyển phản hồi thành Skill viết**
+>
+> Xử lý 20 cặp before/after trong `data/feedback_pairs.json` theo ba đợt, trích xuất quy tắc ứng viên, gộp mẫu trùng, kiểm tra xung đột ngưỡng và tạo `SKILL.md` có nguồn/phạm vi. Quy tắc xác định kiểm tra bằng mã; quy tắc LLM được hiệu chỉnh trên 10 mẫu vàng.
+>
+> Báo cáo đồng thời tỷ lệ phát hiện trên tập nhiệm vụ chưa hoàn thành, tỷ lệ báo nhầm trên văn bản bình thường và số quy tắc tăng. Lần chạy thật đầu tiên đạt 0/8 phát hiện và nhầm 7/8; sau bộ lọc ngoài mô hình và fallback xác định, đạt 8/8, nhầm 0/8, gộp 21 ứng viên thành 8 quy tắc. Xem [`ai-style-skill`](../chapter8/ai-style-skill/).
+
 > **Thí nghiệm 8-3 ★★: Tối ưu Prompt hệ thống dựa trên quỹ đạo thất bại**
 >
 > **Mục tiêu thí nghiệm**: Giúp Agent chăm sóc khách hàng hàng không học từ quỹ đạo thất bại “chuyển sang nhân viên quá sớm khi người dùng chất vấn chính sách”, đồng thời chứng minh quy tắc mới không phá hỏng các tình huống cũ thật sự cần chuyển tiếp.
@@ -203,6 +209,12 @@ Việc tạo công cụ cũng tuân theo cùng giao thức. Trường hợp Alit
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
 [^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
+
+Thí nghiệm 8-8 áp dụng cùng giao thức vào lớp xác minh. Chỉ tạo yêu cầu thay đổi khi nhiều sửa chữa của người dùng, đánh giá thấp và audit cùng chỉ ra thao tác rủi ro cao không được xác nhận; ứng viên được ghi vào thư mục cô lập. Phân loại thao tác xóa nguy hiểm và `git push --force` theo tên/đối số công cụ, buộc token một lần vào thao tác cụ thể. Ứng viên phải qua kiểm tra AST/tĩnh, replay tập ranh giới (kể cả token giả/tái sử dụng) và replay tập giữ lại.
+
+> **Thí nghiệm 8-8 ★★: Cổng xác nhận thao tác rủi ro cao từ phản hồi người dùng**
+>
+> Dùng ba tín hiệu và trajectory đối chứng trong `failure_trajectories.json`. Ứng viên `gpt-4o-mini` thật không qua replay nhiệm vụ chưa hoàn thành, thao tác bình thường và token một lần nên bị cổng an toàn từ chối. Ứng viên xác định vượt qua và nhận `release_to_canary`; ghi lại kiểm tra, quyết định và hash thư mục ổn định. Xem [`harness-safety-gate`](../chapter8/harness-safety-gate/).
 
 ### Ghi kinh nghiệm vào tham số
 
@@ -376,10 +388,6 @@ Agent nhận tín hiệu học từ tương tác và đánh giá, rồi tùy tí
 Tiến hóa liên tục cần tách thực thi trực tuyến khỏi học ngoại tuyến: ghi bằng chứng trực tuyến; sinh và xác minh cập nhật ứng viên ngoại tuyến; rồi từng bước phát hành, chỉnh lý hoặc khôi phục. Vòng khép kín này đáng tin cậy nhất với nhiệm vụ có kết quả tự động xác minh được; trong nhiệm vụ mở có mục tiêu mơ hồ và phản hồi trễ, con người vẫn phải tham gia định nghĩa vấn đề và xây dựng tiêu chuẩn đánh giá.
 
 ## Câu hỏi suy ngẫm
-
-### Kết quả thí nghiệm mới nhất
-
-Các thí nghiệm 8-8 và 8-9 cũng được chạy với lời gọi model/API thực. Ở 8-8, các cổng an toàn bên ngoài đã đúng khi từ chối candidate không an toàn do model tạo ra. Ở 8-9, lần chạy đầu chỉ phát hiện 0/8 và đánh dấu nhầm 7/8 văn bản bình thường; sau khi lọc bên ngoài model và thêm fallback xác định, lần chạy cuối đạt phát hiện 8/8, nhầm 0/8 và gộp 21 candidate thành 8 quy tắc.
 
 1. ★★ Một tài liệu kinh nghiệm được ba quỹ đạo thành công và một quỹ đạo thất bại hỗ trợ. Thất bại xảy ra trên phiên bản API mới hơn. Hệ thống nên xác định đây là kinh nghiệm đã bị bác bỏ hay điều kiện áp dụng đã thay đổi như thế nào?
 2. ★★ Mức độ hài lòng của người dùng với Agent chăm sóc khách hàng tăng lên, nhưng tỷ lệ vi phạm quy tắc cũng tăng. Tại sao không thể dùng mức độ hài lòng làm tín hiệu học tập duy nhất? Bạn sẽ thiết kế các chỉ số rào chắn như thế nào?
