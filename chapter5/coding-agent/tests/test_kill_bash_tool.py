@@ -56,4 +56,17 @@ class TestKillBashTool:
         
         assert result.success
         assert result.data["shell_id"] == "default"
+    def test_kill_background_job(self, system_state):
+        """Test killing a background job using its background_job_id."""
+        bash_tool = BashTool(system_state)
+        kill_tool = KillBashTool(system_state)
+
+        res = bash_tool.execute({"command": "sleep 10", "run_in_background": True})
+        assert res.success
+        bg_id = res.data["background_job_id"]
+
+        result = kill_tool.execute({"shell_id": bg_id})
+        assert result.success
+        assert result.data["status"] == "terminated"
+        assert result.data["shell_id"] == bg_id
 

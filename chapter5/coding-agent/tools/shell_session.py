@@ -6,6 +6,7 @@ import base64
 import os
 import queue
 import re
+import signal
 import shlex
 import shutil
 import subprocess
@@ -14,7 +15,7 @@ import threading
 import time
 import uuid
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, TextIO, Tuple
+from typing import Dict, List, Optional, TextIO, Tuple, Union
 
 
 def get_background_log_path(job_id: str) -> str:
@@ -62,7 +63,7 @@ class ShellSession:
     output_buffer: str = ""
     shell_kind: str = field(default="", init=False)
     shell_command: List[str] = field(default_factory=list, init=False, repr=False)
-    background_processes: Dict[str, subprocess.Popen] = field(
+    background_processes: Dict[str, Union[subprocess.Popen, int]] = field(
         default_factory=dict, init=False, repr=False
     )
 
@@ -235,8 +236,16 @@ class ShellSession:
         self.start()
 
     @staticmethod
-    def _terminate_process(process: Optional[subprocess.Popen]) -> None:
-        if process is None or process.poll() is not None:
+    def _terminate_process(process: Optional[Union[subprocess.Popen, int]]) -> None:
+        if process is None:
+            return
+        if isinstance(process, int):
+            try:
+                os.kill(process, signal.SIGTERM)
+            except ProcessLookupError:
+                pass
+            return
+        if process.poll() is not None:
             return
         process.terminate()
         try:
@@ -388,7 +397,9 @@ class ShellSession:
             if exit_code != 0:
                 raise RuntimeError(f"Unable to start background command: {output}")
             try:
-                return int(output.strip().splitlines()[-1])
+                pid = int(output.strip().splitlines()[-1])
+                self.background_processes[job_id] = pid
+                return pid
             except (IndexError, ValueError) as exc:
                 raise RuntimeError(
                     f"Unable to determine background command PID: {output}"
