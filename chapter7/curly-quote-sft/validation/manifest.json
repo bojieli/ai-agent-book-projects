@@ -1,0 +1,285 @@
+{
+  "experiment": "curly-quote-sft",
+  "model": "Qwen/Qwen3-8B",
+  "model_open_weight": true,
+  "hardware": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+  "data_sha256": {
+    "boundary.jsonl": "e342edf5d28257907bbe486c99a91bd40c482838613c59e09f445b3634a7356c",
+    "eval.jsonl": "7c54b2bf1f146e6a22fb72460c0a7b67a7a2ad5301e5a05dcf4828b6962a2049",
+    "train.jsonl": "9e27158265ab9782951d81a4838e77128061f492466beeddf0b35a27f46cedd6"
+  },
+  "training_receipt": "validation/train_20260808T040644Z/training_receipt.json",
+  "evaluations": {
+    "eval_adapted_boundary.json": {
+      "label": "adapted",
+      "split": "boundary",
+      "count": 256,
+      "exact": 0.9765625,
+      "protected_preservation": 1.0,
+      "curly_count_match": 0.9765625,
+      "by_kind": {
+        "comment": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "english": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "go": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "java": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "javascript": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "json": {
+          "count": 16,
+          "exact": 0.6875,
+          "curly_count_match": 0.6875
+        },
+        "markdown": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "mixed": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "nested": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "python": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "quote": {
+          "count": 16,
+          "exact": 0.9375,
+          "curly_count_match": 0.9375
+        },
+        "rust": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "shell": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "sql": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "yaml": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "zh": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        }
+      }
+    },
+    "eval_adapted_eval.json": {
+      "label": "adapted",
+      "split": "eval",
+      "count": 256,
+      "exact": 0.96875,
+      "protected_preservation": 1.0,
+      "curly_count_match": 0.96875,
+      "by_kind": {
+        "comment": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "english": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "go": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "java": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "javascript": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "json": {
+          "count": 16,
+          "exact": 0.6875,
+          "curly_count_match": 0.6875
+        },
+        "markdown": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "mixed": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "nested": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "python": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "quote": {
+          "count": 16,
+          "exact": 0.8125,
+          "curly_count_match": 0.8125
+        },
+        "rust": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "shell": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "sql": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "yaml": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        },
+        "zh": {
+          "count": 16,
+          "exact": 1.0,
+          "curly_count_match": 1.0
+        }
+      }
+    },
+    "eval_base_eval.json": {
+      "label": "base",
+      "split": "eval",
+      "count": 256,
+      "exact": 0.0,
+      "protected_preservation": 0.9868421052631579,
+      "curly_count_match": 0.67578125,
+      "by_kind": {
+        "comment": {
+          "count": 16,
+          "exact": 0.0,
+          "curly_count_match": 1.0
+        },
+        "english": {
+          "count": 16,
+          "exact": 0.0,
+          "curly_count_match": 0.75
+        },
+        "go": {
+          "count": 16,
+          "exact": 0.0,
+          "curly_count_match": 1.0
+        },
+        "java": {
+          "count": 16,
+          "exact": 0.0,
+          "curly_count_match": 1.0
+        },
+        "javascript": {
+          "count": 16,
+          "exact": 0.0,
+          "curly_count_match": 1.0
+        },
+        "json": {
+          "count": 16,
+          "exact": 0.0,
+          "curly_count_match": 0.0
+        },
+        "markdown": {
+          "count": 16,
+          "exact": 0.0,
+          "curly_count_match": 1.0
+        },
+        "mixed": {
+          "count": 16,
+          "exact": 0.0,
+          "curly_count_match": 0.0
+        },
+        "nested": {
+          "count": 16,
+          "exact": 0.0,
+          "curly_count_match": 0.0
+        },
+        "python": {
+          "count": 16,
+          "exact": 0.0,
+          "curly_count_match": 1.0
+        },
+        "quote": {
+          "count": 16,
+          "exact": 0.0,
+          "curly_count_match": 0.0625
+        },
+        "rust": {
+          "count": 16,
+          "exact": 0.0,
+          "curly_count_match": 1.0
+        },
+        "shell": {
+          "count": 16,
+          "exact": 0.0,
+          "curly_count_match": 1.0
+        },
+        "sql": {
+          "count": 16,
+          "exact": 0.0,
+          "curly_count_match": 1.0
+        },
+        "yaml": {
+          "count": 16,
+          "exact": 0.0,
+          "curly_count_match": 1.0
+        },
+        "zh": {
+          "count": 16,
+          "exact": 0.0,
+          "curly_count_match": 0.0
+        }
+      }
+    }
+  },
+  "quality_audit": "validation/quality_audit.json"
+}

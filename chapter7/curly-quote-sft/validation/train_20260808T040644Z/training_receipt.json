@@ -1,0 +1,22 @@
+{
+  "experiment": "7-18-curly-quote-sft",
+  "run": "train_20260808T040644Z",
+  "model": "Qwen/Qwen3-8B",
+  "data_sha256": "9e27158265ab9782951d81a4838e77128061f492466beeddf0b35a27f46cedd6",
+  "train_examples": 1024,
+  "config": {
+    "model": "Qwen/Qwen3-8B",
+    "epochs": 2,
+    "lr": 0.0001,
+    "batch_size": 2,
+    "grad_accum": 4,
+    "max_length": 768,
+    "seed": 718,
+    "output": "/home/ubuntu/ai-agent-book/chapter7/curly-quote-sft/output/adapter"
+  },
+  "cuda": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+  "started_at": "2026-08-08T04:06:44.715422+00:00",
+  "finished_at": "2026-08-08T04:08:32.643276+00:00",
+  "updates": 256,
+  "final_loss": 5.033254524278163e-07
+}
