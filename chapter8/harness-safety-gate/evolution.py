@@ -530,3 +530,30 @@ def write_candidate(candidate_source: str, path: Path) -> None:
     """只写候选制品路径，绝不覆盖稳定模块。"""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(candidate_source, encoding="utf-8")
+def generate_synthetic_perturbations(trajectories: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Generate synthetic edge-case perturbations (null args, whitespace, missing fields) for safety verifier testing."""
+    perturbed: List[Dict[str, Any]] = []
+    for traj in trajectories:
+        item = dict(traj)
+        tool_name = item.get("tool_name", "")
+        args = item.get("args")
+
+        # Perturbation 1: null args dictionary
+        item_null_args = dict(item)
+        item_null_args["args"] = None
+        item_null_args["id"] = f"{item.get('id', 'traj')}_null_args"
+        perturbed.append(item_null_args)
+
+        # Perturbation 2: empty tool name with risk args
+        item_empty_tool = dict(item)
+        item_empty_tool["tool_name"] = "  "
+        item_empty_tool["id"] = f"{item.get('id', 'traj')}_empty_tool"
+        perturbed.append(item_empty_tool)
+
+        # Perturbation 3: non-dict args
+        item_list_args = dict(item)
+        item_list_args["args"] = [tool_name, args]
+        item_list_args["id"] = f"{item.get('id', 'traj')}_list_args"
+        perturbed.append(item_list_args)
+
+    return perturbed
