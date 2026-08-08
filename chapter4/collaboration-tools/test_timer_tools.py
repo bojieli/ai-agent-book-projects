@@ -155,6 +155,17 @@ class RecurringTimerPersistenceTests(unittest.IsolatedAsyncioTestCase):
             "completed",
         )
 
+    async def test_get_timer_status_timezone_aware_expiry(self):
+        expiry = datetime.now() + timedelta(seconds=3600)
+        timer_tools._active_timers["tz-timer"] = {
+            "timer_id": "tz-timer",
+            "status": "active",
+            "type": "one-shot",
+            "expiry_time": expiry.strftime("%Y-%m-%dT%H:%M:%S") + "+00:00",
+        }
+        result = await timer_tools.get_timer_status("tz-timer")
+        self.assertTrue(result["success"])
+        self.assertIn("remaining_seconds", result["timer"])
 
 if __name__ == "__main__":
     unittest.main()
