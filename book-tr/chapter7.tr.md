@@ -298,7 +298,7 @@ SFT'ye girişmeden önce kaçınılmaz bir uygulama sorusu var: **SFT verisi ner
 >
 > Damıtma iki boyutta yapılabilir: "büyükten küçüğe" (büyük modelin yerine orta veya küçük ölçekli bir model koyarak maliyet ile kalite arasında orta yol bulmak) ve "düşünenden düşünmeyene" (aynı ölçekte açık CoT'yi örtük parametrik bilgiye katlayarak 20-30 kat yanıt hızı kazanmak). İkisi çelişmez, üretim ortamında sık sık birlikte kullanılır. Şuna dikkat edin: damıtma öğretmenin sınırlarını da devralır — öğretmenin uzun kuyruk dağılımında sistematik hataları varsa öğrenci bu hataları bir de sabitleyip yazar; öğretmen doğruluğu güvenceye almak için araçlara dayanıyorsa, salt çıktı damıtması araçların getirdiği sağlamlığı yitirir. Mühendislik dersi: ürün biçimi kararlı, girdi dağılımı öngörülebilir ve maliyet kısıtı belirginken Prompt damıtma çok iyi bir optimizasyon aracıdır; keşif döneminde ya da görev henüz oturmamışken açık düşünmeyi ve düzenlenebilir prompt engineering'i korumak hızlı deneme-yanılmanın çekirdeği olmayı sürdürür.
 >
-> **Deney 7-9 ★★★: Düşünce Zinciri (Chain of Thought, CoT) Damıtma `[genişletilmiş deney]`**
+> **Deney 7-9 ★★★: Düşünce Zinciri (Chain of Thought, CoT) Damıtma**
 >
 > Prompt damıtma düşünme sürecini atar; CoT damıtma ise tam tersini yapar: güçlü öğretmen modelin **eksiksiz düşünme trajectory'sini** öğrenci modele aktarır. Yeterince güçlü bir öğretmen modelden CoT damıtmasıyla, aynı parametre sayısında öğretmenin yeteneğinin %70-80'i geri kazanılabilir. Sınırdaki yetenek rekorlarını kırma peşinde olmayan ama kendi denetimindeki bir model arayan ekipler için bu, en gerçekçi takipçi stratejisidir. DeepSeek-R1 yayımlanırken eş zamanlı olarak açık kaynak yapılan damıtılmış küçük model serisi (R1'in düşünme trajectory'leriyle Qwen ve Llama serilerine SFT uygulanarak elde edilmiştir) tam olarak bu yolun temsilcisidir.
 >
@@ -420,6 +420,8 @@ Bu tek formülde yeni başlayanların sık sorduğu dört soru gizli; hepsini te
 
 ## Pekiştirmeli Öğrenme Algoritmalarının Karşılaştırması
 
+**GRPO (Group Relative Policy Optimization)** DeepSeek tarafından ortaya kondu ve bugün RL eğitiminde en yaygın kullanılan algoritmalardan biridir. Temel fikir, ayrı bir value network eğitmeden aynı problem için üretilen bir rollout grubunu karşılaştırarak göreli advantage'ı kestirmektir.
+
 Önceki tek turlu deneyler RL'in genelleme üstünlüğünü kanıtladı, bir önceki bölüm de RLHF'in tercih optimizasyonu hattını tanıttı. Ancak bu çalışmaların kullandığı somut algoritmalar birbirinden farklıdır ve mevcut seçeneklerin yalnızca bir bölümüdür. Daha karmaşık çok turlu görevlere geçmeden önce, yaygın algoritmaların özelliklerini ve uygun oldukları senaryoları sistemli biçimde gözden geçirmekte fayda var.
 
 > **Okuyucu formüllerin içinde kaybolmadan önce en önemli şeyi söyleyelim.** Bu bölümde epeyce algoritma adı ve formül sıralanıyor, ama bu bölümün ikinci ana hattını unutmayın: **sanayide, hazır RL algoritmalarını (PPO, GRPO vb.) nasıl kullanacağınızı bilmeniz ve doğru olanı seçebilmeniz yeterlidir; başarıyı ya da başarısızlığı asıl belirleyen, algoritmanın kendisi değil veri ve ortamdır.** Bu algoritmalar çoktan veRL, TRL gibi olgun çerçevelerin içine paketlendi; onları çağırmak çoğu zaman birkaç satır yapılandırma değiştirmek demek. Dolayısıyla bu bölümün amacı size türetme yaptırmak değil, "hangi senaryoda hangi algoritma" diye bir seçim haritası kurmanızı sağlamak; formül kısımları (eğitim mühendislerine yönelik) anlaşılmıyorsa atlanabilir, sonrasını okumayı etkilemez. Sonraki bölüm "veri ve ortam neden algoritmadan daha önemli" sorusunu doğrudan yanıtlıyor.
@@ -537,7 +539,7 @@ Algoritma hiç önemli değil demiyoruz; yalnızca sırası daha geride. Makul �
 
 ![Şekil 7-15: Çok Turlu Etkileşimde Credit Assignment](images/fig7-15.svg)
 
-Tek turdan çok tura geçişte karmaşıklık niteliksel bir sıçrama yapar. Politika yalnızca o anki en iyi eylemi seçmekle kalmaz, gelecekteki durum değerini de hesaba katmak zorundadır; yalnızca anlık geri bildirimi işlemekle kalmaz, gecikmeli ödül altında **credit assignment** (katkı payı dağıtımı) da yapmak zorundadır — çok adımlı bir dizide hangi adımın nihai sonuca en çok katkı yaptığına karar vermek. Örneğin bir müşteri hizmetleri Agent'ı 10 turluk diyalogla kullanıcının sorununu çözer ve sonunda iyi bir puan alır — ama bu iyi puan 2. turdaki isabetli soruya mı, yoksa 7. turdaki sabırlı açıklamaya mı yazılmalı? Çok tur bir zorluk daha getirir: **kısmi gözlemlenebilirlik** (Agent tam durumu elde edemez, geçmiş gözlemler üzerinden örtük bir durum temsili kurmak zorundadır).
+Tek turdan çok tura geçişte karmaşıklık niteliksel bir sıçrama yapar. Politika yalnızca o anki en iyi eylemi seçmekle kalmaz, gelecekteki durum değerini de hesaba katmak zorundadır; yalnızca anlık geri bildirimi işlemekle kalmaz, gecikmeli ödül altında **credit assignment** (katkı payı dağıtımı) da yapmak zorundadır — çok adımlı bir dizide hangi adımın nihai sonuca en çok katkı yaptığına karar vermek. Örneğin bir müşteri hizmetleri Agent'ı 10 turluk diyalogla kullanıcının sorununu çözer ve sonunda iyi bir puan alır — ama bu iyi puan 2. turdaki isabetli soruya mı, yoksa 7. turdaki sabırlı açıklamaya mı yazılmalı?
 
 Burada ele alınan çok turlu etkileşimin fiziksel biçimi tam olarak Bölüm 1 ve Bölüm 4'te anlatılan ReAct döngüsüdür — her tur bir **düşün → eyle → gözlemle** yinelemesidir; ödül gecikmesi de "nihai sonucun iyi mi kötü mü olduğuna ancak birkaç tur sonra karar verilebilir" biçimindeki yapısal kısıttan gelir.
 
@@ -595,7 +597,7 @@ Bu yöntemin birkaç kritik üstünlüğü var: genelleme yeteneği güçlüdür
 
 ### Süreç Ödülü vs Sonuç Ödülü: Çok Turlu Görevlerdeki Kritik Seçim
 
-Credit assignment ve kısmi gözlemlenebilirliğin ötesinde, çok turlu görevler bir de **uzun mesafeli bağımlılık** sorunuyla karşılaşır — alt hedef belirleme, araç seçimi gibi erken kararların etkisi ancak onlarca adım sonra ortaya çıkabilir. Bu da ödül tasarımını kritik bir seçimle karşı karşıya bırakır: **süreç ödülü** her adımda geri bildirim verir, credit assignment zorluğunu azaltır, ama insan eliyle konmuş bir tasarım önyargısı getirir ve keşif uzayını kısıtlayabilir; **sonuç ödülü** yalnızca bitişte geri bildirim verir, en geniş keşif özgürlüğünü tanır, ama hem eğitim zorluğu hem örnek ihtiyacı daha yüksektir. Bir benzetmeyle: süreç ödülü, öğretmenin ödevi soru soru düzeltmesi gibidir; öğrenci nerede yanlış yaptığını hemen öğrenir. Sonuç ödülü ise yalnızca dönem sonu sınav notuna bakmak gibidir; öğrencinin çalışma yöntemini keşfetmekte daha fazla özgürlüğü olur, ama geri bildirim çok geç gelir. Ödül fonksiyonu tasarımı, Bölüm 6'da ele alınan değerlendirme ortamı kurulumuyla yakından ilişkilidir — yüksek kaliteli bir otomatik değerlendirme ortamı, RL eğitiminin ön koşuludur.
+Credit assignment'ın ötesinde, çok turlu görevler bir de **uzun mesafeli bağımlılık** sorunuyla karşılaşır — alt hedef belirleme, araç seçimi gibi erken kararların etkisi ancak onlarca adım sonra ortaya çıkabilir. Bu da ödül tasarımını kritik bir seçimle karşı karşıya bırakır: **süreç ödülü** her adımda geri bildirim verir, credit assignment zorluğunu azaltır, ama insan eliyle konmuş bir tasarım önyargısı getirir ve keşif uzayını kısıtlayabilir; **sonuç ödülü** yalnızca bitişte geri bildirim verir, en geniş keşif özgürlüğünü tanır, ama hem eğitim zorluğu hem örnek ihtiyacı daha yüksektir. Bir benzetmeyle: süreç ödülü, öğretmenin ödevi soru soru düzeltmesi gibidir; öğrenci nerede yanlış yaptığını hemen öğrenir. Sonuç ödülü ise yalnızca dönem sonu sınav notuna bakmak gibidir; öğrencinin çalışma yöntemini keşfetmekte daha fazla özgürlüğü olur, ama geri bildirim çok geç gelir. Ödül fonksiyonu tasarımı, Bölüm 6'da ele alınan değerlendirme ortamı kurulumuyla yakından ilişkilidir — yüksek kaliteli bir otomatik değerlendirme ortamı, RL eğitiminin ön koşuludur.
 
 Terim düzeyinde bu iki ödül, iki tür reward model'e karşılık gelir: **süreç ödül modeli (Process Reward Model, PRM)** akıl yürütmenin veya yürütmenin her ara adımını puanlar; temsilci çalışma OpenAI'nin "Let's Verify Step by Step" makalesidir[^ch7-7] — matematiksel akıl yürütme görevlerinde, adım adım insan etiketlemesiyle eğitilen PRM, yalnızca nihai yanıta bakan denetimden belirgin biçimde üstün çıkmıştır. **Sonuç ödül modeli (Outcome Reward Model, ORM)** ise yalnızca nihai sonucu değerlendirir. Daha önce anlatılan RLVR'deki kural doğrulayıcı, ORM'in özel bir hali sayılabilir — "öğrenilmiş puanlama modeli"nin yerine deterministik kurallar konmuştur.
 
@@ -682,24 +684,6 @@ Yani **saf sonuç ödülü, başarı oranının her iki ucunda da "kördür"**. 
 > **Kontrol grubu**: yalnızca sonuç ödülü kullanan standart GRPO.
 >
 > **Beklenen gözlem**: TerminalBench üzerinde (Qwen3-4B, 5 rastgele tohum), episode başına ihlal sayısı saf sonuç ödülündeki 3,71'den 0,66'ya düşüyor (yaklaşık 6 kat), buna karşılık görev başarı oranı gürültü aralığında aşağı yukarı aynı kalıyor — yani "kurala uymak" neredeyse bedavaya elde ediliyor ve üstelik Agent bu durumda daha fazla etkili eylem yapıyor, "az yap az hata yap" taktiğine sığınmıyor. miniF2F cebir sorularında (ilerleme erişilebilir), 0,9 başarı oranına ulaşmak için gereken yineleme sayısı 7,0'den 4,4'e iniyor (4B model); büyük modellerde fark daha da belirgin (30B: 8,5 → 5,4; ayrıca saf sonuç ödülü bazı tohum değerlerinde doğrudan ıraksıyor). Zincirleme dosya işlemi görevinde, "tamamı başarısız grupların" (hiçbir şey öğretmeyen, boşa giden örneklerin) oranı %65'ten %8'e düşüyor. Karşı örnek olarak, "ilerlemenin erişilemez olduğu" yazılım onarımı kurgusunda bütün bir rollout partisi çoğu zaman tek bir testi bile geçemiyor; yoğun ilerleme ödülü her yerde sıfır oluyor ve hiçbir kazanç getirmiyor — bu da "asıl eşik erişilebilirliktir" yargısını doğruluyor.
-
-> **Deney 7-17 ★★: “Erken tamamlama” bad case'lerinden DPO ve GRPO'ya**
->
-> `build_preference_data.py` 24 vakayı trajectory öneki tercih çiftlerine çevirir: eski tamamlandı iddiası rejected, önce doğrulayıp sonra sonuçlandıran eylem chosen. `train_dpo.py` Qwen2.5-7B-Instruct için LoRA-DPO sağlar; isteğe bağlı GRPO gizli kabul testlerini kullanır.
->
-> Sınır kümesindeki doğru karar 3/12’den (25,0%) 11/12’ye (91,7%) çıktı; tamamlanmış görev kümesi 8/8 (100%) kaldı. Serbest üretim fazla temkinli olduğundan ana sonuç sabit karşılaştırmadır, genel üretim başarısı iddiası değildir. Ayrıntılar [`premature-completion-dpo`](../chapter7/premature-completion-dpo/) içindedir.
-
-> **Deney 7-18 ★★: Kapsama duyarlı kıvrımlı tırnak SFT'si**
->
-> Çince düz tırnak bad case'i önce pozitif ve negatif kapsam kuralları içeren bir Skill'e dönüştürülür. Çince düzyazı ve yorumlar kıvrımlı tırnak kullanabilir; İngilizce alıntılar, kod dizeleri, JSON, yollar, tanımlayıcılar ve çalıştırılabilir sözdizimi byte düzeyinde korunmalıdır. Denetlenen veri 10 belge türünü ve 9 programlama dilini, 1024/256/256 train/holdout/sınır örneğini kapsar.
->
-> RTX PRO 6000 üzerindeki Qwen3-8B bf16 LoRA, holdout exact 96,9%, sınır 97,7% ve korunan alan 100% sonuçlarını verdi. Python, JavaScript, Java, Go, Rust, SQL, Shell, YAML ve Markdown 100% olurken JSON 68,8% kaldı; bu nedenle ayrı bir yapılandırılmış veri hattı gerekir.
-
-> **Deney 7-19 ★★: Özel dizeler için exact-copy SFT**
->
-> `old_string` hatası dosya byte'ları, araç dönüşü, Harness serileştirmesi, model çıktısı, tokenizer ve araç eşleşmesi boyunca katmanlı biçimde teşhis edilir. Yalnızca model kaynaklı drift copy-focused SFT'ye alınır. Genişletilmiş corpus 1024/256/256 örnek, çoklu dil bağlamı, hard negative, boşluk, escape, Unicode, zero-width karakter ve tool JSON içerir.
->
-> Qwen3-8B bf16 LoRA holdout byte-exact değerini 37,5%'ten 78,9%'a, sınırı 80,1%'e yükseltti. 512 probe tokenizer denetimi Qwen3/Qwen2.5 için 80,1%, Mistral için 100% round-trip verdi; tokenizer/Harness hataları modelin kopyalama yeteneğinden ayrı raporlanmalıdır.
 
 ## RL ile Tool Calling Öğrenmek
 
@@ -788,6 +772,76 @@ RLVR'e kıyasla OPSD'nin iki temel üstünlüğü var. **Birincisi, artık doğr
 
 Elbette bu paradigmanın sınırları da çok net ve esas olarak öğretmenin yetenek tavanının öğrencinin kendisine kilitli olmasından kaynaklanıyor: **kazancın büyüklüğü, "ayrıcalıklı bilginin ne kadar ek yetenek getirdiğine" bağlıdır.** Model elinde yanıt olmasına rağmen çözüm sürecini anlatamıyorsa (örneğin yanıt, dille açıklanabilir bir akıl yürütmeden değil kaba kuvvet aramasından geliyorsa), öz-damıtmanın sinyal kaynağı olmaz. Mevcut araştırmalar naif OPSD'nin başarısızlık kalıplarını da gözlemledi; örneğin öz-damıtma sırasında model özgün düşünme üslubunu yavaş yavaş kaybediyor ve kararlılık için ek düzenlileştirme gerekiyor[^ch7-16]. "Aynı model, farklı context, birbirine öğretmen ve öğrenci" fikri hâlâ hızla evriliyor, ama "daha güçlü öğretmen yok" biçimindeki yaygın çıkmaza şimdiden bir yol açmış durumda.
 
+## Bad case'lerden Post-Training'e
+
+Bu bölüm, 6. Bölümde açık kalan soruya döner: üretimdeki bad case'lerden oluşturulan değerlendirme verisi post-training girdisine nasıl dönüştürülür? Hata-atıf kayıtları, uçtan uca regresyon görevleri, trajectory-prefix regresyon görevleri ve rubrik puanlarının her biri farklı bir eğitim kullanımına karşılık gelir.
+
+Tablo 7-4. Bölüm 6 değerlendirme verisinin Bölüm 7 eğitim kullanımlarına eşlenmesi
+
+| Bölüm 6 değerlendirme verisi | Bölüm 7 eğitim kullanımı |
+|---|---|
+| Doğrulayıcılı uçtan uca regresyon görevi | RL rollout görevleri ve doğrulanabilir ödüller (RLVR); rejection-sampling fine-tuning (RFT) için örnekleme havuzu |
+| Trajectory-prefix regresyon görevi | DPO tercih çiftleri, karar sınırları için SFT gösterimleri ve On-Policy Distillation öğretmen durumları |
+| Hata-atıf kaydı (ilk hatalı adım ve hata kategorisi) | Süreç denetimi (PRM) için negatif etiketler; RLVP yol cezaları için kurallar |
+| Çok boyutlu rubrik puanları ve human gold set | Vektör ödüllerin boyutları; üretici ödül modelleri (GRM) için eğitim ve kalibrasyon verisi |
+
+### Vaka 1: Coding Agent'ın erken tamamlaması
+
+**Bad case'ten atfa.** Bir Coding Agent testleri çalıştırmadan “tamamlandı” diyebilir, çok hedefli bir görevin yalnızca bir kısmını tamamlayıp kapatabilir veya birkaç başarısızlıktan sonra görevin imkânsız olduğunu ilan edebilir. Kanıt olmadan sonucu açıklamaya hazırlandığı an ilk hatadır; sonraki başarısız testler ve tekrar denemeler sonuçtur. Kullanıcı düzeltmeleri, olumsuz geri bildirim ve sonradan yapılan denetimler bu kategoriyi ortaya çıkarabilir.
+
+**Eğitim verisi.** Agent tamamlandığını söylediğinde uçtan uca regresyon görevi gizli kabul testlerini çalıştırır: geçiş pozitif ödül, başarısızlık negatif ödül alır. Trajectory-prefix görevi erken iddiayı `rejected`, “testleri çalıştır, her kabul koşulunu kontrol et, sonra sonuca var” eylemini `chosen` yapar. Öğretmen tarafından üretilen adaylar belir deterministik doğrulayıcıyla filtrelenir; görev türleri, eksik koşullar ve tamamlanma ifadeleri çeşitlendirilir, sonra küçük bir oran genel talimat verileriyle LoRA eğitimine karıştırılır.
+
+**Değerlendirme.** Tamamlanmamış görevlerin sınır kümesi, gerçekten tamamlanmış görevlerin retention kümesiyle birlikte değerlendirilmelidir. İlki modelin erken durmak yerine doğrulama yapıp yapmadığını, ikincisi normal biçimde sonuçlandırabildiğini ölçer. İkincisi olmazsa model aşırı temkinli hale gelip hiç durmayabilir.
+
+> **Deney 7-17 ★★: “Erken tamamlama” bad case'lerinden DPO**
+>
+> **Deney amacı**: Hata atfından trajectory-prefix regresyon verisine, DPO tercih çiftlerine, 7B LoRA eğitimine ve ayrılmış sınır/retention değerlendirmesine kadar tüm hattı çalıştırmak.
+>
+> **Veri oluşturma**: Eşlik eden proje dört hata türünü kapsayan 24 gerçekçi vaka ve çakışmayan bir holdout kümesi (12 sınır, 8 retention vakası) sağlar. Bu deney eğitim amaçlıdır; üretim verisi daha fazla görev ailesi ve modelin düzenleyemeyeceği ya da yalnızca çalıştırdığını iddia edemeyeceği gizli testler içermelidir.
+
+### Vaka 2: Çince tırnak işaretleri
+
+“Çince makalelerdeki düz tırnakları kıvrımlı tırnaklara çevir” isteği küresel bir değiştirme kuralı değildir. Aynı ASCII tırnağı Çince düzyazı, İngilizce alıntı, Markdown kodu, kod bloğu, yorum, JSON ve yollarda farklı roller taşır. Çince düzyazı ve Çince yorumlar dönüştürülebilir; çalıştırılabilir kod, İngilizce kaynak metin, JSON/schema, yollar, tanımlayıcılar ve belirsiz bölgeler korunmalıdır.
+
+**Bad case'ten atfa.** Harness belgeyi kapsama göre bölmeli, model çıktısını değiştirilebilen ve korunması gereken aralıklarla karşılaştırmalı; Markdown, JSON ve kaynak dil sözdizimi kontrolleri çalıştırmalıdır. İşleme veya serileştirme önce girdiyi değiştiriyorsa sorun Harness'tedir. Model orijinal byte'ları görmesine rağmen korunan tırnağı değiştiriyor veya izin verilen Çince tırnağı atlıyorsa ilk fark bir kapsam seçimi hatasıdır ve post-training verisine dönüştürülebilir.
+
+**Eğitim verisi.** Bir Skill pozitif ve negatif kapsam kurallarını tanımlar. Örnekler kaynak ve hedef metni eşler; Çince düzyazı, iç içe tırnaklar ve Çince yorumları pozitif düzenlemeler, İngilizce metin, literaller, JSON, yollar, satır içi kod ve kod bloklarını korunan negatifler olarak kapsar. Train, holdout ve sınır kümeleri şablon, tür, değişken kombinasyonu ve dile göre ayrılır; SFT öncesinde makine kapıları ve tabakalı insan denetimi uygulanır.
+
+**Değerlendirme.** Hedef tırnak dönüşümü, korunan bölge koruması, hedef dışı düzenleme, sözdizimi geçerliliği ve tüm metin exact match raporlanır. Üretimde aşırı düzenlemeyi yakalamak için zaten doğru belgelerden bir retention kümesi gerekir.
+
+> **Deney 7-18 ★★: Kapsama Duyarlı Kıvrımlı Tırnak SFT'si**
+>
+> **Deney amacı**: LoRA SFT'nin görülmemiş bağlam birleşimlerinde yalnızca izin verilen tırnakları dönüştürmeyi ve korunan sözdizimini korumayı öğretip öğretemediğini sınamak.
+>
+> **Kurulum ve veri**: Qwen3-8B bf16 LoRA, iki epoch ve 256 güncelleme; 16 parça türü, 10 belge türü ve 9 programlama dili; 1.024 train, 256 holdout ve 256 sınır örneği. Skill, etiketleme, kalite kapısı ve regresyon spesifikasyonu olarak kullanılır; 48 tabakalı insan nokta kontrolü yapılır.
+>
+> **Sonuçlar**: Holdout exact taban modeldeki 0%'dan 96,9%'a yükselir, sınır exact 97,7% ve korunan bölge koruması 100% olur. Python, JavaScript, Java, Go, Rust, SQL, Shell, YAML ve Markdown 100% iken JSON 68,8% kalır; bağımsız bir yapılandırılmış veri hattı gerekir.
+
+### Vaka 3: Dosya düzenlemenin sık sık başarısız olması
+
+Coding Agent'lar sıklıkla `edit_file(path, old_string, new_string)` kullanır. Araç `old_string` ile tam eşleştiğinden tek bir boşluk, satır sonu, ters bölü, Unicode birleştirmesi veya seyrek token değişimi bile “old_string not found” hatasına yol açar. Tekrar tekrar denemek bir belirtidir; kök neden olmak zorunda değildir.
+
+**Bad case'ten atfa.** İlk farkın nerede ortaya çıktığını şu zincir boyunca karşılaştırın:
+
+```text
+original file bytes → tool return → Harness serialization → model context
+→ model token output → decoded string → JSON/tool-call parsing → tool matching
+```
+
+Model üretiminden önceki değişiklikler dosya okuyucuya, serileştiriciye veya Harness'e aittir. Tokenizer encode→decode işlemini de ayrı denetleyin. Modelin orijinal byte'ları aldığı ve çıktısının ilk farklı nokta olduğu doğrulanırsa vaka model kopyalama hatası olarak sınıflandırılmalı ve post-training'e gönderilmelidir.
+
+**Eğitim verisi.** Üç doğrulanabilir görev kullanın: kelimesi kelimesine kopyalama, benzer hard negative'ler arasından işaretli hedefi seçme ve tam hedefi `old_string` tool JSON alanına yerleştirme. Uzunlukları, token bileşimlerini ve bağlamları rastgeleleştirin; boşlukları, gerçek satır sonlarını, literal escape'leri, ters bölüleri, Unicode birleşim karakterlerini, Çinceyi ve zero-width karakterleri dahil edin. Seed, uzunluk, token bileşimi ve wrapper bağlamına göre bölme yapın.
+
+**Değerlendirme.** Model byte-exact, code-point-exact, token-exact, ilk fark konumu ve tokenizer round-trip metriklerini uçtan uca araç başarısından ayırın. Doğrudan kopyalama doğru olduğu halde `edit_file` başarısızsa model eğitmek yerine serileştirmeyi veya araç protokolünü düzeltin.
+
+> **Deney 7-19 ★★: Özel Dizeler için Exact-Copy SFT**
+>
+> **Deney amacı**: Model çıktısının ilk farklı katman olduğu doğrulandıktan sonra görülmemiş rastgele dizelerde LoRA SFT'yi sınamak ve tokenization artefaktlarını dışlamak için ayrı bir tokenizer denetimi kullanmak.
+>
+> **Kurulum ve veri**: İki epoch Qwen3-8B bf16 LoRA; `verbatim`, `decoy_copy` ve `tool_json` olmak üzere üç görev, 1.024 train, 256 holdout ve 256 sınır örneği. Üretici tekrarlanabilir rastgele dizeler, hard negative'ler, 10 dil bağlamı, 8 belge türü ve özel boşluk, escape, Unicode, Çince ve zero-width karakterler kullanır.
+>
+> **Sonuçlar**: Holdout byte-exact doğruluğu 37,5%'ten 78,9%'a yükselir, sınır 80,1% olur ve ortalama ilk byte farkı 54,0 ve 54,2'dir. 512 probe'da Qwen3/Qwen2.5 tokenizer round-trip 80,1%, Mistral 100% bulunur; tokenizer ve Harness hataları model kopyalama sonuçlarından ayrı tutulmalıdır.
+
 ## Post-training'in Bütünsel Görünümü ve Pratik İpuçları
 
 Bu bölüm, ön eğitimin "bir sonraki kelimeyi tahmin etme" adımından yola çıkıp uzun bir yol katetti: SFT biçimi sabitler, RL genellemenin önünü açar, çok turlu görevler credit assignment sorununu getirir, ödül tasarımı sonuç ödülünden "sonucu ödüllendir, süreci kısıtla" biçimindeki yol sinyaline uzanır, araç kullanımı ise kombinatoryal patlamayı beraberinde getirir. Bu deneylerin ortak bir izleği var — modelin ne öğrendiği, eğitim sinyalinin ona ne öğrettiğine bağlıdır; sinyalin kalitesini ise esas olarak veri ve ortam belirler, algoritma değil.
@@ -818,6 +872,8 @@ Model post-training'in özü, etkileşim politikasını parametrelere yazmaktır
 SFT ile RL rakip değildir, sıralı bir ilişki içindedir: önce SFT çıktı biçimini kararlı hale getirir (aksi halde RL'in ödül sinyali hesaplanamaz bile), sonra RL bu temel üzerinde genellemeyi öğrenir. "SFT ezberler, RL genelleştirir" bir slogan değil, ölçülebilir bir olgudur.
 Bölümün tamamına yayılan ve her algoritmadan daha çok akılda tutulmaya değer iki tespit daha var. Birincisi, **veri ve ortam algoritmadan daha önemlidir**: hazır RL algoritmalarını kullanmayı bilmeniz yeterli; farkı asıl açan şey simülasyon ortamının gerçekliği ve eğitim verisinin kalitesidir. Gerçek bir ortam kurulamadığında ortamı modelle simüle etmek (araç dönüş değerlerini sentezlemek, ortam dinamiğini simüle etmek) de uygulanabilir bir yoldur, ama simülatörün sapmasının eğitimin tavanı olduğunu unutmayın. Yalnızca yanıtlar elenmekle kalmaz, eğitim verisinin görev dağılımının kendisi de bir optimizasyon nesnesi haline gelebilir. Birçok senaryoda, SFT'nin veri kalitesi yerindeyse RL yapmanıza bile gerek kalmaz. İkincisi, **bugünün RL'inde asıl darboğaz örnek verimliliğidir**: her adımın sinyalini daha yoğun hale getiren On-Policy Distillation ile boşa giden ortam geri bildirimini öğrenilebilir sinyale çeviren doğrulanmış yol cezası RLVP ("sonucu ödüllendir, yolu cezalandır" ve erişilebilir ilerlemenin kısmi ödülüyle tamamı başarısız grupların örneklemelerini kurtarmak), şu an en umut verici görünen iki yön. Ortak noktaları yine aynı cümle: ortamda ve veride zaten var olan, ama saf sonuç ödülü tarafından boşa harcanan bilgiyi modelin öğrenebileceği bir şeye geri çevirmek. Daha güçlü bir öğretmen olmadığında bu fikrin bir öz-damıtma varyantı da var: OPSD, aynı modeli "yanıta bakan öğretmen" ve "yalnızca soruyu gören öğrenci" kimlikleriyle birbirini denetler hale getirir ve token token verilen yoğun sinyali, ödülün doğrulanamadığı görevlere taşır.
 
+Bu bölüm, parametreleri güncelleyerek Agent'ın sürekli evriminin nasıl sağlanacağını yanıtladı. Bir sonraki bölümde parametrelerin Agent'ın öz-evrimi için dört taşıyıcıdan yalnızca biri olduğunu göreceğiz: bilgi, talimatlar, programlar ve parametreler.
+
 [^ch7-1]: Schulman, John and Thinking Machines Lab, "LoRA Without Regret", 2025.
 [^ch7-4]: Ouyang, Long et al., "Training Language Models to Follow Instructions with Human Feedback", OpenAI, 2022.
 [^ch7-5]: Gao, Leo, John Schulman, and Jacob Hilton, "Scaling Laws for Reward Model Overoptimization", OpenAI, 2023.
@@ -837,7 +893,6 @@ Bölümün tamamına yayılan ve her algoritmadan daha çok akılda tutulmaya de
 [^ch7-19]: Zhu, Kaijie, et al. "TermiGen: High-Fidelity Environment and Robust Trajectory Synthesis for Terminal Agents", 2026. arXiv:2602.07274.
 [^ch7-20]: Hua, Zhanbo, et al. "CLI-Universe: Towards Verifiable Task Synthesis Engine for Terminal Agents", 2026. arXiv:2606.22883.
 
-Bu bölüm, parametre güncellemesinde "nasıl eğitilir" sorusunu yanıtladı. Sonraki bölüm model parametrelerini yeniden eksiksiz Agent sisteminin içine yerleştiriyor: parametreler, dört güncelleme taşıyıcısından — bilgi, talimat, program ve parametre — yalnızca biridir ve kendine özgü sorunu, dağıtım trajectory'lerinden güvenilir öğrenme sinyali elde etmek, doğru güncelleme konumunu seçmek ve bütün aday sürümlerin doğrulanmasını, yayımlanmasını ve geri alınmasını yönetmektir. Somut eğitim algoritmaları söz konusu olduğunda Bölüm 8 doğrudan bu bölüme atıf yapacak, konuyu yeniden açmayacak.
 
 ## Düşünce Soruları
 

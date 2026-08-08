@@ -299,7 +299,7 @@ Before getting hands-on with SFT, there is one practical question you cannot avo
 >
 > Distillation can be performed along two dimensions: "large to small" (replacing a large model with a medium or small one to balance cost and quality) and "thinking to non-thinking" (folding explicit CoT into implicit parametric knowledge at the same scale, achieving a 20-30x improvement in response speed). These two are not mutually exclusive and are often used together in production environments. It is important to note that distillation inherits the teacher's boundaries—if the teacher has systematic errors on the long tail of the distribution, the student will further hard-code these errors; if the teacher relies on tools to ensure correctness, simple output distillation will lose the robustness provided by tools. Engineering takeaway: when the product design is stable, the input distribution is predictable, and cost constraints are significant, prompt distillation is an excellent optimization; during exploration or before the task has stabilized, retaining explicit thinking and editable prompts remains central to rapid iteration.
 >
-> **Experiment 7-9 ★★★: Chain of Thought (CoT) Distillation `[Extended Experiment]`**
+> **Experiment 7-9 ★★★: Chain of Thought (CoT) Distillation**
 >
 > Prompt distillation discards the thinking process; CoT distillation does the opposite: it transfers the **complete thinking trajectory** of a strong teacher model to the student model. Distilling CoT from a capable teacher model can enable a student with the same parameter count to recover 70%-80% of the teacher's capabilities. For teams that do not aim to push the frontier of state-of-the-art capabilities but want models they can control themselves, this is the most pragmatic follower strategy. The series of distilled small models open-sourced by DeepSeek-R1 (using R1's thinking trajectories to perform SFT on the Qwen and Llama series) are a representative example of this approach.
 >
@@ -423,6 +423,8 @@ In practice, training often computes this log ratio at each token sampled as $y_
 
 ## Comparison of Reinforcement Learning Algorithms
 
+**GRPO (Group Relative Policy Optimization)** was introduced by DeepSeek and is one of the most commonly used algorithms in RL training today. Its core idea is to estimate relative advantage by comparing a group of rollouts for the same problem, without training a separate value network.
+
 The previous single-turn experiments demonstrated an RL generalization advantage in those controlled settings, and the previous section introduced the preference optimization approach of RLHF. However, the specific algorithms used in these works vary and are just a subset of many options. Before moving on to more complex multi-turn tasks, it is necessary to systematically review the characteristics and applicable scenarios of mainstream algorithms.
 
 > **The most important point first, so you don't get lost in the formulas.** This section lists quite a few algorithm names and equations, but remember Thread Two of this chapter: **in industry, it is enough to know how to use the off-the-shelf RL algorithms (PPO, GRPO, and the like) and to pick the right one; what actually decides success or failure is the data and the environment, not the algorithm.** These algorithms are already packaged in mature frameworks like veRL and TRL; using them usually means changing a few lines of configuration. So the goal here is not to teach you the derivations but to give you a selection map—which algorithm for which scenario. The formula passages (aimed at training engineers) can be skipped without losing the thread. The next section makes the positive case for why data and environment matter more than algorithms.
@@ -540,7 +542,7 @@ Algorithms are not unimportant—they just come later. The sensible order of eff
 
 ![Figure 7-15: Credit Assignment in Multi-Turn Interactions](images/fig7-15.svg)
 
-Moving from single-turn to multi-turn involves a qualitative leap in complexity. The policy must not only choose the optimal action for the current step but also consider the future state value; it must not only handle immediate feedback but also perform **Credit Assignment** under delayed rewards—determining which step in a multi-step sequence contributed most to the final outcome. For example, a customer service Agent solves a user's problem after 10 turns of dialogue and receives a positive review—but should this positive review be attributed to the precise questioning in turn 2 or the patient explanation in turn 7? Multi-turn also introduces another challenge: **Partial Observability** (the Agent cannot obtain the complete state and must construct an implicit state representation from historical observations).
+Moving from single-turn to multi-turn involves a qualitative leap in complexity. The policy must not only choose the optimal action for the current step but also consider the future state value; it must not only handle immediate feedback but also perform **Credit Assignment** under delayed rewards—determining which step in a multi-step sequence contributed most to the final outcome. For example, a customer service Agent solves a user's problem after 10 turns of dialogue and receives a positive review—but should this positive review be attributed to the precise questioning in turn 2 or the patient explanation in turn 7?
 
 The multi-turn interaction discussed here takes the form of the ReAct loop described in Chapters 1 and 4: each turn is one iteration of **Think → Act → Observe**, and the reward delay arises from the structural constraint that "the final outcome can be judged only after multiple turns."
 
@@ -600,7 +602,7 @@ This method has several key advantages: it generalizes well because it learns th
 
 ### Process Reward vs. Outcome Reward: A Key Choice for Multi-Turn Tasks
 
-Beyond credit assignment and partial observability, multi-turn tasks also face the **long-range dependency** problem—the impact of early decisions, such as sub-goal setting or tool selection, may only become apparent dozens of steps later. This presents a key choice in reward design: **Process Reward** provides feedback at every step, reducing the difficulty of credit assignment but introducing human design bias, potentially limiting the exploration space. **Outcome Reward** provides feedback only at the end, offering maximum exploration freedom but requiring higher training difficulty and sample demands. By analogy, process reward is like a teacher grading homework problem by problem, allowing the student to quickly know where they went wrong; outcome reward is like only looking at the final exam score, giving the student more freedom to explore learning methods, but feedback comes very late. Reward function design is closely related to the evaluation environment construction discussed in Chapter 6—a high-quality automatic evaluation environment is a prerequisite for RL training.
+Beyond credit assignment, multi-turn tasks also face the **long-range dependency** problem—the impact of early decisions, such as sub-goal setting or tool selection, may only become apparent dozens of steps later. This presents a key choice in reward design: **Process Reward** provides feedback at every step, reducing the difficulty of credit assignment but introducing human design bias, potentially limiting the exploration space. **Outcome Reward** provides feedback only at the end, offering maximum exploration freedom but requiring higher training difficulty and sample demands. By analogy, process reward is like a teacher grading homework problem by problem, allowing the student to quickly know where they went wrong; outcome reward is like only looking at the final exam score, giving the student more freedom to explore learning methods, but feedback comes very late. Reward function design is closely related to the evaluation environment construction discussed in Chapter 6—a high-quality automatic evaluation environment is a prerequisite for RL training.
 
 Terminologically, these two rewards correspond to two types of reward models: **Process Reward Model (PRM)** scores each intermediate step of reasoning or execution. A representative work is OpenAI's "Let's Verify Step by Step"[^ch7-7]—on mathematical reasoning tasks, PRMs trained with step-by-step human annotations significantly outperformed supervision that only looked at the final answer. **Outcome Reward Model (ORM)** only evaluates the final result. The rule-based verifier in RLVR discussed earlier can be seen as a special case of ORM—replacing the "learned scoring model" with deterministic rules.
 
@@ -687,24 +689,6 @@ To summarize: **Dense signals are useful only when they can restore the within-g
 > **Control Group**: Standard GRPO using only outcome rewards.
 >
 > **Expected Observations**: On Terminal-Bench (Qwen3-4B, 5 random seeds), violations per episode drop from 3.71 with pure outcome rewards to 0.66 (about 6x fewer), while task success rate stays within noise—compliance comes almost free, and the Agent in fact takes *more* effective actions, not fewer; it is not simply "doing less to break less." On miniF2F algebra problems (progress reachable), the number of iterations needed to reach 0.9 success rate drops from 7.0 to 4.4 (4B model), with an even larger gap on larger models (30B: 8.5 → 5.4, and pure outcome rewards diverge on some seeds). On a chained file operation task, the proportion of "all-fail groups" (wasted samples that learn nothing) drops from 65% to 8%. As a counterexample, in a software-repair setting where progress is unreachable, an entire batch of rollouts often cannot pass a single test; the dense progress reward is therefore zero everywhere and provides no benefit, confirming that "reachability is the threshold."
-
-> **Experiment 7-17 ★★: From “Premature Completion” Bad Cases to DPO and GRPO**
->
-> This experiment connects the failures recorded in Chapter 6 to two training paths. `build_preference_data.py` turns 24 premature-completion cases into trajectory-prefix preference pairs: the original completion claim is rejected, while the chosen action verifies first and concludes afterward. `train_dpo.py` provides a LoRA-DPO path for Qwen2.5-7B-Instruct; the optional `train_grpo_optional.py` uses hidden acceptance tests for an online, verifiable-reward comparison.
->
-> Before and after training, the unfinished-task boundary set and completed-task holdout are disjoint. In a fixed comparison between “complete” and “continue verification,” the boundary set improved from 3/12 (25.0%) to 11/12 (91.7%), while the holdout stayed at 8/8 (100%). Open-ended generation became overcautious, so the fixed comparison is the primary result; it is not a claim of higher overall online success. Full receipts and limitations are in [`premature-completion-dpo`](../chapter7/premature-completion-dpo/).
-
-> **Experiment 7-18 ★★: Scope-sensitive curved-quote SFT**
->
-> The Chinese straight-quote bad case is first converted into a Skill with positive and negative scope rules. Chinese prose and Chinese comments may use curved quotes; English quotations, code strings, JSON, paths, identifiers, and executable syntax must remain byte-for-byte unchanged. The corpus is audited across 10 article types and 9 programming languages, with 1,024/256/256 train/holdout/boundary examples.
->
-> On the RTX PRO 6000, Qwen3-8B bf16 LoRA reaches 96.9% exact on the holdout and 97.7% on the boundary set, with 100% protected-region preservation. Python, JavaScript, Java, Go, Rust, SQL, Shell, YAML, and Markdown each reach 100%; JSON remains 68.8%, so structured-data cases need a dedicated track. The result demonstrates that explicit, audited boundaries matter more than simply adding epochs.
-
-> **Experiment 7-19 ★★: Exact-copy SFT for special strings**
->
-> Diagnose `old_string` failures layer by layer: original file bytes, tool return, Harness serialization, model output, tokenizer, and tool matching. Only model-side drift becomes copy-focused SFT data. The expanded corpus contains 1,024/256/256 examples, multiple language contexts, hard negatives, whitespace, escapes, Unicode, zero-width characters, and tool JSON arguments.
->
-> Qwen3-8B bf16 LoRA improves byte-exact accuracy from 37.5% to 78.9% on the holdout and reaches 80.1% on the boundary set. A separate 512-probe audit finds 80.1% encode-decode round-trip for Qwen3 and Qwen2.5 tokenizers, versus 100% for Mistral. Tokenizer/Harness failures must therefore be reported separately from model copying.
 
 ## RL for Learning Tool Calling
 
@@ -793,6 +777,77 @@ Compared with RLVR, OPSD has two core advantages. **First, it no longer depends 
 
 Of course, the boundaries of this paradigm are also clear, stemming mainly from the fact that the teacher's capability ceiling is locked to the student itself: **the size of the gain depends on "how much extra capability the privileged information can bring."** If the model, even with the answer in hand, cannot clearly explain the solution process (for example, when the answer comes from exhaustive search rather than reasoning that can be articulated in language), self-distillation has no source of signal. Existing research has also observed failure modes of naive OPSD—for instance, the model gradually loses its original thinking style during self-distillation and needs extra regularization to stay stable[^ch7-16]. The vision of "the same model, different contexts, teacher and student to each other" is still evolving rapidly, but it has already opened a path for the common predicament of "having no stronger teacher."
 
+## From Bad Cases to Post-Training
+
+This section returns to the question left by Chapter 6: how can evaluation data built from production bad cases become post-training input? Failure-attribution records, end-to-end regression tasks, trajectory-prefix regression tasks, and rubric scores each map to a different training use.
+
+Table 7-4. Mapping Chapter 6 evaluation data to Chapter 7 training uses
+
+| Chapter 6 evaluation data | Chapter 7 training use |
+|---|---|
+| End-to-end regression task with a verifier | RL rollout tasks and verifiable rewards (RLVR); the sampling pool for rejection-sampling fine-tuning (RFT) |
+| Trajectory-prefix regression task | DPO preference pairs, SFT demonstrations for decision boundaries, and teacher states for On-Policy Distillation |
+| Failure-attribution record (first erroneous step and error category) | Negative labels for process supervision (PRM); rules for RLVP path penalties |
+| Multi-dimensional rubric scores and human gold set | Dimensions of vector rewards; training and calibration data for generative reward models (GRM) |
+
+### Case 1: Coding Agent premature completion
+
+**From bad case to attribution.** A Coding Agent may claim “done” before running tests, close a multi-objective task after completing only part of it, or declare a task impossible after a few failures. The first error is the decision boundary where it prepares to conclude without evidence; later failed tests and retries are consequences. User corrections, negative feedback, and post-hoc audits can all expose this category.
+
+**Training data.** An end-to-end regression task runs hidden acceptance tests when the Agent claims completion: pass gives positive reward and failure gives negative reward. A trajectory-prefix task turns the premature claim into `rejected` and “run tests, check every acceptance condition, then conclude” into `chosen`. Teacher-generated candidates are filtered by a deterministic verifier, and task types, missing conditions, and completion wording are varied before mixing a small proportion into general instruction data for LoRA.
+
+**Evaluation.** The unfinished-task boundary set must be evaluated together with a retention set of genuinely completed tasks. The first checks whether the model verifies instead of stopping early; the second checks that it can still conclude normally. Otherwise the model may become overcautious and never stop.
+
+> **Experiment 7-17 ★★: From “Premature Completion” Bad Cases to DPO**
+>
+> **Experiment goal**: Run the complete pipeline from failure attribution to trajectory-prefix regression data, DPO preference pairs, 7B LoRA training, and separate boundary/retention evaluation.
+>
+> **Data construction**: The accompanying project provides 24 realistic cases covering four failure types and a disjoint held-out set (12 boundary cases and 8 retention cases). The experiment is intentionally educational; production data should cover more task families and use hidden tests that the model cannot edit or merely claim to have run.
+
+### Case 2: Chinese quotation marks
+
+A request to “convert straight quotes in Chinese articles to curly quotes” is not a global replacement rule. The same ASCII quote has different roles in Chinese prose, English quotations, Markdown code, code blocks, comments, JSON, and paths. Chinese prose and Chinese comments may be converted; executable code, English source text, JSON/schema, paths, identifiers, and ambiguous regions must be preserved.
+
+**From bad case to attribution.** The Harness should segment the document by scope, compare the model output with allowed and protected spans, and run Markdown, JSON, and source-language syntax checks. If rendering or serialization changes the input first, the problem belongs to the Harness. If the model sees the original bytes but edits a protected quote or misses an allowed Chinese quote, the first difference is a scope-selection error suitable for post-training.
+
+**Training data.** A Skill defines positive and negative scope rules. Samples pair source and target text, cover Chinese prose, nested quotes, and Chinese comments as positive edits, and cover English text, literals, JSON, paths, inline code, and code blocks as protected negatives. Train, holdout, and boundary sets are separated by templates, genres, variable combinations, and languages; machine gates and stratified manual audits run before SFT.
+
+**Evaluation.** Report target-quote conversion, protected-region preservation, non-target edits, syntax validity, and whole-text exact match. A retention set of already-correct documents is needed in production to catch over-editing.
+
+> **Experiment 7-18 ★★: Scope-Sensitive Curly-Quote SFT**
+>
+> **Experiment goal**: Test whether LoRA SFT teaches the model to convert only permitted quotes and preserve protected syntax on unseen context combinations.
+>
+> **Setup and data**: Qwen3-8B bf16 LoRA, two epochs and 256 updates; 16 fragment types, 10 article genres, and 9 programming languages; 1,024 train, 256 holdout, and 256 boundary examples. The Skill is used as the labeling, quality-gate, and regression specification, with 48 stratified manual spot checks.
+>
+> **Results**: Holdout exact rises from 0% for the base model to 96.9%, boundary exact is 97.7%, and protected-region preservation is 100%. Python, JavaScript, Java, Go, Rust, SQL, Shell, YAML, and Markdown reach 100%; JSON remains 68.8% and needs an independent structured-data track.
+
+### Case 3: Frequent file-edit failures
+
+Coding Agents often use `edit_file(path, old_string, new_string)`. The tool matches `old_string` exactly, so one changed byte—a space, newline, backslash, Unicode composition, or low-frequency token—causes “old_string not found.” Repeated retries are a symptom, not necessarily the root cause.
+
+**From bad case to attribution.** Compare the first difference along this chain:
+
+```text
+original file bytes → tool return → Harness serialization → model context
+→ model token output → decoded string → JSON/tool-call parsing → tool matching
+```
+
+Attribute changes before model generation to the file reader, serializer, or Harness. Audit tokenizer encode→decode separately. Only when the model receives the original bytes and its output is the first divergent point should the case be classified as a model copying failure and sent to post-training.
+
+**Training data.** Use three verifiable tasks: verbatim copying, choosing the marked target among similar hard negatives, and placing the exact target into the `old_string` tool JSON field. Randomize lengths, token combinations, and contexts, including spaces, real newlines, literal escapes, backslashes, Unicode combining characters, Chinese, and zero-width characters. Split by seed, length, token composition, and wrapper context.
+
+**Evaluation.** Separate model byte-exact, code-point-exact, token-exact, first-difference position, and tokenizer round-trip metrics from end-to-end tool success. If direct copying is correct but `edit_file` still fails, fix serialization or the tool protocol instead of training the model.
+
+> **Experiment 7-19 ★★: Exact-Copy SFT for Special Strings**
+>
+> **Experiment goal**: After confirming that the model output is the first divergent layer, test LoRA SFT on unseen random strings and use a separate tokenizer audit to rule out tokenization artifacts.
+>
+> **Setup and data**: Qwen3-8B bf16 LoRA for two epochs; 1,024 train, 256 holdout, and 256 boundary samples across `verbatim`, `decoy_copy`, and `tool_json`. The generator uses reproducible random strings, hard negatives, 10 language contexts, 8 article genres, and special whitespace, escapes, Unicode, Chinese, and zero-width characters.
+>
+> **Results**: Holdout byte-exact accuracy improves from 37.5% to 78.9%, boundary reaches 80.1%, and mean first-byte difference is 54.0 and 54.2. On 512 probes, Qwen3/Qwen2.5 tokenizer round-trip is 80.1% versus 100% for Mistral; tokenizer and Harness failures must remain separate from model-copy results.
+
+
 ## The Complete Post-Training Landscape and Practical Tips
 
 Starting from pre-training's objective of "predicting the next token," this chapter has traced a long path: SFT can efficiently learn formats and protocols; in this chapter's comparisons, outcome-based RL improved out-of-distribution generalization; multi-turn tasks introduce the credit-assignment problem; reward design extends from outcome rewards to path signals that reward the outcome while constraining the process; and tool use brings combinatorial explosion. One thread runs through all these experiments—what a model learns depends on what the training signal teaches it, and the quality of that signal is set chiefly by the data and the environment, not the algorithm.
@@ -822,6 +877,8 @@ The essence of model post-training is writing interaction strategies into parame
 
 SFT and RL are not so much competing alternatives as methods that are often combined sequentially. When structured output is unstable, SFT can first stabilize the format so that the RL reward signal can be computed reliably; RL can then explore strategies and improve out-of-distribution performance. "SFT memorizes, RL generalizes" summarizes a tendency observed in this chapter's controlled experiments, not a law that holds regardless of the data, model, reward, and environment.
 Two judgments run through this chapter and are worth remembering more than any algorithm. First, **data and environment matter more than algorithms**: it is enough to know how to use off-the-shelf RL algorithms; what truly separates teams is the fidelity of the simulation environment and the quality of the training data. When a real environment cannot be built, using a model to simulate the environment (synthesizing tool return values, simulating environment dynamics) is also a viable route—but remember that the simulator's bias is the ceiling of training. Not only can answers be filtered; the task distribution of the training data can itself become an optimization target. In many scenarios, if the SFT data is of sufficiently high quality, RL may not be needed at all. Second, **RL's main bottleneck today is sample efficiency**: the two directions that currently look most promising are On-Policy Distillation, which densifies the signal at every step, and the verified path penalty RLVP, which turns wasted environment feedback into learnable signal ("reward the outcome, penalize the path," with partial credit for reachable progress to salvage the samples in all-fail groups). What they share is still the same idea—taking information that already exists in the environment and the data, but that pure outcome rewards squander, and turning it back into something the model can learn. When no stronger teacher is available, this line of thinking also has a self-distillation variant: OPSD lets the same model supervise itself in two roles—an "answer-reading teacher" and a "student who sees only the problem"—bringing token-by-token dense signals to tasks whose rewards are not verifiable.
+
+This chapter answers how updating parameters can enable continuous Agent evolution. In the next chapter, we will see that parameters are only one of four carriers of Agent self-evolution: knowledge, instructions, programs, and parameters.
 
 [^ch7-1]: Schulman, John and Thinking Machines Lab, “LoRA Without Regret”, 2025.
 [^ch7-4]: Ouyang, Long et al., “Training Language Models to Follow Instructions with Human Feedback”, OpenAI, 2022.
