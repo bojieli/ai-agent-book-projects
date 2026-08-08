@@ -1,0 +1,101 @@
+{
+  "experiment": "exact-copy-sft",
+  "model": "Qwen/Qwen3-8B",
+  "model_open_weight": true,
+  "hardware": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+  "data_sha256": {
+    "boundary.jsonl": "25a1dab24c0ead98ba773648abb99143abdba21d2403127210656ba65417ccf7",
+    "eval.jsonl": "3ad8d96b12fc9c5bb1f0e3b040619be2b87b6d686027e13eed8783fb85598709",
+    "train.jsonl": "a56d5acc6cd24b8f6180f1043e01c84ff9d5d1351dfb3a323615fe442c8103ad"
+  },
+  "training_receipt": "validation/train_20260808T035121Z/training_receipt.json",
+  "evaluations": {
+    "eval_adapted_boundary.json": {
+      "label": "adapted",
+      "split": "boundary",
+      "count": 256,
+      "byte_exact": 0.80078125,
+      "mean_first_diff_byte": 54.19921875
+    },
+    "eval_adapted_eval.json": {
+      "label": "adapted",
+      "split": "eval",
+      "count": 256,
+      "byte_exact": 0.7890625,
+      "mean_first_diff_byte": 54.01953125
+    },
+    "eval_base_eval.json": {
+      "label": "base",
+      "split": "eval",
+      "count": 256,
+      "byte_exact": 0.375,
+      "mean_first_diff_byte": 29.015625
+    }
+  },
+  "tokenizer_audit": {
+    "probe_count": 512,
+    "tokenizers": {
+      "Qwen/Qwen3-8B": {
+        "vocab_size": 151669,
+        "roundtrip_rate": 0.80078125,
+        "mean_tokens": 34.603515625,
+        "failures": [
+          "eval-004",
+          "eval-009",
+          "eval-014",
+          "eval-019",
+          "eval-024",
+          "eval-029",
+          "eval-034",
+          "eval-039",
+          "eval-044",
+          "eval-049",
+          "eval-054",
+          "eval-059",
+          "eval-064",
+          "eval-069",
+          "eval-074",
+          "eval-079",
+          "eval-084",
+          "eval-089",
+          "eval-094",
+          "eval-099"
+        ]
+      },
+      "Qwen/Qwen2.5-0.5B-Instruct": {
+        "vocab_size": 151665,
+        "roundtrip_rate": 0.80078125,
+        "mean_tokens": 34.603515625,
+        "failures": [
+          "eval-004",
+          "eval-009",
+          "eval-014",
+          "eval-019",
+          "eval-024",
+          "eval-029",
+          "eval-034",
+          "eval-039",
+          "eval-044",
+          "eval-049",
+          "eval-054",
+          "eval-059",
+          "eval-064",
+          "eval-069",
+          "eval-074",
+          "eval-079",
+          "eval-084",
+          "eval-089",
+          "eval-094",
+          "eval-099"
+        ]
+      },
+      "mistralai/Mistral-7B-v0.1": {
+        "vocab_size": 32000,
+        "roundtrip_rate": 1.0,
+        "mean_tokens": 39.26171875,
+        "failures": []
+      }
+    }
+  },
+  "manual_audit": "validation/manual_audit.md"
+}

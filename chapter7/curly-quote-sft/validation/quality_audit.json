@@ -1,0 +1,19 @@
+{
+  "splits": {
+    "train": {
+      "rows": 1024,
+      "errors": {}
+    },
+    "eval": {
+      "rows": 256,
+      "errors": {}
+    },
+    "boundary": {
+      "rows": 256,
+      "errors": {}
+    }
+  },
+  "total_rows": 1536,
+  "total_errors": 0,
+  "status": "pass"
+}

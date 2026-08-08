@@ -1,0 +1,21 @@
+{
+  "experiment": "7-19-exact-copy-sft",
+  "run": "train_20260808T035121Z",
+  "model": "Qwen/Qwen3-8B",
+  "data_sha256": "a56d5acc6cd24b8f6180f1043e01c84ff9d5d1351dfb3a323615fe442c8103ad",
+  "train_examples": 1024,
+  "config": {
+    "model": "Qwen/Qwen3-8B",
+    "epochs": 2,
+    "lr": 0.0001,
+    "batch_size": 2,
+    "grad_accum": 4,
+    "max_length": 768,
+    "seed": 719,
+    "output": "/home/ubuntu/ai-agent-book/chapter7/exact-copy-sft/output/adapter"
+  },
+  "cuda": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+  "started_at": "2026-08-08T03:51:21.085606+00:00",
+  "finished_at": "2026-08-08T03:53:11.442422+00:00",
+  "final_loss": 1.6291709243887453e-06
+}

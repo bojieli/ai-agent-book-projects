@@ -561,7 +561,7 @@ RLVP 的关键不是“奖励越密越好”，而是能否补回组内差异。
 >
 > `generate_data.py` 从带片段类型的文档蓝图渲染训练、留出和边界样本；`train_sft.py` 使用开源 `Qwen/Qwen3-8B` 的 bf16 LoRA SFT，`evaluate.py` 逐条报告目标引号转换、保护区域保持、非目标编辑和结构化语法完整性。评估不得只看弯引号召回率，否则“把所有引号都改掉”的错误策略可能得到高分。
 >
-> 本机 RTX PRO 6000 的真实运行中，使用 512 条训练、128 条留出和 128 条边界合成样本，训练 2 个 epoch、128 次 LoRA 更新。基座留出集 exact 为 0%；适配后留出集与边界集 exact 均为 71.1%，弯引号数量匹配率也均为 71.1%，动态识别的保护区域保持率均为 100%。按类别看，英文、嵌套引号、Python、普通中文为 100%，混合说明为 0%，JSON 为 68.8%，代码注释为 0%。这些结果只证明受控 SFT 能改善部分作用域格式行为，并同时暴露剩余边界缺口，不能替代代码解析器和生产格式验证。完整训练回执见 [`curly-quote-sft`](../chapter7/curly-quote-sft/)。
+> 本机 RTX PRO 6000 的真实运行中，先对 1024 条训练、256 条留出和 256 条边界合成样本做分层人工抽查与机器门禁，再训练 2 个 epoch、256 次 LoRA 更新。基座留出集 exact 为 0%；把“注释中的中文引号改弯、代码字面量和语法保持不变”的正反规则显式写入 Skill 后，适配后留出集 exact 为 96.9%，边界集为 97.7%，动态保护区域保持率均为 100%。Python、JavaScript、Java、Go、Rust、SQL、Shell、YAML、Markdown 均达到 100%，JSON 为 68.8%。这说明高质量合成数据和明确边界比简单增加 epoch 更关键；JSON 仍需独立结构化数据轨道，且生产环境不能去掉解析器和语法验证。完整训练回执与人工审计见 [`curly-quote-sft`](../chapter7/curly-quote-sft/)。
 
 > **实验 7-19 ★★：从特殊字符串 bad case 到精确复制 SFT**
 >
@@ -569,7 +569,7 @@ RLVP 的关键不是“奖励越密越好”，而是能否补回组内差异。
 >
 > `generate_data.py` 生成可复核的随机字符串和 hard negative；`train_sft.py` 用 `Qwen/Qwen3-8B` 的 LoRA SFT 对复制目标提供逐 token 监督；`evaluate.py` 报告 byte-exact accuracy、首次分歧位置和工具 JSON 的完整匹配。DPO 和二元 RLVR 不是主路线，因为一个 token 的错误会被序列级偏好或稀疏终点奖励稀释；生产训练还应混入 copy replay，防止后续后训练遗忘复制能力。
 >
-> 本机 RTX PRO 6000 的真实运行中，使用 512 条训练、128 条留出和 128 条边界样本，训练 2 个 epoch。未见留出集 byte-exact accuracy 从基座的 39.1% 提升到 80.5%，独立边界集为 79.7%，平均首次字节分歧位置为 54.2 和 54.0。这是模型层复制能力的受控结果；若直接复述正确而工具仍失败，应修复 tokenizer、序列化或编辑接口。完整训练回执见 [`exact-copy-sft`](../chapter7/exact-copy-sft/)。
+> 本机 RTX PRO 6000 的真实运行中，使用 1024 条训练、256 条留出和 256 条边界样本，训练 2 个 epoch。byte-exact accuracy 从基座留出集 37.5% 提升到 78.9%，独立边界集为 80.1%，平均首次字节分歧位置为 54.0 和 54.2。另用 512 条探针比较 Qwen3、Qwen2.5 和 Mistral tokenizer：Qwen3/Qwen2.5 的无损 round-trip 为 80.1%，Mistral 为 100%。因此必须把 tokenizer round-trip 与模型复制能力分开诊断；若模型层正确而工具仍失败，应修复序列化或编辑接口。完整回执见 [`exact-copy-sft`](../chapter7/exact-copy-sft/)。
 
 ## 蒸馏：提升样本效率
 
