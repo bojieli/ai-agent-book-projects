@@ -133,6 +133,8 @@ A Skill-tanulás ugyanezt az elvet követi, de lokalizáltabb hatókörrel. Egy 
 >
 > A befejezetlen feladatok és a normál szövegek külön készletén együtt mérjük a felismerést, a téves riasztást és a szabályszám növekedését. Az első valós futás 0/8 felismerést és 7/8 téves riasztást adott; külső szűrés és determinisztikus tartalékút után 8/8, 0/8 és 21 jelöltből 8 szabály lett. Megvalósítás: [`ai-style-skill`](../chapter8/ai-style-skill/).
 
+A görbe idézőjelek esete azt mutatja, hogy a Skillnek adat-szerződéssé, nem globális csere-szabállyá kell válnia: az SFT előtt a szintetikus példákat műfaj, hatókör és programnyelv szerint rétegezzük, kód/JSON/védett-rész kapukkal és kézi audittal ellenőrizzük. A pontos másolási esetben külön regressziós réteg a tokenizer encode→decode round-trip, a modell byte-exact másolása, a Harness sorosítása és az eszközillesztés.
+
 > **8-3. ★★ kísérlet: Rendszer Promptok optimalizálása sikertelen trajektóriákból**
 >
 > "Cél:" Egy légitársasági ügyfélszolgálati ágens tanítása olyan trajektóriákból, ahol túl gyorsan eszkalál, amikor egy felhasználó megkérdőjelez egy irányelvet, miközben bizonyítja, hogy az új szabály nem töri el a régebbi forgatókönyveket, amelyek valóban eszkalációt igényelnek.

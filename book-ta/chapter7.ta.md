@@ -684,6 +684,18 @@ O என்பது அசல் **விளைவு வெகுமதி** (
 >
 > Boundary set-இல் சரியான முடிவு 3/12 (25.0%) இலிருந்து 11/12 (91.7%) ஆக உயர்ந்தது; முடிந்த task holdout 8/8 (100%) ஆகவே இருந்தது. Free generation மிகுந்த எச்சரிக்கையாக மாறியதால் fixed comparison தான் முதன்மை முடிவு; online முழு வெற்றி உயர்ந்தது என்று கூற முடியாது. [`premature-completion-dpo`](../chapter7/premature-completion-dpo/) பார்க்கவும்.
 
+> **சோதனை 7-18 ★★: scope-sensitive வளைந்த மேற்கோள் SFT**
+>
+> சீன நேரடி மேற்கோள் bad case முதலில் positive/negative scope விதிகளைக் கொண்ட Skill ஆக மாற்றப்படுகிறது. சீன உரை மற்றும் comments-இல் வளைந்த மேற்கோள் பயன்படுத்தலாம்; English quote, code string, JSON, path, identifier மற்றும் executable syntax byte-by-byte மாறாமல் இருக்க வேண்டும். 10 கட்டுரை வகைகள் மற்றும் 9 programming language-களில் 1024/256/256 train/holdout/boundary தரவு தணிக்கை செய்யப்பட்டது.
+>
+> RTX PRO 6000 இல் Qwen3-8B bf16 LoRA holdout exact 96.9%, boundary 97.7%, protected-region preservation 100% பெற்றது. Python, JavaScript, Java, Go, Rust, SQL, Shell, YAML, Markdown அனைத்தும் 100%; JSON 68.8% என்பதால் தனி structured-data track தேவை.
+
+> **சோதனை 7-19 ★★: special string-களுக்கான exact-copy SFT**
+>
+> `old_string` தோல்வியை file byte, tool return, Harness serialization, model output, tokenizer மற்றும் tool matching என்று அடுக்காகக் கண்டறிய வேண்டும். Model உருவாக்கிய drift மட்டுமே copy-focused SFT தரவாகும். விரிவாக்கப்பட்ட corpus-ல் 1024/256/256 sample, பல language context, hard negative, whitespace, escape, Unicode, zero-width character மற்றும் tool JSON உள்ளன.
+>
+> Qwen3-8B bf16 LoRA holdout byte-exact-ஐ 37.5% இலிருந்து 78.9% ஆகவும் boundary-ஐ 80.1% ஆகவும் உயர்த்தியது. 512 probe tokenizer audit-ல் Qwen3/Qwen2.5 round-trip 80.1%, Mistral 100%; tokenizer/Harness பிழைகளை model copy திறனிலிருந்து தனியாக அறிக்கையிட வேண்டும்.
+
 ## கருவி அழைப்பைக் கற்றுக்கொள்வதற்கான RL
 
 முந்தைய பல-சுற்று சோதனைகளில், ஏஜெண்டின் செயல் இடம் நகர்த்துதல் மற்றும் கவனித்தல் போன்ற உள்ளமைக்கப்பட்ட செயல்பாடுகளுக்கு மட்டுப்படுத்தப்பட்டிருந்தது. நிஜ உலக ஏஜெண்டுகள் பல்வேறு வெளிப்புற கருவிகளையும் அழைக்க வேண்டும்—தேடுபொறிகள், குறியீடு மொழிபெயர்ப்பாளர்கள், ஆவண பாகுபடுத்திகள் போன்றவை—இது RL பயிற்சிக்கு புதிய சவால்களை அறிமுகப்படுத்துகிறது.

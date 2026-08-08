@@ -683,6 +683,18 @@ En resumen: **Las señales densas solo son efectivas cuando aportan la varianza 
 >
 > Los conjuntos límite (tarea incompleta) y de reserva (tarea completa) no se solapan. En la comparación fija «completar» frente a «seguir verificando», el conjunto límite pasó de 3/12 (25,0 %) a 11/12 (91,7 %), mientras que la reserva se mantuvo en 8/8 (100 %). La generación libre se volvió demasiado cautelosa; por eso la comparación fija es el resultado principal y no una afirmación de mejora global en producción. Véanse los recibos en [`premature-completion-dpo`](../chapter7/premature-completion-dpo/).
 
+> **Experimento 7-18 ★★: SFT de comillas curvas sensible al ámbito**
+>
+> El bad case de las comillas rectas chinas se convierte primero en una Skill con reglas positivas y negativas de ámbito. La prosa y los comentarios chinos pueden usar comillas curvas; las citas inglesas, cadenas de código, JSON, rutas, identificadores y sintaxis ejecutable deben permanecer byte a byte sin cambios. El corpus se audita en 10 géneros y 9 lenguajes, con 1.024/256/256 muestras de entrenamiento/reserva/borde.
+>
+> En la RTX PRO 6000, LoRA bf16 de Qwen3-8B alcanza 96,9 % exacto en reserva y 97,7 % en borde, conservando el 100 % de las regiones protegidas. Python, JavaScript, Java, Go, Rust, SQL, Shell, YAML y Markdown llegan al 100 %; JSON queda en 68,8 %, por lo que necesita una pista estructurada específica.
+
+> **Experimento 7-19 ★★: SFT de copia exacta para cadenas especiales**
+>
+> Los fallos de `old_string` se diagnostican por capas: bytes del archivo, respuesta de la herramienta, serialización del Harness, salida del modelo, tokenizer y coincidencia final. Solo el desvío producido por el modelo se convierte en datos de SFT. El corpus ampliado contiene 1.024/256/256 muestras, varios contextos de lenguaje, hard negatives, espacios, escapes, Unicode, caracteres de ancho cero y argumentos JSON.
+>
+> LoRA bf16 de Qwen3-8B mejora la exactitud byte-exacta del 37,5 % al 78,9 % en reserva y alcanza 80,1 % en el borde. Una auditoría independiente de 512 sondas obtiene 80,1 % de round-trip en Qwen3/Qwen2.5 frente a 100 % en Mistral; los fallos del tokenizer o del Harness deben informarse separados de la copia del modelo.
+
 ## RL para el Aprendizaje de Llamada a Herramientas
 
 En los experimentos multiturno anteriores, el espacio de acciones del Agente se limitaba a operaciones internas como desplazarse u observar. Los Agentes reales deben invocar herramientas externas (motores de búsqueda, intérpretes de código, procesadores de documentos), lo que introduce nuevos desafíos en el entrenamiento de RL.
