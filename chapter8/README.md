@@ -15,8 +15,8 @@
 | 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | 实验 8-5：真实 Coding Agent 从重复故障生成补丁，并与确定性候选、故意过宽的反例通过同一回归/灰度/回滚发布门；[证据](self-modifying-agent/validation/latest.json)保留接受与拒绝历史 |
 | 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | 把整本书和源码交给 Hermes；它读完后选择一项改进，亲手修改自己，并把每次 Reviewer 的退回变成下一轮学习，直到通过 |
 | 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | 实验 8-7：static、append-only、evolving 三臂 × 3 seeds × 14 任务共 126 次真实调用；[证据](self-evolution-eval/validation/latest.json)保留迁移、规则替换、保持与配对统计 |
-| 8-8 | [harness-safety-gate](harness-safety-gate/) | 🚧 | 实验 8-8：用户纠正/点踩/事后审计触发"高风险调用确认门禁"候选，经 AST 静态检查与边界/保留集回放门槛；离线路径与测试已通过，真实 Coding Agent 验收待运行 |
-| 8-9 | [ai-style-skill](ai-style-skill/) | 🚧 | 实验 8-9：20 条"AI 味"纠正反馈提炼为 8 条可检查写作规则并生成 Skill；离线 boundary 检出 8/8、retention 误伤 0/8、21 条候选合并为 8 条，真实 LLM 提炼/judge/改写验收待运行 |
+| 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | 实验 8-8：用户纠正/点踩/事后审计触发"高风险调用确认门禁"候选，经 AST 静态检查、未完成任务回放和正常操作回放；确定性候选通过，真实 `gpt-4o-mini` 候选因检查失败被安全拒绝，整体验收通过 |
+| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | 实验 8-9：20 条"AI 味"纠正反馈提炼为 8 条可检查写作规则并生成 Skill；真实 `gpt-4o-mini` 只能提交候选，模型外筛选与确定性回退后，未完成任务集检出 8/8、正常文本保留集误伤 0/8，21 条候选合并为 8 条 |
 
 以上实验都保留无需 API Key 的离线入口和单元测试用于预检；表中 ✅ 来自各目录保存的真实模型、真实轨迹或真实浏览器规范证据，不由离线机制演示代替。历史数值或定性主张未复现时，证据按负结果如实记录。
 

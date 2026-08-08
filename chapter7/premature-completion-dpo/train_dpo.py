@@ -1,8 +1,9 @@
 """DPO 训练脚本（实验 7-17 主线，需要单卡 GPU）。
 
 默认配置面向单卡：bf16、gradient checkpointing、LoRA r=16 alpha=32、
-per_device_batch_size=1、gradient_accumulation 16、learning_rate 5e-6、
-beta 0.1、1 epoch。训练产物：output/adapter/（仅 LoRA adapter），
+per_device_batch_size=1、gradient_accumulation 2、learning_rate 3e-5、
+beta 0.1、4 epochs。小数据集使用较小的累积步数，确保确实有足够的更新步；可用
+`--epochs`、`--gradient-accumulation` 和 `--learning-rate` 覆盖。训练产物：output/adapter/（仅 LoRA adapter），
 训练回执 validation/<run>/training_receipt.json（配置、数据哈希、时间戳）。
 
 --smoke 模式只做数据加载、tokenizer、模型前向的一次性检查，不训练，
@@ -84,16 +85,15 @@ def train(args) -> None:
     training_args = DPOConfig(
         output_dir=str(args.output_dir),
         beta=0.1,
-        learning_rate=5e-6,
-        num_train_epochs=1,
+        learning_rate=args.learning_rate,
+        num_train_epochs=args.epochs,
         per_device_train_batch_size=1,
-        gradient_accumulation_steps=16,
+        gradient_accumulation_steps=args.gradient_accumulation,
         gradient_checkpointing=True,
         bf16=True,
         logging_steps=1,
         save_strategy="no",
         report_to=[],
-        max_prompt_length=1024,
         max_length=1536,
         seed=args.seed,
     )
@@ -122,15 +122,19 @@ def train(args) -> None:
         "data_sha256": sha256_file(data_path),
         "pair_count": len(dataset),
         "config": {
-            "beta": 0.1, "learning_rate": 5e-6, "epochs": 1,
+            "beta": 0.1, "learning_rate": args.learning_rate, "epochs": args.epochs,
             "lora_r": 16, "lora_alpha": 32,
-            "per_device_batch_size": 1, "gradient_accumulation": 16,
+            "per_device_batch_size": 1, "gradient_accumulation": args.gradient_accumulation,
             "bf16": True, "gradient_checkpointing": True, "seed": args.seed,
         },
         "started_at": started.isoformat(),
         "finished_at": finished.isoformat(),
         "adapter_dir": str(adapter_dir.relative_to(ROOT)),
-        "training_loss": trainer.state.log_history[-1].get("loss") if trainer.state.log_history else None,
+        "training_loss": next(
+            (entry.get("loss") for entry in reversed(trainer.state.log_history)
+             if entry.get("loss") is not None),
+            None,
+        ),
     }
     (receipt_dir / "training_receipt.json").write_text(
         json.dumps(receipt, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -148,6 +152,12 @@ def main() -> None:
     parser.add_argument("--data", default=str(DATA_PATH), help="preference_pairs.jsonl 路径")
     parser.add_argument("--output-dir", default=str(ADAPTER_DIR), help="adapter 输出目录")
     parser.add_argument("--seed", type=int, default=717)
+    parser.add_argument("--epochs", type=float, default=4,
+                        help="训练轮数；小数据演示默认 4 轮，避免只有一两个更新步")
+    parser.add_argument("--gradient-accumulation", type=int, default=2,
+                        help="梯度累积步数；24 条演示数据默认设为 2")
+    parser.add_argument("--learning-rate", type=float, default=3e-5,
+                        help="LoRA 学习率；小数据演示默认 3e-5")
     parser.add_argument("--smoke", action="store_true", help="只做数据/tokenizer/前向检查，不训练")
     parser.add_argument("--smoke-model", default="Qwen/Qwen2.5-0.5B-Instruct",
                         help="smoke 模式用的小模型（CPU 可前向）")

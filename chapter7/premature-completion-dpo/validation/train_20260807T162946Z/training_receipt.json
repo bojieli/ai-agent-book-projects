@@ -1,0 +1,24 @@
+{
+  "experiment": "7-17 premature-completion-dpo",
+  "run": "train_20260807T162946Z",
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "data": "output/preference_pairs.jsonl",
+  "data_sha256": "4559e2bae75a7e71c5c59f7b327a8b59ea1c44ce732ec08d64a50c71a42e03a6",
+  "pair_count": 32,
+  "config": {
+    "beta": 0.1,
+    "learning_rate": 3e-05,
+    "epochs": 4.0,
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "per_device_batch_size": 1,
+    "gradient_accumulation": 2,
+    "bf16": true,
+    "gradient_checkpointing": true,
+    "seed": 717
+  },
+  "started_at": "2026-08-07T16:29:46.264964+00:00",
+  "finished_at": "2026-08-07T16:30:14.503330+00:00",
+  "adapter_dir": "output/adapter",
+  "training_loss": 0.0007
+}

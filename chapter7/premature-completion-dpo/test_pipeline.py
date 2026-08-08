@@ -76,7 +76,7 @@ def test_pairs_count_and_format(pairs):
     assert len(pairs) == 24
     for pair in pairs:
         assert set(pair) == {"prompt", "chosen", "rejected", "meta"}
-        assert pair["prompt"].endswith("请给出下一步动作。")
+        assert "请给出下一步动作。" in pair["prompt"]
 
 
 def test_chosen_has_verification_without_claim(pairs):

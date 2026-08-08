@@ -1,0 +1,2616 @@
+{
+  "experiment": "8-9",
+  "executed_at": "2026-08-07T16:05:47.386871+00:00",
+  "execution_mode": "real_llm",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "growth_curve": [
+    {
+      "batch": 1,
+      "new_candidates": 7,
+      "added": [
+        "rule-dash-density",
+        "rule-not-but",
+        "rule-parallelism",
+        "rule-lets-start",
+        "rule-template-sequence",
+        "rule-era-opening",
+        "rule-emoji-density"
+      ],
+      "merged": 0,
+      "conflicts": [],
+      "rule_count": 7
+    },
+    {
+      "batch": 2,
+      "new_candidates": 7,
+      "added": [],
+      "merged": 7,
+      "conflicts": [],
+      "rule_count": 7
+    },
+    {
+      "batch": 3,
+      "new_candidates": 7,
+      "added": [
+        "rule-hollow-metaphor"
+      ],
+      "merged": 6,
+      "conflicts": [],
+      "rule_count": 8
+    }
+  ],
+  "total_candidates": 21,
+  "final_rule_count": 8,
+  "active_rules": [
+    "rule-dash-density",
+    "rule-not-but",
+    "rule-parallelism",
+    "rule-lets-start",
+    "rule-template-sequence",
+    "rule-era-opening",
+    "rule-emoji-density",
+    "rule-hollow-metaphor"
+  ],
+  "archived_rules": [],
+  "calibration": [
+    {
+      "rule_id": "rule-hollow-metaphor",
+      "cases": [
+        {
+          "id": "g1",
+          "expected": true,
+          "judged": true,
+          "agree": true
+        },
+        {
+          "id": "g2",
+          "expected": true,
+          "judged": true,
+          "agree": true
+        },
+        {
+          "id": "g3",
+          "expected": true,
+          "judged": true,
+          "agree": true
+        },
+        {
+          "id": "g4",
+          "expected": true,
+          "judged": true,
+          "agree": true
+        },
+        {
+          "id": "g5",
+          "expected": true,
+          "judged": true,
+          "agree": true
+        },
+        {
+          "id": "g6",
+          "expected": false,
+          "judged": false,
+          "agree": true
+        },
+        {
+          "id": "g7",
+          "expected": false,
+          "judged": false,
+          "agree": true
+        },
+        {
+          "id": "g8",
+          "expected": false,
+          "judged": false,
+          "agree": true
+        },
+        {
+          "id": "g9",
+          "expected": false,
+          "judged": false,
+          "agree": true
+        },
+        {
+          "id": "g10",
+          "expected": false,
+          "judged": false,
+          "agree": true
+        }
+      ],
+      "total": 10,
+      "agree": 10,
+      "agreement": 1.0,
+      "threshold": 0.8,
+      "decision": "activate",
+      "note": "judge 与金标集一致率达到阈值，允许上线"
+    }
+  ],
+  "skill_path": "skill/SKILL.md",
+  "archive_path": null,
+  "metrics": {
+    "per_rule": {
+      "rule-dash-density": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "rule-not-but": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "rule-parallelism": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "rule-lets-start": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "rule-template-sequence": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "rule-era-opening": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "rule-emoji-density": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "rule-hollow-metaphor": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    },
+    "boundary_detection_rate": 1.0,
+    "boundary_detected": 8,
+    "boundary_total": 8,
+    "retention_harm_rate": 0.0,
+    "retention_harmed": 0,
+    "retention_total": 8,
+    "boundary_details": [
+      {
+        "id": "b1",
+        "expected": [
+          "rule-dash-density"
+        ],
+        "fired": [
+          "rule-dash-density"
+        ]
+      },
+      {
+        "id": "b2",
+        "expected": [
+          "rule-not-but"
+        ],
+        "fired": [
+          "rule-not-but"
+        ]
+      },
+      {
+        "id": "b3",
+        "expected": [
+          "rule-parallelism"
+        ],
+        "fired": [
+          "rule-parallelism"
+        ]
+      },
+      {
+        "id": "b4",
+        "expected": [
+          "rule-lets-start"
+        ],
+        "fired": [
+          "rule-lets-start"
+        ]
+      },
+      {
+        "id": "b5",
+        "expected": [
+          "rule-template-sequence"
+        ],
+        "fired": [
+          "rule-template-sequence"
+        ]
+      },
+      {
+        "id": "b6",
+        "expected": [
+          "rule-emoji-density",
+          "rule-parallelism"
+        ],
+        "fired": [
+          "rule-emoji-density",
+          "rule-parallelism"
+        ]
+      },
+      {
+        "id": "b7",
+        "expected": [
+          "rule-era-opening"
+        ],
+        "fired": [
+          "rule-era-opening"
+        ]
+      },
+      {
+        "id": "b8",
+        "expected": [
+          "rule-dash-density",
+          "rule-not-but"
+        ],
+        "fired": [
+          "rule-dash-density",
+          "rule-not-but"
+        ]
+      }
+    ],
+    "retention_details": [
+      {
+        "id": "r1",
+        "fired": []
+      },
+      {
+        "id": "r2",
+        "fired": []
+      },
+      {
+        "id": "r3",
+        "fired": []
+      },
+      {
+        "id": "r4",
+        "fired": []
+      },
+      {
+        "id": "r5",
+        "fired": []
+      },
+      {
+        "id": "r6",
+        "fired": []
+      },
+      {
+        "id": "r7",
+        "fired": []
+      },
+      {
+        "id": "r8",
+        "fired": []
+      }
+    ]
+  },
+  "rewrite_demo": {
+    "mode": "real_llm",
+    "original": "在这个效率至上的时代，让我们一起重新认识这款笔记工具——它不是简单的记录软件——而是你的第二大脑。首先，它能自动整理灵感；其次，它让检索快如闪电；最后，它让分享毫无门槛——仿佛一位永不疲倦的管家。总而言之，让我们从现在开始，把每一条灵感都安顿好 🚀✨💡。",
+    "rewritten": "在效率至上的时代，重新认识这款笔记工具，它是你的第二大脑。它能自动整理灵感，检索速度极快，分享也非常便捷。总之，从现在开始，把每一条灵感都安顿好。",
+    "applied_rules": [
+      "rule-era-opening",
+      "rule-lets-start",
+      "rule-template-sequence",
+      "rule-hollow-metaphor",
+      "rule-dash-density"
+    ]
+  },
+  "raw_api_receipts": [
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "你是写作规范的提炼助手。下面是用户纠正 AI 生成文案的 before/after 对。\n请归纳出可检查的规则，每条规则必须能落地为确定性检测或校准过的 LLM judge。\n\n返回 JSON：{\"rules\": [{\"id\": \"rule-<英文短横线命名>\", \"name\": \"...\", \"definition\": \"...\",\n\"detector\": {\"type\": \"regex 或 density 或 llm\", \"pattern\": \"正则（regex/density 必填）\",\n\"min_occurrences\": 数字, \"threshold\": 每千字次数（density 必填）, \"judge_prompt\": \"llm 类型必填\"},\n\"bad_example\": \"取自 before 的原文片段\", \"good_example\": \"对应的 after 原文片段\",\n\"scope\": [\"适用场景\"], \"source_ids\": [\"支撑的反馈对 id\"]}]}\n\n要求：规则必须具体到可检查（不要「写得自然」这种空话）；每条规则至少有一条 source_ids；\nbad_example / good_example 必须是原文片段，不要自己编。\n\n反馈对：\n[\n  {\n    \"id\": \"fp-001\",\n    \"scene\": \"产品发布稿\",\n    \"before\": \"我们隆重推出全新智能笔记应用——一款真正懂你的效率神器——它不仅能记录灵感——还能自动整理、智能归类、跨端同步——让你的每一条想法都不再流失——现在下载，即刻开启高效人生——限时免费，错过再等一年！\",\n    \"after\": \"新版智能笔记应用上线了。它能记录灵感，自动整理和归类，支持多设备同步。现在下载可以免费试用一个月。\",\n    \"correction\": \"破折号太多了，一句话里五六个，读起来喘不过气，全改掉\"\n  },\n  {\n    \"id\": \"fp-002\",\n    \"scene\": \"公众号文章\",\n    \"before\": \"真正的成长，不是年龄的增加，而是认知的升级；不是知识的堆砌，而是思维的重构；不是经验的重复，而是边界的突破。\",\n    \"after\": \"真正的成长，往往体现在认知的变化上：看问题的角度变了，做事的方法跟着变，最后连自己能做什么的边界都被重新画了一遍。\",\n    \"correction\": \"不要「不是……而是……」的句式，连用三次太 AI 了\"\n  },\n  {\n    \"id\": \"fp-003\",\n    \"scene\": \"邮件\",\n    \"before\": \"让我们共同见证这个激动人心的时刻！让我们一起开启数字化转型的全新篇章。让我们携手并进，共创辉煌明天。\",\n    \"after\": \"新版本今天上线了，期待大家试用之后多提意见。\",\n    \"correction\": \"邮件里别连用「让我们」开头，像机器人演讲\"\n  },\n  {\n    \"id\": \"fp-004\",\n    \"scene\": \"README 段落\",\n    \"before\": \"首先，克隆本仓库到本地。其次，安装所需依赖。再次，配置环境变量。然后，运行初始化脚本。最后，启动开发服务器即可。\",\n    \"after\": \"克隆仓库后安装依赖，把 .env.example 复制为 .env 并填好密钥，再运行 init.sh 初始化，最后 make dev 启动服务。\",\n    \"correction\": \"首先其次再次然后最后，模板腔太重，连成句子写\"\n  },\n  {\n    \"id\": \"fp-005\",\n    \"scene\": \"公众号文章\",\n    \"before\": \"在人工智能飞速发展的今天，每个人都面临前所未有的机遇与挑战。在这个信息爆炸的时代，如何保持独立思考显得尤为重要。\",\n    \"after\": \"这两年 AI 工具更新得飞快，很多人一边兴奋一边焦虑。信息越多，越需要自己能做判断。\",\n    \"correction\": \"「在……的今天」「在……的时代」这种开头直接删掉\"\n  },\n  {\n    \"id\": \"fp-006\",\n    \"scene\": \"产品发布稿\",\n    \"before\": \"🎉 重磅来袭！🔥 全新智能手表正式发布！⌚ 超长续航 14 天 🔋，心率血氧全天候监测 ❤️，50 米防水 🏊，现在下单立减 200 元 💰，错过再等一年 ⏰！\",\n    \"after\": \"新款智能手表发布：续航 14 天，支持心率血氧监测和 50 米防水，首发价立减 200 元。\",\n    \"correction\": \"emoji 泛滥，正式稿件里一个都别放\"\n  }\n]\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8905,
+        "max_tokens": 5000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118644-QdIVlyv6pPYLMS8IYymf",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\n  \"rules\": [\n    {\n      \"id\": \"rule-excessive-em-dash\",\n      \"name\": \"过多破折号\",\n      \"definition\": \"一段文字中连续使用破折号的次数超过 2 次。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"——.*?——.*?——\",\n        \"min_occurrences\": 1,\n        \"threshold\": null,\n        \"judge_prompt\": \"请判断这段文字中是否存在过多的破折号。\"\n      },\n      \"bad_example\": \"我们隆重推出全新智能笔记应用——一款真正懂你的效率神器——它不仅能记录灵感——还能自动整理、智能归类、跨端同步——让你的每一条想法都不再流失——现在下载，即刻开启高效人生——限时免费，错过再等一年！\",\n      \"good_example\": \"新版智能笔记应用上线了。它能记录灵感，自动整理和归类，支持多设备同步。现在下载可以免费试用一个月。\",\n      \"scope\": [\"产品发布稿\"],\n      \"source_ids\": [\"fp-001\"]\n    },\n    {\n      \"id\": \"rule-repetitive-structure\",\n      \"name\": \"重复句式\",\n      \"definition\": \"在同一段落中连续使用相同的句式结构超过 2 次。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"(不是.*?而是.*?；){3,}\",\n        \"min_occurrences\": 1,\n        \"threshold\": null,\n        \"judge_prompt\": \"请判断这段文字中是否存在重复的句式结构。\"\n      },\n      \"bad_example\": \"真正的成长，不是年龄的增加，而是认知的升级；不是知识的堆砌，而是思维的重构；不是经验的重复，而是边界的突破。\",\n      \"good_example\": \"真正的成长，往往体现在认知的变化上：看问题的角度变了，做事的方法跟着变，最后连自己能做什么的边界都被重新画了一遍。\",\n      \"scope\": [\"公众号文章\"],\n      \"source_ids\": [\"fp-002\"]\n    },\n    {\n      \"id\": \"rule-repetitive-phrase\",\n      \"name\": \"重复开头短语\",\n      \"definition\": \"在同一段落中连续使用相同的开头短语超过 2 次。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"让我们.*?(让我们.*?){2,}\",\n        \"min_occurrences\": 1,\n        \"threshold\": null,\n        \"judge_prompt\": \"请判断这段文字中是否存在重复的开头短语。\"\n      },\n      \"bad_example\": \"让我们共同见证这个激动人心的时刻！让我们一起开启数字化转型的全新篇章。让我们携手并进，共创辉煌明天。\",\n      \"good_example\": \"新版本今天上线了，期待大家试用之后多提意见。\",\n      \"scope\": [\"邮件\"],\n      \"source_ids\": [\"fp-003\"]\n    },\n    {\n      \"id\": \"rule-template-phrases\",\n      \"name\": \"模板腔\",\n      \"definition\": \"使用过多的模板短语，如“首先”、“其次”、“再次”等，超过 2 次。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"(首先|其次|再次|然后|最后){3,}\",\n        \"min_occurrences\": 1,\n        \"threshold\": null,\n        \"judge_prompt\": \"请判断这段文字中是否存在过多的模板短语。\"\n      },\n      \"bad_example\": \"首先，克隆本仓库到本地。其次，安装所需依赖。再次，配置环境变量。然后，运行初始化脚本。最后，启动开发服务器即可。\",\n      \"good_example\": \"克隆仓库后安装依赖，把 .env.example 复制为 .env 并填好密钥，再运行 init.sh 初始化，最后 make dev 启动服务。\",\n      \"scope\": [\"README 段落\"],\n      \"source_ids\": [\"fp-004\"]\n    },\n    {\n      \"id\": \"rule-avoid-cliché-openings\",\n      \"name\": \"避免陈词滥调开头\",\n      \"definition\": \"使用“在……的今天”或“在……的时代”开头的句子。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"在.*?的(今天|时代)\",\n        \"min_occurrences\": 1,\n        \"threshold\": null,\n        \"judge_prompt\": \"请判断这段文字中是否存在陈词滥调的开头。\"\n      },\n      \"bad_example\": \"在人工智能飞速发展的今天，每个人都面临前所未有的机遇与挑战。在这个信息爆炸的时代，如何保持独立思考显得尤为重要。\",\n      \"good_example\": \"这两年 AI 工具更新得飞快，很多人一边兴奋一边焦虑。信息越多，越需要自己能做判断。\",\n      \"scope\": [\"公众号文章\"],\n      \"source_ids\": [\"fp-005\"]\n    },\n    {\n      \"id\": \"rule-emoji-overuse\",\n      \"name\": \"过度使用 emoji\",\n      \"definition\": \"在正式文稿中使用 emoji 超过 0 次。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"[🎉🔥⌚🔋❤️🏊💰⏰]\",\n        \"min_occurrences\": 1,\n        \"threshold\": null,\n        \"judge_prompt\": \"请判断这段文字中是否存在 emoji 的使用。\"\n      },\n      \"bad_example\": \"🎉 重磅来袭！🔥 全新智能手表正式发布！⌚ 超长续航 14 天 🔋，心率血氧全天候监测 ❤️，50 米防水 🏊，现在下单立减 200 元 💰，错过再等一年 ⏰！\",\n      \"good_example\": \"新款智能手表发布：续航 14 天，支持心率血氧监测和 50 米防水，首发价立减 200 元。\",\n      \"scope\": [\"产品发布稿\"],\n      \"source_ids\": [\"fp-006\"]\n    }\n  ]\n}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118644,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 1405,
+          "prompt_tokens": 1089,
+          "total_tokens": 2494,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 1024,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 0.00092955,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 0.00092955,
+            "upstream_inference_prompt_cost": 8.655e-05,
+            "upstream_inference_completions_cost": 0.000843
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "e0b888725893ae8dbd56b0f8e67a64f5039827ba91235c2a43cf6f4a44bd96ab",
+      "response_sha256": "2d3e91245e7557066be84632decbfc4c86304bfba035efd7e8e5db499d2953db",
+      "elapsed_seconds": 23.576178,
+      "usage": {
+        "prompt_tokens": 1089,
+        "completion_tokens": 1405,
+        "total_tokens": 2494,
+        "provider_reported_cost_usd": 0.00092955,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "你是写作规范的提炼助手。下面是用户纠正 AI 生成文案的 before/after 对。\n请归纳出可检查的规则，每条规则必须能落地为确定性检测或校准过的 LLM judge。\n\n返回 JSON：{\"rules\": [{\"id\": \"rule-<英文短横线命名>\", \"name\": \"...\", \"definition\": \"...\",\n\"detector\": {\"type\": \"regex 或 density 或 llm\", \"pattern\": \"正则（regex/density 必填）\",\n\"min_occurrences\": 数字, \"threshold\": 每千字次数（density 必填）, \"judge_prompt\": \"llm 类型必填\"},\n\"bad_example\": \"取自 before 的原文片段\", \"good_example\": \"对应的 after 原文片段\",\n\"scope\": [\"适用场景\"], \"source_ids\": [\"支撑的反馈对 id\"]}]}\n\n要求：规则必须具体到可检查（不要「写得自然」这种空话）；每条规则至少有一条 source_ids；\nbad_example / good_example 必须是原文片段，不要自己编。\n\n反馈对：\n[\n  {\n    \"id\": \"fp-007\",\n    \"scene\": \"公众号文章\",\n    \"before\": \"读书可以拓宽视野，读书可以沉淀心灵，读书可以启迪智慧，读书可以点亮人生。\",\n    \"after\": \"读书的好处很多：视野会变宽，心能静下来，看问题也会多几个角度。\",\n    \"correction\": \"四连排比太刻意了，写散一点\"\n  },\n  {\n    \"id\": \"fp-008\",\n    \"scene\": \"邮件\",\n    \"before\": \"关于季度复盘会议——时间定于本周五下午三点——地点在三号会议室——请提前准备数据报表——如有冲突请及时告知——谢谢配合。\",\n    \"after\": \"季度复盘定在这周五下午三点，三号会议室。请提前准备好数据报表，时间冲突的话提前跟我说。\",\n    \"correction\": \"把破折号当逗号用是吧？全部改成正常标点\"\n  },\n  {\n    \"id\": \"fp-009\",\n    \"scene\": \"README 段落\",\n    \"before\": \"本项目不是简单的爬虫框架，而是一套完整的数据采集解决方案；不是一次性的脚本集合，而是可长期维护的工程化平台。\",\n    \"after\": \"本项目提供一套可扩展的数据采集方案，支持插件化开发，适合作为长期维护的工程使用。\",\n    \"correction\": \"不要「不是……而是……」的对仗，直接说它是什么就行\"\n  },\n  {\n    \"id\": \"fp-010\",\n    \"scene\": \"产品发布稿\",\n    \"before\": \"在这个万物互联的时代，让我们共同拥抱智能家居的美好未来！让我们一起，让科技温暖每一个家庭。\",\n    \"after\": \"智能家居新品系列今天发布，覆盖灯光、安防和环境控制，希望能让家更省心。\",\n    \"correction\": \"开头「在这个……的时代」和连喊「让我们」都去掉\"\n  },\n  {\n    \"id\": \"fp-011\",\n    \"scene\": \"公众号文章\",\n    \"before\": \"早餐这样吃才健康 🍞🥛！营养师推荐的三餐搭配来了 🍚🥗，坚持一个月，气色肉眼可见变好 ✨✨，姐妹们快收藏 💖！\",\n    \"after\": \"早餐怎么吃更健康？整理了一份营养师的三餐搭配建议，坚持一段时间会有改善，需要的可以收藏。\",\n    \"correction\": \"emoji 收一收，一整段全是表情没法看\"\n  },\n  {\n    \"id\": \"fp-012\",\n    \"scene\": \"邮件\",\n    \"before\": \"首先感谢各位本季度的付出。其次，需要指出交付节奏仍有优化空间。再次，请各组提交改进方案。最后，期待下季度再创佳绩。\",\n    \"after\": \"感谢大家这个季度的付出。交付节奏上还有改进空间，请各组本周内提交改进方案，我们下个季度接着努力。\",\n    \"correction\": \"「首先/其次/再次/最后」公文八股味，内部邮件别这么写\"\n  }\n]\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8906,
+        "max_tokens": 5000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118669-SCfEpZvuwwHlHeUVXCfC",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\n  \"rules\": [\n    {\n      \"id\": \"rule-avoid-repetitive-structures\",\n      \"name\": \"避免重复结构\",\n      \"definition\": \"避免使用过于刻意的排比或重复结构，应该用更自然的表达方式。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"读书可以(\\\\S+)，读书可以(\\\\S+)，读书可以(\\\\S+)，读书可以(\\\\S+)\",\n        \"min_occurrences\": 1,\n        \"threshold\": 0,\n        \"judge_prompt\": \"请判断文本中是否存在过于刻意的排比结构。\"\n      },\n      \"bad_example\": \"读书可以拓宽视野，读书可以沉淀心灵，读书可以启迪智慧，读书可以点亮人生。\",\n      \"good_example\": \"读书的好处很多：视野会变宽，心能静下来，看问题也会多几个角度。\",\n      \"scope\": [\"公众号文章\"],\n      \"source_ids\": [\"fp-007\"]\n    },\n    {\n      \"id\": \"rule-use-standard-punctuation\",\n      \"name\": \"使用标准标点\",\n      \"definition\": \"在书写中应使用标准的标点符号，避免使用不当的符号替代。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"——\",\n        \"min_occurrences\": 1,\n        \"threshold\": 0,\n        \"judge_prompt\": \"请检查文本中是否使用了不当的破折号替代标准标点。\"\n      },\n      \"bad_example\": \"关于季度复盘会议——时间定于本周五下午三点——地点在三号会议室——请提前准备数据报表——如有冲突请及时告知——谢谢配合。\",\n      \"good_example\": \"季度复盘定在这周五下午三点，三号会议室。请提前准备好数据报表，时间冲突的话提前跟我说。\",\n      \"scope\": [\"邮件\"],\n      \"source_ids\": [\"fp-008\"]\n    },\n    {\n      \"id\": \"rule-avoid-antithetical-phrases\",\n      \"name\": \"避免对仗短语\",\n      \"definition\": \"避免使用「不是……而是……」的对仗结构，直接说明事物的特性。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"不是.*而是.*\",\n        \"min_occurrences\": 1,\n        \"threshold\": 0,\n        \"judge_prompt\": \"请判断文本中是否存在对仗的短语结构。\"\n      },\n      \"bad_example\": \"本项目不是简单的爬虫框架，而是一套完整的数据采集解决方案；不是一次性的脚本集合，而是可长期维护的工程化平台。\",\n      \"good_example\": \"本项目提供一套可扩展的数据采集方案，支持插件化开发，适合作为长期维护的工程使用。\",\n      \"scope\": [\"README 段落\"],\n      \"source_ids\": [\"fp-009\"]\n    },\n    {\n      \"id\": \"rule-avoid-cliché-phrases\",\n      \"name\": \"避免陈词滥调\",\n      \"definition\": \"避免使用陈词滥调的开头和口号式的表达，直接陈述事实。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"在这个.*的时代|让我们.*\",\n        \"min_occurrences\": 1,\n        \"threshold\": 0,\n        \"judge_prompt\": \"请检查文本中是否使用了陈词滥调的表达方式。\"\n      },\n      \"bad_example\": \"在这个万物互联的时代，让我们共同拥抱智能家居的美好未来！让我们一起，让科技温暖每一个家庭。\",\n      \"good_example\": \"智能家居新品系列今天发布，覆盖灯光、安防和环境控制，希望能让家更省心。\",\n      \"scope\": [\"产品发布稿\"],\n      \"source_ids\": [\"fp-010\"]\n    },\n    {\n      \"id\": \"rule-limit-emoji-usage\",\n      \"name\": \"限制表情符号使用\",\n      \"definition\": \"在正式文本中应限制表情符号的使用，保持内容的专业性。\",\n      \"detector\": {\n        \"type\": \"density\",\n        \"pattern\": \"emoji\",\n        \"min_occurrences\": 5,\n        \"threshold\": 5,\n        \"judge_prompt\": \"请判断文本中表情符号的使用频率是否过高。\"\n      },\n      \"bad_example\": \"早餐这样吃才健康 🍞🥛！营养师推荐的三餐搭配来了 🍚🥗，坚持一个月，气色肉眼可见变好 ✨✨，姐妹们快收藏 💖！\",\n      \"good_example\": \"早餐怎么吃更健康？整理了一份营养师的三餐搭配建议，坚持一段时间会有改善，需要的可以收藏。\",\n      \"scope\": [\"公众号文章\"],\n      \"source_ids\": [\"fp-011\"]\n    },\n    {\n      \"id\": \"rule-avoid-formal-structure-in-internal-emails\",\n      \"name\": \"避免在内部邮件中使用正式结构\",\n      \"definition\": \"在内部邮件中应避免使用过于正式的结构，如「首先/其次/再次/最后」。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"首先|其次|再次|最后\",\n        \"min_occurrences\": 1,\n        \"threshold\": 0,\n        \"judge_prompt\": \"请检查文本中是否使用了过于正式的结构。\"\n      },\n      \"bad_example\": \"首先感谢各位本季度的付出。其次，需要指出交付节奏仍有优化空间。再次，请各组提交改进方案。最后，期待下季度再创佳绩。\",\n      \"good_example\": \"感谢大家这个季度的付出。交付节奏上还有改进空间，请各组本周内提交改进方案，我们下个季度接着努力。\",\n      \"scope\": [\"邮件\"],\n      \"source_ids\": [\"fp-012\"]\n    }\n  ]\n}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118669,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 1351,
+          "prompt_tokens": 993,
+          "total_tokens": 2344,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 0.00095955,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 0.00095955,
+            "upstream_inference_prompt_cost": 0.00014895,
+            "upstream_inference_completions_cost": 0.0008106
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "ce21a524cf0e9b18f857e5eb6bca451a49559d8ccd5c5d7e536339bde040cb5a",
+      "response_sha256": "32de61ce167388e9bd08671fb524cb754648bb7e220fc3ecc72506cd5fdf12f9",
+      "elapsed_seconds": 20.474797,
+      "usage": {
+        "prompt_tokens": 993,
+        "completion_tokens": 1351,
+        "total_tokens": 2344,
+        "provider_reported_cost_usd": 0.00095955,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "你是写作规范的提炼助手。下面是用户纠正 AI 生成文案的 before/after 对。\n请归纳出可检查的规则，每条规则必须能落地为确定性检测或校准过的 LLM judge。\n\n返回 JSON：{\"rules\": [{\"id\": \"rule-<英文短横线命名>\", \"name\": \"...\", \"definition\": \"...\",\n\"detector\": {\"type\": \"regex 或 density 或 llm\", \"pattern\": \"正则（regex/density 必填）\",\n\"min_occurrences\": 数字, \"threshold\": 每千字次数（density 必填）, \"judge_prompt\": \"llm 类型必填\"},\n\"bad_example\": \"取自 before 的原文片段\", \"good_example\": \"对应的 after 原文片段\",\n\"scope\": [\"适用场景\"], \"source_ids\": [\"支撑的反馈对 id\"]}]}\n\n要求：规则必须具体到可检查（不要「写得自然」这种空话）；每条规则至少有一条 source_ids；\nbad_example / good_example 必须是原文片段，不要自己编。\n\n反馈对：\n[\n  {\n    \"id\": \"fp-013\",\n    \"scene\": \"公众号文章\",\n    \"before\": \"这款耳机仿佛一位贴心的智者，在你喧嚣的世界里低语；它的降噪功能宛如一道温柔的屏障，将浮躁隔绝在外。\",\n    \"after\": \"这款耳机的降噪效果确实好，地铁里戴上能安静不少，报站的人声也能压得住。\",\n    \"correction\": \"「仿佛一位智者」这种空洞比喻删掉，说人话\"\n  },\n  {\n    \"id\": \"fp-014\",\n    \"scene\": \"README 段落\",\n    \"before\": \"它让配置更简单，它让部署更快速，它让监控更全面，它让运维更安心。\",\n    \"after\": \"配置、部署、监控和告警都内置了默认方案，运维成本明显更低。\",\n    \"correction\": \"「它让……它让……」排比改掉，平铺直叙\"\n  },\n  {\n    \"id\": \"fp-015\",\n    \"scene\": \"产品发布稿\",\n    \"before\": \"这不是一次简单的版本更新，而是一次体验的全面革新；不是功能的堆砌，而是对用户需求的深度回应。\",\n    \"after\": \"这次版本更新改动很大：界面重做，核心流程缩短了两步，都来自上一版用户反馈里最高频的问题。\",\n    \"correction\": \"「不是……而是……」连用两句，AI 味很重\"\n  },\n  {\n    \"id\": \"fp-016\",\n    \"scene\": \"邮件\",\n    \"before\": \"在这个快节奏的时代，高效的沟通显得尤为珍贵。在这个充满变化的时代，稳定的协作关系更值得珍惜。\",\n    \"after\": \"最近项目节奏快，咱们沟通尽量简短高效；也希望协作关系保持稳定，有问题随时同步。\",\n    \"correction\": \"别用「在这个……的时代」起头，直接说事\"\n  },\n  {\n    \"id\": \"fp-017\",\n    \"scene\": \"公众号文章\",\n    \"before\": \"成长是一场修行——它教会我们坚持——教会我们取舍——教会我们感恩。每一次跌倒都是财富，每一次爬起都是勋章，每一次坚持都是胜利。\",\n    \"after\": \"成长是场慢功夫。能坚持下来的人，多半都慢慢学会了取舍，也开始记得感谢路上帮过自己的人。摔过跤的地方，印象总是最深。\",\n    \"correction\": \"破折号加「每一次……都是……」排比，都太浓了\"\n  },\n  {\n    \"id\": \"fp-018\",\n    \"scene\": \"README 段落\",\n    \"before\": \"让我们一起构建更好的开源生态！让我们从 star 本项目开始，共同参与这场技术盛宴。\",\n    \"after\": \"如果这个项目对你有帮助，欢迎 star；也欢迎提 issue 和 PR。\",\n    \"correction\": \"README 里别喊「让我们」口号\"\n  },\n  {\n    \"id\": \"fp-019\",\n    \"scene\": \"产品发布稿\",\n    \"before\": \"首先，全新设计语言带来视觉革新。其次，性能提升高达 40%。再次，续航焦虑彻底解决。总而言之，这是迄今为止最值得升级的一代。\",\n    \"after\": \"这一代换了全新的外观设计，性能比上代提升 40%，电池也够用一整天了。如果是老用户，这次值得升级。\",\n    \"correction\": \"「首先其次再次总而言之」八股味，删掉套话\"\n  },\n  {\n    \"id\": \"fp-020\",\n    \"scene\": \"邮件\",\n    \"before\": \"您的建议宛如一盏明灯，照亮了我们产品改进的前路；您的信任仿佛一座灯塔，指引着我们不断前行。\",\n    \"after\": \"您提的建议很具体，我们已经记进需求池，下个版本会先改其中两条。谢谢您的信任。\",\n    \"correction\": \"「明灯」「灯塔」这种假抒情删掉，回邮件说正事\"\n  }\n]\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8907,
+        "max_tokens": 5000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118688-ohrPqGXmo9MEGBfsqQ7V",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\n  \"rules\": [\n    {\n      \"id\": \"rule-avoid-empty-metaphors\",\n      \"name\": \"避免空洞比喻\",\n      \"definition\": \"文中不应使用空洞的比喻或形象化的表达，需直接描述事物的特性或效果。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"仿佛|宛如|如同|似乎|像是\",\n        \"min_occurrences\": 1,\n        \"threshold\": 10,\n        \"judge_prompt\": \"请判断文本中是否存在空洞比喻的表达。\"\n      },\n      \"bad_example\": \"这款耳机仿佛一位贴心的智者，在你喧嚣的世界里低语；它的降噪功能宛如一道温柔的屏障，将浮躁隔绝在外。\",\n      \"good_example\": \"这款耳机的降噪效果确实好，地铁里戴上能安静不少，报站的人声也能压得住。\",\n      \"scope\": [\"公众号文章\"],\n      \"source_ids\": [\"fp-013\"]\n    },\n    {\n      \"id\": \"rule-avoid-parallel-structure\",\n      \"name\": \"避免重复的排比结构\",\n      \"definition\": \"避免使用重复的排比句式，需采用平铺直叙的方式表达信息。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"它让.*?；\",\n        \"min_occurrences\": 1,\n        \"threshold\": 10,\n        \"judge_prompt\": \"请判断文本中是否存在重复的排比结构。\"\n      },\n      \"bad_example\": \"它让配置更简单，它让部署更快速，它让监控更全面，它让运维更安心。\",\n      \"good_example\": \"配置、部署、监控和告警都内置了默认方案，运维成本明显更低。\",\n      \"scope\": [\"README 段落\"],\n      \"source_ids\": [\"fp-014\"]\n    },\n    {\n      \"id\": \"rule-avoid-formal-phrases\",\n      \"name\": \"避免使用正式的套话\",\n      \"definition\": \"避免使用如“首先”、“其次”、“总而言之”等正式的套话，需直接表达观点。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"首先|其次|再次|总而言之\",\n        \"min_occurrences\": 1,\n        \"threshold\": 10,\n        \"judge_prompt\": \"请判断文本中是否存在正式的套话。\"\n      },\n      \"bad_example\": \"首先，全新设计语言带来视觉革新。其次，性能提升高达 40%。再次，续航焦虑彻底解决。总而言之，这是迄今为止最值得升级的一代。\",\n      \"good_example\": \"这一代换了全新的外观设计，性能比上代提升 40%，电池也够用一整天了。如果是老用户，这次值得升级。\",\n      \"scope\": [\"产品发布稿\"],\n      \"source_ids\": [\"fp-019\"]\n    },\n    {\n      \"id\": \"rule-avoid-cliché-expressions\",\n      \"name\": \"避免陈词滥调\",\n      \"definition\": \"避免使用陈词滥调或过于抒情的表达，需直接陈述事实或具体信息。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"宛如|仿佛|照亮|指引|灯塔|明灯\",\n        \"min_occurrences\": 1,\n        \"threshold\": 10,\n        \"judge_prompt\": \"请判断文本中是否存在陈词滥调或过于抒情的表达。\"\n      },\n      \"bad_example\": \"您的建议宛如一盏明灯，照亮了我们产品改进的前路；您的信任仿佛一座灯塔，指引着我们不断前行。\",\n      \"good_example\": \"您提的建议很具体，我们已经记进需求池，下个版本会先改其中两条。谢谢您的信任。\",\n      \"scope\": [\"邮件\"],\n      \"source_ids\": [\"fp-020\"]\n    },\n    {\n      \"id\": \"rule-avoid-abstract-phrases\",\n      \"name\": \"避免抽象的表达\",\n      \"definition\": \"避免使用抽象的表达方式，需具体描述事物的特性或效果。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"成长是一场.*?；|每一次.*?都是.*?；\",\n        \"min_occurrences\": 1,\n        \"threshold\": 10,\n        \"judge_prompt\": \"请判断文本中是否存在抽象的表达方式。\"\n      },\n      \"bad_example\": \"成长是一场修行——它教会我们坚持——教会我们取舍——教会我们感恩。每一次跌倒都是财富，每一次爬起都是勋章，每一次坚持都是胜利。\",\n      \"good_example\": \"成长是场慢功夫。能坚持下来的人，多半都慢慢学会了取舍，也开始记得感谢路上帮过自己的人。摔过跤的地方，印象总是最深。\",\n      \"scope\": [\"公众号文章\"],\n      \"source_ids\": [\"fp-017\"]\n    },\n    {\n      \"id\": \"rule-avoid-cliché-calls-to-action\",\n      \"name\": \"避免口号式的号召\",\n      \"definition\": \"在 README 等文档中避免使用口号式的号召，需直接说明行动的具体内容。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"让我们|共同参与|一起构建\",\n        \"min_occurrences\": 1,\n        \"threshold\": 10,\n        \"judge_prompt\": \"请判断文本中是否存在口号式的号召。\"\n      },\n      \"bad_example\": \"让我们一起构建更好的开源生态！让我们从 star 本项目开始，共同参与这场技术盛宴。\",\n      \"good_example\": \"如果这个项目对你有帮助，欢迎 star；也欢迎提 issue 和 PR。\",\n      \"scope\": [\"README 段落\"],\n      \"source_ids\": [\"fp-018\"]\n    },\n    {\n      \"id\": \"rule-avoid-redundant-phrases\",\n      \"name\": \"避免冗余的表达\",\n      \"definition\": \"避免使用冗余的表达方式，需简洁明了地传达信息。\",\n      \"detector\": {\n        \"type\": \"regex\",\n        \"pattern\": \"在这个.*?的时代|显得尤为珍贵|更值得珍惜\",\n        \"min_occurrences\": 1,\n        \"threshold\": 10,\n        \"judge_prompt\": \"请判断文本中是否存在冗余的表达方式。\"\n      },\n      \"bad_example\": \"在这个快节奏的时代，高效的沟通显得尤为珍贵。在这个充满变化的时代，稳定的协作关系更值得珍惜。\",\n      \"good_example\": \"最近项目节奏快，咱们沟通尽量简短高效；也希望协作关系保持稳定，有问题随时同步。\",\n      \"scope\": [\"邮件\"],\n      \"source_ids\": [\"fp-016\"]\n    }\n  ]\n}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118688,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_c881474fd1",
+        "usage": {
+          "completion_tokens": 1606,
+          "prompt_tokens": 1244,
+          "total_tokens": 2850,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 1152,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 0.0010638,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 0.0010638,
+            "upstream_inference_prompt_cost": 0.0001002,
+            "upstream_inference_completions_cost": 0.0009636
+          }
+        },
+        "provider": "OpenAI"
+      },
+      "request_sha256": "80e3c953fc599ba8175edfa95c8ee9969fffbe775ed4c4642ff79408fed8767d",
+      "response_sha256": "c5506252707c903f2b55fec810c7f7516b61e98271148fe9a88c302d41e3a912",
+      "elapsed_seconds": 27.117479,
+      "usage": {
+        "prompt_tokens": 1244,
+        "completion_tokens": 1606,
+        "total_tokens": 2850,
+        "provider_reported_cost_usd": 0.0010638,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n这款音箱仿佛一位懂你的智者，总能在恰当的时刻送上恰当的音乐。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118715-EjYDHXi2WAwPVjEnW2OV",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": true, \"evidence\": \"这款音箱仿佛一位懂你的智者\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118715,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_e7eb9f2bc2",
+        "usage": {
+          "completion_tokens": 24,
+          "prompt_tokens": 133,
+          "total_tokens": 157,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 3.435e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 3.435e-05,
+            "upstream_inference_prompt_cost": 1.995e-05,
+            "upstream_inference_completions_cost": 1.44e-05
+          }
+        },
+        "provider": "OpenAI"
+      },
+      "request_sha256": "be82ebc8a61fbb90f4805e451db03913dc32d3d2bb83199b44ef63e8d03f5210",
+      "response_sha256": "c4e08f0d287fd4e5f5952033a5f07bb4287622adaa29f27dbef3ea0ac156c95b",
+      "elapsed_seconds": 1.031405,
+      "usage": {
+        "prompt_tokens": 133,
+        "completion_tokens": 24,
+        "total_tokens": 157,
+        "provider_reported_cost_usd": 3.435e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n时间宛如一位公正的导师，教会我们珍惜每一个当下。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118716-ZvoAZoznI8IkfvrVZC7v",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": true, \"evidence\": \"时间宛如一位公正的导师\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118716,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 22,
+          "prompt_tokens": 124,
+          "total_tokens": 146,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 3.18e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 3.18e-05,
+            "upstream_inference_prompt_cost": 1.86e-05,
+            "upstream_inference_completions_cost": 1.32e-05
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "db3a83c96f753451ac04747aef3ee8c8101eb360d3e1e9b17ba2794e9a6d089e",
+      "response_sha256": "f7642a2493f05e9464c82152c0e89d6bb5710e17fe303d60cf1c27ae0d36d291",
+      "elapsed_seconds": 1.191323,
+      "usage": {
+        "prompt_tokens": 124,
+        "completion_tokens": 22,
+        "total_tokens": 146,
+        "provider_reported_cost_usd": 3.18e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n这款产品宛如一座灯塔，为迷茫的航行者指引方向。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118718-nOWSGnHAwj0S9bLuDd45",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": true, \"evidence\": \"宛如一座灯塔，为迷茫的航行者指引方向\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118718,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 30,
+          "prompt_tokens": 125,
+          "total_tokens": 155,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 3.675e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 3.675e-05,
+            "upstream_inference_prompt_cost": 1.875e-05,
+            "upstream_inference_completions_cost": 1.8e-05
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "80494a616a4cfc174fb41d21d6efc04024efa8fbbaeb1e25f2abec2efca7892e",
+      "response_sha256": "d0b772cdbd8daeb86b10022e7d4be986c0d3819a5c82e2dadbf1cd7519c6e5d0",
+      "elapsed_seconds": 1.292658,
+      "usage": {
+        "prompt_tokens": 125,
+        "completion_tokens": 30,
+        "total_tokens": 155,
+        "provider_reported_cost_usd": 3.675e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n数据仿佛一位沉默的守护者，默默记录着每一次选择。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118719-hUihnztKwogL035gsLwz",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": true, \"evidence\": \"数据仿佛一位沉默的守护者\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118719,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 24,
+          "prompt_tokens": 124,
+          "total_tokens": 148,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 3.3e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 3.3e-05,
+            "upstream_inference_prompt_cost": 1.86e-05,
+            "upstream_inference_completions_cost": 1.44e-05
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "8323eaba74aea10be2e421cb209f41d9ce51f88a0b3967a6a4668f4a68c14c37",
+      "response_sha256": "8f97d945ade209ab649699dc9124032e8f3035ecd0e59404802382a0337b4b6a",
+      "elapsed_seconds": 1.134562,
+      "usage": {
+        "prompt_tokens": 124,
+        "completion_tokens": 24,
+        "total_tokens": 148,
+        "provider_reported_cost_usd": 3.3e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n她的文字犹如一盏明灯，照亮了无数读者前行的道路。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118721-8DP4jr07Hdd7nduoL1kF",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": true, \"evidence\": \"她的文字犹如一盏明灯\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118721,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 23,
+          "prompt_tokens": 127,
+          "total_tokens": 150,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 3.285e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 3.285e-05,
+            "upstream_inference_prompt_cost": 1.905e-05,
+            "upstream_inference_completions_cost": 1.38e-05
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "031d345f4248acda3b387e42ebbe081c8b4d523a4ae80da953051252ece720da",
+      "response_sha256": "b71fa09e422ea23edaae990e1f4ea106d1eef08083e64de350afaccd84442d3f",
+      "elapsed_seconds": 1.912705,
+      "usage": {
+        "prompt_tokens": 127,
+        "completion_tokens": 23,
+        "total_tokens": 150,
+        "provider_reported_cost_usd": 3.285e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n这款音箱能根据时间段自动切换歌单，早上放轻音乐，晚上放白噪音。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118722-k6Q76OjLhCqh95irVRXs",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118722,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_c400bf5046",
+        "usage": {
+          "completion_tokens": 11,
+          "prompt_tokens": 130,
+          "total_tokens": 141,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.61e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.61e-05,
+            "upstream_inference_prompt_cost": 1.95e-05,
+            "upstream_inference_completions_cost": 6.6e-06
+          }
+        },
+        "provider": "OpenAI"
+      },
+      "request_sha256": "7cd0f985ea624ab06ff7c1b5c9e8e0187f80818b06d35e57f71e1ae624a10e76",
+      "response_sha256": "8ef81de630a742e984ddb8680a9a86f8f14157fa88368ce0c9a87bd7cc88ca8f",
+      "elapsed_seconds": 1.659004,
+      "usage": {
+        "prompt_tokens": 130,
+        "completion_tokens": 11,
+        "total_tokens": 141,
+        "provider_reported_cost_usd": 2.61e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n他讲话很快，但逻辑清楚，三分钟就把方案说透了。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118724-2a5WBQnXgD8LHyXWLKs2",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118724,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 122,
+          "total_tokens": 134,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.55e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.55e-05,
+            "upstream_inference_prompt_cost": 1.83e-05,
+            "upstream_inference_completions_cost": 7.2e-06
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "f408b6471a357e7e69478056fd425c2802555421365db011ef3668b3ba6efd92",
+      "response_sha256": "8e2442a78c18b05acf4d26fc5acecc8d58d59cbbc43f047eacd46bd5b48c3410",
+      "elapsed_seconds": 1.555488,
+      "usage": {
+        "prompt_tokens": 122,
+        "completion_tokens": 12,
+        "total_tokens": 134,
+        "provider_reported_cost_usd": 2.55e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n这座灯塔建于 1903 年，至今仍是港口的主要导航设施。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118725-VJsL0PSyvifxtcwYy7Nv",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118725,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 125,
+          "total_tokens": 137,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.595e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.595e-05,
+            "upstream_inference_prompt_cost": 1.875e-05,
+            "upstream_inference_completions_cost": 7.2e-06
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "a490325db643ffbb4342912fa816171e8d7c4860db13fcf2f37d0fe5da65f37b",
+      "response_sha256": "22ccb198daff12cb5211a8704792a994b11710c57d2ba8fec62c6e6700bf9bd8",
+      "elapsed_seconds": 0.946083,
+      "usage": {
+        "prompt_tokens": 125,
+        "completion_tokens": 12,
+        "total_tokens": 137,
+        "provider_reported_cost_usd": 2.595e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n新的客服系统上线后，平均响应时间从 4 小时降到 20 分钟。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118726-ZtahvcdjXWUILy6X4De0",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118726,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 124,
+          "total_tokens": 136,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.58e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.58e-05,
+            "upstream_inference_prompt_cost": 1.86e-05,
+            "upstream_inference_completions_cost": 7.2e-06
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "a266210b92b2d7adf0d6ee8662e969788a2a5295edb45e5318f52ab7dc752c9e",
+      "response_sha256": "17e9931eb4bdec7bd79c4ce30523065601fd1ccb21185168c052ada0351b9812",
+      "elapsed_seconds": 1.558432,
+      "usage": {
+        "prompt_tokens": 124,
+        "completion_tokens": 12,
+        "total_tokens": 136,
+        "provider_reported_cost_usd": 2.58e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n导师改完稿子只留了一句话：删掉所有不传递信息的句子。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118728-0rD8ZGTNWeR8Q9xmXmWS",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118728,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_9709ac0e8b",
+        "usage": {
+          "completion_tokens": 11,
+          "prompt_tokens": 124,
+          "total_tokens": 135,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.52e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.52e-05,
+            "upstream_inference_prompt_cost": 1.86e-05,
+            "upstream_inference_completions_cost": 6.6e-06
+          }
+        },
+        "provider": "OpenAI"
+      },
+      "request_sha256": "e4c405e216c839fdfcc1bcad34537d9a08daf1d729de4f0fbdfff13d23b30489",
+      "response_sha256": "ce6413795b19789508f504057fe6598e78a48f0a88ba9761d07030dbf8d20a8c",
+      "elapsed_seconds": 0.762986,
+      "usage": {
+        "prompt_tokens": 124,
+        "completion_tokens": 11,
+        "total_tokens": 135,
+        "provider_reported_cost_usd": 2.52e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n全新降噪耳机——沉浸式体验——一触即达的智能降噪——40 小时超长续航——让音乐回归纯粹——即刻预约——享首发礼遇！"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118729-gL6HXKaJJxKVqkYUYEAc",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118729,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 153,
+          "total_tokens": 165,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 3.015e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 3.015e-05,
+            "upstream_inference_prompt_cost": 2.295e-05,
+            "upstream_inference_completions_cost": 7.2e-06
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "c05628ca6f956ccfbedf7a0a0cbcd9bfe2a072d922aaa533928e4a2623e466da",
+      "response_sha256": "e76da2697458921f0bf8117565b232686713fbd384e32f2081ed92be64fca027",
+      "elapsed_seconds": 1.239724,
+      "usage": {
+        "prompt_tokens": 153,
+        "completion_tokens": 12,
+        "total_tokens": 165,
+        "provider_reported_cost_usd": 3.015e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n坚持不是咬牙硬撑，而是找到自己的节奏；努力不是做给别人看，而是对得起自己的选择。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118730-p8EO9aihXZka72FlRv1I",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118730,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 131,
+          "total_tokens": 143,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.685e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.685e-05,
+            "upstream_inference_prompt_cost": 1.965e-05,
+            "upstream_inference_completions_cost": 7.2e-06
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "395bcffbeabd1cd936a767a4c0fd66a1b530620752b7fc38b6cbc25d8d861a0f",
+      "response_sha256": "bea9dbfd1792466c456565c2dca166cd13180c2ca6ce6bebcf23e100fa4cfbcb",
+      "elapsed_seconds": 1.337548,
+      "usage": {
+        "prompt_tokens": 131,
+        "completion_tokens": 12,
+        "total_tokens": 143,
+        "provider_reported_cost_usd": 2.685e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n我们优化了搜索，我们重构了推荐，我们升级了播放，我们改进了评论。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118731-3qMt75ZykyhseBvIqzOz",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118731,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_27599ce29d",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 122,
+          "total_tokens": 134,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.55e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.55e-05,
+            "upstream_inference_prompt_cost": 1.83e-05,
+            "upstream_inference_completions_cost": 7.2e-06
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "b6efee911b03bd376521787030e3db5dcee998f4aa4bbefac599de40cda4fc2d",
+      "response_sha256": "6d549289b0767d239b51908ec79b2c5b9d6b8316381f3ef644483f15adff2781",
+      "elapsed_seconds": 0.796928,
+      "usage": {
+        "prompt_tokens": 122,
+        "completion_tokens": 12,
+        "total_tokens": 134,
+        "provider_reported_cost_usd": 2.55e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n让我们携手开启新财年的征程。让我们以饱满的热情迎接每一个挑战。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118732-lKc597j73PkrZdRWqlwm",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118732,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_d26e8aed44",
+        "usage": {
+          "completion_tokens": 11,
+          "prompt_tokens": 129,
+          "total_tokens": 140,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.595e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.595e-05,
+            "upstream_inference_prompt_cost": 1.935e-05,
+            "upstream_inference_completions_cost": 6.6e-06
+          }
+        },
+        "provider": "OpenAI"
+      },
+      "request_sha256": "17875cafc67c846050d82886482589fad479f3e9ede18dc89859c5ce905d594e",
+      "response_sha256": "ccebc3e2ad31bb92427cab2b38cd8de2b94b0dd5cbeb0f238308908de202e91e",
+      "elapsed_seconds": 0.730379,
+      "usage": {
+        "prompt_tokens": 129,
+        "completion_tokens": 11,
+        "total_tokens": 140,
+        "provider_reported_cost_usd": 2.595e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n首先安装依赖，其次配置密钥，再次运行迁移脚本，最后启动服务。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118733-B7eUkelqaR4StTj3uw5C",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118733,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 124,
+          "total_tokens": 136,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.58e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.58e-05,
+            "upstream_inference_prompt_cost": 1.86e-05,
+            "upstream_inference_completions_cost": 7.2e-06
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "d688e4d6ca3cd1cafd44bb813821144f041fb3de67fddaecf6a58f364dc76a7e",
+      "response_sha256": "999d09e0a22172602fe2554f1332495e1c2a761ee172c0126d2f76eba9edb25b",
+      "elapsed_seconds": 0.929133,
+      "usage": {
+        "prompt_tokens": 124,
+        "completion_tokens": 12,
+        "total_tokens": 136,
+        "provider_reported_cost_usd": 2.58e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n新品上市 🎉🎉！超美配色 🌈，超强性能 🚀，超值价格 💰，快来抢购吧 🛒✨！"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118734-TjiQGdDE9t5vDbahw4NL",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118734,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 139,
+          "total_tokens": 151,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.805e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.805e-05,
+            "upstream_inference_prompt_cost": 2.085e-05,
+            "upstream_inference_completions_cost": 7.2e-06
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "3db10649fad73e0372c6206f2c63be80bf8cb0f29035ce25883bc808cecaeb3b",
+      "response_sha256": "ee89b77e55db5c2bc83bb8f3e5507ba512537c2e26f04d01d0373308156a52db",
+      "elapsed_seconds": 0.988222,
+      "usage": {
+        "prompt_tokens": 139,
+        "completion_tokens": 12,
+        "total_tokens": 151,
+        "provider_reported_cost_usd": 2.805e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n在自媒体蓬勃发展的今天，内容创作者站在了流量风口。在这个注意力稀缺的时代，好内容愈发珍贵。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118735-AhgRq8NMUt5NHEMEcqgG",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118735,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_79c524b23a",
+        "usage": {
+          "completion_tokens": 11,
+          "prompt_tokens": 140,
+          "total_tokens": 151,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.76e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.76e-05,
+            "upstream_inference_prompt_cost": 2.1e-05,
+            "upstream_inference_completions_cost": 6.6e-06
+          }
+        },
+        "provider": "OpenAI"
+      },
+      "request_sha256": "8d7d8896dff16fbc34bf7966f9dedb5f9e0830101119904c2771e4d77e8d0d76",
+      "response_sha256": "4c405cf54734a9358c5704b03c0da26732c9ac3bd6168b90eb3e1f5451545ac6",
+      "elapsed_seconds": 0.738618,
+      "usage": {
+        "prompt_tokens": 140,
+        "completion_tokens": 11,
+        "total_tokens": 151,
+        "provider_reported_cost_usd": 2.76e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n这次改版——不是小修小补——而是全面升级——不是功能的叠加——而是体验的飞跃。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118736-OptEIDSQIGJsHPcDpjtW",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118736,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_4147058500",
+        "usage": {
+          "completion_tokens": 11,
+          "prompt_tokens": 133,
+          "total_tokens": 144,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.655e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.655e-05,
+            "upstream_inference_prompt_cost": 1.995e-05,
+            "upstream_inference_completions_cost": 6.6e-06
+          }
+        },
+        "provider": "OpenAI"
+      },
+      "request_sha256": "23bb9bed51e0c8309a8ec549786385faa3c7ea25161d58273bf815121fbbe205",
+      "response_sha256": "2d488345ca0b6c96ce981b84d32a1d317b92c8aedb66fc896a320c57dfc3b633",
+      "elapsed_seconds": 0.802072,
+      "usage": {
+        "prompt_tokens": 133,
+        "completion_tokens": 11,
+        "total_tokens": 144,
+        "provider_reported_cost_usd": 2.655e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n内存分配器采用伙伴系统——把空闲块按 2 的幂次分级管理——这样既能快速合并，又能减少外部碎片。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118736-rGddNXajUA6K7yNGb222",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118736,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 141,
+          "total_tokens": 153,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.835e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.835e-05,
+            "upstream_inference_prompt_cost": 2.115e-05,
+            "upstream_inference_completions_cost": 7.2e-06
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "3143ccb983f565596f73da53c3fe6e09ec85660c4f1037b786755a1d4e853228",
+      "response_sha256": "597208d14a21500ddf6f8a5bb11e9c91ec0e312de590af77eebae2666dc92565",
+      "elapsed_seconds": 1.056109,
+      "usage": {
+        "prompt_tokens": 141,
+        "completion_tokens": 12,
+        "total_tokens": 153,
+        "provider_reported_cost_usd": 2.835e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n这个方案不是技术上不可行，而是排期成本太高，建议放到下个季度再评估。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118737-pOVNHxKYQmWpOKOCMqzZ",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118738,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 128,
+          "total_tokens": 140,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.64e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.64e-05,
+            "upstream_inference_prompt_cost": 1.92e-05,
+            "upstream_inference_completions_cost": 7.2e-06
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "e9695e9519d0bfcd333c4e65aac43035a732de0cff9a62c57d673c4a8a0cf878",
+      "response_sha256": "e4c453edd9188dae8686d8a810a8b5622130f7fedb96442975fc8635667942ea",
+      "elapsed_seconds": 1.138501,
+      "usage": {
+        "prompt_tokens": 128,
+        "completion_tokens": 12,
+        "total_tokens": 140,
+        "provider_reported_cost_usd": 2.64e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n写得慢的稿子，读者未必看得出来；写得急的稿子，读者一眼就能看出来。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118739-giJE2fjb45zyLiHu9MJg",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118739,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_66ee548660",
+        "usage": {
+          "completion_tokens": 11,
+          "prompt_tokens": 134,
+          "total_tokens": 145,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.67e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.67e-05,
+            "upstream_inference_prompt_cost": 2.01e-05,
+            "upstream_inference_completions_cost": 6.6e-06
+          }
+        },
+        "provider": "OpenAI"
+      },
+      "request_sha256": "78a6ba896ec1c44cffff4a4b6cfc82b7d9199fbbb0021c6b2fc3ed28e427f0a3",
+      "response_sha256": "2a47118b62b57370968e205c0aa0790b47617c3e95819ce9474f8bd372f65eb3",
+      "elapsed_seconds": 0.776517,
+      "usage": {
+        "prompt_tokens": 134,
+        "completion_tokens": 11,
+        "total_tokens": 145,
+        "provider_reported_cost_usd": 2.67e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n配置分两步：首先把 API 密钥写进配置文件，其次确认网络能访问服务端点。其他选项保持默认即可。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118739-SO85cQ21iH5gMLT5oXtf",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118739,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 134,
+          "total_tokens": 146,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.73e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.73e-05,
+            "upstream_inference_prompt_cost": 2.01e-05,
+            "upstream_inference_completions_cost": 7.2e-06
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "f573e1f97aeaf95267e082065cbcc7bebae13fda5f6f69ceace66c094af74477",
+      "response_sha256": "702abde0df09ea6e44e9448697726054968eb5fe2c0591509226415fae33bcf9",
+      "elapsed_seconds": 1.006278,
+      "usage": {
+        "prompt_tokens": 134,
+        "completion_tokens": 12,
+        "total_tokens": 146,
+        "provider_reported_cost_usd": 2.73e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n今天试了家附近的社区食堂，十五块钱两荤两素，味道超出预期 😋。老板娘说开了八年，附近的老人几乎天天来。这样的小店能多开几家就好了 👍。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118740-4I8laPIbSq0G0Zh9UYgp",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118740,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_79c524b23a",
+        "usage": {
+          "completion_tokens": 11,
+          "prompt_tokens": 159,
+          "total_tokens": 170,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 3.045e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 3.045e-05,
+            "upstream_inference_prompt_cost": 2.385e-05,
+            "upstream_inference_completions_cost": 6.6e-06
+          }
+        },
+        "provider": "OpenAI"
+      },
+      "request_sha256": "82bda501effd9ca7cdf287192eabb316a81925772a00040d0efd65a3fdf6608f",
+      "response_sha256": "4e7676474ee6a7c8a44ed7c69f7859c0e3fc6b6593cabf28212ac28b26665c76",
+      "elapsed_seconds": 0.713416,
+      "usage": {
+        "prompt_tokens": 159,
+        "completion_tokens": 11,
+        "total_tokens": 170,
+        "provider_reported_cost_usd": 3.045e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n如果你也有类似的踩坑经历，让我们在评论区交流一下，互相省点时间。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118741-K4qcscp1Gi6stkNfslRG",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118741,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_830d456649",
+        "usage": {
+          "completion_tokens": 11,
+          "prompt_tokens": 126,
+          "total_tokens": 137,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.55e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.55e-05,
+            "upstream_inference_prompt_cost": 1.89e-05,
+            "upstream_inference_completions_cost": 6.6e-06
+          }
+        },
+        "provider": "OpenAI"
+      },
+      "request_sha256": "3f42aaeb45a2a24dee679b0dc0572be57f90b82014f7c5565b7bf50f19b8869e",
+      "response_sha256": "1f3aba4e9836a6a2bcd26cc5152806d7d35d62d0b57374948c6f5550f51338a8",
+      "elapsed_seconds": 0.634455,
+      "usage": {
+        "prompt_tokens": 126,
+        "completion_tokens": 11,
+        "total_tokens": 137,
+        "provider_reported_cost_usd": 2.55e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n上世纪八十年代，个体户刚刚出现在街头。他们中的不少人——比如那位卖服装起家的陈老板——后来成了第一批民营企业家。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118742-72zSmTzTLtORJHXCq2Rd",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118742,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 145,
+          "total_tokens": 157,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.895e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.895e-05,
+            "upstream_inference_prompt_cost": 2.175e-05,
+            "upstream_inference_completions_cost": 7.2e-06
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "e7011966ffa550ef1e885e16a7cfc59d00b10632d4c7a139c332e36b78ee5648",
+      "response_sha256": "e741db7d047766e87eec12a3aff5c341d8d289179ef67d69eaf81f3d5204f23d",
+      "elapsed_seconds": 1.240571,
+      "usage": {
+        "prompt_tokens": 145,
+        "completion_tokens": 12,
+        "total_tokens": 157,
+        "provider_reported_cost_usd": 2.895e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。\n\n待评文本：\n他不是不想来，而是台风把航班全取消了——人在机场等了六个小时。"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 300,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118743-EjnTw2LPzs2lYrAghEHE",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"hit\": false, \"evidence\": \"\"}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118743,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 127,
+          "total_tokens": 139,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 2.625e-05,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 2.625e-05,
+            "upstream_inference_prompt_cost": 1.905e-05,
+            "upstream_inference_completions_cost": 7.2e-06
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "e2373245685de9ae03f5cd3ef6a51c1f0551659f3e32d0ab062df3ff3912b000",
+      "response_sha256": "38bf2eb636c96a61a016e8a7c4c591efa6d6e8da6eb9d8bb83bb5135a48c29ba",
+      "elapsed_seconds": 1.02835,
+      "usage": {
+        "prompt_tokens": 127,
+        "completion_tokens": 12,
+        "total_tokens": 139,
+        "provider_reported_cost_usd": 2.625e-05,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    },
+    {
+      "backend": {
+        "provider": "openrouter",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "credential_env": "OPENROUTER_API_KEY",
+        "model": "openai/gpt-4o-mini",
+        "credential_value_recorded": false
+      },
+      "request": {
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {
+            "role": "user",
+            "content": "你是中文文案改写助手。请按下面的写作规则改写给出的文案，消除所有违规之处，\n保持原意，不要增加新事实。只返回 JSON：{\"rewritten\": \"改写后的全文\",\n\"applied_rules\": [\"实际应用的规则 id\"]}\n\n写作规则：\n[\n  {\n    \"id\": \"rule-dash-density\",\n    \"name\": \"破折号使用过多\",\n    \"definition\": \"频繁用破折号（——）串联句子、代替正常的停顿和连接，一段里出现三处以上，是典型的 AI 腔。\",\n    \"bad_example\": \"我们隆重推出全新智能笔记应用——一款真正懂你的效率神器——它不仅能记录灵感——还能自动整理、智能归类、跨端同步——让你的每一条想法都不再流失——现在下载，即刻开启高效人生——限时免费，错过再等一年！\",\n    \"good_example\": \"新版智能笔记应用上线了。它能记录灵感，自动整理和归类，支持多设备同步。现在下载可以免费试用一个月。\"\n  },\n  {\n    \"id\": \"rule-not-but\",\n    \"name\": \"「不是……而是……」句式滥用\",\n    \"definition\": \"同一篇里连用两处以上「不是 X，而是 Y」的对仗句式。单独一次真实对比不算违规。\",\n    \"bad_example\": \"真正的成长，不是年龄的增加，而是认知的升级；不是知识的堆砌，而是思维的重构；不是经验的重复，而是边界的突破。\",\n    \"good_example\": \"真正的成长，往往体现在认知的变化上：看问题的角度变了，做事的方法跟着变，最后连自己能做什么的边界都被重新画了一遍。\"\n  },\n  {\n    \"id\": \"rule-parallelism\",\n    \"name\": \"排比堆砌\",\n    \"definition\": \"连续三个以上结构高度相似的分句（同开头或同结尾），读起来像口号。\",\n    \"bad_example\": \"让我们共同见证这个激动人心的时刻！让我们一起开启数字化转型的全新篇章。让我们携手并进，共创辉煌明天。\",\n    \"good_example\": \"新版本今天上线了，期待大家试用之后多提意见。\"\n  },\n  {\n    \"id\": \"rule-lets-start\",\n    \"name\": \"「让我们」口号式开头\",\n    \"definition\": \"连续用「让我们」领起句子，像动员演讲而不是在写文案。\",\n    \"bad_example\": \"让我们共同见证这个激动人心的时刻！让我们一起开启数字化转型的全新篇章。让我们携手并进，共创辉煌明天。\",\n    \"good_example\": \"新版本今天上线了，期待大家试用之后多提意见。\"\n  },\n  {\n    \"id\": \"rule-template-sequence\",\n    \"name\": \"「首先/其次/最后」模板序列\",\n    \"definition\": \"堆叠「首先、其次、再次、然后、最后、总而言之」等连接词，把文案写成公文提纲。\",\n    \"bad_example\": \"首先，克隆本仓库到本地。其次，安装所需依赖。再次，配置环境变量。然后，运行初始化脚本。最后，启动开发服务器即可。\",\n    \"good_example\": \"克隆仓库后安装依赖，把 .env.example 复制为 .env 并填好密钥，再运行 init.sh 初始化，最后 make dev 启动服务。\"\n  },\n  {\n    \"id\": \"rule-era-opening\",\n    \"name\": \"「在……的今天/时代」开头\",\n    \"definition\": \"用「在……的今天」「在这个……的时代」「在……的当下」这类空泛宏大开头的套话。\",\n    \"bad_example\": \"在人工智能飞速发展的今天，每个人都面临前所未有的机遇与挑战。在这个信息爆炸的时代，如何保持独立思考显得尤为重要。\",\n    \"good_example\": \"这两年 AI 工具更新得飞快，很多人一边兴奋一边焦虑。信息越多，越需要自己能做判断。\"\n  },\n  {\n    \"id\": \"rule-emoji-density\",\n    \"name\": \"emoji 泛滥\",\n    \"definition\": \"一段文案里 emoji 出现三次以上，或密度超过每千字 5 个；正式稿件应基本不用。\",\n    \"bad_example\": \"🎉 重磅来袭！🔥 全新智能手表正式发布！⌚ 超长续航 14 天 🔋，心率血氧全天候监测 ❤️，50 米防水 🏊，现在下单立减 200 元 💰，错过再等一年 ⏰！\",\n    \"good_example\": \"新款智能手表发布：续航 14 天，支持心率血氧监测和 50 米防水，首发价立减 200 元。\"\n  },\n  {\n    \"id\": \"rule-hollow-metaphor\",\n    \"name\": \"空洞比喻与假拟人\",\n    \"definition\": \"用「仿佛一位智者」「宛如一盏明灯」这类不传递任何具体信息的比喻和拟人抒情。\",\n    \"bad_example\": \"这款耳机仿佛一位贴心的智者，在你喧嚣的世界里低语；它的降噪功能宛如一道温柔的屏障，将浮躁隔绝在外。\",\n    \"good_example\": \"这款耳机的降噪效果确实好，地铁里戴上能安静不少，报站的人声也能压得住。\"\n  }\n]\n\n待改写文案：\n在这个效率至上的时代，让我们一起重新认识这款笔记工具——它不是简单的记录软件——而是你的第二大脑。首先，它能自动整理灵感；其次，它让检索快如闪电；最后，它让分享毫无门槛——仿佛一位永不疲倦的管家。总而言之，让我们从现在开始，把每一条灵感都安顿好 🚀✨💡。\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 8904,
+        "max_tokens": 5000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "gen-1786118744-999RVfoVv6uTJOozXXk2",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"rewritten\":\"在效率至上的时代，重新认识这款笔记工具，它是你的第二大脑。它能自动整理灵感，检索速度极快，分享也非常便捷。总之，从现在开始，把每一条灵感都安顿好。\",\"applied_rules\":[\"rule-era-opening\",\"rule-lets-start\",\"rule-template-sequence\",\"rule-hollow-metaphor\",\"rule-dash-density\"]}",
+              "role": "assistant"
+            },
+            "native_finish_reason": "stop"
+          }
+        ],
+        "created": 1786118744,
+        "model": "openai/gpt-4o-mini",
+        "object": "chat.completion",
+        "system_fingerprint": "fp_369e662417",
+        "usage": {
+          "completion_tokens": 92,
+          "prompt_tokens": 1440,
+          "total_tokens": 1532,
+          "completion_tokens_details": {
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 0.0002712,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 0.0002712,
+            "upstream_inference_prompt_cost": 0.000216,
+            "upstream_inference_completions_cost": 5.52e-05
+          }
+        },
+        "provider": "Azure"
+      },
+      "request_sha256": "53a549c77bc511c5b585ad093a48c7e033fe54621984d91a9f7260104fdeddb0",
+      "response_sha256": "f4fe672f9a44aac2ebed5a7a868f95eca4536117ca957a64ab83b42265aa1d31",
+      "elapsed_seconds": 2.742257,
+      "usage": {
+        "prompt_tokens": 1440,
+        "completion_tokens": 92,
+        "total_tokens": 1532,
+        "provider_reported_cost_usd": 0.0002712,
+        "cost_qualification": "provider-native usage.cost"
+      }
+    }
+  ],
+  "deterministic_fallback_batches": [
+    1,
+    2,
+    3
+  ],
+  "gates": {
+    "boundary_detection_rate >= 0.85": true,
+    "retention_harm_rate <= 0.15": true,
+    "merged_rules_fewer_than_candidates": true,
+    "llm_rules_calibrated_before_activation": true,
+    "real_llm_called_with_receipts": true
+  },
+  "accepted": true
+}
