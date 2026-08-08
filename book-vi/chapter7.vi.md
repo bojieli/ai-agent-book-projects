@@ -319,6 +319,10 @@ Trước khi bắt tay vào làm SFT, có một vấn đề thực tế không t
 
 Bốn thử nghiệm này có một đặc điểm chung - "ghi các ánh xạ và giao thức ổn định thành các tham số": lời nói SFT củng cố giao thức điều khiển kiểu, SFT đa ngôn ngữ củng cố mẫu tổ chức tư duy và chắt lọc SFT củng cố ánh xạ trực tiếp từ đầu vào đến đầu ra. Điểm chung của họ là mục tiêu rõ ràng, hình thức rõ ràng và tiêu chí đánh giá ổn định. Do đó, SFT có thể đạt được lợi ích với hiệu suất mẫu cực cao; nhưng một khi sự phân bố thay đổi, xu hướng bộ nhớ sẽ bộc lộ dưới dạng suy giảm hiệu suất. Đây chính xác là biểu hiện thử nghiệm của sự khác biệt về khái quát hóa bộ nhớ được đề cập trong Phần 7.1 "Sự khác biệt cơ bản giữa SFT và RL".
 
+Các bad case ở Chương 6 cũng có thể trở thành dữ liệu huấn luyện. Với coding agent kết thúc quá sớm, cắt tiền tố trajectory ngay trước khi tuyên bố hoàn thành; tuyên bố đó là rejected, còn “chạy kiểm thử, kiểm tra từng điều kiện nghiệm thu rồi mới kết luận” là chosen. Cách này phù hợp với DPO hoặc minh họa ranh giới quyết định hơn SFT thông thường; lưu nguyên nhân lỗi, điều kiện áp dụng và bộ kiểm tra cùng mẫu.
+
+Cùng các nhiệm vụ đó có thể làm môi trường luyện RL: SFT dùng trajectory đã kiểm chứng, còn RL chạy lại bằng policy hiện tại và để verifier bên ngoài đánh giá. Bad case vì thế là ranh giới cần cải thiện, không chỉ là ví dụ để ghi nhớ.
+
 ## Khi nào nên chọn SFT, khi nào nên chọn RL
 
 Mục 7.1 giải thích rõ ràng **sự khác biệt cơ bản** giữa SFT và RL. Phần này trả lời một câu hỏi thực tế hơn: **Nên sử dụng cái nào khi gặp một nhiệm vụ cụ thể?** Kết luận của khung ra quyết định dưới đây sẽ được xác nhận thêm trong thí nghiệm RL tiếp theo (Thí nghiệm 7-10, Thí nghiệm 7-11). Bạn đọc có thể nhận định sơ bộ trước, sau đó quay lại so sánh sau khi đọc phần RL.
@@ -679,6 +683,12 @@ Tóm lại: **Tín hiệu dày đặc chỉ hữu ích nếu nó có thể bù �
 >
 > **Quan sát dự kiến**: Trên TerminalBench (Qwen3-4B, 5 hạt giống ngẫu nhiên), số lần vi phạm mỗi vòng giảm từ 3,71 phần thưởng kết quả thuần túy xuống 0,66 (khoảng 6 lần), trong khi tỷ lệ thành công của nhiệm vụ về cơ bản là giống nhau trong phạm vi nhiễu - cho thấy rằng "tuân thủ" gần như miễn phí và tại thời điểm này Agent thực sự đã thực hiện những hành động hiệu quả hơn chứ không phải bằng cách "làm ít hơn và mắc ít lỗi hơn". Đối với các câu hỏi đại số miniF2F (có thể đạt được tiến trình), số lần lặp cần thiết để đạt được tỷ lệ thành công 0,9 đã giảm từ 7,0 xuống 4,4 (mô hình 4B) và khoảng cách rõ ràng hơn trên mô hình lớn (30B: 8,5 → 5,4 và phần thưởng kết quả thuần túy phân kỳ trực tiếp trên một số hạt giống). Trong tác vụ thao tác với tệp được xâu chuỗi, tỷ lệ "mẫu bị mất" (mẫu bị lãng phí không học được gì) đã giảm từ 65% xuống 8%. Như một ví dụ phản bác, trong cài đặt sửa chữa phần mềm là "tiến trình không thể truy cập", toàn bộ đợt triển khai thường không thể vượt qua dù chỉ một bài kiểm tra và phần thưởng tiến độ chuyên sâu bằng 0 ở mọi nơi và không mang lại lợi ích nào - xác nhận nhận định rằng "khả năng tiếp cận là ngưỡng".
 
+> **Thí nghiệm 7-17 ★★: Từ bad case “kết thúc quá sớm” đến DPO và GRPO**
+>
+> `build_preference_data.py` biến 24 trường hợp thành cặp ưu tiên tiền tố trajectory: tuyên bố hoàn thành cũ là rejected, hành động kiểm tra trước là chosen. `train_dpo.py` cung cấp LoRA-DPO cho Qwen2.5-7B-Instruct; nhánh GRPO tùy chọn dùng kiểm thử nghiệm thu ẩn.
+>
+> Quyết định đúng trên tập ranh giới tăng từ 3/12 (25,0%) lên 11/12 (91,7%), còn tập giữ lại của nhiệm vụ đã hoàn thành giữ 8/8 (100%). Sinh tự do quá thận trọng, nên đây là kết quả so sánh cố định chứ không phải tuyên bố cải thiện thành công tổng thể khi vận hành. Xem [`premature-completion-dpo`](../chapter7/premature-completion-dpo/).
+
 ## Gọi công cụ học tập RL
 
 Trong các vòng thử nghiệm trước, không gian hành động của Agent bị giới hạn ở các hoạt động tích hợp sẵn như chuyển động và quan sát. Trên thực tế, Agent cũng cần gọi nhiều công cụ bên ngoài khác nhau - công cụ tìm kiếm, trình thông dịch mã, trình phân tích cú pháp tài liệu, v.v. - điều này mang lại những thách thức mới cho việc đào tạo RL.
@@ -818,10 +828,6 @@ Có hai phán đoán xuyên suốt toàn bộ chương này và đáng được 
 Quá trình post-training giải quyết được vấn đề "làm thế nào để làm cho mô hình thông minh hơn", nhưng chu kỳ cập nhật trọng số của mô hình được tính bằng tuần. Trên thực tế, API hoạt động trực tuyến và ngoại tuyến, nhu cầu của người dùng luôn thay đổi và các quy tắc kinh doanh thay đổi diễn ra hàng ngày. Chương tiếp theo sẽ khám phá một lộ trình tiến hóa bổ sung—không cần sửa đổi trọng số mô hình nhưng cho phép Agent xây dựng độc lập thư viện công cụ và cơ sở kiến thức thông qua External Learning (học bên ngoài tham số mô hình) để đạt được khả năng mở rộng liên tục.
 
 ## Câu hỏi tư duy
-
-### Kết quả thí nghiệm mới nhất
-
-Thí nghiệm 7-17 huấn luyện adapter LoRA Qwen2.5-7B từ 24 bad case của coding agent. Trong phép so sánh cố định giữa “hoàn thành” và “tiếp tục xác minh”, quyết định đúng trên các nhiệm vụ chưa hoàn thành tăng từ 3/12 lên 11/12, còn tập giữ lại của nhiệm vụ đã hoàn thành vẫn là 8/8. Sinh tự do trở nên quá thận trọng, nên phép so sánh cố định là kết quả chính chứ không phải tuyên bố cải thiện thành công chung khi vận hành.
 
 1. ★★ Sự quên lãng nghiêm trọng - một tinh chỉnh dành riêng cho nhiệm vụ phá hủy các khả năng chung ban đầu của mô hình (chẳng hạn như các lệnh gọi công cụ chung) - đặc biệt rắc rối trong kịch bản Agent. So với việc tinh chỉnh đầy đủ thông số, LoRA đóng băng trọng số cơ bản và có nguy cơ quên thấp hơn, nhưng nó không tránh khỏi. Những chiến lược nào có thể làm giảm bớt tình trạng lãng quên các khả năng do tinh chỉnh gây ra?
 2. ★★ Quá trình post-training củng cố các khả năng thành trọng lượng mô hình (“bộ nhớ cơ”), trong khi In-Context Learning (học trong ngữ cảnh) sẽ đưa kiến thức vào đầu vào tại thời điểm suy luận. Tuy nhiên, một số khả năng, chẳng hạn như kiến thức về miền, có thể được học thông qua post-training hoặc được cung cấp bởi ví dụ few-shot. Bạn sẽ sử dụng tiêu chí nào để quyết định con đường mà một năng lực nhất định nên đi?

@@ -319,6 +319,10 @@ Sebelum terjun langsung dengan SFT, ada satu pertanyaan praktis yang tidak bisa 
 
 Keempat eksperimen ini memiliki fitur yang sama—"menuliskan pemetaan dan protokol yang stabil ke dalam parameter": voice SFT memantapkan protokol kontrol gaya, multilingual SFT memantapkan templat pengorganisasian pemikiran, dan distillation SFT memantapkan pemetaan langsung dari input ke output. Mereka berbagi tujuan yang jelas, format yang bersih, dan kriteria evaluasi yang stabil, yang memungkinkan SFT untuk memberikan keuntungan dengan efisiensi sampel yang sangat tinggi; namun begitu distribusinya bergeser, kecenderungannya terhadap hafalan bermanifestasi sebagai penurunan kinerja. Ini adalah manifestasi eksperimental dari pemisahan *memory-generalization* yang dibahas pada Section 7.1, "The Essential Difference Between SFT and RL."
 
+Bad case dari Bab 6 juga dapat dijadikan data pelatihan. Untuk coding agent yang selesai terlalu cepat, potong prefiks trajectory sebelum deklarasi selesai; deklarasi asli menjadi rejected, sedangkan “jalankan tes, periksa setiap syarat penerimaan, lalu simpulkan” menjadi chosen. Ini lebih cocok untuk DPO atau demonstrasi batas keputusan daripada SFT biasa. Simpan penyebab kegagalan, kondisi penerapan, dan verifier bersama setiap sampel.
+
+Tugas yang sama dapat menjadi lingkungan latihan RL: SFT memakai trajectory yang sudah diverifikasi, sementara RL mengulangi tugas dengan policy saat ini dan verifier eksternal menilai hasilnya. Dengan demikian bad case menentukan batas keputusan yang perlu diperbaiki, bukan sekadar contoh untuk dihafal.
+
 ## Kapan Memilih SFT dan Kapan Memilih RL
 
 Bagian 7.1 menjelaskan **perbedaan mendasar** antara SFT dan RL. Bagian ini menjawab pertanyaan yang lebih praktis: **Untuk tugas tertentu, mana yang sebaiknya digunakan?** Beberapa kesimpulan dari kerangka keputusan berikut akan diuji lebih lanjut dalam Eksperimen 7-10 dan 7-11. Pembaca dapat membentuk penilaian awal, lalu kembali membandingkannya setelah membaca bagian RL.
@@ -525,6 +529,8 @@ Algoritma bukannya tidak penting—mereka hanya datang belakangan. Urutan usaha 
 
 ## Dari Single-Turn ke Multi-Turn: Credit Assignment dan Desain Reward
 
+“Selesai terlalu cepat” adalah contoh konkret. Saat model menyatakan tugas selesai, Harness menjalankan tes penerimaan di ruang kerja terisolasi yang tidak terlihat oleh model; hanya lulus yang mendapat reward positif. Tes harus membaca berkas atau status lingkungan nyata, bukan kata “selesai”. Pisahkan kumpulan batas tugas belum selesai dari kumpulan tugas yang benar-benar selesai agar koreksi tidak berubah menjadi sikap selalu menolak berhenti.
+
 ### Tantangan Utama dari Tugas Multi-Giliran
 
 ![Gambar 7-14: Perbandingan RL Putaran Tunggal dan Multi-Putaran](images/fig7-14.svg)
@@ -677,6 +683,12 @@ Ringkasnya: **Sinyal padat (dense signals) berguna hanya jika mereka dapat memul
 >
 > **Pengamatan yang Diharapkan**: Pada Terminal-Bench (Qwen3-4B, 5 nilai seed acak), pelanggaran per episode turun dari 3.71 dengan pure outcome rewards menjadi 0.66 (sekitar 6x lebih sedikit), sementara tingkat keberhasilan tugas tetap berada dalam batas fluktuasi (noise)—kepatuhan hampir tidak memakan biaya, dan nyatanya Agent mengambil *lebih* banyak tindakan efektif, bukan lebih sedikit; ia tidak sekadar "melakukan lebih sedikit agar tidak merusak banyak hal." Pada soal aljabar miniF2F (kemajuan dapat dicapai), jumlah iterasi yang dibutuhkan untuk mencapai tingkat keberhasilan 0.9 turun dari 7.0 menjadi 4.4 (model 4B), dengan selisih yang lebih besar lagi pada model yang lebih besar (30B: 8.5 → 5.4, dan pure outcome rewards menyimpang (diverge) pada beberapa seed). Pada tugas operasi file berantai, proporsi "grup gagal-semua" (sampel terbuang yang tidak mempelajari apa pun) turun dari 65% menjadi 8%. Sebagai contoh kebalikannya, dalam pengaturan perbaikan perangkat lunak (software-repair) di mana kemajuan tidak dapat dicapai, seluruh batch rollout sering kali tidak dapat lulus pada satu pun pengujian; karena itu, hadiah kemajuan yang padat (dense progress reward) adalah nol di mana-mana dan tidak memberikan manfaat, yang menegaskan bahwa "ketercapaian adalah ambang batasnya."
 
+> **Eksperimen 7-17 ★★: Dari bad case “selesai terlalu cepat” ke DPO dan GRPO**
+>
+> `build_preference_data.py` mengubah 24 kasus menjadi pasangan preferensi prefiks trajectory: deklarasi selesai asli adalah rejected, tindakan yang memverifikasi lebih dulu adalah chosen. `train_dpo.py` menyediakan LoRA-DPO untuk Qwen2.5-7B-Instruct; jalur GRPO opsional memakai tes penerimaan tersembunyi.
+>
+> Akurasi perbandingan tetap pada tugas belum selesai naik dari 3/12 (25,0%) menjadi 11/12 (91,7%), sedangkan tugas selesai tetap 8/8 (100%). Generasi bebas terlalu berhati-hati, jadi hasil utama adalah perbandingan tetap, bukan klaim keberhasilan produksi secara umum. Implementasi: [`premature-completion-dpo`](../chapter7/premature-completion-dpo/).
+
 ## RL untuk Mempelajari Tool Calling
 
 Dalam eksperimen multi-giliran (multi-turn) sebelumnya, ruang aksi Agent terbatas pada operasi bawaan seperti bergerak dan mengamati. Agent dunia nyata juga perlu memanggil berbagai tool eksternal—mesin pencari, Code Interpreter, parser dokumen, dll.—yang memperkenalkan tantangan baru untuk pelatihan RL.
@@ -817,10 +829,6 @@ Dua penilaian terjalin di sepanjang bab ini dan lebih berharga untuk diingat dib
 Bab ini telah menjawab pertanyaan terkait pembaruan parameter tentang “bagaimana cara melatih”. Bab selanjutnya menempatkan kembali parameter model ke dalam sistem Agent yang utuh: parameter hanyalah satu dari empat pembawa pembaruan, di samping pengetahuan, instruksi, dan program. Tantangan khasnya adalah bagaimana memperoleh sinyal pembelajaran (learning signals) yang dapat dipercaya dari trajectory deployment, memilih lokasi pembaruan yang tepat, dan mengatur validasi, rilis, serta rollback dari setiap kandidat versi. Terkait spesifikasi algoritma pelatihan, Bab 8 secara langsung merujuk ke bab ini daripada mengulang materi tersebut.
 
 ## Pertanyaan Pemikiran
-
-### Hasil Eksperimen Terbaru
-
-Eksperimen 7-17 melatih adapter LoRA Qwen2.5-7B dari 24 kasus buruk coding agent. Pada perbandingan tetap antara “selesai” dan “lanjutkan verifikasi”, keputusan benar untuk tugas yang belum selesai naik dari 3/12 menjadi 11/12, sedangkan kumpulan tugas selesai tetap 8/8. Generasi terbuka menjadi terlalu berhati-hati, jadi perbandingan tetap adalah hasil utama, bukan klaim peningkatan umum di produksi.
 
 1. ★★ Catastrophic forgetting—di mana fine-tuning untuk task spesifik menghancurkan kemampuan umum asli dari model, seperti Tool Calling umum—sangat merepotkan di dalam skenario Agent. Dibandingkan dengan fine-tuning parameter penuh (full-parameter fine-tuning), LoRA membekukan weights dasar dan membawa risiko melupakan yang lebih rendah, tetapi tidak kebal terhadap hal itu. Strategi apa yang dapat lebih memitigasi lupa kemampuan (capability forgetting) selama fine-tuning?
 2. ★★ Post-training memantapkan kemampuan ke dalam weights model, atau “memori otot” (muscle memory), sedangkan In-Context Learning menempatkan pengetahuan dalam input saat inferensi (inference). Beberapa kemampuan, seperti pengetahuan domain, dapat dipelajari melalui post-training atau diberikan melalui contoh few-shot. Kriteria apa yang akan Anda gunakan untuk memutuskan jalur mana yang harus diambil suatu kemampuan?
