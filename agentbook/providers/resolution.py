@@ -142,8 +142,9 @@ def resolve_backend(
             neither its own variables nor ``OPENROUTER_API_KEY`` are set.
     """
     spec = lookup(provider)
-    if model:
-        resolved_model = model
+    model_clean = (model or "").strip()
+    if model_clean:
+        resolved_model = model_clean
     elif spec.name == _OPENROUTER:
         # The OpenRouter default honours OPENROUTER_MODEL — the env var this
         # package documents (see the module docstring / ZERO_COST_HINT) as the
