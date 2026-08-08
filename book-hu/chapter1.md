@@ -18,13 +18,21 @@ Egy modern ügynökrendszer lényege egy tömör képletbe foglalható: **Ügyn�
 
 Intuitívabban megfogalmazva: **Ügynök = Érvelőmotor + Aktuális információhalmaz + Cselekvési interfészek**. A modell érvel és dönt, a kontextus biztosítja az információhalmazt, amelyre a döntések támaszkodnak, az eszközök pedig azokat az interfészeket nyújtják, amelyeken keresztül a döntések hatással vannak a külvilágra.
 
-Ez a három összetevő pontosan megfelel a megerősítéses tanulás (RL; lásd 7. fejezet) három alapfogalmának.
+A klasszikus megerősítéses tanulási és irányításelméleti nézőpontból az Agent és a Környezet egy zárt hurkú interakció két oldala, nem egymás részei. A Környezet megfigyelést ad vissza, az Agent a kontextusa alapján kiválasztja a következő műveletet, a művelet pedig módosítja a Környezet állapotát, amely új megfigyelést eredményez.
+
+![1-1. ábra: Az Agent–Környezet interakciós ciklusa és az Agenten belüli Modell–Harness szerkezet](images/fig1-1.svg)
+
+Az 1-1. ábra két absztrakciós szintet mutat. A külső szint az **Agent és a Környezet interakciója**: a Környezethez tartozik a fájlrendszer, az adatbázis, a web, a felhasználó, más Agentek és a fizikai vagy szimulált világ. A belső szint az **Agenten belüli Modell–Harness szerkezet**: a Modell hozza a policy-döntéseket; a Harness az Agent határain belüli futtatási és irányítási réteg, amely felépíti a kontextust, eszközinterfészeket tesz elérhetővé, kezeli a ciklust és az állapotot, valamint jogosultságot, ellenőrzést és korrekciót alkalmaz. A Harness létrehozhat, elszigetelhet vagy közvetíthet egy környezetet anélkül, hogy tartalmazná annak állapotát és átmeneti szabályait.
+
+A mérnöki képlet így bontható ki: az LLM a Modellnek felel meg, a Kontextus + Eszközök pedig a minimális Harness-t alkotják; a termelési rendszerek ezen a határon belül korlátozást, ellenőrzést és korrekciót adnak hozzá. A fejezet további része ezt a határt követi.
+
+Ez a három összetevő kapcsolatban áll a megerősítéses tanulás (RL; lásd 7. fejezet) három alapfogalmával, de nem szigorú egy-az-egyben megfeleltetés: a kontextus a megfigyelések és az előzmények Agenten belüli reprezentációja, az eszközök pedig olyan megfigyelési és műveleti interfészeket adnak, amelyek mögöttes objektumai továbbra is a Környezethez tartoznak.
 
 | Intuíció | Ügynök-összetevő | RL fogalom | Szerep |
 |----------|------------------|-------------------------|--------|
 | "Érvelőmotor" | LLM | "Policy" | A döntéshozatali logika, amely meghatározza, hogy "mit tegyünk ezután" – a rendelkezésre álló információk alapján válassza ki a legmegfelelőbb cselekvést az összes lehetséges opció közül |
-| "Aktuális információhalmaz" | Kontextus | "Megfigyelési tér (Observation Space)" | Minden információ, ami az ügynök számára elérhető – mit figyelhet meg, olvashat, mire emlékezhet, és mely rendszerekhez férhet hozzá |
-| "Cselekvési interfészek" | Eszközök | "Cselekvési tér (Action Space)" | Az összes dolog, amit az ügynök tehet – milyen "eszközök" állnak rendelkezésre, az üzenetküldéstől a kódvégrehajtáson át a felületek vezérléséig |
+| "Aktuális információhalmaz" | Kontextus felépítése | "Megfigyelések és előzmények" | A Környezet megfigyeléseit és a meglévő előzményeket az aktuális döntéshez szükséges információvá rendezi |
+| "Cselekvési interfészek" | Eszközinterfészek | "Megfigyelési/műveleti interfészek" | Meghatározza, milyen megfigyeléseket olvashat az Agent, milyen műveleteket küldhet, és milyen formátumban |
 
 ### Megfigyelési és cselekvési terek: A modell és a világ közötti interfész
 
@@ -116,9 +124,9 @@ De felmerül egy mélyebb kérdés: ha a modellek folyamatosan erősödnek, vajo
 
 #### Ügynöktanulási mechanizmusok: A kontextuális adaptációtól a tartós frissítésekig
 
-Az előzőekben megjegyeztük, hogy egy modell megerősítéses tanulással interiorizálhatja az eszközhasználati politikákat natív képességként. Az ügynök viselkedésének változásai azonban nem csak a tréning során következnek be. A frissítés helye és időtartama alapján ezek a változások három egymást kiegészítő útvonalként értelmezhetők (1-1. ábra): feladaton belüli kontextuális adaptáció, feladatokon átívelő frissítések külső artefaktumokban, és paraméterfrissítések a tréningciklusok során.
+Az előzőekben megjegyeztük, hogy egy modell megerősítéses tanulással interiorizálhatja az eszközhasználati politikákat natív képességként. Az ügynök viselkedésének változásai azonban nem csak a tréning során következnek be. A frissítés helye és időtartama alapján ezek a változások három egymást kiegészítő útvonalként értelmezhetők (1-2. ábra): feladaton belüli kontextuális adaptáció, feladatokon átívelő frissítések külső artefaktumokban, és paraméterfrissítések a tréningciklusok során.
 
-![1-1. ábra: Az ügynökképesség-frissítés három szintje](images/fig1-1.svg)
+![1-2. ábra: Az ügynökképesség-frissítés három szintje](images/fig1-2.svg)
 
 "Kontextuális adaptáció" az aktuális feladaton belül történik. Miután példák, állapot és visszakeresési eredmények belépnek a kontextusba, a modell azonnal módosíthatja a viselkedését, de ez nem változtatja meg a következő munkamenet állandó állapotát. Előnyei a gyorsaság és az alacsony költség; korlátai a kontextusablakból és az információszervezés módjából adódnak. A 2. fejezet részletesen elmagyarázza, hogyan működik az adaptációnak ez a formája.
 
@@ -142,9 +150,9 @@ Valóban minden összetevő nélkülözhetetlen? A legközvetlenebb módja ennek
 
 > **1-1. kísérlet ★★: A kontextus kritikus szerepe**
 >
-> Szisztematikus "ablációs vizsgálattal" kutattuk, hogy az egyes kontextus-összetevők hogyan alakítják az ügynök viselkedését. A fenti öt összetevő közül négyet teszteltünk – a system prompt, mint az ügynök alapvető identitásdefiníciója, kivétel volt: nélküle az ügynöknek egyáltalán nincs szereptudata, és a teszt értelmetlen lenne. Az 1-2. ábrán látható módon a kísérlet öt kontrollcsoportot futtatott: egy teljes alapvonalat, amely minden összetevőt megtartott, plusz négy csoportot, amelyek mindegyike egy-egy összetevőt hiányolt, hogy megfigyeljük az egyes összetevők hatását az ügynökteljesítményre.
+> Szisztematikus "ablációs vizsgálattal" kutattuk, hogy az egyes kontextus-összetevők hogyan alakítják az ügynök viselkedését. A fenti öt összetevő közül négyet teszteltünk – a system prompt, mint az ügynök alapvető identitásdefiníciója, kivétel volt: nélküle az ügynöknek egyáltalán nincs szereptudata, és a teszt értelmetlen lenne. Az 1-3. ábrán látható módon a kísérlet öt kontrollcsoportot futtatott: egy teljes alapvonalat, amely minden összetevőt megtartott, plusz négy csoportot, amelyek mindegyike egy-egy összetevőt hiányolt, hogy megfigyeljük az egyes összetevők hatását az ügynökteljesítményre.
 >
-> ![1-2. ábra: 1-1. kísérlet – Kontextus abláció vizsgálati elrendezés](images/fig1-2.svg)
+> ![1-3. ábra: 1-1. kísérlet – Kontextus abláció vizsgálati elrendezés](images/fig1-3.svg)
 >
 > A kísérleti eredmények feltárták az egyes kontextus-összetevők pótolhatatlan szerepét. Az "eszközdefiníciók" (a statikus előtag részei) az ügynök cselekvési képességének alapjai; nélkülük az ügynök nem ismer fel és nem hívhat semmilyen eszközt. Az "eszközeredmények" kulcsfontosságúak a zárt hurkú vezérléshez; hiányuk megfosztja az ügynököt a végrehajtási visszajelzéstől, és végtelen ciklusba taszítja. Az "érvelési folyamat" (az asszisztens üzenetek reasoning része) megőrzi az ügynök korábbi döntéseinek indokait, koherensebbé téve a teljes érvelést és megelőzve az ellentmondó döntéseket. Az "üzenetelőzmény" (korábbi körök felhasználói üzenetei, asszisztens üzenetei és eszközeredményei) megakadályozza a redundáns műveleteket, fenntartja a feladatvégrehajtás koherenciáját, és elkerüli ugyanazon hibák megismétlését.
 >
@@ -156,9 +164,9 @@ A három összetevő ismeretében természetes kérdés: hogyan működnek együ
 
 Azt a központi mintát, ahogy egy ügynök egy feladatot végrehajt, "ReAct"-nek (Reasoning + Acting) hívják. A név csak az érvelést és a cselekvést említi, de a tényleges ciklus három szakaszból áll: a modell először "gondolkodik" (reasoning) arról, mit tegyen ezután, majd meghív egy eszközt a "cselekvéshez" (acting), majd "megfigyeli" (observes) az eszköz eredményét, és gondolkodik a következő lépésről. Ez a "gondolkodás → cselekvés → megfigyelés → gondolkodás → cselekvés → megfigyelés" ciklus addig ismétlődik, amíg a feladat el nem készül.
 
-Vegyünk egy konkrét példát – a bevételek összesítését több devizában –, hogy megértsük az ügynök "trajektóriáját" (trajectory): az üzenetelőzményt, amely az ügynök munkája során halmozódik fel, és amely felhasználói üzenetekből, asszisztens üzenetekből (azok érvelésével és eszközhívásaival) és eszközeredményekből áll. Minden egyes LLM-hívásnál a modell által kapott teljes kontextus a "statikus előtag" (system prompt + eszközdefiníciók) plusz a "trajektória" (dinamikus üzenetelőzmény) (1-3. ábra). Ez egy kulcsfontosságú tényt mutat: **Ügynök kontextus = statikus előtag + trajektória**. Konkrétan: a statikus előtag a fenti öt összetevő közül az első kettő (system prompt + eszközdefiníciók); a trajektória az utolsó három (felhasználói üzenetek + asszisztens üzenetek + eszközeredmények, amelyek minden interakcióval növekednek). Ebből a teljes kontextusból generálja az LLM a következő válaszát, amely aztán hozzáfűződik a trajektóriához a következő híváshoz.
+Vegyünk egy konkrét példát – a bevételek összesítését több devizában –, hogy megértsük az ügynök "trajektóriáját" (trajectory): az üzenetelőzményt, amely az ügynök munkája során halmozódik fel, és amely felhasználói üzenetekből, asszisztens üzenetekből (azok érvelésével és eszközhívásaival) és eszközeredményekből áll. Minden egyes LLM-hívásnál a modell által kapott teljes kontextus a "statikus előtag" (system prompt + eszközdefiníciók) plusz a "trajektória" (dinamikus üzenetelőzmény) (1-4. ábra). Ez egy kulcsfontosságú tényt mutat: **Ügynök kontextus = statikus előtag + trajektória**. Konkrétan: a statikus előtag a fenti öt összetevő közül az első kettő (system prompt + eszközdefiníciók); a trajektória az utolsó három (felhasználói üzenetek + asszisztens üzenetek + eszközeredmények, amelyek minden interakcióval növekednek). Ebből a teljes kontextusból generálja az LLM a következő válaszát, amely aztán hozzáfűződik a trajektóriához a következő híváshoz.
 
-![1-3. ábra: Ügynök trajektória – ReAct ciklus egy többdevizás összesítési feladathoz](images/fig1-3.svg)
+![1-4. ábra: Ügynök trajektória – ReAct ciklus egy többdevizás összesítési feladathoz](images/fig1-4.svg)
 
 Itt látható egy trajektória szerkezete pszeudokódban:
 
@@ -230,9 +238,9 @@ Most, hogy megértettük az ügynök működési ciklusát, két kísérletet vi
 >
 > Fontos megjegyezni, hogy ez a kísérlet nem kötődik egyetlen szolgáltatóhoz sem. Az OpenAI-kredittel nem rendelkező olvasók egyenértékű felügyelt eszközöket kínáló szolgáltatóval is reprodukálhatják. Az Alibaba Cloud Bailian qwen3.7-plus Responses API-ja például szintén beépített `web_search` és `code_interpreter` eszközt kínál; a Kimi K3 Formula által felügyelt keresése és `code_runner` eszköze ugyanehhez a képességosztályhoz tartozik.
 >
-> Az 1-4. ábra a natív eszközhívás teljes architektúráját mutatja a "Model as Agent" paradigma alatt, valamint a Kimi K3 és a GPT-5.6 ReAct végrehajtási folyamatát valós feladatokban.
+> Az 1-5. ábra a natív eszközhívás teljes architektúráját mutatja a "Model as Agent" paradigma alatt, valamint a Kimi K3 és a GPT-5.6 ReAct végrehajtási folyamatát valós feladatokban.
 >
-> ![1-4. ábra: "Model as Agent" Architektúra – Natív eszközhívás](images/fig1-4.svg)
+> ![1-5. ábra: "Model as Agent" Architektúra – Natív eszközhívás](images/fig1-5.svg)
 
 ## Harness Engineering: Versenyképesség a modellen túl
 
@@ -242,7 +250,11 @@ Az előző részek megalapozták a központi képletet: **Ügynök = LLM + Konte
 
 Kibontva egyenletként, a teljes éles üzemi összetétel:
 
-> **Ügynök = LLM + [Kontextus + Eszközök + Korlátozás + Ellenőrzés + Javítás] = Modell + Harness**
+> **Ügynök = Modell + Harness**
+>
+> **Harness = Kontextuskezelés + eszközinterfészek + korlátozás + ellenőrzés + javítás**
+>
+> **Ügynök ↔ Környezet**
 
 Egy minimálisan működő ügynök csak LLM-ből, kontextusból és eszközökből áll. Ahhoz, hogy hosszú futású éles munkaterhelésekben megbízhatóan működjön, a három külső mérnöki rétegre is szükség van – korlátozás a túlkapások megelőzésére, ellenőrzés a hibák észlelésére, javítás a hibákból való felépülésre. Másképpen fogalmazva: a minimális képlet a demó nézet, a kibővített képlet az éles üzemi nézet – az utóbbi teljes egészében tartalmazza az előbbit, és egy biztonsági hálót ad hozzá.
 
@@ -252,7 +264,7 @@ Egy konkrét példa mutatja a Harness értékét. Tegyük fel, hogy megkéred az
 
 Röviden: egy modell Harness nélkül lehet nagyon képzett, de hiányoznak belőle a megbízható feladatvégrehajtáshoz szükséges környező vezérlőelemek.
 
-Pontosabban: minden, a modellen kívüli infrastruktúra a Harness-hez tartozik. A Harness magja a Kontextus és az Eszközök, amelyek köré háromféle mérnöki védelmi mechanizmus épül:
+Pontosabban: a Harness nem minden, ami a modellen kívül található, hanem az **Agent határain belüli, a Modellen kívüli** futtatási és irányítási réteg. A Modell és a Környezet interakcióját közvetíti, de magát a Környezetet nem tartalmazza. Az eszközdefiníciók, a hívásadapterek, valamint a sandbox jogosultság- és visszaállítási mechanizmusai a Harness részei; a sandboxban változó fájlok és folyamatok, a külső adatbázisok, weboldalak, felhasználók és a fizikai világ a Környezethez tartoznak. A telepítés helye nem módosítja ezt a fogalmi határt. A Harness magja a kontextuskezelés és az eszközinterfészek, amelyek köré háromféle mérnöki védelmi mechanizmus épül:
 
 | Funkció | Egymondatos felelősség | Kapcsolat a Kontextussal/Eszközökkel |
 |---------|------------------------|--------------------------------------|
@@ -371,7 +383,7 @@ Egy autonóm ügynöknek ezért magának kell terveznie – kiválasztania a saj
 
 Implementációs szempontból egy autonóm ügynök lényegében egy LLM, amely eszközöket használ egy ciklusban, folyamatosan környezeti visszajelzéseket szerezve a feladat előrehaladásához – ez a korábban bemutatott ReAct ciklus. Gyakori kilépési feltételek közé tartozik: egy végső kimeneti eszköz meghívása, a modell eszközhívás nélküli válasz visszaadása, vagy hiba észlelése, illetve a maximális körszám elérése.
 
-![1-5. ábra: Egy autonóm ügynök végrehajtási ciklusa](images/fig1-5.svg)
+![1-6. ábra: Egy autonóm ügynök végrehajtási ciklusa](images/fig1-6.svg)
 
 Az autonóm ügynökök jól alkalmazhatók nyitott végű problémákra – azokra, ahol nehéz előre megjósolni a szükséges lépések számát. Tipikus használati esetek közé tartoznak: Kódoló Ügynökök, amelyek SWE-bench (Software Engineering Benchmark, egy olyan benchmark, amely az ügynök azon képességét értékeli, hogy automatikusan kijavítson valós GitHub problémákat) feladatokat oldanak meg, "Computer Use" ügynökök, amelyek emberként működtetik a számítógép interfészeit, és kutatási feladatok, amelyek iteratív keresést és elemzést igényelnek.
 
@@ -381,7 +393,7 @@ Az autonómia többe is kerül, és hagyja a hibák halmozódását. Egy autonó
 
 A gyakorlatban a munkafolyamatok és az autonóm ügynökök nem zárják ki egymást – sok rendszer keveri a kettőt: a szigorú megfelelőségi követelményekkel rendelkező kritikus folyamatok munkafolyamatként futnak a megbízhatóság érdekében, míg a rugalmas döntéseket igénylő részek autonóm módba kapcsolnak. Az n8n például egy érett nyílt forráskódú munkafolyamat-automatizációs keretrendszer, amelyben a fejlesztők vizuális vásznon elhelyezett funkcionális komponensek elrendezésével építenek ügynököket – és a munkafolyamat-csomópontok valamint az autonóm ügynök-csomópontok együtt élhetnek ugyanabban a rendszerben.
 
-![1-6. ábra: Az n8n munkafolyamat-szerkesztő felülete](images/n8n-workflow.png)
+![1-7. ábra: Az n8n munkafolyamat-szerkesztő felülete](images/n8n-workflow.png)
 
 #### A főbb ügynökkeretrendszerek rövid összehasonlítása
 

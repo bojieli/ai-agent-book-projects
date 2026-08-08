@@ -18,13 +18,21 @@ Inti dari sistem Agent modern cocok dengan satu formula ringkas: **Agent = LLM (
 
 Secara lebih intuitif: **Agent = Mesin Penalaran + Context Kerja + Antarmuka Tindakan**. Model menalar dan memutuskan, context menyediakan sekumpulan informasi kerja yang menjadi sandaran keputusan tersebut, dan tool menyediakan antarmuka melalui mana keputusan memengaruhi dunia luar.
 
-Ketiga komponen ini berkorespondensi persis dengan tiga konsep inti dalam RL (reinforcement learning; lihat Bab 7).
+Dari perspektif klasik reinforcement learning dan teori kontrol, Agent dan Environment adalah dua pihak dalam interaksi loop tertutup, bukan komponen satu sama lain. Environment mengembalikan observasi, Agent menggunakan context untuk memilih tindakan berikutnya, dan tindakan itu mengubah state Environment sehingga menghasilkan observasi berikutnya.
+
+![Gambar 1-1: Loop interaksi Agent–Environment dan struktur Model–Harness di dalam Agent](images/fig1-1.svg)
+
+Gambar 1-1 menunjukkan dua tingkat abstraksi. Tingkat luar adalah interaksi antara **Agent dan Environment**: Environment mencakup sistem berkas, basis data, halaman web, pengguna, Agent lain, serta dunia fisik atau simulasi. Tingkat dalam adalah **struktur Model–Harness di dalam Agent**: Model mengambil keputusan policy; Harness adalah lapisan runtime dan tata kelola di dalam batas Agent yang membangun context, mengekspos antarmuka tool, memelihara loop dan state, serta menerapkan izin, verifikasi, dan koreksi. Harness dapat membuat, mengisolasi, atau mem-proxy sebuah environment tanpa memuat state dan aturan transisinya.
+
+Formula rekayasa ini dapat diuraikan sebagai berikut: LLM menjadi Model, sedangkan Context + Tool membentuk Harness minimum; sistem produksi menambahkan constrain, verify, dan correct di dalam batas tersebut. Seluruh bab ini mengikuti batas yang sama.
+
+Ketiga komponen tersebut berhubungan dengan tiga konsep inti dalam RL (reinforcement learning; lihat Bab 7), tetapi bukan padanan satu-banding-satu yang ketat: context adalah representasi internal Agent atas observasi dan riwayat, sedangkan tool mendefinisikan antarmuka observasi/tindakan yang objek dasarnya tetap berada di Environment.
 
 | Intuisi | Komponen Agent | Konsep RL | Peran |
 |---------------|----------------|------------------|---------------------------------------------|
 | **Mesin Penalaran** | LLM | **Policy** | Logika pengambilan keputusan yang menentukan "apa yang harus dilakukan selanjutnya"—mengingat informasi saat ini, memilih tindakan yang paling tepat dari semua opsi yang tersedia |
-| **Context Kerja** | Context | **Observation Space** | Semua informasi yang tersedia untuk Agent—apa yang dapat diobservasi, dibaca, diingat, dan sistem mana yang dapat diaksesnya |
-| **Antarmuka Tindakan** | Tool | **Action Space** | Serangkaian lengkap hal-hal yang dapat dilakukan Agent—"sarana" apa yang tersedia, mulai dari mengirim pesan hingga mengeksekusi kode hingga mengontrol antarmuka |
+| **Context Kerja** | Konstruksi Context | **Observasi dan riwayat** | Mengatur observasi Environment dan riwayat yang ada menjadi informasi untuk keputusan saat ini |
+| **Antarmuka Tindakan** | Antarmuka Tool | **Antarmuka observasi/tindakan** | Menentukan observasi yang dapat dibaca Agent, tindakan yang dapat dikirim, dan format antarmukanya |
 
 ### Ruang Observasi dan Tindakan: Antarmuka antara Model dan Dunia
 
@@ -116,9 +124,9 @@ Namun pertanyaan yang lebih mendalam mengikuti: jika model terus menjadi lebih k
 
 #### Mekanisme Pembelajaran Agent: Dari Adaptasi Kontekstual hingga Pembaruan Persisten
 
-Pembahasan sebelumnya menunjukkan bagaimana reinforcement learning dapat menginternalisasi policy penggunaan tool sebagai kemampuan native model. Tetapi perubahan dalam perilaku Agent tidak hanya terjadi selama training. Berdasarkan di mana pembaruan terjadi dan berapa lama ia bertahan, perubahan ini dapat dipahami sebagai tiga jalur yang saling melengkapi (Gambar 1-1): adaptasi kontekstual di dalam tugas (within-task), pembaruan lintas tugas (cross-task) pada artifact eksternal, dan pembaruan parameter selama siklus training.
+Pembahasan sebelumnya menunjukkan bagaimana reinforcement learning dapat menginternalisasi policy penggunaan tool sebagai kemampuan native model. Tetapi perubahan dalam perilaku Agent tidak hanya terjadi selama training. Berdasarkan di mana pembaruan terjadi dan berapa lama ia bertahan, perubahan ini dapat dipahami sebagai tiga jalur yang saling melengkapi (Gambar 1-2): adaptasi kontekstual di dalam tugas (within-task), pembaruan lintas tugas (cross-task) pada artifact eksternal, dan pembaruan parameter selama siklus training.
 
-![Gambar 1-1: Tiga Level Pembaruan Kemampuan Agent](images/fig1-1.svg)
+![Gambar 1-2: Tiga Level Pembaruan Kemampuan Agent](images/fig1-2.svg)
 
 **Adaptasi kontekstual (Contextual adaptation)** terjadi di dalam tugas saat ini. Setelah contoh, state, dan hasil retrieval masuk ke dalam context, model dapat menyesuaikan perilakunya dengan segera, tetapi ini tidak mengubah state yang persisten dari sesi berikutnya. Keuntungannya adalah kecepatan dan biaya rendah; keterbatasannya muncul dari context window dan cara informasi diatur. Bab 2 menjelaskan secara rinci bagaimana bentuk adaptasi ini bekerja.
 
@@ -142,9 +150,9 @@ Apakah setiap komponen benar-benar sangat diperlukan? Cara paling langsung untuk
 
 > **Eksperimen 1-1 ★★: Peran Penting Context**
 >
-> Kami menyelidiki bagaimana setiap komponen context membentuk perilaku Agent dengan **studi ablasi (ablation study)** sistematis. Dari kelima komponen di atas, empat diuji—system prompt, sebagai definisi identitas dasar Agent, dikecualikan: tanpanya Agent tidak memiliki kesadaran peran sama sekali, dan pengujian menjadi tidak berarti. Seperti yang ditunjukkan Gambar 1-2, eksperimen menjalankan lima grup kontrol: baseline lengkap yang mempertahankan setiap komponen, plus empat grup yang masing-masing kehilangan satu komponen, untuk mengobservasi efek dari setiap komponen pada kinerja Agent.
+> Kami menyelidiki bagaimana setiap komponen context membentuk perilaku Agent dengan **studi ablasi (ablation study)** sistematis. Dari kelima komponen di atas, empat diuji—system prompt, sebagai definisi identitas dasar Agent, dikecualikan: tanpanya Agent tidak memiliki kesadaran peran sama sekali, dan pengujian menjadi tidak berarti. Seperti yang ditunjukkan Gambar 1-3, eksperimen menjalankan lima grup kontrol: baseline lengkap yang mempertahankan setiap komponen, plus empat grup yang masing-masing kehilangan satu komponen, untuk mengobservasi efek dari setiap komponen pada kinerja Agent.
 >
-> ![Gambar 1-2: Eksperimen 1-1—Desain studi ablasi context](images/fig1-2.svg)
+> ![Gambar 1-3: Eksperimen 1-1—Desain studi ablasi context](images/fig1-3.svg)
 >
 > Hasil eksperimental mengungkapkan peran yang tak tergantikan dari setiap komponen context. **Tool Definitions** (bagian dari prefix statis) adalah fondasi dari kemampuan tindakan Agent; tanpa itu, Agent tidak dapat mengenali atau memanggil tool apa pun. **Tool Results** adalah kunci untuk kontrol loop tertutup (closed-loop control); ketiadaannya menghilangkan feedback eksekusi Agent dan menyebabkannya jatuh ke dalam perulangan tak terbatas (infinite loop). **Proses reasoning** (bagian reasoning dari assistant messages) menyimpan alasan dari keputusan Agent sebelumnya, membuat penalaran keseluruhan lebih koheren dan mencegah keputusan yang kontradiktif. **Message history** (user messages, assistant messages, dan tool results dari putaran sebelumnya) mencegah operasi yang redundan, menjaga koherensi eksekusi tugas, dan menghindari pengulangan kesalahan yang sama.
 >
@@ -156,9 +164,9 @@ Dengan ketiga komponen tersebut di tangan, muncul pertanyaan yang natural: bagai
 
 Pola inti yang dengannya Agent mengeksekusi tugas disebut **ReAct** (Reasoning + Acting). Namanya hanya menyebut reasoning (penalaran) dan acting (bertindak), tetapi loop sebenarnya memiliki tiga tahap: model pertama-tama **reasons** tentang apa yang harus dilakukan selanjutnya, kemudian memanggil tool untuk **act**, lalu **observes** hasil dari tool tersebut dan reasons tentang langkah selanjutnya. Loop "reason → act → observe → reason → act → observe" ini berulang hingga tugas selesai.
 
-Pertimbangkan contoh konkret—mengagregasi pendapatan lintas berbagai mata uang—untuk memahami **trajectory** (lintasan) Agent: message history yang terakumulasi saat Agent bekerja, yang terdiri dari user messages, assistant messages (dengan reasoning dan tool calls-nya), dan tool results. Pada setiap panggilan LLM, context lengkap yang diterima model adalah **prefix statis** (system prompt + tool definitions) ditambah **trajectory** (message history dinamis) (Gambar 1-3). Ini menunjukkan fakta penting: **Context Agent = prefix statis + trajectory**. Secara konkret, prefix statis adalah dua yang pertama dari kelima komponen di atas (system prompt + tool definitions); trajectory adalah tiga yang terakhir (user messages + assistant messages + tool results, yang berkembang seiring setiap interaksi). Dari context lengkap ini, LLM menghasilkan respons selanjutnya, yang kemudian ditambahkan ke trajectory untuk pemanggilan berikutnya.
+Pertimbangkan contoh konkret—mengagregasi pendapatan lintas berbagai mata uang—untuk memahami **trajectory** (lintasan) Agent: message history yang terakumulasi saat Agent bekerja, yang terdiri dari user messages, assistant messages (dengan reasoning dan tool calls-nya), dan tool results. Pada setiap panggilan LLM, context lengkap yang diterima model adalah **prefix statis** (system prompt + tool definitions) ditambah **trajectory** (message history dinamis) (Gambar 1-4). Ini menunjukkan fakta penting: **Context Agent = prefix statis + trajectory**. Secara konkret, prefix statis adalah dua yang pertama dari kelima komponen di atas (system prompt + tool definitions); trajectory adalah tiga yang terakhir (user messages + assistant messages + tool results, yang berkembang seiring setiap interaksi). Dari context lengkap ini, LLM menghasilkan respons selanjutnya, yang kemudian ditambahkan ke trajectory untuk pemanggilan berikutnya.
 
-![Gambar 1-3: Trajectory Agent—Loop ReAct untuk tugas agregasi multi-mata uang](images/fig1-3.svg)
+![Gambar 1-4: Trajectory Agent—Loop ReAct untuk tugas agregasi multi-mata uang](images/fig1-4.svg)
 
 Berikut adalah struktur trajectory, dalam pseudocode:
 
@@ -230,9 +238,9 @@ Sekarang setelah kita memahami loop operasi Agent, kita akan memeriksa dua ekspe
 >
 > Perlu dicatat bahwa eksperimen ini tidak terikat pada vendor tertentu. Pembaca tanpa kredit OpenAI dapat mereproduksinya dengan penyedia yang menawarkan tool terkelola setara. Sebagai contoh, Responses API qwen3.7-plus dari Alibaba Cloud Bailian juga memiliki `web_search` dan `code_interpreter` bawaan; pencarian terkelola Formula dan `code_runner` milik Kimi K3 menyediakan kemampuan sekelas.
 >
-> Gambar 1-4 mengilustrasikan arsitektur lengkap pemanggilan tool secara native (bawaan) pada paradigma "Model sebagai Agent", bersamaan dengan proses eksekusi ReAct Kimi K3 dan GPT-5.6 pada tugas-tugas dunia nyata.
+> Gambar 1-5 mengilustrasikan arsitektur lengkap pemanggilan tool secara native (bawaan) pada paradigma "Model sebagai Agent", bersamaan dengan proses eksekusi ReAct Kimi K3 dan GPT-5.6 pada tugas-tugas dunia nyata.
 >
-> ![Gambar 1-4: Arsitektur "Model sebagai Agent"—Pemanggilan Tool Native](images/fig1-4.svg)
+> ![Gambar 1-5: Arsitektur "Model sebagai Agent"—Pemanggilan Tool Native](images/fig1-5.svg)
 
 ## Rekayasa Harness (Harness Engineering): Daya Saing di Luar Model
 
@@ -242,7 +250,11 @@ Bagian-bagian sebelumnya telah menetapkan formula inti: **Agent = LLM + Context 
 
 Jika dijabarkan ke dalam bentuk persamaan, komposisi kelas produksi (production-grade) yang utuh adalah:
 
-> **Agent = LLM + [Context + Tool + Constrain + Verify + Correct] = Model + Harness**
+> **Agent = Model + Harness**
+>
+> **Harness = manajemen Context + antarmuka Tool + Constrain + Verify + Correct**
+>
+> **Agent ↔ Environment**
 
 Sebuah Agent minimal mampu berjalan dengan LLM, context, dan tool saja. Untuk terus berjalan andal dalam beban kerja kelas produksi yang berjalan lama, dibutuhkan ketiga lapis rekayasa eksternal ini pula—Constrain untuk mencegah jangkauan berlebih (overreach), Verify untuk menangkap error, Correct guna pemulihan dari kegagalan. Dengan kata lain: formula minimal adalah sudut pandang demo, dan formula luas adalah sudut pandang produksi—yang terakhir sudah memuat seutuhnya komponen dari formula minimal serta menambahkan sebuah jaring pengaman (safety net) di sekitarnya.
 
@@ -252,7 +264,7 @@ Contoh konkret menunjukkan nilai sebuah Harness. Misalkan Anda meminta sebuah Ag
 
 Singkat kata, sebuah model tanpa Harness mungkin sangat kapabel, tetapi ia tidak memiliki kontrol pendukung yang dibutuhkan untuk menyelesaikan tugas secara andal.
 
-Lebih tepatnya, semua infrastruktur di luar model adalah milik Harness. Inti dari Harness adalah Context dan Tool, yang di sekitarnya dibangun tiga jenis perlindungan rekayasa (engineering safeguards):
+Lebih tepatnya, Harness bukanlah segala sesuatu di luar model: Harness adalah lapisan runtime dan tata kelola **di dalam batas Agent dan di luar Model**. Harness menjadi perantara interaksi Model–Environment, tetapi tidak mencakup Environment. Definisi tool, adaptor pemanggilan, serta mekanisme izin dan reset sandbox termasuk Harness; berkas dan proses yang berubah di dalam sandbox, basis data eksternal, halaman web, pengguna, dan dunia fisik termasuk Environment. Lokasi deployment tidak mengubah batas konseptual ini. Inti Harness adalah manajemen Context dan antarmuka Tool, yang di sekitarnya dibangun tiga jenis perlindungan rekayasa:
 
 | Fungsi | Tanggung Jawab Satu-Kalimat | Hubungan dengan Context/Tool |
 |----------|-------------------------------------------|------------------------------------------|
@@ -371,7 +383,7 @@ Oleh karena itu, autonomous Agent harus menyusun rencananya sendiri—memilih la
 
 Dari perspektif implementasi, sebuah autonomous Agent pada dasarnya adalah LLM yang menggunakan tool di dalam loop, terus-menerus memperoleh environmental feedback untuk membuat kemajuan pada tugasnya—inilah loop ReAct yang telah diperkenalkan sebelumnya. Kondisi keluar (exit conditions) yang umum meliputi: memanggil tool keluaran akhir (final output tool), model mereturn (mengembalikan) respons tanpa pemanggilan tool apa pun, atau menghadapi error atau mencapai batas jumlah putaran maksimum.
 
-![Gambar 1-5: Loop eksekusi sebuah Autonomous Agent](images/fig1-5.svg)
+![Gambar 1-6: Loop eksekusi sebuah Autonomous Agent](images/fig1-6.svg)
 
 Autonomous Agent sangat cocok untuk open-ended problems—yakni masalah di mana sulit memprediksi jumlah langkah yang dibutuhkan. Use case tipikal mencakup: Coding Agent yang memecahkan SWE-bench (Software Engineering Benchmark, sebuah benchmark untuk mengevaluasi kemampuan Agent dalam memperbaiki issue GitHub yang sesungguhnya secara otomatis), Agent "Computer Use" yang mengoperasikan antarmuka komputer seperti manusia, dan tugas-tugas riset yang membutuhkan pencarian dan analisis iteratif.
 
@@ -381,7 +393,7 @@ Otonomi juga berbiaya lebih mahal (costs more) dan membuat error menjadi berlipa
 
 Dalam praktiknya, workflow dan autonomous Agent tidak saling eksklusif—banyak sistem yang mencampur keduanya: proses kritis dengan persyaratan kepatuhan ketat dijalankan sebagai workflow demi keandalan, sementara bagian yang membutuhkan keputusan fleksibel dialihkan ke mode otonom. n8n, misalnya, adalah kerangka otomatisasi workflow open-source yang matang di mana developer membangun Agent dengan menyusun komponen fungsional di atas kanvas visual—dan node workflow maupun node autonomous Agent dapat hidup berdampingan di sistem yang sama.
 
-![Gambar 1-6: Antarmuka editor workflow n8n](images/n8n-workflow.png)
+![Gambar 1-7: Antarmuka editor workflow n8n](images/n8n-workflow.png)
 
 #### Perbandingan Singkat Kerangka Kerja Agent Mainstream
 

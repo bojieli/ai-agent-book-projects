@@ -18,13 +18,21 @@ Modern bir Agent sisteminin özü, tek ve öz bir formülde toplanır: **Agent =
 
 Daha sezgisel bir ifadeyle: **Agent = Beyin + Gözler + El ve Ayaklar**. Beyin düşünür ve karar verir, gözler düşünmenin ihtiyaç duyduğu her şeyi sağlar, el ve ayaklar ise kararları gerçek dünyadaki değişikliklere dönüştürür.
 
-Bu üç bileşen, RL'deki (Pekiştirmeli Öğrenme; bkz. Bölüm 7) üç temel kavrama tam olarak karşılık gelir.
+Klasik pekiştirmeli öğrenme ve kontrol teorisi bakışında Agent ve Ortam, kapalı döngülü etkileşimin iki tarafıdır; birbirlerinin parçaları değildir. Ortam bir gözlem döndürür, Agent context'ini kullanarak sonraki eylemi seçer ve bu eylem Ortam'ın durumunu değiştirerek sonraki gözlemi üretir.
+
+![Şekil 1-1: Agent–Ortam etkileşim döngüsü ve Agent içindeki Model–Harness yapısı](images/fig1-1.svg)
+
+Şekil 1-1 iki soyutlama düzeyini gösterir. Dış düzey **Agent ile Ortam arasındaki etkileşimdir**: Ortam dosya sistemi, veritabanları, web sayfaları, kullanıcılar, diğer Agent'lar ve fiziksel veya simüle dünyaları içerir. İç düzey **Agent içindeki Model–Harness yapısıdır**: Model politika kararlarını verir; Harness, Agent sınırları içinde context'i oluşturan, araç arayüzlerini açan, döngü ve durumu yöneten ve izin, doğrulama ve düzeltme uygulayan çalıştırma ve yönetişim katmanıdır. Harness bir ortam yaratabilir, yalıtabilir veya proxy olarak sunabilir; ancak ortamın durumunu ve geçiş kurallarını içermez.
+
+Mühendislik formülü bu nedenle şöyle açılır: LLM Model'e karşılık gelir, Context + Tools asgari Harness'i oluşturur; üretim sistemleri aynı sınır içinde kısıtlama, doğrulama ve düzeltme ekler. Bölümün geri kalanı bu sınırı izler.
+
+Bu üç bileşen RL'deki (Pekiştirmeli Öğrenme; bkz. Bölüm 7) üç temel kavramla ilişkilidir, ancak katı birer bir eşdeğer değildir: context, gözlemler ile geçmişin Agent içindeki temsilidir; araçlar gözlem/eylem arayüzlerini tanımlar, bunların arkasındaki nesneler ise Ortam'a ait kalır.
 
 | Sezgisel Karşılık | Uygulama Bileşeni | Akademik Kavram | Anlamı |
 |---------------|----------------|------------------|---------------------------------------------|
 | **Beyin** | LLM | **Policy (Politika)** | "Sırada ne yapılacağını" belirleyen karar alma mantığı—mevcut bilgiye bakarak tüm seçenekler arasından en uygun eylemi seçme |
-| **Gözler** | Context | **Observation Space (Gözlem Alanı)** | Agent'ın görebildiği tüm bilgi—neyi görebildiği, okuyabildiği, hatırlayabildiği ve hangi sistemlere erişebildiği |
-| **El ve Ayaklar** | Tools | **Action Space (Eylem Alanı)** | Agent'ın yapabildiği her şeyin tam kümesi—mesaj göndermekten kod çalıştırmaya, arayüzleri kontrol etmeye kadar hangi "araçların" mevcut olduğu |
+| **Gözler** | Context oluşturma | **Gözlemler ve geçmiş** | Ortam gözlemlerini ve mevcut geçmişi geçerli karar için gereken bilgide düzenler |
+| **El ve Ayaklar** | Araç arayüzleri | **Gözlem/eylem arayüzleri** | Agent'ın hangi gözlemleri okuyabileceğini, hangi eylemleri gönderebileceğini ve arayüz biçimini tanımlar |
 
 ### Observation ve Action Space: Model ile Dünya Arasındaki Arayüz
 
@@ -116,9 +124,9 @@ Ama bunun ardında daha derin bir soru yatıyor: modeller güçlenmeye devam ede
 
 #### Agent Öğrenme Mekanizmaları: Context Uyarlamasından Kalıcı Güncellemelere
 
-Yukarıdaki tartışma, bir modelin araç kullanma politikalarını pekiştirmeli öğrenme yoluyla yerleşik yetenekler olarak içselleştirebildiğini belirtti. Ancak bir Agent'ın davranışındaki değişiklikler yalnızca eğitim sırasında gerçekleşmez. Güncellemenin nerede yapıldığına ve ne kadar kalıcı olduğuna göre bu değişiklikler, birbirini tamamlayan üç yol olarak anlaşılabilir (Şekil 1-1): görev içi context uyarlaması, görevler arasında harici artefaktların güncellenmesi ve eğitim döngülerindeki parametre güncellemeleri.
+Yukarıdaki tartışma, bir modelin araç kullanma politikalarını pekiştirmeli öğrenme yoluyla yerleşik yetenekler olarak içselleştirebildiğini belirtti. Ancak bir Agent'ın davranışındaki değişiklikler yalnızca eğitim sırasında gerçekleşmez. Güncellemenin nerede yapıldığına ve ne kadar kalıcı olduğuna göre bu değişiklikler, birbirini tamamlayan üç yol olarak anlaşılabilir (Şekil 1-2): görev içi context uyarlaması, görevler arasında harici artefaktların güncellenmesi ve eğitim döngülerindeki parametre güncellemeleri.
 
-![Şekil 1-1: Agent yetenek güncellemelerinin üç düzeyi](images/fig1-1.svg)
+![Şekil 1-2: Agent yetenek güncellemelerinin üç düzeyi](images/fig1-2.svg)
 
 **Context uyarlaması** mevcut görevin içinde gerçekleşir. Örnekler, durum ve retrieval sonuçları context'e girdikten sonra model davranışını hemen ayarlayabilir; ancak bu, sonraki oturumun kalıcı durumunu değiştirmez. Avantajları hız ve düşük maliyet, sınırlamaları ise context penceresi ile bilginin düzenlenme biçimidir. Bölüm 2 bu uyarlama biçiminin nasıl çalıştığını ayrıntılı olarak açıklar.
 
@@ -142,9 +150,9 @@ Her bileşen gerçekten vazgeçilmez mi? Bunu öğrenmenin en doğrudan yolu bir
 
 > **Deney 1-1 ★★: Context'in Kritik Rolü**
 >
-> Her context bileşeninin Agent davranışını nasıl şekillendirdiğini sistematik bir **ablation study** ile araştırdık. Yukarıdaki beş bileşenden dördü test edildi—system prompt, Agent'ın temel kimlik tanımı olduğu için muaf tutuldu: o olmadan Agent'ın hiçbir rol farkındalığı olmaz ve test anlamsız olurdu. Şekil 1-2'de görüldüğü gibi, deney beş kontrollü grupla yürütüldü: her bileşeni koruyan eksiksiz bir temel çizgi (baseline), artı her biri bir bileşeni eksik olan dört grup; böylece her bileşenin Agent performansına etkisi gözlemlendi.
+> Her context bileşeninin Agent davranışını nasıl şekillendirdiğini sistematik bir **ablation study** ile araştırdık. Yukarıdaki beş bileşenden dördü test edildi—system prompt, Agent'ın temel kimlik tanımı olduğu için muaf tutuldu: o olmadan Agent'ın hiçbir rol farkındalığı olmaz ve test anlamsız olurdu. Şekil 1-3'te görüldüğü gibi, deney beş kontrollü grupla yürütüldü: her bileşeni koruyan eksiksiz bir temel çizgi (baseline), artı her biri bir bileşeni eksik olan dört grup; böylece her bileşenin Agent performansına etkisi gözlemlendi.
 >
-> ![Şekil 1-2: Deney 1-1—Context ablation study tasarımı](images/fig1-2.svg)
+> ![Şekil 1-3: Deney 1-1—Context ablation study tasarımı](images/fig1-3.svg)
 >
 > Deney sonuçları, her context bileşeninin yerine konulamaz rolünü ortaya koydu. **Tool Definitions** (static prefix'in bir parçası), Agent'ın eylem yeteneğinin temelidir; bunlar olmadan Agent hiçbir aracı tanıyamaz veya çağıramaz. **Tool Results**, kapalı döngü kontrolünün anahtarıdır; yokluğu Agent'ın "kör" hareket etmesine ve sonsuz bir döngüye düşmesine neden olur. **Reasoning süreci** (asistan mesajlarının reasoning kısmı), Agent'ın önceki kararlarının gerekçelerini korur, düşünce sürecini daha tutarlı kılar ve çelişkili kararları önler. **Mesaj geçmişi** (önceki turlardan gelen kullanıcı mesajları, asistan mesajları ve araç sonuçları), gereksiz işlemleri önler, görev yürütme tutarlılığını korur ve aynı hataların tekrarlanmasını engeller.
 >
@@ -156,9 +164,9 @@ Her bileşen gerçekten vazgeçilmez mi? Bunu öğrenmenin en doğrudan yolu bir
 
 Bir Agent'ın bir görevi yürütme biçimine temel alınan kalıba **ReAct** (Reasoning + Acting) denir. Bu ad yalnızca reasoning ve acting'den bahsetse de, gerçek döngü üç aşamadan oluşur: model önce sırada ne yapılacağı hakkında **reasoning** yapar, ardından eylemde bulunmak için bir aracı **çağırır (act)**, sonra aracın sonucunu **gözlemler (observe)** ve bir sonraki adım hakkında reasoning yapar. Bu "düşün → yap → gör → düşün → yap → gör" döngüsü görev tamamlanana kadar tekrarlanır.
 
-Somut bir örnek üzerinden—birden fazla para biriminde geliri toplama—bir Agent'ın **trajectory'sini (çalışma geçmişi/yörünge)** anlayalım: Agent çalışırken birikmiş mesaj geçmişi; kullanıcı mesajları, asistan mesajları (reasoning ve tool call'larıyla birlikte) ve araç sonuçlarından oluşur. Her bir LLM çağrısında, modelin aldığı eksiksiz context, **static prefix** (system prompt + araç tanımları) artı **trajectory** (dinamik mesaj geçmişi) toplamıdır (Şekil 1-3). Bu, temel bir gerçeği ortaya koyar: **Agent context'i = static prefix + trajectory**. Somut olarak, static prefix yukarıdaki beş bileşenin ilk ikisidir (system prompt + araç tanımları); trajectory ise son üçüdür (kullanıcı mesajları + asistan mesajları + araç sonuçları, her etkileşimle büyür). LLM, bu eksiksiz context'ten bir sonraki yanıtını üretir; bu yanıt da bir sonraki çağrı için trajectory'ye eklenir.
+Somut bir örnek üzerinden—birden fazla para biriminde geliri toplama—bir Agent'ın **trajectory'sini (çalışma geçmişi/yörünge)** anlayalım: Agent çalışırken birikmiş mesaj geçmişi; kullanıcı mesajları, asistan mesajları (reasoning ve tool call'larıyla birlikte) ve araç sonuçlarından oluşur. Her bir LLM çağrısında, modelin aldığı eksiksiz context, **static prefix** (system prompt + araç tanımları) artı **trajectory** (dinamik mesaj geçmişi) toplamıdır (Şekil 1-4). Bu, temel bir gerçeği ortaya koyar: **Agent context'i = static prefix + trajectory**. Somut olarak, static prefix yukarıdaki beş bileşenin ilk ikisidir (system prompt + araç tanımları); trajectory ise son üçüdür (kullanıcı mesajları + asistan mesajları + araç sonuçları, her etkileşimle büyür). LLM, bu eksiksiz context'ten bir sonraki yanıtını üretir; bu yanıt da bir sonraki çağrı için trajectory'ye eklenir.
 
-![Şekil 1-3: Agent trajectory'si—çok para birimli toplama görevi için ReAct döngüsü](images/fig1-3.svg)
+![Şekil 1-4: Agent trajectory'si—çok para birimli toplama görevi için ReAct döngüsü](images/fig1-4.svg)
 
 Bir trajectory'nin yapısı, sözde kod (pseudocode) olarak şöyledir:
 
@@ -231,9 +239,9 @@ Artık Agent'ın çalışma döngüsünü anladığımıza göre, farklı modell
 >
 > Bu deney tek bir sağlayıcıya bağlı değildir. OpenAI kredisi olmayan okuyucular, eşdeğer yönetilen araçlar sunan bir sağlayıcıyla deneyi yeniden üretebilir. Örneğin Alibaba Cloud Bailian'ın qwen3.7-plus Responses API'si de yerleşik `web_search` ve `code_interpreter` sunar; Kimi K3'ün Formula tarafından yönetilen araması ve `code_runner` aracı da aynı sınıfta yetenekler sağlar.
 >
-> Şekil 1-4, "Model as Agent" paradigması altındaki yerleşik tool calling'in tam mimarisini, Kimi K3 / GPT-5.6'nın gerçek dünya görevlerindeki ReAct yürütme süreciyle birlikte gösterir.
+> Şekil 1-5, "Model as Agent" paradigması altındaki yerleşik tool calling'in tam mimarisini, Kimi K3 / GPT-5.6'nın gerçek dünya görevlerindeki ReAct yürütme süreciyle birlikte gösterir.
 >
-> ![Şekil 1-4: "Model as Agent" Mimarisi—Yerleşik Tool Calling](images/fig1-4.svg)
+> ![Şekil 1-5: "Model as Agent" Mimarisi—Yerleşik Tool Calling](images/fig1-5.svg)
 
 
 ## Harness Engineering: Modelin Ötesinde Rekabet Gücü
@@ -244,7 +252,11 @@ Artık bir Agent'ın özünde nasıl çalıştığını anlıyorsunuz: bir LLM, 
 
 Bir denklem olarak genişletildiğinde, eksiksiz üretim düzeyindeki bileşim şudur:
 
-> **Agent = LLM + [Context + Tools + Constrain + Verify + Correct] = Model + Harness**
+> **Agent = Model + Harness**
+>
+> **Harness = context yönetimi + araç arayüzleri + Constrain + Verify + Correct**
+>
+> **Agent ↔ Ortam**
 
 Minimal, çalışan bir Agent yalnızca LLM, context ve tools ile yürür. Uzun vadede üretimde güvenilir biçimde çalışmaya devam etmesi için üç dış mühendislik katmanına da ihtiyacı vardır—aşırıya kaçmayı önlemek için constrain, hataları yakalamak için verify, arızalardan kurtulmak için correct. Başka bir deyişle: minimal formül demo bakış açısıdır, genişletilmiş formül ise üretim bakış açısıdır—ikincisi birincisini tamamen içerir ve etrafına bir güvenlik ağı ekler.
 
@@ -254,7 +266,7 @@ Somut bir örnek, Harness'in değerini gösterir. Bir Agent'tan, kullanıcının
 
 Bu bölümün başındaki koşum takımı (harness) benzetmesine dönersek: Harness'siz bir model, dizginsiz bir at gibidir—muazzam yetenekli, ama görevleri güvenilir biçimde tamamlayamaz.
 
-Daha kesin olarak söylemek gerekirse, modelin dışındaki tüm altyapı Harness'e aittir. Harness'in özü Context ve Tools'tur; bunların etrafında üç tür mühendislik güvenlik önlemi inşa edilir:
+Daha kesin olarak söylemek gerekirse, Harness modelin dışındaki her şey değildir; **Agent sınırları içinde ve Model'in dışında bulunan çalıştırma ve yönetişim katmanıdır**. Model–Ortam etkileşimine aracılık eder, ancak Ortam'ın kendisini içermez. Araç tanımları, çağrı adaptörleri, sandbox izinleri ve sıfırlama mekanizmaları Harness'e aittir; sandbox içinde değişen dosyalar ve süreçler, harici veritabanları, web sayfaları, kullanıcılar ve fiziksel dünya ise Ortam'a aittir. Dağıtım konumu bu kavramsal sınırı değiştirmez. Harness'in özü Context yönetimi ve araç arayüzleridir; bunların etrafında üç tür mühendislik güvenlik önlemi inşa edilir:
 
 | İşlev | Tek Cümlelik Sorumluluk | Context/Tools ile İlişkisi |
 |----------|-------------------------------------------|------------------------------------------|
@@ -375,7 +387,7 @@ Bu yüzden bir autonomous Agent'ın kendi kendine plan yapması—kendi yürütm
 
 Uygulama açısından bakıldığında, bir autonomous Agent özünde bir döngü içinde araçları kullanan, görevi ilerletmek için sürekli ortam geri bildirimi alan bir LLM'dir—bu, daha önce tanıtılan ReAct döngüsüdür. Yaygın çıkış koşulları şunları içerir: bir nihai çıktı aracının çağrılması, modelin herhangi bir tool call olmadan bir yanıt döndürmesi, ya da bir hatayla karşılaşılması veya maksimum tur sayısına ulaşılması.
 
-![Şekil 1-5: Bir autonomous Agent'ın yürütme döngüsü](images/fig1-5.svg)
+![Şekil 1-6: Bir autonomous Agent'ın yürütme döngüsü](images/fig1-6.svg)
 
 Autonomous Agent'lar özellikle açık uçlu problemler için uygundur—gereken adım sayısının tahmin edilmesinin zor olduğu durumlar. Tipik uygulama senaryoları şunları içerir: SWE-bench (Software Engineering Benchmark, bir Agent'ın gerçek GitHub sorunlarını otomatik olarak çözme yeteneğini değerlendiren bir benchmark) görevlerini çözen Kodlama Agent'ları, bir insan gibi bilgisayar arayüzlerini işleten "Computer Use" Agent'ları ve yinelemeli arama ile analiz gerektiren araştırma görevleri.
 
@@ -385,7 +397,7 @@ Otonomi ayrıca daha fazla maliyete yol açar ve hataların birikmesine izin ver
 
 Pratikte, workflow'lar ve autonomous Agent'lar ya-ya da seçimi değildir—birçok sistem ikisini karıştırır: sıkı uyumluluk gereksinimleri olan kritik süreçler güvenilirlik için workflow olarak çalışır, esnek karar gerektiren kısımlar ise autonomous moda geçer. Örneğin n8n, geliştiricilerin görsel bir tuval üzerinde işlevsel bileşenleri sürükleyerek Agent'lar inşa ettiği olgun bir açık kaynak workflow otomasyon çerçevesidir—ve workflow düğümleri ile autonomous Agent düğümleri aynı sistemde bir arada bulunabilir.
 
-![Şekil 1-6: n8n workflow editörü arayüzü](images/n8n-workflow.png)
+![Şekil 1-7: n8n workflow editörü arayüzü](images/n8n-workflow.png)
 
 #### Ana Akım Agent Çerçevelerinin Kısa Karşılaştırması
 
