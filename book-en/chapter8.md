@@ -127,6 +127,12 @@ For example, an airline customer-service Agent may escalate to a human too early
 
 Skill learning follows the same principle, but with a more localized scope. A Skill can be understood as an on-demand operating manual for a particular job: if multiple experiences collectively form a complete insurance claims process, the system can generate or revise the corresponding Skill. A candidate Skill should not merely summarize one conversation; at minimum, it should specify when to load, prerequisites, operating steps, known pitfalls, validation methods, and source trajectories. The system first searches the existing Skill library for similar capabilities, preferring a local `patch` when the same process already exists and creating a new directory only for a genuinely independent capability. This prevents the library from filling with manuals that differ in name but duplicate one another. Anthropic’s Skill Creator[^anthropic-skill-creator] demonstrates a draft–test–evaluate–revise loop. It addresses how to create and improve a Skill; the harder questions remain what operational evidence is sufficient to trigger creation, how to resolve conflicts, and whether the revision passes domain-specific and old-task regression tests.
 
+> **Experiment 8-9 ★★: Turning Feedback into a Writing Skill**
+>
+> Process the 20 before/after pairs in `data/feedback_pairs.json` in three batches. Extract candidate rules, merge duplicate patterns, detect threshold conflicts, and generate a sourced, scoped `SKILL.md`. Check deterministic rules in code and calibrate LLM rules on ten gold examples.
+>
+> Report detection on the unfinished-task boundary set, false positives on the normal-text holdout, and rule-count growth together. The first real run produced 0/8 detection and 7/8 false positives; after model-external filtering and deterministic fallback it produced 8/8, 0/8, and merged 21 candidates into 8 rules. Implementation: [`ai-style-skill`](../chapter8/ai-style-skill/).
+
 > **Experiment 8-3 ★★: Optimizing System Prompts from Failure Trajectories**
 >
 > **Objective:** Teach an airline customer-service Agent from trajectories in which it escalates too quickly when a user challenges a policy, while demonstrating that the new rule does not break older scenarios that genuinely require escalation.
@@ -203,6 +209,12 @@ Tool creation follows the same protocol. Alita[^alita-2025] presents a case in w
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
 [^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
+
+Experiment 8-8 applies the same protocol to the verification layer. Only repeated user corrections, downvotes, and audits pointing to an unconfirmed high-risk operation create a change request; the candidate is written to an isolated directory. Classify dangerous deletions and `git push --force` from tool names and arguments, and bind a one-time confirmation token to the concrete operation. A candidate must pass AST/static checks, boundary replay (including forged and reused tokens), and holdout replay before canary release.
+
+> **Experiment 8-8 ★★: A User-Feedback-Triggered Confirmation Gate for High-Risk Operations**
+>
+> Use the three signal types and control trajectories in `failure_trajectories.json`. The real `gpt-4o-mini` candidate failed unfinished-task replay, normal-operation replay, and one-time-token checks, so the safety gate rejected it. The deterministic candidate passed all checks and received `release_to_canary`; record checks, the release decision, and the stable-directory hash. Implementation: [`harness-safety-gate`](../chapter8/harness-safety-gate/).
 
 ### Encoding Experience in Parameters
 

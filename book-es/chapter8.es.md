@@ -127,6 +127,12 @@ Por ejemplo, un Agente de atención al cliente de aerolíneas suele transferir p
 
 El aprendizaje de Skills sigue los mismos principios, aunque su alcance es más local. Una Skill se puede entender como un manual operativo de puesto abierto bajo demanda: si múltiples experiencias forman colectivamente un proceso completo de reclamos de seguros, el sistema puede generar o revisar la Skill correspondiente. Una Skill candidata no debe ser solo el resumen de una conversación, sino explicar al menos cuándo cargarse, las condiciones previas, los pasos operativos, las trampas conocidas y los métodos de verificación, conservando las trayectorias de origen. El sistema busca primero capacidades similares en la biblioteca de Skills existente: si existe el mismo proceso, prioriza un `patch` local; solo cuando aparece una capacidad independiente realmente nueva crea un nuevo directorio, evitando llenar la biblioteca con manuales de nombres diferentes y contenidos similares. El Skill Creator de Anthropic[^anthropic-skill-creator] muestra un ciclo de generación de "redacción - prueba - evaluación - revisión"; este resuelve cómo elaborar y mejorar Skills, siendo lo realmente difícil determinar qué evidencias operativas son suficientes para activar la generación, cómo manejar conflictos y si tras la modificación se superan las pruebas de regresión en tareas del dominio y tareas antiguas.
 
+> **Experimento 8-9 ★★: Convertir el feedback en un Skill de escritura**
+>
+> Se incorporan en tres lotes los 20 pares before/after de `data/feedback_pairs.json`, se extraen reglas candidatas, se fusionan patrones repetidos, se detectan conflictos de umbral y se genera un `SKILL.md` con fuente y alcance. Las reglas deterministas se comprueban con código y las reglas basadas en LLM se calibran con diez ejemplos de referencia.
+>
+> Se informan a la vez la detección en el conjunto límite de tareas incompletas, los falsos positivos en el conjunto de reserva de textos normales y el crecimiento del número de reglas. La primera ejecución real dio 0/8 detecciones y 7/8 falsos positivos; tras el filtrado externo y el respaldo determinista, dio 8/8, 0/8 y fusionó 21 candidatos en 8 reglas. Implementación en [`ai-style-skill`](../chapter8/ai-style-skill/).
+
 > **Experimento 8-3 ★★: Optimizar prompts del sistema a partir de trayectorias de falla**
 >
 > **Objetivo del experimento**: Permitir que un Agente de atención al cliente de aerolíneas aprenda de las trayectorias de falla de "transferir prematuramente a un humano cuando el usuario cuestiona la política", demostrando al mismo tiempo que la nueva regla no destruye los escenarios antiguos que realmente requieren transferencia.
@@ -203,6 +209,12 @@ La creación de herramientas sigue el mismo protocolo. El caso presentado por Al
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
 [^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
+
+El experimento 8-8 aplica el mismo protocolo a la capa de verificación. Solo cuando varias correcciones de usuarios, votos negativos y auditorías señalan repetidamente una operación de alto riesgo sin confirmación se crea una solicitud de cambio, escrita en un directorio aislado. Un clasificador identifica eliminaciones peligrosas y `git push --force` por nombre y argumentos de herramienta; un token de confirmación de un solo uso queda ligado a la operación concreta. El candidato debe superar comprobaciones AST/estáticas, reproducción del conjunto límite (incluidos tokens falsos o reutilizados) y del conjunto de reserva antes de publicarse en canario.
+
+> **Experimento 8-8 ★★: Puerta de confirmación para operaciones de alto riesgo activada por feedback**
+>
+> Se usan las tres señales y las trayectorias de control de `failure_trajectories.json`. El candidato real de `gpt-4o-mini` no superó la reproducción de tareas incompletas, operaciones normales y tokens de un solo uso, y fue rechazado por la puerta de seguridad. El candidato determinista superó todo y obtuvo `release_to_canary`; se registran las comprobaciones, la decisión y el hash del directorio estable. Implementación en [`harness-safety-gate`](../chapter8/harness-safety-gate/).
 
 ### Codificación de la Experiencia en Parámetros
 

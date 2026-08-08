@@ -551,7 +551,7 @@ RLVP 的关键不是“奖励越密越好”，而是能否补回组内差异。
 >
 > 这个实验把第六章记录的失败原因接到两条训练路径上。`build_preference_data.py` 将 24 条过早结束 bad case 转成轨迹前缀偏好对：rejected 是原来的完成宣称，chosen 是先验证再下结论的动作；`train_dpo.py` 提供 Qwen2.5-7B-Instruct 的 LoRA DPO 路径。可选的 `train_grpo_optional.py` 使用隐藏验收测试计算结果奖励，用来对照离线偏好优化和在线可验证奖励。
 >
-> 训练前后的评估使用互不重叠的边界集（任务还未完成）和保留集（任务已完成）两集。前者的过早结束率应下降，后者的正常收尾率应保持；实际 GPU 结果、训练回执和评估证据写入实验目录，不预先填写预期数字。配套实现见 [`premature-completion-dpo`](../chapter7/premature-completion-dpo/)。
+> 训练前后的评估使用互不重叠的未完成任务集和已完成任务保留集。固定比较“完成/继续验证”两个候选动作后，RTX PRO 6000 上的未完成任务集选对率由 3/12（25.0%）升至 11/12（91.7%），保留集保持 8/8（100%）。自由生成仍然过度谨慎，因此这里只把固定比较作为主要结果；完整回执和限制见 [`premature-completion-dpo`](../chapter7/premature-completion-dpo/)。
 
 ## 蒸馏：提升样本效率
 

@@ -319,6 +319,10 @@ SFT'ye girişmeden önce kaçınılmaz bir uygulama sorusu var: **SFT verisi ner
 
 Bu dört deneyin ortak bir özelliği var: "kararlı eşlemeyi ve protokolü parametrelere yazmak". Ses SFT'si üslup kontrolü protokolünü, çok dilli SFT düşünceyi örgütleme şablonunu, damıtma SFT'si ise girdiden çıktıya doğrudan eşlemeyi kalıcılaştırıyor. Ortak yanları hedefin net, formatın açık ve değerlendirme ölçütünün kararlı olmasıdır; bu yüzden SFT son derece yüksek bir örneklem verimliliğiyle kazanç sağlayabiliyor. Ama dağılım değiştiği anda ezber eğilimi performans düşüşü olarak açığa çıkıyor. Bu, Bölüm 7.1'deki "SFT ile RL arasındaki temel fark" kesiminde anlatılan ezber—genelleştirme ayrımının deney düzeyindeki görünümüdür.
 
+6. Bölümdeki bad case'ler eğitim verisine çevrilebilir. Çok erken bitiren coding agent için tamamlandı demeden önceki trajectory önekini kesin; eski ilan rejected, testleri çalıştırıp her kabul koşulunu kontrol ettikten sonraki eylem chosen olsun. Bu, sıradan SFT'den çok DPO veya karar sınırı gösterimine uygundur; hata nedeni, geçerlilik koşulları ve doğrulayıcı örnekle birlikte saklanmalıdır.
+
+Aynı görevler RL alıştırma ortamı da olabilir: SFT doğrulanmış trajectory'leri kullanır, RL mevcut politikayla yeniden yürütür ve sonucu dış doğrulayıcı değerlendirir. Böylece bad case yalnızca ezberlenecek örnek değil, iyileştirilecek karar sınırıdır.
+
 ## Ne Zaman SFT, Ne Zaman RL Seçilmeli
 
 Bölüm 7.1 SFT ile RL arasındaki **temel farkı** netleştirdi; bu kesim ise daha uygulamalı bir soruyu yanıtlıyor: **somut bir görev karşısında hangisi kullanılmalı?** Aşağıdaki karar çerçevesinin bazı sonuçları ilerideki RL deneylerinde (Deney 7-10 ve Deney 7-11) ayrıca doğrulanacak; okur önce bir ön yargıya varabilir, RL kısmını bitirdikten sonra buraya dönüp karşılaştırabilir.
@@ -678,6 +682,12 @@ Yani **saf sonuç ödülü, başarı oranının her iki ucunda da "kördür"**. 
 > **Kontrol grubu**: yalnızca sonuç ödülü kullanan standart GRPO.
 >
 > **Beklenen gözlem**: TerminalBench üzerinde (Qwen3-4B, 5 rastgele tohum), episode başına ihlal sayısı saf sonuç ödülündeki 3,71'den 0,66'ya düşüyor (yaklaşık 6 kat), buna karşılık görev başarı oranı gürültü aralığında aşağı yukarı aynı kalıyor — yani "kurala uymak" neredeyse bedavaya elde ediliyor ve üstelik Agent bu durumda daha fazla etkili eylem yapıyor, "az yap az hata yap" taktiğine sığınmıyor. miniF2F cebir sorularında (ilerleme erişilebilir), 0,9 başarı oranına ulaşmak için gereken yineleme sayısı 7,0'den 4,4'e iniyor (4B model); büyük modellerde fark daha da belirgin (30B: 8,5 → 5,4; ayrıca saf sonuç ödülü bazı tohum değerlerinde doğrudan ıraksıyor). Zincirleme dosya işlemi görevinde, "tamamı başarısız grupların" (hiçbir şey öğretmeyen, boşa giden örneklerin) oranı %65'ten %8'e düşüyor. Karşı örnek olarak, "ilerlemenin erişilemez olduğu" yazılım onarımı kurgusunda bütün bir rollout partisi çoğu zaman tek bir testi bile geçemiyor; yoğun ilerleme ödülü her yerde sıfır oluyor ve hiçbir kazanç getirmiyor — bu da "asıl eşik erişilebilirliktir" yargısını doğruluyor.
+
+> **Deney 7-17 ★★: “Erken tamamlama” bad case'lerinden DPO ve GRPO'ya**
+>
+> `build_preference_data.py` 24 vakayı trajectory öneki tercih çiftlerine çevirir: eski tamamlandı iddiası rejected, önce doğrulayıp sonra sonuçlandıran eylem chosen. `train_dpo.py` Qwen2.5-7B-Instruct için LoRA-DPO sağlar; isteğe bağlı GRPO gizli kabul testlerini kullanır.
+>
+> Sınır kümesindeki doğru karar 3/12’den (25,0%) 11/12’ye (91,7%) çıktı; tamamlanmış görev kümesi 8/8 (100%) kaldı. Serbest üretim fazla temkinli olduğundan ana sonuç sabit karşılaştırmadır, genel üretim başarısı iddiası değildir. Ayrıntılar [`premature-completion-dpo`](../chapter7/premature-completion-dpo/) içindedir.
 
 ## RL ile Tool Calling Öğrenmek
 

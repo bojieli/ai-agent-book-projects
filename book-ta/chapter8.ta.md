@@ -127,6 +127,12 @@ Prompt-ஐ தானாக மேம்படுத்த பல அணுகு
 
 Skill learning-உம் இதே கோட்பாட்டைப் பின்பற்றுகிறது; ஆனால் அதன் செயல்பாட்டு வரம்பு மேலும் உள்ளூர்மயமானது. Skill-ஐ தேவைக்கேற்ப திறக்கும் பணிச்செயல் கையேடாகக் கருதலாம். பல அனுபவங்கள் இணைந்து முழுமையான insurance claim செயல்முறையை உருவாக்கினால், அமைப்பு அதற்கான Skill-ஐ உருவாக்கவோ திருத்தவோ முடியும். Candidate Skill ஒரு உரையாடல் summary மட்டும் ஆகக்கூடாது; குறைந்தபட்சம் எப்போது load செய்ய வேண்டும், precondition, operation step, அறியப்பட்ட pitfall, verification method ஆகியவற்றைக் குறிப்பிட்டு source trajectory-ஐச் சேமிக்க வேண்டும். அமைப்பு முதலில் உள்ள Skill library-இல் ஒத்த capability-ஐத் தேடுகிறது. அதே process ஏற்கனவே இருந்தால் local `patch`-க்கு முன்னுரிமை; உண்மையான புதிய தனித்த capability இருந்தால் மட்டுமே புதிய directory உருவாக்க வேண்டும். இதனால் வேறு பெயருடன் ஒரே உள்ளடக்கம் கொண்ட கையேடுகள் குவிவது தவிர்க்கப்படும். Anthropic-இன் Skill Creator[^anthropic-skill-creator] “draft—test—evaluate—revise” generation loop-ஐக் காட்டுகிறது. இது Skill-ஐ உருவாக்கவும் மேம்படுத்தவும் வழி காட்டுகிறது; ஆனால் எந்த இயக்கச் சான்று generation-ஐத் தூண்டப் போதுமானது, conflict-ஐ எவ்வாறு கையாளுவது, மாற்றத்திற்குப் பிறகு domain task மற்றும் பழைய task regression-ஐக் கடக்கிறதா என்பவையே உண்மையான சிரமங்கள்.
 
+> **பரிசோதனை 8-9 ★★: feedback-ஐ writing Skill ஆக மாற்றுதல்**
+>
+> `data/feedback_pairs.json` இன் 20 before/after ஜோடிகளை மூன்று batch-களாக ஏற்று, candidate rule-களைப் பிரித்தெடுத்து, duplicate pattern-களை இணைத்து, threshold conflict-களைச் சரிபார்த்து, source/scope உடன் `SKILL.md` உருவாக்கவும். Deterministic rule-களை code-ல் சரிபார்க்கவும்; LLM rule-களை 10 gold sample-களில் calibrate செய்யவும்.
+>
+> முடியாத task set detection, சாதாரண text false-positive, rule count growth ஆகியவற்றை ஒருசேர report செய்யவும். முதல் real run 0/8 detection, 7/8 false-positive; வெளிப்புற filtering மற்றும் deterministic fallback பிறகு 8/8, 0/8, 21 candidate-கள் 8 rule-களாக இணைந்தன. Implementation [`ai-style-skill`](../chapter8/ai-style-skill/) இல் உள்ளது.
+
 > **பரிசோதனை 8-3 ★★: தோல்வி trajectory-களை அடிப்படையாகக் கொண்டு system Prompt-ஐ மேம்படுத்துதல்**
 >
 > **பரிசோதனை இலக்கு**: பயனர் policy-ஐக் கேள்வி கேட்கும்போது மிக விரைவாக மனிதரிடம் transfer செய்த தோல்வி trajectory-இலிருந்து விமான வாடிக்கையாளர் சேவை Agent கற்றுக்கொள்ளச் செய்வதோடு, உண்மையில் transfer தேவைப்படும் பழைய scenario-களைப் புதிய விதி பாதிக்கவில்லை என நிரூபித்தல்.
@@ -203,6 +209,12 @@ Tool creation-உம் இதே protocol-ஐப் பின்பற்று
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
 [^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
+
+பரிசோதனை 8-8 இதே protocol-ஐ verification layer-க்கு பயன்படுத்துகிறது. User correction, குறைந்த மதிப்பீடு, audit ஆகியவை confirmation இல்லாத high-risk operation-ஐ மீண்டும் சுட்டினால் மட்டுமே change request உருவாக்கி candidate-ஐ தனிமைப்படுத்தப்பட்ட directory-யில் எழுதவும். Tool name/argument மூலம் ஆபத்தான delete மற்றும் `git push --force`-ஐ வகைப்படுத்தி, one-time token-ஐ குறிப்பிட்ட operation-க்கு bind செய்யவும். AST/static check, போலி/மீண்டும் பயன்படுத்திய token boundary replay, holdout replay அனைத்தையும் கடக்க வேண்டும்.
+
+> **பரிசோதனை 8-8 ★★: user feedback-இலிருந்து high-risk operation confirmation gate**
+>
+> `failure_trajectories.json` இன் மூன்று signal மற்றும் control trajectory-களைப் பயன்படுத்தவும். உண்மையான `gpt-4o-mini` candidate incomplete task, normal operation, one-time token check-களை கடக்காததால் security gate நிராகரித்தது. Deterministic candidate அனைத்தையும் கடந்து `release_to_canary` பெற்றது; check, decision, stable directory hash பதிவு செய்யவும். Implementation [`harness-safety-gate`](../chapter8/harness-safety-gate/) இல் உள்ளது.
 
 ### அனுபவத்தை parameters-இல் எழுதுதல்
 

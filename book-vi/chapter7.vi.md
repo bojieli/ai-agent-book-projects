@@ -319,6 +319,10 @@ Trước khi bắt tay vào làm SFT, có một vấn đề thực tế không t
 
 Bốn thử nghiệm này có một đặc điểm chung - "ghi các ánh xạ và giao thức ổn định thành các tham số": lời nói SFT củng cố giao thức điều khiển kiểu, SFT đa ngôn ngữ củng cố mẫu tổ chức tư duy và chắt lọc SFT củng cố ánh xạ trực tiếp từ đầu vào đến đầu ra. Điểm chung của họ là mục tiêu rõ ràng, hình thức rõ ràng và tiêu chí đánh giá ổn định. Do đó, SFT có thể đạt được lợi ích với hiệu suất mẫu cực cao; nhưng một khi sự phân bố thay đổi, xu hướng bộ nhớ sẽ bộc lộ dưới dạng suy giảm hiệu suất. Đây chính xác là biểu hiện thử nghiệm của sự khác biệt về khái quát hóa bộ nhớ được đề cập trong Phần 7.1 "Sự khác biệt cơ bản giữa SFT và RL".
 
+Các bad case ở Chương 6 cũng có thể trở thành dữ liệu huấn luyện. Với coding agent kết thúc quá sớm, cắt tiền tố trajectory ngay trước khi tuyên bố hoàn thành; tuyên bố đó là rejected, còn “chạy kiểm thử, kiểm tra từng điều kiện nghiệm thu rồi mới kết luận” là chosen. Cách này phù hợp với DPO hoặc minh họa ranh giới quyết định hơn SFT thông thường; lưu nguyên nhân lỗi, điều kiện áp dụng và bộ kiểm tra cùng mẫu.
+
+Cùng các nhiệm vụ đó có thể làm môi trường luyện RL: SFT dùng trajectory đã kiểm chứng, còn RL chạy lại bằng policy hiện tại và để verifier bên ngoài đánh giá. Bad case vì thế là ranh giới cần cải thiện, không chỉ là ví dụ để ghi nhớ.
+
 ## Khi nào nên chọn SFT, khi nào nên chọn RL
 
 Mục 7.1 giải thích rõ ràng **sự khác biệt cơ bản** giữa SFT và RL. Phần này trả lời một câu hỏi thực tế hơn: **Nên sử dụng cái nào khi gặp một nhiệm vụ cụ thể?** Kết luận của khung ra quyết định dưới đây sẽ được xác nhận thêm trong thí nghiệm RL tiếp theo (Thí nghiệm 7-10, Thí nghiệm 7-11). Bạn đọc có thể nhận định sơ bộ trước, sau đó quay lại so sánh sau khi đọc phần RL.
@@ -678,6 +682,12 @@ Tóm lại: **Tín hiệu dày đặc chỉ hữu ích nếu nó có thể bù �
 > **Nhóm kiểm soát**: Chỉ sử dụng GRPO tiêu chuẩn cho phần thưởng kết quả.
 >
 > **Quan sát dự kiến**: Trên TerminalBench (Qwen3-4B, 5 hạt giống ngẫu nhiên), số lần vi phạm mỗi vòng giảm từ 3,71 phần thưởng kết quả thuần túy xuống 0,66 (khoảng 6 lần), trong khi tỷ lệ thành công của nhiệm vụ về cơ bản là giống nhau trong phạm vi nhiễu - cho thấy rằng "tuân thủ" gần như miễn phí và tại thời điểm này Agent thực sự đã thực hiện những hành động hiệu quả hơn chứ không phải bằng cách "làm ít hơn và mắc ít lỗi hơn". Đối với các câu hỏi đại số miniF2F (có thể đạt được tiến trình), số lần lặp cần thiết để đạt được tỷ lệ thành công 0,9 đã giảm từ 7,0 xuống 4,4 (mô hình 4B) và khoảng cách rõ ràng hơn trên mô hình lớn (30B: 8,5 → 5,4 và phần thưởng kết quả thuần túy phân kỳ trực tiếp trên một số hạt giống). Trong tác vụ thao tác với tệp được xâu chuỗi, tỷ lệ "mẫu bị mất" (mẫu bị lãng phí không học được gì) đã giảm từ 65% xuống 8%. Như một ví dụ phản bác, trong cài đặt sửa chữa phần mềm là "tiến trình không thể truy cập", toàn bộ đợt triển khai thường không thể vượt qua dù chỉ một bài kiểm tra và phần thưởng tiến độ chuyên sâu bằng 0 ở mọi nơi và không mang lại lợi ích nào - xác nhận nhận định rằng "khả năng tiếp cận là ngưỡng".
+
+> **Thí nghiệm 7-17 ★★: Từ bad case “kết thúc quá sớm” đến DPO và GRPO**
+>
+> `build_preference_data.py` biến 24 trường hợp thành cặp ưu tiên tiền tố trajectory: tuyên bố hoàn thành cũ là rejected, hành động kiểm tra trước là chosen. `train_dpo.py` cung cấp LoRA-DPO cho Qwen2.5-7B-Instruct; nhánh GRPO tùy chọn dùng kiểm thử nghiệm thu ẩn.
+>
+> Quyết định đúng trên tập ranh giới tăng từ 3/12 (25,0%) lên 11/12 (91,7%), còn tập giữ lại của nhiệm vụ đã hoàn thành giữ 8/8 (100%). Sinh tự do quá thận trọng, nên đây là kết quả so sánh cố định chứ không phải tuyên bố cải thiện thành công tổng thể khi vận hành. Xem [`premature-completion-dpo`](../chapter7/premature-completion-dpo/).
 
 ## Gọi công cụ học tập RL
 
