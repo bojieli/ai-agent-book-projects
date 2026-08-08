@@ -23,6 +23,9 @@
 | 7-14 | [retool](retool/) · `verl/` · `SandboxFusion/` | 📖 | Kódértelmező használatára tanít veRL háttérrendszerrel és végrehajtási sandboxszal. |
 | 7-15 | [AWorld-train](AWorld-train/) · `AWorld/` | 📖 | AWorld-alapú GAIA-környezetben tanít eszközhasználó ágenst. |
 | 7-16 | [RLVP](RLVP/) · `RLVP/rlvp/` | 📖 | Az RLVP-kutatást reprodukálja: jutalmazza az eredményt, és bünteti az útvonalat. |
+| 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | Korai befejezési bad case DPO-javítása GPU-n. |
+| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | Hatókörérzékeny kínai idézőjel-SFT nyílt Qwen3-8B GPU-futással. |
+| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | Bájt-pontos speciális karakterlánc-SFT nyílt Qwen3-8B GPU-futással. |
 | — | `verl/` | 📖 | Hatékony RLHF-keretrendszer PPO, GRPO, DAPO és további algoritmusok számára. |
 | — | [Intuitor](Intuitor/) | ✅ | Hosszú gondolatmenet nélkül tanít intuitív következtetést. |
 | — | `tinker-cookbook/` | 📖 | Modellképzési receptek és bevált gyakorlatok gyűjteménye. |

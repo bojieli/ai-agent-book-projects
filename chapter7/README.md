@@ -26,6 +26,8 @@
 | 7-15 | [AWorld-train 配套说明](AWorld-train/) · `AWorld/` | 📖 | `bojieli/AWorld` 中的 GAIA MCP 沙盒与训练入口，`bojieli/verl` 为训练后端 |
 | 7-16 | [RLVP 配套说明](RLVP/) · `RLVP/rlvp/` | 📖 | 完整训练/评估代码来自固定到 `1ad30bc…` 的 `19PINE-AI/rlvp`；当前 checkout 缺失，训练未运行 |
 | 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | 从"过早结束" bad case 到 DPO 修复的完整链路：bad case → 偏好对 → 7B+LoRA 单卡训练 → 未完成任务集与已完成任务保留集验证；本地 RTX PRO 6000 已完成训练，固定候选比较中未完成任务集选对率 25.0% → 91.7%，保留集保持 100% |
+| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | 中文弯引号作用域 Bad Case：Skill 引导的合成数据 → Qwen3-8B bf16 LoRA SFT → 英文原文、代码和 JSON 保护区回归；[manifest](curly-quote-sft/validation/manifest.json)；RTX PRO 6000 真实训练已完成，512/128/128（训练/留出/边界），适配后 exact 71.1%/71.1%，保护区保持 100% |
+| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | `old_string`/特殊字符串精确复制 Bad Case：未见随机字符串、相似字符串选择和工具 JSON 参数 → Qwen3-8B bf16 LoRA SFT；[manifest](exact-copy-sft/validation/manifest.json)；RTX PRO 6000 真实训练已完成，512/128/128（训练/留出/边界），byte-exact 基座 39.1%→适配 80.5%，边界 79.7% |
 | — | `verl/` | 📖 | 为 LLM RLHF 设计的高效 RL 框架，支持 PPO/GRPO/DAPO 等 |
 | — | [Intuitor](Intuitor/) | ✅ | 训练模型的直觉推理，快速做出合理判断而不依赖详细思考链 |
 | — | `tinker-cookbook/` | 📖 | 收集各种模型训练的实用技巧与最佳实践 |

@@ -15,6 +15,8 @@
 | 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | Thí nghiệm 8-5: lỗi lặp lại kích hoạt bản vá mã retry/circuit-breaker, kiểm thử hồi quy, phát hành canary và rollback |
 | 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Đưa cho Hermes toàn bộ cuốn sách và mã nguồn của chính nó; Hermes chọn một cải tiến, tự sửa mình và biến mỗi lần Reviewer từ chối thành một vòng học mới cho tới khi được chấp nhận |
 | 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | Thí nghiệm 8-7: đánh giá tiến hóa dài hạn qua bốn giai đoạn — học, chuyển giao, thay đổi quy tắc và giữ vững |
+| 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | Cổng xác nhận thao tác rủi ro cao |
+| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | Chuyển phản hồi viết thành Skill có thể kiểm chứng |
 
 Tất cả thí nghiệm trên đều có lối chạy offline và unit test không cần API Key; các hướng mở rộng cần model thật hoặc trình duyệt được ghi trong README của từng dự án.
 

@@ -15,6 +15,8 @@
 | 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | 実験 8-5：繰り返しの障害をトリガーに、リトライ/サーキットブレーカーのコードパッチ、回帰テスト、カナリアリリースとロールバックを行う |
 | 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Hermes に本書全体と自分のソースを渡す。改善を選んで自分を書き換え、Reviewer の拒否を次の学習に変えながら受理まで進む |
 | 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | 実験 8-7：学習・転移・ルール変化・保持の 4 段階で長期的な進化を評価する |
+| 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | 高リスク操作の確認ゲート |
+| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | 執筆フィードバックを検証可能な Skill に変換する |
 
 上記の実験はすべて、API キー不要のオフライン入口とユニットテストを提供する。実モデルやブラウザが必要な拡張パスは各プロジェクトの README に記載されている。
 

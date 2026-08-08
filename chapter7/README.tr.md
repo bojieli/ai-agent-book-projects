@@ -14,6 +14,9 @@
 | [retool](retool/) | 📖 | Büyük dil modellerinin matematiksel muhakeme yeteneğini artırmak için çok turlu diyalog ve bir kod sandbox'ı kullanır. SFT ve RL'den oluşan iki aşamalı bir eğitim süreciyle model, matematik problemlerini çözmeye yardımcı olmak için bir kod yürütme ortamını kullanmayı öğrenir. Qwen2.5-32B-Instruct'a dayanır, AIME 2024 veri kümesinde DAPO algoritması ve SandboxFusion sandbox'ı kullanılarak eğitilir. |
 | `AWorld/` · [AWorld-train](AWorld-train/) | 📖 | AWorld çerçevesine dayalı olarak somutlaşmış (embodied) ajanları eğitir; ajanların sanal bir ortamda karmaşık görevleri yerine getirmesini ve deneyimden öğrenmesini sağlar. |
 | `SFTvsRL/` | 📖 | Denetimli İnce Ayar (SFT) ve Pekiştirmeli Öğrenmenin (RL) farklı görevlerdeki etkinliğini sistematik olarak karşılaştırır; her iki yöntemin güçlü yanlarını, zayıf yanlarını ve uygun uygulama senaryolarını analiz eder. |
+| [premature-completion-dpo](premature-completion-dpo/) (7-17) | ✅ | GPU üzerinde erken tamamlama bad case için DPO düzeltmesi. |
+| [curly-quote-sft](curly-quote-sft/) (7-18) | ✅ | Açık Qwen3-8B ile GPU üzerinde kapsam duyarlı Çince kıvrımlı tırnak SFT'si. |
+| [exact-copy-sft](exact-copy-sft/) (7-19) | ✅ | Açık Qwen3-8B ile GPU üzerinde byte-exact özel dize kopyalama SFT'si. |
 | `verl/` | 📖 | verl, büyük dil modellerinin RLHF eğitimi için özel olarak tasarlanmış verimli bir pekiştirmeli öğrenme çerçevesidir; PPO, GRPO ve DAPO gibi çeşitli algoritmaları destekler. |
 | [Intuitor](Intuitor/) | ✅ | Modellerin sezgisel muhakeme yeteneğini eğitir; ayrıntılı düşünce zincirleri gerektirmeden hızlı, makul kararlar vermelerini sağlar. |
 | [MultilingualReasoning](MultilingualReasoning/) | ✅ | Modellerin çok dilli ortamlardaki muhakeme yeteneğini eğitir; diller arası görevlerdeki performansı artırır. |

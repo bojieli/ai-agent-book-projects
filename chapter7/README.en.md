@@ -23,6 +23,9 @@
 | 7-14 | [retool](retool/) | 📖 | Uses multi-turn dialogue and a code sandbox to enhance the mathematical reasoning ability of large language models. Through a two-stage training process of SFT and RL, the model learns to use a code execution environment to assist in solving mathematical problems. Based on Qwen2.5-32B-Instruct, trained on the AIME 2024 dataset, using the DAPO algorithm and SandboxFusion sandbox. |
 | 7-15 | `AWorld/` · [AWorld-train](AWorld-train/) | 📖 | Trains embodied agents based on the AWorld framework, enabling agents to perform complex tasks in a virtual environment and learn from experience. |
 | 7-16 | [RLVP](RLVP/) | 📖 | RLVP post-training research — reward the outcome, penalize the path (companion to Experiment 7-16); the full training/evaluation code lives in the separate paper repository `19PINE-AI/rlvp`, which you need to clone yourself. |
+| 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | Bad-case DPO repair for premature completion on GPU. |
+| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | Scope-sensitive Chinese curved-quote SFT on open Qwen3-8B GPU. |
+| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | Byte-exact special-string SFT on open Qwen3-8B GPU. |
 | — | `verl/` | 📖 | verl is an efficient reinforcement learning framework specifically designed for RLHF training of large language models, supporting various algorithms such as PPO, GRPO, and DAPO. |
 | — | [Intuitor](Intuitor/) | ✅ | Trains the intuitive reasoning ability of models, enabling them to make quick, reasonable judgments without requiring detailed chains of thought. |
 | — | `tinker-cookbook/` | 📖 | Collects various practical tips and best practices for model training. |

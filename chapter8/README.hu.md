@@ -15,6 +15,8 @@
 | 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | Ismételt hibák után kódjavítást indít, majd regressziót, canary kiadást és visszaállítást végez. |
 | 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Hermes megkapja a teljes könyvet és saját forrását, választ egy javítást, módosítja önmagát, és minden Reviewer-elutasításból új tanulási kört indít az elfogadásig. |
 | 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | A 8-7. kísérlet hosszú távon értékeli a tanulást, átvitelt, szabályváltozást és megtartást. |
+| 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | Magas kockázatú műveletek megerősítési kapuja |
+| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | Írási visszajelzést ellenőrizhető Skill-lé alakít |
 
 Minden kísérlet kínál offline belépési pontot és API-kulcs nélküli egységtesztet; a valódi modellt vagy böngészőt igénylő útvonalakat az egyes projektek README-je ismerteti.
 

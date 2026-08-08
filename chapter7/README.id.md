@@ -23,6 +23,9 @@
 | 7-14 | [retool](retool/) · `verl/` · `SandboxFusion/` | 📖 | Melatih penggunaan code interpreter dengan backend veRL dan sandbox eksekusi. |
 | 7-15 | [AWorld-train](AWorld-train/) · `AWorld/` | 📖 | Melatih Agent menggunakan tool pada lingkungan GAIA berbasis AWorld. |
 | 7-16 | [RLVP](RLVP/) · `RLVP/rlvp/` | 📖 | Mereproduksi riset RLVP: memberi reward pada hasil dan penalti pada jalur. |
+| 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | Perbaikan DPO bad case penyelesaian prematur di GPU. |
+| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | SFT tanda kutip lengkung Tionghoa berbasis cakupan dengan Qwen3-8B open-weight di GPU. |
+| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | SFT penyalinan string khusus byte-exact dengan Qwen3-8B open-weight di GPU. |
 | — | `verl/` | 📖 | Framework RLHF efisien untuk PPO, GRPO, DAPO, dan algoritme lain. |
 | — | [Intuitor](Intuitor/) | ✅ | Melatih penalaran intuitif tanpa chain-of-thought panjang. |
 | — | `tinker-cookbook/` | 📖 | Kumpulan resep dan praktik terbaik pelatihan model. |

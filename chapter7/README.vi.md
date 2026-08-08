@@ -23,6 +23,9 @@
 | 7-14 | [retool](retool/) | 📖 | Dùng hội thoại nhiều vòng và sandbox mã để nâng cao năng lực suy luận toán học của mô hình ngôn ngữ lớn. Thông qua hai giai đoạn SFT và RL, mô hình học cách dùng môi trường thực thi mã để hỗ trợ giải bài toán. Dựa trên Qwen2.5-32B-Instruct, huấn luyện trên bộ AIME 2024, dùng thuật toán DAPO và sandbox SandboxFusion. |
 | 7-15 | `AWorld/` · [AWorld-train](AWorld-train/) | 📖 | Huấn luyện Agent hiện thân dựa trên framework AWorld, giúp Agent thực thi nhiệm vụ phức tạp trong môi trường ảo và học từ kinh nghiệm. |
 | 7-16 | [RLVP](RLVP/) | 📖 | Nghiên cứu hậu huấn luyện RLVP (thưởng cho kết quả, phạt đường đi), dự án đi kèm Thí nghiệm 7-16; mã huấn luyện/đánh giá đầy đủ nằm trong kho bài báo riêng `19PINE-AI/rlvp`, cần tự clone. |
+| 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | Sửa bad case hoàn thành sớm bằng DPO trên GPU. |
+| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | SFT dấu ngoặc kép cong tiếng Trung theo phạm vi với Qwen3-8B mở trên GPU. |
+| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | SFT sao chép chuỗi đặc biệt byte-exact với Qwen3-8B mở trên GPU. |
 | — | `verl/` | 📖 | verl là framework học tăng cường hiệu quả được thiết kế riêng cho huấn luyện RLHF của mô hình ngôn ngữ lớn, hỗ trợ nhiều thuật toán như PPO, GRPO, DAPO. |
 | — | [Intuitor](Intuitor/) | ✅ | Huấn luyện năng lực suy luận trực giác của mô hình, giúp mô hình có thể nhanh chóng đưa ra phán đoán hợp lý mà không cần chuỗi suy nghĩ chi tiết. |
 | — | `tinker-cookbook/` | 📖 | Tập hợp nhiều kỹ thuật thực dụng và best practice cho huấn luyện mô hình. |

@@ -25,6 +25,9 @@ Los límites de implementación, código externo y evidencia directa de cada exp
 | 7-14 | [documentación de retool](retool/) · `verl/` · `SandboxFusion/` | 📖 | La receta ReTool procede de `bojieli/verl` y la ejecución de código en tiempo real depende de `bojieli/SandboxFusion`; no existe un repositorio de código independiente llamado `retool` |
 | 7-15 | [documentación de AWorld-train](AWorld-train/) · `AWorld/` | 📖 | Sandbox MCP y entrada de entrenamiento de GAIA en `bojieli/AWorld`, con `bojieli/verl` como backend de entrenamiento |
 | 7-16 | [documentación de RLVP](RLVP/) · `RLVP/rlvp/` | 📖 | El código completo de entrenamiento/evaluación procede de `19PINE-AI/rlvp` fijado a `1ad30bc…`; el *checkout* no está presente y el entrenamiento no se ejecutó |
+| 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | Reparación DPO de bad cases de finalización prematura en GPU |
+| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | SFT de comillas curvas chinas sensible al ámbito con Qwen3-8B abierto en GPU |
+| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | SFT de copia byte-exacta de cadenas especiales con Qwen3-8B abierto en GPU |
 | — | `verl/` | 📖 | Marco eficiente de RLHF para LLM compatible con PPO, GRPO, DAPO y otros algoritmos |
 | — | [Intuitor](Intuitor/) | ✅ | Entrena razonamiento intuitivo para obtener decisiones plausibles con rapidez sin depender de una cadena de pensamiento detallada |
 | — | `tinker-cookbook/` | 📖 | Colección de técnicas prácticas y mejores prácticas para entrenar modelos |

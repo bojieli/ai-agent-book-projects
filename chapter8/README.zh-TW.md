@@ -15,6 +15,8 @@
 | 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | 實驗 8-5：由重複故障觸發重試/熔斷程式碼補丁、迴歸、灰度與回滾 |
 | 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | 把整本書與原始碼交給 Hermes；它讀完後選擇一項改進、親手修改自己，並把每次 Reviewer 退回變成下一輪學習，直到通過 |
 | 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | 實驗 8-7：三臂、3 seeds、14 任務的長期學習、遷移、規則替換與保留評估 |
+| 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | 高風險操作確認門禁 |
+| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | 將寫作回饋轉成可驗證的 Skill |
 
 以上實驗都提供無需 API Key 的離線入口和單元測試；需要真實模型或瀏覽器的擴充路徑在各專案 README 中另行說明。
 

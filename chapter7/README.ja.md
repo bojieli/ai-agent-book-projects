@@ -23,6 +23,9 @@
 | 7-14 | [retool](retool/) | 📖 | 複数ターンの対話とコードサンドボックスを用いて、大規模言語モデルの数学的推論能力を強化する。SFT と RL の 2 段階の訓練プロセスを通じて、モデルはコード実行環境を用いて数学問題の解決を支援することを学ぶ。Qwen2.5-32B-Instruct に基づき、AIME 2024 データセットで DAPO アルゴリズムと SandboxFusion サンドボックスを用いて訓練する。 |
 | 7-15 | `AWorld/` · [AWorld-train](AWorld-train/) | 📖 | AWorld フレームワークに基づいて身体化された Agent を訓練し、Agent が仮想環境で複雑なタスクを実行し、経験から学習できるようにする。 |
 | 7-16 | [RLVP](RLVP/) | 📖 | 結果に報酬を与え、経路にペナルティを課す（RLVP）事後学習の研究（実験 7-16 対応）。完全な訓練・評価コードは独立した論文リポジトリ `19PINE-AI/rlvp` にあり、各自でクローンが必要 |
+| 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | GPU 上の早期完了 bad case に対する DPO 修正。 |
+| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | オープンな Qwen3-8B を GPU で学習するスコープ依存の中国語曲線引用符 SFT。 |
+| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | オープンな Qwen3-8B を GPU で学習する byte-exact 特殊文字列コピー SFT。 |
 | — | `verl/` | 📖 | verl は、大規模言語モデルの RLHF 訓練のために特別に設計された効率的な強化学習フレームワークで、PPO、GRPO、DAPO などのさまざまなアルゴリズムをサポートする。 |
 | — | [Intuitor](Intuitor/) | ✅ | モデルの直感的推論能力を訓練し、詳細な思考連鎖を必要とせずに迅速かつ合理的な判断を下せるようにする。 |
 | — | `tinker-cookbook/` | 📖 | モデル訓練のためのさまざまな実践的なコツとベストプラクティスを収集する。 |

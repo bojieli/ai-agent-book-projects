@@ -15,6 +15,8 @@
 | 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | 실제 코딩 에이전트가 반복 장애에서 패치를 만들고, 결정론적 후보 및 의도적으로 지나치게 넓은 반례와 함께 동일한 회귀·카나리·롤백 배포 게이트를 거쳤습니다. [증거](self-modifying-agent/validation/latest.json)는 수락과 거부 이력을 모두 보존합니다. |
 | 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Hermes에게 책 전체와 자기 소스를 줍니다. 스스로 개선을 고르고 자신을 수정하며, Reviewer의 거절을 다음 학습으로 바꾸어 수락될 때까지 발전합니다. |
 | 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | 실험 8-7은 정적·추가 전용·진화형 세 방식에 대해 3개 시드와 14개 작업, 총 126회의 실제 호출을 수행합니다. [증거](self-evolution-eval/validation/latest.json)는 전이, 규칙 교체, 보존, 대응표본 통계를 담고 있습니다. |
+| 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | 고위험 작업 확인 게이트 |
+| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | 글쓰기 피드백을 검증 가능한 Skill로 변환 |
 
 위 실험은 모두 API 키 없이 실행할 수 있는 오프라인 진입점과 단위 테스트를 사전 점검용으로 유지합니다. 표의 ✅는 각 디렉터리에 보존된 실제 모델·궤적·브라우저의 정식 증거를 근거로 하며, 오프라인 동작 시연으로 대신하지 않습니다. 과거의 수치나 정성적 주장이 재현되지 않았을 때도 부정적 결과를 증거에 그대로 기록합니다.
 

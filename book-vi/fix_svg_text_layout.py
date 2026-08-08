@@ -25,6 +25,7 @@ import xml.etree.ElementTree as ET
 SVG_NS = "http://www.w3.org/2000/svg"
 ET.register_namespace("", SVG_NS)
 NUM = re.compile(r"-?\d+(?:\.\d+)?")
+FONT_SIZE_DECL = re.compile(r"font-size\s*:\s*(-?\d+(?:\.\d+)?)", re.IGNORECASE)
 MIN_FONT = 10.0
 LINE_HEIGHT = 1.18
 
@@ -116,6 +117,50 @@ def fmt(value: float) -> str:
 
 def text_nodes(root):
     return [node for node in root.iter() if local(node.tag) == "text"]
+
+
+def css_font_sizes(root):
+    """Return ``.class`` → font-size mappings from SVG ``<style>`` blocks.
+
+    Recent diagrams use semantic CSS classes (for example ``class="heading"``)
+    instead of repeating a ``font-size`` attribute on every text node.  The
+    preflight must inspect the *effective* typography, otherwise those valid
+    diagrams look like they have a zero-sized font.
+    """
+    sizes = {}
+    for node in root.iter():
+        if local(node.tag) != "style":
+            continue
+        stylesheet = "".join(node.itertext())
+        for selector, declarations in re.findall(r"([^{}]+)\{([^{}]*)\}", stylesheet):
+            match = FONT_SIZE_DECL.search(declarations)
+            if not match:
+                continue
+            size = float(match.group(1))
+            for token in selector.split(","):
+                token = token.strip()
+                if token.startswith("."):
+                    # Keep only the simple class portion; selectors in the
+                    # book's SVGs are intentionally small and class-based.
+                    class_name = re.match(r"\.([A-Za-z_][\w-]*)", token)
+                    if class_name:
+                        sizes[class_name.group(1)] = size
+    return sizes
+
+
+def effective_font_size(node, root, class_sizes=None):
+    """Read a text node's effective font size, including CSS class rules."""
+    direct = node.get("font-size")
+    if direct is not None:
+        return number(direct, 0.0)
+    inline = FONT_SIZE_DECL.search(node.get("style", ""))
+    if inline:
+        return float(inline.group(1))
+    class_sizes = class_sizes if class_sizes is not None else css_font_sizes(root)
+    for class_name in node.get("class", "").split():
+        if class_name in class_sizes:
+            return class_sizes[class_name]
+    return 0.0
 
 
 def text_of(node) -> str:
@@ -458,13 +503,14 @@ def reflow_wrapped_shapes(root):
 def validate_file(path: Path):
     errors = []
     root = ET.parse(path).getroot()
+    class_sizes = css_font_sizes(root)
     all_shapes = shapes(root)
     row_regions = same_row_regions(root, all_shapes)
     for index, node in enumerate(text_nodes(root)):
         value = text_of(node)
         if node.get("textLength") or node.get("lengthAdjust"):
             errors.append(f"text #{index}: forbidden textLength/lengthAdjust")
-        font_size = number(node.get("font-size"), 0.0)
+        font_size = effective_font_size(node, root, class_sizes)
         if value and font_size < MIN_FONT:
             errors.append(f"text #{index}: font-size {font_size:g} < {MIN_FONT:g}")
         x = number(node.get("x"), 0.0)

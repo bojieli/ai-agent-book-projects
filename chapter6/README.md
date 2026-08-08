@@ -32,6 +32,10 @@
 
 > 📖 表中带反引号的外部基准需自行克隆。[`android-world/`](android-world/)（连字符）是本仓库内的 **T3A 评估分析笔记**（见该目录 [README](android-world/README.md)），与外部 `android_world/` 基准源码不是同一路径。
 
+## 跨章 Bad Case 回归协议
+
+正文新增的两类作用域/保真度 Bad Case 评估不把训练代码重复复制到第六章：第六章负责记录首个错误、片段作用域、逐层字符串哈希和轨迹前缀回归；第七章的 [`curly-quote-sft`](../chapter7/curly-quote-sft/) 与 [`exact-copy-sft`](../chapter7/exact-copy-sft/) 复用这些标签生成训练数据，并在独立边界集和保留集上回归。前者按中文自然语言、英文原文、代码和 JSON 作用域评分，后者按 byte/code-point/token exactness 和真实工具参数匹配评分。
+
 ## 实验 6-1 / 6-2 外部复现锚点
 
 以下映射以[正文](../book/chapter6.md)为准。SHA 来自对应 checkout 的 `origin` 与 `HEAD`。6-1 已保留五任务正式运行的[验收证据](tau2-bench-eval/validation/runs/exp6-1-openrouter-gpt41mini-telecom-20260802-v1/manifest.json)；6-2 的 18 个分级人工操作案例、正式结果与兼容边界见[独立报告](experiment-6-2-human-benchmark/README.md)。下表继续保留复现来源、路径和入口。

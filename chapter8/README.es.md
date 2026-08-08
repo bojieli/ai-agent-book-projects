@@ -15,6 +15,8 @@
 | 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | Parches de código de reintento/disyuntor activados por fallos repetidos con regresión y despliegue |
 | 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Da a Hermes el libro y su propio código; elige una mejora, se modifica y convierte cada rechazo del Reviewer en otra ronda de aprendizaje hasta ser aceptado |
 | 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | Evaluación 8-7 de evolución a largo plazo en cuatro etapas: aprendizaje, transferencia, reglas y retención |
+| 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | Puerta de confirmación para operaciones de alto riesgo |
+| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | Convierte comentarios de escritura en un Skill verificable |
 
 ## Casos Complementarios
 

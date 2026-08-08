@@ -15,6 +15,8 @@
 | [self-evolving-tools](self-evolving-tools/) | ✅ | Alita tarzı bir "minimal ön tanım, maksimum kendi kendine evrim" yaklaşımı: ajanın önceden inşa edilmiş alana özgü aracı yoktur, yalnızca beş genel meta-araç vardır. Yapamayacağı bir görevle karşılaştığında, açık kaynak kütüphaneler/API'ler için web'de arama yapar, dokümantasyon okur, bir sandbox'ta test eder, uygulanabilir çözümleri yeni araçlar olarak kapsüller, yeniden kullanım için araç kütüphanesinde saklar ve tüm süreç boyunca halüsinasyon kontrolüne vurgu yapar. |
 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Deney 8-6: Hermes'e kitabın tamamını ve kendi kaynağını verir; bir iyileştirme seçip kendini değiştirir ve her Reviewer reddini kabul edilene kadar yeni bir öğrenme turuna dönüştürür. |
 | [self-evolution-eval](self-evolution-eval/) | ✅ | Deney 8-7: öğrenme, aktarım, kural değişimi ve korumayı kapsayan uzun vadeli üç kollu değerlendirme; 3 seed × 14 sıralı görev boyunca 126 gerçek çağrının kanıtını saklar. |
+| [harness-safety-gate](harness-safety-gate/) | ✅ | Yüksek riskli işlemler için onay kapısı (8-8). |
+| [ai-style-skill](ai-style-skill/) | ✅ | Yazım geri bildirimini doğrulanabilir Skill'e dönüştürür (8-9). |
 
 ## Proje Türleri
 
