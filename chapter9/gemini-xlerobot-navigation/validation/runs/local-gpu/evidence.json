@@ -1,0 +1,322 @@
+{
+  "artifacts": [
+    {
+      "kind": "metrics",
+      "path": "metrics.json",
+      "sha256": "e77f6a79ddf199c92eca1642883921cbd0fb8a2988763a2b1ef604a7e4dc0a91"
+    },
+    {
+      "kind": "events",
+      "path": "predictive_episode_events.json",
+      "sha256": "9fcb00648c516a3766e13e535fce41522f5d49881221c551e1675a22c7225421"
+    },
+    {
+      "kind": "scene",
+      "path": "scene_initial.png",
+      "sha256": "8afa759bc85408f14d75d03da1ad57e32dc6824879f3f9911374b0f866e369e5"
+    }
+  ],
+  "blockers": [],
+  "experiment_id": "9-9",
+  "kind": "desktop_manipulation_planning",
+  "metrics": {
+    "cells": [
+      {
+        "episodes": 128,
+        "failure_probability": 0.0,
+        "mean_tool_calls": 4.0,
+        "mode": "open_loop",
+        "recoveries": 0,
+        "seed": 20260808,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.0,
+        "mean_tool_calls": 6.0,
+        "mode": "closed_loop",
+        "recoveries": 0,
+        "seed": 20260808,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.0,
+        "mean_tool_calls": 6.0,
+        "mode": "predictive",
+        "recoveries": 0,
+        "seed": 20260808,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.25,
+        "mean_tool_calls": 4.0,
+        "mode": "open_loop",
+        "recoveries": 34,
+        "seed": 20260808,
+        "success_rate": 0.734375
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.25,
+        "mean_tool_calls": 6.53125,
+        "mode": "closed_loop",
+        "recoveries": 34,
+        "seed": 20260808,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.25,
+        "mean_tool_calls": 6.53125,
+        "mode": "predictive",
+        "recoveries": 34,
+        "seed": 20260808,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.5,
+        "mean_tool_calls": 4.0,
+        "mode": "open_loop",
+        "recoveries": 60,
+        "seed": 20260808,
+        "success_rate": 0.53125
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.5,
+        "mean_tool_calls": 6.9375,
+        "mode": "closed_loop",
+        "recoveries": 60,
+        "seed": 20260808,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.5,
+        "mean_tool_calls": 6.9375,
+        "mode": "predictive",
+        "recoveries": 60,
+        "seed": 20260808,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.0,
+        "mean_tool_calls": 4.0,
+        "mode": "open_loop",
+        "recoveries": 0,
+        "seed": 20260809,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.0,
+        "mean_tool_calls": 6.0,
+        "mode": "closed_loop",
+        "recoveries": 0,
+        "seed": 20260809,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.0,
+        "mean_tool_calls": 6.0,
+        "mode": "predictive",
+        "recoveries": 0,
+        "seed": 20260809,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.25,
+        "mean_tool_calls": 4.0,
+        "mode": "open_loop",
+        "recoveries": 34,
+        "seed": 20260809,
+        "success_rate": 0.734375
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.25,
+        "mean_tool_calls": 6.53125,
+        "mode": "closed_loop",
+        "recoveries": 34,
+        "seed": 20260809,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.25,
+        "mean_tool_calls": 6.53125,
+        "mode": "predictive",
+        "recoveries": 34,
+        "seed": 20260809,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.5,
+        "mean_tool_calls": 4.0,
+        "mode": "open_loop",
+        "recoveries": 60,
+        "seed": 20260809,
+        "success_rate": 0.53125
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.5,
+        "mean_tool_calls": 6.9375,
+        "mode": "closed_loop",
+        "recoveries": 60,
+        "seed": 20260809,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.5,
+        "mean_tool_calls": 6.9375,
+        "mode": "predictive",
+        "recoveries": 60,
+        "seed": 20260809,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.0,
+        "mean_tool_calls": 4.0,
+        "mode": "open_loop",
+        "recoveries": 0,
+        "seed": 20260810,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.0,
+        "mean_tool_calls": 6.0,
+        "mode": "closed_loop",
+        "recoveries": 0,
+        "seed": 20260810,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.0,
+        "mean_tool_calls": 6.0,
+        "mode": "predictive",
+        "recoveries": 0,
+        "seed": 20260810,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.25,
+        "mean_tool_calls": 4.0,
+        "mode": "open_loop",
+        "recoveries": 33,
+        "seed": 20260810,
+        "success_rate": 0.7421875
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.25,
+        "mean_tool_calls": 6.515625,
+        "mode": "closed_loop",
+        "recoveries": 33,
+        "seed": 20260810,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.25,
+        "mean_tool_calls": 6.515625,
+        "mode": "predictive",
+        "recoveries": 33,
+        "seed": 20260810,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.5,
+        "mean_tool_calls": 4.0,
+        "mode": "open_loop",
+        "recoveries": 59,
+        "seed": 20260810,
+        "success_rate": 0.5390625
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.5,
+        "mean_tool_calls": 6.921875,
+        "mode": "closed_loop",
+        "recoveries": 59,
+        "seed": 20260810,
+        "success_rate": 1.0
+      },
+      {
+        "episodes": 128,
+        "failure_probability": 0.5,
+        "mean_tool_calls": 6.921875,
+        "mode": "predictive",
+        "recoveries": 59,
+        "seed": 20260810,
+        "success_rate": 1.0
+      }
+    ],
+    "deterministic_replay": true,
+    "device": {
+      "device": "mps",
+      "name": "Apple Metal Performance Shaders",
+      "torch": "2.7.0"
+    },
+    "models": [
+      {
+        "seed": 20260808,
+        "test_mse": 0.017016880214214325,
+        "train_mse": 0.017159195616841316
+      },
+      {
+        "seed": 20260809,
+        "test_mse": 0.012364446185529232,
+        "train_mse": 0.01264232862740755
+      },
+      {
+        "seed": 20260810,
+        "test_mse": 0.014977166429162025,
+        "train_mse": 0.015084807761013508
+      }
+    ],
+    "protocol": {
+      "episodes_per_cell": 128,
+      "failure_probabilities": [
+        0.0,
+        0.25,
+        0.5
+      ],
+      "seeds": [
+        20260808,
+        20260809,
+        20260810
+      ],
+      "total_episodes": 3456
+    },
+    "wall_time_ms": 8197.975
+  },
+  "schema_version": "3.0",
+  "seed": 20260808,
+  "status": "complete",
+  "tool_contract": [
+    "observe_scene",
+    "pick",
+    "place",
+    "verify_state",
+    "stop"
+  ],
+  "xlerobot_robocrew_extension": {
+    "actuation_attempted": false,
+    "status": "gated",
+    "tool_adapter_required": true
+  }
+}

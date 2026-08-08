@@ -1,0 +1,344 @@
+{
+  "cells": [
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 0.2301437109708786,
+      "mean_steps": 12.97265625,
+      "objects_per_episode": 1,
+      "p95_steps": 20.0,
+      "seed": 20260808,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 0.5379001498222351,
+      "mean_steps": 30.263671875,
+      "objects_per_episode": 2,
+      "p95_steps": 48.0,
+      "seed": 20260808,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 0.8478867411613464,
+      "mean_steps": 47.666015625,
+      "objects_per_episode": 3,
+      "p95_steps": 71.0,
+      "seed": 20260808,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 1.1540141105651855,
+      "mean_steps": 64.80859375,
+      "objects_per_episode": 4,
+      "p95_steps": 94.0,
+      "seed": 20260808,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 0.23004719614982605,
+      "mean_steps": 12.966796875,
+      "objects_per_episode": 1,
+      "p95_steps": 20.0,
+      "seed": 20260809,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 0.5500189065933228,
+      "mean_steps": 30.943359375,
+      "objects_per_episode": 2,
+      "p95_steps": 49.0,
+      "seed": 20260809,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 0.8587707281112671,
+      "mean_steps": 48.28515625,
+      "objects_per_episode": 3,
+      "p95_steps": 72.0,
+      "seed": 20260809,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 1.1936140060424805,
+      "mean_steps": 67.0859375,
+      "objects_per_episode": 4,
+      "p95_steps": 97.0,
+      "seed": 20260809,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 0.2288360595703125,
+      "mean_steps": 12.904296875,
+      "objects_per_episode": 1,
+      "p95_steps": 20.0,
+      "seed": 20260810,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 0.5454419851303101,
+      "mean_steps": 30.68359375,
+      "objects_per_episode": 2,
+      "p95_steps": 49.0,
+      "seed": 20260810,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 0.8452757596969604,
+      "mean_steps": 47.515625,
+      "objects_per_episode": 3,
+      "p95_steps": 72.0,
+      "seed": 20260810,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 1.1632212400436401,
+      "mean_steps": 65.373046875,
+      "objects_per_episode": 4,
+      "p95_steps": 95.44998168945312,
+      "seed": 20260810,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 0.2274591028690338,
+      "mean_steps": 12.8359375,
+      "objects_per_episode": 1,
+      "p95_steps": 20.0,
+      "seed": 20260811,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 0.5360898971557617,
+      "mean_steps": 30.140625,
+      "objects_per_episode": 2,
+      "p95_steps": 49.0,
+      "seed": 20260811,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 0.8582804799079895,
+      "mean_steps": 48.23828125,
+      "objects_per_episode": 3,
+      "p95_steps": 71.0,
+      "seed": 20260811,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 1.1563987731933594,
+      "mean_steps": 64.9453125,
+      "objects_per_episode": 4,
+      "p95_steps": 93.0,
+      "seed": 20260811,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 0.22869494557380676,
+      "mean_steps": 12.8984375,
+      "objects_per_episode": 1,
+      "p95_steps": 20.0,
+      "seed": 20260812,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 0.5435010194778442,
+      "mean_steps": 30.57421875,
+      "objects_per_episode": 2,
+      "p95_steps": 49.0,
+      "seed": 20260812,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 0.8587590456008911,
+      "mean_steps": 48.322265625,
+      "objects_per_episode": 3,
+      "p95_steps": 74.0,
+      "seed": 20260812,
+      "success_rate": 1.0,
+      "successes": 512
+    },
+    {
+      "control_hz": 20,
+      "device": {
+        "device": "mps",
+        "name": "Apple Metal Performance Shaders",
+        "torch": "2.7.0"
+      },
+      "episodes": 512,
+      "max_steps": 900,
+      "mean_path_length_m": 1.1580641269683838,
+      "mean_steps": 65.076171875,
+      "objects_per_episode": 4,
+      "p95_steps": 94.0,
+      "seed": 20260812,
+      "success_rate": 1.0,
+      "successes": 512
+    }
+  ]
+}
