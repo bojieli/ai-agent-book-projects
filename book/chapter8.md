@@ -133,7 +133,7 @@ Skill 学习遵循同样原则，但作用范围更局部。可以把 Skill 理�
 >
 > `data/feedback_pairs.json` 提供 20 条用户修改前后的文本对，按三批进入。实验从文本差异中提取候选规则，合并重复模式、检测阈值冲突并归档失效规则，最后生成带来源和作用域的 `SKILL.md`。确定性规则直接检查，LLM 类规则先在金标集上校准。
 >
-> 验收同时报告未完成任务集的检出率、正常文本保留集的误伤率和规则数量增长。当前离线路径的目标是命中 8 条明显带有模板化表达的文本、不误伤 8 条正常文本，并把 21 条候选合并成 8 条规则；真实运行结果写入 `validation/`，不能用预期数字替代。配套实现见 [`ai-style-skill`](../chapter8/ai-style-skill/)。
+> 验收同时报告未完成任务集的检出率、正常文本保留集的误伤率和规则数量增长。真实运行的第一次 LLM 提炼检出 0/8、误伤 7/8；加入模型外筛选和确定性回退后，检出 8/8、误伤 0/8，并把 21 条候选合并成 8 条规则。配套实现见 [`ai-style-skill`](../chapter8/ai-style-skill/)。
 
 > **实验 8-3 ★★：基于失败轨迹优化系统提示词**
 >
@@ -212,7 +212,7 @@ Agent 修改自己的代码不意味着运行中的进程直接覆盖自身。�
 
 > **实验 8-8 ★★：由用户反馈触发的高风险操作确认门禁**
 >
-> `failure_trajectories.json` 提供三类反馈信号和对照轨迹。实验记录每一类问题得到多少条轨迹支持、补丁大小、各项检查结果和发布决定，并确认稳定目录的哈希没有被候选生成器改动。离线路径的确定性候选应获得 `release_to_canary`，负对照应返回 `reject_candidate`。
+> `failure_trajectories.json` 提供三类反馈信号和对照轨迹。真实 `gpt-4o-mini` 候选未通过未完成任务回放、正常操作回放和一次性令牌检查，被安全门拒绝；确定性候选通过并进入 `release_to_canary`。实验记录各项检查、发布决定和稳定目录哈希，配套实现见 [`harness-safety-gate`](../chapter8/harness-safety-gate/)。
 
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
