@@ -16,6 +16,7 @@ import os
 
 from .models import Backend, Provider
 from .openrouter import (
+    OPENROUTER_DEFAULT_MODEL,
     ZERO_COST_HINT,
     map_model_to_openrouter,
     openrouter_base_url,
@@ -65,7 +66,10 @@ def build_openrouter_backend(
         # reasons alone, so an unmapped id is sent as-is and rejected by name.
         # Substituting here would answer as a different vendor's model without
         # the reader ever learning theirs was unavailable.
-        model=map_model_to_openrouter(model),
+        model=map_model_to_openrouter(
+            (model or "").strip() or os.getenv("OPENROUTER_MODEL", "").strip() or OPENROUTER_DEFAULT_MODEL,
+            substitute_unknown=not (model or "").strip(),
+        ),
         provider=provider,
         using_openrouter=True,
     )
