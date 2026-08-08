@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Iterable
 
-from verifier import FAIL
+from verifier import FAIL, _item_get
 
 
 def calibration_report(
@@ -14,7 +14,7 @@ def calibration_report(
     dimensions = sorted({
         dimension
         for trajectory, _ in pairs
-        for dimension in trajectory.get("expert_labels", {})
+        for dimension in (trajectory.get("expert_labels") if isinstance(trajectory, dict) and isinstance(trajectory.get("expert_labels"), dict) else {})
     })
     per_dimension: Dict[str, Any] = {}
     total_equal = 0
@@ -22,10 +22,12 @@ def calibration_report(
     for dimension in dimensions:
         tp = fp = fn = tn = 0
         for trajectory, report in pairs:
-            expected = trajectory.get("expert_labels", {}).get(dimension)
+            labels = trajectory.get("expert_labels") if isinstance(trajectory, dict) and isinstance(trajectory.get("expert_labels"), dict) else {}
+            expected = labels.get(dimension)
             if expected is None:
                 continue
-            predicted_map = {item["dimension"]: item["verdict"] for item in report["dimensions"]}
+            dims = report.get("dimensions") if isinstance(report, dict) and isinstance(report.get("dimensions"), list) else getattr(report, "dimensions", [])
+            predicted_map = {_item_get(item, "dimension"): _item_get(item, "verdict") for item in dims}
             predicted = predicted_map.get(dimension)
             expected_fail = expected == FAIL
             predicted_fail = predicted == FAIL
