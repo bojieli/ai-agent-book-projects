@@ -6,7 +6,7 @@ import sys
 import pytest
 
 # Ensure chapter4/collaboration-tools/src is in sys.path
-ch4_src = Path(__file__).resolve().parent.parent / "chapter4" / "collaboration-tools" / "src"
+ch4_src = (Path(__file__).resolve().parent.parent / "chapter4" / "collaboration-tools" / "src").resolve()
 if str(ch4_src) not in sys.path:
     sys.path.insert(0, str(ch4_src))
 
@@ -190,3 +190,50 @@ def test_sync_wrapper():
     assert trace.approved is True
     assert trace.status == "auto-approved"
     assert trace.fallback_triggered is True
+
+
+@pytest.mark.asyncio
+async def test_dispatcher_default_channels_honored():
+    """Test that configured default_channels on dispatcher are honored when request has no channels."""
+    dispatcher = NotificationDispatcher(default_channels=["slack"])
+    trace = await dispatcher.dispatch_and_wait("Test msg", timeout=0.05)
+    assert len(trace.channels_dispatched) == 1
+    assert trace.channels_dispatched[0]["channel"] == "slack"
+
+
+@pytest.mark.asyncio
+async def test_custom_decision_string_accepted():
+    """Test that custom decision string submitted by operator is preserved without fallback trigger."""
+    dispatcher = NotificationDispatcher()
+    req_id = "req_custom_dec_1"
+    request = {"request_id": req_id, "message": "Deploy code"}
+
+    task = asyncio.create_task(dispatcher.dispatch_and_wait(request, timeout=2.0))
+    await asyncio.sleep(0.05)
+
+    dispatcher.submit_decision(req_id, approved=True, decision="approved_by_lead")
+    trace = await task
+
+    assert trace.fallback_triggered is False
+    assert trace.approved is True
+    assert trace.decision == "approved_by_lead"
+    assert trace.status == "approved_by_lead"
+
+
+@pytest.mark.asyncio
+async def test_cleanup_on_cancellation():
+    """Test that pending requests and decision events are cleaned up if task is cancelled."""
+    dispatcher = NotificationDispatcher()
+    req_id = "req_cancel_test"
+    task = asyncio.create_task(
+        dispatcher.dispatch_and_wait({"request_id": req_id, "message": "Long wait"}, timeout=10.0)
+    )
+    await asyncio.sleep(0.05)
+    assert req_id in dispatcher._pending_requests
+    task.cancel()
+    try:
+        await task
+    except asyncio.CancelledError:
+        pass
+    assert req_id not in dispatcher._pending_requests
+    assert req_id not in dispatcher._decision_events

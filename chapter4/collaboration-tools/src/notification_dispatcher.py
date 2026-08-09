@@ -26,9 +26,7 @@ class DecisionRequest:
 
     message: str
     request_id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    channels: List[str] = field(
-        default_factory=lambda: ["telegram", "slack", "webhook", "email"]
-    )
+    channels: Optional[List[str]] = None
     fallback_action: Optional[str] = None
     context: Dict[str, Any] = field(default_factory=dict)
     urgent: bool = False
@@ -38,9 +36,7 @@ class DecisionRequest:
         return cls(
             request_id=data.get("request_id") or str(uuid.uuid4()),
             message=data.get("message", data.get("title", "")),
-            channels=data.get(
-                "channels", ["telegram", "slack", "webhook", "email"]
-            ),
+            channels=data.get("channels"),
             fallback_action=data.get("fallback_action"),
             context=data.get("context", {}),
             urgent=data.get("urgent", False),
@@ -284,104 +280,105 @@ class NotificationDispatcher:
             "dispatched_at": dispatched_at,
         }
 
-        # Dispatch across multi-channels
-        channel_results = await self.dispatch_all(channels, req_obj.message, req_obj.context)
-        trace_events.append(
-            {
-                "event": "dispatched",
-                "channels": channels,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            }
-        )
-
-        trace_events.append(
-            {
-                "event": "waiting_decision",
-                "timeout": wait_timeout,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            }
-        )
-
         try:
-            if wait_timeout > 0:
-                await asyncio.wait_for(event.wait(), timeout=wait_timeout)
-        except asyncio.TimeoutError:
-            pass
-
-        req_record = self._pending_requests.get(request_id, {})
-        end_time = datetime.now(timezone.utc)
-        resolved_at = end_time.isoformat()
-        duration = round((end_time - start_time).total_seconds(), 4)
-
-        if req_record.get("status") in ("approved", "rejected") and req_record.get("approved") is not None:
-            # Decision submitted before timeout
-            approved = req_record["approved"]
-            decision = req_record["decision"]
-            status = decision
-            notes = req_record.get("notes")
-            fallback_triggered = False
+            # Dispatch across multi-channels
+            channel_results = await self.dispatch_all(channels, req_obj.message, req_obj.context)
             trace_events.append(
                 {
-                    "event": "human_decision_received",
-                    "decision": decision,
-                    "approved": approved,
-                    "timestamp": resolved_at,
+                    "event": "dispatched",
+                    "channels": channels,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                 }
             )
-        else:
-            # Timeout elapses - apply fallback action policy engine
-            fallback_triggered = True
-            if fallback == FallbackAction.AUTO_APPROVE.value:
-                approved = True
-                decision = "auto-approved"
-                status = "auto-approved"
-                notes = f"Timeout reached ({wait_timeout}s): policy engine auto-approved request."
-            elif fallback == FallbackAction.AUTO_REJECT.value:
-                approved = False
-                decision = "auto-rejected"
-                status = "auto-rejected"
-                notes = f"Timeout reached ({wait_timeout}s): policy engine auto-rejected request."
-            else:  # ESCALATE
-                approved = False
-                decision = "escalated"
-                status = "escalated"
-                notes = f"Timeout reached ({wait_timeout}s): policy engine escalated request."
 
-                # Trigger escalation notification
-                escalation_msg = (
-                    f"🚨 ESCALATION ALERT: HITL decision request {request_id} "
-                    f"timed out after {wait_timeout}s without operator input."
+            trace_events.append(
+                {
+                    "event": "waiting_decision",
+                    "timeout": wait_timeout,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                }
+            )
+
+            try:
+                if wait_timeout > 0:
+                    await asyncio.wait_for(event.wait(), timeout=wait_timeout)
+            except asyncio.TimeoutError:
+                pass
+
+            req_record = self._pending_requests.get(request_id, {})
+            end_time = datetime.now(timezone.utc)
+            resolved_at = end_time.isoformat()
+            duration = round((end_time - start_time).total_seconds(), 4)
+
+            if req_record.get("status") not in (None, "pending") and req_record.get("approved") is not None:
+                # Decision submitted before timeout
+                approved = req_record["approved"]
+                decision = req_record["decision"]
+                status = decision
+                notes = req_record.get("notes")
+                fallback_triggered = False
+                trace_events.append(
+                    {
+                        "event": "human_decision_received",
+                        "decision": decision,
+                        "approved": approved,
+                        "timestamp": resolved_at,
+                    }
                 )
-                await self.dispatch_all(channels, escalation_msg, req_obj.context)
+            else:
+                # Timeout elapses - apply fallback action policy engine
+                fallback_triggered = True
+                if fallback == FallbackAction.AUTO_APPROVE.value:
+                    approved = True
+                    decision = "auto-approved"
+                    status = "auto-approved"
+                    notes = f"Timeout reached ({wait_timeout}s): policy engine auto-approved request."
+                elif fallback == FallbackAction.AUTO_REJECT.value:
+                    approved = False
+                    decision = "auto-rejected"
+                    status = "auto-rejected"
+                    notes = f"Timeout reached ({wait_timeout}s): policy engine auto-rejected request."
+                else:  # ESCALATE
+                    approved = False
+                    decision = "escalated"
+                    status = "escalated"
+                    notes = f"Timeout reached ({wait_timeout}s): policy engine escalated request."
 
-            trace_events.append(
-                {
-                    "event": "fallback_policy_triggered",
-                    "fallback_action": fallback,
-                    "decision": decision,
-                    "timestamp": resolved_at,
-                }
+                    # Trigger escalation notification
+                    escalation_msg = (
+                        f"🚨 ESCALATION ALERT: HITL decision request {request_id} "
+                        f"timed out after {wait_timeout}s without operator input."
+                    )
+                    await self.dispatch_all(channels, escalation_msg, req_obj.context)
+
+                trace_events.append(
+                    {
+                        "event": "fallback_policy_triggered",
+                        "fallback_action": fallback,
+                        "decision": decision,
+                        "timestamp": resolved_at,
+                    }
+                )
+
+            return DecisionTrace(
+                request_id=request_id,
+                message=req_obj.message,
+                status=status,
+                approved=approved,
+                decision=decision,
+                fallback_action=fallback,
+                fallback_triggered=fallback_triggered,
+                channels_dispatched=channel_results,
+                dispatched_at=dispatched_at,
+                resolved_at=resolved_at,
+                duration_seconds=duration,
+                notes=notes,
+                trace=trace_events,
             )
-
-        # Cleanup internal tracking
-        self._pending_requests.pop(request_id, None)
-        self._decision_events.pop(request_id, None)
-
-        return DecisionTrace(
-            request_id=request_id,
-            message=req_obj.message,
-            status=status,
-            approved=approved,
-            decision=decision,
-            fallback_action=fallback,
-            fallback_triggered=fallback_triggered,
-            channels_dispatched=channel_results,
-            dispatched_at=dispatched_at,
-            resolved_at=resolved_at,
-            duration_seconds=duration,
-            notes=notes,
-            trace=trace_events,
-        )
+        finally:
+            # Cleanup internal tracking
+            self._pending_requests.pop(request_id, None)
+            self._decision_events.pop(request_id, None)
 
     def dispatch_and_wait_sync(
         self,
