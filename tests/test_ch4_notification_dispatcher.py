@@ -312,7 +312,7 @@ async def test_non_pending_record_with_custom_decision_string_without_approved()
     assert trace.fallback_triggered is False
     assert trace.status == "deferred"
     assert trace.decision == "deferred"
-    assert trace.approved is True
+    assert trace.approved is False
 
 
 @pytest.mark.asyncio

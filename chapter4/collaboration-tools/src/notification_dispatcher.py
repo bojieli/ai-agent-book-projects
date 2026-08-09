@@ -328,7 +328,7 @@ class NotificationDispatcher:
                 # Decision submitted before timeout
                 approved = req_record.get("approved")
                 if approved is None:
-                    approved = True
+                    approved = False
                 decision = req_record.get("decision") or req_record.get("status")
                 status = req_record.get("status") or decision
                 notes = req_record.get("notes")
