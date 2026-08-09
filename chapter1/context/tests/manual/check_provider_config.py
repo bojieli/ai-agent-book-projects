@@ -17,6 +17,22 @@ def test_providers():
     print("\n" + "="*60)
     print("🧪 PROVIDER CONFIGURATION TEST")
     print("="*60)
+
+    # Test Alibaba Cloud Model Studio / Bailian
+    dashscope_key = os.getenv("DASHSCOPE_API_KEY")
+    if dashscope_key:
+        print("\n✅ Alibaba Cloud Model Studio API key found")
+        try:
+            agent = ContextAwareAgent(
+                dashscope_key, ContextMode.FULL, provider="dashscope"
+            )
+            print(f"   Provider: {agent.provider}")
+            print(f"   Model: {agent.model}")
+            print(f"   Base URL: {agent.client.base_url}")
+        except Exception as e:
+            print(f"   ❌ Error: {str(e)}")
+    else:
+        print("\n⚠️ Alibaba Cloud Model Studio API key not found (DASHSCOPE_API_KEY)")
     
     # Test SiliconFlow
     sf_key = os.getenv("SILICONFLOW_API_KEY")
@@ -78,6 +94,11 @@ def test_providers():
     # Show usage examples
     print("\n📖 Usage Examples:")
     print("-"*40)
+
+    if dashscope_key:
+        print("\n# Using Qwen directly through Alibaba Cloud Model Studio:")
+        print("python main.py --provider dashscope")
+        print("python main.py --provider dashscope --model qwen3.7-plus")
     
     if sf_key:
         print("\n# Using SiliconFlow:")
@@ -94,8 +115,9 @@ def test_providers():
         print("python main.py --provider deepseek")
         print("python main.py --provider deepseek --model deepseek-v4-pro")
     
-    if not sf_key and not ark_key and not deepseek_key:
+    if not dashscope_key and not sf_key and not ark_key and not deepseek_key:
         print("\n⚠️ No API keys found. Please set one of:")
+        print("   export DASHSCOPE_API_KEY=your_key")
         print("   export SILICONFLOW_API_KEY=your_key")
         print("   export ARK_API_KEY=your_key")
         print("   export DEEPSEEK_API_KEY=your_key")

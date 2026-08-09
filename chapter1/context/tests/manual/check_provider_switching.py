@@ -24,6 +24,12 @@ def test_provider_switching():
     providers_to_test = []
     
     # Check which providers have API keys configured
+    if os.getenv("DASHSCOPE_API_KEY"):
+        providers_to_test.append(("dashscope", os.getenv("DASHSCOPE_API_KEY")))
+        print("✅ Alibaba Cloud Model Studio API key found")
+    else:
+        print("⏭️  Skipping Alibaba Cloud Model Studio (no API key)")
+
     if os.getenv("SILICONFLOW_API_KEY"):
         providers_to_test.append(("siliconflow", os.getenv("SILICONFLOW_API_KEY")))
         print("✅ SiliconFlow API key found")
@@ -50,6 +56,7 @@ def test_provider_switching():
     
     if not providers_to_test:
         print("\n❌ No API keys configured. Please set at least one:")
+        print("  - DASHSCOPE_API_KEY")
         print("  - SILICONFLOW_API_KEY")
         print("  - ARK_API_KEY")
         print("  - MOONSHOT_API_KEY")
@@ -101,7 +108,7 @@ def test_provider_switching():
     # Show summary
     print("\n📊 Summary:")
     print(f"  Providers tested: {len(providers_to_test)}")
-    print("  Available providers: siliconflow, doubao, kimi, moonshot, deepseek")
+    print("  Available providers include: dashscope (qwen/bailian), siliconflow, doubao, kimi, moonshot, deepseek")
     
     if len(providers_to_test) < 3:
         print("\n💡 Tip: Configure more API keys to test all providers")

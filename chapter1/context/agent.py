@@ -379,8 +379,9 @@ class ContextAwareAgent:
         Args:
             api_key: API key for the LLM provider
             context_mode: Context mode for ablation studies
-            provider: LLM provider ('siliconflow', 'doubao', 'kimi', 'moonshot',
-                'deepseek', or 'openrouter')
+            provider: Any provider registered in ``agentbook.providers`` (for
+                example ``dashscope``/``qwen``, ``siliconflow``, ``doubao``,
+                ``kimi``, ``deepseek``, or ``openrouter``)
             model: Optional model override
             verbose: If True, log full HTTP requests and responses (default: True)
         """

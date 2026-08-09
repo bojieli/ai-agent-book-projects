@@ -26,7 +26,7 @@ from .resolution import build_openrouter_backend
 __all__ = ["resolve_llm_backend"]
 
 _NO_KEY_MESSAGE = (
-    "No API key found. Set a provider key (SILICONFLOW_API_KEY / ARK_API_KEY / "
+    "No API key found. Set a provider key (DASHSCOPE_API_KEY / SILICONFLOW_API_KEY / ARK_API_KEY / "
     "MOONSHOT_API_KEY / DEEPSEEK_API_KEY / ZHIPU_API_KEY / OPENAI_API_KEY / "
     "GEMINI_API_KEY) or OPENROUTER_API_KEY (universal fallback). " + ZERO_COST_HINT
 )

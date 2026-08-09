@@ -22,6 +22,8 @@ from agentbook.providers.registry import supported_providers
 from agentbook.providers.resolution import build_openrouter_backend
 
 PROVIDER_KEY_VARS = [
+    "DASHSCOPE_API_KEY",
+    "DASHSCOPE_BASE_URL",
     "SILICONFLOW_API_KEY",
     "ARK_API_KEY",
     "MOONSHOT_API_KEY",
@@ -119,6 +121,35 @@ def test_legacy_kimi_key_still_accepted(monkeypatch):
 def test_moonshot_alias_resolves_to_kimi(monkeypatch):
     monkeypatch.setenv("MOONSHOT_API_KEY", "test-moonshot-key")
     assert resolve_backend("moonshot").provider == "kimi"
+
+
+def test_dashscope_key_uses_bailian_directly(monkeypatch):
+    """A Bailian key must call Alibaba directly, not the SiliconFlow route."""
+    monkeypatch.setenv("DASHSCOPE_API_KEY", "test-dashscope-key")
+    backend = resolve_backend("dashscope")
+    assert backend.api_key == "test-dashscope-key"
+    assert backend.base_url == "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    assert backend.model == "qwen3.7-plus"
+    assert backend.provider == "dashscope"
+    assert backend.using_openrouter is False
+
+
+@pytest.mark.parametrize("alias", ["qwen", "bailian"])
+def test_qwen_and_bailian_aliases_resolve_to_dashscope(monkeypatch, alias):
+    monkeypatch.setenv("DASHSCOPE_API_KEY", "test-dashscope-key")
+    backend = resolve_backend(alias)
+    assert backend.provider == "dashscope"
+    assert backend.base_url == "https://dashscope.aliyuncs.com/compatible-mode/v1"
+
+
+def test_dashscope_international_region_override(monkeypatch):
+    monkeypatch.setenv("DASHSCOPE_API_KEY", "test-dashscope-key")
+    monkeypatch.setenv(
+        "DASHSCOPE_BASE_URL",
+        "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    )
+    backend = resolve_backend("dashscope")
+    assert backend.base_url == "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
 
 
 def test_falls_back_to_openrouter_when_provider_key_missing(monkeypatch):
@@ -230,8 +261,9 @@ def test_supported_providers_covers_registry_and_aliases():
     must be selectable without touching argparse."""
     for name in PROVIDERS:
         assert name in SUPPORTED_PROVIDERS
-    for alias in ("moonshot", "ark", "google"):
+    for alias in ("moonshot", "ark", "google", "qwen", "bailian"):
         assert alias in SUPPORTED_PROVIDERS
+    assert "dashscope" in SUPPORTED_PROVIDERS
     assert "ollama" in SUPPORTED_PROVIDERS
     assert "openai" in SUPPORTED_PROVIDERS
     assert "gemini" in SUPPORTED_PROVIDERS

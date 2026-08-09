@@ -40,6 +40,9 @@ rates yourself; use the tool observations."""
 
 EXPECTED_NUMBERS = ("9602895.73", "2400723.93")
 KEY_ENV = {
+    "dashscope": ("DASHSCOPE_API_KEY",),
+    "qwen": ("DASHSCOPE_API_KEY",),
+    "bailian": ("DASHSCOPE_API_KEY",),
     "kimi": ("MOONSHOT_API_KEY", "KIMI_API_KEY"),
     "moonshot": ("MOONSHOT_API_KEY", "KIMI_API_KEY"),
     "doubao": ("ARK_API_KEY",),

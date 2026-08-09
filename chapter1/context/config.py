@@ -55,6 +55,11 @@ class Config:
     LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "doubao").lower()
     
     # API Configuration
+    DASHSCOPE_API_KEY: str = os.getenv("DASHSCOPE_API_KEY", "")
+    DASHSCOPE_BASE_URL: str = os.getenv(
+        "DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    )
+
     SILICONFLOW_API_KEY: str = os.getenv("SILICONFLOW_API_KEY", "")
     SILICONFLOW_BASE_URL: str = "https://api.siliconflow.cn/v1"
     
@@ -198,13 +203,16 @@ class Config:
     @classmethod
     def print_config(cls):
         """Print current configuration (hiding sensitive data)"""
+        provider = canonical_provider(cls.LLM_PROVIDER)
+        api_key = cls.get_api_key(provider)
         print("\n" + "="*50)
         print("CONFIGURATION")
         print("="*50)
+        print(f"Provider: {provider}")
         print(f"Model: {cls.MODEL_NAME}")
         print(f"Temperature: {cls.MODEL_TEMPERATURE}")
         print(f"Max Tokens: {cls.MODEL_MAX_TOKENS}")
         print(f"Max Iterations: {cls.MAX_ITERATIONS}")
-        print(f"API Key Set: {'Yes' if cls.SILICONFLOW_API_KEY else 'No'}")
+        print(f"API Key Set: {'Yes' if api_key else 'No'}")
         print(f"Log Level: {cls.LOG_LEVEL}")
         print("="*50 + "\n")
