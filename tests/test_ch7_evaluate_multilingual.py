@@ -234,10 +234,11 @@ def test_word_boundary_reference_matching():
     evaluator = MultilingualReasoningEvaluator()
     # Word boundary matching should succeed for full word substring
     assert evaluator.evaluate_accuracy("The answer is Paris.", "Paris") == 1.0
+    assert evaluator.evaluate_accuracy("The answer is A", "A") == 1.0
     # Word boundary matching should fail for partial word matching
     assert evaluator.evaluate_accuracy("1042", "42") == 0.0
     assert evaluator.evaluate_accuracy("no", "not paris") == 0.0
-
+    assert evaluator.evaluate_accuracy("apple", "a") == 0.0
 
 def test_invoke_model_inspect_signature():
     evaluator = MultilingualReasoningEvaluator()

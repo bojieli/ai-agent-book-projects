@@ -232,16 +232,12 @@ class MultilingualReasoningEvaluator:
             except ValueError:
                 pass
 
-        # Substring matching for short references with word boundaries
-        if len(ref_clean) >= 2:
-            pattern = r"\b" + re.escape(ref_clean) + r"\b"
-            if re.search(pattern, pred_clean):
-                return 1.0
-        elif len(ref) >= 2:
-            pattern = r"\b" + re.escape(ref) + r"\b"
+        # Substring matching for references with word boundaries
+        target_ref = ref_clean if ref_clean else ref
+        if target_ref:
+            pattern = r"\b" + re.escape(target_ref) + r"\b"
             if re.search(pattern, pred_clean) or re.search(pattern, pred):
                 return 1.0
-
         return 0.0
 
     def compute_token_usage(
