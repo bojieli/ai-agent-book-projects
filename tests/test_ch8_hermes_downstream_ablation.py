@@ -197,6 +197,12 @@ async def fetch(url: str) -> str:
     score = engine.evaluate_code_quality(async_code)
     assert score > 70.0
 
+    async_kwonly_code = '''"""Async kwonly module."""
+async def fetch_kw(*, url: str):
+    return "data"
+'''
+    kw_score = engine.evaluate_code_quality(async_kwonly_code)
+    assert kw_score >= 85.0
 
 def test_invalid_task_item_validation():
     """Regression test: invalid task item raises ValueError."""

@@ -128,7 +128,8 @@ class DownstreamAblationEngine:
             for fn in functions:
                 if ast.get_docstring(fn):
                     docstring_count += 1
-                if fn.returns is not None or any(arg.annotation for arg in fn.args.args):
+                all_args = fn.args.args + getattr(fn.args, "posonlyargs", []) + fn.args.kwonlyargs
+                if fn.returns is not None or any(arg.annotation for arg in all_args):
                     annotation_count += 1
 
             if docstring_count > 0:
