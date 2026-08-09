@@ -11,6 +11,7 @@ import inspect
 import math
 import re
 import statistics
+import warnings
 from typing import Any, Callable, Dict, List, Optional, Sequence, Union
 
 LANG_MAP: dict[str, str] = {
@@ -26,6 +27,24 @@ LANG_MAP: dict[str, str] = {
     "zh-tw": "Chinese",
     "ja": "Japanese",
     "japanese": "Japanese",
+    "de": "German",
+    "german": "German",
+    "it": "Italian",
+    "italian": "Italian",
+    "pt": "Portuguese",
+    "portuguese": "Portuguese",
+    "ru": "Russian",
+    "russian": "Russian",
+    "ko": "Korean",
+    "korean": "Korean",
+    "ar": "Arabic",
+    "arabic": "Arabic",
+    "hi": "Hindi",
+    "hindi": "Hindi",
+    "nl": "Dutch",
+    "dutch": "Dutch",
+    "tr": "Turkish",
+    "turkish": "Turkish",
 }
 
 # Regex patterns for script detection
@@ -66,7 +85,18 @@ ENGLISH_WORDS = {
 def normalize_language(lang: str) -> str:
     """Normalize language identifier string to canonical English name."""
     cleaned = str(lang).strip().lower()
-    return LANG_MAP.get(cleaned, cleaned.capitalize())
+    canonical = LANG_MAP.get(cleaned)
+    if canonical is not None:
+        return canonical
+    # Unknown language: title-case for consistent multi-word names and warn
+    # so callers notice silent filtering in evaluate().
+    title_cased = cleaned.title()
+    warnings.warn(
+        f"Unrecognized language identifier {lang!r}; normalized to {title_cased!r}. "
+        f"Add it to LANG_MAP for reliable matching.",
+        stacklevel=2,
+    )
+    return title_cased
 
 
 def estimate_tokens(text: str) -> int:
@@ -209,7 +239,7 @@ class MultilingualReasoningEvaluator:
         ref = str(reference_answer if reference_answer is not None else "").strip().lower()
 
         if not pred or not ref:
-            return 1.0 if pred == ref else 0.0
+            return 0.0
 
         if pred == ref:
             return 1.0

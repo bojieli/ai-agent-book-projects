@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import sys
+import warnings
 
 # Ensure chapter7/MultilingualReasoning is in sys.path
 ch7_dir = Path(__file__).resolve().parent.parent / "chapter7" / "MultilingualReasoning"
