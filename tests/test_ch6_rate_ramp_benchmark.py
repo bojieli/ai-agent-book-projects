@@ -142,3 +142,14 @@ def test_explicit_rates_config_parsing():
     assert cfg["start_rate"] == 10
     assert cfg["end_rate"] == 30
     assert cfg["rates"] == [10, 20, 30]
+def test_backoff_curves_with_non_dict_and_zero_backoff_429():
+    bench = RateRampBenchmark()
+    records = [
+        "not_a_dict",
+        {"status_code": 429, "backoff_sec": 0.0},  # 429 without backoff
+        {"status_code": 429, "backoff_sec": 2.0},  # 429 with backoff
+    ]
+    res = bench.calculate_backoff_curves(records)
+    assert res["total_429_count"] == 2
+    # overall_avg_backoff should be based on requests with backoff > 0 (2.0 / 1 = 2.0)
+    assert res["overall_avg_backoff_sec"] == 2.0

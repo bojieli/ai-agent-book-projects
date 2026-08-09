@@ -139,13 +139,17 @@ class RateRampBenchmark:
         if not records or sample_size <= 0:
             return []
 
-        if len(records) <= sample_size:
-            return [dict(r) for r in records]
+        valid_records = [r for r in records if isinstance(r, dict)]
+        if not valid_records:
+            return []
+
+        if len(valid_records) <= sample_size:
+            return [dict(r) for r in valid_records]
 
         # Uniformly sample across the records to cover all rate tiers
-        step = len(records) / float(sample_size)
+        step = len(valid_records) / float(sample_size)
         indices = [int(i * step) for i in range(sample_size)]
-        return [dict(records[idx]) for idx in indices]
+        return [dict(valid_records[idx]) for idx in indices]
 
     def calculate_backoff_curves(
         self, records: Sequence[dict[str, Any]]
@@ -156,24 +160,40 @@ class RateRampBenchmark:
         total_429_backoff_time = 0.0
         max_backoff = 0.0
         total_429 = 0
+        total_429_backoff_count = 0
         all_backoffs_count = 0
 
         grouped: dict[int, list[dict[str, Any]]] = {}
         for r in records:
-            rate = int(r.get("target_rate", 0))
+            if not isinstance(r, dict):
+                continue
+            rate = int(r.get("target_rate", 0) or 0)
             grouped.setdefault(rate, []).append(r)
 
         for rate in sorted(grouped.keys()):
             step_recs = grouped[rate]
             cnt = len(step_recs)
-            hits_429 = sum(1 for r in step_recs if r.get("status_code") == 429)
-            backoffs_429 = [float(r.get("backoff_sec", 0.0)) for r in step_recs if r.get("status_code") == 429 and float(r.get("backoff_sec", 0.0)) > 0]
-            backoffs = [float(r.get("backoff_sec", 0.0)) for r in step_recs if float(r.get("backoff_sec", 0.0)) > 0]
+            hits_429 = sum(1 for r in step_recs if isinstance(r, dict) and r.get("status_code") == 429)
+            
+            backoffs_429 = [
+                float(r.get("backoff_sec") or 0.0)
+                for r in step_recs
+                if isinstance(r, dict)
+                and r.get("status_code") == 429
+                and float(r.get("backoff_sec") or 0.0) > 0
+            ]
+            backoffs = [
+                float(r.get("backoff_sec") or 0.0)
+                for r in step_recs
+                if isinstance(r, dict)
+                and float(r.get("backoff_sec") or 0.0) > 0
+            ]
 
             avg_backoff = round(sum(backoffs) / len(backoffs), 4) if backoffs else 0.0
             step_max_backoff = max(backoffs, default=0.0)
 
             total_429 += hits_429
+            total_429_backoff_count += len(backoffs_429)
             total_429_backoff_time += sum(backoffs_429)
             total_backoff_time += sum(backoffs)
             all_backoffs_count += len(backoffs)
@@ -188,8 +208,8 @@ class RateRampBenchmark:
             }
 
         overall_avg_backoff = (
-            round(total_429_backoff_time / total_429, 4)
-            if total_429 > 0
+            round(total_429_backoff_time / total_429_backoff_count, 4)
+            if total_429_backoff_count > 0
             else (round(total_backoff_time / all_backoffs_count, 4) if all_backoffs_count > 0 else 0.0)
         )
 
