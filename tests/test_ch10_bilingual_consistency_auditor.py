@@ -209,3 +209,32 @@ def test_bilingual_consistency_auditor_unbalanced_dollars_without_source_formula
     latex_findings = [f for f in report.findings if f["category"] == "latex_formulas"]
     assert len(latex_findings) > 0
     assert "Unbalanced" in latex_findings[0]["message"]
+
+def test_bilingual_consistency_auditor_non_overlapping_position_matching():
+    """Test that variant matching uses non-overlapping text position match (longest match first)."""
+    custom_glossary = {
+        "zh": {
+            "embedding": {
+                "canonical": "嵌入向量",
+                "variants": ["嵌入向量", "嵌入"],
+            }
+        }
+    }
+    auditor = BilingualConsistencyAuditor(glossary=custom_glossary)
+    # Target has "嵌入向量" twice (index positions 0..4 and 7..11)
+    # Shorter variant "嵌入" overlaps with both (positions 0..2 and 7..9), so it should NOT be matched
+    report = auditor.run_audit("The embedding is good.", "嵌入向量 和 嵌入向量。", lang="zh")
+    assert report.scores["terminology"] == 1.0
+    term_findings = [f for f in report.findings if f["category"] == "terminology"]
+    assert len(term_findings) == 0
+
+
+def test_bilingual_consistency_auditor_fenced_code_block_dollar_signs_ignored_in_latex_audit():
+    """Test that dollar signs in fenced code blocks are stripped before checking LaTeX formula balance."""
+    source_md = "Here is script:\n```bash\necho $VAR1 $VAR2\n```\nFormula: $x = y$."
+    target_md = "这里是脚本:\n```bash\necho $VAR1 $VAR2 $VAR3\n```\n公式: $x = y$."
+    report = audit_translation(source_md, target_md, lang="zh")
+    assert report.scores["latex_formulas"] == 1.0
+    latex_findings = [f for f in report.findings if f["category"] == "latex_formulas"]
+    assert len(latex_findings) == 0
+

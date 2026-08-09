@@ -192,13 +192,18 @@ class BilingualConsistencyAuditor:
             canonical = spec.get("canonical", "")
             variants = spec.get("variants", [canonical])
 
-            temp_target = prose_target
             matched_variants = []
+            occupied_spans: List[Tuple[int, int]] = []
             for v in sorted(variants, key=len, reverse=True):
                 v_pattern = re.compile(re.escape(v), re.IGNORECASE)
-                if v_pattern.search(temp_target):
+                found_v = False
+                for match in v_pattern.finditer(prose_target):
+                    m_start, m_end = match.span()
+                    if not any(m_start < end and start < m_end for start, end in occupied_spans):
+                        occupied_spans.append((m_start, m_end))
+                        found_v = True
+                if found_v:
                     matched_variants.append(v)
-                    temp_target = v_pattern.sub(" ", temp_target)
 
             if not matched_variants:
                 findings.append(
