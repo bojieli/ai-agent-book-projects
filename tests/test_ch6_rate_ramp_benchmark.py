@@ -134,3 +134,11 @@ def test_calculate_backoff_curves_missing_fields():
     res = bench.calculate_backoff_curves(sparse_records)
     assert res["total_429_count"] == 2
     assert res["overall_avg_backoff_sec"] == 1.0
+
+
+def test_explicit_rates_config_parsing():
+    bench = RateRampBenchmark({"rates": [10, 20, 30]})
+    cfg = bench.config
+    assert cfg["start_rate"] == 10
+    assert cfg["end_rate"] == 30
+    assert cfg["rates"] == [10, 20, 30]
