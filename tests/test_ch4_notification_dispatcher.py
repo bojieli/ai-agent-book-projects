@@ -1,6 +1,7 @@
 """Unit tests for chapter4/collaboration-tools/src/notification_dispatcher.py."""
 
 import asyncio
+import logging
 from pathlib import Path
 import sys
 import pytest
@@ -344,6 +345,7 @@ async def test_enum_fallback_action_normalization():
     trace = await dispatcher.dispatch_and_wait(request, timeout=0.05)
     assert trace.fallback_action == "escalate"
     assert trace.status == "escalated"
+
 def test_custom_channel_handler_returns_false():
     """Test that a custom channel returning boolean False is marked as success=False."""
     dispatcher = NotificationDispatcher()
@@ -388,4 +390,184 @@ async def test_enum_string_fallback_action_normalization():
     request = DecisionRequest(message="Enum string test", fallback_action="FallbackAction.ESCALATE")
     trace = await dispatcher.dispatch_and_wait(request, timeout=0.05)
     assert trace.fallback_action == "escalate"
+    assert trace.status == "escalated"
+
+
+@pytest.mark.asyncio
+async def test_late_decision_rejection_is_logged(caplog):
+    """Regression: late human decision after timeout fallback must be explicitly rejected with a log warning, not silently dropped."""
+    dispatcher = NotificationDispatcher(fallback_action="auto-reject")
+    req_id = "req_late_logged"
+
+    # Simulate a request already resolved by timeout fallback
+    dispatcher._pending_requests[req_id] = {
+        "request_id": req_id,
+        "message": "Late decision log test",
+        "channels": ["telegram"],
+        "fallback_action": "auto-reject",
+        "status": "auto-rejected",
+        "approved": False,
+        "decision": "auto-rejected",
+        "notes": "Timeout reached",
+        "dispatched_at": "2025-01-01T00:00:00+00:00",
+        "resolved_at": "2025-01-01T00:00:01+00:00",
+    }
+
+    with caplog.at_level(logging.WARNING):
+        submitted = dispatcher.submit_decision(req_id, approved=True)
+
+    assert submitted is False
+    assert any(
+        "late decision" in record.message.lower() for record in caplog.records
+    ), "Expected a warning log when late decision is rejected"
+
+
+@pytest.mark.asyncio
+async def test_text_reject_decision_recorded_as_rejected():
+    """Regression: human-submitted text 'reject' must be recorded as rejected (approved=False), not approved."""
+    dispatcher = NotificationDispatcher()
+    req_id = "req_text_reject"
+    request = DecisionRequest(request_id=req_id, message="Reject text test")
+
+    task = asyncio.create_task(dispatcher.dispatch_and_wait(request, timeout=2.0))
+    await asyncio.sleep(0.05)
+
+    submitted = dispatcher.submit_decision(req_id, approved="reject")
+    assert submitted is True
+
+    trace = await task
+    assert trace.approved is False
+    assert trace.fallback_triggered is False
+    assert trace.decision == "reject"
+    assert trace.status == "reject"
+
+
+@pytest.mark.asyncio
+async def test_text_deny_decision_recorded_as_rejected():
+    """Regression: human-submitted text 'deny' must be recorded as rejected (approved=False), not approved."""
+    dispatcher = NotificationDispatcher()
+    req_id = "req_text_deny"
+    request = DecisionRequest(request_id=req_id, message="Deny text test")
+
+    task = asyncio.create_task(dispatcher.dispatch_and_wait(request, timeout=2.0))
+    await asyncio.sleep(0.05)
+
+    submitted = dispatcher.submit_decision(req_id, approved="deny")
+    assert submitted is True
+
+    trace = await task
+    assert trace.approved is False
+    assert trace.fallback_triggered is False
+    assert trace.decision == "deny"
+
+
+@pytest.mark.asyncio
+async def test_duplicate_request_id_preserves_existing_decision():
+    """Regression: re-submitting same request ID must not discard an existing human decision by overwriting with a fresh pending record."""
+    dispatcher = NotificationDispatcher()
+    req_id = "req_dup_preserve"
+
+    # Pre-populate a pending request that already has a human decision submitted
+    dispatcher._pending_requests[req_id] = {
+        "request_id": req_id,
+        "message": "Original request",
+        "channels": ["telegram"],
+        "fallback_action": "auto-reject",
+        "status": "approved",
+        "approved": True,
+        "decision": "approved",
+        "notes": "Approved by lead",
+        "dispatched_at": "2025-01-01T00:00:00+00:00",
+        "resolved_at": "2025-01-01T00:00:01+00:00",
+    }
+
+    request = DecisionRequest(request_id=req_id, message="Duplicate request")
+    trace = await dispatcher.dispatch_and_wait(request, timeout=0.1)
+
+    # The existing decision must be preserved, not overwritten to pending + fallback
+    assert trace.approved is True
+    assert trace.status == "approved"
+    assert trace.fallback_triggered is False
+    assert trace.decision == "approved"
+
+
+@pytest.mark.asyncio
+async def test_pending_as_decision_string_rejected():
+    """Regression: 'pending' is reserved; submitting it as a decision must be rejected, not silently treated as timeout."""
+    dispatcher = NotificationDispatcher()
+    req_id = "req_pending_str"
+    request = DecisionRequest(request_id=req_id, message="Pending string test")
+
+    task = asyncio.create_task(dispatcher.dispatch_and_wait(request, timeout=0.1))
+    await asyncio.sleep(0.05)
+
+    submitted = dispatcher.submit_decision(req_id, approved=True, decision="pending")
+    assert submitted is False
+
+    trace = await task
+    # No human decision was accepted, so fallback must fire
+    assert trace.fallback_triggered is True
+
+
+@pytest.mark.asyncio
+async def test_channel_exception_does_not_kill_dispatch_all():
+    """Regression: a single channel raising must not abort the entire dispatch_all batch."""
+    dispatcher = NotificationDispatcher()
+
+    def boom_handler(msg, ctx):
+        raise RuntimeError("channel exploded")
+
+    dispatcher.register_channel_handler("boom", boom_handler)
+    results = await dispatcher.dispatch_all(["boom", "telegram"], "msg", {})
+
+    # The healthy channel must still produce a result
+    assert len(results) == 2
+    telegram_result = [r for r in results if isinstance(r, dict) and r.get("channel") == "telegram"]
+    assert len(telegram_result) == 1
+    assert telegram_result[0]["success"] is True
+
+
+@pytest.mark.asyncio
+async def test_custom_and_unsupported_channels_include_timestamp():
+    """Regression: all dispatch branches must return a 'timestamp' key for downstream consumers."""
+    dispatcher = NotificationDispatcher()
+
+    def sync_handler(msg, ctx):
+        return {"info": "ok"}
+
+    dispatcher.register_channel_handler("custom_ts", sync_handler)
+    custom_res = await dispatcher.dispatch_notification("custom_ts", "msg", {})
+    assert "timestamp" in custom_res
+
+    unsupported_res = await dispatcher.dispatch_notification("nonexistent_channel", "msg", {})
+    assert "timestamp" in unsupported_res
+
+
+@pytest.mark.asyncio
+async def test_escalation_dispatch_timeout_does_not_hang():
+    """Regression: escalation dispatch must have a timeout so a slow channel cannot block dispatch_and_wait indefinitely."""
+    dispatcher = NotificationDispatcher(fallback_action="escalate")
+
+    call_count = 0
+    async def fast_then_slow(msg, ctx):
+        nonlocal call_count
+        call_count += 1
+        if call_count > 1:
+            await asyncio.sleep(10)
+        return {"sent": True}
+
+    dispatcher.register_channel_handler("slow_esc", fast_then_slow)
+    request = DecisionRequest(
+        message="Escalation timeout test",
+        channels=["slow_esc"],
+        fallback_action="escalate",
+    )
+
+    # timeout=0.05 means the decision wait times out quickly, then escalation
+    # dispatch gets the same 0.05s budget. Total should be well under 5s.
+    trace = await asyncio.wait_for(
+        dispatcher.dispatch_and_wait(request, timeout=0.05),
+        timeout=5.0,
+    )
+    assert trace.fallback_triggered is True
     assert trace.status == "escalated"

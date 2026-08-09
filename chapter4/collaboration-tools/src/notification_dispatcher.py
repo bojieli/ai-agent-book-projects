@@ -174,7 +174,7 @@ class NotificationDispatcher:
         self, channel: str, message: str, context: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """Dispatch notification to a single channel."""
-        ch = channel.lower().strip()
+        ch = str(channel).lower().strip()
         ctx = context or {}
 
         if ch in self._custom_handlers:
@@ -188,10 +188,10 @@ class NotificationDispatcher:
                     success = bool(res.get("success", True))
                 else:
                     success = True
-                return {"channel": ch, "success": success, "result": res}
+                return {"channel": ch, "success": success, "result": res, "timestamp": datetime.now(timezone.utc).isoformat()}
             except Exception as e:
                 logger.error(f"Error in custom channel handler '{ch}': {e}")
-                return {"channel": ch, "success": False, "error": str(e)}
+                return {"channel": ch, "success": False, "error": str(e), "timestamp": datetime.now(timezone.utc).isoformat()}
 
         if ch == "telegram":
             return await self.mock_telegram_send(message, ctx)
@@ -206,6 +206,7 @@ class NotificationDispatcher:
                 "channel": ch,
                 "success": False,
                 "error": f"Unsupported notification channel '{channel}'",
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
 
     async def dispatch_all(
@@ -216,7 +217,7 @@ class NotificationDispatcher:
             self.dispatch_notification(channel, message, context)
             for channel in channels
         ]
-        return await asyncio.gather(*tasks)
+        return await asyncio.gather(*tasks, return_exceptions=True)
 
     def submit_decision(
         self,
@@ -231,16 +232,34 @@ class NotificationDispatcher:
 
         req = self._pending_requests[request_id]
         if req["status"] != "pending":
+            logger.warning(
+                f"Decision for request '{request_id}' submitted after status "
+                f"changed to '{req['status']}'; late decision rejected."
+            )
             return False
 
         if not isinstance(approved, bool):
             if decision is None:
                 decision = str(approved)
-            approved_bool = bool(approved)
+            approved_str = str(approved).lower().strip()
+            rejection_words = {
+                "reject", "rejected", "deny", "denied",
+                "no", "false", "decline", "declined",
+            }
+            if approved_str in rejection_words:
+                approved_bool = False
+            else:
+                approved_bool = bool(approved)
         else:
             approved_bool = approved
 
         dec_str = decision or ("approved" if approved_bool else "rejected")
+        if dec_str == "pending":
+            logger.warning(
+                f"Decision string 'pending' is reserved for in-flight requests; "
+                f"rejecting decision for request '{request_id}'."
+            )
+            return False
         req["status"] = dec_str
         req["approved"] = approved_bool
         req["decision"] = dec_str
@@ -284,17 +303,40 @@ class NotificationDispatcher:
         try:
             event = asyncio.Event()
             self._decision_events[request_id] = event
-            self._pending_requests[request_id] = {
-                "request_id": request_id,
-                "message": req_obj.message,
-                "channels": channels,
-                "fallback_action": fallback,
-                "status": "pending",
-                "approved": None,
-                "decision": None,
-                "notes": None,
-                "dispatched_at": dispatched_at,
-            }
+
+            existing = self._pending_requests.get(request_id)
+            if existing and existing.get("status") not in (None, "pending"):
+                # A human decision already exists for this request_id; preserve it
+                # instead of discarding it by overwriting with a fresh pending record.
+                logger.warning(
+                    f"Duplicate request_id '{request_id}' submitted while decision "
+                    f"'{existing.get('status')}' exists; preserving existing decision."
+                )
+                existing["message"] = req_obj.message
+                existing["channels"] = channels
+                existing["fallback_action"] = fallback
+                existing["dispatched_at"] = dispatched_at
+                event.set()
+            elif existing and existing.get("status") == "pending":
+                # Another dispatch is already waiting on this request_id; reuse its
+                # event and record instead of overwriting and orphaning the first wait.
+                logger.warning(
+                    f"Duplicate request_id '{request_id}' submitted while pending; "
+                    f"reusing existing pending request record."
+                )
+                event = self._decision_events.get(request_id, event)
+            else:
+                self._pending_requests[request_id] = {
+                    "request_id": request_id,
+                    "message": req_obj.message,
+                    "channels": channels,
+                    "fallback_action": fallback,
+                    "status": "pending",
+                    "approved": None,
+                    "decision": None,
+                    "notes": None,
+                    "dispatched_at": dispatched_at,
+                }
             # Dispatch across multi-channels
             channel_results = await self.dispatch_all(channels, req_obj.message, req_obj.context)
             trace_events.append(
@@ -374,7 +416,16 @@ class NotificationDispatcher:
                         f"🚨 ESCALATION ALERT: HITL decision request {request_id} "
                         f"timed out after {wait_timeout}s without operator input."
                     )
-                    await self.dispatch_all(channels, escalation_msg, req_obj.context)
+                    try:
+                        await asyncio.wait_for(
+                            self.dispatch_all(channels, escalation_msg, req_obj.context),
+                            timeout=wait_timeout,
+                        )
+                    except asyncio.TimeoutError:
+                        logger.warning(
+                            f"Escalation dispatch for request '{request_id}' "
+                            f"timed out after {wait_timeout}s; continuing with fallback decision."
+                        )
 
                 trace_events.append(
                     {
