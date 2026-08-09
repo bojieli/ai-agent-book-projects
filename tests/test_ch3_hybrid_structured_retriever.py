@@ -5,6 +5,7 @@ import os
 import sys
 from pathlib import Path
 import pytest
+import numpy as np
 
 # Dynamic import for hyphenated module path
 _module_path = (
@@ -161,3 +162,78 @@ def test_empty_query_and_edge_cases():
 
     res = retriever.retrieve("Test", top_k=1)
     assert len(res) <= 1
+def test_relationship_target_matching():
+    """Verify GraphRAG relationships match queries matching the target entity name."""
+    retriever = HybridStructuredRetriever()
+    retriever.add_graphrag_relationship(
+        relation_id="rel_target",
+        source="TransformerModel",
+        target="AttentionMechanism",
+        type="USES",
+        description="Transformer models rely heavily on self-attention.",
+    )
+
+    results = retriever.retrieve("AttentionMechanism", top_k=1)
+    assert len(results) == 1
+    assert results[0].node_id == "rel_target"
+
+
+def test_integer_ids_and_children_type_safety():
+    """Verify integer children and entity_ids do not raise TypeError during citation building."""
+    retriever = HybridStructuredRetriever()
+    retriever.add_raptor_node(node_id="100", level=1, text="Text", children=[101, 102])
+    retriever.add_graphrag_community(community_id="200", entity_ids=[201, 202], summary="Summary")
+
+    results = retriever.retrieve("Text Summary", top_k=2)
+    assert len(results) == 2
+    for res in results:
+        assert isinstance(res.citation.lineage[0], str)
+
+
+def test_embedding_caching():
+    """Verify embedding_fn output is cached on the node dictionary."""
+    call_count = 0
+
+    def mock_embed(text: str):
+        nonlocal call_count
+        call_count += 1
+        return np.ones(8, dtype=np.float32)
+
+    retriever = HybridStructuredRetriever(embedding_fn=mock_embed)
+    retriever.add_raptor_node(node_id="embed_node", level=0, text="Embedding test text")
+
+    # First retrieval computes embedding
+    res1 = retriever.retrieve("Embedding test", top_k=1)
+    first_calls = call_count
+    assert first_calls > 0
+
+    # Second retrieval reuses cached embedding without re-invoking embedding_fn for the node
+    res2 = retriever.retrieve("Embedding test", top_k=1)
+    assert call_count == first_calls + 1  # Only +1 for the query embedding
+
+
+def test_precision_bounds_with_repeated_words():
+    """Verify precision score is bounded <= 1.0 even when text contains repeated query terms."""
+    retriever = HybridStructuredRetriever()
+    retriever.add_raptor_node(
+        node_id="rep_node",
+        level=0,
+        text="apple apple apple apple apple apple apple apple",
+        summary="apple apple apple",
+    )
+
+    results = retriever.retrieve("apple", top_k=1)
+    assert len(results) == 1
+    assert results[0].score <= 1.0
+
+
+def test_deterministic_rrf_ranking():
+    """Verify RRF results order is 100% deterministic across multiple invocations."""
+    retriever = HybridStructuredRetriever()
+    for i in range(10):
+        retriever.add_raptor_node(f"r_{i}", 0, f"Common topic text item {i}", f"Summary {i}")
+        retriever.add_graphrag_entity(f"e_{i}", f"Entity {i}", "CONCEPT", f"Common topic text item {i}")
+
+    res1 = [r.node_id for r in retriever.retrieve("Common topic text", top_k=5)]
+    res2 = [r.node_id for r in retriever.retrieve("Common topic text", top_k=5)]
+    assert res1 == res2

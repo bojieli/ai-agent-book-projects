@@ -113,7 +113,7 @@ class HybridStructuredRetriever:
             "text": str(text),
             "summary": str(summary or text),
             "embedding": embedding,
-            "children": list(children or []),
+            "children": [str(c) for c in (children or [])],
             "parent": parent,
             "source_type": "raptor_tree",
         }
@@ -175,7 +175,7 @@ class HybridStructuredRetriever:
         """Add a GraphRAG community summary node to the index."""
         record = {
             "id": str(community_id),
-            "entity_ids": list(entity_ids),
+            "entity_ids": [str(e) for e in (entity_ids or [])],
             "summary": str(summary),
             "level": int(level),
             "embedding": embedding,
@@ -291,7 +291,7 @@ class HybridStructuredRetriever:
         elif src_type == "graphrag_entity":
             text_content = f"{node.get('name', '')} {node.get('type', '')} {node.get('description', '')}"
         elif src_type == "graphrag_relation":
-            text_content = f"{node.get('source', '')} {node.get('type', '')} {node.get('description', '')}"
+            text_content = f"{node.get('source', '')} {node.get('type', '')} {node.get('target', '')} {node.get('description', '')}"
         elif src_type == "graphrag_community":
             text_content = f"{node.get('summary', '')}"
 
@@ -304,6 +304,7 @@ class HybridStructuredRetriever:
                 n_emb = node.get("embedding")
                 if n_emb is None and self.embedding_fn is not None:
                     n_emb = self.embedding_fn(text_content)
+                    node["embedding"] = n_emb
                 if n_emb is not None:
                     q_norm = np.linalg.norm(query_vector)
                     n_norm = np.linalg.norm(n_emb)
@@ -321,10 +322,11 @@ class HybridStructuredRetriever:
         for w in words:
             word_counts[w] += 1
 
-        matches = sum(word_counts[qt] for qt in query_terms if qt in word_counts)
-        precision = matches / len(query_terms)
+        matched_terms = [qt for qt in query_terms if qt in word_counts]
+        matches = sum(word_counts[qt] for qt in matched_terms)
+        precision = len(matched_terms) / len(query_terms)
         coverage = matches / len(words)
-        return float(precision * 0.8 + coverage * 0.2)
+        return float(precision * 0.8 + min(1.0, coverage) * 0.2)
 
     def _build_citation(self, node: Dict[str, Any]) -> EvidenceCitation:
         """Construct structured evidence citation tracking provenance for a node."""
@@ -338,7 +340,7 @@ class HybridStructuredRetriever:
             if node.get("parent"):
                 lineage.append(f"Parent: {node['parent']}")
             if node.get("children"):
-                lineage.append(f"Children: {', '.join(node['children'])}")
+                lineage.append(f"Children: {', '.join(str(c) for c in node['children'])}")
             snippet = node.get("summary") or node.get("text") or ""
             return EvidenceCitation(
                 source_type="raptor_tree",
@@ -388,7 +390,7 @@ class HybridStructuredRetriever:
                 node_id=n_id,
                 citation_label=label,
                 community_level=lvl,
-                lineage=[f"Entities: {', '.join(e_ids[:5])}"],
+                lineage=[f"Entities: {', '.join(str(e) for e in e_ids[:5])}"],
                 snippet=snippet[:200],
             )
 
@@ -420,12 +422,14 @@ class HybridStructuredRetriever:
 
         # 1. Rank RAPTOR tree summary nodes
         raptor_scores: List[Tuple[str, float]] = []
+        raw_scores: Dict[str, float] = {}
         for key, node in self.unified_nodes.items():
             if node.get("source_type") == "raptor_tree":
                 score = self._compute_relevance_score(query, query_terms, query_vector, node)
                 if score > 0:
                     raptor_scores.append((key, score))
-        raptor_scores.sort(key=lambda x: x[1], reverse=True)
+                    raw_scores[key] = score
+        raptor_scores.sort(key=lambda x: (x[1], x[0]), reverse=True)
 
         # 2. Rank GraphRAG graph summary nodes
         graphrag_scores: List[Tuple[str, float]] = []
@@ -434,13 +438,14 @@ class HybridStructuredRetriever:
                 score = self._compute_relevance_score(query, query_terms, query_vector, node)
                 if score > 0:
                     graphrag_scores.append((key, score))
-        graphrag_scores.sort(key=lambda x: x[1], reverse=True)
+                    raw_scores[key] = score
+        graphrag_scores.sort(key=lambda x: (x[1], x[0]), reverse=True)
         # Build rank lookups (1-indexed ranks)
         raptor_ranks = {item_key: rank + 1 for rank, (item_key, _) in enumerate(raptor_scores)}
         graphrag_ranks = {item_key: rank + 1 for rank, (item_key, _) in enumerate(graphrag_scores)}
 
         # 3. Perform Reciprocal Rank Fusion (RRF) scoring
-        all_candidate_keys = set(raptor_ranks.keys()).union(set(graphrag_ranks.keys()))
+        all_candidate_keys = sorted(set(raptor_ranks.keys()).union(set(graphrag_ranks.keys())))
         rrf_scores: Dict[str, float] = {}
 
         for key in all_candidate_keys:
@@ -451,9 +456,12 @@ class HybridStructuredRetriever:
                 score += 1.0 / (k_val + graphrag_ranks[key])
             rrf_scores[key] = score
 
-        # Sort candidate keys by RRF score descending
-        sorted_keys = sorted(rrf_scores.keys(), key=lambda k: rrf_scores[k], reverse=True)
-
+        # Sort candidate keys deterministically: RRF score desc, raw relevance score desc, key asc
+        sorted_keys = sorted(
+            all_candidate_keys,
+            key=lambda k: (rrf_scores[k], raw_scores.get(k, 0.0), k),
+            reverse=True,
+        )
         # 4. Construct final SearchResult objects with citations
         results: List[SearchResult] = []
         for key in sorted_keys[:top_k]:
