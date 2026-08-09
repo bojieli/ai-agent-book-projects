@@ -122,3 +122,21 @@ def test_clamp_rrf_k():
     results = retriever.retrieve("Sample", rrf_k=-5)
     assert len(results) == 1
     assert results[0].score > 0
+
+
+def test_parent_id_zero_in_citation_lineage():
+    """Verify that parent ID 0 is preserved in citation lineage, not dropped by truthiness (Finding 12)."""
+    retriever = HybridStructuredRetriever()
+    retriever.add_raptor_node(
+        node_id="child_node",
+        level=1,
+        text="Child content for retrieval",
+        summary="Child summary for retrieval",
+        parent=0,
+    )
+
+    results = retriever.retrieve("Child content", top_k=1)
+    assert len(results) == 1
+    parent_entries = [lin for lin in results[0].citation.lineage if lin.startswith("Parent:")]
+    assert len(parent_entries) == 1
+    assert "0" in parent_entries[0]

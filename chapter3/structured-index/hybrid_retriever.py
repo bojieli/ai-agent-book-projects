@@ -114,7 +114,7 @@ class HybridStructuredRetriever:
             "summary": str(summary or text),
             "embedding": embedding,
             "children": [str(c) for c in (children or [])],
-            "parent": parent,
+            "parent": str(parent) if parent is not None else None,
             "source_type": "raptor_tree",
         }
         self.raptor_nodes[str(node_id)] = record
@@ -364,7 +364,7 @@ class HybridStructuredRetriever:
             lvl = node.get("level", 0)
             label = f"[RAPTOR Tree Level {lvl} Node: {n_id}]"
             lineage = []
-            if node.get("parent"):
+            if node.get("parent") is not None:
                 lineage.append(f"Parent: {node['parent']}")
             if node.get("children"):
                 lineage.append(f"Children: {', '.join(str(c) for c in node['children'])}")

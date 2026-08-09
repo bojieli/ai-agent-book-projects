@@ -296,3 +296,87 @@ def test_vector_dimension_mismatch_fallback():
     assert len(results) == 1
     # Should fall back to lexical / coverage scoring without crashing
     assert results[0].score > 0
+
+
+def test_results_merged_by_score_not_source():
+    """Verify results are ranked by score, not interleaved by source type (Finding 1)."""
+    retriever = HybridStructuredRetriever()
+    # Two RAPTOR nodes with strong lexical match
+    retriever.add_raptor_node("rap_a", 0, "alpha beta gamma", "alpha beta gamma summary")
+    retriever.add_raptor_node("rap_b", 0, "alpha beta delta", "alpha beta delta summary")
+    # One GraphRAG entity with weaker match
+    retriever.add_graphrag_entity("ent_weak", "alpha", "CONCEPT", "alpha description")
+
+    results = retriever.retrieve("alpha beta gamma", top_k=3)
+    # Top two results should both be RAPTOR nodes (higher lexical match), not interleaved
+    assert results[0].source_type == "raptor_tree"
+    assert results[1].source_type == "raptor_tree"
+    # Scores must be in descending order
+    assert results[0].score >= results[1].score >= results[2].score
+
+
+def test_negative_vector_similarity_clamped_to_zero():
+    """Verify negative cosine similarity is clamped to 0, not ranked above positive text relevance (Finding 10)."""
+    # Embedding that produces negative cosine similarity for node text (no "query" in it)
+    def mock_embed(text: str) -> np.ndarray:
+        if "query" in text.lower():
+            return np.array([1.0, 0.0])
+        return np.array([-1.0, 0.0])  # Opposite direction → cos_sim = -1.0
+
+    retriever = HybridStructuredRetriever(embedding_fn=mock_embed)
+    # Node text must NOT contain "query" so mock_embed returns the opposite vector
+    retriever.add_raptor_node("neg_node", 0, "term content", "term summary")
+
+    _, _, sem_sc = retriever._compute_scores(
+        "query term", {"query", "term"}, np.array([1.0, 0.0]), retriever.unified_nodes["raptor_neg_node"]
+    )
+    # Semantic score must be clamped to 0.0, not negative
+    assert sem_sc == 0.0
+    assert sem_sc >= 0.0
+
+
+def test_mixed_vector_presence_consistent_scoring():
+    """Verify nodes with and without vectors are scored on a consistent scale (Finding 11)."""
+    def mock_embed(text: str) -> np.ndarray:
+        if "fail" in text.lower():
+            raise ValueError("cannot embed")
+        return np.array([1.0, 0.0])
+
+    retriever = HybridStructuredRetriever(embedding_fn=mock_embed)
+    # Node A: has a pre-computed embedding aligned with query vector
+    retriever.add_raptor_node(
+        "node_a", 0, "common topic text", "common topic text",
+        embedding=np.array([1.0, 0.0]),
+    )
+    # Node B: no pre-computed embedding; embedding_fn raises → falls back to lexical-only
+    retriever.add_raptor_node(
+        "node_b", 0, "fail common topic text", "fail common topic text",
+    )
+
+    results = retriever.retrieve("common topic", top_k=2)
+    assert len(results) == 2
+    # Both nodes should have positive scores (lexical match exists for both)
+    for res in results:
+        assert res.score > 0
+    # Node A (has vector, aligned) should rank higher than Node B (no vector, lexical-only fallback)
+    assert results[0].node_id == "node_a"
+
+
+def test_parent_id_zero_preserved_in_citation():
+    """Verify parent ID 0 is not dropped from citation lineage (Finding 12)."""
+    retriever = HybridStructuredRetriever()
+    retriever.add_raptor_node(
+        node_id="child_1",
+        level=1,
+        text="Child node content",
+        summary="Child node summary",
+        parent=0,
+    )
+
+    results = retriever.retrieve("Child node", top_k=1)
+    assert len(results) == 1
+    citation = results[0].citation
+    # Parent ID 0 must appear in lineage, not be dropped by truthiness check
+    parent_entries = [lin for lin in citation.lineage if lin.startswith("Parent:")]
+    assert len(parent_entries) == 1
+    assert "0" in parent_entries[0]
