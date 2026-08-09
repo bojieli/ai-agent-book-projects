@@ -131,3 +131,32 @@ def test_manager_reset():
     assert len(manager.dialogue_context) == 0
     assert len(manager.replan_triggers) == 0
     assert manager.last_interruption_event is None
+def test_calculate_energy_integer_normalization():
+    """Verify integer arrays and lists are properly normalized to avoid false barge-in."""
+    manager = DuplexInterruptionManager(vad_threshold=0.05)
+
+    # int16 numpy array
+    int16_speech = np.random.randint(-15000, 15000, 1600, dtype=np.int16)
+    energy_int16 = manager.calculate_energy(int16_speech)
+    assert energy_int16 < 1.0
+    assert energy_int16 > 0.05
+
+    # int list
+    int_list_speech = int16_speech.tolist()
+    energy_list = manager.calculate_energy(int_list_speech)
+    assert energy_list < 1.0
+    assert energy_list > 0.05
+
+
+def test_process_audio_chunk_consecutive_frames_speech_flag():
+    """Verify is_speech remains True when consecutive frames condition is pending."""
+    manager = DuplexInterruptionManager(vad_threshold=0.02, consecutive_frames_required=2)
+    manager.start_playback()
+
+    speech_data = np.random.uniform(-0.4, 0.4, 800).astype(np.float32)
+    result = manager.process_audio_chunk(speech_data)
+
+    assert result["barge_in"] is False
+    assert result["is_speech"] is True
+    assert result["is_playing"] is True
+    assert "awaiting consecutive frames" in result["message"]

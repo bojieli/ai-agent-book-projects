@@ -117,11 +117,50 @@ class DuplexInterruptionManager:
         elif isinstance(audio_data, (list, tuple)):
             if len(audio_data) == 0:
                 return 0.0
-            arr = np.array(audio_data, dtype=np.float32)
+            raw_arr = np.array(audio_data)
+            if np.issubdtype(raw_arr.dtype, np.integer):
+                if raw_arr.dtype == np.uint8:
+                    arr = raw_arr.astype(np.float32) / 255.0 - 0.5
+                elif raw_arr.dtype == np.int8:
+                    arr = raw_arr.astype(np.float32) / 128.0
+                elif raw_arr.dtype == np.int16:
+                    arr = raw_arr.astype(np.float32) / 32768.0
+                else:
+                    max_abs = float(np.max(np.abs(raw_arr))) if raw_arr.size > 0 else 1.0
+                    if max_abs > 1.0:
+                        scale = 32768.0 if max_abs <= 32768.0 else max_abs
+                        arr = raw_arr.astype(np.float32) / scale
+                    else:
+                        arr = raw_arr.astype(np.float32)
+            else:
+                arr = raw_arr.astype(np.float32)
+                max_abs = float(np.max(np.abs(arr))) if arr.size > 0 else 0.0
+                if max_abs > 1.0:
+                    scale = 32768.0 if max_abs <= 32768.0 else max_abs
+                    arr = arr / scale
         elif isinstance(audio_data, np.ndarray):
             if audio_data.size == 0:
                 return 0.0
-            arr = audio_data.astype(np.float32)
+            if np.issubdtype(audio_data.dtype, np.integer):
+                if audio_data.dtype == np.uint8:
+                    arr = audio_data.astype(np.float32) / 255.0 - 0.5
+                elif audio_data.dtype == np.int8:
+                    arr = audio_data.astype(np.float32) / 128.0
+                elif audio_data.dtype == np.int16:
+                    arr = audio_data.astype(np.float32) / 32768.0
+                else:
+                    max_abs = float(np.max(np.abs(audio_data))) if audio_data.size > 0 else 1.0
+                    if max_abs > 1.0:
+                        scale = 32768.0 if max_abs <= 32768.0 else max_abs
+                        arr = audio_data.astype(np.float32) / scale
+                    else:
+                        arr = audio_data.astype(np.float32)
+            else:
+                arr = audio_data.astype(np.float32)
+                max_abs = float(np.max(np.abs(arr))) if arr.size > 0 else 0.0
+                if max_abs > 1.0:
+                    scale = 32768.0 if max_abs <= 32768.0 else max_abs
+                    arr = arr / scale
         else:
             return 0.0
 
@@ -181,11 +220,15 @@ class DuplexInterruptionManager:
 
         return {
             "barge_in": False,
-            "is_speech": False,
+            "is_speech": is_speech,
             "energy": energy,
             "vad_threshold": self.vad_threshold,
             "is_playing": True,
-            "message": "No voice activity detected during TTS playback.",
+            "message": (
+                "Voice activity detected; awaiting consecutive frames."
+                if is_speech
+                else "No voice activity detected during TTS playback."
+            ),
         }
 
     def handle_barge_in(
