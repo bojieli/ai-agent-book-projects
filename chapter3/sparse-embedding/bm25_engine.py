@@ -272,7 +272,11 @@ class BM25:
         if df == 0:
             return 0
         
-        return math.log((N - df + 0.5) / (df + 0.5))
+        N = max(N, df)
+        val = (N - df + 0.5) / (df + 0.5)
+        if val <= 0:
+            return 0.0
+        return math.log(val)
 
     def calculate_idf(self, term: str) -> float:
         """Return RSJ IDF with a small floor for corpus-ubiquitous terms.
@@ -310,6 +314,8 @@ class BM25:
         idf = self.calculate_idf(term)
         
         # BM25 term score formula
+        if self.avgdl == 0:
+            return 0.0
         numerator = tf * (self.k1 + 1)
         denominator = tf + self.k1 * (1 - self.b + self.b * (dl / self.avgdl))
         score = idf * (numerator / denominator)
