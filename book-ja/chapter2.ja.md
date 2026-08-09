@@ -768,6 +768,12 @@ Skills が何かを理解したところで、次はより具体的な工学の�
 
 1 つのよくある誤解を明確にしておく必要があります。「KV Cache に優しい」は「ゼロコスト」ではありません——初回に emit するあの数百から数千 token は、結局は一度書き込みの代価を払わなければなりません（前述のとおり、Prompt Cache のキャッシュ書き込みは割り増し課金されます）。その正確な意味は **一度書き込めば、永久に受益する** ことです。モデルにある skill の存在やある段のドキュメントの内容を知らせるには、少なくとも一度はそれをキャッシュに入れなければなりません。Claude Code が達成したのは、この一度だけを払い、その後は会話全体で二度と繰り返さないことです。対比となる方式——同じ情報を system prompt に詰め込む——は、更新のたびにその下流の軌跡全体を無効にして cache_creation に入れます（オーダーは数万から数十万 token）。それこそが本当に不親切なのです。
 
+#### 実装上の注意：標準と wire format を区別する
+
+Agent Skills 標準が定めるのは progressive disclosure の順序であり、API メッセージの字面上の role ではありません。カタログは完全な指示より先にモデルから見える必要があり、完全な `SKILL.md` は Skill が選択された後にだけ読み込まれます。Anthropic はカタログを起動時に読み込む system-level context と説明し、Claude Code は呼び出された Skill の指示を呼び出し位置の user message として追加すると説明しています。したがって、特定バージョンの Claude Code のトレースに現れる user-role の `<system-reminder>` は Harness とバージョンに固有の wire 表現であり、Agent Skills プロトコルの要件ではありません。
+
+Codex CLI は別の Harness です。OpenAI の [Skills ドキュメント](https://developers.openai.com/codex/skills/)によると、初期カタログには各 Skill の名前、説明、パスが含まれます。現在の公開ソースでは、カタログは `developer` context fragment、選択された Skill の本文は `<skill>` で囲まれた user fragment として描画されます（[`fragments.rs`](https://github.com/openai/codex/blob/main/codex-rs/ext/skills/src/fragments.rs)、[`extension.rs`](https://github.com/openai/codex/blob/main/codex-rs/ext/skills/src/extension.rs)）。ゲートウェイによっては `developer` の内容が system-like な領域に表示されることがあります。そのため、DeepSeek による比較表は特定クライアント版のスナップショットとしてのみ有効であり、role、ラッパー、ターンごとの再構築は Harness の実装詳細です。キャッシュコストも Claude Code のモデルを全クライアントへそのまま当てはめず、runtime ごとに評価する必要があります。
+
 ### Skills とツールの関係
 
 コンテキスト管理の観点から見ると、Skills のメカニズムは KV Cache にきわめて優れています。すべての専用コードツールの定義をシステムプロンプトに置くと、数の増加によって大量の token を消費し、モデルの注意も妨げます。一方、Skill + 汎用エクゼキュータのモードではツールの数を常に少なく保てます（第 5 章で示すように、核となるツールは 7 つだけです）。Skill の内容は前述の漸進的開示によってオンデマンドで読み込まれ、キャッシュ済みのプレフィックスには影響しません。2 つの形態の詳細な比較と選択の枠組みは第 4 章で扱い、第 8 章では継続的に進化する Agent が、経験を知識、指示、プログラム、モデルパラメータのどれとして記すべきかをどう判断するかを検討します。

@@ -758,7 +758,11 @@ Claude Code의 도구 정의를 보면 각 설명이 사용 경계(“NEVER invo
 
 - **전체 내용**—모델이 메타데이터를 보고 현재 작업에 적합한 스킬을 판단하면 스킬 도구를 통해 해당 `SKILL.md`를 필요할 때 읽습니다. 내용은 현재 실행 컨텍스트에 들어갑니다. 세션 시작 때 모든 스킬의 전체 지시를 불러오지 않으므로 무관한 컨텍스트를 줄일 수 있습니다.
 
+#### 구현 참고: 표준과 wire 형식의 구분
+
 따라서 두 수준을 구분해야 합니다. **“스킬 메타데이터를 모델이 미리 볼 수 있어야 한다”는 비교적 안정적인 메커니즘이지만, “user 역할, system 역할, 또는 `<system-reminder>` 같은 래퍼”는 버전별 구현 선택입니다.** `<system-reminder>`는 에이전트 스킬 전용 프로토콜 형식이 아니라 Claude Code 에이전트 하네스가 동적 시스템 컨텍스트를 주입할 때 사용하는 표현 중 하나입니다.
+
+Codex CLI는 다른 하네스입니다. OpenAI의 [Skills 문서](https://developers.openai.com/codex/skills/)에 따르면 초기 카탈로그에는 각 Skill의 이름, 설명, 경로가 들어갑니다. 현재 공개 소스는 이 카탈로그를 `developer` 컨텍스트 조각으로 렌더링하고, 선택된 Skill 본문은 `<skill>`로 감싼 user 조각으로 렌더링합니다([`fragments.rs`](https://github.com/openai/codex/blob/main/codex-rs/ext/skills/src/fragments.rs), [`extension.rs`](https://github.com/openai/codex/blob/main/codex-rs/ext/skills/src/extension.rs)). 일부 게이트웨이는 `developer` 콘텐츠를 system과 비슷한 영역에 표시할 수 있습니다. 따라서 DeepSeek에 귀속된 비교 표는 특정 클라이언트 버전의 스냅샷으로만 유용하며, 역할·래퍼·턴별 재구성은 하네스의 구현 세부 사항입니다. 캐시 비용 역시 Claude Code의 모델을 모든 클라이언트에 그대로 적용하지 말고 런타임별로 평가해야 합니다.
 
 이처럼 소량의 카탈로그는 상시 두고 전체 본문은 필요할 때만 불러오는 2단계 설계가 스킬의 발견 가능성과 컨텍스트 비용을 함께 잡는 핵심입니다.
 

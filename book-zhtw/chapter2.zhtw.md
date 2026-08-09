@@ -762,7 +762,11 @@ Skills 的價值不僅在於優雅的上下文管理，更在於為領域知識�
 
 - **完整內容**——當模型根據後設資料判斷某個 Skill 適合當前任務時，再透過 Skill 工具按需讀取對應的 `SKILL.md`，其內容隨後進入當前執行上下文。這樣可以避免在會話開始時一次性載入所有 Skill 的完整說明，從而減少無關上下文占用。
 
+#### 實作備註：標準與 wire 格式
+
 因此，需要區分兩個層次：**「Skill 後設資料需要提前對模型可見」是較穩定的機制設計，而「使用 user role、system role，還是 `<system-reminder>` 等包裝形式」屬於具體版本的實現方式。** `<system-reminder>` 也不是 Agent Skills 專用的協定格式，而是 Claude Code Agent Harness 用於注入動態系統上下文的一種實現形式。
+
+Codex CLI 採用不同的 Harness。OpenAI 的 [Skills 文件](https://developers.openai.com/codex/skills/)指出，初始目錄包含每個 Skill 的名稱、描述和路徑。目前的公開原始碼會將此目錄呈現為 `developer` context fragment，而選定 Skill 的正文則呈現為以 `<skill>` 包裝的 user fragment（[`fragments.rs`](https://github.com/openai/codex/blob/main/codex-rs/ext/skills/src/fragments.rs)、[`extension.rs`](https://github.com/openai/codex/blob/main/codex-rs/ext/skills/src/extension.rs)）。某些 gateway 可能會把 `developer` 內容顯示在類似 system 的區域。因此，歸於 DeepSeek 的比較表只能視為特定用戶端版本的快照；role、wrapper 以及每輪重建都是 Harness 的實作細節。快取成本也應按各 runtime 評估，不能把 Claude Code 的模型直接套用到所有用戶端。
 
 值得注意的是，**這種「在會話過程中動態向模型補充系統上下文」的機制並非 Skills 獨有**。除了可用 Skill 的後設資料，Agent 還可能需要持續向模型提供當前任務狀態、執行環境或其他動態資訊。下一節的 **Agent 狀態列（Agent Status Bar）** 將進一步展開這一機制，Skill 後設資料列表可以看作其中一個具體例子。
 
