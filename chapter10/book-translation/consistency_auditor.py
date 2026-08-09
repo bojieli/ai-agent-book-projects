@@ -195,9 +195,10 @@ class BilingualConsistencyAuditor:
             temp_target = prose_target
             matched_variants = []
             for v in sorted(variants, key=len, reverse=True):
-                if v in temp_target:
+                v_pattern = re.compile(re.escape(v), re.IGNORECASE)
+                if v_pattern.search(temp_target):
                     matched_variants.append(v)
-                    temp_target = temp_target.replace(v, " ")
+                    temp_target = v_pattern.sub(" ", temp_target)
 
             if not matched_variants:
                 findings.append(
@@ -226,7 +227,7 @@ class BilingualConsistencyAuditor:
                     )
                 )
                 consistent_terms += 0.5
-            elif canonical in matched_variants:
+            elif canonical in matched_variants or any(canonical.lower() == m.lower() for m in matched_variants):
                 consistent_terms += 1.0
             else:
                 findings.append(

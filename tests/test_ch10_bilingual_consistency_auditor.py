@@ -42,7 +42,7 @@ def forward(x):
 ```
 
 能量公式为 $E = mc^2$。
-更多细节参见 [文档](https://example.com/docs)。
+更多细节参见 [文档](https://example.com/docs).
 """
 
     report = audit_translation(source_md, target_md, lang="zh")
@@ -184,3 +184,16 @@ def test_bilingual_consistency_auditor_independent_substring_variants():
     assert report.scores["terminology"] == 0.5
     term_findings = [f for f in report.findings if f["category"] == "terminology"]
     assert any(f["severity"] == "warning" for f in term_findings)
+
+
+def test_bilingual_consistency_auditor_case_insensitive_target_matching():
+    """Test that capital letters in target text (e.g. sentence start) match terms case-insensitively."""
+    custom_glossary = {
+        "es": {
+            "agent": {"canonical": "agente", "variants": ["agente"]},
+        }
+    }
+    auditor = BilingualConsistencyAuditor(glossary=custom_glossary)
+    report = auditor.run_audit("An agent works.", "Agente trabaja.", lang="es")
+    assert report.scores["terminology"] == 1.0
+    assert report.is_consistent is True
