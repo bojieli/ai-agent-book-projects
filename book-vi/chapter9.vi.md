@@ -15,294 +15,120 @@ Chương này diễn ra trong ngữ cảnh sau:
 
 Có hai điểm chính đặc biệt mang tính lý thuyết và có thể được chuyển qua các tình huống: **Kiến trúc tư duy**(cách tư duy nhanh và chậm phối hợp với nhau) và **Giao diện nhanh và chậm** bắt nguồn từ nó (Cầu tiềm ẩn, những gì khác có thể được truyền giữa các mô hình nhanh và chậm ngoài văn bản). Mặc dù bắt đầu từ cảnh giọng nói nhưng chúng không chỉ phục vụ giọng nói - Computer Use sau đây và robot cũng sẽ gặp phải vấn đề “khi nào nên thuê chuyên gia tư vấn chậm”, điều này đáng được độc giả đặc biệt quan tâm.
 
-## Giọng nói: giao diện người-máy tính tự nhiên nhất
+## Giọng nói: giao diện người–máy tự nhiên nhất
 
-Trước khi phá bỏ kiến trúc của giọng nói Agent, hãy lùi lại một bước và xem xét giá trị của chính giọng nói. Trong số các cách tương tác khác nhau giữa con người và máy tính, lời nói có băng thông cao nhất và tự nhiên nhất: tốc độ nói bình thường gấp khoảng bốn lần so với đánh máy và không cần sử dụng tay và thị lực. Chính vì điều này, giọng nói đang dần thay đổi từ phương thức nhập liệu phụ sang giao diện tương tác chính cho công việc hàng ngày của nhiều người - nói trực tiếp với Agent từ sáng đến tối thay vì gõ từng chữ trên bàn phím.
+Giọng nói không chỉ là chuyển văn bản thành âm thanh. Tốc độ nói nhanh khoảng bốn lần tốc độ gõ và giải phóng tay, mắt, nên Agent tự nhiên trở thành một vòng lặp vào–ra liên tục mà người dùng có thể ngắt bất cứ lúc nào. Đọc chính tả chuyển lời nói thành văn bản; voice Agent cho phép người dùng cộng tác trực tiếp với Agent. Cả hai đều hỗ trợ quy trình whisper coding đã giới thiệu trước đây.
 
-Ở cấp độ công cụ, có khoảng hai loại sản phẩm dọc theo tuyến đường này. Một loại là **phương thức nhập bằng giọng nói**(chẳng hạn như Typeless): chép chính tả thành văn bản trong thời gian thực và sau đó gửi nó đến bất kỳ ứng dụng nào, về cơ bản là một sự thay thế cho đầu vào bàn phím; loại còn lại là **voice Agent**(chẳng hạn như Pine, ChatGPT Voice): người dùng có thể giao tiếp và cộng tác trực tiếp với nó, và giọng nói vừa là đầu vào vừa là tương tác. Cách sử dụng nâng cao điển hình nhất của cả hai là **vibe coding** được đề cập trong phần giới thiệu - lập trình chỉ huy hoặc nghiên cứu Agent bằng miệng: nhà phát triển nêu ý định, thảo luận nhiều lần với Agent, sau đó cho phép nó thực hiện mã hóa và thử nghiệm; hơn mười bài viết của nhóm tác giả cuốn sách này đã được hoàn thành theo cách này.
+Phần này xét hai hướng: người dùng nói với Agent, và Agent nói với thế giới bên ngoài thay mặt người dùng. Mô hình giọng nói quyết định Agent có thể trả lời gì; kiến trúc tương tác quyết định Agent có nghe rõ, đáp kịp thời, chuyển lượt tự nhiên, hoàn tất xác nhận và gọi công cụ trong cuộc gọi hay không.
 
-Cần lưu ý rằng kiến trúc giọng nói được thảo luận tiếp theo trong chương này phục vụ hai hướng cùng một lúc: người dùng nói chuyện với Agent (như giao diện người-máy tính) và Agent thay mặt người dùng nói chuyện với thế giới bên ngoài (chẳng hạn như gọi điện thoại để đàm phán). Đằng sau cả hai đều là bộ công nghệ giọng nói thời gian thực giống nhau. Hãy bắt đầu với ba mô hình cấu trúc giọng nói.
+### Thời gian tương tác: từ cascade đến full-duplex
 
-## Ba mô hình cấu trúc lời nói
+Bài giới thiệu GPT-Live của OpenAI nêu ba mô hình tương tác bằng giọng nói: cascade, theo lượt và full-duplex[^ch9-12]. Đây không phải chuỗi thay thế đơn giản mà là các đánh đổi khác nhau giữa độ trễ, chi phí và khả năng quan sát:
 
-Để làm rõ sự phát triển công nghệ của giọng nói Agent, một hệ tọa độ rõ ràng là phép chia ba [^ch9-12] do OpenAI đưa ra khi GPT-Live được phát hành vào năm 2026 - nó hoàn toàn tương ứng với kiến trúc ba thế hệ mà chính giọng nói ChatGPT đã trải qua:
+| Mô hình | Cấu trúc cốt lõi | Ưu điểm chính | Hạn chế chính |
+| --- | --- | --- | --- |
+| Cascade | VAD → ASR → LLM → TTS | Mô-đun rõ ràng, dễ thay thế và gỡ lỗi | Độ trễ cộng dồn, thông tin cận ngôn ngữ mất ở các giao diện |
+| Omni end-to-end | Một mô hình nghe, suy nghĩ và nói | Độ trễ thấp hơn, giữ tốt giọng điệu, cảm xúc và âm thanh môi trường | Vẫn theo lượt; huấn luyện và gỡ lỗi tốn kém hơn |
+| Full-duplex | Liên tục nghe, nói và quyết định | Nói chồng, ngắt lời tự nhiên và luồng liên tục | Huấn luyện, điều khiển và đánh giá phức tạp hơn |
 
-1. **Xếp tầng**: Lần lượt xâu chuỗi ba mô hình nhận dạng giọng nói (ASR), mô hình ngôn ngữ lớn (LLM) và tổng hợp giọng nói (TTS) vào một dây chuyền lắp ráp. Đây là trường hợp của ChatGPT Voice sớm nhất, lần đầu tiên cho phép mọi người "nói chuyện" với các mô hình tiên tiến, nhưng thông tin bị mất khi chuyển giữa các mô hình và phản hồi chậm và cứng.
-2. **Chế độ đầy đủ từ đầu đến cuối (Omni)**: Sử dụng một mô hình duy nhất để trực tiếp "nghe âm thanh, muốn trả lời và nói ra", tích hợp ba phân đoạn thành một, giảm độ trễ và giữ lại thông tin phi văn bản như nhịp điệu và cảm xúc. Nhưng nó vẫn giả định "nói lần lượt" - mô hình phải đợi người dùng tạm dừng trước khi nói và việc chuyển đổi lần lượt được đánh giá bằng sự im lặng. Một khoảng dừng nhẹ hoặc tiếng ồn xung quanh có thể bị đánh giá sai là "đã kết thúc" và bị gián đoạn khi đáng ra không nên. Chế độ giọng nói nâng cao của ChatGPT thuộc thế hệ này; OpenAI gọi nó là "mô hình giọng nói theo lượt (turn-based)" và ngành thường gọi nó là mô hình "omni" (chẳng hạn như Qwen3-Omni) dựa trên khả năng của mô hình. Hai cái tên đề cập đến cùng một điều.
-3. **Full-duplex / Interactive (Full-Duplex / Interactive)**: Mô hình nghe và nói cùng lúc, xử lý đầu vào và đầu ra cùng lúc, đưa ra nhiều quyết định mỗi giây về "nên nói, nghe, dừng, ngắt hoặc gọi các công cụ", loại bỏ hoàn toàn giả định "theo lượt". Moshi của Kyutai vào năm 2024 là công ty tiên phong trong nghiên cứu và GPT-Live của OpenAI vào năm 2026 đã đưa nó lên quy mô 150 triệu người dùng.
+Điểm chung là thoát khỏi giả định mọi người phải nói lần lượt và khỏi phỏng đoán của VAD về người đang giữ lượt. Cascade và Omni vẫn chia tương tác thành các lượt; full-duplex biến quyền giữ lượt thành quyết định liên tục của mô hình.
 
-Cùng một chủ đề xuyên suốt ba thế hệ này: **Cách loại bỏ giả định "lần lượt nói" và loại bỏ VAD (Phát hiện hoạt động giọng nói) đoán về lượt**. Cả Cascade và Omni vẫn dựa vào VAD để phân chia các vòng, chỉ có chế độ song công hoàn toàn mới loại bỏ hoàn toàn chính vòng đó. Ba phần sau đây sẽ diễn ra dọc theo trục này. Ba mô hình này không phải là sự thay thế đơn giản giữa cái cũ và cái mới, mà là sự đánh đổi trong thiết kế dưới những hạn chế về độ trễ và chi phí khác nhau, đồng thời sẽ cùng tồn tại trong một thời gian dài trong hệ thống sản xuất của năm 2026.
+[^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ Phân loại cascade / turn-based / full-duplex xuất phát từ phần tóm tắt ba thế hệ ChatGPT Voice; thuật ngữ “end-to-end omnimodal (Omni)” tương ứng với nhóm “turn-based voice models”.
 
-Ngoài ra, GPT-Live còn mang đến sự thay đổi cấu trúc thứ hai - tách "tương tác thời gian thực" khỏi "suy nghĩ sâu": khi gặp một vấn đề cần tìm kiếm hoặc lý luận phức tạp, mô hình tương tác sẽ giao nhiệm vụ cho mô hình tiên tiến ở chế độ nền (sử dụng GPT-5.5 tại thời điểm phát hành) và tiếp tục tự duy trì đối thoại. Manh mối “phân công lao động giữa nhanh và chậm” này sẽ được bàn cụ thể ở phần “Suy nghĩ lựa chọn kiến trúc” sau.
+### Mô hình 1 · Pipeline cascade
 
-[^ch9-12]: OpenAI. *Giới thiệu GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/. Sự phân chia ba chiều "xếp tầng/theo lượt/song công hoàn toàn" trong phần này xuất phát từ phần tóm tắt của bài viết về ba thế hệ tiến hóa giọng nói ChatGPT; "Chế độ đầy đủ từ đầu đến cuối (Omni)" trong bài viết tương ứng với loại "mô hình giọng nói turn-based".
+Phần lớn trợ lý giọng nói thương mại vẫn dùng pipeline tuần tự (Hình 9-1): VAD quyết định người dùng đã nói xong, ASR chuyển âm thanh thành văn bản, LLM hiểu và tạo câu trả lời, rồi TTS đọc câu trả lời. Tính mô-đun giúp tối ưu từng thành phần độc lập, nhưng mỗi ranh giới lại thêm thời gian chờ.
 
-## Mô hình 1 · Đường ống xếp tầng (Cascading)
+![Hình 9-1: Pipeline Agent giọng nói tuần tự](images/fig9-1.svg)
 
-Phần lớn trợ lý giọng nói thương mại—từ loa thông minh đến rô-bốt dịch vụ khách hàng—dựa trên quy trình nối tiếp (Hình 9-1): Phát hiện hoạt động giọng nói (VAD) xác định khi nào người dùng nói xong → Nhận dạng giọng nói tự động (ASR) chuyển âm thanh thành văn bản → Mô hình ngôn ngữ lớn (LLM) hiểu ý định và tạo phản hồi → Chuyển văn bản thành giọng nói (TTS) đọc câu trả lời. Cũng giống như một cuộc đua tiếp sức, mỗi liên kết phải đợi một chặng kết thúc trước khi bắt đầu.
+| Mô-đun | Vai trò | Nút thắt thường gặp |
+| --- | --- | --- |
+| VAD | Xác định lời nói đã kết thúc | Ngưỡng im lặng gây chờ và tách lượt sai |
+| ASR | Chuyển âm thanh thành văn bản | Độ trễ nhận dạng và mất ngữ cảnh |
+| LLM | Hiểu, suy luận và sinh câu trả lời | Thời gian đến token đầu tiên; reasoning làm chờ lâu hơn |
+| TTS | Chuyển văn bản thành giọng nói | Tổng hợp gói đầu tiên và bộ đệm phát |
 
+Với câu trả lời ngắn không reasoning, thời gian chờ của VAD, ASR, LLM và TTS cộng dồn theo chuỗi (Hình 9-2); giá trị thực phụ thuộc độ dài đầu vào, mô hình, phần cứng, mạng và tải. Trong sản xuất, xếp hàng còn khuếch đại độ trễ nhàn rỗi (Hình 9-3).
 
-![Hình 9-1 Đường dẫn nối tiếp Voice Agent ](images/fig9-1.svg)
+![Hình 9-2: Thác độ trễ của câu trả lời tuần tự](images/fig9-2.svg)
 
+![Hình 9-3: Đường cong độ trễ xếp hàng](images/fig9-3.svg)
 
-Các trợ lý giọng nói ban đầu đã áp dụng quy trình nối tiếp bốn giai đoạn này vì một lý do đơn giản: không có mô hình đơn lẻ nào có thể xử lý đồng thời bốn nhiệm vụ nhận dạng giọng nói, hiểu ngôn ngữ, suy nghĩ và tổng hợp giọng nói. Kiến trúc mô-đun cho phép mỗi thành phần được phát triển và tối ưu hóa độc lập. Nhưng cái giá của tính mô-đun là độ trễ tích lũy - mỗi giai đoạn phải đợi giai đoạn trước hoàn thành trước khi có thể bắt đầu.
-
-**VAD** là điểm bắt đầu của đường dẫn và liên tục giám sát luồng âm thanh. Thiết kế quan trọng nhất là phát hiện điểm cuối (Phát hiện End-of-Speech): thường đặt ngưỡng im lặng liên tục là 500-800ms - nếu người dùng ngừng nói trong hơn nửa giây, VAD sẽ coi như người dùng đã nói xong. Điều này đưa đến lớp độ trễ đầu tiên và khó có cả hai bên: nếu đặt ngưỡng quá ngắn, người dùng sẽ bị đánh giá nhầm là đã nói xong sau khi chỉ dừng lại để suy nghĩ và câu sẽ bị cắt ngắn; nếu đặt quá lâu, người dùng sẽ phải đợi hơn nửa giây sau khi nói xong mới phản hồi.
-
-**ASR** Chuyển đổi dạng sóng âm thanh thành văn bản. Các mô hình như Whisper và SenseVoice phiên âm âm thanh trong 5 giây. Khi triển khai các mô hình cỡ vừa và nhỏ trên GPU, 50-200ms thường được yêu cầu; các mô hình lớn hơn hoặc môi trường triển khai hạn chế về tài nguyên sẽ đạt tới 200-500ms (nhóm kiểm soát trong thử nghiệm 9-3 là nhóm sau). Vấn đề nghiêm trọng hơn là: trong toàn bộ quá trình chờ đợi và phiên mã ASR, LLM sau đây hoàn toàn không hoạt động, không nhận được bất kỳ thông tin nào và không thể bắt đầu suy nghĩ trước.
-
-Trong giai đoạn suy luận của **LLM**, ngay cả khi được tối ưu hóa tốt, thời gian đến token đầu tiên (TTFT) thường là 100-500ms tùy theo độ dài ngữ cảnh; việc giải mã đoạn ngắn đầu tiên phù hợp để đọc thành tiếng còn cần thêm thời gian. Nếu bật reasoning, mô hình thường hoàn tất phần suy nghĩ nội bộ trước khi xuất token hiển thị đầu tiên, nên thời gian chờ có thể kéo dài 5-10 giây. Một triển khai truyền thống hoàn toàn nối tiếp cũng đợi LLM tạo xong toàn bộ câu trả lời rồi mới chuyển văn bản cho TTS.
-
-**TTS** chuyển văn bản trả lời thành giọng nói; việc tổng hợp một đoạn ngắn thường mất 200-500ms. Hình 9-2 dùng một câu trả lời ngắn, không bật reasoning, để minh họa độ trễ nối tiếp tích lũy như thế nào: VAD (500-800ms) + ASR (50-200ms) + LLM TTFT (100-500ms) + LLM tạo đoạn ngắn (100-300ms) + TTS (200-500ms), tổng cộng khoảng 0,95-2,3 giây. Đây chỉ là khoảng minh họa theo cùng một cách đo; con số thực tế còn phụ thuộc vào độ dài đầu vào và câu trả lời, mô hình, phần cứng, mạng và tải hệ thống.
-
-
-![Hình 9-2 Thác nước độ trễ: tổng thời gian phản hồi tích lũy nối tiếp ](images/fig9-2.svg)
-
-
-Khi đã được đưa vào sản xuất, sự chậm trễ trong việc xếp hàng có thể khiến tình hình trở nên tồi tệ hơn. Điều này cũng giống như việc xếp hàng trong nhà hàng: nhà bếp càng bận rộn thì thời gian chờ đợi càng lâu và nó không tăng tuyến tính mà tăng vọt (Hình 9-3). Khi máy chủ không có bất kỳ hàng đợi chờ nào (tức là "rảnh"), thời gian cần thiết để xử lý yêu cầu được gọi là độ trễ không tải. Nhưng khi có nhiều yêu cầu đến cùng lúc, các yêu cầu sau đó phải xếp hàng chờ.
-
-Theo trực giác, mức sử dụng càng cao thì thời gian chờ đợi sẽ tăng đột biến một cách phi tuyến tính. Mối quan hệ toán học cụ thể có thể được đưa ra bằng lý thuyết xếp hàng (ở đây nó chỉ được hiểu bằng trực giác và không yêu cầu đạo hàm chặt chẽ): tổng độ trễ ≈ độ trễ không tải × 1/(1-sử dụng). Việc sử dụng đề cập đến tỷ lệ thời gian máy chủ bận. Ví dụ: tỷ lệ sử dụng 50% có nghĩa là máy chủ đang xử lý các yêu cầu một nửa thời gian và một nửa thời gian không hoạt động. Độ trễ ở mức sử dụng 50% tăng gấp 2 lần khi không tải và gấp 5 lần ở mức 80% - đây là lý do tại sao máy chủ không thể chạy ở mức tải cao trong thời gian dài.
-
-
-![Hình 9-3 Đường cong trễ xếp hàng ](images/fig9-3.svg)
-
-
-> **Thử nghiệm 9-1 ★: Xây dựng lời nói truyền thống Agent**
+> **Thử nghiệm 9-1 ★: Xây dựng Agent thoại truyền thống**
 >
-> Thử nghiệm này xây dựng một hệ thống hội thoại bằng giọng nói hoàn chỉnh theo thời gian thực hỗ trợ người dùng tương tác với giọng nói AI thông qua micrô. Hệ thống áp dụng kiến trúc phân tách front-end và back-end và giao tiếp trong thời gian thực thông qua WebSocket.
+> Kết nối microphone, Silero VAD, Whisper cục bộ, LLM streaming và Fish S1 TTS qua WebSocket để lập đường cơ sở cascade. Bằng chứng thực của một lượt còn lại cho thấy chuỗi media và mô hình chạy end-to-end; đây không phải benchmark về đồng thời hay tải sản xuất. Mã và hồ sơ nghiệm thu ở [chapter9/live-audio](../chapter9/live-audio/).
+
+> **Bổ sung: Xây dựng Agent thoại WebRTC “gọi cho người dùng”**
 >
-> Quy trình cốt lõi tuân theo một mẫu nối tiếp nghiêm ngặt: giao diện người dùng ghi lại đầu vào micrô và gửi nó đến back-end trong thời gian thực thông qua WebSocket. Back-end chạy mô hình Silero VAD để phát hiện hoạt động giọng nói. So với các phương pháp phát hiện âm lượng truyền thống, nó có độ chính xác cao hơn và khả năng chống ồn mạnh hơn. Sau khi phát hiện khoảng 500ms im lặng liên tục, các đoạn âm thanh sẽ được trích xuất để xử lý tiếp theo.
+> Phone Agent không cần PSTN. WebRTC trên trình duyệt có thể tái hiện vòng lặp mở phiên, hỏi thông tin thiếu, đọc lại để xác nhận và lưu kết quả có cấu trúc. Khi cần liên hệ tổ chức bên ngoài, thay hợp đồng công cụ bằng nhà cung cấp PSTN/SIP phù hợp. Đường truyền media, so sánh direct/ReAct và bằng chứng nghiệm thu ở [chapter9/phone-agent](../chapter9/phone-agent/). Dự án giữ các run identifier lịch sử \`exp9-2\`, nhưng không còn là một thử nghiệm được đánh số trong bản thảo.
+
+#### Từ tuần tự đến nhận biết streaming
+
+Streaming ASR có thể tạo transcript tạm thời trong khi người dùng nói; LLM gửi câu đầu tiên có thể đọc được cho TTS; TTS trả về các đoạn âm thanh để chồng lấp sinh, tổng hợp và phát. Điều đó không làm ASR, LLM và TTS song song hoàn toàn: nếu transcript một phần thay đổi, phải hủy, khởi động lại hoặc sửa phần sinh; chỉ bật \`stream\` là chưa đủ.
+
+Streaming thông thường cũng không bỏ được thời gian chờ im lặng của VAD. Front end VAD + ASR tích lũy độ trễ, làm mất do dự, cảm xúc, backchannel và âm thanh môi trường; tên riêng hay địa chỉ email có thể bị chia giữa các đoạn. Mô hình streaming thực sự cần encoder nhân quả hoặc theo khối cùng giải mã tăng dần. Encoder của Whisper chờ toàn bộ đoạn âm thanh nên không nên gọi là mô hình streaming nhân quả. Mô hình âm thanh dựa trên LLM có thể phát văn bản và sự kiện ngữ nghĩa từ âm thanh liên tục, nhưng mô phỏng bằng prefix không phải cam kết hiệu năng của mô hình nhân quả.
+
+Ngoài token văn bản, luồng có thể phát \`speak_start/end\`, \`interrupt\` (ranh giới lời nói và ý định ngắt), \`emotion\` (cảm xúc và do dự), \`laugh\`, \`sigh\`, \`noise\` (âm thanh cận ngôn ngữ và môi trường). Nhờ vậy Agent không phải nén mọi sự kiện âm thanh thành văn bản thường.
+
+[^ch9-11]: Về việc đưa phán đoán lượt vào bộ nhận dạng và vấn đề nhãn sử dụng thông tin tương lai, xem Bojie Li và Noah Shi, *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR*, 2026 (sắp xuất bản).
+
+> **Thử nghiệm 9-2 ★: Mô phỏng nhận biết giọng nói streaming bằng Qwen2-Audio**
 >
-> ASR, LLM và TTS hỗ trợ chuyển đổi linh hoạt giữa nhiều nhà cung cấp ở từng giai đoạn. Các nhà phát triển có thể chọn sự kết hợp tối ưu dựa trên độ trễ, độ chính xác và điều kiện mạng khu vực.
+> Bản thân Qwen2-Audio không phải mô hình streaming. Thử nghiệm mô phỏng nhận biết liên tục bằng các prefix âm thanh tăng dần và so sánh với VAD 600 ms + Whisper. Canonical run vượt qua các cổng thực thi và provenance nhưng chỉ tái hiện 2/6 hành vi: các lệnh prefix mất 8,4–11,3 giây, mẫu pause bỏ sót \`silence\`, và mẫu noise vẫn phân loại sai \`cough/laughter\`. Đây là kết quả âm tính để kiểm tra cơ chế và lỗi; không phải bằng chứng cho nhận biết streaming thật 100–200 ms. Toàn bộ hồ sơ ở [chapter9/streaming-speech](../chapter9/streaming-speech/).
+
+### Mô hình 2 · Mô hình omnimodal end-to-end (Omni)
+
+Ngay cả khi có nhận biết streaming, cascade vẫn đưa nghe, suy nghĩ và nói qua các giao diện rời rạc; cảm xúc, ngữ điệu và âm thanh môi trường có thể mất khi âm thanh biến thành văn bản. Omni dùng một mô hình để nghe, sinh câu trả lời và nói, giữ được tín hiệu phi văn bản nhưng tốn hơn khi huấn luyện, gỡ lỗi và thay thành phần (Hình 9-4). Self-cascade có thể sửa lỗi nhận biết khi văn bản đủ cho nhiệm vụ; nếu câu trả lời phụ thuộc tốc độ nói, cảm xúc hoặc môi trường, nút thắt văn bản làm mất bằng chứng không thể đảo ngược[^ch9-13].
+
+Omni vẫn giả định chia lượt và thường dùng VAD hoặc endpointing ngữ nghĩa. Một khoảng dừng trong chuỗi số có thể bị coi là kết thúc; nhận biết streaming cải thiện phán đoán nhưng không xóa lượt.
+
+[^ch9-13]: Đo lường đầy đủ thời điểm lợi thế độ chính xác giữa cascade và end-to-end đảo chiều, xem Li, Bojie và Noah Shi, *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents*, 2026 (sắp xuất bản).
+
+![Hình 9-4: So sánh mô hình giọng nói omnimodal end-to-end](images/fig9-4.svg)
+
+Realtime speech API nằm giữa cascade và Omni: mô hình xử lý âm thanh native nhưng điều khiển tương tác vẫn dựa vào VAD, ngắt lời và gọi công cụ bất đồng bộ. So sánh có ích không phải bảng xếp hạng mà là cách hai đường end-to-end và self-cascade thất bại ở các nhiệm vụ khác nhau.
+
+> **Thử nghiệm 9-3 ★★: Chạy MiniCPM-o 4.5 cục bộ — end-to-end so với self-cascade**
 >
-> **Thử nghiệm 9-2 ★: Xây dựng Agent thoại “gọi cho người dùng” bằng WebRTC**
->
-> “Agent điện thoại” không nhất thiết phải kết nối với PSTN hay yêu cầu người đọc chuẩn bị một số điện thoại thật. Trong nhiều tác vụ nhắc việc, thu thập thông tin, xác nhận và theo dõi, bên nhận cuộc gọi chính là người dùng. Khi đó, WebRTC trên trình duyệt dễ tái hiện hơn: người dùng mở một trang cục bộ và cấp quyền truy cập micrô một cách rõ ràng; Agent thiết lập phiên truyền thông thời gian thực với trình duyệt để trực tiếp “gọi” người dùng. Trình duyệt gửi RTP từ micrô đến peer cục bộ và nhận RTP âm thanh chiều xuống của Agent; data channel chỉ mang tín hiệu điều khiển gửi âm thanh và bản sao phụ đề hỗ trợ khả năng tiếp cận, không mang ngữ nghĩa canonical của người dùng. Toàn bộ quy trình không cần số E.164 hay tài khoản của nhà cung cấp dịch vụ điện thoại. PSTN/IVR vẫn phù hợp với các tác vụ sản xuất buộc phải liên hệ tổ chức bên ngoài, nhưng không phải điều kiện tiên quyết để hiểu “cuộc gọi thoại như một công cụ của Agent”.
->
-> **Mục tiêu của phòng thí nghiệm**: Xây dựng một Agent có thể chủ động khởi tạo phiên thoại trên trình duyệt, thu thập thông tin còn thiếu từ người dùng, đọc lại để xác nhận và trả về kết quả có cấu trúc; đồng thời duy trì hai nhóm “gọi trực tiếp” và “lập kế hoạch ReAct” để đối chiếu.
->
-> **Giải pháp kỹ thuật**: Dịch vụ FastAPI cục bộ nhận SDP offer của trình duyệt; `aiortc` trả về answer, kết cuối luồng truyền thông và giải mã RTP từ micrô thực sự nhận được thành PCM. Whisper cục bộ chạy ASR trên PCM này và chỉ ASR transcript mới được đưa vào mô hình hội thoại. Cả câu hỏi làm rõ lẫn lời xác nhận cuối cùng của Agent đều được TTS thật tổng hợp thành PCM rồi đưa vào hàng đợi của track âm thanh WebRTC chiều xuống phía máy chủ—không được giả làm giọng nói bằng âm báo kết nối, `speechSynthesis` của trình duyệt hay văn bản trên data-channel. Nhóm trực tiếp yêu cầu bên gọi cung cấp trước tên, mục tiêu, context và chỉ dẫn. Nhóm ReAct chỉ nhận một tác vụ bằng ngôn ngữ tự nhiên. Một LLM bên ngoài thực sự để lại raw request/response đã lược bỏ dữ liệu nhạy cảm, response ID, tên model chính xác, usage, finish status, latency và hash, rồi dùng các bản tóm tắt observation / reason / action có thể kiểm toán để quyết định: (1) mục tiêu cuộc gọi; (2) context đã biết; (3) thông tin còn thiếu; và (4) nội dung cần hỏi và xác nhận trong cuộc gọi. Cả hai nhóm dùng chung công cụ `complete_task` để lưu các trường được người dùng xác nhận rõ ràng. Nếu model, ASR hoặc TTS thất bại thì việc nghiệm thu thất bại ngay; không dùng planner/parser fallback cục bộ.
->
-> Quy trình làm việc của Agent: Tác vụ là “Gọi cho tôi để xác nhận buổi khám răng ngày mai” → phần lập kế hoạch ReAct phát hiện còn thiếu thời gian cụ thể và mã xác nhận → người dùng nhận cuộc gọi trong trình duyệt → Agent hỏi bằng giọng nói → người dùng trả lời → Agent đọc lại thông tin và yêu cầu xác nhận cuối cùng → gọi `complete_task` → giao diện lưu transcript, các trường chính và số liệu truyền tải → Agent đọc kết quả cho người dùng. Thử nghiệm cục bộ này chỉ ghi lại những gì người dùng xác nhận; nó không giả vờ rằng phòng khám đã thực sự hoàn tất việc đặt lịch.
->
-> **Tiêu chí chấp nhận**: Mỗi nhóm phải thiết lập một phiên WebRTC thực và đồng thời lưu lại bằng chứng về SDP offer/answer, ICE đã kết nối, data channel đã mở, sự hiện diện của track micrô trình duyệt và track chiều xuống của máy chủ, cùng số packet/byte audio RTP hai chiều lớn hơn 0. Máy chủ còn phải lưu và hash đầu vào ASR lấy từ RTP micrô, nguồn gốc Whisper checkpoint, receipt của model thật và ít nhất hai TTS asset đã được truyền đầy đủ. Canonical user transcript source chỉ được là ASR, còn Agent transcript source chỉ được là TTS; data channel chỉ được dùng cho điều khiển/phụ đề. Sau cuộc gọi, bằng chứng phải cho thấy việc làm rõ các trường còn thiếu, xác nhận rõ ràng và các trường `complete_task` có cấu trúc. Không được thay thế bằng mock, fallback, âm báo kết nối, nhập văn bản hay chỉ chạy preflight. Phần đối chiếu cũng phải cho thấy nhóm trực tiếp cần đủ bốn tham số, còn nhóm ReAct chỉ bắt đầu từ một mô tả tác vụ chưa đầy đủ nhưng có thể dùng LLM thật để nhận diện và bổ sung các trường còn thiếu trong cuộc gọi.
->
-> Thử nghiệm này cho thấy một hướng ứng dụng quan trọng của Agent thoại: **Agent không chỉ phải chờ người dùng mở cửa sổ trò chuyện; nó còn có thể chủ động thiết lập một phiên thời gian thực với các trạng thái bắt đầu, xác nhận và hoàn tất rõ ràng**. WebRTC trên trình duyệt bao quát con đường “gọi cho người dùng” dễ tái hiện nhất. Khi tác vụ đòi hỏi liên hệ với thế giới bên ngoài thay mặt người dùng, chờ nhân viên hỗ trợ hoặc điều hướng IVR, có thể kết nối cùng một hợp đồng công cụ gọi điện với nhà cung cấp PSTN/SIP tuân thủ quy định.
-
-### Truyền phát liên kết đầy đủ các đường ống xếp tầng
-
-Hình 9-2 giả định một quy trình **hoàn toàn nối tiếp**, trong đó mỗi giai đoạn hoàn tất rồi mới chuyển việc cho giai đoạn tiếp theo. Các hệ thống sản xuất thường vẫn giữ cách phân chia mô-đun VAD-ASR-LLM-TTS, nhưng cho mỗi giai đoạn xuất kết quả tăng dần càng sớm càng tốt để rút ngắn thời gian đến khi người dùng nghe thấy âm tiết đầu tiên:
-
-- **ASR vừa nghe vừa phiên âm**: Nhận dạng trực tuyến liên tục tạo bản phiên âm tạm thời khi người dùng đang nói, nhờ đó phần lớn phép tính nhận dạng được thực hiện song song với thời gian nói. Sau khi lượt nói kết thúc, hệ thống vẫn phải xác nhận văn bản cuối cùng vì ngữ cảnh xuất hiện sau có thể sửa bản tạm thời.
-- **LLM xuất trực tuyến và chia đoạn văn bản**: Trong khi tạo, mô hình chia câu trả lời thành các đoạn phù hợp để đọc dựa trên dấu câu hoặc ngữ nghĩa, rồi chuyển đoạn đầu tiên cho TTS mà không đợi toàn bộ câu trả lời hoàn tất. Cách này không rút ngắn TTFT của LLM và không bỏ qua reasoning; nó chỉ loại bỏ thời gian chờ phần còn lại của câu trả lời được tạo xong.
-- **TTS tổng hợp âm thanh tăng dần**: TTS bắt đầu khi nhận đoạn văn bản đầu tiên và trả về các khối âm thanh trước khi toàn bộ dạng sóng hoàn tất. Sau đó, LLM có thể tạo phần văn bản còn lại đồng thời với việc TTS tổng hợp lời nói tiếp theo và phía máy khách phát phần âm thanh đã nhận.
-
-Tuy nhiên, việc mỗi giai đoạn đều phát trực tuyến không có nghĩa là cả ba mô hình cùng bắt đầu xử lý một lượt hội thoại. Trong chuỗi tiêu chuẩn không suy đoán, các quan hệ phụ thuộc vẫn còn: ASR có thể hoạt động khi người dùng đang nói; LLM chỉ tạo câu trả lời cuối cùng sau khi lượt nói kết thúc và bản phiên âm đã ổn định; TTS chỉ bắt đầu khi LLM đưa ra đoạn văn bản đầu tiên có thể đọc thành tiếng. Phần thực sự chồng lấp là “lời nói của người dùng với phiên âm ASR” và “LLM tạo phần trả lời còn lại với TTS tổng hợp/phát lại”, chứ không phải toàn bộ phép tính ASR, LLM và TTS chạy song song từ đầu đến cuối.
-
-Các hệ thống quyết liệt hơn sử dụng **tạo trước/suy đoán (preemptive/speculative generation)**: chúng khởi động LLM sớm dựa trên phần phiên âm tương đối ổn định, rồi hủy, khởi động lại hoặc sửa kết quả nếu bản phiên âm thay đổi về sau. Âm thanh cũng có thể được tổng hợp trước, nhưng thường chỉ được phát sau khi xác nhận kết thúc lượt nói để Agent không chen ngang khi người dùng chưa nói xong. Các framework như LiveKit Agents và Pipecat có thể hỗ trợ cả chuỗi trực tuyến thông thường lẫn các chiến lược tạo trước này. ASR và LLM có thực sự chồng lấp hay không phụ thuộc vào việc hệ thống triển khai rõ ràng cơ chế chốt bản phiên âm từng phần, làm mất hiệu lực và hoàn tác; chỉ bật tùy chọn `stream` không tự động mang lại điều đó.
-
-Phát trực tuyến thông thường cũng không loại bỏ được **thời gian VAD chờ im lặng và quyết định kết thúc lượt nói**. ASR trực tuyến thực ra đã hoạt động trong thời gian chờ này; quyết định lượt nói chỉ đang chặn việc chốt bản phiên âm cuối cùng và phát câu trả lời. Tạo trước có thể che giấu một phần phép tính, nhưng hệ thống vẫn phải quyết định khi nào có thể bắt đầu nói một cách an toàn. Muốn giảm thêm độ trễ này, cần cải thiện chính khâu cảm nhận đầu vào và quyết định điểm kết thúc.
-
-### Nhận thức về giọng nói trực tuyến: Thay thế VAD + ASR
-
-Khâu cảm nhận đầu vào này gồm hai giai đoạn: VAD xác định người dùng đã nói xong hay chưa, còn ASR chuyển âm thanh thành văn bản. Trong kiến trúc hoàn toàn nối tiếp, hai giai đoạn cùng quyết định khi nào quy trình phía sau bắt đầu và nhận đầu vào nào. Trong kiến trúc trực tuyến, ASR bắt đầu sớm hơn, nhưng việc chốt văn bản cuối cùng và thời điểm bắt đầu trả lời vẫn bị ràng buộc bởi quyết định điểm kết thúc. Chuỗi VAD + ASR truyền thống có ba vấn đề cơ bản:
-
-1. **Tích lũy độ trễ**: VAD phải đợi cho đến khi 500-800ms tắt tiếng để xác nhận rằng người dùng đã nói xong, vì nó không thể dự đoán tương lai và chỉ có thể dựa vào "chờ một lát" để phân biệt giữa "thực sự đã hoàn thành" và "chỉ tạm dừng để suy nghĩ"
-2. **Mất thông tin**: VAD chỉ xuất ra các tín hiệu nhị phân như "âm thanh/im lặng" và các chi tiết âm thanh như thay đổi cảm xúc, dao động âm sắc, ngập ngừng và tạm dừng cũng như môi trường nền đều bị mất. Vấn đề phán đoán sai đặc biệt nổi bật trong môi trường phức tạp - nếu người dùng tạm dừng lâu sẽ bị đánh giá sai là đã nói xong, khiến câu bị cắt ngắn. Tiếng ồn nền sẽ được kích hoạt nhầm khiến hệ thống bắt đầu xử lý khi không có ai nói. Không thể đánh giá liệu người dùng muốn ngắt lời hay bày tỏ sự đồng tình khi anh ta lặp lại "ừm".
-3. **Tỷ lệ chính xác giảm**: VAD cắt âm thanh liên tục thành các đoạn độc lập và gửi chúng đến ASR để nhận dạng tương ứng, phá hủy tính liên tục của ngữ cảnh. Tỷ lệ lỗi của nội dung yêu cầu xác định chính xác ngữ cảnh (địa chỉ email, tên thương hiệu, tên cá nhân, danh từ riêng) đã tăng đáng kể - ví dụ: một người dùng đã báo cáo địa chỉ email là "john dot smith tại gmail dot com". Nếu "john" và "smith" được chia thành các phần khác nhau, "smith" có thể bị hiểu nhầm là "miss" do thiếu ngữ cảnh.
-
-**Mô hình nhận thức giọng nói truyền phát** cung cấp giải pháp cơ bản. Trước tiên, hãy làm rõ ý nghĩa kỹ thuật của "truyền phát": việc mô hình giọng nói có thể được truyền phát hay không phụ thuộc vào việc bộ mã hóa là nhân quả hay phân đoạn (chỉ dựa vào âm thanh đã đến mà không xem toàn bộ bản ghi) và liệu quá trình giải mã có tăng dần hay không (xuất ra một phần kết quả mỗi khi nhận được một đoạn âm thanh nhỏ). Whisper không phát trực tuyến, không phải do cách nó giải mã—việc giải mã của nó vốn có tính tự hồi quy—mà vì bộ mã hóa của nó yêu cầu một phân đoạn âm thanh đầy đủ (cố định 30 giây, đệm nếu không đủ) trước khi nó có thể bắt đầu hoạt động. Cũng cần lưu ý rằng bản thân nhận dạng phát trực tuyến không phải là một công nghệ mới: ASR phát trực tuyến truyền thống được đại diện bởi RNN-T và Conformer phát trực tuyến đã được triển khai trên quy mô lớn trong ngành - phụ đề thời gian thực trên điện thoại di động và đầu vào bằng giọng nói trong các phương thức nhập liệu đều sử dụng loại mô hình này - chúng không liên quan gì đến LLM.
-
-Phần này tập trung vào một lộ trình mới: **Truyền tải nhận thức thính giác dựa trên LLM** - sử dụng LLM nguồn mở làm xương sống cho quá trình post-training, cho phép mô hình xuất trực tiếp các phản hồi ở cấp độ ngữ nghĩa từ luồng âm thanh liên tục, hợp nhất "nhận dạng" và "hiểu" vào cùng một mô hình. Đây là bản nâng cấp của tính năng phát trực tuyến truyền thống ASR, chứ không phải là một phát minh về công nghệ phát trực tuyến: độ trễ nhận dạng tăng dần cũng được duy trì ở mức thời gian suy luận một bước (hàng chục đến một hoặc hai trăm mili giây), nhưng mô hình không còn nhìn thấy các đoạn riêng biệt được VAD cắt nhỏ mà là một luồng âm thanh liên tục từ đầu cuộc trò chuyện đến thời điểm hiện tại, có thể thực hiện In-Context Learning (học trong ngữ cảnh) dựa trên ngữ cảnh hoàn chỉnh, độ chính xác nhận dạng thông tin cá nhân, danh từ chuyên nghiệp và thói quen phát âm của người dùng đã được cải thiện đáng kể.
-
-Một ưu điểm quan trọng khác của tuyến đường này là nó kế thừa kiến thức thế giới và khả năng suy luận thông thường của LLM - xét cho cùng, mô hình xương sống đã xem được lượng văn bản khổng lồ. Ví dụ: mô hình biết rằng "Apple" theo sau là "họp báo" rất có thể ám chỉ Apple chứ không phải trái cây. Việc nâng cao kiến thức này cho phép độ chính xác nhận dạng của thông tin có giá trị cao như số lượng, tên địa điểm và tên thương hiệu cao hơn nhiều so với ASR truyền thống. Đã có các mô hình có thể triển khai trên tuyến đường này, chẳng hạn như Ultravox của Fixie - gửi âm thanh trực tiếp đến xương sống LLM, xuất văn bản và mã thông báo ngữ nghĩa; Qwen2-Audio và Qwen2.5-Omni của Alibaba được sử dụng trong các thử nghiệm trong phần này cũng thuộc cùng loại mô hình âm thanh gốc.
-
-Tuy nhiên, việc thay thế VAD không nhất thiết phải có một model âm thanh hoàn chỉnh. Nếu bạn chỉ muốn giải quyết vấn đề đầu tiên - **xác định xem người dùng đã nói xong chưa**, có một cách dễ dàng hơn: cắm trực tiếp "phán đoán vòng" này vào chính bộ nhận dạng [^ch9-11]. Phương pháp là thêm LoRA vào một mô hình nhận dạng phát trực tuyến nguồn mở nhỏ và để nó phiên âm trong khi **ngữ nghĩa toàn diện và sự im lặng** để xác định "liệu câu này đã diễn đạt được ý nghĩa hoàn chỉnh hay chưa" - vì khoảng dừng trong vòng (tạm dừng khi báo số điện thoại) thường dài hơn khoảng thời gian giữa các vòng, chỉ dựa vào ngưỡng im lặng chắc chắn sẽ không làm hài lòng cả hai đầu. Kết luận thú vị hơn là: mô hình luôn xoay quanh "có nên đóng hay không", và nguyên nhân sâu xa thường không nằm ở cấu trúc mô hình mà ở **nhãn đào tạo được đánh dấu bằng "Góc nhìn của Chúa"** - âm thanh xuất hiện sau điểm quyết định được dùng để gắn nhãn, trong khi mô hình trực tuyến hoàn toàn không thể nhìn thấy tương lai; thay đổi từng nhãn thành "chỉ sử dụng thông tin có sẵn tại thời điểm đưa ra quyết định" thành nhãn và cú xoay sai lầm này sẽ biến mất. Điều này cũng lặp lại nhận định được đưa ra sau khi đào tạo ở Chương 7: Trong nhiều trường hợp, dữ liệu còn quan trọng hơn kiến trúc. Tuyến đường nhẹ hơn này cũng đã được triển khai ở cấp độ sản xuất: Flux của Deepgram và Universal-Streaming của AssemblyAI nhúng trực tiếp các điểm cuối và phán đoán vòng vào mô hình nhận dạng luồng, được thiết kế đặc biệt cho lời nói Agent; về phía nguồn mở, có các mô hình phát hiện vòng ngữ nghĩa do LiveKit và Pipecat cung cấp.
-
-[^ch9-11]: Xây dựng phán đoán tròn về người nhận dạng và chẩn đoán "Cái nhìn của Chúa về nhãn" xem Li, Bojie và Noah Shi.
-
-Mô hình không chỉ xuất ra văn bản mà còn xuất ra một loạt mã thông báo đặc biệt của các sự kiện âm thanh - chúng là các mã thông báo đặc biệt được giới thiệu trong quá trình đào tạo mô hình và mô hình sẽ học cách tự động xuất ra khi phát hiện sự kiện âm thanh tương ứng. Các loại phổ biến như sau:
-
-- `<speak_start/end>`: Xác định phần bắt đầu và kết thúc lời nói dựa trên đánh giá toàn diện về ngữ nghĩa và âm học, thay vì phát hiện sự im lặng đơn giản
-- `<interrupt>`: Phân biệt xem người dùng có thực sự muốn ngắt lời hay chỉ đang xen vào hoặc bị phân tâm bởi tiếng ồn xung quanh
-- `<emotion:happy/frustrated>`: Thẻ cảm xúc
-- `<laugh>`/`<sigh>`: Tín hiệu ngôn ngữ như tiếng cười, tiếng thở dài
-- `<music>`/`<noise>`: Âm thanh xung quanh
-
-Các dấu hiệu và mã thông báo văn bản này tạo thành một luồng sự kiện thống nhất và được gửi cùng nhau đến lớp tư duy.
-
-```
-Input audio: "Um, actually I think... no wait, let me reconsider."
-Model output stream:
-  <speak_start> Um, <emotion:hesitant> actually I think...
-  <silence:500ms> no wait, <emotion:confident> let me reconsider <speak_end>
-```
-
-Lưu ý rằng mô hình không chỉ xuất ra bản phiên âm văn bản mà còn xuất ra các điểm đánh dấu sự kiện giọng nói (bắt đầu/kết thúc nói, thay đổi tâm trạng, khoảng im lặng). Khung Agent có thể tận dụng các thẻ này để cho phép tương tác tự nhiên hơn—chẳng hạn như chủ động đưa ra các tùy chọn khi phát hiện sự do dự của người dùng.
-
-> **Thử nghiệm 9-3 ★: Mô phỏng khả năng nhận biết giọng nói trực tuyến bằng Qwen2-Audio**
->
-> Thiết kế thử nghiệm cần được giải thích trước: Bản thân Qwen2-Audio là một mô hình không phát trực tuyến với toàn bộ đầu vào. Thử nghiệm này sử dụng **đầu vào được chia nhỏ để mô phỏng quá trình xử lý phát trực tuyến** - luồng âm thanh liên tục được cắt thành các khối nhỏ có độ dài cố định và mỗi khối được gửi đến mô hình cùng với ngữ cảnh âm thanh đã tích lũy trước đó. Mô hình dần dần tạo ra các mã thông báo sự kiện âm thanh và văn bản (chẳng hạn như tiếng cười, tạm dừng và các tín hiệu phi ngôn ngữ khác) đồng thời đo độ trễ từ văn bản đầu vào đến văn bản đầu ra cho mỗi khối. Có một mức giá quan trọng ở đây: bộ mã hóa của Qwen2-Audio không tăng dần. Mỗi khi một khối mới được xử lý, tất cả âm thanh tích lũy trước đó phải được mã hóa lại từ đầu. Do đó, cuộc trò chuyện càng dài và âm thanh tích lũy càng nhiều thì độ trễ mã hóa của một khối càng cao. Đây là điểm khác biệt cơ bản giữa "phát trực tuyến mô phỏng" và "phát trực tuyến thực sự" (sử dụng bộ mã hóa tăng dần hoặc nhân quả, chỉ mã hóa tăng dần một đoạn âm thanh nhỏ mới đến). Thiết kế này có thể chứng minh độ chính xác đạt được nhờ "nhận thức liên tục với ngữ cảnh hoàn chỉnh được bảo toàn", nhưng số độ trễ chỉ phản ánh mức độ chi tiết và tốc độ suy luận của phân khối và không bằng độ trễ gói đầu tiên của mô hình được thiết kế theo luồng thực sự (chẳng hạn như Qwen3-Omni sử dụng mã hóa phân khối); độc giả quan tâm có thể làm lại thí nghiệm này bằng cách sử dụng thí nghiệm sau. Giải pháp so sánh là đường ống VAD + Whisper ASR truyền thống. Ba loại tình huống được thử nghiệm: hội thoại bình thường, câu dài có ngắt quãng và hội thoại có tiếng ồn xung quanh.
->
-> Kết quả: Độ trễ nhận dạng tăng dần của sơ đồ mô phỏng khối có thể được kiểm soát theo thứ tự từ một đến hai trăm mili giây (tùy thuộc vào độ dài khối và phần cứng), trong khi sơ đồ truyền thống cần đợi xác nhận VAD hoàn tất (600 mili giây) cộng với suy luận Whisper (khoảng 200-500ms trong cấu hình thử nghiệm này), tổng cộng là 800-1100ms. Ở cảnh có đoạn tạm dừng, VAD đã đánh giá sai rằng nó đã kết thúc ở khoảng dừng dài đầu tiên và cắt câu thành hai đoạn để nhận dạng. "Khoảng hai giờ" bị hiểu nhầm là "khoảng 0 giờ" do thiếu ngữ cảnh; trong khi sơ đồ phân đoạn duy trì ngữ cảnh hoàn chỉnh và nhận dạng chính xác toàn bộ câu. Trong cảnh có nhiễu nền, Qwen2-Audio xuất mã thông báo `<|noise|>` để đánh dấu sự hiện diện của nhiễu nhưng không làm gián đoạn quá trình nhận dạng. VAD truyền thống bị kích hoạt nhầm do tiếng ồn, khiến quá trình nhận dạng bắt đầu sớm.
-
-## Mô hình 2 · Mô hình full-modal end-to-end (Omni)
-
-Nhìn lại toàn bộ quy trình phân tầng: ngay cả khi giao diện người dùng nhận thức đã được thay thế bằng nhận thức giọng nói truyền phát, nó vẫn sẽ chỉ định "nghe, suy nghĩ và nói" cho ba mô hình độc lập, được kết nối với nhau bằng một giao diện riêng biệt. Cho dù giao diện này có rộng đến đâu thì nó cũng chẳng qua là một vài mã thông báo ngữ nghĩa và các điểm đánh dấu âm thanh rời rạc - tâm trạng, giai điệu, ngữ điệu hiện tại của người nói cũng như âm thanh xung quanh và nhạc nền. Hầu hết chúng đều bị thất lạc trong quá trình bàn giao; Chưa kể 3 phần này được train và tối ưu riêng biệt nên khó phối hợp với nhau. Mô hình toàn phương thức từ đầu đến cuối (Omni) có một cách tiếp cận khác - sử dụng một mô hình duy nhất để trực tiếp "nghe" âm thanh, "suy nghĩ" để trả lời và "nói" ra, kết hợp ba phân đoạn thành một (Hình 9-4). Miễn là đủ dữ liệu huấn luyện, không gian tiềm ẩn bên trong mô hình có thể truyền trực tiếp những thông tin cận ngôn ngữ này đến đầu thế hệ bên ngoài văn bản: độ trễ thấp hơn và nhịp điệu và cảm xúc được giữ nguyên. Sự cân bằng là: **Các mô-đun đường ống phân tầng** rõ ràng, mỗi phân đoạn có thể được điều chỉnh độc lập và có khả năng diễn giải tốt; **Mô hình đầu cuối** có độ trễ thấp hơn và có thể lưu giữ thông tin phi văn bản, nhưng lại phải trả giá bằng yêu cầu dữ liệu đào tạo lớn hơn và khả năng diễn giải kém hơn.
-
-Cũng cần phải thêm một khía cạnh thường bị bỏ qua: lợi thế của end-to-end chủ yếu được phản ánh ở **độ trễ** và không nhất thiết phải chiếm ưu thế ở khía cạnh **độ chính xác**. Một giải pháp đáng so sánh là **tự xếp tầng**(self-cascade) - cùng một mô hình trước tiên chuyển âm thanh thành văn bản có cấu trúc, sau đó đưa ra suy luận dựa trên văn bản; so với câu trả lời từ đầu đến cuối một lần, câu trả lời nào có độ chính xác cao hơn tùy thuộc vào nhiệm vụ cụ thể. Quy tắc có thể được tóm tắt như sau: khi câu trả lời chủ yếu được xác định bởi nội dung ngữ nghĩa (tức là "những gì đã nói") và văn bản trung gian đủ để mang đầy đủ thông tin liên quan đến nhiệm vụ, thì độ chính xác của phương pháp tự xếp tầng tương đương hoặc thậm chí tốt hơn so với phương pháp đầu cuối. Ưu điểm này đặc biệt có ý nghĩa ở những mô hình có khả năng nhận thức yếu; ngược lại, khi câu trả lời phụ thuộc nhiều vào những manh mối phi ngôn ngữ (giọng điệu, cảm xúc, âm thanh môi trường) khó thể hiện trong văn bản thì phương pháp end-to-end lại cho thấy những ưu điểm rõ ràng. Quan trọng hơn, ưu và nhược điểm của cả hai có thể được xác định trước dựa trên tính chất của nhiệm vụ, thay vì chỉ đơn giản là do "từ đầu đến cuối tiến bộ hơn". Từ đó, có thể rút ra một nguyên tắc thiết kế sâu hơn: chìa khóa để xác định hiệu suất thường không phải là **nút thắt** về việc có nên giới thiệu cách biểu đạt trung gian hay không, mà là thông tin do nút cổ chai mang theo - nếu văn bản trung gian được nâng cấp từ một phiên âm đơn giản lên một dấu hiệu cận ngôn ngữ kèm theo (biểu đạt cảm xúc) (cảm xúc, tốc độ nói, âm thanh môi trường) thì lợi thế về độ chính xác từ đầu đến cuối ban đầu thường bị thu hẹp. Điều này phù hợp với "lớp nhận thức không chỉ xuất ra văn bản thuần túy" được ủng hộ trong bài viết trước "Nhận thức giọng nói truyền phát" [^ch9-13].
-
-Nhưng dù Omni có mạnh đến đâu thì về cơ bản nó cũng chỉ kết hợp ba mô hình thành một. Nó không hủy bỏ giả định "thay phiên nhau nói": nó vẫn dựa vào VAD để phân chia quyền phát biểu - nó dừng khi phát hiện người dùng đang nói và nói ngay khi người dùng tắt tiếng. Sau đó, vấn đề quen thuộc lại nổi lên: người dùng báo một dãy số, tạm dừng một lát, Omni đánh giá đối phương đã nói xong liền cưỡng ép cắt ngang. Khả năng nhận biết giọng nói truyền phát nói trên có thể nâng cấp khả năng phán đoán lần lượt từ khoảng thời gian im lặng lên cấp độ ngữ nghĩa, giúp giảm bớt đáng kể kiểu phán đoán sai lầm này. Tuy nhiên, đây chỉ là sửa chữa một phần trong khuôn khổ "lượt rẽ" và không tự hủy lượt quay. Để **về cơ bản** thoát khỏi tình thế tiến thoái lưỡng nan này, chúng ta không thể mày mò trong khuôn khổ "xoay chuyển" được nữa. Thay vào đó, chúng ta phải để mô hình nghe và nói cùng lúc, đồng thời quyết định độc lập khi nào nên nói. Không còn sự chuyển đổi khó khăn giữa "ai nên nói".
-
-[^ch9-13]: Khi nào sự khác biệt về độ chính xác giữa phân tầng và từ đầu đến cuối bị đảo ngược và cách dự đoán hướng của nó dựa trên tính chất của nhiệm vụ (liệu biểu diễn trung gian có thể mang đầy đủ thông tin liên quan đến nhiệm vụ hay không). Để biết các phép đo đa phương thức hoàn chỉnh, xem Li, Bojie và Noah Shi. *Khoảng cách Cascade: Khi nào và tại sao Self-Cascades Trợ giúp đa phương thức Agents.* 2026 (sẽ được xuất bản).
-
-
-![Hình 9-4 So sánh kiến trúc mô hình giọng nói đa phương thức end-to-end ](images/fig9-4.svg)
-
-
-**OpenAI API thời gian thực** gần như hoàn thiện ở cấp mô hình (mô hình xử lý âm thanh nguyên bản), nhưng vẫn dựa trên VAD truyền thống ở cấp độ kiểm soát tương tác, đây là giải pháp trung gian để chuyển đổi sang hoàn thiện từ đầu đến cuối. Ban đầu, nó (được xem trước vào năm 2024) chạy trên GPT-4o và sau khi được phát hành chính thức dưới dạng GA vào năm 2025, nó đã chuyển sang một mô hình dành riêng cho giọng nói độc lập **gpt-realtime**(không còn là chế độ của GPT-4o mà là một mô hình được tối ưu hóa cho giọng nói thời gian thực). API Máy chủ VAD được bật theo mặc định và tự động xác định khi nào người dùng bắt đầu và kết thúc nói chuyện. Hỗ trợ ngắt quãng trong cuộc trò chuyện - ngay lập tức dừng việc tạo giọng nói hiện tại khi phát hiện người dùng đang nói, giống như khi hai người đang trò chuyện trực tiếp thì một bên ngắt lời và bên kia tự nhiên dừng lại. gpt-realtime cũng giới thiệu các lệnh gọi hàm không đồng bộ: mô hình có thể đợi công cụ trả về kết quả trong khi tiếp tục nói chuyện với người dùng, ẩn độ trễ của công cụ trong quá trình hội thoại. Những điều này đã cải thiện trải nghiệm nhưng bản chất vẫn được tối ưu hóa theo khung VAD. **Gemini Live API** có ý tưởng tương tự, hỗ trợ cấu hình độ nhạy VAD và giữ lại thông tin đã gửi khi bị gián đoạn để đảm bảo cuộc trò chuyện diễn ra liên tục.
-
-**Qwen3-Omni** áp dụng kiến trúc Thinker-Talker: chia suy nghĩ (hiểu và lý luận) và diễn đạt (tạo lời nói) thành hai mô-đun chuyên biệt, thống nhất nhận thức và tạo ra văn bản, hình ảnh, âm thanh và video.
-
-Để kiểm soát chi phí tính toán trong khi vẫn duy trì khả năng cao, Qwen3-Omni áp dụng kiến trúc MoE (Hỗn hợp các chuyên gia) - có thể hiểu là "gọi một nhóm chuyên gia theo yêu cầu": nó chứa nhiều mạng chuyên gia nhỏ trong nội bộ và chỉ một số mạng trong số đó phù hợp nhất với nhiệm vụ hiện tại được kích hoạt cho mỗi suy luận và phần còn lại không tham gia tính toán. Ví dụ: khi xử lý lời nói, các chuyên gia liên quan đến giọng nói chủ yếu được kích hoạt và khi xử lý hình ảnh, các chuyên gia liên quan đến thị giác chủ yếu được kích hoạt. Bằng cách này, mô hình không chỉ có tổng số tham số lớn (đảm bảo giới hạn khả năng trên) mà còn kiểm soát lượng tính toán thực tế của một mã thông báo ở mức nhỏ, từ đó cải thiện thông lượng suy luận và giảm độ trễ xếp hàng khi tải cao.
-
-Điều cần phân biệt là MoE giải quyết vấn đề thông lượng "có thể phục vụ bao nhiêu yêu cầu trên mỗi đơn vị sức mạnh tính toán". Nó không trực tiếp xác định "liệu gói âm thanh đầu tiên có thể được phát ra sớm nhất có thể hay không" - độ trễ của gói đầu tiên phụ thuộc vào kiến trúc của đầu tạo. Gói cấp thấp của Qwen3-Omni xuất phát từ thiết kế của mô-đun Talker: nó dần dần tạo ra các mã thông báo âm thanh theo cách tự động hồi quy nhiều sổ mã và hợp tác với codec nhân quả để giải mã dần dần các mã thông báo này thành dạng sóng. Do đó, ngay khi mô-đun tư duy xuất ra văn bản, Người nói có thể tiếp tục truyền phát giọng nói tổng hợp mà không cần đợi toàn bộ câu trả lời được tạo ra. Theo báo cáo chính thức, độ trễ gói đầu tiên về mặt lý thuyết khởi động nguội của nó thấp khoảng 234 mili giây, hỗ trợ 19 hiểu ngôn ngữ và tạo 10 ngôn ngữ, đồng thời dẫn đầu 22 trong số 36 điểm chuẩn âm thanh và video.
-
-**MiniCPM-o 4.5** thu nhỏ hướng tiếp cận này đến mức có thể chạy cục bộ trên một GPU phổ thông hoặc workstation. Mô hình khoảng 9B tham số được xây dựng trên SigLip2, Whisper-medium, CosyVoice2 và Qwen3-8B; nhận trực tiếp văn bản, hình ảnh, video và âm thanh, đồng thời sinh thẳng văn bản và tiếng nói. Câu hỏi hữu ích ở đây không phải là sao chép thêm một bảng xếp hạng, mà là kiểm tra nhận định end-to-end so với self-cascade ở trên: cùng một mô hình có thất bại theo cách khác nhau khi trả lời trực tiếp từ trạng thái ẩn của âm thanh và khi trước tiên làm phẳng âm thanh thành văn bản thuần túy hay không?
-
-> **Thí nghiệm 9-4 ★★: Chạy MiniCPM-o 4.5 cục bộ — End-to-End so với Self-Cascade**
->
-> Checkpoint mở `openbmb/MiniCPM-o-4_5` được ghim ở revision `1f761131…` và chạy cục bộ bằng BF16 trên một RTX PRO 6000 Blackwell 96GB. VRAM cấp phát cực đại là 20,27GiB, thời gian tải mô hình 6,15 giây và không gọi API bên ngoài. Thinking mode được tắt có chủ ý: thí nghiệm đo khả năng bảo toàn thông tin của mô hình Omni, **không** đo “vừa nói vừa suy nghĩ” ở phần sau.
->
-> Bốn WAV tổng hợp nhỏ gồm hai loại nhiệm vụ: hai bài toán nói mà đáp án chỉ phụ thuộc vào từ ngữ, và hai câu có nội dung giống hệt nhưng tốc độ nói nhanh hoặc chậm. Nhánh **end-to-end** đưa WAV trực tiếp vào MiniCPM-o; nhánh **self-cascade** yêu cầu chính mô hình đó tạo bản chép chỉ có từ, cố ý bỏ giọng điệu và tốc độ, rồi chỉ dựa vào văn bản này để trả lời. Cả hai nhánh đều tắt sampling.
->
-> Bảng 9-1 Kết quả MiniCPM-o 4.5 cục bộ (bốn phép kiểm tra cơ chế, không phải benchmark)
+> Cố định một revision cục bộ, tắt chế độ suy nghĩ, rồi so sánh câu trả lời trực tiếp từ audio với self-cascade (transcribe trước, trả lời từ transcript sau). Đo khả năng giữ thông tin âm thanh, **không** đo khả năng “vừa nói vừa suy nghĩ” về sau.
 >
 > | Loại nhiệm vụ | End-to-end | Self-cascade | Quan sát |
 > | --- | ---: | ---: | --- |
-> | Số học ngữ nghĩa (2) | 1/2 | 2/2 | Nhánh trực tiếp nghe “twelve boxes” thành 8; bản chép tường minh giữ đúng số 12 |
-> | Tốc độ cận ngôn ngữ (2) | 2/2 | 1/2 | Hai bản chép trở thành cùng một câu, nên self-cascade cũng trả lời “slow” cho mẫu nhanh |
-> | Tổng | 3/4 | 3/4 | Cùng tổng điểm, vị trí lỗi đối nghịch |
+> | Số học ngữ nghĩa (2) | 1/2 | 2/2 | Self-cascade sửa một lỗi phiên âm |
+> | Tốc độ nói cận ngôn ngữ (2) | 2/2 | 1/2 | Transcript văn bản xóa khác biệt nhanh/chậm |
+> | Tổng | 3/4 | 3/4 | Tổng bằng nhau, lỗi bổ sung |
 >
-> Lần chạy nhỏ này tái hiện dự đoán định tính: khi văn bản mang đủ thông tin liên quan, chép tường minh có thể sửa lỗi tri giác; khi đáp án phụ thuộc vào tốc độ nói, nút thắt văn bản thuần túy xóa bằng chứng không thể phục hồi. Cả hai nhánh đều đạt 75%, vì vậy end-to-end không tự động chính xác hơn. Sau khi tải, thời gian trung bình cho toàn bộ lời gọi là 0,69 giây và 0,55 giây; nhưng thứ tự cố định, độ dài đầu ra khác nhau và chỉ bốn mẫu khiến đây không phải xếp hạng độ trễ nghiêm ngặt.
+> Mẫu nhỏ nên không chứng minh đường nào thường chính xác hay nhanh hơn. Phiên bản, đầu ra thô và bằng chứng audio-to-audio ở [chapter9/end-to-end-speech](../chapter9/end-to-end-speech/).
+
+Step-Audio 2 cho thấy đường end-to-end xử lý audio thô và phát văn bản lẫn giọng nói, chú ý đến cảm xúc, tốc độ, ngữ điệu và âm thanh môi trường. Step-Audio R1 đưa suy luận vào mô hình âm thanh và làm ví dụ cho “vừa suy nghĩ vừa nói”.
+
+### Mô hình 3 · Mô hình tương tác full-duplex
+
+Omni vẫn tách “người dùng nói” và “mô hình nói”, nhưng phiên dịch đồng thời cần chồng lấp. Full-duplex lắng nghe và nói liên tục, liên tiếp quyết định có tiếp tục, dừng, ngắt hay gọi công cụ. Moshi của Kyutai là một ví dụ nghiên cứu sớm. Thinking Machines Lab gọi đây là **Interaction Model**[^ch9-14]: tương tác được xây trong mô hình thay vì lắp quanh VAD. GPT-Live đưa hướng này lên quy mô sản xuất và ủy thác việc phức tạp cho mô hình suy luận nền trong khi mô hình tiền cảnh giữ cuộc trò chuyện.
+
+[^ch9-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration”, 2026-05. https://thinkingmachines.ai/blog/interaction-models/
+
+Đường tiến hóa là: cascade đoán lượt bằng ngưỡng im lặng; nhận biết streaming nâng phán đoán lên mức ngữ nghĩa; full-duplex biến việc đổi lượt thành quyết định liên tục.
+
+### Thời gian nhận thức: tương tác thời gian thực và suy nghĩ sâu
+
+Mô hình tiền cảnh phải trả lời khi người dùng còn chờ; mô hình nền có thể suy nghĩ lâu hơn. Đây là ba đánh đổi, không phải các bậc tiến hóa tuyến tính:
+
+| Thiết kế | Tiền cảnh | Nền | Rủi ro chính |
+| --- | --- | --- | --- |
+| Lấp chỗ nhanh, sửa chậm | Trả lời ngay | Nghĩ lại và bổ sung | Mâu thuẫn |
+| Tương tác nhanh, lời khuyên chậm | Giữ mạch hội thoại và chọn cách nói | Lời khuyên hoặc kết quả công cụ | Giao diện hạn chế |
+| Hợp nhất suy nghĩ và biểu đạt | Vừa suy nghĩ vừa nói | Chia sẻ trạng thái mô hình | Chi phí huấn luyện và thay thế cao |
+
+Giải pháp đầu có thể xử lý câu hỏi hai lần và tự mâu thuẫn. Giải pháp hai ổn định hơn nhờ gửi lời khuyên qua status bar, nhưng tiền cảnh không thấy suy luận trung gian và không thực sự suy nghĩ trong khi nói. Giải pháp ba hợp nhất hai quá trình. Trong Step-Audio R1, MGRD neo suy luận vào đặc trưng âm học, còn kiến trúc hai não MPS cho phép lập kế hoạch và biểu đạt chạy song song (Hình 9-5 và 9-6). Mô hình hợp nhất tự nhiên hơn; thiết kế tách rời dễ thay “bộ não” nền hơn.
+
+### Tổng hợp giọng nói giống con người hơn
+
+TTS truyền thống quá trơn tru và ít ngắt nghỉ sẽ để lộ bản chất máy móc. LLM chính có thể phát thêm các marker điều khiển như \`THINKING\`, \`EMO:happy\`, \`SPEED:0.8x\`; TTS ánh xạ chúng thành khoảng dừng, ngữ điệu, tốc độ, tiếng cười và tiếng thở dài. Có thể huấn luyện TTS hiểu marker hoặc dùng voice cloning với nhiều đoạn tham chiếu.
+
+> **Thử nghiệm 9-4 ★★: TTS điều khiển bằng token với Fish Audio**
 >
-> Lời gọi audio-to-audio gốc còn lưu một WAV mono 24kHz thật dài 11,56 giây, nhưng kế thừa lỗi tri giác 12→8. Phản hồi thô, bản chép, thời gian từng giai đoạn, hash và kiểm tra nghiệm thu nằm tại [`chapter9/end-to-end-speech`](../chapter9/end-to-end-speech/).
-
-**Step-Audio 2** đi theo một lộ trình khác: xử lý trực tiếp âm thanh thô đầu vào và đầu ra văn bản cũng như âm thanh để đạt được cuộc đối thoại bằng giọng nói đầu cuối thực sự. Nó không chỉ có thể hiểu những gì đã được nói (thông tin ngữ nghĩa) mà còn có thể hiểu nó được nói như thế nào - thông tin cận ngôn ngữ (Thông tin song ngữ), chẳng hạn như tâm trạng của người nói là vui hay tức giận, tốc độ nói nhanh hay ngập ngừng, giọng nói đang lên hay xuống - cũng như âm thanh xung quanh và nhạc nền. Nó tạo ra các phản hồi biểu cảm thông qua học tập phản ánh và củng cố, đồng thời tích hợp cơ chế RAG và các công cụ bên ngoài (tìm kiếm trên web, tìm kiếm âm thanh). Theo báo cáo giấy Step-Audio 2, trên tiêu chuẩn hiểu ngôn ngữ StepEval-Audio-Paralinguistic do nó đề xuất, độ chính xác của Step-Audio 2 đạt 83,09%, vượt xa mô hình full-modal nguồn mở Qwen2.5-Omni (44,18%) trong cùng thời kỳ và cũng cao hơn so với Âm thanh GPT-4o (43,45%) và Kimi-Audio (49,64%).
-
-Step-Audio R1 là sản phẩm tiếp theo của dòng Step-Audio. Dựa trên kiến trúc hội thoại bằng giọng nói từ đầu đến cuối của Step-Audio 2, nó tiếp tục nội hóa khả năng tư duy trực tiếp vào mô hình âm thanh. Cả hai đại diện cho sự phát triển tiến bộ của cùng một lộ trình kỹ thuật.
-
-## Mô hình 3 · Mô hình tương tác song công hoàn toàn (Full-Duplex / Interactive)
-
-Mô hình 2 kết hợp ba mô hình thành một, nhưng vẫn tuân thủ giả định "nói lần lượt" - người dùng nói hoặc mô hình nói và điểm chuyển đổi được đoán bởi VAD hoặc ngữ nghĩa. Nhưng một số cảnh đơn giản là không thể đáp ứng được sự luân phiên của "bạn nói một đằng, tôi nói một nẻo". **Dịch song song** là một ví dụ: người phiên dịch không đợi người nói nói hết câu rồi mới nói mà lắng nghe và sắp xếp trong đầu. Ý nghĩa của một nhóm ý nghĩa gần như đầy đủ rồi mới được dịch ra. Nghe và dịch luôn chồng chéo nhau. Trò chơi nhịp điệu **đập trống theo nhạc** thậm chí còn cực đoan hơn - thính giác của bạn phải liên tục theo dõi dòng nhạc không bị gián đoạn, tay bạn phải đánh nhịp theo thời gian thực và bạn phải dự đoán nhịp tiếp theo. Ở đây thậm chí không có một "vòng", đầu vào là một dòng chảy liên tục không bao giờ dừng lại. Những nhiệm vụ như vậy đặt ra thách thức cơ bản đối với mô hình turn-by-turn: chúng yêu cầu thực hiện đồng thời việc lắng nghe, suy nghĩ và hành động và tiền đề của mô hình theo lượt chính xác là đặt ba nhiệm vụ này vào các khoảng thời gian khác nhau. Mô hình song công hoàn toàn đưa con đường "loại bỏ VAD" đến điểm cuối hợp lý - chỉ cần hủy bỏ giả định về "lượt" và cho phép mô hình nghe và nói liên tục cùng một lúc.
-
-Tiền thân của nghiên cứu là **Moshi**(2024) của Kyutai. Nó mô phỏng song song hai luồng âm thanh (giọng nói của người dùng và giọng nói của chính mô hình), được bổ sung bởi luồng văn bản "độc thoại nội tâm" để cải thiện chất lượng ngôn ngữ của giọng nói được tạo ra. Vì bạn luôn lắng nghe nên việc nói chồng chéo và ngắt lời bất cứ lúc nào đã trở thành hành vi tự nhiên. Không cần bất kỳ logic phát hiện gián đoạn rõ ràng nào. Độ trễ từ đầu đến cuối là khoảng 200ms, gần với nhịp điệu tự nhiên trong cuộc trò chuyện của con người.
-
-Vào năm 2026, **Phòng thí nghiệm máy tư duy** do Mira Murati thành lập đã xem trước một danh mục mới mà họ gọi là **Mô hình tương tác**[^ch9-14] và làm rõ ý tưởng đằng sau chế độ song công hoàn toàn: tính tương tác không nên được thể hiện bằng các khai thác trình cắm như VAD Xung quanh mô hình mà phải được tích hợp vào chính mô hình - theo lời ban đầu của anh ấy, "Để khả năng tương tác mở rộng bằng trí thông minh, tính tương tác phải trở thành một phần của bản thân mô hình." Nằm trong kiến trúc là **Micro-rounds (micro-turn)**: Mô hình không đợi toàn bộ vòng hoàn thành mà sử dụng khoảng 200 mili giây làm một khoảng thời gian, liên tục "đọc 200 mili giây, tạo 200 mili giây", cho phép các luồng âm thanh, video và văn bản xen kẽ và nâng cao. Mức độ chi tiết này là sự thỏa hiệp có chủ ý—đủ tốt để sự im lặng, sự chồng chéo và sự gián đoạn được giữ lại dưới dạng các luồng liên tục trong ngữ cảnh của mô hình và không có ranh giới vòng tròn nhân tạo nào cần điều chỉnh; nhưng vẫn đủ thô để cho phép nhiều phương thức được xử lý đồng thời theo khối, giữ độ trễ trong phạm vi thời gian thực có thể nhận biết được. Do sự tương tác được tích hợp vào mô hình nên các hành vi như "nghe và nói" và "xem và xen vào" trước đây cần có dây đai đặc biệt giờ đây đã trở thành một phần của mô hình và sẽ trở nên mạnh mẽ hơn cùng với mô hình: mô hình đầu tiên TML-Interaction-Small đã đào tạo ba luồng lại với nhau từ đầu. Khi phát hiện người dùng đang viết một đoạn mã có lỗi hoặc ai đó bước vào màn hình, nó có thể chủ động nói.
-
-Cách tiếp cận "tư duy chậm" của nó cũng khá mang tính đại diện. Bản thân mô hình tương tác chỉ chịu trách nhiệm duy trì cuộc trò chuyện trực tuyến. Khi gặp một vấn đề yêu cầu suy luận chuyên sâu hoặc gọi công cụ, nó sẽ được giao cho một mô hình lý luận mạnh hơn ở chế độ nền - nội dung được chuyển giao không phải là một truy vấn riêng lẻ mà là ngữ cảnh của toàn bộ cuộc trò chuyện. Mô hình nền đưa ra các suy luận trong khi truyền lại kết quả. Sau đó, mô hình tương tác sẽ chọn một cơ hội không làm gián đoạn người dùng và đưa cơ hội đó vào cuộc trò chuyện một cách tự nhiên, trong đó mô hình sẽ trả lời cuộc trò chuyện, trả lời câu hỏi và tiếp tục nói chuyện như bình thường. Bằng cách này, "độ trễ của mô hình không suy nghĩ" được sử dụng để hiện thực hóa "khả năng lập kế hoạch, công cụ và tác nhân của mô hình lý luận". Theo báo cáo chính thức, độ trễ chuyển đổi vòng của TML-Interaction-Small (tham số 276B MoE, kích hoạt 12B) thấp nhất là khoảng 0,40 giây (GPT-realtime-2.0 là khoảng 1,18 giây), vượt xa đáng kể so với các sản phẩm cạnh tranh có điểm gần như bằng 0 trên tiêu chuẩn sáng kiến trực quan; khi viết, nó vẫn đang trong giai đoạn xem trước nghiên cứu.
-
-[^ch9-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” 2026-05. https://thinkingmachines.ai/blog/interaction-models/
-
-Trong cùng năm đó, **GPT-Live** của OpenAI đã đưa tính năng song công hoàn toàn lên quy mô sản xuất và được triển khai trên toàn cầu dưới dạng mô hình mặc định mới cho giọng nói ChatGPT. Nó không còn coi các cuộc hội thoại như một chuỗi các vòng tin nhắn rời rạc mà tiếp tục xử lý đầu vào trong khi tiếp tục tạo đầu ra, do đó, nó có thể đưa ra nhiều quyết định tương tác mỗi giây: nên nói, tiếp tục nghe, tạm dừng, ngắt quãng hay gọi một công cụ. Hiệu suất như sau: khi người dùng đang suy nghĩ, nó sẽ im lặng chờ đợi thay vì chộp lấy các từ và sẽ sử dụng các tiếng vang như "ừm" và "đúng" để biểu thị rằng nó đang lắng nghe. Nó cũng có khả năng thực hiện các nhiệm vụ như dịch thuật thời gian thực yêu cầu nghe và nói cùng một lúc.
-
-GPT-Live cũng đã đi theo con đường phân công lao động nhanh và chậm tương tự - **tách "tương tác thời gian thực" khỏi "suy nghĩ sâu"**: Khi nói đến tìm kiếm, lý luận hoặc các hoạt động tác nhân phức tạp hơn, GPT-Live, người chịu trách nhiệm tương tác, giao nhiệm vụ cho mô hình tiên tiến ở chế độ nền (GPT-5.5 tại thời điểm phát hành), tiếp tục duy trì luồng cuộc trò chuyện và đưa nó trở lại cuộc trò chuyện sau khi có kết quả ở chế độ nền. GPT-Live-1 và các phiên bản mini sử dụng GPT-5.5 Instant ở chế độ nền, còn các bánh răng Trung bình và Cao gọi GPT-5.5 chu đáo, cho phép người dùng lựa chọn giữa "nhanh" và "sâu" nếu cần. “Sự phân công lao động giữa tốc độ và chậm” này là chủ đề sẽ được phát triển trong phần tiếp theo “Tư duy lựa chọn kiến trúc”.
-
-Xem lại chuỗi tường thuật “thay thế VAD” trong chương này: VAD dựa vào ngưỡng im lặng để đoán việc chuyển đổi quyền phát biểu. Nhận thức truyền phát (xem phần "Nhận thức giọng nói truyền phát" của mô hình trước) nâng cấp phán đoán chuyển đổi lên lớp ngữ nghĩa và mô hình song công hoàn toàn loại bỏ hoàn toàn chính "chuyển đổi" - nó luôn lắng nghe và "gián đoạn" không còn là một sự kiện cần được xử lý đặc biệt, barge-in Do đó, chuỗi xử lý đã bị loại bỏ về mặt kiến trúc khỏi hầu hết các liên kết. Đây là phần cuối của dòng tường thuật "thay thế VAD" tính đến thời điểm viết bài này.
-
-## Nghĩ về sự đánh đổi kiến trúc: từ tách biệt đến thống nhất
-
-Điều thực sự cần giải quyết là mâu thuẫn giữa phản ứng theo thời gian thực và tư duy chuyên sâu: người dùng mong đợi phản hồi ở mức mili giây và các vấn đề phức tạp đòi hỏi thời gian suy nghĩ ở cấp độ giây. Làm thế nào để mô hình có thể suy nghĩ đủ sâu mà vẫn duy trì được độ trễ thấp? Sự mâu thuẫn này không chỉ xảy ra đối với kiến trúc end-to-end và không thể tránh khỏi các đường ống xếp tầng.
-
-Ba giải pháp sau đây không phải là sự lặp lại kỹ thuật tuyến tính - chúng là sự cân bằng trong thiết kế dựa trên các ràng buộc khác nhau và cùng tồn tại trong thực tế. Việc lựa chọn cái nào phụ thuộc vào độ trễ và yêu cầu suy nghĩ sâu sắc của kịch bản ứng dụng. Trước tiên cần làm rõ sự khác biệt giữa ba phương án: Phương án 1 và Phương án 2 về cơ bản là sự phân chia tốc độ và chậm rãi của “hai mô hình độc lập đồng thời” và không dựa vào end-to-end, thậm chí có thể áp dụng cho đường ống phân tầng; chỉ có Kế hoạch 3 mới thực sự đưa tư duy vào mô hình toàn diện.
-
-Điều đáng chú ý là đến năm 2026, con đường “tách nhanh chậm” đã trở thành lựa chọn chủ đạo cho các sản phẩm thoại tiên tiến và có tên gọi riêng. Phòng thí nghiệm Máy Tư duy gọi nó là "Mô hình tương tác" - mô hình tương tác thời gian thực kết hợp với mô hình lý luận nền tảng không đồng bộ; Giọng nói Grok "Think Fast" của xAI, giọng nói Agent của Pine AI và "phái đoàn" GPT-Live ở phần trước đều đi theo cùng một lộ trình "nhanh ở phía trước để duy trì hội thoại, chậm ở phía sau để suy luận sâu". Có một lý do thực tế đằng sau việc chọn tách riêng thay vì "đào tạo một mô hình đa mục đích": các mô hình suy luận tiên tiến được lặp lại vài tháng một lần và khả năng tương tác thời gian thực yêu cầu dữ liệu chuyên biệt và mục tiêu đào tạo. Nhét cả hai vào cùng một mô hình tương đương với việc để nó đuổi theo một mục tiêu đang chuyển động liên tục và cũng có thể làm suy giảm khả năng suy luận có giá trị nhất [^ch9-8]. Ngược lại, miễn là mô hình suy luận mạnh nhất được giữ nguyên ở nền và chỉ có mô hình tương tác nhẹ được huấn luyện ở nền trước thì "bộ não" mạnh nhất luôn có thể được sử dụng. Đây là lý do tại sao GPT-Live nhấn mạnh "chuyển đổi bền vững sang các mẫu tiên tiến mới nhất". Hãy xem xét ba phương án theo thứ tự “cơ chế phối hợp từ yếu đến mạnh”.
-
-### Phương án 1: Nghĩ nhanh để đối phó, chậm để suy nghĩ và trả lời
-
-Tư duy nhanh và chậm được thực hiện song song (Hình 9-5): Tư duy nhanh đưa ra câu trả lời đối phó ngắn trong vòng 500 mili giây (tương tự như một người nói "để tôi suy nghĩ" trước) và tư duy chậm dành 5-10 giây ở chế độ nền để đưa ra câu trả lời hoàn chỉnh sau khi suy nghĩ sâu. Công nghệ mà Slow Thought sử dụng được gọi là "tỷ lệ tính toán trong quá trình suy luận" (test-time Scaling) - theo cách nói thông thường, nó cho phép mô hình "suy nghĩ nhiều hơn một lúc" khi trả lời câu hỏi: thay vì đưa ra câu trả lời trong một bước, nó giống như con người giải các bài toán, lần đầu tiên liệt kê các ý tưởng, rút ra dần dần, kiểm tra kết quả và sử dụng nhiều bước tính toán hơn để đổi lấy câu trả lời chất lượng cao hơn.
-
-
-![Hình 9-5 So sánh kiến trúc và giải pháp tư duy nhanh/chậm ](images/fig9-5.svg)
-
-
-**Vấn đề 1: Suy nghĩ quá nhiều về những câu hỏi đơn giản**. Người dùng hỏi "Hôm nay là ngày gì?" Tư duy nhanh đã trả lời chính xác "Thứ Tư" trong vòng 500 mili giây, nhưng Tư duy chậm vẫn chạy đủ 10 giây suy nghĩ trước khi lặp lại "Thứ Tư". Điều này không chỉ lãng phí tài nguyên máy tính mà còn phá hủy nghiêm trọng nhịp điệu của cuộc trò chuyện - người dùng đã nhận được câu trả lời và sẵn sàng nói về chủ đề tiếp theo, nhưng bị gián đoạn bởi một câu trả lời lặp đi lặp lại. **Vấn đề 2: Tốc độ không nhất quán**. Cả hai làm việc độc lập và song song. Mặc dù họ nhìn thấy cùng một ngữ cảnh nhưng đường lối suy nghĩ của họ có thể hoàn toàn khác nhau - tư duy nhanh đưa ra câu trả lời sơ bộ dựa trên một giả định nào đó, nhưng tư duy chậm lại nhận thấy giả định đó không có giá trị và đưa ra kết luận ngược lại. Người dùng nghe thấy những câu trả lời trái ngược nhau trong vòng vài giây và niềm tin của họ ngay lập tức sụp đổ. Nguyên nhân cơ bản là kế hoạch chia đối thoại thành hai quá trình tư duy độc lập thay vì một hoạt động nhận thức mạch lạc, thiếu cơ chế phối hợp giữa tốc độ và chậm.
-
-```
-<user>Gói này có phù hợp với tôi không?</user>
-<!-- Suy nghĩ nhanh sau 0,5 giây -->
-<trợ lý (suy nghĩ nhanh)>Giá gói này rất tốt, khuyên bạn nên mua. </trợ lý>
-<user>Được rồi, vậy tôi...</user>
-<!-- Suy nghĩ chậm sẽ hoàn thành sau 8 giây -->
-<trợ lý (suy nghĩ chậm)>Chờ một chút, tôi thấy gói này thiếu tính năng chuyển vùng quốc tế mà bạn cần và có thể không phù hợp. </trợ lý>
-<user>(Tức giận) Bạn có khuyên tôi nên mua nó hay không?!</user>
-```
-
-### Phương án 2: Nghĩ nhanh để tương tác, nghĩ chậm để nhắc nhở
-
-Tùy chọn 2 cho phép Tư duy chậm xem đầu ra của Tư duy nhanh và đưa ra đề xuất cho Tư duy nhanh thông qua thanh trạng thái Agent (cơ chế tiêm siêu thông tin động được giới thiệu trong Chương 2) thay vì nói trực tiếp với người dùng. So với giải pháp đầu tiên, có hai cải tiến: Tư duy chậm chạy không đồng bộ trong nền, tận dụng khoảng trống giữa các cuộc hội thoại để tiếp tục suy nghĩ; Bởi vì bạn có thể nhìn thấy đầu ra của Tư duy nhanh nên sẽ không có xung đột trực tiếp mà bạn sẽ rút lui vào hậu trường để đóng vai trò là một “chiến lược gia”. Đoàn GPT-Live nói trên và giọng nói Pine AI Agent đều là ví dụ về giải pháp hai trong sản xuất - mô hình lý luận nền truyền kết luận trở lại mô hình tương tác giao diện người dùng thông qua kênh văn bản được sắp xếp hợp lý và giao diện người dùng sẽ quyết định thời điểm và cách diễn đạt để nói chuyện với người dùng.
-
-Nhưng giải pháp này vẫn còn những hạn chế cơ bản. **Suy nghĩ nhanh có thể không tuân theo hướng dẫn** - Giao tiếp giữa hai trường hợp suy nghĩ độc lập là gián tiếp và mơ hồ. Sau khi nhận được thanh trạng thái Agent, Kuaisi Thought có thể đã hiểu nhầm. Ví dụ: nó hiểu sai "giá cần được xác nhận lại" thành "hỏi người dùng xem họ có thể chấp nhận giá không" thay vì "giá sai và cần phải tính toán lại". **Không thể biết được kết quả tư duy trung gian** - Tư duy chậm đã tạo ra một lượng lớn kết luận trung gian có giá trị trong 10 giây suy nghĩ. Suy nghĩ nhanh hoàn toàn không thể nhìn thấy chúng và chỉ có thể đợi thanh trạng thái Agent cuối cùng. Nếu người dùng hỏi một câu hỏi khác hoặc ngắt lời trước khi Tư duy chậm hoàn thành, Tư duy nhanh chỉ có thể dựa vào hiểu biết hạn hẹp của mình để trả lời. Giống như hai người cùng nhau giải quyết một vấn đề nhưng chỉ có thể giao tiếp bằng cách chuyển những ghi chú và không thể nhìn thấy giấy nháp của nhau.
-
-Phương án 2 cũng gặp phải một vấn đề cơ bản về mặt lý thuyết: **không thể đạt được “nghĩ và nói cùng một lúc”**. Khi con người đối mặt với những vấn đề phức tạp, họ không nghĩ ra một câu trả lời hoàn chỉnh trong đầu rồi nói ra ngay lập tức. Thay vào đó, họ nghĩ về nó từng đoạn một - "Câu hỏi này rất thú vị... (tạm dừng và suy nghĩ) trước tiên chúng ta cần xem xét... (tiếp tục suy nghĩ) thứ hai...". Tư duy nhanh ở phương án thứ hai chỉ có thể lấp chỗ trống và chờ tư duy chậm tạo ra kết quả, và quá trình tư duy không thể xen kẽ một cách tự nhiên trong cuộc trò chuyện.
-
-### Phương án 3: Thống nhất tư duy và cách diễn đạt từ đầu đến cuối (lấy Step-Audio R1 làm ví dụ)
-
-Mặc dù phương án thứ hai giải quyết được vấn đề chờ đợi của tư duy chậm nhưng về mặt cấu trúc vẫn là “nghĩ trước nói sau” - suy nghĩ và biểu hiện vẫn là hai quá trình riêng biệt, không thể vừa suy nghĩ vừa nói như con người. Để vượt qua hạn chế cơ bản này, khả năng tư duy cần được đưa trực tiếp vào mô hình.
-
-Step-Audio R1 đề xuất một giải pháp khác biệt cơ bản theo hướng này: trực tiếp nội hóa khả năng tư duy vào mô hình ngôn ngữ âm thanh đầu cuối và đạt được khả năng "suy nghĩ và nói" thực sự thông qua kiến trúc bộ não kép. Trên thực tế, nó bao gồm hai cơ chế bổ sung, giải quyết hai vấn đề khác nhau tương ứng: **Chưng cất tư duy neo theo phương thức (MGRD)** trước tiên giải quyết "liệu suy nghĩ đó có đúng hay không" - cho phép mô hình suy nghĩ thực sự dựa trên các đặc điểm âm thanh thay vì phiên âm văn bản; **Kiến trúc bộ não kép MPS** sau đó giải quyết vấn đề "không thể nói kịp thời" - cho phép suy nghĩ và biểu đạt diễn ra song song, đạt được khả năng suy nghĩ và nói có độ trễ thấp. Cái trước là tiền đề của cái sau: chỉ khi bản thân suy nghĩ bắt nguồn từ âm thanh, và vừa nói vừa suy nghĩ mới thực sự có giá trị. Mở rộng bên dưới.
-
-**Câu hỏi về suy nghĩ của tác nhân văn bản**. Lý tưởng nhất là các mô hình giọng nói nên phân tích trực tiếp các đặc điểm giọng nói (chẳng hạn như cao độ, nhịp điệu, ngữ điệu) để hiểu được cảm xúc hoặc ý định của người nói. Nhưng trên thực tế, nhiều mô hình đi tắt: có hiện tượng phản trực giác trong các mô hình ngôn ngữ âm thanh hiện có. Chuỗi suy nghĩ càng dài thì hiệu suất càng kém. Nhóm Step-Audio R1 nhận thấy nguyên nhân sâu xa là "Lý luận thay thế văn bản" (nghĩa là sử dụng thông tin văn bản để "thay thế" thông tin âm thanh để phân tích): Khi mô hình đang "suy nghĩ", nó thực sự đang suy nghĩ ở cấp độ ngữ nghĩa dựa trên phiên âm văn bản, thay vì thực sự phân tích các đặc điểm âm thanh. Ví dụ: khi mô hình được yêu cầu xác định tâm trạng của một bài hát, nó sẽ phân tích "lời bài hát đề cập đến nỗi buồn" thay vì "giai điệu thứ cộng với đường viền cao độ giảm dần truyền tải cảm giác buồn". Sự sai lệch về phương thức này bắt nguồn từ dữ liệu huấn luyện: dữ liệu CoT (Chain-of-Thought, chuỗi suy nghĩ) của hầu hết các mô hình âm thanh được tạo bởi các mô hình văn bản và kế thừa một cách tự nhiên chế độ suy nghĩ của văn bản thuần túy.
-
-**Chưng cất tư duy neo theo phương thức**(MGRD, Modality-Grounded Chưng cất lý luận) giải quyết vấn đề này thông qua quá trình tự cải thiện lặp đi lặp lại (Hình 9-6). Mặc dù cái tên rất hay nhưng ý tưởng cốt lõi thực sự rất trực quan: lọc ra quá trình tư duy "thực sự nghe âm thanh", sử dụng chúng để huấn luyện mô hình và để mô hình học cách phân tích bằng tai như một giáo viên dạy nhạc, thay vì chỉ nhìn vào lời bài hát như một trình soạn thảo văn bản. Cụ thể chia làm 3 bước:
-
-1. Hãy để mô hình hiện tại tạo ra nhiều quy trình suy nghĩ khác nhau cho cùng một đoạn âm thanh, sau đó lọc ra những quy trình thực sự dựa trên các đặc điểm âm thanh. Làm thế nào để lọc? Xem có thông số âm thanh cụ thể nào được đề cập trong nội dung tư duy không. Ví dụ: đối với đầu vào bằng giọng nói tức giận, suy nghĩ dựa trên văn bản là "người dùng đã nói những từ tiêu cực như 'quá tệ' nên phán đoán là tức giận" - đây chỉ là phân tích nội dung văn bản; trong khi tư duy dựa trên tính năng âm thanh là "tốc độ nói nhanh hơn 40% so với bình thường, âm lượng tăng lên đáng kể và âm sắc sắc nét hơn" - đây thực sự là "lắng nghe" âm thanh. MGRD lọc cái sau
-2. Sử dụng dữ liệu tư duy chất lượng cao này để đào tạo lại mô hình và tăng cường khả năng "nghĩ bằng tai"
-3. Tối ưu hóa hơn nữa thông qua học tăng cường để ngăn mô hình lười biếng và bỏ qua suy nghĩ để đoán trực tiếp câu trả lời.
-
-Sau nhiều lần lặp lại, cơ sở suy nghĩ dần dần chuyển từ trừu tượng văn bản sang phân tích âm thanh - mô hình bắt đầu tập trung vào "đường viền cao độ giảm mạnh ở mức 1,2 giây" thay vì nói chung là "người nói có vẻ không hài lòng".
-
-**Kiến trúc bộ não kép MPS**(Mind-Paced Talking, dịch theo nghĩa đen là "nói theo nhịp điệu suy nghĩ") giải quyết mâu thuẫn về độ trễ giữa suy nghĩ và đầu ra lời nói (Hình 9-6). Nó được lấy cảm hứng từ sự phân công lao động trong não người: vùng chịu trách nhiệm suy nghĩ và vùng chịu trách nhiệm tổ chức ngôn ngữ tách biệt và có thể hoạt động song song - trong khi bạn đang nghĩ về câu tiếp theo, miệng bạn vẫn đang nói câu trước đó. MPS sử dụng hai mô hình để mô phỏng sự phân công lao động này: **Bộ não hình thành** chịu trách nhiệm suy nghĩ liên tục và tạo ra các kết quả tư duy; **Bộ não biểu hiện**(Bộ não phát âm) nhận được một phần kết quả suy nghĩ mới, kết hợp suy nghĩ trước đó với các câu trả lời hiện có và chuyển nó thành một câu trả lời bằng giọng nói.
-
-Cả hai hoạt động song song - bộ não sáng tạo không cần phải suy nghĩ thấu đáo mọi thứ trước khi bộ não biểu cảm bắt đầu nói. Ví dụ: tại thời điểm t=0ms, bộ não hình thành ý tưởng bắt đầu phân tích câu hỏi của người dùng và đưa ra kết quả suy nghĩ đầu tiên (chuỗi mã thông báo văn bản) tại thời điểm t=200ms; sau khi bộ não biểu hiện nhận được kết quả này ở tốc độ t=200 mili giây, nó kết hợp ngữ cảnh trả lời được tạo và bắt đầu xuất mã thông báo giọng nói tương ứng ở tốc độ t=350 mili giây. Hai mô-đun hoạt động song song theo kiểu đường ống và người dùng có thể nghe thấy âm tiết đầu tiên ở thời điểm t=350ms.
-
-
-![Hình 9-6 Kiến trúc bộ não kép Step-Audio R1 MGRD và MPS ](images/fig9-6.svg)
-
-Phương án thứ ba “nội hóa” tư duy thành một mô hình duy nhất, đạt được “tư duy và nói” một cách tao nhã nhất, nhưng cái giá phải trả là “mục tiêu di động” được đề cập ở đầu phần này: mô hình này phải vừa là nhà lý luận mạnh nhất, vừa là người nói theo thời gian thực, cả hai khả năng đều đang phát triển nhanh chóng và lộ trình thống nhất phải được đào tạo lại nhiều lần để theo kịp. Điều này cũng giải thích sự phân chia ngành tại thời điểm viết bài - các sản phẩm tiên tiến (GPT-Live, Grok Voice, Pine AI) theo đuổi "khả năng chuyển sang bộ não mới nhất bất cứ lúc nào" chủ yếu tập trung vào lộ trình tách rời của tùy chọn hai, trong khi tùy chọn ba phù hợp hơn cho các tình huống theo đuổi sự tự nhiên tột độ và sẵn sàng chịu chi phí đào tạo chuyên môn. Cả hai không phải là cái này thay thế cái kia, mà là sự đánh đổi giữa "bộ não có thể thay thế" và "suy nghĩ và nói chặt chẽ hơn cùng một lúc".
-
-### Giao diện giữa nhanh và chậm: ngoài văn bản còn có thể truyền được gì nữa
-
-(Mẹo: Đây là cuộc thảo luận có giao diện đa kịch bản, tạm thời rời khỏi dòng chính.) Nhìn lại Kế hoạch 2, bạn sẽ thấy một khía cạnh thiết kế bị bỏ qua: Tư duy chậm "chuyển từ" sang Tư duy nhanh, sử dụng kênh **văn bản**(chuyển gợi ý qua thanh trạng thái). Văn bản dễ hiểu và dễ gỡ lỗi, nhưng nó là cọng rơm mỏng manh cho việc chậm rãi suy nghĩ về những gì trong đầu tôi - trạng thái trung gian thực sự phong phú, được nén lại trong một vài câu. Vì vậy, liệu ranh giới giữa tốc độ và sự chậm chạp này có thể không sử dụng từ ngữ?
-
-Trong các trò chơi thời gian thực, vốn là những kịch bản đòi hỏi nhịp điệu cao nhất, con đường này khả thi (có thể gọi là cầu nối tiềm ẩn) [^ch9-8]: Để một mô hình nhỏ chịu trách nhiệm phản ứng nhanh (hơn một chục hành động mỗi giây) và một mô hình chậm chịu trách nhiệm lý luận (suy nghĩ một lần mỗi giây) bị đóng băng, chỉ đào tạo một "cầu nối" nhỏ với hàng chục triệu tham số giữa chúng và trực tiếp chiếu các kết luận lớp ẩn của mô hình chậm thành một số mô hình "tiềm ẩn". "Mã thông báo" được đánh vần vào đầu vào của mô hình nhanh giống như một mô hình đa phương thức cắm mã thông báo trực quan vào đó - bỏ qua hành trình vòng quanh "ý tưởng → văn bản → sau đó hiểu". Kết quả là, trên nhiều trò chơi Atari, kênh không gian tiềm ẩn này cao hơn nhiều so với kênh văn bản truyền thống (một số trò chơi từ +26% đến +82%) và mỗi bước chỉ mất thêm khoảng 5 mili giây, vẫn theo kịp nhịp thời gian thực.
-
-Nó cũng đưa ra một ranh giới trung thực: **Việc cộng tác nhanh và chậm có hữu ích hay không tùy thuộc vào nút thắt của nhiệm vụ là "bạn muốn hay không" hay "không đủ thời gian để phản ứng"** - cầu nối này chỉ có thể hữu ích khi suy nghĩ chậm vốn đã tốt hơn phản ứng nhanh (mối tương quan này cao tới r≈0,9 trên các trò chơi); ngược lại, nếu nhiệm vụ chỉ thuần túy về tốc độ phản ứng thì cầu có tốt đến đâu cũng không giúp ích được gì. Nhận định này không chỉ đúng với trò chơi, nó còn dự đoán vấn đề tương tự mà Computer Use sẽ gặp phải ở phần sau của chương này: khi nào nên thuê một "chiến lược gia chậm chạp" và khi nào thì chỉ cần thêm sự chậm trễ.
-
-[^ch9-8]: Phân tích đầy đủ về việc chỉ đào tạo cầu nối không gian tiềm ẩn giữa hai mô hình bị đóng băng và "khi nào nên thuê một nhà tư vấn chậm". *Cầu nối tiềm ẩn: Kênh Slow-Fast liên tục dành cho trò chơi Real-Time Agents.* arXiv:2606.24470, 2026.
-
-Cho dù là end-to-end hay mô-đun, chất lượng tương ứng của các lớp nhận thức và thực thi vẫn rất quan trọng. Mô hình đầu cuối giải quyết vấn đề độ trễ ở cấp độ kiến trúc, nhưng hai chức năng cơ bản là "nghe chính xác" và "nói như" sẽ không được giải quyết tự động do những thay đổi trong kiến trúc. Nhận thức truyền phát giọng nói tương ứng với "nghe chính xác" đã được thảo luận trong Mô hình 1. Ở đây chúng ta xem xét lớp thực thi "nói như": tổng hợp giọng nói giống con người hơn.
-
-## Tổng hợp giọng nói giống con người hơn
-
-Sự "hoàn hảo" của TTS truyền thống chính là vấn đề: quá mượt, không có điểm dừng và không có từ đệm khiến người ta biết rằng đó là một cỗ máy. Những “điểm không hoàn hảo” đó trong lời nói của con người không phải là những sai sót—những khoảng dừng, những từ lấp chỗ trống (“ừm,” “uh,” “cái đó”), sự lặp lại không thường xuyên—mà là những biểu hiện tự nhiên của quá trình suy nghĩ, gửi những tín hiệu quan trọng đến người nghe chẳng hạn như “Tôi đang nghĩ,” “Tôi không chắc,” v.v. Tuy nhiên, tốc độ tư duy của AI nhanh hơn nhiều so với phát lại giọng nói và đầu ra mượt mà và đầy đủ một cách tự nhiên. Tổng hợp trực tiếp sẽ tiết lộ danh tính của máy.
-
-**Giải pháp**: Trao quyền quyết định "tạm dừng ở đâu và sử dụng âm nào" cho LLM chính. LLM không chỉ xuất ra văn bản mà còn xuất ra các thẻ điều khiển: `[THINKING]` có nghĩa là chèn 1-2 giây tạm dừng suy nghĩ và âm thanh phụ ("um..."); `[SEARCHING]` tạo ra các khoảng dừng ngắn hơn và tìm kiếm các từ bổ sung ("that..." "cách nói"); `[EMO:happy]`, v.v. để điều chỉnh âm sắc và nhịp điệu; `[SPEED:0.8x]` kiểm soát tốc độ nói. Chỉ LLM mới biết liệu bạn có cần tạm dừng để trả lời một câu hỏi phức tạp hay không, liệu người dùng có thiếu kiên nhẫn và nên nói nhanh hơn hay liệu cuộc trò chuyện có nên sôi nổi hơn hay không.
-
-TTS đóng vai trò là bộ tạo đa phương thức trong giải pháp này, nhập văn bản + thẻ điều khiển và xuất âm thanh. Khi gặp văn bản thông thường, nó sẽ tổng hợp giọng nói một cách bình thường và khi gặp dấu điều khiển, nó sẽ tạo ra âm thanh phi ngôn ngữ tương ứng: `[THINKING]` tạo ra tiếng kéo dài "ừm...", `[SIGH]` tạo ra tiếng thở dài, `[LAUGH:small]` tạo ra tiếng cười khúc khích và `[BREATH]` tạo ra tiếng hít vào.
-
-Có hai cách triển khai: một là tự phát triển các thẻ điều khiển hỗ trợ TTS (độ linh hoạt cao nhất nhưng cần có đội ngũ chuyên nghiệp); cách thứ hai là sử dụng nhân bản giọng nói để chuẩn bị hàng tá giọng nói tham chiếu với những cảm xúc, tốc độ nói và phong cách khác nhau cho cùng một người ảo và chọn giọng nói tham chiếu phù hợp nhất theo thẻ điều khiển để gọi TTS API (chẳng hạn như ElevenLabs, Fish Audio) và quá trình triển khai có thể hoàn tất trong vòng vài tuần.
-
-> **9-5 thử nghiệm ★★: Trình điều khiển điểm đánh dấu điều khiển dựa trên âm thanh cá TTS**
->
-> Sử dụng khả năng sao chép âm thanh của Fish Audio S1 (chỉ mất 3-10 giây lời nói tham chiếu để sao chép cùng một âm thanh không có mẫu). Xây dựng 24 thư viện giọng nói tham khảo, bao gồm các cảm xúc (trung tính/vui vẻ/thất vọng/suy nghĩ) x tốc độ nói (bình thường/nhanh/chậm) x phong cách (trang trọng/thư giãn), mỗi thư viện khoảng 5 giây.
->
-> LLM Ví dụ đầu ra: `[EMO:hạnh phúc][TỐC ĐỘ:nhanh]Tuyệt vời! Đơn đặt hàng của bạn đã được xác nhận. [SUY NGHĨ] Thôi để mình kiểm tra thời gian vận chuyển...[EMO:trung tính][TỐC ĐỘ:bình thường] Dự kiến chiều mai sẽ giao hàng. `
->
-> Lớp thực thi phân tích các thẻ và ánh xạ chúng tới các giọng tham chiếu tương ứng: `[EMO:happy][SPEED:fast]` tương ứng với giọng tham chiếu "vui vẻ + nhanh + thoải mái", `[THINKING]` tương ứng với giọng tham chiếu "suy nghĩ + chậm + trang trọng" (có nhịp tạm dừng và giọng do dự), `[EMO:neutral][SPEED:normal]` tương ứng với giọng tham chiếu "trung tính + bình thường + trang trọng". Fish Audio sẽ đảm bảo rằng âm sắc của các giọng tham chiếu khác nhau là nhất quán, chỉ có những thay đổi về nhịp điệu và cảm xúc.
->
-> So sánh ba cấu hình: không có dấu kiểm soát (mượt mà nhưng máy móc, thoạt nhìn có vẻ giống AI), giọng tham chiếu đơn (tự nhiên nhưng đơn điệu về mặt cảm xúc) và nhiều thư viện giọng nói tham chiếu (vui vẻ và nhanh chóng khi xác nhận thông tin, có khoảng dừng tự nhiên trước khi giải thích và biểu cảm tổng thể gần với biểu hiện của một dịch vụ khách hàng thực sự).
-
+> Dùng Fish Audio S1 để xây dựng thư viện giọng nhiều tham chiếu và so sánh ba cấu hình: không marker, một đoạn tham chiếu và nhiều đoạn tham chiếu. Lớp thực thi chọn cảm xúc, tốc độ và phong cách khớp marker. Cấu hình nhiều tham chiếu đạt điểm cao nhất trong ba vòng nghe mù cân bằng (độ giống nhân viên dịch vụ khách hàng thật 4,67/5), nhưng thứ tự dự kiến không lặp lại đầy đủ vì nhánh không marker vượt nhánh một tham chiếu. Kết quả gợi ý kiểm soát biểu cảm có ích, song nghiên cứu nghe nhỏ không kết luận chất lượng giọng nói nói chung. Thư viện 24 tham chiếu, media A/B/C và hồ sơ nghiệm thu ở [chapter9/controllable-tts](../chapter9/controllable-tts/).
 ## Computer Use: GUI Tự động hóa Agent
 
 Khi đọc điều này, bạn có thể nhận thấy rằng chương này dành nhiều không gian cho giọng nói hơn đáng kể so với hai cảnh cuối - điều này là có chủ ý. Trên tiến trình phát triển của đa phương thức thời gian thực, giọng nói là thứ hoàn thiện nhất và đáng được sử dụng làm hệ thống tham chiếu nhất: bắt đầu từ vấn đề "độ trễ đường ống nối tiếp quá cao", thông qua một loạt các giải pháp như end-to-end, full-duplex, suy nghĩ và nói chuyện, v.v., cho đến phần cuối tương đối hình thành ngày nay, toàn bộ quá trình của vấn đề → giải pháp → kết thúc đã được hoàn thành. Vì vậy, hãy giải thích nó kỹ lưỡng. Hai cảnh tiếp theo của Computer Use và robot có thể được xem trong ngữ cảnh giọng nói - chúng đã đạt đến giai đoạn nào của đường tiến hóa này và chúng đang bị mắc kẹt ở đâu.
@@ -317,7 +143,7 @@ Computer Use (còn gọi là GUI Automation Agent) cho phép AI sử dụng ph�
 4. Đợi giao diện phản hồi rồi chụp ảnh màn hình lại để vào chu kỳ tiếp theo.
 
 
-![Hình 9-7 Chu trình nhận thức-suy nghĩ-hành động của Tác nhân sử dụng máy tính ](images/fig9-7.svg)
+![Hình 9-6 Chu trình nhận thức-suy nghĩ-hành động của Tác nhân sử dụng máy tính ](images/fig9-7.svg)
 
 
 Có ba chiều thiết kế chính trong chu trình này: **không gian hành động**(những thao tác mà Agent có thể thực hiện), **định vị trực quan**(cách tìm phần tử mục tiêu trong ảnh chụp màn hình) và **kiến trúc mô hình**(cách tạo hành động chính xác từ ảnh chụp màn hình).
@@ -327,7 +153,7 @@ Có ba chiều thiết kế chính trong chu trình này: **không gian hành đ
 Anthropic xác định ba loại công cụ để hình thành khả năng tương tác hoàn chỉnh (Hình 9-8):
 
 
-![Hình 9-8 Máy tính Sử dụng không gian hành động ](images/fig9-8.svg)
+![Hình 9-7 Máy tính Sử dụng không gian hành động ](images/fig9-8.svg)
 
 
 **GUI Operation Tool**(công cụ máy tính): Thao tác chuột bao gồm di chuyển (mouse_move), nhấp chuột trái/phải/giữa, nhấp đúp/ba lần, kéo (left_click_drag) và nhấn/nhả chi tiết hơn (left_mouse_down/up). Cuộn hỗ trợ bốn hướng và có thể được sử dụng với các phím bổ trợ. Thao tác trên bàn phím bao gồm nhập từng từ (loại, mỗi ký tự cách nhau 12 mili giây để mô phỏng thao tác gõ thực), tổ hợp phím (phím, chẳng hạn như Ctrl+C) và nhấn và giữ (hold_key). Các hành động được nhận biết: ảnh chụp màn hình (ảnh chụp màn hình), lấy vị trí con trỏ (cursor_position), chờ (wait).
@@ -336,7 +162,7 @@ Anthropic xác định ba loại công cụ để hình thành khả năng tươ
 
 **Công cụ chỉnh sửa tệp**(str_replace_editor): Chỉnh sửa an toàn đạt được thông qua khớp chuỗi. Nó hỗ trợ các hoạt động xem, tạo, thay thế, chèn và hoàn tác. Nó chính xác hơn việc ghi đè trực tiếp toàn bộ tập tin và ít có khả năng vô tình làm thay đổi nội dung khác.
 
-> **Thử nghiệm 9-6 ★: Chạy Computer Use (lộ trình tham chiếu Anthropic hoặc lộ trình mô hình mở)**
+> **Thử nghiệm 9-5 ★: Chạy Computer Use (lộ trình tham chiếu Anthropic hoặc lộ trình mô hình mở)**
 >
 > Lộ trình A sử dụng Anthropic Computer Use Demo. Container đóng gói một môi trường desktop Ubuntu hoàn chỉnh, gồm trình duyệt, terminal và các công cụ thông dụng khác. Frontend nhận tác vụ; backend gửi hướng dẫn và ảnh chụp màn hình đến Claude, rồi thực thi các thao tác chuột, bàn phím, terminal hoặc chỉnh sửa do mô hình trả về. Lộ trình này dùng để tìm hiểu giao thức công cụ `computer` nguyên bản; không yêu cầu mọi độc giả đều phải có quyền truy cập Anthropic API.
 >
@@ -375,7 +201,7 @@ Elements:
 Mô hình chỉ cần xuất số ID và hệ thống sẽ tự động sử dụng tọa độ trung tâm của phần tử để thực hiện nhấp chuột. Loại giải pháp này không lưu mã thông báo (vì tất cả thông tin chú thích phải được gửi đến mô hình), nhưng định vị chính xác và ổn định, đồng thời tránh được các phát hiện bị bỏ sót và phát hiện sai có thể do mô hình phân đoạn đưa ra.
 
 
-![Hình 9-9 Bộ đánh dấu và chỉ mục phần tử có cấu trúc (triển khai sử dụng trình duyệt) ](images/fig9-9.svg)
+![Hình 9-8 Bộ đánh dấu và chỉ mục phần tử có cấu trúc (triển khai sử dụng trình duyệt) ](images/fig9-9.svg)
 
 **Dự đoán tọa độ thuần túy.**
 
@@ -384,12 +210,12 @@ Tuyến thứ ba không thực hiện bất kỳ chú thích nào và trực ti�
 Trong sơ đồ dự đoán tọa độ, sự hiểu biết của mô hình về tọa độ phụ thuộc nhiều vào độ phân giải được sử dụng trong quá trình huấn luyện (Hình 9-10). Claude được đào tạo bằng XGA (1024x768), WXGA (1280x800) và FWXGA (1366x768). Nếu độ phân giải ảnh chụp màn hình đầu vào không khớp, tọa độ mà mô hình dự đoán sẽ được bù một cách có hệ thống - giống như đo khoảng cách trên bản đồ nhỏ và sau đó sử dụng trực tiếp trên bản đồ lớn. Do đó, cần triển khai cơ chế chia tỷ lệ tọa độ hai chiều trên lớp công cụ và chọn độ phân giải mục tiêu theo tỷ lệ khung hình để tránh kéo dài không đẳng cự làm biến dạng hình ảnh và làm sai lệch phán đoán tọa độ. Ví dụ: nếu độ phân giải màn hình thực là 2560×1440 (16:9), bạn nên chọn một trong ba mức được Claude hỗ trợ với tỷ lệ khung hình cũng gần 16:9 – FWXGA (1366×768) là phù hợp nhất. Khi chụp ảnh màn hình, hãy chia tỷ lệ màn hình thành 1366×768 và gửi cho mô hình; sau khi mô hình xuất ra tọa độ nhấp chuột (683, 384), nó sẽ được ánh xạ ngược sang tọa độ thực (683×2560/1366, 384×1440/768) ≈ (1280, 720). Ngược lại, nếu bạn kéo căng mạnh 16:9 thành 4:3 1024×768, màn hình sẽ bị nén theo chiều ngang và tọa độ mà mô hình dự đoán sẽ bị dịch chuyển một cách có hệ thống.
 
 
-![Hình 9-10 Khớp độ phân giải và chia tỷ lệ tọa độ hai chiều ](images/fig9-10.svg)
+![Hình 9-9 Khớp độ phân giải và chia tỷ lệ tọa độ hai chiều ](images/fig9-10.svg)
 
 
 Logic lựa chọn của ba tuyến đường có thể được tóm tắt như sau: **Khi có sẵn thông tin có cấu trúc, chỉ mục Cây DOM/Accessibility** được sử dụng đầu tiên và vị trí là chính xác và ổn định nhất; **Khi không có sẵn**(phần mềm máy tính gốc như Photoshop, giao diện kết xuất Canvas/WebGL, trò chơi), **Bạn có thể sử dụng chú thích trực quan (tuyến SoM gốc) hoặc dự đoán tọa độ**. Chú thích trực quan biến việc định vị thành một câu hỏi trắc nghiệm, thân thiện hơn với các mô hình tổng quát chưa được đào tạo đặc biệt; dự đoán tọa độ loại bỏ bước chú thích và trực tiếp hơn đối với các mô hình đã trải qua khóa đào tạo định vị GUI. Vẫn còn khoảng cách về độ chính xác giữa hai yếu tố này trên các phần tử nhỏ và giao diện dày đặc.
 
-> **Thử nghiệm 9-7 ★: Sử dụng browser-use để đạt được hoạt động trình duyệt tự động**
+> **Thử nghiệm 9-6 ★: Sử dụng browser-use để đạt được hoạt động trình duyệt tự động**
 >
 > Kết hợp Playwright, một framework tự động hóa trình duyệt, với mô hình đa phương thức để triển khai thao tác trình duyệt được điều khiển bằng ngôn ngữ tự nhiên. Bật trực quan hóa SoM và lưu ảnh chụp màn hình có hộp giới hạn được chú thích trước mỗi quyết định. Giao diện mô hình không bị giới hạn ở OpenAI hay Anthropic; sách cung cấp cấu hình API cho mô hình mở Qwen3-VL và giữ một base URL tổng quát tương thích OpenAI cho các dịch vụ lưu trữ khác hoặc suy luận tự lưu trữ.
 >
@@ -431,8 +257,8 @@ Khác với trường giọng nói, bản chất thời gian thực của Comput
 
 ## Vận hành robot: từ điều khiển thời gian thực đến huấn luyện và khái quát hóa
 
-> **Mẹo đọc**: Phần này thảo luận về việc điều khiển robot. Thử nghiệm 9-10 cho thấy phương pháp di chuyển từ mô phỏng sang thực tế - phần đào tạo mô phỏng (bước 3-4) có thể được hoàn thành trên máy chủ GPU thuần túy không cần phần cứng; nhưng để tái tạo toàn bộ quy trình từ đầu đến cuối (bao gồm các bước triển khai thực tế), cần có phần cứng thực sự như cánh tay robot SO100. Nếu bạn tạm thời không quan tâm đến lĩnh vực robot, bạn có thể bỏ qua phần này mà không ảnh hưởng đến việc đọc các chương khác.
-
+> **Năm thí nghiệm trong phần này dùng cùng một nhiệm vụ: đặt chiếc cốc đỏ vào khay, đặt mảnh giấy vàng vào thùng rác, rồi quan sát lại và xác nhận trạng thái mặt bàn. Robot thật và mô phỏng được báo cáo riêng, nhưng ngữ nghĩa hành động và điều kiện thành công là như nhau.**
+>
 Lời nói Agent phải đối mặt với độ trễ trong phương thức thính giác, Computer Use phải đối mặt với độ trễ trong phương thức hình ảnh, đồng thời độ trễ và các thách thức đa phương thức càng được khuếch đại hơn khi Agent cần điều khiển rô-bốt trong thế giới vật lý—hậu quả của các hành động là không thể khắc phục được và một va chạm duy nhất có thể làm hỏng vật thể hoặc chính rô-bốt. Phần này trước tiên xem xét cách robot sử dụng kiến trúc hai lớp và phân đoạn hành động để ngăn chặn các vấn đề kiểm soát thời gian thực, sau đó chuyển sang phần cứng hơn hiện tại của nó - đào tạo và khái quát hóa: dữ liệu đến từ đâu và cách mô hình được chuyển qua các nhiệm vụ và nền tảng.
 
 ### Phần cứng không phải là nút thắt cổ chai, chính là thuật toán
@@ -443,15 +269,15 @@ Cần phải vạch ra ranh giới rõ ràng cho khẳng định này: Bằng ch
 
 Đối với loại nhiệm vụ này, khoảng cách thực sự nằm ở cấp độ thuật toán, điều này sẽ được thảo luận trong hai phần phụ sau.
 
-> **Thử nghiệm 9-8 ★: Trải nghiệm vận hành từ xa XLeRobot**
+> **Thử nghiệm 9-7 ★: Vận hành từ xa XLeRobot để dọn mặt bàn**
 >
-> XLeRobot hỗ trợ nhiều phương pháp điều khiển từ xa như bàn phím, bộ điều khiển Xbox, Switch Joycon và tai nghe VR. Bằng cách đích thân điều khiển robot để hoàn thành các nhiệm vụ như nhặt, đặt và lau đồ vật, quan sát độ trễ phản hồi, độ chính xác của chuyển động và chất lượng hoàn thành nhiệm vụ, đồng thời thiết lập sự hiểu biết trực quan về ranh giới của khả năng phần cứng. Sau trải nghiệm cá nhân, bạn sẽ thấy rằng robot có thể làm mọi thứ khi được con người điều khiển, cho thấy điểm nghẽn hiện tại thực sự là ở thuật toán chứ không phải ở phần cứng. [^ch9-1]
+> **Mục tiêu:** Điều khiển từ xa một XLeRobot thật để hoàn thành cùng nhiệm vụ nhiều bước và kiểm tra trạng thái mặt bàn.
 >
-> [^ch9-1]: XLeRobot, “Tài liệu Teleop” . https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
-
+> **Nguyên tắc:** Cánh tay giá vài trăm đô la có thể làm được nhiệm vụ này khi con người vận hành từ xa; với nhiệm vụ này, thân phần cứng không phải nút thắt mà là nhận thức, lập kế hoạch, điều khiển vòng kín và phục hồi lỗi.
+>
 ### Kiến trúc hai tầng: tách biệt giữa lập kế hoạch và kiểm soát
 
-Robot hoàn thành các nhiệm vụ gia đình phức tạp đòi hỏi phải đưa ra quyết định trên hai thang thời gian khác nhau. Cấp độ đầu tiên chậm hơn **lập kế hoạch dài hạn**(lập kế hoạch long-horizon): chia nhỏ các hướng dẫn cấp cao như "dọn dẹp nhà bếp" thành các chuỗi mục tiêu phụ (làm sạch mặt bàn, xếp đồ vào máy rửa chén, lau bề mặt), yêu cầu hiểu ngữ nghĩa của môi trường, suy luận về sự phụ thuộc của nhiệm vụ và lập kế hoạch hành động gồm nhiều bước - giống như mọi người nghĩ về "việc cần làm trước và việc cần làm tiếp theo" trước khi hành động. Lớp thứ hai là **điều khiển VLA** nhanh hơn (Vision-Language-Action, mô hình hành động ngôn ngữ thị giác): thực hiện từng thao tác cụ thể ("đi đến bồn rửa", "nhặt giẻ lau", "lau mặt bàn") và liên tục xuất ra các tín hiệu điều khiển dựa trên hình ảnh hiện tại và hướng dẫn ngôn ngữ để giúp chuyển động của rô-bốt trơn tru và mạch lạc.
+Robot hoàn thành các nhiệm vụ gia đình phức tạp đòi hỏi phải đưa ra quyết định trên hai thang thời gian khác nhau. Cấp độ đầu tiên chậm hơn **lập kế hoạch dài hạn**(lập kế hoạch long-horizon): chia nhỏ các hướng dẫn cấp cao như "dọn dẹp mặt bàn" thành các chuỗi mục tiêu phụ (làm sạch mặt bàn, xếp đồ vào máy rửa chén, lau bề mặt), yêu cầu hiểu ngữ nghĩa của môi trường, suy luận về sự phụ thuộc của nhiệm vụ và lập kế hoạch hành động gồm nhiều bước - giống như mọi người nghĩ về "việc cần làm trước và việc cần làm tiếp theo" trước khi hành động. Lớp thứ hai là **điều khiển VLA** nhanh hơn (Vision-Language-Action, mô hình hành động ngôn ngữ thị giác): thực hiện từng thao tác cụ thể ("đi đến bồn rửa", "nhặt giẻ lau", "lau mặt bàn") và liên tục xuất ra các tín hiệu điều khiển dựa trên hình ảnh hiện tại và hướng dẫn ngôn ngữ để giúp chuyển động của rô-bốt trơn tru và mạch lạc.
 
 Kiến trúc hai tầng này phân tách sự phức tạp một cách hiệu quả: lập kế hoạch dài hạn chịu trách nhiệm về "cái gì" và kiểm soát VLA chịu trách nhiệm về "như thế nào". Kiến trúc hai lớp "ra quyết định chậm ở trên cùng + thực hiện nhanh ở dưới cùng" này có cấu trúc rất giống với "tư duy nhanh và chậm" trong kịch bản giọng nói trước đó - cả hai đều tách rời tư duy phức tạp và phản hồi theo thời gian thực thành các mô-đun khác nhau. Cần lưu ý rằng việc "lập kế hoạch/kiểm soát" ở đây tương ứng với việc tách rời chiều hướng "suy nghĩ sâu chậm/phản ứng nhanh theo thời gian thực" trong tư duy nhanh và chậm, chứ không phải là việc tách rời "suy nghĩ/biểu hiện" của "não thụ thai/não biểu hiện" của sơ đồ MPS thứ ba - cái sau tách biệt "suy nghĩ" và "nói", và cái trước tách biệt "lập kế hoạch cho tình huống tổng thể" và "thực thi theo thời gian thực". Kích thước của hai "kiến trúc X kép" không giống nhau.
 
@@ -469,18 +295,26 @@ VLM nói chung đã có khả năng tư duy thể hiện tốt. **Gemini Robotic
 
 [^ch9-2]: Google DeepMind, “Gemini Robotics-ER 1.5” . https://deepmind.google/models/gemini-robotics/gemini-robotics-er/
 
-> **Thử nghiệm 9-9 ★★: Sử dụng trình điều khiển Gemini Robotics-ER 1.5 điều hướng tự động XLeRobot**
+> **Thử nghiệm 9-8 ★: Đo cận trên điều khiển lý tưởng của cùng nhiệm vụ trong mô phỏng**
 >
-> Sử dụng Gemini Robotics-ER 1.5 làm mô hình lập kế hoạch tầm xa thông qua thư viện RoboCrew và hình ảnh camera được xếp chồng lên nhau với các chú thích tỷ lệ góc. Hệ thống chỉ cung cấp ba công cụ đơn giản: tiến, rẽ trái và rẽ phải. Được giao nhiệm vụ "tìm bếp và đi đến đó", mô hình đưa ra quyết định với tần suất 0.5-1Hz: xác định các đặc điểm trực quan như hành lang, cửa ra vào, đồ nội thất, v.v., thực hiện rẽ trái khi đánh giá "nhà bếp có thể ở bên trái" và tiếp tục tiến về phía trước khi thấy "có tủ lạnh phía trước". Cũng có thể mở rộng sang chế độ điều khiển bằng giọng nói (kích hoạt các tác vụ mới bằng từ đánh thức). Thử nghiệm này cho thấy ranh giới về khả năng của VLM ở lớp lập kế hoạch tầm xa: lý luận không gian và phân tách nhiệm vụ đã được thực hiện tốt, nhưng vẫn còn chỗ để cải thiện độ mạnh mẽ và tính nhất quán của lý luận nhiều bước trong môi trường phức tạp. [^ch9-3]
+> **Mục tiêu:** Chạy cùng nhiệm vụ với bộ điều khiển lý tưởng không sai về nhận thức hay chọn hành động để lập một cận trên có thể lặp lại.
 >
-> [^ch9-3]: XLeRobot, "Điều khiển LLM Agent" . https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html
+> **Nguyên tắc:** Đây là mốc khi quyết định luôn đúng, không phải bằng chứng robot thật đã chạy.
+>
+
+> **Thử nghiệm 9-9 ★★: Gemini Robotics-ER 1.5 tự điều khiển XLeRobot thật**
+>
+> **Mục tiêu:** Thay người vận hành bằng Agent quan sát mặt bàn và gọi các kỹ năng pick, place, verify bị giới hạn, giữ nguyên robot, nhiệm vụ và điều kiện thành công của 9-7.
+>
+> **Nguyên tắc:** So sánh trực tiếp chỉ ra khoảng cách ở nhận thức, lập kế hoạch, thời điểm, điều khiển vòng kín và phục hồi, không phải giới hạn cơ học mới.
+>
 
 ### Kiểm soát VLA: Từ dữ liệu trình diễn đến khái quát hóa chéo
 
 Ở lớp thực thi của kiến trúc hai lớp, ba mô hình đại diện, RT-2, OpenVLA và π₀, tất cả đều tập trung vào điều khiển VLA—nghĩa là đầu ra các hành động của robot theo thời gian thực dựa trên hình ảnh camera và hướng dẫn ngôn ngữ (Hình 9-11). Chúng thuộc hai tuyến trong biểu diễn hành động: mã thông báo hành động rời rạc và tạo trajectory liên tục.
 
 
-![Hình 9-11 Kiến trúc VLA (Tầm nhìn-Ngôn ngữ-Hành động)](images/fig9-11.svg)
+![Hình 9-10 Kiến trúc VLA (Tầm nhìn-Ngôn ngữ-Hành động)](images/fig9-11.svg)
 
 
 **RT-2 với OpenVLA: Định tuyến mã thông báo hành động riêng biệt.**
@@ -497,32 +331,28 @@ Sự khác biệt thực sự giữa biểu diễn hành động không phải l
 
 ### Sim2Real Transfer: Khoảng cách từ mô phỏng đến thực tế
 
-Phần môi trường mô phỏng của Chương 6 đã giải thích nguồn gốc của khoảng cách sim-to-real (khoảng cách thực tế) và nguyên tắc ngẫu nhiên hóa miền để giải quyết nó. Tôi sẽ không lặp lại ở đây - trong một câu: mô phỏng không thể khôi phục hoàn toàn các đặc điểm vật lý, hình ảnh và phần cứng thực sự. Trong quá trình huấn luyện, các tham số này bị gián đoạn ngẫu nhiên trên quy mô lớn, buộc chiến lược phải học một tập hợp các biểu diễn phổ quát ổn định trước các thay đổi khác nhau (Hình 9-12). Chúng ta hãy xem cách thực hiện bộ nguyên tắc này trên một cánh tay robot thực sự.
+Phần môi trường mô phỏng của Chương 6 đã giải thích nguồn gốc của khoảng cách sim-to-real (khoảng cách thực tế) và nguyên tắc ngẫu nhiên hóa miền để giải quyết nó. Tôi sẽ không lặp lại ở đây - trong một câu: mô phỏng không thể khôi phục hoàn toàn các đặc điểm vật lý, hình ảnh và phần cứng thực sự. Trong quá trình huấn luyện, các tham số này bị gián đoạn ngẫu nhiên trên quy mô lớn, buộc chiến lược phải học một tập hợp các biểu diễn phổ quát ổn định trước các thay đổi khác nhau (Hình 9-11). Chúng ta hãy xem cách thực hiện bộ nguyên tắc này trên một cánh tay robot thực sự.
 
 
-![Hình 9-12 Khoảng cách Sim2Real và Ngẫu nhiên hóa tên miền](images/fig9-12.svg)
+![Hình 9-11 Khoảng cách Sim2Real và Ngẫu nhiên hóa tên miền](images/fig9-12.svg)
 
 
 Có nhiều trường hợp thành công trên lộ trình này: hoạt động khéo léo của bàn tay robot OpenAI (dự án Dactyl nhận ra sự chuyển hướng của khối lập phương trong tay và công việc tiếp theo của nó đã thực hiện việc giải khối Rubik bằng một tay với sự trợ giúp của miền ngẫu nhiên ADR tự động) và ANYmal của ETH Zurich (robot bốn chân có thể bước đi mạnh mẽ trên các địa hình hoang dã phức tạp như tuyết và sỏi). Cả hai đều thuộc thể loại này.
 
 Điều mà chương này thực sự muốn đề cập đến là hai liên kết kỹ thuật không thể tránh khỏi khi triển khai ngẫu nhiên miền vào máy thực. Đầu tiên là **hiệu chỉnh phạm vi ngẫu nhiên**: không thể xác định phạm vi trên đầu. Nếu quá hẹp sẽ không bao quát được những thay đổi thực sự. Nếu quá rộng, nó sẽ tăng độ khó trong quá trình luyện tập và học được chiến lược chưa tối ưu là “có thể xử lý mọi việc nhưng không giỏi việc gì”. Trong thực tế, việc phân phối các tham số chính (chẳng hạn như hệ số ma sát, phân bố thực của độ trễ phản ứng của động cơ) trong dữ liệu môi trường thực thường được đo và hiệu chỉnh trước tiên, đồng thời thực hiện lấy mẫu trong phạm vi này; nếu chiến lược đào tạo mô phỏng rõ ràng bị loại bỏ trên máy thật, thì phạm vi ngẫu nhiên sẽ dần được mở rộng cho đến khi khoảng cách sim-to-real hội tụ đến mức có thể chấp nhận được. Thứ hai là **Căn chỉnh hình ảnh**: Hiệu chỉnh chính xác mô phỏng và tư thế máy ảnh thật (căn chỉnh môi trường) và thay thế ngẫu nhiên nền chụp thực vào kết xuất mô phỏng (thay thế nền màn hình xanh), sao cho hình ảnh mô phỏng càng gần nhất có thể với những gì nhìn thấy trên máy thật - hai bước này của thử nghiệm 9-10 sẽ được trình bày chi tiết.
 
-> **Thử nghiệm 9-10 ★★★: Lấy cánh tay robot Sim2Real không mẫu dựa trên RGB**
+> **Thử nghiệm 9-10 ★★: So sánh ba vòng lặp tự chủ trong mô phỏng**
 >
-> Sử dụng trình mô phỏng LeRobot + ManiSkill để huấn luyện chỉ với hình ảnh camera RGB (không dựa vào cảm biến độ sâu hoặc cảm biến lực), sau đó triển khai trực tiếp lên cánh tay robot SO100 thực mà không cần bất kỳ mẫu nào (không cần bất kỳ điều chỉnh bổ sung nào). Quy trình năm bước:
+> **Mục tiêu:** Giữ nguyên nhiệm vụ và công cụ, so sánh chạy open-loop, kiểm tra từng bước và chiến lược dự đoán ngắn hạn.
 >
-> 1. **Căn chỉnh môi trường**: Điều chỉnh vị trí camera trong môi trường mô phỏng và thực tế, đồng thời xác minh rằng hình ảnh ở cả hai bên có thể được căn chỉnh thông qua lớp phủ trực quan
-> 2. **Thay thế nền**(màn hình xanh): Cắt ngẫu nhiên hình nền được chụp trong môi trường thực và chồng nó vào kết xuất mô phỏng, làm cho nền của hình ảnh mô phỏng gần với thực tế hơn.
-> 3. **Ngẫu nhiên hóa miền**: Chọn ngẫu nhiên các thông số như màu sắc của robot, kết cấu đối tượng, điều kiện ánh sáng, trường nhìn của camera, v.v.
-> 4. **Đào tạo RL**: Sử dụng thuật toán PPO để huấn luyện trong môi trường mô phỏng song song quy mô lớn cho đến khi tỷ lệ mô phỏng thành công >90%
-> 5. **Triển khai thực tế**: Hoàn thành nhiệm vụ thu thập dữ liệu trực tiếp và thành công trên robot thực sự mà không cần lấy mẫu
+> **Nguyên tắc:** Kiểm tra từng bước giúp phục hồi lỗi cục bộ; world model cho phép tiếp tục khi dự đoán khớp thực tế và lập kế hoạch lại khi lệch. Trạng thái cuối luôn được xác nhận bằng quan sát mới.
 >
-> Các yếu tố chính để thành công: căn chỉnh môi trường chính xác + ngẫu nhiên miền trực quan + ngẫu nhiên hóa tham số vật lý, cả ba đều không thể thiếu. Hạn chế: Khi hình dạng, kích thước hoặc chất liệu của vật thể thật nằm ngoài phạm vi phân bổ huấn luyện, tỷ lệ thành công sẽ giảm đáng kể. [^ch9-6]
+
+> **Thử nghiệm 9-11 ★★★: Kiểm tra RGB xuyên môi trường cho cùng nhiệm vụ**
 >
-> [^ch9-6]: LeRobot, “Hướng dẫn về Sim2Real” . https://github.com/StoneT2000/lerobot-sim2real/blob/main/docs/zero_shot_rgb_sim2real.md
+> **Mục tiêu:** Thay đổi nền, hình thức vật thể, ánh sáng và nhiễu thị giác để kiểm tra chính sách thị giác học trong mô phỏng có thích nghi với ảnh mới hay không.
 >
->
-> ![Hình 9-13 Thí nghiệm 9-10 Đường ống Sim2Real RGB không mẫu ](images/fig9-13.svg)
+> **Nguyên tắc:** Đa dạng thị giác có thể tăng độ bền, nhưng không thay thế hiệu chuẩn robot thật và vòng an toàn đầy đủ.
 >
 
 ## Cập nhật năm 2026: Lập kế hoạch dạng luồng và mô hình thế giới
@@ -564,12 +394,6 @@ trạng thái + hành động ứng viên -> trạng thái tương lai dự đo�
 Khái niệm này rộng hơn riêng V-JEPA. Họ mô hình bao gồm mô hình dự đoán tiềm ẩn (V-JEPA 2), mô hình sinh tương tác (Genie 3 và Cosmos), World-Action Model (GeniWorld và Robust-WAM), học latent action từ video không gắn nhãn (LAWM-3D), và model-based RL (Dreamer và MuZero). Giá trị của chúng là học từ quan sát ở quy mô lớn, thử các hành động phản thực trước khi thực thi, tách động lực học dùng chung khỏi điều khiển đặc thù của từng robot, và lập kế hoạch lại khi dự đoán lệch khỏi thực tế.
 
 Các preprint năm 2026 nghiên cứu prior động lực học dùng chung và các head đặc thù cho từng embodiment (DyPES-VLA), biểu diễn hành động-thị giác cho thao tác vòng kín ngoài phân phối (GeniWorld), latent action 3D từ video con người (LAWM-3D), căn chỉnh semantic foresight (Robust-WAM) và triển khai bất đồng bộ theo thời gian thực. Đây là các kết quả hứa hẹn, chưa phải lời giải hoàn chỉnh cho bài toán khái quát hóa.
-
-### Mô hình thế giới cho Computer Use
-
-Máy tính để bàn cũng là một hệ động lực: trạng thái màn hình + click/type/scroll/wait -> trạng thái kế tiếp. Photon-1, được Induction Labs công bố vào tháng 7 năm 2026, dự đoán trạng thái kế tiếp trong không gian tiềm ẩn từ video sử dụng máy tính quy mô lớn, sau đó tinh chỉnh định dạng hành động và áp dụng RL trực tuyến. Các con số benchmark và chi phí do công ty tự đánh giá, chưa được tái lập độc lập. Một thiết kế thực tế là predictor phụ trợ: VLM chọn ngữ nghĩa và công cụ, còn predictor lưu các trạng thái kế tiếp ứng viên, sàng lọc hành động rủi ro và loại bỏ rollout lỗi thời khi ảnh chụp màn hình thực tế không khớp. Mạng, xác thực, CAPTCHA và trạng thái ẩn phía máy chủ vẫn khiến mọi hành động không thể hoàn tác phải được xác minh trong môi trường thật.
-
-Nguồn: [OpenVLA](https://arxiv.org/abs/2406.09246), [V-JEPA 2](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/), [Genie 3](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/), [Photon-1](https://www.inductionlabs.com/news/scaling-video-pretraining), [DyPES-VLA](https://arxiv.org/abs/2608.06374), [GeniWorld](https://arxiv.org/abs/2608.06332), [LAWM-3D](https://arxiv.org/abs/2608.05706), [Robust-WAM](https://arxiv.org/abs/2608.05903).
 
 ## Tóm tắt chương này
 
