@@ -1,4 +1,4 @@
-# 实验 8-9：把「AI 味」反馈内化为写作 Skill
+# 补充案例：把「AI 味」反馈内化为写作 Skill
 
 本项目演示持续进化中最难的一类问题：用户说「这段文字 AI 味太重」，这是一条模糊的主观反馈，Agent 没法直接执行。本实验把它走完整个循环——收集用户纠正的 before/after 对，把「AI 味」提炼成可检查的具体规则（破折号密度、「不是……而是……」句式、排比堆砌、「让我们」开头、「首先/其次/最后」模板、emoji 密度、「在……的今天」开头、空洞比喻），沉淀为写作 Skill，并用评估集防止规则膨胀与误伤。
 
@@ -7,7 +7,7 @@
 ```bash
 python -m pytest -q test_pipeline.py
 python demo.py                      # 离线教学演示全流程
-python run_experiment_8_9.py        # 离线验收入口
+python run_experiment_8_9.py        # 离线验收入口（注：脚本名 run_experiment_8_9.py 属于历史遗留，该项目为补充案例，并非正文实验 8-9）
 python run_experiment_8_9.py \
   --provider ark --model doubao-seed-1-6-250615   # 真实 LLM 路径
 ```
