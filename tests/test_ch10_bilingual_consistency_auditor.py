@@ -248,3 +248,51 @@ def test_bilingual_consistency_auditor_nonexistent_string_path_raises_error(tmp_
         assert False, "Expected FileNotFoundError"
     except FileNotFoundError:
         pass
+
+
+def test_bilingual_consistency_auditor_currency_dollar_not_formula_error():
+    """Regression: dollar signs in prose (e.g. 'costs $5') must not be
+    misjudged as unbalanced LaTeX formula delimiters.
+    Old code counted all '$' in target text, including currency symbols.
+    """
+    source = "The cost is $5 per request.\n\nSome text here."
+    target = "The cost is $5 per request.\n\nSome translated text here."
+    auditor = BilingualConsistencyAuditor()
+    report = auditor.run_audit(source, target, lang="zh")
+    latex_findings = [f for f in report.findings if f["category"] == "latex_formulas"]
+    assert len(latex_findings) == 0
+
+
+def test_bilingual_consistency_auditor_canonical_not_suppressed_by_longer_variant():
+    """Regression: canonical term must not be suppressed by a longer variant
+    that contains it, causing false 'non-canonical' flagging.
+    Old code sorted variants by length (longest first), so a longer variant
+    could occupy the span where the canonical appears, hiding the canonical match.
+    """
+    glossary = {
+        "zh": {
+            "model": {
+                "canonical": "模型",
+                "variants": ["模型", "大语言模型"],
+            }
+        }
+    }
+    # Target uses only the canonical "模型", not the longer "大语言模型"
+    source = "The model processes input."
+    target = "模型处理输入。"
+    auditor = BilingualConsistencyAuditor(glossary=glossary)
+    report = auditor.run_audit(source, target, lang="zh")
+    term_findings = [f for f in report.findings if f["category"] == "terminology"]
+    # Should not flag as non-canonical since canonical "模型" is present
+    assert not any("non-canonical" in f["message"] for f in term_findings)
+
+
+def test_bilingual_consistency_auditor_text_ending_in_md_not_treated_as_path():
+    """Regression: single-line text ending in '.md' that is not an actual file
+    must be treated as content, not raise FileNotFoundError.
+    Old code treated any string ending in '.md' as a file path.
+    """
+    auditor = BilingualConsistencyAuditor()
+    # This is content text, not a file path — should not raise
+    report = auditor.run_audit("Some source content", "This is a note about file.md", lang="zh")
+    assert report is not None

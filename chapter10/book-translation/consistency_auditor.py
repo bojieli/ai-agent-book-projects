@@ -157,14 +157,17 @@ class BilingualConsistencyAuditor:
             try:
                 if p.is_file():
                     return p.read_text(encoding="utf-8")
-            except Exception:
+            except (OSError, ValueError):
                 pass
+            # Only treat as a file path (and raise) if it looks like a path
+            # AND the file doesn't exist. A single-line string ending in ".md"
+            # that isn't an actual file is content, not a missing path.
             if "\n" not in file_or_content:
-                if (
+                looks_like_path = (
                     file_or_content.startswith(("./", "../", "/"))
-                    or file_or_content.endswith((".md", ".markdown", ".txt"))
                     or (" " not in file_or_content and ("/" in file_or_content or "\\" in file_or_content))
-                ):
+                )
+                if looks_like_path:
                     raise FileNotFoundError(f"Source or target file not found: {file_or_content}")
             return file_or_content
         return str(file_or_content)
@@ -343,18 +346,9 @@ class BilingualConsistencyAuditor:
         source_text = self._strip_code(source_text)
         target_text = self._strip_code(target_text)
 
-        # Check syntax balance in target first
-        dollars_count = target_text.count("$")
-        if dollars_count % 2 != 0:
-            findings.append(
-                AuditFinding(
-                    category="latex_formulas",
-                    severity="error",
-                    message="Unbalanced '$' delimiters found in target document.",
-                    details={"dollar_count": dollars_count},
-                )
-            )
-
+        # Count only dollar signs that are actual LaTeX delimiters, not
+        # currency symbols or dollar signs in prose. We do this by counting
+        # the dollars consumed by the block and inline regexes below.
         block_latex_regex = re.compile(r"\$\$(.*?)\$\$", re.DOTALL)
         inline_latex_regex = re.compile(r"(?<!\$)\$([^\$\n]+)\$(?!\$)")
 
@@ -367,11 +361,30 @@ class BilingualConsistencyAuditor:
         src_inlines = inline_latex_regex.findall(src_no_blocks)
         tgt_inlines = inline_latex_regex.findall(tgt_no_blocks)
 
+        # Count formula-related dollars: 2 per block formula, 2 per inline
+        formula_dollars = (len(tgt_blocks) + len(tgt_inlines)) * 2
+        # Remaining dollars after removing matched formulas are non-formula.
+        # Strip currency-style $ (followed by a digit) before counting —
+        # "$5" in prose is not a LaTeX delimiter.
+        remaining = inline_latex_regex.sub(" ", tgt_no_blocks)
+        remaining = re.sub(r"\$(?=\d)", " ", remaining)
+        leftover_dollars = remaining.count("$")
+        unbalanced = leftover_dollars % 2 != 0
+        if unbalanced:
+            findings.append(
+                AuditFinding(
+                    category="latex_formulas",
+                    severity="error",
+                    message="Unbalanced '$' delimiters found in target document.",
+                    details={"dollar_count": formula_dollars + leftover_dollars},
+                )
+            )
+
         all_src_formulas = [f.strip() for f in src_blocks + src_inlines]
         all_tgt_formulas = [f.strip() for f in tgt_blocks + tgt_inlines]
 
         if not all_src_formulas:
-            score = 0.0 if dollars_count % 2 != 0 else 1.0
+            score = 0.0 if unbalanced else 1.0
             return score, findings
 
         matched = 0
