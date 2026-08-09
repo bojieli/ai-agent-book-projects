@@ -759,7 +759,11 @@ Bây giờ chúng ta đã hiểu Kỹ năng là gì, bước tiếp theo là m�
 
 - **Nội dung đầy đủ**—khi mô hình xác định từ siêu dữ liệu rằng một Skill phù hợp với tác vụ hiện tại, nó sẽ đọc `SKILL.md` tương ứng theo yêu cầu thông qua công cụ Skill, rồi đưa nội dung đó vào ngữ cảnh thực thi hiện tại. Nhờ vậy, hệ thống không phải tải toàn bộ hướng dẫn của mọi Skill ngay khi bắt đầu phiên và giảm lượng ngữ cảnh không liên quan.
 
+#### Ghi chú triển khai: tiêu chuẩn và định dạng wire
+
 Vì vậy, cần phân biệt hai tầng: **"siêu dữ liệu Skill phải được cung cấp trước cho mô hình" là một thiết kế cơ chế tương đối ổn định, còn "sử dụng role user, role system hay dạng bọc như `<system-reminder>`" là cách triển khai phụ thuộc từng phiên bản.** `<system-reminder>` cũng không phải định dạng giao thức dành riêng cho Agent Skills, mà là một cách biểu diễn được Claude Code Agent Harness dùng để chèn ngữ cảnh hệ thống động.
+
+Codex CLI dùng một Harness khác. [Tài liệu Skills của OpenAI](https://developers.openai.com/codex/skills/) cho biết danh mục ban đầu chứa tên, mô tả và đường dẫn của từng Skill. Mã nguồn công khai hiện tại dựng danh mục này thành một mảnh ngữ cảnh `developer`, còn phần thân Skill được chọn thành một mảnh user bọc trong `<skill>` ([`fragments.rs`](https://github.com/openai/codex/blob/main/codex-rs/ext/skills/src/fragments.rs), [`extension.rs`](https://github.com/openai/codex/blob/main/codex-rs/ext/skills/src/extension.rs)). Một số gateway có thể hiển thị nội dung `developer` trong vùng giống system. Vì vậy, bảng so sánh gán cho DeepSeek chỉ là ảnh chụp của một số phiên bản client; role, wrapper và việc dựng lại theo từng lượt là chi tiết của Harness. Chi phí cache cũng phải được đánh giá theo từng runtime thay vì áp dụng nguyên mô hình của Claude Code cho mọi client.
 
 Thiết kế hai tầng—một danh mục nhỏ luôn hiện diện và nội dung đầy đủ chỉ được tải khi cần—chính là chìa khóa giúp Skills vừa dễ được phát hiện vừa tiết kiệm context.
 

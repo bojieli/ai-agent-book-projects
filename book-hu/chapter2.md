@@ -762,7 +762,11 @@ A készségek meghatározása után a következő kérdés egy konkrét mérnök
 
 - **Teljes tartalom** – amint a modell a metaadatok alapján megállapítja, hogy egy készség alkalmas az aktuális feladathoz, kérésre beolvassa a megfelelő `SKILL.md` fájlt a Skill eszközön keresztül, majd a tartalom belép az aktuális végrehajtási környezetbe. Ezzel elkerülhető, hogy a munkamenet elején minden készséggel kapcsolatos teljes utasítást betöltsünk, így csökken az irreleváns kontextus mennyisége.
 
+#### Megvalósítási megjegyzés: szabvány és wire formátum
+
 Ezért fontos két szintet megkülönböztetni: **A „készség metaadatainak előre láthatónak kell lenniük a modell számára” egy viszonylag stabil mechanizmus, míg a „felhasználói szerepkör, rendszerszerep vagy burkoló, például `<system-reminder>`” egy verzió-specifikus megvalósítási választás.** A `<system-reminder>` nem az Agent Skills kizárólagos protokollformátuma; ez az egyik reprezentáció, amelyet a Claude Code Agent Harness használ a dinamikus rendszerkörnyezet beillesztésére.
+
+A Codex CLI másik Harness. Az OpenAI [Skills-dokumentációja](https://developers.openai.com/codex/skills/) szerint a kezdeti katalógus minden Skill nevét, leírását és elérési útját tartalmazza. A jelenlegi nyilvános forrás ezt a katalógust `developer` kontextustöredékként, a kiválasztott Skill törzsét pedig `<skill>` elembe csomagolt user-töredékként állítja elő ([`fragments.rs`](https://github.com/openai/codex/blob/main/codex-rs/ext/skills/src/fragments.rs), [`extension.rs`](https://github.com/openai/codex/blob/main/codex-rs/ext/skills/src/extension.rs)). Egyes gateway-ek a `developer` tartalmat a systemhez hasonló területen jeleníthetik meg. Ezért a DeepSeeknek tulajdonított összehasonlító táblázat csak egyes kliensverziók pillanatképeként értelmezhető: a szerepkör, a burkoló és a körönkénti újraépítés a Harness részlete. A gyorsítótár költségét is futtatókörnyezetenként kell értékelni, nem szabad a Claude Code modelljét minden kliensre automatikusan alkalmazni.
 
 Ez a kétszintű kialakítás – egy kis katalógus állandó jelenléte és a teljes tartalom igény szerinti betöltése – teszi lehetővé, hogy a Skills egyszerre legyen felfedezhető és takarékos a kontextussal.
 
