@@ -17,282 +17,178 @@ Two more theoretical themes carry across these scenarios and deserve special att
 
 ## Voice: The Most Natural Human-Machine Interface
 
-Before dissecting the architecture of a voice Agent, step back and consider the value of voice itself. Of all the ways humans interact with computers, voice has the highest bandwidth and feels the most natural: normal speech runs about four times faster than typing, and it ties up neither hands nor eyes. That is why voice is graduating from a secondary input method to a primary interface for many people's daily work—talking to an Agent throughout the day rather than typing word by word.
+Voice is not merely text turned into sound. Speaking is roughly four times faster than typing and leaves the hands and eyes free, so it naturally places an Agent in a continuous input-output loop where the user may interrupt at any moment. Dictation converts speech into text; a voice Agent lets the user collaborate with the Agent directly. Both support the whisper-coding workflow introduced earlier.
 
-At the tool level, this path has produced roughly two kinds of products. One is **voice dictation tools** (e.g., Typeless): they transcribe speech into text in real time and feed it into any application—essentially a keyboard replacement. The other is **voice Agents** (e.g., Pine, ChatGPT Voice), which the user talks with and works with directly: voice is both the input and the interaction itself. The most telling advanced use of both is the **whisper coding** mentioned in the introduction—directing a coding or research Agent by speaking: the developer states an intention, hashes it out with the Agent, and the Agent carries out the coding and experiments. Over a dozen papers from this book's author team were completed exactly this way.
+This section covers two directions: the user speaking to an Agent, and an Agent speaking to the outside world on the user's behalf. The voice model determines what the Agent can answer; the interaction architecture determines whether it can hear clearly, respond in time, hand over naturally, and complete confirmations and tool calls during a call. We first examine interaction timing, then cognitive timing and expressive quality.
 
-One note before we begin: the voice architecture discussed below serves both directions—the user speaking to the Agent (voice as a human-machine interface), and the Agent speaking to the outside world on the user's behalf (say, making a phone call to negotiate). Behind both sits the same real-time voice technology. We start with the three paradigms of voice architecture.
+### Interaction timing: from cascaded to full-duplex
 
-## Three Paradigms of Voice Architecture
+OpenAI's GPT-Live introduction describes three voice-interaction paradigms—cascaded, turn-based, and full-duplex[^ch9-12]. They are not a simple old-to-new replacement; they trade latency, cost, and observability in different ways:
 
-A useful framework for understanding the technical evolution of voice Agents is the three-part classification OpenAI presented when it released GPT-Live in 2026[^ch9-12]. It also corresponds to the three generations of architecture through which ChatGPT Voice itself has evolved:
+| Paradigm | Core structure | Main advantage | Main limitation |
+| --- | --- | --- | --- |
+| Cascaded | VAD → ASR → LLM → TTS | Clear modules that are easy to replace and debug | Latency accumulates and paralinguistic information is lost at interfaces |
+| End-to-end Omni | One model listens, thinks, and speaks | Lower latency and better preservation of tone, emotion, and ambient sound | Still turn-based; training and debugging cost more |
+| Full-duplex | Continuously listens, speaks, and decides | Overlapping speech, natural interruption, and continuous streams | Training, control, and evaluation are more complex |
 
-1.  **Cascaded**: Stringing together three models—Automatic Speech Recognition (ASR), Large Language Model (LLM), and Text-to-Speech (TTS)—into a pipeline, passing the baton from one to the next. The earliest ChatGPT Voice was like this. It allowed people to "talk" to a frontier model for the first time, but information was lost during transfer between models, and responses were slow and stiff.
-2.  **End-to-End Omnimodal (Omni)**: Using a single model to directly "listen to audio, think of a reply, and speak it out," merging the three stages into one. This results in lower latency and preserves non-textual information like prosody and emotion. However, it still assumes "turn-taking"—the model waits for the user to pause before speaking, and turn switching relies on silence detection. A slight pause or background noise can be misjudged as "finished speaking," causing the model to interrupt inappropriately. ChatGPT's Advanced Voice Mode belongs to this generation; OpenAI calls it "turn-based voice models," while the industry more commonly refers to them by their capability as "Omni" models (e.g., Qwen3-Omni). The two names refer to the same thing.
-3.  **Full-Duplex / Interactive**: The model listens and speaks simultaneously, processing input and output concurrently, making decisions many times per second about whether to "speak, listen, stop, interrupt, or call a tool," completely eliminating the "turn-taking" assumption. Kyutai's Moshi in 2024 was a research pioneer, and OpenAI's GPT-Live in 2026 brought it to a scale of 150 million users.
+The common thread is escaping the assumption that people must speak one at a time, and escaping VAD's guess about who has the floor. Cascaded and Omni systems still divide interaction into turns; full-duplex makes turn ownership a continuous model decision.
 
-One thread runs through all three generations: **how to break free of the "taking turns" assumption—of letting VAD (Voice Activity Detection) guess where turns begin and end**. Cascaded and Omni architectures both still lean on VAD to carve up turns; only full-duplex dissolves the notion of turns entirely. The next three sections follow this axis. The three paradigms are not simply a case of newer approaches replacing older ones; they are design choices under different latency and cost constraints, coexisting in production systems in 2026.
+[^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ The cascaded / turn-based / full-duplex taxonomy comes from the article's summary of three generations of ChatGPT Voice; its “end-to-end omnimodal (Omni)” term corresponds to the “turn-based voice models” category.
 
-Furthermore, GPT-Live introduced a second structural change—decoupling "real-time interaction" from "deep thinking": when encountering a problem requiring search or complex reasoning, the interaction model delegates the task to a background frontier model (GPT-5.5 at launch) while continuing the conversation on its own. This thread of "fast-slow division of labor" will be explored in detail in the later section "Trade-offs in Thinking Architectures."
+### Paradigm 1 · Cascaded pipeline
 
-[^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/. The three-part classification of "Cascaded / Turn-based / Full-Duplex" in this section originates from this article's summary of the three generations of ChatGPT Voice evolution; the "End-to-End Omnimodal (Omni)" in the text corresponds to its "turn-based voice models" category.
+Most commercial voice assistants still use a serial pipeline (Figure 9-1): VAD decides when the user has finished, ASR converts audio to text, the LLM understands and generates a reply, and TTS speaks it. Modularity lets each component be optimized independently, but every boundary can add waiting time.
 
-## Paradigm 1: Cascaded Pipeline
+![Figure 9-1: Serial voice Agent pipeline](images/fig9-1.svg)
 
-The vast majority of commercial voice assistants—from smart speakers to customer service robots—are based on a serial pipeline (Figure 9-1): Voice Activity Detection (VAD) determines when the user has finished speaking → Automatic Speech Recognition (ASR) converts the audio into text → a Large Language Model (LLM) understands the intent and generates a reply → Text-to-Speech (TTS) vocalizes the reply. Like a relay race, each stage must wait for the previous one to finish before it can start.
+| Module | Role | Typical bottleneck |
+| --- | --- | --- |
+| VAD | Decide whether speech has ended | Silence thresholds add waiting and split turns incorrectly |
+| ASR | Convert audio to text | Recognition latency and loss of context |
+| LLM | Understand, reason, and generate | Time to first token; reasoning adds more waiting |
+| TTS | Convert text to speech | First-packet synthesis and playback buffering |
 
-![Figure 9-1: Voice Agent Serial Pipeline](images/fig9-1.svg)
+For a short reply without reasoning, VAD, ASR, LLM, and TTS waiting time accumulates serially (Figure 9-2). The real value depends on input length, model, hardware, network, and load.
 
-Early voice assistants adopted this four-stage serial pipeline for a simple reason: no single model could simultaneously handle speech recognition, language understanding, thinking, and speech synthesis. The modular architecture allowed each component to be developed and optimized independently. However, the cost of modularity is accumulated latency—each stage must wait for the previous one to complete before it can begin.
+![Figure 9-2: Latency waterfall for a serial response](images/fig9-2.svg)
 
-**VAD** sits at the start of the pipeline and continuously monitors the audio stream. Its key design choice is end-of-speech detection: systems typically use a continuous silence threshold of 500-800ms. If the user stops speaking for more than half a second, VAD considers the utterance complete. This introduces the first source of latency and forces a difficult trade-off: if the threshold is too short, a pause for thought may be mistaken for the end of the utterance, cutting the sentence short; if it is too long, the user must wait nearly a second after finishing before receiving a response.
+Production queueing amplifies idle latency further (Figure 9-3), but capacity planning is outside this chapter's scope.
 
-**ASR** converts the audio waveform into text. Models like Whisper and SenseVoice, when transcribing 5 seconds of audio with a small to medium-sized model deployed on a GPU, typically take 50-200ms; larger models or resource-constrained deployments can take 200-500ms (the control group in Experiment 9-3 falls into the latter category). The more critical problem: throughout the VAD wait and the ASR transcription, the LLM downstream sits completely idle—it has received nothing and cannot start thinking early.
+![Figure 9-3: Queueing latency curve](images/fig9-3.svg)
 
-**LLM** inference, even when well optimized, often has a Time to First Token (TTFT) of 100-500ms depending on context length; decoding the first short segment suitable for speech takes additional time. When reasoning is enabled, the model typically completes its internal reasoning before emitting the first visible token, which can extend the wait to 5-10 seconds. A traditional fully serial implementation also waits for the LLM to finish the complete reply before handing the text to TTS.
-
-**TTS** converts reply text into speech; synthesizing a short segment typically takes 200-500ms. Figure 9-2 uses a short reply with reasoning disabled to illustrate how serial latency accumulates: VAD (500-800ms) + ASR (50-200ms) + LLM TTFT (100-500ms) + LLM generation of a short segment (100-300ms) + TTS (200-500ms), for a total of about 0.95-2.3 seconds. This is only an illustrative range under a consistent measurement convention; actual latency also depends on input and reply length, model, hardware, network, and load.
-
-![Figure 9-2: Latency Waterfall: Serial Accumulation of Total Response Time](images/fig9-2.svg)
-
-Once in production, queuing latency makes things worse still. It works like a restaurant: the busier the kitchen, the longer the wait—and the wait doesn't grow linearly, it skyrockets (Figure 9-3). When a request arrives with no queue ahead of it, its processing time is the no-queue, or idle, latency. But when multiple requests arrive at once, latecomers must queue.
-
-Intuitively, the higher the utilization, the more steeply—and nonlinearly—the wait time climbs. Queuing theory gives the approximate relationship (for intuition here; no rigorous derivation is needed): Total Latency ≈ Idle Latency × 1/(1-Utilization). Utilization refers to the proportion of time the server is busy; for example, 50% utilization means the server is processing requests half the time and idle half the time. At 50% utilization, latency doubles; at 80%, it is five times the idle latency—which is why servers cannot run under high load for long.
-
-![Figure 9-3: Queuing Latency Curve](images/fig9-3.svg)
-
-> **Experiment 9-1 ★: Building a Traditional Voice Agent**
+> **Experiment 9-1 ★: Build a traditional voice Agent**
 >
-> This experiment builds a complete real-time voice dialogue system, allowing users to interact with an AI via voice through a microphone. The system uses a front-end/back-end separation architecture with real-time communication via WebSocket.
+> Connect the microphone, Silero VAD, local Whisper, a streaming LLM, and Fish S1 TTS over WebSocket to establish the cascaded baseline. The retained real single-turn evidence shows that the media and model chain ran end to end; it is not a concurrency or production-load benchmark. Code and acceptance records are in [chapter9/live-audio](../chapter9/live-audio/).
+
+> **Add-on: Build a WebRTC voice Agent that “calls the user”**
 >
-> The core process follows a strict serial pattern: the front-end captures microphone input and sends it to the back-end in real time via WebSocket. The back-end runs a Silero VAD model for voice activity detection, which offers higher accuracy and better noise resistance compared to traditional volume-based detection methods. After detecting approximately 500ms of continuous silence, the audio segment is extracted for subsequent processing.
+> A phone Agent does not require PSTN. Browser WebRTC can reproduce the loop of opening a session, asking for missing information, repeating it for confirmation, and saving structured results. When an external organization must be contacted, replace the same tool contract with a compliant PSTN/SIP provider. The complete media path, direct/ReAct comparison, and acceptance evidence are in [chapter9/phone-agent](../chapter9/phone-agent/). The project retains its historical \`exp9-2\` run identifiers but no longer occupies a numbered manuscript experiment.
+
+#### From serial to streaming perception
+
+Figure 9-2 describes the fully serial case in which each stage waits for the previous one. A production system can retain the modular split while producing increments as early as possible:
+
+- **Streaming ASR** continuously produces a provisional transcript while the user speaks, then confirms the final text at the turn boundary.
+- **Segmented LLM output** sends the first speakable sentence to TTS without waiting for the full reply.
+- **Incremental TTS** returns audio chunks so later generation, synthesis, and playback overlap.
+
+“Streaming every stage” does not make ASR, LLM, and TTS fully parallel from start to finish. In a standard cascade, ASR overlaps with the user's speech and TTS overlaps with the LLM's later tokens, but the final reply still depends on a stable transcript. A more aggressive system starts the LLM from a partial transcript; if later text changes, it must cancel, restart, or correct the generation. Speculation requires explicit commit, invalidation, and rollback mechanisms; enabling \`stream\` alone does not provide them.
+
+Ordinary streaming also cannot remove VAD's silence wait. A traditional VAD + ASR front end has three problems:
+
+1. **Accumulated latency:** it must wait through silence before confirming the end.
+2. **Lost information:** a voiced/unvoiced bit cannot express hesitation, emotion, backchannels, or ambient sound.
+3. **Broken context:** email addresses, names, and proper nouns may be split across chunks and misrecognized.
+
+A truly streaming model needs a causal or chunked encoder with incremental decoding. Whisper's decoder is autoregressive, but its encoder expects a complete audio segment, so it should not be called a causal streaming model. RNN-T and streaming Conformer ASR have long been used in industry; the focus here is semantic listening built on an LLM backbone.
+
+An LLM-based streaming-audio model can emit text and semantic events from continuous audio, placing recognition and part of understanding in one model. It keeps the conversation context from the beginning and can use world knowledge for brands, names, and proper nouns. Simulated chunking is still not a performance promise for a causal model.
+
+If the only goal is deciding whether the user has finished, endpointing can be built into the streaming recognizer. The model combines semantics and silence to judge whether an utterance is complete. Training labels must contain only information visible at decision time, or hindsight will produce a judgment that cannot be reproduced online[^ch9-11]. This is lighter than a complete audio-capable LLM.
+
+The model can emit acoustic-event markers as well as words:
+
+- **speak_start/end, interrupt:** speech boundaries and interruption intent;
+- **emotion:** emotion and hesitation;
+- **laugh, sigh, noise:** paralinguistic and environmental sound.
+
+Together with text tokens, these markers form one event stream. The Agent can detect hesitation, interruption, and environmental changes without compressing every sound into plain text.
+
+[^ch9-11]: For the diagnosis of embedding turn judgment in the recognizer and the problem of hindsight-based labels, see Bojie Li and Noah Shi. *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR.* 2026 (forthcoming).
+
+> **Experiment 9-2 ★: Simulate streaming voice perception with Qwen2-Audio**
 >
-> The ASR, LLM, and TTS stages each support flexible switching between multiple providers, allowing developers to choose the optimal combination based on latency, accuracy, and regional network conditions.
+> Qwen2-Audio is not itself a streaming model. This experiment simulates continuous perception with increasing audio prefixes and compares it with 600 ms VAD + Whisper. It shows how full context changes pause and noise behavior, but every prefix re-encodes earlier audio, so its timings are not a promise for a causal streaming model.
 >
-> **Experiment 9-2 ★: Using WebRTC to Build a Voice Agent That “Calls the User”**
+> The canonical run passed all execution and provenance gates but reproduced only 2/6 expected behaviors: increasing-prefix calls took 8.4–11.3 seconds, the pause sample missed \`silence\`, and the noise sample still misclassified \`cough/laughter\`. This negative result tests mechanisms and failure modes; it does not support a “100–200 ms true streaming perception” claim. See [chapter9/streaming-speech](../chapter9/streaming-speech/) for the complete record.
+
+### Paradigm 2 · End-to-end omnimodal models (Omni)
+
+Even with streaming perception, a cascade passes listening, thinking, and speaking through discrete interfaces; emotion, intonation, and ambient sound may be lost when audio becomes plain text. Omni uses one model to listen to audio, generate a reply, and speak it, which can preserve those signals at the cost of higher training, debugging, and component-replacement costs (Figure 9-4).
+
+The end-to-end advantage is mainly latency and non-text information, not necessarily accuracy. A self-cascade first transcribes with the same model and then answers from the transcript: when text carries the task information, it may correct a perception error; when the answer depends on speech rate, emotion, or ambient sound, the text bottleneck irreversibly loses evidence. The key question is not whether there is an intermediate representation, but what information it carries[^ch9-13].
+
+Omni still assumes turn-taking and generally uses VAD or semantic endpointing to assign the floor. A pause in a spoken sequence of numbers can still be mistaken for the end; streaming perception improves the judgment but does not remove turns.
+
+[^ch9-13]: For a complete cross-modal measurement of when cascade and end-to-end accuracy advantages reverse, and how task nature predicts the direction, see Li, Bojie and Noah Shi. *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents.* 2026 (forthcoming).
+
+![Figure 9-4: End-to-end omnimodal speech-model comparison](images/fig9-4.svg)
+
+Realtime speech APIs sit between cascaded and Omni systems: the model handles audio natively, but interaction control still relies on VAD, interruption, and asynchronous tool calls. Qwen3-Omni's Thinker-Talker and MiniCPM-o's local path show that this approach can combine thinking, expression, and multimodal input at different model sizes. The useful comparison is not a leaderboard; it is how end-to-end and self-cascade paths fail on different tasks.
+
+> **Experiment 9-3 ★★: Run MiniCPM-o 4.5 locally—end-to-end versus self-cascade**
 >
-> A “Phone Agent” does not necessarily need a PSTN connection or require the reader to prepare a real phone number. In many reminder, information-collection, confirmation, and follow-up tasks, the called party is the user. Browser WebRTC is easier to reproduce in such cases: the user opens a local page and explicitly grants microphone access, and the Agent establishes a real-time media session with the browser to “call” the user directly. The browser sends microphone RTP to the local peer and receives the Agent's downstream audio RTP; the data channel carries only audio-submission control and an accessibility-caption mirror, not the canonical user semantics. The entire process requires neither an E.164 number nor a telephony-provider account. PSTN/IVR remains appropriate for production tasks that must contact external organizations, but it is not a prerequisite for understanding “voice calls as an Agent tool.”
+> Fix one local MiniCPM-o 4.5 revision, disable thinking mode, and compare direct audio answers with the same model's self-cascade: transcribe first, then answer from the transcript. This measures whether audio information is preserved, **not** the later “think while speaking” capability.
 >
-> **Experiment Goal**: Build an Agent that can proactively initiate a browser voice session, collect missing information from the user, read it back for confirmation, and return a structured result; retain both a “direct call” group and a “ReAct planning” group for comparison.
->
-> **Technical Approach**: A local FastAPI service receives the browser's SDP offer; `aiortc` returns the answer, terminates the media, and decodes the microphone RTP actually received into PCM. Local Whisper performs ASR on this PCM, and only the ASR transcript enters the dialogue model. Both the Agent's clarification questions and final confirmation are synthesized into PCM by real TTS and queued on the server's downstream WebRTC audio track—not impersonated by a connection tone, browser `speechSynthesis`, or data-channel text. The direct group requires the caller to supply the name, goal, context, and instructions in advance. The ReAct group receives only a natural-language task. A real external LLM leaves a redacted raw request/response, response ID, exact model, usage, finish status, latency, and hash, then uses auditable observation/reason/action summaries to decide: (1) the call objective; (2) known context; (3) what information is missing; and (4) what to ask and confirm during the call. Both groups use the same `complete_task` tool to save fields explicitly confirmed by the user. If the model, ASR, or TTS fails, acceptance fails directly; there is no local planner/parser fallback.
->
-> The Agent's workflow: The task is “Call me to confirm tomorrow's dental checkup” → ReAct planning discovers that the exact time and confirmation number are missing → The user answers in the browser → The Agent asks by voice → The user responds → The Agent reads the details back and requests final confirmation → Calls `complete_task` → The interface saves the transcript, key fields, and transport statistics → The Agent reads the result back to the user. This local experiment records only what the user confirms; it does not pretend that a clinic has completed a real appointment.
->
-> **Acceptance Criteria**: Each group must establish a real WebRTC session and retain evidence of the SDP offer/answer, connected ICE, an open data channel, the presence of both the browser microphone track and the server's downstream track, and nonzero bidirectional audio RTP packets/bytes. The server must also save and hash the ASR input derived from microphone RTP, Whisper checkpoint provenance, a real model receipt, and at least two fully transmitted TTS assets. The canonical user transcript source must be ASR, the Agent transcript source must be TTS, and the data channel may be used only for control/captions. After the call, the evidence must show clarification of missing fields, explicit confirmation, and structured `complete_task` fields. Mocks, fallbacks, connection tones, text input, and preflight-only runs are not substitutes. The comparison must also show that the direct group requires four complete parameters, while the ReAct group starts from one incomplete task description and uses a real LLM to identify and collect the missing fields during the call.
->
-> This experiment demonstrates an important application direction for voice Agents: **an Agent need not merely wait for the user to open a chat window; it can proactively establish a real-time session with explicit start, confirmation, and completion states**. Browser WebRTC covers the easiest-to-reproduce “call the user” path. When the task instead requires contacting the outside world on the user's behalf, waiting for a human service representative, or navigating IVR, the same call-tool contract can be connected to a compliant PSTN/SIP provider.
-
-### Full-Chain Streaming of the Cascaded Pipeline
-
-Figure 9-2 assumes a **fully serial** scenario in which each stage finishes before passing the baton. Production systems usually preserve the modular VAD-ASR-LLM-TTS division while making each stage emit incremental results as early as possible, shortening the time until the user hears the first syllable:
-
-- **ASR transcribes while listening**: Streaming recognition continuously emits interim transcripts while the user is speaking, hiding most recognition computation behind the user's speech. The final text must still be confirmed after the turn ends because later context may revise an interim transcript.
-- **The LLM streams output and segments text**: As the model generates, it splits the reply into speech-ready chunks based on punctuation or semantics and sends the first chunk to TTS without waiting for the complete reply. This does not shorten the LLM's TTFT or skip reasoning; it removes the wait for the rest of the response to finish.
-- **TTS synthesizes audio incrementally**: TTS starts when it receives the first text chunk and returns audio chunks before the complete waveform is ready. The LLM can then generate the remaining text while TTS synthesizes subsequent speech and the client plays audio it has already received.
-
-However, making every stage streaming does not mean all three models start working simultaneously on the same turn. In a standard non-speculative cascade, dependencies remain: ASR can work while the user is speaking; the LLM generates the final reply only after the turn ends and the transcript stabilizes; TTS starts only after the LLM emits the first speech-ready chunk. The actual overlaps are between user speech and ASR transcription, and between generation of the rest of the LLM reply and TTS synthesis/playback—not full parallelism among ASR, LLM, and TTS from beginning to end.
-
-More aggressive systems use **preemptive/speculative generation**: they start the LLM from a sufficiently stable partial transcript, then cancel, restart, or correct the generation if later transcription changes. They may also synthesize speech early, but usually wait for turn confirmation before playback so the Agent does not talk over a user who has not finished. Frameworks such as LiveKit Agents and Pipecat can support both ordinary streaming cascades and these preemptive strategies. Whether ASR and the LLM truly overlap depends on explicitly implementing partial-transcript commits, invalidation, and rollback; it is not an automatic consequence of enabling a `stream` option.
-
-Ordinary streaming also cannot eliminate **VAD's silence wait and turn judgment itself**. Streaming ASR is already running during that wait; what turn detection blocks is committing the final transcript and playing the reply. Preemptive generation can hide some of this computation, but the system must still decide when it is safe to speak. Reducing that delay further requires improving the front-end perception and endpoint decision itself.
-
-### Streaming Voice Perception: Replacing VAD + ASR
-
-This perception front-end consists of two stages: VAD determines whether the user has finished speaking, and ASR transcribes audio into text. In a fully serial architecture, together they determine when the downstream pipeline starts and what input it receives. In a streaming architecture, ASR begins earlier, but committing the final text and deciding when to reply remain constrained by endpoint detection. The traditional VAD + ASR cascade has three fundamental problems:
-
-1. **Latency Accumulation**: VAD must wait for 500–800ms of silence to confirm the user has finished, because it cannot predict the future and can only rely on "waiting" to distinguish between "truly finished" and "just pausing to think."
-2. **Information Loss**: VAD outputs only a binary signal such as "voice/silence." All acoustic detail—changes in emotion, shifts in tone, hesitant pauses, and background ambience—is lost. Errors are especially common in complex environments: a slightly longer pause may be mistaken for the end of an utterance, truncating the sentence; background noise may trigger a false start, causing the system to process audio when no one is speaking; and the system may be unable to tell whether a user's "uh-huh" is an interruption or an acknowledgment.
-3. **Decreased Accuracy**: VAD cuts continuous audio into independent segments, each sent to ASR for recognition, disrupting contextual continuity. Recognition errors increase significantly for content that requires context, such as email addresses, brand names, personal names, and other proper nouns. For example, if a user says "john dot smith at gmail dot com" and "john" and "smith" are cut into different segments, "smith" might be misrecognized as "miss" due to lack of context.
-
-**Streaming voice perception models** offer a fundamental fix. First, pin down what "streaming" means technically: whether a voice model can stream hinges on whether its **encoder is causal or chunked** (relying only on audio that has already arrived, never needing the whole recording) and whether its **decoding is incremental** (emitting partial results as each small audio chunk comes in). Whisper cannot stream—not because of its decoding, which is autoregressive anyway, but because its encoder needs a complete audio segment (a fixed 30 seconds, padded if shorter) before it can start. Note also that streaming recognition itself is not new: traditional streaming ASR, represented by RNN-T and streaming Conformer, has long been deployed at scale in industry—live captions on phones and voice typing in keyboard apps use exactly such models—and it has nothing to do with LLMs.
-
-This section focuses on a new path: **LLM-based streaming auditory perception**—post-training an open-source LLM backbone to produce semantic responses directly from a continuous audio stream, thereby merging "recognition" and "understanding" in a single model. It is an upgrade to traditional streaming ASR, not an invention of streaming technology: the latency of incremental recognition remains on the order of single-step inference time (tens to a couple hundred milliseconds), but the model no longer sees isolated fragments cut by VAD. Instead, it sees a continuous audio stream from the start of the conversation to the current moment, enabling In-Context Learning based on complete context and significantly improving recognition accuracy for personal information, technical terms, and individual pronunciation patterns.
-
-Another key advantage is that this path inherits the world knowledge and common-sense reasoning capabilities of LLMs—after all, the backbone model has seen vast amounts of text. For example, the model knows that "Apple" followed by "event" likely refers to the company rather than the fruit. This knowledge enhancement makes recognition accuracy for high-value information like amounts, place names, and brand names far exceed traditional ASR. This path already has deployable models, such as Fixie's Ultravox, which feeds audio directly into an LLM backbone and outputs text and semantic tokens. The Qwen2-Audio used in this section's experiments and Alibaba's Qwen2.5-Omni also belong to this category of audio-native models.
-
-However, replacing VAD does not necessarily require using a full-scale audio LLM. If the goal is only to solve the first problem—**determining whether the user has finished speaking**—there is a lighter path: embedding this "turn judgment" directly into the recognizer itself[^ch9-11]. The approach: add a LoRA adapter to a small open-source streaming-recognition model so that it transcribes while **weighing semantics and silence together** to judge whether the sentence has expressed a complete thought—necessary because intra-turn pauses (a beat while reciting a phone number) often run longer than the gaps between turns, so a silence threshold alone is bound to fail in both directions. The more interesting finding: when the model keeps wavering over whether to take the turn, the root cause is usually not the architecture but **training labels annotated with hindsight**—the annotators used audio that appeared after the decision point, which the online model can never see. Re-annotate every label using only the information available at the decision moment, and the spurious wavering disappears. This echoes a judgment from Chapter 7 on post-training: often, data is more critical than architecture. This lighter path also has production-grade implementations: Deepgram's Flux and AssemblyAI's Universal-Streaming embed endpointing and turn detection directly into streaming recognition models, designed specifically for voice Agents; on the open-source side, LiveKit and Pipecat provide semantic turn detection models.
-
-[^ch9-11]: The diagnosis of embedding turn judgment into the recognizer and the problem of hindsight-based labels can be found in Bojie Li and Noah Shi. *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR.* 2026 (forthcoming).
-
-The model outputs not only text but also a series of **special markers for acoustic events**—these are dedicated tokens introduced during model training. The model learns to automatically output them when detecting corresponding acoustic events. Common types include:
-
-- `<speak_start/end>`: Marks speech start and end based on a comprehensive judgment of semantics and acoustics, rather than simple silence detection.
-- `<interrupt>`: Distinguishes whether the user truly wants to interrupt or is just acknowledging or affected by background noise.
-- `<emotion:happy/frustrated>`: Emotion markers.
-- `<laugh>` / `<sigh>`: Paralinguistic signals like laughter and sighs.
-- `<music>` / `<noise>`: Environmental sounds.
-
-These markers, along with text tokens, form a unified event stream that is fed into the thinking layer.
-
-```
-Input audio: "Um, actually I think... no wait, let me reconsider."
-Model output stream:
-  <speak_start> Um, <emotion:hesitant> actually I think...
-  <silence:500ms> no wait, <emotion:confident> let me reconsider <speak_end>
-```
-
-Note that the model outputs not just a text transcription but also voice event markers (start/end of speech, emotion changes, silence intervals). Agent frameworks can leverage these markers for more natural interactions—for example, proactively offering options when detecting user hesitation.
-
-> **Experiment 9-3 ★: Simulating Streaming Voice Perception with Qwen2-Audio**
->
-> First, a caveat about the experimental design: Qwen2-Audio itself is a non-streaming model that takes entire segments as input. This experiment uses **chunked input to simulate streaming processing**—cutting the continuous audio stream into small, fixed-length chunks and sending each one to the model along with the accumulated audio context. The model gradually generates text and acoustic event tokens (such as laughter, pauses, and other non-verbal signals), while the experiment measures the latency from submitting each chunk to receiving text. This approach has an important cost: Qwen2-Audio's encoder is not incremental. Each time the model processes a new chunk, it must re-encode all previously accumulated audio from scratch. As the conversation grows, so does the encoding latency for each chunk. This is the essential difference between "simulated streaming" and "true streaming," which uses incremental or causal encoders to process only the newly arrived audio. The design demonstrates the accuracy benefits of continuous perception with complete context, but its latency numbers reflect only chunk size and inference speed, not the first-packet latency of a model designed for true streaming, such as Qwen3-Omni with chunked encoding. Interested readers can repeat the experiment with such a model. The baseline is a traditional VAD + Whisper ASR pipeline. The experiment covers three scenarios: normal conversation, long sentences with pauses, and conversation with background noise.
->
-> Results: The incremental recognition latency of the chunked simulation scheme can be controlled on the order of one to two hundred milliseconds (depending on chunk length and hardware), while the traditional scheme requires waiting for VAD to confirm completion (600ms) plus Whisper inference (about 200–500ms under this experiment's configuration), totaling 800–1100ms. In the scenario with pauses, VAD misjudged the first long pause as the end of speech, cutting the sentence into two segments for separate recognition. "大概两点左右" ("around two o'clock") was misrecognized as "大概零点左右" ("around midnight")—stripped of the surrounding context, the similar-sounding 两 (liǎng, "two") was misheard as 零 (líng, "zero"). The chunked scheme, maintaining complete context, correctly recognized the entire sentence. In the background noise scenario, Qwen2-Audio outputs `<|noise|>` tokens to mark the presence of noise without interrupting recognition, while traditional VAD was falsely triggered by noise, causing the recognition process to start prematurely.
-
-## Paradigm 2: End-to-End Omnimodal Models (Omni)
-
-Look back at the cascaded pipeline as a whole: even with its perception front-end upgraded to streaming voice perception, it still parcels out listening, thinking, and speaking to three independent models joined by a discrete interface. However wide that interface grows, it carries only a handful of semantic tokens and the occasional acoustic marker; the speaker's emotion, tone, intonation, and ambient background sounds or music are mostly lost in the handover. And because the three segments are trained and tuned separately, they struggle to work as one. End-to-end omnimodal models (Omni) take a different path—a single model directly "listens" to audio, "thinks" of a reply, and "speaks" it, merging the three segments into one (Figure 9-4). Given enough training data, the model's internal latent space can carry these paralinguistic signals straight through to the generation side, reducing latency while preserving prosody and emotion in ways text alone cannot. The trade-off: **cascaded pipelines** have clean modules, per-segment tuning, and good interpretability; **end-to-end models** buy lower latency and non-textual fidelity at the cost of heavier training data demands and poorer interpretability.
-
-One dimension is routinely overlooked: the main advantage of end-to-end models is **latency**; they do not necessarily win on **accuracy**. The instructive comparison is **self-cascade**—the same model first transcribes the audio into structured text, then reasons over that text. Whether self-cascade or a single end-to-end pass is more accurate depends on the task, and the pattern is clear: when the answer is determined mainly by semantic content ("what was said") and the intermediate text can carry the task-relevant information, self-cascade matches or beats end-to-end—especially for models with weaker perception. When the answer hinges on non-verbal cues that text struggles to represent (tone, emotion, environmental sounds), end-to-end pulls clearly ahead. More importantly, which side wins can be **predicted in advance from the nature of the task**, rather than chalked up to "end-to-end is more advanced." A design principle follows: what determines performance is usually not whether an intermediate representation—a **bottleneck**—exists, but what information that bottleneck carries. Upgrade the intermediate text from bare transcription to a structured representation with paralinguistic markers (emotion, speech rate, environmental sounds), and the accuracy advantage of end-to-end models often narrows. This is the same claim made earlier in "Streaming Voice Perception": the perception layer should not output plain text alone[^ch9-13].
-
-However powerful Omni becomes, it has merely merged three models into one, **without discarding the assumption of "taking turns"**: it still relies on VAD to allocate the floor—falling silent the moment it detects the user speaking, starting up the moment the user goes quiet. So the familiar failure resurfaces: the user recites a string of numbers, pauses for a beat, and Omni decides they are done and cuts in. The streaming voice perception described earlier lifts turn judgment from silence duration to the semantic level and greatly reduces such misfires—but that is still a local patch within the turn-taking framework, not the end of turn-taking itself. To escape **for good**, one must stop patching inside the framework: let the model listen and speak simultaneously and decide for itself when to talk, with no hard switch of "whose turn it is."
-
-[^ch9-13]: For a complete cross-modal measurement of when the accuracy advantages of cascade and end-to-end reverse, and how to predict the direction based on task nature (whether the intermediate representation can sufficiently carry task-related information), see Bojie Li and Noah Shi. *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents.* 2026 (forthcoming).
-
-
-![Figure 9-4: Comparison of End-to-End Multimodal Voice Model Architectures](images/fig9-4.svg)
-
-
-At the model level, the **OpenAI Realtime API** is close to end-to-end because the model processes audio natively. At the interaction-control level, however, it still relies on traditional VAD, making it an intermediate step toward a fully end-to-end system. The 2024 preview initially ran on GPT-4o; when the API became generally available in 2025, it switched to **gpt-realtime**, a dedicated model optimized for real-time voice rather than a mode of GPT-4o. The API enables server-side VAD by default and automatically determines when the user starts and stops speaking. It also supports interruptions: when the user begins speaking, the API immediately stops the current voice generation, much as one person naturally falls silent when interrupted in a face-to-face conversation. gpt-realtime also introduces asynchronous function calls, allowing the model to keep talking while it waits for tool results and thereby hide tool latency within the conversation. These improvements enhance the experience but remain optimizations within the VAD framework. The **Gemini Live API** takes a similar approach, offering configurable VAD sensitivity and preserving already-sent information after an interruption to maintain conversational coherence.
-
-**Qwen3-Omni** adopts a Thinker-Talker architecture: separating thinking (understanding and reasoning) from expression (voice generation) into two specialized modules, unifying perception and generation for text, images, audio, and video.
-
-To keep capability high while controlling computational cost, Qwen3-Omni adopts the MoE (Mixture of Experts) architecture—think of it as "calling expert teams on demand": it contains multiple small expert networks internally, and for each inference, only the few most relevant to the current task are activated, while the rest do not participate in computation. For example, when processing speech, it primarily activates speech-related experts; when processing images, it primarily activates vision-related experts. This allows the model to have a very large total parameter count (ensuring high capability) while keeping the actual computation per token very small, thereby improving inference throughput and reducing queuing latency under high load.
-
-A distinction worth keeping straight: MoE improves throughput—how many requests a unit of compute can serve. It does not directly determine how soon the first audio packet can be emitted; first-packet latency depends on the generation architecture. Qwen3-Omni's low first-packet latency comes from its Talker module: it generates audio tokens incrementally using multi-codebook autoregression, while a causal codec incrementally decodes those tokens into a waveform. As soon as the thinking module produces text, the Talker can begin streaming speech without waiting for the full response. According to the official report, its theoretical cold-start first-packet latency is approximately 234ms. It supports understanding in 19 languages and generation in 10, and leads on 22 of 36 audio-video benchmarks.
-
-**MiniCPM-o 4.5** compresses this route to a scale that can run locally on one consumer or workstation GPU. Built on SigLip2, Whisper-medium, CosyVoice2, and Qwen3-8B, it has about 9B parameters, natively accepts text, images, video, and audio, and directly generates text and speech. Besides turn-based voice conversation, it also exposes a full-duplex streaming mode. The useful experiment here is not another copied leaderboard. It is the end-to-end versus self-cascade claim above: for the same model and the same sound, does answering directly from audio latent states fail differently from first flattening that sound into plain text?
-
-> **Experiment 9-4 ★★: Run MiniCPM-o 4.5 Locally—End-to-End versus Self-Cascade**
->
-> We pinned the open checkpoint `openbmb/MiniCPM-o-4_5` at revision `1f761131…` and ran it locally in BF16 on one 96GB RTX PRO 6000 Blackwell. Peak allocated VRAM was 20.27GiB, model loading took 6.15 seconds, and no external API was called. To keep two questions separate, thinking mode was disabled: this experiment measures information preservation in an Omni model, **not** “thinking while speaking” in the later section.
->
-> Four small synthetic WAV files cover two task types: two spoken arithmetic questions whose answers depend only on words, and two utterances with identical words but fast versus slow delivery. The **end-to-end arm** gives each WAV directly to MiniCPM-o; the **self-cascade arm** asks the same MiniCPM-o to produce a words-only transcript that deliberately omits tone and pace, then answers from that transcript alone. Sampling is disabled in both arms.
->
-> Table 9-1 Local MiniCPM-o 4.5 Results (four mechanism checks, not a benchmark)
+> **Table 9-1.** Local MiniCPM-o 4.5 end-to-end and self-cascade results (four mechanism checks, not a benchmark)
 >
 > | Task type | End-to-end | Self-cascade | Observation |
 > | --- | ---: | ---: | --- |
-> | Semantic arithmetic (2) | 1/2 | 2/2 | End-to-end heard “twelve boxes” as 8; explicit transcription retained the correct 12 |
-> | Paralinguistic pace (2) | 2/2 | 1/2 | Both transcripts became the same sentence, so self-cascade also guessed “slow” for the fast sample |
-> | Total | 3/4 | 3/4 | Same total, opposite failure locations |
+> | Semantic arithmetic (2) | 1/2 | 2/2 | Self-cascade corrected one transcription error |
+> | Paralinguistic speaking rate (2) | 2/2 | 1/2 | The plain-text transcript erased the fast/slow distinction |
+> | Total | 3/4 | 3/4 | Equal totals, complementary failures |
 >
-> This tiny run reproduced the qualitative prediction above: when text carries all relevant information, explicit transcription can correct a perceptual error; when the answer depends on speaking rate, a plain-text bottleneck irreversibly removes the evidence. It is also a warning against equating “end-to-end” with “more accurate”—both arms scored 75%. After loading, mean whole-call latency was 0.69 seconds end-to-end and 0.55 seconds self-cascade, but fixed run order, unequal output lengths, and four samples make this unsuitable as a latency ranking.
+> The sample is small, so it cannot establish which path is generally more accurate or faster. Hardware, versions, raw outputs, and real audio-to-audio evidence are in [chapter9/end-to-end-speech](../chapter9/end-to-end-speech/).
+
+Step-Audio 2 demonstrates an end-to-end path that processes raw audio and emits text and speech; it focuses on emotion, speaking rate, intonation, and ambient sound beyond semantics. Step-Audio R1 extends this path by internalizing reasoning in the audio model; it will serve as the example for “thinking while speaking.”
+
+### Paradigm 3 · Full-duplex interactive models
+
+Omni still divides conversation into “the user speaks” and “the model speaks,” but simultaneous interpreting and similar tasks require overlap. A full-duplex model therefore does not presuppose turns: it listens and speaks continuously and repeatedly decides whether to continue, pause, interrupt, or call a tool.
+
+Kyutai's **Moshi** (2024) was an early research example. It models the user's and the model's audio streams in parallel, so overlapping speech and interruption can be natural behaviors.
+
+Thinking Machines Lab calls this an **Interaction Model**[^ch9-14]: interaction is built into the model instead of assembled around it with VAD and other external harnesses. Its micro-turn mechanism advances in short audio blocks, preserving silence, overlap, and interruption as continuous context. It can delegate the full conversation to a background reasoning model while it keeps the conversation alive, then incorporate the result at a suitable moment.
+
+[^ch9-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” 2026-05. https://thinkingmachines.ai/blog/interaction-models/
+
+OpenAI's GPT-Live brings the full-duplex path to production scale: it continuously processes input and generates output, can wait, backchannel, be interrupted, and handle realtime translation. Like the Interaction Model, it delegates complex work to a background model while the foreground model maintains the conversation.
+
+The narrative is: cascades guess turns from silence thresholds; streaming perception upgrades the judgment to the semantic level; full-duplex turns the switch itself into a continuous decision.
+
+### Cognitive timing: realtime interaction and deep thinking
+
+Interaction quality and intelligence ceiling are different dimensions. The foreground model must respond while the user is still engaged; the background model can spend longer thinking. The following three designs are trade-offs, not a linear progression. The first two can wrap a cascade or Omni model; only the third unifies thinking and expression in one end-to-end audio model.
+
+| Design | Foreground | Background | Main risk |
+| --- | --- | --- | --- |
+| Fast filler, slow correction | Give an immediate answer | Re-think and supplement it | Contradiction |
+| Fast interaction, slow advice | Keep the conversation alive and choose wording | Supply advice or tool results | A constrained interface |
+| Unified thinking and expression | Think and speak together | Share model state with expression | High training and replacement cost |
+
+#### Solution 1: Fast thinking for fillers, slow thinking for answers
+
+Fast thinking can give a holding response within a few hundred milliseconds while slow thinking performs a deeper derivation in the background. Simple questions may be processed twice, while hard questions can produce contradictions: the fast model recommends a purchase, then the slow model discovers that a key feature is missing. The root cause is two independent instances thinking separately.
+
+![Figure 9-5: Fast/slow thinking architecture and design alternatives](images/fig9-5.svg)
+
+#### Solution 2: Fast thinking for interaction, slow thinking for advice
+
+The background model can send advice through a status bar or dedicated interface while the foreground model keeps the conversation alive and decides how to phrase it. This is more stable than Solution 1, but communication is still indirect: the foreground can misunderstand the advice and cannot see the background's intermediate reasoning. Before the background finishes, follow-up questions still rely on the foreground model. It can naturally wait for a result, but it cannot truly think while speaking.
+
+#### Solution 3: End-to-end unification of thinking and expression (using Step-Audio R1)
+
+This design internalizes reasoning directly in an end-to-end audio model. Step-Audio R1 uses two complementary mechanisms: **Modality-Grounded Reasoning Distillation (MGRD)** grounds thinking in acoustic features, while the **MPS dual-brain architecture** lets planning and expression proceed in parallel. The first helps the model think correctly; the second helps it speak in time.
+
+Ideally, the model infers emotion from pitch, rhythm, and intonation rather than only from the transcript. “Text-proxy thinking” substitutes negative words in lyrics for analysis of melody and acoustics. MGRD selects reasoning traces that actually cite acoustic features, trains on them, and uses reinforcement learning to prevent guessing without thinking.
+
+MPS lets the planning brain continuously emit thought segments; the expression brain combines each segment with the partial reply and immediately generates speech. The pipeline runs in parallel, so the listener need not wait for the entire chain of reasoning before hearing the first sentence (Figure 9-6).
+
+![Figure 9-6: Step-Audio R1 MGRD and MPS dual-brain architecture](images/fig9-6.svg)
+
+A unified model implements “thinking while speaking” most directly, but thinking and realtime expression must be retrained together. A decoupled design makes it easier to swap the background brain; a unified design suits specialized scenarios that demand the most natural interaction. These are trade-offs, not simple substitutes.
+
+### More human-like speech synthesis
+
+Traditional TTS can expose its machine identity by being too smooth and pausing too little. Pauses, filler words, and occasional repetition signal uncertainty and thought in human speech.
+
+The main LLM can emit control markers in addition to text, such as **THINKING**, **EMO:happy**, and **SPEED:0.8x**; TTS maps them to pauses, prosody, speaking rate, laughter, sighs, and other nonverbal audio. The implementation can be a TTS trained to understand control markers, or voice cloning with reference clips for different emotions and styles.
+
+> **Experiment 9-4 ★★: Control token-driven TTS with Fish Audio**
 >
-> A final native audio-to-audio call retained an 11.56-second, 24kHz mono WAV, closing the local “listen → answer → speak” path. Its answer also inherited the end-to-end arm's 12-to-8 perception error. Raw responses, model-produced transcripts, stage timings, input/output hashes, and acceptance checks are in [`chapter9/end-to-end-speech`](../chapter9/end-to-end-speech/).
-
-**Step-Audio 2** takes a different route: it directly processes raw audio input and outputs both text and audio, achieving true end-to-end voice conversation. It can not only understand *what* is said (semantic information) but also perceive *how* it is said—paralinguistic information, such as whether the speaker's emotion is happy or angry, whether the speech rate is rapid or hesitant, whether the intonation is rising or falling—as well as background environmental sounds and music. It generates expressive responses through thinking and reinforcement learning, and also integrates a RAG mechanism and external tools (web search, audio search). According to the Step-Audio 2 paper, on their proposed StepEval-Audio-Paralinguistic benchmark for paralinguistic understanding, Step-Audio 2 achieves an accuracy of 83.09%, well ahead of the contemporaneous open-source omnimodal model Qwen2.5-Omni (44.18%), and also surpassing GPT-4o Audio (43.45%) and Kimi-Audio (49.64%).
-
-Step-Audio R1 is a follow-up model in the Step-Audio series. Building on Step-Audio 2's end-to-end voice conversation architecture, it further internalizes thinking capabilities directly into the audio model. The two represent a progressive evolution along the same technical path.
-
-## Paradigm 3: Full-Duplex / Interactive Models
-
-Paradigm 2 merged three models into one but still clung to the assumption of taking turns—either the user speaks or the model speaks, with the switch point guessed by VAD or semantics. Some scenarios simply have no room for "your sentence, then mine." **Simultaneous interpretation** is the classic case: the interpreter does not wait for a complete sentence before starting, but listens and composes at once, rendering each unit of meaning as soon as it is roughly whole—listening and translating always overlap. **Rhythm games, where you strike drumbeats in time with music**, are more extreme still: the ear must track an uninterrupted music stream, the hands must hit each beat on the instant, and the mind must anticipate the next one—here there is no such thing as a "turn," only an unending stream of input. Such tasks challenge the turn-by-turn model at its root: they demand that listening, thinking, and action happen simultaneously, while the turn-based model's whole premise is to slot the three into separate time slices. The full-duplex model takes the "eliminate VAD" path to its logical endpoint—it simply drops the turn-taking assumption and lets the model **listen and speak continuously, at the same time**.
-
-The pioneering research work here is Kyutai's **Moshi** (2024). It models two audio streams in parallel (the user's voice and the model's own voice), supplemented by an "inner monologue" text stream to improve the linguistic quality of the generated speech. Since it is always listening, overlapping speech and interruptions become natural behaviors, requiring no explicit interruption detection logic. End-to-end latency is approximately 200ms, approaching the natural rhythm of human conversation.
-
-In 2026, **Thinking Machines Lab**, founded by Mira Murati, previewed a new category they call the **Interaction Model**[^ch9-14] and explicitly argued that interactivity should not be an external harness like VAD wrapped around the model, but should be built into the model itself. In their words, "for interactivity to scale with intelligence, it must become part of the model itself." Architecturally, this translates to **micro-turns**: instead of waiting for an entire turn to finish, the model works in segments of roughly 200ms—continuously processing 200ms of input and generating 200ms of output—allowing audio, video, and text streams to interleave and advance together. This granularity is a deliberate compromise—fine enough that silence, overlap, and interruption are preserved as continuous streams in the model's context, with no artificial turn boundaries to accommodate; yet coarse enough to process multiple modalities in chunks concurrently, keeping latency within a perceptually real-time range. Because interaction lives inside the model, behaviors that once had to be assembled from specialized harnesses—listening while speaking, watching while interjecting—are now simply part of the model's job, and they strengthen as the model does. The first model, TML-Interaction-Small, was trained jointly on all three streams from scratch; when it notices the user writing a piece of buggy code, or someone stepping into the frame, it can speak up unprompted.
-
-Its approach to "slow thinking" is also representative. The interaction model itself is only responsible for keeping the conversation online. When it encounters a problem requiring deep reasoning or tool calls, it delegates to a stronger reasoning model in the background—what it hands over is not an isolated query, but the **entire conversation context**. While the background model reasons, results stream back incrementally. The interaction model then chooses a moment that does not interrupt the user to naturally weave the result into the conversation, all the while continuing to respond, answer follow-ups, and hold the floor. In this way, it delivers the "planning, tool, and agent capabilities of a reasoning model" with the "latency of a non-thinking model." According to the official report, TML-Interaction-Small (a 276B-parameter MoE with 12B activated parameters) achieves a turn-switching latency as low as approximately 0.40 seconds (GPT-realtime-2.0 is about 1.18 seconds), and significantly outperforms competitors that score nearly zero on benchmarks for visual proactivity; as of writing, it is still in the research preview stage.
-
-[^ch9-14]: Thinking Machines Lab, "Interaction Models: A Scalable Approach to Human-AI Collaboration," 2026-05. https://thinkingmachines.ai/blog/interaction-models/
-
-In the same year, OpenAI's **GPT-Live** brought full-duplex to production scale, rolling out globally as the new default voice model for ChatGPT. It no longer treats conversation as a series of discrete message turns, but instead **continuously processes input while continuously generating output**. Therefore, it can make many interaction decisions per second: whether to start speaking, continue listening, pause, interrupt, or call a tool. The result is that it waits quietly when the user is thinking instead of interrupting, uses acknowledgments like "mm-hmm" and "right" to show it is listening, and is also capable of tasks like real-time translation that require listening and speaking simultaneously.
-
-GPT-Live also follows the same path of separating fast and slow processes—**decoupling "real-time interaction" from "deep thinking"**: when it encounters a task requiring search, reasoning, or more complex agent operations, the interactive GPT-Live delegates the task to a frontier model in the background (at launch, GPT-5.5), while continuing to maintain the flow of conversation on its own. Once the background model produces a result, GPT-Live integrates it into the conversation. GPT-Live-1 and the mini version use GPT-5.5 Instant in the background, while the Medium and High tiers call the thinking-enabled GPT-5.5, allowing users to choose between "fast" and "deep" as needed. This "fast-slow division of labor" is precisely the topic to be expanded upon in the next section, "Trade-offs in Thinking Architectures."
-
-Reviewing this chapter's narrative thread of "replacing VAD": VAD guesses the turn-switching point based on silence thresholds; streaming perception (see the earlier section "Streaming Voice Perception" in Paradigm 1) upgrades the switching judgment to the semantic level; and the full-duplex model completely dissolves the concept of "switching" itself—it is always listening, so "interruption" is no longer an event requiring special handling, and the barge-in processing chain is largely eliminated architecturally. This is the endpoint of the "replacing VAD" narrative thread as of the time of writing.
-
-## Trade-offs in Thinking Architectures: From Separation to Unification
-
-The real challenge is the **tension between real-time response and deep thinking**: users expect millisecond-level responses, while complex problems require seconds of thinking time. How can the model think deeply enough while maintaining low latency? This tension is not unique to end-to-end architectures; cascaded pipelines also face it.
-
-The three solutions below do not represent a linear progression. They are design trade-offs for different constraints and coexist in practice. The right choice depends on the application's latency requirements and the depth of reasoning it needs. The key distinction is this: Solutions 1 and 2 divide the work between two independent models, one fast and one slow, running concurrently. They do not require an end-to-end architecture and can even be layered on top of a cascaded pipeline. Only Solution 3 truly internalizes reasoning within the end-to-end model.
-
-By 2026, the "fast-slow decoupling" path had become the mainstream choice for frontier voice products and acquired a name of its own. Thinking Machines Lab calls it "Interaction Models"—a real-time interaction model coupled with an asynchronous background reasoning model; xAI's Grok Voice "Think Fast," Pine AI's voice Agent, and the previous section's GPT-Live "delegation" all follow the same route of "fast in the foreground maintaining the conversation, slow in the background for deep reasoning." The choice to decouple rather than "train a single all-powerful model" has a pragmatic reason: frontier reasoning models iterate every few months, while real-time interaction capabilities require specialized data and training objectives. Stuffing both into the same model means chasing a moving target and potentially diluting the most valuable reasoning capability[^ch9-8]. Conversely, by keeping the strongest reasoning model intact in the background and only training a lightweight interaction model for the foreground, one can always use the current strongest "brain"—this is precisely why GPT-Live emphasizes "sustainable swapping to the latest frontier models." Below, we examine the three solutions in order of increasingly strong coordination mechanisms.
-
-### Solution 1: Fast Thinking for Fillers, Slow Thinking for Answers
-
-Fast and slow thinking run in parallel (Figure 9-5): fast thinking produces a brief holding reply within 500ms (the way a person first says "let me think"), while slow thinking spends 5-10 seconds reasoning in the background before delivering the full answer. The technique behind slow thinking is "test-time scaling"—in plain terms, letting the model think a bit longer before answering: instead of jumping to an answer in one step, it works like a person on a math problem—sketch an approach, derive step by step, check the result—trading more computation for a better answer.
-
-![Figure 9-5: Fast/Slow Thinking Architecture and Solution Comparison](images/fig9-5.svg)
-
-**Problem 1: Overthinking simple questions.** The user asks "What day is it today?" Fast thinking correctly answers "Wednesday" within 500ms, but slow thinking still runs the full 10 seconds of thinking and then repeats "Wednesday." This not only wastes computational resources but, more critically, disrupts the conversation rhythm—the user already has the answer and is ready to move on, only to be interrupted by a repeated response. **Problem 2: Inconsistency between fast and slow.** The two run independently in parallel. They see the same context, but their reasoning paths can diverge completely—fast thinking answers on the strength of one assumption, slow thinking discovers that assumption is false and lands on the opposite conclusion. Within seconds the user hears the system contradict itself, and trust collapses on the spot. The root cause: Solution 1 splits the conversation into two independent thinking processes rather than one coherent cognitive activity, with no coordination mechanism between fast and slow.
-
-```
-<user>Is this plan suitable for me?</user>
-<!-- Fast thinking after 0.5 seconds -->
-<assistant (fast thinking)>This plan is very affordable, so I recommend purchasing it.</assistant>
-<user>Okay, then I'll...</user>
-<!-- Slow thinking completes after 8 seconds -->
-<assistant (slow thinking)>Wait, I found that this plan lacks the international roaming feature you need, so it might not be suitable.</assistant>
-<user>(Angry) So do you recommend I buy it or not?!</user>
-```
-
-### Solution 2: Fast Thinking for Interaction, Slow Thinking for Advice
-
-Solution 2 allows slow thinking to see the output of fast thinking. It provides suggestions through the Agent Status Bar (the dynamic meta-information injection mechanism introduced in Chapter 2) rather than speaking directly to the user. Compared with Solution 1, this approach makes two improvements: slow thinking runs asynchronously in the background and continues reasoning during gaps in speech; and because it can see fast thinking's output, it avoids contradicting it directly and instead acts as a behind-the-scenes "strategist." The GPT-Live delegation and Pine AI voice Agent mentioned earlier are production examples of Solution 2—the background reasoning model sends its conclusions to the foreground interaction model through a concise text channel, and the foreground model decides when and how to present them to the user.
-
-This solution still has fundamental limits, though. **Fast thinking may not follow instructions**—communication between two independent reasoning processes is indirect and ambiguous. Fast thinking can misread an Agent Status Bar update: it might take "the price needs to be reconfirmed" to mean "ask the user whether this price is acceptable," when the intended meaning was "the price was calculated incorrectly—recalculate it." **No visibility into intermediate reasoning**—slow thinking may produce valuable intermediate conclusions during its 10 seconds of reasoning, but fast thinking sees none of them; it can only wait for the final status update. If the user asks another question or interrupts before slow thinking finishes, fast thinking must answer based on its own limited understanding. It is like two people solving a problem together but communicating only by passing notes, without seeing each other's scratch paper.
-
-Solution 2 also faces a fundamental theoretical problem: **it cannot achieve "thinking while speaking."** When humans face a complex problem, they do not first formulate the complete answer in their mind and then deliver it all at once. Instead, they think and speak in segments—"This is an interesting question... (pause to think) First, we need to consider... (continue thinking) Second..." In Solution 2, fast thinking can offer only filler phrases while waiting for slow thinking, with no way to weave the reasoning process naturally into the conversation.
-
-### Solution 3: End-to-End Unification of Thinking and Expression (Using Step-Audio R1 as an Example)
-
-Although Solution 2 reduces the user's need to wait for slow thinking, it is still architecturally "think first, then speak"—thinking and expression remain two separate processes, making it impossible to achieve the human-like "thinking while speaking." To break this fundamental limitation, thinking capabilities must be directly internalized into the model.
-
-Step-Audio R1 proposes a fundamentally different solution in this direction: it internalizes thinking capabilities directly into the end-to-end audio language model, achieving true "thinking while speaking" through a dual-brain architecture. It actually consists of two complementary mechanisms, each solving a different problem: **Modality-Grounded Reasoning Distillation (MGRD)** first solves "thinking correctly"—ensuring the model truly reasons based on acoustic features rather than text transcripts; **MPS Dual-Brain Architecture** then solves "speaking in a timely manner"—enabling thinking and expression to run in parallel for low-latency thinking while speaking. The former is the prerequisite for the latter: only when thinking is rooted in sound is thinking-while-speaking worth having. We take each in turn.
-
-**The Textual Surrogate Reasoning Problem.** Ideally, a voice model should directly analyze acoustic features (such as pitch, rhythm, and intonation) to understand a speaker's emotion or intent. However, many models in practice take a shortcut: existing audio language models exhibit a counterintuitive phenomenon where longer chains of thought lead to worse performance. The Step-Audio R1 team identified the root cause as "Textual Surrogate Reasoning" (using textual information to "stand in" for acoustic information for analysis): when the model "thinks," it is actually performing semantic reasoning based on text transcription, rather than genuinely analyzing acoustic features. For example, when asked to judge the emotion of a song, the model analyzes "the lyrics mention sadness," rather than "the minor key melody combined with a descending pitch contour conveys a feeling of sorrow." This modality mismatch originates from the training data: most audio models' CoT (Chain-of-Thought) data is generated by text models, which naturally inherit a pure-text thinking pattern.
-
-**Modality-Grounded Reasoning Distillation** (MGRD) addresses this issue through iterative self-improvement (Figure 9-6). The name is a mouthful, but the core idea is intuitive: select the thought processes that are genuinely listening to the sound, and train the model on those—teaching it to analyze with its ears like a music teacher rather than skim the lyrics like a copy editor. Three steps:
-
-1.  Have the current model generate several different thought processes for the same audio segment, then keep only those genuinely grounded in acoustic features. How to tell? Check whether the thought mentions concrete sound parameters. For example, for an angry voice input, a text-based thought would be "The user said negative words like 'too bad,' so I judge it as anger"—this is only analyzing the text content; an acoustic-feature-based thought would be "The speaking rate is 40% faster than normal, the volume is significantly higher, and the pitch is sharper"—this is truly "listening" to the sound. MGRD selects the latter.
-2.  Retrain the model on these high-quality reasoning traces to strengthen its ability to "think with its ears."
-3.  Further optimize through reinforcement learning to prevent the model from taking shortcuts by skipping the thinking process and guessing the answer directly.
-
-After multiple iterations, the foundation of thinking gradually shifts from text abstraction to acoustic analysis—the model begins to focus on "the pitch contour drops sharply at 1.2 seconds" rather than vaguely stating "the speaker seems unhappy."
-
-**MPS Dual-Brain Architecture** (Mind-Paced Speaking) addresses the tension between reasoning latency and speech output (Figure 9-6). It draws inspiration from the division of labor in the human brain: the areas responsible for thought and language production are separate and can work in parallel—you can formulate the next sentence while still speaking the previous one. MPS simulates this division with two models: the **Formulation Brain** reasons continuously and produces reasoning segments; whenever the **Articulation Brain** receives a new segment, it combines that segment with earlier reasoning segments and the reply generated so far, then turns it into speech.
-
-The two run in parallel: the Formulation Brain does not need to finish reasoning before the Articulation Brain starts speaking. For example, the Formulation Brain begins analyzing the user's question at t=0ms and produces its first reasoning segment, a sequence of text tokens, at t=200ms. The Articulation Brain receives that segment, combines it with the reply generated so far, and begins producing the corresponding speech tokens at t=350ms. The modules operate as a parallel pipeline, allowing the user to hear the first syllable after just 350ms.
-
-![Figure 9-6: Step-Audio R1 MGRD and MPS Dual-Brain Architecture](images/fig9-6.svg)
-
-Solution 3 internalizes thinking into a single model—the most elegant realization of "thinking while speaking"—but the price is exactly the "moving target" from the start of this section: one model must be both the strongest reasoner and a real-time speaker, and with both capabilities evolving fast, the unified route must retrain again and again to keep pace. Hence the industry divide at the time of writing: frontier products that want to swap in the latest brain at will (GPT-Live, Grok Voice, Pine AI) mostly bet on Solution 2's decoupling, while Solution 3 suits products that chase ultimate naturalness and can absorb the specialized training cost. Neither replaces the other; it is a trade-off between the ability to swap in a reasoning model and more tightly integrated thinking and speech.
-
-### The Interface Between Fast and Slow: What Else Can Be Passed Besides Text
-
-(This cross-scenario discussion briefly departs from the chapter's main focus on voice.) Solution 2 reveals an overlooked design dimension: when slow thinking passes a message to fast thinking, it uses the **text** channel (a suggestion via the status bar). Text is easy to understand and debug, but it is a narrow channel—the slow thinker's rich intermediate state gets squeezed into a few sentences. So must the interface between fast and slow be text at all?
-
-In real-time gaming, one of the most timing-sensitive settings, a more direct approach is feasible: a Latent Bridge[^ch9-8]. Freeze both a small model responsible for quick reactions (producing dozens of actions per second) and a slow model responsible for reasoning (producing one thought per second), then train only a small "bridge" of a few tens of millions of parameters between them. This bridge projects the slow model's hidden-state conclusions directly into a few "latent tokens" and inserts them into the fast model's input, much as multimodal models insert visual tokens. This bypasses the round trip from idea to text and back to an internal representation. Across several Atari games, the latent-space channel substantially outperforms the traditional text channel (+26% to +82% in some games) while adding only about 5 milliseconds per step, fast enough to meet real-time demands.
-
-The same work draws an honest boundary: **whether fast-slow collaboration helps depends on whether the task's bottleneck is "can't think of it" or "can't react in time."** The bridge pays off only where the slow thinker is genuinely better than the fast reactor (across games this correlation runs as high as r≈0.9); where the task is purely a contest of reaction speed, the finest bridge is useless. The judgment holds beyond games—it previews the very question Computer Use will face later in this chapter: when is a "slow strategist" worth inviting, and when does it merely add latency?
-
-[^ch9-8]: The complete analysis of training only a latent-space bridge between two frozen models and "when it's worth inviting a slow strategist" can be found in Bojie Li and Noah Shi. *The Latent Bridge: A Continuous Slow-Fast Channel for Real-Time Game Agents.* arXiv:2606.24470, 2026.
-
-End-to-end or modular, the quality of the perception and execution layers still matters. End-to-end models fix latency at the architectural level, but the two fundamentals—hearing accurately and speaking naturally—do not fix themselves when the architecture changes. Accurate hearing corresponds to the streaming voice perception of Paradigm 1; here we turn to the execution layer for speaking naturally: more human-like speech synthesis.
-
-## More Human-like Speech Synthesis
-
-The "perfection" of traditional TTS is exactly the problem: speech that is flawlessly fluent, with no pauses or filler words, sounds unmistakably machine-generated. The "imperfections" of human speech—pauses, fillers ("um," "uh," "you know"), and occasional repetition—are not flaws but natural signs of the thinking process, telling the listener "I'm thinking" or "I'm not entirely sure." An AI, however, can generate a response faster than that response can be spoken aloud, and its output arrives fluent and complete; synthesize it as-is and its artificial nature becomes obvious.
-
-**Solution**: Delegate decisions about where to pause and what tone to use to the main LLM. The LLM outputs not just text, but also control tokens: `[THINKING]` signals a 1-2 second thinking pause and a filler sound ("um..."); `[SEARCHING]` signals a shorter pause and hesitation phrases ("you know...", "how should I put it"); `[EMO:happy]` adjusts tone and prosody; `[SPEED:0.8x]` controls speaking rate. Only the LLM knows whether it is working through a complex question and should pause, whether the user is getting impatient and it should speed up, or whether this is idle chat and it should sound lively.
-
-In this scheme, TTS acts as a multimodal generator, taking text + control tokens as input and outputting audio. It synthesizes speech normally for regular text, and generates corresponding non-linguistic audio for control tokens: `[THINKING]` generates a drawn-out "um...", `[SIGH]` generates a sigh, `[LAUGH:small]` generates a light laugh, `[BREATH]` generates an inhale sound.
-
-There are two implementation paths: one is developing proprietary TTS with native support for control tokens (the most flexible option, but one that requires a specialized team); the other uses voice cloning. Prepare dozens of reference clips for the same virtual persona, covering different emotions, speeds, and styles, then select the best-matching clip for each control-token combination when calling a TTS API such as ElevenLabs or Fish Audio. This approach can be deployed within weeks.
-
-> **Experiment 9-5 ★★: Control Token-Driven TTS Based on Fish Audio**
+> Use Fish Audio S1 to build a multi-reference voice library and compare three configurations: no control markers, one reference clip, and multiple reference clips. The execution layer selects matching emotion, speaking rate, and style from the markers.
 >
-> Use Fish Audio S1's voice cloning capability (only 3-10 seconds of reference audio needed for zero-shot cloning of the same timbre). Build a library of 24 reference audio clips, covering Emotion (Neutral/Happy/Frustrated/Thinking) x Speed (Normal/Fast/Slow) x Style (Formal/Casual), each about 5 seconds long.
->
-> LLM output example: `[EMO:happy][SPEED:fast]Great! Your order has been confirmed.[THINKING]Um, let me check the shipping time...[EMO:neutral][SPEED:normal]It is expected to arrive tomorrow afternoon.`
->
-> The execution layer parses the tokens and maps them to the corresponding reference audio: `[EMO:happy][SPEED:fast]` maps to "Happy+Fast+Casual" reference; `[THINKING]` maps to "Thinking+Slow+Formal" reference (with pause rhythm and hesitant tone); `[EMO:neutral][SPEED:normal]` maps to "Neutral+Normal+Formal" reference. Fish Audio ensures consistent timbre across different reference clips, only varying prosody and emotion.
->
-> Compare three configurations: no control tokens (fluent but robotic and obviously AI-generated), a single reference clip (natural but emotionally monotone), and a multi-reference library (cheerful and quick when confirming information, with natural pauses before explanations and an overall delivery close to that of a human customer service representative).
+> The multi-reference configuration scored highest in three position-balanced blind listening passes (human-customer-service likeness 4.67/5), but the complete planned ordering was not reproduced because the no-marker arm outscored the single-reference arm. This result suggests that expressive control helps, but a small listening study is not a general speech-quality conclusion. The complete 24-reference library, A/B/C media, and acceptance record are in [chapter9/controllable-tts](../chapter9/controllable-tts/).
 
 ## Computer Use: GUI Automation Agents
 
@@ -300,22 +196,22 @@ By now you may have noticed that this chapter devotes far more space to voice th
 
 These three scenarios seem different but face the same core challenges: real-time perception, low-latency decision-making, and continuous interaction. Next, we turn to visual interaction, or Computer Use, expanding the perspective from the auditory to the visual modality: what if an Agent could not only understand speech but also "see" the screen and operate its graphical interface?
 
-Computer Use, also known as GUI automation, allows AI to use software like a human by observing the screen and operating the mouse and keyboard—for example, opening a browser to search for information, filling in data in a spreadsheet application, or adjusting configurations in system settings. Its core is a **Perceive-Think-Act** loop (Figure 9-7):
+Computer Use, also known as GUI automation, allows AI to use software like a human by observing the screen and operating the mouse and keyboard—for example, opening a browser to search for information, filling in data in a spreadsheet application, or adjusting configurations in system settings. Its core is a **Perceive-Think-Act** loop (Figure 9-6):
 
 1.  The Agent takes a screenshot of the current screen.
 2.  A multimodal model receives the screenshot and task instruction, and outputs a thought and a specific action.
 3.  The execution layer performs the action in the real environment (moving the mouse, clicking, typing text, etc.).
 4.  It waits for the interface to respond, takes another screenshot, and enters the next loop iteration.
 
-![Figure 9-7: Computer Use Agent's Perceive-Think-Act Loop](images/fig9-7.svg)
+![Figure 9-6: Computer Use Agent's Perceive-Think-Act Loop](images/fig9-7.svg)
 
 There are three key design dimensions in this loop: **Action Space** (what operations the Agent can perform), **Visual Grounding** (how to find the target element in the screenshot), and **Model Architecture** (how to generate the correct action from the screenshot).
 
 ### Action Space Design
 
-Anthropic defines three types of tools that constitute a complete interaction capability (Figure 9-8):
+Anthropic defines three types of tools that constitute a complete interaction capability (Figure 9-7):
 
-![Figure 9-8: Computer Use Action Space](images/fig9-8.svg)
+![Figure 9-7: Computer Use Action Space](images/fig9-8.svg)
 
 **GUI Operation Tool** (`computer` tool): Mouse operations include moving (`mouse_move`), left/right/middle clicks, double-clicking or triple-clicking, dragging (`left_click_drag`), and more precise press/release actions (`left_mouse_down` and `left_mouse_up`). Scrolling (`scroll`) supports four directions and can be combined with modifier keys. Keyboard operations include typing character by character (`type`, with a 12ms interval between characters to simulate real typing), key combinations (`key`, e.g., `Ctrl+C`), and holding a key (`hold_key`). Perception actions include taking a screenshot, retrieving the cursor position (`cursor_position`), and waiting (`wait`).
 
@@ -323,7 +219,7 @@ Anthropic defines three types of tools that constitute a complete interaction ca
 
 **File Editing Tool** (`str_replace_editor`): Enables safe editing through string matching and supports view, create, replace, insert, and undo operations. It is more precise than overwriting an entire file and less likely to modify unrelated content accidentally.
 
-> **Experiment 9-6 ★: Running Computer Use (Anthropic Reference Path or Open-Model Path)**
+> **Experiment 9-5 ★: Running Computer Use (Anthropic Reference Path or Open-Model Path)**
 >
 > Path A uses the Anthropic Computer Use Demo. Its container packages a complete Ubuntu desktop environment, including a browser, terminal, and other common tools. The frontend receives a task, while the backend sends the instructions and screenshots to Claude and then executes the mouse, keyboard, terminal, or editing actions returned by the model. This path is intended for understanding the native `computer` tool protocol; it does not require every reader to have access to the Anthropic API.
 >
@@ -342,7 +238,7 @@ The original Set-of-Mark (SoM) was proposed by Microsoft Research in 2023, initi
 
 **Structured Element Indexing: A Structured Implementation of the SoM Idea on the Web.**
 
-When the interface itself provides structured information, annotation can be more precise. Before rendering, modern web pages define a complete element structure (the DOM tree) and semantic roles that identify buttons, input fields, and other controls. Accessibility trees provide similar information for many desktop applications. Rather than asking a segmentation model to guess which region is a button from pixels alone, the system can query the interface directly for its clickable elements. Web Agent systems such as `browser-use` do exactly this: they enumerate and number interactive elements from the DOM. This is a structured implementation of the SoM idea for the web (Figure 9-9). The process has four steps:
+When the interface itself provides structured information, annotation can be more precise. Before rendering, modern web pages define a complete element structure (the DOM tree) and semantic roles that identify buttons, input fields, and other controls. Accessibility trees provide similar information for many desktop applications. Rather than asking a segmentation model to guess which region is a button from pixels alone, the system can query the interface directly for its clickable elements. Web Agent systems such as `browser-use` do exactly this: they enumerate and number interactive elements from the DOM. This is a structured implementation of the SoM idea for the web (Figure 9-8). The process has four steps:
 
 1. Obtain the structured representation (DOM tree) and accessibility information for the page through the browser's debugging interface (CDP, Chrome DevTools Protocol)
 2. Automatically detect which elements are interactive (buttons, input boxes, links, etc.)
@@ -362,21 +258,21 @@ Elements:
 The model only needs to output an ID, and the system automatically clicks the center of the corresponding element. This approach does not save tokens because all annotation data must still be sent to the model, but it provides accurate, stable localization while avoiding the missed detections and false positives that segmentation models can introduce.
 
 
-![Figure 9-9: Set-of-Mark vs. Structured Element Indexing (browser-use implementation)](images/fig9-9.svg)
+![Figure 9-8: Set-of-Mark vs. Structured Element Indexing (browser-use implementation)](images/fig9-9.svg)
 
 **Pure Coordinate Prediction.**
 
 The third route skips annotation and asks the model to output coordinates directly. Systems such as **SeeClick** and Claude's computer use rely on vision models trained on massive datasets of GUI screenshots paired with element positions. These models learn to map natural-language descriptions (e.g., "click the submit button") directly to precise screenshot coordinates, relying on visual perception much like a human user.
 
-In coordinate prediction schemes, the model's understanding of coordinates is highly dependent on the resolution used during training (Figure 9-10). Claude was trained using XGA (1024×768), WXGA (1280×800), and FWXGA (1366×768). If the input screenshot resolution does not match, the model's predicted coordinates will systematically shift—like measuring a distance on a small map and then applying it directly to a large map. Therefore, a bidirectional coordinate scaling mechanism must be implemented at the tool layer, and the target resolution must be **selected based on the aspect ratio** to avoid non-uniform stretching that distorts the image and consequently biases coordinate judgment. For example, if the actual screen resolution is 2560×1440 (16:9), the most suitable target among Claude's three supported options is FWXGA (1366×768), which has an aspect ratio closest to 16:9. The screenshot is proportionally scaled to 1366×768 and fed to the model; after the model outputs the click coordinates (683, 384), they are inversely mapped to the real coordinates (683×2560/1366, 384×1440/768) ≈ (1280, 720). Conversely, if a 16:9 image is forcibly stretched into the 4:3 1024×768, the image will be horizontally compressed, causing the model's predicted coordinates to systematically shift.
+In coordinate prediction schemes, the model's understanding of coordinates is highly dependent on the resolution used during training (Figure 9-9). Claude was trained using XGA (1024×768), WXGA (1280×800), and FWXGA (1366×768). If the input screenshot resolution does not match, the model's predicted coordinates will systematically shift—like measuring a distance on a small map and then applying it directly to a large map. Therefore, a bidirectional coordinate scaling mechanism must be implemented at the tool layer, and the target resolution must be **selected based on the aspect ratio** to avoid non-uniform stretching that distorts the image and consequently biases coordinate judgment. For example, if the actual screen resolution is 2560×1440 (16:9), the most suitable target among Claude's three supported options is FWXGA (1366×768), which has an aspect ratio closest to 16:9. The screenshot is proportionally scaled to 1366×768 and fed to the model; after the model outputs the click coordinates (683, 384), they are inversely mapped to the real coordinates (683×2560/1366, 384×1440/768) ≈ (1280, 720). Conversely, if a 16:9 image is forcibly stretched into the 4:3 1024×768, the image will be horizontally compressed, causing the model's predicted coordinates to systematically shift.
 
 
-![Figure 9-10: Resolution Matching and Bidirectional Coordinate Scaling](images/fig9-10.svg)
+![Figure 9-9: Resolution Matching and Bidirectional Coordinate Scaling](images/fig9-10.svg)
 
 
 The choice among the three routes can be summarized as follows: **when structured information is available, prioritize DOM/accessibility-tree indexing** for the most accurate and stable localization. **When it is unavailable**—in native desktop software such as Photoshop, canvas/WebGL-rendered interfaces, or games—**use either visual annotation (the original SoM route) or coordinate prediction**. Visual annotation turns localization into a multiple-choice problem, making it friendlier to general-purpose models without specialized training. Coordinate prediction eliminates the annotation step and is more direct for models trained specifically on GUI localization. Both approaches still struggle with small elements and dense interfaces.
 
-> **Experiment 9-7 ★: Using browser-use to Implement Automated Browser Operations**
+> **Experiment 9-6 ★: Using browser-use to Implement Automated Browser Operations**
 >
 > Use Playwright, a browser-automation framework, together with a multimodal model to implement browser operations driven by natural language. Enable SoM visualization and save a screenshot with annotated bounding boxes before every decision. The model interface is not limited to OpenAI or Anthropic; the book provides an API configuration for the open Qwen3-VL model and retains a generic OpenAI-compatible base URL for other hosted services or self-hosted inference.
 >
@@ -393,6 +289,16 @@ What truly needs to be redesigned here is not the "action interface," but the "*
 The counterintuitive finding is that what really matters is not frame selection but converting selected frames into persistent text, because text is the modality LLM Agents handle best. Across eight models, ranging from 7B-parameter models to frontier-scale systems, this middleware delivered gains of +17 to +48 percentage points without any retraining, with the widest gap on voice tasks: with the perceptual layer in place, the Agent could finally complete voice tasks that had been "audible but unactionable." It is not a one-size-fits-all configuration, though—on some newer models, injecting too many image tokens crowds out reasoning and drags performance down. So the components should be **chosen per model**, not switched on wholesale. It is the same lesson as the Set-of-Mark-versus-coordinate-prediction trade-off: there is no silver bullet in perception schemes; you configure them to suit the model's temperament.
 
 [^ch9-9]: For the complete mechanism and per-model ablation of the three components—gated keyframes, on-demand transcription, and narrating frames into persistent text—see Bojie Li and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
+
+### World Models for Computer Use
+
+The observation interface answers “what happened between screenshots?” by making dynamic changes arrive sooner and persist in memory. It does not by itself remove the planning overhead: a standard Computer Use Agent may still repeat the serial “screenshot—think—click” loop and reconsider the next step after every action. **OSWorld-Human** shows that human-level task accuracy can coexist with substantially more steps and waiting time than a person needs.
+
+People operate a desktop predictively. They anticipate the consequence of an action; when the observed state agrees with that prediction, they continue along the existing plan instead of replanning from scratch. Only a mismatch sends them back to observation and planning. This is speculative execution, and a world model makes it available to an Agent. **A world model solves the other half of the problem**: it predicts what the desktop may become after an action, so the Agent can continue directly when reality matches the prediction and replan or stop when it does not.
+
+A desktop state is more than pixels: it includes the active window and focus, scroll position, input contents, loading and permission state, and network responses. Actions include clicking, typing, scrolling, dragging, and waiting. A useful world model encodes the current state, predicts state changes for candidate actions, and passes those predictions to the planner. It need not render a photorealistic future screenshot; task-relevant state differences are enough to rank actions, prepare the next step during loading, and gate irreversible operations.
+
+Induction Labs’ **Photon-1** is one recent example. It compresses frames into discrete latent tokens and autoregressively predicts the next state representation after an action. Its attached image generator visualizes latent states but is not required for inference. The result should be treated as a predictive sidecar, not as a replacement for fresh screenshots or structured state checks in the real environment.
 
 ### Mobile: Ecosystem Barriers Are Harder Than Technology
 
@@ -418,8 +324,6 @@ Unlike the speech domain, there is currently no systematic solution for improvin
 
 ## Robot Manipulation: From Real-Time Control to Training and Generalization
 
-> **Reading Note**: This section discusses robot control. Experiment 9-10 demonstrates a method for transferring from simulation to reality—the **training-in-simulation portion (steps 3-4) can be completed using only a GPU server**; however, to reproduce the entire pipeline end-to-end (including the real-world deployment steps), real hardware such as the SO100 robotic arm is required. If you are not currently interested in robotics, you can skip this section; it does not affect the reading of other chapters.
-
 Voice Agents fight latency in the auditory modality; Computer Use does so in the visual modality. When an Agent must control a robot in the physical world, latency and multimodality bite harder still—actions have irreversible consequences, and one collision can damage the object or the robot itself. This section first shows how robots tame the real-time control problem with a two-layer architecture and action chunking, then turns to the harder problem they face today—training and generalization: where the data comes from, and how models transfer across tasks and platforms.
 
 ### Hardware Is Not the Bottleneck; Algorithms Are
@@ -430,15 +334,15 @@ This claim needs a clear boundary: the teleoperation example demonstrates only t
 
 For these tasks, the real gap lies in the algorithmic layer, which is elaborated in the following two subsections.
 
-> **Experiment 9-8 ★: XLeRobot Teleoperation Experience**
+> **Experiment 9-7 ★: XLeRobot Teleoperation Experience**
 >
-> XLeRobot supports several teleoperation methods, including a keyboard, Xbox controller, Nintendo Switch Joy-Con, and VR headset. Manually control the robot as it picks up and places objects or wipes surfaces, and observe its response latency, motion precision, and task-completion quality. This hands-on experience builds an intuitive understanding of the hardware's capabilities: under human control, the robot can perform an unexpectedly broad range of tasks, suggesting that algorithms rather than hardware are the current bottleneck.[^ch9-1]
+> **Goal:** On a real XLeRobot, a human operator teleoperates the robot through the same task: put the red cup in the tray, put the yellow waste paper in the waste bin, then re-observe and verify the desktop state.
 >
-> [^ch9-1]: XLeRobot, "Teleop Documentation." https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
+> **Principle:** A few-hundred-dollar arm can complete this multi-step task under human teleoperation. For this task, the hardware body is not the bottleneck; the gap lies in perception, planning, timing, closed-loop control, and failure recovery.
 
 ### Two-Layer Architecture: Separation of Planning and Control
 
-Robots need to make decisions at two different time scales to complete complex household tasks. The first layer is slower **long-horizon planning**: decomposing a high-level instruction like "clean the kitchen" into a sequence of sub-goals (clear the countertop, load the dishwasher, wipe the surfaces). This requires understanding environmental semantics, reasoning about task dependencies, and planning multi-step action sequences—similar to how a person thinks about "what to do first and what to do next" before starting. The second layer is faster **VLA control** (Vision-Language-Action model): executing each specific operation ("walk to the sink," "pick up the cloth," "wipe the countertop"), continuously outputting control signals based on the current visual input and language instruction to ensure smooth and coherent robot motion.
+Robots need to make decisions at two different time scales to complete complex household tasks. The first layer is slower **long-horizon planning**: decomposing a high-level instruction like "tidy the desk" into a sequence of sub-goals (move the red cup to the tray, put the yellow waste paper in the bin, then verify the final state). This requires understanding environmental semantics, reasoning about task dependencies, and planning multi-step action sequences—similar to how a person thinks about "what to do first and what to do next" before starting. The second layer is faster **VLA control** (Vision-Language-Action model): executing each specific operation ("approach the cup," "grasp it," "place it in the tray"), continuously outputting control signals based on the current visual input and language instruction to ensure smooth and coherent robot motion.
 
 This two-layer architecture separates responsibilities effectively: long-horizon planning handles "what to do," while VLA control handles "how to do it." The combination of slow high-level decision-making and fast low-level execution closely parallels the fast-slow architecture described earlier for speech: both assign complex reasoning and real-time response to different modules. The planning/control split, however, corresponds to slow deep reasoning versus fast real-time response, not to the thinking/expression split between MPS's Formulation Brain and Articulation Brain in Solution 3. MPS separates thinking from speaking; the robotics architecture separates global planning from real-time execution. The two architectures therefore divide the work along different dimensions.
 
@@ -456,18 +360,24 @@ General-purpose VLMs already possess decent embodied reasoning capabilities. Goo
 
 [^ch9-2]: Google DeepMind, "Gemini Robotics-ER 1.5." https://deepmind.google/models/gemini-robotics/gemini-robotics-er/
 
-> **Experiment 9-9 ★★: Using Gemini Robotics-ER 1.5 to Drive XLeRobot Autonomous Navigation**
+> **Experiment 9-8 ★: Measuring the Ideal-Control Upper Bound for the Same Task in Simulation**
 >
-> Use the RoboCrew library with Gemini Robotics-ER 1.5 as the long-horizon planning model, overlaying angular-scale annotations on the camera images. The system provides only three simple tools: move forward, turn left, and turn right. Given the task "find the kitchen and go there," the model makes decisions at 0.5-1Hz. It identifies visual features such as corridors, doors, and furniture; concludes that the kitchen may be on the left and turns accordingly; then sees a refrigerator ahead and continues forward. The system can also be extended with voice control, using a wake word to trigger new tasks. This experiment reveals the limits of VLMs in long-horizon planning: their spatial reasoning and task decomposition are already strong, but their robustness in complex environments and consistency over multiple reasoning steps still need improvement.[^ch9-3]
+> **Goal:** Run the same desk-tidying task with an ideal controller that makes no perception or action-selection errors, establishing a reproducible upper bound.
 >
-> [^ch9-3]: XLeRobot, "LLM Agent Control." https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html
+> **Principle:** This is a reference for the control ceiling, not evidence that the real robot has been run.
+
+> **Experiment 9-9 ★★: Autonomous Control of a Real XLeRobot with Gemini Robotics-ER 1.5**
+>
+> **Goal:** Replace the human operator with an Agent that observes the desktop and calls bounded pick, place, and verify skills, while keeping the real XLeRobot, task, and success criteria from Experiment 9-7 unchanged.
+>
+> **Principle:** The direct comparison exposes gaps in perception, planning, timing, closed-loop control, and recovery—not a new mechanical limitation of the robot body.
 
 ### VLA Control: From Demonstration Data to Cross-Embodiment Generalization
 
-In the execution layer of the two-layer architecture, three representative models—RT-2, OpenVLA, and π₀—all focus on VLA control, i.e., outputting robot actions in real time based on camera images and language instructions (Figure 9-11). They follow two different approaches to action representation: discrete action tokens and continuous trajectory generation.
+In the execution layer of the two-layer architecture, three representative models—RT-2, OpenVLA, and π₀—all focus on VLA control, i.e., outputting robot actions in real time based on camera images and language instructions (Figure 9-10). They follow two different approaches to action representation: discrete action tokens and continuous trajectory generation.
 
 
-![Figure 9-11: VLA Architecture (Vision-Language-Action)](images/fig9-11.svg)
+![Figure 9-10: VLA Architecture (Vision-Language-Action)](images/fig9-11.svg)
 
 
 **RT-2 and OpenVLA: The Discrete Action Token Route.**
@@ -484,43 +394,48 @@ The true divide in action representation is not between RT-2 and OpenVLA, but be
 
 ### Sim2Real Transfer: The Gap from Simulation to Reality
 
-Chapter 6's simulation section already explained where the sim-to-real gap comes from and how domain randomization counters it, so we won't repeat that here. In a nutshell: simulation can never perfectly reproduce real-world physics, visuals, and hardware, so training randomizes those parameters over a wide range, forcing the policy to learn a representation robust to those variations (Figure 9-12). What follows is how that principle lands on a real robotic arm.
+Chapter 6's simulation section already explained where the sim-to-real gap comes from and how domain randomization counters it, so we won't repeat that here. In a nutshell: simulation can never perfectly reproduce real-world physics, visuals, and hardware, so training randomizes those parameters over a wide range, forcing the policy to learn a representation robust to those variations (Figure 9-11). What follows is how that principle lands on a real robotic arm.
 
-![Figure 9-12: Sim2Real Gap and Domain Randomization](images/fig9-12.svg)
+![Figure 9-11: Sim2Real Gap and Domain Randomization](images/fig9-12.svg)
 
 This approach has produced several notable successes. OpenAI's Dactyl project achieved in-hand cube reorientation, and subsequent work used Automatic Domain Randomization (ADR) to solve a Rubik's Cube with one hand. ETH Zurich's ANYmal quadruped has demonstrated robust locomotion over difficult outdoor terrain such as snow and gravel.
 
-What this chapter adds are the two engineering steps you cannot skip when taking domain randomization to a real robot. The first is **calibrating the randomization range**: the range cannot be set on a hunch. Too narrow, and it misses real-world variation; too wide, and training gets harder and yields a suboptimal policy that "handles everything, masters nothing." In practice, the distribution of key parameters (friction coefficient, motor response delay) is first **measured and calibrated** from real-world data and sampled within that range; if the sim-trained policy's performance drops noticeably on the real robot, the range is widened step by step until the sim-to-real gap converges to something acceptable. The second is **visual alignment**: precisely calibrating camera pose between simulation and reality (environment alignment), and randomly splicing real-world background images into the simulated render (greenscreen background replacement) so that the simulation looks as much as possible like what the real robot sees. Experiment 9-10 demonstrates both steps.
+What this chapter adds are the two engineering steps you cannot skip when taking domain randomization to a real robot. The first is **calibrating the randomization range**: the range cannot be set on a hunch. Too narrow, and it misses real-world variation; too wide, and training gets harder and yields a suboptimal policy that "handles everything, masters nothing." In practice, the distribution of key parameters (friction coefficient, motor response delay) is first **measured and calibrated** from real-world data and sampled within that range; if the sim-trained policy's performance drops noticeably on the real robot, the range is widened step by step until the sim-to-real gap converges to something acceptable. The second is **visual alignment**: precisely calibrating camera pose between simulation and reality (environment alignment), and randomly splicing real-world background images into the simulated render (greenscreen background replacement) so that the simulation looks as much as possible like what the real robot sees. The paired experiments below illustrate these principles.
 
-> **Experiment 9-10 ★★★: Zero-Shot RGB Sim2Real Robotic Grasping**
+> **Experiment 9-10 ★★: Comparing Three Autonomous Loops in Simulation**
 >
-> Using the LeRobot + ManiSkill simulator, train with only RGB camera images (without relying on depth sensors or force sensors), then deploy zero-shot (without any additional tuning) directly to a real SO100 robotic arm. The process has five steps:
+> **Goal:** Keep the task and tools fixed while comparing open-loop execution, stepwise checking, and predictive closed-loop control.
 >
-> 1. **Environment Alignment**: Adjust the camera positions in the simulation and real environment, verifying through visual overlay that the images from both sides are aligned.
-> 2. **Background Replacement (Greenscreen)**: Randomly crop background images captured from the real environment and overlay them onto the simulation rendering, making the simulation background closer to reality.
-> 3. **Domain Randomization**: Randomize parameters such as robot color, object texture, lighting conditions, and camera field of view.
-> 4. **RL Training**: Train using the PPO algorithm in a massively parallel simulation environment until the success rate in simulation exceeds 90%.
-> 5. **Real-World Deployment**: Successfully complete the grasping task on the real robot zero-shot.
+> **Principle:** Stepwise checking enables local failure recovery; a world model permits continuation when prediction agrees with reality and replanning when it diverges. The final state is always confirmed with a fresh observation.
+
+> **Experiment 9-11 ★★★: RGB Cross-Environment Test for the Same Task**
 >
-> Key success factors: precise environment alignment, visual domain randomization, and physical parameter randomization; all three are indispensable. Limitation: When the shape, size, or material of real objects falls outside the training distribution, the success rate drops significantly.[^ch9-6]
+> **Goal:** Vary backgrounds, object appearance, lighting, and visual noise while keeping the desk-tidying task fixed, testing whether a vision policy learned in simulation remains robust across RGB environments.
 >
-> [^ch9-6]: LeRobot, "Sim2Real Tutorial". https://github.com/StoneT2000/lerobot-sim2real/blob/main/docs/zero_shot_rgb_sim2real.md
->
->
-> ![Figure 9-13: Experiment 9-10 Zero-Shot RGB Sim2Real Pipeline](images/fig9-13.svg)
+> **Principle:** Visual diversity can improve robustness, but it does not replace real-robot calibration or a complete safety and verification loop.
 >
 
-+## 2026 Update: Streaming Planning and World Models
+### 2026 Update: Aligned Desk-Tidying Experiments
 
-The robot section should not stop at “a VLM writes a plan and a VLA executes it.” Consider **“tidy the desk.”** A long-horizon planner first builds a state list—half-full cup, waste paper, three books, an open laptop, a bin, and a storage box—and emits commands with preconditions and success checks:
+The robot experiments now use one bounded task throughout: **put the red cup in the tray, put the yellow waste paper in the waste bin, then re-observe and verify the desktop state**. XLeRobot is a few-hundred-dollar arm, and a human can complete this multi-step task through teleoperation. That is direct evidence that, for this task, the hardware body is not the bottleneck; the autonomous gap lies in perception, planning, timing, closed-loop control, and recovery.
+
+The five experiments are deliberately paired:
+
+1. **Experiment 9-7**: teleoperate the real XLeRobot and establish the human-controlled hardware upper bound.
+2. **Experiment 9-8**: measure the ideal-control upper bound for the same task in a non-actuating simulator.
+3. **Experiment 9-9**: replace the human with Gemini Robotics-ER 1.5 and autonomously control the real XLeRobot.
+4. **Experiment 9-10**: compare open-loop, stepwise-checking, and predictive closed-loop strategies in the same simulator.
+5. **Experiment 9-11**: vary backgrounds, object appearance, lighting, and visual noise to test RGB cross-environment robustness.
+
+The earlier navigation example is not part of this experiment sequence: a fixed-base arm should be evaluated on a task it can physically perform.
+
+The planner still expresses the task as a dependency graph with preconditions and success checks:
 
 1. “Move to the desk and stop 30 cm from its edge.”
-2. “Put the two paper scraps in the bin; verify that no scraps remain.”
-3. “Keep the cup upright and place it on the tray; slow down if the liquid moves.”
-4. “Close the laptop and move it to the rear-left; do not pull its power cable.”
-5. “Stack the books by size and put the pens in the storage box.”
-6. “Only after fragile and powered objects are clear, wipe the desk.”
-7. “Step back, observe again, and verify the final state.”
+2. “Put the yellow waste paper in the waste bin; verify its new location.”
+3. “Keep the red cup stable and place it in the tray; verify that it is inside.”
+4. “Re-observe the desktop and verify both placements.”
+5. “Stop in a safe posture when the final state is confirmed.”
 
 This is a dependency graph, not a paragraph of prose. If the user says “put the laptop away first,” the system updates the goal priority. If the cup falls, it stops at a safe point, records facts such as cup.orientation=fallen and laptop.at_risk=true, invalidates the stale suffix, and replans: protect the laptop, contain the spill, re-observe, then resume only the unaffected tasks. Completed actions are not repeated. Emergency events cancel the current chunk; ordinary updates wait for the next safe point.
 
@@ -549,12 +464,6 @@ state + candidate action -> predicted future state -> select and verify an actio
 It is broader than V-JEPA alone. The family includes latent predictive models (V-JEPA 2), interactive generative models (Genie 3 and Cosmos), World-Action Models (GeniWorld and Robust-WAM), latent-action learning from unlabeled video (LAWM-3D), and model-based RL (Dreamer and MuZero). The value is to learn from observation at scale, test counterfactual actions before execution, separate shared dynamics from embodiment-specific control, and replan when prediction and reality diverge.
 
 Recent 2026 preprints explore shared dynamics priors and embodiment-specific heads (DyPES-VLA), visual-action representations for OOD closed-loop manipulation (GeniWorld), 3D-aware latent actions from human video (LAWM-3D), semantic foresight alignment (Robust-WAM), and asynchronous real-time deployment. These are promising research results, not solved generalization.
-
-### World models for Computer Use
-
-A desktop is also a dynamical system: screen state + click/type/scroll/wait -> next state. Induction Labs’ July 2026 Photon-1 uses latent next-state prediction from large-scale computer-use video, then fine-tunes action formatting and applies online RL. The company reports internal benchmark and cost results; these have not been independently reproduced. A practical design is a sidecar predictor: the VLM chooses semantics and tools, while the predictor caches candidate next states, screens risky actions, and discards stale rollouts after real screenshots disagree. Network, authentication, CAPTCHA, and hidden server state remain reasons to verify every irreversible action in the real environment.
-
-Sources: [OpenVLA](https://arxiv.org/abs/2406.09246), [V-JEPA 2](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/), [Genie 3](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/), [Photon-1](https://www.inductionlabs.com/news/scaling-video-pretraining), [DyPES-VLA](https://arxiv.org/abs/2608.06374), [GeniWorld](https://arxiv.org/abs/2608.06332), [LAWM-3D](https://arxiv.org/abs/2608.05706), [Robust-WAM](https://arxiv.org/abs/2608.05903).
 
 ## Chapter Summary
 
