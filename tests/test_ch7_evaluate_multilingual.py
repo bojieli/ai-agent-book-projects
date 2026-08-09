@@ -59,7 +59,8 @@ def test_evaluate_accuracy():
     assert evaluator.evaluate_accuracy("The answer is 42.", "42") == 1.0
     assert evaluator.evaluate_accuracy("Paris", "paris!") == 1.0
     assert evaluator.evaluate_accuracy("Wrong", "42") == 0.0
-
+    assert evaluator.evaluate_accuracy("1042", "42") == 0.0
+    assert evaluator.evaluate_accuracy("0", 0) == 1.0
 
 def test_evaluator_sample_formats():
     evaluator = MultilingualReasoningEvaluator()
@@ -96,6 +97,16 @@ def test_evaluator_sample_formats():
     assert res_es["language"] == "Spanish"
     assert res_es["accuracy"] == 1.0
     assert res_es["token_usage"]["total_tokens"] == 30
+
+    # Test non-falsy zero answer
+    sample_zero = {
+        "language": "en",
+        "prompt": "What is 2 - 2?",
+        "reference_answer": 0,
+    }
+    res_zero = evaluator.evaluate_sample(lambda p: "0", sample_zero)
+    assert res_zero["reference_answer"] == "0"
+    assert res_zero["accuracy"] == 1.0
 
 
 def test_run_evaluation_end_to_end():
@@ -136,3 +147,44 @@ def test_run_evaluation_empty_dataset():
     assert report["num_samples"] == 0
     assert report["overall_accuracy"] == 0.0
     assert report["by_language"] == {}
+
+
+def test_object_model_and_method_invocations():
+    evaluator = MultilingualReasoningEvaluator()
+
+    class CustomOutput:
+        def __init__(self):
+            self.reasoning = "Step 1: Compute."
+            self.answer = "42"
+            self.token_usage = {
+                "prompt_tokens": 10,
+                "completion_tokens": 20,
+                "reasoning_tokens": 15,
+                "total_tokens": 30,
+            }
+
+    class GenerateModel:
+        def generate(self, prompt, language="English"):
+            return CustomOutput()
+
+    class PredictModel:
+        def predict(self, prompt):
+            return "Reasoning: Simple math\nAnswer: 42"
+    sample = {"language": "en", "prompt": "40+2?", "reference_answer": "42"}
+    res_gen = evaluator.evaluate_sample(GenerateModel(), sample)
+    assert res_gen["accuracy"] == 1.0
+    assert res_gen["token_usage"]["total_tokens"] == 30
+
+    res_pred = evaluator.evaluate_sample(PredictModel(), sample)
+    assert res_pred["accuracy"] == 1.0
+
+
+def test_transfer_efficiency_zero_reference():
+    evaluator = MultilingualReasoningEvaluator()
+    metrics = {
+        "English": {"accuracy": 0.0},
+        "Spanish": {"accuracy": 0.0},
+    }
+    eff = evaluator.compute_transfer_efficiency(metrics)
+    assert eff["English"] == 0.0
+    assert eff["Spanish"] == 0.0

@@ -7,6 +7,7 @@ token usage, and cross-lingual transfer efficiency.
 
 from __future__ import annotations
 
+import inspect
 import math
 import re
 import statistics
@@ -77,6 +78,17 @@ def estimate_tokens(text: str) -> int:
     words = non_cjk_text.split()
     # ~1.3 tokens per word for Latin scripts, ~1.5 tokens per character for CJK/Kana
     return max(1, int(len(words) * 1.3 + cjk_count * 1.5))
+
+
+def _accepts_language(fn: Any) -> bool:
+    try:
+        sig = inspect.signature(fn)
+        for param in sig.parameters.values():
+            if param.name == "language" or param.kind == inspect.Parameter.VAR_KEYWORD:
+                return True
+        return False
+    except (ValueError, TypeError):
+        return True
 
 
 class MultilingualReasoningEvaluator:
@@ -159,8 +171,8 @@ class MultilingualReasoningEvaluator:
 
     def evaluate_accuracy(self, predicted_answer: str, reference_answer: str) -> float:
         """Determine task accuracy (1.0 for match, 0.0 for mismatch)."""
-        pred = str(predicted_answer or "").strip().lower()
-        ref = str(reference_answer or "").strip().lower()
+        pred = str(predicted_answer if predicted_answer is not None else "").strip().lower()
+        ref = str(reference_answer if reference_answer is not None else "").strip().lower()
 
         if not pred or not ref:
             return 1.0 if pred == ref else 0.0
@@ -186,9 +198,11 @@ class MultilingualReasoningEvaluator:
             except ValueError:
                 pass
 
-        # Substring matching for short references
-        if len(ref_clean) >= 2 and (ref_clean in pred_clean or pred_clean in ref_clean):
-            return 1.0
+        # Substring matching for short references with word boundaries
+        if len(ref_clean) >= 2:
+            pattern = r"\b" + re.escape(ref_clean) + r"\b"
+            if re.search(pattern, pred_clean):
+                return 1.0
 
         return 0.0
 
@@ -196,8 +210,16 @@ class MultilingualReasoningEvaluator:
         self, prompt: str, reasoning: str, answer: str, model_output: Any = None
     ) -> dict[str, int]:
         """Extract or estimate prompt, completion, reasoning, and total token usage."""
-        if isinstance(model_output, dict) and "token_usage" in model_output:
-            tu = model_output["token_usage"]
+        tu = None
+        if isinstance(model_output, dict):
+            if "token_usage" in model_output and isinstance(model_output["token_usage"], dict):
+                tu = model_output["token_usage"]
+            elif "total_tokens" in model_output or "prompt_tokens" in model_output:
+                tu = model_output
+        elif hasattr(model_output, "token_usage"):
+            tu = getattr(model_output, "token_usage")
+
+        if isinstance(tu, dict) and tu:
             p_tok = int(tu.get("prompt_tokens", 0))
             r_tok = int(tu.get("reasoning_tokens", 0))
             c_tok = int(tu.get("completion_tokens", r_tok + estimate_tokens(answer)))
@@ -262,48 +284,53 @@ class MultilingualReasoningEvaluator:
 
         return text, text, {}
 
+
     def _invoke_model(self, model: Any, prompt: str, language: str) -> Any:
         """Call model using appropriate signature (generate, predict, or call)."""
         if callable(model):
-            try:
+            if _accepts_language(model):
                 return model(prompt, language=language)
-            except TypeError:
-                return model(prompt)
+            return model(prompt)
 
         if hasattr(model, "generate") and callable(model.generate):
-            try:
+            if _accepts_language(model.generate):
                 return model.generate(prompt, language=language)
-            except TypeError:
-                return model.generate(prompt)
+            return model.generate(prompt)
 
         if hasattr(model, "predict") and callable(model.predict):
-            try:
+            if _accepts_language(model.predict):
                 return model.predict(prompt, language=language)
-            except TypeError:
-                return model.predict(prompt)
+            return model.predict(prompt)
 
         raise ValueError(f"Model object {type(model)} is not callable and lacks generate/predict methods.")
 
     def evaluate_sample(self, model: Any, sample: dict[str, Any]) -> dict[str, Any]:
         """Evaluate a single dataset sample."""
-        lang_raw = sample.get("language") or sample.get("target_language") or sample.get("lang") or "English"
-        language = normalize_language(lang_raw)
-        prompt = str(sample.get("prompt") or sample.get("question") or sample.get("input") or "")
-        reference_answer = str(
-            sample.get("reference_answer")
-            or sample.get("expected_answer")
-            or sample.get("ground_truth")
-            or sample.get("target")
-            or sample.get("answer")
-            or ""
-        )
+        lang_raw = None
+        for k in ("language", "target_language", "lang"):
+            if k in sample and sample[k] is not None:
+                lang_raw = sample[k]
+                break
+        language = normalize_language(str(lang_raw) if lang_raw is not None else "English")
+
+        prompt = ""
+        for k in ("prompt", "question", "input"):
+            if k in sample and sample[k] is not None:
+                prompt = str(sample[k])
+                break
+
+        reference_answer = ""
+        for k in ("reference_answer", "expected_answer", "ground_truth", "target", "answer"):
+            if k in sample and sample[k] is not None:
+                reference_answer = str(sample[k])
+                break
 
         raw_output = self._invoke_model(model, prompt, language)
         reasoning, answer, tu_raw = self._parse_model_output(raw_output)
 
         cot_fidelity = self.evaluate_cot_fidelity(reasoning, language)
         accuracy = self.evaluate_accuracy(answer, reference_answer)
-        token_usage = self.compute_token_usage(prompt, reasoning, answer, raw_output)
+        token_usage = self.compute_token_usage(prompt, reasoning, answer, tu_raw or raw_output)
 
         return {
             "language": language,
@@ -319,10 +346,8 @@ class MultilingualReasoningEvaluator:
     def compute_transfer_efficiency(self, by_language_metrics: dict[str, dict[str, Any]]) -> dict[str, float]:
         """Calculate cross-lingual transfer efficiency relative to English."""
         english_acc = by_language_metrics.get("English", {}).get("accuracy", 0.0)
-        reference_acc = english_acc if english_acc > 0 else max(
-            (m["accuracy"] for m in by_language_metrics.values() if m.get("accuracy") is not None),
-            default=1.0,
-        )
+        positive_accs = [m["accuracy"] for m in by_language_metrics.values() if m.get("accuracy") is not None and m.get("accuracy", 0.0) > 0]
+        reference_acc = english_acc if english_acc > 0 else (max(positive_accs) if positive_accs else 0.0)
 
         efficiencies: dict[str, float] = {}
         for lang, metrics in by_language_metrics.items():
@@ -330,13 +355,13 @@ class MultilingualReasoningEvaluator:
             if reference_acc > 0:
                 efficiencies[lang] = round(acc / reference_acc, 4)
             else:
-                efficiencies[lang] = 1.0
+                efficiencies[lang] = 0.0
 
         return efficiencies
 
     def evaluate(self, model: Any, dataset: Sequence[dict[str, Any]]) -> dict[str, Any]:
         """Evaluate model on dataset and compile comprehensive report."""
-        if not dataset:
+        def _empty_report() -> dict[str, Any]:
             return {
                 "overall_accuracy": 0.0,
                 "overall_cot_fidelity": 0.0,
@@ -351,8 +376,30 @@ class MultilingualReasoningEvaluator:
                 "num_samples": 0,
             }
 
-        sample_results = [self.evaluate_sample(model, sample) for sample in dataset]
+        if not dataset:
+            return _empty_report()
 
+        if self.target_languages:
+            target_langs = set(self.target_languages)
+            dataset = [
+                s for s in dataset
+                if normalize_language(
+                    s.get("language") or s.get("target_language") or s.get("lang") or "English"
+                ) in target_langs
+            ]
+
+        if not dataset:
+            return _empty_report()
+
+        sample_results = []
+        for sample in dataset:
+            try:
+                sample_results.append(self.evaluate_sample(model, sample))
+            except Exception:
+                continue
+
+        if not sample_results:
+            return _empty_report()
         by_lang_samples: dict[str, list[dict[str, Any]]] = {}
         for res in sample_results:
             lang = res["language"]
