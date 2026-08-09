@@ -197,3 +197,15 @@ def test_bilingual_consistency_auditor_case_insensitive_target_matching():
     report = auditor.run_audit("An agent works.", "Agente trabaja.", lang="es")
     assert report.scores["terminology"] == 1.0
     assert report.is_consistent is True
+
+
+def test_bilingual_consistency_auditor_unbalanced_dollars_without_source_formulas():
+    """Test that unbalanced dollar signs in target document trigger error even if source has no formulas."""
+    source_md = "Simple text without formula."
+    target_md = "简单文本 带着 $ 不匹配定界符。"
+    report = audit_translation(source_md, target_md, lang="zh")
+    assert report.scores["latex_formulas"] == 0.0
+    assert report.is_consistent is False
+    latex_findings = [f for f in report.findings if f["category"] == "latex_formulas"]
+    assert len(latex_findings) > 0
+    assert "Unbalanced" in latex_findings[0]["message"]

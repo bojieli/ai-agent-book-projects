@@ -331,6 +331,18 @@ class BilingualConsistencyAuditor:
         source_text = self._strip_code(source_text)
         target_text = self._strip_code(target_text)
 
+        # Check syntax balance in target first
+        dollars_count = target_text.count("$")
+        if dollars_count % 2 != 0:
+            findings.append(
+                AuditFinding(
+                    category="latex_formulas",
+                    severity="error",
+                    message="Unbalanced '$' delimiters found in target document.",
+                    details={"dollar_count": dollars_count},
+                )
+            )
+
         block_latex_regex = re.compile(r"\$\$(.*?)\$\$", re.DOTALL)
         inline_latex_regex = re.compile(r"(?<!\$)\$([^\$\n]+)\$(?!\$)")
 
@@ -347,7 +359,8 @@ class BilingualConsistencyAuditor:
         all_tgt_formulas = [f.strip() for f in tgt_blocks + tgt_inlines]
 
         if not all_src_formulas:
-            return 1.0, findings
+            score = 0.0 if dollars_count % 2 != 0 else 1.0
+            return score, findings
 
         matched = 0
         tgt_formula_set = set(all_tgt_formulas)
@@ -364,18 +377,6 @@ class BilingualConsistencyAuditor:
                         details={"formula": formula},
                     )
                 )
-
-        # Check syntax balance in target
-        dollars_count = target_text.count("$")
-        if dollars_count % 2 != 0:
-            findings.append(
-                AuditFinding(
-                    category="latex_formulas",
-                    severity="error",
-                    message="Unbalanced '$' delimiters found in target document.",
-                    details={"dollar_count": dollars_count},
-                )
-            )
 
         score = matched / len(all_src_formulas)
         return score, findings
