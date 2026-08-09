@@ -34,4 +34,4 @@ def test_semantic_router_servers_with_only_stop_words():
     assert router.server_embeddings is None
     assert router.route_request("query") == []
     assert router.retrieve("query", top_k=3) == []
-    assert router._route_to_servers("query", top_k=3) == []
+    assert router._route_to_servers("query", top_k=3) == [(router.servers[0], 0.0)]

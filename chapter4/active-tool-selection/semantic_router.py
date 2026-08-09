@@ -144,8 +144,10 @@ class SemanticRouter:
         Returns:
             List of (server, similarity_score) tuples
         """
-        if not self.servers or self.server_embeddings is None:
+        if not self.servers:
             return []
+        if self.server_embeddings is None:
+            return [(server, 0.0) for server in self.servers[:top_k]]
         # Vectorize the request
         request_vector = self.server_vectorizer.transform([request])
         # Calculate similarities with all servers
