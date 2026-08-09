@@ -340,8 +340,12 @@ class HybridStructuredRetriever:
                 has_vector = False
                 semantic_score = 0.0
 
-        if has_vector:
-            final_score = float(semantic_score * 0.7 + lexical_score * 0.3)
+        if query_vector is not None:
+            if has_vector:
+                final_score = float(semantic_score * 0.7 + lexical_score * 0.3)
+            else:
+                semantic_score = 0.0
+                final_score = float(lexical_score * 0.3)
         else:
             semantic_score = coverage_score
             final_score = float(lexical_score * 0.8 + coverage_score * 0.2)
@@ -443,7 +447,12 @@ class HybridStructuredRetriever:
             return []
 
         query_terms = set(re.findall(r"\w+", query.lower()))
-        query_vector = self.embedding_fn(query) if self.embedding_fn is not None else None
+        query_vector = None
+        if self.embedding_fn is not None:
+            try:
+                query_vector = self.embedding_fn(query)
+            except Exception:
+                query_vector = None
 
         candidates: Dict[str, Tuple[float, float, float]] = {}
         for key, node in self.unified_nodes.items():
