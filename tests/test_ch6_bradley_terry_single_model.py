@@ -40,3 +40,16 @@ def test_compute_mle_elo_zero_unique_models():
     res = compute_mle_elo(df)
     assert isinstance(res, pd.Series)
     assert len(res) == 0
+
+
+def test_compute_mle_elo_nan_model_names_multimodel():
+    df = pd.DataFrame([
+        {"model_a": "gpt-4", "model_b": "claude-3", "winner": "model_a"},
+        {"model_a": None, "model_b": "claude-3", "winner": "model_b"},
+        {"model_a": "gpt-4", "model_b": float("nan"), "winner": "model_a"},
+    ])
+    res = compute_mle_elo(df)
+    assert isinstance(res, pd.Series)
+    assert len(res) == 2
+    assert "gpt-4" in res.index
+    assert "claude-3" in res.index

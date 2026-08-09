@@ -80,7 +80,7 @@ def compute_mle_elo(df: pd.DataFrame,
     )
     
     # Align pivots on the full model universe (small samples otherwise leave NaNs).
-    models = sorted(set(df["model_a"]) | set(df["model_b"]))
+    models = sorted({m for m in (set(df["model_a"]) | set(df["model_b"])) if pd.notna(m)})
     ptbl_a_win = ptbl_a_win.reindex(index=models, columns=models, fill_value=0)
     ptbl_b_win = ptbl_b_win.reindex(index=models, columns=models, fill_value=0)
     ptbl_tie = ptbl_tie.reindex(index=models, columns=models, fill_value=0)
