@@ -229,3 +229,26 @@ def test_custom_quality_evaluator_nan_returns_zero():
     """Regression test: custom quality evaluator returning NaN is converted to 0.0."""
     engine = DownstreamAblationEngine(quality_evaluator=lambda code: float("nan"))
     assert engine.evaluate_code_quality("code") == 0.0
+
+def test_net_improvement_count_and_rate():
+    """Regression test: net_improvement_count tracks tasks where baseline failed and evolved passed."""
+    engine = DownstreamAblationEngine()
+
+    def baseline_agent(inp):
+        return "bad"
+
+    def evolved_agent(inp):
+        return "good"
+
+    task = AblationTask(
+        task_id="imp_01",
+        name="Improvement Task",
+        description="Check net improvement",
+        category="improvement",
+        input_data=None,
+        expected_output="good",
+    )
+
+    report = engine.run_ablation_campaign(baseline_agent, evolved_agent, [task])
+    assert report.net_improvement_count == 1
+    assert report.net_improvement_rate == 1.0

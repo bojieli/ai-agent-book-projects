@@ -66,6 +66,7 @@ class AblationReport:
     code_quality_score_change: float
     regression_count: int
     regression_rate: float
+    net_improvement_count: int
     net_improvement_rate: float
     category_breakdown: dict[str, dict[str, Any]]
     statistical_metrics: dict[str, Any]
@@ -345,7 +346,9 @@ class DownstreamAblationEngine:
 
         regression_rate = round(regressions / b_passed, 4) if b_passed > 0 else 0.0
         net_improvement_rate = (
-            round((e_passed - b_passed) / total_tasks, 4) if total_tasks > 0 else 0.0
+            round((net_improvements - regressions) / total_tasks, 4)
+            if total_tasks > 0
+            else 0.0
         )
 
         # Statistical significance calculation (Z-test for proportions)
@@ -375,6 +378,7 @@ class DownstreamAblationEngine:
             regression_count=regressions,
             regression_rate=regression_rate,
             net_improvement_rate=net_improvement_rate,
+            net_improvement_count=net_improvements,
             category_breakdown=category_data,
             statistical_metrics=statistical_metrics,
             detailed_results=detailed_results,
