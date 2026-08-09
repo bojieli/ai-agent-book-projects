@@ -250,3 +250,50 @@ def test_uint8_normalization_around_128():
     tone_uint8 = bytes([128 + int(100 * np.sin(i / 10.0)) for i in range(320)])
     energy_tone = manager.calculate_energy(tone_uint8, sample_format="uint8")
     assert energy_tone > 0.1
+
+
+def test_unknown_int_dtype_uses_value_range_scale():
+    """Regression: unknown integer dtypes must use a standard scale based on value range, not chunk max, so relative volume is preserved."""
+    manager = DuplexInterruptionManager()
+    # Same int16-range values in different containers must produce same energy
+    vals = [15000, -15000, 10000, -10000] * 80
+    energy_int16 = manager.calculate_energy(np.array(vals, dtype=np.int16))
+    energy_int32 = manager.calculate_energy(np.array(vals, dtype=np.int32))
+    energy_list = manager.calculate_energy(vals)
+    assert abs(energy_int16 - energy_int32) < 0.01, "int16 and int32 should match"
+    assert abs(energy_int16 - energy_list) < 0.01, "int16 and list should match"
+
+    # Quiet audio (small values) must have lower energy than loud audio (large values)
+    # at the same scale tier
+    quiet = np.array([100, -100, 50, -50] * 80, dtype=np.int32)
+    loud = np.array([30000, -30000, 25000, -25000] * 80, dtype=np.int32)
+    energy_quiet = manager.calculate_energy(quiet)
+    energy_loud = manager.calculate_energy(loud)
+    assert energy_quiet < energy_loud, f"Quiet ({energy_quiet}) should be < loud ({energy_loud})"
+
+
+def test_float_audio_above_unity_uses_fixed_scale():
+    """Regression: float arrays with values > 1.0 must use a fixed scale (32768), not chunk max, preserving relative volume."""
+    manager = DuplexInterruptionManager()
+    # Quiet float in int16 range
+    quiet = [100.0, -100.0, 50.0, -50.0] * 80
+    energy_quiet = manager.calculate_energy(quiet)
+    assert energy_quiet < 0.01, f"Quiet float audio energy {energy_quiet} should be near zero"
+
+    # Loud float in int16 range
+    loud = [30000.0, -30000.0, 25000.0, -25000.0] * 80
+    energy_loud = manager.calculate_energy(loud)
+    assert energy_loud > 0.1, f"Loud float audio energy {energy_loud} should be significant"
+
+
+def test_barge_in_when_not_playing_preserves_queued_audio():
+    """Regression: barge-in while not playing must not drop queued pending audio."""
+    manager = DuplexInterruptionManager()
+    # Queue some audio but don't start playing
+    manager.pending_audio_stream.append(b"\x00" * 1024)
+    manager.is_playing = False
+
+    result = manager.handle_barge_in(reason="test")
+    assert result["status"] == "ignored"
+    # Queued audio must still be present
+    assert len(manager.pending_audio_stream) == 1

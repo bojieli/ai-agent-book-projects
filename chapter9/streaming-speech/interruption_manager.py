@@ -141,14 +141,20 @@ class DuplexInterruptionManager:
                     arr = raw_arr.astype(np.float32) / 32768.0
                 else:
                     max_abs = float(np.max(np.abs(raw_arr))) if raw_arr.size > 0 else 0.0
-                    scale = 32768.0 if max_abs <= 32768.0 else max_abs
+                    if max_abs <= 128.0:
+                        scale = 128.0
+                    elif max_abs <= 32768.0:
+                        scale = 32768.0
+                    elif max_abs <= 2147483648.0:
+                        scale = 2147483648.0
+                    else:
+                        scale = float(np.iinfo(raw_arr.dtype).max)
                     arr = raw_arr.astype(np.float32) / scale
             else:
                 arr = raw_arr.astype(np.float32)
                 max_abs = float(np.max(np.abs(arr))) if arr.size > 0 else 0.0
                 if max_abs > 1.0:
-                    scale = 32768.0 if max_abs <= 32768.0 else max_abs
-                    arr = arr / scale
+                    arr = arr / 32768.0
         elif isinstance(audio_data, np.ndarray):
             if audio_data.size == 0:
                 return 0.0
@@ -161,14 +167,20 @@ class DuplexInterruptionManager:
                     arr = audio_data.astype(np.float32) / 32768.0
                 else:
                     max_abs = float(np.max(np.abs(audio_data))) if audio_data.size > 0 else 0.0
-                    scale = 32768.0 if max_abs <= 32768.0 else max_abs
+                    if max_abs <= 128.0:
+                        scale = 128.0
+                    elif max_abs <= 32768.0:
+                        scale = 32768.0
+                    elif max_abs <= 2147483648.0:
+                        scale = 2147483648.0
+                    else:
+                        scale = float(np.iinfo(audio_data.dtype).max)
                     arr = audio_data.astype(np.float32) / scale
             else:
                 arr = audio_data.astype(np.float32)
                 max_abs = float(np.max(np.abs(arr))) if arr.size > 0 else 0.0
                 if max_abs > 1.0:
-                    scale = 32768.0 if max_abs <= 32768.0 else max_abs
-                    arr = arr / scale
+                    arr = arr / 32768.0
         else:
             return 0.0
 
@@ -263,8 +275,7 @@ class DuplexInterruptionManager:
         """
         # 1. Instant audio stream cancellation
         was_playing = self.is_playing
-        cancelled_bytes = sum(len(b) for b in self.pending_audio_stream)
-        self.stop_playback()
+        cancelled_bytes = sum(len(b) for b in self.pending_audio_stream) if was_playing else 0
 
         if not was_playing:
             return {
@@ -280,9 +291,8 @@ class DuplexInterruptionManager:
                 "event": None,
             }
 
+        self.stop_playback()
         self.barge_in_count += 1
-
-        # 2. Dialogue context truncation
         truncated_turns_count = 0
         if self.dialogue_context:
             last_turn = self.dialogue_context[-1]
