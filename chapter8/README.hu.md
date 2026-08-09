@@ -11,14 +11,22 @@
 | 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | A környezeti eredményeket, folyamatszabályokat és rubrikákat bizonyítékalapú diagnózissá egyesíti. |
 | 8-2 | [gaia-experience](gaia-experience/) | ✅ | Sikeres, részben sikeres és sikertelen nyomvonalakból tapasztalati dokumentumot készít. |
 | 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Minimális promptjavítást készít, és határ- valamint megtartási készlettel vezérli a kiadást. |
-| 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | Böngészőnyomvonalakat fordít reset és visszajátszás segítségével ellenőrzött munkafolyamattá. |
-| 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | Ismételt hibák után kódjavítást indít, majd regressziót, canary kiadást és visszaállítást végez. |
-| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Hermes megkapja a teljes könyvet és saját forrását, választ egy javítást, módosítja önmagát, és minden Reviewer-elutasításból új tanulási kört indít az elfogadásig. |
-| 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | A 8-7. kísérlet hosszú távon értékeli a tanulást, átvitelt, szabályváltozást és megtartást. |
-| 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | Magas kockázatú műveletek megerősítési kapuja |
-| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | Az írási visszajelzést ellenőrizhető Skill-lé alakítja; a fejezet a görbe idézőjeles Skillt auditált szintetikus adattal és utóhangolással kapcsolja össze, a pontos másolás tokenizer/Harness hibáit pedig külön kezeli |
+| 8-4 | Szöveges kísérlet | 🚧 | 8-4. kísérlet: követelménytisztázó Skillt fejleszt a felhasználói visszajelzésekből |
+| 8-5 | [browser-use-rpa](browser-use-rpa/) | ✅ | 8-5. kísérlet: böngészőnyomvonalakat fordít reset és visszajátszás segítségével ellenőrzött munkafolyamattá |
+| 8-6 | [self-modifying-agent](self-modifying-agent/) | ✅ | 8-6. kísérlet: ismételt hibák után kódjavítást indít, majd regressziót és kiadást végez |
+| 8-7 | [harness-safety-gate](harness-safety-gate/) | ✅ | 8-7. kísérlet: magas kockázatú műveletek megerősítési kapuja |
+| 8-8 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | 8-8. kísérlet: Hermes megkapja a teljes könyvet és saját forrását, módosítja önmagát |
+| 8-9 | [self-evolution-eval](self-evolution-eval/) | ✅ | 8-9. kísérlet: hosszú távon értékeli a tanulást, átvitelt, szabályváltozást és megtartást |
 
 Minden kísérlet kínál offline belépési pontot és API-kulcs nélküli egységtesztet; a valódi modellt vagy böngészőt igénylő útvonalakat az egyes projektek README-je ismerteti.
+## Kiegészítő esetek
+
+| Kísérlet | Projekt | Kapcsolat |
+| :--: | --- | --- |
+| 7-8 | [prompt-distillation](prompt-distillation/) | Prompt蒸馏与参数化学习的跨章项目 |
+| — | [self-evolving-tools](self-evolving-tools/) | Alita-style eszköz-felfedezés és újrafelhasználás |
+| — | [ai-style-skill](ai-style-skill/) | Kiegészítő írási Skill kísérlet; a fő példa a 2. fejezetben található |
+
 
 ## Projekttípusok
 
