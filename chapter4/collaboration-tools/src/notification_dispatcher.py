@@ -344,6 +344,15 @@ class NotificationDispatcher:
                     status = "escalated"
                     notes = f"Timeout reached ({wait_timeout}s): policy engine escalated request."
 
+                # Update pending record immediately to prevent decision race conditions during escalation
+                if req_record:
+                    req_record["status"] = status
+                    req_record["approved"] = approved
+                    req_record["decision"] = decision
+                    req_record["notes"] = notes
+                    req_record["resolved_at"] = resolved_at
+
+                if fallback == FallbackAction.ESCALATE.value:
                     # Trigger escalation notification
                     escalation_msg = (
                         f"🚨 ESCALATION ALERT: HITL decision request {request_id} "

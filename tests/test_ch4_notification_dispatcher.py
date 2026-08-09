@@ -237,3 +237,34 @@ async def test_cleanup_on_cancellation():
         pass
     assert req_id not in dispatcher._pending_requests
     assert req_id not in dispatcher._decision_events
+
+
+@pytest.mark.asyncio
+async def test_late_decision_submission_rejected_after_fallback():
+    """Test that submitting a decision after fallback policy has triggered returns False."""
+    dispatcher = NotificationDispatcher(fallback_action="escalate")
+
+    # Slow custom channel to simulate delay during escalation dispatch
+    async def slow_channel(msg, ctx):
+        await asyncio.sleep(0.3)
+        return {"sent": True}
+
+    dispatcher.register_channel_handler("slow", slow_channel)
+    req_id = "req_late_sub"
+    request = {
+        "request_id": req_id,
+        "message": "Escalated task",
+        "channels": ["slow"],
+        "fallback_action": "escalate",
+    }
+
+    task = asyncio.create_task(dispatcher.dispatch_and_wait(request, timeout=0.05))
+    await asyncio.sleep(0.4)
+
+    # Attempt decision submission after timeout
+    submitted = dispatcher.submit_decision(req_id, approved=True)
+    assert submitted is False
+
+    trace = await task
+    assert trace.status == "escalated"
+    assert trace.fallback_triggered is True
