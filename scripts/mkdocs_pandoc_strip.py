@@ -17,6 +17,8 @@ _PANDOC_ATTR = re.compile(
 
 def on_page_markdown(markdown, **kwargs):
     """MkDocs hook to strip Pandoc attributes outside code blocks and inline code."""
+    if not markdown:
+        return ""
     out = []
     last_end = 0
     for match in _CODE_PATTERN.finditer(markdown):
