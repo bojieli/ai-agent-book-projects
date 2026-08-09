@@ -50,16 +50,10 @@ LLM verifiers also require calibration. Production systems typically maintain a 
 
 > **Experiment 8-1 ★★: Build a Trajectory Verifier for a Customer-Service Agent**
 >
-> **Objective:** Convert a customer-service trajectory into a structured diagnosis that can support subsequent learning, and test whether “multidimensional conclusions with evidence” identify root causes better than a single overall score.
+> **Purpose:** Isolate the capability represented by this experiment and compare it with a suitable baseline.
 >
-> **Data and procedure:** Prepare expert-labeled trajectories covering four categories: normal refunds, false promises, privacy disclosures, and excessive refusals. The first layer reads the final order state and tool logs to determine whether a refund or rescheduling actually occurred. The second checks every step against business policies, including permissions, required procedures, privacy, factual support, and promise–action consistency. The third evaluates language quality and compliant alternatives against the Rubric in Table 8-1 and retains the relevant turns as evidence for each failure. The default quality Judge uses deterministic rules, with a real LLM Judge also available. Regardless of the upper-layer model, the outcome and rule layers must not be left for a language model to guess.
+> **Principle-level conclusion:** Accept a change only when it improves the target behavior without regression and remains attributable, verifiable, and reversible; this book states the design and conclusion, not run-specific parameters.
 >
-> **Controls and metrics:** The baseline outputs only an overall score; the experimental condition outputs `pass`, `fail`, or `uncertain` for each dimension, together with evidence and confidence. During calibration, measure precision and recall for detecting failures in each dimension and report exact agreement with expert labels. Also verify that failures such as false promises contain nonempty evidence rather than unsupported conclusions.
->
-> **Acceptance criteria:** The verifier should reliably detect critical violations, false promises, and excessive refusals. A high overall score must not conceal a privacy or policy failure. Low-confidence and high-risk cases should be sent to a second verifier or human review instead of automatically becoming learning signals.
->
-> The accompanying implementation is available at [`trajectory-verifier`](../chapter8/trajectory-verifier/). By default, it uses a quality Judge that can be reproduced offline; use `--judge llm` to run the implemented real LLM verifier.
-
 ## Four Methods for Continual Agent Evolution
 
 Learning signals indicate that an Agent should change, but not where that change should occur. The primary basis for choosing an update method is not how long an experience has persisted, but whether the target capability can be naturally represented by a particular medium. Facts and experience are suited to knowledge documents; strategies that can be clearly expressed in language belong in Prompts or Skills; precisely executable procedures and constraints should be encoded as programs; and high-dimensional capabilities such as perception, language style, and implicit strategies must enter model parameters. Figure 8-3 shows these four methods and their relationships.
@@ -95,16 +89,10 @@ GAIA experience learning provides an intuitive example. GAIA[^gaia-2023] contain
 
 > **Experiment 8-2 ★★: Distill Experience Knowledge Documents from GAIA Trajectories**
 >
-> **Objective:** Test whether cross-trajectory knowledge documents transfer better than a summary of a single success and reduce negative transfer from accidental successes and incorrect experience.
+> **Purpose:** Isolate the capability represented by this experiment and compare it with a suitable baseline.
 >
-> **Data and procedure:** `gaia-experience` first stores the full trajectory and external `environment_score` for each run, then converts them into minimal learning records containing `task_family`, required `capabilities`, `applies_when`, observed strategies, errors, exceptions, and source trajectory IDs. An outcome verifier classifies runs as successful, partially successful, or failed. The learning module compares paths within the same task family. An LLM may propose candidate generalizations, but a recommended strategy must be supported by at least two non-failed trajectories. The resulting Markdown document includes applicable scenarios, recommended strategies, common pitfalls, exceptions, provenance, and the latest validation time. During application, only these documents are retrieved; lengthy raw trajectories are not inserted directly into the context.
+> **Principle-level conclusion:** Accept a change only when it improves the target behavior without regression and remains attributable, verifiable, and reversible; this book states the design and conclusion, not run-specific parameters.
 >
-> **Three controls:** The first condition uses no historical experience; the second retrieves the one trajectory summary most similar to the current task; the third retrieves a knowledge document supported by multiple trajectories. The learning and transfer sets must be disjoint so that answers to the same GAIA question do not leak into evaluation as “experience.”
->
-> **Metrics and acceptance:** Report transfer-task success rate, average retrieved characters or Tokens, and negative-transfer rate, and verify that every formal conclusion cites its source trajectories. If cross-trajectory documents merely shorten the context without improving new-task performance, they do not demonstrate learned experience. The experiment also fails if one accidental success can be promoted directly to formal knowledge or if a document cannot be traced to its original trajectories.
->
-> The accompanying implementation is available at [`gaia-experience`](../chapter8/gaia-experience/). `demo_documents.py` runs offline by default; with `--extractor llm`, a real LLM can propose cross-trajectory experience candidates.
-
 [^reflexion-2023]: Shinn, N., et al. *Reflexion: Language Agents with Verbal Reinforcement Learning.* arXiv:2303.11366, 2023.
 
 [^gaia-2023]: Mialon, G., et al. *GAIA: a benchmark for General AI Assistants.* arXiv:2311.12983, 2023.
@@ -129,24 +117,18 @@ Skill learning follows the same principle, but with a more localized scope. A Sk
 
 > **Experiment 8-9 ★★: Turning Feedback into a Writing Skill**
 >
-> Process the 20 before/after pairs in `data/feedback_pairs.json` in three batches. Extract candidate rules, merge duplicate patterns, detect threshold conflicts, and generate a sourced, scoped `SKILL.md`. Check deterministic rules in code and calibrate LLM rules on ten gold examples.
+> **Purpose:** Isolate the capability represented by this experiment and compare it with a suitable baseline.
 >
-> Report detection on the unfinished-task boundary set, false positives on the normal-text holdout, and rule-count growth together. The first real run produced 0/8 detection and 7/8 false positives; after model-external filtering and deterministic fallback it produced 8/8, 0/8, and merged 21 candidates into 8 rules. Implementation: [`ai-style-skill`](../chapter8/ai-style-skill/).
-
+> **Principle-level conclusion:** Accept a change only when it improves the target behavior without regression and remains attributable, verifiable, and reversible; this book states the design and conclusion, not run-specific parameters.
+>
 The curved-quote case shows why a Skill should become a data contract rather than a global replacement rule: synthetic examples must be stratified by article type, scope, and programming language, pass code/JSON/protected-region gates, and receive manual audits before SFT. The exact-string case adds a tokenizer audit: encode→decode round-trip, model byte-exact copying, Harness serialization, and tool matching are separate regression layers.
 
 > **Experiment 8-3 ★★: Optimizing System Prompts from Failure Trajectories**
 >
-> **Objective:** Teach an airline customer-service Agent from trajectories in which it escalates too quickly when a user challenges a policy, while demonstrating that the new rule does not break older scenarios that genuinely require escalation.
+> **Purpose:** Isolate the capability represented by this experiment and compare it with a suitable baseline.
 >
-> **Procedure:** First run the old-task retention set and the excessive-escalation boundary set separately. `learning_signal.py` decomposes failures into rule adherence, task resolution, and compliant flexibility, while retaining source case IDs. A Coding Agent then reads the existing Prompt and produces exactly one auditable `old_str → new_str` minimal edit: require the Agent to explain the policy, identify the actual goal, and seek compliant alternatives before escalating, while preserving escalation when the user explicitly requests a human or a safety incident occurs. The patch, provenance, target rule, and rationale are written into a candidate manifest.
+> **Principle-level conclusion:** Accept a change only when it improves the target behavior without regression and remains attributable, verifiable, and reversible; this book states the design and conclusion, not run-specific parameters.
 >
-> **Three controls:** Compare the initial Prompt, the automatically generated candidate Prompt, and a one-time manually optimized Prompt. All three use the same model and the same retention and boundary tasks. `--quick` only reduces the number of cases; it still makes real calls to the task Agent, LLM Judge, and Coding Agent and must not be reported as an offline simulation.
->
-> **Release gate and metrics:** A candidate must pass four conditions: a nonempty patch, traceable provenance, measurable improvement on the boundary set, and no degradation on the retention set. Compare boundary-task accuracy, retention-task accuracy, Prompt growth, regressions introduced, and time from failure discovery to candidate generation. Passing the gate produces only `release_to_canary`, never a direct overwrite of the stable Prompt; failure of any condition returns `reject_candidate`.
->
-> The accompanying implementation is available at [`prompt-auto-optimization`](../chapter8/prompt-auto-optimization/). Offline tests cover diagnosis and release gates, while `--quick` makes real calls to the task Agent, LLM Judge, and Coding Agent.
-
 [^dspy-2023]: Khattab, O., et al. *DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines.* arXiv:2310.03714, 2023.
 
 [^opro-2023]: Yang, C., et al. *Large Language Models as Optimizers.* arXiv:2309.03409, 2023.
@@ -178,16 +160,10 @@ For an email workflow, the compiled result is not merely “click these buttons 
 
 > **Experiment 8-4 ★★★: Generating Verifiable Workflows from Browser Trajectories**
 >
-> **Objective:** Determine whether a web Agent can turn one expensive exploration into a reusable workflow and reject an incorrect replay when the page changes, rather than reporting success merely because every action ran.
+> **Purpose:** Isolate the capability represented by this experiment and compare it with a suitable baseline.
 >
-> **Four-stage scenario:** In the first stage, run “send a message with the subject ‘Test Email’ to `test@example.com`” on a test mail site or simulated messaging page. The full Agent explores, while a wrapper captures actions, parameters, and page states and produces a `candidate`. In the second stage, call `validation_reset` to restore the sandbox and independently replay the entire workflow; the candidate enters the formal capability library only if all before-action, after-action, and final-state checks pass. In the third stage, perform the same kind of task with a different recipient, subject, and body. The system should match the validated workflow, fill the new parameters, and replay it through Playwright without entering the step-by-step LLM loop. In the fourth stage, change a button locator, page text, or final state and verify that the old workflow immediately becomes `invalid` and returns `fallback_required=True`.
+> **Principle-level conclusion:** Accept a change only when it improves the target behavior without regression and remains attributable, verifiable, and reversible; this book states the design and conclusion, not run-specific parameters.
 >
-> **Control design:** A simplified baseline records only whether clicks, text entry, and other actions complete without exceptions. The experimental condition also validates the page before each action, the page after each action, and the final task state. Both conditions use the same trajectories and page changes. Compare their false-positive rates on cases such as “the send button was clicked while a field was empty” and “Save was clicked but the data was not persisted.”
->
-> **Metrics and acceptance:** Record end-to-end time for initial exploration and replay, number of LLM calls, success rate, false-success rate, workflow match rate, page-change detection rate, and number of fallbacks to relearning. Without a reset callback, a workflow must remain a candidate; a version that fails validation must not be retrievable; parameterized replay must not reuse the first run’s recipient or content; and after a page change, dangerous subsequent actions must stop. Acceleration matters only if all these conditions are satisfied.
->
-> The accompanying implementation is available at [`browser-use-rpa`](../chapter8/browser-use-rpa/), which provides both a deterministic state-machine demonstration and an execution path that invokes a real browser Agent.
-
 An Agent modifying its own code does not mean that the running process directly overwrites itself. A production system should create a candidate branch from the current stable version, have a Coding Agent generate a minimal patch, and then sequentially run static checks, unit tests, security scans, failure-trajectory replay, and regression tests on old tasks before producing a new version eligible for canary deployment. This turns “self-modification” into an auditable software release process and defines the boundary between Chapters 8 and 5: Chapter 5 provides the capability to modify systems, while this chapter provides a method for self-modification that is triggered by experience and constrained by a validation loop.
 
 Making the patch small is not enough for reliable attribution. Each modification request should also be a **falsifiable change contract** that records the failure evidence, inferred root cause, responsible Harness component, candidate change, behavior expected to improve, existing behavior that may regress, and tests for both. Agentic Harness Engineering describes this in terms of component-, experience-, and decision-level observability: every editable component has a file-level representation; large collections of trajectories are distilled into evidence that can be inspected at increasing levels of detail; and every edit declares an impact prediction before execution, which the next round of results then tests[^ahe-2026]. A higher score can then be connected to a specific mechanism rather than remaining an uninterpretable trial.
@@ -198,16 +174,10 @@ Tool creation follows the same protocol. Alita[^alita-2025] presents a case in w
 
 > **Experiment 8-5 ★★★: Triggering Agent Self-Modification from Failure Trajectories**
 >
-> **Objective:** Given multiple trajectories in which errors marked `retryable=false` are still called repeatedly, determine whether the system can locate the root cause in retry and circuit-breaker code and produce a candidate fix without breaking recovery from transient failures.
+> **Purpose:** Isolate the capability represented by this experiment and compare it with a suitable baseline.
 >
-> **Procedure:** The diagnosis module first aggregates the same fault across different tasks. It creates a modification request only after the cross-trajectory support threshold is met and targets `retry_policy.py` in the stable version. The candidate generator reads the failure diagnosis, the transient-failure recovery behavior that must be preserved, previously rejected changes, and the stable source. Before emitting a minimal code diff, it predicts that calls after non-retryable errors should fall while transient-timeout recovery should not. Whether the generator is deterministic or a real LLM Coding Agent, it may write only to an isolated candidate directory. The validation Harness then compiles the candidate, replays the original failure trajectories, verifies that a non-retryable error stops immediately and opens the circuit breaker, and retests that transient timeouts still retry according to the original threshold.
+> **Principle-level conclusion:** Accept a change only when it improves the target behavior without regression and remains attributable, verifiable, and reversible; this book states the design and conclusion, not run-specific parameters.
 >
-> **Diagnostic control and metrics:** Treat “add one sentence to the Prompt telling the Agent not to repeat the call” as a conceptual example of choosing the wrong modification layer, demonstrating why a deterministically enforceable retry constraint belongs in code. The executable experiment compares deterministic and LLM patch generators under the same release gate. Record the number of calls after non-retryable errors, transient-error recovery rate, regressions on old tasks, patch size, and candidate acceptance rate.
->
-> **Acceptance criteria:** Passing every check produces only `release_to_canary`. Failure of any static check, failure replay, or old-task regression returns `reject_candidate`. `release_manifest.json` must record the failure cluster, source trajectories, inferred root cause, target component and file, code diff, expected repair, possible regressions, check results, candidate version, and rollback version. Rejected candidates must retain their failure reasons for the next generation round. The patch-generating Agent must not modify stable code, validators, audit logs, or the gate that approves its own release.
->
-> The accompanying implementation is available at [`self-modifying-agent`](../chapter8/self-modifying-agent/). It supports either a deterministic candidate generator or a real LLM Coding Agent, with both paths sharing the same release gate.
-
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
 [^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
@@ -216,8 +186,10 @@ Experiment 8-8 applies the same protocol to the verification layer. Only repeate
 
 > **Experiment 8-8 ★★: A User-Feedback-Triggered Confirmation Gate for High-Risk Operations**
 >
-> Use the three signal types and control trajectories in `failure_trajectories.json`. The real `gpt-4o-mini` candidate failed unfinished-task replay, normal-operation replay, and one-time-token checks, so the safety gate rejected it. The deterministic candidate passed all checks and received `release_to_canary`; record checks, the release decision, and the stable-directory hash. Implementation: [`harness-safety-gate`](../chapter8/harness-safety-gate/).
-
+> **Purpose:** Isolate the capability represented by this experiment and compare it with a suitable baseline.
+>
+> **Principle-level conclusion:** Accept a change only when it improves the target behavior without regression and remains attributable, verifiable, and reversible; this book states the design and conclusion, not run-specific parameters.
+>
 ### Encoding Experience in Parameters
 
 Knowledge, instructions, and programs all rest on one premise: the target capability can be expressed relatively completely through external symbols. Yet capabilities such as medical-image understanding, natural speech prosody, removing a formulaic “AI feel” from text, and long-horizon planning are difficult to compress into a few rules or workflows. Such capabilities must be written into model parameters through post-training.
@@ -242,14 +214,10 @@ Higher levels are not automatically better. Searching for a local rule may requi
 
 > **Experiment 8-6 ★★★: Give Hermes This Book: Can It Upgrade Itself?**
 >
-> **Objective:** Test whether an Agent can turn external knowledge into an update to its own capabilities. The experiment supplies no problem statement and no feature checklist. Hermes receives all ten chapters and its own source, then must understand the principles, inspect its implementation, and choose a worthwhile improvement itself.
+> **Purpose:** Isolate the capability represented by this experiment and compare it with a suitable baseline.
 >
-> **Design:** The book and source are readable context, while the stable version, independent Reviewer, and acceptance tests remain outside Hermes' editable scope. Hermes must complete **read → compare → choose → change → verify**. If a candidate is rejected, the review becomes input to the next learning round; Hermes cannot bypass the gate and declare success.
+> **Principle-level conclusion:** Accept a change only when it improves the target behavior without regression and remains attributable, verifiable, and reversible; this book states the design and conclusion, not run-specific parameters.
 >
-> **Real run:** After reading the book, Hermes independently noticed that its saved trajectories lacked structured evidence that later learning could use directly. It chose to turn execution outcomes into conservative learning signals, then edited its own source and added tests. The first three independent reviews found mismatches with real data formats, persistence paths, and counting semantics. Each finding went back to the original Hermes session for another correction; the fourth review accepted the candidate. Rejection was not the end of the experiment, but part of the improvement loop.
->
-> **Claim boundary:** This run shows that an Agent can extract principles from long-form knowledge, map them onto its own code, and complete a self-update under external verification. It does not show that the update already improves downstream task success; that requires a separate ablation experiment. Reader Grace contributed the experiment idea.
-
 ## Building a Continual-Evolution Closed Loop for Long-Term Operation
 
 The four update methods become continual evolution rather than one-off optimization only when incorporated into the same autonomous loop. Figure 8-5 shows a more robust dual-loop architecture for production systems: the online execution loop only completes tasks and records evidence, without directly rewriting the production Agent; the offline evolution loop aggregates trajectories, diagnoses root causes, generates candidate modifications, and releases new versions only after they pass validation gates. The two loops are connected through versioned experience repositories and evaluation sets.
@@ -345,16 +313,10 @@ Continual evolution does not mean allowing knowledge, Prompts, and tools to grow
 
 > **Experiment 8-7 ★★★: Evaluating Whether an Agent Is Continually Evolving**
 >
-> **Objective:** Distinguish among three long-term behaviors—saving one piece of feedback, merely appending forever, and genuinely updating, transferring, and retaining capabilities—so that repeatedly running the same tasks is not mistaken for continual learning.
+> **Purpose:** Isolate the capability represented by this experiment and compare it with a suitable baseline.
 >
-> **Four-stage task stream:** The learning stage presents refund, identity-verification, and baggage-policy tasks that share latent patterns. The transfer stage changes the phrasing, user, and local environment to test whether old experience applies to new tasks. The rule-change stage updates the baggage limit from 20 kg to 23 kg and requires the system to replace or retire obsolete knowledge. The retention stage retests unchanged capabilities and currently valid rules to measure forgetting. External memory may be updated only after each feedback-bearing task ends; the expected action for the current task must never be leaked to the Agent in advance.
+> **Principle-level conclusion:** Accept a change only when it improves the target behavior without regression and remains attributable, verifiable, and reversible; this book states the design and conclusion, not run-specific parameters.
 >
-> **Control groups:** `static` persists no feedback. `append_only` remembers the first version of a rule but cannot resolve conflicts or retire it. `evolving` stores versions and replaces old rules with new evidence. The reference implementation verifies that the evaluation Harness can distinguish these behaviors. A real experiment can put an LLM through the same ordered stream of 14 tasks, but outcomes must be computed by a Harness outside the model.
->
-> **Metrics and acceptance:** Report accuracy and the learning curve for each stage, and separately calculate transfer accuracy, tasks needed to recover after a new rule, old-capability retention, negative-transfer rate, safety-Rubric pass rate, and Token, latency, and storage costs. For real systems that update Prompts, Skills, or a Harness, also record candidate-change validity, artifact activation rate, and successful adherence rate, so that “the update was correct but never loaded” is not misclassified as a failed update. Even an Agent with high final accuracy does not qualify as continually evolving if it still cites retired rules, succeeds through unsafe shortcuts, or forgets existing capabilities after an update.
->
-> The accompanying implementation is available at [`self-evolution-eval`](../chapter8/self-evolution-eval/). By default, it compares three reference Agents: updatable, append-only, and static. Use `--profile llm` to have a real LLM undergo the same long-term task stream.
-
 [^claude-code-memory]: Anthropic, “How Claude remembers your project”, 2026. https://code.claude.com/docs/en/memory
 
 [^hermes-memory]: Nous Research, *Hermes Agent Documentation: Persistent Memory, Skills System, and Curator*, 2026. https://hermes-agent.nousresearch.com/docs/user-guide/features/memory ; https://hermes-agent.nousresearch.com/docs/user-guide/features/skills ; https://hermes-agent.nousresearch.com/docs/user-guide/features/curator

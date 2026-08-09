@@ -50,16 +50,10 @@ Bản thân bộ xác minh LLM cũng cần được hiệu chuẩn. Hệ thống
 
 > **Thí nghiệm 8-1 ★★: Xây dựng bộ xác minh quỹ đạo cho Agent chăm sóc khách hàng**
 >
-> **Mục tiêu thí nghiệm**: Chuyển một quỹ đạo vận hành chăm sóc khách hàng thành chẩn đoán có cấu trúc dùng được cho việc học về sau, đồng thời xác minh liệu “kết luận đa chiều kèm bằng chứng” có định vị nguyên nhân gốc tốt hơn một tổng điểm duy nhất hay không.
+> **Mục tiêu:** Tách riêng năng lực mà thí nghiệm này đại diện và so sánh với một đường cơ sở phù hợp.
 >
-> **Dữ liệu và quy trình**: Chuẩn bị bốn loại quỹ đạo có nhãn chuyên gia: hoàn tiền bình thường, cam kết sai sự thật, rò rỉ quyền riêng tư và từ chối quá mức. Tầng một đọc trạng thái cuối của đơn hàng và nhật ký công cụ để xác định việc hoàn tiền hoặc đổi lịch có thực sự diễn ra hay không. Tầng hai đối chiếu từng bước với chính sách nghiệp vụ để kiểm tra quyền hạn, quy trình bắt buộc, quyền riêng tư, căn cứ sự kiện và tính nhất quán giữa cam kết với hành động. Tầng ba dùng Rubric ở Bảng 8-1 để đánh giá chất lượng diễn đạt và linh hoạt trong tuân thủ, đồng thời giữ lại lượt hội thoại làm bằng chứng cho kết luận thất bại. Judge chất lượng mặc định dùng quy tắc xác định; hệ thống cũng cung cấp LLM Judge thực. Dù tầng trên dùng mô hình nào, tầng kết quả và tầng quy tắc cũng không được giao cho mô hình ngôn ngữ phỏng đoán.
+> **Kết luận ở mức nguyên tắc:** Chỉ chấp nhận thay đổi khi hành vi mục tiêu được cải thiện mà không gây hồi quy, đồng thời vẫn truy nguyên, kiểm chứng và hoàn tác được; cuốn sách trình bày thiết kế và kết luận, không nêu tham số của một lần chạy cụ thể.
 >
-> **Đối chứng và chỉ số**: Đường cơ sở chỉ xuất một tổng điểm; nhóm thí nghiệm xuất `pass`, `fail` hoặc `uncertain`, bằng chứng và độ tin cậy cho từng chiều. Trong giai đoạn hiệu chuẩn, tính precision và recall nhận diện thất bại theo từng chiều, đồng thời báo cáo tỷ lệ khớp hoàn toàn với nhãn chuyên gia. Cũng cần kiểm tra các thất bại như cam kết sai sự thật có bằng chứng không rỗng, thay vì chỉ có kết luận.
->
-> **Tiêu chí nghiệm thu**: Bộ xác minh phải ổn định nhận diện vi phạm trọng yếu, cam kết sai sự thật và từ chối quá mức. Một tổng điểm cao không được che giấu thất bại ở chiều quyền riêng tư hoặc quy tắc. Trường hợp độ tin cậy thấp hay rủi ro cao phải được chuyển sang bộ xác minh thứ hai hoặc con người rà soát, thay vì tự động trở thành tín hiệu học tập.
->
-> Phần triển khai đi kèm nằm tại [`trajectory-verifier`](../chapter8/trajectory-verifier/), mặc định sử dụng Judge chất lượng có thể tái lập ngoại tuyến; dùng `--judge llm` để chạy bộ xác minh LLM thực đã được triển khai.
-
 ## Bốn phương pháp tiến hóa liên tục của Agent
 
 Tín hiệu học tập cho biết Agent cần thay đổi, nhưng không cho biết thay đổi nên diễn ra ở đâu. Căn cứ hàng đầu để lựa chọn cách cập nhật không phải là kinh nghiệm đã xuất hiện bao lâu, mà là năng lực mục tiêu có thể được biểu đạt tự nhiên bằng vật mang nào. Sự kiện và kinh nghiệm phù hợp để viết thành tài liệu tri thức; chiến lược có thể diễn đạt rõ ràng bằng ngôn ngữ phù hợp để đưa vào Prompt hoặc Skill; quy trình và ràng buộc có thể thực thi chính xác phù hợp để viết thành chương trình; còn những năng lực nhiều chiều như tri giác, phong cách ngôn ngữ và chiến lược ngầm phải được đưa vào tham số mô hình. Hình 8-3 minh họa bốn phương thức này và mối quan hệ giữa chúng.
@@ -95,16 +89,10 @@ Học kinh nghiệm GAIA cung cấp một ví dụ trực quan. GAIA[^gaia-2023]
 
 > **Thí nghiệm 8-2 ★★: Chắt lọc tài liệu tri thức kinh nghiệm từ quỹ đạo GAIA**
 >
-> **Mục tiêu thí nghiệm**: Kiểm tra liệu “tài liệu tri thức xuyên quỹ đạo” có dễ chuyển giao hơn “ghi nhớ bản tóm tắt của một lần thành công”, đồng thời giảm chuyển giao tiêu cực do thành công ngẫu nhiên và kinh nghiệm sai hay không.
+> **Mục tiêu:** Tách riêng năng lực mà thí nghiệm này đại diện và so sánh với một đường cơ sở phù hợp.
 >
-> **Dữ liệu và quy trình**: `gaia-experience` trước tiên lưu toàn bộ quỹ đạo và `environment_score` bên ngoài của mỗi lần chạy, rồi chuyển chúng thành bản ghi học tập tối thiểu gồm `task_family`, `capabilities` cần thiết, `applies_when`, chiến lược quan sát được, sai sót, ngoại lệ và ID quỹ đạo nguồn. Bộ xác minh kết quả phân loại lần chạy thành thành công, thành công một phần hoặc thất bại. Mô-đun học tập so sánh các lộ trình trong cùng họ nhiệm vụ; LLM có thể đề xuất quy nạp ứng viên, nhưng một chiến lược đề xuất phải được ít nhất hai quỹ đạo không thất bại ủng hộ. Tài liệu Markdown cuối cùng gồm bối cảnh áp dụng, chiến lược đề xuất, sai lầm thường gặp, điều kiện ngoại lệ, nguồn và thời điểm xác minh gần nhất. Giai đoạn áp dụng chỉ truy xuất các tài liệu này, không nhét quỹ đạo gốc dài vào ngữ cảnh.
+> **Kết luận ở mức nguyên tắc:** Chỉ chấp nhận thay đổi khi hành vi mục tiêu được cải thiện mà không gây hồi quy, đồng thời vẫn truy nguyên, kiểm chứng và hoàn tác được; cuốn sách trình bày thiết kế và kết luận, không nêu tham số của một lần chạy cụ thể.
 >
-> **Ba nhóm đối chứng**: Nhóm một không dùng kinh nghiệm lịch sử. Nhóm hai truy xuất bản tóm tắt của một quỹ đạo giống nhiệm vụ hiện tại nhất. Nhóm ba truy xuất tài liệu tri thức được nhiều quỹ đạo cùng ủng hộ. Tập học và tập chuyển giao phải không giao nhau, tránh để đáp án của cùng một câu GAIA bị rò rỉ vào đánh giá dưới tên “kinh nghiệm”.
->
-> **Chỉ số và nghiệm thu**: Đồng thời báo cáo tỷ lệ thành công của nhiệm vụ chuyển giao, số ký tự hoặc Token truy xuất trung bình và tỷ lệ chuyển giao tiêu cực; kiểm tra mỗi kết luận chính thức có liệt kê quỹ đạo nguồn hay không. Nếu tài liệu xuyên quỹ đạo chỉ rút ngắn ngữ cảnh mà không cải thiện nhiệm vụ mới, không thể kết luận hệ thống đã học từ kinh nghiệm. Nếu một thành công ngẫu nhiên có thể được nâng thẳng thành tri thức chính thức, hoặc tài liệu không truy vết được về quỹ đạo gốc, thí nghiệm cũng không đạt.
->
-> Phần triển khai đi kèm nằm tại [`gaia-experience`](../chapter8/gaia-experience/). `demo_documents.py` mặc định chạy ngoại tuyến; dùng `--extractor llm` để LLM thực đề xuất các ứng viên kinh nghiệm xuyên quỹ đạo.
-
 [^reflexion-2023]: Shinn, N., et al. *Reflexion: Language Agents with Verbal Reinforcement Learning.* arXiv:2303.11366, 2023.
 
 [^gaia-2023]: Mialon, G., et al. *GAIA: a benchmark for General AI Assistants.* arXiv:2311.12983, 2023.
@@ -129,24 +117,18 @@ Học Skill tuân theo cùng nguyên tắc nhưng có phạm vi tác động c�
 
 > **Thí nghiệm 8-9 ★★: Chuyển phản hồi thành Skill viết**
 >
-> Xử lý 20 cặp before/after trong `data/feedback_pairs.json` theo ba đợt, trích xuất quy tắc ứng viên, gộp mẫu trùng, kiểm tra xung đột ngưỡng và tạo `SKILL.md` có nguồn/phạm vi. Quy tắc xác định kiểm tra bằng mã; quy tắc LLM được hiệu chỉnh trên 10 mẫu vàng.
+> **Mục tiêu:** Tách riêng năng lực mà thí nghiệm này đại diện và so sánh với một đường cơ sở phù hợp.
 >
-> Báo cáo đồng thời tỷ lệ phát hiện trên tập nhiệm vụ chưa hoàn thành, tỷ lệ báo nhầm trên văn bản bình thường và số quy tắc tăng. Lần chạy thật đầu tiên đạt 0/8 phát hiện và nhầm 7/8; sau bộ lọc ngoài mô hình và fallback xác định, đạt 8/8, nhầm 0/8, gộp 21 ứng viên thành 8 quy tắc. Xem [`ai-style-skill`](../chapter8/ai-style-skill/).
-
+> **Kết luận ở mức nguyên tắc:** Chỉ chấp nhận thay đổi khi hành vi mục tiêu được cải thiện mà không gây hồi quy, đồng thời vẫn truy nguyên, kiểm chứng và hoàn tác được; cuốn sách trình bày thiết kế và kết luận, không nêu tham số của một lần chạy cụ thể.
+>
 Trường hợp dấu ngoặc kép cong cho thấy Skill phải trở thành hợp đồng dữ liệu thay vì quy tắc thay thế toàn cục: trước SFT, các ví dụ tổng hợp được phân tầng theo thể loại bài, phạm vi và ngôn ngữ lập trình, vượt qua gate mã/JSON/vùng bảo vệ và được kiểm tra thủ công. Với exact-copy, round-trip encode→decode của tokenizer, sao chép byte-exact của mô hình, tuần tự hóa Harness và đối sánh công cụ phải được kiểm toán như các lớp hồi quy riêng.
 
 > **Thí nghiệm 8-3 ★★: Tối ưu Prompt hệ thống dựa trên quỹ đạo thất bại**
 >
-> **Mục tiêu thí nghiệm**: Giúp Agent chăm sóc khách hàng hàng không học từ quỹ đạo thất bại “chuyển sang nhân viên quá sớm khi người dùng chất vấn chính sách”, đồng thời chứng minh quy tắc mới không phá hỏng các tình huống cũ thật sự cần chuyển tiếp.
+> **Mục tiêu:** Tách riêng năng lực mà thí nghiệm này đại diện và so sánh với một đường cơ sở phù hợp.
 >
-> **Quy trình**: Trước tiên chạy riêng tập lưu giữ nhiệm vụ cũ và tập biên chuyển tiếp quá mức. `learning_signal.py` tách thất bại thành ba chiều: tuân thủ quy tắc, giải quyết nhiệm vụ và linh hoạt trong tuân thủ, đồng thời giữ lại case ID nguồn. Coding Agent sau đó đọc Prompt hiện tại và chỉ tạo một chỉnh sửa tối thiểu có thể kiểm toán theo dạng `old_str → new_str`: yêu cầu Agent trước tiên giải thích chính sách, nhận diện mục tiêu thật và tìm phương án thay thế tuân thủ, đồng thời giữ lộ trình chuyển tiếp khi người dùng yêu cầu rõ ràng hoặc có sự cố an toàn. Bản vá cùng nguồn, quy tắc mục tiêu và lý do sửa đổi được ghi vào manifest ứng viên.
+> **Kết luận ở mức nguyên tắc:** Chỉ chấp nhận thay đổi khi hành vi mục tiêu được cải thiện mà không gây hồi quy, đồng thời vẫn truy nguyên, kiểm chứng và hoàn tác được; cuốn sách trình bày thiết kế và kết luận, không nêu tham số của một lần chạy cụ thể.
 >
-> **Ba nhóm đối chứng**: Prompt ban đầu, Prompt ứng viên sinh tự động và Prompt do con người tối ưu một lần. Cả ba dùng cùng mô hình và cùng tập nhiệm vụ lưu giữ/biên. `--quick` chỉ giảm số ca nhưng vẫn thật sự gọi Agent nhiệm vụ, LLM Judge và Coding Agent; không thể coi đó là kết quả mô phỏng ngoại tuyến.
->
-> **Ngưỡng phát hành và chỉ số**: Ứng viên phải đồng thời đáp ứng bốn điều kiện: bản vá không rỗng, nguồn có thể truy vết, hiệu quả trên tập biên thực sự cải thiện và tập lưu giữ không suy giảm. So sánh độ chính xác nhiệm vụ biên, độ chính xác nhiệm vụ lưu giữ, độ dài Prompt tăng thêm, số hồi quy được đưa vào và thời gian từ phát hiện thất bại đến sinh ứng viên. Vượt qua ngưỡng chỉ tạo `release_to_canary`, không trực tiếp ghi đè Prompt ổn định; bất kỳ điều kiện nào thất bại đều phải trả về `reject_candidate`.
->
-> Phần triển khai đi kèm nằm tại [`prompt-auto-optimization`](../chapter8/prompt-auto-optimization/). Kiểm thử ngoại tuyến bao quát ngưỡng chẩn đoán và phát hành, còn `--quick` sẽ thực sự gọi Agent thực hiện nhiệm vụ, LLM Judge và Coding Agent.
-
 [^dspy-2023]: Khattab, O., et al. *DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines.* arXiv:2310.03714, 2023.
 
 [^opro-2023]: Yang, C., et al. *Large Language Models as Optimizers.* arXiv:2309.03409, 2023.
@@ -178,16 +160,10 @@ Với thao tác gửi email, kết quả biên dịch không chỉ là “nhấp
 
 > **Thí nghiệm 8-4 ★★★: Tạo quy trình công việc có thể xác minh từ quỹ đạo trình duyệt**
 >
-> **Mục tiêu thí nghiệm**: Xác minh liệu Web Agent có thể biến một lần khám phá tốn kém thành quy trình tái sử dụng và từ chối phát lại sai khi trang web thay đổi, thay vì báo nhầm “mọi hành động đã chạy” là thành công hay không.
+> **Mục tiêu:** Tách riêng năng lực mà thí nghiệm này đại diện và so sánh với một đường cơ sở phù hợp.
 >
-> **Kịch bản bốn giai đoạn**: Giai đoạn một thực hiện nhiệm vụ “gửi đến `test@example.com` một tin nhắn có chủ đề ‘Email thử nghiệm’” trên trang email thử nghiệm hoặc trang tin nhắn mô phỏng. Agent đầy đủ chịu trách nhiệm khám phá; lớp bao bọc ghi lại hành động, tham số, trạng thái trang và tạo `candidate`. Giai đoạn hai gọi `validation_reset` để khôi phục sandbox rồi phát lại toàn bộ độc lập. Chỉ ứng viên vượt qua tất cả kiểm tra trước hành động, sau hành động và trạng thái cuối mới vào kho năng lực chính thức. Giai đoạn ba thực hiện nhiệm vụ cùng loại nhưng người nhận, chủ đề và nội dung đều khác; hệ thống phải khớp quy trình đã xác minh, điền tham số mới và dùng Playwright phát lại mà không vào vòng LLM từng bước. Giai đoạn bốn thay đổi cách định vị nút, văn bản trang hoặc trạng thái cuối để kiểm tra quy trình cũ có lập tức thành `invalid` và trả `fallback_required=True` hay không.
+> **Kết luận ở mức nguyên tắc:** Chỉ chấp nhận thay đổi khi hành vi mục tiêu được cải thiện mà không gây hồi quy, đồng thời vẫn truy nguyên, kiểm chứng và hoàn tác được; cuốn sách trình bày thiết kế và kết luận, không nêu tham số của một lần chạy cụ thể.
 >
-> **Thiết kế đối chứng**: Đường cơ sở đơn giản chỉ đếm xem thao tác nhấp, nhập liệu có hoàn thành mà không ném ngoại lệ hay không. Nhóm thí nghiệm còn xác minh trang trước hành động, trang sau hành động và trạng thái cuối của nhiệm vụ. Hai nhóm dùng cùng quỹ đạo và cùng thay đổi trang; so sánh tỷ lệ phán đoán sai trong các ca thành công giả như “trường còn trống nhưng nút Gửi đã được nhấp” hoặc “Save đã được nhấp nhưng dữ liệu chưa ghi vào cơ sở dữ liệu”.
->
-> **Chỉ số và nghiệm thu**: Ghi thời gian đầu-cuối của khám phá lần đầu và phát lại, số lần gọi LLM, tỷ lệ thành công, tỷ lệ thành công sai, tỷ lệ khớp quy trình, tỷ lệ phát hiện thay đổi trang và số lần quay về học lại. Khi không có callback đặt lại, quy trình phải ở vùng ứng viên. Phiên bản xác minh thất bại không được truy xuất. Phát lại tham số hóa không được tái sử dụng người nhận hoặc nội dung lần đầu. Sau khi trang thay đổi, phải dừng các hành động tiếp theo nguy hiểm. Kết quả tăng tốc chỉ có ý nghĩa khi đồng thời thỏa các điều kiện này.
->
-> Phần triển khai đi kèm nằm tại [`browser-use-rpa`](../chapter8/browser-use-rpa/), đồng thời cung cấp bản trình diễn máy trạng thái xác định và lộ trình vận hành gọi Agent trình duyệt thực.
-
 Việc Agent sửa mã của chính mình không có nghĩa là tiến trình đang chạy trực tiếp ghi đè lên bản thân. Hệ thống sản xuất nên tạo một nhánh ứng viên từ phiên bản ổn định hiện tại, để Coding Agent tạo bản vá tối thiểu, lần lượt vượt qua kiểm tra tĩnh, kiểm thử đơn vị, quét an toàn, phát lại quỹ đạo thất bại và hồi quy nhiệm vụ cũ, rồi mới tạo phiên bản mới có thể triển khai canary. Điều này chuyển “tự sửa đổi” thành một quy trình phát hành phần mềm có thể kiểm toán, đồng thời cũng là ranh giới giữa Chương 8 và Chương 5: Chương 5 cung cấp năng lực sửa đổi hệ thống, còn chương này cung cấp phương pháp tự sửa đổi được kích hoạt bởi kinh nghiệm và ràng buộc bằng vòng khép kín xác minh.
 
 Chỉ yêu cầu “bản vá càng nhỏ càng tốt” vẫn chưa đủ để quy kết nguyên nhân đáng tin cậy. Mỗi yêu cầu sửa đổi còn phải là một **hợp đồng thay đổi có thể bác bỏ**: nêu bằng chứng thất bại, nguyên nhân gốc được suy đoán, thành phần Harness chịu trách nhiệm, thay đổi ứng viên, hành vi dự kiến được sửa, hành vi hiện có có thể bị ảnh hưởng và ca kiểm thử cho cả hai. Agentic Harness Engineering gọi đây là khả năng quan sát ở ba tầng thành phần, kinh nghiệm và quyết định: mỗi thành phần có thể sửa đều có biểu diễn cấp tệp; lượng lớn quỹ đạo được tổ chức thành bằng chứng có thể đào sâu dần; trước khi thực thi, mỗi chỉnh sửa tuyên bố dự đoán tác động rồi để kết quả vòng sau kiểm chứng[^ahe-2026]. Nhờ đó, mức điểm tăng mới có thể gắn với một cơ chế cụ thể thay vì chỉ là thử sai khó giải thích.
@@ -198,16 +174,10 @@ Việc tạo công cụ cũng tuân theo cùng giao thức. Trường hợp Alit
 
 > **Thí nghiệm 8-5 ★★★: Kích hoạt Agent tự sửa đổi từ quỹ đạo thất bại**
 >
-> **Mục tiêu thí nghiệm**: Với nhiều quỹ đạo trong đó lỗi `retryable=false` vẫn bị gọi liên tiếp, kiểm tra hệ thống có định vị nguyên nhân gốc ở mã thử lại và ngắt mạch, đồng thời tạo sửa chữa ứng viên mà không phá năng lực thử lại lỗi tạm thời hay không.
+> **Mục tiêu:** Tách riêng năng lực mà thí nghiệm này đại diện và so sánh với một đường cơ sở phù hợp.
 >
-> **Quy trình**: Mô-đun chẩn đoán trước tiên tổng hợp cùng một lỗi trên các nhiệm vụ khác nhau. Chỉ khi đạt ngưỡng ủng hộ xuyên quỹ đạo, nó mới tạo yêu cầu sửa đổi và định vị mục tiêu ở `retry_policy.py` của phiên bản ổn định. Bộ sinh ứng viên đọc chẩn đoán thất bại, hành vi phục hồi lỗi tạm thời cần giữ lại, những thay đổi từng bị từ chối và mã nguồn ổn định. Trước khi xuất diff tối thiểu, nó dự đoán “số lần gọi sau lỗi không thể thử lại phải giảm, tỷ lệ phục hồi timeout tạm thời không được giảm”. Dù dùng bộ sinh xác định hay LLM Coding Agent thực, kết quả chỉ được ghi vào thư mục ứng viên cô lập. Harness xác minh sau đó lần lượt biên dịch ứng viên, phát lại quỹ đạo thất bại gốc, kiểm tra lỗi không thể thử lại có dừng ngay và mở bộ ngắt mạch hay không, rồi kiểm tra lại timeout tạm thời có còn được thử theo ngưỡng cũ hay không.
+> **Kết luận ở mức nguyên tắc:** Chỉ chấp nhận thay đổi khi hành vi mục tiêu được cải thiện mà không gây hồi quy, đồng thời vẫn truy nguyên, kiểm chứng và hoàn tác được; cuốn sách trình bày thiết kế và kết luận, không nêu tham số của một lần chạy cụ thể.
 >
-> **Đối chứng chẩn đoán và chỉ số**: Dùng phương án “chỉ thêm vào Prompt một câu đừng gọi lặp lại” làm đối chứng khái niệm về định vị sai tầng, qua đó cho thấy vì sao ràng buộc thử lại có thể thực thi xác định phải đi vào chương trình. Thí nghiệm chạy được so sánh bộ sinh bản vá xác định với bộ sinh LLM; cả hai dùng chung ngưỡng phát hành. Ghi số lần gọi lỗi không thể thử lại, tỷ lệ phục hồi lỗi tạm thời, số hồi quy nhiệm vụ cũ, kích thước bản vá và tỷ lệ chấp nhận ứng viên.
->
-> **Tiêu chí nghiệm thu**: Sau khi mọi kiểm tra vượt qua, hệ thống chỉ tạo `release_to_canary`. Bất kỳ kiểm tra tĩnh, phát lại thất bại hay hồi quy nhiệm vụ cũ nào không đạt đều trả `reject_candidate`. `release_manifest.json` phải ghi cụm thất bại, quỹ đạo nguồn, nguyên nhân gốc suy đoán, thành phần và tệp mục tiêu, diff mã, sửa chữa dự kiến, hồi quy tiềm tàng, kết quả kiểm tra, phiên bản ứng viên và phiên bản khôi phục. Ứng viên bị từ chối cũng phải giữ lý do thất bại cho vòng sinh tiếp theo. Agent tạo bản vá không được sửa mã ổn định, bộ xác minh, nhật ký kiểm toán hoặc ngưỡng phê duyệt phát hành của chính nó.
->
-> Phần triển khai đi kèm nằm tại [`self-modifying-agent`](../chapter8/self-modifying-agent/), có thể chọn bộ sinh ứng viên xác định hoặc LLM Coding Agent thực; cả hai lộ trình dùng chung một ngưỡng phát hành.
-
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
 [^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
@@ -216,8 +186,10 @@ Thí nghiệm 8-8 áp dụng cùng giao thức vào lớp xác minh. Chỉ tạo
 
 > **Thí nghiệm 8-8 ★★: Cổng xác nhận thao tác rủi ro cao từ phản hồi người dùng**
 >
-> Dùng ba tín hiệu và trajectory đối chứng trong `failure_trajectories.json`. Ứng viên `gpt-4o-mini` thật không qua replay nhiệm vụ chưa hoàn thành, thao tác bình thường và token một lần nên bị cổng an toàn từ chối. Ứng viên xác định vượt qua và nhận `release_to_canary`; ghi lại kiểm tra, quyết định và hash thư mục ổn định. Xem [`harness-safety-gate`](../chapter8/harness-safety-gate/).
-
+> **Mục tiêu:** Tách riêng năng lực mà thí nghiệm này đại diện và so sánh với một đường cơ sở phù hợp.
+>
+> **Kết luận ở mức nguyên tắc:** Chỉ chấp nhận thay đổi khi hành vi mục tiêu được cải thiện mà không gây hồi quy, đồng thời vẫn truy nguyên, kiểm chứng và hoàn tác được; cuốn sách trình bày thiết kế và kết luận, không nêu tham số của một lần chạy cụ thể.
+>
 ### Ghi kinh nghiệm vào tham số
 
 Tri thức, chỉ dẫn và chương trình đều dựa trên một tiền đề: năng lực mục tiêu có thể được biểu đạt tương đối đầy đủ bằng ký hiệu bên ngoài. Tuy nhiên, những năng lực như hiểu ảnh y khoa, ngữ điệu giọng nói tự nhiên, loại bỏ “chất AI” khuôn mẫu trong văn bản và lập kế hoạch dài hạn rất khó nén thành vài quy tắc hoặc quy trình công việc. Những năng lực này phải được ghi vào tham số mô hình thông qua hậu huấn luyện.
@@ -242,14 +214,10 @@ Tầng cao hơn không mặc nhiên tốt hơn. Tìm một quy tắc cục bộ 
 
 > **Thí nghiệm 8-6 ★★★: Đưa cuốn sách này cho Hermes: nó có thể tự nâng cấp không?**
 >
-> **Mục tiêu**: Kiểm tra liệu một Agent có thể biến tri thức bên ngoài thành một bản cập nhật thật cho chính năng lực của mình hay không. Thí nghiệm không nêu sẵn vấn đề hay danh sách tính năng. Hermes nhận cả mười chương và mã nguồn của mình, rồi phải hiểu nguyên tắc, xem lại cách triển khai và tự chọn một cải tiến đáng làm.
+> **Mục tiêu:** Tách riêng năng lực mà thí nghiệm này đại diện và so sánh với một đường cơ sở phù hợp.
 >
-> **Thiết kế**: Cuốn sách và mã nguồn tạo thành ngữ cảnh có thể đọc, còn phiên bản ổn định, Reviewer độc lập và kiểm thử chấp nhận nằm ngoài phạm vi Hermes được sửa. Hermes phải hoàn tất **đọc → đối chiếu → chọn → thay đổi → xác minh**. Nếu ứng viên bị từ chối, nhận xét trở thành tín hiệu học cho vòng tiếp theo; Hermes không thể bỏ qua cổng kiểm tra rồi tuyên bố thành công.
+> **Kết luận ở mức nguyên tắc:** Chỉ chấp nhận thay đổi khi hành vi mục tiêu được cải thiện mà không gây hồi quy, đồng thời vẫn truy nguyên, kiểm chứng và hoàn tác được; cuốn sách trình bày thiết kế và kết luận, không nêu tham số của một lần chạy cụ thể.
 >
-> **Lần chạy thật**: Sau khi đọc sách, Hermes tự nhận ra các trajectory đã lưu còn thiếu bằng chứng có cấu trúc để việc học sau này dùng trực tiếp. Nó chọn chuyển kết quả thực thi thành tín hiệu học thận trọng, sửa mã nguồn của mình và thêm kiểm thử. Ba lần review độc lập đầu tiên tìm thấy sai lệch với định dạng dữ liệu thật, các đường lưu trữ và ý nghĩa phép đếm. Mỗi phát hiện quay về phiên Hermes ban đầu; lần review thứ tư chấp nhận ứng viên.
->
-> **Giới hạn kết luận**: Lần chạy cho thấy Agent có thể rút nguyên tắc từ tri thức dài, ánh xạ chúng vào mã của mình và hoàn tất tự cập nhật dưới xác minh bên ngoài. Nó chưa chứng minh tỷ lệ thành công downstream đã tăng; điều đó cần một thí nghiệm ablation riêng. Ý tưởng thí nghiệm do độc giả Grace đóng góp.
-
 ## Xây dựng vòng khép kín tiến hóa liên tục có thể vận hành dài hạn
 
 Chỉ khi đi vào cùng một chu trình tự chủ, bốn phương thức cập nhật mới chuyển từ tối ưu một lần thành tiến hóa liên tục. Hình 8-5 trình bày cấu trúc hai vòng thận trọng hơn trong hệ thống sản xuất: vòng thực thi trực tuyến chỉ hoàn thành nhiệm vụ và ghi lại bằng chứng, không trực tiếp viết lại Agent chính thức; vòng tiến hóa ngoại tuyến tổng hợp quỹ đạo, chẩn đoán nguyên nhân gốc, tạo sửa đổi ứng viên, rồi phát hành phiên bản mới sau khi vượt qua ngưỡng xác minh. Hai vòng được kết nối bằng kho kinh nghiệm và tập đánh giá có phiên bản.
@@ -345,16 +313,10 @@ Tiến hóa liên tục cũng không có nghĩa là để tri thức, Prompt và
 
 > **Thí nghiệm 8-7 ★★★: Đánh giá Agent có đang tiến hóa liên tục hay không**
 >
-> **Mục tiêu thí nghiệm**: Phân biệt ba hành vi dài hạn — “biết lưu một lần phản hồi”, “chỉ biết nối thêm” và “có thể cập nhật, chuyển giao, duy trì năng lực” — để tránh giả mạo học liên tục bằng cách lặp lại cùng một tập câu hỏi.
+> **Mục tiêu:** Tách riêng năng lực mà thí nghiệm này đại diện và so sánh với một đường cơ sở phù hợp.
 >
-> **Luồng nhiệm vụ bốn giai đoạn**: Giai đoạn học cung cấp các nhiệm vụ hoàn tiền, xác minh danh tính và chính sách hành lý có chung quy luật tiềm ẩn. Giai đoạn chuyển giao thay đổi cách diễn đạt, người dùng và môi trường cục bộ để kiểm tra kinh nghiệm cũ có dùng được cho nhiệm vụ mới hay không. Giai đoạn thay đổi quy tắc cập nhật giới hạn hành lý từ 20kg lên 23kg, yêu cầu hệ thống thay thế hoặc loại bỏ tri thức cũ. Giai đoạn duy trì kiểm thử lại năng lực không thay đổi và quy tắc hiện hành để đo xem cập nhật có gây quên hay không. Chỉ sau khi mỗi nhiệm vụ có phản hồi kết thúc mới được cập nhật bộ nhớ ngoài; hành động kỳ vọng của câu hỏi hiện tại không được rò rỉ cho Agent trước.
+> **Kết luận ở mức nguyên tắc:** Chỉ chấp nhận thay đổi khi hành vi mục tiêu được cải thiện mà không gây hồi quy, đồng thời vẫn truy nguyên, kiểm chứng và hoàn tác được; cuốn sách trình bày thiết kế và kết luận, không nêu tham số của một lần chạy cụ thể.
 >
-> **Nhóm đối chứng**: `static` không lưu phản hồi lâu dài; `append_only` nhớ được phiên bản quy tắc đầu tiên nhưng không xử lý xung đột hay loại bỏ; `evolving` lưu phiên bản và dùng bằng chứng mới thay quy tắc cũ. Bản triển khai tham chiếu dùng để xác minh Harness đánh giá có phân biệt được các hành vi này hay không. Thí nghiệm thực có thể cho LLM trải qua cùng một luồng tuần tự 14 câu, nhưng kết quả phải do Harness bên ngoài mô hình tính toán.
->
-> **Chỉ số và nghiệm thu**: Báo cáo độ chính xác và đường cong học tập theo từng giai đoạn; tính riêng độ chính xác chuyển giao, số nhiệm vụ cần thiết để trở lại đáp án đúng sau khi nhận quy tắc mới, tỷ lệ duy trì năng lực cũ, tỷ lệ chuyển giao tiêu cực, tỷ lệ vượt qua Rubric an toàn, cùng chi phí Token, độ trễ và lưu trữ. Với hệ thống thực cập nhật Prompt, Skill hoặc Harness, còn phải ghi tỷ lệ thay đổi ứng viên hữu hiệu, tỷ lệ kích hoạt tạo tác và tỷ lệ tuân thủ thành công, tránh coi “cập nhật đúng nhưng không được tải” là cập nhật thất bại. Dù độ chính xác cuối cao, một Agent vẫn trích dẫn quy tắc đã bãi bỏ, hoàn thành nhiệm vụ bằng lối tắt vi phạm hoặc quên năng lực cũ sau cập nhật cũng không thể được coi là đang tiến hóa liên tục.
->
-> Phần triển khai đi kèm nằm tại [`self-evolution-eval`](../chapter8/self-evolution-eval/), mặc định so sánh ba Agent tham chiếu: có thể cập nhật, chỉ nối thêm và tĩnh; dùng `--profile llm` để LLM thực trải qua cùng một luồng nhiệm vụ dài hạn.
-
 [^claude-code-memory]: Anthropic, “How Claude remembers your project”, 2026. https://code.claude.com/docs/en/memory
 
 [^hermes-memory]: Nous Research, *Hermes Agent Documentation: Persistent Memory, Skills System, and Curator*, 2026. https://hermes-agent.nousresearch.com/docs/user-guide/features/memory ; https://hermes-agent.nousresearch.com/docs/user-guide/features/skills ; https://hermes-agent.nousresearch.com/docs/user-guide/features/curator

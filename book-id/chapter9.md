@@ -23,7 +23,7 @@ Pada tingkat alat (tool level), jalur ini telah menghasilkan kira-kira dua jenis
 
 Satu catatan sebelum kita mulai: arsitektur suara yang dibahas di bawah ini melayani kedua arah—pengguna berbicara kepada Agent (suara sebagai antarmuka manusia-mesin), dan Agent berbicara ke dunia luar atas nama pengguna (katakanlah, melakukan panggilan telepon untuk bernegosiasi). Di balik keduanya terdapat teknologi suara real-time yang sama. Kita mulai dengan tiga paradigma arsitektur suara.
 
-## Tiga Paradigma Arsitektur Suara
+### Tiga Paradigma Arsitektur Suara
 
 Kerangka kerja yang berguna untuk memahami evolusi teknis Agent suara adalah klasifikasi tiga bagian yang disajikan OpenAI saat merilis GPT-Live pada tahun 2026[^ch9-12]. Ini juga sesuai dengan tiga generasi arsitektur di mana ChatGPT Voice itu sendiri telah berevolusi:
 
@@ -37,7 +37,7 @@ Lebih jauh lagi, GPT-Live memperkenalkan perubahan struktural kedua—memisahkan
 
 [^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/. Klasifikasi tiga bagian dari "Cascaded / Turn-based / Full-Duplex" di bagian ini berasal dari ringkasan artikel ini tentang tiga generasi evolusi ChatGPT Voice; "Omnimodal End-to-End (Omni)" dalam teks sesuai dengan kategori "model suara berbasis giliran" (turn-based voice models) mereka.
 
-## Paradigma 1: Cascaded Pipeline (Pipeline Berjenjang)
+### Paradigma 1: Cascaded Pipeline (Pipeline Berjenjang)
 
 Sebagian besar asisten suara komersial—dari speaker pintar hingga robot layanan pelanggan—didasarkan pada pipeline serial (Gambar 9-1): Voice Activity Detection (VAD) menentukan kapan pengguna selesai berbicara → Automatic Speech Recognition (ASR) mengubah audio menjadi teks → Large Language Model (LLM) memahami maksud dan menghasilkan balasan → Text-to-Speech (TTS) menyuarakan balasan. Seperti lomba lari estafet, setiap tahap harus menunggu tahap sebelumnya selesai sebelum dapat dimulai.
 
@@ -83,7 +83,7 @@ Secara intuitif, semakin tinggi utilisasi (pemanfaatan), semakin tajam—dan tid
 >
 > Eksperimen ini menunjukkan arah aplikasi penting untuk Agent suara: **Agent tidak hanya menunggu pengguna membuka jendela chat; Agent juga dapat secara proaktif membangun sesi real-time dengan status mulai, konfirmasi, dan selesai yang jelas**. WebRTC di browser mencakup jalur “menelepon pengguna” yang paling mudah direproduksi. Jika tugas mengharuskan Agent menghubungi dunia luar atas nama pengguna, menunggu petugas manusia, atau menavigasi IVR, kontrak tool panggilan yang sama dapat dihubungkan ke penyedia PSTN/SIP yang patuh.
 
-### Streaming Rantai-Penuh (Full-Chain) pada Cascaded Pipeline
+#### Streaming Rantai-Penuh (Full-Chain) pada Cascaded Pipeline
 
 Gambar 9-2 mengasumsikan skenario **serial sepenuhnya (fully serial)** di mana setiap tahap selesai sebelum menyerahkan tongkat estafet. Sistem produksi biasanya mempertahankan pembagian modular VAD-ASR-LLM-TTS sambil membuat setiap tahap memancarkan hasil bertahap sedini mungkin, mempersingkat waktu hingga pengguna mendengar suku kata pertama:
 
@@ -97,7 +97,7 @@ Sistem yang lebih agresif menggunakan **pembuatan preemptive/spekulatif**: merek
 
 Streaming biasa juga tidak dapat menghilangkan **waktu tunggu keheningan pada VAD dan penilaian giliran itu sendiri**. ASR streaming sudah berjalan selama waktu tunggu tersebut; apa yang diblokir oleh deteksi giliran adalah menetapkan (committing) transkrip akhir dan memutar balasan. Pembuatan preemptive dapat menyembunyikan sebagian komputasi ini, tetapi sistem masih harus memutuskan kapan waktu yang aman untuk berbicara. Mengurangi penundaan tersebut lebih jauh memerlukan peningkatan persepsi front-end dan keputusan endpoint (titik akhir) itu sendiri.
 
-### Streaming Voice Perception: Menggantikan VAD + ASR
+#### Streaming Voice Perception: Menggantikan VAD + ASR
 
 Perception front-end ini terdiri dari dua tahap: VAD menentukan apakah pengguna telah selesai berbicara, dan ASR mentranskripsi audio menjadi teks. Dalam arsitektur serial sepenuhnya, keduanya bersama-sama menentukan kapan pipeline hilir (downstream pipeline) dimulai dan input apa yang diterimanya. Dalam arsitektur streaming, ASR dimulai lebih awal, tetapi mengonfirmasi teks akhir dan memutuskan kapan harus membalas tetap dibatasi oleh endpoint detection. Cascade VAD + ASR tradisional memiliki tiga masalah mendasar:
 
@@ -140,7 +140,7 @@ Perhatikan bahwa model tersebut menghasilkan bukan hanya transkripsi teks tetapi
 >
 > Hasil: Latensi pengenalan inkremental (incremental recognition latency) dari skema simulasi berbasis potongan ini dapat dikendalikan pada kisaran satu hingga dua ratus milidetik (tergantung pada panjang potongan dan hardware), sementara skema tradisional mengharuskan kita menunggu VAD untuk mengonfirmasi penyelesaian (600ms) ditambah inferensi Whisper (sekitar 200–500ms di bawah konfigurasi eksperimen ini), dengan total 800–1100ms. Dalam skenario yang memiliki jeda, VAD salah menilai jeda panjang pertama sebagai akhir ucapan, sehingga memotong kalimat menjadi dua segmen untuk pengenalan terpisah. "大概两点左右" ("sekitar jam dua") salah dikenali sebagai "大概零点左右" ("sekitar tengah malam")—karena dihilangkan dari konteks di sekitarnya, suara 两 (liǎng, "dua") yang terdengar mirip disalahartikan sebagai 零 (líng, "nol"). Skema potongan, yang mempertahankan konteks lengkap, dengan benar mengenali seluruh kalimat tersebut. Pada skenario kebisingan latar belakang, Qwen2-Audio mengeluarkan token `<|noise|>` untuk menandai adanya kebisingan tanpa menginterupsi pengenalan, sementara VAD tradisional terpicu secara salah oleh kebisingan, menyebabkan proses pengenalan dimulai secara prematur.
 
-## Paradigma 2: End-to-End Omnimodal Models (Omni)
+### Paradigma 2: End-to-End Omnimodal Models (Omni)
 
 Melihat kembali pada cascaded pipeline secara keseluruhan: bahkan dengan perception front-end miliknya yang telah di-upgrade ke streaming voice perception, ia tetap membagi tugas mendengarkan (listening), berpikir (thinking), dan berbicara (speaking) ke tiga model independen yang dihubungkan oleh antarmuka (interface) terpisah. Seberapa pun lebar antarmuka tersebut berkembang, ia hanya membawa segelintir token semantik dan sesekali penanda akustik; emosi pembicara, nada, intonasi, dan suara lingkungan atau musik sebagian besar hilang dalam serah terima (handover). Dan karena ketiga segmen tersebut dilatih dan di-tune secara terpisah, mereka kesulitan untuk bekerja sebagai satu kesatuan. End-to-end omnimodal models (Omni) mengambil jalur yang berbeda—sebuah model tunggal secara langsung "mendengarkan" audio, "memikirkan" balasan, dan "mengucapkannya", menggabungkan ketiga segmen tersebut menjadi satu (Gambar 9-4). Dengan training data yang cukup, ruang laten internal model (internal latent space) dapat membawa sinyal-sinyal paralinguistik ini lurus hingga ke sisi pembuatan (generation side), sehingga mengurangi latensi sambil mempertahankan prosodi dan emosi dengan cara yang tidak dapat dilakukan oleh teks saja. Trade-off-nya adalah: **cascaded pipelines** memiliki modul yang bersih, per-segment tuning, dan interpretabilitas yang baik; **end-to-end models** membeli latensi yang lebih rendah dan non-textual fidelity dengan mengorbankan tuntutan data pelatihan yang lebih berat serta interpretabilitas yang lebih buruk.
 
@@ -184,7 +184,7 @@ Satu perbedaan yang patut diluruskan: MoE meningkatkan throughput—berapa banya
 
 Step-Audio R1 adalah model penerus dalam seri Step-Audio. Dibangun berdasarkan pada arsitektur percakapan suara end-to-end Step-Audio 2, model ini menginternalisasi lebih lanjut kemampuan pemikiran secara langsung ke dalam model audio tersebut. Keduanya mewakili evolusi progresif di sepanjang jalur teknis yang sama.
 
-## Paradigma 3: Full-Duplex / Interactive Models
+### Paradigma 3: Full-Duplex / Interactive Models
 
 Paradigma 2 menggabungkan tiga model menjadi satu tetapi masih berpegang teguh pada asumsi mengambil giliran (taking turns)—entah pengguna yang berbicara atau model yang berbicara, dengan titik peralihan (switch point) ditebak oleh VAD atau semantik. Beberapa skenario sama sekali tidak memiliki ruang untuk konsep "kalimatmu, lalu kalimatku". **Simultaneous interpretation (Penerjemahan simultan)** adalah kasus klasik: penerjemah tidak menunggu kalimat selesai sebelum memulai, melainkan mendengarkan dan menyusun kalimat secara sekaligus, menerjemahkan setiap unit makna segera setelah kira-kira utuh—mendengarkan dan menerjemahkan selalu tumpang tindih. **Game ritme, di mana Anda memukul ketukan drum selaras dengan musik**, bahkan lebih ekstrem lagi: telinga harus mengikuti aliran musik yang tak terputus, tangan harus memukul setiap ketukan pada saat itu juga, dan pikiran harus mengantisipasi ketukan berikutnya—di sini tidak ada yang namanya sebuah "giliran", yang ada hanyalah aliran input tanpa akhir. Tugas-tugas semacam ini menantang model yang berbasis giliran (turn-by-turn model) dari akarnya: mereka menuntut agar mendengarkan, berpikir, dan bertindak terjadi secara bersamaan, sementara seluruh premis dari turn-based model adalah untuk menempatkan ketiganya ke dalam irisan waktu (time slices) yang terpisah. Model full-duplex mengambil jalur "menghapuskan VAD" menuju titik akhir logisnya—ia melepaskan begitu saja asumsi turn-taking tersebut dan membiarkan model **mendengar dan berbicara secara terus-menerus, pada waktu yang bersamaan**.
 
@@ -200,7 +200,7 @@ GPT-Live juga mengikuti jalur yang sama dalam memisahkan proses cepat dan lambat
 
 Mengkaji ulang alur naratif bab ini tentang "menggantikan VAD": VAD menebak titik peralihan-giliran (turn-switching point) berdasarkan ambang batas keheningan (silence thresholds); streaming perception (lihat bagian "Streaming Voice Perception" sebelumnya di Paradigma 1) meningkatkan (upgrades) penilaian peralihan ke tingkat semantik; dan model full-duplex sepenuhnya membubarkan konsep "beralih (switching)" itu sendiri—ia selalu mendengarkan, sehingga "interupsi" bukan lagi sebuah peristiwa (event) yang memerlukan penanganan khusus, dan rantai pemrosesan barge-in sebagian besar dihilangkan secara arsitektural. Ini adalah titik akhir dari alur narasi "menggantikan VAD" pada saat penulisan.
 
-## Trade-off Arsitektur Berpikir: Dari Pemisahan hingga Penyatuan
+### Trade-off Arsitektur Berpikir: Dari Pemisahan hingga Penyatuan
 
 Tantangan yang sesungguhnya adalah **ketegangan antara respons real-time dan pemikiran mendalam (deep thinking)**: pengguna mengharapkan respons di tingkat milidetik, sementara masalah kompleks seringkali membutuhkan waktu berpikir selama beberapa detik. Bagaimana caranya model dapat berpikir cukup dalam namun tetap menjaga latensi yang rendah? Ketegangan (tension) ini tidak unik pada end-to-end architectures; cascaded pipelines juga menghadapinya.
 
@@ -208,7 +208,7 @@ Tiga solusi di bawah ini tidak mewakili suatu perkembangan linier (linear progre
 
 Menjelang tahun 2026, jalur "fast-slow decoupling" telah menjadi pilihan utama bagi produk-produk suara terdepan (frontier voice products) dan memperoleh sebutannya tersendiri. Thinking Machines Lab menyebutnya "Interaction Models"—sebuah model interaksi real-time yang dipasangkan dengan model penalaran latar belakang (background reasoning model) asinkron; "Think Fast" dari Grok Voice xAI, voice Agent dari Pine AI, dan "delegasi" GPT-Live pada bagian sebelumnya, semuanya mengikuti rute yang sama yaitu "cepat di latar depan untuk mempertahankan percakapan, lambat di latar belakang untuk pemikiran yang mendalam (deep reasoning)." Pilihan untuk memisahkan (decouple) ini daripada sekadar "melatih satu model tunggal yang serba bisa" memiliki alasan yang pragmatis: frontier reasoning models beriterasi setiap beberapa bulan sekali, sementara kemampuan interaksi real-time memerlukan data khusus dan tujuan pelatihan. Memasukkan keduanya ke dalam model yang sama berarti mengejar target yang terus bergerak (moving target) dan berpotensi mencairkan kemampuan penalaran yang paling berharga[^ch9-8]. Sebaliknya, dengan menjaga reasoning model terkuat agar tetap utuh di latar belakang dan hanya melatih model interaksi yang ringan untuk layar depan, seseorang akan selalu dapat menggunakan "otak" terkuat saat ini—inilah tepatnya mengapa GPT-Live menekankan pada "pergantian yang berkelanjutan menuju frontier models terbaru (sustainable swapping to the latest frontier models)." Di bawah ini, kita akan memeriksa tiga solusi secara berurutan sesuai dengan mekanisme koordinasinya yang semakin kuat.
 
-### Solusi 1: Pemikiran Cepat untuk Pengisi, Pemikiran Lambat untuk Jawaban
+#### Solusi 1: Pemikiran Cepat untuk Pengisi, Pemikiran Lambat untuk Jawaban
 
 Berpikir cepat (fast thinking) dan berpikir lambat (slow thinking) berjalan secara paralel (Gambar 9-5): berpikir cepat menghasilkan jawaban penahan singkat (brief holding reply) dalam kurun waktu 500ms (seperti cara orang pada awalnya berkata "biar saya pikirkan dulu"), sementara berpikir lambat menghabiskan waktu 5-10 detik untuk menalar di latar belakang sebelum memberikan jawaban yang lengkap. Teknik di balik slow thinking adalah "test-time scaling"—dalam istilah sederhana, membiarkan model untuk berpikir sedikit lebih lama sebelum menjawab: alih-alih langsung melompat ke sebuah jawaban dalam satu langkah, ia bekerja layaknya seseorang yang sedang mengerjakan soal matematika—membuat sketsa pendekatan, menurunkannya langkah demi langkah, memeriksa kembali hasilnya—menukarkan (trading) lebih banyak komputasi demi sebuah jawaban yang lebih baik.
 
@@ -226,7 +226,7 @@ Berpikir cepat (fast thinking) dan berpikir lambat (slow thinking) berjalan seca
 <user>(Marah) Jadi kamu menyarankan saya membelinya atau tidak?!</user>
 ```
 
-### Solusi 2: Pemikiran Cepat untuk Interaksi, Pemikiran Lambat untuk Saran
+#### Solusi 2: Pemikiran Cepat untuk Interaksi, Pemikiran Lambat untuk Saran
 
 Solusi 2 memungkinkan pemikiran lambat melihat output dari pemikiran cepat. Ini memberikan saran melalui Agent Status Bar (mekanisme injeksi meta-informasi dinamis yang diperkenalkan di Bab 2) alih-alih berbicara langsung kepada pengguna. Dibandingkan dengan Solusi 1, pendekatan ini membuat dua peningkatan: pemikiran lambat berjalan secara asinkron di latar belakang dan melanjutkan penalaran selama jeda dalam ucapan; dan karena ia dapat melihat output pemikiran cepat, ia menghindari pertentangan langsung dengannya dan sebaliknya bertindak sebagai "ahli strategi" di balik layar. Delegasi GPT-Live dan Pine AI voice Agent yang disebutkan sebelumnya adalah contoh produksi dari Solusi 2—model penalaran latar belakang mengirimkan kesimpulannya ke model interaksi latar depan melalui saluran teks yang ringkas, dan model latar depan memutuskan kapan dan bagaimana menyajikannya kepada pengguna.
 
@@ -234,7 +234,7 @@ Meskipun demikian, solusi ini masih memiliki batasan mendasar. **Pemikiran cepat
 
 Solusi 2 juga menghadapi masalah teoritis mendasar: **ia tidak dapat mencapai "thinking while speaking" (berpikir sambil berbicara).** Ketika manusia menghadapi masalah yang kompleks, mereka tidak merumuskan jawaban lengkap di pikiran mereka terlebih dahulu lalu menyampaikannya sekaligus. Sebaliknya, mereka berpikir dan berbicara dalam segmen—"Ini pertanyaan yang menarik... (jeda untuk berpikir) Pertama, kita perlu mempertimbangkan... (lanjut berpikir) Kedua..." Dalam Solusi 2, pemikiran cepat hanya dapat menawarkan frasa pengisi (filler) sambil menunggu pemikiran lambat, tanpa ada cara untuk merajut proses penalaran secara alami ke dalam percakapan.
 
-### Solusi 3: Penyatuan Pemikiran dan Ekspresi End-to-End (Menggunakan Step-Audio R1 sebagai Contoh)
+#### Solusi 3: Penyatuan Pemikiran dan Ekspresi End-to-End (Menggunakan Step-Audio R1 sebagai Contoh)
 
 Meskipun Solusi 2 mengurangi kebutuhan pengguna untuk menunggu pemikiran lambat, secara arsitektur ia masih "berpikir dulu, lalu berbicara"—pemikiran dan ekspresi tetap menjadi dua proses terpisah, sehingga tidak mungkin mencapai "berpikir sambil berbicara" yang mirip manusia. Untuk mendobrak keterbatasan mendasar ini, kemampuan berpikir harus diinternalisasi langsung ke dalam model.
 
@@ -258,7 +258,7 @@ Keduanya berjalan secara paralel: Formulation Brain tidak perlu menyelesaikan pe
 
 Solusi 3 menginternalisasi pemikiran ke dalam satu model—perwujudan paling elegan dari "berpikir sambil berbicara"—tetapi harganya adalah tepat pada "target yang bergerak" dari awal bagian ini: satu model harus menjadi penalar terkuat dan pembicara secara *real-time*, dan dengan kedua kemampuan yang berkembang cepat, rute terpadu harus dilatih ulang berulang kali untuk mengimbanginya. Oleh karena itu perbedaan pendekatan di industri pada saat penulisan ini: produk terdepan yang ingin bertukar dengan otak terbaru sesuka hati (GPT-Live, Grok Voice, Pine AI) sebagian besar bertaruh pada pemisahan Solusi 2, sementara Solusi 3 sesuai untuk produk yang mengejar kealamian tertinggi dan dapat menanggung biaya pelatihan khusus. Keduanya tidak saling menggantikan; ini adalah *trade-off* antara kemampuan untuk mengganti model penalaran dan mengintegrasikan pemikiran dan ucapan secara lebih erat.
 
-### Antarmuka Antara Cepat dan Lambat: Apa Lagi yang Bisa Dilewatkan Selain Teks
+#### Antarmuka Antara Cepat dan Lambat: Apa Lagi yang Bisa Dilewatkan Selain Teks
 
 (Diskusi lintas skenario ini secara singkat menyimpang dari fokus utama bab mengenai suara.) Solusi 2 mengungkapkan dimensi desain yang terabaikan: ketika pemikiran lambat menyampaikan pesan ke pemikiran cepat, ia menggunakan saluran **teks** (saran melalui bilah status). Teks mudah dipahami dan di-debug, tetapi ini adalah saluran yang sempit—keadaan perantara kaya dari pemikir yang lambat terjepit ke dalam beberapa kalimat. Jadi, apakah antarmuka antara cepat dan lambat harus selalu berupa teks?
 
@@ -270,7 +270,7 @@ Karya yang sama menarik batas yang jujur: **apakah kolaborasi cepat-lambat memba
 
 *End-to-end* atau modular, kualitas lapisan persepsi dan eksekusi tetap penting. Model *end-to-end* memperbaiki latensi di tingkat arsitektur, tetapi dua dasar—mendengar secara akurat dan berbicara secara alami—tidak membaik dengan sendirinya ketika arsitektur berubah. Pendengaran yang akurat berhubungan dengan persepsi suara *streaming* dari Paradigma 1; di sini kita beralih ke lapisan eksekusi untuk berbicara secara alami: sintesis ucapan (*speech synthesis*) yang lebih mirip manusia.
 
-## Sintesis Ucapan yang Lebih Mirip Manusia
+### Sintesis Ucapan yang Lebih Mirip Manusia
 
 "Kesempurnaan" dari TTS tradisional justru merupakan masalahnya: ucapan yang sangat lancar tanpa cacat, tanpa jeda atau kata pengisi (*filler*), terdengar tidak dapat disangkal sebagai hasil dari mesin. "Ketidaksempurnaan" dalam ucapan manusia—jeda, pengisi ("um," "uh," "you know"), dan pengulangan sesekali—bukanlah cacat melainkan tanda-tanda alami dari proses berpikir, yang memberi tahu pendengar "saya sedang berpikir" atau "saya tidak sepenuhnya yakin." Namun AI dapat menghasilkan respons lebih cepat daripada respons itu dapat diucapkan keras-keras, dan keluarannya tiba secara fasih dan lengkap; sintesiskan apa adanya dan sifat buatan mesinnya menjadi sangat jelas.
 
@@ -387,6 +387,11 @@ Temuan yang berlawanan dengan intuisi adalah bahwa hal yang benar-benar penting 
 [^ch9-9]: Untuk mekanisme lengkap dan ablasi per model dari ketiga komponen—gated keyframes, on-demand transcription, dan narrating frames into persistent text—lihat Bojie Li dan Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
 
 ### Seluler: Hambatan Ekosistem Lebih Sulit Daripada Teknologi
+### World model untuk Computer Use
+
+Antarmuka observasi menjawab “apa yang terjadi di antara dua screenshot?” dengan mengirim perubahan dinamis lebih cepat dan menyimpannya dalam memori. Namun antarmuka ini tidak menghapus biaya perencanaan: Agent masih dapat mengulang loop serial “screenshot—berpikir—klik” dan meninjau ulang langkah setelah setiap tindakan. OSWorld-Human menunjukkan bahwa akurasi setara manusia dapat dicapai dengan jauh lebih banyak langkah dan waktu tunggu.
+
+Manusia mengoperasikan desktop secara prediktif: mengantisipasi akibat tindakan, lalu melanjutkan rencana tanpa replanning ketika keadaan yang diamati sesuai prediksi. Hanya penyimpangan yang memicu observasi dan perencanaan ulang. Inilah speculative execution, dan world model membuatnya tersedia bagi Agent. **World model menyelesaikan separuh masalah yang lain**: memprediksi keadaan berikutnya, melanjutkan saat cocok dengan kenyataan, dan melakukan replanning atau berhenti saat tidak cocok.
 
 Computer Use juga berkembang ke perangkat seluler. Sistem seluler dan desktop memang berbeda secara teknis: alih-alih mengandalkan koordinat mouse dan input keyboard, action space seluler biasanya menggunakan API layanan aksesibilitas sistem (mis., `AccessibilityService` di Android) untuk membaca elemen antarmuka dan mengeluarkan klik atau memasukkan teks. Interaksi juga beralih dari penunjuk mouse ke gestur sentuh, sehingga mengubah makna koordinat. Posisi `(x, y)` yang sama dapat menunjukkan ketukan, tekanan lama, atau titik awal dari geseran (swipe), sehingga tindakan tersebut juga harus menentukan jenis gestur. Benchmark seluler seperti AndroidWorld, yang diperkenalkan di Bab 6, mengevaluasi kemampuan Agent untuk menyelesaikan tugas dalam aplikasi nyata di dalam action space ini.
 
@@ -410,8 +415,8 @@ Tidak seperti domain speech, saat ini tidak ada solusi sistematis untuk meningka
 
 ## Robot Manipulation: Dari Kontrol Real-Time ke Pelatihan dan Generalisasi
 
-> **Catatan Membaca**: Bagian ini membahas kontrol robot. Eksperimen 9-10 mendemonstrasikan metode untuk mentransfer dari simulasi ke realitas—bagian **pelatihan dalam simulasi (langkah 3-4) dapat diselesaikan hanya dengan menggunakan server GPU**; namun, untuk mereproduksi seluruh pipeline dari awal hingga akhir (termasuk langkah-langkah deployment dunia nyata), perangkat keras nyata seperti lengan robot SO100 diperlukan. Jika Anda saat ini tidak tertarik pada robotika, Anda dapat melewati bagian ini; hal itu tidak akan memengaruhi pembacaan bab-bab lain.
-
+> **Kelima eksperimen di bagian ini memakai satu tugas yang sama: masukkan cangkir merah ke baki, masukkan kertas kuning ke tempat sampah, lalu amati ulang dan verifikasi keadaan meja. Robot nyata dan simulator dilaporkan terpisah, tetapi semantik tindakan dan kriteria keberhasilannya sama.**
+>
 Voice Agent melawan latensi dalam modalitas pendengaran; Computer Use melakukannya dalam modalitas visual. Ketika sebuah Agent harus mengendalikan robot di dunia fisik, latensi dan multimodalitas menjadi semakin menantang—tindakan memiliki konsekuensi yang tidak dapat diubah (irreversible), dan satu tabrakan dapat merusak objek atau robot itu sendiri. Bagian ini pertama-tama menunjukkan bagaimana robot menjinakkan masalah kontrol real-time dengan arsitektur dua lapis dan Action Chunking, lalu beralih ke masalah yang lebih sulit yang mereka hadapi saat ini—pelatihan dan generalisasi: dari mana data berasal, dan bagaimana model ditransfer lintas tugas dan platform.
 
 ### Perangkat Keras Bukanlah Bottleneck; Algoritma Adalah Bottleneck-nya
@@ -422,15 +427,15 @@ Klaim ini membutuhkan batasan yang jelas: contoh teleoperasi hanya menunjukkan b
 
 Untuk tugas-tugas ini, kesenjangan sebenarnya terletak pada lapisan algoritmik, yang diuraikan dalam dua subbagian berikut.
 
-> **Eksperimen 9-8 ★: Pengalaman Teleoperasi XLeRobot**
+> **Eksperimen 9-8 ★: Teleoperasi XLeRobot untuk merapikan meja**
 >
-> XLeRobot mendukung beberapa metode teleoperasi, termasuk keyboard, pengontrol Xbox, Nintendo Switch Joy-Con, dan headset VR. Kendalikan robot secara manual saat mengambil dan meletakkan benda atau menyeka permukaan, dan amati latensi respons, presisi gerakan, serta kualitas penyelesaian tugasnya. Pengalaman langsung ini membangun pemahaman intuitif tentang kemampuan perangkat keras: di bawah kendali manusia, robot dapat melakukan berbagai tugas yang tak terduga, menunjukkan bahwa algoritma daripada perangkat keras adalah bottleneck saat ini.[^ch9-1]
+> **Tujuan:** Operator mengendalikan XLeRobot nyata dari jarak jauh untuk melakukan tugas yang sama dan memverifikasi keadaan meja.
 >
-> [^ch9-1]: XLeRobot, "Teleop Documentation." https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
-
+> **Prinsip:** Lengan robot seharga beberapa ratus dolar dapat menyelesaikan tugas multi-langkah ini di bawah kecerdasan manusia melalui teleoperasi; untuk tugas ini badan perangkat keras bukan bottleneck, melainkan persepsi, perencanaan, kontrol closed-loop, dan pemulihan kegagalan.
+>
 ### Arsitektur Dua Lapis: Pemisahan Perencanaan dan Kontrol
 
-Robot perlu membuat keputusan pada dua skala waktu yang berbeda untuk menyelesaikan tugas rumah tangga yang kompleks. Lapisan pertama adalah **long-horizon planning** (perencanaan jangka panjang) yang lebih lambat: menguraikan instruksi tingkat tinggi seperti "bersihkan dapur" menjadi urutan sub-tujuan (membersihkan meja, memuat mesin pencuci piring, menyeka permukaan). Ini membutuhkan pemahaman semantik lingkungan, penalaran tentang dependensi tugas, dan perencanaan urutan tindakan multi-langkah—mirip dengan bagaimana seseorang berpikir tentang "apa yang harus dilakukan pertama kali dan apa yang harus dilakukan selanjutnya" sebelum memulai. Lapisan kedua adalah **VLA control** (Vision-Language-Action model) yang lebih cepat: mengeksekusi setiap operasi spesifik ("berjalan ke wastafel," "mengambil kain," "menyeka meja"), terus-menerus mengeluarkan sinyal kontrol berdasarkan masukan visual saat ini dan instruksi bahasa untuk memastikan gerakan robot yang halus dan koheren.
+Robot perlu membuat keputusan pada dua skala waktu yang berbeda untuk menyelesaikan tugas rumah tangga yang kompleks. Lapisan pertama adalah **long-horizon planning** (perencanaan jangka panjang) yang lebih lambat: menguraikan instruksi tingkat tinggi seperti "bersihkan meja" menjadi urutan sub-tujuan (membersihkan meja, memuat mesin pencuci piring, menyeka permukaan). Ini membutuhkan pemahaman semantik lingkungan, penalaran tentang dependensi tugas, dan perencanaan urutan tindakan multi-langkah—mirip dengan bagaimana seseorang berpikir tentang "apa yang harus dilakukan pertama kali dan apa yang harus dilakukan selanjutnya" sebelum memulai. Lapisan kedua adalah **VLA control** (Vision-Language-Action model) yang lebih cepat: mengeksekusi setiap operasi spesifik ("berjalan ke wastafel," "mengambil kain," "menyeka meja"), terus-menerus mengeluarkan sinyal kontrol berdasarkan masukan visual saat ini dan instruksi bahasa untuk memastikan gerakan robot yang halus dan koheren.
 
 Arsitektur dua lapis ini memisahkan tanggung jawab secara efektif: long-horizon planning menangani "apa yang harus dilakukan," sementara VLA control menangani "bagaimana melakukannya." Kombinasi pengambilan keputusan tingkat tinggi yang lambat dan eksekusi tingkat rendah yang cepat ini sangat mirip dengan arsitektur fast-slow yang dijelaskan sebelumnya untuk speech: keduanya menugaskan penalaran kompleks dan respons real-time ke modul yang berbeda. Namun, pemisahan perencanaan/kontrol (planning/control split) berkaitan dengan penalaran mendalam yang lambat versus respons real-time yang cepat, bukan pemisahan pemikiran/ekspresi antara Formulation Brain dan Articulation Brain milik MPS dalam Solusi 3. MPS memisahkan berpikir dari berbicara; arsitektur robotika memisahkan perencanaan global dari eksekusi real-time. Oleh karena itu, kedua arsitektur tersebut membagi pekerjaan pada dimensi yang berbeda.
 
@@ -448,11 +453,19 @@ VLM yang bersifat general-purpose sudah memiliki kemampuan Embodied Reasoning ya
 
 [^ch9-2]: Google DeepMind, "Gemini Robotics-ER 1.5." https://deepmind.google/models/gemini-robotics/gemini-robotics-er/
 
-> **Eksperimen 9-9 ★★: Menggunakan Gemini Robotics-ER 1.5 untuk Menggerakkan Navigasi Otonom XLeRobot**
+> **Eksperimen 9-9 ★: Mengukur batas atas kontrol ideal di simulator**
 >
-> Gunakan pustaka RoboCrew dengan Gemini Robotics-ER 1.5 sebagai model long-horizon planning, menumpangkan (overlay) anotasi skala sudut pada gambar kamera. Sistem ini hanya menyediakan tiga alat (tools) sederhana: bergerak maju, belok kiri, dan belok kanan. Diberikan tugas "temukan dapur dan pergi ke sana," model membuat keputusan pada 0,5-1Hz. Ia mengidentifikasi fitur visual seperti koridor, pintu, dan furnitur; menyimpulkan bahwa dapur mungkin ada di sebelah kiri dan kemudian berbelok ke arah tersebut; lalu melihat kulkas di depan dan terus maju. Sistem ini juga dapat diperluas dengan kontrol suara, menggunakan kata pemicu (wake word) untuk memulai tugas baru. Eksperimen ini mengungkap batasan VLM dalam long-horizon planning: penalaran spasial dan dekomposisi tugas mereka sudah kuat, tetapi ketahanan (robustness) mereka di lingkungan yang kompleks dan konsistensi di atas beberapa langkah penalaran masih perlu perbaikan.[^ch9-3]
+> **Tujuan:** Jalankan tugas yang sama dengan pengendali ideal yang tidak salah mempersepsi atau memilih tindakan, sehingga tersedia batas atas yang dapat diulang.
 >
-> [^ch9-3]: XLeRobot, "LLM Agent Control." https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html
+> **Prinsip:** Acuan ini mengukur kemampuan ketika keputusan selalu benar; ini bukan bukti bahwa robot nyata telah menjalankan tugas.
+>
+
+> **Eksperimen 9-10 ★★: Gemini Robotics-ER 1.5 mengendalikan XLeRobot nyata secara otonom**
+>
+> **Tujuan:** Gantikan operator manusia dengan Agent yang mengamati meja dan memanggil skill pick, place, serta verify yang dibatasi, dengan robot dan kriteria sukses yang sama seperti Eksperimen 9-8.
+>
+> **Prinsip:** Perbandingan langsung mengungkap kesenjangan persepsi, perencanaan, pengaturan waktu, kontrol tertutup, dan pemulihan—bukan keterbatasan mekanis baru.
+>
 
 ### VLA Control: Dari Data Demonstrasi ke Generalisasi Cross-Embodiment
 
@@ -484,23 +497,19 @@ Pendekatan ini telah menghasilkan beberapa keberhasilan yang menonjol. Proyek Da
 
 Apa yang ditambahkan bab ini adalah dua langkah rekayasa yang tidak dapat Anda lewati saat membawa Domain Randomization ke robot nyata. Yang pertama adalah **mengkalibrasi rentang pengacakan (calibrating the randomization range)**: rentangnya tidak dapat ditetapkan berdasarkan firasat. Terlalu sempit, dan ia melewatkan variasi dunia nyata; terlalu lebar, dan pelatihan menjadi lebih sulit serta menghasilkan kebijakan suboptimal yang "bisa menangani segalanya, tapi tidak menguasai apa pun." Praktiknya, distribusi parameter kunci (koefisien gesekan, penundaan respons motor) terlebih dahulu **diukur dan dikalibrasi** dari data dunia nyata dan disampel di dalam rentang tersebut; jika performa kebijakan yang dilatih dalam simulasi turun secara mencolok pada robot nyata, rentangnya diperlebar selangkah demi selangkah hingga kesenjangan sim-to-real konvergen ke sesuatu yang dapat diterima. Yang kedua adalah **penyelarasan visual (visual alignment)**: secara presisi mengkalibrasi pose kamera antara simulasi dan realitas (environment alignment), dan secara acak menyambungkan (splicing) gambar latar belakang dunia nyata ke dalam render simulasi (greenscreen background replacement) sehingga simulasi terlihat semirip mungkin dengan apa yang dilihat robot nyata. Eksperimen 9-10 mendemonstrasikan kedua langkah tersebut.
 
-> **Eksperimen 9-10 ★★★: Zero-Shot RGB Sim2Real Robotic Grasping**
+> **Eksperimen 9-11 ★★: Membandingkan tiga loop otonom di simulator**
 >
-> Menggunakan simulator LeRobot + ManiSkill, latih hanya dengan gambar kamera RGB (tanpa bergantung pada sensor kedalaman (depth sensors) atau sensor kekuatan (force sensors)), lalu terapkan secara Zero-Shot (tanpa tuning tambahan apa pun) langsung ke lengan robot nyata SO100. Proses ini memiliki lima langkah:
+> **Tujuan:** Pertahankan tugas dan alat yang sama, lalu bandingkan eksekusi open-loop, pemeriksaan setiap langkah, dan strategi prediktif jangka pendek.
 >
-> 1. **Penyelarasan Lingkungan (Environment Alignment)**: Sesuaikan posisi kamera dalam simulasi dan lingkungan nyata, memverifikasi melalui visual overlay bahwa gambar dari kedua sisi sejajar.
-> 2. **Penggantian Latar Belakang (Greenscreen Background Replacement)**: Potong secara acak gambar latar belakang yang diambil dari lingkungan nyata dan tumpangkan (overlay) pada rendering simulasi, membuat latar belakang simulasi menjadi lebih dekat ke realitas.
-> 3. **Domain Randomization**: Acak parameter seperti warna robot, tekstur objek, kondisi pencahayaan, dan bidang pandang (field of view) kamera.
-> 4. **Pelatihan RL (RL Training)**: Latih menggunakan algoritma PPO di lingkungan simulasi paralel secara masif (massively parallel) hingga tingkat keberhasilan dalam simulasi melebihi 90%.
+> **Prinsip:** Pemeriksaan langkah demi langkah memungkinkan pemulihan dari kegagalan lokal; world model memungkinkan kelanjutan saat prediksi cocok dan replanning saat menyimpang. Keadaan akhir selalu dikonfirmasi lewat observasi baru.
+>
 
-> 5. **Real-World Deployment**: Berhasil menyelesaikan tugas menggenggam pada robot nyata secara zero-shot.
+> **Eksperimen 9-12 ★★★: Uji RGB lintas lingkungan untuk tugas yang sama**
 >
-> Faktor kunci keberhasilan: penyelarasan lingkungan yang presisi, visual domain randomization, dan physical parameter randomization; ketiganya sangat penting. Keterbatasan: Ketika bentuk, ukuran, atau material dari objek nyata berada di luar distribusi pelatihan, tingkat keberhasilannya menurun secara signifikan.[^ch9-6]
+> **Tujuan:** Ubah latar, tampilan objek, pencahayaan, dan noise visual untuk menguji adaptasi kebijakan visual simulator pada gambar baru.
 >
-> [^ch9-6]: LeRobot, "Sim2Real Tutorial". https://github.com/StoneT2000/lerobot-sim2real/blob/main/docs/zero_shot_rgb_sim2real.md
+> **Prinsip:** Keragaman visual dapat meningkatkan ketahanan lintas lingkungan, tetapi tidak menggantikan kalibrasi robot nyata dan loop keselamatan lengkap.
 >
->
-> ![Gambar 9-13: Eksperimen 9-10 Zero-Shot RGB Sim2Real Pipeline](images/fig9-13.svg)
 
 +## Pembaruan 2026: Perencanaan Streaming dan World Model
 
@@ -535,12 +544,6 @@ OpenVLA tidak secara harfiah hanya memperbarui projector: karya aslinya juga men
 World model mempelajari transisi yang dapat ditindaklanjuti: keadaan + aksi kandidat → keadaan masa depan yang diprediksi → pilih dan verifikasi aksi. Cakupannya lebih luas daripada V-JEPA: model prediktif laten (V-JEPA 2), model generatif interaktif (Genie 3 dan Cosmos), World-Action Model (GeniWorld dan Robust-WAM), latent action dari video tanpa label (LAWM-3D), dan model-based RL (Dreamer dan MuZero). Nilainya adalah belajar dari observasi dalam skala besar, menguji aksi kontrafaktual sebelum eksekusi, memisahkan dinamika bersama dari kontrol khusus robot, serta merencanakan ulang saat prediksi berbeda dari kenyataan.
 
 Preprint 2026 mengeksplorasi shared dynamics prior dan action head khusus embodiment (DyPES-VLA), visual action untuk manipulasi closed-loop di luar distribusi (GeniWorld), latent action 3D dari video manusia (LAWM-3D), semantic foresight alignment (Robust-WAM), dan deployment asinkron waktu nyata. Ini hasil riset yang menjanjikan, bukan solusi generalisasi yang sudah tuntas.
-
-### World model untuk Computer Use
-
-Desktop juga merupakan sistem dinamis: screen state + click/type/scroll/wait → next state. Photon-1, yang diumumkan Induction Labs pada Juli 2026, memprediksi next state laten dari video penggunaan komputer, lalu mempelajari format aksi dan menerapkan online RL. Angka benchmark dan biaya mereka berasal dari evaluasi internal dan belum direplikasi secara independen. Desain praktisnya adalah predictor pendamping: VLM memilih semantik dan tool, predictor menyimpan kandidat next state, menyaring aksi berisiko, lalu membuang rollout yang basi jika screenshot nyata tidak cocok. Jaringan, autentikasi, CAPTCHA, dan state server tersembunyi membuat setiap aksi yang tidak dapat dibatalkan tetap harus diverifikasi di lingkungan nyata.
-
-Sumber: [OpenVLA](https://arxiv.org/abs/2406.09246), [V-JEPA 2](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/), [Genie 3](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/), [Photon-1](https://www.inductionlabs.com/news/scaling-video-pretraining), [DyPES-VLA](https://arxiv.org/abs/2608.06374), [GeniWorld](https://arxiv.org/abs/2608.06332), [LAWM-3D](https://arxiv.org/abs/2608.05706), [Robust-WAM](https://arxiv.org/abs/2608.05903).
 
 ## Ringkasan Bab
 

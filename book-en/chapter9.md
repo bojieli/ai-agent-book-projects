@@ -23,7 +23,7 @@ At the tool level, this path has produced roughly two kinds of products. One is 
 
 One note before we begin: the voice architecture discussed below serves both directions—the user speaking to the Agent (voice as a human-machine interface), and the Agent speaking to the outside world on the user's behalf (say, making a phone call to negotiate). Behind both sits the same real-time voice technology. We start with the three paradigms of voice architecture.
 
-## Three Paradigms of Voice Architecture
+### Three Paradigms of Voice Architecture
 
 A useful framework for understanding the technical evolution of voice Agents is the three-part classification OpenAI presented when it released GPT-Live in 2026[^ch9-12]. It also corresponds to the three generations of architecture through which ChatGPT Voice itself has evolved:
 
@@ -37,7 +37,7 @@ Furthermore, GPT-Live introduced a second structural change—decoupling "real-t
 
 [^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/. The three-part classification of "Cascaded / Turn-based / Full-Duplex" in this section originates from this article's summary of the three generations of ChatGPT Voice evolution; the "End-to-End Omnimodal (Omni)" in the text corresponds to its "turn-based voice models" category.
 
-## Paradigm 1: Cascaded Pipeline
+### Paradigm 1: Cascaded Pipeline
 
 The vast majority of commercial voice assistants—from smart speakers to customer service robots—are based on a serial pipeline (Figure 9-1): Voice Activity Detection (VAD) determines when the user has finished speaking → Automatic Speech Recognition (ASR) converts the audio into text → a Large Language Model (LLM) understands the intent and generates a reply → Text-to-Speech (TTS) vocalizes the reply. Like a relay race, each stage must wait for the previous one to finish before it can start.
 
@@ -83,7 +83,7 @@ Intuitively, the higher the utilization, the more steeply—and nonlinearly—th
 >
 > This experiment demonstrates an important application direction for voice Agents: **an Agent need not merely wait for the user to open a chat window; it can proactively establish a real-time session with explicit start, confirmation, and completion states**. Browser WebRTC covers the easiest-to-reproduce “call the user” path. When the task instead requires contacting the outside world on the user's behalf, waiting for a human service representative, or navigating IVR, the same call-tool contract can be connected to a compliant PSTN/SIP provider.
 
-### Full-Chain Streaming of the Cascaded Pipeline
+#### Full-Chain Streaming of the Cascaded Pipeline
 
 Figure 9-2 assumes a **fully serial** scenario in which each stage finishes before passing the baton. Production systems usually preserve the modular VAD-ASR-LLM-TTS division while making each stage emit incremental results as early as possible, shortening the time until the user hears the first syllable:
 
@@ -97,7 +97,7 @@ More aggressive systems use **preemptive/speculative generation**: they start th
 
 Ordinary streaming also cannot eliminate **VAD's silence wait and turn judgment itself**. Streaming ASR is already running during that wait; what turn detection blocks is committing the final transcript and playing the reply. Preemptive generation can hide some of this computation, but the system must still decide when it is safe to speak. Reducing that delay further requires improving the front-end perception and endpoint decision itself.
 
-### Streaming Voice Perception: Replacing VAD + ASR
+#### Streaming Voice Perception: Replacing VAD + ASR
 
 This perception front-end consists of two stages: VAD determines whether the user has finished speaking, and ASR transcribes audio into text. In a fully serial architecture, together they determine when the downstream pipeline starts and what input it receives. In a streaming architecture, ASR begins earlier, but committing the final text and deciding when to reply remain constrained by endpoint detection. The traditional VAD + ASR cascade has three fundamental problems:
 
@@ -140,7 +140,7 @@ Note that the model outputs not just a text transcription but also voice event m
 >
 > Results: The incremental recognition latency of the chunked simulation scheme can be controlled on the order of one to two hundred milliseconds (depending on chunk length and hardware), while the traditional scheme requires waiting for VAD to confirm completion (600ms) plus Whisper inference (about 200–500ms under this experiment's configuration), totaling 800–1100ms. In the scenario with pauses, VAD misjudged the first long pause as the end of speech, cutting the sentence into two segments for separate recognition. "大概两点左右" ("around two o'clock") was misrecognized as "大概零点左右" ("around midnight")—stripped of the surrounding context, the similar-sounding 两 (liǎng, "two") was misheard as 零 (líng, "zero"). The chunked scheme, maintaining complete context, correctly recognized the entire sentence. In the background noise scenario, Qwen2-Audio outputs `<|noise|>` tokens to mark the presence of noise without interrupting recognition, while traditional VAD was falsely triggered by noise, causing the recognition process to start prematurely.
 
-## Paradigm 2: End-to-End Omnimodal Models (Omni)
+### Paradigm 2: End-to-End Omnimodal Models (Omni)
 
 Look back at the cascaded pipeline as a whole: even with its perception front-end upgraded to streaming voice perception, it still parcels out listening, thinking, and speaking to three independent models joined by a discrete interface. However wide that interface grows, it carries only a handful of semantic tokens and the occasional acoustic marker; the speaker's emotion, tone, intonation, and ambient background sounds or music are mostly lost in the handover. And because the three segments are trained and tuned separately, they struggle to work as one. End-to-end omnimodal models (Omni) take a different path—a single model directly "listens" to audio, "thinks" of a reply, and "speaks" it, merging the three segments into one (Figure 9-4). Given enough training data, the model's internal latent space can carry these paralinguistic signals straight through to the generation side, reducing latency while preserving prosody and emotion in ways text alone cannot. The trade-off: **cascaded pipelines** have clean modules, per-segment tuning, and good interpretability; **end-to-end models** buy lower latency and non-textual fidelity at the cost of heavier training data demands and poorer interpretability.
 
@@ -186,7 +186,7 @@ A distinction worth keeping straight: MoE improves throughput—how many request
 
 Step-Audio R1 is a follow-up model in the Step-Audio series. Building on Step-Audio 2's end-to-end voice conversation architecture, it further internalizes thinking capabilities directly into the audio model. The two represent a progressive evolution along the same technical path.
 
-## Paradigm 3: Full-Duplex / Interactive Models
+### Paradigm 3: Full-Duplex / Interactive Models
 
 Paradigm 2 merged three models into one but still clung to the assumption of taking turns—either the user speaks or the model speaks, with the switch point guessed by VAD or semantics. Some scenarios simply have no room for "your sentence, then mine." **Simultaneous interpretation** is the classic case: the interpreter does not wait for a complete sentence before starting, but listens and composes at once, rendering each unit of meaning as soon as it is roughly whole—listening and translating always overlap. **Rhythm games, where you strike drumbeats in time with music**, are more extreme still: the ear must track an uninterrupted music stream, the hands must hit each beat on the instant, and the mind must anticipate the next one—here there is no such thing as a "turn," only an unending stream of input. Such tasks challenge the turn-by-turn model at its root: they demand that listening, thinking, and action happen simultaneously, while the turn-based model's whole premise is to slot the three into separate time slices. The full-duplex model takes the "eliminate VAD" path to its logical endpoint—it simply drops the turn-taking assumption and lets the model **listen and speak continuously, at the same time**.
 
@@ -204,7 +204,7 @@ GPT-Live also follows the same path of separating fast and slow processes—**de
 
 Reviewing this chapter's narrative thread of "replacing VAD": VAD guesses the turn-switching point based on silence thresholds; streaming perception (see the earlier section "Streaming Voice Perception" in Paradigm 1) upgrades the switching judgment to the semantic level; and the full-duplex model completely dissolves the concept of "switching" itself—it is always listening, so "interruption" is no longer an event requiring special handling, and the barge-in processing chain is largely eliminated architecturally. This is the endpoint of the "replacing VAD" narrative thread as of the time of writing.
 
-## Trade-offs in Thinking Architectures: From Separation to Unification
+### Trade-offs in Thinking Architectures: From Separation to Unification
 
 The real challenge is the **tension between real-time response and deep thinking**: users expect millisecond-level responses, while complex problems require seconds of thinking time. How can the model think deeply enough while maintaining low latency? This tension is not unique to end-to-end architectures; cascaded pipelines also face it.
 
@@ -212,7 +212,7 @@ The three solutions below do not represent a linear progression. They are design
 
 By 2026, the "fast-slow decoupling" path had become the mainstream choice for frontier voice products and acquired a name of its own. Thinking Machines Lab calls it "Interaction Models"—a real-time interaction model coupled with an asynchronous background reasoning model; xAI's Grok Voice "Think Fast," Pine AI's voice Agent, and the previous section's GPT-Live "delegation" all follow the same route of "fast in the foreground maintaining the conversation, slow in the background for deep reasoning." The choice to decouple rather than "train a single all-powerful model" has a pragmatic reason: frontier reasoning models iterate every few months, while real-time interaction capabilities require specialized data and training objectives. Stuffing both into the same model means chasing a moving target and potentially diluting the most valuable reasoning capability[^ch9-8]. Conversely, by keeping the strongest reasoning model intact in the background and only training a lightweight interaction model for the foreground, one can always use the current strongest "brain"—this is precisely why GPT-Live emphasizes "sustainable swapping to the latest frontier models." Below, we examine the three solutions in order of increasingly strong coordination mechanisms.
 
-### Solution 1: Fast Thinking for Fillers, Slow Thinking for Answers
+#### Solution 1: Fast Thinking for Fillers, Slow Thinking for Answers
 
 Fast and slow thinking run in parallel (Figure 9-5): fast thinking produces a brief holding reply within 500ms (the way a person first says "let me think"), while slow thinking spends 5-10 seconds reasoning in the background before delivering the full answer. The technique behind slow thinking is "test-time scaling"—in plain terms, letting the model think a bit longer before answering: instead of jumping to an answer in one step, it works like a person on a math problem—sketch an approach, derive step by step, check the result—trading more computation for a better answer.
 
@@ -230,7 +230,7 @@ Fast and slow thinking run in parallel (Figure 9-5): fast thinking produces a br
 <user>(Angry) So do you recommend I buy it or not?!</user>
 ```
 
-### Solution 2: Fast Thinking for Interaction, Slow Thinking for Advice
+#### Solution 2: Fast Thinking for Interaction, Slow Thinking for Advice
 
 Solution 2 allows slow thinking to see the output of fast thinking. It provides suggestions through the Agent Status Bar (the dynamic meta-information injection mechanism introduced in Chapter 2) rather than speaking directly to the user. Compared with Solution 1, this approach makes two improvements: slow thinking runs asynchronously in the background and continues reasoning during gaps in speech; and because it can see fast thinking's output, it avoids contradicting it directly and instead acts as a behind-the-scenes "strategist." The GPT-Live delegation and Pine AI voice Agent mentioned earlier are production examples of Solution 2—the background reasoning model sends its conclusions to the foreground interaction model through a concise text channel, and the foreground model decides when and how to present them to the user.
 
@@ -238,7 +238,7 @@ This solution still has fundamental limits, though. **Fast thinking may not foll
 
 Solution 2 also faces a fundamental theoretical problem: **it cannot achieve "thinking while speaking."** When humans face a complex problem, they do not first formulate the complete answer in their mind and then deliver it all at once. Instead, they think and speak in segments—"This is an interesting question... (pause to think) First, we need to consider... (continue thinking) Second..." In Solution 2, fast thinking can offer only filler phrases while waiting for slow thinking, with no way to weave the reasoning process naturally into the conversation.
 
-### Solution 3: End-to-End Unification of Thinking and Expression (Using Step-Audio R1 as an Example)
+#### Solution 3: End-to-End Unification of Thinking and Expression (Using Step-Audio R1 as an Example)
 
 Although Solution 2 reduces the user's need to wait for slow thinking, it is still architecturally "think first, then speak"—thinking and expression remain two separate processes, making it impossible to achieve the human-like "thinking while speaking." To break this fundamental limitation, thinking capabilities must be directly internalized into the model.
 
@@ -262,7 +262,7 @@ The two run in parallel: the Formulation Brain does not need to finish reasoning
 
 Solution 3 internalizes thinking into a single model—the most elegant realization of "thinking while speaking"—but the price is exactly the "moving target" from the start of this section: one model must be both the strongest reasoner and a real-time speaker, and with both capabilities evolving fast, the unified route must retrain again and again to keep pace. Hence the industry divide at the time of writing: frontier products that want to swap in the latest brain at will (GPT-Live, Grok Voice, Pine AI) mostly bet on Solution 2's decoupling, while Solution 3 suits products that chase ultimate naturalness and can absorb the specialized training cost. Neither replaces the other; it is a trade-off between the ability to swap in a reasoning model and more tightly integrated thinking and speech.
 
-### The Interface Between Fast and Slow: What Else Can Be Passed Besides Text
+#### The Interface Between Fast and Slow: What Else Can Be Passed Besides Text
 
 (This cross-scenario discussion briefly departs from the chapter's main focus on voice.) Solution 2 reveals an overlooked design dimension: when slow thinking passes a message to fast thinking, it uses the **text** channel (a suggestion via the status bar). Text is easy to understand and debug, but it is a narrow channel—the slow thinker's rich intermediate state gets squeezed into a few sentences. So must the interface between fast and slow be text at all?
 
@@ -274,7 +274,7 @@ The same work draws an honest boundary: **whether fast-slow collaboration helps 
 
 End-to-end or modular, the quality of the perception and execution layers still matters. End-to-end models fix latency at the architectural level, but the two fundamentals—hearing accurately and speaking naturally—do not fix themselves when the architecture changes. Accurate hearing corresponds to the streaming voice perception of Paradigm 1; here we turn to the execution layer for speaking naturally: more human-like speech synthesis.
 
-## More Human-like Speech Synthesis
+### More Human-like Speech Synthesis
 
 The "perfection" of traditional TTS is exactly the problem: speech that is flawlessly fluent, with no pauses or filler words, sounds unmistakably machine-generated. The "imperfections" of human speech—pauses, fillers ("um," "uh," "you know"), and occasional repetition—are not flaws but natural signs of the thinking process, telling the listener "I'm thinking" or "I'm not entirely sure." An AI, however, can generate a response faster than that response can be spoken aloud, and its output arrives fluent and complete; synthesize it as-is and its artificial nature becomes obvious.
 
@@ -394,6 +394,16 @@ The counterintuitive finding is that what really matters is not frame selection 
 
 [^ch9-9]: For the complete mechanism and per-model ablation of the three components—gated keyframes, on-demand transcription, and narrating frames into persistent text—see Bojie Li and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
 
+### World Models for Computer Use
+
+The observation interface answers “what happened between screenshots?” by making dynamic changes arrive sooner and persist in memory. It does not by itself remove the planning overhead: a standard Computer Use Agent may still repeat the serial “screenshot—think—click” loop and reconsider the next step after every action. **OSWorld-Human** shows that human-level task accuracy can coexist with substantially more steps and waiting time than a person needs.
+
+People operate a desktop predictively. They anticipate the consequence of an action; when the observed state agrees with that prediction, they continue along the existing plan instead of replanning from scratch. Only a mismatch sends them back to observation and planning. This is speculative execution, and a world model makes it available to an Agent. **A world model solves the other half of the problem**: it predicts what the desktop may become after an action, so the Agent can continue directly when reality matches the prediction and replan or stop when it does not.
+
+A desktop state is more than pixels: it includes the active window and focus, scroll position, input contents, loading and permission state, and network responses. Actions include clicking, typing, scrolling, dragging, and waiting. A useful world model encodes the current state, predicts state changes for candidate actions, and passes those predictions to the planner. It need not render a photorealistic future screenshot; task-relevant state differences are enough to rank actions, prepare the next step during loading, and gate irreversible operations.
+
+Induction Labs’ **Photon-1** is one recent example. It compresses frames into discrete latent tokens and autoregressively predicts the next state representation after an action. Its attached image generator visualizes latent states but is not required for inference. The result should be treated as a predictive sidecar, not as a replacement for fresh screenshots or structured state checks in the real environment.
+
 ### Mobile: Ecosystem Barriers Are Harder Than Technology
 
 Computer Use is also expanding to mobile devices. Mobile and desktop systems do differ technically: instead of relying on mouse coordinates and keyboard input, the mobile action space typically uses the system's accessibility-service API (e.g., Android's `AccessibilityService`) to read interface elements and issue clicks or enter text. Interaction also shifts from a mouse pointer to touch gestures, changing the meaning of coordinates. The same `(x, y)` position might indicate a tap, a long press, or the starting point of a swipe, so the action must also specify a gesture type. Mobile benchmarks such as AndroidWorld, introduced in Chapter 6, evaluate an Agent's ability to complete tasks in real applications within this action space.
@@ -418,8 +428,6 @@ Unlike the speech domain, there is currently no systematic solution for improvin
 
 ## Robot Manipulation: From Real-Time Control to Training and Generalization
 
-> **Reading Note**: This section discusses robot control. Experiment 9-10 demonstrates a method for transferring from simulation to reality—the **training-in-simulation portion (steps 3-4) can be completed using only a GPU server**; however, to reproduce the entire pipeline end-to-end (including the real-world deployment steps), real hardware such as the SO100 robotic arm is required. If you are not currently interested in robotics, you can skip this section; it does not affect the reading of other chapters.
-
 Voice Agents fight latency in the auditory modality; Computer Use does so in the visual modality. When an Agent must control a robot in the physical world, latency and multimodality bite harder still—actions have irreversible consequences, and one collision can damage the object or the robot itself. This section first shows how robots tame the real-time control problem with a two-layer architecture and action chunking, then turns to the harder problem they face today—training and generalization: where the data comes from, and how models transfer across tasks and platforms.
 
 ### Hardware Is Not the Bottleneck; Algorithms Are
@@ -432,13 +440,13 @@ For these tasks, the real gap lies in the algorithmic layer, which is elaborated
 
 > **Experiment 9-8 ★: XLeRobot Teleoperation Experience**
 >
-> XLeRobot supports several teleoperation methods, including a keyboard, Xbox controller, Nintendo Switch Joy-Con, and VR headset. Manually control the robot as it picks up and places objects or wipes surfaces, and observe its response latency, motion precision, and task-completion quality. This hands-on experience builds an intuitive understanding of the hardware's capabilities: under human control, the robot can perform an unexpectedly broad range of tasks, suggesting that algorithms rather than hardware are the current bottleneck.[^ch9-1]
+> **Goal:** On a real XLeRobot, a human operator teleoperates the robot through the same task: put the red cup in the tray, put the yellow waste paper in the waste bin, then re-observe and verify the desktop state.
 >
-> [^ch9-1]: XLeRobot, "Teleop Documentation." https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
+> **Principle:** A few-hundred-dollar arm can complete this multi-step task under human teleoperation. For this task, the hardware body is not the bottleneck; the gap lies in perception, planning, timing, closed-loop control, and failure recovery.
 
 ### Two-Layer Architecture: Separation of Planning and Control
 
-Robots need to make decisions at two different time scales to complete complex household tasks. The first layer is slower **long-horizon planning**: decomposing a high-level instruction like "clean the kitchen" into a sequence of sub-goals (clear the countertop, load the dishwasher, wipe the surfaces). This requires understanding environmental semantics, reasoning about task dependencies, and planning multi-step action sequences—similar to how a person thinks about "what to do first and what to do next" before starting. The second layer is faster **VLA control** (Vision-Language-Action model): executing each specific operation ("walk to the sink," "pick up the cloth," "wipe the countertop"), continuously outputting control signals based on the current visual input and language instruction to ensure smooth and coherent robot motion.
+Robots need to make decisions at two different time scales to complete complex household tasks. The first layer is slower **long-horizon planning**: decomposing a high-level instruction like "tidy the desk" into a sequence of sub-goals (move the red cup to the tray, put the yellow waste paper in the bin, then verify the final state). This requires understanding environmental semantics, reasoning about task dependencies, and planning multi-step action sequences—similar to how a person thinks about "what to do first and what to do next" before starting. The second layer is faster **VLA control** (Vision-Language-Action model): executing each specific operation ("approach the cup," "grasp it," "place it in the tray"), continuously outputting control signals based on the current visual input and language instruction to ensure smooth and coherent robot motion.
 
 This two-layer architecture separates responsibilities effectively: long-horizon planning handles "what to do," while VLA control handles "how to do it." The combination of slow high-level decision-making and fast low-level execution closely parallels the fast-slow architecture described earlier for speech: both assign complex reasoning and real-time response to different modules. The planning/control split, however, corresponds to slow deep reasoning versus fast real-time response, not to the thinking/expression split between MPS's Formulation Brain and Articulation Brain in Solution 3. MPS separates thinking from speaking; the robotics architecture separates global planning from real-time execution. The two architectures therefore divide the work along different dimensions.
 
@@ -456,11 +464,17 @@ General-purpose VLMs already possess decent embodied reasoning capabilities. Goo
 
 [^ch9-2]: Google DeepMind, "Gemini Robotics-ER 1.5." https://deepmind.google/models/gemini-robotics/gemini-robotics-er/
 
-> **Experiment 9-9 ★★: Using Gemini Robotics-ER 1.5 to Drive XLeRobot Autonomous Navigation**
+> **Experiment 9-9 ★: Measuring the Ideal-Control Upper Bound for the Same Task in Simulation**
 >
-> Use the RoboCrew library with Gemini Robotics-ER 1.5 as the long-horizon planning model, overlaying angular-scale annotations on the camera images. The system provides only three simple tools: move forward, turn left, and turn right. Given the task "find the kitchen and go there," the model makes decisions at 0.5-1Hz. It identifies visual features such as corridors, doors, and furniture; concludes that the kitchen may be on the left and turns accordingly; then sees a refrigerator ahead and continues forward. The system can also be extended with voice control, using a wake word to trigger new tasks. This experiment reveals the limits of VLMs in long-horizon planning: their spatial reasoning and task decomposition are already strong, but their robustness in complex environments and consistency over multiple reasoning steps still need improvement.[^ch9-3]
+> **Goal:** Run the same desk-tidying task with an ideal controller that makes no perception or action-selection errors, establishing a reproducible upper bound.
 >
-> [^ch9-3]: XLeRobot, "LLM Agent Control." https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html
+> **Principle:** This is a reference for the control ceiling, not evidence that the real robot has been run.
+
+> **Experiment 9-10 ★★: Autonomous Control of a Real XLeRobot with Gemini Robotics-ER 1.5**
+>
+> **Goal:** Replace the human operator with an Agent that observes the desktop and calls bounded pick, place, and verify skills, while keeping the real XLeRobot, task, and success criteria from Experiment 9-8 unchanged.
+>
+> **Principle:** The direct comparison exposes gaps in perception, planning, timing, closed-loop control, and recovery—not a new mechanical limitation of the robot body.
 
 ### VLA Control: From Demonstration Data to Cross-Embodiment Generalization
 
@@ -490,37 +504,42 @@ Chapter 6's simulation section already explained where the sim-to-real gap comes
 
 This approach has produced several notable successes. OpenAI's Dactyl project achieved in-hand cube reorientation, and subsequent work used Automatic Domain Randomization (ADR) to solve a Rubik's Cube with one hand. ETH Zurich's ANYmal quadruped has demonstrated robust locomotion over difficult outdoor terrain such as snow and gravel.
 
-What this chapter adds are the two engineering steps you cannot skip when taking domain randomization to a real robot. The first is **calibrating the randomization range**: the range cannot be set on a hunch. Too narrow, and it misses real-world variation; too wide, and training gets harder and yields a suboptimal policy that "handles everything, masters nothing." In practice, the distribution of key parameters (friction coefficient, motor response delay) is first **measured and calibrated** from real-world data and sampled within that range; if the sim-trained policy's performance drops noticeably on the real robot, the range is widened step by step until the sim-to-real gap converges to something acceptable. The second is **visual alignment**: precisely calibrating camera pose between simulation and reality (environment alignment), and randomly splicing real-world background images into the simulated render (greenscreen background replacement) so that the simulation looks as much as possible like what the real robot sees. Experiment 9-10 demonstrates both steps.
+What this chapter adds are the two engineering steps you cannot skip when taking domain randomization to a real robot. The first is **calibrating the randomization range**: the range cannot be set on a hunch. Too narrow, and it misses real-world variation; too wide, and training gets harder and yields a suboptimal policy that "handles everything, masters nothing." In practice, the distribution of key parameters (friction coefficient, motor response delay) is first **measured and calibrated** from real-world data and sampled within that range; if the sim-trained policy's performance drops noticeably on the real robot, the range is widened step by step until the sim-to-real gap converges to something acceptable. The second is **visual alignment**: precisely calibrating camera pose between simulation and reality (environment alignment), and randomly splicing real-world background images into the simulated render (greenscreen background replacement) so that the simulation looks as much as possible like what the real robot sees. The paired experiments below illustrate these principles.
 
-> **Experiment 9-10 ★★★: Zero-Shot RGB Sim2Real Robotic Grasping**
+> **Experiment 9-11 ★★: Comparing Three Autonomous Loops in Simulation**
 >
-> Using the LeRobot + ManiSkill simulator, train with only RGB camera images (without relying on depth sensors or force sensors), then deploy zero-shot (without any additional tuning) directly to a real SO100 robotic arm. The process has five steps:
+> **Goal:** Keep the task and tools fixed while comparing open-loop execution, stepwise checking, and predictive closed-loop control.
 >
-> 1. **Environment Alignment**: Adjust the camera positions in the simulation and real environment, verifying through visual overlay that the images from both sides are aligned.
-> 2. **Background Replacement (Greenscreen)**: Randomly crop background images captured from the real environment and overlay them onto the simulation rendering, making the simulation background closer to reality.
-> 3. **Domain Randomization**: Randomize parameters such as robot color, object texture, lighting conditions, and camera field of view.
-> 4. **RL Training**: Train using the PPO algorithm in a massively parallel simulation environment until the success rate in simulation exceeds 90%.
-> 5. **Real-World Deployment**: Successfully complete the grasping task on the real robot zero-shot.
+> **Principle:** Stepwise checking enables local failure recovery; a world model permits continuation when prediction agrees with reality and replanning when it diverges. The final state is always confirmed with a fresh observation.
+
+> **Experiment 9-12 ★★★: RGB Cross-Environment Test for the Same Task**
 >
-> Key success factors: precise environment alignment, visual domain randomization, and physical parameter randomization; all three are indispensable. Limitation: When the shape, size, or material of real objects falls outside the training distribution, the success rate drops significantly.[^ch9-6]
+> **Goal:** Vary backgrounds, object appearance, lighting, and visual noise while keeping the desk-tidying task fixed, testing whether a vision policy learned in simulation remains robust across RGB environments.
 >
-> [^ch9-6]: LeRobot, "Sim2Real Tutorial". https://github.com/StoneT2000/lerobot-sim2real/blob/main/docs/zero_shot_rgb_sim2real.md
->
->
-> ![Figure 9-13: Experiment 9-10 Zero-Shot RGB Sim2Real Pipeline](images/fig9-13.svg)
+> **Principle:** Visual diversity can improve robustness, but it does not replace real-robot calibration or a complete safety and verification loop.
 >
 
-+## 2026 Update: Streaming Planning and World Models
+### 2026 Update: Aligned Desk-Tidying Experiments
 
-The robot section should not stop at “a VLM writes a plan and a VLA executes it.” Consider **“tidy the desk.”** A long-horizon planner first builds a state list—half-full cup, waste paper, three books, an open laptop, a bin, and a storage box—and emits commands with preconditions and success checks:
+The robot experiments now use one bounded task throughout: **put the red cup in the tray, put the yellow waste paper in the waste bin, then re-observe and verify the desktop state**. XLeRobot is a few-hundred-dollar arm, and a human can complete this multi-step task through teleoperation. That is direct evidence that, for this task, the hardware body is not the bottleneck; the autonomous gap lies in perception, planning, timing, closed-loop control, and recovery.
+
+The five experiments are deliberately paired:
+
+1. **Experiment 9-8**: teleoperate the real XLeRobot and establish the human-controlled hardware upper bound.
+2. **Experiment 9-9**: measure the ideal-control upper bound for the same task in a non-actuating simulator.
+3. **Experiment 9-10**: replace the human with Gemini Robotics-ER 1.5 and autonomously control the real XLeRobot.
+4. **Experiment 9-11**: compare open-loop, stepwise-checking, and predictive closed-loop strategies in the same simulator.
+5. **Experiment 9-12**: vary backgrounds, object appearance, lighting, and visual noise to test RGB cross-environment robustness.
+
+The earlier navigation example is not part of this experiment sequence: a fixed-base arm should be evaluated on a task it can physically perform.
+
+The planner still expresses the task as a dependency graph with preconditions and success checks:
 
 1. “Move to the desk and stop 30 cm from its edge.”
-2. “Put the two paper scraps in the bin; verify that no scraps remain.”
-3. “Keep the cup upright and place it on the tray; slow down if the liquid moves.”
-4. “Close the laptop and move it to the rear-left; do not pull its power cable.”
-5. “Stack the books by size and put the pens in the storage box.”
-6. “Only after fragile and powered objects are clear, wipe the desk.”
-7. “Step back, observe again, and verify the final state.”
+2. “Put the yellow waste paper in the waste bin; verify its new location.”
+3. “Keep the red cup stable and place it in the tray; verify that it is inside.”
+4. “Re-observe the desktop and verify both placements.”
+5. “Stop in a safe posture when the final state is confirmed.”
 
 This is a dependency graph, not a paragraph of prose. If the user says “put the laptop away first,” the system updates the goal priority. If the cup falls, it stops at a safe point, records facts such as cup.orientation=fallen and laptop.at_risk=true, invalidates the stale suffix, and replans: protect the laptop, contain the spill, re-observe, then resume only the unaffected tasks. Completed actions are not repeated. Emergency events cancel the current chunk; ordinary updates wait for the next safe point.
 
@@ -549,12 +568,6 @@ state + candidate action -> predicted future state -> select and verify an actio
 It is broader than V-JEPA alone. The family includes latent predictive models (V-JEPA 2), interactive generative models (Genie 3 and Cosmos), World-Action Models (GeniWorld and Robust-WAM), latent-action learning from unlabeled video (LAWM-3D), and model-based RL (Dreamer and MuZero). The value is to learn from observation at scale, test counterfactual actions before execution, separate shared dynamics from embodiment-specific control, and replan when prediction and reality diverge.
 
 Recent 2026 preprints explore shared dynamics priors and embodiment-specific heads (DyPES-VLA), visual-action representations for OOD closed-loop manipulation (GeniWorld), 3D-aware latent actions from human video (LAWM-3D), semantic foresight alignment (Robust-WAM), and asynchronous real-time deployment. These are promising research results, not solved generalization.
-
-### World models for Computer Use
-
-A desktop is also a dynamical system: screen state + click/type/scroll/wait -> next state. Induction Labs’ July 2026 Photon-1 uses latent next-state prediction from large-scale computer-use video, then fine-tunes action formatting and applies online RL. The company reports internal benchmark and cost results; these have not been independently reproduced. A practical design is a sidecar predictor: the VLM chooses semantics and tools, while the predictor caches candidate next states, screens risky actions, and discards stale rollouts after real screenshots disagree. Network, authentication, CAPTCHA, and hidden server state remain reasons to verify every irreversible action in the real environment.
-
-Sources: [OpenVLA](https://arxiv.org/abs/2406.09246), [V-JEPA 2](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/), [Genie 3](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/), [Photon-1](https://www.inductionlabs.com/news/scaling-video-pretraining), [DyPES-VLA](https://arxiv.org/abs/2608.06374), [GeniWorld](https://arxiv.org/abs/2608.06332), [LAWM-3D](https://arxiv.org/abs/2608.05706), [Robust-WAM](https://arxiv.org/abs/2608.05903).
 
 ## Chapter Summary
 

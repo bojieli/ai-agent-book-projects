@@ -50,16 +50,10 @@ LLM verifiers juga memerlukan kalibrasi. Sistem produksi biasanya memelihara sek
 
 > **Eksperimen 8-1 ★★: Membangun Pemverifikasi Lintasan (Trajectory Verifier) untuk Agent Layanan Pelanggan**
 >
-> **Tujuan:** Mengubah lintasan layanan pelanggan menjadi diagnosis terstruktur yang dapat mendukung pembelajaran selanjutnya, dan menguji apakah “kesimpulan multidimensi dengan bukti” mengidentifikasi akar penyebab lebih baik daripada satu skor keseluruhan.
+> **Tujuan:** Pisahkan kemampuan yang diwakili eksperimen ini dan bandingkan dengan baseline yang sesuai.
 >
-> **Data dan prosedur:** Siapkan lintasan berlabel pakar (expert-labeled trajectories) yang mencakup empat kategori: pengembalian dana normal, janji palsu, pengungkapan privasi, dan penolakan berlebihan. Lapisan pertama membaca state pesanan akhir dan log tool untuk menentukan apakah pengembalian dana atau penjadwalan ulang benar-benar terjadi. Lapisan kedua memeriksa setiap langkah terhadap kebijakan bisnis, termasuk izin, prosedur wajib, privasi, dukungan faktual, dan konsistensi janji-tindakan. Lapisan ketiga mengevaluasi kualitas bahasa dan alternatif yang patuh aturan terhadap Rubric di Tabel 8-1 dan mempertahankan giliran (turns) yang relevan sebagai bukti untuk setiap kegagalan. Judge kualitas default menggunakan aturan deterministik, dengan LLM Judge nyata juga tersedia. Terlepas dari model lapisan atas, hasil dan lapisan aturan tidak boleh diserahkan pada model bahasa untuk ditebak.
+> **Kesimpulan prinsip:** Terima perubahan hanya jika perilaku sasaran membaik tanpa regresi dan tetap dapat ditelusuri, diverifikasi, serta dibatalkan; buku ini menjelaskan rancangan dan kesimpulan, bukan parameter satu kali eksekusi.
 >
-> **Kontrol dan metrik:** Baseline hanya mengeluarkan skor keseluruhan; kondisi eksperimental mengeluarkan `pass`, `fail`, atau `uncertain` untuk setiap dimensi, bersama dengan bukti dan keyakinan (confidence). Selama kalibrasi, ukur presisi dan recall untuk mendeteksi kegagalan di setiap dimensi dan laporkan kecocokan yang tepat (exact agreement) dengan label pakar. Verifikasikan juga bahwa kegagalan seperti janji palsu mengandung bukti tidak kosong (nonempty evidence) daripada sekadar kesimpulan yang tidak didukung.
->
-> **Kriteria penerimaan (Acceptance criteria):** Pemverifikasi harus secara andal mendeteksi pelanggaran kritis, janji palsu, dan penolakan berlebihan. Skor keseluruhan yang tinggi tidak boleh menyembunyikan kegagalan privasi atau kebijakan. Kasus berkeyakinan rendah (low-confidence) dan berisiko tinggi harus dikirim ke pemverifikasi kedua atau tinjauan manusia alih-alih secara otomatis menjadi sinyal pembelajaran.
->
-> Implementasi yang menyertai tersedia di [`trajectory-verifier`](../chapter8/trajectory-verifier/). Secara default, ini menggunakan Judge kualitas yang dapat direproduksi secara offline; gunakan `--judge llm` untuk menjalankan pemverifikasi LLM nyata yang diimplementasikan.
-
 ## Empat Metode untuk Evolusi Agent secara Kontinual
 
 Sinyal pembelajaran menunjukkan bahwa sebuah Agent harus berubah, tetapi tidak di mana perubahan itu harus terjadi. Basis utama untuk memilih metode pembaruan bukanlah berapa lama sebuah pengalaman telah bertahan, melainkan apakah kemampuan target dapat diwakili secara alami oleh media tertentu. Fakta dan pengalaman cocok untuk dokumen pengetahuan (knowledge documents); strategi yang dapat diungkapkan secara jelas dalam bahasa termasuk dalam Prompt atau Skills; prosedur dan kendala yang dapat dieksekusi secara tepat harus dikodekan sebagai program; dan kemampuan dimensi tinggi seperti persepsi, gaya bahasa, dan strategi implisit harus masuk ke parameter model. Gambar 8-3 menunjukkan keempat metode ini dan hubungannya.
@@ -95,17 +89,10 @@ Pembelajaran pengalaman GAIA memberikan contoh intuitif. GAIA[^gaia-2023] berisi
 
 > **Eksperimen 8-2 ★★: Menyaring Dokumen Pengetahuan Pengalaman dari Lintasan GAIA**
 >
-> **Tujuan:** Menguji apakah dokumen pengetahuan lintas-lintasan (cross-trajectory) ditransfer lebih baik daripada ringkasan satu keberhasilan dan mengurangi transfer negatif dari kesuksesan yang tak disengaja dan pengalaman yang salah.
+> **Tujuan:** Pisahkan kemampuan yang diwakili eksperimen ini dan bandingkan dengan baseline yang sesuai.
 >
-> **Data dan prosedur:** `gaia-experience` pertama-tama menyimpan lintasan penuh (full trajectory) dan `environment_score` eksternal untuk setiap run, lalu mengubahnya menjadi rekaman pembelajaran minimal yang mengandung `task_family`, `capabilities` yang diperlukan, `applies_when`, strategi yang diamati, kesalahan, pengecualian, dan ID lintasan sumber (source trajectory IDs). Verifikator hasil (outcome verifier) mengklasifikasikan run sebagai sukses, sebagian sukses, atau gagal. Modul pembelajaran membandingkan jalur dalam kelompok tugas yang sama. Sebuah LLM mungkin mengusulkan kandidat generalisasi, tetapi strategi yang direkomendasikan harus didukung oleh setidaknya dua lintasan yang tidak gagal. Dokumen Markdown yang dihasilkan mencakup skenario yang berlaku, strategi yang direkomendasikan, kesalahan umum (common pitfalls), pengecualian, asal-usul (provenance), dan waktu validasi terbaru. Selama penerapan (application), hanya dokumen ini yang diambil (retrieved); lintasan mentah yang panjang tidak dimasukkan langsung ke dalam konteks.
-
+> **Kesimpulan prinsip:** Terima perubahan hanya jika perilaku sasaran membaik tanpa regresi dan tetap dapat ditelusuri, diverifikasi, serta dibatalkan; buku ini menjelaskan rancangan dan kesimpulan, bukan parameter satu kali eksekusi.
 >
-> **Tiga kontrol (Three controls):** Kondisi pertama tidak menggunakan pengalaman historis; yang kedua mengambil satu ringkasan trajektori (trajectory summary) yang paling mirip dengan tugas saat ini; yang ketiga mengambil dokumen pengetahuan (knowledge document) yang didukung oleh beberapa trajektori. Set pembelajaran (learning set) dan transfer (transfer set) harus terpisah sehingga jawaban atas pertanyaan GAIA yang sama tidak bocor ke dalam evaluasi sebagai "pengalaman."
->
-> **Metrik dan penerimaan (Metrics and acceptance):** Laporkan tingkat keberhasilan transfer tugas (transfer-task success rate), rata-rata karakter atau Tokens yang diambil, dan tingkat transfer negatif (negative-transfer rate), serta verifikasi bahwa setiap kesimpulan formal mengutip sumber trajektorinya. Jika dokumen lintas-trajektori (cross-trajectory) hanya menyingkat konteks tanpa meningkatkan kinerja tugas baru, itu tidak menunjukkan pengalaman yang dipelajari. Eksperimen ini juga gagal jika satu keberhasilan kebetulan dapat secara langsung dipromosikan menjadi pengetahuan formal atau jika sebuah dokumen tidak dapat ditelusuri ke trajektori aslinya.
->
-> Implementasi yang menyertainya tersedia di [`gaia-experience`](../chapter8/gaia-experience/). `demo_documents.py` berjalan secara offline secara default; dengan `--extractor llm`, sebuah LLM nyata dapat mengusulkan kandidat pengalaman lintas-trajektori.
-
 [^reflexion-2023]: Shinn, N., et al. *Reflexion: Language Agents with Verbal Reinforcement Learning.* arXiv:2303.11366, 2023.
 
 [^gaia-2023]: Mialon, G., et al. *GAIA: a benchmark for General AI Assistants.* arXiv:2311.12983, 2023.
@@ -130,24 +117,18 @@ Agent Skills learning mengikuti prinsip yang sama, tetapi dengan ruang lingkup y
 
 > **Eksperimen 8-9 ★★: Mengubah umpan balik menjadi Skill penulisan**
 >
-> Dua puluh pasangan before/after dari `data/feedback_pairs.json` diproses dalam tiga batch. Sistem mengekstrak aturan, menggabungkan pola duplikat, memeriksa konflik ambang, lalu membuat `SKILL.md` dengan sumber dan cakupan. Aturan deterministik diperiksa dengan kode; aturan LLM dikalibrasi pada 10 contoh emas.
+> **Tujuan:** Pisahkan kemampuan yang diwakili eksperimen ini dan bandingkan dengan baseline yang sesuai.
 >
-> Laporkan deteksi pada kumpulan tugas belum selesai, false positive pada teks normal, dan pertumbuhan jumlah aturan. Proses nyata pertama menghasilkan 0/8 deteksi dan 7/8 false positive; setelah filter eksternal dan fallback deterministik hasilnya 8/8, 0/8, serta 21 kandidat digabung menjadi 8 aturan. Implementasi: [`ai-style-skill`](../chapter8/ai-style-skill/).
-
+> **Kesimpulan prinsip:** Terima perubahan hanya jika perilaku sasaran membaik tanpa regresi dan tetap dapat ditelusuri, diverifikasi, serta dibatalkan; buku ini menjelaskan rancangan dan kesimpulan, bukan parameter satu kali eksekusi.
+>
 Kasus tanda kutip lengkung menunjukkan bahwa Skill harus menjadi kontrak data, bukan aturan penggantian global: sebelum SFT, contoh sintetis distratifikasi menurut jenis artikel, cakupan, dan bahasa pemrograman, lalu melewati gate kode/JSON/area terlindungi serta audit manual. Kasus string eksak menambahkan audit tokenizer; round-trip encode→decode, penyalinan byte-exact oleh model, serialisasi Harness, dan pencocokan tool adalah lapisan regresi yang terpisah.
 
 > **Eksperimen 8-3 ★★: Mengoptimalkan System Prompts dari Trajektori Kegagalan**
 >
-> **Tujuan (Objective):** Mengajari Agent layanan pelanggan maskapai penerbangan dari trajektori di mana ia melakukan eskalasi terlalu cepat ketika pengguna menantang suatu kebijakan, sekaligus mendemonstrasikan bahwa aturan baru tersebut tidak merusak skenario lama yang benar-benar membutuhkan eskalasi.
+> **Tujuan:** Pisahkan kemampuan yang diwakili eksperimen ini dan bandingkan dengan baseline yang sesuai.
 >
-> **Prosedur (Procedure):** Pertama-tama jalankan *retention set* tugas-lama dan *boundary set* eskalasi-berlebihan secara terpisah. `learning_signal.py` menguraikan kegagalan ke dalam kepatuhan aturan, penyelesaian tugas, dan fleksibilitas yang patuh, sambil mempertahankan ID kasus sumber. Sebuah Coding Agent kemudian membaca Prompt yang ada dan menghasilkan tepat satu edit minimal `old_str → new_str` yang dapat diaudit: mengharuskan Agent untuk menjelaskan kebijakan, mengidentifikasi tujuan aktual, dan mencari alternatif yang patuh sebelum eskalasi, sekaligus mempertahankan eskalasi saat pengguna secara eksplisit meminta campur tangan manusia atau terjadi insiden keselamatan. *Patch*, asal-usul, aturan target, dan dasar pemikirannya ditulis ke dalam *candidate manifest*.
+> **Kesimpulan prinsip:** Terima perubahan hanya jika perilaku sasaran membaik tanpa regresi dan tetap dapat ditelusuri, diverifikasi, serta dibatalkan; buku ini menjelaskan rancangan dan kesimpulan, bukan parameter satu kali eksekusi.
 >
-> **Tiga kontrol (Three controls):** Bandingkan Prompt awal, Prompt kandidat yang dihasilkan secara otomatis, dan Prompt yang dioptimalkan secara manual satu kali. Ketiganya menggunakan model yang sama dan tugas retensi serta *boundary* yang sama. `--quick` hanya mengurangi jumlah kasus; ia masih melakukan panggilan nyata ke *task Agent*, *LLM Judge*, dan *Coding Agent* dan tidak boleh dilaporkan sebagai simulasi offline.
->
-> **Gerbang rilis dan metrik (Release gate and metrics):** Sebuah kandidat harus melewati empat kondisi: *patch* yang tidak kosong, asal-usul yang dapat dilacak, peningkatan terukur pada *boundary set*, dan tidak ada degradasi pada *retention set*. Bandingkan akurasi tugas-batas (boundary-task accuracy), akurasi tugas-retensi (retention-task accuracy), pertumbuhan Prompt, regresi yang dimasukkan, dan waktu dari penemuan kegagalan hingga pembuatan kandidat. Melewati gerbang hanya menghasilkan `release_to_canary`, tidak pernah *overwrite* langsung dari Prompt stabil; kegagalan kondisi apa pun mengembalikan `reject_candidate`.
->
-> Implementasi yang menyertainya tersedia di [`prompt-auto-optimization`](../chapter8/prompt-auto-optimization/). Tes offline mencakup diagnosis dan gerbang rilis, sementara `--quick` melakukan panggilan nyata ke *task Agent*, *LLM Judge*, dan *Coding Agent*.
-
 [^dspy-2023]: Khattab, O., et al. *DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines.* arXiv:2310.03714, 2023.
 
 [^opro-2023]: Yang, C., et al. *Large Language Models as Optimizers.* arXiv:2309.03409, 2023.
@@ -179,16 +160,10 @@ Untuk alur kerja email, hasil kompilasinya bukan sekadar "klik tombol-tombol ini
 
 > **Eksperimen 8-4 ★★★: Menghasilkan Alur Kerja yang Dapat Diverifikasi dari Trajektori Peramban**
 >
-> **Tujuan (Objective):** Menentukan apakah web Agent dapat mengubah satu eksplorasi mahal menjadi alur kerja yang dapat digunakan kembali dan menolak pemutaran ulang yang salah ketika halaman berubah, alih-alih melaporkan keberhasilan hanya karena setiap tindakan berjalan.
+> **Tujuan:** Pisahkan kemampuan yang diwakili eksperimen ini dan bandingkan dengan baseline yang sesuai.
 >
-> **Skenario empat tahap (Four-stage scenario):** Pada tahap pertama, jalankan "kirim pesan dengan subjek 'Test Email' ke `test@example.com`" di situs email percobaan atau halaman pesan yang disimulasikan. Agent penuh mengeksplorasi, sementara sebuah *wrapper* merekam tindakan, parameter, dan status halaman, dan menghasilkan sebuah `candidate`. Pada tahap kedua, panggil `validation_reset` untuk memulihkan *sandbox* dan secara mandiri memutar ulang seluruh alur kerja; kandidat hanya masuk ke *library* kemampuan formal jika semua pemeriksaan sebelum-tindakan, sesudah-tindakan, dan status-akhir lulus. Pada tahap ketiga, lakukan jenis tugas yang sama dengan penerima, subjek, dan *body* yang berbeda. Sistem harus mencocokkan alur kerja yang divalidasi, mengisi parameter baru, dan memutarnya kembali melalui Playwright tanpa memasuki *loop* LLM langkah-demi-langkah. Pada tahap keempat, ubah lokator tombol, teks halaman, atau status akhir, dan pastikan alur kerja yang lama segera menjadi `invalid` dan mengembalikan `fallback_required=True`.
+> **Kesimpulan prinsip:** Terima perubahan hanya jika perilaku sasaran membaik tanpa regresi dan tetap dapat ditelusuri, diverifikasi, serta dibatalkan; buku ini menjelaskan rancangan dan kesimpulan, bukan parameter satu kali eksekusi.
 >
-> **Desain kontrol (Control design):** *Baseline* yang disederhanakan hanya mencatat apakah klik, entri teks, dan tindakan lainnya selesai tanpa pengecualian. Kondisi eksperimental juga memvalidasi halaman sebelum setiap tindakan, halaman setelah setiap tindakan, dan status tugas akhir. Kedua kondisi menggunakan trajektori dan perubahan halaman yang sama. Bandingkan tingkat positif palsu (*false-positive rates*) keduanya pada kasus-kasus seperti "tombol kirim diklik saat sebuah kolom kosong" dan "Simpan (Save) diklik tetapi data tidak disimpan persisten (persisted)."
->
-> **Metrik dan penerimaan (Metrics and acceptance):** Rekam waktu *end-to-end* untuk eksplorasi dan *replay* awal, jumlah panggilan LLM, tingkat keberhasilan, tingkat keberhasilan-palsu (false-success rate), tingkat kecocokan alur kerja, tingkat deteksi perubahan-halaman (page-change detection rate), dan jumlah *fallbacks* untuk pembelajaran ulang (relearning). Tanpa panggilan ulang reset (reset callback), alur kerja harus tetap menjadi kandidat; versi yang gagal divalidasi tidak boleh dapat diambil (retrievable); *replay* terparameterisasi tidak boleh menggunakan ulang penerima atau konten dari *run* pertama; dan setelah ada perubahan halaman, tindakan selanjutnya yang berbahaya harus dihentikan. Akselerasi hanya berarti jika semua kondisi ini terpenuhi.
->
-> Implementasi yang menyertainya tersedia di [`browser-use-rpa`](../chapter8/browser-use-rpa/), yang menyediakan demonstrasi mesin-status deterministik (deterministic state-machine) maupun jalur eksekusi yang memanggil Agent peramban nyata.
-
 Agent yang memodifikasi kodenya sendiri tidak berarti bahwa proses yang berjalan secara langsung menimpa dirinya sendiri (*overwrites itself*). Sistem produksi harus membuat cabang kandidat dari versi stabil saat ini, meminta Coding Agent menghasilkan *patch* minimal, lalu secara berurutan menjalankan *static checks*, *unit tests*, *security scans*, pemutaran ulang *failure-trajectory*, dan tes regresi pada tugas-tugas lama sebelum menghasilkan versi baru yang memenuhi syarat untuk *canary deployment*. Ini mengubah "modifikasi diri" (self-modification) menjadi proses perilisan perangkat lunak yang dapat diaudit dan mendefinisikan batasan antara Bab 8 dan 5: Bab 5 memberikan kemampuan untuk memodifikasi sistem, sementara bab ini memberikan metode untuk modifikasi diri yang dipicu oleh pengalaman dan dibatasi oleh *loop* validasi.
 
 Membuat *patch* berukuran kecil saja tidak cukup untuk atribusi yang dapat diandalkan. Setiap permintaan modifikasi juga harus berupa **kontrak perubahan yang dapat difalsifikasi (falsifiable change contract)** yang mencatat bukti kegagalan, akar penyebab yang disimpulkan, komponen *Harness* yang bertanggung jawab, perubahan kandidat, perilaku yang diharapkan membaik, perilaku yang ada yang mungkin mengalami regresi, dan pengujian untuk keduanya. Agentic Harness Engineering menggambarkan hal ini dalam istilah observabilitas (observability) tingkat komponen, pengalaman, dan keputusan: setiap komponen yang dapat diedit memiliki representasi tingkat-file; koleksi besar dari trajektori disuling menjadi bukti yang dapat diperiksa pada tingkat detail yang semakin meningkat; dan setiap pengeditan mendeklarasikan prediksi dampak sebelum eksekusi, yang mana hasil dari ronde berikutnya akan mengujinya[^ahe-2026]. Skor yang lebih tinggi kemudian dapat dihubungkan ke mekanisme tertentu daripada tetap menjadi uji coba yang tidak dapat diinterpretasikan.
@@ -199,17 +174,10 @@ Pembuatan alat (tool creation) mengikuti protokol yang sama. Alita[^alita-2025] 
 
 > **Eksperimen 8-5 ★★★: Memicu Modifikasi Diri Agent dari Trajektori Kegagalan**
 >
-> **Tujuan (Objective):** Diberikan beberapa trajektori di mana kesalahan yang ditandai `retryable=false` masih dipanggil berulang kali, tentukan apakah sistem dapat menemukan akar penyebab di kode *retry* dan *circuit-breaker* dan menghasilkan *patch* kandidat perbaikan tanpa merusak pemulihan dari kegagalan sementara (transient failures).
+> **Tujuan:** Pisahkan kemampuan yang diwakili eksperimen ini dan bandingkan dengan baseline yang sesuai.
 >
-> **Prosedur (Procedure):** Modul diagnosis pertama-tama mengagregasi kesalahan yang sama di berbagai tugas berbeda. Ia membuat permintaan modifikasi hanya setelah ambang batas dukungan lintas-trajektori terpenuhi dan menargetkan `retry_policy.py` di versi yang stabil. *Candidate generator* membaca diagnosis kegagalan, perilaku pemulihan kegagalan-sementara yang harus dipertahankan, perubahan yang sebelumnya ditolak, dan sumber yang stabil. Sebelum mengeluarkan *diff* kode yang minimal, ia memprediksi bahwa panggilan setelah kesalahan yang tidak dapat diulang (non-retryable errors) seharusnya menurun sementara pemulihan batas waktu sementara (transient-timeout recovery) tidak. Terlepas dari apakah *generator* itu deterministik atau LLM Coding Agent sungguhan, ia hanya boleh menulis ke direktori kandidat yang terisolasi. Kode *Harness* validasi kemudian mengompilasi kandidat, memutar ulang trajektori kegagalan awal, memverifikasi bahwa kesalahan yang tidak dapat diulang (non-retryable error) segera berhenti dan membuka *circuit breaker*, dan menguji ulang bahwa *transient timeouts* masih mencoba lagi (retry) sesuai dengan ambang batas aslinya.
+> **Kesimpulan prinsip:** Terima perubahan hanya jika perilaku sasaran membaik tanpa regresi dan tetap dapat ditelusuri, diverifikasi, serta dibatalkan; buku ini menjelaskan rancangan dan kesimpulan, bukan parameter satu kali eksekusi.
 >
-> **Kontrol dan metrik diagnostik (Diagnostic control and metrics):** Perlakukan "tambahkan satu kalimat ke Prompt yang memberi tahu Agent agar tidak mengulang panggilan" sebagai contoh konseptual dalam memilih lapisan modifikasi yang salah, mendemonstrasikan mengapa batasan *retry* yang dapat ditegakkan secara deterministik (deterministically enforceable retry constraint) harus ada di dalam kode. Eksperimen yang dapat dieksekusi membandingkan *patch generators* yang deterministik dan LLM di bawah gerbang rilis (release gate) yang sama. Rekam jumlah panggilan setelah kesalahan yang tidak dapat diulang, tingkat pemulihan kesalahan-sementara, regresi pada tugas-tugas lama, ukuran *patch*, dan tingkat penerimaan kandidat.
->
-> **Kriteria penerimaan (Acceptance criteria):** Lulus di setiap pemeriksaan hanya akan menghasilkan `release_to_canary`. Kegagalan dari *static check* mana pun, *failure replay*, atau regresi tugas-lama mengembalikan `reject_candidate`. `release_manifest.json` harus mencatat klaster kegagalan, trajektori sumber, akar penyebab yang disimpulkan, komponen dan file target, *code diff*, perbaikan yang diharapkan, kemungkinan regresi, hasil pemeriksaan, versi kandidat, dan versi *rollback*. Kandidat yang ditolak harus mempertahankan alasan kegagalan mereka untuk ronde *generation* berikutnya. *Patch-generating Agent* tidak boleh memodifikasi kode stabil, validator, log audit, atau gerbang yang menyetujui perilisannya sendiri.
->
-
-> Implementasi yang menyertai tersedia di [`self-modifying-agent`](../chapter8/self-modifying-agent/). Implementasi ini mendukung generator kandidat deterministik atau LLM Coding Agent sungguhan, di mana kedua jalur tersebut berbagi gerbang rilis (*release gate*) yang sama.
-
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
 [^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
@@ -218,8 +186,10 @@ Eksperimen 8-8 menerapkan protokol yang sama pada lapisan verifikasi. Permintaan
 
 > **Eksperimen 8-8 ★★: Gerbang konfirmasi operasi berisiko tinggi dari umpan balik pengguna**
 >
-> Gunakan tiga sinyal dan trajectory kontrol dari `failure_trajectories.json`. Kandidat `gpt-4o-mini` nyata gagal pada replay tugas belum selesai, operasi normal, dan token sekali pakai sehingga ditolak gerbang keamanan. Kandidat deterministik lulus dan mendapat `release_to_canary`; catat pemeriksaan, keputusan, dan hash direktori stabil. Implementasi: [`harness-safety-gate`](../chapter8/harness-safety-gate/).
-
+> **Tujuan:** Pisahkan kemampuan yang diwakili eksperimen ini dan bandingkan dengan baseline yang sesuai.
+>
+> **Kesimpulan prinsip:** Terima perubahan hanya jika perilaku sasaran membaik tanpa regresi dan tetap dapat ditelusuri, diverifikasi, serta dibatalkan; buku ini menjelaskan rancangan dan kesimpulan, bukan parameter satu kali eksekusi.
+>
 ### Mengodekan Pengalaman dalam Parameter
 
 Pengetahuan, instruksi, dan program semuanya bertumpu pada satu premis: kapabilitas target dapat diekspresikan secara relatif lengkap melalui simbol-simbol eksternal. Namun kapabilitas seperti pemahaman citra medis, prosodi ucapan alami, menghilangkan "rasa AI" yang kaku dari teks, dan perencanaan jangka panjang (*long-horizon planning*) sulit untuk dikompresi ke dalam beberapa aturan atau alur kerja (*workflows*). Kapabilitas semacam ini harus ditulis ke dalam parameter model melalui *post-training*.
@@ -244,14 +214,10 @@ Tingkat yang lebih tinggi tidak otomatis menjadi lebih baik. Mencari aturan loka
 
 > **Eksperimen 8-6 ★★★: Berikan Buku Ini kepada Hermes: Bisakah Ia Meng-upgrade Dirinya Sendiri?**
 >
-> **Tujuan:** Menguji apakah Agent dapat mengubah pengetahuan eksternal menjadi pembaruan nyata bagi kemampuannya sendiri. Eksperimen tidak memberi daftar masalah atau fitur. Hermes menerima sepuluh bab dan source code-nya, lalu harus memahami prinsip, meninjau implementasinya, dan memilih sendiri satu peningkatan yang layak.
+> **Tujuan:** Pisahkan kemampuan yang diwakili eksperimen ini dan bandingkan dengan baseline yang sesuai.
 >
-> **Desain:** Buku dan source menjadi konteks yang dapat dibaca, sedangkan versi stabil, Reviewer independen, dan tes penerimaan berada di luar ruang lingkup yang dapat diubah Hermes. Ia harus menuntaskan **baca → bandingkan → pilih → ubah → verifikasi**. Jika kandidat ditolak, review menjadi sinyal belajar untuk putaran berikutnya; Hermes tidak boleh melewati gerbang dan menyatakan sukses.
+> **Kesimpulan prinsip:** Terima perubahan hanya jika perilaku sasaran membaik tanpa regresi dan tetap dapat ditelusuri, diverifikasi, serta dibatalkan; buku ini menjelaskan rancangan dan kesimpulan, bukan parameter satu kali eksekusi.
 >
-> **Run nyata:** Setelah membaca buku, Hermes secara mandiri menemukan bahwa trajectory yang tersimpan belum memiliki bukti terstruktur yang dapat langsung dipakai untuk pembelajaran berikutnya. Ia memilih mengubah hasil eksekusi menjadi sinyal belajar konservatif, lalu mengedit kodenya sendiri dan menambah tes. Tiga review independen pertama menemukan ketidaksesuaian dengan format data nyata, jalur penyimpanan, dan semantik penghitungan. Setiap temuan kembali ke sesi Hermes asli; review keempat menerima kandidat.
->
-> **Batas klaim:** Run ini menunjukkan bahwa Agent dapat mengambil prinsip dari pengetahuan panjang, memetakannya ke kode sendiri, dan menyelesaikan pembaruan diri di bawah verifikasi eksternal. Ini belum membuktikan peningkatan tugas hilir; hal itu memerlukan eksperimen ablation terpisah. Ide eksperimen disumbangkan oleh pembaca Grace.
-
 ## Membangun Loop Tertutup Evolusi Berkelanjutan untuk Operasi Jangka Panjang
 
 Keempat metode pembaruan tersebut menjadi evolusi berkelanjutan alih-alih optimasi satu kali hanya ketika dimasukkan ke dalam *autonomous loop* yang sama. Gambar 8-5 menunjukkan arsitektur *dual-loop* yang lebih tangguh untuk sistem produksi: *online execution loop* hanya menyelesaikan tugas dan mencatat bukti, tanpa menulis ulang Agent produksi secara langsung; *offline evolution loop* mengumpulkan trajektori, mendiagnosis akar penyebab, menghasilkan modifikasi kandidat, dan merilis versi baru hanya setelah mereka melewati *validation gates*. Kedua loop ini terhubung melalui repositori pengalaman berversi dan set evaluasi.
@@ -345,16 +311,10 @@ Continual evolution bukan berarti membiarkan knowledge, Prompts, dan tools tumbu
 
 > **Eksperimen 8-7 ★★★: Mengevaluasi Apakah Agent Terus Berevolusi**
 >
-> **Tujuan:** Membedakan antara tiga perilaku jangka panjang—menyimpan satu masukan (feedback), hanya menambahkan selamanya (append forever), dan benar-benar memperbarui, mentransfer, serta mempertahankan kapabilitas—sehingga menjalankan tugas yang sama berulang kali tidak disalahartikan sebagai continual learning.
+> **Tujuan:** Pisahkan kemampuan yang diwakili eksperimen ini dan bandingkan dengan baseline yang sesuai.
 >
-> **Alur tugas empat tahap:** Tahap learning menyajikan tugas-tugas pengembalian dana, verifikasi identitas, dan kebijakan bagasi yang berbagi pola laten. Tahap transfer mengubah frasa, pengguna, dan lingkungan lokal untuk menguji apakah pengalaman lama berlaku untuk tugas baru. Tahap rule-change memperbarui batas bagasi dari 20 kg menjadi 23 kg dan mengharuskan sistem untuk mengganti atau memensiunkan knowledge yang usang. Tahap retention menguji ulang kapabilitas yang tidak berubah dan aturan yang saat ini berlaku untuk mengukur kelupaan (forgetting). Memori eksternal hanya dapat diperbarui setelah setiap tugas yang membawa feedback berakhir; tindakan yang diharapkan untuk tugas saat ini tidak boleh dibocorkan ke Agent sebelumnya.
+> **Kesimpulan prinsip:** Terima perubahan hanya jika perilaku sasaran membaik tanpa regresi dan tetap dapat ditelusuri, diverifikasi, serta dibatalkan; buku ini menjelaskan rancangan dan kesimpulan, bukan parameter satu kali eksekusi.
 >
-> **Grup kontrol:** `static` tidak mempertahankan feedback apa pun. `append_only` mengingat versi pertama dari sebuah aturan tetapi tidak dapat menyelesaikan konflik atau memensiunkannya. `evolving` menyimpan versi dan mengganti aturan lama dengan bukti baru. Implementasi referensi memverifikasi bahwa evaluasi Harness dapat membedakan perilaku-perilaku ini. Sebuah eksperimen nyata dapat memasukkan LLM melalui urutan yang sama dari 14 tugas, tetapi hasil harus dihitung oleh Harness di luar model.
->
-> **Metrik dan penerimaan:** Melaporkan akurasi dan learning curve untuk setiap tahap, dan secara terpisah menghitung akurasi transfer, tugas yang dibutuhkan untuk pulih setelah aturan baru, retention kapabilitas lama, tingkat negative-transfer, tingkat kelulusan safety-Rubric, serta biaya Token, latency, dan penyimpanan. Untuk sistem nyata yang memperbarui Prompts, Skills, atau sebuah Harness, catat juga validitas candidate-change, tingkat aktivasi artefak, dan tingkat kepatuhan yang berhasil, sehingga "pembaruan tersebut benar tetapi tidak pernah dimuat" tidak disalahklasifikasikan sebagai pembaruan yang gagal. Bahkan sebuah Agent dengan akurasi akhir yang tinggi tidak memenuhi syarat sebagai continually evolving jika ia masih mengutip aturan yang telah dipensiunkan, berhasil melalui jalan pintas yang tidak aman, atau melupakan kapabilitas yang ada setelah pembaruan.
->
-> Implementasi yang menyertainya tersedia di [`self-evolution-eval`](../chapter8/self-evolution-eval/). Secara default, ini membandingkan tiga referensi Agents: updatable, append-only, dan static. Gunakan `--profile llm` untuk membuat LLM nyata menjalani task stream jangka panjang yang sama.
-
 [^claude-code-memory]: Anthropic, “How Claude remembers your project”, 2026. https://code.claude.com/docs/en/memory
 
 [^hermes-memory]: Nous Research, *Hermes Agent Documentation: Persistent Memory, Skills System, and Curator*, 2026. https://hermes-agent.nousresearch.com/docs/user-guide/features/memory ; https://hermes-agent.nousresearch.com/docs/user-guide/features/skills ; https://hermes-agent.nousresearch.com/docs/user-guide/features/curator

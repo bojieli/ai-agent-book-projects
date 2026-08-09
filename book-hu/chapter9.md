@@ -23,7 +23,7 @@ Az eszköz szintjén ez az út nagyjából kétféle terméket eredményezett. A
 
 Egy megjegyzés mielőtt belevágnánk: az alább tárgyalt hangarchitektúra mindkét irányt szolgálja — a felhasználó beszél az ügynökhöz (hang mint ember-gép interfész), és az ügynök beszél a külvilághoz a felhasználó nevében (mondjuk, egy tárgyalás céljából indított telefonhívás). Mindkettő mögött ugyanaz a valós idejű hangtechnológia áll. Kezdjük a hangarchitektúra három paradigmájával.
 
-## A hangarchitektúra három paradigmája
+### A hangarchitektúra három paradigmája
 
 A hangügynökök technikai evolúciójának megértéséhez hasznos keretrendszer az a háromrészes osztályozás, amelyet az OpenAI a GPT-Live 2026-os kiadásakor mutatott be[^ch9-12]. Ez megfelel annak a három architektúra-generációnak is, amelyen a ChatGPT Voice maga is átesett:
 
@@ -37,7 +37,7 @@ Továbbá a GPT-Live egy második strukturális változást is bevezetett — a 
 
 [^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/. A "Kaszkádolt / Fordulóalapú / Teljes Duplex" háromrészes osztályozás ebben a szakaszban ebből a cikkből származik, amely a ChatGPT Voice evolúciójának három generációját foglalja össze; a szövegben szereplő "Végponttól végpontig tartó Omnimmodális (Omni)" megfelel az ő "turn-based voice models" kategóriájának.
 
-## Paradigma 1: Kaszkádolt csővezeték
+### Paradigma 1: Kaszkádolt csővezeték
 
 A kereskedelmi hangasszisztenek túlnyomó többsége — az okoshangszóróktól az ügyfélszolgálati robotokig — egy soros csővezetéken alapul (9-1. ábra): a Beszédtevékenység-érzékelő (VAD) meghatározza, hogy a felhasználó befejezte-e a beszédet → az Automatikus Beszédfelismerő (ASR) szöveggé alakítja a hangot → egy nagy nyelvi modell (LLM) megérti a szándékot és választ generál → a Szöveg-Beszéd átalakító (TTS) hangosítja a választ. Mint egy váltóversenyben, minden szakasznak meg kell várnia, amíg az előző befejeződik, mielőtt elindulhat.
 
@@ -83,7 +83,7 @@ Intuitívan, minél magasabb a kihasználtság, annál meredekebben — és neml
 >
 > Ez a kísérlet a hangügynökök egy fontos alkalmazási irányát mutatja be: **az ügynök nem csupán arra várhat, hogy a felhasználó megnyisson egy csevegőablakot; proaktívan is létrehozhat egy egyértelmű kezdő-, megerősítési és befejezési állapottal rendelkező valós idejű munkamenetet**. A böngészős WebRTC lefedi a legkönnyebben reprodukálható „felhasználó felhívása” útvonalat. Ha a feladat a külvilág felhasználó nevében történő elérését, ügyintézőre várást vagy IVR-navigációt igényel, ugyanez a hívásieszköz-szerződés egy szabályos PSTN/SIP-szolgáltatóhoz kapcsolható.
 
-### A kaszkádolt csővezeték teljes láncú streamelése
+#### A kaszkádolt csővezeték teljes láncú streamelése
 
 A 9-2. ábra egy "teljesen soros" forgatókönyvet feltételez, amelyben minden szakasz befejeződik, mielőtt átadná a stafétát. A gyártási rendszerek általában megőrzik a moduláris VAD-ASR-LLM-TTS felosztást, miközben minden szakaszt arra késztetnek, hogy a lehető legkorábban bocsássa ki a növekményes eredményeket, lerövidítve az időt, amíg a felhasználó meghallja az első szótagot:
 
@@ -97,7 +97,7 @@ Az agresszívebb rendszerek "preemptív/spekulatív generálást" használnak: e
 
 A szokásos streaming szintén nem képes kiküszöbölni **a VAD csendvárakozását és magát a forduló ítéletet**. A streaming ASR már fut a várakozás alatt; amit a fordulódetektálás blokkol, az a végső átirat közzététele és a válasz lejátszása. A preemptív generálás elrejtheti ennek a számításnak egy részét, de a rendszernek továbbra is el kell döntenie, hogy mikor biztonságos megszólalni. Ennek a késleltetésnek a további csökkentése az előtételezés és a végponti döntéshozatal javítását igényli.
 
-### Streaming hangérzékelés: VAD + ASR lecserélése
+#### Streaming hangérzékelés: VAD + ASR lecserélése
 
 Ez az érzékelési előtét két szakaszból áll: a VAD meghatározza, hogy a felhasználó befejezte-e a beszédet, az ASR pedig szöveggé alakítja a hangot. Egy teljesen soros architektúrában együtt határozzák meg, hogy a downstream csővezeték mikor indul, és milyen bemenetet kap. Egy streaming architektúrában az ASR korábban kezdődik, de a végső szöveg közzététele és a válaszadás időzítése továbbra is a végpont érzékelés korlátai közé esik. A hagyományos VAD + ASR kaszkádnak három alapvető problémája van:
 
@@ -140,7 +140,7 @@ Vegyük észre, hogy a modell nemcsak szöveges átiratot ad ki, hanem hangesem�
 >
 > Eredmények: A darabolt szimulációs séma növekményes felismerési késleltetése szabályozható egy-két száz milliszekundum nagyságrendben (a darab hosszától és a hardvertől függően), míg a hagyományos séma megköveteli a VAD megerősítésének (600 ms) plusz a Whisper inferencia (kb. 200-500 ms a kísérlet konfigurációja szerint) kivárását, összesen 800-1100 ms-ot. A szünetekkel rendelkező forgatókönyvben a VAD az első hosszú szünetet a beszéd végeként értelmezte, két szegmensre vágva a mondatot a különálló felismeréshez. A "大概两点左右" ("két óra körül") félreismerésre került "大概零点左右" ("éjfél körül") formában — a környező kontextustól megfosztva a hasonló hangzású 两 (liǎng, "kettő") 零 (líng, "nulla")-ként hallatszott. A darabolt séma, megtartva a teljes kontextust, helyesen ismerte fel az egész mondatot. A háttérzaj forgatókönyvben a Qwen2-Audio `<|noise|>` tokeneket ad ki a zaj jelenlétének jelzésére anélkül, hogy megszakítaná a felismerést, míg a hagyományos VAD-ot hamisan kiváltotta a zaj, ami a felismerési folyamat idő előtti elindulásához vezetett.
 
-## Paradigma 2: Végponttól végpontig tartó omnimodális modellek (Omni)
+### Paradigma 2: Végponttól végpontig tartó omnimodális modellek (Omni)
 
 Nézzünk vissza a kaszkádolt csővezeték egészére: még ha az érzékelési előtétet streaming hangérzékelésre frissítjük is, a hallgatást, gondolkodást és beszédet továbbra is három független modell között osztja szét, amelyeket diszkrét interfész köt össze. Bármilyen szélesre is nő ez az interfész, csak egy marék szemantikus tokent és alkalmanként egy akusztikus markert hordoz; a beszélő érzelme, hangszíne, intonációja, valamint a környezeti háttérhangok vagy zene nagyrészt elvesznek az átadás során. És mivel a három részt külön-külön tanítják és hangolják, nehezen működnek együtt. A végponttól végpontig tartó omnimodális modellek (Omni) más utat választanak — egyetlen modell közvetlenül "hallgatja" a hangot, "kigondolja" a választ, és "kimondja", egyesítve a három részt egyben (9-4. ábra). Elegendő tanítási adattal a modell belső latens tere közvetlenül továbbíthatja ezeket a paranyelvi jeleket a generálási oldalra, csökkentve a késleltetést, miközben olyan módon őrzi meg a prozódiát és az érzelmet, ahogy a szöveg önmagában nem képes. A kompromisszum: a "kaszkádolt csővezetékek" tiszta modulokkal, szegmensenkénti hangolással és jó interpretálhatósággal rendelkeznek; a "végponttól végpontig tartó modellek" alacsonyabb késleltetést és nem szöveges hűséget vásárolnak a nagyobb tanítási adatigény és a gyengébb interpretálhatóság árán.
 
@@ -184,7 +184,7 @@ A "Step-Audio 2" más utat választ: közvetlenül dolgozza fel a nyers hangbeme
 
 A Step-Audio R1 a Step-Audio sorozat következő modellje. A Step-Audio 2 végponttól végpontig tartó hangalapú beszélgetési architektúrájára építve tovább internalizálja a gondolkodási képességeket közvetlenül a hangmodellbe. A kettő egy progresszív evolúciót képvisel ugyanazon a technikai úton.
 
-## Paradigma 3: Teljes duplex / Interaktív modellek
+### Paradigma 3: Teljes duplex / Interaktív modellek
 
 A Paradigma 2 három modellt egyesített egybe, de továbbra is ragaszkodott a társalgási fordulók feltételezéséhez — vagy a felhasználó beszél, vagy a modell beszél, a váltási pontot a VAD vagy a szemantika találgatja. Néhány forgatókönyvben egyszerűen nincs hely a "te mondatod, aztán az enyém" számára. A "szimultán tolmácsolás" a klasszikus eset: a tolmács nem vár a teljes mondat befejeződésére, hanem egyszerre hallgat és fogalmaz, minden jelentésegységet lefordít, amint nagyjából kész — a hallgatás és a fordítás mindig átfedi egymást. A "ritmusjátékok, ahol dobolsz a zenére", még extrémebbek: a fülnek egy megszakítás nélküli zenei folyamot kell követnie, a kéznek azonnal el kell találnia minden ütemet, és az elmének előre kell jeleznie a következőt — itt nincs olyan, hogy "forduló", csak egy véget nem érő bemeneti folyam. Az ilyen feladatok gyökerében támadják meg a fordulóalapú modellt: megkövetelik, hogy a hallgatás, gondolkodás és cselekvés egyidejűleg történjen, miközben a fordulóalapú modell teljes előfeltétele az, hogy a hármat külön időrésekbe sorolja. A teljes duplex modell a "VAD kiiktatása" utat logikus végpontjába viszi — egyszerűen elveti a társalgási fordulók feltételezését, és hagyja, hogy a modell "folyamatosan, egyszerre hallgasson és beszéljen".
 
@@ -202,7 +202,7 @@ A GPT-Live is ugyanazt a gyors és lassú folyamatok szétválasztásának útj�
 
 Áttekintve e fejezet "VAD lecserélése" narratív fonalát: a VAD csendküszöbök alapján találgatja a fordulóváltási pontot; a streaming érzékelés (lásd a korábbi "Streaming hangérzékelés" szakaszt a Paradigma 1-ben) a váltási ítéletet szemantikus szintre emeli; és a teljes duplex modell teljesen feloldja a "váltás" fogalmát — mindig hallgat, így a "megszakítás" többé nem egy különleges kezelést igénylő esemény, és a belevágás feldolgozási lánca architekturálisan nagyrészt megszűnik. Ez a "VAD lecserélése" narratív fonal végpontja a cikk írásakor.
 
-## Kompromisszumok a gondolkodási architektúrákban: A szétválasztástól az egyesítésig
+### Kompromisszumok a gondolkodási architektúrákban: A szétválasztástól az egyesítésig
 
 A valódi kihívás a **valós idejű válaszadás és a mély gondolkodás közötti feszültség**: a felhasználók ezredmásodperces válaszokat várnak, míg a komplex problémák másodpercekig tartó gondolkodási időt igényelnek. Hogyan tud a modell elég mélyen gondolkodni, miközben alacsonyan tartja a késleltetést? Ez a feszültség nem egyedi a végponti architektúrákban; a kaszkádolt csővezetékek is szembesülnek vele.
 
@@ -210,7 +210,7 @@ Az alábbi három megoldás nem lineáris fejlődést képvisel. Különböző k
 
 2026-ra a "gyors-lassú szétválasztás" útja a frontvonalbeli hangtermékek főáramú választásává vált, és saját nevet kapott. A Thinking Machines Lab "Interakciós Modelleknek" nevezi — egy valós idejű interakciós modell egy aszinkron háttér-érvelő modellhez kapcsolva; az xAI Grok Voice "Think Fast", a Pine AI hangügynöke és az előző szakasz GPT-Live "delegálása" mind ugyanazt a "gyors az előtérben a beszélgetés fenntartása, lassú a háttérben a mély érvelés" utat követik. A szétválasztás választásának, nem pedig "egyetlen mindenható modell tanításának" pragmatikus oka van: a frontvonalbeli érvelő modellek néhány havonta iterálnak, míg a valós idejű interakciós képességek speciális adatokat és tanítási célokat igényelnek. Mindkettőt ugyanabba a modellbe tömöríteni egy mozgó célpont üldözését jelenti, ami potenciálisan felhígítja a legértékesebb érvelési képességet[^ch9-8]. Ezzel szemben a legerősebb érvelő modellt érintetlenül hagyva a háttérben, és csak egy könnyű interakciós modellt tanítva az előtérben, mindig használhatjuk az aktuális legerősebb "agyat" — pontosan ezért hangsúlyozza a GPT-Live a "fenntartható váltást a legújabb frontvonalbeli modellekre". Az alábbiakban a három megoldást vizsgáljuk az egyre erősebb koordinációs mechanizmusok sorrendjében.
 
-### 1. megoldás: Gyors gondolkodás kitöltőkhöz, lassú gondolkodás válaszokhoz
+#### 1. megoldás: Gyors gondolkodás kitöltőkhöz, lassú gondolkodás válaszokhoz
 
 A gyors és lassú gondolkodás párhuzamosan fut (9-5. ábra): a gyors gondolkodás 500 ms-on belül egy rövid tartózkodó választ produkál (ahogy az ember először azt mondja: "hadd gondolkozzam"), míg a lassú gondolkodás 5-10 másodpercet tölt a háttérben érveléssel, mielőtt leadná a teljes választ. A lassú gondolkodás mögötti technika a "tesztidő-skálázás" — leegyszerűsítve, hagyjuk, hogy a modell egy kicsit tovább gondolkodjon, mielőtt válaszol: ahelyett, hogy egy lépésben ugrana a válaszra, úgy működik, mint egy ember egy matekfeladaton — vázol egy megközelítést, lépésről lépésre levezet, ellenőrzi az eredményt — több számítást kereskedve jobb válaszért.
 
@@ -228,7 +228,7 @@ A gyors és lassú gondolkodás párhuzamosan fut (9-5. ábra): a gyors gondolko
 <user>(Dühösen) Szóval ajánlod, hogy vegyem meg, vagy ne?!</user>
 ```
 
-### 2. megoldás: Gyors gondolkodás interakcióhoz, lassú gondolkodás tanácsadáshoz
+#### 2. megoldás: Gyors gondolkodás interakcióhoz, lassú gondolkodás tanácsadáshoz
 
 A 2. megoldás lehetővé teszi, hogy a lassú gondolkodás lássa a gyors gondolkodás kimenetét. Javaslatokat az Ügynök Állapotsoron keresztül ad (a 2. fejezetben bevezetett dinamikus meta-információ-injektáló mechanizmus), ahelyett, hogy közvetlenül a felhasználóhoz beszélne. Az 1. megoldáshoz képest ez a megközelítés két fejlesztést hoz: a lassú gondolkodás aszinkron módon fut a háttérben, és a beszéd szüneteiben folytatja az érvelést; és mivel látja a gyors gondolkodás kimenetét, elkerüli, hogy közvetlenül ellentmondjon neki, és inkább kulisszák mögötti "stratéga"-ként működik. A korábban említett GPT-Live delegálás és Pine AI hangügynök a 2. megoldás gyártási példái — a háttér-érvelő modell egy tömör szöveges csatornán keresztül küldi el következtetéseit az előtér-interakciós modellnek, és az előtérmodell dönti el, mikor és hogyan mutassa be azokat a felhasználónak.
 
@@ -236,7 +236,7 @@ Ennek a megoldásnak azonban továbbra is vannak alapvető korlátai. **A gyors 
 
 A 2. megoldás egy alapvető elméleti problémával is szembesül: "nem képes elérni a "gondolkodva beszélést"". Amikor az emberek komplex problémával szembesülnek, nem először fogalmazzák meg a teljes választ a fejükben, majd adják elő egyben. Ehelyett szegmensekben gondolkodnak és beszélnek — "Ez egy érdekes kérdés... (gondolkodási szünet) Először is meg kell fontolnunk... (tovább gondolkodik) Másodszor..." A 2. megoldásban a gyors gondolkodás csak kitöltő kifejezéseket tud adni, amíg a lassú gondolkodásra vár, anélkül, hogy az érvelési folyamatot természetesen beleszőné a beszélgetésbe.
 
-### 3. megoldás: A gondolkodás és kifejezés végponti egyesítése (a Step-Audio R1 példáján keresztül)
+#### 3. megoldás: A gondolkodás és kifejezés végponti egyesítése (a Step-Audio R1 példáján keresztül)
 
 Bár a 2. megoldás csökkenti a felhasználó lassú gondolkodásra való várakozásának szükségességét, architekturálisan továbbra is "először gondolkodj, aztán beszélj" — a gondolkodás és a kifejezés két külön folyamat marad, lehetetlenné téve az emberi "gondolkodva beszélés" elérését. Ennek az alapvető korlátnak a áttöréséhez a gondolkodási képességeket közvetlenül a modellbe kell internalizálni.
 
@@ -260,7 +260,7 @@ A kettő párhuzamosan fut: a Formuláló Agynak nem kell befejeznie az érvelé
 
 A 3. megoldás egyetlen modellbe internalizálja a gondolkodást — a "gondolkodva beszélés" legelegánsabb megvalósítása —, de az ára pontosan a szakasz elején említett "mozgó célpont": egy modellnek kell lennie a legerősebb érvelőnek és egy valós idejű beszélőnek is, és mivel mindkét képesség gyorsan fejlődik, az egyesített útnak újra és újra kell tanulnia, hogy lépést tartson. Ezért alakult ki az iparági megosztottság a cikk írásakor: a frontvonalbeli termékek, amelyek azonnal be akarják építeni a legújabb agyat (GPT-Live, Grok Voice, Pine AI), többnyire a 2. megoldás szétválasztására fogadnak, míg a 3. megoldás azoknak a termékeknek felel meg, amelyek a végső természetességre törekednek, és fel tudják venni a specializált tanítási költséget. Egyik sem váltja fel a másikat; ez egy kompromisszum az érvelő modell becserélhetősége és a szorosabban integrált gondolkodás és beszéd között.
 
-### A gyors és lassú közötti interfész: Mit lehet átadni a szövegen túl?
+#### A gyors és lassú közötti interfész: Mit lehet átadni a szövegen túl?
 
 (Ez a kereszt-forgatókönyvi diszkusszió rövid időre eltér a fejezet fő hangközpontúságától.) A 2. megoldás felfed egy figyelmen kívül hagyott tervezési dimenziót: amikor a lassú gondolkodás üzenetet ad át a gyors gondolkodásnak, a "szöveges" csatornát használja (egy javaslatot az állapotsoron keresztül). A szöveg könnyen érthető és hibakereshető, de szűk csatorna — a lassú gondolkodó gazdag köztes állapota néhány mondatba van besűrítve. Tehát a gyors és lassú közötti interfésznek szükségszerűen szövegnek kell lennie?
 
@@ -272,7 +272,7 @@ Ugyanez a munka becsületes határt is húz: **az, hogy a gyors-lassú együttm�
 
 Akár végponti, akár moduláris, az érzékelési és végrehajtási rétegek minősége továbbra is számít. A végponti modellek architekturális szinten oldják meg a késleltetést, de a két alapvető dolog — pontosan hallani és természetesen beszélni — nem oldódik meg magától, ha az architektúra változik. A pontos hallás a Paradigma 1 streaming hangérzékelésének felel meg; itt a végrehajtási réteg felé fordulunk a természetes beszédért: emberibb beszédszintézis.
 
-## Emberibb beszédszintézis
+### Emberibb beszédszintézis
 
 A hagyományos TTS "tökéletessége" pontosan a probléma: a kifogástalanul folyékony, szünetek vagy töltelékszavak nélküli beszéd tagadhatatlanul gépi eredetű. Az emberi beszéd "tökéletlenségei" — szünetek, töltelékszavak ("ööö", "izé", "tudod") és alkalmankénti ismétlés — nem hibák, hanem a gondolkodási folyamat természetes jelei, amelyek azt üzenik a hallgatónak: "gondolkodom" vagy "nem vagyok teljesen biztos". Egy MI azonban gyorsabban tud választ generálni, mint ahogy az a válasz hangosan kimondható, és a kimenete folyékonyan és teljesen érkezik; ha szó szerint szintetizáljuk, a mesterséges jellege nyilvánvalóvá válik.
 
@@ -413,8 +413,8 @@ A beszéddoménnel ellentétben jelenleg nincs szisztematikus megoldás a Comput
 
 ## Robot Manipuláció: Valós idejű vezérléstől a tanításig és általánosításig
 
-> "Olvasási megjegyzés": Ez a szakasz a robotvezérlést tárgyalja. A 9-10. kísérlet egy szimulációból valóságba történő átviteli módszert mutat be — a **szimulációs tanítási rész (3-4. lépések) csak egy GPU szerverrel elvégezhető**; azonban a teljes csővezeték végponttól végpontig történő reprodukálásához (beleértve a valós telepítési lépéseket is) valódi hardverre, például SO100 robotkarra van szükség. Ha jelenleg nem érdeklik a robotika iránt, kihagyhatja ezt a szakaszt; nem befolyásolja a többi fejezet olvasását.
-
+> **A szakasz mind az öt kísérlete ugyanazt a feladatot használja: a piros bögrét a tálcára, a sárga papírt a hulladékgyűjtőbe kell tenni, majd újra megfigyelni és ellenőrizni az asztal állapotát. A valódi kar és a szimulátor külön jelenik meg, de az akciók jelentése és a sikerfeltételek azonosak.**
+>
 A hangügynökök a hallási modalitásban küzdenek a késleltetéssel; a Computer Use a vizuális modalitásban teszi ugyanezt. Amikor egy ügynöknek egy robotot kell irányítania a fizikai világban, a késleltetés és a multimodalitás még keményebben harap — a cselekvések visszafordíthatatlan következményekkel járnak, és egyetlen ütközés károsíthatja a tárgyat vagy magát a robotot. Ez a szakasz először bemutatja, hogyan szelídítik meg a robotok a valós idejű vezérlési problémát egy kétrétegű architektúrával és cselekvés-darabolással, majd rátér a ma előttük álló nehezebb problémára — a tanításra és általánosításra: honnan származnak az adatok, és hogyan váltanak át a modellek feladatok és platformok között.
 
 ### A Hardver Nem a Szűk Keresztmetszet; Az Algoritmusok Azok
@@ -433,7 +433,7 @@ Ezeknél a feladatoknál a valódi hiányosság az algoritmikus rétegben van, a
 
 ### Kétrétegű Architektúra: Tervezés és Vezérlés Szétválasztása
 
-A robotoknak két különböző időskálán kell döntéseket hozniuk az összetett háztartási feladatok elvégzéséhez. Az első réteg a lassabb "hosszú távú tervezés": egy magas szintű utasítás, például "takarítsd ki a konyhát" lebontása részcélok sorozatára (pakold le a pultot, töltsd be a mosogatógépet, töröld le a felületeket). Ez megköveteli a környezeti szemantika megértését, a feladatfüggőségek feletti érvelést és a többlépcsős cselekvési sorozatok tervezését — hasonlóan ahhoz, ahogy egy ember gondolkodik arról, hogy "mit csináljak először és mit azután" a kezdés előtt. A második réteg a gyorsabb "VLA vezérlés" (Vision-Language-Action modell): minden egyes konkrét művelet végrehajtása ("sétálj a mosogatóhoz", "vedd fel a rongyot", "töröld le a pultot"), folyamatosan vezérlőjeleket adva az aktuális vizuális bemenet és nyelvi utasítás alapján a sima és összefüggő robotmozgás biztosításához.
+A robotoknak két különböző időskálán kell döntéseket hozniuk az összetett háztartási feladatok elvégzéséhez. Az első réteg a lassabb "hosszú távú tervezés": egy magas szintű utasítás, például "takarítsd ki a asztalt" lebontása részcélok sorozatára (pakold le a pultot, töltsd be a mosogatógépet, töröld le a felületeket). Ez megköveteli a környezeti szemantika megértését, a feladatfüggőségek feletti érvelést és a többlépcsős cselekvési sorozatok tervezését — hasonlóan ahhoz, ahogy egy ember gondolkodik arról, hogy "mit csináljak először és mit azután" a kezdés előtt. A második réteg a gyorsabb "VLA vezérlés" (Vision-Language-Action modell): minden egyes konkrét művelet végrehajtása ("sétálj a mosogatóhoz", "vedd fel a rongyot", "töröld le a pultot"), folyamatosan vezérlőjeleket adva az aktuális vizuális bemenet és nyelvi utasítás alapján a sima és összefüggő robotmozgás biztosításához.
 
 Ez a kétrétegű architektúra hatékonyan osztja szét a felelősségeket: a hosszú távú tervezés kezeli a "mit csináljunk", míg a VLA vezérlés kezeli a "hogyan csináljuk". A lassú magas szintű döntéshozatal és a gyors alacsony szintű végrehajtás kombinációja szorosan párhuzamba állítható a korábban a beszédnél leírt gyors-lassú architektúrával: mindkettő komplex érvelést és valós idejű válaszadást rendel különböző modulokhoz. A tervezés/vezérlés felosztás azonban a lassú mély érvelés versus a gyors valós idejű válaszadásnak felel meg, nem pedig az MPS Formuláló Agya és Artikulációs Agya közötti gondolkodás/kifejezés felosztásnak a 3. megoldásban. Az MPS a gondolkodást választja el a beszédtől; a robotika architektúra a globális tervezést választja el a valós idejű végrehajtástól. A két architektúra tehát a munkát különböző dimenziók mentén osztja fel.
 
@@ -451,11 +451,19 @@ Az általános célú VLM-ek már rendelkeznek elfogadható megtestesült érvel
 
 [^ch9-2]: Google DeepMind, "Gemini Robotics-ER 1.5." https://deepmind.google/models/gemini-robotics/gemini-robotics-er/
 
-> **9-9. kísérlet ★★: A Gemini Robotics-ER 1.5 használata az XLeRobot autonóm navigáció irányításához**
+> **9-9. kísérlet ★: Az ideális vezérlés felső korlátjának mérése szimulációban**
 >
-> Használjuk a RoboCrew könyvtárat a Gemini Robotics-ER 1.5-tel mint hosszú távú tervező modellel, szögskála annotációkat helyezve a kamera képeire. A rendszer csak három egyszerű eszközt biztosít: mozogj előre, fordulj balra, fordulj jobbra. A "találd meg a konyhát és menj oda" feladatot kapva a modell 0,5-1 Hz-en hoz döntéseket. Azonosít vizuális jellemzőket, mint folyosók, ajtók, bútorok; arra következtet, hogy a konyha lehet balra, és elfordul; majd meglát egy hűtőszekrényt előtte, és továbbmegy. A rendszer kiterjeszthető hangvezérléssel is, egy ébresztőszóval új feladatok indítására. Ez a kísérlet felfedi a VLM-ek korlátait a hosszú távú tervezésben: térbeli érvelésük és feladatbontásuk már erős, de robusztusságuk komplex környezetekben és konzisztenciájuk több érvelési lépésen át még fejlesztésre szorul.[^ch9-3]
+> **Cél:** Ugyanezt a feladatot hibátlan érzékelésű és döntésű ideális vezérlővel futtassuk.
 >
-> [^ch9-3]: XLeRobot, "LLM Agent Control." https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html
+> **Elvi tanulság:** Ez a hibátlan döntések referenciája, nem a valódi kar futásának bizonyítéka.
+>
+
+> **9-10. kísérlet ★★: Gemini Robotics-ER 1.5 vezérli önállóan a valódi XLeRobotot**
+>
+> **Cél:** Az embert egy, a felületet figyelő és korlátozott pick, place, verify készségeket hívó Agenttel váltsuk fel, azonos feladattal és sikerfeltételekkel.
+>
+> **Elvi tanulság:** A különbség az érzékelésben, tervezésben, időzítésben, zárt hurkú vezérlésben és helyreállításban van, nem új mechanikai korlátban.
+>
 
 ### VLA Vezérlés: A Demonstrációs Adatoktól a Platformokon Átívelő Általánosításig
 
@@ -485,25 +493,21 @@ Ez a megközelítés számos figyelemre méltó sikert produkált. Az OpenAI Dac
 
 Amit ez a fejezet hozzáad, az a két mérnöki lépés, amelyet nem lehet kihagyni a domén randomizáció valódi robotra vitelénél. Az első a "randomizációs tartomány kalibrálása": a tartományt nem lehet tippre beállítani. Túl szűk, és kihagyja a valós változatosságot; túl széles, és a tanítás nehezebbé válik, és egy szuboptimális politikát eredményez, amely "mindent kezel, semmit sem sajátít el". A gyakorlatban a kulcsparaméterek (súrlódási együttható, motor válaszkésleltetés) eloszlását először a valós adatokból "mérik és kalibrálják", és ezen a tartományon belül mintavételeznek; ha a szimulációban tanított politika teljesítménye észrevehetően csökken a valódi roboton, a tartományt lépésről lépésre szélesítik, amíg a sim-to-real rés elfogadhatóvá nem válik. A második a "vizuális illesztés": a kamera pozíciójának pontos kalibrálása a szimuláció és a valóság között (környezeti illesztés), és valós háttérképek véletlenszerű beillesztése a szimulált renderbe (zöldvászon háttércsere), hogy a szimuláció a lehető legjobban hasonlítson arra, amit a valódi robot lát. A 9-10. kísérlet mindkét lépést bemutatja.
 
-> **9-10. kísérlet ★★★: Nullszoros RGB Sim2Real Robotos Megfogás**
+> **9-11. kísérlet ★★: Három önálló hurok összehasonlítása szimulációban**
 >
-> A LeRobot + ManiSkill szimulátor használatával, csak RGB kamera képekkel tanítva (mélységérzékelők vagy erőérzékelők nélkül), majd nullszoros telepítéssel (további hangolás nélkül) közvetlenül egy valódi SO100 robotkarra. A folyamat öt lépésből áll:
+> **Cél:** Hasonlítsuk össze a nyílt hurkú, lépésenként ellenőrző és rövid távon előrejelző stratégiát.
 >
-> 1. "Környezeti Illesztés": A kamera pozíciók beállítása a szimulációban és a valós környezetben, vizuális átfedéssel ellenőrizve, hogy a két oldal képei illeszkednek.
-> 2. "Háttércsere (Zöldvászon)": A valós környezetből rögzített háttérképek véletlenszerű kivágása és ráhelyezése a szimulációs renderre, így a szimulációs háttér közelebb kerül a valósághoz.
-> 3. "Domén Randomizáció": Olyan paraméterek randomizálása, mint a robot színe, a tárgy textúrája, a fényviszonyok és a kamera látómezeje.
-> 4. "RL Tanítás": Tanítás a PPO algoritmussal egy masszívan párhuzamosított szimulációs környezetben, amíg a sikerességi arány a szimulációban meghaladja a 90%-ot.
-> 5. "Valós Telepítés": A megfogási feladat sikeres elvégzése a valódi roboton, nullszoros módon.
->
-> Kulcsfontosságú sikertényezők: precíz környezeti illesztés, vizuális domén randomizáció és fizikai paraméter randomizáció; mindhárom nélkülözhetetlen. Korlát: Amikor a valódi tárgyak alakja, mérete vagy anyaga kívül esik a tanítási eloszláson, a sikerességi arány jelentősen csökken.[^ch9-6]
->
-> [^ch9-6]: LeRobot, "Sim2Real Tutorial". https://github.com/StoneT2000/lerobot-sim2real/blob/main/docs/zero_shot_rgb_sim2real.md
->
->
-> ![9-13. ábra: 9-10. kísérlet Nullszoros RGB Sim2Real Csővezeték](images/fig9-13.svg)
+> **Elvi tanulság:** Az ellenőrzés helyreállítja a helyi hibát; a világmodell egyezéskor folytat, eltéréskor újratervez. A végső állapotot friss megfigyelés igazolja.
 >
 
-## 2026-os frissítés: Folyamatos tervezés és világmodellek
+> **9-12. kísérlet ★★★: RGB-teszt különböző környezetekben**
+>
+> **Cél:** Változtassuk a hátteret, megjelenést, fényt és zajt, és mérjük a szimulációs vizuális politika alkalmazkodását.
+>
+> **Elvi tanulság:** A vizuális változatosság növelheti a robusztusságot, de nem helyettesíti a valódi kalibrációt és biztonsági hurkot.
+>
+
+### 2026-os frissítés: Folyamatos tervezés és világmodellek
 
 A robotikai résznek nem szabad ott véget érnie, hogy „a VLM megírja a tervet, a VLA pedig végrehajtja”. Vegyük a **„rendezd el az íróasztalt”** példáját. A hosszú horizontú tervező először állapotlistát készít — félig teli csésze, papírfecnik, három könyv, nyitott laptop, szemetes és tárolódoboz —, majd előfeltételeket és sikerességi ellenőrzéseket tartalmazó parancsokat ad ki:
 
@@ -543,12 +547,6 @@ Ez tágabb fogalom, mint a V-JEPA önmagában. Ide tartoznak a látens prediktí
 
 A 2026-os új preprintek közös dinamikai priorokat és testfüggő headeket (DyPES-VLA), eloszláson kívüli zárt hurkú manipulációhoz készült vizuális-akció reprezentációkat (GeniWorld), emberi videóból nyert 3D-tudatos látens akciókat (LAWM-3D), szemantikai előrelátás-illesztést (Robust-WAM) és aszinkron, valós idejű telepítést vizsgálnak. Ezek ígéretes kutatási eredmények, nem pedig a generalizáció végleges megoldásai.
 
-### Világmodellek a Computer Use-hoz
-
-Az asztali számítógép szintén dinamikus rendszer: képernyőállapot + click/type/scroll/wait -> következő állapot. Az Induction Labs által 2026 júliusában bejelentett Photon-1 nagyméretű számítógép-használati videókból látens következőállapot-előrejelzést tanul, majd finomhangolja az akciók formátumát és online RL-t alkalmaz. A vállalat benchmark- és költségadatai belső értékelésekből származnak, független reprodukciójuk még nem történt meg. Gyakorlati megoldás egy oldalkocsi-prediktor: a VLM választja ki a jelentést és az eszközöket, a prediktor pedig gyorsítótárba teszi a jelölt következő állapotokat, kiszűri a kockázatos műveleteket, és eldobja az elavult rolloutokat, ha a valós képernyőképek eltérnek. A hálózat, a hitelesítés, a CAPTCHA és a szerver rejtett állapota miatt minden visszafordíthatatlan műveletet a valódi környezetben kell ellenőrizni.
-
-Források: [OpenVLA](https://arxiv.org/abs/2406.09246), [V-JEPA 2](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/), [Genie 3](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/), [Photon-1](https://www.inductionlabs.com/news/scaling-video-pretraining), [DyPES-VLA](https://arxiv.org/abs/2608.06374), [GeniWorld](https://arxiv.org/abs/2608.06332), [LAWM-3D](https://arxiv.org/abs/2608.05706), [Robust-WAM](https://arxiv.org/abs/2608.05903).
-
 ## Fejezet Összefoglaló
 
 A felszínen a három forgatókönyv aligha lehetne különbözőbb, mégis a késleltetés és a multimodalitás kettős akadálya mindegyiket árnyékolja. A hangügynökök a soros csővezetékektől a végponti és teljes duplex rendszerekig, valamint a különálló gyors és lassú gondolkodástól a gondolkodva beszélésig fejlődtek. A Computer Use most megközelíti az emberi pontosságot az olyan benchmarkokon, mint az OSWorld, de sokkal több lépést igényel, mint egy ember, és minden lépés tovább tart a feladat előrehaladtával — egy hatékonysági rés, amelyre még nincs szisztematikus megoldás. A vizuálisan vezérelt manipulációs feladatokat végző robotok esetében a szűk keresztmetszet a hardverről a VLA vezérlési réteg azon képességére tevődött át, hogy általánosítson a feladatok között (a tapintási érzékelés és az ügyes kezek továbbra is megoldatlan hardverkorlátok). A következő fejezet a több ügynök közötti együttműködésre tér át — egy más dimenziójú kihívásra.
@@ -564,3 +562,8 @@ A felszínen a három forgatókönyv aligha lehetne különbözőbb, mégis a k�
 7. ★★ A DOM/Accessibility Tree elemindexálás jól működik a szabványos webalkalmazásokon, de egyre több szoftverfelület (Canvas/WebGL renderelés, platformokon átívelő egyedi rajzolt vezérlők) nem biztosít hozzáférhető strukturált információt, kizárólag vizuális annotációra vagy koordináta előrejelzésre támaszkodva. Ön szerint a Computer Use-nek a tisztán vizuális megközelítésre kellene fogadnia, vagy mind a strukturált, mind a vizuális utat fenn kellene tartania? Mik a költségei és előnyei mindkét út fenntartásának?
 8. ★★ A VLA modellek cselekvés darabolást használnak — a szövegben említettek szerint π₀ tipikus konfigurációja 25-50 jövőbeli cselekvést generál 50 Hz-en — az inferencia késleltetésének a végrehajtási időn belüli elrejtésére. Ha azonban a környezet hirtelen megváltozik a végrehajtás alatt (pl. egy tárgyat elmozdítanak), az előre generált cselekvési sorozat érvénytelenné válik. Hogyan lehet egyensúlyt teremteni a cselekvés darabolás hatékonysági előnye és a környezeti változásokra való reagálóképesség igénye között?
 9. ★★★ A fejezet mindhárom forgatókönyve (hang, Computer Use, robotika) szembesül az "észlelés-gondolkodás-cselekvés" ciklus késleltetési problémájával, és a párhuzamosított gyors és lassú gondolkodás felé fejlődik. A hangban ez a "javítás a félrebeszélés után"; a Computer Use-ben a "kattints először, aztán nézz"; a robotikában a "tegyél egy lépést, aztán nézz" formában nyilvánul meg. Hogyan biztosítható, hogy ezek a gyors gondolkodáson alapuló cselekvések ne vezessenek visszafordíthatatlan következményekhez?
+### Világmodellek a Computer Use-hoz
+
+A megfigyelési interfész a dinamikus változásokat hamarabb továbbítja és memóriában tartja, így válaszol arra, mi történt két képernyőkép között. A tervezési költséget azonban nem szünteti meg: az Agent továbbra is ismételheti a „kép, gondolkodás, kattintás” hurkot. Az OSWorld-Human szerint emberi pontosság sokkal több lépéssel és várakozással is együtt járhat.
+
+Az ember előrejelzően használja az asztalt: ha a megfigyelt állapot egyezik a jósolttal, újratervezés nélkül folytat. Az eltérés indít új megfigyelést és tervezést. Ez a spekulatív végrehajtás; **a világmodell a probléma másik felét oldja meg** az állapot előrejelzésével, folytatással egyezéskor és újratervezéssel eltéréskor.

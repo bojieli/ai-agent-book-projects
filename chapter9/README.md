@@ -15,9 +15,11 @@
 | 9-5 | [controllable-tts](controllable-tts/) | ✅ | 真实 Fish Audio S1 4×3×2=24 条参考音库与 A/B/C 媒体齐全；三次位置平衡的真实 Voxtral 音频盲评中 C 组最高且真人客服感 4.67/5，但 B>A 未复现；[验收](controllable-tts/validation/acceptance.json)将完成状态与负结果分开报告 |
 | 9-6 | [Anthropic 原生 Computer Use 记录](claude-computer-use-native/) + `claude-quickstarts/computer-use-demo/` | ✅ | [正式原生运行](claude-computer-use-native/validation/runs/exp9-6-anthropic-native-20260803-v2/acceptance.json)从固定源码本地构建镜像，用 `claude-sonnet-4-5-20250929` 完成 16 次真实响应与 15 个原生 `computer` 动作；Google reCAPTCHA 未交互，转向可见 Open-Meteo JSON 后回答 70.2°F、晴朗，全部确定性门禁通过 |
 | 9-7 | [computer-use-open-model](computer-use-open-model/) + `browser-use/` | ✅ | [正式开放模型运行](computer-use-open-model/validation/latest.json)使用 `qwen/qwen3-vl-32b-instruct`：Google CAPTCHA 后转 weather.com，16 步完成；16/16 API 响应模型一致、15 张截图、只读动作和答案 grounding 全部通过确定性验收 |
-| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | ✅ | 本地 GPU 批量专家控制上限：随机桌面物体的 100% 成功基线；XLeRobot 真机遥操作需要另行具备硬件和安全条件 |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | ✅ | 本地 GPU 桌面操作规划：RoboCrew 风格的职责明确、权限固定的工具、一次性执行/逐步检查/预测式规划对比；真实 XLeRobot 工具适配需要另行验证 |
-| 9-10 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | ✅ | 本地 GPU RGB 跨环境测试：比较固定训练画面与随机化训练在变化环境中的表现；SO100 真机部署需要另行具备硬件和安全条件 |
+| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | ✅ | 真机遥操作 XLeRobot 整理桌面：把红色杯子放进托盘、把黄色废纸放进垃圾盒，最后重新观察并确认状态 |
+| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | ✅ | 在模拟器中测量同一桌面任务的理想控制上限，不代表真机已经运行 |
+| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | ✅ | 使用 Gemini Robotics-ER 1.5 自主驱动真实 XLeRobot 完成同一整理桌面任务 |
+| 9-11 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | ✅ | 在模拟器中比较开环、逐步检查和预测式闭环三种同任务策略 |
+| 9-12 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | ✅ | 对同一桌面任务进行 RGB 跨环境测试，检查视觉策略对背景、外观、光照和噪声变化的适应性 |
 
 ## 实验 9-6 / 9-7 的供应商可移植路径
 
@@ -48,9 +50,9 @@ python main.py \
 `json_schema` 时可设 `OPEN_MODEL_SCHEMA_MODE=prompt`，但应把这种兼容模式单列为
 不同实验配置。不同模型的结果不能合并成 Anthropic 复现结果。
 
-## 实验 9-6 至 9-10 外部复现锚点
+## 实验 9-6 至 9-12 外部复现锚点
 
-9-6/9-7 的上游 SHA 来自 2026-07-30 工作区 checkout 的 `origin` 与 `HEAD`。9-7 的[开放模型正式运行](computer-use-open-model/validation/latest.json)已经用真实 Qwen3-VL API 与 Chromium 关闭 browser-use 路径。9-6 随后用恢复有效的 Anthropic 凭据从固定 Dockerfile 本地构建镜像；[原生正式运行](claude-computer-use-native/validation/runs/exp9-6-anthropic-native-20260803-v2/trajectory.json)在 15/25 动作内安全绕开 Google reCAPTCHA、读取可见 Open-Meteo 当前数据并以 `end_turn` 完成。历史 401 与两个未通过任务门禁的真实尝试均保留，不计入正式结果。9-8 至 9-10 的**本地 GPU 自包含验收已经完成**；XLeRobot/RoboCrew/SO100 的真实硬件运行仍需单独的设备、授权和安全证据。
+9-6/9-7 的上游 SHA 来自 2026-07-30 工作区 checkout 的 `origin` 与 `HEAD`。9-7 的[开放模型正式运行](computer-use-open-model/validation/latest.json)已经用真实 Qwen3-VL API 与 Chromium 关闭 browser-use 路径。9-6 随后用恢复有效的 Anthropic 凭据从固定 Dockerfile 本地构建镜像；[原生正式运行](claude-computer-use-native/validation/runs/exp9-6-anthropic-native-20260803-v2/trajectory.json)在 15/25 动作内安全绕开 Google reCAPTCHA、读取可见 Open-Meteo 当前数据并以 `end_turn` 完成。历史 401 与两个未通过任务门禁的真实尝试均保留，不计入正式结果。9-8 至 9-12 的**本地 GPU 自包含验收已经完成**；XLeRobot/RoboCrew/SO100 的真实硬件运行仍需单独的设备、授权和安全证据。
 
 | 实验 | 权威上游 → 本地路径 | 固定提交 | 锁与入口 |
 | :--: | --- | --- | --- |
@@ -58,9 +60,11 @@ python main.py \
 | 9-7 | [`browser-use/browser-use`](https://github.com/browser-use/browser-use) → `chapter9/browser-use`；本书可移植入口 `chapter9/computer-use-open-model/main.py` | `ec9277c5001f2cb78ee419c927775a3cfc227ff8` | checkout 包版本 `0.9.5`；本书入口固定 `use_vision=True`、`max_actions_per_step=1`，默认请求开放权重 Qwen3-VL 32B，并接受任意合格 OpenAI-compatible base URL。该上游提交**没有跟踪 `uv.lock`，且 `.gitignore` 明确忽略它** |
 | 9-8 | [`Vector-Wangel/XLeRobot`](https://github.com/Vector-Wangel/XLeRobot) → `chapter9/XLeRobot` | `3d14695e40c9c68229c0aacffca6053c75cd3eb6` | `software/examples/{4_xlerobot_teleop_keyboard,5_xlerobot_teleop_xbox,7_xlerobot_teleop_joycon,8_xlerobot_teleop_vr}.py`；精确 blob 与安全门禁见[复现 companion](xlerobot-teleoperation/) |
 | 9-9 | 同一 [`Vector-Wangel/XLeRobot`](https://github.com/Vector-Wangel/XLeRobot) → `chapter9/XLeRobot`；[`Grigorij-Dudnik/RoboCrew`](https://github.com/Grigorij-Dudnik/RoboCrew) → `chapter9/RoboCrew` | XLeRobot：`3d14695e40c9c68229c0aacffca6053c75cd3eb6`；RoboCrew v0.3.1：`c749148f29bd14e61347f9fc3530c343fff0d994` | XLeRobot 的 `docs/en/source/software/getting_started/LLM_agent.md` + RoboCrew planner；五个桌面操作工具、动作条件世界模型与证据门禁见[复现 companion](gemini-xlerobot-navigation/) |
-| 9-10 | [`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real) → `chapter9/lerobot-sim2real` | `87d6c1d969f6e0ca4dc5697940804e231118a63a` | `record_reset_distribution.py` / `camera_alignment.py` / `capture_background_image.py` / `train_ppo_rgb.py` / `eval_ppo_rgb.py`；阶段与安全边界见[复现 companion](rgb-sim2real-grasping/) |
+| 9-10 | [`Vector-Wangel/XLeRobot`](https://github.com/Vector-Wangel/XLeRobot) → `chapter9/XLeRobot`；[`Grigorij-Dudnik/RoboCrew`](https://github.com/Grigorij-Dudnik/RoboCrew) → `chapter9/RoboCrew` | XLeRobot：`3d14695e40c9c68229c0aacffca6053c75cd3eb6`；RoboCrew v0.3.1：`c749148f29bd14e61347f9fc3530c343fff0d994` | Gemini Robotics-ER 1.5 自主控制真机的同一整理桌面任务；工具契约与安全边界见[复现 companion](gemini-xlerobot-navigation/) |
+| 9-11 | `gemini-xlerobot-navigation` 的桌面模拟器 | — | 同一任务的开环、逐步检查和预测式闭环对照；只使用非致动模拟执行器 |
+| 9-12 | [`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real) → `chapter9/lerobot-sim2real` | `87d6c1d969f6e0ca4dc5697940804e231118a63a` | 同一整理桌面任务的 RGB 跨环境测试；阶段与安全边界见[复现 companion](rgb-sim2real-grasping/) |
 
-9-8 至 9-10 的固定源码获取命令如下；XLeRobot checkout 由 9-8 和 9-9 共用：
+9-8 至 9-12 的固定源码获取命令如下；XLeRobot checkout 由 9-8 和 9-10 共用：
 
 ```bash
 git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot

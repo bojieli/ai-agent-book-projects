@@ -15,9 +15,11 @@
 | 9-5 | [controllable-tts](controllable-tts/) | 🚧 | Menyiapkan pustaka referensi Fish Audio dan perbandingan media; evaluasi dengar belum lengkap. |
 | 9-6 | `claude-quickstarts/computer-use-demo/` | 📖 | Demo Computer Use resmi Anthropic pada desktop Ubuntu terkontainerisasi. |
 | 9-7 | `browser-use/` | 📖 | Otomatisasi browser visual dengan trajectory tindakan dan screenshot. |
-| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | Jalur teleoperasi XLeRobot; penerimaan memerlukan perangkat keras yang diotorisasi. |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Navigasi XLeRobot dengan Gemini Robotics-ER dan RoboCrew. |
-| 9-10 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | Pipeline RGB-to-PPO-to-SO-100 untuk zero-shot Sim2Real grasping. |
+| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | Teleoperasi XLeRobot nyata untuk satu tugas merapikan meja: masukkan cangkir merah ke nampan, kertas kuning ke tempat sampah, lalu amati dan verifikasi keadaan akhir. |
+| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Mengukur batas atas kontrol ideal untuk tugas meja yang sama di simulator; bukan klaim bahwa robot nyata telah dijalankan. |
+| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Gemini Robotics-ER 1.5 mengendalikan XLeRobot nyata secara otonom untuk tugas meja yang sama. |
+| 9-11 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Membandingkan strategi open-loop, pemeriksaan bertahap, dan closed-loop prediktif di simulator untuk tugas yang sama. |
+| 9-12 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | Uji RGB lintas lingkungan untuk tugas meja yang sama dengan variasi latar, tampilan objek, pencahayaan, dan noise visual. |
 
 ## Jenis Proyek
 

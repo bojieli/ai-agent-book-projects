@@ -6,17 +6,24 @@
 
 ## Eşlik Eden Projeler
 
-| Proje | Tür | Açıklama |
-| --- | :--: | --- |
-| [gaia-experience](gaia-experience/) | ✅ | AWorld çerçevesi ve GAIA kıstasına dayalı olarak eksiksiz bir "öğren-uygula" döngüsü uygular. Ajan, başarılı görev izlencelerini otomatik olarak yapılandırılmış deneyimlere özetler ve bunları yeni görevlerde getirip uygulayarak kendi kendine evrim gerçekleştirir. |
-| [browser-use-rpa](browser-use-rpa/) | ✅ | Tarayıcı otomasyonu için bir iş akışı kayıt sistemi uygular; tekrarlanan işlem dizilerini otomatik olarak parametreli araçlara kapsüller. Pahalı LLM çıkarımından kesin otomatik yürütmeye geçerek 3-5 kat hız artışı sağlar. |
-| [prompt-distillation](prompt-distillation/) | ✅ | Karmaşık promptların etkinliğini model parametrelerine damıtır; çıkarım sırasında prompt uzunluğunu azaltır ve bağlamsal deneyimi parametreli bilgiye dönüştürür. |
-| [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | İnsan geri bildirimine dayalı otomatik sistem istemi öğrenimi: tau-bench tarzı havayolu müşteri hizmetleri "aşırı aktarma" sorununu örnek alarak, bir Coding Agent sistem istem dosyasını okur, sorunlu kuralları belirler, kesin değişiklikler üretir ve istem dosyasını gerçekten yeniden yazar. Ardından değişiklikleri yeniden değerlendirir, "geri bildirim → yeniden yazma → doğrulama" döngüsü oluşturur. |
-| [self-evolving-tools](self-evolving-tools/) | ✅ | Alita tarzı bir "minimal ön tanım, maksimum kendi kendine evrim" yaklaşımı: ajanın önceden inşa edilmiş alana özgü aracı yoktur, yalnızca beş genel meta-araç vardır. Yapamayacağı bir görevle karşılaştığında, açık kaynak kütüphaneler/API'ler için web'de arama yapar, dokümantasyon okur, bir sandbox'ta test eder, uygulanabilir çözümleri yeni araçlar olarak kapsüller, yeniden kullanım için araç kütüphanesinde saklar ve tüm süreç boyunca halüsinasyon kontrolüne vurgu yapar. |
-| [hermes-self-evolution](hermes-self-evolution/) | 📖 | Deney 8-6: Hermes'e kitabın tamamını ve kendi kaynağını verir; bir iyileştirme seçip kendini değiştirir ve her Reviewer reddini kabul edilene kadar yeni bir öğrenme turuna dönüştürür. |
-| [self-evolution-eval](self-evolution-eval/) | ✅ | Deney 8-7: öğrenme, aktarım, kural değişimi ve korumayı kapsayan uzun vadeli üç kollu değerlendirme; 3 seed × 14 sıralı görev boyunca 126 gerçek çağrının kanıtını saklar. |
-| [harness-safety-gate](harness-safety-gate/) | ✅ | Yüksek riskli işlemler için onay kapısı (8-8). |
-| [ai-style-skill](ai-style-skill/) | ✅ | Yazım geri bildirimini doğrulanabilir Skill'e dönüştürür (8-9); bölüm, kıvrımlı tırnak Skill'ini denetlenmiş sentetik veri ve sonradan eğitimle ilişkilendirir, exact-copy tokenizer/Harness hatalarını ayırır. |
+| Deney | Proje | Tür | Açıklama |
+| :--: | --- | :--: | --- |
+| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | Ortam sonuçlarını, süreç kurallarını ve dilsel ölçütleri birleştirerek müşteri hizmetleri yörüngeleri için kanıta dayalı teşhisler üretir. |
+| 8-2 | [gaia-experience](gaia-experience/) | ✅ | Başarılı, kısmen başarılı ve başarısız yörüngeleri karşılaştırarak yörüngeler arası Markdown deneyim belgeleri oluşturur. |
+| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Başarısız yörüngelerden asgari istem yamaları üretir; yayına almayı bir sınır kümesi ve bir koruma kümesiyle denetler. |
+| 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | Tarayıcı yörüngelerini durum yüklemleri olan iş akışlarına derler ve bunları sıfırlayıp yeniden oynatarak doğrular. |
+| 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | Tekrarlanan başarısızlıklar yeniden deneme/devre kesici kod yamalarını tetikler; gerileme testleri, kademeli dağıtım ve geri alma ile güvence sağlanır. |
+| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Deney 8-6: Hermes'e kitabın tamamını ve kendi kaynağını verir; bir iyileştirme seçip kendini değiştirir ve her Reviewer reddini kabul edilene kadar yeni bir öğrenme turuna dönüştürür. |
+| 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | Deney 8-7: öğrenme, aktarım, kural değişimi ve korumayı kapsayan uzun vadeli üç kollu değerlendirme; 3 seed × 14 sıralı görev boyunca 126 gerçek çağrının kanıtını saklar. |
+| 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | Yüksek riskli işlemler için onay kapısı (8-8). |
+| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | Yazım geri bildirimini doğrulanabilir Skill'e dönüştürür (8-9); bölüm, kıvrımlı tırnak Skill'ini denetlenmiş sentetik veri ve sonradan eğitimle ilişkilendirir, exact-copy tokenizer/Harness hatalarını ayırır. |
+
+## Ek Örnekler
+
+| Deney | Proje | İlişki |
+| :--: | --- | --- |
+| 7-8 | [prompt-distillation](prompt-distillation/) | Bölümler arası proje: istem damıtma ve parametreli öğrenme; eğitim yöntemi Bölüm 7'ye aittir |
+| — | [self-evolving-tools](self-evolving-tools/) | Alita tarzı araç keşfi, kapsülleme ve yeniden kullanım — deneyimi "programlara yazma" fikrinin tamamlayıcı bir örneği |
 
 ## Proje Türleri
 

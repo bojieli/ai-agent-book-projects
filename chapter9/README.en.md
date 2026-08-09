@@ -15,9 +15,11 @@
 | 9-5 | [controllable-tts](controllable-tts/) | ✅ | Fish Audio S1 produced the 24-reference library and A/B/C media; a three-pass position-balanced Voxtral listening study rated the multi-reference arm highest and evaluated the near-human claim. The expected C > B > A ordering did not fully reproduce because A outscored B. |
 | 9-6 | [Anthropic native Computer Use record](claude-computer-use-native/) + `claude-quickstarts/computer-use-demo/` | ✅ | A [validated native run](claude-computer-use-native/validation/runs/exp9-6-anthropic-native-20260803-v2/acceptance.json) built the pinned Dockerfile locally and completed 16 real `claude-sonnet-4-5-20250929` responses plus 15 native `computer` actions. It did not interact with Google reCAPTCHA; visible Open-Meteo JSON grounded the final 70.2°F, clear-sky answer, and every deterministic gate passes. |
 | 9-7 | [computer-use-open-model](computer-use-open-model/) + `browser-use/` | ✅ | A real open-model visual browser run used `qwen/qwen3-vl-32b-instruct` for 16/16 calls, recovered from a Google CAPTCHA through weather.com, and retained 15 screenshots, the complete action trajectory, grounded answer evidence, and verified hashes. |
-| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | External XLeRobot pinned to `3d14695…` for keyboard/Xbox/Joy-Con/VR teleoperation. Only source/non-actuating preflight exists; no authorized four-mode hardware run or pick/place/wipe evidence. |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | External XLeRobot `3d14695…` plus RoboCrew, using exactly `gemini-robotics-er-1.5-preview`, angle annotation, and forward/left/right tools. No authorized robot/navigation run exists. |
-| 9-10 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | External `lerobot-sim2real` pinned to `87d6c1d…` for the five-stage RGB→PPO→SO-100 pipeline. The host lacks ManiSkill/NVIDIA and no authorized physical robot run exists. |
+| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | Real XLeRobot teleoperation for one desk-tidying task: put the red cup in the tray, put the yellow waste paper in the waste bin, then re-observe and verify the state. |
+| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Simulator measurement of the ideal-control upper bound for the same desk task; it does not claim that the real robot has run. |
+| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Gemini Robotics-ER 1.5 autonomously drives the real XLeRobot on the same desk-tidying task. |
+| 9-11 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Simulator comparison of open-loop, stepwise-checking, and predictive closed-loop strategies for the same task. |
+| 9-12 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | RGB cross-environment test for the same desk task, varying backgrounds, object appearance, lighting, and visual noise. |
 ## Project Types
 
 | Icon | Type | Meaning |

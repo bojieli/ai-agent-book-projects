@@ -23,7 +23,7 @@ En el plano de las herramientas, existen a grandes rasgos dos categorías de pro
 
 Es necesario aclarar que la arquitectura de voz discutida a continuación en este capítulo sirve simultáneamente para dos direcciones: el usuario hablando al Agente (como interfaz humano-máquina) y el Agente hablando con el mundo exterior en representación del usuario (como realizar llamadas telefónicas para negociar). Detrás de ambas se encuentra el mismo conjunto de tecnologías de voz en tiempo real. A continuación comenzaremos por los tres paradigmas de las arquitecturas de voz.
 
-## Tres paradigmas de la arquitectura de voz
+### Tres paradigmas de la arquitectura de voz
 
 Para aclarar la evolución técnica de los Agentes de voz, un sistema de coordenadas claro es la clasificación en tres partes presentada por OpenAI al lanzar GPT-Live en 2026 [^ch9-12], la cual coincide con las tres generaciones de arquitectura por las que ha pasado el propio sistema de voz de ChatGPT:
 
@@ -37,7 +37,7 @@ Además, GPT-Live trajo un segundo cambio estructural: desacoplar la "interacci�
 
 [^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ . La clasificación en tres partes "Cascada / Basado en turnos / Full-Duplex" de esta sección proviene del resumen de dicho artículo sobre la evolución de tres generaciones de voz en ChatGPT; el término "Omnimodal de extremo a extremo (Omni)" en el texto se corresponde con la categoría "turn-based voice models" en dicho artículo.
 
-## Paradigma 1: Pipeline en cascada (Cascading)
+### Paradigma 1: Pipeline en cascada (Cascading)
 
 La gran mayoría de los asistentes de voz comerciales (desde altavoces inteligentes hasta robots de atención al cliente) se basan en un pipeline en serie (Figura 9-1): la Detección de Actividad de Voz (VAD) determina cuándo ha terminado de hablar el usuario → el Reconocimiento Automático del Habla (ASR) convierte el audio en texto → el Gran Modelo de Lenguaje (LLM) comprende la intención y genera la respuesta → la Síntesis de Texto a Voz (TTS) lee la respuesta en voz alta. Al igual que en una carrera de relevos, cada etapa debe esperar a que el corredor anterior termine antes de empezar a correr.
 
@@ -83,7 +83,7 @@ Intuitivamente, a mayor utilización, el tiempo de espera se disparará de forma
 >
 > Este experimento muestra una dirección de aplicación importante para los Agentes de voz: **el Agente no se limita a esperar a que el usuario abra un chat; también puede iniciar proactivamente una sesión en tiempo real con estados claros de inicio, confirmación y finalización**. WebRTC en el navegador cubre la ruta de «llamar al usuario» más fácil de reproducir. Cuando sea necesario contactar con el mundo exterior en nombre del usuario, esperar a un agente humano o navegar por un IVR, el mismo contrato de herramienta de llamada puede conectarse a un proveedor PSTN/SIP que cumpla la normativa.
 
-### Streaming integral en el pipeline en cascada
+#### Streaming integral en el pipeline en cascada
 
 La Figura 9-2 calcula la situación de **serie pura** donde "cada etapa se ejecuta por completo antes de pasar el relevo". Los sistemas de producción suelen mantener la división modular VAD-ASR-LLM-TTS, pero permiten que cada etapa produzca resultados incrementales lo antes posible para acortar el tiempo que tarda el usuario en escuchar la primera sílaba:
 
@@ -97,7 +97,7 @@ Los sistemas más agresivos realizan **generación de arranque anticipado (preem
 
 La traslación a streaming ordinaria tampoco puede eliminar **la espera en silencio de VAD ni la propia determinación de turnos**. El ASR en streaming ya ha comenzado a trabajar en ese momento; lo que realmente se encuentra bloqueado por la determinación del turno es el envío de la transcripción final y la reproducción de la respuesta. La generación especulativa puede ocultar una parte de este cálculo, pero aún debe decidir cuándo es seguro empezar a hablar. Para reducir aún más esa espera, es necesario dirigirse a la percepción frontal y a la determinación del punto final en sí.
 
-### Percepción de voz en streaming: Sustituyendo VAD + ASR
+#### Percepción de voz en streaming: Sustituyendo VAD + ASR
 
 Este frontal de percepción consta de dos etapas: VAD determina si el usuario ha terminado de hablar y ASR transcribe el audio a texto. En una arquitectura estrictamente en serie, ambas determinan conjuntamente cuándo se inicia el pipeline posterior y qué entrada recibe; en una arquitectura en streaming, aunque el ASR trabaja de forma anticipada, el envío del texto final y el momento en que se empieza a responder siguen estando restringidos por la determinación del punto final. La cascada tradicional VAD + ASR presenta tres problemas fundamentales:
 
@@ -140,7 +140,7 @@ Téngase en cuenta que el modelo no solo emite la transcripción de texto, sino 
 >
 > Resultados: La latencia de reconocimiento incremental de la solución de simulación por bloques se puede controlar en el orden de uno a dos cientos de milisegundos (dependiendo de la longitud del bloque y del hardware), mientras que la solución tradicional necesita esperar a que el VAD confirme la finalización (600 ms) más la inferencia de Whisper (aproximadamente 200-500 ms en la configuración de este experimento), sumando un total de 800-1100 ms. En el escenario con pausas, el VAD juzgó erróneamente que se había terminado de hablar en la primera pausa larga, dividiendo la frase en dos segmentos reconocidos por separado; "aproximadamente a las dos" fue reconocido erróneamente como "aproximadamente a las cero" debido a la falta de contexto. En cambio, la solución por bloques mantuvo el contexto completo y reconoció la frase completa correctamente. En el escenario de ruido de fondo, Qwen2-Audio emitió el token `<|noise|>` marcando la presencia de ruido sin interrumpir el reconocimiento, mientras que el VAD tradicional fue activado erróneamente por el ruido, haciendo que el proceso de reconocimiento se iniciara de forma prematura.
 
-## Paradigma 2: Modelos omnimodales de extremo a extremo (Omni)
+### Paradigma 2: Modelos omnimodales de extremo a extremo (Omni)
 
 Al revisar todo el pipeline en cascada, se observa que incluso si el frontal de percepción se sustituye por la percepción de voz en streaming, al final sigue distribuyendo el "escuchar, pensar y hablar" a tres modelos independientes conectados entre sí mediante una interfaz discreta. Por muy ancha que sea esta interfaz, no es más que unos pocos tokens semánticos y algunos marcadores acústicos aislados: las emociones, el tono y la entonación actuales del hablante, así como el sonido ambiental y la música de fondo, se pierden casi por completo durante la transferencia; además, al entrenarse y optimizarse cada una de las tres etapas de forma independiente, resulta difícil coordinarlas entre sí. Los modelos omnimodales de extremo a extremo (Omni) toman una ruta diferente: utilizan un único modelo para "escuchar" directamente el audio, "pensar" la respuesta y "hablarla", unificando las tres etapas en una sola (Figura 9-4). Siempre que los datos de entrenamiento sean suficientes, el espacio latente (Latent Space) interno del modelo puede transmitir directamente esta información paralingüística al extremo de generación más allá del texto: la latencia es menor y la prosodia y la emoción se conservan. El compromiso radica en que: el **pipeline en cascada** tiene módulos claros, cada etapa se puede ajustar de forma independiente y tiene buena explicabilidad; el **modelo de extremo a extremo** tiene menor latencia y puede retener información no textual, a costa de mayores requisitos de datos de entrenamiento y menor explicabilidad.
 
@@ -180,7 +180,7 @@ La **API OpenAI Realtime** se aproxima a extremo a extremo a nivel de modelo (el
 
 Step-Audio R1 es un trabajo posterior de la serie Step-Audio que, sobre la base de la arquitectura de diálogo de voz de extremo a extremo de Step-Audio 2, internaliza aún más la capacidad de pensamiento directamente en el modelo de audio, representando una evolución progresiva de la misma ruta técnica.
 
-## Paradigma 3: Modelos de interacción full-duplex (Full-Duplex / Interactivo)
+### Paradigma 3: Modelos de interacción full-duplex (Full-Duplex / Interactivo)
 
 El Paradigma 2 combinó los tres modelos en uno solo, pero siguió manteniendo la suposición de "hablar por turnos": o habla el usuario o habla el modelo, y el punto de conmutación se adivina mediante VAD o semántica. Sin embargo, en algunos escenarios la interacción no es una conversación por turnos de "una frase tú, una frase yo". La **interpretación simultánea** es un ejemplo: el intérprete no espera a que el hablante termine la frase completa para empezar a hablar, sino que escucha y organiza en su mente al mismo tiempo; en cuanto el significado de un grupo sintáctico está completo, lo traduce inmediatamente, superponiéndose la escucha y la traducción de forma continua. Los juegos de ritmo donde se **golpea el tambor al ritmo de la música** son aún más extremos: el oído debe seguir continuamente el flujo ininterrumpido de música, las manos deben golpear a tiempo en el pulso y además anticipar el siguiente pulso; aquí ni siquiera existe el concepto de "turno", siendo la entrada un flujo continuo que nunca se detiene. Este tipo de tareas plantea un desafío fundamental para el modo turn-by-turn: requieren que la escucha, el pensamiento y la acción se realicen simultáneamente, mientras que la premisa del modo por turnos es precisamente ubicar los tres en diferentes franjas horarias sucesivas. Los modelos full-duplex llevan la ruta de "librarse de VAD" a su destino lógico: simplemente cancelan la suposición de "turnos", permitiendo que el modelo **escuche y hable de forma continua y simultánea**.
 
@@ -198,7 +198,7 @@ GPT-Live también siguió la misma ruta de división del trabajo entre rápido y
 
 Al revisar la cadena narrativa de "sustituir el VAD" de este capítulo: el VAD adivinaba la transición del turno de palabra mediante umbrales de silencio, la percepción en streaming (véase la sección anterior Paradigma 1 "Percepción de voz en streaming") elevó el juicio de transición al nivel semántico, y el modelo full-duplex disolvió por completo la "transición" en sí (al estar escuchando continuamente, la "interrupción" deja de ser un evento que requiere un procesamiento especial, por lo que la cadena de procesamiento de barge-in prescinde de la mayoría de sus etapas en la arquitectura). Este es el punto final hasta el momento de redactar este libro en la línea narrativa de "sustituir el VAD".
 
-## Compromisos en las arquitecturas de pensamiento: De la separación a la unificación
+### Compromisos en las arquitecturas de pensamiento: De la separación a la unificación
 
 Lo que realmente debe resolverse es la **contradicción entre la respuesta en tiempo real y el pensamiento profundo**: el usuario espera respuestas en milisegundos, mientras que los problemas complejos requieren tiempos de pensamiento de varios segundos. ¿Cómo mantener una baja latencia al tiempo que se permite al modelo pensar con la suficiente profundidad? Esta contradicción no es exclusiva de las arquitecturas de extremo a extremo; el pipeline en cascada tampoco puede evitarla.
 
@@ -206,7 +206,7 @@ Las tres soluciones siguientes no son iteraciones tecnológicas lineales: son co
 
 Vale la pena señalar que para 2026, la ruta de "desacoplamiento rápido-lento" se ha convertido en la opción dominante en los productos de voz de vanguardia y cuenta con un nombre específico. Thinking Machines Lab la denomina "Modelos de Interacción (Interaction Models)" (un modelo de interacción en tiempo real acoplado a un modelo de razonamiento asíncrono en segundo plano); Grok Voice "Think Fast" de xAI, el Agente de voz de Pine AI y la "delegación" de GPT-Live vista en la sección anterior siguen todos la misma ruta de "rápido en primer plano para mantener la conversación, lento en segundo plano para razonamiento profundo". La elección del desacoplamiento en lugar de "entrenar un modelo todopoderoso" responde a una razón práctica: los modelos de razonamiento de vanguardia se iteran cada pocos meses, mientras que la capacidad de interacción en tiempo real requiere datos y objetivos de entrenamiento especializados. Intentar meter ambos en el mismo modelo equivale a hacerle perseguir un blanco en movimiento, corriendo además el riesgo de diluir la capacidad de razonamiento más valiosa [^ch9-8]. Por el contrario, mientras se mantenga el modelo de razonamiento más fuerte intacto en segundo plano y solo se entrene un modelo de interacción ligero en primer plano, se podrá utilizar siempre el "cerebro" más potente del momento (esta es precisamente la razón por la que GPT-Live enfatiza la "capacidad de cambiar de forma sostenible al último modelo de vanguardia"). A continuación veremos las tres soluciones en orden de menor a mayor fuerza del mecanismo de coordinación.
 
-### Enfoque 1: Pensamiento rápido para responder al momento, pensamiento lento para contestar en profundidad
+#### Enfoque 1: Pensamiento rápido para responder al momento, pensamiento lento para contestar en profundidad
 
 El pensamiento rápido y el lento se ejecutan en paralelo (Figura 9-5): el pensamiento rápido ofrece una respuesta de relleno en menos de 500 ms (similar a cuando una persona dice primero "déjame pensar"), mientras que el pensamiento lento dedica 5-10 segundos en segundo plano a realizar un pensamiento profundo antes de ofrecer una respuesta completa. La tecnología utilizada por el pensamiento lento se denomina "escalado de cómputo en tiempo de prueba" (test-time scaling); en términos sencillos, consiste en permitir que el modelo "piense un poco más" al responder: en lugar de dar la respuesta en un solo paso, se desglosa la idea, se deduce paso a paso y se verifican los resultados como haría un humano al resolver un problema de matemáticas, intercambiando más pasos de cómputo por una respuesta de mayor calidad.
 
@@ -224,7 +224,7 @@ El pensamiento rápido y el lento se ejecutan en paralelo (Figura 9-5): el pensa
 <user>（enojado） ¡¿Al final me sugieres comprarlo o no?!</user>
 ```
 
-### Enfoque 2: Pensamiento rápido para la interacción, pensamiento lento para asesorar
+#### Enfoque 2: Pensamiento rápido para la interacción, pensamiento lento para asesorar
 
 La Solución 2 permite que el pensamiento lento vea la salida del pensamiento rápido y proporcione sugerencias al pensamiento rápido a través del Agent Status Bar (el mecanismo de inyección dinámica de metainformación presentado en el Capítulo 2), en lugar de hablar directamente con el usuario. En comparación con la Solución 1, presenta dos mejoras: el pensamiento lento se ejecuta de forma asíncrona en segundo plano, aprovechando los intervalos del habla para continuar pensando; al poder ver la salida del pensamiento rápido, no entra en conflicto directo, sino que se retira a un segundo plano para actuar como "asesor". La delegación de GPT-Live y el Agente de voz de Pine AI mencionados anteriormente son ejemplos de la Solución 2 en producción: el modelo de razonamiento en segundo plano transmite las conclusiones a través de un canal de texto simplificado al modelo de interacción en primer plano, y este último decide cuándo y con qué palabras comunicárselo al usuario.
 
@@ -232,7 +232,7 @@ Sin embargo, esta solución sigue teniendo limitaciones fundamentales. **Es posi
 
 La Solución 2 también enfrenta un problema teórico fundamental: **la imposibilidad de lograr "pensar mientras se habla"**. Cuando los seres humanos enfrentan problemas complejos, no piensan primero toda la respuesta en la cabeza para luego decirla de un tirón, sino que piensan una parte y dicen una parte: "Esta pregunta es muy interesante... (pausa para pensar) En primer lugar debemos considerar... (continúa pensando) En segundo lugar...". El pensamiento rápido de la Solución 2 solo puede decir palabras de rellenado para esperar a que el pensamiento lento produzca un resultado, sin poder intercalar de forma natural el proceso de pensamiento en la conversación.
 
-### Enfoque 3: Unificación de extremo a extremo de pensamiento y expresión (caso de estudio: Step-Audio R1)
+#### Enfoque 3: Unificación de extremo a extremo de pensamiento y expresión (caso de estudio: Step-Audio R1)
 
 Aunque la Solución 2 resuelve el problema de espera del pensamiento lento, en términos de arquitectura sigue siendo un esquema de "pensar primero y hablar después": el pensamiento y la expresión siguen siendo dos procesos separados, imposibilitando pensar y hablar al mismo tiempo como un ser humano. Para romper esta limitación fundamental, es necesario internalizar la capacidad de pensamiento directamente en el modelo.
 
@@ -256,7 +256,7 @@ Ambos funcionan en paralelo: el Cerebro de Formulación no necesita terminar de 
 
 La Solución 3 "internaliza" el pensamiento en un solo modelo, logrando la forma más elegante de "pensar mientras se habla", pero el costo es precisamente el "blanco en movimiento" mencionado al principio de esta sección: este único modelo debe ser tanto el razonador más fuerte como el hablante en tiempo real, y dado que ambas capacidades evolucionan rápidamente, la ruta unificada requiere reentrenamientos repetidos para mantenerse al día. Esto explica también la diferenciación industrial al momento de escribir este libro: los productos de vanguardia que buscan "poder cambiar en cualquier momento al último cerebro" (GPT-Live, Grok Voice, Pine AI) apuestan en su mayoría por la ruta de desacoplamiento de la Solución 2, mientras que la Solución 3 es más adecuada para escenarios que persiguen una naturalidad extrema y están dispuestos a asumir costos de entrenamiento dedicados. Ninguna reemplaza a la otra, sino que representan un compromiso entre un "cerebro intercambiable" y un "pensar mientras se habla más estrecho".
 
-### Interfaz entre rápido y lento: ¿Qué más se puede transmitir además de texto?
+#### Interfaz entre rápido y lento: ¿Qué más se puede transmitir además de texto?
 
 (Nota: Esta es una discusión de interfaz aplicable a múltiples escenarios, alejándose temporalmente de la línea principal de voz.) Al revisar la Solución 2, se descubre una dimensión de diseño pasada por alto: el pensamiento lento le "pasa la nota" al pensamiento rápido mediante un canal de **texto** (transmitiendo una sugerencia a través del Status Bar). El texto es fácil de entender y depurar, pero es una pajilla delgada para todo lo que hay en la cabeza del pensamiento lento: los ricos estados intermedios reales se comprimen en unas pocas frases. Entonces, ¿esta interfaz entre lo rápido y lo lento podría prescindir del texto?
 
@@ -268,7 +268,7 @@ También proporciona una frontera honesta: **si la colaboración rápido-lento e
 
 Ya sea de extremo a extremo o modular, la calidad individual de la capa de percepción y la capa de ejecución sigue siendo de vital importancia. El modelo de extremo a extremo resuelve el problema de la latencia a nivel de arquitectura, pero el "escuchar con precisión" y el "hablar con naturalidad", como habilidades básicas, no se resuelven automáticamente por el cambio de arquitectura (el "escuchar con precisión" correspondiente a la percepción de voz en streaming ya se discutió en el Paradigma 1; aquí examinaremos el "hablar con naturalidad" de la capa de ejecución: la síntesis de voz más humana).
 
-## Síntesis de voz más humana
+### Síntesis de voz más humana
 
 La "perfección" del TTS tradicional es precisamente donde radica el problema: una voz demasiado fluida, sin pausas y sin muletillas hace que el oyente identifique al instante que se trata de una máquina. Las "imperfecciones" del habla humana no son defectos: las pausas, las muletillas ("eh", "este", "bueno") y las repeticiones ocasionales son en realidad la exteriorización natural del proceso de pensamiento, transmitiendo señales importantes al oyente como "estoy pensando" o "no estoy muy seguro". Sin embargo, la velocidad de pensamiento de la IA es mucho más rápida que la reproducción de voz, siendo su salida naturalmente fluida y completa, lo que revela su identidad de máquina si se sintetiza directamente.
 
@@ -384,6 +384,12 @@ Un hallazgo contraintuitivo es que lo que realmente funciona no es "qué fotogra
 
 [^ch9-9]: Los detalles de los fotogramas clave controlados por puerta, la transcripción a pedido y la narración de fotogramas en texto persistente, así como la mecánica completa y las ablaciones por modelo, se encuentran en Li, Bojie y Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
 
+### Modelos del mundo para Computer Use
+
+La interfaz de observación responde a «¿qué ocurrió entre dos capturas?» haciendo que los cambios dinámicos lleguen antes y queden en memoria. No elimina el coste de planificación: el Agente puede seguir repitiendo «captura, piensa, clic» y reconsiderar tras cada acción. OSWorld-Human muestra que una precisión de nivel humano puede requerir muchos más pasos y esperas.
+
+Las personas operan el escritorio de forma predictiva: anticipan el efecto y, si el estado coincide con la predicción, continúan sin replantear. Solo una discrepancia devuelve el sistema a observación y planificación. Es ejecución especulativa; **un modelo del mundo resuelve la otra mitad del problema** al predecir el siguiente estado, continuar cuando coincide y replantear o detenerse cuando no.
+
 ### Dispositivos móviles: Las barreras del ecosistema superan a los desafíos técnicos
 
 Computer Use también se está expandiendo hacia los dispositivos móviles. Existen diferencias técnicas reales entre los dispositivos móviles y los de escritorio: el espacio de acciones ya no suele ser "coordenadas del ratón + teclado", sino que se conecta a las API de servicios de accesibilidad del sistema (como AccessibilityService en Android) para leer los elementos de la interfaz y emitir clics e ingreso de texto; el modo de interacción pasa de un puntero de ratón a gestos táctiles, y la semántica de las coordenadas cambia en consecuencia (si un mismo $(x, y)$ corresponde a un toque simple, una pulsación larga o el punto inicial de un gesto de deslizamiento requiere tipos de gestos adicionales para delimitarse). Los benchmarks para móviles como AndroidWorld presentados en el Capítulo 6 evalúan precisamente la capacidad del Agente para completar tareas reales en App sobre este espacio de acciones.
@@ -408,8 +414,8 @@ A diferencia del campo de la voz, la naturaleza de tiempo real propia de Compute
 
 ## Operación robótica: Del control en tiempo real al entrenamiento y la generalización
 
-> **Nota de lectura**: Esta sección aborda el control robótico. El Experimento 9-10 muestra los métodos de transferencia de la simulación a la realidad: la **parte de entrenamiento en simulación (pasos 3 y 4) se puede completar en un servidor con GPU pura**, sin necesidad de hardware; pero para reproducir de extremo a extremo toda la línea de producción (incluidos los pasos de despliegue real), se requiere hardware real como el brazo robótico SO100. Si temporalmente no estás interesado en el campo de la robótica, puedes saltarte esta sección sin que afecte a la lectura de los demás capítulos.
-
+> **Los cinco experimentos de esta sección usan una única tarea: poner la taza roja en la bandeja, poner el papel amarillo en el cubo de residuos y volver a observar para verificar el estado del escritorio. El brazo real y el simulador se informan por separado, pero comparten la semántica de acciones y las condiciones de éxito.**
+>
 Los Agentes de voz enfrentan la latencia en la modalidad auditiva, Computer Use enfrenta la latencia en la modalidad visual, y cuando el Agente necesita controlar robots en el mundo físico, los desafíos de latencia y multimodalidad se amplifican aún más: las consecuencias de las acciones son irreversibles, y una sola colisión puede dañar los objetos o al propio robot. Esta sección examina primero cómo los robots reducen el problema del control en tiempo real mediante arquitecturas de dos capas y Action Chunking, para pasar luego a su escollo más duro en la actualidad: el entrenamiento y la generalización (cómo se obtienen los datos y cómo migra el modelo entre tareas y plataformas).
 
 ### El hardware no es el cuello de botella, los algoritmos sí lo son
@@ -420,15 +426,15 @@ Es necesario delimitar las fronteras de esta afirmación: lo que la contraprueba
 
 En lo que respecta a este tipo de tareas, la verdadera brecha se encuentra en la capa algorítmica, la cual se desarrolla en las dos subsecciones siguientes.
 
-> **Experimento 9-8 ★: Experiencia de teleoperación con XLeRobot**
+> **Experimento 9-8 ★: Teleoperar XLeRobot para ordenar el escritorio**
 >
-> XLeRobot admite múltiples métodos de teleoperación como teclado, mando de Xbox, Joycon de Switch y visores VR. Al manipular personalmente el robot para completar tareas de recogida, colocación y limpieza, se observa la latencia de respuesta, la precisión del movimiento y la calidad de finalización de la tarea, estableciendo una comprensión intuitiva de los límites de capacidad del hardware: tras experimentarlo en persona se descubre que el robot puede hacer de todo cuando lo controla un humano, lo que demuestra que el cuello de botella actual reside en los algoritmos y no en el hardware [^ch9-1].
+> **Objetivo:** En un XLeRobot real, un operador remoto ejecuta la misma tarea y verifica de nuevo el escritorio.
 >
-> [^ch9-1]: XLeRobot, “Documentación de Teleop”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
-
+> **Principio:** Un brazo de unos cientos de dólares puede completar esta tarea de varios pasos bajo teleoperación humana; aquí el cuerpo del hardware no es el cuello de botella, sino la percepción, la planificación, el control cerrado y la recuperación.
+>
 ### Arquitectura de dos capas: Separación de planificación y control
 
-Para que un robot complete tareas domésticas complejas, debe tomar decisiones en dos escalas temporales diferentes. La primera capa es la **planificación de largo alcance** (long-horizon planning), más lenta: desglosa instrucciones de alto nivel como "limpiar la cocina" en secuencias de subobjetivos (limpiar el mostrador, cargar el lavavajillas, limpiar las superficies), requiriendo comprender la semántica del entorno, razonar sobre las dependencias de la tarea y planificar esquemas de acción multipaso (al igual que un humano piensa "qué hacer primero y qué hacer después" antes de ponerse a trabajar). La segunda capa es el **control VLA** (Vision-Language-Action, modelo de Visión-Lenguaje-Acción), más rápido: ejecuta cada operación específica ("caminar hacia el fregadero", "tomar el trapo", "limpiar la superficie"), emitiendo continuamente señales de control basadas en la imagen actual que ve y las instrucciones de lenguaje, para que los movimientos del robot sean fluidos y continuos.
+Para que un robot complete tareas domésticas complejas, debe tomar decisiones en dos escalas temporales diferentes. La primera capa es la **planificación de largo alcance** (long-horizon planning), más lenta: desglosa instrucciones de alto nivel como "limpiar la escritorio" en secuencias de subobjetivos (limpiar el mostrador, cargar el lavavajillas, limpiar las superficies), requiriendo comprender la semántica del entorno, razonar sobre las dependencias de la tarea y planificar esquemas de acción multipaso (al igual que un humano piensa "qué hacer primero y qué hacer después" antes de ponerse a trabajar). La segunda capa es el **control VLA** (Vision-Language-Action, modelo de Visión-Lenguaje-Acción), más rápido: ejecuta cada operación específica ("caminar hacia el fregadero", "tomar el trapo", "limpiar la superficie"), emitiendo continuamente señales de control basadas en la imagen actual que ve y las instrucciones de lenguaje, para que los movimientos del robot sean fluidos y continuos.
 
 Esta arquitectura de dos capas separa eficazmente la complejidad: la planificación de largo alcance se encarga de "qué hacer" y el control VLA se encarga de "cómo hacerlo". Esta arquitectura de dos capas de "toma de decisiones lenta de alto nivel + ejecución rápida de nivel inferior" es altamente similar en estructura al "pensamiento rápido/lento" en el escenario de voz anterior: ambas desacoplan el pensamiento complejo y la respuesta en tiempo real en diferentes módulos. Cabe recordar que la "planificación / control" aquí se corresponde con el desacoplamiento de la dimensión "pensamiento profundo lento / respuesta en tiempo real rápida" en el pensamiento rápido/lento, y no con el desacoplamiento de "pensamiento / expresión" de MPS Solución 3 (este último divide "pensar" y "hablar", mientras que el primero divide "planificación global" y "ejecución en tiempo real", cortando dimensiones diferentes).
 
@@ -446,11 +452,19 @@ Los VLM generales ya poseen una capacidad notable de pensamiento embrollado. **G
 
 [^ch9-2]: Google DeepMind, “Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/
 
-> **Experimento 9-9 ★★: Uso de Gemini Robotics-ER 1.5 para impulsar la navegación autónoma de XLeRobot**
+> **Experimento 9-9 ★: Medir en simulación el límite de control ideal de la misma tarea**
 >
-> A través de la biblioteca RoboCrew, se utiliza Gemini Robotics-ER 1.5 como modelo de planificación de largo alcance, superponiendo marcas de escala angular en la imagen de la cámara. El sistema solo proporciona tres herramientas simples: avanzar, girar a la izquierda y girar a la derecha. Dada la tarea "encontrar la cocina y caminar hasta allí", el modelo toma decisiones a una frecuencia de 0.5-1Hz: identificando características visuales como pasillos, puertas y muebles, ejecutando un giro a la izquierda si juzga que "la cocina puede estar a la izquierda", y continuando el avance si ve que "hay un refrigerador al frente". También se puede extender al modo de control por voz (usando una palabra de activación para desencadenar nuevas tareas). Este experimento revela los límites de capacidad del VLM en la capa de planificación de largo alcance: el razonamiento espacial y la descomposición de tareas se realizan razonablemente bien, pero aún hay margen de mejora en la robustez y la consistencia del razonamiento multipaso en entornos complejos [^ch9-3].
+> **Objetivo:** Ejecutar la misma tarea con un controlador ideal que no comete errores de percepción ni de elección.
 >
-> [^ch9-3]: XLeRobot, “Control de LLM Agent”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html
+> **Principio:** Esta referencia mide el límite cuando las decisiones son correctas; no demuestra que el brazo real haya ejecutado la tarea.
+>
+
+> **Experimento 9-10 ★★: Control autónomo de un XLeRobot real con Gemini Robotics-ER 1.5**
+>
+> **Objetivo:** Sustituir al operador por un Agente que observa y llama a habilidades acotadas de recoger, colocar y verificar, manteniendo la misma tarea y criterio de éxito.
+>
+> **Principio:** La diferencia está en percepción, planificación, temporización, control cerrado y recuperación, no en una nueva limitación mecánica.
+>
 
 ### Control VLA: De datos de demostración a la generalización entre distintos cuerpos
 
@@ -480,21 +494,19 @@ Existen numerosos casos de éxito en esta ruta: la manipulación diestra de mano
 
 Lo que realmente debe aportar este capítulo son los dos pasos de ingeniería ineludibles al aterrizar la aleatorización de dominio en máquinas reales. El primero es la **calibración del rango de aleatorización**: el rango no se puede fijar al azar; si es demasiado estrecho no cubrirá los cambios reales, y si es demasiado amplio aumentará la dificultad de entrenamiento, aprendiendo políticas subóptimas que "pueden lidiar con todo pero no son expertas en nada". En la práctica, se suele **medir y calibrar la distribución** de parámetros clave a partir de datos del entorno real (como la distribución real del coeficiente de fricción y la latencia de respuesta de los motores), muestreando dentro de ese rango; si la política entrenada en simulación cae notablemente en la máquina real, se amplía gradualmente el rango de aleatorización hasta que la brecha sim-to-real converja a un nivel aceptable. El segundo es el **alineamiento visual**: calibrar con precisión la pose de la cámara en simulación y en la realidad (alineamiento de entorno), y reemplazar aleatoriamente fondos fotografiados en el entorno real dentro del renderizado de simulación (reemplazo de fondo greenscreen), haciendo que la imagen de simulación se asemeje lo más posible a lo que ve la máquina real (estos dos pasos se demostrarán concretamente en el Experimento 9-10).
 
-> **Experimento 9-10 ★★★: Agarre robótico Sim2Real RGB zero-shot**
+> **Experimento 9-11 ★★: Comparar tres bucles autónomos en simulación**
 >
-> Utilizando LeRobot + el simulador ManiSkill, se entrena usando únicamente imágenes de cámaras RGB (sin depender de sensores de profundidad ni sensores de fuerza), desplegándose directamente sin ajustes adicionales (zero-shot) en el brazo robótico real SO100. Flujo de cinco pasos:
+> **Objetivo:** Comparar ejecución abierta, comprobación paso a paso y estrategia predictiva con la misma tarea y herramientas.
 >
-> 1. **Alineamiento de entorno**: Ajustar la posición de la cámara en la simulación y en el entorno real, verificando mediante superposición visual que las imágenes de ambos lados se alineen.
-> 2. **Reemplazo de fondo** (greenscreen): Recortar aleatoriamente imágenes de fondo tomadas del entorno real y superponerlas en el renderizado de simulación, acercando el fondo de las imágenes de simulación a la realidad.
-> 3. **Aleatorización de dominio (Domain randomization)**: Aleatorizar parámetros como color del robot, textura de los objetos, condiciones de iluminación y campo de visión de la cámara.
-> 4. **Entrenamiento con RL**: Entrenar usando el algoritmo PPO en entornos de simulación masivamente paralelos hasta alcanzar una tasa de éxito >90% en simulación.
-> 5. **Despliegue real**: Lograr con éxito la tarea de agarre directamente en el robot real de forma zero-shot.
+> **Principio:** La comprobación permite recuperar fallos locales; el modelo del mundo continúa cuando predicción y realidad coinciden y replantea cuando divergen. El estado final se confirma con observación nueva.
 >
-> Elementos clave para el éxito: Alineamiento preciso del entorno + aleatorización de dominio visual + aleatorización de parámetros físicos, indispensables los tres. Limitaciones: Cuando la forma, tamaño o material de los objetos reales excede la distribución de entrenamiento, la tasa de éxito disminuye significativamente [^ch9-6].
+
+> **Experimento 9-12 ★★★: Prueba RGB entre entornos para la misma tarea**
 >
-> [^ch9-6]: LeRobot, “Tutorial Sim2Real”. https://github.com/StoneT2000/lerobot-sim2real/blob/main/docs/zero_shot_rgb_sim2real.md
+> **Objetivo:** Variar fondo, apariencia, iluminación y ruido visual y probar la adaptación de la política simulada.
 >
-> ![Figura 9-13: Pipeline del Experimento 9-10 Sim2Real RGB Zero-Shot](images/fig9-13.svg)
+> **Principio:** La diversidad visual puede mejorar la robustez, pero no sustituye la calibración real ni el bucle de seguridad.
+>
 
 +## Actualización 2026: planificación en streaming y modelos del mundo
 
@@ -529,12 +541,6 @@ OpenVLA no se entrenó literalmente modificando solo el projector: el trabajo or
 Un modelo del mundo aprende una transición accionable: estado + acción candidata → estado futuro predicho → seleccionar y verificar una acción. Es más amplio que V-JEPA: incluye modelos predictivos latentes (V-JEPA 2), modelos generativos interactivos (Genie 3 y Cosmos), World-Action Models (GeniWorld y Robust-WAM), acciones latentes aprendidas de vídeo sin etiquetas (LAWM-3D) y RL basado en modelos (Dreamer y MuZero). Su función es aprender de observaciones a escala, probar acciones contrafactuales antes de ejecutarlas, separar dinámicas compartidas del control específico del robot y replanificar cuando la predicción difiere de la realidad.
 
 Los preprints de 2026 estudian priors dinámicos compartidos (DyPES-VLA), acciones visuales para manipulación cerrada fuera de distribución (GeniWorld), acciones latentes 3D desde vídeo humano (LAWM-3D), alineación semántica del futuro (Robust-WAM) y despliegue asíncrono en tiempo real. Son resultados prometedores, no una solución definitiva a la generalización.
-
-### Modelos del mundo para Computer Use
-
-Un escritorio también es un sistema dinámico: estado de pantalla + click/type/scroll/wait → siguiente estado. Photon-1, anunciado por Induction Labs en julio de 2026, predice estados latentes a partir de vídeo de uso del ordenador, y después aprende el formato de acciones y aplica RL online. Sus cifras de benchmark y coste son internas y aún no tienen reproducción independiente. Una arquitectura práctica usa un predictor auxiliar: el VLM decide la semántica y las herramientas, mientras el predictor guarda estados candidatos, filtra acciones peligrosas y descarta rollouts obsoletos cuando las capturas reales no coinciden. La red, la autenticación, los CAPTCHA y el estado oculto del servidor obligan a verificar toda acción irreversible en el entorno real.
-
-Fuentes: [OpenVLA](https://arxiv.org/abs/2406.09246), [V-JEPA 2](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/), [Genie 3](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/), [Photon-1](https://www.inductionlabs.com/news/scaling-video-pretraining), [DyPES-VLA](https://arxiv.org/abs/2608.06374), [GeniWorld](https://arxiv.org/abs/2608.06332), [LAWM-3D](https://arxiv.org/abs/2608.05706), [Robust-WAM](https://arxiv.org/abs/2608.05903).
 
 ## Resumen del capítulo
 

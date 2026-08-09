@@ -23,7 +23,7 @@ Araç düzeyine inildiğinde bu hatta kabaca iki tür ürün var. Birincisi **se
 
 Şunu belirtmek gerekir: bu bölümde bundan sonra tartışılan ses mimarisi aynı anda iki yöne birden hizmet eder — kullanıcının Agent'a konuşması (insan-makine arayüzü olarak) ve Agent'ın kullanıcı adına dış dünyayla konuşması (örneğin telefonla pazarlık etmesi). İkisinin ardında da aynı gerçek zamanlı ses teknolojisi vardır. Şimdi ses mimarisinin üç paradigmasından başlayalım.
 
-## Ses Mimarisinin Üç Paradigması
+### Ses Mimarisinin Üç Paradigması
 
 Sesli Agent'ların teknik evrimini netleştirmek için elverişli bir koordinat sistemi, OpenAI'ın 2026'da GPT-Live'ı yayımlarken ortaya koyduğu üçlü ayrımdır[^ch9-12] — bu ayrım, ChatGPT sesinin kendi geçtiği üç mimari kuşağa birebir denk düşer:
 
@@ -37,7 +37,7 @@ Bunun dışında GPT-Live ikinci bir yapısal değişiklik daha getirdi — "ger
 
 [^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ — Bu kısımdaki "kaskad / tur tabanlı / full-duplex" üçlü ayrımı, bu yazının ChatGPT sesinin üç kuşaklık evrimine dair özetinden gelir; metindeki "uçtan uca tam modlu (Omni)", oradaki "turn-based voice models" kategorisine karşılık düşer.
 
-## Paradigma 1 · Kaskad Boru Hattı (Cascading)
+### Paradigma 1 · Kaskad Boru Hattı (Cascading)
 
 Ticari sesli asistanların büyük çoğunluğu — akıllı hoparlörlerden müşteri hizmetleri botlarına kadar — seri bir boru hattına dayanır (Şekil 9-1): konuşma etkinliği algılama (VAD) kullanıcının ne zaman bitirdiğine karar verir → otomatik konuşma tanıma (ASR) sesi yazıya çevirir → büyük dil modeli (LLM) niyeti anlar ve bir yanıt üretir → metinden konuşmaya (TTS) yanıtı seslendirir. Tıpkı bir bayrak yarışındaki gibi, her halka bir öncekinin koşusu bitmeden yola çıkamaz.
 
@@ -89,7 +89,7 @@ Sezgisel olarak, kullanım oranı yükseldikçe bekleme süresi doğrusal olmaya
 >
 > Bu deney, sesli Agent'ların önemli bir uygulama yönünü gösterir: **Agent yalnızca kullanıcının sohbet penceresini açmasını beklemek zorunda değildir; başlangıç, teyit ve tamamlanma durumları açık olan gerçek zamanlı bir oturumu proaktif biçimde kurabilir**. Tarayıcı WebRTC'si, yeniden üretilmesi en kolay “kullanıcıyı ara” yolunu kapsar. Kullanıcı adına dış dünyayla iletişim kurmak, insan müşteri temsilcisini beklemek ya da IVR'da gezinmek gerektiğinde aynı arama aracı sözleşmesi mevzuata uygun bir PSTN/SIP sağlayıcısına bağlanabilir.
 
-### Kaskad Boru Hattında Baştan Sona Akış
+#### Kaskad Boru Hattında Baştan Sona Akış
 
 Şekil 9-2, her aşamanın bayrağı devretmeden önce işini bitirdiği **tamamen seri** durumu gösterir. Üretim sistemleri genellikle modüler VAD-ASR-LLM-TTS iş bölümünü korur; ancak kullanıcının ilk sesi daha erken duyması için her aşamanın artımlı sonuçları olabildiğince erken vermesini sağlar:
 
@@ -103,7 +103,7 @@ Daha agresif sistemler **erken/spekülatif üretim (preemptive/speculative gener
 
 Sıradan akışlı işleme de **VAD'nin sessizlik beklemesini ve tur kararının kendisini** ortadan kaldıramaz. Akışlı ASR bu bekleme sırasında zaten çalışmaktadır; tur kararının engellediği şey nihai transkriptin kaydedilmesi ve yanıtın oynatılmasıdır. Erken üretim hesabın bir bölümünü gizleyebilir, ancak sistemin ne zaman güvenle konuşabileceğine yine karar vermesi gerekir. Bu gecikmeyi daha da azaltmak, en öndeki algı ve bitiş noktası kararının iyileştirilmesini gerektirir.
 
-### Akışlı Konuşma Algısı: VAD + ASR'nin Yerini Almak
+#### Akışlı Konuşma Algısı: VAD + ASR'nin Yerini Almak
 
 Bu algı ön ucu iki kademeden oluşur: VAD kullanıcının sözünü bitirip bitirmediğine karar verir, ASR sesi yazıya döker. Tamamen seri mimaride ikisi birlikte hattın devamının ne zaman başlayacağını ve hangi girdiyi alacağını belirler. Akışlı mimaride ASR daha erken çalışmaya başlasa da nihai metnin kaydedilmesi ve yanıtın ne zaman başlayacağı bitiş noktası kararına bağlı kalır. Geleneksel VAD + ASR kaskadının üç temel sorunu vardır:
 
@@ -146,7 +146,7 @@ Modelin ürettiğinin yalnızca metin transkripsiyonu olmadığına dikkat edin;
 >
 > Sonuçlar: Parçalı simülasyon düzeneğinde artımlı tanıma gecikmesi yüz-iki yüz milisaniye ölçeğinde tutulabilir (kesin değer parça uzunluğuna ve donanıma bağlıdır); geleneksel düzenekte ise VAD'nin bitişi teyit etmesini (600ms) beklemek, üstüne Whisper çıkarımını (bu deneyin yapılandırmasında yaklaşık 200-500ms) eklemek gerekir; toplamı 800-1100ms'dir. Duraklamalı senaryoda VAD, ilk uzun duraklamada "bitti" diye yanlış karar verdi ve cümleyi iki parçaya bölüp ayrı ayrı tanıdı; "大概两点左右" (yaklaşık saat iki civarı) bağlam eksikliği yüzünden "大概零点左右" (yaklaşık saat sıfır civarı) olarak yanlış tanındı. Parçalı düzenek ise eksiksiz bağlamı koruyup cümlenin tamamını doğru tanıdı. Arka plan gürültüsü senaryosunda Qwen2-Audio, gürültünün varlığını işaretlemek için `<|noise|>` token'ı üretti ama tanımayı kesmedi; geleneksel VAD ise gürültüyle yanlışlıkla tetiklenip tanıma sürecinin erkenden başlamasına yol açtı.
 
-## Paradigma 2 · Uçtan Uca Tam Modlu Modeller (Omni)
+### Paradigma 2 · Uçtan Uca Tam Modlu Modeller (Omni)
 
 Kaskad boru hattının bütününe dönüp bakalım: algı ön ucu akışlı konuşma algısıyla değiştirilmiş olsa bile, sonuçta "dinleme, düşünme, konuşma" üçlüsünü birbirinden bağımsız üç modele dağıtır ve bunlar birbirine ayrık bir arayüzle bağlanır. Bu arayüz ne kadar genişletilirse genişletilsin, taşıdığı şey birkaç anlamsal token ile serpiştirilmiş birkaç akustik işaretten ibarettir — konuşanın o andaki duygusu, ses tonu ve tonlaması ile arka plandaki ortam sesleri ve müzik, devir teslim sırasında büyük ölçüde kaybolur; üstelik üç aşama ayrı ayrı eğitilip ayrı ayrı optimize edildiğinden birbiriyle uyum içinde çalışmaları da zordur. Uçtan uca tam modlu modeller (Omni) ise başka bir yol açar — tek bir modelle doğrudan sesi "dinler", yanıtı "düşünür" ve onu "söyler"; üç aşamayı tek bir bütünde birleştirir (Şekil 9-4). Eğitim verisi yeterli olduğu sürece modelin içindeki gizli uzay (Latent Space), bu paralinguistik bilgileri metnin ötesinde doğrudan üretim tarafına aktarabilir: gecikme daha düşük olur, prozodi ve duygu da korunur. Ödünleşim şudur: **kaskad boru hattının** modülleri nettir, her aşama bağımsız olarak ayarlanabilir ve yorumlanabilirliği iyidir; **uçtan uca modelin** gecikmesi daha düşüktür ve metin dışı bilgiyi koruyabilir, ama bunun bedeli daha büyük eğitim verisi ihtiyacı ve daha zayıf yorumlanabilirliktir.
 
@@ -186,7 +186,7 @@ Ama Omni ne kadar güçlü olursa olsun, özünde üç modeli tek bir modelde bi
 
 Step-Audio R1, Step-Audio serisinin devamı niteliğindeki çalışmadır; Step-Audio 2'nin uçtan uca sesli diyalog mimarisi üzerine kurularak düşünme yeteneğini doğrudan ses modelinin içine içselleştirmeyi bir adım daha ileri götürür. İkisi aynı teknik hattın ardışık evrimini temsil eder.
 
-## Paradigma 3 · Tam Çift Yönlü Etkileşim Modelleri (Full-Duplex / Interactive)
+### Paradigma 3 · Tam Çift Yönlü Etkileşim Modelleri (Full-Duplex / Interactive)
 
 Paradigma 2 üç modeli tek modelde birleştirdi, ama "sırayla konuşma" varsayımına sadık kalmayı sürdürdü — ya kullanıcı konuşur ya model; geçiş noktası ise VAD'ye ya da anlama bakılarak tahmin edilir. Oysa bazı senaryolar "bir sen söyle, bir ben söyleyeyim" biçiminde sıralı bir konuşma değildir. **Simültane çeviri** bunun bir örneğidir: çevirmen konuşmacının cümlesini bitirmesini beklemez; dinlerken zihninde kurar ve bir anlam öbeği aşağı yukarı tamamlandığında hemen çevirisini söyler; dinleme ile çeviri baştan sona üst üste biner. **Müziğe eşlik ederek davul vuruşlarına basmayı** gerektiren ritim oyunları ise daha da uçtur — kulağın kesintisiz müzik akışını sürekli izlemesi, ellerin her vuruşu tam zamanında yakalaması ve aynı anda bir sonraki vuruşun öngörülmesi gerekir; burada "bir tur" diye bir şey bile yoktur, girdi hiç durmayan kesintisiz bir akıştır. Bu tür görevler tur tur (turn-by-turn) işleyen düzene kökten bir meydan okumadır: dinlemenin, düşünmenin ve eylemin aynı anda gerçekleşmesini isterler; oysa tur düzeninin ön kabulü tam da bu üçünü ardışık zaman dilimlerine yerleştirmektir. Full-duplex modeli, "VAD'den kurtulma" yolunu mantıksal sonuna kadar götürür — "sırayla konuşma" varsayımını doğrudan ortadan kaldırır ve modelin **aynı anda, kesintisiz biçimde dinleyip konuşmasını** sağlar.
 
@@ -204,7 +204,7 @@ GPT-Live de aynı hızlı-yavaş iş bölümü yolunu izliyor — **"gerçek zam
 
 Bu bölümün "VAD'nin yerini alma" anlatı zincirine dönüp bakalım: VAD söz hakkının el değiştirmesini sessizlik eşiğine bakarak tahmin eder; akışlı algı (yukarıda Paradigma 1'deki "Akışlı Konuşma Algısı" kısmına bakın) bu geçiş kararını anlam düzeyine yükseltir; full-duplex modeli ise "geçişin" kendisini tümüyle ortadan kaldırır — sürekli dinlemededir, "araya girme" artık özel olarak ele alınması gereken bir olay değildir ve barge-in işleme zinciri de bu yüzden mimaride büyük ölçüde ortadan kalkar. Bu, "VAD'nin yerini alma" anlatı hattının, bu satırların yazıldığı tarih itibarıyla vardığı son noktadır.
 
-## Düşünme Mimarisinde Ödünleşimler: Ayrışmadan Birleşmeye
+### Düşünme Mimarisinde Ödünleşimler: Ayrışmadan Birleşmeye
 
 Asıl çözülmesi gereken şey **gerçek zamanlı yanıt ile derin düşünme arasındaki çelişkidir**: kullanıcı milisaniye ölçeğinde bir karşılık bekler, oysa karmaşık problemler saniyeler süren bir düşünme zamanı gerektirir; gecikmeyi düşük tutarken modelin yeterince derin düşünmesi nasıl sağlanır? Bu çelişki yalnızca uçtan uca mimariye özgü değildir; kaskad boru hattı da bunun etrafından dolaşamaz.
 
@@ -212,7 +212,7 @@ Aşağıdaki üç çözüm doğrusal bir teknik ilerleme değildir — farklı k
 
 Şunu belirtmek gerekir: 2026'ya gelindiğinde "hızlı-yavaş ayrıştırma" hattı öncü ses ürünlerinin ana tercihi hâline geldi ve kendine ait bir ad kazandı. Thinking Machines Lab buna "etkileşim modelleri (Interaction Models)" diyor — gerçek zamanlı bir etkileşim modeline eşlik eden asenkron bir arka plan reasoning modeli. xAI'ın Grok Voice "Think Fast"i, Pine AI'ın sesli Agent'ı ve bir önceki kısımdaki GPT-Live "devretmesi" de aynı hattı izliyor: "hızlı olan ön planda konuşmayı sürdürür, yavaş olan arka planda derin reasoning yapar". "Her işi yapan tek bir model eğitmek" yerine ayrıştırmayı seçmenin ardında pragmatik bir gerekçe var: öncü reasoning modelleri birkaç ayda bir yenileniyor, gerçek zamanlı etkileşim yeteneği ise kendine özgü veri ve eğitim hedefleri gerektiriyor; ikisini aynı modele tıkıştırmak, ona sürekli hareket eden bir hedefi kovalatmak demektir ve üstelik en değerli yetenek olan reasoning'i sulandırabilir[^ch9-8]. Tersine, en güçlü reasoning modelini hiç dokunmadan arka planda tutup ön planda yalnızca hafif bir etkileşim modeli eğitmek, o anın en güçlü "beynini" her zaman kullanabilmeyi sağlar — GPT-Live'ın "her zaman en yeni öncü modele geçilebilmesi" vurgusunun nedeni tam olarak budur. Şimdi üç çözüme "koordinasyon mekanizması zayıftan güçlüye" sırasıyla bakalım.
 
-### Çözüm 1: Hızlı Düşünme Oyalar, Yavaş Düşünme Yanıtlar
+#### Çözüm 1: Hızlı Düşünme Oyalar, Yavaş Düşünme Yanıtlar
 
 Hızlı ve yavaş düşünme paralel olarak yürütülür (Şekil 9-5): hızlı düşünme 500ms içinde kısa, oyalayıcı bir yanıt verir (insanın önce "bir düşüneyim" demesi gibi); yavaş düşünme ise arka planda 5-10 saniye derin düşündükten sonra eksiksiz yanıtı sunar. Yavaş düşünmede kullanılan tekniğin adı "çıkarım zamanında hesaplama ölçekleme"dir (test-time scaling) — sade bir ifadeyle, modelin soruyu yanıtlarken "biraz daha uzun düşünmesi": yanıtı tek adımda vermek yerine, insanın matematik problemi çözmesi gibi önce yolu çizer, adım adım türetir, sonucu denetler; daha fazla hesaplama adımı harcayıp daha kaliteli bir yanıt elde eder.
 
@@ -232,7 +232,7 @@ Hızlı ve yavaş düşünme paralel olarak yürütülür (Şekil 9-5): hızlı 
 <user>(öfkeli) Sonuçta almamı mı öneriyorsun, almamamı mı?!</user>
 ```
 
-### Çözüm 2: Hızlı Düşünme Etkileşir, Yavaş Düşünme Uyarır
+#### Çözüm 2: Hızlı Düşünme Etkileşir, Yavaş Düşünme Uyarır
 
 Çözüm 2'de yavaş düşünme, hızlı düşünmenin çıktısını görebilir ve kullanıcıya doğrudan konuşmak yerine Agent Durum Çubuğu (Bölüm 2'de tanıtılan dinamik meta bilgi enjeksiyonu mekanizması) üzerinden hızlı düşünmeye öneri iletir. Çözüm 1'e kıyasla iki iyileştirme getirir: yavaş düşünme arka planda asenkron çalışır ve konuşma aralarından yararlanarak düşünmeyi sürdürür; hızlı düşünmenin çıktısını görebildiği için onunla doğrudan çelişmez, perde arkasına çekilip "akıl hocası" rolünü üstlenir. Yukarıda anılan GPT-Live devretmesi ve Pine AI sesli Agent'ı, Çözüm 2'nin üretimdeki örnekleridir — arka plandaki reasoning modeli vardığı sonuçları özet bir metin kanalıyla ön plandaki etkileşim modeline geri gönderir, kullanıcıya ne zaman ve hangi sözcüklerle aktarılacağına ise ön plandaki model karar verir.
 
@@ -240,7 +240,7 @@ Ama bu çözümün de özsel sınırları var. **Hızlı düşünme sözü dinle
 
 Çözüm 2 ayrıca temel bir kuramsal sorunla da karşı karşıyadır: **"düşünürken konuşma" gerçekleştirilemez**. İnsan karmaşık bir problemle karşılaştığında yanıtın tamamını önce kafasında kurup sonra tek nefeste söylemez; bir parça düşünür, bir parça söyler — "bu soru çok ilginç... (düşünmek için durur) önce şunu göz önünde bulundurmamız gerekiyor... (düşünmeyi sürdürür) ikinci olarak...". Çözüm 2'deki hızlı düşünme ise yavaş düşünme sonuç verene kadar yalnızca doldurma sözcükler söyleyip boşuna bekleyebilir; düşünme sürecini konuşmanın içine doğal biçimde serpiştiremez.
 
-### Çözüm 3: Uçtan Uca Düşünme ve İfadenin Birleşmesi (Step-Audio R1 Örneği)
+#### Çözüm 3: Uçtan Uca Düşünme ve İfadenin Birleşmesi (Step-Audio R1 Örneği)
 
 Çözüm 2, yavaş düşünmenin beklenmesi sorununu çözmüş olsa da mimari olarak hâlâ "önce düşün, sonra söyle" biçimindedir — düşünme ile ifade birbirinden ayrı iki süreç olarak kalır ve insan gibi düşünürken konuşmak mümkün olmaz. Bu temel sınırı aşmak için düşünme yeteneğini doğrudan modelin içine içselleştirmek gerekir.
 
@@ -265,7 +265,7 @@ Birkaç yinelemenin ardından düşünmenin temeli metin soyutlamasından akusti
 
 Çözüm 3 düşünmeyi tek bir modelin içine "içselleştirerek" "düşünürken konuşmayı" en zarif biçimde gerçekleştirir; ama bedeli tam da bu kısmın başında söylenen "hareketli hedeftir": bu tek model hem en güçlü reasoning yapan olmak hem de gerçek zamanlı konuşan olmak zorundadır ve iki yetenek de hızla evrildiğinden, birleşik hat ayak uydurabilmek için defalarca yeniden eğitilmek durumundadır. Bu, bu satırların yazıldığı dönemdeki sektörel ayrışmayı da açıklıyor — "istenildiği an en yeni beyne geçebilme" peşindeki öncü ürünler (GPT-Live, Grok Voice, Pine AI) çoğunlukla Çözüm 2'nin ayrıştırma hattına oynuyor; Çözüm 3 ise azami doğallığı hedefleyen ve özel eğitim maliyetini üstlenmeye razı olan senaryolara daha uygun. İkisi birbirinin yerini almaz; bu, "değiştirilebilir beyin" ile "daha sıkı bir düşünürken konuşma" arasındaki bir ödünleşimdir.
 
-### Hızlı ile Yavaş Arasındaki Arayüz: Metin Dışında Başka Ne Aktarılabilir
+#### Hızlı ile Yavaş Arasındaki Arayüz: Metin Dışında Başka Ne Aktarılabilir
 
 (Not: Bu, senaryolar arası bir arayüz tartışmasıdır ve ses ana hattından geçici olarak ayrılır.) İkinci çözüme dönüp bakınca gözden kaçmış bir tasarım boyutu ortaya çıkar: yavaş düşünme, hızlı düşünmeye "söz aktarırken" **metin** kanalını kullanıyordu (durum çubuğu üzerinden tek cümlelik bir öneri). Metin anlaşılır ve hata ayıklaması kolaydır, ama yavaş düşünmenin kafasındaki birikime takılmış incecik bir pipetten ibarettir — asıl zengin olan ara durum, birkaç cümleye sıkıştırılır. Peki hızlı ile yavaş arasındaki bu arayüz metin kullanmak zorunda mıdır?
 
@@ -277,7 +277,13 @@ Aynı çalışma dürüst bir sınır da çiziyor: **hızlı-yavaş iş birliği
 
 Uçtan uca da olsa modüler de olsa, algı katmanının ve yürütme katmanının kendi kaliteleri hâlâ kritik önemdedir. Uçtan uca modeller gecikmeyi mimari düzeyde çözer, ama "doğru duymak" ve "insan gibi konuşmak" biçimindeki bu iki temel beceri mimari değişti diye kendiliğinden çözülmez — "doğru duymak"a karşılık gelen akış tabanlı konuşma algısı birinci paradigmada ele alındı; burada "insan gibi konuşmak"ın yürütme katmanına bakıyoruz: daha insansı konuşma sentezi.
 
-## Daha İnsansı Konuşma Sentezi
+### Daha İnsansı Konuşma Sentezi
+
+### Computer Use için dünya modelleri
+
+Gözlem arayüzü, dinamik değişiklikleri daha erken iletip bellekte tutarak “iki ekran görüntüsü arasında ne oldu?” sorusunu yanıtlar. Ancak planlama maliyetini ortadan kaldırmaz; Agent yine seri “ekran görüntüsü—düşün—tıkla” döngüsünü tekrarlayabilir. OSWorld-Human, insan düzeyindeki doğruluğun insandan çok daha fazla adım ve beklemeyle birlikte görülebileceğini gösterir.
+
+İnsan masaüstünü öngörülü kullanır: eylemin sonucunu tahmin eder, gözlenen durum tahminle uyuştuğunda yeniden planlamadan devam eder; yalnızca sapma gözlem ve planlamaya döndürür. Bu speculative execution'dır ve dünya modeli bunu Agent'a sağlar. **Dünya modeli sorunun diğer yarısını çözer**: sonraki durumu öngörür, uyuşmada sürdürür, uyuşmazlıkta yeniden planlar veya durur.
 
 Geleneksel TTS'in "kusursuzluğu" tam da sorunun kendisidir: aşırı akıcı, hiç duraksamayan, dolgu sözcüğü içermeyen konuşma, duyulur duyulmaz makine olduğunu ele verir. İnsan konuşmasındaki o "kusurlar" birer eksiklik değildir — duraksamalar, dolgu sözcükleri ("eee", "ııı", "şey"), ara sıra yapılan tekrarlar — aslında düşünme sürecinin doğal dışavurumudur ve dinleyiciye "şu an düşünüyorum", "pek emin değilim" gibi önemli sinyaller iletir. Oysa yapay zekanın düşünme hızı konuşmanın seslendirilme hızından çok daha yüksektir; çıktısı doğası gereği akıcı ve eksiksiz gelir, doğrudan sentezlendiğinde makine kimliğini açık eder.
 
@@ -425,8 +431,8 @@ Ses alanından farklı olarak, Computer Use'un kendi gerçek zamanlılığı iç
 
 ## Robot Manipülasyonu: Gerçek Zamanlı Kontrolden Eğitim ve Genellemeye
 
-> **Okuma notu**: Bu bölüm robot kontrolünü tartışıyor. Deney 9-10, simülasyondan gerçeğe geçiş yöntemini gösteriyor — bunun içindeki **simülasyon eğitimi kısmı (3-4. adımlar) yalnızca bir GPU sunucusunda tamamlanabilir** ve donanım gerektirmez; ancak tüm hattı uçtan uca yeniden üretmek için (gerçek dağıtım adımları dahil) SO100 robot kolu gibi gerçek donanım gerekir. Robotik alanıyla şimdilik ilgilenmiyorsanız bu bölümü atlayabilirsiniz; diğer bölümlerin okunmasını etkilemez.
-
+> **Bu bölümdeki beş deney aynı görevi kullanır: kırmızı bardağı tepsiye koymak, sarı kâğıdı çöp kutusuna koymak, ardından masayı yeniden gözlemleyip durumu doğrulamak. Gerçek robot ve simülatör ayrı raporlanır; eylem anlamı ve başarı koşulları aynıdır.**
+>
 Sesli Agent'lar gecikmeyle işitsel modalitede, Computer Use ise görsel modalitede yüzleşir; Agent'ın fiziksel dünyadaki bir robotu kontrol etmesi gerektiğinde gecikme ve çok modluluk zorlukları daha da büyür — eylemlerin sonuçları geri alınamaz ve tek bir çarpışma nesneye ya da robotun kendisine zarar verebilir. Bu bölümde önce robotların iki katmanlı mimari ve action chunking ile gerçek zamanlı kontrol sorununu nasıl bastırdığına, ardından bugün karşılarındaki daha sert cevize — eğitim ve genellemeye — bakacağız: veri nereden gelecek, model görevler ve platformlar arasında nasıl aktarılacak?
 
 ### Darboğaz Donanım Değil, Algoritma
@@ -437,12 +443,12 @@ Bu iddianın sınırını net çizmek gerekiyor: teleoperasyon karşı örneğin
 
 Bu tür görevler açısından bakıldığında asıl uçurum algoritma katmanındadır; sonraki iki alt bölüm bunu ayrı ayrı ele alıyor.
 
-> **Deney 9-8 ★: XLeRobot Teleoperasyon Deneyimi**
+> **Deney 9-8 ★: XLeRobot teleoperasyonu ile masayı toplamak**
 >
-> XLeRobot; klavye, Xbox kumandası, Switch Joycon ve VR başlığı gibi birçok teleoperasyon yöntemini destekler. Robotu bizzat kumanda ederek nesne alma, yerleştirme ve silme gibi görevleri tamamlayın; tepki gecikmesini, hareket hassasiyetini ve görev tamamlama kalitesini gözlemleyerek donanım yeteneklerinin sınırlarına dair sezgisel bir kavrayış edinin — bunu bizzat deneyimledikten sonra göreceksiniz ki insan kumanda ettiğinde robot her şeyi yapabiliyor; bu da mevcut darboğazın gerçekten donanım değil algoritma olduğunu gösteriyor.[^ch9-1]
+> **Amaç:** Gerçek bir XLeRobot'u uzaktan kullanarak aynı çok adımlı görevi tamamlamak ve masa durumunu doğrulamak.
 >
-> [^ch9-1]: XLeRobot, "Teleop dokümantasyonu". https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
-
+> **İlke:** Birkaç yüz dolarlık kol, insan teleoperasyonu altında bu görevi yapabilir; bu görev için donanım gövdesi darboğaz değildir, farkı algı, planlama, kapalı çevrim kontrol ve hata kurtarma yaratır.
+>
 ### İki Katmanlı Mimari: Planlama ile Kontrolün Ayrılması
 
 Robotların karmaşık ev işlerini tamamlaması, iki farklı zaman ölçeğinde karar vermeyi gerektirir. Birinci katman, daha yavaş olan **uzun ufuklu planlamadır** (long-horizon planning): "mutfağı temizle" gibi üst düzey bir talimatı alt hedef dizisine ayırmak (tezgahı toplamak, bulaşık makinesini doldurmak, yüzeyleri silmek). Bu, ortamın semantiğini anlamayı, görev bağımlılıkları üzerine akıl yürütmeyi ve çok adımlı bir eylem planı kurmayı gerektirir — tıpkı insanın işe girişmeden önce "önce neyi, sonra neyi yapacağım" diye düşünmesi gibi. İkinci katman, daha hızlı olan **VLA kontrolüdür** (Vision-Language-Action, görsel-dil-eylem modeli): her somut işlemi yürütür ("lavaboya git", "bezi al", "tezgahı sil") ve o an gördüğü görüntüyle dil talimatına göre sürekli kontrol sinyali üreterek robotun hareketlerinin akıcı ve tutarlı olmasını sağlar.
@@ -463,11 +469,19 @@ Genel amaçlı VLM'ler şimdiden fena olmayan bir bedenlenmiş akıl yürütme y
 
 [^ch9-2]: Google DeepMind, "Gemini Robotics-ER 1.5". https://deepmind.google/models/gemini-robotics/gemini-robotics-er/
 
-> **Deney 9-9 ★★: Gemini Robotics-ER 1.5 ile XLeRobot'un Otonom Navigasyonu**
+> **Deney 9-9 ★: Simülasyonda aynı görevin ideal kontrol üst sınırı**
 >
-> RoboCrew kütüphanesi aracılığıyla Gemini Robotics-ER 1.5'i uzun ufuklu planlama modeli olarak kullanın; kamera görüntüsünün üzerine açı ölçeği işaretlerini bindirin. Sistem yalnızca üç basit araç sunar: ileri git, sola dön, sağa dön. "Mutfağı bul ve oraya git" görevi verildiğinde model 0,5-1 Hz frekansla karar verir: koridor, kapı, mobilya gibi görsel özellikleri tanır; "mutfak muhtemelen solda" diye değerlendirdiğinde sola döner, "önümde buzdolabı var" gördüğünde ilerlemeye devam eder. Ayrıca sesli kontrol moduna genişletilebilir (yeni görevi bir uyandırma sözcüğüyle tetiklemek). Bu deney, VLM'in uzun ufuklu planlama katmanındaki yetenek sınırlarını açığa çıkarır: uzamsal akıl yürütme ve görev ayrıştırma şimdiden iyi düzeydedir, ama karmaşık ortamlardaki sağlamlık ve çok adımlı akıl yürütmedeki tutarlılık hâlâ gelişmeye açıktır.[^ch9-3]
+> **Amaç:** Algılama ve eylem seçiminde hata yapmayan ideal denetleyiciyle aynı görevi çalıştırıp tekrarlanabilir üst sınır oluşturmak.
 >
-> [^ch9-3]: XLeRobot, "LLM Agent kontrolü". https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html
+> **İlke:** Bu, kararların her zaman doğru olduğu durumun referansıdır; gerçek robotun çalıştırıldığı anlamına gelmez.
+>
+
+> **Deney 9-10 ★★: Gemini Robotics-ER 1.5 ile gerçek XLeRobot'u otonom kontrol etmek**
+>
+> **Amaç:** İnsanın yerine masayı gözleyen ve sınırlı pick, place, verify becerilerini çağıran bir Agent koymak; robotu, görevi ve başarı ölçütünü 9-8 ile aynı tutmak.
+>
+> **İlke:** Doğrudan karşılaştırma yeni bir mekanik sınırı değil; algı, planlama, zamanlama, kapalı çevrim ve hata kurtarma farkını gösterir.
+>
 
 ### VLA Kontrolü: Gösterim Verisinden Çapraz Bedenlenme Genellemesine
 
@@ -501,25 +515,21 @@ Bu yolun çok sayıda başarılı örneği var: OpenAI'ın robot eliyle becerikl
 
 Bu bölümde asıl tamamlanması gereken şey, domain randomization'ı gerçek bir makineye indirirken kaçınılmaz olan iki mühendislik halkasıdır. Birincisi **rastgeleleştirme aralığının kalibrasyonu**: aralık göz kararı belirlenemez; çok dar olursa gerçek değişimleri kapsamaz, çok geniş olursa eğitimi zorlaştırır ve "her şeye idare eder ama hiçbirinde iyi olmayan" alt optimal bir politika ortaya çıkar. Pratikte genellikle önce gerçek ortam verisinden kilit parametrelerin dağılımı **ölçümle kalibre edilir** (sürtünme katsayısının, motor tepki gecikmesinin gerçek dağılımı gibi) ve örnekleme bu aralıkta yapılır; simülasyonda eğitilen politika gerçek makinede belirgin biçimde puan kaybediyorsa rastgeleleştirme aralığı kademeli olarak genişletilir, ta ki sim-to-real gap kabul edilebilir bir düzeye inene kadar. İkincisi **görsel hizalamadır**: simülasyondaki ve gerçekteki kamera pozu (konum ve yönelim) hassas biçimde kalibre edilir (ortam hizalaması) ve gerçekte çekilmiş arka planlar simülasyon render'ına rastgele yerleştirilir (greenscreen arka plan değişimi); böylece simülasyon görüntüsü gerçek makinenin gördüğüne olabildiğince yaklaşır — bu iki adımı Deney 9-10 somut olarak gösterecek.
 
-> **Deney 9-10 ★★★: RGB Tabanlı Zero-Shot Sim2Real Robot Kolu Kavraması**
+> **Deney 9-11 ★★: Simülatörde üç otonom döngüyü karşılaştırmak**
 >
-> LeRobot + ManiSkill simülatörünü kullanarak yalnızca RGB kamera görüntüsüyle (derinlik sensörüne ya da kuvvet sensörüne dayanmadan) eğitin, ardından zero-shot olarak (hiçbir ek ayar yapmadan) doğrudan gerçek bir SO100 robot koluna dağıtın. Beş adımlı süreç:
+> **Amaç:** Aynı görev ve araçlarla açık çevrim, adım adım kontrol ve kısa ufuklu öngörü stratejisini karşılaştırmak.
 >
-> 1. **Ortam hizalaması**: Simülasyondaki ve gerçek ortamdaki kamera konumlarını ayarlayın, görselleştirme üst üste bindirmesiyle iki taraftaki görüntülerin hizalandığını doğrulayın
-> 2. **Arka plan değişimi** (greenscreen): Gerçek ortamda çekilen arka plan görüntüsünü rastgele kırparak simülasyon render'ının üzerine bindirin, böylece simülasyon görüntüsünün arka planı gerçeğe yaklaşsın
-> 3. **Domain randomization**: Robotun rengini, nesne dokularını, aydınlatma koşullarını, kamera görüş açısını vb. parametreleri rastgeleleştirin
-> 4. **RL eğitimi**: PPO algoritmasıyla büyük ölçekli paralel simülasyon ortamlarında, simülasyondaki başarı oranı >%90 olana kadar eğitin
-> 5. **Gerçek dağıtım**: Gerçek robotta zero-shot olarak doğrudan kavrama görevini başarıyla tamamlayın
->
-> Başarının kilit unsurları: hassas ortam hizalaması + görsel alan rastgeleleştirmesi + fiziksel parametre rastgeleleştirmesi; üçünden biri eksik olursa olmaz. Sınırlılık: gerçek nesnenin biçimi, boyutu veya malzemesi eğitim dağılımının dışına çıktığında başarı oranı belirgin biçimde düşer.[^ch9-6]
->
-> [^ch9-6]: LeRobot, "Sim2Real eğitimi". https://github.com/StoneT2000/lerobot-sim2real/blob/main/docs/zero_shot_rgb_sim2real.md
->
->
-> ![Şekil 9-13: Deney 9-10 zero-shot RGB Sim2Real hattı](images/fig9-13.svg)
+> **İlke:** Adım kontrolü yerel hatadan kurtarır; dünya modeli tahmin gerçekle uyuştuğunda devam eder, ayrıştığında yeniden planlar. Son durum yeni gözlemle doğrulanır.
 >
 
-## 2026 Güncellemesi: Akışkan Planlama ve Dünya Modelleri
+> **Deney 9-12 ★★★: Aynı görev için ortamlar arası RGB testi**
+>
+> **Amaç:** Arka planı, nesne görünümünü, ışığı ve görsel gürültüyü değiştirip simülasyonda öğrenilen politikanın yeni görüntülere uyumunu sınamak.
+>
+> **İlke:** Görsel çeşitlilik dayanıklılığı artırabilir, ancak gerçek robot kalibrasyonunun ve tam güvenlik döngüsünün yerini tutmaz.
+>
+
+### 2026 Güncellemesi: Akışkan Planlama ve Dünya Modelleri
 
 Robotik bölümü “VLM bir plan yazar, VLA da uygular” cümlesinde bitmemeli. **“Masayı düzenle”** görevini düşünelim. Uzun ufuklu planlayıcı önce yarısı dolu bir fincanı, kâğıt parçalarını, üç kitabı, açık bir dizüstü bilgisayarı, çöp kutusunu ve bir saklama kutusunu içeren durum listesini çıkarır; ardından önkoşulları ve başarı kontrolleri olan komutlar üretir:
 
@@ -559,12 +569,6 @@ Bu kavram yalnızca V-JEPA’dan ibaret değildir. Aile; latent predictive model
 
 2026 tarihli yeni preprint’ler ortak dinamik öncüllerini ve embodiment’e özgü head’leri (DyPES-VLA), dağılım dışı kapalı çevrim manipülasyon için görsel-eylem temsillerini (GeniWorld), insan videolarından 3B farkındalıklı latent action’ları (LAWM-3D), semantic foresight alignment’ı (Robust-WAM) ve eşzamansız gerçek zamanlı dağıtımı inceliyor. Bunlar umut verici araştırma sonuçlarıdır; genellemenin çözüldüğünü göstermezler.
 
-### Computer Use için dünya modelleri
-
-Masaüstü de dinamik bir sistemdir: ekran durumu + click/type/scroll/wait -> sonraki durum. Induction Labs’ın Temmuz 2026’da duyurduğu Photon-1, büyük ölçekli Computer Use videolarından latent sonraki durum tahmini yapar; ardından eylem biçimlendirmesini fine-tune eder ve online RL uygular. Şirketin benchmark ve maliyet rakamları şirket içi değerlendirmelerdir; henüz bağımsız olarak yeniden üretilmemiştir. Pratik bir tasarım yan yardımcı bir predictor kullanır: VLM anlamı ve araçları seçer, predictor aday sonraki durumları önbelleğe alır, riskli eylemleri süzer ve gerçek ekran görüntüleri uyuşmadığında eskimiş rollout’ları atar. Ağ, kimlik doğrulama, CAPTCHA ve sunucunun gizli durumu, geri alınamaz her eylemin gerçek ortamda doğrulanmasını zorunlu kılar.
-
-Kaynaklar: [OpenVLA](https://arxiv.org/abs/2406.09246), [V-JEPA 2](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/), [Genie 3](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/), [Photon-1](https://www.inductionlabs.com/news/scaling-video-pretraining), [DyPES-VLA](https://arxiv.org/abs/2608.06374), [GeniWorld](https://arxiv.org/abs/2608.06332), [LAWM-3D](https://arxiv.org/abs/2608.05706), [Robust-WAM](https://arxiv.org/abs/2608.05903).
-
 ## Bölüm Özeti
 
 Üç senaryo yüzeyde birbirinden çok farklı görünüyor, ama gecikme ve çok modluluk biçimindeki iki engel hepsinin peşini hiç bırakmıyor. Ses; seri boru hattından uçtan uca ve full-duplex mimarilere, birbirinden ayrı hızlı-yavaş düşünmeden "düşünürken konuşma"ya uzanan bir evrim yolunu şimdiden katetti. Computer Use'un OSWorld gibi benchmark'lardaki doğruluğu insan seviyesine yaklaştı, ama işlem adımlarının insandan belirgin biçimde fazla olması ve adım sürelerinin görev ilerledikçe sürekli artması biçimindeki verimlilik farkının sistematik bir çözümü hâlâ yok. Robotikte ise ağırlıklı olarak görsel geri bildirime dayanan manipülasyon görevlerinde darboğaz donanımdan VLA kontrol katmanının görevler arası genelleme yeteneğine kaydı (dokunsal algılama, becerikli eller vb. hâlâ aşılamamış donanım eksiklikleridir). Bir sonraki bölüm bakış açısını birden fazla Agent arasındaki iş birliğine çevirecek; orası bambaşka bir boyutun zorluğudur.
@@ -580,3 +584,26 @@ Kaynaklar: [OpenVLA](https://arxiv.org/abs/2406.09246), [V-JEPA 2](https://ai.me
 7. ★★ DOM/Accessibility Tree öğe indekslemesi standart Web uygulamalarında belirgin sonuç veriyor, ama gitgide daha çok yazılım arayüzü (Canvas/WebGL render'ı, platformlar arası kendi çizen kontroller) erişilebilir yapısal bilgi sunmuyor ve geriye yalnızca görsel işaretleme ya da koordinat tahmini kalıyor. Sizce Computer Use saf görsel yola mı oynamalı, yoksa yapısal ve görsel iki yolu birden mi sürdürmeli? İki yolu birden sürdürmenin maliyeti ve getirisi nedir?
 8. ★★ VLA modelleri action chunking (eylem parçalama) kullanıyor — metinde anlatıldığı gibi, π₀'ın tipik yapılandırması 50 Hz frekansta 25-50 gelecek eylemi bir seferde üretmektir — ve böylece çıkarım gecikmesini yürütme süresinin içine saklıyor. Ama yürütme sırasında ortam ani biçimde değişirse (örneğin nesne yerinden alınırsa), önceden üretilmiş eylem dizisi geçersizleşir. Action chunking'in verimlilik avantajı ile ortam değişimlerine tepki hızı arasında dengeyi nasıl kurarsınız?
 9. ★★★ Bu bölümdeki üç senaryonun (ses, Computer Use, robotik) hepsi "algılama-düşünme-eylem" döngüsünün gecikme sorunuyla yüzleşiyor ve hepsi hızlı-yavaş düşünmenin paralelleştirilmesi yönünde evriliyor. Ses senaryosunda bu, "yanlış söylediysen sonra düzelt" biçiminde; Computer Use senaryosunda "önce tıkla sonra bak" biçiminde; robotik senaryosunda ise "bir adım at sonra bak" biçiminde ortaya çıkıyor. Hızlı düşünmeye dayanan bu eylemlerin geri döndürülemez sonuçlara yol açmamasını nasıl garanti edersiniz?
+### Computer Use için dünya modelleri
+
+Gözlem arayüzü, dinamik değişiklikleri daha erken iletip bellekte tutarak “iki ekran görüntüsü arasında ne oldu?” sorusunu yanıtlar. Ancak planlama maliyetini ortadan kaldırmaz; Agent yine seri “ekran görüntüsü—düşün—tıkla” döngüsünü tekrarlayabilir. OSWorld-Human, insan düzeyindeki doğruluğun insandan çok daha fazla adım ve beklemeyle birlikte görülebileceğini gösterir.
+
+İnsan masaüstünü öngörülü kullanır: eylemin sonucunu tahmin eder, gözlenen durum tahminle uyuştuğunda yeniden planlamadan devam eder; yalnızca sapma gözlem ve planlamaya döndürür. Bu speculative execution'dır ve dünya modeli bunu Agent'a sağlar. **Dünya modeli sorunun diğer yarısını çözer**: sonraki durumu öngörür, uyuşmada sürdürür, uyuşmazlıkta yeniden planlar veya durur.
+
+Geleneksel TTS'in "kusursuzluğu" tam da sorunun kendisidir: aşırı akıcı, hiç duraksamayan, dolgu sözcüğü içermeyen konuşma, duyulur duyulmaz makine olduğunu ele verir. İnsan konuşmasındaki o "kusurlar" birer eksiklik değildir — duraksamalar, dolgu sözcükleri ("eee", "ııı", "şey"), ara sıra yapılan tekrarlar — aslında düşünme sürecinin doğal dışavurumudur ve dinleyiciye "şu an düşünüyorum", "pek emin değilim" gibi önemli sinyaller iletir. Oysa yapay zekanın düşünme hızı konuşmanın seslendirilme hızından çok daha yüksektir; çıktısı doğası gereği akıcı ve eksiksiz gelir, doğrudan sentezlendiğinde makine kimliğini açık eder.
+
+**Çözüm**: "Nerede duraksanacağı, hangi tonun kullanılacağı" kararını ana LLM'e devretmek. LLM yalnızca metin değil, kontrol etiketleri de üretir: `[THINKING]` 1-2 saniyelik bir düşünme duraksaması ve dolgu sesi ("eee...") ekler; `[SEARCHING]` daha kısa bir duraksama ve arayış bildiren dolgu sözcükleri üretir ("şey...", "nasıl desem"); `[EMO:happy]` gibi etiketler tonu ve prozodiyi ayarlar; `[SPEED:0.8x]` konuşma hızını denetler. Şu anda karmaşık bir soruyu yanıtlarken duraksamak mı gerektiğini, kullanıcının sabırsızlandığını ve hızlanmak gerektiğini ya da bunun rahat bir sohbet olduğunu ve daha canlı konuşulması gerektiğini yalnızca LLM bilebilir.
+
+Bu çözümde TTS, çok modlu bir üretici rolü üstlenir: girdi olarak metin + kontrol etiketleri alır, çıktı olarak ses verir. Sıradan metinle karşılaştığında normal biçimde konuşma sentezler; bir kontrol etiketiyle karşılaştığında ona karşılık gelen dilsel olmayan sesi üretir: `[THINKING]` uzatılmış bir "eee..." sesi, `[SIGH]` iç çekme sesi, `[LAUGH:small]` hafif bir kahkaha, `[BREATH]` nefes alma sesi üretir.
+
+Uygulama için iki yol vardır: birincisi, kontrol etiketlerini yerleşik olarak destekleyen kendi TTS'ini geliştirmek (esnekliği en yüksek seçenek, ama uzman bir ekip gerektirir); ikincisi, voice cloning (ses klonlama) kullanmak — aynı sanal kişi için farklı duygu, hız ve stilde onlarca referans ses kaydı hazırlamak ve kontrol etiketlerine göre en uygun referans sesi seçerek TTS API'sini (ElevenLabs, Fish Audio gibi) çağırmak; bu yol birkaç hafta içinde devreye alınabilir.
+
+> **Deney 9-5 ★★: Fish Audio Tabanlı, Kontrol Etiketleriyle Sürülen TTS**
+>
+> Fish Audio S1'in ses klonlama yeteneğini kullanın (aynı tınıyı zero-shot klonlamak için yalnızca 3-10 saniyelik referans ses yeterlidir). Duygu (nötr/mutlu/hayal kırıklığına uğramış/düşünceli) x hız (normal/hızlı/yavaş) x stil (resmi/rahat) kombinasyonlarını kapsayan, her biri yaklaşık 5 saniyelik 24 kayıtlık bir referans ses kütüphanesi oluşturun.
+>
+> LLM çıktısı örneği: `[EMO:happy][SPEED:fast]Harika! Siparişiniz onaylandı.[THINKING]Eee, kargo süresine bir bakayım...[EMO:neutral][SPEED:normal]Yarın öğleden sonra teslim edilmesi bekleniyor.`
+>
+> Yürütme katmanı etiketleri ayrıştırır ve karşılık gelen referans sese eşler: `[EMO:happy][SPEED:fast]` "mutlu + hızlı + rahat" referans sesine, `[THINKING]` "düşünceli + yavaş + resmi" referans sesine (duraksama ritmi ve tereddütlü tonlamayla), `[EMO:neutral][SPEED:normal]` ise "nötr + normal + resmi" referans sesine karşılık gelir. Fish Audio farklı referans sesler arasında tınının tutarlı kalmasını garanti eder; yalnızca prozodi ve duygu değişir.
+>
+> Üç yapılandırmayı karşılaştırın: kontrol etiketi olmadan (akıcı ama mekanik, duyar duymaz yapay zeka olduğu anlaşılıyor), tek referans sesle (doğal ama duygusal olarak tekdüze) ve çok referanslı kütüphaneyle (bilgi teyit ederken neşeli ve hızlı, açıklamalardan önce doğal duraksamalar, genel olarak gerçek bir müşteri temsilcisinin anlatımına yakın).

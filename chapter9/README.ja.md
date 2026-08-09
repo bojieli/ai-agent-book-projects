@@ -15,9 +15,11 @@
 | 9-5 | [controllable-tts](controllable-tts/) | 🚧 | 実 Fish Audio S1 の 4×3×2 参照音声庫と A/B/C メディアは構造 gate を通過。定性 listening study と「人間の客服に近い」評価が残る。 |
 | 9-6 | `claude-quickstarts/computer-use-demo/` | 📖 | 外部 `anthropics/claude-quickstarts` を `9bcc95e…` に固定。本文対象はコンテナ化 Ubuntu desktop＋Claude agent loop の Computer Use demo で、quickstarts 全体ではない。 |
 | 9-7 | `browser-use/` | 📖 | 外部 `browser-use/browser-use` を `ec9277c…` に固定。本文は `use_vision=True` の visual CLI で Google の San Francisco 天気を検索し、action/screenshot 軌跡を保存する。 |
-| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | 外部 XLeRobot `3d14695…` の keyboard/Xbox/Joy-Con/VR teleoperation。source と非駆動 preflight のみで、許可済み四方式の実機・pick/place/wipe 証拠はない。 |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 外部 XLeRobot `3d14695…`＋RoboCrew。厳密に `gemini-robotics-er-1.5-preview`、角度注釈、forward/left/right tools を使う。許可済み実機 navigation 証拠はない。 |
-| 9-10 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | 外部 `lerobot-sim2real` `87d6c1d…` の五段階 RGB→PPO→SO-100 pipeline。ManiSkill/NVIDIA と許可済み実ロボット実行がない。 |
+| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | 実機 XLeRobot を遠隔操作し、同じ机の片付け課題（赤いカップをトレーへ、黄色い紙をごみ箱へ、最後に再観察・検証）を行う。 |
+| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 同じ机の課題について、シミュレータで理想制御の上限を測る。実機を実行したことを意味しない。 |
+| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Gemini Robotics-ER 1.5 で実機 XLeRobot を自律制御し、同じ机の片付け課題を行う。 |
+| 9-11 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | シミュレータで、同じ課題の開ループ、逐次確認、予測型閉ループを比較する。 |
+| 9-12 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | 背景、物体の外観、照明、視覚ノイズを変え、同じ課題を RGB 環境間で評価する。 |
 ## プロジェクトの種類
 
 | アイコン | 種類 | 意味 |

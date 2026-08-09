@@ -50,16 +50,10 @@ Az LLM-ellenőrzők kalibrálást is igényelnek. A termelési rendszerek által
 
 > **8-1. ★★ kísérlet: Trajektória-ellenőrző építése egy ügyfélszolgálati ágenshez**
 >
-> "Cél:" Egy ügyfélszolgálati trajektória átalakítása strukturált diagnózissá, amely támogatja a későbbi tanulást, és annak tesztelése, hogy a „bizonyítékokkal alátámasztott többdimenziós következtetések" jobban azonosítják-e a gyökérokokat, mint egyetlen összpontszám.
+> **Cél:** Különítsük el a kísérlet által képviselt képességet, és hasonlítsuk össze megfelelő alappal.
 >
-> "Adatok és eljárás:" Készítsünk szakértők által annotált trajektóriákat, amelyek négy kategóriát fednek le: normál visszatérítések, hamis ígéretek, adatvédelmi jogsértések és túlzott elutasítások. Az első réteg a végső rendelés állapotát és az eszköznaplókat olvassa, hogy meghatározza, történt-e tényleges visszatérítés vagy átütemezés. A második minden lépést ellenőriz az üzleti irányelvek alapján, beleértve a jogosultságokat, az előírt eljárásokat, az adatvédelmet, a tények alátámasztását és az ígéret–tett konzisztenciát. A harmadik a nyelvi minőséget és a megfelelő alternatívákat értékeli a 8-1. táblázat rubrikája szerint, és minden hibához megtartja a releváns fordulók bizonyítékait. Az alapértelmezett minőségi bíró determinisztikus szabályokat használ, de elérhető egy valódi LLM bíró is. A felső réteg modelljétől függetlenül az eredmény- és szabályrétegeket nem szabad nyelvi modellre bízni.
+> **Elvi következtetés:** Változtatást csak akkor fogadjunk el, ha javítja a célviselkedést regresszió nélkül, és visszakövethető, ellenőrizhető és visszaállítható marad; a könyv a tervet és a következtetést közli, nem egy konkrét futás paramétereit.
 >
-> "Kontrollok és mérőszámok:" A kiindulási feltétel csak egy összpontszámot ad ki; a kísérleti feltétel `pass`, `fail` vagy `uncertain` értéket ad minden dimenzióhoz, bizonyítékkal és megbízhatósággal együtt. A kalibráció során mérjük a precizitást és a visszahívást a hibák detektálásában minden dimenzióban, és jelentsük a szakértői címkékkel való pontos egyezést. Ellenőrizzük azt is, hogy a hamis ígéretekhez tartozó hibák nem üres bizonyítékot tartalmaznak, nem pedig alátámasztatlan következtetéseket.
->
-> "Elfogadási kritériumok:" Az ellenőrzőnek megbízhatóan kell érzékelnie a kritikus jogsértéseket, a hamis ígéreteket és a túlzott elutasításokat. A magas összpontszám nem takarhat el adatvédelmi vagy irányelvhibát. Az alacsony megbízhatóságú és magas kockázatú eseteket egy második ellenőrzőhöz vagy emberi felülvizsgálathoz kell irányítani ahelyett, hogy automatikusan tanulási jelekké válnának.
->
-> A mellékelt implementáció a [`trajectory-verifier`](../chapter8/trajectory-verifier/) címen érhető el. Alapértelmezésben egy offline reprodukálható minőségi bírót használ; a `--judge llm` kapcsolóval futtatható a megvalósított valódi LLM-ellenőrző.
-
 ## Az ágensek folyamatos evolúciójának négy módszere
 
 A tanulási jelek jelzik, hogy az ágensnek változnia kell, de azt nem, hogy hol. A frissítési módszer kiválasztásának elsődleges alapja nem az, hogy egy tapasztalat mennyi ideje áll fenn, hanem hogy a célképesség természetesen reprezentálható-e egy adott médiummal. Tények és tapasztalatok tudásdokumentumokba illenek; nyelvileg egyértelműen kifejezhető stratégiák Promptokba vagy Skill-ekbe; pontosan végrehajtható eljárások és kényszerek kódba; a magas dimenziós képességek, mint az érzékelés, nyelvi stílus és implicit stratégiák pedig modellparaméterekbe kell hogy kerüljenek. A 8-3. ábra ezt a négy módszert és kapcsolataikat mutatja.
@@ -95,16 +89,10 @@ A GAIA tapasztalati tanulása szemléletes példát nyújt. A GAIA[^gaia-2023] t
 
 > **8-2. ★★ kísérlet: Tapasztalati tudásdokumentumok desztillálása GAIA trajektóriákból**
 >
-> "Cél:" Annak tesztelése, hogy a trajektóriákon átívelő tudásdokumentumok jobban átvihetők-e, mint egyetlen siker összefoglalása, és csökkentik-e a véletlen sikerekből és hibás tapasztalatokból származó negatív transzfert.
+> **Cél:** Különítsük el a kísérlet által képviselt képességet, és hasonlítsuk össze megfelelő alappal.
 >
-> "Adatok és eljárás:" A `gaia-experience` először minden futtatáshoz eltárolja a teljes trajektóriát és a külső `environment_score` értéket, majd minimális tanulási rekordokká alakítja őket, amelyek tartalmazzák a `task_family`, a szükséges `capabilities`, az `applies_when`, a megfigyelt stratégiák, a hibák, a kivételek és a forrás trajektória-azonosítók adatait. Egy eredmény-ellenőrző sikeres, részben sikeres vagy sikertelen kategóriákba sorolja a futtatásokat. A tanulási modul összehasonlítja az útvonalakat ugyanazon feladatcsaládon belül. Egy LLM javasolhat jelölt általánosításokat, de egy ajánlott stratégiát legalább két nem sikertelen trajektóriának kell alátámasztania. Az eredményül kapott Markdown dokumentum tartalmazza az alkalmazható forgatókönyveket, az ajánlott stratégiákat, a gyakori buktatókat, a kivételeket, a származást és a legutóbbi érvényesítési időpontot. Alkalmazáskor csak ezek a dokumentumok kerülnek lekérésre; a hosszú nyers trajektóriák nem kerülnek közvetlenül a kontextusba.
+> **Elvi következtetés:** Változtatást csak akkor fogadjunk el, ha javítja a célviselkedést regresszió nélkül, és visszakövethető, ellenőrizhető és visszaállítható marad; a könyv a tervet és a következtetést közli, nem egy konkrét futás paramétereit.
 >
-> "Három kontroll:" Az első feltétel nem használ történeti tapasztalatot; a második az aktuális feladathoz legjobban hasonlító egyetlen trajektória-összefoglalást kérdezi le; a harmadik egy több trajektória által alátámasztott tudásdokumentumot kérdez le. A tanulási és átviteli készleteknek diszjunktaknak kell lenniük, hogy ugyanazon GAIA kérdésre adott válaszok ne szivárogjanak be „tapasztalatként" a kiértékelésbe.
->
-> "Mérőszámok és elfogadás:" Jelentsük az átviteli feladatok sikerarányát, az átlagosan lekérdezett karakterek vagy tokenek számát, a negatív transzfer arányát, és ellenőrizzük, hogy minden formális következtetés hivatkozik a forrás trajektóriáira. Ha a trajektóriákon átívelő dokumentumok csak a kontextust rövidítik anélkül, hogy javítanák az új feladatok teljesítményét, nem bizonyítanak tanult tapasztalatot. A kísérlet akkor is sikertelen, ha egyetlen véletlen siker közvetlenül formális tudássá léptethető elő, vagy ha egy dokumentum nem vezethető vissza az eredeti trajektóriáihoz.
->
-> A mellékelt implementáció a [`gaia-experience`](../chapter8/gaia-experience/) címen érhető el. A `demo_documents.py` alapértelmezésben offline fut; a `--extractor llm` kapcsolóval egy valódi LLM javasolhat trajektóriákon átívelő tapasztalati jelölteket.
-
 [^reflexion-2023]: Shinn, N., et al. *Reflexion: Language Agents with Verbal Reinforcement Learning.* arXiv:2303.11366, 2023.
 
 [^gaia-2023]: Mialon, G., et al. *GAIA: a benchmark for General AI Assistants.* arXiv:2311.12983, 2023.
@@ -129,24 +117,18 @@ A Skill-tanulás ugyanezt az elvet követi, de lokalizáltabb hatókörrel. Egy 
 
 > **8-9. ★★ kísérlet: Visszajelzésből írási Skill**
 >
-> A `data/feedback_pairs.json` 20 before/after párját három adagban dolgozzuk fel, jelölteket nyerünk ki, egyesítjük az ismétlődéseket, ellenőrizzük a küszöbütközéseket, majd forrással és hatókörrel rendelkező `SKILL.md` készül. A determinisztikus szabályokat kód, az LLM-szabályokat 10 aranypélda kalibrálja.
+> **Cél:** Különítsük el a kísérlet által képviselt képességet, és hasonlítsuk össze megfelelő alappal.
 >
-> A befejezetlen feladatok és a normál szövegek külön készletén együtt mérjük a felismerést, a téves riasztást és a szabályszám növekedését. Az első valós futás 0/8 felismerést és 7/8 téves riasztást adott; külső szűrés és determinisztikus tartalékút után 8/8, 0/8 és 21 jelöltből 8 szabály lett. Megvalósítás: [`ai-style-skill`](../chapter8/ai-style-skill/).
-
+> **Elvi következtetés:** Változtatást csak akkor fogadjunk el, ha javítja a célviselkedést regresszió nélkül, és visszakövethető, ellenőrizhető és visszaállítható marad; a könyv a tervet és a következtetést közli, nem egy konkrét futás paramétereit.
+>
 A görbe idézőjelek esete azt mutatja, hogy a Skillnek adat-szerződéssé, nem globális csere-szabállyá kell válnia: az SFT előtt a szintetikus példákat műfaj, hatókör és programnyelv szerint rétegezzük, kód/JSON/védett-rész kapukkal és kézi audittal ellenőrizzük. A pontos másolási esetben külön regressziós réteg a tokenizer encode→decode round-trip, a modell byte-exact másolása, a Harness sorosítása és az eszközillesztés.
 
 > **8-3. ★★ kísérlet: Rendszer Promptok optimalizálása sikertelen trajektóriákból**
 >
-> "Cél:" Egy légitársasági ügyfélszolgálati ágens tanítása olyan trajektóriákból, ahol túl gyorsan eszkalál, amikor egy felhasználó megkérdőjelez egy irányelvet, miközben bizonyítja, hogy az új szabály nem töri el a régebbi forgatókönyveket, amelyek valóban eszkalációt igényelnek.
+> **Cél:** Különítsük el a kísérlet által képviselt képességet, és hasonlítsuk össze megfelelő alappal.
 >
-> "Eljárás:" Először a régi feladatok retenciós készletét és a túlzott eszkaláció határeset-készletét futtassuk külön. A `learning_signal.py` a hibákat szabálykövetésre, feladatmegoldásra és megfelelő rugalmasságra bontja, miközben megtartja a forrás esetazonosítókat. Egy kódoló ágens ezután elolvassa a meglévő Promptot, és pontosan egy auditálható `old_str → new_str` minimális szerkesztést hoz létre: előírja az ágensnek, hogy magyarázza el az irányelvet, azonosítsa a valódi célt, és keressen megfelelő alternatívákat az eszkaláció előtt, miközben megtartja az eszkalációt, ha a felhasználó kifejezetten embert kér, vagy biztonsági incidens történik. A javítás, a származás, a célszabály és az indoklás egy jelölt manifestbe kerül.
+> **Elvi következtetés:** Változtatást csak akkor fogadjunk el, ha javítja a célviselkedést regresszió nélkül, és visszakövethető, ellenőrizhető és visszaállítható marad; a könyv a tervet és a következtetést közli, nem egy konkrét futás paramétereit.
 >
-> "Három kontroll:" Hasonlítsuk össze a kezdeti Promptot, az automatikusan generált jelölt Promptot és egy egyszeri, manuálisan optimalizált Promptot. Mindhárom ugyanazt a modellt és ugyanazt a retenciós és határeset-készletet használja. A `--quick` csak az esetek számát csökkenti; továbbra is valódi hívásokat indít a feladat ágenshez, az LLM bíróhoz és a kódoló ágenshez, és nem jelenthető offline szimulációként.
->
-> "Kiadási kapu és mérőszámok:" Egy jelöltnek négy feltételt kell teljesítenie: nem üres javítás, visszakövethető származás, mérhető javulás a határeset-készleten, és nincs romlás a retenciós készleten. Hasonlítsuk össze a határeset-feladatok pontosságát, a retenciós feladatok pontosságát, a Prompt növekedését, a bevezetett regressziókat és a hiba felfedezésétől a jelölt generálásáig eltelt időt. A kapun való áthaladás csak `release_to_canary` eredményt ad, soha nem a stabil Prompt közvetlen felülírását; bármely feltétel megszegése `reject_candidate` eredményt ad.
->
-> A mellékelt implementáció a [`prompt-auto-optimization`](../chapter8/prompt-auto-optimization/) címen érhető el. Az offline tesztek lefedik a diagnózist és a kiadási kapukat, míg a `--quick` valódi hívásokat indít a feladat ágenshez, az LLM bíróhoz és a kódoló ágenshez.
-
 [^dspy-2023]: Khattab, O., et al. *DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines.* arXiv:2310.03714, 2023.
 
 [^opro-2023]: Yang, C., et al. *Large Language Models as Optimizers.* arXiv:2309.03409, 2023.
@@ -178,16 +160,10 @@ Egy e-mail munkafolyamat esetén a lefordított eredmény nem csupán „kattint
 
 > **8-4. ★★★ kísérlet: Ellenőrizhető munkafolyamatok generálása böngésző-trajektóriákból**
 >
-> "Cél:" Annak meghatározása, hogy egy webes ágens egy drága felfedezést újrafelhasználható munkafolyamattá tud-e alakítani, és el tudja-e utasítani a hibás visszajátszást, ha az oldal megváltozik, ahelyett, hogy sikert jelentene, mert minden művelet lefutott.
+> **Cél:** Különítsük el a kísérlet által képviselt képességet, és hasonlítsuk össze megfelelő alappal.
 >
-> "Négyszakaszos forgatókönyv:" Az első szakaszban futtassuk a „küldj egy üzenetet 'Teszt e-mail' tárggyal a `test@example.com` címre" parancsot egy teszt e-mail oldalon vagy szimulált üzenetküldő oldalon. A teljes ágens felfedez, miközben egy wrapper rögzíti a műveleteket, paramétereket és oldalállapotokat, és egy `candidate`-et állít elő. A második szakaszban hívjuk meg a `validation_reset` függvényt a sandbox visszaállításához, és játsszuk le a teljes munkafolyamatot függetlenül; a jelölt csak akkor kerül be a formális képességkönyvtárba, ha minden művelet előtti, művelet utáni és végső állapot-ellenőrzés sikeres. A harmadik szakaszban végezzük el ugyanazt a feladattípust más címzettel, tárggyal és szövegtörzzsel. A rendszernek egyeztetnie kell az érvényesített munkafolyamattal, ki kell töltenie az új paramétereket, és Playwright-on keresztül vissza kell játszania anélkül, hogy belépne a lépésenkénti LLM-hurokba. A negyedik szakaszban változtassuk meg egy gomb lokátorát, az oldal szövegét vagy a végső állapotot, és ellenőrizzük, hogy a régi munkafolyamat azonnal `invalid`-dé válik, és `fallback_required=True` értéket ad vissza.
+> **Elvi következtetés:** Változtatást csak akkor fogadjunk el, ha javítja a célviselkedést regresszió nélkül, és visszakövethető, ellenőrizhető és visszaállítható marad; a könyv a tervet és a következtetést közli, nem egy konkrét futás paramétereit.
 >
-> "Kontroll kialakítás:" Egy leegyszerűsített kiindulási feltétel csak azt rögzíti, hogy a kattintások, szövegbevitel és más műveletek kivétel nélkül befejeződnek-e. A kísérleti feltétel emellett érvényesíti az oldalt minden művelet előtt, az oldalt minden művelet után és a végső feladatállapotot. Mindkét feltétel ugyanazokat a trajektóriákat és oldalváltoztatásokat használja. Hasonlítsuk össze a téves pozitív arányokat olyan esetekben, mint „a küldés gombra kattintottak, miközben egy mező üres volt" és „a Mentés gombra kattintottak, de az adatok nem maradtak meg".
->
-> "Mérőszámok és elfogadás:" Rögzítsük a kezdeti felfedezés és a visszajátszás végpontok közötti idejét, az LLM-hívások számát, a sikerarányt, a téves sikerarányt, a munkafolyamat-egyezési arányt, az oldalváltozás-érzékelési arányt és az újratanuláshoz szükséges visszaállások számát. Visszaállítási lehetőség nélkül a munkafolyamatnak jelöltnek kell maradnia; az érvényesítést megbukott verziónak nem szabad lekérdezhetőnek lennie; a paraméterezett visszajátszás nem használhatja újra az első futtatás címzettjét vagy tartalmát; és oldalváltozás után a veszélyes későbbi műveleteknek le kell állniuk. A gyorsulás csak akkor számít, ha minden feltétel teljesül.
->
-> A mellékelt implementáció a [`browser-use-rpa`](../chapter8/browser-use-rpa/) címen érhető el, amely egy determinisztikus állapotgép-demonstrációt és egy valódi böngésző ágenst meghívó végrehajtási útvonalat is biztosít.
-
 Az a tény, hogy egy ágens módosítja a saját kódját, nem jelenti azt, hogy a futó folyamat közvetlenül felülírja önmagát. Egy termelési rendszernek létre kell hoznia egy jelölt ágat az aktuális stabil verzióból, egy kódoló ágenssel kell generálnia egy minimális javítást, majd sorban statikus ellenőrzéseket, egységteszteket, biztonsági vizsgálatokat, sikertelen trajektóriák visszajátszását és régi feladatok regressziós tesztjeit kell futtatnia, mielőtt új verziót bocsátana ki canary telepítésre. Ez az „önmódosítást" egy auditálható szoftverkiadási folyamattá alakítja, és meghatározza a 8. és az 5. fejezet közötti határt: az 5. fejezet a rendszerek módosításának képességét biztosítja, míg ez a fejezet egy olyan módszert ad az önmódosításhoz, amelyet tapasztalat indít el és egy érvényesítési hurok korlátoz.
 
 A javítás kicsinyítése önmagában nem elegendő a megbízható attribúcióhoz. Minden módosítási kérelemnek egy "hamisítható változási szerződésnek" is kell lennie, amely rögzíti a hiba bizonyítékait, a feltételezett gyökérokot, a felelős Harness komponenst, a jelölt változtatást, a várhatóan javuló viselkedést, a meglévő viselkedést, amely romolhat, valamint a teszteket mindkettőhöz. Az Agentic Harness Engineering ezt komponens-, tapasztalat- és döntésszintű megfigyelhetőségként írja le: minden szerkeszthető komponens fájlszintű reprezentációval rendelkezik; a trajektóriák nagy gyűjteményeit egyre részletesebb szinteken vizsgálható bizonyítékokká desztillálják; és minden szerkesztés a végrehajtás előtt hatás-előrejelzést deklarál, amelyet a következő eredménykör aztán tesztel[^ahe-2026]. Egy magasabb pontszám így egy konkrét mechanizmushoz kapcsolható, ahelyett, hogy értelmezhetetlen próbálkozás maradna.
@@ -198,16 +174,10 @@ Az eszközlétrehozás ugyanezt a protokollt követi. Az Alita[^alita-2025] egy 
 
 > **8-5. ★★★ kísérlet: Ágens önmódosításának kiváltása sikertelen trajektóriákból**
 >
-> "Cél:" Több olyan trajektória esetén, ahol a `retryable=false` jelzésű hibákat továbbra is ismételten hívják, annak meghatározása, hogy a rendszer képes-e azonosítani a gyökérokot az újrapróbálkozási és megszakító kódban, és előállítani egy jelölt javítást anélkül, hogy eltörné a tranziens hibákból való helyreállást.
+> **Cél:** Különítsük el a kísérlet által képviselt képességet, és hasonlítsuk össze megfelelő alappal.
 >
-> "Eljárás:" A diagnosztikai modul először ugyanazt a hibát gyűjti össze különböző feladatokból. Csak a trajektóriákon átívelő támogatottsági küszöb elérése után hoz létre módosítási kérelmet, amely a stabil verzió `retry_policy.py` fájlját célozza. A jelöltgenerátor elolvassa a hibadiagnózist, a megőrzendő tranziens hiba-kezelési viselkedést, a korábban elutasított változtatásokat és a stabil forrást. Mielőtt kiad egy minimális kód-különbséget, előrejelzi, hogy a nem újrapróbálható hibák utáni hívásoknak csökkenniük kell, míg a tranziens időtúllépés utáni helyreállásnak nem szabad romlania. Akár determinisztikus a generátor, akár valódi LLM kódoló ágens, csak egy izolált jelölt könyvtárba írhat. Az érvényesítő Harness ezután lefordítja a jelöltet, visszajátssza az eredeti hibás trajektóriákat, ellenőrzi, hogy egy nem újrapróbálható hiba azonnal leáll és nyitja a megszakítót, és újrateszteli, hogy a tranziens időtúllépések továbbra is az eredeti küszöb szerint próbálkoznak újra.
+> **Elvi következtetés:** Változtatást csak akkor fogadjunk el, ha javítja a célviselkedést regresszió nélkül, és visszakövethető, ellenőrizhető és visszaállítható marad; a könyv a tervet és a következtetést közli, nem egy konkrét futás paramétereit.
 >
-> "Diagnosztikai kontroll és mérőszámok:" Kezeljük a „adjunk hozzá egy mondatot a Prompthoz, amely megtiltja az ágensnek a hívás megismétlését" konceptuális példaként a rossz módosítási réteg kiválasztására, demonstrálva, hogy egy determinisztikusan kikényszeríthető újrapróbálkozási kényszer miért a kódba való. A futtatható kísérlet összehasonlítja a determinisztikus és az LLM javításgenerátorokat ugyanazon kiadási kapu alatt. Rögzítsük a nem újrapróbálható hibák utáni hívások számát, a tranziens hibák helyreállási arányát, a régi feladatok regresszióit, a javítás méretét és a jelölt elfogadási arányát.
->
-> "Elfogadási kritériumok:" Minden ellenőrzés sikeres áthaladása csak `release_to_canary` eredményt ad. Bármely statikus ellenőrzés, hibavisszajátszás vagy régi feladat regressziójának meghiúsulása `reject_candidate` eredményt ad. A `release_manifest.json` fájlnak tartalmaznia kell a hibaklasztert, a forrás trajektóriákat, a feltételezett gyökérokot, a célkomponenst és fájlt, a kód-különbséget, a várható javítást, a lehetséges regressziókat, az ellenőrzési eredményeket, a jelölt verziót és a visszaállítási verziót. Az elutasított jelölteknek meg kell őrizniük a hibák okait a következő generálási körhöz. A javítást generáló ágens nem módosíthatja a stabil kódot, az érvényesítőket, az auditnaplókat vagy a saját kiadását jóváhagyó kaput.
->
-> A mellékelt implementáció a [`self-modifying-agent`](../chapter8/self-modifying-agent/) címen érhető el. Támogatja a determinisztikus jelöltgenerátort és a valódi LLM kódoló ágenst is, mindkét útvonal ugyanazt a kiadási kaput használja.
-
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
 [^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
@@ -216,8 +186,10 @@ A 8-8. kísérlet ugyanezt a protokollt a verifikációs rétegre alkalmazza. Cs
 
 > **8-8. ★★ kísérlet: Magas kockázatú műveletek megerősítési kapuja felhasználói visszajelzésből**
 >
-> A `failure_trajectories.json` három jelzést és kontrollpályákat ad. A valós `gpt-4o-mini` jelölt nem ment át a befejezetlen feladatok, normál műveletek és egyszer használatos tokenek ellenőrzésén, ezért a biztonsági kapu elutasította. A determinisztikus jelölt minden ellenőrzést teljesített és `release_to_canary` lett; rögzítjük a döntést és a stabil könyvtár hashét. Megvalósítás: [`harness-safety-gate`](../chapter8/harness-safety-gate/).
-
+> **Cél:** Különítsük el a kísérlet által képviselt képességet, és hasonlítsuk össze megfelelő alappal.
+>
+> **Elvi következtetés:** Változtatást csak akkor fogadjunk el, ha javítja a célviselkedést regresszió nélkül, és visszakövethető, ellenőrizhető és visszaállítható marad; a könyv a tervet és a következtetést közli, nem egy konkrét futás paramétereit.
+>
 ### Tapasztalatok kódolása paraméterekben
 
 A tudás, az utasítások és a programok mind egy előfeltevésen alapulnak: a célképesség viszonylag teljesen kifejezhető külső szimbólumokkal. Az olyan képességek azonban, mint az orvosi képalkotás megértése, a természetes beszéd prozódia, a formális „AI-érzés" eltávolítása a szövegből és a hosszú távú tervezés, nehezen sűríthetők néhány szabályba vagy munkafolyamatba. Ezeket a képességeket paraméterekbe kell írni utóképzéssel.
@@ -242,14 +214,10 @@ A magasabb szintek nem automatikusan jobbak. Egy lokális szabály kereséséhez
 
 > **8-6. ★★★ kísérlet: Mi történik, ha Hermes megkapja ezt a könyvet? Képes frissíteni önmagát?**
 >
-> **Cél:** Annak vizsgálata, hogy egy Agent képes-e külső tudást saját képességeinek valódi frissítésévé alakítani. A kísérlet nem ad meg hibát vagy funkciólistát: Hermes megkapja mind a tíz fejezetet és saját forrását, majd magának kell megértenie az elveket, átvizsgálnia a megvalósítást és kiválasztania egy érdemi javítást.
+> **Cél:** Különítsük el a kísérlet által képviselt képességet, és hasonlítsuk össze megfelelő alappal.
 >
-> **Elrendezés:** A könyv és a forrás olvasható kontextus, de a stabil verzió, a független Reviewer és az elfogadási tesztek Hermes szerkeszthető hatókörén kívül maradnak. A folyamat: **olvasás → összevetés → választás → módosítás → ellenőrzés**. Az elutasított jelölt visszajelzése a következő tanulási kör bemenete; a kapu nem kerülhető meg.
+> **Elvi következtetés:** Változtatást csak akkor fogadjunk el, ha javítja a célviselkedést regresszió nélkül, és visszakövethető, ellenőrizhető és visszaállítható marad; a könyv a tervet és a következtetést közli, nem egy konkrét futás paramétereit.
 >
-> **Valós futás:** A könyv elolvasása után Hermes önállóan felismerte, hogy a mentett trajektóriákból hiányzik a későbbi tanulás számára közvetlenül használható strukturált bizonyíték. Konzervatív tanulási jeleket vezetett le a végrehajtási eredményekből, majd módosította saját kódját és teszteket adott hozzá. Az első három független review valós adatformátum-, mentésiútvonal- és számlálási eltéréseket talált; minden megállapítás visszakerült az eredeti Hermes munkamenetbe, a negyedik review pedig elfogadta a jelöltet.
->
-> **Az állítás határa:** A futás igazolja, hogy egy Agent hosszú tudásanyagból elveket vonhat ki, azokat saját kódjára vetítheti, és külső ellenőrzés mellett önfrissítést fejezhet be. A downstream feladatok javulását nem bizonyítja; ehhez külön ablation kísérlet kell. A kísérlet ötletét Grace olvasó adta.
-
 ## Hosszú távú működésre alkalmas folyamatos evolúciós zárt hurok építése
 
 A négy frissítési módszer csak akkor válik folyamatos evolúcióvá, nem pedig egyszeri optimalizálássá, ha ugyanabba az autonóm hurokba illeszkednek. A 8-5. ábra egy robusztusabb, termelési rendszerekhez tervezett kéthurkú architektúrát mutat: az online végrehajtási hurok csak feladatokat végez el és bizonyítékokat rögzít, anélkül, hogy közvetlenül átírná a termelési ágenst; az offline evolúciós hurok trajektóriákat gyűjt, gyökérokokat diagnosztizál, jelölt módosításokat generál, és új verziókat csak az érvényesítési kapukon való áthaladás után bocsát ki. A két hurkot verziózott tapasztalati tárolók és kiértékelési készletek kötik össze.
@@ -345,16 +313,10 @@ A folyamatos evolúció nem jelenti azt, hogy a tudás, a Promptok és az eszkö
 
 > **8-7. ★★★ kísérlet: Annak értékelése, hogy egy ágens folyamatosan fejlődik-e**
 >
-> "Cél:" Három hosszú távú viselkedés megkülönböztetése – egyetlen visszajelzés elmentése, örökké csak hozzáfűzés, és a képességek tényleges frissítése, átvitele és megtartása –, hogy az azonos feladatok ismételt futtatását ne tévesszük össze a folyamatos tanulással.
+> **Cél:** Különítsük el a kísérlet által képviselt képességet, és hasonlítsuk össze megfelelő alappal.
 >
-> "Négy szakaszból álló feladatfolyam:" A tanulási szakasz visszatérítési, személyazonosság-ellenőrzési és poggyász-irányelv feladatokat mutat be, amelyek rejtett mintákat osztanak meg. Az átviteli szakasz megváltoztatja a megfogalmazást, a felhasználót és a helyi környezetet, hogy tesztelje, alkalmazható-e a régi tapasztalat új feladatokra. A szabályváltoztatási szakasz a poggyászhatárt 20 kg-ról 23 kg-ra módosítja, és megköveteli a rendszertől, hogy cserélje le vagy vonja vissza az elavult tudást. A retenciós szakasz újrateszteli a változatlan képességeket és az aktuálisan érvényes szabályokat a felejtés mérésére. A külső memória csak az egyes visszajelzést tartalmazó feladatok befejezése után frissíthető; az aktuális feladat várható műveletét soha nem szabad előre kiszivárogtatni az ágens számára.
+> **Elvi következtetés:** Változtatást csak akkor fogadjunk el, ha javítja a célviselkedést regresszió nélkül, és visszakövethető, ellenőrizhető és visszaállítható marad; a könyv a tervet és a következtetést közli, nem egy konkrét futás paramétereit.
 >
-> "Kontrollcsoportok:" A `static` nem őriz meg semmilyen visszajelzést. Az `append_only` megjegyzi egy szabály első verzióját, de nem tudja feloldani az ütközéseket vagy visszavonni azt. Az `evolving` verziókat tárol és régi szabályokat cserél le új bizonyítékokra. A referencia implementáció ellenőrzi, hogy az értékelő Harness képes megkülönböztetni ezeket a viselkedéseket. Egy valódi kísérletben egy LLM ugyanazon a 14 feladatból álló rendezett folyamon mehet keresztül, de az eredményeket a modellen kívüli Harness-nek kell kiszámítania.
->
-> "Mérőszámok és elfogadás:" Jelentsük a pontosságot és a tanulási görbét minden szakaszra, és számítsuk ki külön az átviteli pontosságot, az új szabály utáni helyreállításhoz szükséges feladatok számát, a régi képességek megtartását, a negatív transzfer arányát, a biztonsági rubrika áthaladási arányát, valamint a token, késleltetési és tárolási költségeket. Valós rendszereknél, amelyek Promptokat, Skill-eket vagy egy Harness-t frissítenek, rögzítsük a jelölt-változtatás érvényességét, az artefaktum aktiválási arányát és a sikeres követési arányt is, hogy a „a frissítés helyes volt, de soha nem töltődött be" ne minősüljön sikertelen frissítésnek. Még egy magas végső pontosságú ágens sem minősül folyamatosan fejlődőnek, ha továbbra is visszavont szabályokat idéz, nem biztonságos rövidítéseken keresztül ér el sikert, vagy elfelejti a meglévő képességeket egy frissítés után.
->
-> A mellékelt implementáció a [`self-evolution-eval`](../chapter8/self-evolution-eval/) címen érhető el. Alapértelmezésben három referencia ágenst hasonlít össze: frissíthető, csak hozzáfűző és statikus. A `--profile llm` kapcsolóval egy valódi LLM mehet keresztül ugyanazon a hosszú távú feladatfolyamon.
-
 [^claude-code-memory]: Anthropic, "How Claude remembers your project", 2026. https://code.claude.com/docs/en/memory
 
 [^hermes-memory]: Nous Research, *Hermes Agent Documentation: Persistent Memory, Skills System, and Curator*, 2026. https://hermes-agent.nousresearch.com/docs/user-guide/features/memory ; https://hermes-agent.nousresearch.com/docs/user-guide/features/skills ; https://hermes-agent.nousresearch.com/docs/user-guide/features/curator
