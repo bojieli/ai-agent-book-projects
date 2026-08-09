@@ -1,4 +1,4 @@
-"""Deterministic scoring helpers for the two Experiment 10-2 paths.
+"""Deterministic scoring helpers for the two Experiment 10-1 paths.
 
 The evaluator intentionally scores observable trajectory and outcome fields.  It
 never tries to infer hidden chain-of-thought.  The protocol in README.md explains

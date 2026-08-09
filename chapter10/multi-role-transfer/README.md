@@ -1,6 +1,6 @@
 ## English
 
-# Experiment 10-2: Two Ways to Implement Multi-Role Switching (★★)
+# Experiment 10-1: Two Ways to Implement Multi-Role Switching (★★)
 
 Companion code for *Deep Understanding of AI Agents*. This is a controlled comparison of two ways to implement
 multi-role behavior over the same shared trajectory:
@@ -354,7 +354,7 @@ According to public data from CAAM, China's new energy vehicle sales grew from 3
 
 ## 中文
 
-# 实验 10-2：多角色转换的两种实现路径对比（★★）
+# 实验 10-1：多角色转换的两种实现路径对比（★★）
 
 《深入理解 AI Agent》配套代码。实验在同一条共享轨迹上，对比两种实现多角色行为的方法：
 

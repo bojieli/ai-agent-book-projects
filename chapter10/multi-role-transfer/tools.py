@@ -1,7 +1,7 @@
 """
 tools.py —— 各专业角色的专属工具实现 + OpenAI function-calling schema。
 
-设计原则（配合实验 10-2）：
+设计原则（配合实验 10-1）：
 - 所有被实验场景实际调用的工具都执行真实工作，不用预置答案冒充检索。
 - research.web_search：Tavily 真实联网检索，并返回可追溯 URL 与摘录。
 - coding.execute_python：真实执行 Python 代码并捕获标准输出（子进程 + 超时）。

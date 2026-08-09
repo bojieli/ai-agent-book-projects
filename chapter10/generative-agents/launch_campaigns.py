@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Launch or resume all Experiment 10-7 arms as detached local processes."""
+"""Launch or resume all Experiment 10-5 arms as detached local processes."""
 
 from __future__ import annotations
 

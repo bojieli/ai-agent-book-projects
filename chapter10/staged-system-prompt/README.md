@@ -1,6 +1,9 @@
 ## English
 
-# Experiment 10-1: Staged System Prompt Based on Execution Phase
+# Archived companion: Staged System Prompt Based on Execution Phase
+
+This former experiment has been removed from the current Chapter 10 sequence.
+Its retained evidence keeps the historical `10-1` identifier for reproducibility.
 
 *Hands-on code accompanying "Understanding AI Agents"*
 
@@ -212,7 +215,9 @@ Two key points:
 
 ## 中文
 
-# 实验 10-1：根据执行阶段决定系统提示词（Staged System Prompt）
+# 已归档配套项目：根据执行阶段决定系统提示词（Staged System Prompt）
+
+本实验已从当前第十章实验序列中删除；历史验收材料继续保留 `10-1` 标识，以便复核。
 
 《深入理解 AI Agent》配套实验代码。
 

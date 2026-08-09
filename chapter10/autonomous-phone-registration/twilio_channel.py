@@ -1,4 +1,4 @@
-"""Real PSTN transport for the Experiment 10-5 Phone Agent.
+"""Real PSTN transport for the Experiment 10-3 Phone Agent.
 
 Twilio places one outbound call. Its speech ``Gather`` provides ASR and ``Say``
 provides TTS; the call stays open while the Phone and Computer Agents work.

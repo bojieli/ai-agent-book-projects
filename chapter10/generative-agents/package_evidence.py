@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a compact, complete, reviewable Experiment 10-7 evidence package."""
+"""Create a compact, complete, reviewable Experiment 10-5 evidence package."""
 
 from __future__ import annotations
 

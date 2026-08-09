@@ -1,5 +1,5 @@
 """
-实验 10-3：书籍翻译 Agent —— 管理者模式（Orchestration）
+实验 10-2：书籍翻译 Agent —— 管理者模式（Orchestration）
 
 本模块实现四种专职 Agent，以及两种运行方式：
   1) 管理者模式（orchestrate）：Manager 只保存任务/计划/调用记录/文件索引，

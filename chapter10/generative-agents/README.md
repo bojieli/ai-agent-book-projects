@@ -1,4 +1,4 @@
-# Experiment 10-7: Stanford Generative Agents reproduction
+# Experiment 10-5: Stanford Generative Agents reproduction
 
 This project runs the manuscript's full Agent-society experiment against the
 official `joonspk-research/generative_agents` source at commit

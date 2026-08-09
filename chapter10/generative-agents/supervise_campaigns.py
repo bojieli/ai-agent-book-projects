@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Supervise and automatically resume all long-running Experiment 10-7 arms."""
+"""Supervise and automatically resume all long-running Experiment 10-5 arms."""
 
 from __future__ import annotations
 

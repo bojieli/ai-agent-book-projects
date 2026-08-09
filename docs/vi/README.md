@@ -154,7 +154,7 @@ git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-si
 
 # Chương 10 · Kiến trúc đa Agent (đã độc lập thành TalkAct) + Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling
-git clone https://github.com/joonspk-research/generative_agents.git    chapter10/generative_agents             # Exp 10-7 Stanford AI Town
+git clone https://github.com/joonspk-research/generative_agents.git    chapter10/generative_agents             # Exp 10-5 Stanford AI Town
 ```
 
 > Nếu README dự án chỉ định commit cụ thể, hãy `git checkout` phiên bản đó để đảm bảo tái hiện. Chương 10 `use-computer-while-calling` đã phát triển thành [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct) độc lập; kho này không đóng gói thư mục đó, hãy dùng lệnh clone ở trên để lấy về.

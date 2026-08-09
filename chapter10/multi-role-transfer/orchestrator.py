@@ -1,7 +1,7 @@
 """
 orchestrator.py —— 多角色移交（handoff）编排器。
 
-核心机制（实验 10-2）：
+核心机制（实验 10-1）：
 - 全程维护一段【共享对话历史】history（user/assistant/tool 消息）。
 - 每次调用大模型时，把【当前角色】的系统提示词临时拼到 history 前面，
   并只暴露【当前角色的工具集 + transfer_to_agent】。

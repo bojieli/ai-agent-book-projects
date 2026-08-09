@@ -1,4 +1,4 @@
-"""Skill-based implementation for Experiment 10-2.
+"""Skill-based implementation for Experiment 10-1.
 
 The system prompt and the tool definitions are fixed for the whole run.  A role is
 selected by loading a ``SKILL.md`` through ``load_skill``; the loaded document is

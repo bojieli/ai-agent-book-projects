@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Analyze memory, reflection, diffusion, and action logs for Experiment 10-7."""
+"""Analyze memory, reflection, diffusion, and action logs for Experiment 10-5."""
 
 from __future__ import annotations
 

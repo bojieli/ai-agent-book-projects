@@ -8,14 +8,12 @@
 
 | 실험 | 프로젝트 | 유형 | 설명 |
 | :--: | --- | :--: | --- |
-| 10-1 | [staged-system-prompt](staged-system-prompt/) | ✅ | 같은 코딩 에이전트가 작업의 실행 단계(요구사항 명확화 → 코드 구현 → 코드 리뷰)에 따라 서로 다른 시스템 프롬프트와 도구 모음을 불러옵니다. 하나의 대화 안에서 역할과 행동을 바꾸면서도 단계 사이에 대화 기록과 작업 상태를 계속 공유합니다. 리뷰에 실패하면 구현 단계로 되돌아갈 수 있습니다. |
-| 10-2 | [multi-role-transfer](multi-role-transfer/) | ✅ | 공유 컨텍스트에서 연쇄 인계하는 방식을 보여 줍니다. 하나의 세션 안에 각자 고유한 시스템 프롬프트와 전용 도구 모음을 가진 여러 전문 역할 에이전트가 있습니다. 에이전트는 `transfer_to_agent` 도구로 작업 진행 상황에 따라 다른 역할로 전환할 시점을 스스로 결정합니다. 같은 대화 기록을 공유하므로 인계 과정에서도 전체 컨텍스트가 자연스럽게 보존됩니다. |
-| 10-3 | [book-translation](book-translation/) | 🚧 | 네 역할 관리자 방식과 단일 에이전트 대조에서 실제 모델을 사용한 소규모 결과까지 확보했습니다. 다만 본문 요구대로 그림과 코드가 많은 기술서 전체를 번역하고 품질·효율·자원 사용량을 완전히 비교하는 작업은 아직 남아 있습니다. |
-| 10-4 | `use-computer-while-calling/` | 📖 | 로컬 경로는 [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)의 고정 커밋 `7d70007…`에 대응합니다. 빠른 에이전트와 느린 에이전트가 프로세스 내 `SharedState` 블랙보드, 상태 요약, 양방향 텍스트 큐로 협업합니다. 현재 checkout이 없어 실행했다고 주장하지 않습니다. |
-| 10-5 | [autonomous-phone-registration](autonomous-phone-registration/) | 🚧 | 실제 Playwright 양식에서 실제 LLM이 Phone Agent를 자율적으로 호출합니다. 검증·재질문·양방향 병렬 처리·민감 정보를 가린 타임라인·선택적 제출은 구현하고 검증했지만, 허가받은 참여자가 없어 PSTN과 실제 사람의 음성은 `not_run`이며 전체 검수 상태는 `incomplete`입니다. |
-| 10-6 | [parallel-web-research](parallel-web-research/) | ✅ | N개의 독립 Playwright 브라우저 세션이 실제 대학 웹사이트를 병렬 검색하고 실제 LLM이 근거를 추출합니다. 상태 모니터링, 시간 초과·오류 격리, 단 한 번의 결과 확정, 연쇄 종료 확인 응답, 자원 감사와 같은 사이트의 순차·병렬 실측까지 갖췄습니다. |
-| 10-7 | `generative_agents/` | 📖 | Stanford의 ‘AI 마을’ 생성형 에이전트입니다. 로컬 경로는 `joonspk-research/generative_agents`의 고정 커밋 `fe05a71…`에 대응하며, 현재 checkout이 없어 실행했다고 주장하지 않습니다. |
-| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | 자기 좌석 컨텍스트만 보고 도구를 호출하며 합성 오디오와 실제 OpenRouter 오디오 ASR을 거쳐야 하는 실제 LLM 사용자 시뮬레이터를 추가했습니다. 엄격한 재검증은 오전사를 기권으로 본 초기 두 실행을 거부했습니다. 영향 없는 v2는 E2E·격리·규칙 승자·3주기를 통과했지만 주민이 예언자를 잘못 추방해 전략은 실패했습니다. |
+| 10-1 | [multi-role-transfer](multi-role-transfer/) | ✅ | 공유 컨텍스트에서 연쇄 인계하는 방식을 보여 줍니다. 하나의 세션 안에 각자 고유한 시스템 프롬프트와 전용 도구 모음을 가진 여러 전문 역할 에이전트가 있습니다. 에이전트는 `transfer_to_agent` 도구로 작업 진행 상황에 따라 다른 역할로 전환할 시점을 스스로 결정합니다. 같은 대화 기록을 공유하므로 인계 과정에서도 전체 컨텍스트가 자연스럽게 보존됩니다. |
+| 10-2 | [book-translation](book-translation/) | 🚧 | 네 역할 관리자 방식과 단일 에이전트 대조에서 실제 모델을 사용한 소규모 결과까지 확보했습니다. 다만 본문 요구대로 그림과 코드가 많은 기술서 전체를 번역하고 품질·효율·자원 사용량을 완전히 비교하는 작업은 아직 남아 있습니다. |
+| 10-3 | `use-computer-while-calling/` + [autonomous-phone-registration](autonomous-phone-registration/) | 📖 / 🚧 | 로컬 경로는 [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)의 고정 커밋 `7d70007…`에 대응합니다. 빠른 에이전트와 느린 에이전트가 프로세스 내 `SharedState` 블랙보드, 상태 요약, 양방향 텍스트 큐로 협업합니다. 현재 checkout이 없어 실행했다고 주장하지 않습니다. 실제 Playwright 양식에서 실제 LLM이 Phone Agent를 자율적으로 호출합니다. 검증·재질문·양방향 병렬 처리·민감 정보를 가린 타임라인·선택적 제출은 구현하고 검증했지만, 허가받은 참여자가 없어 PSTN과 실제 사람의 음성은 `not_run`이며 전체 검수 상태는 `incomplete`입니다. |
+| 10-4 | [parallel-web-research](parallel-web-research/) | ✅ | N개의 독립 Playwright 브라우저 세션이 실제 대학 웹사이트를 병렬 검색하고 실제 LLM이 근거를 추출합니다. 상태 모니터링, 시간 초과·오류 격리, 단 한 번의 결과 확정, 연쇄 종료 확인 응답, 자원 감사와 같은 사이트의 순차·병렬 실측까지 갖췄습니다. |
+| 10-5 | `generative_agents/` | 📖 | Stanford의 ‘AI 마을’ 생성형 에이전트입니다. 로컬 경로는 `joonspk-research/generative_agents`의 고정 커밋 `fe05a71…`에 대응하며, 현재 checkout이 없어 실행했다고 주장하지 않습니다. |
+| 10-6 | [voice-werewolf](voice-werewolf/) | 🚧 | 자기 좌석 컨텍스트만 보고 도구를 호출하며 합성 오디오와 실제 OpenRouter 오디오 ASR을 거쳐야 하는 실제 LLM 사용자 시뮬레이터를 추가했습니다. 엄격한 재검증은 오전사를 기권으로 본 초기 두 실행을 거부했습니다. 영향 없는 v2는 E2E·격리·규칙 승자·3주기를 통과했지만 주민이 예언자를 잘못 추방해 전략은 실패했습니다. |
 
 ## 프로젝트 유형
 

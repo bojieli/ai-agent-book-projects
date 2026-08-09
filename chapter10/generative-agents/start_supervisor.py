@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Start the Experiment 10-7 supervisor in a detached process session."""
+"""Start the Experiment 10-5 supervisor in a detached process session."""
 
 from __future__ import annotations
 
@@ -58,4 +58,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

@@ -1,4 +1,4 @@
-# Experiment 10-6 · Parallel research with real browser sessions
+# Experiment 10-4 · Parallel research with real browser sessions
 
 This implementation uses no simulated sources, canned content, or artificial source latency. The Manager dynamically launches one homogeneous worker per real university URL. Every worker owns an isolated Playwright Chromium browser context, navigates the live page, reads rendered text, and uses a real configured LLM endpoint for evidence-constrained profile extraction.
 

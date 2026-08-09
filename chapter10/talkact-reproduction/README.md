@@ -1,6 +1,11 @@
-# Experiment 10-4: TalkAct concurrent-agent reproduction
+# Experiment 10-3 · Fixed-topology TalkAct baseline
 
-This record covers the pinned external TalkAct reproduction used by Experiment
+This is the fixed-topology comparison arm of Chapter Experiment 10-3. The
+historical validation identifier remains `10-4`; the autonomous arm is implemented
+in [`autonomous-phone-registration`](../autonomous-phone-registration/).
+
+This record covers the pinned external TalkAct reproduction used by current
+Experiment 10-3. Its retained validation artifacts use historical identifier
 10-4. The comparison runs concurrent fast/slow agents (`duplex`) against a
 single-model control (`strawman`) over four hermetic tasks and two labeled
 repetitions per task and condition.

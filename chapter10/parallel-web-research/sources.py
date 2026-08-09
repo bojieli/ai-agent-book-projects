@@ -1,4 +1,4 @@
-"""Real university website inputs for Experiment 10-6."""
+"""Real university website inputs for Experiment 10-4."""
 
 from __future__ import annotations
 

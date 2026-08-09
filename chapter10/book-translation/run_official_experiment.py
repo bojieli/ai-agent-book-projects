@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run Experiment 10-3 on a real illustrated, code-heavy technical book.
+"""Run Experiment 10-2 on a real illustrated, code-heavy technical book.
 
 The tiny four-file fixture remains useful for a cheap tutorial.  This is the
 acceptance campaign: it translates Chapters 1 and 2 of the English edition of
@@ -503,7 +503,7 @@ def load_checkpoint(path: Path, fingerprint: str) -> Any | None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Official full-scope Experiment 10-3 campaign")
+    parser = argparse.ArgumentParser(description="Official full-scope Experiment 10-2 campaign")
     parser.add_argument("--source", action="append", help="Markdown chapter; repeat (default: book-en ch1/ch2)")
     parser.add_argument("--provider", choices=("mistral", "ark", "openai", "openrouter"), default="mistral")
     parser.add_argument("--model", help="translation model (default chosen for provider)")

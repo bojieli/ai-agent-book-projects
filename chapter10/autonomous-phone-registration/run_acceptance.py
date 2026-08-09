@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the complete safe Experiment 10-5 acceptance scenario.
+"""Run the complete safe current Experiment 10-3 acceptance scenario.
 
 The form and its submission endpoint are localhost-only.  Synthetic personal data is
 spoken by the configured TTS provider, crosses a real WebRTC audio track, is recorded
@@ -135,7 +135,7 @@ async def _git_head(root: Path) -> str:
 
 
 def parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(description="Safe full acceptance for Experiment 10-5")
+    p = argparse.ArgumentParser(description="Safe full acceptance for current Experiment 10-3")
     p.add_argument(
         "--run-dir", default=None, help="output directory (default: timestamped validation run)"
     )
