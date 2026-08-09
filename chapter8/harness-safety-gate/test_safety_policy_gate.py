@@ -91,6 +91,18 @@ class TestSafetyPolicyGatePathTraversal(unittest.TestCase):
         self.assertTrue(decision.triggered_rollback)
         self.assertEqual(decision.violation_type, "path_traversal")
 
+    def test_relative_path_not_falsely_flagged(self):
+        # A legitimate relative path that happens to share a name component with a
+        # sensitive directory must NOT be flagged after CWD resolution.
+        decision = self.gate.validate_tool_call("read_file", {"path": "etc/config"})
+        self.assertTrue(decision.allowed)
+        self.assertFalse(decision.triggered_rollback)
+
+    def test_relative_path_subdir_not_falsely_flagged(self):
+        decision = self.gate.validate_tool_call("read_file", {"path": "proc/stats.txt"})
+        self.assertTrue(decision.allowed)
+        self.assertFalse(decision.triggered_rollback)
+
 
 class TestSafetyPolicyGateSecretKey(unittest.TestCase):
     def test_init_with_parameter(self):
@@ -103,9 +115,13 @@ class TestSafetyPolicyGateSecretKey(unittest.TestCase):
         self.assertEqual(gate.secret_key, "env-secret-key")
 
     @patch.dict(os.environ, {}, clear=True)
-    def test_init_with_default(self):
+    def test_init_with_default_generates_random_secret(self):
         gate = SafetyPolicyGate()
-        self.assertEqual(gate.secret_key, "safety-gate-secret-key")
+        # No hardcoded default: a random 32-byte secret is generated per instance
+        self.assertIsInstance(gate.secret_key, bytes)
+        self.assertEqual(len(gate.secret_key), 32)
+        gate2 = SafetyPolicyGate()
+        self.assertNotEqual(gate.secret_key, gate2.secret_key)
 
 
 class TestSafetyPolicyGateConfirmation(unittest.TestCase):
@@ -169,6 +185,28 @@ class TestSafetyPolicyGateConfirmation(unittest.TestCase):
         decision3 = self.gate.validate_tool_call("SQL_QUERY", {"query": "DELETE FROM users"})
         self.assertFalse(decision3.allowed)
         self.assertTrue(decision3.requires_confirmation)
+
+    def test_expired_token_rejected(self):
+        # Tokens past their TTL are rejected and cleaned up
+        gate = SafetyPolicyGate(token_ttl=0.0)
+        params = {"path": "file.txt"}
+        token = gate.issue_confirmation("delete_file", params)
+        import time as _time
+        _time.sleep(0.01)
+        self.assertFalse(gate.verify_confirmation(token, "delete_file", params))
+        # Expired token was removed from pending set
+        self.assertNotIn(token, gate._pending_confirmations)
+
+    def test_expired_tokens_cleaned_on_issue(self):
+        gate = SafetyPolicyGate(token_ttl=0.0)
+        params = {"path": "file.txt"}
+        token = gate.issue_confirmation("delete_file", params)
+        import time as _time
+        _time.sleep(0.01)
+        # Issuing a new token triggers cleanup of the expired one
+        token2 = gate.issue_confirmation("delete_file", params)
+        self.assertNotIn(token, gate._pending_confirmations)
+        self.assertIn(token2, gate._pending_confirmations)
 
 
 class TestSafetyPolicyGateRollback(unittest.TestCase):

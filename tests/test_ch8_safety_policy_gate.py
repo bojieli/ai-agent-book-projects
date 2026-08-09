@@ -170,6 +170,39 @@ def test_low_risk_operations():
     assert not dec2.requires_confirmation
 
 
+def test_relative_path_not_falsely_flagged_as_traversal():
+    # A relative path sharing a name with a sensitive dir must not be flagged
+    # after CWD resolution (regression for false-positive rollback).
+    gate = SafetyPolicyGate()
+    dec = gate.validate_tool_call("read_file", {"path": "etc/config"})
+    assert dec.allowed
+    assert not dec.triggered_rollback
+
+    dec2 = gate.validate_tool_call("write_file", {"path": "var/log/app.log", "content": "x"})
+    assert dec2.allowed
+    assert not dec2.triggered_rollback
+
+
+def test_confirmation_token_expires_after_ttl():
+    import time as _time
+    gate = SafetyPolicyGate(token_ttl=0.0)
+    dec = gate.validate_tool_call("delete_file", {"path": "draft.txt"})
+    token = dec.confirmation_token
+    _time.sleep(0.01)
+    expired_dec = gate.validate_tool_call("delete_file", {"path": "draft.txt"}, confirm_token=token)
+    assert not expired_dec.allowed
+    assert expired_dec.requires_confirmation
+    assert token not in gate._pending_confirmations
+
+
+def test_default_secret_key_is_random_bytes():
+    gate_a = SafetyPolicyGate()
+    gate_b = SafetyPolicyGate()
+    assert isinstance(gate_a.secret_key, bytes)
+    assert len(gate_a.secret_key) == 32
+    assert gate_a.secret_key != gate_b.secret_key
+
+
 def test_module_level_validate_tool_call_entrypoint():
     dec = validate_tool_call("delete_file", {"path": "draft.txt"})
     assert isinstance(dec, SafetyGateDecision)

@@ -11,6 +11,7 @@ import hmac
 import os
 import re
 import secrets
+import time
 import urllib.parse
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
@@ -45,11 +46,16 @@ class SafetyGateDecision:
 class SafetyPolicyGate:
     """Harness Safety Policy Gate for tool call security inspection and confirmation."""
 
-    # Patterns for detecting path traversal attempts
+    # Patterns for detecting path traversal attempts (applied to all paths)
     PATH_TRAVERSAL_PATTERNS = [
         re.compile(r'\.\.[/\\]'),                           # ../ or ..\
         re.compile(r'%2e%2e', re.IGNORECASE),               # URL-encoded ..
         re.compile(r'\x00|%00'),                            # Null bytes
+    ]
+
+    # Patterns for sensitive directories (applied only to absolute / home-relative paths
+    # so that legitimate relative paths are not falsely flagged after CWD resolution)
+    SENSITIVE_DIR_PATTERNS = [
         re.compile(r'/(etc|var/log|sys|proc|boot|dev|root)(?:/|$)', re.IGNORECASE), # Sensitive Linux dirs
         re.compile(r'~/(?:\.ssh|\.aws|\.gnupg|\.bashrc|\.zshrc)', re.IGNORECASE), # Sensitive user configs
         re.compile(r'^[a-zA-Z]:\\(Windows|System32|Program Files)', re.IGNORECASE), # Sensitive Windows dirs
@@ -78,7 +84,8 @@ class SafetyPolicyGate:
         max_file_bytes: int = 50 * 1024 * 1024,
         max_memory_mb: int = 8192,
         max_threads: int = 16,
-        secret_key: Optional[str] = None,
+        secret_key: Optional[Union[str, bytes]] = None,
+        token_ttl: float = 300.0,
     ):
         """Initialize SafetyPolicyGate with configurable resource limits and secret key."""
         self.max_timeout = max_timeout
@@ -87,10 +94,18 @@ class SafetyPolicyGate:
         self.max_memory_mb = max_memory_mb
         self.max_threads = max_threads
         if secret_key is None:
-            secret_key = os.environ.get("SAFETY_GATE_SECRET_KEY") or "safety-gate-secret-key"
-        self.secret_key = secret_key
-        # Active pending confirmation tokens: token -> fingerprint
-        self._pending_confirmations: Dict[str, str] = {}
+            env_key = os.environ.get("SAFETY_GATE_SECRET_KEY")
+            if env_key:
+                self.secret_key = env_key
+            else:
+                # Generate a random per-instance secret instead of a hardcoded default
+                self.secret_key = secrets.token_bytes(32)
+        else:
+            self.secret_key = secret_key
+        # Active pending confirmation tokens: token -> (fingerprint, expiry timestamp)
+        self._pending_confirmations: Dict[str, Tuple[str, float]] = {}
+        # TTL (seconds) for unused confirmation tokens
+        self._token_ttl: float = token_ttl
         # Registered rollback handlers
         self._rollback_handlers: List[Callable[[], None]] = []
         # State snapshot history
@@ -128,18 +143,26 @@ class SafetyPolicyGate:
         canonical = json.dumps({"tool": tool_name.lower(), "params": clean_p}, sort_keys=True, ensure_ascii=False, default=str)
         return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
+    def _cleanup_expired_tokens(self) -> None:
+        """Remove expired pending confirmation tokens."""
+        now = time.time()
+        for token in [t for t, (_, exp) in self._pending_confirmations.items() if exp <= now]:
+            del self._pending_confirmations[token]
+
     def issue_confirmation(self, tool_name: str, params: Dict[str, Any]) -> str:
         """Generate a single-use non-deterministic confirmation token bound to tool name and parameters."""
+        self._cleanup_expired_tokens()
         fp = self._fingerprint(tool_name, params)
         token = secrets.token_hex(16)
-        self._pending_confirmations[token] = fp
+        self._pending_confirmations[token] = (fp, time.time() + self._token_ttl)
         return token
 
     def verify_confirmation(self, token: str, tool_name: str, params: Dict[str, Any]) -> bool:
         """Verify and consume a single-use confirmation token."""
+        self._cleanup_expired_tokens()
         if not token or token not in self._pending_confirmations:
             return False
-        expected_fp = self._pending_confirmations.pop(token)
+        expected_fp, _expiry = self._pending_confirmations.pop(token)
         actual_fp = self._fingerprint(tool_name, params)
         return hmac.compare_digest(expected_fp, actual_fp)
 
@@ -181,18 +204,25 @@ class SafetyPolicyGate:
             
             candidates = [s, unquoted1, unquoted2]
             for cand in candidates:
+                # Traversal patterns apply to every path
                 for pattern in self.PATH_TRAVERSAL_PATTERNS:
                     if pattern.search(cand):
                         return f"Path traversal attack detected in parameter value: '{s}'"
-                
-                # Check os.path.realpath
-                try:
-                    real_p = os.path.realpath(cand)
-                    for pattern in self.PATH_TRAVERSAL_PATTERNS:
-                        if pattern.search(real_p):
+
+                # Sensitive-directory patterns only apply to absolute or home-relative
+                # paths, so legitimate relative paths are not falsely flagged after
+                # resolution against the current working directory.
+                if os.path.isabs(cand) or cand.startswith("~"):
+                    for pattern in self.SENSITIVE_DIR_PATTERNS:
+                        if pattern.search(cand):
                             return f"Path traversal attack detected in parameter value: '{s}'"
-                except Exception:
-                    pass
+                    try:
+                        real_p = os.path.realpath(cand)
+                        for pattern in self.SENSITIVE_DIR_PATTERNS:
+                            if pattern.search(real_p):
+                                return f"Path traversal attack detected in parameter value: '{s}'"
+                    except Exception:
+                        pass
 
         return None
 
