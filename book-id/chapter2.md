@@ -732,44 +732,54 @@ Ide inti dari Agent Skills adalah memodularisasi kapabilitas Agent ke dalam pake
 
 [^ch2-3]: Anthropic, "Equipping Agents for the Real World with Agent Skills", 2025.
 
-**Lapisan 1 (Metadata)**: Tiap Skill harus menyertakan file `SKILL.md` yang dimulai dengan YAML frontmatter (sebuah blok metadata di bagian atas file yang dibatasi dengan `---`, mirip dengan halaman hak cipta buku), yang memuat kolom `name` dan `description`. Kerangka kerja Agent memindai semua Skills yang terinstal pada saat startup dan menginjeksi `name` dan `description` tersebut ke dalam context dialog. Ini biasanya hanya memakan biaya beberapa ratus token, dan trade-off di seputar lokasi injeksinya akan dibahas pada sub-bagian berikutnya. Tujuannya adalah membiarkan Agent mengetahui kapabilitas khusus apa yang tersedia tanpa perlu memuat seluruh isi konten Skill ke context.
+**Lapisan 1 (Metadata)**: Tiap Skill sebaiknya menyediakan file `SKILL.md` yang dimulai dengan YAML frontmatter (blok metadata yang dibatasi `---`), dengan kolom `name` dan `description`. Katalog harus terlihat oleh Agent sebelum isi utama dimuat, sehingga Agent dapat menilai relevansi sebuah kemampuan tanpa membayar biaya context penuh untuk setiap Skill. Runtime dapat menempatkan katalog di lapisan context yang berbeda; tujuan bersamanya adalah ketercarian, bukan memuat seluruh alur kerja domain.
 
-Routing bergantung secara krusial pada kolom `description` dari metadata. Ia harus cukup ringkas untuk menjaga token yang selalu termuat tetap rendah, tetapi ditulis sebagai aturan routing ketimbang ringkasan fitur. Pola yang paling jelas adalah "Gunakan saat / Jangan gunakan saat," didukung dengan **contoh negatif (negative examples)** yang mengidentifikasi situasi-situasi saat mana Skill tersebut tidak boleh dipicu. Contoh negatif bukanlah suatu opsi; mereka esensial untuk routing Skill yang akurat. Deskripsi umum seperti "bantu perihal backend" akan aktif di tugas yang tidak berhubungan, sementara pengecualian yang jelas akan membuat routing secara substansial lebih presisi. Untuk tujuan routing, "kapan menggunakan saya" jauh lebih penting daripada "apa yang bisa saya lakukan."
+Kolom `description` pada metadata penting untuk routing. Buatlah cukup ringkas agar jumlah token yang selalu hadir tetap rendah, tetapi tulislah sebagai kondisi routing, bukan ringkasan fitur. Batas “Gunakan saat” dan “Jangan gunakan saat” serta beberapa **contoh negatif** dapat mengurangi pemicu keliru akibat pencocokan yang terlalu luas. Ini adalah saran penulisan untuk prompt routing, bukan kolom wajib tambahan. Deskripsi seperti “bantu perihal backend” dapat aktif pada hampir semua tugas backend; deskripsi yang efektif menjelaskan kapan Skill harus digunakan, bukan hanya apa yang dapat dilakukannya.
 
-**Lapisan 2 (Alur Kerja Inti)**: Saat Agent menentukan bahwa Skill tertentu dibutuhkan untuk tugas, ia memuat file `SKILL.md` sepenuhnya via tool Skill yang terdedikasi, dan isi kontennya akan muncul dalam riwayat percakapan sebagai hasil dari tool. Mengambil Skill PPTX[^ch2-4] sebagai contoh, itu memuat alur kerja inti untuk menangani file PowerPoint: bagaimana mengekstraksi teks via markitdown (tool open-source Microsoft untuk mengubah dokumen ke Markdown), bagaimana meng-unzip file PPTX untuk mengakses struktur XML mentahnya, dan konvensi jalur untuk file penting.
+**Lapisan 2 (Alur Kerja Inti)**: Saat Agent menentukan bahwa tugas memerlukan Skill tertentu, runtime baru memuat `SKILL.md` lengkap pada saat itu. Claude Code menambahkan instruksi Skill sebagai pesan user di titik pemanggilan; runtime lain dapat membaca file atau mengaktifkan tool khusus lalu mengembalikan isinya sebagai hasil tool. Sebagai contoh, PPTX Skill[^ch2-4] memuat alur kerja inti untuk menangani file PowerPoint: mengekstrak teks melalui markitdown (tool open-source Microsoft untuk mengubah dokumen menjadi Markdown), membuka arsip PPTX untuk mengakses struktur XML mentah, dan konvensi jalur file penting.
 
 [^ch2-4]: Anthropic, "PPTX Skill", 2025. https://github.com/anthropics/skills/
 
+[^ch2-codex-skills]: OpenAI, “Build skills,” dokumentasi Codex. https://developers.openai.com/codex/skills/
+
 **Lapisan 3 (Detail)**: Referensi file memungkinkan navigasi lebih dalam ke sub-dokumen yang lebih detail. File utama merujuk pada `html2pptx.md` (alur kerja detail untuk membuat PowerPoint dari template HTML), `reference.md` (detail format teknis), dan lain-lain. Agent secara selektif membaca sub-dokumen yang relevan berdasarkan pada kebutuhannya yang spesifik.
 
-Skills bukan cuma memuat dokumentasi instruksional melainkan bisa juga memaketkan tool kode yang dapat dieksekusi dan file template—mengubahnya dari yang sekadar transfer pengetahuan menjadi kemampuan operasional.
+### Cara Menulis Skill yang Berguna
+
+Struktur runtime menjawab “kapan memuat” dan “berapa banyak memuat”; isinya tetap harus mengubah pengalaman menjadi instruksi yang dapat dijalankan model. Skill yang berguna perlu menjelaskan kepada anggota tim baru tugas yang dicakup, urutan tindakan, kapan harus berhenti untuk meminta konfirmasi, dan apa arti selesai.
+
+Mengikuti panduan penulisan Baoyu, *Panduan Visual Skill*[^ch2-baoyu-remove-ai-writing-flavor], mulailah dengan empat bagian:
+
+- **Peran dan pembaca**: siapa yang dilayani Skill, tugas yang dicakup, dan standar keluaran;
+- **Prinsip inti**: tiga hingga lima penilaian penting, dengan contoh positif dan negatif;
+- **Daftar larangan**: kesalahan umum, tindakan di luar cakupan, dan ungkapan membingungkan, termasuk pengecualian yang sah;
+- **Referensi**: glosarium, template, contoh, dan subdokumen rinci. Tulis aturan sebagai “cakupan + tindakan + pengecualian + verifikasi”, bukan daftar kata terlarang yang terus memanjang.
+
+Skill penulisan dapat dimulai dari tiga hingga lima tulisan Anda sendiri. Minta Agent menyimpulkan pilihan kata, pola kalimat, struktur paragraf, dan nada; buat draf awal singkat; lalu terapkan pada tugas nyata dan revisi kalimat demi kalimat. Perbedaan antara naskah asli dan revisi lebih informatif daripada “buat lebih natural”: perbedaan itu menunjukkan kata yang dihapus, kalimat panjang yang dipecah, dan fakta yang ditambahkan. Masukkan perubahan berulang ke Skill, sambil menyimpan contoh positif, negatif, dan cakupan tiap aturan.
+
+Skill juga dapat memaketkan tool kode yang dapat dieksekusi dan file template. Misalnya, Skill presentasi dapat berisi template slide dan skrip untuk mengurai presentasi.
 
 Nilai Skills bukan hanya terletak pada manajemen context namun juga pada penyediaan jalur berkelanjutan untuk mengumpulkan pengetahuan domain. Setiap Skill merupakan modul pengetahuan mandiri yang bisa dikembangkan, diuji, dikontrol versinya, dan dibagikan secara independen. Modularitas ini mengubah perluasan kemampuan Agent dari yang sebelumnya pengeditan system prompt yang terpusat menjadi ekosistem Skill yang terdistribusi, selaras dengan manajer paket semacam pip milik Python atau npm milik Node.js. Setiap Skill merangkum praktik terbaik untuk sebuah domain yang spesifik. Repositori Skills resmi dari Anthropic telah melingkupi perihal pemrosesan dokumen (PPTX, PDF, DOCX), analisis data, pembuatan kode (code generation), dan domain-domain lain, memungkinkan developer untuk menggunakan, menyesuaikan, atau membuat Skills yang sama sekali baru.
 
-Hal ini mengungkap prinsip yang penting untuk pengembang Agent: **saat memilih sebuah mode interaksi Agent, selaraskan dengan pola interaksi yang didesain agar disokong oleh model dan API**. Ketika membangun Agent dengan Claude, pergunakan sepenuhnya Skills dan system prompt yang terstruktur; saat menggunakan model lain, ikuti konvensi yang dioptimalkan oleh vendor model tersebut. Pola-pola pemakaian Agent yang dipromosikan oleh para perusahaan pembuat model utama sering mencerminkan tipe penggunaan dari apa-apa yang telah mereka latih dan evaluasi pada model-model tersebut.
+Hal ini mengungkap prinsip yang penting untuk pengembang Agent: **saat memilih mode interaksi Agent, selaraskan dengan metodologi pelatihan vendor model**. Pola penggunaan Agent yang dipromosikan perusahaan model dasar sering mencerminkan mode yang memang dilatih untuk didukung oleh model mereka.
 
-### Metode Implementasi Skills dan Trade-off
+[^ch2-baoyu-remove-ai-writing-flavor]: Baoyu, “Berhenti Menggunakan Prompt untuk Menghilangkan Rasa AI; Arahnya Keliru,” 14 Februari 2026. https://baoyu.io/blog/2026-02-14/remove-ai-writing-flavor
 
-Sesudah mendefinisikan Skills, pertanyaan selanjutnya adalah masalah teknik konkret: di bagian context yang mana konten Skill harus ditempatkan? Keputusan desain ini berdampak langsung pada efisiensi KV Cache dan kemampuan model dalam mematuhi perintah-perintah pada Skill. Pada prinsipnya, ada dua pendekatan umum, tapi keduanya memakan biaya yang signifikan. Sistem tingkat produksi seperti Claude Code menggunakan pendekatan ketiga yang menghindari sisi kelemahan mendasar dari kedua pendekatan sebelumnya.
+### Skills di dalam Context
 
-**Pendekatan Satu: Injeksikan ke System Prompt (pesan sistem).** Tambahkan konten Skill langsung ke system prompt. Model umumnya paling baik mengikuti instruksi yang berada pada posisi sistem karena pola ini banyak digunakan selama pelatihan. Kekurangannya, setiap Skill baru mengubah pesan sistem dan membatalkan prefix KV Cache. Jika Agent sering berganti Skill, cache akan berulang kali dibuat ulang sehingga latensi dan biaya meningkat.
+Saat menilai biaya context Skills, pisahkan katalog metadata dari instruksi Skill yang lengkap:
 
-**Pendekatan Dua: Baca sebagai file biasa sehingga kontennya muncul di tengah konteks.** Agent membaca dokumen Skill melalui alat pembaca file generik, lalu isi file masuk ke riwayat percakapan sebagai hasil alat. Pendekatan ini tidak mengubah system prompt dan tidak membatalkan prefix cache, tetapi menuntut kemampuan instruction-following yang lebih kuat: model harus mengenali dan mematuhi instruksi yang berada di tengah konteks panjang, bukan memperlakukannya sebagai keluaran alat biasa. Dukungan model terhadap pola ini berbeda-beda; Claude cenderung lebih andal, sedangkan model lain dapat mengalami penurunan kepatuhan terhadap instruksi yang disisipkan di tengah konteks.
+- **Prinsip tingkat standar**: mekanisme menetapkan urutan pemuatan, bukan role pesan. Katalog harus dapat ditemukan sebelum isi utama, dan isi dimuat sesuai kebutuhan setelah Skill dipilih. Role, pembungkus, dan apakah katalog dibangun ulang setiap turn merupakan pilihan Agent Harness.
+- **Claude Code secara konseptual**: menyediakan katalog kecil sebagai context runtime dan menambahkan instruksi lengkap pada titik pemanggilan Skill. “System prompt” dapat menggambarkan lapisan instruksi stabil secara logis, tetapi tidak berarti setiap client menggunakan role API `system`.
+- **Codex secara konseptual**: saat membangun context tiap turn, katalog Skills dirender ke context `developer`; Skill yang dipilih secara eksplisit diinjeksikan sebagai context `user` bertanda `<skill>`. Skill dari sumber lain dapat dibaca sesuai kebutuhan melalui tool.[^ch2-codex-skills]
 
-**Pendekatan Tiga (Implementasi Produksi): Sediakan metadata sebagai konteks dinamis, lalu muat konten lengkap sesuai kebutuhan melalui alat khusus.** Pendekatan inti Claude Code memisahkan "routing" dari "eksekusi": model terlebih dahulu menerima metadata Skill yang tersedia untuk menentukan apakah tugas memerlukan Skill tertentu; setelah memilihnya, barulah model memuat `SKILL.md` lengkap. Desain ini menyeimbangkan overhead konteks, pemakaian ulang Prompt Cache, dan kemampuan mengikuti instruksi.
-
-- **Daftar metadata**—`name` dan `description` dari seluruh Skill terpasang, biasanya hanya beberapa ratus token—disediakan lebih dahulu agar model dapat menentukan Skill yang relevan. Peran pesan yang digunakan untuk menyisipkan metadata merupakan detail implementasi Harness Claude Code, bukan persyaratan tetap mekanisme Agent Skills. Versi historis Claude Code pernah menempatkannya sebagai konten berperan pengguna yang dibungkus `<system-reminder>`; jalur implementasi yang mendukung pesan sistem di tengah percakapan dapat memakai blok konteks sistem yang ditambahkan di akhir. Tujuan keduanya sama: memberi tahu model tentang Skill yang tersedia tanpa terus-menerus menulis ulang prefix konteks yang stabil.
-- **Konten lengkap** dimuat sesuai kebutuhan. Setelah model menentukan bahwa suatu Skill cocok untuk tugas saat ini, alat Skill membaca `SKILL.md` terkait dan memasukkan isinya ke konteks eksekusi. Dengan demikian, instruksi lengkap untuk seluruh Skill tidak perlu dimuat pada awal sesi, sehingga konteks yang tidak relevan dapat dihindari.
-
-Desain dua lapis—katalog kecil yang selalu tersedia dan isi lengkap yang dimuat sesuai kebutuhan—inilah yang membuat Skills tetap mudah ditemukan tanpa membebani context.
-
-Dua gambar berikut menunjukkan efek desain ini dari dua perspektif: posisi Skills dalam trajectory dan evolusi dari KV Cache.
+Agent Harness berkembang cepat sehingga representasi konkretnya dapat berubah. Prinsip yang stabil adalah **katalog kecil yang mudah ditemukan dan isi lengkap yang dimuat sesuai kebutuhan**. Dengan demikian, Skills menggabungkan pemuatan dinamis dan biaya context yang terkendali. Dua gambar berikut menunjukkan desain ini dari dua perspektif: posisi Skills dalam trajectory dan evolusi KV Cache.
 
 ![Gambar 2-12: Struktur Lengkap Trajectory Agent Setelah Mengaktifkan Skills](images/fig2-12.svg){height=55%}
 
 ![Gambar 2-13: Evolusi KV Cache Seiring Tumbuhnya Trajectory Agent](images/fig2-13.svg)
 
-Sebuah kesalahpahaman umum perlu diklarifikasi: "ramah KV Cache (KV Cache-friendly)" tidak berarti "tanpa biaya (zero cost)". Penyisipan pertama dari beberapa ratus hingga beberapa ribu token itu masih dikenakan biaya penulisan (seperti disebutkan sebelumnya, penulisan Prompt Cache bahkan mungkin ditagihkan lebih mahal). Arti persisnya adalah **tulis sekali, manfaatkan berulang-ulang**: agar model menyadari keberadaan suatu Skill atau sepotong konten dokumen, informasi tersebut harus masuk ke dalam cache setidaknya sekali. Claude Code menanggung biaya ini sekali saja, tanpa pengulangan untuk sisa sesi. Bandingkan hal ini dengan menempatkan informasi yang sama ke dalam system prompt: setiap pembaruan akan membatalkan cache dari trajectory di bawahnya (downstream trajectory) dan memaksa pembuatan cache lagi, sering kali untuk puluhan atau ratusan ribu token. Itulah kasus yang benar-benar tidak ramah cache.
+Sebuah kesalahpahaman umum perlu diklarifikasi: “ramah KV Cache” tidak berarti “tanpa biaya”. Katalog harus diproses saat pertama kali masuk ke sebuah request, dan pemuatan isi Skill menambah komputasi ketika pertama kali diperlukan; request berikutnya dapat memakai ulang cache selama prefix yang sudah terbentuk tetap stabil. Harness berbeda dalam cara membangun ulang katalog, tetapi manfaat bersamanya adalah tidak perlu memuat semua isi Skill di awal atau menulis ulang context yang sudah terbentuk setiap kali Skill baru dipanggil.
 
 ### Hubungan Antara Skills dan Tool
 
@@ -794,7 +804,7 @@ Dari perspektif pengelolaan context, mekanisme Skills sangat ramah terhadap KV C
 
 ![Gambar 2-14: Arsitektur Agent Status Bar](images/fig2-14.svg)
 
-Bagian Skills memperkenalkan "pesan meta peran-pengguna (user-role meta message) di akhir context" sebagai sebuah jalur umum untuk menginjeksi informasi meta. Daftar metadata Skill adalah salah satu penggunaan dari jalur tersebut. Bagian ini mengembangkan mekanisme tersebut secara lebih sistematis: kerangka kerja Agent dapat menggunakannya untuk menyinkronkan state runtime (runtime state) dinamis dengan model. Mekanisme ini disebut **Agent Status Bar**.
+Bagian sebelumnya membahas kemampuan yang disediakan Skills sesuai kebutuhan. Bagian ini menangani masalah lain: bagaimana model tetap mengetahui progres tugas, perubahan lingkungan, dan jumlah pemanggilan tool. Kerangka kerja Agent mengemas informasi dinamis tersebut sebagai state terstruktur dan menginjeksi ke context; mekanisme ini disebut **Agent Status Bar**.
 
 Prompt engineering yang dibahas sebelumnya menyelesaikan masalah "instruksi statis apa yang harus diberikan kepada model." Namun, selama eksekusi yang sebenarnya, Agent juga perlu melacak status dan progres tugasnya sendiri secara dinamis—di sinilah Agent Status Bar berperan.
 
