@@ -160,3 +160,40 @@ def test_process_audio_chunk_consecutive_frames_speech_flag():
     assert result["is_speech"] is True
     assert result["is_playing"] is True
     assert "awaiting consecutive frames" in result["message"]
+def test_uint8_energy_normalization():
+    """Verify uint8 PCM energy is normalized to [-1, 1)."""
+    manager = DuplexInterruptionManager(vad_threshold=0.05)
+    uint8_speech = np.random.randint(0, 255, 1600, dtype=np.uint8)
+    energy = manager.calculate_energy(uint8_speech)
+    assert energy > 0.05
+    assert energy < 1.0
+
+
+def test_float32_bytes_energy_calculation():
+    """Verify float32 raw bytes energy calculation."""
+    manager = DuplexInterruptionManager(vad_threshold=0.05)
+    float32_speech = np.random.uniform(-0.5, 0.5, 400).astype(np.float32).tobytes()
+    energy = manager.calculate_energy(float32_speech, sample_format="float32")
+    assert energy > 0.05
+    assert energy < 1.0
+
+
+def test_repeated_barge_in_does_not_truncate_historical_turns():
+    """Verify repeated barge-in does not pollute earlier completed turns."""
+    manager = DuplexInterruptionManager()
+    manager.add_dialogue_turn("assistant", "First turn completed", status="completed")
+    manager.add_dialogue_turn("assistant", "Second turn playing", status="completed")
+
+    manager.start_playback([b"audio"])
+    manager.handle_barge_in()
+
+    ctx = manager.get_dialogue_context()
+    assert ctx[0]["status"] == "completed"
+    assert "[interrupted]" not in ctx[0]["content"]
+    assert ctx[1]["status"] == "interrupted"
+
+    # Second barge-in without new turn should not affect turn 0
+    manager.handle_barge_in()
+    ctx = manager.get_dialogue_context()
+    assert ctx[0]["status"] == "completed"
+    assert "[interrupted]" not in ctx[0]["content"]

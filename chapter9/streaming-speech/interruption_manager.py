@@ -98,29 +98,41 @@ class DuplexInterruptionManager:
         self._consecutive_active_frames = 0
         self.pending_audio_stream.clear()
 
-    def calculate_energy(self, audio_data: Union[np.ndarray, bytes, List[float], List[int]]) -> float:
+    def calculate_energy(
+        self,
+        audio_data: Union[np.ndarray, bytes, List[float], List[int]],
+        sample_format: Optional[str] = None,
+    ) -> float:
         """Calculate Root Mean Square (RMS) energy level of an audio chunk.
 
-        Supports numpy arrays, raw bytes (16-bit PCM or float32), or float/int lists.
+        Supports numpy arrays, raw bytes (16-bit PCM, uint8, or float32), or float/int lists.
+        sample_format can be 'int16', 'uint8', 'float32', or None for auto detection.
         """
         if audio_data is None:
             return 0.0
 
+        fmt = (sample_format or "").lower()
         if isinstance(audio_data, bytes):
             if len(audio_data) == 0:
                 return 0.0
-            # Try 16-bit PCM int or uint8
-            if len(audio_data) % 2 == 0:
-                arr = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
+            if fmt in ("float32", "float") or (not fmt and len(audio_data) % 4 == 0 and len(audio_data) % 2 == 0):
+                if fmt in ("float32", "float"):
+                    arr = np.frombuffer(audio_data, dtype=np.float32)
+                elif len(audio_data) % 2 == 0:
+                    arr = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
+                else:
+                    arr = (np.frombuffer(audio_data, dtype=np.uint8).astype(np.float32) - 128.0) / 128.0
+            elif fmt == "uint8" or (len(audio_data) % 2 != 0):
+                arr = (np.frombuffer(audio_data, dtype=np.uint8).astype(np.float32) - 128.0) / 128.0
             else:
-                arr = np.frombuffer(audio_data, dtype=np.uint8).astype(np.float32) / 255.0 - 0.5
+                arr = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
         elif isinstance(audio_data, (list, tuple)):
             if len(audio_data) == 0:
                 return 0.0
             raw_arr = np.array(audio_data)
             if np.issubdtype(raw_arr.dtype, np.integer):
-                if raw_arr.dtype == np.uint8:
-                    arr = raw_arr.astype(np.float32) / 255.0 - 0.5
+                if raw_arr.dtype == np.uint8 or fmt == "uint8":
+                    arr = (raw_arr.astype(np.float32) - 128.0) / 128.0
                 elif raw_arr.dtype == np.int8:
                     arr = raw_arr.astype(np.float32) / 128.0
                 elif raw_arr.dtype == np.int16:
@@ -142,8 +154,8 @@ class DuplexInterruptionManager:
             if audio_data.size == 0:
                 return 0.0
             if np.issubdtype(audio_data.dtype, np.integer):
-                if audio_data.dtype == np.uint8:
-                    arr = audio_data.astype(np.float32) / 255.0 - 0.5
+                if audio_data.dtype == np.uint8 or fmt == "uint8":
+                    arr = (audio_data.astype(np.float32) - 128.0) / 128.0
                 elif audio_data.dtype == np.int8:
                     arr = audio_data.astype(np.float32) / 128.0
                 elif audio_data.dtype == np.int16:
@@ -170,15 +182,20 @@ class DuplexInterruptionManager:
         rms = float(np.sqrt(np.mean(arr ** 2) + 1e-12))
         return rms
 
-    def is_voice_active(self, audio_data: Union[np.ndarray, bytes, List[float], List[int]]) -> bool:
+    def is_voice_active(
+        self,
+        audio_data: Union[np.ndarray, bytes, List[float], List[int]],
+        sample_format: Optional[str] = None,
+    ) -> bool:
         """Check if incoming audio chunk exceeds the VAD energy threshold."""
-        energy = self.calculate_energy(audio_data)
+        energy = self.calculate_energy(audio_data, sample_format=sample_format)
         return energy >= self.vad_threshold
 
     def process_audio_chunk(
         self,
         audio_data: Union[np.ndarray, bytes, List[float], List[int]],
         sample_rate: int = 16000,
+        sample_format: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Process real-time incoming audio chunk from user.
 
@@ -188,7 +205,7 @@ class DuplexInterruptionManager:
         Returns:
             Dict containing VAD analysis results, playback status, and interruption info.
         """
-        energy = self.calculate_energy(audio_data)
+        energy = self.calculate_energy(audio_data, sample_format=sample_format)
         is_speech = energy >= self.vad_threshold
 
         if not self.is_playing:
@@ -254,15 +271,14 @@ class DuplexInterruptionManager:
         # 2. Dialogue context truncation
         truncated_turns_count = 0
         if self.dialogue_context:
-            for turn in reversed(self.dialogue_context):
-                if turn.role in ("assistant", "system", "agent") and turn.status != "interrupted":
-                    turn.status = "interrupted"
-                    truncated_turns_count += 1
-                    if truncated_length is not None and truncated_length < len(turn.content):
-                        turn.content = turn.content[:truncated_length] + " [interrupted...]"
-                    else:
-                        turn.content = turn.content + " [interrupted]"
-                    break
+            last_turn = self.dialogue_context[-1]
+            if last_turn.role in ("assistant", "system", "agent") and last_turn.status != "interrupted":
+                last_turn.status = "interrupted"
+                truncated_turns_count += 1
+                if truncated_length is not None and truncated_length < len(last_turn.content):
+                    last_turn.content = last_turn.content[:truncated_length] + " [interrupted...]"
+                else:
+                    last_turn.content = last_turn.content + " [interrupted]"
 
         # 3. Re-planning trigger generation
         replan_payload = {
