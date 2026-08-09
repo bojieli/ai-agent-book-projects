@@ -7,7 +7,7 @@
 ```bash
 python -m pytest -q test_pipeline.py
 python demo.py                      # 离线教学演示全流程
-python run_experiment_8_9.py        # 离线验收入口
+python run_experiment_8_9.py        # 离线验收入口（注：脚本名 run_experiment_8_9.py 属于历史遗留，该项目为补充案例，并非正文实验 8-9）
 python run_experiment_8_9.py \
   --provider ark --model doubao-seed-1-6-250615   # 真实 LLM 路径
 ```
