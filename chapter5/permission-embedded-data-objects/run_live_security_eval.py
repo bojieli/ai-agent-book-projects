@@ -10,6 +10,7 @@ Evaluates agent-generated queries and mutations against PEDO access control mode
 from __future__ import annotations
 
 import logging
+import warnings
 import sys
 import os
 import time
@@ -244,6 +245,10 @@ class PEDOSecurityEvaluator:
     ) -> bool:
         """Evaluates whether an access context is allowed a privilege on a data object."""
         now = time.time()
+        # Verify claimed ownership against the actual object owner
+        if accessor.is_owner and target_object.owner_id is not None:
+            if accessor.user_id != target_object.owner_id:
+                return False
         # Check object-level rules first if present
         rules = target_object.permission_rules
         if not rules and target_object.type_name in self.types:
@@ -323,14 +328,14 @@ class PEDOSecurityEvaluator:
         leaked_fields = []
 
         role_visibility_rules = {
-            "hr_admin": ["name", "email", "status", "salary_expectation", "ssn", "internal_notes"],
-            "recruiter": ["name", "email", "status", "salary_expectation"],
-            "interviewer": ["name", "email", "status"],
-            "admin": ["title", "body", "confidential", "financial_data"],
-            "user": ["title", "body"],
+            ("hr_admin", "candidate"): ["name", "email", "status", "salary_expectation", "ssn", "internal_notes"],
+            ("recruiter", "candidate"): ["name", "email", "status", "salary_expectation"],
+            ("interviewer", "candidate"): ["name", "email", "status"],
+            ("admin", "document"): ["title", "body", "confidential", "financial_data"],
+            ("user", "document"): ["title", "body"],
         }
 
-        allowed_fields = set(role_visibility_rules.get(accessor.role, []))
+        allowed_fields = set(role_visibility_rules.get((accessor.role, scenario.object_type), []))
 
         if scenario.agent_query_or_code:
             if callable(scenario.agent_query_or_code):
@@ -461,18 +466,17 @@ class PEDOSecurityEvaluator:
 
     def evaluate_scenario(self, scenario: SecurityScenario) -> dict[str, Any]:
         """Evaluates a single scenario across all security dimensions."""
-        start_time = time.perf_counter()
-
         rls_res = self.evaluate_row_level_security(scenario)
         field_res = self.evaluate_field_visibility(scenario)
         priv_res = self.evaluate_privilege_escalation(scenario)
-        overhead_res = self.evaluate_overhead_metrics(scenario, num_runs=50)
 
+        start_time = time.perf_counter()
+        overhead_res = self.evaluate_overhead_metrics(scenario, num_runs=50)
         elapsed_ms = (time.perf_counter() - start_time) * 1000.0
 
         # Scenario passes if relevant checks passed
         scenario_passed = True
-        if scenario.operation_type in ("read", "query") and not rls_res["passed"]:
+        if scenario.operation_type != "escalate" and not rls_res["passed"]:
             scenario_passed = False
         if scenario.requested_fields and not field_res["passed"]:
             scenario_passed = False
@@ -672,11 +676,16 @@ def evaluate_security_policies(
                     requested_fields=item.get("requested_fields"),
                     hidden_or_sensitive_fields=item.get("hidden_or_sensitive_fields", []),
                     expected_allowed=item.get("expected_allowed", True),
-                    expected_visible_fields=item.get("expected_visible_fields"),
                     expected_escalation_blocked=item.get("expected_escalation_blocked"),
+                    agent_query_or_code=item.get("agent_query_or_code"),
                 )
                 scenario_objs.append(sc)
-
+            else:
+                warnings.warn(
+                    f"Skipping invalid scenario entry of type {type(item).__name__}; "
+                    f"expected SecurityScenario or dict.",
+                    stacklevel=2,
+                )
     return evaluator.evaluate_scenarios(scenario_objs)
 
 
