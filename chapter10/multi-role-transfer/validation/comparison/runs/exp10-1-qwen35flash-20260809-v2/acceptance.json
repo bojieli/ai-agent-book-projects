@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "experiment": "10-1",
+  "run_id": "exp10-1-qwen35flash-20260809-v2",
+  "generated_at_utc": "2026-08-09T14:31:45.754273+00:00",
+  "evidence_status": "pass",
+  "interpretation": "complete_bounded_comparison",
+  "model": "qwen/qwen3.5-flash-02-23",
+  "base_url": "https://openrouter.ai/api/v1",
+  "campaign_parameters": {
+    "tasks": 30,
+    "paired_samples": 30,
+    "main_runs": 60,
+    "boundary_runs": 12,
+    "max_steps": null,
+    "max_output_tokens": 600,
+    "temperature": 0
+  },
+  "receipt_counts": {
+    "provider": 289,
+    "tavily": 31
+  },
+  "result": {
+    "transfer_pass_at_1": 0.06666666666666667,
+    "skill_pass_at_1": 0.5,
+    "transfer_required_sequence_rate": 0.4,
+    "skill_required_sequence_rate": 0.9,
+    "skill_minus_transfer_uncached_input_token_median": 6855.0,
+    "skill_minus_transfer_latency_seconds_median": 4.368,
+    "skill_minus_transfer_cost_usd_median": 0.00044304000000000007,
+    "boundary_pass_rate": {
+      "transfer": {
+        "n": 6,
+        "pass_rate": 1.0
+      },
+      "skill": {
+        "n": 6,
+        "pass_rate": 1.0
+      }
+    },
+    "quality_judge_stage": "completed_position_swapped_external_judge",
+    "blind_judge_winner_counts": {
+      "skill": 32,
+      "transfer": 20,
+      "tie": 8
+    }
+  },
+  "credential_scan": {
+    "actual_secret_hits": 0,
+    "credential_pattern_hits": 0
+  },
+  "gates": {
+    "campaign_finished_not_checkpoint": true,
+    "minimum_30_paired_samples": true,
+    "task_file_matches_retained_runs": true,
+    "research_coding_writing_strata_present": true,
+    "raw_provider_receipt_for_every_call": true,
+    "unique_provider_response_ids": true,
+    "real_tavily_receipts_retained": true,
+    "all_failed_and_limited_trajectories_retained": true,
+    "complete_two_arm_boundary_suite": true,
+    "paired_statistics_and_costs_present": true,
+    "blind_quality_judge_position_swapped": true,
+    "credential_free_campaign": true
+  },
+  "passed_gates": 12,
+  "total_gates": 12
+}

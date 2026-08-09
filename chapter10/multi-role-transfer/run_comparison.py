@@ -156,14 +156,32 @@ def _contains_in_order(observed: list[str], required: list[str]) -> bool:
 
 
 def _path_run(path: str, client: OpenAI, model: str, task: str, max_steps: int,
-              kind: str = "cagr", task_spec: dict | None = None) -> dict:
+              kind: str = "cagr", task_spec: dict | None = None,
+              max_output_tokens: int | None = None) -> dict:
     started = time.monotonic()
+    provider_receipts: list[dict] = []
+    tavily_receipts: list[dict] = []
+
+    def record_provider(receipt: dict) -> None:
+        provider_receipts.append(receipt)
+
+    def record_tavily(receipt: dict) -> None:
+        tavily_receipts.append(receipt)
+
     if path == "transfer":
         agent = ComparisonTransferOrchestrator(
-            client=client, model=model, max_steps=max_steps, verbose=False
+            client=client, model=model, max_steps=max_steps,
+            max_output_tokens=max_output_tokens, verbose=False,
+            provider_receipt_sink=record_provider,
+            tool_receipt_sink=record_tavily,
         )
     else:
-        agent = SkillOrchestrator(client=client, model=model, max_steps=max_steps, verbose=False)
+        agent = SkillOrchestrator(
+            client=client, model=model, max_steps=max_steps,
+            max_output_tokens=max_output_tokens, verbose=False,
+            provider_receipt_sink=record_provider,
+            tool_receipt_sink=record_tavily,
+        )
     final = agent.run(task)
     metrics = _usage_totals(agent.api_calls)
     prefix_hashes = _static_prefix_hashes(path, agent.api_calls)
@@ -184,6 +202,11 @@ def _path_run(path: str, client: OpenAI, model: str, task: str, max_steps: int,
         "metrics": metrics,
         "elapsed_seconds": round(time.monotonic() - started, 3),
         "terminated_by_limit": agent.terminated_by_limit,
+        # Keep the raw provider/search boundaries beside every trajectory.  The
+        # request bodies contain no API key (Tavily removes it before recording),
+        # so a clean-clone reviewer can independently inspect each cell.
+        "provider_receipts": provider_receipts,
+        "tavily_receipts": tavily_receipts,
     }
     if path == "transfer":
         payload["handoff_chain"] = agent.handoff_chain_str()
@@ -215,6 +238,15 @@ def _path_run(path: str, client: OpenAI, model: str, task: str, max_steps: int,
     payload["task_kind"] = kind
     payload["task_spec"] = task_spec or {"kind": kind}
     payload["outcome"] = evaluate_task(final, agent.history, kind=kind, spec=task_spec)
+    # A task is not accepted merely because the final text looks plausible: the
+    # declared role/Skill sequence is itself a deterministic acceptance gate.
+    payload["outcome"]["dimensions"]["required_capability_sequence"] = int(
+        payload["process"]["required_sequence_complete"]
+    )
+    payload["outcome"]["pass"] = bool(
+        payload["outcome"]["pass"]
+        and payload["process"]["required_sequence_complete"]
+    )
     return payload
 
 
@@ -225,6 +257,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--api-key", default=None, help="默认读取 OPENAI_API_KEY")
     parser.add_argument("--trials", type=int, default=5)
     parser.add_argument("--max-steps", type=int, default=20)
+    parser.add_argument("--max-output-tokens", type=int, default=1200,
+                        help="每次模型调用的输出上限；设为 0 使用服务商默认值")
+    parser.add_argument("--request-timeout", type=float, default=120.0,
+                        help="模型 HTTP 请求超时（秒）")
     parser.add_argument("--task", default=COMPOSITE_TASK)
     parser.add_argument("--task-file", type=Path,
                         help="JSON 数组；每项包含 id/prompt/kind，可附加可观察规则门禁")
@@ -233,6 +269,8 @@ def parse_args() -> argparse.Namespace:
                         help="不调用 API；用当前评分器重放已有 comparison JSON")
     parser.add_argument("--output", type=Path,
                         default=Path("validation/comparison/latest.json"))
+    parser.add_argument("--resume", type=Path,
+                        help="从已有的部分 comparison JSON 继续；已完成的 pair/case 会跳过")
     parser.add_argument("--input-price-per-million", type=float, default=None)
     parser.add_argument("--cached-input-price-per-million", type=float, default=None)
     parser.add_argument("--output-price-per-million", type=float, default=None)
@@ -261,6 +299,12 @@ def _rescore_run(run: dict) -> None:
         "required_capabilities": required,
         "required_sequence_complete": _contains_in_order(observed, required),
     }
+    run["outcome"].setdefault("dimensions", {})["required_capability_sequence"] = int(
+        run["process"]["required_sequence_complete"]
+    )
+    run["outcome"]["pass"] = bool(
+        run["outcome"]["pass"] and run["process"]["required_sequence_complete"]
+    )
 
 
 def _replay(args: argparse.Namespace) -> int:
@@ -293,6 +337,7 @@ def _replay(args: argparse.Namespace) -> int:
     }
     payload["rescored_at_utc"] = datetime.now(timezone.utc).isoformat()
     payload["evaluator_version"] = 2
+    payload["max_steps"] = args.max_steps
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"rescored {args.replay} -> {args.output}")
@@ -422,7 +467,8 @@ def main(args: argparse.Namespace) -> int:
         base_url = "https://openrouter.ai/api/v1"
         if "/" not in model:
             model = f"openai/{model}" if model.startswith("gpt-") else model
-    client = OpenAI(api_key=api_key, base_url=base_url)
+    client = OpenAI(api_key=api_key, base_url=base_url, timeout=args.request_timeout)
+    max_output_tokens = args.max_output_tokens or None
     if args.task_file:
         task_specs = json.loads(args.task_file.read_text(encoding="utf-8"))
         if not isinstance(task_specs, list) or not task_specs:
@@ -436,34 +482,89 @@ def main(args: argparse.Namespace) -> int:
     else:
         task_specs = [{"id": "cagr", "prompt": args.task}]
     runs: list[dict] = []
+    boundaries: list[dict] = []
+    if args.resume:
+        checkpoint = json.loads(args.resume.read_text(encoding="utf-8"))
+        if checkpoint.get("experiment") != "10-1-role-switch-comparison":
+            raise SystemExit("--resume 文件不是 Experiment 10-1 comparison")
+        runs.extend(checkpoint.get("runs", []))
+        boundaries.extend(checkpoint.get("boundary_runs", []))
+
+    completed_cells = {
+        (str(item.get("pair_id")), item.get("path")) for item in runs
+    }
+    completed_boundaries = {
+        (str(item.get("case_id")), item.get("path")) for item in boundaries
+    }
+
+    def write_checkpoint() -> None:
+        """Persist every completed cell so an interrupted live run is resumable."""
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        checkpoint = {
+            "schema_version": 1,
+            "experiment": "10-1-role-switch-comparison",
+            "checkpoint": True,
+            "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+            "model": model,
+            "base_url": base_url,
+            "temperature": 0,
+            "max_output_tokens": max_output_tokens,
+            "request_timeout_seconds": args.request_timeout,
+            "tasks": task_specs,
+            "trials_per_task": args.trials,
+            "paired_samples": len(task_specs) * args.trials,
+            "pricing": {
+                "input_per_million": args.input_price_per_million,
+                "cached_input_per_million": args.cached_input_price_per_million,
+                "output_per_million": args.output_price_per_million,
+            },
+            "runs": runs,
+            "boundary_runs": boundaries,
+        }
+        temporary = args.output.with_suffix(args.output.suffix + ".tmp")
+        temporary.write_text(json.dumps(checkpoint, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        temporary.replace(args.output)
+
     for trial in range(1, args.trials + 1):
         for task_index, task_spec in enumerate(task_specs):
             path_order = (
                 ("transfer", "skill") if (trial + task_index) % 2 else ("skill", "transfer")
             )
             for path in path_order:
+                pair_id = f"{task_spec['id']}:{trial}"
+                if (pair_id, path) in completed_cells:
+                    continue
                 run = _path_run(
                     path, client, model, task_spec["prompt"], args.max_steps,
                     str(task_spec.get("kind", "cagr")), task_spec,
+                    max_output_tokens,
                 )
                 run["trial"] = trial
                 run["task_id"] = str(task_spec["id"])
                 run["pair_id"] = f"{task_spec['id']}:{trial}"
                 runs.append(run)
+                completed_cells.add((pair_id, path))
+                write_checkpoint()
                 print(f"task={task_spec['id']} trial={trial} path={path} "
                       f"pass={run['outcome']['pass']} calls={run['metrics']['api_calls']} "
                       f"input={run['metrics']['input_tokens']} output={run['metrics']['output_tokens']}")
 
-    boundaries: list[dict] = []
     if not args.skip_boundary:
         for case in BOUNDARY_CASES:
             for path in ("transfer", "skill"):
-                run = _path_run(path, client, model, case["prompt"], args.max_steps)
+                if (str(case["id"]), path) in completed_boundaries:
+                    continue
+                run = _path_run(
+                    path, client, model, case["prompt"], args.max_steps,
+                    max_output_tokens=max_output_tokens,
+                )
                 run["case_id"] = case["id"]
                 run["boundary"] = evaluate_boundary(run["final_answer"], run["history"], case)
                 # Do not duplicate full boundary histories in the summary; they are
                 # retained in the per-run record so failures remain auditable.
                 boundaries.append(run)
+                completed_boundaries.add((str(case["id"]), path))
+                write_checkpoint()
                 print(f"boundary={case['id']} path={path} pass={run['boundary']['pass']}")
 
     payload: dict[str, Any] = {
@@ -473,6 +574,8 @@ def main(args: argparse.Namespace) -> int:
         "model": model,
         "base_url": base_url,
         "temperature": 0,
+        "max_output_tokens": max_output_tokens,
+        "request_timeout_seconds": args.request_timeout,
         "tasks": task_specs,
         "trials_per_task": args.trials,
         "paired_samples": len(task_specs) * args.trials,

@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "experiment": "10-1",
+  "run_id": "exp10-1-qwen35flash-20260809-v2",
+  "run_directory": "validation/comparison/runs/exp10-1-qwen35flash-20260809-v2",
+  "manifest_sha256": "0fc5c6276230fefdf16d5af4cb487f0c093dac49bbf4eb418cda826dd65db830",
+  "evidence_status": "pass",
+  "interpretation": "complete_bounded_comparison"
+}

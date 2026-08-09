@@ -3,17 +3,33 @@ from pathlib import Path
 
 from evaluation import BOUNDARY_CASES, evaluate_boundary, evaluate_task
 from run_comparison import _static_prefix_hashes
-from skill_orchestrator import SKILLS, _fixed_system_prompt, load_skill
+from skill_orchestrator import SKILLS, SKILL_TOOLS, SkillOrchestrator, _fixed_system_prompt, load_skill
 
 
 def test_skill_catalog_and_bodies_are_complete():
     assert set(SKILLS) == {"triage", "research", "coding", "data_analysis", "writing"}
     prompt = _fixed_system_prompt()
     assert "系统提示词和工具定义在整个会话中保持不变" in prompt
+    assert "第一步必须调用 load_skill(name=\"triage\")" in prompt
     for name, item in SKILLS.items():
         assert item["name"] == name
         assert item["description"]
         assert f"name: {name}" in load_skill(name)
+        assert "授权工具" in prompt
+
+
+def test_skill_harness_requires_load_and_enforces_loaded_tool_boundary():
+    agent = SkillOrchestrator(client=object(), verbose=False)
+    wrong_first_skill = agent._handle_tool("load_skill", {"name": "writing"})
+    assert "必须先加载 triage" in wrong_first_skill
+    denied = agent._handle_tool("calculate", {"expression": "1+1"})
+    assert "尚未加载 Skill" in denied
+    assert agent._handle_tool("load_skill", {"name": "triage"}).startswith("---")
+    denied_again = agent._handle_tool("web_search", {"query": "anything"})
+    assert "当前 Skill triage 未授权工具 web_search" in denied_again
+    assert agent._handle_tool("load_skill", {"name": "data_analysis"}).startswith("---")
+    assert agent._handle_tool("calculate", {"expression": "1+1"}).endswith("= 2.0")
+    assert SKILL_TOOLS["data_analysis"] == {"calculate", "descriptive_stats"}
 
 
 def test_outcome_rubric_requires_evidence_and_a_calculation():

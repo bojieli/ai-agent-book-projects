@@ -26,6 +26,14 @@ import urllib.request
 from typing import Callable, Dict, List, Optional
 
 
+# Keep live campaigns bounded when a provider stalls.  The value is configurable
+# for readers running in a slower network, while the default is short enough that
+# one unavailable search cannot consume the whole paired comparison.
+TAVILY_TIMEOUT_SECONDS = float(os.environ.get("TAVILY_TIMEOUT_SECONDS", "20"))
+TAVILY_MAX_RESULTS = int(os.environ.get("TAVILY_MAX_RESULTS", "5"))
+TAVILY_CONTENT_CHARS = int(os.environ.get("TAVILY_CONTENT_CHARS", "1400"))
+
+
 # ---------------------------------------------------------------------------
 # research 角色：web_search —— 真实 Tavily 搜索
 # ---------------------------------------------------------------------------
@@ -39,7 +47,7 @@ def web_search(query: str, receipt_sink: Optional[Callable[[dict], None]] = None
         "api_key": api_key,
         "query": query,
         "search_depth": "advanced",
-        "max_results": 8,
+        "max_results": TAVILY_MAX_RESULTS,
         "include_answer": True,
         "include_raw_content": False,
     }
@@ -51,13 +59,15 @@ def web_search(query: str, receipt_sink: Optional[Callable[[dict], None]] = None
     )
     started = time.monotonic()
     try:
-        with urllib.request.urlopen(request, timeout=60) as response:
+        with urllib.request.urlopen(request, timeout=TAVILY_TIMEOUT_SECONDS) as response:
             status = response.status
             raw_response = response.read().decode("utf-8", "replace")
             payload = json.loads(raw_response)
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", "replace")[:1000]
         raise RuntimeError(f"Tavily HTTP {exc.code}: {detail}") from None
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+        raise RuntimeError(f"Tavily 请求失败：{exc}") from None
     if receipt_sink:
         receipt_sink({
             "kind": "tavily_search",
@@ -80,7 +90,10 @@ def web_search(query: str, receipt_sink: Optional[Callable[[dict], None]] = None
         results.append({
             "title": item.get("title"),
             "url": item.get("url"),
-            "content": item.get("content"),
+            # Search snippets are evidence pointers, not a second context
+            # window.  Bound their size so repeated role transitions do not
+            # make later API requests quadratic in prompt length.
+            "content": str(item.get("content") or "")[:TAVILY_CONTENT_CHARS],
             "score": item.get("score"),
         })
     if not results:

@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "experiment": "10-1",
+  "run_id": "exp10-1-qwen35flash-20260809-v2",
+  "generated_at_utc": "2026-08-09T14:31:45.755370+00:00",
+  "runtime_source_sha256": {
+    "run_comparison.py": "85e779b1250460befa7b7914fa8e0526e0b7a0c9fbc7b52342802faf4c5093f7",
+    "evaluation.py": "d03290d8f25638452358b5ac0bd231830831089fafdb5d48ae05655ce4089c9c",
+    "orchestrator.py": "7a3790079281e635988b099ec3af8eae6c96cd30eb3a0c18fbc8181173d18618",
+    "skill_orchestrator.py": "df1e7cabdf22bffdc2e807bad1b8689d8feff35217693c7537a86099685f93e5",
+    "tools.py": "5fd7511d85a28545bc389cb85c84f4219e10ccfabd3729834ea71b57c25cca02",
+    "experiment_protocol.json": "468c6d1f053b563a4aad216cd3c7ab08548a5cdeab86597d32f5f11b754131e0",
+    "tasks.formal.json": "62ab84682386c68b7ba4b3e225e561ef2f9a3e3ef51a2a5cfdf03acac8f86cb4",
+    "package_comparison.py": "6dfccff8505ce0e10c0facbf455ca47c7f9fa33b247a4f4d992a27cc0772b4b7",
+    "judge_comparison.py": "8c4ccea0884ed7293147288cd689f51c3b5a79d5e174178aade23be3a0144249",
+    "validate_comparison.py": "f3ba537b87d2ca538f256918edf862149f96e1677193b6dd480b4003a04af5ce"
+  },
+  "artifact_sha256": {
+    "campaign.json": "a7fdd8f9bb549861c653a8ee9b8c1aac52d1a65d5ca91188972e6cf1c02e0385",
+    "judge.json": "0f03ef7e52e72c1a8823ef13a81d4b4c3286a0f31dd3242487a8ef244a391b80",
+    "acceptance.json": "88f31450d99dd6e3aefaf81d7969d2f32bae5867b09e306025b6579f85ff9a7f",
+    "REPORT.md": "c8c3ba13ce86144e6095e07c927664f6b49698371c0fd7d07ab939c068f92fc1"
+  },
+  "acceptance": {
+    "evidence_status": "pass",
+    "passed_gates": 12,
+    "total_gates": 12
+  }
+}

@@ -269,6 +269,14 @@ python demo.py --list-roles
 
 `tests/` contains offline regressions for `count_characters`, `execute_python` timeouts, and tool-dispatch error handling. They do not require an API key.
 
+## Formal v2 evidence
+
+The authoritative package is [`validation/comparison/runs/exp10-1-qwen35flash-20260809-v2/`](validation/comparison/runs/exp10-1-qwen35flash-20260809-v2/), independently checked by [`validate_comparison.py`](validate_comparison.py) (12/12 gates). The campaign uses `qwen/qwen3.5-flash-02-23` through OpenRouter, 30 paired tasks at temperature 0, an eight-round per-cell limit, 60 main trajectories, and 12 boundary trajectories. The Skill arm now requires `load_skill("triage")` before any specialist tool.
+
+For this bounded model/configuration, Skill passes 15/30 deterministic task gates versus Transfer's 2/30. Skill's median delta is +6,855 uncached input tokens, +4.368 seconds, and +$0.00044304 repriced cost. An independent Gemini 2.5 Flash Lite judge reviewed all 30 pairs twice with swapped order: Skill 32, Transfer 20, and 8 ties across 60 judgments. These are bounded architecture results, not model-independent superiority claims.
+
+The Skill arm keeps all tool schemas visible to preserve a stable prefix, but the Harness rejects tools before a Skill is loaded or when the current Skill does not authorize them. Visibility is therefore not mistaken for progressive disclosure.
+
 ## Path 1 Demo and Historical Evidence
 
 `demo.py` presents a composite task requiring **multiple cross-domain switches**:
@@ -591,6 +599,14 @@ python demo.py --list-roles
 ```
 
 `tests/` 包含 `count_characters`、`execute_python` 超时和工具分发错误处理的离线回归测试，无需 API Key。
+
+## 正式 v2 对照证据
+
+权威运行包位于 [`validation/comparison/runs/exp10-1-qwen35flash-20260809-v2/`](validation/comparison/runs/exp10-1-qwen35flash-20260809-v2/)，并由 [`validate_comparison.py`](validate_comparison.py) 独立复核 12/12 门禁。该运行使用 `qwen/qwen3.5-flash-02-23`（OpenRouter），固定 30 个成对任务、温度 0、每单元最多 8 轮，保留 60 条主轨迹和 12 条边界轨迹；Skill 路径在运行时强制先加载 `triage`，再由 Skill 授权专业工具。
+
+在这一模型/configuration 下，Skill 通过 15/30 确定性任务门禁，Transfer 通过 2/30；Skill 的中位未缓存输入多 6,855 token、延迟多 4.368 秒、重算成本多 $0.00044304。异源 Gemini 2.5 Flash Lite 以交换顺序评审 30 对、共 60 次回执（Skill 32、Transfer 20、平局 8）。这是有边界的架构对照结果，不应外推为与模型无关的优胜。
+
+注意：Skill 的固定工具 schema 仍全部可见，以保持前缀稳定；Harness 策略门会拒绝未加载 Skill 或当前 Skill 未授权的工具调用。这样既能测量 Skill 渐进披露，又不会把“看得到工具”误当成“已经加载规程”。
 
 ## 路径一演示与历史证据
 
