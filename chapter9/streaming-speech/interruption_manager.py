@@ -115,17 +115,17 @@ class DuplexInterruptionManager:
         if isinstance(audio_data, bytes):
             if len(audio_data) == 0:
                 return 0.0
-            if fmt in ("float32", "float") or (not fmt and len(audio_data) % 4 == 0 and len(audio_data) % 2 == 0):
-                if fmt in ("float32", "float"):
-                    arr = np.frombuffer(audio_data, dtype=np.float32)
-                elif len(audio_data) % 2 == 0:
-                    arr = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
-                else:
-                    arr = (np.frombuffer(audio_data, dtype=np.uint8).astype(np.float32) - 128.0) / 128.0
-            elif fmt == "uint8" or (len(audio_data) % 2 != 0):
+            if fmt in ("float32", "float"):
+                arr = np.frombuffer(audio_data, dtype=np.float32)
+            elif fmt in ("uint8", "u8"):
                 arr = (np.frombuffer(audio_data, dtype=np.uint8).astype(np.float32) - 128.0) / 128.0
+            elif fmt in ("int8", "i8"):
+                arr = np.frombuffer(audio_data, dtype=np.int8).astype(np.float32) / 128.0
             else:
-                arr = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
+                if len(audio_data) % 2 != 0:
+                    arr = (np.frombuffer(audio_data, dtype=np.uint8).astype(np.float32) - 128.0) / 128.0
+                else:
+                    arr = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
         elif isinstance(audio_data, (list, tuple)):
             if len(audio_data) == 0:
                 return 0.0
@@ -315,7 +315,7 @@ class DuplexInterruptionManager:
         return {
             "status": "interrupted",
             "barge_in": True,
-            "playback_cancelled": True,
+            "playback_cancelled": was_playing,
             "cancelled_audio_bytes": cancelled_bytes,
             "context_truncated": truncated_turns_count > 0,
             "truncated_turns_count": truncated_turns_count,
