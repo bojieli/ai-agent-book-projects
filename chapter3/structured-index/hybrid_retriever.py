@@ -322,6 +322,7 @@ class HybridStructuredRetriever:
         coverage_score = min(1.0, matches / len(words)) if words else 0.0
 
         semantic_score = 0.0
+        has_vector = False
         if query_vector is not None:
             try:
                 n_emb = node.get("embedding")
@@ -329,6 +330,7 @@ class HybridStructuredRetriever:
                     n_emb = self.embedding_fn(text_content)
                     node["embedding"] = n_emb
                 if n_emb is not None:
+                    has_vector = True
                     q_norm = np.linalg.norm(query_vector)
                     n_norm = np.linalg.norm(n_emb)
                     if q_norm > 0 and n_norm > 0:
@@ -337,12 +339,11 @@ class HybridStructuredRetriever:
             except Exception:
                 pass
 
-        if semantic_score > 0:
+        if has_vector:
             final_score = float(semantic_score * 0.7 + lexical_score * 0.3)
         else:
             semantic_score = coverage_score
             final_score = float(lexical_score * 0.8 + coverage_score * 0.2)
-
         return final_score, lexical_score, semantic_score
 
     def _compute_relevance_score(

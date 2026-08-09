@@ -273,3 +273,14 @@ def test_top_k_zero():
     retriever.add_raptor_node("node1", 0, "Quantum physics content", "Quantum physics summary")
     results = retriever.retrieve("Quantum physics", top_k=0)
     assert results == []
+
+def test_orthogonal_vector_scoring():
+    """Verify semantic_score is 0.0 (not replaced by coverage) when orthogonal vector embedding is evaluated."""
+    embedding_fn = lambda text: np.array([0.0, 1.0]) if text == "query" else np.array([1.0, 0.0])
+    retriever = HybridStructuredRetriever(embedding_fn=embedding_fn)
+    retriever.add_raptor_node("node1", 0, "query term content", "query term summary")
+    results = retriever.retrieve("query", top_k=1)
+    assert len(results) == 1
+    # Semantic score should be 0.0 for orthogonal vector
+    raw_score, lex_sc, sem_sc = retriever._compute_scores("query", {"query"}, np.array([0.0, 1.0]), retriever.unified_nodes["raptor_node1"])
+    assert sem_sc == 0.0
