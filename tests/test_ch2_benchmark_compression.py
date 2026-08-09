@@ -139,3 +139,9 @@ def test_edge_cases():
     assert benchmark.compress_key_sentence(None) == ""
     assert benchmark.compress_observation_filtering(None) == ""
     assert benchmark.evaluate_retention("", None) == 0.0
+
+
+def test_dict_empty_content_and_none_task():
+    result = run_benchmark([{"content": ""}], [None])
+    assert "summary" in result
+    assert result["summary"]["display_name"] == "Summary"

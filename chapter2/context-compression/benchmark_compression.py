@@ -211,8 +211,7 @@ class ContextCompressionBenchmark:
         start_time = time.perf_counter()
 
         for idx, ctx in enumerate(contexts):
-            raw_task = tasks[idx % len(tasks)] if tasks else ""
-            task = raw_task if raw_task is not None else ""
+            task = (tasks[idx % len(tasks)] if tasks else "") or ""
             query = task if isinstance(task, str) else (task.get("query", "") if isinstance(task, dict) else "")
             query = query or ""
             orig_tokens = count_tokens(ctx)
@@ -276,7 +275,10 @@ class ContextCompressionBenchmark:
             if isinstance(c, str):
                 normalized_contexts.append(c)
             elif isinstance(c, dict):
-                normalized_contexts.append(c.get("content") or c.get("text") or str(c))
+                content = c.get("content")
+                if content is None:
+                    content = c.get("text")
+                normalized_contexts.append(content if content is not None else str(c))
             else:
                 normalized_contexts.append(str(c))
 
