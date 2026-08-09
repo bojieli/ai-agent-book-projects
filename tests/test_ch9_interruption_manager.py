@@ -203,3 +203,50 @@ def test_repeated_barge_in_does_not_truncate_historical_turns():
     ctx = manager.get_dialogue_context()
     assert ctx[0]["status"] == "completed"
     assert "[interrupted]" not in ctx[0]["content"]
+def test_bytearray_and_memoryview_energy():
+    """Verify bytearray and memoryview inputs are handled cleanly in energy calculation."""
+    manager = DuplexInterruptionManager()
+    pcm_bytes = (np.sin(np.linspace(0, 440 * 2 * np.pi, 320)) * 16000).astype(np.int16).tobytes()
+    
+    energy_bytearray = manager.calculate_energy(bytearray(pcm_bytes))
+    energy_memoryview = manager.calculate_energy(memoryview(pcm_bytes))
+    
+    assert energy_bytearray > 0.05
+    assert energy_memoryview > 0.05
+
+
+def test_consecutive_frames_and_is_speech_in_process_chunk():
+    """Verify is_speech=True and consecutive_frames=N are returned prior to reaching barge-in threshold."""
+    manager = DuplexInterruptionManager(vad_threshold=0.02, consecutive_frames_required=3)
+    manager.start_playback([b"audio"])
+    
+    speech_pcm = (np.sin(np.linspace(0, 440 * 2 * np.pi, 320)) * 16000).astype(np.int16).tobytes()
+    
+    res1 = manager.process_audio_chunk(speech_pcm)
+    assert res1["barge_in"] is False
+    assert res1["is_speech"] is True
+    assert res1["consecutive_frames"] == 1
+
+    res2 = manager.process_audio_chunk(speech_pcm)
+    assert res2["barge_in"] is False
+    assert res2["is_speech"] is True
+    assert res2["consecutive_frames"] == 2
+
+    res3 = manager.process_audio_chunk(speech_pcm)
+    assert res3["barge_in"] is True
+    assert res3["is_speech"] is True
+    assert res3["consecutive_frames"] == 3
+
+
+def test_uint8_normalization_around_128():
+    """Verify 8-bit unsigned audio is normalized around 128 correctly."""
+    manager = DuplexInterruptionManager()
+    # 128 is silence in uint8
+    silence_uint8 = bytes([128] * 320)
+    energy_silence = manager.calculate_energy(silence_uint8, sample_format="uint8")
+    assert energy_silence < 0.01
+
+    # Tone between 0 and 255
+    tone_uint8 = bytes([128 + int(100 * np.sin(i / 10.0)) for i in range(320)])
+    energy_tone = manager.calculate_energy(tone_uint8, sample_format="uint8")
+    assert energy_tone > 0.1

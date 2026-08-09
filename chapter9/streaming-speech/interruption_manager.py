@@ -100,19 +100,19 @@ class DuplexInterruptionManager:
 
     def calculate_energy(
         self,
-        audio_data: Union[np.ndarray, bytes, List[float], List[int]],
+        audio_data: Union[np.ndarray, bytes, bytearray, memoryview, List[float], List[int]],
         sample_format: Optional[str] = None,
     ) -> float:
         """Calculate Root Mean Square (RMS) energy level of an audio chunk.
 
-        Supports numpy arrays, raw bytes (16-bit PCM, uint8, or float32), or float/int lists.
+        Supports numpy arrays, raw bytes/bytearray/memoryview (16-bit PCM, uint8, or float32), or float/int lists.
         sample_format can be 'int16', 'uint8', 'float32', or None for auto detection.
         """
         if audio_data is None:
             return 0.0
 
         fmt = (sample_format or "").lower()
-        if isinstance(audio_data, bytes):
+        if isinstance(audio_data, (bytes, bytearray, memoryview)):
             if len(audio_data) == 0:
                 return 0.0
             if fmt in ("float32", "float"):
@@ -121,6 +121,8 @@ class DuplexInterruptionManager:
                 arr = (np.frombuffer(audio_data, dtype=np.uint8).astype(np.float32) - 128.0) / 128.0
             elif fmt in ("int8", "i8"):
                 arr = np.frombuffer(audio_data, dtype=np.int8).astype(np.float32) / 128.0
+            elif fmt in ("int16", "i16"):
+                arr = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
             else:
                 if len(audio_data) % 2 != 0:
                     arr = (np.frombuffer(audio_data, dtype=np.uint8).astype(np.float32) - 128.0) / 128.0
@@ -131,11 +133,11 @@ class DuplexInterruptionManager:
                 return 0.0
             raw_arr = np.array(audio_data)
             if np.issubdtype(raw_arr.dtype, np.integer):
-                if raw_arr.dtype == np.uint8 or fmt == "uint8":
+                if raw_arr.dtype == np.uint8 or fmt in ("uint8", "u8"):
                     arr = (raw_arr.astype(np.float32) - 128.0) / 128.0
-                elif raw_arr.dtype == np.int8:
+                elif raw_arr.dtype == np.int8 or fmt in ("int8", "i8"):
                     arr = raw_arr.astype(np.float32) / 128.0
-                elif raw_arr.dtype == np.int16:
+                elif raw_arr.dtype == np.int16 or fmt in ("int16", "i16"):
                     arr = raw_arr.astype(np.float32) / 32768.0
                 else:
                     max_abs = float(np.max(np.abs(raw_arr))) if raw_arr.size > 0 else 0.0
@@ -151,11 +153,11 @@ class DuplexInterruptionManager:
             if audio_data.size == 0:
                 return 0.0
             if np.issubdtype(audio_data.dtype, np.integer):
-                if audio_data.dtype == np.uint8 or fmt == "uint8":
+                if audio_data.dtype == np.uint8 or fmt in ("uint8", "u8"):
                     arr = (audio_data.astype(np.float32) - 128.0) / 128.0
-                elif audio_data.dtype == np.int8:
+                elif audio_data.dtype == np.int8 or fmt in ("int8", "i8"):
                     arr = audio_data.astype(np.float32) / 128.0
-                elif audio_data.dtype == np.int16:
+                elif audio_data.dtype == np.int16 or fmt in ("int16", "i16"):
                     arr = audio_data.astype(np.float32) / 32768.0
                 else:
                     max_abs = float(np.max(np.abs(audio_data))) if audio_data.size > 0 else 0.0
@@ -178,7 +180,7 @@ class DuplexInterruptionManager:
 
     def is_voice_active(
         self,
-        audio_data: Union[np.ndarray, bytes, List[float], List[int]],
+        audio_data: Union[np.ndarray, bytes, bytearray, memoryview, List[float], List[int]],
         sample_format: Optional[str] = None,
     ) -> bool:
         """Check if incoming audio chunk exceeds the VAD energy threshold."""
@@ -187,7 +189,7 @@ class DuplexInterruptionManager:
 
     def process_audio_chunk(
         self,
-        audio_data: Union[np.ndarray, bytes, List[float], List[int]],
+        audio_data: Union[np.ndarray, bytes, bytearray, memoryview, List[float], List[int]],
         sample_rate: int = 16000,
         sample_format: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -207,6 +209,7 @@ class DuplexInterruptionManager:
             return {
                 "barge_in": False,
                 "is_speech": is_speech,
+                "consecutive_frames": 0,
                 "energy": energy,
                 "vad_threshold": self.vad_threshold,
                 "is_playing": False,
@@ -216,6 +219,7 @@ class DuplexInterruptionManager:
         if is_speech:
             self._consecutive_active_frames += 1
             if self._consecutive_active_frames >= self.consecutive_frames_required:
+                current_consecutive = self._consecutive_active_frames
                 # Trigger instant barge-in
                 barge_in_result = self.handle_barge_in(
                     reason="user_barge_in_detected",
@@ -223,6 +227,7 @@ class DuplexInterruptionManager:
                 )
                 barge_in_result["energy"] = energy
                 barge_in_result["is_speech"] = True
+                barge_in_result["consecutive_frames"] = current_consecutive
                 barge_in_result["vad_threshold"] = self.vad_threshold
                 barge_in_result["is_playing"] = False
                 return barge_in_result
@@ -232,6 +237,7 @@ class DuplexInterruptionManager:
         return {
             "barge_in": False,
             "is_speech": is_speech,
+            "consecutive_frames": self._consecutive_active_frames,
             "energy": energy,
             "vad_threshold": self.vad_threshold,
             "is_playing": True,
@@ -259,6 +265,20 @@ class DuplexInterruptionManager:
         was_playing = self.is_playing
         cancelled_bytes = sum(len(b) for b in self.pending_audio_stream)
         self.stop_playback()
+
+        if not was_playing:
+            return {
+                "status": "ignored",
+                "barge_in": False,
+                "playback_cancelled": False,
+                "cancelled_audio_bytes": 0,
+                "context_truncated": False,
+                "truncated_turns_count": 0,
+                "replan_triggered": False,
+                "replan_payload": None,
+                "barge_in_count": self.barge_in_count,
+                "event": None,
+            }
 
         self.barge_in_count += 1
 
