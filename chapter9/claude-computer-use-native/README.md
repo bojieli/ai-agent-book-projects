@@ -1,8 +1,9 @@
-# Experiment 9-6: Anthropic native Computer Use
+# Experiment 9-5: Anthropic native Computer Use
 
-This record covers the provider-specific arm of Experiment 9-6: Anthropic's
+This record covers the provider-specific arm of Experiment 9-5: Anthropic's
 native tool protocol in the official containerized Computer Use Demo. It is
-separate from the completed open-model 9-7 arm.
+separate from the completed open-model 9-6 arm. Historical evidence directories
+retain the `exp9-6-*` identifier so existing receipts and hashes remain stable.
 
 Current status: **complete for the bounded read-only task**. The canonical
 [trajectory](validation/runs/exp9-6-anthropic-native-20260803-v2/trajectory.json)

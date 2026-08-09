@@ -59,8 +59,8 @@
 | 5 | 💻 **Coding Agent & குறியீடு உருவாக்கம்** | குறியீடு "புதிய கருவியை உருவாக்கும் கருவி"; உற்பத்தி தர Coding Agent முழுமையாக | [படி](../../book-ta/chapter5.ta.md) | [13](../../chapter5/README.ta.md) |
 | 6 | 🎯 **ஏஜென்ட் மதிப்பீடு** | செயல்திறனை ஒப்பிடக்கூடிய சமிக்ஞையாக மாற்று: சூழல்கள், அளவீடுகள், புள்ளியியல் முக்கியத்துவம், மதிப்பீடு-இயக்கிய தேர்வு | [படி](../../book-ta/chapter6.ta.md) | [12](../../chapter6/README.ta.md) |
 | 7 | 🧠 **மாதிரி பிந்தைய பயிற்சி** | Pre-training/SFT/RL மூன்று நிலைகள்: SFT vs RL, கருவி அழைப்பை உள்ளடக்குதல், மாதிரி செயல்திறன் | [படி](../../book-ta/chapter7.ta.md) | [16](../../chapter7/README.ta.md) |
-| 8 | 🔄 **ஏஜென்ட் சுய-பரிணாமம்** | எடைகளை மாற்றாமல் வளர்தல்: அனுபவத்திலிருந்து கற்றல், பயனரிலிருந்து உருவாக்குநர் | [படி](../../book-ta/chapter8.ta.md) | [7](../../chapter8/README.ta.md) |
-| 9 | 🎙️ **பல்முக & நிகழ்நேர இடைவினை** | உரையிலிருந்து குரல், GUI, பௌதீக உலகம்: மூன்று குரல் முன்னுதாரணங்கள், Computer Use, ரோபோட்டிக்ஸ் | [படி](../../book-ta/chapter9.ta.md) | [7](../../chapter9/README.ta.md) |
+| 8 | 🔄 **ஏஜென்ட் சுய-பரிணாமம்** | எடைகளை மாற்றாமல் வளர்தல்: அனுபவத்திலிருந்து கற்றல், பயனரிலிருந்து உருவாக்குநர் | [படி](../../book-ta/chapter8.ta.md) | [9](../../chapter8/README.ta.md) |
+| 9 | 🎙️ **பல்முக & நிகழ்நேர இடைவினை** | உரையிலிருந்து குரல், GUI, பௌதீக உலகம்: மூன்று குரல் முன்னுதாரணங்கள், Computer Use, ரோபோட்டிக்ஸ் | [படி](../../book-ta/chapter9.ta.md) | [12](../../chapter9/README.ta.md) |
 | 10 | 🤝 **பல-ஏஜென்ட் ஒத்துழைப்பு** | கூட்டு நுண்ணறிவு > தனிப்பட்டது: ஒத்துழைப்பு கட்டமைப்பு, சூழல் பகிர்வு/தனிமைப்படுத்தல், "ஏஜென்ட் சமூகம்" | [படி](../../book-ta/chapter10.ta.md) | [7](../../chapter10/README.ta.md) |
 
 
@@ -148,9 +148,9 @@ git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/
 # அத்தியாயம் 9 · உலாவி தானியக்கம் & Claude எடுத்துக்காட்டுகள்
 git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
 git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-8/9-9 shared
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-9; RoboCrew v0.3.1
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-10
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-7/9-9 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-8/9-9; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-11
 
 # அத்தியாயம் 10 · இரட்டை-ஏஜென்ட் கட்டமைப்பு (TalkAct-ஆக தனியாக உருவாகியது) + Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling

@@ -60,8 +60,8 @@
 | 5 | 💻 **Кодинг-агент и генерация кода** | Код — «инструмент, создающий новые инструменты»; промышленный кодинг-агент целиком | [Читать](../../book-ru/chapter5.md) | [13](../../chapter5/README.ru.md) |
 | 6 | 🎯 **Оценка агентов** | Превращаем качество в сравнимые сигналы: среды, метрики, статзначимость, выбор на основе оценки | [Читать](../../book-ru/chapter6.md) | [12](../../chapter6/README.ru.md) |
 | 7 | 🧠 **Постобучение модели** | Три стадии предобучение/SFT/RL: когда выбирать SFT, а когда RL, внедрение вызова инструментов, эффективность выборки | [Читать](../../book-ru/chapter7.md) | [16](../../chapter7/README.ru.md) |
-| 8 | 🔄 **Самоэволюция агента** | Рост без изменения весов: обучение на опыте, от пользователя инструментов к их создателю | [Читать](../../book-ru/chapter8.md) | [7](../../chapter8/README.ru.md) |
-| 9 | 🎙️ **Мультимодальность и реальное время** | От текста к голосу, GUI, физическому миру: три голосовые парадигмы, Computer Use, робототехника | [Читать](../../book-ru/chapter9.md) | [7](../../chapter9/README.ru.md) |
+| 8 | 🔄 **Самоэволюция агента** | Рост без изменения весов: обучение на опыте, от пользователя инструментов к их создателю | [Читать](../../book-ru/chapter8.md) | [9](../../chapter8/README.ru.md) |
+| 9 | 🎙️ **Мультимодальность и реальное время** | От текста к голосу, GUI, физическому миру: три голосовые парадигмы, Computer Use, робототехника | [Читать](../../book-ru/chapter9.md) | [12](../../chapter9/README.ru.md) |
 | 10 | 🤝 **Многоагентное взаимодействие** | Коллективный интеллект > индивидуального: фреймворки сотрудничества, разделение/изоляция контекста, эмерджентное «общество агентов» | [Читать](../../book-ru/chapter10.md) | [7](../../chapter10/README.ru.md) |
 
 > 💡 **Читать** = читать текст главы на GitHub (markdown); **N** = число сопутствующих проектов, кликните для кода. Типы проектов (✅ автономный / 📖 воспроизведение / 🚧 проектный) поясняются в README каждой главы.
@@ -148,9 +148,9 @@ git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/
 # Глава 9 · Автоматизация браузера и примеры Claude
 git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
 git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-8/9-9 shared
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-9; RoboCrew v0.3.1
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-10
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-7/9-9 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-8/9-9; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-11
 
 # Глава 10 · Архитектура двух агентов (теперь отдельный проект TalkAct) + Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling

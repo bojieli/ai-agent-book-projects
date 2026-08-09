@@ -1,4 +1,6 @@
-# 实验 9-3：Qwen2-Audio 递增前缀模拟流式感知
+# 实验 9-2：Qwen2-Audio 递增前缀模拟流式感知
+
+> 重编号说明：已有 canonical 运行目录继续使用历史标识 `exp9-3-*`，以保持证据链接和哈希不变。
 
 本项目实际运行 `Qwen/Qwen2-Audio-7B-Instruct`：每收到一个新块，就把 `[0:t]` 的完整累积音频再次送入 Qwen2-Audio，输出当前 transcript 和声学事件。它不是 Whisper 替代实现，也不会把这种全量重编码称作真流式。
 

@@ -322,7 +322,7 @@ ch9  = [
     "httpx>=0.27",
     "playwright>=1.40",
     "aiortc>=1.10",
-    # Experiment 9-2 transcribes the exact browser-microphone RTP capture.
+    # The historical 9-2 add-on transcribes the exact browser-microphone RTP capture.
     # The 20231106 metadata installs Linux-only Triton unconditionally on
     # macOS.  The maintained release has platform-correct dependencies.
     "openai-whisper>=20240930",

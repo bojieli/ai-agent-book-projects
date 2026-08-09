@@ -20,8 +20,8 @@ OpenRouter returned the requested `qwen/qwen3-vl-32b-instruct` model for all
 and completed in 16 steps. The deterministic validator matched the final
 64°F/Sunny answer to the retained browser observation, verified 15 screenshot
 hashes and the one-action-per-step read-only trajectory, and found no retained
-credential. This completes the Experiment 9-7 open-model arm only; the
-Anthropic-native Experiment 9-6 arm remains unrun.
+credential. This completes the Experiment 9-6 open-model arm only; the
+Anthropic-native Experiment 9-5 arm remains separate.
 
 ## Endpoint contract
 

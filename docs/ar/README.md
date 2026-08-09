@@ -61,8 +61,8 @@
 | 5 | 💻 **وكيل البرمجة وتوليد الشفرة** | الشفرة «أداة تنشئ أدوات جديدة»؛ من وكيل البرمجة الأساسي إلى منظومة جاهزة للإنتاج | [اقرأ](../../book-ar/chapter5.ar.md) | [13](../../chapter5/README.ar.md) |
 | 6 | 🎯 **تقييم الوكيل** | تحويل الأداء إلى إشارات قابلة للمقارنة: البيئات، والمقاييس، والأهمية الإحصائية، والاختيار القائم على التقييم | [اقرأ](../../book-ar/chapter6.ar.md) | [12](../../chapter6/README.ar.md) |
 | 7 | 🧠 **مرحلة ما بعد تدريب النموذج** | التدريب المسبق وSFT وRL في ثلاث مراحل: متى نختار كل مسار، وكيف يستبطن النموذج استدعاء الأدوات، وكيف نحسن كفاءة العينات | [اقرأ](../../book-ar/chapter7.ar.md) | [16](../../chapter7/README.ar.md) |
-| 8 | 🔄 **التطور الذاتي للوكيل** | النمو دون تغيير الأوزان: التعلم من الخبرة، من مستخدم الأداة إلى منشئ الأداة | [اقرأ](../../book-ar/chapter8.ar.md) | [7](../../chapter8/README.ar.md) |
-| 9 | 🎙️ **تعدد الوسائط والتفاعل الآني** | من النص إلى الصوت والواجهات الرسومية والعالم المادي: ثلاثة نماذج صوتية، واستخدام الحاسوب، والتحكم في الروبوت | [اقرأ](../../book-ar/chapter9.ar.md) | [7](../../chapter9/README.ar.md) |
+| 8 | 🔄 **التطور الذاتي للوكيل** | النمو دون تغيير الأوزان: التعلم من الخبرة، من مستخدم الأداة إلى منشئ الأداة | [اقرأ](../../book-ar/chapter8.ar.md) | [9](../../chapter8/README.ar.md) |
+| 9 | 🎙️ **تعدد الوسائط والتفاعل الآني** | من النص إلى الصوت والواجهات الرسومية والعالم المادي: ثلاثة نماذج صوتية، واستخدام الحاسوب، والتحكم في الروبوت | [اقرأ](../../book-ar/chapter9.ar.md) | [12](../../chapter9/README.ar.md) |
 | 10 | 🤝 **التعاون متعدد الوكلاء** | الذكاء الجماعي أكبر من الفردي: أطر التعاون، ومشاركة السياق أو عزله، ومجتمعات الوكلاء الناشئة | [اقرأ](../../book-ar/chapter10.ar.md) | [7](../../chapter10/README.ar.md) |
 
 > 💡 **اقرأ** = افتح نص الفصل بصيغة Markdown على GitHub؛ و**N** = عدد المشاريع المصاحبة، ويمكن النقر عليه للوصول إلى الشفرة. تُشرح أنواع المشاريع (✅ مستقل / 📖 إعادة إنتاج / 🚧 تصميم) في ملف README الخاص بكل فصل.
@@ -123,9 +123,9 @@ git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/
 # Chapter 9 · Browser Automation & Claude Examples
 git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
 git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-8/9-9 shared
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-9; RoboCrew v0.3.1
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-10
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-7/9-9 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-8/9-9; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-11
 
 # Chapter 10 · Dual-Agent Architecture (now independent TalkAct project) + Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling

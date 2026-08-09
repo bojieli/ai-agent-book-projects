@@ -1,4 +1,4 @@
-# 实验 9-5：Fish Audio S1 控制标记 TTS
+# 实验 9-4：Fish Audio S1 控制标记 TTS
 
 本项目实际调用 Fish Audio S1，不再使用 OpenAI TTS、固定 `alloy` voice 或拟声词替代。执行层把主 LLM 的控制标记映射到真实的 24 条参考语音，并通过 S1 的零样本 `ReferenceAudio` voice cloning 合成同一说话人、不同情绪/语速/风格的语音。
 

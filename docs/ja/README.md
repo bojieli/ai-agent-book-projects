@@ -56,8 +56,8 @@
 | 5 | 💻 **Coding Agent とコード生成** | コードは「新しいツールを生み出せるツール」。本番グレードの Coding Agent の全体像 | [読む](../../book-ja/chapter5.ja.md) | [13](../../chapter5/README.ja.md) |
 | 6 | 🎯 **Agent の評価** | パフォーマンスを比較可能なシグナルに変える: 評価環境、指標、統計的有意性、評価駆動の選定 | [読む](../../book-ja/chapter6.ja.md) | [10](../../chapter6/README.ja.md) |
 | 7 | 🧠 **モデルのポストトレーニング** | 事前学習/SFT/RL の3段階: いつ SFT を選び、いつ RL を選ぶか、ツール呼び出しの内在化、サンプル効率 | [読む](../../book-ja/chapter7.ja.md) | [14](../../chapter7/README.ja.md) |
-| 8 | 🔄 **Agent の自己進化** | 重みを変えずに成長する: 経験からの学習、ツールの利用者から創造者へ | [読む](../../book-ja/chapter8.ja.md) | [7](../../chapter8/README.ja.md) |
-| 9 | 🎙️ **マルチモーダルとリアルタイム対話** | テキストから音声、GUI、物理世界へ拡張する: 音声の3パラダイム、Computer Use、ロボティクス | [読む](../../book-ja/chapter9.ja.md) | [7](../../chapter9/README.ja.md) |
+| 8 | 🔄 **Agent の自己進化** | 重みを変えずに成長する: 経験からの学習、ツールの利用者から創造者へ | [読む](../../book-ja/chapter8.ja.md) | [9](../../chapter8/README.ja.md) |
+| 9 | 🎙️ **マルチモーダルとリアルタイム対話** | テキストから音声、GUI、物理世界へ拡張する: 音声の3パラダイム、Computer Use、ロボティクス | [読む](../../book-ja/chapter9.ja.md) | [12](../../chapter9/README.ja.md) |
 | 10 | 🤝 **マルチ Agent 協調** | 集合知は個を上回る: 協調フレームワーク、コンテキストの共有/隔離、創発する「Agent 社会」 | [読む](../../book-ja/chapter10.ja.md) | [6](../../chapter10/README.ja.md) |
 
 > 💡 **読む** = GitHub 上で章の本文（markdown）を読む。**N** = その章の付随プロジェクト数。クリックでコードを表示。プロジェクトの種類（✅ 単独実行 / 📖 再現 / 🚧 設計）は各章の README で説明しています。
@@ -137,9 +137,9 @@ git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/
 # 第9章 · ブラウザ自動化と Claude サンプル
 git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
 git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-8/9-9 shared
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-9; RoboCrew v0.3.1
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-10
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-7/9-9 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-8/9-9; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-11
 
 # 第10章 · デュアル Agent アーキテクチャ（現在は独立した TalkAct プロジェクト）+ Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling
