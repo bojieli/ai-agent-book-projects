@@ -226,15 +226,19 @@ class HybridStructuredRetriever:
         if entities:
             for item in entities:
                 if isinstance(item, dict):
-                    e_id = item.get("id", item.get("entity_id"))
-                    name = item.get("name", e_id)
+                    e_id = item.get("id") if item.get("id") is not None else item.get("entity_id")
+                    name = item.get("name") if item.get("name") is not None else e_id
                     e_type = item.get("type", "GENERIC")
                     desc = item.get("description", "")
                     emb = item.get("embedding")
                     attrs = item.get("attributes", {})
                 else:
-                    e_id = getattr(item, "id", getattr(item, "entity_id", None))
-                    name = getattr(item, "name", str(e_id))
+                    e_id = getattr(item, "id", None)
+                    if e_id is None:
+                        e_id = getattr(item, "entity_id", None)
+                    name = getattr(item, "name", None)
+                    if name is None:
+                        name = str(e_id)
                     e_type = getattr(item, "type", "GENERIC")
                     desc = getattr(item, "description", "")
                     emb = getattr(item, "embedding", None)
@@ -245,14 +249,16 @@ class HybridStructuredRetriever:
         if relationships:
             for item in relationships:
                 if isinstance(item, dict):
-                    r_id = item.get("id", item.get("relation_id"))
+                    r_id = item.get("id") if item.get("id") is not None else item.get("relation_id")
                     src = item.get("source", "")
                     tgt = item.get("target", "")
                     r_type = item.get("type", "RELATED_TO")
                     desc = item.get("description", "")
                     wt = item.get("weight", 1.0)
                 else:
-                    r_id = getattr(item, "id", getattr(item, "relation_id", None))
+                    r_id = getattr(item, "id", None)
+                    if r_id is None:
+                        r_id = getattr(item, "relation_id", None)
                     src = getattr(item, "source", "")
                     tgt = getattr(item, "target", "")
                     r_type = getattr(item, "type", "RELATED_TO")
@@ -264,13 +270,15 @@ class HybridStructuredRetriever:
         if communities:
             for item in communities:
                 if isinstance(item, dict):
-                    c_id = item.get("id", item.get("community_id"))
+                    c_id = item.get("id") if item.get("id") is not None else item.get("community_id")
                     e_ids = item.get("entity_ids", [])
                     summ = item.get("summary", "")
                     lvl = item.get("level", 0)
                     emb = item.get("embedding")
                 else:
-                    c_id = getattr(item, "id", getattr(item, "community_id", None))
+                    c_id = getattr(item, "id", None)
+                    if c_id is None:
+                        c_id = getattr(item, "community_id", None)
                     e_ids = getattr(item, "entity_ids", [])
                     summ = getattr(item, "summary", "")
                     lvl = getattr(item, "level", 0)
@@ -425,7 +433,9 @@ class HybridStructuredRetriever:
             List of SearchResult items ordered descending by fused RRF score.
         """
         k_val = max(1, int(rrf_k)) if rrf_k is not None else self.rrf_k
-        top_k = max(1, int(top_k))
+        top_k = max(0, int(top_k))
+        if top_k == 0:
+            return []
 
         if not query or not query.strip():
             return []

@@ -253,3 +253,23 @@ def test_negative_rrf_k_parameter():
     results = retriever.retrieve("Quantum physics", top_k=1, rrf_k=-1)
     assert len(results) == 1
     assert results[0].score > 0
+
+
+def test_index_graphrag_data_none_id_fallback():
+    """Verify items with explicit id=None fall back to entity_id/relation_id/community_id."""
+    retriever = HybridStructuredRetriever()
+    retriever.index_graphrag_data(
+        entities=[{"id": None, "entity_id": "ent_1", "name": "Entity 1", "description": "GraphRAG entity test"}],
+        relationships=[{"id": None, "relation_id": "rel_1", "source": "A", "target": "B", "description": "GraphRAG relation test"}],
+        communities=[{"id": None, "community_id": "comm_1", "entity_ids": ["ent_1"], "summary": "GraphRAG community test"}],
+    )
+    res = retriever.retrieve("GraphRAG test", top_k=5)
+    assert len(res) == 3
+
+
+def test_top_k_zero():
+    """Verify top_k=0 returns empty results list."""
+    retriever = HybridStructuredRetriever()
+    retriever.add_raptor_node("node1", 0, "Quantum physics content", "Quantum physics summary")
+    results = retriever.retrieve("Quantum physics", top_k=0)
+    assert results == []
