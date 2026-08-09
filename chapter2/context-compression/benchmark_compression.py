@@ -276,9 +276,11 @@ class ContextCompressionBenchmark:
                 normalized_contexts.append(c)
             elif isinstance(c, dict):
                 content = c.get("content")
-                if content is None:
-                    content = c.get("text")
-                normalized_contexts.append(content if content is not None else str(c))
+                if content is not None:
+                    normalized_contexts.append(content)
+                else:
+                    text = c.get("text")
+                    normalized_contexts.append(text if text is not None else str(c))
             else:
                 normalized_contexts.append(str(c))
 
