@@ -148,7 +148,16 @@ class BilingualConsistencyAuditor:
 
     def _load_content(self, file_or_content: Union[str, Path]) -> str:
         """Load text content from path if existing file, else return as string."""
-        if isinstance(file_or_content, (str, Path)):
+        if isinstance(file_or_content, Path):
+            if not file_or_content.is_file():
+                raise FileNotFoundError(f"File not found: {file_or_content}")
+            return file_or_content.read_text(encoding="utf-8")
+        elif isinstance(file_or_content, str):
+            if "\n" not in file_or_content and (file_or_content.endswith(".md") or file_or_content.endswith(".txt") or file_or_content.startswith("./") or file_or_content.startswith("../")):
+                p = Path(file_or_content)
+                if not p.is_file():
+                    raise FileNotFoundError(f"File not found: {file_or_content}")
+                return p.read_text(encoding="utf-8")
             try:
                 p = Path(file_or_content)
                 if p.is_file():
@@ -170,6 +179,13 @@ class BilingualConsistencyAuditor:
         findings: List[AuditFinding] = []
         lang_glossary = self.glossary.get(lang, {})
         if not lang_glossary:
+            findings.append(
+                AuditFinding(
+                    category="terminology",
+                    severity="warning",
+                    message=f"No terminology glossary available for language '{lang}'. Terminology audit skipped.",
+                )
+            )
             return 1.0, findings
 
         prose_source = self._strip_code(source_text)

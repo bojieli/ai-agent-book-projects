@@ -154,3 +154,20 @@ def test_bilingual_consistency_auditor_custom_glossary():
 
     assert report.scores["terminology"] == 1.0
     assert report.is_consistent is True
+
+
+def test_bilingual_consistency_auditor_file_not_found():
+    """Test that passing a non-existent file path raises FileNotFoundError."""
+    auditor = BilingualConsistencyAuditor()
+    import pytest
+    with pytest.raises(FileNotFoundError):
+        auditor.run_audit(Path("non_existent_file.md"), "some text")
+    with pytest.raises(FileNotFoundError):
+        auditor.run_audit("non_existent_file.md", "some text")
+
+
+def test_bilingual_consistency_auditor_unsupported_language_warning():
+    """Test that auditing with an unsupported language adds a warning finding."""
+    auditor = BilingualConsistencyAuditor()
+    report = auditor.run_audit("Hello world", "Hello world", lang="ja")
+    assert any(f["severity"] == "warning" and "No terminology glossary" in f["message"] for f in report.findings)
