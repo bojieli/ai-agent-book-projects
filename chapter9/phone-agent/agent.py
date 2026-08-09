@@ -70,7 +70,7 @@ def _sha256_json(value: Any) -> str:
 
 def _redact_secrets(value: Any) -> Any:
     """Remove credential values before any provider request/response is retained."""
-    serialized = json.dumps(value, ensure_ascii=False)
+    serialized = json.dumps(value, ensure_ascii=False, default=str)
     for name, secret in os.environ.items():
         if (
             any(marker in name.upper() for marker in ("KEY", "TOKEN", "SECRET", "PASSWORD"))
