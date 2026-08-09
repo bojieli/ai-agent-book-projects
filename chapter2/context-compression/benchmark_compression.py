@@ -182,8 +182,8 @@ class ContextCompressionBenchmark:
             query = ""
         if expected is None:
             expected = ""
-        # Determine key target tokens to evaluate
-        target_text = f"{query} {expected}".strip()
+        # Determine key target tokens to evaluate (answer only; query is fallback if answer not provided)
+        target_text = expected.strip() or query.strip()
         target_tokens = set(re.findall(r'\w+', target_text.lower()))
         
         if not target_tokens:
@@ -211,9 +211,10 @@ class ContextCompressionBenchmark:
         start_time = time.perf_counter()
 
         for idx, ctx in enumerate(contexts):
-            task = tasks[idx % len(tasks)] if tasks else ""
-            query = task if isinstance(task, str) else task.get("query", "")
-
+            raw_task = tasks[idx % len(tasks)] if tasks else ""
+            task = raw_task if raw_task is not None else ""
+            query = task if isinstance(task, str) else (task.get("query", "") if isinstance(task, dict) else "")
+            query = query or ""
             orig_tokens = count_tokens(ctx)
             compressed_ctx = self.compress(strategy, ctx, query=query)
             comp_tokens = count_tokens(compressed_ctx)
@@ -290,16 +291,14 @@ class ContextCompressionBenchmark:
         for strategy in self.STRATEGIES:
             metrics = self.evaluate_strategy(strategy, normalized_contexts, normalized_tasks)
             metrics_dict = metrics.to_dict()
-            results[strategy] = metrics_dict
-
-            # Also provide display name mapping for convenience (e.g., 'Summary', 'Key-Sentence', etc.)
             display_name = {
                 "summary": "Summary",
                 "truncation": "Truncation",
                 "key_sentence": "Key-Sentence",
                 "observation_filtering": "Observation-Filtering",
             }.get(strategy, strategy)
-            results[display_name] = metrics_dict
+            metrics_dict["display_name"] = display_name
+            results[strategy] = metrics_dict
 
         return results
 

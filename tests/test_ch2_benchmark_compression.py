@@ -119,11 +119,11 @@ def test_run_benchmark_entrypoint():
         assert m["ttft_ms"] > 0
         assert 0.0 <= m["qa_retention_accuracy"] <= 1.0
 
-    # Check display names as well
-    assert "Summary" in metrics_dict
-    assert "Truncation" in metrics_dict
-    assert "Key-Sentence" in metrics_dict
-    assert "Observation-Filtering" in metrics_dict
+    # Check display names inside metrics payloads
+    assert metrics_dict["summary"]["display_name"] == "Summary"
+    assert metrics_dict["truncation"]["display_name"] == "Truncation"
+    assert metrics_dict["key_sentence"]["display_name"] == "Key-Sentence"
+    assert metrics_dict["observation_filtering"]["display_name"] == "Observation-Filtering"
 
 
 def test_run_benchmark_single_context_and_task():
