@@ -238,3 +238,13 @@ def test_bilingual_consistency_auditor_fenced_code_block_dollar_signs_ignored_in
     latex_findings = [f for f in report.findings if f["category"] == "latex_formulas"]
     assert len(latex_findings) == 0
 
+
+def test_bilingual_consistency_auditor_nonexistent_string_path_raises_error(tmp_path):
+    """Test that passing a non-existent string file path raises FileNotFoundError."""
+    non_existent = str(tmp_path / "does_not_exist.md")
+    auditor = BilingualConsistencyAuditor()
+    try:
+        auditor.run_audit(non_existent, "Some content", lang="zh")
+        assert False, "Expected FileNotFoundError"
+    except FileNotFoundError:
+        pass

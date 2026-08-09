@@ -153,12 +153,19 @@ class BilingualConsistencyAuditor:
                 return file_or_content.read_text(encoding="utf-8")
             raise FileNotFoundError(f"Source or target file not found: {file_or_content}")
         if isinstance(file_or_content, str):
+            p = Path(file_or_content)
             try:
-                p = Path(file_or_content)
                 if p.is_file():
                     return p.read_text(encoding="utf-8")
             except Exception:
                 pass
+            if "\n" not in file_or_content:
+                if (
+                    file_or_content.startswith(("./", "../", "/"))
+                    or file_or_content.endswith((".md", ".markdown", ".txt"))
+                    or (" " not in file_or_content and ("/" in file_or_content or "\\" in file_or_content))
+                ):
+                    raise FileNotFoundError(f"Source or target file not found: {file_or_content}")
             return file_or_content
         return str(file_or_content)
 
@@ -187,14 +194,14 @@ class BilingualConsistencyAuditor:
             pattern = r"\b" + re.escape(term_en) + r"\b"
             if not re.search(pattern, prose_source, flags=re.IGNORECASE):
                 continue
-
             checked_terms += 1
             canonical = spec.get("canonical", "")
             variants = spec.get("variants", [canonical])
 
             matched_variants = []
             occupied_spans: List[Tuple[int, int]] = []
-            for v in sorted(variants, key=len, reverse=True):
+            unique_variants = list(dict.fromkeys(variants))
+            for v in sorted(unique_variants, key=len, reverse=True):
                 v_pattern = re.compile(re.escape(v), re.IGNORECASE)
                 found_v = False
                 for match in v_pattern.finditer(prose_target):
