@@ -160,7 +160,7 @@ class MultilingualReasoningEvaluator:
         if lang == "Chinese":
             if kana_count > 0:
                 cjk_ratio = cjk_count / non_space_chars
-                return max(0.0, min(1.0, (cjk_ratio / 0.3) * 0.7))
+                return max(0.0, min(1.0, cjk_ratio / 0.3) * 0.7)
             cjk_ratio = cjk_count / non_space_chars
             return min(1.0, cjk_ratio / 0.35)
 
@@ -262,7 +262,7 @@ class MultilingualReasoningEvaluator:
 
         extracted = _extract_token_counts(tu)
         if extracted is not None:
-            r_tok = extracted["reasoning_tokens"] or 0
+            r_tok = extracted["reasoning_tokens"] if extracted["reasoning_tokens"] is not None else estimate_tokens(reasoning)
             p_tok = extracted["prompt_tokens"] if extracted["prompt_tokens"] is not None else estimate_tokens(prompt)
             c_tok = extracted["completion_tokens"] if extracted["completion_tokens"] is not None else (r_tok + estimate_tokens(answer))
             t_tok = extracted["total_tokens"] if extracted["total_tokens"] is not None else (p_tok + c_tok)
@@ -402,14 +402,23 @@ class MultilingualReasoningEvaluator:
         }
 
     def compute_transfer_efficiency(self, by_language_metrics: dict[str, dict[str, Any]]) -> dict[str, float]:
-        """Calculate cross-lingual transfer efficiency relative to English."""
-        english_acc = by_language_metrics.get("English", {}).get("accuracy", 0.0)
-        positive_accs = [m["accuracy"] for m in by_language_metrics.values() if m.get("accuracy") is not None and m.get("accuracy", 0.0) > 0]
+        """Calculate cross-lingual transfer efficiency relative to English.
+
+        If English accuracy is missing or zero, the highest per-language accuracy
+        becomes the reference. If no positive reference exists, efficiency is 0.0.
+        """
+        raw_eng = by_language_metrics.get("English") if isinstance(by_language_metrics.get("English"), dict) else {}
+        english_acc = (raw_eng.get("accuracy") or 0.0) if raw_eng else 0.0
+        positive_accs = [
+            m["accuracy"]
+            for m in by_language_metrics.values()
+            if isinstance(m, dict) and m.get("accuracy") is not None and m.get("accuracy", 0.0) > 0
+        ]
         reference_acc = english_acc if english_acc > 0 else (max(positive_accs) if positive_accs else 0.0)
 
         efficiencies: dict[str, float] = {}
         for lang, metrics in by_language_metrics.items():
-            acc = metrics.get("accuracy", 0.0)
+            acc = (metrics.get("accuracy") or 0.0) if isinstance(metrics, dict) else 0.0
             if reference_acc > 0:
                 efficiencies[lang] = round(acc / reference_acc, 4)
             else:

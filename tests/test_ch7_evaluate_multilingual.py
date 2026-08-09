@@ -264,3 +264,30 @@ def test_zero_answer_handling():
     assert res["predicted_answer"] == "0"
     assert res["reference_answer"] == "0"
     assert res["accuracy"] == 1.0
+def test_chinese_cot_fidelity_japanese_kana_penalty():
+    evaluator = MultilingualReasoningEvaluator()
+    # Chinese CoT containing Japanese kana should be penalized (capped at 0.7)
+    cot_with_kana = "第一歩：計算結果、二足す二は四、答案は四。だ"
+    score = evaluator.evaluate_cot_fidelity(cot_with_kana, "Chinese")
+    assert score == 0.7
+
+
+def test_transfer_efficiency_none_accuracy():
+    evaluator = MultilingualReasoningEvaluator()
+    metrics = {
+        "English": {"accuracy": None},
+        "Spanish": {"accuracy": 0.5},
+    }
+    eff = evaluator.compute_transfer_efficiency(metrics)
+    assert eff["English"] == 0.0
+    assert eff["Spanish"] == 1.0
+
+
+def test_partial_token_usage_reasoning_estimation():
+    evaluator = MultilingualReasoningEvaluator()
+    tu = {"prompt_tokens": 10, "completion_tokens": 50, "total_tokens": 60}
+    res = evaluator.compute_token_usage("prompt", "detailed reasoning step by step", "answer", model_output=tu)
+    assert res["prompt_tokens"] == 10
+    assert res["completion_tokens"] == 50
+    assert res["reasoning_tokens"] > 0
+    assert res["total_tokens"] == 60
