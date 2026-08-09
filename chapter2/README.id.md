@@ -14,6 +14,7 @@
 | 2-4 | [prompt-engineering](prompt-engineering/) | ✅ | Mengukur pengaruh unsur prompt melalui eksperimen ablasi yang sistematis. |
 | 2-5 | [prompt-injection](prompt-injection/) | ✅ | Membandingkan tiga skenario serangan dengan empat konfigurasi pertahanan berlapis. |
 | 2-6 | [agent-skills-ppt](agent-skills-ppt/) | ✅ | Mempraktikkan progressive disclosure pada Agent Skills untuk menghasilkan presentasi PPTX. |
+| 2-7 | Eksperimen teks | 🚧 | Membuat Skill penulisan ringan dari contoh pribadi, mencakup kondisi pemicu, aturan, contoh, cakupan, dan pemeliharaan iteratif. |
 | 2-8 | [system-hint](system-hint/) | ✅ | Menguji pengaruh System Hints terhadap perilaku dan kinerja Agent. |
 | 2-9 | [context-compression](context-compression/) | ✅ | Membandingkan beberapa strategi kompresi untuk mengurangi token tanpa kehilangan kemampuan utama. |
 

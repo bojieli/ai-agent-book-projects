@@ -14,6 +14,7 @@
 | 2-4 | [prompt-engineering](prompt-engineering/) | ✅ | Szisztematikus ablációs kísérletekkel méri a prompt különböző elemeinek hatását. |
 | 2-5 | [prompt-injection](prompt-injection/) | ✅ | Három támadási forgatókönyvet vet össze négy rétegzett védelmi konfigurációval. |
 | 2-6 | [agent-skills-ppt](agent-skills-ppt/) | ✅ | Az Agent Skills fokozatos feltárását alkalmazza valódi PPTX-prezentáció létrehozására. |
+| 2-7 | Szöveges kísérlet | 🚧 | Könnyű írási Skillt készít személyes példákból, aktiválási feltételekkel, szabályokkal, példákkal, hatókörrel és iteratív karbantartással. |
 | 2-8 | [system-hint](system-hint/) | ✅ | A System Hints ágensviselkedésre és teljesítményre gyakorolt hatását vizsgálja. |
 | 2-9 | [context-compression](context-compression/) | ✅ | Több tömörítési stratégiát hasonlít össze a tokenhasználat csökkentésére az alapvető képességek megőrzése mellett. |
 

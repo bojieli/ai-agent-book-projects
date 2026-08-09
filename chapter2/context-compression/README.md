@@ -1,7 +1,7 @@
 # Context Compression Strategies / 上下文压缩策略对比
 
-> Companion material for *AI Agents in Depth*, Chapter 2 — **Experiment 2-9 ★★★: Comparison of context compression strategies**.  
-> 配套《深入理解 AI Agent》第 2 章 **实验 2-9 ★★★：上下文压缩策略对比**。
+> Companion material for *AI Agents in Depth*, Chapter 2 — **Experiment 2-10 ★★★: Comparison of context compression strategies**.
+> 配套《深入理解 AI Agent》第 2 章 **实验 2-10 ★★★：上下文压缩策略对比**。
 
 ← [Chapter 2 index / 返回第 2 章目录](../README.md)
 
@@ -80,7 +80,7 @@ cp env.example .env
 
 - `LLM_PROVIDER` — `kimi` (default), `dashscope`/`qwen`/`bailian`, or `openrouter`.
 - `DASHSCOPE_API_KEY` — Alibaba Cloud Model Studio / Bailian key when using DashScope; default model is `qwen3.7-plus` (set `DASHSCOPE_BASE_URL` for international keys).
-- `MOONSHOT_API_KEY` — Kimi/Moonshot for live runs. Book 实验 2-9 uses Kimi K3 (~1M real window); the demo **caps** the compression/overflow budget at `CONTEXT_WINDOW_SIZE` (default 128K) so overflow/compression is observable. Override model via `MODEL_NAME` or `-m/--model`.
+- `MOONSHOT_API_KEY` — Kimi/Moonshot for live runs. Book 实验 2-10 uses Kimi K3 (~1M real window); the demo **caps** the compression/overflow budget at `CONTEXT_WINDOW_SIZE` (default 128K) so overflow/compression is observable. Override model via `MODEL_NAME` or `-m/--model` (e.g. `kimi-k2.5`, `kimi-k3`, `moonshot-v1-128k`).
 - `OPENROUTER_API_KEY` — fallback if Moonshot key unset (`kimi-*` → `moonshotai/kimi-k2`). Unchanged if `MOONSHOT_API_KEY` is set.
 - `SERPER_API_KEY` — web search (optional; mock data if missing)
 
@@ -331,7 +331,7 @@ cp env.example .env
 
 - `LLM_PROVIDER`：`kimi`（默认）、`dashscope`/`qwen`/`bailian` 或 `openrouter`。
 - `DASHSCOPE_API_KEY`：使用阿里云百炼 / Model Studio 时的 Key，默认模型 `qwen3.7-plus`（国际区 Key 可设置 `DASHSCOPE_BASE_URL`）。
-- `MOONSHOT_API_KEY`：Kimi/Moonshot 在线 Key。书中实验 2-9 使用 Kimi K3；可用 `MODEL_NAME` 或 `-m/--model` 覆盖。
+- `MOONSHOT_API_KEY`：Kimi/Moonshot（在线跑必需）。书中实验 2-10 使用 Kimi K3（真实窗口约 1M）；演示通过 `CONTEXT_WINDOW_SIZE`（默认 128K）**故意收紧**溢出/压缩预算以便观察。可用 `MODEL_NAME` 或 `-m/--model` 覆盖（如 `kimi-k2.5`、`kimi-k3`、`moonshot-v1-128k`）。
 - `OPENROUTER_API_KEY`：未设置 Moonshot key 时的通用回退（`kimi-*` → `moonshotai/kimi-k2`）。设了 `MOONSHOT_API_KEY` 时行为不变。
 - `SERPER_API_KEY`：联网搜索（可选；缺失则用 mock 数据）
 

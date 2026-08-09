@@ -1,21 +1,21 @@
 # 实验 8-3：基于失败轨迹优化系统 Prompt
 
-本实验使用航空客服的“过度转接”案例，演示一条受控的 Prompt 学习链路：先评测运行轨迹，再把失败整理为结构化诊断，随后由 Coding Agent 生成最小补丁，最后用边界集与旧任务保留集决定候选版本是否可以灰度发布。
+本实验使用航空客服的“过度转接”案例，演示一条受控的 Prompt 学习链路：先评测运行轨迹，再把失败整理为结构化诊断，随后由 Coding Agent 生成最小补丁，最后用边界集与旧任务保留集决定待验证版本是否可以灰度发布。
 
 这与一次性人工提示工程的关键差别，不在于“让模型改写 Prompt”，而在于每个补丁都能回答三个问题：它由哪些失败案例触发、作用于哪条规则、为什么没有破坏旧行为。
 
 ## 实验流程
 
-`evaluate.py` 运行保留集与边界集。`learning_signal.py` 将每条轨迹拆成规则遵从、任务解决和合规变通三个维度，并保留来源 case ID。`coding_agent.py` 读取结构化报告，对 Prompt 做精确的 `old_str → new_str` 编辑。`release_gate.py` 生成候选 manifest，并执行四项发布检查：补丁非空、来源可追溯、保留集不退化、边界集确有改善。
+`evaluate.py` 运行保留集与边界集。`learning_signal.py` 将每条轨迹拆成规则遵从、任务解决和合规变通三个维度，并保留来源 case ID。`coding_agent.py` 读取结构化报告，对 Prompt 做精确的 `old_str → new_str` 编辑。`release_gate.py` 生成待验证 manifest，并执行四项发布检查：补丁非空、来源可追溯、保留集不退化、边界集确有改善。
 
-候选补丁只写入 `runtime/system_prompt_working.txt`，不会覆盖 `prompts/system_prompt.txt`。门槛通过时，实验只返回 `release_to_canary`，表示允许灰度；未通过则返回 `reject_candidate`。
+待验证补丁只写入 `runtime/system_prompt_working.txt`，不会覆盖 `prompts/system_prompt.txt`。门槛通过时，实验只返回 `release_to_canary`，表示允许灰度；未通过则返回 `reject_candidate`。
 
 ```text
-失败轨迹 → 三维诊断 → 最小 Prompt diff → 候选 manifest
+失败轨迹 → 三维诊断 → 最小 Prompt diff → 待验证 manifest
                                          ↓
                          边界集改善 + 保留集不退化
                                          ↓
-                              灰度发布或拒绝候选
+                              灰度发布或拒绝提案
 ```
 
 ## 运行
@@ -66,7 +66,7 @@ python demo.py --dry-run
 python -m pytest tests
 ```
 
-项目也保留人工调优版 `prompts/system_prompt_manual.txt` 作为对照。完整实验比较初始版、自动候选版和人工版在两组任务上的表现；具体准确率会随被测模型变化，是否发布则始终由显式门槛决定，而不是由 Coding Agent 自己决定。
+项目也保留人工调优版 `prompts/system_prompt_manual.txt` 作为对照。完整实验比较初始版、自动提案版和人工版在两组任务上的表现；具体准确率会随被测模型变化，是否发布则始终由显式门槛决定，而不是由 Coding Agent 自己决定。
 
 ### 正文验收运行（2026-07-30）
 
@@ -81,18 +81,18 @@ python run_experiment_8_3.py \
 
 机器可读证据位于 `validation/real_20260729T171101Z/evidence.json`，SHA-256 为
 `491b54ca5e10ea3b3154c014a44039e9520ae61880e4d46e7f667fa0aa2c4106`；
-`validation/latest.json` 指向同一内容。证据保存了 73 次无凭据原始 API 请求/响应、三份 Prompt 的逐例轨迹、Judge 理由、精确 `old_str → new_str` 编辑、来源 case ID、候选 manifest、发布检查、Token 用量和耗时。
+`validation/latest.json` 指向同一内容。证据保存了 73 次无凭据原始 API 请求/响应、三份 Prompt 的逐例轨迹、Judge 理由、精确 `old_str → new_str` 编辑、来源 case ID、待验证 manifest、发布检查、Token 用量和耗时。
 
 本次真实结果如下：
 
 | Prompt | 保留集 | 过度转接边界集 |
 | --- | ---: | ---: |
 | 初始 Prompt | 5/5 | 0/5 |
-| 自动候选 | 5/5 | 2/5 |
+| 自动提案 | 5/5 | 2/5 |
 | 人工一次性调优 | 5/5 | 4/5 |
 
-自动候选满足“补丁非空且可审计、来源可追溯、边界集改善、保留集不退化”，因此结果是
-`release_to_canary`，不是覆盖稳定 Prompt 或直接全量发布。自动候选虽通过正文门槛，但仍明显弱于人工对照；证据没有把 2/5 描述成边界问题已全部解决。
+自动提案满足“补丁非空且可审计、来源可追溯、边界集改善、保留集不退化”，因此结果是
+`release_to_canary`，不是覆盖稳定 Prompt 或直接全量发布。自动提案虽通过正文门槛，但仍明显弱于人工对照；证据没有把 2/5 描述成边界问题已全部解决。
 
 ARK 回执合计 73,456 个输入 Token、7,313 个输出 Token、80,769 个 Token。该接口没有返回货币费用字段，所以证据中的美元成本保持 `null`，没有用未固定的价目表猜算。
 
@@ -104,7 +104,7 @@ ARK 回执合计 73,456 个输入 Token、7,313 个输出 Token、80,769 个 Tok
 | `evaluate.py` | 运行 Agent，输出轨迹结果与处理判定 |
 | `learning_signal.py` | 从失败轨迹生成三维诊断和来源证据 |
 | `coding_agent.py` | 生成并应用可审计的最小 Prompt 编辑 |
-| `release_gate.py` | 候选 manifest、回归门槛和发布决定 |
+| `release_gate.py` | 待验证 manifest、回归门槛和发布决定 |
 | `demo.py` | 串联完整闭环并输出对照结果 |
 | `tests/` | 离线验证诊断、补丁应用、工具空值处理、接受和拒绝路径 |
 | `run_experiment_8_3.py` | 强制完整三组真实验收并保存原始回执与 `acceptance` |

@@ -1,7 +1,7 @@
 # System-Hint Enhanced AI Agent / Agent 状态栏（System Hint）实验
 
-> Companion material for *AI Agents in Depth*, Chapter 2 — **Experiment 2-8 ★★: Useful Agent status-bar techniques**.  
-> 配套《深入理解 AI Agent》第 2 章 **实验 2-8 ★★：几种好用的 Agent 状态栏技术**。
+> Companion material for *AI Agents in Depth*, Chapter 2 — **Experiment 2-9 ★★: Useful Agent status-bar techniques**.
+> 配套《深入理解 AI Agent》第 2 章 **实验 2-9 ★★：几种好用的 Agent 状态栏技术**。
 
 ← [Chapter 2 index / 返回第 2 章目录](../README.md)
 
@@ -12,7 +12,7 @@
 ### Canonical matched campaign
 
 The preview and interactive demo below illustrate the mechanism, but the
-manuscript-grade Experiment 2-8 evidence comes from the frozen matched campaign:
+manuscript-grade Experiment 2-9 evidence comes from the frozen matched campaign:
 
 ```bash
 python run_experiment_2_8.py \
@@ -283,7 +283,7 @@ python test_basic.py
 
 ### 概述
 
-对应书中 **实验 2-8：几种好用的 Agent 状态栏技术**（「Agent 状态栏 / Agent Status Bar」一节）。本目录即书中所说的 `agent-status-bar` 实验框架——「system hint（系统提示）」与「Agent 状态栏（status bar）」是同一概念的两种叫法：在上下文末尾以一条 `role=user` 的消息注入动态状态摘要。
+对应书中 **实验 2-9：几种好用的 Agent 状态栏技术**（「Agent 状态栏 / Agent Status Bar」一节）。本目录即书中所说的 `agent-status-bar` 实验框架——「system hint（系统提示）」与「Agent 状态栏（status bar）」是同一概念的两种叫法：在上下文末尾以一条 `role=user` 的消息注入动态状态摘要。
 
 本实验演示如何用系统提示改善 Agent 轨迹、减少无限循环、上下文感知不足与任务管理混乱，并自动保存轨迹便于调试。
 

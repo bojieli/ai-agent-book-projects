@@ -14,6 +14,7 @@
 | 2-4 | [prompt-engineering](prompt-engineering/) | ✅ | Extensión de Tau-Bench para cuantificar el impacto del estilo, organización de instrucciones y descripciones de herramientas |
 | 2-5 | [prompt-injection](prompt-injection/) | ✅ | Experimento comparativo de 3 escenarios de ataque × 4 configuraciones de defensa contra inyecciones de prompts |
 | 2-6 | [agent-skills-ppt](agent-skills-ppt/) | ✅ | Reproducción de "divulgación progresiva" de Agent Skills para generar archivos `.pptx` con python-pptx |
+| 2-7 | Experimento de texto | 🚧 | Crea un Skill de escritura ligero a partir de ejemplos personales, con condiciones de activación, reglas, ejemplos, alcance y mantenimiento iterativo. |
 | 2-8 | [system-hint](system-hint/) | ✅ | Estudio del impacto de los prompts de sistema en el comportamiento del Agente |
 | 2-9 | [context-compression](context-compression/) | ✅ | Comparación de estrategias de resumen, extracción de información clave y compresión semántica de contexto |
 

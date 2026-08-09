@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the frozen, real Kimi K3 campaign for Chapter 2 Experiment 2-8."""
+"""Run the frozen, real Kimi K3 campaign for Chapter 2 Experiment 2-9."""
 
 from __future__ import annotations
 

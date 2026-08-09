@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real Qwen3 attention comparison for Chapter 2 Experiment 2-7."""
+"""Real Qwen3 attention comparison for Chapter 2 Experiment 2-8."""
 
 from __future__ import annotations
 
@@ -315,7 +315,7 @@ def draw_heatmaps(records: dict[str, Any], path: Path) -> None:
         axis.set_xlabel("Key token position")
         axis.set_ylabel("Query token position")
         fig.colorbar(image, ax=axis, fraction=0.046, pad=0.04)
-    fig.suptitle("Experiment 2-7: Qwen3-0.6B attention, full trajectory vs status bar")
+    fig.suptitle("Experiment 2-8: Qwen3-0.6B attention, full trajectory vs status bar")
     fig.savefig(path, dpi=170)
     plt.close(fig)
 
