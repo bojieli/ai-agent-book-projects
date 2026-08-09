@@ -22,7 +22,7 @@ from compression_strategies import CompressionStrategy
 init(autoreset=True)
 
 
-# Short CLI aliases -> compression strategy (order matches the book's 实验 2-9)
+# Short CLI aliases -> compression strategy (order matches the book's 实验 2-10)
 STRATEGY_CHOICES = {
     "no_compression": CompressionStrategy.NO_COMPRESSION,
     "individual": CompressionStrategy.NON_CONTEXT_AWARE_INDIVIDUAL,
@@ -287,7 +287,7 @@ def build_parser() -> argparse.ArgumentParser:
     """构建命令行参数解析器"""
     parser = argparse.ArgumentParser(
         prog="experiment.py",
-        description="上下文压缩策略对比实验（对应《深入理解 AI Agent》实验 2-9）。\n"
+        description="上下文压缩策略对比实验（对应《深入理解 AI Agent》实验 2-10）。\n"
                     "对同一个研究任务（追踪 OpenAI 联合创始人的现状）分别运行多种压缩策略，"
                     "输出 token 用量 / 压缩率 / 成功率对比表，并保存 JSON 结果。",
         epilog="示例：\n"

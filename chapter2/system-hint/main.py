@@ -347,7 +347,7 @@ def demo_comparison():
 def preview_status_bar(config: SystemHintConfig):
     """离线预览：展示五种状态栏（system hint）技术如何改变模型看到的上下文。
 
-    对应书中实验 2-8 的五种技术。整个过程在本地渲染，**不发起任何 LLM 调用，
+    对应书中实验 2-9 的五种技术。整个过程在本地渲染，**不发起任何 LLM 调用，
     因此无需 API Key**。每个案例都做一次“无状态栏 vs 有状态栏”的对照，
     直观地展示 Agent 框架在上下文末尾注入的显式状态。
     """
@@ -465,7 +465,7 @@ def main():
     """Main function with command-line argument support"""
     parser = argparse.ArgumentParser(
         description=(
-            "System-Hint Enhanced AI Agent（对应书中实验 2-8 “Agent 状态栏”）\n"
+            "System-Hint Enhanced AI Agent（对应书中实验 2-9 “Agent 状态栏”）\n"
             "演示五种状态栏技术如何把上下文里的隐式状态提炼为显式知识，"
             "从而改变 Agent 的行为。"
         ),

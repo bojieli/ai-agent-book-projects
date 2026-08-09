@@ -9,7 +9,7 @@ python demo_documents.py
 python -m unittest -v test_experience_documents.py
 ```
 
-真实 LLM 提取路径会逐条读取已评价运行，用模型生成候选的适用条件、策略、误区与例外，再由同一个跨轨迹支持度规则决定哪些内容能进入正式文档：
+真实 LLM 提取路径会逐条读取已评价运行，用模型生成经验草案的适用条件、策略、误区与例外，再由同一个跨轨迹支持度规则决定哪些内容能进入正式文档：
 
 ```bash
 # 从仓库根目录开始：轻量 LLM 提取路径使用共享的第 8 章环境
@@ -35,7 +35,7 @@ export OPENAI_API_KEY=your_api_key_here
 python demo_documents.py --extractor llm --model gpt-5.6
 ```
 
-该命令会真实调用 OpenAI Responses API，并产生 API 费用。LLM 只负责提出候选归纳，`environment_score`、两条轨迹支持门槛、来源记录和迁移评估仍由程序控制。若要在完整 GAIA 环境中采集真实轨迹，再安装主 `requirements.txt` 与 AWorld。
+该命令会真实调用 OpenAI Responses API，并产生 API 费用。LLM 只负责提出经验草案，`environment_score`、两条轨迹支持门槛、来源记录和迁移评估仍由程序控制。若要在完整 GAIA 环境中采集真实轨迹，再安装主 `requirements.txt` 与 AWorld。
 
 运行后，`output/experience_documents/` 会生成两份教学样例文档。每份文档都包含适用场景、推荐策略、常见误区、例外条件、来源轨迹和最近验证时间。推荐策略至少需要两条非失败轨迹支持，因此一次偶然成功不会直接升级为正式知识；失败和部分成功轨迹则用于提炼排除性知识。
 
@@ -48,7 +48,7 @@ python demo_documents.py --extractor llm --model gpt-5.6
 | `experience_documents.py` | 结果标注、跨轨迹归纳、Markdown 生成、检索与三基线评估 |
 | `sample_trajectories.json` | 含成功、部分成功和失败的教学轨迹及迁移任务 |
 | `demo_documents.py` | 无 API Key 的主实验入口 |
-| `llm_extractor.py` | 调用真实 LLM，从已评价运行提出结构化经验候选 |
+| `llm_extractor.py` | 调用真实 LLM，从已评价运行提出结构化经验草案 |
 | `test_experience_documents.py` | 对结果分级、证据来源、文档生成和迁移效果的测试 |
 | `run_with_experience.py` | 基于 AWorld 运行真实 GAIA 任务的扩展入口 |
 | `experience_agent.py` / `trajectory_summarizer.py` | 旧版单轨迹捕获与摘要适配器，用于把 AWorld 输出转换为学习证据 |
@@ -72,6 +72,6 @@ python demo_documents.py --extractor llm --model gpt-5.6
 }
 ```
 
-`environment_score` 必须来自 GAIA 答案验证或其他外部验证器，不能由总结模型自行断言。能力聚类、策略候选与误区可以由 LLM 辅助提取，但生成文档时仍要保留原始轨迹 ID，以便回查和重新验证。
+`environment_score` 必须来自 GAIA 答案验证或其他外部验证器，不能由总结模型自行断言。能力聚类、策略草案与误区可以由 LLM 辅助提取，但生成文档时仍要保留原始轨迹 ID，以便回查和重新验证。
 
 旧的 `--learning-mode` 仍可用于捕获 AWorld 成功轨迹，但它只构成证据采集基线，不再代表本章所说的完整经验学习方法。正式对照应在互不重叠的学习集和迁移集上完成，避免把同一 GAIA 题目的答案作为经验注入评测。

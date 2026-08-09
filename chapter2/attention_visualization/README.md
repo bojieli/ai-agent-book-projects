@@ -108,7 +108,7 @@ npm run dev
 
 Open http://localhost:3000. Keep the frontend running; new trajectories appear automatically.
 
-### Experiment 2-7: status-bar comparison
+### Experiment 2-8: status-bar comparison
 
 The manuscript's Xfinity control is a separate matched campaign, not the older
 tool-vs-no-tool demo. It runs the same complete trajectory in two arms, adds

@@ -16,6 +16,7 @@
 | [system-hint](system-hint/) | ✅ | System Hint'lerin (sistem ipuçlarının) Agent davranışı üzerindeki etkisini inceler, sistem istemlerini optimize ederek performansın nasıl artırılabileceğini araştırır. |
 | [prompt-injection](prompt-injection/) | ✅ | 3 saldırı senaryosu (doğrudan enjeksiyon, dolaylı enjeksiyon, bellek enjeksiyonu) × 4 savunma yapılandırması (savunmasız, prompt sertleştirme, kaynak etiketleme, birleşik savunma) içeren kontrollü bir deney kurar. Saldırı başarı oranlarını hesaplamak için deterministik kurallar kullanır, katmanlı savunmaların enjeksiyon başarı oranlarını nasıl önemli ölçüde azalttığını görsel olarak gösterir. |
 | [agent-skills-ppt](agent-skills-ppt/) | ✅ | Agent Skills'in "kademeli açığa çıkarma" (progressive disclosure) kavramını yeniden üretir: Agent başlangıçta yalnızca ince bir Skill dizini görür. Görevin `pptx` Skill'ini gerektirdiğini belirledikten sonra ancak tam iş akışını, ayrıntılı dokümantasyonu ve paketlenmiş betikleri kademeli olarak yükler; sonunda python-pptx kullanarak gerçek bir `.pptx` dosyası üretir. |
+| **Metin deneyi** | 🚧 | Kişisel örneklerden hafif bir yazma Skill'i oluşturmayı; tetikleme koşullarını, kuralları, örnekleri, kapsamı ve yinelemeli bakımı ele almayı dener. |
 
 ## Proje Türleri
 

@@ -21,7 +21,7 @@ from colorama import init, Fore, Style
 init(autoreset=True)
 
 
-# Short CLI aliases -> compression strategy (order matches the book's 实验 2-9)
+# Short CLI aliases -> compression strategy (order matches the book's 实验 2-10)
 STRATEGY_CHOICES = {
     "no_compression": CompressionStrategy.NO_COMPRESSION,
     "individual": CompressionStrategy.NON_CONTEXT_AWARE_INDIVIDUAL,
