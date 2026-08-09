@@ -118,6 +118,8 @@ code_interpreter 实际执行，不得口算或声称运行了代码。"""
 
     @staticmethod
     def _output_text(response: Dict[str, Any]) -> str:
+        if not isinstance(response, dict):
+            return ""
         chunks: List[str] = []
         for item in response.get("output") or []:
             if not isinstance(item, dict) or item.get("type") != "message":
@@ -129,6 +131,8 @@ code_interpreter 实际执行，不得口算或声称运行了代码。"""
 
     @staticmethod
     def _tool_items(response: Dict[str, Any]) -> List[Dict[str, Any]]:
+        if not isinstance(response, dict):
+            return []
         return [
             item
             for item in response.get("output") or []
@@ -143,6 +147,8 @@ code_interpreter 实际执行，不得口算或声称运行了代码。"""
     @staticmethod
     def _citations(response: Dict[str, Any]) -> List[Dict[str, Any]]:
         citations = []
+        if not isinstance(response, dict):
+            return citations
         for item in response.get("output") or []:
             if not isinstance(item, dict):
                 continue
@@ -274,10 +280,10 @@ code_interpreter 实际执行，不得口算或声称运行了代码。"""
             if stream_events:
                 turn["stream_event_counts"] = stream_events
             self.api_turns.append(turn)
-            if status_code >= 400 or response.get("error"):
-                error = response.get("error") or {
+            if not isinstance(response, dict) or status_code >= 400 or response.get("error"):
+                error = (response.get("error") if isinstance(response, dict) else None) or {
                     "type": "http_error",
-                    "message": response.get("raw_text") or json.dumps(response)[:500],
+                    "message": (response.get("raw_text") if isinstance(response, dict) else None) or (json.dumps(response)[:500] if response is not None else "Empty response"),
                 }
                 return {
                     "success": False,
@@ -287,7 +293,7 @@ code_interpreter 实际执行，不得口算或声称运行了代码。"""
                     "raw_response": response,
                     "tool_calls": [],
                     "citations": [],
-                    "usage": response.get("usage") or {},
+                    "usage": (response.get("usage") if isinstance(response, dict) else {}) or {},
                     "model": self.model,
                     "provider": self.provider,
                     "base_url": self.base_url,
