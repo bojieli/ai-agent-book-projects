@@ -78,6 +78,40 @@ def estimate_tokens(text: str) -> int:
     words = non_cjk_text.split()
     # ~1.3 tokens per word for Latin scripts, ~1.5 tokens per character for CJK/Kana
     return max(1, int(len(words) * 1.3 + cjk_count * 1.5))
+def _extract_token_counts(tu: Any) -> Optional[dict[str, Optional[int]]]:
+    if tu is None:
+        return None
+
+    def get_val(key1: str, key2: Optional[str] = None) -> Optional[int]:
+        val = None
+        if isinstance(tu, dict):
+            val = tu.get(key1)
+            if val is None and key2:
+                val = tu.get(key2)
+        else:
+            val = getattr(tu, key1, None)
+            if val is None and key2:
+                val = getattr(tu, key2, None)
+        if val is not None:
+            try:
+                return int(val)
+            except (ValueError, TypeError):
+                return None
+        return None
+
+    p_tok = get_val("prompt_tokens", "input_tokens")
+    c_tok = get_val("completion_tokens", "output_tokens")
+    r_tok = get_val("reasoning_tokens")
+    t_tok = get_val("total_tokens")
+
+    if any(x is not None for x in (p_tok, c_tok, r_tok, t_tok)):
+        return {
+            "prompt_tokens": p_tok,
+            "completion_tokens": c_tok,
+            "reasoning_tokens": r_tok,
+            "total_tokens": t_tok,
+        }
+    return None
 
 
 def _accepts_language(fn: Any) -> bool:
@@ -203,6 +237,10 @@ class MultilingualReasoningEvaluator:
             pattern = r"\b" + re.escape(ref_clean) + r"\b"
             if re.search(pattern, pred_clean):
                 return 1.0
+        elif len(ref) >= 2:
+            pattern = r"\b" + re.escape(ref) + r"\b"
+            if re.search(pattern, pred_clean) or re.search(pattern, pred):
+                return 1.0
 
         return 0.0
 
@@ -212,18 +250,22 @@ class MultilingualReasoningEvaluator:
         """Extract or estimate prompt, completion, reasoning, and total token usage."""
         tu = None
         if isinstance(model_output, dict):
-            if "token_usage" in model_output and isinstance(model_output["token_usage"], dict):
+            if "token_usage" in model_output and model_output["token_usage"] is not None:
                 tu = model_output["token_usage"]
-            elif "total_tokens" in model_output or "prompt_tokens" in model_output:
+            else:
                 tu = model_output
-        elif hasattr(model_output, "token_usage"):
-            tu = getattr(model_output, "token_usage")
+        elif model_output is not None:
+            if hasattr(model_output, "token_usage") and getattr(model_output, "token_usage") is not None:
+                tu = getattr(model_output, "token_usage")
+            else:
+                tu = model_output
 
-        if isinstance(tu, dict) and tu:
-            p_tok = int(tu.get("prompt_tokens", 0))
-            r_tok = int(tu.get("reasoning_tokens", 0))
-            c_tok = int(tu.get("completion_tokens", r_tok + estimate_tokens(answer)))
-            t_tok = int(tu.get("total_tokens", p_tok + c_tok))
+        extracted = _extract_token_counts(tu)
+        if extracted is not None:
+            r_tok = extracted["reasoning_tokens"] or 0
+            p_tok = extracted["prompt_tokens"] if extracted["prompt_tokens"] is not None else estimate_tokens(prompt)
+            c_tok = extracted["completion_tokens"] if extracted["completion_tokens"] is not None else (r_tok + estimate_tokens(answer))
+            t_tok = extracted["total_tokens"] if extracted["total_tokens"] is not None else (p_tok + c_tok)
             return {
                 "prompt_tokens": p_tok,
                 "completion_tokens": c_tok,

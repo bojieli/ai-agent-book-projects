@@ -200,3 +200,59 @@ def test_model_exception_and_builtin_callable():
     report = evaluator.evaluate(failing_model, dataset)
     assert report["num_samples"] == 1
     assert report["overall_accuracy"] == 0.0
+def test_token_usage_object_attributes():
+    evaluator = MultilingualReasoningEvaluator()
+
+    class TokenUsageObj:
+        def __init__(self, input_tokens=12, output_tokens=24, total_tokens=36):
+            self.input_tokens = input_tokens
+            self.output_tokens = output_tokens
+            self.total_tokens = total_tokens
+
+    class ObjectOutputModel:
+        def __init__(self):
+            self.token_usage = TokenUsageObj()
+
+        def generate(self, prompt):
+            return {"answer": "42", "token_usage": TokenUsageObj(input_tokens=15, output_tokens=30, total_tokens=45)}
+
+    sample = {"language": "en", "prompt": "What is 40+2?", "reference_answer": "42"}
+    res = evaluator.evaluate_sample(ObjectOutputModel(), sample)
+    assert res["token_usage"]["prompt_tokens"] == 15
+    assert res["token_usage"]["completion_tokens"] == 30
+    assert res["token_usage"]["total_tokens"] == 45
+
+    # Direct test on compute_token_usage with token usage object
+    tu_obj = TokenUsageObj(input_tokens=100, output_tokens=200, total_tokens=300)
+    res_direct = evaluator.compute_token_usage("prompt", "reasoning", "answer", model_output=tu_obj)
+    assert res_direct["prompt_tokens"] == 100
+    assert res_direct["completion_tokens"] == 200
+    assert res_direct["total_tokens"] == 300
+
+
+def test_word_boundary_reference_matching():
+    evaluator = MultilingualReasoningEvaluator()
+    # Word boundary matching should succeed for full word substring
+    assert evaluator.evaluate_accuracy("The answer is Paris.", "Paris") == 1.0
+    # Word boundary matching should fail for partial word matching
+    assert evaluator.evaluate_accuracy("1042", "42") == 0.0
+    assert evaluator.evaluate_accuracy("no", "not paris") == 0.0
+
+
+def test_invoke_model_inspect_signature():
+    evaluator = MultilingualReasoningEvaluator()
+
+    # Function accepting language
+    def model_with_lang(prompt, language="English"):
+        return f"Response for {language}: {prompt}"
+
+    # Function not accepting language
+    def model_without_lang(prompt):
+        return f"Response: {prompt}"
+
+    sample = {"language": "Spanish", "prompt": "Hola", "reference_answer": "Hola"}
+    res_lang = evaluator.evaluate_sample(model_with_lang, sample)
+    assert "Spanish" in res_lang["predicted_answer"]
+
+    res_nolang = evaluator.evaluate_sample(model_without_lang, sample)
+    assert "Response: Hola" == res_nolang["predicted_answer"]
