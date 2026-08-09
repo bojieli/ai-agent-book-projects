@@ -57,5 +57,5 @@
   <text x="35" y="615" font-family="'Courier New', Courier, monospace" font-size="18" fill="#333333" font-weight="bold">]</text>
 
   <rect x="50" y="626" width="720" height="24" rx="4" fill="#f5f5f5"/>
-  <text x="410" y="638" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#555555" text-anchor="middle" dominant-baseline="central">以 Claude Code / Anthropic 实现为例：元数据从启动时就在 system prompt；完整指令在调用点按需加入会话。</text>
+  <text x="410" y="638" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#555555" text-anchor="middle" dominant-baseline="central">以 Anthropic 文档描述的逻辑布局为例：元数据从启动时就在 system prompt；完整指令在调用点按需加入会话。</text>
 </svg>
