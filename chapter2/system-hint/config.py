@@ -7,7 +7,7 @@ from typing import Optional
 from dataclasses import dataclass
 from dotenv import load_dotenv
 
-from agentbook.providers import PROVIDERS
+from agentbook.providers import PROVIDERS, canonical_provider
 
 load_dotenv()
 
@@ -40,11 +40,11 @@ class AgentConfig:
     @classmethod
     def from_env(cls) -> "AgentConfig":
         """Create configuration from environment variables"""
+        provider = canonical_provider(os.getenv("LLM_PROVIDER", "kimi"))
         return cls(
-            # Kimi 官方 key 优先，缺失时用 OPENROUTER_API_KEY 兜底；
-            # 具体接受哪些环境变量由 agentbook 的 provider 注册表定义。
-            api_key=PROVIDERS["kimi"].api_key() or os.getenv("OPENROUTER_API_KEY"),
-            provider=os.getenv("LLM_PROVIDER", "kimi"),
+            # Provider credentials and aliases come from the shared registry.
+            api_key=PROVIDERS.get(provider, PROVIDERS["kimi"]).api_key() or os.getenv("OPENROUTER_API_KEY"),
+            provider=provider,
             model=os.getenv("LLM_MODEL"),
             enable_timestamps=os.getenv("ENABLE_TIMESTAMPS", "true").lower() == "true",
             enable_tool_counter=os.getenv("ENABLE_TOOL_COUNTER", "true").lower() == "true",
@@ -61,9 +61,10 @@ class AgentConfig:
     def validate(self) -> bool:
         """Validate the configuration"""
         if not self.api_key:
-            raise ValueError("API key is required. Set KIMI_API_KEY (or MOONSHOT_API_KEY / OPENROUTER_API_KEY fallback).")
-        
-        if self.provider not in ["kimi", "moonshot"]:
+            raise ValueError("API key is required. Set the selected provider's key or OPENROUTER_API_KEY fallback.")
+
+        self.provider = canonical_provider(self.provider)
+        if self.provider not in {"kimi", "moonshot", "dashscope"}:
             raise ValueError(f"Unsupported provider: {self.provider}")
         
         if self.max_iterations < 1:

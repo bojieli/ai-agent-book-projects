@@ -209,7 +209,7 @@ def main():
                         help="批量结果的输出文件路径（默认：results.json）")
 
     # 配置选项
-    parser.add_argument("--provider", type=str, help="LLM 提供商（如 kimi / doubao / openai）")
+    parser.add_argument("--provider", type=str, help="LLM 提供商（如 dashscope/qwen/bailian / kimi / doubao / openai）")
     parser.add_argument("--model", type=str, help="LLM 模型名称（不指定则用提供商默认模型）")
     parser.add_argument("--kb-type", choices=["offline", "local", "dify"],
                         help="知识库后端：offline=内置离线 BM25（无需服务/无需 API）/ local=检索流水线服务 / dify=Dify API")

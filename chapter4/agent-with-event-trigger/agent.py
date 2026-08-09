@@ -44,6 +44,9 @@ def _reasoning_safe_temperature(model, requested=1.0):
 
 # Per-provider env var holding that provider's API key.
 _PROVIDER_KEY_ENV = {
+    "dashscope": "DASHSCOPE_API_KEY",
+    "qwen": "DASHSCOPE_API_KEY",
+    "bailian": "DASHSCOPE_API_KEY",
     "siliconflow": "SILICONFLOW_API_KEY",
     "doubao": "DOUBAO_API_KEY",
     "kimi": "KIMI_API_KEY",
@@ -62,6 +65,7 @@ def resolve_provider_and_key(provider: Optional[str] = None):
     emit its own error.
     """
     provider = (provider or os.getenv("LLM_PROVIDER", "kimi")).lower()
+    provider = {"qwen": "dashscope", "bailian": "dashscope"}.get(provider, provider)
     key_env = _PROVIDER_KEY_ENV.get(provider)
     api_key = os.getenv(key_env) if key_env else None
     if api_key:
@@ -263,17 +267,29 @@ class EventTriggeredAgent:
         
         Args:
             api_key: API key for the LLM provider
-            provider: LLM provider ('siliconflow', 'doubao', 'kimi', 'moonshot', 'openrouter')
+            provider: LLM provider ('dashscope'/'qwen'/'bailian', 'siliconflow', 'doubao', 'kimi', 'moonshot', 'openrouter')
             model: Optional model override
             config: System hint configuration
             verbose: If True, log full details
         """
         self.provider = provider.lower()
+        self.provider = {"qwen": "dashscope", "bailian": "dashscope"}.get(
+            self.provider, self.provider
+        )
         self.verbose = verbose
         self.config = config or SystemHintConfig()
         
         # Configure client based on provider (matching conversational_agent.py)
-        if self.provider == "siliconflow":
+        if self.provider == "dashscope":
+            self.client = OpenAI(
+                api_key=api_key,
+                base_url=os.getenv(
+                    "DASHSCOPE_BASE_URL",
+                    "https://dashscope.aliyuncs.com/compatible-mode/v1",
+                )
+            )
+            self.model = model or "qwen3.7-plus"
+        elif self.provider == "siliconflow":
             self.client = OpenAI(
                 api_key=api_key,
                 base_url="https://api.siliconflow.cn/v1"
@@ -300,7 +316,7 @@ class EventTriggeredAgent:
             self.model = model or "google/gemini-3.5-flash"
             # Supported models: google/gemini-3.5-flash, openai/gpt-5.6-luna, anthropic/claude-sonnet-4.6
         else:
-            raise ValueError(f"Unsupported provider: {provider}. Use 'siliconflow', 'doubao', 'kimi', 'moonshot', or 'openrouter'")
+            raise ValueError(f"Unsupported provider: {provider}. Use 'dashscope'/'qwen'/'bailian', 'siliconflow', 'doubao', 'kimi', 'moonshot', or 'openrouter'")
         
         # Initialize tracking
         self.tool_call_counts: Dict[str, int] = {}

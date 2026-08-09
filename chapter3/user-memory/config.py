@@ -46,6 +46,7 @@ def openrouter_model_id(model) -> str:
 # Default model per provider, used to map onto an OpenRouter model id when the
 # primary provider key is missing but OPENROUTER_API_KEY is present.
 PROVIDER_DEFAULT_MODELS = {
+    "dashscope": "qwen3.7-plus",
     "siliconflow": "Qwen/Qwen3-235B-A22B-Thinking-2507",
     "doubao": os.getenv("ARK_MODEL", "doubao-seed-1-6-250615"),
     "kimi": "kimi-k3",
@@ -70,6 +71,7 @@ class Config:
     # API Keys for different providers
     MOONSHOT_API_KEY: str = os.getenv("MOONSHOT_API_KEY", "")  # For kimi/moonshot
     SILICONFLOW_API_KEY: str = os.getenv("SILICONFLOW_API_KEY", "")
+    DASHSCOPE_API_KEY: str = os.getenv("DASHSCOPE_API_KEY", "")
     # Ark is the provider's canonical product name; older companion docs used
     # DOUBAO_API_KEY. Accept both without copying credentials into local files.
     DOUBAO_API_KEY: str = os.getenv("DOUBAO_API_KEY") or os.getenv("ARK_API_KEY", "")
@@ -78,6 +80,9 @@ class Config:
     # Base URLs for different providers
     MOONSHOT_BASE_URL: str = "https://api.moonshot.cn/v1"
     SILICONFLOW_BASE_URL: str = "https://api.siliconflow.cn/v1"
+    DASHSCOPE_BASE_URL: str = os.getenv(
+        "DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    )
     DOUBAO_BASE_URL: str = "https://ark.cn-beijing.volces.com/api/v3"
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
     
@@ -126,9 +131,12 @@ class Config:
             API key or None if not found
         """
         provider = (provider or cls.PROVIDER).lower()
+        provider = {"qwen": "dashscope", "bailian": "dashscope"}.get(provider, provider)
         
         if provider in ["kimi", "moonshot"]:
             return cls.MOONSHOT_API_KEY
+        elif provider == "dashscope":
+            return cls.DASHSCOPE_API_KEY
         elif provider == "siliconflow":
             return cls.SILICONFLOW_API_KEY
         elif provider == "doubao":
@@ -150,6 +158,7 @@ class Config:
             True if configuration is valid
         """
         provider = (provider or cls.PROVIDER).lower()
+        provider = {"qwen": "dashscope", "bailian": "dashscope"}.get(provider, provider)
         api_key = cls.get_api_key(provider)
         
         if not api_key:
@@ -158,6 +167,8 @@ class Config:
                 print("Please set MOONSHOT_API_KEY in .env file or as environment variable")
             elif provider == "siliconflow":
                 print("Please set SILICONFLOW_API_KEY in .env file or as environment variable")
+            elif provider == "dashscope":
+                print("Please set DASHSCOPE_API_KEY in .env file or as environment variable")
             elif provider == "doubao":
                 print("Please set DOUBAO_API_KEY in .env file or as environment variable")
             elif provider == "openrouter":
@@ -210,6 +221,7 @@ class Config:
         # Show which API keys are set
         print(f"\nAPI Keys:")
         print(f"  Kimi/Moonshot: {'✓ Set' if cls.MOONSHOT_API_KEY else '✗ Not set'}")
+        print(f"  DashScope/Bailian: {'✓ Set' if cls.DASHSCOPE_API_KEY else '✗ Not set'}")
         print(f"  SiliconFlow: {'✓ Set' if cls.SILICONFLOW_API_KEY else '✗ Not set'}")
         print(f"  Doubao: {'✓ Set' if cls.DOUBAO_API_KEY else '✗ Not set'}")
         print(f"  OpenRouter: {'✓ Set' if cls.OPENROUTER_API_KEY else '✗ Not set'}")

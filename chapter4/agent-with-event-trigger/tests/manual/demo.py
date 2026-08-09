@@ -12,7 +12,7 @@ EXPERIMENT_ROOT = Path(__file__).resolve().parents[2]
 if str(EXPERIMENT_ROOT) not in sys.path:
     sys.path.insert(0, str(EXPERIMENT_ROOT))
 
-from agent import EventTriggeredAgent, SystemHintConfig
+from agent import EventTriggeredAgent, SystemHintConfig, resolve_provider_and_key
 from event_types import Event, EventType
 
 
@@ -32,24 +32,13 @@ def main():
     print("="*80)
     print()
     
-    # Get provider and API key (matching conversational_agent.py)
+    # Get provider and API key (including DashScope/Bailian aliases and fallback)
     provider = os.getenv("LLM_PROVIDER", "kimi").lower()
-    
-    if provider == "siliconflow":
-        api_key = os.getenv("SILICONFLOW_API_KEY")
-    elif provider == "doubao":
-        api_key = os.getenv("DOUBAO_API_KEY")
-    elif provider in ["kimi", "moonshot"]:
-        api_key = os.getenv("KIMI_API_KEY")
-    elif provider == "openrouter":
-        api_key = os.getenv("OPENROUTER_API_KEY")
-    else:
-        print(f"❌ Error: Unsupported provider: {provider}")
-        return
+    provider, api_key = resolve_provider_and_key(provider)
     
     if not api_key:
         print(f"❌ Error: Please set API key for provider '{provider}'")
-        print(f"   export {provider.upper()}_API_KEY='your-api-key-here'")
+        print("   export DASHSCOPE_API_KEY='your-api-key-here'  # for dashscope/qwen/bailian")
         return
     
     # Get optional model override

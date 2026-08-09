@@ -386,10 +386,12 @@ def make_client(
     # （间接/记忆注入在 D1 无防御下高成功，随 D2/D3/D4 依次降到 0）。
     # 换成更强的模型（如 gpt-5.6-luna）会在 D1 无防御下就抗住全部三类注入，
     # 全矩阵成功率为 0，从而抹平了本实验要展示的教学对比。故此处保留 gpt-4o-mini。
-    requested_model = model or os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-    # OPENAI_API_KEY 存在 -> 官方直连；否则回退 OPENROUTER_API_KEY。
-    # 端点与 key 的对应关系由 agentbook 的 provider 注册表统一维护。
-    backend = resolve_backend("openai", model=requested_model)
+    requested_provider = os.getenv("LLM_PROVIDER", "openai").lower()
+    requested_model = model or os.getenv("OPENAI_MODEL")
+    if not requested_model and requested_provider == "openai":
+        requested_model = "gpt-4o-mini"
+    # Endpoint and key selection are handled by the shared provider registry.
+    backend = resolve_backend(requested_provider, model=requested_model)
     model = backend.model
     # 允许显式传入 base_url 覆盖（默认官方；OPENAI_BASE_URL 由注册表处理），
     # 但请勿指向已失效的第三方网关。回退到 OpenRouter 时不可覆盖：

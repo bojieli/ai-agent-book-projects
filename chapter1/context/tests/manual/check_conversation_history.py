@@ -22,12 +22,26 @@ def test_conversation_history():
     print("=" * 50)
     
     # Get API key (use any available provider)
-    api_key = os.getenv("ARK_API_KEY") or os.getenv("MOONSHOT_API_KEY") or os.getenv("SILICONFLOW_API_KEY")
-    provider = "doubao" if os.getenv("ARK_API_KEY") else ("kimi" if os.getenv("MOONSHOT_API_KEY") else "siliconflow")
+    api_key = (
+        os.getenv("ARK_API_KEY")
+        or os.getenv("DASHSCOPE_API_KEY")
+        or os.getenv("MOONSHOT_API_KEY")
+        or os.getenv("SILICONFLOW_API_KEY")
+    )
+    provider = (
+        "doubao"
+        if os.getenv("ARK_API_KEY")
+        else (
+            "dashscope"
+            if os.getenv("DASHSCOPE_API_KEY")
+            else ("kimi" if os.getenv("MOONSHOT_API_KEY") else "siliconflow")
+        )
+    )
     
     if not api_key:
         print("❌ No API key found. Please set one of:")
         print("  - ARK_API_KEY")
+        print("  - DASHSCOPE_API_KEY")
         print("  - MOONSHOT_API_KEY")
         print("  - SILICONFLOW_API_KEY")
         return False

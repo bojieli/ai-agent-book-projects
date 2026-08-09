@@ -21,9 +21,10 @@ def quick_demo():
     print("=" * 60)
     
     # Check for API key
-    api_key = os.getenv("KIMI_API_KEY", "")
+    provider = os.getenv("LLM_PROVIDER", "kimi").lower()
+    api_key = os.getenv("DASHSCOPE_API_KEY", "") if provider in {"dashscope", "qwen", "bailian"} else os.getenv("KIMI_API_KEY", "")
     if not api_key or api_key == "your-kimi-api-key":
-        print("\n⚠️  Warning: KIMI_API_KEY not set properly!")
+        print(f"\n⚠️  Warning: API key for provider '{provider}' not set properly!")
         print("Please set your API key in .env file or as environment variable")
         print("\nContinuing with demo setup...")
         api_key = "demo-key"  # Use demo key for structure demonstration
@@ -142,7 +143,7 @@ def quick_demo():
         print("✅ Quick Start Demo Complete!")
         print("=" * 60)
         print("\nNext steps:")
-        print("1. Set your KIMI_API_KEY in .env file")
+        print("1. Set DASHSCOPE_API_KEY for dashscope/qwen/bailian or KIMI_API_KEY for kimi in .env")
         print("2. Run 'python main.py --mode interactive' for full interaction")
         print("3. Run 'python main.py --mode benchmark' for complete evaluation")
         print("4. Check README.md for detailed documentation")

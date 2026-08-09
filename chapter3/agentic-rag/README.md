@@ -23,7 +23,7 @@ hashes are written under `validation/runs/<run-id>/`; the auditable pointer is
 
 - **Agentic RAG (ReAct)**: iterative reason + tool search  
 - **Non-agentic RAG**: single retrieve + answer (for compare)  
-- **LLM providers**: Kimi/Moonshot, Doubao, SiliconFlow, OpenAI, OpenRouter, Groq, Together, DeepSeek  
+- **LLM providers**: Alibaba Cloud Model Studio / Bailian (Qwen), Kimi/Moonshot, Doubao, SiliconFlow, OpenAI, OpenRouter, Groq, Together, DeepSeek
 - **Knowledge bases**:  
   - **Offline BM25** (built-in, zero deps) over bundled `laws/` — no server/API for retrieval  
   - Local retrieval pipeline (`../retrieval-pipeline`)  
@@ -58,6 +58,8 @@ cd chapter3/agentic-rag
 MOONSHOT_API_KEY=...
 ARK_API_KEY=...
 SILICONFLOW_API_KEY=...
+DASHSCOPE_API_KEY=...  # Alibaba Cloud Model Studio / Bailian (Qwen)
+# DASHSCOPE_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1
 OPENAI_API_KEY=...
 OPENROUTER_API_KEY=...
 GROQ_API_KEY=...
@@ -154,6 +156,7 @@ python main.py --batch queries.txt --mode non-agentic
 python main.py --provider openai --model gpt-5.6-luna
 python main.py --provider doubao --model doubao-seed-1-6-thinking-250715
 python main.py --provider siliconflow --query "你好"
+python main.py --provider dashscope --model qwen3.7-plus --query "你好"
 ```
 
 Interactive: type questions; `quit`/`exit`; `clear` history; `mode` switch agentic/non-agentic.

@@ -23,6 +23,17 @@ __all__ = [
 ]
 
 PROVIDERS: dict[str, Provider] = {
+    "dashscope": Provider(
+        name="dashscope",
+        # Alibaba Cloud Model Studio (Bailian) keys are region-bound. Default
+        # to the mainland endpoint for this Chinese-first project; readers
+        # using an international-region key can set DASHSCOPE_BASE_URL to the
+        # Singapore endpoint documented in the experiment README.
+        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+        default_model="qwen3.7-plus",
+        key_vars=("DASHSCOPE_API_KEY",),
+        base_url_var="DASHSCOPE_BASE_URL",
+    ),
     "siliconflow": Provider(
         name="siliconflow",
         base_url="https://api.siliconflow.cn/v1",
@@ -94,7 +105,15 @@ PROVIDERS: dict[str, Provider] = {
 }
 
 # Provider names used interchangeably in the chapters, mapped to canonical ones.
-_ALIASES = {"moonshot": "kimi", "ark": "doubao", "google": "gemini"}
+_ALIASES = {
+    "moonshot": "kimi",
+    "ark": "doubao",
+    "google": "gemini",
+    # "Qwen" is the model family and "Bailian" is the product name; both
+    # select Alibaba's DashScope-compatible endpoint rather than SiliconFlow.
+    "qwen": "dashscope",
+    "bailian": "dashscope",
+}
 
 # Every accepted name, canonical plus aliases. Chapter CLIs use this for their
 # --provider choices so a new registry entry is immediately selectable instead

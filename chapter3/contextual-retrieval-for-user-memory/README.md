@@ -142,10 +142,12 @@ Create a `.env` file:
 MOONSHOT_API_KEY=your_api_key_here
 ARK_API_KEY=your_api_key_here
 SILICONFLOW_API_KEY=your_api_key_here
+DASHSCOPE_API_KEY=your_dashscope_api_key_here
+# DASHSCOPE_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1
 OPENAI_API_KEY=your_api_key_here
 
 # Default Provider
-LLM_PROVIDER=kimi  # Options: kimi, doubao, siliconflow, openai
+LLM_PROVIDER=kimi  # Options: dashscope/qwen/bailian, kimi, doubao, siliconflow, openai
 
 # Model Settings
 LLM_MODEL=kimi-k3  # or another model
@@ -415,10 +417,12 @@ cd chapter3/contextual-retrieval-for-user-memory
 MOONSHOT_API_KEY=your_api_key_here
 ARK_API_KEY=your_api_key_here
 SILICONFLOW_API_KEY=your_api_key_here
+DASHSCOPE_API_KEY=your_dashscope_api_key_here
+# DASHSCOPE_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1
 OPENAI_API_KEY=your_api_key_here
 
 # Default Provider
-LLM_PROVIDER=kimi  # Options: kimi, doubao, siliconflow, openai
+LLM_PROVIDER=kimi  # Options: dashscope/qwen/bailian, kimi, doubao, siliconflow, openai
 
 # Model Settings
 LLM_MODEL=kimi-k3  # 或其他模型

@@ -95,19 +95,27 @@ class APIConfig:
 
 def get_raptor_config() -> RaptorConfig:
     """Get RAPTOR configuration from environment."""
+    provider = os.getenv("LLM_PROVIDER", "openai").lower()
+    provider = {"qwen": "dashscope", "bailian": "dashscope"}.get(provider, provider)
     openai_key = os.getenv("OPENAI_API_KEY", "")
+    dashscope_key = os.getenv("DASHSCOPE_API_KEY", "")
     ark_key = os.getenv("ARK_API_KEY") or os.getenv("DOUBAO_API_KEY", "")
-    direct_key = openai_key or ark_key
+    direct_key = dashscope_key if provider == "dashscope" else (openai_key or ark_key)
     default_model = (
+        os.getenv("RAPTOR_MODEL", "qwen3.7-plus")
+        if provider == "dashscope"
+        else (
         os.getenv("ARK_MODEL", "doubao-seed-1-6-250615")
         if ark_key and not openai_key
-        else "gpt-5.6-luna"
+        else "gpt-5.6-luna")
     )
     api_key, base_url, model_name = _resolve_llm(
         direct_key,
         os.getenv("RAPTOR_MODEL", default_model),
     )
-    if base_url is None and ark_key and not openai_key:
+    if base_url is None and provider == "dashscope":
+        base_url = os.getenv("DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
+    elif base_url is None and ark_key and not openai_key:
         base_url = "https://ark.cn-beijing.volces.com/api/v3"
     return RaptorConfig(
         openai_api_key=api_key,
@@ -125,20 +133,28 @@ def get_raptor_config() -> RaptorConfig:
 
 def get_graphrag_config() -> GraphRAGConfig:
     """Get GraphRAG configuration from environment."""
+    provider = os.getenv("LLM_PROVIDER", "openai").lower()
+    provider = {"qwen": "dashscope", "bailian": "dashscope"}.get(provider, provider)
     openai_key = os.getenv("OPENAI_API_KEY", "")
+    dashscope_key = os.getenv("DASHSCOPE_API_KEY", "")
     ark_key = os.getenv("ARK_API_KEY") or os.getenv("DOUBAO_API_KEY", "")
-    direct_key = openai_key or ark_key
+    direct_key = dashscope_key if provider == "dashscope" else (openai_key or ark_key)
     default_model = (
+        os.getenv("GRAPHRAG_MODEL", "qwen3.7-plus")
+        if provider == "dashscope"
+        else (
         os.getenv("ARK_MODEL", "doubao-seed-1-6-250615")
         if ark_key and not openai_key
-        else "gpt-5.6-luna"
+        else "gpt-5.6-luna")
     )
     api_key, base_url, llm_model, summ_model = _resolve_llm(
         direct_key,
         os.getenv("GRAPHRAG_MODEL", default_model),
         os.getenv("GRAPHRAG_SUMMARY_MODEL", default_model),
     )
-    if base_url is None and ark_key and not openai_key:
+    if base_url is None and provider == "dashscope":
+        base_url = os.getenv("DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
+    elif base_url is None and ark_key and not openai_key:
         base_url = "https://ark.cn-beijing.volces.com/api/v3"
     return GraphRAGConfig(
         llm_api_key=api_key,

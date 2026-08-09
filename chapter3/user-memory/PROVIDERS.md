@@ -2,6 +2,14 @@
 
 The User Memory System now supports multiple LLM providers, allowing you to choose the best provider for your needs.
 
+### Alibaba Cloud DashScope / Bailian (Qwen)
+
+- **Provider names**: `dashscope`, `qwen`, or `bailian` (aliases)
+- **API key**: `DASHSCOPE_API_KEY`
+- **Default model**: `qwen3.7-plus`
+- **Base URL**: `https://dashscope.aliyuncs.com/compatible-mode/v1`
+- For an international-region key, set `DASHSCOPE_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1`.
+
 ## Supported Providers
 
 ### 1. **Kimi/Moonshot** (Default)
@@ -66,6 +74,11 @@ python main.py --mode interactive
 
 # Specify provider
 python main.py --provider siliconflow --mode interactive
+
+# Alibaba Cloud Model Studio / Bailian
+export DASHSCOPE_API_KEY="your-dashscope-key"
+python main.py --provider dashscope --mode interactive
+# `qwen` and `bailian` are accepted aliases for `dashscope`.
 
 # Specify provider and model
 python main.py --provider doubao --model "doubao-seed-1-6-thinking-250715" --mode demo

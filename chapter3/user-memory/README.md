@@ -13,7 +13,7 @@
 
 - **Separated architecture**: conversational agent vs background memory processor  
 - **Memory modes**: notes → enhanced notes → JSON cards → advanced JSON cards  
-- **Providers**: Kimi/Moonshot, SiliconFlow, Doubao, OpenRouter  
+- **Providers**: Alibaba Cloud DashScope/Bailian (Qwen), Kimi/Moonshot, SiliconFlow, Doubao, OpenRouter
 - **React + tools** for structured memory ops  
 - **Streaming** with tool calls  
 - **Evaluation** integration with `user-memory-evaluation`  
@@ -43,7 +43,7 @@ cd chapter3/user-memory
 # python -m pip install -r requirements.txt
 
 cp env.example .env
-# MOONSHOT_API_KEY / SILICONFLOW_API_KEY / DOUBAO_API_KEY / OPENROUTER_API_KEY
+# DASHSCOPE_API_KEY / MOONSHOT_API_KEY / SILICONFLOW_API_KEY / DOUBAO_API_KEY / OPENROUTER_API_KEY
 ```
 
 ### Quick start
@@ -92,6 +92,7 @@ python main.py --mode evaluation --memory-mode advanced_json_cards --provider ki
 
 | Provider | Models (examples) | Notes |
 |----------|-------------------|--------|
+| DashScope / Bailian (Qwen) | qwen3.7-plus | Alibaba Cloud Model Studio; `qwen` and `bailian` are aliases |
 | Kimi/Moonshot | kimi-k3 | Chinese, general |
 | SiliconFlow | Qwen3-235B-… | High performance |
 | Doubao | doubao-seed-1-6-thinking-… | ByteDance |
@@ -101,6 +102,7 @@ python main.py --mode evaluation --memory-mode advanced_json_cards --provider ki
 python main.py --provider siliconflow --model "Qwen/Qwen3-235B-A22B-Thinking-2507"
 python main.py --provider openrouter --model "google/gemini-3.5-flash"
 python main.py --provider doubao --model "doubao-seed-1-6-thinking-250715"
+python main.py --provider dashscope --model "qwen3.7-plus"
 ```
 
 ### API usage
@@ -154,6 +156,7 @@ Uses test cases from `user-memory-evaluation` (histories → question → score/
 
 ```bash
 PROVIDER=kimi
+# For DashScope/Bailian, use PROVIDER=dashscope (or qwen/bailian) and set DASHSCOPE_API_KEY.
 MODEL_TEMPERATURE=0.3
 MODEL_MAX_TOKENS=4096
 MEMORY_MODE=enhanced_notes

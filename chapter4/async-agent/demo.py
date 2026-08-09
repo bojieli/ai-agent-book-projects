@@ -77,6 +77,15 @@ def make_client():
     """
     from openai import AsyncOpenAI  # 惰性导入：离线演示无需安装 openai
     provider = os.getenv("LLM_PROVIDER", "openai").lower()
+    if provider in {"dashscope", "qwen", "bailian"}:
+        key = os.environ["DASHSCOPE_API_KEY"]
+        model = os.getenv("LLM_MODEL", "qwen3.7-plus")
+        base_url = os.getenv(
+            "DASHSCOPE_BASE_URL",
+            "https://dashscope.aliyuncs.com/compatible-mode/v1",
+        )
+        client = AsyncOpenAI(api_key=key, base_url=base_url)
+        return client, model, _completion_params_for(model)
     if provider == "moonshot":
         key = os.environ["MOONSHOT_API_KEY"]
         # 默认用当前的推理模型 kimi-k3（旧的 kimi-k2-*-preview 与 moonshot-v1-* 均已过时/停用）。

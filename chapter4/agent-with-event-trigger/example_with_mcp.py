@@ -5,7 +5,7 @@ Example demonstrating the Event-Triggered Agent with MCP tools
 import os
 import asyncio
 from dotenv import load_dotenv
-from agent import EventTriggeredAgent, SystemHintConfig
+from agent import EventTriggeredAgent, SystemHintConfig, resolve_provider_and_key
 from event_types import Event, EventType
 
 # Load environment variables
@@ -21,10 +21,10 @@ async def main():
     
     # Get API credentials
     provider = os.getenv("LLM_PROVIDER", "kimi")
-    api_key = os.getenv("KIMI_API_KEY")
+    provider, api_key = resolve_provider_and_key(provider)
     
     if not api_key:
-        print("❌ Please set KIMI_API_KEY in your .env file")
+        print("❌ Please set the provider API key in your .env file (DASHSCOPE_API_KEY for dashscope/qwen/bailian)")
         return
     
     # Create agent configuration

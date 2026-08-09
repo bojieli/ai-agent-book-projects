@@ -123,15 +123,17 @@ def watch_llm_agent():
     print("="*60)
     
     # Check API key
-    api_key = os.getenv("MOONSHOT_API_KEY")
+    provider = os.getenv("LLM_PROVIDER", "moonshot").lower()
+    api_key = os.getenv("DASHSCOPE_API_KEY") if provider in {"dashscope", "qwen", "bailian"} else os.getenv("MOONSHOT_API_KEY")
     if not api_key and not os.getenv("OPENROUTER_API_KEY"):
-        print("\nError: MOONSHOT_API_KEY not set.")
+        print(f"\nError: API key for provider '{provider}' not set.")
         print("Please set your Kimi API key:")
-        print("  export MOONSHOT_API_KEY='your-key-here'")
+        print("  export DASHSCOPE_API_KEY='your-key-here'  # for dashscope/qwen/bailian")
+        print("  export MOONSHOT_API_KEY='your-key-here'   # for moonshot/kimi")
         print("Or set OPENROUTER_API_KEY as a universal fallback.")
         return
     
-    agent = LLMAgent(api_key=api_key)
+    agent = LLMAgent(api_key=api_key, provider=provider)
     
     # Load experiences if available
     exp_path = Path("results") / "llm_experiences_demo.json"

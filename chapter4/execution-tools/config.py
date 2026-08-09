@@ -43,11 +43,15 @@ class Config:
     PROVIDER: str = os.getenv("PROVIDER", "kimi")
     
     # API Keys
+    DASHSCOPE_API_KEY: Optional[str] = os.getenv("DASHSCOPE_API_KEY")
     SILICONFLOW_API_KEY: Optional[str] = os.getenv("SILICONFLOW_API_KEY")
     DOUBAO_API_KEY: Optional[str] = os.getenv("DOUBAO_API_KEY")
     KIMI_API_KEY: Optional[str] = os.getenv("KIMI_API_KEY")
     MOONSHOT_API_KEY: Optional[str] = os.getenv("MOONSHOT_API_KEY")
     OPENROUTER_API_KEY: Optional[str] = os.getenv("OPENROUTER_API_KEY")
+    DASHSCOPE_BASE_URL: str = os.getenv(
+        "DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    )
     
     # Model names (optional, defaults to provider defaults)
     MODEL: Optional[str] = os.getenv("MODEL")
@@ -82,7 +86,10 @@ class Config:
     def get_api_key(cls, provider: str) -> Optional[str]:
         """Get API key for the specified provider."""
         provider = provider.lower()
-        if provider == "siliconflow":
+        provider = {"qwen": "dashscope", "bailian": "dashscope"}.get(provider, provider)
+        if provider == "dashscope":
+            return cls.DASHSCOPE_API_KEY
+        elif provider == "siliconflow":
             return cls.SILICONFLOW_API_KEY
         elif provider == "doubao":
             return cls.DOUBAO_API_KEY
@@ -101,6 +108,7 @@ class Config:
         fall back to 'openrouter' so the tools still run with only that key set.
         """
         provider = cls.PROVIDER.lower()
+        provider = {"qwen": "dashscope", "bailian": "dashscope"}.get(provider, provider)
         if cls.get_api_key(provider):
             return provider
         if cls.OPENROUTER_API_KEY:
@@ -132,7 +140,14 @@ class Config:
                 f"Set {cls.PROVIDER.upper()}_API_KEY or OPENROUTER_API_KEY."
             )
         
-        if provider == "siliconflow":
+        if provider == "dashscope":
+            return {
+                "provider": "dashscope",
+                "api_key": api_key,
+                "base_url": cls.DASHSCOPE_BASE_URL,
+                "model": cls.MODEL or "qwen3.7-plus"
+            }
+        elif provider == "siliconflow":
             return {
                 "provider": "siliconflow",
                 "api_key": api_key,
@@ -163,7 +178,7 @@ class Config:
         else:
             raise ValueError(
                 f"Unsupported provider: {provider}. "
-                f"Use 'siliconflow', 'doubao', 'kimi', 'moonshot', or 'openrouter'"
+                f"Use 'dashscope'/'qwen'/'bailian', 'siliconflow', 'doubao', 'kimi', 'moonshot', or 'openrouter'"
             )
 
 

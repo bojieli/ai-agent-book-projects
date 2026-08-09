@@ -19,6 +19,8 @@ def main():
     # Get API key (use any available provider)
     if os.getenv("ARK_API_KEY"):
         api_key, provider = os.getenv("ARK_API_KEY"), "doubao"
+    elif os.getenv("DASHSCOPE_API_KEY"):
+        api_key, provider = os.getenv("DASHSCOPE_API_KEY"), "dashscope"
     elif os.getenv("MOONSHOT_API_KEY"):
         api_key, provider = os.getenv("MOONSHOT_API_KEY"), "kimi"
     elif os.getenv("DEEPSEEK_API_KEY"):
@@ -31,6 +33,7 @@ def main():
     if not api_key:
         print("❌ No API key found. Please set one of:")
         print("  - ARK_API_KEY")
+        print("  - DASHSCOPE_API_KEY")
         print("  - MOONSHOT_API_KEY")
         print("  - DEEPSEEK_API_KEY")
         print("  - SILICONFLOW_API_KEY")

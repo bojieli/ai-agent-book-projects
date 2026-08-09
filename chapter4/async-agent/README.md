@@ -156,6 +156,8 @@ Default OpenAI `gpt-5.6-luna`. Other OpenAI-compatible providers:
 LLM_PROVIDER=moonshot python demo.py scenarios --scenario 1
 # Volcengine ARK (LLM_MODEL = inference endpoint id)
 LLM_PROVIDER=ark LLM_MODEL=ep-xxxx python demo.py scenarios --scenario 1
+# Alibaba Cloud Model Studio / Bailian (Qwen)
+LLM_PROVIDER=dashscope DASHSCOPE_API_KEY=your-key LLM_MODEL=qwen3.7-plus python demo.py scenarios --scenario 1
 ```
 
 > **Universal OpenRouter fallback**: if `OPENAI_API_KEY` is unset (and not moonshot/ark), with `OPENROUTER_API_KEY` set, `demo.py` routes via OpenRouter and maps model ids to `provider/model` (`gpt-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, ids with `/` pass through). Or set `LLM_PROVIDER=openrouter` explicitly. Example:  

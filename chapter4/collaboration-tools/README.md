@@ -126,6 +126,9 @@ HITL_TIMEOUT_SECONDS=3600
 #### For Browser Tasks (AI Agent)
 ```env
 OPENAI_API_KEY=your-openai-api-key
+# Or use Alibaba Cloud Model Studio / Bailian (Qwen):
+# COLLAB_PROVIDER=dashscope  # qwen and bailian are aliases
+# DASHSCOPE_API_KEY=your-dashscope-api-key
 OPENAI_MODEL=gpt-5.6-luna
 ```
 
