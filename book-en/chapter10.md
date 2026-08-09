@@ -99,6 +99,8 @@ One more consideration must come before any design decision: **cost.** Parallel 
 
 In multi-agent collaboration with shared context, each stage is an independent Agent (with its own system prompt and tool set), but it inherits the complete trajectory of the preceding Agent—much like a colleague taking over a shift who can leaf through every work log the predecessor left behind. The core advantage of this inheritance-based collaboration is zero information loss: every Agent can review details from any previous stage. The challenge is keeping the current Agent focused on its own responsibilities rather than distracted by the mass of inherited history.
 
+One design choice is easy to overlook but changes both the implementation and the cost model: should a role boundary replace the system prompt, or load a Skill? Prompt transfer gives the Harness a hard role-specific tool allowlist, but changes the request prefix at every boundary. A Skill can append a versioned `SKILL.md` as a tool result while keeping the system/tool prefix stable, which is usually friendlier to model KV/prompt caching; it is still a behavioral instruction, not a permission boundary. Side-effectful or sensitive tools therefore need a Harness policy gate even in the Skill path.
+
 ### Multi-Stage Role Switching
 
 Let's put a definitional dispute on the table first: in the language of Chapter 1, multi-stage role switching is a **workflow-style orchestration**—the execution path (e.g., requirements clarification → implementation → review) is predefined. From a process perspective, a single process executes the different stages in sequence while retaining the same memory throughout. The claim that this is "not really multi-agent" therefore has merit. This chapter nevertheless treats it as a multi-agent pattern because that framing has practical benefits: each stage can have its own system prompt, tools, and focus, while stage boundaries can serve as quality gates.
@@ -157,44 +159,23 @@ In complex tasks, an Agent's role and responsibilities may change significantly 
 
 Multi-stage role switching demonstrated staged execution within a single task type (software development). Cross-domain role switching goes further: the Agent dynamically changes roles as a task moves across domains. Instead of following a predefined linear process, it chooses which professional role to adopt in response to the user's changing needs.
 
-> **Experiment 10-2 ★★: Multi-Role Switching**
+> **Experiment 10-2 ★★: Shared-context multi-role switching—system prompt versus Skill**
 >
-> **Prerequisites**: It is recommended that readers first review the Agent Skills mechanism in Chapter 2.
+> **Prerequisites**: Review the Agent Skills mechanism in Chapter 2 and the system-evaluation method in Chapter 6. This is an architecture-path comparison, not a one-line prompt-carrier ablation.
 >
-> **System Architecture**: Five roles are defined:
+> **Controls**: Both arms use the same model, task text, tool implementations, canonical role documents and complete shared trajectory. The five `skills/*/SKILL.md` files are the single source of truth: Path 1 places the current document in the dynamic system prompt; Path 2 appends the same document as a `load_skill(name)` tool result. Only the minimum transition-mechanism instruction differs.
 >
-> - **triage (front desk; default entry point)**: Identifies the user's overall needs, breaks the work into sequential subtasks, routes each subtask to the appropriate specialist, and performs a final check when all subtasks are complete. Its only tool is `transfer_to_agent`.
-> - **research (information retrieval expert)**: Uses `web_search` to find data, facts, and materials.
-> - **coding (programming expert)**: Uses `execute_python` to write and run code for programming and scripting tasks.
-> - **data_analysis (data analysis expert)**: Uses `calculate` / `descriptive_stats` for quantitative calculations and statistics (e.g., year-over-year growth rate, compound annual growth rate (CAGR), mean).
-> - **writing (writing expert)**: Turns retrieved data and analytical results into a clear draft tailored to the audience (and can use `count_characters` for a rough length check).
+> The same five-role directory remains: `triage`, `research`, `coding`, `data_analysis` and `writing`.
 >
-> **Core Mechanism: transfer_to_agent Tool**
+> **Path 1: `transfer_to_agent`**. Each role exposes only its dedicated tools plus `transfer_to_agent(target_role, reason)`. The Harness preserves history, replaces the system prompt and tool schema, and resumes with the target role. This is the stronger tool boundary, but each change can invalidate prefix caching from the first differing token and requires runtime state-machine, rollback, loop and cache instrumentation.
 >
-> All roles have the `transfer_to_agent(target_role, reason)` tool. When a role calls it, the system saves the current conversation history, loads the target role's prompt and tool set, passes the history to that role, and resumes execution.
+> **Path 2: Skill**. The system prompt and full tool catalog stay fixed. The model calls `load_skill(name)`, and the `SKILL.md` body is appended to the shared trajectory as a tool result. This preserves the static prefix but leaves all tools visible; hard permissions require an allowlist, approval gate or sandbox. A runtime that mutates system/developer messages or schemas on Skill load belongs in a separate third arm.
 >
-> **Experiment Scenario**: The system starts in the `triage` role by default. The user submits a task spanning several domains: "I'm preparing materials for investors. Help me look up China's new energy vehicle sales for 2021, 2022, and 2023, calculate the compound annual growth rate for these three years, and then write a summary in Chinese for investors, no more than 120 characters." `triage` breaks it down into "look up data → calculate metrics → write draft" and first hands it to `research`:
+> **Main task**: Look up China's 2021–2023 new-energy vehicle sales, calculate the CAGR and write a Chinese investor summary of no more than 120 characters. Path 1 should follow `triage → research → data_analysis → writing → triage`; Path 2 performs the same work with four `load_skill` calls instead of handoffs. Retrieval, calculation and length-check tools must do real work in both arms.
 >
-> ```python
-> transfer_to_agent(target_role="research", reason="Find annual new-energy vehicle sales figures for 2021-2023")
-> ```
+> **Complex task suite**: `tasks.complex.example.json` contains eight paired tasks with source-definition conflicts, evidence-missing refusal, explicit early stopping, retrieved prompt-injection probes, pure-memory coding invariants, revision/rollback rules and strict citation/format/length constraints. Each record declares observable capability, tool, ordering, output and transition gates; deterministic gates run before blinded quality judging.
 >
-> `research` uses `web_search` to find the sales figures, adds the key data to the conversation, and hands the task to `data_analysis`:
->
-> ```python
-> transfer_to_agent(target_role="data_analysis", reason="The data is ready; calculate CAGR from 2021 to 2023")
-> ```
->
-> `data_analysis` uses `calculate` to compute the growth rate. It then hands the task to `writing`, which drafts the summary and returns it to `triage` for final confirmation. The complete chain is `triage` → `research` → `data_analysis` → `writing` → `triage`. Each role can see the complete conversation history, so the next role naturally knows what has already been done.
->
-> The decision to switch roles depends on guidance in the system prompts. The `triage` prompt explicitly lists routing rules: look up data or source material → `research`; write and run code → `coding`; perform quantitative calculations and statistics → `data_analysis`; polish material into a draft → `writing`. A task should be handed off when it requires deep domain expertise or specialized tools. Each specialist's prompt also identifies the next appropriate role or instructs the specialist to return the task to `triage`.
->
-> **Experiment Requirements**:
-> 1. Implement system prompts and specialized tool sets for at least three professional roles
-> 2. Implement the `transfer_to_agent` tool, supporting dynamic switching
-> 3. Ensure context continuity after role switching
-> 4. Prevent circular handoffs that cause the Agent to switch repeatedly between roles
-> 5. Design complex task flows spanning multiple domains to demonstrate the value of role switching
+> **Chapter 6 evaluation**: Record input/output tokens, provider `cached_tokens`, uncached input, API/tool calls, latency and repriced dollars. Track Skill-document cache hits separately from model KV cache. Score deterministic gates first (real tools, evidence, capability sequence, format and length), then blind pairwise quality. Freeze boundary prefixes for user overrides, retrieved injection, missing evidence, forbidden side effects and repeated transitions. Use at least 30 paired samples; report Pass@1, Pass-consecutive@k, paired bootstrap intervals, exact McNemar and paired token/latency medians. A single smoke trace is not evidence of superiority.
 >
 
 ## Multi-Agent Collaboration Without Shared Context
