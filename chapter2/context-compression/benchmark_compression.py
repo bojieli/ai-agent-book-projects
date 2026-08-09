@@ -172,7 +172,7 @@ class ContextCompressionBenchmark:
         else:
             raise ValueError(f"Unknown compression strategy: {strategy}")
 
-    def evaluate_retention(self, compressed_text: str, task: Union[str, Dict[str, Any]]) -> float:
+    def evaluate_retention(self, compressed_text: str, task: Union[str, Dict[str, Any]]) -> Optional[float]:
         """Evaluate downstream QA retention accuracy on compressed context."""
         compressed_text = compressed_text or ""
         task = task or ""
@@ -187,10 +187,10 @@ class ContextCompressionBenchmark:
         # text often survives compression even when the answer is deleted.
         target_text = expected.strip()
         target_tokens = set(re.findall(r'\w+', target_text.lower()))
-        
+
         if not target_tokens:
             # No expected answer to check against: cannot evaluate retention.
-            return 0.0
+            return None
             
         compressed_tokens = set(re.findall(r'\w+', compressed_text.lower()))
         matched = target_tokens.intersection(compressed_tokens)
@@ -209,6 +209,7 @@ class ContextCompressionBenchmark:
         total_orig_tokens = 0
         total_comp_tokens = 0
         total_retention_acc = 0.0
+        retention_count = 0
         sample_count = 0
 
         start_time = time.perf_counter()
@@ -227,14 +228,16 @@ class ContextCompressionBenchmark:
 
             total_orig_tokens += orig_tokens
             total_comp_tokens += comp_tokens
-            total_retention_acc += retention_acc
+            if retention_acc is not None:
+                total_retention_acc += retention_acc
+                retention_count += 1
             sample_count += 1
 
         elapsed_ms = (time.perf_counter() - start_time) * 1000
 
         avg_orig_tokens = total_orig_tokens / max(1, sample_count)
         avg_comp_tokens = total_comp_tokens / max(1, sample_count)
-        avg_retention_acc = total_retention_acc / max(1, sample_count)
+        avg_retention_acc = total_retention_acc / max(1, retention_count)
 
         if avg_orig_tokens == 0:
             ratio = 0.0

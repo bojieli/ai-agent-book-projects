@@ -138,7 +138,7 @@ def test_edge_cases():
     assert benchmark.compress_truncation(None) == ""
     assert benchmark.compress_key_sentence(None) == ""
     assert benchmark.compress_observation_filtering(None) == ""
-    assert benchmark.evaluate_retention("", None) == 0.0
+    assert benchmark.evaluate_retention("", None) is None
 
 
 def test_dict_empty_content_and_none_task():
@@ -155,7 +155,7 @@ def test_retention_does_not_count_query_words():
     benchmark = ContextCompressionBenchmark()
     compressed = "What is the capital of France?"
     # Task with query but no expected_answer: should score 0, not match query words
-    assert benchmark.evaluate_retention(compressed, {"query": "What is the capital of France?"}) == 0.0
+    assert benchmark.evaluate_retention(compressed, {"query": "What is the capital of France?"}) is None
 
 
 def test_retention_uses_expected_answer_only():
