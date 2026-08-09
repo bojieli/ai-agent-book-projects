@@ -35,6 +35,16 @@ def compute_mle_elo(df: pd.DataFrame,
     # Empty battle frame (e.g. --num-battles 0 or fully filtered input) is valid.
     if df is None or len(df) == 0:
         return pd.Series(dtype=float)
+    
+    models = sorted({m for m in (set(df["model_a"]) | set(df["model_b"])) if pd.notna(m)})
+    if len(models) <= 1:
+        res_dict = {}
+        for m in models:
+            if calibration_model == m and calibration_rating is not None:
+                res_dict[m] = float(calibration_rating)
+            else:
+                res_dict[m] = float(INIT_RATING)
+        return pd.Series(res_dict, index=pd.Index(models), dtype=float)
     # Create pivot tables for wins
     ptbl_a_win = pd.pivot_table(
         df[df["winner"] == "model_a"],
