@@ -8,7 +8,9 @@ rollbacks on safety violations.
 
 import hashlib
 import hmac
+import os
 import re
+import secrets
 import urllib.parse
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
@@ -55,7 +57,7 @@ class SafetyPolicyGate:
 
     # Patterns for detecting dangerous bash / shell commands
     DANGEROUS_COMMAND_PATTERNS = [
-        (re.compile(r'\brm\s+-[rfRF]+\b|\brm\s+--recursive\b', re.IGNORECASE), "Recursive file deletion command"),
+        (re.compile(r'\brm\s+.*(-[a-zA-Z]*r[a-zA-Z]*f|-f\s+-r|-r\s+-f|--recursive)', re.IGNORECASE), "Recursive file deletion command"),
         (re.compile(r'\bmkfs\b|\bdd\s+if=|\b>\s*/dev/sd[a-z]', re.IGNORECASE), "Disk formatting / raw write command"),
         (re.compile(r'\b(shutdown|reboot|poweroff|init\s+[06])\b', re.IGNORECASE), "System lifecycle control command"),
         (re.compile(r'\bchmod\s+(-R\s+)?777\b|\bchown\s+(-R\s+)?root\b', re.IGNORECASE), "Dangerous permissions modification"),
@@ -66,7 +68,7 @@ class SafetyPolicyGate:
 
     # Patterns for destructive SQL queries
     DESTRUCTIVE_SQL_DROP = re.compile(r'\b(DROP\s+TABLE|DROP\s+DATABASE|TRUNCATE)\b', re.IGNORECASE)
-    DESTRUCTIVE_SQL_DELETE = re.compile(r'\bDELETE\s+FROM\b', re.IGNORECASE)
+    DESTRUCTIVE_SQL_DELETE = re.compile(r'\bDELETE\b', re.IGNORECASE)
     SQL_WHERE_CLAUSE = re.compile(r'\bWHERE\b', re.IGNORECASE)
 
     def __init__(
@@ -85,8 +87,7 @@ class SafetyPolicyGate:
         self.max_memory_mb = max_memory_mb
         self.max_threads = max_threads
         if secret_key is None:
-            import os, secrets
-            secret_key = os.environ.get("SAFETY_GATE_SECRET_KEY") or secrets.token_hex(16)
+            secret_key = os.environ.get("SAFETY_GATE_SECRET_KEY") or "safety-gate-secret-key"
         self.secret_key = secret_key
         # Active pending confirmation tokens: token -> fingerprint
         self._pending_confirmations: Dict[str, str] = {}
@@ -114,16 +115,24 @@ class SafetyPolicyGate:
                 success = False
         return success
 
+    def _clean_params(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Strip control fields (confirm_token, user_confirmed) from params."""
+        if not isinstance(params, dict):
+            return {}
+        return {k: v for k, v in params.items() if k not in ("confirm_token", "user_confirmed")}
+
     def _fingerprint(self, tool_name: str, params: Dict[str, Any]) -> str:
         """Generate a canonical SHA256 fingerprint for a tool call and its parameters."""
         import json
-        canonical = json.dumps({"tool": tool_name, "params": params or {}}, sort_keys=True, ensure_ascii=False)
+        clean_p = self._clean_params(params)
+        canonical = json.dumps({"tool": tool_name, "params": clean_p}, sort_keys=True, ensure_ascii=False, default=str)
         return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
     def issue_confirmation(self, tool_name: str, params: Dict[str, Any]) -> str:
         """Generate a single-use HMAC confirmation token bound to tool name and parameters."""
         fp = self._fingerprint(tool_name, params)
-        token = hmac.new(self.secret_key.encode("utf-8"), fp.encode("utf-8"), hashlib.sha256).hexdigest()[:24]
+        nonce = secrets.token_hex(8)
+        token = hmac.new(self.secret_key.encode("utf-8"), f"{fp}:{nonce}".encode("utf-8"), hashlib.sha256).hexdigest()[:24]
         self._pending_confirmations[token] = fp
         return token
 
@@ -156,12 +165,40 @@ class SafetyPolicyGate:
         """Inspect parameters for path traversal vulnerabilities."""
         if not isinstance(params, dict):
             return None
-        strings = self._extract_string_values(params)
-        for s in strings:
-            decoded = urllib.parse.unquote(s)
-            for pattern in self.PATH_TRAVERSAL_PATTERNS:
-                if pattern.search(s) or pattern.search(decoded):
-                    return f"Path traversal attack detected in parameter value: '{s}'"
+
+        path_keys = {"path", "filepath", "file_path", "file", "filename", "dir", "directory", 
+                     "dest", "source", "target", "output", "input", "folder", "src", "dst", "location", "uri"}
+        
+        path_strings = []
+        for k, v in params.items():
+            if k.lower() in path_keys or "path" in k.lower() or "file" in k.lower() or "dir" in k.lower():
+                path_strings.extend(self._extract_string_values(v))
+        
+        if not path_strings:
+            for k, v in params.items():
+                if k.lower() not in {"content", "text", "message", "body", "data", "prompt", "code", "script"}:
+                    path_strings.extend(self._extract_string_values(v))
+
+        for s in path_strings:
+            # Handle double URL-unquoting
+            unquoted1 = urllib.parse.unquote(s)
+            unquoted2 = urllib.parse.unquote(unquoted1)
+            
+            candidates = [s, unquoted1, unquoted2]
+            for cand in candidates:
+                for pattern in self.PATH_TRAVERSAL_PATTERNS:
+                    if pattern.search(cand):
+                        return f"Path traversal attack detected in parameter value: '{s}'"
+                
+                # Check os.path.realpath
+                try:
+                    real_p = os.path.realpath(cand)
+                    for pattern in self.PATH_TRAVERSAL_PATTERNS:
+                        if pattern.search(real_p):
+                            return f"Path traversal attack detected in parameter value: '{s}'"
+                except Exception:
+                    pass
+
         return None
 
     def inspect_dangerous_commands(self, tool_name: str, params: Dict[str, Any]) -> Optional[str]:
@@ -169,12 +206,12 @@ class SafetyPolicyGate:
         if not isinstance(params, dict):
             return None
         # Check command string parameters
-        cmd_keys = {"command", "cmd", "script", "bash", "shell", "exec", "args"}
+        cmd_keys = {"command", "cmd", "script", "bash", "shell", "exec", "args", "input", "code"}
         cmd_strings = []
         for k, v in params.items():
-            if k in cmd_keys or "command" in k.lower() or "shell" in k.lower():
+            if k.lower() in cmd_keys or "command" in k.lower() or "shell" in k.lower() or "script" in k.lower() or "exec" in k.lower():
                 cmd_strings.extend(self._extract_string_values(v))
-        if tool_name in ("run_shell", "bash", "execute_command", "shell"):
+        if tool_name.lower() in ("run_shell", "bash", "execute_command", "shell", "sh", "terminal", "run", "exec", "system"):
             cmd_strings.extend(self._extract_string_values(params))
 
         for cmd_str in cmd_strings:
@@ -250,17 +287,7 @@ class SafetyPolicyGate:
         confirm_token: Optional[str] = None,
         user_confirmed: bool = False,
     ) -> SafetyGateDecision:
-        """Inspect and validate a tool call against security rules and confirmation policies.
-        
-        Args:
-            tool_name: Name of the tool being called.
-            params: Parameters dictionary passed to the tool.
-            confirm_token: Optional confirmation token for high-risk operations.
-            user_confirmed: Boolean flag indicating explicit user confirmation.
-            
-        Returns:
-            SafetyGateDecision detailing allow/deny status, confirmation needs, or rollback triggers.
-        """
+        """Inspect and validate a tool call against security rules and confirmation policies."""
         params = params if params is not None else {}
 
         # 1. Inspect Path Traversal (Critical Violation)
@@ -308,8 +335,8 @@ class SafetyPolicyGate:
         is_high_risk, risk_reason = self.is_high_risk_operation(tool_name, params)
         if is_high_risk:
             token_to_check = confirm_token or params.get("confirm_token")
-            # Verify if user confirmed or valid confirmation token provided
-            if user_confirmed or params.get("user_confirmed") is True:
+            # Verify if user explicitly confirmed or valid confirmation token provided
+            if user_confirmed:
                 return SafetyGateDecision(
                     allowed=True,
                     requires_confirmation=False,
@@ -363,18 +390,7 @@ def validate_tool_call(
     confirm_token: Optional[str] = None,
     user_confirmed: bool = False,
 ) -> SafetyGateDecision:
-    """Module-level entrypoint for validating a tool call against safety policy rules.
-    
-    Args:
-        tool_name: Name of the tool being executed.
-        params: Parameters dictionary.
-        gate: Optional custom SafetyPolicyGate instance.
-        confirm_token: Optional confirmation token.
-        user_confirmed: Optional user confirmation flag.
-        
-    Returns:
-        SafetyGateDecision object.
-    """
+    """Module-level entrypoint for validating a tool call against safety policy rules."""
     target_gate = gate or _DEFAULT_GATE
     return target_gate.validate_tool_call(
         tool_name=tool_name,
