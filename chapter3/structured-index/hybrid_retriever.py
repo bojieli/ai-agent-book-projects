@@ -188,7 +188,7 @@ class HybridStructuredRetriever:
         """Bulk ingest RAPTOR tree nodes (objects or dicts)."""
         for node in nodes:
             if isinstance(node, dict):
-                n_id = node.get("id") or node.get("node_id")
+                n_id = node.get("id") if node.get("id") is not None else node.get("node_id")
                 level = node.get("level", 0)
                 text = node.get("text", "")
                 summary = node.get("summary", text)
@@ -196,7 +196,9 @@ class HybridStructuredRetriever:
                 children = node.get("children", [])
                 parent = node.get("parent")
             else:
-                n_id = getattr(node, "id", getattr(node, "node_id", None))
+                n_id = getattr(node, "id", None)
+                if n_id is None:
+                    n_id = getattr(node, "node_id", None)
                 level = getattr(node, "level", 0)
                 text = getattr(node, "text", "")
                 summary = getattr(node, "summary", text)
@@ -276,12 +278,12 @@ class HybridStructuredRetriever:
                 if c_id is not None:
                     self.add_graphrag_community(c_id, e_ids, summ, lvl, emb)
 
-    def _compute_relevance_score(
+    def _compute_scores(
         self, query: str, query_terms: set[str], query_vector: Optional[np.ndarray], node: Dict[str, Any]
-    ) -> float:
-        """Compute relevance score between query and node text/summary."""
+    ) -> Tuple[float, float, float]:
+        """Compute (final_score, lexical_score, semantic_score) for a node."""
         if not query_terms:
-            return 0.0
+            return 0.0, 0.0, 0.0
 
         # Construct textual content for evaluation
         text_content = ""
@@ -296,9 +298,22 @@ class HybridStructuredRetriever:
             text_content = f"{node.get('summary', '')}"
 
         if not text_content.strip():
-            return 0.0
+            return 0.0, 0.0, 0.0
 
-        # Vector similarity if embeddings available
+        words = re.findall(r"\w+", text_content.lower())
+        if not words:
+            return 0.0, 0.0, 0.0
+
+        word_counts = defaultdict(int)
+        for w in words:
+            word_counts[w] += 1
+
+        matched_terms = [qt for qt in query_terms if qt in word_counts]
+        lexical_score = len(matched_terms) / len(query_terms) if query_terms else 0.0
+        matches = sum(word_counts[qt] for qt in matched_terms)
+        coverage_score = min(1.0, matches / len(words)) if words else 0.0
+
+        semantic_score = 0.0
         if query_vector is not None:
             try:
                 n_emb = node.get("embedding")
@@ -310,24 +325,22 @@ class HybridStructuredRetriever:
                     n_norm = np.linalg.norm(n_emb)
                     if q_norm > 0 and n_norm > 0:
                         cos_sim = float(np.dot(query_vector, n_emb) / (q_norm * n_norm))
-                        return max(0.0, cos_sim)
+                        semantic_score = max(0.0, cos_sim)
             except Exception:
                 pass
-        # Term overlap + TF-IDF-like scoring
-        words = re.findall(r"\w+", text_content.lower())
-        if not words:
-            return 0.0
 
-        word_counts = defaultdict(int)
-        for w in words:
-            word_counts[w] += 1
+        if semantic_score > 0:
+            final_score = float(semantic_score * 0.7 + lexical_score * 0.3)
+        else:
+            semantic_score = coverage_score
+            final_score = float(lexical_score * 0.8 + coverage_score * 0.2)
 
-        matched_terms = [qt for qt in query_terms if qt in word_counts]
-        matches = sum(word_counts[qt] for qt in matched_terms)
-        precision = len(matched_terms) / len(query_terms)
-        coverage = matches / len(words)
-        return float(precision * 0.8 + min(1.0, coverage) * 0.2)
+        return final_score, lexical_score, semantic_score
 
+    def _compute_relevance_score(
+        self, query: str, query_terms: set[str], query_vector: Optional[np.ndarray], node: Dict[str, Any]
+    ) -> float:
+        return self._compute_scores(query, query_terms, query_vector, node)[0]
     def _build_citation(self, node: Dict[str, Any]) -> EvidenceCitation:
         """Construct structured evidence citation tracking provenance for a node."""
         src_type = node.get("source_type", "unknown")
@@ -411,7 +424,7 @@ class HybridStructuredRetriever:
         Returns:
             List of SearchResult items ordered descending by fused RRF score.
         """
-        k_val = rrf_k if rrf_k is not None else self.rrf_k
+        k_val = max(1, int(rrf_k)) if rrf_k is not None else self.rrf_k
         top_k = max(1, int(top_k))
 
         if not query or not query.strip():
@@ -420,48 +433,35 @@ class HybridStructuredRetriever:
         query_terms = set(re.findall(r"\w+", query.lower()))
         query_vector = self.embedding_fn(query) if self.embedding_fn is not None else None
 
-        # 1. Rank RAPTOR tree summary nodes
-        raptor_scores: List[Tuple[str, float]] = []
-        raw_scores: Dict[str, float] = {}
+        candidates: Dict[str, Tuple[float, float, float]] = {}
         for key, node in self.unified_nodes.items():
-            if node.get("source_type") == "raptor_tree":
-                score = self._compute_relevance_score(query, query_terms, query_vector, node)
-                if score > 0:
-                    raptor_scores.append((key, score))
-                    raw_scores[key] = score
-        raptor_scores.sort(key=lambda x: (x[1], x[0]), reverse=True)
+            final_sc, lex_sc, sem_sc = self._compute_scores(query, query_terms, query_vector, node)
+            if final_sc > 0:
+                candidates[key] = (final_sc, lex_sc, sem_sc)
 
-        # 2. Rank GraphRAG graph summary nodes
-        graphrag_scores: List[Tuple[str, float]] = []
-        for key, node in self.unified_nodes.items():
-            if node.get("source_type") in ("graphrag_entity", "graphrag_relation", "graphrag_community"):
-                score = self._compute_relevance_score(query, query_terms, query_vector, node)
-                if score > 0:
-                    graphrag_scores.append((key, score))
-                    raw_scores[key] = score
-        graphrag_scores.sort(key=lambda x: (x[1], x[0]), reverse=True)
-        # Build rank lookups (1-indexed ranks)
-        raptor_ranks = {item_key: rank + 1 for rank, (item_key, _) in enumerate(raptor_scores)}
-        graphrag_ranks = {item_key: rank + 1 for rank, (item_key, _) in enumerate(graphrag_scores)}
+        if not candidates:
+            return []
 
-        # 3. Perform Reciprocal Rank Fusion (RRF) scoring
-        all_candidate_keys = sorted(set(raptor_ranks.keys()).union(set(graphrag_ranks.keys())))
+        # 1. Lexical ranking across all candidates
+        lexical_sorted = sorted(candidates.keys(), key=lambda k: (candidates[k][1], candidates[k][0], k), reverse=True)
+        lexical_ranks = {k: r + 1 for r, k in enumerate(lexical_sorted)}
+
+        # 2. Semantic/Coverage ranking across all candidates
+        semantic_sorted = sorted(candidates.keys(), key=lambda k: (candidates[k][2], candidates[k][0], k), reverse=True)
+        semantic_ranks = {k: r + 1 for r, k in enumerate(semantic_sorted)}
+
+        # 3. Reciprocal Rank Fusion (RRF) scoring across identical candidate set
+        all_candidate_keys = sorted(candidates.keys())
         rrf_scores: Dict[str, float] = {}
-
         for key in all_candidate_keys:
-            score = 0.0
-            if key in raptor_ranks:
-                score += 1.0 / (k_val + raptor_ranks[key])
-            if key in graphrag_ranks:
-                score += 1.0 / (k_val + graphrag_ranks[key])
-            rrf_scores[key] = score
+            rrf_scores[key] = (1.0 / (k_val + lexical_ranks[key])) + (1.0 / (k_val + semantic_ranks[key]))
 
-        # Sort candidate keys deterministically: RRF score desc, raw relevance score desc, key asc
         sorted_keys = sorted(
             all_candidate_keys,
-            key=lambda k: (rrf_scores[k], raw_scores.get(k, 0.0), k),
+            key=lambda k: (rrf_scores[k], candidates[k][0], k),
             reverse=True,
         )
+
         # 4. Construct final SearchResult objects with citations
         results: List[SearchResult] = []
         for key in sorted_keys[:top_k]:
@@ -480,8 +480,8 @@ class HybridStructuredRetriever:
                 source_type=src_type,
                 citation=citation,
                 metadata={
-                    "raptor_rank": raptor_ranks.get(key),
-                    "graphrag_rank": graphrag_ranks.get(key),
+                    "lexical_rank": lexical_ranks.get(key),
+                    "semantic_rank": semantic_ranks.get(key),
                     "raw_node": {k: v for k, v in node.items() if k != "embedding"},
                 },
             )

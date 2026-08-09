@@ -237,3 +237,19 @@ def test_deterministic_rrf_ranking():
     res1 = [r.node_id for r in retriever.retrieve("Common topic text", top_k=5)]
     res2 = [r.node_id for r in retriever.retrieve("Common topic text", top_k=5)]
     assert res1 == res2
+def test_index_raptor_nodes_id_zero():
+    """Verify node ID 0 is not dropped during index_raptor_nodes."""
+    retriever = HybridStructuredRetriever()
+    retriever.index_raptor_nodes([{"id": 0, "text": "Zero ID text", "summary": "Zero ID summary"}])
+    results = retriever.retrieve("Zero ID", top_k=1)
+    assert len(results) == 1
+    assert results[0].node_id == "0"
+
+
+def test_negative_rrf_k_parameter():
+    """Verify negative rrf_k override is safely clamped without division by zero."""
+    retriever = HybridStructuredRetriever()
+    retriever.add_raptor_node("node1", 0, "Quantum physics content", "Quantum physics summary")
+    results = retriever.retrieve("Quantum physics", top_k=1, rrf_k=-1)
+    assert len(results) == 1
+    assert results[0].score > 0
