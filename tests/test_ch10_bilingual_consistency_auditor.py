@@ -4,7 +4,7 @@ from pathlib import Path
 import sys
 
 # Ensure chapter10/book-translation is in sys.path
-ch10_dir = Path(__file__).resolve().parent.parent / "chapter10" / "book-translation"
+ch10_dir = (Path(__file__).resolve().parent.parent / "chapter10" / "book-translation").resolve()
 if str(ch10_dir) not in sys.path:
     sys.path.insert(0, str(ch10_dir))
 
@@ -154,3 +154,33 @@ def test_bilingual_consistency_auditor_custom_glossary():
 
     assert report.scores["terminology"] == 1.0
     assert report.is_consistent is True
+
+
+def test_bilingual_consistency_auditor_nonexistent_path_raises_error(tmp_path):
+    """Test that passing a non-existent Path object raises FileNotFoundError."""
+    non_existent = tmp_path / "does_not_exist.md"
+    auditor = BilingualConsistencyAuditor()
+    try:
+        auditor.run_audit(non_existent, "Some content", lang="zh")
+        assert False, "Expected FileNotFoundError"
+    except FileNotFoundError:
+        pass
+
+
+def test_bilingual_consistency_auditor_latex_formula_in_code_block():
+    """Test that dollar signs in code blocks do not trigger false formula errors."""
+    source_md = "Run `$ pip install pkg` for setup."
+    target_md = "运行 `$ pip install pkg` 进行设置。"
+    report = audit_translation(source_md, target_md, lang="zh")
+    assert report.scores["latex_formulas"] == 1.0
+    assert report.is_consistent is True
+
+
+def test_bilingual_consistency_auditor_independent_substring_variants():
+    """Test that independent usage of canonical term alongside longer variant triggers warning."""
+    source_md = "The embedding concept."
+    target_md = "嵌入 和 嵌入向量。"
+    report = audit_translation(source_md, target_md, lang="zh")
+    assert report.scores["terminology"] == 0.5
+    term_findings = [f for f in report.findings if f["category"] == "terminology"]
+    assert any(f["severity"] == "warning" for f in term_findings)

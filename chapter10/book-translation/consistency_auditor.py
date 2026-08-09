@@ -148,13 +148,18 @@ class BilingualConsistencyAuditor:
 
     def _load_content(self, file_or_content: Union[str, Path]) -> str:
         """Load text content from path if existing file, else return as string."""
-        if isinstance(file_or_content, (str, Path)):
+        if isinstance(file_or_content, Path):
+            if file_or_content.is_file():
+                return file_or_content.read_text(encoding="utf-8")
+            raise FileNotFoundError(f"Source or target file not found: {file_or_content}")
+        if isinstance(file_or_content, str):
             try:
                 p = Path(file_or_content)
                 if p.is_file():
                     return p.read_text(encoding="utf-8")
             except Exception:
                 pass
+            return file_or_content
         return str(file_or_content)
 
     def _strip_code(self, text: str) -> str:
@@ -187,11 +192,12 @@ class BilingualConsistencyAuditor:
             canonical = spec.get("canonical", "")
             variants = spec.get("variants", [canonical])
 
-            raw_matched = [v for v in variants if v in prose_target]
-            # Filter out shorter variants that are substrings of longer matched variants
-            matched_variants = [
-                v for v in raw_matched if not any(v != other and v in other for other in raw_matched)
-            ]
+            temp_target = prose_target
+            matched_variants = []
+            for v in sorted(variants, key=len, reverse=True):
+                if v in temp_target:
+                    matched_variants.append(v)
+                    temp_target = temp_target.replace(v, " ")
 
             if not matched_variants:
                 findings.append(
@@ -320,6 +326,9 @@ class BilingualConsistencyAuditor:
     ) -> Tuple[float, List[AuditFinding]]:
         """Audit LaTeX formula syntax preservation."""
         findings: List[AuditFinding] = []
+
+        source_text = self._strip_code(source_text)
+        target_text = self._strip_code(target_text)
 
         block_latex_regex = re.compile(r"\$\$(.*?)\$\$", re.DOTALL)
         inline_latex_regex = re.compile(r"(?<!\$)\$([^\$\n]+)\$(?!\$)")
