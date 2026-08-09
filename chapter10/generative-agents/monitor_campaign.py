@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Report durable Experiment 10-7 progress without reading credentials."""
+"""Report durable Experiment 10-5 progress without reading credentials."""
 
 from __future__ import annotations
 

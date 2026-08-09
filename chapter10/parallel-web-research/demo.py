@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Experiment 10-6: parallel real-browser faculty search."""
+"""Experiment 10-4: parallel real-browser faculty search."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ from sources import DEFAULT_SITES, TARGET, load_sites
 
 
 def parse_args():
-    p = argparse.ArgumentParser(description="实验 10-6：N 个独立真实浏览器会话并行搜索教师")
+    p = argparse.ArgumentParser(description="实验 10-4：N 个独立真实浏览器会话并行搜索教师")
     p.add_argument("--target", default=TARGET, help="要查找的教师姓名")
     p.add_argument("--sites-json", help="网站数组 JSON，每项包含 name/college/url")
     p.add_argument("--agents", type=int, default=len(DEFAULT_SITES), help="使用前 N 个网站/Agent")

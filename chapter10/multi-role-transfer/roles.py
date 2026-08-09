@@ -1,7 +1,7 @@
 """
 roles.py —— 定义多个「专业角色 Agent」。
 
-实验 10-2 的核心：一个会话里存在多个专业角色，每个角色有
+实验 10-1 的核心：一个会话里存在多个专业角色，每个角色有
   (1) 独立的系统提示词（system prompt）
   (2) 专属工具集（tools）
 角色之间通过 transfer_to_agent(target_role, reason) 自主移交控制权。

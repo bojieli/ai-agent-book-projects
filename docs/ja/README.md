@@ -143,7 +143,7 @@ git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-si
 
 # 第10章 · デュアル Agent アーキテクチャ（現在は独立した TalkAct プロジェクト）+ Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling
-git clone https://github.com/joonspk-research/generative_agents.git    chapter10/generative_agents             # 実験 10-7 Stanford AI Town
+git clone https://github.com/joonspk-research/generative_agents.git    chapter10/generative_agents             # 実験 10-5 Stanford AI Town
 ```
 
 > プロジェクトの README が特定のコミットを指定している場合は、再現性のためにそのバージョンへ `git checkout` してください。第10章の `use-computer-while-calling` は独立して保守される [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct) へと発展しました。本リポジトリにはポインタのドキュメントのみを残しています。

@@ -154,7 +154,7 @@ git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-si
 
 # அத்தியாயம் 10 · இரட்டை-ஏஜென்ட் கட்டமைப்பு (TalkAct-ஆக தனியாக உருவாகியது) + Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling
-git clone https://github.com/joonspk-research/generative_agents.git    chapter10/generative_agents             # Exp 10-7 Stanford AI Town
+git clone https://github.com/joonspk-research/generative_agents.git    chapter10/generative_agents             # Exp 10-5 Stanford AI Town
 ```
 
 > ஏதேனும் திட்ட README குறிப்பிட்ட commit-ஐ குறிப்பிட்டால், மறு உருவாக்கத்திற்கு அந்த பதிப்பிற்கு `git checkout` செய்யவும். அத்தியாயம் 10 `use-computer-while-calling` தனியாக பராமரிக்கப்படும் [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)-ஆக வளர்ந்துள்ளது; இந்த களஞ்சியம் அந்த அடைவை உள்ளடக்காது—மேலே உள்ள clone கட்டளையைப் பயன்படுத்தி அதைப் பெறவும்.

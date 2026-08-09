@@ -1,5 +1,5 @@
 """
-demo.py —— 实验 10-2 演示入口：多角色转换 / transfer_to_agent
+demo.py —— 实验 10-1 演示入口：多角色转换 / transfer_to_agent
 
 最简运行（一条命令，跑默认复合任务）：
     python demo.py
@@ -112,7 +112,7 @@ def parse_args() -> argparse.Namespace:
         prog="demo.py",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=(
-            "实验 10-2 演示：多角色转换 / transfer_to_agent。\n"
+            "实验 10-1 演示：多角色转换 / transfer_to_agent。\n"
             "在一段【共享对话历史】上，5 个专业角色通过 transfer_to_agent 自主接力，"
             "触发形如 triage → research → data_analysis → writing 的移交链。"
         ),

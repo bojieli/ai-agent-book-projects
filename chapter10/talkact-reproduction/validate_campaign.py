@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate a retained 16-episode Experiment 10-4 campaign."""
+"""Validate the retained historical 10-4 campaign for current Experiment 10-3."""
 
 from __future__ import annotations
 

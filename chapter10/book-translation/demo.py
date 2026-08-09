@@ -1,5 +1,5 @@
 """
-实验 10-3 一键演示。
+实验 10-2 一键演示。
 
   python demo.py                       # 完整跑：管理者模式 + 单 Agent 对照
   python demo.py --help                # 查看全部参数
@@ -42,7 +42,7 @@ def parse_args():
         prog="demo.py",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=(
-            "实验 10-3：书籍翻译 Agent —— 管理者模式（Glossary/Translation/\n"
+            "实验 10-2：书籍翻译 Agent —— 管理者模式（Glossary/Translation/\n"
             "Proofreading/Manager 四种 Agent 协作）vs 单 Agent 模式，\n"
             "对比上下文膨胀与术语表遵从率。"
         ),
@@ -176,7 +176,7 @@ def run_dry_run(args):
         print(f"错误：{args.sample_dir} 下没有找到任何 .md 章节。", file=sys.stderr)
         sys.exit(1)
 
-    hr(f"实验 10-3 · 离线预演（--dry-run，不调用 API，模型={agents.MODEL}）")
+    hr(f"实验 10-2 · 离线预演（--dry-run，不调用 API，模型={agents.MODEL}）")
     print(f"待翻译书籍：{args.sample_dir}（{len(chapters)} 章）  翻译方向："
           f"{args.source_lang} → {args.target_lang}")
     print(f"启用 Agent：Manager + " +

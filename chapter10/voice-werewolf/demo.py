@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""实验 10-8：1 名真人通过实时 ASR/TTS 与 5-7 个 AI Agent 玩狼人杀。
+"""实验 10-6：1 名真人通过实时 ASR/TTS 与 5-7 个 AI Agent 玩狼人杀。
 
-配套《深入理解 AI Agent》第 10 章「实验 10-8：语音狼人杀 Agent 系统」。
+配套《深入理解 AI Agent》第 10 章「实验 10-6：语音狼人杀 Agent 系统」。
 
 本 demo 演示三件事（对应书中架构设计）：
 1. **多 Agent**：每个玩家 = 一个独立 LLM Agent（OpenAI，默认 gpt-5.6-luna）。
@@ -173,7 +173,7 @@ def verify_simulator_trace(events):
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="实验 10-8：语音狼人杀 Agent 系统 —— 法官编排 + 信息权限控制 + 多 Agent。",
+        description="实验 10-6：语音狼人杀 Agent 系统 —— 法官编排 + 信息权限控制 + 多 Agent。",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "示例：\n"
@@ -241,7 +241,7 @@ def run_game(args):
     )
     roles_note = "" if args.wolves is None else f"（狼人数={args.wolves}）"
     print("=" * 78)
-    print("实验 10-8：语音狼人杀 Agent 系统")
+    print("实验 10-6：语音狼人杀 Agent 系统")
     configured_model = (os.getenv("ARK_MODEL") or os.getenv("MOONSHOT_MODEL") or
                         os.getenv("OPENAI_MODEL") or "provider default")
     print(f"模式：{mode} | 模型：{configured_model if not args.offline else '—'} | "

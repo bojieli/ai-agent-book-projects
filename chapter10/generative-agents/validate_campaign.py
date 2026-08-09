@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Independently validate a retained Experiment 10-7 evidence package."""
+"""Independently validate the retained historical 10-7 evidence for current Experiment 10-5."""
 
 from __future__ import annotations
 

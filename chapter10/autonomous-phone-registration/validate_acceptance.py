@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed validator for retained Experiment 10-5 evidence."""
+"""Fail-closed validator for retained historical 10-5 evidence of current Experiment 10-3."""
 
 from __future__ import annotations
 

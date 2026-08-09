@@ -1,6 +1,6 @@
 ## English
 
-# Experiment 10-3: Book Translation Agent — Orchestration Pattern
+# Experiment 10-2: Book Translation Agent — Orchestration Pattern
 
 Accompanying code demonstrating how to use the **Orchestration Pattern** to delegate long-document translation to multiple specialized agents. The core principles are
 **context isolation** and **controlling Manager context growth**: the Manager only stores tasks, plans, agent call records, and file indexes; **complete translations are all written to the file system**, so no matter how long the book is, the Manager's context remains essentially constant.
@@ -141,7 +141,7 @@ python demo.py --dry-run
 
 ## 中文
 
-# 实验 10-3：书籍翻译 Agent —— 管理者模式（Orchestration）
+# 实验 10-2：书籍翻译 Agent —— 管理者模式（Orchestration）
 
 配套代码，演示如何用**管理者模式**把长文档翻译拆给多个专职 Agent。核心是
 **上下文隔离**与**控制 Manager 上下文膨胀**：Manager 只保存任务、计划、各

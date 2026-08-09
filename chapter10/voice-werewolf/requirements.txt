@@ -1,4 +1,4 @@
-# 实验 10-8 依赖
+# 实验 10-6 依赖
 openai>=1.40.0
 python-dotenv>=1.0.0
 sounddevice>=0.4.6

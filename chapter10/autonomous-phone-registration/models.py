@@ -1,4 +1,4 @@
-"""Shared contracts for Experiment 10-5.
+"""Shared contracts for Experiment 10-3.
 
 The contracts are deliberately serialisable: every Computer/Phone Agent exchange is
 also written to the timing trace, so a run can prove what was decided and when.

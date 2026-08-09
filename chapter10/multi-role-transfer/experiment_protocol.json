@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "experiment": "10-2-role-switch-comparison",
+  "experiment": "10-1-role-switch-comparison",
   "status": "pre_registered_protocol",
   "question": "在共享上下文中，切换 system prompt 与加载 Skill 哪种多角色实现更合适？",
   "estimand": "Architecture-path trade-off; not a pure prompt-carrier causal effect because tool visibility differs",

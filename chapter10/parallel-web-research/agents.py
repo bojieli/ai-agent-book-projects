@@ -1,4 +1,4 @@
-"""Real-browser workers and central coordinator for Experiment 10-6."""
+"""Real-browser workers and central coordinator for Experiment 10-4."""
 
 from __future__ import annotations
 

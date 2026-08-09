@@ -153,7 +153,7 @@ git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-si
 
 # Chapter 10 · Dual-Agent Architecture (now independent TalkAct project) + Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling
-git clone https://github.com/joonspk-research/generative_agents.git    chapter10/generative_agents             # Exp 10-7 Stanford AI Town
+git clone https://github.com/joonspk-research/generative_agents.git    chapter10/generative_agents             # Exp 10-5 Stanford AI Town
 ```
 
 > If a project README specifies a particular commit, `git checkout` to that version for reproducibility. Chapter 10's `use-computer-while-calling` has evolved into the independently maintained [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct); this repo does not bundle that directory — use the clone command above to fetch it.

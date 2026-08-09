@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Experiment 10-5: autonomously spawn Phone Agent during real browser use."""
+"""Experiment 10-3: autonomously spawn Phone Agent during real browser use."""
 
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ DEFAULT_URL = "https://demoqa.com/automation-practice-form"
 
 def parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        description="实验 10-5：Computer Use Agent 自主决定并启动实时 Phone Agent",
+        description="实验 10-3：Computer Use Agent 自主决定并启动实时 Phone Agent",
     )
     p.add_argument("--url", default=DEFAULT_URL, help="真实注册/资料表单 URL")
     p.add_argument("--known-json", default="{}", help="已在上下文中的字段 JSON（键为表单 name/id）")

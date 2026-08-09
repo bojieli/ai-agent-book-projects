@@ -52,7 +52,7 @@ Table 10-1 Selection Criteria for Shared vs. Non-Shared Context
 
 ### Dimension 2: Collaboration Topology
 
-The second dimension is collaboration topology: the structure through which control and information flow among Agents. Topology and context sharing are conceptually distinct but related in practice. Shared-context systems still have a topology; for example, the `transfer_to_agent` pattern in Experiment 10-2 forms a handoff chain. However, because every handoff carries the complete history, there is usually no need to decide what information to pass, so the topology often becomes a simple sequence of role switches. Group-chat-style collaboration is an exception discussed later in the decentralization section. With non-shared context, by contrast, designers must explicitly decide how information flows and who coordinates it.
+The second dimension is collaboration topology: the structure through which control and information flow among Agents. Topology and context sharing are conceptually distinct but related in practice. Shared-context systems still have a topology; for example, the `transfer_to_agent` pattern in Experiment 10-1 forms a handoff chain. However, because every handoff carries the complete history, there is usually no need to decide what information to pass, so the topology often becomes a simple sequence of role switches. Group-chat-style collaboration is an exception discussed later in the decentralization section. With non-shared context, by contrast, designers must explicitly decide how information flows and who coordinates it.
 
 > **Terminology: Graph Engineering.** The term "Graph Engineering," which became popular in July 2026, generally refers in today's Agent context to explicitly designing an execution graph: nodes are Agents, ordinary programs, or human decisions; edges define task dependencies, conditional routing, and failure paths; and structured state flows between nodes.[^ch10-graph-engineering] The "collaboration topology" discussed in this chapter is the multi-agent subset of that idea—peer collaboration, manager orchestration, and decentralized handoffs are different graph topologies. Because the name is still new and is easily confused with knowledge graphs, GraphRAG, and execution traces, this book continues to use the more stable terms "collaboration topology" and "orchestration" as its primary vocabulary.
 
@@ -109,57 +109,11 @@ In complex tasks, an Agent's role and responsibilities may change significantly 
 
 ![Figure 10-2: Stage-based role switching](images/fig10-2.svg)
 
-> **Experiment 10-1 ★★: Determining System Prompts Based on Execution Stage**
->
-> This experiment demonstrates how stage-specific system prompts can improve performance across a complete Coding Agent workflow.
->
-> **Task Scenario**: A user submits a software development request, and the Agent proceeds through three stages: requirements clarification, code implementation, and quality review.
->
-> **Stage 1: Requirements Clarification** (Role: Requirements Analyst)
->
-> The system prompt emphasizes:
-> - "Your responsibility is to fully understand the user's needs. Ask questions to clarify ambiguities, ensuring you fully comprehend the expected functionality, usage scenarios, and performance requirements."
-> - "Do not rush into implementation. At this stage, your task is to ask questions and confirm, not to write code."
-> - "Once you confirm that all key requirements are clear, call the `complete_requirements_analysis()` tool to end this stage."
->
-> The tool set is limited: `ask_clarifying_question(question)` to ask the user clarifying questions, `save_requirement(key, value)` to record confirmed requirements, and `complete_requirements_analysis()` to mark the stage as complete.
->
-> The Agent asks the user what types of files the script needs to process, whether it should process subfolders recursively, and whether it should preserve the original filenames after moving the files. These exchanges help it build and record a structured set of requirements. Once the requirements are sufficiently clear, it calls `complete_requirements_analysis()`. This completion signal tells the system to load the next stage's configuration.
->
-> **Stage 2: Code Implementation** (Role: Software Engineer)
->
-> The new system prompt emphasizes:
-> - "Your responsibility is to write high-quality Python code based on the confirmed requirements."
-> - "Follow best practices: make the code modular, handle errors appropriately, and include comments where they are useful."
-> - "After completing the code and passing basic tests, call `submit_for_review()` to enter the review stage."
->
-> The tools also change: the requirements-clarification tools are replaced with development tools such as `write_file(path, content)`, `read_file(path)`, and `execute_code(code)`. Using the requirements recorded in the first stage, the Agent writes the core logic, adds error handling, and creates tests. It can still consult the earlier conversation for requirement details, but it now focuses solely on implementation rather than asking further questions. When finished, it calls `submit_for_review()`.
->
-> **Stage 3: Code Review** (Role: Code Reviewer)
->
-> The new system prompt emphasizes:
-> - "Review the code for functional correctness, adherence to coding standards, error handling, performance, and security."
-> - "Take a critical approach and identify potential problems and opportunities to improve the code."
-> - "If serious issues are found, call `request_revision(issues)` to return to the implementation stage for modification; if the quality is acceptable, call `approve_code()` to complete the task."
->
-> The tool set changes again: it is replaced by code quality analysis tools such as `run_linter(file)`, `run_tests(file)`, and `analyze_complexity(file)`. The Agent re-examines the code from a reviewer's perspective, runs static analysis, and checks for potential bugs, performance issues, or security risks.
->
-> This three-stage design allows the Agent to focus on the core task at each stage. More importantly, clear stage transitions ensure that every stage is completed: the Agent cannot skip requirements analysis and begin coding immediately, or deliver the result without review.
->
-> **Experiment Requirements**:
-> 1. Implement three-stage system prompts, each with a clear role definition and behavioral guidance
-> 2. Configure matching tool sets for each stage
-> 3. Implement a stage transition trigger mechanism (via specific tool calls)
-> 4. Ensure context continuity between stages
-> 5. Handle rollback scenarios—when code review finds issues, return to the implementation stage
-> 6. Record activity from each stage to demonstrate how different prompts produce different behavior
->
-
 ### Cross-Domain Role Switching
 
 Multi-stage role switching demonstrated staged execution within a single task type (software development). Cross-domain role switching goes further: the Agent dynamically changes roles as a task moves across domains. Instead of following a predefined linear process, it chooses which professional role to adopt in response to the user's changing needs.
 
-> **Experiment 10-2 ★★: Shared-context multi-role switching—system prompt versus Skill**
+> **Experiment 10-1 ★★: Shared-context multi-role switching—system prompt versus Skill**
 >
 > **Prerequisites**: Review the Agent Skills mechanism in Chapter 2 and the system-evaluation method in Chapter 6. This is an architecture-path comparison, not a one-line prompt-carrier ablation.
 >
@@ -244,11 +198,11 @@ The value of the **"file path as a universal interface"** lies in treating a pat
 
 While the file system solves the problem of **artifact exchange** between Agents, collaboration also requires a **control plane**. This is exactly where the lifecycle rows of Table 10-3 come into play: the tool primitives given in Chapter 4—creating (`spawn_subagent`), sending messages (`send_message_to_subagent`), canceling (`cancel_subagent`), and discovering (`list_agents`)—correspond to fork, message, kill, and ps in the process world. This section does not repeat the interface definitions but focuses on four often-overlooked capabilities essential for multi-agent collaboration.
 
-**I. Message Passing.** The simplest form is point-to-point: Agent A directly calls `send_message_to_agent_b(content)`. This is suitable for scenarios with a fixed topology and a small number of Agents (e.g., the phone + computer dual-agent setup of Experiment 10-4 in this chapter). When the number of Agents increases and asynchronous parallelism is required, the number of point-to-point connections grows quadratically with the number of Agents, and both sender and receiver must be online simultaneously. In such cases, a **message bus** should be used (detailed later in this chapter under "Parallel Coordination Pattern"): Agents publish messages to the bus, which forwards them based on subscriptions, so the sender does not need to know the subscribers. Whether point-to-point or via a bus, messages should typically carry a structured **envelope**: sender ID, target (specific Agent or broadcast), message type (e.g., `task_assigned`/`status_update`/`result`/`terminate`), and a JSON payload. A unified envelope format ensures reliable routing and parsing by the receiver and makes the collaboration chain traceable—a key aspect of debugging multi-agent systems.
+**I. Message Passing.** The simplest form is point-to-point: Agent A directly calls `send_message_to_agent_b(content)`. This is suitable for scenarios with a fixed topology and a small number of Agents (e.g., the phone + computer dual-agent setup of Experiment 10-3 in this chapter). When the number of Agents increases and asynchronous parallelism is required, the number of point-to-point connections grows quadratically with the number of Agents, and both sender and receiver must be online simultaneously. In such cases, a **message bus** should be used (detailed later in this chapter under "Parallel Coordination Pattern"): Agents publish messages to the bus, which forwards them based on subscriptions, so the sender does not need to know the subscribers. Whether point-to-point or via a bus, messages should typically carry a structured **envelope**: sender ID, target (specific Agent or broadcast), message type (e.g., `task_assigned`/`status_update`/`result`/`terminate`), and a JSON payload. A unified envelope format ensures reliable routing and parsing by the receiver and makes the collaboration chain traceable—a key aspect of debugging multi-agent systems.
 
 **II. Status Query.** This is the most underestimated part of the control plane. Once a main Agent has dispatched a sub-agent, it needs visibility into the sub-agent's progress; otherwise, it can neither decide whether to keep waiting nor intervene when the sub-agent gets stuck. An intuitive approach is to borrow from RPC and define a `get_subagent_status(agent_id)` query interface that returns "running/completed/failed" plus a progress percentage. But such a pull interface turns out to be far less useful than expected: a sub-agent starts executing the moment it is created and runs until it completes or fails. It does not cycle through a series of queued states the way jobs in a traditional batch system do, just as Unix programming rarely needs to poll another process by its PID for running status. Polling also carries an inherent dilemma: poll too often and you waste tokens; poll too rarely and you react late. A more natural way to obtain status is to return to the two communication paradigms introduced at the beginning of this chapter.
 
-**Getting status via message passing.** The main Agent simply sends the sub-agent a message: "How's it going?" The sub-agent replies at an opportune moment. Everything is asynchronous: sending the message does not block the main Agent's own execution, and when—or whether—the other side replies is a separate matter, just as a manager asks a subordinate for progress via instant messaging without requiring them to drop everything on the spot. Conversely, the sub-agent can also proactively send a message to report when it reaches a milestone; if the system already has a message bus, this is simply publishing a `status_update` to the bus (the "real-time monitoring" of Experiment 10-6 is this form). Whether status is requested explicitly or reported proactively, the status carried in the message should adopt a uniform state-machine vocabulary (executing, needs input, completed, failed)—the A2A protocol later in this chapter standardizes the task lifecycle into exactly such a set of states.
+**Getting status via message passing.** The main Agent simply sends the sub-agent a message: "How's it going?" The sub-agent replies at an opportune moment. Everything is asynchronous: sending the message does not block the main Agent's own execution, and when—or whether—the other side replies is a separate matter, just as a manager asks a subordinate for progress via instant messaging without requiring them to drop everything on the spot. Conversely, the sub-agent can also proactively send a message to report when it reaches a milestone; if the system already has a message bus, this is simply publishing a `status_update` to the bus (the "real-time monitoring" of Experiment 10-4 is this form). Whether status is requested explicitly or reported proactively, the status carried in the message should adopt a uniform state-machine vocabulary (executing, needs input, completed, failed)—the A2A protocol later in this chapter standardizes the task lifecycle into exactly such a set of states.
 
 **Getting status via the shared file system.** The most thorough form is **trajectory persistence**: as it executes, the sub-agent serializes each trajectory event to JSON and appends it to a filesystem log file—usually one file per session, one event per line, i.e., JSONL. The trajectory, defined in Chapter 1, is the complete sequence of user messages, model replies, tool calls, and results. The main Agent needs no status-reporting protocol; by reading this file directly, it can inspect the sub-agent's entire execution: which tool it is calling, what happened in its most recent step, and whether it is stuck in a loop of repeated failed retries. In process terms, this resembles reading another process's memory directly. It does not occupy the sub-agent's context, does not depend on its cooperation, and offers the finest observation granularity.
 
@@ -262,7 +216,7 @@ However, **the trajectory alone cannot always recover the full state of external
 
 With those conditions, persistence resembles a database write-ahead log (WAL): append events before applying them and combine the log with periodic checkpoints. The system can then restart a sub-agent from its last confirmed state, replay events to diagnose failures, or hand auditable state to another Agent (Chapter 3's "fact log + periodic checkpoint" memory design applies the same idea to memory systems).
 
-**III. Execution Termination.** In parallel collaboration, a common scenario is "one succeeds, the rest become irrelevant"—multiple Agents search separately, and once one finds the target, the others should stop immediately (the cascading termination in Experiment 10-6 of this chapter). There are two levels of termination, and Unix users will recognize them as the distinction between SIGTERM and SIGKILL. **Graceful termination** is preferred: the main Agent sends a `terminate` signal, the sub-agent responds at a safe point in its current step, cleans up resources (closes browser sessions, writes pending files, releases locks), sends an acknowledgment (ack), and then exits. **Forced termination** is a fallback: directly terminating the process, used only when the sub-agent does not respond to the graceful signal, at the cost of potentially leaving dangling resources and incomplete writes. Two engineering points need attention. First, graceful termination requires the sub-agent to check periodically for the termination signal in its loop (similar to the interrupt mechanism in Chapter 4); otherwise, it cannot receive the signal. Second, cascading termination has a race condition: multiple sub-agents might report success nearly simultaneously. The main Agent must use a lock or idempotent design to ensure that only one success is accepted and that the termination signal is broadcast once. See the discussion of race conditions in Experiment 10-6.
+**III. Execution Termination.** In parallel collaboration, a common scenario is "one succeeds, the rest become irrelevant"—multiple Agents search separately, and once one finds the target, the others should stop immediately (the cascading termination in Experiment 10-4 of this chapter). There are two levels of termination, and Unix users will recognize them as the distinction between SIGTERM and SIGKILL. **Graceful termination** is preferred: the main Agent sends a `terminate` signal, the sub-agent responds at a safe point in its current step, cleans up resources (closes browser sessions, writes pending files, releases locks), sends an acknowledgment (ack), and then exits. **Forced termination** is a fallback: directly terminating the process, used only when the sub-agent does not respond to the graceful signal, at the cost of potentially leaving dangling resources and incomplete writes. Two engineering points need attention. First, graceful termination requires the sub-agent to check periodically for the termination signal in its loop (similar to the interrupt mechanism in Chapter 4); otherwise, it cannot receive the signal. Second, cascading termination has a race condition: multiple sub-agents might report success nearly simultaneously. The main Agent must use a lock or idempotent design to ensure that only one success is accepted and that the termination signal is broadcast once. See the discussion of race conditions in Experiment 10-4.
 
 One loose end remains: after the main Agent terminates, what happens to sub-agents still running? The cleanest engineering approach borrows from Go's context—termination cascades down the creation relationship: cancel one Agent and all the sub-agents it spawned are canceled with it, preventing orphaned child Agents from being left behind. The "sub-agent checks for the termination signal at a safe point" above corresponds precisely to polling `ctx.Done()` in Go. Conversely, if you genuinely need a long-running background Agent detached from the main Agent (like Unix's `nohup`), let it start from a new lifecycle tree (corresponding to `context.Background()`), explicitly declaring that it does not terminate with its parent.
 
@@ -330,7 +284,7 @@ When a task involves more than five subtasks, needs dynamic scheduling, or has c
 
 From a system design perspective, the manager pattern models each specialized Agent as a tool that the Manager can invoke. The Manager's tool set includes not only traditional external tools, such as search and file operations, but also interfaces for invoking other Agents. The Manager invokes the appropriate Agent through a tool call, passes the task parameters and necessary context, waits for completion, and receives the result. From the Manager's perspective, calling an Agent is essentially no different from calling a regular tool: both involve sending a request and receiving a response. This unified abstraction makes the manager pattern easy to extend. Adding a capability requires only developing the corresponding Agent and registering it as a tool, without modifying the Manager's core logic. It also naturally supports heterogeneity: different Agents can use different models, prompts, tool sets, and even hardware environments.
 
-The abstraction of "Agents as tools for each other" was established in the "Collaboration Tools" section of Chapter 4: the interface design of `spawn_subagent / send_message_to_subagent / cancel_subagent / list_agents` applies directly to the Manager's invocation of sub-agents here. As for what is passed in the "Manager → sub-agent" direction, see the handoff-package design later in this chapter (task description, confirmed facts and constraints, references to structured artifacts). The corresponding question is what the sub-agent returns in the "sub-agent → Manager" direction. The answer is **structured summaries rather than full trajectories**: the sub-agent should return the task conclusion, key findings, file paths of the artifacts, and problems encountered, leaving the complete execution trajectory in its own logs. Only in this way can the Manager's context grow slowly and linearly with the number of subtasks, rather than exploding. This is also why the Manager in Experiment 10-3 below maintains only file indexes and does not store translation content.
+The abstraction of "Agents as tools for each other" was established in the "Collaboration Tools" section of Chapter 4: the interface design of `spawn_subagent / send_message_to_subagent / cancel_subagent / list_agents` applies directly to the Manager's invocation of sub-agents here. As for what is passed in the "Manager → sub-agent" direction, see the handoff-package design later in this chapter (task description, confirmed facts and constraints, references to structured artifacts). The corresponding question is what the sub-agent returns in the "sub-agent → Manager" direction. The answer is **structured summaries rather than full trajectories**: the sub-agent should return the task conclusion, key findings, file paths of the artifacts, and problems encountered, leaving the complete execution trajectory in its own logs. Only in this way can the Manager's context grow slowly and linearly with the number of subtasks, rather than exploding. This is also why the Manager in Experiment 10-2 below maintains only file indexes and does not store translation content.
 
 The manager pattern has inherent challenges, though. The Manager becomes the system's single-point bottleneck: it must understand the nature of every subtask, choose the right Agent, and pass context accurately; any misjudgment ripples through the whole flow. It must also maintain the global context of the entire task, which can balloon as the task deepens and Agent calls accumulate. The Manager therefore requires a carefully designed prompt, an effective context-management strategy, and appropriately granular task decomposition.
 
@@ -348,7 +302,7 @@ This does not conflict with an argument from Chapter 4. In discussing the propos
 
 The Manager calls specialized Agents sequentially. Each Agent returns results upon completion, and the Manager decides the next step. The control flow is linear, simple, and clear, making it suitable for scenarios where subtasks have clear sequential dependencies.
 
-> **Experiment 10-3 ★★: Book Translation Agent**
+> **Experiment 10-2 ★★: Book Translation Agent**
 >
 > Book translation is a complex task well suited to multi-agent collaboration. Translating a technical book involves not just converting text from one language to another, but also ensuring consistent specialized terminology, contextual accuracy, and overall fluency. For example, an English book about large language models may use many recurring terms with several conventional translations. Consistency must be maintained throughout the book: if `agent` is rendered as "智能体" ("intelligent entity," the standard Chinese term) in Chapter 1, the book cannot switch to the alternative rendering "代理" ("proxy") later.
 >
@@ -390,63 +344,24 @@ The rest of Lingtai's design also echoes earlier sections. Knowledge lives in ea
 
 [^lingtai]: Lingtai official tutorial: https://lingtai.ai/en/tutorial/
 
-> **Experiment 10-4 ★★★: Agent Talking on the Phone While Using a Computer**
+> **Experiment 10-3 ★★★: Autonomous Phone and Computer Agents**
 >
-> **Prerequisites**: This experiment integrates the Computer Use and Voice Agent technologies from Chapter 9. It is recommended that readers complete the relevant Chapter 9 experiments first.
+> **Prerequisites**: This experiment integrates the Computer Use and Voice Agent technologies from Chapter 9.
 >
-> Many real-world tasks require several capabilities to operate concurrently rather than sequentially. A human assistant, for example, might talk with a client while looking up documents and taking notes. Asking one Agent to manage both real-time conversation and computer interaction requires continual task switching, which can interrupt either activity. A multi-agent system instead assigns each latency-sensitive task to a specialized Agent and coordinates them through asynchronous messages. The Phone Agent requires low-latency speech recognition and synthesis, while the Computer Agent requires strong visual understanding and action-planning capabilities.
+> **Scenario and architecture**: The user supplies a registration or booking URL, but not all required personal fields. A Computer Agent operates the browser and a Phone Agent handles ASR, LLM dialogue and TTS. They exchange structured messages (sender, receiver, type and payload) through point-to-point tools or a message bus. A local WebRTC audio page is sufficient; PSTN/E.164 is optional.
 >
-> **Scenario**: An AI Agent helps a user fill out a complex flight-booking form. It must operate a web page while asking the user for and confirming personal information (name, ID number, flight preferences, etc.) over the phone. Both the phone conversation and the web interaction must remain responsive, making this a classic case in which a single Agent struggles but a dual-agent system allows each Agent to focus on one role.
+> **Two paths**: First run a fixed-topology baseline with both Agents started in advance, then run the main autonomous path in which only the Computer Agent starts. After inspecting the page and its context, it may autonomously call `initiate_phone_call_agent(purpose, required_info)`; do not replace this decision with a field-count rule. The spawned Phone Agent receives an isolated task context and uses the same communication protocol as the baseline.
 >
-> **Dual-Agent Architecture**:
+> **Parallel closed loop**: The Phone Agent asks, transcribes, validates and re-asks one field at a time while the Computer Agent screenshots, locates elements and fills the previous field. Messages such as `info_collected`, `fill_error`, `format_invalid` and `task_completed` make the loop observable in both directions. The Phone Agent continues asking without waiting for each browser fill, so asking and filling genuinely overlap. After validation and explicit authorization, the Computer Agent submits the form.
 >
-> **Phone Agent**: A voice Agent built with ASR, an LLM, and TTS. It interprets the user's natural-language responses, extracts key information, and sends that information to the Computer Agent through the messaging system. It also receives messages from the Computer Agent (e.g., "Need the user's ID number," "Page loading error") and responds appropriately to the user.
->
-> **Computer Agent**: Uses a browser-automation framework such as Anthropic Computer Use or `browser-use` to interpret the page, identify and fill form fields, and request help from the Phone Agent when necessary.
->
-> **Communication Mechanism**: Two options:
-> - **Simple Solution**: Point-to-point communication via tool calls, e.g., `send_message_to_computer_agent(message)` / `send_message_to_phone_agent(message)`
-> - **Complete Solution**: Message bus + Manager Agent, with a unified message format including sender, receiver, type, and content
->
-> **Parallel Collaboration Mechanism** (shared by the two "Phone + Computer" experiments in this chapter): The two Agents run in separate threads or processes, each maintaining an independent ReAct loop. The Phone Agent repeatedly receives audio, transcribes it with ASR, generates a response with the LLM, synthesizes the response with TTS, plays it, and checks for messages from the Computer Agent. The Computer Agent repeatedly captures a screenshot, interprets the page with a vision-language model, plans and executes an action, and checks for messages from the Phone Agent. Both must run in parallel: while the Computer Agent locates elements and enters text, the Phone Agent must remain online and converse with the user ("Okay, I'm filling in your name... May I ask what your ID number is?"). Messages from the other Agent can be included in the receiving Agent's context with labels such as `[FROM_COMPUTER_AGENT] Cannot find the 'Next' button; user confirmation might be needed` and `[FROM_PHONE_AGENT] User said name is 'Zhang San'; ID number is 123456`.
->
-> **Experiment Requirements**:
-> 1. Implement a dual-agent architecture based on ASR/TTS APIs and a browser operation framework
-> 2. Implement an efficient bidirectional communication mechanism
-> 3. Ensure truly parallel operation, with information collection and form filling happening simultaneously
-> 4. Handle exceptions and error cases
->
-> **Experiment 10-5 ★★★: Autonomously Orchestrated Phone and Computer Agents**
->
-> In Experiment 10-4, the dual-agent collaboration was designed in advance. This experiment goes a step further by exploring **autonomous Agent orchestration**: the Agent itself decides when to launch a collaborator rather than following a flow planned by a human.
->
-> **Scenario**: The user requests, "Help me complete the registration on this website," providing the URL but not specifying what information needs to be filled in. The Manager Agent launches a Computer Use Agent to access the website and load the registration page.
->
-> During the operation, the Computer Use Agent discovers that the registration form is very complex, containing numerous required fields: basic personal information (name, gender, date of birth), contact details (phone number, email, mailing address), identity verification information (ID type, ID number), preference settings, etc. After checking its context, the Agent realizes it doesn't have this information—the user only said "help me register" without providing any specific data.
->
-> A conventional Agent would ask the user to enter the information in chat. This is inefficient for large amounts of data and increases the risk of formatting errors or omissions. A smarter Agent should recognize that **this scenario is better suited to collecting information by phone**. A phone conversation supports sequential questions and confirmations and makes it easier to clarify ambiguous answers.
->
-> The key innovation is that this decision is not preprogrammed, but **made autonomously by the Agent**. The Computer Use Agent's prompt states: "When you need to collect a large amount of structured information from the user, and this can be done progressively through conversation, consider calling the Phone Agent as an assistive tool." The tool set includes `initiate_phone_call_agent(purpose, required_info)`.
->
-> Invoking the tool creates a Phone Agent with a clear task context that identifies the form-filling goal, the information to collect, and the formatting requirements for each field.
->
-> The two Agents then enter the real-time, asynchronous collaboration mode from Experiment 10-4. The Phone Agent initiates a browser WebRTC audio session with the user and asks one question at a time: "Hello, I am helping you fill out the registration form. First, may I have your name?" After the user responds, it immediately sends `{"type": "info_collected", "field": "Name", "value": "Zhang San"}` to the Computer Agent, which locates and fills the corresponding field. The Phone Agent continues with the next question without waiting for the computer operation to finish. This **ask-one, fill-one** workflow keeps operational delays from blocking the conversation. After collecting all required information, the Phone Agent sends `{"type": "task_completed"}`, and the Computer Agent submits the form. Here, “phone” means real-time audio interaction; neither PSTN access nor an E.164 number is required. A local WebRTC page is sufficient for the experiment, while a remote deployment can add signaling and TURN as required by its network environment.
->
-> **Experiment Requirements**:
-> 1. Implement a Computer Use Agent capable of autonomously deciding to launch a Phone Agent
-> 2. Implement real-time bidirectional communication and true parallel work
-> 3. Handle exceptions by providing feedback and asking again when information is in an incorrect format
-> 4. Log timestamps for exchanged messages and record the Agents' key decisions
->
+> **Requirements and evidence**: Demonstrate autonomous launch, independent ReAct loops, bidirectional messaging, true overlap, field validation and re-asking, page-error feedback, timeouts, cancellation and cleanup of browser/audio resources. Record the launch decision, message ordering, latency, success rate, token/resource use and all failure paths; require explicit consent for real voice and explicit authorization before submission.
 >
 > ![Figure 10-8: Phone and Computer Dual Agent Architecture](images/fig10-8.svg)
->
->
-> **Experiment 10-6 ★★★: Agent Collecting Information from Multiple Websites Simultaneously**
+> **Experiment 10-4 ★★★: Agent Collecting Information from Multiple Websites Simultaneously**
 >
 > **Prerequisites**: It is recommended that readers first review the event-driven and interrupt mechanisms from Chapter 4.
 >
-> This experiment explores the application of multi-agent parallel execution in information collection scenarios. Unlike Experiments 10-4 and 10-5, which focus on the collaboration of two heterogeneous Agents, this experiment focuses on **parallel search by multiple homogeneous Agents** and how to achieve efficient task completion and resource optimization through central coordination.
+> This experiment explores the application of multi-agent parallel execution in information collection scenarios. Unlike Experiment 10-3, which focuses on collaboration between two heterogeneous Agents, this experiment focuses on **parallel search by multiple homogeneous Agents** and how to achieve efficient task completion and resource optimization through central coordination.
 >
 > **Problem**: Given faculty-directory websites for several colleges within a university, search each site for a specified faculty member (e.g., "Zhang Wei"). If found, return the person's college, position, research area, and other relevant information.
 >
@@ -487,7 +402,7 @@ The decentralized pattern takes a different architectural approach: **there is n
 
 The following cases progress from partial to full decentralization. MetaGPT uses a fixed pipeline and decentralizes only communication. AutoGen combines shared conversation history with centralized scheduling. OpenAI Swarm distributes control-flow decisions directly among peer Agents.
 
-**What is passed during a handoff without shared context?** Figure 10-10 contrasts two kinds of handoff. In Experiment 10-2, `transfer_to_agent` uses shared context, so the new role automatically inherits the complete history. In the handoff-chain pattern, context is not shared, so the sending Agent must explicitly assemble the information the receiving Agent needs.
+**What is passed during a handoff without shared context?** Figure 10-10 contrasts two kinds of handoff. In Experiment 10-1, `transfer_to_agent` uses shared context, so the new role automatically inherits the complete history. In the handoff-chain pattern, context is not shared, so the sending Agent must explicitly assemble the information the receiving Agent needs.
 
 In practice, an effective "handoff package" typically contains three parts: **Task Description** (what the receiver needs to do and the acceptance criteria), **Confirmed Facts and Constraints** (user preferences, business rules, and decisions made in previous stages), and **References to Structured Artifacts** (file paths rather than file contents, which the receiver reads as needed). The package deliberately excludes the full trajectory—the sending Agent's trial-and-error process, intermediate work, and failed attempts—which is mostly noise for the receiver.
 
@@ -573,7 +488,7 @@ When multiple Coding Agents modify the same codebase concurrently, the standard 
 
 Concurrency conflicts are file-level problems that can be addressed using established operating-system and database techniques. Cascading errors are different because they arise where the process analogy breaks down: processes transmit bytes exactly, whereas Agents transmit meaning, and each retelling can introduce distortion. When multiple Agents interact frequently, an error from one Agent can be progressively reinforced by subsequent Agents, much like the "telephone game" in which information becomes increasingly distorted.
 
-Consider a specific scenario. Suppose a translation system uses a manager pattern (the architecture from Experiment 10-3), where the Manager assigns chapters of a technical book to multiple translation Agents:
+Consider a specific scenario. Suppose a translation system uses a manager pattern (the architecture from Experiment 10-2), where the Manager assigns chapters of a technical book to multiple translation Agents:
 
 ```
 Terminology Agent: Translates "reasoning" as "推理", but "推理" in Chinese is more commonly used for inference, creating ambiguity
@@ -636,7 +551,7 @@ The key takeaway is not that "Agents can organize a party"—a few lines of if-e
 
 The paper reported two other measurable phenomena. The first was **relational memory**: Agents remembered earlier conversations and referred to them in later interactions. For example, an Agent who learned about another Agent's photography project might ask how it was progressing when they next met. As these interactions accumulated, the town's social network became significantly denser. The second phenomenon was **coordinated attendance**: Isabella independently recruited help with decorations, while invitees adjusted their schedules so that they could attend. Multiple Agents aligned on a time and place without a central command. These behaviors were not preprogrammed; they resulted from the Agents' autonomous reasoning based on memory, reflection, and social common sense.
 
-> **Experiment 10-7 ★: Running the Stanford AI Town**
+> **Experiment 10-5 ★: Running the Stanford AI Town**
 >
 > **Experiment Steps**:
 > 1. Clone `https://github.com/joonspk-research/generative_agents` and follow the repository instructions to configure the environment.
@@ -698,7 +613,7 @@ Together, Pinchwork and RentAHuman represent **market-based coordination**: an A
 
 Werewolf anchors the third dimension of this section, **strategic gameplay**: under rule constraints and information asymmetry, Agents must reason, deceive, and see through deception. It provides an architectural counterpoint to the Stanford town that opened this section. The town allows free interaction in a fully decentralized setting, whereas Werewolf uses a centralized **judge + information access control** design: a code-driven judge holds the global state and gives each role only the information it should know. Together, the two cases show how different architectures serve different purposes in Agent-society settings.
 
-> **Experiment 10-8 ★★★: Voice Werewolf Agent System**
+> **Experiment 10-6 ★★★: Voice Werewolf Agent System**
 >
 > Werewolf is a classic social-deduction game that tests players' reasoning, deception, and social strategies. This experiment builds a multi-agent system in which AI Agents play through voice with either a human or an independent LLM user simulator. Automated acceptance must not stop merely because no human is present: the simulator must use a real model, reason from only the context authorized for its seat, and act through the tools supplied by the game.
 >

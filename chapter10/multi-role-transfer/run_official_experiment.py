@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run Experiment 10-2 with raw Moonshot/Tavily receipts and source hashes."""
+"""Run Experiment 10-1 with raw Moonshot/Tavily receipts and source hashes."""
 
 from __future__ import annotations
 

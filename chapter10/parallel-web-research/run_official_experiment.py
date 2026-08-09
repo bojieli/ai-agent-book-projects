@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run Experiment 10-6 with provenance-complete real-provider receipts."""
+"""Run Experiment 10-4 with provenance-complete real-provider receipts."""
 
 from __future__ import annotations
 

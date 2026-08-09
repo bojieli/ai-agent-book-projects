@@ -120,7 +120,7 @@ git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-si
 
 # Bölüm 10 · İkili Agent Mimarisi (artık bağımsız TalkAct projesi) + Stanford AI Kasabası
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling
-git clone https://github.com/joonspk-research/generative_agents.git    chapter10/generative_agents             # Deney 10-7 Stanford AI Kasabası
+git clone https://github.com/joonspk-research/generative_agents.git    chapter10/generative_agents             # Deney 10-5 Stanford AI Kasabası
 ```
 
 > Bir proje README'si belirli bir commit belirtiyorsa, tekrarlanabilirlik için o sürüme `git checkout` yapın. Bölüm 10'daki `use-computer-while-calling`, bağımsız olarak sürdürülen [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct) projesine dönüştü; bu depo yalnızca ona işaret eden bir belge tutar.

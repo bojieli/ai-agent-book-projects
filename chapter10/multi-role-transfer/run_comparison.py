@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the pre-registered Experiment 10-2 comparison.
+"""Run the pre-registered Experiment 10-1 comparison.
 
 Within each paired cell both paths use the same model, task text, temperature and fresh conversation.
 The script saves per-trial trajectories and the deterministic rubric results;
@@ -468,7 +468,7 @@ def main(args: argparse.Namespace) -> int:
 
     payload: dict[str, Any] = {
         "schema_version": 1,
-        "experiment": "10-2-role-switch-comparison",
+        "experiment": "10-1-role-switch-comparison",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "model": model,
         "base_url": base_url,

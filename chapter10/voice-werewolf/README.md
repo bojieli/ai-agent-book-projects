@@ -1,4 +1,4 @@
-# Experiment 10-8 · Voice Werewolf with a real-LLM user simulator
+# Experiment 10-6 · Voice Werewolf with a real-LLM user simulator
 
 The experiment supports two first-class user seats: a consenting live human, or an independent real-LLM user simulator for unattended end-to-end testing. Both use the same seeded role shuffle and protected private memory in a 6–8 seat game with two Werewolves, one Seer, one Witch, and Villagers. The code-driven Judge—not an LLM—owns the state machine, night/day/vote phases, skill inventory, deaths, and deterministic win rule.
 

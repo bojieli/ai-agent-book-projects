@@ -1,4 +1,4 @@
-"""Local WebRTC transport for the Experiment 10-5 Phone Agent.
+"""Local WebRTC transport for the Experiment 10-3 Phone Agent.
 
 The participant page contains the two ends of a standards-based WebRTC call.  The
 agent sends synthesized speech on one RTP audio track; the participant sends a
@@ -30,7 +30,7 @@ CALL_PAGE = r"""<!doctype html>
 <html lang="zh-CN">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Experiment 10-5 · Private WebRTC call</title>
+<title>Experiment 10-3 · Private WebRTC call</title>
 <style>
   :root { color-scheme: light dark; font: 16px/1.5 system-ui, sans-serif; }
   body { max-width: 760px; margin: 4rem auto; padding: 0 1.25rem; }

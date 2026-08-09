@@ -52,7 +52,7 @@ A 10-1. táblázat összefoglalja a két architektúra kiválasztási szempontja
 
 ### 2. Dimenzió: Együttműködési Topológia
 
-A második dimenzió az együttműködési topológia: az a struktúra, amelyen keresztül a vezérlés és az információ áramlik az Ügynökök között. A topológia és a kontextusmegosztás fogalmilag elkülönül, de a gyakorlatban összefüggenek. A megosztott kontextusú rendszereknek is van topológiájuk; például a `transfer_to_agent` minta a 10-2. kísérletben egy átadási láncot alkot. Mivel azonban minden átadás a teljes előzményt hordozza, általában nincs szükség eldönteni, milyen információt adjunk át, így a topológia gyakran egy egyszerű szerepváltási sorozattá válik. A csoportos csevegés stílusú együttműködés kivétel, amelyről később, a decentralizációs szakaszban lesz szó. Nem megosztott kontextus esetén viszont a tervezőknek explicit módon kell eldönteniük, hogyan áramlik az információ és ki koordinálja azt.
+A második dimenzió az együttműködési topológia: az a struktúra, amelyen keresztül a vezérlés és az információ áramlik az Ügynökök között. A topológia és a kontextusmegosztás fogalmilag elkülönül, de a gyakorlatban összefüggenek. A megosztott kontextusú rendszereknek is van topológiájuk; például a `transfer_to_agent` minta a 10-1. kísérletben egy átadási láncot alkot. Mivel azonban minden átadás a teljes előzményt hordozza, általában nincs szükség eldönteni, milyen információt adjunk át, így a topológia gyakran egy egyszerű szerepváltási sorozattá válik. A csoportos csevegés stílusú együttműködés kivétel, amelyről később, a decentralizációs szakaszban lesz szó. Nem megosztott kontextus esetén viszont a tervezőknek explicit módon kell eldönteniük, hogyan áramlik az információ és ki koordinálja azt.
 
 > "Terminológia: Gráf-mérnökség". A "Gráf-mérnökség" kifejezés, amely 2026 júliusában vált népszerűvé, a mai Ügynök-kontextusban általában egy végrehajtási gráf explicit tervezésére utal: a csomópontok Ügynökök, hagyományos programok vagy emberi döntések; az élek feladatfüggőségeket, feltételes útválasztást és hibautakat határoznak meg; a strukturált állapot csomópontok között áramlik.[^ch10-graph-engineering] Az ebben a fejezetben tárgyalt "együttműködési topológia" ennek az elképzelésnek a többügynökös részhalmaza – a társak közötti együttműködés, a menedzseri vezénylés és a decentralizált átadások különböző gráftopológiák. Mivel az elnevezés még új, és könnyen összetéveszthető a tudásgráfokkal, a GraphRAG-gal és a végrehajtási nyomokkal, ez a könyv továbbra is a stabilabb "együttműködési topológia" és "vezénylés" kifejezéseket használja elsődleges szókészletként.
 
@@ -107,57 +107,7 @@ Először is tegyünk le egy definíciós vitát: az 1. fejezet nyelvén a több
 
 ![10-2. ábra: Szakasz-alapú szerepváltás](images/fig10-2.svg)
 
-> **10-1. kísérlet ★★: Rendszerpromptok meghatározása a végrehajtási szakasz alapján**
-
-> Ez a kísérlet bemutatja, hogy a szakaszspecifikus rendszerpromptok hogyan javíthatják a teljesítményt egy teljes Kódoló Ügynök munkafolyamat során.
-
-> "Feladat Forgatókönyv": Egy felhasználó szoftverfejlesztési kérelmet nyújt be, és az Ügynök három szakaszon halad keresztül: követelménytisztázás, kódimplementáció és minőségi felülvizsgálat.
-
-> **1. szakasz: Követelménytisztázás** (Szerep: Követelményelemző)
-
-> A rendszerprompt hangsúlyozza:
-> - "Az Ön felelőssége, hogy teljes mértékben megértse a felhasználó igényeit. Tegyen fel kérdéseket a kétértelműségek tisztázására, biztosítva, hogy teljesen megértse a várt funkcionalitást, használati forgatókönyveket és teljesítménykövetelményeket."
-> - "Ne rohanjon az implementációba. Ebben a szakaszban az Ön feladata a kérdések feltevése és megerősítése, nem a kódírás."
-> - "Miután megerősítette, hogy minden kulcsfontosságú követelmény egyértelmű, hívja meg a `complete_requirements_analysis()` eszközt a szakasz lezárásához."
-
-> Az eszközkészlet korlátozott: `ask_clarifying_question(kérdés)` a tisztázó kérdések feltevéséhez a felhasználónak, `save_requirement(kulcs, érték)` a megerősített követelmények rögzítéséhez, és `complete_requirements_analysis()` a szakasz befejezettként való megjelöléséhez.
-
-> Az Ügynök megkérdezi a felhasználót, hogy milyen típusú fájlokat kell feldolgoznia a szkriptnek, hogy rekurzívan kell-e feldolgoznia az alkönyvtárakat, és hogy meg kell-e őriznie az eredeti fájlneveket a fájlok áthelyezése után. Ezek az egyeztetések segítenek strukturált követelménykészlet felépítésében és rögzítésében. Miután a követelmények elég egyértelműek, meghívja a `complete_requirements_analysis()` függvényt. Ez a befejezési jelzés megmondja a rendszernek, hogy töltse be a következő szakasz konfigurációját.
-
-> **2. szakasz: Kódimplementáció** (Szerep: Szoftvermérnök)
-
-> Az új rendszerprompt hangsúlyozza:
-> - "Az Ön felelőssége, hogy kiváló minőségű Python kódot írjon a megerősített követelmények alapján."
-> - "Kövesse a bevált gyakorlatokat: tegye a kódot modulárissá, kezelje megfelelően a hibákat, és adjon hozzá kommentárokat, ahol hasznosak."
-> - "A kód elkészítése és az alapvető tesztek sikeres teljesítése után hívja meg a `submit_for_review()` függvényt a felülvizsgálati szakaszba lépéshez."
-
-> Az eszközök is változnak: a követelménytisztázási eszközöket fejlesztőeszközök váltják fel, mint a `write_file(útvonal, tartalom)`, `read_file(útvonal)` és `execute_code(kód)`. Az első szakaszban rögzített követelményeket használva az Ügynök megírja a core logikát, hibakezelést ad hozzá, és teszteket hoz létre. Továbbra is hozzáférhet a korábbi beszélgetéshez a követelmény részleteiért, de most kizárólag az implementációra összpontosít, ahelyett, hogy további kérdéseket tenne fel. Befejezéskor meghívja a `submit_for_review()` függvényt.
-
-> **3. szakasz: Kód Felülvizsgálat** (Szerep: Kód Felülvizsgáló)
-
-> Az új rendszerprompt hangsúlyozza:
-> - "Vizsgálja felül a kódot a funkcionális helyesség, a kódolási szabványok betartása, a hibakezelés, a teljesítmény és a biztonság szempontjából."
-> - "Alkalmazzon kritikus megközelítést, és azonosítsa a potenciális problémákat és a kód javításának lehetőségeit."
-> - "Ha súlyos problémákat talál, hívja meg a `request_revision(problémák)` függvényt, hogy visszatérjen az implementációs szakaszba a módosításhoz; ha a minőség elfogadható, hívja meg az `approve_code()` függvényt a feladat befejezéséhez."
-
-> Az eszközkészlet ismét változik: kódminőség-elemző eszközök váltják fel, mint a `run_linter(fájl)`, `run_tests(fájl)` és `analyze_complexity(fájl)`. Az Ügynök a felülvizsgáló szemszögéből vizsgálja újra a kódot, statikus elemzést futtat, és ellenőrzi a potenciális hibákat, teljesítményproblémákat vagy biztonsági kockázatokat.
-
-> Ez a háromszakaszos tervezés lehetővé teszi, hogy az Ügynök minden szakaszban a core feladatra összpontosítson. Még fontosabb, hogy az egyértelmű szakaszátmenetek biztosítják, hogy minden szakasz befejeződjön: az Ügynök nem ugorhatja át a követelményelemzést, és nem kezdheti el azonnal a kódolást, vagy nem adhatja le az eredményt felülvizsgálat nélkül.
-
-> "Kísérleti Követelmények":
-> 1. Valósítson meg háromszakaszos rendszerpromptokat, mindegyik egyértelmű szerepdefinícióval és viselkedési iránymutatással
-> 2. Konfiguráljon minden szakaszhoz illeszkedő eszközkészleteket
-> 3. Valósítson meg egy szakaszátmeneti trigger mechanizmust (specifikus eszközhívásokon keresztül)
-> 4. Biztosítsa a kontextus folytonosságát a szakaszok között
-> 5. Kezelje a visszaállítási forgatókönyveket – amikor a kód felülvizsgálat problémákat talál, térjen vissza az implementációs szakaszba
-> 6. Rögzítse az egyes szakaszok tevékenységét annak bemutatására, hogy a különböző promptok hogyan eredményeznek eltérő viselkedést
->
-
-### Többdoménes Szerepváltás
-
-A többszakaszos szerepváltás egyetlen feladattípuson belül (szoftverfejlesztés) mutatta be a szakaszos végrehajtást. A többdoménes szerepváltás tovább megy: az Ügynök dinamikusan változtatja a szerepét, ahogy egy feladat domének között mozog. Ahelyett, hogy egy előre meghatározott lineáris folyamatot követne, azt választja ki, hogy melyik szakmai szerepet vegye fel a felhasználó változó igényeire válaszul.
-
-> "10-2. kísérlet ★★: Többszerepű Váltás"
+> "10-1. kísérlet ★★: Többszerepű Váltás"
 
 > "Előfeltételek": Ajánlott, hogy az olvasók először tekintsék át a 2. fejezetben található Ügynök Készségek (Agent Skills) mechanizmusát.
 
@@ -263,11 +213,11 @@ A „fájl útvonal mint univerzális interfész” értéke abban rejlik, hogy 
 
 Míg a fájlrendszer a "termékcsere" problémáját oldja meg az Ügynökök között, az együttműködéshez "vezérlési síkra" is szükség van. Pontosan itt jönnek képbe a 10-3. táblázat életciklus sorai: a 4. fejezetben megadott eszköz primitívek – létrehozás (`spawn_subagent`), üzenetküldés (`send_message_to_subagent`), megszakítás (`cancel_subagent`) és felderítés (`list_agents`) – a fork, message, kill és ps megfelelői a folyamatok világában. Ez a szakasz nem ismétli meg az interfészdefiníciókat, hanem négy gyakran figyelmen kívül hagyott képességre összpontosít, amelyek elengedhetetlenek a többügynökös együttműködéshez.
 
-"I. Üzenetküldés." A legegyszerűbb forma a pont-pont: A Ügynök közvetlenül meghívja a `send_message_to_agent_B(tartalom)` függvényt. Ez alkalmas fix topológiájú és kis számú Ügynököt tartalmazó forgatókönyvekhez (pl. a 10-4. kísérlet telefon + számítógép kétügynökös beállítása). Amikor az Ügynökök száma növekszik és aszinkron párhuzamosságra van szükség, a pont-pont kapcsolatok száma az Ügynökök számával négyzetesen nő, és a feladónak és a vevőnek egyszerre kell online lennie. Ilyen esetekben "üzenetsort" kell használni (részletesen a "Párhuzamos Koordinációs Minta" alatt ebben a fejezetben): az Ügynökök üzeneteket tesznek közzé a sorban, amely az előfizetések alapján továbbítja azokat, így a feladónak nem kell ismernie az előfizetőket. Akár pont-pont, akár soron keresztül, az üzeneteknek jellemzően strukturált "borítékot" kell hordozniuk: feladó azonosító, cél (specifikus Ügynök vagy broadcast), üzenet típusa (pl. `task_assigned`/`status_update`/`result`/`terminate`) és JSON payload. Az egységes borítékformátum biztosítja a megbízható útválasztást és elemzést a vevő által, és nyomon követhetővé teszi az együttműködési láncot – ez a többügynökös rendszerek hibakeresésének kulcsfontosságú aspektusa.
+"I. Üzenetküldés." A legegyszerűbb forma a pont-pont: A Ügynök közvetlenül meghívja a `send_message_to_agent_B(tartalom)` függvényt. Ez alkalmas fix topológiájú és kis számú Ügynököt tartalmazó forgatókönyvekhez (pl. a 10-3. kísérlet telefon + számítógép kétügynökös beállítása). Amikor az Ügynökök száma növekszik és aszinkron párhuzamosságra van szükség, a pont-pont kapcsolatok száma az Ügynökök számával négyzetesen nő, és a feladónak és a vevőnek egyszerre kell online lennie. Ilyen esetekben "üzenetsort" kell használni (részletesen a "Párhuzamos Koordinációs Minta" alatt ebben a fejezetben): az Ügynökök üzeneteket tesznek közzé a sorban, amely az előfizetések alapján továbbítja azokat, így a feladónak nem kell ismernie az előfizetőket. Akár pont-pont, akár soron keresztül, az üzeneteknek jellemzően strukturált "borítékot" kell hordozniuk: feladó azonosító, cél (specifikus Ügynök vagy broadcast), üzenet típusa (pl. `task_assigned`/`status_update`/`result`/`terminate`) és JSON payload. Az egységes borítékformátum biztosítja a megbízható útválasztást és elemzést a vevő által, és nyomon követhetővé teszi az együttműködési láncot – ez a többügynökös rendszerek hibakeresésének kulcsfontosságú aspektusa.
 
 "II. Státuszkérdés." Ez a vezérlési sík legalulértékeltebb része. Miután egy fő Ügynök elindított egy al-ügynököt, látnia kell az al-ügynök előrehaladását; különben nem tudja eldönteni, hogy várjon-e tovább, vagy beavatkozzon, amikor az al-ügynök elakad. Egy intuitív megközelítés az RPC-ből kölcsönözni és definiálni egy `get_subagent_status(ügynök_azonosító)` lekérdező interfészt, amely "futó/befejezett/sikertelen" plusz egy százalékos előrehaladást ad vissza. De egy ilyen pull interfész sokkal kevésbé hasznosnak bizonyul, mint vártuk: egy al-ügynök a létrehozás pillanatában elkezd végrehajtódni, és addig fut, amíg be nem fejeződik vagy meg nem hibásodik. Nem megy át a hagyományos kötegelt rendszerekben lévő feladatok sorba állított állapotain, ahogy a Unix programozásban is ritkán van szükség egy másik folyamat PID alapján történő pollozására a futási állapotért. A pollozásnak van egy belső dilemmája is: túl gyakran pollozol, és pazarlod a tokeneket; túl ritkán pollozol, és későn reagálsz. Természetesebb módja a státusz megszerzésének, ha visszatérünk a fejezet elején bemutatott két kommunikációs paradigmához.
 
-"Státusz megszerzése üzenetküldéssel." A fő Ügynök egyszerűen küld egy üzenetet az al-ügynöknek: "Hogy haladsz?" Az al-ügynök egy alkalmas pillanatban válaszol. Minden aszinkron: az üzenet elküldése nem blokkolja a fő Ügynök saját végrehajtását, és hogy a másik fél mikor – vagy egyáltalán – válaszol, az egy másik kérdés, ahogy egy menedzser is instant üzenetben kérdez rá a beosztottjánál anélkül, hogy elvárná, hogy azonnal mindent félredobjon. Ezzel szemben az al-ügynök is küldhet proaktívan egy üzenetet, amikor mérföldkövet ér el; ha a rendszerben már van üzenetsor, ez egyszerűen egy `status_update` közzététele a sorban (a 10-6. kísérlet "valós idejű monitorozása" ez a forma). Akár explicit módon kérik a státuszt, akár proaktívan jelentik, az üzenetben hordozott státusznak egységes állapotgép szókincset kell használnia (végrehajtás alatt, bemenetre vár, befejezett, sikertelen) – az A2A protokoll később ebben a fejezetben pontosan ilyen állapotkészletre szabványosítja a feladat életciklusát.
+"Státusz megszerzése üzenetküldéssel." A fő Ügynök egyszerűen küld egy üzenetet az al-ügynöknek: "Hogy haladsz?" Az al-ügynök egy alkalmas pillanatban válaszol. Minden aszinkron: az üzenet elküldése nem blokkolja a fő Ügynök saját végrehajtását, és hogy a másik fél mikor – vagy egyáltalán – válaszol, az egy másik kérdés, ahogy egy menedzser is instant üzenetben kérdez rá a beosztottjánál anélkül, hogy elvárná, hogy azonnal mindent félredobjon. Ezzel szemben az al-ügynök is küldhet proaktívan egy üzenetet, amikor mérföldkövet ér el; ha a rendszerben már van üzenetsor, ez egyszerűen egy `status_update` közzététele a sorban (a 10-4. kísérlet "valós idejű monitorozása" ez a forma). Akár explicit módon kérik a státuszt, akár proaktívan jelentik, az üzenetben hordozott státusznak egységes állapotgép szókincset kell használnia (végrehajtás alatt, bemenetre vár, befejezett, sikertelen) – az A2A protokoll később ebben a fejezetben pontosan ilyen állapotkészletre szabványosítja a feladat életciklusát.
 
 "Státusz megszerzése a megosztott fájlrendszeren keresztül." A leginkább alapos forma a "trajektória perzisztencia": végrehajtás közben az al-ügynök minden trajektória eseményt JSON formátumba szerializál, és hozzáfűzi egy fájlrendszerbeli naplófájlhoz – általában egy fájl munkamenetenként, egy esemény soronként, azaz JSONL. A trajektória, amely az 1. fejezetben van meghatározva, a felhasználói üzenetek, modellválaszok, eszközhívások és eredmények teljes sorozata. A fő Ügynöknek nincs szüksége státuszjelentési protokollra; a fájl közvetlen olvasásával megvizsgálhatja az al-ügynök teljes végrehajtását: melyik eszközt hívja, mi történt a legutóbbi lépésében, és hogy egy ismétlődő sikertelen újrapróbálkozások hurkában ragadt-e. Folyamat szempontjából ez olyan, mintha közvetlenül olvasnánk egy másik folyamat memóriáját. Nem foglalja el az al-ügynök kontextusát, nem függ az al-ügynök együttműködésétől, és a legfinomabb megfigyelési részletességet kínálja.
 
@@ -277,7 +227,7 @@ Az előrehaladási fájl az "elakadás érzékelését" is lehetővé teszi. Ha 
 
 A trajektória perzisztencia értéke messze túlmutat a monitorozáson. Emlékezzünk az 1. fejezet következtetésére: "egy Ügynök kontextusa = statikus előtag + trajektória." A statikus előtagot (rendszerprompt, eszközdefiníciók) a kód határozza meg, és az Ügynöknek nincs futásidejű állapota a trajektórián kívül (a munka termékek már a fájlrendszerben élnek) – "a trajektória az Ügynök teljes állapota". A trajektória valós idejű fájlba mentése egyenértékű azzal, hogy mindenkor teljes ellenőrzőpontot tartunk fenn: akár az Ügynök folyamata összeomlik, a gép áramellátása megszakad, vagy a felhasználó aktívan bezárja a munkamenetet, a trajektória fájl újratöltése és a statikus előtag elé illesztése után a végrehajtás onnan folytatódhat, ahol abbamaradt – pontosan így van megvalósítva a Claude Code és Codex CLI kódoló Ügynökök munkamenet-folytatási funkciója. Ez ugyanaz az ötlet, mint az adatbázis előreíró naplója (WAL): minden eseményt először egy csak hozzáfűzésre szánt naplóhoz adunk, és az állapot mindig visszajátszható a naplóból (a 3. fejezet "tény napló + időszakos ellenőrzőpont" memóriaterve ugyanez az ötlet a memóriarendszerekre alkalmazva). Egy többügynökös rendszer számára ez azt jelenti, hogy az al-ügynökök természetüknél fogva "helyreállíthatók, auditálhatók és könnyen átadhatók": a Menedzser újraindíthat egy al-ügynököt az utolsó érvényes állapotából egy összeomlás után, eseményről eseményre visszajátszhatja a trajektóriát a hiba okának lokalizálásához, és akár a trajektóriát a feladattal együtt átadhatja egy másik Ügynöknek a folytatáshoz.
 
-"III. Végrehajtás Megszakítása." Párhuzamos együttműködésben gyakori forgatókönyv, hogy "az egyik sikerrel jár, a többi feleslegessé válik" – több Ügynök külön-külön keres, és amint egy megtalálja a célt, a többit azonnal le kell állítani (a kaszkád megszakítás a 10-6. kísérletben ebben a fejezetben). Két szintű megszakítás létezik, és a Unix felhasználók felismerik őket a SIGTERM és SIGKILL közötti különbségként. A "szabályos megszakítás" (graceful termination) előnyösebb: a fő Ügynök egy `terminate` jelet küld, az al-ügynök egy biztonságos ponton válaszol az aktuális lépésében, erőforrásokat takarít meg (böngésző munkameneteket zár be, függőben lévő fájlokat ír ki, zárolásokat old fel), egy visszaigazolást (ack) küld, majd kilép. A "kényszerített megszakítás" (forced termination) egy tartalék lehetőség: a folyamat közvetlen megszakítása, csak akkor használatos, ha az al-ügynök nem válaszol a szabályos jelre, azzal az áron, hogy laza erőforrások és befejezetlen írások maradhatnak vissza. Két mérnöki szempontra kell figyelni. Először is, a szabályos megszakításhoz az al-ügynöknek időszakosan ellenőriznie kell a megszakítási jelet a ciklusában (hasonlóan a 4. fejezet megszakítási mechanizmusához); különben nem tudja fogadni a jelet. Másodszor, a kaszkád megszakításnak versenyhelyzete (race condition) van: több al-ügynök szinte egyszerre jelenthet sikert. A fő Ügynöknek zárolást vagy idempotens tervezést kell használnia annak biztosítására, hogy csak egy sikert fogadjon el, és a megszakítási jel egyszer kerüljön kiküldésre. Lásd a versenyhelyzetek tárgyalását a 10-6. kísérletben.
+"III. Végrehajtás Megszakítása." Párhuzamos együttműködésben gyakori forgatókönyv, hogy "az egyik sikerrel jár, a többi feleslegessé válik" – több Ügynök külön-külön keres, és amint egy megtalálja a célt, a többit azonnal le kell állítani (a kaszkád megszakítás a 10-4. kísérletben ebben a fejezetben). Két szintű megszakítás létezik, és a Unix felhasználók felismerik őket a SIGTERM és SIGKILL közötti különbségként. A "szabályos megszakítás" (graceful termination) előnyösebb: a fő Ügynök egy `terminate` jelet küld, az al-ügynök egy biztonságos ponton válaszol az aktuális lépésében, erőforrásokat takarít meg (böngésző munkameneteket zár be, függőben lévő fájlokat ír ki, zárolásokat old fel), egy visszaigazolást (ack) küld, majd kilép. A "kényszerített megszakítás" (forced termination) egy tartalék lehetőség: a folyamat közvetlen megszakítása, csak akkor használatos, ha az al-ügynök nem válaszol a szabályos jelre, azzal az áron, hogy laza erőforrások és befejezetlen írások maradhatnak vissza. Két mérnöki szempontra kell figyelni. Először is, a szabályos megszakításhoz az al-ügynöknek időszakosan ellenőriznie kell a megszakítási jelet a ciklusában (hasonlóan a 4. fejezet megszakítási mechanizmusához); különben nem tudja fogadni a jelet. Másodszor, a kaszkád megszakításnak versenyhelyzete (race condition) van: több al-ügynök szinte egyszerre jelenthet sikert. A fő Ügynöknek zárolást vagy idempotens tervezést kell használnia annak biztosítására, hogy csak egy sikert fogadjon el, és a megszakítási jel egyszer kerüljön kiküldésre. Lásd a versenyhelyzetek tárgyalását a 10-4. kísérletben.
 
 Egy nyitott kérdés marad: miután a fő Ügynök megszakad, mi történik a még futó al-ügynökökkel? A legtisztább mérnöki megközelítés a Go kontextusából kölcsönöz – a megszakítás a létrehozási kapcsolat mentén kaszkádolódik lefelé: ha megszakítasz egy Ügynököt, az összes általa létrehozott al-ügynök is megszakad, megakadályozva, hogy árva gyermek Ügynökök maradjanak hátra. A fenti "az al-ügynök egy biztonságos ponton ellenőrzi a megszakítási jelet" pontosan a Go `ctx.Done()` pollozásának felel meg. Ezzel szemben, ha valóban szükséged van egy hosszan futó háttér Ügynökre, amely különválik a fő Ügynöktől (mint a Unix `nohup`-ja), indítsd el egy új életciklus-fából (ami a `context.Background()`-nak felel meg), explicit módon deklarálva, hogy nem szakad meg a szülőjével együtt.
 
@@ -363,7 +313,7 @@ A menedzser minta négy mechanizmustól függ:
 
 ![10-5. ábra: A Menedzser szekvenciális koordinációja](images/fig10-5.svg)
 
-> **10-3. kísérlet ★★★: Többügynökös Vezénylési Rendszer: Többnyelvű Dokumentáció Készítő**
+> **10-2. kísérlet ★★★: Többügynökös Vezénylési Rendszer: Többnyelvű Dokumentáció Készítő**
 
 > Ez a kísérlet egy többszereplős, menedzser mintájú feladatot valósít meg, amelyben egy Menedzser Ügynök koordinál három al-ügynököt – Fordító, Műszaki Felülvizsgáló és Formázó – automatikus nyelvi dokumentáció generálásához.
 
@@ -464,7 +414,7 @@ A Lingtai többi tervezési eleme is visszautal a korábbi szakaszokra. A tudás
 
 [^lingtai]: A Lingtai hivatalos oktatóanyaga: https://lingtai.ai/en/tutorial/
 
-> **10-4. kísérlet ★★: Telefon + Számítógép Többügynökös Együttműködés**
+> **10-3. kísérlet ★★: Telefon + Számítógép Többügynökös Együttműködés**
 
 > Ez a kísérlet megköveteli a 9. fejezet valós idejű telefonhívás Ügynökét. A könyvben a „telefon” valós idejű hangkapcsolatot jelent: amikor a hívott fél maga a felhasználó, nincs szükség PSTN-hozzáférésre vagy E.164-es telefonszámra. A helyi WebRTC-oldal elegendő a kísérlethez; távoli telepítésnél a hálózati környezet igényei szerint jelzéskezelés és TURN adható hozzá.
 
@@ -526,7 +476,7 @@ A decentralizált minta számos formát ölthet. Az alábbiakban három képvise
 
 Az A2A fejlődésének figyelemmel kísérése ajánlott, ahogy a szabvány és annak iparági elfogadottsága alakul.
 
-> "10-5. kísérlet ★★: Kétügynökös PPT Javasló-Ellenőrző"
+> **Kétügynökös PPT Javasló-Ellenőrző"**
 
 > Ez a kísérlet az 5. fejezet 5-2. kísérletének (PPT generálás vizuális visszajelzéssel) adaptációja a megosztott kontextus nélküli architektúrához. A Javasló és az Ellenőrző Ügynökök most nem osztanak kontextust; fájlok és eszközhívás paraméterek segítségével kommunikálnak.
 
@@ -543,7 +493,7 @@ Az A2A fejlődésének figyelemmel kísérése ajánlott, ahogy a szabvány és 
 > 4. Iteráció számkorlát (pl. legfeljebb 5 kör)
 >
 >
-> "10-6. kísérlet ★★★: Üzenetsor-alapú Párhuzamos Keresés"
+> "10-4. kísérlet ★★★: Üzenetsor-alapú Párhuzamos Keresés"
 >
 > "Feladat Forgatókönyv": A felhasználó kér egy összetett keresést, pl. "Találd meg a kapcsolati adatait a Samsung amerikai ügyfélszolgálatának." Ehhez több forrás (weboldal, hivatalos dokumentum, fórum stb.) egyidejű keresése szükséges. A kihívás az, hogy a keresésnek hatékonynak kell lennie – ha az egyik forrás megtalálja az eredményt, a többit azonnal le kell állítani.
 >
@@ -605,7 +555,7 @@ Amikor több Kódoló Ügynök egyidejűleg módosítja ugyanazt a kódbázist, 
 
 A konkurencia-ütközések fájlszintű problémák, amelyek a bevett operációs rendszer és adatbázis technikák segítségével kezelhetők. A kaszkád hibák mások, mert ott keletkeznek, ahol a folyamat analógia megtörik: a folyamatok byte-okat továbbítanak pontosan, míg az Ügynökök jelentést adnak át, és minden továbbítás torzíthat. Amikor több Ügynök gyakran lép kapcsolatba, az egyik Ügynöktől származó hiba fokozatosan erősödhet a további Ügynökök által, hasonlóan a "telefonos játékhoz", ahol az információ egyre torzabbá válik.
 
-Tekintsünk egy konkrét forgatókönyvet. Tegyük fel, hogy egy fordítási rendszer a menedzser mintát használja (a 10-3. kísérlet architektúrája), ahol a Menedzser egy műszaki könyv fejezeteit több fordító Ügynökhöz rendeli:
+Tekintsünk egy konkrét forgatókönyvet. Tegyük fel, hogy egy fordítási rendszer a menedzser mintát használja (a 10-2. kísérlet architektúrája), ahol a Menedzser egy műszaki könyv fejezeteit több fordító Ügynökhöz rendeli:
 
 ```text
 Terminológia Ügynök: Lefordítja a "reasoning"-t "推理"-nek, de a "推理" a kínaiban gyakrabban használatos következtetésre, ami kétértelműséget teremt
@@ -666,7 +616,7 @@ A legfontosabb tanulság nem az, hogy "az Ügynökök tudnak bulit szervezni" �
 
 A tanulmány két másik mérhető jelenségről is beszámolt. Az első a "relációs memória": az Ügynökök emlékeztek korábbi beszélgetésekre, és hivatkoztak rájuk a későbbi interakciók során. Például egy Ügynök, aki megtudta egy másik Ügynök fényképezési projektjét, megkérdezhette, hogy halad az, amikor legközelebb találkoztak. Ahogy ezek az interakciók felhalmozódtak, a város társas hálózata jelentősen sűrűbbé vált. A második jelenség a "koordinált részvétel": Isabella önállóan toborzott segítséget a dekorációhoz, míg a meghívottak módosították időbeosztásukat, hogy részt tudjanak venni. Több Ügynök összehangolódott egy időre és helyre központi parancs nélkül. Ezek a viselkedések nem voltak előre programozva; az Ügynökök autonóm érveléséből fakadtak memória, reflexió és társas józan ész alapján.
 
-> **10-7. kísérlet ★: A Stanford AI Town Futtatása**
+> **10-5. kísérlet ★: A Stanford AI Town Futtatása**
 
 > "Kísérleti Lépések":
 > 1. Klónozd a `https://github.com/joonspk-research/generative_agents` tárat, és kövesd a tároló utasításait a környezet konfigurálásához.
@@ -728,7 +678,7 @@ Együtt a Pinchwork és a RentAHuman a "piac-alapú koordinációt" képviselik:
 
 A Farkasos (Werewolf) rögzíti e szakasz harmadik dimenzióját, a "stratégiai játékmenetet": szabályok által korlátozva és információs aszimmetria mellett az Ügynököknek érvelniük, megtéveszteniük és átlátniuk a megtévesztést kell. Építészeti ellenpontot nyújt a szakaszt nyitó Stanford városhoz. A város szabad interakciót tesz lehetővé teljesen decentralizált környezetben, míg a Farkasos egy centralizált **bíró + hozzáférés-vezérlési** tervezést használ: egy kód által vezérelt bíró tartja fenn a globális állapotot, és minden szerepnek csak azt az információt adja át, amelyet tudnia kell. A két eset együtt mutatja, hogy a különböző architektúrák hogyan szolgálnak különböző célokat az Ügynök társadalomban.
 
-> **10-8. kísérlet ★★★: Hangalapú Farkasos Ügynök Rendszer**
+> **10-6. kísérlet ★★★: Hangalapú Farkasos Ügynök Rendszer**
 
 > A Farkasos klasszikus társas következtetési játék, amely az érvelést, megtévesztést és társas stratégiát teszteli. A kísérletben az MI Ügynökök hangon játszanak egy emberrel vagy egy független LLM-felhasználószimulátorral. Az automatikus elfogadás nem állhat meg azért, mert nincs jelen ember: a szimulátor valódi modellt használ, csak a saját helyéhez engedélyezett kontextusból következtet, és a játék eszközein keresztül cselekszik.
 
