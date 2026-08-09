@@ -76,3 +76,15 @@ def test_epub_external_links_preserves_fragments_and_requires_chapter_boundary()
 
     invalid = run_lua_link("../chapter7-not-a-directory")
     assert invalid == "../chapter7-not-a-directory"
+
+
+def test_epub_external_links_transforms_intra_book_chapter_files():
+    """Chapter-to-chapter Markdown links must not point at missing EPUB files."""
+    url = run_lua_link("chapter6.md#人机交互型评估环境")
+    assert url == (
+        "https://github.com/bojieli/ai-agent-book/blob/main/book/"
+        "chapter6.md#人机交互型评估环境"
+    )
+
+    # Keep unrelated relative links untouched.
+    assert run_lua_link("appendix.md") == "appendix.md"
