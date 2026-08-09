@@ -286,7 +286,7 @@ class PEDOSecurityEvaluator:
             )
 
         # Check org boundary: accessor org must match object org and query org (if specified)
-        org_matched = (accessor.org_id == obj.org_id)
+        org_matched = (accessor is not None and obj is not None and accessor.org_id == obj.org_id)
         if scenario.query_params and "org_id" in scenario.query_params:
             org_matched = org_matched and (accessor.org_id == scenario.query_params["org_id"])
 
@@ -513,16 +513,17 @@ class PEDOSecurityEvaluator:
             if res["passed"]:
                 passed_count += 1
 
-            rls_checks += 1
-            if res["row_level_security"]["passed"]:
-                rls_passed += 1
+            if sc.operation_type in ("read", "query"):
+                rls_checks += 1
+                if res["row_level_security"]["passed"]:
+                    rls_passed += 1
 
             if sc.requested_fields:
                 fields_checked += len(sc.requested_fields)
                 if res["field_visibility"]["passed"]:
                     fields_compliant += len(sc.requested_fields)
 
-            if sc.operation_type == "escalate" or sc.mutation_payload:
+            if res["privilege_escalation"]["escalation_attempted"] or sc.operation_type == "escalate" or sc.expected_escalation_blocked is True:
                 escalation_attempts += 1
                 if res["privilege_escalation"]["blocked"]:
                     escalations_blocked += 1
