@@ -51,6 +51,17 @@ class TestSafetyPolicyGateSQL(unittest.TestCase):
         decision = self.gate.validate_tool_call("sql_query", {"query": query})
         self.assertFalse(decision.allowed)
         self.assertTrue(decision.requires_confirmation)
+    def test_sql_multi_statement_second_delete_no_where(self):
+        query = "UPDATE users SET status = 1; DELETE FROM logs"
+        decision = self.gate.validate_tool_call("sql_query", {"query": query})
+        self.assertFalse(decision.allowed)
+        self.assertTrue(decision.requires_confirmation)
+
+    def test_sql_block_comment_before_single_line_comment(self):
+        query = "DELETE FROM users /* block -- comment */ WHERE id = 1"
+        decision = self.gate.validate_tool_call("sql_query", {"query": query})
+        self.assertTrue(decision.allowed)
+        self.assertFalse(decision.requires_confirmation)
 
 
 class TestSafetyPolicyGatePathTraversal(unittest.TestCase):
@@ -139,6 +150,54 @@ class TestSafetyPolicyGateConfirmation(unittest.TestCase):
         decision = self.gate.validate_tool_call("delete_file", params)
         self.assertFalse(decision.allowed)
         self.assertTrue(decision.requires_confirmation)
+    def test_token_nondeterministic(self):
+        params = {"path": "file.txt"}
+        token1 = self.gate.issue_confirmation("delete_file", params)
+        token2 = self.gate.issue_confirmation("delete_file", params)
+        self.assertNotEqual(token1, token2)
+
+    def test_tool_name_casing_normalization(self):
+        params = {"path": "file.txt"}
+        decision1 = self.gate.validate_tool_call("DELETE_FILE", params)
+        self.assertFalse(decision1.allowed)
+        self.assertTrue(decision1.requires_confirmation)
+
+        decision2 = self.gate.validate_tool_call("BASH", {"command": "rm -rf /"})
+        self.assertFalse(decision2.allowed)
+        self.assertEqual(decision2.violation_type, "dangerous_bash_command")
+
+        decision3 = self.gate.validate_tool_call("SQL_QUERY", {"query": "DELETE FROM users"})
+        self.assertFalse(decision3.allowed)
+        self.assertTrue(decision3.requires_confirmation)
+
+
+class TestSafetyPolicyGateRollback(unittest.TestCase):
+    def setUp(self):
+        self.gate = SafetyPolicyGate()
+
+    def test_trigger_rollback_success(self):
+        called = []
+        self.gate.register_rollback_handler(lambda: called.append(True))
+        res = self.gate.trigger_rollback()
+        self.assertTrue(res)
+        self.assertEqual(called, [True])
+
+    def test_trigger_rollback_failure(self):
+        def failing_handler():
+            raise RuntimeError("Rollback failed")
+        self.gate.register_rollback_handler(failing_handler)
+        res = self.gate.trigger_rollback()
+        self.assertFalse(res)
+
+    def test_rollback_failed_violation_type(self):
+        def failing_handler():
+            raise RuntimeError("Rollback failed")
+        self.gate.register_rollback_handler(failing_handler)
+        decision = self.gate.validate_tool_call("read_file", {"path": "../etc/passwd"})
+        self.assertFalse(decision.allowed)
+        self.assertTrue(decision.triggered_rollback)
+        self.assertEqual(decision.violation_type, "rollback_failed")
+        self.assertFalse(decision.details["rollback_success"])
 
 
 if __name__ == "__main__":

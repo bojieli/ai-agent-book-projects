@@ -125,14 +125,13 @@ class SafetyPolicyGate:
         """Generate a canonical SHA256 fingerprint for a tool call and its parameters."""
         import json
         clean_p = self._clean_params(params)
-        canonical = json.dumps({"tool": tool_name, "params": clean_p}, sort_keys=True, ensure_ascii=False, default=str)
+        canonical = json.dumps({"tool": tool_name.lower(), "params": clean_p}, sort_keys=True, ensure_ascii=False, default=str)
         return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
     def issue_confirmation(self, tool_name: str, params: Dict[str, Any]) -> str:
-        """Generate a single-use HMAC confirmation token bound to tool name and parameters."""
+        """Generate a single-use non-deterministic confirmation token bound to tool name and parameters."""
         fp = self._fingerprint(tool_name, params)
-        nonce = secrets.token_hex(8)
-        token = hmac.new(self.secret_key.encode("utf-8"), f"{fp}:{nonce}".encode("utf-8"), hashlib.sha256).hexdigest()[:24]
+        token = secrets.token_hex(16)
         self._pending_confirmations[token] = fp
         return token
 
@@ -140,13 +139,9 @@ class SafetyPolicyGate:
         """Verify and consume a single-use confirmation token."""
         if not token or token not in self._pending_confirmations:
             return False
-        expected_fp = self._pending_confirmations[token]
+        expected_fp = self._pending_confirmations.pop(token)
         actual_fp = self._fingerprint(tool_name, params)
-        if hmac.compare_digest(expected_fp, actual_fp):
-            # Consume token to enforce single-use constraint
-            del self._pending_confirmations[token]
-            return True
-        return False
+        return hmac.compare_digest(expected_fp, actual_fp)
 
     def _extract_string_values(self, obj: Any) -> List[str]:
         """Recursively extract all string values from a nested data structure."""
@@ -205,13 +200,14 @@ class SafetyPolicyGate:
         """Inspect parameters for dangerous bash/shell command patterns."""
         if not isinstance(params, dict):
             return None
+        tool_name_lower = tool_name.lower()
         # Check command string parameters
         cmd_keys = {"command", "cmd", "script", "bash", "shell", "exec", "args", "input", "code"}
         cmd_strings = []
         for k, v in params.items():
             if k.lower() in cmd_keys or "command" in k.lower() or "shell" in k.lower() or "script" in k.lower() or "exec" in k.lower():
                 cmd_strings.extend(self._extract_string_values(v))
-        if tool_name.lower() in ("run_shell", "bash", "execute_command", "shell", "sh", "terminal", "run", "exec", "system"):
+        if tool_name_lower in ("run_shell", "bash", "execute_command", "shell", "sh", "terminal", "run", "exec", "system"):
             cmd_strings.extend(self._extract_string_values(params))
 
         for cmd_str in cmd_strings:
@@ -257,20 +253,21 @@ class SafetyPolicyGate:
         """Determine if a tool call is a high-risk operation requiring explicit confirmation."""
         if not isinstance(params, dict):
             params = {}
+        tool_name_lower = tool_name.lower()
         # Deletion tools
-        if tool_name in ("delete_file", "remove_directory", "rmdir", "unlink", "wipe_cache", "system_reset"):
+        if tool_name_lower in ("delete_file", "remove_directory", "rmdir", "unlink", "wipe_cache", "system_reset"):
             return True, f"Operation '{tool_name}' is destructive and requires user confirmation"
 
         # Git force push
-        if tool_name in ("git_push", "git") and params.get("force"):
+        if tool_name_lower in ("git_push", "git") and params.get("force"):
             return True, "Force push will overwrite remote repository history"
 
         # Destructive SQL queries
-        if tool_name in ("sql_query", "db_execute", "execute_sql"):
+        if tool_name_lower in ("sql_query", "db_execute", "execute_sql"):
             raw_query = str(params.get("query", "") or params.get("sql", ""))
-            # Strip single-line comments (-- ...) and multi-line comments (/* ... */)
-            clean_query = re.sub(r'--.*$', '', raw_query, flags=re.MULTILINE)
-            clean_query = re.sub(r'/\*.*?\*/', '', clean_query, flags=re.DOTALL)
+            # Strip block comments (/* ... */) then single-line comments (-- ...)
+            clean_query = re.sub(r'/\*.*?\*/', '', raw_query, flags=re.DOTALL)
+            clean_query = re.sub(r'--.*$', '', clean_query, flags=re.MULTILINE)
             statements = [s.strip() for s in clean_query.split(";") if s.strip()]
             for stmt in statements:
                 if self.DESTRUCTIVE_SQL_DROP.search(stmt):
@@ -293,31 +290,30 @@ class SafetyPolicyGate:
         # 1. Inspect Path Traversal (Critical Violation)
         pt_violation = self.inspect_path_traversal(params)
         if pt_violation:
-            self.trigger_rollback()
+            rollback_ok = self.trigger_rollback()
             return SafetyGateDecision(
                 allowed=False,
                 requires_confirmation=False,
                 triggered_rollback=True,
-                violation_type="path_traversal",
+                violation_type="rollback_failed" if not rollback_ok else "path_traversal",
                 reason=pt_violation,
                 risk_score=1.0,
-                details={"tool_name": tool_name, "params": params},
+                details={"tool_name": tool_name, "params": params, "rollback_success": rollback_ok},
             )
 
         # 2. Inspect Dangerous Bash Commands (Critical Violation)
         cmd_violation = self.inspect_dangerous_commands(tool_name, params)
         if cmd_violation:
-            self.trigger_rollback()
+            rollback_ok = self.trigger_rollback()
             return SafetyGateDecision(
                 allowed=False,
                 requires_confirmation=False,
                 triggered_rollback=True,
-                violation_type="dangerous_bash_command",
+                violation_type="rollback_failed" if not rollback_ok else "dangerous_bash_command",
                 reason=cmd_violation,
                 risk_score=1.0,
-                details={"tool_name": tool_name, "params": params},
+                details={"tool_name": tool_name, "params": params, "rollback_success": rollback_ok},
             )
-
         # 3. Inspect Resource Limits
         res_violation = self.inspect_resource_limits(params)
         if res_violation:
