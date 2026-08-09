@@ -329,7 +329,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--provider", default=os.getenv("LLM_PROVIDER", "kimi"),
-        choices=["siliconflow", "doubao", "kimi", "moonshot", "openrouter"],
+        choices=["dashscope", "qwen", "bailian", "siliconflow", "doubao", "kimi", "moonshot", "openrouter"],
         help="真实模式使用的大模型提供商（默认：环境变量 LLM_PROVIDER 或 kimi）",
     )
     parser.add_argument(

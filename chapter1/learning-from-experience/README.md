@@ -106,7 +106,12 @@ To run the LLM experiments, you need a Kimi (Moonshot) API key:
 2. Set the environment variable:
 
 ```bash
+export LLM_PROVIDER="moonshot"  # or dashscope/qwen/bailian
 export MOONSHOT_API_KEY="your-api-key-here"
+# For Alibaba Cloud Model Studio / Bailian (Qwen), use:
+# export LLM_PROVIDER="dashscope"
+# export DASHSCOPE_API_KEY="your-dashscope-api-key-here"
+# export DASHSCOPE_MODEL="qwen3.7-plus"
 ```
 
 Or create a `.env` file:

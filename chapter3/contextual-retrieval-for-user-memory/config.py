@@ -44,6 +44,7 @@ def _openrouter_model_id(model: Optional[str]) -> str:
 
 class Provider(str, Enum):
     """Supported LLM providers"""
+    DASHSCOPE = "dashscope"  # Alibaba Cloud Model Studio / Bailian (Qwen)
     SILICONFLOW = "siliconflow"
     DOUBAO = "doubao"
     KIMI = "kimi"
@@ -81,6 +82,13 @@ class LLMConfig:
     
     # Provider-specific defaults
     PROVIDER_DEFAULTS = {
+        "dashscope": {
+            "model": "qwen3.7-plus",
+            "base_url": os.getenv(
+                "DASHSCOPE_BASE_URL",
+                "https://dashscope.aliyuncs.com/compatible-mode/v1",
+            ),
+        },
         "siliconflow": {
             "model": "Qwen/Qwen3-235B-A22B-Thinking-2507",
             "base_url": "https://api.siliconflow.cn/v1"
@@ -122,6 +130,9 @@ class LLMConfig:
     def get_client_config(self) -> tuple[Dict[str, Any], str]:
         """Get OpenAI client configuration"""
         provider = self.provider.lower()
+        provider = {"qwen": "dashscope", "bailian": "dashscope"}.get(
+            provider, provider
+        )
         defaults = self.PROVIDER_DEFAULTS.get(provider, {})
         
         # Determine API key

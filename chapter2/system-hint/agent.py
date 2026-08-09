@@ -94,7 +94,7 @@ class SystemHintAgent:
         
         Args:
             api_key: API key for the LLM provider
-            provider: LLM provider ('kimi' for Kimi K3)
+            provider: LLM provider (including dashscope/qwen/bailian for Qwen)
             model: Optional model override
             config: System hint configuration
             verbose: If True, log full details
@@ -104,7 +104,13 @@ class SystemHintAgent:
         self.config = config or SystemHintConfig()
         
         # Configure client based on provider
-        if self.provider == "kimi" or self.provider == "moonshot":
+        if self.provider in {"dashscope", "qwen", "bailian"}:
+            from agentbook.providers import resolve_backend
+
+            backend = resolve_backend("dashscope", model=model, api_key=api_key)
+            self.client = OpenAI(api_key=backend.api_key, base_url=backend.base_url)
+            self.model = backend.model
+        elif self.provider == "kimi" or self.provider == "moonshot":
             # 默认 Moonshot/Kimi 官方端点；若传入 OpenRouter key（sk-or-…）则自动
             # 回退到 OpenRouter，并把 kimi-* 映射为 moonshotai/kimi-k2。
             # 端点、key 与模型名映射统一由 agentbook 的 provider 注册表维护；
@@ -121,7 +127,7 @@ class SystemHintAgent:
             )
             self.model = backend.model
         else:
-            raise ValueError(f"Unsupported provider: {provider}")
+            raise ValueError(f"Unsupported provider: {provider}. Use dashscope/qwen/bailian, kimi, or openrouter")
         
         # Initialize tracking
         self.tool_call_counts: Dict[str, int] = {}

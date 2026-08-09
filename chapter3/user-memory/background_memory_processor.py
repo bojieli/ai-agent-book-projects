@@ -62,7 +62,7 @@ class BackgroundMemoryProcessor:
         Args:
             user_id: Unique user identifier
             api_key: API key (defaults to env based on provider)
-            provider: LLM provider ('siliconflow', 'doubao', 'kimi', 'moonshot')
+            provider: LLM provider ('dashscope'/'qwen'/'bailian', 'siliconflow', 'doubao', 'kimi', 'moonshot')
             model: Model name (defaults to provider's default)
             config: Processor configuration
             memory_mode: Memory storage mode

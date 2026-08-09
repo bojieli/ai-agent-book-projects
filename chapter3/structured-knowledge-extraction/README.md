@@ -88,7 +88,7 @@ cd chapter3/structured-knowledge-extraction
 # Single-project compatibility path, still supported during migration:
 # python -m pip install -r requirements.txt
 
-cp env.example .env        # set OPENAI_API_KEY (default model gpt-5.6-luna)
+cp env.example .env        # set the selected provider key (OpenAI or DashScope/Bailian)
 python generate_data.py    # optional: regenerate synthetic cases (repo ships data/cases.jsonl)
 python demo.py             # full pipeline: discovery → extract → cluster → conversational advice
 ```

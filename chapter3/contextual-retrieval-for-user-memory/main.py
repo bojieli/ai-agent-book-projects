@@ -712,7 +712,7 @@ class InteractiveContextualRAG:
             if Confirm.ask("Change LLM provider?"):
                 provider = Prompt.ask(
                     "Provider",
-                    choices=["kimi", "doubao", "siliconflow", "openai"],
+                    choices=["dashscope", "qwen", "bailian", "kimi", "doubao", "siliconflow", "openai"],
                     default=self.config.llm.provider
                 )
                 self.config.llm.provider = provider

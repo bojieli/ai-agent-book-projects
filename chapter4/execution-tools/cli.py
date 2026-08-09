@@ -330,7 +330,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     # 全局开关
-    parser.add_argument("--provider", help="LLM 提供商（覆盖 PROVIDER，如 kimi/doubao/siliconflow/openrouter）")
+    parser.add_argument("--provider", help="LLM 提供商（覆盖 PROVIDER，如 dashscope/qwen/bailian/kimi/doubao/siliconflow/openrouter）")
     parser.add_argument("--workspace", help="工作目录（覆盖 WORKSPACE_DIR，文件操作被限制在此目录内）")
     parser.add_argument("--no-approval", action="store_true", help="关闭危险操作的 LLM 事前审批")
     parser.add_argument("--no-verify", action="store_true", help="关闭写文件/代码的自动语法校验")

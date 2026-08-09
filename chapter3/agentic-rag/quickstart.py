@@ -24,7 +24,7 @@ def check_environment():
     load_dotenv()
     
     # Check for at least one API key
-    providers = ["MOONSHOT_API_KEY", "ARK_API_KEY", "SILICONFLOW_API_KEY", 
+    providers = ["MOONSHOT_API_KEY", "ARK_API_KEY", "DASHSCOPE_API_KEY", "SILICONFLOW_API_KEY",
                  "OPENAI_API_KEY", "OPENROUTER_API_KEY"]
     
     has_key = False

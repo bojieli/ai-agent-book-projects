@@ -26,6 +26,7 @@ def check_environment():
     # Check for at least one LLM provider
     llm_providers = [
         "KIMI_API_KEY",
+        "DASHSCOPE_API_KEY",
         "SILICONFLOW_API_KEY", 
         "DOUBAO_API_KEY",
         "OPENROUTER_API_KEY"

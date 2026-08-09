@@ -54,11 +54,11 @@ cd chapter2/prompt-injection
 # Single-project compatibility path, still supported during migration:
 # python -m pip install -r requirements.txt
 
-cp env.example .env    # set OPENAI_API_KEY (OpenAI official API)
+cp env.example .env    # set LLM_PROVIDER and its key (OpenAI or DashScope/Bailian)
 python demo.py         # default: all 3×4=12 combos, 4 trials each
 ```
 
-> **OpenRouter fallback:** If `OPENAI_API_KEY` is unset but `OPENROUTER_API_KEY` is set, requests go through OpenRouter (`gpt-*` → `openai/…`). With `OPENAI_API_KEY` set, behavior is unchanged.
+> **DashScope/Bailian:** Set `LLM_PROVIDER=dashscope` (or `qwen`/`bailian`) and `DASHSCOPE_API_KEY`; the default model is `qwen3.7-plus`. `DASHSCOPE_BASE_URL` supports international-region keys. OpenRouter remains available as a fallback.
 
 The program runs selected combos and prints an **attack × defense** success-rate matrix.
 

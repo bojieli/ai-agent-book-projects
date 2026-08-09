@@ -277,7 +277,7 @@ def build_parser():
     add_common(p_ext)
     p_ext.add_argument("--conversation", required=True, help="对话文本或对话文件路径")
     p_ext.add_argument("--provider", default=None,
-                       choices=["siliconflow", "doubao", "kimi", "moonshot", "openrouter"],
+                       choices=["dashscope", "qwen", "bailian", "siliconflow", "doubao", "kimi", "moonshot", "openrouter"],
                        help="LLM 提供商（默认取环境变量 PROVIDER）")
     p_ext.add_argument("--model", default=None, help="模型名称（默认使用提供商默认模型）")
     p_ext.set_defaults(func=cmd_extract)

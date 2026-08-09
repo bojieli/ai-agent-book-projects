@@ -14,6 +14,14 @@ class Config:
     """Configuration settings for the context compression experiment"""
     
     # API Configuration
+    LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "kimi").lower()
+    LLM_PROVIDER = {"qwen": "dashscope", "bailian": "dashscope"}.get(
+        LLM_PROVIDER, LLM_PROVIDER
+    )
+    DASHSCOPE_API_KEY: str = os.getenv("DASHSCOPE_API_KEY", "")
+    DASHSCOPE_BASE_URL: str = os.getenv(
+        "DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    )
     MOONSHOT_API_KEY: str = os.getenv("MOONSHOT_API_KEY", "")
     MOONSHOT_BASE_URL: str = "https://api.moonshot.cn/v1"
 
@@ -25,7 +33,9 @@ class Config:
     SERPER_BASE_URL: str = "https://google.serper.dev"
     
     # Model Configuration
-    MODEL_NAME: str = os.getenv("MODEL_NAME", "kimi-k3")
+    MODEL_NAME: str = os.getenv(
+        "MODEL_NAME", "qwen3.7-plus" if LLM_PROVIDER == "dashscope" else "kimi-k3"
+    )
     MODEL_TEMPERATURE: float = float(os.getenv("MODEL_TEMPERATURE", "0.3"))
     MODEL_MAX_TOKENS: int = int(os.getenv("MODEL_MAX_TOKENS", "8192"))
     
@@ -56,10 +66,10 @@ class Config:
         Returns:
             True if configuration is valid
         """
-        if not cls.MOONSHOT_API_KEY and not cls.OPENROUTER_API_KEY:
-            print("ERROR: neither MOONSHOT_API_KEY nor OPENROUTER_API_KEY is set")
-            print("Please set MOONSHOT_API_KEY (primary) or OPENROUTER_API_KEY "
-                  "(universal fallback) in .env or as an environment variable")
+        try:
+            cls.resolve_llm()
+        except ValueError as exc:
+            print(f"ERROR: {exc}")
             return False
         
         if not cls.SERPER_API_KEY:
@@ -71,7 +81,7 @@ class Config:
     
     @classmethod
     def resolve_llm(cls):
-        """Return ``(api_key, base_url, model)`` honoring the MOONSHOT->OpenRouter fallback.
+        """Return ``(api_key, base_url, model)`` for the configured provider.
 
         Computed at call time so a runtime override of ``Config.MODEL_NAME``
         (e.g. via ``--model``) is respected.
@@ -82,7 +92,7 @@ class Config:
         """
         from agentbook.providers import resolve_backend
 
-        backend = resolve_backend("kimi", model=cls.MODEL_NAME)
+        backend = resolve_backend(cls.LLM_PROVIDER, model=cls.MODEL_NAME)
         return backend.api_key, backend.base_url, backend.model
 
     @classmethod
@@ -104,6 +114,8 @@ class Config:
         print(f"Context Window: {cls.CONTEXT_WINDOW_SIZE:,} tokens")
         print(f"Max Webpage Length: {cls.MAX_WEBPAGE_LENGTH:,} chars")
         print(f"Summary Max Tokens: {cls.SUMMARY_MAX_TOKENS}")
+        print(f"Provider: {cls.LLM_PROVIDER}")
+        print(f"DashScope API Key Set: {'Yes' if cls.DASHSCOPE_API_KEY else 'No'}")
         print(f"Kimi API Key Set: {'Yes' if cls.MOONSHOT_API_KEY else 'No'}")
         print(f"Serper API Key Set: {'Yes' if cls.SERPER_API_KEY else 'No'}")
         print("="*50 + "\n")

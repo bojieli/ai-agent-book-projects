@@ -19,10 +19,11 @@ resolved_provider, api_key = resolve_provider_and_key(provider)
 if not api_key:
     print(f"❌ Error: no API key for provider '{provider}', and no OPENROUTER_API_KEY fallback")
     print(f"\nPlease set one of:")
+    print(f"  export DASHSCOPE_API_KEY='...'    # for dashscope/qwen/bailian")
     print(f"  export KIMI_API_KEY='...'         # or SILICONFLOW/DOUBAO/OPENROUTER per provider")
     print(f"  export OPENROUTER_API_KEY='...'   # universal fallback")
     print(f"\nOr change provider:")
-    print(f"  export LLM_PROVIDER=kimi  # or siliconflow, doubao, openrouter")
+    print(f"  export LLM_PROVIDER=dashscope  # or qwen, bailian, siliconflow, doubao, kimi, openrouter")
     sys.exit(1)
 
 if resolved_provider != provider:

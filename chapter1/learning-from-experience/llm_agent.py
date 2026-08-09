@@ -69,23 +69,42 @@ class LLMAgent:
                  model: str = "kimi-k3",  # Kimi K3 (see 实验 7-2)
                  base_url: str = "https://api.moonshot.cn/v1",
                  temperature: float = 0.7,
-                 max_experiences: int = 50):
+                 max_experiences: int = 50,
+                 provider: str | None = None):
         """
         Initialize LLM agent with the Kimi (Moonshot) API.
 
         Args:
-            api_key: Kimi API key (or set MOONSHOT_API_KEY env var)
-            model: Model name (Moonshot/Kimi, default kimi-k3)
+            api_key: Provider API key (or set the provider's env var)
+            model: Model name (defaults to the selected provider's model)
             base_url: API base URL
             temperature: Sampling temperature for generation
             max_experiences: Maximum number of experiences to store
         """
-        # Set up API client (Moonshot primary, OpenRouter universal fallback)
-        primary_key = api_key or os.getenv("MOONSHOT_API_KEY")
-        self.api_key, resolved_base_url, self.model, self.using_openrouter = \
-            resolve_llm_backend(primary_key, base_url, model)
+        # Set up an OpenAI-compatible client. The default remains Moonshot,
+        # while LLM_PROVIDER=dashscope/qwen/bailian enables direct Bailian use.
+        requested_provider = (provider or os.getenv("LLM_PROVIDER", "moonshot")).lower()
+        requested_provider = {"qwen": "dashscope", "bailian": "dashscope"}.get(
+            requested_provider, requested_provider
+        )
+        if requested_provider == "dashscope":
+            dashscope_model = model if model != "kimi-k3" else None
+            backend = resolve_backend(
+                "dashscope",
+                model=dashscope_model or os.getenv("DASHSCOPE_MODEL"),
+                api_key=api_key,
+            )
+            self.api_key, resolved_base_url, self.model = (
+                backend.api_key, backend.base_url, backend.model
+            )
+            self.using_openrouter = backend.using_openrouter
+            self.provider = backend.provider
+        else:
+            primary_key = api_key or os.getenv("MOONSHOT_API_KEY")
+            self.api_key, resolved_base_url, self.model, self.using_openrouter = \
+                resolve_llm_backend(primary_key, base_url, model)
+            self.provider = "openrouter" if self.using_openrouter else "moonshot"
         self.base_url = resolved_base_url
-        self.provider = "openrouter" if self.using_openrouter else "moonshot"
         if self.using_openrouter:
             print(f"ℹ️  MOONSHOT_API_KEY not set; routing via OpenRouter (model: {self.model})")
 

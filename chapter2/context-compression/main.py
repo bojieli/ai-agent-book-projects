@@ -75,6 +75,7 @@ def run_demo(enable_streaming=True, strategy: CompressionStrategy = None):
     if not Config.validate():
         print(f"\n{Fore.RED}Configuration validation failed!{Style.RESET_ALL}")
         print("\nPlease set up your .env file with:")
+        print("  DASHSCOPE_API_KEY=your_api_key_here (for LLM_PROVIDER=dashscope/qwen/bailian)")
         print("  MOONSHOT_API_KEY=your_api_key_here")
         print("  SERPER_API_KEY=your_api_key_here (optional, will use mock data)")
         sys.exit(1)
@@ -92,7 +93,7 @@ def run_demo(enable_streaming=True, strategy: CompressionStrategy = None):
     # Create agent
     print(f"\n{Fore.YELLOW}Initializing agent...{Style.RESET_ALL}")
     agent = ResearchAgent(
-        api_key=Config.MOONSHOT_API_KEY,
+        api_key=Config.resolve_llm()[0],
         compression_strategy=strategy,
         verbose=False,
         enable_streaming=enable_streaming

@@ -85,6 +85,12 @@ Drop `--mock` to use a real LLM (built-in tools only by default, no MCP); set th
 ```bash
 export KIMI_API_KEY='your-api-key-here'
 python event_loop_demo.py --trigger timer --provider kimi
+
+# Alibaba Cloud Model Studio / Bailian (Qwen)
+export DASHSCOPE_API_KEY='your-dashscope-api-key-here'
+python event_loop_demo.py --trigger timer --provider dashscope
+# `qwen` and `bailian` are accepted aliases; international keys may use
+# DASHSCOPE_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1
 ```
 
 > **Universal OpenRouter fallback**: if the chosen provider’s key is missing (default `kimi`) but `OPENROUTER_API_KEY` is set, `event_loop_demo.py` / `server.py` / `quickstart.py` switch to `openrouter` (set model with `LLM_MODEL=openai/gpt-5.6-luna`). Example:  
@@ -153,6 +159,7 @@ cd chapter4/agent-with-event-trigger
 cp env.example .env
 # Edit .env and add your API key
 export KIMI_API_KEY='your-api-key-here'
+export DASHSCOPE_API_KEY='your-dashscope-api-key-here'  # for dashscope/qwen/bailian
 ```
 
 #### Tests and Manual Demo
@@ -352,7 +359,7 @@ Uses:
 export KIMI_API_KEY="your-key"
 
 # Optional
-export LLM_PROVIDER="kimi"              # kimi, siliconflow, doubao, openrouter
+export LLM_PROVIDER="kimi"              # dashscope/qwen/bailian, kimi, siliconflow, doubao, openrouter
 export LLM_MODEL="kimi-k3" # Override default model
 export AGENT_PORT="8000"                # Server port (default: 8000)
 export ENABLE_MCP_TOOLS="true"          # Enable MCP (default: true)
@@ -665,6 +672,9 @@ python event_loop_demo.py --mock --trigger file --watch-dir watched_dir
 ```bash
 export KIMI_API_KEY='your-api-key-here'
 python event_loop_demo.py --trigger timer --provider kimi
+
+export DASHSCOPE_API_KEY='your-dashscope-api-key-here'
+python event_loop_demo.py --trigger timer --provider dashscope
 ```
 
 > **OpenRouter 通用兜底**：若所选 provider（默认 `kimi`）的 Key 缺失，但设置了
@@ -899,7 +909,7 @@ curl -X POST http://localhost:8000/event \
 export KIMI_API_KEY="your-key"
 
 # Optional
-export LLM_PROVIDER="kimi"              # kimi, siliconflow, doubao, openrouter
+export LLM_PROVIDER="kimi"              # dashscope/qwen/bailian, kimi, siliconflow, doubao, openrouter
 export LLM_MODEL="kimi-k3" # Override default model
 export AGENT_PORT="8000"                # Server port (default: 8000)
 export ENABLE_MCP_TOOLS="true"          # Enable MCP (default: true)

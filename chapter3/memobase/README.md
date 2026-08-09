@@ -45,7 +45,7 @@ cd chapter3/memobase
 # python -m pip install -r requirements.txt
 
 cp env.example .env
-# Add Kimi API key (hand-rolled agent)
+# Set KIMI_API_KEY, or use LLM_PROVIDER=dashscope/qwen/bailian with DASHSCOPE_API_KEY
 ```
 
 Edit `config.py` for model, memory thresholds, benchmark, logging.
@@ -127,7 +127,7 @@ Benchmark outputs under `benchmark_results/`. Extend tools / memory types in `co
 
 ### Troubleshooting
 
-1. API key: `KIMI_API_KEY` in `.env`  
+1. API key: `KIMI_API_KEY` in `.env`, or `DASHSCOPE_API_KEY` with `LLM_PROVIDER=dashscope`
 2. Memory overflow: lower `MAX_MEMORY_ENTRIES`, more aggressive compression, manual consolidation  
 3. Slow: reduce `MODEL_MAX_TOKENS`, enable cache, category-specific benchmarks  
 
@@ -172,7 +172,7 @@ cd chapter3/memobase
 # python -m pip install -r requirements.txt
 
 cp env.example .env
-# 手写 Agent 填写 Kimi API Key
+# 手写 Agent 可填写 KIMI_API_KEY；也可用 LLM_PROVIDER=dashscope 与 DASHSCOPE_API_KEY
 ```
 
 在 `config.py` 中调整模型、记忆阈值、基准与日志。

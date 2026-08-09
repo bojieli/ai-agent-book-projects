@@ -51,11 +51,13 @@ def run_llm_demo():
     print("🤖"*35)
     
     # Check API key
-    api_key = os.getenv("MOONSHOT_API_KEY")
+    provider = os.getenv("LLM_PROVIDER", "moonshot").lower()
+    api_key = os.getenv("DASHSCOPE_API_KEY") if provider in {"dashscope", "qwen", "bailian"} else os.getenv("MOONSHOT_API_KEY")
     if not api_key and not os.getenv("OPENROUTER_API_KEY"):
-        print("\n❌ Error: MOONSHOT_API_KEY not set.")
+        print(f"\n❌ Error: API key for provider '{provider}' not set.")
         print("Please set your Kimi API key:")
-        print("  export MOONSHOT_API_KEY='your-key-here'")
+        print("  export DASHSCOPE_API_KEY='your-key-here'  # for dashscope/qwen/bailian")
+        print("  export MOONSHOT_API_KEY='your-key-here'   # for moonshot/kimi")
         print("\nGet your key at: https://platform.moonshot.cn/")
         print("Or set OPENROUTER_API_KEY as a universal fallback.")
         return
@@ -67,6 +69,7 @@ def run_llm_demo():
     agent = LLMAgent(
         api_key=api_key,
         model=os.getenv("MOONSHOT_MODEL", "kimi-k3"),
+        provider=provider,
         temperature=0.7,
         max_experiences=30
     )

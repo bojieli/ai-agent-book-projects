@@ -104,6 +104,8 @@ def interactive_mode(user_id: str, memory_mode: MemoryMode = MemoryMode.NOTES,
         print(f"❌ Error: Please set API key for provider '{provider}'")
         if provider in ["kimi", "moonshot"]:
             print("   export MOONSHOT_API_KEY='your-api-key-here'")
+        elif provider in ["dashscope", "qwen", "bailian"]:
+            print("   export DASHSCOPE_API_KEY='your-api-key-here'")
         elif provider == "siliconflow":
             print("   export SILICONFLOW_API_KEY='your-api-key-here'")
         elif provider == "doubao":
@@ -267,6 +269,8 @@ def demo_memory_system(memory_mode: MemoryMode = None, provider: Optional[str] =
     api_key = Config.get_api_key(provider)
     if not api_key:
         print(f"❌ Please set API key for provider '{provider}'")
+        if provider in ["dashscope", "qwen", "bailian"]:
+            print("   export DASHSCOPE_API_KEY='your-api-key-here'")
         return
     
     # Create test user
@@ -438,6 +442,8 @@ def run_evaluation_mode(user_id: str, memory_mode: MemoryMode, verbose: bool = T
     api_key = Config.get_api_key(provider)
     if not api_key:
         print(f"❌ Error: Please set API key for provider '{provider}'")
+        if provider in ["dashscope", "qwen", "bailian"]:
+            print("   export DASHSCOPE_API_KEY='your-api-key-here'")
         sys.exit(1)
     
     # Initialize agents without incorrect parameters
@@ -865,7 +871,7 @@ def main():
     
     parser.add_argument(
         "--provider",
-        choices=["siliconflow", "doubao", "kimi", "moonshot", "openrouter"],
+        choices=["dashscope", "qwen", "bailian", "siliconflow", "doubao", "kimi", "moonshot", "openrouter"],
         default=None,
         help="LLM provider (defaults to env PROVIDER or 'kimi')"
     )

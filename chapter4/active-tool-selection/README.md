@@ -213,7 +213,12 @@ cp env.example .env
 > (`base_url=https://openrouter.ai/api/v1`) and maps the model id to
 > `provider/model` form (`gpt-*` → `openai/…`, `claude-*` →
 > `anthropic/claude-opus-4.8`). Existing `OPENAI_BASE_URL`/`OPENAI_MODEL`
+
 > overrides are preserved.
+
+For direct Alibaba Cloud Model Studio / Bailian (Qwen), set
+`LLM_PROVIDER=dashscope` (or `qwen`/`bailian`) and `DASHSCOPE_API_KEY`; the
+default model is `qwen3.7-plus`. Set `DASHSCOPE_BASE_URL` for international keys.
 
 #### 3. Run Quick Start
 

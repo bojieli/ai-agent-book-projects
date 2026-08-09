@@ -38,17 +38,25 @@ def _openrouter_model_id(model) -> str:
     return "openai/gpt-5.6-luna"
 
 
+# Provider: OpenAI by default; DashScope/Qwen/Bailian are OpenAI-compatible.
+PROVIDER = os.getenv("LLM_PROVIDER", "openai").lower()
+PROVIDER = {"qwen": "dashscope", "bailian": "dashscope"}.get(PROVIDER, PROVIDER)
 # 默认模型，可用环境变量覆盖
-MODEL = os.getenv("OPENAI_MODEL", "gpt-5.6-luna")
+MODEL = os.getenv(
+    "DASHSCOPE_MODEL" if PROVIDER == "dashscope" else "OPENAI_MODEL",
+    "qwen3.7-plus" if PROVIDER == "dashscope" else "gpt-5.6-luna",
+)
 
 # 通用 OpenRouter 回退：若没有 OPENAI_API_KEY 但设置了 OPENROUTER_API_KEY，
 # 则把聊天模型路由到 OpenRouter，并把模型名映射为 OpenRouter 的 id。
 _OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+_DASHSCOPE_API_KEY = os.getenv("DASHSCOPE_API_KEY")
 _OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 # gpt-5.x（含 gpt-5.6*）在 OpenAI 直连 API 上需要组织实名认证；只要设置了
 # OPENROUTER_API_KEY，就优先把这类 id 走 OpenRouter。
 _PREFER_OPENROUTER = bool(_OPENROUTER_API_KEY) and MODEL.lower().startswith("gpt-5")
-_USE_OPENROUTER = _PREFER_OPENROUTER or ((not _OPENAI_API_KEY) and bool(_OPENROUTER_API_KEY))
+_PRIMARY_API_KEY = _DASHSCOPE_API_KEY if PROVIDER == "dashscope" else _OPENAI_API_KEY
+_USE_OPENROUTER = _PREFER_OPENROUTER or ((not _PRIMARY_API_KEY) and bool(_OPENROUTER_API_KEY))
 if _USE_OPENROUTER:
     MODEL = _openrouter_model_id(MODEL)
 
@@ -60,7 +68,17 @@ def get_client() -> OpenAI:
     回退到 OpenRouter（OpenAI 兼容端点）。"""
     # timeout + 自动重试：发现/抽取阶段要连续发几十次请求，单次瞬时错误
     # （网络抖动 / 限流 / 5xx）不应中断整条流水线。
-    if _OPENAI_API_KEY and not _PREFER_OPENROUTER:
+    if _PRIMARY_API_KEY and not _PREFER_OPENROUTER:
+        if PROVIDER == "dashscope":
+            return OpenAI(
+                api_key=_DASHSCOPE_API_KEY,
+                base_url=os.getenv(
+                    "DASHSCOPE_BASE_URL",
+                    "https://dashscope.aliyuncs.com/compatible-mode/v1",
+                ),
+                timeout=60.0,
+                max_retries=5,
+            )
         return OpenAI(api_key=_OPENAI_API_KEY, timeout=60.0, max_retries=5)
     if _OPENROUTER_API_KEY:
         return OpenAI(
@@ -70,6 +88,6 @@ def get_client() -> OpenAI:
             max_retries=5,
         )
     raise RuntimeError(
-        "未找到 OPENAI_API_KEY 或 OPENROUTER_API_KEY，请先 `cp env.example .env` "
-        "并填入你的 OpenAI Key（或 OpenRouter Key 作为回退）。"
+        "未找到所选 provider 的 API Key，请设置 OPENAI_API_KEY、DASHSCOPE_API_KEY "
+        "或 OPENROUTER_API_KEY。"
     )

@@ -12,18 +12,19 @@ load_dotenv()
 
 def check_environment():
     """Check if environment is properly configured"""
-    moonshot_key = os.getenv("MOONSHOT_API_KEY")
+    provider = os.getenv("LLM_PROVIDER", "kimi").lower()
+    provider_key = os.getenv("DASHSCOPE_API_KEY") if provider in {"dashscope", "qwen", "bailian"} else os.getenv("MOONSHOT_API_KEY")
     serper_key = os.getenv("SERPER_API_KEY")
     
     print("🔍 Checking environment configuration...")
     print("-" * 40)
     
-    if moonshot_key:
-        print("✅ MOONSHOT_API_KEY is set")
+    if provider_key:
+        print(f"✅ API key for {provider} is set")
     else:
-        print("❌ MOONSHOT_API_KEY is NOT set")
+        print(f"❌ API key for {provider} is NOT set")
         print("   Please add it to your .env file")
-        print("   Get API key at: https://platform.moonshot.cn/")
+        print("   Set DASHSCOPE_API_KEY for dashscope/qwen/bailian or MOONSHOT_API_KEY for kimi")
         return False
     
     if serper_key:
@@ -48,7 +49,7 @@ def quick_test():
     
     # Create agent
     agent = ResearchAgent(
-        api_key=Config.MOONSHOT_API_KEY,
+        api_key=Config.resolve_llm()[0],
         compression_strategy=CompressionStrategy.CONTEXT_AWARE_CITATIONS,
         verbose=False,
         enable_streaming=True

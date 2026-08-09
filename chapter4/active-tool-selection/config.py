@@ -5,9 +5,18 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # LLM Configuration
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.6-luna")
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai").lower()
+LLM_PROVIDER = {"qwen": "dashscope", "bailian": "dashscope"}.get(LLM_PROVIDER, LLM_PROVIDER)
+if LLM_PROVIDER == "dashscope":
+    OPENAI_API_KEY = os.getenv("DASHSCOPE_API_KEY")
+    OPENAI_BASE_URL = os.getenv(
+        "DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    )
+    OPENAI_MODEL = os.getenv("DASHSCOPE_MODEL", "qwen3.7-plus")
+else:
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
+    OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.6-luna")
 
 
 def _map_model_for_openrouter(model: str) -> str:

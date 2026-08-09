@@ -58,7 +58,7 @@ class ConversationalAgent:
         Args:
             user_id: Unique user identifier
             api_key: API key (defaults to env based on provider)
-            provider: LLM provider ('siliconflow', 'doubao', 'kimi', 'moonshot')
+            provider: LLM provider ('dashscope'/'qwen'/'bailian', 'siliconflow', 'doubao', 'kimi', 'moonshot')
             model: Model name (defaults to provider's default)
             config: Agent configuration
             memory_mode: Memory storage mode
@@ -71,6 +71,9 @@ class ConversationalAgent:
         
         # Determine provider
         self.provider = (provider or Config.PROVIDER).lower()
+        self.provider = {"qwen": "dashscope", "bailian": "dashscope"}.get(
+            self.provider, self.provider
+        )
         
         # Get API key for provider
         api_key = api_key or Config.get_api_key(self.provider)
@@ -89,7 +92,13 @@ class ConversationalAgent:
             )
 
         # Configure client based on provider
-        if self.provider == "siliconflow":
+        if self.provider == "dashscope":
+            self.client = OpenAI(
+                api_key=api_key,
+                base_url=Config.DASHSCOPE_BASE_URL
+            )
+            self.model = model or PROVIDER_DEFAULT_MODELS["dashscope"]
+        elif self.provider == "siliconflow":
             self.client = OpenAI(
                 api_key=api_key,
                 base_url="https://api.siliconflow.cn/v1"
@@ -116,7 +125,7 @@ class ConversationalAgent:
             self.model = model or "google/gemini-3.5-flash"
             # Supported models: google/gemini-3.5-flash, openai/gpt-5, anthropic/claude-sonnet-4
         else:
-            raise ValueError(f"Unsupported provider: {self.provider}. Use 'siliconflow', 'doubao', 'kimi', 'moonshot', or 'openrouter'")
+            raise ValueError(f"Unsupported provider: {self.provider}. Use 'dashscope'/'qwen'/'bailian', 'siliconflow', 'doubao', 'kimi', 'moonshot', or 'openrouter'")
         
         # Initialize memory manager (read-only access)
         self.memory_manager = create_memory_manager(user_id, memory_mode)

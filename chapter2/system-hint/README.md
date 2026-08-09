@@ -102,8 +102,12 @@ cd chapter2/system-hint
 # python -m pip install -r requirements.txt
 
 cp env.example .env
-# Edit .env with your KIMI_API_KEY
+# Edit .env with your provider key (Kimi or DashScope/Bailian)
 export KIMI_API_KEY='your-api-key-here'
+
+# Alibaba Cloud Model Studio / Bailian (Qwen):
+# export LLM_PROVIDER=dashscope
+# export DASHSCOPE_API_KEY='your-dashscope-api-key-here'
 ```
 
 > **OpenRouter fallback:** If `KIMI_API_KEY` is unset but `OPENROUTER_API_KEY` is set, the experiment uses OpenRouter (`kimi-*` → `moonshotai/kimi-k2`). With `KIMI_API_KEY` set, behavior is unchanged.
