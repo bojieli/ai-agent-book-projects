@@ -231,7 +231,12 @@ class HeuristicQualityJudge:
         if expression_issues:
             expression = DimensionResult(
                 "expression_quality", "llm_rubric", FAIL, 0.0,
-                [f"turn {issue.get('turn', '?')}: {issue.get('issue', 'quality issue')}" for issue in expression_issues],
+                [
+                    f"turn {issue.get('turn', '?')}: {issue.get('issue', 'quality issue')}"
+                    if isinstance(issue, dict)
+                    else str(issue)
+                    for issue in expression_issues
+                ],
                 float(facts.get("expression_confidence", 0.85)),
             )
         else:
