@@ -173,6 +173,14 @@ def test_strategy_acceptance_requires_all_named_criteria_and_evidence():
     assert not strategy_acceptance_passes(checked)
 
 
+@pytest.mark.parametrize("malformed", [None, [], "not-json-object", 7])
+def test_strategy_validation_fails_closed_for_non_object_provider_output(malformed):
+    checked = validate_strategy_result(malformed)
+    assert checked["schema_valid"] is False
+    assert checked["overall_pass"] is False
+    assert not strategy_acceptance_passes(checked)
+
+
 def test_strategy_audit_retains_invalid_schema_and_tries_next_backend(monkeypatch):
     from werewolf import strategy_audit as audit_module
 

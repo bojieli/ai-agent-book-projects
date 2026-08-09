@@ -1,3 +1,4 @@
+import hashlib
 import json
 from pathlib import Path
 
@@ -100,3 +101,24 @@ def test_fixed_abstention_has_real_audio_api_receipt():
     assert probe["usage"]["prompt_tokens_details"]["audio_tokens"] > 0
     assert len(probe["source_audio_sha256"]) == 64
     assert probe["status"] == "pass"
+
+
+def test_latest_formal_run_passes_every_gate_in_one_report():
+    run = ROOT / "runs" / "exp10-8-simulated-user-openrouter-20260803-v11"
+    report = json.loads((run / "acceptance_report.json").read_text())
+    independent = json.loads((run / "independent_validation.json").read_text())
+
+    assert report["overall_status"] == "pass"
+    assert report["end_to_end_status"] == "pass"
+    assert report["completed_day_night_vote_cycles"] >= 3
+    assert report["strategy_audit_pass"] is True
+    assert report["information_isolation_pass"] is True
+    assert all(
+        gate["status"] in {"pass", "not_applicable"}
+        for gate in report["gates"].values()
+    )
+    assert independent["strict_audio_action_boundary"] == "pass"
+    assert independent["source_report_sha256"] == hashlib.sha256(
+        (run / "acceptance_report.json").read_bytes()
+    ).hexdigest()
+    assert independent["simulator_tool_events_checked"] == report["simulator_llm_tool_calls"]
