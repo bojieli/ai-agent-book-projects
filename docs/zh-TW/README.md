@@ -59,8 +59,8 @@
 | 5 | 💻 **Coding Agent 與程式碼生成** | 程式碼是「能創造新工具的工具」，生產級 Coding Agent 全景 | [讀](../../book-zhtw/chapter5.zhtw.md) | [13](../../chapter5/README.zh-TW.md) |
 | 6 | 🎯 **Agent 的評估** | 把表現變成可比較訊號：評估環境、指標、統計顯著性、評估驅動選型 | [讀](../../book-zhtw/chapter6.zhtw.md) | [12](../../chapter6/README.zh-TW.md) |
 | 7 | 🧠 **模型後訓練** | 預訓練/SFT/RL 三階段：何時選 SFT、何時選 RL，工具呼叫內化、樣本效率 | [讀](../../book-zhtw/chapter7.zhtw.md) | [16](../../chapter7/README.zh-TW.md) |
-| 8 | 🔄 **Agent 的自我進化** | 不改權重也能成長：經驗學習、從工具使用者到創造者 | [讀](../../book-zhtw/chapter8.zhtw.md) | [7](../../chapter8/README.zh-TW.md) |
-| 9 | 🎙️ **多模態與即時互動** | 從文字擴充套件到語音、GUI、物理世界：語音三典範、Computer Use、機器人 | [讀](../../book-zhtw/chapter9.zhtw.md) | [7](../../chapter9/README.zh-TW.md) |
+| 8 | 🔄 **Agent 的自我進化** | 不改權重也能成長：經驗學習、從工具使用者到創造者 | [讀](../../book-zhtw/chapter8.zhtw.md) | [9](../../chapter8/README.zh-TW.md) |
+| 9 | 🎙️ **多模態與即時互動** | 從文字擴充套件到語音、GUI、物理世界：語音三典範、Computer Use、機器人 | [讀](../../book-zhtw/chapter9.zhtw.md) | [12](../../chapter9/README.zh-TW.md) |
 | 10 | 🤝 **多 Agent 協作** | 群體智慧高於個體：協作框架、上下文共享/隔離、湧現的「Agent 社會」 | [讀](../../book-zhtw/chapter10.zhtw.md) | [7](../../chapter10/README.zh-TW.md) |
 
 > 💡 **讀** = 在 GitHub 網頁直接讀章節正文（markdown）；**N** = 該章配套專案數，點選檢視程式碼。專案型別說明（✅ 可執行 / 📖 復現 / 🚧 設計）見各章 README。
@@ -147,9 +147,9 @@ git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/
 # 第 9 章 · 瀏覽器自動化與 Claude 示例
 git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
 git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-8/9-9 shared
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-9; RoboCrew v0.3.1
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-10
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-7/9-9 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-8/9-9; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-11
 
 # 第 10 章 · 雙 Agent 架構（已獨立為 TalkAct 專案）+ 斯坦福 AI 小鎮
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling

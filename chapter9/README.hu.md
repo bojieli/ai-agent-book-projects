@@ -9,15 +9,17 @@
 | Kísérlet | Projekt | Típus | Leírás |
 | :--: | --- | :--: | --- |
 | 9-1 | [live-audio](live-audio/) | ✅ | Valós idejű hangbeszélgetési demó, amely STT-t, AI-párbeszédet és TTS-t kapcsol össze. |
-| 9-2 | [phone-agent](phone-agent/) | 🚧 | A Pine Voice útvonalai elkészültek, de engedélyezett PSTN-hívás még nem futott. |
-| 9-3 | [streaming-speech](streaming-speech/) | ✅ | Bemutatja a streamelt beszédfelismerés késleltetési és pontossági kompromisszumát. |
-| 9-4 | [end-to-end-speech](end-to-end-speech/) | ✅ | A rögzített revisionű MiniCPM-o 4.5 helyben futott egy RTX PRO 6000 GPU-n; az end-to-end és self-cascade egyaránt 3/4 lett, egymást kiegészítő szemantikai/paralingvisztikai hibákkal és valódi 24kHz-es hangbizonyítékkal. |
-| 9-5 | [controllable-tts](controllable-tts/) | 🚧 | Fish Audio referencia-könyvtárat és média-összehasonlítást készít; a hallgatási értékelés még hiányos. |
-| 9-6 | `claude-quickstarts/computer-use-demo/` | 📖 | Az Anthropic hivatalos Computer Use demója konténerizált Ubuntu asztalon. |
-| 9-7 | `browser-use/` | 📖 | Vizuális böngésző-automatizálás művelet- és képernyőkép-nyomvonalakkal. |
-| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | XLeRobot távvezérlési útvonal; az elfogadás engedélyezett fizikai hardvert igényel. |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | XLeRobot-navigáció Gemini Robotics-ER és RoboCrew használatával. |
-| 9-10 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | RGB → PPO → SO-100 folyamat zero-shot Sim2Real tárgymegfogáshoz. |
+| Add-on | [phone-agent](phone-agent/) | 🚧 | A Pine Voice útvonalai elkészültek, de engedélyezett PSTN-hívás még nem futott. |
+| 9-2 | [streaming-speech](streaming-speech/) | ✅ | Bemutatja a streamelt beszédfelismerés késleltetési és pontossági kompromisszumát. |
+| 9-3 | [end-to-end-speech](end-to-end-speech/) | ✅ | A rögzített revisionű MiniCPM-o 4.5 helyben futott egy RTX PRO 6000 GPU-n; az end-to-end és self-cascade egyaránt 3/4 lett, egymást kiegészítő szemantikai/paralingvisztikai hibákkal és valódi 24kHz-es hangbizonyítékkal. |
+| 9-4 | [controllable-tts](controllable-tts/) | 🚧 | Fish Audio referencia-könyvtárat és média-összehasonlítást készít; a hallgatási értékelés még hiányos. |
+| 9-5 | `claude-quickstarts/computer-use-demo/` | 📖 | Az Anthropic hivatalos Computer Use demója konténerizált Ubuntu asztalon. |
+| 9-6 | `browser-use/` | 📖 | Vizuális böngésző-automatizálás művelet- és képernyőkép-nyomvonalakkal. |
+| 9-7 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | Valós XLeRobot távvezérlése ugyanazon asztalrendezési feladathoz: a piros csésze a tálcába, a sárga papír a hulladékgyűjtőbe kerül, majd az állapotot újra megfigyeljük és ellenőrizzük. |
+| 9-8 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Ugyanennek a feladatnak az ideális vezérlési felső határa szimulátorban; ez nem jelenti a valódi robot futtatását. |
+| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | A Gemini Robotics-ER 1.5 önállóan vezérli a valós XLeRobotot ugyanazon asztalrendezési feladaton. |
+| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Nyílt hurkú, lépésenként ellenőrző és prediktív zárt hurkú stratégia összehasonlítása szimulátorban. |
+| 9-11 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | RGB-környezetközi teszt ugyanazon feladaton, eltérő háttérrel, tárgymegjelenéssel, megvilágítással és zajjal. |
 
 ## Projekttípusok
 

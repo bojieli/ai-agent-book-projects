@@ -1,4 +1,6 @@
-# 实验 9-4：本地运行 MiniCPM-o 4.5 端到端全模态语音
+# 实验 9-3：本地运行 MiniCPM-o 4.5 端到端全模态语音
+
+> 重编号说明：已有 canonical 运行目录继续使用历史标识 `exp9-4-*`，以保持证据链接和哈希不变。
 
 本实验属于正文的“**范式二 · 端到端全模态模型（Omni）**”，不属于后文的“边想边说”方案。它用同一个开放权重模型 MiniCPM-o 4.5 比较两条路径：
 
@@ -78,4 +80,4 @@ python demo.py --help
 
 ## English
 
-Experiment 9-4 now belongs to Paradigm 2, end-to-end omni models. It runs the pinned MiniCPM-o 4.5 checkpoint locally and compares native audio-to-answer inference against a self-cascade that first flattens the same audio to text. A separate audio-output arm retains a real 24kHz waveform. Thinking is deliberately disabled; this experiment makes no MPS or “thinking while speaking” claim.
+Experiment 9-3 belongs to Paradigm 2, end-to-end omni models. Historical canonical paths retain the `exp9-4-*` identifier. It runs the pinned MiniCPM-o 4.5 checkpoint locally and compares native audio-to-answer inference against a self-cascade that first flattens the same audio to text. A separate audio-output arm retains a real 24kHz waveform. Thinking is deliberately disabled; this experiment makes no MPS or “thinking while speaking” claim.

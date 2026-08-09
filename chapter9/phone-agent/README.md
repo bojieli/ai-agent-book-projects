@@ -1,4 +1,4 @@
-# 实验 9-2：完整音频链路的 WebRTC 电话 Agent
+# 附加项目（原实验 9-2）：完整音频链路的 WebRTC 电话 Agent
 
 本实验把“呼叫用户”实现为用户主动加入的本地浏览器 WebRTC 通话，不要求 PSTN、E.164 号码、电话运营商账户或公网 webhook。浏览器授权麦克风后向本地 `aiortc` peer 发送音频 RTP；服务端把实际收到的音频重采样并交给 Whisper ASR，把 ASR transcript 交给真实外部 LLM，再把 Agent 回复通过系统 TTS 合成为 PCM，送进 WebRTC 下行音轨。data channel 只传“音频提交”控制事件及 ASR/TTS 的无障碍字幕镜像，不提供用户语义。
 
@@ -71,6 +71,6 @@ node --check static/app.js
 
 ## English
 
-Experiment 9-2 calls a consenting participant in a local browser rather than dialing the PSTN. Browser microphone audio is sent over RTP to aiortc, buffered and transcribed by real local Whisper. Only that ASR transcript enters the real external LLM dialogue. Every Agent utterance is synthesized by a real system TTS engine and queued on the WebRTC downlink audio track; the data channel carries only audio-commit control and accessibility mirrors.
+This add-on project retains its historical Experiment 9-2 run identifiers. It calls a consenting participant in a local browser rather than dialing the PSTN. Browser microphone audio is sent over RTP to aiortc, buffered and transcribed by real local Whisper. Only that ASR transcript enters the real external LLM dialogue. Every Agent utterance is synthesized by a real system TTS engine and queued on the WebRTC downlink audio track; the data channel carries only audio-commit control and accessibility mirrors.
 
 The direct control requires four fixed parameters. The ReAct treatment accepts one incomplete task and requires a no-fallback external planning receipt with the credential-free raw request/response, provider response ID, exact model, usage, finish status, latency, and hashes. The retained safe campaign and standalone validator are in the directory linked above. PSTN and E.164 are intentionally outside this local “call the user” acceptance scope.

@@ -9,15 +9,17 @@
 | 編號 | 專案 | 型別 | 一句話說明 |
 | :--: | --- | :--: | --- |
 | 9-1 | [live-audio](live-audio/) | ✅ | 即時語音聊天，整合 VAD + ASR（Whisper/SenseVoice）+ LLM（GPT-4o/Gemini/Doubao）+ TTS（Fish Audio），WebSocket 低延遲 |
-| 9-2 | [phone-agent](phone-agent/) | 🚧 | 官方 `pine-voice` SDK 的 direct/ReAct 路徑已實作，但未提供獲授權且同意參與的 E.164 目的號碼；預檢明確記錄未撥號、無 transcript，test double 不算驗收。 |
-| 9-3 | [streaming-speech](streaming-speech/) | ✅ | 音訊按遞增長度分塊餵 ASR，每段立刻出文字降首包延遲，對比「整句到齊再識別」的高準確/高延遲 |
-| 9-4 | [end-to-end-speech](end-to-end-speech/) | ✅ | 已在單張 RTX PRO 6000 上真實本機執行固定 revision 的 MiniCPM-o 4.5；端到端與自級聯皆為 3/4，但語義與副語言錯誤互補，並保留真實 24kHz 語音輸出與完整驗收證據。 |
-| 9-5 | [controllable-tts](controllable-tts/) | 🚧 | 真實 Fish Audio S1 4×3×2 參考音庫與 A/B/C 媒體通過結構門禁；仍缺定性聽測與「接近真人客服」評估。 |
-| 9-6 | `claude-quickstarts/computer-use-demo/` | 📖 | 外部 `anthropics/claude-quickstarts` 固定於 `9bcc95e…`；正文對應容器化 Ubuntu 桌面＋Claude agent loop 的 Computer Use demo，不是整個 quickstarts。 |
-| 9-7 | `browser-use/` | 📖 | 外部 `browser-use/browser-use` 固定於 `ec9277c…`；正文用 `use_vision=True` 視覺 CLI 在 Google 查舊金山天氣並保留動作/截圖軌跡。 |
-| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | 外部 XLeRobot 固定於 `3d14695…`，涵蓋鍵盤/Xbox/Joy-Con/VR 遙操作；目前只有源碼與非致動預檢，沒有獲授權四模式真機與取放擦證據。 |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 外部 XLeRobot `3d14695…`＋RoboCrew，精確使用 `gemini-robotics-er-1.5-preview`、角度標註與前進/左轉/右轉工具；尚無獲授權真機導航證據。 |
-| 9-10 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | 外部 `lerobot-sim2real` 固定於 `87d6c1d…` 的五階段 RGB→PPO→SO-100 流程；本機缺 ManiSkill/NVIDIA，亦無獲授權實體機器人執行。 |
+| Add-on | [phone-agent](phone-agent/) | 🚧 | 官方 `pine-voice` SDK 的 direct/ReAct 路徑已實作，但未提供獲授權且同意參與的 E.164 目的號碼；預檢明確記錄未撥號、無 transcript，test double 不算驗收。 |
+| 9-2 | [streaming-speech](streaming-speech/) | ✅ | 音訊按遞增長度分塊餵 ASR，每段立刻出文字降首包延遲，對比「整句到齊再識別」的高準確/高延遲 |
+| 9-3 | [end-to-end-speech](end-to-end-speech/) | ✅ | 已在單張 RTX PRO 6000 上真實本機執行固定 revision 的 MiniCPM-o 4.5；端到端與自級聯皆為 3/4，但語義與副語言錯誤互補，並保留真實 24kHz 語音輸出與完整驗收證據。 |
+| 9-4 | [controllable-tts](controllable-tts/) | 🚧 | 真實 Fish Audio S1 4×3×2 參考音庫與 A/B/C 媒體通過結構門禁；仍缺定性聽測與「接近真人客服」評估。 |
+| 9-5 | `claude-quickstarts/computer-use-demo/` | 📖 | 外部 `anthropics/claude-quickstarts` 固定於 `9bcc95e…`；正文對應容器化 Ubuntu 桌面＋Claude agent loop 的 Computer Use demo，不是整個 quickstarts。 |
+| 9-6 | `browser-use/` | 📖 | 外部 `browser-use/browser-use` 固定於 `ec9277c…`；正文用 `use_vision=True` 視覺 CLI 在 Google 查舊金山天氣並保留動作/截圖軌跡。 |
+| 9-7 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | 真機 XLeRobot 遙操作同一個整理桌面任務：把紅色杯子放入托盤、黃色廢紙放入垃圾盒，最後重新觀察並確認狀態。 |
+| 9-8 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 在模擬器中測量同一桌面任務的理想控制上限；不代表真機已經執行。 |
+| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 使用 Gemini Robotics-ER 1.5 自主控制真機 XLeRobot 完成同一整理桌面任務。 |
+| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 在模擬器中比較同一任務的開環、逐步檢查與預測式閉環策略。 |
+| 9-11 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | 改變背景、物體外觀、光照與視覺雜訊，對同一桌面任務進行 RGB 跨環境測試。 |
 
 ## 專案型別說明
 

@@ -59,8 +59,8 @@ Sách xoay quanh công thức cốt lõi **Agent = LLM + Context + Tools**, mư�
 | 5 | 💻 **Coding Agent và sinh mã** | Mã là "công cụ tạo ra công cụ mới"; Coding Agent cấp sản xuất đầy đủ | [Đọc](../../book-vi/chapter5.vi.md) | [13](../../chapter5/README.vi.md) |
 | 6 | 🎯 **Đánh giá Agent** | Biến biểu hiện thành tín hiệu so sánh được: môi trường, chỉ số, ý nghĩa thống kê, chọn mô hình dựa trên đánh giá | [Đọc](../../book-vi/chapter6.vi.md) | [12](../../chapter6/README.vi.md) |
 | 7 | 🧠 **Hậu huấn luyện mô hình** | Tiền huấn luyện/SFT/RL ba giai đoạn: khi nào SFT, khi nào RL, nội tại hóa gọi công cụ, hiệu quả mẫu | [Đọc](../../book-vi/chapter7.vi.md) | [16](../../chapter7/README.vi.md) |
-| 8 | 🔄 **Tự tiến hóa của Agent** | Trưởng thành không cần sửa trọng số: học từ kinh nghiệm, từ người dùng thành người tạo | [Đọc](../../book-vi/chapter8.vi.md) | [7](../../chapter8/README.vi.md) |
-| 9 | 🎙️ **Đa phương thức và tương tác thời gian thực** | Mở rộng từ văn bản sang giọng nói, GUI, thế giới vật lý: ba mô thức giọng nói, Computer Use, robot | [Đọc](../../book-vi/chapter9.vi.md) | [7](../../chapter9/README.vi.md) |
+| 8 | 🔄 **Tự tiến hóa của Agent** | Trưởng thành không cần sửa trọng số: học từ kinh nghiệm, từ người dùng thành người tạo | [Đọc](../../book-vi/chapter8.vi.md) | [9](../../chapter8/README.vi.md) |
+| 9 | 🎙️ **Đa phương thức và tương tác thời gian thực** | Mở rộng từ văn bản sang giọng nói, GUI, thế giới vật lý: ba mô thức giọng nói, Computer Use, robot | [Đọc](../../book-vi/chapter9.vi.md) | [12](../../chapter9/README.vi.md) |
 | 10 | 🤝 **Cộng tác đa Agent** | Trí tuệ tập thể cao hơn cá thể: khung cộng tác, chia sẻ/cô lập ngữ cảnh, "xã hội Agent" nổi lên | [Đọc](../../book-vi/chapter10.vi.md) | [7](../../chapter10/README.vi.md) |
 
 
@@ -148,9 +148,9 @@ git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/
 # Chương 9 · Tự động hóa trình duyệt & ví dụ Claude
 git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
 git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-8/9-9 shared
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-9; RoboCrew v0.3.1
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-10
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-7/9-9 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-8/9-9; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-11
 
 # Chương 10 · Kiến trúc đa Agent (đã độc lập thành TalkAct) + Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling
