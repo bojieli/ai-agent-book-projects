@@ -27,6 +27,7 @@
 import argparse
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -125,6 +126,49 @@ def verify_isolation(judge: Judge):
     print(f"信息隔离总校验：{'全部通过 ✓✓✓' if ok else '存在失败 ✗'}")
     print("=" * 78)
     return ok
+
+
+def verify_simulator_trace(events):
+    """Validate tool/TTS/ASR transactions before an acceptance report is written.
+
+    The independent validator performs the same check on persisted evidence.  The
+    in-process copy keeps the embedded report honest when a provider returns a
+    partial or reordered trace (for example, an ASR from a later turn).
+    """
+    tools = [e for e in events if isinstance(e, dict) and e.get("type") == "simulator_llm_tool"]
+    asr_count = sum(isinstance(e, dict) and e.get("type") == "simulator_asr" for e in events)
+    if not tools or asr_count != len(tools):
+        return False
+    seen_ids = set()
+    for index, tool in ((i, e) for i, e in enumerate(events)
+                        if isinstance(e, dict) and e.get("type") == "simulator_llm_tool"):
+        transaction = []
+        for item in events[index + 1:]:
+            if isinstance(item, dict) and item.get("type") == "simulator_llm_tool":
+                break
+            if isinstance(item, dict):
+                transaction.append(item)
+        seat = tool.get("seat")
+        tts = next((e for e in transaction if e.get("type") == "tts_ready"
+                    and e.get("speaker") == seat), None)
+        asr = next((e for e in transaction if e.get("type") == "simulator_asr"), None)
+        if tts is None or asr is None:
+            return False
+        if transaction.index(tts) > transaction.index(asr):
+            return False
+        audio_hash = tts.get("audio_sha256")
+        audio_bytes = tts.get("audio_bytes")
+        if (not isinstance(audio_hash, str) or not re.fullmatch(r"[0-9a-f]{64}", audio_hash)
+                or not isinstance(audio_bytes, int) or audio_bytes <= 0
+                or audio_hash != asr.get("source_audio_sha256")):
+            return False
+        request_id = asr.get("request_id")
+        tool_id = tool.get("response_id")
+        if not request_id or not tool_id or request_id in seen_ids or tool_id in seen_ids:
+            return False
+        seen_ids.update((request_id, tool_id))
+    return not any(isinstance(e, dict) and e.get("type") == "simulator_action_mismatch"
+                   for e in events)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -251,7 +295,22 @@ def run_game(args):
     strategy = None
     if not args.offline:
         from werewolf.strategy_audit import evaluate_strategy
-        strategy = evaluate_strategy(judge)
+        try:
+            strategy = evaluate_strategy(judge)
+        except Exception as exc:
+            # Preserve the completed game and its evidence even when every
+            # post-game judge endpoint is unavailable.  A missing audit is a hard
+            # acceptance failure, never a reason to discard the report or infer a
+            # pass from the model's absence.
+            strategy = {
+                "schema_valid": False,
+                "overall_pass": False,
+                "validation_errors": ["strategy audit unavailable"],
+                "error_type": type(exc).__name__,
+                "error": str(exc)[:500],
+                "judge_attempts": getattr(exc, "judge_attempts", []),
+            }
+            print(f"[策略审计] 未完成：{type(exc).__name__}")
 
     role_counts = {role.value: sum(1 for p in players if p.role == role) for role in Role}
     human_players = [p.name for p in players if getattr(p, "is_human", False)]
@@ -270,11 +329,36 @@ def run_game(args):
         e["type"] == "simulator_llm_tool" for e in voice_events
     )
     simulator_audio_roundtrips = sum(e["type"] == "simulator_asr" for e in voice_events)
+    simulator_receipt_events = [
+        e for e in voice_events if e.get("type") in {"simulator_llm_tool", "simulator_asr"}
+    ]
+    simulator_receipt_ids = [
+        e.get("response_id") or e.get("request_id") for e in simulator_receipt_events
+    ]
+    simulator_unique_receipts = bool(simulator_receipt_ids) and all(simulator_receipt_ids) \
+        and len(simulator_receipt_ids) == len(set(simulator_receipt_ids))
+    simulator_audio_receipts = [
+        e.get("usage", {}).get("prompt_tokens_details", {}).get("audio_tokens", 0)
+        for e in voice_events if e.get("type") == "simulator_asr"
+    ]
+    simulator_asr_events = [e for e in voice_events if e.get("type") == "simulator_asr"]
+    audio_token_receipt_required = any(
+        "OpenRouter" in str(e.get("provider", "")) for e in simulator_asr_events
+    )
+    simulator_nonzero_audio_receipts = (not audio_token_receipt_required) or (
+        bool(simulator_audio_receipts) and all(
+        isinstance(value, (int, float)) and value > 0 for value in simulator_audio_receipts
+        )
+    )
+    simulator_trace_integrity = verify_simulator_trace(voice_events) if simulated_user else False
     simulator_boundary_ok = bool(
         not simulated_user
         or (
             simulator_tool_calls > 0
-            and simulator_audio_roundtrips > 0
+            and simulator_tool_calls == simulator_audio_roundtrips
+            and simulator_unique_receipts
+            and simulator_nonzero_audio_receipts
+            and simulator_trace_integrity
             and not any(e["type"] == "simulator_action_mismatch" for e in voice_events)
         )
     )
@@ -326,7 +410,15 @@ def run_game(args):
             "one_llm_user_simulator": {"status": "pass" if simulated_user and len(simulated_user_players) == 1 else "not_applicable" if live_human else "not_run" if not simulated_user else "fail"},
             "real_user_input_asr": {"status": "pass" if voice_has_asr else "not_run" if not end_to_end else "fail"},
             "real_ai_and_judge_tts": {"status": "pass" if voice_has_tts else "not_run" if not end_to_end else "fail"},
-            "llm_tool_to_audio_to_asr_boundary": {"status": "pass" if simulated_user and simulator_boundary_ok else "not_applicable" if live_human else "not_run" if not simulated_user else "fail", "tool_calls": simulator_tool_calls, "audio_roundtrips": simulator_audio_roundtrips},
+            "llm_tool_to_audio_to_asr_boundary": {
+                "status": "pass" if simulated_user and simulator_boundary_ok else "not_applicable" if live_human else "not_run" if not simulated_user else "fail",
+                "tool_calls": simulator_tool_calls,
+                "audio_roundtrips": simulator_audio_roundtrips,
+                "unique_provider_receipts": simulator_unique_receipts,
+                "audio_token_receipt_required": audio_token_receipt_required,
+                "nonzero_audio_token_receipts": simulator_nonzero_audio_receipts,
+                "transaction_integrity": simulator_trace_integrity,
+            },
             "three_complete_cycles": {"status": "pass" if judge.completed_rounds >= 3 else "fail" if end_to_end else "supplemental_only", "observed": judge.completed_rounds},
             "information_isolation": {"status": "pass" if isolation_ok else "fail"},
             "real_llm_strategy_acceptance": {"status": "pass" if strategy_pass else "not_run" if args.offline else "fail"},

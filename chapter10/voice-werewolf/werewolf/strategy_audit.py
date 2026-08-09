@@ -16,8 +16,23 @@ VALID_STATUSES = {"pass", "fail", "insufficient"}
 
 
 def validate_strategy_result(result):
-    """Turn a model grade into a strict, machine-checkable acceptance record."""
+    """Turn a model grade into a strict, machine-checkable acceptance record.
+
+    This function is deliberately fail-closed.  Provider SDKs occasionally return
+    ``None`` or a scalar when a JSON-mode response is truncated; attempting to
+    mutate those values used to raise an incidental ``AttributeError`` and abort
+    report generation.  Returning a normal, serialisable rejection keeps the
+    acceptance pipeline auditable and prevents malformed model output from being
+    mistaken for a passing grade.
+    """
     errors = []
+    if not isinstance(result, dict):
+        return {
+            "model_overall_pass_claim": None,
+            "schema_valid": False,
+            "validation_errors": ["strategy result must be a JSON object"],
+            "overall_pass": False,
+        }
     criteria = result.get("criteria")
     if not isinstance(criteria, dict):
         criteria = {}
