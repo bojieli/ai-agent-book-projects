@@ -138,12 +138,9 @@ class DuplexInterruptionManager:
                 elif raw_arr.dtype == np.int16:
                     arr = raw_arr.astype(np.float32) / 32768.0
                 else:
-                    max_abs = float(np.max(np.abs(raw_arr))) if raw_arr.size > 0 else 1.0
-                    if max_abs > 1.0:
-                        scale = 32768.0 if max_abs <= 32768.0 else max_abs
-                        arr = raw_arr.astype(np.float32) / scale
-                    else:
-                        arr = raw_arr.astype(np.float32)
+                    max_abs = float(np.max(np.abs(raw_arr))) if raw_arr.size > 0 else 0.0
+                    scale = 32768.0 if max_abs <= 32768.0 else max_abs
+                    arr = raw_arr.astype(np.float32) / scale
             else:
                 arr = raw_arr.astype(np.float32)
                 max_abs = float(np.max(np.abs(arr))) if arr.size > 0 else 0.0
@@ -161,12 +158,9 @@ class DuplexInterruptionManager:
                 elif audio_data.dtype == np.int16:
                     arr = audio_data.astype(np.float32) / 32768.0
                 else:
-                    max_abs = float(np.max(np.abs(audio_data))) if audio_data.size > 0 else 1.0
-                    if max_abs > 1.0:
-                        scale = 32768.0 if max_abs <= 32768.0 else max_abs
-                        arr = audio_data.astype(np.float32) / scale
-                    else:
-                        arr = audio_data.astype(np.float32)
+                    max_abs = float(np.max(np.abs(audio_data))) if audio_data.size > 0 else 0.0
+                    scale = 32768.0 if max_abs <= 32768.0 else max_abs
+                    arr = audio_data.astype(np.float32) / scale
             else:
                 arr = audio_data.astype(np.float32)
                 max_abs = float(np.max(np.abs(arr))) if arr.size > 0 else 0.0

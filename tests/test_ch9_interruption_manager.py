@@ -40,6 +40,12 @@ def test_calculate_energy_silence_vs_speech():
     speech_bytes = (np.random.randint(-10000, 10000, 320, dtype=np.int16)).tobytes()
     assert manager.calculate_energy(speech_bytes) > 0.05
 
+def test_calculate_energy_low_amplitude_int_list():
+    """Verify low-amplitude integer lists do not produce false high energy values."""
+    manager = DuplexInterruptionManager(vad_threshold=0.02)
+    quiet_int_list = [0, 1, -1, 0, 1, 0]
+    energy = manager.calculate_energy(quiet_int_list)
+    assert energy < 0.01
 
 def test_process_audio_chunk_inactive_playback():
     """Verify process_audio_chunk does not trigger barge-in when TTS playback is inactive."""
