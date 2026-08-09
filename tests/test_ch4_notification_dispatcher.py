@@ -344,3 +344,48 @@ async def test_enum_fallback_action_normalization():
     trace = await dispatcher.dispatch_and_wait(request, timeout=0.05)
     assert trace.fallback_action == "escalate"
     assert trace.status == "escalated"
+def test_custom_channel_handler_returns_false():
+    """Test that a custom channel returning boolean False is marked as success=False."""
+    dispatcher = NotificationDispatcher()
+
+    def false_handler(msg, ctx):
+        return False
+
+    dispatcher.register_channel_handler("webhook_custom", false_handler)
+    res = asyncio.run(dispatcher.dispatch_notification("webhook_custom", "Test message"))
+
+    assert res["success"] is False
+    assert res["channel"] == "webhook_custom"
+    assert res["result"] is False
+
+
+@pytest.mark.asyncio
+async def test_submit_decision_non_boolean_approved():
+    """Test submit_decision with non-boolean approved argument preserves custom decision string."""
+    dispatcher = NotificationDispatcher()
+    req_id = "req_non_bool"
+    request = DecisionRequest(request_id=req_id, message="Non-bool test")
+
+    task = asyncio.create_task(dispatcher.dispatch_and_wait(request, timeout=2.0))
+    await asyncio.sleep(0.05)
+
+    submitted = dispatcher.submit_decision(req_id, approved="custom_approved_status")
+    assert submitted is True
+
+    trace = await task
+    assert trace.fallback_triggered is False
+    assert trace.status == "custom_approved_status"
+    assert trace.decision == "custom_approved_status"
+    assert trace.approved is True
+
+
+@pytest.mark.asyncio
+async def test_enum_string_fallback_action_normalization():
+    """Test that string representation of Enum like 'FallbackAction.AUTO_APPROVE' normalizes correctly."""
+    dispatcher = NotificationDispatcher(fallback_action="FallbackAction.AUTO_APPROVE")
+    assert dispatcher.fallback_action == "auto-approve"
+
+    request = DecisionRequest(message="Enum string test", fallback_action="FallbackAction.ESCALATE")
+    trace = await dispatcher.dispatch_and_wait(request, timeout=0.05)
+    assert trace.fallback_action == "escalate"
+    assert trace.status == "escalated"

@@ -122,10 +122,12 @@ class NotificationDispatcher:
 
     def _normalize_fallback(self, action: Union[str, Enum]) -> str:
         raw = action.value if isinstance(action, Enum) else str(action)
+        if "." in raw:
+            raw = raw.split(".")[-1]
         act = raw.lower().replace("_", "-")
-        if act in ("auto-approve", "approve"):
+        if act in ("auto-approve", "approve", "autoapprove"):
             return FallbackAction.AUTO_APPROVE.value
-        elif act in ("auto-reject", "reject"):
+        elif act in ("auto-reject", "reject", "autoreject"):
             return FallbackAction.AUTO_REJECT.value
         elif act in ("escalate", "escalation"):
             return FallbackAction.ESCALATE.value
@@ -180,7 +182,12 @@ class NotificationDispatcher:
                 res = self._custom_handlers[ch](message, ctx)
                 if asyncio.iscoroutine(res):
                     res = await res
-                success = res.get("success", True) if isinstance(res, dict) else True
+                if isinstance(res, bool):
+                    success = res
+                elif isinstance(res, dict):
+                    success = bool(res.get("success", True))
+                else:
+                    success = True
                 return {"channel": ch, "success": success, "result": res}
             except Exception as e:
                 logger.error(f"Error in custom channel handler '{ch}': {e}")
@@ -214,7 +221,7 @@ class NotificationDispatcher:
     def submit_decision(
         self,
         request_id: str,
-        approved: bool,
+        approved: Any,
         notes: Optional[str] = None,
         decision: Optional[str] = None,
     ) -> bool:
@@ -226,9 +233,16 @@ class NotificationDispatcher:
         if req["status"] != "pending":
             return False
 
-        dec_str = decision or ("approved" if approved else "rejected")
+        if not isinstance(approved, bool):
+            if decision is None:
+                decision = str(approved)
+            approved_bool = bool(approved)
+        else:
+            approved_bool = approved
+
+        dec_str = decision or ("approved" if approved_bool else "rejected")
         req["status"] = dec_str
-        req["approved"] = approved
+        req["approved"] = approved_bool
         req["decision"] = dec_str
         req["notes"] = notes
         req["resolved_at"] = datetime.now(timezone.utc).isoformat()
