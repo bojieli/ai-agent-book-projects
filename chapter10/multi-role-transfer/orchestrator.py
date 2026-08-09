@@ -52,6 +52,7 @@ class MultiRoleOrchestrator:
         client: OpenAI,
         model: str = "gpt-5.6-luna",
         max_steps: int = 20,
+        max_output_tokens: Optional[int] = None,
         verbose: bool = True,
         start_role: str = DEFAULT_ROLE,
         provider_receipt_sink: Optional[Callable[[dict], None]] = None,
@@ -62,6 +63,7 @@ class MultiRoleOrchestrator:
         self.client = client
         self.model = model
         self.max_steps = max_steps
+        self.max_output_tokens = max_output_tokens
         self.verbose = verbose
 
         self.history: List[dict] = []          # 共享对话历史（不含 system）
@@ -118,6 +120,8 @@ class MultiRoleOrchestrator:
             tools=self._tools_for_current_role(),
             temperature=0,
         )
+        if self.max_output_tokens is not None:
+            kwargs["max_tokens"] = self.max_output_tokens
         started = time.monotonic()
         try:
             response = self.client.chat.completions.create(**kwargs)

@@ -8,7 +8,7 @@
 
 | 编号 | 项目 | 类型 | 一句话说明 |
 | :--: | --- | :--: | --- |
-| 10-1 | [multi-role-transfer](multi-role-transfer/) | 🚧 | 共享上下文下对比两种多角色实现：`transfer_to_agent` 动态切换系统提示词 vs `load_skill` 渐进式加载 Skill；配套第六章方法记录成本、实际效果和边界指令遵循。旧的 Kimi K2.5 + Tavily `transfer_to_agent` 验收证据仍作为路径一历史基线保留 |
+| 10-1 | [multi-role-transfer](multi-role-transfer/) | ✅ | [正式 v2 对照](multi-role-transfer/validation/comparison/runs/exp10-1-qwen35flash-20260809-v2/REPORT.md)完成 30 对任务、12 条边界轨迹、289 份模型回执、31 份 Tavily 回执和 60 次异源盲测；修复 Skill 路径首步跳过 Skill 的 Harness 策略门后，Skill 确定性通过率 15/30、Transfer 2/30，结论与成本/延迟权衡均已由 manifest 固定 |
 | 10-2 | [book-translation](book-translation/) | ✅ | [正式 ARK v4](book-translation/validation/real_20260730T061500Z_v4/evidence.json)在英文版第 1–2 章的 242,090 字节、23 图、14 代码块上完成 26 单元双臂对照：12/12 门禁、39 份原始裁判回执和 37 个溯源 hash 均通过；Manager 上下文缩小 20.43×、token 减少 6.48×且匿名质量 4.654 > 4.481，但慢 6.57%，宽泛术语一致率与 Markdown 精确保真也出现明确负结果 |
 | 10-3 | [autonomous-phone-registration](autonomous-phone-registration/)；固定并发的 [TalkAct 复现记录](talkact-reproduction/) | ✅ / 📖 | 主路径的 [WebRTC raw-v4](autonomous-phone-registration/validation/runs/exp10-5-webrtc-raw-20260731-v4/manifest.json)用真实 ARK 自主工具调用、Playwright、双向 RTP、本机 TTS/Whisper ASR 和一次 localhost 提交跑通 6 字段注册，9/9 行为门禁通过；固定拓扑基线的 [Anthropic-caller 运行](talkact-reproduction/validation/runs/exp10-4-talkact-anthropic-caller-20260803-v2/acceptance.json)保留 16/16 局并通过 17/17 门禁。两类证据分别验证自主启动与并行协作，不合并统计 |
 | 10-4 | [parallel-web-research](parallel-web-research/) | ✅ | [同一次真实验收运行](parallel-web-research/validation/runs/exp10-6-real-receipts-20260730-v2/manifest.json)覆盖 10 站点串并行与 4 会话级联：12/12 门禁通过、实测加速 1.872×、24 份完整浏览器观测、3 份带 response ID/usage 的 ARK 原始响应和 114 条总线事件均由运行时 manifest 绑定；7 个实际源码/输入 hash 与全部 artifact hash 已复核一致，凭据扫描为零 |
