@@ -182,12 +182,15 @@ class ContextCompressionBenchmark:
             query = ""
         if expected is None:
             expected = ""
-        # Determine key target tokens to evaluate (answer only; query is fallback if answer not provided)
-        target_text = expected.strip() or query.strip()
+        # Only score against the expected answer, not the query.
+        # Using query words as fallback inflates scores because the question
+        # text often survives compression even when the answer is deleted.
+        target_text = expected.strip()
         target_tokens = set(re.findall(r'\w+', target_text.lower()))
         
         if not target_tokens:
-            return 1.0 if len(compressed_text) > 0 else 0.0
+            # No expected answer to check against: cannot evaluate retention.
+            return 0.0
             
         compressed_tokens = set(re.findall(r'\w+', compressed_text.lower()))
         matched = target_tokens.intersection(compressed_tokens)
@@ -211,7 +214,9 @@ class ContextCompressionBenchmark:
         start_time = time.perf_counter()
 
         for idx, ctx in enumerate(contexts):
-            task = (tasks[idx % len(tasks)] if tasks else "") or ""
+            task = tasks[idx % len(tasks)] if tasks else ""
+            if task is None:
+                task = ""
             query = task if isinstance(task, str) else (task.get("query", "") if isinstance(task, dict) else "")
             query = query or ""
             orig_tokens = count_tokens(ctx)
@@ -231,8 +236,12 @@ class ContextCompressionBenchmark:
         avg_comp_tokens = total_comp_tokens / max(1, sample_count)
         avg_retention_acc = total_retention_acc / max(1, sample_count)
 
-        ratio = avg_comp_tokens / max(1.0, avg_orig_tokens)
-        savings = max(0.0, 1.0 - ratio)
+        if avg_orig_tokens == 0:
+            ratio = 0.0
+            savings = 0.0
+        else:
+            ratio = avg_comp_tokens / avg_orig_tokens
+            savings = max(0.0, 1.0 - ratio)
 
         # Simulate TTFT: Base TTFT + processing time + prefill latency based on compressed tokens
         simulated_ttft = self.base_ttft_ms + (avg_comp_tokens * self.per_token_ttft_ms) + (elapsed_ms / max(1, sample_count))
@@ -276,11 +285,12 @@ class ContextCompressionBenchmark:
                 normalized_contexts.append(c)
             elif isinstance(c, dict):
                 content = c.get("content")
-                if content is not None:
-                    normalized_contexts.append(content)
-                else:
-                    text = c.get("text")
-                    normalized_contexts.append(text if text is not None else str(c))
+                if content is None:
+                    content = c.get("text")
+                # Use the extracted content, or empty string if none found.
+                # Falling back to str(c) would treat the raw dict repr as
+                # context text, producing nonsensical benchmark metrics.
+                normalized_contexts.append(content if content is not None else "")
             else:
                 normalized_contexts.append(str(c))
 

@@ -145,3 +145,54 @@ def test_dict_empty_content_and_none_task():
     result = run_benchmark([{"content": ""}], [None])
     assert "summary" in result
     assert result["summary"]["display_name"] == "Summary"
+
+
+def test_retention_does_not_count_query_words():
+    """Regression: evaluate_retention must only check expected_answer, not query fallback.
+    Old code used query words when no expected_answer was given, inflating scores
+    for compressed text that retained the question but deleted the answer.
+    """
+    benchmark = ContextCompressionBenchmark()
+    compressed = "What is the capital of France?"
+    # Task with query but no expected_answer: should score 0, not match query words
+    assert benchmark.evaluate_retention(compressed, {"query": "What is the capital of France?"}) == 0.0
+
+
+def test_retention_uses_expected_answer_only():
+    """Regression: retention scoring uses expected_answer words, not query words."""
+    benchmark = ContextCompressionBenchmark()
+    compressed = "Paris is the capital of France."
+    task = {"query": "What is the capital of France?", "expected_answer": "Paris"}
+    score = benchmark.evaluate_retention(compressed, task)
+    assert score == 1.0
+
+    # Compressed text that has query words but not the answer should score 0
+    compressed_no_answer = "What is the capital of France?"
+    score_no_answer = benchmark.evaluate_retention(compressed_no_answer, task)
+    assert score_no_answer == 0.0
+
+
+def test_empty_context_zero_savings_not_100_percent():
+    """Regression: empty context must report 0% savings, not 100%.
+    Old code computed savings = 1.0 - (0 / max(1.0, 0)) = 1.0 - 0 = 1.0.
+    """
+    result = run_benchmark([""], [{"query": "test", "expected_answer": "answer"}])
+    for strategy in result:
+        assert result[strategy]["token_cost_savings"] == 0.0
+
+
+def test_dict_context_empty_content_not_stringified():
+    """Regression: dict context with empty content must not be stringified to '{}'.
+    Old code fell back to str(c), treating the raw dict repr as context text.
+    """
+    result = run_benchmark([{"content": ""}], [{"query": "test", "expected_answer": "answer"}])
+    for strategy in result:
+        assert result[strategy]["original_tokens"] == 0
+
+
+def test_none_task_does_not_crash():
+    """Regression: None entries in tasks list must not crash the benchmark.
+    Old code used `task = ... or ""` which doesn't handle None properly.
+    """
+    result = run_benchmark(["Some context text here."], [None])
+    assert "summary" in result
