@@ -121,3 +121,16 @@ def test_compile_evidence_package_sample_size():
     raw_records = [{"id": i, "target_rate": 10} for i in range(250)]
     evidence = bench.compile_evidence_package(raw_records, sample_size=100)
     assert len(evidence) == 100
+
+    assert bench.compile_evidence_package(raw_records, sample_size=0) == []
+
+
+def test_calculate_backoff_curves_missing_fields():
+    bench = RateRampBenchmark()
+    sparse_records = [
+        {"backoff_sec": 1.5},
+        {"status_code": 429, "backoff_sec": 0.5},
+    ]
+    res = bench.calculate_backoff_curves(sparse_records)
+    assert res["total_429_count"] == 1
+    assert res["overall_avg_backoff_sec"] == 2.0
