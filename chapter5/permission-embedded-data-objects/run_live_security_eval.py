@@ -270,20 +270,22 @@ class PEDOSecurityEvaluator:
 
         if obj is None:
             # Create dummy object matching scenario specs
+            default_org = accessor.org_id if accessor else "other_org"
+            default_owner = accessor.user_id if (accessor and accessor.is_owner) else "other_user"
             obj = DataObject(
                 type_name=scenario.object_type,
-                owner_id=scenario.query_params.get("owner_id", "other_user")
+                owner_id=scenario.query_params.get("owner_id", default_owner)
                 if scenario.query_params
-                else "other_user",
-                org_id=scenario.query_params.get("org_id", "other_org")
+                else default_owner,
+                org_id=scenario.query_params.get("org_id", default_org)
                 if scenario.query_params
-                else "other_org",
+                else default_org,
             )
 
-        # Check org boundary if specified
-        org_matched = True
+        # Check org boundary: accessor org must match object org and query org (if specified)
+        org_matched = (accessor.org_id == obj.org_id)
         if scenario.query_params and "org_id" in scenario.query_params:
-            org_matched = accessor.org_id == scenario.query_params["org_id"]
+            org_matched = org_matched and (accessor.org_id == scenario.query_params["org_id"])
 
         is_owner_matched = True
         if accessor.is_owner:
@@ -325,12 +327,26 @@ class PEDOSecurityEvaluator:
 
         allowed_fields = set(role_visibility_rules.get(accessor.role, []))
 
-        for field_name in requested_fields:
-            if field_name in allowed_fields:
-                visible_fields.append(field_name)
+        if scenario.agent_query_or_code:
+            if callable(scenario.agent_query_or_code):
+                try:
+                    res = scenario.agent_query_or_code(scenario)
+                    if isinstance(res, (list, tuple, set)):
+                        visible_fields = list(res)
+                    elif isinstance(res, dict):
+                        visible_fields = list(res.keys())
+                    else:
+                        visible_fields = [f for f in requested_fields if f in allowed_fields]
+                except Exception:
+                    visible_fields = [f for f in requested_fields if f in allowed_fields]
+            elif isinstance(scenario.agent_query_or_code, str):
+                visible_fields = list(requested_fields)
             else:
-                masked_or_hidden.append(field_name)
+                visible_fields = [f for f in requested_fields if f in allowed_fields]
+        else:
+            visible_fields = [f for f in requested_fields if f in allowed_fields]
 
+        masked_or_hidden = [f for f in requested_fields if f not in visible_fields]
         leaked_fields = [
             f for f in visible_fields if f in sensitive_fields and f not in allowed_fields
         ]

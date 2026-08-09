@@ -178,3 +178,42 @@ def test_evaluate_security_policies_custom_dicts():
     assert metrics.passed_scenarios == 1
     assert metrics.overall_security_score == 1.0
     assert metrics["total_scenarios"] == 1
+
+
+def test_rls_cross_org_no_query_params_enforced():
+    """Regression test: verify cross-tenant read is denied even without query_params."""
+    evaluator = PEDOSecurityEvaluator()
+    target = DataObject(type_name="candidate", owner_id="u_other", org_id="org_b")
+    sc = SecurityScenario(
+        scenario_id="test_cross_org_01",
+        name="Cross-Tenant Check",
+        description="User in org_a tries to read object in org_b without query_params",
+        accessor=AccessContext(user_id="u_user", role="recruiter", org_id="org_a"),
+        object_type="candidate",
+        operation_type="read",
+        target_object=target,
+        expected_allowed=False,
+    )
+    res = evaluator.evaluate_row_level_security(sc)
+    assert res["allowed"] is False
+    assert res["passed"] is True
+
+
+def test_field_visibility_leakage_detected():
+    """Regression test: verify sensitive field leakage is detected when query returns forbidden sensitive fields."""
+    evaluator = PEDOSecurityEvaluator()
+    sc = SecurityScenario(
+        scenario_id="test_leak_01",
+        name="Leakage Detection Check",
+        description="Query function returns sensitive fields for interviewer",
+        accessor=AccessContext(user_id="u_int", role="interviewer", org_id="org_a"),
+        object_type="candidate",
+        operation_type="read",
+        requested_fields=["name", "salary_expectation", "ssn"],
+        hidden_or_sensitive_fields=["salary_expectation", "ssn"],
+        agent_query_or_code=lambda scenario: ["name", "salary_expectation"],
+        expected_visible_fields=["name"],
+    )
+    res = evaluator.evaluate_field_visibility(sc)
+    assert res["unauthorized_leakage"] is True
+    assert "salary_expectation" in res["leaked_fields"]
