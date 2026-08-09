@@ -236,6 +236,18 @@ def test_custom_quality_evaluator_nan_returns_zero():
     engine = DownstreamAblationEngine(quality_evaluator=lambda code: float("nan"))
     assert engine.evaluate_code_quality("code") == 0.0
 
+def test_custom_quality_evaluator_exception_returns_zero():
+    """Regression test: custom quality evaluator raising an exception returns 0.0, not built-in score.
+
+    Closes the class where a crashed custom scorer silently falls back to the built-in
+    AST scorer, producing a misleadingly high quality score. The fix returns 0.0 so the
+    failure is visible in the report.
+    """
+    engine = DownstreamAblationEngine(quality_evaluator=lambda code: (_ for _ in ()).throw(RuntimeError("boom")))
+    # "code" is valid Python (a Name expression) so the built-in scorer would give ~70.0;
+    # the fix must return 0.0 instead.
+    assert engine.evaluate_code_quality("code") == 0.0
+
 def test_net_improvement_count_and_rate():
     """Regression test: net_improvement_count tracks tasks where baseline failed and evolved passed."""
     engine = DownstreamAblationEngine()
@@ -258,3 +270,48 @@ def test_net_improvement_count_and_rate():
     report = engine.run_ablation_campaign(baseline_agent, evolved_agent, [task])
     assert report.net_improvement_count == 1
     assert report.net_improvement_rate == 1.0
+
+def test_net_improvement_count_and_rate_consistency():
+    """Regression test: net_improvement_count and net_improvement_rate use the same basis.
+
+    Closes the class where net_improvement_count counted only improvements while
+    net_improvement_rate subtracted regressions from the numerator, making the count
+    and rate disagree. Both must now be net (improvements - regressions) so that
+    rate == count / total_tasks.
+    """
+    engine = DownstreamAblationEngine()
+
+    def baseline_agent(inp):
+        # Fails task "imp" (returns wrong), passes task "reg" (returns right)
+        return "wrong" if inp == "imp" else "right"
+
+    def evolved_agent(inp):
+        # Passes task "imp" (returns right), fails task "reg" (returns wrong)
+        return "right" if inp == "imp" else "wrong"
+
+    tasks = [
+        AblationTask(
+            task_id="imp",
+            name="Improvement Task",
+            description="Baseline fails, evolved passes",
+            category="improvement",
+            input_data="imp",
+            expected_output="right",
+        ),
+        AblationTask(
+            task_id="reg",
+            name="Regression Task",
+            description="Baseline passes, evolved fails",
+            category="regression",
+            input_data="reg",
+            expected_output="right",
+        ),
+    ]
+
+    report = engine.run_ablation_campaign(baseline_agent, evolved_agent, tasks)
+    # 1 improvement, 1 regression → net = 0
+    assert report.net_improvement_count == 0
+    assert report.net_improvement_rate == 0.0
+    # Consistency invariant: rate must equal count / total_tasks
+    expected_rate = round(report.net_improvement_count / report.total_tasks, 4)
+    assert report.net_improvement_rate == expected_rate

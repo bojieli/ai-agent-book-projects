@@ -95,6 +95,7 @@ class DownstreamAblationEngine:
                 return max(0.0, min(100.0, raw_score))
             except Exception as e:
                 logger.warning("Custom quality evaluator execution failed: %s", e)
+                return 0.0
 
         if not isinstance(code_or_output, str):
             code_str = str(code_or_output)
@@ -346,8 +347,9 @@ class DownstreamAblationEngine:
             )
 
         regression_rate = round(regressions / b_passed, 4) if b_passed > 0 else 0.0
+        net_improvement_count = net_improvements - regressions
         net_improvement_rate = (
-            round((net_improvements - regressions) / total_tasks, 4)
+            round(net_improvement_count / total_tasks, 4)
             if total_tasks > 0
             else 0.0
         )
@@ -379,7 +381,7 @@ class DownstreamAblationEngine:
             regression_count=regressions,
             regression_rate=regression_rate,
             net_improvement_rate=net_improvement_rate,
-            net_improvement_count=net_improvements,
+            net_improvement_count=net_improvement_count,
             category_breakdown=category_data,
             statistical_metrics=statistical_metrics,
             detailed_results=detailed_results,
