@@ -89,6 +89,8 @@ class DownstreamAblationEngine:
         if self.custom_quality_evaluator is not None:
             try:
                 raw_score = float(self.custom_quality_evaluator(code_or_output))
+                if math.isnan(raw_score):
+                    return 0.0
                 return max(0.0, min(100.0, raw_score))
             except Exception:
                 pass
@@ -201,7 +203,10 @@ class DownstreamAblationEngine:
         """Runs an agent on a single task and returns TaskResult."""
         output, latency_sec, error = self.execute_agent(agent, task)
         passed = self.verify_output(output, task, error)
-        quality_score = self.evaluate_code_quality(output if output is not None else (error or ""))
+        if error is not None or output is None:
+            quality_score = 0.0
+        else:
+            quality_score = self.evaluate_code_quality(output)
         return TaskResult(
             task_id=task.task_id,
             agent_type=agent_type,
@@ -245,6 +250,7 @@ class DownstreamAblationEngine:
                         )
                     )
                 else:
+                    logger.warning("Invalid task item: %s", t)
                     raise ValueError(f"Task item must be an AblationTask instance or dict, got: {type(t)}")
         total_tasks = len(task_objs)
         baseline_results: list[TaskResult] = []

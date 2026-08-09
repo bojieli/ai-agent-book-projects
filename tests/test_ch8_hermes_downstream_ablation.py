@@ -203,3 +203,29 @@ def test_invalid_task_item_validation():
     engine = DownstreamAblationEngine()
     with pytest.raises(ValueError, match="Task item must be an AblationTask instance or dict"):
         engine.run_ablation_campaign(tasks=["invalid_string_task"])
+
+def test_agent_execution_error_sets_quality_score_zero():
+    """Regression test: set quality_score = 0.0 when agent execution raises error or returns None."""
+    engine = DownstreamAblationEngine()
+
+    def failing_agent(inp):
+        raise RuntimeError("Execution crashed with long error stack trace...")
+
+    task = AblationTask(
+        task_id="err_01",
+        name="Error Task",
+        description="Failing agent test",
+        category="error_test",
+        input_data=None,
+        expected_output="ok",
+    )
+
+    res = engine.run_single_task(failing_agent, task, "failing")
+    assert res.error is not None
+    assert res.code_quality_score == 0.0
+
+
+def test_custom_quality_evaluator_nan_returns_zero():
+    """Regression test: custom quality evaluator returning NaN is converted to 0.0."""
+    engine = DownstreamAblationEngine(quality_evaluator=lambda code: float("nan"))
+    assert engine.evaluate_code_quality("code") == 0.0
