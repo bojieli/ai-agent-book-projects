@@ -176,3 +176,30 @@ def test_ablation_latency_and_quality_metrics():
     assert report.latency_change_pct < 0.0  # Latency reduced
     assert report.evolved_avg_code_quality > report.baseline_avg_code_quality
     assert report.code_quality_score_change > 0.0
+
+
+def test_custom_quality_evaluator_clamping():
+    """Regression test: custom quality scorer returns are clamped between 0.0 and 100.0."""
+    engine_high = DownstreamAblationEngine(quality_evaluator=lambda code: 150.0)
+    engine_low = DownstreamAblationEngine(quality_evaluator=lambda code: -50.0)
+    assert engine_high.evaluate_code_quality("code") == 100.0
+    assert engine_low.evaluate_code_quality("code") == 0.0
+
+
+def test_async_function_quality_scoring():
+    """Regression test: async functions are recognized for docstrings and type annotations."""
+    engine = DownstreamAblationEngine()
+    async_code = '''"""Async module."""
+async def fetch(url: str) -> str:
+    """Fetch data from URL."""
+    return "data"
+'''
+    score = engine.evaluate_code_quality(async_code)
+    assert score > 70.0
+
+
+def test_invalid_task_item_validation():
+    """Regression test: invalid task item raises ValueError."""
+    engine = DownstreamAblationEngine()
+    with pytest.raises(ValueError, match="Task item must be an AblationTask instance or dict"):
+        engine.run_ablation_campaign(tasks=["invalid_string_task"])

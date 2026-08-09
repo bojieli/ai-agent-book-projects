@@ -88,7 +88,8 @@ class DownstreamAblationEngine:
         """Evaluates code quality score (0.0 to 100.0) based on AST and structural metrics."""
         if self.custom_quality_evaluator is not None:
             try:
-                return float(self.custom_quality_evaluator(code_or_output))
+                raw_score = float(self.custom_quality_evaluator(code_or_output))
+                return max(0.0, min(100.0, raw_score))
             except Exception:
                 pass
 
@@ -108,7 +109,10 @@ class DownstreamAblationEngine:
             tree = ast.parse(code_str)
             score += 15.0  # Valid Python syntax bonus
 
-            functions = [n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)]
+            functions = [
+                n for n in ast.walk(tree)
+                if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
+            ]
             classes = [n for n in ast.walk(tree) if isinstance(n, ast.ClassDef)]
 
             # Modularization bonus
@@ -240,7 +244,8 @@ class DownstreamAblationEngine:
                             quality_rubric=t.get("quality_rubric"),
                         )
                     )
-
+                else:
+                    raise ValueError(f"Task item must be an AblationTask instance or dict, got: {type(t)}")
         total_tasks = len(task_objs)
         baseline_results: list[TaskResult] = []
         evolved_results: list[TaskResult] = []
