@@ -120,8 +120,9 @@ class NotificationDispatcher:
         """Register a custom handler function for a specific channel."""
         self._custom_handlers[channel_name.lower()] = handler
 
-    def _normalize_fallback(self, action: str) -> str:
-        act = str(action).lower().replace("_", "-")
+    def _normalize_fallback(self, action: Union[str, Enum]) -> str:
+        raw = action.value if isinstance(action, Enum) else str(action)
+        act = raw.lower().replace("_", "-")
         if act in ("auto-approve", "approve"):
             return FallbackAction.AUTO_APPROVE.value
         elif act in ("auto-reject", "reject"):

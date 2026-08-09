@@ -332,3 +332,15 @@ async def test_try_finally_cleanup_on_dispatch_exception():
 
     assert req_id not in dispatcher._pending_requests
     assert req_id not in dispatcher._decision_events
+
+
+@pytest.mark.asyncio
+async def test_enum_fallback_action_normalization():
+    """Test that passing FallbackAction Enum instances normalizes correctly."""
+    dispatcher = NotificationDispatcher(fallback_action=FallbackAction.AUTO_APPROVE)
+    assert dispatcher.fallback_action == "auto-approve"
+
+    request = DecisionRequest(message="Enum test", fallback_action=FallbackAction.ESCALATE)
+    trace = await dispatcher.dispatch_and_wait(request, timeout=0.05)
+    assert trace.fallback_action == "escalate"
+    assert trace.status == "escalated"
