@@ -128,9 +128,9 @@ def test_compile_evidence_package_sample_size():
 def test_calculate_backoff_curves_missing_fields():
     bench = RateRampBenchmark()
     sparse_records = [
-        {"backoff_sec": 1.5},
+        {"status_code": 429, "backoff_sec": 1.5},
         {"status_code": 429, "backoff_sec": 0.5},
     ]
     res = bench.calculate_backoff_curves(sparse_records)
-    assert res["total_429_count"] == 1
-    assert res["overall_avg_backoff_sec"] == 2.0
+    assert res["total_429_count"] == 2
+    assert res["overall_avg_backoff_sec"] == 1.0

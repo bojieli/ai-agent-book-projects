@@ -151,11 +151,11 @@ class RateRampBenchmark:
         """Compute 429 rate limit backoff curve metrics by request rate level."""
         by_rate: dict[int, dict[str, Any]] = {}
         total_backoff_time = 0.0
+        total_429_backoff_time = 0.0
         max_backoff = 0.0
         total_429 = 0
-
-        grouped: dict[int, list[dict[str, Any]]] = {}
         all_backoffs_count = 0
+
         grouped: dict[int, list[dict[str, Any]]] = {}
         for r in records:
             rate = int(r.get("target_rate", 0))
@@ -165,12 +165,14 @@ class RateRampBenchmark:
             step_recs = grouped[rate]
             cnt = len(step_recs)
             hits_429 = sum(1 for r in step_recs if r.get("status_code") == 429)
+            backoffs_429 = [float(r.get("backoff_sec", 0.0)) for r in step_recs if r.get("status_code") == 429 and float(r.get("backoff_sec", 0.0)) > 0]
             backoffs = [float(r.get("backoff_sec", 0.0)) for r in step_recs if float(r.get("backoff_sec", 0.0)) > 0]
 
             avg_backoff = round(sum(backoffs) / len(backoffs), 4) if backoffs else 0.0
             step_max_backoff = max(backoffs, default=0.0)
 
             total_429 += hits_429
+            total_429_backoff_time += sum(backoffs_429)
             total_backoff_time += sum(backoffs)
             all_backoffs_count += len(backoffs)
             max_backoff = max(max_backoff, step_max_backoff)
@@ -184,7 +186,7 @@ class RateRampBenchmark:
             }
 
         overall_avg_backoff = (
-            round(total_backoff_time / total_429, 4)
+            round(total_429_backoff_time / total_429, 4)
             if total_429 > 0
             else (round(total_backoff_time / all_backoffs_count, 4) if all_backoffs_count > 0 else 0.0)
         )
@@ -230,7 +232,7 @@ class RateRampBenchmark:
             )
             successes = sum(1 for r in step_records if r.get("status_code") == 200)
 
-            backoff_secs = [r.get("backoff_sec", 0.0) for r in step_records]
+            backoff_secs = [float(r.get("backoff_sec", 0.0)) for r in step_records if float(r.get("backoff_sec", 0.0)) > 0]
             avg_backoff = (
                 round(sum(backoff_secs) / len(backoff_secs), 4)
                 if backoff_secs
