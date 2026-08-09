@@ -285,18 +285,34 @@ class MultilingualReasoningEvaluator:
             "total_tokens": t_tok,
         }
 
-    def _parse_model_output(self, raw_output: Any) -> tuple[str, str, dict[str, int]]:
+    def _parse_model_output(self, raw_output: Any) -> tuple[str, str, Any]:
         """Parse raw model output into reasoning CoT, final answer, and token metadata."""
         if isinstance(raw_output, dict):
-            reasoning = str(raw_output.get("reasoning") or raw_output.get("cot") or raw_output.get("thinking") or "")
-            answer = str(raw_output.get("answer") or raw_output.get("response") or raw_output.get("predicted_answer") or "")
-            tu = raw_output.get("token_usage") or {}
+            reasoning = ""
+            for k in ("reasoning", "cot", "thinking"):
+                if k in raw_output and raw_output[k] is not None:
+                    reasoning = str(raw_output[k])
+                    break
+            answer = ""
+            for k in ("answer", "response", "predicted_answer"):
+                if k in raw_output and raw_output[k] is not None:
+                    answer = str(raw_output[k])
+                    break
+            tu = raw_output.get("token_usage")
             return reasoning, answer, tu
 
-        if hasattr(raw_output, "reasoning") or hasattr(raw_output, "answer"):
-            reasoning = str(getattr(raw_output, "reasoning", "") or getattr(raw_output, "cot", ""))
-            answer = str(getattr(raw_output, "answer", "") or getattr(raw_output, "response", ""))
-            tu = getattr(raw_output, "token_usage", {})
+        if hasattr(raw_output, "reasoning") or hasattr(raw_output, "answer") or hasattr(raw_output, "cot") or hasattr(raw_output, "response") or hasattr(raw_output, "predicted_answer"):
+            reasoning = ""
+            for attr in ("reasoning", "cot", "thinking"):
+                if hasattr(raw_output, attr) and getattr(raw_output, attr) is not None:
+                    reasoning = str(getattr(raw_output, attr))
+                    break
+            answer = ""
+            for attr in ("answer", "response", "predicted_answer"):
+                if hasattr(raw_output, attr) and getattr(raw_output, attr) is not None:
+                    answer = str(getattr(raw_output, attr))
+                    break
+            tu = getattr(raw_output, "token_usage", None)
             return reasoning, answer, tu
 
         text = str(raw_output or "").strip()

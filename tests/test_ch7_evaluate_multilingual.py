@@ -256,3 +256,11 @@ def test_invoke_model_inspect_signature():
 
     res_nolang = evaluator.evaluate_sample(model_without_lang, sample)
     assert "Response: Hola" == res_nolang["predicted_answer"]
+def test_zero_answer_handling():
+    evaluator = MultilingualReasoningEvaluator()
+    sample = {"language": "en", "prompt": "1-1?", "reference_answer": 0}
+    model = lambda p: {"answer": 0, "reasoning": "1 minus 1 equals 0"}
+    res = evaluator.evaluate_sample(model, sample)
+    assert res["predicted_answer"] == "0"
+    assert res["reference_answer"] == "0"
+    assert res["accuracy"] == 1.0
