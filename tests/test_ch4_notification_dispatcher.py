@@ -268,3 +268,18 @@ async def test_late_decision_submission_rejected_after_fallback():
     trace = await task
     assert trace.status == "escalated"
     assert trace.fallback_triggered is True
+
+
+def test_custom_channel_handler_failure_dict():
+    """Test that a custom channel returning success=False in dict result is marked as success=False."""
+    dispatcher = NotificationDispatcher()
+
+    def failing_handler(msg, ctx):
+        return {"success": False, "error": "Gateway unavailable"}
+
+    dispatcher.register_channel_handler("sms", failing_handler)
+    res = asyncio.run(dispatcher.dispatch_notification("sms", "Test sms"))
+
+    assert res["success"] is False
+    assert res["channel"] == "sms"
+    assert res["result"]["error"] == "Gateway unavailable"

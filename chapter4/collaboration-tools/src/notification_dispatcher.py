@@ -179,7 +179,8 @@ class NotificationDispatcher:
                 res = self._custom_handlers[ch](message, ctx)
                 if asyncio.iscoroutine(res):
                     res = await res
-                return {"channel": ch, "success": True, "result": res}
+                success = res.get("success", True) if isinstance(res, dict) else True
+                return {"channel": ch, "success": success, "result": res}
             except Exception as e:
                 logger.error(f"Error in custom channel handler '{ch}': {e}")
                 return {"channel": ch, "success": False, "error": str(e)}
