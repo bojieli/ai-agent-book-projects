@@ -79,7 +79,7 @@
   <text x="68" y="473" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333">— = 该轮尚未生成</text>
 
   <text x="435" y="425" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666">★ 仅标记调用时加载的完整 Skill 内容；</text>
-  <text x="435" y="448" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666">Skill 元数据从 Turn 1 起就在 system prompt 中。</text>
+  <text x="435" y="448" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666">Skill 元数据从 Turn 1 起就在 system prompt 中（Anthropic 逻辑布局）。</text>
 
-  <text x="430" y="505" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" font-style="italic">调用 Skill 只在调用位置追加完整指令，不会回头改写 system prompt。</text>
+  <text x="430" y="505" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" font-style="italic">调用 Skill 只在调用位置追加完整指令，不会回头改写 system prompt（其他 Harness 的 role 可能不同）。</text>
 </svg>

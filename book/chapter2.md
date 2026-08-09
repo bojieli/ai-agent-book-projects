@@ -726,8 +726,9 @@ Step 5: Verification
 Agent Skills 的核心思想是将 Agent 的能力模块化为独立的、可按需加载的知识包[^ch2-3]。每个 Skill 本质上是一套包含专业领域指导的提示词集合，就像为新员工准备的某个专项任务的操作手册。与传统的将所有指令塞入单一系统提示词的做法不同，Skills 采用了渐进式披露（Progressive Disclosure）的设计哲学——先给 Agent 看一份目录摘要，需要时再加载完整内容，就像你不会把公司所有部门的操作手册都堆到新员工桌上，而是先给一份总目录，需要哪本再去取。
 
 [^ch2-3]: Anthropic, ["Equipping Agents for the Real World with Agent Skills"](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills), 2025；Claude Code Docs, ["How Claude Code uses prompt caching"](https://code.claude.com/docs/en/prompt-caching), “Invoking skills and commands”；Agent Skills, ["How to add skills support to your agent"](https://agentskills.io/client-implementation/adding-skills-support), “Where to place the catalog”.
+[^ch2-codex-skills]: OpenAI, ["Build skills"](https://developers.openai.com/codex/skills/), “How ChatGPT and Codex use skills”；OpenAI Codex 源码，[`fragments.rs`](https://github.com/openai/codex/blob/main/codex-rs/ext/skills/src/fragments.rs) 与 [`extension.rs`](https://github.com/openai/codex/blob/main/codex-rs/ext/skills/src/extension.rs) 的上下文片段实现。
 
-**第一层（元数据）**：每个 Skill 必须包含一个 `SKILL.md` 文件，开头是 YAML frontmatter（即文件顶部用 `---` 分隔的元数据块，类似书籍的版权页），包含 `name` 和 `description` 两个字段。在 Anthropic 公开描述的实现和 Claude Code 默认配置中，Agent 启动时会扫描可用 Skill，将它们的 `name` 和 `description`（仅占数百个 token）预加载到 system prompt，使 Agent 在不加载所有 Skill 正文的前提下知晓自己拥有哪些专业能力。Agent Skills 开放标准并不强制这一消息位置：其他运行时也可以把目录放进专用激活工具的 description。
+**第一层（元数据）**：每个 Skill 必须包含一个 `SKILL.md` 文件，开头是 YAML frontmatter（即文件顶部用 `---` 分隔的元数据块，类似书籍的版权页），包含 `name` 和 `description` 两个字段。在 Anthropic 公开描述的实现和 Claude Code 默认配置中，Agent 启动时会扫描可用 Skill，将它们的 `name` 和 `description`（仅占数百个 token）预加载到 system prompt，使 Agent 在不加载所有 Skill 正文的前提下知晓自己拥有哪些专业能力。这里的“system prompt”是 Anthropic 文档对逻辑上下文层的描述，并不等于所有客户端在 API 线上都使用 `role: "system"` 这一字面形式。Agent Skills 开放标准也不强制这一消息位置：其他运行时也可以把目录放进专用激活工具的 description。
 
 元数据中的 `description` 字段是路由决策的关键——它应当足够短（控制常驻的 token 量），但写法要像路由条件而非功能介绍。最直接的写法是 “Use when / Don't use when” 加上几条**反例**（即明确列出“不该触发此 Skill”的场景）。实践中，缺少反例的 Skill 描述会让路由准确率明显下降——宽泛的描述会在不相关的任务上频繁误触发；补上反例后，路由准确率会显著回升。反例不是可选项，而是 Skill 路由能否准确触发的关键。描述太宽泛（如 “help with backend”）等于任何后端相关的工作都能触发，路由就会失准；真正有效的描述是路由条件——“何时该用我”比“我能做什么”重要得多。
 
@@ -759,10 +760,11 @@ Skills 的价值不仅在于优雅的上下文管理，更在于为领域知识�
 
 理解 Skills 的上下文成本时，必须把 “元数据目录” 和 “完整 Skill 指令” 分开：
 
-- **Claude Code 的元数据目录位于启动时的 system prompt**。Anthropic 对 Agent Skills 的说明明确指出，运行时会在启动时把所有已安装 Skill 的 `name` 与 `description` 预加载进 system prompt。Claude Code 的上下文文档也将其描述为“会话启动时加载、每次请求可见”。只要会话内的 Skill 集合不变，这部分就是稳定前缀，可以持续复用 Prompt Cache。Agent Skills 开放标准也允许把目录放进专用激活工具的 description；这是另一种固定前缀位置，而不是运行时状态栏。
-- **完整 Skill 指令在调用时进入会话历史**。模型根据元数据选中 Skill 后，运行时才加载 `SKILL.md` 正文。当前 Claude Code 将指令作为 user message 注入调用位置；其他兼容 Agent Skills 的运行时也可以通过文件读取或专用激活工具返回正文。无论采用哪种激活方式，都不需要回头修改已经缓存的 system prompt。
+- **规范规定的是时序，不是消息角色**。Skill 的 `name` 和 `description` 必须在完整正文加载前对模型可见，正文则在 Skill 被选中后才读取；目录可以放在 system prompt 的专用区块，也可以放进专用激活工具的 description。把“目录应当预先可见”误读成“目录必须是 API 的 `role: \"system\"` 消息”，会把一个开放标准误写成某个 Harness 的实现细节。
+- **Claude Code 的文档模型**。Anthropic 的 Agent Skills 文档将目录描述为启动时加载到 system prompt；Claude Code 的 Prompt Caching 文档则明确说明，Skill/Command 被调用时，其指令作为 user message 注入调用位置。因此，当前正文所说的“启动时 system prompt”对 Anthropic 文档描述的逻辑布局是正确的，而“完整正文在调用点进入会话历史”描述的是另一层。某些 Claude Code 版本或线上请求的可观察 wire format 会把动态目录包装成 user-role 的 `<system-reminder>`，也可能使用追加的 system-role context block；`<system-reminder>` 不是 Agent Skills 标准格式，消息角色也不应被当作跨版本契约。
+- **Codex CLI 是另一种 Harness**。OpenAI 的文档同样采用渐进式披露：初始目录包含 Skill 的名称、描述（以及 Codex 中的路径），模型选中后再读取完整 `SKILL.md`。当前公开源码将目录渲染为 `developer` 上下文片段，将选中的 Skill 正文渲染为带 `<skill>` 标记的 user 片段，并在每轮请求的上下文构造阶段重新提供目录[^ch2-codex-skills]。某些 API 网关会把 `developer` 内容显示在 system-like 的区域，这不改变它是 Codex CLI 的实现选择，也不说明 Claude Code 或 Agent Skills 标准必须采用相同布局。
 
-这种“少量目录常驻、完整正文按需加载”的两层设计，才是 Skills 兼顾可发现性与上下文开销的关键。
+因此，DeepSeek 给出的对照表可以作为某一时点、某一客户端版本的 wire-level 观察，但不能作为 Skills 机制的通用定义。真正稳定的结论只有两条：**目录先于正文可发现，正文按需加载**；**目录和正文的 role、包装标签以及是否每轮重建，都由具体 Agent Harness 决定**。这种“少量目录常驻、完整正文按需加载”的两层设计，才是 Skills 兼顾可发现性与上下文开销的关键。
 
 为了直观感受这一设计的效果，下面两张图分别从两个视角追踪 Skills 在轨迹中的位置和 KV Cache 的演化。
 
@@ -770,7 +772,7 @@ Skills 的价值不仅在于优雅的上下文管理，更在于为领域知识�
 
 ![图2-13 KV Cache 随 Agent Trajectory 增长的演化](images/fig2-13.svg)
 
-需要厘清一个常见误解：“对 KV Cache 友好”并非“零成本”。Skill 元数据目录作为 system prompt 的一部分，需要在会话开始时完成一次 prefill；后续请求可以按缓存读取计费。完整 Skill 正文首次加载时也需要计算，之后才随稳定的会话前缀一起复用缓存。收益来自两点：无需在启动时加载所有 Skill 正文，也无需在每次调用新 Skill 时改写已有前缀。
+需要厘清一个常见误解：“对 KV Cache 友好”并非“零成本”。在 Anthropic 文档描述的启动式布局中，Skill 元数据目录作为 system prompt 的一部分，需要在会话开始时完成一次 prefill；后续请求可以按缓存读取计费。完整 Skill 正文首次加载时也需要计算，之后才随稳定的会话前缀一起复用缓存。采用每轮重建目录的运行时，其缓存收益则取决于服务端如何缓存该请求前缀；不能把 Claude Code 的一次启动式成本模型直接套到所有客户端。Skills 的共同收益仍然是两点：无需在启动时加载所有 Skill 正文，也无需在每次调用新 Skill 时回头改写已经建立的上下文。
 
 ### Skills 与工具的关系
 
@@ -782,7 +784,7 @@ Skills 的价值不仅在于优雅的上下文管理，更在于为领域知识�
 >
 > 使用 Claude Code（或任意支持 SKILL.md 渐进式披露的等价 Agent 运行时，如 Kimi Code）+ Anthropic 官方 PPTX Skill，从一篇学术论文的 PDF 生成一份 10-15 页的演示文稿。Skill 的内容是实验对象，运行时可以替换——并非每位读者都有 Anthropic 凭证，只要运行时具备「元数据目录 + 按需加载」的 Skills 机制即可。Agent 的执行流程体现了渐进式加载的过程：
 >
-> 1. 在 system prompt 的 Skill 元数据目录中看到 PPTX Skill 的描述
+> 1. 在运行时提供的 Skill 元数据目录中看到 PPTX Skill 的描述（Anthropic 实现通常位于启动时的 system prompt）
 > 2. 识别出任务需要该 Skill
 > 3. 调用 Skill（或读取 `SKILL.md`）加载完整指令，获得核心流程
 > 4. 选择性加载 `html2pptx.md` 获取详细方法
