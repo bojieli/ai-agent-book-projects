@@ -284,3 +284,15 @@ def test_orthogonal_vector_scoring():
     # Semantic score should be 0.0 for orthogonal vector
     raw_score, lex_sc, sem_sc = retriever._compute_scores("query", {"query"}, np.array([0.0, 1.0]), retriever.unified_nodes["raptor_node1"])
     assert sem_sc == 0.0
+
+
+def test_vector_dimension_mismatch_fallback():
+    """Verify dimension mismatch during vector comparison safely falls back to coverage score."""
+    embedding_fn = lambda text: np.array([1.0, 0.0, 0.0])  # 3D query vector
+    retriever = HybridStructuredRetriever(embedding_fn=embedding_fn)
+    # Node contains 2D embedding vector
+    retriever.add_raptor_node("node1", 0, "query term content", "query term summary", embedding=np.array([1.0, 0.0]))
+    results = retriever.retrieve("query", top_k=1)
+    assert len(results) == 1
+    # Should fall back to lexical / coverage scoring without crashing
+    assert results[0].score > 0

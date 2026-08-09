@@ -330,14 +330,15 @@ class HybridStructuredRetriever:
                     n_emb = self.embedding_fn(text_content)
                     node["embedding"] = n_emb
                 if n_emb is not None:
-                    has_vector = True
                     q_norm = np.linalg.norm(query_vector)
                     n_norm = np.linalg.norm(n_emb)
                     if q_norm > 0 and n_norm > 0:
                         cos_sim = float(np.dot(query_vector, n_emb) / (q_norm * n_norm))
                         semantic_score = max(0.0, cos_sim)
+                        has_vector = True
             except Exception:
-                pass
+                has_vector = False
+                semantic_score = 0.0
 
         if has_vector:
             final_score = float(semantic_score * 0.7 + lexical_score * 0.3)
