@@ -283,3 +283,52 @@ def test_custom_channel_handler_failure_dict():
     assert res["success"] is False
     assert res["channel"] == "sms"
     assert res["result"]["error"] == "Gateway unavailable"
+
+
+@pytest.mark.asyncio
+async def test_decision_request_default_channels_none():
+    """Test DecisionRequest has channels default to None."""
+    req = DecisionRequest(message="Test message")
+    assert req.channels is None
+
+
+@pytest.mark.asyncio
+async def test_non_pending_record_with_custom_decision_string_without_approved():
+    """Test that a non-pending record with a custom decision string and approved=None is accepted."""
+    dispatcher = NotificationDispatcher()
+    req_id = "req_custom_no_approved"
+    request = {"request_id": req_id, "message": "Manual override test"}
+
+    task = asyncio.create_task(dispatcher.dispatch_and_wait(request, timeout=2.0))
+    await asyncio.sleep(0.05)
+
+    # Manually set non-pending status with custom decision and no approved boolean
+    dispatcher._pending_requests[req_id]["status"] = "deferred"
+    dispatcher._pending_requests[req_id]["decision"] = "deferred"
+    dispatcher._pending_requests[req_id]["approved"] = None
+    dispatcher._decision_events[req_id].set()
+
+    trace = await task
+    assert trace.fallback_triggered is False
+    assert trace.status == "deferred"
+    assert trace.decision == "deferred"
+    assert trace.approved is True
+
+
+@pytest.mark.asyncio
+async def test_try_finally_cleanup_on_dispatch_exception():
+    """Test that pending requests and decision events are cleaned up even if dispatch raises an exception."""
+    dispatcher = NotificationDispatcher()
+
+    async def mock_raise(*args, **kwargs):
+        raise RuntimeError("Internal dispatch pipeline failure")
+
+    dispatcher.dispatch_all = mock_raise
+    req_id = "req_exception_cleanup"
+    request = DecisionRequest(request_id=req_id, message="Fail test")
+
+    with pytest.raises(RuntimeError, match="Internal dispatch pipeline failure"):
+        await dispatcher.dispatch_and_wait(request, timeout=1.0)
+
+    assert req_id not in dispatcher._pending_requests
+    assert req_id not in dispatcher._decision_events

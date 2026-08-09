@@ -266,22 +266,20 @@ class NotificationDispatcher:
 
         trace_events: List[Dict[str, Any]] = []
 
-        # Store pending state before dispatching to handle instant decisions cleanly
-        event = asyncio.Event()
-        self._decision_events[request_id] = event
-        self._pending_requests[request_id] = {
-            "request_id": request_id,
-            "message": req_obj.message,
-            "channels": channels,
-            "fallback_action": fallback,
-            "status": "pending",
-            "approved": None,
-            "decision": None,
-            "notes": None,
-            "dispatched_at": dispatched_at,
-        }
-
         try:
+            event = asyncio.Event()
+            self._decision_events[request_id] = event
+            self._pending_requests[request_id] = {
+                "request_id": request_id,
+                "message": req_obj.message,
+                "channels": channels,
+                "fallback_action": fallback,
+                "status": "pending",
+                "approved": None,
+                "decision": None,
+                "notes": None,
+                "dispatched_at": dispatched_at,
+            }
             # Dispatch across multi-channels
             channel_results = await self.dispatch_all(channels, req_obj.message, req_obj.context)
             trace_events.append(
@@ -311,11 +309,13 @@ class NotificationDispatcher:
             resolved_at = end_time.isoformat()
             duration = round((end_time - start_time).total_seconds(), 4)
 
-            if req_record.get("status") not in (None, "pending") and req_record.get("approved") is not None:
+            if req_record.get("status") not in (None, "pending"):
                 # Decision submitted before timeout
-                approved = req_record["approved"]
-                decision = req_record["decision"]
-                status = decision
+                approved = req_record.get("approved")
+                if approved is None:
+                    approved = True
+                decision = req_record.get("decision") or req_record.get("status")
+                status = req_record.get("status") or decision
                 notes = req_record.get("notes")
                 fallback_triggered = False
                 trace_events.append(
