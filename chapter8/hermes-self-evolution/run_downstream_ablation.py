@@ -92,8 +92,8 @@ class DownstreamAblationEngine:
                 if math.isnan(raw_score):
                     return 0.0
                 return max(0.0, min(100.0, raw_score))
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("Custom quality evaluator execution failed: %s", e)
 
         if not isinstance(code_or_output, str):
             code_str = str(code_or_output)
