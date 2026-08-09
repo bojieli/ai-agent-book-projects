@@ -217,3 +217,57 @@ def test_field_visibility_leakage_detected():
     res = evaluator.evaluate_field_visibility(sc)
     assert res["unauthorized_leakage"] is True
     assert "salary_expectation" in res["leaked_fields"]
+
+
+def test_default_policy_allow_fallback():
+    """Regression test: default_policy ACCEPT allows access when rules list is empty."""
+    evaluator = PEDOSecurityEvaluator()
+    evaluator.register_type(ObjectType(name="open_data", fields={}, default_policy=Operation.ACCEPT))
+    sc = SecurityScenario(
+        scenario_id="test_default_policy",
+        name="Default Policy Accept",
+        description="Access object type with default_policy ACCEPT",
+        accessor=AccessContext(user_id="u1", role="user", org_id="org_a"),
+        object_type="open_data",
+        operation_type="read",
+        target_object=DataObject(type_name="open_data", owner_id="u1", org_id="org_a"),
+        expected_allowed=True,
+    )
+    res = evaluator.evaluate_row_level_security(sc)
+    assert res["allowed"] is True
+    assert res["passed"] is True
+
+
+def test_owner_impersonation_blocked():
+    """Regression test: accessor with is_owner=True accessing object owned by another user is blocked."""
+    evaluator = PEDOSecurityEvaluator()
+    sc = SecurityScenario(
+        scenario_id="test_owner_impersonate",
+        name="Owner Impersonation Check",
+        description="Accessor claims is_owner=True on target owned by u_other",
+        accessor=AccessContext(user_id="u_imposter", role="user", org_id="org_a", is_owner=True),
+        object_type="candidate",
+        operation_type="read",
+        target_object=DataObject(type_name="candidate", owner_id="u_other", org_id="org_a"),
+        expected_allowed=False,
+    )
+    res = evaluator.evaluate_row_level_security(sc)
+    assert res["allowed"] is False
+    assert res["passed"] is True
+
+
+def test_legitimate_mutation_not_flagged_as_escalation():
+    """Regression test: normal mutation by authorized user does not fail escalation check."""
+    evaluator = PEDOSecurityEvaluator()
+    sc = SecurityScenario(
+        scenario_id="test_legit_mutation",
+        name="Legitimate Mutation Check",
+        description="hr_admin updates candidate status to hired",
+        accessor=AccessContext(user_id="u_hr", role="hr_admin", org_id="org_a"),
+        object_type="candidate",
+        operation_type="update",
+        mutation_payload={"status": "hired"},
+    )
+    res = evaluator.evaluate_privilege_escalation(sc)
+    assert res["escalation_attempted"] is False
+    assert res["passed"] is True

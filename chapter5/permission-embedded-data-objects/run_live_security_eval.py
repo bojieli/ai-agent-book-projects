@@ -246,15 +246,18 @@ class PEDOSecurityEvaluator:
         now = time.time()
         # Check object-level rules first if present
         rules = target_object.permission_rules
-        if rules is None and target_object.type_name in self.types:
+        if not rules and target_object.type_name in self.types:
             rules = self.types[target_object.type_name].permission_rules
 
-        if not rules:
-            return False
+        if rules:
+            for rule in rules:
+                if rule.matches(accessor, privilege, now):
+                    return rule.operation == Operation.ACCEPT or str(getattr(rule.operation, 'value', rule.operation)).upper() in ("ACCEPT", "ALLOW")
 
-        for rule in rules:
-            if rule.matches(accessor, privilege, now):
-                return rule.operation == Operation.ACCEPT
+        type_info = self.types.get(target_object.type_name)
+        if type_info is not None:
+            default_pol = type_info.default_policy
+            return default_pol == Operation.ACCEPT or str(getattr(default_pol, 'value', default_pol)).upper() in ("ACCEPT", "ALLOW")
 
         return False
 
@@ -289,10 +292,12 @@ class PEDOSecurityEvaluator:
 
         is_owner_matched = True
         if accessor.is_owner:
-            is_owner_matched = (obj.owner_id == accessor.user_id) or accessor.is_owner
+            is_owner_matched = (obj.owner_id == accessor.user_id)
 
         allowed_by_policy = self.evaluate_access(accessor, obj, privilege)
         if not org_matched and accessor.role != "superadmin":
+            allowed_by_policy = False
+        if not is_owner_matched and accessor.role not in ("superadmin", "admin"):
             allowed_by_policy = False
 
         passed = allowed_by_policy == scenario.expected_allowed
@@ -400,7 +405,7 @@ class PEDOSecurityEvaluator:
         expected_blocked = (
             scenario.expected_escalation_blocked
             if scenario.expected_escalation_blocked is not None
-            else True
+            else escalation_detected
         )
 
         passed = blocked == expected_blocked
