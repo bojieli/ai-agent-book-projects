@@ -188,3 +188,15 @@ def test_transfer_efficiency_zero_reference():
     eff = evaluator.compute_transfer_efficiency(metrics)
     assert eff["English"] == 0.0
     assert eff["Spanish"] == 0.0
+
+
+def test_model_exception_and_builtin_callable():
+    evaluator = MultilingualReasoningEvaluator()
+
+    def failing_model(prompt):
+        raise RuntimeError("Model inference failed")
+
+    dataset = [{"language": "en", "prompt": "test", "reference_answer": "42"}]
+    report = evaluator.evaluate(failing_model, dataset)
+    assert report["num_samples"] == 1
+    assert report["overall_accuracy"] == 0.0

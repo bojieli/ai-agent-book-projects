@@ -88,7 +88,7 @@ def _accepts_language(fn: Any) -> bool:
                 return True
         return False
     except (ValueError, TypeError):
-        return True
+        return False
 
 
 class MultilingualReasoningEvaluator:
@@ -395,8 +395,19 @@ class MultilingualReasoningEvaluator:
         for sample in dataset:
             try:
                 sample_results.append(self.evaluate_sample(model, sample))
-            except Exception:
-                continue
+            except Exception as e:
+                lang_raw = sample.get("language") or sample.get("target_language") or sample.get("lang") or "English"
+                sample_results.append({
+                    "language": normalize_language(str(lang_raw)),
+                    "prompt": str(sample.get("prompt") or sample.get("question") or sample.get("input") or ""),
+                    "reference_answer": str(sample.get("reference_answer") or sample.get("expected_answer") or ""),
+                    "reasoning": "",
+                    "predicted_answer": "",
+                    "cot_fidelity": 0.0,
+                    "accuracy": 0.0,
+                    "error": str(e),
+                    "token_usage": {"prompt_tokens": 0, "completion_tokens": 0, "reasoning_tokens": 0, "total_tokens": 0},
+                })
 
         if not sample_results:
             return _empty_report()
