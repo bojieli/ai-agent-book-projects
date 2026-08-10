@@ -59,7 +59,7 @@ else:
     emit_structured_diagnosis(outcome, process, quality)
 ```
 
-这里的 `judge_with_rubric` 只负责难以形式化的上层质量，不覆盖数据库真值或权限规则。可运行的 schema、校准集与低置信度处理见 [chapter8/trajectory-verifier](../chapter8/trajectory-verifier/README.md)。
+这里的 `judge_with_rubric` 只负责难以形式化的上层质量，不覆盖数据库真值或权限规则。
 
 LLM 验证器本身也需要校准。生产系统通常准备一小批由专家标注的轨迹，检查验证器在每个维度上的一致性；高风险或低置信度案例交给第二个模型或人工复核；模型版本变更后重新运行校准集。验证器负责给出评价和证据，至于应修改 Agent 的哪个部分，则应由独立的诊断与进化模块决定，避免同一个模型既当裁判又直接改写规则。
 

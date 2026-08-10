@@ -420,7 +420,7 @@ return aggregate_with_confidence(rubric_result)
 ```text
 中文说明：调用 `reset()` 方法。
 这是一段英文原文：“Please restart the service.”
-# 以下代码块仅用于说明受保护作用域（正文示意，不是可运行片段）
+# 以下代码块仅用于说明受保护作用域
 # 中文注释：显示 "当前状态"
 name = "status"
 ```

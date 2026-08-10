@@ -44,7 +44,7 @@ on_final_transcript(text):
     commit_or_restart(text)
 ```
 
-`partial` 只能触发可撤销的抢跑；最终转录、已播报音频和工具副作用要有明确的提交边界。完整的 WebSocket、VAD、ASR 和 TTS 适配器仍在 [chapter9/live-audio](../chapter9/live-audio/README.md) 实验中。
+`partial` 只能触发可撤销的抢跑；最终转录、已播报音频和工具副作用要有明确的提交边界。
 
 [^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ 。本节“级联 / 轮次式 / 全双工”三分法即出自该文对 ChatGPT 语音三代演进的总结；文中“端到端全模态（Omni）”对应其“turn-based voice models”一类。
 
@@ -244,7 +244,7 @@ else:
         rollback_if_possible_or_replan()
 ```
 
-截图、无障碍树和动作执行是环境适配器；模型只提出候选动作，不能凭上一轮的文字宣称跳过新观察。可运行的 browser-use 路径见 [chapter9/computer-use-open-model](../chapter9/computer-use-open-model/README.md)。
+截图、无障碍树和动作执行是环境适配器；模型只提出候选动作，不能凭上一轮的文字宣称跳过新观察。
 
 这里要区分“看懂界面”和“完成任务”。前者更接近多模态理解能力，可以用一次截图问答来测量；后者则要求模型把理解和生成动作放进闭环，处理页面加载、状态变化、误操作和不可逆后果。Computer Use 的难点因此不只是让模型在截图上答对，而是让它在每一步之后重新确认现实是否仍符合计划。
 
@@ -418,24 +418,6 @@ XLeRobot 支持键盘、Xbox 手柄、Switch Joy-Con 和 VR 设备等遥操作�
 | 基本技能 | 当前要完成哪个状态变化 | `pick(red_cup)`、`place(red_cup, tray)` | 约 1—3 秒 |
 | VLA / 技能策略 | 这个技能具体怎么动 | XLeRobot 夹爪的一小段动作或连续轨迹 | 约 1—10 Hz 推理 |
 | 底层控制与安全层 | 如何稳定、及时地执行 | 关节或末端控制量、限速与急停 | 约 50—1000 Hz |
-
-分层控制的最小闭环如下；高层只提交有边界的技能，低层负责实时控制和急停：
-
-```python
-goal = parse_user_goal()
-plan = planner.decompose(goal)
-
-for skill in plan:
-    if safety_stop_requested() or not precondition_holds(skill):
-        halt_and_report()
-        break
-    action_chunk = vla(skill, observe())
-    low_level_controller.execute_limited(action_chunk)
-    if not postcondition_holds(skill, observe()):
-        retry_once_or_replan(skill)
-```
-
-这段骨架解释层级关系；标定、限速、超时和急停应由实验的执行器实现。
 
 这是一种常见的工程分工，不是唯一的模型架构。VLA 可以承担一部分高层判断，规划器也可以是规则程序、VLM 或优化器。无论采用哪种实现，都应该把“任务顺序”和“眼前动作”分开，否则高层模型的推理延迟会拖慢底层控制，底层的高频控制也会让高层模型处理大量无关细节。对 XLeRobot 来说，模型不应直接输出任意关节角；它只选择 `pick`、`place`、`verify_state` 或 `stop` 等有边界的技能，经过标定、限速并带超时的执行器再把技能变成真实机械臂动作。
 

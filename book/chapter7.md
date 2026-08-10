@@ -65,7 +65,7 @@ for sample in dataset:
     update_parameters(loss)
 ```
 
-这里的 `-100` 只表示损失屏蔽，不是把 prompt 从模型输入中删除；模型仍需阅读问题，才能学习回答协议。真实的模板拼装、padding、batching、LoRA 配置和 tokenizer 审计放在 [chapter7/cot-distillation](../chapter7/cot-distillation/README.md) 与各 SFT 实验目录中，正文只保留这个监督边界。
+这里的 `-100` 只表示损失屏蔽，不是把 prompt 从模型输入中删除；模型仍需阅读问题，才能学习回答协议。
 
 一句话概括 SFT 的本质：**用极高的样本效率，把一套稳定的“输入→输出”映射与协议固化进参数。** 它固化的是“格式、风格、流程”这类**协议性知识**（该怎么说、怎么做），而非大量**事实性知识**（知道什么）——后者要靠预训练或 RAG。
 
@@ -538,7 +538,7 @@ for token in trajectory:
         loss_mask[token] = 1
 ```
 
-这不是在说环境反馈不重要；反馈负责计算奖励和优势，只是不应被当成策略要复现的目标序列。工具消息的序列化、来源标记和沙盒执行见 [chapter7/RLVP](../chapter7/RLVP/README.md) 与 [chapter7/SimpleVLA-RL](../chapter7/SimpleVLA-RL/README.md)。
+这不是在说环境反馈不重要；反馈负责计算奖励和优势，只是不应被当成策略要复现的目标序列。工具消息必须保留来源标记，并在执行环境中与策略输出区分开。
 
 > **实验 7-14 ★★★：ReTool——代码解释器增强数学解题**
 >
@@ -606,7 +606,7 @@ for step in trajectory:
 reward = normalize(outcome) + beta * normalize(path_signal)
 ```
 
-路径信号中的允许动作、可达子目标、隐藏测试和证据记录属于实验代码；正文只说明“结果奖励”和“路径约束”如何合流，避免把某个环境的规则误当成通用算法。
+路径信号中的允许动作、可达子目标、隐藏测试和证据记录依赖具体环境；正文只说明“结果奖励”和“路径约束”如何合流，避免把某个环境的规则误当成通用算法。
 
 RLVP 的关键不是“奖励越密越好”，而是能否补回组内差异。纯结果奖励在全败组和全胜组都会产生零方差、没有梯度；违规动作通常容易检测，惩罚几乎总能补回差异；进展奖励只有在部分进展可达时才有效。设计时应遵循四点：只惩罚具体动作，不惩罚“不够努力”；结果奖励始终保留，避免模型学会什么都不做；每个惩罚最好配一条可达的合规路径；规则必须确定、难以钻空子。如果基础策略根本不会采样合规动作，应先用少量示范把这条路径“种”出来，待合规行为稳定后再逐步减弱路径塑形。换句话说，惩罚是通常可达的那一半，进展奖励是受可达性门控的那一半。
 
@@ -643,7 +643,7 @@ for state in student_trajectory:
 update_student(loss)
 ```
 
-教师的完整推理服务、缓存和停止条件见 [chapter7/cot-distillation](../chapter7/cot-distillation/README.md)；这里的 skeleton 只用来区分 on-policy 状态与逐 token 监督。
+这里的 skeleton 只用来区分 on-policy 状态与逐 token 监督。
 
 在数学等任务上，达到同等性能所需的训练步数约为纯 RL 的 **1/10**。在多轮 Agent 中，成败信号更晚、更稀疏，逐 token 的教师分布能直接指导中间决策；但前提是仿真环境足够真实，让学生探索到的状态接近部署分布，否则教师对陌生偏差状态的评分也不可靠。
 
@@ -667,7 +667,7 @@ for state in student_trajectory:
 update(model, loss + retention_regularizer)
 ```
 
-`privileged_state` 只能在训练侧构造，不能泄露给部署时的 Agent；`retention_regularizer` 代表保留集/风格约束，而不是某个固定超参数。数据权限、答案遮蔽和遗忘评估应在 [chapter7/cot-distillation](../chapter7/cot-distillation/README.md) 的训练脚本与验证器中检查。
+`privileged_state` 只能在训练侧构造，不能泄露给部署时的 Agent；`retention_regularizer` 代表保留集/风格约束，而不是某个固定超参数。训练流程还必须检查数据权限、答案遮蔽和遗忘风险。
 
 相比 RLVR，OPSD 不要求奖励一定能被自动验证：特权信息可以是标准答案、人工示范或领域文档。它用这些信息替代更强的外部教师，同时保留“在轨采样 + 逐 token 监督”的样本效率优势。但它不会凭空创造新知识——如果模型拿着答案也讲不清过程，自蒸馏就没有额外信号；朴素 OPSD 还可能让模型丢失原有思考风格，需要额外正则稳定[^ch7-16]。
 

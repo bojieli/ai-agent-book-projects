@@ -248,7 +248,7 @@ Agent 框架拿到模型的工具调用请求后，实际执行这两个工具�
 
 ### 用代码实现 Agent 的核心循环
 
-理解了 JSON 结构之后，让我们用 Python 代码把上面的交互过程串起来。以下是一个最简的 Agent 实现——核心就是一个 while 循环。本章刻意保留这段完整 API 循环作为协议参照；其他章节用 Python 风格 skeleton 标出机制，完整 SDK 适配放在章级实验中。
+理解了 JSON 结构之后，让我们用 Python 代码把上面的交互过程串起来。以下是一个最简的 Agent 实现——核心就是一个 while 循环。本章刻意保留这段完整 API 循环作为协议参照；其他章节用 Python 风格 skeleton 标出机制。
 
 ```python
 from openai import OpenAI
@@ -396,7 +396,7 @@ request.tools = stable_tools
 response = call_model(request)
 ```
 
-系统提示词和核心工具定义尽量保持稳定；旧工具输出只在接近预算时成批压缩；当前状态放在轨迹尾部，让模型不必从长历史中重新推导。完整实现和六种策略的对照入口见配套实验 `chapter2/context-compression`。
+系统提示词和核心工具定义尽量保持稳定；旧工具输出只在接近预算时成批压缩；当前状态放在轨迹尾部，让模型不必从长历史中重新推导。
 
 > **实验 2-1 ★：本地 LLM 服务部署与工具调用**
 >

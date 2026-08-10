@@ -53,10 +53,7 @@ after conversation (background job):
     memory.append_or_update(verified)
 ```
 
-提取器可以提出候选，但不能自行把未核验的字符串当成事实；更新策略还应记录来源、时间和冲突版本。配套实现从
-[`user-memory` 实验](../chapter3/user-memory/README.md)中的
-`conversational_agent.py::ConversationalAgent.chat` 开始，后台处理从
-`background_memory_processor.py::BackgroundMemoryProcessor.process_recent_conversations` 开始。
+提取器可以提出候选，但不能自行把未核验的字符串当成事实；更新策略还应记录来源、时间和冲突版本。
 
 提取结果应同时满足三条规则：**选择性**（丢弃“搜索返回 3 个选项”这类短期细节）、**抽象化**（把本次“靠窗座位”归纳为长期偏好）和**结构化**（用可检索的字段保存事实）。
 
@@ -149,9 +146,9 @@ if checkpoint_due():
         keep_previous_checkpoint()
 ```
 
-这段 skeleton 只说明“日志先保真、检查点后结构化”的时序，完整实现仍放在实验目录。
+这段 skeleton 只说明“日志先保真、检查点后结构化”的时序。
 
-下面是一个简化的状态片段，说明类型化状态和规则如何衔接；可运行定义和测试放在实验目录：
+下面是一个简化的状态片段，说明类型化状态和规则如何衔接：
 
 ```python
 state = {
@@ -337,9 +334,6 @@ online(query):
     evidence = rerank(query, candidates)
     return LLM(query + evidence)
 ```
-
-代码阅读入口：`chapter3/retrieval-pipeline/retrieval_pipeline.py::RetrievalPipeline.search`、
-`fusion.py::fuse` 和 `reranker.py::Reranker.rerank`。
 
 检索器的质量直接决定了 RAG 的效果——如果检索不到相关片段，LLM 再强也难为无米之炊。本节先看文档进入知识库的第一道工序——分块，再重点看检索器的两大技术路线：稠密嵌入（基于语义理解）和稀疏嵌入（基于关键词匹配），以及如何把二者结合起来。
 

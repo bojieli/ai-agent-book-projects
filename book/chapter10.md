@@ -180,7 +180,7 @@ while worker.is_running:
 await worker.ack_or_timeout()
 ```
 
-`trace_id` 用来把跨 Agent 的事件串回同一任务，`deadline` 和取消令牌则把“能运行”与“能收尾”区分开。JSON 序列化、重试、幂等键和真实总线实现放在相应实验目录中。
+`trace_id` 用来把跨 Agent 的事件串回同一任务，`deadline` 和取消令牌则把“能运行”与“能收尾”区分开。JSON 序列化、重试和幂等键都必须遵循同一边界。
 
 **二、状态查询。** 这是控制平面中最易被低估的一环。主 Agent 派出子 Agent 后，若无从获知其进展，则既无法判断是否继续等待，也无法在其阻塞时及时介入。直觉的做法定义一个 `get_subagent_status(agent_id)` 查询接口，返回 “运行中/已完成/失败” 等状态。但这种拉取式接口并不实用：子 Agent 一经创建就立即开始执行，直到完成或失败，子 Agent 完成时自然会通知主 Agent，并不需要主 Agent 显式查询。状态获取更自然的做法，是回到本章开头的两大通信范式。
 
@@ -258,7 +258,7 @@ else:
     escalate_or_reject(review)
 ```
 
-审核者不能修改测试、证据采集器或发布门槛；否则“独立验证”会退化成自我批准。第五章的 PPT/视频实验和 [chapter10/parallel-web-research](../chapter10/parallel-web-research/README.md) 提供了可运行的执行反馈例子。
+审核者不能修改测试、证据采集器或发布门槛；否则“独立验证”会退化成自我批准。
 
 2024 年发表在 TACL 期刊上的综述论文《When Can LLMs Actually Correct Their Own Mistakes?》（arXiv:2406.01297）进一步确认了这一结论：除非提供可靠的外部反馈（如测试用例的执行结果、外部工具的验证输出），否则纯粹依赖模型自身的“自我纠正”几乎不起作用。
 
@@ -310,7 +310,7 @@ while workers.any_running:
 return summarize_failures(workers)
 ```
 
-`settle_once` 必须是幂等的（通常由锁或事务保护），否则两个几乎同时到达的成功事件会触发两次汇总。完整的消息总线、竞态锁和浏览器清理见 [chapter10/parallel-web-research](../chapter10/parallel-web-research/README.md)。
+`settle_once` 必须是幂等的（通常由锁或事务保护），否则两个几乎同时到达的成功事件会触发两次汇总。
 
 [^plan-and-act-2025]: Erdogan, L. E., et al. *Plan-and-Act: Improving Planning of Agents for Long-Horizon Tasks.* arXiv:2503.09572, 2025.
 
