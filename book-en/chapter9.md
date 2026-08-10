@@ -245,7 +245,7 @@ When the interface itself provides structured information, annotation can be mor
 3. Annotate each interactive element with a unique ID and draw bounding boxes on the screenshot
 4. Simultaneously generate a text list describing the element corresponding to each ID
 
-```
+```text
 Screenshot: [Key elements in the image are annotated with IDs like [1], [2], [3], [4]]
 
 Elements:
@@ -443,9 +443,9 @@ This is a dependency graph, not a paragraph of prose. If the user says “put th
 
 Planning and execution can overlap. Once a safe prefix is complete, the planner streams a complete command to the executor while continuing to plan the suffix. A command event must be complete and auditable:
 
-~~~json
+```text
 {"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
-~~~
+```
 
 The executor reports started, succeeded, cancelled, or failed. The planner uses these observations to update dependencies and applies backpressure when the queue is stale or full. Streaming reduces time to the first safe action; it does not authorize executing partial JSON or unverified model thoughts.
 
@@ -457,9 +457,9 @@ OpenVLA is not literally trained by updating only its projector: the original wo
 
 A world model learns an actionable transition:
 
-~~~text
+```text
 state + candidate action -> predicted future state -> select and verify an action
-~~~
+```
 
 It is broader than V-JEPA alone. The family includes latent predictive models (V-JEPA 2), interactive generative models (Genie 3 and Cosmos), World-Action Models (GeniWorld and Robust-WAM), latent-action learning from unlabeled video (LAWM-3D), and model-based RL (Dreamer and MuZero). The value is to learn from observation at scale, test counterfactual actions before execution, separate shared dynamics from embodiment-specific control, and replan when prediction and reality diverge.
 

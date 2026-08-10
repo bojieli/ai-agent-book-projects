@@ -332,7 +332,7 @@ Bu kodun temel mantığı yalnızca tek bir while döngüsü ve tek bir koşuldu
 `messages` listesindeki değişiklikleri her tur boyunca izleyelim:
 
 **Başlangıç durumu (1. çağrıdan önce):**
-```
+```text
 messages = [
   { role: "system",  content: "Sen yardımsever bir asistansın..." },     # Geliştirici tarafından yazıldı
   { role: "user",    content: "Vancouver'da şu anki saat ve hava durumu nedir?" },  # Kullanıcı girdisi
@@ -340,7 +340,7 @@ messages = [
 ```
 
 **1. çağrıdan sonra (model araç çağrıları döndürür):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "Şu anki saat..." },
@@ -351,7 +351,7 @@ messages = [
 ```
 
 **2. çağrıdan sonra (model nihai yanıtı döndürür, döngü biter):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "Şu anki saat..." },
@@ -593,7 +593,7 @@ Markdown, okunabilirliği korurken hafif bir yapı sağlar, bu da onu hiyerarşi
 
 Buna karşılık, süreç odaklı bir prompt, mükemmel bir yeni çalışan eğitim el kitabı gibidir, net bir Standart Çalışma Prosedürü (SOP) sağlar:
 
-```
+```text
 Dosya İşleme Standart Çalışma Prosedürü:
 
 Adım 1: Doğrulama
@@ -885,7 +885,7 @@ Yan kanal bilgisi ve mevcut yetenek listesi, bir kez eklendikten sonra değişme
 
 Aşağıda, N. API çağrısı sırasında Agent çerçevesi tarafından oluşturulan gerçek mesaj listesi var:
 
-```
+```text
 messages: [
   { role: "system",    content: "Sen bir müşteri hizmetleri asistanısın..." }  ← Sabit (KV Cache önbelleklendi)
   { role: "user",      content: "Xfinity planımı iptal etmeme yardım et" }  ← Orijinal kullanıcı isteği
@@ -1076,7 +1076,7 @@ Bu bölüm, durum güncellemelerini ve context bozulmasını **tek bir görev i�
 
 Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
 
-### Context construction before each request
+### Her istek öncesi context oluşturma
 
 ```python
 stable_prefix = system_message

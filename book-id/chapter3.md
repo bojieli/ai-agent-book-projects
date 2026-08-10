@@ -20,7 +20,7 @@ Intinya, sistem memori pengguna adalah proses belajar aktif berkelanjutan untuk 
 
 Mari kita lihat contoh nyatanya. Bayangkan percakapan pengguna dan Agent berikut:
 
-```
+```text
 User: Tolong pesankan tiket pesawat ke Tokyo untuk Jumat depan. Saya suka kursi dekat jendela dan saya seorang vegetarian, jadi saya butuh makanan khusus.
 Agent: Saya akan mencari penerbangan ke Tokyo untuk Jumat depan...
        [memanggil tool flight_search, mengembalikan 3 opsi]
@@ -30,7 +30,7 @@ User: Ya, dan gunakan nomor United MileagePlus saya 12345678.
 
 Setelah percakapan ini usai, sistem Agent akan memanggil LLM khusus untuk menganalisis dialog dan menyaring informasi yang patut diingat selamanya:
 
-```
+```text
 Memori yang diekstrak:
 - Pengguna suka kursi dekat jendela (preferensi)
 - Pengguna vegetarian, butuh makanan khusus di pesawat (batasan diet)
@@ -498,7 +498,7 @@ Oleh karena itu, strategi yang direkomendasikan dalam praktiknya adalah **desain
 
 RAPTOR dan GraphRAG mewakili eksplorasi komunitas akademis terhadap organisasi pengetahuan; [OpenViking](https://github.com/volcengine/OpenViking), yang bersifat open-source oleh Volcano Engine dari ByteDance, mengusulkan filosofi ketiga: **paradigma sistem file**. Ia memperlakukan konteks bukan sebagai fragmen vektor datar ataupun node grafik. Alih-alih, ia memetakan seluruh konteks—memori, sumber daya, keterampilan—ke dalam direktori dan file di dalam sistem file virtual, masing-masing dengan URI unik:
 
-```
+```text
 viking://
 ├── resources/          # Pengetahuan eksternal: dokumen, basis kode, halaman web
 ├── user/memories/      # User Memory: preferensi, kebiasaan
@@ -701,7 +701,7 @@ Bab ini dan bab sebelumnya keduanya membahas masalah "*context*"—satu di dalam
 
 Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
 
-### Memory lifecycle
+### Siklus hidup memori
 
 ```python
 when answering(user_request):
@@ -716,7 +716,7 @@ after conversation (background job):
     memory.append_or_update(verified)
 ```
 
-### Append-only log and checkpoint
+### Log append-only dan checkpoint
 
 ```python
 append_only_log += extract_facts(conversation)
@@ -729,7 +729,7 @@ if checkpoint_due():
         keep_previous_checkpoint()
 ```
 
-### Typed user state
+### State pengguna bertipe
 
 ```python
 state = {
@@ -746,7 +746,7 @@ state = {
 }
 ```
 
-### Deterministic aggregation
+### Agregasi deterministik
 
 ```python
 count(
@@ -756,7 +756,7 @@ count(
 # => 2
 ```
 
-### Conflict detection
+### Deteksi konflik
 
 ```python
 def check_drug_allergy(profile):
@@ -766,7 +766,7 @@ def check_drug_allergy(profile):
                 emit_conflict(medication, allergy)
 ```
 
-### Constraint enforcement
+### Penegakan constraint
 
 ```python
 def check():
@@ -778,7 +778,7 @@ def check():
                 alert("passport expires too soon", trip, days)
 ```
 
-### Hybrid RAG pipeline
+### Pipeline RAG hibrida
 
 ```python
 offline:

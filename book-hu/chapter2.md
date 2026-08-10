@@ -335,7 +335,7 @@ A huroknak egy fő elágazása van: **ha a modell `tool_calls`-t ad vissza, hajt
 A `messages` lista a következőképpen változik a körök során:
 
 "Kezdeti állapot (az első hívás előtt):"
-```
+```text
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # Fejlesztő által írva
   { role: "user",    content: "What's the current time and weather in Vancouver?" },  # Felhasználói bemenet
@@ -343,7 +343,7 @@ messages = [
 ```
 
 **Az első hívás után (a modell eszközhívásokat ad vissza):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -354,7 +354,7 @@ messages = [
 ```
 
 **A második hívás után (a modell visszaadja a végső választ, a hurok véget ér):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -597,7 +597,7 @@ Az emberek kognitív terhelését csökkentő módszerek egyformán hatékonyak 
 
 Ezzel szemben a folyamatvezérelt prompt hatékony oktatási kézikönyvként működik, világos szabványos működési eljárást (SOP) biztosítva:
 
-```
+```text
 File Processing Standard Operating Procedure:
 
 Step 1: Validation
@@ -889,7 +889,7 @@ Egy fontos implementációs részlet, hogy az Ügynöki Állapotsáv a kontextus
 
 Az alábbiakban az ügynök-keretrendszer által az N-edik API hívás során összeállított tényleges üzenetlista látható:
 
-```
+```text
 messages: [
   { role: "system",    content: "You are a customer service assistant..." }  ← Rögzített (KV Cache-ben)
   { role: "user",      content: "Help me cancel my Xfinity plan" }  ← Eredeti felhasználói kérés
@@ -1080,7 +1080,7 @@ Ez a fejezet az állapotfrissítést és a kontextus romlását **egyetlen felad
 
 Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
 
-### Context construction before each request
+### Kontextus felépítése minden kérés előtt
 
 ```python
 stable_prefix = system_message

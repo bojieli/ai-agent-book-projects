@@ -705,7 +705,7 @@ Ez a fejezet és az előző egyaránt a "kontextus" problémával foglalkozik �
 
 Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
 
-### Memory lifecycle
+### A memória életciklusa
 
 ```python
 when answering(user_request):
@@ -720,7 +720,7 @@ after conversation (background job):
     memory.append_or_update(verified)
 ```
 
-### Append-only log and checkpoint
+### Csak-hozzáfűző napló és ellenőrzőpont
 
 ```python
 append_only_log += extract_facts(conversation)
@@ -733,7 +733,7 @@ if checkpoint_due():
         keep_previous_checkpoint()
 ```
 
-### Typed user state
+### Típusos felhasználói állapot
 
 ```python
 state = {
@@ -750,7 +750,7 @@ state = {
 }
 ```
 
-### Deterministic aggregation
+### Determinisztikus összesítés
 
 ```python
 count(
@@ -760,7 +760,7 @@ count(
 # => 2
 ```
 
-### Conflict detection
+### Ütközésészlelés
 
 ```python
 def check_drug_allergy(profile):
@@ -770,7 +770,7 @@ def check_drug_allergy(profile):
                 emit_conflict(medication, allergy)
 ```
 
-### Constraint enforcement
+### Korlátok érvényesítése
 
 ```python
 def check():
@@ -782,7 +782,7 @@ def check():
                 alert("passport expires too soon", trip, days)
 ```
 
-### Hybrid RAG pipeline
+### Hibrid RAG-folyamat
 
 ```python
 offline:

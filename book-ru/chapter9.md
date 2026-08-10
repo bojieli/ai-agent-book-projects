@@ -187,7 +187,7 @@ Anthropic определяет три категории инструменто�
 3. Присвоить каждому интерактивному элементу уникальный ID и нарисовать вокруг него рамку на скриншоте
 4. Одновременно сформировать текстовый список, описывающий, какой элемент соответствует каждому ID
 
-```
+```text
 Скриншот: [на изображении ключевые элементы помечены ID [1], [2], [3], [4] и т. д.]
 
 Элементы:
@@ -372,9 +372,9 @@ Computer Use также расширяется на мобильные устр�
 
 Планирование и исполнение могут перекрываться. Как только готов безопасный префикс, планировщик отправляет исполнителю полную команду и продолжает строить хвост:
 
-~~~json
+```text
 {"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
-~~~
+```
 
 Исполнитель возвращает started, succeeded, cancelled или failed. Планировщик обновляет зависимости и применяет backpressure, если очередь переполнена или команды устарели. Потоковая схема сокращает ожидание первого безопасного действия, но не разрешает выполнять незавершённый JSON или непроверенные рассуждения модели.
 
@@ -396,7 +396,7 @@ OpenVLA обучался не только обновлением projector: и�
 
 Следующие скелеты выделяют управляющие связи, обсуждаемые в главе.
 
-### Streaming cancellation
+### Отмена потоковой передачи
 
 ```python
 while audio_is_arriving:
@@ -412,7 +412,7 @@ on_final_transcript(text):
     commit_or_restart(text)
 ```
 
-### Computer Use safety loop
+### Цикл безопасности Computer Use
 
 ```python
 observation = capture_screenshot_and_accessibility_tree()
@@ -428,7 +428,7 @@ else:
         rollback_if_possible_or_replan()
 ```
 
-### Action-chunk preemption
+### Прерывание блока действий
 
 ```python
 chunk = vla(current_observation, skill)

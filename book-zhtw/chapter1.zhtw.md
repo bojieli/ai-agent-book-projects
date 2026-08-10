@@ -82,7 +82,7 @@
 
 以一個查天氣的場景為例，四步流程在 API 層面的簡化表示如下：
 
-```
+```text
 第一步：宣告工具                    第二步：模型決定呼叫
 tools: [{                          assistant: {
   name: "get_weather",               tool_calls: [{
@@ -170,7 +170,7 @@ Agent 執行任務的核心模式叫做 **ReAct**（Reasoning + Acting）。雖�
 
 讓我們透過虛擬碼來理解 Agent 軌跡的結構：
 
-```
+```text
 軌跡 = [
   {role: "user" , content: "根據公司季度收入：Q1 2.5M 美元，Q2 2.1M 歐元，Q3 1.8M 英鎊，Q4 380M 日元，計算公司年度總收入和季度平均收入" },
   
@@ -498,9 +498,9 @@ Anthropic 在建構長時執行 Agent 時的實踐展示了 Harness 設計如何
 
 ## 機制骨架
 
-下面的 Python 風格骨架只抽出本章討論的控制關係。它們是解釋性的偽代碼，不是可直接執行的 SDK 實作；完整適配器與測試仍在章級實驗中。
+下面的 Python 風格骨架只抽出本章討論的控制關係。它們是解釋性的偽代碼，不是可直接執行的 SDK 實作；完整適配器與測試仍在章級實驗中。其中，`python` 標記只用作語法高亮，不表示可直接執行，也不對應特定 SDK。
 
-### ReAct control loop
+### ReAct 控制迴圈
 
 ```python
 trajectory = [user_request]
@@ -519,7 +519,7 @@ repeat:
         trajectory.append(observation)
 ```
 
-### Harness production boundary
+### Harness 生產邊界
 
 ```python
 decision = Model(Harness.build_context(state, trajectory))
@@ -534,8 +534,6 @@ else:
 ```
 
 請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
-
-python 只用作語法高亮標記，不表示程式可以直接執行。
 
 ## 思考題
 

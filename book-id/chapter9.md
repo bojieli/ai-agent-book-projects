@@ -180,7 +180,7 @@ Ketika antarmuka itu sendiri menyediakan informasi terstruktur, anotasi dapat me
 3. Menganotasi setiap elemen interaktif dengan ID unik dan menggambar kotak pembatas (bounding box) pada tangkapan layar
 4. Secara bersamaan menghasilkan daftar teks yang mendeskripsikan elemen yang sesuai dengan setiap ID
 
-```
+```text
 Tangkapan layar: [Elemen kunci pada gambar dianotasi dengan ID seperti [1], [2], [3], [4]]
 
 Elemen:
@@ -365,9 +365,9 @@ Ini adalah graf dependensi, bukan paragraf biasa. Jika pengguna berkata “simpa
 
 Perencanaan dan eksekusi dapat berjalan tumpang tindih. Setelah awalan yang aman tersedia, planner mengirim command lengkap kepada executor sambil terus merencanakan sisanya:
 
-~~~json
+```text
 {"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
-~~~
+```
 
 Executor mengembalikan started, succeeded, cancelled, atau failed. Planner memperbarui dependensi dan menerapkan backpressure jika antrean penuh atau sudah kedaluwarsa. Streaming mempercepat aksi aman pertama; streaming bukan izin untuk menjalankan JSON yang belum lengkap atau pikiran model yang belum diverifikasi.
 
@@ -389,7 +389,7 @@ Secara kasat mata, ketiga skenario tersebut mungkin terlihat sangat berbeda, nam
 
 Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
 
-### Streaming cancellation
+### Pembatalan streaming
 
 ```python
 while audio_is_arriving:
@@ -405,7 +405,7 @@ on_final_transcript(text):
     commit_or_restart(text)
 ```
 
-### Computer Use safety loop
+### Loop keamanan Computer Use
 
 ```python
 observation = capture_screenshot_and_accessibility_tree()
@@ -421,7 +421,7 @@ else:
         rollback_if_possible_or_replan()
 ```
 
-### Action-chunk preemption
+### Preemption chunk aksi
 
 ```python
 chunk = vla(current_observation, skill)

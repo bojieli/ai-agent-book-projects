@@ -897,7 +897,7 @@ SFT と RL は競争関係ではなく、前後の関係です。SFT がまず�
 
 以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
 
-### SFT loss mask
+### SFT 損失マスク
 
 ```python
 for sample in dataset:
@@ -909,7 +909,7 @@ for sample in dataset:
     update_parameters(loss)
 ```
 
-### GRPO group update
+### GRPO グループ更新
 
 ```python
 for prompt in batch:
@@ -919,7 +919,7 @@ for prompt in batch:
     update(policy, group, advantages)
 ```
 
-### PPO clipped update
+### PPO クリップ更新
 
 ```python
 for trajectory in rollouts:
@@ -936,7 +936,7 @@ for trajectory in rollouts:
 update(policy, value_model, policy_loss + value_coef * value_loss)
 ```
 
-### Trajectory-level reward mask
+### 軌跡レベルの報酬マスク
 
 ```python
 for token in trajectory:
@@ -946,7 +946,7 @@ for token in trajectory:
         loss_mask[token] = 1
 ```
 
-### Outcome plus path signal
+### 結果＋経路シグナル
 
 ```python
 outcome = verify_final_state(trajectory)              # result, not self-report
@@ -956,7 +956,7 @@ for step in trajectory:
 reward = normalize(outcome) + beta * normalize(path_signal)
 ```
 
-### On-policy distillation
+### オンポリシー蒸留
 
 ```python
 student_trajectory = rollout(student, task)
@@ -967,7 +967,7 @@ for state in student_trajectory:
 update_student(loss)
 ```
 
-### On-policy self-distillation
+### オンポリシー自己蒸留
 
 ```python
 student_trajectory = rollout(model, task_without_answer)

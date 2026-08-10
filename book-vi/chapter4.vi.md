@@ -559,7 +559,7 @@ Sự can thiệp có thể xảy ra ở hai cấp độ:
 
 **Điểm đánh dấu thanh trạng thái Agent**: Thêm điểm đánh dấu rõ ràng trước mỗi sự kiện:
 
-```
+```text
 [Sự kiện chưa được xử lý 1/4] Kết quả công cụ từ cơ sở dữ liệu_query:...
 [Sự kiện chưa được xử lý 2/4] Giải thích bổ sung của người dùng: Chỉ nhìn vào dữ liệu ở khu vực Bắc Kinh
 [Sự kiện chưa xử lý 3/4] Nhắc nhở hệ thống: Thời hạn báo cáo còn 30 phút nữa
@@ -694,7 +694,7 @@ Chương tiếp theo sẽ trả lời một câu hỏi cơ bản hơn "cách s�
 
 Các skeleton sau chỉ tách ra quan hệ điều khiển được bàn trong chương.
 
-### Tool safety gate
+### Cổng an toàn tool
 
 ```python
 proposal = model.tool_call()
@@ -721,7 +721,7 @@ checked = verify_result(call, result, observe_environment())
 return checked
 ```
 
-### Event-loop routing
+### Định tuyến event loop
 
 ```python
 while runtime.is_alive:
@@ -738,7 +738,7 @@ while runtime.is_alive:
     dispatch(decision)
 ```
 
-### Proactive tool discovery
+### Khám phá tool chủ động
 
 ```python
 if capability_is_missing(task):

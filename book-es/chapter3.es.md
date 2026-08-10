@@ -20,7 +20,7 @@ La esencia del sistema de memoria del usuario es un proceso de aprendizaje activ
 
 Comprendamos este proceso con un ejemplo concreto. Supongamos que el usuario y el Agente sostienen la siguiente conversación:
 
-```
+```text
 User: Help me book a flight to Tokyo next Friday. I prefer window seats
       and I'm vegetarian, so I'll need a special meal.
 Agent: I'll search for flights to Tokyo for next Friday...
@@ -32,7 +32,7 @@ User: Yes, and use my United MileagePlus number 12345678.
 
 Una vez finalizada esta conversación, el marco del Agente ejecutará una llamada dedicada a un LLM para analizar el contenido y extraer la información que vale la pena recordar a largo plazo:
 
-```
+```text
 Extracted memories:
 - User prefers window seats (preference)
 - User is vegetarian, needs special meals on flights (dietary restriction)
@@ -519,7 +519,7 @@ Por ello, la estrategia recomendada en la práctica es la **complementariedad po
 
 Mientras que RAPTOR y GraphRAG representan la exploración académica de la organización del conocimiento, el proyecto de código abierto [OpenViking](https://github.com/volcengine/OpenViking) de Volcano Engine (ByteDance) propone una tercera filosofía: el **paradigma del sistema de archivos**. En lugar de considerar el contexto como fragmentos vectoriales planos o nodos de un grafo, mapea todo el contexto (memorias, recursos, habilidades) a directorios y archivos en un sistema de archivos virtual, asignando a cada elemento una URI única:
 
-```
+```text
 viking://
 ├── resources/          # Conocimiento externo: documentos, repositorios, webs
 ├── user/memories/      # Memoria del usuario: preferencias, hábitos
@@ -729,7 +729,7 @@ Este capítulo y el anterior abordan la gestión de contexto: uno dentro de una 
 
 Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
 
-### Memory lifecycle
+### Ciclo de vida de la memoria
 
 ```python
 when answering(user_request):
@@ -744,7 +744,7 @@ after conversation (background job):
     memory.append_or_update(verified)
 ```
 
-### Append-only log and checkpoint
+### Registro de solo anexado y checkpoint
 
 ```python
 append_only_log += extract_facts(conversation)
@@ -757,7 +757,7 @@ if checkpoint_due():
         keep_previous_checkpoint()
 ```
 
-### Typed user state
+### Estado de usuario tipado
 
 ```python
 state = {
@@ -774,7 +774,7 @@ state = {
 }
 ```
 
-### Deterministic aggregation
+### Agregación determinista
 
 ```python
 count(
@@ -784,7 +784,7 @@ count(
 # => 2
 ```
 
-### Conflict detection
+### Detección de conflictos
 
 ```python
 def check_drug_allergy(profile):
@@ -794,7 +794,7 @@ def check_drug_allergy(profile):
                 emit_conflict(medication, allergy)
 ```
 
-### Constraint enforcement
+### Aplicación de restricciones
 
 ```python
 def check():
@@ -806,7 +806,7 @@ def check():
                 alert("passport expires too soon", trip, days)
 ```
 
-### Hybrid RAG pipeline
+### Pipeline RAG híbrido
 
 ```python
 offline:

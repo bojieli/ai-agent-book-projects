@@ -82,7 +82,7 @@ Tool calling dört adımdan oluşur: önce context, modele hangi araçların mev
 
 Bir hava durumu sorgusu senaryosunu örnek alırsak, bu dört adımlı sürecin API düzeyindeki basitleştirilmiş gösterimi şöyledir:
 
-```
+```text
 Adım 1: Araçları bildir                Adım 2: Model çağırmaya karar verir
 tools: [{                             assistant: {
   name: "get_weather",                  tool_calls: [{
@@ -170,7 +170,7 @@ Somut bir örnek üzerinden—birden fazla para biriminde geliri toplama—bir A
 
 Bir trajectory'nin yapısı, sözde kod (pseudocode) olarak şöyledir:
 
-```
+```text
 trajectory = [
   {role: "user", content: "Şirketin çeyreklik gelirlerine göre: Q1 2.5M USD, Q2 2.1M EUR, Q3 1.8M GBP, Q4 380M JPY, şirketin toplam yıllık gelirini ve ortalama çeyreklik gelirini hesapla"},
 
@@ -499,9 +499,9 @@ Aşağıdaki düşünce soruları, bölümün temel kavramlarını bir düzey da
 
 ## Mekanizma skeleton'ları
 
-Python tarzı bu skeleton'lar bölümdeki kontrol ilişkilerini izole eder. Bunlar açıklayıcı pseudocode'dur, çalıştırılabilir SDK uygulaması değildir; tam adaptörler ve testler bölüm deneylerindedir.
+Python tarzı bu skeleton'lar bölümdeki kontrol ilişkilerini izole eder. Bunlar açıklayıcı pseudocode'dur, çalıştırılabilir SDK uygulaması değildir; tam adaptörler ve testler bölüm deneylerindedir. `python` işareti yalnızca sözdizimi vurgulaması içindir; çalıştırılabilir bir SDK veya doğrudan çalıştırılabilir bir program anlamına gelmez.
 
-### ReAct control loop
+### ReAct kontrol döngüsü
 
 ```python
 trajectory = [user_request]
@@ -520,7 +520,7 @@ repeat:
         trajectory.append(observation)
 ```
 
-### Harness production boundary
+### Harness üretim sınırı
 
 ```python
 decision = Model(Harness.build_context(state, trajectory))
@@ -535,8 +535,6 @@ else:
 ```
 
 Sınırı açık tutun: gözlemler ve kanıt ortamdan gelir, Harness ise hangi eylemin yürütülebileceğine karar verir.
-
-python yalnızca vurgulama marker'ıdır; doğrudan çalıştırılabilir bir program anlamına gelmez.
 
 ## Düşünce Soruları
 

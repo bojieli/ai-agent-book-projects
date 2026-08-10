@@ -478,7 +478,7 @@ A2A 的定位可以和第四章的 MCP 對照理解：MCP 解決的是 Agent 與
 
 用一個具體場景說明。假設一個翻譯系統採用管理者模式（實驗 10-2 的架構），Manager 將一本技術書分章分配給多個翻譯 Agent：
 
-```
+```text
 術語 Agent：將 “reasoning” 翻譯為 “推理”，但 “推理” 在中文裡更常用於 inference，存在歧義
         ↓ 寫入 glossary.json
 翻譯 Agent A：翻譯第二章，從術語表讀取，將 “reasoning tokens” 翻譯為 “推理 token”
@@ -650,7 +650,7 @@ Pinchwork 和 RentAHuman 共同代表了**基於市場機制的協調方式**—
 
 下面的骨架只抽出本章討論的控制關係。
 
-### Message envelope and worker lifetime
+### 訊息信封與 worker 生命週期
 
 ```python
 envelope = {
@@ -667,7 +667,7 @@ while worker.is_running:
 await worker.ack_or_timeout()
 ```
 
-### Proposer-reviewer loop
+### 提議者—審核者迴圈
 
 ```python
 candidate = proposer(task, constraints)
@@ -685,7 +685,7 @@ else:
     escalate_or_reject(review)
 ```
 
-### First verified parallel winner
+### 第一個通過驗證的並行結果
 
 ```python
 workers = launch_independent_workers(subtasks)
@@ -703,7 +703,7 @@ while workers.any_running:
 return summarize_failures(workers)
 ```
 
-### Decentralized handoff protocol
+### 去中心化 handoff 協定
 
 ```python
 handoff = {

@@ -32,7 +32,7 @@
 
 **ஏஜெண்ட் பாதை**:
 
-```
+```text
 User: நான் 3 நாட்களுக்கு முன் வாங்கிய ஹெட்ஃபோன்களை திரும்பப் பெற விரும்புகிறேன், ஆர்டர் எண் 12345. (இன்று 2026-04-10)
 
 Agent (சிந்தித்தல்): பயனர் பணத்தைத் திரும்பப் பெற விரும்புகிறார், முதலில் ஆர்டர் தகவலைச் சரிபார்க்க வேண்டும்.
@@ -788,7 +788,7 @@ ML ஆராய்ச்சியாளர்கள் நீண்ட கால
 
 கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
 
-### Repeatable evaluation loop
+### மீண்டும் இயக்கக்கூடிய மதிப்பீட்டு சுழற்சி
 
 ```python
 for task in dataset:
@@ -799,7 +799,7 @@ for task in dataset:
     record(task, trajectory, outcome, score)
 ```
 
-### Deterministic veto before rubric judging
+### Rubric மதிப்பீட்டுக்கு முன் தீர்மானகமான veto
 
 ```python
 deterministic = verify_state_policy_and_claims(trajectory, outcome)
@@ -810,7 +810,7 @@ rubric_result = judge(answer, rubric, evidence)
 return aggregate_with_confidence(rubric_result)
 ```
 
-### Paired comparison
+### இணை ஒப்பீடு
 
 ```python
 for task in paired_tasks:

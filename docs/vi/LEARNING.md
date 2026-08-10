@@ -30,11 +30,11 @@ Lộ trình học tương ứng một-một với các chương của sách, tri
 
 Cuốn sách không phải hướng dẫn từng bước cho một SDK cụ thể. Pseudocode và skeleton chỉ ra luồng trạng thái, điểm dừng và ranh giới kiểm chứng; thí nghiệm cung cấp triển khai, adapter, test, log và bằng chứng.
 
-| Layer | Read first | Skip for now | Question it answers |
+| Tầng | Đọc trước | Tạm bỏ qua | Câu hỏi mà nó trả lời |
 | :--: | --- | --- | --- |
-| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | Thí nghiệm này nhằm chứng minh cơ chế nào? |
-| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | Biến nào đã làm thay đổi hành vi? |
-| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | Kết quả có tái lập được không và lỗi có được ghi nhận trung thực không? |
+| **Starter** | README dự án: mục tiêu, lệnh tối thiểu và điều kiện nghiệm thu; skeleton tương ứng trong sách | thông tin xác thực, UI, adapter provider và log thô dài | Thí nghiệm này nhằm chứng minh cơ chế nào? |
+| **Builder** | điểm vào, vòng lặp lõi, schema state/message, tool và verifier | các lớp tương thích/triển khai không liên quan đến cơ chế | Biến nào đã làm thay đổi hành vi? |
+| **Maintainer** | test, xử lý lỗi, định dạng bằng chứng, manifest/hash và đường rollback | chi tiết bên thứ ba chỉ cần khi sửa thí nghiệm | Kết quả có tái lập được không và lỗi có được ghi nhận trung thực không? |
 
 ### Phân cấp độ khó
 

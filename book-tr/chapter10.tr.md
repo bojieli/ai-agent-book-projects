@@ -478,7 +478,7 @@ Eşzamanlılık çakışmaları dosya düzeyinde sorunlardır ve işletim sistem
 
 Somut bir senaryoyla açıklayalım. Diyelim ki bir çeviri sistemi yönetici modelini kullanıyor (Deney 10-2'ün mimarisi) ve Manager teknik bir kitabı bölümlere ayırıp birden çok çeviri Agent'ına dağıtıyor:
 
-```
+```text
 Terim Agent'ı: "reasoning" terimini "推理" diye çeviriyor, ama "推理" Çincede daha çok inference için kullanılıyor; belirsizlik var
         ↓ glossary.json dosyasına yazar
 Çeviri Agent'ı A: İkinci bölümü çeviriyor, terim tablosundan okuyor, "reasoning tokens" ifadesini "推理 token" diye çeviriyor
@@ -650,7 +650,7 @@ Kurt adam, bu kısımdaki üç boyuttan **stratejik oyunu** temsil eder: kural k
 
 Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
 
-### Message envelope and worker lifetime
+### Mesaj zarfı ve worker yaşam döngüsü
 
 ```python
 envelope = {
@@ -667,7 +667,7 @@ while worker.is_running:
 await worker.ack_or_timeout()
 ```
 
-### Proposer-reviewer loop
+### Proposer–Reviewer döngüsü
 
 ```python
 candidate = proposer(task, constraints)
@@ -685,7 +685,7 @@ else:
     escalate_or_reject(review)
 ```
 
-### First verified parallel winner
+### İlk doğrulanmış paralel kazanan
 
 ```python
 workers = launch_independent_workers(subtasks)
@@ -703,7 +703,7 @@ while workers.any_running:
 return summarize_failures(workers)
 ```
 
-### Decentralized handoff protocol
+### Merkeziyetsiz handoff protokolü
 
 ```python
 handoff = {

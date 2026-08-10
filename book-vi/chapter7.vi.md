@@ -900,7 +900,7 @@ Quá trình post-training giải quyết được vấn đề "làm thế nào �
 
 Các skeleton sau chỉ tách ra quan hệ điều khiển được bàn trong chương.
 
-### SFT loss mask
+### Mask loss SFT
 
 ```python
 for sample in dataset:
@@ -912,7 +912,7 @@ for sample in dataset:
     update_parameters(loss)
 ```
 
-### GRPO group update
+### Cập nhật nhóm GRPO
 
 ```python
 for prompt in batch:
@@ -922,7 +922,7 @@ for prompt in batch:
     update(policy, group, advantages)
 ```
 
-### PPO clipped update
+### Cập nhật cắt PPO
 
 ```python
 for trajectory in rollouts:
@@ -939,7 +939,7 @@ for trajectory in rollouts:
 update(policy, value_model, policy_loss + value_coef * value_loss)
 ```
 
-### Trajectory-level reward mask
+### Mask reward cấp trajectory
 
 ```python
 for token in trajectory:
@@ -949,7 +949,7 @@ for token in trajectory:
         loss_mask[token] = 1
 ```
 
-### Outcome plus path signal
+### Tín hiệu kết quả cộng tín hiệu đường đi
 
 ```python
 outcome = verify_final_state(trajectory)              # result, not self-report
@@ -959,7 +959,7 @@ for step in trajectory:
 reward = normalize(outcome) + beta * normalize(path_signal)
 ```
 
-### On-policy distillation
+### Chưng cất on-policy
 
 ```python
 student_trajectory = rollout(student, task)
@@ -970,7 +970,7 @@ for state in student_trajectory:
 update_student(loss)
 ```
 
-### On-policy self-distillation
+### Tự chưng cất on-policy
 
 ```python
 student_trajectory = rollout(model, task_without_answer)

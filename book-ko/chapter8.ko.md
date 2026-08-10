@@ -393,7 +393,7 @@ Hermes는 백그라운드 진화의 더 완전한 사례를 제공합니다. 장
 
 다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
 
-### Three-layer trajectory verification
+### 3계층 trajectory 검증
 
 ```python
 outcome = verify_environment_state(trajectory)
@@ -406,7 +406,7 @@ else:
     emit_structured_diagnosis(outcome, process, quality)
 ```
 
-### Experience-to-capability routing
+### 경험→능력 라우팅
 
 ```python
 if experience.is_factual and experience.has_sources:
@@ -419,7 +419,7 @@ else:
     target = MODEL_PARAMETERS
 ```
 
-### Validated release and rollback
+### 검증된 릴리스와 롤백
 
 ```python
 candidate = propose_minimal_update(evidence, current_version)
@@ -433,7 +433,7 @@ else:
     else: promote(candidate)
 ```
 
-### Sleep-time consolidation
+### 유휴 시간 통합
 
 ```python
 while sleep_gate_is_open():

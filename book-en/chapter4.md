@@ -568,7 +568,7 @@ Intervention can be applied at two levels:
 
 **Agent Status Bar Markers**: Add explicit markers before each event:
 
-```
+```text
 [Unprocessed Event 1/4] Tool result from database_query: ...
 [Unprocessed Event 2/4] User supplementary note: Only look at Beijing data
 [Unprocessed Event 3/4] System reminder: Report deadline is in 30 minutes

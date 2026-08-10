@@ -32,7 +32,7 @@ Agent システムを構築する際、開発者は数多くの設計上の選�
 
 **Agent の軌跡**：
 
-```
+```text
 ユーザー：3 日前に買ったあのイヤホンを返品したいのですが、注文番号は 12345 です。（今日は 2026-04-10）
 
 Agent（思考）：ユーザーは返金を求めている。まず注文情報を照会する必要がある。
@@ -785,7 +785,7 @@ Agent 開発者への示唆はこうです。特性スイッチはデバッグ�
 
 以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
 
-### Repeatable evaluation loop
+### 再現可能な評価ループ
 
 ```python
 for task in dataset:
@@ -796,7 +796,7 @@ for task in dataset:
     record(task, trajectory, outcome, score)
 ```
 
-### Deterministic veto before rubric judging
+### rubric 判定前の決定的 veto
 
 ```python
 deterministic = verify_state_policy_and_claims(trajectory, outcome)
@@ -807,7 +807,7 @@ rubric_result = judge(answer, rubric, evidence)
 return aggregate_with_confidence(rubric_result)
 ```
 
-### Paired comparison
+### ペア比較
 
 ```python
 for task in paired_tasks:

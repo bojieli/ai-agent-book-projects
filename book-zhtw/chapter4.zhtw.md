@@ -559,7 +559,7 @@ PineClaw 的解決方案是引入 **Channel 機制**——在 OpenClaw 的 Gatew
 
 **Agent 狀態列標記**：在每個事件前新增顯式標記：
 
-```
+```text
 [未處理事件 1/4] Tool result from database_query：...
 [未處理事件 2/4] User 補充說明：只看北京地區的資料
 [未處理事件 3/4] 系統提醒：報告截止時間還有 30 分鐘
@@ -694,7 +694,7 @@ PineClaw 的解決方案是引入 **Channel 機制**——在 OpenClaw 的 Gatew
 
 下面的骨架只抽出本章討論的控制關係。
 
-### Tool safety gate
+### 工具安全閘
 
 ```python
 proposal = model.tool_call()
@@ -721,7 +721,7 @@ checked = verify_result(call, result, observe_environment())
 return checked
 ```
 
-### Event-loop routing
+### 事件迴圈路由
 
 ```python
 while runtime.is_alive:
@@ -738,7 +738,7 @@ while runtime.is_alive:
     dispatch(decision)
 ```
 
-### Proactive tool discovery
+### 主動工具發現
 
 ```python
 if capability_is_missing(task):

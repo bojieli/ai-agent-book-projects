@@ -26,11 +26,11 @@ Kerangka utama buku ini adalah **Agent = Model + Konteks + Alat**. Ketiga kompon
 
 Buku ini bukan tutorial langkah demi langkah untuk satu SDK. Pseudocode dan skeleton menjelaskan aliran status, titik penghentian, dan batas verifikasi; eksperimen menyediakan implementasi, adapter, pengujian, log, dan bukti.
 
-| Layer | Read first | Skip for now | Question it answers |
+| Lapisan | Baca terlebih dahulu | Lewati dulu | Pertanyaan yang dijawab |
 | :--: | --- | --- | --- |
-| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | Mekanisme apa yang hendak dibuktikan eksperimen ini? |
-| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | Variabel mana yang mengubah perilaku? |
-| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | Apakah hasil dapat direproduksi dan kegagalan dicatat dengan jujur? |
+| **Starter** | README proyek: tujuan, perintah minimum, dan syarat penerimaan; skeleton teks yang sesuai | kredensial, UI, adapter provider, dan log mentah yang panjang | Mekanisme apa yang hendak dibuktikan eksperimen ini? |
+| **Builder** | entry point, loop inti, skema state/pesan, tool, dan verifier | lapisan kompatibilitas/deployment yang tidak terkait mekanisme | Variabel mana yang mengubah perilaku? |
+| **Maintainer** | test, penanganan kegagalan, format bukti, manifest/hash, dan jalur rollback | detail pihak ketiga yang hanya diperlukan saat mengubah eksperimen | Apakah hasil dapat direproduksi dan kegagalan dicatat dengan jujur? |
 
 ## Tingkat Kesulitan
 

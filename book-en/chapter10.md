@@ -467,7 +467,7 @@ Concurrency conflicts are file-level problems that can be addressed using establ
 
 Consider a specific scenario. Suppose a translation system uses a manager pattern (the architecture from Experiment 10-2), where the Manager assigns chapters of a technical book to multiple translation Agents:
 
-```
+```text
 Terminology Agent: Translates "reasoning" as "推理", but "推理" in Chinese is more commonly used for inference, creating ambiguity
         ↓ writes to glossary.json
 Translation Agent A: Translates Chapter 2, reads from the glossary, translates "reasoning tokens" as "推理 token"

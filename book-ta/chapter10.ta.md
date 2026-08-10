@@ -471,7 +471,7 @@ A2A-வின் நிலைப்பாட்டை அத்தியாய�
 
 ஒரு குறிப்பிட்ட சூழ்நிலையைக் கவனியுங்கள். ஒரு மொழிபெயர்ப்பு அமைப்பு மேலாளர் முறையைப் பயன்படுத்துகிறது (சோதனை 10-2 இன் கட்டமைப்பு), அங்கு மேலாளர் ஒரு தொழில்நுட்ப புத்தகத்தின் அத்தியாயங்களை பல மொழிபெயர்ப்பு ஏஜெண்டுகளுக்கு ஒதுக்குகிறது:
 
-```
+```text
 சொற்களஞ்சிய ஏஜெண்ட்: "reasoning" ஐ "推理" என மொழிபெயர்க்கிறது, ஆனால் சீன மொழியில் "推理" பொதுவாக inference க்கு பயன்படுத்தப்படுகிறது, இது தெளிவின்மையை உருவாக்குகிறது
         ↓ glossary.json க்கு எழுதுகிறது
 மொழிபெயர்ப்பு ஏஜெண்ட் A: அத்தியாயம் 2 ஐ மொழிபெயர்க்கிறது, சொற்களஞ்சியத்திலிருந்து படிக்கிறது, "reasoning tokens" ஐ "推理 tokens" என மொழிபெயர்க்கிறது
@@ -643,7 +643,7 @@ Pinchwork மற்றும் RentAHuman ஆகியவை சேர்ந்
 
 கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
 
-### Message envelope and worker lifetime
+### செய்தி envelope மற்றும் worker வாழ்க்கைச் சுழற்சி
 
 ```python
 envelope = {
@@ -660,7 +660,7 @@ while worker.is_running:
 await worker.ack_or_timeout()
 ```
 
-### Proposer-reviewer loop
+### Proposer–Reviewer சுழற்சி
 
 ```python
 candidate = proposer(task, constraints)
@@ -678,7 +678,7 @@ else:
     escalate_or_reject(review)
 ```
 
-### First verified parallel winner
+### முதல் சரிபார்க்கப்பட்ட parallel வெற்றியாளர்
 
 ```python
 workers = launch_independent_workers(subtasks)

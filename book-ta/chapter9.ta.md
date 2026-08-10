@@ -184,7 +184,7 @@ Anthropic மூன்று வகையான கருவிகளை வர�
 3. ஒவ்வொரு ஊடாடும் உறுப்புக்கும் ஒரு தனித்துவமான ID ஐக் குறித்து, ஸ்கிரீன்ஷாட்டில் எல்லைப் பெட்டிகளை (bounding boxes) வரைதல்
 4. ஒரே நேரத்தில் ஒவ்வொரு ID க்கும் தொடர்புடைய உறுப்பை விவரிக்கும் ஒரு உரை பட்டியலை உருவாக்குதல்
 
-```
+```text
 Screenshot: [Key elements in the image are annotated with IDs like [1], [2], [3], [4]]
 
 Elements:
@@ -367,9 +367,9 @@ LLM அனுமானத்தின் (inference) தாமதம் கா�
 
 திட்டமிடலும் செயல்படுத்தலும் ஒரே நேரத்தில் நடைபெறலாம். பாதுகாப்பான தொடக்கப்பகுதி தயாரானதும், திட்டமிடுபவர் மீதிப் பகுதியைத் திட்டமிடிக்கொண்டே முழுமையான command-ஐ executor-க்கு அனுப்புகிறார்:
 
-~~~json
+```text
 {"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
-~~~
+```
 
 Executor started, succeeded, cancelled அல்லது failed என நிலையைத் திருப்புகிறது. வரிசை நிரம்பியிருந்தாலோ கட்டளைகள் பழையதாகிவிட்டாலோ planner backpressure பயன்படுத்துகிறது. ஸ்ட்ரீமிங் முதல் பாதுகாப்பான செயலுக்கான காத்திருப்பை குறைக்கிறது; முழுமையற்ற JSON அல்லது சரிபார்க்காத மாதிரி சிந்தனையைச் செயல்படுத்த அனுமதிப்பதில்லை.
 
@@ -407,7 +407,7 @@ on_final_transcript(text):
     commit_or_restart(text)
 ```
 
-### Computer Use safety loop
+### Computer Use பாதுகாப்பு சுழற்சி
 
 ```python
 observation = capture_screenshot_and_accessibility_tree()

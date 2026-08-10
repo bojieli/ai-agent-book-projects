@@ -554,7 +554,7 @@ Se puede intervenir a dos niveles:
 
 **Marcado en la barra de estado del Agente**: Añadir marcadores explícitos antes de cada evento:
 
-```
+```text
 [Evento no procesado 1/4] Tool result from database_query: ...
 [Evento no procesado 2/4] User nota adicional: solo consultar datos de la región de Madrid
 [Evento no procesado 3/4] Recordatorio del sistema: quedan 30 minutos para la fecha límite del informe
@@ -688,7 +688,7 @@ El siguiente capítulo responderá a una pregunta más fundamental que "cómo us
 
 Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
 
-### Tool safety gate
+### Puerta de seguridad de herramientas
 
 ```python
 proposal = model.tool_call()
@@ -715,7 +715,7 @@ checked = verify_result(call, result, observe_environment())
 return checked
 ```
 
-### Event-loop routing
+### Enrutamiento del bucle de eventos
 
 ```python
 while runtime.is_alive:
@@ -732,7 +732,7 @@ while runtime.is_alive:
     dispatch(decision)
 ```
 
-### Proactive tool discovery
+### Descubrimiento proactivo de herramientas
 
 ```python
 if capability_is_missing(task):

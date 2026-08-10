@@ -32,7 +32,7 @@ Metodolojiye derinlemesine girmeden önce, eksiksiz bir örnek üzerinden sezgi 
 
 **Agent'ın trajectory'si**:
 
-```
+```text
 Kullanıcı: 3 gün önce aldığım kulaklığı iade etmek istiyorum, sipariş numarası 12345. (Bugün 2026-04-10)
 
 Agent (düşünüyor): Kullanıcı iade istiyor, önce sipariş bilgisini sorgulamam gerek.
@@ -791,7 +791,7 @@ Bu bölümde kurulan değerlendirme sistemi yalnızca mevcut sistemin optimizasy
 
 Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
 
-### Repeatable evaluation loop
+### Tekrarlanabilir değerlendirme döngüsü
 
 ```python
 for task in dataset:
@@ -802,7 +802,7 @@ for task in dataset:
     record(task, trajectory, outcome, score)
 ```
 
-### Deterministic veto before rubric judging
+### Rubric değerlendirmesi öncesi deterministik veto
 
 ```python
 deterministic = verify_state_policy_and_claims(trajectory, outcome)
@@ -813,7 +813,7 @@ rubric_result = judge(answer, rubric, evidence)
 return aggregate_with_confidence(rubric_result)
 ```
 
-### Paired comparison
+### Eşleştirilmiş karşılaştırma
 
 ```python
 for task in paired_tasks:

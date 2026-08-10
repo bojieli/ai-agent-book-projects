@@ -332,7 +332,7 @@ while True:
 Проследим, как изменяется список `messages` на каждом раунде:
 
 **Исходное состояние (перед 1-м вызовом):**
-```
+```text
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # написано разработчиком
   { role: "user",    content: "What's the current time and weather in Vancouver?" },  # ввод пользователя
@@ -340,7 +340,7 @@ messages = [
 ```
 
 **После 1-го вызова (модель вернула вызов инструментов):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -351,7 +351,7 @@ messages = [
 ```
 
 **После 2-го вызова (модель вернула окончательный ответ, цикл завершён):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -592,7 +592,7 @@ Markdown, сохраняя читаемость, предоставляет лё
 
 В противоположность этому, промпт, ориентированный на процесс, работает как хорошее руководство по обучению нового сотрудника, предоставляя чёткий стандартный операционный процесс (SOP):
 
-```
+```text
 Стандартная операционная процедура обработки файлов:
 
 Шаг 1: Валидация
@@ -884,7 +884,7 @@ Agent Harness быстро развиваются, поэтому конкрет
 
 Ниже приведён список сообщений, который фреймворк агента фактически формирует при N-м вызове API:
 
-```
+```text
 messages: [
   { role: "system",    content: "You are a customer service assistant..." }  ← Фиксировано (закэшировано в KV Cache)
   { role: "user",      content: "Help me cancel my Xfinity plan" }  ← Исходный запрос пользователя
@@ -1075,7 +1075,7 @@ messages: [
 
 Следующие скелеты выделяют управляющие связи, обсуждаемые в главе.
 
-### Context construction before each request
+### Построение контекста перед каждым запросом
 
 ```python
 stable_prefix = system_message

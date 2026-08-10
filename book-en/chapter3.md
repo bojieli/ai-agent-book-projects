@@ -20,7 +20,7 @@ At its core, a user memory system is an active, continuous learning process aime
 
 Let's understand this process with a concrete example. Suppose a user and an Agent have the following conversation:
 
-```
+```text
 User: Help me book a flight to Tokyo next Friday. I prefer window seats
       and I'm vegetarian, so I'll need a special meal.
 Agent: I'll search for flights to Tokyo for next Friday...
@@ -32,7 +32,7 @@ User: Yes, and use my United MileagePlus number 12345678.
 
 After this conversation ends, the Agent framework calls a dedicated LLM to analyze the dialogue and extract information worth remembering long-term:
 
-```
+```text
 Extracted memories:
 - User prefers window seats (preference)
 - User is vegetarian, needs special meals on flights (dietary restriction)
@@ -501,7 +501,7 @@ Therefore, the recommended strategy in practice is **a layered, complementary de
 
 RAPTOR and GraphRAG represent the academic community's explorations of knowledge organization; [OpenViking](https://github.com/volcengine/OpenViking), open-sourced by ByteDance's Volcano Engine, proposes a third philosophy: the **filesystem paradigm**. It treats context neither as flat vector fragments nor as graph nodes. Instead, it maps all context—memories, resources, skills—into directories and files within a virtual filesystem, each with a unique URI:
 
-```
+```text
 viking://
 ├── resources/          # External knowledge: documents, codebases, web pages
 ├── user/memories/      # User memories: preferences, habits

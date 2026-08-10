@@ -370,9 +370,9 @@ Elements:
 
 يمكن أن يتداخل التخطيط والتنفيذ. بعد تأكيد بادئة آمنة، يرسل المخطط أمراً كاملاً إلى المنفذ بينما يواصل تخطيط الذيل:
 
-~~~json
+```text
 {"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
-~~~
+```
 
 يعيد المنفذ حالات started أو succeeded أو cancelled أو failed. يستخدم المخطط هذه الملاحظات لتحديث الاعتماديات ويفرض backpressure عندما تصبح الطوابير ممتلئة أو قديمة. يقلل التنفيذ المتدفق زمن الوصول إلى أول فعل آمن، لكنه لا يسمح بتنفيذ JSON ناقص أو أفكار نموذج لم يتم التحقق منها.
 
@@ -394,7 +394,7 @@ Elements:
 
 تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
 
-### Streaming cancellation
+### إلغاء البث
 
 ```python
 while audio_is_arriving:
@@ -410,7 +410,7 @@ on_final_transcript(text):
     commit_or_restart(text)
 ```
 
-### Computer Use safety loop
+### حلقة أمان Computer Use
 
 ```python
 observation = capture_screenshot_and_accessibility_tree()
@@ -426,7 +426,7 @@ else:
         rollback_if_possible_or_replan()
 ```
 
-### Action-chunk preemption
+### استباق كتلة الأفعال
 
 ```python
 chunk = vla(current_observation, skill)

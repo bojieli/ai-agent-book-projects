@@ -26,11 +26,11 @@ A könyv központi kerete az **Ágens = Modell + Kontextus + Eszközök** képle
 
 A könyv nem egyetlen SDK lépésről lépésre követhető oktatóanyaga. A rövid pseudocode és skeleton az állapotáramlást, a megállási pontokat és az ellenőrzési határokat mutatja; a fejezetek kísérletei teljes megvalósítást, adaptereket, teszteket, naplókat és bizonyítékot adnak.
 
-| Layer | Read first | Skip for now | Question it answers |
+| Réteg | Először olvasd | Egyelőre hagyd ki | Milyen kérdésre válaszol? |
 | :--: | --- | --- | --- |
-| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | Melyik mechanizmust hivatott bemutatni ez a kísérlet? |
-| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | Melyik változó változtatta meg a viselkedést? |
-| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | Reprodukálható az eredmény, és őszintén vannak rögzítve a hibák? |
+| **Starter** | A projekt README-je: cél, minimális parancs, elfogadási feltételek és a hozzá tartozó szöveges skeleton | hitelesítő adatok, UI, szolgáltatói adapterek és hosszú nyers naplók | Melyik mechanizmust hivatott bemutatni ez a kísérlet? |
+| **Builder** | belépési pont, magciklus, állapot-/üzenetséma, eszközök és ellenőrző | a mechanizmustól független kompatibilitási/deploy rétegek | Melyik változó változtatta meg a viselkedést? |
+| **Maintainer** | tesztek, hibakezelés, bizonyítékformátum, manifest/hash és visszaállítási útvonal | csak a kísérlet módosításakor szükséges külső részletek | Reprodukálható az eredmény, és őszintén vannak rögzítve a hibák? |
 
 ## Nehézségi szintek
 

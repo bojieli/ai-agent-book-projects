@@ -32,7 +32,7 @@ Sebelum mendalami metodologinya, mari kita bangun intuisi melalui sebuah contoh 
 
 **Lintasan Agent**:
 
-```
+```text
 User: I want to return the headphones I bought 3 days ago, order number 12345. (Today is 2026-04-10)
 
 Agent (thinking): The user wants a refund, I need to check the order information first.
@@ -784,7 +784,7 @@ Sistem evaluasi yang ditetapkan di sini tidak hanya mendukung optimasi sistem sa
 
 Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
 
-### Repeatable evaluation loop
+### Loop evaluasi yang dapat diulang
 
 ```python
 for task in dataset:
@@ -795,7 +795,7 @@ for task in dataset:
     record(task, trajectory, outcome, score)
 ```
 
-### Deterministic veto before rubric judging
+### Veto deterministik sebelum penilaian rubric
 
 ```python
 deterministic = verify_state_policy_and_claims(trajectory, outcome)
@@ -806,7 +806,7 @@ rubric_result = judge(answer, rubric, evidence)
 return aggregate_with_confidence(rubric_result)
 ```
 
-### Paired comparison
+### Perbandingan berpasangan
 
 ```python
 for task in paired_tasks:

@@ -689,7 +689,7 @@ OpenClaw의 세션은 사용자에게 투명합니다. 전용 도구를 통해 �
 
 다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
 
-### Tool safety gate
+### 도구 안전 게이트
 
 ```python
 proposal = model.tool_call()
@@ -716,7 +716,7 @@ checked = verify_result(call, result, observe_environment())
 return checked
 ```
 
-### Event-loop routing
+### 이벤트 루프 라우팅
 
 ```python
 while runtime.is_alive:
@@ -733,7 +733,7 @@ while runtime.is_alive:
     dispatch(decision)
 ```
 
-### Proactive tool discovery
+### 능동적 도구 탐색
 
 ```python
 if capability_is_missing(task):

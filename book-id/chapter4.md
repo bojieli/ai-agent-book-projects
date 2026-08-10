@@ -547,7 +547,7 @@ Intervensi dapat diterapkan pada dua tingkatan:
 
 **Penanda Agent Status Bar**: Tambahkan penanda eksplisit sebelum setiap event:
 
-```
+```text
 [Event Belum Diproses 1/4] Hasil tool dari database_query: ...
 [Event Belum Diproses 2/4] Catatan tambahan dari pengguna: Hanya lihat data Beijing
 [Event Belum Diproses 3/4] Pengingat sistem: Tenggat waktu laporan adalah dalam 30 menit
@@ -682,7 +682,7 @@ Bab berikutnya mengajukan pertanyaan yang lebih mendasar daripada “bagaimana c
 
 Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
 
-### Tool safety gate
+### Gerbang keamanan tool
 
 ```python
 proposal = model.tool_call()
@@ -709,7 +709,7 @@ checked = verify_result(call, result, observe_environment())
 return checked
 ```
 
-### Event-loop routing
+### Routing event loop
 
 ```python
 while runtime.is_alive:
@@ -726,7 +726,7 @@ while runtime.is_alive:
     dispatch(decision)
 ```
 
-### Proactive tool discovery
+### Penemuan tool proaktif
 
 ```python
 if capability_is_missing(task):

@@ -554,7 +554,7 @@ Agent がメールをドラフトしている最中にユーザーが割り込�
 
 **Agent ステータスバーの標示**：各イベントの前に明示的な標示を加える。
 
-```
+```text
 [未処理イベント 1/4] Tool result from database_query：...
 [未処理イベント 2/4] User の補足説明：北京地区のデータだけ見て
 [未処理イベント 3/4] システムリマインダー：レポートの締切まであと 30 分
@@ -688,7 +688,7 @@ Agent がメールをドラフトしている最中にユーザーが割り込�
 
 以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
 
-### Tool safety gate
+### ツール安全ゲート
 
 ```python
 proposal = model.tool_call()
@@ -715,7 +715,7 @@ checked = verify_result(call, result, observe_environment())
 return checked
 ```
 
-### Event-loop routing
+### イベントループのルーティング
 
 ```python
 while runtime.is_alive:
@@ -732,7 +732,7 @@ while runtime.is_alive:
     dispatch(decision)
 ```
 
-### Proactive tool discovery
+### プロアクティブなツール探索
 
 ```python
 if capability_is_missing(task):

@@ -28,11 +28,11 @@
 
 이 책은 특정 SDK의 단계별 튜토리얼이 아닙니다. 짧은 pseudocode와 skeleton은 상태 흐름·중지 지점·검증 경계를 설명하고, 장별 실험은 완전한 구현·adapter·테스트·로그·증거를 제공합니다.
 
-| Layer | Read first | Skip for now | Question it answers |
+| 계층 | 먼저 읽기 | 우선 건너뛰기 | 답하는 질문 |
 | :--: | --- | --- | --- |
-| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | 이 실험이 증명하려는 메커니즘은 무엇인가? |
-| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | 어떤 변수가 동작을 바꾸었는가? |
-| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | 결과를 재현할 수 있고 실패가 정직하게 기록되었는가? |
+| **Starter** | 프로젝트 README: 목표·최소 명령·인수 조건과 대응하는 본문 skeleton | 자격 증명, UI, provider adapter, 긴 원시 로그 | 이 실험이 증명하려는 메커니즘은 무엇인가? |
+| **Builder** | 진입점, 핵심 루프, state/message schema, tool, verifier | 메커니즘과 무관한 호환성/배포 계층 | 어떤 변수가 동작을 바꾸었는가? |
+| **Maintainer** | 테스트, 실패 처리, 증거 형식, manifest/hash, 롤백 경로 | 실험을 수정할 때만 필요한 서드파티 세부 사항 | 결과를 재현할 수 있고 실패가 정직하게 기록되었는가? |
 
 ## 난이도
 

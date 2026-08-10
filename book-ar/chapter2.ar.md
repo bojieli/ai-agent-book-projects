@@ -1124,7 +1124,7 @@ messages: [
 
 تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
 
-### Context construction before each request
+### بناء السياق قبل كل طلب
 
 ```python
 stable_prefix = system_message

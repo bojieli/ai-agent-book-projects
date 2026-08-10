@@ -82,7 +82,7 @@
 
 天気を調べる場面を例にとると、4 ステップの流れを API のレベルで簡略化して表すと次のようになります。
 
-```
+```text
 ステップ1：ツールを宣言              ステップ2：モデルが呼び出しを決定
 tools: [{                          assistant: {
   name: "get_weather",               tool_calls: [{
@@ -172,7 +172,7 @@ Agent がタスクを実行する核となるパターンは **ReAct**（Reasoni
 
 疑似コードを通じて Agent の軌跡の構造を理解しましょう。
 
-```
+```text
 軌跡 = [
   {role: "user" , content: "会社の四半期収入にもとづき：Q1 2.5M 米ドル、Q2 2.1M ユーロ、Q3 1.8M 英ポンド、Q4 380M 日本円。会社の年間総収入と四半期平均収入を計算せよ" },
   
@@ -496,9 +496,9 @@ Anthropic が長時間実行される Agent を構築したときの実践は、
 
 ## メカニズムの skeleton
 
-以下の Python 風 skeleton は、本章で扱う制御関係だけを取り出したものです。実行可能な SDK 実装ではなく説明用 pseudocode であり、完全な adapter とテストは章の実験にあります。
+以下の Python 風 skeleton は、本章で扱う制御関係だけを取り出したものです。実行可能な SDK 実装ではなく説明用 pseudocode であり、完全な adapter とテストは章の実験にあります。 `python` マーカーは構文ハイライト専用であり、実行可能な SDK やそのまま動くプログラムを意味しません。
 
-### ReAct control loop
+### ReAct 制御ループ
 
 ```python
 trajectory = [user_request]
@@ -517,7 +517,7 @@ repeat:
         trajectory.append(observation)
 ```
 
-### Harness production boundary
+### Harness の本番境界
 
 ```python
 decision = Model(Harness.build_context(state, trajectory))
@@ -532,8 +532,6 @@ else:
 ```
 
 境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
-
-python はハイライト用の marker にすぎず、そのまま実行できることを示しません。
 
 ## 演習問題
 

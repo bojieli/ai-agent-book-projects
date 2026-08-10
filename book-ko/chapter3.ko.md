@@ -729,7 +729,7 @@ Agentic RAG는 에이전트의 자율적인 결정을 통해 검색과 사고를
 
 다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
 
-### Memory lifecycle
+### 메모리 수명 주기
 
 ```python
 when answering(user_request):
@@ -744,7 +744,7 @@ after conversation (background job):
     memory.append_or_update(verified)
 ```
 
-### Append-only log and checkpoint
+### 추가 전용 로그와 체크포인트
 
 ```python
 append_only_log += extract_facts(conversation)
@@ -757,7 +757,7 @@ if checkpoint_due():
         keep_previous_checkpoint()
 ```
 
-### Typed user state
+### 타입이 있는 사용자 상태
 
 ```python
 state = {
@@ -774,7 +774,7 @@ state = {
 }
 ```
 
-### Deterministic aggregation
+### 결정론적 집계
 
 ```python
 count(
@@ -784,7 +784,7 @@ count(
 # => 2
 ```
 
-### Conflict detection
+### 충돌 감지
 
 ```python
 def check_drug_allergy(profile):
@@ -794,7 +794,7 @@ def check_drug_allergy(profile):
                 emit_conflict(medication, allergy)
 ```
 
-### Constraint enforcement
+### 제약 적용
 
 ```python
 def check():
@@ -806,7 +806,7 @@ def check():
                 alert("passport expires too soon", trip, days)
 ```
 
-### Hybrid RAG pipeline
+### 하이브리드 RAG 파이프라인
 
 ```python
 offline:

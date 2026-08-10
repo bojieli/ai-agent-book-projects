@@ -32,7 +32,7 @@ Before diving into the methodology, let's build intuition through a complete exa
 
 **Agent Trajectory**:
 
-```
+```text
 User: I want to return the headphones I bought 3 days ago, order number 12345. (Today is 2026-04-10)
 
 Agent (thinking): The user wants a refund, I need to check the order information first.

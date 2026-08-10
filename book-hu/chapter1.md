@@ -82,7 +82,7 @@ A tool calling négy lépésben zajlik: először a kontextus tájékoztatja a m
 
 Egy időjárás-lekérdezés esetén a négy lépéses folyamat API-szintű egyszerűsített reprezentációja a következő:
 
-```
+```text
 1. lépés: Eszközök deklarálása         2. lépés: Modell úgy dönt, meghívja
 tools: [{                              assistant: {
   name: "get_weather",                   tool_calls: [{
@@ -170,7 +170,7 @@ Vegyünk egy konkrét példát – a bevételek összesítését több devizába
 
 Itt látható egy trajektória szerkezete pszeudokódban:
 
-```
+```text
 trajectory = [
   {role: "user", content: "A vállalat negyedéves bevételei alapján: Q1 2,5M USD, Q2 2,1M EUR, Q3 1,8M GBP, Q4 380M JPY, számítsd ki a vállalat teljes éves bevételét és az átlagos negyedéves bevételt"},
 
@@ -497,9 +497,9 @@ Az alábbi gondolkodtató kérdések célja, hogy a fejezet alapfogalmait egy sz
 
 ## Mechanizmus-skeletonok
 
-Ezek a Python-stílusú skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki. Magyarázó pseudocode-ok, nem futtatható SDK-megvalósítások; a teljes adapterek és tesztek a fejezet kísérleteiben találhatók.
+Ezek a Python-stílusú skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki. Magyarázó pseudocode-ok, nem futtatható SDK-megvalósítások; a teljes adapterek és tesztek a fejezet kísérleteiben találhatók. A `python` jelölés csak a szintaxis kiemelésére szolgál; nem jelent futtatható SDK-t vagy közvetlenül végrehajtható programot.
 
-### ReAct control loop
+### ReAct vezérlési ciklus
 
 ```python
 trajectory = [user_request]
@@ -518,7 +518,7 @@ repeat:
         trajectory.append(observation)
 ```
 
-### Harness production boundary
+### A Harness éles határa
 
 ```python
 decision = Model(Harness.build_context(state, trajectory))
@@ -533,8 +533,6 @@ else:
 ```
 
 Legyen világos a határ: a megfigyelések és a bizonyítékok a környezetből érkeznek, a Harness pedig eldönti, mi hajtható végre.
-
-A python csak kiemelési marker; nem jelenti azt, hogy a program közvetlenül futtatható.
 
 ## Gondolkodtató kérdések
 

@@ -791,7 +791,7 @@ rubric:
 
 تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
 
-### Repeatable evaluation loop
+### حلقة تقييم قابلة للتكرار
 
 ```python
 for task in dataset:
@@ -802,7 +802,7 @@ for task in dataset:
     record(task, trajectory, outcome, score)
 ```
 
-### Deterministic veto before rubric judging
+### veto حتمي قبل التحكيم وفق rubric
 
 ```python
 deterministic = verify_state_policy_and_claims(trajectory, outcome)
@@ -813,7 +813,7 @@ rubric_result = judge(answer, rubric, evidence)
 return aggregate_with_confidence(rubric_result)
 ```
 
-### Paired comparison
+### مقارنة مزدوجة
 
 ```python
 for task in paired_tasks:

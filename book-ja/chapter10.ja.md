@@ -477,7 +477,7 @@ A2A の位置づけは第 4 章の MCP と対照して理解できます。MCP �
 
 具体的な場面で説明します。ある翻訳システムが管理者パターン（実験 10-2 のアーキテクチャ）を採り、Manager が技術書を章ごとに分けて複数の翻訳 Agent に割り当てるとします。
 
-```
+```text
 术语 Agent：将 “reasoning” 翻译为 “推理”，但 “推理” 在中文里更常用于 inference，存在歧义
         ↓ 写入 glossary.json
 翻译 Agent A：翻译第二章，从术语表读取，将 “reasoning tokens” 翻译为 “推理 token”
@@ -638,7 +638,7 @@ Pinchwork と RentAHuman はともに**市場メカニズムに基づく協調�
 
 以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
 
-### Message envelope and worker lifetime
+### メッセージエンベロープと worker のライフサイクル
 
 ```python
 envelope = {
@@ -655,7 +655,7 @@ while worker.is_running:
 await worker.ack_or_timeout()
 ```
 
-### Proposer-reviewer loop
+### Proposer–Reviewer ループ
 
 ```python
 candidate = proposer(task, constraints)
@@ -673,7 +673,7 @@ else:
     escalate_or_reject(review)
 ```
 
-### First verified parallel winner
+### 最初の検証済み並列勝者
 
 ```python
 workers = launch_independent_workers(subtasks)
@@ -691,7 +691,7 @@ while workers.any_running:
 return summarize_failures(workers)
 ```
 
-### Decentralized handoff protocol
+### 分散 handoff プロトコル
 
 ```python
 handoff = {

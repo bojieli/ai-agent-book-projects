@@ -544,7 +544,7 @@ Két szinten lehet beavatkozni:
 
 "Agent Állapotsor Jelzők": Adjon explicit jelzőket minden esemény előtt:
 
-```
+```text
 [Feldolgozatlan Esemény 1/4] Eszköz eredmény a database_query-ből: ...
 [Feldolgozatlan Esemény 2/4] Felhasználói kiegészítés: Csak a pekingi adatokat nézd
 [Feldolgozatlan Esemény 3/4] Rendszer emlékeztető: A jelentés határideje 30 perc múlva
@@ -676,7 +676,7 @@ A következő fejezet egy alapvetőbb kérdést tesz fel annál, hogy "hogyan ha
 
 Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
 
-### Tool safety gate
+### Eszközbiztonsági kapu
 
 ```python
 proposal = model.tool_call()
@@ -703,7 +703,7 @@ checked = verify_result(call, result, observe_environment())
 return checked
 ```
 
-### Event-loop routing
+### Eseményhurok-útválasztás
 
 ```python
 while runtime.is_alive:
@@ -720,7 +720,7 @@ while runtime.is_alive:
     dispatch(decision)
 ```
 
-### Proactive tool discovery
+### Proaktív eszközfelderítés
 
 ```python
 if capability_is_missing(task):

@@ -82,7 +82,7 @@ Tool calling berjalan dalam empat langkah: pertama, context memberi tahu model t
 
 Untuk kueri cuaca, representasi sederhana dari proses empat langkah di level API adalah sebagai berikut:
 
-```
+```text
 Step 1: Declare tools                  Step 2: Model decides to call
 tools: [{                             assistant: {
   name: "get_weather",                  tool_calls: [{
@@ -170,7 +170,7 @@ Pertimbangkan contoh konkret—mengagregasi pendapatan lintas berbagai mata uang
 
 Berikut adalah struktur trajectory, dalam pseudocode:
 
-```
+```text
 trajectory = [
   {role: "user", content: "Based on the company's quarterly revenue: Q1 2.5M USD, Q2 2.1M EUR, Q3 1.8M GBP, Q4 380M JPY, calculate the company's total annual revenue and average quarterly revenue"},
 
@@ -495,9 +495,9 @@ Pertanyaan pemikiran di bawah ini dirancang untuk membawa konsep-konsep inti bab
 
 ## Skeleton mekanisme
 
-Skeleton bergaya Python berikut hanya menyoroti hubungan kontrol dalam bab ini. Ini pseudocode penjelasan, bukan implementasi SDK yang dapat dijalankan; adapter dan pengujian lengkap tetap berada di eksperimen bab.
+Skeleton bergaya Python berikut hanya menyoroti hubungan kontrol dalam bab ini. Ini pseudocode penjelasan, bukan implementasi SDK yang dapat dijalankan; adapter dan pengujian lengkap tetap berada di eksperimen bab. Penanda `python` hanya digunakan untuk penyorotan sintaks; ini bukan berarti SDK yang siap dijalankan atau program yang dapat dieksekusi langsung.
 
-### ReAct control loop
+### Loop kontrol ReAct
 
 ```python
 trajectory = [user_request]
@@ -516,7 +516,7 @@ repeat:
         trajectory.append(observation)
 ```
 
-### Harness production boundary
+### Batas produksi Harness
 
 ```python
 decision = Model(Harness.build_context(state, trajectory))
@@ -531,8 +531,6 @@ else:
 ```
 
 Pertahankan batasnya: observasi dan bukti berasal dari lingkungan, sedangkan Harness menentukan tindakan yang boleh dieksekusi.
-
-python hanya merupakan penanda highlight; ini tidak berarti program dapat langsung dijalankan.
 
 ## Pertanyaan Pemikiran
 

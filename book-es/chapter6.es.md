@@ -780,7 +780,7 @@ La arquitectura de evaluación construida en este capítulo no solo sirve a la o
 
 Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
 
-### Repeatable evaluation loop
+### Bucle de evaluación reproducible
 
 ```python
 for task in dataset:
@@ -791,7 +791,7 @@ for task in dataset:
     record(task, trajectory, outcome, score)
 ```
 
-### Deterministic veto before rubric judging
+### Veto determinista antes del juicio con rúbrica
 
 ```python
 deterministic = verify_state_policy_and_claims(trajectory, outcome)
@@ -802,7 +802,7 @@ rubric_result = judge(answer, rubric, evidence)
 return aggregate_with_confidence(rubric_result)
 ```
 
-### Paired comparison
+### Comparación emparejada
 
 ```python
 for task in paired_tasks:

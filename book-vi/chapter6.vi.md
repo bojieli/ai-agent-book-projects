@@ -32,7 +32,7 @@ Trước khi đi sâu vào phương pháp luận, hãy xây dựng trực giác 
 
 **Trajectory của Agent**:
 
-```
+```text
 Người dùng: Tôi muốn trả lại tai nghe đã mua cách đây 3 ngày, mã đơn hàng 12345. (Hôm nay là 2026-04-10)
 
 Đại lý (suy nghĩ): Nếu người dùng muốn hoàn tiền thì trước tiên cần kiểm tra thông tin đơn hàng.
@@ -791,7 +791,7 @@ Hệ thống đánh giá được thiết lập trong chương này không chỉ
 
 Các skeleton sau chỉ tách ra quan hệ điều khiển được bàn trong chương.
 
-### Repeatable evaluation loop
+### Vòng lặp đánh giá có thể lặp lại
 
 ```python
 for task in dataset:
@@ -802,7 +802,7 @@ for task in dataset:
     record(task, trajectory, outcome, score)
 ```
 
-### Deterministic veto before rubric judging
+### Veto xác định trước khi chấm rubric
 
 ```python
 deterministic = verify_state_policy_and_claims(trajectory, outcome)
@@ -813,7 +813,7 @@ rubric_result = judge(answer, rubric, evidence)
 return aggregate_with_confidence(rubric_result)
 ```
 
-### Paired comparison
+### So sánh theo cặp
 
 ```python
 for task in paired_tasks:

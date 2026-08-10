@@ -498,9 +498,9 @@ LLM 애플리케이션을 만들 때는 단순한 것에서 복잡한 것으로 
 
 ## 메커니즘 skeleton
 
-다음 Python 스타일 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다. 실행 가능한 SDK 구현이 아니라 설명용 pseudocode이며, 완전한 adapter와 테스트는 장별 실험에 있습니다.
+다음 Python 스타일 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다. 실행 가능한 SDK 구현이 아니라 설명용 pseudocode이며, 완전한 adapter와 테스트는 장별 실험에 있습니다. `python` 마커는 구문 강조에만 사용되며 실행 가능한 SDK나 바로 실행되는 프로그램을 뜻하지 않습니다.
 
-### ReAct control loop
+### ReAct 제어 루프
 
 ```python
 trajectory = [user_request]
@@ -519,7 +519,7 @@ repeat:
         trajectory.append(observation)
 ```
 
-### Harness production boundary
+### Harness 프로덕션 경계
 
 ```python
 decision = Model(Harness.build_context(state, trajectory))
@@ -534,8 +534,6 @@ else:
 ```
 
 경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
-
-python은 강조 표시용 marker일 뿐 직접 실행 가능한 프로그램을 뜻하지 않습니다.
 
 ## 생각해 볼 문제
 

@@ -20,7 +20,7 @@ Gerçekten kişiselleştirilmiş, sürekli bir hizmet sunan bir AI Agent inşa e
 
 Bu süreci somut bir örnekle anlayalım. Bir kullanıcı ve Agent'ın şu konuşmayı yaptığını varsayalım:
 
-```
+```text
 Kullanıcı: Gelecek Cuma Tokyo'ya bir uçuş ayırtmama yardım et. Pencere kenarı
       koltukları tercih ederim ve vejetaryenim, bu yüzden özel bir yemeğe ihtiyacım olacak.
 Agent: Gelecek Cuma için Tokyo'ya uçuşları arayacağım...
@@ -32,7 +32,7 @@ Kullanıcı: Evet, ve United MileagePlus numaramı kullan: 12345678.
 
 Bu konuşma bittikten sonra, Agent çerçevesi diyaloğu analiz etmek ve uzun vadede hatırlanmaya değer bilgiyi çıkarmak için özel bir LLM çağırır:
 
-```
+```text
 Çıkarılan bellekler:
 - Kullanıcı pencere kenarı koltukları tercih ediyor (tercih)
 - Kullanıcı vejetaryen, uçuşlarda özel yemeğe ihtiyaç duyuyor (diyet kısıtlaması)
@@ -515,7 +515,7 @@ Bu yüzden, pratikte önerilen strateji **katmanlı tamamlayıcılıktır**: tem
 
 RAPTOR ve GraphRAG, akademinin bilgi organizasyonu keşifleridir; ByteDance'in Volcano Engine'inin açık kaynak kıldığı [OpenViking](https://github.com/volcengine/OpenViking), üçüncü bir felsefe önerir: **dosya sistemi paradigması**. Context'i ne düz vektör parçaları ne de graf düğümleri olarak ele alır. Bunun yerine, tüm context'i—bellekleri, kaynakları, becerileri—her biri benzersiz bir URI'ye sahip sanal bir dosya sistemi içindeki dizinlere ve dosyalara eşler:
 
-```
+```text
 viking://
 ├── resources/          # Dışsal bilgi: dokümanlar, kod tabanları, web sayfaları
 ├── user/memories/      # Kullanıcı bellekleri: tercihler, alışkanlıklar
@@ -726,7 +726,7 @@ Bu bölüm ve önceki bölüm Context'i ele alır—biri tek bir oturum içinde,
 
 Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
 
-### Memory lifecycle
+### Bellek yaşam döngüsü
 
 ```python
 when answering(user_request):
@@ -741,7 +741,7 @@ after conversation (background job):
     memory.append_or_update(verified)
 ```
 
-### Append-only log and checkpoint
+### Yalnızca eklemeli günlük ve checkpoint
 
 ```python
 append_only_log += extract_facts(conversation)
@@ -754,7 +754,7 @@ if checkpoint_due():
         keep_previous_checkpoint()
 ```
 
-### Typed user state
+### Tipli kullanıcı durumu
 
 ```python
 state = {
@@ -771,7 +771,7 @@ state = {
 }
 ```
 
-### Deterministic aggregation
+### Deterministik toplama
 
 ```python
 count(
@@ -781,7 +781,7 @@ count(
 # => 2
 ```
 
-### Conflict detection
+### Çakışma tespiti
 
 ```python
 def check_drug_allergy(profile):
@@ -791,7 +791,7 @@ def check_drug_allergy(profile):
                 emit_conflict(medication, allergy)
 ```
 
-### Constraint enforcement
+### Kısıtların uygulanması
 
 ```python
 def check():
@@ -803,7 +803,7 @@ def check():
                 alert("passport expires too soon", trip, days)
 ```
 
-### Hybrid RAG pipeline
+### Hibrit RAG hattı
 
 ```python
 offline:

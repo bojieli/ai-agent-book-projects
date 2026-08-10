@@ -654,7 +654,7 @@ Werewolf는 이 절의 세 번째 차원인 **전략적 게임 플레이**를 �
 
 다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
 
-### Message envelope and worker lifetime
+### 메시지 envelope와 worker 수명 주기
 
 ```python
 envelope = {
@@ -671,7 +671,7 @@ while worker.is_running:
 await worker.ack_or_timeout()
 ```
 
-### Proposer-reviewer loop
+### Proposer–Reviewer 루프
 
 ```python
 candidate = proposer(task, constraints)
@@ -689,7 +689,7 @@ else:
     escalate_or_reject(review)
 ```
 
-### First verified parallel winner
+### 최초 검증 병렬 승자
 
 ```python
 workers = launch_independent_workers(subtasks)
@@ -707,7 +707,7 @@ while workers.any_running:
 return summarize_failures(workers)
 ```
 
-### Decentralized handoff protocol
+### 탈중앙화 handoff 프로토콜
 
 ```python
 handoff = {

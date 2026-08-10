@@ -215,7 +215,7 @@ Anthropic 定義三類工具構成完整的互動能力（圖 9-7）：
 3. 為每個可互動元素標註唯一 ID 並在截圖上繪製邊界框
 4. 同時生成文字列表描述每個 ID 對應的元素
 
-```
+```text
 Screenshot: [圖片中關鍵元素標註了 [1]、[2]、[3]、[4] 等 ID]
 
 Elements:
@@ -400,9 +400,9 @@ Computer Use 也在向移動端擴充套件。移動端與桌面在技術上確�
 
 規劃與執行可以重疊。安全前綴確認後，規劃器一邊繼續產生後綴，一邊把完整 command 串流給執行器：
 
-~~~json
+```text
 {"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
-~~~
+```
 
 執行器回傳 started、succeeded、cancelled 或 failed；規劃器以這些觀察更新依賴，當佇列過滿或命令已過時時施加 backpressure。串流執行縮短的是第一個安全動作的等待，不代表可以執行不完整 JSON 或未驗證的模型思考。
 
@@ -424,7 +424,7 @@ OpenVLA 並非只更新 projector；原始研究也比較了完整微調、凍�
 
 下面的骨架只抽出本章討論的控制關係。
 
-### Streaming cancellation
+### 流式取消
 
 ```python
 while audio_is_arriving:
@@ -440,7 +440,7 @@ on_final_transcript(text):
     commit_or_restart(text)
 ```
 
-### Computer Use safety loop
+### Computer Use 安全迴圈
 
 ```python
 observation = capture_screenshot_and_accessibility_tree()
@@ -456,7 +456,7 @@ else:
         rollback_if_possible_or_replan()
 ```
 
-### Action-chunk preemption
+### 動作區塊搶佔
 
 ```python
 chunk = vla(current_observation, skill)

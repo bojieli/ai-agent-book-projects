@@ -333,7 +333,7 @@ The loop has one main branch: **if the model returns `tool_calls`, execute the t
 The `messages` list changes across rounds as follows:
 
 **Initial state (before the first call):**
-```
+```text
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # Written by developer
   { role: "user",    content: "What's the current time and weather in Vancouver?" },  # User input
@@ -341,7 +341,7 @@ messages = [
 ```
 
 **After the first call (model returns tool calls):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -352,7 +352,7 @@ messages = [
 ```
 
 **After the second call (model returns final reply, loop ends):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -596,7 +596,7 @@ Methods that reduce cognitive load for humans are equally effective for large la
 
 In contrast, a process-driven prompt functions like an effective training manual, providing a clear Standard Operating Procedure (SOP):
 
-```
+```text
 File Processing Standard Operating Procedure:
 
 Step 1: Validation
@@ -889,7 +889,7 @@ An important implementation detail is that the Agent Status Bar is inserted at t
 
 Below is the actual message list constructed by the Agent framework during the Nth API call:
 
-```
+```text
 messages: [
   { role: "system",    content: "You are a customer service assistant..." }  ← Fixed (KV Cache cached)
   { role: "user",      content: "Help me cancel my Xfinity plan" }  ← Original user request

@@ -20,7 +20,7 @@
 
 具体的な例でこのプロセスを理解しましょう。ユーザーと Agent の間に次のような対話があったとします。
 
-```
+```text
 User: Help me book a flight to Tokyo next Friday. I prefer window seats
       and I'm vegetarian, so I'll need a special meal.
 Agent: I'll search for flights to Tokyo for next Friday...
@@ -32,7 +32,7 @@ User: Yes, and use my United MileagePlus number 12345678.
 
 この対話が終わると、Agent フレームワークは専用の LLM を一度呼び出して対話内容を分析し、長期的に記憶する価値のある情報を抽出します。
 
-```
+```text
 Extracted memories:
 - User prefers window seats (preference)
 - User is vegetarian, needs special meals on flights (dietary restriction)
@@ -515,7 +515,7 @@ GraphRAG はまず LLM を使ってテキストから鍵となるエンティテ
 
 RAPTOR と GraphRAG は学術界の知識組織への探求を代表しますが、バイトダンス火山エンジンがオープンソース化した [OpenViking](https://github.com/volcengine/OpenViking) は第 3 の哲学を提示します。**ファイルシステムのパラダイム**です。それはコンテキストを平坦なベクトルの断片やグラフのノードとしてではなく、すべてのコンテキスト——記憶、リソース、スキル——を仮想ファイルシステム中のディレクトリとファイルに写像し、各エントリが一意の URI を持ちます。
 
-```
+```text
 viking://
 ├── resources/          # 外部知识：文档、代码库、网页
 ├── user/memories/      # 用户记忆：偏好、习惯
@@ -726,7 +726,7 @@ Agent のために強力な知識ベースを構築した後、次の核心的�
 
 以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
 
-### Memory lifecycle
+### メモリのライフサイクル
 
 ```python
 when answering(user_request):
@@ -741,7 +741,7 @@ after conversation (background job):
     memory.append_or_update(verified)
 ```
 
-### Append-only log and checkpoint
+### 追記専用ログとチェックポイント
 
 ```python
 append_only_log += extract_facts(conversation)
@@ -754,7 +754,7 @@ if checkpoint_due():
         keep_previous_checkpoint()
 ```
 
-### Typed user state
+### 型付きユーザー状態
 
 ```python
 state = {
@@ -771,7 +771,7 @@ state = {
 }
 ```
 
-### Deterministic aggregation
+### 決定的集約
 
 ```python
 count(
@@ -781,7 +781,7 @@ count(
 # => 2
 ```
 
-### Conflict detection
+### 競合検出
 
 ```python
 def check_drug_allergy(profile):
@@ -791,7 +791,7 @@ def check_drug_allergy(profile):
                 emit_conflict(medication, allergy)
 ```
 
-### Constraint enforcement
+### 制約の適用
 
 ```python
 def check():
@@ -803,7 +803,7 @@ def check():
                 alert("passport expires too soon", trip, days)
 ```
 
-### Hybrid RAG pipeline
+### ハイブリッド RAG パイプライン
 
 ```python
 offline:

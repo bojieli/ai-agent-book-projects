@@ -332,7 +332,7 @@ while True:
 `messages` リストが各ラウンドでどう変化するかを追ってみましょう。
 
 **初期状態（第 1 回目の呼び出し前）：**
-```
+```text
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # 开发者写的
   { role: "user",    content: "What's the current time and weather in Vancouver?" },  # 用户输入
@@ -340,7 +340,7 @@ messages = [
 ```
 
 **第 1 回目の呼び出し後（モデルがツール呼び出しを返す）：**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -351,7 +351,7 @@ messages = [
 ```
 
 **第 2 回目の呼び出し後（モデルが最終的な返答を返し、循環が終了）：**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -593,7 +593,7 @@ Markdown は可読性を保ちつつ軽量な構造を提供し、階層化さ�
 
 対照的に、フロー駆動のプロンプトは優れた新入社員研修ハンドブックのように、明確な標準操作手順（SOP）を提供します。
 
-```
+```text
 File Processing Standard Operating Procedure:
 
 Step 1: Validation
@@ -882,7 +882,7 @@ Agent ステータスバーは、まさにアテンションの配分を明示�
 
 以下は Agent フレームワークが第 N 回目の API 呼び出しのときに実際に構築するメッセージリストです。
 
-```
+```text
 messages: [
   { role: "system",    content: "You are a customer service assistant..." }  ← Fixed (KV Cache cached)
   { role: "user",      content: "Help me cancel my Xfinity plan" }  ← Original user request
@@ -1072,7 +1072,7 @@ Agent ステータスバーには実用上の利点があります。すべて�
 
 以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
 
-### Context construction before each request
+### 各リクエスト前のコンテキスト構築
 
 ```python
 stable_prefix = system_message

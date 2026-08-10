@@ -337,7 +337,7 @@ La lógica central de este código consta únicamente de un bucle `for` acotado 
 Sigamos la evolución de la lista `messages` en cada ronda:
 
 **Estado inicial (antes de la 1.ª llamada):**
-```
+```text
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # Escrito por el desarrollador
   { role: "user",    content: "What's the current time and weather in Vancouver?" },  # Entrada del usuario
@@ -345,7 +345,7 @@ messages = [
 ```
 
 **Tras la 1.ª llamada (el modelo devuelve llamadas a herramientas):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -356,7 +356,7 @@ messages = [
 ```
 
 **Tras la 2.ª llamada (el modelo devuelve la respuesta final, el bucle termina):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -592,7 +592,7 @@ Los métodos para reducir la carga cognitiva humana son igualmente efectivos par
 
 En contraste, los prompts orientados a procesos actúan como un excelente manual de capacitación para nuevos empleados, proporcionando Procedimientos Operativos Estándar (SOP) claros:
 
-```
+```text
 File Processing Standard Operating Procedure:
 
 Step 1: Validation
@@ -886,7 +886,7 @@ Un detalle de implementación importante es que, en la capa API, la barra de est
 
 Esta es la lista de mensajes que el framework del Agente construye realmente durante la llamada número N a la API:
 
-```
+```text
 messages: [
   { role: "system",    content: "Eres un asistente de atención al cliente..." }  ← Fijo (almacenado en la Caché KV)
   { role: "user",      content: "Ayúdame a cancelar mi plan de Xfinity" }  ← Solicitud original del usuario
@@ -1076,7 +1076,7 @@ Este capítulo se ocupa de las actualizaciones de estado y la degradación del c
 
 Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
 
-### Context construction before each request
+### Construcción del contexto antes de cada solicitud
 
 ```python
 stable_prefix = system_message

@@ -393,7 +393,7 @@ Agent は環境との相互作用と評価から学習信号を得て、能力�
 
 以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
 
-### Three-layer trajectory verification
+### 3 層の軌跡検証
 
 ```python
 outcome = verify_environment_state(trajectory)
@@ -406,7 +406,7 @@ else:
     emit_structured_diagnosis(outcome, process, quality)
 ```
 
-### Experience-to-capability routing
+### 経験から能力へのルーティング
 
 ```python
 if experience.is_factual and experience.has_sources:
@@ -419,7 +419,7 @@ else:
     target = MODEL_PARAMETERS
 ```
 
-### Validated release and rollback
+### 検証済みリリースとロールバック
 
 ```python
 candidate = propose_minimal_update(evidence, current_version)
@@ -433,7 +433,7 @@ else:
     else: promote(candidate)
 ```
 
-### Sleep-time consolidation
+### アイドル時の統合
 
 ```python
 while sleep_gate_is_open():

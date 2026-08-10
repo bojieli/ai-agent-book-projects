@@ -31,11 +31,11 @@
 
 الكتاب ليس برنامجًا تعليميًا خطوة بخطوة لـ SDK واحد. يوضح pseudocode والهياكل القصيرة تدفق الحالة ونقاط التوقف وحدود التحقق؛ أما تجارب الفصول فتقدم التنفيذ والمحولات والاختبارات والسجلات والأدلة.
 
-| Layer | Read first | Skip for now | Question it answers |
+| الطبقة | اقرأ أولًا | تخطَّ مؤقتًا | السؤال الذي تجيب عنه |
 | :--: | --- | --- | --- |
-| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | ما الآلية التي يُفترض أن تثبتها التجربة؟ |
-| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | أي متغير غيّر السلوك؟ |
-| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | هل يمكن إعادة إنتاج النتيجة وهل سُجلت الأعطال بصدق؟ |
+| **Starter** | README المشروع: الهدف، والأمر الأدنى، وشروط القبول؛ وskeleton المقابل في النص | بيانات الاعتماد وواجهة المستخدم ومحوّلات المزوّدين والسجلات الخام الطويلة | ما الآلية التي يُفترض أن تثبتها التجربة؟ |
+| **Builder** | نقطة الدخول والحلقة الأساسية ومخطط الحالة/الرسائل والأدوات وأداة التحقق | طبقات التوافق والنشر غير المرتبطة بالآلية | أي متغير غيّر السلوك؟ |
+| **Maintainer** | الاختبارات ومعالجة الأعطال وتنسيق الأدلة وmanifest/hash ومسار التراجع | تفاصيل الأطراف الثالثة اللازمة فقط عند تعديل التجربة | هل يمكن إعادة إنتاج النتيجة وهل سُجلت الأعطال بصدق؟ |
 
 ## مستويات الصعوبة
 

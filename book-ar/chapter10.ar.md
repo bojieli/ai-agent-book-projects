@@ -647,7 +647,7 @@ Moltbook عبارة عن شبكة اجتماعية مصممة خصيصًا لو�
 
 تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
 
-### Message envelope and worker lifetime
+### غلاف الرسالة ودورة حياة worker
 
 ```python
 envelope = {
@@ -664,7 +664,7 @@ while worker.is_running:
 await worker.ack_or_timeout()
 ```
 
-### Proposer-reviewer loop
+### حلقة Proposer–Reviewer
 
 ```python
 candidate = proposer(task, constraints)
@@ -682,7 +682,7 @@ else:
     escalate_or_reject(review)
 ```
 
-### First verified parallel winner
+### أول فائز متوازٍ تم التحقق منه
 
 ```python
 workers = launch_independent_workers(subtasks)
@@ -700,7 +700,7 @@ while workers.any_running:
 return summarize_failures(workers)
 ```
 
-### Decentralized handoff protocol
+### بروتوكول handoff لامركزي
 
 ```python
 handoff = {

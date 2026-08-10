@@ -31,11 +31,11 @@ La ruta de aprendizaje se corresponde capítulo por capítulo con todo el libro,
 
 El libro no es un tutorial paso a paso de un SDK. El pseudocódigo y los skeletons explican el flujo de estados, los puntos de parada y los límites de verificación; los experimentos contienen implementación, adaptadores, pruebas, registros y evidencias.
 
-| Layer | Read first | Skip for now | Question it answers |
+| Capa | Leer primero | Omitir por ahora | Pregunta que responde |
 | :--: | --- | --- | --- |
-| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | ¿Qué mecanismo pretende demostrar este experimento? |
-| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | ¿Qué variable cambió el comportamiento? |
-| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | ¿Se puede reproducir el resultado y se registran honestamente los fallos? |
+| **Starter** | README del proyecto: objetivo, comando mínimo y condiciones de aceptación; skeleton correspondiente del texto | credenciales, interfaz, adaptadores de proveedores y registros sin procesar extensos | ¿Qué mecanismo pretende demostrar este experimento? |
+| **Builder** | punto de entrada, bucle central, esquema de estado/mensajes, herramientas y verificador | capas de compatibilidad y despliegue no relacionadas con el mecanismo | ¿Qué variable cambió el comportamiento? |
+| **Maintainer** | pruebas, gestión de fallos, formato de evidencias, manifest/hash y ruta de rollback | detalles de terceros necesarios solo al modificar el experimento | ¿Se puede reproducir el resultado y se registran honestamente los fallos? |
 
 ### Niveles de Dificultad
 

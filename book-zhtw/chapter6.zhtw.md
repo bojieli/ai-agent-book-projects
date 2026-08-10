@@ -32,7 +32,7 @@
 
 **Agent 的軌跡**：
 
-```
+```text
 使用者：我想退掉 3 天前買的那個耳機，訂單號 12345。（今天是 2026-04-10）
 
 Agent（思考）：使用者要退款，需要先查詢訂單資訊。
@@ -791,7 +791,7 @@ Agent 產品需要從第一天就設計特性開關（Feature Flag）基礎設�
 
 下面的骨架只抽出本章討論的控制關係。
 
-### Repeatable evaluation loop
+### 可重複評估迴圈
 
 ```python
 for task in dataset:
@@ -802,7 +802,7 @@ for task in dataset:
     record(task, trajectory, outcome, score)
 ```
 
-### Deterministic veto before rubric judging
+### Rubric 評分前的確定性否決
 
 ```python
 deterministic = verify_state_policy_and_claims(trajectory, outcome)
@@ -813,7 +813,7 @@ rubric_result = judge(answer, rubric, evidence)
 return aggregate_with_confidence(rubric_result)
 ```
 
-### Paired comparison
+### 配對比較
 
 ```python
 for task in paired_tasks:

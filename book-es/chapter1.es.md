@@ -479,9 +479,9 @@ El próximo capítulo profundizará en el componente más importante del Harness
 Las siguientes preguntas de reflexión tienen como objetivo ayudar a los lectores a explorar con mayor profundidad los conceptos centrales de este capítulo; no tienen una respuesta única y oficial.
 ## Skeletons de mecanismos
 
-Estos skeletons con estilo Python aíslan las relaciones de control tratadas en el capítulo. Son pseudocódigo explicativo, no implementaciones SDK ejecutables; los adaptadores y las pruebas completas están en los experimentos.
+Estos skeletons con estilo Python aíslan las relaciones de control tratadas en el capítulo. Son pseudocódigo explicativo, no implementaciones SDK ejecutables; los adaptadores y las pruebas completas están en los experimentos. El marcador `python` solo sirve para resaltar la sintaxis; no implica un SDK ejecutable ni un programa directamente ejecutable.
 
-### ReAct control loop
+### Bucle de control ReAct
 
 ```python
 trajectory = [user_request]
@@ -500,7 +500,7 @@ repeat:
         trajectory.append(observation)
 ```
 
-### Harness production boundary
+### Límite de producción del Harness
 
 ```python
 decision = Model(Harness.build_context(state, trajectory))
@@ -515,8 +515,6 @@ else:
 ```
 
 Mantén explícito el límite: las observaciones y evidencias proceden del entorno, y el Harness decide qué puede ejecutarse.
-
-python se usa solo como marcador de resaltado; no indica un programa ejecutable directamente.
 
 ## Preguntas de Reflexión
 

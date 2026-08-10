@@ -332,7 +332,7 @@ Logic cốt lõi của mã này chỉ là vòng lặp while và phán đoán: **
 Hãy cùng theo dõi sự thay đổi của danh sách `messages` qua từng vòng đấu:
 
 **Trạng thái ban đầu (trước cuộc gọi đầu tiên):**
-```
+```text
 messages = [
 { role: "system", content: "Bạn là một trợ lý hữu ích..." }, # Viết bởi nhà phát triển
 { role: "user", content: "Thời gian và thời tiết hiện tại ở Vancouver thế nào?" }, # Đầu vào của người dùng
@@ -340,7 +340,7 @@ messages = [
 ```
 
 **Sau lệnh gọi đầu tiên (mô hình trả về lệnh gọi công cụ):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -351,7 +351,7 @@ messages = [
 ```
 
 **Sau cuộc gọi thứ 2 (mô hình trả về câu trả lời cuối cùng, vòng lặp kết thúc):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -594,7 +594,7 @@ Các phương pháp làm giảm tải nhận thức cho con người cũng có h
 
 Ngược lại, lời nhắc theo quy trình giống như một sổ tay đào tạo nhân viên mới tốt, cung cấp các quy trình vận hành tiêu chuẩn rõ ràng (SOP):
 
-```
+```text
 File Processing Standard Operating Procedure:
 
 Step 1: Validation
@@ -883,7 +883,7 @@ Một chi tiết triển khai quan trọng là: thanh trạng thái Agent ở c�
 
 Sau đây là danh sách các thông báo thực sự được xây dựng bởi khung Agent trong lệnh gọi API thứ N:
 
-```
+```text
 messages: [
   { role: "system",    content: "You are a customer service assistant..." }  ← Fixed (KV Cache cached)
   { role: "user",      content: "Help me cancel my Xfinity plan" }  ← Original user request
@@ -1074,7 +1074,7 @@ Chương này bàn về việc cập nhật trạng thái và suy giảm ngữ c
 
 Các skeleton sau chỉ tách ra quan hệ điều khiển được bàn trong chương.
 
-### Context construction before each request
+### Xây dựng context trước mỗi request
 
 ```python
 stable_prefix = system_message

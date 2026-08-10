@@ -20,7 +20,7 @@ Bản chất của hệ thống bộ nhớ người dùng là một quá trình 
 
 Sử dụng một ví dụ cụ thể để hiểu quá trình này. Giả sử rằng người dùng có cuộc trò chuyện sau với Agent:
 
-```
+```text
 User: Help me book a flight to Tokyo next Friday. I prefer window seats
       and I'm vegetarian, so I'll need a special meal.
 Agent: I'll search for flights to Tokyo for next Friday...
@@ -32,7 +32,7 @@ User: Yes, and use my United MileagePlus number 12345678.
 
 Sau khi cuộc trò chuyện kết thúc, framework Agent sẽ gọi một LLM đặc biệt để phân tích nội dung cuộc trò chuyện và trích xuất thông tin đáng nhớ lâu dài:
 
-```
+```text
 Extracted memories:
 - User prefers window seats (preference)
 - User is vegetarian, needs special meals on flights (dietary restriction)
@@ -515,7 +515,7 @@ Do đó, chiến lược được đề xuất trong thực tế là **bổ sung
 
 RAPTOR và GraphRAG đại diện cho hành trình khám phá tổ chức tri thức của cộng đồng học thuật, trong khi [OpenViking](https://github.com/volcengine/OpenViking), có nguồn mở bởi Bytedance Volcano Engine, đề xuất triết lý thứ ba: **Mô hình hệ thống tệp**. Thay vì xử lý các ngữ cảnh như các đoạn vectơ phẳng hoặc các nút biểu đồ, nó ánh xạ tất cả các ngữ cảnh—bộ nhớ, tài nguyên, kỹ năng—dưới dạng thư mục và tệp trong hệ thống tệp ảo, với mỗi mục nhập có một URI duy nhất:
 
-```
+```text
 viking://
 ├── resources/ # Kiến thức bên ngoài: tài liệu, code base, trang web
 ├── user/memories/ # Ký ức người dùng: sở thích, thói quen
@@ -726,7 +726,7 @@ Chương này và chương trước đều xử lý vấn đề “ngữ cảnh�
 
 Các skeleton sau chỉ tách ra quan hệ điều khiển được bàn trong chương.
 
-### Memory lifecycle
+### Vòng đời memory
 
 ```python
 when answering(user_request):
@@ -741,7 +741,7 @@ after conversation (background job):
     memory.append_or_update(verified)
 ```
 
-### Append-only log and checkpoint
+### Log chỉ-ghi-thêm và checkpoint
 
 ```python
 append_only_log += extract_facts(conversation)
@@ -754,7 +754,7 @@ if checkpoint_due():
         keep_previous_checkpoint()
 ```
 
-### Typed user state
+### Trạng thái người dùng có kiểu
 
 ```python
 state = {
@@ -771,7 +771,7 @@ state = {
 }
 ```
 
-### Deterministic aggregation
+### Gộp xác định
 
 ```python
 count(
@@ -781,7 +781,7 @@ count(
 # => 2
 ```
 
-### Conflict detection
+### Phát hiện xung đột
 
 ```python
 def check_drug_allergy(profile):
@@ -791,7 +791,7 @@ def check_drug_allergy(profile):
                 emit_conflict(medication, allergy)
 ```
 
-### Constraint enforcement
+### Thực thi ràng buộc
 
 ```python
 def check():
@@ -803,7 +803,7 @@ def check():
                 alert("passport expires too soon", trip, days)
 ```
 
-### Hybrid RAG pipeline
+### Pipeline RAG lai
 
 ```python
 offline:

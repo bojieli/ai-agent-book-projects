@@ -204,7 +204,7 @@
 
 تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
 
-### Tool safety gate
+### بوابة أمان الأدوات
 
 ```python
 proposal = model.tool_call()
@@ -231,7 +231,7 @@ checked = verify_result(call, result, observe_environment())
 return checked
 ```
 
-### Event-loop routing
+### توجيه حلقة الأحداث
 
 ```python
 while runtime.is_alive:
@@ -248,7 +248,7 @@ while runtime.is_alive:
     dispatch(decision)
 ```
 
-### Proactive tool discovery
+### اكتشاف استباقي للأدوات
 
 ```python
 if capability_is_missing(task):

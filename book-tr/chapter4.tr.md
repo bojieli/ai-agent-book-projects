@@ -559,7 +559,7 @@ Müdahale iki düzeyde uygulanabilir:
 
 **Agent Durum Çubuğu İşaretleri**: Her olaydan önce açık işaretler ekleyin:
 
-```
+```text
 [İşlenmemiş Olay 1/4] database_query'den araç sonucu: ...
 [İşlenmemiş Olay 2/4] Kullanıcı ek notu: Yalnızca Pekin verisine bak
 [İşlenmemiş Olay 3/4] Sistem hatırlatması: Rapor son tarihine 30 dakika kaldı
@@ -694,7 +694,7 @@ Bir sonraki bölüm, "bir Agent araçları nasıl kullanır"dan daha temel bir s
 
 Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
 
-### Tool safety gate
+### Araç güvenlik kapısı
 
 ```python
 proposal = model.tool_call()
@@ -721,7 +721,7 @@ checked = verify_result(call, result, observe_environment())
 return checked
 ```
 
-### Event-loop routing
+### Olay döngüsü yönlendirmesi
 
 ```python
 while runtime.is_alive:
@@ -738,7 +738,7 @@ while runtime.is_alive:
     dispatch(decision)
 ```
 
-### Proactive tool discovery
+### Proaktif araç keşfi
 
 ```python
 if capability_is_missing(task):

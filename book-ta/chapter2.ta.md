@@ -332,7 +332,7 @@ while True:
 ஒவ்வொரு சுற்றிலும் `messages` பட்டியலில் ஏற்படும் மாற்றங்களைக் கண்காணிப்போம்:
 
 **ஆரம்ப நிலை (1வது அழைப்பிற்கு முன்):**
-```
+```text
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # டெவலப்பரால் எழுதப்பட்டது
   { role: "user",    content: "What's the current time and weather in Vancouver?" },  # பயனர் உள்ளீடு
@@ -340,7 +340,7 @@ messages = [
 ```
 
 **1வது அழைப்பிற்குப் பிறகு (மாதிரி tool calls ஐ திருப்பி அனுப்புகிறது):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -351,7 +351,7 @@ messages = [
 ```
 
 **2வது அழைப்பிற்குப் பிறகு (மாதிரி இறுதி பதிலைத் திருப்பி அனுப்புகிறது, loop முடிகிறது):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -593,7 +593,7 @@ Markdown இலகுரக கட்டமைப்பை வழங்குக
 
 இதற்கு மாறாக, ஒரு செயல்முறை சார்ந்த ப்ராம்ப்ட் ஒரு சிறந்த புதிய ஊழியர் பயிற்சி கையேடு போன்றது, இது ஒரு தெளிவான நிலையான இயக்க நடைமுறையை (SOP) வழங்குகிறது:
 
-```
+```text
 கோப்பு செயலாக்க நிலையான இயக்க நடைமுறை:
 
 படி 1: சரிபார்ப்பு
@@ -879,7 +879,7 @@ Context மேலாண்மையின் கோணத்தில், Skills
 
 N-வது API அழைப்பின் போது Agent கட்டமைப்பால் உருவாக்கப்பட்ட உண்மையான செய்தி பட்டியல் கீழே உள்ளது:
 
-```
+```text
 messages: [
   { role: "system",    content: "நீங்கள் ஒரு வாடிக்கையாளர் சேவை உதவியாளர்..." }  ← நிலையானது (KV Cache தற்காலிக சேமிப்பில்)
   { role: "user",      content: "எனது Xfinity திட்டத்தை ரத்து செய்ய உதவுங்கள்" }  ← அசல் பயனர் கோரிக்கை
@@ -1065,7 +1065,7 @@ Context Rot என்பது window நிரம்பிவிடும் Co
 
 கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
 
-### Context construction before each request
+### ஒவ்வொரு கோரிக்கைக்கும் முன் சூழல் கட்டமைப்பு
 
 ```python
 stable_prefix = system_message

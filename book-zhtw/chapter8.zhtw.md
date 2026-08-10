@@ -393,7 +393,7 @@ Agent 從與環境的互動及評價中取得學習訊號，再依能力的表�
 
 下面的骨架只抽出本章討論的控制關係。
 
-### Three-layer trajectory verification
+### 三層軌跡驗證
 
 ```python
 outcome = verify_environment_state(trajectory)
@@ -406,7 +406,7 @@ else:
     emit_structured_diagnosis(outcome, process, quality)
 ```
 
-### Experience-to-capability routing
+### 經驗到能力的路由
 
 ```python
 if experience.is_factual and experience.has_sources:
@@ -419,7 +419,7 @@ else:
     target = MODEL_PARAMETERS
 ```
 
-### Validated release and rollback
+### 驗證後發布與回滾
 
 ```python
 candidate = propose_minimal_update(evidence, current_version)
@@ -433,7 +433,7 @@ else:
     else: promote(candidate)
 ```
 
-### Sleep-time consolidation
+### 閒時整合
 
 ```python
 while sleep_gate_is_open():

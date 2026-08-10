@@ -82,7 +82,7 @@ Quá trình gọi công cụ được chia thành bốn bước: đầu tiên, c
 
 Lấy kịch bản kiểm tra thời tiết làm ví dụ, cách trình bày đơn giản hóa quy trình bốn bước ở cấp độ API như sau:
 
-```
+```text
 Bước 1: Khai báo công cụ Bước 2: Mô hình lời gọi quyết định
 tools: [{                          assistant: {
   name: "get_weather",               tool_calls: [{
@@ -172,7 +172,7 @@ Hãy cùng tìm hiểu trajectory của Agent thông qua một ví dụ cụ th�
 
 Hãy cùng chúng tôi tìm hiểu cấu trúc trajectory Agent thông qua mã giả:
 
-```
+```text
 trajectory = [
 {role: "user" , content: "Dựa trên doanh thu hàng quý của công ty: Quý 1 2,5 triệu đô la Mỹ, quý 2 2,1 triệu euro, quý 3 1,8 triệu bảng Anh, quý 4 380 triệu yên, tính tổng doanh thu hàng năm và doanh thu trung bình hàng quý của công ty" },
 
@@ -480,9 +480,9 @@ Hoạt động thực hành của Anthropic trong việc xây dựng Agent chạ
 
 ## Skeleton cơ chế
 
-Các skeleton theo phong cách Python này chỉ tách ra quan hệ điều khiển được bàn trong chương. Đây là pseudocode giải thích, không phải triển khai SDK chạy được; adapter và test đầy đủ nằm trong thí nghiệm.
+Các skeleton theo phong cách Python này chỉ tách ra quan hệ điều khiển được bàn trong chương. Đây là pseudocode giải thích, không phải triển khai SDK chạy được; adapter và test đầy đủ nằm trong thí nghiệm. Marker `python` chỉ dùng để tô sáng cú pháp; nó không biểu thị SDK có thể chạy hay chương trình có thể thực thi trực tiếp.
 
-### ReAct control loop
+### Vòng lặp điều khiển ReAct
 
 ```python
 trajectory = [user_request]
@@ -501,7 +501,7 @@ repeat:
         trajectory.append(observation)
 ```
 
-### Harness production boundary
+### Ranh giới Harness production
 
 ```python
 decision = Model(Harness.build_context(state, trajectory))
@@ -516,8 +516,6 @@ else:
 ```
 
 Giữ ranh giới rõ ràng: quan sát và bằng chứng đến từ môi trường, còn Harness quyết định hành động nào được phép thực thi.
-
-python chỉ là marker tô sáng, không có nghĩa là chương trình có thể chạy trực tiếp.
 
 ## Tóm tắt chương này
 

@@ -31,11 +31,11 @@
 
 本書は特定 SDK の手順書ではありません。短い pseudocode と skeleton は状態の流れ、停止点、検証境界を示し、章ごとの実験が完全な実装、adapter、テスト、ログ、証拠を提供します。
 
-| Layer | Read first | Skip for now | Question it answers |
+| レイヤー | まず読む | いったん飛ばす | 答える問い |
 | :--: | --- | --- | --- |
-| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | この実験が示す mechanism は何か？ |
-| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | どの変数が挙動を変えたか？ |
-| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | 結果は再現でき、失敗は正直に記録されているか？ |
+| **Starter** | プロジェクト README：目的・最小コマンド・受け入れ条件、および対応する本文の skeleton | 認証情報、UI、プロバイダーアダプター、長い生ログ | この実験が示す mechanism は何か？ |
+| **Builder** | エントリーポイント、コア・ループ、状態/メッセージ schema、ツール、検証器 | メカニズムに関係しない互換性・デプロイ層 | どの変数が挙動を変えたか？ |
+| **Maintainer** | テスト、失敗処理、証拠形式、manifest/hash、ロールバック経路 | 実験を変更するときだけ必要なサードパーティー詳細 | 結果は再現でき、失敗は正直に記録されているか？ |
 
 ### 難易度レベル
 

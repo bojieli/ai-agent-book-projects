@@ -393,7 +393,7 @@ A folyamatos evolúciónak el kell választania az online végrehajtást az offl
 
 Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
 
-### Three-layer trajectory verification
+### Háromrétegű trajektória-ellenőrzés
 
 ```python
 outcome = verify_environment_state(trajectory)
@@ -406,7 +406,7 @@ else:
     emit_structured_diagnosis(outcome, process, quality)
 ```
 
-### Experience-to-capability routing
+### Tapasztalat–képesség útválasztás
 
 ```python
 if experience.is_factual and experience.has_sources:
@@ -419,7 +419,7 @@ else:
     target = MODEL_PARAMETERS
 ```
 
-### Validated release and rollback
+### Ellenőrzött kiadás és visszagörgetés
 
 ```python
 candidate = propose_minimal_update(evidence, current_version)
@@ -433,7 +433,7 @@ else:
     else: promote(candidate)
 ```
 
-### Sleep-time consolidation
+### Alvásidős konszolidáció
 
 ```python
 while sleep_gate_is_open():

@@ -393,7 +393,7 @@ Sürekli evrim, çevrimiçi yürütmeyi çevrimdışı öğrenmeden ayırmayı g
 
 Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
 
-### Three-layer trajectory verification
+### Üç katmanlı trajectory doğrulaması
 
 ```python
 outcome = verify_environment_state(trajectory)
@@ -406,7 +406,7 @@ else:
     emit_structured_diagnosis(outcome, process, quality)
 ```
 
-### Experience-to-capability routing
+### Deneyimden yeteneğe yönlendirme
 
 ```python
 if experience.is_factual and experience.has_sources:
@@ -419,7 +419,7 @@ else:
     target = MODEL_PARAMETERS
 ```
 
-### Validated release and rollback
+### Doğrulanmış sürüm ve geri alma
 
 ```python
 candidate = propose_minimal_update(evidence, current_version)
@@ -433,7 +433,7 @@ else:
     else: promote(candidate)
 ```
 
-### Sleep-time consolidation
+### Boşta kalma sırasında birleştirme
 
 ```python
 while sleep_gate_is_open():

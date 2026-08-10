@@ -554,7 +554,7 @@ Open-source фреймворк OpenClaw (подробнее его архите�
 
 **Пометка в строке состояния агента**: перед каждым событием добавляется явная метка:
 
-```
+```text
 [Необработанное событие 1/4] Tool result from database_query: ...
 [Необработанное событие 2/4] Дополнение от User: смотри только данные по Пекину
 [Необработанное событие 3/4] Системное напоминание: до дедлайна отчёта осталось 30 минут
@@ -689,7 +689,7 @@ Open-source фреймворк OpenClaw (подробнее его архите�
 
 Следующие скелеты выделяют управляющие связи, обсуждаемые в главе.
 
-### Tool safety gate
+### Защитный шлюз инструментов
 
 ```python
 proposal = model.tool_call()
@@ -716,7 +716,7 @@ checked = verify_result(call, result, observe_environment())
 return checked
 ```
 
-### Event-loop routing
+### Маршрутизация цикла событий
 
 ```python
 while runtime.is_alive:
@@ -733,7 +733,7 @@ while runtime.is_alive:
     dispatch(decision)
 ```
 
-### Proactive tool discovery
+### Проактивное обнаружение инструментов
 
 ```python
 if capability_is_missing(task):

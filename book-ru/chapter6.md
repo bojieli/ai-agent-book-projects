@@ -32,7 +32,7 @@
 
 **Траектория агента**:
 
-```
+```text
 Пользователь: Я хочу вернуть наушники, купленные 3 дня назад, номер заказа 12345. (Сегодня 2026-04-10)
 
 Агент (размышляет): Пользователь хочет вернуть средства, сначала нужно запросить информацию о заказе.
@@ -793,7 +793,7 @@ LangSmith — одна из показательных платформ в эт�
 
 Следующие скелеты выделяют управляющие связи, обсуждаемые в главе.
 
-### Repeatable evaluation loop
+### Воспроизводимый цикл оценки
 
 ```python
 for task in dataset:
@@ -804,7 +804,7 @@ for task in dataset:
     record(task, trajectory, outcome, score)
 ```
 
-### Deterministic veto before rubric judging
+### Детерминированный veto до оценки по rubric
 
 ```python
 deterministic = verify_state_policy_and_claims(trajectory, outcome)
@@ -815,7 +815,7 @@ rubric_result = judge(answer, rubric, evidence)
 return aggregate_with_confidence(rubric_result)
 ```
 
-### Paired comparison
+### Парное сравнение
 
 ```python
 for task in paired_tasks:

@@ -478,7 +478,7 @@ Xung đột tương tranh là vấn đề ở cấp độ tệp, kinh nghiệm c
 
 Giải thích bằng một tình huống cụ thể. Giả sử rằng hệ thống dịch thuật áp dụng chế độ trình quản lý (thử nghiệm kiến trúc của 10-2) và Trình quản lý chỉ định các chương của sách kỹ thuật cho nhiều bản dịch Agent:
 
-```
+```text
 Thuật ngữ Tác nhân: Dịch “lý luận” là “lý luận”, nhưng “lý luận” được dùng phổ biến hơn là suy luận trong tiếng Trung và có sự mơ hồ.
 ↓ Viết bảng thuật ngữ.json
 Nhân viên dịch thuật A: Dịch Chương 2, đọc từ bảng thuật ngữ và dịch “mã thông báo lý luận” thành “mã thông báo lý luận”
@@ -650,7 +650,7 @@ Hợp tác đa Agent chỉ thực sự đáng giá khi đưa vào thông tin m�
 
 Các skeleton sau chỉ tách ra quan hệ điều khiển được bàn trong chương.
 
-### Message envelope and worker lifetime
+### Envelope thông điệp và vòng đời worker
 
 ```python
 envelope = {
@@ -667,7 +667,7 @@ while worker.is_running:
 await worker.ack_or_timeout()
 ```
 
-### Proposer-reviewer loop
+### Vòng lặp Proposer–Reviewer
 
 ```python
 candidate = proposer(task, constraints)
@@ -685,7 +685,7 @@ else:
     escalate_or_reject(review)
 ```
 
-### First verified parallel winner
+### Người thắng song song đầu tiên đã xác minh
 
 ```python
 workers = launch_independent_workers(subtasks)
@@ -703,7 +703,7 @@ while workers.any_running:
 return summarize_failures(workers)
 ```
 
-### Decentralized handoff protocol
+### Giao thức handoff phi tập trung
 
 ```python
 handoff = {

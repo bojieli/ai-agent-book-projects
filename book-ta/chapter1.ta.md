@@ -82,7 +82,7 @@
 
 வானிலை வினவல் காட்சியை உதாரணமாக எடுத்துக் கொண்டால், API மட்டத்தில் நான்கு-படி செயல்முறையின் எளிமைப்படுத்தப்பட்ட பிரதிநிதித்துவம் பின்வருமாறு:
 
-```
+```text
 Step 1: Declare tools                  Step 2: Model decides to call
 tools: [{                             assistant: {
   name: "get_weather",                  tool_calls: [{
@@ -169,7 +169,7 @@ LLM ஏஜெண்டுகளின் ஒரு தனித்துவம�
 
 சூடோகுறியீடு மூலம் ஒரு ஏஜெண்ட் பாதையின் கட்டமைப்பைப் புரிந்துகொள்வோம்:
 
-```
+```text
 trajectory = [
   {role: "user", content: "Based on the company's quarterly revenue: Q1 2.5M USD, Q2 2.1M EUR, Q3 1.8M GBP, Q4 380M JPY, calculate the company's total annual revenue and average quarterly revenue"},
   
@@ -494,9 +494,9 @@ Harness பொறியியலின் கண்ணோட்டத்தி�
 
 ## Mechanism skeleton-கள்
 
-இந்த Python பாணி skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன. இவை விளக்க pseudocode; இயக்கக்கூடிய SDK implementation அல்ல. முழு adapters மற்றும் tests அத்தியாயச் சோதனைகளில் உள்ளன.
+இந்த Python பாணி skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன. இவை விளக்க pseudocode; இயக்கக்கூடிய SDK implementation அல்ல. முழு adapters மற்றும் tests அத்தியாயச் சோதனைகளில் உள்ளன. `python` marker என்பது syntax highlighting-க்காக மட்டுமே; இது இயக்கக்கூடிய SDK அல்லது நேரடியாக இயக்கக்கூடிய நிரலைக் குறிக்காது.
 
-### ReAct control loop
+### ReAct கட்டுப்பாட்டு சுழற்சி
 
 ```python
 trajectory = [user_request]
@@ -515,7 +515,7 @@ repeat:
         trajectory.append(observation)
 ```
 
-### Harness production boundary
+### Harness உற்பத்தி எல்லை
 
 ```python
 decision = Model(Harness.build_context(state, trajectory))
@@ -530,8 +530,6 @@ else:
 ```
 
 எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
-
-python என்பது highlight marker மட்டுமே; நேரடியாக இயக்கக்கூடிய நிரல் என்று பொருளல்ல.
 
 ## சிந்தனை கேள்விகள்
 

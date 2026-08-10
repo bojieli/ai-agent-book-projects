@@ -705,7 +705,7 @@ viking://
 
 تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
 
-### Memory lifecycle
+### دورة حياة الذاكرة
 
 ```python
 when answering(user_request):
@@ -720,7 +720,7 @@ after conversation (background job):
     memory.append_or_update(verified)
 ```
 
-### Append-only log and checkpoint
+### سجل الإضافة فقط ونقطة التحقق
 
 ```python
 append_only_log += extract_facts(conversation)
@@ -733,7 +733,7 @@ if checkpoint_due():
         keep_previous_checkpoint()
 ```
 
-### Typed user state
+### حالة مستخدم مهيكلة النوع
 
 ```python
 state = {
@@ -750,7 +750,7 @@ state = {
 }
 ```
 
-### Deterministic aggregation
+### تجميع حتمي
 
 ```python
 count(
@@ -760,7 +760,7 @@ count(
 # => 2
 ```
 
-### Conflict detection
+### اكتشاف التعارضات
 
 ```python
 def check_drug_allergy(profile):
@@ -770,7 +770,7 @@ def check_drug_allergy(profile):
                 emit_conflict(medication, allergy)
 ```
 
-### Constraint enforcement
+### فرض القيود
 
 ```python
 def check():
@@ -782,7 +782,7 @@ def check():
                 alert("passport expires too soon", trip, days)
 ```
 
-### Hybrid RAG pipeline
+### خط أنابيب RAG هجين
 
 ```python
 offline:

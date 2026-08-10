@@ -910,7 +910,7 @@ Ez a fejezet arra válaszolt, hogyan valósítható meg az Ágens folyamatos fej
 
 Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
 
-### SFT loss mask
+### SFT veszteségmaszk
 
 ```python
 for sample in dataset:
@@ -922,7 +922,7 @@ for sample in dataset:
     update_parameters(loss)
 ```
 
-### GRPO group update
+### GRPO csoportfrissítés
 
 ```python
 for prompt in batch:
@@ -932,7 +932,7 @@ for prompt in batch:
     update(policy, group, advantages)
 ```
 
-### PPO clipped update
+### PPO vágott frissítés
 
 ```python
 for trajectory in rollouts:
@@ -949,7 +949,7 @@ for trajectory in rollouts:
 update(policy, value_model, policy_loss + value_coef * value_loss)
 ```
 
-### Trajectory-level reward mask
+### Trajektóriaszintű jutalommaszk
 
 ```python
 for token in trajectory:
@@ -959,7 +959,7 @@ for token in trajectory:
         loss_mask[token] = 1
 ```
 
-### Outcome plus path signal
+### Eredmény- és útvonaljelzés
 
 ```python
 outcome = verify_final_state(trajectory)              # result, not self-report
@@ -969,7 +969,7 @@ for step in trajectory:
 reward = normalize(outcome) + beta * normalize(path_signal)
 ```
 
-### On-policy distillation
+### On-policy desztilláció
 
 ```python
 student_trajectory = rollout(student, task)
@@ -980,7 +980,7 @@ for state in student_trajectory:
 update_student(loss)
 ```
 
-### On-policy self-distillation
+### On-policy ön-desztilláció
 
 ```python
 student_trajectory = rollout(model, task_without_answer)

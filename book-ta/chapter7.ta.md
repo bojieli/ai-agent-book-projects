@@ -892,7 +892,7 @@ SFT மற்றும் RL ஆகியவை போட்டியாளர�
 
 கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
 
-### SFT loss mask
+### SFT இழப்பு முகமூடி
 
 ```python
 for sample in dataset:
@@ -904,7 +904,7 @@ for sample in dataset:
     update_parameters(loss)
 ```
 
-### GRPO group update
+### GRPO குழு புதுப்பிப்பு
 
 ```python
 for prompt in batch:
@@ -941,7 +941,7 @@ for token in trajectory:
         loss_mask[token] = 1
 ```
 
-### Outcome plus path signal
+### முடிவு + பாதை signal
 
 ```python
 outcome = verify_final_state(trajectory)              # result, not self-report

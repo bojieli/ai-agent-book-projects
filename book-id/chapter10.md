@@ -478,7 +478,7 @@ Konflik konkurensi adalah masalah tingkat file yang dapat diatasi menggunakan te
 
 Pertimbangkan skenario spesifik berikut. Misalkan sistem terjemahan menggunakan pola manajer (*manager pattern*) (arsitektur dari Eksperimen 10-2), di mana Manager menugaskan bab-bab dari buku teknis ke beberapa Agent penerjemah:
 
-```
+```text
 Terminology Agent: Menerjemahkan "reasoning" sebagai "推理", tetapi "推理" dalam bahasa Mandarin lebih umum digunakan untuk inference, menciptakan ambiguitas
         ↓ menulis ke glossary.json
 Translation Agent A: Menerjemahkan Bab 2, membaca dari glosarium, menerjemahkan "reasoning tokens" sebagai "推理 token"
@@ -649,7 +649,7 @@ Kolaborasi multi-Agent benar-benar bernilai jika menghadirkan informasi baru yan
 
 Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
 
-### Message envelope and worker lifetime
+### Envelope pesan dan siklus hidup worker
 
 ```python
 envelope = {
@@ -666,7 +666,7 @@ while worker.is_running:
 await worker.ack_or_timeout()
 ```
 
-### Proposer-reviewer loop
+### Loop Proposer–Reviewer
 
 ```python
 candidate = proposer(task, constraints)
@@ -684,7 +684,7 @@ else:
     escalate_or_reject(review)
 ```
 
-### First verified parallel winner
+### Pemenang paralel pertama yang terverifikasi
 
 ```python
 workers = launch_independent_workers(subtasks)
@@ -702,7 +702,7 @@ while workers.any_running:
 return summarize_failures(workers)
 ```
 
-### Decentralized handoff protocol
+### Protokol handoff terdesentralisasi
 
 ```python
 handoff = {

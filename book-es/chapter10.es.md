@@ -472,7 +472,7 @@ Los conflictos de concurrencia son problemas a nivel de archivos que la experien
 
 Ilustremos esto con un escenario concreto. Supóngase que un sistema de traducción adopta el patrón de manager (la arquitectura del Experimento 10-2) y el Manager distribuye un libro técnico por capítulos a múltiples Agentes de traducción:
 
-```
+```text
 Glossary Agent: Traduce "reasoning" como "razonamiento", pero "razonamiento" en español se usa comúnmente para inference, existiendo ambigüedad
         ↓ Escribe en glossary.json
 Translation Agent A: Traduce el Capítulo 2, lee del glosario y traduce "reasoning tokens" como "tokens de razonamiento"
@@ -640,7 +640,7 @@ La colaboración multiagente solo justifica su coste cuando introduce informaci�
 
 Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
 
-### Message envelope and worker lifetime
+### Sobre de mensajes y ciclo de vida del worker
 
 ```python
 envelope = {
@@ -657,7 +657,7 @@ while worker.is_running:
 await worker.ack_or_timeout()
 ```
 
-### Proposer-reviewer loop
+### Bucle Proposer–Reviewer
 
 ```python
 candidate = proposer(task, constraints)
@@ -675,7 +675,7 @@ else:
     escalate_or_reject(review)
 ```
 
-### First verified parallel winner
+### Primer ganador paralelo verificado
 
 ```python
 workers = launch_independent_workers(subtasks)
@@ -693,7 +693,7 @@ while workers.any_running:
 return summarize_failures(workers)
 ```
 
-### Decentralized handoff protocol
+### Protocolo de handoff descentralizado
 
 ```python
 handoff = {

@@ -363,9 +363,9 @@ Ez függőségi gráf, nem prózai bekezdés. Ha a felhasználó azt mondja, hog
 
 A tervezés és a végrehajtás átfedhet. Amint elkészül egy biztonságos előtag, a tervező teljes parancsot továbbít a végrehajtónak, miközben a terv hátralévő részét tovább tervezi. A parancseseménynek teljesnek és auditálhatónak kell lennie:
 
-~~~json
+```text
 {"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
-~~~
+```
 
 A végrehajtó `started`, `succeeded`, `cancelled` vagy `failed` állapotot jelent. A tervező ezek alapján frissíti a függőségeket, és backpressure-t alkalmaz, ha a sor megtelt vagy elavult. A folyamatos végrehajtás lerövidíti az első biztonságos műveletig tartó időt; nem engedi meg hiányos JSON vagy ellenőrizetlen modellgondolatok végrehajtását.
 
@@ -377,9 +377,9 @@ Az OpenVLA-t nem szó szerint csak a projector frissítésével tanították: az
 
 Egy világmodell cselekvésre alkalmas átmenetet tanul:
 
-~~~text
+```text
 állapot + jelölt akció -> előre jelzett jövőbeli állapot -> akció kiválasztása és ellenőrzése
-~~~
+```
 
 Ez tágabb fogalom, mint a V-JEPA önmagában. Ide tartoznak a látens prediktív modellek (V-JEPA 2), az interaktív generatív modellek (Genie 3 és Cosmos), a World-Action Modellek (GeniWorld és Robust-WAM), a címkézetlen videóból végzett látensakció-tanulás (LAWM-3D), valamint a modellalapú RL (Dreamer és MuZero). Értékük, hogy nagy léptékben tanulnak megfigyelésekből, végrehajtás előtt kipróbálják a kontrafaktuális akciók következményeit, szétválasztják a közös dinamikát a testfüggő vezérléstől, és újraterveznek, amikor az előrejelzés eltér a valóságtól.
 
@@ -393,7 +393,7 @@ A felszínen a három forgatókönyv aligha lehetne különbözőbb, mégis a k�
 
 Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
 
-### Streaming cancellation
+### Streaming megszakítása
 
 ```python
 while audio_is_arriving:
@@ -409,7 +409,7 @@ on_final_transcript(text):
     commit_or_restart(text)
 ```
 
-### Computer Use safety loop
+### Computer Use biztonsági ciklus
 
 ```python
 observation = capture_screenshot_and_accessibility_tree()
@@ -425,7 +425,7 @@ else:
         rollback_if_possible_or_replan()
 ```
 
-### Action-chunk preemption
+### Műveletblokk-megelőzés
 
 ```python
 chunk = vla(current_observation, skill)

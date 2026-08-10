@@ -20,7 +20,7 @@
 
 用一個具體的例子來理解這個過程。假設使用者和 Agent 有以下對話：
 
-```
+```text
 User: Help me book a flight to Tokyo next Friday. I prefer window seats
       and I'm vegetarian, so I'll need a special meal.
 Agent: I'll search for flights to Tokyo for next Friday...
@@ -32,7 +32,7 @@ User: Yes, and use my United MileagePlus number 12345678.
 
 這段對話結束後，Agent 框架會呼叫一次專門的 LLM 來分析對話內容，提取出值得長期記住的資訊：
 
-```
+```text
 Extracted memories:
 - User prefers window seats (preference)
 - User is vegetarian, needs special meals on flights (dietary restriction)
@@ -515,7 +515,7 @@ GraphRAG 先利用 LLM 從文字中提取關鍵實體（人物、地點、概念
 
 RAPTOR 和 GraphRAG 代表了學術界對知識組織的探索，而字節跳動火山引擎開源的 [OpenViking](https://github.com/volcengine/OpenViking) 則提出了第三種哲學：**檔案系統範式**。它不將上下文視為扁平的向量碎片或圖譜節點，而是將所有上下文——記憶、資源、技能——對映為虛擬檔案系統中的目錄和檔案，每個條目擁有唯一 URI：
 
-```
+```text
 viking://
 ├── resources/          # 外部知識：文件、程式碼庫、網頁
 ├── user/memories/      # 使用者記憶：偏好、習慣
@@ -726,7 +726,7 @@ viking://
 
 下面的骨架只抽出本章討論的控制關係。
 
-### Memory lifecycle
+### 記憶生命週期
 
 ```python
 when answering(user_request):
@@ -741,7 +741,7 @@ after conversation (background job):
     memory.append_or_update(verified)
 ```
 
-### Append-only log and checkpoint
+### 只增日誌與檢查點
 
 ```python
 append_only_log += extract_facts(conversation)
@@ -754,7 +754,7 @@ if checkpoint_due():
         keep_previous_checkpoint()
 ```
 
-### Typed user state
+### 型別化使用者狀態
 
 ```python
 state = {
@@ -771,7 +771,7 @@ state = {
 }
 ```
 
-### Deterministic aggregation
+### 確定性聚合
 
 ```python
 count(
@@ -781,7 +781,7 @@ count(
 # => 2
 ```
 
-### Conflict detection
+### 衝突偵測
 
 ```python
 def check_drug_allergy(profile):
@@ -791,7 +791,7 @@ def check_drug_allergy(profile):
                 emit_conflict(medication, allergy)
 ```
 
-### Constraint enforcement
+### 約束執行
 
 ```python
 def check():
@@ -803,7 +803,7 @@ def check():
                 alert("passport expires too soon", trip, days)
 ```
 
-### Hybrid RAG pipeline
+### 混合 RAG 流程
 
 ```python
 offline:

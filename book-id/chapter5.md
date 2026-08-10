@@ -32,7 +32,7 @@ Ketujuh alat ini merupakan kotak peralatan yang lengkap namun minimal yang hampi
 
 Untuk melihat bagaimana ketujuh alat ini bekerja sama, mari kita ambil tugas yang paling sederhana. Misalkan pengguna berkata, "Bantu saya menyusun daftar semua komentar TODO dalam proyek ini":
 
-```
+```text
 Agent (thinking): Need to find all code lines containing TODO.
 Agent → Grep("TODO", glob="**/*.py")          # Search file content
 Tool returns:
@@ -368,7 +368,7 @@ Mengikuti alur ini—dari dalam ke luar dan akhirnya kembali ke Agent itu sendir
 
 LLM sangat luar biasa dalam memahami dan menghasilkan bahasa alami, namun pada dasarnya lemah dalam kalkulasi yang presisi, manipulasi simbolik, dan deduksi logis yang ketat. Alasannya: pemikiran model pada dasarnya bersifat probabilistik dan perkiraan, sementara masalah matematis dan logis menuntut jawaban yang deterministik dan eksak. Sebuah perbandingan konkret memperjelas poin tersebut:
 
-```
+```text
 Masalah: "Sebuah kelas memiliki 40 siswa. 60% mengambil matematika, 45% mengambil fisika, dan 25% mengambil keduanya.
           Berapa banyak siswa yang hanya mengambil fisika tetapi tidak mengambil matematika?"
 

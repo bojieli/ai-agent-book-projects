@@ -901,7 +901,7 @@ SFT 和 RL 不是競爭關係，而是先後關係：SFT 先把輸出格式穩�
 
 下面的骨架只抽出本章討論的控制關係。
 
-### SFT loss mask
+### SFT 損失遮罩
 
 ```python
 for sample in dataset:
@@ -913,7 +913,7 @@ for sample in dataset:
     update_parameters(loss)
 ```
 
-### GRPO group update
+### GRPO 群組更新
 
 ```python
 for prompt in batch:
@@ -923,7 +923,7 @@ for prompt in batch:
     update(policy, group, advantages)
 ```
 
-### PPO clipped update
+### PPO 裁剪更新
 
 ```python
 for trajectory in rollouts:
@@ -940,7 +940,7 @@ for trajectory in rollouts:
 update(policy, value_model, policy_loss + value_coef * value_loss)
 ```
 
-### Trajectory-level reward mask
+### 軌跡層級獎勵遮罩
 
 ```python
 for token in trajectory:
@@ -950,7 +950,7 @@ for token in trajectory:
         loss_mask[token] = 1
 ```
 
-### Outcome plus path signal
+### 結果加路徑訊號
 
 ```python
 outcome = verify_final_state(trajectory)              # result, not self-report
@@ -960,7 +960,7 @@ for step in trajectory:
 reward = normalize(outcome) + beta * normalize(path_signal)
 ```
 
-### On-policy distillation
+### 在軌蒸餾
 
 ```python
 student_trajectory = rollout(student, task)
@@ -971,7 +971,7 @@ for state in student_trajectory:
 update_student(loss)
 ```
 
-### On-policy self-distillation
+### 在軌自蒸餾
 
 ```python
 student_trajectory = rollout(model, task_without_answer)

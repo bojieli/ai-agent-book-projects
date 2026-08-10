@@ -393,7 +393,7 @@ Interaction மற்றும் evaluation-இலிருந்து learnin
 
 கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
 
-### Three-layer trajectory verification
+### மூன்று அடுக்கு trajectory சரிபார்ப்பு
 
 ```python
 outcome = verify_environment_state(trajectory)
@@ -406,7 +406,7 @@ else:
     emit_structured_diagnosis(outcome, process, quality)
 ```
 
-### Experience-to-capability routing
+### அனுபவத்திலிருந்து திறனுக்கான வழிமாற்றம்
 
 ```python
 if experience.is_factual and experience.has_sources:
@@ -419,7 +419,7 @@ else:
     target = MODEL_PARAMETERS
 ```
 
-### Validated release and rollback
+### சரிபார்க்கப்பட்ட வெளியீடு மற்றும் rollback
 
 ```python
 candidate = propose_minimal_update(evidence, current_version)
@@ -433,7 +433,7 @@ else:
     else: promote(candidate)
 ```
 
-### Sleep-time consolidation
+### செயலற்ற நேர ஒருங்கிணைப்பு
 
 ```python
 while sleep_gate_is_open():

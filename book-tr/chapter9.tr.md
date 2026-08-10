@@ -188,7 +188,7 @@ Arayüzün kendisi yapısal bilgi sunabildiğinde işaretleme çok daha kesin ya
 3. Her etkileşimli öğeye benzersiz bir ID atamak ve ekran görüntüsünde sınırlayıcı kutuları çizmek
 4. Aynı anda, her ID'ye karşılık gelen öğeyi tanımlayan bir metin listesi üretmek
 
-```
+```text
 Screenshot: [Görseldeki kilit öğeler [1], [2], [3], [4] gibi ID'lerle işaretlenmiştir]
 
 Elements:
@@ -373,9 +373,9 @@ Bu bir düzyazı paragrafı değil, bir bağımlılık grafiğidir. Kullanıcı 
 
 Planlama ile yürütme üst üste bindirilebilir. Güvenli bir önek hazır olur olmaz planlayıcı, kuyruğun geri kalanını planlamaya devam ederken eksiksiz bir komutu yürütücüye akıtır. Komut olayı eksiksiz ve denetlenebilir olmalıdır:
 
-~~~json
+```text
 {"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
-~~~
+```
 
 Yürütücü `started`, `succeeded`, `cancelled` veya `failed` durumlarından birini bildirir. Planlayıcı bu gözlemlerle bağımlılıkları günceller; kuyruk eskimiş ya da doluysa backpressure uygular. Akışkan yürütme ilk güvenli eyleme kadar geçen süreyi kısaltır; eksik JSON’un veya doğrulanmamış model düşüncelerinin çalıştırılmasına izin vermez.
 
@@ -387,9 +387,9 @@ OpenVLA tam anlamıyla yalnızca projector güncellenerek eğitilmiş değildir:
 
 Bir dünya modeli eyleme dönüştürülebilir bir geçiş öğrenir:
 
-~~~text
+```text
 durum + aday eylem -> tahmin edilen gelecek durum -> eylemi seç ve doğrula
-~~~
+```
 
 Bu kavram yalnızca V-JEPA’dan ibaret değildir. Aile; latent predictive model’leri (V-JEPA 2), etkileşimli üretici modelleri (Genie 3 ve Cosmos), World-Action Model’leri (GeniWorld ve Robust-WAM), etiketsiz videodan latent action öğrenimini (LAWM-3D) ve model tabanlı RL’yi (Dreamer ve MuZero) kapsar. Değeri; büyük ölçekte gözlemden öğrenmek, eylemleri gerçekleştirmeden önce karşı-olgusal sonuçlarını sınamak, ortak dinamikleri embodiment’e özgü kontrolden ayırmak ve tahmin gerçeklikten saptığında yeniden planlamaktır.
 
@@ -403,7 +403,7 @@ Bu kavram yalnızca V-JEPA’dan ibaret değildir. Aile; latent predictive model
 
 Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
 
-### Streaming cancellation
+### Akış iptali
 
 ```python
 while audio_is_arriving:
@@ -419,7 +419,7 @@ on_final_transcript(text):
     commit_or_restart(text)
 ```
 
-### Computer Use safety loop
+### Computer Use güvenlik döngüsü
 
 ```python
 observation = capture_screenshot_and_accessibility_tree()
@@ -435,7 +435,7 @@ else:
         rollback_if_possible_or_replan()
 ```
 
-### Action-chunk preemption
+### Eylem parçası öncelik kesmesi
 
 ```python
 chunk = vla(current_observation, skill)

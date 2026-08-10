@@ -31,11 +31,11 @@ Bu kitabın temel çerçevesi **Agent = Model + Bağlam + Araçlar**'dır. Bu ü
 
 Kitap tek bir SDK için adım adım bir öğretici değildir. Kısa pseudocode ve skeleton'lar durum akışını, durma noktalarını ve doğrulama sınırlarını açıklar; bölüm deneyleri tam uygulama, adapter, test, günlük ve kanıt sağlar.
 
-| Layer | Read first | Skip for now | Question it answers |
+| Katman | Önce oku | Şimdilik atla | Yanıtladığı soru |
 | :--: | --- | --- | --- |
-| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | Bu deney hangi mekanizmayı kanıtlamayı amaçlıyor? |
-| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | Hangi değişken davranışı değiştirdi? |
-| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | Sonuç yeniden üretilebilir mi ve hatalar dürüstçe kaydedilmiş mi? |
+| **Starter** | Proje README'si: amaç, minimum komut ve kabul koşulları; metindeki karşılık gelen skeleton | kimlik bilgileri, UI, sağlayıcı adaptörleri ve uzun ham günlükler | Bu deney hangi mekanizmayı kanıtlamayı amaçlıyor? |
+| **Builder** | giriş noktası, çekirdek döngü, durum/mesaj şeması, araçlar ve doğrulayıcı | mekanizmayla ilgisiz uyumluluk/dağıtım katmanları | Hangi değişken davranışı değiştirdi? |
+| **Maintainer** | testler, hata işleme, kanıt biçimi, manifest/hash ve geri alma yolu | deneyi değiştirirken gereken üçüncü taraf ayrıntıları | Sonuç yeniden üretilebilir mi ve hatalar dürüstçe kaydedilmiş mi? |
 
 ### Zorluk Seviyeleri
 

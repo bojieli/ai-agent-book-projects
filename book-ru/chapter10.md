@@ -480,7 +480,7 @@ MetaGPT кодирует стандартные процедуры програ�
 
 Поясним на конкретном примере. Предположим, система перевода использует модель оркестрации (архитектура из эксперимента 10-2), и менеджер распределяет главы технической книги между несколькими агентами-переводчиками:
 
-```
+```text
 Терминологический агент: переводит "reasoning" как "推理" (推理),
         но в китайском "推理" чаще используется для inference — возникает неоднозначность
         ↓ записывает в glossary.json
@@ -646,7 +646,7 @@ Pinchwork и RentAHuman вместе представляют **способ к�
 
 Следующие скелеты выделяют управляющие связи, обсуждаемые в главе.
 
-### Message envelope and worker lifetime
+### Конверт сообщения и жизненный цикл worker
 
 ```python
 envelope = {
@@ -663,7 +663,7 @@ while worker.is_running:
 await worker.ack_or_timeout()
 ```
 
-### Proposer-reviewer loop
+### Цикл Proposer–Reviewer
 
 ```python
 candidate = proposer(task, constraints)
@@ -681,7 +681,7 @@ else:
     escalate_or_reject(review)
 ```
 
-### First verified parallel winner
+### Первый проверенный параллельный победитель
 
 ```python
 workers = launch_independent_workers(subtasks)
@@ -699,7 +699,7 @@ while workers.any_running:
 return summarize_failures(workers)
 ```
 
-### Decentralized handoff protocol
+### Децентрализованный протокол handoff
 
 ```python
 handoff = {

@@ -791,7 +791,7 @@ ML 연구자는 모델의 어느 컴포넌트가 실제로 중요한지 알아�
 
 다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
 
-### Repeatable evaluation loop
+### 반복 가능한 평가 루프
 
 ```python
 for task in dataset:
@@ -802,7 +802,7 @@ for task in dataset:
     record(task, trajectory, outcome, score)
 ```
 
-### Deterministic veto before rubric judging
+### rubric 판정 전 결정론적 veto
 
 ```python
 deterministic = verify_state_policy_and_claims(trajectory, outcome)
@@ -813,7 +813,7 @@ rubric_result = judge(answer, rubric, evidence)
 return aggregate_with_confidence(rubric_result)
 ```
 
-### Paired comparison
+### 쌍대 비교
 
 ```python
 for task in paired_tasks:

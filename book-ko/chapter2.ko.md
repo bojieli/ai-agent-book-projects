@@ -1076,7 +1076,7 @@ messages: [
 
 다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
 
-### Context construction before each request
+### 각 요청 전 컨텍스트 구성
 
 ```python
 stable_prefix = system_message

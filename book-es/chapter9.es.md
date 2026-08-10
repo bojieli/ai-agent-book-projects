@@ -180,7 +180,7 @@ Cuando la propia interfaz puede proporcionar información estructurada, las anot
 3. Etiquetar un ID único para cada elemento interactivo y dibujar cuadros delimitadores en la captura de pantalla.
 4. Generar simultáneamente una lista de texto que describa el elemento correspondiente a cada ID.
 
-```
+```text
 Screenshot: [en la imagen los elementos clave están etiquetados con ID como [1], [2], [3], [4]]
 
 Elements:
@@ -364,9 +364,9 @@ Esto es un grafo de dependencias, no un párrafo de prosa. Si el usuario dice «
 
 La planificación y la ejecución pueden solaparse. Cuando existe un prefijo seguro, el planificador envía un comando completo al ejecutor mientras continúa planificando el sufijo. El comando debe ser completo y auditable:
 
-~~~json
+```text
 {"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
-~~~
+```
 
 El ejecutor devuelve started, succeeded, cancelled o failed. El planificador actualiza las dependencias y aplica backpressure si la cola está llena o quedó obsoleta. El streaming reduce el tiempo hasta la primera acción segura; no permite ejecutar JSON parcial ni pensamientos no verificados.
 
@@ -388,7 +388,7 @@ Aunque los tres escenarios parecen muy diferentes en la superficie, los dos obst
 
 Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
 
-### Streaming cancellation
+### Cancelación en streaming
 
 ```python
 while audio_is_arriving:
@@ -404,7 +404,7 @@ on_final_transcript(text):
     commit_or_restart(text)
 ```
 
-### Computer Use safety loop
+### Bucle de seguridad de Computer Use
 
 ```python
 observation = capture_screenshot_and_accessibility_tree()
@@ -420,7 +420,7 @@ else:
         rollback_if_possible_or_replan()
 ```
 
-### Action-chunk preemption
+### Preempción de bloques de acción
 
 ```python
 chunk = vla(current_observation, skill)

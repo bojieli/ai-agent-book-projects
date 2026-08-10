@@ -333,7 +333,7 @@ while True:
 讓我們跟蹤 `messages` 列表在每一輪的變化：
 
 **初始狀態（第 1 次呼叫前）：**
-```
+```text
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # 開發者寫的
   { role: "user",    content: "What's the current time and weather in Vancouver?" },  # 使用者輸入
@@ -341,7 +341,7 @@ messages = [
 ```
 
 **第 1 次呼叫後（模型返回工具呼叫）：**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -352,7 +352,7 @@ messages = [
 ```
 
 **第 2 次呼叫後（模型返回最終回覆，迴圈結束）：**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -598,7 +598,7 @@ Markdown 在保持可讀性的同時提供了輕量級的結構，特別適合�
 
 相比之下，流程驅動的提示詞就像一份優秀的新員工教育訓練手冊，提供了清晰的標準操作流程（SOP）：
 
-```
+```text
 File Processing Standard Operating Procedure:
 
 Step 1: Validation
@@ -889,7 +889,7 @@ Agent 狀態列正是透過顯式地操縱注意力分配來解決這一問題�
 
 以下是 Agent 框架在第 N 次 API 呼叫時實際建構的訊息列表：
 
-```
+```text
 messages: [
   { role: "system",    content: "You are a customer service assistant..." }  ← Fixed (KV Cache cached)
   { role: "user",      content: "Help me cancel my Xfinity plan" }  ← Original user request
@@ -1078,7 +1078,7 @@ Agent 狀態列技術有一個實用的優點：所有元資訊都以人類可�
 
 下面的骨架只抽出本章討論的控制關係。
 
-### Context construction before each request
+### 每次請求前的上下文建構
 
 ```python
 stable_prefix = system_message

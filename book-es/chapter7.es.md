@@ -891,7 +891,7 @@ Este capítulo ha respondido a cómo actualizar parámetros durante el entrenami
 
 Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
 
-### SFT loss mask
+### Máscara de pérdida SFT
 
 ```python
 for sample in dataset:
@@ -903,7 +903,7 @@ for sample in dataset:
     update_parameters(loss)
 ```
 
-### GRPO group update
+### Actualización grupal GRPO
 
 ```python
 for prompt in batch:
@@ -913,7 +913,7 @@ for prompt in batch:
     update(policy, group, advantages)
 ```
 
-### PPO clipped update
+### Actualización recortada PPO
 
 ```python
 for trajectory in rollouts:
@@ -930,7 +930,7 @@ for trajectory in rollouts:
 update(policy, value_model, policy_loss + value_coef * value_loss)
 ```
 
-### Trajectory-level reward mask
+### Máscara de recompensa a nivel de trayectoria
 
 ```python
 for token in trajectory:
@@ -940,7 +940,7 @@ for token in trajectory:
         loss_mask[token] = 1
 ```
 
-### Outcome plus path signal
+### Señal de resultado más señal de trayectoria
 
 ```python
 outcome = verify_final_state(trajectory)              # result, not self-report
@@ -950,7 +950,7 @@ for step in trajectory:
 reward = normalize(outcome) + beta * normalize(path_signal)
 ```
 
-### On-policy distillation
+### Destilación on-policy
 
 ```python
 student_trajectory = rollout(student, task)
@@ -961,7 +961,7 @@ for state in student_trajectory:
 update_student(loss)
 ```
 
-### On-policy self-distillation
+### Autodestilación on-policy
 
 ```python
 student_trajectory = rollout(model, task_without_answer)

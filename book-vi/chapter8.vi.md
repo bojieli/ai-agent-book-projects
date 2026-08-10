@@ -393,7 +393,7 @@ Tiến hóa liên tục cần tách thực thi trực tuyến khỏi học ngo�
 
 Các skeleton sau chỉ tách ra quan hệ điều khiển được bàn trong chương.
 
-### Three-layer trajectory verification
+### Xác minh trajectory ba lớp
 
 ```python
 outcome = verify_environment_state(trajectory)
@@ -406,7 +406,7 @@ else:
     emit_structured_diagnosis(outcome, process, quality)
 ```
 
-### Experience-to-capability routing
+### Định tuyến kinh nghiệm → năng lực
 
 ```python
 if experience.is_factual and experience.has_sources:
@@ -419,7 +419,7 @@ else:
     target = MODEL_PARAMETERS
 ```
 
-### Validated release and rollback
+### Phát hành đã xác minh và rollback
 
 ```python
 candidate = propose_minimal_update(evidence, current_version)
@@ -433,7 +433,7 @@ else:
     else: promote(candidate)
 ```
 
-### Sleep-time consolidation
+### Hợp nhất khi rảnh
 
 ```python
 while sleep_gate_is_open():

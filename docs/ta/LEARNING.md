@@ -30,11 +30,11 @@
 
 இந்தப் புத்தகம் ஒரு குறிப்பிட்ட SDK-க்கான படிப்படியான பயிற்சி அல்ல. குறுகிய pseudocode/skeleton-கள் state flow, நிறுத்தும் இடங்கள், verification எல்லைகளை விளக்குகின்றன; அத்தியாயச் சோதனைகள் முழு implementation, adapters, tests, logs, evidence ஆகியவற்றை வழங்குகின்றன.
 
-| Layer | Read first | Skip for now | Question it answers |
+| அடுக்கு | முதலில் படிக்கவும் | இப்போது தவிர்க்கவும் | இது பதிலளிக்கும் கேள்வி |
 | :--: | --- | --- | --- |
-| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | இந்தச் சோதனை நிரூபிக்க வேண்டிய mechanism எது? |
-| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | எந்த variable நடத்தை மாற்றியது? |
-| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | முடிவு மீண்டும் உருவாக்கக்கூடியதா, தோல்விகள் நேர்மையாகப் பதிவானதா? |
+| **Starter** | திட்ட README: நோக்கம், குறைந்தபட்ச கட்டளை, ஏற்றுக்கொள்ளும் நிபந்தனைகள்; அதற்கான உரை skeleton | சான்றுகள், UI, provider adapters, நீண்ட raw logs | இந்தச் சோதனை நிரூபிக்க வேண்டிய mechanism எது? |
+| **Builder** | entry point, core loop, state/message schema, tools, verifier | mechanism-க்கு தொடர்பில்லாத compatibility/deployment layers | எந்த variable நடத்தை மாற்றியது? |
+| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | சோதனையை மாற்றும்போது மட்டும் தேவைப்படும் third-party விவரங்கள் | முடிவு மீண்டும் உருவாக்கக்கூடியதா, தோல்விகள் நேர்மையாகப் பதிவானதா? |
 
 ### சிரம நிலை வகைப்பாடு
 

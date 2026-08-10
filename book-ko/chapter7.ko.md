@@ -904,7 +904,7 @@ SFT와 RL은 경쟁하는 선택지라기보다 자주 순차적으로 결합하
 
 다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
 
-### SFT loss mask
+### SFT 손실 마스크
 
 ```python
 for sample in dataset:
@@ -916,7 +916,7 @@ for sample in dataset:
     update_parameters(loss)
 ```
 
-### GRPO group update
+### GRPO 그룹 업데이트
 
 ```python
 for prompt in batch:
@@ -926,7 +926,7 @@ for prompt in batch:
     update(policy, group, advantages)
 ```
 
-### PPO clipped update
+### PPO 클리핑 업데이트
 
 ```python
 for trajectory in rollouts:
@@ -943,7 +943,7 @@ for trajectory in rollouts:
 update(policy, value_model, policy_loss + value_coef * value_loss)
 ```
 
-### Trajectory-level reward mask
+### trajectory 수준 보상 마스크
 
 ```python
 for token in trajectory:
@@ -953,7 +953,7 @@ for token in trajectory:
         loss_mask[token] = 1
 ```
 
-### Outcome plus path signal
+### 결과 + 경로 신호
 
 ```python
 outcome = verify_final_state(trajectory)              # result, not self-report
@@ -963,7 +963,7 @@ for step in trajectory:
 reward = normalize(outcome) + beta * normalize(path_signal)
 ```
 
-### On-policy distillation
+### 온폴리시 증류
 
 ```python
 student_trajectory = rollout(student, task)
@@ -974,7 +974,7 @@ for state in student_trajectory:
 update_student(loss)
 ```
 
-### On-policy self-distillation
+### 온폴리시 자기 증류
 
 ```python
 student_trajectory = rollout(model, task_without_answer)

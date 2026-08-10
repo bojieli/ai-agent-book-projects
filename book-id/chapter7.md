@@ -901,7 +901,7 @@ Bab ini telah menjawab pertanyaan terkait pembaruan parameter tentang “bagaima
 
 Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
 
-### SFT loss mask
+### Mask loss SFT
 
 ```python
 for sample in dataset:
@@ -913,7 +913,7 @@ for sample in dataset:
     update_parameters(loss)
 ```
 
-### GRPO group update
+### Pembaruan grup GRPO
 
 ```python
 for prompt in batch:
@@ -923,7 +923,7 @@ for prompt in batch:
     update(policy, group, advantages)
 ```
 
-### PPO clipped update
+### Pembaruan terklip PPO
 
 ```python
 for trajectory in rollouts:
@@ -940,7 +940,7 @@ for trajectory in rollouts:
 update(policy, value_model, policy_loss + value_coef * value_loss)
 ```
 
-### Trajectory-level reward mask
+### Mask reward tingkat trajektori
 
 ```python
 for token in trajectory:
@@ -950,7 +950,7 @@ for token in trajectory:
         loss_mask[token] = 1
 ```
 
-### Outcome plus path signal
+### Sinyal hasil plus jalur
 
 ```python
 outcome = verify_final_state(trajectory)              # result, not self-report
@@ -960,7 +960,7 @@ for step in trajectory:
 reward = normalize(outcome) + beta * normalize(path_signal)
 ```
 
-### On-policy distillation
+### Distilasi on-policy
 
 ```python
 student_trajectory = rollout(student, task)
@@ -971,7 +971,7 @@ for state in student_trajectory:
 update_student(loss)
 ```
 
-### On-policy self-distillation
+### Self-distillation on-policy
 
 ```python
 student_trajectory = rollout(model, task_without_answer)

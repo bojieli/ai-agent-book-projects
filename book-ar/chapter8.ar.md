@@ -394,7 +394,7 @@
 
 تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
 
-### Three-layer trajectory verification
+### تحقق ثلاثي الطبقات من المسار
 
 ```python
 outcome = verify_environment_state(trajectory)
@@ -407,7 +407,7 @@ else:
     emit_structured_diagnosis(outcome, process, quality)
 ```
 
-### Experience-to-capability routing
+### توجيه الخبرة إلى القدرة
 
 ```python
 if experience.is_factual and experience.has_sources:
@@ -420,7 +420,7 @@ else:
     target = MODEL_PARAMETERS
 ```
 
-### Validated release and rollback
+### إصدار موثّق مع التراجع
 
 ```python
 candidate = propose_minimal_update(evidence, current_version)
@@ -434,7 +434,7 @@ else:
     else: promote(candidate)
 ```
 
-### Sleep-time consolidation
+### دمج أثناء الخمول
 
 ```python
 while sleep_gate_is_open():

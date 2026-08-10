@@ -335,7 +335,7 @@ Loop ini memiliki satu percabangan utama: **jika model mengembalikan `tool_calls
 Daftar `messages` berubah antarputaran sebagai berikut:
 
 **Keadaan awal (sebelum panggilan pertama):**
-```
+```text
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # Ditulis oleh developer
   { role: "user",    content: "What's the current time and weather in Vancouver?" },  # Input pengguna
@@ -343,7 +343,7 @@ messages = [
 ```
 
 **Setelah panggilan pertama (model mengembalikan panggilan tool):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -354,7 +354,7 @@ messages = [
 ```
 
 **Setelah panggilan kedua (model mengembalikan balasan akhir, loop berakhir):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -597,7 +597,7 @@ Metode yang mengurangi beban kognitif manusia juga membantu LLM. Bayangkan anggo
 
 Sebaliknya, prompt berorientasi proses berfungsi seperti manual pelatihan yang baik dengan Standard Operating Procedure (SOP) yang jelas:
 
-```
+```text
 Prosedur Operasi Standar Pemrosesan File:
 
 Langkah 1: Validasi
@@ -889,7 +889,7 @@ Detail implementasi yang penting adalah bahwa Agent Status Bar disisipkan pada a
 
 Berikut adalah daftar pesan sesungguhnya yang disusun oleh kerangka kerja Agent selama panggilan API ke-N:
 
-```
+```text
 messages: [
   { role: "system",    content: "Anda adalah asisten layanan pelanggan..." }  ← Tetap (tersimpan di KV Cache)
   { role: "user",      content: "Tolong batalkan paket Xfinity saya" }  ← Permintaan asli pengguna
@@ -1077,7 +1077,7 @@ Bab ini membahas pembaruan keadaan dan degradasi context **di dalam satu tugas**
 
 Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
 
-### Context construction before each request
+### Konstruksi konteks sebelum setiap permintaan
 
 ```python
 stable_prefix = system_message

@@ -693,7 +693,7 @@ A többügynökös együttműködés akkor indokolt, ha olyan új információt 
 
 Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
 
-### Message envelope and worker lifetime
+### Üzenetboríték és a worker életciklusa
 
 ```python
 envelope = {
@@ -710,7 +710,7 @@ while worker.is_running:
 await worker.ack_or_timeout()
 ```
 
-### Proposer-reviewer loop
+### Proposer–Reviewer ciklus
 
 ```python
 candidate = proposer(task, constraints)
@@ -728,7 +728,7 @@ else:
     escalate_or_reject(review)
 ```
 
-### First verified parallel winner
+### Első ellenőrzött párhuzamos győztes
 
 ```python
 workers = launch_independent_workers(subtasks)
@@ -746,7 +746,7 @@ while workers.any_running:
 return summarize_failures(workers)
 ```
 
-### Decentralized handoff protocol
+### Decentralizált handoff-protokoll
 
 ```python
 handoff = {

@@ -393,7 +393,7 @@ La evolución continua requiere separar la ejecución en línea del aprendizaje 
 
 Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
 
-### Three-layer trajectory verification
+### Verificación de trayectoria en tres capas
 
 ```python
 outcome = verify_environment_state(trajectory)
@@ -406,7 +406,7 @@ else:
     emit_structured_diagnosis(outcome, process, quality)
 ```
 
-### Experience-to-capability routing
+### Enrutamiento de experiencia a capacidad
 
 ```python
 if experience.is_factual and experience.has_sources:
@@ -419,7 +419,7 @@ else:
     target = MODEL_PARAMETERS
 ```
 
-### Validated release and rollback
+### Publicación validada y rollback
 
 ```python
 candidate = propose_minimal_update(evidence, current_version)
@@ -433,7 +433,7 @@ else:
     else: promote(candidate)
 ```
 
-### Sleep-time consolidation
+### Consolidación durante el tiempo de inactividad
 
 ```python
 while sleep_gate_is_open():

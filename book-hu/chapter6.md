@@ -32,7 +32,7 @@ Mielőtt a módszertanba merülnénk, építsünk intuíciót egy teljes példá
 
 "Ügynöktrajektória":
 
-```
+```text
 Felhasználó: Szeretném visszaküldeni a 3 napja vásárolt fejhallgatót, rendelésszám 12345. (Ma 2026-04-10 van)
 
 Ügynök (gondolkodik): A felhasználó visszatérítést szeretne, először le kell kérdeznem a rendelés adatait.
@@ -792,7 +792,7 @@ Az itt létrehozott kiértékelő rendszer nemcsak a jelenlegi rendszer optimali
 
 Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
 
-### Repeatable evaluation loop
+### Ismételhető értékelési ciklus
 
 ```python
 for task in dataset:
@@ -803,7 +803,7 @@ for task in dataset:
     record(task, trajectory, outcome, score)
 ```
 
-### Deterministic veto before rubric judging
+### Determinisztikus vétó a rubric pontozása előtt
 
 ```python
 deterministic = verify_state_policy_and_claims(trajectory, outcome)
@@ -814,7 +814,7 @@ rubric_result = judge(answer, rubric, evidence)
 return aggregate_with_confidence(rubric_result)
 ```
 
-### Paired comparison
+### Páros összehasonlítás
 
 ```python
 for task in paired_tasks:
