@@ -265,9 +265,15 @@ class MultilingualReasoningEvaluator:
         # Substring matching for references with word boundaries
         target_ref = ref_clean if ref_clean else ref
         if target_ref:
-            pattern = r"\b" + re.escape(target_ref) + r"\b"
-            if re.search(pattern, pred_clean) or re.search(pattern, pred):
-                return 1.0
+            # \b word boundaries don't work for CJK characters; use direct
+            # containment for non-ASCII references, and \b for Latin text.
+            if re.search(r"[^\x00-\x7f]", target_ref):
+                if target_ref in pred_clean or target_ref in pred:
+                    return 1.0
+            else:
+                pattern = r"\b" + re.escape(target_ref) + r"\b"
+                if re.search(pattern, pred_clean) or re.search(pattern, pred):
+                    return 1.0
         return 0.0
 
     def compute_token_usage(
