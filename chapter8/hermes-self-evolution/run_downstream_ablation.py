@@ -14,6 +14,7 @@ import ast
 import logging
 import math
 import os
+import random
 import sys
 import time
 from dataclasses import asdict, dataclass, field
@@ -354,16 +355,26 @@ class DownstreamAblationEngine:
             else 0.0
         )
 
-        # Statistical significance calculation (Z-test for proportions)
-        z_score, p_value, ci_lower, ci_upper = self._calculate_proportion_ztest(
-            b_passed, e_passed, total_tasks
+        # Paired statistical analysis: both agents are evaluated on the same
+        # tasks, so pass/fail outcomes are paired, not independent. McNemar's
+        # test is the correct paired test for binary outcomes; a paired
+        # bootstrap produces a confidence interval for the uplift and latency
+        # delta that respects the within-task correlation.
+        mcnemar_stat, mcnemar_p = self._mcnemar_test(baseline_results, evolved_results)
+        uplift_ci = self._paired_bootstrap_ci(
+            baseline_results, evolved_results, metric="passed", n_bootstrap=2000
+        )
+        latency_ci = self._paired_bootstrap_ci(
+            baseline_results, evolved_results, metric="latency_sec", n_bootstrap=2000
         )
 
         statistical_metrics = {
-            "z_score": round(z_score, 4),
-            "p_value": round(p_value, 4),
-            "statistically_significant": p_value < 0.05,
-            "confidence_interval_95": (round(ci_lower, 4), round(ci_upper, 4)),
+            "test": "mcnemar_paired",
+            "mcnemar_chi2": round(mcnemar_stat, 4),
+            "p_value": round(mcnemar_p, 4),
+            "statistically_significant": mcnemar_p < 0.05,
+            "uplift_confidence_interval_95": (round(uplift_ci[0], 4), round(uplift_ci[1], 4)),
+            "latency_change_confidence_interval_95": (round(latency_ci[0], 6), round(latency_ci[1], 6)),
         }
 
         return AblationReport(
@@ -387,33 +398,67 @@ class DownstreamAblationEngine:
             detailed_results=detailed_results,
         )
 
-    def _calculate_proportion_ztest(
-        self, p1_count: int, p2_count: int, n: int
-    ) -> Tuple[float, float, float, float]:
-        """Calculates Z-score, approximate p-value, and 95% CI for two proportions."""
-        if n <= 0:
-            return 0.0, 1.0, 0.0, 0.0
+    def _mcnemar_test(
+        self, baseline_results: list[TaskResult], evolved_results: list[TaskResult]
+    ) -> Tuple[float, float]:
+        """McNemar's test for paired binary (pass/fail) outcomes.
 
-        p1 = p1_count / n
-        p2 = p2_count / n
-        diff = p2 - p1
+        Both agents run on the same tasks, so their outcomes are paired.
+        The test considers only the discordant pairs:
+          b: baseline passed, evolved failed  (regressions)
+          c: baseline failed, evolved passed  (improvements)
+        With continuity correction: chi2 = (|b - c| - 1)^2 / (b + c).
+        When b + c == 0 there is no discordance; the result is not significant.
+        """
+        b = sum(1 for br, er in zip(baseline_results, evolved_results) if br.passed and not er.passed)
+        c = sum(1 for br, er in zip(baseline_results, evolved_results) if not br.passed and er.passed)
+        discordant = b + c
+        if discordant == 0:
+            return 0.0, 1.0
+        chi2 = (abs(b - c) - 1) ** 2 / discordant
+        # p-value from the chi-square distribution with 1 df: p = erfc(sqrt(chi2 / 2))
+        p_value = math.erfc(math.sqrt(chi2 / 2.0))
+        return chi2, p_value
 
-        p_pooled = (p1_count + p2_count) / (2 * n)
-        se_pooled = math.sqrt(2 * p_pooled * (1 - p_pooled) / n) if p_pooled > 0 and p_pooled < 1 else 0.0
+    def _paired_bootstrap_ci(
+        self,
+        baseline_results: list[TaskResult],
+        evolved_results: list[TaskResult],
+        metric: str = "passed",
+        n_bootstrap: int = 2000,
+        confidence: float = 0.95,
+        seed: int = 42,
+    ) -> Tuple[float, float]:
+        """Paired bootstrap confidence interval for the per-task delta.
 
-        if se_pooled > 0:
-            z_score = diff / se_pooled
-        else:
-            z_score = 0.0
-
-        # Approximate p-value using normal distribution error function
-        p_value = 2 * (1 - 0.5 * (1 + math.erf(abs(z_score) / math.sqrt(2))))
-
-        se_diff = math.sqrt((p1 * (1 - p1) / n) + (p2 * (1 - p2) / n))
-        ci_lower = diff - 1.96 * se_diff
-        ci_upper = diff + 1.96 * se_diff
-
-        return z_score, p_value, ci_lower, ci_upper
+        Resamples tasks (with replacement) as paired units, recomputing the
+        metric delta within each resample so within-task correlation is
+        preserved. For ``metric="passed"`` the delta is the pass-rate uplift;
+        for ``metric="latency_sec"`` it is the mean latency change. Returns the
+        (lower, upper) bounds of the confidence interval.
+        """
+        n = min(len(baseline_results), len(evolved_results))
+        if n == 0:
+            return 0.0, 0.0
+        rng = random.Random(seed)
+        deltas: list[float] = []
+        for _ in range(n_bootstrap):
+            indices = [rng.randrange(n) for _ in range(n)]
+            if metric == "passed":
+                b_rate = sum(1 for i in indices if baseline_results[i].passed) / n
+                e_rate = sum(1 for i in indices if evolved_results[i].passed) / n
+                deltas.append(e_rate - b_rate)
+            else:
+                b_mean = sum(baseline_results[i].latency_sec for i in indices) / n
+                e_mean = sum(evolved_results[i].latency_sec for i in indices) / n
+                deltas.append(e_mean - b_mean)
+        deltas.sort()
+        alpha = (1.0 - confidence) / 2.0
+        lower_idx = int(math.floor(alpha * n_bootstrap))
+        upper_idx = int(math.ceil((1.0 - alpha) * n_bootstrap)) - 1
+        lower_idx = max(0, min(lower_idx, n_bootstrap - 1))
+        upper_idx = max(0, min(upper_idx, n_bootstrap - 1))
+        return deltas[lower_idx], deltas[upper_idx]
 
 
 # ── Sample Agents & Task Suite ───────────────────────────────────
@@ -553,4 +598,4 @@ if __name__ == "__main__":
     print(f"Latency Change:     {report.latency_change_pct:+.1f}%")
     print(f"Code Quality Delta: {report.code_quality_score_change:+.1f} pts")
     print(f"Regression Count:   {report.regression_count}")
-    print(f"P-Value:            {report.statistical_metrics['p_value']:.4f}")
+    print(f"McNemar p-Value:    {report.statistical_metrics['p_value']:.4f}")

@@ -3,6 +3,7 @@
 from pathlib import Path
 import sys
 import time
+import math
 import pytest
 
 # Ensure chapter8/hermes-self-evolution is in sys.path
@@ -49,10 +50,12 @@ def test_run_ablation_campaign_defaults():
     assert report.evolved_pass_rate >= report.baseline_pass_rate
     assert report.pass_rate_uplift == round(report.evolved_pass_rate - report.baseline_pass_rate, 4)
 
-    # Check metrics fields
-    assert "z_score" in report.statistical_metrics
+    # Check paired statistical metrics fields
+    assert report.statistical_metrics["test"] == "mcnemar_paired"
+    assert "mcnemar_chi2" in report.statistical_metrics
     assert "p_value" in report.statistical_metrics
-    assert "confidence_interval_95" in report.statistical_metrics
+    assert "uplift_confidence_interval_95" in report.statistical_metrics
+    assert "latency_change_confidence_interval_95" in report.statistical_metrics
 
     # Dictionary indexing test
     assert report["total_tasks"] == 5
@@ -315,3 +318,163 @@ def test_net_improvement_count_and_rate_consistency():
     # Consistency invariant: rate must equal count / total_tasks
     expected_rate = round(report.net_improvement_count / report.total_tasks, 4)
     assert report.net_improvement_rate == expected_rate
+
+
+def test_mcnemar_paired_test_detects_significant_uplift():
+    """Paired McNemar test flags a significant uplift when all discordant pairs favor evolved.
+
+    Closes the class where an independent two-proportion z-test was applied to
+    paired pass/fail outcomes. With 5 improvements and 0 regressions, McNemar's
+    test must report a significant p-value (< 0.05) and a positive chi2.
+    """
+    engine = DownstreamAblationEngine()
+
+    def baseline_agent(inp):
+        return "wrong"
+
+    def evolved_agent(inp):
+        return "right"
+
+    tasks = [
+        AblationTask(
+            task_id=f"t{i}",
+            name=f"Task {i}",
+            description="Baseline fails, evolved passes",
+            category="synthetic",
+            input_data=None,
+            expected_output="right",
+        )
+        for i in range(10)
+    ]
+    report = engine.run_ablation_campaign(baseline_agent, evolved_agent, tasks)
+    assert report.statistical_metrics["test"] == "mcnemar_paired"
+    assert report.statistical_metrics["mcnemar_chi2"] > 0.0
+    assert report.statistical_metrics["p_value"] < 0.05
+    assert report.statistical_metrics["statistically_significant"] is True
+
+
+def test_mcnemar_paired_test_not_significant_when_no_discordance():
+    """McNemar test is not significant when both agents agree on every task.
+
+    If baseline and evolved pass or fail the same tasks (b == c == 0), there is
+    no discordant pair and the p-value must be 1.0 regardless of pass rates.
+    """
+    engine = DownstreamAblationEngine()
+
+    def baseline_agent(inp):
+        return "right"
+
+    def evolved_agent(inp):
+        return "right"
+
+    tasks = [
+        AblationTask(
+            task_id=f"t{i}",
+            name=f"Task {i}",
+            description="Both pass",
+            category="synthetic",
+            input_data=None,
+            expected_output="right",
+        )
+        for i in range(5)
+    ]
+    report = engine.run_ablation_campaign(baseline_agent, evolved_agent, tasks)
+    assert report.statistical_metrics["mcnemar_chi2"] == 0.0
+    assert report.statistical_metrics["p_value"] == 1.0
+    assert report.statistical_metrics["statistically_significant"] is False
+
+
+def test_mcnemar_paired_test_balanced_discordance_not_significant():
+    """McNemar test is not significant when improvements equal regressions.
+
+    Equal discordance (b == c) means no net directional change; the test must
+    not flag significance. This is the paired property an independent z-test
+    would misrepresent.
+    """
+    engine = DownstreamAblationEngine()
+
+    def baseline_agent(inp):
+        return "right" if inp == "pass" else "wrong"
+
+    def evolved_agent(inp):
+        return "wrong" if inp == "pass" else "right"
+
+    tasks = [
+        AblationTask(
+            task_id="t0",
+            name="Regression task",
+            description="Baseline passes, evolved fails",
+            category="regression",
+            input_data="pass",
+            expected_output="right",
+        ),
+        AblationTask(
+            task_id="t1",
+            name="Improvement task",
+            description="Baseline fails, evolved passes",
+            category="improvement",
+            input_data="fail",
+            expected_output="right",
+        ),
+    ]
+    report = engine.run_ablation_campaign(baseline_agent, evolved_agent, tasks)
+    assert report.statistical_metrics["p_value"] >= 0.05
+    assert report.statistical_metrics["statistically_significant"] is False
+
+
+def test_paired_bootstrap_uplift_ci_contains_point_estimate():
+    """Paired bootstrap uplift CI must bracket the observed pass-rate uplift.
+
+    The observed uplift is the point estimate; the bootstrap CI is a range
+    around it. This guards against the CI being computed from independent
+    (unpaired) resampling that ignores within-task correlation.
+    """
+    engine = DownstreamAblationEngine()
+
+    def baseline_agent(inp):
+        return "wrong"
+
+    def evolved_agent(inp):
+        return "right"
+
+    tasks = [
+        AblationTask(
+            task_id=f"t{i}",
+            name=f"Task {i}",
+            description="Evolved improves",
+            category="synthetic",
+            input_data=None,
+            expected_output="right",
+        )
+        for i in range(10)
+    ]
+    report = engine.run_ablation_campaign(baseline_agent, evolved_agent, tasks)
+    ci = report.statistical_metrics["uplift_confidence_interval_95"]
+    assert ci[0] <= report.pass_rate_uplift <= ci[1]
+
+
+def test_paired_bootstrap_latency_ci_is_finite():
+    """Paired bootstrap latency CI must be a finite, ordered interval."""
+    engine = DownstreamAblationEngine()
+
+    def baseline_agent(inp):
+        return inp
+
+    def evolved_agent(inp):
+        return inp
+
+    tasks = [
+        AblationTask(
+            task_id=f"t{i}",
+            name=f"Task {i}",
+            description="Latency CI check",
+            category="synthetic",
+            input_data="ok",
+            expected_output="ok",
+        )
+        for i in range(8)
+    ]
+    report = engine.run_ablation_campaign(baseline_agent, evolved_agent, tasks)
+    ci = report.statistical_metrics["latency_change_confidence_interval_95"]
+    assert math.isfinite(ci[0]) and math.isfinite(ci[1])
+    assert ci[0] <= ci[1]
