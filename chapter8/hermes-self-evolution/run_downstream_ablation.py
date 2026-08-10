@@ -277,7 +277,7 @@ class DownstreamAblationEngine:
         rel_uplift = (
             round((pass_rate_uplift / baseline_pass_rate) * 100.0, 2)
             if baseline_pass_rate > 0
-            else (100.0 if pass_rate_uplift > 0 else 0.0)
+            else (round(evolved_pass_rate * 100.0, 2) if pass_rate_uplift > 0 else 0.0)
         )
 
         # Compute latencies
@@ -549,7 +549,7 @@ if __name__ == "__main__":
     print(f"Total Tasks: {report.total_tasks}")
     print(f"Baseline Pass Rate: {report.baseline_pass_rate * 100:.1f}%")
     print(f"Evolved Pass Rate:  {report.evolved_pass_rate * 100:.1f}%")
-    print(f"Pass Rate Uplift:   +{report.pass_rate_uplift * 100:.1f}% ({report.relative_pass_rate_uplift:+.1f}% relative)")
+    print(f"Pass Rate Uplift:   {report.pass_rate_uplift * 100:+.1f}% ({report.relative_pass_rate_uplift:+.1f}% relative)")
     print(f"Latency Change:     {report.latency_change_pct:+.1f}%")
     print(f"Code Quality Delta: {report.code_quality_score_change:+.1f} pts")
     print(f"Regression Count:   {report.regression_count}")
