@@ -54,6 +54,9 @@ class SafetyPolicyGate:
     ]
 
     # Patterns for sensitive directories (applied only to absolute / home-relative paths
+    # and their realpath resolutions). NOTE: This is defense-in-depth, not an allowlist
+    # sandbox. Symlinks to sensitive files outside the blacklist (e.g. /home/<user>/.ssh)
+    # may bypass detection. Use a proper sandbox for untrusted path access.
     # so that legitimate relative paths are not falsely flagged after CWD resolution)
     SENSITIVE_DIR_PATTERNS = [
         re.compile(r'^/(etc|var/log|sys|proc|boot|dev|root)(?:/|$)', re.IGNORECASE), # Sensitive Linux dirs
@@ -61,7 +64,11 @@ class SafetyPolicyGate:
         re.compile(r'^[a-zA-Z]:\\(Windows|System32|Program Files)', re.IGNORECASE), # Sensitive Windows dirs
     ]
 
-    # Patterns for detecting dangerous bash / shell commands
+    # Patterns for detecting dangerous bash / shell commands.
+    # NOTE: Regex-based detection is defense-in-depth, not a complete sandbox.
+    # Sophisticated shell expansions (e.g. variable substitution, base64 pipes)
+    # can bypass these patterns. The safety gate should be combined with proper
+    # sandboxing for untrusted code execution.
     DANGEROUS_COMMAND_PATTERNS = [
         (re.compile(r'\brm\s+.*(-[a-zA-Z]*(?:r[a-zA-Z]*f|f[a-zA-Z]*r)|-f\s+-r|-r\s+-f|--recursive)', re.IGNORECASE), "Recursive file deletion command"),
         (re.compile(r'\bmkfs\b|\bdd\s+if=|\b>\s*/dev/sd[a-z]', re.IGNORECASE), "Disk formatting / raw write command"),
