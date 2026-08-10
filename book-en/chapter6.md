@@ -807,6 +807,46 @@ From the perspective of Harness engineering introduced in Chapter 1, the evaluat
 
 The evaluation system established here not only supports optimization of the current system but also provides a critical foundation for the next two chapters. Chapter 7 turns evaluation environments and data into inputs for model post-training, using SFT and RL to write interaction policies into parameters. Chapter 8 transforms multidimensional evaluations of production trajectories into candidate updates to knowledge, instructions, programs, or parameters.
 
+## Mechanism skeletons
+
+The following sketches isolate the control relationships discussed in this chapter.
+
+### Repeatable evaluation loop
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
+### Deterministic veto before rubric judging
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
+### Paired comparison
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
+Keep the boundary explicit: observations and evidence come from the environment, while the Harness decides what may be executed.
+
 ## Thought Questions
 
 1. ★★ LLM-as-a-Judge uses a language model to evaluate the output of a language model. Does this "self-evaluation" have systematic blind spots—for example, the model might consistently give high scores to a certain style of response, a preference that is inconsistent with human judgment? How can such biases be detected and corrected?

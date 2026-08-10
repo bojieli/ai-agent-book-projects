@@ -478,6 +478,47 @@ Xem xét lại cấu trúc của cuốn sách này từ góc độ Harness Engin
 
 Hoạt động thực hành của Anthropic trong việc xây dựng Agent chạy lâu dài cho thấy cách thiết kế Harness giải quyết các vấn đề mà bản thân mô hình không thể giải quyết được. Chúng phân tách các tác vụ phức tạp thành "khởi tạo Agent" (thiết lập môi trường, phân tách danh sách tác vụ) và "thực thi Agent" (tăng dần trong mỗi phiên và để lại các tạo phẩm chuyển giao rõ ràng) đồng thời giải quyết các vấn đề Agent về "cạn kiệt ngữ cảnh" và "tuyên bố hoàn thành sớm" trong các tác vụ dài có cấu trúc thông qua Harness. Các chương tiếp theo sẽ lần lượt đi sâu vào từng thành phần của Harness - Chương 2 bắt đầu với Context Engineering (kỹ thuật ngữ cảnh) cốt lõi và Chương 5 sẽ mở rộng cụ thể về thực hành hoàn chỉnh về Harness Engineering (kỹ thuật Harness) trong Coding Agent.
 
+## Skeleton cơ chế
+
+Các skeleton theo phong cách Python này chỉ tách ra quan hệ điều khiển được bàn trong chương. Đây là pseudocode giải thích, không phải triển khai SDK chạy được; adapter và test đầy đủ nằm trong thí nghiệm.
+
+### ReAct control loop
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
+### Harness production boundary
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
+
+Giữ ranh giới rõ ràng: quan sát và bằng chứng đến từ môi trường, còn Harness quyết định hành động nào được phép thực thi.
+
+python chỉ là marker tô sáng, không có nghĩa là chương trình có thể chạy trực tiếp.
+
 ## Tóm tắt chương này
 
 Chương này bắt đầu từ thực tiễn và thiết lập khuôn khổ cơ bản để hiểu và xây dựng AI Agent.

@@ -787,6 +787,46 @@ ML 연구자는 모델의 어느 컴포넌트가 실제로 중요한지 알아�
 
 여기서 구축한 평가 시스템은 현재 시스템의 최적화뿐 아니라 이어지는 두 장의 중요한 토대가 됩니다. 7장은 평가 환경과 데이터를 모델 사후 학습의 입력으로 전환하고 SFT와 RL로 상호작용 정책을 매개변수에 기록합니다. 8장은 프로덕션 궤적의 다차원 평가를 지식, 지침, 프로그램, 매개변수의 갱신 후보로 바꿉니다.
 
+## 메커니즘 skeleton
+
+다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
+
+### Repeatable evaluation loop
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
+### Deterministic veto before rubric judging
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
+### Paired comparison
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
+경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
+
 ## 생각해 볼 문제
 
 1. ★★ LLM-as-a-Judge는 언어 모델의 출력을 언어 모델로 평가합니다. 이러한 "자체 평가"에는 체계적인 사각지대가 있을까요? 예를 들어 모델이 사람의 판단과 맞지 않는 특정 스타일의 응답에 계속 높은 점수를 줄 수 있습니다. 이러한 편향을 어떻게 감지하고 교정할 수 있을까요?

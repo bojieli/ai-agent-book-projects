@@ -1076,6 +1076,31 @@ Ezeknek a technikáknak a közös vonása az explicit, mérnökileg megtervezett
 
 Ez a fejezet az állapotfrissítést és a kontextus romlását **egyetlen feladaton belül** tárgyalja. A következő fejezet az egyetlen kontextusablakon belüli információkezelésen túl, a feladatokon átívelő tartós tudásrendszerekre tér át: a felhasználói memóriára és a tudásbázisokra. Ezek révén az Agent idővel tapasztalatot halmozhat fel, és fokozatosan a felhasználót jobban értő asszisztenssé vagy egy területen mélyebb szaktudással rendelkező szakértővé válhat.
 
+## Mechanizmus-skeletonok
+
+Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
+
+### Context construction before each request
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+Legyen világos a határ: a megfigyelések és a bizonyítékok a környezetből érkeznek, a Harness pedig eldönti, mi hajtható végre.
+
 ## Gondolkodtató Kérdések
 
 1.  ★★★ A 2-3. kísérlet megállapította, hogy a csúszóablakos beszélgetéstörténet az ügynököt ugyanazon eszközhívások ismételt végrehajtására készteti. A teljes történet megtartása azonban a kontextus korlátlan növekedését okozza. Tervezzen egy stratégiát, amely elkerülheti az információvesztést, miközben szabályozza a kontextus hosszát, anélkül, hogy megtörné a KV Cache előtagot.

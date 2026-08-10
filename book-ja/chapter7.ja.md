@@ -893,6 +893,94 @@ SFT と RL は競争関係ではなく、前後の関係です。SFT がまず�
 
 ポストトレーニングは「いかにモデルをより賢くするか」の問題を解決しましたが、モデルの重みの更新周期は週単位である一方、現実では API の稼働・停止、ユーザーニーズの進化、業務ルールの変更が毎日起きています。次章では補完的な進化の経路を探ります――モデルの重みを変更せず、外部化学習を通じて Agent に自主的にツールライブラリと知識ベースを構築させ、持続的な能力の拡張を実現するのです。
 
+## メカニズムの skeleton
+
+以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
+
+### SFT loss mask
+
+```python
+for sample in dataset:
+    prompt_tokens = tokenize(sample.prompt)
+    answer_tokens = tokenize(sample.answer)
+    tokens = prompt_tokens + answer_tokens
+    labels = [-100] * len(prompt_tokens) + answer_tokens
+    loss = causal_lm_loss(tokens, labels)
+    update_parameters(loss)
+```
+
+### GRPO group update
+
+```python
+for prompt in batch:
+    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
+    rewards = [verify(trajectory) for trajectory in group]
+    advantages = normalize_within_group(rewards)       # GRPO baseline
+    update(policy, group, advantages)
+```
+
+### PPO clipped update
+
+```python
+for trajectory in rollouts:
+    returns = discounted_returns(trajectory.rewards)
+    values = value_model(trajectory.states)
+    advantages = returns - stop_gradient(values)
+    ratio = exp(policy.log_prob(trajectory.actions)
+                - old_policy.log_prob(trajectory.actions))
+    policy_loss = -mean(min(
+        ratio * advantages,
+        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    ))
+    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
+update(policy, value_model, policy_loss + value_coef * value_loss)
+```
+
+### Trajectory-level reward mask
+
+```python
+for token in trajectory:
+    if token.source == ENVIRONMENT:
+        loss_mask[token] = 0
+    else:                                      # model thought / tool arguments
+        loss_mask[token] = 1
+```
+
+### Outcome plus path signal
+
+```python
+outcome = verify_final_state(trajectory)              # result, not self-report
+path_signal = 0
+for step in trajectory:
+    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
+reward = normalize(outcome) + beta * normalize(path_signal)
+```
+
+### On-policy distillation
+
+```python
+student_trajectory = rollout(student, task)
+loss = 0
+for state in student_trajectory:
+    teacher_logits = teacher(state)
+    loss += KL(student_logits(state), teacher_logits)
+update_student(loss)
+```
+
+### On-policy self-distillation
+
+```python
+student_trajectory = rollout(model, task_without_answer)
+loss = 0
+for state in student_trajectory:
+    privileged_state = add_verified_answer(state)
+    teacher_logits = stop_gradient(model(privileged_state))
+    loss += KL(model(state), teacher_logits)
+update(model, loss + retention_regularizer)
+```
+
+境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
+
 ## 演習問題
 
 1. ★★ 破滅的忘却――特定のタスクへの一度のファインチューニングがモデルのもとの汎用能力（汎用的なツール呼び出しなど）を壊す――は Agent の場面でとりわけ厄介です。全パラメータファインチューニングに比べ、LoRA は基盤の重みを凍結し忘却のリスクが低いですが、免疫があるわけではありません。ファインチューニングがもたらす能力の忘却をさらに緩和するには、どんな戦略がありうるでしょうか。

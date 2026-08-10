@@ -1074,6 +1074,31 @@ Agent 狀態列技術有一個實用的優點：所有元資訊都以人類可�
 
 本章處理的是**一次任務之內**的狀態更新與上下文腐化。下一章將從上下文視窗內的資訊管理，延伸到跨越任務的持久化知識體系——使用者記憶和知識庫，使 Agent 能在實踐中不斷積累經驗，逐步成為更瞭解使用者的助手，或具備更多領域知識的領域專家。
 
+## 機制骨架
+
+下面的骨架只抽出本章討論的控制關係。
+
+### Context construction before each request
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
+
 ## 思考題
 
 1. ★★★ 實驗 2-3 發現，滑動視窗對話歷史會導致 Agent 反覆執行相同的工具呼叫。但完整保留歷史又會讓上下文不斷膨脹。設計一種策略，既能避免資訊丟失，又能控制上下文長度，且不破壞 KV Cache 字首。

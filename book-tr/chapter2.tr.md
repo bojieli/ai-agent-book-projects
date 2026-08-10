@@ -1072,6 +1072,31 @@ Bu tekniklerin ortak noktası açık ve mühendislik ürünü bilgi yönetimidir
 
 Bu bölüm, durum güncellemelerini ve context bozulmasını **tek bir görev içinde** ele alır. Bir sonraki bölüm, tek bir context penceresindeki bilgi yönetiminin ötesine geçerek görevler arasında kalıcı olan bilgi sistemlerine, yani kullanıcı belleği ve bilgi tabanlarına yönelir. Bu sistemler Agent'ın zaman içinde deneyim biriktirerek kullanıcıyı daha iyi anlayan bir asistana veya belirli bir alanda daha uzmanlaşmış bilgiye sahip bir uzmana dönüşmesini sağlar.
 
+## Mekanizma skeleton'ları
+
+Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
+
+### Context construction before each request
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+Sınırı açık tutun: gözlemler ve kanıt ortamdan gelir, Harness ise hangi eylemin yürütülebileceğine karar verir.
+
 ## Düşünce Soruları
 
 1.  ★★★ Deney 2-3, konuşma geçmişinin kaydırmalı bir penceresinin Agent'ın aynı tool call'ları tekrar tekrar yürütmesine neden olduğunu buldu. Ancak, eksiksiz geçmişi tutmak context'in sınırsızca genişlemesine neden olur. KV Cache ön eğini bozmadan, bilgi kaybını önlerken context uzunluğunu kontrol edebilen bir strateji tasarlayın.

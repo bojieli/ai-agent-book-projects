@@ -650,6 +650,83 @@ Werewolf는 이 절의 세 번째 차원인 **전략적 게임 플레이**를 �
 
 멀티 에이전트 협업은 단일 Agent가 생성 시 얻을 수 없었던 새로운 정보(실행 결과, 시각적 피드백, 외부 도구 검증)를 도입할 때 가치가 있다. 설계에서는 공유 또는 격리 컨텍스트와 동료·관리자·분산 토폴로지를 선택해야 한다. 구조화된 핸드오프 패키지, 권한 경계, 독립 검증, 예산과 취소 메커니즘이 기본적인 장애 허용 루프를 이룬다. 장기간의 개방형 상호작용에서는 사회적 관계, 규범, 시장, 전략이 나타날 수 있으므로 정보 흐름, 능력 분담, 오류 발견을 설계하는 것이 핵심이다.
 
+## 메커니즘 skeleton
+
+다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
+
+### Message envelope and worker lifetime
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
+### Proposer-reviewer loop
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
+### First verified parallel winner
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
+
+### Decentralized handoff protocol
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
+
+경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
+
 ## 생각해 볼 문제
 
 1. ★★ 컨텍스트를 공유하는 멀티 에이전트 협업에서는 뒤따르는 에이전트가 앞선 에이전트의 전체 컨텍스트를 물려받습니다. 하지만 이전 에이전트가 설정한 프레임이 후속 에이전트의 판단을 편향시킬 수 있습니다. 예를 들어 ‘요구 사항 분석가’의 컨텍스트를 물려받은 ‘코드 검토자’가 여전히 코드 품질보다 요구 사항 관점에서 업무에 접근할 수 있습니다. 이런 역할 간 간섭을 어떻게 감지하고 제거할 수 있을까요?

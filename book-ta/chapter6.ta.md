@@ -784,6 +784,46 @@ ML ஆராய்ச்சியாளர்கள் நீண்ட கால
 
 இந்த அத்தியாயத்தில் நிறுவப்பட்ட மதிப்பீட்டு அமைப்பு தற்போதைய அமைப்பை மேம்படுத்துவதோடு மட்டுமல்லாமல், அடுத்த இரண்டு அத்தியாயங்களுக்கும் முக்கிய அடித்தளத்தை வழங்குகிறது. அத்தியாயம் 7 மதிப்பீட்டுச் சூழலையும் தரவையும் மாதிரியின் பிந்தைய பயிற்சிக்கான உள்ளீடுகளாக மாற்றி, SFT மற்றும் RL மூலம் தொடர்பு உத்திகளை அளவுருக்களில் எழுதுகிறது; அத்தியாயம் 8 உற்பத்திப் பாதைகளின் பல்பரிமாண மதிப்பீட்டை அறிவு, அறிவுறுத்தல், நிரல் அல்லது அளவுருக்களுக்கான வேட்பாளர் புதுப்பிப்புகளாக மாற்றுகிறது.
 
+## Mechanism skeleton-கள்
+
+கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
+
+### Repeatable evaluation loop
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
+### Deterministic veto before rubric judging
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
+### Paired comparison
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
+எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
+
 ## சிந்தனை கேள்விகள்
 
 1. ★★ LLM-as-a-Judge ஒரு மொழி மாதிரியின் வெளியீட்டை மதிப்பிடுவதற்கு ஒரு மொழி மாதிரியைப் பயன்படுத்துகிறது. இந்த "சுய-மதிப்பீட்டில்" முறையான குருட்டுப் புள்ளிகள் உள்ளதா—எடுத்துக்காட்டாக, மாதிரி ஒரு குறிப்பிட்ட பாணியிலான பதிலுக்கு தொடர்ந்து அதிக மதிப்பெண்களை வழங்கலாம், இந்த விருப்பம் மனித தீர்ப்புடன் முரண்படுகிறதா? இத்தகைய சார்புகளை எவ்வாறு கண்டறிந்து சரிசெய்வது?

@@ -787,6 +787,46 @@ Bölüm 1'de tanıtılan Harness mühendisliği açısından bakıldığında, b
 
 Bu bölümde kurulan değerlendirme sistemi yalnızca mevcut sistemin optimizasyonuna hizmet etmez, sonraki iki bölüme de kilit bir zemin sağlar. Bölüm 7, değerlendirme ortamlarını ve verisini modelin post-training'i için girdiye çevirir; SFT ve RL ile etkileşim politikasını parametrelere yazar. Bölüm 8 ise üretim trajectory'lerinin çok boyutlu değerlendirmelerini bilgi, talimat, program veya parametre güncelleme adaylarına dönüştürür.
 
+## Mekanizma skeleton'ları
+
+Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
+
+### Repeatable evaluation loop
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
+### Deterministic veto before rubric judging
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
+### Paired comparison
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
+Sınırı açık tutun: gözlemler ve kanıt ortamdan gelir, Harness ise hangi eylemin yürütülebileceğine karar verir.
+
 ## Düşünce Soruları
 
 1. ★★ LLM-as-a-Judge, bir dil modelinin çıktısını yine bir dil modeliyle değerlendirir. Bu "öz değerlendirmenin" sistematik kör noktaları var mıdır — örneğin model, belirli bir üsluptaki yanıtlara tutarlı biçimde yüksek puan verip bu tercih insan yargısıyla uyuşmayabilir mi? Böyle bir yanlılık nasıl tespit edilir ve düzeltilir?

@@ -690,6 +690,70 @@ PineClaw 的解決方案是引入 **Channel 機制**——在 OpenClaw 的 Gatew
 
 下一章要回答一個比「如何使用工具」更基本的問題：Agent 能不能透過寫程式碼來**創造**工具？Coding Agent 加上檔案系統，是所有通用 Agent 最核心的基礎，也為第八章討論受控的系統自我修改提供了執行能力。
 
+## 機制骨架
+
+下面的骨架只抽出本章討論的控制關係。
+
+### Tool safety gate
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### Event-loop routing
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### Proactive tool discovery
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
+
 ## 思考題
 
 1. ★★ MCP 標準將工具定義從 Agent 框架中解耦了出來。但標準化也意味著複雜的工具互動模式（如流式輸出、雙向通訊、有狀態會話）可能難以在標準協定中表達。你認為 MCP 未來最需要擴充套件的能力是什麼？

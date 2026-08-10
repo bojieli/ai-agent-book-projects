@@ -896,6 +896,94 @@ SFT وRL ليسا بدائل متنافسة ولكنهما مراحل متسلس
 
 لقد أجاب هذا الفصل على سؤال تحديث المعلمة حول "كيفية التدريب". يعيد الفصل التالي معلمات النموذج إلى نظام الوكيل الكامل: تعد المعلمات واحدة فقط من أربع ناقلات تحديث، إلى جانب المعرفة والتعليمات والبرامج. التحدي المميز الذي يواجهونه هو كيفية استخلاص إشارات تعليمية جديرة بالثقة من مسارات النشر، وتحديد موقع التحديث الصحيح، والتحكم في التحقق من صحة كل إصدار مرشح وإصداره والتراجع عنه. عندما يتعلق الأمر بخوارزميات تدريب محددة، يشير الفصل الثامن مباشرة إلى هذا الفصل بدلاً من تكرار المادة.
 
+## هياكل الآليات
+
+تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
+
+### SFT loss mask
+
+```python
+for sample in dataset:
+    prompt_tokens = tokenize(sample.prompt)
+    answer_tokens = tokenize(sample.answer)
+    tokens = prompt_tokens + answer_tokens
+    labels = [-100] * len(prompt_tokens) + answer_tokens
+    loss = causal_lm_loss(tokens, labels)
+    update_parameters(loss)
+```
+
+### GRPO group update
+
+```python
+for prompt in batch:
+    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
+    rewards = [verify(trajectory) for trajectory in group]
+    advantages = normalize_within_group(rewards)       # GRPO baseline
+    update(policy, group, advantages)
+```
+
+### PPO clipped update
+
+```python
+for trajectory in rollouts:
+    returns = discounted_returns(trajectory.rewards)
+    values = value_model(trajectory.states)
+    advantages = returns - stop_gradient(values)
+    ratio = exp(policy.log_prob(trajectory.actions)
+                - old_policy.log_prob(trajectory.actions))
+    policy_loss = -mean(min(
+        ratio * advantages,
+        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    ))
+    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
+update(policy, value_model, policy_loss + value_coef * value_loss)
+```
+
+### Trajectory-level reward mask
+
+```python
+for token in trajectory:
+    if token.source == ENVIRONMENT:
+        loss_mask[token] = 0
+    else:                                      # model thought / tool arguments
+        loss_mask[token] = 1
+```
+
+### Outcome plus path signal
+
+```python
+outcome = verify_final_state(trajectory)              # result, not self-report
+path_signal = 0
+for step in trajectory:
+    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
+reward = normalize(outcome) + beta * normalize(path_signal)
+```
+
+### On-policy distillation
+
+```python
+student_trajectory = rollout(student, task)
+loss = 0
+for state in student_trajectory:
+    teacher_logits = teacher(state)
+    loss += KL(student_logits(state), teacher_logits)
+update_student(loss)
+```
+
+### On-policy self-distillation
+
+```python
+student_trajectory = rollout(model, task_without_answer)
+loss = 0
+for state in student_trajectory:
+    privileged_state = add_verified_answer(state)
+    teacher_logits = stop_gradient(model(privileged_state))
+    loss += KL(model(state), teacher_logits)
+update(model, loss + retention_regularizer)
+```
+
+حافظ على الحد واضحًا: تأتي الملاحظات والأدلة من البيئة، بينما يقرر Harness ما يُسمح بتنفيذه.
+
 ## أسئلة للتأمل
 
 1. ★★ النسيان الكارثي - حيث يؤدي الضبط الدقيق لمهمة معينة إلى تدمير القدرات العامة الأصلية للنموذج، مثل استدعاء الأداة العامة - يعد أمرًا مزعجًا بشكل خاص في سيناريوهات الوكيل. بالمقارنة مع الضبط الدقيق للمعلمات الكاملة، يقوم LoRA بتجميد الأوزان الأساسية ويحمل خطرًا أقل للنسيان، لكنه ليس محصنًا. ما هي الاستراتيجيات التي يمكن أن تخفف بشكل أكبر من نسيان القدرة أثناء الضبط الدقيق؟

@@ -389,6 +389,63 @@ Agent, öğrenme sinyalini ortamla etkileşiminden ve değerlendirmelerden alır
 
 Sürekli evrim, çevrimiçi yürütmeyi çevrimdışı öğrenmeden ayırmayı gerektirir: çevrimiçi tarafta kanıt kaydedilir, çevrimdışı tarafta aday güncellemeler üretilip doğrulanır, sonra kademeli olarak yayımlanır, düzenlenir veya geri alınır. Bu döngü, sonucu otomatik olarak doğrulanabilen görevlerde en güvenilir biçimde çalışır; hedefi muğlak, geri bildirimi gecikmeli açık uçlu görevlerde ise problemin tanımlanmasına ve değerlendirme ölçütlerinin belirlenmesine insanın katılması gerekir.
 
+## Mekanizma skeleton'ları
+
+Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
+
+### Three-layer trajectory verification
+
+```python
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
+
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
+else:
+    emit_structured_diagnosis(outcome, process, quality)
+```
+
+### Experience-to-capability routing
+
+```python
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
+```
+
+### Validated release and rollback
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
+```
+
+### Sleep-time consolidation
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
+Sınırı açık tutun: gözlemler ve kanıt ortamdan gelir, Harness ise hangi eylemin yürütülebileceğine karar verir.
+
 ## Düşünce Soruları
 
 1. ★★ Bir deneyim dokümanı üç başarılı ve bir başarısız trajectory tarafından destekleniyor. Başarısızlık, API'nin daha yeni bir sürümünde gerçekleşmiş. Sistem bunun deneyimin çürütülmesi mi, yoksa uygulanabilirlik koşullarının değişmesi mi olduğuna nasıl karar vermelidir?

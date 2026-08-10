@@ -1071,6 +1071,31 @@ messages: [
 
 Эта глава посвящена обновлению состояния и деградации контекста **в пределах одной задачи**. Следующая глава переходит от управления информацией в одном окне контекста к постоянным системам знаний, охватывающим разные задачи: памяти пользователя и базам знаний. Они позволяют агенту со временем накапливать опыт и постепенно становиться либо помощником, который лучше понимает пользователя, либо экспертом с более глубокими знаниями в конкретной области.
 
+## Скелеты механизмов
+
+Следующие скелеты выделяют управляющие связи, обсуждаемые в главе.
+
+### Context construction before each request
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+Граница должна оставаться явной: наблюдения и доказательства приходят из среды, а Harness решает, что разрешено выполнить.
+
 ## Вопросы для размышления
 
 1. ★★★ Эксперимент 2-3 показал, что скользящее окно истории диалога приводит к тому, что агент повторно выполняет одни и те же вызовы инструментов. Но полное сохранение истории приводит к бесконтрольному разрастанию контекста. Разработайте стратегию, которая одновременно избегает потери информации, контролирует длину контекста и не ломает префикс KV Cache.

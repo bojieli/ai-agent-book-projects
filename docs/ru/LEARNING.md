@@ -27,6 +27,16 @@
 
 - **Главы 9–10 · Расширение и сотрудничество**: Глава 9 расширяет восприятие и действие с текста на речь, GUI и физический мир. Глава 10 использует разделение труда между агентами для сложных задач. **Ключевой вывод**: каждое проектное решение в мультиагентной системе находит аналог в трёх элементах одиночного агента.
 
+## Разделение текста и экспериментов
+
+Книга не является пошаговым руководством по одному SDK. Короткий псевдокод и скелеты показывают поток состояния, точки остановки и границы проверки; эксперименты содержат полные реализации, адаптеры, тесты, журналы и доказательства.
+
+| Layer | Read first | Skip for now | Question it answers |
+| :--: | --- | --- | --- |
+| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | Какой механизм должен показать этот эксперимент? |
+| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | Какая переменная изменила поведение? |
+| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | Воспроизводим ли результат и честно ли записаны сбои? |
+
 ### Уровни сложности
 
 - **Начальный** (главы 1–2): для новичков, понимание базовых понятий.

@@ -789,6 +789,46 @@ LangSmith — одна из показательных платформ в эт�
 
 Система оценки, построенная в этой главе, служит не только оптимизации текущей системы, но и предоставляет ключевую основу для двух последующих глав. Глава 7 превращает среду и данные оценки во входные данные для постобучения модели, записывая стратегии взаимодействия в параметры посредством SFT и RL; глава 8 преобразует многомерную оценку производственных траекторий в кандидатные обновления знаний, инструкций, программ или параметров.
 
+## Скелеты механизмов
+
+Следующие скелеты выделяют управляющие связи, обсуждаемые в главе.
+
+### Repeatable evaluation loop
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
+### Deterministic veto before rubric judging
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
+### Paired comparison
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
+Граница должна оставаться явной: наблюдения и доказательства приходят из среды, а Harness решает, что разрешено выполнить.
+
 ## Вопросы для размышления
 
 1. ★★ LLM-as-a-Judge использует языковую модель для оценки выходных данных языковой модели. Существуют ли в такой «самооценке» системные слепые зоны — например, модель может стабильно ставить высокие баллы ответам определённого стиля, а эта склонность может не совпадать с человеческими оценками? Как обнаружить и скорректировать такое смещение?

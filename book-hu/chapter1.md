@@ -495,6 +495,47 @@ A következő fejezet a Harness legközpontibb összetevőjét vizsgálja meg r�
 
 Az alábbi gondolkodtató kérdések célja, hogy a fejezet alapfogalmait egy szinttel mélyebbre vigyék; nincs rájuk egyetlen szabványos válasz.
 
+## Mechanizmus-skeletonok
+
+Ezek a Python-stílusú skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki. Magyarázó pseudocode-ok, nem futtatható SDK-megvalósítások; a teljes adapterek és tesztek a fejezet kísérleteiben találhatók.
+
+### ReAct control loop
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
+### Harness production boundary
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
+
+Legyen világos a határ: a megfigyelések és a bizonyítékok a környezetből érkeznek, a Harness pedig eldönti, mi hajtható végre.
+
+A python csak kiemelési marker; nem jelenti azt, hogy a program közvetlenül futtatható.
+
 ## Gondolkodtató kérdések
 
 1. ★★ Ha csak egy képességet adhatnál egy ügynökrendszerhez – egy erősebb modellt, gazdagabb kontextust vagy több eszközt –, melyiket választanád? Milyen körülmények között változna meg a választásod?

@@ -420,6 +420,57 @@ OpenVLA 並非只更新 projector；原始研究也比較了完整微調、凍�
 
 三個場景表面差異懸殊，但延遲和多模態這兩道坎始終如影隨形。語音已走出了一條從序列流水線到端和全雙工、從分離的快慢思考到「邊想邊說」的演進路徑；Computer Use 在 OSWorld 等基準上的準確率已接近人類水平，但操作步驟明顯多於人類、步驟耗時隨任務推進不斷增長的效率差距還沒有系統性的解法；機器人在以視覺回饋為主的操作任務上，瓶頸已從硬體轉到 VLA 控制層的跨任務泛化能力（觸覺、靈巧手等仍是尚未攻克的硬體短板）。下一章會把視角拉到多個 Agent 之間的協作，那是另一個維度的挑戰。
 
+## 機制骨架
+
+下面的骨架只抽出本章討論的控制關係。
+
+### Streaming cancellation
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
+### Computer Use safety loop
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+### Action-chunk preemption
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
+
 ## 思考題
 
 1. ★★ 語音 Agent 的端到端模型將 ASR-LLM-TTS 合併為單一模型，降低了延遲卻失去了模組化。如果端到端模型在某個環節（如語音識別）出錯，除錯和修復比序列管道困難得多。你會如何設計端到端語音 Agent 的可觀測性（observability）系統？

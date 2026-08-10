@@ -399,6 +399,57 @@ Các preprint năm 2026 nghiên cứu prior động lực học dùng chung và 
 
 Ba cảnh nhìn bề ngoài rất khác nhau, nhưng hai trở ngại về sự chậm trễ và đa phương thức luôn song hành với nhau. Voice đã bắt đầu một con đường phát triển từ đường dẫn nối tiếp đến đầu cuối và song công hoàn toàn, từ tư duy nhanh và chậm tách biệt sang "suy nghĩ và nói"; Độ chính xác của Computer Use trên các điểm chuẩn như OSWorld gần bằng mức con người, nhưng có nhiều bước vận hành hơn đáng kể so với con người và mức tiêu thụ thời gian của từng bước tăng theo tiến độ của nhiệm vụ. Không có giải pháp mang tính hệ thống cho khoảng cách hiệu quả; đối với robot, trong các tác vụ vận hành dựa trên phản hồi trực quan, nút cổ chai đã chuyển từ phần cứng sang khả năng khái quát hóa chéo tác vụ của lớp điều khiển VLA (cảm ứng, khéo léo, v.v. vẫn là những thiếu sót về phần cứng chưa được khắc phục). Chương tiếp theo sẽ tập trung vào sự cộng tác giữa nhiều Agent, đây là một thách thức ở một khía cạnh khác.
 
+## Skeleton cơ chế
+
+Các skeleton sau chỉ tách ra quan hệ điều khiển được bàn trong chương.
+
+### Streaming cancellation
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
+### Computer Use safety loop
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+### Action-chunk preemption
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+Giữ ranh giới rõ ràng: quan sát và bằng chứng đến từ môi trường, còn Harness quyết định hành động nào được phép thực thi.
+
 ## Câu hỏi tư duy
 
 1. ★★ Mô hình giọng nói đầu cuối Agent hợp nhất ASR-LLM-TTS thành một mô hình duy nhất, giảm độ trễ nhưng mất tính mô-đun. Nếu mô hình đầu cuối bị lỗi ở một số điểm (chẳng hạn như nhận dạng giọng nói), việc gỡ lỗi và sửa nó sẽ khó khăn hơn nhiều so với đường ống nối tiếp. Bạn sẽ thiết kế hệ thống quan sát giọng nói Agent giọng nói đầu cuối như thế nào?

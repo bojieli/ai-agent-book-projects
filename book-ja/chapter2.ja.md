@@ -1068,6 +1068,31 @@ Agent ステータスバーには実用上の利点があります。すべて�
 
 本章が扱うのは、**一つのタスク内**における状態更新とコンテキストの劣化です。次章では、一つのコンテキストウィンドウ内の情報管理を越え、複数のタスクにまたがる永続的な知識システム、すなわちユーザーメモリと知識ベースへ進みます。これらのシステムによって Agent は時間とともに経験を蓄積し、ユーザーをより深く理解するアシスタント、あるいは専門分野についてより深い知識を持つエキスパートへと徐々に成長できます。
 
+## メカニズムの skeleton
+
+以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
+
+### Context construction before each request
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
+
 ## 演習問題
 
 1. ★★★ 実験 2-3 は、スライディングウィンドウの対話履歴が Agent に同じツール呼び出しを繰り返し実行させることを発見しました。しかし履歴を完全に保持すると、コンテキストが絶えず膨張します。情報の損失を避けつつ、コンテキスト長を制御し、なおかつ KV Cache のプレフィックスを壊さない戦略を設計してください。

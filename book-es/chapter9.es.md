@@ -384,6 +384,57 @@ Los preprints de 2026 estudian priors dinámicos compartidos (DyPES-VLA), accion
 
 Aunque los tres escenarios parecen muy diferentes en la superficie, los dos obstáculos de la latencia y la multimodalidad siempre están presentes. La voz ha recorrido un camino evolutivo desde pipelines seriales hacia extremo a extremo y full-duplex, y desde el pensamiento rápido/lento separado hacia "pensar mientras se habla"; Computer Use ha alcanzado una precisión cercana a la humana en benchmarks como OSWorld, pero la brecha de eficiencia manifestada en una cantidad notablemente mayor de pasos de operación y en el crecimiento continuo del tiempo consumido por paso aún no cuenta con una solución sistemática; en el caso de los robots en tareas de manipulación basadas principalmente en retroalimentación visual, el cuello de botella ha pasado del hardware a la capacidad de generalización multitarea de la capa de control VLA (siendo el tacto y las manos diestras deficiencias de hardware aún no conquistadas). El siguiente capítulo ampliará la perspectiva a la colaboración entre múltiples Agentes, lo que constituye un desafío en otra dimensión.
 
+## Skeletons de mecanismos
+
+Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
+
+### Streaming cancellation
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
+### Computer Use safety loop
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+### Action-chunk preemption
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+Mantén explícito el límite: las observaciones y evidencias proceden del entorno, y el Harness decide qué puede ejecutarse.
+
 ## Preguntas de reflexión
 
 1. ★★ El modelo de extremo a extremo de los Agentes de voz combina ASR-LLM-TTS en un solo modelo, lo que reduce la latencia pero pierde modularidad. Si el modelo de extremo a extremo comete un error en alguna etapa (como el reconocimiento de voz), la depuración y reparación es mucho más difícil que en un pipeline serial. ¿Cómo diseñarías el sistema de observabilidad (observability) para un Agente de voz de extremo a extremo?

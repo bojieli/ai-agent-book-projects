@@ -399,6 +399,57 @@ Bu kavram yalnızca V-JEPA’dan ibaret değildir. Aile; latent predictive model
 
 Üç senaryo yüzeyde birbirinden çok farklı görünüyor, ama gecikme ve çok modluluk biçimindeki iki engel hepsinin peşini hiç bırakmıyor. Ses; seri boru hattından uçtan uca ve full-duplex mimarilere, birbirinden ayrı hızlı-yavaş düşünmeden "düşünürken konuşma"ya uzanan bir evrim yolunu şimdiden katetti. Computer Use'un OSWorld gibi benchmark'lardaki doğruluğu insan seviyesine yaklaştı, ama işlem adımlarının insandan belirgin biçimde fazla olması ve adım sürelerinin görev ilerledikçe sürekli artması biçimindeki verimlilik farkının sistematik bir çözümü hâlâ yok. Robotikte ise ağırlıklı olarak görsel geri bildirime dayanan manipülasyon görevlerinde darboğaz donanımdan VLA kontrol katmanının görevler arası genelleme yeteneğine kaydı (dokunsal algılama, becerikli eller vb. hâlâ aşılamamış donanım eksiklikleridir). Bir sonraki bölüm bakış açısını birden fazla Agent arasındaki iş birliğine çevirecek; orası bambaşka bir boyutun zorluğudur.
 
+## Mekanizma skeleton'ları
+
+Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
+
+### Streaming cancellation
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
+### Computer Use safety loop
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+### Action-chunk preemption
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+Sınırı açık tutun: gözlemler ve kanıt ortamdan gelir, Harness ise hangi eylemin yürütülebileceğine karar verir.
+
 ## Düşünce Soruları
 
 1. ★★ Sesli Agent'ların uçtan uca modeli ASR-LLM-TTS zincirini tek bir modelde birleştirir; gecikmeyi düşürür ama modülerliği kaybeder. Uçtan uca model bir halkada (örneğin konuşma tanımada) hata yaparsa, hata ayıklamak ve düzeltmek seri boru hattına göre çok daha zordur. Uçtan uca bir sesli Agent'ın gözlemlenebilirlik (observability) sistemini nasıl tasarlardınız?

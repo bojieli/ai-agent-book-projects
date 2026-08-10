@@ -389,6 +389,63 @@ Interaction மற்றும் evaluation-இலிருந்து learnin
 
 தொடர்ச்சியான பரிணாமம் online execution மற்றும் offline learning-ஐப் பிரிக்க வேண்டும்: online-இல் evidence-ஐப் பதிவு செய்து, offline-இல் candidate update-ஐ உருவாக்கிச் சரிபார்த்து, பின்னர் படிப்படியாக release, consolidate அல்லது rollback செய்ய வேண்டும். Outcome தானாகச் சரிபார்க்கக்கூடியபோது இந்த loop மிகவும் நம்பகமானது. Ambiguous objective மற்றும் delayed feedback கொண்ட open-ended task-களில் problem definition மற்றும் evaluation criteria design-இல் மனிதர்கள் இன்னும் பங்கேற்க வேண்டும்.
 
+## Mechanism skeleton-கள்
+
+கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
+
+### Three-layer trajectory verification
+
+```python
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
+
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
+else:
+    emit_structured_diagnosis(outcome, process, quality)
+```
+
+### Experience-to-capability routing
+
+```python
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
+```
+
+### Validated release and rollback
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
+```
+
+### Sleep-time consolidation
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
+எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
+
 ## சிந்தனைக் கேள்விகள்
 
 1. ★★ ஒரு அனுபவ ஆவணத்திற்கு மூன்று வெற்றிகரமான trajectory-களும் ஒரு தோல்வி trajectory-உம் ஆதரவளிக்கின்றன. தோல்வி புதிய API version-இல் நிகழ்ந்துள்ளது. அனுபவம் மறுக்கப்பட்டதாகவா, அல்லது applicable condition மாறியதாகவா அமைப்பு எவ்வாறு தீர்மானிக்க வேண்டும்?

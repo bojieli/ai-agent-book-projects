@@ -27,6 +27,16 @@ Bu kitabın temel çerçevesi **Agent = Model + Bağlam + Araçlar**'dır. Bu ü
 
 - **Bölüm 9–10 · Genişleme ve İşbirliği**: Bölüm 9, algı ve eylemi metinden sese, GUI'ye ve fiziksel dünyaya genişletir. Bölüm 10, karmaşık görevleri ele almak için çoklu ajan iş bölümünü kullanır. **Temel İçgörü**: Çoklu ajan sistemindeki her tasarım kararı, tekil bir ajanın üç unsurunda karşılığını bulabilir.
 
+## Metin ile deneylerin görev paylaşımı
+
+Kitap tek bir SDK için adım adım bir öğretici değildir. Kısa pseudocode ve skeleton'lar durum akışını, durma noktalarını ve doğrulama sınırlarını açıklar; bölüm deneyleri tam uygulama, adapter, test, günlük ve kanıt sağlar.
+
+| Layer | Read first | Skip for now | Question it answers |
+| :--: | --- | --- | --- |
+| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | Bu deney hangi mekanizmayı kanıtlamayı amaçlıyor? |
+| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | Hangi değişken davranışı değiştirdi? |
+| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | Sonuç yeniden üretilebilir mi ve hatalar dürüstçe kaydedilmiş mi? |
+
 ### Zorluk Seviyeleri
 
 - **Başlangıç** (Bölüm 1–2): Yeni başlayanlara uygun, temel kavramları anlama.

@@ -725,6 +725,105 @@ Agentic RAG는 에이전트의 자율적인 결정을 통해 검색과 사고를
 
 이 장과 앞 장은 모두 “컨텍스트” 문제를 다룹니다. 하나는 단일 세션 안에서, 다른 하나는 여러 세션에 걸쳐 다룹니다. 이 장이 주로 축적하는 것은 사용자와 세계에 관한 선언적 지식입니다. 8장은 동일한 추출 및 검색 인프라를 다시 사용하지만, 그 대상을 작업의 성공과 실패로 뒷받침되는 행동 지식, 즉 “어떤 조건에서 에이전트가 무엇을 해야 하는가?”로 바꿉니다. 다음 장에서는 “도구”를 다룹니다. 도구 설계, MCP 상호 운용 표준, 이벤트 기반 아키텍처를 포함하여 에이전트가 도구로 외부 세계와 상호작용하는 방법을 살펴봅니다.
 
+## 메커니즘 skeleton
+
+다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
+
+### Memory lifecycle
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
+### Append-only log and checkpoint
+
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+### Typed user state
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
+```
+
+### Deterministic aggregation
+
+```python
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
+```
+
+### Conflict detection
+
+```python
+def check_drug_allergy(profile):
+    for medication in profile.current_medications:
+        for allergy in profile.allergies:
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
+```
+
+### Constraint enforcement
+
+```python
+def check():
+    for trip in state.trips:
+        if trip.is_international:
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
+            if days < 180:
+                alert("passport expires too soon", trip, days)
+```
+
+### Hybrid RAG pipeline
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
+
+경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
+
 ## 생각해 볼 문제
 
 

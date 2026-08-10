@@ -722,6 +722,105 @@ Bu bölüm, AI Agent'ın kalıcı bellek sistemini iki ölçekte inşa etti: bir
 
 Bu bölüm ve önceki bölüm Context'i ele alır—biri tek bir oturum içinde, diğeri birden fazla oturum boyunca. Bu bölümün öncelikle pekiştirdiği şey, kullanıcılar ve dünya hakkındaki bildirimsel bilgidir. Bölüm 8 aynı çıkarım ve retrieval altyapısını yeniden kullanır, ancak onu başarılı ve başarısız çalıştırmalarla desteklenen davranış bilgisine uygular: “Agent hangi koşullarda ne yapmalıdır?” Bir sonraki bölüm Tools'a döner: Agent'ların araç tasarımı, MCP birlikte çalışabilirlik standardı ve olay güdümlü mimariler aracılığıyla dış dünyayla nasıl etkileşime girdiğini inceler.
 
+## Mekanizma skeleton'ları
+
+Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
+
+### Memory lifecycle
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
+### Append-only log and checkpoint
+
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+### Typed user state
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
+```
+
+### Deterministic aggregation
+
+```python
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
+```
+
+### Conflict detection
+
+```python
+def check_drug_allergy(profile):
+    for medication in profile.current_medications:
+        for allergy in profile.allergies:
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
+```
+
+### Constraint enforcement
+
+```python
+def check():
+    for trip in state.trips:
+        if trip.is_international:
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
+            if days < 180:
+                alert("passport expires too soon", trip, days)
+```
+
+### Hybrid RAG pipeline
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
+
+Sınırı açık tutun: gözlemler ve kanıt ortamdan gelir, Harness ise hangi eylemin yürütülebileceğine karar verir.
+
 ## Düşünce Soruları
 
 

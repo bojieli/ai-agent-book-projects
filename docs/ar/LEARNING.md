@@ -27,6 +27,16 @@
 
 - **الفصلان 9 و10 · التوسع والتعاون**: يوسّع الفصل التاسع الإدراك والعمل من النص إلى الصوت وواجهات المستخدم الرسومية والعالم المادي. ويستخدم الفصل العاشر تقسيم العمل بين عدة وكلاء للتعامل مع المهام المعقدة. **الفكرة الأساسية**: لكل قرار تصميم في نظام متعدد الوكلاء نظير ضمن العناصر الثلاثة للوكيل الواحد.
 
+## تقسيم العمل بين النص والتجارب
+
+الكتاب ليس برنامجًا تعليميًا خطوة بخطوة لـ SDK واحد. يوضح pseudocode والهياكل القصيرة تدفق الحالة ونقاط التوقف وحدود التحقق؛ أما تجارب الفصول فتقدم التنفيذ والمحولات والاختبارات والسجلات والأدلة.
+
+| Layer | Read first | Skip for now | Question it answers |
+| :--: | --- | --- | --- |
+| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | ما الآلية التي يُفترض أن تثبتها التجربة؟ |
+| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | أي متغير غيّر السلوك؟ |
+| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | هل يمكن إعادة إنتاج النتيجة وهل سُجلت الأعطال بصدق؟ |
+
 ## مستويات الصعوبة
 
 - **المبتدئ** (الفصول 1-2): مناسب للمبتدئين الذين يفهمون المفاهيم الأساسية.

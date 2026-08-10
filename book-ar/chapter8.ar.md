@@ -390,6 +390,63 @@
 
 يجب أن يفصل التطور المستمر بين التنفيذ عبر الإنترنت والتعلم خارج الإنترنت: تسجيل الأدلة عبر الإنترنت؛ إنشاء تحديثات المرشح والتحقق من صحتها دون الاتصال بالإنترنت؛ ثم قم بتحريرها أو دمجها أو استعادتها تدريجيًا. تكون هذه الحلقة أكثر موثوقية عندما يتم التحقق من النتائج تلقائيًا. بالنسبة للمهام ذات النهايات المفتوحة ذات الأهداف الغامضة والتغذية الراجعة المتأخرة، يجب على الأشخاص المشاركة في تعريف المشكلة وتصميم معايير التقييم.
 
+## هياكل الآليات
+
+تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
+
+### Three-layer trajectory verification
+
+```python
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
+
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
+else:
+    emit_structured_diagnosis(outcome, process, quality)
+```
+
+### Experience-to-capability routing
+
+```python
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
+```
+
+### Validated release and rollback
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
+```
+
+### Sleep-time consolidation
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
+حافظ على الحد واضحًا: تأتي الملاحظات والأدلة من البيئة، بينما يقرر Harness ما يُسمح بتنفيذه.
+
 ## أسئلة للتأمل
 
 1. ★★ وثيقة الخبرة مدعمة بثلاثة مسارات ناجحة ومسار واحد فاشل. حدث الفشل مع إصدار API الأحدث. كيف يجب على النظام تحديد ما إذا كانت التجربة قد تم إبطالها أو تغيرت شروط تطبيقها؟

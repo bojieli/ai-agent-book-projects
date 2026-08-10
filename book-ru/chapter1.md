@@ -490,6 +490,47 @@ tool: {                            assistant: {
 
 Приведённые ниже вопросы для размышления призваны помочь читателю глубже проработать ключевые концепции этой главы; стандартных ответов на них нет.
 
+## Скелеты механизмов
+
+Эти скелеты в стиле Python выделяют управляющие связи, обсуждаемые в главе. Это поясняющий псевдокод, а не запускаемая реализация SDK; полные адаптеры и тесты находятся в экспериментах.
+
+### ReAct control loop
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
+### Harness production boundary
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
+
+Граница должна оставаться явной: наблюдения и доказательства приходят из среды, а Harness решает, что разрешено выполнить.
+
+python используется только как маркер подсветки и не означает готовую к запуску программу.
+
 ## Вопросы для размышления
 
 1. ★★ Если бы вы могли добавить агентной системе лишь одну способность — более сильную модель, более богатый контекст или больше инструментов, — что бы вы выбрали? При каких условиях ваш выбор изменился бы?

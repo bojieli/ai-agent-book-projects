@@ -645,6 +645,83 @@ Werewolf menjadi jangkar bagi dimensi ketiga dari bagian ini, **strategic gamepl
 
 Kolaborasi multi-Agent benar-benar bernilai jika menghadirkan informasi baru yang tidak dapat diperoleh satu Agent saat menghasilkan jawaban, seperti hasil eksekusi, umpan balik visual, atau verifikasi alat eksternal. Desain harus memilih konteks bersama atau terisolasi serta pola rekan, manajer, atau terdesentralisasi. Paket handoff terstruktur, batas izin, validasi independen, anggaran, dan pembatalan membentuk lingkar toleransi kesalahan dasar. Interaksi terbuka jangka panjang juga dapat memunculkan hubungan sosial, norma budaya, pasar, dan strategi; inti rekayasa multi-Agent adalah merancang aliran informasi, pembagian kemampuan, dan penemuan kesalahan.
 
+## Skeleton mekanisme
+
+Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
+
+### Message envelope and worker lifetime
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
+### Proposer-reviewer loop
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
+### First verified parallel winner
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
+
+### Decentralized handoff protocol
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
+
+Pertahankan batasnya: observasi dan bukti berasal dari lingkungan, sedangkan Harness menentukan tindakan yang boleh dieksekusi.
+
 ## Pertanyaan Pemikiran
 
 1. ★★ Dalam multi-agent collaboration dengan shared context, Agent berikutnya mewarisi konteks lengkap dari Agent sebelumnya. Namun, framing yang diwarisi dari Agent sebelumnya mungkin membuat bias penilaian Agent berikutnya—misalnya, "Code Reviewer" yang mewarisi konteks "Requirements Analyst" mungkin masih mendekati tugas dari perspektif persyaratan alih-alih perspektif kualitas kode. Bagaimana inter-role interference ini dapat dideteksi dan dihilangkan?

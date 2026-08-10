@@ -684,6 +684,70 @@ Los seis experimentos avanzan gradualmente desde lo básico hacia la arquitectur
 
 El siguiente capítulo responderá a una pregunta más fundamental que "cómo usar herramientas": ¿puede el Agente **crear** herramientas escribiendo código? Un Agente programador (Coding Agent) combinado con un sistema de archivos constituye la base más nuclear de todos los Agentes generales, proporcionando además la capacidad de ejecución para la automodificación controlada del sistema que se analizará en el Capítulo 8.
 
+## Skeletons de mecanismos
+
+Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
+
+### Tool safety gate
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### Event-loop routing
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### Proactive tool discovery
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+Mantén explícito el límite: las observaciones y evidencias proceden del entorno, y el Harness decide qué puede ejecutarse.
+
 ## Preguntas de reflexión
 
 1. ★★ El estándar MCP desacopla la definición de herramientas de los frameworks de Agentes. Sin embargo, la estandarización implica también que patrones de interacción complejos (como salidas en streaming, comunicaciones bidireccionales o sesiones con estado) resulten difíciles de expresar en un protocolo estándar. ¿Cuál considera que es la capacidad más urgente que MCP necesita extender en el futuro?

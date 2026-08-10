@@ -1120,6 +1120,31 @@ messages: [
 
 ينتقل الفصل التالي إلى ما هو أبعد من إدارة المعلومات ضمن نافذة سياقية واحدة إلى أنظمة المعرفة المستمرة التي تمتد عبر الجلسات: ذاكرة المستخدم وقواعد المعرفة. تسمح هذه الأنظمة للوكيل بتراكم الخبرة بمرور الوقت ويصبح خبيرًا في المجال تدريجيًا.
 
+## هياكل الآليات
+
+تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
+
+### Context construction before each request
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+حافظ على الحد واضحًا: تأتي الملاحظات والأدلة من البيئة، بينما يقرر Harness ما يُسمح بتنفيذه.
+
 ## أسئلة للتأمل
 
 1.  ★★★ وجدت التجربة 2-3 أن النافذة المنزلقة لسجل المحادثة تجعل الوكيل ينفذ نفس استدعاءات الأداة بشكل متكرر. ومع ذلك، يؤدي الاحتفاظ بالتاريخ الكامل إلى توسيع السياق إلى أجل غير مسمى. صمم إستراتيجية يمكنها تجنب فقدان المعلومات مع التحكم في طول السياق، دون كسر البادئة KV Cache.

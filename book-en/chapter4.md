@@ -699,6 +699,70 @@ On the asynchronous side, OpenClaw's built-in automation mechanisms (Hooks, Cron
 
 This chapter has focused on how Agents use tools. The next chapter asks a more fundamental question: can an Agent **create** tools by writing code?
 
+## Mechanism skeletons
+
+The following sketches isolate the control relationships discussed in this chapter.
+
+### Tool safety gate
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### Event-loop routing
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### Proactive tool discovery
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+Keep the boundary explicit: observations and evidence come from the environment, while the Harness decides what may be executed.
+
 ## Thought Questions
 
 1. ★★ The MCP standard decouples tool definitions from the Agent framework. However, standardization also means that complex tool interaction patterns (e.g., streaming output, bidirectional communication, stateful sessions) may be difficult to express within a standard protocol. What capability do you think MCP most needs to extend in the future?

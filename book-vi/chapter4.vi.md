@@ -690,6 +690,70 @@ Sáu thử nghiệm tiến triển dần dần từ cơ bản đến kiến trú
 
 Chương tiếp theo sẽ trả lời một câu hỏi cơ bản hơn "cách sử dụng công cụ": Agent có thể tạo công cụ bằng cách viết mã không? Coding Agent cộng với hệ thống tệp là nền tảng cốt lõi của tất cả Agent phổ quát - và cũng là điểm khởi đầu cho khả năng tự tiến hóa của Chương 8 Agent.
 
+## Skeleton cơ chế
+
+Các skeleton sau chỉ tách ra quan hệ điều khiển được bàn trong chương.
+
+### Tool safety gate
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### Event-loop routing
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### Proactive tool discovery
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+Giữ ranh giới rõ ràng: quan sát và bằng chứng đến từ môi trường, còn Harness quyết định hành động nào được phép thực thi.
+
 ## Câu hỏi tư duy
 
 1. ★★ Tiêu chuẩn MCP tách các định nghĩa công cụ khỏi khung Agent. Nhưng tiêu chuẩn hóa cũng có nghĩa là các mẫu tương tác công cụ phức tạp (chẳng hạn như đầu ra phát trực tuyến, giao tiếp hai chiều, phiên trạng thái) có thể khó diễn đạt trong các giao thức chuẩn. Bạn nghĩ MCP cần mở rộng những khả năng nào nhất trong tương lai?

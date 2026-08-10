@@ -4,6 +4,16 @@
 
 ← [한국어 메인 README로 돌아가기](../docs/ko/README.md) · 📖 [제1장 본문 읽기](../book-ko/chapter1.ko.md)
 
+## 실험 읽는 방법
+
+본문은 짧은 메커니즘 skeleton으로 제어 흐름을 설명하고, 실험 디렉터리에는 완전한 SDK 어댑터·로그·테스트·검수 증거를 둡니다. 모든 파일을 줄 단위로 읽을 필요는 없습니다.
+
+- **Starter:** 목표, 최소 명령, 검수 조건부터 시작하고 다음에서 출발하세요: [context](context/);
+- **Builder:** 진입점, 핵심 루프, 상태/메시지 스키마, 도구와 verifier를 따라갑니다.
+- **Maintainer:** 마지막으로 테스트, 증거 manifest, 실패 처리, rollback 경로와 provider adapter를 읽습니다.
+
+첫 읽기에서는 credential, UI, provider 호환 계층을 건너뛰고 수치를 재현할 때 돌아오세요.
+
 ## 연계 프로젝트
 
 | 실험 | 프로젝트 | 유형 | 설명 |

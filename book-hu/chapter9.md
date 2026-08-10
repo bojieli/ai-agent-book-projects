@@ -389,6 +389,57 @@ A 2026-os új preprintek közös dinamikai priorokat és testfüggő headeket (D
 
 A felszínen a három forgatókönyv aligha lehetne különbözőbb, mégis a késleltetés és a multimodalitás kettős akadálya mindegyiket árnyékolja. A hangügynökök a soros csővezetékektől a végponti és teljes duplex rendszerekig, valamint a különálló gyors és lassú gondolkodástól a gondolkodva beszélésig fejlődtek. A Computer Use most megközelíti az emberi pontosságot az olyan benchmarkokon, mint az OSWorld, de sokkal több lépést igényel, mint egy ember, és minden lépés tovább tart a feladat előrehaladtával — egy hatékonysági rés, amelyre még nincs szisztematikus megoldás. A vizuálisan vezérelt manipulációs feladatokat végző robotok esetében a szűk keresztmetszet a hardverről a VLA vezérlési réteg azon képességére tevődött át, hogy általánosítson a feladatok között (a tapintási érzékelés és az ügyes kezek továbbra is megoldatlan hardverkorlátok). A következő fejezet a több ügynök közötti együttműködésre tér át — egy más dimenziójú kihívásra.
 
+## Mechanizmus-skeletonok
+
+Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
+
+### Streaming cancellation
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
+### Computer Use safety loop
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+### Action-chunk preemption
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+Legyen világos a határ: a megfigyelések és a bizonyítékok a környezetből érkeznek, a Harness pedig eldönti, mi hajtható végre.
+
 ## Elgondolkodtató Kérdések
 
 1. ★★ A hangügynökök végponti modellje egyetlen modellbe olvasztja az ASR-LLM-TTS-t, csökkentve a késleltetést, de elveszítve a modularitást. Ha a végponti modell egy adott szakaszban hibázik (pl. beszédfelismerés), a hibakeresés és javítás sokkal nehezebb, mint egy soros csővezetékben. Hogyan tervezne megfigyelhetőségi rendszert egy végponti hangügynök számára?

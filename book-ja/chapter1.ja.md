@@ -494,6 +494,47 @@ Anthropic が長時間実行される Agent を構築したときの実践は、
 
 以下の演習問題は、読者が本章の核となる概念についてより深く掘り下げて考える助けとすることを狙いとしており、標準解答はありません。
 
+## メカニズムの skeleton
+
+以下の Python 風 skeleton は、本章で扱う制御関係だけを取り出したものです。実行可能な SDK 実装ではなく説明用 pseudocode であり、完全な adapter とテストは章の実験にあります。
+
+### ReAct control loop
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
+### Harness production boundary
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
+
+境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
+
+python はハイライト用の marker にすぎず、そのまま実行できることを示しません。
+
 ## 演習問題
 
 1. ★★ もし Agent システムに一つだけ能力を追加できるとしたら——より強力なモデル、より豊かなコンテキスト、より多くのツール——あなたはどれを選びますか。どんな条件のもとで、あなたの選択は変わるでしょうか。

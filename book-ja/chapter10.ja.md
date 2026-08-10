@@ -634,6 +634,83 @@ Pinchwork と RentAHuman はともに**市場メカニズムに基づく協調�
 
 マルチ Agent 協調の価値は、生成時に単一 Agent が得られない新しい情報（実行結果、視覚フィードバック、外部ツールによる検証など）を導入できるかで決まります。設計ではコンテキストを共有するか分離するか、対等協調・管理者・去中心化のどのトポロジーを採用するかを選びます。構造化した引き継ぎパッケージ、権限境界、独立検証、予算とキャンセルを組み合わせることで、基本的な耐故障ループを構成できます。長期で開放的な相互作用では社会関係、規範、市場、戦略も創発し得るため、情報の流れ、能力の分担、誤りの発見を設計することが本質です。
 
+## メカニズムの skeleton
+
+以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
+
+### Message envelope and worker lifetime
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
+### Proposer-reviewer loop
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
+### First verified parallel winner
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
+
+### Decentralized handoff protocol
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
+
+境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
+
 ## 演習問題
 
 1. ★★ コンテキスト共有のマルチ Agent 協調では、後続の Agent が前の Agent の完全なコンテキストを継承します。しかし前の Agent が蓄積した「思考の惰性」が後続の Agent の判断に影響しうります——たとえば「要件アナリスト」のコンテキストを継承した「コードレビュアー」は、依然としてコード品質の角度ではなく要件の角度から考える傾向を持つかもしれません。この種の役割間の干渉をどう検出し、除去しますか？

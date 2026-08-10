@@ -1072,6 +1072,31 @@ El hilo común de estas técnicas es una gestión de la información explícita 
 
 Este capítulo se ocupa de las actualizaciones de estado y la degradación del contexto **dentro de una sola tarea**. El siguiente capítulo deja atrás la gestión de información en una única ventana de contexto y pasa a sistemas de conocimiento persistente que abarcan múltiples tareas: la memoria de usuario y las bases de conocimiento. Estos sistemas permiten que el Agente acumule experiencia con el tiempo y se convierta gradualmente en un asistente que comprende mejor al usuario o en un experto con conocimientos más especializados en un dominio.
 
+## Skeletons de mecanismos
+
+Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
+
+### Context construction before each request
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+Mantén explícito el límite: las observaciones y evidencias proceden del entorno, y el Harness decide qué puede ejecutarse.
+
 ## Preguntas de Reflexión
 
 1. ★★★ El Experimento 2-3 identificó que utilizar una ventana deslizante en el historial de conversación puede provocar que el Agente ejecute repetidamente las mismas llamadas a herramientas. Sin embargo, conservar el historial completo provoca que el contexto se expanda continuamente. Diseña una estrategia que evite la pérdida de información crucial, controle la longitud del contexto y no invalide el prefijo de la KV Cache.

@@ -689,6 +689,83 @@ A Farkasos (Werewolf) rögzíti e szakasz harmadik dimenzióját, a "stratégiai
 
 A többügynökös együttműködés akkor indokolt, ha olyan új információt hoz be, amelyet egyetlen Agent a generáláskor nem láthatott: például végrehajtási eredményt, vizuális visszajelzést vagy külső eszköz ellenőrzését. A tervezésnek a megosztott vagy elkülönített kontextus, illetve a partneri, menedzseri vagy decentralizált topológia között kell választania. A strukturált átadási csomagok, a jogosultsági határok, a független ellenőrzés, a költségkeretek és a leállítási mechanizmusok adják az alapvető hibatűrő hurkot. Hosszú, nyílt interakcióban társadalmi kapcsolatok, normák, piacok és stratégiák is kialakulhatnak; az alapfeladat az információáramlás, a képességek felosztása és a hibák felfedezésének megtervezése.
 
+## Mechanizmus-skeletonok
+
+Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
+
+### Message envelope and worker lifetime
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
+### Proposer-reviewer loop
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
+### First verified parallel winner
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
+
+### Decentralized handoff protocol
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
+
+Legyen világos a határ: a megfigyelések és a bizonyítékok a környezetből érkeznek, a Harness pedig eldönti, mi hajtható végre.
+
 ## Gondolatébresztő Kérdések
 
 1. ★★ A megosztott kontextusú többügynökös együttműködésben a későbbi Ügynökök öröklik az előzőek teljes kontextusát. Az előző Ügynöktől örökölt keret azonban torzíthatja a későbbi Ügynökök ítéletét – például egy "Kód Felülvizsgáló", aki örökli a "Követelményelemző" kontextusát, még mindig követelmény szempontból, nem pedig kódminőség szempontból közelítheti meg a feladatot. Hogyan lehet ezt a szerepek közötti interferenciát érzékelni és kiküszöbölni?

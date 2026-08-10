@@ -888,6 +888,94 @@ SFT மற்றும் RL ஆகியவை போட்டியாளர�
 
 அளவுருப் புதுப்பிப்பை “எவ்வாறு பயிற்றுவிப்பது” என்ற கேள்விக்கு இந்த அத்தியாயம் விடையளித்தது. அடுத்த அத்தியாயம் மாதிரி அளவுருக்களை மீண்டும் முழுமையான Agent அமைப்புக்குள் பொருத்துகிறது: அறிவு, அறிவுறுத்தல், நிரல் மற்றும் அளவுரு ஆகிய நான்கு புதுப்பிப்பு ஊடகங்களில் அளவுருவும் ஒன்றே. பயன்படுத்தப்பட்ட பாதைகளிலிருந்து நம்பகமான கற்றல் சமிக்ஞைகளை எவ்வாறு பெறுவது, சரியான புதுப்பிப்பு இடத்தை எவ்வாறு தேர்ந்தெடுப்பது, மேலும் அனைத்து வேட்பாளர் பதிப்புகளின் சரிபார்ப்பு, வெளியீடு மற்றும் பின்னோக்கி மீட்டலை எவ்வாறு நிர்வகிப்பது என்பவையே அதன் தனித்துவமான சிக்கல்கள். குறிப்பிட்ட பயிற்சி வழிமுறைகள் தேவைப்படும் இடங்களில் அத்தியாயம் 8 இந்த அத்தியாயத்தை நேரடியாக மேற்கோளிடும்; அவற்றை மீண்டும் விரிவாக விவரிக்காது.
 
+## Mechanism skeleton-கள்
+
+கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
+
+### SFT loss mask
+
+```python
+for sample in dataset:
+    prompt_tokens = tokenize(sample.prompt)
+    answer_tokens = tokenize(sample.answer)
+    tokens = prompt_tokens + answer_tokens
+    labels = [-100] * len(prompt_tokens) + answer_tokens
+    loss = causal_lm_loss(tokens, labels)
+    update_parameters(loss)
+```
+
+### GRPO group update
+
+```python
+for prompt in batch:
+    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
+    rewards = [verify(trajectory) for trajectory in group]
+    advantages = normalize_within_group(rewards)       # GRPO baseline
+    update(policy, group, advantages)
+```
+
+### PPO clipped update
+
+```python
+for trajectory in rollouts:
+    returns = discounted_returns(trajectory.rewards)
+    values = value_model(trajectory.states)
+    advantages = returns - stop_gradient(values)
+    ratio = exp(policy.log_prob(trajectory.actions)
+                - old_policy.log_prob(trajectory.actions))
+    policy_loss = -mean(min(
+        ratio * advantages,
+        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    ))
+    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
+update(policy, value_model, policy_loss + value_coef * value_loss)
+```
+
+### Trajectory-level reward mask
+
+```python
+for token in trajectory:
+    if token.source == ENVIRONMENT:
+        loss_mask[token] = 0
+    else:                                      # model thought / tool arguments
+        loss_mask[token] = 1
+```
+
+### Outcome plus path signal
+
+```python
+outcome = verify_final_state(trajectory)              # result, not self-report
+path_signal = 0
+for step in trajectory:
+    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
+reward = normalize(outcome) + beta * normalize(path_signal)
+```
+
+### On-policy distillation
+
+```python
+student_trajectory = rollout(student, task)
+loss = 0
+for state in student_trajectory:
+    teacher_logits = teacher(state)
+    loss += KL(student_logits(state), teacher_logits)
+update_student(loss)
+```
+
+### On-policy self-distillation
+
+```python
+student_trajectory = rollout(model, task_without_answer)
+loss = 0
+for state in student_trajectory:
+    privileged_state = add_verified_answer(state)
+    teacher_logits = stop_gradient(model(privileged_state))
+    loss += KL(model(state), teacher_logits)
+update(model, loss + retention_regularizer)
+```
+
+எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
+
 ## சிந்தனை கேள்விகள்
 
 1. ★★ பேரழிவு மறதி—ஒரு குறிப்பிட்ட பணிக்கான நுண்சரிப்படுத்தல் மாதிரியின் அசல் பொதுத் திறன்களை (எடுத்துக்காட்டாக, பொதுவான கருவி அழைப்பு) சிதைப்பது—Agent சூழல்களில் குறிப்பாகச் சிக்கலானது. முழு அளவுரு நுண்சரிப்புடன் ஒப்பிடும்போது, LoRA அடிப்படை எடைகளை உறையவைத்து மறதி அபாயத்தைக் குறைக்கிறது; ஆனால் அது முற்றிலும் பாதுகாப்பானதல்ல. நுண்சரிப்பால் ஏற்படும் திறன் மறதியை மேலும் குறைக்க என்ன உத்திகளைப் பயன்படுத்தலாம்?

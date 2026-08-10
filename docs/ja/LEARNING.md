@@ -27,6 +27,16 @@
 
 - **第9〜10章 · 拡張と協調**: 第9章では知覚とアクションをテキストから音声、GUI、物理世界へと拡張します。第10章ではマルチエージェントの分業によって複雑なタスクに対処します。**キーインサイト**: マルチエージェントシステムにおけるあらゆる設計上の判断は、単一エージェントの3要素の中に対応物を見出すことができます。
 
+## 本文と実験の分担
+
+本書は特定 SDK の手順書ではありません。短い pseudocode と skeleton は状態の流れ、停止点、検証境界を示し、章ごとの実験が完全な実装、adapter、テスト、ログ、証拠を提供します。
+
+| Layer | Read first | Skip for now | Question it answers |
+| :--: | --- | --- | --- |
+| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | この実験が示す mechanism は何か？ |
+| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | どの変数が挙動を変えたか？ |
+| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | 結果は再現でき、失敗は正直に記録されているか？ |
+
 ### 難易度レベル
 
 - **入門**（第1〜2章）: 初心者に適しており、基本概念を理解します。

@@ -497,6 +497,47 @@ Sonraki bölüm, Harness'in en merkezi bileşenine—context engineering'e—der
 
 Aşağıdaki düşünce soruları, bölümün temel kavramlarını bir düzey daha derinleştirmek için tasarlanmıştır; standart cevapları yoktur.
 
+## Mekanizma skeleton'ları
+
+Python tarzı bu skeleton'lar bölümdeki kontrol ilişkilerini izole eder. Bunlar açıklayıcı pseudocode'dur, çalıştırılabilir SDK uygulaması değildir; tam adaptörler ve testler bölüm deneylerindedir.
+
+### ReAct control loop
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
+### Harness production boundary
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
+
+Sınırı açık tutun: gözlemler ve kanıt ortamdan gelir, Harness ise hangi eylemin yürütülebileceğine karar verir.
+
+python yalnızca vurgulama marker'ıdır; doğrudan çalıştırılabilir bir program anlamına gelmez.
+
 ## Düşünce Soruları
 
 1. ★★ Bir Agent sistemine yalnızca tek bir yetenek ekleyebilseydiniz—daha güçlü bir model, daha zengin bir context, ya da daha fazla araç—hangisini seçerdiniz? Seçiminiz hangi koşullarda değişirdi?

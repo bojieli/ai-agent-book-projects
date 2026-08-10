@@ -414,6 +414,57 @@ OpenVLA は文字どおり projector だけを更新して訓練されたわけ�
 
 3 つの場面は表面上の差異は甚だしいものの、遅延とマルチモーダルというこの 2 つの難関は常に影のように付きまといます。音声はすでに、直列パイプラインからエンドツーエンドと全二重へ、分離した速い・遅い思考から「考えながら話す」へという進化の道を歩み抜きました。Computer Use は OSWorld などのベンチマークでの精度がすでに人間の水準に近づいていますが、操作ステップが人間より明らかに多く、ステップの所要時間がタスクの進行につれて増え続ける効率の差には、まだ系統的な解法がありません。ロボットは視覚フィードバックを主とする操作タスクにおいて、ボトルネックがすでにハードウェアから VLA 制御層のタスク横断汎化能力へと移りました（触覚、器用な手などは依然として未攻略のハードウェア上の短所です）。次章では視点を複数の Agent 間の協調へと引き上げます。それはまた別の次元の挑戦です。
 
+## メカニズムの skeleton
+
+以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
+
+### Streaming cancellation
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
+### Computer Use safety loop
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+### Action-chunk preemption
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
+
 ## 演習問題
 
 1. ★★ 音声 Agent のエンドツーエンドモデルは ASR-LLM-TTS を単一のモデルに統合し、遅延を下げた一方でモジュール性を失いました。もしエンドツーエンドモデルがある工程（音声認識など）で誤ると、デバッグと修復は直列パイプラインよりはるかに困難です。あなたならエンドツーエンド音声 Agent の可観測性（observability）システムをどう設計しますか?

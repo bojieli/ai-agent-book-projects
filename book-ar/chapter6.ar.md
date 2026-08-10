@@ -787,6 +787,46 @@ rubric:
 
 إن نظام التقييم المنشأ هنا لا يدعم تحسين النظام الحالي فحسب، بل يوفر أيضًا أساسًا حاسمًا للفصلين التاليين. يحول الفصل السابع بيئات التقييم وبياناته إلى مدخلات لنموذج ما بعد التدريب، باستخدام SFT وRL لكتابة سياسات التفاعل إلى معلمات. يحول الفصل الثامن التقييمات متعددة الأبعاد لمسارات الإنتاج إلى تحديثات مرشحة للمعرفة أو التعليمات أو البرامج أو المعلمات.
 
+## هياكل الآليات
+
+تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
+
+### Repeatable evaluation loop
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
+### Deterministic veto before rubric judging
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
+### Paired comparison
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
+حافظ على الحد واضحًا: تأتي الملاحظات والأدلة من البيئة، بينما يقرر Harness ما يُسمح بتنفيذه.
+
 ## أسئلة للتأمل
 
 1. ★★ يستخدم LLM-as-a-Judge نموذجًا لغويًا لتقييم مخرجات نموذج اللغة. هل يحتوي هذا "التقييم الذاتي" على نقاط عمياء منهجية - على سبيل المثال، قد يعطي النموذج باستمرار درجات عالية لأسلوب معين من الاستجابة، وهو تفضيل لا يتوافق مع الحكم البشري؟ فكيف يمكن اكتشاف مثل هذه التحيزات وتصحيحها؟

@@ -1070,6 +1070,31 @@ Về cơ bản, điều này thay thế việc nén bằng cách ly: quá trình
 
 Chương này bàn về việc cập nhật trạng thái và suy giảm ngữ cảnh **trong phạm vi một nhiệm vụ**. Chương tiếp theo sẽ vượt ra ngoài việc quản lý thông tin trong một cửa sổ ngữ cảnh để đến với các hệ thống tri thức bền vững xuyên suốt nhiều nhiệm vụ: bộ nhớ người dùng và cơ sở tri thức. Các hệ thống này cho phép Agent tích lũy kinh nghiệm theo thời gian, dần trở thành một trợ lý hiểu người dùng hơn hoặc một chuyên gia có kiến thức chuyên sâu hơn trong một lĩnh vực.
 
+## Skeleton cơ chế
+
+Các skeleton sau chỉ tách ra quan hệ điều khiển được bàn trong chương.
+
+### Context construction before each request
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+Giữ ranh giới rõ ràng: quan sát và bằng chứng đến từ môi trường, còn Harness quyết định hành động nào được phép thực thi.
+
 ## Câu hỏi tư duy
 
 1. ★★★ Thử nghiệm 2-3 nhận thấy rằng lịch sử hội thoại cửa sổ trượt sẽ khiến Agent liên tục thực hiện cùng một lệnh gọi công cụ. Nhưng việc giữ nguyên lịch sử sẽ mở rộng ngữ cảnh. Thiết kế chiến lược tránh mất thông tin trong khi kiểm soát độ dài ngữ cảnh mà không phá hủy tiền tố KV Cache.

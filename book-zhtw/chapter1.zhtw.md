@@ -496,6 +496,47 @@ Anthropic 在建構長時執行 Agent 時的實踐展示了 Harness 設計如何
 
 以下思考題旨在幫助讀者對本章核心概念進行更深入的探討，不設標準答案。
 
+## 機制骨架
+
+下面的 Python 風格骨架只抽出本章討論的控制關係。它們是解釋性的偽代碼，不是可直接執行的 SDK 實作；完整適配器與測試仍在章級實驗中。
+
+### ReAct control loop
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
+### Harness production boundary
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
+
+請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
+
+python 只用作語法高亮標記，不表示程式可以直接執行。
+
 ## 思考題
 
 1. ★★ 如果你只能給一個 Agent 系統增加一項能力——更強的模型、更豐富的上下文、還是更多的工具——你會選哪個？在什麼條件下你的選擇會改變？

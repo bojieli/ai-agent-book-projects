@@ -389,6 +389,63 @@ Hermes는 백그라운드 진화의 더 완전한 사례를 제공합니다. 장
 
 지속적 진화는 온라인 실행과 오프라인 학습을 분리해야 합니다. 온라인에서는 증거를 기록하고, 오프라인에서는 후보 업데이트를 생성하고 검증한 다음 점진적으로 릴리스·통합하거나 롤백합니다. 이 루프는 결과를 자동으로 검증할 수 있을 때 가장 신뢰성이 높습니다. 목표가 모호하고 피드백이 늦는 개방형 업무에서는 사람이 여전히 문제 정의와 평가 기준 설계에 참여해야 합니다.
 
+## 메커니즘 skeleton
+
+다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
+
+### Three-layer trajectory verification
+
+```python
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
+
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
+else:
+    emit_structured_diagnosis(outcome, process, quality)
+```
+
+### Experience-to-capability routing
+
+```python
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
+```
+
+### Validated release and rollback
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
+```
+
+### Sleep-time consolidation
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
+경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
+
 ## 생각해 볼 문제
 
 1. ★★ 경험 문서는 성공 궤적 세 개와 실패 궤적 하나로 뒷받침됩니다. 실패는 더 새로운 API 버전에서 발생했습니다. 경험이 무효화된 것인지 적용 조건이 바뀐 것인지 시스템은 어떻게 판단해야 할까요?

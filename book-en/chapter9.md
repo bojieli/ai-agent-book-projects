@@ -469,6 +469,57 @@ Recent 2026 preprints explore shared dynamics priors and embodiment-specific hea
 
 On the surface the three scenarios could hardly differ more, yet the twin hurdles of latency and multimodality shadow them all. Voice Agents have evolved from serial pipelines to end-to-end and full-duplex systems, and from separate fast and slow thinking to thinking while speaking. Computer Use now approaches human accuracy on benchmarks like OSWorld, but it takes far more steps than a human, and each step takes longer as the task progresses—an efficiency gap with no systematic solution yet. For robots performing visually guided manipulation tasks, the bottleneck has moved from hardware to the VLA control layer's ability to generalize across tasks (tactile sensing and dexterous hands remain unresolved hardware limitations). The next chapter turns to collaboration among multiple Agents—a challenge of a different dimension.
 
+## Mechanism skeletons
+
+The following sketches isolate the control relationships discussed in this chapter.
+
+### Streaming cancellation
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
+### Computer Use safety loop
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+### Action-chunk preemption
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+Keep the boundary explicit: observations and evidence come from the environment, while the Harness decides what may be executed.
+
 ## Thought Questions
 
 1. ★★ The end-to-end model for voice Agents merges ASR-LLM-TTS into a single model, reducing latency but losing modularity. If the end-to-end model makes an error in a specific stage (e.g., speech recognition), debugging and fixing it is much harder than in a serial pipeline. How would you design an observability system for an end-to-end voice Agent?

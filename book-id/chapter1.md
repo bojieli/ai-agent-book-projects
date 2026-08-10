@@ -493,6 +493,47 @@ Bab berikutnya akan membahas komponen Harness yang paling sentral secara mendala
 
 Pertanyaan pemikiran di bawah ini dirancang untuk membawa konsep-konsep inti bab ini satu tingkat lebih dalam; tidak ada jawaban standar.
 
+## Skeleton mekanisme
+
+Skeleton bergaya Python berikut hanya menyoroti hubungan kontrol dalam bab ini. Ini pseudocode penjelasan, bukan implementasi SDK yang dapat dijalankan; adapter dan pengujian lengkap tetap berada di eksperimen bab.
+
+### ReAct control loop
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
+### Harness production boundary
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
+
+Pertahankan batasnya: observasi dan bukti berasal dari lingkungan, sedangkan Harness menentukan tindakan yang boleh dieksekusi.
+
+python hanya merupakan penanda highlight; ini tidak berarti program dapat langsung dijalankan.
+
 ## Pertanyaan Pemikiran
 
 1. ★★ Jika Anda hanya bisa menambahkan satu kapabilitas pada sebuah sistem Agent—model yang lebih kuat, context yang lebih kaya, atau lebih banyak tool—mana yang akan Anda pilih? Di bawah kondisi seperti apakah pilihan Anda akan berubah?

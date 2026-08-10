@@ -27,6 +27,16 @@ The learning path corresponds chapter by chapter to the entire book, unfolding l
 
 - **Chapters 9–10 · Expansion and Collaboration**: Chapter 9 expands perception and action from text to speech, GUI, and the physical world. Chapter 10 uses multi-agent division of labor to handle complex tasks. **Key Insight**: Every design decision in a multi-agent system can find its counterpart in the three elements of a single agent.
 
+## Prose and experiments
+
+The book is not a step-by-step tutorial for one SDK. Short pseudocode and skeletons explain state flow, stopping points, and verification boundaries; chapter experiments contain complete implementations, model/environment adapters, tests, logs, and evidence.
+
+| Layer | Read first | Skip for now | Question it answers |
+| :--: | --- | --- | --- |
+| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | Which mechanism is this experiment meant to demonstrate? |
+| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | Which variable changed the behavior? |
+| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | Can the result be reproduced, and are failures recorded honestly? |
+
 ### Difficulty Levels
 
 - **Beginner** (Chapters 1–2): Suitable for beginners, understanding basic concepts.

@@ -684,6 +684,70 @@ Agent がメールをドラフトしている最中にユーザーが割り込�
 
 次章は「いかにツールを使うか」よりも根本的な問いに答えます。Agent はコードを書くことでツールを**創造**できるのか。Coding Agent にファイルシステムを加えたものは、あらゆる汎用 Agent の最も核心的な基盤です——第 8 章の Agent の自己進化能力の起点でもあります。
 
+## メカニズムの skeleton
+
+以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
+
+### Tool safety gate
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### Event-loop routing
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### Proactive tool discovery
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
+
 ## 演習問題
 
 1. ★★ MCP 標準はツール定義を Agent フレームワークから解耦しました。しかし標準化はまた、複雑なツールインタラクションのパターン（ストリーミング出力、双方向通信、状態を持つセッションなど）が標準プロトコルの中で表現しにくくなりうることも意味します。あなたは MCP が将来最も拡張を必要とする能力は何だと考えますか。

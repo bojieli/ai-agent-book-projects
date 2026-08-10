@@ -696,6 +696,105 @@ Agentic RAG ஆனது Agent-இன் தன்னாட்சி முட�
 
 இந்த அத்தியாயமும் முந்தைய அத்தியாயமும் “Context” பிரச்சினையைக் கையாள்கின்றன—ஒன்று தனி அமர்வுக்குள், மற்றொன்று பல அமர்வுகளைக் கடந்து. இவ்வத்தியாயத்தில் நிலைப்படுத்தப்படுவது பெரும்பாலும் பயனர் மற்றும் உலகைப் பற்றிய declarative knowledge ஆகும்; அத்தியாயம் 8 இதே extraction மற்றும் retrieval உள்கட்டமைப்பை மீண்டும் பயன்படுத்தும், ஆனால் அதன் பொருள் இயக்கத்தின் வெற்றி அல்லது தோல்வியால் ஆதரிக்கப்படும் behavioral knowledge, அதாவது “எந்த நிபந்தனைகளில் எவ்வாறு செயல்பட வேண்டும்” என்பதாகும். அடுத்த அத்தியாயம் “Tools” நோக்கித் திரும்புகிறது: Tool வடிவமைப்பு, MCP interoperability தரநிலை மற்றும் event-driven architecture உட்பட, Tools வழியாக Agent வெளி உலகத்துடன் எவ்வாறு தொடர்புகொள்கிறது என்பதை விவாதிக்கிறது.
 
+## Mechanism skeleton-கள்
+
+கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
+
+### Memory lifecycle
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
+### Append-only log and checkpoint
+
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+### Typed user state
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
+```
+
+### Deterministic aggregation
+
+```python
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
+```
+
+### Conflict detection
+
+```python
+def check_drug_allergy(profile):
+    for medication in profile.current_medications:
+        for allergy in profile.allergies:
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
+```
+
+### Constraint enforcement
+
+```python
+def check():
+    for trip in state.trips:
+        if trip.is_international:
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
+            if days < 180:
+                alert("passport expires too soon", trip, days)
+```
+
+### Hybrid RAG pipeline
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
+
+எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
+
 ## சிந்தனை கேள்விகள்
 
 1.  ★★ ஒரு பயனர் நினைவக அமைப்பில், ஒரே பயனர் வெவ்வேறு அமர்வுகளில் முரண்பட்ட தகவல்களை வழங்கும்போது (எ.கா., இரண்டு வெவ்வேறு வீட்டு முகவரிகளைக் குறிப்பிடுதல்), நினைவக அமைப்பு இந்த முரண்பாட்டை எவ்வாறு கையாள வேண்டும்?

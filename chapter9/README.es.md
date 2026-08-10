@@ -4,6 +4,16 @@
 
 ← [Volver al README principal](../docs/es/README.md) · 📖 [Leer texto del capítulo](../book-es/chapter9.es.md)
 
+## Cómo leer los experimentos
+
+El texto usa skeletons breves para explicar el flujo de control; el directorio de experimentos contiene adaptadores SDK completos, registros, pruebas y evidencias de aceptación. No hace falta leer cada archivo línea por línea.
+
+- **Starter:** Empieza por el objetivo, el comando mínimo y la aceptación; comienza con [live-audio](live-audio/);
+- **Builder:** Sigue el punto de entrada, el bucle central, el esquema de estado/mensajes, las herramientas y el verificador.
+- **Maintainer:** Después revisa pruebas, manifiestos, fallos, rollback y adaptadores de proveedores.
+
+En la primera pasada puedes omitir credenciales, presentación y compatibilidad de proveedores; vuelve al reproducir una cifra.
+
 ## Proyectos Complementarios
 
 | Exp. | Proyecto | Tipo | Descripción |

@@ -787,6 +787,46 @@ Agent 產品需要從第一天就設計特性開關（Feature Flag）基礎設�
 
 本章建立的評估體系不僅服務於當前系統的最佳化，也為後續兩章提供關鍵基礎。第七章把評估環境和資料轉化為模型後訓練的輸入，透過 SFT 和 RL 將互動策略寫入參數；第八章則把生產軌跡的多維評價轉化為知識、指令、程式或參數的候選更新。
 
+## 機制骨架
+
+下面的骨架只抽出本章討論的控制關係。
+
+### Repeatable evaluation loop
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
+### Deterministic veto before rubric judging
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
+### Paired comparison
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
+請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
+
 ## 思考題
 
 1. ★★ LLM-as-a-Judge 使用語言模型評估語言模型的輸出。這種 「自我評估」 是否存在系統性盲區——比如模型可能一致地給某種風格的回答打高分，而這種偏好與人類評判不一致？如何偵測和校正這種偏差？

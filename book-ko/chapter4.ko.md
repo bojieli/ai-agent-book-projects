@@ -685,6 +685,70 @@ OpenClaw의 세션은 사용자에게 투명합니다. 전용 도구를 통해 �
 
 다음 장에서는 “에이전트가 도구를 어떻게 사용하는가?”보다 더 근본적인 질문을 던집니다. 에이전트가 코드를 작성해 도구를 **만들 수 있을까요?** 코딩 에이전트와 파일 시스템의 조합은 모든 범용 에이전트의 핵심 토대이며, 8장에서 다룰 통제된 시스템 자기 수정에 필요한 실행 능력도 제공합니다.
 
+## 메커니즘 skeleton
+
+다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
+
+### Tool safety gate
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### Event-loop routing
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### Proactive tool discovery
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
+
 ## 생각해 볼 문제
 
 1. ★★ MCP 표준은 도구 정의를 에이전트 프레임워크에서 분리합니다. 그러나 표준화 때문에 스트리밍 출력, 양방향 커뮤니케이션, 상태 유지 세션 같은 복잡한 도구 상호작용 패턴을 표준 프로토콜로 표현하기 어려울 수도 있습니다. 앞으로 MCP에 가장 우선적으로 추가해야 할 능력은 무엇이라고 생각하나요?

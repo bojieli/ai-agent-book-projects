@@ -896,6 +896,94 @@ Chương này trả lời cách cập nhật tham số để Agent có thể ti�
 
 Quá trình post-training giải quyết được vấn đề "làm thế nào để làm cho mô hình thông minh hơn", nhưng chu kỳ cập nhật trọng số của mô hình được tính bằng tuần. Trên thực tế, API hoạt động trực tuyến và ngoại tuyến, nhu cầu của người dùng luôn thay đổi và các quy tắc kinh doanh thay đổi diễn ra hàng ngày. Chương tiếp theo sẽ khám phá một lộ trình tiến hóa bổ sung—không cần sửa đổi trọng số mô hình nhưng cho phép Agent xây dựng độc lập thư viện công cụ và cơ sở kiến thức thông qua External Learning (học bên ngoài tham số mô hình) để đạt được khả năng mở rộng liên tục.
 
+## Skeleton cơ chế
+
+Các skeleton sau chỉ tách ra quan hệ điều khiển được bàn trong chương.
+
+### SFT loss mask
+
+```python
+for sample in dataset:
+    prompt_tokens = tokenize(sample.prompt)
+    answer_tokens = tokenize(sample.answer)
+    tokens = prompt_tokens + answer_tokens
+    labels = [-100] * len(prompt_tokens) + answer_tokens
+    loss = causal_lm_loss(tokens, labels)
+    update_parameters(loss)
+```
+
+### GRPO group update
+
+```python
+for prompt in batch:
+    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
+    rewards = [verify(trajectory) for trajectory in group]
+    advantages = normalize_within_group(rewards)       # GRPO baseline
+    update(policy, group, advantages)
+```
+
+### PPO clipped update
+
+```python
+for trajectory in rollouts:
+    returns = discounted_returns(trajectory.rewards)
+    values = value_model(trajectory.states)
+    advantages = returns - stop_gradient(values)
+    ratio = exp(policy.log_prob(trajectory.actions)
+                - old_policy.log_prob(trajectory.actions))
+    policy_loss = -mean(min(
+        ratio * advantages,
+        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    ))
+    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
+update(policy, value_model, policy_loss + value_coef * value_loss)
+```
+
+### Trajectory-level reward mask
+
+```python
+for token in trajectory:
+    if token.source == ENVIRONMENT:
+        loss_mask[token] = 0
+    else:                                      # model thought / tool arguments
+        loss_mask[token] = 1
+```
+
+### Outcome plus path signal
+
+```python
+outcome = verify_final_state(trajectory)              # result, not self-report
+path_signal = 0
+for step in trajectory:
+    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
+reward = normalize(outcome) + beta * normalize(path_signal)
+```
+
+### On-policy distillation
+
+```python
+student_trajectory = rollout(student, task)
+loss = 0
+for state in student_trajectory:
+    teacher_logits = teacher(state)
+    loss += KL(student_logits(state), teacher_logits)
+update_student(loss)
+```
+
+### On-policy self-distillation
+
+```python
+student_trajectory = rollout(model, task_without_answer)
+loss = 0
+for state in student_trajectory:
+    privileged_state = add_verified_answer(state)
+    teacher_logits = stop_gradient(model(privileged_state))
+    loss += KL(model(state), teacher_logits)
+update(model, loss + retention_regularizer)
+```
+
+Giữ ranh giới rõ ràng: quan sát và bằng chứng đến từ môi trường, còn Harness quyết định hành động nào được phép thực thi.
+
 ## Câu hỏi tư duy
 
 1. ★★ Sự quên lãng nghiêm trọng - một tinh chỉnh dành riêng cho nhiệm vụ phá hủy các khả năng chung ban đầu của mô hình (chẳng hạn như các lệnh gọi công cụ chung) - đặc biệt rắc rối trong kịch bản Agent. So với việc tinh chỉnh đầy đủ thông số, LoRA đóng băng trọng số cơ bản và có nguy cơ quên thấp hơn, nhưng nó không tránh khỏi. Những chiến lược nào có thể làm giảm bớt tình trạng lãng quên các khả năng do tinh chỉnh gây ra?

@@ -781,6 +781,46 @@ Agent 開発者への示唆はこうです。特性スイッチはデバッグ�
 
 本章で確立した評価体系は現在のシステムの最適化に資するだけでなく、次章のモデルのポストトレーニングに鍵となる基礎も提供します——評価環境とデータセットはポストトレーニングの重要な入力であり、シミュレーション環境はポストトレーニングの練習場です。次章では評価からモデルレベルの改善へと転じ、いかに SFT と RL を通じてインタラクション方策をモデルパラメータに書き込むかを深く論じます。
 
+## メカニズムの skeleton
+
+以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
+
+### Repeatable evaluation loop
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
+### Deterministic veto before rubric judging
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
+### Paired comparison
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
+境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
+
 ## 演習問題
 
 1. ★★ LLM-as-a-Judge は言語モデルを使って言語モデルの出力を評価します。この「自己評価」には系統的な盲点が存在するのでしょうか——例えばモデルがある種のスタイルの回答に一貫して高得点をつけ、その好みが人間の評定と一致しない、というような？ こうしたバイアスをどう検出し校正しますか？

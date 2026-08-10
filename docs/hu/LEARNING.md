@@ -22,6 +22,16 @@ A könyv központi kerete az **Ágens = Modell + Kontextus + Eszközök** képle
 | **Értékelés és evolúció** | 6–8. fejezet | Ágensértékelés, SFT és RL, tanulás a nyomvonalakból, a tudás, utasítások, programok és paraméterek frissítése | Ellenőrizhető tanulási jel nélkül nincs megbízható fejlődés; a frissítés hordozója attól függ, hogyan fejeződik ki és hogyan tesztelhető a képesség |
 | **Kiterjesztés és együttműködés** | 9–10. fejezet | Beszéd, GUI, fizikai világ és több ágens munkamegosztása | Minden többágenses tervezési döntésnek van egyágenses megfelelője |
 
+## A törzsszöveg és a kísérletek felosztása
+
+A könyv nem egyetlen SDK lépésről lépésre követhető oktatóanyaga. A rövid pseudocode és skeleton az állapotáramlást, a megállási pontokat és az ellenőrzési határokat mutatja; a fejezetek kísérletei teljes megvalósítást, adaptereket, teszteket, naplókat és bizonyítékot adnak.
+
+| Layer | Read first | Skip for now | Question it answers |
+| :--: | --- | --- | --- |
+| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | Melyik mechanizmust hivatott bemutatni ez a kísérlet? |
+| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | Melyik változó változtatta meg a viselkedést? |
+| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | Reprodukálható az eredmény, és őszintén vannak rögzítve a hibák? |
+
 ## Nehézségi szintek
 
 | Szint | Fejezet | Kinek ajánlott? |

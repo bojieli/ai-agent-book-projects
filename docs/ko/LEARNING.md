@@ -24,6 +24,16 @@
 | **평가와 진화** | 제6~8장 | 에이전트 평가, SFT와 RL, 실행 궤적의 신호를 바탕으로 지식·지침·프로그램·파라미터 갱신 | 학습에 앞서 신뢰할 수 있는 신호를 확보해야 합니다. 갱신 매체는 역량을 어떻게 표현하고 검증할 수 있는지에 따라 달라집니다. |
 | **확장과 협업** | 제9~10장 | 음성/GUI/물리 세계를 아우르는 멀티모달 상호작용, 멀티 에이전트의 분업과 협업 | 멀티 에이전트의 모든 설계 결정은 단일 에이전트의 세 요소와 대응시킬 수 있습니다. |
 
+## 본문과 실험의 역할 분담
+
+이 책은 특정 SDK의 단계별 튜토리얼이 아닙니다. 짧은 pseudocode와 skeleton은 상태 흐름·중지 지점·검증 경계를 설명하고, 장별 실험은 완전한 구현·adapter·테스트·로그·증거를 제공합니다.
+
+| Layer | Read first | Skip for now | Question it answers |
+| :--: | --- | --- | --- |
+| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | 이 실험이 증명하려는 메커니즘은 무엇인가? |
+| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | 어떤 변수가 동작을 바꾸었는가? |
+| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | 결과를 재현할 수 있고 실패가 정직하게 기록되었는가? |
+
 ## 난이도
 
 | 수준 | 장 | 추천 독자 |

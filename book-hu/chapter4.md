@@ -672,6 +672,70 @@ Hat kísérlet halad az alapoktól az architektúráig: a 4-1. és 4-3. kísérl
 
 A következő fejezet egy alapvetőbb kérdést tesz fel annál, hogy "hogyan használ egy Agent eszközöket?" – vajon egy Agent "létre tud-e hozni" eszközöket kód írásával? Egy Coding Agent plusz egy fájlrendszer az alapja minden általános célú Agentnek, és egyúttal biztosítja a 8. fejezetben tárgyalt ellenőrzött rendszer-önmódosításhoz szükséges végrehajtási képességet is.
 
+## Mechanizmus-skeletonok
+
+Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
+
+### Tool safety gate
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### Event-loop routing
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### Proactive tool discovery
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+Legyen világos a határ: a megfigyelések és a bizonyítékok a környezetből érkeznek, a Harness pedig eldönti, mi hajtható végre.
+
 ## Gondolkodtató Kérdések
 
 1. ★★ Az MCP szabvány leválasztja az eszközdefiníciókat az Agent keretrendszerről. A szabványosítás ugyanakkor azt is jelenti, hogy az összetett eszközinterakciós minták (pl. streaming kimenet, kétirányú kommunikáció, állapotos munkamenetek) nehezen fejezhetők ki egy szabványos protokollon belül. Ön szerint milyen képességgel kellene az MCP-nek leginkább bővülnie a jövőben?

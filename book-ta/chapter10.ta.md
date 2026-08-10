@@ -639,6 +639,83 @@ Pinchwork மற்றும் RentAHuman ஆகியவை சேர்ந்
 
 பல-Agent ஒத்துழைப்பு உண்மையில் பயனுள்ளதாக இருப்பது, உருவாக்கும் நேரத்தில் ஒரு Agent பெற முடியாத புதிய தகவலை—செயல்படுத்தல் முடிவுகள், காட்சிப் பின்னூட்டம் அல்லது வெளிப்புறக் கருவி சரிபார்ப்பு—அறிமுகப்படுத்தும் போது மட்டுமே. வடிவமைப்பு பகிரப்பட்ட அல்லது தனிமைப்படுத்தப்பட்ட சூழலையும், இணை, மேலாளர் அல்லது பரவலாக்கப்பட்ட இடவியலையும் தேர்ந்தெடுக்க வேண்டும். கட்டமைக்கப்பட்ட handoff தொகுப்புகள், அனுமதி எல்லைகள், சுயாதீனச் சரிபார்ப்பு, வரவு செலவுத் திட்டங்கள் மற்றும் ரத்து நடைமுறைகள் அடிப்படைத் தவறு-தாங்கு வளையத்தை உருவாக்குகின்றன. நீண்டகால திறந்த தொடர்புகளில் சமூக உறவுகள், விதிமுறைகள், சந்தைகள் மற்றும் உத்திகள் தோன்றலாம்; தகவல் ஓட்டம், திறன் பகிர்வு, பிழை கண்டறிதல் ஆகியவற்றை வடிவமைப்பதே மையப் பொறியியல் பணியாகும்.
 
+## Mechanism skeleton-கள்
+
+கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
+
+### Message envelope and worker lifetime
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
+### Proposer-reviewer loop
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
+### First verified parallel winner
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
+
+### Decentralized handoff protocol
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
+
+எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
+
 ## சிந்தனை கேள்விகள்
 
 1. ★★ பகிரப்பட்ட சூழலைக் கொண்ட பல-ஏஜெண்ட் ஒத்துழைப்பில், அடுத்தடுத்த ஏஜெண்டுகள் முந்தைய ஏஜெண்டுகளின் முழுமையான சூழலைப் பெறுகின்றன. இருப்பினும், முந்தைய ஏஜெண்டால் திரட்டப்பட்ட "சிந்தனை மந்தநிலை" அடுத்தடுத்த ஏஜெண்டுகளின் தீர்ப்பை பாதிக்கலாம்—எடுத்துக்காட்டாக, "தேவைகள் ஆய்வாளர்" ஒருவரின் சூழலைப் பெறும் "குறியீடு மதிப்பாய்வாளர்" ஒருவர் குறியீடு தரக் கண்ணோட்டத்தை விட தேவைகள் கண்ணோட்டத்தில் இருந்தே சிந்திக்க முனைவார். இந்த பங்குகளுக்கு இடையேயான குறுக்கீட்டை எவ்வாறு கண்டறிந்து நீக்கலாம்?

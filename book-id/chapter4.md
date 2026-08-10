@@ -678,6 +678,70 @@ Enam eksperimen berkembang dari dasar hingga arsitektur: Eksperimen 4-1 hingga 4
 
 Bab berikutnya mengajukan pertanyaan yang lebih mendasar daripada “bagaimana cara sebuah Agent menggunakan tool?”: bisakah sebuah Agent **membuat** tool dengan menulis kode? Sebuah Coding Agent ditambah sistem berkas adalah fondasi inti dari setiap Agent bertujuan umum (*general-purpose Agent*), dan hal ini juga memberikan kemampuan eksekusi yang dibutuhkan untuk pembahasan Bab 8 tentang modifikasi mandiri sistem yang terkontrol (*controlled system self-modification*).
 
+## Skeleton mekanisme
+
+Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
+
+### Tool safety gate
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### Event-loop routing
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### Proactive tool discovery
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+Pertahankan batasnya: observasi dan bukti berasal dari lingkungan, sedangkan Harness menentukan tindakan yang boleh dieksekusi.
+
 ## Pertanyaan Diskusi
 
 1. ★★ Standar MCP memisahkan (*decouples*) definisi tool dari *framework* Agent. Namun, standarisasi juga berarti bahwa pola interaksi tool yang kompleks (misalnya, *streaming output*, komunikasi dua arah, sesi *stateful*) mungkin sulit diekspresikan dalam standar protokol. Menurut Anda, kemampuan apa yang paling perlu diperluas oleh MCP di masa depan?

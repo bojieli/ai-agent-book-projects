@@ -392,6 +392,57 @@ OpenVLA обучался не только обновлением projector: и�
 
 Три сценария внешне сильно различаются, но два барьера — задержка и мультимодальность — неизменно сопровождают каждый из них. Речь прошла путь эволюции от последовательного конвейера к сквозной модели и полному дуплексу, от разделённого быстрого и медленного мышления к «думать на ходу говоря»; точность Computer Use на бенчмарках вроде OSWorld уже приблизилась к человеческому уровню, но разрыв в эффективности — заметно большее число операций по сравнению с человеком и постоянно растущее время на шаг по мере продвижения задачи — пока не имеет системного решения; узкое место робототехники в задачах манипуляции, где преобладает визуальная обратная связь, сместилось с железа на способность к обобщению между задачами на уровне VLA-управления (тактильное восприятие, ловкие манипуляторы и подобное остаются непреодолёнными слабыми местами железа). В следующей главе взгляд сместится на взаимодействие между несколькими агентами — это вызов уже другого измерения.
 
+## Скелеты механизмов
+
+Следующие скелеты выделяют управляющие связи, обсуждаемые в главе.
+
+### Streaming cancellation
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
+### Computer Use safety loop
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+### Action-chunk preemption
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+Граница должна оставаться явной: наблюдения и доказательства приходят из среды, а Harness решает, что разрешено выполнить.
+
 ## Вопросы для размышления
 
 1. ★★ Сквозная модель речевого агента объединяет ASR-LLM-TTS в единую модель, снижая задержку, но теряя модульность. Если сквозная модель ошибается на каком-то этапе (например, при распознавании речи), отладка и исправление оказываются намного сложнее, чем в последовательном конвейере. Как бы вы спроектировали систему наблюдаемости (observability) для сквозного речевого агента?

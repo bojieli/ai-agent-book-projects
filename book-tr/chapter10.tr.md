@@ -646,6 +646,83 @@ Kurt adam, bu kısımdaki üç boyuttan **stratejik oyunu** temsil eder: kural k
 
 Çoklu Agent işbirliği, tek bir Agent'ın üretim sırasında elde edemeyeceği yeni bilgiler (çalıştırma sonuçları, görsel geri bildirim veya harici araç doğrulaması) sağladığında değerlidir. Tasarım; paylaşılan ya da yalıtılmış bağlam ile eşler arası, yönetici veya merkezi olmayan topolojiler arasında seçim yapmalıdır. Yapılandırılmış handoff paketleri, yetki sınırları, bağımsız doğrulama, bütçe ve iptal mekanizmaları temel hata toleransı döngüsünü oluşturur. Uzun süreli açık etkileşimlerde sosyal ilişkiler, normlar, piyasalar ve stratejiler ortaya çıkabilir; öz, bilgi akışını, yeteneklerin bölünmesini ve hataların keşfini tasarlamaktır.
 
+## Mekanizma skeleton'ları
+
+Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
+
+### Message envelope and worker lifetime
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
+### Proposer-reviewer loop
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
+### First verified parallel winner
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
+
+### Decentralized handoff protocol
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
+
+Sınırı açık tutun: gözlemler ve kanıt ortamdan gelir, Harness ise hangi eylemin yürütülebileceğine karar verir.
+
 ## Düşünce Soruları
 
 1. ★★ Paylaşılan context'li çoklu Agent iş birliğinde sonraki Agent, önceki Agent'ın eksiksiz context'ini devralır. Ama önceki Agent'ın biriktirdiği "düşünme ataleti" sonraki Agent'ın yargısını etkileyebilir — örneğin "gereksinim analisti" context'ini devralan bir "kod inceleyici", kod kalitesi açısından değil, hâlâ gereksinim açısından düşünmeye eğilimli olabilir. Roller arasındaki bu bulaşma nasıl saptanır ve nasıl ortadan kaldırılır?

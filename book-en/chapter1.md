@@ -495,6 +495,47 @@ The next chapter examines the Harness's most central component in depth: context
 
 The thought questions below are designed to take the chapter's core concepts a level deeper; they do not have standard answers.
 
+## Mechanism skeletons
+
+These Python-style sketches isolate the control relationships discussed in this chapter. They are explanatory pseudocode, not runnable SDK implementations; complete adapters and tests remain in the chapter experiments.
+
+### ReAct control loop
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
+### Harness production boundary
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
+
+Keep the boundary explicit: observations and evidence come from the environment, while the Harness decides what may be executed.
+
+The python marker is used only for syntax highlighting; it does not imply a directly runnable program.
+
 ## Thought Questions
 
 1. ★★ If you could only add one capability to an Agent system—a stronger model, richer context, or more tools—which would you choose? Under what conditions would your choice change?

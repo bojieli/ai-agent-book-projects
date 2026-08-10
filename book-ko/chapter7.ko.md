@@ -900,6 +900,94 @@ SFT와 RL은 경쟁하는 선택지라기보다 자주 순차적으로 결합하
 
 이 장에서는 ‘어떻게 학습할 것인가’라는 파라미터 업데이트 질문에 답했습니다. 다음 장에서는 모델 파라미터를 완전한 에이전트 시스템 안에 다시 배치합니다. 파라미터는 지식, 지시, 프로그램과 함께 네 가지 업데이트 운반체 중 하나일 뿐입니다. 고유한 과제는 배포 궤적에서 신뢰할 만한 학습 신호를 도출하고, 올바른 업데이트 위치를 선택하고, 각 후보 버전의 검증·출시·롤백을 관리하는 것입니다. 구체적인 학습 알고리즘은 8장에서 반복하지 않고 이 장을 직접 참조합니다.
 
+## 메커니즘 skeleton
+
+다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
+
+### SFT loss mask
+
+```python
+for sample in dataset:
+    prompt_tokens = tokenize(sample.prompt)
+    answer_tokens = tokenize(sample.answer)
+    tokens = prompt_tokens + answer_tokens
+    labels = [-100] * len(prompt_tokens) + answer_tokens
+    loss = causal_lm_loss(tokens, labels)
+    update_parameters(loss)
+```
+
+### GRPO group update
+
+```python
+for prompt in batch:
+    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
+    rewards = [verify(trajectory) for trajectory in group]
+    advantages = normalize_within_group(rewards)       # GRPO baseline
+    update(policy, group, advantages)
+```
+
+### PPO clipped update
+
+```python
+for trajectory in rollouts:
+    returns = discounted_returns(trajectory.rewards)
+    values = value_model(trajectory.states)
+    advantages = returns - stop_gradient(values)
+    ratio = exp(policy.log_prob(trajectory.actions)
+                - old_policy.log_prob(trajectory.actions))
+    policy_loss = -mean(min(
+        ratio * advantages,
+        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    ))
+    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
+update(policy, value_model, policy_loss + value_coef * value_loss)
+```
+
+### Trajectory-level reward mask
+
+```python
+for token in trajectory:
+    if token.source == ENVIRONMENT:
+        loss_mask[token] = 0
+    else:                                      # model thought / tool arguments
+        loss_mask[token] = 1
+```
+
+### Outcome plus path signal
+
+```python
+outcome = verify_final_state(trajectory)              # result, not self-report
+path_signal = 0
+for step in trajectory:
+    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
+reward = normalize(outcome) + beta * normalize(path_signal)
+```
+
+### On-policy distillation
+
+```python
+student_trajectory = rollout(student, task)
+loss = 0
+for state in student_trajectory:
+    teacher_logits = teacher(state)
+    loss += KL(student_logits(state), teacher_logits)
+update_student(loss)
+```
+
+### On-policy self-distillation
+
+```python
+student_trajectory = rollout(model, task_without_answer)
+loss = 0
+for state in student_trajectory:
+    privileged_state = add_verified_answer(state)
+    teacher_logits = stop_gradient(model(privileged_state))
+    loss += KL(model(state), teacher_logits)
+update(model, loss + retention_regularizer)
+```
+
+경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
+
 ## 생각해 볼 문제
 
 1. ★★ 특정 작업을 위한 미세 조정 때문에 범용 도구 호출 같은 모델의 기존 일반 역량이 망가지는 파국적 망각은 에이전트 환경에서 특히 골치 아픈 문제입니다. LoRA는 전체 파라미터 미세 조정과 달리 기반 가중치를 동결해 망각 위험이 낮지만 완전히 피하지는 못합니다. 미세 조정 중 역량 망각을 더 줄이려면 어떤 전략을 사용할 수 있을까요?

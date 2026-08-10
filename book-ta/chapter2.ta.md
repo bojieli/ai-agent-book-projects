@@ -1061,6 +1061,31 @@ Context Rot என்பது window நிரம்பிவிடும் Co
 
 இந்த அத்தியாயம் **ஒரே பணிக்குள்** நிகழும் நிலைப் புதுப்பிப்புகளையும் context சிதைவையும் கையாள்கிறது. அடுத்த அத்தியாயம், ஒரே context window-க்குள் தகவலை நிர்வகிப்பதைக் கடந்து, பல பணிகளைக் கடந்தும் நீடிக்கும் அறிவு அமைப்புகளான பயனர் நினைவகம் மற்றும் அறிவுத் தளங்களை நோக்கிச் செல்கிறது. இவை Agent காலப்போக்கில் அனுபவத்தைக் குவித்து, பயனரை மேலும் நன்றாகப் புரிந்துகொள்ளும் உதவியாளராகவோ, குறிப்பிட்ட துறையில் மேலும் நிபுணத்துவமான அறிவைக் கொண்ட வல்லுநராகவோ படிப்படியாக வளர உதவுகின்றன.
 
+## Mechanism skeleton-கள்
+
+கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
+
+### Context construction before each request
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
+
 ## சிந்தனை கேள்விகள்
 
 1.  ★★★ சோதனை 2-3, உரையாடல் வரலாற்றின் நெகிழ் சாளரம் (sliding window), ஏஜெண்ட் ஒரே கருவி அழைப்புகளை மீண்டும் மீண்டும் செயல்படுத்தக் காரணமாகிறது என்பதைக் கண்டறிந்தது. இருப்பினும், முழு வரலாற்றையும் வைத்திருப்பது சூழலை காலவரையின்றி விரிவடையச் செய்கிறது. KV கேச் முன்னொட்டை உடைக்காமல், சூழல் நீளத்தைக் கட்டுப்படுத்தும் அதே வேளையில் தகவல் இழப்பைத் தவிர்க்கக்கூடிய ஒரு உத்தியை வடிவமைக்கவும்.

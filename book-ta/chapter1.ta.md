@@ -492,6 +492,47 @@ Harness பொறியியலின் கண்ணோட்டத்தி�
 
 பின்வரும் சிந்தனை கேள்விகள் வாசகர்கள் இந்த அத்தியாயத்தின் முக்கிய கருத்துக்களை ஆழமாக ஆராய உதவும் வகையில் வடிவமைக்கப்பட்டுள்ளன; இவற்றுக்கு நிலையான பதில்கள் இல்லை.
 
+## Mechanism skeleton-கள்
+
+இந்த Python பாணி skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன. இவை விளக்க pseudocode; இயக்கக்கூடிய SDK implementation அல்ல. முழு adapters மற்றும் tests அத்தியாயச் சோதனைகளில் உள்ளன.
+
+### ReAct control loop
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
+### Harness production boundary
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
+
+எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
+
+python என்பது highlight marker மட்டுமே; நேரடியாக இயக்கக்கூடிய நிரல் என்று பொருளல்ல.
+
 ## சிந்தனை கேள்விகள்
 
 1. ★★ ஒரு ஏஜெண்ட் அமைப்பில் நீங்கள் ஒரே ஒரு திறனை மட்டுமே சேர்க்க முடிந்தால்—வலுவான மாதிரி, வளமான சூழல் அல்லது அதிக கருவிகள்—எதைத் தேர்ந்தெடுப்பீர்கள்? எந்த நிபந்தனைகளின் கீழ் உங்கள் தேர்வு மாறும்?

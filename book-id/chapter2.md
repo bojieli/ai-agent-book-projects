@@ -1073,6 +1073,31 @@ Benang merah semua teknik tersebut adalah pengelolaan informasi yang eksplisit d
 
 Bab ini membahas pembaruan keadaan dan degradasi context **di dalam satu tugas**. Bab berikutnya beralih dari pengelolaan informasi dalam satu context window ke sistem pengetahuan persisten yang melintasi berbagai tugas: user memory dan knowledge base. Sistem ini memungkinkan Agent mengumpulkan pengalaman dari waktu ke waktu dan secara bertahap menjadi asisten yang lebih memahami pengguna, atau pakar dengan pengetahuan yang lebih khusus di suatu bidang.
 
+## Skeleton mekanisme
+
+Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
+
+### Context construction before each request
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+Pertahankan batasnya: observasi dan bukti berasal dari lingkungan, sedangkan Harness menentukan tindakan yang boleh dieksekusi.
+
 ## Pertanyaan Pemikiran
 
 1.  ★★★ Eksperimen 2-3 menunjukkan sliding window memicu perulangan panggilan tool. Tapi menyimpan histori lengkap membuat context membludak. Buat strategi menghindari information loss sambil menekan panjang context, tanpa merusak awalan KV Cache.

@@ -22,6 +22,16 @@ Kerangka utama buku ini adalah **Agent = Model + Konteks + Alat**. Ketiga kompon
 | **Evaluasi dan Evolusi** | Bab 6–8 | Evaluasi Agent, SFT dan RL, pembelajaran dari jejak untuk memperbarui pengetahuan, instruksi, program, dan parameter | Sinyal yang dapat diverifikasi harus ada sebelum pembelajaran; media pembaruan bergantung pada bagaimana kemampuan dinyatakan dan diuji |
 | **Perluasan dan Kolaborasi** | Bab 9–10 | Interaksi suara/GUI/dunia fisik dan pembagian kerja multi-Agent | Setiap keputusan desain multi-Agent memiliki padanan dalam unsur Agent tunggal |
 
+## Pembagian teks utama dan eksperimen
+
+Buku ini bukan tutorial langkah demi langkah untuk satu SDK. Pseudocode dan skeleton menjelaskan aliran status, titik penghentian, dan batas verifikasi; eksperimen menyediakan implementasi, adapter, pengujian, log, dan bukti.
+
+| Layer | Read first | Skip for now | Question it answers |
+| :--: | --- | --- | --- |
+| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | Mekanisme apa yang hendak dibuktikan eksperimen ini? |
+| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | Variabel mana yang mengubah perilaku? |
+| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | Apakah hasil dapat direproduksi dan kegagalan dicatat dengan jujur? |
+
 ## Tingkat Kesulitan
 
 | Tingkat | Bab | Cocok untuk |

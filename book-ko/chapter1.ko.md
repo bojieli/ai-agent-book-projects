@@ -496,6 +496,47 @@ LLM 애플리케이션을 만들 때는 단순한 것에서 복잡한 것으로 
 
 아래 사고 문제는 이 장의 핵심 개념을 한 단계 더 깊이 탐구하도록 구성했으며, 정답은 따로 없습니다.
 
+## 메커니즘 skeleton
+
+다음 Python 스타일 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다. 실행 가능한 SDK 구현이 아니라 설명용 pseudocode이며, 완전한 adapter와 테스트는 장별 실험에 있습니다.
+
+### ReAct control loop
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
+### Harness production boundary
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
+
+경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
+
+python은 강조 표시용 marker일 뿐 직접 실행 가능한 프로그램을 뜻하지 않습니다.
+
 ## 생각해 볼 문제
 
 1. ★★ 에이전트 시스템에 더 강한 모델, 더 풍부한 컨텍스트, 더 많은 도구 가운데 단 하나의 능력만 추가할 수 있다면 무엇을 고르겠습니까? 어떤 조건에서 선택이 달라질까요?
