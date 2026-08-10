@@ -56,14 +56,14 @@ class SafetyPolicyGate:
     # Patterns for sensitive directories (applied only to absolute / home-relative paths
     # so that legitimate relative paths are not falsely flagged after CWD resolution)
     SENSITIVE_DIR_PATTERNS = [
-        re.compile(r'/(etc|var/log|sys|proc|boot|dev|root)(?:/|$)', re.IGNORECASE), # Sensitive Linux dirs
+        re.compile(r'^/(etc|var/log|sys|proc|boot|dev|root)(?:/|$)', re.IGNORECASE), # Sensitive Linux dirs
         re.compile(r'~/(?:\.ssh|\.aws|\.gnupg|\.bashrc|\.zshrc)', re.IGNORECASE), # Sensitive user configs
         re.compile(r'^[a-zA-Z]:\\(Windows|System32|Program Files)', re.IGNORECASE), # Sensitive Windows dirs
     ]
 
     # Patterns for detecting dangerous bash / shell commands
     DANGEROUS_COMMAND_PATTERNS = [
-        (re.compile(r'\brm\s+.*(-[a-zA-Z]*r[a-zA-Z]*f|-f\s+-r|-r\s+-f|--recursive)', re.IGNORECASE), "Recursive file deletion command"),
+        (re.compile(r'\brm\s+.*(-[a-zA-Z]*(?:r[a-zA-Z]*f|f[a-zA-Z]*r)|-f\s+-r|-r\s+-f|--recursive)', re.IGNORECASE), "Recursive file deletion command"),
         (re.compile(r'\bmkfs\b|\bdd\s+if=|\b>\s*/dev/sd[a-z]', re.IGNORECASE), "Disk formatting / raw write command"),
         (re.compile(r'\b(shutdown|reboot|poweroff|init\s+[06])\b', re.IGNORECASE), "System lifecycle control command"),
         (re.compile(r'\bchmod\s+(-R\s+)?777\b|\bchown\s+(-R\s+)?root\b', re.IGNORECASE), "Dangerous permissions modification"),
@@ -162,9 +162,14 @@ class SafetyPolicyGate:
         self._cleanup_expired_tokens()
         if not token or token not in self._pending_confirmations:
             return False
-        expected_fp, _expiry = self._pending_confirmations.pop(token)
+        expected_fp, _expiry = self._pending_confirmations[token]
         actual_fp = self._fingerprint(tool_name, params)
-        return hmac.compare_digest(expected_fp, actual_fp)
+        if not hmac.compare_digest(expected_fp, actual_fp):
+            # Fingerprint mismatch: leave the token intact so the caller can retry
+            # with correct parameters instead of having it consumed by a bad attempt.
+            return False
+        del self._pending_confirmations[token]
+        return True
 
     def _extract_string_values(self, obj: Any) -> List[str]:
         """Recursively extract all string values from a nested data structure."""
@@ -209,20 +214,20 @@ class SafetyPolicyGate:
                     if pattern.search(cand):
                         return f"Path traversal attack detected in parameter value: '{s}'"
 
-                # Sensitive-directory patterns only apply to absolute or home-relative
-                # paths, so legitimate relative paths are not falsely flagged after
-                # resolution against the current working directory.
+                # Check sensitive-directory patterns on the path itself (if absolute
+                # or home-relative) and on its realpath resolution (catches relative
+                # paths that resolve into sensitive directories).
                 if os.path.isabs(cand) or cand.startswith("~"):
                     for pattern in self.SENSITIVE_DIR_PATTERNS:
                         if pattern.search(cand):
                             return f"Path traversal attack detected in parameter value: '{s}'"
-                    try:
-                        real_p = os.path.realpath(cand)
-                        for pattern in self.SENSITIVE_DIR_PATTERNS:
-                            if pattern.search(real_p):
-                                return f"Path traversal attack detected in parameter value: '{s}'"
-                    except Exception:
-                        pass
+                try:
+                    real_p = os.path.realpath(cand)
+                    for pattern in self.SENSITIVE_DIR_PATTERNS:
+                        if pattern.search(real_p):
+                            return f"Path traversal attack detected in parameter value: '{s}'"
+                except Exception:
+                    pass
 
         return None
 
