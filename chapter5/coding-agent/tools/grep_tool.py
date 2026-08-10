@@ -149,6 +149,14 @@ class GrepTool(BaseTool):
         
         if search_path.is_file():
             # Single file
+            filename = search_path.name
+            if file_type:
+                extensions = type_extensions.get(file_type, [])
+                if not any(fnmatch.fnmatch(filename, ext) for ext in extensions):
+                    return []
+            if glob_pattern:
+                if not (fnmatch.fnmatch(filename, glob_pattern) or fnmatch.fnmatch(str(search_path), glob_pattern)):
+                    return []
             files = [search_path]
         else:
             # Directory - walk recursively
