@@ -91,7 +91,7 @@ class FileTools:
         # Write the file
         try:
             resolved_path.parent.mkdir(parents=True, exist_ok=True)
-            resolved_path.write_text(content)
+            resolved_path.write_text(content, encoding="utf-8")
             
             return {
                 "success": True,
@@ -140,7 +140,7 @@ class FileTools:
         
         # Read current content
         try:
-            current_content = resolved_path.read_text()
+            current_content = resolved_path.read_text(encoding="utf-8")
         except Exception as e:
             return {
                 "success": False,
@@ -181,7 +181,7 @@ class FileTools:
         
         # Write the modified content
         try:
-            resolved_path.write_text(new_content)
+            resolved_path.write_text(new_content, encoding="utf-8")
             
             return {
                 "success": True,

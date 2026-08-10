@@ -183,8 +183,8 @@ def main():
     p.add_argument("--run", type=Path, required=True)
     args = p.parse_args()
     root = args.run
-    orpheus_manifest = json.loads((root / "orpheus_manifest.json").read_text())
-    sesame_manifest = json.loads((root / "sesame_manifest.json").read_text())
+    orpheus_manifest = json.loads((root / "orpheus_manifest.json").read_text(encoding="utf-8"))
+    sesame_manifest = json.loads((root / "sesame_manifest.json").read_text(encoding="utf-8"))
     orpheus, orpheus_failures = orpheus_analysis(root, orpheus_manifest)
     sesame, sesame_failures = sesame_analysis(root, sesame_manifest)
     adapter_verification = {
@@ -221,9 +221,9 @@ def main():
         "orpheus": orpheus,
         "sesame": sesame,
     }
-    (root / "analysis.json").write_text(json.dumps(analysis, indent=2) + "\n")
+    (root / "analysis.json").write_text(json.dumps(analysis, indent=2) + "\n", encoding="utf-8")
     failures = orpheus_failures + sesame_failures
-    (root / "failure_comparisons.json").write_text(json.dumps(failures, indent=2) + "\n")
+    (root / "failure_comparisons.json").write_text(json.dumps(failures, indent=2) + "\n", encoding="utf-8")
 
     inventory = []
     external_blob_names = {"adapter_model.safetensors", "tokenizer.json", "tokenizer_config.json"}
@@ -239,7 +239,7 @@ def main():
                     "repository": manifest["adapter_huggingface_repo"],
                     "revision": manifest["adapter_huggingface_revision"],
                 })
-    (root / "artifact_inventory.json").write_text(json.dumps(inventory, indent=2) + "\n")
+    (root / "artifact_inventory.json").write_text(json.dumps(inventory, indent=2) + "\n", encoding="utf-8")
 
     gate_lines = "\n".join(f"- {'PASS' if ok else 'FAIL'} — `{name}`" for name, ok in gates.items())
     hypothesis_lines = "\n".join(f"- {'SUPPORTED' if ok else 'NOT SUPPORTED'} — `{name}`" for name, ok in hypotheses.items())
@@ -282,7 +282,7 @@ Execution completion and hypothesis support are intentionally separate. A comple
 - Sesame: {sesame_manifest['adapter_huggingface_repo']}/tree/{sesame_manifest['adapter_huggingface_revision']}
 - Exact revisions and every retained artifact hash are in `orpheus_manifest.json`, `sesame_manifest.json`, and `artifact_inventory.json`.
 """
-    (root / "REPORT.md").write_text(report)
+    (root / "REPORT.md").write_text(report, encoding="utf-8")
 
 
 if __name__ == "__main__":

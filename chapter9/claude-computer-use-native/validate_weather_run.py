@@ -30,7 +30,7 @@ def main() -> int:
     parser.add_argument("run_dir", type=Path)
     args = parser.parse_args()
     run_dir = args.run_dir.resolve()
-    trajectory = json.loads((run_dir / "trajectory.json").read_text())
+    trajectory = json.loads((run_dir / "trajectory.json").read_text(encoding="utf-8"))
 
     calls = trajectory["api_calls"]
     actions = trajectory["actions"]
@@ -150,8 +150,8 @@ def main() -> int:
         "run_dir": run_dir.name,
         "files": files,
     }
-    (run_dir / "acceptance.json").write_text(json.dumps(acceptance, indent=2) + "\n")
-    (run_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (run_dir / "acceptance.json").write_text(json.dumps(acceptance, indent=2) + "\n", encoding="utf-8")
+    (run_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(acceptance, indent=2))
     return 0 if acceptance["passed"] else 1
 

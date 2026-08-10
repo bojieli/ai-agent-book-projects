@@ -417,7 +417,7 @@ class FilesystemEnhanced:
             # For text files, add line count
             if resolved_path.is_file() and resolved_path.suffix in ['.txt', '.py', '.md', '.json', '.yaml', '.yml']:
                 try:
-                    content = resolved_path.read_text()
+                    content = resolved_path.read_text(encoding="utf-8")
                     info["lines"] = len(content.splitlines())
                     info["characters"] = len(content)
                 except Exception:

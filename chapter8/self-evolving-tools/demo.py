@@ -168,7 +168,7 @@ def run_offline_selftest(output_path: str | None = None) -> int:
                 ],
                 "reused": reused,
             }
-            Path(output_path).write_text(json.dumps(payload, ensure_ascii=False, indent=2))
+            Path(output_path).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
             print(f"\n[已写入] {output_path}")
 
         return 0 if (reused and not bad["success"]) else 1
@@ -228,7 +228,7 @@ def run_online(tasks: list, allow_create: bool, model: str | None, output_path: 
         Path(output_path).write_text(json.dumps(
             {"mode": "online", "model": agent.model, "allow_create": allow_create,
              "runs": runs, "reused": reused},
-            ensure_ascii=False, indent=2))
+            ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"\n[已写入] {output_path}")
 
     if len(runs) < 2:

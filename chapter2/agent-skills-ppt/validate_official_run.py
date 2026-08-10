@@ -273,7 +273,7 @@ def validate(run_dir: Path) -> dict:
         "experiment_id": "2-6",
         "runtime": runtime,
         "protocol_sha256": sha256(protocol_path),
-        "official_skill_receipt": json.loads((run_dir / "official_skill_receipt.json").read_text()),
+        "official_skill_receipt": json.loads((run_dir / "official_skill_receipt.json").read_text(encoding="utf-8")),
         "agent_result": result_metadata,
         "slide_count": slide_count,
         "section_checks": section_checks,

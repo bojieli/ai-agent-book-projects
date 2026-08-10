@@ -37,17 +37,17 @@ def main() -> int:
     launch_path = output / "launch.json"
     launch_by_arm = {}
     if launch_path.exists():
-        launch = json.loads(launch_path.read_text())
+        launch = json.loads(launch_path.read_text(encoding="utf-8"))
         launch_by_arm = {row["arm"]: row for row in launch.get("launches", [])}
     supervisor_path = output / "supervisor_status.json"
     if supervisor_path.exists():
-        supervisor = json.loads(supervisor_path.read_text())
+        supervisor = json.loads(supervisor_path.read_text(encoding="utf-8"))
         for arm, pid in supervisor.get("pids", {}).items():
             launch_by_arm.setdefault(arm, {})["pid"] = pid
     result = {"seed": None, "arms": {}}
     seed_path = output / "seed_status.json"
     if seed_path.exists():
-        result["seed"] = json.loads(seed_path.read_text())
+        result["seed"] = json.loads(seed_path.read_text(encoding="utf-8"))
     else:
         live = output / "receipts" / "seed_history.jsonl"
         result["seed"] = {
@@ -56,7 +56,7 @@ def main() -> int:
         }
     for arm in ARMS:
         status_path = output / "status" / f"{arm}.json"
-        status = json.loads(status_path.read_text()) if status_path.exists() else {
+        status = json.loads(status_path.read_text(encoding="utf-8")) if status_path.exists() else {
             "completed_steps": 0,
             "target_steps": 17_280,
             "complete": False,

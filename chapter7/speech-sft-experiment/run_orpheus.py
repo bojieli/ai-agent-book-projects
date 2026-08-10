@@ -301,7 +301,7 @@ def main():
         "adapter_huggingface_revision": adapter_revision,
         "audio": base_audio + adapted_audio,
     }
-    (args.output / "orpheus_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (args.output / "orpheus_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

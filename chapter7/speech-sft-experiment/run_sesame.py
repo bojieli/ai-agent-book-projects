@@ -81,9 +81,9 @@ def patched_model_snapshot() -> Path:
     pad = {"content": "<|finetune_right_pad_id|>", "lstrip": False, "normalized": False, "rstrip": False, "single_word": False}
     for name in copied:
         path = target / name
-        data = json.loads(path.read_text())
+        data = json.loads(path.read_text(encoding="utf-8"))
         data["pad_token"] = pad if name == "special_tokens_map.json" else pad["content"]
-        path.write_text(json.dumps(data, indent=2) + "\n")
+        path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
     return target
 
 
@@ -307,7 +307,7 @@ def main():
         "adapter_huggingface_revision": adapter_revision,
         "audio": base_audio + adapted_audio,
     }
-    (args.output / "sesame_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (args.output / "sesame_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

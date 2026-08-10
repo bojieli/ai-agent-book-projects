@@ -18,7 +18,7 @@ ARMS = ("baseline", "custom_goal", "no_reflection")
 
 def atomic_json(path: Path, value: dict) -> None:
     temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(json.dumps(value, indent=2) + "\n")
+    temporary.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
     os.replace(temporary, path)
 
 
@@ -34,7 +34,7 @@ def process_alive(pid: int | None) -> bool:
 
 def arm_complete(output: Path, arm: str) -> bool:
     path = output / "status" / f"{arm}.json"
-    return path.exists() and json.loads(path.read_text()).get("complete") is True
+    return path.exists() and json.loads(path.read_text(encoding="utf-8")).get("complete") is True
 
 
 def live_receipt_has_error(
@@ -45,7 +45,7 @@ def live_receipt_has_error(
     status_path = output / "status" / f"{arm}.json"
     completed = 0
     if status_path.exists():
-        completed = int(json.loads(status_path.read_text()).get("completed_steps", 0))
+        completed = int(json.loads(status_path.read_text(encoding="utf-8")).get("completed_steps", 0))
     if completed >= target_steps:
         return False
     end = min(completed + chunk_steps, target_steps)
@@ -99,7 +99,7 @@ def main() -> int:
     output = args.output.resolve()
     status_path = output / "supervisor_status.json"
     launch_path = output / "launch.json"
-    launch = json.loads(launch_path.read_text()) if launch_path.exists() else {"launches": []}
+    launch = json.loads(launch_path.read_text(encoding="utf-8")) if launch_path.exists() else {"launches": []}
     pids = {
         row["arm"]: row.get("pid")
         for row in launch.get("launches", [])
@@ -108,7 +108,7 @@ def main() -> int:
     attempts = {arm: 0 for arm in ARMS}
     error_aborts = {arm: 0 for arm in ARMS}
     if status_path.exists():
-        previous = json.loads(status_path.read_text())
+        previous = json.loads(status_path.read_text(encoding="utf-8"))
         for arm, pid in previous.get("pids", {}).items():
             if (
                 arm in ARMS
