@@ -728,46 +728,54 @@ Agent Skills'in temel fikri, Agent'ın yeteneklerini bağımsız, yüklenebilir 
 
 [^ch2-3]: Anthropic, "Equipping Agents for the Real World with Agent Skills", 2025.
 
-**Katman 1 (Meta Veri)**: Her Skill, YAML ön ekiyle (dosyanın başında `---` ile sınırlanan bir meta veri bloğu, bir kitabın telif hakkı sayfasına benzer) başlayan, `name` ve `description` alanları içeren bir `SKILL.md` dosyası içermelidir. Agent çerçevesi, başlangıçta yüklü tüm Skill'leri tarar ve `name` ve `description`ını (yalnızca birkaç yüz token kaplayan) diyalog context'ine enjekte eder (enjeksiyon konumu için tasarım ödünleşimleri bir sonraki alt bölümde tartışılır), bu da Agent'ın büyük miktarda context tüketmeden hangi profesyonel yeteneklere sahip olduğunu bilmesini sağlar.
+**Katman 1 (Meta veri)**: Her Skill, `name` ve `description` alanlarını içeren YAML ön ekiyle (`---` ile sınırlanan meta veri bloğu) başlayan bir `SKILL.md` sağlamalıdır. Katalog, ana gövde yüklenmeden önce Agent'a görünür olmalıdır; böylece Agent her Skill'in tam context maliyetini ödemeden bir yeteneğin ilgili olup olmadığına karar verebilir. Çalışma zamanları kataloğu farklı context katmanlarına yerleştirebilir; ortak amaç tam alan iş akışını taşımak değil, keşfedilebilirlik sağlamaktır.
 
-Yönlendirme kararları, meta verideki `description` alanına bağlıdır—kısa olmalıdır (yerleşik token sayısını düşük tutmak için) ama bir özellik tanıtımı değil, bir yönlendirme koşulu olarak yazılmalıdır. En doğrudan kalıp "Şu durumda kullan / Şu durumda kullanma" artı birkaç **olumsuz örnektir**—Skill'in açıkça TETİKLENMEMESİ gereken senaryolar. Pratikte, olumsuz örneklerden yoksun açıklamalar bunun bedelini öder: belirsiz ifadeler ilgisiz görevlerde tetiklenir ve yönlendirme doğruluğu belirgin biçimde düşer; olumsuz örnekler eklemek bunu geri yükseltir. Olumsuz örnekler isteğe bağlı değildir—Skill yönlendirmesini doğru kılan şey onlardır. "Backend'e yardım et" kadar geniş bir açıklama, backend ile ilgili herhangi bir görevin Skill'i tetiklemesine izin verir; etkili bir açıklama bir yönlendirme koşuludur ve "beni ne zaman kullanmalı" "neler yapabilirim"den çok daha önemlidir.
+Meta verideki `description` alanı yönlendirme için önemlidir. Sürekli mevcut token sayısını sınırlayacak kadar kısa, ancak özellik özeti yerine yönlendirme koşulu gibi yazılmalıdır. “Şu durumda kullan / şu durumda kullanma” sınırları ve temsili **olumsuz örnekler**, geniş eşleşmelerden doğan yanlış tetiklemeleri azaltır. Bu, yönlendirme metni için bir yazım tavsiyesidir; ek bir zorunlu alan değildir. “Backend'e yardım et” gibi bir açıklama neredeyse her backend görevinde tetiklenebilir; etkili açıklama Skill'in ne yaptığını değil, ne zaman kullanılacağını söyler.
 
-**Katman 2 (Temel İş Akışı)**: Agent, bir görev için belirli bir Skill'in gerekli olduğuna karar verdiğinde, özel bir Skill aracı aracılığıyla eksiksiz `SKILL.md`ı yükler ve içerik konuşma geçmişinde bir araç sonucu olarak görünür. PPTX Skill'ini[^ch2-4] örnek alırsak, PowerPoint dosyalarını ele almak için temel iş akışını içerir: markitdown (Microsoft'un açık kaynak doküman-Markdown dönüştürme aracı) aracılığıyla metin nasıl çıkarılır, ham XML yapısına erişmek için PPTX dosyası nasıl açılır (unzip) ve kilit dosyaların yol kuralları.
+**Katman 2 (Temel İş Akışı)**: Agent belirli bir Skill'in gerekli olduğuna karar verdiğinde, çalışma zamanı tam `SKILL.md`ı ancak o anda yükler. Claude Code Skill talimatlarını çağrı noktasında user message olarak ekler; diğer çalışma zamanları dosya okuyabilir veya özel bir araç etkinleştirip içeriği tool result olarak döndürebilir. PPTX Skill'i[^ch2-4], PowerPoint dosyalarını işlemek için markitdown ile metin çıkarma, PPTX'i açarak ham XML yapısına erişme ve önemli dosyaların yol kuralları gibi temel akışı içerir.
 
 [^ch2-4]: Anthropic, "PPTX Skill", 2025. https://github.com/anthropics/skills/
 
+[^ch2-codex-skills]: OpenAI, “Build skills”, Codex belgeleri. https://developers.openai.com/codex/skills/
+
 **Katman 3 (Ayrıntılar)**: Dosya referansları, daha ayrıntılı alt dokümanlara daha derin gezinmeye izin verir. Ana dosya, `html2pptx.md`e (HTML şablonlarından PowerPoint oluşturmanın ayrıntılı iş akışı), `reference.md`e (format teknik ayrıntıları) ve diğerlerine referans verir. Agent, belirli ihtiyaçlara göre ilgili alt dokümanları seçici olarak okur.
 
-Skills yalnızca talimat dokümantasyonu içermekle kalmaz, aynı zamanda çalıştırılabilir kod araçlarını ve şablon dosyalarını da paketleyebilir—salt bilgi aktarımından gerçek yetenek güçlendirmesine yükselir.
+### Kullanılabilir bir Skill nasıl yazılır?
+
+Çalışma zamanı yapısı “ne zaman yüklenir” ve “ne kadarı yüklenir” sorularını çözer; içeriğin ise deneyimi modelin uygulayabileceği talimatlara dönüştürmesi gerekir. Yararlı bir Skill yeni ekip üyesine hangi göreve uygulandığını, hangi sırayla hareket edileceğini, ne zaman durup onay isteneceğini ve tamamlanmanın ne demek olduğunu anlatmalıdır.
+
+Baoyu'nun *Skill'lerin görsel rehberi*[^ch2-baoyu-remove-ai-writing-flavor] doğrultusunda dört bölümle başlayın:
+
+- **Rol ve okuyucu**: Skill kime hizmet eder, hangi görevi kapsar ve çıktı hangi standardı karşılamalıdır;
+- **Temel ilkeler**: üç ila beş önemli karar ve ana ilkeler için olumlu/olumsuz örnekler;
+- **Yasaklar**: sık hatalar, kapsam dışı eylemler ve meşru istisnalarıyla birlikte kafa karıştırıcı ifadeler;
+- **Referanslar**: sözlükler, şablonlar, örnekler ve ayrıntılı alt belgeler. Kuralları giderek büyüyen yasaklı sözcük listesi yerine “kapsam + eylem + istisna + doğrulama” olarak yazın.
+
+Bir yazım Skill'i üç ila beş kendi metninizden başlayabilir. Agent'tan sözcük seçimini, cümle kalıplarını, paragraf yapısını ve tonu çıkarmasını isteyin; kısa bir ilk taslak üretip gerçek bir göreve uygulayın ve cümle cümle düzeltin. “Daha doğal yap” demektense özgün metin ile düzeltme arasındaki farklar daha bilgilendiricidir: silinen sözcükleri, bölünen uzun cümleleri ve eklenen olguları gösterir. Tekrarlanan değişiklikleri Skill'e geri yazın; her kural için olumlu/olumsuz örnekleri ve kapsamı koruyun.
+
+Skill'ler çalıştırılabilir kod araçlarını ve şablon dosyalarını da paketleyebilir. Örneğin bir sunum Skill'i slayt şablonları ve sunumları ayrıştıran betikler içerebilir.
 
 Skills'in değeri yalnızca zarif context yönetiminde değil, aynı zamanda alan bilgisi biriktirmek için sürdürülebilir bir yol sağlamasında da yatar. Her Skill, bağımsız olarak geliştirilebilen, test edilebilen, sürüm kontrollü olabilen ve paylaşılabilen kendi kendine yeten bir bilgi modülüdür. Bu modülerlik, Agent yetenek genişletmesini merkezi system prompt düzenlemesinden dağıtık, topluluk odaklı bir Skill ekosistemine dönüştürür—açık kaynak yazılım paket yönetim sistemlerine (Python'un pip'i, Node.js'in npm'i gibi) derinden benzer, her Skill belirli bir alan için en iyi uygulamaları kapsüller. Anthropic'in resmi Skills deposu zaten doküman işleme (PPTX, PDF, DOCX), veri analizi, kod üretimi ve diğer alanları kapsıyor, geliştiricilerin mevcut Skill'leri kullanmasına, özelleştirmesine veya tamamen yeni Skill'ler oluşturmasına izin veriyor.
 
-Bu, Agent geliştiricileri için önemli bir ilkeyi ortaya koyar: **bir Agent etkileşim modu seçerken, model tedarikçisinin eğitim metodolojisiyle uyumlu olun**. Claude ile Agent'lar inşa ederken, Skills'ten ve yapılandırılmış system prompt'lardan tam olarak yararlanın; başka modeller kullanırken, o model tedarikçisi tarafından özel olarak optimize edilen etkileşim kurallarını benimseyin. Temel model şirketlerinin teşvik ettiği Agent kullanım kalıpları özünde özel olarak eğittikleri modlardır, bu da aynı ekosistem içindeki modellerin doğal olarak en iyi performansı göstermesini sağlar.
+Bu, Agent geliştiricileri için önemli bir ilkeyi ortaya koyar: **bir Agent etkileşim modu seçerken model tedarikçisinin eğitim metodolojisiyle uyumlu olun**. Temel model şirketlerinin teşvik ettiği Agent kullanım kalıpları, çoğu zaman modellerinin özellikle desteklemek üzere eğitildiği modları yansıtır.
 
-### Skills Uygulama Yöntemleri ve Ödünleşimler
+[^ch2-baoyu-remove-ai-writing-flavor]: Baoyu, “Yapay zekâ tadını prompt'larla gidermeyin; yön yanlış,” 14 Şubat 2026. https://baoyu.io/blog/2026-02-14/remove-ai-writing-flavor
 
-Skills'in ne olduğunu anladıktan sonra, bir sonraki soru daha somut bir mühendislik sorunudur: Skill içeriği context'in neresine yerleştirilmelidir? Bu, KV Cache verimliliğini ve modelin talimat izleme etkinliğini doğrudan etkileyen temel bir tasarım kararıdır. Teoride, iki basit yaklaşım vardır, ama ikisinin de önemli maliyetleri vardır; üretim uygulaması (örn. Claude Code) her ikisinin de sıkıntılı noktalarından kaçınan üçüncü bir yaklaşım kullanır.
+### Skills'in Context'teki Konumu
 
-**Yaklaşım Bir: System Prompt'a Enjekte Etme (system mesajı)**. Skill içeriğini doğrudan system prompt'a ekleyin. Modelin talimat izleme yeteneği system konumundaki içerik için en güçlüdür (çünkü eğitim bu konumdaki talimatları yoğun biçimde kullanır), bu yüzden Skill yürütmesi en etkilidir. Sorun: her yeni Skill yüklendiğinde, system mesajı içeriği değişir, KV Cache ön ekini geçersiz kılar. Agent sık sık Skill değiştiriyorsa (örn. bir görev önce bir arama Skill'i, ardından bir doküman Skill'i kullanmayı gerektiriyorsa), cache tekrar tekrar geçersiz olur, gecikmeyi ve maliyeti önemli ölçüde artırır.
+Skills'in context maliyetini değerlendirirken meta veri kataloğu ile tam Skill talimatlarını ayırın:
 
-**Yaklaşım İki: Sıradan bir dosya olarak okuma, içerik context'in ortasında görünür**. Agent, Skill dosyasını genel bir dosya okuma aracı aracılığıyla okur ve dosya içeriği konuşma geçmişinde bir araç sonucu olarak—yani context'in ortasında—görünür. Bu yaklaşım KV Cache'i hiç etkilemez (system prompt değişmeden kalır), ama modelin **talimat izleme** yeteneğine daha yüksek talepler getirir: model, Skill'i uzun bir context'in ortasında yalnızca "başvurulacak" sıradan bir araç çıktısı olarak ele almak yerine, içindeki talimatları doğru biçimde tanımlamalı ve izlemelidir. Pratikte, farklı modeller bu modu desteklemede önemli ölçüde farklılık gösterir—Claude en güvenilir performansı gösterir çünkü eğitimi orta konumda talimat izleme verisini yoğun biçimde kullanır; diğer modeller genellikle context'in ortasına enjekte edilen talimatları izlerken kötüleşir.
+- **Standart düzeyi ilkesi**: mekanizma mesaj rollerini değil yükleme sırasını tanımlar. Katalog gövdeden önce keşfedilebilir olmalı, gövde Skill seçildikten sonra ihtiyaç halinde yüklenmelidir. Roller, sarmalayıcılar ve kataloğun her turda yeniden oluşturulması Agent Harness seçimleridir.
+- **Claude Code kavramsal olarak**: küçük bir kataloğu çalışma zamanı context'i olarak sunar ve tam talimatları Skill'in çağrıldığı noktaya ekler. “System prompt” mantıksal olarak sabit talimat katmanını anlatabilir; tüm istemcilerin API `system` rolünü kullandığı anlamına gelmez.
+- **Codex kavramsal olarak**: her tur context'i oluşturulurken Skills kataloğunu `developer` context'inde yeniden işler; açıkça seçilen Skill'i `<skill>` işaretli `user` context'i olarak enjekte eder. Diğer kaynaklardaki Skill'ler araçlarla ihtiyaç halinde okunabilir.[^ch2-codex-skills]
 
-**Yaklaşım Üç (Üretim Uygulaması): Dinamik context olarak sunulan meta veri, özel bir araçla ihtiyaç halinde yüklenen eksiksiz içerik**. Claude Code'un temel yaklaşımı Skill "yönlendirmesini" "yürütmeden" ayırmaktır: model önce kullanılabilir Skill'lerin meta verisini alır ve mevcut görevin belirli bir Skill gerektirip gerektirmediğini buna göre belirler; eksiksiz `SKILL.md` ancak Skill seçildikten sonra yüklenir. Bu tasarım context yükünü, Prompt Cache'in yeniden kullanımını ve talimat izleme yeteneğini dengeler.
-
-- **Meta veri listesi**—kurulu tüm Skill'lerin `name` + `description` alanları (genellikle yalnızca birkaç yüz token)—modelin mevcut görevle ilgili Skill'leri belirleyebilmesi için önceden erişilebilir kılınır. Önemli nokta şudur: **bu meta veriyi context'e enjekte etmek için kullanılan mesaj rolü, Claude Code Agent Harness'inin bir uygulama ayrıntısıdır; Agent Skills mekanizmasının sabit bir gereksinimi değildir**. Claude Code'un bazı tarihsel sürümlerinde bu tür dinamik context, `<system-reminder>` ile sarılmış user rolü içeriği olarak görünüyordu; konuşma ortasında system mesajlarını destekleyen daha yeni uygulama yolları ise sona eklenen system rolü bir context bloğu kullanabilir. Gösterim ne olursa olsun ortak amaç, kararlı context ön ekini tekrar tekrar yeniden yazmadan modeli o anda kullanılabilir Skill'lerden haberdar etmektir.
-- **Eksiksiz içerik**—model, meta veriden bir Skill'in mevcut görev için uygun olduğunu belirlediğinde, ilgili `SKILL.md`ı Skill aracı aracılığıyla ihtiyaç halinde okur ve içerik o anki yürütme context'ine girer. Böylece oturum başında her Skill'in eksiksiz talimatlarını yüklemekten kaçınılır ve ilgisiz context miktarı azaltılır.
-
-Bu nedenle iki düzeyi ayırmak önemlidir: **"Skill meta verisi modele önceden görünür olmalıdır" görece kararlı bir mekanizmadır; "user rolü, system rolü veya `<system-reminder>` gibi bir sarmalayıcı" ise sürüme özgü bir uygulama tercihidir.** `<system-reminder>`, yalnızca Agent Skills'e ait bir protokol biçimi değil, Claude Code Agent Harness'inin dinamik system context enjekte etmek için kullandığı gösterimlerden biridir.
-
-Az miktarda kataloğu sürekli hazır tutup tam içeriği ihtiyaç halinde yükleyen bu iki katmanlı tasarım, Skills'in keşfedilebilirlik ile context maliyetini birlikte dengelemesini sağlar.
-
-Bu tasarımın etkisini sezgisel olarak anlamak için, aşağıdaki iki şekil, Skills'in trajectory'deki konumunu ve KV Cache'in evrimini iki perspektiften izler.
+Agent Harness'ler hızla geliştiği için somut gösterimler değişebilir. Sabit ilke **küçük ve keşfedilebilir bir katalog tutmak, tam gövdeyi ihtiyaç halinde yüklemektir**. Aşağıdaki iki şekil Skills'in trajectory'deki konumunu ve KV Cache'in evrimini gösterir.
 
 ![Şekil 2-12: Skills etkinleştirildikten sonra Agent Trajectory'sinin eksiksiz yapısı](images/fig2-12.svg){height=55%}
 
 ![Şekil 2-13: Agent Trajectory'si büyüdükçe KV Cache'in evrimi](images/fig2-13.svg)
 
-Yaygın bir yanlış anlama netleştirilmeye ihtiyaç duyuyor: "KV Cache dostu" "sıfır maliyet" anlamına gelmez—o birkaç yüz ila birkaç bin token'ın ilk üretimi hâlâ bir yazma maliyetine yol açar (daha önce belirtildiği gibi, Prompt Cache yazmaları hatta prim ücretlendirilir). Kesin anlamı **bir kez yaz, sonsuza kadar yararlan**dır: modelin bir skill'in varlığından veya bir doküman içeriğinden haberdar olması için, bunun en az bir kez cache'e girmesi gerekir; Claude Code'un başardığı şey bu maliyeti yalnızca bir kez ödemek, tüm oturum için tekrar etmemektir. Alternatifle karşılaştırın—aynı bilgiyi system prompt'a tıkıştırmak: her güncelleme tüm alt akış trajectory'sini geçersiz kılar, onu cache_creation'a geri zorlar (on binlerce ila yüz binlerce token mertebesinde). Gerçekten cache-dostu olmayan şey budur.
+Yaygın bir yanlış anlama netleştirilmeli: “KV Cache dostu” “sıfır maliyet” anlamına gelmez. Katalog bir isteğe ilk girdiğinde işlenmeli, Skill gövdesinin ilk yüklenmesi de ek hesaplama getirmelidir; yerleşik prefix sabit kaldığında sonraki istekler cache'i yeniden kullanabilir. Harness'ler kataloğu farklı biçimlerde yeniden oluşturur, ancak ortak yarar tüm Skill gövdelerini başlangıçta yüklememek ve yeni bir Skill çağrıldığında kurulmuş context'i yeniden yazmamaktır.
 
 ### Skills ve Tools Arasındaki İlişki
 
@@ -792,7 +800,7 @@ Context yönetimi açısından Skills mekanizması KV Cache ile son derece uyuml
 
 ![Şekil 2-14: Agent Durum Çubuğu Mimarisi](images/fig2-14.svg)
 
-Skills için Yaklaşım Üç tanıtılırken, önceki bölüm zaten "context'in sonundaki user rolündeki meta mesajın" genel bir meta bilgi enjeksiyon kanalı olduğunu belirtmişti—Skill meta veri listesi bunun yalnızca bir kullanımıdır. Bu bölüm o kanalı sistematik olarak geliştirir: Agent çerçevesinin her türlü dinamik durumu modelle senkronize ettiği birleşik mekanizma, **Agent Durum Çubuğu** olarak adlandırılır.
+Önceki bölüm Skills'in ihtiyaç halinde hangi yetenekleri sunduğunu ele aldı. Bu bölüm ayrı bir sorunu inceler: modelin görev ilerlemesini, ortam değişikliklerini ve araç çağrısı sayılarını nasıl sürekli göreceği. Agent çerçevesi bu dinamik bilgiyi yapılandırılmış bir durum özeti olarak context'e enjekte eder; bu mekanizmaya **Agent Durum Çubuğu** denir.
 
 Daha önce tartışılan prompt engineering, "modele hangi statik talimatların verileceği" sorununu çözdü. Ancak gerçek yürütme sırasında, Agent'ın kendi durumunu ve görev ilerlemesini dinamik olarak algılaması da gerekir—işte burada Agent Durum Çubuğu devreye girer.
 
