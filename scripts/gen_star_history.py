@@ -117,12 +117,22 @@ def fetch_starred_at(repo: str, refresh: bool) -> list[str]:
     return starred
 
 
+def parse_iso_timestamp(s: str) -> datetime:
+    """Parse ISO-8601 timestamps (including fractional seconds and offsets) into UTC."""
+    s = s.strip()
+    if s.endswith("Z") or s.endswith("z"):
+        s = s[:-1] + "+00:00"
+    dt = datetime.fromisoformat(s)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    else:
+        dt = dt.astimezone(timezone.utc)
+    return dt
+
+
 def build_series(starred: list[str], start: datetime) -> tuple[np.ndarray, np.ndarray]:
     """Cumulative star count per star event, cropped to `start` (UTC)."""
-    times = [
-        datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
-        for s in starred
-    ]
+    times = [parse_iso_timestamp(s) for s in starred]
     base = sum(1 for t in times if t < start)
     times = [t for t in times if t >= start]
     # Anchor the line at the start date so the curve begins at the axis edge.
@@ -287,7 +297,7 @@ def main() -> None:
     parser.add_argument("--refresh", action="store_true", help="ignore the timestamp cache")
     args = parser.parse_args()
 
-    start = datetime.strptime(args.start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+    start = parse_iso_timestamp(args.start_date)
     starred = fetch_starred_at(args.repo, refresh=args.refresh)
     x, y = build_series(starred, start)
 
