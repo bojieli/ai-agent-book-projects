@@ -2,6 +2,10 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+import pytest
+
+pytest.importorskip("matplotlib")
+
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 
 from gen_star_history import build_series, parse_iso_timestamp
