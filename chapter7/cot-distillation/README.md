@@ -1,3 +1,13 @@
+## Code map
+
+- **Run first:** python generate_data.py --max_problems 2 (a bounded teacher-trajectory smoke).
+- **Start here:** generate_data.py produces raw and verified trajectories.
+- **Core behavior:** train_student.py masks prompt tokens and updates the student; evaluate_student.py runs the paired comparison.
+- **State / protocol:** JSONL messages, answer-validation fields, checkpoint directory and training manifest.
+- **Verifier:** exact answer validator, paired sign test and reflection/backtracking audit.
+- **Experiment variable:** teacher endpoint/model, sampling budget, student base model and LoRA settings.
+- **Skip on first pass:** provider retry code, tokenizer diagnostics and long raw trajectory files.
+
 ## English
 
 # CoT Distillation: Collecting SFT Data from Frontier Cloud Models
@@ -37,13 +47,13 @@ cd chapter7/cot-distillation
 cp env.example .env
 
 # Small smoke test with two problems
-python collect.py --limit 2
+python generate_data.py --max_problems 2
 
 # Collect the full set of 24 AIME problems
-python collect.py
+python generate_data.py
 
 # Inspect dataset statistics
-python stats.py output/sft_data.jsonl
+python analyze_data.py
 
 # Real parameter update (CUDA; no mock/CPU success fallback)
 python train_student.py --preflight
@@ -55,7 +65,7 @@ python evaluate_student.py --student-model checkpoints/cot-student \
   --teacher-data data/raw_trajectories_aime_kimi_k3.jsonl
 ```
 
-Provider, model, concurrency, retry, and output settings can be configured through command-line arguments and environment variables. See `python collect.py --help` for the complete list.
+Provider, model, concurrency, retry, and output settings can be configured through command-line arguments and environment variables. See `python generate_data.py --help` for the complete list.
 
 ## Output
 

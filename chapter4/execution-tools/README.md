@@ -5,6 +5,16 @@
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
 
+## Code map
+
+- **Run first:** `python cli.py demo` (offline end-to-end path).
+- **Start here:** `cli.py::cmd_demo` constructs `ExecutionTools`; `execution_tools.py::ExecutionTools` is the shared execution surface.
+- **Core behavior:** `file_tools.py::FileTools`, `terminal_controller.py::TerminalController` and `multilang_executor.py::LanguageExecutor` implement validation, execution and output handling.
+- **State / protocol:** `experiment_protocol.json`, workspace boundaries, approval flags and structured tool-result fields.
+- **Verifier:** `test_execution_tools.py`, `test_file_tools.py`, `test_terminal_controller.py` and `run_experiment_4_3.py` acceptance gates.
+- **Experiment variable:** approval, syntax verification, long-output summarization/truncation and sandbox settings.
+- **Skip on first pass:** MCP transport, calendar/GitHub integrations and provider-specific LLM adapters.
+
 ---
 
 ## English

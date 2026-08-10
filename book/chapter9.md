@@ -28,6 +28,24 @@ OpenAI 在 GPT-Live 的介绍中用“级联、轮次式、全双工”概括了
 
 贯穿三种范式的主线是：如何摆脱“轮流说话”和 VAD 对发言权的猜测。级联和 Omni 仍要划分轮次，只有全双工把“该谁说话”变成模型的持续决策。
 
+级联系统从串行变成流式时，最重要的不是把每个函数改成 `async`，而是允许**增量结果失效并被取消**：
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
+`partial` 只能触发可撤销的抢跑；最终转录、已播报音频和工具副作用要有明确的提交边界。
+
 [^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ 。本节“级联 / 轮次式 / 全双工”三分法即出自该文对 ChatGPT 语音三代演进的总结；文中“端到端全模态（Omni）”对应其“turn-based voice models”一类。
 
 ### 范式一 · 级联流水线（Cascading）
@@ -210,6 +228,24 @@ Computer Use（也称 GUI 自动化 Agent）让 AI 像人类一样通过观察�
 3. 执行层在真实环境中执行该动作（移动鼠标、点击、输入文字等）
 4. 等待界面响应后再次截图，进入下一轮循环
 
+把这个循环写成 skeleton 后，安全边界会更直观：
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+截图、无障碍树和动作执行是环境适配器；模型只提出候选动作，不能凭上一轮的文字宣称跳过新观察。
+
 这里要区分“看懂界面”和“完成任务”。前者更接近多模态理解能力，可以用一次截图问答来测量；后者则要求模型把理解和生成动作放进闭环，处理页面加载、状态变化、误操作和不可逆后果。Computer Use 的难点因此不只是让模型在截图上答对，而是让它在每一步之后重新确认现实是否仍符合计划。
 
 
@@ -258,7 +294,7 @@ Anthropic 的参考实现把完整交互能力分成三类工具（图9-8）。�
 3. 为每个可交互元素标注唯一 ID 并在截图上绘制边界框
 4. 同时生成文本列表描述每个 ID 对应的元素
 
-```
+```text
 Screenshot: [图片中关键元素标注了 [1]、[2]、[3]、[4] 等 ID]
 
 Elements:
@@ -389,15 +425,15 @@ XLeRobot 支持键盘、Xbox 手柄、Switch Joy-Con 和 VR 设备等遥操作�
 
 用户说“把桌面整理干净”时，系统不能把这句话直接交给动作模型。规划器要先列出场景中的物体和目标，再决定先后顺序，并为每一步写清楚开始条件、完成条件和风险限制。例如：
 
-~~~
+```text
 处理红色杯子 → 清理黄色纸张 → 检查桌面
-~~~
+```
 
 “处理红色杯子”还要继续拆成两个动作和一次检查：
 
-~~~
+```text
 pick(red_cup) → place(red_cup, tray) → verify_state()
-~~~
+```
 
 每完成一个技能，就得到一个可以检查的节点。如果抓取失败，只重试当前这一步；如果物体被人挪动了，或者用户改变了目标，只需要重新规划受影响的后续步骤，不必把旧计划全部重做。给智能体的工具也应该足够简单：一次调用只做一件事，动作范围固定，有超时限制，执行后立即重新观察。
 
@@ -415,15 +451,30 @@ pick(red_cup) → place(red_cup, tray) → verify_state()
 
 VLA 是 Vision-Language-Action 的缩写，中文可以理解为“视觉—语言—动作模型”。它接收当前画面和一条技能指令，然后输出机器人接下来要执行的动作：
 
-~~~
+```text
 当前观察 + 技能指令 → 动作
-~~~
+```
 
 在 XLeRobot 的例子里，高层规划器只提交 `pick(red_cup)`，VLA 或技能策略还要根据当前画面决定从哪个方向接近杯子、夹爪何时闭合、手臂以什么轨迹抬起。执行层完成这一小段运动后重新拍摄桌面，只有确认杯子确实被夹住，规划器才允许提交 `place(red_cup, tray)`。因此，工具调用定义的是期望的状态变化，VLA 定义的是如何通过连续动作实现这个状态变化。
 
 RT-2 和 OpenVLA 把连续动作切成离散的 token，再像生成文字一样逐个输出；π₀ 则代表另一条路线，直接生成连续、平滑的动作轨迹。两种方法没有简单的高下之分：离散 token 更容易和语言模型结合，连续轨迹通常更适合表达平滑运动。真正的取舍在于动作应该怎样表示，而不只是模型大小。[^ch9-15]
 
 大模型每秒通常只能推理 1—10 次，而传统控制器每秒可能要更新几十到上千次。工程上常用“动作分块”：模型一次生成一小段未来动作，控制线程按较高频率执行这一小段，模型则在后台准备下一段。这样可以把一部分推理等待藏在动作执行时间里。代价是，动作段越长，运动越平滑，模型在这段时间里看到的新画面却越少；如果 XLeRobot 伸手抓杯子时杯子被碰动，它可能仍在执行根据旧画面生成的动作。因此，动作分块是在平滑性和反应速度之间做取舍，而不是没有代价的加速。
+
+动作分块通常需要一个“预测—执行—抢占”骨架，而不是一次性执行到底：
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+短 chunk 反应更快但增加模型调用，长 chunk 更平滑但更容易使用过时观察；实验 9-10 在模拟器中比较这类取舍，实验 9-9 才涉及真实硬件安全边界。
 
 ### VLA 的局限
 
@@ -440,12 +491,12 @@ RT-2 和 OpenVLA 把连续动作切成离散的 token，再像生成文字一样
 
 可以把世界模型理解成一个“动作结果预测器”。它学习的是：在当前状态下采取某个动作，下一刻的状态可能怎样变化。
 
-~~~
+```text
 当前状态 + 候选动作
     → 预测下一状态或未来片段
     → 比较候选结果
     → 选择动作、重新规划或安全停止
-~~~
+```
 
 一个能用于机器人的世界模型，至少要做好三件事：
 
@@ -489,14 +540,14 @@ RT-2 和 OpenVLA 把连续动作切成离散的 token，再像生成文字一样
 
 语音、Computer Use 和机器人分别把这个问题放在声音、数字界面和物理世界中。它们可以按同一条主线理解：
 
-~~~
+```text
 持续感知
   → 判断当前状态与时机
   → 选择回复或动作
   → 让输出进入环境
   → 观察反馈
   → 继续、修正、重试、停止或重新规划
-~~~
+```
 
 语音部分比较了级联流水线、端到端 Omni 和全双工交互三种范式，核心变化是从“轮流说话”转向持续听说，并在前台实时交互与后台深度思考之间进行分工。Computer Use 把同一个闭环具体化为“截图—动作—新截图”，其主要瓶颈已从单纯的能否完成任务，扩展到操作效率、连续视觉理解和状态确认。
 

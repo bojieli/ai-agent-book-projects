@@ -14,13 +14,11 @@
 
 ## 用户记忆系统
 
-要构建真正具备个性化、连续性服务的 AI Agent，用户记忆（User Memory）系统是不可或缺的核心能力。记忆并非简单记录用户说过的每一句话。正如我们在与朋友相处时，不会记住每次对话的原始内容，而是通过持续交互，在脑海中逐渐形成一个关于对方的生动模型——他的爱好、习惯和价值观。这个模型让我们能够理解甚至预测他们的需求。
-
-用户记忆系统的本质是一个主动的、持续的学习过程，其目标是构建一个关于用户的简洁而有效的预测模型。它投入额外的算力（通过专门的 LLM 调用来分析、总结和结构化信息），将分散在冗长对话历史中的关键信息进行显式提取和压缩。这与上下文学习形成对比——用户记忆是持久的、可审查的，上下文学习则是临时的、会话结束就消失。
+要让 Agent 跨会话提供个性化服务，需要一层持久的用户记忆。它不保存每句对话，而是用额外的 LLM 调用提取、压缩并审查对未来有用的事实；这与只在当前窗口生效的上下文学习不同。
 
 用一个具体的例子来理解这个过程。假设用户和 Agent 有以下对话：
 
-```
+```text
 User: Help me book a flight to Tokyo next Friday. I prefer window seats
       and I'm vegetarian, so I'll need a special meal.
 Agent: I'll search for flights to Tokyo for next Friday...
@@ -32,7 +30,7 @@ User: Yes, and use my United MileagePlus number 12345678.
 
 这段对话结束后，Agent 框架会调用一次专门的 LLM 来分析对话内容，提取出值得长期记住的信息：
 
-```
+```text
 Extracted memories:
 - User prefers window seats (preference)
 - User is vegetarian, needs special meals on flights (dietary restriction)
@@ -40,13 +38,24 @@ Extracted memories:
 - User has travel plans to Tokyo (recent activity)
 ```
 
-注意这个提取过程的几个关键特征：
+上面的列表展示的是**提取结果**，不是记忆系统的完整运行逻辑。把“什么时候读、什么时候写、谁来审核”补齐后，生命周期可以压缩为下面四步 Python 风格伪代码：
 
-**选择性**——Agent 不会记住 “搜索返回了 3 个选项” 这种临时信息，只保留对未来有用的事实；
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
 
-**抽象化**——“I prefer window seats”被提炼为一条通用偏好，而不是绑定到这次具体的航班；
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
 
-**结构化**——不论使用 Markdown、JSON 或者其他格式，良好的组织结构都方便后续检索。下次用户订机票时，Agent 无需再问座位偏好和餐食需求，因为这些信息已经在记忆中了。
+提取器可以提出候选，但不能自行把未核验的字符串当成事实；更新策略还应记录来源、时间和冲突版本。
+
+提取结果应同时满足三条规则：**选择性**（丢弃“搜索返回 3 个选项”这类短期细节）、**抽象化**（把本次“靠窗座位”归纳为长期偏好）和**结构化**（用可检索的字段保存事实）。
 
 ### 记忆能力的评估：三层次框架
 
@@ -120,59 +129,76 @@ Extracted memories:
 
 ### 进阶知识表示形态：可执行代码
 
-前面四种格式无论简单还是复杂，本质上都是**文本**——于是记忆的“存”和“用”始终是分开的两步：先把相关文本捞回来，再交给容易出错的 LLM 去读、去算。文本记忆擅长召回单条事实，却难以在众多记录上做聚合统计、发现相互矛盾的事实、或强制执行逻辑规则，因为这些操作都要靠 LLM“心算”。User as Code[^uac] 提出的解法是把表示的介质从文本换成**可执行代码**：让 Agent 对用户的模型本身就是一个**活的软件工程**——用带类型的 Python 对象保存用户状态，用普通 Python 函数编码约束规则，使得“表示用户”和“推理用户”发生在同一个可被解释器运行的介质里。
+前面四种格式本质上都是文本：擅长召回单条事实，却要把聚合、冲突发现和约束执行交给 LLM“心算”。User as Code[^uac] 把用户状态改成带类型的可执行对象，并把规则写成普通函数，让“表示”和“推理”使用同一种可验证介质。
 
-它把记忆的更新拆成两阶段[^uac]：**记忆阶段**（每次会话后，LLM 把对话中的事实逐条抽成字符串，追加到一个只增不删的事实日志里）与**结构化阶段**（周期性地，LLM 从完整的事实日志重新生成整份带类型的 Python——把事实组织进 dataclass，日期用 `date()`、集合用带类型的列表、难以类型化的杂项进 `notes: list[str]`）。这正是数据库里 “预写日志 + 周期性检查点” 的经典设计第一次被用到 LLM 记忆上：只增日志保证不丢失任何事实，周期检查点则把它压缩成整洁、可查询的结构。（这个周期性重构过程与本章后文“记忆压缩与整理机制”一脉相承，只是产物是代码而非文本。）
+它借鉴“预写日志 + 检查点”：会话后先把事实追加到只增日志，周期性再从完整日志重建带类型状态。这样既保留原始证据，也得到可查询、可执行的派生状态。
 
-下面是一个简化的例子。结构化阶段把用户的护照和行程存成带类型的状态：
+先把两阶段的边界写成伪代码，再看一个很短的状态片段：
 
 ```python
-from datetime import date
+append_only_log += extract_facts(conversation)
 
-passport = PassportInfo(
-    number="AB1234567", country="US",
-    expiry_date=date(2025, 2, 18),
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+这段 skeleton 只说明“日志先保真、检查点后结构化”的时序。
+
+下面是一个简化的状态片段，说明类型化状态和规则如何衔接：
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
+```
+
+带类型的状态把原本需要 LLM“读一遍再心算”的操作交给确定性函数。**聚合统计**例如：
+
+```python
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
 )
-trips = [
-    Trip(destination="Tokyo", departure_date=date(2025, 1, 15),
-         is_international=True),
-    # ... 其余行程
-]
+# => 2
 ```
 
-有了带类型的状态，此前只能靠 LLM “读一遍文本再心算” 的三件事，现在都变成了确定性的代码：
-
-其一，**聚合统计**。“我去年出了几次国？”——在文本记忆里要把所有行程召回再逐条数，记录一多就容易出错；而在 User as Code 里就是一行表达式，正确率接近 100%[^uac]：
-
-```python
->>> sum(1 for t in trips if t.is_international and t.departure_date.year == 2025)
-2
-```
-
-其二，**冲突发现**。把 “当前用药” 和 “过敏史” 两份状态放在一起，一个函数就能按药物类别交叉比对，揪出散落在不同对话里、文本形式下几乎不可能自动关联的矛盾：
+**冲突发现**可以把当前用药和过敏史交叉比对：
 
 ```python
 def check_drug_allergy(profile):
-    for med in profile.current_medications:
+    for medication in profile.current_medications:
         for allergy in profile.allergies:
-            if med.drug_class == allergy.drug_class:
-                yield (f"用药冲突：{med.name} 属于 {med.drug_class} 类，"
-                       f"而患者对 {allergy.allergen} 严重过敏")
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
 ```
 
-其三，**约束执行**。Agent 可以把这样的检查函数固化下来，在状态每次更新时自动触发——不需要用户开口、也不需要检索，就能主动提醒。比如一条护照有效期约束：出国行程的出发日距护照到期不足 180 天就报警。
+**约束执行**则在状态更新后自动检查护照有效期，不必等用户再次检索：
 
 ```python
 def check():
-    for trip in trips:
+    for trip in state.trips:
         if trip.is_international:
-            days = (passport.expiry_date - trip.departure_date).days
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
             if days < 180:
-                yield (f"护照 {passport.expiry_date} 到期，距 {trip.destination} "
-                       f"行程仅剩 {days} 天，请尽快续办")
+                alert("passport expires too soon", trip, days)
 ```
 
 [^uac]: 把用户记忆建成可执行代码工程的完整设计与评测见 Li, Bojie. *User as Code: Executable Memory for Personalized Agents.* arXiv:2606.16707, 2026.
+
 ### 用户记忆的认知科学基础
 
 我们已经看到了四种具体的记忆策略，现在用认知科学的框架来补充另一个维度的理解——记忆内容的类型。
@@ -292,6 +318,22 @@ answer = llm.generate(system="你是客服助手。", context=results, question=
 ```
 
 两个例子的模式完全一致：**检索相关片段 → 注入上下文 → LLM 基于上下文生成答案**。RAG 的核心价值在于让 LLM 能利用它训练时没见过的知识（维基百科的最新内容、公司的内部文档），而不需要重新训练模型。
+
+把离线建索引、在线检索和重排序分开后，混合 RAG 的控制流如下：
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
 
 检索器的质量直接决定了 RAG 的效果——如果检索不到相关片段，LLM 再强也难为无米之炊。本节先看文档进入知识库的第一道工序——分块，再重点看检索器的两大技术路线：稠密嵌入（基于语义理解）和稀疏嵌入（基于关键词匹配），以及如何把二者结合起来。
 
@@ -513,7 +555,7 @@ GraphRAG 先利用 LLM 从文本中提取关键实体（人物、地点、概念
 
 RAPTOR 和 GraphRAG 代表了学术界对知识组织的探索，而字节跳动火山引擎开源的 [OpenViking](https://github.com/volcengine/OpenViking) 则提出了第三种哲学：**文件系统范式**。它不将上下文视为扁平的向量碎片或图谱节点，而是将所有上下文——记忆、资源、技能——映射为虚拟文件系统中的目录和文件，每个条目拥有唯一 URI：
 
-```
+```text
 viking://
 ├── resources/          # 外部知识：文档、代码库、网页
 ├── user/memories/      # 用户记忆：偏好、习惯
@@ -708,17 +750,11 @@ viking://
 
 ## 本章小结
 
-本章系统地构建了 AI Agent 的持久化记忆体系，从两个尺度展开：针对个体用户的用户记忆，和面向所有用户的共享知识库。
+本章把持久化知识分成两个尺度：面向个人的用户记忆，以及面向所有用户的共享知识库。前者遵循“读取相关记忆 → 后台提取候选 → 来源与策略核验 → 更新”的生命周期，并可在 Simple Notes、JSON Cards 或可执行状态之间按需求取舍。
 
-在**用户记忆**层面，我们探索了从原子化事实（Simple Notes）到情境化知识管理（Advanced JSON Cards）的四种渐进式策略，揭示了信息表示中简单性与表达力之间的根本张力。Mem0 和 Memobase 等框架提供了工程化的记忆管理方案，而隐私保护机制确保了敏感信息在整个流程中的安全。
+知识库的主流水线是“分块 → 稠密/稀疏检索 → 融合 → 重排序 → 生成”，用 recall@k 等指标验收。RAPTOR、GraphRAG、OpenViking、上下文感知检索和智能体化 RAG 分别改变知识的组织、分块或检索控制方式；实践中可以让结构化概览常驻上下文，把原始细节按需召回。
 
-**知识获取**层面，核心技术栈是：文档分块划定检索单元、稠密嵌入捕捉语义、稀疏嵌入做关键词匹配、结果融合汇成候选池、神经重排序作最终精排，并以 recall@k 等指标度量检索质量。
-
-在**知识理解**层面，我们超越了传统的 “扁平化” 文档分块，通过 RAPTOR 的树状层次摘要和 GraphRAG 的实体关系网络构建结构化索引；引入上下文感知检索从根本上解决了语义丢失问题；更以智能体化 RAG 实现了从被动 “检索-生成” 管道到由 Agent 主导的主动迭代探索的范式转变。这些知识库技术同样适用于用户记忆，最终收敛为一套**双层记忆架构**：Advanced JSON Cards 常驻上下文提供“概览”，上下文感知检索按需提供“细节”，二者叠加显著提升了跨会话记忆的召回精度和冲突解决能力，也才真正支撑起本章开头三层次框架中最高一层的“主动服务”能力。
-
-在**知识更新**层面，系统需要同时具备两种节奏：增量更新及时吸收新证据，定期整理则回到全量知识与原始数据，执行去重、去旧、合并、结构重排、遗漏核查和场景限定。无论知识用 Markdown 还是 Python 表示，两条路径都应由 Proposer Agent 依据原始证据提交 diff，再由异源 Reviewer Agent 独立审核，直到通过才合并 PR 并重建派生索引。
-
-本章和上一章处理的都是“上下文”问题——一个在单次会话内，一个跨越多次会话。本章沉淀的主要是关于用户与世界的陈述性知识；第八章还会复用相同的抽取和检索基础设施，但其对象是由运行成败支持的行为知识，即“在什么条件下应该怎样做”。下一章转向“工具”：Agent 如何通过工具与外部世界交互，包括工具设计、MCP 互操作标准和事件驱动架构。
+写入不能跳过来源、时间、冲突和隐私检查。增量更新吸收新证据，定期整理则回到原始数据去重、合并并重建索引，待验证 diff 通过独立审核后才发布。上一章管理单次任务内的上下文，本章管理跨任务的陈述性知识；第八章会把同一基础设施用于“在什么条件下应该怎样做”的行为经验。
 
 ## 思考题
 

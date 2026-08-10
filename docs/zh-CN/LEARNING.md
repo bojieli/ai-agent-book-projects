@@ -24,6 +24,20 @@
 | **评估与进化篇** | 第 6–8 章 | Agent 评估；SFT 与 RL；从轨迹信号更新知识、指令、程序和参数 | 可靠信号先于学习；更新载体取决于能力如何被表达与验证 |
 | **拓展与协作篇** | 第 9–10 章 | 语音/GUI/物理世界的多模态交互；多 Agent 分工协作 | 多 Agent 的每个设计决策都能在单 Agent 三要素中找到对应 |
 
+## 正文与实验的分工
+
+正文不是某个 SDK 的逐步教程。正文中的短伪代码和 skeleton 只回答“状态怎样流动、哪一步可以停止、哪类信号参与验证”；章级实验则提供完整实现、模型/环境适配、测试、日志和证据。阅读实验时不需要理解每个文件的每一行，也不应把一次实验的具体 API 写法当成通用架构。
+
+建议按下面三层阅读，遇到复杂章节可以在同一层选择多个机制实验，而不是只跑一个项目：
+
+| 层级 | 先看什么 | 暂时可以跳过什么 | 适合的问题 |
+| :--: | --- | --- | --- |
+| **Starter** | 项目 README 的目标、最小命令、验收条件；正文对应 skeleton | 凭据加载、UI、provider adapter、长篇原始日志 | “这个实验要证明哪条机制？” |
+| **Builder** | 入口函数、核心循环、状态/消息 schema、工具和验证器 | 与机制无关的兼容层、部署脚本 | “哪一个变量改变了行为？” |
+| **Maintainer** | 测试、失败处理、证据格式、manifest/hash、回滚路径 | 只有在改动实验时才需要的第三方源码细节 | “结果是否可复核，失败是否被诚实记录？” |
+
+推荐的第一批入口是：第 1 章 `context`，第 2 章 `context-compression`，第 3 章 `user-memory`/`retrieval-pipeline`，第 4 章 `async-agent`，第 5 章 `coding-agent`，第 6 章 `tau2-bench-eval`，第 7 章 `cot-distillation`，第 8 章 `trajectory-verifier`，第 9 章 `live-audio`，第 10 章 `parallel-web-research`。每个目录的 Code map 会标出 Run first、Core behavior、Verifier 和首次阅读可跳过的部分。
+
 ## 难度分级
 
 | 级别 | 章节 | 适合读者 |

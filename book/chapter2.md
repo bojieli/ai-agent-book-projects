@@ -248,7 +248,7 @@ Agent 框架拿到模型的工具调用请求后，实际执行这两个工具�
 
 ### 用代码实现 Agent 的核心循环
 
-理解了 JSON 结构之后，让我们用 Python 代码把上面的交互过程串起来。以下是一个最简的 Agent 实现——核心就是一个 while 循环：
+理解了 JSON 结构之后，让我们用 Python 代码把上面的交互过程串起来。以下是一个最简的 Agent 实现——核心就是一个 while 循环。本章刻意保留这段完整 API 循环作为协议参照；其他章节用 Python 风格 skeleton 标出机制。
 
 ```python
 from openai import OpenAI
@@ -333,7 +333,7 @@ while True:
 让我们跟踪 `messages` 列表在每一轮的变化：
 
 **初始状态（第 1 次调用前）：**
-```
+```text
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # 开发者写的
   { role: "user",    content: "What's the current time and weather in Vancouver?" },  # 用户输入
@@ -342,7 +342,7 @@ messages = [
 
 **第 1 次调用后（模型返回工具调用）：**
 
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -354,7 +354,7 @@ messages = [
 
 **第 2 次调用后（模型返回最终回复，循环结束）：**
 
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -376,6 +376,27 @@ messages = [
 上半部分（System Prompt + Tool Definitions）在整个对话过程中保持不变，下半部分（对话历史，即第一章所定义的**轨迹**）随着交互的进行不断增长。这正是第一章“上下文的五个组成部分”在 API 层面的具体样子：系统提示词和工具定义构成静态前缀，用户消息、模型回复和工具执行结果构成动态增长的消息历史。这个 “静态前缀 + 轨迹” 的结构，是后续讨论 KV Cache 优化、上下文压缩等技术的基础——理解了这个结构，就能理解为什么“前面不能动、后面可以压缩”。
 
 本章后续将围绕这个结构的每一层展开：如何利用静态前缀的不变性加速推理（KV Cache）、如何设计好的 System Prompt（提示工程）、如何防范外部内容对上下文的劫持（提示注入防御）、如何按需加载专业知识（Agent Skills）、如何在对话末尾注入动态状态信息（Agent 状态栏）、以及如何在对话历史膨胀时进行智能压缩（压缩策略）。
+
+后续技术虽然名称很多，落到每次请求前其实只是一次上下文构造决策。下面用 Python 风格伪代码保留这个决策的最小骨架；它与前面的完整 API 循环互补，强调上下文布局，不替代消息角色、`tool_call_id` 等协议细节。
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+系统提示词和核心工具定义尽量保持稳定；旧工具输出只在接近预算时成批压缩；当前状态放在轨迹尾部，让模型不必从长历史中重新推导。
 
 > **实验 2-1 ★：本地 LLM 服务部署与工具调用**
 >
@@ -594,7 +615,7 @@ Markdown 在保持可读性的同时提供了轻量级的结构，特别适合�
 
 相比之下，流程驱动的提示词就像一份优秀的新员工培训手册，提供了清晰的标准操作流程（SOP）：
 
-```
+```text
 File Processing Standard Operating Procedure:
 
 Step 1: Validation
@@ -888,7 +909,7 @@ Agent 状态栏正是通过显式地操纵注意力分配来解决这一问题�
 
 以下是 Agent 框架在第 N 次 API 调用时实际构建的消息列表：
 
-```
+```text
 messages: [
   { role: "system",    content: "You are a customer service assistant..." }  ← Fixed (KV Cache cached)
   { role: "user",      content: "Help me cancel my Xfinity plan" }  ← Original user request
@@ -1066,11 +1087,9 @@ Agent 状态栏技术有一个实用的优点：所有元信息都以人类可�
 
 ## 本章小结
 
-本章绕来绕去，其实在说一件事：给模型看什么、怎么组织，比模型本身有多聪明往往更影响最终的结果。API 的消息结构定义了上下文的骨架；KV Cache 约束了你能改什么、不能改什么；提示工程和 Agent Skills 决定了如何高效地向模型提供静态指令和动态知识；Agent 状态栏把隐式的状态变成可直接使用的显式信息；压缩策略则解决了上下文不断膨胀的问题：不仅是控制长度，更是通过主动总结把原始数据变成高密度的结构化知识。
+上下文工程的主线是显式管理信息：API 消息结构定义骨架；稳定前缀提高 KV Cache 命中；Prompt、Skills 和状态栏分别承载规则、按需知识与当前状态；压缩则在保留决策、约束、失败和来源的前提下，提高历史信息密度。
 
-这些技术的共同点是显式的、工程化的信息管理：不要让模型被动地在海量上下文中寻找线索，而要主动提供经过提炼的结构化状态。从 KV Cache 友好的上下文布局到上下文感知压缩，本章展示的每一项技术都是在当前模型能力边界下，用工程手段最大化信息利用效率。
-
-本章处理的是**一次任务之内**的状态更新与上下文腐化。下一章将从上下文窗口内的信息管理，延伸到跨越任务的持久化知识体系——用户记忆和知识库，使 Agent 能够在实践中不断积累经验，逐步成为更了解用户的助手，或者具备更多领域知识的领域专家。
+本章处理**一次任务之内**的状态更新与上下文腐化。下一章把同一思路扩展到跨任务的用户记忆和共享知识库。
 
 ## 思考题
 

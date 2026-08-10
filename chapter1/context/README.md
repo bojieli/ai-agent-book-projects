@@ -7,6 +7,16 @@
 
 ---
 
+## Code map
+
+- **Run first:** python main.py --mode interactive (after provider setup).
+- **Start here:** main.py builds the selected provider and agent loop.
+- **Core behavior:** agent.py assembles history, reasoning, tool calls and tool results.
+- **State / protocol:** AgentTrajectory and the provider adapter messages.
+- **Verifier:** the ablation runner and tests under tests/; compare behavior, not just final text.
+- **Experiment variable:** context modes (full, no history, no reasoning, no tool calls, no tool results).
+- **Skip on first pass:** provider-specific clients, plotting and credential checks.
+
 ## English
 
 ### Overview

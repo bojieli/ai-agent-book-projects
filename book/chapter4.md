@@ -261,6 +261,35 @@ Sidecar 与提议者-审核者机制都引入了第二视角，但二者的执�
 
 Sidecar 模式的另一个典型应用是**构造和补充上下文**：主模型在思考的同时，Sidebar 模型旁路调用并行地筛选相关的用户记忆、为较长的工具输出生成摘要、从数据库中提取用户的最新信息等。这些结果在主模型需要时就已经准备好了，用户感受不到额外的延迟。
 
+把执行侧的安全边界压缩成一个可审查的骨架：
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+这里的输入隔离是关键边界：Reviewer 看到工具名、解析后的参数和权限元数据，而不是可能携带提示注入的完整轨迹；必须传递的自由文本要标成数据而不是指令，并经过长度、编码和内容策略检查。
+
 **自动验证与反馈闭环。**
 
 执行工具的另一个重要设计原则是：**如果操作结果可以被验证，就应该自动验证**。以代码编写为例，当 Agent 调用 `write_file` 创建或修改代码文件时，工具不应只写入内容然后返回 “成功”，而应在写入后立即执行语法检查：根据文件类型调用相应的 linter（代码静态检查工具），将输出解析为结构化的错误列表，作为工具返回值的一部分返回给 Agent。
@@ -498,6 +527,25 @@ Agent 与虚拟环境之间的数据交换通过**共享文件系统**完成：�
 
 硬编码的规则有其局限性，事件的语义决定了处理方式——“马上停下来” 用取消式、“今天天气怎么样” 用并行式、“报告需要用中文发给我” 用队列式。**建议使用轻量级的分类 LLM 作为事件路由器**，在事件到达时快速判断应该采用哪种策略。
 
+事件循环本身可以先用规则写清，再让模型只参与需要语义判断的路由：
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+取消点必须是工具或推理能够安全收尾的位置；未完成的工具结果用显式占位符表示，不能伪造成功。
+
 下面通过一个事件驱动的邮件处理 Agent 实验，将上述事件处理策略落地为可运行的实现。
 
 > **实验 4-5 ★★★：事件驱动的邮件处理 Agent**
@@ -578,7 +626,7 @@ Agent 与虚拟环境之间的数据交换通过**共享文件系统**完成：�
 
 **Agent 状态栏标记**：在每个事件前添加显式标记：
 
-```
+```text
 [未处理事件 1/4] Tool result from database_query：...
 [未处理事件 2/4] User 补充说明：只看北京地区的数据
 [未处理事件 3/4] 系统提醒：报告截止时间还有 30 分钟
@@ -646,6 +694,22 @@ Agent 与虚拟环境之间的数据交换通过**共享文件系统**完成：�
 
 **层次化匹配与降级。** 高效匹配的关键在于工具组织本身具有层次结构：在 MCP 等协议中，工具按**服务器**分组（类似手机上的 App，每个 App 提供一组相关功能），于是匹配可分两层——先按能力描述定位相关服务器，再在服务器内匹配具体工具，把搜索空间从 “数千个工具” 缩小为 “数十个服务器 × 每个服务器数十个工具”，既省算力也减少跨领域的语义混淆。工程上这依赖一个离线构建、支持增量更新的嵌入索引；若两层匹配的候选相似度都低于阈值，则应明确返回 “未找到”，让 Agent 改写需求重试、用基础工具手工实现，或干脆创造一个新工具（创造工具是第八章的主题）。
 
+主动发现的控制流可以写成更短的伪代码：
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+首次加载后的 schema 固定在轨迹原位置，静态前缀仍可复用。
+
 ![图4-8 工具动态加载的 KV Cache 优化](images/fig4-8.svg)
 
 **动态加载与 KV Cache。** 主动发现有一个微妙的工程代价：动态加载工具会**破坏 KV Cache**——若把全部工具定义放进静态前缀，每加载一个新工具就使整段缓存失效。破解思路与第二章讨论 Skill 注入位置时一致：把会变动的部分（新工具的完整 schema）追加到上下文末尾，让静态前缀保持稳定、KV Cache 完全复用，只在 Agent 状态栏维护一份简短的工具名列表。如今这套模式已获得各大 API 的原生支持，并成为主流框架的默认架构：OpenAI Responses API 提供 `tool_search` 工具与 `defer_loading: true` 标记，被加载的 schema 以 `tool_search_output` 形式追加在上下文末尾，前缀缓存持续命中；Claude Code 对 MCP 工具默认延迟加载（经 `tool_reference` blocks 按需注入，会话启动只保留工具名与服务器说明）；Codex CLI 的 `tool_search`（BM25 检索）更是默认开启的架构而非可选特性。
@@ -693,11 +757,9 @@ Skill 的优点是对人类编写者更友好。人不论是否会编程，都�
 
 ## 本章小结
 
-本章的核心结论是：工具设计的质量决定了 Agent 的能力上限，而异步架构决定了 Agent 能否在真实世界中可靠运行。
+工具设计决定 Agent 的能力上限，异步架构决定这些能力能否在真实环境中可靠运行。MCP 统一互操作接口；层次化组织、延迟加载和主动发现控制工具数量。接入第三方服务器也会扩大信任边界，因此必须审查描述与版本、隔离凭证，并保证模型看到的参数与工具真正执行的参数一致。
 
-在工具设计方面，MCP 协议统一了工具互操作的标准，而层次化组织、动态工具发现和 Skills 回应了工具过多时的选择挑战。同时，接入第三方 MCP 服务器意味着引入新的信任边界，工具描述投毒、工具遮蔽和凭证管理风险需要在接入前审查、在运行时防御。贯穿所有工具设计的一条底线是参数传递的保真性：模型感知到的世界与工具操作的世界之间不能存在系统性的偏差。
-
-五类工具各有设计侧重：
+五类工具的重点分别是：
 
 - **感知工具**：关键在于粒度权衡、上下文感知的智能总结，以及分页与显式截断等接口设计；只读性使其天然适合缓存与并行
 - **执行工具**：关键在于层次化的安全防护、提议者-审核者审查（事前审批与事后验证）与 Sidecar 机制
@@ -705,7 +767,7 @@ Skill 的优点是对人类编写者更友好。人不论是否会编程，都�
 - **事件触发工具**：关键在于触发条件的过滤和事件载荷的设计，让世界能够主动唤醒 Agent
 - **用户沟通工具**：关键在于异步消息模式、多渠道选择与用户召回，虚拟身份与隔离执行环境则为 Agent 独立行动提供身份基础
 
-在异步架构方面，OpenClaw 的内置自动化机制（Hooks、Cron、Heartbeat）赋予了 Agent 定时自主行动的能力，但对内置渠道之外的第三方事件源（如邮件、API 回调）缺乏即时接入通道；PineClaw 引入 Channel 机制补上了这一缺口，展示了从时间驱动到事件驱动的演进。取消式、队列式、并行处理三种策略使 Agent 能够应对不同优先级的事件。但这一架构与当前大模型的同步训练范式存在深刻的矛盾，目前只能用异步占位符等工程手段来缓解，根本的解法有待下一代模型在异步环境中通过强化学习内化对延迟、中断和并发的理解。
+异步运行时用 Hooks、Cron、Heartbeat 或 Channel 接收时间与外部事件，再按取消、排队或并行策略路由。当前模型仍主要按同步轨迹训练，因此未完成结果必须用占位符、任务 ID 和后续事件显式表示，不能伪造完成。
 
 本章聚焦 Agent 如何使用工具，下一章要回答一个更基本的问题：Agent 能不能通过写代码来**创造**工具？
 

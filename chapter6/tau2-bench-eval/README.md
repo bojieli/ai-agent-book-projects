@@ -4,6 +4,16 @@ This directory retains the bounded τ²-bench campaign requested by the
 manuscript: five telecom tasks, one trial per task, with the same model acting
 as the customer-service Agent and user simulator.
 
+## Code map
+
+- **Run first:** follow the pinned external checkout command below and run one task with num-trials 1.
+- **Start here:** the τ²-bench CLI is the runner; this directory is the reproducibility and evidence wrapper.
+- **Core behavior:** the external telecom environment executes the Agent/user turns; this project records the resulting trajectory.
+- **State / protocol:** saved raw trajectory, task seed, model IDs and run manifest under validation/runs/.
+- **Verifier:** task reward plus the chapter acceptance checks; inspect the failed task record, not only the 4/5 aggregate.
+- **Experiment variable:** fixed task set, model pair, concurrency and seed.
+- **Skip on first pass:** upstream framework internals and cost-report formatting.
+
 ## Reproduction
 
 The external checkout is deliberately not vendored. Clone and pin the

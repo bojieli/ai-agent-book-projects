@@ -7,6 +7,16 @@
 
 ---
 
+## Code map
+
+- **Run first:** python main.py --mode demo --memory-mode enhanced_notes.
+- **Start here:** conversational_agent.py::ConversationalAgent.chat reads memory without directly persisting it.
+- **Core behavior:** background_memory_processor.py::BackgroundMemoryProcessor.process_recent_conversations extracts candidates and applies updates.
+- **State / protocol:** memory_manager.py owns mode-specific storage; conversation history remains separate.
+- **Verifier:** user-memory-evaluation and the evaluation mode compare evidence, not only generated summaries.
+- **Experiment variable:** notes, enhanced notes, JSON cards and advanced JSON cards.
+- **Skip on first pass:** provider adapters, streaming presentation and benchmark helpers.
+
 ## English
 
 ### Key features

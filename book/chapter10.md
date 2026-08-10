@@ -163,6 +163,25 @@
 
 **一、消息传递。** 最简形态为点对点：Agent A 直接调用 `send_message_to_agent_b(content)`，适用于拓扑固定、Agent 数量少的场景（如本章实验 10-3 的电话 + 电脑双 Agent）。当 Agent 数量增多且需异步并行时，点对点连接数随 Agent 数呈平方增长，且要求收发双方同时在线；此时应改用**消息总线**（详见本章后文“并行协调形态”）：Agent 将消息发布至总线，由总线按订阅关系转发，发送方无需知晓消费者。无论点对点还是经总线，消息通常应携带结构化的**信封**（envelope）：发送者 ID、目标（指定 Agent 或广播）、消息类型（如 `task_assigned`/`status_update`/`result`/`terminate`）及 JSON 负载。统一的信封格式保证接收方可靠地路由与解析，并使协作链路可追溯——这是多 Agent 系统调试的关键。
 
+信封和 worker 生命周期可以先用一个与具体消息库无关的骨架固定下来：
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
+`trace_id` 用来把跨 Agent 的事件串回同一任务，`deadline` 和取消令牌则把“能运行”与“能收尾”区分开。JSON 序列化、重试和幂等键都必须遵循同一边界。
+
 **二、状态查询。** 这是控制平面中最易被低估的一环。主 Agent 派出子 Agent 后，若无从获知其进展，则既无法判断是否继续等待，也无法在其阻塞时及时介入。直觉的做法定义一个 `get_subagent_status(agent_id)` 查询接口，返回 “运行中/已完成/失败” 等状态。但这种拉取式接口并不实用：子 Agent 一经创建就立即开始执行，直到完成或失败，子 Agent 完成时自然会通知主 Agent，并不需要主 Agent 显式查询。状态获取更自然的做法，是回到本章开头的两大通信范式。
 
 **用消息传递获取状态**。主 Agent 直接给子 Agent 发一条消息：“进展如何？”子 Agent 在合适的时机回复。一切都是异步的：发出消息不阻塞自己的执行，对方何时回复、是否回复是另一回事——正如经理通过即时消息询问下属进度，而不要求对方立即停下手头的工作。反过来，子 Agent 也可以在到达关键节点时主动发消息汇报；系统若已架设消息总线，这就是往总线上发布一条 `status_update`（实验 10-4 的“实时监控”即此形态）。无论问答还是主动汇报，消息中的状态本身宜采用统一的状态机词汇（执行中、需要输入、已完成、失败）——本章后文的 A2A 协议正是把任务生命周期标准化为这样一组状态。
@@ -221,6 +240,26 @@ LoopX 决策 → Agent 执行 → 独立验证器证明 → LoopX 提交
 
 **为什么不能让一个 Agent 自己生成再自己审查？** 这正是前面“多 Agent 何时真正优于单 Agent”一节那条判据的具体落点——审查若不引入新信息，就只是“让模型再想一遍”。相关研究对此给出了明确的答案。Huang 等人在 ICLR 2024 论文《Large Language Models Cannot Self-Correct Reasoning Yet》中发现：让 GPT-4 在没有外部反馈的情况下审查并修正自己的回答，准确率反而下降——模型把正确答案改错的次数比把错误答案改对的次数更多。
 
+提议者—审核者循环的最小不变量是：审核者读取**独立证据**，而不是只复述提议者的解释；退回时必须给出可定位的修复条件：
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
+审核者不能修改测试、证据采集器或发布门槛；否则“独立验证”会退化成自我批准。
+
 2024 年发表在 TACL 期刊上的综述论文《When Can LLMs Actually Correct Their Own Mistakes?》（arXiv:2406.01297）进一步确认了这一结论：除非提供可靠的外部反馈（如测试用例的执行结果、外部工具的验证输出），否则纯粹依赖模型自身的“自我纠正”几乎不起作用。
 
 ICLR 2024 的 CRITIC 论文提供了一个直观的对比实验。CRITIC 让模型使用外部工具（搜索引擎、Python 解释器）来验证自己的回答，效果显著提升；但当实验者移除工具验证步骤、只保留模型的自我评估时，大部分提升就消失了。这说明审查的价值不在于“让模型再想一遍”，而在于**引入了模型生成时不具备的新信息**——测试结果、渲染截图、编译错误、外部搜索结果。
@@ -252,6 +291,26 @@ ICLR 2024 的 CRITIC 论文提供了一个直观的对比实验。CRITIC 让模�
 但管理者模式也有固有的挑战。Manager 成为系统的单点瓶颈——它必须理解所有子任务的性质，选择正确的 Agent，准确传递上下文，任何决策偏差都会影响整体流程。此外，Manager 需要维护整个任务的全局上下文，随着任务深入和 Agent 调用增多，上下文可能快速膨胀。因此需要特别注意 Manager 的提示词质量、上下文管理策略和合理的任务分解粒度。
 
 2025 年的 Plan-and-Act 论文 [^plan-and-act-2025] 对此做了实证分析：在 Planner-Executor 双 Agent 架构中，**弱规划者是整个系统最关键的瓶颈**。当 Planner 的规划质量足够高时，即使 Executor 比较简单也能取得好结果；反之，如果 Planner 的任务分解有误，后续所有 Executor 的工作都建立在错误的前提上。该研究在 WebArena-Lite 基准上取得了 54% 的成功率，核心贡献正是改善了 Planner 的规划能力，而非 Executor 的执行能力。这一发现的启示是：应当将最强的模型和最精心设计的提示词分配给 Manager（规划者），而不是将资源平均分配给所有 Agent。
+
+并行管理器还要定义“第一个**已验证**成功”而不是“第一个声称成功”的结算点：
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
+
+`settle_once` 必须是幂等的（通常由锁或事务保护），否则两个几乎同时到达的成功事件会触发两次汇总。
 
 [^plan-and-act-2025]: Erdogan, L. E., et al. *Plan-and-Act: Improving Planning of Agents for Long-Horizon Tasks.* arXiv:2503.09572, 2025.
 
@@ -407,7 +466,27 @@ AutoGen 的群聊（group chat）让多个 Agent 参与同一场会话：每轮�
 
 **OpenAI Swarm。**
 
-真正在控制流上做到对等去中心化的代表，是 OpenAI 的 Swarm：它把去中心化做成了最简形态——每个 Agent 配备若干 handoff（移交）选项，可以在任何时刻把控制权移交给网络中的任意其他 Agent。系统中没有中心调度者，控制权像接力棒一样在对等的 Agent 之间流转，路由决策完全分散在每个 Agent 自己的判断里。与共享上下文的多 Agent 协作不同，OpenAI Swarm 中的移交没有。对等移交的风险则是成环：A 移交给 B，B 又移交回 A，任务在环路中空转，因此需要移交次数上限之类的保护机制。
+真正在控制流上做到对等去中心化的代表，是 OpenAI 的 Swarm：它把去中心化做成了最简形态——每个 Agent 配备若干 handoff（移交）选项，可以在任何时刻把控制权移交给网络中的任意其他 Agent。系统中没有中心调度者，控制权像接力棒一样在对等的 Agent 之间流转，路由决策完全分散在每个 Agent 自己的判断里。与共享上下文的多 Agent 协作不同，handoff 只应传递明确的任务包和产物引用，不应默认暴露完整私有轨迹。对等移交的风险则是成环：A 移交给 B，B 又移交回 A，任务在环路中空转，因此需要移交次数上限之类的保护机制。
+
+去中心化 handoff 的最小协议可以表示为：
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
+
+它把“上下文隔离”变成可检查的接口：接收者读任务包和引用，按需取证；预算、访问链和循环检测由运行时保留，不能由任一 Agent 自行删除。
 
 > 2025 年以来，“Agent Swarm”（智能体集群）成为各厂商的热门词汇，但它并不对应单一架构。业界用法大致有两类：其一，OpenAI Swarm 式的 handoff 网络（LangGraph 的 swarm 库、微软 Agent Framework 的 handoff 编排同此），是本节的去中心化模式；其二，一些主流商业产品的 Agent Swarm 是规模化的管理者模式：Kimi K2.5 首发的 Agent Swarm 由主 Agent 动态创建上百个子 Agent 并行执行，把 “何时拆、拆几个” 的编排决策通过并行 Agent 强化学习直接训练进模型，K3 将其延续为独立模型档位并开源了配套的并行 Agent 训练沙箱 AgentEnv[^ch10-kimi-swarm]；Anthropic 的多 Agent 研究系统与 Manus 的 Wide Research 同属 orchestrator-worker 星型拓扑。希望读者在阅读本书之后，能够看透概念背后的本质，从第一性原理的角度分析多 agent 系统。
 

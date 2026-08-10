@@ -5,6 +5,16 @@
 
 ← [Chapter 5 index / 返回第 5 章目录](../README.md)
 
+## Code map
+
+- **Run first:** `python demo.py --selftest` (offline policy/guard smoke); model-backed runs require the configured provider.
+- **Start here:** `airline_env.py::AirlineEnv` owns database truth and `is_refundable`; `agent.py::run_agent` drives one conversation.
+- **Core behavior:** `agent.py::_dispatch` separates control and codified tools; `demo.py::judge` scores the final environment state.
+- **State / protocol:** `Reservation`, `tasks.py::TASKS`, checklist records, tool transcript and per-arm result JSON.
+- **Verifier:** `test_campaign.py`, deterministic `judge`, and the validation manifest/paired analysis.
+- **Experiment variable:** `control` versus `codified`, model/provider, task subset and checklist parameters.
+- **Skip on first pass:** provider retry/serialization code, checkpoint plumbing and report formatting.
+
 ## Formal manuscript result (canonical)
 
 The canonical campaign ran local Ollama `qwen3:4b` on all 60 frozen policy

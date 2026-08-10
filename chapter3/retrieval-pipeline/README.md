@@ -5,6 +5,16 @@
 
 ← [Chapter 3 index / 返回第 3 章目录](../README.md)
 
+## Code map
+
+- **Run first:** `python evaluate.py --no-dense --no-rerank` (offline BM25 smoke; the full pipeline needs the two retrieval services and local models).
+- **Start here:** `retrieval_pipeline.py::RetrievalPipeline.search` orchestrates retrieval, fusion and reranking.
+- **Core behavior:** `retrieval_client.py::RetrievalClient.search`, `fusion.py::fuse` and `reranker.py::Reranker.rerank`.
+- **State / protocol:** `document_store.py::DocumentStore`, `SearchResult`, `PipelineConfig` and `SearchMode`.
+- **Verifier:** `evaluate.py` reports recall/MRR by stage; `test_pipeline.py` and `test_weighted_fusion_dedup.py` lock down ranking and deduplication.
+- **Experiment variable:** dense/sparse/hybrid mode, fusion method, candidate `top_k` and `rerank_top_k`.
+- **Skip on first pass:** service startup scripts, model downloads and HTTP error adapters.
+
 ---
 
 ## English

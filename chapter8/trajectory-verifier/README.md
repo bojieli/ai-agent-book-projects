@@ -6,6 +6,16 @@
 
 `sample_trajectories.json` 包含正常退款、虚假承诺、违规泄露和过度拒绝四类轨迹，并带有专家标签。`calibration.py` 按维度报告违规识别的精确率、召回率与标签一致率。`demo.py` 还对比了只有一个总分的输出与带证据的多维诊断。
 
+## Code map
+
+- **Run first:** python demo.py (deterministic HeuristicQualityJudge, no API key).
+- **Start here:** verifier.py composes the result, process and quality layers.
+- **Core behavior:** customer_service_env.py::run_case supplies environment truth; calibration.py compares dimensions with expert labels.
+- **State / protocol:** sample_trajectories.json, structured verdict schema and evidence turns.
+- **Verifier:** test_verifier.py plus calibration precision/recall; LLM quality judging never replaces the first two code gates.
+- **Experiment variable:** single scalar score versus dimensioned verdict with evidence/confidence.
+- **Skip on first pass:** provider client and demo formatting.
+
 运行方法：
 
 ```bash

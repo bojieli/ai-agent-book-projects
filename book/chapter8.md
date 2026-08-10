@@ -46,6 +46,21 @@
 
 验证结果不应被压缩成一个标量。一次轨迹评价更像一份结构化诊断：任务部分成功，规则遵从通过，但出现了一处无证据陈述、一处虚假承诺，回复还重复解释了三次政策。维度化信号既保留了问题性质，也保留了证据位置。后续模块才能进一步判断：无证据陈述是缺知识、缺引用要求还是模型能力不足；虚假承诺应修改提示词，还是应在 Harness 中增加回复与工具状态的一致性检查。
 
+三层验证的控制关系可以写得很短：结果与过程是硬门，只有都通过时，语言质量才有资格决定候选是否值得学习。
+
+```python
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
+
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
+else:
+    emit_structured_diagnosis(outcome, process, quality)
+```
+
+这里的 `judge_with_rubric` 只负责难以形式化的上层质量，不覆盖数据库真值或权限规则。
+
 LLM 验证器本身也需要校准。生产系统通常准备一小批由专家标注的轨迹，检查验证器在每个维度上的一致性；高风险或低置信度案例交给第二个模型或人工复核；模型版本变更后重新运行校准集。验证器负责给出评价和证据，至于应修改 Agent 的哪个部分，则应由独立的诊断与进化模块决定，避免同一个模型既当裁判又直接改写规则。
 
 > **实验 8-1 ★★：为客服 Agent 构建轨迹验证器**
@@ -73,6 +88,21 @@ LLM 验证器本身也需要校准。生产系统通常准备一小批由专家�
 | Prompt 与 Skill | 需要理解语境、例外和优先级，但仍能用自然语言说明的判断原则 | 可解释、作用范围可控 | 容易膨胀、冲突或被忽略 |
 | 程序与 Harness | 可确定解析、可执行验证和高风险硬约束 | 可测试、执行稳定、成本低 | 开发与维护成本较高 |
 | 模型参数 | 高维感知、生成风格和隐式策略 | 泛化能力强、推理开销低 | 更新与回归成本高 |
+
+表中的选择不是按“新旧”排序，而是按经验最自然的表示方式路由：
+
+```python
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
+```
+
+同一能力可以拆到多个载体：事实进入知识库，解释例外的原则进入 Skill，不可绕过的权限仍由程序门控，高维识别能力再进入参数。路由结果只是更新提案，尚未获得发布资格。
 
 ### 将经验沉淀为知识
 
@@ -115,7 +145,7 @@ Andrej Karpathy 将这种做法称为**系统提示学习**（System Prompt Lear
 
 #### 例子一：基于失败轨迹优化提示词中的规则
 
-[第六章](chapter6.md#人机交互型评估环境)用 τ-bench/τ²-bench 说明了航空客服 Agent 的评估方式：用户逐步透露需求，系统既检查订单等环境状态，也检查对话中是否给出了必要信息。该章的失败归因还强调，不能只记录“失败”，而要找到**首个错误步骤**。
+[第六章](https://github.com/bojieli/ai-agent-book/blob/main/book/chapter6.md#人机交互型评估环境)用 τ-bench/τ²-bench 说明了航空客服 Agent 的评估方式：用户逐步透露需求，系统既检查订单等环境状态，也检查对话中是否给出了必要信息。该章的失败归因还强调，不能只记录“失败”，而要找到**首个错误步骤**。
 
 本例的 bad case 是：用户对退票、改签费或行李政策不满，Agent 没有查政策、解释规则或寻找允许的替代方案，就调用 `transfer_to_human`。普通政策争议不需要转接；**用户明确要求人工或出现安全/人身风险时才必须转接**。因此，问题不是“Agent 不够礼貌”，而是 Prompt 没有写清转接边界。
 
@@ -271,6 +301,22 @@ Voyager[^voyager-2023] 展示了一个较完整的持续进化循环。它在 Mi
 
 所有修改首先产生待验证能力版本或待验证 Agent 版本，而不是直接覆盖生产版本。知识文档要验证检索后是否提高新任务表现，Prompt 和 Skill 要检查边界案例与旧任务回归，程序要在沙盒和重置环境中运行测试，参数更新则要检查遗忘、安全和分布外任务。验证通过后仍应通过灰度发布观察真实流量；关键指标恶化时自动回滚到已知安全版本。
 
+无论更新写入哪种载体，发布协议都应保持一致：
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
+```
+
+`boundary_set` 检查是否修复触发问题，`retention_set` 防止旧能力回退，`safety_set` 守住不可牺牲的边界；三者不能合成一个平均分来绕过 veto。
+
 验证还要区分两种经常混在一起的能力。**Harness 更新能力**（harness-updating）是从轨迹中产生有价值的持久修改；**Harness 受益能力**（harness-benefit）是任务 Agent 在后续运行中找到、激活并正确使用这些修改。一个 Skill 本身可能写得完全正确，但较弱的任务模型没有在合适场景加载它，或加载后无法长期遵循，其中任一种都会让最终成绩看起来 “没有进化”。因此，不能只用端到端分数反推更新器好坏。Lin 等人的模型替换实验表明，这两种能力与基础模型能力的关系并不相同[^harness-benefit-2026]；具体强弱关系仍需更多任务验证，但将二者拆开评估是普遍适用的方法。
 
 表8-3 持续进化的分层评估指标
@@ -338,6 +384,19 @@ Agent 的自我进化能力有可能把一次错误变成长期风险。网页�
 3. **采集与整合**：从近期已评价轨迹中寻找新信号，合并重复内容，标记冲突与适用条件，优先生成局部补丁；
 4. **验证与审批**：在迁移集、保留集和安全集上评估待验证版本，高风险写入等待人工批准；
 5. **修剪与索引**：更新检索索引，把长期不用或被新证据推翻的能力标为过期、归档或删除，同时保留来源和回滚版本。
+
+上述五步可收敛为一个不会直接改写线上版本的离线循环：
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
+这段 skeleton 的重点是 `evaluated`、`proposal` 和 `rollback` 三个边界：原始日志不能直接成为能力，整理结果不能跳过验证，修剪也不能删除审计与回滚依据。
 
 用户记忆是最直观的例子，但要与行动经验区分。Claude Code 的自动记忆为每个项目维护 `MEMORY.md` 索引和按主题拆分的详细文件，会话启动只加载索引的有界前缀，其余内容按需读取；当索引接近上限时，系统要求 Agent 合并或移走细节。它说明纯文本记忆也需要容量约束、分层加载和主动整理，但当前公开机制主要是在会话中持续写入，并不能简单等同于一个固定的夜间后台任务[^claude-code-memory]。
 

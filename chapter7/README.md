@@ -6,6 +6,16 @@
 
 逐实验的实现、外部源码与直接证据边界见 [验收台账](EXPERIMENT_LEDGER.md)。
 
+## 如何阅读实验
+
+正文用多组 text skeleton 分开说明 SFT masking、GRPO/PPO rollout、工具 token 屏蔽、RLVP 与蒸馏；完整训练框架和 CUDA 适配留在项目中：
+
+- **Starter**：从 [cot-distillation](cot-distillation/) 先跑 2 题采集/验证 smoke，再按 generate_data.py → train_student.py → evaluate_student.py 追踪；
+- **Builder**：按 [RLVP](RLVP/)、[SimpleVLA-RL](SimpleVLA-RL/) 的入口追踪 rollout、验证器和奖励字段；
+- **Maintainer**：最后检查数据隔离、checkpoint/环境 hash、显存配置、失败轨迹与留出集；不需要首轮读完 verl/。
+
+正文不要求把实验代码当作可复制的 SDK 教程；读者只需先能定位“哪段实现了正文 skeleton、哪段负责证据”。
+
 ## 配套项目
 
 | 编号 | 项目 | 类型 | 一句话说明 |

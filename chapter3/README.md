@@ -8,6 +8,16 @@
 [EXPERIMENT_LEDGER.md](EXPERIMENT_LEDGER.md)；项目可运行不等同于实验已通过，
 最终状态以各项目的 `validation/latest.json` 为准。
 
+## 如何阅读实验
+
+正文用伪代码说明“读取记忆 → 后台提取 → 核验 → 写入”的生命周期；完整存储与检索实现放在项目中：
+
+- **Starter**：从 [user-memory](user-memory/) 运行一次对话和后台处理，先看 conversational_agent.py、background_memory_processor.py；
+- **Builder**：再读 [retrieval-pipeline](retrieval-pipeline/) 的 RetrievalPipeline.search、fusion.py::fuse 和 Reranker.rerank；
+- **Maintainer**：最后查看评估夹具、来源/时间戳、索引构建与失败回退，并对照 [agentic-rag](agentic-rag/)。
+
+不需要首轮理解每个 embedding provider 或 UI 文件；先把“事实日志”和“可变索引/记忆”分开，再按代码地图深入。
+
 ## 配套项目
 
 | 编号 | 项目 | 类型 | 一句话说明 |

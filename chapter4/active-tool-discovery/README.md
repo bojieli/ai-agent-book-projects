@@ -5,6 +5,16 @@
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
 
+## Code map
+
+- **Run first:** `python demo.py --offline` (mechanism smoke without credentials); use `run_exact_experiment.py` only for the formal real-tool campaign.
+- **Start here:** `discovery.py::ToolIndex` builds/searches the index; `agent.py::run_active_discovery` shows on-demand schema injection.
+- **Core behavior:** compare `run_full_injection`, `run_retrieval_prefilter` and `run_active_discovery`; the formal runner’s task loop is in `run_exact_experiment.py::run_agent_task`.
+- **State / protocol:** available-tool names, appended schemas, JSON action records and per-task receipts.
+- **Verifier:** `test_exact_experiment.py`, `run_exact_experiment.py::derive_acceptance` and the manifest/receipt checks.
+- **Experiment variable:** catalog size, retrieval `top_k`, strategy and task mix; compare latency, tokens and exact completion.
+- **Skip on first pass:** embedding backends, MCP transport and failure-attempt archival.
+
 ## Canonical manuscript campaign / 正式实验活动
 
 `run_exact_experiment.py` replaces the mechanism-only demo for formal

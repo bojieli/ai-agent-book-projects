@@ -6,6 +6,16 @@ A real-time voice chat demo featuring speech-to-text, AI conversation, and text-
 
 > This is the companion code for **实验 9-1「构建传统语音 Agent」** in 《深入理解 AI Agent》第 9 章. It implements the **cascaded** voice pipeline (VAD → ASR → LLM → TTS) discussed there: the frontend captures the microphone and streams audio over a WebSocket; the backend runs Silero VAD to detect end-of-speech (~500 ms of silence), then routes the utterance through pluggable ASR, LLM, and TTS providers and streams synthesized audio back for playback.
 
+## Code map
+
+- **Run first:** `node backend/check-setup.js`, then the browser demo with a single utterance.
+- **Start here:** backend/server.js owns the WebSocket session and media loop.
+- **Core behavior:** backend/utils/vad.js → speechToText.js → provider LLM → TTS; frontend audioWorklet.js supplies chunks.
+- **State / protocol:** WebSocket message/audio events and the per-utterance provider result.
+- **Verifier:** backend tests plus the validation evidence; record actual media/model hashes and latency.
+- **Experiment variable:** VAD endpointing, provider combination and streaming versus buffered response.
+- **Skip on first pass:** Next.js styling and provider-specific credential plumbing.
+
 ## Features
 
 - 🎤 Real-time voice input with Voice Activity Detection (VAD)

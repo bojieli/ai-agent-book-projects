@@ -12,6 +12,16 @@ Implemented requirements:
 - Context creation/closure counters make leaked browser sessions an explicit failing audit.
 - Serial and parallel paths visit the same live sites and use the same extraction function; wall-clock time and speedup are measured, not estimated.
 
+## Code map
+
+- **Run first:** python demo.py --target "Professor Name" --sites-json sites.example.json --agents 3.
+- **Start here:** agents.py::search_one and the Manager run path in run_official_experiment.py.
+- **Core behavior:** worker navigation/extraction, async message bus, first-target settlement and cancellation.
+- **State / protocol:** task IDs, status/result/terminate events, worker registry and manifest.
+- **Verifier:** evidence-constrained extraction, acceptance gates, lock-protected single winner, acknowledgement count and browser-context closure.
+- **Experiment variable:** site count, serial versus parallel scheduling and cascade timing.
+- **Skip on first pass:** provider request serialization, HTML fixtures and report formatting.
+
 ## Run
 
 ```bash

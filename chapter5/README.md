@@ -4,6 +4,16 @@
 
 ← [返回主目录](../README.md) · 📖 [读本章正文](../book/chapter5.md)
 
+## 如何阅读实验
+
+正文用 skeleton 展示 Coding Agent 的“读/搜 → 补丁 → 测试 → 修复 → 验证”循环；可运行代码分层阅读：
+
+- **Starter**：从 [coding-agent](coding-agent/) 的 `CodingAgent.run` 入口和一个只读任务开始；
+- **Builder**：沿工具 schema、工作区隔离、测试执行和 Reviewer 反馈追踪，再对照 [small-model-codified-rules](small-model-codified-rules/) 的服务端真值；
+- **Maintainer**：阅读权限门、失败归因、证据 manifest 和回归测试；PPT/视频项目可作为独立的提议者—审核者案例。
+
+不需要首轮逐行阅读模型客户端、渲染器或兼容层；先确认“模型声明”与“环境事实”如何被分开验收。
+
 ## 配套项目
 
 | 编号 | 项目 | 类型 | 一句话说明 |

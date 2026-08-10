@@ -4,6 +4,14 @@
 
 ← [返回主目录](../README.md) · 📖 [读本章正文](../book/chapter10.md)
 
+## 如何阅读实验
+
+正文 skeleton 先固定消息信封、worker 生命周期、独立审核和“首个已验证成功”结算；实验目录承载完整并发实现：
+
+- **Starter**：从 [parallel-web-research](parallel-web-research/) 运行少量站点，先看 agents.py 的 worker、消息总线和验证；
+- **Builder**：阅读 [multi-role-transfer](multi-role-transfer/) 的共享上下文/Skill 对照，再看 [voice-werewolf](voice-werewolf/) 的法官状态与信息权限；
+- **Maintainer**：检查锁/幂等结算、取消 ack、消息 schema、资源关闭和 manifest。无需首轮逐行阅读浏览器或音频适配器。
+
 ## 配套项目
 
 | 编号 | 项目 | 类型 | 一句话说明 |
