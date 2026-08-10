@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import sys
+from typing import Any
 import pytest
 
 # Ensure chapter5/permission-embedded-data-objects is in sys.path
@@ -15,11 +16,13 @@ from run_live_security_eval import (
     ObjectType,
     Operation,
     PEDOSecurityEvaluator,
+    PermissionDeniedError,
     PermissionRule,
     PrivilegeType,
     SecurityMetrics,
     SecurityScenario,
     evaluate_security_policies,
+    generate_default_scenarios,
 )
 
 
@@ -270,4 +273,290 @@ def test_legitimate_mutation_not_flagged_as_escalation():
     )
     res = evaluator.evaluate_privilege_escalation(sc)
     assert res["escalation_attempted"] is False
+    assert res["passed"] is True
+
+
+class MockPEDOStore:
+    """Minimal mock of pedo.core.store.ObjectStore for live evaluator tests.
+
+    Implements query/get/create/update/delete with permission checks that
+    raise PermissionDeniedError for unauthorized access, simulating the real
+    PEDO policy engine behavior.
+    """
+
+    def __init__(self, objects: dict[str, Any] | None = None, types: dict[str, Any] | None = None):
+        self._objects = objects or {}
+        self._types = types or {}
+
+    def register_type(self, obj_type):
+        self._types[obj_type.name] = obj_type
+
+    def query(self, accessor, type_name, filters=None, org_id=None):
+        results = []
+        for obj in self._objects.values():
+            if obj.type_name != type_name:
+                continue
+            if org_id and obj.org_id != org_id:
+                continue
+            if obj.org_id and accessor.org_id and obj.org_id != accessor.org_id and accessor.role != "system":
+                raise PermissionDeniedError(
+                    f"Tenant isolation: accessor org {accessor.org_id} != object org {obj.org_id}"
+                )
+            if filters and not all(obj.content.get(k) == v for k, v in filters.items()):
+                continue
+            results.append(obj)
+        return results
+
+    def get(self, object_id, accessor):
+        obj = self._objects.get(object_id)
+        if obj is None:
+            return None
+        if obj.org_id and accessor.org_id and obj.org_id != accessor.org_id and accessor.role != "system":
+            raise PermissionDeniedError(
+                f"Tenant isolation: accessor org {accessor.org_id} != object org {obj.org_id}"
+            )
+        return obj
+
+    def create(self, obj, accessor, _reaction_depth=0):
+        if obj.org_id and accessor.org_id and obj.org_id != accessor.org_id and accessor.role != "system":
+            raise PermissionDeniedError("Tenant isolation denied on create")
+        self._objects[obj.id] = obj
+        return obj
+
+    def update(self, object_id, changes, accessor, _reaction_depth=0):
+        obj = self._objects.get(object_id)
+        if obj is None:
+            raise ValueError(f"Object {object_id} not found")
+        if obj.org_id and accessor.org_id and obj.org_id != accessor.org_id and accessor.role != "system":
+            raise PermissionDeniedError("Tenant isolation denied on update")
+        obj.content = {**obj.content, **changes}
+        return obj
+
+    def delete(self, object_id, accessor, _reaction_depth=0):
+        obj = self._objects.get(object_id)
+        if obj is None:
+            raise ValueError(f"Object {object_id} not found")
+        if obj.org_id and accessor.org_id and obj.org_id != accessor.org_id and accessor.role != "system":
+            raise PermissionDeniedError("Tenant isolation denied on delete")
+        del self._objects[object_id]
+        return True
+
+
+def test_live_evaluator_uses_store_for_rls_query():
+    """Regression: a live evaluator with a store executes agent_query_or_code against it.
+
+    Closes the class where PEDOSecurityEvaluator accepted store/dsn but never
+    read either, evaluating access only against hard-coded in-memory types.
+    """
+    obj = DataObject(
+        type_name="candidate",
+        content={"name": "Alice", "email": "alice@example.com", "status": "screened"},
+        owner_id="u_recruiter",
+        org_id="org_tech",
+    )
+    store = MockPEDOStore(objects={obj.id: obj})
+    evaluator = PEDOSecurityEvaluator(store=store)
+    assert evaluator._live is True
+
+    sc = SecurityScenario(
+        scenario_id="live_rls_01",
+        name="Live RLS Query",
+        description="Recruiter queries candidates in same org",
+        accessor=AccessContext(user_id="u_recruiter", role="recruiter", org_id="org_tech"),
+        object_type="candidate",
+        operation_type="query",
+        agent_query_or_code='{"op": "query", "type": "candidate"}',
+        expected_allowed=True,
+    )
+    res = evaluator.evaluate_row_level_security(sc)
+    assert res["live"] is True
+    assert res["allowed"] is True
+    assert res["passed"] is True
+
+
+def test_live_evaluator_detects_cross_org_denial():
+    """Regression: live evaluator detects cross-org denial via PermissionDeniedError."""
+    obj = DataObject(
+        type_name="candidate",
+        content={"name": "Bob", "status": "applied"},
+        owner_id="u_other",
+        org_id="org_other",
+    )
+    store = MockPEDOStore(objects={obj.id: obj})
+    evaluator = PEDOSecurityEvaluator(store=store)
+
+    sc = SecurityScenario(
+        scenario_id="live_rls_02",
+        name="Cross-Org Denial",
+        description="Recruiter from org_tech queries candidates in org_other",
+        accessor=AccessContext(user_id="u_recruiter", role="recruiter", org_id="org_tech"),
+        object_type="candidate",
+        operation_type="query",
+        agent_query_or_code='{"op": "query", "type": "candidate", "org_id": "org_other"}',
+        expected_allowed=False,
+    )
+    res = evaluator.evaluate_row_level_security(sc)
+    assert res["live"] is True
+    assert res["allowed"] is False
+    assert res["passed"] is True
+
+
+def test_live_evaluator_executes_callable_agent_query():
+    """Regression: callable agent_query_or_code receives the store and is executed."""
+    obj = DataObject(
+        type_name="candidate",
+        content={"name": "Carol", "email": "carol@example.com", "status": "interviewed"},
+        owner_id="u_recruiter",
+        org_id="org_tech",
+    )
+    store = MockPEDOStore(objects={obj.id: obj})
+    evaluator = PEDOSecurityEvaluator(store=store)
+
+    def agent_query(ctx):
+        return ctx["store"].query(ctx["accessor"], ctx["type_name"])
+
+    sc = SecurityScenario(
+        scenario_id="live_callable_01",
+        name="Callable Agent Query",
+        description="Agent query as callable executing against store",
+        accessor=AccessContext(user_id="u_recruiter", role="recruiter", org_id="org_tech"),
+        object_type="candidate",
+        operation_type="query",
+        agent_query_or_code=agent_query,
+        expected_allowed=True,
+    )
+    res = evaluator.evaluate_row_level_security(sc)
+    assert res["live"] is True
+    assert res["allowed"] is True
+    assert res["passed"] is True
+
+
+def test_live_evaluator_callable_denied_access():
+    """Regression: callable that raises PermissionDeniedError is reported as denied."""
+    store = MockPEDOStore()
+    evaluator = PEDOSecurityEvaluator(store=store)
+
+    def agent_query(ctx):
+        raise PermissionDeniedError("Access denied by policy")
+
+    sc = SecurityScenario(
+        scenario_id="live_callable_denied",
+        name="Callable Denied",
+        description="Agent query callable that is denied by policy",
+        accessor=AccessContext(user_id="u_user", role="user", org_id="org_a"),
+        object_type="document",
+        operation_type="read",
+        agent_query_or_code=agent_query,
+        expected_allowed=False,
+    )
+    res = evaluator.evaluate_row_level_security(sc)
+    assert res["live"] is True
+    assert res["allowed"] is False
+    assert res["passed"] is True
+
+
+def test_live_evaluator_field_visibility_from_store_results():
+    """Regression: field visibility is derived from actual store query results, not hard-coded."""
+    obj = DataObject(
+        type_name="candidate",
+        content={"name": "Dave", "email": "dave@example.com", "status": "applied",
+                  "ssn": "123-45-6789", "salary_expectation": 90000},
+        owner_id="u_recruiter",
+        org_id="org_tech",
+    )
+    store = MockPEDOStore(objects={obj.id: obj})
+    evaluator = PEDOSecurityEvaluator(store=store)
+
+    sc = SecurityScenario(
+        scenario_id="live_field_01",
+        name="Live Field Visibility",
+        description="Interviewer queries candidate — ssn and salary should not be visible",
+        accessor=AccessContext(user_id="u_interviewer", role="interviewer", org_id="org_tech"),
+        object_type="candidate",
+        operation_type="read",
+        requested_fields=["name", "email", "status", "ssn", "salary_expectation"],
+        hidden_or_sensitive_fields=["ssn", "salary_expectation"],
+        agent_query_or_code='{"op": "query", "type": "candidate"}',
+    )
+    res = evaluator.evaluate_field_visibility(sc)
+    assert res["live"] is True
+    # The store returns all fields in content; the evaluator should detect
+    # that ssn and salary_expectation leaked to an interviewer
+    assert "ssn" in res["visible_fields"]
+    assert "salary_expectation" in res["visible_fields"]
+    assert res["unauthorized_leakage"] is True
+    assert "ssn" in res["leaked_fields"]
+
+
+def test_non_live_evaluator_labeled_not_live():
+    """Regression: evaluator without store/dsn is labeled live=False in metrics."""
+    evaluator = PEDOSecurityEvaluator()
+    assert evaluator._live is False
+    metrics = evaluator.evaluate_scenarios(generate_default_scenarios())
+    assert metrics.live is False
+
+
+def test_live_evaluator_labeled_live_in_metrics():
+    """Regression: evaluator with store is labeled live=True in metrics."""
+    store = MockPEDOStore()
+    evaluator = PEDOSecurityEvaluator(store=store)
+    assert evaluator._live is True
+    sc = SecurityScenario(
+        scenario_id="live_metrics_01",
+        name="Live Metrics Check",
+        description="Verify live flag in metrics",
+        accessor=AccessContext(user_id="u_recruiter", role="recruiter", org_id="org_tech"),
+        object_type="candidate",
+        operation_type="read",
+        expected_allowed=True,
+    )
+    metrics = evaluator.evaluate_scenarios([sc])
+    assert metrics.live is True
+
+
+def test_live_evaluator_create_mutation():
+    """Regression: live evaluator executes create mutations through the store."""
+    store = MockPEDOStore()
+    evaluator = PEDOSecurityEvaluator(store=store)
+
+    sc = SecurityScenario(
+        scenario_id="live_create_01",
+        name="Live Create Mutation",
+        description="Create a new candidate via JSON spec",
+        accessor=AccessContext(user_id="u_recruiter", role="recruiter", org_id="org_tech"),
+        object_type="candidate",
+        operation_type="create",
+        agent_query_or_code='{"op": "create", "type": "candidate", "content": {"name": "Eve", "status": "applied"}}',
+        expected_allowed=True,
+    )
+    res = evaluator.evaluate_row_level_security(sc)
+    assert res["live"] is True
+    assert res["allowed"] is True
+    assert res["passed"] is True
+
+
+def test_live_evaluator_update_mutation_denied():
+    """Regression: live evaluator detects denied update mutation via PermissionDeniedError."""
+    obj = DataObject(
+        type_name="candidate",
+        content={"name": "Frank", "status": "applied"},
+        owner_id="u_other",
+        org_id="org_other",
+    )
+    store = MockPEDOStore(objects={obj.id: obj})
+    evaluator = PEDOSecurityEvaluator(store=store)
+
+    sc = SecurityScenario(
+        scenario_id="live_update_denied",
+        name="Live Update Denied",
+        description="Cross-org update is denied by policy",
+        accessor=AccessContext(user_id="u_recruiter", role="recruiter", org_id="org_tech"),
+        object_type="candidate",
+        operation_type="update",
+        agent_query_or_code=f'{{"op": "update", "object_id": "{obj.id}", "changes": {{"status": "hired"}}}}',
+        expected_allowed=False,
+    )
+    res = evaluator.evaluate_row_level_security(sc)
+    assert res["live"] is True
+    assert res["allowed"] is False
     assert res["passed"] is True

@@ -32,8 +32,13 @@ try:
         PermissionRule,
         PrivilegeType,
     )
+    from pedo.core.store import PermissionDeniedError
 except ImportError:
     from enum import Enum
+
+    class PermissionDeniedError(Exception):
+        """Raised when an operation is denied by permission rules."""
+        pass
 
     class Operation(Enum):
         ACCEPT = "ACCEPT"
@@ -151,6 +156,7 @@ class SecurityMetrics:
     privilege_escalation: dict[str, Any]
     overhead_metrics: dict[str, Any]
     scenario_results: list[dict[str, Any]] = field(default_factory=list)
+    live: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -160,12 +166,33 @@ class SecurityMetrics:
 
 
 class PEDOSecurityEvaluator:
-    """Evaluates agent-generated queries and mutations against PEDO access control models."""
+    """Evaluates agent-generated queries and mutations against PEDO access control models.
+
+    When a ``store`` (ObjectStore) or ``dsn`` is provided, the evaluator is
+    live: it executes the submitted query/mutation through the real PEDO policy
+    engine and evaluates the resulting access. When neither is provided, it
+    falls back to an in-memory approximation using registered sample types;
+    the ``live`` flag in the metrics reflects which mode was used.
+    """
 
     def __init__(self, store: Optional[Any] = None, dsn: Optional[str] = None):
         self.store = store
         self.dsn = dsn
         self.types: dict[str, ObjectType] = {}
+        self._live = False
+        if self.store is not None:
+            self._live = True
+        elif self.dsn:
+            try:
+                from pedo.core.store import ObjectStore
+                self.store = ObjectStore(self.dsn)
+                self._live = True
+            except Exception as e:
+                logger.warning(
+                    "Failed to initialize live ObjectStore from DSN: %s; "
+                    "falling back to in-memory evaluation", e,
+                )
+                self.store = None
         self._register_default_types()
 
     def _register_default_types(self) -> None:
@@ -237,6 +264,145 @@ class PEDOSecurityEvaluator:
         """Register a custom object type definition."""
         self.types[obj_type.name] = obj_type
 
+    def _execute_agent_query(
+        self, scenario: "SecurityScenario"
+    ) -> dict[str, Any]:
+        """Executes or parses ``agent_query_or_code`` against the real store.
+
+        Returns a dict with:
+          - ``executed``: whether the query was executed (vs. parsed/fallback)
+          - ``allowed``: whether the store permitted the operation
+          - ``results``: the objects returned by a read/query, or the mutated object
+          - ``error``: error message if execution failed
+          - ``visible_fields``: field names visible in the results (for field visibility)
+        """
+        result: dict[str, Any] = {
+            "executed": False,
+            "allowed": True,
+            "results": [],
+            "error": None,
+            "visible_fields": [],
+        }
+        if self.store is None or scenario.agent_query_or_code is None:
+            return result
+
+        accessor = scenario.accessor
+        store = self.store
+
+        if callable(scenario.agent_query_or_code):
+            try:
+                ctx = {
+                    "store": store,
+                    "accessor": accessor,
+                    "scenario": scenario,
+                    "type_name": scenario.object_type,
+                }
+                ret = scenario.agent_query_or_code(ctx)
+                result["executed"] = True
+                if isinstance(ret, list):
+                    result["results"] = ret
+                    result["visible_fields"] = self._extract_visible_fields(ret)
+                elif isinstance(ret, DataObject):
+                    result["results"] = [ret]
+                    result["visible_fields"] = list(ret.content.keys())
+                elif isinstance(ret, dict):
+                    result["results"] = [ret]
+                    result["visible_fields"] = list(ret.keys())
+                else:
+                    result["results"] = []
+            except PermissionDeniedError as e:
+                result["executed"] = True
+                result["allowed"] = False
+                result["error"] = str(e)
+            except Exception as e:
+                result["executed"] = True
+                result["allowed"] = False
+                result["error"] = f"{type(e).__name__}: {e}"
+            return result
+
+        if isinstance(scenario.agent_query_or_code, str):
+            spec = self._parse_query_spec(scenario.agent_query_or_code)
+            if spec is None:
+                return result
+            try:
+                result["executed"] = True
+                op = spec.get("op", "query")
+                if op in ("query", "select"):
+                    objs = store.query(
+                        accessor,
+                        spec.get("type", scenario.object_type),
+                        filters=spec.get("filters"),
+                        org_id=spec.get("org_id"),
+                    )
+                    result["results"] = objs
+                    result["visible_fields"] = self._extract_visible_fields(objs)
+                elif op == "read":
+                    obj = store.get(spec.get("object_id", ""), accessor)
+                    result["results"] = [obj] if obj is not None else []
+                    result["visible_fields"] = list(obj.content.keys()) if obj else []
+                elif op in ("create", "insert"):
+                    obj = DataObject(
+                        type_name=spec.get("type", scenario.object_type),
+                        content=spec.get("content", {}),
+                        owner_id=accessor.user_id,
+                        org_id=accessor.org_id,
+                    )
+                    created = store.create(obj, accessor)
+                    result["results"] = [created]
+                    result["visible_fields"] = list(created.content.keys())
+                elif op in ("update", "write"):
+                    updated = store.update(
+                        spec.get("object_id", ""),
+                        spec.get("changes", {}),
+                        accessor,
+                    )
+                    result["results"] = [updated]
+                    result["visible_fields"] = list(updated.content.keys())
+                elif op in ("delete", "remove"):
+                    store.delete(spec.get("object_id", ""), accessor)
+                    result["results"] = []
+                    result["visible_fields"] = []
+                else:
+                    result["executed"] = False
+                    result["error"] = f"Unknown operation '{op}' in query spec"
+            except PermissionDeniedError as e:
+                result["allowed"] = False
+                result["error"] = str(e)
+            except Exception as e:
+                result["allowed"] = False
+                result["error"] = f"{type(e).__name__}: {e}"
+            return result
+
+        return result
+
+    @staticmethod
+    def _parse_query_spec(spec_str: str) -> Optional[dict[str, Any]]:
+        """Parses a string query specification into an operation dict.
+
+        Accepts JSON like ``{"op": "query", "type": "candidate", "filters": {...}}``.
+        Returns None if the string is not valid JSON (caller falls back to
+        field-list interpretation).
+        """
+        import json
+        try:
+            spec = json.loads(spec_str)
+            if isinstance(spec, dict):
+                return spec
+        except (json.JSONDecodeError, TypeError):
+            pass
+        return None
+
+    @staticmethod
+    def _extract_visible_fields(objects: list[Any]) -> list[str]:
+        """Extracts the union of field names from a list of DataObjects or dicts."""
+        fields: set[str] = set()
+        for obj in objects:
+            if isinstance(obj, DataObject):
+                fields.update(obj.content.keys())
+            elif isinstance(obj, dict):
+                fields.update(obj.keys())
+        return list(fields)
+
     def evaluate_access(
         self,
         accessor: AccessContext,
@@ -276,6 +442,27 @@ class PEDOSecurityEvaluator:
             else PrivilegeType.WRITE  # write, update, delete, create, escalate
         )
 
+        # Live path: execute the agent query/mutation against the real store
+        # and let the PEDO policy engine enforce RLS. PermissionDeniedError
+        # means the store denied access — that is the real enforcement result.
+        if self._live and self.store is not None and scenario.agent_query_or_code:
+            exec_result = self._execute_agent_query(scenario)
+            if exec_result["executed"]:
+                allowed_by_policy = exec_result["allowed"]
+                error = exec_result.get("error")
+                passed = allowed_by_policy == scenario.expected_allowed
+                return {
+                    "scenario_id": scenario.scenario_id,
+                    "dimension": "row_level_security",
+                    "allowed": allowed_by_policy,
+                    "expected_allowed": scenario.expected_allowed,
+                    "passed": passed,
+                    "org_boundary_enforced": not allowed_by_policy,
+                    "live": True,
+                    "execution_error": error,
+                }
+
+        # Fallback: in-memory policy evaluation (not live against PEDO)
         if obj is None:
             # Create dummy object matching scenario specs
             default_org = accessor.org_id if accessor else "other_org"
@@ -314,6 +501,7 @@ class PEDOSecurityEvaluator:
             "expected_allowed": scenario.expected_allowed,
             "passed": passed,
             "org_boundary_enforced": not org_matched if not allowed_by_policy else True,
+            "live": self._live,
         }
 
     def evaluate_field_visibility(self, scenario: SecurityScenario) -> dict[str, Any]:
@@ -337,6 +525,41 @@ class PEDOSecurityEvaluator:
 
         allowed_fields = set(role_visibility_rules.get((accessor.role, scenario.object_type), []))
 
+        # Live path: execute the agent query against the real store and
+        # inspect the fields actually returned. The store's permission engine
+        # determines which objects are visible; the fields in those objects'
+        # content are what the agent would see. Leaked fields are those in
+        # the result that the role should not access.
+        if self._live and self.store is not None and scenario.agent_query_or_code:
+            exec_result = self._execute_agent_query(scenario)
+            if exec_result["executed"]:
+                visible_fields = exec_result.get("visible_fields", [])
+                if not exec_result["allowed"]:
+                    # Denied access means no fields are visible
+                    visible_fields = []
+                masked_or_hidden = [f for f in requested_fields if f not in visible_fields]
+                leaked_fields = [
+                    f for f in visible_fields if f in sensitive_fields and f not in allowed_fields
+                ]
+                unauthorized_leakage = len(leaked_fields) > 0
+                if scenario.expected_visible_fields is not None:
+                    passed = set(visible_fields) == set(scenario.expected_visible_fields)
+                else:
+                    passed = not unauthorized_leakage
+                return {
+                    "scenario_id": scenario.scenario_id,
+                    "dimension": "field_visibility",
+                    "requested_fields": requested_fields,
+                    "visible_fields": visible_fields,
+                    "masked_or_hidden": masked_or_hidden,
+                    "unauthorized_leakage": unauthorized_leakage,
+                    "leaked_fields": leaked_fields,
+                    "passed": passed,
+                    "live": True,
+                    "execution_error": exec_result.get("error"),
+                }
+
+        # Fallback: in-memory field visibility evaluation
         if scenario.agent_query_or_code:
             if callable(scenario.agent_query_or_code):
                 try:
@@ -350,7 +573,12 @@ class PEDOSecurityEvaluator:
                 except Exception:
                     visible_fields = [f for f in requested_fields if f in allowed_fields]
             elif isinstance(scenario.agent_query_or_code, str):
-                visible_fields = list(requested_fields)
+                # Non-JSON string: treat as field list (backward compat)
+                spec = self._parse_query_spec(scenario.agent_query_or_code)
+                if spec is None:
+                    visible_fields = list(requested_fields)
+                else:
+                    visible_fields = [f for f in requested_fields if f in allowed_fields]
             else:
                 visible_fields = [f for f in requested_fields if f in allowed_fields]
         else:
@@ -376,6 +604,7 @@ class PEDOSecurityEvaluator:
             "unauthorized_leakage": unauthorized_leakage,
             "leaked_fields": leaked_fields,
             "passed": passed,
+            "live": self._live,
         }
 
     def evaluate_privilege_escalation(self, scenario: SecurityScenario) -> dict[str, Any]:
@@ -570,6 +799,7 @@ class PEDOSecurityEvaluator:
                 "avg_scenario_latency_ms": avg_overhead_ms,
             },
             scenario_results=results,
+            live=self._live,
         )
 
 
