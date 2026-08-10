@@ -139,7 +139,7 @@ Agent 评估需要一个可重复运行的自动化环境——能在开发阶�
 
 五个要素合起来，就是一个可重复的评估循环：
 
-```text
+```python
 for task in dataset:
     environment.reset(task.initial_state)
     trajectory = agent.run(task.prompt, environment.tools)
@@ -373,7 +373,7 @@ rubric:
 
 因此，确定性检查和模型评判不应被揉成一次“总分”调用。更稳妥的聚合骨架是：
 
-```text
+```python
 deterministic = verify_state_policy_and_claims(trajectory, outcome)
 if deterministic.veto:
     return FAIL(reason = deterministic.evidence)
@@ -681,7 +681,7 @@ $$
 
 同一批任务比较两个配置时，应优先做**配对分析**：逐题记录谁胜出，用 McNemar 检验或配对 bootstrap 判断差异，而不是直接相减两个独立成功率。由于 Agent 每次运行也可能不同，每个配置最好用多个随机种子（如 3–5 次），报告均值和波动范围；单次运行只能用来筛选方向。若预期收益只有 2–3 个百分点，而评估集只有几十题，应该先扩大样本，标准误会按 $1/\sqrt{n}$ 缩小。
 
-```text
+```python
 for task in paired_tasks:
     for seed in fixed_seeds:
         a = run(config_a, task, seed)

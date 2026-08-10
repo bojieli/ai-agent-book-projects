@@ -30,7 +30,7 @@ OpenAI 在 GPT-Live 的介绍中用“级联、轮次式、全双工”概括了
 
 级联系统从串行变成流式时，最重要的不是把每个函数改成 `async`，而是允许**增量结果失效并被取消**：
 
-```text
+```python
 while audio_is_arriving:
     partial = asr.push(audio_chunk)
     if endpoint_is_probable(partial):
@@ -230,7 +230,7 @@ Computer Use（也称 GUI 自动化 Agent）让 AI 像人类一样通过观察�
 
 把这个循环写成 skeleton 后，安全边界会更直观：
 
-```text
+```python
 observation = capture_screenshot_and_accessibility_tree()
 proposal = model.decide(task, observation)
 action = validate_schema_and_coordinates(proposal)
@@ -421,7 +421,7 @@ XLeRobot 支持键盘、Xbox 手柄、Switch Joy-Con 和 VR 设备等遥操作�
 
 分层控制的最小闭环如下；高层只提交有边界的技能，低层负责实时控制和急停：
 
-```text
+```python
 goal = parse_user_goal()
 plan = planner.decompose(goal)
 
@@ -435,7 +435,7 @@ for skill in plan:
         retry_once_or_replan(skill)
 ```
 
-这段伪代码解释层级关系，不规定某个机器人 SDK 的关节接口；标定、限速、超时和急停应由实验的执行器实现。
+这段骨架解释层级关系；标定、限速、超时和急停应由实验的执行器实现。
 
 这是一种常见的工程分工，不是唯一的模型架构。VLA 可以承担一部分高层判断，规划器也可以是规则程序、VLM 或优化器。无论采用哪种实现，都应该把“任务顺序”和“眼前动作”分开，否则高层模型的推理延迟会拖慢底层控制，底层的高频控制也会让高层模型处理大量无关细节。对 XLeRobot 来说，模型不应直接输出任意关节角；它只选择 `pick`、`place`、`verify_state` 或 `stop` 等有边界的技能，经过标定、限速并带超时的执行器再把技能变成真实机械臂动作。
 
@@ -481,7 +481,7 @@ RT-2 和 OpenVLA 把连续动作切成离散的 token，再像生成文字一样
 
 动作分块通常需要一个“预测—执行—抢占”骨架，而不是一次性执行到底：
 
-```text
+```python
 chunk = vla(current_observation, skill)
 for action in chunk:
     low_level.execute(action)

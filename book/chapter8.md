@@ -48,7 +48,7 @@
 
 三层验证的控制关系可以写得很短：结果与过程是硬门，只有都通过时，语言质量才有资格决定候选是否值得学习。
 
-```text
+```python
 outcome = verify_environment_state(trajectory)
 process = verify_actions_and_permissions(trajectory)
 quality = judge_with_rubric(trajectory, cite_evidence = true)
@@ -91,7 +91,7 @@ LLM 验证器本身也需要校准。生产系统通常准备一小批由专家�
 
 表中的选择不是按“新旧”排序，而是按经验最自然的表示方式路由：
 
-```text
+```python
 if experience.is_factual and experience.has_sources:
     target = KNOWLEDGE
 elif experience.can_be_expressed_as_contextual_language_rule:
@@ -303,7 +303,7 @@ Voyager[^voyager-2023] 展示了一个较完整的持续进化循环。它在 Mi
 
 无论更新写入哪种载体，发布协议都应保持一致：
 
-```text
+```python
 candidate = propose_minimal_update(evidence, current_version)
 
 if not verify(candidate, boundary_set): reject(candidate)
@@ -387,7 +387,7 @@ Agent 的自我进化能力有可能把一次错误变成长期风险。网页�
 
 上述五步可收敛为一个不会直接改写线上版本的离线循环：
 
-```text
+```python
 while sleep_gate_is_open():
     batch = load_new_evaluated_trajectories()
     proposals = consolidate(batch, current_capabilities)

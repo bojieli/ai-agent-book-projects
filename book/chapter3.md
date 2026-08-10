@@ -38,9 +38,9 @@ Extracted memories:
 - User has travel plans to Tokyo (recent activity)
 ```
 
-上面的列表展示的是**提取结果**，不是记忆系统的完整运行逻辑。把“什么时候读、什么时候写、谁来审核”补齐后，生命周期可以压缩为下面四步伪代码：
+上面的列表展示的是**提取结果**，不是记忆系统的完整运行逻辑。把“什么时候读、什么时候写、谁来审核”补齐后，生命周期可以压缩为下面四步 Python 风格伪代码：
 
-```text
+```python
 when answering(user_request):
     recent_turns = conversation.tail()
     relevant_memory = memory.search(user_request)
@@ -138,7 +138,7 @@ after conversation (background job):
 
 先把两阶段的边界写成伪代码，再看一个很短的状态片段：
 
-```text
+```python
 append_only_log += extract_facts(conversation)
 
 if checkpoint_due():
@@ -149,11 +149,11 @@ if checkpoint_due():
         keep_previous_checkpoint()
 ```
 
-这不是可直接运行的 User-as-Code 框架；它只说明“日志先保真、检查点后结构化”的时序，完整实现仍放在实验目录。
+这段 skeleton 只说明“日志先保真、检查点后结构化”的时序，完整实现仍放在实验目录。
 
-下面是一个简化的状态片段。它只说明类型化状态和规则如何衔接，不是可直接运行的 Python；可运行定义和测试放在实验目录：
+下面是一个简化的状态片段，说明类型化状态和规则如何衔接；可运行定义和测试放在实验目录：
 
-```text
+```python
 state = {
     passport: PassportInfo(
         number = "AB1234567",
@@ -170,7 +170,7 @@ state = {
 
 带类型的状态把原本需要 LLM“读一遍再心算”的操作交给确定性函数。**聚合统计**例如：
 
-```text
+```python
 count(
     trip for trip in state.trips
     if trip.is_international and year(trip.departure_date) == 2025
@@ -180,7 +180,7 @@ count(
 
 **冲突发现**可以把当前用药和过敏史交叉比对：
 
-```text
+```python
 def check_drug_allergy(profile):
     for medication in profile.current_medications:
         for allergy in profile.allergies:
@@ -190,7 +190,7 @@ def check_drug_allergy(profile):
 
 **约束执行**则在状态更新后自动检查护照有效期，不必等用户再次检索：
 
-```text
+```python
 def check():
     for trip in state.trips:
         if trip.is_international:
@@ -287,7 +287,7 @@ def check():
 
 **例 1：维基百科知识库**。用户问“量子纠缠是什么？”，基座模型的训练数据可能不包含最新的实验进展。RAG 的流程如下：
 
-```text
+```python
 # 1. 用户提问
 query = "量子纠缠是什么？最新的实验进展有哪些？"
 
@@ -309,7 +309,7 @@ answer = llm.generate(
 
 **例 2：公司知识库**。用户问“我买的东西想退款，流程是什么？”：
 
-```text
+```python
 query = "退款流程"
 results = retriever.search(query, top_k=2)
 # results = [
@@ -322,9 +322,9 @@ answer = llm.generate(system="你是客服助手。", context=results, question=
 
 两个例子的模式完全一致：**检索相关片段 → 注入上下文 → LLM 基于上下文生成答案**。RAG 的核心价值在于让 LLM 能利用它训练时没见过的知识（维基百科的最新内容、公司的内部文档），而不需要重新训练模型。
 
-把离线建索引、在线检索和重排序分开后，混合 RAG 的控制流如下。这里用 `text` 标注，表示流程示意而非某个向量库 SDK 的可运行代码：
+把离线建索引、在线检索和重排序分开后，混合 RAG 的控制流如下：
 
-```text
+```python
 offline:
     chunks = split_documents(documents)
     dense_index = build_dense_index(chunks)

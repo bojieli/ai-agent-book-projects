@@ -89,9 +89,9 @@ Agent：已整理完毕，共发现 3 个 TODO 项，清单保存在 TODO_LIST.m
 
 不同模型裁剪这套流程的方式并不相同。有些 Coding 模型会在第一次修改前广泛阅读目录、实现、调用方和测试；另一些则会读少数最可能相关的文件，马上提交一个补丁，再把编译与测试反馈当作调查的一部分。这种“何时停止收集信息、开始行动”的阈值可以在更换 Harness 后继续跟随模型，也可以在同一 Harness 内随模型切换而改变，因此首先是**模型学到的行为策略**，而不只是 Coding 产品的界面风格。Harness 的提示词、工具和预算仍能放大或抑制它，但不必是它的来源。第六章实验 6-7 将在固定 Harness 中测量这个差异，第七章再从后训练角度解释它可能如何写入参数。
 
-先把一个生产级 Coding Agent 的控制流写成骨架。它不是某个框架的 API，也不要求正文读者记住每个工具参数；完整的文件工具、会话状态和测试适配器留在配套实验中。
+先把一个生产级 Coding Agent 的控制流写成骨架；完整的文件工具、会话状态和测试适配器留在配套实验中。
 
-```text
+```python
 understand_task()
 inspect_repository()
 clarify_if_needed()
@@ -434,7 +434,7 @@ Mathematica 创始人 Stephen Wolfram 对此提出了深刻洞察。在 LLM 出�
 
 与其设计独立校验工具，不如让执行工具内部先校验。以 τ-bench（tau-bench，一个模拟航空、电商客服场景，专门评测 Agent 工具调用与政策遵守能力的基准测试）中的航空公司取消政策为例：
 
-```text
+```python
 cancel_reservation(reservation_id, requested_reason, model_checklist):
     reservation = database.read(reservation_id)
     now = trusted_server_clock()
@@ -457,7 +457,7 @@ cancel_reservation(reservation_id, requested_reason, model_checklist):
         return reject_with_reason()
 ```
 
-这是机制骨架，不是可运行的服务端实现；策略分支、幂等键、数据库事务和测试位于
+这是机制骨架；策略分支、幂等键、数据库事务和测试位于
 `chapter5/small-model-codified-rules` 实验中。
 
 这个设计有三层边界：系统提示词帮助模型理解并解释政策，工具描述和 `expected_*` 参数提供调用前 checklist，服务端则从数据库和可信时钟读取事实并强制执行规则。`expected_*` 只用于记录模型的判断；出现不一致时留痕，但不能改变裁决。前两层减少无效调用，最后一层确保幻觉或提示注入不会变成不可逆的取消。

@@ -241,7 +241,7 @@ Sidecar 也可在主模型思考时预取相关记忆、摘要工具输出或读
 
 把执行侧的安全边界压缩成一个可审查的骨架：
 
-```text
+```python
 proposal = model.tool_call()
 call = parse_and_validate_schema(proposal)
 
@@ -507,7 +507,7 @@ Agent 与虚拟环境之间的数据交换通过**共享文件系统**完成：�
 
 事件循环本身可以先用规则写清，再让模型只参与需要语义判断的路由：
 
-```text
+```python
 while runtime.is_alive:
     events = queue.take_batch()
 
@@ -674,7 +674,7 @@ while runtime.is_alive:
 
 主动发现的控制流可以写成更短的伪代码：
 
-```text
+```python
 if capability_is_missing(task):
     server = search_server_index(capability)
     tool = search_tool_index(server, capability)

@@ -165,7 +165,7 @@
 
 信封和 worker 生命周期可以先用一个与具体消息库无关的骨架固定下来：
 
-```text
+```python
 envelope = {
     id, trace_id, sender, recipient, type,
     payload, created_at, deadline, schema_version
@@ -242,7 +242,7 @@ LoopX 决策 → Agent 执行 → 独立验证器证明 → LoopX 提交
 
 提议者—审核者循环的最小不变量是：审核者读取**独立证据**，而不是只复述提议者的解释；退回时必须给出可定位的修复条件：
 
-```text
+```python
 candidate = proposer(task, constraints)
 evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
 review = independent_reviewer(candidate, evidence)
@@ -294,7 +294,7 @@ ICLR 2024 的 CRITIC 论文提供了一个直观的对比实验。CRITIC 让模�
 
 并行管理器还要定义“第一个**已验证**成功”而不是“第一个声称成功”的结算点：
 
-```text
+```python
 workers = launch_independent_workers(subtasks)
 while workers.any_running:
     event = next_event()
@@ -470,7 +470,7 @@ AutoGen 的群聊（group chat）让多个 Agent 参与同一场会话：每轮�
 
 去中心化 handoff 的最小协议可以表示为：
 
-```text
+```python
 handoff = {
     task_id, sender, recipient, goal, constraints,
     accepted_facts, artifact_refs, remaining_budget,

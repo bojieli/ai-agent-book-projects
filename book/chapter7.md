@@ -55,7 +55,7 @@
 
 把这件事压缩成一个最小训练骨架，关键不在某个训练框架的 API，而在 **prompt token 不提供监督、answer token 提供监督** 这一边界：
 
-```text
+```python
 for sample in dataset:
     prompt_tokens = tokenize(sample.prompt)
     answer_tokens = tokenize(sample.answer)
@@ -376,9 +376,9 @@ SFT 的上限首先由数据决定。实际项目很少能靠人工逐条写出�
 
 在进入实验之前，先建立一点关于 RL 算法的**最小直觉**，以便理解后续实验里出现的术语。本章的 RL 训练大多基于**策略梯度**：让模型对同一个问题多生成几条回答，奖励高的回答就提高它出现的概率、奖励低的就降低——“奖励高的方向多走，奖励低的方向少走”。为抑制单次更新把模型带偏，主流的 **PPO** 算法会在概率比超出指定区间时裁掉代理目标中的额外收益；它会抑制大幅更新，但不是对策略变化的硬约束（后文实验中出现的 “带价值网络的 PPO” 即指此，价值网络用来估计基线、算出更细的优势）。另一种 **GRPO** 则不训练价值网络，而是用 “同一问题的多条回答互相比较” 来判断每条的相对好坏。记住这条直觉，就足以读懂接下来两个实验。
 
-同一机制可以用下面的语言无关骨架表示。它省略采样并行、KL 正则和优化器细节，只标出一次 rollout 到参数更新的因果链：
+同一机制可以用下面的 Python 风格骨架表示。它省略采样并行、KL 正则和优化器细节，只标出一次 rollout 到参数更新的因果链：
 
-```text
+```python
 for prompt in batch:
     group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
     rewards = [verify(trajectory) for trajectory in group]
@@ -388,7 +388,7 @@ for prompt in batch:
 
 PPO 的价值网络和裁剪目标可以单独写成：
 
-```text
+```python
 for trajectory in rollouts:
     returns = discounted_returns(trajectory.rewards)
     values = value_model(trajectory.states)
@@ -403,7 +403,7 @@ for trajectory in rollouts:
 update(policy, value_model, policy_loss + value_coef * value_loss)
 ```
 
-GRPO 的“相对”来自同一 prompt 的组内比较；PPO 中的 `old_policy` 是生成这批 rollout 时冻结的策略快照，概率比用它衡量当前策略已经移动了多远。裁剪会抑制大步更新，但不是对策略变化的硬约束；两者都仍依赖可靠环境与奖励，伪代码不表示可直接运行的训练脚本。
+GRPO 的“相对”来自同一 prompt 的组内比较；PPO 中的 `old_policy` 是生成这批 rollout 时冻结的策略快照，概率比用它衡量当前策略已经移动了多远。裁剪会抑制大步更新，但不是对策略变化的硬约束；两者都仍依赖可靠环境与奖励，具体训练适配见对应实验。
 
 > **实验 7-10 ★★：AdaptThink——学会 “何时不思考”**
 >
@@ -530,7 +530,7 @@ Search-R1[^ch7-25]代表检索增强路线：模型自主决定何时搜索、�
 
 可以把这条边界写成一个很短的轨迹级 mask：
 
-```text
+```python
 for token in trajectory:
     if token.source == ENVIRONMENT:
         loss_mask[token] = 0
@@ -598,7 +598,7 @@ for token in trajectory:
 
 在实现层面，可以先把验证器输出拆成两路，再交给现有的策略优化器：
 
-```text
+```python
 outcome = verify_final_state(trajectory)              # result, not self-report
 path_signal = 0
 for step in trajectory:
@@ -634,7 +634,7 @@ On-Policy Distillation 让学生先按自己的策略生成轨迹，再让更强
 
 其控制流可以压缩为：学生先走自己的路，教师只在学生实际访问过的状态上提供分布，不替学生重放一条离轨答案。
 
-```text
+```python
 student_trajectory = rollout(student, task)
 loss = 0
 for state in student_trajectory:
@@ -657,7 +657,7 @@ On-Policy Distillation 的威力来自教师，但它也因此背上了一个硬
 
 OPSD 可以看成上一段骨架的一个受限变体：
 
-```text
+```python
 student_trajectory = rollout(model, task_without_answer)
 loss = 0
 for state in student_trajectory:

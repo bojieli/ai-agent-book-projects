@@ -248,7 +248,7 @@ Agent 框架拿到模型的工具调用请求后，实际执行这两个工具�
 
 ### 用代码实现 Agent 的核心循环
 
-理解了 JSON 结构之后，让我们用 Python 代码把上面的交互过程串起来。以下是一个最简的 Agent 实现——核心就是一个 while 循环。本章刻意保留这段完整 API 循环作为协议参照；其他章节只用语言无关的 skeleton 标出机制，完整 SDK 适配放在章级实验中。
+理解了 JSON 结构之后，让我们用 Python 代码把上面的交互过程串起来。以下是一个最简的 Agent 实现——核心就是一个 while 循环。本章刻意保留这段完整 API 循环作为协议参照；其他章节用 Python 风格 skeleton 标出机制，完整 SDK 适配放在章级实验中。
 
 ```python
 from openai import OpenAI
@@ -377,9 +377,9 @@ messages = [
 
 本章后续将围绕这个结构的每一层展开：如何利用静态前缀的不变性加速推理（KV Cache）、如何设计好的 System Prompt（提示工程）、如何防范外部内容对上下文的劫持（提示注入防御）、如何按需加载专业知识（Agent Skills）、如何在对话末尾注入动态状态信息（Agent 状态栏）、以及如何在对话历史膨胀时进行智能压缩（压缩策略）。
 
-后续技术虽然名称很多，落到每次请求前其实只是一次上下文构造决策。下面的伪代码保留了这个决策的最小骨架；它与前面的完整 API 循环互补，不替代消息角色、`tool_call_id` 等协议细节。
+后续技术虽然名称很多，落到每次请求前其实只是一次上下文构造决策。下面用 Python 风格伪代码保留这个决策的最小骨架；它与前面的完整 API 循环互补，强调上下文布局，不替代消息角色、`tool_call_id` 等协议细节。
 
-```text
+```python
 stable_prefix = system_message
 stable_tools = core_tool_schemas
 trajectory = load_message_history(session)
