@@ -103,7 +103,9 @@ class ContextCompressionBenchmark:
             return ""
         words = context.split()
         if not words:
-            return ""
+            # No whitespace-separated words (e.g. CJK text): truncate by characters.
+            # CJK characters are roughly 1-2 tokens each, so use a conservative 1:1 ratio.
+            return context[:limit]
         # Estimate max words corresponding to limit tokens (~0.75 words per token)
         max_words = max(1, int(limit * 0.75))
         truncated_words = words[:max_words]
