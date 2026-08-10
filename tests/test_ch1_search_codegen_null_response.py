@@ -1,11 +1,17 @@
+import importlib.util
 import os
 import sys
+from pathlib import Path
 import pytest
 from unittest.mock import MagicMock
 
-sys.path.insert(0, os.path.abspath("chapter1/search-codegen"))
-
-from agent import GPT5NativeAgent
+_module_path = (
+    Path(__file__).resolve().parent.parent / "chapter1" / "search-codegen" / "agent.py"
+)
+_spec = importlib.util.spec_from_file_location("search_codegen_agent", _module_path)
+_module = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_module)
+GPT5NativeAgent = _module.GPT5NativeAgent
 
 
 def test_output_text_handles_null_response():
