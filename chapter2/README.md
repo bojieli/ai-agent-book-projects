@@ -8,6 +8,16 @@
 [EXPERIMENT_LEDGER.md](EXPERIMENT_LEDGER.md)。项目“可运行”不代表历史数值已复现，
 也不代表外部凭证阻塞的正式路径可以由本地 proxy 替代。
 
+## 如何阅读实验
+
+正文保留完整 API 循环；实验提供可运行的上下文管理实现。无需逐行读每个文件：
+
+- **Starter**：先运行 [context-compression](context-compression/) 的单策略 smoke，确认输入、轨迹和压缩结果；
+- **Builder**：阅读 [kv-cache](kv-cache/) 的请求前缀/动态状态划分，再对照 [prompt-engineering](prompt-engineering/) 的变量与评估；
+- **Maintainer**：查看 token 计数、溢出处理、缓存命中证据和回归测试。
+
+首次可跳过 provider adapter、可视化和样式代码；正文的 API 循环、缓存边界和压缩门控才是第一遍需要掌握的代码地图。
+
 ## 配套项目
 
 | 编号 | 项目 | 类型 | 一句话说明 |

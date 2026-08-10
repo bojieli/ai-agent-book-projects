@@ -20,6 +20,16 @@ Two usage paths:
 
 Both paths share the same async runtime. Long-running work uses **real, allowlisted Python subprocesses**. No shell is opened: progress is parsed from child stdout, completion includes observed hashes/return codes, and cancellation terminates the child PID.
 
+## Code map
+
+- **Run first:** python demo.py (offline, no API key).
+- **Start here:** runtime.py::AgentRuntime
+- **Core behavior:** runtime.py::_dispatcher routes urgency; _handle_interrupt cancels at a safe point; run_llm_turn advances the trajectory.
+- **State / protocol:** Event, inbox, pending batch and checkpoint files.
+- **Verifier:** offline demo assertions and run_real_experiment.py evidence gates.
+- **Experiment variable:** serial vs parallel tools, interrupt timing and checkpoint restore.
+- **Skip on first pass:** provider clients and the frontend/demo formatting.
+
 ### Architecture
 
 Corresponds to section 5 of the design doc—all single-threaded `asyncio`:

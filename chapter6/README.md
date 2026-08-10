@@ -6,6 +6,16 @@
 
 逐实验的正文要求、直接证据与未完成边界见 [验收台账](EXPERIMENT_LEDGER.md)。
 
+## 如何阅读实验
+
+正文伪代码先建立 reset → run → snapshot → verifier → record 的评估闭环；实验目录再展开统计与证据：
+
+- **Starter**：从 [tau2-bench-eval](tau2-bench-eval/) 跑一个固定任务，先看环境 reset、轨迹保存和结果 verifier；
+- **Builder**：阅读 [user-memory-system-evaluation](user-memory-system-evaluation/) 的 Rubric/证据 schema，再看 [elo-leaderboard](elo-leaderboard/) 的配对统计；
+- **Maintainer**：检查 veto 规则、seed/任务配对、bootstrap 或 McNemar 实现、manifest hash 和失败样本。
+
+首次可跳过 provider 适配器、图表和长期开跑脚本；先确认“过程违规”和“最终失败”是两类独立信号。
+
 ## 配套项目
 
 | 编号 | 项目 | 类型 | 一句话说明 |

@@ -13,6 +13,16 @@
 
 A production-ready AI coding agent built with Claude, implementing techniques from Chapter 2 with **pure Python tools**—no command-line dependencies required.
 
+## Code map
+
+- **Run first:** `python quickstart.py` in a disposable workspace (after provider setup).
+- **Start here:** `agent.py::CodingAgent.run` (the CLI wrapper in `main.py` is a separate presentation layer).
+- **Core behavior:** tool selection, trajectory turns, patch application and test feedback are in agent.py; tool schemas live in tools.json.
+- **State / protocol:** system_state.py::SystemState, workspace snapshots and structured tool results.
+- **Verifier:** test/lint execution plus the acceptance checks; inspect the failure path before the provider adapter.
+- **Experiment variable:** read/search depth, patch strategy and verification budget.
+- **Skip on first pass:** pure-Python compatibility wrappers, colorized CLI output and long tutorial examples.
+
 ### Key Features
 
 #### Pure Python Implementation

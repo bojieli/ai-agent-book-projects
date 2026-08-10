@@ -53,6 +53,20 @@
 
 理解了这一点，也就能看出 SFT 为什么会在有限示范上表现出记忆倾向：它的优化目标是**让标注回答里每一个 token 的概率尽可能高**，也就是尽量复现示范。对目标明确、格式固定的任务，这种方法极其高效（几千条样例就见效）；但当数据覆盖面和多样性不足时，模型可能对示范中的表面模式或捷径过拟合，在分布变化后性能下降。
 
+把这件事压缩成一个最小训练骨架，关键不在某个训练框架的 API，而在 **prompt token 不提供监督、answer token 提供监督** 这一边界：
+
+```text
+for sample in dataset:
+    prompt_tokens = tokenize(sample.prompt)
+    answer_tokens = tokenize(sample.answer)
+    tokens = prompt_tokens + answer_tokens
+    labels = [-100] * len(prompt_tokens) + answer_tokens
+    loss = causal_lm_loss(tokens, labels)
+    update_parameters(loss)
+```
+
+这里的 `-100` 只表示损失屏蔽，不是把 prompt 从模型输入中删除；模型仍需阅读问题，才能学习回答协议。真实的模板拼装、padding、batching、LoRA 配置和 tokenizer 审计放在 [chapter7/cot-distillation](../chapter7/cot-distillation/README.md) 与各 SFT 实验目录中，正文只保留这个监督边界。
+
 一句话概括 SFT 的本质：**用极高的样本效率，把一套稳定的“输入→输出”映射与协议固化进参数。** 它固化的是“格式、风格、流程”这类**协议性知识**（该怎么说、怎么做），而非大量**事实性知识**（知道什么）——后者要靠预训练或 RAG。
 
 > **训练成本：LoRA 参数高效微调**。上面 SFT 和后面的 RL 都要更新模型参数，而全参数微调对显存的要求很高（要为数十亿参数都存梯度和优化器状态）。**LoRA**（Low-Rank Adaptation，低秩适配）是最常用的省钱办法：不动原始的大权重矩阵，只在旁边挂一个很小的“补丁”（低秩矩阵）来学习任务，参数量仅占原始的 1%–5%，却能接近全参微调的效果。因为原权重被冻结，LoRA 对基座已有能力的扰动也更小，灾难性遗忘的风险更低。几条经过验证的实践经验[^ch7-1]：**必须**把 LoRA 应用到所有主要权重矩阵（尤其参数占比最大的 MLP 层），只加在注意力层会掉点；**最优学习率约是全参微调的 10 倍**（SFT、RL 都成立，是个非常实用的迁移规则）；SFT 用中高 rank（64–256），RL 因每轮信息量很小、用小 rank（8–32）甚至 rank=1 就够。部署时一台推理服务器可同时加载多个 LoRA adapter 做多租户服务。本书把 LoRA 当作贯穿所有后训练方法的工程默认项，不再单独展开。
@@ -362,6 +376,35 @@ SFT 的上限首先由数据决定。实际项目很少能靠人工逐条写出�
 
 在进入实验之前，先建立一点关于 RL 算法的**最小直觉**，以便理解后续实验里出现的术语。本章的 RL 训练大多基于**策略梯度**：让模型对同一个问题多生成几条回答，奖励高的回答就提高它出现的概率、奖励低的就降低——“奖励高的方向多走，奖励低的方向少走”。为抑制单次更新把模型带偏，主流的 **PPO** 算法会在概率比超出指定区间时裁掉代理目标中的额外收益；它会抑制大幅更新，但不是对策略变化的硬约束（后文实验中出现的 “带价值网络的 PPO” 即指此，价值网络用来估计基线、算出更细的优势）。另一种 **GRPO** 则不训练价值网络，而是用 “同一问题的多条回答互相比较” 来判断每条的相对好坏。记住这条直觉，就足以读懂接下来两个实验。
 
+同一机制可以用下面的语言无关骨架表示。它省略采样并行、KL 正则和优化器细节，只标出一次 rollout 到参数更新的因果链：
+
+```text
+for prompt in batch:
+    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
+    rewards = [verify(trajectory) for trajectory in group]
+    advantages = normalize_within_group(rewards)       # GRPO baseline
+    update(policy, group, advantages)
+```
+
+PPO 的价值网络和裁剪目标可以单独写成：
+
+```text
+for trajectory in rollouts:
+    returns = discounted_returns(trajectory.rewards)
+    values = value_model(trajectory.states)
+    advantages = returns - stop_gradient(values)
+    ratio = exp(policy.log_prob(trajectory.actions)
+                - old_policy.log_prob(trajectory.actions))
+    policy_loss = -mean(min(
+        ratio * advantages,
+        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    ))
+    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
+update(policy, value_model, policy_loss + value_coef * value_loss)
+```
+
+GRPO 的“相对”来自同一 prompt 的组内比较；PPO 中的 `old_policy` 是生成这批 rollout 时冻结的策略快照，概率比用它衡量当前策略已经移动了多远。裁剪会抑制大步更新，但不是对策略变化的硬约束；两者都仍依赖可靠环境与奖励，伪代码不表示可直接运行的训练脚本。
+
 > **实验 7-10 ★★：AdaptThink——学会 “何时不思考”**
 >
 > 大型思考模型（如 OpenAI o1、DeepSeek-R1）对所有问题都会生成冗长的思维链，在简单问题上造成不必要的开销。实验首先验证了一个直觉：**NoThinking 模式**（通过 `<think></think>` 跳过思考）在简单问题上性能相当甚至更好，只有面对困难问题时 Thinking 的优势才显现出来。
@@ -485,6 +528,18 @@ Search-R1[^ch7-25]代表检索增强路线：模型自主决定何时搜索、�
 
 工具轨迹还有一个关键实现细节：环境返回的 token 不是策略生成的，计算策略梯度时应屏蔽这些反馈 token，只对模型自己的思考和工具调用参数回传梯度。否则模型会被训练去预测沙盒输出，而不是学会如何使用工具。
 
+可以把这条边界写成一个很短的轨迹级 mask：
+
+```text
+for token in trajectory:
+    if token.source == ENVIRONMENT:
+        loss_mask[token] = 0
+    else:                                      # model thought / tool arguments
+        loss_mask[token] = 1
+```
+
+这不是在说环境反馈不重要；反馈负责计算奖励和优势，只是不应被当成策略要复现的目标序列。工具消息的序列化、来源标记和沙盒执行见 [chapter7/RLVP](../chapter7/RLVP/README.md) 与 [chapter7/SimpleVLA-RL](../chapter7/SimpleVLA-RL/README.md)。
+
 > **实验 7-14 ★★★：ReTool——代码解释器增强数学解题**
 >
 > ![图7-17 ReTool 交织文本-代码思考与沙盒执行反馈循环](images/fig7-19.svg)
@@ -541,6 +596,18 @@ Search-R1[^ch7-25]代表检索增强路线：模型自主决定何时搜索、�
 
 真实环境通常是**非对称验证器**：检测“做了一个坏动作”便宜而可靠，证明“这一步确实朝着目标取得了有意义的进展”却很难。把总奖励写成 $R=O+\beta\Phi$：$O$ 是任务结果，$\Phi$ 是由确定性规则逐动作计算的路径信号。对可验证的违规动作扣分，对可验证的合规动作或可达子目标给少量部分奖励；两路归一化后再合并，避免路径信号淹没主目标。它不改变 PPO/GRPO，只改变每一步看到的奖励。
 
+在实现层面，可以先把验证器输出拆成两路，再交给现有的策略优化器：
+
+```text
+outcome = verify_final_state(trajectory)              # result, not self-report
+path_signal = 0
+for step in trajectory:
+    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
+reward = normalize(outcome) + beta * normalize(path_signal)
+```
+
+路径信号中的允许动作、可达子目标、隐藏测试和证据记录属于实验代码；正文只说明“结果奖励”和“路径约束”如何合流，避免把某个环境的规则误当成通用算法。
+
 RLVP 的关键不是“奖励越密越好”，而是能否补回组内差异。纯结果奖励在全败组和全胜组都会产生零方差、没有梯度；违规动作通常容易检测，惩罚几乎总能补回差异；进展奖励只有在部分进展可达时才有效。设计时应遵循四点：只惩罚具体动作，不惩罚“不够努力”；结果奖励始终保留，避免模型学会什么都不做；每个惩罚最好配一条可达的合规路径；规则必须确定、难以钻空子。如果基础策略根本不会采样合规动作，应先用少量示范把这条路径“种”出来，待合规行为稳定后再逐步减弱路径塑形。换句话说，惩罚是通常可达的那一半，进展奖励是受可达性门控的那一半。
 
 > **实验 7-16 ★★★：RLVP——奖励结果、惩罚路径**
@@ -565,6 +632,19 @@ On-Policy Distillation 让学生先按自己的策略生成轨迹，再让更强
 
 具体做法是让学生的预测分布贴近教师分布，通常最小化两者的 **KL 散度**。例如学生生成“先查询 API，再解析返回值……”时，教师可以在当前位置给出“查询”80%、“调用”15%、其余 5% 的分布。相比最终成败的二元奖励，逐 token 对齐提供了密集得多、方差更低的学习信号；代价是教师推理成本，因此在环境交互昂贵时尤其划算。
 
+其控制流可以压缩为：学生先走自己的路，教师只在学生实际访问过的状态上提供分布，不替学生重放一条离轨答案。
+
+```text
+student_trajectory = rollout(student, task)
+loss = 0
+for state in student_trajectory:
+    teacher_logits = teacher(state)
+    loss += KL(student_logits(state), teacher_logits)
+update_student(loss)
+```
+
+教师的完整推理服务、缓存和停止条件见 [chapter7/cot-distillation](../chapter7/cot-distillation/README.md)；这里的 skeleton 只用来区分 on-policy 状态与逐 token 监督。
+
 在数学等任务上，达到同等性能所需的训练步数约为纯 RL 的 **1/10**。在多轮 Agent 中，成败信号更晚、更稀疏，逐 token 的教师分布能直接指导中间决策；但前提是仿真环境足够真实，让学生探索到的状态接近部署分布，否则教师对陌生偏差状态的评分也不可靠。
 
 “稠密信号胜过稀疏信号”在一个纯 Agent 场景中也得到过验证。笔者和合作者曾在“时间感”任务上比较 DPO、四种 RL 与 On-Policy Distillation：前者分别受到稀疏奖励、目标错位、rollout 形状不匹配和策略崩溃的限制；换成冻结的 Qwen3-32B 教师，在学生自己的多轮轨迹上逐 token 对齐后，训练平滑收敛，四种条件下通过率比同源 SFT 基线高出 23 到 47 个百分点[^ch7-11]。这说明瓶颈往往不是奖励函数不够复杂，而是每次交互提供的信号不够密。
@@ -574,6 +654,20 @@ On-Policy Distillation 让学生先按自己的策略生成轨迹，再让更强
 On-Policy Distillation 的威力来自教师，但它也因此背上了一个硬前提：**必须有一个明显强于学生的教师模型。** 这在很多场景里并不成立。如果你要训练的是垂直领域模型，现有模型的能力都存在不足，那就没有教师模型可用。没有更强的教师，稠密信号的红利就与我们无缘了吗？
 
 一个巧妙的破题思路是 **On-Policy Self-Distillation（OPSD，在轨自蒸馏）**[^ch7-15]：**同一个模型分饰教师和学生两角，但看到的上下文不同。** 教师版能看到“特权信息”——如标准答案或已验证的正确解答；学生版只看到问题本身，却在自己采样的轨迹上向教师版的逐 token 分布对齐。对着答案解释学生刚走过的路径，通常比独立探索更容易，因此一条 rollout 仍能产生密集监督。
+
+OPSD 可以看成上一段骨架的一个受限变体：
+
+```text
+student_trajectory = rollout(model, task_without_answer)
+loss = 0
+for state in student_trajectory:
+    privileged_state = add_verified_answer(state)
+    teacher_logits = stop_gradient(model(privileged_state))
+    loss += KL(model(state), teacher_logits)
+update(model, loss + retention_regularizer)
+```
+
+`privileged_state` 只能在训练侧构造，不能泄露给部署时的 Agent；`retention_regularizer` 代表保留集/风格约束，而不是某个固定超参数。数据权限、答案遮蔽和遗忘评估应在 [chapter7/cot-distillation](../chapter7/cot-distillation/README.md) 的训练脚本与验证器中检查。
 
 相比 RLVR，OPSD 不要求奖励一定能被自动验证：特权信息可以是标准答案、人工示范或领域文档。它用这些信息替代更强的外部教师，同时保留“在轨采样 + 逐 token 监督”的样本效率优势。但它不会凭空创造新知识——如果模型拿着答案也讲不清过程，自蒸馏就没有额外信号；朴素 OPSD 还可能让模型丢失原有思考风格，需要额外正则稳定[^ch7-16]。
 

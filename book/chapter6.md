@@ -34,7 +34,7 @@
 
 **Agent 的轨迹**：
 
-```
+```text
 用户：我想退掉 3 天前买的那个耳机，订单号 12345。（今天是 2026-04-10）
 
 Agent（思考）：用户要退款，需要先查询订单信息。
@@ -136,6 +136,19 @@ Agent 评估需要一个可重复运行的自动化环境——能在开发阶�
 **评分标准（Rubric，评分准则）**量化 Agent 的表现，可以是二元的（通过/不通过）、连续的（0 到 100 分）或多维的（分别给准确性、效率、安全性打分）。
 
 **执行协议（Interaction Protocol）**规定交互模式和终止条件。
+
+五个要素合起来，就是一个可重复的评估循环：
+
+```text
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
+`reset`、完整轨迹和最终状态缺一不可：没有重置就无法公平复跑，只看回复会漏掉“说了但没做”，只看最终状态又无法定位过程违规。
 
 ![图6-2 工具调用型与人机交互型评估环境](images/fig6-2.svg)
 
@@ -358,6 +371,19 @@ rubric:
 
 **好的 Rubric vs 坏的 Rubric**：上面每个评分档都给出了可验证的具体行为（“准确回答 Dr. Chen”），而非“展示了对记忆的深刻理解”这类无法客观判定的描述。一票否决项明确了底线：即使其他维度全部满分，一旦出现幻觉就直接判零。
 
+因此，确定性检查和模型评判不应被揉成一次“总分”调用。更稳妥的聚合骨架是：
+
+```text
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
+底线项先由环境真值或规则否决，LLM 只评价难以形式化的质量维度；低置信度或评委分歧进入人工复核，而不是自动放行。
+
 将这个 Rubric 和 Agent 的实际回答一起交给评判模型，模型会逐项打分并说明理由。把几十个用例的结果汇总起来，再回看其中的低分轨迹，原本笼统的“成功率下降”就能拆成几类具体问题：是没检索到信息，还是把人物关系想错了，抑或补充了没有依据的内容。这样一来，Rubric 不只告诉我们“得了多少分”，还会告诉我们下一步该改哪里。
 
 ### 失败归因：从整条轨迹定位首个错误
@@ -394,7 +420,7 @@ rubric:
 ```text
 中文说明：调用 `reset()` 方法。
 这是一段英文原文：“Please restart the service.”
-```python
+# 以下代码块仅用于说明受保护作用域（正文示意，不是可运行片段）
 # 中文注释：显示 "当前状态"
 name = "status"
 ```
@@ -654,6 +680,18 @@ $$
 例如 100 个用例、成功率 70% 时，95% 置信区间约为 $70\%\pm9$ 个百分点；“新模型 73% 对旧模型 70%”不足以支持切换。
 
 同一批任务比较两个配置时，应优先做**配对分析**：逐题记录谁胜出，用 McNemar 检验或配对 bootstrap 判断差异，而不是直接相减两个独立成功率。由于 Agent 每次运行也可能不同，每个配置最好用多个随机种子（如 3–5 次），报告均值和波动范围；单次运行只能用来筛选方向。若预期收益只有 2–3 个百分点，而评估集只有几十题，应该先扩大样本，标准误会按 $1/\sqrt{n}$ 缩小。
+
+```text
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
+配对的含义是让两组共享任务与随机条件，而不是分别抽两批样本再比较平均值。
 
 并行验证多个假设时还要考虑**多重比较**：收紧显著性阈值，或对正向结果做独立复跑。实务上的判断标准很简单：分差要超过噪声、在配对分析中成立，并且能够复现，才值得据此切换模型或发布改动。
 

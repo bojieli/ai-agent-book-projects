@@ -4,6 +4,14 @@
 
 ← [返回主目录](../README.md) · 📖 [读本章正文](../book/chapter8.md)
 
+## 如何阅读实验
+
+正文用 skeleton 说明验证、载体选择、候选发布/回滚和睡眠学习；项目代码按三层阅读：
+
+- **Starter**：从 [trajectory-verifier](trajectory-verifier/) 运行离线样例，先看三层 verifier 和证据输出；
+- **Builder**：再看 [self-modifying-agent](self-modifying-agent/) 的提案—回归—灰度—回滚循环，以及 [prompt-auto-optimization](prompt-auto-optimization/) 的最小 diff；
+- **Maintainer**：检查安全可信根、边界/保留/安全集、版本淘汰和 validation/latest.json。首次可跳过 provider 与 UI 适配。
+
 ## 配套实验
 
 | 编号 | 项目 | 类型 | 一句话说明 |

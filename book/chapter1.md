@@ -82,7 +82,7 @@
 
 以一个查天气的场景为例，四步流程在 API 层面的简化表示如下：
 
-```
+```text
 第一步：声明工具                    第二步：模型决定调用
 tools: [{                          assistant: {
   name: "get_weather",               tool_calls: [{
@@ -168,9 +168,28 @@ Agent 执行任务的核心模式叫做 **ReAct**（Reasoning + Acting）。虽�
 
 ![图1-4 Agent 轨迹——多币种汇总任务的 ReAct 循环](images/fig1-4.svg)
 
-让我们通过伪代码来理解 Agent 轨迹的结构：
+先看最小运行骨架。它说明的是**机制如何运行**：Model 只负责决定下一步，Harness 负责组装上下文、校验并执行工具，Environment 负责产生真实状态变化和观察。这里的写法是语言无关的伪代码，不对应某个 SDK。
 
+```text
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
 ```
+
+下面再看一次运行后**轨迹中保存了什么**。它是消息数据的结构示意，不是 Agent 循环的实现代码：
+
+```text
 轨迹 = [
   {role: "user" , content: "根据公司季度收入：Q1 2.5M 美元，Q2 2.1M 欧元，Q3 1.8M 英镑，Q4 380M 日元，计算公司年度总收入和季度平均收入" },
   
@@ -257,13 +276,23 @@ Agent 执行任务的核心模式叫做 **ReAct**（Reasoning + Acting）。虽�
 >
 > **Agent $\leftrightarrow$ Environment**
 
-最小可工作的 Agent 只需要 Model，以及能够构造上下文、暴露工具接口的最小 Harness；它被放入任务环境后，才能通过观察与行动形成闭环。要让它在生产环境中长期可靠运转，还需要在 Harness 中补全约束、验证、纠正这三层工程外壳——约束防止越界、验证发现错误、纠正恢复异常。换句话说，最小公式是 Demo 视角，扩展公式是生产视角；后者完全包含前者，并在外围加了一圈安全网。
+把五项 Harness 职责放回一次迭代，生产形态可以压缩成下面的控制骨架：
 
-举个例子帮助理解：上下文中嵌入退款政策是“上下文管理”的范畴，而校验退款金额不超过订单金额则属于“约束”；`process_refund` 的工具定义、调用适配器和权限检查属于 Harness，而订单服务及其数据库状态属于 Environment；API 超时后自动重试则属于“纠正”。模型提供基础的理解和推理能力，而 Harness 将这些能力引导、约束和放大为可靠的任务执行。设计和优化这套 Agent 边界内、模型之外的运行与治理层的工程实践，就是 **Harness 工程**（Harness Engineering）。
+```text
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
 
-用一个具体的例子来理解 Harness 的价值。假设你让一个 Agent 帮用户退掉 3 天前的订单。**没有 Harness 时**：模型看不到退款政策（缺上下文），不知道该调哪个 API（缺工具），直接编造一个退款结果回复用户（缺验证），用户发现退款根本没发生（缺纠正）。**有了 Harness 后**：系统提示词写明了 7 天退款政策（上下文），Agent 调用 `query_order` 和 `process_refund` 工具完成操作（工具），框架校验退款金额不超过订单金额（约束），校验数据库状态确认退款成功（验证），如果 API 调用超时则自动重试（纠正）。同一个模型，有无 Harness，结果天壤之别。
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
 
-回到本章前面给出的马具隐喻：没有 Harness 的模型就像脱缰的野马，能力惊人，但无法可靠地完成任务。
+这段骨架刻意不展开重试、权限策略和验证器实现；它只标出控制权与状态的归属。完整的 API 消息循环在第二章，工具安全与自动验证分别在第四、五、六章展开。
+
+最小 Demo 只需 Model 和能构造上下文、暴露工具的 Harness；生产系统还要在同一边界内加入约束、验证和纠正。比如退款 Agent 可以把政策放进上下文、用权限和金额规则约束调用、用数据库状态验证结果，并在超时时重试或回退。Harness 工程研究的正是这层“模型之外、环境之内”的运行与治理代码。
 
 更精确地说，**Harness 不是模型之外的一切**，而是 **Agent 边界内、模型之外**的运行与治理层。它负责中介 Model 与 Environment 的交互，但不包含被交互的环境本身：工具定义、调用适配器、沙箱的权限与重置机制属于 Harness；沙箱内随行动变化的文件和进程、外部数据库、网页、用户及物理世界属于 Environment。物理部署位置也不能决定概念归属——即使仿真环境与 Agent 运行在同一进程中，它仍然是 Environment。Harness 的核心是上下文管理与工具接口，围绕它们构建了三类工程化保障机制：
 

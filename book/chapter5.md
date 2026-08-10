@@ -34,7 +34,7 @@
 
 用一个最简单的任务来看这七个工具是怎么配合的。假设用户说 “帮我把项目里所有 TODO 注释整理成一个清单”：
 
-```
+```text
 Agent（思考）：需要找到所有包含 TODO 的代码行。
 Agent → Grep("TODO", glob="**/*.py")          # 搜索文件内容
 工具返回：
@@ -88,6 +88,34 @@ Agent：已整理完毕，共发现 3 个 TODO 项，清单保存在 TODO_LIST.m
 下面描述的是一套**推荐的工程化流程**，它把软件工程的最佳实践投射到 Agent 身上，勾勒的是理想形态。现实中的 Coding Agent（如 Claude Code、OpenClaw）更多按反应式的迭代循环工作，会**按需裁剪**这套流程——简单任务会跳过设计文档、不会每一步都阻塞等待用户批准，只有当任务复杂、影响面大时才会完整走完各阶段。
 
 不同模型裁剪这套流程的方式并不相同。有些 Coding 模型会在第一次修改前广泛阅读目录、实现、调用方和测试；另一些则会读少数最可能相关的文件，马上提交一个补丁，再把编译与测试反馈当作调查的一部分。这种“何时停止收集信息、开始行动”的阈值可以在更换 Harness 后继续跟随模型，也可以在同一 Harness 内随模型切换而改变，因此首先是**模型学到的行为策略**，而不只是 Coding 产品的界面风格。Harness 的提示词、工具和预算仍能放大或抑制它，但不必是它的来源。第六章实验 6-7 将在固定 Harness 中测量这个差异，第七章再从后训练角度解释它可能如何写入参数。
+
+先把一个生产级 Coding Agent 的控制流写成骨架。它不是某个框架的 API，也不要求正文读者记住每个工具参数；完整的文件工具、会话状态和测试适配器留在配套实验中。
+
+```text
+understand_task()
+inspect_repository()
+clarify_if_needed()
+plan_or_choose_next_step()
+
+repeat until verified:
+    observation = read_or_search()
+    patch = propose_edit(observation)
+
+    if patch.target_is_ambiguous:
+        request_more_context()
+        continue
+
+    apply(patch)
+    checks = run_tests_lint_and_policy_checks()
+    if checks.pass:
+        review_and_finish()
+    else:
+        diagnose(checks)
+        repair()
+```
+
+“完成”在这里由验证器决定，而不是由模型的一句自我报告决定。可从 [`coding-agent` 实验](../chapter5/coding-agent/README.md)中的
+`agent.py::CodingAgent.run` 开始对照实现。
 
 **项目文档化。**
 
@@ -348,7 +376,7 @@ Coding Agent 拥有读写文件、执行命令、访问网络的权限，这意�
 
 LLM 在自然语言理解和生成上表现惊人，但在精确计算、符号操作或严格逻辑推导上却有根本短板。原因在于：模型思考本质上是概率性的、近似的，而数学和逻辑问题要求确定性的、精确的答案。用一个具体对比说明：
 
-```
+```text
 问题："一个班有 40 名学生，其中 60% 选修了数学，45% 选修了物理，25% 两门都选了。
       只选了物理没选数学的有多少人？"
 
@@ -406,70 +434,33 @@ Mathematica 创始人 Stephen Wolfram 对此提出了深刻洞察。在 LLM 出�
 
 与其设计独立校验工具，不如让执行工具内部先校验。以 τ-bench（tau-bench，一个模拟航空、电商客服场景，专门评测 Agent 工具调用与政策遵守能力的基准测试）中的航空公司取消政策为例：
 
-```python
-def cancel_reservation(
-    reservation_id: str,
-    cancellation_reason: str,        # "change_of_plan", "airline_cancelled", "other"
-    expected_cabin_class: str = None,    # 可选：模型自查用，服务端以数据库真值复核
-    expected_has_insurance: bool = None  # 可选：模型自查用，同上
-) -> dict:
-    """
-    取消航班预订。
+```text
+cancel_reservation(reservation_id, requested_reason, model_checklist):
+    reservation = database.read(reservation_id)
+    now = trusted_server_clock()
+    # policy: (1) used segment → reject; (2) <=24h → allow;
+    # (3) airline-cancelled or (4) business cabin → allow;
+    # (5) basic/economy → allow only with insurance
 
-    取消政策（服务端根据数据库真值强制执行）：
-    - 规则 1: 已使用任何航段的订单不可取消
-    - 规则 2: 预订后 24 小时内可无条件取消
-    - 规则 3: 航空公司取消的航班总可取消
-    - 规则 4: 商务舱总可取消
-    - 规则 5: 基础经济舱和经济舱需购买旅行保险才可取消
+    if model_checklist disagrees with reservation:
+        record_mismatch_for_audit()
+    record_requested_reason_for_audit(requested_reason)
 
-    调用前请先查询订单详情，逐条核对上述政策；expected_* 参数用于
-    陈述你的判断依据，仅供服务端比对与审计，不影响政策裁决。
-    """
-    # 所有政策事实一律从数据库读取，绝不采信模型自报的值
-    r = db.get_reservation(reservation_id)
-    now = server_clock.now()  # 服务端时钟，而非模型提供
-
-    # 模型自报值与真值不一致时记录告警，用于发现模型的错误认知或潜在注入
-    if expected_cabin_class is not None and expected_cabin_class != r.cabin_class:
-        log_mismatch(reservation_id, "cabin_class", expected_cabin_class, r.cabin_class)
-    if expected_has_insurance is not None and expected_has_insurance != r.has_insurance:
-        log_mismatch(reservation_id, "has_insurance", expected_has_insurance, r.has_insurance)
-
-    if r.any_segment_used:
-        return {"success": False, "reason": "Cannot cancel with used segments"}
-
-    hours_since_booking = (now - r.booking_time).total_seconds() / 3600
-    if hours_since_booking < 0:
-        return {"success": False, "reason": "Booking time is in the future"}
-    if hours_since_booking <= 24:
-        execute_cancellation(reservation_id)
-        return {"success": True, "reason": "Cancelled within 24-hour window"}
-
-    if r.flight_status == "cancelled_by_airline":
-        execute_cancellation(reservation_id)
-        return {"success": True, "reason": "Airline cancelled flight"}
-
-    if r.cabin_class == "business":
-        execute_cancellation(reservation_id)
-        return {"success": True, "reason": "Business class cancellation"}
-
-    if r.cabin_class in ["basic_economy", "economy"]:
-        if r.has_insurance:
-            execute_cancellation(reservation_id)
-            return {"success": True, "reason": f"{r.cabin_class} with insurance"}
-        return {"success": False, "reason": f"{r.cabin_class} requires insurance"}
-
-    return {"success": False, "reason": "Does not meet cancellation policy"}
+    if reservation.used:
+        reject("already used")
+    elif reservation.booking_time > now:
+        reject("invalid future timestamp")
+    elif policy_allows(reservation, now):       # only trusted record fields
+        execute_cancellation_once(reservation_id)
+        return success
+    else:
+        return reject_with_reason()
 ```
 
-这个设计的价值要分两层来看。
+这是机制骨架，不是可运行的服务端实现；策略分支、幂等键、数据库事务和测试位于
+`chapter5/small-model-codified-rules` 实验中。
 
-**第一层：参数作为思考的 checklist**。工具描述中列出了完整的取消政策，并要求模型“调用前先查询订单详情、逐条核对”；可选的 `expected_*` 参数进一步促使模型把自己的判断依据显式写出来。为了填好这些参数，模型必须先调用查询工具获取订单详情，逐一确认每个条件——填写参数的过程本质上是一个**强制性 checklist**。当模型查到舱位是经济舱且未购保险时，很可能在准备调用的过程中就注意到规则 5，从而**根本不会发起调用**，而是直接告诉用户“经济舱未购保险无法取消，可考虑购买保险后再取消或改签”。这一层的价值在于引导思考、减少无效调用；但它不承担安全责任——`expected_*` 参数只是模型的自我陈述，服务端从不把它当作事实。
-
-**第二层：服务端真值校验才是守门员**。注意代码中的关键设计：舱位等级、保险状态、预订时间、航段使用情况、航班状态，全部由服务端查询数据库获得；当前时间来自服务端时钟。**没有任何一条政策事实来自模型自报的参数**。这不是多余的谨慎：模型可能产生幻觉，也可能被提示注入操纵——正如前文“致命三要素”所分析的，同一上下文中的 Agent 难以自证清白。如果把 `cabin_class`、`has_insurance` 乃至 `current_time` 设计成由模型填写的参数，模型只要报错（或被诱导报错）一个值，“守门员”就形同虚设。最后一道防线必须建立在模型无法伪造的数据之上——这与前文“关键操作需要独立验证”的立场一脉相承：独立性不仅指独立的模型，更指独立的数据来源。
-
-三重保障由此完整：(1) 系统提示词的自然语言规则帮助理解和解释；(2) 工具描述与参数设计作为 checklist，引导模型在调用前显式核对条件；(3) 服务端基于数据库真值的代码化校验作为最后守门员。前两重减少错误的发生，第三重确保错误不会变成不可逆的损失。
+这个设计有三层边界：系统提示词帮助模型理解并解释政策，工具描述和 `expected_*` 参数提供调用前 checklist，服务端则从数据库和可信时钟读取事实并强制执行规则。`expected_*` 只用于记录模型的判断；出现不一致时留痕，但不能改变裁决。前两层减少无效调用，最后一层确保幻觉或提示注入不会变成不可逆的取消。
 
 > **实验 5-3 ★★：小模型通过代码化知识提升执行规则的准确性**
 >

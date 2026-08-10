@@ -4,6 +4,14 @@
 
 ← [返回主目录](../README.md) · 📖 [读本章正文](../book/chapter9.md)
 
+## 如何阅读实验
+
+正文 skeleton 统一了“持续观察 → 受限动作 → 新观察 → 验收/抢占”的闭环；完整媒体、浏览器和机器人代码分层阅读：
+
+- **Starter**：从 [live-audio](live-audio/) 的级联入口理解 VAD → ASR → LLM → TTS；
+- **Builder**：再读 [computer-use-open-model](computer-use-open-model/) 的截图/动作/验证循环，以及 [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) 的五个有边界技能；
+- **Maintainer**：最后检查取消、不可逆动作门禁、真实观察证据、硬件急停和 sim-to-real 评估。首次可跳过前端样式、模型下载和设备驱动。
+
 ## 配套项目
 
 | 编号 | 项目 | 类型 | 一句话说明 |

@@ -10,6 +10,16 @@
 政策验收：官方 OpenAI 路径保留但仍受配额阻塞，阿里云百炼 qwen3.7-plus 的
 Responses API（hosted web_search + code_interpreter）实测通过全部验收门。
 
+## 如何阅读实验
+
+正文用短 skeleton 解释控制流；实验目录承载完整 SDK 适配、日志和验收。无需逐行读完每个文件，建议按三层推进：
+
+- **Starter**：先读目标、最小命令和验收条件，推荐从 [context](context/) 开始；
+- **Builder**：沿 main.py 的入口追踪上下文、工具调用和消融变量，再看 [web-search-agent](web-search-agent/) 的多轮循环；
+- **Maintainer**：最后阅读 tests/、证据 manifest、失败回退和 provider adapter。
+
+首次阅读可跳过凭据加载、展示层和 provider 兼容代码；当你要复现实验数字时，再回到 [验收台账](EXPERIMENT_LEDGER.md)。
+
 ## 配套项目
 
 | 编号 | 项目 | 类型 | 一句话说明 |

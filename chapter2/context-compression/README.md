@@ -7,6 +7,16 @@
 
 ---
 
+## Code map
+
+- **Run first:** python experiment.py -s context_aware (or python quickstart.py for the menu).
+- **Start here:** experiment.py::ExperimentRunner controls one strategy comparison.
+- **Core behavior:** agent.py::ResearchAgent records the tool trajectory; compression_strategies.py::ContextCompressor applies the policy.
+- **State / protocol:** AgentTrajectory, ToolCall and CompressionStrategy.
+- **Verifier:** results/ JSON plus token/overflow counters; tests cover malformed tool results.
+- **Experiment variable:** six compression strategies and the context-window budget.
+- **Skip on first pass:** web search provider, streaming UI and plotting helpers.
+
 ## English
 
 ### Overview
