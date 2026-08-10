@@ -344,8 +344,11 @@ class HybridStructuredRetriever:
             if has_vector:
                 final_score = float(semantic_score * 0.7 + lexical_score * 0.3)
             else:
+                # No vector available for this item: use lexical score at the
+                # same weight as the no-query-vector path (0.8) so textually matching
+                # items are not penalized below non-matching vectorized items.
                 semantic_score = 0.0
-                final_score = float(lexical_score * 0.3)
+                final_score = float(lexical_score * 0.8)
         else:
             semantic_score = coverage_score
             final_score = float(lexical_score * 0.8 + coverage_score * 0.2)
