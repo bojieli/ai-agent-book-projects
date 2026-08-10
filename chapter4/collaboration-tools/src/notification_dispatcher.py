@@ -103,18 +103,55 @@ class DecisionTrace(dict):
 
 
 class NotificationDispatcher:
-    """Unified multi-channel dispatcher and HITL timeout policy engine."""
+    """Unified multi-channel dispatcher and HITL timeout policy engine.
+
+    By default, built-in channels (telegram, slack, email, webhook) are wired
+    to the real adapters in ``notification_tools``. An unconfigured production
+    channel fails explicitly — the adapter returns ``success: False`` with an
+    error message — so a HITL request is never marked dispatched when nothing
+    left the process. Set ``use_mock_channels=True`` to route built-in channels
+    through the in-process mock senders instead; this is intended for tests.
+    """
 
     def __init__(
         self,
         fallback_action: str = "auto-reject",
         default_channels: Optional[List[str]] = None,
+        use_mock_channels: bool = False,
+        channel_config: Optional[Dict[str, Any]] = None,
     ):
         self.fallback_action = self._normalize_fallback(fallback_action)
         self.default_channels = default_channels or ["telegram", "slack", "webhook", "email"]
+        self.use_mock_channels = use_mock_channels
+        self.channel_config: Dict[str, Any] = channel_config or {}
         self._custom_handlers: Dict[str, Callable] = {}
         self._pending_requests: Dict[str, Dict[str, Any]] = {}
         self._decision_events: Dict[str, asyncio.Event] = {}
+        self._real_adapters = self._load_real_adapters()
+
+    def _load_real_adapters(self) -> Dict[str, Callable]:
+        """Loads real channel adapter functions from notification_tools.
+
+        Returns a dict mapping channel name to the async send callable. If
+        notification_tools cannot be imported (e.g. missing dependencies), an
+        empty dict is returned and built-in channels will fail explicitly.
+        """
+        adapters: Dict[str, Callable] = {}
+        try:
+            from notification_tools import (
+                send_telegram_message,
+                send_slack_message,
+                send_email,
+            )
+            adapters["telegram"] = send_telegram_message
+            adapters["slack"] = send_slack_message
+            adapters["email"] = send_email
+        except ImportError:
+            logger.debug(
+                "notification_tools not available; built-in channels will fail "
+                "explicitly unless mock channels are enabled"
+            )
+        return adapters
 
     def register_channel_handler(self, channel_name: str, handler: Callable) -> None:
         """Register a custom handler function for a specific channel."""
@@ -134,7 +171,7 @@ class NotificationDispatcher:
         return FallbackAction.AUTO_REJECT.value
 
     async def mock_telegram_send(self, message: str, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Mock Telegram channel dispatcher."""
+        """Mock Telegram channel dispatcher (opt-in via use_mock_channels)."""
         return {
             "channel": "telegram",
             "success": True,
@@ -143,7 +180,7 @@ class NotificationDispatcher:
         }
 
     async def mock_slack_send(self, message: str, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Mock Slack channel dispatcher."""
+        """Mock Slack channel dispatcher (opt-in via use_mock_channels)."""
         return {
             "channel": "slack",
             "success": True,
@@ -152,7 +189,7 @@ class NotificationDispatcher:
         }
 
     async def mock_webhook_send(self, message: str, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Mock Webhook channel dispatcher."""
+        """Mock Webhook channel dispatcher (opt-in via use_mock_channels)."""
         return {
             "channel": "webhook",
             "success": True,
@@ -162,13 +199,120 @@ class NotificationDispatcher:
         }
 
     async def mock_email_send(self, message: str, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Mock Email channel dispatcher."""
+        """Mock Email channel dispatcher (opt-in via use_mock_channels)."""
         return {
             "channel": "email",
             "success": True,
             "delivery_id": f"email_{uuid.uuid4().hex[:8]}",
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
+
+    async def _send_via_real_adapter(
+        self, channel: str, message: str, context: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Dispatches through a real adapter from notification_tools.
+
+        Adapters that are not configured return ``success: False`` with an
+        explicit error, so the dispatcher never silently claims delivery.
+        """
+        adapter = self._real_adapters.get(channel)
+        cfg = self.channel_config.get(channel, {})
+        ts = datetime.now(timezone.utc).isoformat()
+
+        if adapter is None:
+            return {
+                "channel": channel,
+                "success": False,
+                "error": f"No real adapter available for channel '{channel}'; "
+                         f"configure the adapter or enable mock channels",
+                "timestamp": ts,
+            }
+
+        try:
+            if channel == "telegram":
+                result = await adapter(
+                    message,
+                    chat_id=cfg.get("chat_id"),
+                    parse_mode=cfg.get("parse_mode", "HTML"),
+                )
+            elif channel == "slack":
+                result = await adapter(
+                    message,
+                    webhook_url=cfg.get("webhook_url"),
+                    channel=cfg.get("channel"),
+                    username=cfg.get("username", "Collaboration Agent"),
+                )
+            elif channel == "email":
+                result = await adapter(
+                    cfg.get("to_email", ""),
+                    cfg.get("subject", "HITL Decision Request"),
+                    message,
+                    html=cfg.get("html", False),
+                )
+            else:
+                result = await adapter(message, **cfg)
+        except Exception as e:
+            logger.error(f"Real adapter for channel '{channel}' raised: {e}")
+            return {
+                "channel": channel,
+                "success": False,
+                "error": str(e),
+                "timestamp": ts,
+            }
+
+        success = bool(result.get("success", False)) if isinstance(result, dict) else False
+        return {
+            "channel": channel,
+            "success": success,
+            "result": result,
+            "error": result.get("error") if isinstance(result, dict) and not success else None,
+            "timestamp": ts,
+        }
+
+    async def _send_webhook(
+        self, message: str, context: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Dispatches a webhook notification via HTTP POST.
+
+        Requires a ``webhook_url`` in channel_config; fails explicitly if not
+        configured.
+        """
+        cfg = self.channel_config.get("webhook", {})
+        url = cfg.get("webhook_url")
+        ts = datetime.now(timezone.utc).isoformat()
+        if not url:
+            return {
+                "channel": "webhook",
+                "success": False,
+                "error": "Webhook URL not configured; set channel_config['webhook']['webhook_url']",
+                "timestamp": ts,
+            }
+        try:
+            import httpx
+            template = cfg.get("payload_template")
+            if isinstance(template, dict):
+                payload = {**template, "text": message}
+            else:
+                payload = {"text": message}
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    url, json=payload, headers=cfg.get("headers", {})
+                )
+                response.raise_for_status()
+            return {
+                "channel": "webhook",
+                "success": True,
+                "status_code": response.status_code,
+                "timestamp": ts,
+            }
+        except Exception as e:
+            logger.error(f"Webhook dispatch failed: {e}")
+            return {
+                "channel": "webhook",
+                "success": False,
+                "error": str(e),
+                "timestamp": ts,
+            }
 
     async def dispatch_notification(
         self, channel: str, message: str, context: Optional[Dict[str, Any]] = None
@@ -193,14 +337,28 @@ class NotificationDispatcher:
                 logger.error(f"Error in custom channel handler '{ch}': {e}")
                 return {"channel": ch, "success": False, "error": str(e), "timestamp": datetime.now(timezone.utc).isoformat()}
 
-        if ch == "telegram":
-            return await self.mock_telegram_send(message, ctx)
-        elif ch == "slack":
-            return await self.mock_slack_send(message, ctx)
-        elif ch == "webhook":
-            return await self.mock_webhook_send(message, ctx)
-        elif ch == "email":
-            return await self.mock_email_send(message, ctx)
+        if self.use_mock_channels:
+            if ch == "telegram":
+                return await self.mock_telegram_send(message, ctx)
+            elif ch == "slack":
+                return await self.mock_slack_send(message, ctx)
+            elif ch == "webhook":
+                return await self.mock_webhook_send(message, ctx)
+            elif ch == "email":
+                return await self.mock_email_send(message, ctx)
+            else:
+                return {
+                    "channel": ch,
+                    "success": False,
+                    "error": f"Unsupported notification channel '{channel}'",
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                }
+
+        # Production path: route built-in channels to real adapters
+        if ch == "webhook":
+            return await self._send_webhook(message, ctx)
+        elif ch in ("telegram", "slack", "email"):
+            return await self._send_via_real_adapter(ch, message, ctx)
         else:
             return {
                 "channel": ch,
@@ -468,7 +626,12 @@ class NotificationDispatcher:
 async def dispatch_and_wait(
     request: Union[Dict[str, Any], DecisionRequest, str],
     timeout: Optional[float] = None,
+    use_mock_channels: bool = False,
 ) -> DecisionTrace:
-    """Standalone module-level function for dispatching and waiting."""
-    dispatcher = NotificationDispatcher()
+    """Standalone module-level function for dispatching and waiting.
+
+    By default uses real channel adapters (which fail explicitly when
+    unconfigured). Pass ``use_mock_channels=True`` for in-process testing.
+    """
+    dispatcher = NotificationDispatcher(use_mock_channels=use_mock_channels)
     return await dispatcher.dispatch_and_wait(request, timeout)
