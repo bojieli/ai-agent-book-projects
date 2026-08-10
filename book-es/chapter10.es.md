@@ -20,7 +20,7 @@ Esta es la decisión de arquitectura más fundamental y determina cómo se trans
 
 Dado que los Agentes no comparten contexto, la información debe transmitirse mediante mecanismos de comunicación explícitos. Los sistemas distribuidos clásicos responden a esto desde hace tiempo: los libros de texto de sistemas operativos nos enseñan que la comunicación entre procesos (IPC) se reduce en última instancia a dos grandes paradigmas: **memoria compartida** (una parte escribe y la otra lee en el mismo bloque de almacenamiento) y **paso de mensajes** (enviar los datos explícitamente a la otra parte). Los mecanismos de comunicación entre Agentes caen dentro de estos dos paradigmas, siendo comunes tres variantes:
 
-- **Parámetros de llamada a herramientas**: el Agente aguas arriba pasa datos estructurados como parámetros a las herramientas del Agente aguas abajo, adecuado para escenarios que requieren tipos determinados y estructuras claras.
+- **Parámetros de llamada a herramientas**: el Agente aguas abajo se envuelve como una herramienta y el Agente aguas arriba pasa datos estructurados mediante sus parámetros, adecuado para escenarios que requieren tipos determinados y estructuras claras.
 - **Sistema de archivos compartido**: los Agentes intercambian información leyendo y escribiendo productos intermedios como documentos y código en un directorio compartido, adecuado para escenarios donde los productos son grandes o requieren persistencia.
 - **Bus de mensajes (Message Bus)**: una estación intermedia encargada de transmitir mensajes entre Agentes; los Agentes no se invocan directamente, sino que envían mensajes al bus de mensajes, el cual los reenvía al Agente de destino.
 
@@ -96,54 +96,26 @@ Existe otro aspecto que debe situarse por delante de cualquier diseño: **el cos
 
 ## Colaboración Multi-Agente con Contexto Compartido
 
-En la colaboración multi-agente con contexto compartido, cada etapa constituye un Agente independiente (con sus propios prompts del sistema y conjunto de herramientas), pero hereda la trayectoria completa del Agente anterior, de forma similar a como un colega que asume un turno puede revisar todos los registros de trabajo dejados por su predecesor. La ventaja central de esta "colaboración por herencia" es la nula pérdida de información, permitiendo que cada Agente revise los detalles de cualquier etapa previa. El desafío consiste en lograr que el Agente actual se concentre en sus responsabilidades principales sin distraerse con la gran cantidad de información histórica heredada.
+En la colaboración con contexto compartido, cada etapa es un Agente independiente —con su propio prompt del sistema y sus herramientas—, pero hereda la trayectoria completa de la etapa anterior. La ventaja principal es que no se pierde información; el reto consiste en mantener al Agente actual centrado en su responsabilidad pese al historial acumulado.
 
-### Cambio de Rol Multietapa
+En tareas complejas, el rol puede cambiar notablemente entre etapas. Un único prompt estático resulta demasiado genérico o excesivamente largo, por lo que el sistema puede cambiar dinámicamente el prompt y el conjunto de herramientas según la etapa.
 
-Conviene aclarar una controversia de definición: utilizando el lenguaje del Capítulo 1, el cambio de rol multietapa es una **orquestación basada en flujos de trabajo** (*workflow-based orchestration*), donde la ruta de ejecución (por ejemplo, aclaración de requisitos → implementación → revisión) está predefinida. Desde la perspectiva de los procesos, resulta aún más claro: se trata de un solo proceso que ejecuta secuencialmente el código de distintas etapas; lo que cambia es el segmento de código, mientras que la memoria permanece idéntica de principio a fin, no tratándose de múltiples procesos. Por ello, la postura que no lo considera un "verdadero sistema multi-agente" tiene su fundamento. Este capítulo lo incluye dentro del marco multi-agente debido a sus beneficios de diseño prácticos: cuando las instrucciones del sistema, los conjuntos de herramientas y los focos de atención difieren en cada etapa, tratar cada fase como múltiples Agentes que comparten la misma trayectoria permite pulir de forma independiente las instrucciones y herramientas de cada "identidad", convirtiendo los límites entre etapas en puntos naturales de control de calidad.
+La decisión arquitectónica clave es si el cambio de rol sustituye el prompt del sistema o carga una Skill. Ambos mecanismos modifican las reglas de conducta, pero tienen costes y límites distintos.
 
-En tareas complejas, el rol y las responsabilidades del Agente pueden cambiar significativamente en las distintas fases. Si se utiliza siempre el mismo conjunto estático de prompts del sistema, o bien resulta demasiado general y falto de enfoque, o bien agrupa las instrucciones de todas las fases volviéndose excesivamente extenso. El enfoque del cambio de rol multietapa consiste en cambiar dinámicamente los prompts del sistema y el conjunto de herramientas según la etapa actual, permitiendo que el Agente trabaje bajo la "identidad" más adecuada en cada momento. Esta transición no requiere crear nuevas instancias ni iniciar nuevos procesos, sino únicamente actualizar el contexto dentro de la misma sesión de ejecución. La clave reside en que, aunque el rol cambie, el historial de conversación y el estado de la tarea se comparten de forma continua: el Agente bajo su nuevo rol sigue teniendo acceso a toda la información acumulada en las etapas anteriores.
+| Opción | Portador de las reglas del rol | Visibilidad de herramientas | Efecto sobre contexto/KV Cache | Fuerza de la restricción |
+|---|---|---|---|---|
+| `transfer_to_agent` | Sustituye el prompt del sistema y normalmente las herramientas | Solo las herramientas del rol actual | Cada cambio altera el prefijo y suele invalidar la caché desde el primer punto distinto | Fuerte: las herramientas fuera del rol pueden no existir en el schema |
+| Skill | Mantiene un directorio de Skills fijo y añade `SKILL.md` a la trayectoria | Normalmente todo el catálogo o una entrada de búsqueda estable | El prefijo permanece estable; la Skill se añade al final de la trayectoria | Débil: una Skill es una instrucción; los permisos requieren una puerta del Harness |
 
-![Figura 10-2 Cambio de rol basado en etapas](images/fig10-2.svg)
+Si la diferencia entre roles es conocimiento, procedimiento o estilo, conviene preferir una Skill. Si implica permisos, aislamiento de herramientas, cumplimiento o prohibición de efectos secundarios, se necesita un Agente independiente o `transfer_to_agent`, junto con restricciones aplicadas por código en el Harness.
 
-> **Experimento 10-1 ★★: Cambio de Múltiples Roles**
+> **Experimento 10-1 ★★: Cambio de roles con contexto compartido — prompt del sistema frente a Skill**
 >
-> **Requisito previo**: Se recomienda comprender primero el mecanismo de Agent Skills del Capítulo 2.
+> **Tarea y variables comunes**: ambos caminos usan el mismo modelo, tarea, implementación de herramientas, reglas de rol y trayectoria completa. La tarea consiste en buscar las ventas de vehículos de nueva energía en China entre 2021 y 2023, calcular la CAGR y redactar un resumen en chino para inversores de no más de 120 caracteres.
 >
-> **Arquitectura del sistema**: Cinco roles:
+> **Camino 1: cambio del prompt del sistema**. Los cinco roles son `triage`, `research`, `coding`, `data_analysis` y `writing`. Cada rol solo ve sus herramientas y `transfer_to_agent`; al transferir, el Harness conserva el historial, carga el prompt y las herramientas del rol destino y reanuda la ejecución.
 >
-> - **triage (Triage de Recepción, entrada por defecto)**: comprende las necesidades generales del usuario, las descompone en subtareas ordenadas cronológicamente, las transfiere gradualmente al rol profesional adecuado y realiza la confirmación final al completar todas las subtareas. No posee herramientas profesionales propias, solo dispone de la herramienta `transfer`.
-> - **research (Experto en Recuperación de Información)**: utiliza `web_search` para buscar datos, hechos y documentación.
-> - **coding (Experto en Programación)**: utiliza `execute_python` para escribir y ejecutar código, resolviendo problemas de lógica de programación o scripts.
-> - **data_analysis (Experto en Análisis de Datos)**: utiliza `calculate` / `descriptive_stats` para realizar cálculos cuantitativos y estadísticas (como tasa de crecimiento interanual, tasa de crecimiento anual compuesto CAGR, promedios).
-> - **writing (Experto en Redacción)**: pule los datos recuperados y las conclusiones de los cálculos en un texto fluido orientado a una audiencia específica (puede usar `count_characters` para verificar la extensión de forma aproximada).
->
-> **Mecanismo central: la herramienta transfer_to_agent**
->
-> Todos los roles están equipados con la herramienta `transfer_to_agent(target_role, reason)`. Al invocarla, el sistema realiza en orden: 1) guardar el historial de conversación actual; 2) cargar los prompts y el conjunto de herramientas del rol de destino; 3) transmitir el historial de conversación al nuevo rol para que comprenda el contexto; 4) continuar la ejecución bajo la identidad del nuevo rol.
->
-> **Escenario del experimento**: El sistema se ejecuta por defecto con la identidad de triage. El usuario plantea una tarea compuesta trans-dominio: "Estoy preparando un material para inversionistas. Ayúdame a consultar las ventas de vehículos de nuevas energías en China para los años 2021, 2022 y 2023, calcula la tasa de crecimiento anual compuesto de estos tres años y redacta un resumen en español orientado a inversionistas de no más de 120 palabras." Triage descompone la tarea en "Buscar datos → Calcular indicadores → Redactar texto final", transfiriendo primero la búsqueda de información:
->
-> ```python
-> transfer_to_agent(target_role="research", reason="Se requiere consultar primero los datos de ventas de vehículos de nuevas energías de los tres años")
-> ```
->
-> Una vez que `research` obtiene las ventas con `web_search`, escribe los datos clave en la conversación y los transfiere al análisis de datos:
->
-> ```python
-> transfer_to_agent(target_role="data_analysis", reason="Datos listos, se requiere calcular la CAGR de tres años")
-> ```
->
-> `data_analysis` calcula la tasa de crecimiento con `calculate` y la transfiere a `writing` para la redacción; tras redactar el texto, `writing` la devuelve a `triage` para la confirmación de cierre. La cadena completa es triage → research → data_analysis → writing → triage. Cada rol tiene acceso al historial de conversación completo, por lo que el siguiente rol sabe de forma natural lo que ya ha hecho el anterior.
->
-> La decisión del cambio de rol depende de las instrucciones de los prompts del sistema. El prompt de triage enumera explícitamente las reglas de enrutamiento: búsqueda de datos/información pasa a `research`, escribir y ejecutar código pasa a `coding`, cálculos cuantitativos y estadísticas pasa a `data_analysis`, y pulir textos pasa a `writing`. El criterio de evaluación es sencillo: si la tarea requiere conocimientos profundos o herramientas profesionales de un dominio específico, se transfiere al rol correspondiente. Los prompts de los roles profesionales también indican a quién transferir o cuándo regresar a triage tras completar su parte.
->
-> **Requisitos del experimento**:
-> 1. Implementar los prompts del sistema y los conjuntos de herramientas específicos para al menos tres roles profesionales.
-> 2. Implementar la herramienta `transfer_to_agent`, admitiendo el cambio dinámico.
-> 3. Garantizar la continuidad del contexto tras la conmutación de rol.
-> 4. Manejar el problema de conmutación cíclica: evitar que el Agente alterne indefinidamente entre roles.
-> 5. Diseñar un flujo de tareas complejo que abarque múltiples dominios para demostrar el valor del cambio de rol.
+> **Camino 2: Skill**. El prompt del sistema y el catálogo completo de herramientas permanecen fijos. El modelo llama a `load_skill(name)` y el contenido de `SKILL.md` entra en la trayectoria como resultado de herramienta. El prefijo no cambia, pero los permisos estrictos los hacen cumplir las reglas del Harness.
 
 ## Colaboración Multi-Agente Sin Contexto Compartido
 
@@ -433,45 +405,27 @@ Cuando varias subtareas pueden ejecutarse en paralelo, el modelo secuencial resu
 > ![Figura 10-9 Arquitectura paralela de Web Scraping](images/fig10-9.svg)
 >
 >
-### Patrón Descentralizado: Transferencia entre Pares
+### Patrón descentralizado
 
-![Figura 10-10 Patrón de transferencia en cadena (Handoff)](images/fig10-10.svg)
+La motivación para eliminar el controlador central es imitar la organización humana: roles equivalentes dividen el trabajo y se controlan mutuamente; cada Agente decide cuándo transferir una tarea, pedir opinión o comunicar una contradicción. También se reduce el punto único de fallo que supone un Manager caído. En microservicios, estas dos opciones se denominan **orquestación** y **coreografía**.
 
-El patrón de manager proporciona una estructura de control clara y una visión global; el patrón descentralizado no surge para reparar sus defectos, sino principalmente para simular la forma de organización de la sociedad humana: permitir que múltiples roles con responsabilidades equivalentes se dividan el trabajo y se contrapesen, evaluando el problema desde su propia perspectiva profesional y decidiendo de forma autónoma con quién comunicarse, en lugar de centralizar todos los juicios en un Manager. En el ámbito de los microservicios esta elección se conoce como **orquestación** (*orchestration*) y **coreografía** (*choreography*): la primera es dirigida de forma unificada por un director, mientras que la segunda depende de que cada bailarín determine su momento de entrada.
+Los casos siguientes progresan desde el desacoplamiento de la comunicación hasta la descentralización del flujo de control: MetaGPT utiliza una cadena fija, AutoGen group chat combina una conversación compartida con planificación central y OpenAI Swarm distribuye las decisiones de transferencia entre Agentes pares.
 
-El patrón descentralizado ofrece otra perspectiva arquitectónica: **no hay un controlador central único y los Agentes colaboran en plano de igualdad**. Cada Agente, basándose en su propio juicio profesional, decide de forma autónoma cuándo iniciar la comunicación con otros Agentes (ya sea para transferir una tarea: "Mi parte está lista, te la entrego", solicitar retroalimentación: "¿Es técnicamente viable este plan?", o reportar problemas: "Tus requisitos contienen contradicciones, debemos discutirlo de nuevo").
+**MetaGPT: simulación de una empresa de software dirigida por SOP.**
 
-Los tres casos siguientes se ordenan deliberadamente en una secuencia progresiva de "pseudo a verdadero": el flujo de control de MetaGPT es en realidad una línea de ensamblaje fija (pseudo-descentralización, desacoplada únicamente en el mecanismo de comunicación), el *group chat* de AutoGen es una forma híbrida con registros de diálogo compartidos y programación centralizada, y solo OpenAI Swarm logra una verdadera descentralización entre pares en el flujo de control.
+![Figura 10-11 Red de colaboración multiagente de MetaGPT](images/fig10-11.svg)
 
-**¿Qué se transmite en una transferencia sin contexto compartido?** La transferencia en cadena (*Handoff*) de la Figura 10-10 contrasta directamente con la herramienta `transfer_to_agent` del Experimento 10-1: esta última se realiza bajo contexto compartido, heredando el nuevo rol el historial completo de forma automática sin requerir diseño alguno; la primera se realiza sin contexto compartido, debiendo la parte que transfiere decidir explícitamente qué transmitir. En la práctica, un "paquete de transferencia" efectivo consta habitualmente de tres partes: **descripción de la tarea** (qué debe hacer el receptor y cuáles son los criterios de aceptación), **hechos y restricciones confirmados** (preferencias del usuario, reglas de negocio, decisiones tomadas en etapas previas) y **referencias a productos estructurados** (rutas de archivo en lugar del contenido de los archivos, leyéndolos el receptor según sus necesidades). Lo que deliberadamente no se transmite es la trayectoria completa: el proceso de ensayo y error del emisor, sus pensamientos intermedios y sus intentos fallidos representan mayormente ruido para el receptor.
+MetaGPT codifica los procedimientos operativos estándar de una empresa de software. Los roles trabajan en el orden Product Manager → Architect → Project Manager → Engineer → QA, y cada uno entrega un paquete estructurado: descripción y criterios de aceptación, hechos y restricciones confirmados y referencias a artefactos, como rutas de archivo. Los roles publican mensajes en un fondo común y consumen solo los tipos a los que están suscritos. Esto desacopla emisor y receptor, pero el flujo de control sigue fijado por el SOP; MetaGPT no está totalmente descentralizado.
 
-**MetaGPT: Simulación de una empresa de software impulsada por SOP (caso de transición de línea de ensamblaje a comunicación desacoplada).**
+**AutoGen group chat.** Todos los Agentes comparten un registro público, pero un `GroupChatManager` elige al siguiente hablante. Es una combinación de contexto compartido y planificación central, no un sistema completamente descentralizado.
 
-![Figura 10-11 Red de colaboración multi-agente de MetaGPT](images/fig10-11.svg)
+**OpenAI Swarm.** Cada Agente puede transferir el control directamente a otro sin planificador central. El control circula como un testigo, pero puede formarse un ciclo A → B → A, por lo que hace falta un límite de transferencias.
 
-La idea central de MetaGPT es que los **Procedimientos Operativos Estándar** (SOP, *Standard Operating Procedure*) acumulados por las empresas de software humanas constituyen protocolos de colaboración probados repetidamente: codificar los SOP en el sistema multi-agente permite que cada rol genere entregables estandarizados como en una línea de ensamblaje, constituyendo dichos entregables la interfaz de comunicación natural entre roles.
+> Desde 2025, “Agent Swarm” se usa para arquitecturas distintas. Puede referirse a una red de handoff descentralizada como OpenAI Swarm o a un patrón de Manager a gran escala, donde el Agente principal crea muchos subagentes en paralelo, como Kimi K2.5/K3 y AgentEnv[^ch10-kimi-swarm]. Los sistemas de investigación multiagente de Anthropic y Manus también usan una topología orquestador-trabajador.
 
-En MetaGPT, los roles trabajan en un orden fijo (Product Manager → Architect → Project Manager → Engineer → QA), generando cada uno entregables estructurados:
+La siguiente evolución del patrón descentralizado es la sociedad de Agentes, presentada más adelante.
 
-- **Product Manager Agent**: Recibe la descripción de requisitos y genera un PRD estructurado (documento de requisitos de producto con lista de funciones, historias de usuario, criterios de aceptación y prioridades).
-- **Architect Agent**: Lee el PRD y toma decisiones de arquitectura (selección de stack tecnológico, división de módulos, definición de interfaces, diseño del modelo de datos), emitiendo el documento de diseño.
-- **Project Manager Agent**: Lee el diseño de arquitectura y descompone el sistema en una lista concreta de tareas y asignación de archivos, aclarando la secuencia de dependencias entre módulos antes de asignar las tareas a los ingenieros.
-- **Engineer Agents**: Leen los documentos de diseño, implementan los módulos asignados y producen el código. Pueden trabajar múltiples instancias en paralelo.
-- **QA Engineer Agent**: Lee el código y el PRD, genera casos de prueba, ejecuta pruebas, registra errores y emite el informe de pruebas.
-
-La contribución real de MetaGPT a la comunicación descentralizada reside en su mecanismo de transmisión de información: **pozo de mensajes compartido + suscripción por rol**. Cada rol publica sus mensajes estructurados en un pozo de mensajes visible para todos, mientras que los demás roles extraen únicamente los mensajes relevantes para sus responsabilidades según su configuración de suscripción, en lugar de comunicarse punto a punto. El emisor no necesita conocer quién consumirá su salida, y para añadir un nuevo rol basta con declarar a qué tipos de mensajes se suscribe, sin modificar ninguno de los roles existentes. Esto aporta un desacoplamiento real: si se cambia el Product Manager por un modelo más potente, mientras el PRD emitido cumpla las especificaciones, ningún otro Agente requerirá modificaciones.
-
-La mejora iterativa en MetaGPT ocurre principalmente en la etapa de ingeniería mediante el mecanismo de **retroalimentación ejecutable** (*executable feedback*): el Engineer ejecuta el código y las pruebas que ha escrito, entrando en un bucle de depuración basado en los errores y fallos obtenidos hasta superarlos, impulsando las correcciones mediante resultados de ejecución deterministas en lugar de las opiniones de otro Agente.
-
-Conviene aclarar con precisión que MetaGPT no es descentralizado en su **flujo de control**: la secuencia de roles está prefijada por el SOP, asemejándose en su conjunto a una línea de ensamblaje (un flujo de trabajo en el lenguaje del Capítulo 1). Se incluye en esta sección porque su mecanismo de comunicación basado en pozo de mensajes más suscripción ilustra el elemento de diseño más crítico de los sistemas descentralizados: el desacoplamiento. Las retroalimentaciones dinámicas multidireccionales como "QA consulta directamente al Product Manager para aclarar requisitos" o "Engineer consulta al Architect para discutir soluciones alternativas" representan extensiones naturales de esta arquitectura, las cuales no estaban implementadas en el MetaGPT original.
-
-**AutoGen group chat: Registros de diálogo compartidos + programación centralizada.** El *group chat* de AutoGen permite que múltiples Agentes participen en la misma conversación: en cada ronda, un "seleccionador de hablante" determina el siguiente Agente en intervenir (el seleccionador puede ser una regla de turno simple o un LLM que evalúe quién es el más adecuado según el contenido reciente); las intervenciones de cualquier Agente son visibles para todos los participantes. Es preciso señalar que no se trata de un sistema completamente descentralizado en el flujo de control: la elección del hablante es arbitrada de forma centralizada por un `GroupChatManager`, y decidir "a quién le toca hablar" constituye en sí mismo una decisión de flujo de control. Su ubicación precisa es la de una **forma híbrida de "registros de diálogo compartidos + programación centralizada"**, donde todos los Agentes ven la misma lista de diálogo pública pero conservan sus propios prompts de sistema.
-
-**OpenAI Swarm y Agents SDK: Red de transferencias (handoff network).** En contraste, el representante que logra una verdadera descentralización entre pares en el flujo de control es Swarm de OpenAI (y su sucesor Agents SDK): reduce la descentralización a su forma más simple, equipando a cada Agente con varias opciones de *handoff* (transferencia) para traspasar el control a cualquier otro Agente de la red en cualquier momento. Si el Agente de recepción de atención al cliente determina que la consulta involucra reembolsos, la transfiere al Agente de Reembolsos; si el Agente de Reembolsos detecta un fallo técnico durante el proceso, la transfiere al Agente de Soporte Técnico. No existe un programador central en el sistema, y el control fluye como un testigo entre Agentes en plano de igualdad, estando las decisiones de enrutamiento completamente distribuidas en el juicio individual de cada Agente. Esta es una transferencia entre pares limpia, correspondiendo exactamente a la implementación de ingeniería del patrón de transferencia en cadena mostrado en la Figura 10-10.
-
-> **Nota terminológica: Agent Swarm.** Desde 2025, «Agent Swarm» (enjambre de Agentes) se ha convertido en un término de moda entre los distintos proveedores, pero no corresponde a una única arquitectura. El uso en el sector se divide aproximadamente en dos corrientes: la primera es la red de transferencias (*handoff network*) al estilo de OpenAI Swarm (la biblioteca swarm de LangGraph y la orquestación de transferencias de Microsoft Agent Framework siguen la misma idea), que corresponde al patrón descentralizado tratado en esta sección; la segunda, presente en algunos productos comerciales mayoritarios, es el modelo de gestor llevado a escala: el Agent Swarm estrenado con Kimi K2.5 hace que el Agente principal cree dinámicamente más de un centenar de subagentes que se ejecutan en paralelo, entrenando directamente en el modelo—mediante aprendizaje por refuerzo con Agentes en paralelo—las decisiones de orquestación sobre «cuándo dividir y en cuántos»; K3 lo continúa como una categoría de modelo independiente y se ha liberado como código abierto AgentEnv, el entorno de entrenamiento (sandbox) de Agentes en paralelo que lo acompaña[^ch10-kimi-swarm]. El sistema de investigación multiagente de Anthropic y Wide Research de Manus pertenecen a la misma topología en estrella orchestrator-worker. Esperamos que, tras leer este libro, el lector sea capaz de ver la esencia detrás de los conceptos y de analizar los sistemas multiagente desde los primeros principios.
-
-[^ch10-kimi-swarm]: Moonshot AI, *Kimi Agent Swarm: 100 Sub-Agents at Scale*, 2026, https://www.kimi.com/blog/agent-swarm; en el GTC 2026 se reveló que el límite superior de subagentes en paralelo se ha ampliado a 300; AgentEnv es un sandbox de entrenamiento de Agentes liberado como código abierto por Moonshot AI en colaboración con KVCache.ai, publicado junto con Kimi K3 en julio de 2026.
+[^ch10-kimi-swarm]: Moonshot AI, *Kimi Agent Swarm: 100 Sub-Agents at Scale*, 2026, https://www.kimi.com/blog/agent-swarm. En GTC 2026 se anunció un límite de 300 subagentes; AgentEnv se publicó con Kimi K3 en julio de 2026.
 
 ### Colaboración Trans-Organizacional: Protocolo A2A
 
@@ -539,6 +493,14 @@ La **validación cruzada** es el medio central para romper esta cadena. La clave
 El extremo opuesto a la terminación prematura es el **bucle fuera de control**. Mientras que la sección de "colaboración entre pares" abordó cuando un bucle debía ocurrir y no ocurría (el Agente se detiene a medio trabajo), aquí se debe prevenir que "el bucle gire sin parar empeorando progresivamente". La práctica en ingeniería de bucles resume tres modos de falla típicos: primero, **costos de tokens fuera de control**, donde el bucle se ejecuta sin supervisión durante horas consumiendo gran parte del presupuesto para producir código no solicitado; segundo, la **deuda de comprensión** (*comprehension debt*), donde cuanto más rápido entrega código el bucle, más se rezaga la comprensión del desarrollador sobre la implementación real del sistema, llegando al punto de no entender su propio sistema al tener que intervenir manualmente; y tercero, la **rendición cognitiva** (*cognitive surrender*), donde los diseñadores se acostumbran a delegar en el bucle, abandonando progresivamente el pensamiento independiente y la revisión, cayendo la calidad en una espiral descendente. La solución a estos tres problemas exige establecer límites claros de presupuesto y condiciones de parada deterministas.
 
 Todas las discusiones anteriores corresponden a la perspectiva de ingeniería: cómo lograr que un conjunto de Agentes colabore para completar una tarea. A continuación cambiaremos la perspectiva: cuando un gran número de Agentes coexiste a largo plazo sin ser impulsados por un objetivo único, ¿qué conductas emergen? Esta sección pertenece a la exploración de frontera.
+
+### Modo de Falla 3: Terminación Prematura y Bucles Descontrolados
+
+El extremo opuesto a la terminación prematura es **un bucle descontrolado**. Puede ejecutarse indefinidamente o agotar su presupuesto de tokens. Para mantenerlo acotado se necesitan presupuestos explícitos, cancelación y condiciones de parada deterministas.
+
+### Modo de Falla 4: Deuda de Comprensión y Rendición Cognitiva
+
+Cuanto más rápido entrega código un bucle, más puede rezagarse la comprensión del ingeniero. Con el tiempo, la persona puede dejar de entender el sistema o de revisarlo de forma independiente. El remedio consiste en verificadores basados en observaciones reales y en que la persona siga siendo la ingeniera responsable del bucle.
 
 ## Sociedad de Agentes
 
@@ -645,7 +607,7 @@ El juego del Hombre Lobo sustenta la dimensión de **juegos estratégicos** de e
 
 > **Experimento 10-6 ★★★: Sistema de Agente de Hombre Lobo por Voz**
 >
-> El Hombre Lobo es un juego clásico de deducción social que pone a prueba el razonamiento, el engaño y la estrategia social. Este experimento construye un sistema multi-agente en el que los AI Agents juegan por voz con un humano o con un simulador de usuario LLM independiente. La aceptación automática no debe detenerse por la ausencia de una persona: el simulador usa un modelo real, razona únicamente con el contexto autorizado para su asiento y actúa mediante las herramientas del juego.
+> El Hombre Lobo es un juego clásico de deducción social que pone a prueba el razonamiento, el engaño y la estrategia social. Este experimento construye un sistema multi-agente en el que los AI Agents juegan por voz con participantes humanos.
 >
 > **Diseño de la arquitectura**:
 >
@@ -653,9 +615,7 @@ El juego del Hombre Lobo sustenta la dimensión de **juegos estratégicos** de e
 >
 > **2. Control de permisos de información**: El mecanismo central del Hombre Lobo es la asimetría de información (*Information Asymmetry*): diferentes roles ven información distinta. Por ejemplo, los hombres lobo saben quiénes son sus compañeros, pero los aldeanos lo desconocen; el vidente puede verificar la identidad de una persona cada noche, pero solo él conoce el resultado. La implementación consiste en que el moderador, al invocar al Agente de cada rol, transmite únicamente la información que dicho rol debe conocer.
 >
-> **3. Voz en tiempo real y simulación automática del usuario**: La ruta humana se basa en el Agente de voz del Capítulo 9. En la ruta automática, un LLM independiente debe invocar la única herramienta legal del turno; después, la expresión elegida se sintetiza como audio real y se envía a una API ASR real. El juego consume solo la transcripción ASR, nunca el texto previo al audio, y falla de forma cerrada si el objetivo de la herramienta difiere del objetivo interpretado por ASR. VAD y las interrupciones siguen siendo cobertura específica de la ruta humana.
->
-> **4. Razonamiento y estrategia del Agente**:
+> **3. Razonamiento y estrategia del Agente**:
 >
 > - **Estrategia de camuflaje del hombre lobo**: Las instrucciones del prompt incluyen tácticas y estrategias comunes: "Habla como un aldeano común, pudiendo expresar sospechas sobre ciertos jugadores sin ser demasiado agresivo para no llamar la atención. Si un vidente sostiene que te ha descubierto como lobo, puedes acusarlo a tu vez de ser un falso vidente. Al votar, intenta seguir la tendencia de la mayoría para evitar destacar."
 > - **Demostración de identidad del vidente**: Cuando múltiples jugadores afirman ser el vidente: "Compara la información de verificación tuya y la del rival, señalando las contradicciones o inconsistencias en la información del otro. Si un jugador verificado por el rival actúa de forma claramente inconsistente con la identidad afirmada, ahí hay un fallo. Solicita la colaboración de la bruja para verificar."
