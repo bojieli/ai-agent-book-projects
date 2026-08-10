@@ -1,12 +1,16 @@
 import datetime
+import importlib.util
 import os
 import sys
 from pathlib import Path
 
-# Add chapter9/phone-agent to sys.path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "chapter9" / "phone-agent"))
-
-from agent import _redact_secrets
+_module_path = (
+    Path(__file__).resolve().parent.parent / "chapter9" / "phone-agent" / "agent.py"
+)
+_spec = importlib.util.spec_from_file_location("phone_agent", _module_path)
+_module = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_module)
+_redact_secrets = _module._redact_secrets
 
 
 class CustomObject:
