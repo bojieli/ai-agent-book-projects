@@ -273,7 +273,7 @@ class PEDOSecurityEvaluator:
         privilege = (
             PrivilegeType.READ
             if scenario.operation_type in ("read", "query")
-            else PrivilegeType.WRITE
+            else PrivilegeType.WRITE  # write, update, delete, create, escalate
         )
 
         if obj is None:
