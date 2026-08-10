@@ -234,13 +234,13 @@ class RateRampBenchmark:
                 step_records.append(rec)
                 all_records.append(rec)
 
-            ttfts = [float(r.get("ttft_sec", 0.0) or 0.0) for r in step_records if isinstance(r, dict)]
+            ttfts = [float(r["ttft_sec"]) for r in step_records if isinstance(r, dict) and r.get("ttft_sec") is not None]
             hits_429 = sum(1 for r in step_records if isinstance(r, dict) and r.get("status_code") == 429)
             other_errs = sum(
                 1
                 for r in step_records
-                if isinstance(r, dict)
-                and r.get("status_code") not in (200, 429)
+                if not isinstance(r, dict)
+                or r.get("status_code") not in (200, 429)
             )
             successes = sum(1 for r in step_records if isinstance(r, dict) and r.get("status_code") == 200)
 
