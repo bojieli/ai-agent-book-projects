@@ -50,3 +50,55 @@ def test_empty_evidence_fails_closed():
     acceptance = runner.derive_acceptance([], protocol)
     assert acceptance["status"] == "failed"
     assert not any(acceptance["gates"].values())
+
+
+
+def test_protocol_coverage_mapping_is_complete_and_enforced():
+    """Every protocol acceptance key must map to at least one gate, and the
+    coverage report must reflect gate pass/fail status correctly."""
+    scenarios, protocol = _campaign()
+    acceptance = runner.derive_acceptance(scenarios, protocol)
+    coverage = acceptance["protocol_coverage"]
+    # Every protocol acceptance key must appear in the coverage report.
+    protocol_keys = set(protocol.get("acceptance", {}))
+    assert set(coverage) == protocol_keys, (
+        f"coverage keys {set(coverage)} != protocol keys {protocol_keys}"
+    )
+    # Every coverage entry must reference at least one gate key.
+    for proto_key, entry in coverage.items():
+        assert len(entry["enforced_by"]) >= 1, f"{proto_key} has no enforcing gate"
+    # When all gates pass, every coverage entry must report all_gates_passed=True.
+    if acceptance["status"] == "passed":
+        assert all(entry["all_gates_passed"] for entry in coverage.values())
+
+
+def test_protocol_coverage_detects_unmapped_acceptance_key():
+    """Adding an acceptance key to the protocol without a PROTOCOL_TO_GATE
+    mapping must raise an assertion at run time."""
+    scenarios, protocol = _campaign()
+    tampered_protocol = copy.deepcopy(protocol)
+    tampered_protocol["acceptance"]["bogus_unmapped_key"] = "must be enforced"
+    try:
+        runner.derive_acceptance(scenarios, tampered_protocol)
+    except AssertionError as exc:
+        assert "bogus_unmapped_key" in str(exc)
+    else:
+        raise AssertionError("expected AssertionError for unmapped acceptance key")
+
+
+def test_protocol_coverage_reflects_gate_failure():
+    """When a gate fails, the coverage entries that depend on it must report
+    all_gates_passed=False."""
+    scenarios, protocol = _campaign()
+    tampered = copy.deepcopy(scenarios)
+    tampered[0]["tasks"][0]["executable"]["mode"] = "simulated"
+    acceptance = runner.derive_acceptance(tampered, protocol)
+    coverage = acceptance["protocol_coverage"]
+    # real_subprocess_receipts_only gate should have failed.
+    assert not acceptance["gates"]["real_subprocess_receipts_only"]
+    # Every protocol key enforced by that gate must report failure.
+    for proto_key, entry in coverage.items():
+        if "real_subprocess_receipts_only" in entry["enforced_by"]:
+            assert not entry["all_gates_passed"], (
+                f"{proto_key} should report gate failure"
+            )
