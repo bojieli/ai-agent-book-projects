@@ -680,3 +680,55 @@ async def test_dispatch_and_wait_does_not_silently_succeed_unconfigured():
     channel_result = trace.channels_dispatched[0]
     assert channel_result["success"] is False
     assert "error" in channel_result
+
+
+@pytest.mark.asyncio
+async def test_concurrent_duplicate_request_id_same_decision():
+    """Regression: two simultaneous dispatches sharing a request_id get the
+    same decision when one approval is submitted.
+
+    Closes the class where dispatch_and_wait assigned a new asyncio.Event to
+    _decision_events[request_id] before checking for an existing pending
+    request. The duplicate branch then retrieved the newly assigned event
+    rather than the first waiter's event, so a single approval submission
+    woke only the second waiter while the first timed out to auto-rejected,
+    producing contradictory HITL decisions for one request.
+    """
+    dispatcher = NotificationDispatcher(
+        use_mock_channels=True,
+        fallback_action="auto-reject",
+    )
+    request_id = "dup-req-001"
+    req = DecisionRequest(
+        message="Concurrent duplicate test",
+        channels=["slack"],
+        request_id=request_id,
+    )
+
+    # Launch both dispatches concurrently so they overlap while pending.
+    task_a = asyncio.create_task(dispatcher.dispatch_and_wait(req, timeout=2.0))
+    task_b = asyncio.create_task(dispatcher.dispatch_and_wait(req, timeout=2.0))
+
+    # Give both tasks time to register as waiters on the same request_id.
+    await asyncio.sleep(0.1)
+    assert dispatcher._waiter_counts.get(request_id) == 2
+
+    # Submit a single approval — both waiters must see the same decision.
+    dispatcher.submit_decision(request_id, approved=True, decision="approved")
+
+    trace_a = await task_a
+    trace_b = await task_b
+
+    assert trace_a.request_id == request_id
+    assert trace_b.request_id == request_id
+    assert trace_a.approved is True
+    assert trace_b.approved is True
+    assert trace_a.status == "approved"
+    assert trace_b.status == "approved"
+    assert trace_a.fallback_triggered is False
+    assert trace_b.fallback_triggered is False
+
+    # Cleanup must have removed all tracking for this request_id.
+    assert request_id not in dispatcher._pending_requests
+    assert request_id not in dispatcher._decision_events
+    assert request_id not in dispatcher._waiter_counts

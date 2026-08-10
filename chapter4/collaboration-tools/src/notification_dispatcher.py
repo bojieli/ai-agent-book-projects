@@ -127,6 +127,7 @@ class NotificationDispatcher:
         self._custom_handlers: Dict[str, Callable] = {}
         self._pending_requests: Dict[str, Dict[str, Any]] = {}
         self._decision_events: Dict[str, asyncio.Event] = {}
+        self._waiter_counts: Dict[str, int] = {}
         self._real_adapters = self._load_real_adapters()
 
     def _load_real_adapters(self) -> Dict[str, Callable]:
@@ -457,11 +458,7 @@ class NotificationDispatcher:
         wait_timeout = timeout if timeout is not None else 10.0
 
         trace_events: List[Dict[str, Any]] = []
-
         try:
-            event = asyncio.Event()
-            self._decision_events[request_id] = event
-
             existing = self._pending_requests.get(request_id)
             if existing and existing.get("status") not in (None, "pending"):
                 # A human decision already exists for this request_id; preserve it
@@ -474,16 +471,27 @@ class NotificationDispatcher:
                 existing["channels"] = channels
                 existing["fallback_action"] = fallback
                 existing["dispatched_at"] = dispatched_at
+                event = self._decision_events.get(request_id)
+                if event is None:
+                    event = asyncio.Event()
+                    self._decision_events[request_id] = event
                 event.set()
             elif existing and existing.get("status") == "pending":
-                # Another dispatch is already waiting on this request_id; reuse its
-                # event and record instead of overwriting and orphaning the first wait.
+                # Another dispatch is already waiting on this request_id; reuse
+                # its event instead of creating a new one that orphans the first
+                # waiter. The original event in _decision_events is the one the
+                # first waiter is blocked on; we must wait on that same event.
                 logger.warning(
                     f"Duplicate request_id '{request_id}' submitted while pending; "
-                    f"reusing existing pending request record."
+                    f"reusing existing pending request record and event."
                 )
-                event = self._decision_events.get(request_id, event)
+                event = self._decision_events.get(request_id)
+                if event is None:
+                    event = asyncio.Event()
+                    self._decision_events[request_id] = event
             else:
+                event = asyncio.Event()
+                self._decision_events[request_id] = event
                 self._pending_requests[request_id] = {
                     "request_id": request_id,
                     "message": req_obj.message,
@@ -495,6 +503,9 @@ class NotificationDispatcher:
                     "notes": None,
                     "dispatched_at": dispatched_at,
                 }
+            # Track this waiter so cleanup does not remove the event while
+            # other waiters on the same request_id are still blocked.
+            self._waiter_counts[request_id] = self._waiter_counts.get(request_id, 0) + 1
             # Dispatch across multi-channels
             channel_results = await self.dispatch_all(channels, req_obj.message, req_obj.context)
             trace_events.append(
@@ -610,9 +621,16 @@ class NotificationDispatcher:
                 trace=trace_events,
             )
         finally:
-            # Cleanup internal tracking
-            self._pending_requests.pop(request_id, None)
-            self._decision_events.pop(request_id, None)
+            # Decrement waiter count; only the last waiter cleans up the
+            # event and pending request so concurrent duplicate dispatches
+            # sharing a request_id do not orphan each other's wait.
+            count = self._waiter_counts.get(request_id, 0) - 1
+            if count <= 0:
+                self._waiter_counts.pop(request_id, None)
+                self._pending_requests.pop(request_id, None)
+                self._decision_events.pop(request_id, None)
+            else:
+                self._waiter_counts[request_id] = count
 
     def dispatch_and_wait_sync(
         self,
