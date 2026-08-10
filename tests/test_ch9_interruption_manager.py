@@ -4,8 +4,10 @@ import importlib.util
 import os
 import sys
 from pathlib import Path
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 
 # Dynamic import for hypenated module path
 _module_path = (
