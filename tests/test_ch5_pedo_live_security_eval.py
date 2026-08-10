@@ -560,3 +560,123 @@ def test_live_evaluator_update_mutation_denied():
     assert res["live"] is True
     assert res["allowed"] is False
     assert res["passed"] is True
+
+
+def test_live_evaluator_mutation_executed_once():
+    """Regression: evaluate_scenario executes a mutation exactly once.
+
+    Closes the class where evaluate_row_level_security and
+    evaluate_field_visibility each called _execute_agent_query independently,
+    causing mutations (create/update/delete) to be executed twice per
+    scenario. With a create mutation, two objects were created from one
+    scenario.
+    """
+    store = MockPEDOStore()
+    create_count = 0
+
+    class CountingStore(MockPEDOStore):
+        def create(self, obj, accessor, _reaction_depth=0):
+            nonlocal create_count
+            create_count += 1
+            return super().create(obj, accessor, _reaction_depth)
+
+    counting_store = CountingStore()
+    evaluator = PEDOSecurityEvaluator(store=counting_store)
+
+    sc = SecurityScenario(
+        scenario_id="live_create_once",
+        name="Mutation Executed Once",
+        description="Create mutation should be executed exactly once per scenario",
+        accessor=AccessContext(user_id="u_recruiter", role="recruiter", org_id="org_tech"),
+        object_type="candidate",
+        operation_type="create",
+        agent_query_or_code='{"op": "create", "type": "candidate", "content": {"name": "Zoe", "status": "applied"}}',
+        expected_allowed=True,
+    )
+    evaluator.evaluate_scenario(sc)
+    assert create_count == 1, f"Expected 1 create call, got {create_count}"
+
+
+def test_live_evaluator_non_json_string_does_not_report_live():
+    """Regression: non-JSON agent_query_or_code in live mode does not silently
+    fall back to in-memory rules while reporting live=True.
+
+    Closes the class where a malformed/non-JSON string caused
+    _execute_agent_query to return executed=False, and the evaluator fell
+    through to the in-memory fallback that reported live=self._live (True).
+    """
+    store = MockPEDOStore()
+    evaluator = PEDOSecurityEvaluator(store=store)
+
+    sc = SecurityScenario(
+        scenario_id="live_non_json_rls",
+        name="Non-JSON String RLS",
+        description="Malformed query string should not silently fall back",
+        accessor=AccessContext(user_id="u_recruiter", role="recruiter", org_id="org_tech"),
+        object_type="candidate",
+        operation_type="query",
+        agent_query_or_code="not a json query",
+        expected_allowed=True,
+    )
+    res = evaluator.evaluate_row_level_security(sc)
+    assert res["live"] is False
+    assert res["passed"] is False
+    assert res["execution_error"] is not None
+
+
+def test_live_evaluator_non_json_string_does_not_leak_sensitive_fields():
+    """Regression: non-JSON agent_query_or_code in live mode does not leak
+    sensitive fields by setting visible_fields to all requested_fields.
+
+    Closes the class where the non-JSON field fallback set visible_fields to
+    list(requested_fields), exposing sensitive fields like ssn and
+    salary_expectation to roles that should not see them.
+    """
+    store = MockPEDOStore()
+    evaluator = PEDOSecurityEvaluator(store=store)
+
+    sc = SecurityScenario(
+        scenario_id="live_non_json_fields",
+        name="Non-JSON String Field Visibility",
+        description="Malformed query string should not leak sensitive fields",
+        accessor=AccessContext(user_id="u_interviewer", role="interviewer", org_id="org_tech"),
+        object_type="candidate",
+        operation_type="read",
+        requested_fields=["name", "email", "status", "ssn", "salary_expectation"],
+        hidden_or_sensitive_fields=["ssn", "salary_expectation"],
+        agent_query_or_code="name, email, status, ssn, salary_expectation",
+    )
+    res = evaluator.evaluate_field_visibility(sc)
+    assert res["live"] is False
+    assert res["passed"] is False
+    assert "ssn" not in res["visible_fields"]
+    assert "salary_expectation" not in res["visible_fields"]
+    assert res["unauthorized_leakage"] is False
+
+
+def test_non_live_non_json_string_uses_allowed_fields_filter():
+    """Regression: non-JSON string in non-live mode uses allowed_fields filter
+    instead of treating the string as a field list.
+
+    Closes the class where the in-memory fallback for non-JSON strings set
+    visible_fields to all requested_fields, leaking sensitive fields to
+    unauthorized roles even without a live store.
+    """
+    evaluator = PEDOSecurityEvaluator()
+
+    sc = SecurityScenario(
+        scenario_id="nonlive_non_json_fields",
+        name="Non-Live Non-JSON Field Visibility",
+        description="Non-JSON string should use allowed_fields filter",
+        accessor=AccessContext(user_id="u_interviewer", role="interviewer", org_id="org_tech"),
+        object_type="candidate",
+        operation_type="read",
+        requested_fields=["name", "email", "status", "ssn", "salary_expectation"],
+        hidden_or_sensitive_fields=["ssn", "salary_expectation"],
+        agent_query_or_code="name, email, status, ssn, salary_expectation",
+    )
+    res = evaluator.evaluate_field_visibility(sc)
+    assert res["live"] is False
+    assert "ssn" not in res["visible_fields"]
+    assert "salary_expectation" not in res["visible_fields"]
+    assert res["unauthorized_leakage"] is False

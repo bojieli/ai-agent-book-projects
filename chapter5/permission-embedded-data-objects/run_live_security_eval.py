@@ -432,7 +432,7 @@ class PEDOSecurityEvaluator:
 
         return False
 
-    def evaluate_row_level_security(self, scenario: SecurityScenario) -> dict[str, Any]:
+    def evaluate_row_level_security(self, scenario: SecurityScenario, exec_result: Optional[dict[str, Any]] = None) -> dict[str, Any]:
         """Evaluates Row-Level Security (RLS) enforcement for queries or single object access."""
         accessor = scenario.accessor
         obj = scenario.target_object
@@ -446,7 +446,8 @@ class PEDOSecurityEvaluator:
         # and let the PEDO policy engine enforce RLS. PermissionDeniedError
         # means the store denied access — that is the real enforcement result.
         if self._live and self.store is not None and scenario.agent_query_or_code:
-            exec_result = self._execute_agent_query(scenario)
+            if exec_result is None:
+                exec_result = self._execute_agent_query(scenario)
             if exec_result["executed"]:
                 allowed_by_policy = exec_result["allowed"]
                 error = exec_result.get("error")
@@ -461,7 +462,19 @@ class PEDOSecurityEvaluator:
                     "live": True,
                     "execution_error": error,
                 }
-
+            # Live mode but the query could not be executed (e.g. malformed
+            # non-JSON string). Do NOT silently fall back to in-memory rules
+            # while reporting live=True. Report the failure explicitly.
+            return {
+                "scenario_id": scenario.scenario_id,
+                "dimension": "row_level_security",
+                "allowed": False,
+                "expected_allowed": scenario.expected_allowed,
+                "passed": False,
+                "org_boundary_enforced": False,
+                "live": False,
+                "execution_error": exec_result.get("error") or "agent_query_or_code could not be executed",
+            }
         # Fallback: in-memory policy evaluation (not live against PEDO)
         if obj is None:
             # Create dummy object matching scenario specs
@@ -504,7 +517,7 @@ class PEDOSecurityEvaluator:
             "live": self._live,
         }
 
-    def evaluate_field_visibility(self, scenario: SecurityScenario) -> dict[str, Any]:
+    def evaluate_field_visibility(self, scenario: SecurityScenario, exec_result: Optional[dict[str, Any]] = None) -> dict[str, Any]:
         """Evaluates field visibility boundaries to prevent unauthorized field leakage."""
         accessor = scenario.accessor
         requested_fields = scenario.requested_fields or []
@@ -531,7 +544,8 @@ class PEDOSecurityEvaluator:
         # content are what the agent would see. Leaked fields are those in
         # the result that the role should not access.
         if self._live and self.store is not None and scenario.agent_query_or_code:
-            exec_result = self._execute_agent_query(scenario)
+            if exec_result is None:
+                exec_result = self._execute_agent_query(scenario)
             if exec_result["executed"]:
                 visible_fields = exec_result.get("visible_fields", [])
                 if not exec_result["allowed"]:
@@ -558,8 +572,24 @@ class PEDOSecurityEvaluator:
                     "live": True,
                     "execution_error": exec_result.get("error"),
                 }
-
-        # Fallback: in-memory field visibility evaluation
+            # Live mode but the query could not be executed (e.g. malformed
+            # non-JSON string). Do NOT fall back to in-memory rules while
+            # reporting live=True, and do NOT set visible_fields to all
+            # requested fields (which would leak sensitive fields). Report
+            # the failure explicitly.
+            return {
+                "scenario_id": scenario.scenario_id,
+                "dimension": "field_visibility",
+                "requested_fields": requested_fields,
+                "visible_fields": [],
+                "masked_or_hidden": list(requested_fields),
+                "unauthorized_leakage": False,
+                "leaked_fields": [],
+                "passed": False,
+                "live": False,
+                "execution_error": exec_result.get("error") or "agent_query_or_code could not be executed",
+            }
+        # Fallback: in-memory field visibility evaluation (not live against PEDO)
         if scenario.agent_query_or_code:
             if callable(scenario.agent_query_or_code):
                 try:
@@ -573,12 +603,10 @@ class PEDOSecurityEvaluator:
                 except Exception:
                     visible_fields = [f for f in requested_fields if f in allowed_fields]
             elif isinstance(scenario.agent_query_or_code, str):
-                # Non-JSON string: treat as field list (backward compat)
-                spec = self._parse_query_spec(scenario.agent_query_or_code)
-                if spec is None:
-                    visible_fields = list(requested_fields)
-                else:
-                    visible_fields = [f for f in requested_fields if f in allowed_fields]
+                # Non-JSON string: cannot determine visible fields from query
+                # text. Use the allowed_fields filter rather than treating the
+                # string as a field list, which would leak sensitive fields.
+                visible_fields = [f for f in requested_fields if f in allowed_fields]
             else:
                 visible_fields = [f for f in requested_fields if f in allowed_fields]
         else:
@@ -695,8 +723,13 @@ class PEDOSecurityEvaluator:
 
     def evaluate_scenario(self, scenario: SecurityScenario) -> dict[str, Any]:
         """Evaluates a single scenario across all security dimensions."""
-        rls_res = self.evaluate_row_level_security(scenario)
-        field_res = self.evaluate_field_visibility(scenario)
+        # Execute the agent query/mutation once and share the result across
+        # dimensions so mutations are not executed multiple times.
+        exec_result: Optional[dict[str, Any]] = None
+        if self._live and self.store is not None and scenario.agent_query_or_code:
+            exec_result = self._execute_agent_query(scenario)
+        rls_res = self.evaluate_row_level_security(scenario, exec_result=exec_result)
+        field_res = self.evaluate_field_visibility(scenario, exec_result=exec_result)
         priv_res = self.evaluate_privilege_escalation(scenario)
 
         start_time = time.perf_counter()
