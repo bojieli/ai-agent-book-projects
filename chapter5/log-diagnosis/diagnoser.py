@@ -110,7 +110,10 @@ class Diagnoser:
             response_format={"type": "json_object"},
             temperature=self._temp,
         )
-        data = json.loads(resp.choices[0].message.content)
+        try:
+            data = json.loads(resp.choices[0].message.content)
+        except json.JSONDecodeError:
+            data = {}
         return data.get("problems", [])
 
     # ---------- 阶段二：生成回归测试用例 ----------
@@ -149,5 +152,8 @@ class Diagnoser:
             response_format={"type": "json_object"},
             temperature=self._temp,
         )
-        data = json.loads(resp.choices[0].message.content)
+        try:
+            data = json.loads(resp.choices[0].message.content)
+        except json.JSONDecodeError:
+            data = {}
         return data.get("test_cases", [])

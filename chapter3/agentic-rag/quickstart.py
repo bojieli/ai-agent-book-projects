@@ -81,7 +81,7 @@ def check_retrieval_pipeline():
             if response.status_code == 200:
                 print("✅ Local retrieval pipeline is running")
                 return True
-        except:
+        except Exception:
             pass
         
         print("⚠️  Local retrieval pipeline is not running")

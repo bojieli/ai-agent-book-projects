@@ -55,7 +55,10 @@ def _chat_json(client, system, user):
         messages=[{"role": "system", "content": system},
                   {"role": "user", "content": user}],
     )
-    return json.loads(resp.choices[0].message.content)
+    try:
+        return json.loads(resp.choices[0].message.content)
+    except json.JSONDecodeError:
+        return {}
 
 
 def discover_schema(cases, batch_size=12, use_cache=True, verbose=True):

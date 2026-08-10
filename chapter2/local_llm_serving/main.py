@@ -86,7 +86,7 @@ class ToolCallingAgent:
                 response = requests.get(server_url, timeout=1)
                 if response.status_code != 200:
                     raise ConnectionError("vLLM server not responding")
-            except:
+            except Exception:
                 # Try to start the server
                 logger.info("Starting vLLM server...")
                 from server import VLLMServer

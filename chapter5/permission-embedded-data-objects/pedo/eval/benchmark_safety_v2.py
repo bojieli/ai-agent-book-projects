@@ -220,7 +220,7 @@ Write ONLY the function. No markdown."""
         code = re.sub(r'^```(?:python)?\s*\n?', '', code)
         code = re.sub(r'\n?```\s*$', '', code)
         return code
-    except:
+    except Exception:
         return "# Generation failed"
 
 

@@ -43,7 +43,7 @@ try:
     print("   python client.py --mode test")
     print("   python client.py --mode interactive")
     sys.exit(0)
-except:
+except Exception:
     pass
 
 print("📦 Starting the event-triggered agent server...")
@@ -68,7 +68,7 @@ try:
             if response.status_code == 200:
                 print("✅ Server is running!\n")
                 break
-        except:
+        except Exception:
             pass
         time.sleep(1)
         if i % 5 == 0:
