@@ -5,6 +5,8 @@ import os
 import sys
 from pathlib import Path
 import pytest
+
+pytest.importorskip("numpy")
 import numpy as np
 
 # Dynamic import for hyphenated module path
