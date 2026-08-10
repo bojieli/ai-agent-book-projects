@@ -54,7 +54,10 @@ class SemanticRouter:
             ]
             
             vectorizer = TfidfVectorizer(stop_words='english')
-            embeddings = vectorizer.fit_transform(tool_descriptions)
+            try:
+                embeddings = vectorizer.fit_transform(tool_descriptions)
+            except ValueError:
+                embeddings = None
             
             self.tool_vectorizers[server.name] = vectorizer
             
@@ -141,8 +144,10 @@ class SemanticRouter:
         Returns:
             List of (server, similarity_score) tuples
         """
-        if not self.servers or self.server_embeddings is None:
+        if not self.servers:
             return []
+        if self.server_embeddings is None:
+            return [(server, 0.0) for server in self.servers[:top_k]]
         # Vectorize the request
         request_vector = self.server_vectorizer.transform([request])
         # Calculate similarities with all servers
@@ -166,14 +171,18 @@ class SemanticRouter:
         Returns:
             List of (tool, similarity_score) tuples
         """
-        if server.name not in self.tool_vectorizers:
+        if server.name not in self.tool_vectorizers or getattr(server, "_tool_embeddings", None) is None:
             return []
         
         vectorizer = self.tool_vectorizers[server.name]
         tool_embeddings = server._tool_embeddings
+        if tool_embeddings is None:
+            return []
         
         # Vectorize the request
         request_vector = vectorizer.transform([request])
+        if request_vector.getnnz() == 0:
+            return []
         
         # Calculate similarities with all tools in this server
         similarities = cosine_similarity(request_vector, tool_embeddings)[0]
