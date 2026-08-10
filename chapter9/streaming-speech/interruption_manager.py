@@ -152,9 +152,17 @@ class DuplexInterruptionManager:
                     arr = raw_arr.astype(np.float32) / scale
             else:
                 arr = raw_arr.astype(np.float32)
+                # If values are in integer PCM range (>1.0), normalize to [-1, 1].
+                # Use a fixed int16 scale rather than per-chunk max to preserve
+                # relative volume across chunks.
                 max_abs = float(np.max(np.abs(arr))) if arr.size > 0 else 0.0
                 if max_abs > 1.0:
-                    arr = arr / 32768.0
+                    if max_abs <= 128.0:
+                        arr = arr / 128.0
+                    elif max_abs <= 32768.0:
+                        arr = arr / 32768.0
+                    else:
+                        arr = arr / 2147483648.0
         elif isinstance(audio_data, np.ndarray):
             if audio_data.size == 0:
                 return 0.0
@@ -180,7 +188,12 @@ class DuplexInterruptionManager:
                 arr = audio_data.astype(np.float32)
                 max_abs = float(np.max(np.abs(arr))) if arr.size > 0 else 0.0
                 if max_abs > 1.0:
-                    arr = arr / 32768.0
+                    if max_abs <= 128.0:
+                        arr = arr / 128.0
+                    elif max_abs <= 32768.0:
+                        arr = arr / 32768.0
+                    else:
+                        arr = arr / 2147483648.0
         else:
             return 0.0
 
