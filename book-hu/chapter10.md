@@ -20,11 +20,11 @@ Ez a legalapvetőbb architekturális döntés, amely meghatározza, hogyan áram
 
 Mivel az Ügynökök nem osztanak meg kontextust, az információt explicit kommunikációs mechanizmusokon keresztül kell átadni. A klasszikus elosztott rendszerek ezt a kérdést már régen eldöntötték: az operációs rendszerekről szóló tankönyvek szerint a folyamatok közötti kommunikáció (IPC) végső soron csak két paradigmában létezik – "megosztott memória" (az egyik fél ír, a másik ugyanazt a tárterületet olvassa) és "üzenetküldés" (az adatokat explicit módon küldik a másik félnek). Az Ügynökök közötti kommunikációs mechanizmusok ebbe a két paradigmába illeszkednek. Három gyakori módszer létezik:
 
-- "Eszközhívás-paraméterek": A felsőbb Ügynök strukturált adatokat ad át paraméterként az alsóbb Ügynök eszközének, alkalmas olyan forgatókönyvekhez, amelyek jól tipizált, egyértelműen strukturált adatokat igényelnek.
+- "Eszközhívás-paraméterek": Az alsóbb Ügynök eszközként van becsomagolva, a felsőbb Ügynök pedig a paraméterein keresztül ad át strukturált adatokat; ez olyan forgatókönyvekhez alkalmas, amelyek jól tipizált, egyértelműen strukturált adatokat igényelnek.
 - "Megosztott fájlrendszer": Az Ügynökök köztes termékek (dokumentumok, kód stb.) olvasásával és írásával cserélnek információt egy megosztott könyvtárban, alkalmas nagy méretű fájlokkal rendelkező vagy perzisztenciát igénylő forgatókönyvekhez.
 - "Üzenetsor": Egy dedikált közvetítő, amely üzeneteket továbbít az Ügynökök között. Az Ügynökök nem közvetlenül hívják egymást, hanem üzeneteket küldenek a sornak, amely továbbítja azokat a cél-Ügynöknek.
 
-A két IPC paradigmára leképezve: a megosztott fájlrendszer a "megosztott memóriának" felel meg, míg az eszközhívás-paraméterek és az üzenetsor az "üzenetküldés" formái. Az eszközparaméterek szinkron módon, egy hívással együtt érkeznek; a sorban lévő üzenetek aszinkron módon, egy közvetítőn keresztül kerülnek kézbesítésre. Minden paradigmának megvannak a maga kompromisszumai. A Go-nak van egy széles körben idézett mondása: "Ne megosztott memóriával kommunikálj; ehelyett ossz meg memóriát kommunikációval." A megosztott memória gyors, de a fejlesztőknek kezelniük kell a konkurenciából adódó veszélyeket; az üzenetküldés több vezénylési kódot igényel, de az adattulajdonlást egyértelművé és nyomon követhetővé teszi. Ez a kompromisszum újra és újra felbukkan a későbbi, státuszkérdezésekről és konkurencia-ütközésekről szóló tárgyalások során.
+A két IPC paradigmára leképezve: a megosztott fájlrendszer a "megosztott memóriának" felel meg, míg az eszközhívás-paraméterek és az üzenetsor az "üzenetküldés" formái. Az eszközparaméterek szinkron módon, egy hívással együtt érkeznek; a sorban lévő üzenetek aszinkron módon, egy közvetítőn keresztül kerülnek kézbesítésre. Minden paradigmának megvannak a maga kompromisszumai. A Go-nak van egy széles körben idézett mondása: "Ne megosztott memóriával kommunikálj; ehelyett ossz meg memóriát kommunikációval."
 
 Az üzenetsor természeténél fogva támogatja az "aszinkron kommunikációt" – a feladónak és a vevőnek nem kell egyszerre online lennie. Ez olyan, mint egy belső vállalati e-mail rendszer: amikor e-mailt küldesz egy kollégának, nem kell, hogy éppen a gépénél legyen; az e-mail tárolódik a szerveren, és akkor kerül feldolgozásra, amikor a kolléga online lesz. Ez a megközelítés különösen alkalmas olyan forgatókönyvekhez, ahol több Ügynök párhuzamosan dolgozik, és koordinációra van szükségük egymással (lásd a "Párhuzamos Koordináció" szakaszt később ebben a fejezetben).
 
@@ -97,55 +97,26 @@ Még egy szempontot figyelembe kell venni bármely tervezési döntés előtt: "
 
 ## Többügynökös Együttműködés Megosztott Kontextussal
 
-A megosztott kontextusú többügynökös együttműködésben minden szakasz egy független Ügynök (saját rendszerprompttal és eszközkészlettel), de örökli az előző Ügynök teljes trajektóriáját – hasonlóan ahhoz, ahogy egy műszakot átvevő kolléga átlapozhatja az előd által hátrahagyott összes munkanaplót. Az öröklés-alapú együttműködés alapvető előnye a nulla információs veszteség: minden Ügynök áttekintheti bármely korábbi szakasz részleteit. A kihívás az aktuális Ügynök fókuszban tartása a saját felelősségi körén, ahelyett, hogy elterelné a figyelmét az örökölt előzmények tömege.
+Megosztott kontextusú együttműködésben minden szakasz önálló Agent, saját System Prompttal és eszközkészlettel, de örökli az előző szakasz teljes trajektóriáját. Ennek előnye a veszteségmentes információátadás; a kihívás az, hogy az aktuális Agent a feladatára összpontosítson a felhalmozódó előzmények ellenére.
 
-### Többszakaszos Szerepváltás
+Összetett feladatokban a szerep és a felelősség szakaszonként jelentősen változhat. Egyetlen statikus prompt vagy túl általános, vagy túl hosszú, ezért a rendszer a szakasznak megfelelően válthatja a promptot és az eszközöket.
 
-Először is tegyünk le egy definíciós vitát: az 1. fejezet nyelvén a többszakaszos szerepváltás egy "munkafolyamat-stílusú vezénylés" – a végrehajtási útvonal (pl. követelménytisztázás → implementáció → felülvizsgálat) előre meghatározott. Folyamat szempontjából egyetlen folyamat hajtja végre a különböző szakaszokat egymás után, miközben ugyanazt a memóriát tartja meg. Az az állítás, hogy ez "nem igazán többügynökös", ezért jogos. Ez a fejezet mégis többügynökös mintaként kezeli, mert ennek a keretezésnek gyakorlati előnyei vannak: minden szakasznak lehet saját rendszerpromptja, eszközei és fókusza, míg a szakaszhatárok minőségi kapukként szolgálhatnak.
+A kulcskérdés: a szerepváltás cserélje le a System Promptot, vagy töltsön be Skillt? Mindkettő új viselkedési szabályokat ad, de eltérő költséggel és korlátozással.
 
-Összetett feladatokban egy Ügynök szerepe és felelőssége jelentősen megváltozhat a szakaszok között. Ha egyetlen statikus rendszerpromptot használunk végig, az vagy túl általános lesz a szakaszspecifikus iránymutatáshoz, vagy túl hosszú, mert minden szakasz utasításait tartalmazza. A többszakaszos szerepváltás ehelyett a rendszerpromptot és az eszközkészletet az aktuális szakasznak megfelelően változtatja meg, lehetővé téve az Ügynök számára, hogy a legmegfelelőbb szerepben dolgozzon. Ez a váltás nem igényel új példányok létrehozását vagy új folyamatok indítását; csak a rendszerprompt és az eszközkészlet változik ugyanazon a végrehajtási munkameneten belül. Bár a szerep változik, a beszélgetési előzmény és a feladat állapota megosztott marad, így az Ügynök az új szerepében is hozzáférhet az előző szakaszokban felhalmozott összes információhoz.
+| Választás | A szerepszabály hordozója | Látható eszközök | Kontextus/KV Cache hatás | Korlátozás ereje |
+|---|---|---|---|---|
+| `transfer_to_agent` | Lecseréli a System Promptot és rendszerint az eszközkészletet | Csak az aktuális szerep eszközei | Minden váltás módosítja a prefixet, így a cache az eltérés helyétől általában nem használható újra | Erős: a szerepen kívüli eszközök hiányozhatnak a schema-ból |
+| Skill | Fix Skill-katalógus, a `SKILL.md` igény szerint a trajektóriához kerül | Többnyire a teljes katalógus vagy stabil keresési belépő | A statikus prefix változatlan; a Skill a trajektória végére kerül | Gyenge: a Skill utasítás, a kemény jogosultságot a Harness adja |
 
-![10-2. ábra: Szakasz-alapú szerepváltás](images/fig10-2.svg)
+Ha a szerepek tudásban, folyamatban vagy írásmódban különböznek, a Skill az első választás. Jogosultság, eszközigazolás, megfelelőség vagy tiltott mellékhatás esetén külön Agent vagy `transfer_to_agent` kell, kóddal kikényszerített Harness-szabállyal.
 
-> "10-1. kísérlet ★★: Többszerepű Váltás"
-
-> "Előfeltételek": Ajánlott, hogy az olvasók először tekintsék át a 2. fejezetben található Ügynök Készségek (Agent Skills) mechanizmusát.
-
-> "Rendszerarchitektúra": Öt szerep van meghatározva:
-
-> - "triage (recepció; alapértelmezett belépési pont)": Azonosítja a felhasználó átfogó igényeit, a munkát egymást követő részfeladatokra bontja, minden részfeladatot a megfelelő specialistához irányít, és végső ellenőrzést végez, amikor minden részfeladat kész. Az egyetlen eszköze a `transfer_to_agent`.
-> - "research (információkereső szakértő)": `web_search` segítségével keres adatokat, tényeket és anyagokat.
-> - "coding (programozási szakértő)": `execute_python` segítségével ír és futtat kódot programozási és szkriptelési feladatokhoz.
-> - "data_analysis (adat elemző szakértő)": `calculate` / `descriptive_stats` segítségével végez kvantitatív számításokat és statisztikákat (pl. év/év növekedési ráta, összetett éves növekedési ráta (CAGR), átlag).
-> - "writing (író szakértő)": A keresett adatokat és elemzési eredményeket egyértelmű vázlattá alakítja, a közönséghez igazítva (és `count_characters` segítségével hozzávetőleges hosszellenőrzést végez).
-
-> "Alapvető Mechanizmus: transfer_to_agent Eszköz"
-
-> Minden szerep rendelkezik a `transfer_to_agent(cél_szerep, indok)` eszközzel. Amikor egy szerep meghívja, a rendszer elmenti az aktuális beszélgetési előzményt, betölti a cél szerep promptját és eszközkészletét, átadja az előzményt annak a szerepnek, és folytatja a végrehajtást.
-
-> "Kísérleti Forgatókönyv": A rendszer alapértelmezés szerint a `triage` szerepben indul. A felhasználó egy több doménre kiterjedő feladatot ad be: "Befektetői anyagokat készítek. Segíts megtalálni Kína újenergiás járműeladásait 2021-re, 2022-re és 2023-ra, számold ki a három év összetett éves növekedési rátáját, majd írj egy összefoglalót kínaiul a befektetőknek, maximum 120 karakterben." A `triage` a feladatot "adatok keresése → mutatók kiszámítása → vázlat írása" részekre bontja, és először a `research`-nek adja át:
+> **10-1. kísérlet ★★: Szerepváltás megosztott kontextusban — System Prompt kontra Skill**
 >
-> ```python
-> transfer_to_agent(target_role="research", reason="Find annual new-energy vehicle sales figures for 2021-2023")
-> ```
-
-> A `research` a `web_search` segítségével megtalálja az eladási adatokat, hozzáadja a kulcsadatokat a beszélgetéshez, és átadja a feladatot a `data_analysis`-nek:
-
-> ```python
-> transfer_to_agent(target_role="data_analysis", reason="The data is ready; calculate CAGR from 2021 to 2023")
-> ```
-
-> A `data_analysis` a `calculate` segítségével kiszámítja a növekedési rátát. Ezután átadja a feladatot a `writing`-nek, amely megírja az összefoglalót, és visszaadja a `triage`-nak a végső jóváhagyáshoz. A teljes lánc: `triage` → `research` → `data_analysis` → `writing` → `triage`. Minden szerep láthatja a teljes beszélgetési előzményt, így a következő szerep természetesen tudja, hogy mi már megtörtént.
-
-> A szerepváltás döntése a rendszerpromptokban található iránymutatás függvénye. A `triage` prompt explicit módon felsorolja az útválasztási szabályokat: adatok vagy forrásanyagok keresése → `research`; kód írása és futtatása → `coding`; kvantitatív számítások és statisztikák → `data_analysis`; anyag csiszolása vázlattá → `writing`. Egy feladatot akkor kell átadni, ha mély szaktudást vagy specializált eszközöket igényel. Minden specialista promptja azonosítja a következő megfelelő szerepet, vagy utasítja a specialistát, hogy adja vissza a feladatot a `triage`-nak.
-
-> "Kísérleti Követelmények":
-> 1. Valósítson meg rendszerpromptokat és specializált eszközkészleteket legalább három szakmai szerephez
-> 2. Valósítsa meg a `transfer_to_agent` eszközt, támogatva a dinamikus váltást
-> 3. Biztosítsa a kontextus folytonosságát a szerepváltás után
-> 4. Akadályozza meg a körkörös átadásokat, amelyek az Ügynököt ismétlődő szerepváltásba kényszerítik
-> 5. Tervezzen összetett, több doménre kiterjedő feladatfolyamokat a szerepváltás értékének bemutatására
+> **Közös feladat és változók**: mindkét út ugyanazt a modellt, feladatot, eszközmegvalósítást, szerepszabályt és teljes közös trajektóriát használja. A feladat a kínai újenergiás járművek 2021–2023-as eladásainak megkeresése, a CAGR kiszámítása és legfeljebb 120 kínai karakteres befektetői összefoglaló írása.
 >
+> **1. út: System Prompt váltása**. Az öt szerep: `triage`, `research`, `coding`, `data_analysis`, `writing`. Minden szerep csak saját eszközeit és a `transfer_to_agent` eszközt látja; átadáskor az előzmény megmarad, a cél szerep promptja és eszközei betöltődnek, majd a futás folytatódik.
+>
+> **2. út: Skill**. A System Prompt és a teljes eszközkatalógus végig rögzített. A modell meghívja a `load_skill(name)` eszközt, és a beolvasott `SKILL.md` eszközeredményként kerül a közös trajektóriába. A prefix stabil marad, a kemény jogosultságokat pedig a Harness szabályai biztosítják.
 
 ## Többügynökös Együttműködés Megosztott Kontextus Nélkül
 
@@ -170,7 +141,7 @@ Korábban ebben a fejezetben összehasonlítottuk a kommunikációs mechanizmuso
 
 Egy program statikus kód; a folyamat a program egy futó példánya. Hasonlóképpen, a statikus előtag határozza meg, ki az Ügynök, míg a trajektória rögzíti, mennyire jutott előre. Az LLM a CPU szerepét tölti be: nincs saját állapota, és időosztásos módban több Ügynök között oszlik meg különböző kontextusok betöltésével – maga a "kontextusváltás" kifejezés is az operációs rendszerektől kölcsönzött. És ugyanezen okból: egy gyorsabb CPU behelyezése ugyanúgy futó programot eredményez; egy erősebb modellre váltás ugyanazt az Ügynököt tartja meg – az identitása és memóriája az előtagban és a trajektóriában él, nem a modell súlyaiban.
 
-Ez az absztrakció nem újdonság: a privát állapot, az aszinkron üzenetek és az új tagok létrehozásának képessége pontosan az 1970-es évek Actor modelljének[^actor-model] alapvető felépítése. Egy többügynökös rendszer ezért az Actor modell LLM-alapú változatának tekinthető, és az operációs rendszerekből és elosztott rendszerekből felhalmozott tudás nagy része közvetlenül alkalmazható. Az analógia egy fontos ponton törik meg: a folyamatok byte-okat továbbítanak hűen, bitről bitre, míg az Ügynökök jelentést adnak át, és minden továbbítás torzíthatja azt. Ez az új probléma, amelyet e fejezet "Hibamódok" szakasza tárgyal.
+Ez az absztrakció nem újdonság: a privát állapot, az aszinkron üzenetek és az új tagok létrehozásának képessége pontosan az 1970-es évek Actor modelljének[^actor-model] alapvető felépítése. Egy többügynökös rendszer ezért az Actor modell LLM-alapú változatának tekinthető, és az operációs rendszerekből és elosztott rendszerekből felhalmozott tudás nagy része közvetlenül alkalmazható.
 
 [^actor-model]: Hewitt, C., Bishop, P., Steiger, R. *A Universal Modular ACTOR Formalism for Artificial Intelligence.* IJCAI 1973.
 
@@ -396,7 +367,6 @@ A "tervező korlát" problémájára egy gyakorlati megoldás a visszacsatolási
 
 A 2025-ös Plan-and-Act tanulmány[^plan-and-act-2025] empirikusan is elemezte ezt a jelenséget. Egy tervező–végrehajtó kétügynökös architektúrában **a gyenge tervező jelenti a teljes rendszer legkritikusabb szűk keresztmetszetét**. Ha a tervezés minősége elég jó, viszonylag egyszerű végrehajtóval is jó eredmény érhető el. Ha viszont a tervező hibásan bontja fel a feladatot, minden későbbi végrehajtói munka téves alapokra épül. A tanulmány 54%-os sikerarányt ért el a WebArena-Lite benchmarkon, és a fő hozzájárulása a tervező képességének javítása volt, nem a végrehajtóé. A tanulság: a legerősebb modellt és a leggondosabban megírt promptot a Menedzserhez – vagyis a tervezőhöz – érdemes rendelni, nem pedig egyenletesen elosztani az erőforrásokat az összes Ügynök között.
 
-Ez nem mond ellent a 4. fejezet állításának, amely szerint a javaslattevő és az ellenőrző modell képességének hasonlónak kell lennie. Az az állítás az **ellenőrzési helyzetről** szólt: az ellenőrzőnek követnie kell a vizsgált fél érvelését ahhoz, hogy észrevegye a hibáit. Ha sokkal gyengébb nála, lehet, hogy az érvelést sem érti meg eléggé a hiányosságok felismeréséhez. A menedzser minta ezzel szemben a **tervezés és végrehajtás munkamegosztásáról** szól. Ha a tervező rosszul bontja fel a feladatot, azt a legerősebb végrehajtó sem tudja helyrehozni. Ezért elsőként a tervező kapja a legerősebb modellt és a leggondosabb promptot. Hogy a végrehajtóknak mennyire kell kiegyensúlyozott képességekkel rendelkezniük, a részfeladatok kapcsolódásának szorosságától függ. Ha a kimeneteiket végül egyetlen egésszé kell összeállítani, gyakran a leggyengébb láncszem húzza le a teljes minőséget.
 
 [^plan-and-act-2025]: Erdogan, L. E., et al. *Plan-and-Act: Improving Planning of Agents for Long-Horizon Tasks.* arXiv:2503.09572, 2025.
 
@@ -440,31 +410,27 @@ A Lingtai többi tervezési eleme is visszautal a korábbi szakaszokra. A tudás
 
 > A menedzser minta természetesen támogatja a párhuzamos koordinációt, amelyben a Menedzser dinamikusan hozza létre és koordinálja az al-ügynököket. A Menedzser monitorozza az előrehaladást, és szükség esetén beavatkozik. Ez a mintázat alkalmas összetett feladatokhoz, ahol a számos részfeladat áttekintéséhez és koordinálásához központi vezérlésre van szükség. A fő korlátja, hogy a Menedzser potenciális szűk keresztmetszetté és egyetlen meghibásodási ponttá válik.
 
-### Decentralizált Minta: Elosztott Koordináció
+### Decentralizált minta
 
-![10-10. ábra: Átadási lánc minta](images/fig10-10.svg)
+A központi vezérlő elhagyásának célja az emberi szervezetek mintázata: egyenrangú szerepek osztják fel a munkát és ellenőrzik egymást, minden Agent maga dönti el, mikor ad át feladatot, kér visszajelzést vagy jelez ellentmondást. Ez a Manager leállásából eredő egyetlen hibapontot is csökkenti. A mikroszolgáltatások világában a két megközelítés neve **orchestration** és **choreography**.
 
-A társi együttműködés és a menedzser minta mögött meghúzódó gondolkodásmód az, hogy "a fejlesztő tervezi a kapcsolatokat és a munkafolyamatot az Ügynökök között." A decentralizált minta más: megadja az Ügynököknek a szükséges készségeket és kontextust, majd hagyja, hogy önállóan döntsék el, kivel működjenek együtt és hogyan. Ez hasonlít ahhoz, ahogy egy szervezetben nemcsak a Menedzser irányítja az összes együttműködést – a kollégák gyakran közvetlenül kommunikálnak egymással, önállóan csoportosulnak csapatokba, és a vezető csak vészhelyzetben avatkozik be. Ez a minta különösen hasznos, amikor az Ügynökök száma nagy, a kapcsolatok dinamikusak, és a priori tervezés nem hatékony.
+A következő példák a kommunikáció szétcsatolásától a vezérlési folyamat decentralizálásáig vezetnek: a MetaGPT rögzített futószalag, az AutoGen group chat megosztott beszélgetést és központi ütemezést vegyít, az OpenAI Swarm pedig a devirányítást az egyenrangú Agentek között osztja el.
 
-A decentralizált minta számos formát ölthet. Az alábbiakban három képviselőt tárgyalunk:
+**MetaGPT: SOP-vezérelt szoftvervállalat-szimuláció.**
 
-"Társalgó Minta (Chatroom Pattern)" (csoportos csevegéses együttműködés): Több Ügynök ugyanabban a csoportos csevegésben osztozik, ahol kimondhatják véleményüket. A legtöbb kereskedelmi többügynökös keretrendszer hasonló minta szerint működik. Általában a következő tulajdonságokkal rendelkezik:
-- A fejlesztők előre meghatározzák a résztvevő Ügynököket (szerep, rendszerprompt, elérhető eszközök).
-- Minden üzenet egy megosztott szálban jelenik meg, amelyben minden Ügynök látja az összes többit.
-- A soron következő beszélőt egy szabály (pl. körbeforgás, szekvenciális) vagy egy koordinátor (a csevegés egy adott Ügynöke vagy a futásidejű környezet) határozza meg.
-- A munkafolyamat általában laza: az Ügynökök nem merev munkafolyamat szerint kommunikálnak, hanem a feladat előrehaladásának megfelelően (a csoportos csevegés egy miniatűr emberi szervezetként működik, ahol mindenki kifejtheti véleményét a feladatról).
+![10-11. ábra A MetaGPT többügynökös együttműködési hálózata](images/fig10-11.svg)
 
-"Al-ügynök Delegációs Minta": Ez a "hatáskör-átruházás" megvalósítása: ha egy Ügynök olyan feladattal találkozik, amelyet nem tud egyedül elvégezni, al-ügynököket hoz létre a segítségnyújtásra. Minden Ügynök rendelkezik a `spawn_subagent` eszközzel, és amikor a feladatterhelés meghaladja a kapacitását (vagy a 10-1. táblázatban leírt egyéb tényezők miatt), új Ügynököket hoz létre. Ez a minta gyakran előfordul a kódolási Ügynökök gyakorlatában – a fő Ügynök szétosztja a feladatokat, minden al-ügynököt elindít a kód megírására, majd integrálja az eredményeket. Az al-ügynök delegáció iteratívan mélyíthető; ez rekurzív tervezést és visszafejtést tesz lehetővé.
+A MetaGPT egy szoftvercég szabványos eljárásait kódolja. A szerepek Product Manager → Architect → Project Manager → Engineer → QA sorrendben dolgoznak, és mindegyik strukturált átadási csomagot készít: feladatleírást és elfogadási feltételeket, megerősített tényeket és korlátokat, valamint termékhivatkozásokat, például fájlútvonalakat. A szerepek közös üzenetkészletbe publikálnak, és csak a feliratkozott típusokat olvassák. Ez szétcsatolja a küldőt és fogadót, de a vezérlési folyamatot az SOP rögzíti; a MetaGPT ezért nem teljesen decentralizált.
 
-"MCP-alapú Szolgáltatás Felfedezés". Az MCP szabvány, amely lehetővé teszi az Ügynökök számára, hogy egymás képességeit egy "felfedező interfészen" keresztül fedezzék fel, a gyakorlatban lehetővé teszi a ténylegesen decentralizált együttműködést: az A Ügynök felfedezhet egy B szolgáltatást az MCP-n keresztül, és felkérheti azt egy adott feladat elvégzésére. Ebben a mintában a koordináció nem központi Menedzseren keresztül történik, hanem maguk az Ügynökök fedezik fel és használják a szükséges szolgáltatásokat. Ennek azonban az a költsége, hogy nincs egységes felügyeleti és hibakezelési mechanizmus.
+**AutoGen group chat.** Az Agentek közös nyilvános naplót látnak, de a következő megszólalót egy `GroupChatManager` választja. Ez megosztott kontextus és központi ütemezés keveréke.
 
-**MetaGPT: SOP-vezérelt szoftvervállalat-szimuláció.** A MetaGPT megosztott üzenetkészletet és szerepalapú feliratkozást használ: minden szerep strukturált eredményeket tesz közzé, a többi szerep pedig csak a feladatához szükséges üzenettípusokat fogyasztja. Ez leválasztja a küldőt a fogadóról, miközben a szabványos működési eljárás rögzíti a szerepek sorrendjét és az átadott artefaktumok formátumát.
+**OpenAI Swarm.** Minden Agent központi ütemező nélkül adhatja át a vezérlést egy másiknak. A vezérlés stafétaként halad, de A → B → A ciklus keletkezhet, ezért átadási korlát szükséges.
 
-![10-11. ábra: A MetaGPT többügynökös együttműködési hálózata](images/fig10-11.svg)
+> Az „Agent Swarm” 2025 óta több architektúrát jelölhet: OpenAI Swarm-szerű decentralizált handoff hálózatot, vagy nagy léptékű Manager-mintát, ahol a fő Agent sok párhuzamos al-Agentet indít, mint a Kimi K2.5/K3 és az AgentEnv[^ch10-kimi-swarm]. Az Anthropic és a Manus több-Agentes kutatórendszerei is orchestrator-worker csillagtopológiát használnak.
 
-> **Terminológia: Agent Swarm.** Az „Agent Swarm” 2025 óta több szolgáltatónál is divatos kifejezéssé vált, de nem egyetlen architektúrát jelöl. Az iparági használat nagyjából két csoportra oszlik. Az első az OpenAI Swarmhoz hasonló handoff-hálózat (a LangGraph swarm könyvtára és a Microsoft Agent Framework handoff-orkesztrációja ugyanezt az elvet követi): ez az ebben a szakaszban tárgyalt decentralizált minta. A második, amely néhány jelentős kereskedelmi termékben jelenik meg, a nagy léptékű Menedzser Minta: a Kimi K2.5-tel bemutatott Agent Swarm fő Ügynöke dinamikusan hoz létre több száz, párhuzamosan dolgozó al-ügynököt, miközben a „mikor és hány részre bontson” orkesztrációs döntéseit párhuzamos-Ügynökös megerősítéses tanulással közvetlenül a modellbe tanítják. A K3 ezt külön modellszintként folytatja, és a hozzá tartozó párhuzamos-Ügynökös tanítási sandbox, az AgentEnv nyílt forráskódúvá vált.[^ch10-kimi-swarm] Az Anthropic többügynökös kutatási rendszere és a Manus Wide Research megoldása ugyanebbe az orchestrator-worker csillagtopológiába tartozik. Reméljük, hogy a könyv elolvasása után az olvasó át tud látni az elnevezéseken, és első elvekből kiindulva képes elemezni a többügynökös rendszereket.
+A decentralizált minta következő fejlődési lépése az Agent-társadalom.
 
-[^ch10-kimi-swarm]: Moonshot AI, *Kimi Agent Swarm: 100 Sub-Agents at Scale*, 2026, https://www.kimi.com/blog/agent-swarm. A GTC 2026 rendezvényen közölték, hogy a párhuzamos al-ügynökök felső határa 300-ra nőtt. Az AgentEnv a Moonshot AI és a KVCache.ai együttműködésében nyílt forráskódúvá tett Ügynök-tanítási sandbox, amelyet 2026 júliusában, a Kimi K3-mal együtt adtak ki.
+[^ch10-kimi-swarm]: Moonshot AI, *Kimi Agent Swarm: 100 Sub-Agents at Scale*, 2026, https://www.kimi.com/blog/agent-swarm. A GTC 2026-on 300 párhuzamos al-Agentes felső határt jelentettek be; az AgentEnv a Kimi K3-mal együtt, 2026 júliusában jelent meg.
 
 ### Szervezetközi együttműködés: Az A2A protokoll
 
@@ -576,6 +542,14 @@ A korai befejezés szimmetrikus ellentéte a "szabályozhatatlan hurok". A társ
 
 Eddig ez a fejezet mérnöki szempontból vizsgálta a kérdést: hogyan működhet együtt egy csoport Ügynök egy feladaton? A fókusz most egy másik kérdésre irányul: mi jelenik meg, amikor nagy számú Ügynök hosszú időn keresztül együtt létezik anélkül, hogy egyetlen cél hajtaná őket? A következő szakasz a határkutatás feltárása, így a mérnöki olvasók nyugodtan válogathatnak.
 
+### Harmadik Hibamód: Korai Leállás és Elszabadult Ciklusok
+
+A korai leállás ellentéte az **ellenőrizetlen ciklus**. A ciklus a végtelenségig futhat, vagy kimerítheti a tokenkeretét. Kifejezett költségkeretekre, megszakítási lehetőségre és leállási feltételekre van szükség ahhoz, hogy a végrehajtás korlátos maradjon.
+
+### Negyedik Hibamód: Megértési Adósság és Kognitív Feladás
+
+Minél gyorsabban szállít kódot egy ciklus, annál jobban lemaradhat mögötte a mérnök megértése. Idővel az ember már nem érti a rendszert, vagy felhagy a független ellenőrzéssel. A megoldást valós megfigyeléseken alapuló ellenőrzők és az jelentik, hogy az ember továbbra is a ciklus felelős mérnöke marad.
+
 ## Ügynök Társadalom
 
 Az előző három szakasz mindegyike célirányos feladat-együttműködéssel foglalkozott. Minden esetben – akár társi együttműködést, a menedzser mintát vagy a decentralizált mintát használva – a fejlesztők előre meghatározzák a szerepeket, interfészeket és vezérlési folyamatokat. Most egy nyitottabb kérdésre térünk át: **Amikor az Ügynökök száma néhányról százakra vagy ezrekre nő, és az interakció elég szabad, milyen viselkedések jelennek meg?** Ez az anyag feltáró és akadémiai jellegű, különbözik a fenti mérnöki iránymutatásoktól.
@@ -680,7 +654,7 @@ A Farkasos (Werewolf) rögzíti e szakasz harmadik dimenzióját, a "stratégiai
 
 > **10-6. kísérlet ★★★: Hangalapú Farkasos Ügynök Rendszer**
 
-> A Farkasos klasszikus társas következtetési játék, amely az érvelést, megtévesztést és társas stratégiát teszteli. A kísérletben az MI Ügynökök hangon játszanak egy emberrel vagy egy független LLM-felhasználószimulátorral. Az automatikus elfogadás nem állhat meg azért, mert nincs jelen ember: a szimulátor valódi modellt használ, csak a saját helyéhez engedélyezett kontextusból következtet, és a játék eszközein keresztül cselekszik.
+> A Farkasos klasszikus társas következtetési játék, amely az érvelést, megtévesztést és társas stratégiát teszteli. A kísérletben az MI Ügynökök hangon játszanak emberi játékosokkal.
 
 > "Architektúra Tervezés":
 
@@ -688,9 +662,7 @@ A Farkasos (Werewolf) rögzíti e szakasz harmadik dimenzióját, a "stratégiai
 
 > **2. Információ Hozzáférés-vezérlés**: A Farkasos core mechanizmusa az információs aszimmetria: a különböző szerepek különböző információkat kapnak. Például a farkasok tudják, kik a csapattársaik, de a falusiak nem; a Látó minden éjjel ellenőrizheti egy játékos identitását, de csak a Látó ismeri az eredményt. Amikor a Bíró meghív egy Ügynököt, csak az adott Ügynök szerepe számára elérhető információt adja át.
 
-> **3. Valós idejű hang és automatikus felhasználószimuláció**: Az emberi út a 9. fejezet hang Ügynökére épül. Az automatikus úton egy független LLM-nek meg kell hívnia a kör egyetlen jogszerű eszközét; a választott megszólalásból valódi hang készül, amely egy valódi ASR API-hoz kerül. A játék kizárólag az ASR-átiratot fogyasztja, az eredeti szöveget nem, és zártan hibázik, ha az eszköz célpontja eltér az ASR által felismert célponttól. A VAD és a félbeszakítás az emberi út saját tesztje marad.
-
-> **4. Ügynök Érvelés és Stratégia**:
+> **3. Ügynök Érvelés és Stratégia**:
 
 > - "Farkas Álcázási Stratégia": "Viselkedj úgy, mint egy átlagos falusi. Gyanakvást fejezhetsz ki más játékosokkal kapcsolatban, de kerüld, hogy annyira agresszív légy, hogy felhívd magadra a figyelmet. Ha egy játékos azt állítja, hogy ő a Látó, és farkasként azonosít, vádold vissza, hogy kamu Látó. Szavazáskor próbálj a többségi célponttal tartani, hogy ne tűnj ki."
 > - "Látó Identitás Bizonyítás": "Ha több játékos is azt állítja, hogy ő a Látó, hasonlítsd össze a jelentett ellenőrzéseiket a tiéddel, és mutass rá az ellentmondásokra. Ha egy másik Látó-jelölt azt mondja, hogy ellenőrzött egy játékost, figyeld, hogy a későbbi viselkedése egyértelműen ellentmond-e az állított identitásnak. Kérd meg a Boszorkányt, hogy segítsen ellenőrizni az állításokat, amikor lehetséges."
