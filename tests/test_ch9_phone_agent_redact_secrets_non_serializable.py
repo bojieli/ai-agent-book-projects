@@ -12,6 +12,7 @@ _module_path = (
 )
 _spec = importlib.util.spec_from_file_location("phone_agent", _module_path)
 _module = importlib.util.module_from_spec(_spec)
+sys.modules["phone_agent"] = _module
 _spec.loader.exec_module(_module)
 _redact_secrets = _module._redact_secrets
 
