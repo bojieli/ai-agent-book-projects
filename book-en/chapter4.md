@@ -199,7 +199,6 @@ Compared with native multimodal processing, tool-based analysis keeps only a sho
 > - **File System**: File reading and search, directory browsing, file operations (move/copy/delete, etc. — strictly speaking, these are execution tools, but they are often bundled with file reading in the same MCP server)
 > - **Public Data Sources**: Free APIs for weather, stock prices, exchange rates, Wikipedia, ArXiv papers, etc.
 > - **Private Data Sources**: Personal data requiring authorization, such as calendars and Notion
->
 > Most of these tools are based on free, open APIs and can be used without registration. There are already many ready-made perception tool servers available in the MCP ecosystem. Chapter 5 will demonstrate that most of these capabilities can be covered by seven core tools combined with Skill documents.
 
 ## Execution Tools

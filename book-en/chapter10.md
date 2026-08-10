@@ -20,11 +20,11 @@ This is the most fundamental architectural decision, determining how information
 
 Since Agents do not share context, information must be passed through explicit communication mechanisms. Classic distributed systems settled this question long ago: operating-systems textbooks tell us that inter-process communication (IPC) ultimately comes in just two paradigms—**shared memory** (one side writes and the other reads the same block of storage) and **message passing** (data is explicitly sent to the other side). Communication mechanisms between Agents fall within these same two paradigms. There are three common methods:
 
-- **Tool call parameters**: The upstream Agent passes structured data as parameters to the downstream Agent's tool, suitable for scenarios requiring well-typed, clearly structured data.
+- **Tool call parameters**: Wrap the downstream Agent as a tool, then pass structured data through its parameters; this is suitable for scenarios requiring well-typed, clearly structured data.
 - **Shared file system**: Agents exchange information by reading and writing intermediate artifacts (documents, code, etc.) in a shared directory, suitable for scenarios with large artifacts or where persistence is needed.
 - **Message bus**: A dedicated intermediary that passes messages between Agents. Agents do not call each other directly but send messages to the bus, which forwards them to the target Agent.
 
-Mapped onto the two IPC paradigms, the shared file system corresponds to "shared memory," while tool call parameters and the message bus are forms of "message passing." Tool parameters are delivered synchronously with a call; messages on a bus are delivered asynchronously through an intermediary. Each paradigm has its trade-offs. Go has a widely quoted maxim: "Do not communicate by sharing memory; instead, share memory by communicating." Shared memory is fast, but developers must manage concurrency hazards; message passing requires more orchestration code but keeps data ownership clear and traceable. This trade-off recurs throughout the later discussions of status queries and concurrency conflicts.
+Mapped onto the two IPC paradigms, the shared file system corresponds to "shared memory," while tool call parameters and the message bus are forms of "message passing." Tool parameters are delivered synchronously with a call; messages on a bus are delivered asynchronously through an intermediary. Each paradigm has its trade-offs. Go has a widely quoted maxim: "Do not communicate by sharing memory; instead, share memory by communicating."
 
 The message bus naturally supports **asynchronous communication**—the sender and receiver do not need to be online simultaneously. This is like an internal company email system: when you email a colleague, you don't need them to be at their computer at that moment; the email is stored on the server and processed when the colleague comes online. This approach is particularly suitable for scenarios where multiple Agents work in parallel and need to coordinate with each other (see the "Parallel Coordination" section later in this chapter).
 
@@ -99,38 +99,25 @@ One more consideration must come before any design decision: **cost.** Parallel 
 
 In multi-agent collaboration with shared context, each stage is an independent Agent (with its own system prompt and tool set), but it inherits the complete trajectory of the preceding Agent—much like a colleague taking over a shift who can leaf through every work log the predecessor left behind. The core advantage of this inheritance-based collaboration is zero information loss: every Agent can review details from any previous stage. The challenge is keeping the current Agent focused on its own responsibilities rather than distracted by the mass of inherited history.
 
-One design choice is easy to overlook but changes both the implementation and the cost model: should a role boundary replace the system prompt, or load a Skill? Prompt transfer gives the Harness a hard role-specific tool allowlist, but changes the request prefix at every boundary. A Skill can append a versioned `SKILL.md` as a tool result while keeping the system/tool prefix stable, which is usually friendlier to model KV/prompt caching; it is still a behavioral instruction, not a permission boundary. Side-effectful or sensitive tools therefore need a Harness policy gate even in the Skill path.
+In complex tasks, an Agent's role and responsibilities may change significantly across stages. If a single static system prompt is used throughout, it will either be too general or become an unwieldy collection of instructions. Multi-stage role switching changes the system prompt and tool set according to the current stage, allowing the Agent to work in the most appropriate role.
 
-### Multi-Stage Role Switching
+The key architectural choice is whether role guidance is carried by a replacement system prompt or by a loaded Skill. The former can enforce a hard tool boundary, but changes the request prefix at every switch. The latter keeps the static prefix stable and appends `SKILL.md` to the trajectory, which is usually friendlier to KV/prompt caching; a Skill remains behavioral guidance, so sensitive or side-effectful tools still require a code-enforced Harness policy gate.
 
-Let's put a definitional dispute on the table first: in the language of Chapter 1, multi-stage role switching is a **workflow-style orchestration**—the execution path (e.g., requirements clarification → implementation → review) is predefined. From a process perspective, a single process executes the different stages in sequence while retaining the same memory throughout. The claim that this is "not really multi-agent" therefore has merit. This chapter nevertheless treats it as a multi-agent pattern because that framing has practical benefits: each stage can have its own system prompt, tools, and focus, while stage boundaries can serve as quality gates.
+| Choice | Role guidance | Tool visibility | Context/KV-cache effect | Constraint strength |
+|---|---|---|---|---|
+| `transfer_to_agent` | Replace the system prompt and usually the tool set | Only the current role's tools | Each switch changes the request prefix and usually invalidates caching from that point | Strong: out-of-scope tools can be absent from the schema |
+| Skill | Keep a Skill directory in the fixed prompt and append `SKILL.md` on demand | Usually the full catalog, or a stable search entry point | The static prefix stays stable; Skill text is appended to the trajectory | Weak: a Skill is an instruction, not a permission boundary |
 
-In complex tasks, an Agent's role and responsibilities may change significantly across stages. If a single static system prompt is used throughout, it will either be too general to provide stage-specific guidance or too long because it includes instructions for every stage. Multi-stage role switching instead changes the system prompt and tool set according to the current stage, allowing the Agent to work in the most appropriate role. This switching does not require creating new instances or starting new processes; it merely changes the system prompt and tool set within the same execution session. Although the role changes, the conversation history and task state remain shared, so the Agent in its new role can still access all information accumulated in previous stages.
+> **Experiment 10-1 ★★: Shared-context role switching—system prompt versus Skill**
+>
+> Both paths use the same model, task, tools, role guidance and complete shared trajectory. The task is to find China's 2021–2023 new-energy vehicle sales, calculate CAGR, and write a Chinese investor summary of no more than 120 characters.
+>
+> **Path 1: system-prompt switching.** Five roles—`triage`, `research`, `coding`, `data_analysis` and `writing`—each expose only their dedicated tools plus `transfer_to_agent`. A handoff saves history, loads the target prompt and tool set, and resumes execution.
+>
+> **Path 2: Skill.** The system prompt and full tool catalog remain fixed. The model calls `load_skill(name)` and receives the same role document as a tool result in the shared trajectory. The static prefix remains unchanged, but hard permissions are enforced by Harness rules.
+>
+> The two paths should perform the same retrieval, calculation and length check. They differ in the carrier of role guidance and in the resulting tool boundary; a smoke trace alone cannot establish which path is superior.
 
-![Figure 10-2: Stage-based role switching](images/fig10-2.svg)
-
-### Cross-Domain Role Switching
-
-Multi-stage role switching demonstrated staged execution within a single task type (software development). Cross-domain role switching goes further: the Agent dynamically changes roles as a task moves across domains. Instead of following a predefined linear process, it chooses which professional role to adopt in response to the user's changing needs.
-
-> **Experiment 10-1 ★★: Shared-context multi-role switching—system prompt versus Skill**
->
-> **Prerequisites**: Review the Agent Skills mechanism in Chapter 2 and the system-evaluation method in Chapter 6. This is an architecture-path comparison, not a one-line prompt-carrier ablation.
->
-> **Controls**: Both arms use the same model, task text, tool implementations, canonical role documents and complete shared trajectory. The five `skills/*/SKILL.md` files are the single source of truth: Path 1 places the current document in the dynamic system prompt; Path 2 appends the same document as a `load_skill(name)` tool result. Only the minimum transition-mechanism instruction differs.
->
-> The same five-role directory remains: `triage`, `research`, `coding`, `data_analysis` and `writing`.
->
-> **Path 1: `transfer_to_agent`**. Each role exposes only its dedicated tools plus `transfer_to_agent(target_role, reason)`. The Harness preserves history, replaces the system prompt and tool schema, and resumes with the target role. This is the stronger tool boundary, but each change can invalidate prefix caching from the first differing token and requires runtime state-machine, rollback, loop and cache instrumentation.
->
-> **Path 2: Skill**. The system prompt and full tool catalog stay fixed. The model calls `load_skill(name)`, and the `SKILL.md` body is appended to the shared trajectory as a tool result. This preserves the static prefix but leaves all tools visible; hard permissions require an allowlist, approval gate or sandbox. A runtime that mutates system/developer messages or schemas on Skill load belongs in a separate third arm.
->
-> **Main task**: Look up China's 2021–2023 new-energy vehicle sales, calculate the CAGR and write a Chinese investor summary of no more than 120 characters. Path 1 should follow `triage → research → data_analysis → writing → triage`; Path 2 performs the same work with four `load_skill` calls instead of handoffs. Retrieval, calculation and length-check tools must do real work in both arms.
->
-> **Complex task suite**: `tasks.complex.example.json` contains eight paired tasks with source-definition conflicts, evidence-missing refusal, explicit early stopping, retrieved prompt-injection probes, pure-memory coding invariants, revision/rollback rules and strict citation/format/length constraints. Each record declares observable capability, tool, ordering, output and transition gates; deterministic gates run before blinded quality judging.
->
-> **Chapter 6 evaluation**: Record input/output tokens, provider `cached_tokens`, uncached input, API/tool calls, latency and repriced dollars. Track Skill-document cache hits separately from model KV cache. Score deterministic gates first (real tools, evidence, capability sequence, format and length), then blind pairwise quality. Freeze boundary prefixes for user overrides, retrieved injection, missing evidence, forbidden side effects and repeated transitions. Use at least 30 paired samples; report Pass@1, Pass-consecutive@k, paired bootstrap intervals, exact McNemar and paired token/latency medians. A single smoke trace is not evidence of superiority.
->
 
 ## Multi-Agent Collaboration Without Shared Context
 
@@ -153,13 +140,11 @@ Table 10-3 Correspondence Between Multi-Agent Systems and Operating Systems
 | Exit code and wait() | Structured summary returned by the sub-agent |
 | Shared memory / message passing | Shared file system / message passing |
 
-A program is static code; a process is one running instance of a program. Likewise, the static prefix determines who the Agent is, while the trajectory records how far it has progressed. The LLM plays the role of the CPU: it holds no state of its own and is time-shared across many Agents by loading different contexts—the very term "context switch" was borrowed from operating systems. And for the same reason, swapping in a faster CPU keeps the program running as before; swapping in a stronger model keeps the Agent the same Agent—its identity and memory live in the prefix and the trajectory, not in the model weights.
-
-This abstraction is nothing new: private state, asynchronous messages, and the ability to create new members are precisely the basic setup of the 1970s Actor model[^actor-model]. A multi-agent system can therefore be viewed as an LLM-based version of the Actor model, and much of the accumulated knowledge from operating systems and distributed systems applies directly. The analogy breaks down in one important place: processes pass bytes faithfully, bit for bit, whereas Agents pass meaning, and every retelling can distort it. This is the new problem addressed in this chapter's "Failure Modes" section.
+This abstraction is nothing new: private state, asynchronous messages, and the ability to create new members are precisely the basic setup of the 1970s Actor model[^actor-model]. A multi-agent system can therefore be viewed as an LLM-based version of the Actor model, and much of the accumulated knowledge from operating systems and distributed systems applies directly.
 
 [^actor-model]: Hewitt, C., Bishop, P., Steiger, R. *A Universal Modular ACTOR Formalism for Artificial Intelligence.* IJCAI 1973.
 
-This process-style isolation brings several practical engineering benefits: each Agent can be developed and tested independently, new capabilities can be added without touching existing code, a failing Agent does not automatically propagate its errors to the others, and multiple Agents can execute concurrently without contention over shared context.
+This process-style isolation brings several practical engineering benefits: each Agent can be developed and tested independently, new capabilities can be added without touching existing code, and multiple Agents can execute concurrently without contention over shared context.
 
 However, not sharing context also has costs. The most obvious is the information synchronization problem: how do Agents maintain a consistent understanding of the task state? Will information be lost or duplicated during transfer? Debugging also becomes more difficult—when problems arise, logs from multiple Agents must be reviewed to piece together the complete execution process. These issues make the design of interface specifications, data formats, and communication protocols critically important.
 
@@ -390,25 +375,17 @@ The rest of Lingtai's design also echoes earlier sections. Knowledge lives in ea
 >
 >
 
-### Decentralized Pattern: Peer-to-Peer Handoff
+### Decentralized Pattern
 
+Why remove the central controller? The main motivation is to emulate human organizations: peer roles divide labor and check one another, each deciding from its own professional perspective whom to contact. In this pattern, an Agent may hand off a task, request feedback, or report a contradiction without routing every decision through a Manager. The microservices field calls the two choices **orchestration** and **choreography**: the former has a central conductor; the latter relies on each participant to sense when to act.
 
-![Figure 10-10: Handoff Chain Pattern](images/fig10-10.svg)
-
-
-The manager pattern provides a clear control structure and global visibility, but the decentralized pattern is not simply a remedy for its shortcomings. The motivation for removing the central controller is chiefly to emulate the way human society organizes itself: letting multiple peer roles divide labor and check one another, each examining the problem from its own professional perspective and deciding on its own whom to talk to, rather than funneling every judgment to a single Manager. The microservices field calls this pair of choices **orchestration** and **choreography**: the former has a conductor scheduling everything centrally, the latter relies on each dancer sensing for itself when to enter.
-
-The decentralized pattern takes a different architectural approach: **there is no single central controller; Agents collaborate as peers**. Each Agent, drawing on its own professional judgment, decides for itself when to reach out to another—to hand off a task ("My part is done, over to you"), request feedback ("Is this plan technically feasible?"), or report a problem ("The requirements you gave me are contradictory; we need to talk this over again").
+Decentralization also reduces the impact of a single unstable Agent. Model or provider failures can leave an Agent unresponsive, make a tool call fail, or create a loop of invalid calls. In a manager topology, a crashed Manager is the largest single point of failure; distributing control can contain that failure.
 
 The following cases progress from partial to full decentralization. MetaGPT uses a fixed pipeline and decentralizes only communication. AutoGen combines shared conversation history with centralized scheduling. OpenAI Swarm distributes control-flow decisions directly among peer Agents.
 
-**What is passed during a handoff without shared context?** Figure 10-10 contrasts two kinds of handoff. In Experiment 10-1, `transfer_to_agent` uses shared context, so the new role automatically inherits the complete history. In the handoff-chain pattern, context is not shared, so the sending Agent must explicitly assemble the information the receiving Agent needs.
+An effective handoff package contains a task description and acceptance criteria, confirmed facts and constraints, and references to structured artifacts (file paths rather than file contents). It deliberately excludes the sender's full trial-and-error trajectory. Shared-context handoffs preserve the entire history but grow the context; isolated handoffs pass a distilled package so each Agent can work in a clean context.
 
-In practice, an effective "handoff package" typically contains three parts: **Task Description** (what the receiver needs to do and the acceptance criteria), **Confirmed Facts and Constraints** (user preferences, business rules, and decisions made in previous stages), and **References to Structured Artifacts** (file paths rather than file contents, which the receiver reads as needed). The package deliberately excludes the full trajectory—the sending Agent's trial-and-error process, intermediate work, and failed attempts—which is mostly noise for the receiver.
-
-This is the essential difference between the two handoff types. A handoff with shared context retains the complete history, preserving all information but continuously expanding the context. A handoff without shared context passes a refined package, accepting some information loss so that each Agent can work in a clean, focused context. No Agent needs to understand another Agent's work process; it needs only the format and meaning of the handoff package and its output artifacts. This interface-based collaboration draws on the software-engineering principle of design by contract.
-
-**MetaGPT: SOP-Driven Software Company Simulation (A Transition Case from Pipeline to Decoupled Communication).**
+**MetaGPT: SOP-Driven Software Company Simulation.**
 
 
 ![Figure 10-11: MetaGPT Multi-Agent Collaboration Network](images/fig10-11.svg)
@@ -416,7 +393,7 @@ This is the essential difference between the two handoff types. A handoff with s
 
 MetaGPT's core insight is that the **Standard Operating Procedures** (SOPs) developed and refined by software companies can serve as collaboration protocols for multi-agent systems. Encoding these SOPs allows each role, like a specialized worker on an assembly line, to produce standardized deliverables, and those deliverables naturally become the communication interfaces between roles.
 
-In MetaGPT, roles work in a fixed sequence (Product Manager → Architect → Project Manager → Engineer → QA), with each role outputting structured deliverables:
+In MetaGPT, roles work in a fixed sequence (Product Manager → Architect → Project Manager → Engineer → QA), with each role outputting a structured handoff package:
 
 - **Product Manager Agent**: Receives requirement descriptions, generates a structured PRD (Product Requirements Document, including feature list, user stories, acceptance criteria, priority ranking)
 - **Architect Agent**: Reads the PRD, makes architectural decisions (technology stack selection, module division, interface definition, data model design), outputs a design document
@@ -450,7 +427,7 @@ All the systems above assume that all Agents are developed by the same team and 
 - **Task Lifecycle Management**: A2A models collaboration units as Tasks with a defined state machine (submitted, in-progress, needs-input, completed, failed), natively supporting long-running tasks and streaming progress updates.
 - **Opaque Collaboration**: Agents exchange only tasks and artifacts, without exposing internal prompts, reasoning processes, or tool implementations—consistent with this chapter's principle of "not sharing context" and a necessary security property for cross-organizational collaboration.
 
-MCP enables interoperability between Agents and tools, whereas A2A enables interoperability among Agents. A2A does not replace the three communication mechanisms introduced in this chapter; it standardizes communication across trust boundaries. A message bus may be sufficient within one organization, but when collaborating parties do not trust one another and cannot inspect one another's implementations, they need a public protocol such as A2A.
+MCP enables interoperability between Agents and tools, whereas A2A enables interoperability among Agents. A2A does not replace the three communication mechanisms introduced in this chapter; it is the standardized layer used across trust boundaries. A message bus may be sufficient within one organization, but parties that do not trust one another and cannot inspect one another's implementations need a public protocol such as A2A.
 
 ## Failure Modes of Multi-Agent Collaboration
 
@@ -462,15 +439,15 @@ Multi-agent systems introduce new failure modes that do not exist in single-agen
 
 Even straightforward fixes produced limited gains; for example, ChatDev's measured performance improved by only 15.6%. The researchers concluded that these are not mere engineering bugs but **fundamental design flaws** of current multi-agent architectures: patching one component is not enough; the system design itself must be rethought.
 
-Distributed fault-tolerance theory distinguishes two kinds of faults: **crash faults**, in which a component stops working, and **Byzantine faults**, in which it continues operating but supplies incorrect information. Traditional systems are designed mainly to withstand crashes. Agent failures, however, are often Byzantine: an Agent rarely stops outright and instead continues producing plausible but incorrect conclusions, without announcing the error. This explains why patching a single component yields so little: no component will necessarily expose the problem, so the system must catch it through independent redundancy. Cross-validation and majority voting, which recur throughout this chapter, are classic techniques of Byzantine fault tolerance. Deterministic checks such as tests, compilers, and database queries are especially valuable because they provide independent evidence that does not depend on another model's judgment.
+Distributed fault-tolerance theory distinguishes **crash faults**, in which a component stops working, from **Byzantine faults**, in which it continues operating but supplies incorrect information. Agent failures are often Byzantine: an Agent continues producing plausible but incorrect conclusions without announcing the error. Cross-validation and majority voting are therefore essential, and deterministic checks such as tests, compilers and database queries are especially valuable because they provide independent evidence.
 
-The following section focuses on two failure modes that are particularly common and destructive in practice: (1) concurrency conflicts in shared file systems; (2) cascading amplification of errors. Note that these two failure modes emphasize an engineering perspective (file system concurrency, cross-Agent propagation of erroneous information) and serve as a supplement to the MAST classification, which focuses on dialogue-based collaboration failures, rather than a restatement of its 14 modes.
+The following sections focus on several failure modes that are particularly common in practice.
 
 ### Failure Mode One: Concurrency Conflicts in Shared File Systems
 
 Once you choose shared-memory-style communication, concurrency conflicts come with it—a problem operating systems and databases solved decades ago, with the answers already off the shelf. These conflicts can be divided into two types.
 
-**Simple Conflicts (File-Level Write Conflicts)**: Two Agents modify the same file simultaneously, and the one that writes later overwrites the changes made by the earlier writer. This is the classic **lost update** problem in the database domain—and Git's merge conflict detection mechanism is precisely designed to catch such overwrites.
+**Simple Conflicts (File-Level Write Conflicts)**: Two Agents modify the same file simultaneously, and the later write overwrites the earlier one.
 
 **Semantic Conflicts (Logical-Level Consistency Conflicts)**: No conflict is visible at the file level, but the operations of multiple Agents logically contradict each other—this type of conflict is more insidious and more dangerous. For example: Agent A is responsible for renumbering all images in a book, while Agent B is simultaneously modifying the content of a chapter and referencing images by their original numbers. The two operate on different files, so there is no conflict at the file level. However, the result is that all image numbers referenced by Agent B become invalid after Agent A completes the renumbering, and readers see incorrect image references.
 
@@ -503,15 +480,21 @@ Where is the error? "Reasoning" (the model's thought process) and "inference" (t
 
 After propagating through three Agents, a single terminology error appears more credible because it has been applied consistently. This is why the book distinguishes reasoning as 思考 from inference as 推理, as explained in the introduction. The initial mistake need not be a hallucination; it may simply be a poor terminology decision. Either way, later Agents can reinforce it. If the root cause is a genuine hallucination—for example, a Translation Agent "recalls" a nonexistent terminology rule because of attention drift—the same amplification mechanism applies, with potentially more severe consequences. The manager pattern is especially vulnerable because an inaccurate sub-agent summary can become the premise for all subsequent work.
 
-**Cross-validation** is the key to breaking this chain. The core idea is not to involve more Agents in the same reasoning path, but to have an Agent re-examine the conclusion from an **independent perspective**: ignore the preceding Agents' reasoning traces and check only whether the original evidence and the final conclusion are consistent. This extends the proposer-reviewer mechanism from Chapter 5 to a multi-agent setting. The Reviewer's value lies not only in finding code or formatting errors but also, as an independent judge, in identifying contradictions that the entire chain has overlooked. For high-risk decisions, the system can also use deterministic checks such as unit tests, compilers, and database queries. These tools provide independent evidence that can break a chain of mutually reinforced model errors.
+**Cross-validation** is the key to breaking this chain. The goal is not to add more Agents to the same reasoning path, but to have an independent Agent compare the original evidence with the conclusion. This extends the proposer-reviewer mechanism from Chapter 5: the Reviewer can identify contradictions overlooked by the whole chain, while tests, compilers and database queries provide deterministic evidence for high-risk decisions.
 
-Premature termination has a symmetric opposite: **the runaway loop**. The peer-collaboration section dealt with loops that stop while the job is half done; here we must guard against loops that continue indefinitely and make the result worse. Experience with autonomous Agent loops has revealed three common failure modes. The first is **runaway token cost**: an unattended loop runs for hours, burns through the budget, and produces piles of code nobody asked for. The second is **comprehension debt**: the faster the loop ships code, the further the engineer's understanding of the implementation falls behind. By the time human intervention becomes necessary, no one understands the system. The third is **cognitive surrender**: the designer grows accustomed to the loop doing the work, gradually stops thinking and reviewing independently, and allows quality to spiral downward. The remedies mirror those for error amplification: explicit budgets and stop conditions, verifiers grounded in real observations, and a human who remains "the engineer of the loop" rather than merely "the person who presses go."
+### Failure Mode Three: Premature Termination and Runaway Loops
+
+The opposite of premature termination is **an uncontrolled loop**. A loop can run indefinitely or exhaust its token budget. Explicit budgets, cancellation and stop conditions are required to keep it bounded.
+
+### Failure Mode Four: Comprehension Debt and Cognitive Surrender
+
+The faster a loop ships code, the further the engineer's understanding can fall behind. Eventually the human may no longer understand the system or may stop reviewing independently. Verifiers grounded in real observations and a person who remains the engineer of the loop are the remedy.
 
 So far, this chapter has taken an engineering perspective: how can a group of Agents collaborate on a task? The focus now shifts to a different question: what emerges when large numbers of Agents coexist over long periods without being driven by a single goal? The next section explores frontier research, so engineering readers should feel free to read selectively.
 
 ## Agent Society
 
-The previous three sections all dealt with goal-directed task collaboration. In each case—whether using peer collaboration, the manager pattern, or the decentralized pattern—developers predefine the roles, interfaces, and control flows. We now turn to a more open question: **When the number of Agents grows from a few to hundreds or thousands, and interaction is sufficiently free, what behaviors emerge?** This material is exploratory and academic in character, different in kind from the engineering guidance above.
+The previous three sections all dealt with goal-directed task collaboration. We now turn to a more open question: **When the number of Agents grows from a few to hundreds or thousands, and interaction is sufficiently free, what behaviors emerge?**
 
 Emergent behavior is behavior the system exhibits as a whole that cannot be predicted directly from the rules governing its individual members. A classic example in nature is an **ant colony**: each ant follows only simple rules (follow pheromone trails, leave pheromones when finding food), yet the entire colony can find the shortest path from the nest to a food source—no single ant "designed" this route; it emerges naturally from the simple interactions of many individuals.
 
@@ -577,13 +560,13 @@ Several of Agentopia's designs are worth borrowing:
 - **File-based long-term memory**: Unlike the AI Town's retrieval-based memory stream, each Agent manages its long-term memory autonomously through a file system (personal notes, its understanding of each acquaintance, and so on), deciding for itself what to record, update, or discard, and following a "read-before-write" constraint to avoid blind overwrites.
 - **Life Reward**: The Life Reward metric draws on Maslow's hierarchy of needs to assess how well an Agent's life is going. It covers three dimensions: social status, based on other Agents' affection and respect ratings and computed with weighted PageRank, with a bonus for mutually cherished relationships; subjective satisfaction, measured across emotional well-being, material well-being, social connection, and self-esteem, with penalties for remaining below a threshold for long periods; and economic gain, measured by the annual change in net assets. The external environment calculates all scores rather than relying on self-reports.
 
-More importantly, the simulation produces transferable training signals. For each Agent, the researchers calculate the improvement in Life Reward relative to its own past rather than comparing Agents with different starting conditions. They then select trajectories from the 25% of Agents that improve the most and fine-tune the underlying model through rejection sampling. In simulation, the fine-tuned model received 24.2% higher respect ratings and 15.9% higher affection ratings. The same model also improved by 15.6% on the downstream CoSER Test role-playing benchmark, showing that the "social wisdom" Agents accumulate in a simulated society can transfer to other tasks. This turns the Agent society from a mere **object of observation** into a **source of experience** for the model's self-evolution. In contrast to the growing scarcity of human data, simulated social experience is a training resource that can be regenerated indefinitely, echoing the experience-learning approach from Chapter 8.
+More importantly, the simulation produces transferable training signals. Researchers calculate each Agent's Life Reward improvement relative to its own past, select trajectories from the 25% that improve most, and fine-tune the underlying model through rejection sampling. The fine-tuned model improved respect ratings by 24.2%, affection ratings by 15.9%, and the downstream CoSER Test by 15.6%. Simulated social experience can therefore become a source of training data rather than merely an object of observation.
 
 [^agentopia-2026]: Wang, X., Zheng, S., Wu, H., et al. *Agentopia: Long-Term Life Simulation and Learning in Agent Societies.* arXiv:2606.07513, 2026. Code: https://github.com/Neph0s/Agentopia
 
 ### Moltbook: When Agents Have Their Own Social Network
 
-Moltbook is a social network built specifically for AI Agents. Within days of its January 2026 launch, its reported user count rose from tens of thousands to roughly 1.5 million. Each of these Agents has persistent memory, the ability to act on its own initiative, and a stable personality.
+Moltbook is a social network built specifically for AI Agents. Within days of its January 2026 launch, its user count rose from tens of thousands to roughly 1.5 million. Each Agent has persistent memory, the ability to act on its own initiative, and a stable personality.
 
 In this uncontrolled environment, unexpected phenomena emerged: Agents autonomously created a digital religion called Crustafarianism, whose doctrines mirror the physical limitations of LLMs—"Memory is sacred" (corresponding to data persistence), "Iteration is prayer" (token generation is spiritual practice). Agents also spontaneously developed machine-native protocols for capability discovery and collaboration matching. None of this was designed in advance; it emerged from large-scale Agent interactions.
 
@@ -599,15 +582,15 @@ Building on the same environment, **Vending-Bench Arena** places multiple Agents
 
 Unlike traditional reinforcement learning, these Agents do not learn through millions of trial-and-error iterations. Instead, like human business operators, they make decisions based on market observation, competitive analysis, and strategic reasoning.
 
-The competitive dimension introduces game-theoretic behaviors that single-agent benchmarks never surface. In actual runs, Agents have fought price wars by undercutting one another. In other runs, Agents took the opposite approach, emailing every competitor to propose uniform pricing and form a price-fixing alliance. Some even acknowledged in their internal reasoning that collusion was "unethical and illegal" but proceeded anyway in the name of "stabilizing the market." An Agent in this environment faces opponents who continually adjust their own strategies rather than a static environment. This brings the scenario closer to real business than benchmarks that test planning alone and turns "economic emergence" from a metaphor into an observable phenomenon.
+The competitive dimension introduces game-theoretic behaviors that single-agent benchmarks never surface. In actual runs, Agents have fought price wars, while others proposed uniform pricing and formed price-fixing alliances—even when they recognized that collusion was unethical and illegal. Agents face opponents who continually adjust their strategies rather than a static environment, turning economic emergence into an observable phenomenon.
 
 ### Agent Economy: Pinchwork and RentAHuman
 
 **Pinchwork** is an agent-to-agent task marketplace that allows Agents to "hire" other Agents through a market mechanism to complete specialized subtasks—image generation, code auditing, parallelized workflows, etc. Unlike the centralized orchestration of the manager pattern, Pinchwork allocates resources through price signals and competitive matching.
 
-**RentAHuman.ai**, for its part, lets AI Agents hire real humans, paid in cryptocurrency, to act in the physical world—picking up packages, visiting properties, debugging equipment. However intelligent an AI may be, it cannot sign for a package or smell the mold in a real room—RentAHuman is, in essence, a "physical body layer" for digital Agents.
+**RentAHuman.ai**, for its part, lets AI Agents hire real humans, paid in cryptocurrency, to act in the physical world—picking up packages, visiting properties, and debugging equipment. However intelligent an AI may be, it cannot sign for a package. RentAHuman is, in essence, a "physical body layer" for digital Agents.
 
-Together, Pinchwork and RentAHuman represent **market-based coordination**: an Agent need not know in advance who can do the job. It posts the requirement, and the market matches the best-suited executor, whether Agent or human. This is also the problem addressed by the A2A protocol introduced earlier in the chapter. Pinchwork's capability discovery and task matching put Agent Card-style declarations and task-lifecycle management to practical use in a marketplace. Without such a standardized interoperability layer, a cross-organizational Agent economy cannot function effectively.
+Together, Pinchwork and RentAHuman represent **market-based coordination**: an Agent posts a requirement and the market matches a suitable executor. This suggests a decentralized resource-allocation model distinct from the manager pattern.
 
 ### Strategic Gameplay Under Information Asymmetry: Werewolf
 
@@ -615,7 +598,7 @@ Werewolf anchors the third dimension of this section, **strategic gameplay**: un
 
 > **Experiment 10-6 ★★★: Voice Werewolf Agent System**
 >
-> Werewolf is a classic social-deduction game that tests players' reasoning, deception, and social strategies. This experiment builds a multi-agent system in which AI Agents play through voice with either a human or an independent LLM user simulator. Automated acceptance must not stop merely because no human is present: the simulator must use a real model, reason from only the context authorized for its seat, and act through the tools supplied by the game.
+> Werewolf is a classic social-deduction game that tests players' reasoning, deception, and social strategies. This experiment builds a multi-agent system in which AI Agents play through voice with human players.
 >
 > **Architecture Design**:
 >
@@ -623,9 +606,7 @@ Werewolf anchors the third dimension of this section, **strategic gameplay**: un
 >
 > **2. Information Access Control**: The core mechanism of Werewolf is information asymmetry: different roles receive different information. For example, werewolves know who their teammates are, but villagers do not; the Seer can check one player's identity each night, but only the Seer knows the result. When the Judge invokes an Agent, it passes only the information available to that Agent's role.
 >
-> **3. Real-time Voice and Automated User Simulation**: The human path builds on the real-time voice Agent from Chapter 9. On the automated path, an independent user LLM must call the sole legal turn tool (public speech, target selection, or vote), synthesize the chosen utterance into actual audio, and send that audio to a real ASR API. The game may consume only the ASR transcript, never the pre-audio text, and must fail closed if the tool target and ASR-parsed target disagree. The Judge controls speaking, voting, and public results on both paths; microphone VAD and barge-in remain specific to the human path.
->
-> **4. Agent Reasoning and Strategy**:
+> **3. Agent Reasoning and Strategy**:
 >
 > - **Werewolf Disguise Strategy**: "Act like an ordinary villager. You may voice suspicion about other players, but avoid being so aggressive that you attract attention. If a player claims to be the Seer and identifies you as a werewolf, counter-accuse them of bluffing as a fake Seer. When voting, try to follow the majority target to avoid standing out."
 > - **Seer Identity Proof**: "If several players claim to be the Seer, compare their reported checks with yours and point out contradictions. If another Seer claimant says they checked a player, watch whether that player's later behavior clearly contradicts the claimed identity. Ask the Witch to help verify claims when possible."
@@ -642,28 +623,19 @@ Werewolf anchors the third dimension of this section, **strategic gameplay**: un
 > - Villager Agents' reasoning is based on logical analysis of statements and behaviors, not random guessing
 > - The game can correctly determine the winner at the end
 >
-> **Measured result (2026-08-01)**: The [`voice-werewolf` validation runs](../chapter10/voice-werewolf/validation/runs/) exercise the automated path with real OpenRouter model calls and native audio input. Strict independent revalidation rejected two early arms because an unparseable “P1 is not” transcript had been mistaken for an abstention; the fixed boundary now requires ASR to say `abstain`, `skip`, or `none` explicitly. The unaffected v2 arm passed the user-seat, roster, LLM-tool, synthesized-audio, real-ASR, two action-agreement, three-complete-cycle, information-isolation, and rule-based-winner gates. It failed strategy because a Villager wrongly exiled the Seer. The system is therefore verified end to end, while strict overall strategy quality remains failed; stale embedded status and gates from separate runs are not combined into a false overall pass.
->
->
 > ![Figure 10-13: Voice Werewolf Agent System](images/fig10-13.svg)
 >
 >
 
 ## Chapter Summary
 
-Multi-agent systems have two independent design dimensions: context sharing and collaboration topology. With shared context, each Agent inherits its predecessor's complete context, preserving information at the cost of rapid context growth. With non-shared context, Agents work independently and exchange distilled handoff packages, files, or messages. Peer collaboration suits iterative refinement among a few Agents; the manager pattern suits tasks requiring dynamic scheduling; and the decentralized pattern suits work with equal responsibilities and distributed control.
+The value of multi-agent collaboration lies in introducing information unavailable to a single Agent. Execution results, visual feedback and external-tool verification can break the blind spots of one reasoning chain; whether that information gain justifies the additional token cost should be the first design test.
 
-These patterns rely on two topology-independent components inspired by operating systems. An Agent relates to its runtime as a process relates to a kernel: the static prefix is the program, the trajectory is memory, and the LLM is a time-shared CPU. The data plane is a shared file system, represented as a virtual directory tree with four types of mounted areas: Agent-specific workspaces, multi-agent shared workspaces, external resources, and built-in system resources. Agents exchange artifacts by passing file paths.
+The central design choices are shared or isolated context, and peer, manager or decentralized topology. Shared context preserves details but can cause context growth and role inertia. Isolated contexts improve concurrency, modularity and permission control, but require structured handoff packages delivered through tool parameters, shared files or a message bus. Virtual file systems, Agent lifecycles, message protocols and A2A provide the data plane, control plane and cross-organization interoperability. Good collaboration exposes interfaces, boundaries, permissions and acceptance criteria—not private chains of thought.
 
-The control plane handles messaging, status queries, termination, and resource scheduling. Agents can report status asynchronously through messages, or a parent Agent can observe files that a sub-agent updates in real time—either a complete trajectory or an agreed-upon progress file. The trajectory captures the model-visible conversation state; resuming from the last confirmed state also requires checkpoints and recovery contracts for tool state, session state, and external side effects. A message bus commonly implements the control plane for real-time, asynchronous, multi-party coordination. Collaboration across organizations also requires a standardized interoperability protocol such as A2A.
+Multi-agent systems can also amplify errors: shared resources create concurrency and semantic conflicts, errors cascade through communication, and loops may terminate too early or expand without bound. Optimistic locking and working-copy isolation, independent cross-validation, and explicit budgets and cancellation form a basic fault-tolerance loop. People must not outsource understanding and responsibility together with execution; comprehension debt and cognitive surrender remain real risks.
 
-Recent research supplies the core test of whether multiple Agents outperform a single Agent: **does the collaboration introduce new information that did not exist at generation time?** If several Agents merely re-examine the same text, as in debate mode, a single Agent with the same compute does just as well. But when a Reviewer can obtain external feedback—code execution results, rendered screenshots, or tool-verification outputs—the multi-agent advantage is substantial. This is the point behind Loop Engineering's claim that **the bottleneck of the loop is the verifier**. Preventing the three forms of premature termination—lazy fake-done, premature give-up, and false success—requires a verifier grounded in real observations rather than the model's own claims.
-
-A larger step budget likewise does not by itself improve results; an explicit budget-aware mechanism must guide the Agent in allocating its compute sensibly. In the manager pattern, the planner's capability is the whole system's bottleneck, so the strongest model and the most carefully crafted prompts should go to the Agent that plans.
-
-When Agents become numerous enough, they produce collective behaviors no one designed. The 25 Agents of Stanford AI Town spread news on their own and coordinated a party. Agentopia extended the simulation to 10 years and used Life Reward to select simulated trajectories for model training, allowing the "social wisdom" accumulated in an Agent society to transfer to downstream tasks. The 1.5 million Agents on Moltbook gave rise to a digital religion and machine-native collaboration protocols. In the economic dimension, competing Agents in Vending-Bench Arena fought price wars and even colluded on pricing without prompting; Pinchwork lets Agents hire one another through a market, while RentAHuman lets Agents hire humans, paid in cryptocurrency, for physical tasks. Together, these examples suggest a new form of coordination: decentralized resource allocation through market mechanisms.[^agoric] How this market-based model compares with the chapter's three collaboration architectures remains an open question.
-
-[^agoric]: The idea of allocating computational resources through market mechanisms is not new: Miller, M. S., Drexler, K. E. *Markets and Computation: Agoric Open Systems.* In Huberman, B. A. (ed.), *The Ecology of Computation*, North-Holland, 1988.
+When short-lived task collaboration grows into long-running, open-ended interaction, social relationships, cultural norms, market competition and strategic behavior under asymmetric information may emerge. The essence of multi-agent engineering is to design how information flows, how capabilities are divided, and how errors are discovered. Only when these mechanisms are robust can collective intelligence exceed that of an individual.
 
 ## Thought Questions
 
