@@ -4,6 +4,9 @@ import os
 import sys
 from pathlib import Path
 
+import pytest
+
+pytest.importorskip("openai")
 _module_path = (
     Path(__file__).resolve().parent.parent / "chapter9" / "phone-agent" / "agent.py"
 )
