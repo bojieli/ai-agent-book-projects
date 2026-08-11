@@ -7,15 +7,13 @@ name = "agentbook"
 version = "0.1.0"
 description = "Shared packaging and plumbing for the ai-agent-book companion experiments"
 readme = "README.md"
-# 3.10 matches what the chapter READMEs document (chapter2/local_llm_serving,
-# chapter7/orpheus, chapter8/prompt-distillation all state Python 3.10+).
-# browser-use needs >=3.11, but that is scoped to the `browser` extra with an
-# environment marker rather than raised here, so chapters that do not need a
-# browser stay installable on 3.10.
-# The CUDA/ML stacks used by the training chapters do not yet publish a
-# coherent Python 3.14 wheel set.  Keep the advertised range to versions the
-# lockfile can actually reproduce.
-requires-python = ">=3.10,<3.14"
+# 3.11 matches what the chapter READMEs document (chapter2/local_llm_serving,
+# chapter7/orpheus, chapter8/prompt-distillation all state Python 3.10+, which
+# 3.11 continues to satisfy). The CUDA/ML stacks used by the training chapters
+# do not yet publish a coherent Python 3.14 wheel set, and the maintained
+# `python-constraint2` solver (imported as `constraint` by chapter 5) requires
+# >=3.11, so 3.11 is the lowest version the lockfile can actually reproduce.
+requires-python = ">=3.11,<3.14"
 license = { text = "Apache-2.0" }
 
 # The core that nearly every experiment needs.
@@ -104,9 +102,8 @@ web = [
 ]
 
 # Browser-driving agents (chapter 4 collaboration tools, chapter 8 RPA).
-# browser-use declares requires-python >=3.11. The marker scopes that to the
-# interpreters that can actually install it, so `.[ch4]`/`.[ch8]`/`.[all]`
-# still resolve on 3.10 (without browser-use) instead of failing outright.
+# browser-use declares requires-python >=3.11, which the project floor already
+# satisfies, so `.[ch4]`/`.[ch8]`/`.[all]` install it unconditionally.
 browser = [
     "agentbook[web]",
     "browser-use>=0.1.40; python_version >= '3.11'",
@@ -150,10 +147,9 @@ torch = [
 rag = [
     "agentbook[tokens]",
     "chromadb>=0.5.0",
-    # Chroma does not cap onnxruntime, but onnxruntime 1.24+ dropped Python
-    # 3.10 wheels. Keep the advertised Python 3.10 contract without holding
-    # newer interpreters back from current releases.
-    "onnxruntime<1.24; python_version < '3.11'",
+    # Chroma does not cap onnxruntime; onnxruntime 1.24+ ships wheels for the
+    # supported 3.11+ interpreters, so no version pin is needed here.
+
     "faiss-cpu>=1.7.4",
     "sentence-transformers>=2.2.2",
     "rank-bm25>=0.2.2",
@@ -201,15 +197,18 @@ orchestration = [
     "python-dateutil>=2.9",
 ]
 
-# Constraint solving (chapter 5 code-for-logic).
+# Constraint solving (chapter 5 code-for-logic). The original `python-constraint`
+# 1.4.0 ships only a non-PEP 625-compliant sdist that uv refuses to build, so we
+# use the maintained `python-constraint2` fork, which exposes the same
+# `constraint` module (`from constraint import Problem`) and publishes wheels
+# for every supported platform and Python version.
 solvers = [
-    "python-constraint>=1.4",
+    "python-constraint2>=2.0.2",
 ]
 
 # Long-term memory backends used by the chapter 3 memory experiments.
-# memobase declares requires-python >=3.11; the marker keeps `.[ch3]` and
-# `.[all]` resolvable on 3.10 without it, rather than failing the whole
-# aggregate.
+# mem0ai[nlp]>=2.0,<3; memobase declares requires-python >=3.11, which the
+# project floor satisfies, so it installs for every supported interpreter.
 mem = [
     "mem0ai[nlp]>=2.0,<3",
     "memobase>=0.0.27; python_version >= '3.11'",
