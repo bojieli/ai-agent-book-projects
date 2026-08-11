@@ -35,6 +35,22 @@ OpenAI は GPT-Live で、音声対話をカスケード、ターンベース、
 
 [^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/。この三分類は ChatGPT Voice の三世代をまとめた同記事に由来し、本文の Omni は「turn-based voice models」に対応する。
 
+**ストリーミングキャンセル:**
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
 ### パラダイム一・カスケードパイプライン（Cascading）
 
 商用音声アシスタントの多くは直列パイプラインを使う（図9-1）。VAD が終了を判断し、ASR が音声を文字にし、LLM が回答を生成し、TTS が読み上げる。モジュール性は最適化を容易にするが、各境界が待ち時間を加える。
@@ -157,6 +173,21 @@ Computer Use（GUI 自動化 Agent とも呼ぶ）は、AI に人間のように
 3. 実行層が現実の環境でその動作を実行する（マウスを動かす、クリックする、文字を入力する、など）
 4. インターフェースの応答を待ってから再びスクリーンショットし、次のループに入る
 
+**Computer Use 安全ループ:**
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
 
 ![図9-6 Computer Use Agent の知覚-思考-行動ループ](images/fig9-7.svg)
 
@@ -398,6 +429,19 @@ LLM の推論には遅延があるため、VLA の制御周波数は従来のロ
 
 OpenVLA は文字どおり projector だけを更新して訓練されたわけではありません。原論文では、全パラメータの fine-tuning、視覚エンコーダを凍結した設定、最終層のみの更新、LoRA も報告されています。それでも、より深い批判は残ります。巨大なテキスト・画像の事前訓練コーパスが、はるかに小さいロボットデータセットと狭い適応経路で接続され、低コストの適応では新しい振る舞いが projector、LoRA モジュール、または action head に集中しがちです。Behavior cloning が学ぶのは「観測 + 指示 → action chunk」であって、反実仮想的な物理結果ではありません。embodiment 固有のアクション空間と古い action chunk も転移を制限します。言語 backbone が「カップ」という語を知っていても、摩擦、液体、接触、電源ケーブルの振る舞いまで知っていることにはなりません。
 
+**アクションチャンクのプリエンプション:**
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
 ### 世界モデル
 
 世界モデルは、行動可能な遷移を学習します。
@@ -413,57 +457,6 @@ OpenVLA は文字どおり projector だけを更新して訓練されたわけ�
 ## 本章のまとめ
 
 3 つの場面は表面上の差異は甚だしいものの、遅延とマルチモーダルというこの 2 つの難関は常に影のように付きまといます。音声はすでに、直列パイプラインからエンドツーエンドと全二重へ、分離した速い・遅い思考から「考えながら話す」へという進化の道を歩み抜きました。Computer Use は OSWorld などのベンチマークでの精度がすでに人間の水準に近づいていますが、操作ステップが人間より明らかに多く、ステップの所要時間がタスクの進行につれて増え続ける効率の差には、まだ系統的な解法がありません。ロボットは視覚フィードバックを主とする操作タスクにおいて、ボトルネックがすでにハードウェアから VLA 制御層のタスク横断汎化能力へと移りました（触覚、器用な手などは依然として未攻略のハードウェア上の短所です）。次章では視点を複数の Agent 間の協調へと引き上げます。それはまた別の次元の挑戦です。
-
-## メカニズムの skeleton
-
-以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
-
-### ストリーミングキャンセル
-
-```python
-while audio_is_arriving:
-    partial = asr.push(audio_chunk)
-    if endpoint_is_probable(partial):
-        candidate = llm.start(partial)
-        if later_audio_changes_meaning(partial):
-            cancel(candidate)                 # speculative cancellation
-        else:
-            tts.enqueue_stable_segments(candidate)
-
-on_final_transcript(text):
-    commit_or_restart(text)
-```
-
-### Computer Use 安全ループ
-
-```python
-observation = capture_screenshot_and_accessibility_tree()
-proposal = model.decide(task, observation)
-action = validate_schema_and_coordinates(proposal)
-
-if action.is_irreversible and not user_or_policy_approval(action):
-    stop("approval required")
-else:
-    execute_in_sandbox_or_scoped_session(action)
-    new_observation = capture_after_settle()
-    if not verify_goal_progress(new_observation, action):
-        rollback_if_possible_or_replan()
-```
-
-### アクションチャンクのプリエンプション
-
-```python
-chunk = vla(current_observation, skill)
-for action in chunk:
-    low_level.execute(action)
-    if safety_event() or observation_changed_significantly():
-        low_level.stop()
-        discard_remaining(chunk)
-        reobserve_and_replan()
-        break
-```
-
-境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
 
 ## 演習問題
 

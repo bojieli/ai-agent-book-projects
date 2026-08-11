@@ -26,6 +26,19 @@ Sok más feladatnak nincs egyetlen helyes válasza. Az, hogy az ügyfélszolgál
 
 A 8-2. ábra egy háromrétegű ellenőrzési struktúrát mutat. Az alsó rétegbeli eredmény-ellenőrző a teszteredményeket, adatbázis-állapotokat és eszköz-visszatéréseket olvassa, hogy megválaszolja: „Ténylegesen elkészült a feladat?" A középső rétegbeli folyamat-ellenőrző az üzleti szabályokat, jogosultságokat és műveleti sorrendeket ellenőrzi a kérdésre: „Megengedett módon készült el?" A felső rétegbeli minőség-ellenőrző a rubrika szerint értékeli a nyelvet és a stratégiát a kérdésre: „Megfelelően lett kezelve?" Az alsó szintű mutatóknak erősebben kell támaszkodniuk a kódra és a környezeti alapismeretekre; csak a formalizálható szempontokat szabad nyelvi modellre bízni.
 
+**Háromrétegű trajektória-ellenőrzés:**
+
+```python
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
+
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
+else:
+    emit_structured_diagnosis(outcome, process, quality)
+```
+
 ![8-2. ábra: Háromrétegű trajektória-ellenőrzés a környezeti eredményektől az LLM Rubrikáig](images/fig8-2.svg)
 
 Egy ügyfélszolgálati ágens esetében egy hasznos rubrikának legalább a 8-1. táblázatban felsorolt dimenziókat kell lefednie. Az első öt elsősorban az alapkövetelményeket kényszeríti ki, míg az utolsó kettő a szolgáltatás minőségét méri. Ez a bontás diagnosztikailag hasznosabb, mint annak megkérdezése, hogy a felhasználó elégedett volt-e: a felhasználó lehet elégedett, mert az ágens nem megfelelő visszatérítést adott ki, vagy elégedetlen egy megfelelőségi korlátozás miatt. Egyetlen elégedettségi pontszám nem képes megkülönböztetni a kettőt.
@@ -76,6 +89,19 @@ A 8-2. táblázat tömör összehasonlítást nyújt. A négy módszer nem zárj
 | Prompt és Skill | Nyelvileg kifejezhető ítélkezési elvek és műveleti eljárások | Értelmezhető, szabályozható hatókör | Hajlamos a dagályra, konfliktusra vagy figyelmen kívül hagyásra |
 | Programok és Harness | Determinisztikus eljárások, eszközök és kemény kényszerek | Tesztelhető, stabil végrehajtás, alacsony költség | Magasabb fejlesztési és karbantartási költségek |
 | Modellparaméterek | Magas dimenziós érzékelés, generálási stílus és implicit stratégiák | Erős általánosítás, alacsony következtetési többletterhelés | Magas frissítési és regressziós költségek |
+
+**Tapasztalat–képesség útválasztás:**
+
+```python
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
+```
 
 ### Tapasztalatok konszolidálása tudásba
 
@@ -270,6 +296,20 @@ Ez a választás a tapasztalatok felhalmozódásával is változhat. Egy újonna
 
 Minden módosításnak először egy jelölt képességet vagy jelölt ágenst kell eredményeznie, nem pedig közvetlenül felülírnia a termelési verziót. A tudásdokumentumokat tesztelni kell, hogy a visszakeresés javítja-e a teljesítményt új feladatokon; a Promptokat és Skill-eket ellenőrizni kell határesetekre és a korábbi feladatokon való regressziókra; a programokat sandbox-okban és visszaállított környezetekben kell tesztelni; a paraméterfrissítéseket pedig értékelni kell felejtésre, biztonságra és eloszláson kívüli teljesítményre. Még az érvényesítés után is fokozatosan kell kiadni az új verziót, és valós forgalom mellett figyelni; ha a kulcsfontosságú mutatók romlanak, a rendszernek automatikusan vissza kell állnia egy ismert biztonságos verzióra.
 
+**Ellenőrzött kiadás és visszagörgetés:**
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
+```
+
 Az érvényesítésnek két gyakran összemosott képességet is szét kell választania. A "Harness frissítése" a trajektóriákból értékes, tartós változások előállításának képessége; a "Harness haszna" a feladat ágens azon képessége, hogy megtalálja, aktiválja és helyesen használja ezeket a változásokat később. Egy Skill önmagában helyes lehet, de egy gyengébb feladatmodell nem biztos, hogy betölti a megfelelő helyzetben, vagy nem követi egy hosszú trajektórián keresztül. Bármelyik kudarc miatt a végső pontszám úgy nézhet ki, mintha nem történt volna evolúció. A végpontok közötti teljesítmény önmagában ezért nem diagnosztizálja a frissítőt. A Lin és munkatársai által végzett modellcsere-kísérletek azt jelzik, hogy a két képesség eltérően viszonyul az alapmodell képességéhez[^harness-benefit-2026]. A pontos kapcsolat több feladaton történő érvényesítést igényel, de a kettő elkülönített értékelése széles körben hasznos.
 
 8-3. táblázat: A folyamatos evolúció rétegezett értékelési mérőszámai
@@ -330,6 +370,17 @@ Egy tipikus alvó tanulási ciklus öt lépésből áll:
 4. "Érvényesítés és jóváhagyás:" Értékeljük a jelölteket átviteli, retenciós és biztonsági készleteken; a magas kockázatú írások várjanak emberi jóváhagyásra.
 5. "Ritkítás és indexelés:" Frissítsük a visszakeresési indexeket, és a hosszú ideje használaton kívüli vagy új bizonyítékok által megcáfolt képességeket jelöljük lejártnak, archiváltnak vagy töröltnek, miközben megőrizzük a származást és a visszaállítási verziókat.
 
+**Alvásidős konszolidáció:**
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
 A felhasználói memória a legkézenfekvőbb példa, de meg kell különböztetni a műveleti tapasztalattól. A Claude Code auto memory funkciója minden projekthez fenntart egy `MEMORY.md` indexet és témaspecifikus részletes fájlokat. A munkamenet indításakor csak az index egy korlátozott előtagját tölti be, és a többi tartalmat igény szerint olvassa; amikor az index megközelíti a korlátját, az ágens utasítást kap a részletek egyesítésére vagy máshová helyezésére. Ez megmutatja, hogy még az egyszerű szöveges memória is kapacitáskorlátokat, rétegzett betöltést és aktív szervezést igényel. A jelenleg dokumentált mechanizmus elsősorban a munkamenetek során ír memóriát, és nem szabad egyszerűen egy rögzített éjszakai háttérfeladattal azonosítani[^claude-code-memory].
 
 A Hermes egy teljesebb példát ad a háttérben zajló evolúcióra. A hosszú távú információt korlátozott `MEMORY.md` és `USER.md` fájlokra, SQLite/FTS5 keresésre a korábbi munkamenetekben, igény szerinti Skill-ekre és opcionális külső memóriaszolgáltatókra (például Honcho) bontja. A munkamenet-keresés az eredeti üzeneteket adja vissza, nem pedig először LLM-mel összefoglalja őket, így a visszakeresés különbözik a generálástól és auditálható marad. Amikor egy feladat sok eszközhívást tartalmaz, hibából vagy zsákutcából áll helyre, felhasználói javítást kap, vagy egy nem nyilvánvaló munkafolyamatot fedez fel, egy háttér-felülvizsgálat létrehozhat vagy lokálisan felülvizsgálhat egy Skill-t; a memória- és Skill-írások áthaladhatnak egy jóváhagyási kapun is. Egy külön kurátor követi a Skill-használatot, az elavultságot és az archiválási státuszt, determinisztikus ritkítást végez üresjáratban, és opcionálisan meghívhat egy LLM-et a tartalom egyesítésére. Először pillanatfelvételt készít a változásokról, hogy a helytelen konszolidáció visszaállítható legyen[^hermes-memory]. Ez a „rögzítés–konszolidáció–érvényesítés–ritkítás" folyamatot metaforából működő képesség-életciklussá alakítja.
@@ -388,63 +439,6 @@ A folyamatos tanulás az ágensek egyik legfontosabb képességévé válik, de 
 Egy ágens tanulási jeleket szerez az interakcióból és a kiértékelésből, majd frissíti a tudást, Promptokat, Skill-eket, programokat vagy modellparamétereket aszerint, hogy a képesség hogyan reprezentálható. A rendszer optimalizálhatja az artefaktumok kezelésére és generálására használt módszereket is, de előnyben kell részesítenie a visszakövethető, ellenőrizhető és visszaállítható lokális változtatásokat.
 
 A folyamatos evolúciónak el kell választania az online végrehajtást az offline tanulástól: rögzítsük a bizonyítékokat online; generáljuk és érvényesítsük a jelölt frissítéseket offline; majd fokozatosan adjuk ki, konszolidáljuk vagy vonjuk vissza azokat. Ez a hurok a legmegbízhatóbb, ha az eredmények automatikusan ellenőrizhetők. Nyílt végű, kétértelmű célkitűzésekkel és késleltetett visszajelzéssel rendelkező feladatok esetén az embereknek továbbra is részt kell venniük a probléma meghatározásában és az értékelési kritériumok tervezésében.
-
-## Mechanizmus-skeletonok
-
-Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
-
-### Háromrétegű trajektória-ellenőrzés
-
-```python
-outcome = verify_environment_state(trajectory)
-process = verify_actions_and_permissions(trajectory)
-quality = judge_with_rubric(trajectory, cite_evidence = true)
-
-if not outcome.pass or not process.pass:
-    reject_as_learning_example(outcome, process, quality)
-else:
-    emit_structured_diagnosis(outcome, process, quality)
-```
-
-### Tapasztalat–képesség útválasztás
-
-```python
-if experience.is_factual and experience.has_sources:
-    target = KNOWLEDGE
-elif experience.can_be_expressed_as_contextual_language_rule:
-    target = PROMPT_OR_SKILL
-elif experience.is_deterministic or experience.is_hard_safety_constraint:
-    target = PROGRAM_OR_HARNESS
-else:
-    target = MODEL_PARAMETERS
-```
-
-### Ellenőrzött kiadás és visszagörgetés
-
-```python
-candidate = propose_minimal_update(evidence, current_version)
-
-if not verify(candidate, boundary_set): reject(candidate)
-elif not verify(candidate, retention_set): reject(candidate)
-elif not verify(candidate, safety_set): reject(candidate)
-else:
-    canary = deploy_to_small_traffic(candidate)
-    if canary.metrics_regress: rollback(current_version)
-    else: promote(candidate)
-```
-
-### Alvásidős konszolidáció
-
-```python
-while sleep_gate_is_open():
-    batch = load_new_evaluated_trajectories()
-    proposals = consolidate(batch, current_capabilities)
-    for proposal in proposals:
-        validate_canary_and_promote_or_rollback(proposal)
-    prune_stale_entries_but_keep_provenance()
-```
-
-Legyen világos a határ: a megfigyelések és a bizonyítékok a környezetből érkeznek, a Harness pedig eldönti, mi hajtható végre.
 
 ## Elgondolkodtató kérdések
 

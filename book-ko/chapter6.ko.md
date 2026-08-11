@@ -109,6 +109,17 @@ $p=0.6$, $k=5$일 때 Pass@5는 약 99.0%지만 Pass consecutive@5는 약 7.8%�
 
 **상호작용 프로토콜**: 상호작용 방식과 종료 조건을 명시합니다.
 
+**반복 가능한 평가 루프:**
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
 ![그림 6-2: 도구 호출 및 인간-컴퓨터 상호작용 평가 환경](images/fig6-2.svg)
 
 ### 도구 호출형 평가 환경
@@ -367,6 +378,17 @@ rubric:
 
 **좋은 루브릭과 나쁜 루브릭**: 위의 각 점수 수준은 "Dr. Chen이라고 정확히 답함"처럼 검증할 수 있고 구체적인 행동을 명시합니다. "메모리를 깊이 이해함을 보여 줌"처럼 객관적으로 판단할 수 없는 설명은 사용하지 않습니다. 즉시 탈락 항목은 최저선을 정합니다. 다른 모든 차원에서 만점을 받아도 환각이 한 번이라도 있으면 자동으로 0점입니다.
 
+**rubric 판정 전 결정론적 veto:**
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
 루브릭과 에이전트의 실제 응답을 평가 모델에 함께 넘기면 항목별 점수와 근거가 나옵니다. 수십 개 사례를 모아 낮은 점수의 궤적을 다시 보면 막연한 성공률 하락을 구체적인 원인으로 나눌 수 있습니다. 정보를 찾지 못했는지, 사람 사이의 관계를 잘못 연결했는지, 근거 없는 내용을 덧붙였는지 구분하는 것입니다. 루브릭은 점수표이면서 다음 수정 지점을 알려 주는 진단 도구입니다.
 
 > **실험 6-3 ★★: 루브릭 기반 사용자 메모리 평가 시스템 구축하기**
@@ -610,6 +632,18 @@ Chatbot Arena는 익명 무작위 대결을 사용합니다. 사용자는 모델
 
 평가 기반 의사결정은 고품질 데이터에 의존하며, 이 데이터는 에이전트의 운영 과정을 체계적으로 기록하여 얻습니다. 관측 가능성이 바로 이 문제를 다룹니다.
 
+**쌍대 비교:**
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
 ## 에이전트 관측 가능성
 
 모델 선택이든 지속적 개선이든 평가 기반 의사결정은 고품질 운영 데이터에 의존합니다. 아래에서는 먼저 이 데이터를 체계적으로 수집하는 방법인 관측 가능성을 소개하고, 평가 결과를 시스템 개선으로 옮기는 방법을 논의합니다.
@@ -786,46 +820,6 @@ ML 연구자는 모델의 어느 컴포넌트가 실제로 중요한지 알아�
 1장에서 소개한 하네스 엔지니어링의 관점에서 이 장의 평가 방법론은 하네스의 "검증" 기능을 체계적으로 구현한 것이며, "벤치마크 보고서에서 시스템 개선으로" 이어지는 폐루프는 하네스 반복 최적화의 핵심 메커니즘입니다. 이 장은 "어떻게 신뢰성 있게 측정할 것인가"에 답하고, 이를 바탕으로 8장은 "여러 차원의 궤적 평가를 실행 가능하고 되돌릴 수 있는 시스템 갱신으로 어떻게 바꿀 것인가"에 답합니다.
 
 여기서 구축한 평가 시스템은 현재 시스템의 최적화뿐 아니라 이어지는 두 장의 중요한 토대가 됩니다. 7장은 평가 환경과 데이터를 모델 사후 학습의 입력으로 전환하고 SFT와 RL로 상호작용 정책을 매개변수에 기록합니다. 8장은 프로덕션 궤적의 다차원 평가를 지식, 지침, 프로그램, 매개변수의 갱신 후보로 바꿉니다.
-
-## 메커니즘 skeleton
-
-다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
-
-### 반복 가능한 평가 루프
-
-```python
-for task in dataset:
-    environment.reset(task.initial_state)
-    trajectory = agent.run(task.prompt, environment.tools)
-    outcome = environment.snapshot()
-    score = verifier(task, trajectory, outcome)
-    record(task, trajectory, outcome, score)
-```
-
-### rubric 판정 전 결정론적 veto
-
-```python
-deterministic = verify_state_policy_and_claims(trajectory, outcome)
-if deterministic.veto:
-    return FAIL(reason = deterministic.evidence)
-
-rubric_result = judge(answer, rubric, evidence)
-return aggregate_with_confidence(rubric_result)
-```
-
-### 쌍대 비교
-
-```python
-for task in paired_tasks:
-    for seed in fixed_seeds:
-        a = run(config_a, task, seed)
-        b = run(config_b, task, seed)
-        record_paired_delta(verifier(a), verifier(b))
-
-return paired_bootstrap_or_mcnemar(all_deltas)
-```
-
-경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
 
 ## 생각해 볼 문제
 

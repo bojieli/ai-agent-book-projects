@@ -183,6 +183,23 @@ OpenAI는 한때 AI 능력을 다섯 단계로 분류했습니다. 1단계 대�
 
 파일 시스템이 에이전트 사이의 **산출물 교환** 문제를 해결하지만 협업에는 **제어 평면**도 필요합니다. 바로 여기서 표 10-3의 생명 주기 관련 행이 쓰입니다. 4장에서 제공한 생성(`spawn_subagent`), 메시지 전송(`send_message_to_subagent`), 취소(`cancel_subagent`), 탐색(`list_agents`) 도구 프리미티브는 프로세스 세계의 fork, message, kill, ps에 해당합니다. 이 절에서는 인터페이스 정의를 반복하지 않고 멀티 에이전트 협업에 필수이지만 흔히 놓치는 네 능력에 초점을 둡니다.
 
+**메시지 envelope와 worker 수명 주기:**
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
 **I. 메시지 전달.** 가장 단순한 형태는 지점 간 통신으로 에이전트 A가 `send_message_to_agent_b(content)`를 직접 호출합니다. 토폴로지가 고정되어 있고 에이전트가 적은 상황(예: 이 장의 실험 10-3 전화 + 컴퓨터 이중 에이전트 구성)에 적합합니다. 에이전트 수가 늘고 비동기 병렬성이 필요하면 지점 간 연결 수가 에이전트 수의 제곱으로 증가하며 송신자와 수신자가 동시에 온라인이어야 합니다. 이때는 **메시지 버스**를 사용해야 합니다(뒤의 ‘병렬 조율 패턴’에서 자세히 설명). 에이전트가 버스에 메시지를 게시하고 버스가 구독에 따라 전달하므로 송신자는 구독자를 알 필요가 없습니다. 지점 간이든 버스를 통하든 메시지는 일반적으로 구조화된 **봉투(envelope)**를 담아야 합니다. 송신자 ID, 대상(특정 에이전트 또는 브로드캐스트), 메시지 유형(예: `task_assigned`/`status_update`/`result`/`terminate`), JSON 페이로드입니다. 통합 봉투 형식은 신뢰할 수 있는 라우팅과 수신자 파싱을 보장하고 협업 체인을 추적 가능하게 합니다. 이는 멀티 에이전트 시스템 디버깅의 핵심입니다.
 
 **II. 상태 질의.** 제어 평면에서 가장 과소평가되는 부분입니다. 주 에이전트가 하위 에이전트를 보낸 뒤에는 진행 상황을 볼 수 있어야 합니다. 그렇지 않으면 계속 기다릴지 결정할 수도, 하위 에이전트가 막혔을 때 개입할 수도 없습니다. 직관적인 접근법은 RPC에서 빌려 와 `get_subagent_status(agent_id)` 질의 인터페이스를 정의하여 ‘실행 중/완료/실패’와 진행률을 반환하게 하는 것입니다. 하지만 이런 풀 인터페이스는 예상보다 훨씬 덜 유용합니다. 하위 에이전트는 생성되는 순간 실행을 시작해 완료하거나 실패할 때까지 계속 작동합니다. 전통적인 일괄 시스템의 작업처럼 대기 상태를 차례로 순환하지 않습니다. Unix 프로그래밍에서 다른 프로세스의 PID로 실행 상태를 반복 조회할 일이 거의 없는 것과 같습니다. 폴링에도 근본적인 딜레마가 있습니다. 너무 자주 하면 토큰을 낭비하고 너무 드물면 늦게 반응합니다. 더 자연스럽게 상태를 얻으려면 이 장의 시작에서 소개한 두 통신 패러다임으로 돌아가야 합니다.
@@ -243,6 +260,24 @@ LoopX 결정 → 에이전트 실행 → 독립 검증기 증명 → LoopX 커�
 
 **단일 에이전트가 생성한 뒤 자신의 작업을 검토하면 왜 안 될까요?** 바로 앞의 ‘멀티 에이전트가 단일 에이전트보다 실제로 나은 때’ 기준이 적용됩니다. 검토가 새 정보를 도입하지 않는다면 그저 ‘모델에 다시 생각하라고 요구’하는 것입니다. 관련 연구는 명확한 답을 줍니다. Huang 등은 ICLR 2024 논문 “Large Language Models Cannot Self-Correct Reasoning Yet”에서 외부 피드백 없이 GPT-4에 자신의 답을 검토하고 수정하게 하면 정확도가 오히려 떨어진다는 사실을 발견했습니다. 모델은 틀린 답을 옳게 바꾼 횟수보다 옳은 답을 틀리게 바꾼 횟수가 더 많았습니다.
 
+**Proposer–Reviewer 루프:**
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
 TACL에 실린 2024년 서베이 논문 “When Can LLMs Actually Correct Their Own Mistakes?”(arXiv:2406.01297)도 이 결론을 확인했습니다. 테스트 사례 실행 결과나 외부 도구의 검증 출력처럼 신뢰할 수 있는 외부 피드백이 없으면 모델 자체의 ‘자기 수정’에만 의존하는 방식은 대체로 효과가 없습니다.
 
 ICLR 2024의 CRITIC 논문은 직관적인 비교 실험을 제공합니다. CRITIC은 모델이 검색 엔진, Python 인터프리터 같은 외부 도구로 자신의 답을 검증하게 하여 성능을 크게 높였습니다. 하지만 실험자가 도구 검증 단계를 없애고 모델의 자기 평가만 남기자 개선의 대부분이 사라졌습니다. 이는 검토의 가치가 ‘모델에 다시 생각하라고 요구’하는 데 있지 않고 **모델이 생성할 때 이용할 수 없었던 새 정보**, 즉 테스트 결과, 렌더링된 스크린샷, 컴파일 오류, 외부 검색 결과를 도입하는 데 있음을 보여 줍니다.
@@ -274,6 +309,23 @@ ICLR 2024의 CRITIC 논문은 직관적인 비교 실험을 제공합니다. CRI
 
 2025년 Plan-and-Act 논문[^plan-and-act-2025]은 이를 실증적으로 분석했습니다. 계획자-실행자 이중 에이전트 아키텍처에서 **약한 계획자가 전체 시스템의 가장 중대한 병목**입니다. 계획자의 계획 품질이 충분히 높으면 비교적 단순한 실행자로도 좋은 결과를 얻을 수 있습니다. 반대로 계획자의 업무 분해가 잘못되면 이후 실행자의 모든 작업이 잘못된 전제 위에 세워집니다. 연구는 WebArena-Lite 벤치마크에서 성공률 54%를 달성했으며 핵심 기여는 실행자의 실행이 아니라 계획자의 계획 능력 개선이었습니다. 모든 에이전트에 자원을 균등 배분하기보다 가장 강한 모델과 가장 세심하게 작성한 프롬프트를 관리자(계획자)에 주어야 한다는 교훈입니다.
 
+**최초 검증 병렬 승자:**
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
 
 [^plan-and-act-2025]: Erdogan, L. E., et al. *Plan-and-Act: Improving Planning of Agents for Long-Horizon Tasks.* arXiv:2503.09572, 2025.
 
@@ -417,6 +469,24 @@ Lingtai 설계의 나머지 부분도 앞 절과 맞닿습니다. 지식은 각 
 중앙 제어자를 없애는 이유는 인간 조직처럼 대등한 역할이 분업하고 서로 견제하며, 각 Agent가 작업 인계, 피드백 요청, 모순 보고 시점을 스스로 결정하게 하기 위해서다. Manager 중단이 단일 장애점이 되는 문제도 줄일 수 있다. 마이크로서비스에서는 두 선택을 **orchestration**과 **choreography**라고 부른다.
 
 다음 사례는 통신 결합 해제에서 제어 흐름의 탈중앙화로 발전한다. MetaGPT는 고정 파이프라인이고, AutoGen group chat은 공유 대화와 중앙 스케줄링의 혼합이며, OpenAI Swarm은 핸드오프 결정을 동료 Agent들에게 분산한다.
+
+**탈중앙화 handoff 프로토콜:**
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
 
 **MetaGPT: SOP 기반 소프트웨어 회사 시뮬레이션.**
 
@@ -649,83 +719,6 @@ Werewolf는 이 절의 세 번째 차원인 **전략적 게임 플레이**를 �
 ## 장 요약
 
 멀티 에이전트 협업은 단일 Agent가 생성 시 얻을 수 없었던 새로운 정보(실행 결과, 시각적 피드백, 외부 도구 검증)를 도입할 때 가치가 있다. 설계에서는 공유 또는 격리 컨텍스트와 동료·관리자·분산 토폴로지를 선택해야 한다. 구조화된 핸드오프 패키지, 권한 경계, 독립 검증, 예산과 취소 메커니즘이 기본적인 장애 허용 루프를 이룬다. 장기간의 개방형 상호작용에서는 사회적 관계, 규범, 시장, 전략이 나타날 수 있으므로 정보 흐름, 능력 분담, 오류 발견을 설계하는 것이 핵심이다.
-
-## 메커니즘 skeleton
-
-다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
-
-### 메시지 envelope와 worker 수명 주기
-
-```python
-envelope = {
-    id, trace_id, sender, recipient, type,
-    payload, created_at, deadline, schema_version
-}
-
-worker = spawn(task, budget, cancellation_token)
-publish(task_assigned(envelope, worker))
-while worker.is_running:
-    accept(status_update | artifact | needs_input)
-    if deadline_expired or cancellation_token.is_set:
-        request_graceful_stop(worker)
-await worker.ack_or_timeout()
-```
-
-### Proposer–Reviewer 루프
-
-```python
-candidate = proposer(task, constraints)
-evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
-review = independent_reviewer(candidate, evidence)
-
-while review.veto and budget_remaining:
-    candidate = proposer.repair(candidate, review.findings)
-    evidence = execute_or_render(candidate)
-    review = independent_reviewer(candidate, evidence)
-
-if review.pass:
-    publish(candidate, evidence, review)
-else:
-    escalate_or_reject(review)
-```
-
-### 최초 검증 병렬 승자
-
-```python
-workers = launch_independent_workers(subtasks)
-while workers.any_running:
-    event = next_event()
-    if event.type == RESULT:
-        if verify(event.artifact, hidden_checks):
-            if not settle_once(event):       # atomically claim the winner
-                continue
-            broadcast_cancel(to = workers - {event.worker_id})
-            await_all_ack_or_timeout()
-            return assemble(event.artifact, evidence = event.evidence)
-        else:
-            record_failure(event)
-return summarize_failures(workers)
-```
-
-### 탈중앙화 handoff 프로토콜
-
-```python
-handoff = {
-    task_id, sender, recipient, goal, constraints,
-    accepted_facts, artifact_refs, remaining_budget,
-    visited_agents
-}
-
-if recipient in handoff.visited_agents:
-    reject("cycle")
-elif handoff.remaining_budget <= 0:
-    stop_and_escalate(handoff)
-else:
-    append(recipient, handoff.visited_agents)
-    run_local_agent(handoff)
-```
-
-경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
 
 ## 생각해 볼 문제
 

@@ -109,6 +109,17 @@ Sebuah lingkungan evaluasi terdiri dari lima elemen — bagian selanjutnya akan 
 
 **Protokol Interaksi**: Menentukan mode interaksi dan kondisi terminasi.
 
+**Loop evaluasi yang dapat diulang:**
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
 ![Gambar 6-2: Lingkungan Evaluasi Pemanggilan Tool dan Interaksi Manusia-Komputer](images/fig6-2.svg)
 
 ### Lingkungan Evaluasi Pemanggilan Tool
@@ -367,6 +378,17 @@ rubric:
 
 **Rubric yang Baik vs. Rubric yang Buruk**: Setiap tingkat penilaian di atas menetapkan perilaku yang dapat diverifikasi dan konkret ("Menjawab Dr. Chen dengan benar") alih-alih deskripsi yang tidak dapat dinilai secara objektif, seperti "menunjukkan pemahaman memori yang mendalam." Item veto menetapkan batas bawah: bahkan jika setiap dimensi lain mendapat nilai penuh, satu contoh halusinasi akan secara otomatis menghasilkan nilai nol.
 
+**Veto deterministik sebelum penilaian rubric:**
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
 Kirim Rubric bersama respons aktual Agent ke model penilai untuk memperoleh skor dan alasan per dimensi. Setelah puluhan hasil dikumpulkan, putar ulang jejak yang nilainya rendah. Penurunan tingkat keberhasilan yang semula samar lalu dapat dipecah menjadi diagnosis konkret: informasi tidak ditemukan, hubungan antartokoh keliru, atau jawaban menambahkan hal yang tidak didukung data. Dengan demikian Rubric bukan hanya memberi nilai, tetapi juga menunjukkan bagian yang perlu diperbaiki.
 
 > **Eksperimen 6-3 ★★: Membangun Sistem Evaluasi User Memory Berbasis Rubric**
@@ -606,6 +628,18 @@ Jebakan lain adalah **perbandingan ganda**. Saat sejumlah hipotesis diuji parale
 
 Keputusan yang didorong oleh evaluasi bergantung pada data berkualitas tinggi, yang berasal dari perekaman sistematis dari proses operasional Agent—inilah yang dibahas oleh observabilitas (observability).
 
+**Perbandingan berpasangan:**
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
 ## Observabilitas Agent (Agent Observability)
 
 Keputusan yang didorong oleh evaluasi (baik untuk pemilihan model atau iterasi berkelanjutan) bergantung pada data operasional berkualitas tinggi. Di bawah ini, pertama-tama kita akan memperkenalkan cara mengumpulkan data ini secara sistematis (observabilitas), dan kemudian mendiskusikan cara menerjemahkan hasil evaluasi menjadi perbaikan sistem.
@@ -779,46 +813,6 @@ Sistem evaluasi yang diperkenalkan dalam bab ini membentuk closed loop yang leng
 Dari perspektif Harness engineering yang diperkenalkan di Bab 1, metodologi evaluasi dalam bab ini adalah implementasi sistematis dari fungsi “validasi” Harness, sementara closed loop “dari laporan Benchmark hingga peningkatan sistem” adalah mekanisme inti untuk optimasi Harness iteratif. Bab ini menjawab “bagaimana mengukur dengan andal”; berdasarkan hal itu, Bab 8 menjawab “bagaimana mengubah evaluasi trajectory multidimensi menjadi pembaruan sistem yang dapat dieksekusi dan dibalik (reversible).”
 
 Sistem evaluasi yang ditetapkan di sini tidak hanya mendukung optimasi sistem saat ini tetapi juga memberikan landasan penting untuk dua bab berikutnya. Bab 7 mengubah lingkungan dan data evaluasi menjadi input untuk post-training model, menggunakan SFT dan RL untuk menulis interaction policies ke dalam parameter. Bab 8 mengubah evaluasi multidimensi dari lintasan produksi menjadi kandidat pembaruan untuk pengetahuan, instruksi, program, atau parameter.
-
-## Skeleton mekanisme
-
-Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
-
-### Loop evaluasi yang dapat diulang
-
-```python
-for task in dataset:
-    environment.reset(task.initial_state)
-    trajectory = agent.run(task.prompt, environment.tools)
-    outcome = environment.snapshot()
-    score = verifier(task, trajectory, outcome)
-    record(task, trajectory, outcome, score)
-```
-
-### Veto deterministik sebelum penilaian rubric
-
-```python
-deterministic = verify_state_policy_and_claims(trajectory, outcome)
-if deterministic.veto:
-    return FAIL(reason = deterministic.evidence)
-
-rubric_result = judge(answer, rubric, evidence)
-return aggregate_with_confidence(rubric_result)
-```
-
-### Perbandingan berpasangan
-
-```python
-for task in paired_tasks:
-    for seed in fixed_seeds:
-        a = run(config_a, task, seed)
-        b = run(config_b, task, seed)
-        record_paired_delta(verifier(a), verifier(b))
-
-return paired_bootstrap_or_mcnemar(all_deltas)
-```
-
-Pertahankan batasnya: observasi dan bukti berasal dari lingkungan, sedangkan Harness menentukan tindakan yang boleh dieksekusi.
 
 ## Pertanyaan Pemikiran
 

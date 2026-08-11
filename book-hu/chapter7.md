@@ -63,6 +63,18 @@ Röviden: Az SFT rendkívül magas mintahatékonysággal **egy stabil bemenet-ki
 
 > "Tréningköltség: LoRA paraméterhatékony finomhangolás." Mind az SFT, mind a későbbi RL megköveteli a modell paramétereinek frissítését, és a teljes paraméteres finomhangolás nagy VRAM-igényekkel jár (tárolni kell a gradienseket és optimalizátor állapotokat több milliárd paraméterhez). A "LoRA" (Low-Rank Adaptation) a leggyakoribb költségcsökkentő módszer: ahelyett, hogy a nagy eredeti súlymátrixokat módosítaná, egy kis "javítást" (alacsony rangú mátrixot) csatol a feladat megtanulásához. A paraméterszám csak 1–5%-a az eredetiének, mégis megközelítheti a teljes finomhangolás teljesítményét. Mivel az eredeti súlyok fagyasztva vannak, a LoRA kevésbé zavarja az alapmodell meglévő képességeit, csökkentve a katasztrofális felejtés kockázatát. Néhány bevált szabály[^ch7-1]: "Muszáj" a LoRA-t az összes fő súlymátrixra alkalmazni (különösen az MLP rétegekre, amelyek a legtöbb paraméterrel rendelkeznek); ha csak a figyelmi rétegekre alkalmazzuk, az pontosságot veszít. **Az optimális tanulási ráta körülbelül 10-szerese a teljes finomhangolásénak** (igaz mind az SFT-re, mind az RL-re, egy nagyon praktikus átviteli szabály). Az SFT-hez használj közepes-magas rangot (64–256); mivel az RL-ben körönként kevés az információ, kis rang (8–32) vagy akár rang=1 is elegendő. Telepítéskor egyetlen következtető szerver több LoRA adaptert is betölthet egyszerre több-bérlős kiszolgáláshoz. Ez a könyv a LoRA-t tekinti az alapértelmezett mérnöki választásnak minden poszt-tréning módszerhez, és nem tárgyalja külön.
 
+**SFT veszteségmaszk:**
+
+```python
+for sample in dataset:
+    prompt_tokens = tokenize(sample.prompt)
+    answer_tokens = tokenize(sample.answer)
+    tokens = prompt_tokens + answer_tokens
+    labels = [-100] * len(prompt_tokens) + answer_tokens
+    loss = causal_lm_loss(tokens, labels)
+    update_parameters(loss)
+```
+
 ### Miért kell az SFT-nek az RL előtt jönnie, és nem fordítva
 
 A három szakasz sorrendje nem önkényes. A pre-tréning első vitathatatlan – nyelvi és ismereti alap nélkül semmi más nem lehetséges. Amit meg kell magyarázni: **Miért kell az SFT-nek az RL előtt jönnie?**
@@ -361,6 +373,33 @@ Gyakorlatban a döntés a következő sorrendben hozható meg:
 Az "egymenetes" azt jelenti, hogy a feladat egyetlen interakcióban teljesül: a modell bemenetet kap, kimenetet produkál, és jutalmat kap, anélkül hogy állapotot kellene fenntartania a lépések között. Ez az egyszerűsített beállítás lehetővé teszi, hogy az SFT és az RL tanulási mechanizmusainak alapvető különbségeire összpontosítsunk, a többlépéses interakciók komplexitása nélkül. Az egymenetes forgatókönyv tiszta kontrollált kísérleti körülményeket biztosít: ugyanaz a feladat, ugyanaz az alapmodell, ugyanaz a számítási költségvetés, az egyetlen változó a tréning módszer. Az első kísérlet bemutatja, hogy az RL hogyan tanulja meg a "mikor gondolkodjunk" meta-stratégiát; a második kísérlet egy számtani érvelési kártyajátékot használ az "SFT memorizál, RL általánosít" szisztematikus kvantifikálására.
 
 A kísérletek előtt építsünk némi "minimális intuíciót" az RL algoritmusokról, elég a felmerülő kifejezések követéséhez (a teljes képletek és összehasonlítások a "Megerősítéses tanulási algoritmusok összehasonlítása" szakaszban várnak). A fejezet RL tréningje többnyire a "policy gradient"-re támaszkodik: a modell több választ generál ugyanarra a problémára, növelve a magas jutalmú válaszok valószínűségét és csökkentve az alacsony jutalmúakét – elmozdulva a jutalmazó irányokba és kevésbé a nem jutalmazókba. Hogy egyetlen nagy frissítés ne sodorja el a modellt, a mainstream "PPO" algoritmus minden lépésben korlátozza a frissítés mértékét (ez a későbbi kísérletek "PPO értékhálózattal" változata; az értékhálózat becsli a bázisszintet a finomabb felbontású előny kiszámításához). A másik módszer, a "GRPO", nem tréningez értékhálózatot; ehelyett több választ hasonlít össze ugyanarra a problémára egymáshoz képest, hogy megítélje mindegyik relatív minőségét. Ennyi intuíció elég a következő két kísérlethez.
+
+**GRPO csoportfrissítés:**
+
+```python
+for prompt in batch:
+    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
+    rewards = [verify(trajectory) for trajectory in group]
+    advantages = normalize_within_group(rewards)       # GRPO baseline
+    update(policy, group, advantages)
+```
+
+**PPO vágott frissítés:**
+
+```python
+for trajectory in rollouts:
+    returns = discounted_returns(trajectory.rewards)
+    values = value_model(trajectory.states)
+    advantages = returns - stop_gradient(values)
+    ratio = exp(policy.log_prob(trajectory.actions)
+                - old_policy.log_prob(trajectory.actions))
+    policy_loss = -mean(min(
+        ratio * advantages,
+        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    ))
+    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
+update(policy, value_model, policy_loss + value_coef * value_loss)
+```
 
 > **7-10. kísérlet ★★: AdaptThink – "Mikor ne gondolkodjunk" megtanulása**
 >
@@ -690,6 +729,16 @@ Más szóval, **a tiszta eredmény jutalmak vakok a sikerarány mindkét véglet
 
 **Kapcsolat az RLVR-rel (egy gyakori zavar tisztázása).** Az RLVP és az RLVR (Reinforcement Learning with Verifiable Rewards), amelyet többször említettünk ebben a fejezetben, csak egy betűben különböznek, ami szépen kiemeli a komplementaritásukat: **az RLVR eredményeket verifikál; az RLVP ezen felül folyamatokat is verifikál.** A kettő kombinálásával olyan tréning jelet kapunk, amely egyszerre összpontosít a "feladat elvégzésére" és a "megfelelő elvégzésére" – pontosan erre van szüksége egy biztonságosan telepíthető Ágensnek.
 
+**Eredmény- és útvonaljelzés:**
+
+```python
+outcome = verify_final_state(trajectory)              # result, not self-report
+path_signal = 0
+for step in trajectory:
+    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
+reward = normalize(outcome) + beta * normalize(path_signal)
+```
+
 > **7-16. kísérlet ★★★: RLVP – Jutalmazd az eredményt, büntesd az utat `[Kiterjesztett kísérlet]`**
 >
 > "Kísérleti cél": Annak meghatározása, hogy az "eredmény jutalmak + verifikálható út jelek" együttesen képesek-e csökkenteni a korlátsértéseket büntetéseken keresztül és javítani a mintahatékonyságot részleges hitelen keresztül, anélkül hogy a feladat sikerarányát feláldoznák.
@@ -711,6 +760,16 @@ Az eszközhasználat kiterjeszti az Ágens képesség határát a "modell saját
 Jelenleg két aktív kutatási irány van az Ágens RL körül az eszközhíváshoz. Az egyik a "visszakeresés kiterjesztése": a Search-R1 (Jin et al., 2025) képviseli, amely RL-t használ a modell megtanítására, hogy önállóan döntsön, mikor kezdeményezzen keresést a gondolkodási folyamat során, és használja a visszaadott eredményeket az érvelés folytatásához, ahelyett hogy egy rögzített RAG csővezetéket követne. A másik a "szoftvermérnöki munka", amelyet olyan tréning környezetek képviselnek, mint a SWE-Gym, amelyek támogatják a többlépéses RL-t kódoló Ágensek számára valós kódbázisokban, lehetővé téve a modell számára a kód iteratív szerkesztését, futtatását és javítását. Mindkét irány ugyanazokkal a két kihívással néz szembe: hosszú távú hitelkiosztás (a végső siker tulajdonítása egy több tucat lépéssel korábban hozott döntésnek) és környezeti mérnöki munka (olyan tréning környezetek építése, amelyek stabilak, reprodukálhatók és masszívan párhuzamosíthatók).
 
 Az eszköz RL-nek van egy elkerülhetetlen mérnöki részlete is: "loss maszkolás a környezeti visszajelzés tokenekhez". Egy eszközhívási pálya tartalmazza a modell által generált tokeneket (gondolkodás, eszközhívási paraméterek) és a környezet által visszaadott tokeneket (kódinterpretátor kimenet, keresési eredmények, ügyfélszolgálati válaszok). Utóbbiakat nem az irányelv generálja, hanem a környezet adja – ha szerepelnek a policy gradientben, a modellt arra tréningeznénk, hogy "megjósolja, mit fog kiadni a sandbox", ami eltér az optimalizációs céltól, és instabillá teszi a tréninget. A standard gyakorlat a környezeti visszajelzés tokenek maszkolása a loss számításakor, a gradiensek visszapropagálása csak a modell által generált tokenekre. Ez a ReTool egyik alapvető technikai pontja (gradiensek maszkolása a `<interpreter>` címkékben lévő visszajelzési tokenekhez), és erre utal a Search-R1 "maszkolt visszakeresett tokenek a tréning stabilizálásához" kifejezés. A nagy tréning keretrendszereknek, mint a veRL és az AWorld, ez a mechanizmus be van építve.
+
+**Trajektóriaszintű jutalommaszk:**
+
+```python
+for token in trajectory:
+    if token.source == ENVIRONMENT:
+        loss_mask[token] = 0
+    else:                                      # model thought / tool arguments
+        loss_mask[token] = 1
+```
 
 > **7-14. kísérlet ★★★: ReTool – Kód interpretátorral fokozott matematikai probléma megoldás**
 >
@@ -767,6 +826,17 @@ Az On-Policy Distillation, amelyet a Thinking Machines Lab 2025-ben szisztematik
 
 Hogyan történik pontosan a pontozás? A tanító nemcsak azt ítéli meg, hogy a tanuló lépése helyes-e; megadja a teljes valószínűségi eloszlást a következő tokenre az aktuális pozícióban. Például ha a tanuló azt írja, "először kérdezd le az API-t, aztán elemezd a visszatérési értéket...", a tanító megállapíthatja, hogy ezen a pozíción a "kérdezd"-nek 80%-os valószínűséggel kell rendelkeznie, a "hívd"-nak 15%-kal, a maradék 5% pedig más tokenekre jut. A tanuló tanulási célja, hogy a saját előrejelzési eloszlását minden pozícióban a lehető legközelebb hozza a tanító eloszlásához. Technikailag ezt a "KL divergencia" minimalizálásával érik el a két eloszlás között (a KL divergencia két valószínűségi eloszlás közötti különbséget méri; minél kisebb, annál közelebb vannak, és nulla, ha azonosak, részletek a 7.7 szakaszban). A végső siker/kudarc bináris jeléhez képest ez a token-szintű eloszlás-illesztés több mint egy nagyságrenddel sűrűbb.
 
+**On-policy desztilláció:**
+
+```python
+student_trajectory = rollout(student, task)
+loss = 0
+for state in student_trajectory:
+    teacher_logits = teacher(state)
+    loss += KL(student_logits(state), teacher_logits)
+update_student(loss)
+```
+
 Az eredmények lenyűgözőek: olyan feladatokon, mint a matematika, a tiszta RL teljesítményének eléréséhez körülbelül "1/10" annyi tréning lépés kell. Az előny a leghangsúlyosabb a hosszú gondolkodási láncú érvelésben – a tanító minden lépésben mutatja az utat, a tanuló gyorsan megtanulja kijavítani a hibáit, ahelyett hogy tovább sodródna egy rossz úton. Enyhíti a túlilleszkedést is: a standard RL-ben a tréning ismételt alkalmazása ugyanarra a promptra a végső válasz memorizálása felé hajlik, míg itt minden pálya más, és a tanító visszajelzése specifikus rá, így a tanuló általános stratégiát tanul meg, nem pedig konkrét válaszokat – és az adatok sokkal nagyobb mértékben újrafelhasználhatók.
 
 Ez a módszer különösen értékes "többlépéses Ágens forgatókönyvekben": a siker/kudarc jel a legvégén jelenik meg, mind ritkán, mind késleltetve. A token-szintű tanító eloszlás tökéletesen kitölti a hiányzó útmutatást minden köztes lépéshez. Azonban van egy előfeltétele, amely visszhangozza a fejezet fő témáját: **egy elég valósághű szimulációs környezet szükséges ahhoz, hogy a tanuló szabadon felfedezhessen** – különben, amikor a tanuló olyan eltérő eloszlású állapotba kerül, amelyet a tanító sem látott, a tanító céleloszlása megbízhatatlanná válik. Az On-Policy tanulás értéke arra a premisszára épül, hogy "a tanuló valóban a telepítési eloszlást fedezi fel".
@@ -778,6 +848,18 @@ Az az elv, hogy "a sűrű jelek felülmúlják a ritka jeleket", nagyon tiszta v
 Az On-Policy Distillation ereje a tanítótól származik, de ez egy kemény előfeltételt is ró rá: **kell lennie egy tanító modellnek, ami egyértelműen erősebb a tanulónál.** Sok forgatókönyvben ez nem áll fenn. Ha amit tréningezel, egy vertikális domain modell, és a meglévő modellek képességei mind elégtelenek, akkor nem áll rendelkezésre tanító modell. Erősebb tanító nélkül a sűrű jelek osztaléka elérhetetlen számunkra?
 
 Egy zseniális kiút az "On-Policy Self-Distillation (OPSD)"[^ch7-15]: **hagyd, hogy ugyanaz a modell játssza mind a tanító, mind a tanuló szerepét, az egyetlen különbség a kontextus.** A tanító verzió láthat "kiváltságos információkat" – például a probléma standard válaszát vagy egy verifikált helyes megoldást. Nem kell ténylegesen "tudnia, hogyan oldja meg" a problémát; csak annyi kell, hogy vegye a választ, és "racionalizálja" a tanuló által megtett minden lépést, létrehozva egy tokenről tokenre céleloszlást. A tanuló verzió csak magát a problémát látja, és a saját mintavételezett pályáin a tanító verzióhoz igazodik. Az intuíció mögötte: "egy probléma magyarázata a válasz birtokában" sokkal könnyebb, mint "a probléma önálló megoldása" – ez izomorf az RLVR alapját képező "verifikáció-generálás aszimmetriával", azzal a különbséggel, hogy itt az aszimmetriát sűrű felügyeleti jel előállítására használjuk, nem ritka siker/kudarc skalár előállítására.
+
+**On-policy ön-desztilláció:**
+
+```python
+student_trajectory = rollout(model, task_without_answer)
+loss = 0
+for state in student_trajectory:
+    privileged_state = add_verified_answer(state)
+    teacher_logits = stop_gradient(model(privileged_state))
+    loss += KL(model(state), teacher_logits)
+update(model, loss + retention_regularizer)
+```
 
 Az RLVR-hez képest az OPSD-nek két alapvető előnye van. **Először is, már nem függ az igazolható jutalmaktól.** Az RLVR egy automatikus ellenőrzőt feltételez, míg az OPSD kiváltságos információforrásai sokkal tágabbak: standard válaszok, de gazdagabb rendszerpromptok, emberi demonstrációk vagy domain dokumentumok is – bármi, ami "lehetővé teszi a modell számára, hogy utólag világosan elmagyarázza a helyes viselkedést", megteszi. **Másodszor, a felügyeleti jel sokkal sűrűbb, mint az RL-é.** Az RL egyetlen skalár jutalmat ad pályánként; az OPSD teljes valószínűségi eloszlást biztosít a pálya minden pozíciójában, és a token hatékonysága észrevehetően jobb, mint az RL módszereké. Fair azt mondani, hogy az OPSD a "erősebb tanítót" "kiváltságos információval" helyettesítette, és ezáltal realisztikus úttá vált a mintahatékonysági probléma enyhítésére.
 
@@ -904,95 +986,6 @@ Ez a fejezet arra válaszolt, hogyan valósítható meg az Ágens folyamatos fej
 [^ch7-18]: Wei, Yifan, et al. "Towards Compositional Generalization of LLMs via Skill Taxonomy Guided Data Synthesis", 2026. arXiv:2601.03676.
 [^ch7-19]: Zhu, Kaijie, et al. "TermiGen: High-Fidelity Environment and Robust Trajectory Synthesis for Terminal Agents", 2026. arXiv:2602.07274.
 [^ch7-20]: Hua, Zhanbo, et al. "CLI-Universe: Towards Verifiable Task Synthesis Engine for Terminal Agents", 2026. arXiv:2606.22883.
-
-
-## Mechanizmus-skeletonok
-
-Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
-
-### SFT veszteségmaszk
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
-```
-
-### GRPO csoportfrissítés
-
-```python
-for prompt in batch:
-    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
-    rewards = [verify(trajectory) for trajectory in group]
-    advantages = normalize_within_group(rewards)       # GRPO baseline
-    update(policy, group, advantages)
-```
-
-### PPO vágott frissítés
-
-```python
-for trajectory in rollouts:
-    returns = discounted_returns(trajectory.rewards)
-    values = value_model(trajectory.states)
-    advantages = returns - stop_gradient(values)
-    ratio = exp(policy.log_prob(trajectory.actions)
-                - old_policy.log_prob(trajectory.actions))
-    policy_loss = -mean(min(
-        ratio * advantages,
-        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
-    ))
-    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
-update(policy, value_model, policy_loss + value_coef * value_loss)
-```
-
-### Trajektóriaszintű jutalommaszk
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-### Eredmény- és útvonaljelzés
-
-```python
-outcome = verify_final_state(trajectory)              # result, not self-report
-path_signal = 0
-for step in trajectory:
-    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
-reward = normalize(outcome) + beta * normalize(path_signal)
-```
-
-### On-policy desztilláció
-
-```python
-student_trajectory = rollout(student, task)
-loss = 0
-for state in student_trajectory:
-    teacher_logits = teacher(state)
-    loss += KL(student_logits(state), teacher_logits)
-update_student(loss)
-```
-
-### On-policy ön-desztilláció
-
-```python
-student_trajectory = rollout(model, task_without_answer)
-loss = 0
-for state in student_trajectory:
-    privileged_state = add_verified_answer(state)
-    teacher_logits = stop_gradient(model(privileged_state))
-    loss += KL(model(state), teacher_logits)
-update(model, loss + retention_regularizer)
-```
-
-Legyen világos a határ: a megfigyelések és a bizonyítékok a környezetből érkeznek, a Harness pedig eldönti, mi hajtható végre.
 
 ## Gondolatkérdések
 

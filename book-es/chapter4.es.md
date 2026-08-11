@@ -240,6 +240,33 @@ Otra aplicación típica del patrón Sidecar es el **enriquecimiento de contexto
 
 Para el Sidecar de seguridad, se requiere además un **interruptor de rechazo (circuit breaker)**: cuando el clasificador rechaza operaciones de forma consecutiva múltiples veces, el sistema no debe reintentar indefinidamente (lo que desperdiciaría recursos y podría atrapar al usuario en un bucle infinito), sino degradarse solicitando el juicio manual del usuario. Este es precisamente un ejemplo típico de la función de "corrección" del Harness del Capítulo 1.
 
+**Puerta de seguridad de herramientas:**
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
 **Validación automática y bucle de retroalimentación.**
 
 Otro principio de diseño importante para las herramientas de ejecución es: **si el resultado de una operación se puede verificar, se debe verificar automáticamente**. Tomando como ejemplo la escritura de código, cuando el Agente invoca `write_file` para crear o modificar un archivo de código, la herramienta no debe limitarse a escribir el contenido y devolver "éxito", sino ejecutar inmediatamente una comprobación sintáctica tras la escritura: invocando el linter correspondiente según el tipo de archivo y analizando la salida en una lista estructurada de errores devuelta como parte de la respuesta de la herramienta al Agente.
@@ -476,6 +503,23 @@ Las reglas rígidas codificadas tienen sus limitaciones, ya que la semántica de
 
 A continuación, mediante un experimento de Agente de procesamiento de correo orientado a eventos, aterrizaremos las estrategias de procesamiento anteriores en una implementación ejecutable.
 
+**Enrutamiento del bucle de eventos:**
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
 > **Experimento 4-4 ★★★: Agente de Procesamiento de Correos Orientado a Eventos**
 >
 >
@@ -623,6 +667,20 @@ La práctica tradicional consiste en inyectar los schemas de todas las herramien
 
 **Coincidencia jerárquica y degradación**. La clave para una coincidencia eficiente reside en que la propia organización de las herramientas posea una estructura jerárquica: en protocolos como MCP, las herramientas se agrupan por **servidores** (similar a las aplicaciones en un teléfono móvil, donde cada aplicación proporciona un conjunto de funciones relacionadas), permitiendo dividir la coincidencia en dos capas: primero localizar el servidor relevante según la descripción de capacidad, y luego coincidir la herramienta específica dentro del servidor, reduciendo el espacio de búsqueda de "miles de herramientas" a "docenas de servidores x docenas de herramientas por servidor", ahorrando cómputo y reduciendo la confusión semántica interdominio. En ingeniería esto depende de un índice de embeddings construido fuera de línea que admita actualizaciones incrementales; si la similitud de los candidatos en ambas capas es inferior al umbral, se debe devolver explícitamente "no encontrado", permitiendo que el Agente reescriba la petición, implemente manualmente mediante herramientas básicas o cree directamente una nueva herramienta (la creación de herramientas es el tema del Capítulo 8).
 
+**Descubrimiento proactivo de herramientas:**
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
 ![Figura 4-8 Optimización de Caché KV para la carga dinámica de herramientas](images/fig4-8.svg)
 
 **Carga dinámica y Caché KV**. El descubrimiento activo conlleva un sutil costo de ingeniería: la carga dinámica de herramientas **destruye la Caché KV** (si se colocan todas las definiciones de herramientas en un prefijo estático, cargar una nueva herramienta invalida todo el bloque de caché anterior). La solución coincide con la discutida en el Capítulo 2 al analizar la posición de inyección de Skills: añadir la parte cambiante (el schema completo de la nueva herramienta) al final del contexto, manteniendo estable el prefijo estático y reutilizando por completo la Caché KV, conservando solo una breve lista de nombres de herramientas en la barra de estado del Agente. Hoy en día este patrón cuenta con soporte nativo en las principales API, convirtiéndose en la arquitectura por defecto de los frameworks principales: la API OpenAI Responses proporciona la herramienta `tool_search` con la marca `defer_loading: true`, añadiendo el schema cargado como `tool_search_output` al final del contexto y manteniendo el acierto de caché del prefijo; Claude Code aplica por defecto la carga diferida para herramientas MCP (inyectadas bajo demanda mediante bloques `tool_reference`, conservando solo nombres y descripciones de servidores al inicio); y el `tool_search` de Codex CLI (búsqueda BM25) es una arquitectura activada por defecto en lugar de una función opcional. Además, los entornos de herramientas dinámicas imponen mayores exigencias a las capacidades del modelo: los modelos más débiles tienen dificultades para comprender posiciones no estándares donde "las definiciones de herramientas aparecen en medio del contexto", y tienden a generar formatos de llamada ilegales (como paréntesis JSON no emparejados o parámetros faltantes), requiriendo habitualmente entrenamiento específico mediante aprendizaje por refuerzo (véase el Capítulo 7).
@@ -683,70 +741,6 @@ En la arquitectura asíncrona, los mecanismos de automatización integrados de O
 Los seis experimentos avanzan gradualmente desde lo básico hacia la arquitectura: los Experimentos 4-1 a 4-3 construyen los tres conjuntos de herramientas fundamentales de percepción, ejecución y colaboración; el Experimento 4-4 introduce el enfoque orientado a eventos con un Agente de procesamiento de correo; el Experimento 4-5 implementa la ejecución en paralelo, la interrupción/recuperación y la gestión de estado; y el Experimento 4-6 verifica el valor del descubrimiento proactivo de herramientas en catálogos a gran escala. El límite de este capítulo radica en describir, descubrir y utilizar de forma segura **herramientas existentes**; mientras que el Capítulo 8 analizará cómo el Agente juzga cuándo crear, modificar, volver a verificar o descartar herramientas a partir de sus fallos y operaciones repetitivas.
 
 El siguiente capítulo responderá a una pregunta más fundamental que "cómo usar herramientas": ¿puede el Agente **crear** herramientas escribiendo código? Un Agente programador (Coding Agent) combinado con un sistema de archivos constituye la base más nuclear de todos los Agentes generales, proporcionando además la capacidad de ejecución para la automodificación controlada del sistema que se analizará en el Capítulo 8.
-
-## Skeletons de mecanismos
-
-Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
-
-### Puerta de seguridad de herramientas
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
-### Enrutamiento del bucle de eventos
-
-```python
-while runtime.is_alive:
-    events = queue.take_batch()
-
-    if any(is_urgent(event) for event in events):
-        cancel_at_safe_point(current_work)
-    elif has_independent_fast_query(events):
-        start_parallel_session(events)
-    else:
-        append_to_trajectory(events)
-
-    decision = LLM(context + trajectory)
-    dispatch(decision)
-```
-
-### Descubrimiento proactivo de herramientas
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
-
-Mantén explícito el límite: las observaciones y evidencias proceden del entorno, y el Harness decide qué puede ejecutarse.
 
 ## Preguntas de reflexión
 

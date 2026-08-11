@@ -375,6 +375,25 @@ messages = [
 
 本章後續將圍繞這個結構的每一層展開：如何利用靜態字首的不變性加速推理（KV Cache）、如何設計好的 System Prompt（提示工程）、如何防範外部內容對上下文的劫持（提示注入防禦）、如何按需載入專業知識（Agent Skills）、如何在對話末尾註入動態狀態資訊（Agent 狀態列）、以及如何在對話歷史膨脹時進行智慧壓縮（壓縮策略）。
 
+**每次請求前的上下文建構:**
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
 > **實驗 2-1 ★：本地 LLM 服務部署與工具呼叫**
 >
 >
@@ -1073,31 +1092,6 @@ Agent 狀態列技術有一個實用的優點：所有元資訊都以人類可�
 這些技術的共同點是顯式、工程化的資訊管理：不要讓模型被動地在海量上下文中尋找線索，而要主動提供經過提煉的結構化狀態。從 KV Cache 友善的上下文佈局到上下文感知壓縮，本章展示的每一項技術，都是在當前模型能力邊界下，以工程手段最大化資訊利用效率。
 
 本章處理的是**一次任務之內**的狀態更新與上下文腐化。下一章將從上下文視窗內的資訊管理，延伸到跨越任務的持久化知識體系——使用者記憶和知識庫，使 Agent 能在實踐中不斷積累經驗，逐步成為更瞭解使用者的助手，或具備更多領域知識的領域專家。
-
-## 機制骨架
-
-下面的骨架只抽出本章討論的控制關係。
-
-### 每次請求前的上下文建構
-
-```python
-stable_prefix = system_message
-stable_tools = core_tool_schemas
-trajectory = load_message_history(session)
-status_message = make_status_message(derive_current_state(trajectory))
-
-if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
-    trajectory = compress_old_evidence(
-        trajectory,
-        preserve = [decisions, constraints, failures, citations]
-    )
-
-request.messages = [stable_prefix] + trajectory + [status_message]
-request.tools = stable_tools
-response = call_model(request)
-```
-
-請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
 
 ## 思考題
 

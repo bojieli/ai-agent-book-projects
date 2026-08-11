@@ -170,6 +170,27 @@ Agent がタスクを実行する核となるパターンは **ReAct**（Reasoni
 
 ![図1-4 Agent の軌跡——多通貨集計タスクの ReAct ループ](images/fig1-4.svg)
 
+以下の Python 風スケッチは説明用の疑似コードであり、実行可能な SDK コードではありません。`python` マーカーは構文のハイライトだけに使います。
+
+**ReAct 制御ループ:**
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
 疑似コードを通じて Agent の軌跡の構造を理解しましょう。
 
 ```text
@@ -258,6 +279,20 @@ Agent の実行ループを理解したところで、2 つの実験を通じて
 > **Harness = コンテキスト管理 + ツールインターフェース + 制約 + 検証 + 是正**
 >
 > **Agent ↔ Environment**
+
+**Harness の本番境界:**
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
 
 最小で動く Agent は LLM・コンテキスト・ツールさえあれば走り出せます。しかし本番環境で長期にわたり信頼性高く動かすには、さらに制約・検証・是正というこの 3 層のエンジニアリングの外殻を補う必要があります。制約は逸脱を防ぎ、検証は誤りを発見し、是正は異常を回復します。言い換えれば、最小の公式は Demo の観点であり、拡張された公式は本番の観点です。後者は前者を完全に包含し、その外周に一巡りの安全網を張り巡らせているのです。
 
@@ -493,45 +528,6 @@ Anthropic が長時間実行される Agent を構築したときの実践は、
 次の章では、Harness の中で最も核となる構成要素、すなわちコンテキストエンジニアリングを深く掘り下げます。Agent という概念の強化学習における学術的な源流、そして従来の RL と現代の LLM Agent の踏み込んだ比較については、第 7 章で体系的に展開します。
 
 以下の演習問題は、読者が本章の核となる概念についてより深く掘り下げて考える助けとすることを狙いとしており、標準解答はありません。
-
-## メカニズムの skeleton
-
-以下の Python 風 skeleton は、本章で扱う制御関係だけを取り出したものです。実行可能な SDK 実装ではなく説明用 pseudocode であり、完全な adapter とテストは章の実験にあります。 `python` マーカーは構文ハイライト専用であり、実行可能な SDK やそのまま動くプログラムを意味しません。
-
-### ReAct 制御ループ
-
-```python
-trajectory = [user_request]
-
-repeat:
-    context = stable_prefix + trajectory
-    decision = Model(context)
-    trajectory.append(decision)
-
-    if decision has no tool call:
-        return decision.answer
-
-    for call in decision.tool_calls:       # independent calls may run in parallel
-        validated_call = Harness.validate(call)
-        observation = Environment.execute(validated_call)
-        trajectory.append(observation)
-```
-
-### Harness の本番境界
-
-```python
-decision = Model(Harness.build_context(state, trajectory))
-allowed_action = Harness.constrain(decision)
-observation = Environment.apply(allowed_action)
-evidence = Harness.verify(allowed_action, observation)
-
-if evidence passes:
-    trajectory.append(observation)
-else:
-    trajectory.append(Harness.correct(evidence))
-```
-
-境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
 
 ## 演習問題
 

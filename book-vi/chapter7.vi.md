@@ -63,6 +63,18 @@ Một câu tóm tắt bản chất của SFT: sử dụng hiệu suất mẫu c�
 
 > **Chi phí đào tạo: Tinh chỉnh các thông số LoRA một cách hiệu quả**. SFT ở trên và RL sau đây đều cần cập nhật các tham số mô hình và tinh chỉnh tham số đầy đủ có yêu cầu cao về bộ nhớ video (gradient và trạng thái tối ưu hóa phải được lưu trữ cho hàng tỷ tham số). **LoRA**(Low-Rank Thích ứng, thích ứng cấp thấp) là cách tiết kiệm tiền được sử dụng phổ biến nhất: ma trận trọng số lớn ban đầu được giữ nguyên và chỉ treo một "bản vá" nhỏ (ma trận cấp thấp) bên cạnh để học nhiệm vụ. Số lượng tham số chỉ chiếm 1%–5% so với ban đầu nhưng có thể gần đạt hiệu quả tinh chỉnh toàn tham số. Vì trọng lượng ban đầu được cố định nên LoRA ít bị ảnh hưởng hơn đối với khả năng hiện có của cơ sở và nguy cơ quên thảm họa cũng thấp hơn. Một số kinh nghiệm thực tế đã được xác minh [^ch7-1]: **Phải** áp dụng LoRA cho tất cả các ma trận trọng số chính (đặc biệt là lớp MLP có tỷ lệ tham số lớn nhất). Chỉ thêm nó vào lớp chú ý sẽ làm mất điểm; **Tốc độ học tối ưu gấp khoảng 10 lần so với tinh chỉnh tham số đầy đủ**(SFT, RL (tất cả đều đã được thiết lập, đó là một quy tắc di chuyển rất thực tế); SFT sử dụng thứ hạng trung bình và cao (64–256) và RL sử dụng thứ hạng nhỏ (8–32) hoặc thậm chí là thứ hạng=1 vì lượng thông tin trong mỗi vòng là rất nhỏ. Trong quá trình triển khai, một máy chủ suy luận có thể tải nhiều bộ điều hợp LoRA cùng lúc để cung cấp các dịch vụ cho nhiều người thuê. Cuốn sách này coi LoRA là mục mặc định về mặt kỹ thuật trong tất cả các phương pháp post-training và sẽ không được phát triển riêng biệt.
 
+**Mask loss SFT:**
+
+```python
+for sample in dataset:
+    prompt_tokens = tokenize(sample.prompt)
+    answer_tokens = tokenize(sample.answer)
+    tokens = prompt_tokens + answer_tokens
+    labels = [-100] * len(prompt_tokens) + answer_tokens
+    loss = causal_lm_loss(tokens, labels)
+    update_parameters(loss)
+```
+
 ### Tại sao SFT phải đến trước rồi mới đến RL mà không phải ngược lại?
 
 Thứ tự của ba giai đoạn không phải là tùy ý. Không có gì phải bàn cãi rằng việc đào tạo trước phải được xếp lên hàng đầu - không có nền tảng về ngôn ngữ và kiến thức trước thì không còn gì để nói sau này. Điều thực sự cần được giải thích là: **Tại sao SFT lại xuất hiện trước RL?**
@@ -346,6 +358,33 @@ Khi đưa ra quyết định thực tế, bạn có thể xem xét chúng theo t
 "Vòng đơn" có nghĩa là nhiệm vụ được hoàn thành trong một lần tương tác: mô hình nhận đầu vào, tạo đầu ra và nhận phần thưởng mà không duy trì trạng thái bước chéo. Cài đặt đơn giản hóa này cho phép chúng tôi tập trung vào những khác biệt cơ bản trong cơ chế học tập giữa SFT và RL mà không bị làm phiền bởi sự phức tạp của nhiều vòng tương tác. Kịch bản chạy một lần cung cấp các điều kiện thử nghiệm kiểm soát rõ ràng: cùng một nhiệm vụ, cùng một mô hình cơ bản, cùng ngân sách tính toán, biến số duy nhất là phương pháp đào tạo. Thử nghiệm đầu tiên cho thấy cách RL học siêu chiến lược "khi nào cần suy nghĩ"; thí nghiệm thứ hai định lượng một cách có hệ thống "bộ nhớ SFT, khái quát hóa RL" thông qua trò chơi thẻ lý luận số học.
 
 Trước khi bước vào thử nghiệm, trước tiên hãy thiết lập một chút **trực giác tối thiểu** về thuật toán RL để hiểu thuật ngữ xuất hiện trong các thử nghiệm tiếp theo (công thức hoàn chỉnh và so sánh được để lại trong phần "So sánh các thuật toán học tăng cường" ở phần sau của chương này). Việc đào tạo RL trong chương này chủ yếu dựa trên **Policy gradient**: Hãy để mô hình tạo ra nhiều câu trả lời hơn cho cùng một câu hỏi. Câu trả lời có phần thưởng cao sẽ làm tăng xác suất xuất hiện của nó, còn câu trả lời có phần thưởng thấp sẽ làm giảm khả năng xuất hiện - "đi nhiều hơn về hướng phần thưởng cao và ít đi về hướng phần thưởng thấp". Để tránh sai lệch mô hình nếu biên độ cập nhật đơn quá lớn, thuật toán **PPO** chính thống sẽ cắt biên độ cập nhật của từng bước ("PPO với mạng giá trị" xuất hiện trong các thử nghiệm sau này đề cập đến điều này, mạng giá trị được sử dụng để ước tính đường cơ sở và tính toán các lợi thế chi tiết hơn); còn **GRPO** thì không đào tạo mạng giá trị mà "nhiều câu trả lời cho cùng một câu hỏi được so sánh với nhau" để đánh giá chất lượng tương đối của mỗi câu trả lời. Hãy ghi nhớ trực giác này là đủ để hiểu hai thí nghiệm tiếp theo.
+
+**Cập nhật nhóm GRPO:**
+
+```python
+for prompt in batch:
+    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
+    rewards = [verify(trajectory) for trajectory in group]
+    advantages = normalize_within_group(rewards)       # GRPO baseline
+    update(policy, group, advantages)
+```
+
+**Cập nhật cắt PPO:**
+
+```python
+for trajectory in rollouts:
+    returns = discounted_returns(trajectory.rewards)
+    values = value_model(trajectory.states)
+    advantages = returns - stop_gradient(values)
+    ratio = exp(policy.log_prob(trajectory.actions)
+                - old_policy.log_prob(trajectory.actions))
+    policy_loss = -mean(min(
+        ratio * advantages,
+        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    ))
+    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
+update(policy, value_model, policy_loss + value_coef * value_loss)
+```
 
 > **Thí nghiệm 7-10 ★★: AdaptThink - Học “Khi nào không nên suy nghĩ”**
 >
@@ -675,6 +714,16 @@ Tóm lại: **Tín hiệu dày đặc chỉ hữu ích nếu nó có thể bù �
 
 **Mối quan hệ với RLVR (nhân tiện, chỉ ra một điểm khó hiểu).** Chỉ có một sự khác biệt về chữ cái giữa RLVP và RLVR (Học tăng cường với Phần thưởng có thể xác minh) xuất hiện nhiều lần trong chương này, chỉ ra chính xác tính bổ sung: **RLVR xác minh kết quả, RLVP xác minh thêm quy trình**. Khi cả hai được đặt chồng lên nhau, bạn sẽ nhận được tín hiệu huấn luyện tập trung vào cả "hoàn thành công việc" và "làm việc không thường xuyên" - đây chính xác là những gì Agent cần để có thể trực tuyến an toàn.
 
+**Tín hiệu kết quả cộng tín hiệu đường đi:**
+
+```python
+outcome = verify_final_state(trajectory)              # result, not self-report
+path_signal = 0
+for step in trajectory:
+    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
+reward = normalize(outcome) + beta * normalize(path_signal)
+```
+
 > **Thí nghiệm 7-16 ★★★: RLVP - kết quả thưởng, lộ trình trừng phạt `[Thử nghiệm mở rộng]`**
 >
 > **Mục tiêu thử nghiệm**: Xác minh xem liệu "tín hiệu đường dẫn xác minh + phần thưởng kết quả" có thể một mặt giảm bớt các vi phạm ràng buộc (sử dụng hình phạt) và cải thiện hiệu quả mẫu (sử dụng một phần phần thưởng) mà không làm giảm tỷ lệ thành công của nhiệm vụ hay không.
@@ -696,6 +745,16 @@ Việc sử dụng các công cụ mở rộng ranh giới khả năng của Age
 Hiện tại có hai tuyến đang hoạt động xung quanh công cụ gọi Agent RL. Một là **nâng cao khả năng truy xuất**: được đại diện bởi Search-R1 (Jin và cộng sự, 2025), sử dụng mô hình đào tạo RL để quyết định độc lập thời điểm bắt đầu tìm kiếm trong quá trình suy nghĩ và sử dụng kết quả trả về để tiếp tục suy luận, thay vì áp dụng quy trình RAG cố định. Cái còn lại là **Kỹ thuật phần mềm**: Được đại diện bởi các môi trường đào tạo như SWE-Gym, thực hiện nhiều vòng RL trên cơ sở mã thực để mã hóa Agent, cho phép mô hình chỉnh sửa, chạy và sửa mã lặp đi lặp lại. Những thách thức chung của cả hai lộ trình là phân bổ tín dụng dài hạn (thành công cuối cùng là nhờ quyết định được đưa ra hàng chục bước trước) và kỹ thuật môi trường (xây dựng môi trường đào tạo song song rộng rãi, ổn định và có thể tái tạo).
 
 Có một chi tiết kỹ thuật khác không thể tránh khỏi với công cụ RL: **Chống mất mát đối với mã thông báo phản hồi môi trường**. Dấu vết lệnh gọi công cụ chứa cả mã thông báo do chính mô hình tạo ra (suy nghĩ, tham số lệnh gọi công cụ) và mã thông báo do môi trường trả về (đầu ra của trình thông dịch mã, kết quả tìm kiếm, phản hồi dịch vụ khách hàng). Cái sau không phải do chính sách tạo ra mà do môi trường đưa ra - nếu chúng cũng được bao gồm trong gradient chính sách, mô hình sẽ được đào tạo để "dự đoán hộp cát sẽ xuất ra gì", điều này không chỉ đi chệch khỏi mục tiêu tối ưu hóa mà còn làm cho quá trình đào tạo không ổn định. Cách tiếp cận tiêu chuẩn là chặn mã thông báo phản hồi môi trường khi tính toán tổn thất và chỉ trả về độ dốc cho mã thông báo do chính mô hình tạo ra. Đây là một trong những điểm kỹ thuật cốt lõi của ReTool (che chắn độ dốc của mã thông báo phản hồi trong thẻ `<interpreter>`) và đó cũng là điều Search-R1 đã nói "che chắn mã thông báo được truy xuất để ổn định quá trình đào tạo". Các khung đào tạo chính thống như verRL và AWorld đã tích hợp sẵn cơ chế này.
+
+**Mask reward cấp trajectory:**
+
+```python
+for token in trajectory:
+    if token.source == ENVIRONMENT:
+        loss_mask[token] = 0
+    else:                                      # model thought / tool arguments
+        loss_mask[token] = 1
+```
 
 > **Thử nghiệm 7-14 ★★★: ReTool - Giải bài toán nâng cao bằng trình thông dịch mã**
 >
@@ -756,6 +815,17 @@ Chưng cất On-Policy (chưng cất trên trajectory) đã được Phòng thí
 
 Cách tính điểm cụ thể như thế nào? Giáo viên không chỉ đánh giá xem bước đi của học sinh có đúng hay không mà còn trực tiếp đưa ra cách phân phối đầy đủ "ở vị trí hiện tại, xác suất của các lựa chọn khác nhau cho mã thông báo tiếp theo là bao nhiêu". Ví dụ: khi học sinh viết "Truy vấn đầu tiên API, sau đó phân tích giá trị trả về...", giáo viên cho rằng "truy vấn" phải chiếm 80%, "gọi" 15% và 5% còn lại; Mục tiêu học tập của học sinh là làm cho phân bố dự đoán của mình ở mỗi vị trí càng gần với phân bố của giáo viên càng tốt. Về mặt kỹ thuật, điều này đạt được bằng cách giảm thiểu **KL phân kỳ** giữa hai phân bố (Phân kỳ KL đo lường sự khác biệt giữa hai phân bố xác suất, chúng càng gần thì chúng càng nhỏ và bằng 0, như được trình bày chi tiết trong Phần 7.7). So với các tín hiệu nhị phân chỉ có thành công hoặc thất bại cuối cùng, việc căn chỉnh phân phối từng mã thông báo này dày đặc hơn một bậc độ lớn.
 
+**Chưng cất on-policy:**
+
+```python
+student_trajectory = rollout(student, task)
+loss = 0
+for state in student_trajectory:
+    teacher_logits = teacher(state)
+    loss += KL(student_logits(state), teacher_logits)
+update_student(loss)
+```
+
 Hiệu quả rất vượt trội: đối với các nhiệm vụ như toán học, số bước luyện tập cần thiết để đạt được hiệu suất tương tự chỉ khoảng **1/10** của RL thuần túy. Ưu điểm của các nhiệm vụ tư duy chuỗi dài là đặc biệt rõ ràng - giáo viên hướng dẫn từng bước và học sinh nhanh chóng học cách sửa lỗi thay vì ngày càng đi sâu vào con đường sai lầm. Nó cũng làm giảm tình trạng quá khớp: đào tạo lặp đi lặp lại với cùng một lời nhắc trong RL tiêu chuẩn giúp bạn dễ dàng ghi nhớ câu trả lời cuối cùng, nhưng ở đây mỗi trajectory là khác nhau và giáo viên sẽ đưa ra phản hồi về các trajectory cụ thể. Những gì học được là một chiến lược chung chứ không phải là một câu trả lời cụ thể, do đó tỷ lệ tái sử dụng dữ liệu được cải thiện rất nhiều.
 
 Phương pháp này đặc biệt có giá trị trong **kịch bản Agent nhiều vòng**: tín hiệu thành công hay thất bại của nhiệm vụ nhiều vòng xuất hiện ở cuối, vừa thưa vừa có độ trễ. Việc phân phối giáo viên theo từng mã thông báo chỉ bù đắp cho phần hướng dẫn còn thiếu ở mỗi bước ở giữa. Nhưng nó có một tiền đề phản ánh chủ đề chính được nhấn mạnh nhiều lần trong chương này: **Phải có môi trường mô phỏng đủ thực tế để học sinh tự do khám phá** - nếu không, khi học sinh đạt đến trạng thái sai lệch mà giáo viên chưa thấy, điểm của giáo viên cũng sẽ không đáng tin cậy như nhau. Giá trị của On-Policy dựa trên "sinh viên thực sự khám phá phân phối triển khai".
@@ -767,6 +837,18 @@ Quy tắc "tín hiệu dày đặc tốt hơn tín hiệu thưa thớt" đã đ�
 Sức mạnh của Chưng cất On-Policy đến từ giáo viên, nhưng chính vì thế nó gánh một tiền đề cứng: **phải có một mô hình giáo viên mạnh hơn hẳn học sinh.** Điều này trong nhiều kịch bản không đúng. Nếu bạn đang đào tạo mô hình cho một lĩnh vực chuyên biệt mà khả năng của các mô hình hiện có đều còn thiếu, thì không có giáo viên nào để dùng. Không có giáo viên mạnh hơn, liệu lợi ích của tín hiệu dày đặc có còn dành cho chúng ta không?
 
 Một ý tưởng giải mã khéo léo là **On-Policy Self-Distillation (OPSD, tự chưng cất trên trajectory)**[^ch7-15]: **để cùng một mô hình đóng hai vai giáo viên và học sinh, khác biệt duy nhất nằm ở ngữ cảnh.** Phiên bản giáo viên được nhìn thấy "thông tin đặc quyền" (privileged information) - chẳng hạn đáp án chuẩn của bài toán, một lời giải đúng đã được kiểm chứng - nó không cần thực sự "giải được" bài đó, chỉ cần cầm đáp án và **hợp lý hóa** từng bước học sinh đã đi, đưa ra phân phối mục tiêu theo từng mã thông báo; phiên bản học sinh chỉ nhìn thấy đề bài và căn chỉnh theo phiên bản giáo viên trên trajectory do chính mình lấy mẫu. Trực giác phía sau là: "cầm đáp án mà giảng bài" dễ hơn nhiều so với "tự lực giải bài" - điều này đồng cấu với "bất đối xứng kiểm chứng-tạo sinh" mà RLVR dựa vào để tồn tại, chỉ khác là ở đây sự bất đối xứng được dùng để tạo ra tín hiệu giám sát dày đặc, thay vì một vô hướng thành bại thưa thớt.
+
+**Tự chưng cất on-policy:**
+
+```python
+student_trajectory = rollout(model, task_without_answer)
+loss = 0
+for state in student_trajectory:
+    privileged_state = add_verified_answer(state)
+    teacher_logits = stop_gradient(model(privileged_state))
+    loss += KL(model(state), teacher_logits)
+update(model, loss + retention_regularizer)
+```
 
 So với RLVR, OPSD có hai ưu thế cốt lõi. **Thứ nhất, không còn phụ thuộc phần thưởng có thể xác minh.** Tiền đề của RLVR là tồn tại một trình xác thực tự động, còn nguồn thông tin đặc quyền của OPSD rộng hơn nhiều: có thể là đáp án chuẩn, cũng có thể là lời nhắc hệ thống phong phú hơn, phần trình diễn của con người, tài liệu lĩnh vực - bất cứ thông tin nào "giúp mô hình nói lại hành vi đúng một cách rõ ràng sau khi đã biết" đều được. **Thứ hai, tín hiệu giám sát dày đặc hơn RL rất nhiều.** RL chỉ có một phần thưởng vô hướng cho mỗi trajectory, còn OPSD cung cấp một phân phối xác suất đầy đủ ở mọi vị trí của trajectory, hiệu quả mã thông báo vượt trội rõ rệt so với các phương pháp RL. Có thể nói, OPSD dùng "thông tin đặc quyền" thay thế "giáo viên mạnh hơn" và nhờ đó trở thành một lộ trình thực tế để giảm thiểu vấn đề hiệu quả mẫu.
 
@@ -895,94 +977,6 @@ Chương này trả lời cách cập nhật tham số để Agent có thể ti�
 [^ch7-20]: Hua, Zhanbo, et al. "CLI-Universe: Towards Verifiable Task Synthesis Engine for Terminal Agents", 2026. arXiv:2606.22883.
 
 Quá trình post-training giải quyết được vấn đề "làm thế nào để làm cho mô hình thông minh hơn", nhưng chu kỳ cập nhật trọng số của mô hình được tính bằng tuần. Trên thực tế, API hoạt động trực tuyến và ngoại tuyến, nhu cầu của người dùng luôn thay đổi và các quy tắc kinh doanh thay đổi diễn ra hàng ngày. Chương tiếp theo sẽ khám phá một lộ trình tiến hóa bổ sung—không cần sửa đổi trọng số mô hình nhưng cho phép Agent xây dựng độc lập thư viện công cụ và cơ sở kiến thức thông qua External Learning (học bên ngoài tham số mô hình) để đạt được khả năng mở rộng liên tục.
-
-## Skeleton cơ chế
-
-Các skeleton sau chỉ tách ra quan hệ điều khiển được bàn trong chương.
-
-### Mask loss SFT
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
-```
-
-### Cập nhật nhóm GRPO
-
-```python
-for prompt in batch:
-    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
-    rewards = [verify(trajectory) for trajectory in group]
-    advantages = normalize_within_group(rewards)       # GRPO baseline
-    update(policy, group, advantages)
-```
-
-### Cập nhật cắt PPO
-
-```python
-for trajectory in rollouts:
-    returns = discounted_returns(trajectory.rewards)
-    values = value_model(trajectory.states)
-    advantages = returns - stop_gradient(values)
-    ratio = exp(policy.log_prob(trajectory.actions)
-                - old_policy.log_prob(trajectory.actions))
-    policy_loss = -mean(min(
-        ratio * advantages,
-        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
-    ))
-    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
-update(policy, value_model, policy_loss + value_coef * value_loss)
-```
-
-### Mask reward cấp trajectory
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-### Tín hiệu kết quả cộng tín hiệu đường đi
-
-```python
-outcome = verify_final_state(trajectory)              # result, not self-report
-path_signal = 0
-for step in trajectory:
-    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
-reward = normalize(outcome) + beta * normalize(path_signal)
-```
-
-### Chưng cất on-policy
-
-```python
-student_trajectory = rollout(student, task)
-loss = 0
-for state in student_trajectory:
-    teacher_logits = teacher(state)
-    loss += KL(student_logits(state), teacher_logits)
-update_student(loss)
-```
-
-### Tự chưng cất on-policy
-
-```python
-student_trajectory = rollout(model, task_without_answer)
-loss = 0
-for state in student_trajectory:
-    privileged_state = add_verified_answer(state)
-    teacher_logits = stop_gradient(model(privileged_state))
-    loss += KL(model(state), teacher_logits)
-update(model, loss + retention_regularizer)
-```
-
-Giữ ranh giới rõ ràng: quan sát và bằng chứng đến từ môi trường, còn Harness quyết định hành động nào được phép thực thi.
 
 ## Câu hỏi tư duy
 

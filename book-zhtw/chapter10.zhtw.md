@@ -187,6 +187,23 @@
 
 檔案系統解決 Agent 間**產物交換**的問題，協作還需一條**控制平面**。這正是表 10-3 中生命週期各行的用武之地：建立（`spawn_subagent`）、發訊息（`send_message_to_subagent`）、取消（`cancel_subagent`）、發現（`list_agents`）這組第四章給出的工具原語，對應程序世界的 fork、訊息、kill 和 ps。本節不重複介面定義，而聚焦多 Agent 協作依賴、卻常被忽略的四項能力。
 
+**訊息信封與 worker 生命週期:**
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
 **一、訊息傳遞。** 最簡形態為點對點：Agent A 直接呼叫 `send_message_to_agent_b(content)`，適用於拓撲固定、Agent 數量少的場景（如本章實驗 10-3 的電話 + 電腦雙 Agent）。當 Agent 數量增多且需非同步並行時，點對點連線數隨 Agent 數呈平方增長，且要求收發雙方同時線上；此時應改用**訊息匯流排**（詳見本章後文「並行協調形態」）：Agent 將訊息釋出至匯流排，由匯流排按訂閱關係轉寄，傳送方無需知曉消費者。無論點對點還是經匯流排，訊息通常應攜帶結構化的**信封**（envelope）：傳送者 ID、目標（指定 Agent 或廣播）、訊息型別（如 `task_assigned`/`status_update`/`result`/`terminate`）及 JSON 負載。統一的信封格式保證接收方可靠地路由與解析，並使協作鏈路可追溯——這很多 Agent 系統除錯的關鍵。
 
 **二、狀態查詢。** 這是控制平面中最易被低估的一環。主 Agent 派出子 Agent 後，若無從獲知其進展，則既無法判斷是否繼續等待，也無法在其阻塞時及時介入。直覺的做法是照搬 RPC，定義一個 `get_subagent_status(agent_id)` 查詢介面，返回「執行中/已完成/失敗」加一個進度百分比。但這種拉取式介面的實際用處遠小於預期：子 Agent 一經建立就立即開始執行，直到完成或失敗，並不像傳統批次處理系統的作業那樣在一串排隊狀態之間流轉——正如 Unix 程式設計中極少需要按 PID 去輪詢另一個程序的執行狀態。輪詢還有固有的兩難：過密浪費 token，過疏則不及時。狀態獲取更自然的做法，是回到本章開頭的兩大通訊正規化。
@@ -241,6 +258,24 @@ LoopX 決策 → Agent 執行 → 獨立驗證器證明 → LoopX 提交
 
 **為什麼不能讓一個 Agent 自己生成再自己審查？** 這正是前面「多 Agent 何時真正優於單 Agent」一節那條判據的具體落點——審查若不引入新資訊，就只是「讓模型再想一遍」。相關研究對此給出了明確的答案。Huang 等人在 ICLR 2024 論文《Large Language Models Cannot Self-Correct Reasoning Yet》中發現：讓 GPT-4 在沒有外部回饋的情況下審查並修正自己的回答，準確率反而下降——模型把正確答案改錯的次數比把錯誤答案改對的次數更多。
 
+**提議者—審核者迴圈:**
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
 2024 年發表在 TACL 期刊上的綜述論文《When Can LLMs Actually Correct Their Own Mistakes？》（arXiv:2406.01297）進一步確認了這一結論：除非提供可靠的外部回饋（如測試用例的執行結果、外部工具的驗證輸出），否則純粹依賴模型自身的「自我糾正」幾乎不起作用。
 
 ICLR 2024 的 CRITIC 論文提供了一個直觀的對比實驗。CRITIC 讓模型使用外部工具（搜尋引擎、Python 直譯器）來驗證自己的回答，效果顯著提升；但當實驗者移除工具驗證步驟、只保留模型的自我評估時，大部分提升就消失了。這說明審查的價值不在於「讓模型再想一遍」，而在於**引入了模型生成時不具備的新資訊**——測試結果、渲染截圖、編譯錯誤、外部搜尋結果。
@@ -272,6 +307,23 @@ ICLR 2024 的 CRITIC 論文提供了一個直觀的對比實驗。CRITIC 讓模�
 
 2025 年的 Plan-and-Act 論文 [^plan-and-act-2025] 對此做了實證分析：在 Planner-Executor 雙 Agent 架構中，**弱規劃者是整個系統最關鍵的瓶頸**。當 Planner 的規劃質量足夠高時，即使 Executor 比較簡單也能取得好結果；反之，如果 Planner 的任務分解有誤，後續所有 Executor 的工作都建立在錯誤的前提上。該研究在 WebArena-Lite 基準上取得了 54% 的成功率，核心貢獻正是改善了 Planner 的規劃能力，而非 Executor 的執行能力。這一發現的啟示是：應當將最強的模型和最精心設計的提示詞分配給 Manager（規劃者），而不是將資源平均分配給所有 Agent。
 
+**第一個通過驗證的並行結果:**
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
 
 [^plan-and-act-2025]: Erdogan, L. E., et al. *Plan-and-Act: Improving Planning of Agents for Long-Horizon Tasks.* arXiv:2503.09572, 2025.
 
@@ -413,6 +465,24 @@ Manager 按順序依次呼叫專門 Agent，每個 Agent 完成後返回結果�
 移除中心控制者的主要動機，是模擬人類組織：由職責對等的角色分工與制衡，每個 Agent 自主決定何時移交任務、請求回饋或報告矛盾。這也能降低 Manager 崩潰造成的單點故障。微服務領域把兩種選擇稱為**編排**（orchestration）與**編舞**（choreography）。
 
 以下案例從通訊解耦逐步走向控制流去中心化：MetaGPT 是固定流水線，AutoGen group chat 結合共享對話與中心化排程，OpenAI Swarm 則把移交決策分散給對等 Agent。
+
+**去中心化 handoff 協定:**
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
 
 **MetaGPT：SOP 驅動的軟體公司模擬。**
 
@@ -645,83 +715,6 @@ Pinchwork 和 RentAHuman 共同代表了**基於市場機制的協調方式**—
 ## 本章小結
 
 多 Agent 協作的價值在於引入單個 Agent 生成時無法取得的新資訊，例如執行結果、視覺回饋或外部工具驗證。設計需要在共享或隔離上下文，以及對等、管理者或去中心化拓撲之間作出選擇。結構化移交包、權限邊界、獨立交叉驗證、預算與取消機制構成基本的容錯閉環。當互動長期且開放時，還可能湧現社會關係、規範、市場和策略；多 Agent 工程的核心是設計資訊如何流動、能力如何分工，以及如何發現錯誤。
-
-## 機制骨架
-
-下面的骨架只抽出本章討論的控制關係。
-
-### 訊息信封與 worker 生命週期
-
-```python
-envelope = {
-    id, trace_id, sender, recipient, type,
-    payload, created_at, deadline, schema_version
-}
-
-worker = spawn(task, budget, cancellation_token)
-publish(task_assigned(envelope, worker))
-while worker.is_running:
-    accept(status_update | artifact | needs_input)
-    if deadline_expired or cancellation_token.is_set:
-        request_graceful_stop(worker)
-await worker.ack_or_timeout()
-```
-
-### 提議者—審核者迴圈
-
-```python
-candidate = proposer(task, constraints)
-evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
-review = independent_reviewer(candidate, evidence)
-
-while review.veto and budget_remaining:
-    candidate = proposer.repair(candidate, review.findings)
-    evidence = execute_or_render(candidate)
-    review = independent_reviewer(candidate, evidence)
-
-if review.pass:
-    publish(candidate, evidence, review)
-else:
-    escalate_or_reject(review)
-```
-
-### 第一個通過驗證的並行結果
-
-```python
-workers = launch_independent_workers(subtasks)
-while workers.any_running:
-    event = next_event()
-    if event.type == RESULT:
-        if verify(event.artifact, hidden_checks):
-            if not settle_once(event):       # atomically claim the winner
-                continue
-            broadcast_cancel(to = workers - {event.worker_id})
-            await_all_ack_or_timeout()
-            return assemble(event.artifact, evidence = event.evidence)
-        else:
-            record_failure(event)
-return summarize_failures(workers)
-```
-
-### 去中心化 handoff 協定
-
-```python
-handoff = {
-    task_id, sender, recipient, goal, constraints,
-    accepted_facts, artifact_refs, remaining_budget,
-    visited_agents
-}
-
-if recipient in handoff.visited_agents:
-    reject("cycle")
-elif handoff.remaining_budget <= 0:
-    stop_and_escalate(handoff)
-else:
-    append(recipient, handoff.visited_agents)
-    run_local_agent(handoff)
-```
-
-請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
 
 ## 思考題
 

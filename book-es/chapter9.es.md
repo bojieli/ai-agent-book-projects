@@ -35,6 +35,22 @@ El hilo común es escapar de la suposición de que hay que hablar por turnos y d
 
 [^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ . La clasificación procede del resumen de las tres generaciones de ChatGPT Voice; «end-to-end omnimodal (Omni)» corresponde a «turn-based voice models».
 
+**Cancelación en streaming:**
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
 ### Paradigma 1 · Pipeline en cascada
 
 La mayoría de asistentes comerciales todavía usa un pipeline serial (Figura 9-1): VAD detecta el final, ASR convierte audio en texto, el LLM entiende y genera la respuesta, y TTS la pronuncia. La modularidad facilita optimizar cada componente, pero cada frontera añade espera.
@@ -138,6 +154,22 @@ Computer Use (también llamado Agente de automatización de GUI) permite a la IA
 2. El modelo multimodal recibe la captura y la instrucción de la tarea, emitiendo un fragmento de pensamiento y una acción específica.
 3. La capa de ejecución ejecuta dicha acción en el entorno real (mover el ratón, hacer clic, ingresar texto, etc.).
 4. Espera la respuesta de la interfaz y vuelve a tomar una captura de pantalla, entrando en la siguiente ronda del bucle.
+
+**Bucle de seguridad de Computer Use:**
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
 
 ![Figura 9-6: Bucle Percibir-Pensar-Actuar de Agentes Computer Use](images/fig9-7.svg)
 
@@ -322,6 +354,19 @@ Debido a la latencia de inferencia de los LLM, la frecuencia de control de VLA e
 
 La verdadera diferenciación en la representación de acciones no está entre RT-2 y OpenVLA, sino entre los **tokens discretos y la generación de trayectorias continuas**. **π₀** representa esta última ruta: ya no predice tokens de acción discretos uno por uno, sino que utiliza flow matching (coincidencia de flujo, un método de generación continua de la misma familia que los modelos de difusión) partiendo del ruido aleatorio para "desruidificar" iterativamente en múltiples pasos, generando directamente una trayectoria de acciones suave y continua. Esta representación se combina de forma natural con Action Chunking, funcionando mejor en tareas que exigen alta precisión y fluidez de movimiento como las manipulaciones diestras. Para hacer una analogía: la ruta de tokens discretos es como elegir paso a paso en un menú "5 grados a la izquierda" y "3 centímetros adelante", mientras que la ruta de trayectorias continuas es como un pintor que traza primero la curva completa y la corrige pincelada a pincelada hasta darle forma.
 
+**Preempción de bloques de acción:**
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
 ### Transferencia Sim2Real: La brecha entre simulación y realidad
 
 En la sección de entornos de simulación del Capítulo 6 se explicaron los orígenes de la brecha entre simulación y realidad (sim-to-real gap) y el principio de la aleatorización de dominio (domain randomization) para hacerle frente, por lo que no se repetirá aquí; en una frase: dado que la simulación no puede restaurar completamente las características físicas, visuales y de hardware reales, se alteran aleatoriamente estos parámetros en un amplio rango durante el entrenamiento, forzando a la política a aprender un conjunto de representaciones generales estables ante diversos cambios (Figura 9-11). A continuación solo examinaremos cómo se aterriza este principio en brazos robóticos reales.
@@ -383,57 +428,6 @@ Los preprints de 2026 estudian priors dinámicos compartidos (DyPES-VLA), accion
 ## Resumen del capítulo
 
 Aunque los tres escenarios parecen muy diferentes en la superficie, los dos obstáculos de la latencia y la multimodalidad siempre están presentes. La voz ha recorrido un camino evolutivo desde pipelines seriales hacia extremo a extremo y full-duplex, y desde el pensamiento rápido/lento separado hacia "pensar mientras se habla"; Computer Use ha alcanzado una precisión cercana a la humana en benchmarks como OSWorld, pero la brecha de eficiencia manifestada en una cantidad notablemente mayor de pasos de operación y en el crecimiento continuo del tiempo consumido por paso aún no cuenta con una solución sistemática; en el caso de los robots en tareas de manipulación basadas principalmente en retroalimentación visual, el cuello de botella ha pasado del hardware a la capacidad de generalización multitarea de la capa de control VLA (siendo el tacto y las manos diestras deficiencias de hardware aún no conquistadas). El siguiente capítulo ampliará la perspectiva a la colaboración entre múltiples Agentes, lo que constituye un desafío en otra dimensión.
-
-## Skeletons de mecanismos
-
-Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
-
-### Cancelación en streaming
-
-```python
-while audio_is_arriving:
-    partial = asr.push(audio_chunk)
-    if endpoint_is_probable(partial):
-        candidate = llm.start(partial)
-        if later_audio_changes_meaning(partial):
-            cancel(candidate)                 # speculative cancellation
-        else:
-            tts.enqueue_stable_segments(candidate)
-
-on_final_transcript(text):
-    commit_or_restart(text)
-```
-
-### Bucle de seguridad de Computer Use
-
-```python
-observation = capture_screenshot_and_accessibility_tree()
-proposal = model.decide(task, observation)
-action = validate_schema_and_coordinates(proposal)
-
-if action.is_irreversible and not user_or_policy_approval(action):
-    stop("approval required")
-else:
-    execute_in_sandbox_or_scoped_session(action)
-    new_observation = capture_after_settle()
-    if not verify_goal_progress(new_observation, action):
-        rollback_if_possible_or_replan()
-```
-
-### Preempción de bloques de acción
-
-```python
-chunk = vla(current_observation, skill)
-for action in chunk:
-    low_level.execute(action)
-    if safety_event() or observation_changed_significantly():
-        low_level.stop()
-        discard_remaining(chunk)
-        reobserve_and_replan()
-        break
-```
-
-Mantén explícito el límite: las observaciones y evidencias proceden del entorno, y el Harness decide qué puede ejecutarse.
 
 ## Preguntas de reflexión
 

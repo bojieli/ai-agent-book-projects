@@ -63,6 +63,18 @@
 
 > **訓練成本：LoRA 引數高效微調**。上面 SFT 和後面的 RL 都要更新模型引數，而全引數微調對視訊記憶體的要求很高（要為數十億引數都存梯度和最佳化器狀態）。**LoRA**（Low-Rank Adaptation，低秩適配）是最常用的省錢辦法：不動原始的大權重矩陣，只在旁邊掛一個很小的「補丁」（低秩矩陣）來學習任務，引數量僅佔原始的 1%–5%，卻能接近全參微調的效果。因為原權重被凍結，LoRA 對基座已有能力的擾動也更小，災難性遺忘的風險更低。幾條經過驗證的實踐經驗[^ch7-1]：**必須**把 LoRA 應用到所有主要權重矩陣（尤其引數佔比最大的 MLP 層），只加在注意力層會掉點；**最優學習率約是全參微調的 10 倍**（SFT、RL 都成立，是個非常實用的遷移規則）；SFT 用中高 rank（64–256），RL 因每輪資訊量很小、用小 rank（8–32）甚至 rank=1 就夠。部署時一臺推理伺服器可同時載入多個 LoRA adapter 做多租戶服務。本書把 LoRA 當作貫穿所有後訓練方法的工程預設項，不再單獨展開。
 
+**SFT 損失遮罩:**
+
+```python
+for sample in dataset:
+    prompt_tokens = tokenize(sample.prompt)
+    answer_tokens = tokenize(sample.answer)
+    tokens = prompt_tokens + answer_tokens
+    labels = [-100] * len(prompt_tokens) + answer_tokens
+    loss = causal_lm_loss(tokens, labels)
+    update_parameters(loss)
+```
+
 ### 為什麼必須先 SFT 後 RL，而不是反過來
 
 三階段的順序不是隨意的。預訓練排在最前沒有爭議——不先有語言和知識的地基，後面無從談起。真正需要解釋的是：**為什麼 SFT 要在 RL 之前？**
@@ -346,6 +358,33 @@ RL 後訓練則透過外部獎勵教會 LLM 在特定任務中更高效地運用
 「單輪」指任務在一次互動中完成：模型接收輸入、產出輸出、獲得獎勵，無需維護跨步驟的狀態。這種簡化設定讓我們能夠聚焦於 SFT 與 RL 在學習機制上的根本差異，而不被多輪互動的複雜性干擾。單輪場景提供了清晰的對照實驗條件：相同任務、相同基礎模型、相同計算預算，唯一的變數是訓練方法。第一個實驗展示 RL 如何學會「何時該思考」這一元策略；第二個實驗透過算術推理卡牌遊戲系統地量化「SFT 記憶、RL 泛化」。
 
 在進入實驗之前，先建立一點關於 RL 演算法的**最小直覺**，以便理解後續實驗裡出現的術語（完整的公式與對比留到本章後面的「強化學習演算法比較」一節）。本章的 RL 訓練大多基於**策略梯度**：讓模型對同一個問題多生成幾條回答，獎勵高的回答就提高它出現的機率、獎勵低的就降低——「獎勵高的方向多走，獎勵低的方向少走」。為避免單次更新幅度過大把模型帶偏，主流的 **PPO** 演算法會裁剪每一步的更新幅度（後文實驗中出現的「帶價值網路的 PPO」即指此，價值網路用來估計基線、算出更細的優勢）；另一種 **GRPO** 則不訓練價值網路，而是用「同一問題的多條回答互相比較」來判斷每條的相對好壞。記住這條直覺，就足以讀懂接下來兩個實驗。
+
+**GRPO 群組更新:**
+
+```python
+for prompt in batch:
+    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
+    rewards = [verify(trajectory) for trajectory in group]
+    advantages = normalize_within_group(rewards)       # GRPO baseline
+    update(policy, group, advantages)
+```
+
+**PPO 裁剪更新:**
+
+```python
+for trajectory in rollouts:
+    returns = discounted_returns(trajectory.rewards)
+    values = value_model(trajectory.states)
+    advantages = returns - stop_gradient(values)
+    ratio = exp(policy.log_prob(trajectory.actions)
+                - old_policy.log_prob(trajectory.actions))
+    policy_loss = -mean(min(
+        ratio * advantages,
+        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    ))
+    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
+update(policy, value_model, policy_loss + value_coef * value_loss)
+```
 
 > **實驗 7-10 ★★：AdaptThink——學會 「何時不思考」**
 >
@@ -677,6 +716,16 @@ O 是原來的**結果獎勵**（稀疏，仍是真正的目標）；Φ 是**路
 
 **和 RLVR 的關係（順便點破一個易混點）。** RLVP 和本章反覆出現的 RLVR（可驗證獎勵的強化學習）只差一個字母，恰好點出互補：**RLVR 驗證的是結果，RLVP 額外驗證過程**。兩者疊加，就得到一個既盯著「把事辦成」、又盯著「辦得規不規矩」的訓練訊號——這正是能安全上線的 Agent 所需要的。
 
+**結果加路徑訊號:**
+
+```python
+outcome = verify_final_state(trajectory)              # result, not self-report
+path_signal = 0
+for step in trajectory:
+    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
+reward = normalize(outcome) + beta * normalize(path_signal)
+```
+
 > **實驗 7-16 ★★★：RLVP——獎勵結果、懲罰路徑 `[擴充套件實驗]`**
 >
 > **實驗目標**：驗證「結果獎勵 + 驗證路徑訊號」能否在不犧牲任務成功率的前提下，一方面把約束違反降下來（懲罰用法），另一方面提升樣本效率（部分獎勵用法）。
@@ -698,6 +747,16 @@ O 是原來的**結果獎勵**（稀疏，仍是真正的目標）；Φ 是**路
 圍繞工具呼叫的 Agent RL 目前有兩條活躍路線。一條是**檢索增強**：以 Search-R1（Jin 等人，2025）為代表，用 RL 訓練模型在思考過程中自主決定何時發起搜尋、並利用返回結果繼續推理，而不是套用固定的 RAG 流程。另一條是**軟體工程**：以 SWE-Gym 等訓練環境為代表，針對 coding Agent 在真實程式碼庫上做多輪 RL，讓模型迭代地編輯、執行、修復程式碼。兩條路線共同的挑戰是長時序信用分配（一次最終成功要歸因到幾十步之前的某個決策）與環境工程（建構穩定、可復現、可大規模並行的訓練環境）。
 
 工具 RL 還有一個繞不開的工程細節：**對環境回饋的 token 做損失遮蔽（loss masking）**。一條工具呼叫軌跡裡既有模型自己生成的 token（思考、工具呼叫引數），也有環境返回的 token（程式碼直譯器的輸出、搜尋結果、客服的回話）。後者不是策略生成的、而是環境給定的——如果把它們也計入策略梯度，模型就會被訓練去「預測沙盒會輸出什麼」，這既偏離了最佳化目標，又會讓訓練變得不穩定。標準做法是在計算損失時把環境回饋 token 遮蔽掉，只對模型自己生成的 token 回傳梯度。這正是 ReTool 的核心技術點之一（對 `<interpreter>` 標籤內的回饋 token 遮蔽梯度），也是 Search-R1 所說的「對檢索到的 token 做遮蔽以穩定訓練」，veRL、AWorld 等主流訓練框架都內建了這一機制。
+
+**軌跡層級獎勵遮罩:**
+
+```python
+for token in trajectory:
+    if token.source == ENVIRONMENT:
+        loss_mask[token] = 0
+    else:                                      # model thought / tool arguments
+        loss_mask[token] = 1
+```
 
 > **實驗 7-14 ★★★：ReTool——程式碼直譯器增強數學解題**
 >
@@ -758,6 +817,17 @@ On-Policy Distillation（在軌蒸餾）由 Thinking Machines Lab 於 2025 年�
 
 具體怎麼打分？教師不只判斷學生這一步對不對，而是直接給出「在當前這個位置，下一個 token 各種選擇分別該有多大機率」的完整分佈。比如學生寫到「先查詢 API，再解析返回值……」的某個位置，教師認為這裡「查詢」該佔 80%、「呼叫」佔 15%、其餘 5%；學生的學習目標就是讓自己在每個位置的預測分佈儘量貼近教師的分佈。技術上透過最小化兩個分佈之間的 **KL 散度**來實現（KL 散度衡量兩個機率分佈的差異，越接近越小、相同為 0，7.7 節已詳細介紹）。相比只有最終成敗的二元訊號，這種逐 token 的分佈對齊，密集了不止一個數量級。
 
+**在軌蒸餾:**
+
+```python
+student_trajectory = rollout(student, task)
+loss = 0
+for state in student_trajectory:
+    teacher_logits = teacher(state)
+    loss += KL(student_logits(state), teacher_logits)
+update_student(loss)
+```
+
 效果很突出：在數學等任務上，達到同等效能所需的訓練步數只要純 RL 的約 **1/10**。長鏈思考任務上優勢尤其明顯——每一步都有教師指路，學生迅速學會糾錯，而不是在錯誤路徑上越走越遠。它還順帶緩解了過擬合：標準 RL 裡同一個 prompt 反覆訓練容易把最終答案背下來，而這裡每次軌跡都不同、教師針對具體軌跡給回饋，學到的是通用策略而非特定答案，資料複用率因此大幅提升。
 
 這個方法在**多輪 Agent 場景**裡價值尤其大：多輪任務的成敗訊號出現在最末端、既稀疏又滯後，逐 token 的教師分佈恰好補上了中間每一步缺失的指引。但它有一個前提，正好呼應本章反覆強調的主線：**必須有一個足夠真實的模擬環境讓學生自由探索**——否則學生走到教師也沒見過的偏差狀態時，教師的打分同樣不可靠。On-Policy 的價值，建立在「學生真的在部署分佈上探索」之上。
@@ -769,6 +839,18 @@ On-Policy Distillation（在軌蒸餾）由 Thinking Machines Lab 於 2025 年�
 On-Policy Distillation 的威力來自教師，但它也因此背上了一個硬前提：**必須有一個明顯強於學生的教師模型。** 這在很多場景裡並不成立。如果你要訓練的是垂直領域模型，現有模型的能力都存在不足，那就沒有教師模型可用。沒有更強的教師，稠密訊號的紅利就與我們無緣了嗎？
 
 一個巧妙的破題思路是 **On-Policy Self-Distillation（OPSD，在軌自蒸餾）**[^ch7-15]：**讓同一個模型分飾教師和學生兩角，區別只在於上下文。** 教師版能看到「特權資訊」（privileged information）——比如題目的標準答案、一條已驗證的正確解答——它不需要真的「會做」這道題，只需要拿著答案把學生走出的每一步**合理化**，給出逐 token 的目標分佈；學生版只看到問題本身，在自己取樣的軌跡上向教師版對齊。背後的直覺是：「對著答案講題」遠比「獨立解題」容易——這與 RLVR 賴以成立的「驗證—生成不對稱」同構，只不過這裡的不對稱性被用來產生稠密的監督訊號，而不是一個稀疏的成敗純量。
+
+**在軌自蒸餾:**
+
+```python
+student_trajectory = rollout(model, task_without_answer)
+loss = 0
+for state in student_trajectory:
+    privileged_state = add_verified_answer(state)
+    teacher_logits = stop_gradient(model(privileged_state))
+    loss += KL(model(state), teacher_logits)
+update(model, loss + retention_regularizer)
+```
 
 相比 RLVR，OPSD 有兩個核心優勢。**其一，不再依賴可驗證獎勵。** RLVR 的前提是存在一個自動驗證器，而 OPSD 的特權資訊來源要寬得多：可以是標準答案，也可以是更豐富的系統提示詞、人工示範、領域文件，凡是「能讓模型事後把正確行為講清楚」的資訊都行。**其二，監督訊號比 RL 密集得多。** RL 一條軌跡只有一個純量獎勵，OPSD 在軌跡的每個位置都提供一個完整的機率分佈，token 效率明顯優於 RL 方法。可以說，OPSD 用「特權資訊」替代了「更強教師」，也因此成為緩解樣本效率問題的一條現實路徑。
 
@@ -895,95 +977,6 @@ SFT 和 RL 不是競爭關係，而是先後關係：SFT 先把輸出格式穩�
 [^ch7-18]: Wei, Yifan, et al. "Towards Compositional Generalization of LLMs via Skill Taxonomy Guided Data Synthesis", 2026. arXiv:2601.03676.
 [^ch7-19]: Zhu, Kaijie, et al. "TermiGen: High-Fidelity Environment and Robust Trajectory Synthesis for Terminal Agents", 2026. arXiv:2602.07274.
 [^ch7-20]: Hua, Zhanbo, et al. "CLI-Universe: Towards Verifiable Task Synthesis Engine for Terminal Agents", 2026. arXiv:2606.22883.
-
-
-## 機制骨架
-
-下面的骨架只抽出本章討論的控制關係。
-
-### SFT 損失遮罩
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
-```
-
-### GRPO 群組更新
-
-```python
-for prompt in batch:
-    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
-    rewards = [verify(trajectory) for trajectory in group]
-    advantages = normalize_within_group(rewards)       # GRPO baseline
-    update(policy, group, advantages)
-```
-
-### PPO 裁剪更新
-
-```python
-for trajectory in rollouts:
-    returns = discounted_returns(trajectory.rewards)
-    values = value_model(trajectory.states)
-    advantages = returns - stop_gradient(values)
-    ratio = exp(policy.log_prob(trajectory.actions)
-                - old_policy.log_prob(trajectory.actions))
-    policy_loss = -mean(min(
-        ratio * advantages,
-        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
-    ))
-    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
-update(policy, value_model, policy_loss + value_coef * value_loss)
-```
-
-### 軌跡層級獎勵遮罩
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-### 結果加路徑訊號
-
-```python
-outcome = verify_final_state(trajectory)              # result, not self-report
-path_signal = 0
-for step in trajectory:
-    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
-reward = normalize(outcome) + beta * normalize(path_signal)
-```
-
-### 在軌蒸餾
-
-```python
-student_trajectory = rollout(student, task)
-loss = 0
-for state in student_trajectory:
-    teacher_logits = teacher(state)
-    loss += KL(student_logits(state), teacher_logits)
-update_student(loss)
-```
-
-### 在軌自蒸餾
-
-```python
-student_trajectory = rollout(model, task_without_answer)
-loss = 0
-for state in student_trajectory:
-    privileged_state = add_verified_answer(state)
-    teacher_logits = stop_gradient(model(privileged_state))
-    loss += KL(model(state), teacher_logits)
-update(model, loss + retention_regularizer)
-```
-
-請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
 
 ## 思考題
 

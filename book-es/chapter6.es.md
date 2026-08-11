@@ -112,6 +112,17 @@ Un entorno de evaluación consta de cinco elementos (las secciones posteriores p
 
 **Protocolo de interacción (Interaction Protocol)**: Establece el modo de interacción y las condiciones de terminación.
 
+**Bucle de evaluación reproducible:**
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
 ![Figura 6-2 Entornos de Evaluación de Llamada a Herramientas e Interacción Humano-Computadora](images/fig6-2.svg)
 
 ### Entornos de Evaluación Basados en Llamadas a Herramientas
@@ -366,6 +377,17 @@ rubric:
 
 **Rúbrica buena frente a Rúbrica mala**: Cada nivel de puntuación anterior proporciona comportamientos verificables específicos ("responder con precisión Dr. Chen") en lugar de descripciones imposibles de juzgar objetivamente como "demuestra una comprensión profunda de la memoria". El ítem de veto define la línea roja: incluso con puntuación máxima en las demás dimensiones, la presencia de alucinación resulta en cero puntos.
 
+**Veto determinista antes del juicio con rúbrica:**
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
 Al enviar la rúbrica junto con la respuesta real del Agente, el modelo evaluador puntúa cada dimensión y explica el motivo. Al reunir decenas de casos y volver sobre las trayectorias peor puntuadas, una caída genérica de la tasa de éxito se convierte en un diagnóstico concreto: faltó recuperar un dato, se relacionaron mal las personas o se añadió información sin respaldo. La rúbrica, por tanto, no se limita a decir cuánto falló el sistema; también orienta la siguiente mejora.
 
 > **Experimento 6-3 ★★: Construcción de un Sistema de Evaluación de Memoria de Usuario Basado en Rubrics**
@@ -603,6 +625,18 @@ Existe además una trampa fácil de obviar: las **comparaciones múltiples**. Al
 
 Las decisiones impulsadas por la evaluación dependen de datos de alta calidad obtenidos a partir del registro sistemático del proceso de ejecución del Agente, ámbito que resuelve la observabilidad.
 
+**Comparación emparejada:**
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
 ## Observabilidad del Agente
 
 Las decisiones impulsadas por la evaluación (tanto en la selección de modelos como en la iteración continua) dependen de datos de ejecución de alta calidad. A continuación se presenta cómo recolectar sistemáticamente estos datos (observabilidad) y cómo transformar los resultados de evaluación en mejoras del sistema.
@@ -775,46 +809,6 @@ El sistema de evaluación presentado en este capítulo forma un bucle cerrado co
 Desde la perspectiva de ingeniería de Harness introducida en el Capítulo 1, la metodología de evaluación de este capítulo representa la implementación sistemática de la función de "verificación" en el Harness, mientras que el bucle cerrado "de reportes de benchmark a mejoras del sistema" constituye el mecanismo central de la iteración del Harness. Este capítulo responde a "cómo medir de forma confiable"; el Capítulo 8 responderá sobre esta base a "cómo transformar evaluaciones de trayectorias multidimensionales en actualizaciones del sistema ejecutables y reversibles".
 
 La arquitectura de evaluación construida en este capítulo no solo sirve a la optimización del sistema actual, sino que sienta las bases clave para los dos capítulos siguientes. El Capítulo 7 transforma los entornos y datos de evaluación en entradas para el post-entrenamiento del modelo, grabando estrategias de interacción en los parámetros mediante SFT y RL; mientras que el Capítulo 8 convierte las evaluaciones multidimensionales de trayectorias de producción en actualizaciones candidatas de conocimiento, instrucciones, programas o parámetros.
-
-## Skeletons de mecanismos
-
-Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
-
-### Bucle de evaluación reproducible
-
-```python
-for task in dataset:
-    environment.reset(task.initial_state)
-    trajectory = agent.run(task.prompt, environment.tools)
-    outcome = environment.snapshot()
-    score = verifier(task, trajectory, outcome)
-    record(task, trajectory, outcome, score)
-```
-
-### Veto determinista antes del juicio con rúbrica
-
-```python
-deterministic = verify_state_policy_and_claims(trajectory, outcome)
-if deterministic.veto:
-    return FAIL(reason = deterministic.evidence)
-
-rubric_result = judge(answer, rubric, evidence)
-return aggregate_with_confidence(rubric_result)
-```
-
-### Comparación emparejada
-
-```python
-for task in paired_tasks:
-    for seed in fixed_seeds:
-        a = run(config_a, task, seed)
-        b = run(config_b, task, seed)
-        record_paired_delta(verifier(a), verifier(b))
-
-return paired_bootstrap_or_mcnemar(all_deltas)
-```
-
-Mantén explícito el límite: las observaciones y evidencias proceden del entorno, y el Harness decide qué puede ejecutarse.
 
 ## Preguntas de Reflexión
 

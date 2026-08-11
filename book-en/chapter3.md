@@ -40,6 +40,21 @@ Extracted memories:
 - User has travel plans to Tokyo (recent activity)
 ```
 
+**Memory lifecycle:**
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
 Note several key characteristics of this extraction process:
 
 **Selectivity**—the Agent won't remember transient information like "the search returned 3 options," only facts useful for the future;
@@ -127,51 +142,74 @@ It splits memory updates into two phases[^uac]: the **memory phase** (after each
 
 Below is a simplified example. The structuring phase stores the user's passport and trips as typed state:
 
-```python
-from datetime import date
+**Append-only log and checkpoint:**
 
-passport = PassportInfo(
-    number="AB1234567", country="US",
-    expiry_date=date(2025, 2, 18),
-)
-trips = [
-    Trip(destination="Tokyo", departure_date=date(2025, 1, 15),
-         is_international=True),
-    # ... remaining trips
-]
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+**Typed user state:**
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
 ```
 
 With typed state, three tasks that previously required the LLM to "read the text and do mental arithmetic" now become deterministic code:
 
 First, **statistical aggregation**. "How many times did I go abroad in 2025?"—with text memory, you'd need to recall all trips and count them one by one, and errors become more likely as the number of records grows; with User as Code, it is a single expression, achieving nearly 100% accuracy[^uac]:
 
+**Deterministic aggregation:**
+
 ```python
->>> sum(1 for t in trips if t.is_international and t.departure_date.year == 2025)
-2
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
 ```
 
 Second, **conflict detection**. By placing "current medications" and "allergy history" side by side, a single function can cross-reference them by drug class, uncovering contradictions scattered across different conversations that would be nearly impossible to automatically associate in text form:
 
+**Conflict detection:**
+
 ```python
 def check_drug_allergy(profile):
-    for med in profile.current_medications:
+    for medication in profile.current_medications:
         for allergy in profile.allergies:
-            if med.drug_class == allergy.drug_class:
-                yield (f"Medication conflict: {med.name} belongs to {med.drug_class} class, "
-                       f"but the patient is severely allergic to {allergy.allergen}")
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
 ```
 
 Third, **constraint enforcement**. The Agent can codify such check functions and trigger them automatically every time the state is updated—without the user needing to speak or the Agent needing to retrieve anything. For example, a passport validity constraint: alert if the passport expires less than 180 days after the departure date of an international trip.
 
+**Constraint enforcement:**
+
 ```python
 def check():
-    for trip in trips:
+    for trip in state.trips:
         if trip.is_international:
-            days = (passport.expiry_date - trip.departure_date).days
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
             if days < 180:
-                yield (f"Passport expires on {passport.expiry_date}, only {days} days "
-                       f"between the {trip.destination} departure and passport expiry. "
-                       f"Please renew as soon as possible.")
+                alert("passport expires too soon", trip, days)
 ```
 
 [^uac]: The complete design and evaluation of building user memory as an executable code project can be found in Li, Bojie. *User as Code: Executable Memory for Personalized Agents.* arXiv:2606.16707, 2026.
@@ -293,6 +331,22 @@ answer = llm.generate(system="You are a customer service assistant.", context=re
 The pattern is identical in both examples: **Retrieve relevant fragments → Inject into context → LLM generates answer based on context**. The core value of RAG is enabling the LLM to use knowledge it hasn't seen during training (the latest Wikipedia content, a company's internal documents) without needing to retrain the model.
 
 The quality of the retriever directly determines the effectiveness of RAG—if it can't retrieve relevant fragments, even the strongest LLM has nothing to work with. This section starts with the first step of getting documents into the knowledge base—chunking—then turns to the two main retrieval approaches, dense embeddings (semantic understanding) and sparse embeddings (keyword matching), and how to combine them.
+
+**Hybrid RAG pipeline:**
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
 
 ![Figure 3-5: RAG Query Flow: Retrieval, Augmentation, and Generation](images/fig3-5.svg)
 
@@ -699,105 +753,6 @@ For **knowledge understanding**, we moved past flat document chunking: RAPTOR's 
 For **knowledge updating**, the system needs two rhythms: incremental updates promptly absorb new evidence, while periodic reorganization returns to the complete knowledge and raw data to deduplicate, retire, merge, restructure, check omissions, and qualify scenarios. Whether the knowledge is represented as Markdown or Python, both paths should have a Proposer Agent submit an evidence-grounded diff and a heterogeneous Reviewer Agent audit it independently. Only after approval should the PR merge and the derived indexes be rebuilt.
 
 This chapter and the previous one both address the "context" problem—one within a single session, the other across multiple sessions. This chapter primarily distills declarative knowledge about users and the world. Chapter 8 will reuse the same extraction and retrieval infrastructure for behavioral knowledge supported by successful and failed runs: what should be done under which conditions. The next chapter turns to "tools": how Agents interact with the external world through tools, including tool design, the MCP interoperability standard, and event-driven architecture.
-
-## Mechanism skeletons
-
-The following sketches isolate the control relationships discussed in this chapter.
-
-### Memory lifecycle
-
-```python
-when answering(user_request):
-    recent_turns = conversation.tail()
-    relevant_memory = memory.search(user_request)
-    answer = LLM(recent_turns + relevant_memory)
-    return answer
-
-after conversation (background job):
-    candidates = extract_memory_candidates(conversation)
-    verified = verify_against_sources_and_policy(candidates, conversation)
-    memory.append_or_update(verified)
-```
-
-### Append-only log and checkpoint
-
-```python
-append_only_log += extract_facts(conversation)
-
-if checkpoint_due():
-    proposed_state = rebuild_typed_state(append_only_log)
-    if type_check(proposed_state) and source_review(proposed_state):
-        publish_checkpoint(proposed_state)
-    else:
-        keep_previous_checkpoint()
-```
-
-### Typed user state
-
-```python
-state = {
-    passport: PassportInfo(
-        number = "AB1234567",
-        country = "US",
-        expiry_date = date(2025, 2, 18),
-    ),
-    trips: [
-        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
-             is_international = true),
-        ...
-    ],
-}
-```
-
-### Deterministic aggregation
-
-```python
-count(
-    trip for trip in state.trips
-    if trip.is_international and year(trip.departure_date) == 2025
-)
-# => 2
-```
-
-### Conflict detection
-
-```python
-def check_drug_allergy(profile):
-    for medication in profile.current_medications:
-        for allergy in profile.allergies:
-            if medication.drug_class == allergy.drug_class:
-                emit_conflict(medication, allergy)
-```
-
-### Constraint enforcement
-
-```python
-def check():
-    for trip in state.trips:
-        if trip.is_international:
-            days = date_difference(state.passport.expiry_date,
-                                   trip.departure_date)
-            if days < 180:
-                alert("passport expires too soon", trip, days)
-```
-
-### Hybrid RAG pipeline
-
-```python
-offline:
-    chunks = split_documents(documents)
-    dense_index = build_dense_index(chunks)
-    sparse_index = build_sparse_index(chunks)
-
-online(query):
-    dense_hits = dense_search(dense_index, query)
-    sparse_hits = sparse_search(sparse_index, query)
-    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
-    evidence = rerank(query, candidates)
-    return LLM(query + evidence)
-```
-
-Keep the boundary explicit: observations and evidence come from the environment, while the Harness decides what may be executed.
 
 ## Thought Questions
 

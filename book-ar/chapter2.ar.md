@@ -383,6 +383,25 @@ messages = [
 
 يدرس باقي هذا الفصل كل طبقة من هذه البنية: كيفية استخدام بادئة ثابتة ثابتة لتسريع الاستدلال (KV Cache)، وكيفية تصميم موجّه نظام فعال (هندسة سريعة)، وكيفية منع المحتوى الخارجي من اختطاف السياق (دفاع حقن الموجّهات)، وكيفية تحميل المعرفة المتخصصة عند الطلب (مهارات الوكيل)، وكيفية إدخال حالة ديناميكية في نهاية المحادثة (شريط حالة الوكيل)، وكيفية ضغط سجل المحادثة عندما يصبح كبيرًا جدًا (استراتيجيات الضغط).
 
+**بناء السياق قبل كل طلب:**
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
 > **التجربة 2-1 ★: نشر خدمة LLM المحلية واستدعاء الأدوات**
 >
 >
@@ -1119,31 +1138,6 @@ messages: [
 بالعودة إلى إطار عمل Harness من الفصل الأول، تعمل كل تقنية في هذا الفصل ضمن طبقة "السياق والأدوات" الخاصة بها. ويحددون معًا ما إذا كان الوكيل يتلقى معلومات كافية ومكررة ومنظمة في كل نقطة قرار. تدخل المهارات المسار كنتائج للأداة من خلال قراءة الملف، بينما يستبدل الضغط رسائل المسار الموجودة بتمثيلات أكثر إيجازًا. يعد شريط حالة الوكيل غير عادي فقط على مستوى API: نظرًا لعدم وجود دور معلومات تعريفية مخصص، فإنه يستخدم رسالة `user` لنقل حالة البيئة وتقدم المهمة. ومن الناحية الدلالية، فهو يكمل مكونات السياق الخمسة الموجودة بدلاً من إنشاء مكون سادس. يبقى الهيكل المكون من خمسة أجزاء دون تغيير. يضيف هذا الفصل التفاصيل الهندسية.
 
 ينتقل الفصل التالي إلى ما هو أبعد من إدارة المعلومات ضمن نافذة سياقية واحدة إلى أنظمة المعرفة المستمرة التي تمتد عبر الجلسات: ذاكرة المستخدم وقواعد المعرفة. تسمح هذه الأنظمة للوكيل بتراكم الخبرة بمرور الوقت ويصبح خبيرًا في المجال تدريجيًا.
-
-## هياكل الآليات
-
-تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
-
-### بناء السياق قبل كل طلب
-
-```python
-stable_prefix = system_message
-stable_tools = core_tool_schemas
-trajectory = load_message_history(session)
-status_message = make_status_message(derive_current_state(trajectory))
-
-if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
-    trajectory = compress_old_evidence(
-        trajectory,
-        preserve = [decisions, constraints, failures, citations]
-    )
-
-request.messages = [stable_prefix] + trajectory + [status_message]
-request.tools = stable_tools
-response = call_model(request)
-```
-
-حافظ على الحد واضحًا: تأتي الملاحظات والأدلة من البيئة، بينما يقرر Harness ما يُسمح بتنفيذه.
 
 ## أسئلة للتأمل
 

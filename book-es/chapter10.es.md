@@ -182,6 +182,23 @@ Unificar las cuatro categorías de áreas en el mismo árbol de directorios repr
 
 El sistema de archivos resuelve el problema del **intercambio de artefactos** entre Agentes, pero la colaboración también necesita un **plano de control**. Ahí es precisamente donde entran en juego las distintas filas del ciclo de vida de la tabla 10-3: el conjunto de primitivas de herramientas presentado en el capítulo 4 para crear (`spawn_subagent`), enviar mensajes (`send_message_to_subagent`), cancelar (`cancel_subagent`) y descubrir (`list_agents`) se corresponde, en el mundo de los procesos, con fork, mensajes, kill y ps. Esta sección no repite las definiciones de las interfaces, sino que se centra en cuatro capacidades de las que depende la colaboración entre múltiples Agentes y que, sin embargo, suelen pasarse por alto.
 
+**Sobre de mensajes y ciclo de vida del worker:**
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
 **Uno: transmisión de mensajes.** La forma más sencilla es la comunicación punto a punto: el Agente A invoca directamente `send_message_to_agent_b(content)`, algo adecuado para escenarios con una topología fija y pocos Agentes, como el sistema dual de teléfono + ordenador del experimento 10-3 de este capítulo. Cuando aumenta el número de Agentes y se necesita paralelismo asíncrono, la cantidad de conexiones punto a punto crece de forma cuadrática con el número de Agentes y, además, exige que emisor y receptor estén conectados al mismo tiempo; en ese caso, conviene utilizar un **bus de mensajes** (véase más adelante en este capítulo «Forma de coordinación paralela»): los Agentes publican mensajes en el bus, que los reenvía según las suscripciones, sin que el emisor tenga que conocer a los consumidores. Tanto en la comunicación punto a punto como a través de un bus, los mensajes suelen incluir un **sobre** estructurado (envelope): ID del emisor, destino —un Agente concreto o una difusión—, tipo de mensaje —como `task_assigned`/`status_update`/`result`/`terminate`— y una carga JSON. Un formato de sobre unificado permite que el receptor enrute y analice los mensajes de forma fiable, y hace trazable la cadena de colaboración—algo esencial para depurar sistemas multiagente.
 
 **Dos: consulta de estado.** Este es el componente más fácil de infravalorar dentro del plano de control. Después de que el Agente principal envíe un subagente, si no tiene forma de conocer su progreso, no podrá decidir si debe seguir esperando ni intervenir a tiempo cuando este se bloquee. La solución intuitiva consiste en copiar el modelo RPC y definir una interfaz de consulta `get_subagent_status(agent_id)` que devuelva «en ejecución/completado/fallido» junto con un porcentaje de progreso. Sin embargo, la utilidad práctica de esta interfaz de sondeo es mucho menor de lo esperado: un subagente comienza a ejecutarse inmediatamente después de su creación y continúa hasta completar la tarea o fallar; no pasa por una sucesión de estados de cola como los trabajos de un sistema tradicional de procesamiento por lotes—del mismo modo que, en la programación Unix, rara vez es necesario consultar repetidamente por PID el estado de ejecución de otro proceso. El sondeo también presenta un dilema inherente: si se realiza con demasiada frecuencia, desperdicia tokens; si se realiza con poca frecuencia, deja de ser oportuno. Una forma más natural de obtener el estado consiste en volver a los dos grandes paradigmas de comunicación presentados al comienzo de este capítulo.
@@ -236,6 +253,24 @@ Este paradigma también resulta adecuado para escenarios como la revisión de se
 
 **¿Por qué no dejar que un solo Agente genere y después revise su propio trabajo?** Esta es precisamente la aplicación concreta del criterio presentado antes en la sección «Cuándo múltiples Agentes superan realmente a un solo Agente»—si la revisión no introduce información nueva, no es más que «hacer que el modelo vuelva a pensarlo». La investigación relacionada ofrece una respuesta clara. Huang et al. descubrieron en el artículo de ICLR 2024 «Large Language Models Cannot Self-Correct Reasoning Yet» que pedir a GPT-4 que revisara y corrigiera sus propias respuestas sin feedback externo reducía la precisión: el modelo convertía respuestas correctas en incorrectas más veces de las que corregía respuestas incorrectas.
 
+**Bucle Proposer–Reviewer:**
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
 El artículo de revisión «When Can LLMs Actually Correct Their Own Mistakes?» (arXiv:2406.01297), publicado en la revista TACL en 2024, confirmó esta conclusión: salvo que se proporcione feedback externo fiable —como los resultados de ejecución de casos de prueba o la salida de validación de herramientas externas—, la «autocorrección» basada exclusivamente en el propio modelo prácticamente no funciona.
 
 El artículo CRITIC de ICLR 2024 ofrece un experimento comparativo intuitivo. CRITIC permitía que el modelo utilizara herramientas externas —un motor de búsqueda y un intérprete de Python— para verificar sus propias respuestas, lo que mejoraba significativamente los resultados; sin embargo, cuando los investigadores eliminaban el paso de verificación mediante herramientas y conservaban únicamente la autoevaluación del modelo, desaparecía la mayor parte de la mejora. Esto demuestra que el valor de la revisión no reside en «hacer que el modelo vuelva a pensarlo», sino en **introducir información nueva de la que el modelo no disponía durante la generación**—resultados de pruebas, capturas del renderizado, errores de compilación y resultados de búsquedas externas.
@@ -267,6 +302,23 @@ Sin embargo, el modelo de gestor también presenta desafíos inherentes. El Mana
 
 El artículo Plan-and-Act de 2025[^plan-and-act-2025] realizó un análisis empírico de esta cuestión: en una arquitectura de dos Agentes Planner-Executor, **un planificador débil es el cuello de botella más crítico de todo el sistema**. Cuando la calidad de planificación del Planner es suficientemente alta, incluso un Executor relativamente sencillo puede obtener buenos resultados; a la inversa, si el Planner descompone mal la tarea, todo el trabajo posterior de los Executors se construye sobre una premisa errónea. El estudio alcanzó una tasa de éxito del 54 % en el benchmark WebArena-Lite, y su principal aportación consistió precisamente en mejorar la capacidad de planificación del Planner, no la capacidad de ejecución del Executor. La lección de este hallazgo es que el modelo más potente y los prompts diseñados con mayor cuidado deben asignarse al Manager —el planificador—, en vez de repartir los recursos por igual entre todos los Agentes.
 
+**Primer ganador paralelo verificado:**
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
 
 [^plan-and-act-2025]: Erdogan, L. E., et al. *Plan-and-Act: Improving Planning of Agents for Long-Horizon Tasks.* arXiv:2503.09572, 2025.
 
@@ -407,6 +459,24 @@ Cuando varias subtareas pueden ejecutarse en paralelo, el modelo secuencial resu
 La motivación para eliminar el controlador central es imitar la organización humana: roles equivalentes dividen el trabajo y se controlan mutuamente; cada Agente decide cuándo transferir una tarea, pedir opinión o comunicar una contradicción. También se reduce el punto único de fallo que supone un Manager caído. En microservicios, estas dos opciones se denominan **orquestación** y **coreografía**.
 
 Los casos siguientes progresan desde el desacoplamiento de la comunicación hasta la descentralización del flujo de control: MetaGPT utiliza una cadena fija, AutoGen group chat combina una conversación compartida con planificación central y OpenAI Swarm distribuye las decisiones de transferencia entre Agentes pares.
+
+**Protocolo de handoff descentralizado:**
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
 
 **MetaGPT: simulación de una empresa de software dirigida por SOP.**
 
@@ -635,83 +705,6 @@ El juego del Hombre Lobo sustenta la dimensión de **juegos estratégicos** de e
 ## Resumen del Capítulo
 
 La colaboración multiagente solo justifica su coste cuando introduce información nueva: resultados de ejecución, capturas visuales o verificaciones externas. El diseño debe elegir entre contexto compartido o aislado y entre topologías de pares, gestor y descentralizada. Los paquetes de transferencia estructurados, los límites de permisos, la validación independiente y los presupuestos explícitos forman el circuito básico de tolerancia a fallos. Las interacciones abiertas y prolongadas también pueden hacer emerger relaciones sociales, normas culturales, mercados y estrategias; la ingeniería multiagente consiste en diseñar cómo fluye la información, cómo se dividen las capacidades y cómo se descubren los errores.
-
-## Skeletons de mecanismos
-
-Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
-
-### Sobre de mensajes y ciclo de vida del worker
-
-```python
-envelope = {
-    id, trace_id, sender, recipient, type,
-    payload, created_at, deadline, schema_version
-}
-
-worker = spawn(task, budget, cancellation_token)
-publish(task_assigned(envelope, worker))
-while worker.is_running:
-    accept(status_update | artifact | needs_input)
-    if deadline_expired or cancellation_token.is_set:
-        request_graceful_stop(worker)
-await worker.ack_or_timeout()
-```
-
-### Bucle Proposer–Reviewer
-
-```python
-candidate = proposer(task, constraints)
-evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
-review = independent_reviewer(candidate, evidence)
-
-while review.veto and budget_remaining:
-    candidate = proposer.repair(candidate, review.findings)
-    evidence = execute_or_render(candidate)
-    review = independent_reviewer(candidate, evidence)
-
-if review.pass:
-    publish(candidate, evidence, review)
-else:
-    escalate_or_reject(review)
-```
-
-### Primer ganador paralelo verificado
-
-```python
-workers = launch_independent_workers(subtasks)
-while workers.any_running:
-    event = next_event()
-    if event.type == RESULT:
-        if verify(event.artifact, hidden_checks):
-            if not settle_once(event):       # atomically claim the winner
-                continue
-            broadcast_cancel(to = workers - {event.worker_id})
-            await_all_ack_or_timeout()
-            return assemble(event.artifact, evidence = event.evidence)
-        else:
-            record_failure(event)
-return summarize_failures(workers)
-```
-
-### Protocolo de handoff descentralizado
-
-```python
-handoff = {
-    task_id, sender, recipient, goal, constraints,
-    accepted_facts, artifact_refs, remaining_budget,
-    visited_agents
-}
-
-if recipient in handoff.visited_agents:
-    reject("cycle")
-elif handoff.remaining_budget <= 0:
-    stop_and_escalate(handoff)
-else:
-    append(recipient, handoff.visited_agents)
-    run_local_agent(handoff)
-```
-
-Mantén explícito el límite: las observaciones y evidencias proceden del entorno, y el Harness decide qué puede ejecutarse.
 
 ## Preguntas de Reflexión
 

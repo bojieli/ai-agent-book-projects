@@ -26,6 +26,19 @@
 
 படம் 8-2 மூன்று அடுக்கு சரிபார்ப்பு அமைப்பைக் காட்டுகிறது. கீழடுக்கு result verifier test முடிவுகள், database state மற்றும் tool return-களைப் படித்து, “பணி உண்மையில் முடிக்கப்பட்டதா” என்பதற்குப் பதிலளிக்கிறது; நடு அடுக்கு process verifier வணிக விதிகள், அனுமதிகள் மற்றும் action sequence-களைச் சோதித்து, “அனுமதிக்கப்பட்ட முறையில் முடிக்கப்பட்டதா” என்பதற்குப் பதிலளிக்கிறது; மேலடுக்கு quality verifier Rubric-ஐ அடிப்படையாகக் கொண்டு மொழியையும் உத்தியையும் மதிப்பிட்டு, “பொருத்தமாகச் செய்யப்பட்டதா” என்பதற்குப் பதிலளிக்கிறது. கீழடுக்கு metrics இயன்றவரை code மற்றும் environment ground truth-ஐச் சார்ந்திருக்க வேண்டும்; formalize செய்யக் கடினமான பகுதிகள் மட்டுமே மொழி மாதிரியிடம் ஒப்படைக்கப்பட வேண்டும்.
 
+**மூன்று அடுக்கு trajectory சரிபார்ப்பு:**
+
+```python
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
+
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
+else:
+    emit_structured_diagnosis(outcome, process, quality)
+```
+
 ![படம் 8-2 சூழல் முடிவிலிருந்து LLM Rubric வரை மூன்று அடுக்கு trajectory சரிபார்ப்பு](images/fig8-2.svg)
 
 வாடிக்கையாளர் சேவை Agent-ஐ எடுத்துக்கொண்டால், பயனுள்ள Rubric குறைந்தபட்சம் அட்டவணை 8-1-ல் உள்ள பரிமாணங்களை உள்ளடக்க வேண்டும். முதல் ஐந்து உருப்படிகள் முக்கியமாக அடிப்படை வரம்புகளை உறுதிப்படுத்துகின்றன; கடைசி இரண்டு சேவைத் தரத்தை அளவிடுகின்றன. “பயனர் திருப்தியடைந்தாரா” என்ற ஒரே கேள்வியைவிட இவ்வகைப் பிரிப்பு அதிக diagnostic மதிப்புடையது: Agent விதிமீறி refund வழங்கியதால் பயனர் திருப்தியடையலாம்; compliance கட்டுப்பாடுகளால் அதிருப்தியடையவும்லாம். ஒரே satisfaction metric இவ்விரண்டையும் வேறுபடுத்த முடியாது.
@@ -76,6 +89,19 @@ Learning signal Agent மாற வேண்டும் என்பதைச�
 | Prompt மற்றும் Skill | மொழியாக்கக்கூடிய தீர்மானக் கோட்பாடுகள் மற்றும் செயல்பாட்டு விதிமுறைகள் | விளக்கக்கூடியது, செயல்பாட்டு வரம்பைக் கட்டுப்படுத்தலாம் | எளிதில் பெரிதாகலாம், முரண்படலாம் அல்லது புறக்கணிக்கப்படலாம் |
 | Program மற்றும் Harness | deterministic செயல்முறைகள், tools மற்றும் வலுவான கட்டுப்பாடுகள் | test செய்யலாம், நிலையான செயல்பாடு, குறைந்த செலவு | development மற்றும் maintenance செலவு அதிகம் |
 | Model parameters | உயர்-பரிமாண perception, generation style மற்றும் implicit strategy | வலுவான generalization, குறைந்த inference செலவு | update மற்றும் regression செலவு அதிகம் |
+
+**அனுபவத்திலிருந்து திறனுக்கான வழிமாற்றம்:**
+
+```python
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
+```
 
 ### அனுபவத்தை அறிவாக நிலைநிறுத்துதல்
 
@@ -270,6 +296,20 @@ Voyager[^voyager-2023] ஒப்பீட்டளவில் முழும�
 
 அனைத்து மாற்றங்களும் முதலில் candidate capability அல்லது candidate Agent-ஐ உருவாக்க வேண்டும்; production version-ஐ நேரடியாக overwrite செய்யக்கூடாது. Retrieval செய்யப்பட்ட அறிவு ஆவணம் புதிய பணித் திறனை மேம்படுத்துகிறதா எனச் சரிபார்க்க வேண்டும்; Prompt மற்றும் Skill boundary case-களையும் பழைய task regression-ஐயும் கடக்க வேண்டும்; program sandbox மற்றும் reset சூழலில் test செய்யப்பட வேண்டும்; parameter update மறதி, பாதுகாப்பு மற்றும் out-of-distribution பணிகளில் சோதிக்கப்பட வேண்டும். Verification வெற்றியடைந்த பிறகும் உண்மையான traffic-இல் canary release மூலம் கண்காணிக்கப்பட வேண்டும்; முக்கிய metrics மோசமடைந்தால் அறியப்பட்ட safe version-க்கு தானாக rollback செய்ய வேண்டும்.
 
+**சரிபார்க்கப்பட்ட வெளியீடு மற்றும் rollback:**
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
+```
+
 Verification பொதுவாக ஒன்றாகக் கருதப்படும் இரண்டு திறன்களைப் பிரிக்க வேண்டும். **Harness updating** என்பது trajectory-களிலிருந்து மதிப்புள்ள persistent change-களை உருவாக்கும் திறன்; **Harness benefit** என்பது task Agent பின்னர் அந்த change-களை சரியான சூழலில் கண்டறிந்து, activate செய்து, முறையாகப் பயன்படுத்தும் திறன். ஒரு Skill தானாகவே சரியானதாக இருந்தாலும், பலவீனமான task model அதை உரிய சூழலில் load செய்யாமல் இருக்கலாம்; அல்லது நீண்ட trajectory முழுவதும் அதைத் தொடர்ந்து பின்பற்றத் தவறலாம். இரண்டிலும் final score பரிணாமமே நடக்கவில்லை என்று தோன்றும். எனவே end-to-end performance மட்டும் updater-ஐ diagnosis செய்யப் போதாது. Lin et al. செய்த model-swapping experiment-கள் இந்த இரு திறன்களும் base-model capability-உடன் வேறுபட்ட முறையில் தொடர்புடையதாகக் காட்டுகின்றன[^harness-benefit-2026]. இந்த relationship மேலும் பல task-களில் சரிபார்க்கப்பட வேண்டும்; இருந்தாலும் இரண்டையும் தனித்தனியாக மதிப்பிடுவது பொதுவாக பயனுள்ளதாகும்.
 
 அட்டவணை 8-3 தொடர்ச்சியான பரிணாமத்திற்கான layered evaluation metric-கள்
@@ -330,6 +370,17 @@ Agent-இன் self-evolution திறன் ஒரு தவறை நீண�
 4. **Verification மற்றும் approval**: transfer set, retention set மற்றும் safety set-இல் candidate-ஐ மதிப்பிட்டு, high-risk write-களை மனித approval-க்காக நிறுத்துதல்.
 5. **Pruning மற்றும் indexing**: retrieval index-ஐ update செய்து, நீண்டகாலம் பயன்படுத்தப்படாத அல்லது புதிய சான்றால் மறுக்கப்பட்ட capability-ஐ expired, archived அல்லது deleted எனக் குறித்தல்; source மற்றும் rollback version-ஐப் பாதுகாத்தல்.
 
+**செயலற்ற நேர ஒருங்கிணைப்பு:**
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
 User memory இதற்கான நேரடியான எடுத்துக்காட்டு; ஆனால் action experience-இலிருந்து வேறுபடுத்த வேண்டும். Claude Code automatic memory ஒவ்வொரு project-க்கும் `MEMORY.md` index மற்றும் topic அடிப்படையில் பிரிக்கப்பட்ட detail file-களைப் பராமரிக்கிறது. Session தொடக்கத்தில் index-இன் bounded prefix மட்டுமே load செய்யப்படுகிறது; மற்றவை தேவைக்கேற்பப் படிக்கப்படுகின்றன. Index limit-ஐ அணுகும்போது detail-ஐ merge செய்யவோ வேறு file-க்கு நகர்த்தவோ Agent-க்கு அமைப்பு அறிவுறுத்துகிறது. Plain-text memory-க்கும் capacity constraint, layered loading மற்றும் active organization தேவை என்பதை இது காட்டுகிறது. ஆனால் வெளியிடப்பட்ட தற்போதைய mechanism முக்கியமாக session-இல் தொடர்ந்து எழுதுகிறது; அதை ஒரு fixed nightly background task-க்கு நேரடியாகச் சமமாகக் கருத முடியாது[^claude-code-memory].
 
 Hermes மேலும் முழுமையான background evolution எடுத்துக்காட்டை வழங்குகிறது. Long-term information-ஐ bounded `MEMORY.md` மற்றும் `USER.md`, SQLite/FTS5 அடிப்படையிலான historical-session retrieval, தேவைக்கேற்ப load செய்யப்படும் Skill, Honcho போன்ற optional external-memory provider எனப் பிரிக்கிறது. Historical retrieval முதலில் LLM summary செய்யாமல் raw message-ஐத் தருகிறது; retrieval மற்றும் generation audit செய்ய முடியாத ஒரே படியாக கலப்பதைத் தவிர்க்கிறது. ஒரு task பல tool call-களைக் கொண்டிருந்தால், error அல்லது dead end-இலிருந்து recover செய்தால், user correction பெற்றால், அல்லது வெளிப்படையில்லாத workflow கண்டுபிடித்தால், background reflection புதிய Skill உருவாக்கவோ local revision செய்யவோ முடியும்; memory மற்றும் Skill write approval gate-ஐயும் கடக்கலாம். தனித்த Curator Skill usage, staleness மற்றும் archival state-ஐக் கண்காணித்து, idle நேரத்தில் deterministic pruning செய்கிறது; தேவையெனில் LLM merge-ஐ இயக்குகிறது. Change-க்கு முன் snapshot சேமிக்கப்படுவதால் தவறான organization rollback செய்யப்படலாம்[^hermes-memory]. இந்த எடுத்துக்காட்டு “பதிவு—ஒருங்கிணைப்பு—சரிபார்ப்பு—pruning” என்பதை ஒப்புமையிலிருந்து இயங்கக்கூடிய capability lifecycle-ஆக மாற்றுகிறது.
@@ -388,63 +439,6 @@ Hermes மேலும் முழுமையான background evolution எ�
 Interaction மற்றும் evaluation-இலிருந்து learning signal-ஐப் பெற்ற பிறகு, திறன் எவ்வாறு represent செய்யப்படுகிறது என்பதற்கேற்ப Agent knowledge, Prompt, Skill, program அல்லது model parameter-ஐ update செய்கிறது. இந்த artifact-களை நிர்வகித்து உருவாக்கும் method-களையும் system optimize செய்யலாம்; ஆனால் attribution, verification மற்றும் rollback செய்யக்கூடிய local change-களுக்கு முன்னுரிமை அளிக்க வேண்டும்.
 
 தொடர்ச்சியான பரிணாமம் online execution மற்றும் offline learning-ஐப் பிரிக்க வேண்டும்: online-இல் evidence-ஐப் பதிவு செய்து, offline-இல் candidate update-ஐ உருவாக்கிச் சரிபார்த்து, பின்னர் படிப்படியாக release, consolidate அல்லது rollback செய்ய வேண்டும். Outcome தானாகச் சரிபார்க்கக்கூடியபோது இந்த loop மிகவும் நம்பகமானது. Ambiguous objective மற்றும் delayed feedback கொண்ட open-ended task-களில் problem definition மற்றும் evaluation criteria design-இல் மனிதர்கள் இன்னும் பங்கேற்க வேண்டும்.
-
-## Mechanism skeleton-கள்
-
-கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
-
-### மூன்று அடுக்கு trajectory சரிபார்ப்பு
-
-```python
-outcome = verify_environment_state(trajectory)
-process = verify_actions_and_permissions(trajectory)
-quality = judge_with_rubric(trajectory, cite_evidence = true)
-
-if not outcome.pass or not process.pass:
-    reject_as_learning_example(outcome, process, quality)
-else:
-    emit_structured_diagnosis(outcome, process, quality)
-```
-
-### அனுபவத்திலிருந்து திறனுக்கான வழிமாற்றம்
-
-```python
-if experience.is_factual and experience.has_sources:
-    target = KNOWLEDGE
-elif experience.can_be_expressed_as_contextual_language_rule:
-    target = PROMPT_OR_SKILL
-elif experience.is_deterministic or experience.is_hard_safety_constraint:
-    target = PROGRAM_OR_HARNESS
-else:
-    target = MODEL_PARAMETERS
-```
-
-### சரிபார்க்கப்பட்ட வெளியீடு மற்றும் rollback
-
-```python
-candidate = propose_minimal_update(evidence, current_version)
-
-if not verify(candidate, boundary_set): reject(candidate)
-elif not verify(candidate, retention_set): reject(candidate)
-elif not verify(candidate, safety_set): reject(candidate)
-else:
-    canary = deploy_to_small_traffic(candidate)
-    if canary.metrics_regress: rollback(current_version)
-    else: promote(candidate)
-```
-
-### செயலற்ற நேர ஒருங்கிணைப்பு
-
-```python
-while sleep_gate_is_open():
-    batch = load_new_evaluated_trajectories()
-    proposals = consolidate(batch, current_capabilities)
-    for proposal in proposals:
-        validate_canary_and_promote_or_rollback(proposal)
-    prune_stale_entries_but_keep_provenance()
-```
-
-எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
 
 ## சிந்தனைக் கேள்விகள்
 

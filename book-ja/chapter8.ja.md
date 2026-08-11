@@ -26,6 +26,19 @@
 
 図8-2は、3層の検証構造を示している。最下層の結果検証器は、テスト結果、データベース状態、ツールの戻り値を読み取り、「実際に処理が完了したか」に答える。中間層のプロセス検証器は、業務ルール、権限、アクション列を検査し、「許可された方法で完了したか」に答える。上位層の品質検証器は Rubric に基づいて言語と戦略を評価し、「適切に処理したか」に答える。下位に位置する指標ほどコードと環境のグラウンドトゥルースに依存すべきであり、形式化が困難な部分だけを言語モデルに委ねるべきである。
 
+**3 層の軌跡検証:**
+
+```python
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
+
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
+else:
+    emit_structured_diagnosis(outcome, process, quality)
+```
+
 ![図8-2 環境の結果から LLM Rubric までの3層軌跡検証](images/fig8-2.svg)
 
 カスタマーサービス Agent を例にすると、有用な Rubric は少なくとも表8-1に示す複数の次元を含むべきである。最初の5項目は主として最低限の要件を制約し、後の2項目はサービス品質を測定する。この分解は、「ユーザーが満足したか」よりも診断価値が高い。ユーザーは Agent が規則に違反して返金したために満足することも、コンプライアンス上の制約によって不満を抱くこともあるため、単一の満足度では両者を区別できない。
@@ -76,6 +89,19 @@ LLM 検証器自体も較正する必要がある。実運用システムでは�
 | Prompt と Skill | 言語化可能な判断原則と運用規範 | 説明可能で、適用範囲を制御できる | 肥大化、衝突、無視が生じやすい |
 | プログラムと Harness | 決定論的なプロセス、ツール、強い制約 | テスト可能で、実行が安定し、コストが低い | 開発・保守コストが比較的高い |
 | モデルパラメータ | 高次元の知覚、生成スタイル、暗黙的戦略 | 汎化能力が高く、推論オーバーヘッドが低い | 更新と回帰検証のコストが高い |
+
+**経験から能力へのルーティング:**
+
+```python
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
+```
 
 ### 経験を知識として蓄積する
 
@@ -270,6 +296,20 @@ Voyager[^voyager-2023] は、比較的完全な継続的進化ループを示し
 
 すべての変更は、まず候補能力または候補 Agent を生成し、実運用版を直接上書きしない。知識文書については、検索後に新規タスクの性能が向上するかを検証する。Prompt と Skill については、境界ケースと既存タスクの回帰を検査する。プログラムについては、サンドボックスとリセット済み環境でテストを実行する。パラメータ更新については、忘却、安全性、分布外タスクを検査する。検証に合格した後も、カナリアリリースによって実トラフィックを観察すべきである。主要指標が悪化した場合は、既知の安全なバージョンへ自動的にロールバックする。
 
+**検証済みリリースとロールバック:**
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
+```
+
 検証では、混同されやすい2つの能力も分ける必要がある。**Harness 更新能力**（harness-updating）は軌跡から価値ある永続的変更を生む能力、**Harness 利得能力**（harness-benefit）はタスク Agent が後続実行でその変更を見つけ、起動し、正しく使う能力である。Skill 自体は正しくても、弱いタスクモデルが適切な場面で読み込まなかったり、長い軌跡で従えなかったりすれば、最終得点は「進化なし」に見える。したがってエンドツーエンド得点だけで更新器の良否を推定できない。Lin らのモデル交換実験は、この2能力と基礎モデル能力の関係が同一ではないことを示す[^harness-benefit-2026]。具体的関係はさらに多くのタスクで検証すべきだが、分離評価自体は広く有効である。
 
 表8-3 継続的進化の階層別評価指標
@@ -330,6 +370,17 @@ Agent の自己進化能力は、一度の誤りを長期的なリスクへ変�
 4. **検証と承認**：転移セット、保持セット、安全性セットで候補を評価し、高リスクな書き込みは人間の承認待ちにする。
 5. **剪定と索引化**：検索インデックスを更新し、長期間使われていない能力や新しい証拠で否定された能力を期限切れ、アーカイブ、削除のいずれかにする。同時に、出典とロールバック版は残す。
 
+**アイドル時の統合:**
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
 ユーザーメモリは最も分かりやすい例だが、行動経験とは区別する必要がある。Claude Code の自動メモリは、プロジェクトごとに `MEMORY.md` のインデックスと、トピック別に分割した詳細ファイルを維持する。セッション開始時にはインデックスの上限付き先頭部分だけを読み込み、残りは必要に応じて読む。インデックスが上限に近づくと、Agent に詳細の統合または移動を求める。これは、プレーンテキストのメモリにも容量制約、階層的な読み込み、能動的整理が必要であることを示す。ただし現在公開されている仕組みは主にセッション内で継続的に書き込むものであり、固定された夜間バックグラウンドタスクと単純に同一視することはできない[^claude-code-memory]。
 
 Hermes は、より完全なバックグラウンド進化の事例を示す。長期情報を、上限付きの `MEMORY.md` と `USER.md`、SQLite/FTS5 に基づく過去セッション検索、必要に応じて読み込む Skill、Honcho などの任意の外部メモリプロバイダーに分ける。過去検索は LLM に先に要約させず原メッセージを返し、検索と生成が監査不能な一手順に混ざるのを防ぐ。あるタスクに多数のツール呼び出しが含まれる場合、エラーや行き止まりから復旧した場合、ユーザーの訂正を受けた場合、または自明でないワークフローを発見した場合、バックグラウンドの振り返りが Skill を作成または局所修正できる。メモリと Skill の書き込みには承認ゲートも設けられる。独立した Curator はさらに、Skill の利用状況、陳腐化、アーカイブ状態を追跡し、アイドル時に決定論的な剪定を行い、任意で LLM による統合も実行する。変更前にはスナップショットを保存するため、誤った整理をロールバックできる[^hermes-memory]。この事例は「記録―統合―検証―剪定」を比喩から実行可能な能力ライフサイクルへ変えている。
@@ -388,63 +439,6 @@ Hermes は、より完全なバックグラウンド進化の事例を示す。�
 Agent は環境との相互作用と評価から学習信号を得て、能力の表現特性に応じて知識、Prompt、Skill、プログラム、モデルパラメータを更新する。これらの成果物を管理・生成する方法自体も最適化できるが、まずは原因帰属、検証、ロールバックが可能な局所変更を優先すべきである。
 
 継続的進化ではオンライン実行とオフライン学習を分ける。オンラインで証拠を記録し、オフラインで候補更新を生成・検証し、その後に段階的なリリース、整理、ロールバックを行う。この閉ループは結果を自動検証できるタスクで最も信頼できる。目標が曖昧でフィードバックが遅れるオープンタスクでは、人間が問題定義と評価基準の策定に引き続き関与する必要がある。
-
-## メカニズムの skeleton
-
-以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
-
-### 3 層の軌跡検証
-
-```python
-outcome = verify_environment_state(trajectory)
-process = verify_actions_and_permissions(trajectory)
-quality = judge_with_rubric(trajectory, cite_evidence = true)
-
-if not outcome.pass or not process.pass:
-    reject_as_learning_example(outcome, process, quality)
-else:
-    emit_structured_diagnosis(outcome, process, quality)
-```
-
-### 経験から能力へのルーティング
-
-```python
-if experience.is_factual and experience.has_sources:
-    target = KNOWLEDGE
-elif experience.can_be_expressed_as_contextual_language_rule:
-    target = PROMPT_OR_SKILL
-elif experience.is_deterministic or experience.is_hard_safety_constraint:
-    target = PROGRAM_OR_HARNESS
-else:
-    target = MODEL_PARAMETERS
-```
-
-### 検証済みリリースとロールバック
-
-```python
-candidate = propose_minimal_update(evidence, current_version)
-
-if not verify(candidate, boundary_set): reject(candidate)
-elif not verify(candidate, retention_set): reject(candidate)
-elif not verify(candidate, safety_set): reject(candidate)
-else:
-    canary = deploy_to_small_traffic(candidate)
-    if canary.metrics_regress: rollback(current_version)
-    else: promote(candidate)
-```
-
-### アイドル時の統合
-
-```python
-while sleep_gate_is_open():
-    batch = load_new_evaluated_trajectories()
-    proposals = consolidate(batch, current_capabilities)
-    for proposal in proposals:
-        validate_canary_and_promote_or_rollback(proposal)
-    prune_stale_entries_but_keep_provenance()
-```
-
-境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
 
 ## 考察問題
 

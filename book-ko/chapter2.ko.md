@@ -374,6 +374,25 @@ messages = [
 
 이 장의 나머지 부분에서는 이 구조의 각 계층을 살펴봅니다. 안정적인 정적 접두부로 추론을 가속하는 방법(KV Cache), 효과적인 시스템 프롬프트를 설계하는 방법(프롬프트 엔지니어링), 외부 콘텐츠가 컨텍스트를 탈취하지 못하게 막는 방법(프롬프트 주입 방어), 전문 지식을 필요할 때 불러오는 방법(에이전트 스킬), 대화 끝에 동적 상태를 주입하는 방법(에이전트 상태 표시줄), 대화 기록이 지나치게 커졌을 때 압축하는 방법(압축 전략)을 차례로 설명합니다.
 
+**각 요청 전 컨텍스트 구성:**
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
 > **실험 2-1 ★: 로컬 LLM 서비스 배포와 도구 호출**
 >
 >
@@ -1071,31 +1090,6 @@ messages: [
 이 기법들의 공통점은 명시적이고 공학적으로 설계한 정보 관리입니다. 모델이 방대한 컨텍스트에서 단서를 수동적으로 찾게 두는 대신, 정제되고 구조화된 상태를 능동적으로 제공합니다. 이 장에서 제시한 KV Cache 친화적인 컨텍스트 배치부터 컨텍스트 인식 압축까지 모든 기법은 현재 모델 능력의 경계에서 정보 효율을 극대화하기 위한 구체적인 엔지니어링 실천입니다.
 
 이 장은 **하나의 작업 안에서** 일어나는 상태 갱신과 컨텍스트 저하를 다룹니다. 다음 장에서는 하나의 컨텍스트 창 안에서 이루어지는 정보 관리를 넘어 작업 간에 지속되는 지식 시스템, 즉 사용자 메모리와 지식 베이스를 다룹니다. 이러한 시스템을 통해 에이전트는 시간이 흐르면서 경험을 축적하고, 사용자를 더 잘 이해하는 어시스턴트나 한 분야에 더 전문적인 지식을 갖춘 전문가로 점차 발전할 수 있습니다.
-
-## 메커니즘 skeleton
-
-다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
-
-### 각 요청 전 컨텍스트 구성
-
-```python
-stable_prefix = system_message
-stable_tools = core_tool_schemas
-trajectory = load_message_history(session)
-status_message = make_status_message(derive_current_state(trajectory))
-
-if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
-    trajectory = compress_old_evidence(
-        trajectory,
-        preserve = [decisions, constraints, failures, citations]
-    )
-
-request.messages = [stable_prefix] + trajectory + [status_message]
-request.tools = stable_tools
-response = call_model(request)
-```
-
-경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
 
 ## 생각해 볼 문제
 

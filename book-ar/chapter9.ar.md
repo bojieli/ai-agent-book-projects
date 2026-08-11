@@ -33,6 +33,22 @@
 
 [^ch9-12]: OpenAI، *Introducing GPT-Live*، 2026-07-08. https://openai.com/index/introducing-gpt-live/ يأتي تصنيف التسلسلي/القائم على الأدوار/الازدواج الكامل من ملخص المقال للأجيال الثلاثة من ChatGPT Voice؛ ويقابل مصطلح «Omni متعدد الوسائط من طرف إلى طرف» فئة «نماذج الصوت القائمة على الأدوار».
 
+**إلغاء البث:**
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
 ### النموذج الأول · خط أنابيب تسلسلي
 
 لا تزال معظم المساعدات الصوتية التجارية تستخدم خطًا تسلسليًا (الشكل 9-1): يقرر VAD انتهاء كلام المستخدم، ويحوّل ASR الصوت إلى نص، ويفهم LLM الطلب وينشئ الرد، ثم ينطقه TTS. تتيح الوحدات المستقلة تحسين كل جزء، لكن كل حدّ يضيف وقت انتظار.
@@ -139,6 +155,22 @@
 2.  يتلقى النموذج متعدد الوسائط لقطة الشاشة وتعليمات المهمة، ويخرج فكرة وإجراءًا محددًا.
 3.  تنفذ طبقة التنفيذ الإجراء في البيئة الحقيقية (تحريك الماوس، والنقر، وكتابة النص، وما إلى ذلك).
 4.  وينتظر استجابة الواجهة، ويأخذ لقطة شاشة أخرى، ويدخل في تكرار الحلقة التالية.
+
+**حلقة أمان Computer Use:**
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
 
 ![الشكل 9-6: حلقة الإدراك والتفكير والتصرف الخاصة بوكيل استخدام الحاسوب](images/fig9-7.svg)
 
@@ -328,6 +360,19 @@ Elements:
 
 الانقسام الحقيقي في تمثيل الإجراء ليس بين RT-2 وOpenVLA، ولكن بين **الرموز المنفصلة وتوليد المسار المستمر**. **π₀** يتبع المسار الأخير: بدلاً من التنبؤ برموز العمل المنفصلة واحدة تلو الأخرى، فإنه يستخدم مطابقة التدفق، وهي طريقة توليد مستمرة تتعلق بنماذج الانتشار، للبدء بالضوضاء العشوائية و"تقليل الضوضاء" بشكل متكرر إلى مسار عمل سلس ومستمر. يقترن هذا التمثيل بشكل طبيعي مع تقطيع الحركة ويؤدي بشكل أفضل في مهام مثل التلاعب الحاذق الذي يتطلب حركة سلسة ودقيقة. على سبيل القياس، يشبه أسلوب الرمز المنفصل اختيار أوامر مثل "5 درجات لليسار" و"3 سم للأمام" واحدًا تلو الآخر من القائمة. إن توليد المسار المستمر يشبه إلى حد كبير فنانًا يرسم المنحنى بأكمله ثم يقوم بتحسينه خطوة تلو الأخرى.
 
+**استباق كتلة الأفعال:**
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
 ### نقل Sim2Real: الفجوة من المحاكاة إلى الواقع
 
 لقد أوضح قسم المحاكاة في الفصل السادس بالفعل من أين تأتي فجوة المحاكاة إلى الحقيقية وكيف تتصدى لها التوزيع العشوائي للنطاق، لذلك لن نكرر ذلك هنا. باختصار: لا يمكن للمحاكاة أبدًا إعادة إنتاج فيزياء العالم الحقيقي، والمرئيات، والأجهزة بشكل مثالي، لذا فإن التدريب يقوم بترتيب هذه المعلمات بشكل عشوائي على نطاق واسع، مما يجبر السياسة على تعلم تمثيل قوي لتلك الاختلافات (الشكل 9-11). ما يلي هو كيف يستقر هذا المبدأ على ذراع آلية حقيقية.
@@ -389,57 +434,6 @@ Elements:
 ## ملخص الفصل
 
 قد تبدو السيناريوهات الثلاثة متباعدة جدًا، لكن عقبتَي زمن الاستجابة وتعدد الوسائط تخيّمان عليها جميعًا. فقد تطور الوكلاء الصوتيون من خطوط معالجة تسلسلية إلى أنظمة شاملة مزدوجة الاتجاه، ومن فصل التفكير السريع عن البطيء إلى التفكير أثناء الكلام. ويقترب استخدام الحاسوب اليوم من الدقة البشرية في معايير مثل OSWorld، لكنه يحتاج إلى خطوات أكثر بكثير مما يحتاج إليه الإنسان، كما تطول مدة كل خطوة مع تقدم المهمة؛ وهي فجوة في الكفاءة لم يظهر لها حل منهجي بعد. أما في الروبوتات التي تنفذ مهام معالجة موجّهة بصريًا، فقد انتقل عنق الزجاجة من العتاد إلى قدرة طبقة التحكم VLA على التعميم عبر المهام، وإن ظل الاستشعار اللمسي والأيدي الماهرة من قيود العتاد غير المحسومة. وينتقل الفصل التالي إلى التعاون بين عدة وكلاء، وهو تحدٍّ من بُعد مختلف.
-
-## هياكل الآليات
-
-تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
-
-### إلغاء البث
-
-```python
-while audio_is_arriving:
-    partial = asr.push(audio_chunk)
-    if endpoint_is_probable(partial):
-        candidate = llm.start(partial)
-        if later_audio_changes_meaning(partial):
-            cancel(candidate)                 # speculative cancellation
-        else:
-            tts.enqueue_stable_segments(candidate)
-
-on_final_transcript(text):
-    commit_or_restart(text)
-```
-
-### حلقة أمان Computer Use
-
-```python
-observation = capture_screenshot_and_accessibility_tree()
-proposal = model.decide(task, observation)
-action = validate_schema_and_coordinates(proposal)
-
-if action.is_irreversible and not user_or_policy_approval(action):
-    stop("approval required")
-else:
-    execute_in_sandbox_or_scoped_session(action)
-    new_observation = capture_after_settle()
-    if not verify_goal_progress(new_observation, action):
-        rollback_if_possible_or_replan()
-```
-
-### استباق كتلة الأفعال
-
-```python
-chunk = vla(current_observation, skill)
-for action in chunk:
-    low_level.execute(action)
-    if safety_event() or observation_changed_significantly():
-        low_level.stop()
-        discard_remaining(chunk)
-        reobserve_and_replan()
-        break
-```
-
-حافظ على الحد واضحًا: تأتي الملاحظات والأدلة من البيئة، بينما يقرر Harness ما يُسمح بتنفيذه.
 
 ## أسئلة للتأمل
 

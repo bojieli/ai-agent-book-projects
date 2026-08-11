@@ -35,6 +35,22 @@ OpenAI-யின் GPT-Live அறிமுகம் மூன்று கு�
 
 [^ch9-12]: OpenAI, *Introducing GPT-Live*, 2026-07-08. https://openai.com/index/introducing-gpt-live/ கட்டுரை சுருக்கும் ChatGPT Voice-ன் மூன்று தலைமுறைகளிலிருந்து cascade / turn-based / full-duplex வகைப்பாடு வருகிறது; “end-to-end omnimodal (Omni)” என்பது “turn-based voice models” வகைக்கு இணையானது.
 
+**Streaming cancellation:**
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
 ### வடிவம் 1 · Cascade pipeline
 
 பெரும்பாலான வணிக குரல் உதவியாளர்கள் இன்னும் தொடர்ச்சியான pipeline-ஐப் பயன்படுத்துகின்றனர் (படம் 9-1): VAD பயனர் பேசி முடித்தாரா என முடிவு செய்கிறது, ASR ஆடியோவை உரையாக மாற்றுகிறது, LLM புரிந்து பதிலை உருவாக்குகிறது, TTS அதை ஒலியாக்குகிறது. தொகுதிகளைத் தனித்தனியாக மேம்படுத்தலாம்; ஆனால் ஒவ்வொரு எல்லையும் காத்திருப்பைச் சேர்க்கிறது.
@@ -141,6 +157,22 @@ Foreground model பயனர் ஈடுபாட்டில் இருக�
 2.  ஒரு மல்டிமோடல் மாதிரி, ஸ்கிரீன்ஷாட் மற்றும் பணி அறிவுறுத்தலைப் பெற்று, ஒரு சிந்தனை மற்றும் ஒரு குறிப்பிட்ட செயலை வெளியிடுகிறது.
 3.  செயலாக்க அடுக்கு, உண்மையான சூழலில் செயலைச் செய்கிறது (மவுஸை நகர்த்துதல், கிளிக் செய்தல், உரையைத் தட்டச்சு செய்தல் போன்றவை).
 4.  இடைமுகம் பதிலளிக்க காத்திருந்து, மற்றொரு ஸ்கிரீன்ஷாட்டை எடுத்து, அடுத்த சுழற்சி மறு செய்கையில் நுழைகிறது.
+
+**Computer Use பாதுகாப்பு சுழற்சி:**
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
 
 ![படம் 9-6: கணினி பயன்பாட்டு ஏஜெண்ட்டின் Perceive-Think-Act சுழற்சி](images/fig9-7.svg)
 
@@ -377,53 +409,7 @@ Executor started, succeeded, cancelled அல்லது failed என நி�
 
 OpenVLA projector-ஐ மட்டும் புதுப்பித்து பயிற்றுவிக்கப்படவில்லை; அதன் அசல் ஆய்வு full fine-tuning, உறையவைத்த vision encoder, கடைசி layer மற்றும் LoRA ஆகியவற்றையும் ஒப்பிடுகிறது. இருந்தாலும் அடிப்படை விமர்சனம் பொருந்தும்: மிகப்பெரிய உரை/பட முன்பயிற்சி தொகுப்பு, மிகச் சிறிய ரோபோட் தரவுடன் குறுகிய adaptation பாதை வழியாக இணைக்கப்படுகிறது. குறைந்த செலவிலான adaptation புதிய நடத்தையை projector, LoRA modules அல்லது action head-ல் குவிக்கிறது. Behavior cloning “கவனிப்பு + கட்டளை → action chunk” என்பதை கற்கிறது; எதிர்மறை-கற்பனை இயற்பியல் விளைவுகளை அல்ல. embodiment-ஐச் சார்ந்த action space மற்றும் பழைய action chunk-களும் transfer-ஐக் குறைக்கின்றன.
 
-### உலக மாதிரிகள்
-
-உலக மாதிரி செயல்படக்கூடிய மாற்றத்தை கற்கிறது: நிலை + தேர்வு செயல் → கணிக்கப்பட்ட எதிர்கால நிலை → செயலைத் தேர்ந்து சரிபார்த்தல். இது V-JEPA மட்டும் அல்ல. latent predictive models (V-JEPA 2), interactive generative models (Genie 3, Cosmos), World-Action Models (GeniWorld, Robust-WAM), குறியீடில்லா வீடியோவிலிருந்து latent action learning (LAWM-3D), model-based RL (Dreamer, MuZero) ஆகியவை இதில் அடங்கும். பெருமளவு கவனிப்பிலிருந்து கற்றல், செயல்படுத்தும் முன் மாற்று விளைவுகளைச் சோதித்தல், பொதுவான dynamics-ஐ embodiment-specific control-இலிருந்து பிரித்தல், கணிப்பும் உண்மையும் மாறும்போது மறுதிட்டமிடல் ஆகியவை இதன் மதிப்பு.
-
-2026 preprint-கள் shared dynamics priors மற்றும் embodiment-specific heads (DyPES-VLA), OOD closed-loop manipulation-க்கு visual actions (GeniWorld), மனித வீடியோவிலிருந்து 3D latent actions (LAWM-3D), semantic foresight alignment (Robust-WAM), asynchronous real-time deployment ஆகியவற்றை ஆராய்கின்றன. இவை நம்பிக்கையளிக்கும் முடிவுகள்; பொதுமைப்படுத்தல் முழுமையாகத் தீர்ந்துவிட்டதற்கான சான்றுகள் அல்ல.
-
-## அத்தியாயச் சுருக்கம்
-
-மூன்று காட்சிகளும் மேலோட்டமாக மிகவும் வேறுபட்டதாகத் தோன்றினாலும், தாமதம் (latency) மற்றும் பல்முறைமை (multimodality) ஆகிய இரண்டு தடைகளும் எப்போதும் நிலவுகின்றன. குரல், ஒரு தொடர் குழாய் (serial pipeline) அமைப்பிலிருந்து எண்ட்-டு-எண்ட் (end-to-end) மற்றும் முழு-இருவழி (full-duplex) ஆகவும், தனித்தனி வேக மற்றும் மெதுவான சிந்தனையிலிருந்து "பேசும்போதே சிந்தித்தல்" (thinking while speaking) ஆகவும் உருவெடுத்துள்ளது; OSWorld போன்ற அளவுகோல்களில் (benchmarks) கணினி பயன்பாட்டின் (Computer Use) துல்லியம் மனித அளவை நெருங்கி வருகிறது, ஆனால் இதற்கு மனிதர்களை விட கணிசமாக அதிக படிகள் தேவைப்படுகின்றன, மேலும் பணி நீளும்போது ஒவ்வொரு படியும் மேலும் மெதுவாகிறது—இந்தத் திறன் இடைவெளிக்கு (efficiency gap) இன்னும் முறையான தீர்வு இல்லை; காட்சி வழிகாட்டுதலுடன் கூடிய கையாளுதல் பணிகளில் (visually-guided manipulation tasks) ரோபோக்களுக்கு, தடையானது வன்பொருளிலிருந்து VLA கட்டுப்பாட்டு அடுக்கின் (VLA control layer) குறுக்கு-பணி பொதுமைப்படுத்தல் திறனுக்கு (cross-task generalization capability) மாறியுள்ளது (தொட்டுணர்வு உணர்தல் (tactile sensing) மற்றும் திறமையான கைகள் (dexterous hands) ஆகியவை தீர்க்கப்படாத வன்பொருள் வரம்புகளாகவே உள்ளன). அடுத்த அத்தியாயம், பல முகவர்களுக்கு (multiple agents) இடையேயான ஒத்துழைப்பின் மீது கவனத்தைத் திருப்பும், இது வேறுபட்ட பரிமாணத்தின் சவாலாகும்.
-
-## Mechanism skeleton-கள்
-
-கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
-
-### Streaming cancellation
-
-```python
-while audio_is_arriving:
-    partial = asr.push(audio_chunk)
-    if endpoint_is_probable(partial):
-        candidate = llm.start(partial)
-        if later_audio_changes_meaning(partial):
-            cancel(candidate)                 # speculative cancellation
-        else:
-            tts.enqueue_stable_segments(candidate)
-
-on_final_transcript(text):
-    commit_or_restart(text)
-```
-
-### Computer Use பாதுகாப்பு சுழற்சி
-
-```python
-observation = capture_screenshot_and_accessibility_tree()
-proposal = model.decide(task, observation)
-action = validate_schema_and_coordinates(proposal)
-
-if action.is_irreversible and not user_or_policy_approval(action):
-    stop("approval required")
-else:
-    execute_in_sandbox_or_scoped_session(action)
-    new_observation = capture_after_settle()
-    if not verify_goal_progress(new_observation, action):
-        rollback_if_possible_or_replan()
-```
-
-### Action-chunk preemption
+**Action-chunk preemption:**
 
 ```python
 chunk = vla(current_observation, skill)
@@ -436,7 +422,15 @@ for action in chunk:
         break
 ```
 
-எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
+### உலக மாதிரிகள்
+
+உலக மாதிரி செயல்படக்கூடிய மாற்றத்தை கற்கிறது: நிலை + தேர்வு செயல் → கணிக்கப்பட்ட எதிர்கால நிலை → செயலைத் தேர்ந்து சரிபார்த்தல். இது V-JEPA மட்டும் அல்ல. latent predictive models (V-JEPA 2), interactive generative models (Genie 3, Cosmos), World-Action Models (GeniWorld, Robust-WAM), குறியீடில்லா வீடியோவிலிருந்து latent action learning (LAWM-3D), model-based RL (Dreamer, MuZero) ஆகியவை இதில் அடங்கும். பெருமளவு கவனிப்பிலிருந்து கற்றல், செயல்படுத்தும் முன் மாற்று விளைவுகளைச் சோதித்தல், பொதுவான dynamics-ஐ embodiment-specific control-இலிருந்து பிரித்தல், கணிப்பும் உண்மையும் மாறும்போது மறுதிட்டமிடல் ஆகியவை இதன் மதிப்பு.
+
+2026 preprint-கள் shared dynamics priors மற்றும் embodiment-specific heads (DyPES-VLA), OOD closed-loop manipulation-க்கு visual actions (GeniWorld), மனித வீடியோவிலிருந்து 3D latent actions (LAWM-3D), semantic foresight alignment (Robust-WAM), asynchronous real-time deployment ஆகியவற்றை ஆராய்கின்றன. இவை நம்பிக்கையளிக்கும் முடிவுகள்; பொதுமைப்படுத்தல் முழுமையாகத் தீர்ந்துவிட்டதற்கான சான்றுகள் அல்ல.
+
+## அத்தியாயச் சுருக்கம்
+
+மூன்று காட்சிகளும் மேலோட்டமாக மிகவும் வேறுபட்டதாகத் தோன்றினாலும், தாமதம் (latency) மற்றும் பல்முறைமை (multimodality) ஆகிய இரண்டு தடைகளும் எப்போதும் நிலவுகின்றன. குரல், ஒரு தொடர் குழாய் (serial pipeline) அமைப்பிலிருந்து எண்ட்-டு-எண்ட் (end-to-end) மற்றும் முழு-இருவழி (full-duplex) ஆகவும், தனித்தனி வேக மற்றும் மெதுவான சிந்தனையிலிருந்து "பேசும்போதே சிந்தித்தல்" (thinking while speaking) ஆகவும் உருவெடுத்துள்ளது; OSWorld போன்ற அளவுகோல்களில் (benchmarks) கணினி பயன்பாட்டின் (Computer Use) துல்லியம் மனித அளவை நெருங்கி வருகிறது, ஆனால் இதற்கு மனிதர்களை விட கணிசமாக அதிக படிகள் தேவைப்படுகின்றன, மேலும் பணி நீளும்போது ஒவ்வொரு படியும் மேலும் மெதுவாகிறது—இந்தத் திறன் இடைவெளிக்கு (efficiency gap) இன்னும் முறையான தீர்வு இல்லை; காட்சி வழிகாட்டுதலுடன் கூடிய கையாளுதல் பணிகளில் (visually-guided manipulation tasks) ரோபோக்களுக்கு, தடையானது வன்பொருளிலிருந்து VLA கட்டுப்பாட்டு அடுக்கின் (VLA control layer) குறுக்கு-பணி பொதுமைப்படுத்தல் திறனுக்கு (cross-task generalization capability) மாறியுள்ளது (தொட்டுணர்வு உணர்தல் (tactile sensing) மற்றும் திறமையான கைகள் (dexterous hands) ஆகியவை தீர்க்கப்படாத வன்பொருள் வரம்புகளாகவே உள்ளன). அடுத்த அத்தியாயம், பல முகவர்களுக்கு (multiple agents) இடையேயான ஒத்துழைப்பின் மீது கவனத்தைத் திருப்பும், இது வேறுபட்ட பரிமாணத்தின் சவாலாகும்.
 
 ## சிந்தனை கேள்விகள்
 

@@ -35,6 +35,22 @@ Ortak hedef, insanların mutlaka sırayla konuşması ve VAD'nin kimin söz hakk
 
 [^ch9-12]: OpenAI, *Introducing GPT-Live*, 2026-07-08. https://openai.com/index/introducing-gpt-live/ Kaskad / sıra tabanlı / full-duplex sınıflandırması, yazının ChatGPT Voice'un üç kuşağına dair özetinden gelir; “uçtan uca omnimodal (Omni)” terimi “turn-based voice models” kategorisine karşılık gelir.
 
+**Akış iptali:**
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
 ### Paradigma 1 · Kaskad boru hattı
 
 Ticari sesli yardımcıların çoğu hâlâ seri bir boru hattı kullanır (Şekil 9-1): VAD konuşmanın bitip bitmediğine karar verir, ASR sesi metne çevirir, LLM isteği anlayıp yanıtı üretir ve TTS bunu seslendirir. Modülerlik her parçayı ayrı ayrı geliştirmeyi kolaylaştırır, fakat her sınır bekleme ekler.
@@ -142,6 +158,21 @@ Computer Use (GUI otomasyonu Agent'ı olarak da anılır), yapay zekanın tıpk�
 3. Yürütme katmanı bu eylemi gerçek ortamda uygular (fareyi hareket ettirmek, tıklamak, metin girmek vb.)
 4. Arayüzün yanıt vermesini bekledikten sonra yeniden ekran görüntüsü alır ve döngünün bir sonraki turuna girer
 
+**Computer Use güvenlik döngüsü:**
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
 
 ![Şekil 9-6: Computer Use Agent'ının algılama-düşünme-eylem döngüsü](images/fig9-7.svg)
 
@@ -383,6 +414,19 @@ Yürütücü `started`, `succeeded`, `cancelled` veya `failed` durumlarından bi
 
 OpenVLA tam anlamıyla yalnızca projector güncellenerek eğitilmiş değildir: özgün çalışma tam fine-tuning’in yanı sıra dondurulmuş vision encoder, yalnızca son katman ve LoRA varyantlarını da raporlar. Yine de temel eleştiri geçerlidir. Çok büyük bir metin/görüntü ön eğitim külliyatı, çok daha küçük bir robot veri kümesine dar bir uyarlama yoluyla bağlanır; düşük maliyetli uyarlama yeni davranışı çoğu zaman projector, LoRA modülleri veya action head üzerinde yoğunlaştırır. Behavior cloning “gözlem + talimat → action chunk” eşlemesini öğrenir, karşı-olgusal fiziksel sonuçları değil. Embodiment’e özgü eylem uzayları ve eskimiş action chunk’lar aktarımı daha da sınırlar. Dil backbone’u “fincan” kelimesini bilse de sürtünme, sıvı, temas ve güç kablosunun nasıl davranacağını bu yüzden bilmez.
 
+**Eylem parçası öncelik kesmesi:**
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
 ### Dünya modelleri
 
 Bir dünya modeli eyleme dönüştürülebilir bir geçiş öğrenir:
@@ -398,57 +442,6 @@ Bu kavram yalnızca V-JEPA’dan ibaret değildir. Aile; latent predictive model
 ## Bölüm Özeti
 
 Üç senaryo yüzeyde birbirinden çok farklı görünüyor, ama gecikme ve çok modluluk biçimindeki iki engel hepsinin peşini hiç bırakmıyor. Ses; seri boru hattından uçtan uca ve full-duplex mimarilere, birbirinden ayrı hızlı-yavaş düşünmeden "düşünürken konuşma"ya uzanan bir evrim yolunu şimdiden katetti. Computer Use'un OSWorld gibi benchmark'lardaki doğruluğu insan seviyesine yaklaştı, ama işlem adımlarının insandan belirgin biçimde fazla olması ve adım sürelerinin görev ilerledikçe sürekli artması biçimindeki verimlilik farkının sistematik bir çözümü hâlâ yok. Robotikte ise ağırlıklı olarak görsel geri bildirime dayanan manipülasyon görevlerinde darboğaz donanımdan VLA kontrol katmanının görevler arası genelleme yeteneğine kaydı (dokunsal algılama, becerikli eller vb. hâlâ aşılamamış donanım eksiklikleridir). Bir sonraki bölüm bakış açısını birden fazla Agent arasındaki iş birliğine çevirecek; orası bambaşka bir boyutun zorluğudur.
-
-## Mekanizma skeleton'ları
-
-Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
-
-### Akış iptali
-
-```python
-while audio_is_arriving:
-    partial = asr.push(audio_chunk)
-    if endpoint_is_probable(partial):
-        candidate = llm.start(partial)
-        if later_audio_changes_meaning(partial):
-            cancel(candidate)                 # speculative cancellation
-        else:
-            tts.enqueue_stable_segments(candidate)
-
-on_final_transcript(text):
-    commit_or_restart(text)
-```
-
-### Computer Use güvenlik döngüsü
-
-```python
-observation = capture_screenshot_and_accessibility_tree()
-proposal = model.decide(task, observation)
-action = validate_schema_and_coordinates(proposal)
-
-if action.is_irreversible and not user_or_policy_approval(action):
-    stop("approval required")
-else:
-    execute_in_sandbox_or_scoped_session(action)
-    new_observation = capture_after_settle()
-    if not verify_goal_progress(new_observation, action):
-        rollback_if_possible_or_replan()
-```
-
-### Eylem parçası öncelik kesmesi
-
-```python
-chunk = vla(current_observation, skill)
-for action in chunk:
-    low_level.execute(action)
-    if safety_event() or observation_changed_significantly():
-        low_level.stop()
-        discard_remaining(chunk)
-        reobserve_and_replan()
-        break
-```
-
-Sınırı açık tutun: gözlemler ve kanıt ortamdan gelir, Harness ise hangi eylemin yürütülebileceğine karar verir.
 
 ## Düşünce Soruları
 

@@ -26,6 +26,19 @@ Muchas tareas no tienen una única respuesta correcta. Determinar si un agente d
 
 La Figura 8-2 ilustra una estructura de verificación de tres capas. El verificador de resultados de la capa inferior lee los resultados de las pruebas, el estado de la base de datos y los retornos de las herramientas, respondiendo a la pregunta de "si el asunto realmente se completó"; el verificador de procesos de la capa intermedia comprueba las reglas de negocio, los permisos y las secuencias de acciones, respondiendo a "si se completó de la manera permitida"; el verificador de calidad de la capa superior evalúa el lenguaje y la estrategia según la Rubric, respondiendo a "si se completó de forma adecuada". Cuanto más abajo se encuentre el indicador, más debe depender del código y de la verdad de entorno, dejando al modelo de lenguaje únicamente la parte difícil de formalizar.
 
+**Verificación de trayectoria en tres capas:**
+
+```python
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
+
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
+else:
+    emit_structured_diagnosis(outcome, process, quality)
+```
+
 ![Figura 8-2: Verificación de trayectoria de tres capas desde resultados ambientales hasta una Rúbrica de LLM](images/fig8-2.svg)
 
 Tomando como ejemplo un Agente de atención al cliente, una Rubric útil debe cubrir al menos las dimensiones mostradas en la Tabla 8-1. Las primeras cinco dimensiones restringen los límites fundamentales, mientras que las últimas dos miden la calidad del servicio. Esta división ofrece mayor valor diagnóstico que "saber si el usuario está satisfecho": un usuario puede estar satisfecho porque el Agente realizó un reembolso violando las normas, o insatisfecho debido a restricciones normativas; un indicador de satisfacción único no puede distinguir entre ambos escenarios.
@@ -76,6 +89,19 @@ Tabla 8-2 Límites aplicables de los cuatro métodos de evolución continua
 | Prompt y Skill | Principios de juicio y normas operativas verbalizables | Interpretable, alcance de acción controlable | Propenso a sobrecarga, conflictos u omisiones |
 | Programa y Harness | Procesos deterministas, herramientas y restricciones fuertes | Evaluable, ejecución estable, bajo costo | Costo de desarrollo y mantenimiento relativamente alto |
 | Parámetros del modelo | Percepción de alta dimensión, estilo de generación y estrategias implícitas | Alta capacidad de generalización, bajo costo de inferencia | Alto costo de actualización y prueba de regresión |
+
+**Enrutamiento de experiencia a capacidad:**
+
+```python
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
+```
 
 ### Consolidación de la Experiencia en Conocimiento
 
@@ -270,6 +296,20 @@ Esta elección también puede cambiar con el aumento de la experiencia. Una estr
 
 Todas las modificaciones producen primero capacidades candidatas o Agentes candidatos, en lugar de sobrescribir directamente la versión de producción. Los documentos de conocimiento deben verificar si tras su recuperación mejoran el rendimiento en nuevas tareas, los Prompts y Skills deben comprobar casos límite y regresiones en tareas antiguas, los programas deben ejecutar pruebas en sandboxes y entornos restablecidos, y las actualizaciones de parámetros deben comprobar olvidos, seguridad y tareas fuera de distribución. Tras aprobar la validación, se debe utilizar un despliegue gradual (canary) para observar el tráfico real; si los indicadores clave se deterioran, se revierte automáticamente a la versión segura conocida.
 
+**Publicación validada y rollback:**
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
+```
+
 La validación requiere además distinguir entre dos capacidades que suelen confundirse. La **capacidad de actualización del Harness** (harness-updating) consiste en generar modificaciones duraderas y valiosas a partir de trayectorias; la **capacidad de beneficio del Harness** (harness-benefit) es la capacidad del Agente de tareas para encontrar, activar y utilizar correctamente dichas modificaciones en ejecuciones posteriores. Una Skill en sí misma puede estar redactada de forma impecable, pero un modelo de tareas más débil podría no cargarla en el escenario adecuado, o ser incapaz de seguirla a largo plazo tras cargarla, haciendo en cualquiera de los casos que el resultado final parezca "sin evolución". Por lo tanto, no se debe utilizar únicamente la puntuación de extremo a extremo para deducir la calidad del actualizador. Los experimentos de reemplazo de modelos de Lin et al. demostraron que la relación entre estas dos capacidades y la capacidad del modelo base no es idéntica[^harness-benefit-2026]; la relación de fortaleza específica requiere mayor verificación en tareas, pero evaluar ambas de forma separada constituye un método de aplicación general.
 
 Tabla 8-3 Métricas de evaluación por capas para la evolución continua
@@ -330,6 +370,17 @@ Un ciclo típico de aprendizaje durante el sueño consta de cinco pasos:
 4. **Validación y aprobación**: Evaluar los candidatos en conjuntos de transferencia, retención y seguridad, registrando escrituras de alto riesgo a la espera de aprobación humana;
 5. **Poda e indexación**: Actualizar los índices de búsqueda, marcando capacidades no utilizadas durante mucho tiempo o refutadas por nueva evidencia como expiradas, archivadas o eliminadas, conservando simultáneamente fuentes y versiones de reversión.
 
+**Consolidación durante el tiempo de inactividad:**
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
 La memoria de usuario es el ejemplo más intuitivo, pero debe distinguirse de la experiencia de acción. La memoria automática de Claude Code mantiene un índice `MEMORY.md` y archivos detallados divididos por tema para cada proyecto; al iniciar la sesión solo se carga un prefijo acotado del índice, leyéndose el resto del contenido bajo demanda; cuando el índice se aproxima al límite superior, el sistema exige al Agente fusionar o retirar detalles. Esto demuestra que la memoria de texto plano también requiere restricciones de capacidad, carga por capas y sistematización activa, aunque los mecanismos públicos actuales escriben continuamente durante la sesión y no se pueden equiparar simplemente a una tarea fija de fondo nocturno[^claude-code-memory].
 
 Hermes ofrece un caso de evolución en segundo plano más completo. Divide la información a largo plazo en archivos acotados `MEMORY.md` y `USER.md`, búsqueda de conversaciones históricas basada en SQLite/FTS5, Skills cargadas bajo demanda y proveedores de memoria externa opcionales como Honcho. La búsqueda histórica devuelve mensajes originales en lugar de resúmenes previos del LLM, evitando confundir la recuperación y la generación en un paso inauditable. Cuando una tarea incluye múltiples llamadas a herramientas, recuperación tras errores o caminos sin salida, correcciones del usuario o el descubrimiento de flujos de trabajo no evidentes, la revisión en segundo plano puede crear o revisar localmente la Skill; las escrituras de memoria y Skills pueden pasar además por un control de aprobación. Un Curator independiente rastrea el uso, obsolescencia y estado de archivado de las Skills, ejecutando podas deterministas en periodos de inactividad con la opción de ejecutar fusiones por LLM; guardando capturas antes de cambios para poder revertir sistematizaciones erróneas[^hermes-memory]. Este caso transforma el "registro - consolidación - validación - poda" de una metáfora en un ciclo de vida operativo de capacidad.
@@ -388,63 +439,6 @@ El aprendizaje continuo se está convirtiendo en una de las capacidades más imp
 El Agente obtiene señales de aprendizaje a partir de la interacción con el entorno y su evaluación, actualizando posteriormente conocimientos, Prompts, Skills, programas o parámetros del modelo según la naturaleza de representación de la capacidad. El sistema puede optimizar además los métodos para gestionar y generar estos artefactos, debiendo priorizar modificaciones locales atribuibles, verificables y reversibles.
 
 La evolución continua requiere separar la ejecución en línea del aprendizaje fuera de línea: registrar evidencias en línea, generar y verificar actualizaciones candidatas fuera de línea y publicar, sistematizar o revertir gradualmente. Este bucle cerrado resulta más confiable en tareas cuyos resultados se pueden verificar automáticamente; para tareas abiertas con objetivos ambiguos y retroalimentación diferida, la intervención humana sigue siendo necesaria en la definición de problemas y en el establecimiento de criterios de evaluación.
-
-## Skeletons de mecanismos
-
-Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
-
-### Verificación de trayectoria en tres capas
-
-```python
-outcome = verify_environment_state(trajectory)
-process = verify_actions_and_permissions(trajectory)
-quality = judge_with_rubric(trajectory, cite_evidence = true)
-
-if not outcome.pass or not process.pass:
-    reject_as_learning_example(outcome, process, quality)
-else:
-    emit_structured_diagnosis(outcome, process, quality)
-```
-
-### Enrutamiento de experiencia a capacidad
-
-```python
-if experience.is_factual and experience.has_sources:
-    target = KNOWLEDGE
-elif experience.can_be_expressed_as_contextual_language_rule:
-    target = PROMPT_OR_SKILL
-elif experience.is_deterministic or experience.is_hard_safety_constraint:
-    target = PROGRAM_OR_HARNESS
-else:
-    target = MODEL_PARAMETERS
-```
-
-### Publicación validada y rollback
-
-```python
-candidate = propose_minimal_update(evidence, current_version)
-
-if not verify(candidate, boundary_set): reject(candidate)
-elif not verify(candidate, retention_set): reject(candidate)
-elif not verify(candidate, safety_set): reject(candidate)
-else:
-    canary = deploy_to_small_traffic(candidate)
-    if canary.metrics_regress: rollback(current_version)
-    else: promote(candidate)
-```
-
-### Consolidación durante el tiempo de inactividad
-
-```python
-while sleep_gate_is_open():
-    batch = load_new_evaluated_trajectories()
-    proposals = consolidate(batch, current_capabilities)
-    for proposal in proposals:
-        validate_canary_and_promote_or_rollback(proposal)
-    prune_stale_entries_but_keep_provenance()
-```
-
-Mantén explícito el límite: las observaciones y evidencias proceden del entorno, y el Harness decide qué puede ejecutarse.
 
 ## Preguntas de Reflexión
 

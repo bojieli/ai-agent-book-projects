@@ -183,6 +183,23 @@ Nilai dari **"file path sebagai antarmuka universal"** terletak pada perlakuan p
 
 Sementara file system menyelesaikan masalah **pertukaran artifact** antar Agent, kolaborasi juga membutuhkan **control plane**. Di sinilah baris lifecycle pada Tabel 10-3 berperan: primitif tool yang diberikan pada Bab 4—membuat (`spawn_subagent`), mengirim pesan (`send_message_to_subagent`), membatalkan (`cancel_subagent`), dan menemukan (`list_agents`)—berkorespondensi dengan fork, message, kill, dan ps di dunia process. Bagian ini tidak mengulangi definisi antarmuka tersebut melainkan berfokus pada empat kemampuan yang sering terabaikan yang esensial untuk kolaborasi multi-agent.
 
+**Envelope pesan dan siklus hidup worker:**
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
 **I. Message Passing.** Bentuk yang paling sederhana adalah point-to-point: Agent A secara langsung memanggil `send_message_to_agent_b(content)`. Hal ini cocok untuk skenario dengan topologi tetap dan jumlah Agent yang sedikit (misalnya, pengaturan dual-agent telepon + komputer pada Eksperimen 10-3 di bab ini). Ketika jumlah Agent meningkat dan asynchronous parallelism diperlukan, jumlah koneksi point-to-point tumbuh secara kuadratik dengan jumlah Agent, dan baik pengirim maupun penerima harus online secara bersamaan. Dalam kasus seperti itu, sebuah **message bus** harus digunakan (dirinci lebih lanjut di bab ini di bawah "Parallel Coordination Pattern"): Agent memublikasikan pesan ke bus, yang meneruskannya berdasarkan langganan, sehingga pengirim tidak perlu mengetahui siapa saja pelanggannya. Baik secara point-to-point maupun melalui bus, pesan pada umumnya harus membawa **envelope** yang terstruktur: ID pengirim, target (Agent spesifik atau broadcast), tipe pesan (misalnya, `task_assigned`/`status_update`/`result`/`terminate`), dan sebuah JSON payload. Format envelope yang terpadu memastikan perutean dan parsing yang andal oleh penerima serta membuat rantai kolaborasi dapat dilacak—sebuah aspek kunci dari debugging multi-agent system.
 
 **II. Status Query.** Ini adalah bagian dari control plane yang paling sering diremehkan. Setelah sebuah main Agent mengirimkan sebuah sub-agent, ia membutuhkan visibilitas ke dalam kemajuan sub-agent tersebut; jika tidak, ia tidak dapat memutuskan apakah harus terus menunggu atau melakukan intervensi ketika sub-agent mengalami kebuntuan. Pendekatan yang intuitif adalah dengan meminjam dari RPC dan mendefinisikan antarmuka query `get_subagent_status(agent_id)` yang mengembalikan "running/completed/failed" plus persentase kemajuan. Namun, antarmuka pull semacam itu ternyata jauh kurang berguna dari yang diharapkan: sub-agent mulai mengeksekusi pada saat ia dibuat dan berjalan hingga selesai atau gagal. Ia tidak melewati serangkaian queued states seperti halnya job dalam batch system tradisional, sama seperti pemrograman Unix jarang perlu melakukan polling terhadap proses lain menggunakan PID-nya untuk mengetahui status yang berjalan. Polling juga membawa dilema bawaan: polling terlalu sering dan Anda akan membuang-buang token; polling terlalu jarang dan Anda akan merespons terlambat. Cara yang lebih alami untuk mendapatkan status adalah kembali ke dua paradigma komunikasi yang diperkenalkan di awal bab ini.
@@ -239,6 +256,24 @@ Paradigma ini juga berlaku untuk skenario seperti tinjauan keamanan (Proposer me
 
 **Mengapa sebuah Agent tunggal tidak bisa menghasilkan dan kemudian meninjau pekerjaannya sendiri?** Ini tepat di mana kriteria dari "Kapan Multi-Agent Benar-benar Lebih Baik Daripada Agent Tunggal?" di awal bab ini berlaku—jika tinjauan tidak memperkenalkan informasi baru, itu hanya "meminta model untuk berpikir lagi." Penelitian terkait memberikan jawaban yang jelas. Dalam makalah ICLR 2024 mereka "Large Language Models Cannot Self-Correct Reasoning Yet," Huang et al. menemukan bahwa meminta GPT-4 untuk meninjau dan mengoreksi jawabannya sendiri tanpa umpan balik eksternal justru menurunkan akurasi—model lebih sering mengubah jawaban yang benar menjadi salah daripada mengubah jawaban yang salah menjadi benar.
 
+**Loop Proposer–Reviewer:**
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
 Sebuah makalah survei tahun 2024 yang diterbitkan di TACL, "When Can LLMs Actually Correct Their Own Mistakes?" (arXiv:2406.01297), semakin mengkonfirmasi kesimpulan ini: kecuali umpan balik eksternal yang andal disediakan (misalnya, hasil eksekusi test case, output verifikasi dari alat eksternal), hanya mengandalkan "self-correction" model sendiri sebagian besar tidak efektif.
 
 Makalah CRITIC di ICLR 2024 memberikan eksperimen komparatif yang intuitif. CRITIC meminta model menggunakan alat eksternal (search engine, Python interpreter) untuk memverifikasi jawabannya sendiri, yang mengarah pada peningkatan kinerja yang signifikan. Namun, ketika peneliti menghapus langkah verifikasi alat dan hanya menyimpan penilaian diri (self-assessment) model, sebagian besar peningkatan itu menghilang. Ini menunjukkan bahwa nilai dari tinjauan bukan terletak pada "meminta model untuk berpikir lagi," tetapi pada **memperkenalkan informasi baru yang tidak tersedia selama pembuatan model**—hasil pengujian, tangkapan layar yang dirender, kesalahan kompilasi, hasil pencarian eksternal.
@@ -270,6 +305,23 @@ Namun, pola manajer memiliki tantangan bawaan. Manager menjadi bottleneck titik-
 
 Makalah Plan-and-Act 2025 [^plan-and-act-2025] memberikan analisis empiris mengenai hal ini: dalam arsitektur dual-agent Planner-Executor, **planner yang lemah adalah bottleneck paling kritis dari seluruh sistem**. Ketika kualitas perencanaan Planner cukup tinggi, hasil yang baik dapat dicapai bahkan dengan Executor yang relatif sederhana. Sebaliknya, jika dekomposisi tugas Planner salah, semua pekerjaan Executor selanjutnya dibangun di atas premis yang cacat. Studi tersebut mencapai tingkat keberhasilan 54% pada benchmark WebArena-Lite, dan kontribusi intinya adalah meningkatkan kemampuan perencanaan Planner, bukan eksekusi Executor. Pelajarannya: berikan model terkuat dan prompt yang dibuat dengan paling cermat kepada Manager (planner), daripada menyebarkan sumber daya secara merata ke semua Agent.
 
+**Pemenang paralel pertama yang terverifikasi:**
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
 
 [^plan-and-act-2025]: Erdogan, L. E., et al. *Plan-and-Act: Improving Planning of Agents for Long-Horizon Tasks.* arXiv:2503.09572, 2025.
 
@@ -413,6 +465,24 @@ Sisa dari desain Lingtai juga menggemakan bagian-bagian sebelumnya. Pengetahuan 
 Alasan menghapus pengendali pusat adalah meniru organisasi manusia: peran yang setara membagi pekerjaan dan saling memeriksa; setiap Agent menentukan sendiri kapan menyerahkan tugas, meminta umpan balik, atau melaporkan kontradiksi. Pola ini juga mengurangi single point of failure ketika Manager berhenti. Dalam microservices, kedua pilihan ini disebut **orchestration** dan **choreography**.
 
 Kasus berikut bergerak dari pelepasan ketergantungan komunikasi hingga desentralisasi control flow: MetaGPT memakai pipeline tetap, AutoGen group chat menggabungkan percakapan bersama dan penjadwalan terpusat, sedangkan OpenAI Swarm menyebarkan keputusan handoff di antara Agent sejawat.
+
+**Protokol handoff terdesentralisasi:**
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
 
 **MetaGPT: simulasi perusahaan perangkat lunak berbasis SOP.**
 
@@ -644,83 +714,6 @@ Werewolf menjadi jangkar bagi dimensi ketiga dari bagian ini, **strategic gamepl
 ## Ringkasan Bab
 
 Kolaborasi multi-Agent benar-benar bernilai jika menghadirkan informasi baru yang tidak dapat diperoleh satu Agent saat menghasilkan jawaban, seperti hasil eksekusi, umpan balik visual, atau verifikasi alat eksternal. Desain harus memilih konteks bersama atau terisolasi serta pola rekan, manajer, atau terdesentralisasi. Paket handoff terstruktur, batas izin, validasi independen, anggaran, dan pembatalan membentuk lingkar toleransi kesalahan dasar. Interaksi terbuka jangka panjang juga dapat memunculkan hubungan sosial, norma budaya, pasar, dan strategi; inti rekayasa multi-Agent adalah merancang aliran informasi, pembagian kemampuan, dan penemuan kesalahan.
-
-## Skeleton mekanisme
-
-Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
-
-### Envelope pesan dan siklus hidup worker
-
-```python
-envelope = {
-    id, trace_id, sender, recipient, type,
-    payload, created_at, deadline, schema_version
-}
-
-worker = spawn(task, budget, cancellation_token)
-publish(task_assigned(envelope, worker))
-while worker.is_running:
-    accept(status_update | artifact | needs_input)
-    if deadline_expired or cancellation_token.is_set:
-        request_graceful_stop(worker)
-await worker.ack_or_timeout()
-```
-
-### Loop Proposer–Reviewer
-
-```python
-candidate = proposer(task, constraints)
-evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
-review = independent_reviewer(candidate, evidence)
-
-while review.veto and budget_remaining:
-    candidate = proposer.repair(candidate, review.findings)
-    evidence = execute_or_render(candidate)
-    review = independent_reviewer(candidate, evidence)
-
-if review.pass:
-    publish(candidate, evidence, review)
-else:
-    escalate_or_reject(review)
-```
-
-### Pemenang paralel pertama yang terverifikasi
-
-```python
-workers = launch_independent_workers(subtasks)
-while workers.any_running:
-    event = next_event()
-    if event.type == RESULT:
-        if verify(event.artifact, hidden_checks):
-            if not settle_once(event):       # atomically claim the winner
-                continue
-            broadcast_cancel(to = workers - {event.worker_id})
-            await_all_ack_or_timeout()
-            return assemble(event.artifact, evidence = event.evidence)
-        else:
-            record_failure(event)
-return summarize_failures(workers)
-```
-
-### Protokol handoff terdesentralisasi
-
-```python
-handoff = {
-    task_id, sender, recipient, goal, constraints,
-    accepted_facts, artifact_refs, remaining_budget,
-    visited_agents
-}
-
-if recipient in handoff.visited_agents:
-    reject("cycle")
-elif handoff.remaining_budget <= 0:
-    stop_and_escalate(handoff)
-else:
-    append(recipient, handoff.visited_agents)
-    run_local_agent(handoff)
-```
-
-Pertahankan batasnya: observasi dan bukti berasal dari lingkungan, sedangkan Harness menentukan tindakan yang boleh dieksekusi.
 
 ## Pertanyaan Pemikiran
 

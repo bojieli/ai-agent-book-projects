@@ -63,6 +63,18 @@ In a nutshell, SFT uses extremely high sample efficiency to **encode a stable in
 
 > **Training Cost: LoRA Parameter-Efficient Fine-Tuning.** Both SFT and the subsequent RL require updating model parameters, and full-parameter fine-tuning has high VRAM requirements (needing to store gradients and optimizer states for billions of parameters). **LoRA** (Low-Rank Adaptation) is the most common cost-saving method: instead of modifying the large original weight matrices, it attaches a small "patch" (low-rank matrix) to learn the task. The parameter count is only 1%–5% of the original, yet it can approach the performance of full fine-tuning. Because the original weights are frozen, LoRA also causes less perturbation to the base model's existing capabilities, reducing the risk of catastrophic forgetting. A few validated rules of thumb[^ch7-1]: You **must** apply LoRA to all major weight matrices (especially the MLP layers, which have the largest parameter count); applying it only to attention layers costs accuracy. **The optimal learning rate is about 10 times that of full fine-tuning** (true for both SFT and RL, a very practical transfer rule). Use medium-to-high rank (64–256) for SFT; since the information per round is small for RL, a small rank (8–32) or even rank=1 is sufficient. During deployment, a single inference server can load multiple LoRA adapters simultaneously for multi-tenant service. This book treats LoRA as the default engineering choice for all post-training methods and will not elaborate on it separately.
 
+**SFT loss mask:**
+
+```python
+for sample in dataset:
+    prompt_tokens = tokenize(sample.prompt)
+    answer_tokens = tokenize(sample.answer)
+    tokens = prompt_tokens + answer_tokens
+    labels = [-100] * len(prompt_tokens) + answer_tokens
+    loss = causal_lm_loss(tokens, labels)
+    update_parameters(loss)
+```
+
 ### When SFT Should Come Before RL
 
 Pre-training provides the foundation of language and knowledge. What needs explanation is: **Under what conditions should SFT come before RL?**
@@ -347,6 +359,33 @@ In practice, the decision can be made in the following order:
 "Single-turn" means the task is completed in one interaction: the model receives input, produces output, and receives a reward, without needing to maintain state across steps. This simplified setting allows us to focus on the fundamental differences in learning mechanisms between SFT and RL, without the complexity of multi-turn interactions. The single-turn scenario provides clear controlled experimental conditions: the same task, the same base model, the same computational budget, with the only variable being the training method. The first experiment demonstrates how RL learns the meta-strategy of "when to think"; the second experiment uses an arithmetic reasoning card game to systematically quantify "SFT memorizes, RL generalizes."
 
 Before the experiments, let's build some **minimal intuition** about RL algorithms, enough to follow the terms that come up (full formulas and comparisons wait until the "Comparison of Reinforcement Learning Algorithms" section later in this chapter). The RL training in this chapter mostly rests on the **policy gradient**: the model generates several responses to the same problem, increasing the probability of high-reward responses and decreasing that of low-reward responses—moving further in rewarding directions and less in unrewarding ones. To discourage a single large update from derailing the model, mainstream **PPO** clips additional gains in its surrogate objective when a probability ratio falls outside a specified range; this discourages large changes but does not impose a hard constraint on policy movement (the later experiments use "PPO with a value network," whose value network estimates a baseline for finer-grained advantages). The other method, **GRPO**, trains no value network; instead it compares multiple responses to the same problem against one another to judge each one's relative quality. That intuition is all you need for the next two experiments.
+
+**GRPO group update:**
+
+```python
+for prompt in batch:
+    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
+    rewards = [verify(trajectory) for trajectory in group]
+    advantages = normalize_within_group(rewards)       # GRPO baseline
+    update(policy, group, advantages)
+```
+
+**PPO clipped update:**
+
+```python
+for trajectory in rollouts:
+    returns = discounted_returns(trajectory.rewards)
+    values = value_model(trajectory.states)
+    advantages = returns - stop_gradient(values)
+    ratio = exp(policy.log_prob(trajectory.actions)
+                - old_policy.log_prob(trajectory.actions))
+    policy_loss = -mean(min(
+        ratio * advantages,
+        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    ))
+    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
+update(policy, value_model, policy_loss + value_coef * value_loss)
+```
 
 > **Experiment 7-10 ★★: AdaptThink—Learning "When Not to Think"**
 >
@@ -680,6 +719,16 @@ To summarize: **Dense signals are useful only when they can restore the within-g
 
 **Relationship with RLVR (clarifying a common point of confusion).** RLVP and RLVR (Reinforcement Learning with Verifiable Rewards), repeatedly mentioned in this chapter, differ by only one letter, which neatly highlights their complementarity: **RLVR verifies outcomes; RLVP additionally verifies processes.** Combining the two yields a training signal that both focuses on "getting the job done" and "doing it properly"—exactly what is needed for an Agent that can be safely deployed.
 
+**Outcome plus path signal:**
+
+```python
+outcome = verify_final_state(trajectory)              # result, not self-report
+path_signal = 0
+for step in trajectory:
+    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
+reward = normalize(outcome) + beta * normalize(path_signal)
+```
+
 > **Experiment 7-16 ★★★: RLVP—Reward the Outcome, Penalize the Path `[Extended Experiment]`**
 >
 > **Experiment Goal**: Determine whether "outcome rewards + verifiable path signals" can both reduce constraint violations through penalties and improve sample efficiency through partial credit, without sacrificing task success rate.
@@ -701,6 +750,16 @@ Tool use extends the Agent's capability boundary from "model's own reasoning" to
 There are currently two active lines of research around Agent RL for tool calling. One is **retrieval augmentation**: represented by Search-R1 (Jin et al., 2025), which uses RL to train the model to autonomously decide when to initiate a search during the thinking process and to use the returned results to continue reasoning, rather than following a fixed RAG pipeline. The other is **software engineering**, represented by training environments such as SWE-Gym, which support multi-turn RL for coding Agents in real codebases, allowing the model to iteratively edit, run, and fix code. Both lines share the same two challenges: long-horizon credit assignment (attributing a final success to a decision made dozens of steps earlier) and environment engineering (building training environments that are stable, reproducible, and massively parallelizable).
 
 Tool RL also has an unavoidable engineering detail: **loss masking for environment feedback tokens**. A tool call trajectory contains both tokens generated by the model itself (thinking, tool call parameters) and tokens returned by the environment (code interpreter output, search results, customer service replies). The latter are not generated by the policy but are given by the environment—if they are included in the policy gradient, the model would be trained to "predict what the sandbox will output," which deviates from the optimization objective and makes training unstable. The standard practice is to mask the environment feedback tokens when computing the loss, backpropagating gradients only for the tokens generated by the model. This is one of the core technical points of ReTool (masking gradients for feedback tokens inside `<interpreter>` tags), and it is what Search-R1 refers to as "masking retrieved tokens to stabilize training." Major training frameworks like veRL and AWorld have this mechanism built in.
+
+**Trajectory-level reward mask:**
+
+```python
+for token in trajectory:
+    if token.source == ENVIRONMENT:
+        loss_mask[token] = 0
+    else:                                      # model thought / tool arguments
+        loss_mask[token] = 1
+```
 
 > **Experiment 7-14 ★★★: ReTool—Code Interpreter Enhanced Math Problem Solving**
 >
@@ -761,6 +820,17 @@ On-Policy Distillation, systematically formulated and popularized by Thinking Ma
 
 How exactly is the scoring done? The teacher doesn't just judge whether the student's step is correct; it provides the complete probability distribution for the next token at the current position. For example, if the student writes "first query the API, then parse the return value...", the teacher might determine that at this position, "query" should have an 80% probability, "call" 15%, and the remaining 5% for other tokens. The student's learning objective is to make its own predictive distribution at each position as close as possible to the teacher's distribution. Technically, this is achieved by minimizing the **KL divergence** between the two distributions (KL divergence measures the difference between two probability distributions; the smaller it is, the closer they are, and it is zero when identical, as detailed in Section 7.7). Compared to the binary signal of final success/failure, this token-level distribution alignment is denser by more than an order of magnitude.
 
+**On-policy distillation:**
+
+```python
+student_trajectory = rollout(student, task)
+loss = 0
+for state in student_trajectory:
+    teacher_logits = teacher(state)
+    loss += KL(student_logits(state), teacher_logits)
+update_student(loss)
+```
+
 The results are striking: on tasks like mathematics, matching pure RL's performance takes roughly **1/10** of the training steps. The advantage is most pronounced in long-chain reasoning—with the teacher pointing the way at every step, the student quickly learns to correct its errors instead of drifting further down a wrong path. It also eases overfitting: in standard RL, training repeatedly on the same prompt tends toward memorizing the final answer, whereas here every trajectory is different and the teacher's feedback is specific to it, so the student learns a general strategy rather than particular answers—and data can be reused far more heavily.
 
 This method is particularly valuable in **multi-turn Agent scenarios**: the success/failure signal appears at the very end, being both sparse and delayed. The token-level teacher distribution perfectly fills the missing guidance for every intermediate step. However, it has a prerequisite that echoes the main theme of this chapter: **a sufficiently realistic simulation environment is necessary for the student to explore freely**—otherwise, when the student enters an off-distribution state that the teacher has also never seen, the teacher's target distribution becomes unreliable. The value of On-Policy learning is built upon the premise that "the student is truly exploring the deployment distribution."
@@ -772,6 +842,18 @@ The principle that "dense signals outperform sparse signals" had a very clean va
 The power of On-Policy Distillation comes from the teacher, but that also saddles it with a hard prerequisite: **there must be a teacher model that is clearly stronger than the student.** In many scenarios this does not hold. If what you are training is a vertical-domain model and the capabilities of existing models are all inadequate, then no teacher model is available. Without a stronger teacher, is the dividend of dense signals out of our reach?
 
 An ingenious way out is **On-Policy Self-Distillation (OPSD)**[^ch7-15]: **let the same model play both teacher and student, with the only difference being the context.** The teacher version can see "privileged information"—such as the standard answer to the problem, or a verified correct solution. It does not need to actually "know how to solve" the problem; it only needs to take the answer and **rationalize** every step the student has taken, producing a token-by-token target distribution. The student version sees only the problem itself and aligns itself to the teacher version on its own sampled trajectories. The intuition behind this: "explaining a problem with the answer in hand" is far easier than "solving the problem independently"—this is isomorphic to the "verification–generation asymmetry" on which RLVR rests, except that here the asymmetry is used to produce a dense supervision signal rather than a sparse success/failure scalar.
+
+**On-policy self-distillation:**
+
+```python
+student_trajectory = rollout(model, task_without_answer)
+loss = 0
+for state in student_trajectory:
+    privileged_state = add_verified_answer(state)
+    teacher_logits = stop_gradient(model(privileged_state))
+    loss += KL(model(state), teacher_logits)
+update(model, loss + retention_regularizer)
+```
 
 Compared with RLVR, OPSD has two core advantages. **First, it no longer depends on verifiable rewards.** RLVR presupposes an automatic verifier, whereas OPSD's sources of privileged information are far broader: standard answers, but also richer system prompts, human demonstrations, or domain documents—anything that "lets the model, after the fact, clearly explain the correct behavior" will do. **Second, the supervision signal is far denser than RL's.** RL yields a single scalar reward per trajectory; OPSD provides a complete probability distribution at every position along the trajectory, and its token efficiency is markedly better than RL methods. It is fair to say that OPSD replaces the "stronger teacher" with "privileged information," and has thereby become a realistic path for alleviating the sample-efficiency problem.
 
@@ -900,94 +982,6 @@ This chapter answers how updating parameters can enable continuous Agent evoluti
 [^ch7-20]: Hua, Zhanbo, et al. "CLI-Universe: Towards Verifiable Task Synthesis Engine for Terminal Agents", 2026. arXiv:2606.22883.
 
 This chapter has answered the parameter-update question of “how to train.” The next chapter places model parameters back within the complete Agent system: parameters are only one of four update carriers, alongside knowledge, instructions, and programs. Their distinctive challenge is how to derive trustworthy learning signals from deployment trajectories, select the correct update location, and govern the validation, release, and rollback of every candidate version. Where specific training algorithms are concerned, Chapter 8 refers directly to this chapter rather than repeating the material.
-
-## Mechanism skeletons
-
-The following sketches isolate the control relationships discussed in this chapter.
-
-### SFT loss mask
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
-```
-
-### GRPO group update
-
-```python
-for prompt in batch:
-    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
-    rewards = [verify(trajectory) for trajectory in group]
-    advantages = normalize_within_group(rewards)       # GRPO baseline
-    update(policy, group, advantages)
-```
-
-### PPO clipped update
-
-```python
-for trajectory in rollouts:
-    returns = discounted_returns(trajectory.rewards)
-    values = value_model(trajectory.states)
-    advantages = returns - stop_gradient(values)
-    ratio = exp(policy.log_prob(trajectory.actions)
-                - old_policy.log_prob(trajectory.actions))
-    policy_loss = -mean(min(
-        ratio * advantages,
-        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
-    ))
-    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
-update(policy, value_model, policy_loss + value_coef * value_loss)
-```
-
-### Trajectory-level reward mask
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-### Outcome plus path signal
-
-```python
-outcome = verify_final_state(trajectory)              # result, not self-report
-path_signal = 0
-for step in trajectory:
-    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
-reward = normalize(outcome) + beta * normalize(path_signal)
-```
-
-### On-policy distillation
-
-```python
-student_trajectory = rollout(student, task)
-loss = 0
-for state in student_trajectory:
-    teacher_logits = teacher(state)
-    loss += KL(student_logits(state), teacher_logits)
-update_student(loss)
-```
-
-### On-policy self-distillation
-
-```python
-student_trajectory = rollout(model, task_without_answer)
-loss = 0
-for state in student_trajectory:
-    privileged_state = add_verified_answer(state)
-    teacher_logits = stop_gradient(model(privileged_state))
-    loss += KL(model(state), teacher_logits)
-update(model, loss + retention_regularizer)
-```
-
-Keep the boundary explicit: observations and evidence come from the environment, while the Harness decides what may be executed.
 
 ## Thought Questions
 

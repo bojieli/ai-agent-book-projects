@@ -183,6 +183,23 @@ The value of the **"file path as a universal interface"** lies in treating a pat
 
 While the file system solves the problem of **artifact exchange** between Agents, collaboration also requires a **control plane**. This is exactly where the lifecycle rows of Table 10-3 come into play: the tool primitives given in Chapter 4—creating (`spawn_subagent`), sending messages (`send_message_to_subagent`), canceling (`cancel_subagent`), and discovering (`list_agents`)—correspond to fork, message, kill, and ps in the process world. This section does not repeat the interface definitions but focuses on four often-overlooked capabilities essential for multi-agent collaboration.
 
+**Message envelope and worker lifetime:**
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
 **I. Message Passing.** The simplest form is point-to-point: Agent A directly calls `send_message_to_agent_b(content)`. This is suitable for scenarios with a fixed topology and a small number of Agents (e.g., the phone + computer dual-agent setup of Experiment 10-3 in this chapter). When the number of Agents increases and asynchronous parallelism is required, the number of point-to-point connections grows quadratically with the number of Agents, and both sender and receiver must be online simultaneously. In such cases, a **message bus** should be used (detailed later in this chapter under "Parallel Coordination Pattern"): Agents publish messages to the bus, which forwards them based on subscriptions, so the sender does not need to know the subscribers. Whether point-to-point or via a bus, messages should typically carry a structured **envelope**: sender ID, target (specific Agent or broadcast), message type (e.g., `task_assigned`/`status_update`/`result`/`terminate`), and a JSON payload. A unified envelope format ensures reliable routing and parsing by the receiver and makes the collaboration chain traceable—a key aspect of debugging multi-agent systems.
 
 **II. Status Query.** This is the most underestimated part of the control plane. Once a main Agent has dispatched a sub-agent, it needs visibility into the sub-agent's progress; otherwise, it can neither decide whether to keep waiting nor intervene when the sub-agent gets stuck. An intuitive approach is to borrow from RPC and define a `get_subagent_status(agent_id)` query interface that returns "running/completed/failed" plus a progress percentage. But such a pull interface turns out to be far less useful than expected: a sub-agent starts executing the moment it is created and runs until it completes or fails. It does not cycle through a series of queued states the way jobs in a traditional batch system do, just as Unix programming rarely needs to poll another process by its PID for running status. Polling also carries an inherent dilemma: poll too often and you waste tokens; poll too rarely and you react late. A more natural way to obtain status is to return to the two communication paradigms introduced at the beginning of this chapter.
@@ -243,6 +260,24 @@ This paradigm is also applicable to scenarios like security review (Proposer gen
 
 **Why can't a single Agent generate and then review its own work?** This is exactly where the criterion from "When Is Multi-Agent Truly Better Than a Single Agent?" earlier in this chapter applies—if the review does not introduce new information, it is just "asking the model to think again." Related research provides a clear answer. In their ICLR 2024 paper "Large Language Models Cannot Self-Correct Reasoning Yet," Huang et al. found that asking GPT-4 to review and correct its own answers without external feedback actually decreased accuracy—the model changed correct answers to incorrect ones more often than it changed incorrect answers to correct ones.
 
+**Proposer-reviewer loop:**
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
 A 2024 survey paper published in TACL, "When Can LLMs Actually Correct Their Own Mistakes?" (arXiv:2406.01297), further confirmed this conclusion: unless reliable external feedback is provided (e.g., test case execution results, verification output from external tools), relying solely on the model's own "self-correction" is largely ineffective.
 
 The CRITIC paper at ICLR 2024 provides an intuitive comparative experiment. CRITIC had the model use external tools (search engine, Python interpreter) to verify its own answers, leading to significant performance improvements. However, when the experimenters removed the tool verification step and only kept the model's self-assessment, most of the improvement disappeared. This indicates that the value of review lies not in "asking the model to think again," but in **introducing new information that was not available during the model's generation**—test results, rendered screenshots, compilation errors, external search results.
@@ -276,6 +311,24 @@ The manager pattern has inherent challenges, though. The Manager becomes the sys
 The 2025 Plan-and-Act paper [^plan-and-act-2025] provides an empirical analysis of this: in a Planner-Executor dual-agent architecture, **a weak planner is the most critical bottleneck of the entire system**. When the Planner's planning quality is high enough, good results can be achieved even with a relatively simple Executor. Conversely, if the Planner's task decomposition is wrong, all subsequent Executor work is built on a faulty premise. The study achieved a 54% success rate on the WebArena-Lite benchmark, and its core contribution was improving the Planner's planning ability, not the Executor's execution. The lesson: give the strongest model and the most carefully crafted prompt to the Manager (the planner), rather than spreading resources evenly across all Agents.
 
 This does not conflict with an argument from Chapter 4. In discussing the proposal model and the review model, Chapter 4 held that their capabilities should be similar—but that concerns the **review scenario**: a reviewer must keep up with the reasoning of the party under review to spot its flaws. If the reviewer is much less capable than the party under review, it may be unable to follow the reasoning closely enough to identify flaws. The manager pattern concerns something else: **the division of labor between planning and execution**. Once the planner decomposes the task incorrectly, no executor, however strong, can recover. Hence the strongest model and the most careful prompt go to the planner first. Whether the executors need balanced capabilities depends on how tightly the subtasks are coupled. When their outputs must ultimately be assembled into one whole, the weakest link often drags down the overall quality.
+
+**First verified parallel winner:**
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
 
 [^plan-and-act-2025]: Erdogan, L. E., et al. *Plan-and-Act: Improving Planning of Agents for Long-Horizon Tasks.* arXiv:2503.09572, 2025.
 
@@ -382,6 +435,24 @@ Why remove the central controller? The main motivation is to emulate human organ
 Decentralization also reduces the impact of a single unstable Agent. Model or provider failures can leave an Agent unresponsive, make a tool call fail, or create a loop of invalid calls. In a manager topology, a crashed Manager is the largest single point of failure; distributing control can contain that failure.
 
 The following cases progress from partial to full decentralization. MetaGPT uses a fixed pipeline and decentralizes only communication. AutoGen combines shared conversation history with centralized scheduling. OpenAI Swarm distributes control-flow decisions directly among peer Agents.
+
+**Decentralized handoff protocol:**
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
 
 An effective handoff package contains a task description and acceptance criteria, confirmed facts and constraints, and references to structured artifacts (file paths rather than file contents). It deliberately excludes the sender's full trial-and-error trajectory. Shared-context handoffs preserve the entire history but grow the context; isolated handoffs pass a distilled package so each Agent can work in a clean context.
 
@@ -636,83 +707,6 @@ The central design choices are shared or isolated context, and peer, manager or 
 Multi-agent systems can also amplify errors: shared resources create concurrency and semantic conflicts, errors cascade through communication, and loops may terminate too early or expand without bound. Optimistic locking and working-copy isolation, independent cross-validation, and explicit budgets and cancellation form a basic fault-tolerance loop. People must not outsource understanding and responsibility together with execution; comprehension debt and cognitive surrender remain real risks.
 
 When short-lived task collaboration grows into long-running, open-ended interaction, social relationships, cultural norms, market competition and strategic behavior under asymmetric information may emerge. The essence of multi-agent engineering is to design how information flows, how capabilities are divided, and how errors are discovered. Only when these mechanisms are robust can collective intelligence exceed that of an individual.
-
-## Mechanism skeletons
-
-The following sketches isolate the control relationships discussed in this chapter.
-
-### Message envelope and worker lifetime
-
-```python
-envelope = {
-    id, trace_id, sender, recipient, type,
-    payload, created_at, deadline, schema_version
-}
-
-worker = spawn(task, budget, cancellation_token)
-publish(task_assigned(envelope, worker))
-while worker.is_running:
-    accept(status_update | artifact | needs_input)
-    if deadline_expired or cancellation_token.is_set:
-        request_graceful_stop(worker)
-await worker.ack_or_timeout()
-```
-
-### Proposer-reviewer loop
-
-```python
-candidate = proposer(task, constraints)
-evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
-review = independent_reviewer(candidate, evidence)
-
-while review.veto and budget_remaining:
-    candidate = proposer.repair(candidate, review.findings)
-    evidence = execute_or_render(candidate)
-    review = independent_reviewer(candidate, evidence)
-
-if review.pass:
-    publish(candidate, evidence, review)
-else:
-    escalate_or_reject(review)
-```
-
-### First verified parallel winner
-
-```python
-workers = launch_independent_workers(subtasks)
-while workers.any_running:
-    event = next_event()
-    if event.type == RESULT:
-        if verify(event.artifact, hidden_checks):
-            if not settle_once(event):       # atomically claim the winner
-                continue
-            broadcast_cancel(to = workers - {event.worker_id})
-            await_all_ack_or_timeout()
-            return assemble(event.artifact, evidence = event.evidence)
-        else:
-            record_failure(event)
-return summarize_failures(workers)
-```
-
-### Decentralized handoff protocol
-
-```python
-handoff = {
-    task_id, sender, recipient, goal, constraints,
-    accepted_facts, artifact_refs, remaining_budget,
-    visited_agents
-}
-
-if recipient in handoff.visited_agents:
-    reject("cycle")
-elif handoff.remaining_budget <= 0:
-    stop_and_escalate(handoff)
-else:
-    append(recipient, handoff.visited_agents)
-    run_local_agent(handoff)
-```
-
-Keep the boundary explicit: observations and evidence come from the environment, while the Harness decides what may be executed.
 
 ## Thought Questions
 

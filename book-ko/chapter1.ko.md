@@ -168,6 +168,27 @@ LLM 에이전트의 독특한 능력은 **내부 사고**입니다. 행동하기
 
 ![그림 1-4 에이전트 궤적—다중 통화 합산 작업의 ReAct 루프](images/fig1-4.svg)
 
+다음 Python 스타일 스케치는 설명을 위한 pseudocode이며 실행 가능한 SDK 코드가 아닙니다. `python` 마커는 구문 강조에만 사용합니다.
+
+**ReAct 제어 루프:**
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
 궤적의 구조를 의사 코드로 나타내면 다음과 같습니다.
 
 ```text
@@ -256,6 +277,20 @@ trajectory = [
 > **하네스 = 컨텍스트 관리 + 도구 인터페이스 + 제약 + 검증 + 교정**
 >
 > **에이전트 ↔ 환경**
+
+**Harness 프로덕션 경계:**
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
 
 최소한으로 작동하는 에이전트는 LLM, 컨텍스트, 도구만으로 실행할 수 있습니다. 하지만 장기적인 프로덕션 작업을 안정적으로 수행하려면 과도한 행동을 막는 제약, 오류를 발견하는 검증, 실패에서 복구하는 교정이라는 세 개의 외부 엔지니어링 계층도 필요합니다. 다시 말해 최소 공식은 데모 관점이고 확장 공식은 프로덕션 관점입니다. 후자는 전자를 완전히 포함하고 그 둘레에 안전망을 더합니다.
 
@@ -495,45 +530,6 @@ LLM 애플리케이션을 만들 때는 단순한 것에서 복잡한 것으로 
 다음 장에서는 하네스의 가장 중심적인 구성 요소인 컨텍스트 엔지니어링을 자세히 살펴봅니다. 7장은 강화 학습에 뿌리를 둔 에이전트 개념의 학술적 기원을 다루고 전통적인 강화 학습과 현대 LLM 에이전트를 비교합니다.
 
 아래 사고 문제는 이 장의 핵심 개념을 한 단계 더 깊이 탐구하도록 구성했으며, 정답은 따로 없습니다.
-
-## 메커니즘 skeleton
-
-다음 Python 스타일 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다. 실행 가능한 SDK 구현이 아니라 설명용 pseudocode이며, 완전한 adapter와 테스트는 장별 실험에 있습니다. `python` 마커는 구문 강조에만 사용되며 실행 가능한 SDK나 바로 실행되는 프로그램을 뜻하지 않습니다.
-
-### ReAct 제어 루프
-
-```python
-trajectory = [user_request]
-
-repeat:
-    context = stable_prefix + trajectory
-    decision = Model(context)
-    trajectory.append(decision)
-
-    if decision has no tool call:
-        return decision.answer
-
-    for call in decision.tool_calls:       # independent calls may run in parallel
-        validated_call = Harness.validate(call)
-        observation = Environment.execute(validated_call)
-        trajectory.append(observation)
-```
-
-### Harness 프로덕션 경계
-
-```python
-decision = Model(Harness.build_context(state, trajectory))
-allowed_action = Harness.constrain(decision)
-observation = Environment.apply(allowed_action)
-evidence = Harness.verify(allowed_action, observation)
-
-if evidence passes:
-    trajectory.append(observation)
-else:
-    trajectory.append(Harness.correct(evidence))
-```
-
-경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
 
 ## 생각해 볼 문제
 

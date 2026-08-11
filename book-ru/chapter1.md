@@ -168,6 +168,27 @@ tool: {                            assistant: {
 
 ![Рис. 1-4 Траектория агента — цикл ReAct в задаче сведения доходов в нескольких валютах](images/fig1-4.svg)
 
+Следующий скетч в стиле Python — поясняющий псевдокод, а не запускаемый код SDK; маркер `python` используется только для подсветки синтаксиса.
+
+**Цикл управления ReAct:**
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
 Давайте разберём структуру траектории агента на псевдокоде:
 
 ```text
@@ -256,6 +277,20 @@ tool: {                            assistant: {
 > **Harness = управление контекстом + интерфейсы инструментов + ограничения + проверка + исправление**
 >
 > **Агент ↔ Окружение**
+
+**Производственная граница Harness:**
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
 
 Минимально работающему агенту достаточно LLM, контекста и инструментов, чтобы запуститься; но чтобы он долго и надёжно работал в продакшене, нужно добавить ещё три инженерных слоя оболочки — ограничения, проверку и исправление: ограничения не дают выйти за границы, проверка находит ошибки, исправление восстанавливает после сбоев. Иными словами, минимальная формула — это взгляд с точки зрения демо, расширенная — с точки зрения продакшена; вторая полностью включает первую и добавляет вокруг ещё и защитную сеть.
 
@@ -489,45 +524,6 @@ tool: {                            assistant: {
 Следующая глава углубится в самый ключевой компонент Harness — инженерию контекста. Академические истоки понятия «агент» в обучении с подкреплением, а также подробное сравнение традиционного RL и современных LLM-агентов мы систематически развернём в главе 7.
 
 Приведённые ниже вопросы для размышления призваны помочь читателю глубже проработать ключевые концепции этой главы; стандартных ответов на них нет.
-
-## Скелеты механизмов
-
-Эти скелеты в стиле Python выделяют управляющие связи, обсуждаемые в главе. Это поясняющий псевдокод, а не запускаемая реализация SDK; полные адаптеры и тесты находятся в экспериментах. Маркер `python` используется только для подсветки синтаксиса; он не означает готовый к запуску SDK или непосредственно исполняемую программу.
-
-### Цикл управления ReAct
-
-```python
-trajectory = [user_request]
-
-repeat:
-    context = stable_prefix + trajectory
-    decision = Model(context)
-    trajectory.append(decision)
-
-    if decision has no tool call:
-        return decision.answer
-
-    for call in decision.tool_calls:       # independent calls may run in parallel
-        validated_call = Harness.validate(call)
-        observation = Environment.execute(validated_call)
-        trajectory.append(observation)
-```
-
-### Производственная граница Harness
-
-```python
-decision = Model(Harness.build_context(state, trajectory))
-allowed_action = Harness.constrain(decision)
-observation = Environment.apply(allowed_action)
-evidence = Harness.verify(allowed_action, observation)
-
-if evidence passes:
-    trajectory.append(observation)
-else:
-    trajectory.append(Harness.correct(evidence))
-```
-
-Граница должна оставаться явной: наблюдения и доказательства приходят из среды, а Harness решает, что разрешено выполнить.
 
 ## Вопросы для размышления
 

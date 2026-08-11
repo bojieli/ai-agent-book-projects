@@ -26,6 +26,19 @@ Many other tasks have no single correct answer. Whether customer service is pati
 
 Figure 8-2 presents a three-layer verification structure. The bottom-layer outcome verifier reads test results, database states, and tool returns to answer, “Was the task actually completed?” The middle-layer process verifier checks business rules, permissions, and action sequences to answer, “Was it completed in an allowed manner?” The upper-layer quality verifier evaluates language and strategy according to the Rubric to answer, “Was it handled appropriately?” Lower-level metrics should rely more heavily on code and environmental ground truth; only aspects that are difficult to formalize should be delegated to a language model.
 
+**Three-layer trajectory verification:**
+
+```python
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
+
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
+else:
+    emit_structured_diagnosis(outcome, process, quality)
+```
+
 ![Figure 8-2 Three-layer trajectory verification from environmental outcomes to an LLM Rubric](images/fig8-2.svg)
 
 For a customer-service Agent, a useful Rubric should cover at least the dimensions listed in Table 8-1. The first five primarily enforce baseline requirements, while the final two measure service quality. This decomposition is more diagnostically useful than asking whether the user was satisfied: a user may be satisfied because the Agent issued a noncompliant refund, or dissatisfied because of a compliance restriction. A single satisfaction score cannot distinguish the two.
@@ -76,6 +89,19 @@ Table 8-2 Applicable boundaries of four continual evolution methods
 | Prompt and Skill | Linguistically expressible judgment principles and operating procedures | Interpretable, controllable scope | Prone to bloat, conflict, or being ignored |
 | Programs and Harness | Deterministic procedures, tools, and hard constraints | Testable, stable execution, low cost | Higher development and maintenance costs |
 | Model parameters | High-dimensional perception, generation style, and implicit strategies | Strong generalization, low inference overhead | High update and regression costs |
+
+**Experience-to-capability routing:**
+
+```python
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
+```
 
 ### Consolidating Experience into Knowledge
 
@@ -270,6 +296,20 @@ This choice may also change as experience accumulates. A newly discovered strate
 
 Every modification should first produce a candidate capability or candidate Agent rather than directly overwrite the production version. Knowledge documents must be tested to determine whether retrieval improves performance on new tasks; Prompts and Skills must be checked against edge cases and for regressions on previous tasks; programs must be tested in sandboxes and reset environments; and parameter updates must be evaluated for forgetting, safety, and out-of-distribution performance. Even after validation, a new version should be released gradually and monitored on real traffic; if key metrics deteriorate, the system should automatically roll back to a known safe version.
 
+**Validated release and rollback:**
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
+```
+
 Validation must also separate two capabilities that are often conflated. **Harness updating** is the ability to produce valuable persistent changes from trajectories; **Harness benefit** is the task Agent's ability to find, activate, and correctly use those changes later. A Skill may be correct in itself, yet a weaker task model may fail to load it in the right situation or fail to follow it over a long trajectory. Either failure makes the final score look as if no evolution occurred. End-to-end performance alone therefore cannot diagnose the updater. Model-swapping experiments by Lin et al. indicate that the two abilities relate differently to base-model capability[^harness-benefit-2026]. The exact relationship requires validation on more tasks, but evaluating them separately is broadly useful.
 
 Table 8-3 Layered evaluation metrics for continual evolution
@@ -330,6 +370,17 @@ A typical sleep-learning cycle has five steps:
 4. **Validate and approve:** Evaluate candidates on transfer, retention, and safety sets; high-risk writes wait for human approval.
 5. **Prune and index:** Update retrieval indexes and mark capabilities that are long unused or contradicted by new evidence as expired, archived, or deleted, while retaining provenance and rollback versions.
 
+**Sleep-time consolidation:**
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
 User memory is the most intuitive example, but it must be distinguished from action experience. Claude Code’s auto memory maintains a `MEMORY.md` index and topic-specific detail files for each project. At session startup it loads only a bounded prefix of the index and reads the remaining content on demand; when the index approaches its limit, the Agent is instructed to merge or move details elsewhere. This shows that even plain-text memory requires capacity limits, layered loading, and active organization. The currently documented mechanism primarily writes memory during sessions and should not simply be equated with a fixed nightly background task[^claude-code-memory].
 
 Hermes provides a more complete example of background evolution. It separates long-term information into bounded `MEMORY.md` and `USER.md` files, SQLite/FTS5 search over prior sessions, on-demand Skills, and optional external memory providers such as Honcho. Session search returns original messages rather than first summarizing them with an LLM, keeping retrieval distinct from generation and auditable. When a task contains many tool calls, recovers from an error or dead end, receives a user correction, or discovers a non-obvious workflow, a background review can create or locally revise a Skill; memory and Skill writes can also pass through an approval gate. A separate Curator tracks Skill usage, staleness, and archival status, performs deterministic pruning while idle, and may optionally invoke an LLM to merge content. It snapshots changes first so that incorrect consolidation can be rolled back[^hermes-memory]. This turns “record–consolidate–validate–prune” from a metaphor into an operational capability lifecycle.
@@ -388,63 +439,6 @@ Continual learning is becoming one of the most important capabilities of Agents,
 An Agent obtains learning signals from interaction and evaluation, then updates knowledge, Prompts, Skills, programs, or model parameters according to how the capability is represented. The system can also optimize the methods used to manage and generate these artifacts, but it should prefer local changes that are attributable, verifiable, and reversible.
 
 Continual evolution should separate online execution from offline learning: record evidence online; generate and validate candidate updates offline; then release, consolidate, or roll them back gradually. This loop is most reliable when outcomes are automatically verifiable. For open-ended tasks with ambiguous objectives and delayed feedback, people must still participate in problem definition and the design of evaluation criteria.
-
-## Mechanism skeletons
-
-The following sketches isolate the control relationships discussed in this chapter.
-
-### Three-layer trajectory verification
-
-```python
-outcome = verify_environment_state(trajectory)
-process = verify_actions_and_permissions(trajectory)
-quality = judge_with_rubric(trajectory, cite_evidence = true)
-
-if not outcome.pass or not process.pass:
-    reject_as_learning_example(outcome, process, quality)
-else:
-    emit_structured_diagnosis(outcome, process, quality)
-```
-
-### Experience-to-capability routing
-
-```python
-if experience.is_factual and experience.has_sources:
-    target = KNOWLEDGE
-elif experience.can_be_expressed_as_contextual_language_rule:
-    target = PROMPT_OR_SKILL
-elif experience.is_deterministic or experience.is_hard_safety_constraint:
-    target = PROGRAM_OR_HARNESS
-else:
-    target = MODEL_PARAMETERS
-```
-
-### Validated release and rollback
-
-```python
-candidate = propose_minimal_update(evidence, current_version)
-
-if not verify(candidate, boundary_set): reject(candidate)
-elif not verify(candidate, retention_set): reject(candidate)
-elif not verify(candidate, safety_set): reject(candidate)
-else:
-    canary = deploy_to_small_traffic(candidate)
-    if canary.metrics_regress: rollback(current_version)
-    else: promote(candidate)
-```
-
-### Sleep-time consolidation
-
-```python
-while sleep_gate_is_open():
-    batch = load_new_evaluated_trajectories()
-    proposals = consolidate(batch, current_capabilities)
-    for proposal in proposals:
-        validate_canary_and_promote_or_rollback(proposal)
-    prune_stale_entries_but_keep_provenance()
-```
-
-Keep the boundary explicit: observations and evidence come from the environment, while the Harness decides what may be executed.
 
 ## Questions for Reflection
 

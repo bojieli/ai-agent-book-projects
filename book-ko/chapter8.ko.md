@@ -26,6 +26,19 @@
 
 그림 8-2는 3계층 검증 구조를 보여 줍니다. 맨 아래의 결과 검증기는 테스트 결과, 데이터베이스 상태, 도구 반환값을 읽고 “업무가 실제로 완료되었는가?”에 답합니다. 중간의 과정 검증기는 비즈니스 규칙, 권한, 행동 순서를 확인하고 “허용된 방식으로 완료했는가?”에 답합니다. 위의 품질 검증기는 루브릭에 따라 언어와 전략을 평가하고 “적절하게 처리했는가?”에 답합니다. 아래 계층의 지표일수록 코드와 환경의 실측 자료에 더 많이 의존해야 하며, 정형화하기 어려운 부분만 언어 모델에 맡겨야 합니다.
 
+**3계층 trajectory 검증:**
+
+```python
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
+
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
+else:
+    emit_structured_diagnosis(outcome, process, quality)
+```
+
 ![그림 8-2 환경 결과에서 LLM 루브릭까지 이어지는 3계층 궤적 검증](images/fig8-2.svg)
 
 고객 서비스 에이전트를 위한 유용한 루브릭에는 적어도 표 8-1의 차원이 포함되어야 합니다. 앞의 다섯 항목은 주로 기본 요구 사항을 강제하고, 마지막 두 항목은 서비스 품질을 측정합니다. 이처럼 나누면 사용자가 만족했는지만 묻는 것보다 원인을 진단하기 좋습니다. 에이전트가 규정에 어긋나는 환불을 해 주어 사용자가 만족했을 수도 있고, 규정상 제한 때문에 불만족했을 수도 있습니다. 하나의 만족도 점수로는 둘을 구분할 수 없습니다.
@@ -76,6 +89,19 @@ LLM 검증기 역시 보정해야 합니다. 프로덕션 시스템은 보통 �
 | 프롬프트와 스킬 | 언어로 표현할 수 있는 판단 원칙과 운영 절차 | 해석 가능, 범위 통제 가능 | 비대화, 충돌, 무시될 가능성 |
 | 프로그램과 하네스 | 결정론적 절차, 도구, 엄격한 제약 | 테스트 가능, 안정적 실행, 저렴한 비용 | 개발·유지보수 비용이 더 높음 |
 | 모델 매개변수 | 고차원 인식, 생성 스타일, 암묵적 전략 | 강한 일반화, 낮은 추론 오버헤드 | 높은 업데이트·회귀 비용 |
+
+**경험→능력 라우팅:**
+
+```python
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
+```
 
 ### 경험을 지식으로 통합하기
 
@@ -270,6 +296,20 @@ Voyager[^voyager-2023]는 비교적 완전한 지속적 진화 루프를 보여 
 
 모든 수정은 프로덕션 버전을 직접 덮어쓰는 대신 먼저 후보 능력이나 후보 에이전트를 만들어야 합니다. 지식 문서는 검색이 새 업무의 성능을 높이는지 시험해야 합니다. 프롬프트와 스킬은 경계 사례와 이전 업무 회귀를 확인해야 합니다. 프로그램은 샌드박스와 재설정 가능한 환경에서 시험해야 하고, 매개변수 업데이트는 망각, 안전, 분포 밖 성능을 평가해야 합니다. 검증이 끝난 뒤에도 새 버전은 점진적으로 릴리스하고 실제 트래픽에서 모니터링해야 하며, 핵심 지표가 나빠지면 시스템이 알려진 안전 버전으로 자동 롤백해야 합니다.
 
+**검증된 릴리스와 롤백:**
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
+```
+
 검증에서는 흔히 혼동하는 두 능력도 분리해야 합니다. **하네스 업데이트**는 궤적에서 가치 있는 영속적 변경을 만드는 능력이고, **하네스 활용**은 업무 에이전트가 나중에 그 변경을 찾아 활성화하고 올바르게 사용하는 능력입니다. 스킬 자체는 정확해도 약한 업무 모델은 적절한 상황에서 이를 로드하지 못하거나 긴 궤적 동안 따르지 못할 수 있습니다. 어느 쪽이 실패해도 최종 점수에는 진화가 전혀 없었던 것처럼 나타납니다. 따라서 종단 간 성능만으로는 업데이트기를 진단할 수 없습니다. Lin 등의 모델 교체 실험은 두 능력과 기반 모델 능력의 관계가 서로 다름을 시사합니다[^harness-benefit-2026]. 정확한 관계는 더 많은 업무에서 검증해야 하지만 둘을 따로 평가하는 방식은 널리 유용합니다.
 
 표 8-3 지속적 진화를 위한 계층별 평가 지표
@@ -330,6 +370,17 @@ Voyager[^voyager-2023]는 비교적 완전한 지속적 진화 루프를 보여 
 4. **검증과 승인:** 전이·유지·안전 집합에서 후보를 평가하며, 위험도가 높은 쓰기는 사람의 승인을 기다립니다.
 5. **정리와 색인:** 검색 색인을 업데이트하고 오랫동안 사용하지 않았거나 새 증거와 모순되는 능력을 만료·보관·삭제로 표시하면서 출처와 롤백 버전을 보존합니다.
 
+**유휴 시간 통합:**
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
 사용자 메모리가 가장 직관적인 사례이지만 행동 경험과 구분해야 합니다. Claude Code의 자동 메모리는 프로젝트마다 `MEMORY.md` 색인과 주제별 세부 파일을 관리합니다. 세션을 시작할 때 색인의 제한된 앞부분만 로드하고 나머지는 필요할 때 읽습니다. 색인이 한계에 가까워지면 에이전트에 세부 사항을 병합하거나 다른 곳으로 옮기라고 지시합니다. 이는 일반 텍스트 메모리에도 용량 제한, 계층별 로딩, 능동적 정리가 필요함을 보여 줍니다. 현재 문서화된 메커니즘은 주로 세션 중에 메모리를 기록하므로 고정된 야간 백그라운드 업무와 동일시해서는 안 됩니다[^claude-code-memory].
 
 Hermes는 백그라운드 진화의 더 완전한 사례를 제공합니다. 장기 정보를 용량이 제한된 `MEMORY.md`와 `USER.md` 파일, 이전 세션에 대한 SQLite/FTS5 검색, 주문형 스킬, Honcho 같은 선택적 외부 메모리 제공자로 분리합니다. 세션 검색은 먼저 LLM으로 요약하는 대신 원래 메시지를 반환하므로 검색과 생성을 분리하고 감사 가능성을 유지합니다. 업무에 도구 호출이 많거나 오류·막다른 길에서 복구했거나 사용자 수정을 받았거나 자명하지 않은 워크플로를 발견하면 백그라운드 검토가 스킬을 만들거나 국소 수정할 수 있습니다. 메모리와 스킬 쓰기에 승인 게이트를 적용할 수도 있습니다. 별도의 Curator가 스킬 사용량, 오래됨, 보관 상태를 추적하고 유휴 시간에 결정론적으로 정리하며, 선택적으로 LLM을 호출해 내용을 병합할 수 있습니다. 먼저 변경 스냅샷을 만들어 잘못된 통합을 롤백할 수 있게 합니다[^hermes-memory]. 이로써 ‘기록-통합-검증-정리’가 비유를 넘어 실제 운영 가능한 능력 생명 주기가 됩니다.
@@ -388,63 +439,6 @@ Hermes는 백그라운드 진화의 더 완전한 사례를 제공합니다. 장
 에이전트는 상호작용과 평가에서 학습 신호를 얻고 능력의 표현 방식에 따라 지식, 프롬프트, 스킬, 프로그램, 모델 매개변수를 업데이트합니다. 시스템은 이러한 산출물을 관리하고 생성하는 방법도 최적화할 수 있지만 원인을 귀속하고 검증하고 되돌릴 수 있는 국소 변경을 우선해야 합니다.
 
 지속적 진화는 온라인 실행과 오프라인 학습을 분리해야 합니다. 온라인에서는 증거를 기록하고, 오프라인에서는 후보 업데이트를 생성하고 검증한 다음 점진적으로 릴리스·통합하거나 롤백합니다. 이 루프는 결과를 자동으로 검증할 수 있을 때 가장 신뢰성이 높습니다. 목표가 모호하고 피드백이 늦는 개방형 업무에서는 사람이 여전히 문제 정의와 평가 기준 설계에 참여해야 합니다.
-
-## 메커니즘 skeleton
-
-다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
-
-### 3계층 trajectory 검증
-
-```python
-outcome = verify_environment_state(trajectory)
-process = verify_actions_and_permissions(trajectory)
-quality = judge_with_rubric(trajectory, cite_evidence = true)
-
-if not outcome.pass or not process.pass:
-    reject_as_learning_example(outcome, process, quality)
-else:
-    emit_structured_diagnosis(outcome, process, quality)
-```
-
-### 경험→능력 라우팅
-
-```python
-if experience.is_factual and experience.has_sources:
-    target = KNOWLEDGE
-elif experience.can_be_expressed_as_contextual_language_rule:
-    target = PROMPT_OR_SKILL
-elif experience.is_deterministic or experience.is_hard_safety_constraint:
-    target = PROGRAM_OR_HARNESS
-else:
-    target = MODEL_PARAMETERS
-```
-
-### 검증된 릴리스와 롤백
-
-```python
-candidate = propose_minimal_update(evidence, current_version)
-
-if not verify(candidate, boundary_set): reject(candidate)
-elif not verify(candidate, retention_set): reject(candidate)
-elif not verify(candidate, safety_set): reject(candidate)
-else:
-    canary = deploy_to_small_traffic(candidate)
-    if canary.metrics_regress: rollback(current_version)
-    else: promote(candidate)
-```
-
-### 유휴 시간 통합
-
-```python
-while sleep_gate_is_open():
-    batch = load_new_evaluated_trajectories()
-    proposals = consolidate(batch, current_capabilities)
-    for proposal in proposals:
-        validate_canary_and_promote_or_rollback(proposal)
-    prune_stale_entries_but_keep_provenance()
-```
-
-경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
 
 ## 생각해 볼 문제
 

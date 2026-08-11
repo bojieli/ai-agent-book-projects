@@ -39,6 +39,21 @@
 - У пользователя есть планы поездки в Токио (недавняя активность)
 ```
 
+**Жизненный цикл памяти:**
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
 У этого процесса извлечения есть несколько ключевых особенностей.
 
 **Избирательность** — агент не запоминает временную информацию вроде «поиск вернул 3 варианта», сохраняя только факты, полезные в будущем.
@@ -126,50 +141,74 @@
 
 Вот упрощённый пример. На этапе структурирования паспорт и маршруты поездок пользователя сохраняются как типизированное состояние:
 
-```python
-from datetime import date
+**Журнал только-добавление и контрольная точка:**
 
-passport = PassportInfo(
-    number="AB1234567", country="US",
-    expiry_date=date(2025, 2, 18),
-)
-trips = [
-    Trip(destination="Tokyo", departure_date=date(2025, 1, 15),
-         is_international=True),
-    # ... остальные поездки
-]
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+**Типизированное состояние пользователя:**
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
 ```
 
 Имея типизированное состояние, три задачи, которые раньше можно было решить только силами LLM — «прочитать текст ещё раз и посчитать в уме», — теперь становятся детерминированным кодом.
 
 Во-первых, **агрегирующая статистика**. «Сколько раз я выезжал за границу в прошлом году?» — в текстовой памяти пришлось бы извлечь все поездки и пересчитать их одну за другой, а с ростом числа записей ошибки становятся вероятнее; в User as Code это одно выражение с точностью почти 100%[^uac]:
 
+**Детерминированная агрегация:**
+
 ```python
->>> sum(1 for t in trips if t.is_international and t.departure_date.year == 2025)
-2
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
 ```
 
 Во-вторых, **обнаружение конфликтов**. Если поместить рядом два состояния — «текущие лекарства» и «история аллергий», одна функция может сопоставить их по классу препарата и выявить противоречия, разбросанные по разным диалогам, которые в текстовом виде практически невозможно связать автоматически:
 
+**Обнаружение конфликтов:**
+
 ```python
 def check_drug_allergy(profile):
-    for med in profile.current_medications:
+    for medication in profile.current_medications:
         for allergy in profile.allergies:
-            if med.drug_class == allergy.drug_class:
-                yield (f"Конфликт по лекарству: {med.name} относится к классу {med.drug_class}, "
-                       f"а у пациента тяжёлая аллергия на {allergy.allergen}")
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
 ```
 
 В-третьих, **применение ограничений**. Агент может зафиксировать такую проверочную функцию так, чтобы она автоматически срабатывала при каждом обновлении состояния — не требуя от пользователя вопроса и не требуя поиска, она может проактивно предупредить. Например, ограничение по сроку действия паспорта: если до вылета за границу осталось менее 180 дней до истечения срока действия паспорта — выдать предупреждение.
 
+**Применение ограничений:**
+
 ```python
 def check():
-    for trip in trips:
+    for trip in state.trips:
         if trip.is_international:
-            days = (passport.expiry_date - trip.departure_date).days
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
             if days < 180:
-                yield (f"Паспорт истекает {passport.expiry_date}, до поездки в {trip.destination} "
-                       f"осталось всего {days} дней, пожалуйста, продлите паспорт как можно скорее")
+                alert("passport expires too soon", trip, days)
 ```
 
 [^uac]: полное описание дизайна и оценки построения памяти пользователя как исполняемого кода см. Li, Bojie. *User as Code: Executable Memory for Personalized Agents.* arXiv:2606.16707, 2026.
@@ -296,6 +335,21 @@ answer = llm.generate(system="Ты помощник службы поддерж�
 
 Качество ретривера напрямую определяет эффективность RAG — если релевантные фрагменты не находятся, даже самая мощная LLM останется без материала для работы. Сначала рассмотрим первый этап попадания документа в базу знаний — разбиение на фрагменты, затем сосредоточимся на двух основных технических подходах ретривера: плотный эмбеддинг (основан на понимании семантики) и разреженное встраивание (основано на сопоставлении ключевых слов), а также на том, как их комбинировать.
 
+**Гибридный конвейер RAG:**
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
 
 ![Рис. 3-5 Процесс запроса RAG: поиск, дополнение и генерация](images/fig3-5.svg)
 
@@ -719,105 +773,6 @@ viking://
 На уровне **обновления знаний** системе нужны два ритма: инкрементальные обновления быстро усваивают новые свидетельства, а периодическая реорганизация возвращается ко всей базе и исходным данным для дедупликации, вывода старого, объединения, перестройки структуры, поиска пропусков и уточнения условий. Независимо от Markdown или Python, Proposer Agent предлагает diff по исходным данным, независимый Reviewer Agent из другого семейства проверяет его, и лишь затем PR сливается и производные индексы перестраиваются.
 
 Эта и предыдущая главы посвящены проблеме «контекста»: одна рассматривает её внутри отдельной сессии, другая — на протяжении множества сессий. Основным результатом настоящей главы является декларативное знание о пользователе и мире; в главе 8 та же инфраструктура извлечения и поиска будет повторно использована применительно к поведенческому знанию, подтверждённому успехами и неудачами выполнения, то есть к знанию о том, «как следует действовать при определённых условиях». Следующая глава переходит к теме «инструментов»: как агент взаимодействует с внешним миром через инструменты, включая проектирование инструментов, стандарт совместимости MCP и событийно-ориентированную архитектуру.
-
-## Скелеты механизмов
-
-Следующие скелеты выделяют управляющие связи, обсуждаемые в главе.
-
-### Жизненный цикл памяти
-
-```python
-when answering(user_request):
-    recent_turns = conversation.tail()
-    relevant_memory = memory.search(user_request)
-    answer = LLM(recent_turns + relevant_memory)
-    return answer
-
-after conversation (background job):
-    candidates = extract_memory_candidates(conversation)
-    verified = verify_against_sources_and_policy(candidates, conversation)
-    memory.append_or_update(verified)
-```
-
-### Журнал только-добавление и контрольная точка
-
-```python
-append_only_log += extract_facts(conversation)
-
-if checkpoint_due():
-    proposed_state = rebuild_typed_state(append_only_log)
-    if type_check(proposed_state) and source_review(proposed_state):
-        publish_checkpoint(proposed_state)
-    else:
-        keep_previous_checkpoint()
-```
-
-### Типизированное состояние пользователя
-
-```python
-state = {
-    passport: PassportInfo(
-        number = "AB1234567",
-        country = "US",
-        expiry_date = date(2025, 2, 18),
-    ),
-    trips: [
-        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
-             is_international = true),
-        ...
-    ],
-}
-```
-
-### Детерминированная агрегация
-
-```python
-count(
-    trip for trip in state.trips
-    if trip.is_international and year(trip.departure_date) == 2025
-)
-# => 2
-```
-
-### Обнаружение конфликтов
-
-```python
-def check_drug_allergy(profile):
-    for medication in profile.current_medications:
-        for allergy in profile.allergies:
-            if medication.drug_class == allergy.drug_class:
-                emit_conflict(medication, allergy)
-```
-
-### Применение ограничений
-
-```python
-def check():
-    for trip in state.trips:
-        if trip.is_international:
-            days = date_difference(state.passport.expiry_date,
-                                   trip.departure_date)
-            if days < 180:
-                alert("passport expires too soon", trip, days)
-```
-
-### Гибридный конвейер RAG
-
-```python
-offline:
-    chunks = split_documents(documents)
-    dense_index = build_dense_index(chunks)
-    sparse_index = build_sparse_index(chunks)
-
-online(query):
-    dense_hits = dense_search(dense_index, query)
-    sparse_hits = sparse_search(sparse_index, query)
-    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
-    evidence = rerank(query, candidates)
-    return LLM(query + evidence)
-```
-
-Граница должна оставаться явной: наблюдения и доказательства приходят из среды, а Harness решает, что разрешено выполнить.
 
 ## Вопросы для размышления
 

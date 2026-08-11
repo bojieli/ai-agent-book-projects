@@ -63,6 +63,18 @@ SFT와 RL까지 줄곧 이어지는 핵심 사항이 있습니다. **모델의 �
 
 > **학습 비용: LoRA 파라미터 효율적 미세 조정.** SFT와 뒤에서 다룰 RL은 모두 모델 파라미터를 업데이트하며, 전체 파라미터 미세 조정은 VRAM 요구량이 큽니다. 수십억 개 파라미터의 경사와 옵티마이저 상태를 저장해야 하기 때문입니다. **LoRA**(Low-Rank Adaptation)는 가장 일반적인 비용 절감 방법입니다. 원래의 큰 가중치 행렬을 수정하는 대신 작은 ‘패치’인 저랭크 행렬을 붙여 작업을 학습합니다. 파라미터 수는 원래의 1~5%에 불과하지만 전체 미세 조정에 가까운 성능을 낼 수 있습니다. 원래 가중치를 동결하므로 기반 모델이 이미 갖춘 역량을 덜 교란해 파국적 망각 위험도 줄입니다. 검증된 몇 가지 경험칙이 있습니다[^ch7-1]. LoRA는 **반드시** 모든 주요 가중치 행렬, 특히 파라미터 수가 가장 많은 MLP 계층에 적용해야 합니다. 어텐션 계층에만 적용하면 정확도가 떨어집니다. **최적 학습률은 전체 미세 조정의 약 10배입니다.** SFT와 RL 모두에 적용되는 매우 실용적인 전이 규칙입니다. SFT에는 중간~높은 랭크(64~256)를 사용하십시오. RL은 회차마다 정보량이 적으므로 낮은 랭크(8~32), 심지어 rank=1로도 충분합니다. 배포할 때는 하나의 추론 서버에 여러 LoRA 어댑터를 동시에 로드해 멀티테넌트 서비스를 제공할 수 있습니다. 이 책은 LoRA를 모든 사후 학습 방법의 기본 엔지니어링 선택으로 간주하며 이후에는 따로 자세히 설명하지 않습니다.
 
+**SFT 손실 마스크:**
+
+```python
+for sample in dataset:
+    prompt_tokens = tokenize(sample.prompt)
+    answer_tokens = tokenize(sample.answer)
+    tokens = prompt_tokens + answer_tokens
+    labels = [-100] * len(prompt_tokens) + answer_tokens
+    loss = causal_lm_loss(tokens, labels)
+    update_parameters(loss)
+```
+
 ### SFT를 RL보다 먼저 해야 하는 경우
 
 사전 학습은 언어와 지식의 토대를 제공하므로 뒤의 사후 학습보다 먼저 이루어집니다. 설명이 필요한 부분은 **어떤 조건에서 SFT를 RL보다 먼저 해야 하는가?**입니다.
@@ -347,6 +359,33 @@ SFT를 직접 시작하기 전에 피할 수 없는 실용적인 질문이 있�
 ‘단일 턴’은 모델이 입력을 받고 출력을 생성한 뒤 보상을 받는 한 번의 상호작용으로 작업이 끝나며, 여러 단계에 걸쳐 상태를 유지할 필요가 없다는 뜻입니다. 이 단순화된 설정에서는 다중 턴 상호작용의 복잡성 없이 SFT와 RL 학습 메커니즘의 근본적인 차이에 집중할 수 있습니다. 단일 턴 환경은 같은 작업, 같은 기반 모델, 같은 계산 예산에서 학습 방법만 변수로 두는 명확한 통제 실험 조건을 제공합니다. 첫 실험은 RL이 ‘언제 사고할 것인가’라는 메타 전략을 어떻게 배우는지 보여 주고, 두 번째 실험은 산술 사고 카드 게임으로 ‘SFT는 암기하고 RL은 일반화한다’는 현상을 체계적으로 정량화합니다.
 
 실험에 앞서 뒤에 나올 용어를 이해할 수 있을 정도의 **최소한의 직관**을 RL 알고리즘에 관해 익혀 보겠습니다. 전체 수식과 비교는 이 장 뒤의 ‘강화 학습 알고리즘 비교’ 절에서 다룹니다. 이 장의 RL 학습은 대부분 **정책 경사(policy gradient)**를 토대로 합니다. 같은 문제에 여러 응답을 생성하고, 보상이 높은 응답의 확률은 높이며 낮은 응답의 확률은 낮춥니다. 보상을 주는 방향으로는 더 나아가고 그렇지 않은 방향으로는 덜 나아가는 것입니다. 한 번의 큰 업데이트로 모델이 궤도에서 이탈하는 일을 억제하기 위해 주류 **PPO** 알고리즘은 확률비가 정한 구간을 벗어날 때 대리 목적함수에서 얻는 추가 이득을 클리핑합니다. 이는 큰 변경을 억제하지만 정책 변화의 하드 제약은 아닙니다. 뒤의 실험에서 말하는 ‘가치 네트워크를 사용하는 PPO’로, 가치 네트워크는 더 세밀한 어드밴티지를 계산하기 위한 기준선을 추정합니다. 다른 방식인 **GRPO**는 가치 네트워크를 학습하지 않고 같은 문제의 여러 응답을 서로 비교해 상대적인 품질을 판단합니다. 다음 두 실험에는 이 정도 직관이면 충분합니다.
+
+**GRPO 그룹 업데이트:**
+
+```python
+for prompt in batch:
+    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
+    rewards = [verify(trajectory) for trajectory in group]
+    advantages = normalize_within_group(rewards)       # GRPO baseline
+    update(policy, group, advantages)
+```
+
+**PPO 클리핑 업데이트:**
+
+```python
+for trajectory in rollouts:
+    returns = discounted_returns(trajectory.rewards)
+    values = value_model(trajectory.states)
+    advantages = returns - stop_gradient(values)
+    ratio = exp(policy.log_prob(trajectory.actions)
+                - old_policy.log_prob(trajectory.actions))
+    policy_loss = -mean(min(
+        ratio * advantages,
+        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    ))
+    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
+update(policy, value_model, policy_loss + value_coef * value_loss)
+```
 
 > **실험 7-10 ★★: AdaptThink—‘사고하지 않을 때’를 학습하기**
 >
@@ -680,6 +719,16 @@ O는 원래의 **결과 보상**으로 희소하며 여전히 진짜 목표입�
 
 **RLVR과의 관계(흔한 혼동 해소).** RLVP와 이 장에서 반복해 언급한 RLVR(Reinforcement Learning with Verifiable Rewards)은 글자 하나만 다르며, 바로 그 차이가 상호 보완 관계를 잘 보여 줍니다. **RLVR은 결과를 검증하고, RLVP는 과정까지 추가로 검증합니다.** 둘을 결합하면 ‘작업을 완료하는 것’과 ‘올바른 방식으로 완료하는 것’ 모두에 집중하는 학습 신호를 얻습니다. 안전하게 배포할 수 있는 에이전트에 꼭 필요한 조건입니다.
 
+**결과 + 경로 신호:**
+
+```python
+outcome = verify_final_state(trajectory)              # result, not self-report
+path_signal = 0
+for step in trajectory:
+    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
+reward = normalize(outcome) + beta * normalize(path_signal)
+```
+
 > **실험 7-16 ★★★: RLVP—결과에 보상하고 경로에 페널티 부여하기 `[확장 실험]`**
 >
 > **실험 목표**: ‘결과 보상 + 검증 가능한 경로 신호’가 작업 성공률을 희생하지 않으면서 페널티를 통해 제약 위반을 줄이고 부분 보상을 통해 샘플 효율도 높일 수 있는지 확인합니다.
@@ -701,6 +750,16 @@ O는 원래의 **결과 보상**으로 희소하며 여전히 진짜 목표입�
 현재 도구 호출을 위한 에이전트 RL 연구에는 활발한 두 계열이 있습니다. 하나는 Search-R1(Jin et al., 2025)이 대표하는 **검색 증강**입니다. 고정된 RAG 파이프라인을 따르는 대신, 모델이 사고 과정에서 검색을 시작할 시점을 자율적으로 정하고 반환 결과를 사용해 계속 사고하도록 RL로 학습합니다. 다른 하나는 SWE-Gym 같은 학습 환경이 대표하는 **소프트웨어 엔지니어링**입니다. 실제 코드베이스에서 코딩 에이전트를 위한 다중 턴 RL을 지원해 모델이 반복해서 코드를 편집하고 실행하고 수정하게 합니다. 두 계열에는 긴 지평의 기여도 할당(수십 단계 전에 내린 결정에 최종 성공의 공로를 돌림)과 환경 엔지니어링(안정적이고 재현 가능하며 대규모 병렬 처리가 가능한 학습 환경 구축)이라는 같은 두 가지 과제가 있습니다.
 
 도구 RL에는 피할 수 없는 엔지니어링 세부 사항인 **환경 피드백 토큰의 손실 마스킹**도 있습니다. 도구 호출 궤적에는 모델 자체가 생성한 토큰(사고, 도구 호출 파라미터)과 환경이 반환한 토큰(코드 인터프리터 출력, 검색 결과, 고객 서비스 답변)이 함께 들어 있습니다. 후자는 정책이 생성한 것이 아니라 환경이 제공한 것입니다. 이를 정책 경사에 포함하면 모델이 ‘샌드박스가 무엇을 출력할지 예측’하도록 학습하게 되어 최적화 목표에서 벗어나고 학습이 불안정해집니다. 표준 방식은 손실을 계산할 때 환경 피드백 토큰을 마스킹하고 모델이 생성한 토큰에만 경사를 역전파하는 것입니다. 이는 `<interpreter>` 태그 안의 피드백 토큰 경사를 마스킹하는 ReTool의 핵심 기술 중 하나이며, Search-R1이 ‘학습 안정화를 위한 검색 토큰 마스킹’이라고 부르는 방식입니다. veRL과 AWorld 같은 주요 학습 프레임워크에는 이 메커니즘이 내장되어 있습니다.
+
+**trajectory 수준 보상 마스크:**
+
+```python
+for token in trajectory:
+    if token.source == ENVIRONMENT:
+        loss_mask[token] = 0
+    else:                                      # model thought / tool arguments
+        loss_mask[token] = 1
+```
 
 > **실험 7-14 ★★★: ReTool—코드 인터프리터로 강화한 수학 문제 해결**
 >
@@ -761,6 +820,17 @@ Thinking Machines Lab이 2025년에 체계화하고 널리 알린 온폴리시 �
 
 구체적으로 어떻게 채점할까요? 교사는 학생의 단계가 맞는지만 판단하지 않고 현재 위치의 다음 토큰에 관한 완전한 확률 분포를 제공합니다. 예를 들어 학생이 ‘먼저 API를 조회한 뒤 반환값을 파싱한다…’라고 쓰면, 교사는 이 위치에서 ‘조회’ 확률이 80%, ‘호출’이 15%, 다른 토큰이 나머지 5%여야 한다고 판단할 수 있습니다. 학생의 학습 목표는 각 위치에서 자신의 예측 분포를 교사의 분포에 최대한 가깝게 만드는 것입니다. 기술적으로는 두 분포 사이의 **KL 발산**을 최소화해 달성합니다. 7.7절에서 자세히 설명했듯 KL 발산은 두 확률 분포의 차이를 측정하며, 작을수록 분포가 가깝고 동일하면 0입니다. 최종 성공/실패라는 이진 신호와 비교하면 이 토큰 수준 분포 정렬은 10배 이상 조밀합니다.
 
+**온폴리시 증류:**
+
+```python
+student_trajectory = rollout(student, task)
+loss = 0
+for state in student_trajectory:
+    teacher_logits = teacher(state)
+    loss += KL(student_logits(state), teacher_logits)
+update_student(loss)
+```
+
 결과는 놀랍습니다. 수학 같은 작업에서 순수 RL의 성능에 도달하는 데 필요한 학습 단계가 약 **10분의 1**입니다. 긴 연쇄 사고에서 특히 큰 이점을 보입니다. 교사가 단계마다 길을 알려 주므로 학생은 잘못된 경로에서 더 멀리 표류하지 않고 오류를 빠르게 바로잡는 법을 익힙니다. 과적합도 완화합니다. 표준 RL은 같은 프롬프트에서 반복 학습하면 최종 답을 암기하는 경향이 있지만, 여기서는 궤적마다 다르고 교사 피드백도 해당 궤적에 맞춰지므로 학생은 특정 답이 아니라 일반적인 전략을 배웁니다. 데이터도 훨씬 더 많이 재사용할 수 있습니다.
 
 이 방식은 **다중 턴 에이전트 환경**에서 특히 가치가 큽니다. 성공/실패 신호가 맨 마지막에 나타나 희소할 뿐 아니라 지연되기 때문입니다. 토큰 수준의 교사 분포가 모든 중간 단계에 빠진 안내를 완벽히 채웁니다. 하지만 이 장의 주제와 맞닿는 전제 조건이 있습니다. **학생이 자유롭게 탐색할 수 있도록 충분히 현실적인 시뮬레이션 환경이 필요합니다.** 그렇지 않으면 학생이 교사도 본 적 없는 분포 밖 상태에 들어갔을 때 교사의 목표 분포도 신뢰할 수 없습니다. 온폴리시 학습의 가치는 ‘학생이 실제로 배포 분포를 탐색한다’는 전제 위에 세워집니다.
@@ -772,6 +842,18 @@ Thinking Machines Lab이 2025년에 체계화하고 널리 알린 온폴리시 �
 온폴리시 증류의 힘은 교사에서 나오지만, 그 때문에 **학생보다 분명히 강한 교사 모델이 있어야 한다**는 까다로운 전제 조건이 생깁니다. 많은 상황에서는 그렇지 않습니다. 학습하려는 모델이 특정 수직 도메인 모델이고 기존 모델의 역량이 모두 부족하다면 사용할 교사 모델이 없습니다. 더 강한 교사 없이 조밀한 신호의 이점을 누릴 수는 없을까요?
 
 기발한 해법은 **온폴리시 자기 증류(On-Policy Self-Distillation, OPSD)**[^ch7-15]입니다. **같은 모델에 교사와 학생 역할을 모두 맡기되 컨텍스트만 다르게 합니다.** 교사 버전은 문제의 모범 답안이나 검증된 정답 풀이 같은 ‘특권 정보’를 볼 수 있습니다. 문제를 실제로 ‘풀 줄’ 알 필요는 없습니다. 답을 들고 학생이 밟은 각 단계를 **사후 합리화**해 토큰별 목표 분포를 만들기만 하면 됩니다. 학생 버전은 문제 자체만 보고 자신이 샘플링한 궤적에서 교사 버전에 맞춥니다. 직관은 다음과 같습니다. ‘답을 손에 쥔 채 문제를 설명하기’는 ‘독립적으로 문제 풀기’보다 훨씬 쉽습니다. 이는 RLVR의 토대인 ‘검증-생성 비대칭’과 동형이지만, 여기서는 희소한 성공/실패 스칼라가 아니라 조밀한 지도 신호를 만드는 데 비대칭을 사용합니다.
+
+**온폴리시 자기 증류:**
+
+```python
+student_trajectory = rollout(model, task_without_answer)
+loss = 0
+for state in student_trajectory:
+    privileged_state = add_verified_answer(state)
+    teacher_logits = stop_gradient(model(privileged_state))
+    loss += KL(model(state), teacher_logits)
+update(model, loss + retention_regularizer)
+```
 
 OPSD에는 RLVR과 비교해 두 가지 핵심 장점이 있습니다. **첫째, 더는 검증 가능한 보상에 의존하지 않습니다.** RLVR은 자동 검증기를 전제로 하지만 OPSD의 특권 정보 출처는 훨씬 넓습니다. 모범 답안뿐 아니라 더 풍부한 시스템 프롬프트, 인간 시연, 도메인 문서 등 ‘사후에 모델이 올바른 행동을 명확히 설명하게’ 하는 것이면 무엇이든 사용할 수 있습니다. **둘째, 지도 신호가 RL보다 훨씬 조밀합니다.** RL은 궤적마다 스칼라 보상 하나를 주지만 OPSD는 궤적의 모든 위치에서 완전한 확률 분포를 제공하므로 토큰 효율이 RL 방식보다 현저히 높습니다. OPSD는 ‘더 강한 교사’를 ‘특권 정보’로 바꿨고, 이를 통해 샘플 효율 문제를 완화하는 현실적인 경로가 되었다고 할 수 있습니다.
 
@@ -899,94 +981,6 @@ SFT와 RL은 경쟁하는 선택지라기보다 자주 순차적으로 결합하
 [^ch7-20]: Hua, Zhanbo, et al. "CLI-Universe: Towards Verifiable Task Synthesis Engine for Terminal Agents", 2026. arXiv:2606.22883.
 
 이 장에서는 ‘어떻게 학습할 것인가’라는 파라미터 업데이트 질문에 답했습니다. 다음 장에서는 모델 파라미터를 완전한 에이전트 시스템 안에 다시 배치합니다. 파라미터는 지식, 지시, 프로그램과 함께 네 가지 업데이트 운반체 중 하나일 뿐입니다. 고유한 과제는 배포 궤적에서 신뢰할 만한 학습 신호를 도출하고, 올바른 업데이트 위치를 선택하고, 각 후보 버전의 검증·출시·롤백을 관리하는 것입니다. 구체적인 학습 알고리즘은 8장에서 반복하지 않고 이 장을 직접 참조합니다.
-
-## 메커니즘 skeleton
-
-다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
-
-### SFT 손실 마스크
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
-```
-
-### GRPO 그룹 업데이트
-
-```python
-for prompt in batch:
-    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
-    rewards = [verify(trajectory) for trajectory in group]
-    advantages = normalize_within_group(rewards)       # GRPO baseline
-    update(policy, group, advantages)
-```
-
-### PPO 클리핑 업데이트
-
-```python
-for trajectory in rollouts:
-    returns = discounted_returns(trajectory.rewards)
-    values = value_model(trajectory.states)
-    advantages = returns - stop_gradient(values)
-    ratio = exp(policy.log_prob(trajectory.actions)
-                - old_policy.log_prob(trajectory.actions))
-    policy_loss = -mean(min(
-        ratio * advantages,
-        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
-    ))
-    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
-update(policy, value_model, policy_loss + value_coef * value_loss)
-```
-
-### trajectory 수준 보상 마스크
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-### 결과 + 경로 신호
-
-```python
-outcome = verify_final_state(trajectory)              # result, not self-report
-path_signal = 0
-for step in trajectory:
-    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
-reward = normalize(outcome) + beta * normalize(path_signal)
-```
-
-### 온폴리시 증류
-
-```python
-student_trajectory = rollout(student, task)
-loss = 0
-for state in student_trajectory:
-    teacher_logits = teacher(state)
-    loss += KL(student_logits(state), teacher_logits)
-update_student(loss)
-```
-
-### 온폴리시 자기 증류
-
-```python
-student_trajectory = rollout(model, task_without_answer)
-loss = 0
-for state in student_trajectory:
-    privileged_state = add_verified_answer(state)
-    teacher_logits = stop_gradient(model(privileged_state))
-    loss += KL(model(state), teacher_logits)
-update(model, loss + retention_regularizer)
-```
-
-경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
 
 ## 생각해 볼 문제
 

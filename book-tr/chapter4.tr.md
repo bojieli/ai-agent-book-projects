@@ -245,6 +245,33 @@ Sidecar kalıbının bir başka tipik uygulaması **context zenginleştirmesidir
 
 Bir güvenlik Sidecar'ı ayrıca bir **ret circuit breaker'ına** ihtiyaç duyar: sınıflandırıcı işlem üstüne işlemi reddettiğinde, sistem sonsuza kadar yeniden denememeli—bu kaynakları israf eder ve kullanıcıyı bir döngüye hapsedebilir—bunun yerine kullanıcıdan elle karar vermesini istemeye geri dönmelidir. Bu, Bölüm 1'deki Harness "düzeltme" işlevinin tipik bir örneğidir.
 
+**Araç güvenlik kapısı:**
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
 **Otomatik Doğrulama ve Geri Bildirim Döngüsü.**
 
 Yürütme araçları için bir başka önemli tasarım ilkesi şudur: **bir işlemin sonucu doğrulanabiliyorsa, otomatik olarak doğrulanmalıdır.** Kod yazmayı örnek alırsak: bir Agent bir kod dosyası oluşturmak veya değiştirmek için `write_file`ı çağırdığında, araç yalnızca içeriği yazıp "başarılı" döndürmemelidir. Bunun yerine, yazdıktan hemen sonra bir sözdizimi kontrolü yapmalıdır: dosya türüne göre uygun linter'ı (statik kod analiz aracı) çağırmalı, çıktısını yapılandırılmış bir hata listesine ayrıştırmalı ve bunu aracın Agent'a dönüş değerinin bir parçası olarak döndürmelidir.
@@ -481,6 +508,23 @@ Sabit kodlanmış kuralların sınırlamaları vardır; olayın semantiği işle
 
 Aşağıdaki deney, olay güdümlü bir e-posta işleme Agent'ı, yukarıda tartışılan olay işleme stratejilerini çalıştırılabilir bir uygulamaya dönüştürür.
 
+**Olay döngüsü yönlendirmesi:**
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
 > **Deney 4-4 ★★★: Olay Güdümlü E-posta İşleme Agent'ı**
 >
 >
@@ -629,6 +673,20 @@ Geleneksel yaklaşım her aracın şemasını bir kerede system prompt'a enjekte
 
 **Hiyerarşik Eşleştirme ve Geri Dönüş.** Verimli eşleştirme, araçların organize edilme biçiminde zaten mevcut olan hiyerarşiden yararlanır. MCP gibi protokollerde, araçlar **sunucuya** göre gruplandırılır (bir telefondaki uygulamalar gibi, her biri ilgili işlevler kümesini paketler), bu yüzden eşleştirme iki katmanda çalışabilir: yetenek açıklamasına göre ilgili sunucuları bulun, ardından bunların içindeki belirli araçları eşleştirin. Bu, arama uzayını "binlerce araçtan" "düzinelerce sunucu × sunucu başına düzinelerce araca" küçültür, hesaplamadan tasarruf eder ve çapraz alan semantik karışıklığını azaltır. Mühendislik açısından bu, çevrimdışı inşa edilen ve artımlı olarak güncellenen bir embedding indeksine dayanır. Ve her iki katmanın adayları da eşiğin altında puan aldığında, sistem açık bir "bulunamadı" döndürmeli, Agent'ı yeniden ifade edip yeniden denemeye, temel araçlarla doğaçlama yapmaya veya doğrudan yeni bir araç yaratmaya (Bölüm 8'in konusu) yönlendirmelidir.
 
+**Proaktif araç keşfi:**
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
 ![Şekil 4-8: Dinamik Araç Yüklemesi için KV Cache Optimizasyonu](images/fig4-8.svg)
 
 **Dinamik Yükleme ve KV Cache.** Proaktif keşif, ince bir mühendislik maliyeti taşır: araçları dinamik olarak yüklemek **KV Cache'i bozar**—araç listesini system prompt'a koyun, yeni yüklenen her araç tüm önbelleğe alınmış ön eği geçersiz kılar. Düzeltme, Bölüm 2'nin Skill enjeksiyon konumu tartışmasıyla eşleşir: değişken kısmı (yeni aracın eksiksiz şeması) konuşmanın sonuna bir user mesajı olarak ekleyin, system prompt ön eğini kararlı ve KV Cache'i tamamen yeniden kullanılabilir tutarak, Agent'ın durum çubuğunda yalnızca kısa bir araç adları listesi tutun. Bu kalıp artık büyük API'ler tarafından yerleşik olarak desteklenir ve ana akım çerçevelerin varsayılan mimarisi haline gelmiştir: OpenAI Responses API bir `tool_search` aracı ve bir `defer_loading: true` bayrağı sağlar, yüklenen şemalar context'in sonuna `tool_search_output` öğeleri olarak eklenir, böylece ön ek cache isabet etmeye devam eder; Claude Code, MCP araçlarını varsayılan olarak erteler (ihtiyaç halinde `tool_reference` blokları aracılığıyla enjekte edilir, oturum başlangıcında yalnızca araç adları ve sunucu talimatları tutulur); ve Codex CLI'nin `tool_search`ü (BM25 retrieval) isteğe bağlı bir özellik değil, her zaman açık bir mimaridir. Dinamik bir araç ortamı ayrıca modelin kendisinden daha fazlasını talep eder—daha zayıf modeller context'in ortasındaki standart olmayan bir konumda görünen araç tanımlarıyla zorlanır ve biçimsiz çağrılar üretme eğilimindedir (uyumsuz JSON parantezleri, eksik parametreler), genellikle özel pekiştirmeli öğrenme eğitimi gerektirir (bkz. Bölüm 7).
@@ -689,70 +747,6 @@ Asenkron tarafta, OpenClaw'ın yerleşik otomasyon mekanizmaları (Hooks, Cron, 
 Altı deney, temellerden mimariye ilerler: Deney 4-1'den 4-3'e üç temel araç kümesini—algı, yürütme ve iş birliğini—inşa eder; Deney 4-4, bir e-posta işleme Agent'ıyla olay güdümlü işlemeyi tanıtır; Deney 4-5, paralel yürütmeyi, kesinti kurtarmayı ve durum yönetimini uygular; Deney 4-6, kütüphane ölçeğinde proaktif araç keşfinin değerini doğrular. Bu bölümün sınırı **mevcut araçları** tanımlamak, keşfetmek ve güvenli biçimde kullanmaktır. Bölüm 8 ise Agent'ın başarısızlıklardan ve tekrarlanan işlemlerden yola çıkarak ne zaman bir aracı yaratacağına, değiştireceğine, yeniden doğrulayacağına veya kullanımdan kaldıracağına nasıl karar verdiğini tartışır.
 
 Bir sonraki bölüm, "bir Agent araçları nasıl kullanır"dan daha temel bir soruyu sorar: bir Agent kod yazarak araçlar **yaratabilir mi**? Bir Kodlama Agent'ı artı bir dosya sistemi, her genel amaçlı Agent'ın temel dayanağıdır ve Bölüm 8'deki kontrollü sistem öz-değişikliği tartışması için gereken yürütme yeteneğini de sağlar.
-
-## Mekanizma skeleton'ları
-
-Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
-
-### Araç güvenlik kapısı
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
-### Olay döngüsü yönlendirmesi
-
-```python
-while runtime.is_alive:
-    events = queue.take_batch()
-
-    if any(is_urgent(event) for event in events):
-        cancel_at_safe_point(current_work)
-    elif has_independent_fast_query(events):
-        start_parallel_session(events)
-    else:
-        append_to_trajectory(events)
-
-    decision = LLM(context + trajectory)
-    dispatch(decision)
-```
-
-### Proaktif araç keşfi
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
-
-Sınırı açık tutun: gözlemler ve kanıt ortamdan gelir, Harness ise hangi eylemin yürütülebileceğine karar verir.
 
 ## Düşünce Soruları
 
