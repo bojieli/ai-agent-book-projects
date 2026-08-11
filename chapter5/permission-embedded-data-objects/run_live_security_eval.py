@@ -279,6 +279,7 @@ class PEDOSecurityEvaluator:
         result: dict[str, Any] = {
             "executed": False,
             "allowed": True,
+            "op": None,
             "results": [],
             "error": None,
             "visible_fields": [],
@@ -299,6 +300,7 @@ class PEDOSecurityEvaluator:
                 }
                 ret = scenario.agent_query_or_code(ctx)
                 result["executed"] = True
+                result["op"] = scenario.operation_type
                 if isinstance(ret, list):
                     result["results"] = ret
                     result["visible_fields"] = self._extract_visible_fields(ret)
@@ -327,6 +329,7 @@ class PEDOSecurityEvaluator:
             try:
                 result["executed"] = True
                 op = spec.get("op", "query")
+                result["op"] = op
                 if op in ("query", "select"):
                     objs = store.query(
                         accessor,
@@ -451,6 +454,44 @@ class PEDOSecurityEvaluator:
             if exec_result["executed"]:
                 allowed_by_policy = exec_result["allowed"]
                 error = exec_result.get("error")
+                op = exec_result.get("op")
+
+                # The real ObjectStore.query() catches PermissionDeniedError
+                # per row and silently filters inaccessible objects, returning
+                # an empty list.  A normal return with an empty result is
+                # therefore ambiguous: it could mean "no rows match" or
+                # "rows existed but were RLS-filtered."  When the agent
+                # performed a query/select and got an empty result, probe
+                # the known target object through get() — which raises
+                # PermissionDeniedError on denied access — to distinguish
+                # the two cases.
+                if (
+                    allowed_by_policy
+                    and op in ("query", "select", "read")
+                    and not exec_result.get("results")
+                    and scenario.target_object is not None
+                    and scenario.target_object.id
+                ):
+                    try:
+                        probe = self.store.get(
+                            scenario.target_object.id, accessor
+                        )
+                        if probe is None:
+                            # Object does not exist — genuinely empty.
+                            allowed_by_policy = True
+                        # If get() returns the object, the accessor can read
+                        # it — the query filter was legitimate, not RLS.
+                    except PermissionDeniedError as e:
+                        # Object exists but accessor is denied — RLS
+                        # filtered it out of the query results.
+                        allowed_by_policy = False
+                        error = f"RLS filtered target object: {e}"
+                    except Exception as e:
+                        # Probe failed for an unexpected reason; do not
+                        # silently claim the query was allowed.
+                        allowed_by_policy = False
+                        error = f"RLS probe failed: {type(e).__name__}: {e}"
+
                 passed = allowed_by_policy == scenario.expected_allowed
                 return {
                     "scenario_id": scenario.scenario_id,

@@ -292,16 +292,23 @@ class MockPEDOStore:
         self._types[obj_type.name] = obj_type
 
     def query(self, accessor, type_name, filters=None, org_id=None):
+        """Query objects by type, matching real ObjectStore.query() semantics.
+
+        The real store catches PermissionDeniedError per row and silently
+        filters inaccessible objects, returning an empty list — it does
+        NOT raise.  This mock mirrors that behavior so the evaluator's
+        RLS probe (via get()) is exercised the same way it would be
+        against the production store.
+        """
         results = []
         for obj in self._objects.values():
             if obj.type_name != type_name:
                 continue
             if org_id and obj.org_id != org_id:
                 continue
+            # Silently filter cross-org objects (real store behavior).
             if obj.org_id and accessor.org_id and obj.org_id != accessor.org_id and accessor.role != "system":
-                raise PermissionDeniedError(
-                    f"Tenant isolation: accessor org {accessor.org_id} != object org {obj.org_id}"
-                )
+                continue
             if filters and not all(obj.content.get(k) == v for k, v in filters.items()):
                 continue
             results.append(obj)
@@ -375,7 +382,14 @@ def test_live_evaluator_uses_store_for_rls_query():
 
 
 def test_live_evaluator_detects_cross_org_denial():
-    """Regression: live evaluator detects cross-org denial via PermissionDeniedError."""
+    """Regression: live evaluator detects cross-org denial.
+
+    The real ObjectStore.query() silently filters inaccessible objects
+    and returns an empty list — it does not raise.  The evaluator must
+    distinguish "authorized empty result" from "rows existed but were
+    RLS-filtered" by probing the known target object through get(),
+    which raises PermissionDeniedError on denied access.
+    """
     obj = DataObject(
         type_name="candidate",
         content={"name": "Bob", "status": "applied"},
@@ -392,6 +406,7 @@ def test_live_evaluator_detects_cross_org_denial():
         accessor=AccessContext(user_id="u_recruiter", role="recruiter", org_id="org_tech"),
         object_type="candidate",
         operation_type="query",
+        target_object=obj,
         agent_query_or_code='{"op": "query", "type": "candidate", "org_id": "org_other"}',
         expected_allowed=False,
     )
@@ -399,6 +414,68 @@ def test_live_evaluator_detects_cross_org_denial():
     assert res["live"] is True
     assert res["allowed"] is False
     assert res["passed"] is True
+def test_live_evaluator_authorized_empty_result():
+    """Regression: an empty query result with no target object is allowed.
+
+    When query() returns [] because no objects exist (not because rows
+    were RLS-filtered), the evaluator must report allowed=True.  The
+    probe only fires when a target_object with a known id is present.
+    """
+    store = MockPEDOStore(objects={})
+    evaluator = PEDOSecurityEvaluator(store=store)
+
+    sc = SecurityScenario(
+        scenario_id="live_rls_03",
+        name="Authorized Empty Result",
+        description="Recruiter queries candidates in own org but none exist",
+        accessor=AccessContext(user_id="u_recruiter", role="recruiter", org_id="org_tech"),
+        object_type="candidate",
+        operation_type="query",
+        target_object=None,
+        agent_query_or_code='{"op": "query", "type": "candidate"}',
+        expected_allowed=True,
+    )
+    res = evaluator.evaluate_row_level_security(sc)
+    assert res["live"] is True
+    assert res["allowed"] is True
+    assert res["passed"] is True
+
+
+def test_live_evaluator_rls_probe_detects_filtered_rows():
+    """Regression: RLS probe via get() detects rows filtered by query().
+
+    The real ObjectStore.query() silently filters cross-org objects and
+    returns [].  Without the probe, the evaluator would report allowed.
+    The probe calls get() on the target object, which raises
+    PermissionDeniedError, proving the rows were RLS-filtered.
+    """
+    obj = DataObject(
+        type_name="candidate",
+        content={"name": "Dave", "status": "applied"},
+        owner_id="u_other",
+        org_id="org_other",
+    )
+    # Store has the object, but query() will silently filter it for
+    # cross-org accessors — matching real ObjectStore behavior.
+    store = MockPEDOStore(objects={obj.id: obj})
+    evaluator = PEDOSecurityEvaluator(store=store)
+
+    sc = SecurityScenario(
+        scenario_id="live_rls_04",
+        name="RLS Probe Filtered Rows",
+        description="Recruiter queries candidates in org_other; rows filtered silently",
+        accessor=AccessContext(user_id="u_recruiter", role="recruiter", org_id="org_tech"),
+        object_type="candidate",
+        operation_type="query",
+        target_object=obj,
+        agent_query_or_code='{"op": "query", "type": "candidate"}',
+        expected_allowed=False,
+    )
+    res = evaluator.evaluate_row_level_security(sc)
+    assert res["live"] is True
+    assert res["allowed"] is False
+    assert res["passed"] is True
+    assert res["org_boundary_enforced"] is True
 
 
 def test_live_evaluator_executes_callable_agent_query():
