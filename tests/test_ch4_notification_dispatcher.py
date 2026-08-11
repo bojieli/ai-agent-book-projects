@@ -732,3 +732,38 @@ async def test_concurrent_duplicate_request_id_same_decision():
     assert request_id not in dispatcher._pending_requests
     assert request_id not in dispatcher._decision_events
     assert request_id not in dispatcher._waiter_counts
+@pytest.mark.asyncio
+async def test_initial_dispatch_timeout_does_not_block_hitl_timeout():
+    """Regression: a slow initial dispatch must not prevent the HITL timeout.
+
+    The initial dispatch_all() is bounded by the same deadline as the
+    HITL wait.  A slow or hung channel that exceeds the timeout must
+    trigger the fallback, not block indefinitely.  This is analogous to
+    the escalation-dispatch timeout test but for the initial
+    notification path.
+    """
+    dispatcher = NotificationDispatcher(
+        fallback_action="auto-reject", use_mock_channels=True
+    )
+
+    async def slow_handler(msg, ctx):
+        await asyncio.sleep(10)
+        return {"sent": True}
+
+    dispatcher.register_channel_handler("slow_init", slow_handler)
+    request = DecisionRequest(
+        message="Initial dispatch timeout test",
+        channels=["slow_init"],
+        fallback_action="auto-reject",
+    )
+
+    # timeout=0.05 means the initial dispatch must be bounded to 0.05s.
+    # Without the fix, the slow handler blocks for 10s and the fallback
+    # never runs.  Total must be well under 5s.
+    trace = await asyncio.wait_for(
+        dispatcher.dispatch_and_wait(request, timeout=0.05),
+        timeout=5.0,
+    )
+    assert trace.fallback_triggered is True
+    assert trace.status == "auto-rejected"
+    assert trace.approved is False

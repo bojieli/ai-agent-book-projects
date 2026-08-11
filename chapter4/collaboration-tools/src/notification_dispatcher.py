@@ -506,8 +506,26 @@ class NotificationDispatcher:
             # Track this waiter so cleanup does not remove the event while
             # other waiters on the same request_id are still blocked.
             self._waiter_counts[request_id] = self._waiter_counts.get(request_id, 0) + 1
-            # Dispatch across multi-channels
-            channel_results = await self.dispatch_all(channels, req_obj.message, req_obj.context)
+            # Dispatch across multi-channels.  The initial dispatch is
+            # bounded by the same deadline as the HITL wait so a slow or
+            # hung channel cannot prevent the timeout fallback from
+            # running.  The remaining time after dispatch is used for the
+            # decision wait, making the timeout end-to-end from start.
+            dispatch_deadline = wait_timeout
+            try:
+                if dispatch_deadline > 0:
+                    channel_results = await asyncio.wait_for(
+                        self.dispatch_all(channels, req_obj.message, req_obj.context),
+                        timeout=dispatch_deadline,
+                    )
+                else:
+                    channel_results = await self.dispatch_all(channels, req_obj.message, req_obj.context)
+            except asyncio.TimeoutError:
+                logger.warning(
+                    f"Initial dispatch for request '{request_id}' "
+                    f"timed out after {dispatch_deadline}s; applying fallback."
+                )
+                channel_results = []
             trace_events.append(
                 {
                     "event": "dispatched",
@@ -516,17 +534,21 @@ class NotificationDispatcher:
                 }
             )
 
+            # Remaining time for the decision wait after dispatch.
+            elapsed = (datetime.now(timezone.utc) - start_time).total_seconds()
+            remaining_timeout = max(0.0, wait_timeout - elapsed)
+
             trace_events.append(
                 {
                     "event": "waiting_decision",
-                    "timeout": wait_timeout,
+                    "timeout": remaining_timeout,
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                 }
             )
 
             try:
-                if wait_timeout > 0:
-                    await asyncio.wait_for(event.wait(), timeout=wait_timeout)
+                if remaining_timeout > 0:
+                    await asyncio.wait_for(event.wait(), timeout=remaining_timeout)
             except asyncio.TimeoutError:
                 pass
 
