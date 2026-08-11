@@ -372,7 +372,7 @@ class CodingAgent:
                 
                 try:
                     tool_input = json.loads(tool_call["arguments"])
-                except:
+                except (json.JSONDecodeError, TypeError):
                     tool_input = {}
                 
                 yield {
