@@ -441,13 +441,13 @@ Important: When you have gathered all necessary information and computed the fin
                 "type": "function",
                 "function": {
                     "name": "parse_pdf",
-                    "description": "Download and parse a PDF document from a URL to extract text content",
+                    "description": "Download and parse a PDF document from a URL or a file path to extract text content",
                     "parameters": {
                         "type": "object",
                         "properties": {
                             "url": {
                                 "type": "string",
-                                "description": "The URL of the PDF document to parse"
+                                "description": "The URL or file path of the PDF document to parse"
                             }
                         },
                         "required": ["url"]
