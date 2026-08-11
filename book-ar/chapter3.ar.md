@@ -40,6 +40,21 @@ Extracted memories:
 - User has travel plans to Tokyo (recent activity)
 ```
 
+**دورة حياة الذاكرة:**
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
 لاحظ عدة خصائص أساسية لعملية الاستخراج هذه:
 
 **الانتقائية** — لا يتذكر الوكيل معلومات عابرة مثل «أعاد البحث ثلاثة خيارات»، بل يحتفظ فقط بالحقائق التي قد تفيد مستقبلًا.
@@ -126,51 +141,74 @@ Extracted memories:
 
 في المثال المبسّط الآتي، تمثل مرحلة الهيكلة جواز سفر المستخدم ورحلاته في حالة محددة النوع:
 
-```python
-from datetime import date
+**سجل الإضافة فقط ونقطة التحقق:**
 
-passport = PassportInfo(
-    number="AB1234567", country="US",
-    expiry_date=date(2025, 2, 18),
-)
-trips = [
-    Trip(destination="Tokyo", departure_date=date(2025, 1, 15),
-         is_international=True),
-    # ... remaining trips
-]
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+**حالة مستخدم مهيكلة النوع:**
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
 ```
 
 وبعد تمثيل الحالة بهذه الصورة، تتحول ثلاث مهام كانت تتطلب من النموذج قراءة النص والحساب ذهنيًا إلى عمليات حتمية تنفذها الشفرة:
 
 أولاً، **التجميع الإحصائي**. في سؤال «كم مرة سافرت إلى الخارج عام 2025؟»، تحتاج الذاكرة النصية إلى استرجاع كل الرحلات وعدّها واحدة واحدة، فتزداد احتمالات الخطأ مع كثرة السجلات. أما في نهج المستخدم بوصفه شفرة، فتكفي عبارة واحدة وتقترب الدقة من 100%[^uac]:
 
+**تجميع حتمي:**
+
 ```python
->>> sum(1 for t in trips if t.is_international and t.departure_date.year == 2025)
-2
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
 ```
 
 ثانيا، **كشف الصراع**. من خلال وضع "الأدوية الحالية" و"تاريخ الحساسية" جنبًا إلى جنب، يمكن لوظيفة واحدة أن ترجعها حسب فئة الدواء، وتكشف عن التناقضات المنتشرة عبر المحادثات المختلفة التي سيكون من المستحيل تقريبًا ربطها تلقائيًا في نموذج نصي:
 
+**اكتشاف التعارضات:**
+
 ```python
 def check_drug_allergy(profile):
-    for med in profile.current_medications:
+    for medication in profile.current_medications:
         for allergy in profile.allergies:
-            if med.drug_class == allergy.drug_class:
-                yield (f"Medication conflict: {med.name} belongs to {med.drug_class} class, "
-                       f"but the patient is severely allergic to {allergy.allergen}")
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
 ```
 
 ثالثًا، **فرض القيود**. يمكن للوكيل تدوين وظائف الفحص هذه وتشغيلها تلقائيًا في كل مرة يتم فيها تحديث الحالة - دون أن يحتاج المستخدم إلى التحدث أو يحتاج الوكيل إلى استرداد أي شيء. على سبيل المثال، قيد صلاحية جواز السفر: تنبيه إذا انتهت صلاحية جواز السفر بعد أقل من 180 يومًا من تاريخ مغادرة رحلة دولية.
 
+**فرض القيود:**
+
 ```python
 def check():
-    for trip in trips:
+    for trip in state.trips:
         if trip.is_international:
-            days = (passport.expiry_date - trip.departure_date).days
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
             if days < 180:
-                yield (f"Passport expires on {passport.expiry_date}, only {days} days "
-                       f"between the {trip.destination} departure and passport expiry. "
-                       f"Please renew as soon as possible.")
+                alert("passport expires too soon", trip, days)
 ```
 
 [^uac]: يمكن العثور على التصميم والتقييم الكاملين لبناء ذاكرة المستخدم كمشروع تعليمات برمجية قابل للتنفيذ في Li, Bojie. *المستخدم كرمز: الذاكرة القابلة للتنفيذ للوكلاء المخصصين.* arXiv:2606.16707, 2026.
@@ -292,6 +330,22 @@ answer = llm.generate(system="You are a customer service assistant.", context=re
 النمط متطابق في كلا المثالين: **استرداد الأجزاء ذات الصلة → إدخالها في السياق → يقوم LLM بإنشاء إجابة بناءً على السياق**. القيمة الأساسية لـ RAG هي تمكين LLM من استخدام المعرفة التي لم ترها أثناء التدريب (أحدث محتوى Wikipedia، المستندات الداخلية للشركة) دون الحاجة إلى إعادة تدريب النموذج.
 
 تحدد جودة المسترد بشكل مباشر فعالية RAG - إذا لم يتمكن من استرداد الأجزاء ذات الصلة، فحتى أقوى LLM ليس لديه ما يمكن التعامل معه. يبدأ هذا القسم بالخطوة الأولى لإدخال المستندات في قاعدة المعرفة - التقطيع - ثم ينتقل إلى طريقتي الاسترجاع الرئيسيتين، التضمينات الكثيفة (الفهم الدلالي) والتضمينات المتفرقة (مطابقة الكلمات الرئيسية)، وكيفية الجمع بينهما.
+
+**خط أنابيب RAG هجين:**
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
 
 ![الشكل 3-5: RAG تدفق الاستعلام: الاسترجاع والتعزيز والإنشاء](images/fig3-5.svg)
 
@@ -700,105 +754,6 @@ viking://
 أما **تحديث المعرفة** فيحتاج إلى إيقاعين معًا: يستوعب التحديث الإضافي الأدلة الجديدة بسرعة، بينما تعود إعادة التنظيم الدورية إلى المعرفة والبيانات الأصلية كاملةً لإزالة التكرار والقديم، والدمج وإعادة الهيكلة، وفحص الإغفالات، وتحديد نطاقات الانطباق. وسواء مُثلت المعرفة في Markdown أو Python، ينبغي أن يقدم وكيل Proposer فرقًا مستندًا إلى الأدلة الخام، وأن يراجعه بصورة مستقلة وكيل Reviewer من عائلة نموذج مختلفة؛ ولا يُدمج طلب السحب وتُعاد الفهارس المشتقة إلا بعد الموافقة.
 
 يتناول هذا الفصل والفصل السابق مشكلة "السياق" - أحدهما خلال جلسة واحدة والآخر عبر جلسات متعددة. يتحول الفصل التالي إلى "الأدوات": كيفية تفاعل الوكلاء مع العالم الخارجي من خلال الأدوات، بما في ذلك تصميم الأدوات، ومعيار قابلية التشغيل البيني MCP، والهندسة المعمارية المستندة إلى الأحداث.
-
-## هياكل الآليات
-
-تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
-
-### دورة حياة الذاكرة
-
-```python
-when answering(user_request):
-    recent_turns = conversation.tail()
-    relevant_memory = memory.search(user_request)
-    answer = LLM(recent_turns + relevant_memory)
-    return answer
-
-after conversation (background job):
-    candidates = extract_memory_candidates(conversation)
-    verified = verify_against_sources_and_policy(candidates, conversation)
-    memory.append_or_update(verified)
-```
-
-### سجل الإضافة فقط ونقطة التحقق
-
-```python
-append_only_log += extract_facts(conversation)
-
-if checkpoint_due():
-    proposed_state = rebuild_typed_state(append_only_log)
-    if type_check(proposed_state) and source_review(proposed_state):
-        publish_checkpoint(proposed_state)
-    else:
-        keep_previous_checkpoint()
-```
-
-### حالة مستخدم مهيكلة النوع
-
-```python
-state = {
-    passport: PassportInfo(
-        number = "AB1234567",
-        country = "US",
-        expiry_date = date(2025, 2, 18),
-    ),
-    trips: [
-        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
-             is_international = true),
-        ...
-    ],
-}
-```
-
-### تجميع حتمي
-
-```python
-count(
-    trip for trip in state.trips
-    if trip.is_international and year(trip.departure_date) == 2025
-)
-# => 2
-```
-
-### اكتشاف التعارضات
-
-```python
-def check_drug_allergy(profile):
-    for medication in profile.current_medications:
-        for allergy in profile.allergies:
-            if medication.drug_class == allergy.drug_class:
-                emit_conflict(medication, allergy)
-```
-
-### فرض القيود
-
-```python
-def check():
-    for trip in state.trips:
-        if trip.is_international:
-            days = date_difference(state.passport.expiry_date,
-                                   trip.departure_date)
-            if days < 180:
-                alert("passport expires too soon", trip, days)
-```
-
-### خط أنابيب RAG هجين
-
-```python
-offline:
-    chunks = split_documents(documents)
-    dense_index = build_dense_index(chunks)
-    sparse_index = build_sparse_index(chunks)
-
-online(query):
-    dense_hits = dense_search(dense_index, query)
-    sparse_hits = sparse_search(sparse_index, query)
-    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
-    evidence = rerank(query, candidates)
-    return LLM(query + evidence)
-```
-
-حافظ على الحد واضحًا: تأتي الملاحظات والأدلة من البيئة، بينما يقرر Harness ما يُسمح بتنفيذه.
 
 ## أسئلة للتأمل
 

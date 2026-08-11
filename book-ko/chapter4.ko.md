@@ -240,6 +240,33 @@ Pi Coding Agent는 이 아이디어를 더 과감한 아키텍처 절충으로 �
 
 보안 사이드카에는 **거부 회로 차단기**도 필요합니다. 분류기가 작업을 연달아 거부하면 무한히 다시 시도해서는 안 됩니다. 자원을 낭비하고 사용자를 반복 루프에 가둘 수 있기 때문입니다. 대신 사용자에게 직접 판단을 요청하는 방식으로 폴백해야 합니다. 이는 1장의 하네스 “교정” 기능을 적용한 전형적인 사례입니다.
 
+**도구 안전 게이트:**
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
 **자동 검증과 피드백 루프.**
 
 실행 도구의 또 다른 중요한 설계 원칙은 **작업 결과를 검증할 수 있다면 자동으로 검증해야 한다**는 것입니다. 코드 쓰기를 예로 들면 에이전트가 `write_file`로 코드 파일을 생성하거나 수정했을 때 도구는 콘텐츠를 쓴 뒤 “성공”이라고만 반환해서는 안 됩니다. 파일 유형에 맞는 linter(정적 코드 분석 도구)를 호출하여 곧바로 구문을 검사하고, 출력을 구조화된 오류 목록으로 파싱하여 도구 반환값에 포함해야 합니다.
@@ -476,6 +503,23 @@ OpenClaw의 세션은 사용자에게 투명합니다. 전용 도구를 통해 �
 
 다음 실험에서는 지금까지 설명한 이벤트 처리 전략을 실행 가능한 이벤트 기반 이메일 처리 에이전트로 구현합니다.
 
+**이벤트 루프 라우팅:**
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
 > **실험 4-4 ★★★: 이벤트 기반 이메일 처리 에이전트**
 >
 >
@@ -624,6 +668,20 @@ OpenClaw의 세션은 사용자에게 투명합니다. 전용 도구를 통해 �
 
 **계층형 매칭과 폴백.** 효율적인 매칭은 도구가 이미 계층적으로 구성되어 있다는 점을 활용합니다. MCP 같은 프로토콜에서 도구는 휴대전화의 앱처럼 관련 기능을 하나로 묶은 **서버** 단위로 그룹화됩니다. 따라서 먼저 기능 설명으로 관련 서버를 찾고, 그 서버 안에서 구체적인 도구를 매칭하는 두 단계 검색을 수행할 수 있습니다. 검색 공간이 “수천 개 도구”에서 “수십 개 서버 × 서버마다 수십 개 도구”로 줄어들어 연산량을 아끼고 도메인 간 의미 혼동도 줄입니다. 실무에서는 오프라인에서 만든 뒤 점진적으로 갱신하는 임베딩 인덱스를 기반으로 합니다. 두 단계 모두에서 후보 점수가 임계값보다 낮으면 시스템은 명시적인 “찾을 수 없음”을 반환해야 합니다. 그러면 에이전트는 요청을 다르게 표현해 다시 시도하거나, 기본 도구로 직접 구현하거나, 아예 새 도구를 만들 수 있습니다. 도구 생성은 8장의 주제입니다.
 
+**능동적 도구 탐색:**
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
 ![그림 4-8 동적 도구 로딩을 위한 KV Cache 최적화](images/fig4-8.svg)
 
 **동적 로딩과 KV Cache.** 능동적 발견에는 미묘한 공학적 비용이 있습니다. 도구를 동적으로 불러오면 **KV Cache가 무효화됩니다**. 모든 도구 정의를 정적 접두부에 넣으면 새 도구 하나를 불러올 때마다 캐시 전체가 무효화됩니다. 해결책은 2장에서 설명한 스킬 주입 위치와 같습니다. 바뀌는 부분인 새 도구의 전체 스키마를 컨텍스트 끝에 추가해 정적 접두부와 KV Cache를 완전히 재사용하고, 에이전트 상태 표시줄에는 간단한 도구 이름 목록만 유지합니다. 이제 주요 API가 이 패턴을 기본으로 지원하며 주류 프레임워크의 표준 아키텍처로 자리 잡았습니다. OpenAI Responses API는 `tool_search` 도구와 `defer_loading: true` 플래그를 제공합니다. 불러온 스키마를 `tool_search_output` 항목으로 컨텍스트 끝에 추가해 접두부 캐시가 계속 적중하도록 합니다. Claude Code는 MCP 도구를 기본적으로 지연 로딩합니다. 세션 시작 시에는 도구 이름과 서버 지시만 두고 `tool_reference` 블록으로 필요할 때 주입합니다. Codex CLI의 `tool_search`는 BM25 검색을 사용하는 상시 활성화 아키텍처이며 선택 기능이 아닙니다. 동적 도구 환경은 모델 자체에도 더 많은 능력을 요구합니다. 성능이 낮은 모델은 도구 정의가 컨텍스트 중간의 낯선 위치에 등장하면 이해하기 어렵고, JSON 괄호 불일치나 매개변수 누락 같은 잘못된 호출을 만드는 경향이 있어 전용 강화 학습 훈련이 필요한 경우가 많습니다. 자세한 내용은 7장을 참고하세요.
@@ -684,70 +742,6 @@ OpenClaw의 세션은 사용자에게 투명합니다. 전용 도구를 통해 �
 여섯 가지 실험은 기초에서 아키텍처로 차근차근 나아갑니다. 실험 4-1부터 4-3까지는 인식·실행·협업이라는 세 가지 기본 도구 집합을 만듭니다. 실험 4-4는 이메일 처리 에이전트로 이벤트 기반 처리를 도입합니다. 실험 4-5는 병렬 실행, 중단 복구, 상태 관리를 구현합니다. 실험 4-6은 대규모 도구 라이브러리에서 능동적 도구 발견의 가치를 검증합니다. 이 장의 범위는 **기존 도구**를 설명하고 발견하며 안전하게 사용하는 것까지입니다. 8장에서는 에이전트가 실패와 반복 작업을 근거로 언제 도구를 만들고 수정하며 재검증하거나 폐기할지 판단하는 방법을 다룹니다.
 
 다음 장에서는 “에이전트가 도구를 어떻게 사용하는가?”보다 더 근본적인 질문을 던집니다. 에이전트가 코드를 작성해 도구를 **만들 수 있을까요?** 코딩 에이전트와 파일 시스템의 조합은 모든 범용 에이전트의 핵심 토대이며, 8장에서 다룰 통제된 시스템 자기 수정에 필요한 실행 능력도 제공합니다.
-
-## 메커니즘 skeleton
-
-다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
-
-### 도구 안전 게이트
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
-### 이벤트 루프 라우팅
-
-```python
-while runtime.is_alive:
-    events = queue.take_batch()
-
-    if any(is_urgent(event) for event in events):
-        cancel_at_safe_point(current_work)
-    elif has_independent_fast_query(events):
-        start_parallel_session(events)
-    else:
-        append_to_trajectory(events)
-
-    decision = LLM(context + trajectory)
-    dispatch(decision)
-```
-
-### 능동적 도구 탐색
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
-
-경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
 
 ## 생각해 볼 문제
 

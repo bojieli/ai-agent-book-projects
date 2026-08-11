@@ -109,6 +109,17 @@ $$
 
 **بروتوكول التفاعل**: يحدد وضع التفاعل وشروط الإنهاء.
 
+**حلقة تقييم قابلة للتكرار:**
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
 ![الشكل 6-2: بيئات تقييم استدعاء الأدوات والتفاعل بين الإنسان والحاسوب](images/fig6-2.svg)
 
 ### بيئة تقييم استدعاء الأدوات
@@ -367,6 +378,17 @@ rubric:
 
 **قواعد التقييم الجيدة مقابل قواعد التقييم السيئة**: يحدد كل مستوى من مستويات الدرجات أعلاه سلوكًا ملموسًا يمكن التحقق منه ("يجيب بشكل صحيح على دكتور تشين") بدلاً من الأوصاف التي لا يمكن الحكم عليها بشكل موضوعي، مثل "يُظهر فهمًا عميقًا للذاكرة". يحدد عنصر النقض النتيجة النهائية: حتى لو حصل كل بُعد آخر على علامات كاملة، فإن حالة واحدة من الهلوسة تؤدي إلى صفر تلقائي.
 
+**veto حتمي قبل التحكيم وفق rubric:**
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
 قدّم إلى نموذج التحكيم كلاً من نموذج التقييم وإجابة الوكيل، ليمنح كل بُعد درجة ويشرح سببها. وعند تجميع نتائج عشرات الحالات بحسب الأبعاد وإعادة تشغيل المسارات منخفضة الدرجات، يتحول الوصف العام «انخفض معدل النجاح» إلى تشخيص محدد: هل أخفق الاسترجاع في جلب حقيقة، أم ربط النموذج الأشخاص أو الأحداث على نحو خاطئ، أم أضاف ادعاءً بلا سند؟ نموذج التقييم الجيد لا يخبر الفريق بالدرجة فحسب، بل يحدد أيضًا أين يبدأ التحقيق التالي.
 
 > **التجربة 6-3 ★★: إنشاء نظام لتقييم ذاكرة المستخدم قائم على القواعد**
@@ -610,6 +632,18 @@ rubric:
 
 تعتمد القرارات المبنية على التقييم على بيانات عالية الجودة، والتي تأتي من التسجيل المنهجي للعملية التشغيلية للوكيل - وهذا ما تعالجه إمكانية الملاحظة.
 
+**مقارنة مزدوجة:**
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
 ## إمكانية ملاحظة الوكيل
 
 تعتمد القرارات المبنية على التقييم (سواء المتعلقة باختيار النموذج أو التكرار المستمر) على بيانات تشغيلية عالية الجودة. أدناه، نقدم أولاً كيفية جمع هذه البيانات بشكل منهجي (قابلية الملاحظة)، ثم نناقش كيفية ترجمة نتائج التقييم إلى تحسينات في النظام.
@@ -786,46 +820,6 @@ rubric:
 من منظور هندسة منظومة التشغيل المقدمة في الفصل الأول، فإن منهجية التقييم في هذا الفصل هي التنفيذ المنهجي لوظيفة "التحقق من صحة" منظومة التشغيل، في حين أن الحلقة المغلقة "من التقرير المعياري إلى تحسين النظام" هي الآلية الأساسية لتحسين منظومة التشغيل التكراري. يجيب هذا الفصل على "كيفية القياس بشكل موثوق"؛ وبناءً عليه، يجيب الفصل الثامن على "كيفية تحويل تقييمات المسار متعددة الأبعاد إلى تحديثات نظام قابلة للتنفيذ وقابلة للعكس".
 
 إن نظام التقييم المنشأ هنا لا يدعم تحسين النظام الحالي فحسب، بل يوفر أيضًا أساسًا حاسمًا للفصلين التاليين. يحول الفصل السابع بيئات التقييم وبياناته إلى مدخلات لنموذج ما بعد التدريب، باستخدام SFT وRL لكتابة سياسات التفاعل إلى معلمات. يحول الفصل الثامن التقييمات متعددة الأبعاد لمسارات الإنتاج إلى تحديثات مرشحة للمعرفة أو التعليمات أو البرامج أو المعلمات.
-
-## هياكل الآليات
-
-تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
-
-### حلقة تقييم قابلة للتكرار
-
-```python
-for task in dataset:
-    environment.reset(task.initial_state)
-    trajectory = agent.run(task.prompt, environment.tools)
-    outcome = environment.snapshot()
-    score = verifier(task, trajectory, outcome)
-    record(task, trajectory, outcome, score)
-```
-
-### veto حتمي قبل التحكيم وفق rubric
-
-```python
-deterministic = verify_state_policy_and_claims(trajectory, outcome)
-if deterministic.veto:
-    return FAIL(reason = deterministic.evidence)
-
-rubric_result = judge(answer, rubric, evidence)
-return aggregate_with_confidence(rubric_result)
-```
-
-### مقارنة مزدوجة
-
-```python
-for task in paired_tasks:
-    for seed in fixed_seeds:
-        a = run(config_a, task, seed)
-        b = run(config_b, task, seed)
-        record_paired_delta(verifier(a), verifier(b))
-
-return paired_bootstrap_or_mcnemar(all_deltas)
-```
-
-حافظ على الحد واضحًا: تأتي الملاحظات والأدلة من البيئة، بينما يقرر Harness ما يُسمح بتنفيذه.
 
 ## أسئلة للتأمل
 

@@ -109,6 +109,17 @@ Agent の評価には、繰り返し実行できる自動化された環境が�
 
 **実行プロトコル（Interaction Protocol）** はインタラクションのモードと終了条件を規定します。
 
+**再現可能な評価ループ:**
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
 ![図6-2 ツール呼び出し型と人間・機械インタラクション型の評価環境](images/fig6-2.svg)
 
 ### ツール呼び出し型評価環境
@@ -366,6 +377,17 @@ rubric:
 
 **良い Rubric 対 悪い Rubric**：上記の各採点段階は検証可能な具体的行動（「Dr. Chen と正確に回答」）を示しており、「メモリへの深い理解を示した」のような客観的に判定不能な記述ではありません。否決項は底線を明確にしています。他の次元がすべて満点でも、ハルシネーションが 1 回でも現れたら直接ゼロと判定します。
 
+**rubric 判定前の決定的 veto:**
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
 Rubric と Agent の回答を評価モデルに渡すと、各項目の点数と根拠が返ります。数十件の結果を集計し、低得点の軌跡を読み直せば、漠然とした「成功率の低下」を具体的な原因に分解できます。情報を取得できなかったのか、人物関係を取り違えたのか、それとも根拠のない内容を補ったのか。Rubric は点数を付けるだけでなく、次に直すべき場所を示す診断器になります。
 
 > **実験 6-3 ★★：Rubric に基づくユーザーメモリ評価システムの構築**
@@ -606,6 +628,18 @@ Agent 評価にはさらに実行ごとの揺らぎがあります。同じモ�
 
 評価駆動の意思決定は高品質のデータに依存し、そのデータは Agent の実行過程の系統的な記録から来ます——これが可観測性の解決すべき問題です。
 
+**ペア比較:**
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
 ## Agent の可観測性
 
 評価駆動の意思決定（モデル選定であれ継続的反復であれ）は、いずれも高品質の実行データに依存します。以下ではまず、いかにこれらのデータを系統的に収集するか（可観測性）を紹介し、次にいかに評価結果をシステム改善へと転化するかを論じます。
@@ -780,46 +814,6 @@ Agent 開発者への示唆はこうです。特性スイッチはデバッグ�
 第 1 章で導入した Harness 工学の視点から見ると、本章の評価方法論は Harness における「検証」機能の系統的な実装であり、「Benchmark レポートからシステム改善へ」の閉ループは Harness の反復最適化の核心メカニズムです——評価は Agent の現在の能力を計測するだけでなく、Harness の継続的な進化の方向を指し示します。
 
 本章で確立した評価体系は現在のシステムの最適化に資するだけでなく、次章のモデルのポストトレーニングに鍵となる基礎も提供します——評価環境とデータセットはポストトレーニングの重要な入力であり、シミュレーション環境はポストトレーニングの練習場です。次章では評価からモデルレベルの改善へと転じ、いかに SFT と RL を通じてインタラクション方策をモデルパラメータに書き込むかを深く論じます。
-
-## メカニズムの skeleton
-
-以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
-
-### 再現可能な評価ループ
-
-```python
-for task in dataset:
-    environment.reset(task.initial_state)
-    trajectory = agent.run(task.prompt, environment.tools)
-    outcome = environment.snapshot()
-    score = verifier(task, trajectory, outcome)
-    record(task, trajectory, outcome, score)
-```
-
-### rubric 判定前の決定的 veto
-
-```python
-deterministic = verify_state_policy_and_claims(trajectory, outcome)
-if deterministic.veto:
-    return FAIL(reason = deterministic.evidence)
-
-rubric_result = judge(answer, rubric, evidence)
-return aggregate_with_confidence(rubric_result)
-```
-
-### ペア比較
-
-```python
-for task in paired_tasks:
-    for seed in fixed_seeds:
-        a = run(config_a, task, seed)
-        b = run(config_b, task, seed)
-        record_paired_delta(verifier(a), verifier(b))
-
-return paired_bootstrap_or_mcnemar(all_deltas)
-```
-
-境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
 
 ## 演習問題
 

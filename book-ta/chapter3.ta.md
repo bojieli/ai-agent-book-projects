@@ -39,6 +39,21 @@ User: ஆம், எனது United MileagePlus எண் 12345678 ஐப் �
 - பயனருக்கு டோக்கியோ பயணத் திட்டங்கள் உள்ளன (சமீபத்திய செயல்பாடு)
 ```
 
+**நினைவக வாழ்க்கைச் சுழற்சி:**
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
 இந்தப் பிரித்தெடுக்கும் செயல்முறையின் சில முக்கிய பண்புகளைக் கவனியுங்கள்:
 
 **தேர்ந்தெடுக்கும் தன்மை**—"தேடல் 3 விருப்பங்களை வழங்கியது" போன்ற தற்காலிகத் தகவலை Agent நினைவில் வைக்காது; எதிர்காலத்தில் பயன்படும் உண்மைகளை மட்டுமே வைத்திருக்கும்.
@@ -124,50 +139,74 @@ Agent தற்போதைய பணிகளை திறமையாக க�
 
 கீழே ஒரு எளிமைப்படுத்தப்பட்ட எடுத்துக்காட்டு உள்ளது. கட்டமைப்பு கட்டம் பயனரின் பாஸ்போர்ட் மற்றும் பயணங்களை தட்டச்சு செய்யப்பட்ட நிலையாக சேமிக்கிறது:
 
-```python
-from datetime import date
+**Append-only பதிவு மற்றும் checkpoint:**
 
-passport = PassportInfo(
-    number="AB1234567", country="US",
-    expiry_date=date(2025, 2, 18),
-)
-trips = [
-    Trip(destination="Tokyo", departure_date=date(2025, 1, 15),
-         is_international=True),
-    # ... மீதமுள்ள பயணங்கள்
-]
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+**வகைப்படுத்தப்பட்ட பயனர் நிலை:**
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
 ```
 
 தட்டச்சு செய்யப்பட்ட நிலையுடன், முன்பு LLM "உரையைப் படித்து மனக் கணக்கு செய்ய" தேவைப்பட்ட மூன்று பணிகள் இப்போது உறுதியான குறியீடாக மாறுகின்றன:
 
 முதலில், **தொகுப்புப் புள்ளிவிவரங்கள்**. "2025-இல் நான் எத்தனை முறை வெளிநாடு சென்றேன்?" என்ற கேள்விக்கு, உரை நினைவகம் அனைத்து பயணங்களையும் மீட்டெடுத்து ஒவ்வொன்றாக எண்ண வேண்டும்; பதிவுகள் அதிகரிக்கும்போது பிழை ஏற்படுவது எளிது. User as Code-இல் இது ஒரே வெளிப்பாடு; துல்லியம் கிட்டத்தட்ட 100%[^uac]:
 
+**தீர்மானகமான திரட்டல்:**
+
 ```python
->>> sum(1 for t in trips if t.is_international and t.departure_date.year == 2025)
-2
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
 ```
 
 இரண்டாவதாக, **முரண்பாடு கண்டறிதல்**. "தற்போதைய மருந்துகள்" மற்றும் "ஒவ்வாமை வரலாறு" ஆகியவற்றை அருகருகே வைப்பதன் மூலம், ஒரு ஒற்றைச் செயல்பாடு அவற்றை மருந்து வகுப்பின் அடிப்படையில் குறுக்கு-குறிப்பிட முடியும், இது வெவ்வேறு உரையாடல்களில் சிதறிக்கிடக்கும் முரண்பாடுகளை வெளிப்படுத்துகிறது, அவற்றை உரை வடிவில் தானாக இணைப்பது கிட்டத்தட்ட சாத்தியமற்றது:
 
+**முரண்பாடு கண்டறிதல்:**
+
 ```python
 def check_drug_allergy(profile):
-    for med in profile.current_medications:
+    for medication in profile.current_medications:
         for allergy in profile.allergies:
-            if med.drug_class == allergy.drug_class:
-                yield (f"மருந்து முரண்பாடு: {med.name} என்பது {med.drug_class} வகுப்பைச் சேர்ந்தது, "
-                       f"ஆனால் நோயாளிக்கு {allergy.allergen} மீது கடுமையான ஒவ்வாமை உள்ளது")
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
 ```
 
 மூன்றாவதாக, **கட்டுப்பாடு அமலாக்கம்**. ஏஜெண்ட் இத்தகைய சரிபார்ப்புச் செயல்பாடுகளை உறுதிப்படுத்தி, நிலை புதுப்பிக்கப்படும் ஒவ்வொரு முறையும் அவற்றை தானாகவே தூண்ட முடியும்—பயனர் பேச வேண்டிய அவசியமில்லை அல்லது ஏஜெண்ட் எதையும் மீட்டெடுக்க வேண்டிய அவசியமில்லை. உதாரணமாக, பாஸ்போர்ட் செல்லுபடியாகும் கட்டுப்பாடு: சர்வதேச பயணத்தின் புறப்படும் தேதி பாஸ்போர்ட் காலாவதியாவதற்கு 180 நாட்களுக்குள் இருந்தால் எச்சரிக்கை செய்யவும்.
 
+**கட்டுப்பாடுகளை அமல்படுத்தல்:**
+
 ```python
 def check():
-    for trip in trips:
+    for trip in state.trips:
         if trip.is_international:
-            days = (passport.expiry_date - trip.departure_date).days
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
             if days < 180:
-                yield (f"பாஸ்போர்ட் {passport.expiry_date} அன்று காலாவதியாகிறது, "
-                       f"{trip.destination} பயணத்திற்கு {days} நாட்கள் மட்டுமே உள்ளன. தயவுசெய்து விரைவில் புதுப்பிக்கவும்.")
+                alert("passport expires too soon", trip, days)
 ```
 
 [^uac]: பயனர் நினைவகத்தை இயங்கக்கூடிய குறியீடு திட்டமாக உருவாக்குவதற்கான முழுமையான வடிவமைப்பு மற்றும் மதிப்பீட்டை Li, Bojie. *User as Code: Executable Memory for Personalized Agents.* arXiv:2606.16707, 2026 இல் காணலாம்.
@@ -287,6 +326,22 @@ answer = llm.generate(system="You are a customer service assistant.", context=re
 இரண்டு எடுத்துக்காட்டுகளிலும் உள்ள முறை ஒரே மாதிரியானது: **தொடர்புடைய பகுதிகளை மீட்டெடுக்கவும் → சூழலில் செலுத்தவும் → LLM சூழலின் அடிப்படையில் பதிலை உருவாக்குகிறது**. RAG-இன் மைய மதிப்பு, பயிற்சியின் போது LLM பார்க்காத அறிவை (சமீபத்திய விக்கிபீடியா உள்ளடக்கம், ஒரு நிறுவனத்தின் உள் ஆவணங்கள்) மாதிரியை மீண்டும் பயிற்றுவிக்காமல் (retrain) பயன்படுத்த உதவுவதாகும்.
 
 மீட்டெடுப்பியின் தரம் நேரடியாக RAG-ன் செயல்திறனைத் தீர்மானிக்கிறது—அது பொருத்தமான பகுதிகளை மீட்டெடுக்க முடியாவிட்டால், வலிமையான LLM கூட வேலை செய்ய எதுவும் இருக்காது. இந்தப் பகுதி முதலில் ஆவணங்களை அறிவுத் தளத்தில் சேர்ப்பதற்கான முதல் படியான—துண்டாக்குதலைப் (chunking) பார்க்கிறது, பின்னர் மீட்டெடுப்பிகளுக்கான இரண்டு முக்கிய தொழில்நுட்ப அணுகுமுறைகளில் கவனம் செலுத்துகிறது: அடர்த்தியான உட்பொதிப்புகள் (dense embeddings, சொற்பொருள் புரிதலை அடிப்படையாகக் கொண்டவை) மற்றும் அரிதான உட்பொதிப்புகள் (sparse embeddings, முக்கியச் சொல் பொருத்தத்தை அடிப்படையாகக் கொண்டவை), மற்றும் அவற்றை எவ்வாறு இணைப்பது என்பதையும் பார்க்கிறது.
+
+**கலப்பு RAG pipeline:**
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
 
 ![படம் 3-5: RAG வினவல் ஓட்டம்: மீட்டெடுப்பு, விரிவாக்கம் மற்றும் உருவாக்கம்](images/fig3-5.svg)
 
@@ -695,105 +750,6 @@ Agentic RAG ஆனது Agent-இன் தன்னாட்சி முட�
 **அறிவுப் புதுப்பிப்பு** மட்டத்தில் இரண்டு வேகங்கள் ஒன்றாக தேவை: அதிகரிப்பு புதுப்பிப்பு புதிய ஆதாரத்தை உடனடியாக ஏற்றுக்கொள்கிறது; காலமுறை மறுசீரமைப்பு முழு அறிவையும் அசல் தரவையும் மீண்டும் பார்த்து, நகல் நீக்கம், பழையதை ஓய்வுபடுத்தல், ஒன்றிணைப்பு, கட்டமைப்பு மாற்றம், விடுபாடுகள் சரிபார்ப்பு மற்றும் பொருந்தும் சூழல் குறிப்பிடுதல் ஆகியவற்றைச் செய்கிறது. அறிவு Markdown அல்லது Python எதிலிருந்தாலும், Proposer Agent மூல ஆதாரத்தின் அடிப்படையில் diff சமர்ப்பிக்க வேண்டும்; வேறு மாதிரி குடும்பத்தைச் சேர்ந்த Reviewer Agent அதை சுயாதீனமாக மதிப்பாய்வு செய்ய வேண்டும். ஒப்புதல் கிடைத்த பிறகே PR இணைக்கப்பட்டு வழித்தோன்றல் குறியீடுகள் மீண்டும் கட்டமைக்கப்பட வேண்டும்.
 
 இந்த அத்தியாயமும் முந்தைய அத்தியாயமும் “Context” பிரச்சினையைக் கையாள்கின்றன—ஒன்று தனி அமர்வுக்குள், மற்றொன்று பல அமர்வுகளைக் கடந்து. இவ்வத்தியாயத்தில் நிலைப்படுத்தப்படுவது பெரும்பாலும் பயனர் மற்றும் உலகைப் பற்றிய declarative knowledge ஆகும்; அத்தியாயம் 8 இதே extraction மற்றும் retrieval உள்கட்டமைப்பை மீண்டும் பயன்படுத்தும், ஆனால் அதன் பொருள் இயக்கத்தின் வெற்றி அல்லது தோல்வியால் ஆதரிக்கப்படும் behavioral knowledge, அதாவது “எந்த நிபந்தனைகளில் எவ்வாறு செயல்பட வேண்டும்” என்பதாகும். அடுத்த அத்தியாயம் “Tools” நோக்கித் திரும்புகிறது: Tool வடிவமைப்பு, MCP interoperability தரநிலை மற்றும் event-driven architecture உட்பட, Tools வழியாக Agent வெளி உலகத்துடன் எவ்வாறு தொடர்புகொள்கிறது என்பதை விவாதிக்கிறது.
-
-## Mechanism skeleton-கள்
-
-கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
-
-### நினைவக வாழ்க்கைச் சுழற்சி
-
-```python
-when answering(user_request):
-    recent_turns = conversation.tail()
-    relevant_memory = memory.search(user_request)
-    answer = LLM(recent_turns + relevant_memory)
-    return answer
-
-after conversation (background job):
-    candidates = extract_memory_candidates(conversation)
-    verified = verify_against_sources_and_policy(candidates, conversation)
-    memory.append_or_update(verified)
-```
-
-### Append-only பதிவு மற்றும் checkpoint
-
-```python
-append_only_log += extract_facts(conversation)
-
-if checkpoint_due():
-    proposed_state = rebuild_typed_state(append_only_log)
-    if type_check(proposed_state) and source_review(proposed_state):
-        publish_checkpoint(proposed_state)
-    else:
-        keep_previous_checkpoint()
-```
-
-### வகைப்படுத்தப்பட்ட பயனர் நிலை
-
-```python
-state = {
-    passport: PassportInfo(
-        number = "AB1234567",
-        country = "US",
-        expiry_date = date(2025, 2, 18),
-    ),
-    trips: [
-        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
-             is_international = true),
-        ...
-    ],
-}
-```
-
-### தீர்மானகமான திரட்டல்
-
-```python
-count(
-    trip for trip in state.trips
-    if trip.is_international and year(trip.departure_date) == 2025
-)
-# => 2
-```
-
-### முரண்பாடு கண்டறிதல்
-
-```python
-def check_drug_allergy(profile):
-    for medication in profile.current_medications:
-        for allergy in profile.allergies:
-            if medication.drug_class == allergy.drug_class:
-                emit_conflict(medication, allergy)
-```
-
-### கட்டுப்பாடுகளை அமல்படுத்தல்
-
-```python
-def check():
-    for trip in state.trips:
-        if trip.is_international:
-            days = date_difference(state.passport.expiry_date,
-                                   trip.departure_date)
-            if days < 180:
-                alert("passport expires too soon", trip, days)
-```
-
-### கலப்பு RAG pipeline
-
-```python
-offline:
-    chunks = split_documents(documents)
-    dense_index = build_dense_index(chunks)
-    sparse_index = build_sparse_index(chunks)
-
-online(query):
-    dense_hits = dense_search(dense_index, query)
-    sparse_hits = sparse_search(sparse_index, query)
-    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
-    evidence = rerank(query, candidates)
-    return LLM(query + evidence)
-```
-
-எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
 
 ## சிந்தனை கேள்விகள்
 

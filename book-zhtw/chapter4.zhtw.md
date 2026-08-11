@@ -245,6 +245,33 @@ Sidecar 模式的另一個典型應用是**上下文豐富**：主模型在思�
 
 對於安全性 Sidecar，還需要配備**拒絕熔斷器**：當分類器連續多次拒絕操作時，系統不應無限重試（這會浪費資源，還可能讓使用者陷入死迴圈），而應回退到請求使用者手動判斷。這正是第一章 Harness「糾正」功能的典型例項。
 
+**工具安全閘:**
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
 **自動驗證與回饋閉環。**
 
 執行工具的另一個重要設計原則是：**如果操作結果可以被驗證，就應該自動驗證**。以程式碼編寫為例，當 Agent 呼叫 `write_file` 建立或修改程式碼檔案時，工具不應只寫入內容然後返回「成功」，而應在寫入後立即執行語法檢查：根據檔案型別呼叫相應的 linter（程式碼靜態檢查工具），將輸出解析為結構化的錯誤列表，作為工具返回值的一部分返回給 Agent。
@@ -481,6 +508,23 @@ PineClaw 的解決方案是引入 **Channel 機制**——在 OpenClaw 的 Gatew
 
 下面透過一個事件驅動的郵件處理 Agent 實驗，將上述事件處理策略落地為可執行的實現。
 
+**事件迴圈路由:**
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
 > **實驗 4-4 ★★★：事件驅動的郵件處理 Agent**
 >
 >
@@ -629,6 +673,20 @@ PineClaw 的解決方案是引入 **Channel 機制**——在 OpenClaw 的 Gatew
 
 **層次化匹配與降級。** 高效匹配的關鍵在於工具組織本身具有層次結構：在 MCP 等協定中，工具按**伺服器**分組（類似手機上的 App，每個 App 提供一組相關功能），於是匹配可分兩層——先按能力描述定位相關伺服器，再在伺服器內匹配具體工具，把搜尋空間從「數千個工具」縮小為「數十個伺服器 × 每個伺服器數十個工具」，既省算力也減少跨領域的語義混淆。工程上這依賴一個離線建構、支援增量更新的嵌入索引；若兩層匹配的候選相似度都低於閾值，則應明確返回「未找到」，讓 Agent 改寫需求重試、用基礎工具手工實現，或乾脆創造一個新工具（創造工具是第八章的主題）。
 
+**主動工具發現:**
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
 ![圖 4-8 工具動態載入的 KV Cache 最佳化](images/fig4-8.svg)
 
 **動態載入與 KV Cache。** 主動發現有一個微妙的工程代價：動態載入工具會**破壞 KV Cache**——若把全部工具定義放進靜態字首，每載入一個新工具就使整段快取失效。破解思路與第二章討論 Skill 注入位置時一致：把會變動的部分（新工具的完整 schema）追加到上下文末尾，讓靜態字首保持穩定、KV Cache 完全複用，只在 Agent 狀態列維護一份簡短的工具名列表。如今這套模式已獲得各大 API 的原生支援，並成為主流框架的預設架構：OpenAI Responses API 提供 `tool_search` 工具與 `defer_loading: true` 標記，被載入的 schema 以 `tool_search_output` 形式追加在上下文末尾，字首快取持續命中；Claude Code 對 MCP 工具預設延遲載入（經 `tool_reference` blocks 按需注入，會話啟動只保留工具名與伺服器說明）；Codex CLI 的 `tool_search`（BM25 檢索）更是預設開啟的架構而非可選特性。此外，動態工具環境對模型能力要求也更高——能力較弱的模型既難以理解「工具定義出現在上下文中間」這種非標準位置，也容易生成非法的呼叫格式（如 JSON 括號不匹配、引數缺失），往往需要透過強化學習專門訓練（詳見第七章）。
@@ -689,70 +747,6 @@ PineClaw 的解決方案是引入 **Channel 機制**——在 OpenClaw 的 Gatew
 六個實驗從基礎到架構逐步遞進：實驗 4-1 至實驗 4-3 建構感知、執行、協作三大基礎工具集，實驗 4-4 用郵件處理 Agent 引入事件驅動，實驗 4-5 實現並行執行、中斷恢復和狀態管理，實驗 4-6 驗證主動工具發現在大規模工具庫下的價值。本章的邊界是描述、發現和安全使用**已有工具**；第八章則討論 Agent 如何從失敗與重複操作中判斷何時建立、修改、重新驗證或淘汰工具。
 
 下一章要回答一個比「如何使用工具」更基本的問題：Agent 能不能透過寫程式碼來**創造**工具？Coding Agent 加上檔案系統，是所有通用 Agent 最核心的基礎，也為第八章討論受控的系統自我修改提供了執行能力。
-
-## 機制骨架
-
-下面的骨架只抽出本章討論的控制關係。
-
-### 工具安全閘
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
-### 事件迴圈路由
-
-```python
-while runtime.is_alive:
-    events = queue.take_batch()
-
-    if any(is_urgent(event) for event in events):
-        cancel_at_safe_point(current_work)
-    elif has_independent_fast_query(events):
-        start_parallel_session(events)
-    else:
-        append_to_trajectory(events)
-
-    decision = LLM(context + trajectory)
-    dispatch(decision)
-```
-
-### 主動工具發現
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
-
-請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
 
 ## 思考題
 

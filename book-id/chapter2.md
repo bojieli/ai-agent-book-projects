@@ -377,6 +377,25 @@ Bagian atas (System Prompt + Tool Definitions) tetap tidak berubah di sepanjang 
 
 Sisa bab ini membedah tiap lapisan struktur tersebut: bagaimana menggunakan prefix statis yang stabil untuk mempercepat inferensi (KV Cache), bagaimana merancang System Prompt yang efektif (prompt engineering), bagaimana mencegah konten eksternal membajak context (pertahanan terhadap prompt injection), bagaimana memuat pengetahuan terspesialisasi on-demand (Agent Skills), bagaimana menyuntikkan state (keadaan) dinamis di akhir percakapan (Agent Status Bar), dan bagaimana mengompresi conversation history saat membesar terlalu besar (strategi kompresi).
 
+**Konstruksi konteks sebelum setiap permintaan:**
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
 > **Eksperimen 2-1 ★: Deployment Layanan LLM Lokal dan Pemanggilan Tool**
 >
 >
@@ -1072,31 +1091,6 @@ Di balik banyak detail teknisnya, bab ini memiliki satu argumen utama: apa yang 
 Benang merah semua teknik tersebut adalah pengelolaan informasi yang eksplisit dan direkayasa: alih-alih membiarkan model mencari petunjuk secara pasif dalam context yang sangat besar, kita secara proaktif memberinya keadaan yang sudah disaring dan terstruktur. Setiap teknik dalam bab ini, dari tata letak context yang ramah KV Cache hingga kompresi yang sadar context, merupakan praktik konkret penggunaan rekayasa untuk memaksimalkan efisiensi informasi pada batas kemampuan model saat ini.
 
 Bab ini membahas pembaruan keadaan dan degradasi context **di dalam satu tugas**. Bab berikutnya beralih dari pengelolaan informasi dalam satu context window ke sistem pengetahuan persisten yang melintasi berbagai tugas: user memory dan knowledge base. Sistem ini memungkinkan Agent mengumpulkan pengalaman dari waktu ke waktu dan secara bertahap menjadi asisten yang lebih memahami pengguna, atau pakar dengan pengetahuan yang lebih khusus di suatu bidang.
-
-## Skeleton mekanisme
-
-Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
-
-### Konstruksi konteks sebelum setiap permintaan
-
-```python
-stable_prefix = system_message
-stable_tools = core_tool_schemas
-trajectory = load_message_history(session)
-status_message = make_status_message(derive_current_state(trajectory))
-
-if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
-    trajectory = compress_old_evidence(
-        trajectory,
-        preserve = [decisions, constraints, failures, citations]
-    )
-
-request.messages = [stable_prefix] + trajectory + [status_message]
-request.tools = stable_tools
-response = call_model(request)
-```
-
-Pertahankan batasnya: observasi dan bukti berasal dari lingkungan, sedangkan Harness menentukan tindakan yang boleh dieksekusi.
 
 ## Pertanyaan Pemikiran
 

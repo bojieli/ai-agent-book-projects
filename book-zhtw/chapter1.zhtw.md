@@ -168,6 +168,27 @@ Agent 執行任務的核心模式叫做 **ReAct**（Reasoning + Acting）。雖�
 
 ![圖 1-4 Agent 軌跡——多幣種彙總任務的 ReAct 迴圈](images/fig1-4.svg)
 
+以下 Python 風格的骨架是解釋用的偽代碼，不是可直接執行的 SDK 程式碼；`python` 標記只用於語法高亮。
+
+**ReAct 控制迴圈:**
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
 讓我們透過虛擬碼來理解 Agent 軌跡的結構：
 
 ```text
@@ -256,6 +277,20 @@ Agent 執行任務的核心模式叫做 **ReAct**（Reasoning + Acting）。雖�
 > **Harness = 上下文管理 + 工具介面 + 約束 + 驗證 + 糾正**
 >
 > **Agent ↔ Environment**
+
+**Harness 生產邊界:**
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
 
 最小可工作的 Agent 只需要 LLM、上下文與工具就能跑起來；而要讓它在生產環境中長期可靠運轉，還需要補全約束、驗證、糾正這三層工程外殼——約束防止越界、驗證發現錯誤、糾正恢復異常。換句話說，最小公式是 Demo 視角，擴展公式是生產視角；後者完全包含前者，並在外圍加了一圈安全網。
 
@@ -495,45 +530,6 @@ Anthropic 在建構長時執行 Agent 時的實踐展示了 Harness 設計如何
 下一章將深入探討 Harness 中最核心的元件——上下文工程。關於 Agent 概念在強化學習中的學術淵源，以及傳統 RL 與現代 LLM Agent 的深入對比，我們將在第七章系統展開。
 
 以下思考題旨在幫助讀者對本章核心概念進行更深入的探討，不設標準答案。
-
-## 機制骨架
-
-下面的 Python 風格骨架只抽出本章討論的控制關係。它們是解釋性的偽代碼，不是可直接執行的 SDK 實作；完整適配器與測試仍在章級實驗中。其中，`python` 標記只用作語法高亮，不表示可直接執行，也不對應特定 SDK。
-
-### ReAct 控制迴圈
-
-```python
-trajectory = [user_request]
-
-repeat:
-    context = stable_prefix + trajectory
-    decision = Model(context)
-    trajectory.append(decision)
-
-    if decision has no tool call:
-        return decision.answer
-
-    for call in decision.tool_calls:       # independent calls may run in parallel
-        validated_call = Harness.validate(call)
-        observation = Environment.execute(validated_call)
-        trajectory.append(observation)
-```
-
-### Harness 生產邊界
-
-```python
-decision = Model(Harness.build_context(state, trajectory))
-allowed_action = Harness.constrain(decision)
-observation = Environment.apply(allowed_action)
-evidence = Harness.verify(allowed_action, observation)
-
-if evidence passes:
-    trajectory.append(observation)
-else:
-    trajectory.append(Harness.correct(evidence))
-```
-
-請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
 
 ## 思考題
 

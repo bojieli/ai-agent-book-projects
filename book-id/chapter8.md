@@ -26,6 +26,19 @@ Banyak tugas lain tidak memiliki jawaban tunggal yang benar. Apakah layanan pela
 
 Gambar 8-2 menyajikan struktur verifikasi tiga lapis. Verifikator hasil (outcome verifier) lapisan bawah membaca hasil pengujian, state basis data, dan balasan tool untuk menjawab, “Apakah tugas tersebut benar-benar diselesaikan?” Verifikator proses (process verifier) lapisan tengah memeriksa aturan bisnis, izin, dan urutan tindakan untuk menjawab, “Apakah itu diselesaikan dengan cara yang diizinkan?” Verifikator kualitas (quality verifier) lapisan atas mengevaluasi bahasa dan strategi menurut Rubric untuk menjawab, “Apakah itu ditangani dengan tepat?” Metrik tingkat bawah harus lebih bergantung pada kode dan kebenaran dasar lingkungan (environmental ground truth); hanya aspek-aspek yang sulit diformalkan yang harus didelegasikan ke model bahasa.
 
+**Verifikasi trajektori tiga lapis:**
+
+```python
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
+
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
+else:
+    emit_structured_diagnosis(outcome, process, quality)
+```
+
 ![Gambar 8-2 Verifikasi lintasan tiga lapis dari hasil lingkungan ke LLM Rubric](images/fig8-2.svg)
 
 Untuk Agent layanan pelanggan, sebuah Rubric yang berguna setidaknya harus mencakup dimensi-dimensi yang tercantum dalam Tabel 8-1. Lima yang pertama terutama menegakkan persyaratan dasar, sementara dua yang terakhir mengukur kualitas layanan. Dekomposisi ini secara diagnostik lebih berguna daripada menanyakan apakah pengguna merasa puas: pengguna mungkin puas karena Agent menerbitkan pengembalian dana yang tidak patuh aturan, atau tidak puas karena pembatasan kepatuhan. Skor kepuasan tunggal tidak dapat membedakan keduanya.
@@ -76,6 +89,19 @@ Tabel 8-2 Batasan yang berlaku dari empat metode evolusi kontinual
 | Prompt dan Skill | Prinsip penilaian yang dapat diekspresikan secara linguistik dan prosedur operasi | Dapat diinterpretasikan, ruang lingkup yang dapat dikontrol | Rentan terhadap pembengkakan (bloat), konflik, atau diabaikan |
 | Program dan Harness | Prosedur deterministik, tool, dan kendala ketat (hard constraints) | Dapat diuji, eksekusi stabil, biaya rendah | Biaya pengembangan dan pemeliharaan lebih tinggi |
 | Parameter model | Persepsi dimensi tinggi, gaya generasi, dan strategi implisit | Generalisasi kuat, overhead inferensi rendah | Biaya pembaruan dan regresi tinggi |
+
+**Routing pengalaman ke kapabilitas:**
+
+```python
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
+```
 
 ### Mengkonsolidasikan Pengalaman menjadi Pengetahuan
 
@@ -272,6 +298,20 @@ Pilihan ini mungkin juga berubah seiring dengan bertumpuknya pengalaman. Strateg
 
 Setiap modifikasi pertama-tama harus menghasilkan kapabilitas kandidat atau kandidat Agent dan bukan langsung menimpa versi produksi. Dokumen pengetahuan harus diuji untuk menentukan apakah pengambilan (*retrieval*) meningkatkan kinerja pada tugas-tugas baru; Prompts dan Skills harus diperiksa terhadap *edge cases* dan untuk regresi pada tugas-tugas sebelumnya; program harus diuji di dalam *sandboxes* dan *reset environments*; serta pembaruan parameter harus dievaluasi untuk lupa (*forgetting*), keamanan, dan kinerja *out-of-distribution*. Bahkan setelah divalidasi, versi baru harus dirilis secara bertahap dan dipantau pada lalu lintas nyata; jika metrik utama memburuk, sistem harus secara otomatis men-*roll back* ke versi aman yang diketahui.
 
+**Rilis tervalidasi dan rollback:**
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
+```
+
 Validasi juga harus memisahkan dua kapabilitas yang sering disamakan. **Harness updating** adalah kemampuan untuk menghasilkan perubahan persisten yang berharga dari trajektori; **Harness benefit** adalah kemampuan Task Agent untuk menemukan, mengaktifkan, dan menggunakan perubahan tersebut dengan benar nantinya. Sebuah Skill mungkin sudah benar pada dirinya sendiri, namun model tugas yang lebih lemah mungkin gagal memuatnya pada situasi yang tepat atau gagal mengikutinya selama trajektori yang panjang. Kegagalan mana pun membuat skor akhir terlihat seolah-olah tidak terjadi evolusi. Oleh karena itu, kinerja *end-to-end* saja tidak dapat mendiagnosis si *updater*. Eksperimen penukaran model (*model-swapping*) oleh Lin dkk. menunjukkan bahwa kedua kemampuan ini berhubungan secara berbeda terhadap kapabilitas *base-model*[^harness-benefit-2026]. Hubungan pastinya memerlukan validasi pada lebih banyak tugas, tetapi mengevaluasi keduanya secara terpisah secara luas sangat berguna.
 
 Tabel 8-3 Metrik evaluasi berlapis untuk evolusi berkelanjutan
@@ -329,6 +369,17 @@ Siklus sleep-learning khas memiliki lima langkah:
 3. **Collect and consolidate:** Menemukan sinyal baru dalam trajectories yang baru dievaluasi, menggabungkan duplikat, menandai konflik dan kondisi keberlakuan, dan memprioritaskan local patches.
 4. **Validate and approve:** Mengevaluasi kandidat pada set transfer, retention, dan safety; penulisan berisiko tinggi menunggu persetujuan manusia.
 5. **Prune and index:** Memperbarui retrieval indexes dan menandai kapabilitas yang lama tidak digunakan atau bertentangan dengan bukti baru sebagai kedaluwarsa, diarsipkan, atau dihapus, sambil mempertahankan provenance dan versi untuk rollback.
+
+**Konsolidasi saat idle:**
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
 
 User memory adalah contoh yang paling intuitif, tetapi ini harus dibedakan dari action experience. Auto memory pada Claude Code mempertahankan indeks `MEMORY.md` dan file detail spesifik topik untuk setiap proyek. Pada saat memulai sesi, sistem hanya memuat prefix terbatas dari indeks dan membaca konten yang tersisa on demand; ketika indeks mendekati batasnya, Agent diinstruksikan untuk menggabungkan atau memindahkan detail ke tempat lain. Ini menunjukkan bahwa plain-text memory pun memerlukan batas kapasitas, layered loading, dan pengorganisasian aktif. Mekanisme yang saat ini didokumentasikan terutama menulis memori selama sesi dan tidak boleh sekadar disamakan dengan background task malam hari yang tetap[^claude-code-memory].
 
@@ -388,63 +439,6 @@ Continual learning menjadi salah satu kapabilitas terpenting dari Agents, tetapi
 Sebuah Agent memperoleh learning signals dari interaksi dan evaluasi, kemudian memperbarui knowledge, Prompts, Skills, programs, atau model parameters sesuai dengan bagaimana kapabilitas tersebut direpresentasikan. Sistem juga dapat mengoptimalkan metode yang digunakan untuk mengelola dan menghasilkan artefak ini, tetapi harus memprioritaskan perubahan lokal yang attributable, verifiable, dan reversible.
 
 Continual evolution harus memisahkan eksekusi online dari pembelajaran offline: merekam bukti secara online; membuat dan memvalidasi pembaruan kandidat secara offline; kemudian merilis, mengonsolidasikan, atau membatalkannya (roll them back) secara bertahap. Putaran ini paling andal ketika hasil dapat diverifikasi secara otomatis. Untuk tugas-tugas open-ended dengan tujuan ambigu dan feedback yang tertunda, manusia masih harus berpartisipasi dalam definisi masalah dan perancangan kriteria evaluasi.
-
-## Skeleton mekanisme
-
-Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
-
-### Verifikasi trajektori tiga lapis
-
-```python
-outcome = verify_environment_state(trajectory)
-process = verify_actions_and_permissions(trajectory)
-quality = judge_with_rubric(trajectory, cite_evidence = true)
-
-if not outcome.pass or not process.pass:
-    reject_as_learning_example(outcome, process, quality)
-else:
-    emit_structured_diagnosis(outcome, process, quality)
-```
-
-### Routing pengalaman ke kapabilitas
-
-```python
-if experience.is_factual and experience.has_sources:
-    target = KNOWLEDGE
-elif experience.can_be_expressed_as_contextual_language_rule:
-    target = PROMPT_OR_SKILL
-elif experience.is_deterministic or experience.is_hard_safety_constraint:
-    target = PROGRAM_OR_HARNESS
-else:
-    target = MODEL_PARAMETERS
-```
-
-### Rilis tervalidasi dan rollback
-
-```python
-candidate = propose_minimal_update(evidence, current_version)
-
-if not verify(candidate, boundary_set): reject(candidate)
-elif not verify(candidate, retention_set): reject(candidate)
-elif not verify(candidate, safety_set): reject(candidate)
-else:
-    canary = deploy_to_small_traffic(candidate)
-    if canary.metrics_regress: rollback(current_version)
-    else: promote(candidate)
-```
-
-### Konsolidasi saat idle
-
-```python
-while sleep_gate_is_open():
-    batch = load_new_evaluated_trajectories()
-    proposals = consolidate(batch, current_capabilities)
-    for proposal in proposals:
-        validate_canary_and_promote_or_rollback(proposal)
-    prune_stale_entries_but_keep_provenance()
-```
-
-Pertahankan batasnya: observasi dan bukti berasal dari lingkungan, sedangkan Harness menentukan tindakan yang boleh dieksekusi.
 
 ## Pertanyaan Refleksi
 

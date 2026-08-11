@@ -63,6 +63,18 @@ Singkatnya, SFT menggunakan efisiensi sampel yang sangat tinggi untuk **menyandi
 
 > **Biaya Training: LoRA Parameter-Efficient Fine-Tuning.** Baik SFT maupun RL selanjutnya membutuhkan pembaruan parameter model, dan full-parameter fine-tuning memiliki kebutuhan VRAM yang tinggi (perlu menyimpan gradien dan state optimizer untuk miliaran parameter). **LoRA** (Low-Rank Adaptation) adalah metode penghematan biaya yang paling umum: alih-alih memodifikasi matriks bobot asli yang besar, ia melampirkan sebuah "tambalan" kecil (matriks rank rendah) untuk mempelajari tugas tersebut. Jumlah parameternya hanya 1%–5% dari aslinya, namun ia dapat mendekati performa full fine-tuning. Karena bobot aslinya dibekukan (frozen), LoRA juga menyebabkan lebih sedikit gangguan (perturbation) pada kapabilitas model dasar (base model) yang ada, mengurangi risiko catastrophic forgetting (lupa secara drastis). Beberapa aturan praktis (rules of thumb) yang telah divalidasi[^ch7-1]: Anda **harus** menerapkan LoRA ke semua matriks bobot utama (terutama layer MLP, yang memiliki jumlah parameter terbesar); menerapkannya hanya pada layer attention akan mengorbankan akurasi. **Learning rate yang optimal adalah sekitar 10 kali lipat dari full fine-tuning** (berlaku untuk SFT dan RL, sebuah aturan transfer yang sangat praktis). Gunakan rank menengah ke tinggi (64–256) untuk SFT; karena informasi per putaran kecil untuk RL, rank kecil (8–32) atau bahkan rank=1 sudah cukup. Selama deployment, sebuah inference server tunggal dapat memuat beberapa LoRA adapter secara bersamaan untuk layanan multi-tenant. Buku ini memperlakukan LoRA sebagai pilihan engineering default untuk semua metode post-training dan tidak akan menjelaskannya secara terpisah.
 
+**Mask loss SFT:**
+
+```python
+for sample in dataset:
+    prompt_tokens = tokenize(sample.prompt)
+    answer_tokens = tokenize(sample.answer)
+    tokens = prompt_tokens + answer_tokens
+    labels = [-100] * len(prompt_tokens) + answer_tokens
+    loss = causal_lm_loss(tokens, labels)
+    update_parameters(loss)
+```
+
 ### Mengapa SFT Harus Ada Sebelum RL, dan Bukan Sebaliknya
 
 Urutan ketiga tahapan ini tidaklah sembarangan. Pre-training pertama tidak menjadi kontroversi—tanpa dasar bahasa dan pengetahuan, tidak ada hal lain yang memungkinkan. Yang perlu dijelaskan adalah: **Mengapa SFT harus ada sebelum RL?**
@@ -346,6 +358,33 @@ Dalam praktiknya, keputusan dapat dibuat dengan urutan sebagai berikut:
 "Single-turn" berarti tugas diselesaikan dalam satu interaksi: model menerima input, menghasilkan output, dan menerima *reward*, tanpa perlu mempertahankan *state* di seluruh langkah. Pengaturan yang disederhanakan ini memungkinkan kita untuk fokus pada perbedaan mendasar dalam mekanisme pembelajaran antara SFT dan RL, tanpa kompleksitas dari interaksi *multi-turn*. Skenario *single-turn* memberikan kondisi eksperimental terkontrol yang jelas: tugas yang sama, *base model* yang sama, anggaran komputasi yang sama, dengan satu-satunya variabel adalah metode pelatihannya. Eksperimen pertama mendemonstrasikan bagaimana RL mempelajari meta-strategi tentang "kapan harus berpikir"; eksperimen kedua menggunakan permainan kartu penalaran aritmatika untuk secara sistematis mengkuantifikasi "SFT menghafal, RL menggeneralisasi".
 
 Sebelum masuk ke eksperimen, mari kita bangun beberapa **intuisi minimal** tentang algoritma RL, yang cukup untuk mengikuti istilah-istilah yang muncul (rumus lengkap dan perbandingannya akan dibahas nanti di bagian "Comparison of Reinforcement Learning Algorithms" di bab ini). Pelatihan RL dalam bab ini sebagian besar bertumpu pada **policy gradient**: model menghasilkan beberapa respons untuk masalah yang sama, meningkatkan probabilitas untuk respons ber-*reward* tinggi dan menurunkan probabilitas untuk respons ber-*reward* rendah—bergerak lebih jauh ke arah yang memberikan *reward* dan lebih sedikit ke arah yang tidak memberikan *reward*. Untuk menjaga agar pembaruan besar tunggal tidak menggagalkan model, algoritma **PPO** arus utama memotong besaran pembaruan pada setiap langkah (ini adalah "PPO with value network" dari eksperimen-eksperimen selanjutnya; *value network* memperkirakan *baseline* untuk menghitung *advantage* yang lebih halus). Metode lainnya, **GRPO**, tidak melatih *value network*; melainkan ia membandingkan beberapa respons terhadap masalah yang sama satu sama lain untuk menilai kualitas relatif masing-masing. Intuisi tersebut adalah semua yang Anda butuhkan untuk dua eksperimen berikutnya.
+
+**Pembaruan grup GRPO:**
+
+```python
+for prompt in batch:
+    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
+    rewards = [verify(trajectory) for trajectory in group]
+    advantages = normalize_within_group(rewards)       # GRPO baseline
+    update(policy, group, advantages)
+```
+
+**Pembaruan terklip PPO:**
+
+```python
+for trajectory in rollouts:
+    returns = discounted_returns(trajectory.rewards)
+    values = value_model(trajectory.states)
+    advantages = returns - stop_gradient(values)
+    ratio = exp(policy.log_prob(trajectory.actions)
+                - old_policy.log_prob(trajectory.actions))
+    policy_loss = -mean(min(
+        ratio * advantages,
+        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    ))
+    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
+update(policy, value_model, policy_loss + value_coef * value_loss)
+```
 
 > **Eksperimen 7-10 ★★: AdaptThink—Belajar "Kapan Tidak Perlu Berpikir"**
 >
@@ -675,6 +714,16 @@ Ringkasnya: **Sinyal padat (dense signals) berguna hanya jika mereka dapat memul
 
 **Hubungan dengan RLVR (mengklarifikasi titik kebingungan yang umum).** RLVP dan RLVR (Reinforcement Learning with Verifiable Rewards), yang berulang kali disebutkan dalam bab ini, hanya berbeda satu huruf, yang dengan rapi menyoroti sifat komplementernya: **RLVR memverifikasi hasil; RLVP juga memverifikasi proses.** Menggabungkan keduanya menghasilkan sinyal pelatihan yang berfokus pada "menyelesaikan pekerjaan" dan "melakukannya dengan benar"—tepat seperti yang dibutuhkan untuk Agent yang dapat di-deploy dengan aman.
 
+**Sinyal hasil plus jalur:**
+
+```python
+outcome = verify_final_state(trajectory)              # result, not self-report
+path_signal = 0
+for step in trajectory:
+    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
+reward = normalize(outcome) + beta * normalize(path_signal)
+```
+
 > **Eksperimen 7-16 ★★★: RLVP—Hargai Hasilnya, Hukum Jalurnya `[Eksperimen Diperluas]`**
 >
 > **Tujuan Eksperimen**: Menentukan apakah "outcome rewards + sinyal jalur yang dapat diverifikasi" keduanya dapat mengurangi pelanggaran kendala melalui hukuman dan meningkatkan efisiensi sampel melalui kredit sebagian (partial credit), tanpa mengorbankan tingkat keberhasilan tugas.
@@ -696,6 +745,16 @@ Penggunaan tool memperluas batas kemampuan Agent dari "penalaran model itu sendi
 Saat ini terdapat dua jalur penelitian yang aktif seputar Agent RL untuk Tool Calling. Salah satunya adalah **retrieval augmentation**: diwakili oleh Search-R1 (Jin dkk., 2025), yang menggunakan RL untuk melatih model agar memutuskan secara otonom kapan harus memulai pencarian selama proses berpikir dan menggunakan hasil yang dikembalikan untuk melanjutkan penalaran, daripada mengikuti pipeline RAG yang tetap. Yang lainnya adalah **rekayasa perangkat lunak (software engineering)**, diwakili oleh lingkungan pelatihan seperti SWE-Gym, yang mendukung multi-turn RL untuk Agent pengodean di codebase nyata, memungkinkan model untuk secara berulang mengedit, menjalankan, dan memperbaiki kode. Kedua jalur ini memiliki dua tantangan yang sama: long-horizon credit assignment (menghubungkan keberhasilan akhir dengan keputusan yang dibuat belasan langkah sebelumnya) dan rekayasa lingkungan (membangun lingkungan pelatihan yang stabil, dapat direproduksi, dan dapat diparalelkan secara masif).
 
 Tool RL juga memiliki detail rekayasa yang tidak dapat dihindari: **loss masking untuk token umpan balik lingkungan**. Trajectory dari Tool Call berisi token yang dihasilkan oleh model itu sendiri (thinking, parameter pemanggilan tool) dan token yang dikembalikan oleh lingkungan (output Code Interpreter, hasil pencarian, balasan layanan pelanggan). Yang terakhir tidak dihasilkan oleh policy melainkan diberikan oleh lingkungan—jika mereka disertakan dalam policy gradient, model akan dilatih untuk "memprediksi apa yang akan dikeluarkan (output) oleh Code Sandbox," yang menyimpang dari tujuan pengoptimalan dan membuat pelatihan menjadi tidak stabil. Praktik standarnya adalah menutupi (mask) token umpan balik lingkungan ketika menghitung kerugian (loss), melakukan propagasi balik (backpropagating) gradien hanya untuk token yang dihasilkan oleh model. Ini adalah salah satu poin teknis inti dari ReTool (menutupi gradien untuk token umpan balik (feedback tokens) di dalam tag `<interpreter>`), dan ini adalah apa yang disebut oleh Search-R1 sebagai "masking retrieved tokens to stabilize training." Framework pelatihan utama seperti veRL dan AWorld memiliki mekanisme bawaan ini.
+
+**Mask reward tingkat trajektori:**
+
+```python
+for token in trajectory:
+    if token.source == ENVIRONMENT:
+        loss_mask[token] = 0
+    else:                                      # model thought / tool arguments
+        loss_mask[token] = 1
+```
 
 > **Eksperimen 7-14 ★★★: ReTool—Penyelesaian Soal Matematika yang Ditingkatkan Code Interpreter**
 >
@@ -757,6 +816,17 @@ On-Policy Distillation, yang dirumuskan secara sistematis dan dipopulerkan oleh 
 
 Bagaimana tepatnya penilaian dilakukan? Guru tidak hanya menilai apakah langkah siswa tersebut benar; ia memberikan distribusi probabilitas lengkap untuk token berikutnya pada posisi saat ini. Misalnya, jika siswa menulis "pertama-tama kueri API, lalu parse nilai kembalian...", guru mungkin menentukan bahwa pada posisi ini, "kueri" harus memiliki probabilitas 80%, "panggil" 15%, dan sisa 5% untuk token lainnya. Tujuan pembelajaran siswa adalah membuat distribusi prediksinya sendiri di setiap posisi sedekat mungkin dengan distribusi guru. Secara teknis, ini dicapai dengan meminimalkan **KL divergence** antara dua distribusi (KL divergence mengukur perbedaan antara dua distribusi probabilitas; semakin kecil, semakin dekat keduanya, dan bernilai nol jika identik, sebagaimana dirinci di Bagian 7.7). Dibandingkan dengan sinyal biner keberhasilan/kegagalan akhir, penyelarasan distribusi di tingkat token ini lebih padat (dense) lebih dari satu tingkat (order of magnitude).
 
+**Distilasi on-policy:**
+
+```python
+student_trajectory = rollout(student, task)
+loss = 0
+for state in student_trajectory:
+    teacher_logits = teacher(state)
+    loss += KL(student_logits(state), teacher_logits)
+update_student(loss)
+```
+
 Hasilnya mencolok: pada task seperti matematika, menyamai performa RL murni hanya membutuhkan sekitar **1/10** langkah pelatihan. Keunggulannya paling menonjol dalam penalaran rantai panjang (long-chain reasoning)—dengan guru menunjukkan jalan di setiap langkah, siswa dengan cepat belajar mengoreksi kesalahannya alih-alih melayang lebih jauh ke jalur yang salah. Hal ini juga mengurangi overfitting: dalam RL standar, melatih berulang kali pada prompt yang sama cenderung menghafal jawaban akhir, sedangkan di sini setiap trajectory berbeda dan feedback guru spesifik untuk trajectory tersebut, sehingga siswa mempelajari strategi umum daripada jawaban tertentu—dan data dapat digunakan kembali dengan jauh lebih masif.
 
 Metode ini sangat berharga dalam **skenario Agent multi-putaran (multi-turn Agent)**: sinyal keberhasilan/kegagalan muncul di bagian paling akhir, yang menjadikannya sparse sekaligus tertunda. Distribusi guru di tingkat token dengan sempurna mengisi panduan yang hilang untuk setiap langkah menengah. Namun, hal ini memiliki prasyarat yang menggemakan tema utama bab ini: **environment simulasi yang cukup realistis diperlukan agar siswa dapat bereksplorasi secara bebas**—jika tidak, ketika siswa memasuki status off-distribution yang juga belum pernah dilihat guru, distribusi target guru menjadi tidak dapat diandalkan. Nilai pembelajaran On-Policy dibangun di atas premis bahwa "siswa benar-benar mengeksplorasi distribusi deployment."
@@ -768,6 +838,18 @@ Prinsip bahwa "dense signals lebih baik daripada sparse signals" mendapat valida
 Kekuatan On-Policy Distillation berasal dari guru, tetapi hal itu juga membebani dengan prasyarat yang sulit: **harus ada model guru yang jelas-jelas lebih kuat dari siswa.** Di banyak skenario, ini tidak berlaku. Jika yang Anda latih adalah model domain vertikal dan kemampuan model-model yang ada semuanya tidak memadai, maka tidak ada model guru yang tersedia. Tanpa guru yang lebih kuat, apakah keuntungan dari sinyal padat di luar jangkauan kita?
 
 Jalan keluar yang cerdas adalah **On-Policy Self-Distillation (OPSD)**[^ch7-15]: **biarkan model yang sama bermain sebagai guru dan siswa, di mana satu-satunya perbedaan adalah konteksnya.** Versi guru dapat melihat "informasi istimewa" (privileged information)—seperti standar jawaban untuk masalah tersebut, atau solusi benar yang telah diverifikasi. Ia tidak perlu benar-benar "tahu cara memecahkan" masalah; ia hanya perlu mengambil jawaban dan **merasionalisasi** setiap langkah yang telah diambil siswa, menghasilkan distribusi target token demi token. Versi siswa hanya melihat masalah itu sendiri dan menyelaraskan dirinya dengan versi guru pada trajectory sampelnya sendiri. Intuisi di baliknya: "menjelaskan masalah dengan memegang jawaban di tangan" jauh lebih mudah daripada "memecahkan masalah secara independen"—ini isomorfik dengan "asimetri verifikasi-generasi" (verification-generation asymmetry) yang menjadi tumpuan RLVR, kecuali bahwa di sini asimetri tersebut digunakan untuk menghasilkan sinyal supervisi yang padat alih-alih skalar keberhasilan/kegagalan yang sparse.
+
+**Self-distillation on-policy:**
+
+```python
+student_trajectory = rollout(model, task_without_answer)
+loss = 0
+for state in student_trajectory:
+    privileged_state = add_verified_answer(state)
+    teacher_logits = stop_gradient(model(privileged_state))
+    loss += KL(model(state), teacher_logits)
+update(model, loss + retention_regularizer)
+```
 
 Dibandingkan dengan RLVR, OPSD memiliki dua keunggulan inti. **Pertama, ia tidak lagi bergantung pada reward yang dapat diverifikasi (verifiable rewards).** RLVR mengandaikan pemverifikasi (verifier) otomatis, sedangkan sumber informasi istimewa OPSD jauh lebih luas: standar jawaban, namun juga System Prompt yang lebih kaya, demonstrasi manusia, atau dokumen domain—apa pun yang "memungkinkan model, setelah fakta (after the fact), menjelaskan dengan jelas perilaku yang benar" dapat digunakan. **Kedua, sinyal supervisi jauh lebih padat daripada RL.** RL menghasilkan satu skalar reward per trajectory; OPSD memberikan distribusi probabilitas lengkap di setiap posisi di sepanjang trajectory, dan efisiensi tokennya jelas lebih baik daripada metode RL. Wajar untuk mengatakan bahwa OPSD mengganti "guru yang lebih kuat" dengan "informasi istimewa," dan dengan demikian telah menjadi jalur yang realistis untuk meringankan masalah efisiensi sampel.
 
@@ -896,94 +978,6 @@ Bab ini menjawab bagaimana pembaruan parameter dapat mewujudkan evolusi Agent se
 [^ch7-20]: Hua, Zhanbo, et al. "CLI-Universe: Towards Verifiable Task Synthesis Engine for Terminal Agents", 2026. arXiv:2606.22883.
 
 Bab ini telah menjawab pertanyaan terkait pembaruan parameter tentang “bagaimana cara melatih”. Bab selanjutnya menempatkan kembali parameter model ke dalam sistem Agent yang utuh: parameter hanyalah satu dari empat pembawa pembaruan, di samping pengetahuan, instruksi, dan program. Tantangan khasnya adalah bagaimana memperoleh sinyal pembelajaran (learning signals) yang dapat dipercaya dari trajectory deployment, memilih lokasi pembaruan yang tepat, dan mengatur validasi, rilis, serta rollback dari setiap kandidat versi. Terkait spesifikasi algoritma pelatihan, Bab 8 secara langsung merujuk ke bab ini daripada mengulang materi tersebut.
-
-## Skeleton mekanisme
-
-Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
-
-### Mask loss SFT
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
-```
-
-### Pembaruan grup GRPO
-
-```python
-for prompt in batch:
-    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
-    rewards = [verify(trajectory) for trajectory in group]
-    advantages = normalize_within_group(rewards)       # GRPO baseline
-    update(policy, group, advantages)
-```
-
-### Pembaruan terklip PPO
-
-```python
-for trajectory in rollouts:
-    returns = discounted_returns(trajectory.rewards)
-    values = value_model(trajectory.states)
-    advantages = returns - stop_gradient(values)
-    ratio = exp(policy.log_prob(trajectory.actions)
-                - old_policy.log_prob(trajectory.actions))
-    policy_loss = -mean(min(
-        ratio * advantages,
-        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
-    ))
-    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
-update(policy, value_model, policy_loss + value_coef * value_loss)
-```
-
-### Mask reward tingkat trajektori
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-### Sinyal hasil plus jalur
-
-```python
-outcome = verify_final_state(trajectory)              # result, not self-report
-path_signal = 0
-for step in trajectory:
-    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
-reward = normalize(outcome) + beta * normalize(path_signal)
-```
-
-### Distilasi on-policy
-
-```python
-student_trajectory = rollout(student, task)
-loss = 0
-for state in student_trajectory:
-    teacher_logits = teacher(state)
-    loss += KL(student_logits(state), teacher_logits)
-update_student(loss)
-```
-
-### Self-distillation on-policy
-
-```python
-student_trajectory = rollout(model, task_without_answer)
-loss = 0
-for state in student_trajectory:
-    privileged_state = add_verified_answer(state)
-    teacher_logits = stop_gradient(model(privileged_state))
-    loss += KL(model(state), teacher_logits)
-update(model, loss + retention_regularizer)
-```
-
-Pertahankan batasnya: observasi dan bukti berasal dari lingkungan, sedangkan Harness menentukan tindakan yang boleh dieksekusi.
 
 ## Pertanyaan Pemikiran
 

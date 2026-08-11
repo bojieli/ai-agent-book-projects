@@ -187,6 +187,23 @@ IPC の 2 つのパラダイムに対応させると、共有ファイルシス�
 
 ファイルシステムは Agent 間の**生成物交換**の問題を解決しますが、協調にはもう一つ**コントロールプレーン**が必要です。ここでこそ表10-3 のライフサイクルの各行が力を発揮します。作成（`spawn_subagent`）、メッセージ送信（`send_message_to_subagent`）、キャンセル（`cancel_subagent`）、発見（`list_agents`）という第 4 章で示された一群のツールのプリミティブは、プロセス世界の fork、メッセージ、kill、ps に対応します。本節はインターフェース定義を繰り返さず、マルチ Agent 協調が依存しながらもしばしば見過ごされる 4 つの能力に焦点を当てます。
 
+**メッセージエンベロープと worker のライフサイクル:**
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
 **一、メッセージ受け渡し。** 最も単純な形態はポイントツーポイントです。Agent A が直接 `send_message_to_agent_b(content)` を呼び出すもので、トポロジーが固定で Agent 数が少ない場面（本章の実験 10-3 の電話＋パソコンの 2 Agent など）に適します。Agent 数が増え、非同期並列が必要になると、ポイントツーポイントの接続数は Agent 数に対して二乗で増え、しかも送受信の双方が同時にオンラインであることを要します。このときは**メッセージバス**に切り替えるべきです（本章後半の「並列協調形態」を参照）。Agent はメッセージをバスに発行し、バスが購読関係に従って転送するので、送信側は消費者を知る必要がありません。ポイントツーポイントであれバス経由であれ、メッセージは通常、構造化された**エンベロープ**（envelope）を携えるべきです。送信者 ID、宛先（指定 Agent かブロードキャストか）、メッセージ種別（`task_assigned`/`status_update`/`result`/`terminate` など）、および JSON ペイロードです。統一されたエンベロープ形式は、受信側が確実にルーティング・解析できることを保証し、協調経路を追跡可能にします。これはマルチ Agent システムのデバッグの鍵です。
 
 **二、状態照会。** これはコントロールプレーンで最も過小評価されがちな一環です。メイン Agent がサブ Agent を送り出したあと、その進捗を知る術がなければ、待ち続けるべきか判断することも、ブロックしたときに適時介入することもできません。直感的なやり方は RPC をそのまま持ち込み、`get_subagent_status(agent_id)` という照会インターフェースを定義して「実行中／完了済み／失敗」に進捗のパーセンテージを添えて返すことです。しかしこのプル式のインターフェースの実際の用途は予想よりはるかに小さいのです。サブ Agent はいったん作成されると直ちに実行を始め、完了または失敗するまで走り続けるのであって、従来のバッチ処理システムのジョブのように一連のキュー状態の間を遷移するわけではありません——ちょうど Unix プログラミングで、PID を指定して別のプロセスの実行状態をポーリングする必要がめったにないのと同じです。ポーリングにはさらに固有のジレンマがあります。密すぎれば token を浪費し、疎すぎれば適時性を欠くのです。状態取得のより自然なやり方は、本章冒頭の 2 つの大きな通信パラダイムに立ち返ることです。
@@ -241,6 +258,24 @@ Agent は引き続き推論し、ツールを使い、候補成果物を生成�
 
 **なぜ 1 つの Agent に自分で生成させて自分で審査させてはいけないのか？** これこそ先ほどの「マルチ Agent が本当に単一 Agent に勝るのはいつか」の節のあの判定基準の具体的な着地点です。審査が新しい情報を導入しないなら、それは「モデルにもう一度考えさせる」だけです。関連研究はこれに明確な答えを与えています。Huang らは ICLR 2024 の論文『Large Language Models Cannot Self-Correct Reasoning Yet』で、GPT-4 に外部フィードバックのない状況で自分の回答を審査・修正させると、正答率がかえって下がることを発見しました。モデルが正しい答えを誤りに変える回数が、誤った答えを正しく直す回数よりも多かったのです。
 
+**Proposer–Reviewer ループ:**
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
 2024 年に TACL 誌に発表された総説論文『When Can LLMs Actually Correct Their Own Mistakes?』（arXiv:2406.01297）はこの結論をさらに裏付けました。信頼できる外部フィードバック（テストケースの実行結果、外部ツールの検証出力など）を与えない限り、純粋にモデル自身の「自己修正」に依存してもほとんど効果がない、というものです。
 
 ICLR 2024 の CRITIC 論文は直感的な対比実験を提供しました。CRITIC はモデルに外部ツール（検索エンジン、Python インタプリタ）を使って自分の回答を検証させ、効果が顕著に向上しました。しかし実験者がツール検証のステップを取り除き、モデルの自己評価だけを残すと、大部分の向上は消えました。これは、審査の価値が「モデルにもう一度考えさせる」ことにあるのではなく、**モデルが生成時には持たない新しい情報を導入する**ことにある——テスト結果、レンダリング後のスクリーンショット、コンパイルエラー、外部検索結果——ことを示しています。
@@ -272,6 +307,23 @@ Loop 工程の視点から見ると、業界がまとめたいくつかのルー
 
 2025 年の Plan-and-Act 論文 [^plan-and-act-2025] はこれについて実証分析を行いました。Planner-Executor の 2 Agent アーキテクチャにおいて、**弱い計画者こそがシステム全体で最も鍵となるボトルネック**です。Planner の計画品質が十分に高ければ、たとえ Executor が比較的単純でも良い結果を出せます。逆に、Planner のタスク分解が誤っていれば、後続のすべての Executor の仕事は誤った前提の上に築かれます。この研究は WebArena-Lite ベンチマークで 54% の成功率を達成しましたが、その中核的な貢献はまさに Executor の実行能力ではなく Planner の計画能力を改善したことにあります。この発見の示唆はこうです。最も強力なモデルと最も入念に設計されたプロンプトを Manager（計画者）に割り当てるべきであって、リソースをすべての Agent に均等に配分すべきではない、ということです。
 
+**最初の検証済み並列勝者:**
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
 
 [^plan-and-act-2025]: Erdogan, L. E., et al. *Plan-and-Act: Improving Planning of Agents for Long-Horizon Tasks.* arXiv:2503.09572, 2025.
 
@@ -412,6 +464,24 @@ Manager が順番に専門 Agent を次々と呼び出し、各 Agent が完了�
 中央制御者をなくす目的は、人間の組織のように対等な役割が分業と相互牽制を行い、各 Agent がタスクの移譲、フィードバック要求、矛盾の報告を自律的に判断できるようにすることです。Manager の停止が単一障害点になる問題も軽減します。マイクロサービスでは、この二つを **orchestration** と **choreography** と呼びます。
 
 以下の事例は、通信の疎結合化から制御フローの去中心化へ進みます。MetaGPT は固定パイプライン、AutoGen group chat は共有会話と中心化スケジューリングの混合、OpenAI Swarm は移譲判断を対等な Agent に分散します。
+
+**分散 handoff プロトコル:**
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
 
 **MetaGPT：SOP 駆動のソフトウェア会社シミュレーション。**
 
@@ -633,83 +703,6 @@ Pinchwork と RentAHuman はともに**市場メカニズムに基づく協調�
 ## 本章のまとめ
 
 マルチ Agent 協調の価値は、生成時に単一 Agent が得られない新しい情報（実行結果、視覚フィードバック、外部ツールによる検証など）を導入できるかで決まります。設計ではコンテキストを共有するか分離するか、対等協調・管理者・去中心化のどのトポロジーを採用するかを選びます。構造化した引き継ぎパッケージ、権限境界、独立検証、予算とキャンセルを組み合わせることで、基本的な耐故障ループを構成できます。長期で開放的な相互作用では社会関係、規範、市場、戦略も創発し得るため、情報の流れ、能力の分担、誤りの発見を設計することが本質です。
-
-## メカニズムの skeleton
-
-以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
-
-### メッセージエンベロープと worker のライフサイクル
-
-```python
-envelope = {
-    id, trace_id, sender, recipient, type,
-    payload, created_at, deadline, schema_version
-}
-
-worker = spawn(task, budget, cancellation_token)
-publish(task_assigned(envelope, worker))
-while worker.is_running:
-    accept(status_update | artifact | needs_input)
-    if deadline_expired or cancellation_token.is_set:
-        request_graceful_stop(worker)
-await worker.ack_or_timeout()
-```
-
-### Proposer–Reviewer ループ
-
-```python
-candidate = proposer(task, constraints)
-evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
-review = independent_reviewer(candidate, evidence)
-
-while review.veto and budget_remaining:
-    candidate = proposer.repair(candidate, review.findings)
-    evidence = execute_or_render(candidate)
-    review = independent_reviewer(candidate, evidence)
-
-if review.pass:
-    publish(candidate, evidence, review)
-else:
-    escalate_or_reject(review)
-```
-
-### 最初の検証済み並列勝者
-
-```python
-workers = launch_independent_workers(subtasks)
-while workers.any_running:
-    event = next_event()
-    if event.type == RESULT:
-        if verify(event.artifact, hidden_checks):
-            if not settle_once(event):       # atomically claim the winner
-                continue
-            broadcast_cancel(to = workers - {event.worker_id})
-            await_all_ack_or_timeout()
-            return assemble(event.artifact, evidence = event.evidence)
-        else:
-            record_failure(event)
-return summarize_failures(workers)
-```
-
-### 分散 handoff プロトコル
-
-```python
-handoff = {
-    task_id, sender, recipient, goal, constraints,
-    accepted_facts, artifact_refs, remaining_budget,
-    visited_agents
-}
-
-if recipient in handoff.visited_agents:
-    reject("cycle")
-elif handoff.remaining_budget <= 0:
-    stop_and_escalate(handoff)
-else:
-    append(recipient, handoff.visited_agents)
-    run_local_agent(handoff)
-```
-
-境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
 
 ## 演習問題
 

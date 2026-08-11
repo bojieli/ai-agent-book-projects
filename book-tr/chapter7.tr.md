@@ -63,6 +63,18 @@ SFT'nin özü tek cümlede: **son derece yüksek bir örneklem verimliliğiyle, 
 
 > **Eğitim maliyeti: LoRA ile parametre-verimli ince ayar**. Yukarıdaki SFT de sonraki RL de model parametrelerini güncellemeyi gerektirir, oysa tam parametreli ince ayarın VRAM ihtiyacı çok yüksektir (milyarlarca parametrenin hepsi için gradyan ve optimizer durumu saklanmalıdır). **LoRA** (Low-Rank Adaptation, düşük ranklı uyarlama) en yaygın tasarruf yöntemidir: orijinal büyük ağırlık matrislerine dokunmaz, yalnızca yanlarına görevi öğrenecek küçücük bir "yama" (düşük ranklı matris) asar; parametre sayısı orijinalin yalnızca %1–5'i kadardır ama tam parametreli ince ayara yakın bir sonuç verir. Orijinal ağırlıklar dondurulduğu için LoRA'nın temel modelin mevcut yeteneklerinde yarattığı sarsıntı da daha küçüktür, catastrophic forgetting riski daha düşüktür. Doğrulanmış birkaç pratik ders[^ch7-1]: LoRA'yı bütün ana ağırlık matrislerine (özellikle parametrenin en büyük payını tutan MLP katmanlarına) uygulamak **zorunludur**, yalnızca attention katmanlarına eklerseniz puan kaybedersiniz; **en iyi öğrenme oranı, tam parametreli ince ayarınkinin yaklaşık 10 katıdır** (hem SFT hem RL için geçerli, son derece kullanışlı bir aktarım kuralı); SFT'de orta-yüksek rank (64–256) kullanılır, RL'de ise her turun taşıdığı bilgi çok az olduğu için küçük rank (8–32), hatta rank=1 bile yeter. Konuşlandırmada tek bir çıkarım sunucusu aynı anda birden fazla LoRA adapter yükleyip çok kiracılı hizmet verebilir. Bu kitap LoRA'yı bütün post-training yöntemlerini kesen bir mühendislik varsayılanı olarak alıyor ve ayrıca açmıyor.
 
+**SFT kayıp maskesi:**
+
+```python
+for sample in dataset:
+    prompt_tokens = tokenize(sample.prompt)
+    answer_tokens = tokenize(sample.answer)
+    tokens = prompt_tokens + answer_tokens
+    labels = [-100] * len(prompt_tokens) + answer_tokens
+    loss = causal_lm_loss(tokens, labels)
+    update_parameters(loss)
+```
+
 ### Neden Önce SFT Sonra RL, Tersi Değil
 
 Üç aşamanın sırası keyfi değildir. Pre-training'in en başta gelmesi tartışmasızdır — dil ve bilgi temeli olmadan sonrasının lafı bile edilemez. Asıl açıklanması gereken şudur: **SFT neden RL'den önce gelmek zorunda?**
@@ -346,6 +358,33 @@ Pratikte karar verirken şu sırayı izleyebilirsiniz:
 "Tek tur", görevin tek bir etkileşimde tamamlanması demektir: model girdiyi alır, çıktıyı üretir, ödülü kazanır ve adımlar arası bir durum tutmasına gerek kalmaz. Bu sadeleştirilmiş kurgu, çok turlu etkileşimin karmaşıklığına takılmadan SFT ile RL'in öğrenme mekanizmalarındaki temel farka odaklanmamızı sağlar. Tek turlu senaryo net bir kontrollü deney ortamı sunar: aynı görev, aynı temel model, aynı hesaplama bütçesi; tek değişken eğitim yöntemidir. İlk deney, RL'in "ne zaman düşünmek gerekir" biçimindeki üst-stratejiyi nasıl öğrendiğini gösteriyor; ikinci deney ise aritmetik akıl yürütme gerektiren bir kart oyunuyla "SFT ezberler, RL genelleştirir" iddiasını sistemli biçimde niceliyor.
 
 Deneylere geçmeden önce, sonraki deneylerde geçen terimleri anlayabilmek adına RL algoritmalarına dair **asgari bir sezgi** kuralım (eksiksiz formüller ve karşılaştırma, bölümün ilerisindeki "Pekiştirmeli Öğrenme Algoritmalarının Karşılaştırması" kesimine bırakıldı). Bu bölümdeki RL eğitimlerinin çoğu **policy gradient** temellidir: modele aynı soru için birkaç yanıt ürettirilir, ödülü yüksek olan yanıtların ortaya çıkma olasılığı yükseltilir, ödülü düşük olanlarınki düşürülür — "ödülün yüksek olduğu yöne çok, düşük olduğu yöne az git". Tek seferlik güncellemenin fazla büyük olup modeli yoldan çıkarmaması için ana akım **PPO** algoritması her adımdaki güncelleme genliğini kırpar (ilerideki deneylerde geçen "değer ağı olan PPO" bunu kasteder; değer ağı bir taban çizgisi kestirip daha ince bir avantaj hesabı çıkarmaya yarar). Bir diğer algoritma olan **GRPO** ise değer ağı eğitmez; onun yerine "aynı sorunun birden çok yanıtını birbiriyle karşılaştırarak" her birinin göreli iyiliğini belirler. Bu sezgiyi aklınızda tutmanız sonraki iki deneyi anlamaya yeter.
+
+**GRPO grup güncellemesi:**
+
+```python
+for prompt in batch:
+    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
+    rewards = [verify(trajectory) for trajectory in group]
+    advantages = normalize_within_group(rewards)       # GRPO baseline
+    update(policy, group, advantages)
+```
+
+**PPO kırpılmış güncellemesi:**
+
+```python
+for trajectory in rollouts:
+    returns = discounted_returns(trajectory.rewards)
+    values = value_model(trajectory.states)
+    advantages = returns - stop_gradient(values)
+    ratio = exp(policy.log_prob(trajectory.actions)
+                - old_policy.log_prob(trajectory.actions))
+    policy_loss = -mean(min(
+        ratio * advantages,
+        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    ))
+    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
+update(policy, value_model, policy_loss + value_coef * value_loss)
+```
 
 > **Deney 7-10 ★★: AdaptThink — "Ne Zaman Düşünmemek Gerektiğini" Öğrenmek**
 >
@@ -675,6 +714,16 @@ Yani **saf sonuç ödülü, başarı oranının her iki ucunda da "kördür"**. 
 
 **RLVR ile ilişkisi (bu arada karıştırılan bir noktayı da açalım).** RLVP ile bu bölümde defalarca geçen RLVR (doğrulanabilir ödüllü pekiştirmeli öğrenme) arasında yalnızca bir harf fark var ve bu fark tam da birbirlerini tamamladıklarını gösteriyor: **RLVR sonucu doğrular, RLVP ek olarak süreci doğrular.** İkisi üst üste bindiğinde hem "işi bitirmeye" hem de "kurallara uygun bitirmeye" bakan bir eğitim sinyali elde edilir — güvenle canlıya çıkabilecek bir Agent'ın ihtiyacı tam olarak budur.
 
+**Sonuç artı yol sinyali:**
+
+```python
+outcome = verify_final_state(trajectory)              # result, not self-report
+path_signal = 0
+for step in trajectory:
+    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
+reward = normalize(outcome) + beta * normalize(path_signal)
+```
+
 > **Deney 7-16 ★★★: RLVP — Sonucu Ödüllendir, Yolu Cezalandır `[genişletilmiş deney]`**
 >
 > **Deney amacı**: "Sonuç ödülü + doğrulanmış yol sinyali" bileşiminin, görev başarı oranından ödün vermeden bir yandan kısıt ihlallerini düşürüp düşüremeyeceğini (ceza kullanımı), diğer yandan örnek verimliliğini artırıp artıramayacağını (kısmi ödül kullanımı) doğrulamak.
@@ -696,6 +745,16 @@ Araç kullanımı, Agent'ın yetenek sınırını "modelin kendi akıl yürütme
 Tool calling etrafındaki Agent RL çalışmalarında şu anda iki etkin hat var. Birincisi **retrieval ile güçlendirme**: temsilcisi Search-R1 (Jin ve arkadaşları, 2025); RL ile modele, sabit bir RAG akışını uygulamak yerine düşünme sürecinde ne zaman arama başlatacağına kendi başına karar vermeyi ve dönen sonuçlarla akıl yürütmeye devam etmeyi öğretir. İkincisi **yazılım mühendisliği**: temsilcisi SWE-Gym gibi eğitim ortamları; coding Agent için gerçek kod depoları üzerinde çok turlu RL yapar ve modelin kodu yinelemeli olarak düzenlemesini, çalıştırmasını, onarmasını sağlar. İki hattın ortak zorluğu, uzun zaman ufuklu credit assignment (nihai bir başarının onlarca adım öncesindeki bir karara atfedilmesi) ve ortam mühendisliğidir (kararlı, yeniden üretilebilir ve büyük ölçekte paralelleştirilebilir eğitim ortamı kurmak).
 
 Araç RL'inde kaçınılmaz bir mühendislik ayrıntısı daha var: **ortam geri bildirimi token'larına kayıp maskeleme (loss masking) uygulamak**. Bir tool calling trajectory'sinde hem modelin kendi ürettiği token'lar (düşünme, araç çağrısı parametreleri) hem de ortamın döndürdüğü token'lar (kod yorumlayıcı çıktısı, arama sonuçları, müşteri temsilcisinin yanıtı) bulunur. İkinciler politika tarafından üretilmemiştir, ortam tarafından verilmiştir — bunları da policy gradient'e katarsanız model "sandbox'ın ne çıktı vereceğini tahmin etmeye" doğru eğitilir; bu hem optimizasyon hedefinden sapar hem de eğitimi kararsızlaştırır. Standart uygulama, kayıp hesaplanırken ortam geri bildirimi token'larını maskelemek ve gradyanı yalnızca modelin kendi ürettiği token'lara geri yaymaktır. ReTool'un çekirdek teknik noktalarından biri tam olarak budur (`<interpreter>` etiketleri içindeki geri bildirim token'larına gradyan maskesi uygulamak); Search-R1'in "eğitimi kararlı kılmak için retrieval edilen token'ları maskelemek" dediği şey de budur. veRL, AWorld gibi yaygın eğitim çerçevelerinin hepsinde bu mekanizma yerleşiktir.
+
+**Trajectory düzeyinde ödül maskesi:**
+
+```python
+for token in trajectory:
+    if token.source == ENVIRONMENT:
+        loss_mask[token] = 0
+    else:                                      # model thought / tool arguments
+        loss_mask[token] = 1
+```
 
 > **Deney 7-14 ★★★: ReTool — Kod Yorumlayıcıyla Güçlendirilmiş Matematik Problemi Çözme**
 >
@@ -756,6 +815,17 @@ On-Policy Distillation (iz üstü damıtma), 2025'te Thinking Machines Lab taraf
 
 Puanlama tam olarak nasıl yapılır? Öğretmen yalnızca öğrencinin bu adımının doğru olup olmadığına karar vermez; doğrudan "şu anki konumda bir sonraki token için çeşitli seçeneklerin olasılıkları ne olmalı" sorusunun tam dağılımını verir. Örneğin öğrenci "önce API'yi sorgula, sonra dönen değeri ayrıştır..." derken belirli bir noktaya geldiğinde, öğretmen burada "sorgula"nın %80, "çağır"ın %15, geri kalanın %5 olması gerektiğini düşünür; öğrencinin öğrenme hedefi ise her konumdaki tahmin dağılımını öğretmenin dağılımına olabildiğince yaklaştırmaktır. Teknik olarak bu, iki dağılım arasındaki **KL sapmasını** (KL divergence) en aza indirerek gerçekleştirilir (KL sapması iki olasılık dağılımı arasındaki farkı ölçer; dağılımlar birbirine yaklaştıkça küçülür, aynı olduklarında 0 olur; Bölüm 7.7'de ayrıntılı anlatıldı). Yalnızca nihai başarı/başarısızlığı bildiren ikili sinyale kıyasla, bu token token dağılım hizalaması bir büyüklük mertebesinden fazla yoğundur.
 
+**On-policy damıtma:**
+
+```python
+student_trajectory = rollout(student, task)
+loss = 0
+for state in student_trajectory:
+    teacher_logits = teacher(state)
+    loss += KL(student_logits(state), teacher_logits)
+update_student(loss)
+```
+
 Sonuçlar çok belirgin: matematik gibi görevlerde aynı performansa ulaşmak için gereken eğitim adımı sayısı, saf RL'in yalnızca yaklaşık **1/10'u** kadardır. Uzun zincirli düşünme görevlerinde üstünlüğü özellikle belirgin — her adımda öğretmen yol gösterdiği için öğrenci hatasını hızla düzeltmeyi öğrenir, yanlış yolda gitgide uzaklaşmaz. Ayrıca yan fayda olarak aşırı öğrenmeyi de hafifletir: standart RL'de aynı prompt üzerinde tekrar tekrar eğitim yapmak nihai yanıtın ezberlenmesine yol açabilir; burada ise her seferinde trajectory farklıdır ve öğretmen somut trajectory'ye göre geri bildirim verir, böylece öğrenilen şey belirli bir yanıt değil genel bir politika olur; verinin yeniden kullanım oranı da bu sayede büyük ölçüde artar.
 
 Bu yöntemin değeri **çok turlu Agent senaryolarında** özellikle büyüktür: çok turlu görevlerde başarı/başarısızlık sinyali en sonda ortaya çıkar, hem seyrek hem gecikmelidir; token token verilen öğretmen dağılımı ise tam olarak aradaki her adımda eksik kalan yönlendirmeyi tamamlar. Ama bir ön koşulu var ve bu, bölüm boyunca vurgulanan ana hattı yankılıyor: **öğrencinin serbestçe keşfedebileceği, yeterince gerçekçi bir simülasyon ortamı olmak zorundadır** — yoksa öğrenci, öğretmenin de hiç görmediği sapma durumlarına düştüğünde öğretmenin puanlaması da güvenilmez olur. On-Policy'nin değeri, "öğrencinin gerçekten dağıtım ortamının dağılımı üzerinde keşif yapması" temeline dayanır.
@@ -767,6 +837,18 @@ Bu yöntemin değeri **çok turlu Agent senaryolarında** özellikle büyüktür
 On-Policy Distillation'ın gücü öğretmenden gelir, ama tam da bu yüzden sert bir ön koşulu vardır: **öğrenciden belirgin biçimde güçlü bir öğretmen model bulunmak zorundadır.** Bu, birçok senaryoda geçerli değildir. Eğitmek istediğiniz şey dikey bir alan modeliyse ve mevcut modellerin hepsinin yeteneği yetersizse, kullanılabilecek bir öğretmen model yoktur. Daha güçlü bir öğretmen olmadan, yoğun sinyalin getirisinden büsbütün mahrum mu kalırız?
 
 Zekice bir çözüm fikri **On-Policy Self-Distillation (OPSD, iz üstü öz-damıtma)**[^ch7-15]: **aynı modele hem öğretmen hem öğrenci rolünü oynatmak; tek fark context'tedir.** Öğretmen sürümü "ayrıcalıklı bilgiyi" (privileged information) görebilir — örneğin sorunun standart yanıtını ya da doğrulanmış doğru bir çözümü. Bu sürümün soruyu gerçekten "çözebiliyor" olması gerekmez; elindeki yanıtla öğrencinin yürüdüğü her adımı **gerekçelendirip** token token hedef dağılımı vermesi yeterlidir. Öğrenci sürümü ise yalnızca sorunun kendisini görür ve kendi örneklediği trajectory'ler üzerinde öğretmen sürümüyle hizalanır. Arkasındaki sezgi şu: "yanıta bakarak soruyu anlatmak", "soruyu bağımsız çözmekten" çok daha kolaydır — bu, RLVR'in dayandığı "doğrulama—üretim asimetrisiyle" eş yapıdadır; yalnızca burada asimetri, seyrek bir başarı/başarısızlık skaleri değil yoğun bir denetim sinyali üretmek için kullanılır.
+
+**On-policy öz-damıtma:**
+
+```python
+student_trajectory = rollout(model, task_without_answer)
+loss = 0
+for state in student_trajectory:
+    privileged_state = add_verified_answer(state)
+    teacher_logits = stop_gradient(model(privileged_state))
+    loss += KL(model(state), teacher_logits)
+update(model, loss + retention_regularizer)
+```
 
 RLVR'e kıyasla OPSD'nin iki temel üstünlüğü var. **Birincisi, artık doğrulanabilir ödüle bağımlı değildir.** RLVR'in ön koşulu otomatik bir doğrulayıcının varlığıdır; OPSD'nin ayrıcalıklı bilgi kaynağı ise çok daha geniştir: standart yanıt olabileceği gibi daha zengin bir system prompt, insan gösterimi ya da alan dokümanı da olabilir — "modelin sonradan doğru davranışı açıklıkla anlatmasını sağlayan" her bilgi işe yarar. **İkincisi, denetim sinyali RL'inkinden çok daha yoğundur.** RL'de bir trajectory yalnızca tek bir skaler ödül alır; OPSD ise trajectory'nin her konumunda eksiksiz bir olasılık dağılımı sağlar ve token verimliliği RL yöntemlerinden belirgin biçimde üstündür. Denilebilir ki OPSD, "daha güçlü öğretmenin" yerine "ayrıcalıklı bilgiyi" koymuştur ve bu sayede örnek verimliliği sorununu hafifletmenin gerçekçi bir yolu haline gelmiştir.
 
@@ -892,95 +974,6 @@ Bu bölüm, parametreleri güncelleyerek Agent'ın sürekli evriminin nasıl sa�
 [^ch7-18]: Wei, Yifan, et al. "Towards Compositional Generalization of LLMs via Skill Taxonomy Guided Data Synthesis", 2026. arXiv:2601.03676.
 [^ch7-19]: Zhu, Kaijie, et al. "TermiGen: High-Fidelity Environment and Robust Trajectory Synthesis for Terminal Agents", 2026. arXiv:2602.07274.
 [^ch7-20]: Hua, Zhanbo, et al. "CLI-Universe: Towards Verifiable Task Synthesis Engine for Terminal Agents", 2026. arXiv:2606.22883.
-
-
-## Mekanizma skeleton'ları
-
-Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
-
-### SFT kayıp maskesi
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
-```
-
-### GRPO grup güncellemesi
-
-```python
-for prompt in batch:
-    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
-    rewards = [verify(trajectory) for trajectory in group]
-    advantages = normalize_within_group(rewards)       # GRPO baseline
-    update(policy, group, advantages)
-```
-
-### PPO kırpılmış güncellemesi
-
-```python
-for trajectory in rollouts:
-    returns = discounted_returns(trajectory.rewards)
-    values = value_model(trajectory.states)
-    advantages = returns - stop_gradient(values)
-    ratio = exp(policy.log_prob(trajectory.actions)
-                - old_policy.log_prob(trajectory.actions))
-    policy_loss = -mean(min(
-        ratio * advantages,
-        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
-    ))
-    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
-update(policy, value_model, policy_loss + value_coef * value_loss)
-```
-
-### Trajectory düzeyinde ödül maskesi
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-### Sonuç artı yol sinyali
-
-```python
-outcome = verify_final_state(trajectory)              # result, not self-report
-path_signal = 0
-for step in trajectory:
-    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
-reward = normalize(outcome) + beta * normalize(path_signal)
-```
-
-### On-policy damıtma
-
-```python
-student_trajectory = rollout(student, task)
-loss = 0
-for state in student_trajectory:
-    teacher_logits = teacher(state)
-    loss += KL(student_logits(state), teacher_logits)
-update_student(loss)
-```
-
-### On-policy öz-damıtma
-
-```python
-student_trajectory = rollout(model, task_without_answer)
-loss = 0
-for state in student_trajectory:
-    privileged_state = add_verified_answer(state)
-    teacher_logits = stop_gradient(model(privileged_state))
-    loss += KL(model(state), teacher_logits)
-update(model, loss + retention_regularizer)
-```
-
-Sınırı açık tutun: gözlemler ve kanıt ortamdan gelir, Harness ise hangi eylemin yürütülebileceğine karar verir.
 
 ## Düşünce Soruları
 

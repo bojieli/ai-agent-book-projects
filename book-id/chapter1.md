@@ -168,6 +168,27 @@ Pertimbangkan contoh konkret—mengagregasi pendapatan lintas berbagai mata uang
 
 ![Gambar 1-4: Trajectory Agent—Loop ReAct untuk tugas agregasi multi-mata uang](images/fig1-4.svg)
 
+Sketsa bergaya Python berikut adalah pseudocode penjelas, bukan kode SDK yang dapat dijalankan; penanda `python` hanya digunakan untuk penyorotan sintaks.
+
+**Loop kontrol ReAct:**
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
 Berikut adalah struktur trajectory, dalam pseudocode:
 
 ```text
@@ -255,6 +276,20 @@ Jika dijabarkan ke dalam bentuk persamaan, komposisi kelas produksi (production-
 > **Harness = manajemen Context + antarmuka Tool + Constrain + Verify + Correct**
 >
 > **Agent ↔ Environment**
+
+**Batas produksi Harness:**
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
 
 Sebuah Agent minimal mampu berjalan dengan LLM, context, dan tool saja. Untuk terus berjalan andal dalam beban kerja kelas produksi yang berjalan lama, dibutuhkan ketiga lapis rekayasa eksternal ini pula—Constrain untuk mencegah jangkauan berlebih (overreach), Verify untuk menangkap error, Correct guna pemulihan dari kegagalan. Dengan kata lain: formula minimal adalah sudut pandang demo, dan formula luas adalah sudut pandang produksi—yang terakhir sudah memuat seutuhnya komponen dari formula minimal serta menambahkan sebuah jaring pengaman (safety net) di sekitarnya.
 
@@ -492,45 +527,6 @@ Bab ini telah membangun kerangka kerja yang mengutamakan praktik (practice-first
 Bab berikutnya akan membahas komponen Harness yang paling sentral secara mendalam: context engineering. Bab 7 membahas akar akademis dari konsep Agent di dalam reinforcement learning dan membandingkan RL tradisional dengan LLM Agent modern.
 
 Pertanyaan pemikiran di bawah ini dirancang untuk membawa konsep-konsep inti bab ini satu tingkat lebih dalam; tidak ada jawaban standar.
-
-## Skeleton mekanisme
-
-Skeleton bergaya Python berikut hanya menyoroti hubungan kontrol dalam bab ini. Ini pseudocode penjelasan, bukan implementasi SDK yang dapat dijalankan; adapter dan pengujian lengkap tetap berada di eksperimen bab. Penanda `python` hanya digunakan untuk penyorotan sintaks; ini bukan berarti SDK yang siap dijalankan atau program yang dapat dieksekusi langsung.
-
-### Loop kontrol ReAct
-
-```python
-trajectory = [user_request]
-
-repeat:
-    context = stable_prefix + trajectory
-    decision = Model(context)
-    trajectory.append(decision)
-
-    if decision has no tool call:
-        return decision.answer
-
-    for call in decision.tool_calls:       # independent calls may run in parallel
-        validated_call = Harness.validate(call)
-        observation = Environment.execute(validated_call)
-        trajectory.append(observation)
-```
-
-### Batas produksi Harness
-
-```python
-decision = Model(Harness.build_context(state, trajectory))
-allowed_action = Harness.constrain(decision)
-observation = Environment.apply(allowed_action)
-evidence = Harness.verify(allowed_action, observation)
-
-if evidence passes:
-    trajectory.append(observation)
-else:
-    trajectory.append(Harness.correct(evidence))
-```
-
-Pertahankan batasnya: observasi dan bukti berasal dari lingkungan, sedangkan Harness menentukan tindakan yang boleh dieksekusi.
 
 ## Pertanyaan Pemikiran
 

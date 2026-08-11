@@ -233,6 +233,33 @@ Aplikasi khas lain dari pola Sidecar adalah **context enrichment** (pengayaan ko
 
 Sidecar keamanan juga memerlukan **rejection circuit breaker** (*circuit breaker* penolakan): ketika pengklasifikasi menolak operasi demi operasi, sistem tidak boleh mencoba lagi tanpa batas—hal itu membuang-buang sumber daya dan dapat menjebak pengguna dalam sebuah *loop* (perulangan)—tetapi kembali dengan meminta pengguna untuk menilai secara manual. Ini adalah contoh tipikal dari fungsi "koreksi" Harness dari Bab 1.
 
+**Gerbang keamanan tool:**
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
 **Validasi Otomatis dan Loop Umpan Balik.**
 
 Prinsip desain penting lainnya untuk *execution tool* (tool eksekusi) adalah: **jika hasil operasi dapat diverifikasi, operasi tersebut harus diverifikasi secara otomatis.** Mengambil penulisan kode sebagai contoh: ketika sebuah Agent memanggil `write_file` untuk membuat atau memodifikasi file kode, *tool* tidak seharusnya hanya menulis konten dan mengembalikan pesan "berhasil." Sebaliknya, ia harus segera melakukan pemeriksaan sintaksis setelah menulis: memanggil *linter* (sebuah alat analisis kode statis) yang sesuai berdasarkan jenis file, mengurai *output*-nya menjadi daftar kesalahan terstruktur, dan mengembalikannya sebagai bagian dari nilai pengembalian *tool* kepada Agent.
@@ -469,6 +496,23 @@ Hardcoded rules memiliki keterbatasan; semantik event menentukan metode penangan
 
 Eksperimen berikut, yakni event-driven Agent pemroses email, mengimplementasikan strategi event handling yang dibahas di atas menjadi implementasi yang dapat dijalankan.
 
+**Routing event loop:**
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
 > **Eksperimen 4-4 ★★★: Event-Driven Email Processing Agent**
 >
 >
@@ -617,6 +661,20 @@ Pendekatan tradisional menyuntikkan setiap skema tool ke dalam System Prompt sek
 
 **Pencocokan Hierarkis dan Fallback.** Pencocokan yang efisien memanfaatkan hierarki yang sudah ada dalam cara tool diatur. Dalam protokol seperti MCP, tool dikelompokkan berdasarkan **server** (seperti aplikasi di ponsel, yang masing-masing membundel serangkaian fungsi terkait), sehingga pencocokan dapat berjalan dalam dua lapisan: menemukan server yang relevan berdasarkan deskripsi kemampuan, kemudian mencocokkan tool spesifik di dalamnya. Hal ini menyusutkan ruang pencarian dari "ribuan tool" menjadi "puluhan server × masing-masing puluhan tool," menghemat komputasi dan mengurangi kebingungan semantik lintas domain. Secara rekayasa, hal ini bergantung pada indeks *embedding* yang dibangun secara *offline* dan diperbarui secara inkremental. Dan ketika kandidat dari kedua lapisan mendapat skor di bawah ambang batas (*threshold*), sistem harus mengembalikan nilai eksplisit "tidak ditemukan," yang mendorong Agent untuk memparafrase dan mencoba lagi, berimprovisasi dengan tool dasar, atau membuat tool baru sama sekali (subjek dari Bab 8).
 
+**Penemuan tool proaktif:**
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
 ![Gambar 4-8: Optimasi KV Cache untuk Pemuatan Alat Dinamis](images/fig4-8.svg)
 
 **Pemuatan Dinamis dan KV Cache.** Penemuan proaktif (*proactive discovery*) membawa biaya rekayasa yang tidak kentara: memuat tool secara dinamis **membatalkan KV Cache**—jika semua definisi tool diletakkan di prefiks statis, setiap tool yang baru dimuat akan membatalkan seluruh *cache*. Solusinya sesuai dengan diskusi Bab 2 tentang posisi injeksi Skill: tambahkan bagian variabel (skema lengkap tool baru) di akhir konteks, menjaga prefiks statis tetap stabil dan KV Cache sepenuhnya dapat digunakan kembali, dengan hanya daftar pendek nama-nama tool yang dipertahankan di bilah status Agent. Pola ini sekarang didukung secara *native* oleh API utama dan telah menjadi arsitektur *default* dari *framework* arus utama: OpenAI Responses API menyediakan tool `tool_search` dan *flag* `defer_loading: true`, dengan skema yang dimuat ditambahkan di akhir konteks sebagai item `tool_search_output` sehingga *cache* prefiks terus mengenai (*hit*); Claude Code menunda tool MCP secara *default* (diinjeksi sesuai permintaan melalui blok `tool_reference`, dengan hanya nama tool dan instruksi server yang disimpan saat sesi dimulai); dan `tool_search` dari Codex CLI (pencarian BM25) adalah arsitektur yang selalu aktif (*always-on*) daripada fitur opsional. Lingkungan tool yang dinamis juga menuntut lebih banyak dari model itu sendiri—model yang lebih lemah kesulitan dengan definisi tool yang muncul pada posisi non-standar di pertengahan konteks dan cenderung menghasilkan pemanggilan yang cacat (tanda kurung JSON tidak cocok, parameter hilang), yang seringkali membutuhkan pelatihan *reinforcement learning* khusus (lihat Bab 7).
@@ -677,70 +735,6 @@ Di sisi asinkron, mekanisme otomatisasi bawaan OpenClaw (Hooks, Cron, Heartbeat)
 Enam eksperimen berkembang dari dasar hingga arsitektur: Eksperimen 4-1 hingga 4-3 membangun tiga set tool dasar—Persepsi, Eksekusi, dan Kolaborasi; Eksperimen 4-4 memperkenalkan pemrosesan berbasis kejadian (*event-driven*) dengan Agent penanganan email; Eksperimen 4-5 mengimplementasikan eksekusi paralel, pemulihan interupsi, dan manajemen status (*state management*); dan Eksperimen 4-6 memvalidasi nilai dari penemuan tool proaktif pada skala pustaka (*library scale*). Batasan bab ini adalah deskripsi, penemuan, dan penggunaan aman dari **tool yang sudah ada**. Bab 8 sebaliknya membahas bagaimana Agent menentukan dari kegagalan dan operasi berulang kapan harus membuat, memodifikasi, memvalidasi ulang, atau mempensiunkan sebuah tool.
 
 Bab berikutnya mengajukan pertanyaan yang lebih mendasar daripada “bagaimana cara sebuah Agent menggunakan tool?”: bisakah sebuah Agent **membuat** tool dengan menulis kode? Sebuah Coding Agent ditambah sistem berkas adalah fondasi inti dari setiap Agent bertujuan umum (*general-purpose Agent*), dan hal ini juga memberikan kemampuan eksekusi yang dibutuhkan untuk pembahasan Bab 8 tentang modifikasi mandiri sistem yang terkontrol (*controlled system self-modification*).
-
-## Skeleton mekanisme
-
-Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
-
-### Gerbang keamanan tool
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
-### Routing event loop
-
-```python
-while runtime.is_alive:
-    events = queue.take_batch()
-
-    if any(is_urgent(event) for event in events):
-        cancel_at_safe_point(current_work)
-    elif has_independent_fast_query(events):
-        start_parallel_session(events)
-    else:
-        append_to_trajectory(events)
-
-    decision = LLM(context + trajectory)
-    dispatch(decision)
-```
-
-### Penemuan tool proaktif
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
-
-Pertahankan batasnya: observasi dan bukti berasal dari lingkungan, sedangkan Harness menentukan tindakan yang boleh dieksekusi.
 
 ## Pertanyaan Diskusi
 

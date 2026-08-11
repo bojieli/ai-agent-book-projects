@@ -63,6 +63,18 @@ En resumen, la esencia del SFT es: **utilizar una eficiencia de muestra extremad
 
 > **Costo de entrenamiento: ajuste fino eficiente en parámetros con LoRA**. Tanto el SFT como el RL posterior requieren actualizar los parámetros del modelo, mientras que el ajuste fino de parámetros completos impone exigencias de memoria VRAM muy altas (debido a la necesidad de almacenar gradientes y estados del optimizador para miles de millones de parámetros). **LoRA** (Low-Rank Adaptation, Adaptación de Bajo Rango) es el método más común para ahorrar recursos: en lugar de modificar las grandes matrices de pesos originales, se añade a un lado un "parche" muy pequeño (matrices de bajo rango) para aprender la tarea. El volumen de parámetros representa solo entre el 1% y el 5% del original, logrando un rendimiento cercano al ajuste completo. Dado que los pesos originales permanecen congelados, LoRA altera en menor medida las capacidades previas de la base, reduciendo el riesgo de olvido catastrófico. Algunas experiencias prácticas comprobadas [^ch7-1]: **debes** aplicar LoRA a todas las matrices de pesos principales (especialmente a las capas MLP, que concentran la mayor proporción de parámetros); aplicarlo únicamente a las capas de atención degrada el rendimiento; **la tasa de aprendizaje óptima es aproximadamente 10 veces mayor que la del ajuste completo** (regla empírica muy práctica que aplica tanto a SFT como a RL); SFT suele emplear rangos medios a altos (64 a 256), mientras que RL, al recibir una menor cantidad de información por iteración, funciona bien con rangos pequeños (8 a 32) o incluso rank=1. Durante el despliegue, un único servidor de inferencia puede cargar simultáneamente múltiples adaptadores LoRA para ofrecer servicios multitenant. Este libro trata a LoRA como la opción por defecto de ingeniería en todos los métodos de post-entrenamiento, por lo que no se detallará por separado.
 
+**Máscara de pérdida SFT:**
+
+```python
+for sample in dataset:
+    prompt_tokens = tokenize(sample.prompt)
+    answer_tokens = tokenize(sample.answer)
+    tokens = prompt_tokens + answer_tokens
+    labels = [-100] * len(prompt_tokens) + answer_tokens
+    loss = causal_lm_loss(tokens, labels)
+    update_parameters(loss)
+```
+
 ### Por qué el SFT debe ir antes del RL y no al revés ("Forma primero, espíritu después")
 
 El orden de las tres etapas no es arbitrario. Que el pre-entrenamiento vaya en primer lugar no admite debate: sin los cimientos de lenguaje y conocimiento, no se puede construir nada posterior. Lo que realmente requiere explicación es: **¿por qué el SFT debe preceder al RL?**
@@ -340,6 +352,33 @@ En las decisiones prácticas, se puede seguir este orden de evaluación:
 Un escenario de "un solo turno" implica que la tarea se completa en una única interacción: el modelo recibe una entrada, produce una salida y obtiene una recompensa, sin necesidad de mantener un estado a través de múltiples pasos. Esta configuración simplificada nos permite enfocar de forma nítida las diferencias fundamentales entre el SFT y el RL en sus mecanismos de aprendizaje, sin la interferencia de la complejidad multiturno. El escenario de un solo turno ofrece condiciones de experimento comparativo ideales: la misma tarea, el mismo modelo base y el mismo presupuesto computacional, siendo el método de entrenamiento la única variable. El primer experimento muestra cómo el RL aprende la meta-estrategia de "cuándo se debe pensar", mientras que el segundo experimento cuantifica sistemáticamente el fenómeno de "SFT memoriza, RL generaliza" mediante un juego de cartas de razonamiento aritmético.
 
 Antes de abordar los experimentos, construyamos una **intuición mínima** sobre los algoritmos de RL para comprender la terminología posterior (las fórmulas completas y comparativas se reservan para la sección "Comparación de algoritmos de aprendizaje por refuerzo"). El entrenamiento de RL en este capítulo se basa principalmente en el **gradiente de política**: se deja que el modelo genere varias respuestas para una misma pregunta; las respuestas con alta recompensa incrementan su probabilidad de aparición, mientras que las de baja recompensa la reducen ("avanzar más en la dirección de alta recompensa y menos en la de baja recompensa"). Para evitar que una actualización individual excesiva desvíe al modelo, el algoritmo dominante **PPO** recorta el margen de actualización de cada paso (a esto se refiere la mención posterior a "PPO con red de valor", donde la red de valor estimar la línea base para calcular ventajas más precisas); por su parte, **GRPO** prescinde de entrenar una red de valor y compara las múltiples respuestas de una misma pregunta entre sí para determinar su calidad relativa. Retener esta intuición basta para seguir los dos experimentos siguientes.
+
+**Actualización grupal GRPO:**
+
+```python
+for prompt in batch:
+    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
+    rewards = [verify(trajectory) for trajectory in group]
+    advantages = normalize_within_group(rewards)       # GRPO baseline
+    update(policy, group, advantages)
+```
+
+**Actualización recortada PPO:**
+
+```python
+for trajectory in rollouts:
+    returns = discounted_returns(trajectory.rewards)
+    values = value_model(trajectory.states)
+    advantages = returns - stop_gradient(values)
+    ratio = exp(policy.log_prob(trajectory.actions)
+                - old_policy.log_prob(trajectory.actions))
+    policy_loss = -mean(min(
+        ratio * advantages,
+        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    ))
+    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
+update(policy, value_model, policy_loss + value_coef * value_loss)
+```
 
 > **Experimento 7-10 ★★: AdaptThink: Aprender "Cuándo No Pensar"**
 >
@@ -669,6 +708,16 @@ En resumen: **Las señales densas solo son efectivas cuando aportan la varianza 
 
 **Relación con RLVR.** RLVP y RLVR (Aprendizaje por Refuerzo con Recompensas Verificables) se complementan: **RLVR verifica el resultado y RLVP verifica además el proceso**. Su superposición genera una señal de entrenamiento que atiende a "completar la tarea" y a "hacerlo respetando las reglas", necesario para desplegar Agentes en entornos reales.
 
+**Señal de resultado más señal de trayectoria:**
+
+```python
+outcome = verify_final_state(trajectory)              # result, not self-report
+path_signal = 0
+for step in trajectory:
+    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
+reward = normalize(outcome) + beta * normalize(path_signal)
+```
+
 > **Experimento 7-16 ★★★: RLVP: Recompensar el Resultado, Penalizar la Ruta `[Experimento Extendido]`**
 >
 > **Objetivo del experimento**: Verificar si la combinación de "recompensa de resultado + señal de ruta verificada" logra reducir las violaciones de restricciones (uso de penalización) y mejorar la eficiencia de muestra (uso de recompensa parcial) sin degradar la tasa de éxito en la tarea.
@@ -690,6 +739,16 @@ El uso de herramientas expande las capacidades del Agente desde el "razonamiento
 Actualmente existen dos rutas activas en RL para herramientas. Una es la **búsqueda mejorada**: representada por Search-R1 (Jin et al., 2025), entrena al modelo mediante RL para decidir autónomamente cuándo iniciar búsquedas durante el razonamiento y aprovechar los resultados devueltos, en lugar de aplicar flujos fijos de RAG. La otra es la **ingeniería de software**: representada por entornos de entrenamiento como SWE-Gym, aplica RL multiturno en repositorios de código reales para que el modelo edite, ejecute y corrija código iterativamente. Los desafíos compartidos por ambas rutas son la asignación de crédito en secuencias largas (atribuir el éxito final a decisiones adoptadas decenas de pasos atrás) y la ingeniería de entornos (construir entornos de entrenamiento estables, reproducibles y paralelizables a gran escala).
 
 Existe un detalle de ingeniería indispensable en RL para herramientas: el **enmascaramiento de pérdida (loss masking) sobre la retroalimentación del entorno**. Una trayectoria de llamada a herramientas contiene tokens generados por el modelo (pensamiento, parámetros de herramientas) y tokens retornados por el entorno (salidas del intérprete de código, resultados de búsqueda, respuestas de atención al cliente). Estos últimos no son generados por la política sino dados por el entorno; si se incluyen en el gradiente de política, se entrenaría al modelo para "predecir la salida del sandbox", desviando el objetivo de optimización y desestabilizando el entrenamiento. La práctica estándar consiste en enmascarar los tokens de retroalimentación del entorno al calcular la pérdida, retropropagando gradientes únicamente sobre los tokens generados por el propio modelo. Este es un punto técnico central en ReTool (enmascarando gradientes en tokens dentro de la etiqueta `<interpreter>`) y en Search-R1 ("enmascarar tokens recuperados para estabilizar el entrenamiento"), estando integrado en frameworks de entrenamiento como veRL o AWorld.
+
+**Máscara de recompensa a nivel de trayectoria:**
+
+```python
+for token in trajectory:
+    if token.source == ENVIRONMENT:
+        loss_mask[token] = 0
+    else:                                      # model thought / tool arguments
+        loss_mask[token] = 1
+```
 
 > **Experimento 7-14 ★★★: ReTool: Intérprete de Código para Resolver Problemas Matemáticos**
 >
@@ -746,6 +805,17 @@ La Destilación en la Política (On-Policy Distillation) fue formalizada y difun
 
 ¿Cómo se asigna la puntuación? El profesor no se limita a juzgar si el paso es correcto, sino que ofrece la distribución de probabilidad completa sobre las distintas opciones para el siguiente token en la posición actual. Por ejemplo, si el estudiante escribe "consultar primero la API y luego procesar el retorno...", el profesor indica que en esa posición "consultar" debe tener un 80% de probabilidad, "llamar" un 15% y otras opciones el 5%; el objetivo del estudiante es alinear su distribución predicha con la del profesor en cada posición. Técnicamente, esto se logra minimizando la **divergencia KL** entre ambas distribuciones (métrica explicada en la Sección 7.7). Frente al escalar binario final, esta alineación de distribución token a token densifica la señal en varios órdenes de magnitud.
 
+**Destilación on-policy:**
+
+```python
+student_trajectory = rollout(student, task)
+loss = 0
+for state in student_trajectory:
+    teacher_logits = teacher(state)
+    loss += KL(student_logits(state), teacher_logits)
+update_student(loss)
+```
+
 Los resultados son destacables: en tareas matemáticas, el número de pasos de entrenamiento necesarios para alcanzar un rendimiento equivalente se reduce a aproximadamente **1/10** respecto a RL puro. En tareas de razonamiento en cadena larga la ventaja es aún mayor: al contar con la guía del profesor en cada paso, el estudiante aprende a corregir errores rápidamente sin profundizar en rutas erróneas. Además, mitiga el sobreajuste: mientras el RL estándar tiende a memorizar respuestas finales al repetir un mismo prompt, aquí cada trayectoria es distinta y el profesor ofrece retroalimentación específica para cada caso, aprendiendo estrategias generales y elevando la reutilización de los datos.
 
 Este método aporta un valor excepcional en **escenarios de Agentes multiturno**: dado que las señales de éxito o fracaso en tareas multiturno se ubican al final y resultan esporádicas y diferidas, la distribución token a token del profesor aporta la guía intermedia faltante. No obstante, exige un requisito previo alineado con el hilo central de este capítulo: **contar con un entorno de simulación realista donde el estudiante pueda explorar libremente**; de lo contrario, si el estudiante entra en estados desviados no vistos tampoco por el profesor, las puntuaciones de este último dejarán de ser confiables. El valor del enfoque en la política descansa en que el estudiante explore efectivamente sobre la distribución de despliegue.
@@ -753,6 +823,18 @@ Este método aporta un valor excepcional en **escenarios de Agentes multiturno**
 Esta superioridad de la señal densa sobre la esporádica se verificó en un experimento con Agentes. En el Capítulo 2 se abordó la "noción del tiempo" del Agente (urgencia, persistencia, vigilancia), administrable en la inferencia mediante manuales de operación; sin embargo, lograr que un modelo de escala 8B consolide ese sentido del ritmo directamente en los pesos sin prompts representa un desafío de post-entrenamiento. En dicha investigación se evaluaron DPO y cuatro formulaciones de RL, coincidiendo cada una con modos de falla analizados en este capítulo: la recompensa por umbral rígido resultó excesivamente esporádica, con la mayoría de las rollouts obteniendo puntuación cero y anulando la ventaja intra-grupo (escasez); al usar recompensas por niveles la señal se densificó, pero el indicador proxy no coincidía con la tasa de éxito real (desalineación de objetivos); evaluar únicamente la respuesta del primer turno incentivó respuestas cortas y evasivas que empeoraron la evaluación multiturno (desajuste de forma de rollout); y finalmente, al alinear la forma del rollout con la evaluación y observar un ascenso en la recompensa, la política colapsó en pocos pasos hacia un patrón único que ni una ancla KL 4 veces más fuerte logró contener (colapso de entrenamiento). Ninguna formulación superó el techo del SFT. Al cambiar a la Destilación en la Política (utilizando un modelo profesor Qwen3-32B congelado que ofrecía la distribución objetivo token a token sobre las trayectorias multiturno generadas por el estudiante), el entrenamiento convergió suavemente, superando la tasa de éxito en las cuatro condiciones a la línea base de SFT en un rango de 23 a 47 puntos porcentuales [^ch7-11]. El fallo de cuatro formulaciones de señales esporádicas frente al éxito de una señal densa ratifica la lección principal: el obstáculo en el post-entrenamiento raras veces radica en la sofisticación de la función de recompensa, sino en la densidad intrínseca de la señal.
 
 ### ¿Qué hacer si no hay un profesor más fuerte?: Auto-destilación en la política (OPSD)
+
+**Autodestilación on-policy:**
+
+```python
+student_trajectory = rollout(model, task_without_answer)
+loss = 0
+for state in student_trajectory:
+    privileged_state = add_verified_answer(state)
+    teacher_logits = stop_gradient(model(privileged_state))
+    loss += KL(model(state), teacher_logits)
+update(model, loss + retention_regularizer)
+```
 
 La potencia de la Destilación en la Política proviene del profesor, pero esto impone un requisito estricto: **disponer de un modelo profesor significativamente más fuerte que el estudiante.** Esto no siempre se cumple en la práctica. Si entrenas un modelo de dominio especializado donde los modelos existentes presentan limitaciones, no dispondrás de un profesor más fuerte. ¿Significa esto renunciar a los beneficios de la señal densa?
 
@@ -886,94 +968,6 @@ Este capítulo responde cómo las actualizaciones de parámetros pueden hacer po
 [^ch7-20]: Hua, Zhanbo, et al. "CLI-Universe: Towards Verifiable Task Synthesis Engine for Terminal Agents", 2026. arXiv:2606.22883.
 
 Este capítulo ha respondido a cómo actualizar parámetros durante el entrenamiento. El siguiente capítulo reubica los parámetros del modelo dentro del sistema completo de Agentes: los parámetros constituyen uno de los cuatro soportes de actualización junto al conocimiento, las instrucciones y los programas, siendo su desafío específico obtener señales de aprendizaje confiables desde las trayectorias de despliegue, seleccionar la ubicación de actualización correcta y gestionar la verificación, publicación y reversión de versiones candidatas. Al abordar algoritmos de entrenamiento específicos, el Capítulo 8 hará referencia directa a este capítulo sin repetirlos.
-
-## Skeletons de mecanismos
-
-Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
-
-### Máscara de pérdida SFT
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
-```
-
-### Actualización grupal GRPO
-
-```python
-for prompt in batch:
-    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
-    rewards = [verify(trajectory) for trajectory in group]
-    advantages = normalize_within_group(rewards)       # GRPO baseline
-    update(policy, group, advantages)
-```
-
-### Actualización recortada PPO
-
-```python
-for trajectory in rollouts:
-    returns = discounted_returns(trajectory.rewards)
-    values = value_model(trajectory.states)
-    advantages = returns - stop_gradient(values)
-    ratio = exp(policy.log_prob(trajectory.actions)
-                - old_policy.log_prob(trajectory.actions))
-    policy_loss = -mean(min(
-        ratio * advantages,
-        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
-    ))
-    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
-update(policy, value_model, policy_loss + value_coef * value_loss)
-```
-
-### Máscara de recompensa a nivel de trayectoria
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-### Señal de resultado más señal de trayectoria
-
-```python
-outcome = verify_final_state(trajectory)              # result, not self-report
-path_signal = 0
-for step in trajectory:
-    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
-reward = normalize(outcome) + beta * normalize(path_signal)
-```
-
-### Destilación on-policy
-
-```python
-student_trajectory = rollout(student, task)
-loss = 0
-for state in student_trajectory:
-    teacher_logits = teacher(state)
-    loss += KL(student_logits(state), teacher_logits)
-update_student(loss)
-```
-
-### Autodestilación on-policy
-
-```python
-student_trajectory = rollout(model, task_without_answer)
-loss = 0
-for state in student_trajectory:
-    privileged_state = add_verified_answer(state)
-    teacher_logits = stop_gradient(model(privileged_state))
-    loss += KL(model(state), teacher_logits)
-update(model, loss + retention_regularizer)
-```
-
-Mantén explícito el límite: las observaciones y evidencias proceden del entorno, y el Harness decide qué puede ejecutarse.
 
 ## Preguntas de Reflexión
 

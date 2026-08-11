@@ -374,6 +374,25 @@ Yukarıdaki örnek aracılığıyla, Agent'ın modeli her çağırışında cont
 
 Bu bölümün geri kalanı, bu yapının her katmanını inceleyecek: static prefix'in değişmezliğinden çıkarımı hızlandırmak için nasıl yararlanılır (KV Cache), iyi bir System Prompt nasıl tasarlanır (prompt engineering), dış içeriğin context'i ele geçirmesi nasıl önlenir (prompt injection savunması), özelleşmiş bilgi ihtiyaç halinde nasıl yüklenir (Agent Skills), konuşmanın sonuna dinamik durum bilgisi nasıl enjekte edilir (Agent Durum Çubuğu) ve konuşma geçmişi çok büyüdüğünde nasıl akıllıca sıkıştırılır (sıkıştırma stratejileri).
 
+**Her istek öncesi context oluşturma:**
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
 > **Deney 2-1 ★: Yerel LLM Servisi Dağıtımı ve Tool Calling**
 >
 >
@@ -1071,31 +1090,6 @@ Bu bölümün çok sayıdaki teknik ayrıntısının ardında tek bir temel sav 
 Bu tekniklerin ortak noktası açık ve mühendislik ürünü bilgi yönetimidir: modelin devasa bir context içinde ipuçlarını pasif biçimde aramasını beklemek yerine, ona önceden ayıklanmış ve yapılandırılmış durum sağlarız. KV Cache dostu context düzenlerinden bağlama duyarlı sıkıştırmaya kadar bu bölümde sunulan her teknik, modellerin mevcut yetenek sınırında bilgi verimliliğini en üst düzeye çıkarmaya yönelik somut bir mühendislik uygulamasıdır.
 
 Bu bölüm, durum güncellemelerini ve context bozulmasını **tek bir görev içinde** ele alır. Bir sonraki bölüm, tek bir context penceresindeki bilgi yönetiminin ötesine geçerek görevler arasında kalıcı olan bilgi sistemlerine, yani kullanıcı belleği ve bilgi tabanlarına yönelir. Bu sistemler Agent'ın zaman içinde deneyim biriktirerek kullanıcıyı daha iyi anlayan bir asistana veya belirli bir alanda daha uzmanlaşmış bilgiye sahip bir uzmana dönüşmesini sağlar.
-
-## Mekanizma skeleton'ları
-
-Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
-
-### Her istek öncesi context oluşturma
-
-```python
-stable_prefix = system_message
-stable_tools = core_tool_schemas
-trajectory = load_message_history(session)
-status_message = make_status_message(derive_current_state(trajectory))
-
-if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
-    trajectory = compress_old_evidence(
-        trajectory,
-        preserve = [decisions, constraints, failures, citations]
-    )
-
-request.messages = [stable_prefix] + trajectory + [status_message]
-request.tools = stable_tools
-response = call_model(request)
-```
-
-Sınırı açık tutun: gözlemler ve kanıt ortamdan gelir, Harness ise hangi eylemin yürütülebileceğine karar verir.
 
 ## Düşünce Soruları
 

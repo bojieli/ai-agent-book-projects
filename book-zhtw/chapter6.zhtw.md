@@ -109,6 +109,17 @@ Agent 評估需要一個可重複執行的自動化環境——能在開發階�
 
 **執行協定（Interaction Protocol）**規定互動模式和終止條件。
 
+**可重複評估迴圈:**
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
 ![圖 6-2 工具呼叫型與人機互動型評估環境](images/fig6-2.svg)
 
 ### 工具呼叫型評估環境
@@ -367,6 +378,17 @@ rubric:
 
 **好的 Rubric vs 壞的 Rubric**：上面每個評分檔都給出了可驗證的具體行為（「準確回答 Dr. Chen」），而非「展示了對記憶的深刻理解」這類無法客觀判定的描述。否決項明確了底線：即使其他維度全部滿分，一旦出現幻覺就直接判零。
 
+**Rubric 評分前的確定性否決:**
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
 將這個 Rubric 和 Agent 的實際回答一起交給評判模型，模型會逐項評分並說明理由。彙整數十個案例的結果，再回頭檢視低分軌跡，就能把籠統的「成功率下降」拆成具體問題：究竟是沒有找到資訊、弄錯人物關係，還是加入了沒有根據的內容。這樣一來，Rubric 不只告訴我們分數，也指出下一步該改哪裡。
 
 > **實驗 6-3 ★★：建構基於 Rubric 的使用者記憶評估系統**
@@ -610,6 +632,18 @@ Agent 評估還有一層額外的不確定性：同一模型、同一資料集�
 
 評估驅動的決策依賴於高質量的資料，而這些資料來自對 Agent 執行過程的系統性記錄——這就是可觀測性要解決的問題。
 
+**配對比較:**
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
 ## Agent 的可觀測性
 
 評估驅動的決策（無論是模型選型還是持續迭代）都依賴於高質量的執行資料。下面先介紹如何系統性地採集這些資料（可觀測性），然後討論如何將評估結果轉化為系統改進。
@@ -786,46 +820,6 @@ Agent 產品需要從第一天就設計特性開關（Feature Flag）基礎設�
 從第一章引入的 Harness 工程視角看，本章的評估方法論是 Harness 中「驗證」功能的系統化實現，而「從 Benchmark 報告到系統改進」的閉環則是 Harness 迭代最佳化的核心機制。本章回答「如何可靠地測量」；第八章將在此基礎上回答「如何把多維軌跡評價轉化為可執行、可回滾的系統更新」。
 
 本章建立的評估體系不僅服務於當前系統的最佳化，也為後續兩章提供關鍵基礎。第七章把評估環境和資料轉化為模型後訓練的輸入，透過 SFT 和 RL 將互動策略寫入參數；第八章則把生產軌跡的多維評價轉化為知識、指令、程式或參數的候選更新。
-
-## 機制骨架
-
-下面的骨架只抽出本章討論的控制關係。
-
-### 可重複評估迴圈
-
-```python
-for task in dataset:
-    environment.reset(task.initial_state)
-    trajectory = agent.run(task.prompt, environment.tools)
-    outcome = environment.snapshot()
-    score = verifier(task, trajectory, outcome)
-    record(task, trajectory, outcome, score)
-```
-
-### Rubric 評分前的確定性否決
-
-```python
-deterministic = verify_state_policy_and_claims(trajectory, outcome)
-if deterministic.veto:
-    return FAIL(reason = deterministic.evidence)
-
-rubric_result = judge(answer, rubric, evidence)
-return aggregate_with_confidence(rubric_result)
-```
-
-### 配對比較
-
-```python
-for task in paired_tasks:
-    for seed in fixed_seeds:
-        a = run(config_a, task, seed)
-        b = run(config_b, task, seed)
-        record_paired_delta(verifier(a), verifier(b))
-
-return paired_bootstrap_or_mcnemar(all_deltas)
-```
-
-請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
 
 ## 思考題
 

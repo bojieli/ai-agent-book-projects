@@ -184,6 +184,23 @@
 
 في حين أن نظام الملفات يحل مشكلة **تبادل العناصر** بين الوكلاء، فإن التعاون يتطلب أيضًا **مستوى تحكم**. هذا هو بالضبط المكان الذي تلعب فيه صفوف دورة الحياة في الجدول 10-3: أساسيات الأداة الواردة في الفصل 4 - الإنشاء (`spawn_subagent`)، وإرسال الرسائل (`send_message_to_subagent`)، والإلغاء (`cancel_subagent`)، والاكتشاف (`list_agents`) - تتوافق مع التفرع والرسالة والقتل والملاحظة في عالم العمليات. لا يكرر هذا القسم تعريفات الواجهة ولكنه يركز على أربع إمكانات غالبًا ما يتم التغاضي عنها وهي ضرورية للتعاون متعدد الوكلاء.
 
+**غلاف الرسالة ودورة حياة worker:**
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
 **أولًا: تمرير الرسائل.** أبسط صورة هي الاتصال المباشر من نقطة إلى نقطة، كأن يستدعي الوكيل A الدالة `send_message_to_agent_b(content)`. ويلائم ذلك البنى الثابتة ذات العدد القليل من الوكلاء، مثل إعداد الهاتف والحاسوب في التجربة 10-3. لكن عدد الوصلات المباشرة ينمو تربيعيًا مع عدد الوكلاء، كما يشترط توافر المرسل والمتلقي في الوقت نفسه. وعند اتساع النظام أو الحاجة إلى توازٍ غير متزامن، يكون **ناقل الرسائل** أنسب: ينشر الوكلاء رسائلهم عليه، ثم يوجهها وفق الاشتراكات، فلا يحتاج المرسل إلى معرفة المتلقين. وفي الحالتين ينبغي أن تحمل الرسالة **غلافًا** منظمًا يتضمن هوية المرسل والوجهة، ونوع الرسالة مثل `task_assigned` أو `status_update` أو `result` أو `terminate`، وحمولة JSON. ويجعل هذا التنسيق التوجيه والتحليل أكثر موثوقية، ويحافظ على سلسلة تعاون قابلة للتتبع والتنقيح.
 
 **ثانيا. الاستعلام عن الحالة.** هذا هو الجزء الأكثر استخفافًا في مستوى التحكم. بمجرد قيام الوكيل الرئيسي بإرسال وكيل فرعي، فإنه يحتاج إلى رؤية تقدم الوكيل الفرعي؛ وبخلاف ذلك، لا يمكنه أن يقرر ما إذا كان سيستمر في الانتظار أم لا، ولا يمكنه التدخل عندما يتعطل الوكيل الفرعي. يتمثل الأسلوب البديهي في الاقتراض من RPC وتحديد واجهة استعلام `get_subagent_status(agent_id)` التي تُرجع "قيد التشغيل/مكتمل/فشل" بالإضافة إلى نسبة التقدم. ولكن تبين أن واجهة السحب هذه أقل فائدة بكثير مما كان متوقعًا: يبدأ الوكيل الفرعي في التنفيذ لحظة إنشائه ويعمل حتى يكتمل أو يفشل. فهو لا يتنقل عبر سلسلة من الحالات الموضوعة في قائمة الانتظار بالطريقة التي تعمل بها الوظائف في نظام الدُفعات التقليدي، تمامًا كما نادرًا ما تحتاج برمجة Unix إلى استقصاء عملية أخرى بواسطة PID الخاص بها لمعرفة حالة التشغيل. يحمل الاقتراع أيضًا معضلة متأصلة: قم بالتصويت في كثير من الأحيان، مما يؤدي إلى إهدار الرموز المميزة؛ نادرًا ما تقوم بالاستطلاع وتتفاعل متأخرًا. الطريقة الأكثر طبيعية للحصول على المكانة هي العودة إلى نموذجي الاتصال اللذين تم تقديمهما في بداية هذا الفصل.
@@ -240,6 +257,24 @@ LoopX يقرر → الوكيل ينفذ → مدقق مستقل يثبت → Lo
 
 **لماذا لا يستطيع وكيل واحد إنشاء عمله الخاص ثم مراجعته؟** هذا هو بالضبط المعيار الذي جاء منه "متى يكون الوكيل المتعدد أفضل حقًا من الوكيل الفردي؟" ينطبق ما سبق في هذا الفصل - إذا لم تقدم المراجعة معلومات جديدة، فهي مجرد "مطالبة النموذج بالتفكير مرة أخرى". توفر الأبحاث ذات الصلة إجابة واضحة. في بحثهم ICLR 2024 بعنوان "نماذج اللغة الكبيرة لا يمكنها تصحيح الاستدلال ذاتيًا بعد"، هوانغ وآخرون. وجدت أن مطالبة GPT-4 بمراجعة وتصحيح إجاباتها دون تعليقات خارجية أدى في الواقع إلى تقليل الدقة، حيث قام النموذج بتغيير الإجابات الصحيحة إلى الإجابات غير الصحيحة في كثير من الأحيان أكثر من تغيير الإجابات غير الصحيحة إلى الإجابات الصحيحة.
 
+**حلقة Proposer–Reviewer:**
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
 ورقة استطلاع عام 2024 منشورة في TACL، "متى يمكن لـ نماذج LLM تصحيح أخطائهم فعليًا؟" (arXiv:2406.01297)، أكد أيضًا هذا الاستنتاج: ما لم يتم تقديم تعليقات خارجية موثوقة (على سبيل المثال، نتائج تنفيذ حالة الاختبار، ومخرجات التحقق من الأدوات الخارجية)، فإن الاعتماد فقط على "التصحيح الذاتي" الخاص بالنموذج سيكون غير فعال إلى حد كبير.
 
 توفر الورقة النقدية في ICLR 2024 تجربة مقارنة بديهية. جعل CRITIC النموذج يستخدم أدوات خارجية (محرك بحث، مترجم Python) للتحقق من إجاباته، مما أدى إلى تحسينات كبيرة في الأداء. ومع ذلك، عندما أزال المجربون خطوة التحقق من الأداة واحتفظوا فقط بالتقييم الذاتي للنموذج، اختفى معظم التحسن. ويشير هذا إلى أن قيمة المراجعة لا تكمن في "مطالبة النموذج بالتفكير مرة أخرى"، ولكن في **تقديم معلومات جديدة لم تكن متاحة أثناء إنشاء النموذج** — نتائج الاختبار، ولقطات الشاشة المعروضة، وأخطاء التجميع، ونتائج البحث الخارجية.
@@ -271,6 +306,23 @@ LoopX يقرر → الوكيل ينفذ → مدقق مستقل يثبت → Lo
 
 تقدم ورقة Plan-and-Act المنشورة عام 2025 [^plan-and-act-2025] تحليلًا تجريبيًا لهذه المسألة. ففي بنية ثنائية تتكون من مخطِّط ومنفِّذ، **يكون المخطِّط الضعيف أهم عنق زجاجة في النظام كله**. وعندما تبلغ جودة التخطيط مستوى كافيًا، يمكن تحقيق نتائج جيدة حتى بمنفّذ بسيط نسبيًا. أما إذا أخطأ المخطِّط في تحليل المهمة، فستُبنى أعمال المنفّذ اللاحقة كلها على فرضية خاطئة. وقد حققت الدراسة معدل نجاح قدره 54% على معيار WebArena-Lite، وكان إسهامها الأساسي تحسين قدرة المخطِّط، لا آلية التنفيذ. والخلاصة أن النموذج الأقوى والموجّه الأدق تصميمًا ينبغي أن يُخصَّصا للمدير (المخطِّط)، بدل توزيع الموارد بالتساوي على جميع الوكلاء.
 
+**أول فائز متوازٍ تم التحقق منه:**
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
 
 [^plan-and-act-2025]: أردوغان، L. E.، وآخرون. *التخطيط والتنفيذ: تحسين تخطيط الوكلاء للمهام بعيدة المدى.* أرخايف:2503.09572، 2025.
 
@@ -414,6 +466,24 @@ LoopX يقرر → الوكيل ينفذ → مدقق مستقل يثبت → Lo
 الدافع لإزالة المدير المركزي هو محاكاة تنظيم المجتمعات البشرية: أدوار متكافئة تتقاسم العمل وتراجع بعضها بعضاً، ويقرر كل وكيل متى يسلّم مهمة أو يطلب رأياً أو يبلغ عن تناقض. كما يخفف هذا النمط نقطة الفشل الواحدة التي يمثلها تعطل المدير. في عالم الخدمات المصغرة يسمى الخياران **التنسيق المركزي** (orchestration) و**التنسيق اللامركزي** (choreography).
 
 تتدرج الحالات التالية من فك اقتران الاتصال إلى لامركزية تدفق التحكم: MetaGPT خط إنتاج ثابت، وAutoGen group chat سجل محادثة مشترك مع جدولة مركزية، أما OpenAI Swarm فيوزع قرار التسليم بين الوكلاء النظراء.
+
+**بروتوكول handoff لامركزي:**
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
 
 **MetaGPT: محاكاة شركة برمجيات تقودها إجراءات SOP.**
 
@@ -642,83 +712,6 @@ Moltbook عبارة عن شبكة اجتماعية مصممة خصيصًا لو�
 ## ملخص الفصل
 
 تكون قيمة التعاون متعدد الوكلاء حقيقية عندما يضيف معلومات جديدة لا يستطيع وكيل واحد الحصول عليها أثناء التوليد، مثل نتائج التنفيذ أو التغذية البصرية أو التحقق بأدوات خارجية. يجب أن يختار التصميم بين سياق مشترك أو معزول، وبين أنماط التعاون النديّ أو المدير أو اللامركزي. وتشكّل حزم التسليم المنظمة، وحدود الصلاحيات، والتحقق المستقل، والميزانيات وآليات الإلغاء حلقة تحمّل الأعطال الأساسية. ومع التفاعل المفتوح طويل الأمد قد تظهر علاقات اجتماعية وأعراف وأسواق واستراتيجيات؛ جوهر هندسة الأنظمة متعددة الوكلاء هو تصميم تدفق المعلومات وتقسيم القدرات واكتشاف الأخطاء.
-
-## هياكل الآليات
-
-تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
-
-### غلاف الرسالة ودورة حياة worker
-
-```python
-envelope = {
-    id, trace_id, sender, recipient, type,
-    payload, created_at, deadline, schema_version
-}
-
-worker = spawn(task, budget, cancellation_token)
-publish(task_assigned(envelope, worker))
-while worker.is_running:
-    accept(status_update | artifact | needs_input)
-    if deadline_expired or cancellation_token.is_set:
-        request_graceful_stop(worker)
-await worker.ack_or_timeout()
-```
-
-### حلقة Proposer–Reviewer
-
-```python
-candidate = proposer(task, constraints)
-evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
-review = independent_reviewer(candidate, evidence)
-
-while review.veto and budget_remaining:
-    candidate = proposer.repair(candidate, review.findings)
-    evidence = execute_or_render(candidate)
-    review = independent_reviewer(candidate, evidence)
-
-if review.pass:
-    publish(candidate, evidence, review)
-else:
-    escalate_or_reject(review)
-```
-
-### أول فائز متوازٍ تم التحقق منه
-
-```python
-workers = launch_independent_workers(subtasks)
-while workers.any_running:
-    event = next_event()
-    if event.type == RESULT:
-        if verify(event.artifact, hidden_checks):
-            if not settle_once(event):       # atomically claim the winner
-                continue
-            broadcast_cancel(to = workers - {event.worker_id})
-            await_all_ack_or_timeout()
-            return assemble(event.artifact, evidence = event.evidence)
-        else:
-            record_failure(event)
-return summarize_failures(workers)
-```
-
-### بروتوكول handoff لامركزي
-
-```python
-handoff = {
-    task_id, sender, recipient, goal, constraints,
-    accepted_facts, artifact_refs, remaining_budget,
-    visited_agents
-}
-
-if recipient in handoff.visited_agents:
-    reject("cycle")
-elif handoff.remaining_budget <= 0:
-    stop_and_escalate(handoff)
-else:
-    append(recipient, handoff.visited_agents)
-    run_local_agent(handoff)
-```
-
-حافظ على الحد واضحًا: تأتي الملاحظات والأدلة من البيئة، بينما يقرر Harness ما يُسمح بتنفيذه.
 
 ## أسئلة للتأمل
 

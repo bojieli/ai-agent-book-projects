@@ -40,6 +40,21 @@ Extracted memories:
 - User has travel plans to Tokyo (recent activity)
 ```
 
+**メモリのライフサイクル:**
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
 この抽出プロセスには、いくつかの重要な特徴があります。
 
 **選択性**——Agent は「検索結果に 3 つの候補があった」といった一時的な情報を記憶せず、将来も役立つ事実だけを残します。
@@ -127,50 +142,74 @@ Agent が現在のタスクを効率的に処理でき、かつセッション�
 
 以下は簡略化した例です。構造化段階はユーザーのパスポートと旅程を型付きの状態として格納します。
 
-```python
-from datetime import date
+**追記専用ログとチェックポイント:**
 
-passport = PassportInfo(
-    number="AB1234567", country="US",
-    expiry_date=date(2025, 2, 18),
-)
-trips = [
-    Trip(destination="Tokyo", departure_date=date(2025, 1, 15),
-         is_international=True),
-    # ... 其余行程
-]
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+**型付きユーザー状態:**
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
 ```
 
 型付きの状態があれば、これまで LLM が「テキストを一度読んで暗算する」しかなかった 3 つのことが、今やすべて決定論的なコードになります。
 
 その一、**集計統計**。「私は去年何回海外へ出たか？」——テキスト記憶ではすべての旅程を思い出して一つずつ数える必要があり、記録が増えるほど誤りやすくなります。一方 User as Code では 1 行の式で済み、正解率はほぼ 100% です[^uac]。
 
+**決定的集約:**
+
 ```python
->>> sum(1 for t in trips if t.is_international and t.departure_date.year == 2025)
-2
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
 ```
 
 その二、**衝突の発見**。「現在の服薬」と「アレルギー歴」の 2 つの状態を並べれば、1 つの関数で薬物カテゴリごとに突き合わせ、異なる対話に散らばっていてテキスト形式ではほぼ自動的に関連付けられない矛盾を見つけ出せます。
 
+**競合検出:**
+
 ```python
 def check_drug_allergy(profile):
-    for med in profile.current_medications:
+    for medication in profile.current_medications:
         for allergy in profile.allergies:
-            if med.drug_class == allergy.drug_class:
-                yield (f"用药冲突：{med.name} 属于 {med.drug_class} 类，"
-                       f"而患者对 {allergy.allergen} 严重过敏")
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
 ```
 
 その三、**制約の強制**。Agent はこのようなチェック関数を固定化し、状態が更新されるたびに自動的にトリガーできます。ユーザーが口に出す必要も、検索する必要もなく、能動的に注意喚起できるのです。たとえばパスポートの有効期限の制約なら、海外行程の出発日がパスポートの失効まで 180 日を切ったら警告します。
 
+**制約の適用:**
+
 ```python
 def check():
-    for trip in trips:
+    for trip in state.trips:
         if trip.is_international:
-            days = (passport.expiry_date - trip.departure_date).days
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
             if days < 180:
-                yield (f"护照 {passport.expiry_date} 到期，距 {trip.destination} "
-                       f"行程仅剩 {days} 天，请尽快续办")
+                alert("passport expires too soon", trip, days)
 ```
 
 [^uac]: ユーザー記憶を実行可能コードのエンジニアリングとして構築する完全な設計と評価は、Li, Bojie. *User as Code: Executable Memory for Personalized Agents.* arXiv:2606.16707, 2026 を参照。
@@ -297,6 +336,21 @@ answer = llm.generate(system="你是客服助手。", context=results, question=
 
 検索器の品質が RAG の効果を直接決めます。関連する断片を検索できなければ、LLM がいくら強くても無い袖は振れません。本節ではまず文書が知識ベースに入る最初の工程——分割（チャンキング）——を見て、次に検索器の 2 大技術路線に重点を置きます。密ベクトル埋め込み（意味理解に基づく）と疎ベクトル埋め込み（キーワードマッチングに基づく）、そして両者をどう組み合わせるか、です。
 
+**ハイブリッド RAG パイプライン:**
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
 
 ![図3-5 RAG のクエリフロー：検索、拡張、生成](images/fig3-5.svg)
 
@@ -721,105 +775,6 @@ Agent のために強力な知識ベースを構築した後、次の核心的�
 **知識更新**の層面では 2 つのリズムが必要です。増分更新は新しい証拠をすぐ取り込み、定期整理は全知識と生データへ戻って重複排除、旧情報の廃止、統合、構造再編、欠落確認、適用条件の明示を行います。知識が Markdown でも Python でも、Proposer Agent が生の証拠に基づく diff を提出し、異種モデルの Reviewer Agent が独立に審査し、承認後にのみ PR をマージして派生インデックスを再構築します。
 
 本章と前章はいずれも「コンテキスト」を扱います。一方は単一セッション内、もう一方は複数セッションをまたぎます。本章で蓄積するのは主にユーザーと世界についての宣言的知識です。第 8 章も同じ抽出・検索基盤を再利用しますが、対象は実行の成否に裏付けられた「どの条件で何をすべきか」という行動知識です。次章は「ツール」に転じ、Agent がツールを通じて外部世界とどうやり取りするかを、ツール設計、MCP 相互運用標準、イベント駆動アーキテクチャとともに論じます。
-
-## メカニズムの skeleton
-
-以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
-
-### メモリのライフサイクル
-
-```python
-when answering(user_request):
-    recent_turns = conversation.tail()
-    relevant_memory = memory.search(user_request)
-    answer = LLM(recent_turns + relevant_memory)
-    return answer
-
-after conversation (background job):
-    candidates = extract_memory_candidates(conversation)
-    verified = verify_against_sources_and_policy(candidates, conversation)
-    memory.append_or_update(verified)
-```
-
-### 追記専用ログとチェックポイント
-
-```python
-append_only_log += extract_facts(conversation)
-
-if checkpoint_due():
-    proposed_state = rebuild_typed_state(append_only_log)
-    if type_check(proposed_state) and source_review(proposed_state):
-        publish_checkpoint(proposed_state)
-    else:
-        keep_previous_checkpoint()
-```
-
-### 型付きユーザー状態
-
-```python
-state = {
-    passport: PassportInfo(
-        number = "AB1234567",
-        country = "US",
-        expiry_date = date(2025, 2, 18),
-    ),
-    trips: [
-        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
-             is_international = true),
-        ...
-    ],
-}
-```
-
-### 決定的集約
-
-```python
-count(
-    trip for trip in state.trips
-    if trip.is_international and year(trip.departure_date) == 2025
-)
-# => 2
-```
-
-### 競合検出
-
-```python
-def check_drug_allergy(profile):
-    for medication in profile.current_medications:
-        for allergy in profile.allergies:
-            if medication.drug_class == allergy.drug_class:
-                emit_conflict(medication, allergy)
-```
-
-### 制約の適用
-
-```python
-def check():
-    for trip in state.trips:
-        if trip.is_international:
-            days = date_difference(state.passport.expiry_date,
-                                   trip.departure_date)
-            if days < 180:
-                alert("passport expires too soon", trip, days)
-```
-
-### ハイブリッド RAG パイプライン
-
-```python
-offline:
-    chunks = split_documents(documents)
-    dense_index = build_dense_index(chunks)
-    sparse_index = build_sparse_index(chunks)
-
-online(query):
-    dense_hits = dense_search(dense_index, query)
-    sparse_hits = sparse_search(sparse_index, query)
-    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
-    evidence = rerank(query, candidates)
-    return LLM(query + evidence)
-```
-
-境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
 
 ## 演習問題
 

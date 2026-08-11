@@ -40,6 +40,21 @@ Extracted memories:
 - User has travel plans to Tokyo (recent activity)
 ```
 
+**記憶生命週期:**
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
 注意這個提取過程的幾個關鍵特徵：
 
 **選擇性**——Agent 不會記住「搜尋返回了 3 個選項」這種臨時資訊，只保留對未來有用的事實；
@@ -127,50 +142,74 @@ Extracted memories:
 
 下面是簡化的例子。結構化階段把使用者的護照和行程存成帶型別的狀態：
 
-```python
-from datetime import date
+**只增日誌與檢查點:**
 
-passport = PassportInfo(
-    number="AB1234567", country="US",
-    expiry_date=date(2025, 2, 18),
-)
-trips = [
-    Trip(destination="Tokyo", departure_date=date(2025, 1, 15),
-         is_international=True),
-    # ... 其餘行程
-]
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+**型別化使用者狀態:**
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
 ```
 
 有了帶型別的狀態，此前只能靠 LLM「讀一遍文字再心算」的三件事，現在都變成了確定性的程式碼：
 
 其一，**聚合統計**。「我去年出了幾次國？」——在文字記憶裡要把所有行程召回再逐條數，記錄一多就容易出錯；而在 User as Code 裡就是一行表示式，正確率接近 100%[^uac]：
 
+**確定性聚合:**
+
 ```python
->>> sum(1 for t in trips if t.is_international and t.departure_date.year == 2025)
-2
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
 ```
 
 其二，**衝突發現**。把「當前用藥」和「過敏史」兩份狀態放在一起，一個函式就能按藥物類別交叉比對，揪出散落在不同對話裡、文字形式下幾乎不可能自動關聯的矛盾：
 
+**衝突偵測:**
+
 ```python
 def check_drug_allergy(profile):
-    for med in profile.current_medications:
+    for medication in profile.current_medications:
         for allergy in profile.allergies:
-            if med.drug_class == allergy.drug_class:
-                yield (f"用藥衝突：{med.name} 屬於 {med.drug_class} 類，"
-                       f"而患者對 {allergy.allergen} 嚴重過敏")
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
 ```
 
 其三，**約束執行**。Agent 可以把這樣的檢查函式固化下來，在狀態每次更新時自動觸發——不需要使用者開口、也不需要檢索，就能主動提醒。比如一條護照有效期約束：出國行程的出發日距護照到期不足 180 天就報警。
 
+**約束執行:**
+
 ```python
 def check():
-    for trip in trips:
+    for trip in state.trips:
         if trip.is_international:
-            days = (passport.expiry_date - trip.departure_date).days
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
             if days < 180:
-                yield (f"護照 {passport.expiry_date} 到期，距 {trip.destination} "
-                       f"行程僅剩 {days} 天，請儘快續辦")
+                alert("passport expires too soon", trip, days)
 ```
 
 [^uac]: 把使用者記憶建成可執行程式碼工程的完整設計與評測見 Li, Bojie. *User as Code: Executable Memory for Personalized Agents.* arXiv:2606.16707, 2026.
@@ -297,6 +336,21 @@ answer = llm.generate(system="你是客服助手。", context=results, question=
 
 檢索器的質量直接決定了 RAG 的效果——如果檢索不到相關片段，LLM 再強也難為無米之炊。本節先看文件進入知識庫的第一道工序——分塊，再重點看檢索器的兩大技術路線：稠密嵌入（基於語義理解）和稀疏嵌入（基於關鍵詞匹配），以及如何把二者結合起來。
 
+**混合 RAG 流程:**
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
 
 ![圖 3-5 RAG 查詢流程：檢索、增強與生成](images/fig3-5.svg)
 
@@ -721,105 +775,6 @@ viking://
 在**知識更新**層面，系統需要兩種節奏：增量更新及時吸收新證據，定期整理則回到完整知識和原始資料，進行去重、去舊、合併、重組、遺漏檢查與情境限定。不論知識表示為 Markdown 或 Python，都應由 Proposer Agent 提交以證據為基礎的 diff，再由異源 Reviewer Agent 獨立審核。只有通過審核後，PR 才能合併，衍生索引才能重建。
 
 本章和上一章處理的都是「上下文」問題——一個在單次會話內，一個跨越多次會話。本章沉澱的主要是關於使用者與世界的陳述性知識；第八章還會複用相同的提取和檢索基礎設施，但其對象是由執行成敗支持的行為知識，即「在什麼條件下應該怎樣做」。下一章轉向「工具」：Agent 如何透過工具與外部世界互動，包括工具設計、MCP 互操作標準和事件驅動架構。
-
-## 機制骨架
-
-下面的骨架只抽出本章討論的控制關係。
-
-### 記憶生命週期
-
-```python
-when answering(user_request):
-    recent_turns = conversation.tail()
-    relevant_memory = memory.search(user_request)
-    answer = LLM(recent_turns + relevant_memory)
-    return answer
-
-after conversation (background job):
-    candidates = extract_memory_candidates(conversation)
-    verified = verify_against_sources_and_policy(candidates, conversation)
-    memory.append_or_update(verified)
-```
-
-### 只增日誌與檢查點
-
-```python
-append_only_log += extract_facts(conversation)
-
-if checkpoint_due():
-    proposed_state = rebuild_typed_state(append_only_log)
-    if type_check(proposed_state) and source_review(proposed_state):
-        publish_checkpoint(proposed_state)
-    else:
-        keep_previous_checkpoint()
-```
-
-### 型別化使用者狀態
-
-```python
-state = {
-    passport: PassportInfo(
-        number = "AB1234567",
-        country = "US",
-        expiry_date = date(2025, 2, 18),
-    ),
-    trips: [
-        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
-             is_international = true),
-        ...
-    ],
-}
-```
-
-### 確定性聚合
-
-```python
-count(
-    trip for trip in state.trips
-    if trip.is_international and year(trip.departure_date) == 2025
-)
-# => 2
-```
-
-### 衝突偵測
-
-```python
-def check_drug_allergy(profile):
-    for medication in profile.current_medications:
-        for allergy in profile.allergies:
-            if medication.drug_class == allergy.drug_class:
-                emit_conflict(medication, allergy)
-```
-
-### 約束執行
-
-```python
-def check():
-    for trip in state.trips:
-        if trip.is_international:
-            days = date_difference(state.passport.expiry_date,
-                                   trip.departure_date)
-            if days < 180:
-                alert("passport expires too soon", trip, days)
-```
-
-### 混合 RAG 流程
-
-```python
-offline:
-    chunks = split_documents(documents)
-    dense_index = build_dense_index(chunks)
-    sparse_index = build_sparse_index(chunks)
-
-online(query):
-    dense_hits = dense_search(dense_index, query)
-    sparse_hits = sparse_search(sparse_index, query)
-    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
-    evidence = rerank(query, candidates)
-    return LLM(query + evidence)
-```
-
-請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
 
 ## 思考題
 

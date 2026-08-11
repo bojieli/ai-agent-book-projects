@@ -377,6 +377,25 @@ A felső rész (Rendszer Prompt + Eszközdefiníciók) változatlan marad a besz
 
 A fejezet hátralévő része e struktúra minden rétegét megvizsgálja: hogyan használjunk stabil statikus előtagot a következtetés gyorsítására (KV Cache), hogyan tervezzünk hatékony Rendszer Promptot (prompt tervezés), hogyan akadályozzuk meg, hogy külső tartalom eltérítse a kontextust (prompt injekció elleni védelem), hogyan töltsünk be speciális tudást igény szerint (Ügynöki Készségek), hogyan injektáljunk dinamikus állapotot a beszélgetés végére (Ügynöki Állapotsáv), és hogyan tömörítsük a beszélgetéstörténetet, ha az túl nagyra nő (tömörítési stratégiák).
 
+**Kontextus felépítése minden kérés előtt:**
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
 > **Kísérlet 2-1 ★: Lokális LLM Szolgáltatás Telepítése és Eszközhívás**
 >
 >
@@ -1075,31 +1094,6 @@ A sok technikai részlet mögött a fejezet egyetlen központi állítása húz�
 Ezeknek a technikáknak a közös vonása az explicit, mérnökileg megtervezett információkezelés: ahelyett, hogy a modellnek egy hatalmas kontextusban kellene passzívan nyomokat keresnie, proaktívan finomított, strukturált állapotot adunk neki. A fejezet minden technikája, a KV Cache-barát kontextuselrendezéstől a kontextusérzékeny tömörítésig, annak konkrét mérnöki gyakorlata, hogyan maximalizáljuk az információ hatékony felhasználását a modellek jelenlegi képességhatárán.
 
 Ez a fejezet az állapotfrissítést és a kontextus romlását **egyetlen feladaton belül** tárgyalja. A következő fejezet az egyetlen kontextusablakon belüli információkezelésen túl, a feladatokon átívelő tartós tudásrendszerekre tér át: a felhasználói memóriára és a tudásbázisokra. Ezek révén az Agent idővel tapasztalatot halmozhat fel, és fokozatosan a felhasználót jobban értő asszisztenssé vagy egy területen mélyebb szaktudással rendelkező szakértővé válhat.
-
-## Mechanizmus-skeletonok
-
-Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
-
-### Kontextus felépítése minden kérés előtt
-
-```python
-stable_prefix = system_message
-stable_tools = core_tool_schemas
-trajectory = load_message_history(session)
-status_message = make_status_message(derive_current_state(trajectory))
-
-if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
-    trajectory = compress_old_evidence(
-        trajectory,
-        preserve = [decisions, constraints, failures, citations]
-    )
-
-request.messages = [stable_prefix] + trajectory + [status_message]
-request.tools = stable_tools
-response = call_model(request)
-```
-
-Legyen világos a határ: a megfigyelések és a bizonyítékok a környezetből érkeznek, a Harness pedig eldönti, mi hajtható végre.
 
 ## Gondolkodtató Kérdések
 

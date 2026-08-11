@@ -332,6 +332,33 @@ Az al-Agentek alapvető értéke a "munka megosztásán alapuló specializáció
 
 Az előző szakaszokban tárgyalt észlelő, végrehajtó és együttműködő eszközöket mind az Agent hívja meg aktívan. Ez a szakasz a fejezet elején felvetett másik kihíváshoz fordul: hogyan kezel egy Agent időigényes feladatokat, és hogyan reagál a bármikor érkező külső eseményekre? Ez egy eseményvezérelt aszinkron architektúrát igényel, és az öt eszközkategóriából kettő – az Eseményindított Eszközök és a Felhasználói Kommunikációs Eszközök – ezt az architektúrát használja a működéséhez.
 
+**Eszközbiztonsági kapu:**
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
 ### Miért Van Szükség Aszinkron Működésre
 
 Kezdjük egy analógiával, hogy elmagyarázzuk, miért van szükség aszinkron működésre. A szinkron azt jelenti, hogy "egy dolgot kell elvégezni, mielőtt a következőhöz láthatunk", míg az aszinkron azt, hogy "több dolog történhet egyidejűleg". Egy hagyományos szinkron Agent architektúra olyan, mint egy egyetlen pénztárral rendelkező bolt – egyszerre csak egy vevőt tud kiszolgálni, és csak az aktuális befejezése után hívja a következőt. Egy igazán intelligens asszisztens inkább olyan, mint egy rugalmas titkár – több függőben lévő dolog van az asztalon (e-mailek, telefonhívások, látogatók), a titkár a sürgősség alapján dönti el, melyiket kezelje először, és félbeszakíthatja az aktuális feladatot egy sürgősebbért. Szinkron módban az Agentnek vagy meg kell várnia egy háttérfeladat befejezését, mielőtt a felhasználóval beszélhetne, vagy meg kell várnia a beszélgetés végét, mielőtt egy újonnan érkezett eseményt feldolgozhatna. Nem tudja nyújtani azokat az alapvető képességeket, amelyeket egy valódi asszisztens forgatókönyv megkövetel:
@@ -465,6 +492,23 @@ Nem sürgős események: Normál felhasználói bemenet (`user.input`), Agent be
 A keménykódolt szabályoknak korlátai vannak; az esemény szemantikája diktálja a kezelési módot – "Azonnal állj le!" megszakítás-alapú feldolgozást használ, "Milyen idő lesz ma?" párhuzamos feldolgozást, "Küldd el a jelentést kínaiul" sorbaállítás-alapú feldolgozást. **Egy könnyűsúlyú osztályozó LLM használata javasolt esemény-útválasztóként**, amely gyorsan meghatározza, melyik stratégiát alkalmazza, amikor egy esemény érkezik.
 
 A következő kísérlet, egy eseményvezérelt e-mail feldolgozó Agent, a fent tárgyalt eseménykezelési stratégiákat valósítja meg futtatható implementációként.
+
+**Eseményhurok-útválasztás:**
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
 
 > **4-4. ★★★ Kísérlet: Eseményvezérelt E-mail Feldolgozó Agent**
 >
@@ -611,6 +655,20 @@ A hagyományos megközelítés minden eszköz sémáját egyszerre injektálja a
 
 "Hierarchikus Egyeztetés és Tartalék (Fallback)." A hatékony egyeztetés kihasználja az eszközök szervezésében már meglévő hierarchiát. Az olyan protokollokban, mint az MCP, az eszközök "szerverenként" vannak csoportosítva (mint az alkalmazások egy telefonon, mindegyik egy kapcsolódó funkciókészletet csomagolva), így az egyeztetés két rétegben futhat: a releváns szerverek megkeresése képességleírás alapján, majd a specifikus eszközök egyeztetése azokon belül. Ez a keresési teret "több ezer eszközről" "tucatnyi szerver × tucatnyi eszközre" szűkíti, számítási kapacitást megtakarítva és csökkentve a domének közötti szemantikai összetévesztést. Mérnöki szempontból ez egy offline felépített és inkrementálisan frissített beágyazási indexen (embedding index) alapul. És amikor mindkét réteg jelöltjei a küszöbérték alá esnek, a rendszernek egy explicit "nem található" eredményt kell visszaadnia, ami arra ösztönzi az Agentet, hogy fogalmazza újra és próbálkozzon újra, improvizáljon alap eszközökkel, vagy hozzon létre egy teljesen új eszközt (a 8. fejezet témája).
 
+**Proaktív eszközfelderítés:**
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
 ![4-8. ábra: KV Cache Optimalizálás a Dinamikus Eszközbetöltéshez](images/fig4-8.svg)
 
 "Dinamikus Betöltés és KV Cache." A proaktív felfedezés egy finom mérnöki költséggel jár: a dinamikus eszközbetöltés "érvényteleníti a KV Cache-t" – tegye az összes eszközdefiníciót a statikus előtagba, és minden újonnan betöltött eszköz érvényteleníti az egész gyorsítótárat. A javítás megegyezik a 2. fejezet Skill injektálási pozícióról szóló tárgyalásával: a változó részt (az új eszköz teljes sémáját) a kontextus végéhez fűzze, miközben a statikus előtag stabil marad és a KV Cache teljesen újrahasználható, csak egy rövid eszköznévlista marad az Agent állapotsorában. Ez a minta ma már natívan támogatott a nagy API-k által, és a mainstream keretrendszerek alapértelmezett architektúrájává vált: az OpenAI Responses API egy `tool_search` eszközt és egy `defer_loading: true` jelzőt biztosít, a betöltött sémák a kontextus végéhez vannak fűzve `tool_search_output` elemekként, így az előtag gyorsítótár folyamatosan talál; a Claude Code alapértelmezés szerint elhalasztja az MCP eszközöket (igény szerint injektálva `tool_reference` blokkokon keresztül, csak az eszközneveket és szerver utasításokat tartva a munkamenet indításakor); és a Codex CLI `tool_search`-je (BM25 visszakeresés) egy mindig bekapcsolt architektúra, nem egy opcionális funkció. A dinamikus eszközkörnyezet többet kér a modelltől is – a gyengébb modellek küszködnek a nem szabványos pozícióban, a kontextus közepén megjelenő eszközdefiníciókkal, és hajlamosak hibás hívásokat generálni (nem illeszkedő JSON zárójelek, hiányzó paraméterek), gyakran dedikált megerősítéses tanulási képzést igényelve (lásd 7. fejezet).
@@ -671,70 +729,6 @@ Az aszinkron oldalon az OpenClaw beépített automatizálási mechanizmusai (Hoo
 Hat kísérlet halad az alapoktól az architektúráig: a 4-1. és 4-3. kísérletek a három alap eszközkészletet – Észlelés, Végrehajtás, Együttműködés – építik fel; a 4-4. kísérlet bevezeti az eseményvezérelt feldolgozást egy e-mailt kezelő Agent segítségével; a 4-5. kísérlet a párhuzamos végrehajtást, a megszakítás helyreállítást és az állapotkezelést valósítja meg; a 4-6. kísérlet pedig a proaktív eszközfelfedezés értékét igazolja könyvtári léptékben. Ennek a fejezetnek a határa a "meglévő eszközök" leírása, felfedezése és biztonságos használata. A 8. fejezet ezzel szemben azt tárgyalja, hogyan határozza meg egy Agent a hibákból és ismétlődő műveletekből, hogy mikor kell létrehozni, módosítani, újraérvényesíteni vagy kivonni egy eszközt.
 
 A következő fejezet egy alapvetőbb kérdést tesz fel annál, hogy "hogyan használ egy Agent eszközöket?" – vajon egy Agent "létre tud-e hozni" eszközöket kód írásával? Egy Coding Agent plusz egy fájlrendszer az alapja minden általános célú Agentnek, és egyúttal biztosítja a 8. fejezetben tárgyalt ellenőrzött rendszer-önmódosításhoz szükséges végrehajtási képességet is.
-
-## Mechanizmus-skeletonok
-
-Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
-
-### Eszközbiztonsági kapu
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
-### Eseményhurok-útválasztás
-
-```python
-while runtime.is_alive:
-    events = queue.take_batch()
-
-    if any(is_urgent(event) for event in events):
-        cancel_at_safe_point(current_work)
-    elif has_independent_fast_query(events):
-        start_parallel_session(events)
-    else:
-        append_to_trajectory(events)
-
-    decision = LLM(context + trajectory)
-    dispatch(decision)
-```
-
-### Proaktív eszközfelderítés
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
-
-Legyen világos a határ: a megfigyelések és a bizonyítékok a környezetből érkeznek, a Harness pedig eldönti, mi hajtható végre.
 
 ## Gondolkodtató Kérdések
 

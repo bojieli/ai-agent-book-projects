@@ -374,6 +374,25 @@ messages = [
 
 Остальная часть главы будет строиться вокруг каждого слоя этой структуры: как использовать неизменность статического префикса для ускорения вывода (KV Cache), как проектировать хороший System Prompt (инженерия промптов), как защищаться от перехвата контекста внешним содержимым (защита от инъекции промпта), как подгружать специализированные знания по мере необходимости (Agent Skills), как внедрять динамическую информацию о состоянии в конец диалога (строка состояния агента), и как выполнять умное сжатие при разрастании истории диалога (стратегии сжатия).
 
+**Построение контекста перед каждым запросом:**
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
 > **Эксперимент 2-1 ★: развёртывание локального сервиса LLM и вызов инструментов**
 >
 >
@@ -1070,31 +1089,6 @@ messages: [
 Общая черта этих методов — явное, инженерно спроектированное управление информацией: вместо того чтобы оставлять модели пассивный поиск подсказок в огромном контексте, мы заранее предоставляем ей отфильтрованное и структурированное состояние. Все методы этой главы, от дружественной к KV Cache компоновки контекста до контекстно-ориентированного сжатия, представляют собой конкретные инженерные практики максимизации информационной эффективности на нынешней границе возможностей моделей.
 
 Эта глава посвящена обновлению состояния и деградации контекста **в пределах одной задачи**. Следующая глава переходит от управления информацией в одном окне контекста к постоянным системам знаний, охватывающим разные задачи: памяти пользователя и базам знаний. Они позволяют агенту со временем накапливать опыт и постепенно становиться либо помощником, который лучше понимает пользователя, либо экспертом с более глубокими знаниями в конкретной области.
-
-## Скелеты механизмов
-
-Следующие скелеты выделяют управляющие связи, обсуждаемые в главе.
-
-### Построение контекста перед каждым запросом
-
-```python
-stable_prefix = system_message
-stable_tools = core_tool_schemas
-trajectory = load_message_history(session)
-status_message = make_status_message(derive_current_state(trajectory))
-
-if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
-    trajectory = compress_old_evidence(
-        trajectory,
-        preserve = [decisions, constraints, failures, citations]
-    )
-
-request.messages = [stable_prefix] + trajectory + [status_message]
-request.tools = stable_tools
-response = call_model(request)
-```
-
-Граница должна оставаться явной: наблюдения и доказательства приходят из среды, а Harness решает, что разрешено выполнить.
 
 ## Вопросы для размышления
 

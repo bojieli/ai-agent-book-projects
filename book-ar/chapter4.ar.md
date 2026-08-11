@@ -131,6 +131,33 @@
 - يفحص Sidecar البيانات الهيكلية لاستدعاء الأداة صراحةً دون النظر للنص الحر للنموذج الرئيسي، مما يمنع **هجمات حقن الموجهات (Prompt Injection)**.
 - يعمل كبوابة أمان (Gating Mechanism) تمنع تنفيذ العمليات الخطرة (مثل `rm -rf` أو تعديل إعدادات النشر) دون إتاحة الثغرات الكلامية للالتفاف عليها.
 
+**بوابة أمان الأدوات:**
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
 ### التحقق التلقائي وحلقة التغذية الراجعة لـ Linter
 
 - **حلقة التنفيذ والتحقق والتغذية الراجعة**: عند كتابة الشفرة أو تعديل الملفات عبر `write_file` أو `edit_file`، يجب تشغيل أداة التحقق النحوي (Linter) تلقائيًا وإرجاع الأخطاء الهيكلية مباشرة في مخرجات الأداة ليقوم الوكيل بإصلاحها في الجولة التالية.
@@ -177,61 +204,7 @@
 2. **المعالجة القائمة على الصف (Queued)**: للأحداث الاعتيادية، حيث تُضاف الأحداث للقائمة وتُعالج بعد النقطة الآمنة التالية.
 3. **المعالجة المتوازية (Parallel)**: الاستعلامات المستقلة الخفيفة التي تُنفذ في حلقة استدلال موازية دون تعطيل المهمة الرئيسية.
 
-![الشكل 4-4: بنية Agent موجه بالأحداث لمعالجة البريد](images/fig4-4.svg)
-
-![الشكل 4-5: التعارض بين التنسيق المتزامن والواقع غير المتزامن](images/fig4-5.svg)
-
-![الشكل 4-6: معالجة المقاطعات والاسترداد في Agent غير المتزامن](images/fig4-6.svg)
-
-## الاكتشاف النشط للأدوات (Active Tool Discovery)
-
-عند تضخم عدد الأدوات لآلاف الخيارات، يصبح إدراجها جميعًا في الموجّه مستحيلاً ويصيب النموذج بالارتباك.
-
-![الشكل 4-7: المطابقة الهرمية للأدوات عبر السيرفر والأداة](images/fig4-7.svg)
-
-- **التحول من الاختيار السلبي إلى الاكتشاف النشط**: يعلن Agent عن حاجته عبر طلب هيكلي، ليتولى موجه النظام مطابقة الأداة وإدراجها عند الطلب (مثل MCP-Zero وTool Search Tool).
-- **المطابقة الهرمية (Hierarchical Matching)**: تصنيف الأدوات حسب السيرفر والمجال لتقليل مساحة البحث من آلاف الأدوات إلى عشرات السيرفرات.
-
-![الشكل 4-8: تحسين KV Cache عند التحميل الديناميكي للأدوات](images/fig4-8.svg)
-
-![الشكل 4-9: بنية السياق بعد الاكتشاف الديناميكي للأدوات](images/fig4-9.svg)
-
-## ملخص الفصل
-
-يحدد تصميم الأدوات السقف الأعلى لقدرات Agent، بينما تحدد البنية غير المتزامنة مدى موثوقية تشغيله في العالم الحقيقي. تضمن مبادئ ACI ودقة التمرير أمانة التفاعل، بينما يحل بروتوكول MCP مشكلة التشغيل البيني بين مختلف بيئات النماذج والأدوات.
-
-## هياكل الآليات
-
-تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
-
-### بوابة أمان الأدوات
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
-### توجيه حلقة الأحداث
+**توجيه حلقة الأحداث:**
 
 ```python
 while runtime.is_alive:
@@ -248,7 +221,22 @@ while runtime.is_alive:
     dispatch(decision)
 ```
 
-### اكتشاف استباقي للأدوات
+![الشكل 4-4: بنية Agent موجه بالأحداث لمعالجة البريد](images/fig4-4.svg)
+
+![الشكل 4-5: التعارض بين التنسيق المتزامن والواقع غير المتزامن](images/fig4-5.svg)
+
+![الشكل 4-6: معالجة المقاطعات والاسترداد في Agent غير المتزامن](images/fig4-6.svg)
+
+## الاكتشاف النشط للأدوات (Active Tool Discovery)
+
+عند تضخم عدد الأدوات لآلاف الخيارات، يصبح إدراجها جميعًا في الموجّه مستحيلاً ويصيب النموذج بالارتباك.
+
+![الشكل 4-7: المطابقة الهرمية للأدوات عبر السيرفر والأداة](images/fig4-7.svg)
+
+- **التحول من الاختيار السلبي إلى الاكتشاف النشط**: يعلن Agent عن حاجته عبر طلب هيكلي، ليتولى موجه النظام مطابقة الأداة وإدراجها عند الطلب (مثل MCP-Zero وTool Search Tool).
+- **المطابقة الهرمية (Hierarchical Matching)**: تصنيف الأدوات حسب السيرفر والمجال لتقليل مساحة البحث من آلاف الأدوات إلى عشرات السيرفرات.
+
+**اكتشاف استباقي للأدوات:**
 
 ```python
 if capability_is_missing(task):
@@ -262,7 +250,13 @@ if capability_is_missing(task):
         continue
 ```
 
-حافظ على الحد واضحًا: تأتي الملاحظات والأدلة من البيئة، بينما يقرر Harness ما يُسمح بتنفيذه.
+![الشكل 4-8: تحسين KV Cache عند التحميل الديناميكي للأدوات](images/fig4-8.svg)
+
+![الشكل 4-9: بنية السياق بعد الاكتشاف الديناميكي للأدوات](images/fig4-9.svg)
+
+## ملخص الفصل
+
+يحدد تصميم الأدوات السقف الأعلى لقدرات Agent، بينما تحدد البنية غير المتزامنة مدى موثوقية تشغيله في العالم الحقيقي. تضمن مبادئ ACI ودقة التمرير أمانة التفاعل، بينما يحل بروتوكول MCP مشكلة التشغيل البيني بين مختلف بيئات النماذج والأدوات.
 
 ## أسئلة التأمل
 

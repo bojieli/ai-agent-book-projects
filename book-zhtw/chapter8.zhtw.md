@@ -26,6 +26,19 @@
 
 圖8-2呈現一個三層驗證結構。底層的結果驗證器讀取測試結果、資料庫狀態與工具回傳，回答「事情是否真的辦成」；中間的過程驗證器檢查業務規則、權限與動作序列，回答「是否以允許的方式辦成」；上層的品質驗證器依據 Rubric 評價語言與策略，回答「是否辦得恰當」。越靠下層的指標越應依賴程式碼與環境真值，只有難以形式化的部分才交由語言模型處理。
 
+**三層軌跡驗證:**
+
+```python
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
+
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
+else:
+    emit_structured_diagnosis(outcome, process, quality)
+```
+
 ![圖8-2 從環境結果到 LLM Rubric 的三層軌跡驗證](images/fig8-2.svg)
 
 以客服 Agent 為例，一套有用的 Rubric 至少應涵蓋表8-1中的幾個面向。前五項主要約束底線，後兩項衡量服務品質。這樣的拆分比「使用者是否滿意」更具診斷價值：使用者可能因 Agent 違規退款而滿意，也可能因合規限制而不滿，單一滿意度無法區分兩者。
@@ -76,6 +89,19 @@ LLM 驗證器本身也需要校準。正式系統通常會準備一小批由專�
 | Prompt 與 Skill | 可語言化的判斷原則與操作規範 | 可解釋、作用範圍可控 | 容易膨脹、衝突或被忽略 |
 | 程式與 Harness | 確定性流程、工具與強約束 | 可測試、執行穩定、成本低 | 開發與維護成本較高 |
 | 模型參數 | 高維度感知、生成風格與隱式策略 | 泛化能力強、推理成本低 | 更新與迴歸成本高 |
+
+**經驗到能力的路由:**
+
+```python
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
+```
 
 ### 將經驗沉澱為知識
 
@@ -270,6 +296,20 @@ Voyager[^voyager-2023] 展示了一個較完整的持續進化循環。它在 Mi
 
 所有修改首先產生候選能力或候選 Agent，而不是直接覆蓋正式版本。知識文件要驗證檢索後是否提升新任務表現，Prompt 與 Skill 要檢查邊界案例和舊任務迴歸，程式要在沙盒與重設環境中執行測試，參數更新則要檢查遺忘、安全性與分布外任務。驗證通過後，仍應透過分階段發布觀察真實流量；關鍵指標惡化時，自動回復至已知安全版本。
 
+**驗證後發布與回滾:**
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
+```
+
 驗證還要區分兩種經常混在一起的能力。**Harness 更新能力**（harness-updating）是從軌跡中產生有價值的持久修改；**Harness 受益能力**（harness-benefit）是任務 Agent 在後續執行中找到、啟用並正確使用這些修改。一個 Skill 本身可能完全正確，但較弱的任務模型沒有在適當場景載入它，或載入後無法長程遵循；任一情況都會讓最終成績看起來像是「沒有進化」。因此，不能只以端到端分數反推更新器好壞。Lin 等人的模型替換實驗顯示，這兩種能力與基礎模型能力的關係並不相同[^harness-benefit-2026]；具體強弱關係仍需更多任務驗證，但將兩者拆開評估是普遍適用的方法。
 
 表8-3 持續進化的分層評估指標
@@ -330,6 +370,17 @@ Agent 的自我進化能力可能將一次錯誤變成長期風險。網頁、�
 4. **驗證與審批**：在遷移集、保留集與安全集上評估候選，高風險寫入等待人工核准；
 5. **修剪與索引**：更新檢索索引，將長期不用或被新證據推翻的能力標記為過期、封存或刪除，同時保留來源與回復版本。
 
+**閒時整合:**
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
 使用者記憶是最直觀的例子，但要與行動經驗區分。Claude Code 的自動記憶為每個專案維護 `MEMORY.md` 索引與依主題拆分的詳細檔案，工作階段啟動時只載入索引的有界前綴，其餘內容隨需讀取；當索引接近上限時，系統要求 Agent 合併或移出細節。這說明純文字記憶也需要容量限制、分層載入與主動整理，但目前公開機制主要是在工作階段中持續寫入，不能簡單等同於固定的夜間背景任務[^claude-code-memory]。
 
 Hermes 則提供更完整的背景進化案例。它將長期資訊分成有界的 `MEMORY.md` 與 `USER.md`、基於 SQLite/FTS5 的歷史工作階段檢索、隨需載入的 Skill，以及 Honcho 等可選外部記憶供應者。歷史檢索回傳原始訊息，而不是先由 LLM 摘要，避免將檢索與生成混成一個不可稽核的步驟。當一次任務包含較多工具呼叫、從錯誤或死路中恢復、收到使用者修正，或發現非顯然的工作流程時，背景複盤可以建立或局部修訂 Skill；記憶與 Skill 寫入也可以經過審批門控。獨立的 Curator 進一步追蹤 Skill 的使用、陳舊與封存狀態，在閒置期執行確定性修剪，並可選擇執行 LLM 合併；變更前保存快照，錯誤整理可以回復[^hermes-memory]。這個案例將「記錄—整合—驗證—修剪」從比喻變成可執行的能力生命週期。
@@ -388,63 +439,6 @@ Hermes 則提供更完整的背景進化案例。它將長期資訊分成有界�
 Agent 從與環境的互動及評價中取得學習訊號，再依能力的表示性質更新知識、Prompt、Skill、程式或模型參數。系統也可以進一步最佳化管理與生成這些產物的方法，但應優先採用可歸因、可驗證、可回復的局部修改。
 
 持續進化需要將線上執行與離線學習分開：線上記錄證據，離線產生並驗證候選更新，再逐步發布、整理或回復。這個閉環在結果可自動驗證的任務上最可靠；對於目標模糊、回饋延遲的開放式任務，人仍需參與問題定義與評價標準的制定。
-
-## 機制骨架
-
-下面的骨架只抽出本章討論的控制關係。
-
-### 三層軌跡驗證
-
-```python
-outcome = verify_environment_state(trajectory)
-process = verify_actions_and_permissions(trajectory)
-quality = judge_with_rubric(trajectory, cite_evidence = true)
-
-if not outcome.pass or not process.pass:
-    reject_as_learning_example(outcome, process, quality)
-else:
-    emit_structured_diagnosis(outcome, process, quality)
-```
-
-### 經驗到能力的路由
-
-```python
-if experience.is_factual and experience.has_sources:
-    target = KNOWLEDGE
-elif experience.can_be_expressed_as_contextual_language_rule:
-    target = PROMPT_OR_SKILL
-elif experience.is_deterministic or experience.is_hard_safety_constraint:
-    target = PROGRAM_OR_HARNESS
-else:
-    target = MODEL_PARAMETERS
-```
-
-### 驗證後發布與回滾
-
-```python
-candidate = propose_minimal_update(evidence, current_version)
-
-if not verify(candidate, boundary_set): reject(candidate)
-elif not verify(candidate, retention_set): reject(candidate)
-elif not verify(candidate, safety_set): reject(candidate)
-else:
-    canary = deploy_to_small_traffic(candidate)
-    if canary.metrics_regress: rollback(current_version)
-    else: promote(candidate)
-```
-
-### 閒時整合
-
-```python
-while sleep_gate_is_open():
-    batch = load_new_evaluated_trajectories()
-    proposals = consolidate(batch, current_capabilities)
-    for proposal in proposals:
-        validate_canary_and_promote_or_rollback(proposal)
-    prune_stale_entries_but_keep_provenance()
-```
-
-請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
 
 ## 思考題
 

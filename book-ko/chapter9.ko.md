@@ -35,6 +35,22 @@ OpenAI는 GPT-Live 소개에서 음성 상호작용을 캐스케이드, 턴 기�
 
 [^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ 이 분류는 ChatGPT Voice 세 세대의 진화를 요약한 글에서 왔으며 엔드투엔드 옴니모달은 “turn-based voice models”에 해당한다.
 
+**스트리밍 취소:**
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
 ### 패러다임 1 · 캐스케이드 파이프라인
 
 상용 음성 비서 대부분은 직렬 파이프라인을 사용한다(그림 9-1). VAD가 발화 종료를 판단하고 ASR이 음성을 텍스트로 바꾸며 LLM이 답을 만들고 TTS가 읽어 준다. 모듈식 구조는 개별 최적화를 가능하게 하지만 경계마다 대기가 생긴다.
@@ -156,6 +172,22 @@ GUI 자동화라고도 하는 컴퓨터 사용은 AI가 화면을 관찰하고 �
 2.  멀티모달 모델이 스크린샷과 업무 지시를 받고 사고와 구체적인 행동을 출력합니다.
 3.  실행 계층이 실제 환경에서 행동(마우스 이동, 클릭, 텍스트 입력 등)을 수행합니다.
 4.  인터페이스의 응답을 기다리고 다시 스크린샷을 찍어 다음 루프 반복에 들어갑니다.
+
+**Computer Use 안전 루프:**
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
 
 ![그림 9-6: 컴퓨터 사용 에이전트의 인식-사고-행동 루프](images/fig9-7.svg)
 
@@ -396,6 +428,19 @@ Anthropic은 완전한 상호작용 능력을 이루는 세 가지 도구 유형
 
 OpenVLA는 문자 그대로 projector만 업데이트해 학습한 것이 아닙니다. 원 논문은 전체 fine-tuning, vision encoder 동결, 마지막 계층만 학습하는 방식, LoRA 변형도 보고합니다. 그러나 더 근본적인 비판은 여전히 유효합니다. 거대한 텍스트·이미지 사전 학습 말뭉치가 훨씬 작은 로봇 데이터셋과 좁은 적응 경로로 연결되고, 저비용 적응에서는 새로운 행동이 projector, LoRA 모듈 또는 action head에 집중되기 쉽습니다. 행동 복제는 “관찰 + 지시 → action chunk”를 학습할 뿐, 반사실적인 물리적 결과를 학습하지 않습니다. embodiment별 행동 공간과 오래된 action chunk도 전이를 제한합니다. 언어 backbone이 ‘컵’이라는 단어를 안다고 해서 마찰, 액체, 접촉, 전원 케이블의 거동까지 아는 것은 아닙니다.
 
+**액션 청크 선점:**
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
 ### 월드 모델
 
 월드 모델은 행동 가능한 전이를 학습합니다.
@@ -411,57 +456,6 @@ OpenVLA는 문자 그대로 projector만 업데이트해 학습한 것이 아닙
 ## 장 요약
 
 겉으로는 세 상황이 더 다를 수 없을 만큼 달라 보이지만 지연 시간과 멀티모달리티라는 두 장애물이 모두를 따라다닙니다. 음성 에이전트는 직렬 파이프라인에서 종단 간·전이중 시스템으로, 분리된 빠른 사고와 느린 사고에서 말하면서 생각하기로 발전했습니다. 컴퓨터 사용은 OSWorld 같은 벤치마크에서 사람의 정확도에 다가가고 있지만 사람보다 훨씬 많은 단계가 필요하고 업무가 진행될수록 각 단계가 오래 걸립니다. 이 효율 격차에는 아직 체계적인 해법이 없습니다. 시각적 안내에 따라 물체를 조작하는 로봇에서는 병목이 하드웨어에서 VLA 제어 계층의 업무 간 일반화 능력으로 이동했습니다(촉각 감지와 능숙한 손은 해결되지 않은 하드웨어 한계로 남아 있습니다). 다음 장에서는 다른 차원의 과제인 여러 에이전트의 협업을 살펴봅니다.
-
-## 메커니즘 skeleton
-
-다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
-
-### 스트리밍 취소
-
-```python
-while audio_is_arriving:
-    partial = asr.push(audio_chunk)
-    if endpoint_is_probable(partial):
-        candidate = llm.start(partial)
-        if later_audio_changes_meaning(partial):
-            cancel(candidate)                 # speculative cancellation
-        else:
-            tts.enqueue_stable_segments(candidate)
-
-on_final_transcript(text):
-    commit_or_restart(text)
-```
-
-### Computer Use 안전 루프
-
-```python
-observation = capture_screenshot_and_accessibility_tree()
-proposal = model.decide(task, observation)
-action = validate_schema_and_coordinates(proposal)
-
-if action.is_irreversible and not user_or_policy_approval(action):
-    stop("approval required")
-else:
-    execute_in_sandbox_or_scoped_session(action)
-    new_observation = capture_after_settle()
-    if not verify_goal_progress(new_observation, action):
-        rollback_if_possible_or_replan()
-```
-
-### 액션 청크 선점
-
-```python
-chunk = vla(current_observation, skill)
-for action in chunk:
-    low_level.execute(action)
-    if safety_event() or observation_changed_significantly():
-        low_level.stop()
-        discard_remaining(chunk)
-        reobserve_and_replan()
-        break
-```
-
-경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
 
 ## 생각해 볼 문제
 

@@ -379,6 +379,25 @@ La parte superior (System Prompt + Tool Definitions) se mantiene inalterada a lo
 
 Las secciones siguientes del capítulo se desarrollarán en torno a cada nivel de esta estructura: cómo utilizar la inmutabilidad del prefijo estático para acelerar la inferencia (KV Cache), cómo diseñar un buen System Prompt (ingeniería de prompts), cómo prevenir el secuestro del contexto por contenidos externos (defensa contra inyección de prompts), cómo cargar conocimiento especializado a demanda (Agent Skills), cómo inyectar información dinámica de estado al final de la conversación (barra de estado del Agente) y cómo comprimir de forma inteligente el historial de mensajes cuando este se expande (estrategias de compresión).
 
+**Construcción del contexto antes de cada solicitud:**
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
 > **Experimento 2-1 ★: Despliegue de Servicios de LLM Locales y Llamada a Herramientas**
 >
 > ![Figura 2-5: Arquitectura de llamada a herramientas en LLM local](images/fig2-5.svg)
@@ -1071,31 +1090,6 @@ A través de sus numerosos detalles técnicos, este capítulo sostiene un argume
 El hilo común de estas técnicas es una gestión de la información explícita y diseñada: en lugar de dejar que el modelo busque pistas de forma pasiva en un contexto enorme, se le proporciona de manera proactiva un estado depurado y estructurado. Todas las técnicas presentadas en este capítulo, desde las disposiciones de contexto favorables para la KV Cache hasta la compresión consciente del contexto, son aplicaciones concretas de la ingeniería para maximizar la eficiencia de la información en el límite actual de las capacidades del modelo.
 
 Este capítulo se ocupa de las actualizaciones de estado y la degradación del contexto **dentro de una sola tarea**. El siguiente capítulo deja atrás la gestión de información en una única ventana de contexto y pasa a sistemas de conocimiento persistente que abarcan múltiples tareas: la memoria de usuario y las bases de conocimiento. Estos sistemas permiten que el Agente acumule experiencia con el tiempo y se convierta gradualmente en un asistente que comprende mejor al usuario o en un experto con conocimientos más especializados en un dominio.
-
-## Skeletons de mecanismos
-
-Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
-
-### Construcción del contexto antes de cada solicitud
-
-```python
-stable_prefix = system_message
-stable_tools = core_tool_schemas
-trajectory = load_message_history(session)
-status_message = make_status_message(derive_current_state(trajectory))
-
-if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
-    trajectory = compress_old_evidence(
-        trajectory,
-        preserve = [decisions, constraints, failures, citations]
-    )
-
-request.messages = [stable_prefix] + trajectory + [status_message]
-request.tools = stable_tools
-response = call_model(request)
-```
-
-Mantén explícito el límite: las observaciones y evidencias proceden del entorno, y el Harness decide qué puede ejecutarse.
 
 ## Preguntas de Reflexión
 

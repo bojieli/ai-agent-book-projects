@@ -374,6 +374,25 @@ messages = [
 
 本章では以降、この構造の各層をめぐって話を展開します。静的プレフィックスの不変性を利用してどう推論を高速化するか（KV Cache）、よい System Prompt をどう設計するか（プロンプトエンジニアリング）、外部コンテンツによるコンテキストの乗っ取りをどう防ぐか（プロンプトインジェクション防御）、専門知識をどうオンデマンドで読み込むか（Agent Skills）、対話の末尾に動的な状態情報をどう注入するか（Agent ステータスバー）、そして対話履歴が膨張したときにどう賢く圧縮するか（圧縮戦略）です。
 
+**各リクエスト前のコンテキスト構築:**
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
 > **実験 2-1 ★：ローカル LLM サービスのデプロイとツール呼び出し**
 >
 >
@@ -1067,31 +1086,6 @@ Agent ステータスバーには実用上の利点があります。すべて�
 これらの技術に共通するのは、明示的で工学的に設計された情報管理です。モデルに巨大なコンテキストから受動的に手がかりを探させるのではなく、精選して構造化した状態を能動的に与えます。本章で扱った、KV Cache に適したコンテキスト配置からコンテキストを考慮した圧縮までの各技術は、現在のモデル能力の境界で情報効率を最大化するための具体的な工学実践です。
 
 本章が扱うのは、**一つのタスク内**における状態更新とコンテキストの劣化です。次章では、一つのコンテキストウィンドウ内の情報管理を越え、複数のタスクにまたがる永続的な知識システム、すなわちユーザーメモリと知識ベースへ進みます。これらのシステムによって Agent は時間とともに経験を蓄積し、ユーザーをより深く理解するアシスタント、あるいは専門分野についてより深い知識を持つエキスパートへと徐々に成長できます。
-
-## メカニズムの skeleton
-
-以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
-
-### 各リクエスト前のコンテキスト構築
-
-```python
-stable_prefix = system_message
-stable_tools = core_tool_schemas
-trajectory = load_message_history(session)
-status_message = make_status_message(derive_current_state(trajectory))
-
-if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
-    trajectory = compress_old_evidence(
-        trajectory,
-        preserve = [decisions, constraints, failures, citations]
-    )
-
-request.messages = [stable_prefix] + trajectory + [status_message]
-request.tools = stable_tools
-response = call_model(request)
-```
-
-境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
 
 ## 演習問題
 

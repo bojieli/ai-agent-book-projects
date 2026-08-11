@@ -245,6 +245,33 @@ Một ứng dụng điển hình khác của mẫu Sidecar là **làm giàu ng�
 
 Đối với Sidecar bảo mật, cũng cần trang bị **bộ ngắt mạch từ chối**: khi bộ phân loại từ chối các hoạt động nhiều lần liên tiếp, hệ thống không nên thử lại vô thời hạn (điều này sẽ lãng phí tài nguyên và cũng có thể đưa người dùng vào một vòng lặp vô hạn), mà sẽ chuyển sang yêu cầu người dùng đánh giá thủ công. Đây là một ví dụ điển hình về chức năng “sửa” của Harness ở Chương 1.
 
+**Cổng an toàn tool:**
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
 **Vòng khép kín xác minh và phản hồi tự động.**
 
 Một nguyên tắc thiết kế quan trọng khác đối với các công cụ thực thi là: **Nếu kết quả của thao tác có thể được xác minh thì chúng sẽ được xác minh tự động**. Lấy việc viết mã làm ví dụ, khi Agent gọi `write_file` để tạo hoặc sửa đổi tệp mã, công cụ không chỉ ghi nội dung rồi trả về "thành công" mà còn phải thực hiện kiểm tra cú pháp ngay sau khi viết: gọi linter tương ứng (công cụ kiểm tra tĩnh mã) theo loại tệp, phân tích đầu ra thành danh sách lỗi có cấu trúc và trả về Agent như một phần của giá trị trả về của công cụ.
@@ -481,6 +508,23 @@ Các quy tắc được mã hóa cứng có những hạn chế và ngữ nghĩa
 
 Sau đây là thử nghiệm Agent xử lý email theo hướng sự kiện để triển khai chiến lược xử lý sự kiện trên thành một triển khai có thể chạy được.
 
+**Định tuyến event loop:**
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
 > **4-4 thử nghiệm ★★★: Xử lý email theo sự kiện Agent**
 >
 >
@@ -629,6 +673,20 @@ Cách tiếp cận truyền thống là đưa lược đồ của tất cả cá
 
 **Kết hợp và hạ cấp thứ bậc.** Chìa khóa để so khớp hiệu quả là bản thân tổ chức công cụ có cấu trúc phân cấp: trong các giao thức như MCP, các công cụ được nhóm theo **máy chủ**(tương tự như Ứng dụng trên điện thoại di động, mỗi Ứng dụng cung cấp một tập hợp các chức năng liên quan), do đó, việc so khớp có thể được chia thành hai lớp - trước tiên hãy xác định vị trí các máy chủ có liên quan theo mô tả khả năng và sau đó khớp các công cụ cụ thể trong máy chủ, giảm không gian tìm kiếm từ "hàng nghìn công cụ" xuống "hàng chục máy chủ × hàng chục công cụ trên mỗi máy chủ", điều này không làm giảm không gian tìm kiếm chỉ tiết kiệm sức mạnh tính toán mà còn giảm sự nhầm lẫn ngữ nghĩa giữa các miền. Về mặt kỹ thuật, điều này dựa vào một chỉ mục nhúng được xây dựng ngoại tuyến và hỗ trợ các bản cập nhật gia tăng; nếu độ giống nhau của các ứng viên ở cả hai cấp độ so khớp thấp hơn ngưỡng, "không tìm thấy" phải được trả về một cách rõ ràng, cho phép Agent viết lại các yêu cầu và thử lại, triển khai thủ công bằng các công cụ cơ bản hoặc đơn giản là tạo một công cụ mới (tạo công cụ là chủ đề của Chương 8).
 
+**Khám phá tool chủ động:**
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
 ![Hình 4-8 Tối ưu hóa KV Cache của việc tải động công cụ ](images/fig4-8.svg)
 
 **Tải động với KV Cache.** Khám phá tích cực có chi phí kỹ thuật rất nhỏ: các công cụ tải động sẽ **phá vỡ KV Cache** - nếu đưa toàn bộ định nghĩa công cụ vào tiền tố tĩnh, mỗi khi một công cụ mới được tải, toàn bộ bộ đệm sẽ bị vô hiệu. Ý tưởng bẻ khóa cũng giống như khi thảo luận về vị trí chèn Kỹ năng trong Chương 2: nối phần thay đổi (lược đồ hoàn chỉnh của công cụ mới) vào cuối ngữ cảnh, giữ ổn định tiền tố tĩnh, sử dụng lại hoàn toàn KV Cache và chỉ duy trì một danh sách ngắn các tên công cụ trong thanh trạng thái Agent. Ngày nay, mô hình này đã được các API lớn hỗ trợ nguyên bản và trở thành kiến trúc mặc định của các framework chính thống: OpenAI Responses API cung cấp công cụ `tool_search` và cờ `defer_loading: true`, lược đồ được tải được nối vào cuối ngữ cảnh dưới dạng `tool_search_output` và bộ đệm tiền tố liên tục trúng; Claude Code mặc định tải trễ các công cụ MCP (chèn theo yêu cầu thông qua `tool_reference` blocks, khi phiên khởi động chỉ giữ lại tên công cụ và mô tả máy chủ); còn `tool_search` của Codex CLI (truy xuất BM25) là kiến trúc được bật mặc định chứ không phải tính năng tùy chọn. Ngoài ra, môi trường công cụ động cũng có yêu cầu cao hơn về khả năng của mô hình - các mô hình có khả năng yếu sẽ khó hiểu các vị trí không chuẩn như "định nghĩa công cụ xuất hiện ở giữa ngữ cảnh" và cũng có xu hướng tạo ra các định dạng gọi bất hợp pháp (chẳng hạn như dấu ngoặc không khớp JSON, thiếu tham số) và thường yêu cầu đào tạo đặc biệt thông qua học tăng cường (xem Chương 7 để biết chi tiết).
@@ -689,70 +747,6 @@ Về kiến trúc không đồng bộ, cơ chế tự động hóa tích hợp c
 Sáu thử nghiệm tiến triển dần dần từ cơ bản đến kiến trúc: Thử nghiệm 4-1 đến Thử nghiệm 4-3 xây dựng ba bộ công cụ cơ bản về nhận thức, thực thi và cộng tác. Thử nghiệm 4-4 sử dụng xử lý email. Agent giới thiệu ổ sự kiện. Thử nghiệm 4-5 triển khai thực thi song song, khôi phục gián đoạn và quản lý trạng thái. Thử nghiệm 4-6 xác minh giá trị của khám phá công cụ tích cực trong thư viện công cụ quy mô lớn. Thiết kế công cụ và kiến trúc được thảo luận trong chương này—giao thức MCP, nguyên tắc thiết kế và kiến trúc không đồng bộ—là điều kiện tiên quyết cho quá trình tự phát triển của Agent trong Chương 8.
 
 Chương tiếp theo sẽ trả lời một câu hỏi cơ bản hơn "cách sử dụng công cụ": Agent có thể tạo công cụ bằng cách viết mã không? Coding Agent cộng với hệ thống tệp là nền tảng cốt lõi của tất cả Agent phổ quát - và cũng là điểm khởi đầu cho khả năng tự tiến hóa của Chương 8 Agent.
-
-## Skeleton cơ chế
-
-Các skeleton sau chỉ tách ra quan hệ điều khiển được bàn trong chương.
-
-### Cổng an toàn tool
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
-### Định tuyến event loop
-
-```python
-while runtime.is_alive:
-    events = queue.take_batch()
-
-    if any(is_urgent(event) for event in events):
-        cancel_at_safe_point(current_work)
-    elif has_independent_fast_query(events):
-        start_parallel_session(events)
-    else:
-        append_to_trajectory(events)
-
-    decision = LLM(context + trajectory)
-    dispatch(decision)
-```
-
-### Khám phá tool chủ động
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
-
-Giữ ranh giới rõ ràng: quan sát và bằng chứng đến từ môi trường, còn Harness quyết định hành động nào được phép thực thi.
 
 ## Câu hỏi tư duy
 

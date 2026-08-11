@@ -63,6 +63,18 @@
 
 > **訓練コスト：LoRA パラメータ効率的ファインチューニング**。上記の SFT も後述の RL もモデルパラメータを更新しますが、全パラメータのファインチューニングは VRAM への要求が非常に高くなります（数十億のパラメータすべてに勾配とオプティマイザの状態を保存する必要があるため）。**LoRA**（Low-Rank Adaptation、低ランク適応）は最もよく使われる節約法です。元の大きな重み行列には手をつけず、その脇に小さな「パッチ」（低ランク行列）を付けてタスクを学習します。パラメータ量は元の 1%〜5% にすぎませんが、全パラメータファインチューニングに近い効果を出せます。元の重みが凍結されているため、LoRA は基盤モデルが既に持つ能力への攪乱も小さく、破滅的忘却のリスクも低くなります。検証済みの実践的な経験がいくつかあります[^ch7-1]。**必ず** LoRA をすべての主要な重み行列（とりわけパラメータ比率が最大の MLP 層）に適用しなければなりません。アテンション層だけに加えると性能が落ちます。**最適な学習率はおよそ全パラメータファインチューニングの 10 倍**です（SFT でも RL でも成立し、非常に実用的な移転規則です）。SFT では中〜高ランク（64〜256）を使い、RL では毎ラウンドの情報量が非常に小さいため小さいランク（8〜32）、さらには rank=1 でも十分です。デプロイ時には 1 台の推論サーバーが複数の LoRA アダプターを同時にロードしてマルチテナントサービスを行えます。本書では LoRA をすべてのポストトレーニング手法を貫く工学的なデフォルト項目とみなし、以後は個別に展開しません。
 
+**SFT 損失マスク:**
+
+```python
+for sample in dataset:
+    prompt_tokens = tokenize(sample.prompt)
+    answer_tokens = tokenize(sample.answer)
+    tokens = prompt_tokens + answer_tokens
+    labels = [-100] * len(prompt_tokens) + answer_tokens
+    loss = causal_lm_loss(tokens, labels)
+    update_parameters(loss)
+```
+
 ### なぜ必ず先に SFT、後に RL でなければならず、逆ではいけないのか
 
 3 段階の順序は恣意的なものではありません。事前学習が最前に来ることに異論はありません。言語と知識の土台がまずなければ、後は何も語れないからです。本当に説明が必要なのは、**なぜ SFT が RL の前でなければならないのか**という点です。
@@ -342,6 +354,33 @@ Kimi K3 のようなツール呼び出しと長い連鎖思考のために最適
 「シングルターン」とは、タスクが一度の相互作用で完了することを指します。モデルは入力を受け取り、出力を生み出し、報酬を得るもので、ステップをまたいだ状態を維持する必要はありません。この単純化された設定により、私たちはマルチターン相互作用の複雑さに邪魔されることなく、SFT と RL の学習機構における根本的な違いに焦点を当てられます。シングルターンの場面は明快な対照実験の条件を提供します。同じタスク、同じ基礎モデル、同じ計算予算で、唯一の変数は訓練方法です。最初の実験は RL がいかに「いつ思考すべきか」というメタ方策を学ぶかを示し、2 番目の実験は算術推論のカードゲームを通じて「SFT は記憶、RL は汎化」を系統的に定量化します。
 
 実験に入る前に、まず RL アルゴリズムに関する**最小限の直感**を築いておき、以降の実験に出てくる用語を理解できるようにします（完全な公式と対比は本章後半の「強化学習アルゴリズムの比較」の節に譲ります）。本章の RL 訓練の大半は**方策勾配**に基づきます。モデルに同じ問題に対していくつか回答を生成させ、報酬の高い回答はその出現確率を高め、報酬の低いものは下げます――「報酬の高い方向へ多く進み、報酬の低い方向へは少なく進む」。一度の更新幅が大きすぎてモデルを狂わせないように、主流の **PPO** アルゴリズムは各ステップの更新幅をクリップします（後述の実験に出てくる「価値ネットワーク付きの PPO」がこれを指し、価値ネットワークはベースラインを推定し、より細かい優位性を算出するのに使います）。もう一つの **GRPO** は価値ネットワークを訓練せず、「同じ問題に対する複数の回答を互いに比較する」ことで各回答の相対的な良し悪しを判断します。この直感を覚えておけば、次の 2 つの実験を読み解くのに十分です。
+
+**GRPO グループ更新:**
+
+```python
+for prompt in batch:
+    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
+    rewards = [verify(trajectory) for trajectory in group]
+    advantages = normalize_within_group(rewards)       # GRPO baseline
+    update(policy, group, advantages)
+```
+
+**PPO クリップ更新:**
+
+```python
+for trajectory in rollouts:
+    returns = discounted_returns(trajectory.rewards)
+    values = value_model(trajectory.states)
+    advantages = returns - stop_gradient(values)
+    ratio = exp(policy.log_prob(trajectory.actions)
+                - old_policy.log_prob(trajectory.actions))
+    policy_loss = -mean(min(
+        ratio * advantages,
+        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    ))
+    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
+update(policy, value_model, policy_loss + value_coef * value_loss)
+```
 
 > **実験 7-10 ★★：AdaptThink――「いつ思考しないか」を学ぶ**
 >
@@ -673,6 +712,16 @@ O はもとの**結果報酬**（疎で、なお本当の目標）です。Φ �
 
 **RLVR との関係（ついでに紛らわしい点を一つ突く）。** RLVP と本章で繰り返し出てくる RLVR（検証可能報酬の強化学習）は一文字違いで、ちょうど補完性を突いています。**RLVR が検証するのは結果、RLVP はさらにプロセスを検証します**。両者を重ねれば、「事を成し遂げる」ことと「規則を守ってやるか」の両方を見つめる訓練信号が得られます――これこそ安全に実運用に乗せられる Agent が必要とするものです。
 
+**結果＋経路シグナル:**
+
+```python
+outcome = verify_final_state(trajectory)              # result, not self-report
+path_signal = 0
+for step in trajectory:
+    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
+reward = normalize(outcome) + beta * normalize(path_signal)
+```
+
 > **実験 7-16 ★★★：RLVP――結果に報酬を、経路に罰を `[拡張実験]`**
 >
 > **実験目標**：「結果報酬 + 検証経路信号」が、タスクの成功率を犠牲にせずに、一方で制約違反を下げ（ペナルティ用法）、他方でサンプル効率を高められる（部分報酬用法）かを検証します。
@@ -694,6 +743,16 @@ O はもとの**結果報酬**（疎で、なお本当の目標）です。Φ �
 ツール呼び出しをめぐる Agent RL には現在、活発な 2 つの路線があります。一つは**検索拡張**です。Search-R1（Jin ら、2025）を代表とし、RL でモデルに思考過程の中で自主的にいつ検索を発起するかを決めさせ、返ってきた結果を利用して推論を続けさせるもので、固定の RAG フローを当てはめるのではありません。もう一つは**ソフトウェアエンジニアリング**です。SWE-Gym などの訓練環境を代表とし、coding Agent が本物のコードベース上でマルチターンの RL を行い、モデルに反復的にコードを編集、実行、修復させます。2 つの路線に共通の課題は、長時系列のクレジット割り当て（一度の最終的な成功を数十ステップ前のある判断に帰す）と環境工学（安定して、再現可能で、大規模並列できる訓練環境を構築する）です。
 
 ツール RL には避けて通れない工学的な細部がもう一つあります。**環境フィードバックの token に損失マスキング（loss masking）を施す**ことです。一本のツール呼び出しの軌跡には、モデル自身が生成した token（思考、ツール呼び出しのパラメータ）と、環境が返す token（コードインタプリタの出力、検索結果、カスタマーサービスの返答）の両方があります。後者は方策が生成したものではなく、環境が与えたものです――もしそれらも方策勾配に算入すれば、モデルは「サンドボックスが何を出力するかを予測する」よう訓練され、これは最適化目標から外れるうえ、訓練を不安定にします。標準的なやり方は、損失を計算する際に環境フィードバックの token をマスクし、モデル自身が生成した token にのみ勾配を逆伝播させることです。これこそ ReTool の核となる技術ポイントの一つ（`<interpreter>` タグ内のフィードバック token に勾配をマスク）であり、また Search-R1 の言う「検索された token をマスクして訓練を安定させる」ことでもあり、veRL、AWorld などの主流の訓練フレームワークはいずれもこの仕組みを内蔵しています。
+
+**軌跡レベルの報酬マスク:**
+
+```python
+for token in trajectory:
+    if token.source == ENVIRONMENT:
+        loss_mask[token] = 0
+    else:                                      # model thought / tool arguments
+        loss_mask[token] = 1
+```
 
 > **実験 7-14 ★★★：ReTool――コードインタプリタで数学の問題解決を強化**
 >
@@ -754,6 +813,17 @@ On-Policy Distillation（オンポリシー蒸留）は Thinking Machines Lab �
 
 具体的にどう採点するのでしょうか。教師は生徒のこのステップが正しいかどうかを判断するだけでなく、直接「今のこの位置で、次の token の各選択肢がそれぞれどれくらいの確率であるべきか」という完全な分布を与えます。たとえば生徒が「まず API を照会し、次に返り値を解析し……」のある位置まで書いたとき、教師はここで「照会」が 80%、「呼び出し」が 15%、残り 5% であるべきだと考えます。生徒の学習目標は、各位置での自分の予測分布を教師の分布にできる限り近づけることです。技術的には 2 つの分布の間の **KL ダイバージェンス**を最小化することで実現します（KL ダイバージェンスは 2 つの確率分布の差異を測り、近いほど小さく、同じなら 0、7.7 節で詳しく紹介しました）。最終的な成否だけの二値信号に比べ、この token ごとの分布のアライメントは、一桁どころではなく密です。
 
+**オンポリシー蒸留:**
+
+```python
+student_trajectory = rollout(student, task)
+loss = 0
+for state in student_trajectory:
+    teacher_logits = teacher(state)
+    loss += KL(student_logits(state), teacher_logits)
+update_student(loss)
+```
+
 効果は際立っています。数学などのタスクで、同等の性能に達するのに必要な訓練ステップ数は純粋な RL の約 **1/10** ですみます。長い連鎖思考のタスクでは優位性がとりわけ明らかです――各ステップで教師が道を指し示し、生徒は素早く誤りを正すことを学び、誤った経路をどんどん進んでいくことがありません。それはついでに過学習も緩和します。標準的な RL では同じ prompt を繰り返し訓練すると最終答えを暗記しやすいのですが、ここでは毎回の軌跡が異なり、教師が具体的な軌跡に対してフィードバックを与えるので、学ぶのは汎用的な方策であって特定の答えではなく、データの再利用率が大幅に高まります。
 
 この手法は**マルチターン Agent の場面**でとりわけ価値が大きいです。マルチターンのタスクの成否信号は最末端に現れ、疎で滞りがちですが、token ごとの教師分布がちょうど途中の各ステップに欠けた指針を補います。しかしそれには一つの前提があり、それはちょうど本章が繰り返し強調する主線に呼応します。**生徒が自由に探索できる十分に本物のシミュレーション環境がなければなりません**――さもないと生徒が教師も見たことのない偏差状態に踏み込んだとき、教師の採点も同様に信頼できません。On-Policy の価値は、「生徒が本当にデプロイ分布の上で探索している」ことの上に成り立ちます。
@@ -765,6 +835,18 @@ On-Policy Distillation（オンポリシー蒸留）は Thinking Machines Lab �
 On-Policy Distillation の威力は教師から来ますが、それゆえに一つの厳しい前提を背負っています。**生徒より明らかに強い教師モデルがなければならない**という前提です。これは多くの場面で成り立ちません。訓練したいのが垂直領域のモデルで、既存モデルの能力がいずれも不足しているなら、使える教師モデルはありません。より強い教師がいなければ、密な信号の恩恵は私たちと無縁なのでしょうか。
 
 一つの巧妙な突破口は **On-Policy Self-Distillation（OPSD、オンポリシー自己蒸留）**です[^ch7-15]。**同じモデルに教師と生徒の二役を演じさせ、違うのはコンテキストだけ**というものです。教師版は「特権情報」（privileged information）――たとえば問題の模範解答や、検証済みの正しい解答――を見ることができます。本当にその問題を「解ける」必要はなく、答えを手がかりに生徒が歩いた各ステップを**合理化**し、token ごとの目標分布を与えればよいのです。生徒版は問題そのものしか見えず、自分でサンプリングした軌跡の上で教師版へアラインします。背後にある直感は、「答えを見ながら解説する」ことは「自力で問題を解く」ことよりはるかに容易だということです――これは RLVR が成り立つ根拠である「検証—生成の非対称性」と同型です。ただしここでは、その非対称性が疎な成否スカラーではなく、密な監督信号を生み出すために使われます。
+
+**オンポリシー自己蒸留:**
+
+```python
+student_trajectory = rollout(model, task_without_answer)
+loss = 0
+for state in student_trajectory:
+    privileged_state = add_verified_answer(state)
+    teacher_logits = stop_gradient(model(privileged_state))
+    loss += KL(model(state), teacher_logits)
+update(model, loss + retention_regularizer)
+```
 
 RLVR と比べて、OPSD には 2 つの核心的な優位性があります。**その一、検証可能な報酬への依存から解放される。** RLVR の前提は自動検証器の存在ですが、OPSD の特権情報の出所ははるかに広いのです。模範解答でもよく、より豊かなシステムプロンプト、人間の示範、領域文書でもよく、「モデルが事後に正しい振る舞いを筋道立てて説明できるようにする」情報なら何でも使えます。**その二、監督信号が RL よりはるかに密。** RL は一つの軌跡に一つのスカラー報酬しかありませんが、OPSD は軌跡の各位置に完全な確率分布を与え、token 効率は RL 手法を明らかに上回ります。言い換えれば、OPSD は「特権情報」で「より強い教師」を代替したのであり、それゆえサンプル効率の問題を緩和する現実的な道筋となっています。
 
@@ -892,94 +974,6 @@ SFT と RL は競争関係ではなく、前後の関係です。SFT がまず�
 [^ch7-20]: Hua, Zhanbo, et al. *CLI-Universe: Towards Verifiable Task Synthesis Engine for Terminal Agents.* arXiv:2606.22883, 2026.
 
 ポストトレーニングは「いかにモデルをより賢くするか」の問題を解決しましたが、モデルの重みの更新周期は週単位である一方、現実では API の稼働・停止、ユーザーニーズの進化、業務ルールの変更が毎日起きています。次章では補完的な進化の経路を探ります――モデルの重みを変更せず、外部化学習を通じて Agent に自主的にツールライブラリと知識ベースを構築させ、持続的な能力の拡張を実現するのです。
-
-## メカニズムの skeleton
-
-以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
-
-### SFT 損失マスク
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
-```
-
-### GRPO グループ更新
-
-```python
-for prompt in batch:
-    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
-    rewards = [verify(trajectory) for trajectory in group]
-    advantages = normalize_within_group(rewards)       # GRPO baseline
-    update(policy, group, advantages)
-```
-
-### PPO クリップ更新
-
-```python
-for trajectory in rollouts:
-    returns = discounted_returns(trajectory.rewards)
-    values = value_model(trajectory.states)
-    advantages = returns - stop_gradient(values)
-    ratio = exp(policy.log_prob(trajectory.actions)
-                - old_policy.log_prob(trajectory.actions))
-    policy_loss = -mean(min(
-        ratio * advantages,
-        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
-    ))
-    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
-update(policy, value_model, policy_loss + value_coef * value_loss)
-```
-
-### 軌跡レベルの報酬マスク
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-### 結果＋経路シグナル
-
-```python
-outcome = verify_final_state(trajectory)              # result, not self-report
-path_signal = 0
-for step in trajectory:
-    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
-reward = normalize(outcome) + beta * normalize(path_signal)
-```
-
-### オンポリシー蒸留
-
-```python
-student_trajectory = rollout(student, task)
-loss = 0
-for state in student_trajectory:
-    teacher_logits = teacher(state)
-    loss += KL(student_logits(state), teacher_logits)
-update_student(loss)
-```
-
-### オンポリシー自己蒸留
-
-```python
-student_trajectory = rollout(model, task_without_answer)
-loss = 0
-for state in student_trajectory:
-    privileged_state = add_verified_answer(state)
-    teacher_logits = stop_gradient(model(privileged_state))
-    loss += KL(model(state), teacher_logits)
-update(model, loss + retention_regularizer)
-```
-
-境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
 
 ## 演習問題
 

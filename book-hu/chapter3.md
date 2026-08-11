@@ -40,6 +40,21 @@ Kinyert emlékek:
 - A felhasználónak utazási tervei vannak Tokióba (közelmúltbeli tevékenység)
 ```
 
+**A memória életciklusa:**
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
 A kinyerési folyamatnak több kulcsjellemzője van.
 
 **Szelektivitás** – az Ágens nem jegyez meg átmeneti információkat, például hogy „a keresés 3 lehetőséget adott vissza”, csak a jövőben hasznos tényeket.
@@ -127,51 +142,74 @@ A memória frissítését két fázisra bontja[^uac]: a "memória fázisra" (min
 
 Az alábbiakban egy egyszerűsített példa látható. A strukturáló fázis a felhasználó útlevelét és utazásait tipizált állapotként tárolja:
 
-```python
-from datetime import date
+**Csak-hozzáfűző napló és ellenőrzőpont:**
 
-passport = PassportInfo(
-    number="AB1234567", country="US",
-    expiry_date=date(2025, 2, 18),
-)
-trips = [
-    Trip(destination="Tokyo", departure_date=date(2025, 1, 15),
-         is_international=True),
-    # ... további utazások
-]
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+**Típusos felhasználói állapot:**
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
 ```
 
 A tipizált állapottal három olyan feladat, amely korábban az LLM "szöveg olvasása és fejben számolása" volt, most determinisztikus kóddá válik:
 
 Először, **statisztikai aggregáció**. „Hányszor utaztam külföldre 2025-ben?” – szöveges memóriával minden utazást vissza kell keresni és megszámolni, ami sok rekordnál könnyen hibázik; a User as Code-ban ez egyetlen kifejezés, közel 100%-os pontossággal[^uac]:
 
+**Determinisztikus összesítés:**
+
 ```python
->>> sum(1 for t in trips if t.is_international and t.departure_date.year == 2025)
-2
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
 ```
 
 Másodszor, "konfliktusészlelés". Az "aktuális gyógyszerek" és az "allergia előzmények" egymás mellé helyezésével egyetlen függvény gyógyszerosztály szerint összevetheti őket, feltárva a különböző beszélgetésekben szétszórt ellentmondásokat, amelyeket szöveges formában szinte lehetetlen automatikusan összekapcsolni:
 
+**Ütközésészlelés:**
+
 ```python
 def check_drug_allergy(profile):
-    for med in profile.current_medications:
+    for medication in profile.current_medications:
         for allergy in profile.allergies:
-            if med.drug_class == allergy.drug_class:
-                yield (f"Gyógyszer-ütközés: {med.name} a {med.drug_class} osztályba tartozik, "
-                       f"de a páciens súlyosan allergiás {allergy.allergen}-re")
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
 ```
 
 Harmadszor, "kényszerek érvényesítése". Az Ágens kódolhat ilyen ellenőrző függvényeket, és automatikusan aktiválhatja őket minden állapotfrissítéskor – anélkül, hogy a felhasználónak szólnia kellene, vagy az Ágensnek bármit vissza kellene keresnie. Például egy útlevél érvényességi kényszer: figyelmeztetés, ha az útlevél kevesebb mint 180 nappal a nemzetközi utazás indulási dátuma után jár le.
 
+**Korlátok érvényesítése:**
+
 ```python
 def check():
-    for trip in trips:
+    for trip in state.trips:
         if trip.is_international:
-            days = (passport.expiry_date - trip.departure_date).days
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
             if days < 180:
-                yield (f"Az útlevél lejár: {passport.expiry_date}, csak {days} nap van "
-                       f"a {trip.destination} indulás és az útlevél lejárata között. "
-                       f"Kérjük, újítsa meg mihamarabb.")
+                alert("passport expires too soon", trip, days)
 ```
 
 [^uac]: A felhasználói memória végrehajtható kódprojektként való felépítésének teljes tervezése és értékelése megtalálható a következőben: Li, Bojie. *User as Code: Executable Memory for Personalized Agents.* arXiv:2606.16707, 2026.
@@ -293,6 +331,22 @@ answer = llm.generate(system="Te egy ügyfélszolgálati asszisztens vagy.", con
 A minta mindkét példában azonos: **Releváns töredékek visszakeresése → Kontextusba illesztés → LLM által generált válasz a kontextus alapján**. A RAG alapvető értéke, hogy lehetővé teszi az LLM számára olyan tudás használatát, amelyet nem látott a betanítás során (a legújabb Wikipedia tartalom, egy vállalat belső dokumentumai), anélkül, hogy újra kellene tanítani a modellt.
 
 A visszakereső minősége közvetlenül meghatározza a RAG hatékonyságát – ha nem tud releváns töredékeket visszakeresni, a legerősebb LLM-nek sincs mivel dolgoznia. Ez a szakasz a tudásbázisba való dokumentumbevitel első lépésével, a darabolással (chunking) kezdődik, majd rátér a két fő visszakeresési megközelítésre, a sűrű beágyazásokra (szemantikus megértés) és a ritka beágyazásokra (kulcsszó-egyeztetés), valamint azok kombinálására.
+
+**Hibrid RAG-folyamat:**
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
 
 ![3-5. ábra: A RAG-lekérdezés folyamata: visszakeresés, kiegészítés és generálás](images/fig3-5.svg)
 
@@ -700,105 +754,6 @@ A "tudás megértéséhez" túlléptünk a lapos dokumentumdaraboláson: a RAPTO
 A **tudásfrissítés** két eltérő ritmust igényel: a növekményes frissítés gyorsan befogadja az új bizonyítékot, a rendszeres átszervezés pedig a teljes tudást és az eredeti adatokat újravizsgálva duplikációt szüntet meg, elavult elemeket von ki, összevon, átrendezi a szerkezetet, ellenőrzi a kihagyásokat és pontosítja az alkalmazási köröket. Akár Markdown, akár Python képviseli a tudást, mindkét útvonalon egy Proposer Agent nyújtja be a nyers bizonyítékra épülő diffet, egy másik modellcsaládból származó Reviewer Agent pedig önállóan ellenőrzi azt; csak jóváhagyás után olvasztható be a PR és építhetők újra a származtatott indexek.
 
 Ez a fejezet és az előző egyaránt a "kontextus" problémával foglalkozik – az egyik egyetlen szekción belül, a másik több szekción keresztül. A következő fejezet az "eszközökre" tér át: hogyan lépnek kapcsolatba az Ágensek a külvilággal eszközökön keresztül, beleértve az eszköztervezést, az MCP interoperabilitási szabványt és az eseményvezérelt architektúrát.
-
-## Mechanizmus-skeletonok
-
-Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
-
-### A memória életciklusa
-
-```python
-when answering(user_request):
-    recent_turns = conversation.tail()
-    relevant_memory = memory.search(user_request)
-    answer = LLM(recent_turns + relevant_memory)
-    return answer
-
-after conversation (background job):
-    candidates = extract_memory_candidates(conversation)
-    verified = verify_against_sources_and_policy(candidates, conversation)
-    memory.append_or_update(verified)
-```
-
-### Csak-hozzáfűző napló és ellenőrzőpont
-
-```python
-append_only_log += extract_facts(conversation)
-
-if checkpoint_due():
-    proposed_state = rebuild_typed_state(append_only_log)
-    if type_check(proposed_state) and source_review(proposed_state):
-        publish_checkpoint(proposed_state)
-    else:
-        keep_previous_checkpoint()
-```
-
-### Típusos felhasználói állapot
-
-```python
-state = {
-    passport: PassportInfo(
-        number = "AB1234567",
-        country = "US",
-        expiry_date = date(2025, 2, 18),
-    ),
-    trips: [
-        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
-             is_international = true),
-        ...
-    ],
-}
-```
-
-### Determinisztikus összesítés
-
-```python
-count(
-    trip for trip in state.trips
-    if trip.is_international and year(trip.departure_date) == 2025
-)
-# => 2
-```
-
-### Ütközésészlelés
-
-```python
-def check_drug_allergy(profile):
-    for medication in profile.current_medications:
-        for allergy in profile.allergies:
-            if medication.drug_class == allergy.drug_class:
-                emit_conflict(medication, allergy)
-```
-
-### Korlátok érvényesítése
-
-```python
-def check():
-    for trip in state.trips:
-        if trip.is_international:
-            days = date_difference(state.passport.expiry_date,
-                                   trip.departure_date)
-            if days < 180:
-                alert("passport expires too soon", trip, days)
-```
-
-### Hibrid RAG-folyamat
-
-```python
-offline:
-    chunks = split_documents(documents)
-    dense_index = build_dense_index(chunks)
-    sparse_index = build_sparse_index(chunks)
-
-online(query):
-    dense_hits = dense_search(dense_index, query)
-    sparse_hits = sparse_search(sparse_index, query)
-    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
-    evidence = rerank(query, candidates)
-    return LLM(query + evidence)
-```
-
-Legyen világos a határ: a megfigyelések és a bizonyítékok a környezetből érkeznek, a Harness pedig eldönti, mi hajtható végre.
 
 ## Gondolatébresztő kérdések
 

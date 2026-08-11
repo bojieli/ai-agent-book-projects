@@ -35,6 +35,22 @@ OpenAI 在 GPT-Live 介紹中把語音互動概括為級聯、輪次式與全雙
 
 [^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/。本節的「級聯／輪次式／全雙工」分類出自該文對 ChatGPT 語音三代演進的總結；文中的「端到端全模態（Omni）」對應「turn-based voice models」類別。
 
+**流式取消:**
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
 ### 範式一 · 級聯流水線（Cascading）
 
 大多數商用語音助理仍使用串行流水線（圖 9-1）：VAD 判斷使用者何時說完，ASR 把音訊轉成文字，LLM 理解並生成回覆，TTS 再把文字說出來。模組化讓每個元件可以獨立優化，但每個邊界都可能增加等待時間。
@@ -169,6 +185,21 @@ Computer Use（也稱 GUI 自動化 Agent）讓 AI 像人類一樣透過觀察�
 3. 執行層在真實環境中執行該動作（移動滑鼠、點選、輸入文字等）
 4. 等待介面響應後再次截圖，進入下一輪迴圈
 
+**Computer Use 安全迴圈:**
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
 
 ![圖 9-6 Computer Use Agent 的感知～思考～行動迴圈](images/fig9-7.svg)
 
@@ -410,53 +441,7 @@ Computer Use 也在向移動端擴充套件。移動端與桌面在技術上確�
 
 OpenVLA 並非只更新 projector；原始研究也比較了完整微調、凍結視覺編碼器、只訓練最後一層及 LoRA。真正的結構性問題仍存在：龐大的文字／影像預訓練資料，透過狹窄的適配通道連接到少量機器人資料；低成本適配時，新增行為常被集中到 projector、LoRA 模組或 action head。行為克隆學到的是「觀察 + 指令 → action chunk」，而不是反事實的物理後果。具身專屬動作空間與過時的動作分塊也限制了跨機器人遷移。
 
-### 世界模型
-
-世界模型學習可行動的狀態轉移：狀態 + 候選動作 → 預測的未來狀態 → 選擇並驗證動作。它不只是 V-JEPA：還包括潛表示預測模型（V-JEPA 2）、互動式生成模型（Genie 3、Cosmos）、World-Action Model（GeniWorld、Robust-WAM）、從無標註影片學習潛在動作（LAWM-3D），以及模型式強化學習（Dreamer、MuZero）。它讓系統能從大規模觀察學習，在執行前比較反事實動作，將共享動力學與具身專屬控制分離，並在預測與現實不一致時重新規劃。
-
-2026 年預印本正研究共享動力學先驗與具身專屬 action head（DyPES-VLA）、分布外閉環操作的視覺動作表示（GeniWorld）、從人類影片學習 3D 潛在動作（LAWM-3D）、語義未來對齊（Robust-WAM）及即時非同步部署。這些是值得追蹤的研究結果，並非已經解決泛化。
-
-## 本章小結
-
-三個場景表面差異懸殊，但延遲和多模態這兩道坎始終如影隨形。語音已走出了一條從序列流水線到端和全雙工、從分離的快慢思考到「邊想邊說」的演進路徑；Computer Use 在 OSWorld 等基準上的準確率已接近人類水平，但操作步驟明顯多於人類、步驟耗時隨任務推進不斷增長的效率差距還沒有系統性的解法；機器人在以視覺回饋為主的操作任務上，瓶頸已從硬體轉到 VLA 控制層的跨任務泛化能力（觸覺、靈巧手等仍是尚未攻克的硬體短板）。下一章會把視角拉到多個 Agent 之間的協作，那是另一個維度的挑戰。
-
-## 機制骨架
-
-下面的骨架只抽出本章討論的控制關係。
-
-### 流式取消
-
-```python
-while audio_is_arriving:
-    partial = asr.push(audio_chunk)
-    if endpoint_is_probable(partial):
-        candidate = llm.start(partial)
-        if later_audio_changes_meaning(partial):
-            cancel(candidate)                 # speculative cancellation
-        else:
-            tts.enqueue_stable_segments(candidate)
-
-on_final_transcript(text):
-    commit_or_restart(text)
-```
-
-### Computer Use 安全迴圈
-
-```python
-observation = capture_screenshot_and_accessibility_tree()
-proposal = model.decide(task, observation)
-action = validate_schema_and_coordinates(proposal)
-
-if action.is_irreversible and not user_or_policy_approval(action):
-    stop("approval required")
-else:
-    execute_in_sandbox_or_scoped_session(action)
-    new_observation = capture_after_settle()
-    if not verify_goal_progress(new_observation, action):
-        rollback_if_possible_or_replan()
-```
-
-### 動作區塊搶佔
+**動作區塊搶佔:**
 
 ```python
 chunk = vla(current_observation, skill)
@@ -469,7 +454,15 @@ for action in chunk:
         break
 ```
 
-請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
+### 世界模型
+
+世界模型學習可行動的狀態轉移：狀態 + 候選動作 → 預測的未來狀態 → 選擇並驗證動作。它不只是 V-JEPA：還包括潛表示預測模型（V-JEPA 2）、互動式生成模型（Genie 3、Cosmos）、World-Action Model（GeniWorld、Robust-WAM）、從無標註影片學習潛在動作（LAWM-3D），以及模型式強化學習（Dreamer、MuZero）。它讓系統能從大規模觀察學習，在執行前比較反事實動作，將共享動力學與具身專屬控制分離，並在預測與現實不一致時重新規劃。
+
+2026 年預印本正研究共享動力學先驗與具身專屬 action head（DyPES-VLA）、分布外閉環操作的視覺動作表示（GeniWorld）、從人類影片學習 3D 潛在動作（LAWM-3D）、語義未來對齊（Robust-WAM）及即時非同步部署。這些是值得追蹤的研究結果，並非已經解決泛化。
+
+## 本章小結
+
+三個場景表面差異懸殊，但延遲和多模態這兩道坎始終如影隨形。語音已走出了一條從序列流水線到端和全雙工、從分離的快慢思考到「邊想邊說」的演進路徑；Computer Use 在 OSWorld 等基準上的準確率已接近人類水平，但操作步驟明顯多於人類、步驟耗時隨任務推進不斷增長的效率差距還沒有系統性的解法；機器人在以視覺回饋為主的操作任務上，瓶頸已從硬體轉到 VLA 控制層的跨任務泛化能力（觸覺、靈巧手等仍是尚未攻克的硬體短板）。下一章會把視角拉到多個 Agent 之間的協作，那是另一個維度的挑戰。
 
 ## 思考題
 

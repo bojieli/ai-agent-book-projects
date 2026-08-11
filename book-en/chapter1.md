@@ -168,6 +168,27 @@ Consider a concrete example—aggregating revenue across multiple currencies—t
 
 ![Figure 1-4: Agent trajectory—ReAct loop for a multi-currency aggregation task](images/fig1-4.svg)
 
+The following Python-style sketch is explanatory pseudocode, not runnable SDK code; the `python` marker is used only for syntax highlighting.
+
+**ReAct control loop:**
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
 Here is the structure of a trajectory, in pseudocode:
 
 ```text
@@ -255,6 +276,20 @@ Expanded as an equation, the complete production-grade composition is:
 > **Harness = Context management + Tool interfaces + Constrain + Verify + Correct**
 >
 > **Agent ↔ Environment**
+
+**Harness production boundary:**
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
 
 A minimal working Agent runs on LLM, context, and tools alone. To keep running reliably in long-running production workloads, it needs the three outer engineering layers as well—constrain to prevent overreach, verify to catch errors, correct to recover from failures. Put differently: the minimal formula is the demo view, and the expanded formula is the production view—the latter contains the former entirely and adds a safety net around it.
 
@@ -494,45 +529,6 @@ This chapter has built a practice-first framework for understanding and construc
 The next chapter examines the Harness's most central component in depth: context engineering. Chapter 7 covers the Agent concept's academic roots in reinforcement learning and compares traditional RL with modern LLM Agents.
 
 The thought questions below are designed to take the chapter's core concepts a level deeper; they do not have standard answers.
-
-## Mechanism skeletons
-
-These Python-style sketches isolate the control relationships discussed in this chapter. They are explanatory pseudocode, not runnable SDK implementations; complete adapters and tests remain in the chapter experiments. The `python` marker is used only for syntax highlighting; it does not imply a runnable SDK or directly executable program.
-
-### ReAct control loop
-
-```python
-trajectory = [user_request]
-
-repeat:
-    context = stable_prefix + trajectory
-    decision = Model(context)
-    trajectory.append(decision)
-
-    if decision has no tool call:
-        return decision.answer
-
-    for call in decision.tool_calls:       # independent calls may run in parallel
-        validated_call = Harness.validate(call)
-        observation = Environment.execute(validated_call)
-        trajectory.append(observation)
-```
-
-### Harness production boundary
-
-```python
-decision = Model(Harness.build_context(state, trajectory))
-allowed_action = Harness.constrain(decision)
-observation = Environment.apply(allowed_action)
-evidence = Harness.verify(allowed_action, observation)
-
-if evidence passes:
-    trajectory.append(observation)
-else:
-    trajectory.append(Harness.correct(evidence))
-```
-
-Keep the boundary explicit: observations and evidence come from the environment, while the Harness decides what may be executed.
 
 ## Thought Questions
 

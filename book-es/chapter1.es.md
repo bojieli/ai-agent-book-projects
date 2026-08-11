@@ -164,6 +164,27 @@ Consideremos la **trayectoria**: el historial de mensajes que se acumula a medid
 
 ![Figura 1-4: Trayectoria del Agente, Bucle ReAct para una tarea de agregación multimoneda](images/fig1-4.svg)
 
+El siguiente esquema con estilo Python es pseudocódigo explicativo, no código SDK ejecutable; el marcador `python` se usa únicamente para resaltar la sintaxis.
+
+**Bucle de control ReAct:**
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
 Estructura de una trayectoria en pseudocódigo:
 
 ```text
@@ -243,6 +264,20 @@ Si expresamos mediante una ecuación la composición completa de un sistema de p
 > **Harness = gestión del contexto + interfaces de herramientas + restricción + verificación + corrección**
 >
 > **Agente ↔ Entorno**
+
+**Límite de producción del Harness:**
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
 
 Un Agente mínimo funcional solo necesita un LLM, contexto y herramientas para ponerse en marcha; sin embargo, para que funcione de manera fiable y duradera en un entorno de producción también es necesario completar la envoltura de ingeniería con los tres niveles de restricción, verificación y corrección—la restricción impide que se sobrepasen los límites, la verificación detecta errores y la corrección permite recuperarse de las anomalías. En otras palabras, la fórmula mínima corresponde a la perspectiva de una demostración, mientras que la fórmula ampliada corresponde a la perspectiva de producción; la segunda contiene por completo a la primera y añade a su alrededor una red de seguridad.
 
@@ -477,44 +512,6 @@ Este capítulo ha establecido, desde una perspectiva práctica, un marco fundame
 El próximo capítulo profundizará en el componente más importante del Harness—la ingeniería de contexto. En cuanto a los orígenes académicos del concepto de Agente en el aprendizaje por refuerzo y a la comparación exhaustiva entre el RL tradicional y los Agentes LLM modernos, los abordaremos sistemáticamente en el capítulo 7.
 
 Las siguientes preguntas de reflexión tienen como objetivo ayudar a los lectores a explorar con mayor profundidad los conceptos centrales de este capítulo; no tienen una respuesta única y oficial.
-## Skeletons de mecanismos
-
-Estos skeletons con estilo Python aíslan las relaciones de control tratadas en el capítulo. Son pseudocódigo explicativo, no implementaciones SDK ejecutables; los adaptadores y las pruebas completas están en los experimentos. El marcador `python` solo sirve para resaltar la sintaxis; no implica un SDK ejecutable ni un programa directamente ejecutable.
-
-### Bucle de control ReAct
-
-```python
-trajectory = [user_request]
-
-repeat:
-    context = stable_prefix + trajectory
-    decision = Model(context)
-    trajectory.append(decision)
-
-    if decision has no tool call:
-        return decision.answer
-
-    for call in decision.tool_calls:       # independent calls may run in parallel
-        validated_call = Harness.validate(call)
-        observation = Environment.execute(validated_call)
-        trajectory.append(observation)
-```
-
-### Límite de producción del Harness
-
-```python
-decision = Model(Harness.build_context(state, trajectory))
-allowed_action = Harness.constrain(decision)
-observation = Environment.apply(allowed_action)
-evidence = Harness.verify(allowed_action, observation)
-
-if evidence passes:
-    trajectory.append(observation)
-else:
-    trajectory.append(Harness.correct(evidence))
-```
-
-Mantén explícito el límite: las observaciones y evidencias proceden del entorno, y el Harness decide qué puede ejecutarse.
 
 ## Preguntas de Reflexión
 

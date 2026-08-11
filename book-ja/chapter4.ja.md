@@ -240,6 +240,33 @@ Sidecar パターンのもう 1 つの典型的な応用は**コンテキスト�
 
 安全性 Sidecar については、さらに**拒否のサーキットブレーカー**を備える必要があります。分類器が連続して複数回操作を拒否したとき、システムは無限にリトライすべきではなく（これはリソースを浪費し、ユーザーを無限ループに陥れかねません）、ユーザーに手動判断を求める方式へフォールバックすべきです。これはまさに第 1 章 Harness の「是正」機能の典型的な実例です。
 
+**ツール安全ゲート:**
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
 **自動検証とフィードバックの閉ループ。**
 
 実行ツールのもう 1 つの重要な設計原則は、**操作の結果が検証できるなら、自動的に検証すべき**ということです。コード記述を例に取ると、Agent が `write_file` を呼び出してコードファイルを作成または変更するとき、ツールは内容を書き込んで「成功」を返すだけであるべきではなく、書き込み後に直ちに構文チェックを実行すべきです。ファイルの種類に応じて対応する linter（コードの静的検査ツール）を呼び出し、その出力を構造化されたエラーリストにパースし、ツールの返り値の一部として Agent に返すのです。
@@ -476,6 +503,23 @@ OpenClaw のセッションはユーザーから見えず、専用ツールで�
 
 以下では、イベント駆動のメール処理 Agent の実験を通じて、上述のイベント処理戦略を実行可能な実装へと落とし込みます。
 
+**イベントループのルーティング:**
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
 > **実験 4-4 ★★★：イベント駆動のメール処理 Agent**
 >
 >
@@ -623,6 +667,20 @@ Agent がメールをドラフトしている最中にユーザーが割り込�
 
 **階層的なマッチングとデグレード。** 効率的なマッチングの鍵は、ツールの組織そのものが階層構造を持つことにあります。MCP などのプロトコルでは、ツールは**サーバー**ごとにグループ化されます（スマホ上の App に似ており、各 App が一群の関連機能を提供する）。そこでマッチングは 2 層に分けられます——まず能力の記述に基づいて関連するサーバーを特定し、それからサーバー内で具体的なツールをマッチングし、検索空間を「数千個のツール」から「数十個のサーバー × 各サーバー数十個のツール」へと縮小します。これは計算力を節約すると同時に、領域横断の意味的な混同も減らします。エンジニアリング上、これはオフラインで構築され、増分更新をサポートする埋め込みインデックスに依存します。もし 2 層のマッチングの候補の類似度がいずれも閾値を下回るなら、明確に「見つからない」を返し、Agent にニーズを書き換えてリトライさせるか、基礎ツールで手作業で実現させるか、いっそ新しいツールを創造させる（ツールの創造は第 8 章のテーマです）べきです。
 
+**プロアクティブなツール探索:**
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
 ![図4-8 ツールの動的な読み込みの KV Cache 最適化](images/fig4-8.svg)
 
 **動的な読み込みと KV Cache。** 能動的な発見には微妙なエンジニアリング上の代償があります。動的にツールを読み込むと **KV Cache を破壊する**のです——もしツールリストを system prompt に入れると、新しいツールを 1 つ読み込むたびにその一段のキャッシュが失効します。突破の発想は第 2 章で Skill の注入位置を論じたときと同じです。変動する部分（新しいツールの完全な schema）を user メッセージとして対話の末尾に追加し、system prompt の接頭辞を安定に保ち、KV Cache を完全に再利用し、Agent ステータスバーには簡潔なツール名のリストだけを維持するのです。今やこのパターンは各大手 API のネイティブなサポートを得ており、主流フレームワークのデフォルトのアーキテクチャになっています。OpenAI Responses API は `tool_search` ツールと `defer_loading: true` の標識を提供し、読み込まれた schema は `tool_search_output` の形でコンテキストの末尾に追加され、接頭辞のキャッシュがヒットし続けます。Claude Code は MCP ツールをデフォルトで遅延読み込みします（`tool_reference` blocks を経て必要に応じて注入され、セッション起動時にはツール名とサーバーの説明だけを保持します）。Codex CLI の `tool_search`（BM25 検索）に至っては、オプション機能ではなくデフォルトで有効なアーキテクチャです。さらに、動的なツール環境はモデルの能力への要求もより高くなります——能力の弱いモデルは「ツール定義がコンテキストの途中に現れる」というこの非標準的な位置を理解しにくく、また不正な呼び出し形式（JSON の括弧の不整合、パラメータの欠落など）を生成しやすいため、しばしば強化学習で専門に訓練する必要があります（第 7 章を参照）。
@@ -683,70 +741,6 @@ Agent がメールをドラフトしている最中にユーザーが割り込�
 6 つの実験は基礎からアーキテクチャへと段階的に進みます。実験 4-1 から実験 4-3 は知覚・実行・協調の 3 大基礎ツールセットを構築し、実験 4-4 はメール処理 Agent でイベント駆動を導入し、実験 4-5 は並行実行、割り込みからの復帰、状態管理を実装し、実験 4-6 は大規模なツールライブラリのもとでの能動的なツール発見の価値を検証します。本章で論じたツール設計とアーキテクチャ——MCP プロトコル、設計原則、非同期アーキテクチャ——は、第 8 章の Agent の自己進化の前提です。
 
 次章は「いかにツールを使うか」よりも根本的な問いに答えます。Agent はコードを書くことでツールを**創造**できるのか。Coding Agent にファイルシステムを加えたものは、あらゆる汎用 Agent の最も核心的な基盤です——第 8 章の Agent の自己進化能力の起点でもあります。
-
-## メカニズムの skeleton
-
-以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
-
-### ツール安全ゲート
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
-### イベントループのルーティング
-
-```python
-while runtime.is_alive:
-    events = queue.take_batch()
-
-    if any(is_urgent(event) for event in events):
-        cancel_at_safe_point(current_work)
-    elif has_independent_fast_query(events):
-        start_parallel_session(events)
-    else:
-        append_to_trajectory(events)
-
-    decision = LLM(context + trajectory)
-    dispatch(decision)
-```
-
-### プロアクティブなツール探索
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
-
-境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
 
 ## 演習問題
 
