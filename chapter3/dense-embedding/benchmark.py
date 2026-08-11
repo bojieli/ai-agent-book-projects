@@ -259,7 +259,7 @@ def main() -> int:
         print(f"{name}: recall@{args.top_k}={initial['recall_at_k']:.3f}, build={initial['build_ms']:.1f}ms")
 
     cache_ref = Path.home() / ".cache" / "huggingface" / "hub" / f"models--{args.model.replace('/', '--')}" / "refs" / "main"
-    model_revision = cache_ref.read_text().strip() if cache_ref.exists() else None
+    model_revision = cache_ref.read_text(encoding="utf-8").strip() if cache_ref.exists() else None
     full = args.docs >= 300 and all(results[name]["recall_at_k"] >= 0.8 for name in results)
     evidence = {
         "status": "passed" if full else "partial",

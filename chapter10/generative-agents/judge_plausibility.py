@@ -199,7 +199,7 @@ def load_canonical_judgments(receipts_path: Path) -> list[dict]:
 
     if not receipts_path.exists():
         return []
-    rows = [json.loads(line) for line in receipts_path.read_text().splitlines() if line]
+    rows = [json.loads(line) for line in receipts_path.read_text(encoding="utf-8").splitlines() if line]
     failed = [row for row in rows if not row.get("success")]
     if not failed:
         return rows
@@ -319,7 +319,7 @@ def main() -> int:
     }
     (analysis / "plausibility_summary.json").write_text(
         json.dumps(summary, indent=2) + "\n"
-    )
+    , encoding="utf-8")
     print(json.dumps(summary, indent=2))
     return 0
 

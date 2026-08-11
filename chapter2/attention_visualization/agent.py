@@ -314,7 +314,7 @@ class AttentionVisualizationAgent:
             try:
                 with open(manifest_file, 'r') as f:
                     manifest = json.load(f)
-            except:
+            except Exception:
                 manifest = []
         
         # Add new trajectory to manifest

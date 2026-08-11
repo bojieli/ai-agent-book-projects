@@ -603,7 +603,10 @@ Respond with valid JSON only."""
                 response_format={"type": "json_object"}
             )
             
-            result = json.loads(response.choices[0].message.content)
+            try:
+                result = json.loads(response.choices[0].message.content)
+            except json.JSONDecodeError:
+                result = {}
             
             # Ensure required fields
             if 'reward' not in result:

@@ -646,8 +646,8 @@ def evaluate_local_arm(run_dir: Path, arm: str) -> dict[str, Any]:
 
 def package_evidence(run_dir: Path, command: str) -> dict[str, Any]:
     teacher = summarize_retained_teacher_receipts(run_dir)
-    baseline = json.loads((run_dir / "student_baseline_summary.json").read_text())
-    trained = json.loads((run_dir / "student_trained_summary.json").read_text())
+    baseline = json.loads((run_dir / "student_baseline_summary.json").read_text(encoding="utf-8"))
+    trained = json.loads((run_dir / "student_trained_summary.json").read_text(encoding="utf-8"))
     train_rows = read_jsonl(run_dir / "benchmark_train_gold.jsonl")
     test_rows = read_jsonl(run_dir / "benchmark_test_gold.jsonl")
     train_ids = {r["text"] for r in train_rows}

@@ -294,7 +294,7 @@ class AblationAgent(Agent):
                             for key, value in args_dict.items():
                                 value_str = str(value)
                                 print(f"      • {key}: {value_str}")
-                        except:
+                        except Exception:
                             print(f"      Args: {func_args}")
                 print(f"{'─'*40}")
             

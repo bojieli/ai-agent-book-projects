@@ -132,6 +132,6 @@ class MultiEditTool(BaseTool):
                     "message": "No syntax errors detected" if result.returncode == 0 else None
                 }
             return None
-        except:
+        except Exception:
             return None
 

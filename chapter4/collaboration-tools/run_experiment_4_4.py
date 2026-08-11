@@ -508,7 +508,7 @@ def main() -> int:
         real_notifications=args.real_notifications,
     ))
     print(path)
-    return 0 if json.loads((path / "summary.json").read_text())["status"] in {"passed", "blocked"} else 1
+    return 0 if json.loads((path / "summary.json").read_text(encoding="utf-8"))["status"] in {"passed", "blocked"} else 1
 
 
 if __name__ == "__main__":

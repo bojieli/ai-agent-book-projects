@@ -60,7 +60,7 @@ class ValidatedZero(int):
 def atomic_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n")
+    temporary.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     os.replace(temporary, path)
 
 
@@ -408,7 +408,7 @@ def prepare_seed(upstream: Path, output: Path) -> None:
     seed_dir = storage / SEED_SIM
     status_path = output / "seed_status.json"
     if status_path.exists() and seed_dir.exists():
-        status = json.loads(status_path.read_text())
+        status = json.loads(status_path.read_text(encoding="utf-8"))
         if status.get("complete"):
             print(json.dumps(status, indent=2))
             return
@@ -480,13 +480,13 @@ def run_arm(
     install_task_decomp_compat()
     install_validated_zero_compat()
 
-    seed_status = json.loads((output / "seed_status.json").read_text())
+    seed_status = json.loads((output / "seed_status.json").read_text(encoding="utf-8"))
     if not seed_status.get("complete"):
         raise RuntimeError("history seed is incomplete")
     storage = output / "storage"
     status_path = output / "status" / f"{arm}.json"
     if status_path.exists():
-        status = json.loads(status_path.read_text())
+        status = json.loads(status_path.read_text(encoding="utf-8"))
     else:
         status = {
             "schema_version": 1,

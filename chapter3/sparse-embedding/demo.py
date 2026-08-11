@@ -28,7 +28,7 @@ def wait_for_server(max_attempts=10):
             if response.status_code == 200:
                 logger.info("Server is ready!")
                 return True
-        except:
+        except Exception:
             pass
         time.sleep(1)
     return False

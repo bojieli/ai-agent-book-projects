@@ -93,7 +93,7 @@ def load_arena_data(filepath: str) -> pd.DataFrame:
         # Try JSON by default
         try:
             df = pd.read_json(filepath)
-        except:
+        except (ValueError, KeyError):
             df = pd.read_json(filepath, lines=True)
     
     print(f"Loaded {len(df)} records")

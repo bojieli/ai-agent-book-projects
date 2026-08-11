@@ -32,8 +32,8 @@ def probe(path: Path) -> dict[str, float | int | str]:
 
 
 def main() -> int:
-    manifest = json.loads(MANIFEST.read_text())
-    run = json.loads(RUN.read_text())
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    run = json.loads(RUN.read_text(encoding="utf-8"))
     profiles = manifest["profiles"]
     reference_checks = []
     for key, profile in sorted(profiles.items()):

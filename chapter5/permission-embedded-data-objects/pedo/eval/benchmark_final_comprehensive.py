@@ -177,7 +177,7 @@ def check_violations(conn) -> list[dict]:
                 if r["sal"] is not None and r["smin"] is not None and r["smax"] is not None:
                     if r["sal"] < r["smin"] or r["sal"] > r["smax"]:
                         vs.append({"type":"salary_range","detail":f"{r['n']}: ${r['sal']:.0f} outside [${r['smin']:.0f},${r['smax']:.0f}]"})
-            except: pass
+            except Exception: pass
         # Orphaned refs
         cur.execute("SELECT id, content->>'name' as n, content->>'position_id' as pid FROM objects WHERE type_name='candidate' AND content->>'position_id' IS NOT NULL")
         for r in cur.fetchall():

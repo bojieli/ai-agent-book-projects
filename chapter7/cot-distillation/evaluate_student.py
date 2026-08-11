@@ -204,7 +204,7 @@ def main() -> None:
     questions = [str(problem["question"]) for problem in problems]
     reused_local_arms = None
     if args.reuse_local_arms_from:
-        prior = json.loads(args.reuse_local_arms_from.read_text())
+        prior = json.loads(args.reuse_local_arms_from.read_text(encoding="utf-8"))
         arms = {arm.get("name"): arm for arm in prior.get("arms", [])}
         if set(arms) < {"baseline", "student"}:
             raise SystemExit("reuse source lacks retained baseline and student arms")
@@ -239,7 +239,7 @@ def main() -> None:
         student=student,
         teacher=teacher,
         paired=paired,
-        student_training_complete=json.loads(student_manifest.read_text()).get("status") == "complete",
+        student_training_complete=json.loads(student_manifest.read_text(encoding="utf-8")).get("status") == "complete",
         teacher_outputs_complete=all(bool(text) for text in teacher_texts),
     )
     payload = {
@@ -250,7 +250,7 @@ def main() -> None:
         "inputs": {
             "problems": {"path": str(args.problems), "sha256": sha256(args.problems)},
             "teacher_data": {"path": str(args.teacher_data), "sha256": sha256(args.teacher_data)},
-            "student_training_manifest": json.loads(student_manifest.read_text()),
+            "student_training_manifest": json.loads(student_manifest.read_text(encoding="utf-8")),
             "reused_local_arms": reused_local_arms,
         },
         "models": {

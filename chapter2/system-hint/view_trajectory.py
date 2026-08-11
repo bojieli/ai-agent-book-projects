@@ -14,7 +14,7 @@ def format_time(iso_string):
     try:
         dt = datetime.fromisoformat(iso_string.replace('Z', '+00:00'))
         return dt.strftime("%Y-%m-%d %H:%M:%S")
-    except:
+    except (ValueError, TypeError):
         return iso_string
 
 def view_trajectory(file_path="trajectory.json"):

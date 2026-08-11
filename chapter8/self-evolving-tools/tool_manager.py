@@ -92,7 +92,7 @@ class ToolLibrary:
                 }
             validated = True
 
-        (self.dir / f"{name}.json").write_text(json.dumps(record, ensure_ascii=False, indent=2))
+        (self.dir / f"{name}.json").write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding="utf-8")
         return {
             "success": True,
             "message": f"tool '{name}' created and saved to tool_library/"
@@ -134,7 +134,7 @@ class ToolLibrary:
         recs = []
         for p in sorted(self.dir.glob("*.json")):
             try:
-                data = json.loads(p.read_text())
+                data = json.loads(p.read_text(encoding="utf-8"))
                 if isinstance(data, dict):
                     recs.append(data)
             except Exception:  # noqa: BLE001
@@ -146,7 +146,7 @@ class ToolLibrary:
         if not p.exists():
             return None
         try:
-            data = json.loads(p.read_text())
+            data = json.loads(p.read_text(encoding="utf-8"))
             return data if isinstance(data, dict) else None
         except Exception:  # noqa: BLE001
             return None

@@ -29,7 +29,7 @@ def create_sample_files():
     """
     
     svg_path = test_dir / "sample.svg"
-    svg_path.write_text(svg_content)
+    svg_path.write_text(svg_content, encoding="utf-8")
     print(f"Created: {svg_path}")
     
     # Create a simple text file that we'll treat as a "document"
@@ -60,7 +60,7 @@ def create_sample_files():
     """
     
     doc_path = test_dir / "sample_document.txt"
-    doc_path.write_text(doc_content)
+    doc_path.write_text(doc_content, encoding="utf-8")
     print(f"Created: {doc_path}")
     
     return test_dir

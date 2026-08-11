@@ -195,7 +195,7 @@ Focus on extracting factual information that would be useful for future conversa
                                 content_dict = json.loads(update.content)
                             else:
                                 content_dict = update.content
-                        except:
+                        except (json.JSONDecodeError, TypeError):
                             # Fallback to simple parsing
                             parts = str(update.content).split(':')
                             if len(parts) >= 2:
@@ -224,7 +224,7 @@ Focus on extracting factual information that would be useful for future conversa
                                 content_dict = json.loads(update.content)
                             else:
                                 content_dict = update.content
-                        except:
+                        except (json.JSONDecodeError, TypeError):
                             # Skip if can't parse
                             results['failed'] += 1
                             continue
@@ -283,7 +283,7 @@ Focus on extracting factual information that would be useful for future conversa
                                 content_dict = json.loads(update.content)
                             else:
                                 content_dict = update.content
-                        except:
+                        except (json.JSONDecodeError, TypeError):
                             # Simple value update
                             content_dict = {'value': update.content}
                         
@@ -299,7 +299,7 @@ Focus on extracting factual information that would be useful for future conversa
                                 content_dict = json.loads(update.content)
                             else:
                                 content_dict = update.content
-                        except:
+                        except (json.JSONDecodeError, TypeError):
                             # Skip if can't parse
                             results['failed'] += 1
                             continue

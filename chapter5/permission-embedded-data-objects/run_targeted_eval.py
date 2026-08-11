@@ -433,7 +433,7 @@ def run_single(model_name, generate_fn, test, condition):
         except Exception as e:
             try:
                 conn.close()
-            except:
+            except Exception:
                 pass
             return {"id": test["id"], "model": model_name, "condition": condition,
                     "status": "exec_error", "violations": [], "catches": [],

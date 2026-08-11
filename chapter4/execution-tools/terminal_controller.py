@@ -327,7 +327,7 @@ class TerminalController:
                 }
             
             # Read current content
-            lines = resolved_path.read_text().splitlines()
+            lines = resolved_path.read_text(encoding="utf-8").splitlines()
             
             # Insert content
             if line_number < 1 or line_number > len(lines) + 1:
@@ -339,7 +339,7 @@ class TerminalController:
             lines.insert(line_number - 1, content)
             
             # Write back
-            resolved_path.write_text('\n'.join(lines) + '\n')
+            resolved_path.write_text('\n'.join(lines) + '\n', encoding="utf-8")
             
             return {
                 "success": True,
@@ -387,7 +387,7 @@ class TerminalController:
                 }
             
             # Read lines
-            lines = resolved_path.read_text().splitlines()
+            lines = resolved_path.read_text(encoding="utf-8").splitlines()
             
             # Validate range
             if start_line < 1 or end_line > len(lines) or start_line > end_line:
@@ -400,7 +400,7 @@ class TerminalController:
             del lines[start_line - 1:end_line]
             
             # Write back
-            resolved_path.write_text('\n'.join(lines) + '\n' if lines else '')
+            resolved_path.write_text('\n'.join(lines) + '\n' if lines else '', encoding="utf-8")
             
             return {
                 "success": True,
@@ -448,7 +448,7 @@ class TerminalController:
                 }
             
             # Read lines
-            lines = resolved_path.read_text().splitlines()
+            lines = resolved_path.read_text(encoding="utf-8").splitlines()
             
             if line_number < 1 or line_number > len(lines):
                 return {
@@ -461,7 +461,7 @@ class TerminalController:
             lines[line_number - 1] = new_content
             
             # Write back
-            resolved_path.write_text('\n'.join(lines) + '\n')
+            resolved_path.write_text('\n'.join(lines) + '\n', encoding="utf-8")
             
             return {
                 "success": True,

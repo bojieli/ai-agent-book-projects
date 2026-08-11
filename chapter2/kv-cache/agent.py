@@ -328,7 +328,7 @@ class LocalFileTools:
                                 if len(matches) >= 100:  # Limit matches
                                     break
                     files_searched.append(file)
-                except:
+                except Exception:
                     continue
                 
                 if len(matches) >= 100:

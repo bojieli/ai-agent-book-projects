@@ -225,7 +225,10 @@ def judge_answers(recorder: CheckpointRecorder, model: str, rows: list[dict[str,
             {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
         ],
     )
-    return json.loads(response.choices[0].message.content)["items"]
+    try:
+        return json.loads(response.choices[0].message.content)["items"]
+    except json.JSONDecodeError:
+        return []
 
 
 def tool_version(command: list[str]) -> str:

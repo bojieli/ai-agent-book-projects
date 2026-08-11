@@ -65,7 +65,7 @@ class ExternalTools:
                 creds = flow.run_local_server(port=0)
             
             # Save token
-            token_path.write_text(creds.to_json())
+            token_path.write_text(creds.to_json(), encoding="utf-8")
         
         self._google_service = build('calendar', 'v3', credentials=creds)
         return self._google_service

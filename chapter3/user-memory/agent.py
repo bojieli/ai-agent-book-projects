@@ -485,7 +485,7 @@ Current Memory Context will be provided with each message."""
             if not isinstance(content, dict):
                 try:
                     content = json.loads(content)
-                except:
+                except (json.JSONDecodeError, TypeError):
                     return {
                         "success": False,
                         "message": "Advanced JSON cards mode requires properly structured JSON content"
@@ -549,7 +549,7 @@ Current Memory Context will be provided with each message."""
             if not isinstance(content, dict):
                 try:
                     content = json.loads(content)
-                except:
+                except (json.JSONDecodeError, TypeError):
                     return {
                         "success": False,
                         "message": "Advanced JSON cards mode requires properly structured JSON content"

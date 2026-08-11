@@ -84,7 +84,7 @@ class ContextCompressor:
         # Initialize tokenizer for token counting
         try:
             self.encoding = tiktoken.encoding_for_model("gpt-4")
-        except:
+        except Exception:
             self.encoding = tiktoken.get_encoding("cl100k_base")
         
         logger.info(f"Context compressor initialized with strategy: {strategy.value}, streaming: {enable_streaming}")
@@ -93,7 +93,7 @@ class ContextCompressor:
         """Count the number of tokens in a text string."""
         try:
             return len(self.encoding.encode(text))
-        except:
+        except Exception:
             # Fallback to character-based estimation (1 token ≈ 4 chars)
             return len(text) // 4
     

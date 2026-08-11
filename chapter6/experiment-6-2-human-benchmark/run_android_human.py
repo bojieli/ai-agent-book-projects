@@ -90,7 +90,7 @@ def main() -> int:
         "episodes": episodes,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(result, indent=2, default=str) + "\n")
+    args.output.write_text(json.dumps(result, indent=2, default=str) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2, default=str))
     return 0 if episodes and episodes[0].get("is_successful") == 1 else 1
 
