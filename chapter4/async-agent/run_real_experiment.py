@@ -267,6 +267,28 @@ def real_task(receipt: dict[str, Any]) -> bool:
 
 
 def derive_acceptance(scenarios: list[dict[str, Any]], protocol: dict[str, Any]) -> dict[str, Any]:
+    # Explicit mapping from protocol acceptance keys to the gate keys that
+    # enforce them. This prevents silent drift: adding a key to the protocol's
+    # acceptance block without a corresponding gate entry raises an assertion
+    # at run time, and removing a gate key leaves a dangling reference that
+    # the coverage check also catches.
+    PROTOCOL_TO_GATE: dict[str, str | tuple[str, ...]] = {
+        "long_job_at_least_three_seconds": "scenario_1_nonblocking_and_immediate_response",
+        "placeholder_return_is_nonblocking": "scenario_1_nonblocking_and_immediate_response",
+        "all_terminal_jobs_are_real_subprocesses": "real_subprocess_receipts_only",
+        "cancelled_jobs_have_os_return_codes": "scenario_3_os_process_cancelled_then_recovered",
+        "completed_jobs_have_stdout_and_input_hashes": "real_subprocess_receipts_only",
+        "all_artifacts_are_hash_manifested": (
+            "scenario_2_japanese_html_artifact",
+            "scenario_4_integrated_report_hashed",
+        ),
+        "no_simulated_terminal_result_can_pass": "real_subprocess_receipts_only",
+    }
+    protocol_acceptance = protocol.get("acceptance", {})
+    missing = set(protocol_acceptance) - set(PROTOCOL_TO_GATE)
+    assert not missing, (
+        f"protocol acceptance keys not covered by PROTOCOL_TO_GATE: {missing}"
+    )
     by_id = {row["id"]: row for row in scenarios}
     one = by_id.get("async_command_and_immediate_question", {})
     two = by_id.get("queued_batch_to_japanese_html", {})
@@ -328,7 +350,28 @@ def derive_acceptance(scenarios: list[dict[str, Any]], protocol: dict[str, Any])
             and len(four.get("artifact", {}).get("sha256", "")) == 64
         ),
     }
+    # Verify that every referenced gate key actually exists.
+    referenced_gate_keys = set()
+    for gate_spec in PROTOCOL_TO_GATE.values():
+        if isinstance(gate_spec, str):
+            referenced_gate_keys.add(gate_spec)
+        else:
+            referenced_gate_keys.update(gate_spec)
+    dangling = referenced_gate_keys - set(gates)
+    assert not dangling, (
+        f"PROTOCOL_TO_GATE references gate keys that do not exist: {dangling}"
+    )
+    # Compute per-protocol-key coverage so an auditor can mechanically verify
+    # that every acceptance declaration is enforced by at least one gate.
+    protocol_coverage: dict[str, Any] = {}
+    for proto_key, gate_spec in PROTOCOL_TO_GATE.items():
+        gate_keys = (gate_spec,) if isinstance(gate_spec, str) else gate_spec
+        protocol_coverage[proto_key] = {
+            "enforced_by": list(gate_keys),
+            "all_gates_passed": all(gates.get(gk, False) for gk in gate_keys),
+        }
     return {"status": "passed" if all(gates.values()) else "failed", "gates": gates,
+            "protocol_coverage": protocol_coverage,
             "protocol_sha256": sha256(canonical_json(protocol))}
 
 
