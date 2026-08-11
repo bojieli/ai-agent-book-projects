@@ -425,6 +425,35 @@ def test_analyze_turn_standalone_none_threshold_never_expensive():
                                     completion_tokens=5_000_000))
     # Standalone, None threshold -> inf -> never expensive (wasteful needs no tool calls).
     assert m.classification != "expensive"
+def test_zero_cost_trajectory_not_flagged_expensive():
+    """A fully zero-cost trajectory must not mark productive turns as expensive.
+
+    With a zero mean cost, the relative threshold is zero and
+    ``cost_usd >= 0`` would flag every productive turn.  The guard skips
+    reclassification when the threshold is zero.
+    """
+    spans = [
+        _turn("turn-1", tool="query_order", prompt_tokens=0,
+              completion_tokens=0, cached_tokens=0),
+        _turn("turn-2", tool="query_order", prompt_tokens=0,
+              completion_tokens=0, cached_tokens=0),
+    ]
+    analyzer = CostEfficiencyAnalyzer()
+    report = analyzer.analyze_trajectory({"spans": spans})
+    for m in report.turn_metrics:
+        assert m.classification != "expensive", (
+            f"Zero-cost turn {m.turn_id} wrongly classified as expensive"
+        )
+
+
+def test_single_zero_cost_turn_not_expensive():
+    """A single zero-cost turn with a tool call stays productive, not expensive."""
+    span = _turn("turn-1", tool="query_order", prompt_tokens=0,
+                 completion_tokens=0, cached_tokens=0)
+    analyzer = CostEfficiencyAnalyzer()
+    report = analyzer.analyze_trajectory({"spans": [span]})
+    assert report.turn_metrics[0].classification != "expensive"
+    assert report.efficiency_score > 0.0
 
 
 def test_invalid_trajectory_type_raises():

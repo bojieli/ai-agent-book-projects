@@ -230,8 +230,8 @@ class CodeSandboxEvaluator:
     def _classify_risk(patterns: list[str]) -> str:
         """Classify risk level from detected patterns.
 
-        - ``high``: arbitrary execution, or data exfiltration (network plus
-          file write or env-var access).
+- ``high``: arbitrary execution, or data exfiltration (network plus
+  file read, file write, or env-var access).
         - ``medium``: network call, subprocess execution, or file write.
         - ``low``: read-only file access or env-var access.
         - ``safe``: no risky patterns.
@@ -242,9 +242,11 @@ class CodeSandboxEvaluator:
             return "high"
 
         # Data exfiltration: external communication combined with access to
-        # private data (file writes or environment variables).
+        # private data (file reads, file writes, or environment variables).
         if "network_call" in pattern_set and (
-            "file_write" in pattern_set or "env_var_access" in pattern_set
+            "file_read" in pattern_set
+            or "file_write" in pattern_set
+            or "env_var_access" in pattern_set
         ):
             return "high"
 
@@ -296,7 +298,9 @@ class CodeSandboxEvaluator:
                 "before exposing them to agent-generated code."
             )
         if "network_call" in pattern_set and (
-            "file_write" in pattern_set or "env_var_access" in pattern_set
+            "file_read" in pattern_set
+            or "file_write" in pattern_set
+            or "env_var_access" in pattern_set
         ):
             recs.append(
                 "Deadly triad detected: private data plus external "

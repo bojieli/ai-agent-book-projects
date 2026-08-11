@@ -293,12 +293,17 @@ class CostEfficiencyAnalyzer:
         total_tokens = sum(m.total_tokens for m in metrics)
 
         # Relative expensive threshold: 1.5x mean per-turn cost.
+        # When mean cost is zero (e.g. a fully cached or zero-token
+        # trajectory), every turn costs $0 and none should be flagged
+        # expensive — a zero threshold would mark all of them. Skip the
+        # relative reclassification in that case.
         if self.expensive_cost_threshold is None and total_turns > 0:
             mean_cost = total_cost / total_turns
             rel_threshold = mean_cost * 1.5
-            for m in metrics:
-                if m.classification == "productive" and m.cost_usd >= rel_threshold:
-                    m.classification = "expensive"
+            if rel_threshold > 0:
+                for m in metrics:
+                    if m.classification == "productive" and m.cost_usd >= rel_threshold:
+                        m.classification = "expensive"
         elif self.expensive_cost_threshold is None:
             rel_threshold = float("inf")
         else:
