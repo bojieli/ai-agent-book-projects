@@ -335,7 +335,7 @@ Loop ini memiliki satu percabangan utama: **jika model mengembalikan `tool_calls
 Daftar `messages` berubah antarputaran sebagai berikut:
 
 **Keadaan awal (sebelum panggilan pertama):**
-```
+```text
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # Ditulis oleh developer
   { role: "user",    content: "What's the current time and weather in Vancouver?" },  # Input pengguna
@@ -343,7 +343,7 @@ messages = [
 ```
 
 **Setelah panggilan pertama (model mengembalikan panggilan tool):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -354,7 +354,7 @@ messages = [
 ```
 
 **Setelah panggilan kedua (model mengembalikan balasan akhir, loop berakhir):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -597,7 +597,7 @@ Metode yang mengurangi beban kognitif manusia juga membantu LLM. Bayangkan anggo
 
 Sebaliknya, prompt berorientasi proses berfungsi seperti manual pelatihan yang baik dengan Standard Operating Procedure (SOP) yang jelas:
 
-```
+```text
 Prosedur Operasi Standar Pemrosesan File:
 
 Langkah 1: Validasi
@@ -889,7 +889,7 @@ Detail implementasi yang penting adalah bahwa Agent Status Bar disisipkan pada a
 
 Berikut adalah daftar pesan sesungguhnya yang disusun oleh kerangka kerja Agent selama panggilan API ke-N:
 
-```
+```text
 messages: [
   { role: "system",    content: "Anda adalah asisten layanan pelanggan..." }  ← Tetap (tersimpan di KV Cache)
   { role: "user",      content: "Tolong batalkan paket Xfinity saya" }  ← Permintaan asli pengguna
@@ -1072,6 +1072,31 @@ Di balik banyak detail teknisnya, bab ini memiliki satu argumen utama: apa yang 
 Benang merah semua teknik tersebut adalah pengelolaan informasi yang eksplisit dan direkayasa: alih-alih membiarkan model mencari petunjuk secara pasif dalam context yang sangat besar, kita secara proaktif memberinya keadaan yang sudah disaring dan terstruktur. Setiap teknik dalam bab ini, dari tata letak context yang ramah KV Cache hingga kompresi yang sadar context, merupakan praktik konkret penggunaan rekayasa untuk memaksimalkan efisiensi informasi pada batas kemampuan model saat ini.
 
 Bab ini membahas pembaruan keadaan dan degradasi context **di dalam satu tugas**. Bab berikutnya beralih dari pengelolaan informasi dalam satu context window ke sistem pengetahuan persisten yang melintasi berbagai tugas: user memory dan knowledge base. Sistem ini memungkinkan Agent mengumpulkan pengalaman dari waktu ke waktu dan secara bertahap menjadi asisten yang lebih memahami pengguna, atau pakar dengan pengetahuan yang lebih khusus di suatu bidang.
+
+## Skeleton mekanisme
+
+Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
+
+### Konstruksi konteks sebelum setiap permintaan
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+Pertahankan batasnya: observasi dan bukti berasal dari lingkungan, sedangkan Harness menentukan tindakan yang boleh dieksekusi.
 
 ## Pertanyaan Pemikiran
 

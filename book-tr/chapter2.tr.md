@@ -332,7 +332,7 @@ Bu kodun temel mantığı yalnızca tek bir while döngüsü ve tek bir koşuldu
 `messages` listesindeki değişiklikleri her tur boyunca izleyelim:
 
 **Başlangıç durumu (1. çağrıdan önce):**
-```
+```text
 messages = [
   { role: "system",  content: "Sen yardımsever bir asistansın..." },     # Geliştirici tarafından yazıldı
   { role: "user",    content: "Vancouver'da şu anki saat ve hava durumu nedir?" },  # Kullanıcı girdisi
@@ -340,7 +340,7 @@ messages = [
 ```
 
 **1. çağrıdan sonra (model araç çağrıları döndürür):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "Şu anki saat..." },
@@ -351,7 +351,7 @@ messages = [
 ```
 
 **2. çağrıdan sonra (model nihai yanıtı döndürür, döngü biter):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "Şu anki saat..." },
@@ -593,7 +593,7 @@ Markdown, okunabilirliği korurken hafif bir yapı sağlar, bu da onu hiyerarşi
 
 Buna karşılık, süreç odaklı bir prompt, mükemmel bir yeni çalışan eğitim el kitabı gibidir, net bir Standart Çalışma Prosedürü (SOP) sağlar:
 
-```
+```text
 Dosya İşleme Standart Çalışma Prosedürü:
 
 Adım 1: Doğrulama
@@ -885,7 +885,7 @@ Yan kanal bilgisi ve mevcut yetenek listesi, bir kez eklendikten sonra değişme
 
 Aşağıda, N. API çağrısı sırasında Agent çerçevesi tarafından oluşturulan gerçek mesaj listesi var:
 
-```
+```text
 messages: [
   { role: "system",    content: "Sen bir müşteri hizmetleri asistanısın..." }  ← Sabit (KV Cache önbelleklendi)
   { role: "user",      content: "Xfinity planımı iptal etmeme yardım et" }  ← Orijinal kullanıcı isteği
@@ -1071,6 +1071,31 @@ Bu bölümün çok sayıdaki teknik ayrıntısının ardında tek bir temel sav 
 Bu tekniklerin ortak noktası açık ve mühendislik ürünü bilgi yönetimidir: modelin devasa bir context içinde ipuçlarını pasif biçimde aramasını beklemek yerine, ona önceden ayıklanmış ve yapılandırılmış durum sağlarız. KV Cache dostu context düzenlerinden bağlama duyarlı sıkıştırmaya kadar bu bölümde sunulan her teknik, modellerin mevcut yetenek sınırında bilgi verimliliğini en üst düzeye çıkarmaya yönelik somut bir mühendislik uygulamasıdır.
 
 Bu bölüm, durum güncellemelerini ve context bozulmasını **tek bir görev içinde** ele alır. Bir sonraki bölüm, tek bir context penceresindeki bilgi yönetiminin ötesine geçerek görevler arasında kalıcı olan bilgi sistemlerine, yani kullanıcı belleği ve bilgi tabanlarına yönelir. Bu sistemler Agent'ın zaman içinde deneyim biriktirerek kullanıcıyı daha iyi anlayan bir asistana veya belirli bir alanda daha uzmanlaşmış bilgiye sahip bir uzmana dönüşmesini sağlar.
+
+## Mekanizma skeleton'ları
+
+Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
+
+### Her istek öncesi context oluşturma
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+Sınırı açık tutun: gözlemler ve kanıt ortamdan gelir, Harness ise hangi eylemin yürütülebileceğine karar verir.
 
 ## Düşünce Soruları
 

@@ -25,6 +25,16 @@
 | **自我進化篇** | 第 8 章 | 經驗學習、工作流程外化為工具、提示與觀察蒸餾進引數 | 從經驗中學習是 Agent 從「聰明」走向「熟練」的關鍵 |
 | **拓展與協作篇** | 第 9–10 章 | 語音/GUI/物理世界的多模態互動；多 Agent 分工協作 | 多 Agent 的每個設計決策都能在單 Agent 三要素中找到對應 |
 
+## 正文與實驗的分工
+
+本書正文不是某個 SDK 的逐步教學。短偽代碼與 skeleton 說明狀態流、停止點與驗證邊界；章級實驗提供完整實作、模型／環境適配、測試、日誌與證據。
+
+| Layer | Read first | Skip for now | Question it answers |
+| :--: | --- | --- | --- |
+| **Starter** | Project README: goal, minimum command, acceptance conditions; matching prose skeleton | credentials, UI, provider adapters, long raw logs | 這個實驗要證明哪條機制？ |
+| **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | 哪個變數改變了行為？ |
+| **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | 結果能否複核，失敗是否被如實記錄？ |
+
 ## 難度分級
 
 | 級別 | 章節 | 適合讀者 |

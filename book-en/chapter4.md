@@ -568,7 +568,7 @@ Intervention can be applied at two levels:
 
 **Agent Status Bar Markers**: Add explicit markers before each event:
 
-```
+```text
 [Unprocessed Event 1/4] Tool result from database_query: ...
 [Unprocessed Event 2/4] User supplementary note: Only look at Beijing data
 [Unprocessed Event 3/4] System reminder: Report deadline is in 30 minutes
@@ -698,6 +698,70 @@ The five categories of tools each have distinct design emphases:
 On the asynchronous side, OpenClaw's built-in automation mechanisms (Hooks, Cron, Heartbeat) let Agents act autonomously on a schedule, but provide no immediate ingress path for third-party event sources beyond the built-in channels, such as email and API callbacks. PineClaw's Channel mechanism fills that gap, marking the evolution from time-driven to event-driven. Three strategies—cancellation-based, queued, and parallel processing—let Agents handle events of differing priority. Yet this architecture sits in deep contradiction with the synchronous training paradigm of today's large models; for now, engineering workarounds like asynchronous placeholders can only mitigate it. The fundamental fix awaits next-generation models that internalize latency, interruption, and concurrency through reinforcement learning in asynchronous environments.
 
 This chapter has focused on how Agents use tools. The next chapter asks a more fundamental question: can an Agent **create** tools by writing code?
+
+## Mechanism skeletons
+
+The following sketches isolate the control relationships discussed in this chapter.
+
+### Tool safety gate
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### Event-loop routing
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### Proactive tool discovery
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+Keep the boundary explicit: observations and evidence come from the environment, while the Harness decides what may be executed.
 
 ## Thought Questions
 

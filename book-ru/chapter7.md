@@ -897,6 +897,94 @@ SFT и RL находятся не в конкурентных, а в после�
 
 Эта глава ответила на вопрос о том, «как обучать» посредством обновления параметров. В следующей главе параметры модели вновь рассматриваются как часть целостной системы агента: параметры — лишь один из четырёх носителей обновления наряду со знаниями, инструкциями и программами, а специфическая проблема состоит в том, как получать достоверный обучающий сигнал из траекторий развёрнутой системы, выбирать правильное место обновления и управлять проверкой, выпуском и откатом всех кандидатных версий. Когда потребуется обратиться к конкретным алгоритмам обучения, глава 8 будет напрямую ссылаться на эту главу, не повторяя их изложение.
 
+## Скелеты механизмов
+
+Следующие скелеты выделяют управляющие связи, обсуждаемые в главе.
+
+### Маска потерь SFT
+
+```python
+for sample in dataset:
+    prompt_tokens = tokenize(sample.prompt)
+    answer_tokens = tokenize(sample.answer)
+    tokens = prompt_tokens + answer_tokens
+    labels = [-100] * len(prompt_tokens) + answer_tokens
+    loss = causal_lm_loss(tokens, labels)
+    update_parameters(loss)
+```
+
+### Групповое обновление GRPO
+
+```python
+for prompt in batch:
+    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
+    rewards = [verify(trajectory) for trajectory in group]
+    advantages = normalize_within_group(rewards)       # GRPO baseline
+    update(policy, group, advantages)
+```
+
+### Обрезанное обновление PPO
+
+```python
+for trajectory in rollouts:
+    returns = discounted_returns(trajectory.rewards)
+    values = value_model(trajectory.states)
+    advantages = returns - stop_gradient(values)
+    ratio = exp(policy.log_prob(trajectory.actions)
+                - old_policy.log_prob(trajectory.actions))
+    policy_loss = -mean(min(
+        ratio * advantages,
+        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    ))
+    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
+update(policy, value_model, policy_loss + value_coef * value_loss)
+```
+
+### Маска награды на уровне траектории
+
+```python
+for token in trajectory:
+    if token.source == ENVIRONMENT:
+        loss_mask[token] = 0
+    else:                                      # model thought / tool arguments
+        loss_mask[token] = 1
+```
+
+### Сигнал результата плюс сигнал пути
+
+```python
+outcome = verify_final_state(trajectory)              # result, not self-report
+path_signal = 0
+for step in trajectory:
+    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
+reward = normalize(outcome) + beta * normalize(path_signal)
+```
+
+### Дистилляция on-policy
+
+```python
+student_trajectory = rollout(student, task)
+loss = 0
+for state in student_trajectory:
+    teacher_logits = teacher(state)
+    loss += KL(student_logits(state), teacher_logits)
+update_student(loss)
+```
+
+### Самодистилляция on-policy
+
+```python
+student_trajectory = rollout(model, task_without_answer)
+loss = 0
+for state in student_trajectory:
+    privileged_state = add_verified_answer(state)
+    teacher_logits = stop_gradient(model(privileged_state))
+    loss += KL(model(state), teacher_logits)
+update(model, loss + retention_regularizer)
+```
+
+Граница должна оставаться явной: наблюдения и доказательства приходят из среды, а Harness решает, что разрешено выполнить.
+
 ## Вопросы для размышления
 
 1. ★★ Катастрофическое забывание — когда тонкая настройка под конкретную задачу разрушает исходные общие способности модели (например, общий вызов инструментов) — особенно болезненно в сценариях с агентами. По сравнению с полной тонкой настройкой параметров, LoRA замораживает веса базовой модели и несёт меньший риск забывания, но не является иммунной к нему полностью. Какие ещё стратегии могут дополнительно смягчить забывание способностей при тонкой настройке?

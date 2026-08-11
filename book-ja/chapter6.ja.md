@@ -32,7 +32,7 @@ Agent システムを構築する際、開発者は数多くの設計上の選�
 
 **Agent の軌跡**：
 
-```
+```text
 ユーザー：3 日前に買ったあのイヤホンを返品したいのですが、注文番号は 12345 です。（今日は 2026-04-10）
 
 Agent（思考）：ユーザーは返金を求めている。まず注文情報を照会する必要がある。
@@ -780,6 +780,46 @@ Agent 開発者への示唆はこうです。特性スイッチはデバッグ�
 第 1 章で導入した Harness 工学の視点から見ると、本章の評価方法論は Harness における「検証」機能の系統的な実装であり、「Benchmark レポートからシステム改善へ」の閉ループは Harness の反復最適化の核心メカニズムです——評価は Agent の現在の能力を計測するだけでなく、Harness の継続的な進化の方向を指し示します。
 
 本章で確立した評価体系は現在のシステムの最適化に資するだけでなく、次章のモデルのポストトレーニングに鍵となる基礎も提供します——評価環境とデータセットはポストトレーニングの重要な入力であり、シミュレーション環境はポストトレーニングの練習場です。次章では評価からモデルレベルの改善へと転じ、いかに SFT と RL を通じてインタラクション方策をモデルパラメータに書き込むかを深く論じます。
+
+## メカニズムの skeleton
+
+以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
+
+### 再現可能な評価ループ
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
+### rubric 判定前の決定的 veto
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
+### ペア比較
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
+境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
 
 ## 演習問題
 

@@ -335,7 +335,7 @@ A huroknak egy fő elágazása van: **ha a modell `tool_calls`-t ad vissza, hajt
 A `messages` lista a következőképpen változik a körök során:
 
 "Kezdeti állapot (az első hívás előtt):"
-```
+```text
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # Fejlesztő által írva
   { role: "user",    content: "What's the current time and weather in Vancouver?" },  # Felhasználói bemenet
@@ -343,7 +343,7 @@ messages = [
 ```
 
 **Az első hívás után (a modell eszközhívásokat ad vissza):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -354,7 +354,7 @@ messages = [
 ```
 
 **A második hívás után (a modell visszaadja a végső választ, a hurok véget ér):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -597,7 +597,7 @@ Az emberek kognitív terhelését csökkentő módszerek egyformán hatékonyak 
 
 Ezzel szemben a folyamatvezérelt prompt hatékony oktatási kézikönyvként működik, világos szabványos működési eljárást (SOP) biztosítva:
 
-```
+```text
 File Processing Standard Operating Procedure:
 
 Step 1: Validation
@@ -889,7 +889,7 @@ Egy fontos implementációs részlet, hogy az Ügynöki Állapotsáv a kontextus
 
 Az alábbiakban az ügynök-keretrendszer által az N-edik API hívás során összeállított tényleges üzenetlista látható:
 
-```
+```text
 messages: [
   { role: "system",    content: "You are a customer service assistant..." }  ← Rögzített (KV Cache-ben)
   { role: "user",      content: "Help me cancel my Xfinity plan" }  ← Eredeti felhasználói kérés
@@ -1075,6 +1075,31 @@ A sok technikai részlet mögött a fejezet egyetlen központi állítása húz�
 Ezeknek a technikáknak a közös vonása az explicit, mérnökileg megtervezett információkezelés: ahelyett, hogy a modellnek egy hatalmas kontextusban kellene passzívan nyomokat keresnie, proaktívan finomított, strukturált állapotot adunk neki. A fejezet minden technikája, a KV Cache-barát kontextuselrendezéstől a kontextusérzékeny tömörítésig, annak konkrét mérnöki gyakorlata, hogyan maximalizáljuk az információ hatékony felhasználását a modellek jelenlegi képességhatárán.
 
 Ez a fejezet az állapotfrissítést és a kontextus romlását **egyetlen feladaton belül** tárgyalja. A következő fejezet az egyetlen kontextusablakon belüli információkezelésen túl, a feladatokon átívelő tartós tudásrendszerekre tér át: a felhasználói memóriára és a tudásbázisokra. Ezek révén az Agent idővel tapasztalatot halmozhat fel, és fokozatosan a felhasználót jobban értő asszisztenssé vagy egy területen mélyebb szaktudással rendelkező szakértővé válhat.
+
+## Mechanizmus-skeletonok
+
+Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
+
+### Kontextus felépítése minden kérés előtt
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+Legyen világos a határ: a megfigyelések és a bizonyítékok a környezetből érkeznek, a Harness pedig eldönti, mi hajtható végre.
 
 ## Gondolkodtató Kérdések
 

@@ -1072,6 +1072,31 @@ messages: [
 
 이 장은 **하나의 작업 안에서** 일어나는 상태 갱신과 컨텍스트 저하를 다룹니다. 다음 장에서는 하나의 컨텍스트 창 안에서 이루어지는 정보 관리를 넘어 작업 간에 지속되는 지식 시스템, 즉 사용자 메모리와 지식 베이스를 다룹니다. 이러한 시스템을 통해 에이전트는 시간이 흐르면서 경험을 축적하고, 사용자를 더 잘 이해하는 어시스턴트나 한 분야에 더 전문적인 지식을 갖춘 전문가로 점차 발전할 수 있습니다.
 
+## 메커니즘 skeleton
+
+다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
+
+### 각 요청 전 컨텍스트 구성
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
+
 ## 생각해 볼 문제
 
 1. ★★★ 실험 2-3에서는 대화 기록에 슬라이딩 윈도를 사용하면 에이전트가 같은 도구 호출을 반복한다는 사실을 발견했습니다. 하지만 전체 기록을 유지하면 컨텍스트가 끝없이 늘어납니다. KV Cache 접두부를 깨뜨리지 않으면서 정보 손실을 피하고 컨텍스트 길이를 통제할 전략을 설계해 보세요.

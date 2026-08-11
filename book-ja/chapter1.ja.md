@@ -82,7 +82,7 @@
 
 天気を調べる場面を例にとると、4 ステップの流れを API のレベルで簡略化して表すと次のようになります。
 
-```
+```text
 ステップ1：ツールを宣言              ステップ2：モデルが呼び出しを決定
 tools: [{                          assistant: {
   name: "get_weather",               tool_calls: [{
@@ -172,7 +172,7 @@ Agent がタスクを実行する核となるパターンは **ReAct**（Reasoni
 
 疑似コードを通じて Agent の軌跡の構造を理解しましょう。
 
-```
+```text
 軌跡 = [
   {role: "user" , content: "会社の四半期収入にもとづき：Q1 2.5M 米ドル、Q2 2.1M ユーロ、Q3 1.8M 英ポンド、Q4 380M 日本円。会社の年間総収入と四半期平均収入を計算せよ" },
   
@@ -493,6 +493,45 @@ Anthropic が長時間実行される Agent を構築したときの実践は、
 次の章では、Harness の中で最も核となる構成要素、すなわちコンテキストエンジニアリングを深く掘り下げます。Agent という概念の強化学習における学術的な源流、そして従来の RL と現代の LLM Agent の踏み込んだ比較については、第 7 章で体系的に展開します。
 
 以下の演習問題は、読者が本章の核となる概念についてより深く掘り下げて考える助けとすることを狙いとしており、標準解答はありません。
+
+## メカニズムの skeleton
+
+以下の Python 風 skeleton は、本章で扱う制御関係だけを取り出したものです。実行可能な SDK 実装ではなく説明用 pseudocode であり、完全な adapter とテストは章の実験にあります。 `python` マーカーは構文ハイライト専用であり、実行可能な SDK やそのまま動くプログラムを意味しません。
+
+### ReAct 制御ループ
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
+### Harness の本番境界
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
+
+境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
 
 ## 演習問題
 

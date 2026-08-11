@@ -333,7 +333,7 @@ The loop has one main branch: **if the model returns `tool_calls`, execute the t
 The `messages` list changes across rounds as follows:
 
 **Initial state (before the first call):**
-```
+```text
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # Written by developer
   { role: "user",    content: "What's the current time and weather in Vancouver?" },  # User input
@@ -341,7 +341,7 @@ messages = [
 ```
 
 **After the first call (model returns tool calls):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -352,7 +352,7 @@ messages = [
 ```
 
 **After the second call (model returns final reply, loop ends):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -596,7 +596,7 @@ Methods that reduce cognitive load for humans are equally effective for large la
 
 In contrast, a process-driven prompt functions like an effective training manual, providing a clear Standard Operating Procedure (SOP):
 
-```
+```text
 File Processing Standard Operating Procedure:
 
 Step 1: Validation
@@ -889,7 +889,7 @@ An important implementation detail is that the Agent Status Bar is inserted at t
 
 Below is the actual message list constructed by the Agent framework during the Nth API call:
 
-```
+```text
 messages: [
   { role: "system",    content: "You are a customer service assistant..." }  ← Fixed (KV Cache cached)
   { role: "user",      content: "Help me cancel my Xfinity plan" }  ← Original user request
@@ -1073,6 +1073,31 @@ Across its many technical details, this chapter has one central argument: what y
 The common thread among these techniques is explicit, engineered information management: rather than letting the model search passively for clues in a vast context, proactively provide it with refined, structured state. Every technique presented in this chapter—from KV Cache-friendly context layouts to context-aware compression—is a concrete practice of using engineering to maximize information efficiency at the current boundary of model capability.
 
 This chapter addresses state updates and context degradation **within a single task**. The next chapter moves beyond information management within a single context window to persistent knowledge systems that span tasks: user memory and knowledge bases. These systems allow the Agent to accumulate experience over time and gradually become an assistant that understands the user better, or a domain expert with more specialized knowledge.
+
+## Mechanism skeletons
+
+The following sketches isolate the control relationships discussed in this chapter.
+
+### Context construction before each request
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+Keep the boundary explicit: observations and evidence come from the environment, while the Harness decides what may be executed.
 
 ## Thought Questions
 

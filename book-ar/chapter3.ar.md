@@ -701,6 +701,105 @@ viking://
 
 يتناول هذا الفصل والفصل السابق مشكلة "السياق" - أحدهما خلال جلسة واحدة والآخر عبر جلسات متعددة. يتحول الفصل التالي إلى "الأدوات": كيفية تفاعل الوكلاء مع العالم الخارجي من خلال الأدوات، بما في ذلك تصميم الأدوات، ومعيار قابلية التشغيل البيني MCP، والهندسة المعمارية المستندة إلى الأحداث.
 
+## هياكل الآليات
+
+تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
+
+### دورة حياة الذاكرة
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
+### سجل الإضافة فقط ونقطة التحقق
+
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+### حالة مستخدم مهيكلة النوع
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
+```
+
+### تجميع حتمي
+
+```python
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
+```
+
+### اكتشاف التعارضات
+
+```python
+def check_drug_allergy(profile):
+    for medication in profile.current_medications:
+        for allergy in profile.allergies:
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
+```
+
+### فرض القيود
+
+```python
+def check():
+    for trip in state.trips:
+        if trip.is_international:
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
+            if days < 180:
+                alert("passport expires too soon", trip, days)
+```
+
+### خط أنابيب RAG هجين
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
+
+حافظ على الحد واضحًا: تأتي الملاحظات والأدلة من البيئة، بينما يقرر Harness ما يُسمح بتنفيذه.
+
 ## أسئلة للتأمل
 
 1.  ★★ في نظام ذاكرة المستخدم، عندما يقدم نفس المستخدم معلومات متناقضة في جلسات مختلفة (على سبيل المثال، ذكر عنوانين مختلفين للمنزل)، كيف يجب على نظام الذاكرة التعامل مع هذا التعارض؟

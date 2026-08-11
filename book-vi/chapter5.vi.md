@@ -32,7 +32,7 @@ Bảy công cụ này tạo thành một hộp công cụ hoàn chỉnh nhưng t
 
 Sử dụng tác vụ đơn giản nhất để xem bảy công cụ này phối hợp với nhau như thế nào. Giả sử người dùng nói "Hãy giúp tôi sắp xếp tất cả các nhận xét TODO trong dự án thành một danh sách":
 
-```
+```text
 Agent (suy nghĩ): Cần tìm tất cả các dòng code có chứa TODO.
 Tác nhân → Grep("TODO", glob="**/*.py") # Tìm kiếm nội dung tệp
 Công cụ trả về:
@@ -374,7 +374,7 @@ Sáu hướng này không được liệt kê song song mà được tổ chức
 
 LLM hoạt động rất tốt trong việc hiểu và tạo ngôn ngữ tự nhiên, nhưng có những thiếu sót cơ bản trong tính toán chính xác, các phép toán ký hiệu hoặc đạo hàm logic nghiêm ngặt. Lý do là thế này: Tư duy mô hình có bản chất xác suất và gần đúng, trong khi các vấn đề toán học và logic đòi hỏi các câu trả lời chính xác và xác định. Hãy dùng một so sánh cụ thể để minh họa:
 
-```
+```text
 Câu hỏi: Một lớp có 40 học sinh, trong đó 60% học toán, 45% học vật lý và 25% học cả hai.
 Có bao nhiêu người chỉ chọn vật lý mà không chọn toán? "
 
@@ -436,27 +436,28 @@ Thay vì thiết kế một công cụ xác minh độc lập, tốt hơn là đ
 def cancel_reservation(
     reservation_id: str,
     cancellation_reason: str,        # "change_of_plan", "airline_cancelled", "other"
-Expected_cabin_class: str = None, # Tùy chọn: để tự kiểm tra model, máy chủ sẽ kiểm tra với giá trị true của cơ sở dữ liệu
-Expected_has_insurance: bool = None # Tùy chọn: để tự kiểm tra mô hình, tương tự như trên
+    expected_cabin_class: str = None, # Tùy chọn: để tự kiểm tra model, máy chủ sẽ kiểm tra với giá trị đúng trong cơ sở dữ liệu
+    expected_has_insurance: bool = None # Tùy chọn: để tự kiểm tra mô hình, tương tự như trên
 ) -> dict:
     """
-Hủy đặt vé máy bay.
+    Hủy đặt vé máy bay.
 
-Chính sách hủy (được thực thi bởi máy chủ dựa trên giá trị thực của cơ sở dữ liệu):
-- Quy định 1: Các đơn hàng đã sử dụng bất kỳ chặng bay nào đều không được hủy
-- Quy định 2: Hủy vé vô điều kiện trong vòng 24 giờ kể từ khi đặt phòng
-- Quy tắc 3: Các chuyến bay bị hãng hàng không hủy luôn có thể bị hủy
-- Quy tắc 4: Hạng thương gia luôn được hủy
-- Quy định 5: Vé hạng phổ thông cơ bản và hạng phổ thông yêu cầu phải hủy bảo hiểm du lịch.
+    Chính sách hủy (được thực thi bởi máy chủ dựa trên giá trị thực của cơ sở dữ liệu):
+    - Quy định 1: Các đơn hàng đã sử dụng bất kỳ chặng bay nào đều không được hủy
+    - Quy định 2: Hủy vé vô điều kiện trong vòng 24 giờ kể từ khi đặt phòng
+    - Quy tắc 3: Các chuyến bay bị hãng hàng không hủy luôn có thể bị hủy
+    - Quy tắc 4: Hạng thương gia luôn được hủy
+    - Quy định 5: Vé hạng phổ thông cơ bản và hạng phổ thông yêu cầu có bảo hiểm du lịch để được hủy.
 
-Trước khi gọi, vui lòng kiểm tra chi tiết đơn hàng và kiểm tra từng chính sách trên; tham số dự kiến_* được sử dụng cho
-Việc nêu cơ sở phán đoán của bạn chỉ nhằm mục đích so sánh và kiểm tra máy chủ và không ảnh hưởng đến các quyết định chính sách.
+    Trước khi gọi, vui lòng kiểm tra chi tiết đơn hàng và kiểm tra từng chính sách trên; tham số `expected_*` được sử dụng để
+    nêu cơ sở phán đoán của bạn, chỉ phục vụ việc máy chủ đối chiếu và kiểm toán, không ảnh hưởng đến quyết định chính sách.
     """
-# Tất cả các sự kiện về chính sách đều được đọc từ cơ sở dữ liệu và các giá trị do mô hình tự báo cáo không bao giờ được chấp nhận.
+    # Tất cả sự kiện chính sách đều được đọc từ cơ sở dữ liệu; không bao giờ tin các giá trị do mô hình tự báo cáo
     r = db.get_reservation(reservation_id)
-now = server_clock.now() # Đồng hồ máy chủ, không được mô hình cung cấp
+    now = server_clock.now()  # Đồng hồ máy chủ, không do mô hình cung cấp
 
-# Ghi lại cảnh báo khi giá trị tự báo cáo của mô hình không nhất quán với giá trị thực, giá trị này được sử dụng để phát hiện những hiểu lầm hoặc khả năng tiêm vào mô hình.
+    # Ghi cảnh báo khi giá trị mô hình tự báo cáo không khớp giá trị thực,
+    # để phát hiện nhận thức sai của mô hình hoặc khả năng prompt injection
     if expected_cabin_class is not None and expected_cabin_class != r.cabin_class:
         log_mismatch(reservation_id, "cabin_class", expected_cabin_class, r.cabin_class)
     if expected_has_insurance is not None and expected_has_insurance != r.has_insurance:

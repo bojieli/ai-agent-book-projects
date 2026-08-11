@@ -332,7 +332,7 @@ while True:
 ஒவ்வொரு சுற்றிலும் `messages` பட்டியலில் ஏற்படும் மாற்றங்களைக் கண்காணிப்போம்:
 
 **ஆரம்ப நிலை (1வது அழைப்பிற்கு முன்):**
-```
+```text
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # டெவலப்பரால் எழுதப்பட்டது
   { role: "user",    content: "What's the current time and weather in Vancouver?" },  # பயனர் உள்ளீடு
@@ -340,7 +340,7 @@ messages = [
 ```
 
 **1வது அழைப்பிற்குப் பிறகு (மாதிரி tool calls ஐ திருப்பி அனுப்புகிறது):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -351,7 +351,7 @@ messages = [
 ```
 
 **2வது அழைப்பிற்குப் பிறகு (மாதிரி இறுதி பதிலைத் திருப்பி அனுப்புகிறது, loop முடிகிறது):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -593,7 +593,7 @@ Markdown இலகுரக கட்டமைப்பை வழங்குக
 
 இதற்கு மாறாக, ஒரு செயல்முறை சார்ந்த ப்ராம்ப்ட் ஒரு சிறந்த புதிய ஊழியர் பயிற்சி கையேடு போன்றது, இது ஒரு தெளிவான நிலையான இயக்க நடைமுறையை (SOP) வழங்குகிறது:
 
-```
+```text
 கோப்பு செயலாக்க நிலையான இயக்க நடைமுறை:
 
 படி 1: சரிபார்ப்பு
@@ -879,7 +879,7 @@ Context மேலாண்மையின் கோணத்தில், Skills
 
 N-வது API அழைப்பின் போது Agent கட்டமைப்பால் உருவாக்கப்பட்ட உண்மையான செய்தி பட்டியல் கீழே உள்ளது:
 
-```
+```text
 messages: [
   { role: "system",    content: "நீங்கள் ஒரு வாடிக்கையாளர் சேவை உதவியாளர்..." }  ← நிலையானது (KV Cache தற்காலிக சேமிப்பில்)
   { role: "user",      content: "எனது Xfinity திட்டத்தை ரத்து செய்ய உதவுங்கள்" }  ← அசல் பயனர் கோரிக்கை
@@ -1060,6 +1060,31 @@ Context Rot என்பது window நிரம்பிவிடும் Co
 இந்த நுட்பங்களின் பொதுவான இழை, வெளிப்படையாகவும் பொறியியல் முறையிலும் வடிவமைக்கப்பட்ட தகவல் மேலாண்மை ஆகும்: மிகப்பெரிய context-இல் மாதிரி செயலற்ற முறையில் தடயங்களைத் தேட விடாமல், சுத்திகரிக்கப்பட்ட கட்டமைக்கப்பட்ட நிலையை முன்கூட்டியே வழங்குகிறோம். KV Cache-க்கு ஏற்ற context layout முதல் context-aware compression வரை, இந்த அத்தியாயம் வழங்கும் ஒவ்வொரு நுட்பமும் தற்போதைய மாதிரித் திறன்களின் எல்லையில் தகவல் செயல்திறனை அதிகப்படுத்தும் உறுதியான பொறியியல் நடைமுறையாகும்.
 
 இந்த அத்தியாயம் **ஒரே பணிக்குள்** நிகழும் நிலைப் புதுப்பிப்புகளையும் context சிதைவையும் கையாள்கிறது. அடுத்த அத்தியாயம், ஒரே context window-க்குள் தகவலை நிர்வகிப்பதைக் கடந்து, பல பணிகளைக் கடந்தும் நீடிக்கும் அறிவு அமைப்புகளான பயனர் நினைவகம் மற்றும் அறிவுத் தளங்களை நோக்கிச் செல்கிறது. இவை Agent காலப்போக்கில் அனுபவத்தைக் குவித்து, பயனரை மேலும் நன்றாகப் புரிந்துகொள்ளும் உதவியாளராகவோ, குறிப்பிட்ட துறையில் மேலும் நிபுணத்துவமான அறிவைக் கொண்ட வல்லுநராகவோ படிப்படியாக வளர உதவுகின்றன.
+
+## Mechanism skeleton-கள்
+
+கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
+
+### ஒவ்வொரு கோரிக்கைக்கும் முன் சூழல் கட்டமைப்பு
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
 
 ## சிந்தனை கேள்விகள்
 

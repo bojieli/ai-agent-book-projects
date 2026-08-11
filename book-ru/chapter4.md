@@ -554,7 +554,7 @@ Open-source фреймворк OpenClaw (подробнее его архите�
 
 **Пометка в строке состояния агента**: перед каждым событием добавляется явная метка:
 
-```
+```text
 [Необработанное событие 1/4] Tool result from database_query: ...
 [Необработанное событие 2/4] Дополнение от User: смотри только данные по Пекину
 [Необработанное событие 3/4] Системное напоминание: до дедлайна отчёта осталось 30 минут
@@ -684,6 +684,70 @@ Open-source фреймворк OpenClaw (подробнее его архите�
 Шесть экспериментов последовательно продвигаются от основ к архитектуре: эксперименты 4-1–4-3 строят три базовых набора инструментов — для восприятия, выполнения и сотрудничества; эксперимент 4-4 вводит событийную модель на примере агента обработки почты; эксперимент 4-5 реализует параллельное выполнение, восстановление после прерывания и управление состоянием; эксперимент 4-6 проверяет ценность активного обнаружения инструментов при большой библиотеке инструментов. Границы этой главы охватывают описание, обнаружение и безопасное использование **существующих инструментов**; в главе 8 будет рассмотрено, как агент на основании неудач и повторяющихся операций определяет, когда следует создать, изменить, повторно проверить или вывести инструмент из эксплуатации.
 
 Следующая глава должна ответить на вопрос более фундаментальный, чем «как использовать инструменты»: способен ли агент **создавать** инструменты, написав код? Coding Agent в сочетании с файловой системой — самая важная основа всех универсальных агентов, которая также предоставляет исполнительные возможности для рассматриваемого в главе 8 контролируемого самомодифицирования системы.
+
+## Скелеты механизмов
+
+Следующие скелеты выделяют управляющие связи, обсуждаемые в главе.
+
+### Защитный шлюз инструментов
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### Маршрутизация цикла событий
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### Проактивное обнаружение инструментов
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+Граница должна оставаться явной: наблюдения и доказательства приходят из среды, а Harness решает, что разрешено выполнить.
 
 ## Вопросы для размышления
 

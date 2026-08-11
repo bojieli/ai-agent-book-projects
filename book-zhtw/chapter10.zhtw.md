@@ -478,7 +478,7 @@ A2A 的定位可以和第四章的 MCP 對照理解：MCP 解決的是 Agent 與
 
 用一個具體場景說明。假設一個翻譯系統採用管理者模式（實驗 10-2 的架構），Manager 將一本技術書分章分配給多個翻譯 Agent：
 
-```
+```text
 術語 Agent：將 “reasoning” 翻譯為 “推理”，但 “推理” 在中文裡更常用於 inference，存在歧義
         ↓ 寫入 glossary.json
 翻譯 Agent A：翻譯第二章，從術語表讀取，將 “reasoning tokens” 翻譯為 “推理 token”
@@ -645,6 +645,83 @@ Pinchwork 和 RentAHuman 共同代表了**基於市場機制的協調方式**—
 ## 本章小結
 
 多 Agent 協作的價值在於引入單個 Agent 生成時無法取得的新資訊，例如執行結果、視覺回饋或外部工具驗證。設計需要在共享或隔離上下文，以及對等、管理者或去中心化拓撲之間作出選擇。結構化移交包、權限邊界、獨立交叉驗證、預算與取消機制構成基本的容錯閉環。當互動長期且開放時，還可能湧現社會關係、規範、市場和策略；多 Agent 工程的核心是設計資訊如何流動、能力如何分工，以及如何發現錯誤。
+
+## 機制骨架
+
+下面的骨架只抽出本章討論的控制關係。
+
+### 訊息信封與 worker 生命週期
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
+### 提議者—審核者迴圈
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
+### 第一個通過驗證的並行結果
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
+
+### 去中心化 handoff 協定
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
+
+請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
 
 ## 思考題
 

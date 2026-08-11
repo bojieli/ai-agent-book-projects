@@ -701,6 +701,105 @@ A **tudásfrissítés** két eltérő ritmust igényel: a növekményes frissít
 
 Ez a fejezet és az előző egyaránt a "kontextus" problémával foglalkozik – az egyik egyetlen szekción belül, a másik több szekción keresztül. A következő fejezet az "eszközökre" tér át: hogyan lépnek kapcsolatba az Ágensek a külvilággal eszközökön keresztül, beleértve az eszköztervezést, az MCP interoperabilitási szabványt és az eseményvezérelt architektúrát.
 
+## Mechanizmus-skeletonok
+
+Az alábbi skeletonok a fejezetben tárgyalt vezérlési kapcsolatokat emelik ki.
+
+### A memória életciklusa
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
+### Csak-hozzáfűző napló és ellenőrzőpont
+
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+### Típusos felhasználói állapot
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
+```
+
+### Determinisztikus összesítés
+
+```python
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
+```
+
+### Ütközésészlelés
+
+```python
+def check_drug_allergy(profile):
+    for medication in profile.current_medications:
+        for allergy in profile.allergies:
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
+```
+
+### Korlátok érvényesítése
+
+```python
+def check():
+    for trip in state.trips:
+        if trip.is_international:
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
+            if days < 180:
+                alert("passport expires too soon", trip, days)
+```
+
+### Hibrid RAG-folyamat
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
+
+Legyen világos a határ: a megfigyelések és a bizonyítékok a környezetből érkeznek, a Harness pedig eldönti, mi hajtható végre.
+
 ## Gondolatébresztő kérdések
 
 1.  ★★ Egy felhasználói memóriarendszerben, amikor ugyanaz a felhasználó különböző szekciókban ellentmondó információkat ad meg (pl. két különböző lakcímet említ), hogyan kezelje a memóriarendszer ezt a konfliktust?

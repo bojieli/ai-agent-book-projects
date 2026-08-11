@@ -82,7 +82,7 @@ Tool calling proceeds in four steps: first, the context tells the model which to
 
 For a weather query, the simplified representation of the four-step process at the API level is as follows:
 
-```
+```text
 Step 1: Declare tools                  Step 2: Model decides to call
 tools: [{                             assistant: {
   name: "get_weather",                  tool_calls: [{
@@ -170,7 +170,7 @@ Consider a concrete example—aggregating revenue across multiple currencies—t
 
 Here is the structure of a trajectory, in pseudocode:
 
-```
+```text
 trajectory = [
   {role: "user", content: "Based on the company's quarterly revenue: Q1 2.5M USD, Q2 2.1M EUR, Q3 1.8M GBP, Q4 380M JPY, calculate the company's total annual revenue and average quarterly revenue"},
   
@@ -494,6 +494,45 @@ This chapter has built a practice-first framework for understanding and construc
 The next chapter examines the Harness's most central component in depth: context engineering. Chapter 7 covers the Agent concept's academic roots in reinforcement learning and compares traditional RL with modern LLM Agents.
 
 The thought questions below are designed to take the chapter's core concepts a level deeper; they do not have standard answers.
+
+## Mechanism skeletons
+
+These Python-style sketches isolate the control relationships discussed in this chapter. They are explanatory pseudocode, not runnable SDK implementations; complete adapters and tests remain in the chapter experiments. The `python` marker is used only for syntax highlighting; it does not imply a runnable SDK or directly executable program.
+
+### ReAct control loop
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
+### Harness production boundary
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
+
+Keep the boundary explicit: observations and evidence come from the environment, while the Harness decides what may be executed.
 
 ## Thought Questions
 

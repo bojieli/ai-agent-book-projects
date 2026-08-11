@@ -389,6 +389,63 @@ Agent は環境との相互作用と評価から学習信号を得て、能力�
 
 継続的進化ではオンライン実行とオフライン学習を分ける。オンラインで証拠を記録し、オフラインで候補更新を生成・検証し、その後に段階的なリリース、整理、ロールバックを行う。この閉ループは結果を自動検証できるタスクで最も信頼できる。目標が曖昧でフィードバックが遅れるオープンタスクでは、人間が問題定義と評価基準の策定に引き続き関与する必要がある。
 
+## メカニズムの skeleton
+
+以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
+
+### 3 層の軌跡検証
+
+```python
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
+
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
+else:
+    emit_structured_diagnosis(outcome, process, quality)
+```
+
+### 経験から能力へのルーティング
+
+```python
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
+```
+
+### 検証済みリリースとロールバック
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
+```
+
+### アイドル時の統合
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
+境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
+
 ## 考察問題
 
 1. ★★ ある経験文書が、3件の成功軌跡と1件の失敗軌跡によって支持されている。失敗は、より新しい API バージョンで発生した。システムは、経験が否定されたのか、適用条件が変化したのかをどのように判断すべきか。

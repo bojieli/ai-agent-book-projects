@@ -554,7 +554,7 @@ Se puede intervenir a dos niveles:
 
 **Marcado en la barra de estado del Agente**: Añadir marcadores explícitos antes de cada evento:
 
-```
+```text
 [Evento no procesado 1/4] Tool result from database_query: ...
 [Evento no procesado 2/4] User nota adicional: solo consultar datos de la región de Madrid
 [Evento no procesado 3/4] Recordatorio del sistema: quedan 30 minutos para la fecha límite del informe
@@ -683,6 +683,70 @@ En la arquitectura asíncrona, los mecanismos de automatización integrados de O
 Los seis experimentos avanzan gradualmente desde lo básico hacia la arquitectura: los Experimentos 4-1 a 4-3 construyen los tres conjuntos de herramientas fundamentales de percepción, ejecución y colaboración; el Experimento 4-4 introduce el enfoque orientado a eventos con un Agente de procesamiento de correo; el Experimento 4-5 implementa la ejecución en paralelo, la interrupción/recuperación y la gestión de estado; y el Experimento 4-6 verifica el valor del descubrimiento proactivo de herramientas en catálogos a gran escala. El límite de este capítulo radica en describir, descubrir y utilizar de forma segura **herramientas existentes**; mientras que el Capítulo 8 analizará cómo el Agente juzga cuándo crear, modificar, volver a verificar o descartar herramientas a partir de sus fallos y operaciones repetitivas.
 
 El siguiente capítulo responderá a una pregunta más fundamental que "cómo usar herramientas": ¿puede el Agente **crear** herramientas escribiendo código? Un Agente programador (Coding Agent) combinado con un sistema de archivos constituye la base más nuclear de todos los Agentes generales, proporcionando además la capacidad de ejecución para la automodificación controlada del sistema que se analizará en el Capítulo 8.
+
+## Skeletons de mecanismos
+
+Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
+
+### Puerta de seguridad de herramientas
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### Enrutamiento del bucle de eventos
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### Descubrimiento proactivo de herramientas
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+Mantén explícito el límite: las observaciones y evidencias proceden del entorno, y el Harness decide qué puede ejecutarse.
 
 ## Preguntas de reflexión
 

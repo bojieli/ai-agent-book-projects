@@ -20,7 +20,7 @@ Bản chất của hệ thống bộ nhớ người dùng là một quá trình 
 
 Sử dụng một ví dụ cụ thể để hiểu quá trình này. Giả sử rằng người dùng có cuộc trò chuyện sau với Agent:
 
-```
+```text
 User: Help me book a flight to Tokyo next Friday. I prefer window seats
       and I'm vegetarian, so I'll need a special meal.
 Agent: I'll search for flights to Tokyo for next Friday...
@@ -32,7 +32,7 @@ User: Yes, and use my United MileagePlus number 12345678.
 
 Sau khi cuộc trò chuyện kết thúc, framework Agent sẽ gọi một LLM đặc biệt để phân tích nội dung cuộc trò chuyện và trích xuất thông tin đáng nhớ lâu dài:
 
-```
+```text
 Extracted memories:
 - User prefers window seats (preference)
 - User is vegetarian, needs special meals on flights (dietary restriction)
@@ -515,7 +515,7 @@ Do đó, chiến lược được đề xuất trong thực tế là **bổ sung
 
 RAPTOR và GraphRAG đại diện cho hành trình khám phá tổ chức tri thức của cộng đồng học thuật, trong khi [OpenViking](https://github.com/volcengine/OpenViking), có nguồn mở bởi Bytedance Volcano Engine, đề xuất triết lý thứ ba: **Mô hình hệ thống tệp**. Thay vì xử lý các ngữ cảnh như các đoạn vectơ phẳng hoặc các nút biểu đồ, nó ánh xạ tất cả các ngữ cảnh—bộ nhớ, tài nguyên, kỹ năng—dưới dạng thư mục và tệp trong hệ thống tệp ảo, với mỗi mục nhập có một URI duy nhất:
 
-```
+```text
 viking://
 ├── resources/ # Kiến thức bên ngoài: tài liệu, code base, trang web
 ├── user/memories/ # Ký ức người dùng: sở thích, thói quen
@@ -721,6 +721,105 @@ Chương này xây dựng một cách có hệ thống hệ thống bộ nhớ l
 Ở cấp độ **cập nhật tri thức**, hệ thống cần đồng thời vận hành theo hai nhịp: cập nhật gia tăng để kịp thời tiếp nhận bằng chứng mới, còn tái tổ chức định kỳ quay lại toàn bộ tri thức và dữ liệu gốc để khử trùng lặp, loại bỏ nội dung cũ, hợp nhất, sắp xếp lại cấu trúc, kiểm tra thiếu sót và giới hạn phạm vi áp dụng. Dù tri thức được biểu diễn bằng Markdown hay Python, cả hai đường đều phải để Proposer Agent gửi diff dựa trên bằng chứng thô và một Reviewer Agent khác nguồn kiểm duyệt độc lập; chỉ sau khi được duyệt mới hợp nhất PR và xây dựng lại chỉ mục dẫn xuất.
 
 Chương này và chương trước đều xử lý vấn đề “ngữ cảnh”—một chương trong một phiên, chương kia xuyên nhiều phiên. Phần chính được kết tinh trong chương này là tri thức khai báo về người dùng và thế giới; Chương 8 sẽ dùng lại cùng hạ tầng trích xuất và truy xuất, nhưng đối tượng của nó là tri thức hành vi được nâng đỡ bởi thành công hoặc thất bại khi chạy, tức “trong điều kiện nào thì nên làm gì”. Chương tiếp theo chuyển sang “công cụ”: cách Agent tương tác với thế giới bên ngoài qua công cụ, bao gồm thiết kế công cụ, tiêu chuẩn tương tác MCP và kiến trúc hướng sự kiện.
+
+## Skeleton cơ chế
+
+Các skeleton sau chỉ tách ra quan hệ điều khiển được bàn trong chương.
+
+### Vòng đời memory
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
+### Log chỉ-ghi-thêm và checkpoint
+
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+### Trạng thái người dùng có kiểu
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
+```
+
+### Gộp xác định
+
+```python
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
+```
+
+### Phát hiện xung đột
+
+```python
+def check_drug_allergy(profile):
+    for medication in profile.current_medications:
+        for allergy in profile.allergies:
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
+```
+
+### Thực thi ràng buộc
+
+```python
+def check():
+    for trip in state.trips:
+        if trip.is_international:
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
+            if days < 180:
+                alert("passport expires too soon", trip, days)
+```
+
+### Pipeline RAG lai
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
+
+Giữ ranh giới rõ ràng: quan sát và bằng chứng đến từ môi trường, còn Harness quyết định hành động nào được phép thực thi.
 
 ## Câu hỏi tư duy
 

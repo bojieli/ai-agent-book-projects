@@ -32,7 +32,7 @@
 
 **Agent 的軌跡**：
 
-```
+```text
 使用者：我想退掉 3 天前買的那個耳機，訂單號 12345。（今天是 2026-04-10）
 
 Agent（思考）：使用者要退款，需要先查詢訂單資訊。
@@ -786,6 +786,46 @@ Agent 產品需要從第一天就設計特性開關（Feature Flag）基礎設�
 從第一章引入的 Harness 工程視角看，本章的評估方法論是 Harness 中「驗證」功能的系統化實現，而「從 Benchmark 報告到系統改進」的閉環則是 Harness 迭代最佳化的核心機制。本章回答「如何可靠地測量」；第八章將在此基礎上回答「如何把多維軌跡評價轉化為可執行、可回滾的系統更新」。
 
 本章建立的評估體系不僅服務於當前系統的最佳化，也為後續兩章提供關鍵基礎。第七章把評估環境和資料轉化為模型後訓練的輸入，透過 SFT 和 RL 將互動策略寫入參數；第八章則把生產軌跡的多維評價轉化為知識、指令、程式或參數的候選更新。
+
+## 機制骨架
+
+下面的骨架只抽出本章討論的控制關係。
+
+### 可重複評估迴圈
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
+### Rubric 評分前的確定性否決
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
+### 配對比較
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
+請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
 
 ## 思考題
 

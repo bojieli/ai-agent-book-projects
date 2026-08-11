@@ -32,7 +32,7 @@ These seven tools constitute a complete yet minimal toolbox that almost any Agen
 
 To see how the seven tools work together, take the simplest of tasks. Suppose the user says, "Help me compile a list of all TODO comments in the project":
 
-```
+```text
 Agent (thinking): Need to find all code lines containing TODO.
 Agent → Grep("TODO", glob="**/*.py")          # Search file content
 Tool returns:
@@ -370,7 +370,7 @@ Following this thread—from the inside out and ultimately back to the Agent its
 
 LLMs are remarkable at understanding and generating natural language, yet fundamentally weak at precise calculation, symbolic manipulation, and strict logical deduction. The reason: a model's thinking is inherently probabilistic and approximate, while mathematical and logical problems demand deterministic, exact answers. One concrete comparison makes the point:
 
-```
+```text
 Problem: "A class has 40 students. 60% take math, 45% take physics, and 25% take both.
           How many students take only physics but not math?"
 

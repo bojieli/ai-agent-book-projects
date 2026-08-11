@@ -332,7 +332,7 @@ Logic cốt lõi của mã này chỉ là vòng lặp while và phán đoán: **
 Hãy cùng theo dõi sự thay đổi của danh sách `messages` qua từng vòng đấu:
 
 **Trạng thái ban đầu (trước cuộc gọi đầu tiên):**
-```
+```text
 messages = [
 { role: "system", content: "Bạn là một trợ lý hữu ích..." }, # Viết bởi nhà phát triển
 { role: "user", content: "Thời gian và thời tiết hiện tại ở Vancouver thế nào?" }, # Đầu vào của người dùng
@@ -340,7 +340,7 @@ messages = [
 ```
 
 **Sau lệnh gọi đầu tiên (mô hình trả về lệnh gọi công cụ):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -351,7 +351,7 @@ messages = [
 ```
 
 **Sau cuộc gọi thứ 2 (mô hình trả về câu trả lời cuối cùng, vòng lặp kết thúc):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -594,7 +594,7 @@ Các phương pháp làm giảm tải nhận thức cho con người cũng có h
 
 Ngược lại, lời nhắc theo quy trình giống như một sổ tay đào tạo nhân viên mới tốt, cung cấp các quy trình vận hành tiêu chuẩn rõ ràng (SOP):
 
-```
+```text
 File Processing Standard Operating Procedure:
 
 Step 1: Validation
@@ -883,7 +883,7 @@ Một chi tiết triển khai quan trọng là: thanh trạng thái Agent ở c�
 
 Sau đây là danh sách các thông báo thực sự được xây dựng bởi khung Agent trong lệnh gọi API thứ N:
 
-```
+```text
 messages: [
   { role: "system",    content: "You are a customer service assistant..." }  ← Fixed (KV Cache cached)
   { role: "user",      content: "Help me cancel my Xfinity plan" }  ← Original user request
@@ -1069,6 +1069,31 @@ Về cơ bản, điều này thay thế việc nén bằng cách ly: quá trình
 Điểm chung của các kỹ thuật này là cách quản lý thông tin rõ ràng và được thiết kế có chủ đích: thay vì để mô hình thụ động tìm manh mối trong một ngữ cảnh khổng lồ, ta chủ động cung cấp trạng thái đã được chắt lọc và cấu trúc hóa. Mọi kỹ thuật trong chương này, từ cách bố trí ngữ cảnh thân thiện với KV Cache đến nén có nhận thức về ngữ cảnh, đều là những thực hành kỹ thuật cụ thể nhằm tối đa hóa hiệu quả thông tin tại ranh giới năng lực hiện tại của mô hình.
 
 Chương này bàn về việc cập nhật trạng thái và suy giảm ngữ cảnh **trong phạm vi một nhiệm vụ**. Chương tiếp theo sẽ vượt ra ngoài việc quản lý thông tin trong một cửa sổ ngữ cảnh để đến với các hệ thống tri thức bền vững xuyên suốt nhiều nhiệm vụ: bộ nhớ người dùng và cơ sở tri thức. Các hệ thống này cho phép Agent tích lũy kinh nghiệm theo thời gian, dần trở thành một trợ lý hiểu người dùng hơn hoặc một chuyên gia có kiến thức chuyên sâu hơn trong một lĩnh vực.
+
+## Skeleton cơ chế
+
+Các skeleton sau chỉ tách ra quan hệ điều khiển được bàn trong chương.
+
+### Xây dựng context trước mỗi request
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+Giữ ranh giới rõ ràng: quan sát và bằng chứng đến từ môi trường, còn Harness quyết định hành động nào được phép thực thi.
 
 ## Câu hỏi tư duy
 

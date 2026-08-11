@@ -82,7 +82,7 @@
 
 வானிலை வினவல் காட்சியை உதாரணமாக எடுத்துக் கொண்டால், API மட்டத்தில் நான்கு-படி செயல்முறையின் எளிமைப்படுத்தப்பட்ட பிரதிநிதித்துவம் பின்வருமாறு:
 
-```
+```text
 Step 1: Declare tools                  Step 2: Model decides to call
 tools: [{                             assistant: {
   name: "get_weather",                  tool_calls: [{
@@ -169,7 +169,7 @@ LLM ஏஜெண்டுகளின் ஒரு தனித்துவம�
 
 சூடோகுறியீடு மூலம் ஒரு ஏஜெண்ட் பாதையின் கட்டமைப்பைப் புரிந்துகொள்வோம்:
 
-```
+```text
 trajectory = [
   {role: "user", content: "Based on the company's quarterly revenue: Q1 2.5M USD, Q2 2.1M EUR, Q3 1.8M GBP, Q4 380M JPY, calculate the company's total annual revenue and average quarterly revenue"},
   
@@ -491,6 +491,45 @@ Harness பொறியியலின் கண்ணோட்டத்தி�
 அடுத்த அத்தியாயம் ஹார்னஸின் மிக மையமான கூறான சூழல் பொறியியலை ஆழமாக ஆராயும். வலுவூட்டல் கற்றலில் ஏஜெண்ட் கருத்தின் கல்வி தோற்றம் மற்றும் பாரம்பரிய RL மற்றும் நவீன LLM ஏஜெண்டுகளுக்கு இடையேயான ஆழமான ஒப்பீடு குறித்து, அத்தியாயம் 7 இல் முறையாக விளக்குவோம்.
 
 பின்வரும் சிந்தனை கேள்விகள் வாசகர்கள் இந்த அத்தியாயத்தின் முக்கிய கருத்துக்களை ஆழமாக ஆராய உதவும் வகையில் வடிவமைக்கப்பட்டுள்ளன; இவற்றுக்கு நிலையான பதில்கள் இல்லை.
+
+## Mechanism skeleton-கள்
+
+இந்த Python பாணி skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன. இவை விளக்க pseudocode; இயக்கக்கூடிய SDK implementation அல்ல. முழு adapters மற்றும் tests அத்தியாயச் சோதனைகளில் உள்ளன. `python` marker என்பது syntax highlighting-க்காக மட்டுமே; இது இயக்கக்கூடிய SDK அல்லது நேரடியாக இயக்கக்கூடிய நிரலைக் குறிக்காது.
+
+### ReAct கட்டுப்பாட்டு சுழற்சி
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
+### Harness உற்பத்தி எல்லை
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
+
+எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
 
 ## சிந்தனை கேள்விகள்
 

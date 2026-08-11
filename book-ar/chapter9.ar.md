@@ -370,9 +370,9 @@ Elements:
 
 يمكن أن يتداخل التخطيط والتنفيذ. بعد تأكيد بادئة آمنة، يرسل المخطط أمراً كاملاً إلى المنفذ بينما يواصل تخطيط الذيل:
 
-~~~json
+```text
 {"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
-~~~
+```
 
 يعيد المنفذ حالات started أو succeeded أو cancelled أو failed. يستخدم المخطط هذه الملاحظات لتحديث الاعتماديات ويفرض backpressure عندما تصبح الطوابير ممتلئة أو قديمة. يقلل التنفيذ المتدفق زمن الوصول إلى أول فعل آمن، لكنه لا يسمح بتنفيذ JSON ناقص أو أفكار نموذج لم يتم التحقق منها.
 
@@ -389,6 +389,57 @@ Elements:
 ## ملخص الفصل
 
 قد تبدو السيناريوهات الثلاثة متباعدة جدًا، لكن عقبتَي زمن الاستجابة وتعدد الوسائط تخيّمان عليها جميعًا. فقد تطور الوكلاء الصوتيون من خطوط معالجة تسلسلية إلى أنظمة شاملة مزدوجة الاتجاه، ومن فصل التفكير السريع عن البطيء إلى التفكير أثناء الكلام. ويقترب استخدام الحاسوب اليوم من الدقة البشرية في معايير مثل OSWorld، لكنه يحتاج إلى خطوات أكثر بكثير مما يحتاج إليه الإنسان، كما تطول مدة كل خطوة مع تقدم المهمة؛ وهي فجوة في الكفاءة لم يظهر لها حل منهجي بعد. أما في الروبوتات التي تنفذ مهام معالجة موجّهة بصريًا، فقد انتقل عنق الزجاجة من العتاد إلى قدرة طبقة التحكم VLA على التعميم عبر المهام، وإن ظل الاستشعار اللمسي والأيدي الماهرة من قيود العتاد غير المحسومة. وينتقل الفصل التالي إلى التعاون بين عدة وكلاء، وهو تحدٍّ من بُعد مختلف.
+
+## هياكل الآليات
+
+تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
+
+### إلغاء البث
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
+### حلقة أمان Computer Use
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+### استباق كتلة الأفعال
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+حافظ على الحد واضحًا: تأتي الملاحظات والأدلة من البيئة، بينما يقرر Harness ما يُسمح بتنفيذه.
 
 ## أسئلة للتأمل
 

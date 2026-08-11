@@ -4,6 +4,16 @@
 
 ← [返回主目錄](../docs/zh-TW/README.md) · 📖 [讀本章正文](../book/chapter10.md)
 
+## 如何閱讀實驗
+
+正文用短小的機制 skeleton 說明控制流；實驗目錄放完整的 SDK 適配、日誌、測試與驗收證據，不需要逐行讀完每個檔案。
+
+- **Starter:** 先讀目標、最小指令與驗收條件；可從 [parallel-web-research](parallel-web-research/);
+- **Builder:** 沿著入口、核心迴圈、狀態／訊息 schema、工具與驗證器閱讀。
+- **Maintainer:** 最後再看測試、證據 manifest、失敗處理、回滾路徑與 provider adapter。
+
+第一次閱讀可先跳過憑證載入、展示層和 provider 相容層；要重現數字時再回來查看。
+
 ## 配套專案
 
 | 編號 | 專案 | 型別 | 一句話說明 |

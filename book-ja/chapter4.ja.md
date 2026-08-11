@@ -554,7 +554,7 @@ Agent がメールをドラフトしている最中にユーザーが割り込�
 
 **Agent ステータスバーの標示**：各イベントの前に明示的な標示を加える。
 
-```
+```text
 [未処理イベント 1/4] Tool result from database_query：...
 [未処理イベント 2/4] User の補足説明：北京地区のデータだけ見て
 [未処理イベント 3/4] システムリマインダー：レポートの締切まであと 30 分
@@ -683,6 +683,70 @@ Agent がメールをドラフトしている最中にユーザーが割り込�
 6 つの実験は基礎からアーキテクチャへと段階的に進みます。実験 4-1 から実験 4-3 は知覚・実行・協調の 3 大基礎ツールセットを構築し、実験 4-4 はメール処理 Agent でイベント駆動を導入し、実験 4-5 は並行実行、割り込みからの復帰、状態管理を実装し、実験 4-6 は大規模なツールライブラリのもとでの能動的なツール発見の価値を検証します。本章で論じたツール設計とアーキテクチャ——MCP プロトコル、設計原則、非同期アーキテクチャ——は、第 8 章の Agent の自己進化の前提です。
 
 次章は「いかにツールを使うか」よりも根本的な問いに答えます。Agent はコードを書くことでツールを**創造**できるのか。Coding Agent にファイルシステムを加えたものは、あらゆる汎用 Agent の最も核心的な基盤です——第 8 章の Agent の自己進化能力の起点でもあります。
+
+## メカニズムの skeleton
+
+以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
+
+### ツール安全ゲート
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### イベントループのルーティング
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### プロアクティブなツール探索
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
 
 ## 演習問題
 

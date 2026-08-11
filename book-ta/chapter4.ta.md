@@ -556,7 +556,7 @@ OpenClaw-இல் session பயனருக்கு வெளிப்பட�
 
 **ஏஜெண்ட் நிலைப் பட்டி குறிப்பான்கள் (Agent Status Bar Markers)**: ஒவ்வொரு நிகழ்வுக்கு முன்பும் தெளிவான குறிப்பான்களைச் சேர்க்கவும்:
 
-```
+```text
 [செயலாக்கப்படாத நிகழ்வு 1/4] database_query இலிருந்து கருவி முடிவு: ...
 [செயலாக்கப்படாத நிகழ்வு 2/4] பயனர் கூடுதல் குறிப்பு: பெய்ஜிங் தரவை மட்டும் பார்க்கவும்
 [செயலாக்கப்படாத நிகழ்வு 3/4] கணினி நினைவூட்டல்: அறிக்கை சமர்ப்பிப்பு காலக்கெடு 30 நிமிடங்களில் உள்ளது
@@ -683,6 +683,70 @@ OpenClaw-இல் session பயனருக்கு வெளிப்பட�
 ஆறு சோதனைகள் அடிப்படைகளிலிருந்து கட்டமைப்பு வரை படிப்படியாக முன்னேறுகின்றன: சோதனைகள் 4-1 முதல் 4-3 வரை உணர்தல், செயலாக்கம் மற்றும் ஒத்துழைப்பு ஆகிய மூன்று அடிப்படைக் கருவித் தொகுப்புகளை உருவாக்குகின்றன; சோதனை 4-4 மின்னஞ்சல் கையாளும் Agent மூலம் நிகழ்வு-உந்துதல் செயலாக்கத்தை அறிமுகப்படுத்துகிறது; சோதனை 4-5 இணைச் செயலாக்கம், குறுக்கீட்டிலிருந்து மீட்பு மற்றும் நிலை மேலாண்மையைச் செயல்படுத்துகிறது; சோதனை 4-6 பெரிய அளவிலான கருவி நூலகங்களில் முனைப்பான கருவி கண்டுபிடிப்பின் மதிப்பைச் சரிபார்க்கிறது. **ஏற்கனவே உள்ள கருவிகளை** விவரிப்பது, கண்டறிவது மற்றும் பாதுகாப்பாகப் பயன்படுத்துவது வரை இந்த அத்தியாயத்தின் எல்லை அமைகிறது; தோல்விகளும் மீண்டும் மீண்டும் நிகழும் செயல்பாடுகளும் எப்போது கருவிகளை உருவாக்க, மாற்ற, மறுசரிபார்க்க அல்லது கைவிட வேண்டும் என்பதைக் குறித்து Agent எவ்வாறு தீர்மானிக்கிறது என்பதை அத்தியாயம் 8 விவாதிக்கிறது.
 
 அடுத்த அத்தியாயம் “கருவிகளை எவ்வாறு பயன்படுத்துவது” என்பதை விட அடிப்படையான ஒரு கேள்விக்கு விடையளிக்கிறது: குறியீடு எழுதுவதன் மூலம் Agent கருவிகளை **உருவாக்க** முடியுமா? Coding Agent மற்றும் கோப்பு முறைமை ஆகியவை அனைத்து பொது நோக்க Agent-களுக்கும் மிக முக்கியமான அடித்தளமாக இருப்பதுடன், அத்தியாயம் 8 இல் கட்டுப்படுத்தப்பட்ட அமைப்புச் சுயமாற்றத்தை விவாதிப்பதற்கான செயலாக்கத் திறனையும் வழங்குகின்றன.
+
+## Mechanism skeleton-கள்
+
+கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
+
+### கருவி பாதுகாப்பு வாயில்
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### Event-loop routing
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### Proactive tool discovery
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
 
 ## சிந்தனை கேள்விகள்
 

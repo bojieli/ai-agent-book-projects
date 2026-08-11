@@ -184,7 +184,7 @@ Anthropic மூன்று வகையான கருவிகளை வர�
 3. ஒவ்வொரு ஊடாடும் உறுப்புக்கும் ஒரு தனித்துவமான ID ஐக் குறித்து, ஸ்கிரீன்ஷாட்டில் எல்லைப் பெட்டிகளை (bounding boxes) வரைதல்
 4. ஒரே நேரத்தில் ஒவ்வொரு ID க்கும் தொடர்புடைய உறுப்பை விவரிக்கும் ஒரு உரை பட்டியலை உருவாக்குதல்
 
-```
+```text
 Screenshot: [Key elements in the image are annotated with IDs like [1], [2], [3], [4]]
 
 Elements:
@@ -367,9 +367,9 @@ LLM அனுமானத்தின் (inference) தாமதம் கா�
 
 திட்டமிடலும் செயல்படுத்தலும் ஒரே நேரத்தில் நடைபெறலாம். பாதுகாப்பான தொடக்கப்பகுதி தயாரானதும், திட்டமிடுபவர் மீதிப் பகுதியைத் திட்டமிடிக்கொண்டே முழுமையான command-ஐ executor-க்கு அனுப்புகிறார்:
 
-~~~json
+```text
 {"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
-~~~
+```
 
 Executor started, succeeded, cancelled அல்லது failed என நிலையைத் திருப்புகிறது. வரிசை நிரம்பியிருந்தாலோ கட்டளைகள் பழையதாகிவிட்டாலோ planner backpressure பயன்படுத்துகிறது. ஸ்ட்ரீமிங் முதல் பாதுகாப்பான செயலுக்கான காத்திருப்பை குறைக்கிறது; முழுமையற்ற JSON அல்லது சரிபார்க்காத மாதிரி சிந்தனையைச் செயல்படுத்த அனுமதிப்பதில்லை.
 
@@ -386,6 +386,57 @@ OpenVLA projector-ஐ மட்டும் புதுப்பித்து
 ## அத்தியாயச் சுருக்கம்
 
 மூன்று காட்சிகளும் மேலோட்டமாக மிகவும் வேறுபட்டதாகத் தோன்றினாலும், தாமதம் (latency) மற்றும் பல்முறைமை (multimodality) ஆகிய இரண்டு தடைகளும் எப்போதும் நிலவுகின்றன. குரல், ஒரு தொடர் குழாய் (serial pipeline) அமைப்பிலிருந்து எண்ட்-டு-எண்ட் (end-to-end) மற்றும் முழு-இருவழி (full-duplex) ஆகவும், தனித்தனி வேக மற்றும் மெதுவான சிந்தனையிலிருந்து "பேசும்போதே சிந்தித்தல்" (thinking while speaking) ஆகவும் உருவெடுத்துள்ளது; OSWorld போன்ற அளவுகோல்களில் (benchmarks) கணினி பயன்பாட்டின் (Computer Use) துல்லியம் மனித அளவை நெருங்கி வருகிறது, ஆனால் இதற்கு மனிதர்களை விட கணிசமாக அதிக படிகள் தேவைப்படுகின்றன, மேலும் பணி நீளும்போது ஒவ்வொரு படியும் மேலும் மெதுவாகிறது—இந்தத் திறன் இடைவெளிக்கு (efficiency gap) இன்னும் முறையான தீர்வு இல்லை; காட்சி வழிகாட்டுதலுடன் கூடிய கையாளுதல் பணிகளில் (visually-guided manipulation tasks) ரோபோக்களுக்கு, தடையானது வன்பொருளிலிருந்து VLA கட்டுப்பாட்டு அடுக்கின் (VLA control layer) குறுக்கு-பணி பொதுமைப்படுத்தல் திறனுக்கு (cross-task generalization capability) மாறியுள்ளது (தொட்டுணர்வு உணர்தல் (tactile sensing) மற்றும் திறமையான கைகள் (dexterous hands) ஆகியவை தீர்க்கப்படாத வன்பொருள் வரம்புகளாகவே உள்ளன). அடுத்த அத்தியாயம், பல முகவர்களுக்கு (multiple agents) இடையேயான ஒத்துழைப்பின் மீது கவனத்தைத் திருப்பும், இது வேறுபட்ட பரிமாணத்தின் சவாலாகும்.
+
+## Mechanism skeleton-கள்
+
+கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
+
+### Streaming cancellation
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
+### Computer Use பாதுகாப்பு சுழற்சி
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+### Action-chunk preemption
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
 
 ## சிந்தனை கேள்விகள்
 

@@ -333,7 +333,7 @@ while True:
 讓我們跟蹤 `messages` 列表在每一輪的變化：
 
 **初始狀態（第 1 次呼叫前）：**
-```
+```text
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # 開發者寫的
   { role: "user",    content: "What's the current time and weather in Vancouver?" },  # 使用者輸入
@@ -341,7 +341,7 @@ messages = [
 ```
 
 **第 1 次呼叫後（模型返回工具呼叫）：**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -352,7 +352,7 @@ messages = [
 ```
 
 **第 2 次呼叫後（模型返回最終回覆，迴圈結束）：**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -598,7 +598,7 @@ Markdown 在保持可讀性的同時提供了輕量級的結構，特別適合�
 
 相比之下，流程驅動的提示詞就像一份優秀的新員工教育訓練手冊，提供了清晰的標準操作流程（SOP）：
 
-```
+```text
 File Processing Standard Operating Procedure:
 
 Step 1: Validation
@@ -889,7 +889,7 @@ Agent 狀態列正是透過顯式地操縱注意力分配來解決這一問題�
 
 以下是 Agent 框架在第 N 次 API 呼叫時實際建構的訊息列表：
 
-```
+```text
 messages: [
   { role: "system",    content: "You are a customer service assistant..." }  ← Fixed (KV Cache cached)
   { role: "user",      content: "Help me cancel my Xfinity plan" }  ← Original user request
@@ -1073,6 +1073,31 @@ Agent 狀態列技術有一個實用的優點：所有元資訊都以人類可�
 這些技術的共同點是顯式、工程化的資訊管理：不要讓模型被動地在海量上下文中尋找線索，而要主動提供經過提煉的結構化狀態。從 KV Cache 友善的上下文佈局到上下文感知壓縮，本章展示的每一項技術，都是在當前模型能力邊界下，以工程手段最大化資訊利用效率。
 
 本章處理的是**一次任務之內**的狀態更新與上下文腐化。下一章將從上下文視窗內的資訊管理，延伸到跨越任務的持久化知識體系——使用者記憶和知識庫，使 Agent 能在實踐中不斷積累經驗，逐步成為更瞭解使用者的助手，或具備更多領域知識的領域專家。
+
+## 機制骨架
+
+下面的骨架只抽出本章討論的控制關係。
+
+### 每次請求前的上下文建構
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
 
 ## 思考題
 

@@ -82,7 +82,7 @@ Tool calling berjalan dalam empat langkah: pertama, context memberi tahu model t
 
 Untuk kueri cuaca, representasi sederhana dari proses empat langkah di level API adalah sebagai berikut:
 
-```
+```text
 Step 1: Declare tools                  Step 2: Model decides to call
 tools: [{                             assistant: {
   name: "get_weather",                  tool_calls: [{
@@ -170,7 +170,7 @@ Pertimbangkan contoh konkret—mengagregasi pendapatan lintas berbagai mata uang
 
 Berikut adalah struktur trajectory, dalam pseudocode:
 
-```
+```text
 trajectory = [
   {role: "user", content: "Based on the company's quarterly revenue: Q1 2.5M USD, Q2 2.1M EUR, Q3 1.8M GBP, Q4 380M JPY, calculate the company's total annual revenue and average quarterly revenue"},
 
@@ -492,6 +492,45 @@ Bab ini telah membangun kerangka kerja yang mengutamakan praktik (practice-first
 Bab berikutnya akan membahas komponen Harness yang paling sentral secara mendalam: context engineering. Bab 7 membahas akar akademis dari konsep Agent di dalam reinforcement learning dan membandingkan RL tradisional dengan LLM Agent modern.
 
 Pertanyaan pemikiran di bawah ini dirancang untuk membawa konsep-konsep inti bab ini satu tingkat lebih dalam; tidak ada jawaban standar.
+
+## Skeleton mekanisme
+
+Skeleton bergaya Python berikut hanya menyoroti hubungan kontrol dalam bab ini. Ini pseudocode penjelasan, bukan implementasi SDK yang dapat dijalankan; adapter dan pengujian lengkap tetap berada di eksperimen bab. Penanda `python` hanya digunakan untuk penyorotan sintaks; ini bukan berarti SDK yang siap dijalankan atau program yang dapat dieksekusi langsung.
+
+### Loop kontrol ReAct
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
+### Batas produksi Harness
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
+
+Pertahankan batasnya: observasi dan bukti berasal dari lingkungan, sedangkan Harness menentukan tindakan yang boleh dieksekusi.
 
 ## Pertanyaan Pemikiran
 

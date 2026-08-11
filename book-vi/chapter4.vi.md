@@ -559,7 +559,7 @@ Sự can thiệp có thể xảy ra ở hai cấp độ:
 
 **Điểm đánh dấu thanh trạng thái Agent**: Thêm điểm đánh dấu rõ ràng trước mỗi sự kiện:
 
-```
+```text
 [Sự kiện chưa được xử lý 1/4] Kết quả công cụ từ cơ sở dữ liệu_query:...
 [Sự kiện chưa được xử lý 2/4] Giải thích bổ sung của người dùng: Chỉ nhìn vào dữ liệu ở khu vực Bắc Kinh
 [Sự kiện chưa xử lý 3/4] Nhắc nhở hệ thống: Thời hạn báo cáo còn 30 phút nữa
@@ -689,6 +689,70 @@ Về kiến trúc không đồng bộ, cơ chế tự động hóa tích hợp c
 Sáu thử nghiệm tiến triển dần dần từ cơ bản đến kiến trúc: Thử nghiệm 4-1 đến Thử nghiệm 4-3 xây dựng ba bộ công cụ cơ bản về nhận thức, thực thi và cộng tác. Thử nghiệm 4-4 sử dụng xử lý email. Agent giới thiệu ổ sự kiện. Thử nghiệm 4-5 triển khai thực thi song song, khôi phục gián đoạn và quản lý trạng thái. Thử nghiệm 4-6 xác minh giá trị của khám phá công cụ tích cực trong thư viện công cụ quy mô lớn. Thiết kế công cụ và kiến trúc được thảo luận trong chương này—giao thức MCP, nguyên tắc thiết kế và kiến trúc không đồng bộ—là điều kiện tiên quyết cho quá trình tự phát triển của Agent trong Chương 8.
 
 Chương tiếp theo sẽ trả lời một câu hỏi cơ bản hơn "cách sử dụng công cụ": Agent có thể tạo công cụ bằng cách viết mã không? Coding Agent cộng với hệ thống tệp là nền tảng cốt lõi của tất cả Agent phổ quát - và cũng là điểm khởi đầu cho khả năng tự tiến hóa của Chương 8 Agent.
+
+## Skeleton cơ chế
+
+Các skeleton sau chỉ tách ra quan hệ điều khiển được bàn trong chương.
+
+### Cổng an toàn tool
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### Định tuyến event loop
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### Khám phá tool chủ động
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+Giữ ranh giới rõ ràng: quan sát và bằng chứng đến từ môi trường, còn Harness quyết định hành động nào được phép thực thi.
 
 ## Câu hỏi tư duy
 

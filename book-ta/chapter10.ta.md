@@ -471,7 +471,7 @@ A2A-வின் நிலைப்பாட்டை அத்தியாய�
 
 ஒரு குறிப்பிட்ட சூழ்நிலையைக் கவனியுங்கள். ஒரு மொழிபெயர்ப்பு அமைப்பு மேலாளர் முறையைப் பயன்படுத்துகிறது (சோதனை 10-2 இன் கட்டமைப்பு), அங்கு மேலாளர் ஒரு தொழில்நுட்ப புத்தகத்தின் அத்தியாயங்களை பல மொழிபெயர்ப்பு ஏஜெண்டுகளுக்கு ஒதுக்குகிறது:
 
-```
+```text
 சொற்களஞ்சிய ஏஜெண்ட்: "reasoning" ஐ "推理" என மொழிபெயர்க்கிறது, ஆனால் சீன மொழியில் "推理" பொதுவாக inference க்கு பயன்படுத்தப்படுகிறது, இது தெளிவின்மையை உருவாக்குகிறது
         ↓ glossary.json க்கு எழுதுகிறது
 மொழிபெயர்ப்பு ஏஜெண்ட் A: அத்தியாயம் 2 ஐ மொழிபெயர்க்கிறது, சொற்களஞ்சியத்திலிருந்து படிக்கிறது, "reasoning tokens" ஐ "推理 tokens" என மொழிபெயர்க்கிறது
@@ -638,6 +638,83 @@ Pinchwork மற்றும் RentAHuman ஆகியவை சேர்ந்
 ## அத்தியாயச் சுருக்கம்
 
 பல-Agent ஒத்துழைப்பு உண்மையில் பயனுள்ளதாக இருப்பது, உருவாக்கும் நேரத்தில் ஒரு Agent பெற முடியாத புதிய தகவலை—செயல்படுத்தல் முடிவுகள், காட்சிப் பின்னூட்டம் அல்லது வெளிப்புறக் கருவி சரிபார்ப்பு—அறிமுகப்படுத்தும் போது மட்டுமே. வடிவமைப்பு பகிரப்பட்ட அல்லது தனிமைப்படுத்தப்பட்ட சூழலையும், இணை, மேலாளர் அல்லது பரவலாக்கப்பட்ட இடவியலையும் தேர்ந்தெடுக்க வேண்டும். கட்டமைக்கப்பட்ட handoff தொகுப்புகள், அனுமதி எல்லைகள், சுயாதீனச் சரிபார்ப்பு, வரவு செலவுத் திட்டங்கள் மற்றும் ரத்து நடைமுறைகள் அடிப்படைத் தவறு-தாங்கு வளையத்தை உருவாக்குகின்றன. நீண்டகால திறந்த தொடர்புகளில் சமூக உறவுகள், விதிமுறைகள், சந்தைகள் மற்றும் உத்திகள் தோன்றலாம்; தகவல் ஓட்டம், திறன் பகிர்வு, பிழை கண்டறிதல் ஆகியவற்றை வடிவமைப்பதே மையப் பொறியியல் பணியாகும்.
+
+## Mechanism skeleton-கள்
+
+கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
+
+### செய்தி envelope மற்றும் worker வாழ்க்கைச் சுழற்சி
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
+### Proposer–Reviewer சுழற்சி
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
+### முதல் சரிபார்க்கப்பட்ட parallel வெற்றியாளர்
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
+
+### Decentralized handoff protocol
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
+
+எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
 
 ## சிந்தனை கேள்விகள்
 

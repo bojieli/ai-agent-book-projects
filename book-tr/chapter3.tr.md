@@ -20,7 +20,7 @@ Gerçekten kişiselleştirilmiş, sürekli bir hizmet sunan bir AI Agent inşa e
 
 Bu süreci somut bir örnekle anlayalım. Bir kullanıcı ve Agent'ın şu konuşmayı yaptığını varsayalım:
 
-```
+```text
 Kullanıcı: Gelecek Cuma Tokyo'ya bir uçuş ayırtmama yardım et. Pencere kenarı
       koltukları tercih ederim ve vejetaryenim, bu yüzden özel bir yemeğe ihtiyacım olacak.
 Agent: Gelecek Cuma için Tokyo'ya uçuşları arayacağım...
@@ -32,7 +32,7 @@ Kullanıcı: Evet, ve United MileagePlus numaramı kullan: 12345678.
 
 Bu konuşma bittikten sonra, Agent çerçevesi diyaloğu analiz etmek ve uzun vadede hatırlanmaya değer bilgiyi çıkarmak için özel bir LLM çağırır:
 
-```
+```text
 Çıkarılan bellekler:
 - Kullanıcı pencere kenarı koltukları tercih ediyor (tercih)
 - Kullanıcı vejetaryen, uçuşlarda özel yemeğe ihtiyaç duyuyor (diyet kısıtlaması)
@@ -515,7 +515,7 @@ Bu yüzden, pratikte önerilen strateji **katmanlı tamamlayıcılıktır**: tem
 
 RAPTOR ve GraphRAG, akademinin bilgi organizasyonu keşifleridir; ByteDance'in Volcano Engine'inin açık kaynak kıldığı [OpenViking](https://github.com/volcengine/OpenViking), üçüncü bir felsefe önerir: **dosya sistemi paradigması**. Context'i ne düz vektör parçaları ne de graf düğümleri olarak ele alır. Bunun yerine, tüm context'i—bellekleri, kaynakları, becerileri—her biri benzersiz bir URI'ye sahip sanal bir dosya sistemi içindeki dizinlere ve dosyalara eşler:
 
-```
+```text
 viking://
 ├── resources/          # Dışsal bilgi: dokümanlar, kod tabanları, web sayfaları
 ├── user/memories/      # Kullanıcı bellekleri: tercihler, alışkanlıklar
@@ -721,6 +721,105 @@ Bu bölüm, AI Agent'ın kalıcı bellek sistemini iki ölçekte inşa etti: bir
 **Bilgi güncelleme** için sistemin iki ritme ihtiyacı vardır: artımlı güncellemeler yeni kanıtı hızla alır; dönemsel düzenleme ise tekilleştirmek, kullanım dışı bırakmak, birleştirmek, yeniden yapılandırmak, ihmalleri kontrol etmek ve senaryoları nitelemek için eksiksiz bilgiye ve ham veriye döner. Bilgi Markdown veya Python olarak temsil edilsin, Proposer Agent kanıta dayalı bir diff sunmalı ve heterojen Reviewer Agent bunu bağımsız olarak denetlemelidir. PR ancak onaydan sonra birleştirilmeli, türetilmiş indeksler de bundan sonra yeniden oluşturulmalıdır.
 
 Bu bölüm ve önceki bölüm Context'i ele alır—biri tek bir oturum içinde, diğeri birden fazla oturum boyunca. Bu bölümün öncelikle pekiştirdiği şey, kullanıcılar ve dünya hakkındaki bildirimsel bilgidir. Bölüm 8 aynı çıkarım ve retrieval altyapısını yeniden kullanır, ancak onu başarılı ve başarısız çalıştırmalarla desteklenen davranış bilgisine uygular: “Agent hangi koşullarda ne yapmalıdır?” Bir sonraki bölüm Tools'a döner: Agent'ların araç tasarımı, MCP birlikte çalışabilirlik standardı ve olay güdümlü mimariler aracılığıyla dış dünyayla nasıl etkileşime girdiğini inceler.
+
+## Mekanizma skeleton'ları
+
+Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
+
+### Bellek yaşam döngüsü
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
+### Yalnızca eklemeli günlük ve checkpoint
+
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+### Tipli kullanıcı durumu
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
+```
+
+### Deterministik toplama
+
+```python
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
+```
+
+### Çakışma tespiti
+
+```python
+def check_drug_allergy(profile):
+    for medication in profile.current_medications:
+        for allergy in profile.allergies:
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
+```
+
+### Kısıtların uygulanması
+
+```python
+def check():
+    for trip in state.trips:
+        if trip.is_international:
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
+            if days < 180:
+                alert("passport expires too soon", trip, days)
+```
+
+### Hibrit RAG hattı
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
+
+Sınırı açık tutun: gözlemler ve kanıt ortamdan gelir, Harness ise hangi eylemin yürütülebileceğine karar verir.
 
 ## Düşünce Soruları
 

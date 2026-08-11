@@ -26,6 +26,16 @@ Lộ trình học tương ứng một-một với các chương của sách, tri
 
 - **Chương 9–10 · Phần mở rộng và cộng tác**: chương 9 mở rộng cảm nhận và hành động từ văn bản sang giọng nói, GUI và thế giới vật lý; chương 10 xử lý nhiệm vụ phức tạp thông qua phân công cộng tác đa Agent. **Insight then chốt**: mọi quyết định thiết kế trong hệ thống đa Agent đều có thể tìm thấy đối ứng trong ba yếu tố của đơn Agent.
 
+## Phân công giữa văn bản và thí nghiệm
+
+Cuốn sách không phải hướng dẫn từng bước cho một SDK cụ thể. Pseudocode và skeleton chỉ ra luồng trạng thái, điểm dừng và ranh giới kiểm chứng; thí nghiệm cung cấp triển khai, adapter, test, log và bằng chứng.
+
+| Tầng | Đọc trước | Tạm bỏ qua | Câu hỏi mà nó trả lời |
+| :--: | --- | --- | --- |
+| **Starter** | README dự án: mục tiêu, lệnh tối thiểu và điều kiện nghiệm thu; skeleton tương ứng trong sách | thông tin xác thực, UI, adapter provider và log thô dài | Thí nghiệm này nhằm chứng minh cơ chế nào? |
+| **Builder** | điểm vào, vòng lặp lõi, schema state/message, tool và verifier | các lớp tương thích/triển khai không liên quan đến cơ chế | Biến nào đã làm thay đổi hành vi? |
+| **Maintainer** | test, xử lý lỗi, định dạng bằng chứng, manifest/hash và đường rollback | chi tiết bên thứ ba chỉ cần khi sửa thí nghiệm | Kết quả có tái lập được không và lỗi có được ghi nhận trung thực không? |
+
 ### Phân cấp độ khó
 
 - **Nhập môn** (Chương 1–2): phù hợp với người mới bắt đầu, hiểu khái niệm cơ bản
@@ -41,4 +51,3 @@ Lộ trình học tương ứng một-một với các chương của sách, tri
 3. **So sánh thí nghiệm**: nhiều dự án chứa nghiên cứu ablation và thí nghiệm đối chứng; hãy dùng so sánh để hiểu sâu hơn
 4. **Học tăng dần**: bắt đầu từ dự án đơn giản rồi dần đi sâu vào hệ thống phức tạp
 5. **Chú ý giao thức**: các dự án MCP server ở chương 4 minh họa giao thức công cụ chuẩn hóa, đây là chìa khóa để xây dựng Agent có thể mở rộng
-

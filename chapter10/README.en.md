@@ -4,6 +4,16 @@
 
 ← [Back to main README](../docs/en/README.md) · 📖 [Read chapter text](../book-en/chapter10.md)
 
+## How to Read the Experiments
+
+The prose uses short mechanism skeletons to explain control flow; the experiment directory contains complete SDK adapters, logs, tests, and acceptance evidence. You do not need to read every file line by line.
+
+- **Starter:** Start with the goal, minimum command, and acceptance conditions; begin with [parallel-web-research](parallel-web-research/);
+- **Builder:** Follow the entry point, core loop, state/message schema, tools, and verifier.
+- **Maintainer:** Then read tests, evidence manifests, failure handling, rollback paths, and provider adapters.
+
+On a first pass, skip credential loading, presentation code, and provider-compatibility layers; return when reproducing a number.
+
 ## Companion Projects
 
 | Exp. | Project | Type | Description |

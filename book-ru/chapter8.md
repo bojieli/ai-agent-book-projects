@@ -389,6 +389,63 @@ Agent получает обучающий сигнал из взаимодейс
 
 Непрерывная эволюция должна разделять онлайн-исполнение и офлайн-обучение: онлайн фиксируются свидетельства, офлайн создаются и проверяются кандидаты, после чего они постепенно выпускаются, упорядочиваются или откатываются. Этот цикл надёжнее всего для автоматически проверяемых результатов; в открытых задачах с неясной целью и запаздывающей обратной связью человек по-прежнему участвует в постановке проблемы и определении критериев оценки.
 
+## Скелеты механизмов
+
+Следующие скелеты выделяют управляющие связи, обсуждаемые в главе.
+
+### Трёхуровневая проверка траектории
+
+```python
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
+
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
+else:
+    emit_structured_diagnosis(outcome, process, quality)
+```
+
+### Маршрутизация опыта в способность
+
+```python
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
+```
+
+### Проверенный выпуск и откат
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
+```
+
+### Консолидация в период простоя
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
+Граница должна оставаться явной: наблюдения и доказательства приходят из среды, а Harness решает, что разрешено выполнить.
+
 ## Вопросы для размышления
 
 1. ★★ Один документ опыта подтверждается тремя успешными и одной неуспешной траекторией. Неудача произошла на более новой версии API. Как системе определить, опровергнут ли опыт или изменились условия его применимости?

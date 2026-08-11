@@ -386,9 +386,9 @@ Anthropic은 완전한 상호작용 능력을 이루는 세 가지 도구 유형
 
 계획과 실행은 겹쳐서 진행할 수 있습니다. 안전한 접두부가 완성되면 계획기는 나머지 부분을 계속 계획하면서 완전한 명령을 실행기에 스트리밍합니다. 명령 이벤트는 완전하고 감사 가능해야 합니다.
 
-~~~json
+```text
 {"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
-~~~
+```
 
 실행기는 `started`, `succeeded`, `cancelled`, `failed` 상태를 보고합니다. 계획기는 이 관찰로 의존성을 갱신하고, 큐가 오래되었거나 가득 차면 backpressure를 적용합니다. 스트리밍은 첫 번째 안전한 행동까지의 시간을 줄여 주지만, 불완전한 JSON이나 검증되지 않은 모델의 생각을 실행해도 된다는 뜻은 아닙니다.
 
@@ -400,9 +400,9 @@ OpenVLA는 문자 그대로 projector만 업데이트해 학습한 것이 아닙
 
 월드 모델은 행동 가능한 전이를 학습합니다.
 
-~~~text
+```text
 상태 + 후보 행동 -> 예측된 미래 상태 -> 행동을 선택하고 검증
-~~~
+```
 
 이는 V-JEPA만을 뜻하지 않습니다. 잠재 예측 모델(V-JEPA 2), 상호작용형 생성 모델(Genie 3, Cosmos), World-Action Model(GeniWorld, Robust-WAM), 라벨 없는 동영상에서 latent action을 학습하는 모델(LAWM-3D), 모델 기반 RL(Dreamer, MuZero)까지 포함하는 더 넓은 계열입니다. 대규모 관찰에서 학습하고, 실행 전에 반사실적 행동의 결과를 시험하며, 공유 동역학과 embodiment별 제어를 분리하고, 예측과 현실이 어긋나면 다시 계획할 수 있다는 점이 핵심 가치입니다.
 
@@ -411,6 +411,57 @@ OpenVLA는 문자 그대로 projector만 업데이트해 학습한 것이 아닙
 ## 장 요약
 
 겉으로는 세 상황이 더 다를 수 없을 만큼 달라 보이지만 지연 시간과 멀티모달리티라는 두 장애물이 모두를 따라다닙니다. 음성 에이전트는 직렬 파이프라인에서 종단 간·전이중 시스템으로, 분리된 빠른 사고와 느린 사고에서 말하면서 생각하기로 발전했습니다. 컴퓨터 사용은 OSWorld 같은 벤치마크에서 사람의 정확도에 다가가고 있지만 사람보다 훨씬 많은 단계가 필요하고 업무가 진행될수록 각 단계가 오래 걸립니다. 이 효율 격차에는 아직 체계적인 해법이 없습니다. 시각적 안내에 따라 물체를 조작하는 로봇에서는 병목이 하드웨어에서 VLA 제어 계층의 업무 간 일반화 능력으로 이동했습니다(촉각 감지와 능숙한 손은 해결되지 않은 하드웨어 한계로 남아 있습니다). 다음 장에서는 다른 차원의 과제인 여러 에이전트의 협업을 살펴봅니다.
+
+## 메커니즘 skeleton
+
+다음 skeleton은 이 장에서 다루는 제어 관계만 분리해 보여 줍니다.
+
+### 스트리밍 취소
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
+### Computer Use 안전 루프
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+### 액션 청크 선점
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+경계를 명확히 유지하세요. 관찰과 증거는 환경에서 오고, Harness가 실행 가능한 동작을 결정합니다.
 
 ## 생각해 볼 문제
 

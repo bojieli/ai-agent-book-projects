@@ -20,7 +20,7 @@ At its core, a user memory system is an active, continuous learning process aime
 
 Let's understand this process with a concrete example. Suppose a user and an Agent have the following conversation:
 
-```
+```text
 User: Help me book a flight to Tokyo next Friday. I prefer window seats
       and I'm vegetarian, so I'll need a special meal.
 Agent: I'll search for flights to Tokyo for next Friday...
@@ -32,7 +32,7 @@ User: Yes, and use my United MileagePlus number 12345678.
 
 After this conversation ends, the Agent framework calls a dedicated LLM to analyze the dialogue and extract information worth remembering long-term:
 
-```
+```text
 Extracted memories:
 - User prefers window seats (preference)
 - User is vegetarian, needs special meals on flights (dietary restriction)
@@ -501,7 +501,7 @@ Therefore, the recommended strategy in practice is **a layered, complementary de
 
 RAPTOR and GraphRAG represent the academic community's explorations of knowledge organization; [OpenViking](https://github.com/volcengine/OpenViking), open-sourced by ByteDance's Volcano Engine, proposes a third philosophy: the **filesystem paradigm**. It treats context neither as flat vector fragments nor as graph nodes. Instead, it maps all context—memories, resources, skills—into directories and files within a virtual filesystem, each with a unique URI:
 
-```
+```text
 viking://
 ├── resources/          # External knowledge: documents, codebases, web pages
 ├── user/memories/      # User memories: preferences, habits
@@ -699,6 +699,105 @@ For **knowledge understanding**, we moved past flat document chunking: RAPTOR's 
 For **knowledge updating**, the system needs two rhythms: incremental updates promptly absorb new evidence, while periodic reorganization returns to the complete knowledge and raw data to deduplicate, retire, merge, restructure, check omissions, and qualify scenarios. Whether the knowledge is represented as Markdown or Python, both paths should have a Proposer Agent submit an evidence-grounded diff and a heterogeneous Reviewer Agent audit it independently. Only after approval should the PR merge and the derived indexes be rebuilt.
 
 This chapter and the previous one both address the "context" problem—one within a single session, the other across multiple sessions. This chapter primarily distills declarative knowledge about users and the world. Chapter 8 will reuse the same extraction and retrieval infrastructure for behavioral knowledge supported by successful and failed runs: what should be done under which conditions. The next chapter turns to "tools": how Agents interact with the external world through tools, including tool design, the MCP interoperability standard, and event-driven architecture.
+
+## Mechanism skeletons
+
+The following sketches isolate the control relationships discussed in this chapter.
+
+### Memory lifecycle
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
+### Append-only log and checkpoint
+
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+### Typed user state
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
+```
+
+### Deterministic aggregation
+
+```python
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
+```
+
+### Conflict detection
+
+```python
+def check_drug_allergy(profile):
+    for medication in profile.current_medications:
+        for allergy in profile.allergies:
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
+```
+
+### Constraint enforcement
+
+```python
+def check():
+    for trip in state.trips:
+        if trip.is_international:
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
+            if days < 180:
+                alert("passport expires too soon", trip, days)
+```
+
+### Hybrid RAG pipeline
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
+
+Keep the boundary explicit: observations and evidence come from the environment, while the Harness decides what may be executed.
 
 ## Thought Questions
 

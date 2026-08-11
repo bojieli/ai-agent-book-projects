@@ -32,7 +32,7 @@ Estas siete herramientas constituyen una caja de herramientas completa pero extr
 
 Veamos cómo se coordinan estas siete herramientas mediante la tarea más sencilla. Supongamos que el usuario dice: "Ayúdame a organizar todos los comentarios TODO del proyecto en una lista":
 
-```
+```text
 Agente (Pensamiento): Necesito encontrar todas las líneas de código que contengan TODO.
 Agente → Grep("TODO", glob="**/*.py")          # Buscar en el contenido del archivo
 Respuesta de la herramienta:
@@ -368,7 +368,7 @@ Seguir este hilo "de adentro hacia afuera, volviendo finalmente al Agente mismo"
 
 Los LLM muestran un rendimiento sorprendente en la comprensión y generación del lenguaje natural, pero tienen deficiencias fundamentales en el cálculo preciso, la manipulación simbólica o la deducción lógica estricta. La razón reside en que el pensamiento del modelo es esencialmente probabilístico y aproximado, mientras que los problemas matemáticos y lógicos exigen respuestas deterministas y exactas. Una comparación concreta lo ilustra:
 
-```
+```text
 Problema: "Una clase tiene 40 estudiantes, de los cuales el 60% cursa Matemáticas, el 45% cursa Física,
            y el 25% cursa ambas materias. ¿Cuántos estudian solo Física pero no Matemáticas?"
 

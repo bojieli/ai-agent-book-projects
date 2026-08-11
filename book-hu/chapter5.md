@@ -32,7 +32,7 @@ Ez a hét eszköz egy komplett, mégis minimális eszközkészletet alkot, amely
 
 Hogy lássuk, hogyan működik együtt a hét eszköz, vegyük a legegyszerűbb feladatot. Tegyük fel, hogy a felhasználó azt mondja: "Segíts összegyűjteni az összes TODO megjegyzést a projektben":
 
-```
+```text
 Ágens (gondolkodás): Meg kell találnom az összes TODO-t tartalmazó kódsort.
 Ágens → Grep("TODO", glob="**/*.py")          # Fájltartalom keresése
 Eszköz visszatér:
@@ -387,7 +387,7 @@ Ezt a szálat követve – belülről kifelé, és végül vissza az ügynökig 
 
 Az LLM-ek figyelemre méltóak a természetes nyelv megértésében és generálásában, de alapvetően gyengék a precíz számításban, a szimbolikus manipulációban és a szigorú logikai levezetésben. Az ok: egy modell gondolkodása eredendően valószínűségi és közelítő, míg a matematikai és logikai problémák determinisztikus, egzakt válaszokat igényelnek. Egy konkrét összehasonlítás a lényeg:
 
-```
+```text
 Problem: "A class has 40 students. 60% take math, 45% take physics, and 25% take both.
           How many students take only physics but not math?"
 

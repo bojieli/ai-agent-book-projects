@@ -4,6 +4,16 @@
 
 ← [メイン README に戻る](../docs/ja/README.md) · 📖 [章の本文を読む](../book-ja/chapter3.ja.md)
 
+## 実験の読み方
+
+本文では短い mechanism skeleton で制御フローを説明し、実験ディレクトリには完全な SDK アダプター、ログ、テスト、受け入れ証拠を置きます。すべてのファイルを一行ずつ読む必要はありません。
+
+- **Starter:** 目的・最小コマンド・受け入れ条件から始め、まず [user-memory](user-memory/) / [retrieval-pipeline](retrieval-pipeline/);
+- **Builder:** エントリポイント、中心ループ、状態／メッセージ schema、ツール、検証器を追います。
+- **Maintainer:** 最後にテスト、証拠 manifest、失敗処理、rollback 経路、provider adapter を読みます。
+
+初読では認証情報、表示層、provider 互換層を飛ばし、数値を再現するときに戻ってください。
+
 ## 付随プロジェクト
 
 | 実験 | プロジェクト | 種類 | 説明 |

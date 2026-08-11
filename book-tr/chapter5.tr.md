@@ -32,7 +32,7 @@ Bu yedi araç, neredeyse herhangi bir Agent sisteminin düşük maliyetle entegr
 
 Yedi aracın nasıl birlikte çalıştığını görmek için, en basit görevi ele alalım. Kullanıcının "Projedeki tüm TODO yorumlarının bir listesini derlememe yardım et" dediğini varsayalım:
 
-```
+```text
 Agent (düşünüyor): TODO içeren tüm kod satırlarını bulmak gerekiyor.
 Agent → Grep("TODO", glob="**/*.py")          # Dosya içeriğini ara
 Araç döndürür:
@@ -374,7 +374,7 @@ Bu ipliği izlemek—içeriden dışarıya, nihayetinde Agent'ın kendisine geri
 
 LLM'ler doğal dili anlamada ve üretmede olağanüstüdür, ama hassas hesaplamada, sembolik manipülasyonda ve sıkı mantıksal çıkarımda temelden zayıftır. Neden: bir modelin düşünmesi doğası gereği olasılıksal ve yaklaşıktır, matematiksel ve mantıksal problemler ise deterministik, kesin yanıtlar talep eder. Somut bir karşılaştırma bunu netleştirir:
 
-```
+```text
 Problem: "Bir sınıfta 40 öğrenci var. %60'ı matematik, %45'i fizik alıyor ve %25'i ikisini birden alıyor.
           Kaç öğrenci yalnızca fizik alıyor, matematik almıyor?"
 

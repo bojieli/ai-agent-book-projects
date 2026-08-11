@@ -559,7 +559,7 @@ Müdahale iki düzeyde uygulanabilir:
 
 **Agent Durum Çubuğu İşaretleri**: Her olaydan önce açık işaretler ekleyin:
 
-```
+```text
 [İşlenmemiş Olay 1/4] database_query'den araç sonucu: ...
 [İşlenmemiş Olay 2/4] Kullanıcı ek notu: Yalnızca Pekin verisine bak
 [İşlenmemiş Olay 3/4] Sistem hatırlatması: Rapor son tarihine 30 dakika kaldı
@@ -689,6 +689,70 @@ Asenkron tarafta, OpenClaw'ın yerleşik otomasyon mekanizmaları (Hooks, Cron, 
 Altı deney, temellerden mimariye ilerler: Deney 4-1'den 4-3'e üç temel araç kümesini—algı, yürütme ve iş birliğini—inşa eder; Deney 4-4, bir e-posta işleme Agent'ıyla olay güdümlü işlemeyi tanıtır; Deney 4-5, paralel yürütmeyi, kesinti kurtarmayı ve durum yönetimini uygular; Deney 4-6, kütüphane ölçeğinde proaktif araç keşfinin değerini doğrular. Bu bölümün sınırı **mevcut araçları** tanımlamak, keşfetmek ve güvenli biçimde kullanmaktır. Bölüm 8 ise Agent'ın başarısızlıklardan ve tekrarlanan işlemlerden yola çıkarak ne zaman bir aracı yaratacağına, değiştireceğine, yeniden doğrulayacağına veya kullanımdan kaldıracağına nasıl karar verdiğini tartışır.
 
 Bir sonraki bölüm, "bir Agent araçları nasıl kullanır"dan daha temel bir soruyu sorar: bir Agent kod yazarak araçlar **yaratabilir mi**? Bir Kodlama Agent'ı artı bir dosya sistemi, her genel amaçlı Agent'ın temel dayanağıdır ve Bölüm 8'deki kontrollü sistem öz-değişikliği tartışması için gereken yürütme yeteneğini de sağlar.
+
+## Mekanizma skeleton'ları
+
+Aşağıdaki skeleton'lar bölümdeki kontrol ilişkilerini izole eder.
+
+### Araç güvenlik kapısı
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### Olay döngüsü yönlendirmesi
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### Proaktif araç keşfi
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+Sınırı açık tutun: gözlemler ve kanıt ortamdan gelir, Harness ise hangi eylemin yürütülebileceğine karar verir.
 
 ## Düşünce Soruları
 

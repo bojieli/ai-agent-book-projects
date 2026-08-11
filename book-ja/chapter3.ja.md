@@ -20,7 +20,7 @@
 
 具体的な例でこのプロセスを理解しましょう。ユーザーと Agent の間に次のような対話があったとします。
 
-```
+```text
 User: Help me book a flight to Tokyo next Friday. I prefer window seats
       and I'm vegetarian, so I'll need a special meal.
 Agent: I'll search for flights to Tokyo for next Friday...
@@ -32,7 +32,7 @@ User: Yes, and use my United MileagePlus number 12345678.
 
 この対話が終わると、Agent フレームワークは専用の LLM を一度呼び出して対話内容を分析し、長期的に記憶する価値のある情報を抽出します。
 
-```
+```text
 Extracted memories:
 - User prefers window seats (preference)
 - User is vegetarian, needs special meals on flights (dietary restriction)
@@ -515,7 +515,7 @@ GraphRAG はまず LLM を使ってテキストから鍵となるエンティテ
 
 RAPTOR と GraphRAG は学術界の知識組織への探求を代表しますが、バイトダンス火山エンジンがオープンソース化した [OpenViking](https://github.com/volcengine/OpenViking) は第 3 の哲学を提示します。**ファイルシステムのパラダイム**です。それはコンテキストを平坦なベクトルの断片やグラフのノードとしてではなく、すべてのコンテキスト——記憶、リソース、スキル——を仮想ファイルシステム中のディレクトリとファイルに写像し、各エントリが一意の URI を持ちます。
 
-```
+```text
 viking://
 ├── resources/          # 外部知识：文档、代码库、网页
 ├── user/memories/      # 用户记忆：偏好、习惯
@@ -721,6 +721,105 @@ Agent のために強力な知識ベースを構築した後、次の核心的�
 **知識更新**の層面では 2 つのリズムが必要です。増分更新は新しい証拠をすぐ取り込み、定期整理は全知識と生データへ戻って重複排除、旧情報の廃止、統合、構造再編、欠落確認、適用条件の明示を行います。知識が Markdown でも Python でも、Proposer Agent が生の証拠に基づく diff を提出し、異種モデルの Reviewer Agent が独立に審査し、承認後にのみ PR をマージして派生インデックスを再構築します。
 
 本章と前章はいずれも「コンテキスト」を扱います。一方は単一セッション内、もう一方は複数セッションをまたぎます。本章で蓄積するのは主にユーザーと世界についての宣言的知識です。第 8 章も同じ抽出・検索基盤を再利用しますが、対象は実行の成否に裏付けられた「どの条件で何をすべきか」という行動知識です。次章は「ツール」に転じ、Agent がツールを通じて外部世界とどうやり取りするかを、ツール設計、MCP 相互運用標準、イベント駆動アーキテクチャとともに論じます。
+
+## メカニズムの skeleton
+
+以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
+
+### メモリのライフサイクル
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
+### 追記専用ログとチェックポイント
+
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+### 型付きユーザー状態
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
+```
+
+### 決定的集約
+
+```python
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
+```
+
+### 競合検出
+
+```python
+def check_drug_allergy(profile):
+    for medication in profile.current_medications:
+        for allergy in profile.allergies:
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
+```
+
+### 制約の適用
+
+```python
+def check():
+    for trip in state.trips:
+        if trip.is_international:
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
+            if days < 180:
+                alert("passport expires too soon", trip, days)
+```
+
+### ハイブリッド RAG パイプライン
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
+
+境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
 
 ## 演習問題
 

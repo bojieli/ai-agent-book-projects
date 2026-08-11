@@ -492,6 +492,45 @@ trajectory = [
 
 صُممت الأسئلة التأملية أدناه للتعمق في مفاهيم الفصل الأساسية، ولا توجد لها إجابات معيارية.
 
+## هياكل الآليات
+
+تعزل الهياكل التالية ذات الأسلوب الشبيه بـ Python علاقات التحكم التي يناقشها الفصل. إنها pseudocode توضيحية وليست تطبيقات SDK قابلة للتشغيل؛ أما المحولات والاختبارات الكاملة ففي تجارب الفصل. وتُستخدم علامة `python` للتلوين النحوي فقط، ولا تعني وجود SDK قابل للتشغيل أو برنامج يمكن تشغيله مباشرةً.
+
+### حلقة تحكم ReAct
+
+```python
+trajectory = [user_request]
+
+repeat:
+    context = stable_prefix + trajectory
+    decision = Model(context)
+    trajectory.append(decision)
+
+    if decision has no tool call:
+        return decision.answer
+
+    for call in decision.tool_calls:       # independent calls may run in parallel
+        validated_call = Harness.validate(call)
+        observation = Environment.execute(validated_call)
+        trajectory.append(observation)
+```
+
+### حد الإنتاج في Harness
+
+```python
+decision = Model(Harness.build_context(state, trajectory))
+allowed_action = Harness.constrain(decision)
+observation = Environment.apply(allowed_action)
+evidence = Harness.verify(allowed_action, observation)
+
+if evidence passes:
+    trajectory.append(observation)
+else:
+    trajectory.append(Harness.correct(evidence))
+```
+
+حافظ على الحد واضحًا: تأتي الملاحظات والأدلة من البيئة، بينما يقرر Harness ما يُسمح بتنفيذه.
+
 ## أسئلة للتأمل
 
 1. ★★ إذا كان بإمكانك إضافة قدرة واحدة فقط إلى نظام الوكيل - نموذج أقوى، أو سياق أكثر ثراء، أو المزيد من الأدوات - فما الذي ستختاره؟ تحت أي ظروف سيتغير اختيارك؟

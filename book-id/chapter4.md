@@ -547,7 +547,7 @@ Intervensi dapat diterapkan pada dua tingkatan:
 
 **Penanda Agent Status Bar**: Tambahkan penanda eksplisit sebelum setiap event:
 
-```
+```text
 [Event Belum Diproses 1/4] Hasil tool dari database_query: ...
 [Event Belum Diproses 2/4] Catatan tambahan dari pengguna: Hanya lihat data Beijing
 [Event Belum Diproses 3/4] Pengingat sistem: Tenggat waktu laporan adalah dalam 30 menit
@@ -677,6 +677,70 @@ Di sisi asinkron, mekanisme otomatisasi bawaan OpenClaw (Hooks, Cron, Heartbeat)
 Enam eksperimen berkembang dari dasar hingga arsitektur: Eksperimen 4-1 hingga 4-3 membangun tiga set tool dasar—Persepsi, Eksekusi, dan Kolaborasi; Eksperimen 4-4 memperkenalkan pemrosesan berbasis kejadian (*event-driven*) dengan Agent penanganan email; Eksperimen 4-5 mengimplementasikan eksekusi paralel, pemulihan interupsi, dan manajemen status (*state management*); dan Eksperimen 4-6 memvalidasi nilai dari penemuan tool proaktif pada skala pustaka (*library scale*). Batasan bab ini adalah deskripsi, penemuan, dan penggunaan aman dari **tool yang sudah ada**. Bab 8 sebaliknya membahas bagaimana Agent menentukan dari kegagalan dan operasi berulang kapan harus membuat, memodifikasi, memvalidasi ulang, atau mempensiunkan sebuah tool.
 
 Bab berikutnya mengajukan pertanyaan yang lebih mendasar daripada “bagaimana cara sebuah Agent menggunakan tool?”: bisakah sebuah Agent **membuat** tool dengan menulis kode? Sebuah Coding Agent ditambah sistem berkas adalah fondasi inti dari setiap Agent bertujuan umum (*general-purpose Agent*), dan hal ini juga memberikan kemampuan eksekusi yang dibutuhkan untuk pembahasan Bab 8 tentang modifikasi mandiri sistem yang terkontrol (*controlled system self-modification*).
+
+## Skeleton mekanisme
+
+Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
+
+### Gerbang keamanan tool
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### Routing event loop
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### Penemuan tool proaktif
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+Pertahankan batasnya: observasi dan bukti berasal dari lingkungan, sedangkan Harness menentukan tindakan yang boleh dieksekusi.
 
 ## Pertanyaan Diskusi
 

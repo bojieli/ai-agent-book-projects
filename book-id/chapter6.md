@@ -32,7 +32,7 @@ Sebelum mendalami metodologinya, mari kita bangun intuisi melalui sebuah contoh 
 
 **Lintasan Agent**:
 
-```
+```text
 User: I want to return the headphones I bought 3 days ago, order number 12345. (Today is 2026-04-10)
 
 Agent (thinking): The user wants a refund, I need to check the order information first.
@@ -779,6 +779,46 @@ Sistem evaluasi yang diperkenalkan dalam bab ini membentuk closed loop yang leng
 Dari perspektif Harness engineering yang diperkenalkan di Bab 1, metodologi evaluasi dalam bab ini adalah implementasi sistematis dari fungsi “validasi” Harness, sementara closed loop “dari laporan Benchmark hingga peningkatan sistem” adalah mekanisme inti untuk optimasi Harness iteratif. Bab ini menjawab “bagaimana mengukur dengan andal”; berdasarkan hal itu, Bab 8 menjawab “bagaimana mengubah evaluasi trajectory multidimensi menjadi pembaruan sistem yang dapat dieksekusi dan dibalik (reversible).”
 
 Sistem evaluasi yang ditetapkan di sini tidak hanya mendukung optimasi sistem saat ini tetapi juga memberikan landasan penting untuk dua bab berikutnya. Bab 7 mengubah lingkungan dan data evaluasi menjadi input untuk post-training model, menggunakan SFT dan RL untuk menulis interaction policies ke dalam parameter. Bab 8 mengubah evaluasi multidimensi dari lintasan produksi menjadi kandidat pembaruan untuk pengetahuan, instruksi, program, atau parameter.
+
+## Skeleton mekanisme
+
+Skeleton berikut hanya menyoroti hubungan kontrol dalam bab ini.
+
+### Loop evaluasi yang dapat diulang
+
+```python
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
+```
+
+### Veto deterministik sebelum penilaian rubric
+
+```python
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
+```
+
+### Perbandingan berpasangan
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
+Pertahankan batasnya: observasi dan bukti berasal dari lingkungan, sedangkan Harness menentukan tindakan yang boleh dieksekusi.
 
 ## Pertanyaan Pemikiran
 

@@ -480,7 +480,7 @@ MetaGPT кодирует стандартные процедуры програ�
 
 Поясним на конкретном примере. Предположим, система перевода использует модель оркестрации (архитектура из эксперимента 10-2), и менеджер распределяет главы технической книги между несколькими агентами-переводчиками:
 
-```
+```text
 Терминологический агент: переводит "reasoning" как "推理" (推理),
         но в китайском "推理" чаще используется для inference — возникает неоднозначность
         ↓ записывает в glossary.json
@@ -641,6 +641,83 @@ Pinchwork и RentAHuman вместе представляют **способ к�
 ## Резюме главы
 
 Мультиагентное сотрудничество оправдано, когда оно добавляет новую информацию, недоступную одному Agent во время генерации: результаты выполнения, визуальную обратную связь или проверку внешним инструментом. Нужно выбрать между общим и изолированным контекстом, а также между одноранговой, менеджерской и децентрализованной топологиями. Структурированные пакеты передачи, границы разрешений, независимая проверка, бюджеты и отмена образуют базовый контур отказоустойчивости. В длительном открытом взаимодействии могут возникать социальные отношения, нормы, рынки и стратегии; задача инженерии — спроектировать поток информации, разделение возможностей и обнаружение ошибок.
+
+## Скелеты механизмов
+
+Следующие скелеты выделяют управляющие связи, обсуждаемые в главе.
+
+### Конверт сообщения и жизненный цикл worker
+
+```python
+envelope = {
+    id, trace_id, sender, recipient, type,
+    payload, created_at, deadline, schema_version
+}
+
+worker = spawn(task, budget, cancellation_token)
+publish(task_assigned(envelope, worker))
+while worker.is_running:
+    accept(status_update | artifact | needs_input)
+    if deadline_expired or cancellation_token.is_set:
+        request_graceful_stop(worker)
+await worker.ack_or_timeout()
+```
+
+### Цикл Proposer–Reviewer
+
+```python
+candidate = proposer(task, constraints)
+evidence = execute_or_render(candidate)       # tests, state, screenshot, facts
+review = independent_reviewer(candidate, evidence)
+
+while review.veto and budget_remaining:
+    candidate = proposer.repair(candidate, review.findings)
+    evidence = execute_or_render(candidate)
+    review = independent_reviewer(candidate, evidence)
+
+if review.pass:
+    publish(candidate, evidence, review)
+else:
+    escalate_or_reject(review)
+```
+
+### Первый проверенный параллельный победитель
+
+```python
+workers = launch_independent_workers(subtasks)
+while workers.any_running:
+    event = next_event()
+    if event.type == RESULT:
+        if verify(event.artifact, hidden_checks):
+            if not settle_once(event):       # atomically claim the winner
+                continue
+            broadcast_cancel(to = workers - {event.worker_id})
+            await_all_ack_or_timeout()
+            return assemble(event.artifact, evidence = event.evidence)
+        else:
+            record_failure(event)
+return summarize_failures(workers)
+```
+
+### Децентрализованный протокол handoff
+
+```python
+handoff = {
+    task_id, sender, recipient, goal, constraints,
+    accepted_facts, artifact_refs, remaining_budget,
+    visited_agents
+}
+
+if recipient in handoff.visited_agents:
+    reject("cycle")
+elif handoff.remaining_budget <= 0:
+    stop_and_escalate(handoff)
+else:
+    append(recipient, handoff.visited_agents)
+    run_local_agent(handoff)
+```
+
+Граница должна оставаться явной: наблюдения и доказательства приходят из среды, а Harness решает, что разрешено выполнить.
 
 ## Вопросы для размышления
 

@@ -20,7 +20,7 @@
 
 用一個具體的例子來理解這個過程。假設使用者和 Agent 有以下對話：
 
-```
+```text
 User: Help me book a flight to Tokyo next Friday. I prefer window seats
       and I'm vegetarian, so I'll need a special meal.
 Agent: I'll search for flights to Tokyo for next Friday...
@@ -32,7 +32,7 @@ User: Yes, and use my United MileagePlus number 12345678.
 
 這段對話結束後，Agent 框架會呼叫一次專門的 LLM 來分析對話內容，提取出值得長期記住的資訊：
 
-```
+```text
 Extracted memories:
 - User prefers window seats (preference)
 - User is vegetarian, needs special meals on flights (dietary restriction)
@@ -515,7 +515,7 @@ GraphRAG 先利用 LLM 從文字中提取關鍵實體（人物、地點、概念
 
 RAPTOR 和 GraphRAG 代表了學術界對知識組織的探索，而字節跳動火山引擎開源的 [OpenViking](https://github.com/volcengine/OpenViking) 則提出了第三種哲學：**檔案系統範式**。它不將上下文視為扁平的向量碎片或圖譜節點，而是將所有上下文——記憶、資源、技能——對映為虛擬檔案系統中的目錄和檔案，每個條目擁有唯一 URI：
 
-```
+```text
 viking://
 ├── resources/          # 外部知識：文件、程式碼庫、網頁
 ├── user/memories/      # 使用者記憶：偏好、習慣
@@ -721,6 +721,105 @@ viking://
 在**知識更新**層面，系統需要兩種節奏：增量更新及時吸收新證據，定期整理則回到完整知識和原始資料，進行去重、去舊、合併、重組、遺漏檢查與情境限定。不論知識表示為 Markdown 或 Python，都應由 Proposer Agent 提交以證據為基礎的 diff，再由異源 Reviewer Agent 獨立審核。只有通過審核後，PR 才能合併，衍生索引才能重建。
 
 本章和上一章處理的都是「上下文」問題——一個在單次會話內，一個跨越多次會話。本章沉澱的主要是關於使用者與世界的陳述性知識；第八章還會複用相同的提取和檢索基礎設施，但其對象是由執行成敗支持的行為知識，即「在什麼條件下應該怎樣做」。下一章轉向「工具」：Agent 如何透過工具與外部世界互動，包括工具設計、MCP 互操作標準和事件驅動架構。
+
+## 機制骨架
+
+下面的骨架只抽出本章討論的控制關係。
+
+### 記憶生命週期
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
+### 只增日誌與檢查點
+
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+### 型別化使用者狀態
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
+```
+
+### 確定性聚合
+
+```python
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
+```
+
+### 衝突偵測
+
+```python
+def check_drug_allergy(profile):
+    for medication in profile.current_medications:
+        for allergy in profile.allergies:
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
+```
+
+### 約束執行
+
+```python
+def check():
+    for trip in state.trips:
+        if trip.is_international:
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
+            if days < 180:
+                alert("passport expires too soon", trip, days)
+```
+
+### 混合 RAG 流程
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
+
+請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
 
 ## 思考題
 

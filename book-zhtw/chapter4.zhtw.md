@@ -559,7 +559,7 @@ PineClaw 的解決方案是引入 **Channel 機制**——在 OpenClaw 的 Gatew
 
 **Agent 狀態列標記**：在每個事件前新增顯式標記：
 
-```
+```text
 [未處理事件 1/4] Tool result from database_query：...
 [未處理事件 2/4] User 補充說明：只看北京地區的資料
 [未處理事件 3/4] 系統提醒：報告截止時間還有 30 分鐘
@@ -689,6 +689,70 @@ PineClaw 的解決方案是引入 **Channel 機制**——在 OpenClaw 的 Gatew
 六個實驗從基礎到架構逐步遞進：實驗 4-1 至實驗 4-3 建構感知、執行、協作三大基礎工具集，實驗 4-4 用郵件處理 Agent 引入事件驅動，實驗 4-5 實現並行執行、中斷恢復和狀態管理，實驗 4-6 驗證主動工具發現在大規模工具庫下的價值。本章的邊界是描述、發現和安全使用**已有工具**；第八章則討論 Agent 如何從失敗與重複操作中判斷何時建立、修改、重新驗證或淘汰工具。
 
 下一章要回答一個比「如何使用工具」更基本的問題：Agent 能不能透過寫程式碼來**創造**工具？Coding Agent 加上檔案系統，是所有通用 Agent 最核心的基礎，也為第八章討論受控的系統自我修改提供了執行能力。
+
+## 機制骨架
+
+下面的骨架只抽出本章討論的控制關係。
+
+### 工具安全閘
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### 事件迴圈路由
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### 主動工具發現
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+請保持邊界清楚：觀察與證據來自環境，Harness 負責決定哪些動作可以執行。
 
 ## 思考題
 

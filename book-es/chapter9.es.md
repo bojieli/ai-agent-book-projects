@@ -180,7 +180,7 @@ Cuando la propia interfaz puede proporcionar información estructurada, las anot
 3. Etiquetar un ID único para cada elemento interactivo y dibujar cuadros delimitadores en la captura de pantalla.
 4. Generar simultáneamente una lista de texto que describa el elemento correspondiente a cada ID.
 
-```
+```text
 Screenshot: [en la imagen los elementos clave están etiquetados con ID como [1], [2], [3], [4]]
 
 Elements:
@@ -364,9 +364,9 @@ Esto es un grafo de dependencias, no un párrafo de prosa. Si el usuario dice «
 
 La planificación y la ejecución pueden solaparse. Cuando existe un prefijo seguro, el planificador envía un comando completo al ejecutor mientras continúa planificando el sufijo. El comando debe ser completo y auditable:
 
-~~~json
+```text
 {"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
-~~~
+```
 
 El ejecutor devuelve started, succeeded, cancelled o failed. El planificador actualiza las dependencias y aplica backpressure si la cola está llena o quedó obsoleta. El streaming reduce el tiempo hasta la primera acción segura; no permite ejecutar JSON parcial ni pensamientos no verificados.
 
@@ -383,6 +383,57 @@ Los preprints de 2026 estudian priors dinámicos compartidos (DyPES-VLA), accion
 ## Resumen del capítulo
 
 Aunque los tres escenarios parecen muy diferentes en la superficie, los dos obstáculos de la latencia y la multimodalidad siempre están presentes. La voz ha recorrido un camino evolutivo desde pipelines seriales hacia extremo a extremo y full-duplex, y desde el pensamiento rápido/lento separado hacia "pensar mientras se habla"; Computer Use ha alcanzado una precisión cercana a la humana en benchmarks como OSWorld, pero la brecha de eficiencia manifestada en una cantidad notablemente mayor de pasos de operación y en el crecimiento continuo del tiempo consumido por paso aún no cuenta con una solución sistemática; en el caso de los robots en tareas de manipulación basadas principalmente en retroalimentación visual, el cuello de botella ha pasado del hardware a la capacidad de generalización multitarea de la capa de control VLA (siendo el tacto y las manos diestras deficiencias de hardware aún no conquistadas). El siguiente capítulo ampliará la perspectiva a la colaboración entre múltiples Agentes, lo que constituye un desafío en otra dimensión.
+
+## Skeletons de mecanismos
+
+Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
+
+### Cancelación en streaming
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
+### Bucle de seguridad de Computer Use
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+### Preempción de bloques de acción
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+Mantén explícito el límite: las observaciones y evidencias proceden del entorno, y el Harness decide qué puede ejecutarse.
 
 ## Preguntas de reflexión
 

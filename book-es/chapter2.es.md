@@ -337,7 +337,7 @@ La lógica central de este código consta únicamente de un bucle `for` acotado 
 Sigamos la evolución de la lista `messages` en cada ronda:
 
 **Estado inicial (antes de la 1.ª llamada):**
-```
+```text
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # Escrito por el desarrollador
   { role: "user",    content: "What's the current time and weather in Vancouver?" },  # Entrada del usuario
@@ -345,7 +345,7 @@ messages = [
 ```
 
 **Tras la 1.ª llamada (el modelo devuelve llamadas a herramientas):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -356,7 +356,7 @@ messages = [
 ```
 
 **Tras la 2.ª llamada (el modelo devuelve la respuesta final, el bucle termina):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -592,7 +592,7 @@ Los métodos para reducir la carga cognitiva humana son igualmente efectivos par
 
 En contraste, los prompts orientados a procesos actúan como un excelente manual de capacitación para nuevos empleados, proporcionando Procedimientos Operativos Estándar (SOP) claros:
 
-```
+```text
 File Processing Standard Operating Procedure:
 
 Step 1: Validation
@@ -886,7 +886,7 @@ Un detalle de implementación importante es que, en la capa API, la barra de est
 
 Esta es la lista de mensajes que el framework del Agente construye realmente durante la llamada número N a la API:
 
-```
+```text
 messages: [
   { role: "system",    content: "Eres un asistente de atención al cliente..." }  ← Fijo (almacenado en la Caché KV)
   { role: "user",      content: "Ayúdame a cancelar mi plan de Xfinity" }  ← Solicitud original del usuario
@@ -1071,6 +1071,31 @@ A través de sus numerosos detalles técnicos, este capítulo sostiene un argume
 El hilo común de estas técnicas es una gestión de la información explícita y diseñada: en lugar de dejar que el modelo busque pistas de forma pasiva en un contexto enorme, se le proporciona de manera proactiva un estado depurado y estructurado. Todas las técnicas presentadas en este capítulo, desde las disposiciones de contexto favorables para la KV Cache hasta la compresión consciente del contexto, son aplicaciones concretas de la ingeniería para maximizar la eficiencia de la información en el límite actual de las capacidades del modelo.
 
 Este capítulo se ocupa de las actualizaciones de estado y la degradación del contexto **dentro de una sola tarea**. El siguiente capítulo deja atrás la gestión de información en una única ventana de contexto y pasa a sistemas de conocimiento persistente que abarcan múltiples tareas: la memoria de usuario y las bases de conocimiento. Estos sistemas permiten que el Agente acumule experiencia con el tiempo y se convierta gradualmente en un asistente que comprende mejor al usuario o en un experto con conocimientos más especializados en un dominio.
+
+## Skeletons de mecanismos
+
+Los siguientes skeletons aíslan las relaciones de control tratadas en el capítulo.
+
+### Construcción del contexto antes de cada solicitud
+
+```python
+stable_prefix = system_message
+stable_tools = core_tool_schemas
+trajectory = load_message_history(session)
+status_message = make_status_message(derive_current_state(trajectory))
+
+if estimated_tokens(stable_prefix, trajectory, status_message) > budget:
+    trajectory = compress_old_evidence(
+        trajectory,
+        preserve = [decisions, constraints, failures, citations]
+    )
+
+request.messages = [stable_prefix] + trajectory + [status_message]
+request.tools = stable_tools
+response = call_model(request)
+```
+
+Mantén explícito el límite: las observaciones y evidencias proceden del entorno, y el Harness decide qué puede ejecutarse.
 
 ## Preguntas de Reflexión
 

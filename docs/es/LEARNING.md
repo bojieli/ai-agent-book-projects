@@ -27,6 +27,16 @@ La ruta de aprendizaje se corresponde capítulo por capítulo con todo el libro,
 
 - **Capítulos 9–10 · Expansión y Colaboración**: El Capítulo 9 expande la percepción y la acción del texto a la voz, GUI y el mundo físico. El Capítulo 10 utiliza la división del trabajo multi-agente para manejar tareas complejas. **Idea clave**: Cada decisión de diseño en un sistema multi-agente puede encontrar su homólogo en los tres elementos de un solo agente.
 
+## Reparto entre texto y experimentos
+
+El libro no es un tutorial paso a paso de un SDK. El pseudocódigo y los skeletons explican el flujo de estados, los puntos de parada y los límites de verificación; los experimentos contienen implementación, adaptadores, pruebas, registros y evidencias.
+
+| Capa | Leer primero | Omitir por ahora | Pregunta que responde |
+| :--: | --- | --- | --- |
+| **Starter** | README del proyecto: objetivo, comando mínimo y condiciones de aceptación; skeleton correspondiente del texto | credenciales, interfaz, adaptadores de proveedores y registros sin procesar extensos | ¿Qué mecanismo pretende demostrar este experimento? |
+| **Builder** | punto de entrada, bucle central, esquema de estado/mensajes, herramientas y verificador | capas de compatibilidad y despliegue no relacionadas con el mecanismo | ¿Qué variable cambió el comportamiento? |
+| **Maintainer** | pruebas, gestión de fallos, formato de evidencias, manifest/hash y ruta de rollback | detalles de terceros necesarios solo al modificar el experimento | ¿Se puede reproducir el resultado y se registran honestamente los fallos? |
+
 ### Niveles de Dificultad
 
 - **Principiante** (Capítulos 1–2): Adecuado para principiantes, para entender conceptos básicos.

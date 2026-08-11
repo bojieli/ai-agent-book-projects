@@ -200,6 +200,70 @@
 
 يحدد تصميم الأدوات السقف الأعلى لقدرات Agent، بينما تحدد البنية غير المتزامنة مدى موثوقية تشغيله في العالم الحقيقي. تضمن مبادئ ACI ودقة التمرير أمانة التفاعل، بينما يحل بروتوكول MCP مشكلة التشغيل البيني بين مختلف بيئات النماذج والأدوات.
 
+## هياكل الآليات
+
+تعزل الهياكل التالية علاقات التحكم التي يناقشها الفصل.
+
+### بوابة أمان الأدوات
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+### توجيه حلقة الأحداث
+
+```python
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
+```
+
+### اكتشاف استباقي للأدوات
+
+```python
+if capability_is_missing(task):
+    server = search_server_index(capability)
+    tool = search_tool_index(server, capability)
+
+    if tool == NOT_FOUND:
+        retry_with_rewritten_request_or_escalate()
+    else:
+        append_tool_schema_to_trajectory(tool)
+        continue
+```
+
+حافظ على الحد واضحًا: تأتي الملاحظات والأدلة من البيئة، بينما يقرر Harness ما يُسمح بتنفيذه.
+
 ## أسئلة التأمل
 
 1. (★★) يفك بروتوكول MCP الارتباط بين تعريفات الأدوات وأطر العمل. ما هي القدرات التي تعتقد أن MCP بحاجة لتطويرها مستقبلاً لدعم الجلسات ذات الحالة المعقدة؟

@@ -20,7 +20,7 @@
 
 இந்த செயல்முறையை ஒரு உறுதியான உதாரணத்துடன் புரிந்து கொள்வோம். ஒரு பயனரும் ஏஜெண்டும் பின்வரும் உரையாடலை நடத்துகிறார்கள் என்று வைத்துக் கொள்வோம்:
 
-```
+```text
 பயனர்: அடுத்த வெள்ளிக்கிழமை டோக்கியோவுக்கு ஒரு விமானத்தை முன்பதிவு செய்ய உதவுங்கள். நான் ஜன்னல் ஓர இருக்கையை விரும்புகிறேன்
         மற்றும் நான் சைவ உணவு உண்பவர், எனவே எனக்கு ஒரு சிறப்பு உணவு தேவைப்படும்.
 ஏஜெண்ட்: அடுத்த வெள்ளிக்கிழமை டோக்கியோவுக்கான விமானங்களைத் தேடுகிறேன்...
@@ -31,7 +31,7 @@ User: ஆம், எனது United MileagePlus எண் 12345678 ஐப் �
 
 இந்த உரையாடல் முடிந்ததும், Agent கட்டமைப்பு, உரையாடலை பகுப்பாய்வு செய்து நீண்ட காலத்திற்கு நினைவில் வைத்துக் கொள்ளத் தகுந்த தகவல்களைப் பிரித்தெடுக்க, ஒரு பிரத்யேக LLM ஐ அழைக்கிறது:
 
-```
+```text
 பிரித்தெடுக்கப்பட்ட நினைவுகள்:
 - பயனர் சாளர இருக்கைகளை விரும்புகிறார் (விருப்பம்)
 - பயனர் சைவ உணவு உண்பவர், விமானங்களில் சிறப்பு உணவு தேவை (உணவுக் கட்டுப்பாடு)
@@ -497,7 +497,7 @@ GraphRAG முதலில் உரையிலிருந்து முக
 
 RAPTOR மற்றும் GraphRAG ஆகியவை அறிவு அமைப்பின் கல்விசார் ஆய்வுகளைப் பிரதிநிதித்துவப்படுத்துகின்றன, அதே நேரத்தில் ByteDance-ன் Volcano Engine [OpenViking](https://github.com/volcengine/OpenViking) ஐ திறந்த மூலமாக வெளியிட்டது, இது மூன்றாவது தத்துவத்தை முன்மொழிகிறது: **கோப்பு முறைமை முன்னுதாரணம்**. இது சூழலை தட்டையான திசையன் துண்டுகளாக அல்லது வரைபட முனைகளாக கருதவில்லை. மாறாக, இது அனைத்து சூழல்களையும்—நினைவுகள், வளங்கள், திறன்கள்—ஒரு மெய்நிகர் கோப்பு முறைமைக்குள் உள்ள அடைவுகள் மற்றும் கோப்புகளாக வரைபடமாக்குகிறது, ஒவ்வொன்றும் ஒரு தனித்துவமான URI-ஐக் கொண்டுள்ளது:
 
-```
+```text
 viking://
 ├── resources/          # வெளிப்புற அறிவு: ஆவணங்கள், குறியீட்டுத் தளங்கள், வலைப்பக்கங்கள்
 ├── user/memories/      # பயனர் நினைவுகள்: விருப்பத்தேர்வுகள், பழக்கங்கள்
@@ -695,6 +695,105 @@ Agentic RAG ஆனது Agent-இன் தன்னாட்சி முட�
 **அறிவுப் புதுப்பிப்பு** மட்டத்தில் இரண்டு வேகங்கள் ஒன்றாக தேவை: அதிகரிப்பு புதுப்பிப்பு புதிய ஆதாரத்தை உடனடியாக ஏற்றுக்கொள்கிறது; காலமுறை மறுசீரமைப்பு முழு அறிவையும் அசல் தரவையும் மீண்டும் பார்த்து, நகல் நீக்கம், பழையதை ஓய்வுபடுத்தல், ஒன்றிணைப்பு, கட்டமைப்பு மாற்றம், விடுபாடுகள் சரிபார்ப்பு மற்றும் பொருந்தும் சூழல் குறிப்பிடுதல் ஆகியவற்றைச் செய்கிறது. அறிவு Markdown அல்லது Python எதிலிருந்தாலும், Proposer Agent மூல ஆதாரத்தின் அடிப்படையில் diff சமர்ப்பிக்க வேண்டும்; வேறு மாதிரி குடும்பத்தைச் சேர்ந்த Reviewer Agent அதை சுயாதீனமாக மதிப்பாய்வு செய்ய வேண்டும். ஒப்புதல் கிடைத்த பிறகே PR இணைக்கப்பட்டு வழித்தோன்றல் குறியீடுகள் மீண்டும் கட்டமைக்கப்பட வேண்டும்.
 
 இந்த அத்தியாயமும் முந்தைய அத்தியாயமும் “Context” பிரச்சினையைக் கையாள்கின்றன—ஒன்று தனி அமர்வுக்குள், மற்றொன்று பல அமர்வுகளைக் கடந்து. இவ்வத்தியாயத்தில் நிலைப்படுத்தப்படுவது பெரும்பாலும் பயனர் மற்றும் உலகைப் பற்றிய declarative knowledge ஆகும்; அத்தியாயம் 8 இதே extraction மற்றும் retrieval உள்கட்டமைப்பை மீண்டும் பயன்படுத்தும், ஆனால் அதன் பொருள் இயக்கத்தின் வெற்றி அல்லது தோல்வியால் ஆதரிக்கப்படும் behavioral knowledge, அதாவது “எந்த நிபந்தனைகளில் எவ்வாறு செயல்பட வேண்டும்” என்பதாகும். அடுத்த அத்தியாயம் “Tools” நோக்கித் திரும்புகிறது: Tool வடிவமைப்பு, MCP interoperability தரநிலை மற்றும் event-driven architecture உட்பட, Tools வழியாக Agent வெளி உலகத்துடன் எவ்வாறு தொடர்புகொள்கிறது என்பதை விவாதிக்கிறது.
+
+## Mechanism skeleton-கள்
+
+கீழுள்ள skeleton-கள் அத்தியாயத்தில் பேசப்படும் control உறவுகளை மட்டும் காட்டுகின்றன.
+
+### நினைவக வாழ்க்கைச் சுழற்சி
+
+```python
+when answering(user_request):
+    recent_turns = conversation.tail()
+    relevant_memory = memory.search(user_request)
+    answer = LLM(recent_turns + relevant_memory)
+    return answer
+
+after conversation (background job):
+    candidates = extract_memory_candidates(conversation)
+    verified = verify_against_sources_and_policy(candidates, conversation)
+    memory.append_or_update(verified)
+```
+
+### Append-only பதிவு மற்றும் checkpoint
+
+```python
+append_only_log += extract_facts(conversation)
+
+if checkpoint_due():
+    proposed_state = rebuild_typed_state(append_only_log)
+    if type_check(proposed_state) and source_review(proposed_state):
+        publish_checkpoint(proposed_state)
+    else:
+        keep_previous_checkpoint()
+```
+
+### வகைப்படுத்தப்பட்ட பயனர் நிலை
+
+```python
+state = {
+    passport: PassportInfo(
+        number = "AB1234567",
+        country = "US",
+        expiry_date = date(2025, 2, 18),
+    ),
+    trips: [
+        Trip(destination = "Tokyo", departure_date = date(2025, 1, 15),
+             is_international = true),
+        ...
+    ],
+}
+```
+
+### தீர்மானகமான திரட்டல்
+
+```python
+count(
+    trip for trip in state.trips
+    if trip.is_international and year(trip.departure_date) == 2025
+)
+# => 2
+```
+
+### முரண்பாடு கண்டறிதல்
+
+```python
+def check_drug_allergy(profile):
+    for medication in profile.current_medications:
+        for allergy in profile.allergies:
+            if medication.drug_class == allergy.drug_class:
+                emit_conflict(medication, allergy)
+```
+
+### கட்டுப்பாடுகளை அமல்படுத்தல்
+
+```python
+def check():
+    for trip in state.trips:
+        if trip.is_international:
+            days = date_difference(state.passport.expiry_date,
+                                   trip.departure_date)
+            if days < 180:
+                alert("passport expires too soon", trip, days)
+```
+
+### கலப்பு RAG pipeline
+
+```python
+offline:
+    chunks = split_documents(documents)
+    dense_index = build_dense_index(chunks)
+    sparse_index = build_sparse_index(chunks)
+
+online(query):
+    dense_hits = dense_search(dense_index, query)
+    sparse_hits = sparse_search(sparse_index, query)
+    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
+    evidence = rerank(query, candidates)
+    return LLM(query + evidence)
+```
+
+எல்லையைத் தெளிவாக வைத்திருங்கள்: observations மற்றும் evidence சூழலிலிருந்து வரும்; Harness எந்த action இயங்கலாம் என்பதைத் தீர்மானிக்கும்.
 
 ## சிந்தனை கேள்விகள்
 

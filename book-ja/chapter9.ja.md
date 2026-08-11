@@ -203,7 +203,7 @@ Anthropic は完全な対話能力を構成する 3 種類のツールを定義�
 3. 各対話可能要素に一意の ID を振り、スクリーンショット上に境界ボックスを描く
 4. 同時に、各 ID に対応する要素を記述したテキストリストを生成する
 
-```
+```text
 Screenshot: [画像中の主要な要素に [1]、[2]、[3]、[4] などの ID が付されている]
 
 Elements:
@@ -388,9 +388,9 @@ LLM の推論には遅延があるため、VLA の制御周波数は従来のロ
 
 計画と実行は重ね合わせられます。安全なプレフィックスが完成したら、プランナーは後続部分の計画を続けながら、完全なコマンドをエグゼキュータへストリーム送信します。コマンドイベントは完全で監査可能でなければなりません。
 
-~~~json
+```text
 {"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
-~~~
+```
 
 エグゼキュータは `started`、`succeeded`、`cancelled`、`failed` を返します。プランナーはその観測で依存関係を更新し、キューが古くなったり満杯になったりしたときはバックプレッシャーを適用します。ストリーミングは最初の安全な動作までの時間を短縮しますが、不完全な JSON や検証されていないモデルの思考を実行してよいという意味ではありません。
 
@@ -402,9 +402,9 @@ OpenVLA は文字どおり projector だけを更新して訓練されたわけ�
 
 世界モデルは、行動可能な遷移を学習します。
 
-~~~text
+```text
 状態 + 候補アクション -> 予測された未来状態 -> アクションを選択して検証
-~~~
+```
 
 これは V-JEPA だけを指す言葉ではありません。潜在予測モデル（V-JEPA 2）、インタラクティブ生成モデル（Genie 3 と Cosmos）、World-Action Model（GeniWorld と Robust-WAM）、ラベルなし動画からの latent action 学習（LAWM-3D）、model-based RL（Dreamer と MuZero）を含む、より広い系統です。大規模な観測から学び、実行前に反実仮想の行動結果を試し、共有されたダイナミクスと embodiment 固有の制御を分離し、予測と現実が食い違えば再計画することに価値があります。
 
@@ -413,6 +413,57 @@ OpenVLA は文字どおり projector だけを更新して訓練されたわけ�
 ## 本章のまとめ
 
 3 つの場面は表面上の差異は甚だしいものの、遅延とマルチモーダルというこの 2 つの難関は常に影のように付きまといます。音声はすでに、直列パイプラインからエンドツーエンドと全二重へ、分離した速い・遅い思考から「考えながら話す」へという進化の道を歩み抜きました。Computer Use は OSWorld などのベンチマークでの精度がすでに人間の水準に近づいていますが、操作ステップが人間より明らかに多く、ステップの所要時間がタスクの進行につれて増え続ける効率の差には、まだ系統的な解法がありません。ロボットは視覚フィードバックを主とする操作タスクにおいて、ボトルネックがすでにハードウェアから VLA 制御層のタスク横断汎化能力へと移りました（触覚、器用な手などは依然として未攻略のハードウェア上の短所です）。次章では視点を複数の Agent 間の協調へと引き上げます。それはまた別の次元の挑戦です。
+
+## メカニズムの skeleton
+
+以下の skeleton は、本章で扱う制御関係だけを取り出したものです。
+
+### ストリーミングキャンセル
+
+```python
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
+
+on_final_transcript(text):
+    commit_or_restart(text)
+```
+
+### Computer Use 安全ループ
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+### アクションチャンクのプリエンプション
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+境界を明確に保ちます。観測と証拠は環境から得られ、Harness が実行可能な操作を決めます。
 
 ## 演習問題
 
