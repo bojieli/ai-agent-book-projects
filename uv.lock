@@ -545,6 +545,7 @@ ch9 = [
     { name = "uvicorn", extra = ["standard"] },
 ]
 dev = [
+    { name = "httpx" },
     { name = "markdown" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
@@ -748,6 +749,7 @@ requires-dist = [
     { name = "hnswlib", marker = "extra == 'rag'", specifier = ">=0.8" },
     { name = "html2text", marker = "extra == 'web'", specifier = ">=2020.1.16" },
     { name = "httpx", marker = "extra == 'ch9'", specifier = ">=0.27" },
+    { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.27,<1" },
     { name = "httpx", marker = "extra == 'web'", specifier = ">=0.27" },
     { name = "huggingface-hub", marker = "extra == 'rag'", specifier = ">=0.34.0" },
     { name = "jieba", marker = "extra == 'rag'", specifier = ">=0.42.1" },
