@@ -285,6 +285,9 @@ audio = [
 
 # Test and lint tooling.
 dev = [
+    # Root registry tests collect Chapter 4 perception-tool modules directly;
+    # those modules import httpx before individual tests can exercise helpers.
+    "httpx>=0.27,<1",
     "Markdown>=3.5,<4",
     "pytest>=8.3.0",
     "pytest-asyncio>=0.24.0",
