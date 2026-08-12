@@ -69,7 +69,7 @@ A magyar kézirat forrása a [`book-hu/`](../../book-hu/) könyvtárban találha
 
 ## 💻 A kapcsolódó kísérletek futtatása
 
-A közös alapkövetelmény a **Python 3.10+**. A függőségeket a repository gyökeréből, fejezetenként telepítsd; másik fejezethez a `ch1` helyére `ch2`–`ch10` kerüljön:
+A közösen támogatott tartomány a **Python 3.11–3.13**. A függőségeket a repository gyökeréből, fejezetenként telepítsd; másik fejezethez a `ch1` helyére `ch2`–`ch10` kerüljön:
 
 ```bash
 # Ajánlott: reprodukálható környezet a repository-ban tárolt uv.lock alapján

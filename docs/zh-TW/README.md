@@ -69,7 +69,7 @@
 
 ## 💻 執行配套實驗
 
-專案統一支援 **Python 3.10+**。請在倉庫根目錄按章節安裝依賴；將 `ch1` 替換為 `ch2` ~ `ch10` 即可安裝對應章節：
+專案統一支援 **Python 3.11–3.13**。請在倉庫根目錄按章節安裝依賴；將 `ch1` 替換為 `ch2` ~ `ch10` 即可安裝對應章節：
 
 ```bash
 # 推薦：使用提交到倉庫的 uv.lock，取得可重現的章節環境
@@ -91,7 +91,7 @@ uv run python chapter1/context/main.py
 - `uv` 安裝方法見[官方文件](https://docs.astral.sh/uv/getting-started/installation/)；`pip` 仍受支援，但不會使用鎖定檔。
 - 各實驗現有的 `requirements.txt` 在遷移期間繼續有效，適合只執行單一專案或需要特殊版本約束的情況。
 - `all` 是不含本機訓練堆疊的 CPU 友好組合，並不代表每個實驗；`uv sync` 每次都會精確同步目前選擇，使用特殊 extra 時請合併到同一條指令，例如 `uv sync --locked --extra ch2 --extra vllm` 或 `uv sync --locked --extra ch7 --extra unsloth`；pip 對應為 `python -m pip install -e ".[ch2,vllm]"`。
-- 瀏覽器、CUDA、FFmpeg、Ollama、Playwright 瀏覽器及外部倉庫等系統依賴，請繼續參考各實驗 README。部分瀏覽器和記憶實驗需要 Python 3.11+，第 8 章部分內建第三方元件需要 Python 3.12+。
+- 瀏覽器、CUDA、FFmpeg、Ollama、Playwright 瀏覽器及外部倉庫等系統依賴，請繼續參考各實驗 README。第 8 章部分內建第三方元件需要 Python 3.12+。
 
 ## 🔑 API 金鑰
 
