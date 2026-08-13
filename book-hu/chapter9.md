@@ -134,7 +134,27 @@ Az előtérmodell addig válaszol, amíg a felhasználó jelen van; a háttérmo
 | Gyors interakció, lassú tanács | Beszélgetés és megfogalmazás | Tanács vagy eszközeredmény | Korlátozott interfész |
 | Egyesített gondolkodás és kifejezés | Gondolkodás közben beszél | Közös állapot | Magas újratanítási költség |
 
-Az első terv megkettőzi a munkát, a második közvetett kapcsolatot használ, a harmadik egyesíti a gondolkodást és a beszédet. A Step-Audio R1 MGRD-vel az akusztikai jellemzőkhöz köti a gondolkodást, az MPS kettős aggyal pedig párhuzamosítja a tervezést és a kifejezést (9-5 és 9-6. ábra). Az egyesített modell természetesebb, a leválasztott háttéragy könnyebben cserélhető.
+#### 1. megoldás: a gyors gondolkodás elüti, a lassú megválaszolja
+
+A gyors gondolkodás néhány száz ezredmásodperc alatt ad egy kitöltő választ, a lassú pedig a háttérben végzi el a mélyebb levezetést. A gond az, hogy az egyszerű kérdéseket kétszer dolgozza fel a rendszer, a bonyolultaknál pedig ellentmondás keletkezhet: a gyors modell azt tanácsolja, hogy vedd meg a csomagot, a lassú utóbb észreveszi, hogy hiányzik belőle egy kulcsfontosságú funkció, és a felhasználó pár másodpercen belül két egymásnak ellentmondó választ hall. A gyökérok az, hogy két példány egymástól függetlenül gondolkodott végig egy-egy menetet.
+
+![9-5. ábra: Gyors és lassú gondolkodás architektúráinak összevetése](images/fig9-5.svg)
+
+#### 2. megoldás: a gyors gondolkodás társalog, a lassú figyelmeztet
+
+Itt a háttérmodell állapotsávon vagy külön felületen ad javaslatot az előtérmodellnek, az előtér pedig tovább viszi a beszélgetést, és maga dönti el a megfogalmazást. Stabilabb az első megoldásnál, de a kapcsolat továbbra is közvetett: az előtér félreértheti a javaslatot, és nem látja a háttér köztes gondolatmenetét. Amíg a háttér nem végez, egy visszakérdezésre az előtér csak a saját képességeire támaszkodhat. Természetesen tud „várni az eredményre”, de valóban beszéd közben gondolkodni nem.
+
+#### 3. megoldás: a gondolkodás és a kifejezés egyesítése végponttól végpontig (Step-Audio R1)
+
+A harmadik megoldás magába a végponttól végpontig tartó hangmodellbe építi a gondolkodási képességet. A Step-Audio R1 két egymást kiegészítő mechanizmussal old meg két problémát: a **modalitáshoz horgonyzott gondolkodásdesztilláció (MGRD)** akusztikai jellemzők alapján gondolkodtatja a modellt, az **MPS kettős agyi architektúra** pedig párhuzamosítja a gondolat megformálását és a kimondását. Az előbbi a „jól gondolkodást”, az utóbbi az „időben megszólalást” biztosítja.
+
+Ideális esetben a modell a hangmagasságból, a ritmusból és a hanglejtésből ítéli meg az érzelmet, nem pusztán a leiratból. Az úgynevezett „szöveges helyettesítőn át gondolkodás” az, amikor a modell a dallam és az akusztikai jellemzők elemzése helyett a dalszöveg negatív szavaira támaszkodik. Az MGRD kiszűri azokat a gondolatmeneteket, amelyek valóban akusztikai jellemzőkre hivatkoznak, ezekkel tanítja a modellt, és megerősítéses tanulással akadályozza meg, hogy a modell átugorja a gondolkodást és rögtön tippeljen.
+
+Az MPS-ben a megformáló agy folyamatosan gondolatfoszlányokat termel, a kifejező agy pedig a kapott foszlányt a már elhangzottakkal együtt azonnal beszéddé alakítja. A kettő futószalagszerűen, párhuzamosan halad, így a felhasználónak nem kell a teljes gondolatmenet végét kivárnia az első mondatig (9-6. ábra).
+
+![9-6. ábra: A Step-Audio R1 MGRD és MPS kettős agyi architektúrája](images/fig9-6.svg)
+
+Az egyesített modell valósítja meg a legszorosabban a „beszéd közbeni gondolkodást”, cserébe a gondolkodást és a valós idejű kifejezést együtt kell újratanítani. A szétcsatolt út könnyebbé teszi a háttéragy cseréjét, az egyesített út pedig azokhoz a különleges helyzetekhez illik jobban, ahol a végsőkig fokozott természetesség a cél. A kettő kompromisszum, nem egyszerű helyettesítés.
 
 ### Emberibb beszédszintézis
 
@@ -339,8 +359,6 @@ Az általános célú VLM-ek már rendelkeznek elfogadható megtestesült érvel
 
 A kétrétegű architektúra végrehajtási rétegében három reprezentatív modell — RT-2, OpenVLA és π₀ — mind a VLA vezérlésre összpontosít, azaz robotcselekvések valós idejű kiadására kamera képek és nyelvi utasítások alapján (9-10. ábra). Két különböző megközelítést követnek a cselekvés reprezentációjában: diszkrét cselekvési tokenek és folytonos pályagenerálás.
 
-![9-11. ábra: VLA Architektúra (Vision-Language-Action)](images/fig9-11.svg)
-
 **RT-2 és OpenVLA: A Diszkrét Cselekvési Token Út.**
 
 Az "RT-2" volt az úttörő ezen az úton: közvetlenül finomhangol egy nagyméretű látás-nyelvi modellt, a robot folytonos cselekvéseit tokenekké diszkretizálva, és autoregresszíven, egyenként adva ki őket, mint a szöveggenerálásnál. Kihasználja az előtanított modell általánosítási képességét a nullszoros átvitel javítására új tárgyakra és utasításokra. Az "OpenVLA" az RT-2 cselekvés-reprezentációs sémáját követi, egyesítve a nyelvi modellt és a látás kódolót egyetlen architektúrában. Képeket és szöveges utasításokat vesz bemenetként, és cselekvési tokeneket ad ki. A tanítás két szakaszban történik: először előtanítás a nagyméretű, platformokon átívelő Open X-Embodiment adatkészleten (amely több mint 20 robotplatform valós manipulációs demonstrációit fedi le) az általános manipulációs tudás megtanulására (a "megfogás" és "elhelyezés" akcióminták közösek a különböző robotoknál); másodszor, finomhangolás egy kis mennyiségű adattal egy adott platformhoz. Mivel cselekvés-reprezentációik hasonlóak, a gyakorlati különbség, amelyet itt hangsúlyoznunk kell, a nyitottságban és a mérnöki döntésekben rejlik: az RT-2 és tanítási adatai a Google belső anyagai, míg az OpenVLA teljesen nyílt forráskódú — egy nyílt forráskódú törzsmodell (Llama 2 plusz egy látás kódoló) nyilvános adatkészletekkel párosítva, így az OpenVLA verem reprodukálható és bővíthető a szélesebb közösség által.
@@ -355,9 +373,7 @@ A valódi megosztottság a cselekvés reprezentációjában nem az RT-2 és az O
 
 ### Sim2Real Átvitel: A Szimuláció és Valóság Közötti Rés
 
-A 6. fejezet szimulációs szakasza már elmagyarázta, honnan származik a szimuláció-valóság (sim-to-real) rés, és hogyan küzd ellene a domén randomizáció, így nem ismételjük meg itt. Röviden: a szimuláció soha nem képes tökéletesen reprodukálni a valós fizikát, vizuális elemeket és hardvert, ezért a tanítás széles tartományban randomizálja ezeket a paramétereket, kényszerítve a politikát, hogy megtanuljon egy, ezekre a változatokra robusztus reprezentációt (9-11. ábra). A következőkben azt nézzük meg, hogy ez az elv hogyan valósul meg egy valódi robotkaron.
-
-![9-12. ábra: Sim2Real rés és Domén Randomizáció](images/fig9-12.svg)
+A 6. fejezet szimulációs szakasza már elmagyarázta, honnan származik a szimuláció-valóság (sim-to-real) rés, és hogyan küzd ellene a domén randomizáció, így nem ismételjük meg itt. Röviden: a szimuláció soha nem képes tökéletesen reprodukálni a valós fizikát, vizuális elemeket és hardvert, ezért a tanítás széles tartományban randomizálja ezeket a paramétereket, kényszerítve a politikát, hogy megtanuljon egy, ezekre a változatokra robusztus reprezentációt. A következőkben azt nézzük meg, hogy ez az elv hogyan valósul meg egy valódi robotkaron.
 
 Ez a megközelítés számos figyelemre méltó sikert produkált. Az OpenAI Dactyl projektje elérte a kocka kézben történő átforgatását, és egy későbbi munka az Automatikus Domén Randomizációt (ADR) használva egy Rubik-kockát oldott meg egy kézzel. Az ETH Zürich ANYmal négylábúja robusztus járást mutatott be nehéz külső terepen, például havon és kavicson.
 

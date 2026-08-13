@@ -132,7 +132,27 @@ Model latar depan harus menjawab selama pengguna masih aktif; model latar belaka
 | Interaksi cepat, nasihat lambat | Menjaga percakapan dan memilih kata | Nasihat atau hasil alat | Antarmuka terbatas |
 | Penalaran dan ekspresi terpadu | Berpikir sambil berbicara | Berbagi keadaan model | Biaya pelatihan tinggi |
 
-Desain pertama menggandakan kerja dan dapat bertentangan; desain kedua berkomunikasi secara tidak langsung; desain ketiga menyatukan keduanya. Step-Audio R1 menggunakan MGRD untuk menambatkan penalaran pada ciri akustik dan arsitektur dua otak MPS untuk menghasilkan pikiran dan suara secara paralel (Gambar 9-5 dan 9-6). Model terpadu lebih alami tetapi harus dilatih ulang bersama; desain terpisah lebih mudah mengganti otak latar belakang.
+#### Solusi 1: pikiran cepat menambal, pikiran lambat menjawab
+
+Pikiran cepat dapat memberi jawaban penambal dalam beberapa ratus milidetik, sementara pikiran lambat menuntaskan penalaran yang lebih dalam di latar belakang. Masalahnya, pertanyaan sederhana diproses dua kali dan pertanyaan rumit bisa berujung kontradiksi: model cepat menyarankan membeli paket, model lambat kemudian menemukan paket itu tidak punya fitur penting, dan dalam hitungan detik pengguna mendengar dua jawaban yang saling bertentangan. Akar penyebabnya adalah dua instans yang bernalar sendiri-sendiri.
+
+![Gambar 9-5: Perbandingan arsitektur pemikiran cepat dan lambat](images/fig9-5.svg)
+
+#### Solusi 2: pikiran cepat berinteraksi, pikiran lambat mengingatkan
+
+Di sini model latar belakang memberi saran kepada model latar depan lewat bilah status atau antarmuka khusus, sedangkan latar depan tetap memegang percakapan dan menentukan cara mengungkapkannya. Ini lebih stabil daripada solusi pertama, tetapi komunikasinya masih tidak langsung: latar depan bisa salah menafsirkan saran dan tidak melihat penalaran antara di latar belakang. Sebelum latar belakang selesai, pertanyaan susulan hanya bisa dijawab dengan kemampuan latar depan sendiri. Ia bisa "menunggu hasil" secara wajar, tetapi belum benar-benar berpikir sambil berbicara.
+
+#### Solusi 3: penalaran dan ekspresi menyatu end-to-end (contoh Step-Audio R1)
+
+Solusi ketiga menanamkan kemampuan bernalar langsung ke dalam model audio end-to-end. Step-Audio R1 menyelesaikan dua masalah dengan dua mekanisme yang saling melengkapi: **distilasi penalaran berjangkar modalitas (MGRD)** membuat model bernalar dari ciri akustik, dan **arsitektur dua otak MPS** menjalankan penyusunan gagasan dan pengungkapan secara paralel. Yang pertama menjamin "berpikir benar", yang kedua menjamin "berbicara tepat waktu".
+
+Idealnya model menilai emosi dari nada, ritme, dan intonasi, bukan hanya dari teks transkripsi. Yang disebut "bernalar lewat proksi teks" terjadi ketika model mengganti analisis melodi dan ciri akustik dengan kata-kata negatif dalam lirik. MGRD menyaring proses penalaran yang benar-benar merujuk ciri akustik, melatih model dengan data itu, dan lewat pembelajaran penguatan mencegah model melompati penalaran lalu menebak jawaban.
+
+MPS membuat otak penyusun terus menghasilkan potongan pikiran, sementara otak pengungkap langsung mengubah tiap potongan menjadi suara dengan menggabungkannya dengan yang sudah diucapkan. Keduanya berjalan paralel seperti pipeline, sehingga pengguna mendengar kalimat pertama tanpa menunggu seluruh penalaran selesai (gambar 9-6).
+
+![Gambar 9-6: Arsitektur dua otak MGRD dan MPS pada Step-Audio R1](images/fig9-6.svg)
+
+Model terpadu paling dekat mewujudkan "berpikir sambil berbicara", dengan ongkos bahwa penalaran dan ekspresi real-time harus dilatih ulang bersama. Jalur terpisah lebih mudah menukar otak latar belakang; jalur terpadu lebih cocok untuk skenario khusus yang mengejar kealamian maksimal. Keduanya adalah trade-off, bukan sekadar saling menggantikan.
 
 ### Sintesis suara yang lebih manusiawi
 
@@ -339,10 +359,6 @@ VLM yang bersifat general-purpose sudah memiliki kemampuan Embodied Reasoning ya
 
 Dalam lapisan eksekusi dari arsitektur dua lapis, tiga model representatif—RT-2, OpenVLA, dan π₀—semuanya fokus pada VLA control, yaitu, mengeluarkan tindakan robot secara real-time berdasarkan gambar kamera dan instruksi bahasa (Gambar 9-10). Mereka mengikuti dua pendekatan berbeda untuk representasi tindakan: discrete action tokens dan continuous trajectory generation.
 
-
-![Gambar 9-11: Arsitektur VLA (Vision-Language-Action)](images/fig9-11.svg)
-
-
 **RT-2 dan OpenVLA: Rute Discrete Action Token.**
 
 **RT-2** memelopori rute ini: ia secara langsung melakukan fine-tuning pada vision-language model berskala besar, mendiskritisasi (discretizing) tindakan kontinu robot menjadi token dan mengeluarkannya secara autoregresif satu per satu, seperti menghasilkan teks. Ia memanfaatkan kemampuan generalisasi dari model pra-pelatihan (pre-trained model) untuk meningkatkan Zero-Shot transfer ke objek dan instruksi baru. **OpenVLA** mengikuti skema representasi tindakan RT-2, menyatukan language model dan vision encoder dalam arsitektur tunggal. Model ini mengambil gambar dan instruksi teks sebagai input dan mengeluarkan action tokens. Pelatihan dilakukan dalam dua tahap: pertama, pra-pelatihan (pre-training) pada dataset lintas platform (cross-platform) berskala besar yaitu Open X-Embodiment (mencakup demonstrasi manipulasi dunia nyata dari lebih dari 20 platform robot) untuk mempelajari pengetahuan manipulasi umum (pola tindakan seperti "menggenggam" dan "meletakkan" adalah hal umum di berbagai robot); kedua, fine-tuning dengan sejumlah kecil data untuk platform tertentu. Karena representasi tindakan mereka serupa, perbedaan praktis yang ditekankan di sini terletak pada keterbukaan dan pilihan teknik (engineering choices): RT-2 dan data pelatihannya adalah internal Google, sementara OpenVLA sepenuhnya open-source—sebuah model tulang punggung (backbone) open-source (Llama 2 plus vision encoder) yang dipasangkan dengan dataset publik, membuat tumpukan (stack) OpenVLA dapat direproduksi dan diperluas oleh komunitas yang lebih luas.
@@ -357,9 +373,7 @@ Pembagian sebenarnya dalam representasi tindakan bukan antara RT-2 dan OpenVLA, 
 
 ### Transfer Sim2Real: Kesenjangan dari Simulasi ke Realitas
 
-Bagian simulasi Bab 6 telah menjelaskan dari mana kesenjangan sim-to-real (Sim2Real) berasal dan bagaimana Domain Randomization melawannya, jadi kita tidak akan mengulanginya di sini. Singkatnya: simulasi tidak akan pernah bisa mereproduksi secara sempurna fisika, visual, dan perangkat keras dunia nyata, sehingga pelatihan mengacak (randomizes) parameter tersebut dalam rentang yang luas, memaksa kebijakan (policy) untuk mempelajari representasi yang kuat terhadap variasi tersebut (Gambar 9-11). Berikut ini adalah bagaimana prinsip itu mendarat pada lengan robot nyata.
-
-![Gambar 9-12: Kesenjangan Sim2Real dan Domain Randomization](images/fig9-12.svg)
+Bagian simulasi Bab 6 telah menjelaskan dari mana kesenjangan sim-to-real (Sim2Real) berasal dan bagaimana Domain Randomization melawannya, jadi kita tidak akan mengulanginya di sini. Singkatnya: simulasi tidak akan pernah bisa mereproduksi secara sempurna fisika, visual, dan perangkat keras dunia nyata, sehingga pelatihan mengacak (randomizes) parameter tersebut dalam rentang yang luas, memaksa kebijakan (policy) untuk mempelajari representasi yang kuat terhadap variasi tersebut. Berikut ini adalah bagaimana prinsip itu mendarat pada lengan robot nyata.
 
 Pendekatan ini telah menghasilkan beberapa keberhasilan yang menonjol. Proyek Dactyl milik OpenAI mencapai reorientasi kubus di dalam tangan, dan pekerjaan selanjutnya menggunakan Automatic Domain Randomization (ADR) untuk memecahkan Kubus Rubik dengan satu tangan. Quadruped ANYmal dari ETH Zurich telah menunjukkan penggerak (locomotion) yang kuat di atas medan luar ruangan yang sulit seperti salju dan kerikil.
 

@@ -136,7 +136,27 @@ Mô hình tiền cảnh phải trả lời khi người dùng còn chờ; mô h�
 | Tương tác nhanh, lời khuyên chậm | Giữ mạch hội thoại và chọn cách nói | Lời khuyên hoặc kết quả công cụ | Giao diện hạn chế |
 | Hợp nhất suy nghĩ và biểu đạt | Vừa suy nghĩ vừa nói | Chia sẻ trạng thái mô hình | Chi phí huấn luyện và thay thế cao |
 
-Giải pháp đầu có thể xử lý câu hỏi hai lần và tự mâu thuẫn. Giải pháp hai ổn định hơn nhờ gửi lời khuyên qua status bar, nhưng tiền cảnh không thấy suy luận trung gian và không thực sự suy nghĩ trong khi nói. Giải pháp ba hợp nhất hai quá trình. Trong Step-Audio R1, MGRD neo suy luận vào đặc trưng âm học, còn kiến trúc hai não MPS cho phép lập kế hoạch và biểu đạt chạy song song (Hình 9-5 và 9-6). Mô hình hợp nhất tự nhiên hơn; thiết kế tách rời dễ thay “bộ não” nền hơn.
+#### Giải pháp 1: nghĩ nhanh đỡ lời, nghĩ chậm trả lời
+
+Suy nghĩ nhanh có thể đưa ra một câu đỡ lời trong vài trăm mili giây, còn suy nghĩ chậm hoàn tất suy luận sâu hơn ở nền. Vấn đề là câu hỏi đơn giản bị xử lý hai lần, còn câu hỏi phức tạp dễ sinh mâu thuẫn: mô hình nhanh khuyên mua gói cước, mô hình chậm sau đó phát hiện gói thiếu một tính năng quan trọng, và chỉ trong vài giây người dùng nghe hai câu trả lời chọi nhau. Nguyên nhân gốc là hai thực thể đã suy nghĩ độc lập.
+
+![Hình 9-5: So sánh kiến trúc suy nghĩ nhanh và chậm](images/fig9-5.svg)
+
+#### Giải pháp 2: nghĩ nhanh tương tác, nghĩ chậm nhắc
+
+Ở đây mô hình nền gửi gợi ý cho mô hình tiền cảnh qua thanh trạng thái hoặc một giao diện riêng, còn tiền cảnh tiếp tục giữ mạch hội thoại và tự quyết định cách diễn đạt. Cách này ổn định hơn giải pháp một, nhưng liên lạc vẫn gián tiếp: tiền cảnh có thể hiểu sai gợi ý và không thấy phần suy luận trung gian của nền. Trước khi nền xong, nếu người dùng hỏi thêm thì tiền cảnh chỉ còn cách tự xoay xở. Nó "chờ kết quả" một cách tự nhiên, nhưng chưa thực sự vừa nghĩ vừa nói.
+
+#### Giải pháp 3: hợp nhất suy nghĩ và biểu đạt đầu-cuối (ví dụ Step-Audio R1)
+
+Giải pháp ba đưa năng lực suy nghĩ vào thẳng mô hình âm thanh đầu-cuối. Step-Audio R1 giải quyết hai vấn đề bằng hai cơ chế bổ trợ: **chưng cất suy luận neo theo modality (MGRD)** buộc mô hình suy nghĩ dựa trên đặc trưng âm học, còn **kiến trúc hai não MPS** cho phép hình thành ý và biểu đạt chạy song song. Cơ chế đầu bảo đảm "nghĩ đúng", cơ chế sau lo "nói kịp".
+
+Lý tưởng nhất, mô hình nên phán đoán cảm xúc từ cao độ, nhịp điệu và ngữ điệu chứ không chỉ từ văn bản chuyển ngữ. Cái gọi là "suy nghĩ qua đại diện văn bản" là khi mô hình thay việc phân tích giai điệu và đặc trưng âm học bằng những từ tiêu cực trong lời bài hát. MGRD lọc ra các chuỗi suy nghĩ thực sự viện dẫn đặc trưng âm học, dùng dữ liệu đó huấn luyện mô hình, và dùng học tăng cường để ngăn mô hình bỏ qua suy nghĩ mà đoán thẳng đáp án.
+
+MPS để não hình thành ý liên tục sinh ra các mảnh suy nghĩ, còn não biểu đạt nhận mảnh nào là kết hợp ngay với phần đã nói để tạo tiếng. Hai bên chạy song song theo kiểu đường ống, nên người dùng nghe được câu đầu tiên mà không phải chờ toàn bộ suy nghĩ kết thúc (hình 9-6).
+
+![Hình 9-6: Kiến trúc hai não MGRD và MPS của Step-Audio R1](images/fig9-6.svg)
+
+Mô hình hợp nhất tiến gần nhất tới việc thực sự vừa nghĩ vừa nói, đổi lại phải huấn luyện lại đồng thời cả khả năng suy nghĩ lẫn biểu đạt thời gian thực. Hướng tách rời dễ thay não nền hơn, còn hướng hợp nhất phù hợp hơn với những kịch bản chuyên biệt đòi hỏi độ tự nhiên tối đa. Đây là đánh đổi, không phải chuyện cái này thay thế cái kia.
 
 ### Tổng hợp giọng nói giống con người hơn
 
@@ -176,16 +196,13 @@ else:
 
 ![Hình 9-7 Chu trình nhận thức-suy nghĩ-hành động của Tác nhân sử dụng máy tính ](images/fig9-7.svg)
 
-
 Có ba chiều thiết kế chính trong chu trình này: **không gian hành động**(những thao tác mà Agent có thể thực hiện), **định vị trực quan**(cách tìm phần tử mục tiêu trong ảnh chụp màn hình) và **kiến trúc mô hình**(cách tạo hành động chính xác từ ảnh chụp màn hình).
 
 ### Thiết kế không gian hành động
 
 Anthropic xác định ba loại công cụ để hình thành khả năng tương tác hoàn chỉnh (Hình 9-8):
 
-
 ![Hình 9-8 Máy tính Sử dụng không gian hành động ](images/fig9-8.svg)
-
 
 **GUI Operation Tool**(công cụ máy tính): Thao tác chuột bao gồm di chuyển (mouse_move), nhấp chuột trái/phải/giữa, nhấp đúp/ba lần, kéo (left_click_drag) và nhấn/nhả chi tiết hơn (left_mouse_down/up). Cuộn hỗ trợ bốn hướng và có thể được sử dụng với các phím bổ trợ. Thao tác trên bàn phím bao gồm nhập từng từ (loại, mỗi ký tự cách nhau 12 mili giây để mô phỏng thao tác gõ thực), tổ hợp phím (phím, chẳng hạn như Ctrl+C) và nhấn và giữ (hold_key). Các hành động được nhận biết: ảnh chụp màn hình (ảnh chụp màn hình), lấy vị trí con trỏ (cursor_position), chờ (wait).
 
@@ -231,7 +248,6 @@ Elements:
 
 Mô hình chỉ cần xuất số ID và hệ thống sẽ tự động sử dụng tọa độ trung tâm của phần tử để thực hiện nhấp chuột. Loại giải pháp này không lưu mã thông báo (vì tất cả thông tin chú thích phải được gửi đến mô hình), nhưng định vị chính xác và ổn định, đồng thời tránh được các phát hiện bị bỏ sót và phát hiện sai có thể do mô hình phân đoạn đưa ra.
 
-
 ![Hình 9-9 Bộ đánh dấu và chỉ mục phần tử có cấu trúc (triển khai sử dụng trình duyệt) ](images/fig9-9.svg)
 
 **Dự đoán tọa độ thuần túy.**
@@ -240,9 +256,7 @@ Tuyến thứ ba không thực hiện bất kỳ chú thích nào và trực ti�
 
 Trong sơ đồ dự đoán tọa độ, sự hiểu biết của mô hình về tọa độ phụ thuộc nhiều vào độ phân giải được sử dụng trong quá trình huấn luyện (Hình 9-10). Claude được đào tạo bằng XGA (1024x768), WXGA (1280x800) và FWXGA (1366x768). Nếu độ phân giải ảnh chụp màn hình đầu vào không khớp, tọa độ mà mô hình dự đoán sẽ được bù một cách có hệ thống - giống như đo khoảng cách trên bản đồ nhỏ và sau đó sử dụng trực tiếp trên bản đồ lớn. Do đó, cần triển khai cơ chế chia tỷ lệ tọa độ hai chiều trên lớp công cụ và chọn độ phân giải mục tiêu theo tỷ lệ khung hình để tránh kéo dài không đẳng cự làm biến dạng hình ảnh và làm sai lệch phán đoán tọa độ. Ví dụ: nếu độ phân giải màn hình thực là 2560×1440 (16:9), bạn nên chọn một trong ba mức được Claude hỗ trợ với tỷ lệ khung hình cũng gần 16:9 – FWXGA (1366×768) là phù hợp nhất. Khi chụp ảnh màn hình, hãy chia tỷ lệ màn hình thành 1366×768 và gửi cho mô hình; sau khi mô hình xuất ra tọa độ nhấp chuột (683, 384), nó sẽ được ánh xạ ngược sang tọa độ thực (683×2560/1366, 384×1440/768) ≈ (1280, 720). Ngược lại, nếu bạn kéo căng mạnh 16:9 thành 4:3 1024×768, màn hình sẽ bị nén theo chiều ngang và tọa độ mà mô hình dự đoán sẽ bị dịch chuyển một cách có hệ thống.
 
-
 ![Hình 9-10 Khớp độ phân giải và chia tỷ lệ tọa độ hai chiều ](images/fig9-10.svg)
-
 
 Logic lựa chọn của ba tuyến đường có thể được tóm tắt như sau: **Khi có sẵn thông tin có cấu trúc, chỉ mục Cây DOM/Accessibility** được sử dụng đầu tiên và vị trí là chính xác và ổn định nhất; **Khi không có sẵn**(phần mềm máy tính gốc như Photoshop, giao diện kết xuất Canvas/WebGL, trò chơi), **Bạn có thể sử dụng chú thích trực quan (tuyến SoM gốc) hoặc dự đoán tọa độ**. Chú thích trực quan biến việc định vị thành một câu hỏi trắc nghiệm, thân thiện hơn với các mô hình tổng quát chưa được đào tạo đặc biệt; dự đoán tọa độ loại bỏ bước chú thích và trực tiếp hơn đối với các mô hình đã trải qua khóa đào tạo định vị GUI. Vẫn còn khoảng cách về độ chính xác giữa hai yếu tố này trên các phần tử nhỏ và giao diện dày đặc.
 
@@ -324,7 +338,7 @@ Hai phần sau đây thảo luận sâu hơn về các giải pháp kỹ thuật
 
 VLM nói chung đã có khả năng tư duy thể hiện tốt. **Gemini Robotics-ER 1.5** của Google DeepMind được tối ưu hóa đặc biệt cho Lý luận thể hiện (hiểu vị trí, chuyển động và quan hệ nhân quả của các vật thể trong thế giới vật chất), đạt trung bình 62,8% trên 15 điểm chuẩn học thuật (Point-Bench, RefSpatial, RoboSpatial, BLINK, v.v.), vượt quá GPT-4o (60,6%) và Gemini 2.5 Pro (59,3%). Các điểm mạnh cốt lõi bao gồm: hiểu biết không gian nâng cao và định vị đối tượng, lý luận theo thời gian (dự đoán nguyên nhân và kết quả của các hành động như "điều gì sẽ xảy ra nếu bạn làm đổ chiếc cốc này"), điều phối nhiệm vụ (phân tách các hướng dẫn cấp cao thành các bước nhỏ) và hỗ trợ nguyên gốc cho các cơ chế tư duy và gọi công cụ. [^ch9-2]
 
-[^ch9-2]: Google DeepMind, “Gemini Robotics-ER 1.5” . https://deepmind.google/models/gemini-robotics/gemini-robotics-er/
+[^ch9-2]: Google DeepMind, “Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/
 
 > **Thử nghiệm 9-8 ★: Đo cận trên điều khiển lý tưởng của cùng nhiệm vụ trong mô phỏng**
 >
@@ -342,11 +356,7 @@ VLM nói chung đã có khả năng tư duy thể hiện tốt. **Gemini Robotic
 
 ### Kiểm soát VLA: Từ dữ liệu trình diễn đến khái quát hóa chéo
 
-Ở lớp thực thi của kiến trúc hai lớp, ba mô hình đại diện, RT-2, OpenVLA và π₀, tất cả đều tập trung vào điều khiển VLA—nghĩa là đầu ra các hành động của robot theo thời gian thực dựa trên hình ảnh camera và hướng dẫn ngôn ngữ (Hình 9-11). Chúng thuộc hai tuyến trong biểu diễn hành động: mã thông báo hành động rời rạc và tạo trajectory liên tục.
-
-
-![Hình 9-11 Kiến trúc VLA (Tầm nhìn-Ngôn ngữ-Hành động)](images/fig9-11.svg)
-
+Ở lớp thực thi của kiến trúc hai lớp, ba mô hình đại diện, RT-2, OpenVLA và π₀, tất cả đều tập trung vào điều khiển VLA—nghĩa là đầu ra các hành động của robot theo thời gian thực dựa trên hình ảnh camera và hướng dẫn ngôn ngữ. Chúng thuộc hai tuyến trong biểu diễn hành động: mã thông báo hành động rời rạc và tạo trajectory liên tục.
 
 **RT-2 với OpenVLA: Định tuyến mã thông báo hành động riêng biệt.**
 
@@ -375,11 +385,7 @@ for action in chunk:
 
 ### Sim2Real Transfer: Khoảng cách từ mô phỏng đến thực tế
 
-Phần môi trường mô phỏng của Chương 6 đã giải thích nguồn gốc của khoảng cách sim-to-real (khoảng cách thực tế) và nguyên tắc ngẫu nhiên hóa miền để giải quyết nó. Tôi sẽ không lặp lại ở đây - trong một câu: mô phỏng không thể khôi phục hoàn toàn các đặc điểm vật lý, hình ảnh và phần cứng thực sự. Trong quá trình huấn luyện, các tham số này bị gián đoạn ngẫu nhiên trên quy mô lớn, buộc chiến lược phải học một tập hợp các biểu diễn phổ quát ổn định trước các thay đổi khác nhau (Hình 9-11). Chúng ta hãy xem cách thực hiện bộ nguyên tắc này trên một cánh tay robot thực sự.
-
-
-![Hình 9-12 Khoảng cách Sim2Real và Ngẫu nhiên hóa tên miền](images/fig9-12.svg)
-
+Phần môi trường mô phỏng của Chương 6 đã giải thích nguồn gốc của khoảng cách sim-to-real (khoảng cách thực tế) và nguyên tắc ngẫu nhiên hóa miền để giải quyết nó. Tôi sẽ không lặp lại ở đây - trong một câu: mô phỏng không thể khôi phục hoàn toàn các đặc điểm vật lý, hình ảnh và phần cứng thực sự. Trong quá trình huấn luyện, các tham số này bị gián đoạn ngẫu nhiên trên quy mô lớn, buộc chiến lược phải học một tập hợp các biểu diễn phổ quát ổn định trước các thay đổi khác nhau. Chúng ta hãy xem cách thực hiện bộ nguyên tắc này trên một cánh tay robot thực sự.
 
 Có nhiều trường hợp thành công trên lộ trình này: hoạt động khéo léo của bàn tay robot OpenAI (dự án Dactyl nhận ra sự chuyển hướng của khối lập phương trong tay và công việc tiếp theo của nó đã thực hiện việc giải khối Rubik bằng một tay với sự trợ giúp của miền ngẫu nhiên ADR tự động) và ANYmal của ETH Zurich (robot bốn chân có thể bước đi mạnh mẽ trên các địa hình hoang dã phức tạp như tuyết và sỏi). Cả hai đều thuộc thể loại này.
 

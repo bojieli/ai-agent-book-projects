@@ -185,25 +185,6 @@ A következő két ábra a Q-learning felfedezési folyamatát mutatja egy rács
 
 A Q-learning az "off-policy" módszerek egy speciális típusa – bármely irányelv által generált adatokat (beleértve a véletlen felfedezést is) felhasználhatja az optimális irányelv megtanulásához. Az on-policy és off-policy módszerek szigorú definícióit, valamint azt, hogy hogyan kapcsolódnak az LLM poszt-tréninghez, később a "Megerősítéses tanulási algoritmusok összehasonlítása" szakaszban tárgyaljuk.
 
-> ![7-7. ábra: Q-learning- és LLM-ágensarchitektúra összehasonlítása egy kincsvadász játékban](images/fig7-7.svg)
->
-> **7-1. kísérlet ★: Q-learning teljesítménye kincsvadász játékban**
->
-> A Q-learning jellemzőinek és korlátainak ellenőrzésére terveztünk egy "kincsvadász játékkörnyezetet". Ez a környezet több kulcsfontosságú kihívást tartalmaz: "rejtett mechanizmusok" megkövetelik, hogy az Ágens maga fedezze fel a kulcsok és ajtók, a fegyverhatások és a tárgykészítési szabályok közötti összefüggéseket; "többlépéses függőségek" miatt a feladat végrehajtásához a helyes akciók sorrendjére van szükség (optimális megoldás: 11 lépés); "ritka jutalmak" azt jelentik, hogy csak a kulcsfontosságú akciók és a végső győzelem adnak jelentős jutalmat, a legtöbb köztes lépés nem kap visszajelzést.
->
-> A Q-learning Ágens standard paraméterbeállításokat és ε-greedy felfedezési stratégiát használ: általában az aktuálisan optimális akciót választja, de alkalmanként véletlenszerűt, a véletlen felfedezés aránya fokozatosan csökken a tréning során.
->
-> A tanulási görbe tipikus jellemzőket mutat (egy epizód egy teljes játék a kezdettől a befejezésig vagy kudarcig):
-> - "Első 1000 epizód": 0%-os nyerési arány, a Q-táblában csak 124 állapot, az Ágens vakon fedez fel
-> - "Első 5000 epizód": Még mindig nincs stabil győzelem, a Q-táblában 133 állapot
-> - "7 000–8 000 epizód": Nyerési arány fokozatosan 34%-ról 96%-ra emelkedik
-> - "10 000 epizód": 100%-os nyerési arány, a Q-táblában 145 állapot, megtalálta a 11-lépéses optimális megoldást
->
-> A teljes tréning kevesebb, mint 10 másodpercet vesz igénybe (nagyon hatékony szimuláció), de majdnem 10 000 teljes próbálkozást igényel. Ez demonstrálja a Q-learning központi jellemzőjét: nagy mennyiségű véletlenszerű felfedezésre van szükség, hogy véletlenül teljesítse a teljes utat, és az értékjelek terjedése nagyon lassú, ismételt megerősítést igényelve. A tiszta szimbolikus tanulás előzetes ismeretek nélkül csak brute-force kereséssel tudja bejárni az állapotteret.
->
-> Egy játékszimulátorban 10 000 próbálkozás csak 10 másodpercet vesz igénybe, elhanyagolható költség. De a valós Ágens forgatókönyvekben – ahol minden telefonhívásnak költsége van, minden böngészőműveletnek késleltetése, és minden rossz döntésnek visszafordíthatatlan következményei lehetnek – 10 000 próbálkozás teljesen elfogadhatatlan. Pontosan ezért fordultak a modern Ágensek az LLM-alapú módszerekhez: kihasználva a pre-tréning során felhalmozott ismereteket, hogy minimális interakcióval hatékony döntéseket hozzanak.
->
-
 ![7-5. ábra: A klasszikus RL és a modern LLM-ágens összehasonlítása](images/fig7-5.svg)
 
 ### LLM-alapú Ágensek: A pre-tréning, mint előzetes ismeret
@@ -231,9 +212,30 @@ A megerősítéses tanulás alapvető algoritmusai közé tartoznak az "irányel
 
 Az LLM-ek kontextusában a PPO, a GRPO és a DPO a legelterjedtebb algoritmusok, és ezeket a könyv későbbi részeiben részletesen tárgyaljuk.
 
+> ![7-7. ábra: Q-learning- és LLM-ágensarchitektúra összehasonlítása egy kincsvadász játékban](images/fig7-7.svg)
+>
+> **7-1. kísérlet ★: Q-learning teljesítménye kincsvadász játékban**
+>
+> A Q-learning jellemzőinek és korlátainak ellenőrzésére terveztünk egy "kincsvadász játékkörnyezetet". Ez a környezet több kulcsfontosságú kihívást tartalmaz: "rejtett mechanizmusok" megkövetelik, hogy az Ágens maga fedezze fel a kulcsok és ajtók, a fegyverhatások és a tárgykészítési szabályok közötti összefüggéseket; "többlépéses függőségek" miatt a feladat végrehajtásához a helyes akciók sorrendjére van szükség (optimális megoldás: 11 lépés); "ritka jutalmak" azt jelentik, hogy csak a kulcsfontosságú akciók és a végső győzelem adnak jelentős jutalmat, a legtöbb köztes lépés nem kap visszajelzést.
+>
+> A Q-learning Ágens standard paraméterbeállításokat és ε-greedy felfedezési stratégiát használ: általában az aktuálisan optimális akciót választja, de alkalmanként véletlenszerűt, a véletlen felfedezés aránya fokozatosan csökken a tréning során.
+>
+> A tanulási görbe tipikus jellemzőket mutat (egy epizód egy teljes játék a kezdettől a befejezésig vagy kudarcig):
+> - "Első 1000 epizód": 0%-os nyerési arány, a Q-táblában csak 124 állapot, az Ágens vakon fedez fel
+> - "Első 5000 epizód": Még mindig nincs stabil győzelem, a Q-táblában 133 állapot
+> - "7 000–8 000 epizód": Nyerési arány fokozatosan 34%-ról 96%-ra emelkedik
+> - "10 000 epizód": 100%-os nyerési arány, a Q-táblában 145 állapot, megtalálta a 11-lépéses optimális megoldást
+>
+> A teljes tréning kevesebb, mint 10 másodpercet vesz igénybe (nagyon hatékony szimuláció), de majdnem 10 000 teljes próbálkozást igényel. Ez demonstrálja a Q-learning központi jellemzőjét: nagy mennyiségű véletlenszerű felfedezésre van szükség, hogy véletlenül teljesítse a teljes utat, és az értékjelek terjedése nagyon lassú, ismételt megerősítést igényelve. A tiszta szimbolikus tanulás előzetes ismeretek nélkül csak brute-force kereséssel tudja bejárni az állapotteret.
+>
+> Egy játékszimulátorban 10 000 próbálkozás csak 10 másodpercet vesz igénybe, elhanyagolható költség. De a valós Ágens forgatókönyvekben – ahol minden telefonhívásnak költsége van, minden böngészőműveletnek késleltetése, és minden rossz döntésnek visszafordíthatatlan következményei lehetnek – 10 000 próbálkozás teljesen elfogadhatatlan. Pontosan ezért fordultak a modern Ágensek az LLM-alapú módszerekhez: kihasználva a pre-tréning során felhalmozott ismereteket, hogy minimális interakcióval hatékony döntéseket hozzanak.
+>
+
 ## Modell pre-tréning alapok `[Ajánlott olvasmány]`
 
+
 ### A három szakaszos képzés áttekintése
+
 
 ![7-8. ábra: Következőtoken-előrejelzés az előtréning során](images/fig7-8.svg)
 

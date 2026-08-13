@@ -168,7 +168,7 @@ Agent 执行任务的核心模式叫做 **ReAct**（Reasoning + Acting）。虽�
 
 ![图1-4 Agent 轨迹——多币种汇总任务的 ReAct 循环](images/fig1-4.svg)
 
-先看最小运行骨架。它说明的是**机制如何运行**：Model 只负责决定下一步，Harness 负责组装上下文、校验并执行工具，Environment 负责产生真实状态变化和观察。本书后续的机制 skeleton 也沿用 Python 风格伪代码；`python` 标记只提供语法高亮，不代表可以直接运行，也不对应某个 SDK。
+先看最小运行骨架。它说明的是**机制如何运行**：Model 只负责决定下一步，Harness 负责组装上下文、校验并执行工具，Environment 负责产生真实状态变化和观察。本书后续也沿用 Python 风格伪代码；伪代码不可以直接运行，也不对应某个 SDK。具体的可执行代码在本书配套代码仓库中。
 
 ```python
 trajectory = [user_request]
