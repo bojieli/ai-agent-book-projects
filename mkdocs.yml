@@ -194,9 +194,21 @@ extra:
     # site language code; `sourceLanguage` is translate.js' name for it.
     source: en
     sourceLanguage: english
-    # Free, keyless channel. Alternatives: `giteeAI`, `siliconflow`, or
-    # `translate.service` against a self-hosted API.
-    service: client.edge
+    # Free, keyless channel. NOT `client.edge`: that channel authenticates
+    # against https://edge.microsoft.com/translate/auth, an undocumented Edge
+    # browser endpoint that now returns 404, so it fails for every visitor.
+    # `giteeAI` posts to giteeai.zvo.cn/translate.json (verified working,
+    # keyless) and fails over to two backup hosts on its own.
+    # Alternatives: `siliconflow`, or `translate.service` against a self-host.
+    service: giteeAI
+    # translate.js' MutationObserver (translate.listener.start) throws
+    # "Cannot read properties of null (reading 'nodeValue')" against Material's
+    # navigation.instant DOM swaps, and queues a redundant translation pass per
+    # mutation. We re-translate on Material's own `document$` instead, so it
+    # stays off unless you explicitly want it.
+    listener: false
+    # How long to wait before telling the reader the service is not answering.
+    failureTimeoutMs: 12000
     # Pinned version + SRI hash: this is third-party code from a public CDN,
     # so the exact bytes are fixed. Both must be updated together.
     cdn: https://cdn.staticfile.net/translate.js/3.18.66/translate.js

@@ -21,7 +21,9 @@ const CONF = {
   label: "机器翻译 / Machine translation",
   source: "en",
   sourceLanguage: "english",
-  service: "client.edge",
+  service: "giteeAI",
+  listener: false,
+  failureTimeoutMs: 60,
   cdn: "https://cdn.example.test/translate.js",
   integrity: "sha384-TESTHASH",
   languages: [
@@ -146,10 +148,10 @@ test("on the English edition it loads, configures and translates", async () => {
   assert.strictEqual(injected[0].crossOrigin, "anonymous");
 
   const t = w.translate;
-  assert.strictEqual(t.service.used, "client.edge");
+  assert.strictEqual(t.service.used, "giteeAI");
   assert.strictEqual(t.language.local, "english");
   assert.strictEqual(t.selectLanguageTag.show, false);
-  assert.ok(t.listener.started);
+  assert.strictEqual(t.listener.started, false, "MutationObserver must stay off by default");
   assert.ok(t.ignore.tag.includes("mjx-container"), "MathJax output must be ignored");
   assert.ok(t.ignore.tag.includes("pre") && t.ignore.tag.includes("code"), "defaults kept");
   for (const c of ["mermaid", "arithmatex", "highlight", "md-source"]) {
@@ -228,6 +230,42 @@ test("corrupt storage is ignored rather than throwing", async () => {
   w.document.dispatchEvent(new w.Event("DOMContentLoaded"));
   await tick();
   assert.strictEqual(injected.length, 0);
+});
+
+test("starts translate.js' listener only when explicitly enabled", async () => {
+  const { w } = await setup();
+  w.AUTO_TRANSLATE_CONFIG = { ...CONF, listener: true };
+  w.document.querySelector('[data-auto-lang="french"]').click();
+  await tick();
+  assert.strictEqual(w.translate.listener.started, true);
+});
+
+test("warns in place when the translation service never answers", async () => {
+  const { w } = await setup();
+  w.document.querySelector('[data-auto-lang="french"]').click();
+  await tick();
+  // Service is dead: the notice text is never rewritten.
+  const notice = w.document.querySelector(".auto-translate-notice");
+  const before = notice.querySelector(".auto-translate-notice__text").textContent;
+  await new Promise((r) => setTimeout(r, 120));
+  const after = w.document.querySelector(".auto-translate-notice");
+  assert.ok(after.className.includes("auto-translate-notice--failed"), "should flag failure");
+  assert.match(after.textContent, /unavailable/);
+  // Same node, not a replacement — an in-flight pass may hold a reference.
+  assert.strictEqual(after, notice);
+  assert.notStrictEqual(after.querySelector(".auto-translate-notice__text").textContent, before);
+});
+
+test("stays silent when the service does answer", async () => {
+  const { w } = await setup();
+  w.document.querySelector('[data-auto-lang="french"]').click();
+  await tick();
+  // Simulate translate.js rewriting the page (including our notice).
+  w.document.querySelector(".auto-translate-notice__text").textContent =
+    "Traduit automatiquement de l'\u00e9dition anglaise";
+  await new Promise((r) => setTimeout(r, 120));
+  const notice = w.document.querySelector(".auto-translate-notice");
+  assert.ok(!notice.className.includes("auto-translate-notice--failed"), "must not cry wolf");
 });
 
 (async () => {
