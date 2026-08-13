@@ -108,8 +108,14 @@
       "md-source", // repository name + stars/forks in the header
     ]);
 
-    // Re-translate content injected after load (search results, annotations).
-    translate.listener.start();
+    // translate.listener.start() installs a MutationObserver that re-translates
+    // injected content. It is off by default: against Material's
+    // navigation.instant swaps it throws "Cannot read properties of null
+    // (reading 'nodeValue')" from its own callback, and queues a duplicate
+    // translation pass per mutation. Material's `document$` already tells us
+    // when a page swap finished, which is the only dynamic content that
+    // matters here, so we drive re-translation from that instead.
+    if (conf.listener) translate.listener.start();
   }
 
   function translatePage() {
@@ -122,6 +128,7 @@
         configure(translate, conf);
         if (translate.to !== language.name) translate.changeLanguage(language.name);
         else translate.execute();
+        watchForFailure(language, conf);
       })
       .catch(function (error) {
         // Leave the English page readable rather than failing loudly.
@@ -130,14 +137,47 @@
       });
   }
 
+  // translate.js reports a failed translation service only to the console, so
+  // a dead channel would silently leave the reader on English with a notice
+  // claiming the page was translated. The notice sits inside the translated
+  // region, so a working service always rewrites it; if it is still unchanged
+  // after the timeout, say the service is unavailable instead.
+  var failureTimer = null;
+
+  function watchForFailure(language, conf) {
+    var probe = document.querySelector(".auto-translate-notice__text");
+    if (!probe) return;
+    var before = probe.textContent;
+    clearTimeout(failureTimer);
+    failureTimer = setTimeout(function () {
+      var node = document.querySelector(".auto-translate-notice__text");
+      if (node && node.textContent === before) showNotice(language, true);
+    }, conf.failureTimeoutMs || 12000);
+  }
+
   // ── notice ────────────────────────────────────────────────
+
+  var NOTICE_TEXT = {
+    ok:
+      "Machine-translated from the English edition — not reviewed. " +
+      "Figures and code stay in English.",
+    failed: "Machine translation is unavailable right now. Showing the English edition.",
+  };
 
   function showNotice(language, failed) {
     var host = document.querySelector(".md-content__inner");
     if (!host) return;
 
     var existing = host.querySelector(".auto-translate-notice");
-    if (existing) existing.parentNode.removeChild(existing);
+    if (existing) {
+      // Update in place: replacing the node would detach the text node that an
+      // in-flight translation pass is holding a reference to.
+      existing.className =
+        "auto-translate-notice" + (failed ? " auto-translate-notice--failed" : "");
+      var current = existing.querySelector(".auto-translate-notice__text");
+      if (current) current.textContent = failed ? NOTICE_TEXT.failed : NOTICE_TEXT.ok;
+      return;
+    }
 
     var notice = document.createElement("div");
     notice.className = "auto-translate-notice";
@@ -148,10 +188,7 @@
 
     var text = document.createElement("span");
     text.className = "auto-translate-notice__text";
-    text.textContent = failed
-      ? "Machine translation is unavailable right now. Showing the English edition."
-      : "Machine-translated from the English edition — not reviewed. " +
-        "Figures and code stay in English.";
+    text.textContent = failed ? NOTICE_TEXT.failed : NOTICE_TEXT.ok;
 
     var off = document.createElement("button");
     off.type = "button";
