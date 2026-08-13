@@ -432,9 +432,15 @@ Trong đó, `TF(t,d)` là số lần thuật ngữ $t$ xuất hiện trong tài 
 
 Có thể xem BM25 (Okapi BM25) là cách sửa kinh điển cho hai hạn chế này. Nó giữ trọng số IDF dành cho các từ hiếm, đồng thời bổ sung cơ chế bão hòa tần suất và chuẩn hóa độ dài tài liệu:
 
-$$\text{Score}(Q, D) = \sum_{i} \text{IDF}(q_i) \cdot \frac{\text{TF}(q_i, D)\,(k_1+1)}{\text{TF}(q_i, D) + k_1\left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
+$$\text{Score}(Q, D) = \sum_{i} \text{IDF}_{\text{BM25}}(q_i) \cdot \frac{\text{TF}(q_i, D)\,(k_1+1)}{\text{TF}(q_i, D) + k_1\left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
 
-Trong đó, $q_i$ là một từ trong truy vấn, $|D|$ là độ dài tài liệu và $\text{avgdl}$ là độ dài tài liệu trung bình của kho ngữ liệu. Như Hình 3-8 minh họa, $k_1$ kiểm soát tốc độ bão hòa của tần suất, khiến mỗi lần lặp thêm mang lại mức tăng nhỏ dần; $b$ kiểm soát cường độ chuẩn hóa độ dài, giúp so sánh công bằng hơn giữa các tài liệu dài ngắn khác nhau. Vì vậy, 10 lần xuất hiện thường đóng góp ít hơn gấp đôi so với 5 lần, và cùng một TF sẽ nhận trọng số thấp hơn trong tài liệu dài hơn. Các giá trị tham số và phép tính cụ thể được trình bày trong Thử nghiệm 3-5.
+Trong đó, $q_i$ là một từ trong truy vấn, $|D|$ là độ dài tài liệu và $\text{avgdl}$ là độ dài tài liệu trung bình của kho ngữ liệu. $\text{IDF}_{\text{BM25}}$ mang chỉ số dưới vì đây không phải cùng một công thức với $\text{IDF}$ của TF-IDF ở trên: BM25 chuyển sang một biến thể ổn định hơn.
+
+$$\text{IDF}_{\text{BM25}}(t) = \ln\frac{N - \text{DF}(t) + 0.5}{\text{DF}(t) + 0.5}$$
+
+Trực giác không đổi—từ càng hiếm thì trọng số càng cao—chỉ có cách đo là khác. Tử số trở thành số tài liệu *không* chứa từ đó, $N - \text{DF}(t)$, thay vì tổng số tài liệu $N$, nên tỷ lệ này cho biết ngay số tài liệu không chứa từ đó gấp bao nhiêu lần số tài liệu có chứa nó; việc cộng thêm 0,5 vào cả tử số và mẫu số giúp làm trơn kết quả, khiến công thức vẫn xác định ở hai trường hợp cực đoan là $\text{DF}(t) = 0$ và $\text{DF}(t) = N$. Cái giá phải trả là một từ xuất hiện trong hơn một nửa số tài liệu ($\text{DF}(t) > N/2$) sẽ nhận trọng số âm, nên các cài đặt thực tế thường đặt cho nó một ngưỡng dưới. Biến thể này bắt nguồn từ mô hình truy hồi xác suất và trong tài liệu chuyên ngành được gọi là trọng số Robertson–Spärck Jones.
+
+Như Hình 3-8 minh họa, $k_1$ kiểm soát tốc độ bão hòa của tần suất, khiến mỗi lần lặp thêm mang lại mức tăng nhỏ dần; $b$ kiểm soát cường độ chuẩn hóa độ dài, giúp so sánh công bằng hơn giữa các tài liệu dài ngắn khác nhau. Vì vậy, 10 lần xuất hiện thường đóng góp ít hơn gấp đôi so với 5 lần, và cùng một TF sẽ nhận trọng số thấp hơn trong tài liệu dài hơn. Các giá trị tham số và phép tính cụ thể được trình bày trong Thử nghiệm 3-5.
 
 
 ![Hình 3-8 Cơ chế tính điểm BM25](images/fig3-8.svg)
@@ -444,7 +450,7 @@ Trong đó, $q_i$ là một từ trong truy vấn, $|D|$ là độ dài tài li�
 >
 > Để khám phá hoạt động bên trong dịch vụ sản xuất thưa thớt, dự án `sparse-embedding` phát triển công cụ tìm kiếm thưa thớt dựa trên kỹ thuật BM25 từ đầu theo cách mang tính giáo dục. Giá trị cốt lõi của dự án không nằm ở việc tối ưu hiệu suất tối đa mà ở tính minh bạch hoàn toàn của quy trình: quan sát rõ toàn bộ quá trình lập chỉ mục tài liệu - tiền xử lý văn bản (tách từ và loại bỏ các từ dừng như "of" và "the" vốn hầu như không mang giá trị truy xuất), xây dựng chỉ mục đảo và tính các giá trị TF và IDF. Cái gọi là chỉ mục đảo ngược là bảng ánh xạ ngược từ sang tài liệu - chỉ mục thông thường là "cho một tài liệu, liệt kê các từ nó chứa", còn chỉ mục đảo thì ngược lại, "cho một từ, tìm ngay tất cả tài liệu chứa nó". Nó giống như trang chỉ mục thuật ngữ ở cuối một cuốn sách: bạn tra cứu "TCP" và bạn biết rằng từ đó được đề cập ở trang 45, 112 và 203.
 >
-> Nhật ký truy vấn hiển thị chi tiết từng bước tính toán của BM25. Vẫn lấy truy vấn "chưng cất mô hình" làm ví dụ - sau đây là nhật ký đang chạy trên kho ngữ liệu mẫu nhỏ (tổng cộng N=10 tài liệu) đi kèm với dự án, do đó số lượt trúng ít hơn nhiều so với kịch bản minh họa 100 bài viết trước đó. Để tạo điều kiện thuận lợi cho người đọc tính toán và sao chép bằng tay, ví dụ này sửa các tham số BM25 k1=1,5, b=0,75 và độ dài tài liệu trung bình avgdl=250 từ; IDF sử dụng dạng chuẩn IDF=ln((N−df+0.5)/(df+0.5)) và df là số lượng tài liệu có chứa từ:
+> Nhật ký truy vấn hiển thị chi tiết từng bước tính toán của BM25. Vẫn lấy truy vấn "chưng cất mô hình" làm ví dụ - sau đây là nhật ký đang chạy trên kho ngữ liệu mẫu nhỏ (tổng cộng N=10 tài liệu) đi kèm với dự án, do đó số lượt trúng ít hơn nhiều so với kịch bản minh họa 100 bài viết trước đó. Để tạo điều kiện thuận lợi cho người đọc tính toán và sao chép bằng tay, ví dụ này sửa các tham số BM25 k1=1,5, b=0,75 và độ dài tài liệu trung bình avgdl=250 từ; IDF sử dụng dạng BM25 nêu trên IDF=ln((N−df+0.5)/(df+0.5)) và df là số lượng tài liệu có chứa từ:
 >
 > ```
 > Phân đoạn từ truy vấn: ["model", "chưng cất"]
