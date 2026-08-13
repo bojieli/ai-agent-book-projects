@@ -1,79 +1,68 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 890 515" width="890" height="515" style="background:#ffffff">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 560" width="780" height="560" style="background:#ffffff">
 <defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
 
-<rect x="26" y="55" width="150" height="230" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="101" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Gestor de producto</text>
-<text x="34" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Entrada: Descripción de requisitos del usuario</text>
-<rect x="34" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="40" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Salida:</text>
-<text x="40" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Lista de características + prioridad</text>
-<text x="40" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Historias de usuario (5 elementos)</text>
-<text x="40" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Criterios de aceptación</text>
-<rect x="34" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="101" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/PRD.md</text>
-<line x1="186" y1="170" x2="198" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-
-<rect x="198" y="55" width="150" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="273" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Arquitecto</text>
-<text x="206" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Entrada: PRD.md</text>
-<rect x="206" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="212" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Salida:</text>
-<text x="212" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Stack tecnológico: FastAPI+React</text>
-<text x="212" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Especificación de API (OpenAPI)</text>
-<text x="212" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Esquema de la base de datos</text>
-<rect x="206" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="273" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/design.md</text>
-<line x1="358" y1="170" x2="370" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-
-<rect x="370" y="55" width="150" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="445" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Gestor de proyectos</text>
-<text x="378" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Entrada: design.md</text>
-<rect x="378" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="384" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Salida:</text>
-<text x="384" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Lista de tareas + asignación</text>
-<text x="384" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Asignación a nivel de archivo</text>
-<text x="384" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Orden de dependencia de módulos</text>
-<rect x="378" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="445" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/tasks.md</text>
-<line x1="530" y1="170" x2="542" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-
-<rect x="542" y="55" width="150" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="617" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Ingeniero ×3</text>
-<text x="550" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Entrada: tasks.md + design.md</text>
-<rect x="550" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="556" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Salida:</text>
-<text x="556" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Módulo A: Servicio de usuario</text>
-<text x="556" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Módulo B: Servicio de pedidos</text>
-<text x="556" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Módulo C: Servicio de pagos</text>
-<rect x="550" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="617" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">src/*.py</text>
-<line x1="702" y1="170" x2="714" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-
-<rect x="714" y="55" width="150" height="230" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="789" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Ingeniero de QA</text>
-<text x="722" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Entrada: src/ + PRD.md</text>
-<rect x="722" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="728" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Salida:</text>
-<text x="728" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Pruebas unitarias (pytest)</text>
-<text x="728" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Pruebas de integración (API)</text>
-<text x="728" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Informe de error → Ingeniero</text>
-<rect x="722" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="789" y="238" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/test_report.md</text>
-<path d="M 789,293 Q 703,346 617,293" fill="none" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
-<text x="703" y="300" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Corrección de errores</text>
-
-<rect x="30" y="335" width="830" height="50" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="445" y="351" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Directorio de proyecto compartido</text>
-<text x="445" y="371" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">docs/PRD.md   docs/design.md   docs/tasks.md   src/*.py   docs/test_report.md</text>
-
-<rect x="30" y="400" width="830" height="130" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="445" y="418" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Diseño principal de MetaGPT</text>
-<text x="42" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ Documentos estandarizados</text>
-<text x="270" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Cada rol emite un formato fijo; el proceso posterior necesita el formato, no el razonamiento</text>
-<text x="42" y="466" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ Desacoplamiento de interfaz</text>
-<text x="270" y="466" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Sustituir por un gestor de producto más capacitado; si la salida mantiene el formato PRD, el flujo posterior no cambia</text>
-<text x="42" y="490" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ Sin gestor</text>
-<text x="270" y="490" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">El flujo de control sigue el DAG: Gestor de producto→Arquitecto→Gestor de proyecto→Ingeniero→QA</text>
-<text x="42" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ Canal de excepciones</text>
-<text x="270" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Fallo de QA → informe de error enrutado de nuevo al ingeniero por módulo → corrección iterativa</text>
+<rect x="260" y="55" width="260" height="75" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="390" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Juez (basado en código)</text>
+<text x="390" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">Estado del juego · Control de fase · Distribución de información</text>
+<text x="390" y="113" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">Noche → Día → Votación → Resolución</text>
+<rect x="40" y="180" width="135" height="155" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="107" y="200" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">🐺 Hombre lobo 1</text>
+<text x="107" y="228" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Visible: Identidades de compañeros</text>
+<text x="107" y="252" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Estrategia: Disfrazarse de aldeano</text>
+<text x="107" y="276" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Noche: Elegir objetivo</text>
+<line x1="390" y1="132" x2="107" y2="178" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="130" y="315" width="40" height="18" rx="9" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="150.0" y="324.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Conocimiento mutuo</text>
+<rect x="185" y="180" width="135" height="155" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="252" y="200" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">🐺 Hombre lobo 2</text>
+<text x="252" y="228" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Visible: Identidades de compañeros</text>
+<text x="252" y="252" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Estrategia: Seguir y proteger</text>
+<text x="252" y="276" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Noche: Negociar objetivo</text>
+<line x1="390" y1="132" x2="252" y2="178" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="275" y="315" width="40" height="18" rx="9" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="295.0" y="324.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Conocimiento mutuo</text>
+<rect x="330" y="180" width="135" height="155" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="397" y="200" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">🔮 Vidente</text>
+<text x="397" y="228" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Visible: Resultados de investigación</text>
+<text x="397" y="252" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Estrategia: Elegir cuándo revelar</text>
+<text x="397" y="276" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Noche: Investigar a 1 persona</text>
+<line x1="390" y1="132" x2="397" y2="178" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="410" y="315" width="50" height="18" rx="9" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="435.0" y="324.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Resultados de la investigación</text>
+<rect x="475" y="180" width="135" height="155" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="542" y="200" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">🧪 Bruja</text>
+<text x="542" y="228" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Visible: Muerte/Curación</text>
+<text x="542" y="252" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Estrategia: Conservar poción/antídoto</text>
+<text x="542" y="276" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Noche: Salvar/Envenenar a 1 persona</text>
+<line x1="390" y1="132" x2="542" y2="178" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="620" y="180" width="135" height="155" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="687" y="200" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">👤 Aldeano ×2</text>
+<text x="687" y="228" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Visible: Solo información pública</text>
+<text x="687" y="252" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Estrategia: Razonamiento lógico</text>
+<text x="687" y="276" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Día: Analizar discurso</text>
+<line x1="390" y1="132" x2="687" y2="178" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="30" y="355" width="720" height="95" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="390" y="375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Control de acceso a la información: El juez filtra el contexto por rol</text>
+<text x="50" y="399" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Hombre lobo:</text>
+<text x="132" y="399" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">ID de aliados + conversación nocturna + discurso público</text>
+<text x="400" y="399" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Vidente:</text>
+<text x="485" y="399" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Resultados de verificación propia + discurso público</text>
+<text x="50" y="423" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Bruja:</text>
+<text x="132" y="423" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Muertes + estado de pociones + discurso público</text>
+<text x="400" y="423" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Aldeano:</text>
+<text x="485" y="423" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Solo discurso público + votos</text>
+<rect x="30" y="468" width="720" height="105" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="390" y="488" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Interacción de voz en tiempo real (ASR + LLM + TTS)</text>
+<text x="137" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Discusión diurna</text>
+<text x="137" y="534" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">El juez establece el orden de habla</text>
+<text x="137" y="552" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Hablar en turno por asiento</text>
+<text x="312" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Fase de votación</text>
+<text x="312" y="534" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Recopilar votos de los jugadores</text>
+<text x="312" y="552" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Contar + anunciar votos</text>
+<text x="487" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Fase nocturna</text>
+<text x="487" y="534" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Despertar roles por turno</text>
+<text x="487" y="552" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Canal de voz privado</text>
+<text x="662" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Jugador humano</text>
+<text x="662" y="534" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Asignar roles aleatoriamente</text>
+<text x="662" y="552" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Votación por voz/habla</text>
 </svg>

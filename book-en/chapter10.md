@@ -162,9 +162,9 @@ At the beginning of this chapter, the "shared file system" was listed as one of 
 
 **IV. Built-in System Resources.** A resource package pre-installed by the system and shared read-only with all Agents. Typical examples are the **Skills** introduced in Chapters 2 and 4—knowledge documents and scripts organized as files, mounted at paths like `/skills`, accessed via progressive disclosure (index first, then expand on demand). Other examples include reference manuals, template libraries, and shared tool definitions. This layer is globally shared, read-only, stable across sessions, and can be read concurrently by all Agents without concurrency control.
 
-Figure 10-3 illustrates how these four area types are uniformly mounted under a single directory tree: the Agent accesses the entire tree through a unified interface, users upload and download files from the shared space, external data sources are mounted via adapters, and built-in system resources are provided read-only.
+Figure 10-2 illustrates how these four area types are uniformly mounted under a single directory tree: the Agent accesses the entire tree through a unified interface, users upload and download files from the shared space, external data sources are mounted via adapters, and built-in system resources are provided read-only.
 
-![Figure 10-3: Mounting structure of the four area types in the Agent Virtual File System](images/fig10-3.svg)
+![Figure 10-2: Mounting structure of the four area types in the Agent Virtual File System](images/fig10-2.svg)
 
 Table 10-4 compares these four area types across four dimensions—visibility, lifecycle, read/write permissions, and concurrency control—serving as a checklist for file system layout design.
 
@@ -252,7 +252,7 @@ The Agent still reasons, uses tools, and produces candidate artifacts. LoopX doe
 
 **Proposer-Reviewer Paradigm.**
 
-![Figure 10-4: Proposer-Reviewer Loop](images/fig10-4.svg)
+![Figure 10-3: Proposer-Reviewer Loop](images/fig10-3.svg)
 
 Proposer-Reviewer is the canonical peer-collaboration paradigm. Chapter 5 already covered its design principles and practical applications in three experiments: PPT generation, video editing, and log visualization. The Proposer Agent generates code, while the Reviewer Agent renders the execution results, evaluates their quality using a vision-language model, and provides structured suggestions for improvement. The two iterate until the result meets the required standard.
 
@@ -335,7 +335,7 @@ return summarize_failures(workers)
 **Sequential Coordination Pattern.**
 
 
-![Figure 10-5: Manager Sequential Coordination](images/fig10-5.svg)
+![Figure 10-4: Manager Sequential Coordination](images/fig10-4.svg)
 
 
 The Manager calls specialized Agents sequentially. Each Agent returns results upon completion, and the Manager decides the next step. The control flow is linear, simple, and clear, making it suitable for scenarios where subtasks have clear sequential dependencies.
@@ -364,14 +364,14 @@ The Manager calls specialized Agents sequentially. Each Agent returns results up
 > 4. Compare a single Agent with the manager pattern in terms of translation quality, execution efficiency, and resource consumption
 >
 >
-> ![Figure 10-6: Book Translation Agent Architecture](images/fig10-6.svg)
+> ![Figure 10-5: Book Translation Agent Architecture](images/fig10-5.svg)
 >
 >
 
 **Parallel Coordination Pattern.**
 
 
-![Figure 10-7: Manager Parallel Coordination](images/fig10-7.svg)
+![Figure 10-6: Manager Parallel Coordination](images/fig10-6.svg)
 
 
 When multiple subtasks can run in parallel, the sequential pattern becomes inefficient. Parallel coordination allows multiple Agents to work simultaneously, significantly increasing throughput. The Manager Agent must plan the parallel tasks, monitor all running Agents in real time, coordinate their communication, and make system-wide decisions when Agents succeed or fail. This typically requires a **message bus** as infrastructure—think of it as a "public bulletin board" where Agents can publish messages and subscribe to the message types that interest them, enabling asynchronous, non-blocking communication. Two common implementations, from simpler to more complex, are **Redis Pub/Sub** and message queues such as **RabbitMQ**. Redis Pub/Sub is lightweight and delivers messages immediately, but it does not persist them, so a receiver that is offline will miss them. RabbitMQ and similar systems persist messages to disk, preserving them while a receiver is temporarily offline. Messages typically use a JSON envelope containing the sender ID, target Agent (or a broadcast marker), message type, and payload.
@@ -394,7 +394,7 @@ The rest of Lingtai's design also echoes earlier sections. Knowledge lives in ea
 >
 > **Requirements and evidence**: Demonstrate autonomous launch, independent ReAct loops, bidirectional messaging, true overlap, field validation and re-asking, page-error feedback, timeouts, cancellation and cleanup of browser/audio resources. Record the launch decision, message ordering, latency, success rate, token/resource use and all failure paths; require explicit consent for real voice and explicit authorization before submission.
 >
-> ![Figure 10-8: Phone and Computer Dual Agent Architecture](images/fig10-8.svg)
+> ![Figure 10-7: Phone and Computer Dual Agent Architecture](images/fig10-7.svg)
 > **Experiment 10-4 ★★★: Agent Collecting Information from Multiple Websites Simultaneously**
 >
 > **Prerequisites**: It is recommended that readers first review the event-driven and interrupt mechanisms from Chapter 4.
@@ -424,7 +424,7 @@ The rest of Lingtai's design also echoes earlier sections. Knowledge lives in ea
 > 6. Measure and compare serial and parallel execution times to quantify the speedup from parallelization
 >
 >
-> ![Figure 10-9: Parallel Web Scraping Architecture](images/fig10-9.svg)
+> ![Figure 10-8: Parallel Web Scraping Architecture](images/fig10-8.svg)
 >
 >
 
@@ -459,7 +459,7 @@ An effective handoff package contains a task description and acceptance criteria
 **MetaGPT: SOP-Driven Software Company Simulation.**
 
 
-![Figure 10-11: MetaGPT Multi-Agent Collaboration Network](images/fig10-11.svg)
+![Figure 10-9: MetaGPT Multi-Agent Collaboration Network](images/fig10-9.svg)
 
 
 MetaGPT's core insight is that the **Standard Operating Procedures** (SOPs) developed and refined by software companies can serve as collaboration protocols for multi-agent systems. Encoding these SOPs allows each role, like a specialized worker on an assembly line, to produce standardized deliverables, and those deliverables naturally become the communication interfaces between roles.
@@ -484,7 +484,7 @@ This is not fully decentralized in terms of control flow: a `GroupChatManager` s
 
 This model suits tasks that require discussion from several perspectives and whose speaking order cannot be determined in advance, such as plan review or cross-domain analysis. However, the conversation can drift: every Agent may keep speaking without the group making progress, a form of livelock. Clear termination conditions are therefore essential. On the dimensions used in this chapter, AutoGen is a hybrid: scheduling is centralized, while context is partially shared. This illustrates that topology and context sharing are independent design dimensions.
 
-**OpenAI Swarm and Agents SDK: Handoff Network.** In contrast, OpenAI's Swarm and its successor, the Agents SDK, represent peer-to-peer decentralization in control flow. Each Agent has several handoff options and can transfer control to another Agent in the network at any time. A customer-service triage Agent that determines an issue involves a refund hands the task to the Refund Agent; if that Agent discovers a technical fault, it can hand the task to the Technical Support Agent. There is no central scheduler. Control passes like a baton between peer Agents, and each Agent makes its own routing decisions. This is the engineering implementation of the handoff-chain pattern in Figure 10-10. The risk is cycles: A hands off to B, and B hands back to A, leaving the task spinning in a loop. A guard such as a maximum handoff count is needed to break it.
+**OpenAI Swarm and Agents SDK: Handoff Network.** In contrast, OpenAI's Swarm and its successor, the Agents SDK, represent peer-to-peer decentralization in control flow. Each Agent has several handoff options and can transfer control to another Agent in the network at any time. A customer-service triage Agent that determines an issue involves a refund hands the task to the Refund Agent; if that Agent discovers a technical fault, it can hand the task to the Technical Support Agent. There is no central scheduler. Control passes like a baton between peer Agents, and each Agent makes its own routing decisions. The risk is cycles: A hands off to B, and B hands back to A, leaving the task spinning in a loop. A guard such as a maximum handoff count is needed to break it.
 
 > **Terminology: Agent Swarm.** Since 2025, "Agent Swarm" has become a buzzword across vendors, but it does not correspond to a single architecture. Industry usage falls roughly into two camps. The first is the OpenAI Swarm-style handoff network (LangGraph's swarm library and Microsoft Agent Framework's handoff orchestration follow the same idea)—the decentralized pattern discussed in this section. The second, found in some mainstream commercial products, is the Manager Pattern at scale: the Agent Swarm debuted with Kimi K2.5 has the main Agent dynamically create hundreds of sub-agents to execute in parallel, with the orchestration decisions of "when to split, and into how many" trained directly into the model through parallel-Agent reinforcement learning; K3 continues this as a dedicated model tier, and the accompanying parallel-Agent training sandbox, AgentEnv, has been open-sourced.[^ch10-kimi-swarm] Anthropic's multi-agent research system and Manus's Wide Research both belong to the same orchestrator-worker star topology. Our hope is that after reading this book, you can see through the concepts to their essence and analyze multi-agent systems from first principles.
 
@@ -580,7 +580,7 @@ The cases in this section can be understood from three dimensions:
 ### Stanford AI Town: Social Simulation of Generative Agents
 
 
-![Figure 10-12: AI Town Architecture](images/fig10-12.svg)
+![Figure 10-10: AI Town Architecture](images/fig10-10.svg)
 
 
 In 2023, researchers from Stanford University and Google published the landmark paper "Generative Agents: Interactive Simulacra of Human Behavior," introducing the concept of "generative agents." The core innovation was to stop confining Agents to predefined tasks and instead endow them with near-human memory, reflection, and planning, so that they could live, socialize, and develop autonomously in an open social environment.
@@ -694,7 +694,7 @@ Werewolf anchors the third dimension of this section, **strategic gameplay**: un
 > - Villager Agents' reasoning is based on logical analysis of statements and behaviors, not random guessing
 > - The game can correctly determine the winner at the end
 >
-> ![Figure 10-13: Voice Werewolf Agent System](images/fig10-13.svg)
+> ![Figure 10-11: Voice Werewolf Agent System](images/fig10-11.svg)
 >
 >
 

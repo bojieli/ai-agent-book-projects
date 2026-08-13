@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 410" width="780" height="410" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="37" y="60" width="160" height="130" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="117" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent A</text>
+<text x="117" y="100" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">需求分析</text>
+<rect x="45" y="115" width="144" height="50" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="117" y="132" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">輸出: 結構化需求文件</text>
+<text x="117" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">spec.json</text>
+<text x="117" y="182" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">完成後移交 →</text>
+<line x1="201" y1="125" x2="215" y2="125" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="219" y="60" width="160" height="130" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="299" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent B</text>
+<text x="299" y="100" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">架構設計</text>
+<rect x="227" y="115" width="144" height="50" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="299" y="132" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">輸出: 技術設計文件</text>
+<text x="299" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">design.md</text>
+<text x="299" y="182" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">完成後移交 →</text>
+<line x1="383" y1="125" x2="397" y2="125" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="401" y="60" width="160" height="130" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="481" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent C</text>
+<text x="481" y="100" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">程式碼實現</text>
+<rect x="409" y="115" width="144" height="50" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="481" y="132" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">輸出: 原始碼</text>
+<text x="481" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">src/*.py</text>
+<text x="481" y="182" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">完成後移交 →</text>
+<line x1="565" y1="125" x2="579" y2="125" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="583" y="60" width="160" height="130" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="663" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent D</text>
+<text x="663" y="100" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">測試驗證</text>
+<rect x="591" y="115" width="144" height="50" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="663" y="132" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">輸出: 測試報告</text>
+<text x="663" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">test_report.md</text>
+<text x="663" y="182" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">完成後移交 →</text>
+<rect x="30" y="215" width="720" height="100" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="390" y="233" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Handoff 傳遞內容（Agent A → Agent B 示例）</text>
+<text x="42" y="253" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">觸發條件:</text>
+<text x="150" y="253" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">A 完成需求文件 → is_complete=True</text>
+<text x="42" y="269" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">目標 Agent:</text>
+<text x="150" y="269" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">target=&quot;architect&quot; (Agent B)</text>
+<text x="42" y="285" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">傳遞內容:</text>
+<text x="150" y="285" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">files=[&quot;spec.json&quot;] + summary=&quot;電商系統: 3個微服務, REST API&quot;</text>
+<text x="42" y="301" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">移交後狀態:</text>
+<text x="150" y="301" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">status=&quot;退出&quot; (釋放資源, 不保持待命)</text>
+<rect x="30" y="330" width="340" height="100" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="200" y="348" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">去中心化優勢</text>
+<text x="48" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">✓ 無需中心 Manager 理解所有角色</text>
+<text x="48" y="392" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">✓ 清晰職責邊界，介面解耦</text>
+<text x="48" y="412" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">✓ 完成即退出，釋放常駐資源</text>
+<rect x="400" y="330" width="350" height="100" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="575" y="348" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">去中心化侷限</text>
+<text x="418" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">✗ 缺乏全域性最佳化視野</text>
+<text x="418" y="392" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">✗ 異常處理困難（無中心協調）</text>
+<text x="418" y="412" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">✗ 流程固定，難以動態調整</text>
+</svg>
