@@ -164,10 +164,10 @@ Bu bölümün başında "paylaşılan dosya sistemi", paylaşılmayan context'in
 
 **Dört, Sistemle Gelen Kaynaklar (Built-in System Resources)**. Sistemin önceden yerleştirdiği, bütün Agent'lara salt okunur biçimde paylaştırılan kaynak paketleridir; tipik örneği Bölüm 2 ve Bölüm 4'te tanıtılan **Skills**'tir — dosya biçiminde örgütlenmiş bilgi dokümanları ve betikler, `/skills` gibi yollara bağlanır ve aşamalı açığa çıkarmayla (önce dizin, sonra ihtiyaç oldukça açma) kullanılır; bunun dışında başvuru kılavuzları, şablon kitaplıkları ve paylaşılan araç tanımları da bu kapsamdadır. Bu katman küresel olarak paylaşılır, salt okunurdur, oturumlar arası kararlıdır ve eşzamanlılık denetimi gerekmeden bütün Agent'lar tarafından eşzamanlı okunabilir.
 
-Şekil 10-3, bu dört bölgenin aynı dizin ağacı altında tek tip biçimde bağlanmış yapısını gösterir: Agent bütün ağaca tek tip arayüzle erişir, kullanıcı paylaşılan alandan dosya yükleyip indirir, dış veri kaynakları adaptörle bağlanır, sistemle gelen kaynaklar ise salt okunur biçimde sunulur.
+Şekil 10-2, bu dört bölgenin aynı dizin ağacı altında tek tip biçimde bağlanmış yapısını gösterir: Agent bütün ağaca tek tip arayüzle erişir, kullanıcı paylaşılan alandan dosya yükleyip indirir, dış veri kaynakları adaptörle bağlanır, sistemle gelen kaynaklar ise salt okunur biçimde sunulur.
 
 
-![Şekil 10-3: Agent Sanal Dosya Sisteminin Dört Bölge Türünün Bağlanma Yapısı](images/fig10-3.svg)
+![Şekil 10-2: Agent Sanal Dosya Sisteminin Dört Bölge Türünün Bağlanma Yapısı](images/fig10-2.svg)
 
 
 Tablo 10-4, bu dört bölgeyi görünürlük, yaşam döngüsü, okuma-yazma izni ve eşzamanlılık denetimi olmak üzere dört boyutta karşılaştırır; dosya sistemi yerleşimi tasarımı için kontrol listesi olarak kullanılabilir.
@@ -249,7 +249,7 @@ Agent yine akıl yürütür, araçları kullanır ve aday çıktılar üretir. L
 **Proposer-Reviewer paradigması.**
 
 
-![Şekil 10-4: Proposer-Reviewer Döngüsü](images/fig10-4.svg)
+![Şekil 10-3: Proposer-Reviewer Döngüsü](images/fig10-3.svg)
 
 
 Proposer-Reviewer, eşler arası iş birliğinin en klasik paradigmasıdır. Bölüm 5, bu paradigmanın tasarım ilkelerini ve saha uygulamasını PPT üretimi, video düzenleme ve günlük görselleştirme olmak üzere üç deneyde ayrıntılı olarak tanıtmıştı: Proposer Agent kodu üretir, Reviewer Agent yürütme sonucunu render edip Vision LLM ile kaliteyi değerlendirir ve yapılandırılmış iyileştirme önerileri verir; ikisi sonuç istenen düzeye gelene kadar tekrar tekrar yineler.
@@ -330,7 +330,7 @@ return summarize_failures(workers)
 **Sıralı koordinasyon biçimi.**
 
 
-![Şekil 10-5: Manager Sıralı Koordinasyonu](images/fig10-5.svg)
+![Şekil 10-4: Manager Sıralı Koordinasyonu](images/fig10-4.svg)
 
 
 Manager, uzman Agent'ları sırayla birbiri ardına çağırır; her Agent tamamlandığında sonucunu döndürür, Manager da bir sonraki adıma karar verir. Kontrol akışı doğrusal, basit ve nettir; alt görevler arasında açık bir öncelik-sonralık bağımlılığı bulunan senaryolara uygundur.
@@ -359,14 +359,14 @@ Manager, uzman Agent'ları sırayla birbiri ardına çağırır; her Agent tamam
 > 4. Tek Agent ile yönetici modelini çeviri kalitesi, yürütme verimliliği ve kaynak tüketimi açısından karşılaştırın
 >
 >
-> ![Şekil 10-6: Kitap Çeviri Agent'ı Mimarisi](images/fig10-6.svg)
+> ![Şekil 10-5: Kitap Çeviri Agent'ı Mimarisi](images/fig10-5.svg)
 >
 >
 
 **Paralel koordinasyon biçimi.**
 
 
-![Şekil 10-7: Manager Paralel Koordinasyonu](images/fig10-7.svg)
+![Şekil 10-6: Manager Paralel Koordinasyonu](images/fig10-6.svg)
 
 
 Birden çok alt görev paralel yürütülebiliyorsa sıralı model verimsiz kalır. Paralel koordinasyon, birden çok Agent'ın aynı anda çalışmasına izin vererek iş hacmini büyük ölçüde artırır. Manager Agent yalnızca paralel görevleri planlamakla kalmaz; çalışan bütün Agent'ları gerçek zamanlı izlemeli, iletişimi koordine etmeli ve bir Agent başarılı ya da başarısız olduğunda sistem çapında karar vermelidir. Bu genellikle altyapı olarak bir **message bus** (mesaj veri yolu) gerektirir — bunu bir "kamuya açık ilan panosu" gibi düşünebilirsiniz: Agent'lar panoya mesaj asabilir (yayımlama), ilgilendikleri mesaj türlerini takibe alabilir (abonelik) ve böylece birbirini bloke etmeden asenkron iletişim kurabilir. Yaygın uygulamalar karmaşıklığa göre iki gruba ayrılır: **Redis Pub/Sub** hafiftir, mesaj gönderildiği anda teslim edilir, kullanımı basittir; kusuru kalıcılık sağlamamasıdır — alıcı o sırada çevrimiçi değilse mesaj kaybolur. **RabbitMQ** gibi mesaj kuyrukları ise mesajları diske kaydeder, böylece alıcı geçici olarak çevrimdışı olsa bile mesaj kaybolmaz. Mesaj biçimi genelde göndericinin kimliğini, hedef Agent'ı (ya da herkese yayın işaretini), mesaj türünü ve JSON biçimindeki veri içeriğini kapsar.
@@ -424,7 +424,7 @@ Birden çok alt görev paralel yürütülebiliyorsa sıralı model verimsiz kal�
 > 4. İş birliği sürecindeki mesaj zaman sırasını ve Agent'ların kilit karar noktalarını kaydedin
 >
 >
-> ![Şekil 10-8: Phone ve Computer İkili Agent Mimarisi](images/fig10-8.svg)
+> ![Şekil 10-7: Phone ve Computer İkili Agent Mimarisi](images/fig10-7.svg)
 >
 >
 > **Deney 10-4 ★★★: Aynı Anda Birden Çok Siteden Bilgi Toplayan Agent**
@@ -456,7 +456,7 @@ Birden çok alt görev paralel yürütülebiliyorsa sıralı model verimsiz kal�
 > 6. Paralel ve sıralı yürütme arasındaki süre farkını kaydedip karşılaştırın, paralelleştirmenin getirdiği performans kazancını doğrulayın
 >
 >
-> ![Şekil 10-9: Paralel Web Scraping Mimarisi](images/fig10-9.svg)
+> ![Şekil 10-8: Paralel Web Scraping Mimarisi](images/fig10-8.svg)
 >
 >
 
@@ -486,7 +486,7 @@ else:
 
 **MetaGPT: SOP güdümlü yazılım şirketi simülasyonu.**
 
-![Şekil 10-11 MetaGPT çoklu Agent iş birliği ağı](images/fig10-11.svg)
+![Şekil 10-9 MetaGPT çoklu Agent iş birliği ağı](images/fig10-9.svg)
 
 MetaGPT bir yazılım şirketinin standart çalışma prosedürlerini kodlar. Roller Product Manager → Architect → Project Manager → Engineer → QA sırasıyla çalışır ve her biri yapılandırılmış bir devir paketi üretir: görev ile kabul ölçütleri, doğrulanmış olgular ve kısıtlar, dosya yolları gibi ürün referansları. Roller ortak mesaj havuzuna yayın yapar ve yalnızca abone oldukları türleri alır. Gönderen ile alıcı gevşek bağlanır, ancak kontrol akışını SOP sabitler; MetaGPT tümüyle merkezsiz değildir.
 
@@ -592,7 +592,7 @@ Bu kısımdaki örnekler üç boyuttan okunabilir:
 ### Stanford AI Kasabası: Üretken Agent'ların Toplumsal Simülasyonu
 
 
-![Şekil 10-12: AI Kasabası Mimarisi](images/fig10-12.svg)
+![Şekil 10-10: AI Kasabası Mimarisi](images/fig10-10.svg)
 
 
 2023'te Stanford Üniversitesi ile Google araştırma ekibi, dönüm noktası niteliğindeki "Generative Agents: Interactive Simulacra of Human Behavior" makalesini yayımlayarak "üretken Agent" (Generative Agent) kavramını ortaya koydu. Temel yenilik, Agent'ı önceden tanımlanmış görevleri tamamlamakla sınırlamak yerine ona insana yakın bellek, kendini değerlendirme ve planlama yetenekleri vermek ve böylece açık bir toplumsal ortamda kendi başına yaşayabilmesini, sosyalleşebilmesini ve gelişebilmesini sağlamaktır.
@@ -708,7 +708,7 @@ Kurt adam, bu kısımdaki üç boyuttan **stratejik oyunu** temsil eder: kural k
 >
 >
 >
-> ![Şekil 10-13: Sesli Kurt Adam Agent Sistemi](images/fig10-13.svg)
+> ![Şekil 10-11: Sesli Kurt Adam Agent Sistemi](images/fig10-11.svg)
 >
 >
 

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 480" width="820" height="480" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333" /></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999" /></marker></defs>
+
+<rect x="30" y="55" width="760" height="28" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2" />
+<text x="410" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="410" dy="63.6">▼ Luồng liên tục của cùng một bối cảnh — lịch sử hội thoại được giữ nguyên giữa các giai</tspan><tspan x="410" dy="10.8">đoạn ▼</tspan></text>
+<rect x="24" y="100" width="248" height="380" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
+<text x="148" y="122" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Giai đoạn 1</text>
+<text x="148" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Nhà phân tích nhu cầu</text>
+<rect x="32" y="160" width="232" height="88" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2" />
+<text x="40" y="171.34" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.76" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Lời nhắc hệ thống</text>
+<text x="40" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.08" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal"><tspan x="40" dy="183.13">"Công việc của bạn là hiểu đầy đủ</tspan><tspan x="40" dy="10.89">các yêu cầu.</tspan></text>
+<text x="40" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.08" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal"><tspan x="40" dy="204.91">Đừng vội thực hiện ở giai đoạn</tspan><tspan x="40" dy="10.89">này</tspan></text>
+<text x="40" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.08" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal"><tspan x="40" dy="226.68">Công việc của bạn là đặt câu hỏi</tspan><tspan x="40" dy="10.89">và xác nhận. "</tspan></text>
+<rect x="32" y="258" width="232" height="78" rx="3" fill="#ffffff" stroke="#333333" stroke-width="2" />
+<text x="40" y="272" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Bộ tool</text>
+<text x="40" y="290" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">ask_clarifying_question(q)</text>
+<text x="40" y="310" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">save_requirement(k, v)</text>
+<text x="40" y="330" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">complete_req_analysis()</text>
+<rect x="32" y="390" width="232" height="48" rx="12" fill="#999999" stroke="#333333" stroke-width="2" />
+<text x="148" y="406" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">kích hoạt chuyển đổi</text>
+<text x="148" y="424" font-family="'Courier New', Courier, monospace" font-size="10" fill="#ffffff" text-anchor="middle" dominant-baseline="central">complete_req_analysis()</text>
+<line x1="274" y1="410" x2="288" y2="410" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<rect x="290" y="100" width="248" height="380" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="414" y="122" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Giai đoạn 2</text>
+<text x="414" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">kỹ sư phần mềm</text>
+<rect x="298" y="160" width="232" height="88" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2" />
+<text x="306" y="178.08" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Lời nhắc hệ thống</text>
+<text x="306" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal"><tspan x="306" dy="192.12">"Viết dựa trên nhu cầu đã được</tspan><tspan x="306" dy="12.96">xác nhận</tspan></text>
+<text x="306" y="218.04" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Mã Python chất lượng cao. theo</text>
+<text x="306" y="231" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Mô-đun hóa, xử lý lỗi tốt nhất. "</text>
+<rect x="298" y="258" width="232" height="78" rx="3" fill="#ffffff" stroke="#333333" stroke-width="2" />
+<text x="306" y="272" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Bộ tool</text>
+<text x="306" y="290" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">write_file(path, content)</text>
+<text x="306" y="310" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">read_file(path)</text>
+<text x="306" y="330" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">execute_code(code)</text>
+<rect x="298" y="390" width="232" height="48" rx="12" fill="#999999" stroke="#333333" stroke-width="2" />
+<text x="414" y="406" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">kích hoạt chuyển đổi</text>
+<text x="414" y="424" font-family="'Courier New', Courier, monospace" font-size="10" fill="#ffffff" text-anchor="middle" dominant-baseline="central">submit_for_review()</text>
+<line x1="540" y1="410" x2="554" y2="410" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<rect x="556" y="100" width="248" height="380" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2" />
+<text x="680" y="122" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Giai đoạn 3</text>
+<text x="680" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">người đánh giá mã</text>
+<rect x="564" y="160" width="232" height="88" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2" />
+<text x="572" y="171.34" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.76" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Lời nhắc hệ thống</text>
+<text x="572" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.08" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal"><tspan x="572" dy="183.13">"Đánh giá chất lượng mã từ nhiều</tspan><tspan x="572" dy="10.89">chiều:</tspan></text>
+<text x="572" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.08" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal"><tspan x="572" dy="204.91">Tính chính xác về chức năng,</tspan><tspan x="572" dy="10.89">thông số kỹ thuật của mã,</tspan></text>
+<text x="572" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.08" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal"><tspan x="572" dy="226.68">Bảo vệ. Sử dụng tư duy phản biện.</tspan><tspan x="572" dy="10.89">"</tspan></text>
+<rect x="564" y="258" width="232" height="78" rx="3" fill="#ffffff" stroke="#333333" stroke-width="2" />
+<text x="572" y="272" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Bộ tool</text>
+<text x="572" y="290" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">run_linter(file)</text>
+<text x="572" y="310" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">run_tests(file)</text>
+<text x="572" y="330" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">analyze_complexity(file)</text>
+<text x="410" y="510" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="410" dy="-9.44">Đảo ngược vai trò: Cập nhật từ nhắc nhở hệ thống + bộ tool, lịch sử và trạng thái hội thoại liên</tspan><tspan x="410" dy="18.88">tục được giữ lại</tspan></text>
+</svg>

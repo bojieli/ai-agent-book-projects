@@ -171,7 +171,7 @@ else:
         rollback_if_possible_or_replan()
 ```
 
-![Figura 9-6: Bucle Percibir-Pensar-Actuar de Agentes Computer Use](images/fig9-7.svg)
+![Figura 9-7: Bucle Percibir-Pensar-Actuar de Agentes Computer Use](images/fig9-7.svg)
 
 Existen tres dimensiones de diseño clave en este bucle: el **espacio de acciones** (qué operaciones puede ejecutar el Agente), el **grounding visual** (cómo encontrar el elemento objetivo en la captura de pantalla) y la **arquitectura del modelo** (cómo generar la acción correcta a partir de la captura de pantalla).
 
@@ -179,7 +179,7 @@ Existen tres dimensiones de diseño clave en este bucle: el **espacio de accione
 
 Anthropic define tres categorías de herramientas que constituyen la capacidad de interacción completa (Figura 9-7):
 
-![Figura 9-7: Espacio de acciones de Computer Use](images/fig9-8.svg)
+![Figura 9-8: Espacio de acciones de Computer Use](images/fig9-8.svg)
 
 **Herramientas de operación de GUI** (`computer tool`): Las operaciones de ratón incluyen movimiento (`mouse_move`), clic con botón izquierdo/derecho/central, doble clic/triple clic, arrastre (`left_click_drag`), así como presionar/soltar con mayor precisión (`left_mouse_down/up`). El desplazamiento (`scroll`) admite cuatro direcciones y se puede combinar con teclas modificadoras. Las operaciones de teclado incluyen escritura carácter por carácter (`type`, simulando la escritura real con un intervalo de 12 ms entre caracteres), combinaciones de teclas (`key`, como Ctrl+C) y pulsación prolongada (`hold_key`). Acciones de percepción: captura de pantalla (`screenshot`), obtención de la posición del cursor (`cursor_position`) y espera (`wait`).
 
@@ -224,7 +224,7 @@ Elements:
 
 El modelo solo necesita emitir un número de ID, y el sistema ejecuta automáticamente el clic utilizando las coordenadas centrales de dicho elemento. Este tipo de solución no ahorra tokens (porque toda la información de anotación debe enviarse al modelo), pero la localización es precisa y estable, evitando además las omisiones y falsas detecciones que los modelos de segmentación podrían introducir.
 
-![Figura 9-8: Set-of-Mark vs indexación de elementos estructurados (implementación browser-use)](images/fig9-9.svg)
+![Figura 9-9: Set-of-Mark vs indexación de elementos estructurados (implementación browser-use)](images/fig9-9.svg)
 
 **Predicción directa de coordenadas.**
 
@@ -232,7 +232,7 @@ La tercera ruta no realiza ninguna anotación y permite que el modelo emita las 
 
 En la solución de predicción de coordenadas, la comprensión de las coordenadas por parte del modelo depende en gran medida de la resolución utilizada durante el entrenamiento (Figura 9-9). El entrenamiento de Claude utiliza XGA (1024x768), WXGA (1280x800) y FWXGA (1366x768); si la resolución de la captura de pantalla de entrada no coincide, las coordenadas predichas por el modelo se desviarán sistemáticamente, como si se midiera una distancia en un mapa pequeño y se aplicara directamente a un mapa grande. Por lo tanto, es necesario implementar un mecanismo de escalado bidireccional de coordenadas en la capa de herramientas, debiendo **seleccionar la resolución objetivo según la relación de aspecto de ancho y alto**, evitando que un estiramiento no proporcional deforme la imagen e introduzca desvíos en el juicio de coordenadas. Por ejemplo, si la resolución real de la pantalla es de 2560×1440 (16:9), se debe seleccionar entre las tres opciones admitidas por Claude aquella cuya relación de aspecto sea más cercana a 16:9: FWXGA (1366×768) es la más adecuada. Al tomar la captura de pantalla, la pantalla se escala proporcionalmente a 1366×768 para enviarla al modelo; tras emitir el modelo las coordenadas de clic (683, 384), se mapean de forma inversa a las coordenadas reales (683×2560/1366, 384×1440/768) ≈ (1280, 720). Por el contrario, si se fuerza el estiramiento de 16:9 a 1024×768 (4:3), la imagen se aplastará horizontalmente y las coordenadas predichas por el modelo sufrirán una desviación sistemática.
 
-![Figura 9-9: Coincidencia de resolución y escalado bidireccional de coordenadas](images/fig9-10.svg)
+![Figura 9-10: Coincidencia de resolución y escalado bidireccional de coordenadas](images/fig9-10.svg)
 
 La lógica de elección entre las tres rutas se puede resumir de la siguiente manera: **cuando la información estructurada esté disponible, se priorizará el uso del índice DOM/Accessibility Tree**, ya que la localización es la más precisa y estable; **cuando no esté disponible** (software de escritorio nativo como Photoshop, interfaces renderizadas en Canvas/WebGL, juegos), **se puede utilizar tanto la anotación visual (ruta SoM original) como la predicción de coordenadas**. La anotación visual convierte la localización en una pregunta de opción múltiple, siendo más amigable para modelos generales no entrenados específicamente; la predicción de coordenadas omite el paso de anotación y es más directa para modelos entrenados en localización de GUI. La precisión de ambas en elementos pequeños e interfaces densas aún presenta brechas.
 
@@ -340,7 +340,7 @@ Los VLM generales ya poseen una capacidad notable de pensamiento embrollado. **G
 
 En la capa de ejecución de la arquitectura de dos capas, tres modelos representativos (RT-2, OpenVLA y π₀) se enfocan en el control VLA, es decir, emitir las acciones del robot en tiempo real basándose en las imágenes de las cámaras y las instrucciones de lenguaje (Figura 9-10). Pertenecen a dos rutas en cuanto a la representación de las acciones: tokens de acción discretos y generación de trayectorias continuas.
 
-![Figura 9-10: Arquitectura VLA (Vision-Language-Action)](images/fig9-11.svg)
+![Figura 9-11: Arquitectura VLA (Vision-Language-Action)](images/fig9-11.svg)
 
 **RT-2 y OpenVLA: Ruta de tokens de acción discretos.**
 
@@ -371,7 +371,7 @@ for action in chunk:
 
 En la sección de entornos de simulación del Capítulo 6 se explicaron los orígenes de la brecha entre simulación y realidad (sim-to-real gap) y el principio de la aleatorización de dominio (domain randomization) para hacerle frente, por lo que no se repetirá aquí; en una frase: dado que la simulación no puede restaurar completamente las características físicas, visuales y de hardware reales, se alteran aleatoriamente estos parámetros en un amplio rango durante el entrenamiento, forzando a la política a aprender un conjunto de representaciones generales estables ante diversos cambios (Figura 9-11). A continuación solo examinaremos cómo se aterriza este principio en brazos robóticos reales.
 
-![Figura 9-11: Brecha Sim2Real y Aleatorización de Dominio](images/fig9-12.svg)
+![Figura 9-12: Brecha Sim2Real y Aleatorización de Dominio](images/fig9-12.svg)
 
 Existen numerosos casos de éxito en esta ruta: la manipulación diestra de manos mecánicas de OpenAI (el proyecto Dactyl logró la reorientación de cubos dentro de la mano, y su trabajo posterior logró resolver el cubo de Rubik con una mano mediante aleatorización automática de dominio ADR) y ANYmal de ETH Zurich (caminata robusta de robots cuadrúpedos sobre nieve, grava y otros terrenos complejos en exteriores) pertenecen a esta categoría.
 

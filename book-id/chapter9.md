@@ -171,7 +171,7 @@ else:
         rollback_if_possible_or_replan()
 ```
 
-![Gambar 9-6: Loop Perceive-Think-Act dari Computer Use Agent](images/fig9-7.svg)
+![Gambar 9-7: Loop Perceive-Think-Act dari Computer Use Agent](images/fig9-7.svg)
 
 Ada tiga dimensi desain utama dalam loop ini: **Action Space** (operasi apa yang dapat dilakukan Agent), **Visual Grounding** (bagaimana menemukan elemen target dalam tangkapan layar), dan **Model Architecture** (bagaimana menghasilkan tindakan yang benar dari tangkapan layar).
 
@@ -179,7 +179,7 @@ Ada tiga dimensi desain utama dalam loop ini: **Action Space** (operasi apa yang
 
 Anthropic mendefinisikan tiga jenis alat yang membentuk kemampuan interaksi lengkap (Gambar 9-7):
 
-![Gambar 9-7: Action Space dari Computer Use](images/fig9-8.svg)
+![Gambar 9-8: Action Space dari Computer Use](images/fig9-8.svg)
 
 **GUI Operation Tool** (alat `computer`): Operasi mouse mencakup menggerakkan (`mouse_move`), klik kiri/kanan/tengah, klik ganda atau klik tiga kali, menyeret (`left_click_drag`), dan tindakan tekan/lepas yang lebih presisi (`left_mouse_down` dan `left_mouse_up`). Menggulir (`scroll`) mendukung empat arah dan dapat dikombinasikan dengan tombol pengubah. Operasi keyboard mencakup mengetik karakter demi karakter (`type`, dengan interval 12ms antar karakter untuk menyimulasikan pengetikan nyata), kombinasi tombol (`key`, mis., `Ctrl+C`), dan menahan tombol (`hold_key`). Tindakan persepsi mencakup mengambil tangkapan layar, mengambil posisi kursor (`cursor_position`), dan menunggu (`wait`).
 
@@ -224,7 +224,7 @@ Elemen:
 
 Model hanya perlu menghasilkan ID, dan sistem secara otomatis mengklik bagian tengah elemen yang sesuai. Pendekatan ini tidak menghemat token karena semua data anotasi tetap harus dikirim ke model, tetapi memberikan pelokalan yang akurat dan stabil sembari menghindari deteksi yang terlewat dan positif palsu yang dapat diperkenalkan oleh model segmentasi.
 
-![Gambar 9-8: Set-of-Mark vs. Pengindeksan Elemen Terstruktur (implementasi browser-use)](images/fig9-9.svg)
+![Gambar 9-9: Set-of-Mark vs. Pengindeksan Elemen Terstruktur (implementasi browser-use)](images/fig9-9.svg)
 
 **Prediksi Koordinat Murni.**
 
@@ -232,7 +232,7 @@ Rute ketiga melewatkan anotasi dan meminta model untuk mengeluarkan koordinat se
 
 Dalam skema prediksi koordinat, pemahaman model tentang koordinat sangat bergantung pada resolusi yang digunakan selama pelatihan (Gambar 9-9). Claude dilatih menggunakan XGA (1024×768), WXGA (1280×800), dan FWXGA (1366×768). Jika resolusi tangkapan layar input tidak cocok, prediksi koordinat model akan bergeser secara sistematis—seperti mengukur jarak di peta kecil dan kemudian menerapkannya secara langsung ke peta besar. Oleh karena itu, mekanisme penskalaan koordinat dua arah harus diimplementasikan pada lapisan alat, dan resolusi target harus **dipilih berdasarkan rasio aspek** untuk menghindari peregangan tidak seragam yang mendistorsi gambar dan akibatnya membiaskan penilaian koordinat. Misalnya, jika resolusi layar sebenarnya adalah 2560×1440 (16:9), target yang paling sesuai di antara tiga opsi yang didukung Claude adalah FWXGA (1366×768), yang memiliki rasio aspek terdekat dengan 16:9. Tangkapan layar diskalakan secara proporsional menjadi 1366×768 dan diumpankan ke model; setelah model mengeluarkan koordinat klik (683, 384), koordinat tersebut dipetakan secara terbalik ke koordinat sebenarnya (683×2560/1366, 384×1440/768) ≈ (1280, 720). Sebaliknya, jika gambar 16:9 diregangkan secara paksa ke 4:3 1024×768, gambar akan dikompresi secara horizontal, menyebabkan prediksi koordinat model bergeser secara sistematis.
 
-![Gambar 9-9: Pencocokan Resolusi dan Penskalaan Koordinat Dua Arah](images/fig9-10.svg)
+![Gambar 9-10: Pencocokan Resolusi dan Penskalaan Koordinat Dua Arah](images/fig9-10.svg)
 
 Pilihan di antara ketiga rute tersebut dapat diringkas sebagai berikut: **ketika informasi terstruktur tersedia, prioritaskan pengindeksan DOM/accessibility-tree** untuk pelokalan yang paling akurat dan stabil. **Ketika tidak tersedia**—dalam perangkat lunak desktop asli seperti Photoshop, antarmuka yang dirender canvas/WebGL, atau game—**gunakan anotasi visual (rute SoM asli) atau prediksi koordinat**. Anotasi visual mengubah pelokalan menjadi masalah pilihan ganda, membuatnya lebih ramah terhadap model serbaguna tanpa pelatihan khusus. Prediksi koordinat menghilangkan langkah anotasi dan lebih langsung untuk model yang dilatih khusus pada pelokalan GUI. Kedua pendekatan ini masih kesulitan dengan elemen kecil dan antarmuka yang padat.
 
@@ -340,7 +340,7 @@ VLM yang bersifat general-purpose sudah memiliki kemampuan Embodied Reasoning ya
 Dalam lapisan eksekusi dari arsitektur dua lapis, tiga model representatif—RT-2, OpenVLA, dan π₀—semuanya fokus pada VLA control, yaitu, mengeluarkan tindakan robot secara real-time berdasarkan gambar kamera dan instruksi bahasa (Gambar 9-10). Mereka mengikuti dua pendekatan berbeda untuk representasi tindakan: discrete action tokens dan continuous trajectory generation.
 
 
-![Gambar 9-10: Arsitektur VLA (Vision-Language-Action)](images/fig9-11.svg)
+![Gambar 9-11: Arsitektur VLA (Vision-Language-Action)](images/fig9-11.svg)
 
 
 **RT-2 dan OpenVLA: Rute Discrete Action Token.**
@@ -359,7 +359,7 @@ Pembagian sebenarnya dalam representasi tindakan bukan antara RT-2 dan OpenVLA, 
 
 Bagian simulasi Bab 6 telah menjelaskan dari mana kesenjangan sim-to-real (Sim2Real) berasal dan bagaimana Domain Randomization melawannya, jadi kita tidak akan mengulanginya di sini. Singkatnya: simulasi tidak akan pernah bisa mereproduksi secara sempurna fisika, visual, dan perangkat keras dunia nyata, sehingga pelatihan mengacak (randomizes) parameter tersebut dalam rentang yang luas, memaksa kebijakan (policy) untuk mempelajari representasi yang kuat terhadap variasi tersebut (Gambar 9-11). Berikut ini adalah bagaimana prinsip itu mendarat pada lengan robot nyata.
 
-![Gambar 9-11: Kesenjangan Sim2Real dan Domain Randomization](images/fig9-12.svg)
+![Gambar 9-12: Kesenjangan Sim2Real dan Domain Randomization](images/fig9-12.svg)
 
 Pendekatan ini telah menghasilkan beberapa keberhasilan yang menonjol. Proyek Dactyl milik OpenAI mencapai reorientasi kubus di dalam tangan, dan pekerjaan selanjutnya menggunakan Automatic Domain Randomization (ADR) untuk memecahkan Kubus Rubik dengan satu tangan. Quadruped ANYmal dari ETH Zurich telah menunjukkan penggerak (locomotion) yang kuat di atas medan luar ruangan yang sulit seperti salju dan kerikil.
 

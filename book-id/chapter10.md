@@ -162,9 +162,9 @@ Di awal bab ini, "shared file system" dicantumkan sebagai salah satu dari tiga m
 
 **IV. Built-in System Resources.** Sebuah paket sumber daya yang telah diinstal sebelumnya oleh sistem dan dibagikan secara read-only kepada semua Agent. Contoh umumnya adalah **Skills** yang diperkenalkan pada Bab 2 dan 4—dokumen pengetahuan dan skrip yang diorganisasikan sebagai file, di-mount di path seperti `/skills`, diakses melalui progressive disclosure (indeks terlebih dahulu, lalu di-expand sesuai permintaan). Contoh lainnya termasuk panduan referensi, pustaka template, dan definisi tool yang dibagikan. Lapisan ini dibagikan secara global, bersifat read-only, stabil di seluruh sesi, dan dapat dibaca secara konkuren oleh semua Agent tanpa concurrency control.
 
-Gambar 10-3 mengilustrasikan bagaimana keempat tipe area ini secara seragam di-mount di bawah satu directory tree tunggal: Agent mengakses keseluruhan pohon melalui antarmuka yang terpadu, pengguna mengunggah dan mengunduh file dari ruang bersama, sumber data eksternal di-mount melalui adaptor, dan sumber daya sistem bawaan disediakan secara read-only.
+Gambar 10-2 mengilustrasikan bagaimana keempat tipe area ini secara seragam di-mount di bawah satu directory tree tunggal: Agent mengakses keseluruhan pohon melalui antarmuka yang terpadu, pengguna mengunggah dan mengunduh file dari ruang bersama, sumber data eksternal di-mount melalui adaptor, dan sumber daya sistem bawaan disediakan secara read-only.
 
-![Gambar 10-3: Struktur mounting dari empat tipe area dalam Agent Virtual File System](images/fig10-3.svg)
+![Gambar 10-2: Struktur mounting dari empat tipe area dalam Agent Virtual File System](images/fig10-2.svg)
 
 Tabel 10-4 membandingkan keempat tipe area ini di empat dimensi—visibilitas, lifecycle, permission baca/tulis, dan concurrency control—yang berfungsi sebagai daftar periksa untuk desain tata letak file system.
 
@@ -248,7 +248,7 @@ Agent tetap melakukan penalaran, menggunakan tool, dan menghasilkan artefak kand
 
 **Paradigma Proposer-Reviewer.**
 
-![Gambar 10-4: Proposer-Reviewer Loop](images/fig10-4.svg)
+![Gambar 10-3: Proposer-Reviewer Loop](images/fig10-3.svg)
 
 Proposer-Reviewer adalah paradigma peer-collaboration kanonik. Bab 5 telah membahas prinsip-prinsip desainnya dan aplikasi praktis dalam tiga eksperimen: pembuatan PPT, pengeditan video, dan visualisasi log. Proposer Agent menghasilkan kode, sementara Reviewer Agent merender hasil eksekusi, mengevaluasi kualitasnya menggunakan vision-language model, dan memberikan saran terstruktur untuk perbaikan. Keduanya beriterasi hingga hasilnya memenuhi standar yang disyaratkan.
 
@@ -328,7 +328,7 @@ return summarize_failures(workers)
 **Pola Koordinasi Sekuensial (Sequential Coordination Pattern).**
 
 
-![Gambar 10-5: Manager Sequential Coordination](images/fig10-5.svg)
+![Gambar 10-4: Manager Sequential Coordination](images/fig10-4.svg)
 
 
 Manager memanggil Agent-agent khusus (specialized Agents) secara berurutan. Setiap Agent mengembalikan hasil setelah selesai, dan Manager memutuskan langkah selanjutnya. Control flow-nya linier, sederhana, dan jelas, membuatnya cocok untuk skenario di mana sub-tugas memiliki dependensi sekuensial yang jelas.
@@ -357,14 +357,14 @@ Manager memanggil Agent-agent khusus (specialized Agents) secara berurutan. Seti
 > 4. Bandingkan Agent tunggal dengan pola manajer dalam hal kualitas terjemahan, efisiensi eksekusi, dan konsumsi sumber daya
 >
 >
-> ![Gambar 10-6: Book Translation Agent Architecture](images/fig10-6.svg)
+> ![Gambar 10-5: Book Translation Agent Architecture](images/fig10-5.svg)
 >
 >
 
 **Pola Koordinasi Paralel (Parallel Coordination Pattern).**
 
 
-![Gambar 10-7: Manager Parallel Coordination](images/fig10-7.svg)
+![Gambar 10-6: Manager Parallel Coordination](images/fig10-6.svg)
 
 
 Ketika beberapa sub-tugas (subtasks) dapat berjalan secara paralel, pola sekuensial (sequential pattern) menjadi tidak efisien. Koordinasi paralel memungkinkan beberapa Agent untuk bekerja secara bersamaan (simultaneously), yang secara signifikan meningkatkan throughput. Manager Agent harus merencanakan tugas paralel, memonitor semua Agent yang berjalan secara real time, mengoordinasikan komunikasi mereka, dan membuat keputusan di tingkat sistem (system-wide decisions) ketika Agent berhasil atau gagal. Ini biasanya membutuhkan sebuah **message bus** sebagai infrastruktur—anggap saja sebagai "papan buletin publik" di mana Agent-agent dapat menerbitkan pesan (publish messages) dan berlangganan (subscribe) ke tipe pesan yang menarik minat mereka, memungkinkan komunikasi asinkron (asynchronous, non-blocking communication). Dua implementasi umum, dari yang lebih sederhana hingga yang lebih kompleks, adalah **Redis Pub/Sub** dan message queues seperti **RabbitMQ**. Redis Pub/Sub bersifat ringan (lightweight) dan segera mengirimkan pesan, tetapi tidak menyimpannya (persist), sehingga penerima yang sedang offline akan kehilangannya. RabbitMQ dan sistem serupa menyimpan pesan ke disk (persist messages to disk), menjaganya tetap utuh ketika penerima sedang offline sementara waktu. Pesan biasanya menggunakan amplop JSON (JSON envelope) yang berisi sender ID, target Agent (atau penanda siaran (broadcast marker)), tipe pesan, dan payload.
@@ -425,7 +425,7 @@ Sisa dari desain Lingtai juga menggemakan bagian-bagian sebelumnya. Pengetahuan 
 > 4. Catat stempel waktu (*timestamp*) untuk pesan yang dipertukarkan dan catat keputusan-keputusan penting para Agent
 >
 >
-> ![Gambar 10-8: Phone and Computer Dual Agent Architecture](images/fig10-8.svg)
+> ![Gambar 10-7: Phone and Computer Dual Agent Architecture](images/fig10-7.svg)
 >
 >
 > **Eksperimen 10-4 ★★★: Agent Mengumpulkan Informasi dari Banyak Situs Web Secara Bersamaan**
@@ -457,7 +457,7 @@ Sisa dari desain Lingtai juga menggemakan bagian-bagian sebelumnya. Pengetahuan 
 > 6. Ukur dan bandingkan waktu eksekusi serial dan paralel untuk mengukur peningkatan kecepatan dari paralelisasi
 >
 >
-> ![Gambar 10-9: Parallel Web Scraping Architecture](images/fig10-9.svg)
+> ![Gambar 10-8: Parallel Web Scraping Architecture](images/fig10-8.svg)
 >
 
 ### Pola terdesentralisasi
@@ -486,7 +486,7 @@ else:
 
 **MetaGPT: simulasi perusahaan perangkat lunak berbasis SOP.**
 
-![Gambar 10-11 Jaringan kolaborasi multi-Agent MetaGPT](images/fig10-11.svg)
+![Gambar 10-9 Jaringan kolaborasi multi-Agent MetaGPT](images/fig10-9.svg)
 
 MetaGPT mengodekan prosedur operasi standar perusahaan perangkat lunak. Peran bekerja dalam urutan Product Manager → Architect → Project Manager → Engineer → QA. Setiap peran menghasilkan paket handoff terstruktur: deskripsi tugas dan kriteria penerimaan, fakta dan batasan yang telah dipastikan, serta referensi artifact seperti path file. Peran menerbitkan pesan ke shared pool dan hanya membaca tipe yang dilanggan. Ini melepaskan ketergantungan pengirim dan penerima, tetapi control flow tetap ditentukan SOP; MetaGPT tidak sepenuhnya terdesentralisasi.
 
@@ -592,7 +592,7 @@ Kasus-kasus di bagian ini dapat dipahami dari tiga dimensi:
 ### Stanford AI Town: Simulasi Sosial Agent Generatif
 
 
-![Gambar 10-12: AI Town Architecture](images/fig10-12.svg)
+![Gambar 10-10: AI Town Architecture](images/fig10-10.svg)
 
 
 Pada tahun 2023, para peneliti dari Stanford University dan Google menerbitkan makalah penting "Generative Agents: Interactive Simulacra of Human Behavior," yang memperkenalkan konsep "generative agents." Inovasi intinya adalah berhenti membatasi Agents pada tugas-tugas yang telah ditentukan sebelumnya dan sebaliknya membekali mereka dengan memori, *reflection*, dan *planning* yang menyerupai manusia, sehingga mereka dapat hidup, bersosialisasi, dan berkembang secara mandiri di lingkungan sosial yang terbuka.
@@ -707,7 +707,7 @@ Werewolf menjadi jangkar bagi dimensi ketiga dari bagian ini, **strategic gamepl
 >
 >
 >
-> ![Gambar 10-13: Sistem Voice Werewolf Agent](images/fig10-13.svg)
+> ![Gambar 10-11: Sistem Voice Werewolf Agent](images/fig10-11.svg)
 >
 >
 
