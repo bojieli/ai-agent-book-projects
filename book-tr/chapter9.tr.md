@@ -174,7 +174,7 @@ else:
         rollback_if_possible_or_replan()
 ```
 
-![Şekil 9-6: Computer Use Agent'ının algılama-düşünme-eylem döngüsü](images/fig9-7.svg)
+![Şekil 9-7: Computer Use Agent'ının algılama-düşünme-eylem döngüsü](images/fig9-7.svg)
 
 
 Bu döngüde üç kritik tasarım boyutu vardır: **action space** (eylem alanı — Agent'ın hangi işlemleri yürütebildiği), **görsel konumlandırma** (ekran görüntüsünde hedef öğenin nasıl bulunacağı) ve **model mimarisi** (ekran görüntüsünden doğru eylemin nasıl üretileceği).
@@ -184,7 +184,7 @@ Bu döngüde üç kritik tasarım boyutu vardır: **action space** (eylem alanı
 Anthropic, eksiksiz bir etkileşim yeteneği oluşturan üç tür araç tanımlar (Şekil 9-8):
 
 
-![Şekil 9-7: Computer Use action space'i](images/fig9-8.svg)
+![Şekil 9-8: Computer Use action space'i](images/fig9-8.svg)
 
 
 **GUI işlem aracı** (computer tool): Fare işlemleri arasında hareket ettirme (mouse_move), sol/sağ/orta tuş tıklaması, çift/üçlü tıklama, sürükleme (left_click_drag) ve daha ince taneli basma/bırakma (left_mouse_down/up) yer alır. Kaydırma (scroll) dört yönü destekler ve değiştirici tuşlarla birlikte kullanılabilir. Klavye işlemleri arasında karakter karakter yazma (type; gerçek klavye kullanımını taklit etmek için her karakter arasında 12 ms aralıkla), tuş kombinasyonları (key, örneğin Ctrl+C) ve tuşu basılı tutma (hold_key) bulunur. Algı eylemleri: ekran görüntüsü alma (screenshot), imleç konumunu okuma (cursor_position) ve bekleme (wait).
@@ -232,7 +232,7 @@ Elements:
 Modelin yalnızca bir ID numarası üretmesi yeterlidir; sistem otomatik olarak o öğenin merkez koordinatını kullanarak tıklamayı gerçekleştirir. Bu tür çözümler token tasarrufu sağlamaz (çünkü tüm işaretleme bilgisinin modele gönderilmesi gerekir), ama konumlandırması kesin ve kararlıdır; üstelik segmentasyon modelinin yol açabileceği atlanmış ve yanlış tespitleri de ortadan kaldırır.
 
 
-![Şekil 9-8: Set-of-Mark ile yapısal öğe indeksleme (browser-use uygulaması)](images/fig9-9.svg)
+![Şekil 9-9: Set-of-Mark ile yapısal öğe indeksleme (browser-use uygulaması)](images/fig9-9.svg)
 
 **Saf koordinat tahmini.**
 
@@ -241,7 +241,7 @@ Modelin yalnızca bir ID numarası üretmesi yeterlidir; sistem otomatik olarak 
 Koordinat tahmini çözümlerinde modelin koordinatları kavrayışı, eğitim sırasında kullanılan çözünürlüğe yüksek oranda bağımlıdır (Şekil 9-10). Claude'un eğitiminde XGA (1024x768), WXGA (1280x800) ve FWXGA (1366x768) kullanılmıştır; girdi olarak verilen ekran görüntüsünün çözünürlüğü bunlarla uyuşmazsa modelin tahmin ettiği koordinatlar sistematik biçimde kayar — tıpkı küçük bir haritada ölçülen mesafeyi doğrudan büyük haritaya uygulamak gibi. Bu nedenle araç katmanında çift yönlü bir koordinat ölçekleme mekanizması gerekir ve hedef çözünürlük **en-boy oranına göre seçilmelidir**; aksi hâlde orantısız gerdirme görüntüyü bozar ve koordinat değerlendirmesini de saptırır. Örneğin gerçek ekran çözünürlüğü 2560×1440 (16:9) ise, Claude'un desteklediği üç seçenek arasından en-boy oranı 16:9'a en yakın olanı — FWXGA (1366×768) — seçilmelidir. Ekran görüntüsü orantılı biçimde 1366×768'e ölçeklenip modele verilir; model tıklama koordinatı olarak (683, 384) ürettiğinde bu değer ters yönde gerçek koordinata eşlenir: (683×2560/1366, 384×1440/768) ≈ (1280, 720). Buna karşılık 16:9'luk bir görüntü zorla 4:3'lük 1024×768'e gerdirilirse görüntü yatayda ezilir ve modelin tahmin ettiği koordinatlar sistematik olarak kayar.
 
 
-![Şekil 9-9: Çözünürlük eşleştirme ve çift yönlü koordinat ölçekleme](images/fig9-10.svg)
+![Şekil 9-10: Çözünürlük eşleştirme ve çift yönlü koordinat ölçekleme](images/fig9-10.svg)
 
 
 Üç yol arasındaki seçim mantığı şöyle özetlenebilir: **yapısal bilgi elde edilebiliyorsa öncelikle DOM/Accessibility Tree indekslemesi kullanılmalıdır**; konumlandırması en kesin ve en kararlı olan budur. **Elde edilemiyorsa** (Photoshop gibi yerel masaüstü yazılımları, Canvas/WebGL ile render edilen arayüzler, oyunlar) **hem görsel işaretleme (orijinal SoM yolu) hem de koordinat tahmini kullanılabilir**. Görsel işaretleme konumlandırmayı çoktan seçmeli bir soruya dönüştürdüğü için, özel olarak eğitilmemiş genel amaçlı modellere daha dosttur; koordinat tahmini ise işaretleme adımını ortadan kaldırdığı için, GUI konumlandırma eğitimi almış modeller açısından daha doğrudandır. Küçük öğelerde ve yoğun arayüzlerde her ikisinin de doğruluğu hâlâ yetersizdir.
@@ -345,9 +345,6 @@ Genel amaçlı VLM'ler şimdiden fena olmayan bir bedenlenmiş akıl yürütme y
 İki katmanlı mimarinin yürütme katmanında RT-2, OpenVLA ve π₀ olmak üzere üç temsilci model VLA kontrolüne odaklanır — yani kamera görüntüsüne ve dil talimatına göre robotun eylemlerini gerçek zamanlı üretmeye (Şekil 9-11). Bu modeller eylem temsili bakımından iki ayrı yola ayrılır: ayrık eylem token'ları ile sürekli yörünge üretimi.
 
 
-![Şekil 9-10: VLA mimarisi (Vision-Language-Action)](images/fig9-11.svg)
-
-
 **RT-2 ve OpenVLA: ayrık eylem token'ı yolu.**
 
 **RT-2** bu yolu açtı: doğrudan büyük ölçekli görsel-dil modelleri üzerinde fine-tuning yapar, robotun sürekli eylemlerini token'lara ayrıklaştırır ve tıpkı metin üretir gibi bunları tek tek otoregresif olarak çıkarır; böylece ön eğitimli modelin genelleme yeteneğinden yararlanarak yeni nesnelere ve yeni talimatlara zero-shot aktarımı iyileştirir. **OpenVLA** ise RT-2'nin eylem temsili şemasını sürdürdü; dil modeli ile görsel kodlayıcıyı tek bir mimaride birleştirir, girdi olarak görüntü ve yazılı talimat alır, çıktı olarak eylem token'ları üretir. Eğitim iki aşamalıdır: önce büyük ölçekli, platformlar arası Open X-Embodiment veri kümesinde (20'den fazla robot platformundaki gerçek manipülasyon gösterimlerini kapsar) ön eğitim yapılarak genel manipülasyon bilgisi öğrenilir ("kavrama", "yerleştirme" gibi eylem kalıpları farklı robotlar arasında ortaktır), ardından belirli bir platform için az miktarda veriyle fine-tuning yapılır. Eylem temsilleri özünde aynı olduğuna göre, ikisi arasındaki asıl fark açıklık ve mühendislik tercihlerindedir: RT-2 ve eğitim verisi Google'ın içindedir, OpenVLA ise tamamen açık kaynaktır — açık kaynak bir omurga model (Llama 2 artı görsel kodlayıcı) ile herkese açık bir veri kümesi, tüm topluluğa ilk kez bunun üzerine yeniden üretim ve iyileştirme yapma imkânı verdi.
@@ -363,9 +360,6 @@ Eylem temsilindeki asıl ayrım RT-2 ile OpenVLA arasında değil, **ayrık toke
 ### Sim2Real Transfer: Simülasyondan Gerçekliğe Uzanan Uçurum
 
 Bölüm 6'daki simülasyon ortamları alt bölümü, sim-to-real gap'in (gerçeklik farkı) kaynağını ve domain randomization'ın (alan rastgeleleştirme) buna nasıl çözüm ürettiğini zaten açıklığa kavuşturmuştu; burada tekrar etmiyoruz — tek cümleyle özetlemek gerekirse: simülasyon gerçek fiziği, görüntüyü ve donanım özelliklerini tam olarak yeniden üretemediği için, eğitim sırasında bu parametreler geniş bir aralıkta rastgele karıştırılır ve politikanın her türlü değişime dayanıklı, genel bir temsil öğrenmesi zorlanır (Şekil 9-11). Aşağıda yalnızca bu ilkenin gerçek bir robot kolunda nasıl hayata geçtiğine bakacağız.
-
-
-![Şekil 9-11: Sim2Real uçurumu ve Domain Randomization](images/fig9-12.svg)
 
 
 Bu yolun çok sayıda başarılı örneği var: OpenAI'ın robot eliyle becerikli manipülasyonu (Dactyl projesi el içinde küp yeniden yönlendirmeyi gerçekleştirdi; devamındaki çalışma otomatik alan rastgeleleştirmesi (ADR) yardımıyla tek elle Rubik küpü çözmeyi başardı) ve ETH Zürih'in ANYmal'i (dört ayaklı robotun kar, moloz gibi karmaşık arazi koşullarında sağlam biçimde yürümesi) bunlar arasındadır.
