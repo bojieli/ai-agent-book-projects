@@ -482,7 +482,7 @@ Ez az egy időbélyegsor minden kérésnél az időbélyeg helyétől kezdve elt
 > A figyelmi mechanizmus alapvető megértésével most megfigyelhetjük egy valódi modell figyelmi eloszlását a `attention_visualization` kísérleten keresztül.
 >
 >
-> ![2-7. ábra: Figyelmi hőtérkép](images/fig2-7.svg)
+> ![2-7. ábra: Figyelmi hőtérkép](images/fig2-7.png)
 >
 >
 > A figyelmi hőtérkép több kulcsfontosságú mintázatot tár fel:

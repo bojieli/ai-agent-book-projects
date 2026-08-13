@@ -647,6 +647,32 @@
       });
     }
 
+    // Exposed for extras/auto-translate.js, which routes the reader to the
+    // source edition before overlaying machine translation on a language we
+    // do not build. Deliberately limited to the two operations it needs
+    // rather than exporting the whole module.
+    window.langSwitcher = {
+      // Language code of the edition the current URL belongs to.
+      current: function () {
+        return detectLang(cleanPathname());
+      },
+      // Absolute URL of this page in `code`, or null when the current page
+      // has no counterpart there (or is already in that edition).
+      urlFor: function (code) {
+        var cleanPath = cleanPathname();
+        var rel = translatePath(cleanPath, detectLang(cleanPath), code);
+        if (!rel) return null;
+        return (
+          window.SITE_ROOT.replace(/\/$/, "") + "/" + rel.replace(/^\//, "")
+        );
+      },
+    };
+
+    function cleanPathname() {
+      var basePath = siteBasePath();
+      return "/" + location.pathname.slice(basePath.length).replace(/^\//, "");
+    }
+
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", render);
     } else {

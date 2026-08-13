@@ -235,7 +235,7 @@ else:
         rollback_if_possible_or_replan()
 ```
 
-![Figure 9-6: Computer Use Agent's Perceive-Think-Act Loop](images/fig9-7.svg)
+![Figure 9-7: Computer Use Agent's Perceive-Think-Act Loop](images/fig9-7.svg)
 
 There are three key design dimensions in this loop: **Action Space** (what operations the Agent can perform), **Visual Grounding** (how to find the target element in the screenshot), and **Model Architecture** (how to generate the correct action from the screenshot).
 
@@ -243,7 +243,7 @@ There are three key design dimensions in this loop: **Action Space** (what opera
 
 Anthropic defines three types of tools that constitute a complete interaction capability (Figure 9-7):
 
-![Figure 9-7: Computer Use Action Space](images/fig9-8.svg)
+![Figure 9-8: Computer Use Action Space](images/fig9-8.svg)
 
 **GUI Operation Tool** (`computer` tool): Mouse operations include moving (`mouse_move`), left/right/middle clicks, double-clicking or triple-clicking, dragging (`left_click_drag`), and more precise press/release actions (`left_mouse_down` and `left_mouse_up`). Scrolling (`scroll`) supports four directions and can be combined with modifier keys. Keyboard operations include typing character by character (`type`, with a 12ms interval between characters to simulate real typing), key combinations (`key`, e.g., `Ctrl+C`), and holding a key (`hold_key`). Perception actions include taking a screenshot, retrieving the cursor position (`cursor_position`), and waiting (`wait`).
 
@@ -290,7 +290,7 @@ Elements:
 The model only needs to output an ID, and the system automatically clicks the center of the corresponding element. This approach does not save tokens because all annotation data must still be sent to the model, but it provides accurate, stable localization while avoiding the missed detections and false positives that segmentation models can introduce.
 
 
-![Figure 9-8: Set-of-Mark vs. Structured Element Indexing (browser-use implementation)](images/fig9-9.svg)
+![Figure 9-9: Set-of-Mark vs. Structured Element Indexing (browser-use implementation)](images/fig9-9.svg)
 
 **Pure Coordinate Prediction.**
 
@@ -299,7 +299,7 @@ The third route skips annotation and asks the model to output coordinates direct
 In coordinate prediction schemes, the model's understanding of coordinates is highly dependent on the resolution used during training (Figure 9-9). Claude was trained using XGA (1024×768), WXGA (1280×800), and FWXGA (1366×768). If the input screenshot resolution does not match, the model's predicted coordinates will systematically shift—like measuring a distance on a small map and then applying it directly to a large map. Therefore, a bidirectional coordinate scaling mechanism must be implemented at the tool layer, and the target resolution must be **selected based on the aspect ratio** to avoid non-uniform stretching that distorts the image and consequently biases coordinate judgment. For example, if the actual screen resolution is 2560×1440 (16:9), the most suitable target among Claude's three supported options is FWXGA (1366×768), which has an aspect ratio closest to 16:9. The screenshot is proportionally scaled to 1366×768 and fed to the model; after the model outputs the click coordinates (683, 384), they are inversely mapped to the real coordinates (683×2560/1366, 384×1440/768) ≈ (1280, 720). Conversely, if a 16:9 image is forcibly stretched into the 4:3 1024×768, the image will be horizontally compressed, causing the model's predicted coordinates to systematically shift.
 
 
-![Figure 9-9: Resolution Matching and Bidirectional Coordinate Scaling](images/fig9-10.svg)
+![Figure 9-10: Resolution Matching and Bidirectional Coordinate Scaling](images/fig9-10.svg)
 
 
 The choice among the three routes can be summarized as follows: **when structured information is available, prioritize DOM/accessibility-tree indexing** for the most accurate and stable localization. **When it is unavailable**—in native desktop software such as Photoshop, canvas/WebGL-rendered interfaces, or games—**use either visual annotation (the original SoM route) or coordinate prediction**. Visual annotation turns localization into a multiple-choice problem, making it friendlier to general-purpose models without specialized training. Coordinate prediction eliminates the annotation step and is more direct for models trained specifically on GUI localization. Both approaches still struggle with small elements and dense interfaces.
@@ -409,7 +409,7 @@ General-purpose VLMs already possess decent embodied reasoning capabilities. Goo
 In the execution layer of the two-layer architecture, three representative models—RT-2, OpenVLA, and π₀—all focus on VLA control, i.e., outputting robot actions in real time based on camera images and language instructions (Figure 9-10). They follow two different approaches to action representation: discrete action tokens and continuous trajectory generation.
 
 
-![Figure 9-10: VLA Architecture (Vision-Language-Action)](images/fig9-11.svg)
+![Figure 9-11: VLA Architecture (Vision-Language-Action)](images/fig9-11.svg)
 
 
 **RT-2 and OpenVLA: The Discrete Action Token Route.**
@@ -428,7 +428,7 @@ The true divide in action representation is not between RT-2 and OpenVLA, but be
 
 Chapter 6's simulation section already explained where the sim-to-real gap comes from and how domain randomization counters it, so we won't repeat that here. In a nutshell: simulation can never perfectly reproduce real-world physics, visuals, and hardware, so training randomizes those parameters over a wide range, forcing the policy to learn a representation robust to those variations (Figure 9-11). What follows is how that principle lands on a real robotic arm.
 
-![Figure 9-11: Sim2Real Gap and Domain Randomization](images/fig9-12.svg)
+![Figure 9-12: Sim2Real Gap and Domain Randomization](images/fig9-12.svg)
 
 This approach has produced several notable successes. OpenAI's Dactyl project achieved in-hand cube reorientation, and subsequent work used Automatic Domain Randomization (ADR) to solve a Rubik's Cube with one hand. ETH Zurich's ANYmal quadruped has demonstrated robust locomotion over difficult outdoor terrain such as snow and gravel.
 

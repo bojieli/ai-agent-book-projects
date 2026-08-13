@@ -1,26 +1,66 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 194" width="880" height="194" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
-<rect x="27.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="122.0" y="67.25" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Successful trajectory</text>
-<text x="122.0" y="90.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Process of completing</text>
-<text x="122.0" y="112.75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">task</text>
-<rect x="239.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="334.0" y="64.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Strategy summary</text>
-<text x="334.0" y="90.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Refine into</text>
-<text x="334.0" y="116.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">knowledge summary</text>
-<line x1="219.0" y1="90.0" x2="237.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="451.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="546.0" y="64.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Knowledge</text>
-<text x="546.0" y="90.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">summary base</text>
-<text x="546.0" y="116.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Build semantic index</text>
-<line x1="431.0" y1="90.0" x2="449.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="663.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="758.0" y="64.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Retrieval injection</text>
-<text x="758.0" y="90.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Agent uses when</text>
-<text x="758.0" y="116.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">making decisions</text>
-<line x1="643.0" y1="90.0" x2="661.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<line x1="758.0" y1="132" x2="758.0" y2="166" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<line x1="758.0" y1="166" x2="122.0" y2="166" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<line x1="122.0" y1="166" x2="122.0" y2="134" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
-<text x="440.0" y="184" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Reuse historical experience for similar tasks</text>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 430" width="1000" height="430" style="background:#ffffff">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#33434d"/>
+    </marker>
+    <style>
+      .t{font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;fill:#26343c}
+      .h{font-size:20px;font-weight:700}
+      .s{font-size:15px;fill:#52636d}
+      .label{font-size:13px;font-weight:700;fill:#2f617a}
+      .value{font-size:15px;fill:#3f515c}
+      .box{fill:#f5f7f8;stroke:#33434d;stroke-width:2}
+      .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
+      .line{fill:none;stroke:#33434d;stroke-width:2;marker-end:url(#arrow)}
+    </style>
+  </defs>
+
+  <text x="500" y="30" text-anchor="middle" class="t h">மூன்று அடுக்கு பாதை சரிபார்ப்பு: சான்று நிஜச் சூழலிலிருந்து வரட்டும்</text>
+
+  <!-- 三类验证器 -->
+  <rect x="30" y="76" width="245" height="82" rx="8" class="box"/>
+  <text x="152.5" y="107" text-anchor="middle" class="t h" style="font-size:18.5px">முடிவு சரிபார்ப்பான்</text>
+  <text x="152.5" y="135" text-anchor="middle" class="t s" style="font-size:11px">சோதனைகள், தொகைகள், ஆர்டரின் இறுதி நிலை</text>
+
+  <rect x="30" y="174" width="245" height="82" rx="8" class="box"/>
+  <text x="152.5" y="205" text-anchor="middle" class="t h" style="font-size:16px">செயல்முறை சரிபார்ப்பான்</text>
+  <text x="152.5" y="233" text-anchor="middle" class="t s" style="font-size:11px">கொள்கை, அனுமதி, செயல்கள், உறுதிமொழிகள்</text>
+
+  <rect x="30" y="272" width="245" height="82" rx="8" class="accent"/>
+  <text x="152.5" y="303" text-anchor="middle" class="t h">LLM Rubric</text>
+  <text x="152.5" y="331" text-anchor="middle" class="t s" style="font-size:9px">இயல்பு, சுருக்கம், விதிக்கு உட்பட்ட மாற்று வழி</text>
+
+  <!-- 结构化评价：改用纵向字段，避免中文字体宽度导致双列重叠 -->
+  <rect x="342" y="62" width="320" height="340" rx="10" class="accent"/>
+  <text x="502" y="97" text-anchor="middle" class="t h" style="font-size:16.5px">கட்டமைக்கப்பட்ட பாதை மதிப்பீடு</text>
+  <line x1="374" y1="117" x2="630" y2="117" stroke="#89a0ac"/>
+
+  <text x="376" y="145" class="t label">பணி முடிவு</text>
+  <text x="376" y="168" class="t value">வெற்றி, பகுதி வெற்றி அல்லது தோல்வி</text>
+
+  <text x="376" y="198" class="t label">பரிமாண வாரியான மதிப்பீடு</text>
+  <text x="376" y="221" class="t value" style="font-size:12px">மொத்தம் மட்டுமல்ல, ஒவ்வொன்றுக்கும் மதிப்பெண்</text>
+
+  <text x="376" y="251" class="t label">சான்றின் இடம்</text>
+  <text x="376" y="274" class="t value" style="font-size:13px">உரையாடல் சுற்றையும் கருவி நிலையையும் குறி</text>
+
+  <text x="376" y="304" class="t label">தோல்விச் சிட்டைகள்</text>
+  <text x="376" y="327" class="t value" style="font-size:12px">பிந்தைய கண்டறிதலுக்கு சிக்கல் வகையை வைத்திரு</text>
+
+  <line x1="374" y1="348" x2="630" y2="348" stroke="#b6c7cf"/>
+  <text x="502" y="378" text-anchor="middle" class="t s" style="font-size:14.5px">சான்று போதாதபோது மதிப்பிட மறுக்கலாம்</text>
+
+  <!-- 供进化模块使用的诊断信号 -->
+  <rect x="712" y="119" width="258" height="202" rx="10" class="box"/>
+  <text x="841" y="156" text-anchor="middle" class="t h" style="font-size:13.5px">கற்கக்கூடிய கண்டறிதல் சமிக்ஞை</text>
+  <text x="841" y="199" text-anchor="middle" class="t s" style="font-size:10.5px">வெற்றி தோல்வியின் இடத்தைத் தக்கவைக்கும்</text>
+  <text x="841" y="234" text-anchor="middle" class="t s" style="font-size:12px">சான்றையும் சிக்கல் வகையையும் கூறும்</text>
+  <text x="841" text-anchor="middle" class="t s" y="260.3" style="font-size:15px">புதுப்பிக்கும் இலக்கைத் தனி</text><text x="841" text-anchor="middle" class="t s" y="277.7" style="font-size:15px">தொகுதி தேர்வு செய்யட்டும்</text>
+
+  <!-- 数据流 -->
+  <path d="M275 117 H307 V151 H340" class="line"/>
+  <path d="M275 215 H340" class="line"/>
+  <path d="M275 313 H307 V279 H340" class="line"/>
+  <path d="M662 220 H710" class="line"/>
 </svg>
