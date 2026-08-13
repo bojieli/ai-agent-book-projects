@@ -1,22 +1,66 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 194" width="880" height="194" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333" /></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999" /></marker></defs>
-<rect x="27.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="122.0" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18.03" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="122" dy="62.74">trajectory</tspan><tspan x="122" dy="19.47">thành công</tspan></text>
-<text x="122.0" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16.23" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="122" dy="100.71">quá trình hoàn</tspan><tspan x="122" dy="17.53">thành nhiệm vụ</tspan></text>
-<rect x="239.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="334.0" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.58" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="334" dy="60.87">Tóm tắt chiến</tspan><tspan x="334" dy="15.75">lược</tspan></text>
-<text x="334.0" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="334" dy="91.58">Chắt lọc thành</tspan><tspan x="334" dy="14.17">những bản tóm tắt</tspan><tspan x="334" dy="14.17">kiến ​​thức</tspan></text>
-<line x1="219.0" y1="90.0" x2="237.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
-<rect x="451.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="546.0" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18.03" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="546" dy="62.74">Cơ sở tóm tắt</tspan><tspan x="546" dy="19.47">kiến ​​thức</tspan></text>
-<text x="546.0" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16.23" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="546" dy="100.71">Xây dựng chỉ mục</tspan><tspan x="546" dy="17.53">ngữ nghĩa</tspan></text>
-<line x1="431.0" y1="90.0" x2="449.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
-<rect x="663.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="758.0" y="62.99" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18.52" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Lấy lại mũi tiêm</text>
-<text x="758.0" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16.67" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="758" dy="82">Agent được sử dụng</tspan><tspan x="758" dy="18">khi đưa ra quyết</tspan><tspan x="758" dy="18">định</tspan></text>
-<line x1="643.0" y1="90.0" x2="661.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
-<line x1="758.0" y1="132" x2="758.0" y2="166" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" />
-<line x1="758.0" y1="166" x2="122.0" y2="166" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" />
-<line x1="122.0" y1="166" x2="122.0" y2="134" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)" />
-<text x="440.0" y="184" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Tái sử dụng kinh nghiệm lịch sử cho các nhiệm vụ tương tự</text>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 430" width="1000" height="430" style="background:#ffffff">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#33434d"/>
+    </marker>
+    <style>
+      .t{font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;fill:#26343c}
+      .h{font-size:20px;font-weight:700}
+      .s{font-size:15px;fill:#52636d}
+      .label{font-size:13px;font-weight:700;fill:#2f617a}
+      .value{font-size:15px;fill:#3f515c}
+      .box{fill:#f5f7f8;stroke:#33434d;stroke-width:2}
+      .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
+      .line{fill:none;stroke:#33434d;stroke-width:2;marker-end:url(#arrow)}
+    </style>
+  </defs>
+
+  <text x="500" y="30" text-anchor="middle" class="t h">Kiểm chứng quỹ đạo ba lớp: để bằng chứng đến từ môi trường thật</text>
+
+  <!-- 三类验证器 -->
+  <rect x="30" y="76" width="245" height="82" rx="8" class="box"/>
+  <text x="152.5" y="107" text-anchor="middle" class="t h">Bộ kiểm chứng kết quả</text>
+  <text x="152.5" y="135" text-anchor="middle" class="t s" style="font-size:10.5px">Kiểm thử, số tiền, trạng thái cuối của đơn hàng</text>
+
+  <rect x="30" y="174" width="245" height="82" rx="8" class="box"/>
+  <text x="152.5" y="205" text-anchor="middle" class="t h" style="font-size:19.5px">Bộ kiểm chứng quá trình</text>
+  <text x="152.5" y="233" text-anchor="middle" class="t s" style="font-size:12px">Chính sách, quyền, hành động và cam kết</text>
+
+  <rect x="30" y="272" width="245" height="82" rx="8" class="accent"/>
+  <text x="152.5" y="303" text-anchor="middle" class="t h">LLM Rubric</text>
+  <text x="152.5" y="331" text-anchor="middle" class="t s" style="font-size:13px">Tự nhiên, súc tích, lách đúng quy định</text>
+
+  <!-- 结构化评价：改用纵向字段，避免中文字体宽度导致双列重叠 -->
+  <rect x="342" y="62" width="320" height="340" rx="10" class="accent"/>
+  <text x="502" y="97" text-anchor="middle" class="t h">Đánh giá quỹ đạo có cấu trúc</text>
+  <line x1="374" y1="117" x2="630" y2="117" stroke="#89a0ac"/>
+
+  <text x="376" y="145" class="t label">Kết quả tác vụ</text>
+  <text x="376" y="168" class="t value" style="font-size:14px">Thành công, thành công một phần hoặc thất bại</text>
+
+  <text x="376" y="198" class="t label">Chấm điểm theo từng chiều</text>
+  <text x="376" y="221" class="t value">Chấm từng mục, không chỉ tổng điểm</text>
+
+  <text x="376" y="251" class="t label">Vị trí bằng chứng</text>
+  <text x="376" y="274" class="t value">Ghi rõ lượt hội thoại và trạng thái công cụ</text>
+
+  <text x="376" y="304" class="t label">Nhãn thất bại</text>
+  <text x="376" y="327" class="t value">Giữ loại vấn đề để chẩn đoán về sau</text>
+
+  <line x1="374" y1="348" x2="630" y2="348" stroke="#b6c7cf"/>
+  <text x="502" y="378" text-anchor="middle" class="t s">Cho phép từ chối chấm khi thiếu bằng chứng</text>
+
+  <!-- 供进化模块使用的诊断信号 -->
+  <rect x="712" y="119" width="258" height="202" rx="10" class="box"/>
+  <text x="841" y="156" text-anchor="middle" class="t h" style="font-size:17px">Tín hiệu chẩn đoán học được</text>
+  <text x="841" y="199" text-anchor="middle" class="t s" style="font-size:13.5px">Giữ vị trí xảy ra thành công và thất bại</text>
+  <text x="841" y="234" text-anchor="middle" class="t s">Nêu rõ bằng chứng và loại vấn đề</text>
+  <text x="841" y="269" text-anchor="middle" class="t s" style="font-size:11px">Giao cho module riêng chọn đối tượng cập nhật</text>
+
+  <!-- 数据流 -->
+  <path d="M275 117 H307 V151 H340" class="line"/>
+  <path d="M275 215 H340" class="line"/>
+  <path d="M275 313 H307 V279 H340" class="line"/>
+  <path d="M662 220 H710" class="line"/>
 </svg>
