@@ -1,0 +1,76 @@
+/* Tier 3 (machine translation) — the language-menu group and the page notice.
+   See extras/auto-translate.js. Colours reuse the same --fenix-* tokens as
+   lang-switcher.css so light/dark both follow the book theme. */
+
+/* ── language menu group ─────────────────────────────────── */
+
+.lang-menu__group {
+  margin: 0.35rem 0 0.15rem;
+  padding: 0.3rem 0.75rem 0.2rem;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fenix-ink-muted, var(--md-default-fg-color--light));
+  border-top: 1px solid var(--fenix-border, rgba(128, 128, 128, 0.25));
+}
+
+/* Machine-translated languages are a lesser tier than the built editions;
+   keep them visually secondary until selected. */
+.lang-menu__option--auto .lang-menu__label {
+  color: var(--fenix-ink-muted, var(--md-default-fg-color--light));
+}
+
+.lang-menu__option--auto:hover .lang-menu__label,
+.lang-menu__option--auto:focus-visible .lang-menu__label,
+.lang-menu__option--auto[aria-checked="true"] .lang-menu__label {
+  color: inherit;
+}
+
+/* ── in-page notice ──────────────────────────────────────── */
+
+.auto-translate-notice {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin: 0 0 1.2rem;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: var(--fenix-ink-muted, var(--md-default-fg-color--light));
+  background: var(--fenix-bg-soft, rgba(128, 128, 128, 0.08));
+  border: 1px solid var(--fenix-border, rgba(128, 128, 128, 0.25));
+  border-left: 3px solid var(--fenix-link-hover, var(--md-accent-fg-color));
+  border-radius: 0.15rem;
+}
+
+.auto-translate-notice--failed {
+  border-left-color: var(--md-typeset-del-color, #f5504e);
+}
+
+.auto-translate-notice__text {
+  flex: 1 1 16rem;
+}
+
+.auto-translate-notice__off {
+  flex: 0 0 auto;
+  padding: 0.15rem 0.5rem;
+  font: inherit;
+  color: var(--fenix-link-hover, var(--md-accent-fg-color));
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--fenix-border, rgba(128, 128, 128, 0.25));
+  border-radius: 0.15rem;
+}
+
+.auto-translate-notice__off:hover,
+.auto-translate-notice__off:focus-visible {
+  border-color: var(--fenix-link-hover, var(--md-accent-fg-color));
+}
+
+[dir="rtl"] .auto-translate-notice {
+  border-left: 1px solid var(--fenix-border, rgba(128, 128, 128, 0.25));
+  border-right: 3px solid var(--fenix-link-hover, var(--md-accent-fg-color));
+}
