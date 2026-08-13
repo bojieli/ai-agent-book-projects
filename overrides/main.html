@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{#
+  Material's own main.html is just `{% extends "base.html" %}`; we add one
+  script tag to it.
+
+  search-index-router.js must run *before* bundle.js, which requests
+  search/search_index.json as it initialises. Files listed in
+  `extra_javascript` are emitted after bundle.js, so they cannot be used for
+  this. base.html renders `block config` (the `#__config` blob) immediately
+  before `block scripts` (bundle.js), which makes it the last hook point
+  early enough to patch the request. See extras/search-index-router.js.
+#}
+{% block config %}
+  {{ super() }}
+  <script src="{{ 'extras/search-index-router.js' | url }}"></script>
+{% endblock %}

@@ -20,6 +20,10 @@ hooks:
   - scripts/site_i18n.py
   - scripts/mkdocs_pandoc_strip.py
   - scripts/seo_meta.py
+  # Splits the search plugin's single 55 MB search_index.json into one file
+  # per book edition. Runs last: MkDocs appends `hooks:` to the plugin list,
+  # so this sees the index the search plugin just wrote.
+  - scripts/split_search_index.py
 
 theme:
   name: material
