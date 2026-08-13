@@ -135,6 +135,10 @@ extra_javascript:
   # Generated into _web/ by scripts/site_i18n.py during each MkDocs build.
   - extras/site-i18n.generated.js
   - extras/lang-switcher.js
+  # Must load after lang-switcher.js: it appends to the menu the switcher
+  # builds, and relies on `window.langSwitcher` to map the current page to
+  # the English edition.
+  - extras/auto-translate.js
   - extras/nav-collapse.js
   - https://unpkg.com/mermaid@11/dist/mermaid.min.js
   - extras/mermaid-init.js
@@ -145,6 +149,7 @@ extra_javascript:
 
 extra_css:
   - extras/lang-switcher.css
+  - extras/auto-translate.css
   - extras/book-theme.css
 
 # Language definitions for the switcher tab bar.
@@ -168,6 +173,56 @@ extra:
     ar:   { label: العربية,    prefix: book-ar/,   suffix: .ar,   readmeSuffix: ar }
     tr:   { label: Türkçe,      prefix: book-tr/,   suffix: .tr,   readmeSuffix: tr }
     hu:   { label: Magyar,      prefix: book-hu/,                   readmeSuffix: hu }
+
+  # Tier 3 — languages the book has no edition for. Selecting one loads
+  # translate.js (MIT, https://github.com/xnx3/translate) on demand and
+  # machine-translates the English edition in the browser. See
+  # extras/auto-translate.js for why it is opt-in, lazy, and always labelled.
+  #
+  # This is explicitly a lesser tier than the 13 built editions: figures stay
+  # in English (they are <img> SVGs, unreachable from page scripts) and the
+  # text is unreviewed. Anything worth shipping properly should get a real
+  # edition instead.
+  auto_translate:
+    label: 机器翻译 / Machine translation
+    # The edition to translate *from*: MT out of English beats MT out of
+    # Chinese for most targets, and that edition is reviewed. `source` is the
+    # site language code; `sourceLanguage` is translate.js' name for it.
+    source: en
+    sourceLanguage: english
+    # Free, keyless channel. Alternatives: `giteeAI`, `siliconflow`, or
+    # `translate.service` against a self-hosted API.
+    service: client.edge
+    # Pinned version + SRI hash: this is third-party code from a public CDN,
+    # so the exact bytes are fixed. Both must be updated together.
+    cdn: https://cdn.staticfile.net/translate.js/3.18.66/translate.js
+    integrity: sha384-J3fM1QvC/Px5E8QNZj9KjrYuADHneSN4vCpv//WZPKUVzJocwGpZO/byDiEjaPCL
+    # `name` is translate.js' v2 language name (note German is `deutsch`);
+    # `locale` becomes the <html lang> attribute.
+    languages:
+      - { name: french,     label: Français,        locale: fr }
+      - { name: deutsch,    label: Deutsch,         locale: de }
+      - { name: portuguese, label: Português,       locale: pt }
+      - { name: italian,    label: Italiano,        locale: it }
+      - { name: polish,     label: Polski,          locale: pl }
+      - { name: dutch,      label: Nederlands,      locale: nl }
+      - { name: ukrainian,  label: Українська,      locale: uk }
+      - { name: czech,      label: Čeština,         locale: cs }
+      - { name: romanian,   label: Română,          locale: ro }
+      - { name: greek,      label: Ελληνικά,        locale: el }
+      - { name: swedish,    label: Svenska,         locale: sv }
+      - { name: danish,     label: Dansk,           locale: da }
+      - { name: finnish,    label: Suomi,           locale: fi }
+      - { name: norwegian,  label: Norsk,           locale: "no" }
+      - { name: thai,       label: ไทย,              locale: th }
+      - { name: hindi,      label: हिन्दी,             locale: hi }
+      - { name: bengali,    label: বাংলা,             locale: bn }
+      - { name: malay,      label: Bahasa Melayu,   locale: ms }
+      - { name: filipino,   label: Filipino,        locale: fil }
+      - { name: swahili,    label: Kiswahili,       locale: sw }
+      - { name: urdu,       label: اردو,             locale: ur, dir: rtl }
+      - { name: persian,    label: فارسی,            locale: fa, dir: rtl }
+      - { name: hebrew,     label: עברית,            locale: he, dir: rtl }
 
 nav:
   # The left sidebar is a clean chapter tree. With navigation.indexes,

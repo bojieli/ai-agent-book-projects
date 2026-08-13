@@ -107,6 +107,10 @@
     {# Expose language config + site root to the switcher script. #}
     <script>window.LANG_CONFIG = {{ config.extra.languages | tojson }};</script>
     <script>window.SITE_ROOT = "{{ config.site_url }}";</script>
+    {# Tier-3 machine-translation fallback (extras/auto-translate.js). #}
+    {% if config.extra.auto_translate %}
+      <script>window.AUTO_TRANSLATE_CONFIG = {{ config.extra.auto_translate | tojson }};</script>
+    {% endif %}
 
     {% if config.repo_url %}
       <div class="md-header__source">
