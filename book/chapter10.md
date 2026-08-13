@@ -138,10 +138,10 @@
 
 **四、系统内置资源（Built-in System Resources）**。系统预置、对所有 Agent 只读共享的资源包，典型代表是第二章、第四章介绍的 **Skills**——以文件形式组织的知识文档与脚本，挂载于 `/skills` 等路径，按渐进式披露（先索引、后按需展开）取用；此外还包括参考手册、模板库与共享工具定义。该层全局共享、只读、跨会话稳定，可被所有 Agent 并发读取而无需并发控制。
 
-图10-3 呈现了这四类区域统一挂载于同一目录树的结构：Agent 通过统一接口访问整棵树，用户从共享空间上传与下载文件，外部数据源经适配器挂载，系统内置资源则以只读方式提供。
+图10-2 呈现了这四类区域统一挂载于同一目录树的结构：Agent 通过统一接口访问整棵树，用户从共享空间上传与下载文件，外部数据源经适配器挂载，系统内置资源则以只读方式提供。
 
 
-![图10-3 Agent 虚拟文件系统的四类区域挂载结构](images/fig10-3.svg)
+![图10-2 Agent 虚拟文件系统的四类区域挂载结构](images/fig10-2.svg)
 
 
 表10-4 从可见性、生命周期、读写权限与并发控制四个维度对比这四类区域，可作为文件系统布局设计的检查表。
@@ -231,7 +231,7 @@ LoopX 决策 → Agent 执行 → 独立验证器证明 → LoopX 提交
 #### 提议者-审核者范式
 
 
-![图10-4 提议者-审核者循环](images/fig10-4.svg)
+![图10-3 提议者-审核者循环](images/fig10-3.svg)
 
 
 提议者-审核者是最经典的对等协作范式。第五章已经在 PPT 生成、视频编辑和日志可视化三个实验中详细介绍了这一范式的设计原则和实战应用：Proposer Agent 负责生成代码，审核者 Agent 渲染执行结果并用 Vision LLM 评估质量、给出结构化改进建议，两者反复迭代直到效果达标。
@@ -317,7 +317,7 @@ return summarize_failures(workers)
 **顺序协调形态。**
 
 
-![图10-5 Manager 顺序协调](images/fig10-5.svg)
+![图10-4 Manager 顺序协调](images/fig10-4.svg)
 
 
 Manager 按顺序依次调用专门 Agent，每个 Agent 完成后返回结果，Manager 再决定下一步。控制流是线性的，简单明了，适合子任务之间有清晰先后依赖的场景。
@@ -346,14 +346,14 @@ Manager 按顺序依次调用专门 Agent，每个 Agent 完成后返回结果�
 > 4. 对比单 Agent vs 管理者模式在翻译质量、执行效率、资源消耗方面的差异
 >
 >
-> ![图10-6 书籍翻译 Agent 架构](images/fig10-6.svg)
+> ![图10-5 书籍翻译 Agent 架构](images/fig10-5.svg)
 >
 >
 
 **并行协调形态。**
 
 
-![图10-7 Manager 并行协调](images/fig10-7.svg)
+![图10-6 Manager 并行协调](images/fig10-6.svg)
 
 
 当多个子任务可以并行执行时，顺序模式就显得效率低下了。并行协调让多个 Agent 同时工作，大幅提升吞吐量。Manager Agent 不仅要规划并行任务，还要实时监控所有运行中的 Agent，处理通信协调，在 Agent 成功或失败时做出全局决策。这通常需要**消息总线**（Message Bus）作为基础设施——可以把它理解为一个 “公共公告板”，Agent 可以往上面贴消息（发布），也可以关注自己感兴趣的消息类型（订阅），实现异步通信、互不阻塞。
@@ -392,7 +392,7 @@ Manager 按顺序依次调用专门 Agent，每个 Agent 完成后返回结果�
 > 4. 记录消息时序、自主启动决策、延迟、成功率和资源消耗，并比较两种模式。
 >
 >
-> ![图10-8 Phone 与 Computer 双 Agent 架构](images/fig10-8.svg)
+> ![图10-7 Phone 与 Computer 双 Agent 架构](images/fig10-7.svg)
 >
 >
 > **实验 10-4 ★★★：同时从多个网站搜集信息的 Agent**
@@ -424,7 +424,7 @@ Manager 按顺序依次调用专门 Agent，每个 Agent 完成后返回结果�
 > 6. 记录和对比并行执行与串行执行的时间差异，验证并行化带来的性能提升
 >
 >
-> ![图10-9 并行 Web Scraping 架构](images/fig10-9.svg)
+> ![图10-8 并行 Web Scraping 架构](images/fig10-8.svg)
 >
 >
 
@@ -441,7 +441,7 @@ Manager 按顺序依次调用专门 Agent，每个 Agent 完成后返回结果�
 **MetaGPT：SOP 驱动的软件公司模拟。**
 
 
-![图10-11 MetaGPT 多 Agent 协作网络](images/fig10-11.svg)
+![图10-9 MetaGPT 多 Agent 协作网络](images/fig10-9.svg)
 
 
 MetaGPT 的核心洞察是：人类软件公司积累的**标准作业程序**（SOP，Standard Operating Procedure）本身就是被反复验证过的协作协议——把 SOP 编码进多 Agent 系统，让每个角色像流水线上的专业工种一样产出标准化交付物，交付物天然构成了角色间的通信接口。
@@ -565,7 +565,7 @@ Andrej Karpathy 曾说，“你可以外包你的思考，但不能外包你的�
 ### 斯坦福 AI 小镇：生成式 Agent 的社会模拟
 
 
-![图10-12 AI 小镇架构](images/fig10-12.svg)
+![图10-10 AI 小镇架构](images/fig10-10.svg)
 
 
 2023 年，斯坦福大学和 Google 研究团队发表了具有里程碑意义的论文《Generative Agents: Interactive Simulacra of Human Behavior》，提出了“生成式 Agent”的概念。核心创新在于不再局限于让 Agent 完成预定义的任务，而是赋予 Agent 接近人类的记忆、反思和规划能力，使它们能够在开放的社会环境中自主生活、社交和发展。
@@ -681,7 +681,7 @@ Pinchwork 和 RentAHuman 共同代表了**基于市场机制的协调方式**—
 > - 游戏结束时能正确判断胜负
 >
 >
-> ![图10-13 语音狼人杀 Agent 系统](images/fig10-13.svg)
+> ![图10-11 语音狼人杀 Agent 系统](images/fig10-11.svg)
 >
 >
 

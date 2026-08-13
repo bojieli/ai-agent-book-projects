@@ -1,68 +1,79 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 495" width="780" height="495" style="background:#ffffff">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 890 515" width="890" height="515" style="background:#ffffff">
 <defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
 
-<rect x="230" y="55" width="320" height="65" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="390" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Menedzser ágens</text>
-<text x="390" y="99" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">dinamikus létrehozás · valós idejű monitorozás · kaszkádos befejezés</text>
-<rect x="41" y="160" width="130" height="95" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="106" y="176" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">ágens 1</text>
-<text x="106" y="195" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central">cs.edu.cn</text>
-<text x="106" y="215" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">tanár Directory keresés</text>
-<text x="106" y="235" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Searching... ◎</text>
-<line x1="390" y1="122" x2="106" y2="158" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<rect x="183" y="160" width="130" height="95" rx="4" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
-<text x="248" y="176" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">ágens 2</text>
-<text x="248" y="195" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central">math.edu.cn</text>
-<text x="248" y="215" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">tanár Directory keresés</text>
-<text x="248" y="235" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">nem megtalálva ✗</text>
-<line x1="390" y1="122" x2="248" y2="158" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<rect x="325" y="160" width="130" height="95" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="390" y="176" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">ágens 3</text>
-<text x="390" y="195" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central">phys.edu.cn</text>
-<text x="390" y="215" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">tanár Directory keresés</text>
-<text x="390" y="235" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">megtalálva! ✓</text>
-<line x1="390" y1="122" x2="390" y2="158" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<rect x="467" y="160" width="130" height="95" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="532" y="176" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">ágens 4</text>
-<text x="532" y="195" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central">chem.edu.cn</text>
-<text x="532" y="215" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">tanár Directory keresés</text>
-<text x="532" y="235" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Terminated ⊘</text>
-<line x1="390" y1="122" x2="532" y2="158" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<rect x="609" y="160" width="130" height="95" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="674" y="176" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">ágens 5 … 10</text>
-<text x="674" y="195" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central">… (10 total)</text>
-<text x="674" y="215" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">tanár Directory keresés</text>
-<text x="674" y="235" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Terminated ⊘</text>
-<line x1="390" y1="122" x2="674" y2="158" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<rect x="30" y="280" width="720" height="120" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="390" y="298" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">kaszkádos befejezés sorozat</text>
-<text x="100" y="322" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">t=0s</text>
-<text x="100" y="338" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">indítás 10 ágensek</text>
-<text x="100" y="353" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Párhuzamos keresés céljára "Zhang Wei"</text>
-<line x1="155" y1="335" x2="175" y2="335" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<text x="240" y="322" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">t=12s</text>
-<text x="240" y="338" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">A 2. ágens befejezi</text>
-<text x="240" y="353" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">nem megtalálva → kilépés</text>
-<line x1="295" y1="335" x2="315" y2="335" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<text x="380" y="322" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">t=18s</text>
-<text x="380" y="338" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">ágens 3 megtalálva!</text>
-<text x="380" y="353" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">küldés target_found</text>
-<line x1="435" y1="335" x2="455" y2="335" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<text x="520" y="322" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">t=18.1s</text>
-<text x="520" y="338" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">A menedzser leállítást sugároz szét</text>
-<text x="520" y="353" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">→ fennmaradó futó ágensek</text>
-<line x1="585" y1="335" x2="605" y2="335" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<text x="670" y="322" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">t=19s</text>
-<text x="670" y="338" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Mindenki megerősíti a befejezést</text>
-<text x="670" y="353" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Az eredmények összesítése és visszaadása</text>
-<rect x="30" y="420" width="340" height="100" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="200" y="438" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">eredmény megtalálva</text>
-<text x="50" y="460" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">Name: Zhang Wei   School: School of Physics</text>
-<text x="50" y="476" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">Position: Professor   Field: Quantum Computing</text>
-<text x="50" y="492" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">Email: zhangwei@phys.edu.cn</text>
-<rect x="400" y="420" width="350" height="100" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="575" y="438" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Teljesítmény-összehasonlítás</text>
-<text x="420" y="462" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">soros: 10 websites × 30s = ~5 perc</text>
-<text x="420" y="480" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Párhuzamos: 18s → keresés + 1s → terminate = 19s</text>
-<text x="420" y="498" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">gyorsulás: ~15× (és kaszkádos befejezés optimalizálás)</text>
+<rect x="26" y="55" width="150" height="230" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="101" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Termékmenedzser</text>
+<text x="34" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Bemenet: felhasználói követelményleírás</text>
+<rect x="34" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="40" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">kimenet:</text>
+<text x="40" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Funkciólista + prioritás</text>
+<text x="40" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Felhasználói történetek (5 elem)</text>
+<text x="40" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Elfogadási feltételek</text>
+<rect x="34" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="101" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/PRD.md</text>
+<line x1="186" y1="170" x2="198" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="198" y="55" width="150" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="273" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Architekt</text>
+<text x="206" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Input: PRD.md</text>
+<rect x="206" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="212" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">kimenet:</text>
+<text x="212" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Technológiai verem: FastAPI+React</text>
+<text x="212" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">API-specifikáció (OpenAPI)</text>
+<text x="212" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Adatbázisséma</text>
+<rect x="206" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="273" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/design.md</text>
+<line x1="358" y1="170" x2="370" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="370" y="55" width="150" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="445" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Projektmenedzser</text>
+<text x="378" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Input: design.md</text>
+<rect x="378" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="384" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">kimenet:</text>
+<text x="384" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Feladatlista + kiosztás</text>
+<text x="384" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Fájlszintű felosztás</text>
+<text x="384" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Modulfüggőségi sorrend</text>
+<rect x="378" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="445" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/tasks.md</text>
+<line x1="530" y1="170" x2="542" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="542" y="55" width="150" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="617" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Mérnök ×3</text>
+<text x="550" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Input: tasks.md + design.md</text>
+<rect x="550" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="556" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">kimenet:</text>
+<text x="556" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">A modul: felhasználói szolgáltatás</text>
+<text x="556" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">B modul: rendelési szolgáltatás</text>
+<text x="556" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">C modul: fizetési szolgáltatás</text>
+<rect x="550" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="617" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">src/*.py</text>
+<line x1="702" y1="170" x2="714" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="714" y="55" width="150" height="230" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="789" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">QA-mérnök</text>
+<text x="722" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Input: src/ + PRD.md</text>
+<rect x="722" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="728" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">kimenet:</text>
+<text x="728" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Egységtesztek (pytest)</text>
+<text x="728" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Integrációs tesztek (API)</text>
+<text x="728" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Hibajelentés → mérnök</text>
+<rect x="722" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="789" y="238" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/test_report.md</text>
+<path d="M 789,293 Q 703,346 617,293" fill="none" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
+<text x="703" y="300" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Hibajavítás</text>
+
+<rect x="30" y="335" width="830" height="50" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="445" y="351" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Megosztott projektkönyvtár</text>
+<text x="445" y="371" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">docs/PRD.md   docs/design.md   docs/tasks.md   src/*.py   docs/test_report.md</text>
+
+<rect x="30" y="400" width="830" height="130" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="445" y="418" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">A MetaGPT alapterve</text>
+<text x="42" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ Egységes dokumentumok</text>
+<text x="270" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Minden szerep rögzített formátumot ad; a következő lépésnek ez kell, nem az érvelés</text>
+<text x="42" y="466" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ Laza csatolás</text>
+<text x="270" y="466" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Erősebb termékmenedzser cserélhető lenni; a PRD-formátum mellett a további folyamat változatlan</text>
+<text x="42" y="490" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ Nincs menedzser</text>
+<text x="270" y="490" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Vezérlés a DAG mentén: termékmenedzser→architekt→projektmenedzser→mérnök→QA</text>
+<text x="42" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ Kivételcsatorna</text>
+<text x="270" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">QA-hiba → modulonkénti hibajelentés a mérnöknek → iteratív javítás</text>
 </svg>

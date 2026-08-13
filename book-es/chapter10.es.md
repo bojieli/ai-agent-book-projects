@@ -161,9 +161,9 @@ Al principio de este capítulo se incluyó el "sistema de archivos compartido" c
 
 **4. Recursos de Sistema Integrados (Built-in System Resources)**. Paquetes de recursos preestablecidos y compartidos en modo solo lectura para todos los Agentes. El representante típico son los **Skills** presentados en los Capítulos 2 y 4: documentos de conocimiento y scripts organizados en forma de archivos, montados en rutas como `/skills`, a los que se accede mediante revelación progresiva (primero índice, luego despliegue bajo demanda). También incluyen manuales de referencia, bibliotecas de plantillas y definiciones de herramientas compartidas. Esta capa es globalmente compartida, de solo lectura, estable entre sesiones y puede ser leída de forma concurrente por todos los Agentes sin necesidad de control de concurrencia.
 
-La Figura 10-3 ilustra la estructura en la que estas cuatro categorías de áreas se montan de forma unificada en el mismo árbol de directorios: el Agente accede a todo el árbol mediante una interfaz unificada, el usuario sube y descarga archivos desde el espacio compartido, las fuentes de datos externas se montan a través de adaptadores y los recursos del sistema se proporcionan en modo solo lectura.
+La Figura 10-2 ilustra la estructura en la que estas cuatro categorías de áreas se montan de forma unificada en el mismo árbol de directorios: el Agente accede a todo el árbol mediante una interfaz unificada, el usuario sube y descarga archivos desde el espacio compartido, las fuentes de datos externas se montan a través de adaptadores y los recursos del sistema se proporcionan en modo solo lectura.
 
-![Figura 10-3 Estructura de montaje del sistema de archivos virtual del Agente](images/fig10-3.svg)
+![Figura 10-2 Estructura de montaje del sistema de archivos virtual del Agente](images/fig10-2.svg)
 
 La Tabla 10-4 compara estas cuatro áreas en función de cuatro dimensiones: visibilidad, ciclo de vida, permisos de lectura/escritura y control de concurrencia, sirviendo como lista de verificación para el diseño de la estructura del sistema de archivos.
 
@@ -244,7 +244,7 @@ El Agente sigue razonando, utilizando herramientas y produciendo artefactos cand
 **Paradigma proponente-revisor.**
 
 
-![Figura 10-4 Bucle proponente-revisor](images/fig10-4.svg)
+![Figura 10-3 Bucle proponente-revisor](images/fig10-3.svg)
 
 
 El paradigma proponente-revisor es el paradigma clásico de colaboración entre pares. El capítulo 5 ya presentó en detalle sus principios de diseño y su aplicación práctica en tres experimentos: generación de PPT, edición de vídeo y visualización de registros. El Proposer Agent genera el código, mientras que el Reviewer Agent renderiza el resultado de la ejecución, evalúa su calidad mediante un Vision LLM y ofrece sugerencias estructuradas de mejora; ambos iteran repetidamente hasta alcanzar el resultado deseado.
@@ -325,7 +325,7 @@ return summarize_failures(workers)
 **Forma de coordinación secuencial.**
 
 
-![Figura 10-5 Coordinación secuencial del Manager](images/fig10-5.svg)
+![Figura 10-4 Coordinación secuencial del Manager](images/fig10-4.svg)
 
 
 El Manager invoca secuencialmente a los Agentes especializados. Cada Agente devuelve su resultado al terminar, y entonces el Manager decide el siguiente paso. El flujo de control es lineal, sencillo y claro, por lo que resulta apropiado para escenarios en los que existe una dependencia temporal bien definida entre las subtareas.
@@ -354,14 +354,14 @@ El Manager invoca secuencialmente a los Agentes especializados. Cada Agente devu
 > 4. Comparar un solo Agente con el modelo de gestor en términos de calidad de traducción, eficiencia de ejecución y consumo de recursos
 >
 >
-> ![Figura 10-6 Arquitectura del Agente de traducción de libros](images/fig10-6.svg)
+> ![Figura 10-5 Arquitectura del Agente de traducción de libros](images/fig10-5.svg)
 >
 >
 
 **Forma de coordinación paralela.**
 
 
-![Figura 10-7 Coordinación paralela del Manager](images/fig10-7.svg)
+![Figura 10-6 Coordinación paralela del Manager](images/fig10-6.svg)
 
 
 Cuando varias subtareas pueden ejecutarse en paralelo, el modelo secuencial resulta ineficiente. La coordinación paralela permite que varios Agentes trabajen al mismo tiempo, lo que aumenta considerablemente el rendimiento. El Manager Agent no solo debe planificar las tareas paralelas, sino también monitorizar en tiempo real todos los Agentes en ejecución, gestionar la coordinación de sus comunicaciones y tomar decisiones globales cuando un Agente tiene éxito o falla. Esto suele requerir un **bus de mensajes** (Message Bus) como infraestructura—puede entenderse como un «tablón público de anuncios» en el que los Agentes pueden colocar mensajes —publicar— y seguir los tipos de mensajes que les interesan —suscribirse—, lo que permite una comunicación asíncrona y sin bloqueos mutuos. Existen dos tipos habituales de implementación, en orden creciente de complejidad: **Redis Pub/Sub** es ligero, envía y recibe los mensajes de inmediato y resulta sencillo de usar, pero presenta la desventaja de que no ofrece persistencia—si el receptor no está conectado en ese momento, el mensaje se pierde; las colas de mensajes como **RabbitMQ**, en cambio, almacenan los mensajes en disco, por lo que no se pierden aunque el receptor esté temporalmente desconectado. El formato de los mensajes suele incluir el ID del emisor, el Agente de destino —o una difusión a todos—, el tipo de mensaje y el contenido de datos en formato JSON.
@@ -419,7 +419,7 @@ Cuando varias subtareas pueden ejecutarse en paralelo, el modelo secuencial resu
 > 4. Registrar la secuencia temporal de los mensajes del proceso de colaboración y los puntos clave de decisión del Agente
 >
 >
-> ![Figura 10-8 Arquitectura de dos Agentes Phone y Computer](images/fig10-8.svg)
+> ![Figura 10-7 Arquitectura de dos Agentes Phone y Computer](images/fig10-7.svg)
 >
 >
 > **Experimento 10-4 ★★★: Agente que recopila información simultáneamente de varios sitios web**
@@ -451,7 +451,7 @@ Cuando varias subtareas pueden ejecutarse en paralelo, el modelo secuencial resu
 > 6. Registrar y comparar las diferencias temporales entre la ejecución paralela y la secuencial para verificar la mejora de rendimiento aportada por la paralelización
 >
 >
-> ![Figura 10-9 Arquitectura paralela de Web Scraping](images/fig10-9.svg)
+> ![Figura 10-8 Arquitectura paralela de Web Scraping](images/fig10-8.svg)
 >
 >
 ### Patrón descentralizado
@@ -480,7 +480,7 @@ else:
 
 **MetaGPT: simulación de una empresa de software dirigida por SOP.**
 
-![Figura 10-11 Red de colaboración multiagente de MetaGPT](images/fig10-11.svg)
+![Figura 10-9 Red de colaboración multiagente de MetaGPT](images/fig10-9.svg)
 
 MetaGPT codifica los procedimientos operativos estándar de una empresa de software. Los roles trabajan en el orden Product Manager → Architect → Project Manager → Engineer → QA, y cada uno entrega un paquete estructurado: descripción y criterios de aceptación, hechos y restricciones confirmados y referencias a artefactos, como rutas de archivo. Los roles publican mensajes en un fondo común y consumen solo los tipos a los que están suscritos. Esto desacopla emisor y receptor, pero el flujo de control sigue fijado por el SOP; MetaGPT no está totalmente descentralizado.
 
@@ -586,7 +586,7 @@ Los casos de esta sección se pueden comprender desde tres dimensiones:
 ### La ciudad de IA de Stanford: simulación social con Agentes generativos
 
 
-![Figura 10-12 Arquitectura de la ciudad de IA](images/fig10-12.svg)
+![Figura 10-10 Arquitectura de la ciudad de IA](images/fig10-10.svg)
 
 
 En 2023, un equipo de investigación de Stanford University y Google publicó el artículo pionero «Generative Agents: Interactive Simulacra of Human Behavior», en el que propuso el concepto de «Agente generativo». La innovación central consistía en dejar de limitar los Agentes a la ejecución de tareas predefinidas y dotarlos de capacidades de memoria, reflexión y planificación similares a las humanas, de modo que pudieran vivir, socializar y desarrollarse de forma autónoma en un entorno social abierto.
@@ -700,7 +700,7 @@ El juego del Hombre Lobo sustenta la dimensión de **juegos estratégicos** de e
 > - Al finalizar la partida se debe determinar correctamente la victoria o derrota.
 >
 
-![Figura 10-13 Sistema de Agente de Hombre Lobo por Voz](images/fig10-13.svg)
+![Figura 10-11 Sistema de Agente de Hombre Lobo por Voz](images/fig10-11.svg)
 
 ## Resumen del Capítulo
 

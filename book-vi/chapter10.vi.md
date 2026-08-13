@@ -164,10 +164,10 @@ Phần đầu của chương này liệt kê "hệ thống tệp dùng chung" l�
 
 **4. Tài nguyên tích hợp trong hệ thống (Built-in System Resources)**. Cài đặt trước hệ thống và gói tài nguyên chia sẻ chỉ đọc cho tất cả Agent. Đại diện điển hình là **Skills** được giới thiệu trong Chương 2 và 4 - các tài liệu kiến thức và tập lệnh được sắp xếp dưới dạng tệp, được gắn trên `/skills` và các đường dẫn khác và được truy cập theo cách tiết lộ lũy tiến (đầu tiên được lập chỉ mục, sau đó được mở rộng theo yêu cầu); Ngoài ra, nó còn bao gồm các tài liệu hướng dẫn tham khảo, thư viện mẫu và định nghĩa công cụ dùng chung. Lớp này được chia sẻ trên toàn cầu, chỉ đọc, ổn định trong các phiên và có thể được đọc đồng thời bởi tất cả Agent mà không cần kiểm soát đồng thời.
 
-Hình 10-3 cho thấy cấu trúc trong đó bốn loại khu vực này được gắn thống nhất trên cùng một cây thư mục: Agent truy cập toàn bộ cây thông qua giao diện hợp nhất, người dùng tải lên và tải xuống các tệp từ không gian dùng chung, nguồn dữ liệu bên ngoài được gắn thông qua bộ điều hợp và các tài nguyên tích hợp trong hệ thống được cung cấp theo cách chỉ đọc.
+Hình 10-2 cho thấy cấu trúc trong đó bốn loại khu vực này được gắn thống nhất trên cùng một cây thư mục: Agent truy cập toàn bộ cây thông qua giao diện hợp nhất, người dùng tải lên và tải xuống các tệp từ không gian dùng chung, nguồn dữ liệu bên ngoài được gắn thông qua bộ điều hợp và các tài nguyên tích hợp trong hệ thống được cung cấp theo cách chỉ đọc.
 
 
-![Hình 10-3 Bốn loại cấu trúc gắn vùng của hệ thống tệp ảo Agent ](images/fig10-3.svg)
+![Hình 10-2 Bốn loại cấu trúc gắn vùng của hệ thống tệp ảo Agent ](images/fig10-2.svg)
 
 
 Bảng 10-4 so sánh bốn loại lĩnh vực này từ bốn chiều về khả năng hiển thị, vòng đời, quyền đọc và ghi và kiểm soát tương tranh, có thể được sử dụng làm danh sách kiểm tra cho thiết kế bố cục hệ thống tệp.
@@ -249,7 +249,7 @@ Agent vẫn suy luận, sử dụng công cụ và tạo ra sản phẩm ứng v
 **Mô hình người đề xuất-người đánh giá.**
 
 
-![Hình 10-4 Chu trình người đề xuất-đánh giá ](images/fig10-4.svg)
+![Hình 10-3 Chu trình người đề xuất-đánh giá ](images/fig10-3.svg)
 
 
 Người đề xuất-đánh giá là mô hình hợp tác ngang hàng cổ điển nhất. Chương 5 đã giới thiệu chi tiết các nguyên tắc thiết kế và ứng dụng thực tế của mô hình này trong ba thử nghiệm tạo PPT, chỉnh sửa video và trực quan hóa nhật ký: Người đề xuất Agent chịu trách nhiệm tạo mã, Người đánh giá Agent hiển thị kết quả thực thi và sử dụng Vision LLM để đánh giá chất lượng và đưa ra các đề xuất cải tiến về cấu trúc. Cả hai lặp đi lặp lại nhiều lần cho đến khi hiệu quả đạt tiêu chuẩn.
@@ -330,7 +330,7 @@ return summarize_failures(workers)
 **Hình thức phối hợp tuần tự.**
 
 
-![Hình 10-5 Phối hợp trình tự trình quản lý ](images/fig10-5.svg)
+![Hình 10-4 Phối hợp trình tự trình quản lý ](images/fig10-4.svg)
 
 
 Người quản lý gọi Agent đặc biệt theo trình tự. Sau khi hoàn thành mỗi Agent, kết quả sẽ được trả về và Người quản lý quyết định bước tiếp theo. Luồng điều khiển tuyến tính, đơn giản và rõ ràng, phù hợp với các tình huống có sự phụ thuộc tuần tự rõ ràng giữa các nhiệm vụ phụ.
@@ -359,14 +359,14 @@ Người quản lý gọi Agent đặc biệt theo trình tự. Sau khi hoàn th
 > 4. So sánh sự khác biệt giữa chế độ Agent và chế độ quản lý về chất lượng dịch, hiệu quả thực thi và mức tiêu thụ tài nguyên
 >
 >
-> ![Hình 10-6 Kiến trúc tác nhân dịch sách ](images/fig10-6.svg)
+> ![Hình 10-5 Kiến trúc tác nhân dịch sách ](images/fig10-5.svg)
 >
 >
 
 **Hình thức phối hợp song song.**
 
 
-![Hình 10-7 Phối hợp song song của trình quản lý ](images/fig10-7.svg)
+![Hình 10-6 Phối hợp song song của trình quản lý ](images/fig10-6.svg)
 
 
 Chế độ tuần tự trở nên kém hiệu quả khi nhiều tác vụ con có thể được thực thi song song. Phối hợp song song cho phép nhiều Agent hoạt động đồng thời, cải thiện đáng kể thông lượng. Trình quản lý Agent không chỉ lên kế hoạch cho các nhiệm vụ song song mà còn giám sát tất cả các Agent đang chạy trong thời gian thực, xử lý việc phối hợp liên lạc và đưa ra quyết định chung khi Agent thành công hay thất bại. Điều này thường yêu cầu Message Bus làm cơ sở hạ tầng - nó có thể được hiểu là một "bảng thông báo công cộng" mà trên đó Agent có thể đăng tin nhắn (xuất bản) hoặc tập trung vào các loại tin nhắn mà nó quan tâm (đăng ký), đạt được khả năng liên lạc không đồng bộ và không bị chặn. Có hai loại giải pháp triển khai phổ biến với mức độ phức tạp ngày càng tăng: **Redis Pub/Sub** có dung lượng nhẹ, gửi và nhận tin nhắn, đơn giản và dễ sử dụng. Nhược điểm là không liên tục - người nhận lúc đó không trực tuyến và tin nhắn bị mất; hàng đợi tin nhắn như **RabbitMQ** lưu tin nhắn trên đĩa và sẽ không bị mất ngay cả khi người nhận tạm thời ngoại tuyến. Định dạng tin nhắn thường chứa ID người gửi, Agent đích (hoặc phát tới mọi người), loại tin nhắn và nội dung dữ liệu ở định dạng JSON.
@@ -424,7 +424,7 @@ Chế độ tuần tự trở nên kém hiệu quả khi nhiều tác vụ con c
 > 4. Ghi lại thời gian thông báo của quá trình cộng tác và các điểm quyết định chính của Agent
 >
 >
-> ![Hình 10-8 Kiến trúc tác nhân kép điện thoại và máy tính ](images/fig10-8.svg)
+> ![Hình 10-7 Kiến trúc tác nhân kép điện thoại và máy tính ](images/fig10-7.svg)
 >
 >
 > **Thử nghiệm 10-4 ★★★: Agent thu thập thông tin từ nhiều trang web cùng một lúc**
@@ -456,7 +456,7 @@ Chế độ tuần tự trở nên kém hiệu quả khi nhiều tác vụ con c
 > 6. Ghi lại và so sánh sự khác biệt về thời gian giữa thực thi song song và thực thi nối tiếp, đồng thời xác minh sự cải thiện hiệu suất do song song hóa mang lại
 >
 >
-> ![Hình 10-9 Kiến trúc quét web song song ](images/fig10-9.svg)
+> ![Hình 10-8 Kiến trúc quét web song song ](images/fig10-8.svg)
 >
 >
 
@@ -486,7 +486,7 @@ else:
 
 **MetaGPT: mô phỏng công ty phần mềm theo SOP.**
 
-![Hình 10-11 Mạng cộng tác đa Agent của MetaGPT](images/fig10-11.svg)
+![Hình 10-9 Mạng cộng tác đa Agent của MetaGPT](images/fig10-9.svg)
 
 MetaGPT mã hóa quy trình vận hành chuẩn của công ty phần mềm. Các vai trò làm việc theo thứ tự Product Manager → Architect → Project Manager → Engineer → QA; mỗi vai trò xuất một gói bàn giao có cấu trúc gồm tác vụ và tiêu chí chấp nhận, sự kiện và ràng buộc đã xác nhận, cùng tham chiếu artifact như đường dẫn tệp. Vai trò đăng vào nhóm tin nhắn chung và chỉ đọc loại đã đăng ký. Người gửi và người nhận được tách rời, nhưng luồng điều khiển vẫn do SOP cố định; MetaGPT chưa hoàn toàn phi tập trung.
 
@@ -592,7 +592,7 @@ Các trường hợp trong phần này có thể được hiểu từ ba chiều
 ### Thị trấn AI Stanford: Mô phỏng xã hội sáng tạo Agent
 
 
-![Hình 10-12 Kiến trúc thị trấn AI ](images/fig10-12.svg)
+![Hình 10-10 Kiến trúc thị trấn AI ](images/fig10-10.svg)
 
 
 Năm 2023, Đại học Stanford và nhóm nghiên cứu của Google đã xuất bản bài báo mang tính bước ngoặt “Generative Agents: Interactive Simulacra of Human Behavior”, đề xuất khái niệm “Generative Agent”. Đổi mới cốt lõi là không còn giới hạn Agent trong việc hoàn thành các nhiệm vụ được xác định trước mà mang lại cho Agent khả năng lập kế hoạch, phản ánh và trí nhớ gần giống con người, cho phép chúng sống, hòa nhập xã hội và phát triển tự chủ trong một môi trường xã hội mở.
@@ -708,7 +708,7 @@ Người sói hỗ trợ **trò chơi chiến lược** theo ba chiều của ph
 >
 >
 >
-> ![Hình 10-13 Hệ thống đặc vụ người sói bằng giọng nói ](images/fig10-13.svg)
+> ![Hình 10-11 Hệ thống đặc vụ người sói bằng giọng nói ](images/fig10-11.svg)
 >
 >
 

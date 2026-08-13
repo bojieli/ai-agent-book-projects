@@ -1,68 +1,79 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 495" width="780" height="495" style="background:#ffffff">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 890 515" width="890" height="515" style="background:#ffffff">
 <defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
 
-<rect x="230" y="55" width="320" height="65" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="390" y="75" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">관리자 에이전트</text>
-<text x="390" y="99" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">동적 생성 · 실시간 모니터링 · 연쇄 종료</text>
-<rect x="41" y="160" width="130" height="95" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="106" y="176" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent 1</text>
-<text x="106" y="195" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central">cs.edu.cn</text>
-<text x="106" y="215" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">교수 명단 검색</text>
-<text x="106" y="235" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">검색 중... ◎</text>
-<line x1="390" y1="122" x2="106" y2="158" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<rect x="183" y="160" width="130" height="95" rx="4" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
-<text x="248" y="176" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent 2</text>
-<text x="248" y="195" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central">math.edu.cn</text>
-<text x="248" y="215" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">교수 명단 검색</text>
-<text x="248" y="235" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">찾지 못함 ✗</text>
-<line x1="390" y1="122" x2="248" y2="158" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<rect x="325" y="160" width="130" height="95" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="390" y="176" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent 3</text>
-<text x="390" y="195" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central">phys.edu.cn</text>
-<text x="390" y="215" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">교수 명단 검색</text>
-<text x="390" y="235" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">찾음! ✓</text>
-<line x1="390" y1="122" x2="390" y2="158" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<rect x="467" y="160" width="130" height="95" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="532" y="176" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent 4</text>
-<text x="532" y="195" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central">chem.edu.cn</text>
-<text x="532" y="215" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">교수 명단 검색</text>
-<text x="532" y="235" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">종료됨 ⊘</text>
-<line x1="390" y1="122" x2="532" y2="158" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<rect x="609" y="160" width="130" height="95" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="674" y="176" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent 5 … 10</text>
-<text x="674" y="195" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central">…(총 10개)</text>
-<text x="674" y="215" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">교수 명단 검색</text>
-<text x="674" y="235" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">종료됨 ⊘</text>
-<line x1="390" y1="122" x2="674" y2="158" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<rect x="30" y="280" width="720" height="120" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="390" y="298" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">연쇄 종료 타임라인</text>
-<text x="100" y="322" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">t=0s</text>
-<text x="100" y="338" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">에이전트 10개 시작</text>
-<text x="100" y="353" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;Zhang Wei&quot; 병렬 검색</text>
-<line x1="155" y1="335" x2="175" y2="335" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<text x="240" y="322" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">t=12s</text>
-<text x="240" y="338" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Agent 2 완료</text>
-<text x="240" y="353" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">찾지 못함 → 종료</text>
-<line x1="295" y1="335" x2="315" y2="335" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<text x="380" y="322" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">t=18s</text>
-<text x="380" y="338" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Agent 3이 찾음!</text>
-<text x="380" y="353" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">target_found 전송</text>
-<line x1="435" y1="335" x2="455" y2="335" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<text x="520" y="322" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">t=18.1s</text>
-<text x="520" y="338" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">관리자가 terminate를</text>
-<text x="520" y="353" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">나머지 에이전트에 전파</text>
-<line x1="585" y1="335" x2="605" y2="335" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<text x="670" y="322" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">t=19s</text>
-<text x="670" y="338" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">모두 종료 확인</text>
-<text x="670" y="353" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">결과 집계·반환</text>
-<rect x="30" y="420" width="340" height="100" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="200" y="438" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">검색 결과</text>
-<text x="50" y="460" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">이름: Zhang Wei  소속: 물리학부</text>
-<text x="50" y="476" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">직위: 교수  분야: 양자 컴퓨팅</text>
-<text x="50" y="492" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">이메일: zhangwei@phys.edu.cn</text>
-<rect x="400" y="420" width="350" height="100" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="575" y="438" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">성능 비교</text>
-<text x="420" y="462" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">직렬: 사이트 10개 × 30s = 약 5분</text>
-<text x="420" y="480" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">병렬: 18초 검색 + 종료 1초 = 19초</text>
-<text x="420" y="498" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">속도 향상: ~15×(연쇄 종료 최적화 포함)</text>
+<rect x="26" y="55" width="150" height="230" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="101" y="75" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">제품 관리자</text>
+<text x="34" y="97" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">입력: 사용자 요구 사항 설명</text>
+<rect x="34" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="40" y="127" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">출력:</text>
+<text x="40" y="143" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">기능 목록 + 우선순위</text>
+<text x="40" y="159" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">사용자 스토리(5개)</text>
+<text x="40" y="175" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">인수 조건</text>
+<rect x="34" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="101" y="238" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/PRD.md</text>
+<line x1="186" y1="170" x2="198" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="198" y="55" width="150" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="273" y="75" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">아키텍트</text>
+<text x="206" y="97" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">입력: PRD.md</text>
+<rect x="206" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="212" y="127" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">출력:</text>
+<text x="212" y="143" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">기술 스택: FastAPI+React</text>
+<text x="212" y="159" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">API 규격(OpenAPI)</text>
+<text x="212" y="175" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">데이터베이스 스키마</text>
+<rect x="206" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="273" y="238" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/design.md</text>
+<line x1="358" y1="170" x2="370" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="370" y="55" width="150" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="445" y="75" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">프로젝트 관리자</text>
+<text x="378" y="97" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">입력: design.md</text>
+<rect x="378" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="384" y="127" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">출력:</text>
+<text x="384" y="143" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">업무 목록 + 분담</text>
+<text x="384" y="159" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">파일 단위 할당</text>
+<text x="384" y="175" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">모듈 의존 순서</text>
+<rect x="378" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="445" y="238" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/tasks.md</text>
+<line x1="530" y1="170" x2="542" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="542" y="55" width="150" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="617" y="75" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">엔지니어 ×3</text>
+<text x="550" y="97" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">입력: tasks.md + design.md</text>
+<rect x="550" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="556" y="127" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">출력:</text>
+<text x="556" y="143" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">모듈 A: 사용자 서비스</text>
+<text x="556" y="159" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">모듈 B: 주문 서비스</text>
+<text x="556" y="175" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">모듈 C: 결제 서비스</text>
+<rect x="550" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="617" y="238" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">src/*.py</text>
+<line x1="702" y1="170" x2="714" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="714" y="55" width="150" height="230" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="789" y="75" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">QA 엔지니어</text>
+<text x="722" y="97" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">입력: src/ + PRD.md</text>
+<rect x="722" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="728" y="127" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">출력:</text>
+<text x="728" y="143" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">단위 테스트(pytest)</text>
+<text x="728" y="159" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">통합 테스트(API)</text>
+<text x="728" y="175" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">버그 보고서 → 엔지니어</text>
+<rect x="722" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="789" y="238" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/test_report.md</text>
+<path d="M 789,293 Q 703,346 617,293" fill="none" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
+<text x="703" y="300" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">버그 수정</text>
+
+<rect x="30" y="335" width="830" height="50" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="445" y="351" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">공유 프로젝트 디렉터리</text>
+<text x="445" y="371" font-family="'Courier New', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', Courier, monospace" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">docs/PRD.md   docs/design.md   docs/tasks.md   src/*.py   docs/test_report.md</text>
+
+<rect x="30" y="400" width="830" height="130" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="445" y="418" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">MetaGPT 핵심 설계</text>
+<text x="42" y="442" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ 표준화된 문서</text>
+<text x="180" y="442" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">각 역할은 고정 형식으로 출력 — 후속 역할은 형식만 알면 되고 이전 추론은 불필요</text>
+<text x="42" y="466" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ 인터페이스 분리</text>
+<text x="180" y="466" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">제품 관리자를 더 강한 모델로 바꿔도 PRD 형식만 지키면 후속 역할은 변경 없음</text>
+<text x="42" y="490" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ 관리자 없음</text>
+<text x="180" y="490" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">제어권은 DAG를 따라 이동: Product Mgr→Architect→Project Mgr→Engineer→QA</text>
+<text x="42" y="514" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ 예외 경로</text>
+<text x="180" y="514" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">QA 테스트 실패 → 모듈별 버그 보고서를 엔지니어에 전달 → 반복 수정</text>
 </svg>
