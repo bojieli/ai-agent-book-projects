@@ -33,7 +33,7 @@ La introducción de GPT-Live de OpenAI resume tres paradigmas: cascada, basado e
 
 El hilo común es escapar de la suposición de que hay que hablar por turnos y de la conjetura de VAD sobre quién tiene la palabra. Cascada y Omni aún dividen la interacción en turnos; el dúplex completo convierte esa decisión en una salida continua del modelo.
 
-[^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ . La clasificación procede del resumen de las tres generaciones de ChatGPT Voice; «end-to-end omnimodal (Omni)» corresponde a «turn-based voice models».
+[^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/. La clasificación procede del resumen de las tres generaciones de ChatGPT Voice; «end-to-end omnimodal (Omni)» corresponde a «turn-based voice models».
 
 **Cancelación en streaming:**
 
@@ -132,7 +132,27 @@ El modelo de primer plano responde mientras el usuario sigue conectado; el model
 | Interacción rápida, consejo lento | Mantener el hilo y elegir palabras | Consejo o resultados de herramientas | Interfaz limitada |
 | Pensamiento y expresión unidos | Pensar mientras habla | Compartir el estado | Alto coste de entrenamiento |
 
-La primera solución duplica el trabajo y puede contradecirse; la segunda comunica consejos de forma indirecta y no ve el razonamiento intermedio; la tercera integra ambos procesos. Step-Audio R1 usa MGRD para anclar el razonamiento en rasgos acústicos y una arquitectura MPS de dos cerebros para producir pensamiento y voz en paralelo. El modelo unificado es más natural, pero requiere reentrenar pensamiento y expresión juntos; el desacoplado permite cambiar el cerebro de fondo (Figuras 9-5 y 9-6).
+#### Solución 1: el pensamiento rápido responde, el lento razona
+
+El pensamiento rápido puede emitir una respuesta de relleno en unos cientos de milisegundos mientras el lento completa el razonamiento en segundo plano. El problema es que las preguntas simples se procesan dos veces y las complejas acaban contradiciéndose: el modelo rápido recomienda contratar la tarifa y el lento descubre después que le falta una función clave, de modo que el usuario oye dos respuestas incompatibles en pocos segundos. La causa de fondo es que dos instancias razonaron por separado.
+
+![Figura 9-5: Comparación de arquitecturas de pensamiento rápido y lento](images/fig9-5.svg)
+
+#### Solución 2: el pensamiento rápido interactúa, el lento avisa
+
+Aquí el modelo de fondo entrega sugerencias al de primer plano mediante una barra de estado o una interfaz específica, y el de primer plano mantiene el hilo y decide cómo formularlo. Es más estable que la primera solución, pero la comunicación sigue siendo indirecta: el primer plano puede malinterpretar la sugerencia y no ve el razonamiento intermedio del fondo. Mientras el fondo no termina, una repregunta solo puede responderse con los medios propios del primer plano. Sabe «esperar el resultado» con naturalidad, pero no llega a pensar mientras habla.
+
+#### Solución 3: pensamiento y expresión unificados (el caso de Step-Audio R1)
+
+La tercera solución interioriza la capacidad de razonar dentro del propio modelo de audio de extremo a extremo. Step-Audio R1 resuelve dos problemas con dos mecanismos complementarios: la **destilación de razonamiento anclada en la modalidad (MGRD)** hace que el modelo piense a partir de rasgos acústicos, y la **arquitectura de dos cerebros MPS** paraleliza la concepción y la expresión. El primero garantiza «pensar bien»; el segundo, «hablar a tiempo».
+
+Idealmente el modelo debería juzgar la emoción por el tono, el ritmo y la entonación, no solo por la transcripción. El llamado «razonamiento por sustituto textual» ocurre cuando el modelo reemplaza el análisis de la melodía y de los rasgos acústicos por las palabras negativas de la letra. MGRD filtra las cadenas de razonamiento que realmente citan rasgos acústicos, entrena con esos datos y, mediante aprendizaje por refuerzo, impide que el modelo se salte el razonamiento y adivine la respuesta.
+
+MPS hace que el cerebro de concepción produzca fragmentos de pensamiento de forma continua, y que el de expresión los convierta en voz de inmediato combinándolos con lo ya dicho. Ambos avanzan en paralelo, como una tubería, así que el usuario oye la primera frase sin esperar a que termine todo el razonamiento (figura 9-6).
+
+![Figura 9-6: Arquitectura de dos cerebros MGRD y MPS de Step-Audio R1](images/fig9-6.svg)
+
+El modelo unificado es el que más se acerca a pensar mientras habla, a cambio de tener que reentrenar juntas la capacidad de razonar y la de hablar en tiempo real. La vía desacoplada facilita sustituir el cerebro de fondo; la unificada encaja mejor en escenarios especializados que buscan la máxima naturalidad. Son un intercambio, no un simple reemplazo.
 
 ### Síntesis de voz más humana
 
@@ -340,8 +360,6 @@ Los VLM generales ya poseen una capacidad notable de pensamiento embrollado. **G
 
 En la capa de ejecución de la arquitectura de dos capas, tres modelos representativos (RT-2, OpenVLA y π₀) se enfocan en el control VLA, es decir, emitir las acciones del robot en tiempo real basándose en las imágenes de las cámaras y las instrucciones de lenguaje (Figura 9-10). Pertenecen a dos rutas en cuanto a la representación de las acciones: tokens de acción discretos y generación de trayectorias continuas.
 
-![Figura 9-11: Arquitectura VLA (Vision-Language-Action)](images/fig9-11.svg)
-
 **RT-2 y OpenVLA: Ruta de tokens de acción discretos.**
 
 **RT-2** fue el pionero de esta ruta: realiza un ajuste fino directo sobre grandes modelos de visión-lenguaje, discretizando las acciones continuas del robot en tokens que se emiten de forma autorregresiva uno a uno como si fuera generación de texto, aprovechando la capacidad de generalización del modelo preentrenado para mejorar la transferencia zero-shot a nuevos objetos e instrucciones. **OpenVLA** sigue el esquema de representación de acciones de RT-2, unificando el modelo de lenguaje y el codificador visual en una sola arquitectura, recibiendo imágenes e instrucciones de texto para emitir tokens de acción. El entrenamiento consta de dos etapas: primero se realiza un preentrenamiento en el dataset multiplataforma a gran escala Open X-Embodiment (que abarca demostraciones de manipulación real en más de 20 plataformas robóticas) para aprender conocimientos generales de manipulación (los patrones de acción como "agarrar" y "colocar" son comunes entre diferentes robots), y luego se realiza un ajuste fino con pocos datos para plataformas específicas. Puesto que la representación de acciones es idéntica en esencia, la verdadera diferencia entre ambos reside en la apertura y las elecciones de ingeniería: RT-2 y sus datos de entrenamiento son internos de Google, mientras que OpenVLA es completamente de código abierto (modelo backbone de código abierto Llama 2 más codificador visual combinado con datasets públicos), lo que permite a toda la comunidad reproducir y mejorar sobre su base por primera vez.
@@ -369,9 +387,7 @@ for action in chunk:
 
 ### Transferencia Sim2Real: La brecha entre simulación y realidad
 
-En la sección de entornos de simulación del Capítulo 6 se explicaron los orígenes de la brecha entre simulación y realidad (sim-to-real gap) y el principio de la aleatorización de dominio (domain randomization) para hacerle frente, por lo que no se repetirá aquí; en una frase: dado que la simulación no puede restaurar completamente las características físicas, visuales y de hardware reales, se alteran aleatoriamente estos parámetros en un amplio rango durante el entrenamiento, forzando a la política a aprender un conjunto de representaciones generales estables ante diversos cambios (Figura 9-11). A continuación solo examinaremos cómo se aterriza este principio en brazos robóticos reales.
-
-![Figura 9-12: Brecha Sim2Real y Aleatorización de Dominio](images/fig9-12.svg)
+En la sección de entornos de simulación del Capítulo 6 se explicaron los orígenes de la brecha entre simulación y realidad (sim-to-real gap) y el principio de la aleatorización de dominio (domain randomization) para hacerle frente, por lo que no se repetirá aquí; en una frase: dado que la simulación no puede restaurar completamente las características físicas, visuales y de hardware reales, se alteran aleatoriamente estos parámetros en un amplio rango durante el entrenamiento, forzando a la política a aprender un conjunto de representaciones generales estables ante diversos cambios. A continuación solo examinaremos cómo se aterriza este principio en brazos robóticos reales.
 
 Existen numerosos casos de éxito en esta ruta: la manipulación diestra de manos mecánicas de OpenAI (el proyecto Dactyl logró la reorientación de cubos dentro de la mano, y su trabajo posterior logró resolver el cubo de Rubik con una mano mediante aleatorización automática de dominio ADR) y ANYmal de ETH Zurich (caminata robusta de robots cuadrúpedos sobre nieve, grava y otros terrenos complejos en exteriores) pertenecen a esta categoría.
 

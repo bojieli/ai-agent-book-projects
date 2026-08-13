@@ -136,7 +136,27 @@ Gelişim çizgisi şöyledir: kaskad sessizlik eşikleriyle turları tahmin eder
 | Hızlı etkileşim, yavaş tavsiye | Sohbeti ve ifadeyi sürdürme | Tavsiye veya araç sonucu | Kısıtlı arayüz |
 | Düşünme ve ifadenin birleşmesi | Konuşurken düşünme | Model durumunu paylaşma | Yüksek eğitim/değiştirme maliyeti |
 
-İlk tasarım soruyu iki kez işleyebilir ve çelişebilir. İkincisi status bar üzerinden tavsiye verdiği için daha kararlı olsa da ön plan ara muhakemeyi göremez ve gerçekten konuşurken düşünemez. Üçüncüsü iki süreci birleştirir. Step-Audio R1'de MGRD düşünmeyi akustik özelliklere bağlar; MPS iki beyinli mimarisi planlama ile ifadeyi paralel üretir (Şekil 9-5 ve 9-6). Birleşik model daha doğaldır, ayrıştırılmış tasarım arka plan beynini değiştirmeyi kolaylaştırır; bunlar alternatif değil ödünleşimlerdir.
+#### Çözüm 1: hızlı düşünme idare eder, yavaş düşünme yanıtlar
+
+Hızlı düşünme birkaç yüz milisaniye içinde bir dolgu yanıtı verirken yavaş düşünme arka planda daha derin çıkarımı tamamlar. Sorun şu ki basit sorular iki kez işlenir, karmaşık olanlarda ise çelişki çıkar: hızlı model paketi almayı önerir, yavaş model ardından pakette kritik bir özelliğin eksik olduğunu fark eder ve kullanıcı birkaç saniye içinde birbiriyle çelişen iki yanıt duyar. Temel neden, iki örneğin birbirinden bağımsız birer düşünme yapmasıdır.
+
+![Şekil 9-5: Hızlı/yavaş düşünme mimarilerinin karşılaştırması](images/fig9-5.svg)
+
+#### Çözüm 2: hızlı düşünme etkileşir, yavaş düşünme hatırlatır
+
+Bu tasarımda arka plan modeli, ön plandaki modele durum çubuğu ya da özel bir arayüz üzerinden tavsiye verir; ön plan sohbeti sürdürmeye ve ifadeyi seçmeye devam eder. Birinci çözümden kararlıdır ama iletişim hâlâ dolaylıdır: ön plan tavsiyeyi yanlış anlayabilir ve arka planın ara muhakemesini göremez. Arka plan bitirmeden gelen bir soruya ön plan yalnızca kendi gücüyle yanıt verebilir. Doğal biçimde "sonucu bekleyebilir", ama gerçekten konuşurken düşünemez.
+
+#### Çözüm 3: düşünme ve ifadenin uçtan uca birleşmesi (Step-Audio R1 örneği)
+
+Üçüncü çözüm düşünme yeteneğini doğrudan uçtan uca ses modelinin içine yerleştirir. Step-Audio R1 iki sorunu birbirini tamamlayan iki mekanizmayla çözer: **kipe demirlenmiş muhakeme damıtması (MGRD)** modelin akustik özniteliklere dayanarak düşünmesini sağlar, **MPS çift beyin mimarisi** ise tasarlamayı ve ifade etmeyi paralel yürütür. İlki "doğru düşünmeyi", ikincisi "zamanında söylemeyi" güvence altına alır.
+
+İdeal durumda model duyguyu yalnızca deşifre metinden değil, perde, ritim ve tonlamadan çıkarmalıdır. "Metin vekili üzerinden düşünme" dediğimiz şey, modelin ezgi ve akustik öznitelik çözümlemesinin yerine şarkı sözündeki olumsuz kelimeleri koymasıdır. MGRD gerçekten akustik özniteliklere atıf yapan düşünme süreçlerini süzer, modeli bu veriyle eğitir ve pekiştirmeli öğrenmeyle modelin düşünmeyi atlayıp yanıtı tahmin etmesini engeller.
+
+MPS'te tasarlama beyni sürekli düşünce parçaları üretir; ifade beyni gelen parçayı, söylenmiş yanıtla birleştirerek anında sese çevirir. İkisi bir boru hattı gibi paralel ilerlediğinden kullanıcı ilk cümleyi duymak için düşünmenin tamamının bitmesini beklemez (şekil 9-6).
+
+![Şekil 9-6: Step-Audio R1 MGRD ve MPS çift beyin mimarisi](images/fig9-6.svg)
+
+Birleşik model "konuşurken düşünme"yi en sıkı biçimde gerçekleştirir; bedeli, düşünme ile gerçek zamanlı ifadenin birlikte yeniden eğitilmesidir. Ayrıştırılmış yol arka plandaki beyni değiştirmeyi kolaylaştırır, birleşik yol ise en yüksek doğallığı arayan özel senaryolara daha uygundur. İkisi bir ödünleşimdir, basit bir ikame değil.
 
 ### Daha insana benzeyen konuşma sentezi
 
@@ -176,16 +196,13 @@ else:
 
 ![Şekil 9-7: Computer Use Agent'ının algılama-düşünme-eylem döngüsü](images/fig9-7.svg)
 
-
 Bu döngüde üç kritik tasarım boyutu vardır: **action space** (eylem alanı — Agent'ın hangi işlemleri yürütebildiği), **görsel konumlandırma** (ekran görüntüsünde hedef öğenin nasıl bulunacağı) ve **model mimarisi** (ekran görüntüsünden doğru eylemin nasıl üretileceği).
 
 ### Action Space Tasarımı
 
 Anthropic, eksiksiz bir etkileşim yeteneği oluşturan üç tür araç tanımlar (Şekil 9-8):
 
-
 ![Şekil 9-8: Computer Use action space'i](images/fig9-8.svg)
-
 
 **GUI işlem aracı** (computer tool): Fare işlemleri arasında hareket ettirme (mouse_move), sol/sağ/orta tuş tıklaması, çift/üçlü tıklama, sürükleme (left_click_drag) ve daha ince taneli basma/bırakma (left_mouse_down/up) yer alır. Kaydırma (scroll) dört yönü destekler ve değiştirici tuşlarla birlikte kullanılabilir. Klavye işlemleri arasında karakter karakter yazma (type; gerçek klavye kullanımını taklit etmek için her karakter arasında 12 ms aralıkla), tuş kombinasyonları (key, örneğin Ctrl+C) ve tuşu basılı tutma (hold_key) bulunur. Algı eylemleri: ekran görüntüsü alma (screenshot), imleç konumunu okuma (cursor_position) ve bekleme (wait).
 
@@ -231,7 +248,6 @@ Elements:
 
 Modelin yalnızca bir ID numarası üretmesi yeterlidir; sistem otomatik olarak o öğenin merkez koordinatını kullanarak tıklamayı gerçekleştirir. Bu tür çözümler token tasarrufu sağlamaz (çünkü tüm işaretleme bilgisinin modele gönderilmesi gerekir), ama konumlandırması kesin ve kararlıdır; üstelik segmentasyon modelinin yol açabileceği atlanmış ve yanlış tespitleri de ortadan kaldırır.
 
-
 ![Şekil 9-9: Set-of-Mark ile yapısal öğe indeksleme (browser-use uygulaması)](images/fig9-9.svg)
 
 **Saf koordinat tahmini.**
@@ -240,9 +256,7 @@ Modelin yalnızca bir ID numarası üretmesi yeterlidir; sistem otomatik olarak 
 
 Koordinat tahmini çözümlerinde modelin koordinatları kavrayışı, eğitim sırasında kullanılan çözünürlüğe yüksek oranda bağımlıdır (Şekil 9-10). Claude'un eğitiminde XGA (1024x768), WXGA (1280x800) ve FWXGA (1366x768) kullanılmıştır; girdi olarak verilen ekran görüntüsünün çözünürlüğü bunlarla uyuşmazsa modelin tahmin ettiği koordinatlar sistematik biçimde kayar — tıpkı küçük bir haritada ölçülen mesafeyi doğrudan büyük haritaya uygulamak gibi. Bu nedenle araç katmanında çift yönlü bir koordinat ölçekleme mekanizması gerekir ve hedef çözünürlük **en-boy oranına göre seçilmelidir**; aksi hâlde orantısız gerdirme görüntüyü bozar ve koordinat değerlendirmesini de saptırır. Örneğin gerçek ekran çözünürlüğü 2560×1440 (16:9) ise, Claude'un desteklediği üç seçenek arasından en-boy oranı 16:9'a en yakın olanı — FWXGA (1366×768) — seçilmelidir. Ekran görüntüsü orantılı biçimde 1366×768'e ölçeklenip modele verilir; model tıklama koordinatı olarak (683, 384) ürettiğinde bu değer ters yönde gerçek koordinata eşlenir: (683×2560/1366, 384×1440/768) ≈ (1280, 720). Buna karşılık 16:9'luk bir görüntü zorla 4:3'lük 1024×768'e gerdirilirse görüntü yatayda ezilir ve modelin tahmin ettiği koordinatlar sistematik olarak kayar.
 
-
 ![Şekil 9-10: Çözünürlük eşleştirme ve çift yönlü koordinat ölçekleme](images/fig9-10.svg)
-
 
 Üç yol arasındaki seçim mantığı şöyle özetlenebilir: **yapısal bilgi elde edilebiliyorsa öncelikle DOM/Accessibility Tree indekslemesi kullanılmalıdır**; konumlandırması en kesin ve en kararlı olan budur. **Elde edilemiyorsa** (Photoshop gibi yerel masaüstü yazılımları, Canvas/WebGL ile render edilen arayüzler, oyunlar) **hem görsel işaretleme (orijinal SoM yolu) hem de koordinat tahmini kullanılabilir**. Görsel işaretleme konumlandırmayı çoktan seçmeli bir soruya dönüştürdüğü için, özel olarak eğitilmemiş genel amaçlı modellere daha dosttur; koordinat tahmini ise işaretleme adımını ortadan kaldırdığı için, GUI konumlandırma eğitimi almış modeller açısından daha doğrudandır. Küçük öğelerde ve yoğun arayüzlerde her ikisinin de doğruluğu hâlâ yetersizdir.
 
@@ -342,11 +356,7 @@ Genel amaçlı VLM'ler şimdiden fena olmayan bir bedenlenmiş akıl yürütme y
 
 ### VLA Kontrolü: Gösterim Verisinden Çapraz Bedenlenme Genellemesine
 
-İki katmanlı mimarinin yürütme katmanında RT-2, OpenVLA ve π₀ olmak üzere üç temsilci model VLA kontrolüne odaklanır — yani kamera görüntüsüne ve dil talimatına göre robotun eylemlerini gerçek zamanlı üretmeye (Şekil 9-11). Bu modeller eylem temsili bakımından iki ayrı yola ayrılır: ayrık eylem token'ları ile sürekli yörünge üretimi.
-
-
-![Şekil 9-11: VLA mimarisi (Vision-Language-Action)](images/fig9-11.svg)
-
+İki katmanlı mimarinin yürütme katmanında RT-2, OpenVLA ve π₀ olmak üzere üç temsilci model VLA kontrolüne odaklanır — yani kamera görüntüsüne ve dil talimatına göre robotun eylemlerini gerçek zamanlı üretmeye. Bu modeller eylem temsili bakımından iki ayrı yola ayrılır: ayrık eylem token'ları ile sürekli yörünge üretimi.
 
 **RT-2 ve OpenVLA: ayrık eylem token'ı yolu.**
 
@@ -362,11 +372,7 @@ Eylem temsilindeki asıl ayrım RT-2 ile OpenVLA arasında değil, **ayrık toke
 
 ### Sim2Real Transfer: Simülasyondan Gerçekliğe Uzanan Uçurum
 
-Bölüm 6'daki simülasyon ortamları alt bölümü, sim-to-real gap'in (gerçeklik farkı) kaynağını ve domain randomization'ın (alan rastgeleleştirme) buna nasıl çözüm ürettiğini zaten açıklığa kavuşturmuştu; burada tekrar etmiyoruz — tek cümleyle özetlemek gerekirse: simülasyon gerçek fiziği, görüntüyü ve donanım özelliklerini tam olarak yeniden üretemediği için, eğitim sırasında bu parametreler geniş bir aralıkta rastgele karıştırılır ve politikanın her türlü değişime dayanıklı, genel bir temsil öğrenmesi zorlanır (Şekil 9-11). Aşağıda yalnızca bu ilkenin gerçek bir robot kolunda nasıl hayata geçtiğine bakacağız.
-
-
-![Şekil 9-12: Sim2Real uçurumu ve Domain Randomization](images/fig9-12.svg)
-
+Bölüm 6'daki simülasyon ortamları alt bölümü, sim-to-real gap'in (gerçeklik farkı) kaynağını ve domain randomization'ın (alan rastgeleleştirme) buna nasıl çözüm ürettiğini zaten açıklığa kavuşturmuştu; burada tekrar etmiyoruz — tek cümleyle özetlemek gerekirse: simülasyon gerçek fiziği, görüntüyü ve donanım özelliklerini tam olarak yeniden üretemediği için, eğitim sırasında bu parametreler geniş bir aralıkta rastgele karıştırılır ve politikanın her türlü değişime dayanıklı, genel bir temsil öğrenmesi zorlanır. Aşağıda yalnızca bu ilkenin gerçek bir robot kolunda nasıl hayata geçtiğine bakacağız.
 
 Bu yolun çok sayıda başarılı örneği var: OpenAI'ın robot eliyle becerikli manipülasyonu (Dactyl projesi el içinde küp yeniden yönlendirmeyi gerçekleştirdi; devamındaki çalışma otomatik alan rastgeleleştirmesi (ADR) yardımıyla tek elle Rubik küpü çözmeyi başardı) ve ETH Zürih'in ANYmal'i (dört ayaklı robotun kar, moloz gibi karmaşık arazi koşullarında sağlam biçimde yürümesi) bunlar arasındadır.
 
