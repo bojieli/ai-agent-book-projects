@@ -1,18 +1,42 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 620 314" width="620" height="314" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
-<rect x="160.0" y="46" width="300" height="52" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="310.0" y="60.625" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Kullanıcı sorgusu</text>
-<text x="310.0" y="83.375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;Bu dosyayı hata ayıkla&quot;</text>
-<line x1="310.0" y1="100" x2="310.0" y2="120" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="90.0" y="122" width="440" height="62" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="310.0" y="140.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Katman 1: Sunucu düzeyi anlamsal arama</text>
-<text x="310.0" y="166.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Yüzlerce MCP sunucusu → en iyi K sunucuyu getir</text>
-<line x1="310.0" y1="186" x2="310.0" y2="208" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="90.0" y="210" width="440" height="62" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="310.0" y="231.25" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Katman 2: Araç düzeyi anlamsal arama</text>
-<text x="310.0" y="250.75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Yalnızca en iyi K sunucunun araçları arasında eşleştir → en iyi N araç</text>
-<line x1="310.0" y1="274" x2="310.0" y2="296" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="160.0" y="298" width="300" height="46" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="310.0" y="313.85" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Seçilen araç</text>
-<text x="310.0" y="328.15000000000003" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.0" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Aday kapsamını belirgin şekilde daraltır, seçim maliyetini azaltır</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 410" width="1000" height="410" style="background:#ffffff">
+  <defs>
+    <style>
+      .t{font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;fill:#26343c}
+      .h{font-size:20px;font-weight:700}
+      .s{font-size:16px;fill:#52636d}
+      .box{fill:#f5f7f8;stroke:#33434d;stroke-width:2}
+      .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
+    </style>
+  </defs>
+  <text x="500" y="30" text-anchor="middle" class="t h">Bir yeteneğin temsil biçimi, nerede güncelleneceğini belirler</text>
+
+  <rect x="35" y="72" width="220" height="126" rx="9" class="box"/>
+  <text x="145" y="105" text-anchor="middle" class="t h">Bilgi</text>
+  <text x="145" y="135" text-anchor="middle" class="t s">Olgular, deneyim, istisnalar</text>
+  <text x="145" y="164" text-anchor="middle" class="t s">Markdown / bilgi tabanı</text>
+
+  <rect x="275" y="72" width="220" height="126" rx="9" class="box"/>
+  <text x="385" y="105" text-anchor="middle" class="t h">Talimatlar</text>
+  <text x="385" y="135" text-anchor="middle" class="t s">Dile dökülebilen karar ilkeleri</text>
+  <text x="385" y="164" text-anchor="middle" class="t s">Prompt / Skill</text>
+
+  <rect x="515" y="72" width="220" height="126" rx="9" class="box"/>
+  <text x="625" y="105" text-anchor="middle" class="t h">Programlar</text>
+  <text x="625" y="135" text-anchor="middle" class="t s" style="font-size:12.5px">Belirlenimci akışlar ve sıkı kısıtlar</text>
+  <text x="625" y="164" text-anchor="middle" class="t s" style="font-size:15.5px">Araçlar / İş akışı / Harness</text>
+
+  <rect x="755" y="72" width="220" height="126" rx="9" class="accent"/>
+  <text x="865" y="105" text-anchor="middle" class="t h">Parametreler</text>
+  <text x="865" y="135" text-anchor="middle" class="t s" style="font-size:12.5px">Yüksek boyutlu algı ve örtük politika</text>
+  <text x="865" y="164" text-anchor="middle" class="t s">SFT / Damıtma / RL</text>
+
+  <line x1="145" y1="226" x2="865" y2="226" stroke="#33434d" stroke-width="2"/>
+  <path d="M145 218 V234 M865 218 V234" stroke="#33434d" stroke-width="2"/>
+  <text x="145" y="260" text-anchor="middle" class="t s">Güncellemesi kolay, izlenebilir</text>
+  <text x="865" y="260" text-anchor="middle" class="t s" style="font-size:15px">İçselleşmiş, düşük çıkarım maliyeti</text>
+  <text x="500" y="289" text-anchor="middle" class="t h">Tek yönlü bir merdiven değil, dört tamamlayıcı taşıyıcı</text>
+
+  <rect x="145" y="320" width="710" height="58" rx="8" class="accent"/>
+  <text x="500" y="344" text-anchor="middle" class="t h" style="font-size:18.5px">İlk soru: yetenek olgular, dil kuralları ya da programlarla tam ifade edilebilir mi?</text>
+  <text x="500" y="367" text-anchor="middle" class="t s">Dağıtımı kararlılık, maliyet ve güncelleme sıklığı belirler; parametrelenebilirlik değil</text>
 </svg>
