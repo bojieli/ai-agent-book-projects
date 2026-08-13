@@ -390,7 +390,7 @@ update(policy, value_model, policy_loss + value_coef * value_loss)
 >
 > El "muestreo por importancia" utilizado aquí es un método estadístico común: cuando la distribución de muestreo está sesgada hacia una categoría, se aplican pesos a las muestras para "corregir" la distribución y lograr que la señal de aprendizaje cubra equitativamente todas las categorías. Los algoritmos PPO y DAPO analizados más adelante reutilizarán este concepto.
 >
-> El registro canónico de esta ejecución histórica de entrenamiento es el [informe de entrenamiento](../chapter7/AdaptThink/TRAINING_REPORT.md), que no incluye ningún checkpoint. La ejecución principal pública de W&B [`wubbn5tj`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/wubbn5tj) utilizó 8×NVIDIA H100 de 80GB. Entre los pasos 0→300, la precisión de MATH500 pasó de 0.8100→0.8180 (+0.80 pp) y la longitud de respuesta de 4911.46→1576.62 (-67.90%); en GSM8K fueron 0.796816→0.818802 (+2.20 pp) y 1025.24→477.33 (-53.44%); en AIME mean@16, 0.314583→0.310417 (-0.42 pp) y 12119.51→6402.23 (-47.17%). Las proporciones correspondientes de NoThinking fueron 83.80%, 84.15% y 56.25%. Esto muestra, al nivel agregado de cada conjunto de datos, una señal de encaminamiento coherente con la dificultad, pero no permite hablar de una «percepción perfecta de la dificultad» en cada problema ni afirmar que la precisión mejore de forma generalizada.
+> El registro canónico de esta ejecución histórica de entrenamiento es el [informe de entrenamiento](../chapter7/AdaptThink/TRAINING_REPORT.md), que no incluye ningún checkpoint. La ejecución principal pública de W&B [`wubbn5tj`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/wubbn5tj) utilizó 8×NVIDIA H100 de 80GB. Entre los pasos 0→300, la precisión de MATH500 pasó de 0.8100→0.8180 (+0.80 pp) y la longitud de respuesta de 4911.46→1576.62 (-67.90%); en GSM8K fueron 0.796816→0.818802 (+2.20 pp) y 1025.24→477.33 (-53.44%); en AIME mean16, 0.314583→0.310417 (-0.42 pp) y 12119.51→6402.23 (-47.17%). Las proporciones correspondientes de NoThinking fueron 83.80%, 84.15% y 56.25%. Esto muestra, al nivel agregado de cada conjunto de datos, una señal de encaminamiento coherente con la dificultad, pero no permite hablar de una «percepción perfecta de la dificultad» en cada problema ni afirmar que la precisión mejore de forma generalizada.
 >
 > La ejecución continuó más allá del punto de medición elegido en el informe hasta el paso 410 y 36.92 horas acumuladas, tras lo cual W&B la marcó como `crashed`; no se completaron las 10 epochs / 3,140 pasos configurados. Aunque en el paso 300 aparece un evento de temporización de checkpoint, este no se distribuye con el libro y no existe ningún comprobante independiente de que se evaluara correctamente con `run_eval_verl_hf.sh` ni de que se volviera a ejecutar MMLU. El commit histórico del código fuente es `9e588202…`; las futuras reproducciones quedan fijadas en su commit hijo directo `0033ad172…`. Los tres archivos de punto de entrada no han cambiado, pero la ruta `-fl-` generada por el script de entrenamiento es incompatible con la ruta `-fl4096` codificada en el script de evaluación y debe corregirse manualmente.
 >
@@ -639,7 +639,7 @@ Estas cifras proceden de entornos sustitutos controlados y no pueden extrapolars
 
 En los experimentos multiturno anteriores, el espacio de acciones del Agente se limitaba a operaciones internas como desplazarse u observar. Los Agentes reales deben invocar herramientas externas (motores de búsqueda, intérpretes de código, procesadores de documentos), lo que introduce nuevos desafíos en el entrenamiento de RL.
 
-![Figura 7-18 Bucle de recompensa de RL para llamada a herramientas](images/fig7-18.svg)
+![Figura 7-16 Bucle de recompensa de RL para llamada a herramientas](images/fig7-16.svg)
 
 El uso de herramientas expande las capacidades del Agente desde el "razonamiento interno del modelo" hacia la "colaboración con sistemas externos", siendo crucial para su aplicación práctica. La dificultad en el entrenamiento con RL de llamadas a herramientas se estructura en tres niveles. El primer nivel es dominar el uso de herramientas individuales (comprender especificaciones de entrada/salida, manejar momentos de llamada y procesar errores). El segundo nivel es seleccionar entre múltiples herramientas (decidir cuándo buscar, cuándo ejecutar código o cuándo procesar documentos entre docenas de opciones). El tercer nivel es la orquestación de cadenas de herramientas (identificar dependencias, gestionar restricciones de exclusión mutua y optimizar la eficiencia de costos).
 
@@ -659,7 +659,7 @@ for token in trajectory:
 
 > **Experimento 7-14 ★★★: ReTool: Intérprete de Código para Resolver Problemas Matemáticos**
 >
-> ![Figura 7-19 ReTool entrelazando texto-código de pensamiento y bucle de retroalimentación de ejecución en sandbox](images/fig7-19.svg)
+> ![Figura 7-17 ReTool entrelazando texto-código de pensamiento y bucle de retroalimentación de ejecución en sandbox](images/fig7-17.svg)
 >
 > El pensamiento en texto puro tiende a acumular errores en cálculos numéricos precisos, operaciones simbólicas o ecuaciones complejas, mientras que un intérprete de código ofrece verificación precisa mediante ejecuciones. ReTool integra la ejecución en tiempo real de código en el bucle de pensamiento de RL, permitiendo que el modelo aprenda autónomamente cuándo y cómo usar herramientas guiado por la retroalimentación de resultados.
 >
@@ -682,7 +682,7 @@ for token in trajectory:
 >
 > **Experimento 7-15 ★★★: AWorld-train: Aprender a Usar Herramientas en un Entorno de Pruebas**
 >
-> ![Figura 7-20 Arquitectura de entrenamiento en sandbox MCP de AWorld-train y ecosistema de herramientas](images/fig7-20.svg)
+> ![Figura 7-18 Arquitectura de entrenamiento en sandbox MCP de AWorld-train y ecosistema de herramientas](images/fig7-18.svg)
 >
 > GAIA es uno de los benchmarks de evaluación de Agentes más exigentes. Incluso grandes modelos entrenados a gran escala suelen alcanzar alrededor del 32%, distantes de los sistemas avanzados. Este experimento utiliza un modelo pequeño (Qwen3-4B) con el objetivo principal de ilustrar el flujo completo de "aprender mediante la práctica".
 >

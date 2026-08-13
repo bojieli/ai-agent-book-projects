@@ -397,7 +397,7 @@ update(policy, value_model, policy_loss + value_coef * value_loss)
 >
 > Burada geçen "önem örneklemesi", istatistikte sık kullanılan bir yöntemdir: örneklem dağılımı belirli bir örnek türüne kaydığında, örneklere ağırlık vererek dağılımı "düzeltir" ve öğrenme sinyalinin bütün sınıfları adilce kapsamasını sağlar. Kitabın ilerisinde tartışılan PPO, DAPO gibi RL algoritmaları bu fikri tekrar tekrar kullanır.
 >
-> Bu tarihsel eğitim çalışmasının esas kaydı, checkpoint içermeyen [eğitim raporudur](../chapter7/AdaptThink/TRAINING_REPORT.md). Herkese açık ana W&B çalışması [`wubbn5tj`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/wubbn5tj), 8×NVIDIA H100 80GB kullandı. Step 0→300 arasında MATH500 doğruluğu 0.8100→0.8180 (+0.80 yüzde puan), yanıt uzunluğu 4911.46→1576.62 (-67.90%); GSM8K değerleri sırasıyla 0.796816→0.818802 (+2.20 yüzde puan) ve 1025.24→477.33 (-53.44%); AIME mean@16 değerleri ise 0.314583→0.310417 (-0.42 yüzde puan) ve 12119.51→6402.23 (-47.17%) oldu. Karşılık gelen NoThinking oranları %83.80, %84.15 ve %56.25'tir. Bunlar veri kümesi toplamı düzeyinde zorlukla uyumlu bir yönlendirme sinyaline işaret eder; ancak her soru için “kusursuz zorluk farkındalığı” denemez ve doğruluğun genel olarak arttığı ileri sürülemez.
+> Bu tarihsel eğitim çalışmasının esas kaydı, checkpoint içermeyen [eğitim raporudur](../chapter7/AdaptThink/TRAINING_REPORT.md). Herkese açık ana W&B çalışması [`wubbn5tj`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/wubbn5tj), 8×NVIDIA H100 80GB kullandı. Step 0→300 arasında MATH500 doğruluğu 0.8100→0.8180 (+0.80 yüzde puan), yanıt uzunluğu 4911.46→1576.62 (-67.90%); GSM8K değerleri sırasıyla 0.796816→0.818802 (+2.20 yüzde puan) ve 1025.24→477.33 (-53.44%); AIME mean16 değerleri ise 0.314583→0.310417 (-0.42 yüzde puan) ve 12119.51→6402.23 (-47.17%) oldu. Karşılık gelen NoThinking oranları %83.80, %84.15 ve %56.25'tir. Bunlar veri kümesi toplamı düzeyinde zorlukla uyumlu bir yönlendirme sinyaline işaret eder; ancak her soru için “kusursuz zorluk farkındalığı” denemez ve doğruluğun genel olarak arttığı ileri sürülemez.
 >
 > Çalışma, raporda seçilen ölçüm noktasından sonra step 410'a ve toplam 36.92 saate kadar devam etti; ardından W&B durumu `crashed` oldu. Yapılandırılan 10 epochs / 3,140 steps tamamlanmadı. Step 300'de bir checkpoint zamanlama olayı bulunsa da checkpoint kitapla dağıtılmıyor; `run_eval_verl_hf.sh` ile başarıyla değerlendirildiğini veya MMLU'nun yeniden çalıştırıldığını kanıtlayan bağımsız bir yürütme kaydı da yok. Tarihsel kaynak commit'i `9e588202…`; gelecekteki yeniden üretimler doğrudan alt commit'i `0033ad172…` üzerine sabitlenmiştir. Üç giriş noktası dosyası değişmemiştir, ancak eğitim betiğinin ürettiği `-fl-` yolu, değerlendirme betiğinde sabit kodlanmış `-fl4096` yoluyla uyumlu değildir ve elle düzeltilmelidir.
 >
@@ -646,7 +646,7 @@ Bu sayılar denetimli vekil ortamlardan gelir ve canlı bir Agent için eşdeğe
 
 Önceki çok turlu deneylerde Agent'ın action space'i hareket etme, gözlemleme gibi yerleşik işlemlerle sınırlıydı. Gerçek hayattaki bir Agent ise çeşitli dış araçları — arama motorları, kod yorumlayıcıları, doküman ayrıştırıcıları vb. — çağırmak zorundadır; bu da RL eğitimine yeni zorluklar getirir.
 
-![Şekil 7-18: Tool Calling RL Ödül Döngüsü](images/fig7-18.svg)
+![Şekil 7-16: Tool Calling RL Ödül Döngüsü](images/fig7-16.svg)
 
 Araç kullanımı, Agent'ın yetenek sınırını "modelin kendi akıl yürütmesinden" "dış sistemleri çağırarak iş birliği yapmaya" genişletir ve Agent'ın pratikte kullanışlı hale gelmesinin anahtarıdır. Zorluk kademesi açısından bakıldığında, araç kullanımının RL eğitimi üç düzeyde zorlukla karşılaşır. Birinci düzey, tek bir aracı kullanmayı öğrenmektir — girdi/çıktı spesifikasyonunu anlamak, çağırma zamanlamasını kavramak, hata geri bildirimlerini işlemek. İkinci düzey, çok araçlı bir ekosistemde seçim yapmaktır — onlarca araç karşısında ne zaman arama yapılacağı, ne zaman kod çalıştırılacağı, ne zaman doküman ayrıştırılacağı. Üçüncü düzey, araç zinciri orkestrasyonudur — araçlar arasındaki bağımlılıkları keşfetmek, karşılıklı dışlama kısıtlarını tanımak, maliyet verimliliğini optimize etmek.
 
@@ -667,7 +667,7 @@ for token in trajectory:
 > **Deney 7-14 ★★★: ReTool — Kod Yorumlayıcıyla Güçlendirilmiş Matematik Problemi Çözme**
 >
 >
-> ![Şekil 7-19: ReTool'un Metin-Kod Düşünmeyi İç İçe Geçiren Sandbox Yürütme Geri Bildirim Döngüsü](images/fig7-19.svg)
+> ![Şekil 7-17: ReTool'un Metin-Kod Düşünmeyi İç İçe Geçiren Sandbox Yürütme Geri Bildirim Döngüsü](images/fig7-17.svg)
 >
 >
 > Saf metinle düşünme; hassas sayısal hesaplama, sembolik işlem veya karmaşık denklem çözümünde kolayca birikimli hata üretir (örneğin arka arkaya on adım çarpma yapıldığında her adımda yanlış hesaplama olabilir); kod yorumlayıcı ise yürütülebilir bir arayüz sunarak hassas doğrulama sağlar. ReTool, kod yorumlayıcının gerçek zamanlı yürütmesini RL düşünme döngüsüne entegre eder ve modelin, sonuç geri bildiriminin rehberliğinde aracı ne zaman ve nasıl kullanacağını kendi başına öğrenmesini sağlar.
@@ -692,7 +692,7 @@ for token in trajectory:
 > **Deney 7-15 ★★★: AWorld-train — Sandbox'ta Araç Kullanmayı Öğrenmek**
 >
 >
-> ![Şekil 7-20: AWorld-train MCP Sandbox Eğitim Mimarisi ve Araç Ekosistemi](images/fig7-20.svg)
+> ![Şekil 7-18: AWorld-train MCP Sandbox Eğitim Mimarisi ve Araç Ekosistemi](images/fig7-18.svg)
 >
 >
 > GAIA, Agent değerlendirme benchmark'larının en zorlayıcılarından biridir. Büyük parametreli modeller büyük ölçekli eğitimden geçse bile yalnızca yaklaşık %32'ye ulaşabilir ve yüksek puanlı sistemlere göre belirgin bir fark kalır. Bu deney daha küçük bir model (Qwen3-4B) kullanır; asıl amacı, eksiksiz bir "pratikten öğrenme" eğitim akışını göstermektir.
