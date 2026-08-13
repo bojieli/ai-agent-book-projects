@@ -345,6 +345,9 @@ VLM nói chung đã có khả năng tư duy thể hiện tốt. **Gemini Robotic
 Ở lớp thực thi của kiến trúc hai lớp, ba mô hình đại diện, RT-2, OpenVLA và π₀, tất cả đều tập trung vào điều khiển VLA—nghĩa là đầu ra các hành động của robot theo thời gian thực dựa trên hình ảnh camera và hướng dẫn ngôn ngữ (Hình 9-11). Chúng thuộc hai tuyến trong biểu diễn hành động: mã thông báo hành động rời rạc và tạo trajectory liên tục.
 
 
+![Hình 9-11 Kiến trúc VLA (Tầm nhìn-Ngôn ngữ-Hành động)](images/fig9-11.svg)
+
+
 **RT-2 với OpenVLA: Định tuyến mã thông báo hành động riêng biệt.**
 
 **RT-2** pioneered this route: fine-tuning directly on the large-scale visual-language model, discretizing the robot's continuous actions into tokens, outputting autoregressive output one by one like generating text, and using the generalization ability of the pre-trained model to improve the zero-sample transfer effect for new objects and new instructions. **OpenVLA** tuân theo sơ đồ biểu diễn hành động của RT-2, hợp nhất mô hình ngôn ngữ và bộ mã hóa hình ảnh trong một kiến trúc duy nhất, nhập hình ảnh và hướng dẫn văn bản cũng như xuất mã thông báo hành động. Quá trình đào tạo được chia thành hai giai đoạn: đầu tiên là đào tạo trước về bộ dữ liệu đa nền tảng quy mô lớn Open X-Embodiment (bao gồm các minh họa hoạt động thực tế của hơn 20 nền tảng robot), tìm hiểu kiến thức vận hành chung (các chế độ hành động như "lấy" và "đặt" giống nhau giữa các robot khác nhau), sau đó tinh chỉnh với một lượng nhỏ dữ liệu cho các nền tảng cụ thể. Vì cách trình bày hành động về cơ bản là giống nhau nên sự khác biệt thực sự giữa cả hai nằm ở tính mở và các lựa chọn kỹ thuật: RT-2 và dữ liệu đào tạo của nó là nội bộ của Google, trong khi OpenVLA hoàn toàn là nguồn mở - mô hình đường trục nguồn mở (Llama 2 cộng với bộ mã hóa trực quan) với các bộ dữ liệu công khai, cho phép toàn bộ cộng đồng tái tạo và cải thiện nó lần đầu tiên.
@@ -373,6 +376,9 @@ for action in chunk:
 ### Sim2Real Transfer: Khoảng cách từ mô phỏng đến thực tế
 
 Phần môi trường mô phỏng của Chương 6 đã giải thích nguồn gốc của khoảng cách sim-to-real (khoảng cách thực tế) và nguyên tắc ngẫu nhiên hóa miền để giải quyết nó. Tôi sẽ không lặp lại ở đây - trong một câu: mô phỏng không thể khôi phục hoàn toàn các đặc điểm vật lý, hình ảnh và phần cứng thực sự. Trong quá trình huấn luyện, các tham số này bị gián đoạn ngẫu nhiên trên quy mô lớn, buộc chiến lược phải học một tập hợp các biểu diễn phổ quát ổn định trước các thay đổi khác nhau (Hình 9-11). Chúng ta hãy xem cách thực hiện bộ nguyên tắc này trên một cánh tay robot thực sự.
+
+
+![Hình 9-12 Khoảng cách Sim2Real và Ngẫu nhiên hóa tên miền](images/fig9-12.svg)
 
 
 Có nhiều trường hợp thành công trên lộ trình này: hoạt động khéo léo của bàn tay robot OpenAI (dự án Dactyl nhận ra sự chuyển hướng của khối lập phương trong tay và công việc tiếp theo của nó đã thực hiện việc giải khối Rubik bằng một tay với sự trợ giúp của miền ngẫu nhiên ADR tự động) và ANYmal của ETH Zurich (robot bốn chân có thể bước đi mạnh mẽ trên các địa hình hoang dã phức tạp như tuyết và sỏi). Cả hai đều thuộc thể loại này.

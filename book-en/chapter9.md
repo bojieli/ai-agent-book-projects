@@ -409,6 +409,9 @@ General-purpose VLMs already possess decent embodied reasoning capabilities. Goo
 In the execution layer of the two-layer architecture, three representative models—RT-2, OpenVLA, and π₀—all focus on VLA control, i.e., outputting robot actions in real time based on camera images and language instructions (Figure 9-10). They follow two different approaches to action representation: discrete action tokens and continuous trajectory generation.
 
 
+![Figure 9-11: VLA Architecture (Vision-Language-Action)](images/fig9-11.svg)
+
+
 **RT-2 and OpenVLA: The Discrete Action Token Route.**
 
 **RT-2** pioneered this route: it directly fine-tunes a large-scale vision-language model, discretizing the robot's continuous actions into tokens and outputting them autoregressively one by one, like generating text. It leverages the generalization ability of the pre-trained model to improve zero-shot transfer to new objects and instructions. **OpenVLA** follows RT-2's action representation scheme, unifying the language model and vision encoder in a single architecture. It takes images and text instructions as input and outputs action tokens. Training is done in two stages: first, pre-training on the large-scale cross-platform dataset Open X-Embodiment (covering real-world manipulation demonstrations from over 20 robot platforms) to learn general manipulation knowledge (action patterns like "grasp" and "place" are common across different robots); second, fine-tuning with a small amount of data for a specific platform. Because their action representations are similar, the practical difference emphasized here lies in openness and engineering choices: RT-2 and its training data are internal to Google, while OpenVLA is fully open-source—an open-source backbone model (Llama 2 plus a vision encoder) paired with public datasets, making the OpenVLA stack reproducible and extensible by the wider community.
@@ -424,6 +427,8 @@ The true divide in action representation is not between RT-2 and OpenVLA, but be
 ### Sim2Real Transfer: The Gap from Simulation to Reality
 
 Chapter 6's simulation section already explained where the sim-to-real gap comes from and how domain randomization counters it, so we won't repeat that here. In a nutshell: simulation can never perfectly reproduce real-world physics, visuals, and hardware, so training randomizes those parameters over a wide range, forcing the policy to learn a representation robust to those variations (Figure 9-11). What follows is how that principle lands on a real robotic arm.
+
+![Figure 9-12: Sim2Real Gap and Domain Randomization](images/fig9-12.svg)
 
 This approach has produced several notable successes. OpenAI's Dactyl project achieved in-hand cube reorientation, and subsequent work used Automatic Domain Randomization (ADR) to solve a Rubik's Cube with one hand. ETH Zurich's ANYmal quadruped has demonstrated robust locomotion over difficult outdoor terrain such as snow and gravel.
 

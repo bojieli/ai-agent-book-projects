@@ -340,6 +340,9 @@ VLM yang bersifat general-purpose sudah memiliki kemampuan Embodied Reasoning ya
 Dalam lapisan eksekusi dari arsitektur dua lapis, tiga model representatif—RT-2, OpenVLA, dan π₀—semuanya fokus pada VLA control, yaitu, mengeluarkan tindakan robot secara real-time berdasarkan gambar kamera dan instruksi bahasa (Gambar 9-10). Mereka mengikuti dua pendekatan berbeda untuk representasi tindakan: discrete action tokens dan continuous trajectory generation.
 
 
+![Gambar 9-11: Arsitektur VLA (Vision-Language-Action)](images/fig9-11.svg)
+
+
 **RT-2 dan OpenVLA: Rute Discrete Action Token.**
 
 **RT-2** memelopori rute ini: ia secara langsung melakukan fine-tuning pada vision-language model berskala besar, mendiskritisasi (discretizing) tindakan kontinu robot menjadi token dan mengeluarkannya secara autoregresif satu per satu, seperti menghasilkan teks. Ia memanfaatkan kemampuan generalisasi dari model pra-pelatihan (pre-trained model) untuk meningkatkan Zero-Shot transfer ke objek dan instruksi baru. **OpenVLA** mengikuti skema representasi tindakan RT-2, menyatukan language model dan vision encoder dalam arsitektur tunggal. Model ini mengambil gambar dan instruksi teks sebagai input dan mengeluarkan action tokens. Pelatihan dilakukan dalam dua tahap: pertama, pra-pelatihan (pre-training) pada dataset lintas platform (cross-platform) berskala besar yaitu Open X-Embodiment (mencakup demonstrasi manipulasi dunia nyata dari lebih dari 20 platform robot) untuk mempelajari pengetahuan manipulasi umum (pola tindakan seperti "menggenggam" dan "meletakkan" adalah hal umum di berbagai robot); kedua, fine-tuning dengan sejumlah kecil data untuk platform tertentu. Karena representasi tindakan mereka serupa, perbedaan praktis yang ditekankan di sini terletak pada keterbukaan dan pilihan teknik (engineering choices): RT-2 dan data pelatihannya adalah internal Google, sementara OpenVLA sepenuhnya open-source—sebuah model tulang punggung (backbone) open-source (Llama 2 plus vision encoder) yang dipasangkan dengan dataset publik, membuat tumpukan (stack) OpenVLA dapat direproduksi dan diperluas oleh komunitas yang lebih luas.
@@ -355,6 +358,8 @@ Pembagian sebenarnya dalam representasi tindakan bukan antara RT-2 dan OpenVLA, 
 ### Transfer Sim2Real: Kesenjangan dari Simulasi ke Realitas
 
 Bagian simulasi Bab 6 telah menjelaskan dari mana kesenjangan sim-to-real (Sim2Real) berasal dan bagaimana Domain Randomization melawannya, jadi kita tidak akan mengulanginya di sini. Singkatnya: simulasi tidak akan pernah bisa mereproduksi secara sempurna fisika, visual, dan perangkat keras dunia nyata, sehingga pelatihan mengacak (randomizes) parameter tersebut dalam rentang yang luas, memaksa kebijakan (policy) untuk mempelajari representasi yang kuat terhadap variasi tersebut (Gambar 9-11). Berikut ini adalah bagaimana prinsip itu mendarat pada lengan robot nyata.
+
+![Gambar 9-12: Kesenjangan Sim2Real dan Domain Randomization](images/fig9-12.svg)
 
 Pendekatan ini telah menghasilkan beberapa keberhasilan yang menonjol. Proyek Dactyl milik OpenAI mencapai reorientasi kubus di dalam tangan, dan pekerjaan selanjutnya menggunakan Automatic Domain Randomization (ADR) untuk memecahkan Kubus Rubik dengan satu tangan. Quadruped ANYmal dari ETH Zurich telah menunjukkan penggerak (locomotion) yang kuat di atas medan luar ruangan yang sulit seperti salju dan kerikil.
 

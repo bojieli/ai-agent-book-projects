@@ -345,6 +345,9 @@ Genel amaçlı VLM'ler şimdiden fena olmayan bir bedenlenmiş akıl yürütme y
 İki katmanlı mimarinin yürütme katmanında RT-2, OpenVLA ve π₀ olmak üzere üç temsilci model VLA kontrolüne odaklanır — yani kamera görüntüsüne ve dil talimatına göre robotun eylemlerini gerçek zamanlı üretmeye (Şekil 9-11). Bu modeller eylem temsili bakımından iki ayrı yola ayrılır: ayrık eylem token'ları ile sürekli yörünge üretimi.
 
 
+![Şekil 9-11: VLA mimarisi (Vision-Language-Action)](images/fig9-11.svg)
+
+
 **RT-2 ve OpenVLA: ayrık eylem token'ı yolu.**
 
 **RT-2** bu yolu açtı: doğrudan büyük ölçekli görsel-dil modelleri üzerinde fine-tuning yapar, robotun sürekli eylemlerini token'lara ayrıklaştırır ve tıpkı metin üretir gibi bunları tek tek otoregresif olarak çıkarır; böylece ön eğitimli modelin genelleme yeteneğinden yararlanarak yeni nesnelere ve yeni talimatlara zero-shot aktarımı iyileştirir. **OpenVLA** ise RT-2'nin eylem temsili şemasını sürdürdü; dil modeli ile görsel kodlayıcıyı tek bir mimaride birleştirir, girdi olarak görüntü ve yazılı talimat alır, çıktı olarak eylem token'ları üretir. Eğitim iki aşamalıdır: önce büyük ölçekli, platformlar arası Open X-Embodiment veri kümesinde (20'den fazla robot platformundaki gerçek manipülasyon gösterimlerini kapsar) ön eğitim yapılarak genel manipülasyon bilgisi öğrenilir ("kavrama", "yerleştirme" gibi eylem kalıpları farklı robotlar arasında ortaktır), ardından belirli bir platform için az miktarda veriyle fine-tuning yapılır. Eylem temsilleri özünde aynı olduğuna göre, ikisi arasındaki asıl fark açıklık ve mühendislik tercihlerindedir: RT-2 ve eğitim verisi Google'ın içindedir, OpenVLA ise tamamen açık kaynaktır — açık kaynak bir omurga model (Llama 2 artı görsel kodlayıcı) ile herkese açık bir veri kümesi, tüm topluluğa ilk kez bunun üzerine yeniden üretim ve iyileştirme yapma imkânı verdi.
@@ -360,6 +363,9 @@ Eylem temsilindeki asıl ayrım RT-2 ile OpenVLA arasında değil, **ayrık toke
 ### Sim2Real Transfer: Simülasyondan Gerçekliğe Uzanan Uçurum
 
 Bölüm 6'daki simülasyon ortamları alt bölümü, sim-to-real gap'in (gerçeklik farkı) kaynağını ve domain randomization'ın (alan rastgeleleştirme) buna nasıl çözüm ürettiğini zaten açıklığa kavuşturmuştu; burada tekrar etmiyoruz — tek cümleyle özetlemek gerekirse: simülasyon gerçek fiziği, görüntüyü ve donanım özelliklerini tam olarak yeniden üretemediği için, eğitim sırasında bu parametreler geniş bir aralıkta rastgele karıştırılır ve politikanın her türlü değişime dayanıklı, genel bir temsil öğrenmesi zorlanır (Şekil 9-11). Aşağıda yalnızca bu ilkenin gerçek bir robot kolunda nasıl hayata geçtiğine bakacağız.
+
+
+![Şekil 9-12: Sim2Real uçurumu ve Domain Randomization](images/fig9-12.svg)
 
 
 Bu yolun çok sayıda başarılı örneği var: OpenAI'ın robot eliyle becerikli manipülasyonu (Dactyl projesi el içinde küp yeniden yönlendirmeyi gerçekleştirdi; devamındaki çalışma otomatik alan rastgeleleştirmesi (ADR) yardımıyla tek elle Rubik küpü çözmeyi başardı) ve ETH Zürih'in ANYmal'i (dört ayaklı robotun kar, moloz gibi karmaşık arazi koşullarında sağlam biçimde yürümesi) bunlar arasındadır.

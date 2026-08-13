@@ -340,6 +340,8 @@ Los VLM generales ya poseen una capacidad notable de pensamiento embrollado. **G
 
 En la capa de ejecución de la arquitectura de dos capas, tres modelos representativos (RT-2, OpenVLA y π₀) se enfocan en el control VLA, es decir, emitir las acciones del robot en tiempo real basándose en las imágenes de las cámaras y las instrucciones de lenguaje (Figura 9-10). Pertenecen a dos rutas en cuanto a la representación de las acciones: tokens de acción discretos y generación de trayectorias continuas.
 
+![Figura 9-11: Arquitectura VLA (Vision-Language-Action)](images/fig9-11.svg)
+
 **RT-2 y OpenVLA: Ruta de tokens de acción discretos.**
 
 **RT-2** fue el pionero de esta ruta: realiza un ajuste fino directo sobre grandes modelos de visión-lenguaje, discretizando las acciones continuas del robot en tokens que se emiten de forma autorregresiva uno a uno como si fuera generación de texto, aprovechando la capacidad de generalización del modelo preentrenado para mejorar la transferencia zero-shot a nuevos objetos e instrucciones. **OpenVLA** sigue el esquema de representación de acciones de RT-2, unificando el modelo de lenguaje y el codificador visual en una sola arquitectura, recibiendo imágenes e instrucciones de texto para emitir tokens de acción. El entrenamiento consta de dos etapas: primero se realiza un preentrenamiento en el dataset multiplataforma a gran escala Open X-Embodiment (que abarca demostraciones de manipulación real en más de 20 plataformas robóticas) para aprender conocimientos generales de manipulación (los patrones de acción como "agarrar" y "colocar" son comunes entre diferentes robots), y luego se realiza un ajuste fino con pocos datos para plataformas específicas. Puesto que la representación de acciones es idéntica en esencia, la verdadera diferencia entre ambos reside en la apertura y las elecciones de ingeniería: RT-2 y sus datos de entrenamiento son internos de Google, mientras que OpenVLA es completamente de código abierto (modelo backbone de código abierto Llama 2 más codificador visual combinado con datasets públicos), lo que permite a toda la comunidad reproducir y mejorar sobre su base por primera vez.
@@ -368,6 +370,8 @@ for action in chunk:
 ### Transferencia Sim2Real: La brecha entre simulación y realidad
 
 En la sección de entornos de simulación del Capítulo 6 se explicaron los orígenes de la brecha entre simulación y realidad (sim-to-real gap) y el principio de la aleatorización de dominio (domain randomization) para hacerle frente, por lo que no se repetirá aquí; en una frase: dado que la simulación no puede restaurar completamente las características físicas, visuales y de hardware reales, se alteran aleatoriamente estos parámetros en un amplio rango durante el entrenamiento, forzando a la política a aprender un conjunto de representaciones generales estables ante diversos cambios (Figura 9-11). A continuación solo examinaremos cómo se aterriza este principio en brazos robóticos reales.
+
+![Figura 9-12: Brecha Sim2Real y Aleatorización de Dominio](images/fig9-12.svg)
 
 Existen numerosos casos de éxito en esta ruta: la manipulación diestra de manos mecánicas de OpenAI (el proyecto Dactyl logró la reorientación de cubos dentro de la mano, y su trabajo posterior logró resolver el cubo de Rubik con una mano mediante aleatorización automática de dominio ADR) y ANYmal de ETH Zurich (caminata robusta de robots cuadrúpedos sobre nieve, grava y otros terrenos complejos en exteriores) pertenecen a esta categoría.
 

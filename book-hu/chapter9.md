@@ -339,6 +339,8 @@ Az általános célú VLM-ek már rendelkeznek elfogadható megtestesült érvel
 
 A kétrétegű architektúra végrehajtási rétegében három reprezentatív modell — RT-2, OpenVLA és π₀ — mind a VLA vezérlésre összpontosít, azaz robotcselekvések valós idejű kiadására kamera képek és nyelvi utasítások alapján (9-10. ábra). Két különböző megközelítést követnek a cselekvés reprezentációjában: diszkrét cselekvési tokenek és folytonos pályagenerálás.
 
+![9-11. ábra: VLA Architektúra (Vision-Language-Action)](images/fig9-11.svg)
+
 **RT-2 és OpenVLA: A Diszkrét Cselekvési Token Út.**
 
 Az "RT-2" volt az úttörő ezen az úton: közvetlenül finomhangol egy nagyméretű látás-nyelvi modellt, a robot folytonos cselekvéseit tokenekké diszkretizálva, és autoregresszíven, egyenként adva ki őket, mint a szöveggenerálásnál. Kihasználja az előtanított modell általánosítási képességét a nullszoros átvitel javítására új tárgyakra és utasításokra. Az "OpenVLA" az RT-2 cselekvés-reprezentációs sémáját követi, egyesítve a nyelvi modellt és a látás kódolót egyetlen architektúrában. Képeket és szöveges utasításokat vesz bemenetként, és cselekvési tokeneket ad ki. A tanítás két szakaszban történik: először előtanítás a nagyméretű, platformokon átívelő Open X-Embodiment adatkészleten (amely több mint 20 robotplatform valós manipulációs demonstrációit fedi le) az általános manipulációs tudás megtanulására (a "megfogás" és "elhelyezés" akcióminták közösek a különböző robotoknál); másodszor, finomhangolás egy kis mennyiségű adattal egy adott platformhoz. Mivel cselekvés-reprezentációik hasonlóak, a gyakorlati különbség, amelyet itt hangsúlyoznunk kell, a nyitottságban és a mérnöki döntésekben rejlik: az RT-2 és tanítási adatai a Google belső anyagai, míg az OpenVLA teljesen nyílt forráskódú — egy nyílt forráskódú törzsmodell (Llama 2 plusz egy látás kódoló) nyilvános adatkészletekkel párosítva, így az OpenVLA verem reprodukálható és bővíthető a szélesebb közösség által.
@@ -354,6 +356,8 @@ A valódi megosztottság a cselekvés reprezentációjában nem az RT-2 és az O
 ### Sim2Real Átvitel: A Szimuláció és Valóság Közötti Rés
 
 A 6. fejezet szimulációs szakasza már elmagyarázta, honnan származik a szimuláció-valóság (sim-to-real) rés, és hogyan küzd ellene a domén randomizáció, így nem ismételjük meg itt. Röviden: a szimuláció soha nem képes tökéletesen reprodukálni a valós fizikát, vizuális elemeket és hardvert, ezért a tanítás széles tartományban randomizálja ezeket a paramétereket, kényszerítve a politikát, hogy megtanuljon egy, ezekre a változatokra robusztus reprezentációt (9-11. ábra). A következőkben azt nézzük meg, hogy ez az elv hogyan valósul meg egy valódi robotkaron.
+
+![9-12. ábra: Sim2Real rés és Domén Randomizáció](images/fig9-12.svg)
 
 Ez a megközelítés számos figyelemre méltó sikert produkált. Az OpenAI Dactyl projektje elérte a kocka kézben történő átforgatását, és egy későbbi munka az Automatikus Domén Randomizációt (ADR) használva egy Rubik-kockát oldott meg egy kézzel. Az ETH Zürich ANYmal négylábúja robusztus járást mutatott be nehéz külső terepen, például havon és kavicson.
 
