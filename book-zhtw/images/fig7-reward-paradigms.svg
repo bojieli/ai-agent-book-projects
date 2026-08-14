@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 500" width="880" height="500" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="120" y="55" width="640" height="35" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="135" y="73" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">任務: Xfinity套餐變更 | 瑕疵: 遺漏賬單地址 + 誤報套餐名稱</text>
+<rect x="37.5" y="100" width="190" height="36" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="132.5" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">標量</text>
+<rect x="37.5" y="146" width="190" height="210" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="47.5" y="165" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"></text>
+<text x="47.5" y="191" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  7.2 分</text>
+<text x="47.5" y="217" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"></text>
+<text x="47.5" y="243" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">─────────</text>
+<text x="47.5" y="269" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">無診斷能力</text>
+<text x="47.5" y="295" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">不知道哪裡</text>
+<text x="47.5" y="321" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">做得好/差</text>
+<line x1="229.5" y1="250" x2="240.5" y2="250" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="242.5" y="100" width="190" height="36" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="337.5" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">半標量</text>
+<rect x="242.5" y="146" width="190" height="210" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="252.5" y="165" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">優: 找到正確電話</text>
+<text x="252.5" y="191" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">優: 成功完成變更</text>
+<text x="252.5" y="217" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">缺: 遺漏賬單地址</text>
+<text x="252.5" y="243" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">缺: 套餐名稱錯誤</text>
+<text x="252.5" y="269" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">─────────</text>
+<text x="252.5" y="295" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">綜合: 6.5 分</text>
+<text x="252.5" y="321" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">(有依據但粗粒度)</text>
+<line x1="434.5" y1="250" x2="445.5" y2="250" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="447.5" y="100" width="190" height="36" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="542.5" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">向量</text>
+<rect x="447.5" y="146" width="190" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="457.5" y="165" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">資訊查詢準確 9/10</text>
+<text x="457.5" y="191" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">資訊收集完整 6/10</text>
+<text x="457.5" y="217" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">溝通流暢度   8/10</text>
+<text x="457.5" y="243" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">溝通準確性   7/10</text>
+<text x="457.5" y="269" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">使用者溝通準確性10/10</text>
+<text x="457.5" y="295" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">整體任務完成度 8/10</text>
+<text x="457.5" y="321" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">─────────</text>
+<text x="457.5" y="343" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">精確定位短板 ↑</text>
+<line x1="639.5" y1="250" x2="650.5" y2="250" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="652.5" y="100" width="190" height="36" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="747.5" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">生成式</text>
+<rect x="652.5" y="146" width="190" height="210" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="662.5" y="165" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">視角1: 工具使用準確</text>
+<text x="662.5" y="191" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">視角2: 資訊收集遺漏</text>
+<text x="662.5" y="217" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">視角3: 套餐名轉述</text>
+<text x="662.5" y="243" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  錯誤→建議直接複述</text>
+<text x="662.5" y="269" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">視角4: 未說明資訊用途</text>
+<text x="662.5" y="295" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">視角5: 未驗證客服身份</text>
+<text x="662.5" y="321" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">→ 6-7種分析視角</text>
+<line x1="132.5" y1="368" x2="747.5" y2="368" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="440.0" y="388" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">資訊量遞增 →</text>
+<rect x="60" y="405" width="760" height="55" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="80" y="420" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">DeepSeek 實驗: 生成式 8次評估產生 6-7種分析視角</text>
+<text x="80" y="442" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">綜合多角度診斷後顯著改進（示意）— 從一次失敗中學到改進方向</text>
+<rect x="60" y="475" width="760" height="45" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="440.0" y="498" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">生成式獎勵：將環境豐富反饋轉化為可學習知識，無需數百次試錯</text>
+</svg>
