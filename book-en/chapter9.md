@@ -324,13 +324,21 @@ The counterintuitive finding is that what really matters is not frame selection 
 
 ### World Models for Computer Use
 
-The observation interface answers “what happened between screenshots?” by making dynamic changes arrive sooner and persist in memory. It does not by itself remove the planning overhead: a standard Computer Use Agent may still repeat the serial “screenshot—think—click” loop and reconsider the next step after every action. **OSWorld-Human** shows that human-level task accuracy can coexist with substantially more steps and waiting time than a person needs.
+The observation interface of the previous section answers "what happened in between?": with keyframes, speech transcription and persistent text, the Agent no longer sees only two screenshots taken far apart. But an observation interface does not remove planning latency. The Agent is still running a serial "screenshot—think—click" loop, re-observing and reasoning about the next step after every single action. The **OSWorld-Human** efficiency study shows that even when a task eventually succeeds, the Agent takes markedly more steps and waits markedly longer than a person does; reaching human-level accuracy is not the same as being practical.
 
-People operate a desktop predictively. They anticipate the consequence of an action; when the observed state agrees with that prediction, they continue along the existing plan instead of replanning from scratch. Only a mismatch sends them back to observation and planning. This is speculative execution, and a world model makes it available to an Agent. **A world model solves the other half of the problem**: it predicts what the desktop may become after an action, so the Agent can continue directly when reality matches the prediction and replan or stop when it does not.
+People do not start thinking about the next step only after clicking. They first predict what an action will do: if the actual change matches the expectation, they carry on with the existing plan; only when the page state departs from what was expected do they stop to observe and plan again. A world model lets the Agent predict what the desktop may turn into before it acts, giving it this human-like "speculative execution" and improving efficiency substantially.
 
-A desktop state is more than pixels: it includes the active window and focus, scroll position, input contents, loading and permission state, and network responses. Actions include clicking, typing, scrolling, dragging, and waiting. A useful world model encodes the current state, predicts state changes for candidate actions, and passes those predictions to the planner. It need not render a photorealistic future screenshot; task-relevant state differences are enough to rank actions, prepare the next step during loading, and gate irreversible operations.
+Desktop state is more than a grid of pixels. It also includes windows, focus, scroll position, input-field contents, loading state, permissions and network responses; actions include clicking, typing, scrolling, dragging and waiting. A world model usable for Computer Use must at minimum encode the current state, predict the state change a candidate action would cause, and hand that prediction to the planner to decide the next step:
 
-Induction Labs’ **Photon-1** is one recent example. It compresses frames into discrete latent tokens and autoregressively predicts the next state representation after an action. Its attached image generator visualizes latent states but is not required for inference. The result should be treated as a predictive sidecar, not as a replacement for fresh screenshots or structured state checks in the real environment.
+```text
+desktop state + click/type/scroll/wait ──> representation of the next state
+```
+
+This lets the Agent compare the consequences of candidate actions before it actually clicks, prepare the next step while a page is loading, and recover from a dialog that flashed past by reasoning about the state difference. If the task is "create a new Python file in VS Code and write hello world", the model can first predict the key state of the file tree and editor on success, and only then choose the click, type and save actions; if the task is to delete a file, it can predict inside an isolated virtual desktop whether an irreversible confirmation dialog will appear, and ask the user to confirm when necessary. The point here is not to have the model generate a photorealistic future screenshot, but to predict the checkable state differences that completing the task requires.
+
+In July 2026, **Photon-1** from Induction Labs demonstrated one implementation of this route, completing the pretraining of a computer use world model with only 30,000 hours of H200 GPU time. It compresses each frame into discrete latent tokens and autoregressively predicts the representation of the next state after an action, rather than generating screenshots pixel by pixel during pretraining; the image generator attached to it serves only to visualize the latent representations and is not a component required for inference. Given a seed screenshot and the actions that follow, the model can "imagine" desktop states continuously, and then learn to output computer-use actions through online training on virtual machines.[^ch9-20]
+
+[^ch9-20]: David Li and Jonathan Li, Induction Labs, “Scaling Video Pretraining with Imagination Models,” 2026-07-23. https://www.inductionlabs.com/news/scaling-video-pretraining. The parameters, data scale, internal benchmarks and cost comparisons reported for Photon-1 are figures disclosed by the company.
 
 ### Mobile: Ecosystem Barriers Are Harder Than Technology
 
@@ -342,150 +350,100 @@ This reveals a unique challenge for Computer Use: **ecosystem barriers**. The fu
 
 This means that Computer Use faces not only technical countermeasures such as CAPTCHAs, but also a **structural conflict of interest**. This conflict will be difficult to resolve in the short term and poses a greater obstacle to consumer adoption than purely technical problems.
 
-### Real-Time Performance: The Unsolved Core Challenge
+## Robot Manipulation: Tidying a Desk with XLeRobot
 
-**OSWorld**, whose evaluation methodology is described in Chapter 6, is a widely used benchmark for Computer Use that tests an Agent's ability to complete cross-application tasks in real Ubuntu/Windows/macOS environments. Early general-purpose models achieved only about a 20% success rate on this benchmark. Subsequent specialized models and more powerful general-purpose models have continuously pushed the success rate higher, gradually approaching human-level performance as of this writing. However, success rate is far from the finish line—the real bottleneck has shifted from "can it do it correctly?" to "can it do it quickly?"
+> **Reading note**: This section uses one task throughout—"put the red cup in the tray, put the yellow scrap paper in the bin, then observe again and confirm the state of the desk." Experiments 9-7 and 9-9 run on real XLeRobot hardware and need an arm, calibration, an emergency stop and an on-site observer; experiments 9-8, 9-10 and 9-11 are the corresponding local-GPU experiments. Hardware and simulation are reported separately, but the task goal, the action semantics and the success conditions stay the same.
 
-The **OSWorld-Human** efficiency study yields a sobering finding: even when the task ultimately succeeds, the Agent needs markedly more steps than a human, and per-step inference latency keeps growing as the task progresses—the longer the context, the slower the model decides, so late steps often take far longer than early ones. A document-formatting tweak that takes a human tens of seconds may take an Agent several minutes to complete. **Human-level accuracy is not the same as practical usability; efficiency is the true bottleneck.**
+Robot manipulation is much harder than answering questions about a picture. The model has to understand the scene and then take actions continuously in the real world, where every action changes what the next moment looks like. XLeRobot makes that difference concrete: the same arm can be teleoperated by a person through a keyboard, a gamepad or a VR device, or it can hand camera observations and a constrained set of action tools to an Agent to call on its own. The hardware and the task stay fixed; only the operator changes—in the first case a human observes and corrects continuously, in the second the model and the control system must do the same work.
 
-The root cause mirrors the speech scenario: in the serial "screenshot-think-click" loop, even with every stage optimized to the hilt, the step-by-step accumulation of delay remains unacceptable. The deeper problem is that today's Computer Use cannot think ahead at all. If an Agent could predict its next move while executing the current one—working out where to click next while the page is still loading—it could overlap thinking with execution and cut total latency sharply (the same demand as thinking-while-speaking earlier in this chapter and the "continuous thinking" asynchronous Agent of Chapter 4, recast here as thinking-while-operating).
+This section runs five experiments on "tidy the desk." First a human teleoperates the real XLeRobot, measuring what the hardware can do under a sufficiently capable operator; then a simulator establishes the ideal control ceiling for the same task. Next an Agent controls the real XLeRobot autonomously, showing how perception, planning and failure recovery affect the result; then the same tool contract goes into the simulator so that open-loop execution, step-by-step checking and world models can be compared in bulk. Finally the background, object appearance, lighting and visual noise change, to see whether a visual policy learned in simulation adapts to a new environment.
 
-Unlike the speech domain, there is currently no systematic solution for improving the real-time performance of Computer Use itself—making the "screenshot-think-click" loop faster—and it remains stuck in a discrete loop of frame-by-frame screenshots. However, a workaround has already been proven effective, using the fast-slow decoupling that appears repeatedly in this chapter: since it is difficult to make a slow Computer Use agent faster, **don't make the user wait for it**. Use two models concurrently: a fast model for speech and a slow model for computer operation[^ch9-10]. The fast model handles real-time voice conversation, while the cutting-edge VLM operates step-by-step in the browser. The two communicate only through a minimal "plain text contract": each time the slow Agent performs an action, it updates a rolling status summary ("Filling out the form, still need your date of birth"). The fast Agent uses this to answer the user in real time and relays any new information the user provides verbally to the slow Agent. Crucially, **the fast Agent must never say "done" until the status summary confirms completion**. This is the scenario of "talking on the phone while letting the computer operate itself." In experiments, this decoupling made voice responses about 15 times faster than a single model that operates and speaks at once (median latency 0.58 seconds vs. 8.64 seconds), with no loss in task success rate. Remove the text channel between fast and slow, and success collapses to zero—the key information users give verbally can no longer reach the browser. This is the same idea as the Latent Bridge earlier and thinking-while-speaking in the speech scenario: when one component is inherently slow, let a fast one fill the user's waiting time—and that "plain text contract" is, at bottom, the Agent Status Bar concept introduced in Chapter 2. Speeding up the Computer Use loop itself may well be the next important research direction, but hiding the slowness behind fast-slow decoupling is already a workable answer.
+The bottleneck here is usually not one more static question-answering benchmark, but whether the model can keep closing the loop under limited perception and control bandwidth. A usable robot system has to answer at least four questions:
 
-[^ch9-10]: The complete design of the speech-operation fast-slow decoupling and the "plain text contract" can be found in Bojie Li and Noah Shi. *Talking While Acting: Real-Time Voice for Slow Computer-Use Agents.* 2026 (forthcoming).
+1. What task does the person want done?
+2. Which subtask comes next?
+3. What actions does the current skill actually emit?
+4. After the action executes, does reality still match the plan?
 
-## Robot Manipulation: From Real-Time Control to Training and Generalization
+This section places those four questions inside one XLeRobot control loop and shows what each of four techniques is responsible for: long-horizon planning decides whether the cup or the paper is handled first, a VLA or action primitive performs the grasp and the placement, a world model estimates the consequences of an action, and sim-to-real transfer handles the differences between training footage and the real camera and actuators. Even when the high-level model already has enough knowledge and planning ability, losing any one of these feedback links can still leave the task unfinished.
 
-Voice Agents fight latency in the auditory modality; Computer Use does so in the visual modality. When an Agent must control a robot in the physical world, latency and multimodality bite harder still—actions have irreversible consequences, and one collision can damage the object or the robot itself. This section first shows how robots tame the real-time control problem with a two-layer architecture and action chunking, then turns to the harder problem they face today—training and generalization: where the data comes from, and how models transfer across tasks and platforms.
+### The Division of Labour Between Hardware and Algorithms
 
-### Hardware Is Not the Bottleneck; Algorithms Are
+The first question XLeRobot is best suited to answer is this: when autonomous desk tidying fails, is it the arm that cannot do it, or the algorithm that is not using the arm well? There is a fact here that should not be softened: **an arm costing only a few hundred dollars, like XLeRobot, can already complete the kind of continuous multi-step desk task in this section through teleoperation**—a person watches the camera feed, picks up the red cup and puts it in the tray, then puts the yellow scrap paper in the bin and confirms the state again. That result is not merely "the hardware is barely feasible"; it is a clear piece of diagnostic evidence: **for this task the hardware itself is not the bottleneck, the algorithm is.**
 
-Why have robots not been widely adopted in open-ended, general-purpose settings? Is the bottleneck hardware or algorithms? The XLeRobot project provides a compelling counterexample: when remotely controlled by a human through a VR headset, a dual-arm wheeled robot costing less than $1,000 can already perform a wide range of household tasks smoothly. Unitree robots can likewise handle more complex household tasks requiring dexterous hands when operated by a human. Teleoperation latency is around 100-200ms, close to the response time required for physical interaction. On today's low-cost platforms, sensor resolution, actuator precision, and control frequency—the number of times per second a robot updates its action commands—are already sufficient for practical tasks. Lower control frequencies produce less fluid motion and increase jitter or deviation from the target trajectory.
+The diagnostic method is direct: keep the camera, the arm, the gripper, the desk layout and the success conditions fixed, and let a human take over the loop. A human continuously corrects object localization, action choice and timing, and handles failed grasps; the gap between an autonomous system and a person lies precisely in those closed-loop abilities. The scope of the claim is of course this section's desk task: it shows the hardware has cleared the payload, precision and workspace thresholds this task requires, not that a few-hundred-dollar arm can handle every open environment or harder manipulation.
 
-This claim needs a clear boundary: the teleoperation example demonstrates only that existing low-cost hardware, combined with human intelligence, is sufficient for **household manipulation tasks that rely primarily on visual feedback**. It does not mean that the hardware is adequate in every respect. The absence of tactile sensing and the cost and reliability of dexterous hands remain well-known limitations. For tasks that depend heavily on precise force control and tactile feedback, hardware may indeed be the bottleneck. The statement "hardware is not the bottleneck" is therefore limited to the class of tasks discussed in this section.
+XLeRobot supports keyboard, Xbox controller, Switch Joy-Con and VR teleoperation. A human operator naturally does many things an algorithm has to implement explicitly: slowing the gripper as it nears the cup, correcting the grasp point when the cup slides, observing again after failing to pinch the paper the first time, and checking the outcome once an object is in the target area. Teleoperation is therefore not only a way to collect demonstrations but also a "fix the hardware, swap the operator" diagnostic experiment.[^ch9-1]
 
-For these tasks, the real gap lies in the algorithmic layer, which is elaborated in the following two subsections.
-
-> **Experiment 9-7 ★: XLeRobot Teleoperation Experience**
+> **Experiment 9-7 ★: Teleoperating a real XLeRobot to tidy a desk**
 >
-> **Goal:** On a real XLeRobot, a human operator teleoperates the robot through the same task: put the red cup in the tray, put the yellow waste paper in the waste bin, then re-observe and verify the desktop state.
+> Place a red cup, a tray, yellow scrap paper and a bin in the real XLeRobot workspace. Using one calibrated teleoperation method, the operator performs the fixed task: "put the red cup in the tray, put the yellow scrap paper in the bin, then observe again and confirm the state of the desk." Repeat for several rounds at minimum, recording the camera feed, operator input, arm state, action timing, failed grasps, retry counts and the final state.
 >
-> **Principle:** A few-hundred-dollar arm can complete this multi-step task under human teleoperation. For this task, the hardware body is not the bottleneck; the gap lies in perception, planning, timing, closed-loop control, and failure recovery.
+> Acceptance cannot rest on "the desk looks tidy at the end." The red cup must be inside the tray, the yellow paper inside the bin, the arm back in a safe pose, with no collision, no out-of-bounds motion and no unconfirmed manual intervention along the way.
 
-### Two-Layer Architecture: Separation of Planning and Control
+Teleoperation on real hardware gives the most convincing ceiling for the task, but it is not suited to varying object counts and positions in bulk. To obtain a repeatable, statistically meaningful control, the next step moves the same "put objects where they belong" problem into a 2D desktop simulator, using an ideal controller to stand in for a strong operator who never misperceives and never picks the wrong action.
 
-Robots need to make decisions at two different time scales to complete complex household tasks. The first layer is slower **long-horizon planning**: decomposing a high-level instruction like "tidy the desk" into a sequence of sub-goals (move the red cup to the tray, put the yellow waste paper in the bin, then verify the final state). This requires understanding environmental semantics, reasoning about task dependencies, and planning multi-step action sequences—similar to how a person thinks about "what to do first and what to do next" before starting. The second layer is faster **VLA control** (Vision-Language-Action model): executing each specific operation ("approach the cup," "grasp it," "place it in the tray"), continuously outputting control signals based on the current visual input and language instruction to ensure smooth and coherent robot motion.
-
-This two-layer architecture separates responsibilities effectively: long-horizon planning handles "what to do," while VLA control handles "how to do it." The combination of slow high-level decision-making and fast low-level execution closely parallels the fast-slow architecture described earlier for speech: both assign complex reasoning and real-time response to different modules. The planning/control split, however, corresponds to slow deep reasoning versus fast real-time response, not to the thinking/expression split between MPS's Formulation Brain and Articulation Brain in Solution 3. MPS separates thinking from speaking; the robotics architecture separates global planning from real-time execution. The two architectures therefore divide the work along different dimensions.
-
-Real-time constraints have not disappeared; they have been pushed down into the VLA control layer, where **Action Chunking** helps mitigate them (see the "VLA Control" subsection below). The model generates a short sequence of future actions in a single inference, and the control thread replays them at high frequency, amortizing inference latency over the execution of the entire sequence. This creates an unavoidable trade-off between smoothness and responsiveness: longer chunks spread the latency over more actions and produce smoother motion, but the model receives no new visual input during that interval and therefore reacts more slowly to sudden changes, such as an object being moved or a hand blocking the way. The two-layer architecture does not eliminate this tension; it merely relocates it.
-
-The chapter's focus now shifts: in robotics, the real-time tension has been partly relieved by two-layer decoupling and action chunking, while **training and generalization**—how to obtain enough demonstration data and make models generalize across tasks and platforms—have become the central concerns. The following subsections extend the themes of Chapter 6's simulation environments and Chapter 7's reinforcement learning into the physical world.
-
-This new challenge falls chiefly on the VLA control layer. Think of VLA as "VLM + action output": the **VLM** (Vision-Language Model—a large model that understands both images and text) handles perception and reasoning, while the VLA must also act—and action is where the real difficulty lies. Today, the VLA control layer is trained primarily through imitation learning, or **behavior cloning**, which learns mappings from observations to actions using large collections of human demonstrations. OpenVLA, RT-2, and π₀ all fall into this category. Reinforcement learning has emerged more recently as a complementary technique. Although RL-trained VLAs can perform well on individual tasks, they often generalize poorly. For example, SimpleVLA-RL from Chapter 7 reports strong single-task results on LIBERO, but it is trained separately for each task rather than as one unified model that generalizes zero-shot across all tasks. This one-training-run-per-task pattern means that each new task requires fresh data collection and retraining.
-
-The following two sections delve into the specific technical solutions for long-horizon planning and VLA control, respectively.
-
-### Long-Horizon Planning: From VLM to Specialized Embodied Reasoning Models
-
-General-purpose VLMs already possess decent embodied reasoning capabilities. Google DeepMind's **Gemini Robotics-ER 1.5** is specifically optimized for Embodied Reasoning (understanding the position, movement, and causal relationships of objects in the physical world). It achieves an average of 62.8% across 15 academic benchmarks (Point-Bench, RefSpatial, RoboSpatial, BLINK, etc.), surpassing GPT-4o (60.6%) and Gemini 2.5 Pro (59.3%). Key advantages include: advanced spatial understanding and object localization, temporal reasoning (predicting action consequences like "what happens if I push this cup"), task sequencing (decomposing high-level instructions into smaller steps), and native support for thinking mechanisms and tool calls.[^ch9-2]
-
-[^ch9-2]: Google DeepMind, "Gemini Robotics-ER 1.5." https://deepmind.google/models/gemini-robotics/gemini-robotics-er/
-
-> **Experiment 9-8 ★: Measuring the Ideal-Control Upper Bound for the Same Task in Simulation**
+> **Experiment 9-8 ★: Measuring the ideal control ceiling for the same task in simulation**
 >
-> **Goal:** Run the same desk-tidying task with an ideal controller that makes no perception or action-selection errors, establishing a reproducible upper bound.
+> In a 2D desktop simulator, randomly place the red cup, the yellow paper and their target areas, and let an ideal controller approach each object in turn, grasp it and move it to the right place. It does not need to recognise images and never picks the wrong action, so it represents "what this task can at least achieve when perception and decision-making are both correct."
 >
-> **Principle:** This is a reference for the control ceiling, not evidence that the real robot has been run.
+> The experiment tracks task success rate, number of steps and path length, and varies initial object positions and task scale to see whether the ideal ceiling stays stable. It uses the same success conditions as experiment 9-7, but measures a non-actuated simulation and does not imply the real XLeRobot has been run. Together the two establish the reference lines for the autonomous control that follows: experiment 9-7 is a human loop on real hardware, experiment 9-8 an ideal loop in simulation.
 
-> **Experiment 9-9 ★★: Autonomous Control of a Real XLeRobot with Gemini Robotics-ER 1.5**
->
-> **Goal:** Replace the human operator with an Agent that observes the desktop and calls bounded pick, place, and verify skills, while keeping the real XLeRobot, task, and success criteria from Experiment 9-7 unchanged.
->
-> **Principle:** The direct comparison exposes gaps in perception, planning, timing, closed-loop control, and recovery—not a new mechanical limitation of the robot body.
+### The Basic Structure of Robot Control
 
-### VLA Control: From Demonstration Data to Cross-Embodiment Generalization
+Robot systems usually separate work by timescale:
 
-In the execution layer of the two-layer architecture, three representative models—RT-2, OpenVLA, and π₀—all focus on VLA control, i.e., outputting robot actions in real time based on camera images and language instructions (Figure 9-10). They follow two different approaches to action representation: discrete action tokens and continuous trajectory generation.
+| Layer | Core question | Output | Typical timescale |
+| --- | --- | --- | --- |
+| Task goal | What does the person want done | "Put the cup and the paper away" | Minutes |
+| Long-horizon planning | What comes first, what comes after | Handle the cup, then the paper, then check | Seconds to minutes |
+| Basic skills | Which state change to achieve now | `pick(red_cup)`, `place(red_cup, tray)` | About 1–3 s |
+| VLA / skill policy | How this skill actually moves | A short motion or continuous trajectory of the XLeRobot gripper | About 1–10 Hz inference |
+| Low-level control and safety | How to execute stably and in time | Joint or end-effector commands, speed limits and emergency stop | About 50–1000 Hz |
 
+This is a common engineering split, not the only model architecture. A VLA can take on part of the high-level judgement, and the planner can be a rule-based program, a VLM or an optimiser. Whichever implementation you choose, "task order" and "the action right now" should stay separate; otherwise the high-level model's inference latency drags down low-level control, and high-frequency low-level control forces the high-level model to process a great deal of irrelevant detail. For XLeRobot the model should not emit arbitrary joint angles directly; it only selects bounded skills such as `pick`, `place`, `verify_state` or `stop`, and a calibrated, speed-limited executor with timeouts turns those skills into real arm motion.
 
-![Figure 9-11: VLA Architecture (Vision-Language-Action)](images/fig9-11.svg)
+### Long-Horizon Planning and Task Decomposition
 
-
-**RT-2 and OpenVLA: The Discrete Action Token Route.**
-
-**RT-2** pioneered this route: it directly fine-tunes a large-scale vision-language model, discretizing the robot's continuous actions into tokens and outputting them autoregressively one by one, like generating text. It leverages the generalization ability of the pre-trained model to improve zero-shot transfer to new objects and instructions. **OpenVLA** follows RT-2's action representation scheme, unifying the language model and vision encoder in a single architecture. It takes images and text instructions as input and outputs action tokens. Training is done in two stages: first, pre-training on the large-scale cross-platform dataset Open X-Embodiment (covering real-world manipulation demonstrations from over 20 robot platforms) to learn general manipulation knowledge (action patterns like "grasp" and "place" are common across different robots); second, fine-tuning with a small amount of data for a specific platform. Because their action representations are similar, the practical difference emphasized here lies in openness and engineering choices: RT-2 and its training data are internal to Google, while OpenVLA is fully open-source—an open-source backbone model (Llama 2 plus a vision encoder) paired with public datasets, making the OpenVLA stack reproducible and extensible by the wider community.
-
-**Action Chunking: A Universal Frequency Compensation Technique in the VLA Domain.**
-
-Because large-model inference is slow, VLAs run inference at much lower frequencies than traditional robot controllers operate. Traditional control typically runs at 50-1000Hz, whereas VLA inference usually runs at only about 1-10Hz—a gap that can range from one to three orders of magnitude. The original OpenVLA illustrates this problem: it outputs only one action per inference, at roughly 6Hz using single-step autoregressive prediction, and its jerky motion is one of its most criticized shortcomings. **Action Chunking** is a general technique for bridging this gap. First proposed by ACT (Zhao et al., 2023) and later adopted by π₀, OpenVLA-OFT, and others, it has the model generate a short sequence of future actions in each inference rather than a single action. In a typical π₀ configuration, for example, the model generates a 0.5-1 second chunk containing 25-50 actions at a 50Hz control frequency. The control thread executes those actions sequentially at high frequency while the model generates the next batch asynchronously in the background. As long as inference finishes before the current action batch finishes executing, the robot can maintain continuous, smooth motion—much like video buffering prevents playback from stuttering by loading content in advance.
-
-**π₀: The Continuous Trajectory Generation Route.**
-
-The true divide in action representation is not between RT-2 and OpenVLA, but between **discrete tokens and continuous trajectory generation**. **π₀** follows the latter route: rather than predicting discrete action tokens one by one, it uses flow matching, a continuous generation method related to diffusion models, to begin with random noise and iteratively "denoise" it into a smooth, continuous action trajectory. This representation pairs naturally with action chunking and performs better on tasks such as dexterous manipulation that demand precise, fluid motion. As an analogy, the discrete-token approach resembles choosing commands such as "5 degrees left" and "3 cm forward" one at a time from a menu. Continuous trajectory generation is more like an artist sketching the entire curve and then refining it stroke by stroke.
-
-### Sim2Real Transfer: The Gap from Simulation to Reality
-
-Chapter 6's simulation section already explained where the sim-to-real gap comes from and how domain randomization counters it, so we won't repeat that here. In a nutshell: simulation can never perfectly reproduce real-world physics, visuals, and hardware, so training randomizes those parameters over a wide range, forcing the policy to learn a representation robust to those variations (Figure 9-11). What follows is how that principle lands on a real robotic arm.
-
-![Figure 9-12: Sim2Real Gap and Domain Randomization](images/fig9-12.svg)
-
-This approach has produced several notable successes. OpenAI's Dactyl project achieved in-hand cube reorientation, and subsequent work used Automatic Domain Randomization (ADR) to solve a Rubik's Cube with one hand. ETH Zurich's ANYmal quadruped has demonstrated robust locomotion over difficult outdoor terrain such as snow and gravel.
-
-What this chapter adds are the two engineering steps you cannot skip when taking domain randomization to a real robot. The first is **calibrating the randomization range**: the range cannot be set on a hunch. Too narrow, and it misses real-world variation; too wide, and training gets harder and yields a suboptimal policy that "handles everything, masters nothing." In practice, the distribution of key parameters (friction coefficient, motor response delay) is first **measured and calibrated** from real-world data and sampled within that range; if the sim-trained policy's performance drops noticeably on the real robot, the range is widened step by step until the sim-to-real gap converges to something acceptable. The second is **visual alignment**: precisely calibrating camera pose between simulation and reality (environment alignment), and randomly splicing real-world background images into the simulated render (greenscreen background replacement) so that the simulation looks as much as possible like what the real robot sees. The paired experiments below illustrate these principles.
-
-> **Experiment 9-10 ★★: Comparing Three Autonomous Loops in Simulation**
->
-> **Goal:** Keep the task and tools fixed while comparing open-loop execution, stepwise checking, and predictive closed-loop control.
->
-> **Principle:** Stepwise checking enables local failure recovery; a world model permits continuation when prediction agrees with reality and replanning when it diverges. The final state is always confirmed with a fresh observation.
-
-> **Experiment 9-11 ★★★: RGB Cross-Environment Test for the Same Task**
->
-> **Goal:** Vary backgrounds, object appearance, lighting, and visual noise while keeping the desk-tidying task fixed, testing whether a vision policy learned in simulation remains robust across RGB environments.
->
-> **Principle:** Visual diversity can improve robustness, but it does not replace real-robot calibration or a complete safety and verification loop.
->
-
-### 2026 Update: Aligned Desk-Tidying Experiments
-
-The robot experiments now use one bounded task throughout: **put the red cup in the tray, put the yellow waste paper in the waste bin, then re-observe and verify the desktop state**. XLeRobot is a few-hundred-dollar arm, and a human can complete this multi-step task through teleoperation. That is direct evidence that, for this task, the hardware body is not the bottleneck; the autonomous gap lies in perception, planning, timing, closed-loop control, and recovery.
-
-The five experiments are deliberately paired:
-
-1. **Experiment 9-7**: teleoperate the real XLeRobot and establish the human-controlled hardware upper bound.
-2. **Experiment 9-8**: measure the ideal-control upper bound for the same task in a non-actuating simulator.
-3. **Experiment 9-9**: replace the human with Gemini Robotics-ER 1.5 and autonomously control the real XLeRobot.
-4. **Experiment 9-10**: compare open-loop, stepwise-checking, and predictive closed-loop strategies in the same simulator.
-5. **Experiment 9-11**: vary backgrounds, object appearance, lighting, and visual noise to test RGB cross-environment robustness.
-
-The earlier navigation example is not part of this experiment sequence: a fixed-base arm should be evaluated on a task it can physically perform.
-
-The planner still expresses the task as a dependency graph with preconditions and success checks:
-
-1. “Move to the desk and stop 30 cm from its edge.”
-2. “Put the yellow waste paper in the waste bin; verify its new location.”
-3. “Keep the red cup stable and place it in the tray; verify that it is inside.”
-4. “Re-observe the desktop and verify both placements.”
-5. “Stop in a safe posture when the final state is confirmed.”
-
-This is a dependency graph, not a paragraph of prose. If the user says “put the laptop away first,” the system updates the goal priority. If the cup falls, it stops at a safe point, records facts such as cup.orientation=fallen and laptop.at_risk=true, invalidates the stale suffix, and replans: protect the laptop, contain the spill, re-observe, then resume only the unaffected tasks. Completed actions are not repeated. Emergency events cancel the current chunk; ordinary updates wait for the next safe point.
-
-### Streaming execution
-
-Planning and execution can overlap. Once a safe prefix is complete, the planner streams a complete command to the executor while continuing to plan the suffix. A command event must be complete and auditable:
+When the user says "tidy up the desk," the system cannot hand that sentence straight to an action model. The planner first lists the objects and goals in the scene, then decides the order, and for each step writes down the start condition, the completion condition and the risk limits. For example:
 
 ```text
-{"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
+handle the red cup → clear the yellow paper → check the desk
 ```
 
-The executor reports started, succeeded, cancelled, or failed. The planner uses these observations to update dependencies and applies backpressure when the queue is stale or full. Streaming reduces time to the first safe action; it does not authorize executing partial JSON or unverified model thoughts.
+"Handle the red cup" then decomposes further into two actions and one check:
 
-### Why current VLAs generalize poorly
+```text
+pick(red_cup) → place(red_cup, tray) → verify_state()
+```
 
-OpenVLA is not literally trained by updating only its projector: the original work reports full fine-tuning as well as frozen-vision, last-layer, and LoRA variants. The deeper criticism remains valid. A huge text/image pretraining corpus is connected to a much smaller robot dataset through a narrow adaptation path, and downstream low-cost adaptation often concentrates new behavior in a projector, LoRA modules, or an action head. Behavior cloning learns “observation + instruction → action chunk,” not counterfactual physical consequences. Embodiment-specific action spaces and stale action chunks further limit transfer. A language backbone knows the word “cup”; it does not thereby know how friction, liquid, contact, and power cables behave.
+Every completed skill yields a checkable node. If a grasp fails, only that step is retried; if someone moves an object, or the user changes the goal, only the affected later steps need replanning—the old plan does not have to be redone from scratch. The tools given to the agent should be equally simple: one call does one thing, the range of motion is fixed, there is a timeout, and observation happens again immediately after execution.
 
-**Action-chunk preemption:**
+> **Experiment 9-9 ★★: Driving XLeRobot to tidy a desk autonomously with Gemini Robotics-ER 1.5**
+>
+> Keep the real XLeRobot, the desk layout, the task instruction and the success conditions of experiment 9-7 unchanged, and replace the human operator with an Agent. An embodied reasoning model such as Gemini Robotics-ER 1.5 can handle observation and planning, exposing only five tools through a RoboCrew-style agent loop: `observe_scene`, `pick`, `place`, `verify_state` and `stop`.[^ch9-2]
+>
+> The model first observes the desk, decides the order, then calls the calibrated XLeRobot grasp and place actions. After every completed skill it must observe again and check the postcondition; on a failed grasp it may only retry the current skill, and it must call `stop` when the user says stop, when an object leaves the workspace, or when the state cannot be confirmed. The model cannot emit arbitrary joint angles, nor skip a real check merely because it previously said "done."
+>
+> The acceptance criteria are exactly those of experiment 9-7: cup in the tray, paper in the bin, arm back in a safe pose, no collision and no out-of-bounds motion. The difference is that in the autonomous experiment the task semantics must come from the model's own observation, the real actions must come from tool calls, and the final state must be confirmed by a fresh observation; the human may only start the run, hit the emergency stop and supervise safety, never complete an action on the Agent's behalf midway. Only then can experiments 9-7 and 9-9 be compared directly on "same hardware, same task—what is still missing between the human loop and the model loop."
+
+Real-hardware experiments expose calibration error, camera occlusion and gripper failure, but they are poorly suited to repeating large numbers of faults safely and controllably. The simulation experiments that follow keep these five tools and exactly the same task state, replacing only the real actuator with a desktop environment into which failures can be injected, in order to separate what open-loop execution, step-by-step checking and action prediction each contribute.
+
+### VLA Control
+
+VLA stands for Vision-Language-Action. It takes the current frame and one skill instruction, then emits the action the robot should perform next:
+
+```text
+current observation + skill instruction → action
+```
+
+In the XLeRobot case the high-level planner only submits `pick(red_cup)`; the VLA or skill policy still has to decide, from the current frame, which direction to approach the cup from, when the gripper closes and along what trajectory the arm lifts. After the execution layer finishes that short motion it photographs the desk again, and only once the cup is confirmed to be held may the planner submit `place(red_cup, tray)`. A tool call therefore defines the desired state change, while the VLA defines how to realise that change through continuous motion.
+
+RT-2 and OpenVLA cut continuous actions into discrete tokens and emit them one at a time, like generating text; π₀ represents the other route, producing continuous, smooth action trajectories directly. Neither is simply better: discrete tokens combine more easily with language models, while continuous trajectories usually express smooth motion better. The real trade-off is how the action should be represented, not merely model size.[^ch9-15]
+
+A large model can usually run inference only 1–10 times per second, whereas a traditional controller may update tens to thousands of times per second. A common engineering answer is "action chunking": the model generates a short segment of future actions at once, a control thread executes that segment at a higher rate, and the model prepares the next segment in the background. This hides part of the inference wait inside the execution time. The cost is that the longer the segment, the smoother the motion but the fewer new frames the model sees during it; if the cup is knocked while XLeRobot reaches for it, the arm may still be executing actions generated from the old frame. Action chunking is therefore a trade-off between smoothness and reaction speed, not free acceleration.
+
+Action chunking usually needs a "predict–execute–preempt" skeleton rather than running to completion:
 
 ```python
 chunk = vla(current_observation, skill)
@@ -498,17 +456,65 @@ for action in chunk:
         break
 ```
 
-### World models
+Short chunks react faster but cost more model calls; long chunks are smoother but more likely to act on stale observations. Experiment 9-10 compares this trade-off in simulation; only experiment 9-9 involves real hardware safety boundaries.
 
-A world model learns an actionable transition:
+### The Limits of VLAs
+
+"Long-horizon planning + VLA" is a practical baseline, but several problems are easy to overlook:
+
+- **Limited training data**: robot demonstrations are far scarcer than internet text and images. That a model has seen the word "cup" does not mean it has seen cups of every material and friction condition.
+- **Imitation without consequence**: behaviour cloning mainly learns "what the demonstrator did next," and never explicitly requires the model to answer "what will this action cause."
+- **Robots differ**: different robots have different degrees of freedom, coordinate frames, grippers and actuator latencies, so the same action does not necessarily transfer to another machine.
+- **Observations go stale**: once an action chunk starts executing, an object may be moved, occluded or knocked over while the model is still deciding from the previous frame.
+
+So a language model knowing what a "cup" is does not mean it knows how friction, contact, liquid sloshing and a power cable will change the future state. A VLA mainly answers "what should be done now"; another kind of model is needed to judge "what may happen afterwards."
+
+### World Models
+
+A world model can be understood as an "action-outcome predictor." What it learns is: given the current state and some action, how the next state may change.
 
 ```text
-state + candidate action -> predicted future state -> select and verify an action
+current state + candidate action
+    → predict the next state or a future segment
+    → compare candidate outcomes
+    → choose an action, replan, or stop safely
 ```
 
-It is broader than V-JEPA alone. The family includes latent predictive models (V-JEPA 2[^ch9-16]), interactive generative models (Genie 3[^ch9-21] and Cosmos), World-Action Models (GeniWorld and Robust-WAM), latent-action learning from unlabeled video (LAWM-3D), and model-based RL (Dreamer and MuZero). The value is to learn from observation at scale, test counterfactual actions before execution, separate shared dynamics from embodiment-specific control, and replan when prediction and reality diverge.
+A world model usable for robotics has to do at least three things well:
 
-Recent 2026 preprints explore shared dynamics priors and embodiment-specific heads (DyPES-VLA), visual-action representations for OOD closed-loop manipulation (GeniWorld), 3D-aware latent actions from human video (LAWM-3D), semantic foresight alignment (Robust-WAM), and asynchronous real-time deployment. These are promising research results, not solved generalization.
+- understand the current state;
+- predict the outcomes different actions may bring;
+- pass those predictions to the planner or controller to help them choose.
+
+A VLM that can only describe video, or a model that can only generate frames, does not automatically become a reliable robot world model. It must also know what the actions are and be able to predict their effect on objects and the environment. V-JEPA 2 represents the route of predicting the future in an internal state, while World-Action Models explicitly learn the "action–future observation" relationship. These models can work alongside a VLA; they need not replace it.[^ch9-16]
+
+In practical systems a world model is typically used in three ways:
+
+1. **Before acting**: compare candidates such as grasping, pushing or waiting, and prefer the lower-risk option;
+2. **During execution**: compare the real observation against the prediction, and on divergence shorten the action, stop, or replan;
+3. **During training**: learn state transitions from video, simulation data and failure trajectories, reducing trial and error on real hardware.
+
+Back to the XLeRobot desk task: if the yellow paper is partly hidden under the red cup, the system can compare candidate skills such as "grab the paper first," "move the cup first" and "approach from another direction." The world model does not need to generate photorealistic robot video; predicting which candidates are more likely to make the paper graspable and which might knock the cup over is already enough to help the planner rank them. Once an action executes, the real camera observation remains the final truth; prediction can inform the choice but cannot replace acceptance.
+
+What a world model gives is not a definite answer but a comparable prediction of "if I do this, what may happen." The further ahead it predicts, the larger the error usually grows, and a future frame that looks realistic may still violate real contact and friction. Practical systems therefore still need short-horizon prediction, real-time observation, an estimate of uncertainty, and an independent hardware safety controller. Generative world models can serve interactive simulation or visualisation, but "can generate video" must not be conflated with "can guide robot action."[^ch9-21]
+
+> **Experiment 9-10 ★★: Comparing three autonomous desk-tidying loops in simulation**
+>
+> Put the task, object state, success conditions and five tools of experiment 9-9 into the desktop simulator unchanged, replacing only the real XLeRobot actuator with a controllable simulated one, and let grasps occasionally suffer recoverable transient failures. This allows three strategies to be compared without changing the problem.
+>
+> **Open-loop execution** generates the full action sequence once and never observes again midway; **step-by-step checking** re-reads the state after every `pick` and `place` and retries only the current skill on failure; **predictive execution** adds a short-horizon world model, comparing the expected outcomes of candidate skills before choosing the next step. The experiment compares task success rate, tool-call overhead and failure-recovery ability, and checks that every final success is confirmed by a fresh `verify_state` observation.
+>
+> The point is not to prove that a small simulated world model equals a real robot's physics model, but to verify a more basic relationship: an open-loop plan carries a single local failure all the way to the end of the task, step-by-step checking can recover, and action prediction can further help rank candidate skills. Whether the task is truly finished must still be decided by environment feedback.
+
+### From Simulation to a Real Robot
+
+Even if experiment 9-10 is stable in the simulator, that does not imply the real XLeRobot of experiment 9-9 will succeed the same way. Going from simulation to a real robot is not a matter of swapping in yet another controller, but of handling the differences between two environments. Training may use teleoperation data, video data or simulated interaction data; in real deployment the same red cup, yellow paper, tray and bin appear against different backgrounds, lighting, camera positions and occlusion relationships, and the arm additionally meets different friction, sensor noise and actuator latency. Once those differences are large enough, motions learned in simulation may fail in reality.
+
+> **Experiment 9-11 ★★★: A cross-environment RGB test on the same desk task**
+>
+> Keep using the basic "move the object to its target" problem in simulation, treating each sample as one local decision within desk tidying: from the RGB frame, judge which direction to approach the object from, or whether it can already be grasped. Train four visual policies with identical structure: one sees only a fixed scene, one varies the background, one varies object appearance, and the last varies background, appearance, lighting and noise together.
+>
+> All policies are tested in the original environment and in the changed one, comparing action-decision accuracy before and after the visual conditions change. The question here is not "is the simulator already equal to the real XLeRobot," but a narrower one: does actively widening the range of visual variation during training help the same cup–tray, paper–bin task adapt to a new camera view? Even if the result improves, real deployment still requires real camera calibration, actuator testing and a complete safety loop.[^ch9-6]
 
 ## Chapter Summary
 
@@ -526,3 +532,7 @@ On the surface the three scenarios could hardly differ more, yet the twin hurdle
 8. ★★★ All three scenarios in this chapter (voice, Computer Use, robotics) face the latency problem of the "perceive-think-act" loop and are evolving toward parallelized fast and slow thinking. In voice, this manifests as "correcting after misspeaking"; in Computer Use, as "clicking first, then looking"; in robotics, as "taking a step, then looking." How can we ensure that these actions based on fast thinking do not lead to irreversible consequences?
 [^ch9-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
 [^ch9-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。
+[^ch9-1]: XLeRobot, "Teleop documentation". https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
+[^ch9-2]: Google DeepMind, "Gemini Robotics-ER 1.5". https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, "LLM Agent control". https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. The upstream XLeRobot example shows how the model and tool calls are orchestrated; this section keeps the same orchestration principle but restricts the action tools to calibrated desktop grasp, place, check and stop primitives.
+[^ch9-6]: LeRobot, "Sim2Real tutorial". https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
+[^ch9-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246

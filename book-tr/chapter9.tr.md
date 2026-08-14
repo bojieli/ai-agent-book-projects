@@ -264,6 +264,24 @@ Sezgiye aykırı bir bulgu şudur: asıl işe yarayan şey "hangi karelerin seç
 
 [^ch9-9]: Kapılı anahtar kare, ihtiyaç hâlinde transkripsiyon ve kareleri kalıcı metne dönüştürme biçimindeki üç bileşenin eksiksiz mekanizması ve model bazlı ablation çalışması için bkz. Li, Bojie and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
 
+### Computer Use için Dünya Modelleri
+
+Bir önceki bölümdeki gözlem arayüzü "arada ne oldu" sorusunu çözer: anahtar kareler, konuşma dökümü ve kalıcı metin sayesinde Agent artık yalnızca birbirinden uzak iki ekran görüntüsünü görmez. Ama gözlem arayüzü planlama gecikmesini ortadan kaldırmaz. Agent hâlâ "ekran görüntüsü—düşün—tıkla" biçimindeki sıralı döngüyü çeviriyor ve her eylemden sonra yeniden gözlemleyip bir sonraki adımı düşünüyor. **OSWorld-Human** verimlilik çalışması gösteriyor ki görev sonunda başarılsa bile Agent'ın işlem adımları ve bekleme süresi insandan belirgin biçimde fazla; insan düzeyinde doğruluğa ulaşmak, kullanılabilir olmakla aynı şey değil.
+
+İnsan bilgisayarı kullanırken bir sonraki adımı tıkladıktan sonra düşünmeye başlamaz; önce eylemin sonucunu öngörür. Gerçekleşen değişim beklentiye uyuyorsa mevcut planla devam eder; ancak sayfa durumu beklenenden saptığında durup yeniden gözlemler ve yeniden planlar. Dünya modeli, Agent'ın harekete geçmeden önce masaüstünün neye dönüşebileceğini öngörmesini sağlar; böylece insana benzeyen bu "öngörülü yürütme" mümkün olur ve verimlilik belirgin biçimde artar.
+
+Masaüstü durumu yalnızca bir piksel görüntüsü değildir: pencereleri, odağı, kaydırma konumunu, giriş kutusu içeriğini, yükleme durumunu, izinleri ve ağ yanıtlarını da kapsar; eylemler ise tıklama, klavye girişi, kaydırma, sürükleme ve bekleme içerir. Computer Use'da kullanılabilecek bir dünya modeli en azından mevcut durumu kodlayabilmeli, aday eylemin yol açacağı durum değişimini öngörebilmeli ve bu öngörüyü bir sonraki adıma karar vermesi için planlayıcıya verebilmelidir:
+
+```text
+masaüstü durumu + click/type/scroll/wait ──> sonraki durumun gösterimi
+```
+
+Böylece Agent, gerçekten tıklamadan önce aday eylemlerin sonuçlarını karşılaştırabilir, sayfa yüklenirken bir sonraki adımı hazırlayabilir ve bir açılır pencere bir an görünüp kaybolduğunda durum farkından yararlanarak toparlanabilir. Örneğin görev "VS Code'da yeni bir Python dosyası oluştur ve hello world yaz" ise, model önce başarı hâlindeki dosya ağacının ve düzenleyicinin anahtar durumunu öngörebilir, sonra tıklama, yazma ve kaydetme eylemlerini seçebilir; görev bir dosyayı silmekse, yalıtılmış bir sanal masaüstünde geri alınamaz bir onay kutusunun çıkıp çıkmayacağını önceden öngörebilir ve gerektiğinde kullanıcıdan onay isteyebilir. Buradaki asıl mesele modele gerçekçi görünen bir gelecek ekran görüntüsü ürettirmek değil, görevi tamamlamak için gereken, denetlenebilir durum farklarını öngörmesini sağlamaktır.
+
+Temmuz 2026'da Induction Labs'in duyurduğu **Photon-1**, bu yolun bir gerçekleştirimini gösterdi: yalnızca 30.000 saatlik H200 GPU süresiyle bir computer use dünya modelinin ön eğitimini tamamladı. Her kareyi ayrık gizli token'lara sıkıştırıp bir eylemin ardından gelen sonraki durum gösterimini özbağlanımlı olarak öngörür; ön eğitim aşamasında ekran görüntülerini piksel piksel üretmez. Ayrıca bağlanan görüntü üreteci yalnızca gizli gösterimleri görselleştirmeye yarar, çıkarım için zorunlu bir bileşen değildir. Bir tohum ekran görüntüsü ve ardından gelen eylemler verildiğinde model masaüstü durumlarını kesintisiz biçimde "hayal edebilir"; sonra sanal makineler üzerindeki çevrim içi eğitimle computer-use eylemleri üretmeyi öğrenir.[^ch9-20]
+
+[^ch9-20]: David Li and Jonathan Li, Induction Labs, “Scaling Video Pretraining with Imagination Models,” 2026-07-23. https://www.inductionlabs.com/news/scaling-video-pretraining. Metinde geçen Photon-1 parametreleri, veri ölçeği, şirket içi benchmark sonuçları ve maliyet karşılaştırmaları şirketin açıkladığı verilerdir.
+
 ### Mobil Taraf: Ekosistem Bariyerleri Teknolojiden Daha Zorlu
 
 Computer Use mobil tarafa da yayılıyor. Mobil ile masaüstü arasında teknik açıdan gerçek farklar vardır: action space genellikle artık "fare koordinatı + klavye" değildir, sistemin erişilebilirlik servisi API'si (örneğin Android'in AccessibilityService'i) üzerinden arayüz öğeleri okunur, tıklama ve metin girişi gönderilir; etkileşim biçimi de fare imlecinden dokunma hareketlerine döner ve koordinatın anlamı buna bağlı olarak değişir — aynı (x, y) noktasının parmakla tek dokunuş mu, uzun basma mı, yoksa bir kaydırma hareketinin başlangıç noktası mı olduğunu belirlemek için ayrıca bir hareket türü gerekir. Bölüm 6'da tanıtılan AndroidWorld gibi mobil benchmark'lar, Agent'ın gerçek uygulamalarda görev tamamlama yeteneğini tam da böyle bir action space üzerinde değerlendirir.
@@ -274,147 +292,100 @@ Bu durum Computer Use'un karşılaştığı kendine özgü bir zorluğu açığa
 
 Bu da Computer Use'un yalnızca CAPTCHA (doğrulama kodu) gibi teknik düzeydeki karşı önlemlerle değil, **yapısal bir çıkar çatışmasıyla** da karşı karşıya olduğu anlamına gelir. Bu çelişkiyi kısa vadede uzlaştırmak zordur ve Computer Use'un tüketici senaryolarında hayata geçmesini, salt teknik sorunlardan daha çetin bir engelle karşı karşıya bırakır.
 
-### Gerçek Zamanlılık: Henüz Çözülmemiş Temel Zorluk
+## Robot Manipülasyonu: XLeRobot ile Masa Toplama Örneği
 
-**OSWorld** (değerlendirme metodolojisi Bölüm 6'da ayrıntılı olarak anlatılıyor), yaygın kullanılan bir Computer Use değerlendirme benchmark'ıdır ve Agent'ın gerçek Ubuntu/Windows/macOS ortamlarında uygulamalar arası görevleri tamamlama yeteneğini ölçer. Erken dönem genel amaçlı modellerin bu benchmark'taki başarı oranı yalnızca %20 civarındaydı; sonraki özel modeller ve daha güçlü genel amaçlı modeller doğruluğu sürekli yukarı taşıdı ve bu satırların yazıldığı sırada kademeli olarak insan seviyesine yaklaştı. Ama doğruluk hiç de bitiş çizgisi değil — asıl darboğaz "doğru yapabiliyor mu" sorusundan "hızlı yapabiliyor mu" sorusuna kaydı.
+> **Bu bölüm nasıl okunmalı**: baştan sona tek bir görev kullanıyoruz——"kırmızı bardağı tepsiye koy, sarı kâğıt parçasını çöp kutusuna at, en sonunda bir kez daha gözlem yaparak masanın durumunu doğrula". Deney 9-7 ve 9-9 gerçek bir XLeRobot üzerinde yürütülür; kol, kalibrasyon, acil durdurma düzeneği ve yerinde bir gözetmen gerektirir. Deney 9-8, 9-10 ve 9-11 bunların yerel GPU'daki karşılıklarıdır. Gerçek donanım ile benzetim sonuçları ayrı ayrı raporlanır, ancak görevin amacı, eylemlerin anlamı ve başarı koşulları aynı tutulur.
 
-**OSWorld-Human** verimlilik araştırması can sıkıcı bir gerçeği ortaya koyuyor: görev sonunda başarıyla tamamlansa bile, Agent'ın aynı görev için ihtiyaç duyduğu işlem adımı sayısı insandan belirgin biçimde fazla kalıyor; üstelik her adımın çıkarım gecikmesi görev ilerledikçe sürekli büyüyor — context uzadıkça model daha yavaş karar veriyor ve geç adımlar çoğu zaman erken adımlardan çok daha uzun sürüyor. Bir insanın onlarca saniyede bitirdiği bir doküman biçimlendirme işi, Agent'ın dakikalarını alabiliyor. **İnsan seviyesinde doğruluğa ulaşmak kullanışlılıkla aynı şey değildir; asıl darboğaz verimliliktir.**
+Robot manipülasyonu, "resme bakıp soruyu yanıtlamak"tan çok daha zor bir iştir. Model yalnızca sahneyi anlamakla kalmayıp gerçek dünyada sürekli eylemde bulunmak zorundadır ve her eylem bir sonraki anın durumunu değiştirir. XLeRobot bu farkı çok somut hâle getirir. Aynı kol, insan tarafından klavye, oyun kumandası veya VR donanımıyla uzaktan kumanda edilebilir; ya da kamera gözlemi ile sınırlı bir eylem aracı kümesi bir Agent'a devredilip onun kendi başına çağırması sağlanabilir. Donanım da görev de değişmez; değişen tek şey kimin kullandığıdır——birincisinde insan sürekli gözleyip düzeltir, ikincisinde ise modelin ve kontrol sisteminin aynı işi sonuna kadar götürmesi gerekir.
 
-Verimlilik sorununun kökeni ses senaryosundakine benzer: seri işleyen "ekran görüntüsü-düşünme-tıklama" döngüsünde her halka en uç noktasına kadar optimize edilse bile, adım adım biriken gecikme yine de kabul edilemez düzeyde kalır. Daha derindeki sorun şudur: bugünkü Computer Use "önceden düşünmeyi" hiç beceremiyor. Agent, mevcut eylemi yürütürken bir sonraki adımda ne yapacağını da öngörebilseydi — örneğin sayfa yüklenirken bir sonraki tıklamanın nereye yapılacağını çoktan kararlaştırabilseydi — düşünme ile yürütme zamanları üst üste bindirilebilir ve toplam gecikme büyük ölçüde düşürülebilirdi (bu, bu bölümün başındaki ses senaryosunda "düşünürken konuşma" ile Bölüm 4'teki "sürekli düşünme" tarzı asenkron Agent'ın talebinin aynısıdır; burada yalnızca "düşünürken işlem yapma"ya dönüşmüştür).
+Bu bölüm beş deneyi "masa toplama" üzerinden birbirine bağlar. Önce insan gerçek XLeRobot'u uzaktan kumanda eder; böylece yeterince yetkin bir operatörün elinde bu donanımın nereye kadar gidebildiği ölçülür. Ardından benzetimde aynı görev için ideal kontrol üst sınırı belirlenir. Sonra bir Agent'ın gerçek XLeRobot'u özerk biçimde kontrol etmesine izin verilir; algı, planlama ve hatadan toparlanmanın sonucu nasıl belirlediği gözlenir. Daha sonra aynı araç sözleşmesi benzetime taşınır ve üç strateji bir arada karşılaştırılır: açık çevrim yürütme, adım adım denetim ve dünya modeli. Son olarak arka plan, nesne görünümü, aydınlatma ve görsel gürültü değiştirilerek, benzetimde öğrenilen görsel politikanın yeni bir ortama uyum sağlayıp sağlayamadığına bakılır.
 
-Ses alanından farklı olarak, Computer Use'un kendi gerçek zamanlılığı için — yani "ekran görüntüsü-düşünme-tıklama" döngüsünün kendisini hızlandırmak için — şu an sistematik bir çözüm yok; hâlâ kare kare ekran görüntüsüne dayalı ayrık bir döngüde takılı durumda. Ama bunu baypas eden bir fikir çoktan işler hâle geldi ve bu bölümde tekrar tekrar karşımıza çıkan hızlı-yavaş ayrıştırmasını kullanıyor: madem yavaş çalışan bilgisayar kullanma Agent'ını hızlandırmak zor, o hâlde **kullanıcıyı onu boş yere bekletmeyelim**. "Konuşma" ile "bilgisayarı kullanma" hızlı ve yavaş iki modele bölünüp eşzamanlı çalıştırılır[^ch9-10]: küçük bir model (hızlı) gerçek zamanlı sesli sohbeti üstlenir, öncü bir VLM (yavaş) tarayıcıda adım adım işlem yapar ve ikisi yalnızca son derece sade bir "düz metin sözleşmesi" üzerinden haberleşir. Yavaş Agent her işlemine, sürekli güncellenen tek cümlelik bir durum özeti ekler ("Formu dolduruyorum, doğum tarihine ihtiyacım var"); hızlı Agent buna dayanarak kullanıcıya gerçek zamanlı yanıt verir ve kullanıcının sözlü olarak verdiği yeni bilgileri yavaş Agent'a aktarır. Üstelik **durum özeti tamamlandığını teyit etmeden hızlı Agent asla "hallettim" diyemez**. Bu, tam olarak "bir yandan telefonda konuşurken bir yandan bilgisayarın kendi kendine işlem yapması" senaryosudur. Deneylerde bu ayrıştırma, sesli yanıtı "tek modelle hem işlem yapıp hem konuşma" yaklaşımına göre yaklaşık 15 kat hızlandırdı (medyan gecikme 0,58 saniyeye karşı 8,64 saniye) ve görev başarı oranı düşmedi; hızlı ile yavaş arasındaki o metin kanalı çekilip alındığında ise başarı oranı anında sıfıra çöktü — çünkü kullanıcının sözlü olarak verdiği kritik bilgi artık tarayıcıya ulaşamıyordu. Bu, daha önceki Latent Bridge ve ses senaryosundaki "düşünürken konuşma" ile aynı fikirdir: bir halka doğası gereği yavaşsa, hızlı olan başka bir halka kullanıcının bekleme süresini doldursun — üstelik o "düz metin sözleşmesi", özünde bu kitabın Bölüm 2'den beri anlattığı Agent durum çubuğundan başka bir şey değildir. Computer Use döngüsünün kendisini hızlandırmak muhtemelen hâlâ bir sonraki önemli araştırma yönü olacak, ama "hızlı-yavaş ayrıştırmasıyla 'yavaşlığı' saklamak" şimdiden kullanılabilir bir yanıttır.
+Buradaki darboğaz genellikle bir statik soru-cevap ölçütü daha üretmek değil, sınırlı algı ve kontrol bant genişliğiyle modelin çevrimi kapalı tutmasını sağlamaktır. Kullanılabilir bir robot sistemi en azından şu dört soruyu yanıtlamalıdır:
 
-[^ch9-10]: Ses-işlem hızlı-yavaş ayrıştırmasının ve "düz metin sözleşmesi"nin eksiksiz tasarımı için bkz. Li, Bojie and Noah Shi. *Talking While Acting: Real-Time Voice for Slow Computer-Use Agents.* 2026 (yayınlanacak).
+1. İnsan hangi görevi bitirmek istiyor?
+2. Sırada hangi alt görev var?
+3. Şu anki beceri somut olarak hangi eylemi üretiyor?
+4. Eylem yürütüldükten sonra gerçeklik hâlâ ilk plana uyuyor mu?
 
-## Robot Manipülasyonu: Gerçek Zamanlı Kontrolden Eğitim ve Genellemeye
+Bu bölüm bu dört soruyu XLeRobot'un aynı kontrol çevrimine yerleştirir ve dört tekniğin hangi kısmı üstlendiğini gösterir: uzun ufuklu planlama bardağın mı yoksa kâğıdın mı önce ele alınacağına karar verir; VLA ya da eylem ilkelleri kavrama ve yerleştirmeyi yapar; dünya modeli bir eylemin sonuçlarını kestirir; benzetimden gerçekliğe geçiş ise eğitim videoları ile gerçek kamera ve eyleyiciler arasındaki farkı üstlenir. Üst düzey modelin yeterli bilgisi ve planlama yetisi zaten olsa bile, bu geri besleme halkasının tek bir eksik halkası sistemin görevi bitirememesine yeter.
 
-> **Bu bölümdeki beş deney aynı görevi kullanır: kırmızı bardağı tepsiye koymak, sarı kâğıdı çöp kutusuna koymak, ardından masayı yeniden gözlemleyip durumu doğrulamak. Gerçek robot ve simülatör ayrı raporlanır; eylem anlamı ve başarı koşulları aynıdır.**
+### Donanım ile Algoritmanın İş Bölümü
+
+XLeRobot'un yanıtlamaya en uygun olduğu ilk soru şudur: özerk masa toplama başarısız olduğunda, kolun kendisi mi beceremiyor, yoksa algoritma mı kolu kullanmayı bilmiyor? Burada yumuşatılmaması gereken bir olgu var: **XLeRobot gibi birkaç yüz dolarlık bir kol bile, uzaktan kumandayla, bu bölümdekine benzer çok adımlı ve birbirine bağlı bir masa görevini hâlihazırda tamamlayabiliyor**——insan kamera görüntüsüne bakarak kırmızı bardağı kavrayıp tepsiye koyuyor, sarı kâğıdı çöp kutusuna atıyor ve sonunda durumu bir kez daha denetliyor. Bu sonuç yalnızca "donanım kıl payı yetiyor" demek değildir; açık bir tanı kanıtıdır: **bu görev söz konusu olduğunda darboğaz donanımın kendisinde değil, algoritma tarafındadır.**
+
+Tanı yöntemi dolaysızdır. Kamera, kol, tutucu, masa düzeni ve başarı koşulları sabitken çevrimi önce insan devralır. İnsan nesne konumu kestirimini, eylem seçimini ve zamanlamayı sürekli düzeltir, kavrama başarısız olduğunda ne yapacağını da bilir. Özerk sistem ile insan arasındaki mesafe tam da bu kapalı çevrim yetisinde görünür. Elbette bu yargının menzili bu bölümdeki masa görevidir: donanımın bu görevin gerektirdiği yük, hassasiyet ve çalışma uzayı eşiklerini aştığını gösterir, ama birkaç yüz dolarlık bir kolun her açık ortamla ya da daha zor manipülasyonlarla baş edebileceği anlamına gelmez.
+
+XLeRobot birkaç uzaktan kumanda girişini destekler: klavye, Xbox kumandası, Switch Joy-Con ve VR donanımı. İnsan operatör, bir algoritmanın açıkça kodlaması gereken pek çok şeyi doğal olarak yapar: tutucu bardağa yaklaşırken yavaşlar, bardak kayarsa kavrama noktasını düzeltir, kâğıdı ilk seferde tutamazsa yeniden bakar ve nesne hedef bölgeye girdiğinde sonucu doğrular. Bu yüzden uzaktan kumanda yalnızca gösterim verisi toplamanın bir yolu değil, aynı zamanda "donanımı sabitleyip yalnızca operatörü değiştiren" bir tanı deneyidir.[^ch9-1]
+
+> **Deney 9-7 ★: Gerçek XLeRobot'u uzaktan kumanda ederek masayı toplamak**
 >
-Sesli Agent'lar gecikmeyle işitsel modalitede, Computer Use ise görsel modalitede yüzleşir; Agent'ın fiziksel dünyadaki bir robotu kontrol etmesi gerektiğinde gecikme ve çok modluluk zorlukları daha da büyür — eylemlerin sonuçları geri alınamaz ve tek bir çarpışma nesneye ya da robotun kendisine zarar verebilir. Bu bölümde önce robotların iki katmanlı mimari ve action chunking ile gerçek zamanlı kontrol sorununu nasıl bastırdığına, ardından bugün karşılarındaki daha sert cevize — eğitim ve genellemeye — bakacağız: veri nereden gelecek, model görevler ve platformlar arasında nasıl aktarılacak?
-
-### Darboğaz Donanım Değil, Algoritma
-
-Robotlar genel amaçlı açık senaryolarda hâlâ yaygın olarak kullanılmıyor; peki darboğaz donanımda mı yoksa algoritmada mı? XLeRobot projesi güçlü bir karşı örnek sunuyor: maliyeti 1000 doları bulmayan çift kollu tekerlekli bir robot, insan tarafından VR başlığı üzerinden uzaktan kumanda edildiğinde (teleoperasyon) birçok ev işini şimdiden akıcı biçimde yapabiliyor. Becerikli el gerektiren daha karmaşık ev işlerini de Unitree'nin robotları insan teleoperasyonuyla akıcı biçimde tamamlayabiliyor. Teleoperasyon gecikmesi yaklaşık 100-200 ms; bu, fiziksel etkileşimin gerektirdiği tepki süresine yakın bir değer. Sensör çözünürlüğü, aktüatör hassasiyeti ve kontrol frekansı (robotun saniyede kaç kez eylem komutunu güncellediği; frekans düştükçe hareket daha az akıcı olur, titreme ya da hedef yörüngeden sapma olasılığı artar) bugünkü düşük maliyetli platformlarda pratik görevleri desteklemeye şimdiden yeterli.
-
-Bu iddianın sınırını net çizmek gerekiyor: teleoperasyon karşı örneğinin asıl gösterdiği şey, "mevcut düşük maliyetli donanım artı insan zekâsının **ağırlıklı olarak görsel geri bildirime dayanan bu tür ev manipülasyon görevlerini** tamamlamaya yettiği"dir. Bu, donanımın her boyutta yeterli olduğu anlamına gelmez — dokunsal algılamanın yokluğu, becerikli ellerin güvenilirliği ve maliyeti bugün de herkesçe kabul edilen donanım eksiklikleridir; görev ince kuvvet kontrolüne ve dokunsal geri bildirime ağır biçimde bağımlı hâle geldiğinde donanım pekâlâ darboğaz olabilir. Dolayısıyla aşağıda söylenen "donanım darboğaz değil" ifadesi, bu bölümde tartışılan görev sınıfıyla sınırlıdır.
-
-Bu tür görevler açısından bakıldığında asıl uçurum algoritma katmanındadır; sonraki iki alt bölüm bunu ayrı ayrı ele alıyor.
-
-> **Deney 9-7 ★: XLeRobot teleoperasyonu ile masayı toplamak**
+> Gerçek bir XLeRobot'un çalışma alanına kırmızı bir bardak, bir tepsi, buruşturulmuş sarı bir kâğıt ve bir çöp kutusu yerleştirin. Operatör, kalibre edilmiş uzaktan kumanda yollarından biriyle sabit görevi yürütür: "kırmızı bardağı tepsiye koy, sarı kâğıt parçasını çöp kutusuna at, en sonunda bir kez daha gözlem yaparak masanın durumunu doğrula". En az birkaç tur yineleyin ve kamera görüntüsünü, operatör girdilerini, kolun durumunu, eylem sürelerini, kavrama hatalarını, yeniden deneme sayısını ve son durumu kaydedin.
 >
-> **Amaç:** Gerçek bir XLeRobot'u uzaktan kullanarak aynı çok adımlı görevi tamamlamak ve masa durumunu doğrulamak.
+> Kabul ölçütünü "sonunda masa temiz görünüyor"a indirmeyin. Kırmızı bardak tepsinin içinde, sarı kâğıt çöp kutusunun içinde olmalı; kol güvenli duruşuna dönmeli; süreç boyunca çarpışma, çalışma alanının dışına çıkma ya da doğrulanmadan işi insanın tamamlaması olmamalıdır.
+
+Gerçek donanımda uzaktan kumanda, görevin üst sınırını göstermenin en ikna edici yoludur; ama nesnelerin sayısını ve konumunu toplu hâlde değiştirmeye elverişli değildir. Yinelenebilir ve istatistiği alınabilir bir karşılaştırma elde etmek için, aynı "nesneleri yerine koyma" problemini iki boyutlu bir masa benzetimine taşıyoruz ve algıda yanılmayan, eylemi yanlış seçmeyen güçlü bir operatörün yerine ideal bir denetleyici koyuyoruz.
+
+> **Deney 9-8 ★: Benzetimde aynı görevin ideal kontrol üst sınırını ölçmek**
 >
-> **İlke:** Birkaç yüz dolarlık kol, insan teleoperasyonu altında bu görevi yapabilir; bu görev için donanım gövdesi darboğaz değildir, farkı algı, planlama, kapalı çevrim kontrol ve hata kurtarma yaratır.
+> İki boyutlu bir masa benzetiminde kırmızı bardağı, sarı kâğıdı ve bunların hedef bölgelerini rastgele yerleştirin; ideal denetleyici sırayla nesnelere yaklaşsın, onları kavrasın ve doğru konuma taşısın. Görüntü tanımaya ihtiyacı yoktur ve eylemi yanlış seçmez; dolayısıyla "algı da karar da doğruyken bu görev en azından nereye kadar gidebilir"i temsil eder.
 >
-### İki Katmanlı Mimari: Planlama ile Kontrolün Ayrılması
+> Görev başarı oranına, adım sayısına ve yol uzunluğuna bakın; ayrıca nesnelerin başlangıç konumunu ve görev ölçeğini değiştirerek bu ideal üst sınırın kararlı kalıp kalmadığını gözleyin. Deney 9-7 ile aynı başarı koşulları kullanılır, ama ölçülen şey eyleyicisiz bir benzetimdir: gerçek XLeRobot'un hareket ettiği anlamına gelmez. İkisi, sonraki özerk kontrol için iki taban çizgisi olacaktır——Deney 9-7 gerçek donanım üzerindeki insan kapalı çevrimi, Deney 9-8 ise benzetim ortamındaki ideal kapalı çevrimdir.
 
-Robotların karmaşık ev işlerini tamamlaması, iki farklı zaman ölçeğinde karar vermeyi gerektirir. Birinci katman, daha yavaş olan **uzun ufuklu planlamadır** (long-horizon planning): "mutfağı temizle" gibi üst düzey bir talimatı alt hedef dizisine ayırmak (tezgahı toplamak, bulaşık makinesini doldurmak, yüzeyleri silmek). Bu, ortamın semantiğini anlamayı, görev bağımlılıkları üzerine akıl yürütmeyi ve çok adımlı bir eylem planı kurmayı gerektirir — tıpkı insanın işe girişmeden önce "önce neyi, sonra neyi yapacağım" diye düşünmesi gibi. İkinci katman, daha hızlı olan **VLA kontrolüdür** (Vision-Language-Action, görsel-dil-eylem modeli): her somut işlemi yürütür ("lavaboya git", "bezi al", "tezgahı sil") ve o an gördüğü görüntüyle dil talimatına göre sürekli kontrol sinyali üreterek robotun hareketlerinin akıcı ve tutarlı olmasını sağlar.
+### Robot Kontrolünün Temel Yapısı
 
-Bu iki katmanlı mimari karmaşıklığı etkili biçimde ayırır: uzun ufuklu planlama "ne yapılacağından", VLA kontrolü ise "nasıl yapılacağından" sorumludur. Bu "üst düzeyde yavaş karar + alt düzeyde hızlı yürütme" biçimindeki iki katmanlı mimari, yukarıdaki ses senaryosunda anlatılan "hızlı-yavaş düşünme" ile yapısal olarak büyük benzerlik taşır — her ikisi de karmaşık düşünme ile gerçek zamanlı tepkiyi farklı modüllere ayrıştırır. Şunu hatırlatmak gerekir: buradaki "planlama / kontrol" ayrımı, hızlı-yavaş düşünmedeki "yavaş derin düşünme / hızlı gerçek zamanlı tepki" boyutunun ayrıştırılmasına karşılık gelir; üçüncü çözümdeki MPS'in "kurgulama beyni / ifade beyni" (Formulation Brain / Articulation Brain) biçimindeki "düşünme / ifade etme" ayrıştırmasına değil — ikincisi "düşünmek" ile "söylemek"i böler, birincisi ise "bütünü planlamak" ile "gerçek zamanlı yürütmek"i böler; bu iki "çift-X mimarisi"nin böldüğü boyutlar aynı değildir.
+Bir robot sistemi genellikle farklı zaman ölçeklerindeki işleri ayırır.
 
-Bununla birlikte gerçek zamanlılık ortadan kalkmış olmaz, yalnızca VLA kontrol katmanına itilir ve orada **action chunking** (eylem parçalama; aşağıdaki "VLA Kontrolü" alt bölümüne bakınız) ile sindirilir: model tek bir çıkarımda gelecekteki kısa bir eylem dizisini üretir, kontrol iş parçacığı bunu yüksek frekansla oynatır ve tek çıkarımın gecikmesi dizinin tümünün yürütülme süresine yayılır. Ama burada kaçınılmaz bir denge vardır — parçalama, tepkiselliği pürüzsüzlükle takas eder: parça uzadıkça her çıkarımın gecikmesi daha ince yayılır ve hareket daha tutarlı olur, ama model bu süre boyunca yeni görüntüyü "göremez" ve ani değişikliklere (nesnenin yerinden alınması, birinin elini uzatıp önünü kesmesi) o kadar geç tepki verir. Gerçek zamanlılık ile pürüzsüzlük arasındaki bu tercih, iki katmanlı mimarinin ortadan kaldırmadığı, yalnızca yerini değiştirdiği bir gerilimdir.
+| Katman | Temel soru | Çıktı | Tipik zaman ölçeği |
+| --- | --- | --- | --- |
+| Görev amacı | İnsan neyi bitirmek istiyor | "Bardak ve kâğıt yerine" | Dakika mertebesi |
+| Uzun ufuklu planlama | Önce ne, sonra ne | Önce bardak, sonra kâğıt, en son denetim | Saniyeden dakikaya |
+| Temel beceri | Şimdi hangi durum değişimi sağlanıyor | `pick(red_cup)`, `place(red_cup, tray)` | Yaklaşık 1—3 sn |
+| VLA / beceri politikası | Bu beceri somut olarak nasıl hareket ediyor | XLeRobot tutucusunun kısa hareketi ya da sürekli yörüngesi | ~1—10 Hz çıkarım |
+| Alt düzey kontrol ve güvenlik katmanı | Nasıl kararlı ve gecikmesiz yürütülür | Eklem ya da uç işlevci kontrol büyüklükleri, hız sınırı ve acil durdurma | ~50—1000 Hz |
 
-Burada bu bölümün ana hattındaki bir dönüşü de belirtmek gerekiyor: robotik senaryosunda gerçek zamanlılık çelişkisi iki katmanlı ayrıştırma ve action chunking ile kısmen hafifletilmiş durumda; asıl çelişki artık **eğitim ve genellemeye** kaydı — yeterli gösterim verisi nasıl elde edilecek, model görevler ve platformlar arasında nasıl genelleyecek? Sonraki birkaç alt bölüm tam da bu yeni çelişki etrafında ilerliyor; bu aynı zamanda Bölüm 6'daki simülasyon ortamları ile Bölüm 7'deki pekiştirmeli öğrenme temalarının fiziksel dünyaya uzantısıdır.
+Bu, yaygın bir mühendislik iş bölümüdür; tek model mimarisi değildir. VLA üst düzey yargının bir kısmını üstlenebilir ve planlayıcı kural tabanlı bir program, bir VLM ya da bir eniyileyici olabilir. Hangi gerçekleştirim seçilirse seçilsin, "görevin sırası" ile "şu andaki eylem" ayrılmalıdır; aksi hâlde üst düzey modelin çıkarım gecikmesi alt düzey kontrolü geriye çeker, alt düzeydeki yüksek frekanslı kontrol de üstteki modele bir yığın ilgisiz ayrıntıyı işletir. XLeRobot'ta model doğrudan rastgele eklem açıları üretmemelidir: yalnızca `pick`, `place`, `verify_state` ve `stop` gibi sınırları belirli becerileri seçer; kalibre edilmiş, hız sınırlı ve zaman aşımlı yürütücü ise bunları kolun gerçek hareketine çevirir.
 
-Bu yeni çelişki esas olarak VLA kontrol katmanının üzerine biniyor. VLA'yı "VLM + eylem çıktısı" olarak düşünebilirsiniz: **VLM** (Vision-Language Model, görsel-dil modeli — görüntüyü ve metni aynı anda anlayabilen büyük model) "görmek"ten ve "düşünmek"ten sorumludur; VLA bunun üzerine bir de "iş yapmak" zorundadır ve asıl zorluk tam da bu "iş yapma" katmanındadır. Bugün VLA kontrol katmanı ağırlıklı olarak taklit yoluyla öğrenmeyle (davranış klonlama) eğitiliyor — çok sayıda insan gösteriminden doğrudan "ne görürsen onu yap" öğreniliyor (OpenVLA, RT-2, π₀ gibi modellerin hepsi bu kategoridedir); pekiştirmeli öğrenme ise son yıllarda bunun üzerine eklenen tamamlayıcı bir yöntemdir. Pekiştirmeli öğrenmeyle eğitilen VLA'lar tek bir görevde çok iyi performans gösterebilse de genelleme yetenekleri çoğu zaman yetersiz kalıyor: örneğin Bölüm 7'deki SimpleVLA-RL, LIBERO üzerinde çok yüksek tek görev sonuçları bildirse de bu sonuçlar her görev için ayrı ayrı yapılan RL eğitimlerinden geliyor; tüm görevlere zero-shot genelleyen tek bir birleşik modelden değil. Bu "her görev için bir eğitim" düzeni, her yeni görevde yeniden veri toplamak ve yeniden eğitmek anlamına geliyor.
+### Uzun Ufuklu Planlama ve Görev Ayrıştırma
 
-Aşağıdaki iki alt bölüm sırasıyla uzun ufuklu planlama ile VLA kontrolünün somut teknik çözümlerini derinlemesine ele alıyor.
-
-### Uzun Ufuklu Planlama: VLM'den Özel Bedenlenmiş Akıl Yürütme Modellerine
-
-Genel amaçlı VLM'ler şimdiden fena olmayan bir bedenlenmiş akıl yürütme yeteneğine sahip. Google DeepMind'ın **Gemini Robotics-ER 1.5** modeli özellikle bedenlenmiş akıl yürütme (Embodied Reasoning, yani fiziksel dünyadaki nesnelerin konumunu, hareketini ve nedensel ilişkilerini anlamak) için optimize edilmiştir; 15 akademik benchmark üzerinde (Point-Bench, RefSpatial, RoboSpatial, BLINK vb.) ortalama %62,8 ile GPT-4o'yu (%60,6) ve Gemini 2.5 Pro'yu (%59,3) geride bırakır. Temel üstünlükleri arasında şunlar vardır: gelişmiş uzamsal kavrayış ve nesne konumlandırma, zamansal akıl yürütme ("bu bardağı devirirsem ne olur" gibi eylem-sonuç ilişkilerini öngörme), görev orkestrasyonu (üst düzey talimatları küçük adımlara ayırma); ayrıca düşünme (thinking) mekanizmasını ve tool calling'i yerleşik olarak destekler.[^ch9-2]
-
-[^ch9-2]: Google DeepMind, "Gemini Robotics-ER 1.5". https://deepmind.google/models/gemini-robotics/gemini-robotics-er/
-
-> **Deney 9-8 ★: Simülasyonda aynı görevin ideal kontrol üst sınırı**
->
-> **Amaç:** Algılama ve eylem seçiminde hata yapmayan ideal denetleyiciyle aynı görevi çalıştırıp tekrarlanabilir üst sınır oluşturmak.
->
-> **İlke:** Bu, kararların her zaman doğru olduğu durumun referansıdır; gerçek robotun çalıştırıldığı anlamına gelmez.
->
-
-> **Deney 9-9 ★★: Gemini Robotics-ER 1.5 ile gerçek XLeRobot'u otonom kontrol etmek**
->
-> **Amaç:** İnsanın yerine masayı gözleyen ve sınırlı pick, place, verify becerilerini çağıran bir Agent koymak; robotu, görevi ve başarı ölçütünü 9-7 ile aynı tutmak.
->
-> **İlke:** Doğrudan karşılaştırma yeni bir mekanik sınırı değil; algı, planlama, zamanlama, kapalı çevrim ve hata kurtarma farkını gösterir.
->
-
-### VLA Kontrolü: Gösterim Verisinden Çapraz Bedenlenme Genellemesine
-
-İki katmanlı mimarinin yürütme katmanında RT-2, OpenVLA ve π₀ olmak üzere üç temsilci model VLA kontrolüne odaklanır — yani kamera görüntüsüne ve dil talimatına göre robotun eylemlerini gerçek zamanlı üretmeye (Şekil 9-11). Bu modeller eylem temsili bakımından iki ayrı yola ayrılır: ayrık eylem token'ları ile sürekli yörünge üretimi.
-
-
-![Şekil 9-11: VLA mimarisi (Vision-Language-Action)](images/fig9-11.svg)
-
-
-**RT-2 ve OpenVLA: ayrık eylem token'ı yolu.**
-
-**RT-2** bu yolu açtı: doğrudan büyük ölçekli görsel-dil modelleri üzerinde fine-tuning yapar, robotun sürekli eylemlerini token'lara ayrıklaştırır ve tıpkı metin üretir gibi bunları tek tek otoregresif olarak çıkarır; böylece ön eğitimli modelin genelleme yeteneğinden yararlanarak yeni nesnelere ve yeni talimatlara zero-shot aktarımı iyileştirir. **OpenVLA** ise RT-2'nin eylem temsili şemasını sürdürdü; dil modeli ile görsel kodlayıcıyı tek bir mimaride birleştirir, girdi olarak görüntü ve yazılı talimat alır, çıktı olarak eylem token'ları üretir. Eğitim iki aşamalıdır: önce büyük ölçekli, platformlar arası Open X-Embodiment veri kümesinde (20'den fazla robot platformundaki gerçek manipülasyon gösterimlerini kapsar) ön eğitim yapılarak genel manipülasyon bilgisi öğrenilir ("kavrama", "yerleştirme" gibi eylem kalıpları farklı robotlar arasında ortaktır), ardından belirli bir platform için az miktarda veriyle fine-tuning yapılır. Eylem temsilleri özünde aynı olduğuna göre, ikisi arasındaki asıl fark açıklık ve mühendislik tercihlerindedir: RT-2 ve eğitim verisi Google'ın içindedir, OpenVLA ise tamamen açık kaynaktır — açık kaynak bir omurga model (Llama 2 artı görsel kodlayıcı) ile herkese açık bir veri kümesi, tüm topluluğa ilk kez bunun üzerine yeniden üretim ve iyileştirme yapma imkânı verdi.
-
-**Action chunking: VLA alanında ortak kullanılan frekans telafisi tekniği.**
-
-LLM çıkarımının gecikmesi olduğundan, VLA'nın kontrol frekansı geleneksel robot kontrolünün gerektirdiğinin çok altındadır (geleneksel robot kontrolü genellikle 50-1000 Hz kontrol frekansı ister, VLA'nın tek çıkarımı ise yalnızca 1-10 Hz dolayındadır — aradaki fark iki büyüklük mertebesine ulaşabilir). Orijinal OpenVLA bu sorunun tipik örneğidir: her çıkarımda yalnızca tek bir eylem üretir (yaklaşık 6 Hz'lik tek adımlı otoregresif tahmin) ve hareketlerinin takılması onun en çok eleştirilen eksiği olmuştur. **Action chunking** (eylem parçalama) tam da bu farkı kapatmak için doğmuş genel bir tekniktir — ilk kez ACT (Zhao ve ark., 2023) tarafından önerildi, sonra π₀ ve OpenVLA-OFT gibi modellerce yaygın olarak benimsendi: model her çıkarımda tek bir eylem değil, gelecekteki kısa bir zaman dilimine ait eylem dizisini bir seferde üretir (π₀'ın tipik yapılandırması örnek alınırsa, bir seferde yaklaşık 0,5-1 saniyelik bir eylem parçası, yani 50 Hz kontrol frekansında 25-50 eylem); kontrol iş parçacığı bunları yüksek frekansla sırayla yürütürken model arka planda bir sonraki partiyi asenkron olarak üretir. Modelin çıkarım süresi bu partinin yürütme süresinden kısa olduğu sürece robot sürekli ve akıcı hareket edebilir — tıpkı video ön belleğe alma gibi: sonraki içerik önceden yüklendiği için oynatma takılmaz.
-
-**π₀: sürekli yörünge üretimi yolu.**
-
-Eylem temsilindeki asıl ayrım RT-2 ile OpenVLA arasında değil, **ayrık token ile sürekli yörünge üretimi** arasındadır. **π₀** ikinci yolu temsil eder: ayrık eylem token'larını tek tek tahmin etmek yerine, flow matching (akış eşleme; difüzyon modelleriyle aynı kökten gelen sürekli bir üretim yöntemi) kullanarak rastgele gürültüden başlar, çok adımlı yinelemeli bir "gürültü giderme" süreciyle doğrudan pürüzsüz ve sürekli bir eylem yörüngesi üretir. Bu temsil, action chunking ile doğal biçimde birleşir ve becerikli manipülasyon gibi hareket hassasiyeti ile akıcılığın kritik olduğu görevlerde daha iyi sonuç verir. Bir benzetme yapmak gerekirse: ayrık token yolu bir menüden adım adım "5 derece sola", "3 santimetre ileri" seçmeye benzer; sürekli yörünge yolu ise ressamın önce tüm eğriyi kabaca çizip sonra fırça darbeleriyle son hâline getirmesine benzer.
-
-### Sim2Real Transfer: Simülasyondan Gerçekliğe Uzanan Uçurum
-
-Bölüm 6'daki simülasyon ortamları alt bölümü, sim-to-real gap'in (gerçeklik farkı) kaynağını ve domain randomization'ın (alan rastgeleleştirme) buna nasıl çözüm ürettiğini zaten açıklığa kavuşturmuştu; burada tekrar etmiyoruz — tek cümleyle özetlemek gerekirse: simülasyon gerçek fiziği, görüntüyü ve donanım özelliklerini tam olarak yeniden üretemediği için, eğitim sırasında bu parametreler geniş bir aralıkta rastgele karıştırılır ve politikanın her türlü değişime dayanıklı, genel bir temsil öğrenmesi zorlanır (Şekil 9-11). Aşağıda yalnızca bu ilkenin gerçek bir robot kolunda nasıl hayata geçtiğine bakacağız.
-
-
-![Şekil 9-12: Sim2Real uçurumu ve Domain Randomization](images/fig9-12.svg)
-
-
-Bu yolun çok sayıda başarılı örneği var: OpenAI'ın robot eliyle becerikli manipülasyonu (Dactyl projesi el içinde küp yeniden yönlendirmeyi gerçekleştirdi; devamındaki çalışma otomatik alan rastgeleleştirmesi (ADR) yardımıyla tek elle Rubik küpü çözmeyi başardı) ve ETH Zürih'in ANYmal'i (dört ayaklı robotun kar, moloz gibi karmaşık arazi koşullarında sağlam biçimde yürümesi) bunlar arasındadır.
-
-Bu bölümde asıl tamamlanması gereken şey, domain randomization'ı gerçek bir makineye indirirken kaçınılmaz olan iki mühendislik halkasıdır. Birincisi **rastgeleleştirme aralığının kalibrasyonu**: aralık göz kararı belirlenemez; çok dar olursa gerçek değişimleri kapsamaz, çok geniş olursa eğitimi zorlaştırır ve "her şeye idare eder ama hiçbirinde iyi olmayan" alt optimal bir politika ortaya çıkar. Pratikte genellikle önce gerçek ortam verisinden kilit parametrelerin dağılımı **ölçümle kalibre edilir** (sürtünme katsayısının, motor tepki gecikmesinin gerçek dağılımı gibi) ve örnekleme bu aralıkta yapılır; simülasyonda eğitilen politika gerçek makinede belirgin biçimde puan kaybediyorsa rastgeleleştirme aralığı kademeli olarak genişletilir, ta ki sim-to-real gap kabul edilebilir bir düzeye inene kadar. İkincisi **görsel hizalamadır**: simülasyondaki ve gerçekteki kamera pozu (konum ve yönelim) hassas biçimde kalibre edilir (ortam hizalaması) ve gerçekte çekilmiş arka planlar simülasyon render'ına rastgele yerleştirilir (greenscreen arka plan değişimi); böylece simülasyon görüntüsü gerçek makinenin gördüğüne olabildiğince yaklaşır — bu iki adımı Deney 9-9 somut olarak gösterecek.
-
-> **Deney 9-10 ★★: Simülatörde üç otonom döngüyü karşılaştırmak**
->
-> **Amaç:** Aynı görev ve araçlarla açık çevrim, adım adım kontrol ve kısa ufuklu öngörü stratejisini karşılaştırmak.
->
-> **İlke:** Adım kontrolü yerel hatadan kurtarır; dünya modeli tahmin gerçekle uyuştuğunda devam eder, ayrıştığında yeniden planlar. Son durum yeni gözlemle doğrulanır.
->
-
-> **Deney 9-11 ★★★: Aynı görev için ortamlar arası RGB testi**
->
-> **Amaç:** Arka planı, nesne görünümünü, ışığı ve görsel gürültüyü değiştirip simülasyonda öğrenilen politikanın yeni görüntülere uyumunu sınamak.
->
-> **İlke:** Görsel çeşitlilik dayanıklılığı artırabilir, ancak gerçek robot kalibrasyonunun ve tam güvenlik döngüsünün yerini tutmaz.
->
-
-### 2026 Güncellemesi: Akışkan Planlama ve Dünya Modelleri
-
-Robotik bölümü “VLM bir plan yazar, VLA da uygular” cümlesinde bitmemeli. **“Masayı düzenle”** görevini düşünelim. Uzun ufuklu planlayıcı önce yarısı dolu bir fincanı, kâğıt parçalarını, üç kitabı, açık bir dizüstü bilgisayarı, çöp kutusunu ve bir saklama kutusunu içeren durum listesini çıkarır; ardından önkoşulları ve başarı kontrolleri olan komutlar üretir:
-
-1. “Masaya git ve kenardan 30 cm uzakta dur.”
-2. “İki kâğıt parçasını çöp kutusuna koy; hiç kâğıt kalmadığını doğrula.”
-3. “Fincanı dik tutup tepsiye yerleştir; sıvı hareket ederse yavaşla.”
-4. “Dizüstü bilgisayarı kapatıp arka sola taşı; güç kablosunu çekme.”
-5. “Kitapları boyutlarına göre istifle ve kalemleri saklama kutusuna koy.”
-6. “Kırılabilir ve elektriğe bağlı eşyalar kaldırıldıktan sonra masayı sil.”
-7. “Geri çekil, yeniden gözlemle ve son durumu doğrula.”
-
-Bu bir düzyazı paragrafı değil, bir bağımlılık grafiğidir. Kullanıcı “dizüstünü önce kaldır” derse sistem hedef önceliğini günceller. Fincan devrilirse robot güvenli bir noktada durur, `cup.orientation=fallen` ve `laptop.at_risk=true` gibi olguları kaydeder, eskimiş planın kuyruğunu geçersiz kılar ve yeniden planlar: dizüstünü koru, dökülen sıvıyı kontrol altına al, tekrar gözlemle, sonra yalnızca etkilenmeyen görevleri sürdür. Tamamlanmış eylemler tekrarlanmaz. Acil olaylar mevcut parçayı iptal eder; sıradan güncellemeler bir sonraki güvenli noktayı bekler.
-
-### Akışkan yürütme
-
-Planlama ile yürütme üst üste bindirilebilir. Güvenli bir önek hazır olur olmaz planlayıcı, kuyruğun geri kalanını planlamaya devam ederken eksiksiz bir komutu yürütücüye akıtır. Komut olayı eksiksiz ve denetlenebilir olmalıdır:
+Kullanıcı "masayı toplar mısın" dediğinde sistem bu cümleyi olduğu gibi eylem modeline veremez. Planlayıcı önce sahnedeki nesneleri ve hedefleri sıralar, sırayı belirler, sonra her adım için başlangıç koşulunu, bitiş koşulunu ve risk sınırlarını yazar. Örneğin:
 
 ```text
-{"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
+Kırmızı bardağı ele al → Sarı kâğıdı kaldır → Masayı denetle
 ```
 
-Yürütücü `started`, `succeeded`, `cancelled` veya `failed` durumlarından birini bildirir. Planlayıcı bu gözlemlerle bağımlılıkları günceller; kuyruk eskimiş ya da doluysa backpressure uygular. Akışkan yürütme ilk güvenli eyleme kadar geçen süreyi kısaltır; eksik JSON’un veya doğrulanmamış model düşüncelerinin çalıştırılmasına izin vermez.
+"Kırmızı bardağı ele al" ise iki eyleme ve bir denetime ayrışır:
 
-### Güncel VLA’lar neden kötü genelleme yapıyor?
+```text
+pick(red_cup) → place(red_cup, tray) → verify_state()
+```
 
-OpenVLA tam anlamıyla yalnızca projector güncellenerek eğitilmiş değildir: özgün çalışma tam fine-tuning’in yanı sıra dondurulmuş vision encoder, yalnızca son katman ve LoRA varyantlarını da raporlar. Yine de temel eleştiri geçerlidir. Çok büyük bir metin/görüntü ön eğitim külliyatı, çok daha küçük bir robot veri kümesine dar bir uyarlama yoluyla bağlanır; düşük maliyetli uyarlama yeni davranışı çoğu zaman projector, LoRA modülleri veya action head üzerinde yoğunlaştırır. Behavior cloning “gözlem + talimat → action chunk” eşlemesini öğrenir, karşı-olgusal fiziksel sonuçları değil. Embodiment’e özgü eylem uzayları ve eskimiş action chunk’lar aktarımı daha da sınırlar. Dil backbone’u “fincan” kelimesini bilse de sürtünme, sıvı, temas ve güç kablosunun nasıl davranacağını bu yüzden bilmez.
+Tamamlanan her beceri bize doğrulanabilir bir düğüm bırakır. Kavrama başarısız olursa yalnızca o adım yinelenir. Biri nesneyi kaydırırsa ya da kullanıcı hedefi değiştirirse, yalnızca etkilenen sonraki adımlar yeniden planlanır; eski planın tamamı tekrarlanmaz. Ajana verilen araçlar da yeterince yalın olmalıdır: her çağrı tek bir iş yapar, hareket aralığı sabittir, zaman aşımı vardır ve yürütmeden hemen sonra yeniden gözlem yapılır.
 
-**Eylem parçası öncelik kesmesi:**
+> **Deney 9-9 ★★: Gemini Robotics-ER 1.5 ile XLeRobot'un masayı özerk biçimde toplaması**
+>
+> Deney 9-7'deki gerçek XLeRobot'u, masa düzenini, görev yönergesini ve başarı koşullarını olduğu gibi bırakın; yalnızca insan operatörü bir Agent ile değiştirin. Gözlem ve planlamayı Gemini Robotics-ER 1.5 gibi bedenlenmiş bir akıl yürütme modeline bırakın ve RoboCrew tarzı bir ajan çevrimi üzerinden yalnızca beş aracı açın: `observe_scene`, `pick`, `place`, `verify_state` ve `stop`.[^ch9-2]
+>
+> Model önce masayı gözler, ele alma sırasını belirler, ardından XLeRobot'un kalibre edilmiş kavrama ve yerleştirme eylemlerini çağırır. Her beceriyi bitirdiğinde yeniden gözlem yapıp son koşulu denetlemek zorundadır. Kavrama başarısız olduğunda yalnızca o anki beceriyi yeniden denemesine izin verilir; kullanıcı dur dediğinde, nesne çalışma alanının dışına çıktığında ya da durum doğrulanamadığında `stop` çağırmak zorundadır. Model doğrudan rastgele eklem açıları üretemez ve yalnızca kendisi daha önce "bitti" dediği için gerçek doğrulamayı atlayamaz.
+>
+> Kabul ölçütü Deney 9-7 ile birebir aynıdır: bardak tepsinin içinde, kâğıt çöp kutusunun içinde, kol güvenli duruşta, çarpışma ve alan dışına çıkma yok. Fark şudur: özerk deneyde görevin anlamı modelin kendi gözleminden gelmeli, gerçek eylemler araç çağrılarından gelmeli ve son durum yeni bir gözlemle doğrulanmalıdır. İnsan yalnızca başlatabilir, acil durdurabilir ve güvenliği gözetebilir; yolun ortasında Agent'ın yerine eylemi tamamlayamaz. Ancak böyle olursa Deney 9-7 ile 9-9, "aynı donanım ve aynı görevde, modelin kapalı çevrimi insanınkine göre neyi eksik bırakıyor" sorusunu doğrudan karşılaştırabilir.
+
+Gerçek donanım deneyleri kalibrasyon hatalarını, kamera örtülmelerini ve tutucu başarısızlıklarını açığa çıkarır; ama çok sayıda arızayı güvenli ve denetimli biçimde yinelemeye elverişli değildir. Bundan sonraki benzetim deneyleri bu beş aracı ve görev durumunu birebir korur, yalnızca gerçek eyleyicileri hata enjekte edilebilen bir masa ortamıyla değiştirir; böylece açık çevrim yürütmenin, adım adım denetimin ve eylem kestiriminin ayrı ayrı ne kattığı ayrıştırılabilir.
+
+### VLA ile Kontrol
+
+VLA, Vision-Language-Action'ın kısaltmasıdır; yani "görme—dil—eylem modeli". Şu anki sahneyi ve tek bir beceri yönergesini alır, robotun bir sonraki adımda yürüteceği eylemi üretir:
+
+```text
+şu anki gözlem + beceri yönergesi → eylem
+```
+
+XLeRobot örneğinde üst düzey planlayıcı yalnızca `pick(red_cup)` sunar; bardağa hangi yönden yaklaşılacağına, tutucunun ne zaman kapanacağına ve kolun hangi yörüngeyle kaldırılacağına ise VLA ya da beceri politikası, o anki sahneye bakarak karar verir. Yürütme katmanı bu kısa hareketi bitirdiğinde masa yeniden görüntülenir ve ancak bardağın gerçekten kavrandığı doğrulandıktan sonra planlayıcının `place(red_cup, tray)` sunmasına izin verilir. Başka bir deyişle, araç çağrısı istenen durum değişimini tanımlar; VLA ise bu durum değişiminin sürekli eylemle nasıl gerçekleştirileceğini tanımlar.
+
+RT-2 ve OpenVLA sürekli eylemi ayrık token'lara böler ve tıpkı cümle üretir gibi teker teker çıkarır. π₀ öbür yolu temsil eder: doğrudan sürekli ve pürüzsüz eylem yörüngeleri üretir. İkisi arasında yalın bir üstünlük yoktur. Ayrık token'lar dil modelleriyle kolay eklemlenir; sürekli yörüngeler pürüzsüz hareketi anlatmaya daha uygundur. Asıl tercih, eylemin nasıl temsil edileceğidir; yalnızca modelin büyüklüğü değil.[^ch9-15]
+
+Büyük bir model genellikle saniyede yalnızca 1—10 kez çıkarım yapabilirken, geleneksel bir denetleyici saniyede onlarca ila binlerce kez güncellenebilir. Mühendislikte yaygın bir uygulama "eylem parçalama"dır (action chunking): model gelecekteki eylemlerin kısa bir dilimini tek seferde üretir, kontrol iş parçacığı bu dilimi yüksek frekansla yürütür ve model arkada bir sonraki dilimi hazırlar. Böylece çıkarım beklemesinin bir kısmı eylem yürütme süresinin içine gizlenir. Bedeli şudur: dilim uzadıkça hareket pürüzsüzleşir, ama model bu aralıkta daha az yeni sahne görür. XLeRobot bardağı almak için kolunu uzatırken bardak yolda çarpılıp kayarsa, eski görüntüden üretilmiş eylemleri yürütmeyi sürdürebilir. Dolayısıyla eylem parçalama, pürüzsüzlük ile tepki hızı arasında bir ödünleşimdir; bedelsiz bir hızlanma değil.
+
+Eylem parçalama genellikle dilimi sonuna kadar götürmek yerine "kestir—yürüt—kes" iskeletine ihtiyaç duyar:
 
 ```python
 chunk = vla(current_observation, skill)
@@ -427,17 +398,65 @@ for action in chunk:
         break
 ```
 
-### Dünya modelleri
+Kısa dilimler daha hızlı tepki verir ama model çağrılarını çoğaltır; uzun dilimler daha pürüzsüzdür ama bayatlamış gözlemleri kullanmaya yatkındır. Deney 9-10 bu tür ödünleşimleri benzetimde karşılaştırır; gerçek donanımın güvenlik sınırına dokunan ise Deney 9-9'dur.
 
-Bir dünya modeli eyleme dönüştürülebilir bir geçiş öğrenir:
+### VLA'nın Sınırları
+
+"Uzun ufuklu planlama + VLA" kullanılabilir bir temel tasarımdır, ama gözden kaçması kolay birkaç sorun bırakır.
+
+- **Eğitim verisi kısıtlıdır**: robot gösterimleri, internetteki metin ve görüntülerden çok daha azdır. Modelin "bardak" sözcüğünü görmüş olması, her malzemeden ve her sürtünme koşulundan bardak gördüğü anlamına gelmez.
+- **Taklidi öğrenir ama sonucu bilmez**: davranış klonlama çoğunlukla "gösterici bir sonraki adımda ne yaptı"yı öğrenir; modelden "bu eylem neye yol açar"ı yanıtlamasını açıkça istemez.
+- **Her robot farklıdır**: serbestlik dereceleri, koordinat sistemleri, tutucular ve eyleyici gecikmeleri farklıysa, aynı eylemin başka bir makineye olduğu gibi taşınacağının güvencesi yoktur.
+- **Gözlem bayatlayabilir**: eylem dilimi yürütülmeye başladıktan sonra nesne kaydırılırsa, örtülürse ya da devrilirse, model hâlâ önceki kareye dayanarak karar veriyordur.
+
+Dolayısıyla bir dil modelinin "bardak"ı biliyor olması, sürtünmenin, temasın, sıvı çalkalanmasının ya da bir güç kablosunun gelecekteki durumu nasıl değiştireceğini bildiği anlamına gelmez. VLA çoğunlukla "şimdi ne yapmalı"yı yanıtlar; "yaptıktan sonra ne olabilir"i yargılamak için başka tür bir model gerekir.
+
+### Dünya Modelleri
+
+Dünya modeli, eylem sonuçlarının kestiricisi olarak anlaşılabilir. Öğrendiği şey şudur: şu anki durumda belli bir eylem yapılırsa bir sonraki andaki durum nasıl değişebilir.
 
 ```text
-durum + aday eylem -> tahmin edilen gelecek durum -> eylemi seç ve doğrula
+şu anki durum + aday eylem
+    → sonraki durumu ya da geleceğin bir parçasını kestir
+    → adayların sonuçlarını karşılaştır
+    → eylemi seç, yeniden planla ya da güvenle dur
 ```
 
-Bu kavram yalnızca V-JEPA’dan ibaret değildir. Aile; latent predictive model’leri (V-JEPA 2[^ch9-16]), etkileşimli üretici modelleri (Genie 3[^ch9-21] ve Cosmos), World-Action Model’leri (GeniWorld ve Robust-WAM), etiketsiz videodan latent action öğrenimini (LAWM-3D) ve model tabanlı RL’yi (Dreamer ve MuZero) kapsar. Değeri; büyük ölçekte gözlemden öğrenmek, eylemleri gerçekleştirmeden önce karşı-olgusal sonuçlarını sınamak, ortak dinamikleri embodiment’e özgü kontrolden ayırmak ve tahmin gerçeklikten saptığında yeniden planlamaktır.
+Robotikte kullanılabilir bir dünya modeli en azından şu üç şeyi iyi yapmalıdır:
 
-2026 tarihli yeni preprint’ler ortak dinamik öncüllerini ve embodiment’e özgü head’leri (DyPES-VLA), dağılım dışı kapalı çevrim manipülasyon için görsel-eylem temsillerini (GeniWorld), insan videolarından 3B farkındalıklı latent action’ları (LAWM-3D), semantic foresight alignment’ı (Robust-WAM) ve eşzamansız gerçek zamanlı dağıtımı inceliyor. Bunlar umut verici araştırma sonuçlarıdır; genellemenin çözüldüğünü göstermezler.
+- şu anki durumu anlamak;
+- farklı eylemlerin getirebileceği sonuçları kestirmek;
+- bu kestirimi planlayıcıya ya da denetleyiciye vererek seçime yardım etmek.
+
+Yalnızca video betimleyebilen bir VLM ya da yalnızca görüntü üretebilen bir model, kendiliğinden güvenilir bir robot dünya modeline dönüşmez. Eylemin ne olduğunu bilmeli ve bu eylemin nesneler ile çevre üzerindeki etkisini kestirebilmelidir. V-JEPA 2 geleceği içsel durumda kestirme yolunu temsil eder; World-Action Model ise "eylem—gelecekteki gözlem" ilişkisini açıkça öğrenir. Bunlar VLA ile birlikte kullanılabilir, onun yerini almak zorunda değildir.[^ch9-16]
+
+Gerçek bir sistemde dünya modelinin genellikle üç kullanımı vardır:
+
+1. **Hareket etmeden önce**: kavrama, itme ya da bekleme gibi aday eylemleri karşılaştırmak ve riski daha az olanı öne almak;
+2. **Yürütme sırasında**: gerçek gözlemi kestirimle karşılaştırmak, sapma bulunduğunda eylemi kısaltmak, durmak ya da yeniden planlamak;
+3. **Eğitim sırasında**: videodan, benzetim verisinden ve başarısız yörüngelerden durum değişimlerini öğrenmek, böylece gerçek makinedeki deneme yanılmayı azaltmak.
+
+XLeRobot'un masa görevine dönelim. Sarı kâğıt kısmen kırmızı bardağın altında kalıyorsa sistem aday becerileri karşılaştırabilir: "önce kâğıdı al", "önce bardağı kaydır" ya da "başka yönden kavra". Dünya modelinin gerçekçi robot videosu üretmesi gerekmez: hangi aday eylemin kâğıdın alınabileceği bir duruma daha çok yol açtığını ve hangisinin bardağı devirebileceğini kestirebilmesi, planlayıcının seçenekleri sıralamasına yardım etmeye yeter. Eylem yürütüldükten sonra gerçek kamera gözlemi hâlâ nihai olgudur: kestirim yalnızca seçime yardım eder, kabul denetiminin yerini almaz.
+
+Dünya modelinin verdiği şey kesin yanıtlar değil, "böyle yaparsam ne olabilir" konusunda karşılaştırılabilir kestirimlerdir. Ne kadar uzağa kestirilirse hata da o kadar büyüme eğilimindedir ve gerçekçi görünen bir gelecek sahnesi, gerçek temas ve sürtünme yasalarına uymak zorunda değildir. Bu yüzden gerçek bir sistem hâlâ kısa vadeli kestirime, gerçek zamanlı gözleme, belirsizlik kestirimine ve bağımsız bir donanım güvenlik denetleyicisine ihtiyaç duyar. Üretici dünya modelleri etkileşimli benzetim ve görselleştirme için kullanılabilir; ancak "video üretebilmek" ile "robotun eylemlerine yön verebilmek" birbirine karıştırılmamalıdır.[^ch9-21]
+
+> **Deney 9-10 ★★: Benzetimde üç özerk masa toplama çevriminin karşılaştırılması**
+>
+> Deney 9-9'daki görevi, hedef durumları, başarı koşullarını ve beş aracı olduğu gibi masa benzetimine taşıyın; yalnızca gerçek XLeRobot'un eyleyicilerini, kavrama sırasında ara sıra toparlanabilir geçici bir başarısızlık üreten, denetlenebilir bir benzetim yürütücüsüyle değiştirin. Böylece problem değişmeden üç strateji karşılaştırılabilir.
+>
+> **Açık çevrim yürütme** eylem dizisinin tamamını tek seferde üretir ve yolda yeniden gözlem yapmaz. **Adım adım denetim** her `pick` ve `place` sonrası durumu yeniden okur, başarısızlıkta yalnızca o anki beceriyi yineler. **Kestirimli yürütme** buna kısa vadeli bir dünya modeli ekler; aday becerilerin beklenen sonuçlarını karşılaştırdıktan sonra bir sonraki hamleyi seçer. Deney; görev başarı oranını, araç çağrısı ek yükünü ve hatadan toparlanma yetisini karşılaştırır ve son başarıların tümünün `verify_state`'ten gelen yeni bir gözlemle doğrulanıp doğrulanmadığını denetler.
+>
+> Bu deneyin amacı küçük bir benzetim dünya modelinin gerçek makinenin fizik modeline denk olduğunu göstermek değil, daha temel bir ilişkiyi sınamaktır: açık çevrim planlama tek bir yerel hatayı görevin sonuna kadar sürükler; adım adım denetim toparlanmaya izin verir; eylem kestirimi ise ayrıca aday becerileri sıralamaya yardım eder. İşin gerçekten bitip bitmediğine hâlâ çevreden gelen geri besleme karar verir.
+
+### Benzetim Ortamından Gerçek Robota
+
+Deney 9-10'un benzetimde kararlı olması, Deney 9-9'daki gerçek XLeRobot'un da aynı biçimde başarılı olacağı anlamına gelmez. Benzetimden gerçek makineye geçmek bir denetleyici daha değiştirmek değil, iki ortam arasındaki farkı üstlenmektir. Eğitim için uzaktan kumanda verisi, video verisi ve benzetim etkileşim verisi kullanılabilir; ama gerçekten sahaya çıkıldığında aynı kırmızı bardak, aynı sarı kâğıt, aynı tepsi ve aynı çöp kutusu farklı arka plan, aydınlatma, kamera konumu ve örtülme ilişkileri altında görünür; kol ise ayrıca başka bir sürtünmeyle, başka bir algılayıcı gürültüsüyle ve başka bir eyleyici gecikmesiyle karşılaşır. Bu farklar yeterince büyükse, benzetimde öğrenilen hareketler gerçeklikte işe yaramayabilir.
+
+> **Deney 9-11 ★★★: Aynı masa görevinde RGB ortamlar arası sınama**
+>
+> Benzetim ortamında "nesneyi karşılık gelen hedefe taşıma" temel problemini kullanmayı sürdürün ve her örneği masa toplama sürecindeki yerel bir karar olarak görün: RGB görüntüden, nesneye hangi yönden yaklaşılması gerektiğine ya da artık kavranıp kavranamayacağına karar vermek. Yapısı aynı olan dört görsel politika eğitin: biri yalnızca sabit sahneleri görsün; biri arka planı değiştirsin; biri nesne görünümünü değiştirsin; sonuncusu ise arka planı, görünümü, aydınlatmayı ve gürültüyü aynı anda değiştirsin.
+>
+> Tüm politikaları hem özgün ortamda hem de değiştirilmiş yeni ortamda sınayın ve görsel koşullar değişmeden önceki ve sonraki eylem kararı doğruluğunu karşılaştırın. Bu deneyin yanıtlamaya çalıştığı soru "benzetim artık gerçek XLeRobot ile aynı mı" değil, daha dar bir sorudur: eğitim sırasında sahne değişkenliğinin aralığını bilinçli olarak genişletmek, aynı bardak—tepsi ve kâğıt—çöp kutusu görevinin yeni bir kamera görüntüsüne uyum sağlamasına yardım eder mi? Sonuç iyileşse bile, gerçek makinede sahaya çıkmak yine de gerçek kamera kalibrasyonunu, eyleyici sınamalarını ve eksiksiz bir güvenlik kapalı çevrimini gerektirir.[^ch9-6]
 
 ## Bölüm Özeti
 
@@ -448,10 +467,14 @@ Bu kavram yalnızca V-JEPA’dan ibaret değildir. Aile; latent predictive model
 1. ★★ Sesli Agent'ların uçtan uca modeli ASR-LLM-TTS zincirini tek bir modelde birleştirir; gecikmeyi düşürür ama modülerliği kaybeder. Uçtan uca model bir halkada (örneğin konuşma tanımada) hata yaparsa, hata ayıklamak ve düzeltmek seri boru hattına göre çok daha zordur. Uçtan uca bir sesli Agent'ın gözlemlenebilirlik (observability) sistemini nasıl tasarlardınız?
 2. ★ Step-Audio R1, MPS çift beyin mimarisiyle "düşünürken konuşma"yı gerçekleştiriyor. Ama insanlar "düşünürken konuşurken" sık sık iyi düşünülmemiş şeyler söyler, kendini düzeltir ya da dolgu sözcükleri kullanır. Agent'ın "düşünürken konuşması" insandaki bu özellikleri taklit etmeli mi?
 3. ★★ SoM (Set-of-Mark) ve onun yapısal türevi (DOM öğe indeksleme), Computer Use'un görsel konumlandırmasını açık uçlu koordinat tahmininden kapalı uçlu ID seçimine dönüştürür; ama her ikisi de önce arayüz öğelerinin tespit edilip işaretlenmesini gerektirir — ister segmentasyon modeliyle ister DOM'la olsun. Arayüzde standart dışı kontroller veya dinamik olarak değişen öğeler varsa, işaretleme eksik ya da hatalı olabilir. Bu durumda koordinat tahminine geri dönmeli mi?
-4. ★★ XLeRobot gibi bin dolar seviyesindeki robot platformları teleoperasyon verisi toplamayı ucuzlattı. Ama teleoperasyon verisinin kalitesi büyük ölçüde operatörün becerisine bağlıdır. Deneyimsiz bir operatörün sağladığı veri, VLA modelinin eğitimini nasıl etkiler? Veri toplama aşamasında düşük kaliteli veriyi otomatik olarak nasıl elerdiniz?
+4. ★★ XLeRobot gibi birkaç yüz dolar seviyesindeki robot platformları teleoperasyon verisi toplamayı ucuzlattı. Ama teleoperasyon verisinin kalitesi büyük ölçüde operatörün becerisine bağlıdır. Deneyimsiz bir operatörün sağladığı veri, VLA modelinin eğitimini nasıl etkiler? Veri toplama aşamasında düşük kaliteli veriyi otomatik olarak nasıl elerdiniz?
 5. ★★★ Bu bölüm ses, Computer Use ve robotik olmak üzere üç etkileşim biçimini kapsadı. Bu üç biçimin ortak eğilimi, seri boru hattından uçtan uca modellere doğru evrilmek. Bu eğilim sürerse, beş yıl sonraki Agent etkileşim katmanı nasıl görünecek?
 6. ★★ DOM/Accessibility Tree öğe indekslemesi standart Web uygulamalarında belirgin sonuç veriyor, ama gitgide daha çok yazılım arayüzü (Canvas/WebGL render'ı, platformlar arası kendi çizen kontroller) erişilebilir yapısal bilgi sunmuyor ve geriye yalnızca görsel işaretleme ya da koordinat tahmini kalıyor. Sizce Computer Use saf görsel yola mı oynamalı, yoksa yapısal ve görsel iki yolu birden mi sürdürmeli? İki yolu birden sürdürmenin maliyeti ve getirisi nedir?
 7. ★★ VLA modelleri action chunking (eylem parçalama) kullanıyor — metinde anlatıldığı gibi, π₀'ın tipik yapılandırması 50 Hz frekansta 25-50 gelecek eylemi bir seferde üretmektir — ve böylece çıkarım gecikmesini yürütme süresinin içine saklıyor. Ama yürütme sırasında ortam ani biçimde değişirse (örneğin nesne yerinden alınırsa), önceden üretilmiş eylem dizisi geçersizleşir. Action chunking'in verimlilik avantajı ile ortam değişimlerine tepki hızı arasında dengeyi nasıl kurarsınız?
 8. ★★★ Bu bölümdeki üç senaryonun (ses, Computer Use, robotik) hepsi "algılama-düşünme-eylem" döngüsünün gecikme sorunuyla yüzleşiyor ve hepsi hızlı-yavaş düşünmenin paralelleştirilmesi yönünde evriliyor. Ses senaryosunda bu, "yanlış söylediysen sonra düzelt" biçiminde; Computer Use senaryosunda "önce tıkla sonra bak" biçiminde; robotik senaryosunda ise "bir adım at sonra bak" biçiminde ortaya çıkıyor. Hızlı düşünmeye dayanan bu eylemlerin geri döndürülemez sonuçlara yol açmamasını nasıl garanti edersiniz?
 [^ch9-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
 [^ch9-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。
+[^ch9-1]: XLeRobot, “Teleop belgeleri”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
+[^ch9-2]: Google DeepMind, “Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, “LLM Agent ile kontrol”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. XLeRobot'un üst kaynak örneği, modelin araç çağrılarıyla nasıl düzenlendiğini gösterir; bu bölüm aynı düzenleme ilkesini korur, ancak eylem araçlarını masa üzerinde kalibre edilmiş kavrama, yerleştirme, denetleme ve durdurma ilkelleriyle sınırlar.
+[^ch9-6]: LeRobot, “Sim2Real öğreticisi”. https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
+[^ch9-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246

@@ -264,6 +264,24 @@ Một khám phá phản trực giác là điều thực sự quan trọng không
 
 [^ch9-9]: Ba thành phần của khung hình chính, phiên âm theo yêu cầu và khung tường thuật thành văn bản cố định. Cơ chế hoàn chỉnh và sự cắt bỏ theo từng mô hình được tìm thấy ở Li, Bojie và Noah Shi. *Agent-Giao diện quan sát trên máy tính kích hoạt Computer Use động.* arXiv:2606.29472, 2026.
 
+### Mô hình thế giới cho Computer Use
+
+Giao diện quan sát ở phần trước giải quyết câu hỏi "chuyện gì đã xảy ra ở khoảng giữa": nhờ khung hình chính, bản chép lời và văn bản bền, Agent không còn chỉ nhìn thấy hai ảnh chụp màn hình cách nhau rất xa. Nhưng giao diện quan sát không xóa được độ trễ lập kế hoạch. Agent vẫn đang chạy vòng lặp tuần tự "chụp màn hình—suy nghĩ—bấm chuột", cứ thực thi xong một hành động là lại quan sát lại và nghĩ nước tiếp theo. Nghiên cứu hiệu suất **OSWorld-Human** cho thấy dù nhiệm vụ rốt cuộc có thành công, số bước thao tác và thời gian chờ của Agent vẫn nhiều hơn con người rõ rệt; đạt độ chính xác ngang con người không có nghĩa là đã đủ dùng.
+
+Khi thao tác máy tính, con người không đợi bấm xong mới bắt đầu nghĩ bước kế tiếp, mà dự đoán trước hệ quả của hành động: nếu thay đổi thực tế đúng như dự kiến thì cứ theo kế hoạch cũ mà làm tiếp; chỉ khi phát hiện trạng thái trang lệch khỏi dự kiến mới dừng lại để quan sát và lập kế hoạch lại. Mô hình thế giới cho phép Agent dự đoán màn hình làm việc kế tiếp có thể biến thành gì trước khi ra tay, nhờ đó hiện thực hóa cơ chế "thực thi suy đoán" giống con người và nâng hiệu suất lên đáng kể.
+
+Trạng thái màn hình làm việc không chỉ là một ảnh điểm ảnh, mà còn gồm cửa sổ, tiêu điểm, vị trí cuộn, nội dung ô nhập, trạng thái tải, quyền hạn và phản hồi mạng; còn hành động thì gồm bấm chuột, gõ phím, cuộn, kéo thả và chờ. Một mô hình thế giới dùng được cho Computer Use ít nhất phải mã hóa được trạng thái hiện tại, dự đoán được thay đổi trạng thái mà hành động ứng viên gây ra, và chuyển dự đoán đó cho bộ lập kế hoạch để quyết định nước tiếp theo:
+
+```text
+trạng thái màn hình làm việc + click/type/scroll/wait ──> biểu diễn của trạng thái kế tiếp
+```
+
+Nhờ vậy Agent có thể so sánh hệ quả của các hành động ứng viên trước khi thật sự bấm chuột, chuẩn bị nước tiếp theo trong lúc trang đang tải, và dựa vào chênh lệch trạng thái mà khôi phục khi một cửa sổ bật lên chỉ lóe qua. Chẳng hạn nếu nhiệm vụ là "tạo tệp Python mới trong VS Code và viết hello world", mô hình có thể dự đoán trước trạng thái then chốt của cây tệp và trình soạn thảo sau khi thành công, rồi mới chọn các hành động bấm, gõ và lưu; còn nếu nhiệm vụ là xóa tệp, nó có thể dự đoán trước trong một màn hình ảo cách ly xem có hiện ra hộp xác nhận không thể hoàn tác hay không, và khi cần thì hỏi người dùng để xác nhận. Điều quan trọng ở đây không phải là bắt mô hình sinh ra một ảnh chụp màn hình tương lai trông như thật, mà là dự đoán những chênh lệch trạng thái kiểm tra được mà việc hoàn thành nhiệm vụ đòi hỏi.
+
+Tháng 7 năm 2026, **Photon-1** do Induction Labs công bố đã cho thấy một cách hiện thực hóa hướng đi này: chỉ với 30.000 giờ GPU H200 mà hoàn tất việc tiền huấn luyện một mô hình thế giới cho computer use. Nó nén mỗi khung hình thành các token tiềm ẩn rời rạc và dự đoán tự hồi quy biểu diễn của trạng thái kế tiếp sau một hành động, thay vì sinh ảnh chụp màn hình từng điểm ảnh ở giai đoạn tiền huấn luyện; bộ sinh ảnh gắn kèm chỉ dùng để trực quan hóa các biểu diễn tiềm ẩn chứ không phải thành phần bắt buộc khi suy luận. Cho trước một ảnh chụp màn hình mầm và các hành động tiếp theo, mô hình có thể "tưởng tượng" liên tục các trạng thái màn hình làm việc, rồi qua huấn luyện trực tuyến trên máy ảo mà học được cách xuất ra hành động computer-use.[^ch9-20]
+
+[^ch9-20]: David Li and Jonathan Li, Induction Labs, “Scaling Video Pretraining with Imagination Models,” 2026-07-23. https://www.inductionlabs.com/news/scaling-video-pretraining. Các tham số, quy mô dữ liệu, benchmark nội bộ và so sánh chi phí của Photon-1 nêu trong bài đều là kết quả do chính công ty công bố.
+
 ### Di động: Rào cản sinh thái còn khó hơn công nghệ
 
 Computer Use cũng đang mở rộng sang thiết bị đầu cuối di động. Thực sự có sự khác biệt về mặt kỹ thuật giữa thiết bị đầu cuối di động và máy tính để bàn: không gian hành động thường không còn là "tọa độ chuột + bàn phím" mà truy cập vào dịch vụ trợ năng API của hệ thống (chẳng hạn như AccessibilityService của Android) để đọc các thành phần giao diện, thực hiện nhấp chuột và nhập văn bản; phương thức tương tác cũng thay đổi từ con trỏ chuột sang cử chỉ chạm và ngữ nghĩa của tọa độ thay đổi tương ứng - giống nhau (x, y) Cho dù đó là nhấp ngón tay, nhấn lâu hay điểm bắt đầu của cử chỉ trượt đều yêu cầu các loại cử chỉ bổ sung để xác định. Các điểm chuẩn dành cho thiết bị di động như AndroidWorld được giới thiệu trong Chương 6 được sử dụng để đánh giá khả năng của Agent trong việc hoàn thành các tác vụ Ứng dụng thực trong không gian hành động như vậy.
@@ -274,93 +292,100 @@ Nhưng điều thực sự cản trở thiết bị đầu cuối di động th�
 
 Điều này có nghĩa là Computer Use không chỉ phải đối mặt với sự đối đầu về mặt kỹ thuật như CAPTCHA (mã xác minh) mà còn phải đối mặt với xung đột lợi ích về mặt cấu trúc. Khó có thể giải quyết mâu thuẫn này trong thời gian ngắn và việc triển khai Computer Use trong các tình huống tiêu dùng phải đối mặt với nhiều thách thức khó khăn hơn so với các vấn đề kỹ thuật thuần túy.
 
-### Thời gian thực: Một thách thức cốt lõi vẫn chưa được giải quyết
+## Vận hành robot: dọn bàn làm việc với XLeRobot
 
-**OSWorld**(phương pháp đánh giá của nó được trình bày chi tiết trong Chương 6) là điểm chuẩn đánh giá Computer Use được sử dụng rộng rãi để kiểm tra khả năng của Agent trong việc hoàn thành các tác vụ ứng dụng chéo trong môi trường Ubuntu/Windows/macOS thực. Tỷ lệ thành công của các mô hình chung ban đầu trên tiêu chuẩn này chỉ khoảng 20%. Các mô hình đặc biệt tiếp theo và các mô hình chung mạnh mẽ hơn tiếp tục đẩy tỷ lệ chính xác lên cao hơn và tính đến thời điểm viết bài, nó đã dần tiệm cận đến trình độ của con người. Nhưng độ chính xác còn lâu mới kết thúc - nút thắt thực sự đã chuyển từ “liệu nó có thể được thực hiện đúng không” sang “liệu nó có thể được thực hiện nhanh chóng” hay không.
+> **Cách đọc phần này**: từ đầu đến cuối chúng ta chỉ dùng một nhiệm vụ——"đặt cốc đỏ vào khay, bỏ tờ giấy vàng vào thùng rác, cuối cùng quan sát thêm một lần để xác nhận trạng thái mặt bàn". Thử nghiệm 9-7 và 9-9 chạy trên XLeRobot thật, cần cánh tay robot, hiệu chuẩn, nút dừng khẩn cấp và người giám sát tại chỗ. Thử nghiệm 9-8, 9-10 và 9-11 là các bản đối ứng chạy trên GPU cục bộ. Kết quả trên máy thật và trong mô phỏng được báo cáo tách bạch, nhưng mục tiêu nhiệm vụ, ý nghĩa hành động và điều kiện thành công thì giữ nguyên như nhau.
 
-**OSWorld-Human** Nghiên cứu về hiệu quả đã tiết lộ một sự thật đau lòng: Ngay cả khi nhiệm vụ cuối cùng thành công, Agent vẫn cần nhiều bước hơn đáng kể so với con người để hoàn thành cùng một nhiệm vụ và độ trễ lý do ở mỗi bước sẽ tiếp tục tăng lên khi nhiệm vụ tiến triển - ngữ cảnh càng dài, quá trình ra quyết định của mô hình càng chậm và các bước sau thường mất nhiều thời gian hơn so với các bước đầu. Việc điều chỉnh định dạng tài liệu mà con người có thể hoàn thành trong hàng chục giây có thể khiến Agent mất vài phút để hoàn thành. **Độ chính xác ở cấp độ con người không bằng tính thực tế—hiệu quả là điểm nghẽn thực sự.**
+Vận hành robot khó hơn nhiều so với "nhìn ảnh rồi trả lời câu hỏi". Mô hình không chỉ phải hiểu khung cảnh mà còn phải hành động liên tục trong thế giới thực, và mỗi hành động lại làm thay đổi tình huống ở khoảnh khắc kế tiếp. XLeRobot khiến khác biệt ấy trở nên rất cụ thể. Cùng một cánh tay, người ta có thể điều khiển từ xa bằng bàn phím, tay cầm chơi game hay thiết bị VR; cũng có thể giao quan sát từ camera cùng một nhóm công cụ hành động hạn chế cho Agent để nó tự gọi. Phần cứng không đổi, nhiệm vụ cũng không đổi; thứ duy nhất đổi là ai đang vận hành——ở trường hợp trước, con người liên tục quan sát và sửa sai; ở trường hợp sau, mô hình và hệ điều khiển phải tự làm trọn vẹn công việc đó.
 
-Nguyên nhân cốt lõi của vấn đề hiệu quả cũng tương tự như cảnh lồng tiếng: trong chu trình "chụp ảnh màn hình-nghĩ-nhấp chuột" nối tiếp, ngay cả khi mỗi liên kết được tối ưu hóa đến mức tối đa, độ trễ tích lũy từng bước vẫn không thể chấp nhận được. Vấn đề sâu xa hơn là: Computer Use hiện tại không hề "suy nghĩ trước" chút nào. Nếu Agent có thể dự đoán điều cần làm tiếp theo trong khi thực hiện hành động hiện tại - ví dụ: suy nghĩ về việc cần làm tiếp theo trong khi chờ tải trang - thì thời gian suy nghĩ và thực hiện có thể trùng lặp, giúp giảm đáng kể tổng độ trễ (điều này giống hệt với sự hấp dẫn của "suy nghĩ và nói" trong cảnh giọng nói trước đó trong chương này và Agent không đồng bộ "suy nghĩ liên tục" trong Chương 4, nhưng ở đây nó được thay thế bằng "suy nghĩ và vận hành").
+Phần này xâu chuỗi năm thử nghiệm bằng việc "dọn bàn làm việc". Trước hết, con người điều khiển từ xa chiếc XLeRobot thật, để đo xem phần cứng này làm được đến đâu dưới tay một người vận hành đủ giỏi. Kế đó, trong bộ mô phỏng, ta thiết lập giới hạn trên lý tưởng của việc điều khiển cho cùng nhiệm vụ ấy. Tiếp theo, để Agent tự chủ điều khiển chiếc XLeRobot thật, nhằm quan sát xem tri giác, lập kế hoạch và khả năng phục hồi sau thất bại quyết định kết quả ra sao. Sau đó, đưa đúng bản giao kèo công cụ ấy vào bộ mô phỏng và so sánh một lượt ba chiến lược: thực thi vòng hở, kiểm tra theo từng bước, và mô hình thế giới. Cuối cùng, ta thay đổi nền, hình dáng vật thể, ánh sáng và nhiễu thị giác để xem chính sách thị giác học trong mô phỏng có thích nghi được với môi trường mới hay không.
 
-Khác với trường giọng nói, bản chất thời gian thực của Computer Use - làm cho chu kỳ "nhấn ảnh chụp màn hình-nghĩ-nhấn" nhanh hơn - hiện tại chưa có giải pháp mang tính hệ thống nào và nó vẫn bị mắc kẹt trong chu kỳ rời rạc của ảnh chụp màn hình theo từng khung hình. Nhưng có một cách để vượt qua nó, đó là sử dụng khả năng tách tốc độ chậm xuất hiện nhiều lần trong chương này: Vì rất khó để làm cho một máy tính chậm vận hành Agent nhanh hơn, nên đừng để người dùng chờ đợi. Chia "nói" và "vận hành máy tính" thành hai bộ mô hình nhanh và chậm để chạy đồng thời [^ch9-10] - một mô hình nhỏ (nhanh) chịu trách nhiệm đối thoại bằng giọng nói theo thời gian thực và một VLM tiên tiến (chậm) hoạt động từng bước trong trình duyệt. Cả hai chỉ giao tiếp bằng một "hợp đồng văn bản thuần túy" tối giản: Agent chậm Mỗi thao tác đều đi kèm với một bản tóm tắt trạng thái cập nhật luân phiên ("Điền vào biểu mẫu và ngày sinh của bạn cũng được yêu cầu"), Agent nhanh sẽ phản hồi cho người dùng theo thời gian thực và truyền tải thông tin mới bằng lời nói do người dùng cung cấp tới Agent chậm và **Agent nhanh thì không bao giờ được phép nói "xong"** trước khi hoàn tất xác nhận tóm tắt trạng thái **. Đây chính xác là tình huống “nói chuyện điện thoại và để máy tính tự vận hành”. Trong thử nghiệm, bộ tách rời này giúp phản hồi bằng giọng nói nhanh hơn khoảng 15 lần so với "một mô hình nói trong khi vận hành" (độ trễ trung bình là 0,58 giây so với 8,64 giây), trong khi tỷ lệ thành công của nhiệm vụ không giảm; Một khi kênh văn bản giữa tốc độ và độ chậm bị xóa, tỷ lệ thành công ngay lập tức giảm xuống 0 - vì thông tin chính do người dùng cung cấp bằng lời nói không thể truyền tới trình duyệt được nữa. Đây là ý tưởng tương tự như Cầu tiềm ẩn trước đó và "suy nghĩ và nói" trong cảnh thoại: khi một liên kết chậm tự nhiên, hãy để một liên kết nhanh khác lấp đầy sự chờ đợi của người dùng - nhưng "hợp đồng văn bản thuần túy" đó về cơ bản là thanh trạng thái Agent từ Chương 2 của cuốn sách này đến nay. Computer Use Bản thân việc tăng tốc vòng lặp có thể vẫn là hướng nghiên cứu quan trọng tiếp theo, nhưng "sử dụng khả năng tách rời nhanh và chậm để ẩn 'chậm'" đã là một câu trả lời có sẵn.
+Nút thắt ở đây thường không nằm ở việc làm thêm một bộ chuẩn hỏi đáp tĩnh nữa, mà ở chỗ giữ cho mô hình khép kín được vòng điều khiển với băng thông tri giác và điều khiển hạn hẹp. Một hệ robot dùng được ít nhất phải trả lời bốn câu hỏi sau:
 
-[^ch9-10]: Bạn có thể tìm thấy thiết kế hoàn chỉnh về khả năng tách tốc độ hoạt động bằng giọng nói và "hợp đồng văn bản thuần túy" ở Li, Bojie và Noah Shi. *Nói chuyện trong khi diễn xuất: Real-Time Giọng nói chậm Computer-Use Agents.* 2026 (sẽ được xuất bản).
+1. Con người muốn hoàn thành nhiệm vụ gì?
+2. Nhiệm vụ con nào sẽ làm tiếp theo?
+3. Kỹ năng hiện tại sinh ra hành động cụ thể nào?
+4. Sau khi thực thi hành động, thực tế có còn khớp với kế hoạch ban đầu không?
 
-## Vận hành robot: từ điều khiển thời gian thực đến huấn luyện và khái quát hóa
+Phần này đặt bốn câu hỏi ấy vào cùng một vòng điều khiển của XLeRobot, và chỉ ra bốn kỹ thuật lần lượt gánh phần nào: lập kế hoạch dài hạn quyết định xử lý cốc trước hay giấy trước; VLA hoặc các nguyên thủy hành động lo việc gắp và đặt; mô hình thế giới ước lượng hệ quả của một hành động; còn bước chuyển từ mô phỏng sang thực tế gánh lấy khác biệt giữa video huấn luyện với camera và cơ cấu chấp hành thật. Dù mô hình cấp cao đã có đủ tri thức và năng lực lập kế hoạch, chỉ cần thiếu một mắt xích trong vòng phản hồi này là hệ thống vẫn có thể không hoàn thành nổi nhiệm vụ.
 
-> **Năm thí nghiệm trong phần này dùng cùng một nhiệm vụ: đặt chiếc cốc đỏ vào khay, đặt mảnh giấy vàng vào thùng rác, rồi quan sát lại và xác nhận trạng thái mặt bàn. Robot thật và mô phỏng được báo cáo riêng, nhưng ngữ nghĩa hành động và điều kiện thành công là như nhau.**
+### Phân công giữa phần cứng và thuật toán
+
+Câu hỏi đầu tiên mà XLeRobot thích hợp trả lời nhất là: khi việc tự chủ dọn bàn thất bại, là cánh tay không làm nổi, hay thuật toán không biết dùng cánh tay? Ở đây có một sự thật không nên nói giảm đi: **ngay cả một cánh tay chỉ vài trăm đô la như XLeRobot, nếu điều khiển từ xa, cũng đã có thể hoàn thành một nhiệm vụ trên bàn gồm nhiều bước nối tiếp như trong phần này**——con người nhìn video camera, gắp cốc đỏ bỏ vào khay, bỏ tờ giấy vàng vào thùng rác, rồi kiểm tra lại trạng thái lần cuối. Kết quả này không chỉ có nghĩa "phần cứng vừa đủ dùng", mà là một bằng chứng chẩn đoán rõ ràng: **xét riêng nhiệm vụ này, nút thắt nằm ở thuật toán chứ không nằm ở bản thân phần cứng.**
+
+Cách chẩn đoán rất thẳng thắn. Giữ nguyên camera, cánh tay, kẹp, cách bày biện mặt bàn và điều kiện thành công, trước hết để con người đảm nhận vòng điều khiển. Con người liên tục hiệu chỉnh ước lượng vị trí vật thể, lựa chọn hành động và thời điểm ra tay, đồng thời biết xử lý khi gắp hụt. Khoảng cách giữa hệ tự chủ và con người lộ ra chính ở năng lực vòng kín ấy. Dĩ nhiên tầm với của kết luận này là nhiệm vụ trên bàn ở phần này: nó cho thấy phần cứng đã vượt ngưỡng tải trọng, độ chính xác và không gian làm việc mà nhiệm vụ này cần, chứ không có nghĩa một cánh tay vài trăm đô la kham nổi mọi môi trường mở hay những thao tác khó hơn.
+
+XLeRobot hỗ trợ nhiều lối vào điều khiển từ xa: bàn phím, tay cầm Xbox, Joy-Con của Switch và thiết bị VR. Người vận hành làm một cách tự nhiên nhiều việc mà thuật toán buộc phải cài đặt tường minh: giảm tốc khi kẹp lại gần cốc, sửa điểm gắp khi cốc trượt, quan sát lại khi không kẹp được tờ giấy trong một lần, và xác nhận kết quả khi vật thể đã vào vùng đích. Vì vậy điều khiển từ xa không chỉ là cách thu thập dữ liệu trình diễn, mà còn là một thử nghiệm chẩn đoán "giữ nguyên phần cứng, chỉ thay người vận hành".[^ch9-1]
+
+> **Thử nghiệm 9-7 ★: Điều khiển từ xa XLeRobot thật để dọn bàn**
 >
-Lời nói Agent phải đối mặt với độ trễ trong phương thức thính giác, Computer Use phải đối mặt với độ trễ trong phương thức hình ảnh, đồng thời độ trễ và các thách thức đa phương thức càng được khuếch đại hơn khi Agent cần điều khiển rô-bốt trong thế giới vật lý—hậu quả của các hành động là không thể khắc phục được và một va chạm duy nhất có thể làm hỏng vật thể hoặc chính rô-bốt. Phần này trước tiên xem xét cách robot sử dụng kiến trúc hai lớp và phân đoạn hành động để ngăn chặn các vấn đề kiểm soát thời gian thực, sau đó chuyển sang phần cứng hơn hiện tại của nó - đào tạo và khái quát hóa: dữ liệu đến từ đâu và cách mô hình được chuyển qua các nhiệm vụ và nền tảng.
-
-### Phần cứng không phải là nút thắt cổ chai, chính là thuật toán
-
-Robot chưa được sử dụng rộng rãi trong các kịch bản mở chung. Nút cổ chai nằm ở phần cứng hay thuật toán? Dự án XLeRobot cung cấp bằng chứng phản bác mạnh mẽ: một robot có bánh xe hai tay có giá dưới 1.000 USD có thể hoàn thành một cách suôn sẻ một số lượng lớn công việc gia đình khi con người điều khiển nó từ xa thông qua tai nghe VR (điều khiển từ xa). Những công việc gia đình phức tạp hơn đòi hỏi đôi tay khéo léo có thể được robot của Yushu hoàn thành một cách suôn sẻ dưới sự điều khiển từ xa của con người. Độ trễ vận hành từ xa xấp xỉ 100-200ms, gần với yêu cầu đáp ứng của tương tác vật lý. Độ phân giải của cảm biến, độ chính xác của bộ truyền động và tần số điều khiển (số lần robot cập nhật hướng dẫn hành động trong một giây, tần số càng thấp, chuyển động càng kém mượt mà và càng dễ bị giật hoặc lệch khỏi trajectory mục tiêu) là đủ để hỗ trợ các tác vụ thực tế trên nền tảng chi phí thấp hiện nay.
-
-Cần phải vạch ra ranh giới rõ ràng cho khẳng định này: Bằng chứng phản bác về hoạt động từ xa thực sự có thể minh họa là “phần cứng giá rẻ hiện có cộng với trí thông minh của con người là đủ để hoàn thành các nhiệm vụ vận hành tại nhà như phản hồi trực quan”. Điều đó không có nghĩa là phần cứng vượt qua bài kiểm tra ở mọi khía cạnh - việc thiếu cảm biến xúc giác, độ tin cậy và giá thành của những bàn tay khéo léo vẫn là những thiếu sót được thừa nhận của phần cứng; một khi nhiệm vụ phụ thuộc nhiều vào khả năng kiểm soát lực tốt và phản hồi xúc giác, phần cứng có thể không còn là trở ngại. Do đó, "phần cứng không phải là nút thắt cổ chai" sau đây chỉ giới hạn ở các nhiệm vụ được thảo luận trong phần này.
-
-Đối với loại nhiệm vụ này, khoảng cách thực sự nằm ở cấp độ thuật toán, điều này sẽ được thảo luận trong hai phần phụ sau.
-
-> **Thử nghiệm 9-7 ★: Vận hành từ xa XLeRobot để dọn mặt bàn**
+> Đặt vào vùng làm việc của một chiếc XLeRobot thật: cốc đỏ, khay, tờ giấy vàng vo tròn và thùng rác. Người vận hành thực hiện nhiệm vụ cố định qua một trong các lối điều khiển từ xa đã hiệu chuẩn: "đặt cốc đỏ vào khay, bỏ tờ giấy vàng vào thùng rác, cuối cùng quan sát thêm một lần để xác nhận trạng thái mặt bàn". Lặp ít nhất vài vòng, ghi lại video camera, đầu vào của người vận hành, trạng thái cánh tay, thời lượng hành động, các lần gắp hụt, số lần thử lại và trạng thái cuối cùng.
 >
-> **Mục tiêu:** Điều khiển từ xa một XLeRobot thật để hoàn thành cùng nhiệm vụ nhiều bước và kiểm tra trạng thái mặt bàn.
+> Đừng hạ tiêu chí nghiệm thu xuống thành "cuối cùng mặt bàn trông sạch sẽ". Cốc đỏ phải nằm trong khay và tờ giấy vàng phải nằm trong thùng rác, cánh tay phải trở về tư thế an toàn, và suốt quá trình không được có va chạm, ra khỏi vùng làm việc, hay việc con người ra tay làm thay mà không kiểm chứng.
+
+Điều khiển từ xa trên máy thật là cách thuyết phục nhất để cho thấy giới hạn trên của nhiệm vụ, nhưng lại không tiện để thay đổi hàng loạt số lượng và vị trí vật thể. Để có một đối chứng lặp lại được và tính được thống kê, tiếp theo ta chuyển chính bài toán "đưa vật thể về đúng chỗ" ấy sang một bộ mô phỏng mặt bàn hai chiều, và dùng bộ điều khiển lý tưởng thay cho một người vận hành giỏi không hề nhìn nhầm cũng không chọn sai hành động.
+
+> **Thử nghiệm 9-8 ★: Đo giới hạn trên lý tưởng của việc điều khiển cùng nhiệm vụ trong bộ mô phỏng**
 >
-> **Nguyên tắc:** Cánh tay giá vài trăm đô la có thể làm được nhiệm vụ này khi con người vận hành từ xa; với nhiệm vụ này, thân phần cứng không phải nút thắt mà là nhận thức, lập kế hoạch, điều khiển vòng kín và phục hồi lỗi.
+> Trong bộ mô phỏng mặt bàn hai chiều, đặt ngẫu nhiên cốc đỏ, tờ giấy vàng cùng các vùng đích tương ứng, rồi để bộ điều khiển lý tưởng lần lượt tiến đến vật thể, gắp lên và đưa về đúng vị trí. Nó không cần nhận dạng hình ảnh và cũng không chọn sai hành động, nên nó biểu thị "khi tri giác lẫn quyết định đều đúng thì nhiệm vụ này ít nhất đi được đến đâu".
 >
-### Kiến trúc hai tầng: tách biệt giữa lập kế hoạch và kiểm soát
+> Hãy xem tỷ lệ thành công, số bước cần dùng và độ dài quãng đường; đồng thời thay đổi vị trí ban đầu của vật thể và quy mô nhiệm vụ để xem giới hạn lý tưởng ấy có ổn định không. Ta dùng cùng điều kiện thành công như Thử nghiệm 9-7, nhưng thứ được đo là một mô phỏng không có cơ cấu chấp hành: điều đó không có nghĩa chiếc XLeRobot thật đã cử động. Hai thử nghiệm sẽ là hai đường cơ sở cho phần điều khiển tự chủ về sau——Thử nghiệm 9-7 là vòng kín của con người trên phần cứng thật, còn Thử nghiệm 9-8 là vòng kín lý tưởng trong môi trường mô phỏng.
 
-Robot hoàn thành các nhiệm vụ gia đình phức tạp đòi hỏi phải đưa ra quyết định trên hai thang thời gian khác nhau. Cấp độ đầu tiên chậm hơn **lập kế hoạch dài hạn**(lập kế hoạch long-horizon): chia nhỏ các hướng dẫn cấp cao như "dọn dẹp mặt bàn" thành các chuỗi mục tiêu phụ (làm sạch mặt bàn, xếp đồ vào máy rửa chén, lau bề mặt), yêu cầu hiểu ngữ nghĩa của môi trường, suy luận về sự phụ thuộc của nhiệm vụ và lập kế hoạch hành động gồm nhiều bước - giống như mọi người nghĩ về "việc cần làm trước và việc cần làm tiếp theo" trước khi hành động. Lớp thứ hai là **điều khiển VLA** nhanh hơn (Vision-Language-Action, mô hình hành động ngôn ngữ thị giác): thực hiện từng thao tác cụ thể ("đi đến bồn rửa", "nhặt giẻ lau", "lau mặt bàn") và liên tục xuất ra các tín hiệu điều khiển dựa trên hình ảnh hiện tại và hướng dẫn ngôn ngữ để giúp chuyển động của rô-bốt trơn tru và mạch lạc.
+### Cấu trúc cơ bản của điều khiển robot
 
-Kiến trúc hai tầng này phân tách sự phức tạp một cách hiệu quả: lập kế hoạch dài hạn chịu trách nhiệm về "cái gì" và kiểm soát VLA chịu trách nhiệm về "như thế nào". Kiến trúc hai lớp "ra quyết định chậm ở trên cùng + thực hiện nhanh ở dưới cùng" này có cấu trúc rất giống với "tư duy nhanh và chậm" trong kịch bản giọng nói trước đó - cả hai đều tách rời tư duy phức tạp và phản hồi theo thời gian thực thành các mô-đun khác nhau. Cần lưu ý rằng việc "lập kế hoạch/kiểm soát" ở đây tương ứng với việc tách rời chiều hướng "suy nghĩ sâu chậm/phản ứng nhanh theo thời gian thực" trong tư duy nhanh và chậm, chứ không phải là việc tách rời "suy nghĩ/biểu hiện" của "não thụ thai/não biểu hiện" của sơ đồ MPS thứ ba - cái sau tách biệt "suy nghĩ" và "nói", và cái trước tách biệt "lập kế hoạch cho tình huống tổng thể" và "thực thi theo thời gian thực". Kích thước của hai "kiến trúc X kép" không giống nhau.
+Hệ robot thường tách các công việc có thang thời gian khác nhau.
 
-Tuy nhiên, hiệu suất thời gian thực không biến mất đột ngột mà bị đẩy xuống lớp điều khiển VLA, lớp này bị pha loãng bởi Action Chunking (xem phần "Điều khiển VLA" bên dưới): mô hình suy luận một lần để tạo ra một chuỗi ngắn các hành động trong tương lai và luồng điều khiển phát lại chuỗi đó ở tần số cao, dàn trải độ trễ của một suy luận duy nhất thành thời gian thực hiện của toàn bộ hành động. Nhưng có một sự đánh đổi không thể tránh khỏi ở đây - chặn là đánh đổi khả năng phản ứng để lấy sự mượt mà: khối càng dài, độ trễ của mỗi suy luận được lan truyền càng mỏng, chuyển động càng mạch lạc, nhưng mô hình "không thể nhìn thấy" hình ảnh mới trong khoảng thời gian này và càng chậm trước những thay đổi đột ngột (vật thể được di chuyển, có người đưa tay ra chặn). Sự đánh đổi giữa thời gian thực và độ mượt mà là điều mà kiến trúc hai tầng không loại bỏ mà chỉ di chuyển.
+| Tầng | Câu hỏi cốt lõi | Đầu ra | Thang thời gian điển hình |
+| --- | --- | --- | --- |
+| Mục tiêu nhiệm vụ | Con người muốn hoàn thành điều gì | "Cốc và giấy về đúng chỗ" | Cỡ phút |
+| Lập kế hoạch dài hạn | Làm gì trước, làm gì sau | Cốc trước, giấy sau, cuối cùng kiểm tra | Từ giây đến phút |
+| Kỹ năng cơ bản | Bây giờ đạt được thay đổi trạng thái nào | `pick(red_cup)`, `place(red_cup, tray)` | Khoảng 1—3 giây |
+| VLA / chính sách kỹ năng | Kỹ năng này cụ thể cử động ra sao | Chuyển động ngắn hoặc quỹ đạo liên tục của kẹp XLeRobot | Suy luận ~1—10 Hz |
+| Điều khiển mức thấp và tầng an toàn | Làm sao thực thi ổn định và không trễ | Lượng điều khiển khớp hoặc đầu công tác, giới hạn tốc độ và dừng khẩn cấp | ~50—1000 Hz |
 
-Cũng cần phải giải thích sự thay đổi trong dòng chính của chương này: trong ngữ cảnh robot, mâu thuẫn thời gian thực đã được giảm bớt một phần bằng cách tách hai lớp và chặn hành động. Mâu thuẫn chính hiện tại đã được chuyển sang **đào tạo và khái quát hóa** - làm thế nào để có đủ dữ liệu trình diễn và cách khái quát hóa mô hình trên các nhiệm vụ và nền tảng. Một số phần tiếp theo tập trung vào mâu thuẫn mới này, đây cũng là phần mở rộng của các chủ đề của Chương 6 Môi trường mô phỏng và Chương 7 Học tập tăng cường trong thế giới vật chất.
+Đây là cách phân công kỹ thuật thường gặp, không phải kiến trúc mô hình duy nhất. VLA hoàn toàn có thể gánh một phần phán đoán ở cấp cao, và bộ lập kế hoạch có thể là chương trình dựa trên luật, một VLM, hay một bộ tối ưu. Chọn cách cài đặt nào đi nữa, "thứ tự của nhiệm vụ" vẫn nên tách khỏi "hành động trước mắt"; nếu không, độ trễ suy luận của mô hình cấp cao sẽ kéo lùi điều khiển mức thấp, còn điều khiển tần số cao ở mức thấp lại buộc mô hình bên trên xử lý vô số chi tiết không liên quan. Trên XLeRobot, mô hình không nên trực tiếp xuất ra góc khớp tùy ý: nó chỉ chọn những kỹ năng có ranh giới rõ ràng như `pick`, `place`, `verify_state` và `stop`, rồi bộ thực thi đã hiệu chuẩn——có giới hạn tốc độ và có thời gian chờ tối đa——mới biến chúng thành chuyển động thật của cánh tay.
 
-Mâu thuẫn mới này chủ yếu nằm ở lớp điều khiển VLA. VLA có thể được coi là "VLM + đầu ra hành động": **VLM**(Vision-Language Model, mô hình ngôn ngữ hình ảnh - một mô hình lớn có thể hiểu hình ảnh và văn bản cùng lúc) chịu trách nhiệm "hiểu" và "suy nghĩ rõ ràng". Trên cơ sở đó, VLA cũng cần phải “vào tay”. Thử thách thực sự nằm ở mức độ “thực hành”. Lớp điều khiển VLA hiện tại chủ yếu được đào tạo thông qua học bắt chước (nhân bản hành vi) - học trực tiếp từ một số lượng lớn các cuộc biểu tình của con người để "làm những gì bạn thấy" (OpenVLA, RT-2, π₀, v.v. đều thuộc loại này); học tăng cường là một phương pháp bổ sung được ưu tiên hàng đầu trong những năm gần đây. Mặc dù VLA được đào tạo bằng học tăng cường có thể thực hiện tốt một nhiệm vụ, nhưng nó thường không có đủ khả năng khái quát hóa: ngay cả khi SimpleVLA-RL trong Chương 7 báo cáo kết quả một nhiệm vụ cao trên LIBERO, RL được đào tạo riêng cho từng nhiệm vụ, thay vì một mô hình thống nhất tổng quát hóa cho tất cả các nhiệm vụ không có mẫu. Mô hình "đào tạo một lần cho một nhiệm vụ" này có nghĩa là mỗi khi gặp một nhiệm vụ mới, dữ liệu phải được thu thập và đào tạo lại.
+### Lập kế hoạch dài hạn và phân rã nhiệm vụ
 
-Hai phần sau đây thảo luận sâu hơn về các giải pháp kỹ thuật cụ thể để lập kế hoạch dài hạn và kiểm soát VLA.
+Khi người dùng bảo "dọn bàn giúp tôi", hệ thống không thể ném nguyên câu ấy cho mô hình hành động. Bộ lập kế hoạch trước hết liệt kê các vật thể và mục tiêu trong khung cảnh, định ra thứ tự, rồi viết ra cho từng bước điều kiện khởi đầu, điều kiện kết thúc và giới hạn rủi ro. Chẳng hạn:
 
-### Lập kế hoạch dài hạn: từ VLM đến các mô hình tư duy thể hiện chuyên dụng
+```text
+Xử lý cốc đỏ → Dọn tờ giấy vàng → Kiểm tra mặt bàn
+```
 
-VLM nói chung đã có khả năng tư duy thể hiện tốt. **Gemini Robotics-ER 1.5** của Google DeepMind được tối ưu hóa đặc biệt cho Lý luận thể hiện (hiểu vị trí, chuyển động và quan hệ nhân quả của các vật thể trong thế giới vật chất), đạt trung bình 62,8% trên 15 điểm chuẩn học thuật (Point-Bench, RefSpatial, RoboSpatial, BLINK, v.v.), vượt quá GPT-4o (60,6%) và Gemini 2.5 Pro (59,3%). Các điểm mạnh cốt lõi bao gồm: hiểu biết không gian nâng cao và định vị đối tượng, lý luận theo thời gian (dự đoán nguyên nhân và kết quả của các hành động như "điều gì sẽ xảy ra nếu bạn làm đổ chiếc cốc này"), điều phối nhiệm vụ (phân tách các hướng dẫn cấp cao thành các bước nhỏ) và hỗ trợ nguyên gốc cho các cơ chế tư duy và gọi công cụ. [^ch9-2]
+"Xử lý cốc đỏ" lại phân rã thành hai hành động và một lần kiểm tra:
 
-[^ch9-2]: Google DeepMind, “Gemini Robotics-ER 1.5” . https://deepmind.google/models/gemini-robotics/gemini-robotics-er/
+```text
+pick(red_cup) → place(red_cup, tray) → verify_state()
+```
 
-> **Thử nghiệm 9-8 ★: Đo cận trên điều khiển lý tưởng của cùng nhiệm vụ trong mô phỏng**
+Mỗi kỹ năng hoàn tất cho ta một nút có thể kiểm chứng. Gắp hụt thì chỉ làm lại đúng bước ấy. Nếu ai đó dời vật thể hoặc người dùng đổi mục tiêu, chỉ cần lập lại kế hoạch cho những bước phía sau bị ảnh hưởng, chứ không phải làm lại toàn bộ kế hoạch cũ. Công cụ trao cho tác nhân cũng phải đủ đơn giản: mỗi lần gọi chỉ làm một việc, phạm vi cử động cố định, có thời gian chờ tối đa, và thực thi xong thì quan sát lại ngay.
+
+> **Thử nghiệm 9-9 ★★: Để Gemini Robotics-ER 1.5 tự chủ dọn bàn bằng XLeRobot**
 >
-> **Mục tiêu:** Chạy cùng nhiệm vụ với bộ điều khiển lý tưởng không sai về nhận thức hay chọn hành động để lập một cận trên có thể lặp lại.
+> Giữ nguyên chiếc XLeRobot thật, cách bày bàn, chỉ dẫn nhiệm vụ và điều kiện thành công của Thử nghiệm 9-7; chỉ thay người vận hành bằng một Agent. Giao việc quan sát và lập kế hoạch cho một mô hình suy luận nhập thân như Gemini Robotics-ER 1.5, và qua vòng lặp tác nhân kiểu RoboCrew chỉ mở đúng năm công cụ: `observe_scene`, `pick`, `place`, `verify_state` và `stop`.[^ch9-2]
 >
-> **Nguyên tắc:** Đây là mốc khi quyết định luôn đúng, không phải bằng chứng robot thật đã chạy.
+> Mô hình trước hết quan sát mặt bàn, định ra thứ tự xử lý, rồi mới gọi các hành động gắp và đặt đã hiệu chuẩn của XLeRobot. Cứ hoàn tất một kỹ năng là phải quan sát lại và kiểm tra hậu điều kiện. Khi gắp hụt, nó chỉ được phép thử lại kỹ năng hiện tại; và phải gọi `stop` khi người dùng bảo dừng, khi vật thể ra khỏi vùng làm việc, hoặc khi không xác minh được trạng thái. Mô hình không được trực tiếp xuất ra góc khớp tùy ý, cũng không được bỏ qua bước kiểm chứng thật chỉ vì chính nó đã nói trước rằng "xong rồi".
 >
+> Tiêu chí nghiệm thu hệt như Thử nghiệm 9-7: cốc nằm trong khay, giấy nằm trong thùng rác, cánh tay trở về tư thế an toàn, không va chạm và không ra khỏi vùng. Khác biệt nằm ở chỗ: trong thử nghiệm tự chủ, ý nghĩa của nhiệm vụ phải đến từ chính quan sát của mô hình, hành động thật phải đến từ lời gọi công cụ, và trạng thái cuối cùng phải được xác nhận bằng một quan sát mới. Con người chỉ được khởi động, dừng khẩn cấp và giám sát an toàn, không được làm thay Agent giữa chừng. Chỉ như vậy Thử nghiệm 9-7 và 9-9 mới so sánh trực tiếp được: "với cùng phần cứng và cùng nhiệm vụ, vòng kín của mô hình còn thiếu gì so với vòng kín của con người".
 
-> **Thử nghiệm 9-9 ★★: Gemini Robotics-ER 1.5 tự điều khiển XLeRobot thật**
->
-> **Mục tiêu:** Thay người vận hành bằng Agent quan sát mặt bàn và gọi các kỹ năng pick, place, verify bị giới hạn, giữ nguyên robot, nhiệm vụ và điều kiện thành công của 9-7.
->
-> **Nguyên tắc:** So sánh trực tiếp chỉ ra khoảng cách ở nhận thức, lập kế hoạch, thời điểm, điều khiển vòng kín và phục hồi, không phải giới hạn cơ học mới.
->
+Thử nghiệm trên máy thật phơi bày sai số hiệu chuẩn, camera bị che khuất và kẹp hỏng ăn, nhưng lại không thích hợp để lặp lại một lượng lớn sự cố một cách an toàn và có kiểm soát. Các thử nghiệm mô phỏng tiếp sau giữ đúng năm công cụ ấy cùng trạng thái nhiệm vụ y hệt, và chỉ thay cơ cấu chấp hành thật bằng một môi trường mặt bàn có thể tiêm lỗi, để tách bạch xem thực thi vòng hở, kiểm tra theo từng bước và dự đoán hành động mỗi thứ đóng góp được gì.
 
-### Kiểm soát VLA: Từ dữ liệu trình diễn đến khái quát hóa chéo
+### Điều khiển bằng VLA
 
-Ở lớp thực thi của kiến trúc hai lớp, ba mô hình đại diện, RT-2, OpenVLA và π₀, tất cả đều tập trung vào điều khiển VLA—nghĩa là đầu ra các hành động của robot theo thời gian thực dựa trên hình ảnh camera và hướng dẫn ngôn ngữ (Hình 9-11). Chúng thuộc hai tuyến trong biểu diễn hành động: mã thông báo hành động rời rạc và tạo trajectory liên tục.
+VLA là viết tắt của Vision-Language-Action, tức "mô hình thị giác—ngôn ngữ—hành động". Nó nhận khung cảnh hiện tại cùng một chỉ dẫn kỹ năng, rồi xuất ra hành động mà robot phải thực thi kế tiếp:
 
+```text
+quan sát hiện tại + chỉ dẫn kỹ năng → hành động
+```
 
-![Hình 9-11 Kiến trúc VLA (Tầm nhìn-Ngôn ngữ-Hành động)](images/fig9-11.svg)
+Trong ví dụ XLeRobot, bộ lập kế hoạch cấp cao chỉ đưa ra `pick(red_cup)`; còn tiếp cận cốc từ hướng nào, khép kẹp lúc nào, nâng cánh tay theo quỹ đạo ra sao là do VLA hoặc chính sách kỹ năng quyết định dựa trên khung cảnh hiện tại. Khi tầng thực thi hoàn tất chuyển động ngắn ấy, mặt bàn được chụp lại, và chỉ sau khi xác nhận cốc quả thật đã được gắp thì bộ lập kế hoạch mới được đưa ra `place(red_cup, tray)`. Nói cách khác, lời gọi công cụ định nghĩa thay đổi trạng thái mong muốn, còn VLA định nghĩa cách hiện thực hóa thay đổi trạng thái ấy bằng hành động liên tục.
 
+RT-2 và OpenVLA cắt hành động liên tục thành các token rời rạc rồi xuất ra từng cái một, y như sinh câu chữ. π₀ đại diện cho hướng còn lại: sinh thẳng ra quỹ đạo hành động liên tục và mượt mà. Không có chuyện bên nào hơn bên nào một cách giản đơn. Token rời rạc dễ gắn với mô hình ngôn ngữ; quỹ đạo liên tục hợp hơn để biểu diễn chuyển động mượt. Lựa chọn thật sự là nên biểu diễn hành động ra sao, chứ không chỉ là mô hình lớn cỡ nào.[^ch9-15]
 
-**RT-2 với OpenVLA: Định tuyến mã thông báo hành động riêng biệt.**
+Mô hình lớn thường chỉ suy luận được 1—10 lần mỗi giây, trong khi bộ điều khiển truyền thống có thể cập nhật vài chục đến vài nghìn lần mỗi giây. Một cách làm thông dụng trong kỹ thuật là "chia đoạn hành động" (action chunking): mô hình sinh một lần một đoạn ngắn các hành động tương lai, luồng điều khiển thực thi đoạn ấy ở tần số cao, còn mô hình chuẩn bị đoạn kế tiếp ở phía sau. Nhờ vậy một phần thời gian chờ suy luận được giấu vào trong thời gian thực thi hành động. Cái giá phải trả là: đoạn càng dài thì chuyển động càng mượt, nhưng trong quãng ấy mô hình càng ít thấy khung cảnh mới. Nếu XLeRobot đang vươn tay định lấy cốc mà giữa chừng cốc bị va lệch đi, nó vẫn có thể tiếp tục thực thi những hành động sinh ra từ hình ảnh cũ. Vậy nên chia đoạn hành động là một sự đánh đổi giữa độ mượt và tốc độ phản ứng, chứ không phải một cách tăng tốc không mất gì.
 
-**RT-2** pioneered this route: fine-tuning directly on the large-scale visual-language model, discretizing the robot's continuous actions into tokens, outputting autoregressive output one by one like generating text, and using the generalization ability of the pre-trained model to improve the zero-sample transfer effect for new objects and new instructions. **OpenVLA** tuân theo sơ đồ biểu diễn hành động của RT-2, hợp nhất mô hình ngôn ngữ và bộ mã hóa hình ảnh trong một kiến trúc duy nhất, nhập hình ảnh và hướng dẫn văn bản cũng như xuất mã thông báo hành động. Quá trình đào tạo được chia thành hai giai đoạn: đầu tiên là đào tạo trước về bộ dữ liệu đa nền tảng quy mô lớn Open X-Embodiment (bao gồm các minh họa hoạt động thực tế của hơn 20 nền tảng robot), tìm hiểu kiến thức vận hành chung (các chế độ hành động như "lấy" và "đặt" giống nhau giữa các robot khác nhau), sau đó tinh chỉnh với một lượng nhỏ dữ liệu cho các nền tảng cụ thể. Vì cách trình bày hành động về cơ bản là giống nhau nên sự khác biệt thực sự giữa cả hai nằm ở tính mở và các lựa chọn kỹ thuật: RT-2 và dữ liệu đào tạo của nó là nội bộ của Google, trong khi OpenVLA hoàn toàn là nguồn mở - mô hình đường trục nguồn mở (Llama 2 cộng với bộ mã hóa trực quan) với các bộ dữ liệu công khai, cho phép toàn bộ cộng đồng tái tạo và cải thiện nó lần đầu tiên.
-
-**Chặn hành động: Công nghệ bù tần số phổ biến trong lĩnh vực VLA.**
-
-Do độ trễ trong suy luận LLM nên tần số điều khiển của VLA thấp hơn nhiều so với yêu cầu điều khiển robot truyền thống (điều khiển robot truyền thống thường yêu cầu tần số điều khiển là 50-1000Hz, trong khi suy luận đơn của VLA chỉ khoảng 1-10Hz - chênh lệch lên tới hai bậc độ lớn). OpenVLA ban đầu là một đại diện điển hình cho vấn đề này: nó chỉ đưa ra một hành động cho mỗi suy luận (dự đoán tự hồi quy một bước ở khoảng 6Hz) và độ trễ hành động chính xác là thiếu sót chính mà nó đã bị chỉ trích. **Phân đoạn hành động**(Action Chunking) là một công nghệ chung được sinh ra để thu hẹp khoảng cách này - lần đầu tiên được đề xuất bởi ACT (Zhao và cộng sự, 2023), sau đó được áp dụng rộng rãi bởi π₀, OpenVLA-OFT, v.v.: mô hình không chỉ đưa ra một hành động cho mỗi suy luận mà còn tạo ra một chuỗi hành động trong một khoảng thời gian ngắn trong tương lai chỉ trong một hơi thở (lấy cấu hình điển hình của π₀ làm ví dụ, nó tạo ra khoảng 0.5-1 tại khối hành động thứ hai tại thời điểm, ở tần số điều khiển 50Hz (tức là các hành động 25-50), luồng điều khiển được thực thi tuần tự ở tần số cao, trong khi mô hình tạo ra lô tiếp theo không đồng bộ trong nền Miễn là thời gian suy luận của mô hình nhỏ hơn thời gian thực hiện của loạt hành động này, thì rô-bốt có thể duy trì chuyển động liên tục và mượt mà - giống như đệm video, nội dung tiếp theo sẽ được tải trước và nội dung tiếp theo sẽ được tải trước. phát lại sẽ không bị treo.
-
-**π₀: Lộ trình tạo trajectory liên tục.**
-
-Sự khác biệt thực sự giữa biểu diễn hành động không phải là giữa RT-2 và OpenVLA, mà là giữa các mã thông báo rời rạc và việc tạo trajectory liên tục. **π₀** đại diện cho lộ trình thứ hai: thay vì dự đoán từng mã thông báo hành động rời rạc, việc khớp luồng (một phương pháp tạo liên tục tương tự với mô hình khuếch tán) được sử dụng để trực tiếp tạo ra một trajectory hành động trơn tru và liên tục bắt đầu từ nhiễu ngẫu nhiên và "khử nhiễu" thông qua các lần lặp nhiều bước. Kiểu biểu diễn này được kết hợp một cách tự nhiên với phân đoạn hành động và thực hiện tốt hơn các nhiệm vụ đòi hỏi độ chính xác và tính trôi chảy của hành động cao, chẳng hạn như các thao tác khéo léo. Ví dụ: lộ trình mã thông báo rời rạc giống như chọn dần dần "5 độ sang trái" và "tiến lên 3 cm" từ menu và lộ trình trajectory liên tục giống như một họa sĩ đầu tiên phác thảo toàn bộ đường cong và sau đó sửa từng bước.
-
-**Preemption action chunk:**
+Chia đoạn hành động thường cần một bộ khung "dự đoán—thực thi—chen ngang" thay vì chạy đoạn cho tới hết:
 
 ```python
 chunk = vla(current_observation, skill)
@@ -373,71 +398,65 @@ for action in chunk:
         break
 ```
 
-### Sim2Real Transfer: Khoảng cách từ mô phỏng đến thực tế
+Đoạn ngắn phản ứng nhanh nhưng làm số lần gọi mô hình tăng lên; đoạn dài mượt hơn nhưng dễ dùng phải quan sát đã cũ. Thử nghiệm 9-10 so sánh loại đánh đổi này trong bộ mô phỏng, còn thứ chạm tới ranh giới an toàn của phần cứng thật là Thử nghiệm 9-9.
 
-Phần môi trường mô phỏng của Chương 6 đã giải thích nguồn gốc của khoảng cách sim-to-real (khoảng cách thực tế) và nguyên tắc ngẫu nhiên hóa miền để giải quyết nó. Tôi sẽ không lặp lại ở đây - trong một câu: mô phỏng không thể khôi phục hoàn toàn các đặc điểm vật lý, hình ảnh và phần cứng thực sự. Trong quá trình huấn luyện, các tham số này bị gián đoạn ngẫu nhiên trên quy mô lớn, buộc chiến lược phải học một tập hợp các biểu diễn phổ quát ổn định trước các thay đổi khác nhau (Hình 9-11). Chúng ta hãy xem cách thực hiện bộ nguyên tắc này trên một cánh tay robot thực sự.
+### Giới hạn của VLA
 
+"Lập kế hoạch dài hạn + VLA" là một phương án nền dùng được, nhưng vẫn để lại vài vấn đề dễ bị bỏ sót.
 
-![Hình 9-12 Khoảng cách Sim2Real và Ngẫu nhiên hóa tên miền](images/fig9-12.svg)
+- **Dữ liệu huấn luyện hạn chế**: các bản trình diễn robot ít hơn rất nhiều so với văn bản và hình ảnh trên internet. Mô hình từng thấy chữ "cốc" không có nghĩa nó đã thấy đủ loại cốc với mọi chất liệu và mọi điều kiện ma sát.
+- **Học được cách bắt chước nhưng không hiểu hệ quả**: nhân bản hành vi chủ yếu học "người trình diễn làm gì tiếp theo", chứ không đòi hỏi tường minh rằng mô hình phải trả lời "hành động này gây ra chuyện gì".
+- **Robot nào cũng khác nhau**: bậc tự do, hệ tọa độ, kẹp và độ trễ cơ cấu chấp hành khác nhau thì không có gì bảo đảm cùng một hành động chuyển nguyên xi được sang máy khác.
+- **Quan sát có thể lỗi thời**: sau khi một đoạn hành động đã bắt đầu chạy, nếu vật thể bị dời đi, bị che khuất hay đổ xuống, mô hình vẫn đang phán đoán dựa trên khung hình trước đó.
 
-
-Có nhiều trường hợp thành công trên lộ trình này: hoạt động khéo léo của bàn tay robot OpenAI (dự án Dactyl nhận ra sự chuyển hướng của khối lập phương trong tay và công việc tiếp theo của nó đã thực hiện việc giải khối Rubik bằng một tay với sự trợ giúp của miền ngẫu nhiên ADR tự động) và ANYmal của ETH Zurich (robot bốn chân có thể bước đi mạnh mẽ trên các địa hình hoang dã phức tạp như tuyết và sỏi). Cả hai đều thuộc thể loại này.
-
-Điều mà chương này thực sự muốn đề cập đến là hai liên kết kỹ thuật không thể tránh khỏi khi triển khai ngẫu nhiên miền vào máy thực. Đầu tiên là **hiệu chỉnh phạm vi ngẫu nhiên**: không thể xác định phạm vi trên đầu. Nếu quá hẹp sẽ không bao quát được những thay đổi thực sự. Nếu quá rộng, nó sẽ tăng độ khó trong quá trình luyện tập và học được chiến lược chưa tối ưu là “có thể xử lý mọi việc nhưng không giỏi việc gì”. Trong thực tế, việc phân phối các tham số chính (chẳng hạn như hệ số ma sát, phân bố thực của độ trễ phản ứng của động cơ) trong dữ liệu môi trường thực thường được đo và hiệu chỉnh trước tiên, đồng thời thực hiện lấy mẫu trong phạm vi này; nếu chiến lược đào tạo mô phỏng rõ ràng bị loại bỏ trên máy thật, thì phạm vi ngẫu nhiên sẽ dần được mở rộng cho đến khi khoảng cách sim-to-real hội tụ đến mức có thể chấp nhận được. Thứ hai là **Căn chỉnh hình ảnh**: Hiệu chỉnh chính xác mô phỏng và tư thế máy ảnh thật (căn chỉnh môi trường) và thay thế ngẫu nhiên nền chụp thực vào kết xuất mô phỏng (thay thế nền màn hình xanh), sao cho hình ảnh mô phỏng càng gần nhất có thể với những gì nhìn thấy trên máy thật - hai bước này của thử nghiệm 9-10 sẽ được trình bày chi tiết.
-
-> **Thử nghiệm 9-10 ★★: So sánh ba vòng lặp tự chủ trong mô phỏng**
->
-> **Mục tiêu:** Giữ nguyên nhiệm vụ và công cụ, so sánh chạy open-loop, kiểm tra từng bước và chiến lược dự đoán ngắn hạn.
->
-> **Nguyên tắc:** Kiểm tra từng bước giúp phục hồi lỗi cục bộ; world model cho phép tiếp tục khi dự đoán khớp thực tế và lập kế hoạch lại khi lệch. Trạng thái cuối luôn được xác nhận bằng quan sát mới.
->
-
-> **Thử nghiệm 9-11 ★★★: Kiểm tra RGB xuyên môi trường cho cùng nhiệm vụ**
->
-> **Mục tiêu:** Thay đổi nền, hình thức vật thể, ánh sáng và nhiễu thị giác để kiểm tra chính sách thị giác học trong mô phỏng có thích nghi với ảnh mới hay không.
->
-> **Nguyên tắc:** Đa dạng thị giác có thể tăng độ bền, nhưng không thay thế hiệu chuẩn robot thật và vòng an toàn đầy đủ.
->
-
-## Cập nhật năm 2026: Lập kế hoạch dạng luồng và mô hình thế giới
-
-Phần robot không nên dừng ở câu “VLM viết kế hoạch và VLA thực thi”. Hãy xét ví dụ **“dọn bàn làm việc”**. Bộ lập kế hoạch dài hạn trước hết lập danh sách trạng thái—một chiếc cốc còn một nửa, giấy vụn, ba quyển sách, một chiếc laptop đang mở, thùng rác và hộp đựng—rồi phát ra các lệnh có điều kiện tiên quyết và kiểm tra thành công:
-
-1. “Di chuyển đến bàn và dừng cách mép bàn 30 cm.”
-2. “Bỏ hai mẩu giấy vào thùng rác; xác nhận không còn mẩu giấy nào.”
-3. “Giữ cốc thẳng đứng và đặt lên khay; giảm tốc nếu chất lỏng chuyển động.”
-4. “Đóng laptop và chuyển nó ra phía sau bên trái; không kéo dây nguồn.”
-5. “Xếp sách theo kích thước và cho bút vào hộp đựng.”
-6. “Chỉ lau mặt bàn sau khi đã dọn các vật dễ vỡ và thiết bị đang có điện.”
-7. “Lùi lại, quan sát lần nữa và xác nhận trạng thái cuối cùng.”
-
-Đây là một đồ thị phụ thuộc, không phải một đoạn văn mô tả. Nếu người dùng nói “cất laptop trước”, hệ thống cập nhật độ ưu tiên của mục tiêu. Nếu cốc bị đổ, robot dừng ở điểm an toàn, ghi nhận các sự kiện như `cup.orientation=fallen` và `laptop.at_risk=true`, vô hiệu hóa phần đuôi kế hoạch đã lỗi thời rồi lập kế hoạch lại: bảo vệ laptop, khống chế chỗ đổ, quan sát lại, sau đó chỉ tiếp tục những việc không bị ảnh hưởng. Các hành động đã hoàn tất không bị lặp lại. Sự cố khẩn cấp hủy chunk hiện tại; các cập nhật thông thường chờ đến điểm an toàn kế tiếp.
-
-### Thực thi theo luồng
-
-Lập kế hoạch và thực thi có thể chồng lấn. Khi một tiền tố an toàn đã sẵn sàng, bộ lập kế hoạch truyền một command hoàn chỉnh cho executor trong lúc tiếp tục lập kế hoạch phần đuôi. Mỗi command phải đầy đủ và có thể kiểm toán:
-
-```text
-{"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
-```
-
-Executor báo các trạng thái `started`, `succeeded`, `cancelled` hoặc `failed`. Bộ lập kế hoạch dùng các quan sát này để cập nhật phụ thuộc và áp dụng backpressure khi hàng đợi đã đầy hoặc trở nên lỗi thời. Thực thi theo luồng rút ngắn thời gian đến hành động an toàn đầu tiên; nó không cho phép chạy JSON chưa hoàn chỉnh hay suy nghĩ của mô hình chưa được kiểm chứng.
-
-### Vì sao VLA hiện nay khái quát hóa kém
-
-OpenVLA không thực sự được huấn luyện chỉ bằng cách cập nhật projector: công trình gốc cũng báo cáo các biến thể fine-tuning toàn phần, đóng băng vision encoder, chỉ huấn luyện lớp cuối và LoRA. Tuy vậy, phê bình sâu hơn vẫn đúng: một kho dữ liệu tiền huấn luyện văn bản/hình ảnh khổng lồ được nối với tập dữ liệu robot nhỏ hơn nhiều qua một con đường thích nghi hẹp; các phương pháp thích nghi ít tốn kém thường dồn hành vi mới vào projector, các mô-đun LoRA hoặc action head. Behavior cloning học ánh xạ “quan sát + chỉ dẫn → action chunk”, chứ không học các hệ quả vật lý phản thực. Không gian hành động phụ thuộc embodiment và những chunk đã lỗi thời càng hạn chế khả năng chuyển giao. Backbone ngôn ngữ biết từ “cốc”, nhưng không vì thế mà biết ma sát, chất lỏng, tiếp xúc hay dây nguồn sẽ hành xử ra sao.
+Vì thế, mô hình ngôn ngữ biết chữ "cốc" không có nghĩa nó biết ma sát, tiếp xúc, chất lỏng sóng sánh hay dây nguồn sẽ làm trạng thái tương lai đổi khác ra sao. VLA chủ yếu trả lời "bây giờ nên làm gì"; muốn phán đoán "làm xong thì có thể xảy ra chuyện gì" thì cần một loại mô hình khác.
 
 ### Mô hình thế giới
 
-Mô hình thế giới học một chuyển tiếp có thể hành động:
+Mô hình thế giới có thể hiểu là bộ dự đoán hệ quả của hành động. Thứ nó học là: ở trạng thái hiện tại, nếu thực hiện một hành động nào đó thì trạng thái ở khoảnh khắc kế tiếp có thể đổi khác ra sao.
 
 ```text
-trạng thái + hành động ứng viên -> trạng thái tương lai dự đoán -> chọn và xác minh hành động
+trạng thái hiện tại + hành động ứng viên
+    → dự đoán trạng thái kế tiếp hoặc một mẩu tương lai
+    → so sánh kết quả của các ứng viên
+    → chọn hành động, lập lại kế hoạch, hoặc dừng an toàn
 ```
 
-Khái niệm này rộng hơn riêng V-JEPA. Họ mô hình bao gồm mô hình dự đoán tiềm ẩn (V-JEPA 2[^ch9-16]), mô hình sinh tương tác (Genie 3[^ch9-21] và Cosmos), World-Action Model (GeniWorld và Robust-WAM), học latent action từ video không gắn nhãn (LAWM-3D), và model-based RL (Dreamer và MuZero). Giá trị của chúng là học từ quan sát ở quy mô lớn, thử các hành động phản thực trước khi thực thi, tách động lực học dùng chung khỏi điều khiển đặc thù của từng robot, và lập kế hoạch lại khi dự đoán lệch khỏi thực tế.
+Một mô hình thế giới dùng được cho robot ít nhất phải làm tốt ba việc:
 
-Các preprint năm 2026 nghiên cứu prior động lực học dùng chung và các head đặc thù cho từng embodiment (DyPES-VLA), biểu diễn hành động-thị giác cho thao tác vòng kín ngoài phân phối (GeniWorld), latent action 3D từ video con người (LAWM-3D), căn chỉnh semantic foresight (Robust-WAM) và triển khai bất đồng bộ theo thời gian thực. Đây là các kết quả hứa hẹn, chưa phải lời giải hoàn chỉnh cho bài toán khái quát hóa.
+- hiểu được trạng thái hiện tại;
+- dự đoán được kết quả mà các hành động khác nhau có thể mang lại;
+- chuyển dự đoán ấy cho bộ lập kế hoạch hoặc bộ điều khiển để giúp lựa chọn.
+
+Một VLM chỉ biết mô tả video, hay một mô hình chỉ biết sinh hình ảnh, không tự nhiên trở thành mô hình thế giới đáng tin cho robot. Nó phải biết hành động là gì, và dự đoán được ảnh hưởng của hành động ấy lên vật thể và môi trường. V-JEPA 2 đại diện cho hướng dự đoán tương lai ở trạng thái nội tại, còn World-Action Model học tường minh quan hệ "hành động—quan sát tương lai". Chúng có thể dùng song song với VLA, không nhất thiết phải thay thế VLA.[^ch9-16]
+
+Trong hệ thống thật, mô hình thế giới thường có ba cách dùng:
+
+1. **Trước khi cử động**: so sánh các hành động ứng viên như gắp, đẩy hay chờ, và ưu tiên phương án ít rủi ro hơn;
+2. **Trong lúc thực thi**: đối chiếu quan sát thật với dự đoán, phát hiện sai lệch thì rút ngắn hành động, dừng lại, hoặc lập lại kế hoạch;
+3. **Trong lúc huấn luyện**: học các thay đổi trạng thái từ video, dữ liệu mô phỏng và những quỹ đạo thất bại, nhờ đó bớt phải thử sai trên máy thật.
+
+Quay lại nhiệm vụ trên bàn của XLeRobot. Nếu tờ giấy vàng bị cốc đỏ che khuất một phần, hệ thống có thể so sánh các kỹ năng ứng viên: "gắp giấy trước", "dời cốc trước", hay "gắp từ hướng khác". Mô hình thế giới không cần sinh ra video robot trông như thật: chỉ cần nó dự đoán được hành động ứng viên nào dễ dẫn tới trạng thái gắp được tờ giấy, và hành động nào có thể làm đổ cốc, là đã đủ giúp bộ lập kế hoạch xếp hạng lựa chọn. Sau khi thực thi hành động, quan sát thật từ camera vẫn là sự thật cuối cùng: dự đoán chỉ giúp chọn, chứ không thay thế được việc kiểm tra nghiệm thu.
+
+Thứ mô hình thế giới đưa ra không phải câu trả lời chắc chắn, mà là những dự đoán so sánh được về "làm thế này thì có thể xảy ra chuyện gì". Dự đoán càng xa thì sai số càng có xu hướng lớn, và một khung cảnh tương lai trông như thật chưa chắc đã hợp với quy luật tiếp xúc và ma sát thật. Vì vậy hệ thống thật vẫn cần dự đoán ngắn hạn, quan sát thời gian thực, ước lượng bất định, và một bộ điều khiển an toàn phần cứng độc lập. Mô hình thế giới sinh mẫu dùng được cho mô phỏng tương tác và trực quan hóa, nhưng đừng lẫn lộn "sinh được video" với "dẫn dắt được hành động của robot".[^ch9-21]
+
+> **Thử nghiệm 9-10 ★★: So sánh ba vòng dọn bàn tự chủ trong bộ mô phỏng**
+>
+> Đưa nhiệm vụ, trạng thái đích, điều kiện thành công và năm công cụ của Thử nghiệm 9-9 vào bộ mô phỏng mặt bàn, chỉ thay cơ cấu chấp hành của XLeRobot thật bằng một bộ thực thi mô phỏng có thể kiểm soát, thỉnh thoảng gây ra ở khâu gắp một thất bại nhất thời nhưng còn phục hồi được. Như vậy có thể so sánh ba chiến lược mà không đổi bài toán.
+>
+> **Thực thi vòng hở** sinh một lần trọn dãy hành động và không quan sát lại giữa chừng. **Kiểm tra theo từng bước** đọc lại trạng thái ở mỗi lần `pick` và `place`, hỏng thì chỉ làm lại kỹ năng hiện tại. **Thực thi có dự đoán** thêm vào một mô hình thế giới ngắn hạn, so sánh kết quả dự kiến của các kỹ năng ứng viên rồi mới chọn nước đi kế tiếp. Thử nghiệm so sánh tỷ lệ thành công, chi phí gọi công cụ và khả năng phục hồi sau thất bại, đồng thời kiểm tra xem mọi thành công cuối cùng có đều được một quan sát mới từ `verify_state` xác nhận hay không.
+>
+> Mục đích của thử nghiệm này không phải chứng minh một mô hình thế giới mô phỏng nhỏ tương đương với mô hình vật lý của máy thật, mà là kiểm chứng một quan hệ căn bản hơn: kế hoạch vòng hở kéo một thất bại cục bộ đi suốt tới cuối nhiệm vụ; kiểm tra theo từng bước cho phép phục hồi; còn dự đoán hành động thì giúp thêm việc xếp hạng các kỹ năng ứng viên. Rốt cuộc ai đã thật sự hoàn thành vẫn do phản hồi từ môi trường định đoạt.
+
+### Từ môi trường mô phỏng sang robot thật
+
+Thử nghiệm 9-10 ổn định trong bộ mô phỏng không có nghĩa chiếc XLeRobot thật ở Thử nghiệm 9-9 cũng thành công y như vậy. Đi từ mô phỏng sang máy thật không phải là thay thêm một loại bộ điều khiển, mà là gánh lấy khác biệt giữa hai môi trường. Để huấn luyện, ta có thể dùng dữ liệu điều khiển từ xa, dữ liệu video và dữ liệu tương tác mô phỏng; nhưng khi triển khai thật, vẫn cốc đỏ ấy, tờ giấy vàng ấy, khay ấy và thùng rác ấy lại xuất hiện dưới nền, ánh sáng, vị trí camera và quan hệ che khuất khác đi, còn cánh tay thì lại gặp ma sát, nhiễu cảm biến và độ trễ cơ cấu chấp hành khác. Nếu những khác biệt đó đủ lớn, chuyển động học được trong mô phỏng có thể mất tác dụng ngoài thực tế.
+
+> **Thử nghiệm 9-11 ★★★: Kiểm thử xuyên môi trường RGB trên cùng nhiệm vụ mặt bàn**
+>
+> Trong môi trường mô phỏng, hãy tiếp tục dùng bài toán cơ bản "đưa vật thể tới đích tương ứng", và xem mỗi mẫu là một quyết định cục bộ trong quá trình dọn bàn: từ ảnh RGB mà phán đoán nên tiếp cận vật thể từ hướng nào, hay đã có thể gắp được chưa. Huấn luyện bốn chính sách thị giác có cấu trúc như nhau: một chính sách chỉ nhìn khung cảnh cố định; một thay đổi nền; một thay đổi hình dáng vật thể; và chính sách cuối cùng thay đổi đồng thời cả nền, hình dáng, ánh sáng lẫn nhiễu.
+>
+> Hãy thử tất cả các chính sách ấy trong môi trường ban đầu và trong môi trường mới đã đổi khác, rồi so sánh độ chính xác của quyết định hành động trước và sau khi điều kiện thị giác thay đổi. Điều thử nghiệm này muốn trả lời không phải "bộ mô phỏng đã giống XLeRobot thật hay chưa", mà là một câu hỏi hẹp hơn: việc chủ động mở rộng biên độ biến thiên của khung cảnh lúc huấn luyện có giúp chính nhiệm vụ cốc—khay, giấy—thùng rác này thích nghi với video camera mới hay không? Cho dù kết quả có khá lên, việc triển khai trên máy thật vẫn đòi hỏi hiệu chuẩn camera thật, thử nghiệm cơ cấu chấp hành và một vòng kín an toàn đầy đủ.[^ch9-6]
 
 ## Tóm tắt chương này
 
@@ -448,10 +467,14 @@ Ba cảnh nhìn bề ngoài rất khác nhau, nhưng hai trở ngại về sự 
 1. ★★ Mô hình giọng nói đầu cuối Agent hợp nhất ASR-LLM-TTS thành một mô hình duy nhất, giảm độ trễ nhưng mất tính mô-đun. Nếu mô hình đầu cuối bị lỗi ở một số điểm (chẳng hạn như nhận dạng giọng nói), việc gỡ lỗi và sửa nó sẽ khó khăn hơn nhiều so với đường ống nối tiếp. Bạn sẽ thiết kế hệ thống quan sát giọng nói Agent giọng nói đầu cuối như thế nào?
 2. ★ Step-Audio R1 thực hiện “nghĩ và nói” thông qua kiến trúc bộ não kép MPS. Nhưng khi con người đang “suy nghĩ và nói chuyện”, họ thường nói những điều chưa được suy nghĩ kỹ, tự sửa hoặc sử dụng những từ lấp chỗ trống. “Suy nghĩ và lời nói” của Agent có nên bắt chước những đặc điểm này của con người không?
 3. ★★ SoM (Set-of-Mark) và biến thể có cấu trúc của nó (chỉ mục phần tử DOM) chuyển bản địa hóa trực quan của Computer Use từ dự đoán tọa độ mở sang lựa chọn ID đóng, nhưng cả hai đều yêu cầu các thành phần giao diện phải được phát hiện và chú thích trước - bằng mô hình phân đoạn hoặc DOM. Nếu giao diện chứa các điều khiển không chuẩn hoặc các phần tử thay đổi linh hoạt, việc ghi nhãn có thể không đầy đủ hoặc không chính xác. Chúng ta có nên quay lại việc phối hợp dự đoán trong trường hợp này không?
-4. ★★ Các nền tảng robot trị giá hàng nghìn đô la như XLeRobot giúp việc thu thập dữ liệu từ xa trở nên rẻ hơn. Tuy nhiên, chất lượng của dữ liệu viễn thông phụ thuộc nhiều vào kỹ năng của người vận hành. Dữ liệu do người vận hành không có kỹ năng cung cấp ảnh hưởng như thế nào đến việc đào tạo mô hình VLA? Làm cách nào để tự động lọc dữ liệu chất lượng thấp trong giai đoạn thu thập dữ liệu?
+4. ★★ Các nền tảng robot trị giá vài trăm đô la như XLeRobot giúp việc thu thập dữ liệu điều khiển từ xa trở nên rẻ hơn. Tuy nhiên, chất lượng của dữ liệu điều khiển từ xa phụ thuộc nhiều vào kỹ năng của người vận hành. Dữ liệu do người vận hành không có kỹ năng cung cấp ảnh hưởng như thế nào đến việc đào tạo mô hình VLA? Làm cách nào để tự động lọc dữ liệu chất lượng thấp trong giai đoạn thu thập dữ liệu?
 5. ★★★ Chương này bao gồm ba hình thức tương tác: giọng nói, Computer Use và robot. Xu hướng chung giữa ba hình thức này là sự phát triển từ các đường ống nối tiếp sang các mô hình đầu cuối. Nếu xu hướng này tiếp tục, lớp tương tác Agent sẽ trông như thế nào sau 5 năm nữa?
 6. ★★ Lập chỉ mục phần tử cây DOM/Accessibility có hiệu quả trong các ứng dụng web tiêu chuẩn, nhưng ngày càng có nhiều giao diện phần mềm (hiển thị Canvas/WebGL, điều khiển tự vẽ đa nền tảng) không cung cấp thông tin có cấu trúc có thể truy cập được và chỉ có thể dựa vào chú thích trực quan hoặc dự đoán tọa độ. Bạn nghĩ Computer Use nên đặt cược vào tuyến đường hoàn toàn trực quan hay duy trì cả tuyến đường có cấu trúc và trực quan? Chi phí và lợi ích của việc duy trì hai con đường là gì?
 7. ★★ Mô hình VLA sử dụng phân đoạn hành động - như đã đề cập trong văn bản, cấu hình điển hình của π₀ là tạo ra các hành động trong tương lai 25-50 ở tần số 50Hz - ẩn độ trễ suy luận trong thời gian thực hiện. Tuy nhiên, nếu môi trường thay đổi đột ngột trong quá trình thực thi (chẳng hạn như một đối tượng bị xóa), chuỗi hành động được tạo trước sẽ trở nên không hợp lệ. Làm thế nào để đạt được sự cân bằng giữa lợi ích hiệu quả của việc phân chia hành động và tốc độ phản ứng với những thay đổi của môi trường?
 8. ★★★ Ba kịch bản trong chương này (giọng nói, Computer Use, robot) đều gặp phải vấn đề độ trễ của chu trình "nhận thức-suy nghĩ-hành động" và chúng đều phát triển theo hướng song song hóa tư duy nhanh và chậm. Trong cảnh lồng tiếng, điều này thể hiện là "sửa lỗi sau khi bạn mắc lỗi"; trong cảnh Computer Use, điều này biểu hiện dưới dạng "nhấp vào trước rồi nhìn"; trong cảnh người máy, điều này thể hiện là "bước một bước và nhìn bước kia". Làm thế nào để đảm bảo rằng những hành động dựa trên tư duy nhanh nhạy này sẽ không dẫn đến những hậu quả không thể khắc phục được?
 [^ch9-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
 [^ch9-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。
+[^ch9-1]: XLeRobot, “Tài liệu Teleop”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
+[^ch9-2]: Google DeepMind, “Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, “Điều khiển bằng LLM Agent”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. Ví dụ ở thượng nguồn của XLeRobot cho thấy cách phối hợp mô hình với lời gọi công cụ; phần này giữ nguyên nguyên tắc phối hợp ấy, nhưng giới hạn các công cụ hành động vào những nguyên thủy gắp, đặt, kiểm tra và dừng đã hiệu chuẩn trên mặt bàn.
+[^ch9-6]: LeRobot, “Hướng dẫn Sim2Real”. https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
+[^ch9-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246
