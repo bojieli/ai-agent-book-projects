@@ -476,6 +476,33 @@ Rubric viết tay phù hợp để nhanh chóng tạo các chiều chẩn đoán
 
 Trong việc lựa chọn mô hình thực tế, câu hỏi chúng ta thường gặp là: "Cái nào tốt hơn, A hay B?" So sánh từng cặp cung cấp một cách đánh giá không dựa vào điểm số tuyệt đối.
 
+#### Lỗi định dạng tài liệu nhạy với phạm vi
+
+Khi người dùng nói "định dạng dấu ngoặc kép sai", ta không thể biến điều đó thành một phép thay thế ký tự toàn cục. Ít nhất phải phân biệt dấu ngoặc thẳng ASCII (`"`, `'`), dấu ngoặc cong tiếng Trung (`“”`, `‘’`) và dấu backtick Markdown (`` ` ``). Cùng một ký tự đảm nhận vai trò cú pháp khác nhau trong văn xuôi tiếng Trung, nguyên bản tiếng Anh được trích, mã nội dòng, khối mã, chú thích mã, JSON và đường dẫn.
+
+Dữ liệu đánh giá nên phân tích tài liệu thành các đoạn có phạm vi trước đã — ví dụ `ZH_PROSE`, `EN_PROSE`, `QUOTED_SOURCE`, `INLINE_CODE`, `CODE_BLOCK`, `CODE_COMMENT` và `JSON_OR_SCHEMA`. Mỗi đoạn lưu tập phép biến đổi được phép, các ký tự bắt buộc phải bảo vệ, và kết quả của bộ kiểm tra sau khi sửa. Ba trường hợp dưới đây không thể xử lý bằng cùng một quy tắc thay thế:
+
+```text
+Văn xuôi tiếng Trung: gọi phương thức `reset()`.
+Nguyên bản tiếng Anh được trích: “Please restart the service.”
+# khối mã dưới đây chỉ nhằm minh họa một phạm vi được bảo vệ
+# Chú thích tiếng Trung: hiển thị "trạng thái hiện tại"
+name = "status"
+```
+
+Hồi quy theo tiền tố quỹ đạo phải yêu cầu mô hình sửa tối thiểu, đồng thời kiểm tra phong cách tài liệu tiếng Trung, tỷ lệ giữ nguyên nguyên bản tiếng Anh, cú pháp mã và JSON, cùng khoảng cách chỉnh sửa trên phần văn bản không phải mục tiêu. Khi quy tắc không xác định được phạm vi, giữ nguyên văn bản gốc và yêu cầu làm rõ phải được tính là hành động được phép, chứ không phải một sửa đổi phỏng đoán tình cờ vượt qua.
+
+#### Lỗi sao chép chính xác: từ `old_string` mismatch đến truy vết theo từng lớp
+
+Lỗi `old_string` cũng không thể quy hết cho "mô hình chép sai". Với cùng một chuỗi, hãy lưu hash byte gốc, dãy code point Unicode và dãy token ID của tokenizer, rồi tìm khác biệt đầu tiên dọc theo chuỗi sau:
+
+```text
+byte file gốc → tool trả về → serialization của Harness → context model
+→ output token → chuỗi decode → parse JSON/tool-call → tool matching
+```
+
+Bộ thăm dò đánh giá tối thiểu bao phủ việc nhắc lại trực tiếp, trích xuất từ ngữ cảnh dài, đặt vào đối số của tool, chọn giữa các chuỗi tương tự, cùng với khoảng trắng, xuống dòng, dấu gạch chéo ngược, ký tự tổ hợp Unicode và token tần suất thấp. Các chỉ số gồm byte-exact match, code-point-exact match, token-exact match, vị trí khác biệt đầu tiên và tỷ lệ thành công thực tế của tool. Nếu mô hình đúng ở thăm dò trực tiếp nhưng lời gọi tool vẫn thất bại, hãy sửa tokenizer, serialization, Harness hoặc giao thức tool; chỉ khi khác biệt đầu tiên xuất hiện ở chính đầu ra của mô hình thì mới chuyển trường hợp đó thành dữ liệu huấn luyện sao chép ở Chương 7.
+
 ### So sánh theo cặp và xếp hạng mô hình
 
 ![Hình 6-5 Xếp hạng Elo và xếp hạng so sánh ghép đôi ](images/fig6-5.svg)

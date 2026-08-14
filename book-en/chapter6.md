@@ -409,6 +409,33 @@ Production bad cases usually come from three signals: an explicit user correctio
 
 An initial Coding-Agent taxonomy can include missing process or repository rules, tool-call and format errors, abnormal model termination, and task-completion or logic failures. The first violating action—not the final error message—should be recorded. Store a structured JSON or YAML attribution with step number, tool name, observation evidence, root cause versus consequence, recoverability, and confidence, together with the task goal, environment state, version identities, and complete trajectory.
 
+#### Scope-Sensitive Document Formatting Errors
+
+When a user says "the quotes are wrong", that cannot be turned into a global character replacement. At minimum you must distinguish ASCII straight quotes (`"`, `'`), Chinese curly quotes (`“”`, `‘’`) and Markdown backticks (`` ` ``). The same character plays a different syntactic role in Chinese prose, quoted English source, inline code, code blocks, code comments, JSON and paths.
+
+Evaluation data should first parse the document into scoped spans—for example `ZH_PROSE`, `EN_PROSE`, `QUOTED_SOURCE`, `INLINE_CODE`, `CODE_BLOCK`, `CODE_COMMENT` and `JSON_OR_SCHEMA`. Each span records the set of permitted transformations, the characters that must be protected, and the validator result after editing. The three cases below cannot be handled by one replacement rule:
+
+```text
+Chinese prose: call the `reset()` method.
+Quoted English source: “Please restart the service.”
+# the code block below only illustrates a protected scope
+# Chinese comment: display "current status"
+name = "status"
+```
+
+Trajectory-prefix regression should require the model to make the minimal edit, and check at the same time Chinese document style, the preservation rate of quoted English source, code and JSON syntax, and the edit distance over non-target text. When the rules cannot determine the scope, keeping the original text and asking for clarification should count as a permitted action, not a guessed edit that happens to pass.
+
+#### Exact-Copy Errors: From `old_string` Mismatch to Layer-by-Layer Localization
+
+An `old_string` failure cannot be attributed simply to "the model copied it wrong" either. For the same string, store the raw byte hash, the Unicode code point sequence and the tokenizer token ID sequence, then look for the first divergence along this chain:
+
+```text
+original file bytes → tool return → Harness serialization → model context
+→ model token output → decoded string → JSON/tool-call parsing → tool matching
+```
+
+A minimal set of evaluation probes covers direct restatement, extraction from a long context, placement into tool arguments, selection among similar strings, and spaces, newlines, backslashes, Unicode combining characters and low-frequency tokens. The metrics are byte-exact match, code-point-exact match, token-exact match, the position of the first divergence, and the real tool success rate. If the model is correct on the direct probe but the tool call still fails, fix the tokenizer, the serialization, the Harness or the tool protocol; only when the first divergence appears in the model's own output should the case be turned into the copying training data of Chapter 7.
+
 ### End-to-End and Trajectory-Prefix Regression Tasks
 
 Once the first error is known, turn the repair target into a repeatable **regression task**. End-to-end regression starts from the initial state and user request, runs the whole workflow, and checks final state, required output, and safety. A **trajectory-prefix regression task** freezes the context, conversation, tool returns, and environment state just before the first error, then tests only the next one or few observable actions. It is cheaper and isolates one decision boundary, so it is especially important for high-reliability production Agents.

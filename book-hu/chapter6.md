@@ -477,6 +477,33 @@ A kézzel írt Rubricák gyorsan kialakítják ezeket a diagnosztikai dimenziók
 
 A gyakorlati modellválasztás során gyakran szembesülünk a kérdéssel: "Melyik jobb, A vagy B?" A páronkénti összehasonlítás olyan kiértékelési módszert kínál, amely nem támaszkodik abszolút pontszámokra.
 
+#### Hatókör-érzékeny dokumentumformázási hibák
+
+Amikor a felhasználó azt mondja, hogy „rossz az idézőjel formátuma”, azt nem szabad globális karaktercserére fordítani. Legalább meg kell különböztetni az ASCII egyenes idézőjeleket (`"`, `'`), a kínai íves idézőjeleket (`“”`, `‘’`) és a Markdown visszaperjeleket (`` ` ``). Ugyanaz a karakter más-más szintaktikai szerepet tölt be a kínai prózában, az idézett angol forrásban, a soron belüli kódban, a kódblokkokban, a kódmegjegyzésekben, a JSON-ban és az útvonalakban.
+
+Az értékelési adatot előbb hatókörrel ellátott szakaszokra kell bontani — például `ZH_PROSE`, `EN_PROSE`, `QUOTED_SOURCE`, `INLINE_CODE`, `CODE_BLOCK`, `CODE_COMMENT` és `JSON_OR_SCHEMA`. Minden szakasz eltárolja az engedélyezett átalakítások halmazát, a kötelezően védendő karaktereket és a szerkesztés utáni ellenőrző eredményét. Az alábbi három eset nem kezelhető egyetlen cserélési szabállyal:
+
+```text
+Kínai próza: hívd meg a `reset()` metódust.
+Idézett angol forrás: “Please restart the service.”
+# az alábbi kódblokk csak egy védett hatókört szemléltet
+# Kínai megjegyzés: jelenítsd meg az "aktuális állapot" szöveget
+name = "status"
+```
+
+A trajectory-prefix regressziónak a minimális szerkesztést kell megkövetelnie a modelltől, és egyszerre kell ellenőriznie a kínai dokumentumstílust, az idézett angol forrás megőrzési arányát, a kód és a JSON szintaxisát, valamint a nem célszövegen mért szerkesztési távolságot. Ha a szabályok nem tudják eldönteni a hatókört, az eredeti szöveg megőrzése és a pontosítás kérése engedélyezett műveletnek számítson, ne pedig véletlenül átmenő, találgatáson alapuló szerkesztésnek.
+
+#### Pontos másolási hibák: az `old_string` mismatch-től a rétegenkénti behatárolásig
+
+Egy `old_string` hiba sem tulajdonítható pusztán annak, hogy „a modell rosszul másolta le”. Ugyanarra a karakterláncra el kell menteni a nyers bájtok hash-ét, a Unicode code point sorozatot és a tokenizer token ID sorozatát, majd az alábbi lánc mentén kell megkeresni az első eltérést:
+
+```text
+original file bytes → tool return → Harness serialization → model context
+→ model token output → decoded string → JSON/tool-call parsing → tool matching
+```
+
+A minimális értékelési szondakészlet lefedi a közvetlen visszamondást, a hosszú kontextusból való kinyerést, az eszközargumentumba helyezést, a hasonló karakterláncok közötti választást, valamint a szóközöket, sortöréseket, visszaperjeleket, Unicode kombináló karaktereket és a ritka tokeneket. A metrikák: byte-exact match, code-point-exact match, token-exact match, az első eltérés pozíciója és a valós eszközsiker-arány. Ha a modell a közvetlen szondán helyes, de az eszközhívás mégis elbukik, a tokenizert, a szerializálást, a Harness-t vagy az eszközprotokollt kell javítani; és csak akkor szabad az esetet a 7. fejezet másolási tréningadatává alakítani, ha az első eltérés magának a modellnek a kimenetében jelenik meg.
+
 ### Páronkénti Összehasonlítás és Modellrangsorolás
 
 ![6-5. ábra: Elo Pontszámítás és Páronkénti Összehasonlítási Rangsor](images/fig6-5.svg)
