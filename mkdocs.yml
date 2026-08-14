@@ -116,6 +116,12 @@ markdown_extensions:
   - md_in_html
   - toc:
       permalink: true
+      # Default slugify drops CJK, so Chinese headings collapse to useless ids
+      # (`蒸馏：提升样本效率` -> `_1`). pymdownx's slugify keeps them and matches
+      # GitHub's anchors, so in-page section links work in both places.
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
   - pymdownx.arithmatex:
       generic: true
   - pymdownx.highlight:
