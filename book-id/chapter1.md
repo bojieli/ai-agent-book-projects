@@ -301,13 +301,13 @@ Singkat kata, sebuah model tanpa Harness mungkin sangat kapabel, tetapi ia tidak
 
 Lebih tepatnya, Harness bukanlah segala sesuatu di luar model: Harness adalah lapisan runtime dan tata kelola **di dalam batas Agent dan di luar Model**. Harness menjadi perantara interaksi Model–Environment, tetapi tidak mencakup Environment. Definisi tool, adaptor pemanggilan, serta mekanisme izin dan reset sandbox termasuk Harness; berkas dan proses yang berubah di dalam sandbox, basis data eksternal, halaman web, pengguna, dan dunia fisik termasuk Environment. Lokasi deployment tidak mengubah batas konseptual ini. Inti Harness adalah manajemen Context dan antarmuka Tool, yang di sekitarnya dibangun tiga jenis perlindungan rekayasa:
 
-| Fungsi | Tanggung Jawab Satu-Kalimat | Hubungan dengan Context/Tool |
-|----------|-------------------------------------------|------------------------------------------|
-| **Context** | Memberikan model informasi yang relevan | Kemampuan inti (Core capability) |
-| **Tool** | Memberikan model antarmuka tindakan | Kemampuan inti (Core capability) |
-| **Constrain** | Menetapkan batas perilaku—apa yang bisa dan tidak bisa dilakukan | Batas aman (Safety boundary) yang dibangun di sekitar context dan tool |
-| **Verify** | Secara otomatis menilai kebenaran dari hasil eksekusi tool | Mekanisme pengecekan yang dibangun di sekitar hasil eksekusi tool |
-| **Correct** | Secara otomatis memulihkan (recover) atau membatalkan (roll back) saat masalah ditemukan | Mekanisme pemulihan yang dibangun di sekitar kegagalan panggilan tool |
+| Fungsi | Tanggung Jawab Satu-Kalimat / Aturan Dasar Inti | Contoh Praktik | Lihat Bab |
+|---|---|---|---|
+| **Context** | Memberikan model informasi yang relevan; Kecukupan Informasi: Memastikan Agent membuat keputusan berdasarkan informasi yang cukup pada setiap titik pengambilan keputusan | System prompt, basis knowledge, status bar Agent, kueri bypass Sidecar | Bab 2 & 3 |
+| **Tool** | Memberikan model antarmuka tindakan; Antarmuka Jelas: Nama tool intuitif, parameter memiliki contoh, batasan dijelaskan | Tool MCP, code interpreter, tool pencarian | Bab 4 |
+| **Constrain** | Menetapkan batas perilaku—apa yang bisa dan tidak bisa dilakukan; Default Gagal-Aman (Fail-Safe Defaults): Semua kapabilitas nonaktif secara default dan harus diaktifkan secara eksplisit (mirip dengan manajemen permission aplikasi seluler) | Di Claude Code, setiap tool memerlukan otorisasi pengguna secara default sebelum dieksekusi | Bab 4 |
+| **Verify** | Secara otomatis menilai kebenaran dari hasil eksekusi tool; Isolasi Input: Pemeriksaan keamanan hanya melihat data terstruktur (mis., field JSON yang dikembalikan oleh tool), bukan teks bentuk bebas yang dihasilkan oleh model (karena penyerang mungkin memanipulasi output model melalui prompt injection) | Pemeriksaan linter, sistem tipe data, validasi hasil panggilan tool | Bab 5 & 6 |
+| **Correct** | Secara otomatis memulihkan (recover) atau membatalkan (roll back) saat masalah ditemukan; Jangan mengekspos state intermediate (menengah/sedang berjalan) hingga kegagalan dipastikan tidak dapat dipulihkan (misalnya, secara diam-diam mencoba kembali pemanggilan tool yang gagal alih-alih menunjukkan hasil yang setengah jadi kepada pengguna) | Percobaan ulang (retry) diam-diam, continuation generation, pengembalian (fallback) ke penilaian manusia pada kegagalan berturut-turut (mekanisme circuit breaker) | Bab 2 & 5 |
 
 Context dan Tool memungkinkan Agent menyelesaikan tugas—memahami tugas dan mengerjakannya. Constrain, Verify, dan Correct memastikan ia melakukannya dengan andal dan aman—bukan sebagai sesuatu yang terpisah dari Context dan Tool, tetapi sebagai rekayasa yang menjaganya tetap bekerja secara andal dalam produksi. Di sepanjang kurva kematangan (maturity curve) produk Agent, penekanan di antara kedua kelompok ini bergeser.
 
@@ -342,20 +342,6 @@ Pada Juli 2026, industri mulai menggunakan istilah **Graph Engineering** untuk p
 Kelima tahap ini tidak saling menggantikan, melainkan lapisan bersarang: Prompt Engineering adalah bagian dari Context Engineering, yang merupakan bagian dari Harness Engineering, yang lalu menjadi bagian dari Loop Engineering. Setiap lapisan memperluas cakupan perhatian dan pengaruh perekayasa melebihi lapisan sebelumnya. **Ketika kapabilitas model saling mendekat dan tidak lagi menjadi pembeda yang menentukan, keunggulan kompetitif beralih ke rekayasa di luar model.**
 
 Praktik rekayasa belakangan ini mendukung pandangan tersebut. Proyek LangChain di Terminal Bench 2.0, sebuah benchmark untuk kemampuan Agent menyelesaikan tugas kompleks di lingkungan terminal, merupakan contoh mencolok: Coding Agent mereka meningkat dari 52,8% ke 66,5%, melompat dari luar 30 besar ke dalam lima besar leaderboard. Yang berubah bukan modelnya, melainkan Harness-nya—Agent memeriksa hasil eksekusinya sendiri, mendeteksi saat terjebak dalam loop berulang, dan menyempurnakan strategi penalarannya.
-
-### Prinsip Inti dari Lima Fungsi Harness
-
-Tabel sebelumnya mencantumkan kelima fungsi Harness. Tabel di bawah ini menambahkan prinsip inti desain masing-masing fungsi, dan di bab mana buku ini membahasnya, yang memetakan konsep ke praktik:
-
-| Fungsi | Aturan Dasar Inti | Contoh Praktik | Lihat Bab |
-|----------|------------------------------------------|----------------------------------|---------|
-| **Context** | Kecukupan Informasi: Memastikan Agent membuat keputusan berdasarkan informasi yang cukup pada setiap titik pengambilan keputusan | System prompt, basis knowledge, status bar Agent, kueri bypass Sidecar | Bab 2 & 3 |
-| **Tool** | Antarmuka Jelas: Nama tool intuitif, parameter memiliki contoh, batasan dijelaskan | Tool MCP, code interpreter, tool pencarian | Bab 4 |
-| **Constrain** | Default Gagal-Aman (Fail-Safe Defaults): Semua kapabilitas nonaktif secara default dan harus diaktifkan secara eksplisit (mirip dengan manajemen permission aplikasi seluler) | Di Claude Code, setiap tool memerlukan otorisasi pengguna secara default sebelum dieksekusi | Bab 4 |
-| **Verify** | Isolasi Input: Pemeriksaan keamanan hanya melihat data terstruktur (mis., field JSON yang dikembalikan oleh tool), bukan teks bentuk bebas yang dihasilkan oleh model (karena penyerang mungkin memanipulasi output model melalui prompt injection) | Pemeriksaan linter, sistem tipe data, validasi hasil panggilan tool | Bab 5 & 6 |
-| **Correct** | Jangan mengekspos state intermediate (menengah/sedang berjalan) hingga kegagalan dipastikan tidak dapat dipulihkan (misalnya, secara diam-diam mencoba kembali pemanggilan tool yang gagal alih-alih menunjukkan hasil yang setengah jadi kepada pengguna) | Percobaan ulang (retry) diam-diam, continuation generation, pengembalian (fallback) ke penilaian manusia pada kegagalan berturut-turut (mekanisme circuit breaker) | Bab 2 & 5 |
-
-Kelima fungsi tersebut membentuk sebuah siklus tertutup (closed loop): Context dan Tool mendukung pengambilan keputusan, Constrain mencegah terjadinya error, Verify mendeteksi adanya deviasi, dan Correct menutup siklus tersebut. Jika salah satu mata rantai hilang, sistem akan mengalami kesenjangan keandalan. Sebelum mengkaji orchestration pattern dan desain guardrail yang spesifik, pertama-tama kita jabarkan prinsip inti untuk membangun Agent yang efektif dan untuk memilih sebuah model—fondasi bagi setiap keputusan desain setelahnya.
 
 ### Prinsip Inti Membangun Agent yang Efektif
 

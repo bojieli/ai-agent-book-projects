@@ -304,13 +304,13 @@ Quay trở lại với phép ẩn dụ về dây nịt được đưa ra ở đ�
 
 Chính xác hơn, Harness không phải là mọi thứ bên ngoài mô hình; đó là **lớp chạy và quản trị nằm trong ranh giới Agent nhưng bên ngoài Model**. Harness trung gian cho tương tác giữa Model và Môi trường nhưng không bao gồm chính Môi trường. Định nghĩa công cụ, bộ chuyển đổi lệnh gọi, quyền sandbox và cơ chế đặt lại thuộc về Harness; các tệp và tiến trình thay đổi trong sandbox, cơ sở dữ liệu bên ngoài, trang web, người dùng và thế giới vật lý thuộc về Môi trường. Vị trí triển khai không làm thay đổi ranh giới khái niệm này. Cốt lõi của Harness là quản lý ngữ cảnh và giao diện công cụ, xung quanh đó ba loại cơ chế đảm bảo kỹ thuật được xây dựng:
 
-| Chức năng | Trách nhiệm trong một câu | Mối quan hệ với ngữ cảnh/công cụ |
-|------|-----------|-------------------|
-|**Ngữ cảnh**| Cung cấp thông tin cảm quan cho mô hình | Năng lực cốt lõi |
-|**Công cụ**| Cung cấp phương tiện hành động cho mô hình | Năng lực cốt lõi |
-|**Hạn chế**| Đặt ra ranh giới hành vi - những gì có thể và không thể làm được | Ranh giới an toàn được xây dựng xung quanh ngữ cảnh và công cụ |
-|**Xác minh**| Tự động xác định kết quả thao tác đúng hay sai | Cơ chế kiểm tra được xây dựng dựa trên kết quả thực thi công cụ |
-|**Sửa lỗi**| Tự động sửa hoặc khôi phục khi phát hiện sự cố | Cơ chế phục hồi được xây dựng xung quanh lỗi gọi công cụ |
+| Chức năng | Trách nhiệm trong một câu / Nguyên tắc cốt lõi | Ví dụ thực tế | Xem chi tiết |
+|---|---|---|---|
+| **Ngữ cảnh** | Cung cấp thông tin cảm quan cho mô hình; Đầy đủ thông tin: Hãy để Agent đưa ra phán đoán dựa trên thông tin đầy đủ tại mỗi thời điểm quyết định | System prompt, cơ sở kiến thức, thanh trạng thái Agent, truy vấn bỏ qua Sidecar | Chương 2 và 3 |
+| **Công cụ** | Cung cấp phương tiện hành động cho mô hình; Giao diện rõ ràng: đặt tên công cụ trực quan, ví dụ về tham số và mô tả ranh giới | Công cụ MCP, trình thông dịch mã, công cụ tìm kiếm | Chương 4 |
+| **Hạn chế** | Đặt ra ranh giới hành vi - những gì có thể và không thể làm được; Giá trị mặc định không an toàn: tất cả các tính năng đều bị tắt theo mặc định và phải được mở một cách rõ ràng (tương tự như quản lý quyền ứng dụng di động) | Theo mặc định, mỗi công cụ trong Claude Code đều yêu cầu ủy quyền của người dùng để thực thi | Chương 4 |
+| **Xác minh** | Tự động xác định kết quả thao tác đúng hay sai; Cách ly đầu vào: Kiểm tra bảo mật chỉ xem xét dữ liệu có cấu trúc (chẳng hạn như trường JSON được công cụ trả về), chứ không phải văn bản do mô hình tạo tự do (vì kẻ tấn công có thể thao túng đầu ra của mô hình thông qua prompt injection) | Kiểm tra linter, hệ thống loại, xác minh kết quả cuộc gọi công cụ | Chương 5 và 6 |
+| **Sửa lỗi** | Tự động sửa hoặc khôi phục khi phát hiện sự cố; Trước khi xác nhận rằng không thể khôi phục, không để lộ trạng thái trung gian (ví dụ: thử lại trong im lặng khi lệnh gọi công cụ không thành công và không hiển thị kết quả bán thành phẩm cho người dùng) | Âm thầm thử lại, tiếp tục tạo và quay lại phán đoán thủ công (cơ chế ngắt mạch) khi xảy ra lỗi liên tục | Chương 2 và 5 |
 
 Ngữ cảnh và công cụ cho phép Agent "làm mọi việc" - hiểu nhiệm vụ và thực hiện hành động; các ràng buộc, xác minh và sửa chữa cho phép Agent "không làm sai" - chúng không phải là những thứ độc lập với ngữ cảnh và công cụ, mà là các thực tiễn kỹ thuật đảm bảo rằng ngữ cảnh và công cụ hoạt động đáng tin cậy trong môi trường sản xuất. Trên đường cong trưởng thành của sản phẩm Agent, tầm quan trọng của cả hai là không đối xứng.
 
@@ -345,21 +345,6 @@ Vào tháng 7 năm 2026, ngành bắt đầu dùng **Graph Engineering (kỹ thu
 Năm giai đoạn này không thay thế mà được bao gồm từng lớp: Prompt Engineering là một tập hợp con của Context Engineering, Context Engineering là một tập hợp con của Harness Engineering, và Harness Engineering là một tập hợp con của Loop Engineering. Mỗi lớp mở rộng trọng tâm và tầm ảnh hưởng của kỹ sư dựa trên lớp trước đó. **Khi năng lực của mỗi mô hình ngày càng gần nhau và không còn là yếu tố khác biệt mang tính quyết định, lợi thế cạnh tranh sẽ chuyển sang thực hành kỹ thuật bên ngoài mô hình**.
 
 Nhận định này đã được xác minh trong thực tiễn kỹ thuật gần đây - thực tiễn của LangChain trên Terminal Bench 2.0 (một bài kiểm tra điểm chuẩn để đánh giá khả năng Agent hoàn thành các nhiệm vụ phức tạp trong môi trường thiết bị đầu cuối) là một ví dụ điển hình: Coding Agent của họ đã tăng từ 52,8% lên 66,5% (nhảy từ vị trí thứ 30 trong bảng xếp hạng lên top 5). Thứ thay đổi không phải là mô hình mà là Harness: Hãy để Agent tự động kiểm tra kết quả thực thi của chính nó, phát hiện xem liệu nó có bị mắc kẹt trong một vòng lặp lặp đi lặp lại hay không và tối ưu hóa các chiến lược tư duy cũng như các phương pháp kỹ thuật khác.
-
-### Nguyên tắc Harness cốt lõi của năm chức năng
-
-Bảng trên liệt kê năm chức năng của Harness. Bảng sau đây mở rộng thêm về các nguyên tắc thiết kế cốt lõi của từng tính năng và các chương tương ứng trong cuốn sách để giúp người đọc vạch ra các khái niệm để thực hành:
-
-| Tính năng | Nguyên tắc cốt lõi | Ví dụ thực tế | Xem chi tiết |
-|------|---------|---------|------|
-|**Ngữ cảnh**| Đầy đủ thông tin: Hãy để Agent đưa ra phán đoán dựa trên thông tin đầy đủ tại mỗi thời điểm quyết định | System prompt, cơ sở kiến thức, thanh trạng thái Agent, truy vấn bỏ qua Sidecar | Chương 2 và 3 |
-|**Công cụ**| Giao diện rõ ràng: đặt tên công cụ trực quan, ví dụ về tham số và mô tả ranh giới | Công cụ MCP, trình thông dịch mã, công cụ tìm kiếm | Chương 4 |
-|**Ràng buộc**| Giá trị mặc định không an toàn: tất cả các tính năng đều bị tắt theo mặc định và phải được mở một cách rõ ràng (tương tự như quản lý quyền ứng dụng di động) | Theo mặc định, mỗi công cụ trong Claude Code đều yêu cầu ủy quyền của người dùng để thực thi | Chương 4 |
-|**Xác thực**| Cách ly đầu vào: Kiểm tra bảo mật chỉ xem xét dữ liệu có cấu trúc (chẳng hạn như trường JSON được công cụ trả về), chứ không phải văn bản do mô hình tạo tự do (vì kẻ tấn công có thể thao túng đầu ra của mô hình thông qua prompt injection) | Kiểm tra linter, hệ thống loại, xác minh kết quả cuộc gọi công cụ | Chương 5 và 6 |
-|**Chỉnh sửa**| Trước khi xác nhận rằng không thể khôi phục, không để lộ trạng thái trung gian (ví dụ: thử lại trong im lặng khi lệnh gọi công cụ không thành công và không hiển thị kết quả bán thành phẩm cho người dùng) | Âm thầm thử lại, tiếp tục tạo và quay lại phán đoán thủ công (cơ chế ngắt mạch) khi xảy ra lỗi liên tục | Chương 2 và 5 |
-
-Năm chức năng tạo thành một vòng khép kín: ngữ cảnh và công cụ hỗ trợ việc ra quyết định, các ràng buộc ngăn ngừa lỗi, xác minh phát hiện sai lệch và sửa chữa sẽ đóng vòng lặp. Nếu không có bất kỳ liên kết nào, hệ thống sẽ có những khoảng trống về độ tin cậy. Trước khi đi sâu vào các mẫu điều phối và thiết kế guardrails cụ thể, hãy làm rõ các nguyên tắc cốt lõi và chiến lược lựa chọn mô hình để xây dựng Agent—chúng làm cơ sở cho tất cả các quyết định thiết kế tiếp theo.
-
 
 ### Nguyên tắc cốt lõi để xây dựng Agent hiệu quả
 

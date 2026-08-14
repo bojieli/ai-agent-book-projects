@@ -303,13 +303,13 @@ Bu bölümün başındaki koşum takımı (harness) benzetmesine dönersek: Harn
 
 Daha kesin olarak söylemek gerekirse, Harness modelin dışındaki her şey değildir; **Agent sınırları içinde ve Model'in dışında bulunan çalıştırma ve yönetişim katmanıdır**. Model–Ortam etkileşimine aracılık eder, ancak Ortam'ın kendisini içermez. Araç tanımları, çağrı adaptörleri, sandbox izinleri ve sıfırlama mekanizmaları Harness'e aittir; sandbox içinde değişen dosyalar ve süreçler, harici veritabanları, web sayfaları, kullanıcılar ve fiziksel dünya ise Ortam'a aittir. Dağıtım konumu bu kavramsal sınırı değiştirmez. Harness'in özü Context yönetimi ve araç arayüzleridir; bunların etrafında üç tür mühendislik güvenlik önlemi inşa edilir:
 
-| İşlev | Tek Cümlelik Sorumluluk | Context/Tools ile İlişkisi |
-|----------|-------------------------------------------|------------------------------------------|
-| **Context** | Modele algısal bilgi sağlar | Temel yetenek |
-| **Tools** | Modele eylem araçları sağlar | Temel yetenek |
-| **Constrain** | Davranışsal sınırlar koyar—neyin yapılıp neyin yapılamayacağı | Context ve tools etrafında inşa edilmiş güvenlik sınırı |
-| **Verify** | İşlem sonuçlarının doğruluğuna otomatik olarak karar verir | Araç yürütme sonuçları etrafında inşa edilmiş kontrol mekanizması |
-| **Correct** | Sorun bulunduğunda otomatik olarak düzeltir veya geri alır | Araç çağrısı başarısızlıkları etrafında inşa edilmiş kurtarma mekanizması |
+| İşlev | Tek Cümlelik Sorumluluk / Temel İlke | Pratik Örnek | İlgili Bölüm |
+|---|---|---|---|
+| **Context** | Modele algısal bilgi sağlar; Bilgi Yeterliliği: Agent'ın her karar noktasında yeterli bilgiye dayanarak karar vermesini sağlamak | System prompt'lar, bilgi tabanları, Agent durum çubukları, Sidecar bypass sorguları | Bölüm 2 & 3 |
+| **Tools** | Modele eylem araçları sağlar; Net Arayüz: Araç adları sezgisel, parametrelerin örnekleri var, sınırlar açıklanmış | MCP araçları, code interpreter, arama araçları | Bölüm 4 |
+| **Constrain** | Davranışsal sınırlar koyar—neyin yapılıp neyin yapılamayacağı; Güvenli Varsayılanlar (Fail-Safe Defaults): Tüm yetenekler varsayılan olarak kapalıdır ve açıkça etkinleştirilmelidir (mobil uygulama izin yönetimine benzer) | Claude Code'da her araç, çalıştırılmadan önce varsayılan olarak kullanıcı yetkilendirmesi gerektirir | Bölüm 4 |
+| **Verify** | İşlem sonuçlarının doğruluğuna otomatik olarak karar verir; Girdi İzolasyonu: Güvenlik kontrolleri yalnızca yapılandırılmış verilere (örn. araçların döndürdüğü JSON alanları) bakar, modelin ürettiği serbest formatlı metne bakmaz (çünkü saldırganlar prompt injection yoluyla model çıktısını manipüle edebilir) | Linter kontrolleri, tip sistemleri, araç çağrısı sonucu doğrulaması | Bölüm 5 & 6 |
+| **Correct** | Sorun bulunduğunda otomatik olarak düzeltir veya geri alır; Bir arıza kurtarılamaz olduğu doğrulanana kadar ara durumları açığa çıkarmayın (örn. kullanıcıya yarım kalmış bir sonuç göstermek yerine başarısız bir araç çağrısını sessizce yeniden deneyin) | Sessiz yeniden denemeler, devam üretimi, ardışık başarısızlıklarda insan yargısına geri dönüş (circuit breaker mekanizması) | Bölüm 2 & 5 |
 
 Context ve Tools, Agent'ın "işi yapmasını" sağlar—görevi anlamasını ve ona göre eylemesini. Constrain, Verify ve Correct ise "işi yanlış yapmamasını" sağlar—Context ve Tools'tan ayrı bir şey değil, bunların üretimde güvenilir biçimde çalışmasını sağlayan mühendisliktir. Ve Agent ürünlerinin olgunluk eğrisi boyunca bu iki grubun ağırlığı değişir.
 
@@ -344,21 +344,6 @@ Temmuz 2026'da sektör, daha üst düzey bir orkestrasyon perspektifi için **Gr
 Bu beş aşama birbirinin yerine geçmez, iç içe geçmiş katmanlardır: Prompt Engineering, Context Engineering'in bir alt kümesidir; o da Harness Engineering'in bir alt kümesidir; o da Loop Engineering'in bir alt kümesidir. Her katman, mühendisin ilgi ve etki alanını bir öncekinin ötesine genişletir. **Modeller yetenek açısından birbirine yaklaşıp belirleyici bir farklılaştırıcı olmaktan çıktıkça, rekabet avantajı modelin dışındaki mühendisliğe kayar.**
 
 Yakın zamandaki mühendislik pratiği bunu doğruluyor. LangChain'in Terminal Bench 2.0 (bir Agent'ın terminal ortamında karmaşık görevleri tamamlama yeteneğini değerlendiren bir benchmark) üzerindeki çalışması çarpıcı bir örnektir: Kodlama Agent'ları %52,8'den %66,5'e yükseldi (lider tablosunda ilk 30'un dışından ilk 5'e sıçradı). Değişen model değil, Harness'ti—Agent'ın kendi yürütme sonuçlarını kontrol etmesi, tekrarlayan bir döngüde sıkışıp kalıp kalmadığını tespit etmesi, düşünme stratejisini inceltmesi.
-
-### Beş Harness İşlevinin Temel İlkeleri
-
-Önceki tablo Harness'in beş işlevini listeledi. Aşağıdaki tablo, her işlevin temel tasarım ilkesini ve bu kitapta nerede ele alındığını ekleyerek kavramı pratiğe bağlar:
-
-| İşlev | Temel İlke | Pratik Örnek | İlgili Bölüm |
-|----------|------------------------------------------|----------------------------------|---------|
-| **Context** | Bilgi Yeterliliği: Agent'ın her karar noktasında yeterli bilgiye dayanarak karar vermesini sağlamak | System prompt'lar, bilgi tabanları, Agent durum çubukları, Sidecar bypass sorguları | Bölüm 2 & 3 |
-| **Tools** | Net Arayüz: Araç adları sezgisel, parametrelerin örnekleri var, sınırlar açıklanmış | MCP araçları, code interpreter, arama araçları | Bölüm 4 |
-| **Constrain** | Güvenli Varsayılanlar (Fail-Safe Defaults): Tüm yetenekler varsayılan olarak kapalıdır ve açıkça etkinleştirilmelidir (mobil uygulama izin yönetimine benzer) | Claude Code'da her araç, çalıştırılmadan önce varsayılan olarak kullanıcı yetkilendirmesi gerektirir | Bölüm 4 |
-| **Verify** | Girdi İzolasyonu: Güvenlik kontrolleri yalnızca yapılandırılmış verilere (örn. araçların döndürdüğü JSON alanları) bakar, modelin ürettiği serbest formatlı metne bakmaz (çünkü saldırganlar prompt injection yoluyla model çıktısını manipüle edebilir) | Linter kontrolleri, tip sistemleri, araç çağrısı sonucu doğrulaması | Bölüm 5 & 6 |
-| **Correct** | Bir arıza kurtarılamaz olduğu doğrulanana kadar ara durumları açığa çıkarmayın (örn. kullanıcıya yarım kalmış bir sonuç göstermek yerine başarısız bir araç çağrısını sessizce yeniden deneyin) | Sessiz yeniden denemeler, devam üretimi, ardışık başarısızlıklarda insan yargısına geri dönüş (circuit breaker mekanizması) | Bölüm 2 & 5 |
-
-Beş işlev kapalı bir döngü oluşturur: Context ve Tools karar almayı destekler, Constrain hataları önler, Verify sapmaları tespit eder, Correct döngüyü kapatır. Herhangi bir halkayı düşürürseniz sistemde bir güvenilirlik açığı oluşur. Belirli orkestrasyon kalıplarına ve guardrail tasarımlarına girmeden önce, önce etkili Agent'lar inşa etmenin ve bir model seçmenin temel ilkelerini ortaya koyalım—bundan sonraki her tasarım kararının temeli.
-
 
 ### Etkili Agent'lar İnşa Etmenin Temel İlkeleri
 

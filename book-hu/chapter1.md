@@ -301,13 +301,13 @@ Röviden: egy modell Harness nélkül lehet nagyon képzett, de hiányoznak bel�
 
 Pontosabban: a Harness nem minden, ami a modellen kívül található, hanem az **Agent határain belüli, a Modellen kívüli** futtatási és irányítási réteg. A Modell és a Környezet interakcióját közvetíti, de magát a Környezetet nem tartalmazza. Az eszközdefiníciók, a hívásadapterek, valamint a sandbox jogosultság- és visszaállítási mechanizmusai a Harness részei; a sandboxban változó fájlok és folyamatok, a külső adatbázisok, weboldalak, felhasználók és a fizikai világ a Környezethez tartoznak. A telepítés helye nem módosítja ezt a fogalmi határt. A Harness magja a kontextuskezelés és az eszközinterfészek, amelyek köré háromféle mérnöki védelmi mechanizmus épül:
 
-| Funkció | Egymondatos felelősség | Kapcsolat a Kontextussal/Eszközökkel |
-|---------|------------------------|--------------------------------------|
-| "Kontextus" | Releváns információkat biztosít a modellnek | Alapképesség |
-| "Eszközök" | Cselekvési interfészeket biztosít a modellnek | Alapképesség |
-| "Korlátozás" | Viselkedési határokat szab meg – mit szabad és mit nem | Kontextus és eszközök köré épített biztonsági határ |
-| "Ellenőrzés" | Automatikusan megítéli az eszköz-végrehajtási eredmények helyességét | Eszköz-végrehajtási eredmények köré épített ellenőrző mechanizmus |
-| "Javítás" | Automatikusan helyreállít vagy visszaállít, ha problémát talál | Eszközhívási hibák köré épített helyreállítási mechanizmus |
+| Funkció | Egymondatos felelősség / Alapelv | Gyakorlati példa | Lásd a fejezetet |
+|---|---|---|---|
+| "Kontextus" | Releváns információkat biztosít a modellnek; Információs teljesség: Biztosítsd, hogy az ügynök minden döntési ponton elegendő információ alapján döntsön | System promptok, tudásbázisok, ügynökállapot-sávok, Sidecar bypass lekérdezések | 2. és 3. fejezet |
+| "Eszközök" | Cselekvési interfészeket biztosít a modellnek; Tiszta interfész: Az eszköznevek intuitívak, a paraméterek példákkal ellátottak, a határok magyarázottak | MCP eszközök, kódértelmező, keresőeszközök | 4. fejezet |
+| "Korlátozás" | Viselkedési határokat szab meg – mit szabad és mit nem; Hibatűrő alapértelmezések: Minden képesség alapértelmezés szerint ki van kapcsolva, és kifejezetten engedélyezni kell (hasonlóan a mobilalkalmazás-engedélykezeléshez) | Claude Code-ban minden eszköz alapértelmezés szerint felhasználói engedélyt igényel a végrehajtás előtt | 4. fejezet |
+| "Ellenőrzés" | Automatikusan megítéli az eszköz-végrehajtási eredmények helyességét; Bemeneti elkülönítés: A biztonsági ellenőrzések csak strukturált adatokat vizsgálnak (pl. az eszközök által visszaadott JSON mezőket), nem a modell által generált szabad formátumú szöveget (mert a támadók prompt injection segítségével manipulálhatják a modell kimenetét) | Linter-ellenőrzések, típusrendszerek, eszközhívási eredmények validálása | 5. és 6. fejezet |
+| "Javítás" | Automatikusan helyreállít vagy visszaállít, ha problémát talál; Ne tegyél ki köztes állapotokat, amíg a hiba visszafordíthatatlannak nem bizonyul (pl. némán próbáld újra a meghiúsult eszközhívást ahelyett, hogy egy félkész eredményt mutatnál a felhasználónak) | Csendes újrapróbálkozások, folytatásgenerálás, emberi ítéletre hagyatkozás egymást követő hibák esetén (megszakító mechanizmus) | 2. és 5. fejezet |
 
 A Kontextus és az Eszközök lehetővé teszik az ügynök számára a feladatok elvégzését – a feladat megértését és a cselekvést. A Korlátozás, Ellenőrzés és Javítás biztosítja, hogy ezt megbízhatóan és biztonságosan tegye – nem a Kontextustól és Eszközöktől elkülönülve, hanem annak a mérnöki munkának a részeként, amely megbízhatóan működteti őket éles üzemben. Az ügynöktermékek érettségi görbéje mentén a hangsúly e két csoport között eltolódik.
 
@@ -342,20 +342,6 @@ A "Loop Engineering" következett ezután, kitágítva a nézőpontot egyetlen f
 Ez az öt szakasz nem helyettesítő, hanem egymásba ágyazott rétegek: a Prompt Engineering a Context Engineering része, amely a Harness Engineering része, amely a Loop Engineering része. Minden egyes réteg szélesíti a mérnök látókörét és befolyását az előzőhöz képest. **Ahogy a modellek képességben konvergálnak, és megszűnnek a döntő megkülönböztető tényező lenni, a versenyelőny a modellen kívüli mérnöki munkára helyeződik át.**
 
 A közelmúlt mérnöki gyakorlata alátámasztja ezt a nézetet. A LangChain munkája a Terminal Bench 2.0-n – amely azt méri, hogyan teljesít egy ügynök összetett terminálfeladatokon – szembetűnő példa: a Kódoló Ügynökük 52,8%-ról 66,5%-ra javult, és a ranglista első harminc helyén kívülről az első ötbe ugrott. Nem a modell változott, hanem a Harness: az ügynök ellenőrizte saját végrehajtási eredményeit, felismerte, ha ismétlődő ciklusba ragadt, és finomította érvelési stratégiáját.
-
-### Az öt Harness-funkció alapelvei
-
-A korábbi táblázat felsorolta a Harness öt funkcióját. Az alábbi táblázat mindegyik funkcióhoz hozzáadja a központi tervezési elvet és azt, hogy a könyv hol tárgyalja, fogalmat gyakorlathoz rendelve:
-
-| Funkció | Alapelv | Gyakorlati példa | Lásd a fejezetet |
-|---------|---------|------------------|------------------|
-| "Kontextus" | Információs teljesség: Biztosítsd, hogy az ügynök minden döntési ponton elegendő információ alapján döntsön | System promptok, tudásbázisok, ügynökállapot-sávok, Sidecar bypass lekérdezések | 2. és 3. fejezet |
-| "Eszközök" | Tiszta interfész: Az eszköznevek intuitívak, a paraméterek példákkal ellátottak, a határok magyarázottak | MCP eszközök, kódértelmező, keresőeszközök | 4. fejezet |
-| "Korlátozás" | Hibatűrő alapértelmezések: Minden képesség alapértelmezés szerint ki van kapcsolva, és kifejezetten engedélyezni kell (hasonlóan a mobilalkalmazás-engedélykezeléshez) | Claude Code-ban minden eszköz alapértelmezés szerint felhasználói engedélyt igényel a végrehajtás előtt | 4. fejezet |
-| "Ellenőrzés" | Bemeneti elkülönítés: A biztonsági ellenőrzések csak strukturált adatokat vizsgálnak (pl. az eszközök által visszaadott JSON mezőket), nem a modell által generált szabad formátumú szöveget (mert a támadók prompt injection segítségével manipulálhatják a modell kimenetét) | Linter-ellenőrzések, típusrendszerek, eszközhívási eredmények validálása | 5. és 6. fejezet |
-| "Javítás" | Ne tegyél ki köztes állapotokat, amíg a hiba visszafordíthatatlannak nem bizonyul (pl. némán próbáld újra a meghiúsult eszközhívást ahelyett, hogy egy félkész eredményt mutatnál a felhasználónak) | Csendes újrapróbálkozások, folytatásgenerálás, emberi ítéletre hagyatkozás egymást követő hibák esetén (megszakító mechanizmus) | 2. és 5. fejezet |
-
-Az öt funkció zárt hurkot alkot: a Kontextus és az Eszközök támogatják a döntéshozatalt, a Korlátozás megelőzi a hibákat, az Ellenőrzés észleli az eltéréseket, a Javítás pedig lezárja a ciklust. Ha bármelyik láncszem hiányzik, a rendszerben megbízhatósági rés keletkezik. Mielőtt megvizsgálnánk a konkrét összehangolási mintákat és védőkorlát-terveket, először lefektetjük a hatékony ügynökök építésének alapelveit és a modellválasztás alapjait – minden ezt követő tervezési döntés alapját.
 
 ### A hatékony ügynökök építésének alapelvei
 
