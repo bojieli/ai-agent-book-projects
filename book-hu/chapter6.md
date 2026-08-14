@@ -401,7 +401,7 @@ A Rubricát és az Ügynök válaszát együtt adjuk a bírómodellnek, amely di
 > Tervezz egy egységes, többdimenziós Rubrica keretrendszert, amely mindhárom feladatszintre alkalmazható. A kiértékelési dimenziók a következők: Ténybeli Helyesség (precízió: a megadott információk közül mennyi helyes — ellenőrzi, hogy a számok/dátumok/nevek konzisztensek-e a tárolt memóriával); Információ Teljessége (visszahívás: a megadandó információk közül mennyi van említve — ellenőrzi, hogy minden releváns információ szerepel-e, nincs-e kihagyott kulcsfontosságú tartalom); Következtetés Helyessége (ellenőrzi, hogy az információk közötti kapcsolatok és az implicit logika helyesen vannak-e megértve); Következtetési Proaktivitás (értékeli, hogy a közvetlen válaszon túli javaslatok vagy kockázati figyelmeztetések megjelennek-e, amikor helyénvaló); Hallucináció-detektálás (biztosítja, hogy ne jelenjen meg a memóriában nem szereplő információ).
 >
 > Négy szintű pontozás (Kiváló/Jó/Elfogadható/Hibás), minden szinthez specifikus ítéleti kritériumokkal, nem pedig absztrakt leírásokkal. A hallucinációs dimenzió vétó elem. Adj példákat és határeseteket minden dimenzióhoz.
->
+
 > **6-4. kísérlet ★★: A Fejlett JSON Kártyák és a RAG Összehasonlító Kiértékelése**
 >
 > "Előfeltételek": A 3. fejezet Felhasználói Memória és RAG kísérleteinek (`chapter3/user-memory`, `chapter3/agentic-rag-for-user-memory`) befejezése kötelező.
@@ -636,7 +636,7 @@ Egy megbízható kiértékelő rendszerrel rendelkező csapat órákon belül v�
 > Szabványosított tesztelési munkaterhelések tervezése: A bemeneti átviteli teljesítménytesztek rögzített hosszúságú kontextusokat használnak (8K/32K/128K token), a kimeneti teljesítménytesztek rögzített hosszúságú válaszokat kérnek (512/2048 token). A késleltetési tesztek közé tartozik a TTFT (Time to First Token) és a végpontok közötti késleltetés. A gondolkodást támogató modelleknél külön mérje meg a gondolkodási hosszt és a gondolkodási késleltetést. Minden konfigurációhoz készítsen legalább 100 kérést, és számítsa ki a szórást, p50, p95 és p99; a nagy késleltetési eltérés instabil felhasználói élményt jelez.
 >
 > Értékelje az API rendelkezésre állását és stabilitását: Egy héten keresztül óránként egyszer vizsgálja meg, rögzíti a sikerarányt, a hibatípusokat és a hiba időtartamát. Számítsa ki a hibaarányt, az MTTR-t (átlagos helyreállítási időt) és a leghosszabb folyamatos üzemidőt. Tesztelje a sebességkorlátok tényleges küszöbértékeit – fokozatosan növelje az egyidejűséget a fojtópont megtalálásához, rögzítve az RPM/TPM határértékeket. Átfogó költség kiszámítása: Gyűjtse össze az árinformációkat (az input/output/cache tokenek egységárai), mérlegelje a KV Cache hatását, és számítsa ki a tipikus többfordulós ügynöki feladatok átlagos költségét.
->
+
 > **6-11. kísérlet ★★: Felhasználói memóriarendszerek végpontok közötti kiválasztási kiértékelése**
 >
 > **Előfeltételek**: Be kell fejeznie a 3. fejezetben található kontextuális visszakeresési vagy ügynöki RAG-kísérletet.

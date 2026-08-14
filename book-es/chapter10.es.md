@@ -430,8 +430,7 @@ Cuando varias subtareas pueden ejecutarse en paralelo, el modelo secuencial resu
 >
 >
 > ![Figura 10-7 Arquitectura de dos Agentes Phone y Computer](images/fig10-7.svg)
->
->
+
 > **Experimento 10-4 ★★★: Agente que recopila información simultáneamente de varios sitios web**
 >
 > **Requisitos previos**: se recomienda conocer primero los mecanismos dirigidos por eventos y de interrupción del capítulo 4.

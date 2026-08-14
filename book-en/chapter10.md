@@ -405,6 +405,7 @@ The rest of Lingtai's design also echoes earlier sections. Knowledge lives in ea
 > **Requirements and evidence**: Demonstrate autonomous launch, independent ReAct loops, bidirectional messaging, true overlap, field validation and re-asking, page-error feedback, timeouts, cancellation and cleanup of browser/audio resources. Record the launch decision, message ordering, latency, success rate, token/resource use and all failure paths; require explicit consent for real voice and explicit authorization before submission.
 >
 > ![Figure 10-7: Phone and Computer Dual Agent Architecture](images/fig10-7.svg)
+
 > **Experiment 10-4 ★★★: Agent Collecting Information from Multiple Websites Simultaneously**
 >
 > **Prerequisites**: It is recommended that readers first review the event-driven and interrupt mechanisms from Chapter 4.

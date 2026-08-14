@@ -342,7 +342,7 @@ AI アプリケーションエンジニアリングの発展を振り返ると�
 
 [^ch1-graph-engineering-ja]: Josh C. Simmons は 2026 年 7 月 4 日の記事 *We Are Entering the Graph Engineering Phase* でこの名称を早くから明示的に使い、ノード、型付きエッジ、チェックポイント化された状態として要約しました。7 月 18 日には、議論は loops から graphs へ移ったのかという Peter Steinberger の問いが、この名称のさらなる普及を後押ししました。実践そのものは名称より古く、LangGraph、Microsoft Agent Framework、Google ADK の公式ドキュメントでは、グラフオーケストレーションまたは graph-based workflow と呼ばれています。参照： https://www.drjoshcsimmons.com/writing/we-are-entering-the-graph-engineering-phase、https://x.com/steipete/status/2078277297791189132、https://docs.langchain.com/oss/python/langgraph/overview、https://learn.microsoft.com/en-us/agent-framework/workflows/、https://adk.dev/workflows/。
 
-この 5 つの段階は代替の関係ではなく、層ごとに包含する関係です。プロンプトエンジニアリングはコンテキストエンジニアリングの部分集合であり、コンテキストエンジニアリングは Harness エンジニアリングの部分集合であり、Harness エンジニアリングは Loop エンジニアリングの部分集合です。各層は前の層の基礎の上に、エンジニアの関心の範囲と影響力を広げています。**各社のモデルの能力がますます接近し、もはや決定的な差異の要因でなくなったとき、競争優位はモデルの外側のエンジニアリング実践へと移ります**。
+この 5 つの段階は代替の関係ではなく、層ごとに包含する関係です。プロンプトエンジニアリングはコンテキストエンジニアリングの部分集合であり、コンテキストエンジニアリングは Harness エンジニアリングの部分集合であり、Harness エンジニアリングは Loop エンジニアリングの部分集合であり、Loop エンジニアリングは Graph エンジニアリングの部分集合です――単一の Agent ループは実行グラフの 1 つのノードにあたります。各層は前の層の基礎の上に、エンジニアの関心の範囲と影響力を広げています。**各社のモデルの能力がますます接近し、もはや決定的な差異の要因でなくなったとき、競争優位はモデルの外側のエンジニアリング実践へと移ります**。
 
 この判断は最近のエンジニアリング実践で裏づけられています。LangChain の Terminal Bench 2.0（ターミナル環境で Agent が複雑なタスクをこなす能力を評価するベンチマーク）での実践がその有力な一例です。彼らの Coding Agent は 52.8% から 66.5% へと向上し、ランキングで 30 位圏外から上位 5 位へと躍進しました。変えたのはモデルではなく Harness でした。Agent に自らの実行結果を自動でチェックさせ、繰り返しループに陥っていないかを検知させ、思考の方策を最適化させる、といったエンジニアリング上の手段です。
 
