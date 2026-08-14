@@ -228,6 +228,16 @@ LoopX 决策 → Agent 执行 → 独立验证器证明 → LoopX 提交
 
 [^loopx-framework]: LoopX, "The local control plane for long-running AI agent work", v0.4.0，稳定提交 `a893d221db0b8e028997cefc303f7ec9fa7dbe0a`。 https://github.com/huangruiteng/loopx/tree/a893d221db0b8e028997cefc303f7ec9fa7dbe0a
 
+**具体框架：LongHorizon-Harness。** LongHorizon-Harness 与 LoopX 都是 Loop 工程的具体实现，但关注的方向不同。LoopX 面向长期 Agent 工作的持久控制面；LongHorizon-Harness 则从多模态 Computer Use 出发，处理同一任务跨越 GUI、CLI、多个桌面应用和多次上下文刷新的连续执行问题。
+
+LongHorizon-Harness 将长程执行重新表述为任务状态管理，并把自己的循环实现为 Manage–Execute–Audit（MEA）：Manager 根据原始目标、已核实进展、失败证据和剩余工作生成下一项有界子任务；Executor 在全新上下文中通过 GUI 或 CLI 改变环境；Auditor 再以只读方式检查真实结果。只有审计通过的内容才能进入下一轮任务状态，失败则被保留为恢复和重规划的依据。它通过适配层复用 Claude Code、Codex CLI 等执行后端，而不改写后端内部的 Agent loop。[^longhorizon-implementation]
+
+这一方向的价值，在于把任务连续性从不断增长的执行历史中分离出来：上下文可以刷新，界面操作也可能失败，但下一轮仍能从最近一次核实的状态继续。论文在保持 Qwen 3.7-Plus 模型与 Claude Code 执行后端相同、只改变外层 loop 的对照中，报告 WeaveBench PassRate 从 51.8% 提升到 80.7%，OSWorld 2.0 二元完成率从 2.8% 提升到 8.3%，Terminal-Bench 2.1 成功率从 69.7% 提升到 77.2%。代价也不是固定的：前两个基准分别消耗了基线 2.3 倍的总 token 和 3.6 倍的输出 token，Terminal-Bench 2.1 则减少了 24%。在实际部署中，还需要处理外部环境或用户要求变化造成的旧状态失效，并用轮数、时间和费用预算防止恢复循环无限运行。
+
+**公开轨迹与实验复现。** 项目网站提供了 WeaveBench、OSWorld 2.0 和 Terminal-Bench 2.1 的数百条运行轨迹，可以直接查看执行过程和不同角色的记录。以 WeaveBench 的 `WEB_task_16_webrtc_simulcast_layer_audit` 为例，可以对照使用同一 Qwen 3.7-Plus 模型的[基线轨迹](https://lh-harness.pages.dev/traj/tasks/baseline__WEB_task_16_webrtc_simulcast_layer_audit.html)与 [MEA 轨迹](https://lh-harness.pages.dev/traj/tasks/lh_harness__WEB_task_16_webrtc_simulcast_layer_audit.html)：前者在 Wireshark 交互卡住后反复尝试，得分 0.59；后者把失败和未满足的证据项写回任务状态，后续轮次只处理缺口，得分 0.92。这个案例用于展示“失败如何变成下一轮输入”，不能代替总体统计；完整实验的环境、参数和启动脚本见固定版本的 [`eval/`](https://github.com/AMAP-ML/LongHorizon-Harness/tree/53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb/eval) 目录。
+
+[^longhorizon-implementation]: LongHorizon-Harness，稳定提交 `53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb`。项目网站与公开轨迹：https://lh-harness.pages.dev/#trajectories；论文：https://arxiv.org/abs/2608.01964；代码：https://github.com/AMAP-ML/LongHorizon-Harness/tree/53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb
+
 #### 提议者-审核者范式
 
 
