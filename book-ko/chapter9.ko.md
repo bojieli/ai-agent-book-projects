@@ -449,7 +449,7 @@ for action in chunk:
 상태 + 후보 행동 -> 예측된 미래 상태 -> 행동을 선택하고 검증
 ```
 
-이는 V-JEPA만을 뜻하지 않습니다. 잠재 예측 모델(V-JEPA 2), 상호작용형 생성 모델(Genie 3, Cosmos), World-Action Model(GeniWorld, Robust-WAM), 라벨 없는 동영상에서 latent action을 학습하는 모델(LAWM-3D), 모델 기반 RL(Dreamer, MuZero)까지 포함하는 더 넓은 계열입니다. 대규모 관찰에서 학습하고, 실행 전에 반사실적 행동의 결과를 시험하며, 공유 동역학과 embodiment별 제어를 분리하고, 예측과 현실이 어긋나면 다시 계획할 수 있다는 점이 핵심 가치입니다.
+이는 V-JEPA만을 뜻하지 않습니다. 잠재 예측 모델(V-JEPA 2[^ch9-16]), 상호작용형 생성 모델(Genie 3[^ch9-21], Cosmos), World-Action Model(GeniWorld, Robust-WAM), 라벨 없는 동영상에서 latent action을 학습하는 모델(LAWM-3D), 모델 기반 RL(Dreamer, MuZero)까지 포함하는 더 넓은 계열입니다. 대규모 관찰에서 학습하고, 실행 전에 반사실적 행동의 결과를 시험하며, 공유 동역학과 embodiment별 제어를 분리하고, 예측과 현실이 어긋나면 다시 계획할 수 있다는 점이 핵심 가치입니다.
 
 2026년 최신 preprint들은 공유 동역학 사전분포와 embodiment별 head(DyPES-VLA), 분포 밖 폐루프 조작을 위한 시각-행동 표현(GeniWorld), 인간 동영상에서 얻은 3D 인식 latent action(LAWM-3D), semantic foresight alignment(Robust-WAM), 비동기 실시간 배포를 탐구합니다. 모두 유망한 연구 결과이지만 일반화가 해결되었다는 뜻은 아닙니다.
 
@@ -467,3 +467,5 @@ for action in chunk:
 6. ★★ DOM/접근성 트리 요소 색인은 표준 웹 애플리케이션에서 잘 작동하지만 점점 많은 소프트웨어 인터페이스(Canvas/WebGL 렌더링, 크로스 플랫폼 사용자 정의 컨트롤)가 접근 가능한 구조화된 정보를 제공하지 않아 시각 주석이나 좌표 예측에만 의존합니다. 컴퓨터 사용은 순수 시각 접근법에 베팅해야 할까요, 아니면 구조적·시각적 경로를 모두 유지해야 할까요? 두 경로를 모두 유지하는 비용과 이점은 무엇일까요?
 7. ★★ VLA 모델은 행동 청킹을 사용합니다. 본문에서 언급했듯 π₀의 일반적인 구성은 50Hz로 미래 행동 25~50개를 생성하여 실행 시간 안에 추론 지연을 숨깁니다. 하지만 실행 중 환경이 갑자기 바뀌면(예: 물체가 이동함) 미리 생성한 행동 시퀀스가 무효가 됩니다. 행동 청킹의 효율 이점과 환경 변화에 대한 반응성 요구를 어떻게 조율할 수 있을까요?
 8. ★★★ 이 장의 세 상황(음성, 컴퓨터 사용, 로봇공학)은 모두 ‘인식-사고-행동’ 루프의 지연 문제를 겪으며 병렬화된 빠른 사고와 느린 사고로 진화하고 있습니다. 음성에서는 ‘말을 잘못한 뒤 고치기’, 컴퓨터 사용에서는 ‘먼저 클릭하고 나중에 보기’, 로봇공학에서는 ‘한 걸음 내디딘 뒤 보기’로 나타납니다. 빠른 사고에 기반한 이런 행동이 되돌릴 수 없는 결과를 낳지 않도록 어떻게 보장할 수 있을까요?
+[^ch9-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
+[^ch9-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。
