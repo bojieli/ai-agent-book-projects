@@ -246,6 +246,16 @@ Agent は引き続き推論し、ツールを使い、候補成果物を生成�
 
 [^loopx-framework]: LoopX, "The local control plane for long-running AI agent work", v0.4.0、安定版コミット `a893d221db0b8e028997cefc303f7ec9fa7dbe0a`。 https://github.com/huangruiteng/loopx/tree/a893d221db0b8e028997cefc303f7ec9fa7dbe0a
 
+**具体的なフレームワーク：LongHorizon-Harness。** LongHorizon-Harness と LoopX はいずれも Loop Engineering の具体的な実装ですが、向いている方向が異なります。LoopX は長期的な Agent 作業のための永続的なコントロールプレーンを狙います。一方 LongHorizon-Harness はマルチモーダルな Computer Use から出発し、同じタスクが GUI、CLI、複数のデスクトップアプリ、そして何度もの文脈リフレッシュをまたぐときの連続実行を扱います。
+
+LongHorizon-Harness は長期実行をタスク状態の管理として捉え直し、自らのループを Manage–Execute–Audit（MEA）として実装します。Manager は元の目標、検証済みの進捗、失敗の証拠、残りの作業から次の有界なサブタスクを生成し、Executor はまっさらな文脈で GUI または CLI を通じて環境を変更し、Auditor が読み取り専用で実際の結果を検査します。監査を通ったものだけが次のラウンドのタスク状態に入り、失敗は復旧と再計画の根拠として保持されます。Claude Code や Codex CLI などの実行バックエンドはアダプタ層を介して再利用し、バックエンド内部の Agent loop は書き換えません。[^longhorizon-implementation]
+
+この方向性の価値は、タスクの連続性を増え続ける実行履歴から切り離す点にあります。文脈はリフレッシュされてよく、画面操作は失敗しうるとしても、次のラウンドは直近に検証された状態から再開できます。論文は、Qwen 3.7-Plus モデルと Claude Code 実行バックエンドを同一に保ち、外側のループだけを変えた対照において、WeaveBench の PassRate が 51.8% から 80.7% へ、OSWorld 2.0 の二値完了率が 2.8% から 8.3% へ、Terminal-Bench 2.1 の成功率が 69.7% から 77.2% へ向上したと報告しています。コストも一定ではありません。前二者のベンチマークではベースラインのそれぞれ 2.3 倍の総トークンと 3.6 倍の出力トークンを消費した一方、Terminal-Bench 2.1 では 24% 減りました。実運用では、外部環境やユーザー要求の変化によって古い状態が無効になる問題にも対処し、ラウンド数・時間・費用の予算で復旧ループが無限に回らないようにする必要があります。
+
+**公開された軌跡と実験の再現。** プロジェクトサイトは WeaveBench、OSWorld 2.0、Terminal-Bench 2.1 の数百件の実行軌跡を公開しており、実行の過程と各ロールの記録をそのまま確認できます。WeaveBench の `WEB_task_16_webrtc_simulcast_layer_audit` を例にとると、同じ Qwen 3.7-Plus モデルを使う[ベースラインの軌跡](https://lh-harness.pages.dev/traj/tasks/baseline__WEB_task_16_webrtc_simulcast_layer_audit.html)と [MEA の軌跡](https://lh-harness.pages.dev/traj/tasks/lh_harness__WEB_task_16_webrtc_simulcast_layer_audit.html)を突き合わせられます。前者は Wireshark の操作で行き詰まった後に試行を繰り返し、スコアは 0.59。後者は失敗と未達の証拠項目をタスク状態に書き戻し、以降のラウンドは欠落分だけを扱って、スコアは 0.92 でした。この事例は「失敗がどのように次のラウンドの入力になるか」を示すためのもので、全体の統計の代わりにはなりません。実験全体の環境・パラメータ・起動スクリプトは、バージョンを固定した [`eval/`](https://github.com/AMAP-ML/LongHorizon-Harness/tree/53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb/eval) ディレクトリにあります。
+
+[^longhorizon-implementation]: LongHorizon-Harness、安定版コミット `53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb`。プロジェクトサイトと公開軌跡：https://lh-harness.pages.dev/#trajectories；論文：https://arxiv.org/abs/2608.01964；コード：https://github.com/AMAP-ML/LongHorizon-Harness/tree/53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb
+
 **提議者・審査者パラダイム。**
 
 

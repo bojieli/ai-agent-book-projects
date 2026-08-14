@@ -250,6 +250,16 @@ LoopX 결정 → 에이전트 실행 → 독립 검증기 증명 → LoopX 커�
 
 [^loopx-framework]: LoopX, "The local control plane for long-running AI agent work", v0.4.0, 안정 커밋 `a893d221db0b8e028997cefc303f7ec9fa7dbe0a`. https://github.com/huangruiteng/loopx/tree/a893d221db0b8e028997cefc303f7ec9fa7dbe0a
 
+**구체적인 프레임워크: LongHorizon-Harness.** LongHorizon-Harness와 LoopX는 모두 루프 엔지니어링의 구체적인 구현이지만 바라보는 방향이 다릅니다. LoopX는 장기 에이전트 작업을 위한 지속형 제어 평면을 겨냥합니다. 반면 LongHorizon-Harness는 멀티모달 Computer Use에서 출발해, 하나의 작업이 GUI와 CLI, 여러 데스크톱 애플리케이션, 그리고 여러 차례의 컨텍스트 갱신에 걸쳐 이어질 때의 연속 실행 문제를 다룹니다.
+
+LongHorizon-Harness는 장기 실행을 작업 상태 관리로 다시 정의하고, 자신의 루프를 Manage–Execute–Audit(MEA)로 구현합니다. Manager는 원래 목표, 확인된 진행 상황, 실패 증거, 남은 작업을 바탕으로 경계가 정해진 다음 하위 작업을 만들고, Executor는 완전히 새로운 컨텍스트에서 GUI나 CLI를 통해 환경을 바꾸며, Auditor는 읽기 전용으로 실제 결과를 점검합니다. 감사를 통과한 내용만 다음 라운드의 작업 상태로 들어가고, 실패는 복구와 재계획의 근거로 보존됩니다. Claude Code나 Codex CLI 같은 실행 백엔드는 어댑터 계층을 통해 재사용하며, 백엔드 내부의 에이전트 루프는 다시 쓰지 않습니다.[^longhorizon-implementation]
+
+이 방향의 가치는 작업의 연속성을 계속 늘어나는 실행 기록에서 떼어 놓는 데 있습니다. 컨텍스트는 갱신될 수 있고 화면 조작은 실패할 수 있지만, 다음 라운드는 가장 최근에 확인된 상태에서 이어 갈 수 있습니다. 논문은 Qwen 3.7-Plus 모델과 Claude Code 실행 백엔드를 동일하게 두고 바깥 루프만 바꾼 대조에서 WeaveBench PassRate가 51.8%에서 80.7%로, OSWorld 2.0 이진 완료율이 2.8%에서 8.3%로, Terminal-Bench 2.1 성공률이 69.7%에서 77.2%로 올랐다고 보고합니다. 비용도 일정하지 않습니다. 앞의 두 벤치마크는 각각 베이스라인의 2.3배 총 토큰과 3.6배 출력 토큰을 썼지만, Terminal-Bench 2.1은 24% 줄었습니다. 실제 배포에서는 외부 환경이나 사용자 요구가 바뀌어 예전 상태가 무효가 되는 상황도 처리해야 하고, 라운드 수·시간·비용 예산으로 복구 루프가 끝없이 도는 것을 막아야 합니다.
+
+**공개 궤적과 실험 재현.** 프로젝트 웹사이트는 WeaveBench, OSWorld 2.0, Terminal-Bench 2.1의 실행 궤적 수백 건을 제공하므로 실행 과정과 각 역할의 기록을 바로 살펴볼 수 있습니다. WeaveBench의 `WEB_task_16_webrtc_simulcast_layer_audit`를 예로 들면, 같은 Qwen 3.7-Plus 모델을 쓴 [베이스라인 궤적](https://lh-harness.pages.dev/traj/tasks/baseline__WEB_task_16_webrtc_simulcast_layer_audit.html)과 [MEA 궤적](https://lh-harness.pages.dev/traj/tasks/lh_harness__WEB_task_16_webrtc_simulcast_layer_audit.html)을 나란히 비교할 수 있습니다. 전자는 Wireshark 조작에서 막힌 뒤 시도를 반복해 0.59점을 받았고, 후자는 실패와 충족되지 않은 증거 항목을 작업 상태에 다시 기록해 이후 라운드가 빈 곳만 처리하도록 하여 0.92점을 받았습니다. 이 사례는 ‘실패가 어떻게 다음 라운드의 입력이 되는가’를 보여 주기 위한 것으로 전체 통계를 대신하지 못합니다. 전체 실험의 환경, 파라미터, 실행 스크립트는 버전이 고정된 [`eval/`](https://github.com/AMAP-ML/LongHorizon-Harness/tree/53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb/eval) 디렉터리에 있습니다.
+
+[^longhorizon-implementation]: LongHorizon-Harness, 안정 커밋 `53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb`. 프로젝트 웹사이트와 공개 궤적: https://lh-harness.pages.dev/#trajectories; 논문: https://arxiv.org/abs/2608.01964; 코드: https://github.com/AMAP-ML/LongHorizon-Harness/tree/53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb
+
 **제안자-검토자 패러다임.**
 
 ![그림 10-3: 제안자-검토자 루프](images/fig10-3.svg)

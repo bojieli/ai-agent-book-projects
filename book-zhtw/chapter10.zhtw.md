@@ -246,6 +246,16 @@ LoopX 決策 → Agent 執行 → 獨立驗證器證明 → LoopX 提交
 
 [^loopx-framework]: LoopX, "The local control plane for long-running AI agent work", v0.4.0，穩定提交 `a893d221db0b8e028997cefc303f7ec9fa7dbe0a`。 https://github.com/huangruiteng/loopx/tree/a893d221db0b8e028997cefc303f7ec9fa7dbe0a
 
+**具體框架：LongHorizon-Harness。** LongHorizon-Harness 與 LoopX 都是 Loop 工程的具體實作，但關注的方向不同。LoopX 面向長期 Agent 工作的持久控制面；LongHorizon-Harness 則從多模態 Computer Use 出發，處理同一任務跨越 GUI、CLI、多個桌面應用程式和多次上下文刷新的連續執行問題。
+
+LongHorizon-Harness 將長程執行重新表述為任務狀態管理，並把自己的迴圈實作為 Manage–Execute–Audit（MEA）：Manager 根據原始目標、已核實進展、失敗證據和剩餘工作產生下一項有界子任務；Executor 在全新上下文中透過 GUI 或 CLI 改變環境；Auditor 再以唯讀方式檢查真實結果。只有稽核通過的內容才能進入下一輪任務狀態，失敗則被保留為恢復和重新規劃的依據。它透過配接層重用 Claude Code、Codex CLI 等執行後端，而不改寫後端內部的 Agent loop。[^longhorizon-implementation]
+
+這一方向的價值，在於把任務連續性從不斷增長的執行歷史中分離出來：上下文可以刷新，介面操作也可能失敗，但下一輪仍能從最近一次核實的狀態繼續。論文在保持 Qwen 3.7-Plus 模型與 Claude Code 執行後端相同、只改變外層 loop 的對照中，報告 WeaveBench PassRate 從 51.8% 提升到 80.7%，OSWorld 2.0 二元完成率從 2.8% 提升到 8.3%，Terminal-Bench 2.1 成功率從 69.7% 提升到 77.2%。代價也不是固定的：前兩個基準分別消耗了基線 2.3 倍的總 token 和 3.6 倍的輸出 token，Terminal-Bench 2.1 則減少了 24%。在實際部署中，還需要處理外部環境或使用者要求變化造成的舊狀態失效，並用輪數、時間和費用預算防止恢復迴圈無限執行。
+
+**公開軌跡與實驗重現。** 專案網站提供了 WeaveBench、OSWorld 2.0 和 Terminal-Bench 2.1 的數百條執行軌跡，可以直接查看執行過程和不同角色的紀錄。以 WeaveBench 的 `WEB_task_16_webrtc_simulcast_layer_audit` 為例，可以對照使用同一 Qwen 3.7-Plus 模型的[基線軌跡](https://lh-harness.pages.dev/traj/tasks/baseline__WEB_task_16_webrtc_simulcast_layer_audit.html)與 [MEA 軌跡](https://lh-harness.pages.dev/traj/tasks/lh_harness__WEB_task_16_webrtc_simulcast_layer_audit.html)：前者在 Wireshark 互動卡住後反覆嘗試，得分 0.59；後者把失敗和未滿足的證據項寫回任務狀態，後續輪次只處理缺口，得分 0.92。這個案例用於展示「失敗如何變成下一輪輸入」，不能代替總體統計；完整實驗的環境、參數和啟動指令碼見固定版本的 [`eval/`](https://github.com/AMAP-ML/LongHorizon-Harness/tree/53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb/eval) 目錄。
+
+[^longhorizon-implementation]: LongHorizon-Harness，穩定提交 `53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb`。專案網站與公開軌跡：https://lh-harness.pages.dev/#trajectories；論文：https://arxiv.org/abs/2608.01964；程式碼：https://github.com/AMAP-ML/LongHorizon-Harness/tree/53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb
+
 **提議者～稽核者正規化。**
 
 
