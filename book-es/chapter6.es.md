@@ -473,6 +473,33 @@ Las rúbricas escritas a mano permiten crear rápido estas dimensiones diagnóst
 
 En la selección práctica de modelos, la pregunta habitual es: "¿cuál es mejor, A o B?". La comparación por pares ofrece una forma de evaluación que no depende de puntuaciones absolutas.
 
+#### Errores de formato del documento sensibles al ámbito
+
+Cuando un usuario dice «las comillas están mal», eso no puede convertirse en un reemplazo global de caracteres. Como mínimo hay que distinguir las comillas rectas ASCII (`"`, `'`), las comillas curvas chinas (`“”`, `‘’`) y las comillas invertidas de Markdown (`` ` ``). El mismo carácter cumple un papel sintáctico distinto en la prosa china, en el original inglés citado, en el código en línea, en los bloques de código, en los comentarios de código, en JSON y en las rutas.
+
+Los datos de evaluación deberían analizar primero el documento en fragmentos con ámbito: por ejemplo `ZH_PROSE`, `EN_PROSE`, `QUOTED_SOURCE`, `INLINE_CODE`, `CODE_BLOCK`, `CODE_COMMENT` y `JSON_OR_SCHEMA`. Cada fragmento guarda el conjunto de transformaciones permitidas, los caracteres que deben protegerse y el resultado del validador tras la edición. Los tres casos siguientes no pueden tratarse con una única regla de reemplazo:
+
+```text
+Prosa china: llamar al método `reset()`.
+Original inglés citado: “Please restart the service.”
+# el bloque de código siguiente solo ilustra un ámbito protegido
+# Comentario en chino: mostrar "estado actual"
+name = "status"
+```
+
+La regresión por prefijo de trayectoria debe exigir al modelo la edición mínima y comprobar a la vez el estilo del documento chino, la tasa de conservación del original inglés, la sintaxis de código y JSON, y la distancia de edición sobre el texto no objetivo. Cuando las reglas no puedan determinar el ámbito, conservar el texto original y pedir aclaración debe contar como acción permitida, y no como una edición conjetural que pasa por casualidad.
+
+#### Errores de copia exacta: del *mismatch* de `old_string` a la localización capa por capa
+
+Un fallo de `old_string` tampoco puede atribuirse sin más a «el modelo lo copió mal». Para la misma cadena hay que guardar el hash de bytes original, la secuencia de code points Unicode y la secuencia de token IDs del tokenizador, y buscar la primera divergencia a lo largo de esta cadena:
+
+```text
+bytes originales → respuesta de la herramienta → serialización del Harness → contexto del modelo
+→ salida de tokens → cadena decodificada → análisis JSON/tool-call → coincidencia de la herramienta
+```
+
+Un conjunto mínimo de sondas de evaluación cubre la repetición directa, la extracción desde un contexto largo, la colocación en argumentos de herramienta, la selección entre cadenas similares, y espacios, saltos de línea, barras invertidas, caracteres combinantes Unicode y tokens de baja frecuencia. Las métricas son byte-exact match, code-point-exact match, token-exact match, la posición de la primera divergencia y la tasa real de éxito de la herramienta. Si el modelo acierta en la sonda directa pero la llamada a la herramienta falla, hay que arreglar el tokenizador, la serialización, el Harness o el protocolo de la herramienta; solo cuando la primera divergencia aparece en la salida del propio modelo debe convertirse el caso en datos de entrenamiento de copia del capítulo 7.
+
 ### Comparación por Pares y Ranking de Modelos
 
 ![Figura 6-5 Elo Rating y Ranking de Comparación por Pares](images/fig6-5.svg)

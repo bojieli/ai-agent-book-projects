@@ -474,6 +474,33 @@ Rubric buatan manusia cocok untuk membangun dimensi diagnostik ini dengan cepat.
 
 Dalam pemilihan model secara praktis, kita sering menghadapi pertanyaan: "Mana yang lebih baik, A atau B?" Perbandingan berpasangan (pairwise comparison) memberikan metode evaluasi yang tidak bergantung pada skor absolut.
 
+#### Kesalahan format dokumen yang peka terhadap cakupan
+
+Ketika pengguna berkata "format tanda kutipnya salah", itu tidak boleh diubah menjadi penggantian karakter global. Setidaknya Anda harus membedakan tanda kutip lurus ASCII (`"`, `'`), tanda kutip lengkung Tionghoa (`“”`, `‘’`), dan backtick Markdown (`` ` ``). Karakter yang sama memikul peran sintaktis yang berbeda dalam prosa Tionghoa, sumber bahasa Inggris yang dikutip, kode sebaris, blok kode, komentar kode, JSON, dan path.
+
+Data evaluasi sebaiknya lebih dulu mengurai dokumen menjadi potongan-potongan bercakupan—misalnya `ZH_PROSE`, `EN_PROSE`, `QUOTED_SOURCE`, `INLINE_CODE`, `CODE_BLOCK`, `CODE_COMMENT`, dan `JSON_OR_SCHEMA`. Setiap potongan menyimpan himpunan transformasi yang diizinkan, karakter yang wajib dilindungi, serta hasil verifier setelah penyuntingan. Tiga kasus di bawah ini tidak dapat ditangani oleh satu aturan penggantian:
+
+```text
+Prosa Tionghoa: panggil metode `reset()`.
+Sumber Inggris yang dikutip: “Please restart the service.”
+# blok kode berikut hanya untuk menggambarkan cakupan yang dilindungi
+# Komentar Tionghoa: tampilkan "status saat ini"
+name = "status"
+```
+
+Regresi trajectory-prefix harus menuntut model melakukan suntingan minimal, sekaligus memeriksa gaya dokumen Tionghoa, tingkat pelestarian sumber Inggris, sintaksis kode dan JSON, serta jarak edit pada teks non-target. Ketika aturan tidak dapat menentukan cakupan, mempertahankan teks asli dan meminta klarifikasi harus dihitung sebagai tindakan yang diizinkan, bukan suntingan tebakan yang kebetulan lolos.
+
+#### Kesalahan penyalinan persis: dari `old_string` mismatch ke pelacakan lapis demi lapis
+
+Kegagalan `old_string` juga tidak bisa hanya diatribusikan pada "modelnya salah menyalin". Untuk string yang sama, simpanlah hash byte asli, urutan code point Unicode, dan urutan token ID tokenizer, lalu cari perbedaan pertama sepanjang rantai berikut:
+
+```text
+byte file asli → balasan tool → serialisasi Harness → konteks model
+→ keluaran token model → string hasil decode → parsing JSON/tool-call → pencocokan tool
+```
+
+Serangkaian probe evaluasi minimal mencakup pengulangan langsung, ekstraksi dari konteks panjang, penempatan ke argumen tool, pemilihan di antara string serupa, serta spasi, baris baru, backslash, karakter penggabung Unicode, dan token berfrekuensi rendah. Metriknya adalah byte-exact match, code-point-exact match, token-exact match, posisi perbedaan pertama, dan tingkat keberhasilan tool yang sebenarnya. Jika model benar pada probe langsung tetapi panggilan tool tetap gagal, perbaikilah tokenizer, serialisasi, Harness, atau protokol tool; hanya ketika perbedaan pertama muncul pada keluaran model itu sendiri, kasus tersebut diubah menjadi data latih penyalinan pada Bab 7.
+
 ### Pairwise Comparison dan Peringkat Model
 
 ![Gambar 6-5: Peringkat Elo dan Peringkat Pairwise Comparison](images/fig6-5.svg)

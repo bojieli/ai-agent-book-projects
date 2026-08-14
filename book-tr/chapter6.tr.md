@@ -476,6 +476,33 @@ Elle yazılmış Rubric'ler bu tür teşhis boyutlarını hızla kurmayı sağla
 
 Gerçek model seçimlerinde sık karşılaştığımız soru şudur: "A mı daha iyi, B mi?" İkili karşılaştırma, mutlak puanlara dayanmayan bir değerlendirme yolu sunar.
 
+#### Kapsama duyarlı belge biçimi hataları
+
+Kullanıcı "tırnak biçimi yanlış" dediğinde bunu genel bir karakter değiştirmeye dönüştüremezsiniz. En azından ASCII düz tırnakları (`"`, `'`), Çince kıvrık tırnakları (`“”`, `‘’`) ve Markdown ters tırnaklarını (`` ` ``) ayırmak gerekir. Aynı karakter; Çince düzyazıda, alıntılanan İngilizce kaynakta, satır içi kodda, kod bloklarında, kod yorumlarında, JSON'da ve yollarda farklı bir sözdizimsel rol üstlenir.
+
+Değerlendirme verisi önce belgeyi kapsamlı parçalara ayrıştırmalıdır: örneğin `ZH_PROSE`, `EN_PROSE`, `QUOTED_SOURCE`, `INLINE_CODE`, `CODE_BLOCK`, `CODE_COMMENT` ve `JSON_OR_SCHEMA`. Her parça, izin verilen dönüşüm kümesini, korunması zorunlu karakterleri ve düzenleme sonrası doğrulayıcı sonucunu saklar. Aşağıdaki üç durum tek bir değiştirme kuralıyla ele alınamaz:
+
+```text
+Çince düzyazı: `reset()` metodunu çağır.
+Alıntılanan İngilizce kaynak: “Please restart the service.”
+# aşağıdaki kod bloğu yalnızca korunan bir kapsamı göstermek içindir
+# Çince yorum: "geçerli durum" göster
+name = "status"
+```
+
+Trajectory-prefix regresyonu modelden en küçük düzenlemeyi istemeli; aynı anda Çince belge üslubunu, alıntılanan İngilizce kaynağın korunma oranını, kod ve JSON sözdizimini ve hedef dışı metindeki düzenleme mesafesini denetlemelidir. Kurallar kapsamı belirleyemediğinde, özgün metni koruyup açıklama istemek izin verilen bir eylem sayılmalı; tahmine dayalı bir düzenlemenin tesadüfen geçmesi kabul edilmemelidir.
+
+#### Birebir kopyalama hataları: `old_string` mismatch'ten katman katman yerelleştirmeye
+
+Bir `old_string` hatası da yalnızca "model yanlış kopyaladı" diye atfedilemez. Aynı dize için ham byte özetini, Unicode code point dizisini ve tokenizer token ID dizisini saklayın; ardından ilk farkı şu zincir boyunca arayın:
+
+```text
+original file bytes → tool return → Harness serialization → model context
+→ model token output → decoded string → JSON/tool-call parsing → tool matching
+```
+
+Asgari değerlendirme probları; doğrudan yineleme, uzun bağlamdan çıkarma, tool argümanına yerleştirme, benzer dizeler arasından seçim ile boşluk, satır sonu, ters bölü, Unicode birleştirici karakterler ve düşük frekanslı token'ları kapsar. Metrikler byte-exact match, code-point-exact match, token-exact match, ilk farkın konumu ve gerçek tool başarı oranıdır. Model doğrudan probda doğruyken tool çağrısı yine de başarısız oluyorsa tokenizer'ı, serileştirmeyi, Harness'ı veya tool protokolünü düzeltin; ilk fark yalnızca modelin kendi çıktısında belirdiğinde bu vaka 7. Bölüm'ün kopyalama eğitim verisine dönüştürülmelidir.
+
 ### İkili Karşılaştırma ve Model Sıralaması
 
 ![Şekil 6-5: Elo Puanlaması ve İkili Karşılaştırmayla Sıralama](images/fig6-5.svg)
