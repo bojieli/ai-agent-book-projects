@@ -432,9 +432,15 @@ Burada `TF(t,d)`, $t$ teriminin $d$ belgesinde kaç kez geçtiğini; `DF(t)`, bu
 
 BM25 (Okapi BM25), bu iki sınırlamaya yönelik klasik bir düzeltme olarak görülebilir. Nadir terimler için IDF ağırlığını korurken terim frekansı doygunluğu ve belge uzunluğu normalizasyonu ekler:
 
-$$\text{Score}(Q, D) = \sum_{i} \text{IDF}(q_i) \cdot \frac{\text{TF}(q_i, D)\,(k_1+1)}{\text{TF}(q_i, D) + k_1\left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
+$$\text{Score}(Q, D) = \sum_{i} \text{IDF}_{\text{BM25}}(q_i) \cdot \frac{\text{TF}(q_i, D)\,(k_1+1)}{\text{TF}(q_i, D) + k_1\left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
 
-Burada $q_i$ sorgudaki bir terim, $|D|$ belge uzunluğu ve $\text{avgdl}$ külliyattaki ortalama belge uzunluğudur. Şekil 3-8'de gösterildiği gibi, $k_1$ terim frekansının ne kadar hızlı doygunluğa ulaştığını kontrol eder; böylece her ek tekrarın marjinal katkısı azalır. $b$ ise uzunluk normalizasyonunun gücünü belirleyerek farklı uzunluktaki belgelerin daha adil karşılaştırılmasını sağlar. Bu nedenle 10 tekrar genellikle 5 tekrarın tam iki katından az katkı verir ve aynı TF daha uzun bir belgede daha düşük ağırlık alır. Belirli parametreler ve hesaplama Deney 3-5'te ele alınır.
+Burada $q_i$ sorgudaki bir terim, $|D|$ belge uzunluğu ve $\text{avgdl}$ külliyattaki ortalama belge uzunluğudur. $\text{IDF}_{\text{BM25}}$ ifadesinin alt simge taşımasının nedeni, bunun yukarıdaki TF-IDF'in $\text{IDF}$'i ile aynı formül olmamasıdır: BM25 daha sağlam bir varyanta geçer.
+
+$$\text{IDF}_{\text{BM25}}(t) = \ln\frac{N - \text{DF}(t) + 0.5}{\text{DF}(t) + 0.5}$$
+
+Sezgi değişmez —terim ne kadar nadirse ağırlığı o kadar büyüktür—, değişen yalnızca ölçme biçimidir. Payda toplam belge sayısı $N$ yerine terimi *içermeyen* belge sayısı $N - \text{DF}(t)$ yer alır; böylece oran, terimi içermeyen belgelerin içerenlerden kaç kat fazla olduğunu doğrudan ifade eder. Pay ve paydaya 0,5 eklenmesi sonucu yumuşatır ve formül $\text{DF}(t) = 0$ ile $\text{DF}(t) = N$ uç durumlarında da tanımlı kalır. Bedeli ise, belgelerin yarısından fazlasında geçen bir terimin ($\text{DF}(t) > N/2$) negatif ağırlık almasıdır; bu yüzden uygulamalar genellikle bir alt sınır koyar. Bu varyant olasılıksal erişim modelinden gelir ve literatürde Robertson–Spärck Jones ağırlığı olarak bilinir.
+
+Şekil 3-8'de gösterildiği gibi, $k_1$ terim frekansının ne kadar hızlı doygunluğa ulaştığını kontrol eder; böylece her ek tekrarın marjinal katkısı azalır. $b$ ise uzunluk normalizasyonunun gücünü belirleyerek farklı uzunluktaki belgelerin daha adil karşılaştırılmasını sağlar. Bu nedenle 10 tekrar genellikle 5 tekrarın tam iki katından az katkı verir ve aynı TF daha uzun bir belgede daha düşük ağırlık alır. Belirli parametreler ve hesaplama Deney 3-5'te ele alınır.
 
 
 ![Şekil 3-8: BM25 Puanlama Mekanizması](images/fig3-8.svg)
@@ -444,7 +450,7 @@ Burada $q_i$ sorgudaki bir terim, $|D|$ belge uzunluğu ve $\text{avgdl}$ külli
 >
 > Sparse retrieval'ın iç işleyişini açığa çıkarmak için, `sparse-embedding` projesi öğretici bir araç olarak sıfırdan BM25 tabanlı bir sparse vektör arama motoru uygular. Değeri performans sıkmakta değil, tam şeffaflıktadır. Zengin loglama ve görselleştirme arayüzleri aracılığıyla, tüm doküman indeksleme sürecini net biçimde gözlemleyebiliriz: metin ön işleme (tokenizasyon ve neredeyse hiç retrieval değeri taşımayan Çince durak kelimelerinin—"的" ve "了" gibi, İngilizce'deki "the" veya "of" kadar yaygın işlev kelimeleri—kaldırılması), bir ters indeks (inverted index) inşa etme ve TF ile IDF değerlerini hesaplama. Bir ters indeks, kelimelerden dokümanlara ters bir eşleme tablosudur—normal bir indeks "bir doküman verildiğinde, içerdiği kelimeleri listele" iken, bir ters indeks tam tersini yapar: "bir kelime verildiğinde, onu içeren tüm dokümanları hemen bul." Bu, bir kitabın arkasındaki terim indeksine benzer: "TCP"yi ararsınız, size 45, 112 ve 203. sayfalarda bahsedildiğini söyler.
 >
-> Bir sorgu sırasında, log BM25 hesaplamasının her adımını ayrıntılı biçimde gösterir. Yine "model damıtma" sorgusunu örnek alırsak—aşağıdaki, projeyle birlikte gelen küçük bir örnek külliyattan (N=10 doküman) bir logdur, bu yüzden isabet sayısı daha önce bahsedilen 100 makale senaryosundan çok daha küçüktür. Elle yeniden hesaplamayı kolaylaştırmak için, örnek BM25 parametrelerini k1=1,5, b=0,75 ve ortalama doküman uzunluğunu avgdl=250 kelime olarak sabitler; IDF standart formu kullanır IDF=ln((N−df+0,5)/(df+0,5)), burada df kelimeyi içeren doküman sayısıdır:
+> Bir sorgu sırasında, log BM25 hesaplamasının her adımını ayrıntılı biçimde gösterir. Yine "model damıtma" sorgusunu örnek alırsak—aşağıdaki, projeyle birlikte gelen küçük bir örnek külliyattan (N=10 doküman) bir logdur, bu yüzden isabet sayısı daha önce bahsedilen 100 makale senaryosundan çok daha küçüktür. Elle yeniden hesaplamayı kolaylaştırmak için, örnek BM25 parametrelerini k1=1,5, b=0,75 ve ortalama doküman uzunluğunu avgdl=250 kelime olarak sabitler; IDF yukarıdaki BM25 formunu kullanır: IDF=ln((N−df+0,5)/(df+0,5)), burada df kelimeyi içeren doküman sayısıdır:
 >
 > ```
 > Sorgu token'ları: ["model", "damıtma"]

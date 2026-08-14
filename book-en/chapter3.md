@@ -422,9 +422,15 @@ Here, `TF(t,d)` is the number of times term $t$ appears in document $d$, `DF(t)`
 
 BM25 (Okapi BM25) can be viewed as a classic correction to these two limitations. It retains IDF weighting for rare terms while adding term-frequency saturation and document-length normalization:
 
-$$\text{Score}(Q, D) = \sum_{i} \text{IDF}(q_i) \cdot \frac{\text{TF}(q_i, D)\,(k_1+1)}{\text{TF}(q_i, D) + k_1\left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
+$$\text{Score}(Q, D) = \sum_{i} \text{IDF}_{\text{BM25}}(q_i) \cdot \frac{\text{TF}(q_i, D)\,(k_1+1)}{\text{TF}(q_i, D) + k_1\left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
 
-Here, $q_i$ is a query term, $|D|$ is the document length, and $\text{avgdl}$ is the corpus's average document length. As Figure 3-8 shows, $k_1$ controls how quickly term frequency saturates, so repeated occurrences provide diminishing gains; $b$ controls the strength of length normalization, making documents of different lengths more comparable. Consequently, 10 occurrences usually contribute less than twice as much as 5, and the same term frequency receives less weight in a longer document. Specific parameter values and the arithmetic are covered in Experiment 3-5.
+Here, $q_i$ is a query term, $|D|$ is the document length, and $\text{avgdl}$ is the corpus's average document length. $\text{IDF}_{\text{BM25}}$ carries a subscript because it is not the same formula as the $\text{IDF}$ of TF-IDF above—BM25 switches to a more robust variant:
+
+$$\text{IDF}_{\text{BM25}}(t) = \ln\frac{N - \text{DF}(t) + 0.5}{\text{DF}(t) + 0.5}$$
+
+The intuition is unchanged—the rarer the term, the higher its weight—only the way it is measured. The numerator becomes the number of documents *without* the term, $N - \text{DF}(t)$, rather than the corpus size $N$, so the ratio states how many times more documents lack the term than contain it; adding 0.5 to both numerator and denominator smooths the result, keeping the formula defined at the two extremes $\text{DF}(t) = 0$ and $\text{DF}(t) = N$. The price is that a term occurring in more than half the documents ($\text{DF}(t) > N/2$) receives a negative weight, so implementations usually clamp it to a floor. This variant comes from the probabilistic retrieval model and is known in the literature as the Robertson–Spärck Jones weight.
+
+As Figure 3-8 shows, $k_1$ controls how quickly term frequency saturates, so repeated occurrences provide diminishing gains; $b$ controls the strength of length normalization, making documents of different lengths more comparable. Consequently, 10 occurrences usually contribute less than twice as much as 5, and the same term frequency receives less weight in a longer document. Specific parameter values and the arithmetic are covered in Experiment 3-5.
 
 
 ![Figure 3-8: BM25 Scoring Mechanism](images/fig3-8.svg)
@@ -434,7 +440,7 @@ Here, $q_i$ is a query term, $|D|$ is the document length, and $\text{avgdl}$ is
 >
 > To lay bare the inner workings of sparse retrieval, the `sparse-embedding` project implements a BM25-based sparse vector search engine from scratch as a teaching vehicle. Its value lies not in squeezing out performance but in complete transparency. Through rich logging and visualization interfaces, we can clearly observe the entire document indexing process: text preprocessing (tokenization and removal of Chinese stop words like "的" and "了" (function words as common as "the" or "of" in English) that carry almost no retrieval value), building an inverted index, and calculating TF and IDF values. An inverted index is a reverse mapping table from words to documents—a forward index is "given a document, list the words it contains," while an inverted index does the opposite: "given a word, immediately find all documents containing it." It's like the term index at the back of a book: you look up "TCP," and it tells you pages 45, 112, and 203 mention it.
 >
-> During a query, the log details each step of the BM25 calculation. Using the query "model distillation" as an example again—the following log comes from a small sample corpus (N=10 documents) included with the project, so the number of hits is much smaller than the 100-article scenario mentioned earlier. To facilitate manual recalculation, the example fixes BM25 parameters k1=1.5, b=0.75, and average document length avgdl=250 words; IDF uses the standard form IDF=ln((N−df+0.5)/(df+0.5)), where df is the number of documents containing the word:
+> During a query, the log details each step of the BM25 calculation. Using the query "model distillation" as an example again—the following log comes from a small sample corpus (N=10 documents) included with the project, so the number of hits is much smaller than the 100-article scenario mentioned earlier. To facilitate manual recalculation, the example fixes BM25 parameters k1=1.5, b=0.75, and average document length avgdl=250 words; IDF uses the BM25 form given above, IDF=ln((N−df+0.5)/(df+0.5)), where df is the number of documents containing the word:
 >
 > ```
 > Query tokens: ["model", "distillation"]

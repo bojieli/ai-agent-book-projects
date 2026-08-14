@@ -423,9 +423,15 @@ Itt `TF(t,d)` azt jelöli, hogy a $t$ kifejezés hányszor fordul elő a $d$ dok
 
 A BM25 (Okapi BM25) e két korlát klasszikus korrekciójaként fogható fel: megtartja a ritka kifejezések IDF-súlyozását, miközben szógyakorisági telítést és dokumentumhossz-normalizálást vezet be.
 
-$$\text{Score}(Q, D) = \sum_{i} \text{IDF}(q_i) \cdot \frac{\text{TF}(q_i, D)\,(k_1+1)}{\text{TF}(q_i, D) + k_1\left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
+$$\text{Score}(Q, D) = \sum_{i} \text{IDF}_{\text{BM25}}(q_i) \cdot \frac{\text{TF}(q_i, D)\,(k_1+1)}{\text{TF}(q_i, D) + k_1\left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
 
-Itt $q_i$ egy lekérdezési kifejezés, $|D|$ a dokumentum hossza, $\text{avgdl}$ pedig a korpusz átlagos dokumentumhossza. Amint a 3-8. ábra mutatja, $k_1$ szabályozza, milyen gyorsan telítődik a szógyakoriság, így minden további ismétlés egyre kisebb nyereséget ad; $b$ a hossznormalizálás erősségét szabályozza, hogy a különböző hosszúságú dokumentumok igazságosabban legyenek összehasonlíthatók. Következésképpen tíz előfordulás rendszerint kevesebb mint kétszer annyit ér, mint öt, és ugyanaz a szógyakoriság kisebb súlyt kap egy hosszabb dokumentumban. A konkrét paraméterértékeket és a számítást a 3-5. kísérlet tárgyalja.
+Itt $q_i$ egy lekérdezési kifejezés, $|D|$ a dokumentum hossza, $\text{avgdl}$ pedig a korpusz átlagos dokumentumhossza. Az $\text{IDF}_{\text{BM25}}$ azért kapott alsó indexet, mert nem ugyanaz a képlet, mint a fenti TF-IDF $\text{IDF}$-je: a BM25 egy robusztusabb változatra vált.
+
+$$\text{IDF}_{\text{BM25}}(t) = \ln\frac{N - \text{DF}(t) + 0.5}{\text{DF}(t) + 0.5}$$
+
+Az intuíció nem változik – minél ritkább a kifejezés, annál nagyobb a súlya –, csak a mérés módja. A számlálóba a dokumentumok teljes száma, $N$ helyett a kifejezést *nem* tartalmazó dokumentumok száma, $N - \text{DF}(t)$ kerül, így a hányados közvetlenül azt mondja meg, hányszor több dokumentumból hiányzik a kifejezés, mint amennyi tartalmazza; a számlálóhoz és a nevezőhöz adott 0,5 simítja az eredményt, és a képlet mindkét szélső esetben, $\text{DF}(t) = 0$ és $\text{DF}(t) = N$ mellett is értelmes marad. Ennek ára, hogy a dokumentumok több mint felében előforduló kifejezés negatív súlyt kap ($\text{DF}(t) > N/2$), ezért a megvalósítások általában alsó korlátot alkalmaznak rá. Ez a változat a valószínűségi visszakeresési modellből származik, és a szakirodalom Robertson–Spärck Jones-súlyként ismeri.
+
+Amint a 3-8. ábra mutatja, $k_1$ szabályozza, milyen gyorsan telítődik a szógyakoriság, így minden további ismétlés egyre kisebb nyereséget ad; $b$ a hossznormalizálás erősségét szabályozza, hogy a különböző hosszúságú dokumentumok igazságosabban legyenek összehasonlíthatók. Következésképpen tíz előfordulás rendszerint kevesebb mint kétszer annyit ér, mint öt, és ugyanaz a szógyakoriság kisebb súlyt kap egy hosszabb dokumentumban. A konkrét paraméterértékeket és a számítást a 3-5. kísérlet tárgyalja.
 
 ![3-8. ábra: A BM25 pontozási mechanizmusa](images/fig3-8.svg)
 
@@ -433,7 +439,7 @@ Itt $q_i$ egy lekérdezési kifejezés, $|D|$ a dokumentum hossza, $\text{avgdl}
 >
 > Hogy a ritka visszakeresés belső működését teljesen feltárjuk, a `sparse-embedding` projekt oktatási segédeszközként a semmiből implementál egy BM25-alapú ritka vektoros keresőmotort. Értéke nem a teljesítmény kifacsarásában rejlik, hanem a teljes átláthatóságban. Gazdag naplózási és vizualizációs interfészeken keresztül világosan megfigyelhetjük a teljes dokumentum-indexelési folyamatot: szöveg-előfeldolgozás (tokenizálás és a visszakeresési értékkel alig rendelkező kínai stop szavak, mint "的" és "了" eltávolítása – olyan funkciószavak, mint a "the" vagy "of" angolban), inverziós index építése, valamint a TF és IDF értékek kiszámítása. Az inverziós index egy fordított leképezési tábla a szavaktól a dokumentumok felé – a forward index "adott dokumentumhoz listázza a benne lévő szavakat", míg az inverziós index ennek az ellenkezőjét csinálja: "adott szóhoz azonnal megkeresi az összes azt tartalmazó dokumentumot". Olyan, mint egy könyv végén lévő tárgymutató: keresed a "TCP"-t, és megmondja, hogy a 45., 112. és 203. oldal említi.
 >
-> Lekérdezés során a napló részletezi a BM25 számítás minden lépését. Ismét a "model distillation" lekérdezést használva példaként – a következő napló a projekthez mellékelt kis mintakorpuszból (N=10 dokumentum) származik, így a találatok száma sokkal kisebb, mint a korábban említett 100 cikkes forgatókönyv. A kézi újraszámolás megkönnyítésére a példa rögzíti a BM25 paramétereket: k1=1.5, b=0.75, átlagos dokumentumhossz avgdl=250 szó; az IDF a standard formát használja: IDF=ln((N−df+0.5)/(df+0.5)), ahol df a szót tartalmazó dokumentumok száma:
+> Lekérdezés során a napló részletezi a BM25 számítás minden lépését. Ismét a "model distillation" lekérdezést használva példaként – a következő napló a projekthez mellékelt kis mintakorpuszból (N=10 dokumentum) származik, így a találatok száma sokkal kisebb, mint a korábban említett 100 cikkes forgatókönyv. A kézi újraszámolás megkönnyítésére a példa rögzíti a BM25 paramétereket: k1=1.5, b=0.75, átlagos dokumentumhossz avgdl=250 szó; az IDF a fenti BM25-formát használja: IDF=ln((N−df+0.5)/(df+0.5)), ahol df a szót tartalmazó dokumentumok száma:
 >
 > ```text
 > Lekérdezés tokenek: ["model", "distillation"]
