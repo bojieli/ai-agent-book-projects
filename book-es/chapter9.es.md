@@ -282,79 +282,100 @@ A diferencia del campo de la voz, la naturaleza de tiempo real propia de Compute
 
 [^ch9-10]: El diseño completo del desacoplamiento rápido-lento entre voz y operación y el "contrato de texto puro" se encuentra en Li, Bojie y Noah Shi. *Talking While Acting: Real-Time Voice for Slow Computer-Use Agents.* 2026 (pendiente de publicación).
 
-## Operación robótica: Del control en tiempo real al entrenamiento y la generalización
+## Operación robótica: ordenar un escritorio con XLeRobot
 
-> **Los cinco experimentos de esta sección usan una única tarea: poner la taza roja en la bandeja, poner el papel amarillo en el cubo de residuos y volver a observar para verificar el estado del escritorio. El brazo real y el simulador se informan por separado, pero comparten la semántica de acciones y las condiciones de éxito.**
+> **Cómo leer esta sección**: de principio a fin usamos una sola tarea——"poner la taza roja en la bandeja, tirar el papel amarillo a la papelera y, al final, observar otra vez para comprobar el estado del escritorio". Los experimentos 9-7 y 9-9 se hacen sobre un XLeRobot físico y requieren brazo, calibración, parada de emergencia y un supervisor presente. Los experimentos 9-8, 9-10 y 9-11 son sus contrapartes en GPU local. Lo físico y lo simulado se reportan por separado, pero la meta de la tarea, el significado de las acciones y las condiciones de éxito se mantienen iguales.
+
+La operación robótica es bastante más difícil que "mirar una imagen y responder". El modelo no solo tiene que entender la escena: tiene que actuar de forma continua en el mundo real, y cada acción cambia la situación del instante siguiente. XLeRobot vuelve muy concreta esa diferencia. El mismo brazo puede teleoperarse con teclado, mando de videojuegos o equipo de VR, o bien puede entregarse la observación de la cámara y un conjunto acotado de herramientas de acción a un Agent para que las invoque por su cuenta. El hardware no cambia y la tarea tampoco; lo único que cambia es quién opera——en el primer caso una persona observa y corrige sin parar; en el segundo, el modelo y el sistema de control tienen que llevar el mismo trabajo hasta el final.
+
+Esta sección hilvana cinco experimentos con "ordenar el escritorio". Primero una persona teleopera el XLeRobot físico, para medir de qué es capaz este hardware con un operador suficientemente competente. Después, en el simulador, se establece el límite superior ideal de control para la misma tarea. A continuación se deja que un Agent controle de forma autónoma el XLeRobot físico, para observar cómo la percepción, la planificación y la recuperación de fallos determinan el resultado. Luego se lleva el mismo contrato de herramientas al simulador y se comparan de una vez tres estrategias: ejecución en lazo abierto, verificación paso a paso y modelo del mundo. Por último se cambian el fondo, la apariencia de los objetos, la iluminación y el ruido visual para ver si una política visual aprendida en simulación logra adaptarse a un entorno nuevo.
+
+El cuello de botella aquí no suele estar en fabricar otro benchmark estático de preguntas y respuestas, sino en conseguir que el modelo mantenga el lazo cerrado con un ancho de banda de percepción y control limitado. Un sistema robótico utilizable tiene que responder al menos a cuatro preguntas:
+
+1. ¿Qué tarea quiere terminar la persona?
+2. ¿Qué subtarea toca a continuación?
+3. ¿Qué acción concreta produce la habilidad actual?
+4. Después de ejecutar la acción, ¿la realidad sigue ajustándose al plan original?
+
+Esta sección coloca esas cuatro preguntas en el mismo lazo de control de XLeRobot y muestra de qué se encarga cada una de las cuatro técnicas: la planificación a largo plazo decide si va primero la taza o el papel; el VLA o las primitivas de acción hacen el agarre y la colocación; el modelo del mundo estima las consecuencias de una acción; y el paso de la simulación a la realidad carga con la diferencia entre los vídeos de entrenamiento y la cámara y los actuadores reales. Aunque el modelo de alto nivel ya tenga conocimiento y capacidad de planificación de sobra, basta con que falte uno de los eslabones de este lazo de realimentación para que el sistema no consiga terminar la tarea.
+
+### El reparto entre hardware y algoritmo
+
+La primera pregunta que XLeRobot está en mejor posición de responder es esta: cuando falla el ordenado autónomo del escritorio, ¿es que el brazo no puede, o es que el algoritmo no sabe usar el brazo? Hay aquí un hecho que no conviene suavizar: **incluso un brazo de unos pocos cientos de dólares como XLeRobot ya es capaz, por teleoperación, de completar una tarea de escritorio de varios pasos encadenados como la de esta sección**——una persona mira el vídeo de la cámara, agarra la taza roja y la deja en la bandeja, tira el papel amarillo a la papelera y al final vuelve a comprobar el estado. Este resultado no dice solo que "el hardware apenas da la talla"; es una evidencia diagnóstica clara: **en lo que respecta a esta tarea, el cuello de botella está del lado del algoritmo, no del hardware.**
+
+El método de diagnóstico es directo. Con la cámara, el brazo, la pinza, la disposición del escritorio y las condiciones de éxito fijas, primero es la persona quien se hace cargo del lazo. La persona corrige de forma continua la estimación de la posición de los objetos, la elección de acciones y el momento de ejecutarlas, y también sabe qué hacer cuando el agarre falla. La distancia entre un sistema autónomo y una persona se manifiesta precisamente en esa capacidad de lazo cerrado. Por supuesto, el alcance de esta conclusión es la tarea de escritorio de esta sección: muestra que el hardware supera los umbrales de carga, precisión y espacio de trabajo que esta tarea necesita, pero no significa que un brazo de unos cientos de dólares sirva para cualquier entorno abierto ni para manipulaciones más difíciles.
+
+XLeRobot admite varias vías de teleoperación: teclado, mando de Xbox, Joy-Con de Switch y equipos de VR. El operador humano hace de forma natural muchas cosas que un algoritmo tendría que implementar explícitamente: frena cuando la pinza se acerca a la taza, corrige el punto de agarre si la taza resbala, vuelve a mirar si no consigue pinzar el papel a la primera y comprueba el resultado cuando el objeto entra en la zona objetivo. Por eso la teleoperación no es solo un medio para recoger datos de demostración, sino también un experimento diagnóstico que "fija el hardware y solo cambia al operador".[^ch9-1]
+
+> **Experimento 9-7 ★: Ordenar el escritorio teleoperando un XLeRobot físico**
 >
-Los Agentes de voz enfrentan la latencia en la modalidad auditiva, Computer Use enfrenta la latencia en la modalidad visual, y cuando el Agente necesita controlar robots en el mundo físico, los desafíos de latencia y multimodalidad se amplifican aún más: las consecuencias de las acciones son irreversibles, y una sola colisión puede dañar los objetos o al propio robot. Esta sección examina primero cómo los robots reducen el problema del control en tiempo real mediante arquitecturas de dos capas y Action Chunking, para pasar luego a su escollo más duro en la actualidad: el entrenamiento y la generalización (cómo se obtienen los datos y cómo migra el modelo entre tareas y plataformas).
-
-### El hardware no es el cuello de botella, los algoritmos sí lo son
-
-Los robots aún no se han aplicado ampliamente en escenarios abiertos generales. ¿El cuello de botella está en el hardware o en los algoritmos? El proyecto XLeRobot ofrece una contraprueba contundente: un robot de dos brazos sobre ruedas con un costo inferior a 1,000 dólares puede completar con fluidez una gran cantidad de tareas domésticas cuando los humanos lo teleoperan a través de visores VR. Tareas domésticas más complejas que requieren manos diestras también pueden ser completadas con fluidez por los robots de Unitree bajo teleoperación humana. La latencia de la teleoperación es de aproximadamente 100-200 ms, cercana a las exigencias de respuesta de la interacción física. La resolución de los sensores, la precisión de los actuadores y la frecuencia de control (el número de veces por segundo que el robot actualiza las instrucciones de acción; cuanto menor es la frecuencia, menos fluido es el movimiento y más probable es que aparezcan vibraciones o desvíos de la trayectoria objetivo) en las plataformas de bajo costo actuales ya son suficientes para respaldar tareas prácticas.
-
-Es necesario delimitar las fronteras de esta afirmación: lo que la contraprueba de la teleoperación demuestra realmente es que "el hardware actual de bajo costo sumado a la inteligencia humana es suficiente para completar **este tipo de tareas de manipulación doméstica basadas principalmente en retroalimentación visual**". Esto no significa que el hardware cumpla en todas las dimensiones: la falta de sensores táctiles y la confiabilidad y costo de las manos diestras siguen siendo deficiencias de hardware reconocidas hasta el día de hoy; una vez que la tarea depende en gran medida del control preciso de fuerzas y la retroalimentación táctil, el hardware puede ser un cuello de botella. Por lo tanto, lo que se indica a continuación sobre "el hardware no es el cuello de botella" se limita al alcance de las tareas discutidas en esta sección.
-
-En lo que respecta a este tipo de tareas, la verdadera brecha se encuentra en la capa algorítmica, la cual se desarrolla en las dos subsecciones siguientes.
-
-> **Experimento 9-7 ★: Teleoperar XLeRobot para ordenar el escritorio**
+> Coloca en el área de trabajo de un XLeRobot físico una taza roja, una bandeja, un papel amarillo arrugado y una papelera. El operador ejecuta la tarea fija mediante una de las vías de teleoperación calibradas: "poner la taza roja en la bandeja, tirar el papel amarillo a la papelera y, al final, observar otra vez para comprobar el estado del escritorio". Repite al menos varias rondas y registra el vídeo de la cámara, las entradas del operador, el estado del brazo, la duración de las acciones, los fallos de agarre, el número de reintentos y el estado final.
 >
-> **Objetivo:** En un XLeRobot real, un operador remoto ejecuta la misma tarea y verifica de nuevo el escritorio.
+> No rebajes el criterio de aceptación a "al final el escritorio parece limpio". La taza roja tiene que estar dentro de la bandeja y el papel amarillo dentro de la papelera, el brazo tiene que volver a su postura segura y en todo el proceso no puede haber colisiones, salidas del área de trabajo ni intervenciones humanas que rematen la tarea sin verificación.
+
+La teleoperación física es lo más convincente como límite superior de la tarea, pero no es cómoda para variar en bloque el número y la posición de los objetos. Para obtener un control reproducible y con estadística, llevamos a continuación el mismo problema de "devolver los objetos a su sitio" a un simulador de escritorio en dos dimensiones, y usamos un controlador ideal como sustituto de un operador fuerte que ni se equivoca al percibir ni elige mal la acción.
+
+> **Experimento 9-8 ★: Medir en el simulador el límite superior ideal de control de la misma tarea**
 >
-> **Principio:** Un brazo de unos cientos de dólares puede completar esta tarea de varios pasos bajo teleoperación humana; aquí el cuerpo del hardware no es el cuello de botella, sino la percepción, la planificación, el control cerrado y la recuperación.
+> En un simulador de escritorio bidimensional, coloca al azar la taza roja, el papel amarillo y sus respectivas zonas objetivo, y deja que un controlador ideal se acerque a los objetos por orden, los agarre y los mueva a la posición correcta. No necesita reconocer imágenes ni se equivoca al elegir la acción, de modo que representa "hasta dónde puede llegar esta tarea como mínimo cuando la percepción y la decisión son ambas correctas".
 >
-### Arquitectura de dos capas: Separación de planificación y control
+> Observa la tasa de éxito, el número de pasos y la longitud del recorrido, y varía la posición inicial de los objetos y la escala de la tarea para ver si ese límite ideal se mantiene estable. Se usan las mismas condiciones de éxito que en el experimento 9-7, pero lo que se mide es una simulación sin actuadores: no implica que el XLeRobot físico se haya movido. Ambos experimentos serán las dos líneas base del control autónomo posterior——el 9-7 es el lazo cerrado humano sobre hardware real, y el 9-8 el lazo cerrado ideal en un entorno simulado.
 
-Para que un robot complete tareas domésticas complejas, debe tomar decisiones en dos escalas temporales diferentes. La primera capa es la **planificación de largo alcance** (long-horizon planning), más lenta: desglosa instrucciones de alto nivel como "limpiar la escritorio" en secuencias de subobjetivos (limpiar el mostrador, cargar el lavavajillas, limpiar las superficies), requiriendo comprender la semántica del entorno, razonar sobre las dependencias de la tarea y planificar esquemas de acción multipaso (al igual que un humano piensa "qué hacer primero y qué hacer después" antes de ponerse a trabajar). La segunda capa es el **control VLA** (Vision-Language-Action, modelo de Visión-Lenguaje-Acción), más rápido: ejecuta cada operación específica ("caminar hacia el fregadero", "tomar el trapo", "limpiar la superficie"), emitiendo continuamente señales de control basadas en la imagen actual que ve y las instrucciones de lenguaje, para que los movimientos del robot sean fluidos y continuos.
+### La estructura básica del control robótico
 
-Esta arquitectura de dos capas separa eficazmente la complejidad: la planificación de largo alcance se encarga de "qué hacer" y el control VLA se encarga de "cómo hacerlo". Esta arquitectura de dos capas de "toma de decisiones lenta de alto nivel + ejecución rápida de nivel inferior" es altamente similar en estructura al "pensamiento rápido/lento" en el escenario de voz anterior: ambas desacoplan el pensamiento complejo y la respuesta en tiempo real en diferentes módulos. Cabe recordar que la "planificación / control" aquí se corresponde con el desacoplamiento de la dimensión "pensamiento profundo lento / respuesta en tiempo real rápida" en el pensamiento rápido/lento, y no con el desacoplamiento de "pensamiento / expresión" de MPS Solución 3 (este último divide "pensar" y "hablar", mientras que el primero divide "planificación global" y "ejecución en tiempo real", cortando dimensiones diferentes).
+Un sistema robótico suele separar trabajos con escalas de tiempo distintas.
 
-Sin embargo, la naturaleza de tiempo real no desaparece mágicamente, sino que se desplaza hacia abajo a la capa de control VLA, amortiguándose mediante la **fragmentación de acciones** (Action Chunking, véase la sección posterior "Control VLA"): el modelo genera en una sola inferencia una secuencia corta de acciones futuras, y el hilo de control la reproduce a alta frecuencia, diluyendo la latencia de una sola inferencia a lo largo del tiempo de ejecución de todo el bloque de acciones. Sin embargo, aquí hay un compromiso ineludible: la fragmentación intercambia reactividad por suavidad. Cuanto más largo es el bloque, más se diluye la latencia de cada inferencia y más continuo es el movimiento, pero el modelo "no ve" nuevas imágenes durante ese tiempo, volviéndose más lento ante cambios repentinos (si se mueve un objeto o alguien extiende la mano para bloquear). Este compromiso entre tiempo real y suavidad es la parte que la arquitectura de dos capas no elimina, sino que simplemente desplaza.
+| Nivel | Pregunta central | Salida | Escala de tiempo típica |
+| --- | --- | --- | --- |
+| Meta de la tarea | Qué quiere terminar la persona | "La taza y el papel a su sitio" | Minutos |
+| Planificación a largo plazo | Qué va antes y qué después | Primero la taza, luego el papel, comprobar al final | De segundos a minutos |
+| Habilidad básica | Qué cambio de estado se logra ahora | `pick(red_cup)`, `place(red_cup, tray)` | Unos 1—3 s |
+| VLA / política de habilidad | Cómo se mueve concretamente esta habilidad | Movimiento corto o trayectoria continua de la pinza de XLeRobot | Inferencia a ~1—10 Hz |
+| Control de bajo nivel y capa de seguridad | Cómo ejecutar de forma estable y sin retardo | Consignas de articulación o del extremo, límites de velocidad y parada de emergencia | ~50—1000 Hz |
 
-Aquí también es necesario explicar un giro en la línea principal de este capítulo: en el escenario robótico, la contradicción en tiempo real ya se ha mitigar parcialmente mediante el desacoplamiento de dos capas y la fragmentación de acciones, desplazándose la contradicción principal actual hacia el **entrenamiento y la generalización** (cómo obtener suficientes datos de demostración y cómo hacer que el modelo generalice entre tareas y plataformas). Las subsecciones siguientes se desarrollan en torno a esta nueva contradicción, siendo también la extensión al mundo físico de los entornos de simulación del Capítulo 6 y del aprendizaje por refuerzo del Capítulo 7.
+Este es un reparto de ingeniería habitual, no la única arquitectura de modelo posible. El VLA puede asumir parte de las decisiones de alto nivel, y el planificador puede ser un programa basado en reglas, un VLM o un optimizador. Sea cual sea la implementación, conviene separar "el orden de la tarea" de "la acción inmediata"; de lo contrario la latencia de inferencia del modelo de alto nivel lastra el control de bajo nivel, y el control de alto ritmo del nivel bajo obliga al modelo superior a procesar un montón de detalles irrelevantes. En XLeRobot, el modelo no debería emitir directamente ángulos articulares arbitrarios: solo elige habilidades con fronteras claras, como `pick`, `place`, `verify_state` y `stop`, y es el ejecutor——calibrado, con límite de velocidad y con tiempo máximo——quien las convierte en movimiento real del brazo.
 
-Y esta nueva contradicción recae principalmente sobre la capa de control VLA. Se puede considerar VLA como "VLM + salida de acciones": el **VLM** (Vision-Language Model, modelo de visión-lenguaje: un gran modelo que comprende imágenes y texto simultáneamente) se encarga de "entender" y "pensar con claridad", y el VLA además debe "manos a la obra" sobre esta base, residiendo el verdadero desafío precisamente en esta capa de "manos a la obra". Actualmente, la capa de control VLA se entrena principalmente mediante aprendizaje por imitación (clonación de comportamiento): aprendiendo directamente de un gran número de demostraciones humanas "qué hacer al ver qué" (OpenVLA, RT-2, π₀, etc. pertenecen a esta categoría); el aprendizaje por refuerzo ha sido un medio complementario sobre esto en los últimos años. Aunque los VLA entrenados con aprendizaje por refuerzo pueden funcionar muy bien en tareas individuales, a menudo carecen de capacidad de generalización: incluso si SimpleVLA-RL en el Capítulo 7 reportó resultados elevados en tareas individuales en LIBERO, se entrenó con RL por separado para cada tarea, en lugar de ser un modelo unificado que generalice con cero muestras a todas las tareas. Este patrón de "entrenar una vez por cada tarea" significa que cada vez que se encuentra una nueva tarea, se deben volver a recopilar datos y reentrenar.
+### Planificación a largo plazo y descomposición de la tarea
 
-Las dos secciones siguientes discuten en profundidad las soluciones técnicas específicas para la planificación de largo alcance y el control VLA.
+Cuando el usuario dice "recoge el escritorio", el sistema no puede pasarle esa frase tal cual al modelo de acción. El planificador primero enumera los objetos y las metas de la escena, decide el orden y escribe para cada paso su condición de inicio, su condición de finalización y sus límites de riesgo. Por ejemplo:
 
-### Planificación de largo alcance: De VLM a modelos de pensamiento embrollado dedicados
+```text
+Tratar la taza roja → Retirar el papel amarillo → Comprobar el escritorio
+```
 
-Los VLM generales ya poseen una capacidad notable de pensamiento embrollado. **Gemini Robotics-ER 1.5** de Google DeepMind se optimizó específicamente para el pensamiento embrollado (Embodied Reasoning, es decir, comprender la posición, movimiento y relaciones causales de los objetos en el mundo físico), alcanzando un promedio de 62.8% en 15 benchmarks académicos (Point-Bench, RefSpatial, RoboSpatial, BLINK, etc.), superando a GPT-4o (60.6%) y Gemini 2.5 Pro (59.3%). Sus ventajas centrales incluyen: comprensión espacial avanzada y localización de objetos, razonamiento temporal (predecir causalidades de acciones como "qué pasará si empujo este vaso") y orquestación de tareas (descomponer instrucciones de alto nivel en pequeños pasos), admitiendo de forma nativa mecanismos de pensamiento (thinking) y llamadas a herramientas [^ch9-2].
+"Tratar la taza roja" se descompone a su vez en dos acciones y una verificación:
 
-[^ch9-2]: Google DeepMind, “Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/
+```text
+pick(red_cup) → place(red_cup, tray) → verify_state()
+```
 
-> **Experimento 9-8 ★: Medir en simulación el límite de control ideal de la misma tarea**
+Cada habilidad terminada nos deja un nodo verificable. Si falla el agarre, se rehace solo ese paso. Si alguien mueve un objeto o el usuario cambia de meta, basta con replanificar los pasos posteriores afectados en lugar de repetir el plan entero. Las herramientas que se dan al agente también deben ser lo bastante simples: cada llamada hace una sola cosa, el rango de movimiento está acotado, hay tiempo máximo y después de ejecutar se vuelve a observar de inmediato.
+
+> **Experimento 9-9 ★★: Que Gemini Robotics-ER 1.5 ordene el escritorio de forma autónoma con XLeRobot**
 >
-> **Objetivo:** Ejecutar la misma tarea con un controlador ideal que no comete errores de percepción ni de elección.
+> Mantén el XLeRobot físico, la disposición del escritorio, la instrucción de la tarea y las condiciones de éxito del experimento 9-7, y sustituye únicamente al operador humano por un Agent. Deja la observación y la planificación en manos de un modelo de razonamiento corporeizado como Gemini Robotics-ER 1.5 y, a través de un lazo de agente al estilo RoboCrew, abre solo cinco herramientas: `observe_scene`, `pick`, `place`, `verify_state` y `stop`.[^ch9-2]
 >
-> **Principio:** Esta referencia mide el límite cuando las decisiones son correctas; no demuestra que el brazo real haya ejecutado la tarea.
+> El modelo primero observa el escritorio, decide el orden de tratamiento y después invoca las acciones calibradas de agarre y colocación de XLeRobot. Cada vez que termina una habilidad tiene que volver a observar y comprobar la poscondición. Cuando el agarre falla solo se le permite reintentar la habilidad actual, y tiene que llamar a `stop` si el usuario pide parar, si un objeto sale del área de trabajo o si no consigue verificar el estado. El modelo no puede emitir directamente ángulos articulares arbitrarios ni saltarse la verificación real solo porque él mismo haya dicho antes que "ya está".
 >
+> El criterio de aceptación es exactamente el del experimento 9-7: la taza dentro de la bandeja, el papel dentro de la papelera, el brazo de vuelta en postura segura, sin colisiones ni salidas del área. La diferencia es que en el experimento autónomo el sentido de la tarea tiene que salir de la propia observación del modelo, las acciones reales tienen que salir de llamadas a herramientas y el estado final tiene que confirmarse con una observación nueva. La persona solo puede arrancar, parar de emergencia y supervisar la seguridad, nunca completar acciones en lugar del Agent a mitad de camino. Solo así los experimentos 9-7 y 9-9 permiten comparar directamente "con el mismo hardware y la misma tarea, qué le falta al lazo cerrado del modelo frente al lazo cerrado humano".
 
-> **Experimento 9-9 ★★: Control autónomo de un XLeRobot real con Gemini Robotics-ER 1.5**
->
-> **Objetivo:** Sustituir al operador por un Agente que observa y llama a habilidades acotadas de recoger, colocar y verificar, manteniendo la misma tarea y criterio de éxito.
->
-> **Principio:** La diferencia está en percepción, planificación, temporización, control cerrado y recuperación, no en una nueva limitación mecánica.
->
+Los experimentos físicos sacan a la luz errores de calibración, oclusiones de cámara y fallos de pinza, pero no son adecuados para repetir gran cantidad de averías de forma segura y controlada. Los experimentos simulados que siguen conservan exactamente estas cinco herramientas y el mismo estado de la tarea, y solo sustituyen los actuadores reales por un entorno de escritorio en el que se pueden inyectar fallos, para separar qué aporta cada uno: la ejecución en lazo abierto, la verificación paso a paso y la predicción de acciones.
 
-### Control VLA: De datos de demostración a la generalización entre distintos cuerpos
+### Control mediante VLA
 
-En la capa de ejecución de la arquitectura de dos capas, tres modelos representativos (RT-2, OpenVLA y π₀) se enfocan en el control VLA, es decir, emitir las acciones del robot en tiempo real basándose en las imágenes de las cámaras y las instrucciones de lenguaje (Figura 9-10). Pertenecen a dos rutas en cuanto a la representación de las acciones: tokens de acción discretos y generación de trayectorias continuas.
+VLA es la abreviatura de Vision-Language-Action, es decir, "modelo visión—lenguaje—acción". Recibe la escena actual más una instrucción de habilidad y emite la acción que el robot debe ejecutar a continuación:
 
-![Figura 9-11: Arquitectura VLA (Vision-Language-Action)](images/fig9-11.svg)
+```text
+observación actual + instrucción de habilidad → acción
+```
 
-**RT-2 y OpenVLA: Ruta de tokens de acción discretos.**
+En el ejemplo de XLeRobot, el planificador de alto nivel solo presenta `pick(red_cup)`, y es el VLA o la política de habilidad quien decide, a partir de la escena actual, desde qué dirección acercarse a la taza, cuándo cerrar la pinza y con qué trayectoria levantar el brazo. Cuando la capa de ejecución termina ese movimiento corto, se vuelve a fotografiar el escritorio, y solo tras confirmar que la taza está efectivamente agarrada se le permite al planificador presentar `place(red_cup, tray)`. Dicho de otro modo: la llamada a la herramienta define el cambio de estado deseado, y el VLA define cómo lograr ese cambio de estado con acción continua.
 
-**RT-2** fue el pionero de esta ruta: realiza un ajuste fino directo sobre grandes modelos de visión-lenguaje, discretizando las acciones continuas del robot en tokens que se emiten de forma autorregresiva uno a uno como si fuera generación de texto, aprovechando la capacidad de generalización del modelo preentrenado para mejorar la transferencia zero-shot a nuevos objetos e instrucciones. **OpenVLA** sigue el esquema de representación de acciones de RT-2, unificando el modelo de lenguaje y el codificador visual en una sola arquitectura, recibiendo imágenes e instrucciones de texto para emitir tokens de acción. El entrenamiento consta de dos etapas: primero se realiza un preentrenamiento en el dataset multiplataforma a gran escala Open X-Embodiment (que abarca demostraciones de manipulación real en más de 20 plataformas robóticas) para aprender conocimientos generales de manipulación (los patrones de acción como "agarrar" y "colocar" son comunes entre diferentes robots), y luego se realiza un ajuste fino con pocos datos para plataformas específicas. Puesto que la representación de acciones es idéntica en esencia, la verdadera diferencia entre ambos reside en la apertura y las elecciones de ingeniería: RT-2 y sus datos de entrenamiento son internos de Google, mientras que OpenVLA es completamente de código abierto (modelo backbone de código abierto Llama 2 más codificador visual combinado con datasets públicos), lo que permite a toda la comunidad reproducir y mejorar sobre su base por primera vez.
+RT-2 y OpenVLA trocean la acción continua en tokens discretos y los emiten uno a uno, como quien genera texto. π₀ representa la otra vía: genera directamente trayectorias de acción continuas y suaves. No hay una superioridad simple de una sobre otra. Los tokens discretos se acoplan con facilidad a los modelos de lenguaje; las trayectorias continuas se prestan mejor a expresar movimiento suave. La decisión de fondo es cómo representar la acción, no solo el tamaño del modelo.[^ch9-15]
 
-**Action Chunking: Tecnología de compensación de frecuencia universal en el campo VLA.**
+Un modelo grande suele poder inferir solo entre 1 y 10 veces por segundo, mientras que un controlador tradicional puede actualizarse de decenas a miles de veces por segundo. Una práctica habitual en ingeniería es el "troceado de acciones" (action chunking): el modelo genera de una vez un tramo corto de acciones futuras, el hilo de control ejecuta ese tramo a alta frecuencia y el modelo prepara entretanto el siguiente. Así se oculta parte de la espera de inferencia dentro del tiempo de ejecución de las acciones. El precio es que, cuanto más largo es el tramo, más suave resulta el movimiento pero menos escenas nuevas ve el modelo durante ese intervalo. Si el XLeRobot extiende el brazo para coger la taza y la taza se desplaza de un golpe a mitad de camino, puede seguir ejecutando acciones generadas a partir de una imagen antigua. El troceado de acciones es, por tanto, un compromiso entre suavidad y velocidad de reacción, no una aceleración gratuita.
 
-Debido a la latencia de inferencia de los LLM, la frecuencia de control de VLA es muy inferior a las exigencias del control robótico tradicional (el control robótico tradicional exige frecuencias de 50-1000 Hz, mientras que la inferencia única de VLA solo alcanza unos 1-10 Hz, con una brecha de hasta dos órdenes de magnitud). El OpenVLA original es un ejemplo típico de este problema: solo emite una acción por inferencia (predicción autorregresiva de un solo paso a unos 6 Hz), siendo los tirones en el movimiento su principal deficiencia criticada. La **fragmentación de acciones** (Action Chunking) es una tecnología universal nacida para compensar esta brecha: propuesta inicialmente por ACT (Zhao et al., 2023) y adoptada posteriormente por π₀, OpenVLA-OFT, etc. El modelo no emite una sola acción por inferencia, sino que genera de un tirón una secuencia de acciones futuras para un período corto (en la configuración típica de π₀, genera un bloque de unos 0.5-1 segundos de acciones a la vez, equivalente a 25-50 acciones a 50 Hz de frecuencia de control), ejecutándolas secuencialmente el hilo de control a alta frecuencia mientras el modelo genera el siguiente lote asíncronamente en segundo plano. Siempre que el tiempo de inferencia del modelo sea menor que el tiempo de ejecución de este lote de acciones, el robot mantendrá un movimiento continuo y fluido, como el almacenamiento en búfer de video, cargando el contenido posterior por adelantado para que la reproducción no sufra tirones.
-
-**π₀: Ruta de generación de trayectorias continuas.**
-
-La verdadera diferenciación en la representación de acciones no está entre RT-2 y OpenVLA, sino entre los **tokens discretos y la generación de trayectorias continuas**. **π₀** representa esta última ruta: ya no predice tokens de acción discretos uno por uno, sino que utiliza flow matching (coincidencia de flujo, un método de generación continua de la misma familia que los modelos de difusión) partiendo del ruido aleatorio para "desruidificar" iterativamente en múltiples pasos, generando directamente una trayectoria de acciones suave y continua. Esta representación se combina de forma natural con Action Chunking, funcionando mejor en tareas que exigen alta precisión y fluidez de movimiento como las manipulaciones diestras. Para hacer una analogía: la ruta de tokens discretos es como elegir paso a paso en un menú "5 grados a la izquierda" y "3 centímetros adelante", mientras que la ruta de trayectorias continuas es como un pintor que traza primero la curva completa y la corrige pincelada a pincelada hasta darle forma.
-
-**Preempción de bloques de acción:**
+El troceado de acciones necesita normalmente un esqueleto de "predecir—ejecutar—interrumpir" en lugar de llevar el tramo hasta el final:
 
 ```python
 chunk = vla(current_observation, skill)
@@ -367,63 +388,65 @@ for action in chunk:
         break
 ```
 
-### Transferencia Sim2Real: La brecha entre simulación y realidad
+Los tramos cortos reaccionan más rápido pero multiplican las llamadas al modelo; los largos son más suaves pero tienden a usar observaciones caducadas. El experimento 9-10 compara este tipo de compromiso en el simulador, y es el 9-9 el que toca la frontera de seguridad del hardware real.
 
-En la sección de entornos de simulación del Capítulo 6 se explicaron los orígenes de la brecha entre simulación y realidad (sim-to-real gap) y el principio de la aleatorización de dominio (domain randomization) para hacerle frente, por lo que no se repetirá aquí; en una frase: dado que la simulación no puede restaurar completamente las características físicas, visuales y de hardware reales, se alteran aleatoriamente estos parámetros en un amplio rango durante el entrenamiento, forzando a la política a aprender un conjunto de representaciones generales estables ante diversos cambios (Figura 9-11). A continuación solo examinaremos cómo se aterriza este principio en brazos robóticos reales.
+### Los límites del VLA
 
-![Figura 9-12: Brecha Sim2Real y Aleatorización de Dominio](images/fig9-12.svg)
+"Planificación a largo plazo + VLA" es un plan base practicable, pero deja algunos problemas que se pasan por alto con facilidad.
 
-Existen numerosos casos de éxito en esta ruta: la manipulación diestra de manos mecánicas de OpenAI (el proyecto Dactyl logró la reorientación de cubos dentro de la mano, y su trabajo posterior logró resolver el cubo de Rubik con una mano mediante aleatorización automática de dominio ADR) y ANYmal de ETH Zurich (caminata robusta de robots cuadrúpedos sobre nieve, grava y otros terrenos complejos en exteriores) pertenecen a esta categoría.
+- **Los datos de entrenamiento son escasos**: las demostraciones robóticas son muchísimo menos abundantes que el texto y las imágenes de internet. Que el modelo haya visto la palabra "taza" no significa que haya visto tazas de todos los materiales y condiciones de fricción.
+- **Aprende a imitar, pero no conoce las consecuencias**: la clonación de comportamiento aprende sobre todo "qué hizo el demostrador a continuación", y no exige explícitamente al modelo que responda "qué provoca esta acción".
+- **Cada robot es distinto**: con grados de libertad, sistemas de coordenadas, pinzas y retardos de actuador diferentes, no hay garantía de que la misma acción se traslade tal cual a otra máquina.
+- **La observación puede quedar obsoleta**: una vez que el tramo de acciones entra en ejecución, si el objeto se mueve, se ocluye o se vuelca, el modelo sigue decidiendo con base en el fotograma anterior.
 
-Lo que realmente debe aportar este capítulo son los dos pasos de ingeniería ineludibles al aterrizar la aleatorización de dominio en máquinas reales. El primero es la **calibración del rango de aleatorización**: el rango no se puede fijar al azar; si es demasiado estrecho no cubrirá los cambios reales, y si es demasiado amplio aumentará la dificultad de entrenamiento, aprendiendo políticas subóptimas que "pueden lidiar con todo pero no son expertas en nada". En la práctica, se suele **medir y calibrar la distribución** de parámetros clave a partir de datos del entorno real (como la distribución real del coeficiente de fricción y la latencia de respuesta de los motores), muestreando dentro de ese rango; si la política entrenada en simulación cae notablemente en la máquina real, se amplía gradualmente el rango de aleatorización hasta que la brecha sim-to-real converja a un nivel aceptable. El segundo es el **alineamiento visual**: calibrar con precisión la pose de la cámara en simulación y en la realidad (alineamiento de entorno), y reemplazar aleatoriamente fondos fotografiados en el entorno real dentro del renderizado de simulación (reemplazo de fondo greenscreen), haciendo que la imagen de simulación se asemeje lo más posible a lo que ve la máquina real (estos dos pasos se demostrarán concretamente en el Experimento 9-9).
-
-> **Experimento 9-10 ★★: Comparar tres bucles autónomos en simulación**
->
-> **Objetivo:** Comparar ejecución abierta, comprobación paso a paso y estrategia predictiva con la misma tarea y herramientas.
->
-> **Principio:** La comprobación permite recuperar fallos locales; el modelo del mundo continúa cuando predicción y realidad coinciden y replantea cuando divergen. El estado final se confirma con observación nueva.
->
-
-> **Experimento 9-11 ★★★: Prueba RGB entre entornos para la misma tarea**
->
-> **Objetivo:** Variar fondo, apariencia, iluminación y ruido visual y probar la adaptación de la política simulada.
->
-> **Principio:** La diversidad visual puede mejorar la robustez, pero no sustituye la calibración real ni el bucle de seguridad.
->
-
-+## Actualización 2026: planificación en streaming y modelos del mundo
-
-La sección de robótica no debe terminar en «un VLM escribe un plan y un VLA lo ejecuta». Consideremos **«ordenar el escritorio»**. El planificador de horizonte largo construye primero una lista del estado: una taza medio llena, papeles, tres libros, un portátil abierto, una papelera y una caja organizadora. Después emite comandos con precondiciones y comprobaciones:
-
-1. «Ve al escritorio y detente a 30 cm del borde».
-2. «Pon los dos papeles en la papelera y verifica que no quede ninguno».
-3. «Mantén la taza vertical y colócala en la bandeja; reduce la velocidad si el líquido se mueve».
-4. «Cierra el portátil y muévelo a la esquina posterior izquierda; no tires del cable».
-5. «Apila los libros por tamaño y guarda los bolígrafos en la caja».
-6. «Solo cuando se hayan retirado los objetos frágiles y eléctricos, limpia la superficie».
-7. «Retrocede, observa de nuevo y verifica el estado final».
-
-Esto es un grafo de dependencias, no un párrafo de prosa. Si el usuario dice «guarda primero el portátil», cambia la prioridad. Si se vuelca la taza, el robot se detiene en un punto seguro, registra cup.orientation=fallen y laptop.at_risk=true, invalida el sufijo obsoleto y vuelve a planificar: proteger el portátil, contener el líquido, observar de nuevo y reanudar solo las tareas no afectadas. Las acciones ya verificadas no se repiten; los eventos urgentes cancelan el bloque actual y las actualizaciones normales esperan al siguiente punto seguro.
-
-### Ejecución en streaming
-
-La planificación y la ejecución pueden solaparse. Cuando existe un prefijo seguro, el planificador envía un comando completo al ejecutor mientras continúa planificando el sufijo. El comando debe ser completo y auditable:
-
-```text
-{"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
-```
-
-El ejecutor devuelve started, succeeded, cancelled o failed. El planificador actualiza las dependencias y aplica backpressure si la cola está llena o quedó obsoleta. El streaming reduce el tiempo hasta la primera acción segura; no permite ejecutar JSON parcial ni pensamientos no verificados.
-
-### Por qué los VLA actuales generalizan mal
-
-OpenVLA no se entrenó literalmente modificando solo el projector: el trabajo original también estudia fine-tuning completo, visión congelada, última capa y LoRA. La crítica estructural sigue siendo válida: un corpus enorme de texto e imágenes se conecta con un conjunto mucho menor de datos robóticos mediante una vía de adaptación estrecha; las adaptaciones baratas suelen concentrar la conducta nueva en el projector, módulos LoRA o la cabeza de acciones. El cloning de comportamiento aprende «observación + instrucción → bloque de acciones», no consecuencias físicas contrafactuales. Las acciones dependen del cuerpo del robot y los bloques obsoletos limitan la transferencia.
+Así pues, que un modelo de lenguaje conozca la palabra "taza" no implica que sepa cómo la fricción, el contacto, el chapoteo del líquido o un cable de alimentación cambian el estado futuro. El VLA responde sobre todo a "qué hay que hacer ahora"; para juzgar "qué puede pasar después de hacerlo" hace falta otro tipo de modelo.
 
 ### Modelos del mundo
 
-Un modelo del mundo aprende una transición accionable: estado + acción candidata → estado futuro predicho → seleccionar y verificar una acción. Es más amplio que V-JEPA: incluye modelos predictivos latentes (V-JEPA 2[^ch9-16]), modelos generativos interactivos (Genie 3[^ch9-21] y Cosmos), World-Action Models (GeniWorld y Robust-WAM), acciones latentes aprendidas de vídeo sin etiquetas (LAWM-3D) y RL basado en modelos (Dreamer y MuZero). Su función es aprender de observaciones a escala, probar acciones contrafactuales antes de ejecutarlas, separar dinámicas compartidas del control específico del robot y replanificar cuando la predicción difiere de la realidad.
+Un modelo del mundo puede entenderse como un predictor de las consecuencias de las acciones. Lo que aprende es cómo puede cambiar el estado del instante siguiente si se toma cierta acción en el estado actual.
 
-Los preprints de 2026 estudian priors dinámicos compartidos (DyPES-VLA), acciones visuales para manipulación cerrada fuera de distribución (GeniWorld), acciones latentes 3D desde vídeo humano (LAWM-3D), alineación semántica del futuro (Robust-WAM) y despliegue asíncrono en tiempo real. Son resultados prometedores, no una solución definitiva a la generalización.
+```text
+estado actual + acción candidata
+    → predecir el estado siguiente o un fragmento de futuro
+    → comparar los resultados de los candidatos
+    → elegir la acción, replanificar o detenerse de forma segura
+```
+
+Un modelo del mundo utilizable en robótica tiene que hacer bien al menos tres cosas:
+
+- entender el estado actual;
+- predecir los resultados que pueden traer acciones distintas;
+- entregar esa predicción al planificador o al controlador para ayudar a decidir.
+
+Un VLM que solo sabe describir vídeo, o un modelo que solo sabe generar imágenes, no se convierte automáticamente en un modelo del mundo fiable para robótica. Tiene que saber qué es una acción y poder predecir el efecto de esa acción sobre los objetos y el entorno. V-JEPA 2 representa la vía de predecir el futuro en el estado interno, mientras que el World-Action Model aprende explícitamente la relación "acción—observación futura". Ambos pueden usarse junto al VLA; no hace falta que lo sustituyan.[^ch9-16]
+
+En un sistema real, un modelo del mundo suele tener tres usos:
+
+1. **Antes de moverse**: comparar acciones candidatas como agarrar, empujar o esperar, y priorizar la opción de menor riesgo;
+2. **Durante la ejecución**: contrastar la observación real con la predicción y, al detectar una desviación, acortar la acción, detenerse o replanificar;
+3. **Durante el entrenamiento**: aprender los cambios de estado a partir de vídeo, datos simulados y trayectorias fallidas, para reducir el ensayo y error sobre la máquina real.
+
+Volvamos a la tarea de escritorio de XLeRobot. Si el papel amarillo queda parcialmente tapado por la taza roja, el sistema puede comparar habilidades candidatas: "coger primero el papel", "mover primero la taza" o "agarrar desde otra dirección". El modelo del mundo no necesita generar vídeo robótico realista: basta con que prediga qué acción candidata conduce con más probabilidad a un estado en el que el papel se pueda coger, y cuál podría volcar la taza, para ayudar al planificador a ordenar las opciones. Después de ejecutar la acción, la observación real de la cámara sigue siendo el hecho definitivo: la predicción ayuda a elegir, pero no sustituye a la verificación de aceptación.
+
+Lo que da un modelo del mundo no son respuestas definitivas, sino predicciones comparables sobre "qué puede pasar si hago esto". Cuanto más lejos se predice, mayor tiende a ser el error, y una escena futura de aspecto realista no tiene por qué ajustarse a las leyes reales del contacto y la fricción. Por eso un sistema real sigue necesitando predicción a corto plazo, observación en tiempo real, estimación de incertidumbre y un controlador de seguridad de hardware independiente. Los modelos del mundo generativos sirven para simulación interactiva y visualización, pero no hay que confundir "puede generar vídeo" con "puede guiar las acciones de un robot".[^ch9-21]
+
+> **Experimento 9-10 ★★: Comparar en el simulador tres lazos autónomos de ordenado de escritorio**
+>
+> Lleva al simulador de escritorio la tarea, los estados objetivo, las condiciones de éxito y las cinco herramientas del experimento 9-9, y sustituye únicamente los actuadores del XLeRobot físico por un ejecutor simulado y controlable, que de vez en cuando provoque en el agarre un fallo transitorio recuperable. Así se pueden comparar tres estrategias sin cambiar el problema.
+>
+> La **ejecución en lazo abierto** genera de una vez la secuencia completa de acciones y no vuelve a observar por el camino. La **verificación paso a paso** relee el estado en cada `pick` y cada `place`, y al fallar rehace solo la habilidad actual. La **ejecución predictiva** añade además un modelo del mundo de corto plazo y compara los resultados previstos de las habilidades candidatas antes de elegir el siguiente movimiento. El experimento compara la tasa de éxito, el sobrecoste de llamadas a herramientas y la capacidad de recuperación ante fallos, y comprueba si todos los éxitos finales están confirmados por una observación nueva de `verify_state`.
+>
+> El objetivo de este experimento no es mostrar que un pequeño modelo del mundo simulado equivalga al modelo físico de la máquina real, sino verificar una relación más básica: la planificación en lazo abierto arrastra un fallo local hasta el final de la tarea, la verificación paso a paso permite recuperarse, y la predicción de acciones ayuda además a ordenar las habilidades candidatas. Quién ha terminado de verdad lo sigue decidiendo la realimentación del entorno.
+
+### Del entorno simulado al robot real
+
+Que el experimento 9-10 sea estable en el simulador no significa que el XLeRobot físico del experimento 9-9 vaya a tener el mismo éxito. Pasar de la simulación a la máquina real no consiste en cambiar de controlador, sino en hacerse cargo de la diferencia entre dos entornos. Para entrenar se pueden usar datos de teleoperación, datos de vídeo y datos de interacción simulada; pero al desplegar de verdad, la misma taza roja, el mismo papel amarillo, la misma bandeja y la misma papelera aparecen bajo fondos, iluminación, posiciones de cámara y relaciones de oclusión distintas, y el brazo se encuentra además con otra fricción, otro ruido de sensor y otro retardo de actuador. Si esas diferencias son lo bastante grandes, los movimientos aprendidos en simulación pueden dejar de funcionar en la realidad.
+
+> **Experimento 9-11 ★★★: Prueba entre entornos RGB en la misma tarea de escritorio**
+>
+> Sigue usando en el entorno simulado el problema básico de "mover el objeto hasta su meta correspondiente", y considera cada muestra como una decisión local dentro del ordenado del escritorio: a partir de una imagen RGB, juzgar desde qué dirección hay que acercarse al objeto o si ya se puede agarrar. Entrena cuatro políticas visuales de idéntica estructura: una que solo ve escenas fijas; otra que varía el fondo; otra que varía la apariencia de los objetos; y una última que varía a la vez fondo, apariencia, iluminación y ruido.
+>
+> Prueba todas las políticas en el entorno original y en el entorno nuevo modificado, y compara la precisión de la decisión de acción antes y después del cambio de condiciones visuales. Lo que este experimento intenta responder no es "¿ya es el simulador igual que el XLeRobot físico?", sino una pregunta más estrecha: ampliar deliberadamente el rango de variación de las escenas durante el entrenamiento, ¿ayuda a que esta misma tarea de taza—bandeja y papel—papelera se adapte a un vídeo de cámara nuevo? Aunque el resultado mejore, desplegar en la máquina real sigue exigiendo calibración real de cámara, pruebas de actuadores y un lazo cerrado de seguridad completo.[^ch9-6]
 
 ## Resumen del capítulo
 
@@ -434,10 +457,14 @@ Aunque los tres escenarios parecen muy diferentes en la superficie, los dos obst
 1. ★★ El modelo de extremo a extremo de los Agentes de voz combina ASR-LLM-TTS en un solo modelo, lo que reduce la latencia pero pierde modularidad. Si el modelo de extremo a extremo comete un error en alguna etapa (como el reconocimiento de voz), la depuración y reparación es mucho más difícil que en un pipeline serial. ¿Cómo diseñarías el sistema de observabilidad (observability) para un Agente de voz de extremo a extremo?
 2. ★ Step-Audio R1 logra "pensar mientras se habla" mediante la arquitectura de doble cerebro MPS. Sin embargo, los seres humanos a menudo dicen palabras sin pensar profundamente, se autorcorrigen o utilizan muletillas al "pensar mientras hablan". ¿Debería el "pensar mientras se habla" de un Agente imitar estas características humanas?
 3. ★★ SoM (Set-of-Mark) y sus variantes estructuradas (índice de elementos DOM) convierten el grounding visual de Computer Use de una predicción de coordenadas abierta a una selección de ID cerrada, pero ambos requieren detectar y etiquetar previamente los elementos de la interfaz, ya sea mediante modelos de segmentación o mediante el DOM. Si la interfaz contiene controles no estándar o elementos dinámicos, la anotación puede ser incompleta o inexacta. En este caso, ¿se debería recurrir a la predicción de coordenadas?
-4. ★★ Plataformas robóticas del orden de mil dólares como XLeRobot hacen que la recopilación de datos de teleoperación sea económica. Sin embargo, la calidad de los datos de teleoperación depende en gran medida de la habilidad del operador. ¿Cómo afectará el entrenamiento del modelo VLA los datos proporcionados por un operador no experimentado? ¿Cómo filtrar automáticamente datos de baja calidad durante la etapa de recopilación?
+4. ★★ Plataformas robóticas de unos cientos de dólares como XLeRobot hacen que la recopilación de datos de teleoperación sea económica. Sin embargo, la calidad de los datos de teleoperación depende en gran medida de la habilidad del operador. ¿Cómo afectará el entrenamiento del modelo VLA los datos proporcionados por un operador no experimentado? ¿Cómo filtrar automáticamente datos de baja calidad durante la etapa de recopilación?
 5. ★★★ Este capítulo abarca tres formas de interacción: voz, Computer Use y robótica. La tendencia común de estas tres formas es evolucionar de pipelines seriales hacia modelos de extremo a extremo. Si esta tendencia continúa, ¿cómo será la capa de interacción de los Agentes dentro de cinco años?
 6. ★★ El índice de elementos DOM/Accessibility Tree produce efectos notables en aplicaciones Web estándar, pero cada vez más interfaces de software (renderizado en Canvas/WebGL, controles autodibujados multiplataforma) no proporcionan información estructurada accesible, teniendo que depender únicamente de la anotación visual o la predicción de coordenadas. ¿Crees que Computer Use debería apostar por una ruta puramente visual, o mantener simultáneamente dos vías, estructurada y visual? ¿Cuáles son los costos y beneficios de mantener ambas vías?
 7. ★★ Los modelos VLA adoptan la fragmentación de acciones (action chunking); como se menciona en el texto principal, la configuración típica de π₀ es generar de una vez entre 25 y 50 acciones futuras a una frecuencia de 50 Hz, ocultando la latencia de inferencia en el tiempo de ejecución. Sin embargo, si el entorno cambia repentinamente durante la ejecución (por ejemplo, si se retira un objeto), la secuencia de acciones pregenerada quedará invalidada. ¿Cómo equilibrar la ventaja de eficiencia de la fragmentación de acciones con la velocidad de respuesta ante cambios en el entorno?
 8. ★★★ Los tres escenarios de este capítulo (voz, Computer Use y robótica) enfrentan el problema de latencia en el bucle "Percepción-Pensamiento-Acción", evolucionando todos hacia la paralelización del pensamiento rápido y lento. En el escenario de voz, esto se manifiesta como "corregir tras hablar mal"; en el escenario de Computer Use, se manifiesta como "hacer clic primero y mirar después"; en el escenario robótico, se manifiesta como "dar un paso y observar". ¿Cómo garantizar que estas acciones basadas en el pensamiento rápido no causen consecuencias irreversibles?
 [^ch9-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
 [^ch9-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。
+[^ch9-1]: XLeRobot, “Documentación de teleoperación”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
+[^ch9-2]: Google DeepMind, “Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, “Control mediante LLM Agent”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. El ejemplo original de XLeRobot muestra cómo orquestar el modelo con las llamadas a herramientas; esta sección mantiene el mismo principio de orquestación, pero acota las herramientas de acción a primitivas calibradas de agarre, colocación, verificación y parada sobre el escritorio.
+[^ch9-6]: LeRobot, “Tutorial de Sim2Real”. https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
+[^ch9-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246

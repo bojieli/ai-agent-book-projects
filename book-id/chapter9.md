@@ -281,133 +281,100 @@ Tidak seperti domain speech, saat ini tidak ada solusi sistematis untuk meningka
 
 [^ch9-10]: Desain lengkap dari decoupling fast-slow untuk speech-operation dan "plain text contract" dapat ditemukan di Bojie Li dan Noah Shi. *Talking While Acting: Real-Time Voice for Slow Computer-Use Agents.* 2026 (mendatang).
 
-## Robot Manipulation: Dari Kontrol Real-Time ke Pelatihan dan Generalisasi
+## Robot Manipulation: Merapikan Meja dengan XLeRobot
 
-> **Kelima eksperimen di bagian ini memakai satu tugas yang sama: masukkan cangkir merah ke baki, masukkan kertas kuning ke tempat sampah, lalu amati ulang dan verifikasi keadaan meja. Robot nyata dan simulator dilaporkan terpisah, tetapi semantik tindakan dan kriteria keberhasilannya sama.**
+> **Cara membaca bagian ini**: dari awal sampai akhir kita memakai satu tugas saja——"masukkan cangkir merah ke nampan, buang kertas kuning ke tempat sampah, lalu amati sekali lagi untuk memastikan keadaan meja". Eksperimen 9-7 dan 9-9 dijalankan pada XLeRobot fisik dan memerlukan lengan robot, kalibrasi, tombol henti darurat, serta pengawas di tempat. Eksperimen 9-8, 9-10, dan 9-11 adalah padanannya di GPU lokal. Hasil fisik dan hasil simulasi dilaporkan terpisah, tetapi tujuan tugas, makna aksi, dan syarat keberhasilannya dijaga tetap sama.
+
+Manipulasi robot jauh lebih sulit daripada "melihat gambar lalu menjawab pertanyaan". Model bukan hanya harus memahami pemandangan, tetapi harus bertindak secara berkelanjutan di dunia nyata, dan setiap aksi mengubah keadaan pada detik berikutnya. XLeRobot membuat perbedaan ini menjadi sangat konkret. Lengan yang sama bisa dikendalikan dari jarak jauh oleh manusia dengan papan ketik, gamepad, atau perangkat VR; bisa pula pengamatan kamera dan sehimpunan kecil alat aksi diserahkan kepada Agent agar ia memanggilnya sendiri. Perangkat kerasnya tidak berubah, tugasnya juga tidak; yang berubah hanya siapa yang mengoperasikan——pada kasus pertama manusia terus mengamati dan mengoreksi, pada kasus kedua model dan sistem kendali harus menuntaskan pekerjaan yang sama.
+
+Bagian ini merangkai lima eksperimen dengan "merapikan meja". Mula-mula manusia mengendalikan XLeRobot fisik dari jarak jauh, untuk mengukur sampai di mana kemampuan perangkat keras ini di tangan operator yang cukup cakap. Berikutnya, di dalam simulator, kita menetapkan batas atas kendali yang ideal untuk tugas yang sama. Setelah itu Agent dibiarkan mengendalikan XLeRobot fisik secara mandiri, untuk melihat bagaimana persepsi, perencanaan, dan pemulihan dari kegagalan menentukan hasil. Selanjutnya kontrak alat yang sama dipindahkan ke simulator, dan tiga strategi dibandingkan sekaligus: eksekusi lingkar terbuka, pemeriksaan bertahap, dan model dunia. Terakhir kita mengubah latar belakang, rupa benda, pencahayaan, dan derau visual untuk melihat apakah kebijakan visual yang dipelajari di simulasi mampu menyesuaikan diri dengan lingkungan baru.
+
+Hambatan di sini biasanya bukan membuat satu lagi tolok ukur tanya-jawab yang statis, melainkan membuat model tetap menutup lingkar kendali dengan lebar pita persepsi dan kendali yang terbatas. Sistem robot yang layak pakai setidaknya harus menjawab empat pertanyaan berikut:
+
+1. Tugas apa yang ingin diselesaikan manusia?
+2. Subtugas mana yang dikerjakan berikutnya?
+3. Aksi konkret apa yang dihasilkan keterampilan saat ini?
+4. Setelah aksi dijalankan, apakah kenyataan masih sesuai dengan rencana semula?
+
+Bagian ini menaruh keempat pertanyaan itu di dalam lingkar kendali XLeRobot yang sama, dan menunjukkan bagian mana yang ditangani masing-masing dari empat teknik: perencanaan jangka panjang menentukan cangkir dulu atau kertas dulu; VLA atau primitif aksi mengerjakan penjepitan dan peletakan; model dunia memperkirakan akibat sebuah aksi; dan perpindahan dari simulasi ke dunia nyata memikul selisih antara video latih dengan kamera serta aktuator sungguhan. Sekalipun model tingkat tinggi sudah punya pengetahuan dan kemampuan perencanaan yang memadai, cukup satu mata rantai umpan balik ini hilang untuk membuat sistem gagal menuntaskan tugas.
+
+### Pembagian Kerja antara Perangkat Keras dan Algoritme
+
+Pertanyaan pertama yang paling cocok dijawab XLeRobot adalah: ketika perapian meja secara mandiri gagal, apakah lengan robotnya yang tidak mampu, atau algoritmenya yang tidak becus memakai lengan itu? Ada satu fakta di sini yang tidak boleh diperlunak: **lengan seharga beberapa ratus dolar seperti XLeRobot pun, lewat teleoperasi, sudah sanggup menuntaskan tugas meja berantai beberapa langkah seperti pada bagian ini**——manusia menonton video kamera, menjepit cangkir merah dan menaruhnya di nampan, membuang kertas kuning ke tempat sampah, lalu memeriksa keadaannya sekali lagi. Hasil ini bukan sekadar berarti "perangkat kerasnya nyaris cukup", melainkan bukti diagnostik yang jelas: **sejauh menyangkut tugas ini, hambatannya ada pada algoritme, bukan pada perangkat kerasnya.**
+
+Cara mendiagnosisnya lugas. Dengan kamera, lengan, penjepit, tata letak meja, dan syarat keberhasilan yang dikunci, manusia lebih dulu memegang lingkar kendali. Manusia terus-menerus mengoreksi taksiran posisi benda, pilihan aksi, dan pemilihan waktu, serta tahu apa yang harus dilakukan ketika jepitan gagal. Jarak antara sistem mandiri dan manusia justru tampak pada kemampuan lingkar tertutup semacam itu. Tentu saja jangkauan kesimpulan ini adalah tugas meja pada bagian ini: ia menunjukkan perangkat keras sudah melewati ambang beban, ketelitian, dan ruang kerja yang dibutuhkan tugas ini, tetapi bukan berarti lengan seharga beberapa ratus dolar sanggup menangani segala lingkungan terbuka atau manipulasi yang lebih sulit.
+
+XLeRobot mendukung beberapa pintu masuk teleoperasi: papan ketik, pengendali Xbox, Joy-Con Switch, dan perangkat VR. Operator manusia secara alami melakukan banyak hal yang harus ditulis eksplisit bila dikerjakan algoritme: melambat ketika penjepit mendekati cangkir, memperbaiki titik jepit bila cangkir tergelincir, mengamati ulang bila kertas tak terjepit dalam sekali coba, dan memastikan hasilnya ketika benda masuk ke zona sasaran. Karena itu teleoperasi bukan hanya sarana mengumpulkan data demonstrasi, melainkan juga eksperimen diagnostik yang "mengunci perangkat keras dan hanya mengganti operatornya".[^ch9-1]
+
+> **Eksperimen 9-7 ★: Merapikan meja dengan meneleoperasi XLeRobot fisik**
 >
-Voice Agent melawan latensi dalam modalitas pendengaran; Computer Use melakukannya dalam modalitas visual. Ketika sebuah Agent harus mengendalikan robot di dunia fisik, latensi dan multimodalitas menjadi semakin menantang—tindakan memiliki konsekuensi yang tidak dapat diubah (irreversible), dan satu tabrakan dapat merusak objek atau robot itu sendiri. Bagian ini pertama-tama menunjukkan bagaimana robot menjinakkan masalah kontrol real-time dengan arsitektur dua lapis dan Action Chunking, lalu beralih ke masalah yang lebih sulit yang mereka hadapi saat ini—pelatihan dan generalisasi: dari mana data berasal, dan bagaimana model ditransfer lintas tugas dan platform.
-
-### Perangkat Keras Bukanlah Bottleneck; Algoritma Adalah Bottleneck-nya
-
-Mengapa robot belum diadopsi secara luas dalam pengaturan open-ended yang general-purpose? Apakah bottleneck-nya ada pada perangkat keras (hardware) atau algoritma? Proyek XLeRobot memberikan contoh tandingan yang kuat: ketika dikendalikan dari jarak jauh oleh manusia melalui headset VR, robot beroda lengan ganda yang berharga kurang dari $1.000 sudah dapat melakukan berbagai tugas rumah tangga dengan lancar. Robot Unitree juga dapat menangani tugas rumah tangga yang lebih kompleks yang membutuhkan tangan cekatan ketika dioperasikan oleh manusia. Latensi teleoperasi (teleoperation) adalah sekitar 100-200ms, dekat dengan waktu respons yang diperlukan untuk interaksi fisik. Pada platform berbiaya rendah saat ini, resolusi sensor, presisi aktuator, dan frekuensi kontrol—berapa kali per detik robot memperbarui perintah tindakannya—sudah cukup untuk tugas-tugas praktis. Frekuensi kontrol yang lebih rendah menghasilkan gerakan yang kurang mulus dan meningkatkan jitter atau penyimpangan dari lintasan target.
-
-Klaim ini membutuhkan batasan yang jelas: contoh teleoperasi hanya menunjukkan bahwa perangkat keras berbiaya rendah yang ada, dikombinasikan dengan kecerdasan manusia, sudah cukup untuk **tugas manipulasi rumah tangga yang bergantung terutama pada umpan balik visual**. Ini tidak berarti bahwa perangkat keras tersebut memadai dalam segala hal. Tidak adanya penginderaan taktil serta biaya dan keandalan tangan yang cekatan (dexterous hands) tetap menjadi batasan yang sudah dikenal. Untuk tugas yang sangat bergantung pada kontrol kekuatan presisi dan umpan balik taktil, perangkat keras mungkin memang menjadi bottleneck-nya. Pernyataan "perangkat keras bukanlah bottleneck" oleh karena itu terbatas pada kelas tugas yang dibahas di bagian ini.
-
-Untuk tugas-tugas ini, kesenjangan sebenarnya terletak pada lapisan algoritmik, yang diuraikan dalam dua subbagian berikut.
-
-> **Eksperimen 9-7 ★: Teleoperasi XLeRobot untuk merapikan meja**
+> Taruh cangkir merah, nampan, gumpalan kertas kuning, dan tempat sampah di area kerja XLeRobot fisik. Operator menjalankan tugas tetap melalui salah satu jalur teleoperasi yang sudah dikalibrasi: "masukkan cangkir merah ke nampan, buang kertas kuning ke tempat sampah, lalu amati sekali lagi untuk memastikan keadaan meja". Ulangi sekurang-kurangnya beberapa putaran, dan catat video kamera, masukan operator, keadaan lengan, lama aksi, kegagalan jepitan, jumlah percobaan ulang, serta keadaan akhir.
 >
-> **Tujuan:** Operator mengendalikan XLeRobot nyata dari jarak jauh untuk melakukan tugas yang sama dan memverifikasi keadaan meja.
+> Jangan menurunkan syarat penerimaan menjadi "pada akhirnya meja tampak bersih". Cangkir merah harus berada di dalam nampan dan kertas kuning di dalam tempat sampah, lengan harus kembali ke sikap aman, dan sepanjang proses tidak boleh ada tabrakan, keluar dari area kerja, maupun campur tangan manusia yang menuntaskan tugas tanpa verifikasi.
+
+Teleoperasi fisik adalah cara paling meyakinkan untuk menunjukkan batas atas tugas, tetapi kurang cocok untuk mengubah jumlah dan posisi benda secara besar-besaran. Untuk memperoleh pembanding yang dapat diulang dan bisa dihitung secara statistik, masalah "mengembalikan benda ke tempatnya" yang sama berikutnya kita pindahkan ke simulator meja dua dimensi, dan kita pakai pengendali ideal sebagai pengganti operator kuat yang tidak salah mempersepsi dan tidak salah memilih aksi.
+
+> **Eksperimen 9-8 ★: Mengukur batas atas kendali ideal untuk tugas yang sama di simulator**
 >
-> **Prinsip:** Lengan robot seharga beberapa ratus dolar dapat menyelesaikan tugas multi-langkah ini di bawah kecerdasan manusia melalui teleoperasi; untuk tugas ini badan perangkat keras bukan bottleneck, melainkan persepsi, perencanaan, kontrol closed-loop, dan pemulihan kegagalan.
+> Di dalam simulator meja dua dimensi, tempatkan cangkir merah, kertas kuning, dan zona sasaran masing-masing secara acak, lalu biarkan pengendali ideal mendekati benda satu per satu, menjepitnya, dan memindahkannya ke posisi yang benar. Ia tidak perlu mengenali gambar dan tidak pernah salah memilih aksi, sehingga ia mewakili "sejauh mana tugas ini setidaknya bisa berjalan bila persepsi dan keputusan sama-sama benar".
 >
-### Arsitektur Dua Lapis: Pemisahan Perencanaan dan Kontrol
+> Amati tingkat keberhasilan, jumlah langkah, dan panjang lintasan; ubah pula posisi awal benda dan skala tugas untuk melihat apakah batas ideal itu tetap stabil. Syarat keberhasilannya sama dengan Eksperimen 9-7, tetapi yang diukur adalah simulasi tanpa aktuator: ini tidak berarti XLeRobot fisik telah bergerak. Keduanya menjadi dua garis dasar bagi kendali mandiri sesudahnya——Eksperimen 9-7 adalah lingkar tertutup manusia di atas perangkat keras nyata, dan Eksperimen 9-8 adalah lingkar tertutup ideal di lingkungan simulasi.
 
-Robot perlu membuat keputusan pada dua skala waktu yang berbeda untuk menyelesaikan tugas rumah tangga yang kompleks. Lapisan pertama adalah **long-horizon planning** (perencanaan jangka panjang) yang lebih lambat: menguraikan instruksi tingkat tinggi seperti "bersihkan meja" menjadi urutan sub-tujuan (membersihkan meja, memuat mesin pencuci piring, menyeka permukaan). Ini membutuhkan pemahaman semantik lingkungan, penalaran tentang dependensi tugas, dan perencanaan urutan tindakan multi-langkah—mirip dengan bagaimana seseorang berpikir tentang "apa yang harus dilakukan pertama kali dan apa yang harus dilakukan selanjutnya" sebelum memulai. Lapisan kedua adalah **VLA control** (Vision-Language-Action model) yang lebih cepat: mengeksekusi setiap operasi spesifik ("berjalan ke wastafel," "mengambil kain," "menyeka meja"), terus-menerus mengeluarkan sinyal kontrol berdasarkan masukan visual saat ini dan instruksi bahasa untuk memastikan gerakan robot yang halus dan koheren.
+### Struktur Dasar Kendali Robot
 
-Arsitektur dua lapis ini memisahkan tanggung jawab secara efektif: long-horizon planning menangani "apa yang harus dilakukan," sementara VLA control menangani "bagaimana melakukannya." Kombinasi pengambilan keputusan tingkat tinggi yang lambat dan eksekusi tingkat rendah yang cepat ini sangat mirip dengan arsitektur fast-slow yang dijelaskan sebelumnya untuk speech: keduanya menugaskan penalaran kompleks dan respons real-time ke modul yang berbeda. Namun, pemisahan perencanaan/kontrol (planning/control split) berkaitan dengan penalaran mendalam yang lambat versus respons real-time yang cepat, bukan pemisahan pemikiran/ekspresi antara Formulation Brain dan Articulation Brain milik MPS dalam Solusi 3. MPS memisahkan berpikir dari berbicara; arsitektur robotika memisahkan perencanaan global dari eksekusi real-time. Oleh karena itu, kedua arsitektur tersebut membagi pekerjaan pada dimensi yang berbeda.
+Sistem robot biasanya memisahkan pekerjaan dengan skala waktu yang berbeda.
 
-Batasan real-time tidak hilang; mereka telah didorong turun ke lapisan VLA control, di mana **Action Chunking** membantu memitigasinya (lihat subbagian "VLA Control" di bawah). Model menghasilkan urutan pendek dari tindakan masa depan dalam satu inferensi tunggal, dan thread kontrol memutarnya kembali (replay) pada frekuensi tinggi, mengamortisasi latensi inferensi di atas eksekusi seluruh urutan tersebut. Ini menciptakan trade-off (kompromi) yang tak terhindarkan antara kehalusan dan daya tanggap (responsiveness): chunk yang lebih panjang menyebarkan latensi pada lebih banyak tindakan dan menghasilkan gerakan yang lebih halus, tetapi model tidak menerima masukan visual baru selama interval tersebut dan oleh karena itu bereaksi lebih lambat terhadap perubahan mendadak, seperti objek yang dipindahkan atau tangan yang menghalangi jalan. Arsitektur dua lapis tidak menghilangkan ketegangan ini; ia hanya memindahkannya.
+| Lapisan | Pertanyaan inti | Keluaran | Skala waktu khas |
+| --- | --- | --- | --- |
+| Tujuan tugas | Apa yang ingin diselesaikan manusia | "Cangkir dan kertas ke tempatnya" | Orde menit |
+| Perencanaan jangka panjang | Mana dulu, mana kemudian | Cangkir dulu, lalu kertas, terakhir memeriksa | Detik sampai menit |
+| Keterampilan dasar | Perubahan keadaan apa yang dicapai sekarang | `pick(red_cup)`, `place(red_cup, tray)` | Sekitar 1—3 detik |
+| VLA / kebijakan keterampilan | Bagaimana persisnya keterampilan ini bergerak | Gerak pendek atau lintasan kontinu penjepit XLeRobot | Inferensi ~1—10 Hz |
+| Kendali aras rendah dan lapisan keselamatan | Bagaimana menjalankannya dengan stabil dan tanpa tunda | Perintah sendi atau ujung lengan, batas laju dan henti darurat | ~50—1000 Hz |
 
-Fokus bab ini sekarang bergeser: dalam robotika, ketegangan real-time sebagian telah diredakan oleh pemisahan (decoupling) dua lapis dan Action Chunking, sementara **pelatihan dan generalisasi**—bagaimana mendapatkan cukup data demonstrasi dan membuat model menggeneralisasi di berbagai tugas dan platform—telah menjadi perhatian utama. Subbagian berikut memperluas tema lingkungan simulasi dari Bab 6 dan Reinforcement Learning (RL) dari Bab 7 ke dalam dunia fisik.
+Ini pembagian kerja rekayasa yang lazim, bukan satu-satunya arsitektur model. VLA bisa saja memikul sebagian keputusan aras tinggi, dan perencana bisa berupa program berbasis aturan, VLM, atau pengoptimal. Implementasi mana pun yang dipilih, "urutan tugas" sebaiknya dipisahkan dari "aksi saat ini"; jika tidak, tundaan inferensi model aras tinggi akan menyeret kendali aras rendah, sementara kendali berfrekuensi tinggi di aras rendah memaksa model atas mengolah segudang perincian yang tidak relevan. Pada XLeRobot, model tidak seharusnya langsung mengeluarkan sudut sendi sembarang: ia hanya memilih keterampilan berbatas jelas seperti `pick`, `place`, `verify_state`, dan `stop`, lalu pelaksana yang sudah dikalibrasi——dengan batas laju dan batas waktu——mengubahnya menjadi gerak lengan yang sesungguhnya.
 
-Tantangan baru ini terutama jatuh pada lapisan VLA control. Pikirkan VLA sebagai "VLM + output tindakan": **VLM** (Vision-Language Model—model besar yang memahami gambar dan teks) menangani persepsi dan penalaran, sementara VLA juga harus bertindak—dan tindakan (action) adalah letak kesulitan sebenarnya. Saat ini, lapisan VLA control dilatih terutama melalui Imitation Learning, atau **Behavior Cloning**, yang mempelajari pemetaan dari observasi ke tindakan menggunakan koleksi besar demonstrasi manusia. OpenVLA, RT-2, dan π₀ semuanya masuk dalam kategori ini. Reinforcement Learning belakangan ini muncul sebagai teknik pelengkap. Meskipun VLA yang dilatih dengan RL dapat berkinerja baik pada tugas-tugas individual, mereka sering kali menggeneralisasi dengan buruk. Misalnya, SimpleVLA-RL dari Bab 7 melaporkan hasil tugas tunggal (single-task) yang kuat pada LIBERO, tetapi ia dilatih secara terpisah untuk setiap tugas daripada sebagai satu model terpadu yang menggeneralisasi secara Zero-Shot di semua tugas. Pola satu kali pelatihan per tugas (one-training-run-per-task) ini berarti bahwa setiap tugas baru membutuhkan pengumpulan data dan pelatihan ulang yang baru.
+### Perencanaan Jangka Panjang dan Penguraian Tugas
 
-Dua bagian berikut mendalami solusi teknis spesifik untuk long-horizon planning dan VLA control, secara berurutan.
-
-### Long-Horizon Planning: Dari VLM ke Model Embodied Reasoning Khusus
-
-VLM yang bersifat general-purpose sudah memiliki kemampuan Embodied Reasoning yang layak. **Gemini Robotics-ER 1.5** dari Google DeepMind secara khusus dioptimalkan untuk Embodied Reasoning (memahami posisi, pergerakan, dan hubungan kausal objek di dunia fisik). Model ini mencapai rata-rata 62,8% di 15 tolok ukur akademik (Point-Bench, RefSpatial, RoboSpatial, BLINK, dll.), melampaui GPT-4o (60,6%) dan Gemini 2.5 Pro (59,3%). Keunggulan utamanya meliputi: pemahaman spasial (spatial understanding) dan lokalisasi objek (object localization) tingkat lanjut, penalaran temporal (memprediksi konsekuensi tindakan seperti "apa yang terjadi jika saya mendorong cangkir ini"), pengurutan tugas (menguraikan instruksi tingkat tinggi ke dalam langkah-langkah yang lebih kecil), dan dukungan bawaan (native) untuk mekanisme pemikiran serta pemanggilan alat (Tool Calls).[^ch9-2]
-
-[^ch9-2]: Google DeepMind, "Gemini Robotics-ER 1.5." https://deepmind.google/models/gemini-robotics/gemini-robotics-er/
-
-> **Eksperimen 9-8 ★: Mengukur batas atas kontrol ideal di simulator**
->
-> **Tujuan:** Jalankan tugas yang sama dengan pengendali ideal yang tidak salah mempersepsi atau memilih tindakan, sehingga tersedia batas atas yang dapat diulang.
->
-> **Prinsip:** Acuan ini mengukur kemampuan ketika keputusan selalu benar; ini bukan bukti bahwa robot nyata telah menjalankan tugas.
->
-
-> **Eksperimen 9-9 ★★: Gemini Robotics-ER 1.5 mengendalikan XLeRobot nyata secara otonom**
->
-> **Tujuan:** Gantikan operator manusia dengan Agent yang mengamati meja dan memanggil skill pick, place, serta verify yang dibatasi, dengan robot dan kriteria sukses yang sama seperti Eksperimen 9-7.
->
-> **Prinsip:** Perbandingan langsung mengungkap kesenjangan persepsi, perencanaan, pengaturan waktu, kontrol tertutup, dan pemulihan—bukan keterbatasan mekanis baru.
->
-
-### VLA Control: Dari Data Demonstrasi ke Generalisasi Cross-Embodiment
-
-Dalam lapisan eksekusi dari arsitektur dua lapis, tiga model representatif—RT-2, OpenVLA, dan π₀—semuanya fokus pada VLA control, yaitu, mengeluarkan tindakan robot secara real-time berdasarkan gambar kamera dan instruksi bahasa (Gambar 9-10). Mereka mengikuti dua pendekatan berbeda untuk representasi tindakan: discrete action tokens dan continuous trajectory generation.
-
-
-![Gambar 9-11: Arsitektur VLA (Vision-Language-Action)](images/fig9-11.svg)
-
-
-**RT-2 dan OpenVLA: Rute Discrete Action Token.**
-
-**RT-2** memelopori rute ini: ia secara langsung melakukan fine-tuning pada vision-language model berskala besar, mendiskritisasi (discretizing) tindakan kontinu robot menjadi token dan mengeluarkannya secara autoregresif satu per satu, seperti menghasilkan teks. Ia memanfaatkan kemampuan generalisasi dari model pra-pelatihan (pre-trained model) untuk meningkatkan Zero-Shot transfer ke objek dan instruksi baru. **OpenVLA** mengikuti skema representasi tindakan RT-2, menyatukan language model dan vision encoder dalam arsitektur tunggal. Model ini mengambil gambar dan instruksi teks sebagai input dan mengeluarkan action tokens. Pelatihan dilakukan dalam dua tahap: pertama, pra-pelatihan (pre-training) pada dataset lintas platform (cross-platform) berskala besar yaitu Open X-Embodiment (mencakup demonstrasi manipulasi dunia nyata dari lebih dari 20 platform robot) untuk mempelajari pengetahuan manipulasi umum (pola tindakan seperti "menggenggam" dan "meletakkan" adalah hal umum di berbagai robot); kedua, fine-tuning dengan sejumlah kecil data untuk platform tertentu. Karena representasi tindakan mereka serupa, perbedaan praktis yang ditekankan di sini terletak pada keterbukaan dan pilihan teknik (engineering choices): RT-2 dan data pelatihannya adalah internal Google, sementara OpenVLA sepenuhnya open-source—sebuah model tulang punggung (backbone) open-source (Llama 2 plus vision encoder) yang dipasangkan dengan dataset publik, membuat tumpukan (stack) OpenVLA dapat direproduksi dan diperluas oleh komunitas yang lebih luas.
-
-**Action Chunking: Teknik Kompensasi Frekuensi Universal dalam Domain VLA.**
-
-Karena inferensi model besar berjalan lambat, VLA menjalankan inferensi pada frekuensi yang jauh lebih rendah daripada operasi pengendali (controllers) robot tradisional. Kontrol tradisional biasanya berjalan pada 50-1000Hz, sedangkan inferensi VLA biasanya hanya berjalan pada sekitar 1-10Hz—kesenjangan yang dapat berkisar dari satu hingga tiga urutan besarnya (orders of magnitude). OpenVLA asli menggambarkan masalah ini: ia hanya mengeluarkan satu tindakan per inferensi, pada sekitar 6Hz menggunakan single-step autoregressive prediction, dan gerakannya yang tersentak-sentak (jerky) adalah salah satu kekurangannya yang paling banyak dikritik. **Action Chunking** adalah teknik umum untuk menjembatani kesenjangan ini. Pertama kali diusulkan oleh ACT (Zhao dkk., 2023) dan kemudian diadopsi oleh π₀, OpenVLA-OFT, dan lainnya, teknik ini membuat model menghasilkan urutan pendek tindakan masa depan dalam setiap inferensi alih-alih satu tindakan tunggal. Dalam konfigurasi π₀ yang tipikal, misalnya, model menghasilkan sebuah chunk 0,5-1 detik yang berisi 25-50 tindakan pada frekuensi kontrol 50Hz. Thread kontrol mengeksekusi tindakan tersebut secara berurutan pada frekuensi tinggi sementara model menghasilkan batch berikutnya secara asinkron di latar belakang. Selama inferensi selesai sebelum batch tindakan saat ini selesai dieksekusi, robot dapat mempertahankan gerakan yang kontinu dan halus—mirip seperti penyanggaan (buffering) video yang mencegah pemutaran menjadi tersendat dengan memuat konten terlebih dahulu.
-
-**π₀: Rute Continuous Trajectory Generation.**
-
-Pembagian sebenarnya dalam representasi tindakan bukan antara RT-2 dan OpenVLA, tetapi antara **discrete tokens dan continuous trajectory generation**. **π₀** mengikuti rute yang terakhir: daripada memprediksi discrete action tokens satu per satu, ia menggunakan flow matching, sebuah metode pembuatan kontinu yang terkait dengan diffusion models, untuk memulai dengan random noise (random noise) dan secara iteratif "menghilangkan noise tersebut" (denoise) tersebut menjadi lintasan tindakan kontinu yang halus. Representasi ini berpasangan secara alami dengan Action Chunking dan berkinerja lebih baik pada tugas-tugas seperti manipulasi cekatan (dexterous manipulation) yang menuntut gerakan yang presisi dan mengalir. Sebagai analogi, pendekatan discrete-token menyerupai pemilihan perintah seperti "5 derajat ke kiri" dan "3 cm ke depan" satu per satu dari menu. Continuous trajectory generation lebih seperti seorang seniman yang membuat sketsa seluruh kurva lalu menyempurnakannya goresan demi goresan.
-
-### Transfer Sim2Real: Kesenjangan dari Simulasi ke Realitas
-
-Bagian simulasi Bab 6 telah menjelaskan dari mana kesenjangan sim-to-real (Sim2Real) berasal dan bagaimana Domain Randomization melawannya, jadi kita tidak akan mengulanginya di sini. Singkatnya: simulasi tidak akan pernah bisa mereproduksi secara sempurna fisika, visual, dan perangkat keras dunia nyata, sehingga pelatihan mengacak (randomizes) parameter tersebut dalam rentang yang luas, memaksa kebijakan (policy) untuk mempelajari representasi yang kuat terhadap variasi tersebut (Gambar 9-11). Berikut ini adalah bagaimana prinsip itu mendarat pada lengan robot nyata.
-
-![Gambar 9-12: Kesenjangan Sim2Real dan Domain Randomization](images/fig9-12.svg)
-
-Pendekatan ini telah menghasilkan beberapa keberhasilan yang menonjol. Proyek Dactyl milik OpenAI mencapai reorientasi kubus di dalam tangan, dan pekerjaan selanjutnya menggunakan Automatic Domain Randomization (ADR) untuk memecahkan Kubus Rubik dengan satu tangan. Quadruped ANYmal dari ETH Zurich telah menunjukkan penggerak (locomotion) yang kuat di atas medan luar ruangan yang sulit seperti salju dan kerikil.
-
-Apa yang ditambahkan bab ini adalah dua langkah rekayasa yang tidak dapat Anda lewati saat membawa Domain Randomization ke robot nyata. Yang pertama adalah **mengkalibrasi rentang pengacakan (calibrating the randomization range)**: rentangnya tidak dapat ditetapkan berdasarkan firasat. Terlalu sempit, dan ia melewatkan variasi dunia nyata; terlalu lebar, dan pelatihan menjadi lebih sulit serta menghasilkan kebijakan suboptimal yang "bisa menangani segalanya, tapi tidak menguasai apa pun." Praktiknya, distribusi parameter kunci (koefisien gesekan, penundaan respons motor) terlebih dahulu **diukur dan dikalibrasi** dari data dunia nyata dan disampel di dalam rentang tersebut; jika performa kebijakan yang dilatih dalam simulasi turun secara mencolok pada robot nyata, rentangnya diperlebar selangkah demi selangkah hingga kesenjangan sim-to-real konvergen ke sesuatu yang dapat diterima. Yang kedua adalah **penyelarasan visual (visual alignment)**: secara presisi mengkalibrasi pose kamera antara simulasi dan realitas (environment alignment), dan secara acak menyambungkan (splicing) gambar latar belakang dunia nyata ke dalam render simulasi (greenscreen background replacement) sehingga simulasi terlihat semirip mungkin dengan apa yang dilihat robot nyata. Eksperimen 9-9 mendemonstrasikan kedua langkah tersebut.
-
-> **Eksperimen 9-10 ★★: Membandingkan tiga loop otonom di simulator**
->
-> **Tujuan:** Pertahankan tugas dan alat yang sama, lalu bandingkan eksekusi open-loop, pemeriksaan setiap langkah, dan strategi prediktif jangka pendek.
->
-> **Prinsip:** Pemeriksaan langkah demi langkah memungkinkan pemulihan dari kegagalan lokal; world model memungkinkan kelanjutan saat prediksi cocok dan replanning saat menyimpang. Keadaan akhir selalu dikonfirmasi lewat observasi baru.
->
-
-> **Eksperimen 9-11 ★★★: Uji RGB lintas lingkungan untuk tugas yang sama**
->
-> **Tujuan:** Ubah latar, tampilan objek, pencahayaan, dan noise visual untuk menguji adaptasi kebijakan visual simulator pada gambar baru.
->
-> **Prinsip:** Keragaman visual dapat meningkatkan ketahanan lintas lingkungan, tetapi tidak menggantikan kalibrasi robot nyata dan loop keselamatan lengkap.
->
-
-+## Pembaruan 2026: Perencanaan Streaming dan World Model
-
-Bagian robot tidak boleh berhenti pada “VLM menulis rencana dan VLA menjalankannya”. Ambil contoh **“merapikan meja”**. Perencana jangka panjang membuat daftar keadaan—cangkir setengah penuh, kertas bekas, tiga buku, laptop terbuka, tempat sampah, dan kotak penyimpanan—lalu mengirim perintah dengan prasyarat dan pemeriksaan keberhasilan:
-
-1. “Bergerak ke meja dan berhenti 30 cm dari tepinya.”
-2. “Masukkan dua kertas ke tempat sampah; pastikan tidak ada kertas tersisa.”
-3. “Jaga cangkir tetap tegak dan letakkan di nampan; perlambat jika cairan bergerak.”
-4. “Tutup laptop dan pindahkan ke kiri belakang; jangan menarik kabel daya.”
-5. “Susun buku berdasarkan ukuran dan masukkan pena ke kotak.”
-6. “Setelah benda rapuh dan perangkat berdaya dipindahkan, lap meja.”
-7. “Mundur, amati lagi, lalu verifikasi keadaan akhir.”
-
-Ini adalah graf dependensi, bukan paragraf biasa. Jika pengguna berkata “simpan laptop terlebih dahulu”, prioritas tujuan diperbarui. Jika cangkir jatuh, robot berhenti di titik aman, mencatat cup.orientation=fallen dan laptop.at_risk=true, membatalkan sufiks yang sudah basi, lalu merencanakan ulang: lindungi laptop, tahan tumpahan, amati ulang, dan lanjutkan hanya tugas yang tidak terdampak. Aksi yang sudah diverifikasi tidak diulang; kejadian darurat membatalkan chunk saat ini, sedangkan pembaruan biasa menunggu titik aman berikutnya.
-
-### Eksekusi streaming
-
-Perencanaan dan eksekusi dapat berjalan tumpang tindih. Setelah awalan yang aman tersedia, planner mengirim command lengkap kepada executor sambil terus merencanakan sisanya:
+Ketika pengguna berkata "rapikan mejanya", sistem tidak bisa menyerahkan kalimat itu apa adanya kepada model aksi. Perencana lebih dulu mendaftar benda dan sasaran di dalam pemandangan, menetapkan urutannya, lalu menuliskan syarat mulai, syarat selesai, dan batas risiko untuk setiap langkah. Misalnya:
 
 ```text
-{"type":"command.commit","seq":12,"command_id":"desk-02","command":"put paper in bin","preconditions":["paper.visible","bin.reachable"],"success":"paper_count=0","cancel_at":"before_grasp"}
+Tangani cangkir merah → Singkirkan kertas kuning → Periksa meja
 ```
 
-Executor mengembalikan started, succeeded, cancelled, atau failed. Planner memperbarui dependensi dan menerapkan backpressure jika antrean penuh atau sudah kedaluwarsa. Streaming mempercepat aksi aman pertama; streaming bukan izin untuk menjalankan JSON yang belum lengkap atau pikiran model yang belum diverifikasi.
+"Tangani cangkir merah" masih terurai menjadi dua aksi dan satu pemeriksaan:
 
-### Mengapa VLA saat ini sulit melakukan generalisasi
+```text
+pick(red_cup) → place(red_cup, tray) → verify_state()
+```
 
-OpenVLA tidak secara harfiah hanya memperbarui projector: karya aslinya juga menguji full fine-tuning, visual encoder yang dibekukan, lapisan terakhir, dan LoRA. Kritik strukturalnya tetap berlaku. Korpus teks/gambar yang sangat besar dihubungkan dengan data robot yang jauh lebih kecil melalui jalur adaptasi yang sempit; adaptasi murah sering memusatkan perilaku baru pada projector, modul LoRA, atau action head. Behavior cloning mempelajari “observasi + instruksi → action chunk”, bukan konsekuensi fisik kontrafaktual. Ruang aksi yang bergantung pada embodiment dan chunk yang sudah basi semakin membatasi transfer.
+Setiap keterampilan yang tuntas memberi kita satu simpul yang bisa diperiksa. Bila jepitan gagal, hanya langkah itu yang diulang. Bila ada yang memindahkan benda atau pengguna mengubah sasaran, cukup rencanakan ulang langkah-langkah sesudahnya yang terpengaruh, bukan mengulang seluruh rencana lama. Alat yang diberikan kepada agen juga harus cukup sederhana: satu panggilan mengerjakan satu hal saja, jangkauan geraknya terkunci, ada batas waktu, dan sesudah dijalankan langsung diamati ulang.
 
-**Preemption chunk aksi:**
+> **Eksperimen 9-9 ★★: Membiarkan Gemini Robotics-ER 1.5 merapikan meja secara mandiri dengan XLeRobot**
+>
+> Pertahankan XLeRobot fisik, tata letak meja, perintah tugas, dan syarat keberhasilan dari Eksperimen 9-7; ganti hanya operator manusianya dengan Agent. Serahkan pengamatan dan perencanaan kepada model penalaran terwujud seperti Gemini Robotics-ER 1.5, dan lewat lingkar agen bergaya RoboCrew bukalah lima alat saja: `observe_scene`, `pick`, `place`, `verify_state`, dan `stop`.[^ch9-2]
+>
+> Model mula-mula mengamati meja, menetapkan urutan penanganan, lalu memanggil aksi jepit dan letak XLeRobot yang sudah dikalibrasi. Setiap kali sebuah keterampilan tuntas, ia harus mengamati ulang dan memeriksa pascasyaratnya. Ketika jepitan gagal ia hanya boleh mengulang keterampilan yang sedang berjalan, dan ia harus memanggil `stop` bila pengguna menyuruh berhenti, bila benda keluar dari area kerja, atau bila keadaan tak bisa diverifikasi. Model tidak boleh langsung mengeluarkan sudut sendi sembarang, dan tidak boleh melewati verifikasi nyata hanya karena ia sendiri sudah lebih dulu berkata "sudah selesai".
+>
+> Syarat penerimaannya persis sama dengan Eksperimen 9-7: cangkir di dalam nampan, kertas di dalam tempat sampah, lengan kembali ke sikap aman, tanpa tabrakan dan tanpa keluar area. Bedanya, pada eksperimen mandiri makna tugas harus lahir dari pengamatan model itu sendiri, aksi nyata harus lahir dari panggilan alat, dan keadaan akhir harus dipastikan lewat pengamatan yang baru. Manusia hanya boleh menyalakan, menekan henti darurat, dan mengawasi keselamatan——tidak boleh menuntaskan aksi menggantikan Agent di tengah jalan. Hanya dengan begitu Eksperimen 9-7 dan 9-9 dapat langsung dibandingkan: "dengan perangkat keras dan tugas yang sama, apa yang masih kurang pada lingkar tertutup model dibanding lingkar tertutup manusia".
+
+Eksperimen fisik menyingkap galat kalibrasi, kamera yang terhalang, dan kegagalan penjepit, tetapi tidak cocok untuk mengulang banyak kerusakan secara aman dan terkendali. Eksperimen simulasi selanjutnya mempertahankan kelima alat itu dan keadaan tugas yang persis sama, dan hanya mengganti aktuator nyata dengan lingkungan meja tempat kegagalan bisa disuntikkan, agar dapat dipilah apa sumbangan masing-masing: eksekusi lingkar terbuka, pemeriksaan bertahap, dan prediksi aksi.
+
+### Kendali dengan VLA
+
+VLA adalah singkatan Vision-Language-Action, yaitu "model penglihatan—bahasa—aksi". Ia menerima pemandangan saat ini beserta satu perintah keterampilan, lalu mengeluarkan aksi yang harus dijalankan robot berikutnya:
+
+```text
+pengamatan saat ini + perintah keterampilan → aksi
+```
+
+Dalam contoh XLeRobot, perencana aras tinggi hanya mengajukan `pick(red_cup)`; VLA atau kebijakan keterampilanlah yang menentukan, dari pemandangan saat ini, dari arah mana mendekati cangkir, kapan penjepit dikatupkan, dan dengan lintasan seperti apa lengan diangkat. Setelah lapisan pelaksana menuntaskan gerak pendek itu, meja difoto ulang, dan hanya setelah dipastikan cangkir benar-benar terjepit barulah perencana boleh mengajukan `place(red_cup, tray)`. Dengan kata lain, panggilan alat menetapkan perubahan keadaan yang diinginkan, sedangkan VLA menetapkan bagaimana perubahan keadaan itu diwujudkan lewat aksi kontinu.
+
+RT-2 dan OpenVLA memotong aksi kontinu menjadi token diskret dan mengeluarkannya satu per satu seperti menghasilkan kalimat. π₀ mewakili jalur yang lain: ia langsung menghasilkan lintasan aksi yang kontinu dan mulus. Tidak ada yang secara sederhana lebih unggul. Token diskret mudah dirangkai dengan model bahasa; lintasan kontinu lebih cocok untuk menyatakan gerak yang mulus. Pilihan yang sesungguhnya adalah bagaimana aksi sebaiknya diwakilkan, bukan sekadar seberapa besar modelnya.[^ch9-15]
+
+Model besar biasanya hanya sanggup berinferensi 1—10 kali per detik, sedangkan pengendali tradisional bisa memperbarui puluhan sampai ribuan kali per detik. Praktik rekayasa yang lazim adalah "pemenggalan aksi" (action chunking): model sekali jalan menghasilkan sepenggal pendek aksi masa depan, utas kendali menjalankan penggalan itu pada frekuensi tinggi, dan model menyiapkan penggalan berikutnya di belakang layar. Dengan begitu sebagian waktu tunggu inferensi tersembunyi di dalam waktu pelaksanaan aksi. Harganya: makin panjang penggalannya, makin mulus geraknya, tetapi makin sedikit pemandangan baru yang dilihat model selama selang itu. Bila XLeRobot menjulurkan lengan hendak mengambil cangkir lalu cangkirnya tersenggol dan bergeser di tengah jalan, ia mungkin tetap menjalankan aksi yang dihasilkan dari gambar lama. Jadi pemenggalan aksi adalah pertukaran antara kemulusan dan kecepatan tanggap, bukan percepatan tanpa ongkos.
+
+Pemenggalan aksi umumnya memerlukan kerangka "prediksi—jalankan—sela", bukan menghabiskan penggalan sampai ujung:
 
 ```python
 chunk = vla(current_observation, skill)
@@ -420,11 +387,65 @@ for action in chunk:
         break
 ```
 
-### World model
+Penggalan pendek lebih gesit tetapi memperbanyak panggilan model; penggalan panjang lebih mulus tetapi gampang memakai pengamatan yang basi. Eksperimen 9-10 membandingkan pertukaran semacam ini di simulator, sedangkan yang menyentuh batas keselamatan perangkat keras nyata adalah Eksperimen 9-9.
 
-World model mempelajari transisi yang dapat ditindaklanjuti: keadaan + aksi kandidat → keadaan masa depan yang diprediksi → pilih dan verifikasi aksi. Cakupannya lebih luas daripada V-JEPA: model prediktif laten (V-JEPA 2[^ch9-16]), model generatif interaktif (Genie 3[^ch9-21] dan Cosmos), World-Action Model (GeniWorld dan Robust-WAM), latent action dari video tanpa label (LAWM-3D), dan model-based RL (Dreamer dan MuZero). Nilainya adalah belajar dari observasi dalam skala besar, menguji aksi kontrafaktual sebelum eksekusi, memisahkan dinamika bersama dari kontrol khusus robot, serta merencanakan ulang saat prediksi berbeda dari kenyataan.
+### Batas Kemampuan VLA
 
-Preprint 2026 mengeksplorasi shared dynamics prior dan action head khusus embodiment (DyPES-VLA), visual action untuk manipulasi closed-loop di luar distribusi (GeniWorld), latent action 3D dari video manusia (LAWM-3D), semantic foresight alignment (Robust-WAM), dan deployment asinkron waktu nyata. Ini hasil riset yang menjanjikan, bukan solusi generalisasi yang sudah tuntas.
+"Perencanaan jangka panjang + VLA" adalah rancangan dasar yang bisa dipakai, tetapi menyisakan beberapa persoalan yang mudah terlewat.
+
+- **Data latihnya terbatas**: demonstrasi robot jauh lebih sedikit daripada teks dan gambar di internet. Model pernah melihat kata "cangkir" bukan berarti ia pernah melihat cangkir dari segala bahan dan segala kondisi gesekan.
+- **Bisa meniru, tetapi tak paham akibat**: kloning perilaku terutama mempelajari "apa yang dilakukan pendemonstrasi berikutnya", dan tidak secara eksplisit menuntut model menjawab "apa yang ditimbulkan aksi ini".
+- **Setiap robot berbeda**: dengan derajat kebebasan, sistem koordinat, penjepit, dan tundaan aktuator yang berlainan, tidak ada jaminan aksi yang sama bisa dipindahkan begitu saja ke mesin lain.
+- **Pengamatan bisa basi**: setelah penggalan aksi mulai dijalankan, bila benda dipindahkan, terhalang, atau terguling, model masih memutuskan berdasarkan bingkai sebelumnya.
+
+Jadi, model bahasa yang mengenal kata "cangkir" tidak berarti ia tahu bagaimana gesekan, sentuhan, riak zat cair, atau kabel daya mengubah keadaan di masa depan. VLA terutama menjawab "apa yang harus dikerjakan sekarang"; untuk menimbang "apa yang mungkin terjadi setelah dikerjakan" dibutuhkan model jenis lain.
+
+### Model Dunia
+
+Model dunia dapat dipahami sebagai peramal akibat aksi. Yang ia pelajari adalah: bila pada keadaan sekarang diambil suatu aksi, bagaimana keadaan pada saat berikutnya mungkin berubah.
+
+```text
+keadaan sekarang + aksi calon
+    → ramalkan keadaan berikutnya atau sepenggal masa depan
+    → bandingkan hasil tiap calon
+    → pilih aksinya, rencanakan ulang, atau berhenti dengan aman
+```
+
+Model dunia yang bisa dipakai untuk robot setidaknya harus pandai dalam tiga hal:
+
+- memahami keadaan sekarang;
+- meramalkan hasil yang mungkin ditimbulkan aksi-aksi yang berbeda;
+- menyerahkan ramalan itu kepada perencana atau pengendali untuk membantu memilih.
+
+VLM yang hanya bisa menerangkan video, atau model yang hanya bisa membangkitkan gambar, tidak otomatis menjadi model dunia yang tepercaya untuk robot. Ia harus tahu apa itu aksi, dan bisa meramalkan pengaruh aksi itu terhadap benda dan lingkungan. V-JEPA 2 mewakili jalur meramalkan masa depan pada keadaan internal, sedangkan World-Action Model secara eksplisit mempelajari hubungan "aksi—pengamatan mendatang". Keduanya bisa dipakai berdampingan dengan VLA dan tidak harus menggantikannya.[^ch9-16]
+
+Dalam sistem nyata, model dunia biasanya punya tiga kegunaan:
+
+1. **Sebelum bergerak**: membandingkan aksi calon seperti menjepit, mendorong, atau menunggu, dan mendahulukan pilihan yang risikonya lebih kecil;
+2. **Saat berjalan**: menyandingkan pengamatan nyata dengan ramalan, dan bila ditemukan simpangan, memperpendek aksi, berhenti, atau merencanakan ulang;
+3. **Saat berlatih**: mempelajari perubahan keadaan dari video, data simulasi, dan jejak kegagalan, sehingga coba-coba pada mesin nyata berkurang.
+
+Kembali ke tugas meja XLeRobot. Bila kertas kuning sebagian tertutup cangkir merah, sistem bisa membandingkan keterampilan calon: "ambil kertasnya dulu", "geser cangkirnya dulu", atau "jepit dari arah lain". Model dunia tidak perlu membangkitkan video robot yang tampak nyata: cukup ia bisa meramalkan aksi calon mana yang lebih mungkin membawa ke keadaan di mana kertas bisa diambil, dan aksi mana yang bisa menjatuhkan cangkir, untuk membantu perencana mengurutkan pilihan. Setelah aksi dijalankan, pengamatan kamera yang nyata tetap menjadi fakta pemutus: ramalan hanya membantu memilih, dan tidak menggantikan pemeriksaan penerimaan.
+
+Yang diberikan model dunia bukan jawaban pasti, melainkan ramalan yang bisa dibandingkan tentang "apa yang mungkin terjadi bila begini". Makin jauh ke depan meramal, galatnya cenderung makin besar, dan pemandangan masa depan yang tampak nyata belum tentu sesuai dengan hukum sentuh dan gesek yang sesungguhnya. Karena itu sistem nyata tetap memerlukan ramalan jangka pendek, pengamatan waktu nyata, taksiran ketidakpastian, dan pengendali keselamatan perangkat keras yang berdiri sendiri. Model dunia generatif berguna untuk simulasi interaktif dan visualisasi, tetapi jangan mencampuradukkan "bisa membangkitkan video" dengan "bisa memandu aksi robot".[^ch9-21]
+
+> **Eksperimen 9-10 ★★: Membandingkan tiga lingkar perapian meja mandiri di simulator**
+>
+> Pindahkan tugas, keadaan sasaran, syarat keberhasilan, dan kelima alat dari Eksperimen 9-9 ke simulator meja, dan ganti hanya aktuator XLeRobot fisik dengan pelaksana simulasi yang terkendali, yang sesekali membuat jepitan gagal sementara namun masih bisa dipulihkan. Dengan begitu tiga strategi dapat dibandingkan tanpa mengubah masalahnya.
+>
+> **Eksekusi lingkar terbuka** menghasilkan seluruh runtunan aksi sekaligus dan tidak mengamati ulang di tengah jalan. **Pemeriksaan bertahap** membaca ulang keadaan pada setiap `pick` dan `place`, dan bila gagal hanya mengulang keterampilan yang sedang berjalan. **Eksekusi prediktif** menambahkan model dunia jangka pendek, membandingkan ramalan hasil keterampilan calon sebelum memilih langkah berikutnya. Eksperimen ini membandingkan tingkat keberhasilan, ongkos tambahan panggilan alat, dan kemampuan pulih dari kegagalan, serta memeriksa apakah semua keberhasilan akhir sudah dipastikan oleh pengamatan baru dari `verify_state`.
+>
+> Tujuan eksperimen ini bukan menunjukkan bahwa model dunia simulasi yang kecil setara dengan model fisika mesin nyata, melainkan menguji hubungan yang lebih mendasar: perencanaan lingkar terbuka menyeret satu kegagalan setempat sampai ke ujung tugas, pemeriksaan bertahap memungkinkan pemulihan, dan prediksi aksi lebih jauh membantu mengurutkan keterampilan calon. Siapa yang benar-benar tuntas tetap ditentukan oleh umpan balik lingkungan.
+
+### Dari Lingkungan Simulasi ke Robot Nyata
+
+Eksperimen 9-10 yang stabil di simulator tidak berarti XLeRobot fisik pada Eksperimen 9-9 akan sama berhasilnya. Melangkah dari simulasi ke mesin nyata bukan sekadar berganti pengendali, melainkan memikul selisih antara dua lingkungan. Untuk berlatih kita bisa memakai data teleoperasi, data video, dan data interaksi simulasi; tetapi ketika benar-benar digelar, cangkir merah, kertas kuning, nampan, dan tempat sampah yang sama muncul di bawah latar belakang, pencahayaan, posisi kamera, dan hubungan halangan yang berbeda, sedangkan lengan robot lagi-lagi bertemu gesekan, derau sensor, dan tundaan aktuator yang lain. Bila selisih itu cukup besar, gerak yang dipelajari di simulasi bisa tidak mempan di dunia nyata.
+
+> **Eksperimen 9-11 ★★★: Uji lintas lingkungan RGB pada tugas meja yang sama**
+>
+> Di lingkungan simulasi, teruslah memakai masalah dasar "memindahkan benda ke sasaran yang sesuai", dan pandanglah setiap sampel sebagai keputusan setempat di dalam perapian meja: dari gambar RGB, menimbang dari arah mana benda harus didekati, atau apakah ia sudah bisa dijepit. Latih empat kebijakan visual berstruktur sama: satu hanya melihat pemandangan tetap; satu mengubah-ubah latar belakang; satu mengubah-ubah rupa benda; dan yang terakhir mengubah latar belakang, rupa, pencahayaan, dan derau sekaligus.
+>
+> Ujilah semua kebijakan itu di lingkungan asal dan di lingkungan baru yang sudah diubah, lalu bandingkan ketepatan keputusan aksinya sebelum dan sesudah kondisi visual berubah. Yang hendak dijawab eksperimen ini bukan "apakah simulator sudah sama dengan XLeRobot fisik", melainkan pertanyaan yang lebih sempit: apakah dengan sengaja memperluas rentang perubahan pemandangan sewaktu berlatih membantu tugas cangkir—nampan dan kertas—tempat sampah yang sama ini menyesuaikan diri dengan video kamera yang baru? Sekalipun hasilnya membaik, penggelaran pada mesin nyata tetap menuntut kalibrasi kamera yang sesungguhnya, pengujian aktuator, dan lingkar keselamatan tertutup yang lengkap.[^ch9-6]
 
 ## Ringkasan Bab
 
@@ -435,10 +456,14 @@ Secara kasat mata, ketiga skenario tersebut mungkin terlihat sangat berbeda, nam
 1. ★★ Model end-to-end untuk Voice Agents menggabungkan ASR-LLM-TTS menjadi sebuah model tunggal, mengurangi latensi namun mengorbankan modularitas. Jika model end-to-end membuat kesalahan pada tahap tertentu (misalnya, speech recognition), melakukan debugging dan memperbaikinya jauh lebih sulit daripada dalam sebuah serial pipeline. Bagaimana Anda akan mendesain sebuah sistem observabilitas (observability system) untuk sebuah Voice Agent end-to-end?
 2. ★ Step-Audio R1 mencapai "thinking while speaking" melalui arsitektur dual-brain MPS. Akan tetapi, manusia, ketika "berpikir sambil berbicara", sering kali mengatakan sesuatu sebelum mereka memikirkannya secara utuh, mengoreksi diri sendiri (self-correct), atau menggunakan kata-kata pengisi (filler words). Haruskah kemampuan "thinking while speaking" pada Agent meniru karakteristik manusia ini?
 3. ★★ SoM (Set-of-Mark) dan varian terstrukturnya (DOM element indexing) mengubah lokalisasi visual Computer Use dari prediksi koordinat yang bersifat open-ended menjadi pemilihan ID closed-set, namun semuanya membutuhkan pendeteksian dan penganotasian elemen UI terlebih dahulu—baik melalui segmentation model ataupun DOM. Jika antarmuka tersebut mengandung kontrol non-standar atau elemen yang berubah secara dinamis, anotasinya mungkin menjadi tidak lengkap atau tidak akurat. Dalam kasus seperti ini, haruskah kita kembali menggunakan coordinate prediction?
-4. ★★ Platform robot seharga ribuan dolar seperti XLeRobot membuat pengumpulan data teleoperation menjadi murah. Namun, kualitas dari data teleoperation sangat bergantung pada keterampilan operatornya. Bagaimana data berkualitas rendah dari operator yang tidak terampil akan memengaruhi pelatihan model VLA? Bagaimana data berkualitas rendah dapat difilter secara otomatis selama fase pengumpulan data?
+4. ★★ Platform robot seharga beberapa ratus dolar seperti XLeRobot membuat pengumpulan data teleoperation menjadi murah. Namun, kualitas dari data teleoperation sangat bergantung pada keterampilan operatornya. Bagaimana data berkualitas rendah dari operator yang tidak terampil akan memengaruhi pelatihan model VLA? Bagaimana data berkualitas rendah dapat difilter secara otomatis selama fase pengumpulan data?
 5. ★★★ Bab ini mencakup tiga modalitas interaksi: voice, Computer Use, dan robotika. Tren umum di seluruh modalitas ini adalah evolusi dari serial pipelines menuju model end-to-end. Jika tren ini berlanjut, akan seperti apa bentuk dari Agent interaction layer dalam lima tahun ke depan?
 6. ★★ DOM/Accessibility Tree element indexing bekerja dengan baik pada aplikasi web standar, tetapi semakin banyak antarmuka perangkat lunak (rendering Canvas/WebGL, kontrol cross-platform yang digambar secara kustom) tidak menyediakan informasi terstruktur yang dapat diakses, hanya mengandalkan anotasi visual atau coordinate prediction. Apakah menurut Anda Computer Use harus bertaruh pada pendekatan visual murni, atau mempertahankan jalur terstruktur dan visual? Apa biaya dan manfaat dari mempertahankan kedua jalur tersebut?
 7. ★★ Model VLA menggunakan action chunking—seperti yang disebutkan di dalam teks, konfigurasi tipikal π₀ menghasilkan 25-50 future actions pada 50Hz—untuk menyembunyikan inference latency di dalam execution time. Akan tetapi, jika lingkungan berubah secara tiba-tiba selama eksekusi (misalnya, sebuah objek dipindahkan), urutan tindakan (action sequence) yang dihasilkan sebelumnya menjadi tidak valid. Bagaimana kita dapat menyeimbangkan keuntungan efisiensi dari action chunking dengan kebutuhan akan responsivitas terhadap perubahan lingkungan?
 8. ★★★ Ketiga skenario dalam bab ini (voice, Computer Use, robotika) menghadapi masalah latensi pada loop "perceive-think-act" dan sedang berevolusi menuju fast and slow thinking yang diparalelkan. Pada voice, ini bermanifestasi sebagai "mengoreksi setelah salah bicara"; pada Computer Use, sebagai "mengklik dulu, baru melihat"; pada robotika, sebagai "mengambil satu langkah, lalu melihat." Bagaimana kita dapat memastikan bahwa tindakan-tindakan yang didasarkan pada fast thinking ini tidak mengarah pada konsekuensi yang tidak dapat diubah (irreversible consequences)?
 [^ch9-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
 [^ch9-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。
+[^ch9-1]: XLeRobot, “Dokumentasi Teleop”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
+[^ch9-2]: Google DeepMind, “Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, “Kendali LLM Agent”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. Contoh hulu XLeRobot memperlihatkan cara menata model bersama panggilan alat; bagian ini mempertahankan prinsip penataan yang sama, tetapi membatasi alat aksinya pada primitif jepit, letak, periksa, dan henti di atas meja yang sudah dikalibrasi.
+[^ch9-6]: LeRobot, “Tutorial Sim2Real”. https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
+[^ch9-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246
