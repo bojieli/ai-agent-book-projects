@@ -435,8 +435,7 @@ Birden çok alt görev paralel yürütülebiliyorsa sıralı model verimsiz kal�
 >
 >
 > ![Şekil 10-7: Phone ve Computer İkili Agent Mimarisi](images/fig10-7.svg)
->
->
+
 > **Deney 10-4 ★★★: Aynı Anda Birden Çok Siteden Bilgi Toplayan Agent**
 >
 > **Ön koşul**: Önce Bölüm 4'teki olay güdümlü yapıyı ve kesme mekanizmasını gözden geçirmeniz önerilir.

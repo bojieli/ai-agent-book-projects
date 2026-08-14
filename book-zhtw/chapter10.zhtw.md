@@ -435,8 +435,7 @@ Manager 按順序依次呼叫專門 Agent，每個 Agent 完成後返回結果�
 >
 >
 > ![圖 10-7 Phone 與 Computer 雙 Agent 架構](images/fig10-7.svg)
->
->
+
 > **實驗 10-4 ★★★：同時從多個網站蒐集資訊的 Agent**
 >
 > **前置要求**：建議先了解第四章事件驅動與中斷機制。

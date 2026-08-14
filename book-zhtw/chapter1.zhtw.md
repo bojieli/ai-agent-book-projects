@@ -340,7 +340,7 @@ else:
 
 [^ch1-graph-engineering-zhtw]: Josh C. Simmons 在 2026 年 7 月 4 日的文章 *We Are Entering the Graph Engineering Phase* 中較早明確使用這一名稱，並將其概括為節點、型別化邊和可檢查點狀態；7 月 18 日，Peter Steinberger 關於「是否已從 loops 轉向 graphs」的討論進一步推動了該名稱傳播。需要注意的是，相關實踐早於這個名稱：LangGraph、Microsoft Agent Framework 和 Google ADK 的官方文件分別稱其為圖編排或 graph-based workflow。參見 https://www.drjoshcsimmons.com/writing/we-are-entering-the-graph-engineering-phase、https://x.com/steipete/status/2078277297791189132、https://docs.langchain.com/oss/python/langgraph/overview、https://learn.microsoft.com/en-us/agent-framework/workflows/、https://adk.dev/workflows/。
 
-這五個階段不是替代關係，而是層層包含的：提示工程是上下文工程的子集，上下文工程是 Harness 工程的子集，Harness 工程是 Loop 工程的子集。每一層都在前一層的基礎上擴展了工程師的關注範圍和影響力。**當各家模型的能力越來越接近、不再是決定性的差異因素時，競爭優勢就轉移到了模型之外的工程實踐**。
+這五個階段不是替代關係，而是層層包含的：提示工程是上下文工程的子集，上下文工程是 Harness 工程的子集，Harness 工程是 Loop 工程的子集，Loop 工程又是 Graph 工程的子集——單個 Agent 迴圈正是執行圖中的一個節點。每一層都在前一層的基礎上擴展了工程師的關注範圍和影響力。**當各家模型的能力越來越接近、不再是決定性的差異因素時，競爭優勢就轉移到了模型之外的工程實踐**。
 
 這一判斷在最近的工程實踐中得到驗證——LangChain 在 Terminal Bench 2.0（一個評估 Agent 在終端機環境中完成複雜任務能力的基準測試）上的實踐就是有力的例證：他們的 Coding Agent 從 52.8% 提升到 66.5%（從排行榜 30 名開外躍升至前 5），改變的不是模型，而是 Harness：讓 Agent 自動檢查自己的執行結果、偵測是否陷入了重複迴圈、最佳化思考策略等工程手段。
 

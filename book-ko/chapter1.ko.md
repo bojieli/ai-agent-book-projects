@@ -340,7 +340,7 @@ AI 애플리케이션 엔지니어링의 발전을 돌아보면 분명한 진화
 
 [^ch1-graph-engineering]: Josh C. Simmons는 2026년 7월 4일 글 *We Are Entering the Graph Engineering Phase*에서 이 이름을 명시적으로 사용하고 노드, 타입이 지정된 엣지, 체크포인트된 상태라는 관점으로 요약했습니다. 7월 18일에는 논의가 루프에서 그래프로 옮겨갔는지를 묻는 Peter Steinberger의 질문을 계기로 이 명칭이 더 널리 퍼졌습니다. 관련 실천은 이름보다 오래됐습니다. LangGraph, Microsoft Agent Framework, Google ADK의 공식 문서는 각각 이를 그래프 오케스트레이션 또는 graph-based workflow라고 설명합니다. https://www.drjoshcsimmons.com/writing/we-are-entering-the-graph-engineering-phase, https://x.com/steipete/status/2078277297791189132, https://docs.langchain.com/oss/python/langgraph/overview, https://learn.microsoft.com/en-us/agent-framework/workflows/, https://adk.dev/workflows/ 참조.
 
-이 다섯 단계는 서로 대체하는 것이 아니라 중첩됩니다. 프롬프트 엔지니어링은 컨텍스트 엔지니어링의 부분집합이고, 컨텍스트 엔지니어링은 하네스 엔지니어링의 부분집합이며, 하네스 엔지니어링은 루프 엔지니어링의 부분집합입니다. 계층이 올라갈수록 엔지니어가 관심을 두고 영향을 미치는 범위가 넓어집니다. **모델 능력이 서로 비슷해져 결정적인 차별 요소가 되지 못할수록 경쟁 우위는 모델 밖의 엔지니어링으로 이동합니다.**
+이 다섯 단계는 서로 대체하는 것이 아니라 중첩됩니다. 프롬프트 엔지니어링은 컨텍스트 엔지니어링의 부분집합이고, 컨텍스트 엔지니어링은 하네스 엔지니어링의 부분집합이며, 하네스 엔지니어링은 루프 엔지니어링의 부분집합이며, 루프 엔지니어링은 그래프 엔지니어링의 부분집합입니다. 하나의 Agent 루프가 실행 그래프의 노드 하나에 해당합니다. 계층이 올라갈수록 엔지니어가 관심을 두고 영향을 미치는 범위가 넓어집니다. **모델 능력이 서로 비슷해져 결정적인 차별 요소가 되지 못할수록 경쟁 우위는 모델 밖의 엔지니어링으로 이동합니다.**
 
 최근 실천도 이를 뒷받침합니다. 터미널 환경에서 복잡한 작업을 수행하는 에이전트 능력을 평가하는 Terminal Bench 2.0에서 LangChain의 사례가 인상적입니다. 코딩 에이전트 성능이 52.8%에서 66.5%로 올라 리더보드 30위권 밖에서 5위권으로 진입했습니다. 달라진 것은 모델이 아니라 하네스였습니다. 에이전트가 실행 결과를 스스로 확인하고, 반복 루프에 빠졌는지 감지하고, 사고 전략을 다듬게 했습니다.
 

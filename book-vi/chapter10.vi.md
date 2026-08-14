@@ -435,8 +435,7 @@ Chế độ tuần tự trở nên kém hiệu quả khi nhiều tác vụ con c
 >
 >
 > ![Hình 10-7 Kiến trúc tác nhân kép điện thoại và máy tính ](images/fig10-7.svg)
->
->
+
 > **Thử nghiệm 10-4 ★★★: Agent thu thập thông tin từ nhiều trang web cùng một lúc**
 >
 > **Điều kiện tiên quyết**: Trước tiên, bạn nên hiểu Chương 4 Cơ chế ngắt và điều khiển sự kiện.
