@@ -1,14 +1,14 @@
-# Bölüm 9 · Çok Modluluk ve Gerçek Zamanlı Etkileşim
+# Bölüm 8 · Agent'ın Kendi Kendine Evrimi
 
-> Algı ve eylemi metinden sese, GUI'ye ve fiziksel dünyaya genişletir. Üç ses paradigması (aşamalı zincir/uçtan uca tam modlu/tam çift yönlü), akış tabanlı ses algısı ve sentezi, Computer Use ve robot manipülasyonu.
+> Ağırlıkları değiştirmeden büyüme. Üç öğrenme paradigması, deneyimden öğrenme ve "araç kullanıcısından" "araç yaratıcısına" giden yolculuk; Agent'ların "akıllı"dan "usta"ya ilerlemesini sağlar.
 
-← [Ana README'ye dön](../README.tr.md) · 📖 [Bölüm metnini oku](../book-tr/chapter9.tr.md)
+← [Ana README'ye dön](../README.tr.md) · 📖 [Bölüm metnini oku](../book-tr/chapter8.tr.md)
 
 ## Deneyler nasıl okunur
 
 Metin, kontrol akışını açıklamak için kısa mekanizma skeleton'ları kullanır; deney dizininde tam SDK adaptörleri, günlükler, testler ve kabul kanıtı bulunur. Her dosyayı satır satır okumanız gerekmez.
 
-- **Starter:** Hedef, en kısa komut ve kabul koşullarıyla başlayın; önce [live-audio](live-audio/);
+- **Starter:** Hedef, en kısa komut ve kabul koşullarıyla başlayın; önce [trajectory-verifier](trajectory-verifier/);
 - **Builder:** Giriş noktasını, ana döngüyü, durum/mesaj şemasını, araçları ve doğrulayıcıyı izleyin.
 - **Maintainer:** Son olarak testleri, kanıt manifestlerini, hata işlemeyi, rollback yollarını ve sağlayıcı adaptörlerini okuyun.
 
@@ -16,20 +16,17 @@ Metin, kontrol akışını açıklamak için kısa mekanizma skeleton'ları kull
 
 ## Eşlik Eden Projeler
 
-| Deney | Proje | Tür | Açıklama |
-| :--: | --- | :--: | --- |
-| 9-1 | [live-audio](live-audio/) | ✅ | Konuşmadan metne, AI diyaloğu ve metinden konuşmayı entegre eden gerçek zamanlı bir sesli sohbet demosu. Birden çok AI hizmet sağlayıcısını destekler (OpenAI, OpenRouter, ARK, Siliconflow), düşük gecikmeli bir konuşma deneyimi sunar. |
-| Add-on | [phone-agent](phone-agent/) | 🚧 | Resmî `pine-voice` SDK direct/ReAct yolları uygulanmıştır; ancak yetkili ve onay vermiş bir E.164 hedefi yoktur. Preflight arama/transcript olmadığını kaydeder; test double kabul sayılmaz. |
-| 9-2 | [streaming-speech](streaming-speech/) | ✅ | Akış tabanlı ses algısının temel ödünleşimini gösterir: sürekli sesi giderek uzayan segmentlere ayırır ve ASR'ye besler. Alınan her segment, erken metin çıktısı için son derece düşük ilk parça gecikmesi sağlamak üzere bir "mevcut kısmi tanıma sonucu" üretir. Bedeli, cümlenin ikinci yarısının bağlamından yoksun olan erken parçaların hatalı olabilmesi, ses biriktikçe kademeli olarak yakınsamasıdır. Bu, "tanımadan önce tüm cümleyi bekleme"nin yüksek doğruluk/yüksek gecikmeli yaklaşımıyla tezat oluşturur. |
-| 9-3 | [end-to-end-speech](end-to-end-speech/) | ✅ | Sabit revision'lı MiniCPM-o 4.5 tek RTX PRO 6000 üzerinde gerçekten yerel çalıştırıldı; end-to-end ve self-cascade 3/4 elde etti, tamamlayıcı anlamsal/paralinguistik hatalar ile gerçek 24kHz ses ve kabul kanıtı saklandı. |
-| 9-4 | [controllable-tts](controllable-tts/) | 🚧 | Gerçek Fish Audio S1 4×3×2 referans kütüphanesi ve A/B/C medya yapısal kapıları geçer; nitel dinleme çalışması ve “insana yakın” değerlendirme eksiktir. |
-| 9-5 | `claude-quickstarts/computer-use-demo/` | 📖 | Harici `anthropics/claude-quickstarts` `9bcc95e…` commit'ine sabitlenmiştir; hedef tüm quickstarts değil, container içindeki Ubuntu desktop＋Claude agent loop Computer Use demosudur. |
-| 9-6 | `browser-use/` | 📖 | Harici `browser-use/browser-use` `ec9277c…` commit'ine sabitlenmiştir; visual CLI (`use_vision=True`) Google'da San Francisco hava durumunu arar ve action/screenshot yörüngesini saklar. |
-| 9-7 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | Gerçek XLeRobot teleoperasyonu ile aynı masa toplama görevi: kırmızı bardağı tepsiye, sarı kâğıdı çöp kutusuna koyup durumu yeniden doğrulama. |
-| 9-8 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Simülatörde aynı görevin ideal kontrol üst sınırını ölçer; gerçek robotun çalıştırıldığı anlamına gelmez. |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Gemini Robotics-ER 1.5 ile gerçek XLeRobot'u aynı masa toplama görevinde otonom olarak kontrol eder. |
-| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Simülatörde aynı görev için açık çevrim, adım adım kontrol ve öngörülü kapalı çevrim stratejilerini karşılaştırır. |
-| 9-11 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | Arka planı, nesne görünümünü, ışığı ve görsel gürültüyü değiştirerek aynı görevde RGB ortamlar arası testi yapar. |
+| Proje | Tür | Açıklama |
+| --- | :--: | --- |
+| [gaia-experience](gaia-experience/) | ✅ | AWorld çerçevesi ve GAIA kıstasına dayalı olarak eksiksiz bir "öğren-uygula" döngüsü uygular. Ajan, başarılı görev izlencelerini otomatik olarak yapılandırılmış deneyimlere özetler ve bunları yeni görevlerde getirip uygulayarak kendi kendine evrim gerçekleştirir. |
+| [browser-use-rpa](browser-use-rpa/) | ✅ | Tarayıcı otomasyonu için bir iş akışı kayıt sistemi uygular; tekrarlanan işlem dizilerini otomatik olarak parametreli araçlara kapsüller. Pahalı LLM çıkarımından kesin otomatik yürütmeye geçerek 3-5 kat hız artışı sağlar. |
+| [prompt-distillation](prompt-distillation/) | ✅ | Karmaşık promptların etkinliğini model parametrelerine damıtır; çıkarım sırasında prompt uzunluğunu azaltır ve bağlamsal deneyimi parametreli bilgiye dönüştürür. |
+| [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | İnsan geri bildirimine dayalı otomatik sistem istemi öğrenimi: tau-bench tarzı havayolu müşteri hizmetleri "aşırı aktarma" sorununu örnek alarak, bir Coding Agent sistem istem dosyasını okur, sorunlu kuralları belirler, kesin değişiklikler üretir ve istem dosyasını gerçekten yeniden yazar. Ardından değişiklikleri yeniden değerlendirir, "geri bildirim → yeniden yazma → doğrulama" döngüsü oluşturur. |
+| [self-evolving-tools](self-evolving-tools/) | ✅ | Alita tarzı bir "minimal ön tanım, maksimum kendi kendine evrim" yaklaşımı: ajanın önceden inşa edilmiş alana özgü aracı yoktur, yalnızca beş genel meta-araç vardır. Yapamayacağı bir görevle karşılaştığında, açık kaynak kütüphaneler/API'ler için web'de arama yapar, dokümantasyon okur, bir sandbox'ta test eder, uygulanabilir çözümleri yeni araçlar olarak kapsüller, yeniden kullanım için araç kütüphanesinde saklar ve tüm süreç boyunca halüsinasyon kontrolüne vurgu yapar. |
+| [hermes-self-evolution](hermes-self-evolution/) | 📖 | Deney 8-6: Hermes'e kitabın tamamını ve kendi kaynağını verir; bir iyileştirme seçip kendini değiştirir ve her Reviewer reddini kabul edilene kadar yeni bir öğrenme turuna dönüştürür. |
+| [self-evolution-eval](self-evolution-eval/) | ✅ | Deney 8-7: öğrenme, aktarım, kural değişimi ve korumayı kapsayan uzun vadeli üç kollu değerlendirme; 3 seed × 14 sıralı görev boyunca 126 gerçek çağrının kanıtını saklar. |
+| [harness-safety-gate](harness-safety-gate/) | ✅ | Yüksek riskli işlemler için onay kapısı (8-8). |
+| [ai-style-skill](ai-style-skill/) | ✅ | Yazım geri bildirimini doğrulanabilir Skill'e dönüştürür (8-9); bölüm, kıvrımlı tırnak Skill'ini denetlenmiş sentetik veri ve sonradan eğitimle ilişkilendirir, exact-copy tokenizer/Harness hatalarını ayırır. |
 
 ## Proje Türleri
 
@@ -37,4 +34,4 @@ Metin, kontrol akışını açıklamak için kısa mekanizma skeleton'ları kull
 | :--: | --- | --- |
 | ✅ | **Bağımsız** | Bu depoda tam kod, API Key yapılandırıldıktan sonra çalışır |
 | 📖 | **Yeniden Üretim Rehberi** | `git clone` ile **harici depolara** bağımlı ayrıntılı belge |
-| 🚧 | **Devam Ediyor** | Uygulama vardır; ancak gerekli canlı çalıştırma, yetki, donanım veya metin kabul kanıtı eksiktir |
+| 🚧 | **Tasarım Belgesi** | Yalnızca mimari/uygulama planı, çalıştırılabilir kod henüz hazır değil |

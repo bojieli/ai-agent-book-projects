@@ -1,100 +1,79 @@
-# 第 7 章 · 模型后训练
+# 第 7 章 · Agent 的评估
 
-> 预训练/SFT/RL 三阶段：SFT 数据合成、RL 模拟环境、单轮到多轮与工具调用、奖励设计和样本效率
+> 把表现变成可比较信号：评估环境、指标、统计显著性、评估驱动选型
 
 ← [返回主目录](../README.md) · 📖 [读本章正文](../book/chapter7.md)
 
-逐实验的实现、外部源码与直接证据边界见 [验收台账](EXPERIMENT_LEDGER.md)。
+逐实验的正文要求、直接证据与未完成边界见 [验收台账](EXPERIMENT_LEDGER.md)。
 
 ## 如何阅读实验
 
-正文用多组 text skeleton 分开说明 SFT masking、GRPO/PPO rollout、工具 token 屏蔽、RLVP 与蒸馏；完整训练框架和 CUDA 适配留在项目中：
+正文伪代码先建立 reset → run → snapshot → verifier → record 的评估闭环；实验目录再展开统计与证据：
 
-- **Starter**：从 [cot-distillation](cot-distillation/) 先跑 2 题采集/验证 smoke，再按 generate_data.py → train_student.py → evaluate_student.py 追踪；
-- **Builder**：按 [RLVP](RLVP/)、[SimpleVLA-RL](SimpleVLA-RL/) 的入口追踪 rollout、验证器和奖励字段；
-- **Maintainer**：最后检查数据隔离、checkpoint/环境 hash、显存配置、失败轨迹与留出集；不需要首轮读完 verl/。
+- **Starter**：从 [tau2-bench-eval](tau2-bench-eval/) 跑一个固定任务，先看环境 reset、轨迹保存和结果 verifier；
+- **Builder**：阅读 [user-memory-system-evaluation](user-memory-system-evaluation/) 的 Rubric/证据 schema，再看 [elo-leaderboard](elo-leaderboard/) 的配对统计；
+- **Maintainer**：检查 veto 规则、seed/任务配对、bootstrap 或 McNemar 实现、manifest hash 和失败样本。
 
-正文不要求把实验代码当作可复制的 SDK 教程；读者只需先能定位“哪段实现了正文 skeleton、哪段负责证据”。
+首次可跳过 provider 适配器、图表和长期开跑脚本；先确认“过程违规”和“最终失败”是两类独立信号。
 
 ## 配套项目
 
 | 编号 | 项目 | 类型 | 一句话说明 |
 | :--: | --- | :--: | --- |
-| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | 同一确定性寻宝环境下完成 10,000 局 Q-learning、100 局贪婪评估与官方 Moonshot `kimi-k3` 第一局实测；[双臂证据](../chapter1/learning-from-experience/validation/20260730_011704/evidence.json)保留 17/17 原始 API 回执且零 fallback |
-| 7-3 | [MiniMind-pretrain](MiniMind-pretrain/) · `MiniMind-pretrain/minimind/` | ✅ | [规范训练报告](MiniMind-pretrain/validation/runs/exp7-3-training-report-20260731-v1/report.md)绑定原始与 QK-Norm + Muon 两臂在预训练、SFT、DPO 后的 49 份历史输出、8 次匿名 ARK 盲评、源码/数据/环境复现契约与完整 hash；盲评总分 3.6250 对 2.0417（+1.5833，7 胜 1 平），历史 loss 日志缺失的边界明确保留，checkpoint 不随书分发也不作为验收门槛 |
-| 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | ✅ | [规范训练报告](MiniMind-pretrain/validation/runs/exp7-4-training-report-20260731-v1/report.md)保留 8 配置 × 8 图片的 64 份历史输出及 8 次真实图像感知匿名 ARK 评审，固定原版/改进版源码、数据、CLIP 与评估图片哈希；评审中原版 SFT 最高（1.9062），同 SFT 基座的 QK-Norm+Muon 两阶段均未占优。历史 revision/checkpoint 缺失被明确限定，checkpoint 不随书分发也不作为验收门槛 |
-| 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | [规范训练报告](continued-pretraining/validation/runs/exp7-5-training-report-20260731-v1/report.md)绑定 RTX-4090 三阶段原始输出、15 份生成、5 次匿名 ARK 盲评、源码与当前复现 revision；韩语最终阶段 +1.7777，英语下降 0.8333，泡菜事实错误明确保留，checkpoint 不随书分发也不作为验收门槛 |
-| 7-6 | [sesame](sesame/) · [orpheus](orpheus/) | ✅ | [有界本地 GPU 实验](speech-sft-experiment/)已完成两条真实语音 SFT 轨道：各 60 次 LoRA 更新、留出集损失、40 个基线/微调音频、自动代理指标、哈希与失败样例；不据此声称主观音质 |
-| 7-7 | [MultilingualReasoning](MultilingualReasoning/) | 🚧 | 多语言思考 SFT 实现；需训练 checkpoint 与跨语言基准前后对照才算完成 |
-| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | ✅ | [正式保留运行](../chapter8/prompt-distillation/validation/exp7-8-kimi3-smollm2-20260730/)包含 160/160 训练与 80/80 留出 Kimi K3 教师回执、真实 CUDA 训练的 SmolLM2-135M-Instruct LoRA checkpoint，并通过 8/8 门禁；留出集教师 100%、基线 0%、训练后学生 95% |
-| 7-9 | [cot-distillation](cot-distillation/) | ✅ | 24/24 Kimi K3 教师轨迹均已完成并经规则过滤，23 条进入 SFT；真实 CUDA checkpoint 与同题三臂对照已保留。学生 2/24 对基线 1/24 的提升不显著（p=1.0），作为负结果如实报告 |
-| 7-10 | [AdaptThink 配套说明](AdaptThink/) · `AdaptThink-original/` | ✅ | [历史训练报告](AdaptThink/TRAINING_REPORT.md)记录公开 W&B 主运行 `wubbn5tj`：8×H100，step 300 三基准响应长度均显著下降，但 AIME mean@16 下降 0.42 pp；运行继续至 step 410 后崩溃，checkpoint 不随书分发，且未保留独立 checkpoint 评估回执 |
-| 7-11 | `SFTvsRL/` | 📖 | `bojieli/SFTvsRL` 的 GeneralPoints-L/VL：同预算 SFT 与 PPO 的 ID/OOD 记忆—泛化对照 |
-| 7-12 | [SpatialReasoning 配套说明](SpatialReasoning/) · `SFTvsRL/` | 📖 | 同一 `bojieli/SFTvsRL` checkout 的 V-IRL-L/VL 训练与跨城市/规则 OOD 评估，不是独立 SpatialReasoning 代码仓库 |
-| 7-13 | [SimpleVLA-RL 配套说明](SimpleVLA-RL/) · `SimpleVLA-RL/SimpleVLA-RL/` | 📖 | `PRIME-RL/SimpleVLA-RL` 主仓与内嵌 `verl/` 已固定；OpenVLA-OFT、LIBERO/RoboTwin、checkpoint、Flash Attention、CUDA/driver 和 simulator assets 仍未形成经验证的完整依赖锁 |
-| 7-14 | [retool 配套说明](retool/) · `verl/` · `SandboxFusion/` | 📖 | ReTool 配方来自 `bojieli/verl`，实时代码执行依赖 `bojieli/SandboxFusion`；不是一个名为 `retool` 的独立源码仓库 |
-| 7-15 | [AWorld-train 配套说明](AWorld-train/) · `AWorld/` | 📖 | `bojieli/AWorld` 中的 GAIA MCP 沙盒与训练入口，`bojieli/verl` 为训练后端 |
-| 7-16 | [RLVP 配套说明](RLVP/) · `RLVP/rlvp/` | 📖 | 完整训练/评估代码来自固定到 `1ad30bc…` 的 `19PINE-AI/rlvp`；当前 checkout 缺失，训练未运行 |
-| 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | 从"过早结束" bad case 到 DPO 修复的完整链路：bad case → 偏好对 → 7B+LoRA 单卡训练 → 未完成任务集与已完成任务保留集验证；本地 RTX PRO 6000 已完成训练，固定候选比较中未完成任务集选对率 25.0% → 91.7%，保留集保持 100% |
-| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | 中文弯引号作用域 Bad Case：人工审计合成数据 + 显式 Skill 正反规则 → Qwen3-8B bf16 LoRA SFT → 9 种代码语言和 10 种文章体裁回归；[manifest](curly-quote-sft/validation/manifest.json)；RTX PRO 6000 真实训练已完成，1024/256/256（训练/留出/边界），适配后 exact 96.9%/97.7%，保护区保持 100% |
-| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | `old_string`/特殊字符串精确复制 Bad Case：未见随机字符串、相似字符串选择和工具 JSON 参数 → Qwen3-8B bf16 LoRA SFT；[manifest](exact-copy-sft/validation/manifest.json)；RTX PRO 6000 真实训练已完成，1024/256/256（训练/留出/边界），byte-exact 基座 37.5%→适配 78.9%，边界 80.1%；另有 Qwen3/Qwen2.5/Mistral tokenizer 审计 |
-| — | `verl/` | 📖 | 为 LLM RLHF 设计的高效 RL 框架，支持 PPO/GRPO/DAPO 等 |
-| — | [Intuitor](Intuitor/) | ✅ | 训练模型的直觉推理，快速做出合理判断而不依赖详细思考链 |
-| — | `tinker-cookbook/` | 📖 | 收集各种模型训练的实用技巧与最佳实践 |
+| 7-1 | [tau2-bench-eval](tau2-bench-eval/) | ✅ | 已在固定上游提交上完成 5 个 telecom 双控任务：4/5 通过；保存原始轨迹、成本、内容哈希及错选线路导致漏做流量加油的失败分析 |
+| 7-2 | [experiment-6-2-human-benchmark](experiment-6-2-human-benchmark/) | ✅ | Codex 作为人工操作员，预注册并完成 GAIA、AndroidWorld、SWE-bench Verified、τ²-bench、Terminal-Bench、OSWorld-Verified 各简单/中等/困难一题，共 18/18 个首轮正式结果：13 通过、5 失败；逐题保留任务、轨迹、官方评估及成败解释 |
+| 7-2 | `terminal-bench/` | 📖 | Terminal-Bench 外部任务与执行框架；6-2 的三档人工操作结果与失败分析已收录于上行案例集 |
+| 7-2 | `SWE-bench/` | 📖 | SWE-bench Verified 外部代码修复基准；6-2 的三档补丁轨迹与官方 harness 结果已收录于上行案例集 |
+| 7-2 | `GAIA/` | 📖 | GAIA 外部数据集；6-2 的 Level 1/2/3 作答、核验与舍入失败边界已收录于上行案例集 |
+| 7-2 | `OSWorld/` | 📖 | OSWorld-Verified 外部桌面环境；6-2 的三档 GUI 操作轨迹与官方结果已收录于上行案例集 |
+| 6-2, 6-12 | `android_world/` | 📖 | 评估 Agent 在 Android 环境的应用导航、UI 交互与任务完成能力（外部基准仓库；6-2 的实际结果见上行） |
+| 7-3 | [user-memory-evaluation](../chapter3/user-memory-evaluation/) | ✅ | 四档多维 Rubric 已在 60 用例 × 3 系统的 180/180 条真实评判记录上完整执行；[独立验收索引](user-memory-system-evaluation/results/full_6_3_structured_rubric_evidence.json)验证逐维理由/证据或边界案例及幻觉一票否决，状态为 `complete` |
+| 7-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | 60 用例 × 3 系统共 180/180 条真实轨迹，零错误且原生币种定价完整；[验收结果](user-memory-system-evaluation/results/full_6_4_60_cases_costed.json)状态为 `complete` |
+| 7-5 | [user-memory-policy-eval](user-memory-policy-eval/) | ✅ | 已用真实 `openai/gpt-5.6-sol` 经 OpenRouter 完成 11 个 trajectory-prefix bad case × JSON/Markdown/Python-like 三种表示，共 33/33 个 API 单元、0 个 API 错误；三种表示均为 6/11 通过，结果和哈希保存在 `results/policy_prefix_live.json` 与 `results/manifest.json` |
+| 7-6 | [tts-quality-eval](tts-quality-eval/) | ✅ | [真实验收](tts-quality-eval/validation/mistral_multimodal_20260730/manifest.json)完成 OpenAI/Fish 两 provider × 四类语料的 8/8 双音频 Voxtral 四维评审；候选/参考音频逐项哈希，早期 Gemini/OpenRouter 失败证据仍保留 |
+| 7-7 | [elo-leaderboard](elo-leaderboard/) | ✅ | [正式全量验收](elo-leaderboard/validation/runs/exp6-6-arena-20260731-v1/manifest.json)处理 1,799,991 条公开 Arena 记录（1,670,250 条盲选票、129 个模型），在线 Elo 与 Bradley-Terry 排名 Spearman 0.787、Top-20 重合 12/20；胜率矩阵、17 个月度快照、三张图与 D3 动画均由同一 manifest 哈希绑定并复核通过 |
+| 7-8 | [model-action-threshold](model-action-threshold/) | ✅ | 同一中性 Coding Harness 下完成 GPT-5.6-sol / Claude Sonnet 5 × 三任务 × 三次重复的 18/18 单元实测；[manifest](model-action-threshold/results/exp6-7-action-threshold-20260731-v1/manifest.json)零 API 错误并绑定完整轨迹与汇总哈希 |
+| 7-9 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | 多轮 Agent 任务（客服退款）全链路成本拆解 + KV-cache 友好设计/上下文压缩的 A/B 节省量化 |
+| 7-10 | [model-benchmark](model-benchmark/) | 🚧 | 完整 8K/32K/128K × 512/2048、限流爬坡、Agent 成本与 168 小时可用性 campaign 已实现；现有[验收清单](model-benchmark/results/manifest.json)只有真实 smoke/readiness，不能替代完整长期实验 |
+| 7-11 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | [全矩阵验收](user-memory-system-evaluation/results/full_6_11_60_case_matrix.json)完成 60 用例 × 24 单元（4 嵌入 × 3 reranker × 2 主模型）共 1,440/1,440 条真实轨迹，零错误、零未定价用量，检索/任务指标与交互分析完整；[独立验证器](user-memory-system-evaluation/validation/verify_full_matrix_20260731.py)复核通过（ALL CHECKS PASSED），后端替代方案如实记录于 [readiness 证据](user-memory-system-evaluation/results/full_matrix_backend_readiness_20260731.json) |
+| 7-12 | [android-world](android-world/) | ✅ | [完整候选实验证据](android-world/validation/candidate_h5c_api33_local_qwen_20260804/evidence.json)保留 116 任务 × 5 轮的 580/580 条唯一 episode（包括评估失败），运行时错误为零：严格 T3A 成功 26 条（4.4828%），平均 evaluator reward 0.133621，由 77 条满分状态与 1 条 `0.5` 部分 reward 组成。实验在完成官方初始化且配齐 24/24 应用的 Pixel 6/API-33 上执行，本地 Qwen2.5-7B（revision `a09a35458c702b33eeacc393d103063234e8bc28`）通过 vLLM 0.19.0 运行于 RTX PRO 6000 Blackwell 96 GB。执行与证据已完成，但未批准部署；候选 Qwen 与配对源 Doubao 不同，因而不支持同模型提升或非劣性结论 |
+| 7-13 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | [正式单卡运行](openvla-robotwin2-eval/validation/runs/exp6-12-localgpu-20260803-v1/manifest.json)完成 chunk 1/25 各 128 IID + 128 OOD episodes，严格门禁及 512 个 rollout hash 全通过；chunk 1 为 0/256、chunk 25 为 26/256，低绝对成功率作为真实结果保留 |
+| — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | 基于合成 DHIS2 风格汇总数据，客观评估公共卫生报告 Agent 的工具调用、计算准确性、证据引用与无依据声明 |
 
-## 外部训练实验复现锚点
+> 📖 表中带反引号的外部基准需自行克隆。[`android-world/`](android-world/)（连字符）是本仓库内的 **T3A 评估分析笔记**（见该目录 [README](android-world/README.md)），与外部 `android_world/` 基准源码不是同一路径。
 
-下表严格对应正文实验编号。SHA 来自 2026-07-30 当前工作区 checkout，或同日只读上游审计。7-3、7-4、7-5 有各自的 checkpoint-free 历史训练报告验收包；7-10 提供直接链接公开 W&B 的训练报告。固定 revision 属于未来复现说明，不冒充历史训练时的精确 checkout。其余标为未完成的条目仍只完成来源/路径/入口静态核验，**没有启动训练或外部评测**。
+## 跨章 Bad Case 回归协议
 
-| 实验 | 权威上游 → 本地源码路径 | 固定提交 | 已核对入口 |
+正文新增的两类作用域/保真度 Bad Case 评估不把训练代码重复复制到第六章：第六章负责记录首个错误、片段作用域、逐层字符串哈希和轨迹前缀回归；第七章的 [`curly-quote-sft`](../chapter7/curly-quote-sft/) 与 [`exact-copy-sft`](../chapter7/exact-copy-sft/) 复用这些标签生成训练数据，并在独立边界集和保留集上回归。前者按中文自然语言、英文原文、代码和 JSON 作用域评分，后者按 byte/code-point/token exactness 和真实工具参数匹配评分。
+
+## 实验 6-1 / 6-2 外部复现锚点
+
+以下映射以[正文](../book/chapter7.md)为准。SHA 来自对应 checkout 的 `origin` 与 `HEAD`。6-1 已保留五任务正式运行的[验收证据](tau2-bench-eval/validation/runs/exp6-1-openrouter-gpt41mini-telecom-20260802-v1/manifest.json)；6-2 的 18 个分级人工操作案例、正式结果与兼容边界见[独立报告](experiment-6-2-human-benchmark/README.md)。下表继续保留复现来源、路径和入口。
+
+| 实验 | 上游与本地路径 | 固定提交 | 正文对应入口 |
 | :--: | --- | --- | --- |
-| 7-3 | [`bojieli/minimind`](https://github.com/bojieli/minimind) → `chapter7/MiniMind-pretrain/minimind` | `8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795` | `trainer/train_pretrain_muon.py` → `trainer/train_full_sft_muon.py` → `trainer/train_dpo.py`；评估 `eval_model.py` |
-| 7-4 | [`bojieli/minimind-v`](https://github.com/bojieli/minimind-v) → `chapter7/MiniMind-pretrain/minimind-v` | `ead791c530fa5f9a3549dbfe9e11ec732d18d2e5` | `trainer/train_pretrain_vlm_muon.py` → `trainer/train_sft_vlm_muon.py`；评估 `eval_vlm.py` |
-| 7-10 | [`bojieli/AdaptThink`](https://github.com/bojieli/AdaptThink) → `chapter7/AdaptThink-original` | `0033ad172dd53ac64004b763477407014f21b838`（W&B 历史提交 `9e588202…` 的直接子提交；三个入口文件字节一致） | `bash scripts/preprocess_dataset.sh` → `bash scripts/run_adapt_think_1.5b_deepscaler_16k_delta0.05_btz128_lr2e-6.sh` → `bash scripts/run_eval_verl_hf.sh`；训练命名产生 `-fl-`，评估却硬编码 `-fl4096` 且少一层目录，复现时需手工修正路径 |
-| 7-11 | [`bojieli/SFTvsRL`](https://github.com/bojieli/SFTvsRL) → `chapter7/SFTvsRL` | `fef0a4a3367260a0934be1e40b01e4021698e023` | GeneralPoints：`bash scripts/gp_training/language_train.sh` / `bash scripts/gp_training/vl_train.sh`；评估在 `scripts/gp_evaluation/*.sh` |
-| 7-12 | 同一 [`bojieli/SFTvsRL`](https://github.com/bojieli/SFTvsRL) → `chapter7/SFTvsRL`；说明在 `chapter7/SpatialReasoning` | `fef0a4a3367260a0934be1e40b01e4021698e023` | V-IRL：`bash scripts/virl_training/vl_train.sh`；ID/规则 OOD/视觉 OOD 分别运行 `scripts/virl_evaluation/vl_{indist,rule_ood,visual_ood}_eval.sh` |
-| 7-13 | [论文](https://arxiv.org/abs/2509.09674) · [`PRIME-RL/SimpleVLA-RL`](https://github.com/PRIME-RL/SimpleVLA-RL/tree/7c51662df27b586f9e8a1ab35fcf849f2b8852f9) → `chapter7/SimpleVLA-RL/SimpleVLA-RL` | 主仓及内嵌 `verl/`：`7c51662df27b586f9e8a1ab35fcf849f2b8852f9`；外部栈没有作者给出的兼容 SHA，详见[依赖契约](SimpleVLA-RL/README.md#dependency-contract-and-lock-state) | `bash examples/run_openvla_oft_rl_libero.sh`；RoboTwin2 为 `bash examples/run_openvla_oft_rl_twin2.sh`；两者的 `SFT_MODEL_PATH` 仍是占位符 |
-| 7-14 | [`bojieli/verl`](https://github.com/bojieli/verl) → `chapter7/verl`；[`bojieli/SandboxFusion`](https://github.com/bojieli/SandboxFusion) → `chapter7/SandboxFusion` | veRL：`1593fc3a8cf894debdc3dece2a23ed739c282789`；SandboxFusion：`4a0d573ebd64c98234c190a9d1d49e4276199a0c` | 启动沙箱 `make run-online`；在 veRL 根目录运行 `bash recipe/retool/run_qwen2-32b_dapo.sh` |
-| 7-15 | [`bojieli/AWorld`](https://github.com/bojieli/AWorld) → `chapter7/AWorld`；训练后端 `chapter7/verl` | AWorld：`a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec`；veRL：`1593fc3a8cf894debdc3dece2a23ed739c282789` | `cd chapter7/AWorld/env && bash run-local.sh`；数据准备后在 `train/examples/train_gaia_with_aworld_verl` 运行 `bash run.sh` |
-| 7-16 | [`19PINE-AI/rlvp`](https://github.com/19PINE-AI/rlvp) → `chapter7/RLVP/rlvp` | `1ad30bc7e338911fb733739393d92c420f4d8bee` | 规则/credit 测试 → `scripts/phase0_baseline.py` → `scripts/run_all.sh` → `scripts/eval_checkpoint.py`；完整训练需 CUDA |
+| 6-1；6-2 的 τ²-bench 样本 | [`sierra-research/tau2-bench`](https://github.com/sierra-research/tau2-bench) → `chapter6/tau2-bench` | `8d005b0e5b9e4af0bc055886fa7f95fc86d1710e` | 正文要求重点观察新增的双控 telecom 领域：`tau2 run --domain telecom --agent-llm <model> --user-llm <model> --num-trials 1 --num-tasks 5` |
+| 6-1 原始 τ-bench 对照（仅溯源） | [论文](https://arxiv.org/abs/2406.12045) · [`sierra-research/tau-bench`](https://github.com/sierra-research/tau-bench/tree/59a200c6d575d595120f1cb70fea53cef0632f6b)；**不承诺本地 checkout** | `59a200c6d575d595120f1cb70fea53cef0632f6b` | 该历史版本入口：`python run.py --agent-strategy tool-calling --env retail --model gpt-4o --model-provider openai --user-model gpt-4o --user-model-provider openai --user-strategy llm --max-concurrency 10` |
+| 6-2 GAIA | [`gaia-benchmark/GAIA`](https://huggingface.co/datasets/gaia-benchmark/GAIA) → `chapter6/GAIA` | `682dd723ee1e1697e00360edccf2366dc8418dd9` | 从 `2023/validation/metadata.level1.parquet`、`metadata.level2.parquet`、`metadata.level3.parquet` 各选一题人工完成并核对答案 |
+| 6-2 AndroidWorld | [`google-research/android_world`](https://github.com/google-research/android_world) → `chapter6/android_world` | `0e95d641e244504c22087cc29b013f3b2428a261` | `python minimal_task_runner.py --task=ContactsAddContact`（先按上游 README 配置 emulator） |
+| 6-2 SWE-Bench Verified | [`SWE-bench/SWE-bench`](https://github.com/SWE-bench/SWE-bench) → `chapter6/SWE-bench` | `5cd4be9fb23971679cbbafe5a0ecade27cef99be` | 安装后先用 `python -m swebench.harness.run_evaluation --predictions_path gold --max_workers 1 --instance_ids sympy__sympy-20590 --run_id validate-gold` 验证 harness，再人工处理选定 Verified issue |
+| 6-2 Terminal-Bench | [`laude-institute/terminal-bench`](https://github.com/laude-institute/terminal-bench) → `chapter6/terminal-bench` | `8384a179b1b8688f6ea5233a4d9d51218df1ac96` | 任务定义在 `tasks/`；若要核对 harness 参数，运行 `tb run --help` |
+| 6-2 OSWorld-Verified | [`xlang-ai/OSWorld`](https://github.com/xlang-ai/OSWorld) → `chapter6/OSWorld` | `8365edc975efd0477a0d62444a5beed562ab5a7b` | `python quickstart.py --provider_name vmware --path_to_vm "path/to/your/vm.vmx"`；再从 Verified 任务中抽样人工完成 |
 
-从仓库根目录获取当前可固定的版本：
+从仓库根目录取得同一版本：
 
 ```bash
-git clone https://github.com/bojieli/AdaptThink.git chapter7/AdaptThink-original && git -C chapter7/AdaptThink-original checkout --detach 0033ad172dd53ac64004b763477407014f21b838
-git clone https://github.com/bojieli/SFTvsRL.git chapter7/SFTvsRL && git -C chapter7/SFTvsRL checkout --detach fef0a4a3367260a0934be1e40b01e4021698e023
-git clone https://github.com/PRIME-RL/SimpleVLA-RL.git chapter7/SimpleVLA-RL/SimpleVLA-RL && git -C chapter7/SimpleVLA-RL/SimpleVLA-RL checkout --detach 7c51662df27b586f9e8a1ab35fcf849f2b8852f9
-git clone https://github.com/bojieli/verl.git chapter7/verl && git -C chapter7/verl checkout --detach 1593fc3a8cf894debdc3dece2a23ed739c282789
-git clone https://github.com/bojieli/AWorld.git chapter7/AWorld && git -C chapter7/AWorld checkout --detach a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec
+git clone https://github.com/sierra-research/tau2-bench.git chapter6/tau2-bench && git -C chapter6/tau2-bench checkout --detach 8d005b0e5b9e4af0bc055886fa7f95fc86d1710e
+git clone https://huggingface.co/datasets/gaia-benchmark/GAIA chapter6/GAIA && git -C chapter6/GAIA checkout --detach 682dd723ee1e1697e00360edccf2366dc8418dd9
+git clone https://github.com/google-research/android_world.git chapter6/android_world && git -C chapter6/android_world checkout --detach 0e95d641e244504c22087cc29b013f3b2428a261
+git clone https://github.com/SWE-bench/SWE-bench.git chapter6/SWE-bench && git -C chapter6/SWE-bench checkout --detach 5cd4be9fb23971679cbbafe5a0ecade27cef99be
+git clone https://github.com/laude-institute/terminal-bench.git chapter6/terminal-bench && git -C chapter6/terminal-bench checkout --detach 8384a179b1b8688f6ea5233a4d9d51218df1ac96
+git clone https://github.com/xlang-ai/OSWorld.git chapter6/OSWorld && git -C chapter6/OSWorld checkout --detach 8365edc975efd0477a0d62444a5beed562ab5a7b
 ```
 
-以下四个源码目录当前缺失，但不可变版本已经固定。每组命令都显式 fetch、detached checkout，并核对 `rev-parse HEAD`。7-3 的 checkpoint-free 训练报告已按本书训练实验政策验收；对其他实验而言，源码就绪仍不等于实验完成：
+原始 τ-bench 行只用于复核 6-1 的历史设计差异，不在本仓库的 checkout 清单中。其当前 README 已明确警告：该仓库的 airline/retail 任务版本过时，应使用后续的 [`tau2-bench`](https://github.com/sierra-research/tau2-bench)（现已继续演进为 τ³-bench）获取修订任务与新领域。因此，不应把历史 τ-bench 的 retail 命令当成当前 τ²/τ³-bench 的推荐运行入口。
 
-```bash
-git clone https://github.com/bojieli/minimind.git chapter7/MiniMind-pretrain/minimind
-git -C chapter7/MiniMind-pretrain/minimind fetch origin 8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795
-git -C chapter7/MiniMind-pretrain/minimind checkout --detach 8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795
-git -C chapter7/MiniMind-pretrain/minimind rev-parse HEAD
-test "$(git -C chapter7/MiniMind-pretrain/minimind rev-parse HEAD)" = "8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795"
-
-git clone https://github.com/bojieli/minimind-v.git chapter7/MiniMind-pretrain/minimind-v
-git -C chapter7/MiniMind-pretrain/minimind-v fetch origin ead791c530fa5f9a3549dbfe9e11ec732d18d2e5
-git -C chapter7/MiniMind-pretrain/minimind-v checkout --detach ead791c530fa5f9a3549dbfe9e11ec732d18d2e5
-git -C chapter7/MiniMind-pretrain/minimind-v rev-parse HEAD
-test "$(git -C chapter7/MiniMind-pretrain/minimind-v rev-parse HEAD)" = "ead791c530fa5f9a3549dbfe9e11ec732d18d2e5"
-
-git clone https://github.com/19PINE-AI/rlvp.git chapter7/RLVP/rlvp
-git -C chapter7/RLVP/rlvp fetch origin 1ad30bc7e338911fb733739393d92c420f4d8bee
-git -C chapter7/RLVP/rlvp checkout --detach 1ad30bc7e338911fb733739393d92c420f4d8bee
-git -C chapter7/RLVP/rlvp rev-parse HEAD
-test "$(git -C chapter7/RLVP/rlvp rev-parse HEAD)" = "1ad30bc7e338911fb733739393d92c420f4d8bee"
-
-git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion
-git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c
-git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c
-git -C chapter7/SandboxFusion rev-parse HEAD
-test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"
-```
+实验 6-2 是**操作员亲自执行并记录轨迹**，不是把六套 Agent harness 全跑一遍。本仓库的[已完成案例集](experiment-6-2-human-benchmark/)由 Codex 明确署名为人工操作员，并分别记录每个基准的简单、中等、困难任务 ID、环境版本、步骤、最终答案/状态与标准验证结果；失败案例未在评估后修改或重跑。
 
 ## 项目类型说明
 
@@ -102,4 +81,4 @@ test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190
 | :--: | --- | --- |
 | ✅ | **可独立运行** | 本仓库自带完整代码，配置好 API Key 即可运行 |
 | 📖 | **复现指南** | 依赖需自行 `git clone` 的**外部仓库**（训练框架、评测基准等） |
-| 🚧 | **进行中** | 已有实现，但训练或正文验收证据尚未完整 |
+| 🚧 | **进行中** | 已有实现，但实验范围或验收证据尚未满足正文全部要求 |

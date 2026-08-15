@@ -1,14 +1,14 @@
-# 6. fejezet · Ügynökök kiértékelése
+# 9. fejezet · Multimodalitás és valós idejű interakció
 
-> A teljesítményt összehasonlítható jellé alakítja értékelési környezetekkel, adathalmazokkal, mérőszámokkal, megfigyelhetőséggel és értékelésvezérelt kiválasztással.
+> A szövegtől a beszéd, a grafikus felületek és a fizikai világ felé bővíti az érzékelést és a cselekvést: streamelt beszéd, Computer Use és robotika.
 
-← [Vissza a magyar főoldalhoz](../docs/hu/README.md) · 📖 [A fejezet olvasása](../book-hu/chapter6.md)
+← [Vissza a magyar főoldalhoz](../docs/hu/README.md) · 📖 [A fejezet olvasása](../book-hu/chapter9.md)
 
 ## Hogyan olvassuk a kísérleteket?
 
 A törzsszöveg rövid mechanizmus-skeletonokkal magyarázza a vezérlési folyamatot; a kísérleti könyvtárakban találhatók a teljes SDK-adapterek, naplók, tesztek és átvételi bizonyítékok. Nem kell minden fájlt sorról sorra elolvasni.
 
-- **Starter:** Kezdje a céllal, a minimális paranccsal és az átvételi feltételekkel; induljon innen: [tau2-bench-eval](tau2-bench-eval/);
+- **Starter:** Kezdje a céllal, a minimális paranccsal és az átvételi feltételekkel; induljon innen: [live-audio](live-audio/);
 - **Builder:** Kövesse a belépési pontot, a fő ciklust, az állapot-/üzenetsémát, az eszközöket és az ellenőrzőt.
 - **Maintainer:** Végül olvassa el a teszteket, a bizonyíték-manifeszteket, a hibakezelést, a visszaállítási útvonalakat és a provider-adaptereket.
 
@@ -18,32 +18,23 @@ Első olvasáskor átugorható a hitelesítő adatok betöltése, a megjelenít�
 
 | Kísérlet | Projekt | Típus | Leírás |
 | :--: | --- | :--: | --- |
-| 6-1 | `tau2-bench/` | 📖 | Többkörös, kettős vezérlésű τ²-bench értékelést futtat, és összeveti a τ-bench-csel. |
-| 6-2 | `tau2-bench/` | 📖 | Mintafeladatokat old meg kézzel a τ²-bench-ből, és rögzíti a végrehajtási nyomvonalakat. |
-| 6-2 | `terminal-bench/` | 📖 | Valós terminálkörnyezetben tesztel teljes, végponttól végpontig tartó feladatokat. |
-| 6-2 | `SWE-bench/` | 📖 | Valós GitHub Issue-k tesztelhető javítással történő megoldását értékeli. |
-| 6-2 | `GAIA/` | 📖 | Többszintű feladatokon méri a keresést, eszközhasználatot és autonómiát. |
-| 6-2 | `OSWorld/` | 📖 | Teljes operációsrendszer-környezetben értékeli a fájl-, alkalmazás- és konfigurációkezelést. |
-| 6-2, 6-12 | `android_world/` | 📖 | Androidon méri az alkalmazásnavigációt és a felhasználói felület kezelését. |
-| 6-3 | [user-memory-evaluation](../chapter3/user-memory-evaluation/) | ✅ | Többdimenziós memóriaértékelési rubrikát futtat, minden ítélethez bizonyítékkal. |
-| 6-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | Azonos esetkészleten hasonlítja össze a JSON Cards, RAG és hibrid rendszereket. |
-| 6-5 | [user-memory-policy-eval](user-memory-policy-eval/) | ✅ | Tizenegy hibás trajektória-előtag esetet futtat JSON, Markdown és Python-szerű memóriareprezentációkon, valós OpenRouter-hívásokkal és determinisztikus szabályzat-ellenőrzésekkel. |
-| 6-6 | [tts-quality-eval](tts-quality-eval/) | ✅ | Rubrikaalapú multimodális LLM-bíróval hasonlít össze TTS-konfigurációkat. |
-| 6-7 | [elo-leaderboard](elo-leaderboard/) | ✅ | Páronkénti összehasonlítások és ELO-pontszám alapján készít ágensranglistát. |
-| 6-8 | [model-action-threshold](model-action-threshold/) | ✅ | Azonos, semleges Coding Harness alatt hasonlítja össze a GPT-5.6-sol és a Claude Sonnet 5 átmenetét a feltárástól az első szerkesztésig; mind a 18/18 cella API-hiba nélkül lefutott, a [manifest](model-action-threshold/results/exp6-7-action-threshold-20260731-v1/manifest.json) pedig ellenőrizhető hash-ekkel köti össze a nyomvonalakat és az összesítéseket. |
-| 6-9 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | Felbontja a teljes költséget, és méri a cache-barát tervezés és tömörítés megtakarítását. |
-| 6-10 | [model-benchmark](model-benchmark/) | 🚧 | TTFT-t, késleltetést, áteresztőképességet, megbízhatóságot és költséget mér; a hosszú kampány még nem teljes. |
-| 6-11 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | A teljes 4×3×2×60 mátrix 1 440/1 440 valós trajektóriát őriz meg hiba és árazatlan használat nélkül, teljes visszakeresési és feladatmetrikákkal, interakcióelemzéssel és sikeres független ellenőrzéssel. |
-| 6-12 | [android-world](android-world/) | 📖 | Repository-n belüli T3A-értékelési jelentés és AndroidWorld-hibaelemzés. |
-| 6-13 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | Az egy GPU-s hivatalos futás karonként 256 epizódot teljesített: chunk 1 0/256, chunk 25 26/256; mind az 512 rollout hash-e megmaradt. |
-| — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | Közegészségügyi jelentések eszközhívásait, számításait, hivatkozásait és állításait értékeli. |
-
-> A kódformázással jelölt benchmarkokat külön kell klónozni. Az `android-world/` helyi elemzési jegyzet, nem az `android_world/` benchmark forrása.
+| 9-1 | [live-audio](live-audio/) | ✅ | Valós idejű hangbeszélgetési demó, amely STT-t, AI-párbeszédet és TTS-t kapcsol össze. |
+| Add-on | [phone-agent](phone-agent/) | 🚧 | A Pine Voice útvonalai elkészültek, de engedélyezett PSTN-hívás még nem futott. |
+| 9-2 | [streaming-speech](streaming-speech/) | ✅ | Bemutatja a streamelt beszédfelismerés késleltetési és pontossági kompromisszumát. |
+| 9-3 | [end-to-end-speech](end-to-end-speech/) | ✅ | A rögzített revisionű MiniCPM-o 4.5 helyben futott egy RTX PRO 6000 GPU-n; az end-to-end és self-cascade egyaránt 3/4 lett, egymást kiegészítő szemantikai/paralingvisztikai hibákkal és valódi 24kHz-es hangbizonyítékkal. |
+| 9-4 | [controllable-tts](controllable-tts/) | 🚧 | Fish Audio referencia-könyvtárat és média-összehasonlítást készít; a hallgatási értékelés még hiányos. |
+| 9-5 | `claude-quickstarts/computer-use-demo/` | 📖 | Az Anthropic hivatalos Computer Use demója konténerizált Ubuntu asztalon. |
+| 9-6 | `browser-use/` | 📖 | Vizuális böngésző-automatizálás művelet- és képernyőkép-nyomvonalakkal. |
+| 9-7 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | Valós XLeRobot távvezérlése ugyanazon asztalrendezési feladathoz: a piros csésze a tálcába, a sárga papír a hulladékgyűjtőbe kerül, majd az állapotot újra megfigyeljük és ellenőrizzük. |
+| 9-8 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Ugyanennek a feladatnak az ideális vezérlési felső határa szimulátorban; ez nem jelenti a valódi robot futtatását. |
+| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | A Gemini Robotics-ER 1.5 önállóan vezérli a valós XLeRobotot ugyanazon asztalrendezési feladaton. |
+| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Nyílt hurkú, lépésenként ellenőrző és prediktív zárt hurkú stratégia összehasonlítása szimulátorban. |
+| 9-11 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | RGB-környezetközi teszt ugyanazon feladaton, eltérő háttérrel, tárgymegjelenéssel, megvilágítással és zajjal. |
 
 ## Projekttípusok
 
 | Ikon | Típus | Jelentés |
 | :--: | --- | --- |
 | ✅ | **Önálló** | A teljes kód a repository-ban található, és az API-kulcsok beállítása után futtatható. |
-| 📖 | **Reprodukciós útmutató** | Külső repository szükséges, amelyet külön kell `git clone` paranccsal letölteni. |
-| 🚧 | **Folyamatban** | Az implementáció vagy az elfogadási bizonyíték még nem teljes. |
+| 📖 | **Reprodukciós útmutató** | Külső repository vagy meghatározott hardver szükséges. |
+| 🚧 | **Folyamatban** | Az implementáció vagy az élő elfogadási bizonyíték még nem teljes. |

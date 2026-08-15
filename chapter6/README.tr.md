@@ -1,14 +1,14 @@
-# Bölüm 6 · Agent Değerlendirmesi
+# Bölüm 9 · Çok Modluluk ve Gerçek Zamanlı Etkileşim
 
-> Agent performansını karşılaştırılabilir sinyallere dönüştürür. Değerlendirme ortamlarını, veri kümesi tasarımını, metrik sistemlerini, istatistiksel anlamlılığı, gözlemlenebilirliği, değerlendirme odaklı seçimi ve üretim seviyesinde dahili değerlendirme ile simülasyon ortamlarını kapsar.
+> Algı ve eylemi metinden sese, GUI'ye ve fiziksel dünyaya genişletir. Üç ses paradigması (aşamalı zincir/uçtan uca tam modlu/tam çift yönlü), akış tabanlı ses algısı ve sentezi, Computer Use ve robot manipülasyonu.
 
-← [Ana README'ye dön](../README.tr.md) · 📖 [Bölüm metnini oku](../book-tr/chapter6.tr.md)
+← [Ana README'ye dön](../README.tr.md) · 📖 [Bölüm metnini oku](../book-tr/chapter9.tr.md)
 
 ## Deneyler nasıl okunur
 
 Metin, kontrol akışını açıklamak için kısa mekanizma skeleton'ları kullanır; deney dizininde tam SDK adaptörleri, günlükler, testler ve kabul kanıtı bulunur. Her dosyayı satır satır okumanız gerekmez.
 
-- **Starter:** Hedef, en kısa komut ve kabul koşullarıyla başlayın; önce [tau2-bench-eval](tau2-bench-eval/);
+- **Starter:** Hedef, en kısa komut ve kabul koşullarıyla başlayın; önce [live-audio](live-audio/);
 - **Builder:** Giriş noktasını, ana döngüyü, durum/mesaj şemasını, araçları ve doğrulayıcıyı izleyin.
 - **Maintainer:** Son olarak testleri, kanıt manifestlerini, hata işlemeyi, rollback yollarını ve sağlayıcı adaptörlerini okuyun.
 
@@ -16,29 +16,20 @@ Metin, kontrol akışını açıklamak için kısa mekanizma skeleton'ları kull
 
 ## Eşlik Eden Projeler
 
-| Proje | Tür | Açıklama |
-| --- | :--: | --- |
-| `terminal-bench/` | 📖 | Terminal-Bench, gerçek terminal ortamlarında AI Agent performansını test etmek için bir kıstastır. Kod derlemekten model eğitmeye ve sunucu kurmaya kadar, Agent'ların gerçek uçtan uca görevleri nasıl ele aldığını değerlendirir. ~100 görevlik bir veri kümesi ve çeşitli Agent uygulamalarını destekleyen bir yürütme çerçevesi içerir. |
-| `SWE-bench/` | 📖 | SWE-bench, büyük dil modellerinin gerçek GitHub issue'larını çözme yeteneğini değerlendirmek için bir kıstastır. Bir kod tabanı ve issue açıklaması verildiğinde model, sorunu çözen bir yama üretmelidir. SWE-bench, SWE-bench Lite, SWE-bench Verified ve SWE-bench Multimodal dahil birden çok sürüm içerir. |
-| `GAIA/` | 📖 | GAIA, yeni nesil LLM'leri (araç genişletmeli, verimli promptlamalı, arama erişimli vb.) değerlendirmeyi amaçlar. Farklı derecelerde araç kullanımı ve özerklik gerektiren, belirsiz olmayan yanıtlara sahip 450'den fazla önemsiz olmayan soru içerir. 3 zorluk seviyesine ayrılmıştır. |
-| `OSWorld/` | 📖 | Ajanların dosya yönetimi, uygulama işletme ve sistem yapılandırması dahil, eksiksiz bir işletim sistemi ortamı içinde karmaşık görevleri yerine getirme yeteneğini değerlendirir. |
-| `android_world/` (6-2, 6-12) | 📖 | Ajan performansını bir Android mobil ortamında değerlendirir; uygulama gezinme, UI etkileşimi ve görev tamamlama yeteneklerini kapsar. |
-| `tau2-bench/` (6-1) | 📖 | Bir ajanın hesaplama, arama ve veri işleme gibi senaryolar dahil, karmaşık muhakeme için araç kullanma yeteneğini değerlendirmeye odaklanır. |
-| `tau2-bench/` (6-2) | 📖 | Derecelendirilmiş τ²-bench görevlerini elle tamamlar ve yörüngeleri kaydeder. |
-| [user-memory-evaluation](../chapter3/user-memory-evaluation/) (6-3) | ✅ | Dört seviyeli rubric'i kanıt ve halüsinasyon vetosuyla 180 yapılandırılmış değerlendirmede çalıştırır. |
-| [user-memory-system-evaluation](user-memory-system-evaluation/) (6-4) | ✅ | Tam maliyet muhasebesiyle üç sistem üzerinde 60 vakayı çalıştırır. |
-| [user-memory-policy-eval](user-memory-policy-eval/) (6-5) | ✅ | JSON, Markdown ve Python benzeri bellek gösterimlerinde 11 hatalı yörünge öneki vakasını gerçek OpenRouter çağrıları ve belirlenimci politika kontrolleriyle çalıştırır. |
-| [user-memory-system-evaluation](user-memory-system-evaluation/) (6-11) | ✅ | Tam 4×3×2×60 matrisinde 1.440/1.440 gerçek yörüngeyi hata veya fiyatlandırılmamış kullanım olmadan korur; erişim/görev metrikleri, etkileşim analizi ve bağımsız doğrulama tamamlanmıştır. |
-| [openvla-robotwin2-eval](openvla-robotwin2-eval/) (6-13) | ✅ | Tek GPU'lu resmi çalışma kol başına 256 episode tamamladı; chunk 1 0/256, chunk 25 26/256 aldı ve 512 rollout hash'i saklandı. |
-| [elo-leaderboard](elo-leaderboard/) (6-7) | ✅ | ELO derecelendirme sistemine dayalı bir ajan performansı liderlik tablosu uygular; ikili karşılaştırmalarla farklı ajanların göreli yeteneklerini değerlendirir. |
-| [model-action-threshold](model-action-threshold/) (6-8) | ✅ | Aynı tarafsız Coding Harness altında GPT-5.6-sol ile Claude Sonnet 5'in keşiften ilk düzenlemeye geçiş eşiğini karşılaştırır; 18/18 hücre API hatası olmadan tamamlanmış, [manifest](model-action-threshold/results/exp6-7-action-threshold-20260731-v1/manifest.json) ise yürütme izleriyle özetleri doğrulanabilir hash'lerle bağlamıştır. |
-| [model-benchmark](model-benchmark/) (6-10) | 🚧 | Birden çok OpenAI uyumlu LLM API sağlayıcısının yatay bir kıstasını yapar. İlk Token Süresini (TTFT) hassas biçimde ölçmek için bir akış arayüzü kullanır, eşzamanlılık altında uçtan uca gecikme yüzdeliklerini (p50/p95), verimi ve başarı oranını hesaplar. Tek bir komut, model seçiminin yalnızca bir liderlik tablosuna bakmaktan ibaret olmadığını, çok yönlü bir ödünleşim olduğunu gösteren çok boyutlu bir karşılaştırma tablosu üretir. |
-| [agent-cost-analysis](agent-cost-analysis/) (6-9) | ✅ | Tipik çok turlu bir ajan görevi (müşteri hizmetleri iadesi) için tam zincir maliyet analizi yapar: her LLM çağrısı için girdi/çıktı/önbellek token'larını, gecikmeyi ve maliyeti kaydetmek için özel hafif bir izleme sistemi kullanır, "hangi adımın en pahalı olduğunu" belirlemek için toplar, ardından KV-cache dostu tasarım ve context sıkıştırmadan elde edilen gerçek tasarrufları nicelleştirmek için A/B testi kullanır. |
-| [tts-quality-eval](tts-quality-eval/) (6-6) | ✅ | Aynı zorlu metin kümesini çeşitli TTS yapılandırmalarıyla (farklı model/ses/hız) sentezler, ardından her boyutu (netlik, doğallık vb.) bir Rubric'e göre puanlamak için çok modlu bir LLM-as-a-Judge kullanır, sonuçları yeniden üretilebilir bir yapılandırma karşılaştırma tablosunda toplar. |
-| [android-world](android-world/) (6-12) | 📖 | AndroidWorld üzerinde T3A Agent değerlendirmesi ve başarısızlık analizi için başlangıç raporu; kıstasın kaynak kodu yerine Deney 6-12'nin uygulama notlarını içerir. |
-| [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | Sentetik DHIS2 tarzı özet veriler üzerinde bir halk sağlığı raporlama Agent'ının araç çağrılarını, hesaplama doğruluğunu, kanıt kullanımını ve dayanaksız iddialarını nesnel olarak değerlendirir. |
-
-> `chapter6/android-world/` (tire ile yazılan) kıstas kodu değil, bilakis kitabın android_world üzerindeki T3A Agent başarısızlık vakaları hakkındaki analiz notlarıdır (`t3a*.md`); referans okuma materyali olarak kullanılabilir.
+| Deney | Proje | Tür | Açıklama |
+| :--: | --- | :--: | --- |
+| 9-1 | [live-audio](live-audio/) | ✅ | Konuşmadan metne, AI diyaloğu ve metinden konuşmayı entegre eden gerçek zamanlı bir sesli sohbet demosu. Birden çok AI hizmet sağlayıcısını destekler (OpenAI, OpenRouter, ARK, Siliconflow), düşük gecikmeli bir konuşma deneyimi sunar. |
+| Add-on | [phone-agent](phone-agent/) | 🚧 | Resmî `pine-voice` SDK direct/ReAct yolları uygulanmıştır; ancak yetkili ve onay vermiş bir E.164 hedefi yoktur. Preflight arama/transcript olmadığını kaydeder; test double kabul sayılmaz. |
+| 9-2 | [streaming-speech](streaming-speech/) | ✅ | Akış tabanlı ses algısının temel ödünleşimini gösterir: sürekli sesi giderek uzayan segmentlere ayırır ve ASR'ye besler. Alınan her segment, erken metin çıktısı için son derece düşük ilk parça gecikmesi sağlamak üzere bir "mevcut kısmi tanıma sonucu" üretir. Bedeli, cümlenin ikinci yarısının bağlamından yoksun olan erken parçaların hatalı olabilmesi, ses biriktikçe kademeli olarak yakınsamasıdır. Bu, "tanımadan önce tüm cümleyi bekleme"nin yüksek doğruluk/yüksek gecikmeli yaklaşımıyla tezat oluşturur. |
+| 9-3 | [end-to-end-speech](end-to-end-speech/) | ✅ | Sabit revision'lı MiniCPM-o 4.5 tek RTX PRO 6000 üzerinde gerçekten yerel çalıştırıldı; end-to-end ve self-cascade 3/4 elde etti, tamamlayıcı anlamsal/paralinguistik hatalar ile gerçek 24kHz ses ve kabul kanıtı saklandı. |
+| 9-4 | [controllable-tts](controllable-tts/) | 🚧 | Gerçek Fish Audio S1 4×3×2 referans kütüphanesi ve A/B/C medya yapısal kapıları geçer; nitel dinleme çalışması ve “insana yakın” değerlendirme eksiktir. |
+| 9-5 | `claude-quickstarts/computer-use-demo/` | 📖 | Harici `anthropics/claude-quickstarts` `9bcc95e…` commit'ine sabitlenmiştir; hedef tüm quickstarts değil, container içindeki Ubuntu desktop＋Claude agent loop Computer Use demosudur. |
+| 9-6 | `browser-use/` | 📖 | Harici `browser-use/browser-use` `ec9277c…` commit'ine sabitlenmiştir; visual CLI (`use_vision=True`) Google'da San Francisco hava durumunu arar ve action/screenshot yörüngesini saklar. |
+| 9-7 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | Gerçek XLeRobot teleoperasyonu ile aynı masa toplama görevi: kırmızı bardağı tepsiye, sarı kâğıdı çöp kutusuna koyup durumu yeniden doğrulama. |
+| 9-8 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Simülatörde aynı görevin ideal kontrol üst sınırını ölçer; gerçek robotun çalıştırıldığı anlamına gelmez. |
+| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Gemini Robotics-ER 1.5 ile gerçek XLeRobot'u aynı masa toplama görevinde otonom olarak kontrol eder. |
+| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Simülatörde aynı görev için açık çevrim, adım adım kontrol ve öngörülü kapalı çevrim stratejilerini karşılaştırır. |
+| 9-11 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | Arka planı, nesne görünümünü, ışığı ve görsel gürültüyü değiştirerek aynı görevde RGB ortamlar arası testi yapar. |
 
 ## Proje Türleri
 
@@ -46,4 +37,4 @@ Metin, kontrol akışını açıklamak için kısa mekanizma skeleton'ları kull
 | :--: | --- | --- |
 | ✅ | **Bağımsız** | Bu depoda tam kod, API Key yapılandırıldıktan sonra çalışır |
 | 📖 | **Yeniden Üretim Rehberi** | `git clone` ile **harici depolara** bağımlı ayrıntılı belge |
-| 🚧 | **Tasarım Belgesi** | Yalnızca mimari/uygulama planı, çalıştırılabilir kod henüz hazır değil |
+| 🚧 | **Devam Ediyor** | Uygulama vardır; ancak gerekli canlı çalıştırma, yetki, donanım veya metin kabul kanıtı eksiktir |

@@ -1,14 +1,14 @@
-# 제9장 · 멀티모달리티와 실시간 상호작용
+# 제8장 · 에이전트의 지속적 진화
 
-> 인식과 행동의 범위를 텍스트에서 음성, GUI, 물리 세계로 넓힙니다. 세 가지 음성 패러다임(캐스케이드, 종단 간 옴니모달, 전이중/상호작용형), 스트리밍 음성 인식·합성, Computer Use, 로봇 조작을 다룹니다.
+> 가중치를 바꾸지 않고도 성장하는 방법을 다룹니다. 세 가지 학습 패러다임, 경험으로부터의 학습, ‘도구 사용자’에서 ‘도구 제작자’로 나아가는 과정을 통해 에이전트가 ‘똑똑함’을 넘어 ‘능숙함’을 갖추게 합니다.
 
-← [한국어 메인 README로 돌아가기](../docs/ko/README.md) · 📖 [제9장 본문 읽기](../book-ko/chapter9.ko.md)
+← [한국어 메인 README로 돌아가기](../docs/ko/README.md) · 📖 [제8장 본문 읽기](../book-ko/chapter8.ko.md)
 
 ## 실험 읽는 방법
 
 본문은 짧은 메커니즘 skeleton으로 제어 흐름을 설명하고, 실험 디렉터리에는 완전한 SDK 어댑터·로그·테스트·검수 증거를 둡니다. 모든 파일을 줄 단위로 읽을 필요는 없습니다.
 
-- **Starter:** 목표, 최소 명령, 검수 조건부터 시작하고 다음에서 출발하세요: [live-audio](live-audio/);
+- **Starter:** 목표, 최소 명령, 검수 조건부터 시작하고 다음에서 출발하세요: [trajectory-verifier](trajectory-verifier/);
 - **Builder:** 진입점, 핵심 루프, 상태/메시지 스키마, 도구와 verifier를 따라갑니다.
 - **Maintainer:** 마지막으로 테스트, 증거 manifest, 실패 처리, rollback 경로와 provider adapter를 읽습니다.
 
@@ -18,18 +18,24 @@
 
 | 실험 | 프로젝트 | 유형 | 설명 |
 | :--: | --- | :--: | --- |
-| 9-1 | [live-audio](live-audio/) | ✅ | VAD + ASR(Whisper/SenseVoice) + LLM(GPT-4o/Gemini/Doubao) + TTS(Fish Audio)를 통합한 실시간 음성 채팅으로, WebSocket을 통해 짧은 지연 시간을 제공합니다. |
-| Add-on | [phone-agent](phone-agent/) | ✅ | 로컬 WebRTC 프로젝트는 브라우저 마이크 RTP, 로컬 Whisper, 실제 외부 LLM, TTS 및 하향 RTP를 사용하는 직접/ReAct 실행을 보존하며 두 경로 모두 20/20 게이트를 통과합니다. PSTN/E.164는 이 로컬 범위에 포함되지 않습니다. [manifest](phone-agent/validation/runs/exp9-2-webrtc-audio-20260731-v1/manifest.json)에 역사적 실행 식별자를 보존합니다. |
-| 9-2 | [streaming-speech](streaming-speech/) | ✅ | 실제 Qwen2-Audio에서 누적되는 음성 접두부 전체를 매번 다시 인코딩해 음향 이벤트를 감지하고 청크별 지연 시간을 측정합니다. 이를 600ms VAD + 오픈 소스 Whisper 조합과 일반·쉼·소음 세 시나리오에서 비교합니다. |
-| 9-3 | [end-to-end-speech](end-to-end-speech/) | ✅ | 고정 revision의 MiniCPM-o 4.5를 RTX PRO 6000 한 장에서 실제 로컬 실행했습니다. end-to-end와 self-cascade 모두 3/4였지만 의미/준언어 오류가 상호 보완적이었고, 실제 24kHz 음성 출력과 검증 증거를 보존했습니다. |
-| 9-4 | [controllable-tts](controllable-tts/) | 🚧 | 실제 Fish Audio S1의 4×3×2=24개 참조 음성 라이브러리와 A/B/C 미디어가 구조 검사를 통과했습니다. 다만 [검수 결과](controllable-tts/validation/acceptance.json)에는 정성 청취 평가와 ‘사람 상담원에 가까움’이라는 주장에 대한 평가가 아직 없다고 명시되어 있습니다. |
-| 9-5 | `claude-quickstarts/computer-use-demo/` | 📖 | `anthropics/claude-quickstarts`를 `9bcc95e…`에 고정해 사용합니다. 본문이 다루는 것은 전체 quickstarts 모음이 아니라 컨테이너 기반 Ubuntu 데스크톱과 Claude Computer Use 에이전트 루프로 구성된 `computer-use-demo/`입니다. |
-| 9-6 | `browser-use/` | 📖 | 외부 `browser-use/browser-use` 저장소를 `ec9277c…`에 고정해 사용합니다. 본문 과제에서는 시각 입력을 사용하는 CLI(`use_vision=True`)로 Google에서 샌프란시스코 날씨를 검색하고 동작 및 스크린샷 궤적을 보관합니다. |
-| 9-7 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | 실제 XLeRobot을 원격 조작해 같은 책상 정리 과제를 수행합니다. 빨간 컵은 쟁반에, 노란 폐지는 쓰레기통에 넣고 마지막에 다시 관찰·검증합니다. |
-| 9-8 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 같은 책상 과제의 이상적 제어 상한을 시뮬레이터에서 측정합니다. 실제 로봇 실행을 뜻하지 않습니다. |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Gemini Robotics-ER 1.5가 실제 XLeRobot을 자율 제어해 같은 책상 정리 과제를 수행합니다. |
-| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 시뮬레이터에서 같은 과제의 오픈 루프, 단계별 확인, 예측형 폐루프를 비교합니다. |
-| 9-11 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | 배경·물체 외관·조명·시각 노이즈를 바꾸며 같은 과제를 RGB 환경 간에 평가합니다. |
+| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | 실제 고객 서비스 호출 28건, Judge 호출 8건, 전문가 표본 8건을 검수했습니다. [증거](trajectory-verifier/validation/real_20260729T165247Z/evidence.json)에는 핵심 위반의 안정성 주장이 재현되지 않은 사실도 함께 기록돼 있습니다. |
+| 8-2 | [gaia-experience](gaia-experience/) | ✅ | 실제 GAIA 궤적 세 그룹과 지식 문서 대조를 검수했습니다. [증거](gaia-experience/validation/real_20260729T164012Z/evidence.json)에는 지식 문서 그룹이 25%, 두 대조군이 각각 50%였던 부정적 결과가 기록돼 있습니다. |
+| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 실제 작업 에이전트, LLM Judge, 코딩 에이전트로 초기·자동·수동 세 그룹의 전체 보존 세트와 경계 세트를 실행했으며, 원본 응답과 배포 기준을 보존했습니다. |
+| 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | 실제 ARK 에이전트와 Chromium이 초기화 가능한 로컬 메시지 사이트에서 탐색, 독립 검증, 매개변수화된 재실행, 거짓 성공 대조, 페이지 변경에 따른 무효화를 완료했습니다. |
+| 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | 실제 코딩 에이전트가 반복 장애에서 패치를 만들고, 결정론적 후보 및 의도적으로 지나치게 넓은 반례와 함께 동일한 회귀·카나리·롤백 배포 게이트를 거쳤습니다. [증거](self-modifying-agent/validation/latest.json)는 수락과 거부 이력을 모두 보존합니다. |
+| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Hermes에게 책 전체와 자기 소스를 줍니다. 스스로 개선을 고르고 자신을 수정하며, Reviewer의 거절을 다음 학습으로 바꾸어 수락될 때까지 발전합니다. |
+| 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | 실험 8-7은 정적·추가 전용·진화형 세 방식에 대해 3개 시드와 14개 작업, 총 126회의 실제 호출을 수행합니다. [증거](self-evolution-eval/validation/latest.json)는 전이, 규칙 교체, 보존, 대응표본 통계를 담고 있습니다. |
+| 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | 고위험 작업 확인 게이트 |
+| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | 글쓰기 피드백을 검증 가능한 Skill로 변환하며, 곡선 따옴표 Skill을 감사된 합성 데이터·후훈련과 연결하고 exact-copy의 tokenizer/Harness 오류를 분리합니다 |
+
+위 실험은 모두 API 키 없이 실행할 수 있는 오프라인 진입점과 단위 테스트를 사전 점검용으로 유지합니다. 표의 ✅는 각 디렉터리에 보존된 실제 모델·궤적·브라우저의 정식 증거를 근거로 하며, 오프라인 동작 시연으로 대신하지 않습니다. 과거의 수치나 정성적 주장이 재현되지 않았을 때도 부정적 결과를 증거에 그대로 기록합니다.
+
+## 보충 사례
+
+| 실험 | 프로젝트 | 연관성 |
+| :--: | --- | --- |
+| 7-8 | [prompt-distillation](prompt-distillation/) | 프롬프트 증류와 파라미터 기반 학습을 다루는 장 간 프로젝트입니다. 학습 방법 자체는 제7장에 속합니다. |
+| — | [self-evolving-tools](self-evolving-tools/) | Alita 방식의 도구 발견·캡슐화·재사용을 보여 주는, ‘경험을 프로그램에 기록하기’의 보충 사례입니다. |
 
 ## 프로젝트 유형
 
@@ -37,4 +43,4 @@
 | :--: | --- | --- |
 | ✅ | **독립 실행** | 전체 코드가 이 저장소에 있으며, API 키를 설정하면 실행할 수 있습니다. |
 | 📖 | **재현 가이드** | **외부 저장소**를 `git clone`해야 하는 상세 안내 문서입니다. |
-| 🚧 | **진행 중** | 구현은 있지만, 본문에서 요구하는 실제 실행, 승인된 참여자, 하드웨어 또는 검수 증거가 아직 완전하지 않습니다. |
+| 🚧 | **진행 중** | 구현은 있지만 실제 데이터·환경 또는 장기 검수 증거가 아직 완전하지 않습니다. |

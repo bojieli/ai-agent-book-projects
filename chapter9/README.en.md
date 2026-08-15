@@ -1,14 +1,14 @@
-# Chapter 9 · Multimodal and Real-Time Interaction
+# Chapter 8 · Agent Self-Evolution
 
-> Extends perception and action from text to voice, GUI, and the physical world. Three voice paradigms (cascaded/end-to-end full-modal/full-duplex), streaming voice perception and synthesis, Computer Use, and robotic manipulation.
+> Growth without changing weights. Three learning paradigms, learning from experience, and the journey from "tool user" to "tool creator," allowing Agents to progress from "smart" to "skilled."
 
-← [Back to main README](../docs/en/README.md) · 📖 [Read chapter text](../book-en/chapter9.md)
+← [Back to main README](../docs/en/README.md) · 📖 [Read chapter text](../book-en/chapter8.md)
 
 ## How to Read the Experiments
 
 The prose uses short mechanism skeletons to explain control flow; the experiment directory contains complete SDK adapters, logs, tests, and acceptance evidence. You do not need to read every file line by line.
 
-- **Starter:** Start with the goal, minimum command, and acceptance conditions; begin with [live-audio](live-audio/);
+- **Starter:** Start with the goal, minimum command, and acceptance conditions; begin with [trajectory-verifier](trajectory-verifier/);
 - **Builder:** Follow the entry point, core loop, state/message schema, tools, and verifier.
 - **Maintainer:** Then read tests, evidence manifests, failure handling, rollback paths, and provider adapters.
 
@@ -18,22 +18,30 @@ On a first pass, skip credential loading, presentation code, and provider-compat
 
 | Exp. | Project | Type | Description |
 | :--: | --- | :--: | --- |
-| 9-1 | [live-audio](live-audio/) | ✅ | A real-time voice chat demo integrating speech-to-text, AI dialogue, and text-to-speech. Supports multiple AI service providers (OpenAI, OpenRouter, ARK, Siliconflow), providing a low-latency conversational experience. |
-| Add-on | [phone-agent](phone-agent/) | ✅ | The retained direct/ReAct campaign runs browser-microphone RTP through real local Whisper, a real external LLM and TTS back over downlink RTP; both arms pass 20/20 gates and independent hash validation. PSTN/E.164 is outside this local WebRTC acceptance scope. |
-| 9-2 | [streaming-speech](streaming-speech/) | ✅ | Demonstrates the core trade-off of streaming speech perception: chunk continuous audio into segments of increasing length and feed them to the ASR. Each received segment produces a "current partial recognition result" to achieve extremely low first-chunk latency for early text output. The cost is that early chunks, lacking the context of the latter half of the sentence, may be erroneous, gradually converging as audio accumulates. This contrasts with the high-accuracy/high-latency approach of "waiting for the entire sentence before recognition." |
-| 9-3 | [end-to-end-speech](end-to-end-speech/) | ✅ | A [real local run](end-to-end-speech/validation/runs/exp9-4-minicpmo45-20260801-v1/evidence.json) executed pinned MiniCPM-o 4.5 on one RTX PRO 6000: end-to-end and self-cascade both scored 3/4 with complementary semantic/paralinguistic failures; a real 24kHz speech output and [11/11 acceptance](end-to-end-speech/validation/runs/exp9-4-minicpmo45-20260801-v1/acceptance.json) are retained. |
-| 9-4 | [controllable-tts](controllable-tts/) | ✅ | Fish Audio S1 produced the 24-reference library and A/B/C media; a three-pass position-balanced Voxtral listening study rated the multi-reference arm highest and evaluated the near-human claim. The expected C > B > A ordering did not fully reproduce because A outscored B. |
-| 9-5 | [Anthropic native Computer Use record](claude-computer-use-native/) + `claude-quickstarts/computer-use-demo/` | ✅ | A [validated native run](claude-computer-use-native/validation/runs/exp9-6-anthropic-native-20260803-v2/acceptance.json) built the pinned Dockerfile locally and completed 16 real `claude-sonnet-4-5-20250929` responses plus 15 native `computer` actions. It did not interact with Google reCAPTCHA; visible Open-Meteo JSON grounded the final 70.2°F, clear-sky answer, and every deterministic gate passes. |
-| 9-6 | [computer-use-open-model](computer-use-open-model/) + `browser-use/` | ✅ | A real open-model visual browser run used `qwen/qwen3-vl-32b-instruct` for 16/16 calls, recovered from a Google CAPTCHA through weather.com, and retained 15 screenshots, the complete action trajectory, grounded answer evidence, and verified hashes. |
-| 9-7 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | Real XLeRobot teleoperation for one desk-tidying task: put the red cup in the tray, put the yellow waste paper in the waste bin, then re-observe and verify the state. |
-| 9-8 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Simulator measurement of the ideal-control upper bound for the same desk task; it does not claim that the real robot has run. |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Gemini Robotics-ER 1.5 autonomously drives the real XLeRobot on the same desk-tidying task. |
-| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Simulator comparison of open-loop, stepwise-checking, and predictive closed-loop strategies for the same task. |
-| 9-11 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | RGB cross-environment test for the same desk task, varying backgrounds, object appearance, lighting, and visual noise. |
+| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | Experiment 8-1: combines environment outcomes, process rules, and language rubrics into evidence-backed diagnoses of customer-service trajectories |
+| 8-2 | [gaia-experience](gaia-experience/) | ✅ | Experiment 8-2: compares successful, partially successful, and failed trajectories to generate cross-trajectory Markdown experience documents |
+| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Experiment 8-3: generates minimal prompt patches from failed trajectories, controlling release with a boundary set and a retention set |
+| 8-4 | Text experiment | 🚧 | Experiment 8-4: evolves a requirements-clarification and Spec-confirmation Skill from user feedback, with a three-arm A/B design and release gates |
+| 8-5 | [browser-use-rpa](browser-use-rpa/) | ✅ | Experiment 8-5: compiles browser trajectories into workflows with state predicates, verified by reset-and-replay |
+| 8-6 | [self-modifying-agent](self-modifying-agent/) | ✅ | Experiment 8-6: repeated failures trigger retry/circuit-breaker code patches, regression tests, canary rollout, and rollback |
+| 8-7 | [harness-safety-gate](harness-safety-gate/) | ✅ | Experiment 8-7: evolves a high-risk operation confirmation gate from user corrections and audits |
+| 8-8 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Experiment 8-8: gives Hermes the whole book and its own source; it chooses an improvement, changes itself, and turns each Reviewer rejection into another learning round until accepted |
+| 8-9 | [self-evolution-eval](self-evolution-eval/) | ✅ | Experiment 8-9: evaluates long-term evolution across four phases — learning, transfer, rule change, and retention |
+
+All experiments above offer offline entry points and unit tests that require no API Key; extension paths that need real models or a browser are documented in each project's README.
+
+## Supplementary Cases
+
+| Exp. | Project | Relation |
+| :--: | --- | --- |
+| 7-8 | [prompt-distillation](prompt-distillation/) | Cross-chapter project on prompt distillation and parameterized learning; the training method belongs to Chapter 7 |
+| — | [self-evolving-tools](self-evolving-tools/) | Alita-style tool discovery, encapsulation, and reuse — a supplementary case of "writing experience into programs" |
+| — | [ai-style-skill](ai-style-skill/) | Supplementary writing-Skill case; the main example appears in Chapter 2 |
+
 ## Project Types
 
 | Icon | Type | Meaning |
 | :--: | --- | --- |
 | ✅ | **Standalone** | Full code in this repo, runs after configuring API Key |
 | 📖 | **Reproduction Guide** | Detailed doc depending on **external repos** to `git clone` |
-| 🚧 | **In Progress** | An implementation exists, but required live execution, authorization, hardware, or manuscript acceptance evidence is incomplete |
+| 🚧 | **Design Doc** | Architecture/implementation plan only, runnable code still WIP |

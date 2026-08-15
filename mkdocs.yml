@@ -189,19 +189,19 @@ nav:
   - 第4章 工具:
       - book/chapter4/index.md
       - 配套实验: chapter4/README.md
-  - 第5章 CodingAgent与代码生成:
+  - 第5章 CodingAgent与通用Agent:
       - book/chapter5/index.md
       - 配套实验: chapter5/README.md
-  - 第6章 Agent的评估:
+  - 第6章 交互：观察与动作空间的扩展:
       - book/chapter6/index.md
       - 配套实验: chapter6/README.md
-  - 第7章 模型后训练:
+  - 第7章 Agent的评估:
       - book/chapter7/index.md
       - 配套实验: chapter7/README.md
-  - 第8章 Agent的持续进化:
+  - 第8章 模型后训练:
       - book/chapter8/index.md
       - 配套实验: chapter8/README.md
-  - 第9章 多模态与实时交互:
+  - 第9章 Agent的持续进化:
       - book/chapter9/index.md
       - 配套实验: chapter9/README.md
   - 第10章 多Agent协作:
