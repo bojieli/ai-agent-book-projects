@@ -478,11 +478,13 @@ Set caps on the Agent's retries and operations. If the Agent exceeds those caps,
 **High-Risk Operations**
 Sensitive, irreversible, or high-risk operations should trigger human oversight—at least until the team has built enough confidence in the Agent's reliability. Typical examples include authorizing a large refund or processing a payment.
 
-With the five Harness elements in mind, the rest of the book follows this structure.
+Back to the main thread of the five Harness elements—let us see how they relate to the structure of this book.
 
-### This Book as a Practical Guide to Harness Engineering
+### The Five Harness Elements and the "Building" Part
 
-Seen through the lens of Harness engineering, each chapter of this book systematically builds out one component of the Harness. Security, meanwhile, belongs to no single chapter; it is a cross-cutting concern of the whole book (a cross-cutting concern touches many parts of a system at once—the way logging, in software engineering, has to thread through every module). The table below presents the Harness functions, security aspects, and corresponding chapters in a single view:
+**First, the relationship between the two formulas, so that no one has to remember two skeletons.** The book has exactly one structural skeleton, the one the introduction and afterword keep using: **Agent = LLM + Context + Tools**—chapters 2 through 6 build, chapters 7 through 9 evaluate and evolve, chapter 10 collaborates. **Agent = Model + Harness** is not a rival partition alongside it but the same thing unfolded into its production form: it expands "context" and "tools" into five responsibilities—context management, tool interface, constraints, verification, correction. It is therefore **a lens inside the "building" part**, not a table of contents covering all ten chapters.
+
+Within that scope, the five Harness elements map cleanly onto chapters 2 through 5:
 
 | Harness Focus | Corresponding Chapter | Core Content | Security Concerns |
 |--------------------|--------------------|-------------------------------|------------------------|
@@ -490,11 +492,10 @@ Seen through the lens of Harness engineering, each chapter of this book systemat
 | Context Expansion (Knowledge Persistence) | Chapter 3 (Knowledge Base) | User memory, RAG, structured indexing, agentic RAG | Sensitive information exposure, privacy protection |
 | Tool Design and Security Constraints | Chapter 4 (Tool Design) | Tool classification, permission control, MCP standard, asynchronous architecture | Misoperation, unauthorized access, irreversible operations |
 | Tool Verification and Correction | Chapter 5 (Code Generation) | Coding Agent's Harness, test-driven development, codified rules | Identity impersonation, responsibility attribution |
-| System-Level Verification | Chapter 7 (Evaluation) | Evaluation environment, datasets, automated evaluation, observability | — |
-| Model-Level Correction | Chapter 8 (Post-Training) | SFT (Supervised Fine-Tuning), Reinforcement Learning—encoding feedback signals accumulated by the Harness into model parameters, as an extension of Harness engineering | Goal misalignment, alignment and robustness |
-| System-Level Correction | Chapter 9 (Self-Evolution) | Externalized learning, tool creation, experience accumulation | — |
-| Multimodal Context and Tools | Chapter 6 (Multimodal and Real-Time Interaction) | Voice Agent, Computer Use, robotic operation | Security filtering of multimodal input, permission control in real-time interaction |
-| Constraints and Corrections Among Multiple Agents | Chapter 10 (Multi-Agent Collaboration) | Collaboration architecture, failure modes, Agent society | Trust boundary violations between Agents, shared resource conflicts |
+
+Chapter 6 (Interaction) does not belong to any of the five elements; what it expands is the modality and timing of the observation and action spaces themselves. Chapters 7 through 9 ask **how we know the Harness was built right, and how to keep making it better**. Chapter 10 replaces a single Agent's Harness with a collaboration structure among several. Forcing those chapters into the five boxes only makes the boxes stop discriminating.
+
+Security likewise is not partitioned by chapter: it is a cross-cutting concern (a problem that affects many parts of a system) running through the whole book, organized by the three guardrail layers of the previous section—context, execution, data. The "security focus" column above gives each chapter's principal landing point among those three layers.
 
 Anthropic's practice in building long-running Agents shows how Harness design can solve problems the model itself cannot. They split complex tasks between an "Initialization Agent" (setting up the environment, decomposing the task list) and an "Execution Agent" (making incremental progress each session and leaving clear handover artifacts), using a structured Harness to tackle the two failure modes of long tasks: running out of context and declaring the task done prematurely. The chapters ahead work through the Harness component by component—Chapter 2 begins with the most central one, context engineering, and Chapter 5 lays out the complete practice of Harness engineering in Coding Agents.
 

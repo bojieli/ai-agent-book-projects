@@ -479,11 +479,13 @@ Agent'ın yeniden deneme ve işlem sayısına bir üst sınır koyun. Agent bu s
 **Yüksek Riskli İşlemler**
 Hassas, geri alınamaz veya yüksek riskli işlemler—en azından ekip Agent'ın güvenilirliğine yeterli güven inşa edene kadar—insan gözetimini tetiklemelidir. Tipik örnekler: büyük bir iadeyi yetkilendirmek, bir ödemeyi işlemek.
 
-Şimdi beş Harness unsurunun ana hattına dönelim—bu kitabın bölümlerinin bu çerçeve içinde nasıl açıldığına bakalım.
+Harness'ın beş öğesinin ana hattına dönelim—bunun kitabın yapısıyla nasıl bir ilişkisi olduğuna bakalım.
 
-### Harness Engineering'e Pratik Bir Rehber Olarak Bu Kitap
+### Harness'ın Beş Öğesi ve "İnşa" Bölümü
 
-Harness engineering merceğinden bakıldığında, bu kitabın her bölümü Harness'in bir bileşenini sistematik olarak inşa eder. Bu arada güvenlik tek bir bölüme ait değildir; kitabın tamamının kesişen bir kaygısıdır (cross-cutting concern; bir sistemin birçok parçasına aynı anda dokunan bir kaygı—yazılım mühendisliğinde loglamanın her modülden geçmesi gerekmesi gibi). Aşağıdaki tablo, Harness işlevlerini, güvenlik yönlerini ve ilgili bölümleri tek bir bakışta sunar:
+**Önce iki formülün ilişkisini netleştirelim ki kimse iki iskelet ezberlemek zorunda kalmasın.** Kitabın yapısal iskeleti tektir; giriş ile sonsözün tekrar tekrar kullandığı iskelet: **Agent = LLM + context + tools**—Bölüm 2'den 6'ya inşa, Bölüm 7'den 9'a değerlendirme ve evrim, Bölüm 10 iş birliği. **Agent = Model + Harness** ise onun yanına konmuş rakip bir bölümleme değil, aynı şeyin üretim biçimine açılmış hâlidir: "context" ve "tools" öğelerini context yönetimi, araç arayüzü, kısıtlar, doğrulama ve düzeltme olmak üzere beş sorumluluğa açar. Dolayısıyla o, **"inşa" bölümünün içinde kullanılan bir mercektir**, on bölümü kaplayan bir içindekiler listesi değil.
+
+Bu kapsam içinde Harness'ın beş öğesi Bölüm 2–5 ile açıkça eşleşir:
 
 | Harness Odağı | İlgili Bölüm | Temel İçerik | Güvenlik Kaygıları |
 |--------------------|--------------------|-------------------------------|------------------------|
@@ -491,11 +493,10 @@ Harness engineering merceğinden bakıldığında, bu kitabın her bölümü Har
 | Context Genişletme (Bilgi Kalıcılığı) | Bölüm 3 (Bilgi Tabanı) | Kullanıcı belleği, RAG, yapılandırılmış indeksleme, agentic RAG | Hassas bilgi ifşası, gizlilik koruması |
 | Araç Tasarımı ve Güvenlik Kısıtları | Bölüm 4 (Araç Tasarımı) | Araç sınıflandırması, izin kontrolü, MCP standardı, asenkron mimari | Yanlış işlem, yetkisiz erişim, geri alınamaz işlemler |
 | Araç Doğrulama ve Düzeltme | Bölüm 5 (Kod Üretimi) | Kodlama Agent'ının Harness'i, test odaklı geliştirme, kodlaştırılmış kurallar | Kimlik taklidi, sorumluluk atfı |
-| Sistem Düzeyinde Doğrulama | Bölüm 7 (Değerlendirme) | Değerlendirme ortamı, veri kümeleri, otomatik değerlendirme, gözlemlenebilirlik | — |
-| Model Düzeyinde Düzeltme | Bölüm 8 (Post-Training) | SFT (Denetimli İnce Ayar), Pekiştirmeli Öğrenme—Harness'te biriken geri bildirim sinyallerini model parametrelerine yazmak, Harness engineering'in bir uzantısı olarak görülür | Hedef uyumsuzluğu, alignment ve sağlamlık |
-| Sistem Düzeyinde Düzeltme | Bölüm 9 (Kendi Kendine Evrim) | Externalized learning, araç yaratma, deneyim birikimi | — |
-| Çok Modlu Context ve Tools | Bölüm 6 (Çok Modlu ve Gerçek Zamanlı Etkileşim) | Sesli Agent, Computer Use, robotik işlem | Çok modlu girdinin güvenlik filtrelemesi, gerçek zamanlı etkileşimde izin kontrolü |
-| Çoklu Agent'lar Arasında Kısıtlama ve Düzeltmeler | Bölüm 10 (Multi-Agent İş Birliği) | İş birliği mimarisi, başarısızlık modları, Agent toplumu | Agent'lar arası güven sınırı ihlalleri, paylaşılan kaynak çatışmaları |
+
+Bölüm 6 (etkileşim) bu beş öğeden hiçbirine ait değildir; onun genişlettiği şey, gözlem ve eylem uzaylarının kendisinin kipi ve zamanlamasıdır. Bölüm 7–9 şunu sorar: **Harness'ın doğru inşa edildiğini nereden biliriz ve onu nasıl sürekli daha iyi hâle getiririz?** Bölüm 10 ise tek bir Agent'ın Harness'ını birden çok Agent'ın iş birliği yapısıyla değiştirir. Bu bölümleri de beş kutuya tıkıştırmak, yalnızca kutuların ayırt etme gücünü yitirmesine yol açar.
+
+Güvenlik de bölümlere göre bölünmez: kitabın tamamını kat eden kesişen bir ilgi alanıdır (cross-cutting concern, yani sistemin birçok parçasını etkileyen bir sorun) ve önceki bölümdeki üç katmanlı guardrail'e göre düzenlenir—bağlam katmanı, yürütme katmanı, veri katmanı. Yukarıdaki tablonun "güvenlik odağı" sütunu, her bölümün bu üç katmanda başlıca nereye indiğini gösterir.
 
 Anthropic'in uzun süre çalışan Agent'lar inşa etme pratiği, Harness tasarımının modelin kendisinin çözemediği sorunları nasıl çözebildiğini gösterir. Uzun görevlerin iki başarısızlık modunu—context'in tükenmesi ve görevin erken bitmiş sayılması—ele almak için yapılandırılmış bir Harness kullanarak, karmaşık görevleri bir "Başlatma Agent'ı" (ortamı kurar, görev listesini ayrıştırır) ile bir "Yürütme Agent'ı" (her oturumda artımlı ilerleme kaydeder ve net devir teslim çıktıları bırakır) arasında bölerler. İlerideki bölümler Harness'i bileşen bileşen ele alır—Bölüm 2, en merkezi olanla, context engineering ile başlar, Bölüm 5 ise Kodlama Agent'larında Harness engineering'in eksiksiz pratiğini ortaya koyar.
 
