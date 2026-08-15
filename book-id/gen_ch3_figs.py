@@ -709,9 +709,9 @@ def fig3_12():
 
     # Clustering
     svg.rect(280, 310, 200, 65, fill='medium')
-    svg.text(380, 328, "HDBSCAN clustering", size=FS_SMALL, bold=True)
+    svg.text(380, 328, "KMeans clustering", size=FS_SMALL, bold=True)
     svg.text(380, 350, "discover \"case prototype\"", size=FS_SMALL, fill='text_light')
-    svg.text(380, 370, "e.g., minor quarrel → minor injury", size=FS_SMALL, fill='text_light')
+    svg.text(380, 370, "misal, \"tangan kosong, luka ringan\"", size=FS_SMALL, fill='text_light')
 
     svg.arrow(480, 342, 518, 342)
 

@@ -601,9 +601,9 @@ def fig3_12():
     svg.arrow(240, 342, 278, 342)
 
     svg.rect(280, 310, 200, 65, fill='medium')
-    svg.text(380, 328, "Agrupamiento HDBSCAN", size=FS_SMALL, bold=True)
+    svg.text(380, 328, "Agrupamiento KMeans", size=FS_SMALL, bold=True)
     svg.text(380, 350, "Descubrimiento \"prototipos de caso\"", size=FS_SMALL, fill='text_light')
-    svg.text(380, 370, "ej. riña menor → lesión leve", size=FS_SMALL, fill='text_light')
+    svg.text(380, 370, "p. ej., \"riña sin armas, lesión leve\"", size=FS_SMALL, fill='text_light')
 
     svg.arrow(480, 342, 518, 342)
 

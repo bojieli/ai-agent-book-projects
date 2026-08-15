@@ -709,9 +709,9 @@ def fig3_12():
 
     # Clustering
     svg.rect(280, 310, 200, 65, fill='medium')
-    svg.text(380, 328, "HDBSCAN kümeleme", size=FS_SMALL, bold=True)
+    svg.text(380, 328, "KMeans kümeleme", size=FS_SMALL, bold=True)
     svg.text(380, 350, "\"dava prototipi\" keşfi", size=FS_SMALL, fill='text_light')
-    svg.text(380, 370, "örn., küçük kavga → hafif yaralanma", size=FS_SMALL, fill='text_light')
+    svg.text(380, 370, "örn., \"silahsız kavga, hafif yaralanma\"", size=FS_SMALL, fill='text_light')
 
     svg.arrow(480, 342, 518, 342)
 
