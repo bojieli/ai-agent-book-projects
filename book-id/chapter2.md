@@ -148,6 +148,8 @@ Kedua panggilan dalam gambar sama-sama merujuk pada **pemanggilan API model**, b
 }
 ```
 
+Daftar `tools` ini adalah metadata tool statis yang sudah didaftarkan developer sejak awal: nama tool, deskripsi, dan schema parameternya tertulis di dalam kode dan tidak ada kaitannya dengan apa yang ditanyakan pengguna kali ini. Baik pengguna menanyakan cuaca di Vancouver maupun meminta Agent memesan tiket pesawat, daftar yang dikirim tetap sama; contoh ini hanya mencantumkan dua tool yang relevan agar request-nya lebih pendek, sedangkan Agent nyata kerap mendeklarasikan puluhan tool sekaligus. **Bukan berarti Agent lebih dulu memecah input pengguna menjadi dua subtugas, “cari waktu” dan “cari cuaca”, lalu menghasilkan deskripsi tool yang sesuai** — pemecahan itu terjadi di sisi model, dan justru berupa `tool_calls` pada response di bawah.
+
 **Model mengembalikan tool call request (bukan balasan akhir):**
 
 ```javascript

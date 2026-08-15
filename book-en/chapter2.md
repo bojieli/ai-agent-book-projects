@@ -148,6 +148,8 @@ The two calls in the figure both refer to **calls to the model API**, not to two
 }
 ```
 
+This `tools` list is static tool metadata the developer registered ahead of time: the tool names, descriptions and parameter schemas are written into the code and have nothing to do with what the user happens to be asking this time. Whether the user asks about the weather in Vancouver or asks the Agent to book a flight, the same list goes out; the example lists only the two relevant tools to keep the request short, whereas a real Agent often declares dozens of them at once. **The Agent did not first split the user input into a "look up the time" subtask and a "look up the weather" subtask and then write the matching tool descriptions** — that decomposition happens on the model's side, and it is precisely the `tool_calls` in the response below.
+
 **Model returns a tool call request (not a final reply):**
 
 ```javascript
