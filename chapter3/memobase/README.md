@@ -86,7 +86,7 @@ Extra: `--api-key KEY`, `--no-memory`, `--verbose`.
 Memobase extracts **server-side**; you need a reachable service:
 
 - **Self-hosted**: [memodb-io/memobase](https://github.com/memodb-io/memobase) (docker compose). Default `http://localhost:8019`, token `secret`. Extraction model is in the **server’s** `.env` / `config.yaml` (`--model` on the client is informational only).  
-- **Cloud**: `project_url` + `api_key` from https://www.memobase.io  
+- **Cloud**: `project_url` + `api_key` from https://www.memobase.ai  
 
 Client: `--project-url` / `--api-key` or `MEMOBASE_PROJECT_URL` / `MEMOBASE_API_KEY` (see `env.example`).
 
@@ -202,7 +202,7 @@ python main.py --mode task --task "Plan a 7-day trip to Japan with a $3000 budge
 抽取在**服务端**完成，需要可访问的 Memobase：
 
 - **自托管**：[memodb-io/memobase](https://github.com/memodb-io/memobase)（docker compose）。默认 `http://localhost:8019`，token `secret`。抽取模型在**服务端**配置。  
-- **云端**：https://www.memobase.io 的 `project_url` + `api_key`  
+- **云端**：https://www.memobase.ai 的 `project_url` + `api_key`  
 
 客户端：`--project-url` / `--api-key` 或 `MEMOBASE_PROJECT_URL` / `MEMOBASE_API_KEY`。
 
