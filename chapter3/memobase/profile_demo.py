@@ -17,7 +17,7 @@ flush 时才统一触发一次 LLM 记忆提取，查询侧（profile/event/cont
 运行前提：Memobase 需要一个正在运行的服务端 + 用于提取记忆的 LLM。
   * 自托管：见 https://github.com/memodb-io/memobase （docker compose 启动，
     默认服务地址 http://localhost:8019，默认 token 为 secret）；
-  * 云服务：在 https://www.memobase.io 申请 project_url 与 api_key。
+  * 云服务：在 https://www.memobase.ai 申请 project_url 与 api_key。
 无服务端时可用 --dry-run 查看示例对话与将要执行的操作（不联网、不伪造结果）。
 """
 
