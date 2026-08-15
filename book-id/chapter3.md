@@ -746,6 +746,8 @@ Rupa wajah atau suara seseorang sulit dijelaskan dengan kata-kata dan tidak dapa
 
 Bab ini membangun sistem memori persisten AI Agent pada dua skala: User Memory untuk individu, dan Knowledge Base bersama untuk semua orang.
 
+Dilihat dari struktur buku secara keseluruhan, bab ini membangun ruas **usulan** dalam lingkar penemuan Bab 1: mengubah satu bukti menjadi satu perubahan yang minimal, dapat ditinjau, dan dapat dibalik—bukan menilai apakah sistem secara keseluruhan membaik.
+
 Untuk **User Memory**, kita telah mengeksplorasi empat strategi progresif, dari fakta atomik (Simple Notes) ke manajemen pengetahuan yang dikontekstualisasikan (Advanced JSON Cards), mengungkap ketegangan fundamental pada representasi informasi antara kesederhanaan dan ekspresifitas. Kerangka kerja (*frameworks*) seperti Mem0 dan Memobase menyediakan manajemen memori yang direkayasa, dan perlindungan privasi menjaga agar informasi sensitif tetap aman di seluruh prosesnya.
 
 Untuk ***knowledge acquisition***, tumpukan intinya adalah: *document chunking* menentukan unit *retrieval*, *dense embeddings* menangkap semantik, *sparse embeddings* mencocokkan kata kunci, *result fusion* menggabungkan kandidat ke dalam *pool* tunggal, *neural reranking* menyempurnakan urutan akhir, dan metrik seperti recall@k mengukur kualitas *retrieval*.

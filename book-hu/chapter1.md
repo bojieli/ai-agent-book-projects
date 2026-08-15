@@ -498,6 +498,45 @@ A Harness engineering lencséjén keresztül nézve a könyv minden fejezete szi
 
 Az Anthropic gyakorlata a hosszú ideig futó ügynökök építésében megmutatja, hogy a Harness-tervezés hogyan oldhat meg olyan problémákat, amelyeket maga a modell nem képes. A bonyolult feladatokat egy "Inicializáló Ügynök" (környezet beállítása, feladatlista lebontása) és egy "Végrehajtó Ügynök" (minden munkamenetben inkrementális előrelépés és tiszta átadási artefaktumok hátrahagyása) közé osztották, strukturált Harness-t használva a hosszú feladatok két hibamódjának kezelésére: a kontextus kifogyása és a feladat idő előtti befejezettnek nyilvánítása. Az előttünk álló fejezetek a Harness összetevőit veszik sorra – a 2. fejezet a legközpontibbal, a kontextusmérnökséggel kezdi, és az 5. fejezet fekteti le a Kódoló Ügynökök teljes Harness-mérnökségi gyakorlatát.
 
+## A könyvön végigvonuló tervezési minták
+
+A következő kilenc fejezet újra és újra ugyanahhoz a néhány szerkezethez nyúl. Ezek nem tartoznak egyetlen fejezethez sem: ugyanazon kényszer alatt ismétlődő megoldások. Ezért itt egyszerre nevet adunk nekik, és mindegyiknek megadjuk a kanonikus meghatározását; a további fejezetek pedig néven hivatkoznak rájuk, és csak a helyi változatot ismertetik.
+
+**Javasló–Ellenőrző (Proposer-Reviewer)**: az előállítást és az ítéletet két olyan szerep végzi, amely nem osztozik a kontextuson, és az ítélő magát a terméket látja – a kirenderelt eredményt, a teszt kimenetét, a strukturált hívási paramétereket –, nem pedig az előállító gondolatmenetét. Az előfeltevés, hogy **az önellenőrzés megbízhatatlan**: az adott kontextuson belüli modell sem arra nem jut rá, amire nem jutott, sem azt nem tudja könnyen megítélni, hogy nem injektálták-e már. A 3. fejezet ezzel frissíti a tudást; a 4. fejezet az eszközhívások előzetes jóváhagyására és utólagos ellenőrzésére használja (a Sidecar ennek csak olvasható változata); az 5. fejezet prezentációs, videós és naplós kísérlete egyaránt erre épül; a 7. fejezet felületek értékelésére, a 9. fejezet frissítési javaslatok elbírálására használja; a 10. fejezet pedig azt tárgyalja, milyen alakot ölt a társi együttműködésben, és miért nem szabad egyazon Ügynökkel önmagát ellenőriztetni.
+
+**Fokozatos feltárás (Progressive Disclosure)**: ahelyett, hogy minden információt egyszerre tennénk a kontextusba, előbb egy kereshető katalógust adunk, a részleteket pedig igény szerint töltjük be. Egyszerre két dolgot optimalizál: a kontextusköltségvetést és a kiválasztás pontosságát. A 2. fejezet Agent Skills mechanizmusa a legjellemzőbb alakja (a metaadat bent marad, a törzs igény szerint töltődik); a 3. fejezet rétegzett keresése, a 4. fejezet proaktív eszközfelfedezése és lapozó csonkolása, valamint a 10. fejezet Ügynök-felfedezése mind ennek változatai.
+
+**Csak hozzáfűzés (Append-only)**: az állapot hozzáfűzéssel halad előre, a már leírtat nem írjuk át utólag. Cserébe gyorsítótárazhatóságot, visszajátszhatóságot és auditálhatóságot kapunk. A 2. fejezet KV Cache-előtagstabilitása ennek teljesítménybeli alakja – minél elöl van a változás, annál több gyorsítótár érvénytelenedik; a 3. fejezet eseményszerű memóriája és a 4. fejezet szokása, hogy az új eszköz sémáját a trajektória végére fűzi, nem pedig visszaszúrja az előtagba, ugyanezt a fegyelmet követi.
+
+**Határhalmaz + megtartási halmaz (Boundary Set + Retention Set)**: minden módosítást egyszerre kell érvényesíteni azon a mintakészleten, „amelyet meg kell változtatnia", és azon, „amelyet nem szabad befolyásolnia". Csak az elsőt mérve a túlillesztést tekintjük haladásnak; csak a másodikat mérve a hatástalan módosítást tekintjük biztonságosnak. A 7. fejezet regressziós feladatai, a 8. fejezet tréning–értékelés elkülönítése és a 9. fejezet frissítésijavaslat-ellenőrzése mind erre a halmazpárra épül.
+
+**Minimális diff + visszafordíthatóság (Minimal Diff, Reversible)**: minden módosítás legyen a lehető legkisebb, hordozza a forrását, és legyen külön visszavonható – ne teljes újraírás. Ez teszi lehetővé a hozzárendelést: ha valami elromlik, konkrét módosításig vissza lehet vezetni. A 3. fejezet tudásfrissítései, az 5. fejezet kódfoltjai, a 9. fejezet prompt- és programfrissítései mind ezt követik; a fejezet elején megadott három frissítési útvonal (kontextuson belüli alkalmazkodás, külső termék frissítése, paraméterfrissítés) pedig épp a visszafordíthatóság csökkenő sorrendjében áll.
+
+Ez az öt minta egyetlen közös motívumot oszt meg: **az ítéletet „a modell dönti el"-ből „a modellen kívüli mechanizmus dönti el"-be helyezni** – az ellenőrző a kontextuson kívül, a katalógus a törzsszövegen kívül, a gyorsítótár a változáson kívül, a megtartási halmaz a határhalmazon kívül, a visszagörgetés a commiton kívül van. A fejezet korábbi részében megadott háromrétegű védőkorlát ugyanennek a motívumnak a biztonságra alkalmazott esete. Ha később újra találkozunk velük, a könyv csak a minta nevét és az adott fejezetbeli eltérést jelöli meg, nem vezeti le újra.
+
+## A felfedezési hurok: bizonyíték, javaslat, kísérlet, visszacsatolás
+
+Az előző szakasz öt mintája helyi szerkezet. Van egy nagyobb szerkezet is, amely három fejezeten ível át, de mivel darabokban épül fel, könnyen három független csővezetéknek látszik.
+
+A 7. fejezetnek egy sikertelen trajektóriában meg kell találnia az első hibát, és be kell sorolnia. A 3. fejezetnek egyetlen új bizonyítékot kell a tudásbázis lehető legkisebb, megalapozott módosításává alakítania. A 9. fejezetnek el kell döntenie, hogy egy módosítás valóban jobbá tette-e a rendszert, majd hogy kiadja vagy visszagörgeti. E három egészen más gépezetet használ – a hibaokolás rubrikákra és az első hiba lokalizálására, a javaslat a Javasló–Ellenőrző mintára, az érvényesítés a határ- és megtartási halmazokra, kanári kiadással és visszagörgetéssel –, tehát **nem ugyanannak a mechanizmusnak a háromszori ismétlései**, és szókészletük erőltetett egységesítése épp a lényegi különbségeket fedné el.
+
+Ami valóban közös bennük, az a hely: mindegyik ugyanannak a huroknak egy-egy szakaszát foglalja el.
+
+```text
+Bizonyíték (7. fejezet): sikertelen trajektória → első hiba + hibaosztály
+  → Javaslat (3. fejezet): bizonyíték → egyetlen minimális, ellenőrizhető, visszafordítható módosítás
+  → Kísérlet (9. fejezet): mérés a határ- és a megtartási halmazon, kanári kiadás
+  → Visszacsatolás: a mért eredmények és az új sikertelen trajektóriák visszatérnek a bizonyíték szakaszba
+```
+
+Ezt a hurkot nemrég nevezte el és lökte az automatizálás felé a Jeff Dean és társai által alapított Discovery Loop: javasolj egy kísérletet, valósítsd meg, ami hozzá kell, értékeld ki, vidd az eredményt a következő körbe, és párhuzamosítsd azt, ami korábban sorosan futott[^ch1-discovery-loop]. Nyíltan ki kell mondani: a cég 2026 augusztusában alakult, és eddig csak a küldetését hozta nyilvánosságra, nyilvános technikai eredmény nélkül; ez a könyv **a huroknak adott névért** hivatkozik rá, nem bizonyítékként – pontosan az a különbségtétel, amelyet a 7. fejezet újra és újra hangsúlyoz majd.
+
+Ha egy Ügynök-rendszer hurkát a tiszta kutatási hurok mellé tesszük, kiderül, hogy az előbbin két további megkötés van, és épp ezekkel foglalkozik a könyv hátralévő részének nagy hányada. **Először: a kísérletnek valós megfigyelésben kell gyökereznie.** A kutatási hurokban a „kísérlet" lehet egy tréningfutás; egy Ügynök-rendszerben viszont éppen felhasználókat kiszolgáló rendszert módosít, ezért az ítéletnek a környezet tényleges állapotából kell jönnie – átmennek-e a tesztek, mi a végső adatbázis-állapot, mit adott vissza az eszköz –, nem pedig abból, ahogy a modell elmeséli a saját viselkedését. **Másodszor: minden kísérletnek egyszerre kell megválaszolnia, hogy „mit javított" és „mit rontott el".** A kutatási hurok rendszerint csak a mutató emelkedését akarja; egy Ügynök-rendszernek azt is bizonyítania kell, hogy nem rontotta el a korábban helyes viselkedést. Az előző szakasz határ- és megtartási halmaza pontosan ezért létezik.
+
+A következő három fejezet mindegyike csak a maga szakaszát tárgyalja, és nem mondja el újra az egész hurkot: a 3. fejezet azt, mitől megalapozott egy javaslat, a 7. fejezet azt, mitől megbízható egy bizonyíték, a 9. fejezet pedig azt, mitől tud a kísérlet és a visszacsatolás hosszú távon szétszóródás nélkül járni.
+
+[^ch1-discovery-loop]: A Discovery Loop megalapítását 2026. augusztus 5-én jelentette be Jeff Dean, Sanjay Ghemawat, Quoc Le és Oriol Vinyals; public benefit corporation, amelynek küldetése a gépi tanulás, a tudomány és a mérnöki munka automatizálása. Nyilvános leírása szerint teljes kísérleti hurkokat automatizál, és nagy léptékben párhuzamosítja azt, ami korábban sorosan futott. Lásd: https://techcrunch.com/2026/08/05/jeff-dean-and-other-top-ai-researchers-are-leaving-google-to-launch-their-own-startup/ . A könyv írásakor reprodukálható technikai eredményt nem tett közzé.
+
 ## Fejezet-összefoglaló
 
 Ez a fejezet egy gyakorlatközpontú keretrendszert épített fel az AI-ügynökök megértéséhez és megalkotásához.
@@ -511,6 +550,10 @@ Ez a fejezet egy gyakorlatközpontú keretrendszert épített fel az AI-ügynök
 **A Harness a versenyelőny**: A modellképesség árucikké válik; a valódi megkülönböztető tényező a Harness – a kontextus és eszközök köré épített korlátozó, ellenőrző és javító mechanizmusok, amelyek lehetővé teszik a megbízható feladatvégrehajtást. Az éles üzemre szánt ügynökrendszerekben a Harness kódjának túlnyomó többsége ezekbe a védelmi mechanizmusokba kerül, nem csupán a kontextusba és eszközökbe.
 
 **A munkafolyamattól az autonóm ügynökig**: Promptok először, majd munkafolyamatok, végül autonóm ügynökök – ez a sorrend a legpraktikusabb módja a váratlan viselkedés csökkentésének. Minden összehangolási mintának vannak olyan helyzetei, ahol illeszkedik; egyetlen minta sem a legjobb mindenhol.
+
+**Öt minta vonul végig a könyvön**: Javasló–Ellenőrző, fokozatos feltárás, csak hozzáfűzés, határhalmaz + megtartási halmaz, valamint minimális visszafordítható diff – mind ugyanazt a motívumot osztják: az ítéletet magától a modelltől egy rajta kívüli mechanizmushoz helyezik át. A további fejezetek néven hivatkoznak rájuk, nem vezetik le újra.
+
+**A felfedezési hurok három fejezeten ível át**: bizonyíték (a 7. fejezet hibaokolása) → javaslat (a 3. fejezet tudásfrissítése) → kísérlet és visszacsatolás (a 9. fejezet érvényesítése és kiadása). A három szakasz valóban más gépezetet használ; ami közös bennük, az a hely, nem a szókészlet. A tiszta kutatási hurokhoz képest az Ügynök-rendszer hurkán két további megkötés van: a kísérletnek valós megfigyelésben kell gyökereznie, és minden körnek meg kell válaszolnia, mit javított és mit rontott el.
 
 **A biztonság architekturális kérdés**: Védőkorlátok, emberi közreműködés, alignment – a biztonságot az első kódsorból kezdve kell tervezni, nem a bevezetés előtt utólag hozzáfoldozni. A védőkorlátok három rétegbe rendeződnek – kontextus, végrehajtás, adat –, a megkerülés nehézsége szerint, és a további fejezetek biztonsági fejtegetései mind erre a vázra épülnek.
 

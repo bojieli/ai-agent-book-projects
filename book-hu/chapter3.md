@@ -750,6 +750,8 @@ Egy arc megjelenését vagy egy ember hangját nehéz szavakkal pontosan leírni
 
 Ez a fejezet az AI Ágens perzisztens memóriarendszerét építette fel két léptékben: a felhasználói memóriát az egyén számára, és a megosztott tudásbázist mindenki számára.
 
+A könyv egészének szerkezete felől nézve ez a fejezet az 1. fejezet felfedezési hurkának **javaslat** szakaszát építi: egy bizonyítékot minimális, ellenőrizhető, visszafordítható módosítássá alakít – nem azt ítéli meg, hogy a rendszer egésze jobb lett-e.
+
 A "felhasználói memória" terén négy progresszív stratégiát tártunk fel, az atomi tényektől (Egyszerű jegyzetek) a kontextualizált tudásmenedzsmentig (Haladó JSON kártyák), feltárva az információreprezentáció alapvető feszültségét az egyszerűség és a kifejezőerő között. Az olyan keretrendszerek, mint a Mem0 és a Memobase, mérnöki memóriakezelést biztosítanak, és az adatvédelem biztonságban tartja az érzékeny információkat.
 
 A "tudásszerzés" terén az alapvető technológiai verem: a dokumentumdarabolás határozza meg a visszakeresési egységeket, a sűrű beágyazások a szemantikát, a ritka beágyazások a kulcsszavakat fogják meg, az eredményfúzió egyesíti a jelölteket egyetlen készletbe, a neurális újrarangsorolás finomítja a végső sorrendet, és az olyan mérőszámok, mint a recall@k, mérik a visszakeresés minőségét.

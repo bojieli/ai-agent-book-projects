@@ -498,6 +498,45 @@ Dilihat melalui kacamata Harness engineering, setiap bab dalam buku ini secara s
 
 Praktik Anthropic dalam membangun Agent jangka-panjang (long-running Agents) menunjukkan bagaimana desain Harness dapat menyelesaikan masalah yang tidak dapat diselesaikan oleh model itu sendiri. Mereka membagi tugas kompleks antara "Initialization Agent" (menyiapkan lingkungan, memecah daftar tugas) dan "Execution Agent" (membuat kemajuan bertahap di setiap sesi dan meninggalkan artifak serah-terima yang jelas), menggunakan Harness terstruktur untuk mengatasi dua mode kegagalan dari tugas yang panjang: kehabisan context dan menyatakan tugas selesai sebelum waktunya. Bab-bab di depan akan membedah Harness komponen demi komponen—Bab 2 dimulai dengan yang paling sentral, context engineering, dan Bab 5 menjabarkan praktik lengkap dari Harness engineering pada Coding Agent.
 
+## Pola Desain yang Membentang Sepanjang Buku
+
+Sembilan bab berikutnya berulang kali memakai sekumpulan struktur yang sama. Struktur-struktur itu bukan milik satu bab tertentu, melainkan solusi berulang di bawah kendala yang sama; karena itu di sini kita menamainya sekaligus dan memberi definisi bakunya. Selanjutnya tiap bab cukup memanggilnya dengan nama dan hanya menjelaskan variannya sendiri.
+
+**Pengusul-Peninjau (Proposer-Reviewer)**: produksi dan penilaian dijalankan oleh dua peran yang tidak berbagi konteks, dan pihak penilai melihat artefaknya sendiri—hasil render, keluaran pengujian, argumen pemanggilan terstruktur—bukan proses penalaran pihak yang memproduksi. Premisnya adalah **peninjauan diri tidak dapat diandalkan**: model yang berada di dalam satu konteks tidak bisa memikirkan apa yang tak terpikirkan olehnya, dan sulit pula menilai apakah dirinya sudah tersuntik. Bab 3 memakainya untuk memperbarui pengetahuan; Bab 4 untuk persetujuan di muka dan validasi setelahnya pada pemanggilan tool (Sidecar adalah variannya yang hanya-baca); tiga eksperimen Bab 5—presentasi, video, dan log—semuanya berkerangka pola ini; Bab 7 memakainya untuk mengevaluasi UI; Bab 9 untuk meninjau usulan pembaruan; dan Bab 10 membahas bentuknya dalam kolaborasi setara serta mengapa satu Agent tidak boleh meninjau dirinya sendiri.
+
+**Pengungkapan Bertahap (Progressive Disclosure)**: alih-alih memasukkan seluruh informasi ke konteks sekaligus, sediakan dulu katalog yang dapat ditelusuri lalu muat detailnya sesuai kebutuhan. Ia mengoptimalkan dua hal sekaligus—anggaran konteks dan ketepatan pemilihan. Agent Skills di Bab 2 adalah bentuk paling khasnya (metadata menetap, isi dimuat sesuai kebutuhan); pencarian berlapis di Bab 3, penemuan tool proaktif dan pemotongan berhalaman di Bab 4, serta penemuan Agent di Bab 10 semuanya adalah variannya.
+
+**Hanya Tambah (Append-only)**: keadaan berkembang dengan cara menambahkan, dan apa yang sudah ditulis tidak diubah lagi. Imbalannya adalah dapat di-cache, dapat diputar ulang, dan dapat diaudit. Kestabilan prefiks KV Cache di Bab 2 adalah bentuk kinerjanya—makin di depan letak perubahan, makin banyak cache yang gugur; memori bergaya peristiwa di Bab 3 dan kebiasaan Bab 4 menambahkan schema tool baru di ujung trajektori alih-alih menyisipkannya kembali ke prefiks mengikuti disiplin yang sama.
+
+**Himpunan Batas + Himpunan Retensi (Boundary Set + Retention Set)**: setiap perubahan harus divalidasi sekaligus pada "kumpulan sampel yang seharusnya berubah" dan "kumpulan sampel yang tidak boleh terpengaruh". Menguji yang pertama saja membuat overfitting disangka kemajuan; menguji yang kedua saja membuat perubahan tak berguna disangka aman. Tugas regresi di Bab 7, pemisahan pelatihan dan evaluasi di Bab 8, serta validasi usulan pembaruan di Bab 9 semuanya berdiri di atas pasangan himpunan ini.
+
+**Diff Minimal + Dapat Dibalik (Minimal Diff, Reversible)**: setiap perubahan diupayakan sekecil mungkin, membawa asal-usulnya, dan dapat dibalik sendiri-sendiri, bukan ditulis ulang seluruhnya. Inilah yang membuat atribusi mungkin—ketika ada masalah, ia dapat dilacak ke satu perubahan tertentu. Pembaruan pengetahuan di Bab 3, tambalan kode di Bab 5, serta pembaruan prompt dan program di Bab 9 semuanya mengikutinya; dan tiga jalur pembaruan yang diberikan di awal bab ini (adaptasi dalam konteks, pembaruan artefak eksternal, pembaruan parameter) memang tersusun dari yang paling mudah dibalik hingga yang paling sulit.
+
+Kelima pola ini berbagi satu motif yang sama: **memindahkan penilaian dari "model sendiri yang memutuskan" ke "mekanisme di luar model yang memutuskan"**—peninjau berada di luar konteks, katalog di luar isi, cache di luar perubahan, himpunan retensi di luar himpunan batas, pembalikan di luar commit. Guardrail tiga lapis yang diberikan sebelumnya di bab ini adalah motif itu yang diterapkan pada keamanan. Ketika pola-pola ini muncul lagi nanti, buku ini cukup menyebut namanya beserta perbedaan di bab bersangkutan, tanpa menurunkannya kembali.
+
+## Lingkar Penemuan: Bukti, Usulan, Eksperimen, Umpan Balik
+
+Lima pola pada bagian sebelumnya adalah struktur lokal. Ada satu struktur yang lebih besar membentang di tiga bab, tetapi karena dibangun terpisah-pisah, ia mudah disangka tiga jalur yang berdiri sendiri.
+
+Bab 7 harus menemukan kesalahan pertama pada trajektori yang gagal dan menetapkan jenisnya. Bab 3 harus mengubah satu bukti baru menjadi perubahan basis pengetahuan yang sekecil dan seberdasar mungkin. Bab 9 harus menilai apakah sebuah perubahan benar-benar membuat sistem lebih baik, lalu memutuskan merilis atau membalikkannya. Ketiganya memakai mekanisme yang sama sekali berbeda—atribusi bersandar pada rubrik dan pelokalan kesalahan pertama, usulan pada Pengusul-Peninjau, validasi pada himpunan batas dan himpunan retensi dengan rilis kanari serta pembalikan—sehingga ketiganya **bukan tiga pengulangan satu mekanisme**, dan menyeragamkan istilahnya secara paksa justru akan menutupi perbedaan yang penting.
+
+Yang benar-benar mereka bagi adalah posisi: masing-masing menempati satu ruas dari lingkar yang sama.
+
+```text
+Bukti (Bab 7): trajektori gagal → kesalahan pertama + jenis kesalahan
+  → Usulan (Bab 3): bukti → satu perubahan minimal, dapat ditinjau, dapat dibalik
+  → Eksperimen (Bab 9): pengukuran pada himpunan batas dan retensi, rilis kanari
+  → Umpan balik: hasil pengukuran dan trajektori gagal yang baru kembali ke ruas bukti
+```
+
+Lingkar ini baru-baru ini diberi nama dan didorong ke arah otomatisasi oleh Discovery Loop, perusahaan yang didirikan Jeff Dean bersama rekan-rekannya: mengusulkan eksperimen, mengimplementasikan yang dibutuhkan, mengevaluasinya, membawa hasilnya ke putaran berikutnya, dan memparalelkan proses yang dahulu berjalan serial[^ch1-discovery-loop]. Perlu dikatakan terus terang: perusahaan itu berdiri pada Agustus 2026 dan sejauh ini hanya mengumumkan misinya, tanpa hasil teknis publik; buku ini mengutipnya karena **penamaannya atas lingkar tersebut**, bukan sebagai bukti—persis pembedaan yang akan ditegaskan berulang kali di Bab 7.
+
+Menaruh lingkar sistem Agent ini berdampingan dengan lingkar riset murni memperlihatkan dua batasan tambahan, dan justru itulah yang dibahas panjang lebar di sisa buku ini. **Pertama, eksperimen harus berakar pada observasi nyata.** Dalam lingkar riset, "eksperimen" bisa berupa satu kali proses pelatihan; dalam sistem Agent, ia mengubah sistem yang sedang melayani pengguna, sehingga putusannya harus datang dari keadaan nyata lingkungan—apakah pengujian lolos, keadaan akhir basis data, apa yang dikembalikan tool—bukan dari penuturan model tentang perbuatannya sendiri. **Kedua, setiap eksperimen harus menjawab sekaligus "apa yang diperbaikinya" dan "apa yang dirusaknya".** Lingkar riset biasanya hanya mengejar naiknya metrik; sistem Agent harus pula membuktikan perilaku yang semula benar tidak menjadi rusak. Itulah alasan keberadaan himpunan batas dan himpunan retensi pada bagian sebelumnya.
+
+Tiga bab berikutnya masing-masing hanya membahas ruasnya sendiri dan tidak mengulang seluruh lingkar: Bab 3 tentang apa yang membuat sebuah usulan berdasar, Bab 7 tentang apa yang membuat bukti tepercaya, Bab 9 tentang apa yang membuat eksperimen dan umpan balik terus berjalan dalam jangka panjang tanpa melenceng.
+
+[^ch1-discovery-loop]: Discovery Loop diumumkan pada 5 Agustus 2026 oleh Jeff Dean, Sanjay Ghemawat, Quoc Le, dan Oriol Vinyals sebagai public benefit corporation yang bermisi mengotomatiskan pembelajaran mesin, sains, dan rekayasa; deskripsi publiknya adalah mengotomatiskan lingkar eksperimen yang utuh dan memparalelkan secara besar-besaran apa yang dahulu berjalan serial. Lihat https://techcrunch.com/2026/08/05/jeff-dean-and-other-top-ai-researchers-are-leaving-google-to-launch-their-own-startup/ . Hingga buku ini ditulis, belum ada hasil teknis yang dapat direproduksi yang dipublikasikan.
+
 ## Ringkasan Bab
 
 Bab ini telah membangun kerangka kerja yang mengutamakan praktik (practice-first framework) untuk memahami dan membangun AI Agent.
@@ -509,6 +548,10 @@ Bab ini telah membangun kerangka kerja yang mengutamakan praktik (practice-first
 **Harness Adalah Keunggulan Kompetitif**: Kemampuan model sedang mengalami komoditisasi; pembeda sesungguhnya adalah Harness—mekanisme batasan (constrain), verifikasi (verify), dan koreksi (correct) yang dibangun di sekitar context dan tool, yang memungkinkan penyelesaian tugas secara andal. Dalam sistem Agent kelas-produksi (production-grade), sebagian besar kode Harness ditujukan untuk pengamanan (safeguards) ini, bukan hanya untuk context dan tool semata.
 
 **Dari Workflow ke Autonomous Agent**: Terapkan prompt terlebih dahulu, lalu workflow, baru autonomous Agent terakhir—urutan tersebut adalah cara paling praktis untuk mengurangi perilaku tak terduga. Setiap orchestration pattern memiliki situasi tersendiri di mana ia cocok diterapkan; tidak ada pola tunggal yang terbaik di mana-mana.
+
+**Lima pola membentang sepanjang buku**: Pengusul-Peninjau, pengungkapan bertahap, hanya tambah, himpunan batas + himpunan retensi, serta diff minimal yang dapat dibalik—semuanya berbagi satu motif, yaitu memindahkan penilaian dari model itu sendiri ke mekanisme di luarnya. Bab-bab berikutnya memanggilnya dengan nama, bukan menurunkannya lagi.
+
+**Lingkar penemuan membentang di tiga bab**: bukti (atribusi kegagalan di Bab 7) → usulan (pembaruan pengetahuan di Bab 3) → eksperimen dan umpan balik (validasi dan rilis di Bab 9). Ketiga ruas memakai mekanisme yang memang berbeda; yang mereka bagi adalah posisi, bukan istilah. Dibanding lingkar riset murni, lingkar sistem Agent menambah dua batasan—eksperimen harus berakar pada observasi nyata, dan setiap putaran harus menjawab sekaligus apa yang diperbaiki dan apa yang dirusak.
 
 **Keamanan Adalah Isu Arsitektur**: Guardrail, intervensi human-in-the-loop, alignment (menjaga perilaku model agar tetap konsisten dengan niat manusia)—keamanan harus dirancang sedari baris kode pertama, bukan ditambalkan (patched on) sebelum peluncuran. Guardrail terbagi menjadi tiga lapis—konteks, eksekusi, dan data—yang diurutkan menurut seberapa sulit dilewati, dan pembahasan keamanan pada bab-bab berikutnya bergantung pada kerangka itu.
 

@@ -827,6 +827,8 @@ Dengan itu, lingkungan evaluasi menyelesaikan evolusi akhirnya: dari ruang ujian
 
 Bab ini berpusat pada satu pertanyaan: bagaimana kita tahu bahwa Agent benar-benar membaik? Lingkungan yang dapat direproduksi, dataset tahan leakage, LLM sebagai penilai, serta model selection dan iterasi berbasis hasil semuanya menentukan keandalan kesimpulan. Eksperimen nyata memberi empat peringatan tambahan: menggabungkan memori terstruktur dan RAG tidak menjamin sinergi; penghematan cache dan kompresi tidak dapat dijumlahkan; pilihan audio referensi mengubah makna skor multimodal; dan kemampuan Agent membaca UI beserta biaya token-nya bergantung pada cara Harness menyajikan input. Model selection harus membandingkan kurva kemampuan pada berbagai anggaran, bukan satu titik. Evaluasi produksi adalah validasi berkelanjutan yang tertanam dalam keputusan produk.
 
+Dilihat dari struktur buku secara keseluruhan, bab ini membangun ruas **bukti** dalam lingkar penemuan Bab 1: atribusi kegagalan menentukan apakah usulan berikutnya punya pijakan yang kukuh.
+
 Metodologi inti: Observe → Hypothesize → Experiment → Validate → New Understanding → New Hypothesis, mengubah Agent engineering dari "alkimia" yang didorong pengalaman menjadi rekayasa ilmiah yang didorong oleh data.
 
 Sistem evaluasi yang diperkenalkan dalam bab ini membentuk closed loop yang lengkap: **Evaluation Environment** menyediakan infrastruktur pengujian otomatis → **Evaluation Dataset** mendefinisikan test cases → **Automated Evaluation Methods** (LLM-as-a-Judge dan Rubric) menilai kinerja Agent → **Benchmark Analysis** mengungkapkan arah peningkatan → **System Improvements** memperbaiki masalah → Memperbarui lingkungan evaluasi dan dataset, memulai siklus iterasi baru.
