@@ -875,7 +875,7 @@ Agent Durum Çubuğu, attention tahsisini açıkça manipüle ederek bu sorunu e
 > Attention, durum çubuğu bilgisi üzerinde yoğun biçimde toplanır. Düşünme süreci, artık ham veriden istatistik çıkarmak yerine doğrudan zaten damıtılmış bilgiyi kullanır. Qwen3-0.6B gibi küçük bir model için, Kontrol Grubu A sıklıkla kısıtı ihlal edip aramaya devam ederken, Kontrol Grubu B kısıta istikrarlı biçimde uyar.
 >
 
-Deney 2-8, sezgi sağlayan küçük ölçekli nitel bir gösterimdir. “Önceden hesapla, doğrudan göz at” yaklaşımının ne kadar yararlı olduğunu ve sınırlarını ölçmek için yazar ve iş birlikçileri özel bir benchmark kullandı[^ch2-7] (bu yaklaşımın ortak adı **Context Distillation**'dır; Agent Durum Çubuğu onun en gündelik biçimidir). Sonuçlar:
+Deney 2-8, sezgi sağlayan küçük ölçekli nitel bir gösterimdir. “Önceden hesapla, doğrudan göz at” yaklaşımının ne kadar yararlı olduğunu ve sınırlarını ölçmek için yazar ve iş birlikçileri özel bir benchmark kullandı[^ch2-8] (bu yaklaşımın ortak adı **Context Distillation**'dır; Agent Durum Çubuğu onun en gündelik biçimidir). Sonuçlar:
 
 - Modele **önceden hesaplanmış bir durum çubuğu** verildiğinde, **zayıf modeller doğruluğu geri kazanır**. En zayıf modeller 40–54 yüzde puanı iyileşti; yerel bir 2B model bu görevlerde durum çubuğu olmayan öncü bir modele yetişti.
 - **Güçlü modeller zaten doğru yanıt verir; kazançları verimliliktir.** Aynı durum çubuğu sorgu başına düşünme miktarını, gecikmeyi ve maliyeti yaklaşık bir büyüklük mertebesi azaltır (düşünme token'larını %80–90 veya daha fazla düşürür).
@@ -890,7 +890,7 @@ Ancak önceden hesaplamayı doğru ve yanlış yapmak arasında büyük fark var
 
 **3. Durum çubuğu doğruluğunu birinci sınıf production metriği olarak izleyin.** Deney, **modelin durum çubuğuna neredeyse koşulsuz güvendiğini** gösterdi: “3 kez arandı” yazarsanız, kontrol etmeden veya yeniden hesaplamadan bunu üç olarak kabul eder. Bu, durum çubuğunu etkili kılar; ama içindeki bir hata da nihai yanıta **aynen** aktarılır. Bu nedenle daha önce değinilen **durum çubuğu zehirlenmesi** riski ciddiye alınmalıdır.
 
-[^ch2-7]: Li, Bojie and Noah Shi. *Distill, Don't Retrieve: Inference-Time Context Distillation for LLM Agent Reasoning.* 2026. https://01.me/research/context-distillation
+[^ch2-8]: Li, Bojie and Noah Shi. *Distill, Don't Retrieve: Inference-Time Context Distillation for LLM Agent Reasoning.* 2026. https://01.me/research/context-distillation
 
 ### Agent Durum Çubuğunun Bileşimi
 

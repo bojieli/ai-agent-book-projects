@@ -879,7 +879,7 @@ Az Ügynöki Állapotsáv ezt a problémát úgy kezeli, hogy szándékosan a ku
 > A figyelem erősen koncentrálódik az állapotsáv információira. Az érvelési folyamat közvetlenül a már desztillált információkat használja, többé nem számol statisztikákat a nyers adatokból. Egy olyan kis modellnél, mint a Qwen3-0.6B, az A kontrollcsoport gyakran megsérti a korlátot és folytatja a hívást, míg a B kontrollcsoport következetesen betartja a korlátot.
 >
 
-A 2-8. kísérlet egy kis léptékű, kvalitatív bemutató, amely szemlélteti az alapötletet. A szerző és munkatársai egy erre készült benchmarkkal[^ch2-7] mérték fel, mennyire hasznos az „előre kiszámít, majd közvetlenül kiolvas” megközelítés, és hol vannak a határai (ennek egységes neve **kontextusdesztilláció, Context Distillation**; az ügynöki állapotsáv ennek hétköznapi formája). Következtetések:
+A 2-8. kísérlet egy kis léptékű, kvalitatív bemutató, amely szemlélteti az alapötletet. A szerző és munkatársai egy erre készült benchmarkkal[^ch2-8] mérték fel, mennyire hasznos az „előre kiszámít, majd közvetlenül kiolvas” megközelítés, és hol vannak a határai (ennek egységes neve **kontextusdesztilláció, Context Distillation**; az ügynöki állapotsáv ennek hétköznapi formája). Következtetések:
 
 - Az **előre kiszámított állapotsáv** a **gyenge modellek pontosságát állítja helyre**. A leggyengébb modellek 40–54 százalékpontot javultak, egy helyi 2B modell pedig ezeken a feladatokon utolérte az állapotsáv nélküli élvonalbeli modellt.
 - **Az erős modellek eleve helyesen válaszolnak; náluk a nyereség a hatékonyság.** Ugyanaz az állapotsáv nagyjából egy nagyságrenddel csökkenti a kérésenkénti gondolkodást, késleltetést és költséget (a gondolkodási tokenek 80–90%-át vagy még többet megtakarítva).
@@ -894,7 +894,7 @@ Az „előre kiszámítás” azonban jól és rosszul is elvégezhető, a kül�
 
 **3. Az állapotsáv pontosságát elsődleges production metrikaként kövesse.** A kísérlet szerint **a modell szinte feltétel nélkül megbízik az állapotsávban**: ha az „3 hívást” ír, a modell ellenőrzés és újraszámítás nélkül elfogadja. Ez teszi hatékonnyá, de emiatt egy hiba **változatlanul** átkerül a végső válaszba. Ezért a korábban említett **állapotsáv-mérgezés** kockázatát komolyan kell venni.
 
-[^ch2-7]: Li, Bojie and Noah Shi. *Distill, Don't Retrieve: Inference-Time Context Distillation for LLM Agent Reasoning.* 2026. https://01.me/research/context-distillation
+[^ch2-8]: Li, Bojie and Noah Shi. *Distill, Don't Retrieve: Inference-Time Context Distillation for LLM Agent Reasoning.* 2026. https://01.me/research/context-distillation
 
 ### Az Ügynöki Állapotsáv Összetétele
 

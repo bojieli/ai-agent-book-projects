@@ -630,7 +630,9 @@ Smallville が動いた 2 日間の仮想時間の中で、これらの Agent �
 >
 ### Agentopia：10 年にわたる生活シミュレーション
 
-Stanford AI Town は Agent 社会に社会的行動が生まれることを示しましたが、シミュレーションは 2 日間だけでした。Agentopia（2026 年、復旦大学ほか）は、集合住宅・魔法学校・高校という 3 つの仮想世界で 100 個の Agent を 10 年間シミュレートしました。Agent は自律的に成長し、社会関係を築き、仕事と財務を管理します。
+Stanford AI Town は Agent 社会に社会的行動が生まれることを示しましたが、シミュレーションは 2 日間だけでした。Agentopia（2026 年、復旦大学ほか）[^agentopia-2026]は、集合住宅・魔法学校・高校という 3 つの仮想世界で 100 個の Agent を 10 年間シミュレートしました。Agent は自律的に成長し、社会関係を築き、仕事と財務を管理します。
+
+[^agentopia-2026]: Wang, X., Zheng, S., Wu, H., et al. *Agentopia: Long-Term Life Simulation and Learning in Agent Societies.* arXiv:2606.07513, 2026. コード：https://github.com/Neph0s/Agentopia
 
 Agentopia は週単位の Plan・Contact・Activity・Review ループ、実現可能性や会話を判定する環境モデル、ファイルベースの長期記憶、社会的地位・主観的満足・経済的利益を測る Life Reward を備えます。研究者は自身の過去から最も改善した上位 25% の軌跡を選び、拒否サンプリングで基盤モデルを微調整しました。尊敬・好感度はそれぞれ 24.2%・15.9%、下流の CoSER Test は 15.6% 改善し、シミュレーションで得た社会的知恵が他のタスクへ移転しました。
 

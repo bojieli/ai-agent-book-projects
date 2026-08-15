@@ -876,7 +876,7 @@ La barra de estado del Agente resuelve este problema manipulando explícitamente
 > La atención se concentra en gran medida en la información de la barra de estado, y el proceso de pensamiento utiliza directamente la información ya destilada en lugar de calcularla a partir de los datos originales. En modelos pequeños como Qwen3-0.6B, el grupo de control A infringe con frecuencia la restricción y sigue llamando, mientras que el grupo de control B la cumple de forma estable.
 >
 
-El experimento 2-8 es una demostración cualitativa a pequeña escala que aporta una intuición. Para cuantificar hasta qué punto resulta útil este enfoque de «calcular de antemano y consultar directamente» y dónde están sus límites, el autor y sus colaboradores utilizaron un benchmark específico[^ch2-7] (este enfoque tiene un nombre unificado: **destilación de contexto, Context Distillation**; la barra de estado del Agente es su forma más cotidiana). Conclusiones:
+El experimento 2-8 es una demostración cualitativa a pequeña escala que aporta una intuición. Para cuantificar hasta qué punto resulta útil este enfoque de «calcular de antemano y consultar directamente» y dónde están sus límites, el autor y sus colaboradores utilizaron un benchmark específico[^ch2-8] (este enfoque tiene un nombre unificado: **destilación de contexto, Context Distillation**; la barra de estado del Agente es su forma más cotidiana). Conclusiones:
 
 - Al proporcionar al modelo una **barra de estado calculada de antemano**, **los modelos débiles recuperan precisión**. Los más débiles mejoran entre 40 y 54 puntos porcentuales, y un modelo local 2B llega incluso a igualar, en estas tareas, a un modelo de vanguardia sin barra de estado.
 - **Los modelos potentes ya responden correctamente; lo que ganan es eficiencia**. La misma barra de estado reduce aproximadamente un orden de magnitud el razonamiento, la latencia y el coste de cada consulta (recorta entre un 80 y un 90 % o más los tokens de pensamiento).
@@ -891,7 +891,7 @@ Sin embargo, «calcular de antemano» puede hacerse bien o mal, y la diferencia 
 
 **Tres: supervise la precisión de la barra de estado como un indicador de producción de primera línea.** El experimento constató que **el modelo confía casi incondicionalmente en la barra de estado**: si dice «se realizaron 3 llamadas», lo acepta como cierto sin comprobarlo ni volver a calcularlo. Esto explica su eficacia, pero también implica que cualquier error se transmite **sin cambios** a la respuesta final. Por ello, el riesgo de **contaminación de la barra de estado** mencionado antes merece atención.
 
-[^ch2-7]: Li, Bojie and Noah Shi. *Distill, Don't Retrieve: Inference-Time Context Distillation for LLM Agent Reasoning.* 2026. https://01.me/research/context-distillation
+[^ch2-8]: Li, Bojie and Noah Shi. *Distill, Don't Retrieve: Inference-Time Context Distillation for LLM Agent Reasoning.* 2026. https://01.me/research/context-distillation
 
 ### Componentes de la barra de estado del Agente
 

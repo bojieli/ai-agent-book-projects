@@ -876,7 +876,7 @@ Thanh trạng thái Agent giải quyết vấn đề này bằng cách thao tác
 > Sự chú ý tập trung cao độ vào thông tin trên thanh trạng thái và quá trình suy nghĩ trực tiếp sử dụng thông tin đã được tinh chỉnh thay vì thống kê từ dữ liệu gốc. Đối với mô hình nhỏ như Qwen3-0.6B, nhóm điều khiển A thường vi phạm các ràng buộc và tiếp tục thực hiện cuộc gọi, trong khi nhóm điều khiển B có thể tuân thủ ổn định các ràng buộc.
 >
 
-Thí nghiệm 2-8 là một minh họa định tính quy mô nhỏ nhằm cung cấp trực giác. Để định lượng mức độ hữu ích và giới hạn của cách “tính sẵn rồi nhìn trực tiếp”, tác giả và các cộng sự dùng một benchmark chuyên biệt[^ch2-7] (cách này có tên chung là **Context Distillation**; thanh trạng thái Agent là dạng thường gặp nhất). Kết luận:
+Thí nghiệm 2-8 là một minh họa định tính quy mô nhỏ nhằm cung cấp trực giác. Để định lượng mức độ hữu ích và giới hạn của cách “tính sẵn rồi nhìn trực tiếp”, tác giả và các cộng sự dùng một benchmark chuyên biệt[^ch2-8] (cách này có tên chung là **Context Distillation**; thanh trạng thái Agent là dạng thường gặp nhất). Kết luận:
 
 - Khi có **thanh trạng thái được tính sẵn**, **mô hình yếu lấy lại độ chính xác**. Các mô hình yếu nhất tăng 40–54 điểm phần trăm, và một mô hình cục bộ 2B thậm chí ngang với mô hình tiên tiến không có thanh trạng thái trên loại tác vụ này.
 - **Mô hình mạnh vốn đã trả lời đúng; phần tiết kiệm là hiệu suất.** Cùng một thanh trạng thái làm giảm lượng suy luận, độ trễ và chi phí cho mỗi truy vấn khoảng một bậc độ lớn (cắt 80–90% hoặc hơn số token suy luận).
@@ -890,7 +890,7 @@ Tuy nhiên, tính sẵn đúng và sai tạo ra khác biệt rất lớn. Ba bà
 
 **3. Hãy theo dõi độ chính xác của thanh trạng thái như một chỉ số production hàng đầu.** Thí nghiệm cho thấy **mô hình gần như tin thanh trạng thái vô điều kiện**: nếu bạn viết “đã gọi 3 lần”, nó sẽ coi là ba mà không kiểm tra hay tính lại. Đây là lý do thanh trạng thái hiệu quả, nhưng cũng có nghĩa lỗi trong đó sẽ đi **nguyên trạng** vào câu trả lời cuối. Vì vậy, nguy cơ **đầu độc thanh trạng thái** nêu trước đó cần được xem xét nghiêm túc.
 
-[^ch2-7]: Li, Bojie and Noah Shi. *Distill, Don't Retrieve: Inference-Time Context Distillation for LLM Agent Reasoning.* 2026. https://01.me/research/context-distillation
+[^ch2-8]: Li, Bojie and Noah Shi. *Distill, Don't Retrieve: Inference-Time Context Distillation for LLM Agent Reasoning.* 2026. https://01.me/research/context-distillation
 
 Từ góc nhìn này, có thể thấy kỹ thuật Loop ở cuối tiến trình phát triển của Chương 1 (Chương 10 sẽ trình bày cùng hệ thống cộng tác đa Agent) thực chất là kỹ thuật hóa trục thứ ba—“tương tác”. Mỗi vòng lặp chỉ tạo ra tiến bộ thật khi bước xác minh ghi quan sát từ thế giới bên ngoài trở lại context, bổ sung thông tin mà mô hình không thể tự nghĩ ra; bỏ bước đó đi, vòng lặp chỉ sắp xếp lại thông tin cũ tại chỗ. Nhận định phổ biến trong ngành rằng “nút thắt của vòng lặp nằm ở bộ xác minh, không phải ở mô hình” cũng nói lên điều này: thước đo tiến bộ phải bám vào quan sát thực, nếu không vòng lặp sẽ âm thầm chạy rỗng.
 
