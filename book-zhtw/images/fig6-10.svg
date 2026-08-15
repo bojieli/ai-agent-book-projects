@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 430" width="780" height="430" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="30" y="60" width="140" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="100" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">使用者輸入</text>
+<text x="100" y="98" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;選哪個套餐?&quot;</text>
+<line x1="172" y1="78" x2="218" y2="78" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="220" y="55" width="250" height="130" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="232" y="73" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">並行思考</text>
+<rect x="235" y="80" width="220" height="42" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="345" y="95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">快思考 ~500ms（思考關閉）</text>
+<text x="345" y="110" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;價格不錯，建議購買&quot;</text>
+<rect x="235" y="130" width="220" height="42" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="345" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">慢思考 ~8s（思考開啟）</text>
+<text x="345" y="160" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;缺少國際漫遊，不太適合&quot;</text>
+<line x1="457" y1="95" x2="503" y2="95" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="457" y1="150" x2="503" y2="150" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="505" y="60" width="240" height="130" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="625" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">使用者體驗</text>
+<text x="625" y="102" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">0.5s: &quot;價格不錯，建議購買&quot;</text>
+<text x="625" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">8.0s: &quot;缺少國際漫遊，不適合&quot;</text>
+<text x="625" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">→ 自相矛盾！</text>
+<text x="625" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">→ 使用者失去信任</text>
+<rect x="30" y="210" width="720" height="90" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="390" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">兩大問題</text>
+<text x="200" y="258" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">問題一：簡單問題過度思考</text>
+<text x="200" y="278" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;今天星期幾&quot;→快思考已對→慢思考仍執行 8s</text>
+<text x="580" y="258" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">問題二：快慢不一致</text>
+<text x="580" y="278" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">獨立思考路徑，假設可能完全不同</text>
+<rect x="30" y="355" width="340" height="100" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="200" y="376" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">改進：慢思考作為&quot;軍師&quot;幕後指導</text>
+<text x="200" y="400" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">慢思考 → Agent 狀態列 → 快思考</text>
+<text x="200" y="420" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">不直接衝突，但溝通間接模糊</text>
+<rect x="410" y="355" width="340" height="100" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="580" y="376" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">仍有本質侷限</text>
+<text x="580" y="398" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">快思考可能誤解狀態列提示（&quot;確認價格&quot;→</text>
+<text x="580" y="416" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;向使用者確認&quot;而非&quot;重新計算&quot;）</text>
+<text x="580" y="434" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">無法實現&quot;邊想邊說&quot;的自然互動</text>
+</svg>

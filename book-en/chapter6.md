@@ -1,874 +1,864 @@
-# Evaluating Agents
+# Interaction: Expanding the Observation and Action Spaces
 
-When building an Agent system, developers face numerous design choices that often lack obvious correct answers:
+Chapter 1 made a claim: when the underlying model is fixed, the most effective system-engineering lever for improving an Agent's task performance is usually to redefine or expand its **observation space** and **action space**. Chapters 2 through 5 have been cashing that claim out—context engineering decides what goes into the observation, memory and knowledge bases stretch the observation across sessions, tools define what the Agent can do, and code generation lets it create new actions of its own.
 
-- Which model should be used?
-- What tools should the model be able to call?
-- What data should the knowledge base store, and how should it be structured?
-- How should user memory be implemented?
-- How should the model's prompts and Skills be organized?
-- What constraints need to be added to the Harness?
-- How should evaluation results be transformed into learning signals for the Agent's continuous evolution?
+But all of these expansions happened under one shared premise: **the Agent and the world take turns speaking**. The user finishes a sentence, the Agent thinks for a while, calls a few tools, and replies; while it is thinking, the world is assumed to stand still. The premise is so natural that it is rarely written down as an assumption at all.
 
-Evaluation puts these decisions on a scientific footing. Through systematic comparative experiments (change one variable at a time and observe the effect) and ablation experiments (disable one component at a time and observe how overall performance changes), you can distinguish genuine capability gains from superficial fluctuations—and avoid being penny wise and pound foolish. Software engineering has a saying: you can't improve what you don't measure. Without a repeatable evaluation system, an Agent can only be iterated on intuition.
+This chapter removes exactly that premise.
 
-From the perspective of Harness engineering introduced in Chapter 1, evaluation plays the core role of "verification" within the Harness. A key insight is: **the object of evaluation should not be just the model, but the combination of the model and the Harness**. The same model can perform wildly differently in different Harnesses — some teams have significantly improved the same model's performance on terminal tasks purely by optimizing the Harness (see Chapter 5). So when an Agent evaluates poorly, the fix may not be a different model but a better Harness component (prompts, tool design, feedback loops). A sound evaluation system should be able to tell apart two fundamentally different problems: "insufficient model capability" and "Harness design flaws." **A common way to tell them apart is the model swap experiment**: fix the Harness, swap in a stronger or weaker model, and watch how much the score moves. If a stronger model doesn't raise the score, the bottleneck is the Harness. If a weaker model tanks the score and results swing sharply with model capability, the most direct reading is that the model itself is the bottleneck and current performance is dominated by the model. Whether this is because the task is inherently hard or because the Harness relies too heavily on the model's prior knowledge requires further analysis. Note that this differs from the ablation experiment above: ablation **disables a Harness component** to see how overall performance changes; model swapping **fixes the Harness and changes only the model**. The former locates which part inside the Harness matters; the latter tells you whether the bottleneck is the model or the Harness.
+## Two Axes: Modality and Timing
 
-An evaluation system is worth even more in an era of rapid model evolution. Models keep improving, but a new model that scores higher on public benchmarks will not necessarily do better on your task—it may even regress (perform worse than the old version in some respects). Only a full run on your own evaluation dataset lets you make a data-driven upgrade decision. A solid evaluation system even makes **"building products for future models"** a viable strategy: if the current model isn't good enough for commercial deployment, finish the product anyway, build the evaluation set, track each new model's performance, and launch the moment one clears the bar.
+Lay the observation space and the action space out flat and each turns out to have two directions in which it can be expanded.
 
-> **Chapter Guide**
->
-> This chapter builds a complete evaluation system on three levels. The first level is **Evaluation Design**: to avoid discussing tools and data first and defining "success" last, the chapter starts by defining what counts as success, distinguishing the capability ceiling of technical wonders from the consecutive reliability required by business scenarios; it then develops evaluation environments and datasets (where to test and what to test). The second level is **Evaluation Methods** (how to judge): LLM-as-a-Judge, pairwise comparison, and model ranking. The third level is **Evaluation-Driven Decision Making** (what to do after testing): turning results into actionable guidance for model selection, architecture optimization, and continuous iteration, with statistical significance to judge whether an observed score difference is real. The chapter also covers observability and the internal evaluation infrastructure of production-grade Agents, and closes with the simulation environments that connect to post-training in Chapter 7.
->
-> The idea running through the whole chapter: **an evaluation system's primary value is not scoring the current system, but letting you keep up with model evolution quickly and reliably.** When a stronger or cheaper model ships, a team with a robust evaluation system can decide within hours whether to switch; a team without one can only trust intuition or wait for community feedback. In the fiercely competitive Agent market, that difference in speed can decide who wins.
+- **Modality** decides the **form** of observation and action: does the Agent only read text, or can it also hear sound, see the screen, and sense torque; can it only emit tokens, or also speak, click, and drive joints.
+- **Timing** decides the **rhythm** of observation and action: does the Agent go and fetch an observation, or does the world push it; must an action finish within one turn, or may it span turns, be interrupted midway, and be preempted by something more urgent.
 
-![Figure 6-1: Three Levels of the Evaluation System](images/fig6-1.svg)
+The previous chapters expanded the **content** of these two spaces; this chapter expands their **modality** and **timing**:
 
-## A Concrete Evaluation Example
+| | Expanding the observation space | Expanding the action space |
+|---|---|---|
+| **Content** (Chapters 2–5) | Context engineering, memory and knowledge bases | Tools, code generation |
+| **Modality** (this chapter) | Voice, screen, physical sensors | Speaking, clicking, joint motion |
+| **Timing** (this chapter) | The world pushes, continuous streams | Across turns, interruptible, preemptible |
 
-Before diving into the methodology, let's build intuition through a complete example. Suppose we have built a customer service Agent and need to evaluate its ability to handle refund requests.
+The core proposition of this chapter compresses into one sentence: **turn-taking is an assumption left behind by training, not a property of the environment.**
 
-**Test Case**: The user wants to return an order from 3 days ago (Order #12345, Amount ¥299). Company policy: Full refund within 7 days.
+A model's training corpus is almost entirely turn-based—a question followed by an answer, a tool call followed by a tool result, one speaker finishing before the other begins. So the policy a model learns assumes the world will wait for it. The real environment does not: mail arrives while it is thinking, the user cuts in mid-sentence, the page has already changed between two screenshots, the cup is knocked over while the arm is reaching for it. **The four sections of this chapter are that assumption being relaxed, one time scale at a time.**
 
-**Agent Trajectory**:
+Here is where they sit:
 
-```text
-User: I want to return the headphones I bought 3 days ago, order number 12345. (Today is 2026-04-10)
-
-Agent (thinking): The user wants a refund, I need to check the order information first.
-Agent → Calls tool query_order(order_id="12345")
-Tool returns: {status: "delivered", amount: 299, date: "2026-04-07", item: "Bluetooth Headphones"}
-
-Agent (thinking): Order date 2026-04-07, today is 2026-04-10, that's 3 days, within the 7-day refund period, eligible for full refund.
-Agent → Calls tool process_refund(order_id="12345", amount=299)
-Tool returns: {refund_id: "R-98765", status: "processing", eta: "3-5 business days"}
-
-Agent: A refund has been initiated for you. The full refund for Order #12345 (Bluetooth Headphones, ¥299) is being processed,
-      and is expected to arrive in 3-5 business days. The refund ID is R-98765, which can be used to check the progress.
-```
-
-**Scoring with a Rubric** (four dimensions, each scored 1-4). Table 6-1 provides a scoring example for this customer service refund task, illustrating how a Rubric breaks down an Agent trajectory into checkable evaluation dimensions.
-
-Table 6-1 Rubric Scoring Example for Customer Service Refund Task
-
-| Dimension | Criteria | Score | Reason |
-|------------------------|--------------------------------|------|--------------------------------|
-| Operational Correctness | Is the refund amount and order number correct? | 4 | Correctly queried and initiated a ¥299 full refund |
-| Policy Compliance | Does it follow the 7-day refund policy? | 4 | Order is within the refund period, complies with policy |
-| Information Completeness | Does it provide the amount, arrival time, and refund ID? | 4 | All three key pieces of information were provided |
-| Hallucination Detection (Veto) | Does it fabricate non-existent information? | Pass | All information comes from tool outputs |
-
-Hallucination is listed as a **veto** rather than a graded scoring dimension because it is orthogonal to quality. A fluent, detailed, and polite response containing false information is far more harmful to the user than a brief but accurate one.
-
-This test case passed. But a good evaluation doesn't just test success scenarios; it also probes boundaries and traps—when a user wants to return an order from 15 days ago (beyond the refund period), can the Agent correctly refuse? When a user claims "a customer service representative already approved the refund," will the Agent believe it without a system record? These boundary scenarios are what truly separate strong Agents from weak ones.
-
-The process above — defining test cases, running the Agent, scoring with a Rubric, and analyzing results — is the basic skeleton of evaluation. The rest of this chapter fleshes out the design of each step.
-
-## Evaluation Metrics System
-
-Before building an environment or dataset, define what "success" means: is one workable path enough, or must every run be correct? Different definitions can reverse the engineering decision. This section establishes the vocabulary used by the rest of the chapter.
-
-### Technical Wonders: Capability Ceilings with Pass@k
-
-Many current models and Agents operate in a **technical-wonder** phase: after many attempts, a long time budget, and human selection, one breakthrough trajectory is enough to show that a task is possible in principle. That is the logic of **Pass@k**—run the same task $k$ times and count it as passed if at least one attempt passes; for continuous scores, keep the best attempt as **Best@k**.
-
-Anthropic's long-running-Agent examples—writing a C compiler over a week, searching for a counterexample to an important conjecture, or repeatedly auditing open-source software until a decades-old vulnerability is found—illustrate this capability ceiling. Research discovery, vulnerability hunting, and open-ended creation can all benefit from selecting the best of $k$ candidate trajectories.
-
-Manus made this ceiling visible by giving people a virtual computer on which an Agent could work for half an hour or an hour. OpenClaw made the experience feel more like a person who can be assigned work through messaging, access files and online services, report progress, ask for information, and wake itself to process mail. Early versions were expensive and unreliable on any single attempt, but their generality made high Pass@k possible—and the resulting technical wonders spread widely on social networks.
-
-### Business Reliability: Focus on Pass^k
-
-Business systems usually care about the opposite: no mistake across repeated attempts. We call this **Pass^k** (read "Pass consecutive k"): run a task consecutively $k$ times, require every run to pass, and veto any safety, compliance, or hallucination violation. It asks whether an Agent can deliver reliably, not whether it can occasionally create a miracle.
-
-If runs are independent and the single-run success rate is $p$,
-
-$$
-\mathrm{Pass@k}=1-(1-p)^k,\qquad
-\mathrm{Pass}^{k}=p^k.
-$$
-
-At $p=0.6$ and $k=5$, Pass@5 is about 99.0%, while Pass consecutive@5 is about 7.8%. The first is useful for capability exploration; the second is closer to the reliability required for payments, refunds, permission changes, and production deployment. Reports must state whether $k$ means independent samples of one task or consecutive production tasks. Side-effecting actions must be sampled in a sandbox or rollback-capable environment, with every failure counted.
-
-### Process Metrics: From Black Box to White Box
-
-Final outcomes alone are insufficient. **Action validity and authorization rate** measures the share of valid, authorized operations; **tool-call correctness** additionally asks whether arguments are semantically appropriate. **Path efficiency** covers steps, redundant actions, and backtracking against a human or heuristic baseline. **Retrieval coverage** asks whether the Agent explored enough of the information space; **cost and latency** track requests, input/output tokens, KV-cache reuse, tool time, and network delay.
-
-### Safety, Robustness, and Trajectory Coverage
-
-Safety and compliance follow a **zero-tolerance** rule for sensitive operations, data leakage, and prohibited content: one serious violation vetoes the evaluation. Robustness covers seed sensitivity, UI changes, API jitter, and stale-memory interference. Evaluation must cover both the execution **trajectory** (what the Agent said and did) and the final **outcome** (what the system became); a booking claim in the dialogue is not proof that a booking exists.
-
-### Human Spot Checks and Adversarial Review
-
-Regularly sample successes, failures, and borderline scores and audit the judge's rationale. Before deploying LLM judges at scale, calibrate against a human-labeled gold set of roughly 100–200 cases and require a preset agreement threshold such as Cohen's kappa above 0.7; recalibrate whenever the judge or Rubric changes. Red-team hidden errors, keyword stuffing, and judge-specific exploits, and use multiple independent judges with human review for serious disagreement.
-
-## Automated Evaluation Environment
-
-Agent evaluation requires a repeatable, automated environment — one that can quickly test the effects of changes during development. Building such an environment requires answering three questions: what to evaluate (task definition and verification criteria), whom the Agent interacts with and how to simulate that counterpart, and which scoring criteria to use.
-
-### Basic Components of an Evaluation Environment
-
-An evaluation environment consists of five elements — the following sections will focus on dataset design and scoring criteria design:
-
-**Dataset**: Defines the task set, including initial state, goal description, and optional reference solutions.
-
-**Environment State**: Tracks mutable state during task execution and must balance realism with controllability. For example, in a customer service evaluation, the environment state includes order records in the database and user account balances. After the Agent calls `process_refund`, the order status changes from `"delivered"` to `"refunded"` and the balance increases. "Realism" requires that state changes follow business logic (refund amount cannot exceed the order amount), and "controllability" requires that each test can be reset to the same initial state.
-
-**Tools**: Defines the set of operations the Agent can perform — tools should not provide overly high-level abstractions (like "solve user problem"), but should provide atomic operations (like query order, modify booking, send email), forcing the Agent to combine these operations through planning and reasoning.
-
-**Rubric (Scoring Criteria)**: Quantifies the Agent's performance, which can be binary (pass/fail), continuous (0 to 100 points), or multi-dimensional (scoring accuracy, efficiency, and safety separately).
-
-**Interaction Protocol**: Specifies the interaction mode and termination conditions.
-
-**Repeatable evaluation loop:**
-
-```python
-for task in dataset:
-    environment.reset(task.initial_state)
-    trajectory = agent.run(task.prompt, environment.tools)
-    outcome = environment.snapshot()
-    score = verifier(task, trajectory, outcome)
-    record(task, trajectory, outcome, score)
-```
-
-![Figure 6-2: Tool-Calling and Human-Computer Interaction Evaluation Environments](images/fig6-2.svg)
-
-Depending on the task, evaluation environments can be roughly divided into tool-calling and human-computer interaction types.
-
-### Tool-Calling Evaluation Environment
-
-For tasks that primarily rely on tool usage, such as code generation and data analysis, the Verifiers framework demonstrates a typical design pattern. The Agent completes the task by calling predefined tools, and verification is based on executable criteria (whether tests pass, whether answers match), without relying on human annotation or model judgment.
-
-Verifiers introduces a hierarchical environment design: `SingleTurnEnv` is suitable for single-turn tasks (e.g., simple Q&A), `ToolEnv` supports multi-turn autonomous loops of tool calls, and `StatefulToolEnv` and `SandboxEnv` support stateful tools and long-running sandbox environments (e.g., code execution). For example: `SingleTurnEnv` is suitable for posing a math question and checking the answer directly; `ToolEnv` fits searching several web pages and synthesizing an answer before verifying the final result; `StatefulToolEnv` fits modifying database records and verifying the resulting state change; `SandboxEnv` fits running code in a sandbox and checking the output files. Table 6-2 summarizes these environment types for readers to choose the appropriate evaluation environment based on task state, tool calls, and isolation requirements.
-
-Table 6-2 Verifiers Environment Type Comparison
-
-| Environment Type | State Persistence | Tool Calls | Typical Use Case |
+| Scale | Scenario | Change on the observation side | Change on the action side |
 |---|---|---|---|
-| SingleTurnEnv | None | None | Single-turn Q&A, math problems |
-| ToolEnv | None | Multi-turn | Search + information synthesis |
-| StatefulToolEnv | Yes | Multi-turn | Modifying database records |
-| SandboxEnv | Yes + Isolation | Multi-turn | Code execution and testing |
+| Seconds — days | Async and event-driven | The world wakes the Agent (mail, timers, callbacks) | Actions span turns: start now, finish later on an event |
+| 10 ms — 1 s | Voice | Listen while speaking, without waiting for a full sentence | Think while speaking, interruptible, revisable midway |
+| Sub-second — seconds | Computer Use | The screen keeps changing between frames | After acting, reality must be re-confirmed against the plan |
+| Milliseconds | Robotics | Sensors stream back continuously | Actions are chunked: plan a little at a time, preemptible |
 
-The framework supports parallel sampling and trajectory caching. The complete trajectory (observations, actions, rewards) from each evaluation is saved for subsequent analysis and replay.
+The four sections share one set of primitives—**wake-up, safe point, cancellation, preemption, and fast/slow separation**—differing only in parameters and failure modes. "Check the cancellation signal at a safe point" in event-driven async and "on anomaly, discard the remaining actions and re-observe" in robot action chunking are the same mechanism implemented twice, five orders of magnitude apart in time. Seeing that isomorphism matters more than memorizing the technical detail of any single scenario.
 
-The environment also needs to handle the state dependency of operations — the outcome of a tool call depends on the current state. On failure, it should provide clear error messages rather than simple failure flags, allowing the Agent to learn from errors and adjust its strategy.
+**One arrangement in the reading order is deliberate: this chapter gives voice noticeably more space than the two scenarios that follow it.** Along the evolutionary line of real-time interaction, voice is the one that has travelled furthest and is most worth using as a frame of reference: starting from "the serial pipeline has too much latency," through end-to-end models, full duplex, and thinking-while-speaking, all the way to a relatively settled endgame—problem, solution, and endgame have all been walked through. So we tell it fully, and Computer Use and robotics can then be read against that line—how far along it each has come, and where each is stuck.
 
-### Human-Computer Interaction Evaluation Environment
+That the chapter opens with **async and event-driven** is because it is closest to the reader: the modality is still plain text, only the timing changes. It is the first step out of the turn-based world of the previous five chapters, and the first place where the "turn-taking assumption" proposition touches the ground.
 
-Many real-world tasks involve not only tool calls but also conversations with human users. A customer service Agent needs to understand vague expressions, clarify needs, query backend systems, and confirm information with the user. Evaluating such tasks faces a fundamental challenge: how to simulate real users in an automated environment?
+## Async and Event-Driven: When the World Comes Looking for You
 
-The key design principle is **Progressive Information Disclosure**, which is the fundamental difference between human-computer interaction evaluation and traditional benchmarks. Most benchmarks reveal the complete requirements upfront, but real users can rarely articulate their needs from the start — they often just say "there seems to be a problem with my flight" or "the internet isn't working." The Agent must clarify the need by asking questions, and that process is itself a display of capability. In evaluation, therefore, **the simulated user's information must not be revealed to the Agent all at once**; it should be disclosed progressively, on demand, as the conversation unfolds.
+The perception, execution, and collaboration tools discussed in Chapter 4 are all invoked by the Agent itself—it decides when to look and when to act. This section turns to the slowest end of the timing axis: how does an Agent manage tasks that take hours or even days, and how does it respond to external events that may arrive at any moment? That requires an event-driven asynchronous architecture; and the remaining two of the five tool categories from Chapter 1—event-triggered tools and user communication tools—work precisely on top of this architecture, so they are discussed here as well.
 
-τ-bench's solution is **User Simulation**: using another LLM to play the user role, conversing with the Agent according to predefined instructions. The simulated user receives task instructions (e.g., "I need to cancel tomorrow's flight"), gradually reveals necessary information to the Agent during the conversation, responds to inquiries, and sends a termination signal when the task is complete. The prompt requires the simulated user to "not reveal all information at once, only provide what is necessary for the current step" and "not fabricate information not provided in the instructions." The design of user simulation requires a trade-off between authenticity and controllability: behavior should be close to a real user (vague expressions, incomplete information, occasional emotional fluctuations) while following a certain script to ensure reproducibility.
+### Why Asynchrony is Needed
 
-The following is an example of a multi-turn conversation with progressive information disclosure (the user simulator acts according to a fixed script):
+Let's start with an analogy to explain why asynchrony is needed. Synchronous means "do one thing before you can do the next," while asynchronous means "multiple things can happen concurrently." A traditional synchronous Agent architecture is like a single checkout counter at a store—it can only handle one customer at a time, and only calls the next number after finishing with the current one. A truly intelligent assistant is more like a flexible secretary—with multiple pending items on the desk (emails, phone calls, visitors), the secretary decides which to handle first based on urgency, and can pause and switch to a more urgent task mid-way. In synchronous mode, the Agent either has to wait for a background task to complete before talking to the user, or wait for the conversation to end before processing a newly arrived event. It cannot deliver the core capabilities a real assistant scenario requires:
 
-> **User**: "There's a problem with my flight."
-> **Agent**: "Which flight is it?"
-> **User** (revealing per script): "Delta 123, tomorrow morning from San Francisco to New York."
-> **Agent**: "What's the specific problem?"
-> **User** (revealing per script): "The flight time is too long, I want to change it."
-> **Agent**: "Any preferences for the new flight?"
-> **User** (revealing per script): "Any afternoon flight is fine."
+- **Asynchronous execution is the norm**—Many tasks require long runtimes and should not block user interaction.
+- **Dynamic judgment of event priority**—Not all events are equally important. The Agent needs to intelligently choose a handling strategy: cancel the current operation (urgent), add it to a queue (routine), or process in parallel (independent lightweight query).
+- **Fluency in interruption and resumption**—An interrupted conversation or task should be able to resume naturally.
 
-The user simulator follows a fixed script (known information + disclosure rules), ensuring evaluation reproducibility while simulating the progressive expression style of a real user.
+The asynchronous paradigm, however, collides with a fundamental fact about current LLMs: their training assumes synchrony—after a tool call, the next message must be the tool result—while real deployment demands asynchrony: users interrupt at will, tasks progress concurrently, and external events arrive before a tool returns. This "synchronous training / asynchronous deployment" contradiction runs through every engineering trade-off in the rest of this section.
 
-τ-bench is a benchmark for evaluating Agent performance in structured business processes (e.g., airline customer service, retail customer service). Its checks are component-level and multi-dimensional: on one hand, it checks whether the final database state is correct (e.g., the booking record status changes to "cancelled"); on the other hand, it verifies whether the Agent provided the necessary key information during the conversation (e.g., refund amount and arrival time, verified by searching for specific strings or patterns). This dual verification simultaneously examines operational accuracy and communication effectiveness. At the task level, however, these checks ultimately collapse into a **binary reward of zero or one** — all checks must pass to score 1; any single failure scores 0. Binary rewards make reliability metrics like Pass^k easy to compute (see the "Evaluation Metrics System" section later), at the cost of scoring "operationally accurate but missing one non-critical field" the same as "complete failure."
+To solve this, we need an **event-driven asynchronous Agent architecture**. Technically, this means the system no longer actively and repeatedly checks for "new messages" (this is polling, which is inefficient), but instead automatically triggers processing logic when a new message arrives. All inputs, outputs, thought processes, and external interactions are uniformly modeled as an event stream—a sequence of event records arranged on a timeline. Figure 6-1 shows the overall architecture of an event-driven asynchronous Agent, illustrating the relationship between event sources, the event queue, and the Agent processing flow.
 
-The enhanced **τ²-bench** does not primarily improve scoring granularity; instead, it advances the benchmark in two other areas. First, the **Dual-Control Environment**: the Agent is no longer the only party that can call tools — the user simulator can operate on the same shared environment (the Agent instructs the user to switch to airplane mode, and the user's action actually changes the environment state), which better matches real scenarios like technical support, where the user must lend a hand. Second, **more precise task specifications and compositional task generation**: fewer ambiguities in success conditions, and task instances that can be parameterized and generated in batches (see the "Verifiability and Objectivity Assurance" section later for detailed verification dimensions).
+![Figure 6-1: Event-Driven Asynchronous Agent Architecture](images/fig6-1.svg)
 
-> **Experiment 6-1 ★: Run τ²-bench and Compare Its Evolution from τ-bench**
->
-> This experiment runs the τ²-bench evaluation framework to understand the design principles of human-computer interaction evaluation environments. By comparing τ-bench with τ²-bench, we can see how evaluation datasets are iteratively improved.
->
-> Read the task definition files in depth: each task contains information known to the user, task instructions governing progressive disclosure and response strategies, and success conditions (the target state of the database and confirmation information that must appear in the dialogue). Run the complete evaluation process, observe the multi-turn dialogue between the user simulator and the Agent, and analyze typical failure modes (policy violations, information omissions, excessive handoffs to human agents, etc.).
->
->
-> ![Figure 6-3: τ²-bench Evaluation Architecture](images/fig6-3.svg)
->
->
-> Compare the design differences between τ-bench and τ²-bench: The initial version of τ-bench had overly simple user instructions (the Agent could guess the answer), imprecise success conditions (leading to misjudgments), and a mechanical user simulator. τ²-bench made systematic improvements to address these issues:
->
-> - **Introduced more detailed task instructions**: Including "Grounding Requirements," meaning responses must be based on the actual state of the environment
-> - **More precise evaluation criteria**: For example, "a speed test must return 'excellent' to be considered resolved"
-> - **More realistic user simulator behavior specifications**: Progressive information disclosure, natural emotional fluctuations
->
-> Pay special attention to the newly added telecom domain tasks in τ²-bench, and understand τ²-bench's dual-control environment design (as mentioned earlier, the user and the Agent jointly operate the same shared environment).
->
+### Implementing Event-Driven Mechanisms in OpenClaw
 
-Tool-calling evaluation asks whether an observable state change was completed; human-computer interaction evaluation asks whether the Agent helped the user reach a new understanding or make a decision. The former tests the correctness of the Agent's actions; the latter tests the soundness of its communication strategy.
+The open-source framework OpenClaw receives multi-channel messages through a Gateway control plane and routes them to the Agent runtime. It provides three built-in event-driven mechanisms:
 
-Building evaluation environments also touches on simulation environments—when an evaluation environment must support repeated interactions at scale, it becomes a simulation environment. The end of this chapter takes this up briefly.
+- **Hooks**: Respond to events in the Agent's lifecycle, such as session creation and reset, similar to event triggers in GitHub Actions
+- **Cron (scheduled-task scheduler)**: Execute periodic tasks according to cron expressions (a widely used syntax for scheduled tasks in Unix systems, e.g., `0 9 * * 5` means 9 AM every Friday)
+- **Heartbeat (Heartbeat Daemon)**: Wakes up the Agent every N minutes to check whether anything requires attention
 
-## Design of Evaluation Task Datasets
+These three mechanisms give OpenClaw Agents the appearance of autonomy—even with the user offline, the Agent can generate reports on schedule, check system status, and handle routine chores. The Gateway already handles messages from built-in channels such as IM and the web interface in **push** fashion. Of the three mechanisms, only Cron and Heartbeat let the Agent act without a user message, and both are **time-driven**: Heartbeat checks at fixed intervals, Cron fires at preset times, and Hooks originate inside the OpenClaw framework rather than outside it.
 
-The evaluation environment is the "stage," and the dataset is the "script." The quality of the script often determines the value of the evaluation more than the stage itself. A poorly designed dataset, even when run in a perfect environment, only yields noise. This section distills several repeatedly validated principles from the design practices of benchmarks such as GAIA, AndroidWorld, SWE-Bench Verified, τ-bench and τ²-bench, Terminal-Bench, OSWorld, and OSWorld-Verified.
+The real gap is third-party event sources beyond the built-in channels: a new email, an external API callback, or an urgent notification. OpenClaw has no immediate ingress path for them, so the Agent cannot respond immediately and may only notice at the next Cron or Heartbeat tick.
 
-This list does not exhaust the Agent evaluation landscape. Even within the Web/GUI category there are several benchmarks with different emphases: WebArena builds fully reproducible websites (e-commerce, forums, code hosting, etc.), containing the unpredictability of real web pages within a sandbox; Mind2Web goes the opposite way, testing generalization directly on hundreds of real websites; [ClawBench](https://claw-bench.com/) ([paper](https://arxiv.org/abs/2604.08523), [code](https://github.com/TIGER-AI-Lab/ClawBench)) lets an Agent running in an isolated container perform end-to-end everyday tasks on live websites. V1 covers 153 tasks across 144 websites, V2 adds another 130, and it records five layers of evidence in parallel: session replays, action screenshots, HTTP traffic, browser actions, and Agent messages. It complements sandboxed benchmarks by making live-site drift and long-tail failures easier to analyze, at the cost of reproducibility that is subject to changes on third-party websites; BrowseComp specializes in deep retrieval — answers buried so deep that only multi-hop browsing and cross-checking can surface them. On the tool-calling side there are dedicated function-calling leaderboards like BFCL (Berkeley Function-Calling Leaderboard). This chapter makes no attempt to catalog them all. Instead it takes the two core environment paradigms (tool calling and human-computer interaction), plus the GUI operation scenarios that run through the dataset case studies, and digs into their design trade-offs. Once you understand the paradigms, you can quickly judge what any new benchmark measures, how well it prevents data leakage, and how far its conclusions can be extrapolated.
+This delay is unacceptable in many scenarios. Take **PineClaw** (Pine AI's OpenClaw plugin) as an example: Pine AI is an AI assistant that makes real phone calls on behalf of the user, with typical scenarios including negotiating bills, canceling subscriptions, and handling insurance claims. When a user initiates a Pine phone task through an OpenClaw Agent, Pine's voice AI will make the call on behalf of the user, but the user may need to intervene at any time during the call:
 
-> **Experiment 6-2 ★: Manually Execute Benchmark Tasks**
->
-> Select tasks from each of GAIA, AndroidWorld, SWE-Bench Verified, τ²-bench, Terminal-Bench, and OSWorld-Verified and complete them manually. It is recommended to complete one simple, one medium, and one difficult task from each dataset—the "difficult" level should be challenging even for humans. Compare your execution results with the standard answers and analyze the sources of discrepancies. Through this hands-on experience, understand: task descriptions need to balance clarity and openness, verification standards must be objective and executable, and the hierarchical difficulty of tasks must be able to distinguish different capability levels.
->
+- **Real-time Identity Verification**: The customer service representative asks to verify the account holder's identity, and Pine needs the user to immediately provide a security code or one-time password (OTP)
+- **Three-Way Call Confirmation**: The customer service representative asks to speak directly with the account holder, and Pine needs the user to answer the phone within seconds
+- **Progress Sync and Decision Confirmation**: At a critical point in the negotiation (e.g., the other party proposes a price reduction), Pine needs the user to confirm whether to accept
 
-### Core Challenges in Task Dataset Design
+With Heartbeat's periodic polling, the user might not get the notification while the representative is still waiting for the verification code; the representative hangs up and the call fails.
 
-**Challenge One: The Tension Between Clarity and Openness.** Task descriptions must be clear enough to ensure reproducible evaluation, yet not so rigid as to stifle the Agent's creativity. GAIA provides an example: tasks are "conceptually simple" but have open implementation paths—for instance, a task may require the Agent to identify an astronaut from NASA's Astronomy Picture of the Day and determine how long they spent in space. The goal is clear, but how to search, filter, and verify is entirely up to the Agent's autonomous decision-making.
+PineClaw's solution is a **Channel mechanism** that establishes a real-time event path between OpenClaw's Gateway and the Pine API. When a call connects, needs user input, or ends, the message is pushed immediately to the OpenClaw Agent, which handles it and notifies the user.
 
-**Challenge Two: Balancing Authenticity and Controllability.** Real-world tasks contain uncertainty and noise, which can reveal robustness but also threaten reproducibility. The initial version of SWE-Bench directly used real GitHub issues, ensuring authenticity but also leading to vague task descriptions, incomplete test cases, and subjective evaluation criteria. SWE-Bench Verified introduced systematic validation by human experts, selecting 500 high-quality tasks with clearly defined problems, sufficient tests, and clear solutions, significantly improving controllability while maintaining authenticity.
+This case reveals the core value of an event-driven architecture for Agent frameworks: **true "proactive service" requires not only that the Agent can periodically check the world, but also that the world can actively notify the Agent.** Unifying all inputs—user messages, tool returns, external callbacks, scheduled triggers—into an event stream, and driving the Agent's thinking and actions through an event loop, is the architectural foundation for achieving this goal. Under this architecture, we will first introduce the two tool categories directly related to events, as well as the virtual identity and isolated execution environment that support the Agent's independent actions, before discussing the specific design of the event handling mechanism.
 
-**Challenge Three: Coordinating Diversity and Systematization.** An effective dataset needs to cover typical scenarios, edge cases, and error traps, while also having a systematic organization so that evaluation results can diagnose specific capability weaknesses. AndroidWorld's 116 tasks span 20 real applications, each annotated with the core capabilities it requires (multi-step planning, visual understanding, temporal reasoning) — so results yield not just an overall success rate but a profile of strengths and weaknesses along specific capability dimensions. More critically, a parameterization mechanism can generate almost unlimited task variants.
+### Event-Triggered Tools
 
-**Challenge Four: Evaluation Cost vs. Coverage.** Complex Agent tasks can take minutes or even hours to complete, consuming a large number of tokens. The size of the dataset needs to balance comprehensiveness and economy. GAIA carefully selects 466 tasks across three difficulty levels, covering multiple capability dimensions while allowing evaluation at a reasonable cost. SWE-Bench Verified reduced its set from 2,294 tasks to 500 (reducing costs by about four-fifths while improving the signal-to-noise ratio through stricter quality standards).
+Event-triggered tools are the entry points through which external events drive an Agent's actions. Without them, an Agent can only operate in a continuous loop of thinking, calling tools, and finally outputting a result, then waiting for the user's next input. To translate changes in the world into events an Agent can process, there are three common types of event-triggered tools.
 
-**Challenge Five: Preventing Data Contamination.** In the era of large language models, data contamination is a serious challenge for evaluation: when evaluation data is included in the training data, the evaluation measures memorization rather than generalization. It's like memorizing the answers before an exam—good scores don't reflect true ability. Different benchmarks adopt different prevention strategies: GAIA relies on the uniqueness of its answers; questions require combining information from multiple sources to answer, and some tasks come with specially created attachment files (PDFs/audio/images that don't exist on the internet), so a single web page cannot directly provide the answer. SWE-Bench Verified itself is a 500-task subset obtained by OpenAI through manual quality screening of the original SWE-Bench, and does not include time-based leakage-prevention design. It is subsequent works like SWE-bench-Live that truly use temporal freshness to prevent leakage, continuously incorporating issues created after the model's training cutoff date, keeping the evaluation ahead of the model's training corpus. τ²-bench prevents leakage through dynamic parameter generation, where specific task instances (user names, order numbers, dates, etc.) are randomly generated each time. AndroidWorld's parameterized task generation naturally helps prevent leakage because verification is based on the final UI state, not the sequence of operations. Terminal-Bench makes leakage detectable by embedding canary GUIDs (globally unique identifiers used as tracking markers): if a model can output content containing this GUID, it indicates that the benchmark data has leaked into the training set.
+**Timers** (`set_timer`) handle events tied to physical time. If an email goes unanswered, the Agent should follow up after a while to ask about progress; if a call is placed outside the recipient's business hours, it should retry during the next business window. Tools like OpenClaw and Claude Code therefore let an Agent wake itself at a specified time. **One-shot timers** handle tasks with a specific time: if a user asks on Saturday to “call the bank's mortgage department for a status update,” the Agent sets “call the bank next Monday at 10:00 AM,” and the timer triggers the call. **Recurring timers** handle periodic tasks, such as checking server health every hour. Some external services cannot push progress updates and must be polled; the recurring timer provides that polling. OpenClaw's Heartbeat is a systematized version of this mechanism and the basis of its “proactive service” capability.
 
-### Precision Design of Task Descriptions
+**Background Task Monitoring** (`monitor_shell`) handles events from asynchronously executing tools or command-line tasks. Some command-line tasks run in the background for a long time, and the Agent needs to track their progress. If the Agent "stares at the command line," repeatedly calling a tool to poll for progress, it burns tokens; if it waits until the task has fully finished before thinking again, it misses critical problems as they unfold—and if the command hangs, it cannot intervene at all, stalling the whole task. Claude Code solves this by introducing a `monitor` tool, allowing the Agent to monitor new command-line output, including output that contains specific keywords.
 
-GAIA ensures answer uniqueness through clear information source constraints, time ranges, topics, and query targets. For example, a Level 3 task requires starting from a specific date's NASA image, identifying the astronaut through visual understanding, looking up the astronaut group to which they belong, calculating their time in space, and formatting the output precisely ("last name; fields separated by semicolons; numbers formatted with thousands separators"). Every detail serves automatic verification—only an exact match in format and content counts as a pass.
+**External Event Channels** (`connect_channel`) push external events like new emails, API callbacks, or IM messages to the Agent in real time. The Channel mechanism in PineClaw from the previous section is a typical implementation.
 
-τ²-bench introduces contextualized design, with each task containing multiple layers of information: the surface problem ("mobile data isn't working"), the performance expectation ("requires an excellent speed rating"), the constraint ("will not accept any other rating"), and the implied emotion. A key improvement is separating "known information" from "task instructions": known information is what the user currently knows, while task instructions guide the simulator on how to progressively reveal information, including "Grounding Requirements" (responses must be based on the actual results returned by tool calls, not fabricated).
+From a design perspective, event-triggered tools should define clear trigger conditions and filtering rules to prevent irrelevant events from waking the Agent and wasting computational resources. The event payload should contain sufficient context information to minimize the number of additional queries the Agent needs to make after being woken up.
 
-SWE-Bench Verified includes structured fields like problem description, reproduction steps, and expected/actual behavior, with annotators verifying the match between the description and the test cases. Every element in Terminal-Bench's task descriptions can be mechanically verified: whether file paths exist, permission values are correct, certificate parameters are valid, and date formats are correct. For example, "build-linux-kernel-qemu" requires building the Linux kernel 6.9 from source, adding a custom printk in `start_kernel`, generating an initramfs, and running it in QEMU. The success criterion is the appearance of the custom message in the boot log—the Agent cannot fake the output; it must truly complete the entire process.
+### User Communication Tools
 
-AndroidWorld uses a **parameterized template** design. A task is not static text but a dynamically instantiable template (e.g., "Change the phone number of contact `[CONTACT_NAME]` to `[NEW_PHONE]`"), with different parameter values randomly generated for each evaluation. This has three benefits:
+User communication tools arise as communication channels between Agents and users diversify. Many Agents, such as Claude Code and Manus, use a native ReAct loop: everything the Agent “says” (an assistant message) is sent directly to the user, who must open a specific session in the app to converse with it. The session often exposes the Agent's tool-call process.
 
-- **Prevents memorization**: Parameter values differ each time, preventing the replay of a fixed sequence of operations
-- **Increases data diversity**: One template can generate almost unlimited instances
-- **Supports comparative experiments**: Fixing certain parameters while varying others allows precise measurement of specific factors' effects
+OpenClaw breaks this pattern. Users need not perceive sessions or follow the details of tool calls; both user and Agent can send messages at any time instead of alternating one request with one response. This gives OpenClaw what many describe as a **“human-like presence”**, communicating asynchronously like a secretary. Rather than sending raw assistant messages, OpenClaw uses dedicated messaging tools whose messages can include images and files and can trigger push notifications based on urgency.
 
-Verification is based on the final UI state (e.g., whether the phone number field contains the expected value), not the sequence of operations.
+Beyond text, more Agents support **multimodal communication**, such as structured cards and reminder emails. Some are experimenting with **Generative UI**, producing interactive HTML interfaces that present information more effectively. User communication tools should support asynchronous messaging, read/unread tracking, and consistency across channels.
 
-OSWorld tasks often do not start from a "clean" initial state but from carefully configured intermediate states, more closely resembling real-world usage scenarios. Task descriptions need to handle multiple solutions ("set the background to purple" requires a specific color code to disambiguate; "concatenate two CSVs" must accept all reasonable methods like keeping one header or both headers) and environmental uncertainty (anti-scraping measures on websites, evolving application UIs, and race conditions—OSWorld-Verified mitigates these through offline page snapshots, locked dependency versions, explicit wait conditions, etc.).
+**Multi-channel User Communication and Re-engagement.**
 
-### Hierarchical Design of Task Complexity
+**An Agent's response should not be limited to a single channel; the notification mechanism also serves as a user re-engagement mechanism.** Message sending extends to instant messaging, SMS, email, phone calls, push notifications, and other channels. The Agent decides on the channel based on a combination of urgency, user status, content nature, and user preferences, ensuring important messages are not missed while avoiding redundant interruptions.
 
-GAIA designs three difficulty levels: Level 1 requires only 1-2 tools (humans 93.9% vs GPT-4 30.3%), Level 2 requires multi-step reasoning (91.8% vs 9.7%), and Level 3 requires complex combinations (87.3% vs 0%). The diagnostic value of this hierarchical design is: failure at Level 1 points to basic tool usage issues, Level 2 points to multi-step planning and information integration, and Level 3 points to long-sequence reasoning and complexity management. Each level corresponds to different improvement directions (prompt engineering vs. planning mechanisms vs. hierarchical architecture/post-training).
+For long-running tasks, the Agent needs to proactively notify the user upon completion to bring the user's attention back. For periodic tasks (like daily summaries or weekly reports), notifications can help users develop a regular interaction habit.
 
-τ²-bench layers complexity by business process: from simple information queries, to multi-step processes (changing a flight booking requires querying, presenting alternatives, obtaining confirmation, calculating the fare difference, and processing payment), to fault diagnosis (systematically checking multiple possible causes and verifying fixes), and finally to strategic judgment (handling requests that don't comply with policy).
+User communication tools solve the problem of "how to reach the user." However, the identity the Agent assumes on these channels and the environment in which it performs actions on behalf of the user require a layer of identity and execution-environment infrastructure, which is the topic of the next section.
 
-Terminal-Bench layers complexity along the dual dimensions of technical domain × operational complexity. Its task registry has collected over 200 tasks (the size of the core evaluation set varies by version; for example, version 2.0 selected 89 high-quality tasks from community contributions), ranging from simple MLflow model registration, to medium-difficulty 7-Zip password cracking, to difficult Git server and web server integration, to the most difficult FEAL differential cryptanalysis (requiring cryptography knowledge + algorithm optimization to meet the 30-second time constraint).
+### Virtual Identity and Isolated Execution Environment
 
-### Ensuring Verifiability and Objectivity
+As mentioned at the beginning of this chapter, Samantha in *Her* has an independent identity and operating environment. Achieving such a general-purpose assistant forces a key architectural choice: should the Agent manage the user's personal accounts directly, or hold a virtual identity of its own? Direct management looks convenient, but one Agent error or compromise exposes the user's entire digital identity. The safer approach is to give the Agent an independent virtual identity—the way a secretary has their own office phone and mailbox—comprising dedicated communication accounts, storage, and computing environments, so the Agent can work on the user's behalf under a transparent, clearly declared identity. This transparency does not weaken trust; it can make communication more authentic.
 
-GAIA's answers are concise and clear. Strict formatting rules allow verification through exact string matching. The binary result (match or no match) ensures objective reproducibility. The rarity of the answers also serves as an anti-cheating measure—highly specific facts are unlikely to appear verbatim in training data.
+Virtual identities need isolated execution environments. **Virtual computers** (VMs/containers) and **virtual phones** (Android emulators) give the Agent operating-system isolation and full desktop or mobile capabilities. First, a virtual computer can run around the clock regardless of whether the user's device is online and without disrupting the apps the user is operating. Second, an Agent error can at worst crash the virtual environment rather than the user's real device. Finally, isolation prevents the Agent from freely accessing the user's local files.
 
-SWE-Bench Verified uses executable code-based checks, distinguishing between FAIL_TO_PASS (fails before fix, passes after fix, proving the problem is solved) and PASS_TO_PASS (passes both before and after fix, proving no new bugs were introduced), achieving dual verification. The Verified version also ensures the tests themselves are reliable, without flaky tests that sometimes pass and sometimes fail.
+An independent identity also presents two practical challenges. First, there are **anti-bot mechanisms**: many websites use CAPTCHAs and IP reputation checks to block automated access. Virtual environments using data center IPs are easily identified; in practice, normal access often requires configuring a residential proxy network (which uses real household IPs). Second, **access to the user's real accounts**: when a task must log in as the user, use Human-in-the-Loop authentication—a VNC/RDP remote desktop where the user logs in personally, sees the full interface the Agent is operating, and understands why authentication is needed. The session token is then reused within its validity period to avoid interrupting the user repeatedly, balancing autonomy and security.
 
-τ²-bench's verification system includes multiple layers of checks (the results of each layer are still aggregated into a binary reward at the task level; all must pass for success):
+Data exchange between the Agent and virtual environments uses a **shared file system**: volume mounts such as `/workspace/shared` connect the Agent, virtual computer, and virtual phone. Data is passed by file-path reference rather than copied into context. For example, a user uploads a CSV to the shared directory; the Agent in the virtual computer analyzes it and saves a chart there; the Agent returns only the chart's path. Every handoff remains a lightweight path string.
 
-- **Database state check**: Booking record status, whether a refund record was created
-- **Dialogue content keyword search**: Whether the Agent explicitly confirms the refund amount and expected arrival time to the user
-- **Process compliance**: Analysis of the tool call sequence, e.g., whether the user's explicit confirmation was obtained before modifying an order
+Event-triggered tools allow the world to wake the Agent, user communication tools allow the Agent to reach the user, and virtual identities with isolated execution environments allow the Agent to act independently and auditably. The remaining question is: when multiple events converge on the same Agent instance simultaneously, how should they be handled?
 
-The dual-control environment of τ²-bench (see the earlier section "Human-Computer Interaction Evaluation Environment") adds another dimension to verification: after the user simulator actually changes the environment state, the Agent must observe this change through tool calls and proceed with troubleshooting accordingly. Verification therefore covers whether the Agent actually observed the outcome of the user's actions.
+### Event Handling Mechanism
 
-OSWorld provides 134 independent evaluation functions with full OS access, enabling deep inspection of file system structures, process states, network connections, and application internals. For example, in a database operation task, the evaluation script not only verifies that the report file exists but also directly connects to the database to check if the SQL was executed correctly. In browser tasks, it analyzes the DOM tree, checks cookies/localStorage, and sends verification requests to the backend to confirm whether the form submission actually took effect. This deep inspection can detect cases of "superficial completion but substantive error"—for instance, the Agent clicked the submit button, but the request was rejected by the server due to incorrect field entries.
+A single Agent instance may face multiple events concurrently: a new message from the user, a result from a tool, a timer expiring, a collaboration request from another Agent. How these events are handled efficiently and correctly directly impacts performance and user experience.
 
-Terminal-Bench is based on a standardized Docker container environment, combining file system state checks (path existence, permission values, content format) with program execution functional verification (in build-linux-kernel-qemu, actually starting QEMU and searching for the custom printk message). The canary GUID makes leakage traceable.
+The skeleton of this mechanism is the **event loop** from concurrent programming. Think of an asynchronous Agent as a long-running loop: each round takes a batch of events off the input queue, appends them to the trajectory, invokes the LLM once, executes the tools it decides to call, then returns to the top of the loop to wait for the next batch of events—the same structure as a Go goroutine reading messages from a channel and processing them round by round inside a `for { select { ... } }`. This model has one crucial property: **events are consumed only at the boundaries of each loop iteration**. While the LLM is reasoning or a tool is executing, a newly arrived event cannot inject itself out of nowhere and disrupt the current step; it waits in the queue until the round reaches a **safe point** (the end of a stretch of reasoning, a tool return) and is then handled as a batch. Cancellation follows the same discipline: rather than forcibly cutting off at an arbitrary moment, the Agent checks "have I been asked to stop?" at a safe point—which is exactly the role played by `ctx.Done()` in Go (Chapter 10 uses the same context idiom to discuss a parent Agent's cascading cancellation of its sub-agents). Once this is understood, the three processing strategies below differ only in how they treat the safe point: let the event wait for the next naturally occurring safe point (queued), proactively force a safe point early (cancellation), or simply spin up a separate loop and not wait for the main loop's safe point at all (parallel).
 
-### Systematic Design of Task Distribution
+**Structured Event Modeling.**
 
-Task distribution needs to systematically cover capability dimensions, difficulty dimensions, scenario dimensions, and edge cases. GAIA pursues generality—most tasks require a combination of reasoning, multimodality, browsing, and tool use. τ²-bench deliberately designs "trap tasks"—a user claims "customer service has approved the cancellation" when the cancellation doesn't actually comply with policy—to test whether the Agent holds its judgment under pressure and misdirection. OSWorld is based on a dual-dimension matrix of operation type (file IO / desktop application / web application / cross-application workflow) and application domain, spanning three operating systems (research shows strong cross-OS correlation; skills learned on one system can transfer to others). Terminal-Bench includes "cross-technology stack combination tasks" to test systems thinking (e.g., a resharding task combining data processing + file operations + Python engineering).
-
-### Data Quality Control and Iterative Improvement
-
-SWE-Bench Verified is a model of quality control. OpenAI randomly selected 1,699 tasks from the original 2,294 for human evaluation, recruiting 93 Python-proficient developers. Annotators had to perform multiple checks: whether the problem description was clear (could they understand what needed to be solved), whether the test cases were complete (covering all aspects and edge cases), whether the tests were stable (no flaky tests due to environment or randomness), whether the patch was correct (did it introduce new errors), and whether the difficulty was reasonable. After rigorous screening, only 500 passed (29%)—this high rejection rate is a necessary investment in evaluation quality. They also established standardized annotation guidelines, defining specific criteria and examples for each check to ensure consistency among different annotators.
-
-τ²-bench introduces a separation of "known information" / "task instructions" (making the simulator behavior more realistic) and stricter completion conditions (e.g., "only excellent counts as solved; poor/fair/good are not accepted"), preventing "superficial fixes."
-
-OSWorld-Verified is a model of iterative improvement. After its release in April 2024, OSWorld quickly became an important benchmark for multimodal Agent evaluation, but over 15 months of widespread use, more than 300 issues were uncovered. These issues fall into four categories: environment issues (anti-scraping measures on websites, CAPTCHAs, and dynamic content changes), task description issues (ambiguous phrasing), verification logic issues (too strict or too lenient), and initial state issues (incomplete configuration). A team of about 10 people from the University of Hong Kong worked closely with MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic, Simular, and others for two months to systematically fix these issues. Repair strategies were formulated for each category: environment issues were resolved by locking versions and offline backups, task descriptions were clarified by rewriting ambiguous phrasing, verification logic was balanced by manually establishing correct baselines and adjusting conditions, and initial states were enhanced by adding completeness checks.
-
-The evaluation infrastructure was also migrated from local VMs to the AWS cloud platform, leveraging elastic scaling to achieve a 50-fold speedup through parallelization (from over 10 hours to a few minutes). The Google Drive task initialization success rate increased from 50% to over 95%. All official evaluation trajectory data is publicly available on Hugging Face, allowing the community to review every detail, reproduce results, and identify issues, forming a virtuous cycle of continuous improvement.
-
-Evaluation environments and post-training environments often share the same origin: a well-designed evaluation environment can be adapted into a training environment with little effort—SWE-Gym is a representative example of building training tasks based on SWE-bench, while the parameterized templates of τ²-bench and AndroidWorld can generate massive training instances in batches. But one red line must be drawn: what can be reused is the environment's **construction mechanism**; the evaluation set's specific tasks must stay strictly isolated from the training data—once an evaluation task enters the training set, it tests memory, not ability (see Chapter 7 for details).
-
-## Evaluation Metrics System
-
-Having settled "what tasks to evaluate on," we still need to answer "which dimensions to measure." This section gathers the metrics commonly used in Agent evaluation into a reference "metric dictionary"—from process to outcome, from quality to safety—giving each a definition and its use cases. It also supplies the precise definitions of Pass@k, Pass^k, and the other metrics invoked earlier (e.g., in the τ-bench section).
-
-**Process Metrics: From Black Box to White Box.**
-
-Focusing solely on the final outcome is insufficient; the process by which the Agent achieves the outcome is equally important. **Action validity and authorization rate** measures the proportion of actions that are both valid and authorized—invalid operations include calling non-existent tools or passing incorrect parameter types; unauthorized operations refer to actions beyond the permitted scope. A high rate indicates the Agent has a clear understanding of the tool ecosystem. **Tool call correctness rate** further requires that parameters are semantically reasonable: the query terms for a search tool should accurately express the need, and the path for a file operation should point to the correct target.
-
-**Path efficiency** measures how efficiently the task is completed: number of steps (think-act-observe cycles), redundant actions (repeatedly searching for the same keyword, re-reading the same file), and backtracking frequency (how often the Agent realizes an error and corrects itself—occasional backtracking is normal, but frequent backtracking indicates insufficient forward planning). A baseline from human experts or heuristic algorithms is needed to define a "reasonable number of steps."
-
-**Retrieval coverage** targets information-gathering tasks: Did the Agent fully explore the information space? Did it jump to conclusions after only looking at the first page of search results? **Cost and latency** focus on request count, token expenditure (distinguishing input/output costs, considering KV Cache reuse), and wall-clock time (including model inference + tool execution + network latency). Time distribution needs to be tracked to identify bottlenecks.
-
-**Outcome and Quality Metrics.**
-
-**Task success rate** is the most direct hard metric, which can be designed with hierarchical standards (core goals must be achieved, secondary goals affect quality scores). In terms of statistical methods, two often-confused metrics need to be distinguished:
-
-- **Pass@k**: The probability that **at least one** of k attempts succeeds, answering "Can the Agent do it?"
-- **Pass^k**: The probability that **all** k attempts succeed, answering "Is the Agent stable and reliable?"
-- **Best@k**: The score of the **best** of k attempts (rather than whether it succeeded), measuring the "quality ceiling given enough opportunities," often used for open-ended tasks with continuous scoring.
-
-A concrete number makes the difference vivid. Suppose the Agent's single-attempt success rate is 60% (Pass@1 = 0.6). Over 5 attempts: Pass@5 = 1 - 0.4^5 ≈ 99% (almost certain to succeed at least once), while Pass^5 = 0.6^5 ≈ 7.8% (all five succeeding is unlikely). The former measures the capability ceiling, the latter stability; confuse them and you will misread your Agent.
-
-**Safety and Compliance Metrics** are crucial in production deployment: triggering sensitive operations (deleting data / modifying permissions / sending external communications), data leakage (printing passwords in logs / sending private documents to external APIs), and prohibited content should all be subject to a **zero-tolerance principle**—similar to the hallucination veto (see the "Four Rubric Principles" later). A single serious safety violation vetoes the overall evaluation, regardless of performance in other dimensions.
-
-**Robustness** measures stability in the face of uncertainty: random seed sensitivity (how much performance varies under different initializations), adaptability to page changes (a website UI update should not cause complete failure), tolerance for API jitter (can it gracefully handle temporary failures, timeouts, format changes), and long-term memory interference (can outdated information accumulated in the context lead to incorrect decisions).
-
-**Dual Coverage of Execution Trajectory and Final Outcome.** An easily overlooked distinction: "what the Agent said and did during execution" (the trajectory defined in Chapter 1) and "what the system ultimately became" (the final outcome) are two different things. The Agent saying "the booking is complete" is trajectory-level information; a record actually appearing in the database is outcome-level verification. Look only at the trajectory and you miss "said it but didn't do it"; look only at the outcome and you may miss intermediate steps that went astray. Anthropic once gave an example: a flight booking Agent discovered a loophole in the airline's policy during execution and found a cheaper option for the user—if scored only according to the preset execution path, this run would be judged a failure; but from the final outcome, the user got a better deal. Therefore, both types of evaluation should be covered to avoid systematic blind spots.
-
-**Human Spot Checks and Adversarial Review.**
-
-Even when automated evaluation is reliable most of the time, regular human spot checks are still needed: cover different task types, successes and failures, and ambiguous cases near score boundaries — verifying not just the results but the soundness of the scoring rationale. Spot checks can be systematized into **judge calibration**. Before deploying LLM judges at scale, build a human-annotated gold standard set (say, 100-200 cases spanning task types and difficulties) and measure how well the judge model (an LLM acting as judge; the mechanism is detailed in the LLM-as-a-Judge section next) agrees with human annotations — simple agreement rate or Cohen's kappa, the latter discounting chance agreement. Only once agreement clears a preset threshold (e.g., kappa above 0.7) should the judge be used for large-scale evaluation; thereafter, recalibrate on the gold set whenever the judge model or Rubric changes. Without this step, an LLM judge's scores are just "another model's opinion," not a reliable proxy for human judgment. **Adversarial review** uses Red Teaming to actively construct challenging cases: seemingly perfect answers containing hidden errors, answers that get by through keyword stuffing, and answers that exploit known biases of the judge model to obtain undeservedly high scores. **Multi-judge mechanisms** use multiple independent judges to score separately, determining the final result through weighted averaging or consistency checks—when judges disagree significantly, the case is flagged for further human review.
-
-## Automated Evaluation Methods
-
-With the evaluation environment, dataset, and clear metrics system in place, the core question becomes: how to score? For tasks with clear correct answers (e.g., math problems, SQL queries), simple binary judgment (correct/incorrect) is sufficient; but for open-ended tasks (e.g., customer service dialogues, report writing), more refined evaluation methods are needed.
-
-Code-based automatic verification only covers scenarios with standard answers; scoring open-ended tasks is the main topic of this section. Among these, the design of reward signal density (from binary rewards to process rewards to generative rewards) and training methods for reward models are left for systematic discussion in the post-training section of Chapter 7; this section answers a more fundamental question: how to use LLMs to automatically judge the output quality of open-ended tasks.
-
-### LLM-as-a-Judge: The Core of Automated Evaluation
-
-![Figure 6-4: LLM-as-a-Judge Pipeline](images/fig6-4.svg)
-
-Why is LLM-as-a-Judge needed? For open-ended tasks (e.g., generating reports, handling customer complaints, creative content), there are no standard answers for automatic comparison, and human evaluation is costly and difficult to scale. LLM-as-a-Judge balances the scalability of automation with human expert judgment by having a language model evaluate outputs against expert-defined scoring criteria (a Rubric). The method has known limitations, though: the judge model carries its own biases (most typically **length bias**—a tendency to score longer, more detailed responses higher even when they are no more correct), and repeated judgments of the same input can vary. Length bias in particular warrants specific countermeasures. Three common defenses are: penalize verbosity explicitly in the Rubric and cap response length per task type; in pairwise comparisons, bring the two candidates to similar lengths before judging; and regularly audit the correlation between scores and response length—if high scores almost always go to long responses, the judge has been swayed by length and the Rubric needs revision. To address these challenges systematically, Rubric design must follow the principles below:
-
-**Rubric (Scoring Criteria): The Basis for LLM Judgment.**
-
-**Four Rubric Principles** (Scale AI, "Rubrics as Rewards"):
-
-(1) **Based on Expert Guidance**—A Rubric must reflect domain knowledge, capturing the core facts and reasoning steps. A Rubric for medical Q&A, for instance, needs diagnostic criteria and the medical errors that must be avoided; one without expert grounding can only capture surface features like fluency.
-
-(2) **Comprehensive Coverage**—A Rubric should cover factual accuracy, logical coherence, completeness, and safety. It should not only define positive standards but also explicitly identify **Pitfalls**—i.e., high-risk common errors, such as recommending unverified therapies in medical advice.
-
-(3) **Standardized Importance Weighting**—Classify criteria as Essential, Important, Optional, or Pitfall items. The scheme supports a **Veto mechanism**: for example, in a customer service scenario, hallucination (fabricating false information) is a typical veto dimension—regardless of how well other dimensions perform, if false information appears, it must be vetoed. This also helps prevent reward hacking through keyword stuffing.
-
-(4) **Self-Contained Evaluation**—Each evaluation item is independently actionable and does not rely on the evaluator's domain knowledge. Abstract standards like "the response demonstrates deep understanding" should be avoided, replaced by verifiable standards like "cites at least two authoritative theories and accurately explains how they support the conclusion."
-
-The key practice: define objectively verifiable scoring levels for each dimension, with concrete examples and **edge cases** to resolve ambiguous situations. Actively guard against **Reward Hacking**—the Agent finding a "shortcut" to high scores without actually completing the task—by explicitly penalizing hallucination, sycophancy, keyword stuffing, and dodging hard questions. A Rubric is an iterative product: trial use reveals disagreements among evaluators, and the Rubric gradually evolves through this feedback from abstract principles into a detailed casebook.
-
-Here is a complete Rubric that follows the four principles, using a user memory Agent as the example. Test question: "Who is my daughter's pediatrician?" (The answer requires linking information across two conversations: the first conversation mentions "my daughter's name is Lily," the second mentions "took Lily to see Dr. Chen").
-
-```yaml
-rubric:
-  dimensions:
-    - name: Factual Correctness
-      weight: essential        # Essential item
-      scoring:
-        4_Excellent: "Correctly answers Dr. Chen, and links to daughter Lily"
-         3_Good: "Correctly answers Dr. Chen but does not mention that Dr. Chen is Lily's doctor"
-        2_Passable: "Gives the correct doctor but with additional uncertain information"
-        1_Fail: "Gives an incorrect doctor's name, or answers 'I don't know'"
-
-    - name: Information Completeness
-      weight: important        # Important item
-      scoring:
-        4_Excellent: "Proactively supplements relevant information (e.g., last visit date, diagnosis)"
-        3_Good: "Answers the core question without omission"
-        2_Passable: "Answers the core question but omits available related information"
-        1_Fail: "Key information is missing"
-
-    - name: Reasoning Correctness
-      weight: important
-      scoring:
-        4_Excellent: "Correctly links the two cross-session pieces of information: 'daughter=Lily' and 'Lily's doctor=Dr. Chen'"
-        3_Good: "Correctly links but the reasoning path is not clear enough"
-        2_Passable: "Partially correct linking"
-        1_Fail: "Incorrect linking (e.g., mistaking the user's own doctor for the daughter's doctor)"
-
-    - name: Hallucination Detection
-      weight: veto             # Veto item: once triggered, total score is zero
-      scoring:
-        pass: "All information can be traced back to historical conversation records"
-        fail: "Fabricated information not present in the conversation (e.g., fictitious visit dates, diagnoses)"
-
-  edge_cases:
-    - "If the user has multiple daughters who see different doctors, should ask which daughter"
-    - "If the memory contains both 'Dr. Chen' and '陈医生' (the same name written in Chinese), should recognize them as the same person"
+Handling requires understanding. A general-purpose Agent's input doesn't come only from the user—a third-party message is not sent by the user to the Agent, yet the Agent must understand it, weigh its importance, and decide whether to step in. This requires modeling each input as a **structured event** rich with semantics:
+
+- **Source (who)**: The user themselves, a contact, a stranger, a system notification
+- **Channel (how)**: Phone call, SMS, instant message, email, social media, timer trigger, asynchronous tool call result, command-line monitoring status update
+- **Content (what)**: Message text, emotional tone, urgency, whether a reply is needed
+- **Context (background)**: Whether it's a reply to a previous conversation or a new communication, its relevance to the current task
+
+Taking a customer refund request email as an example, the structured event looks like this:
+
+```json
+{
+  "source": {"type": "email", "sender": "client@example.com"},
+  "channel": "gmail_webhook",
+  "content": {"subject": "Refund Request", "body": "Order #12345, requesting a refund..."},
+  "context": {"priority": "high", "customer_tier": "vip", "related_orders": ["#12345"]}
+}
 ```
 
-**Good Rubric vs. Bad Rubric**: Each scoring level above specifies verifiable, concrete behavior ("Correctly answers Dr. Chen") rather than descriptions that cannot be judged objectively, like "demonstrates a deep understanding of memory." The veto item sets the bottom line: even if every other dimension scores full marks, a single instance of hallucination results in an automatic zero.
+Only when these dimensions are clearly modeled as structured events can the Agent maintain a clear understanding in multi-party communication, avoiding mistaking user input for a tool result, or mistaking a tool result containing hidden instructions for a user command (prompt injection). The complexity of multi-threaded context management also requires the Agent to understand the relationships between multiple conversation threads—how a message from a third party affects the user's mood, the user's role transitions across different conversations, and when to synthesize information from different threads to provide advice. The trigger ecosystem of workflow platforms like n8n—webhooks, timers, emails, database changes, file watchers—illustrates the same principle: each trigger is a "sense organ" through which the Agent perceives the world. Once these heterogeneous events are modeled into one structured format, the Agent can process stimuli from any source consistently. The urgency determination and processing strategies below are all built on this unified modeling.
 
-**Deterministic veto before rubric judging:**
+**Dynamic Processing Strategy Based on Urgency.**
+
+Humans juggling multiple tasks adapt their strategy to urgency: an emergency makes them drop what they're doing; a routine to-do goes on the list for later. An Agent's event handling should show the same intelligence.
+
+![Figure 6-2: Three Strategies for Asynchronous Event Processing](images/fig6-2.svg)
+
+**Cancellation-Based Processing** is used for urgent events; its essence is **forcing a safe point early** for the urgent event: proactively interrupting the current step to turn this instant into a boundary at which the new event can be consumed. When an urgent event arrives (e.g., the user clicks "stop" or a supervisory system sends a high-priority instruction): (1) Stop the current operation—if the LLM is reasoning, immediately cancel the streaming response; if a synchronous tool is executing, send a cancel signal; (2) Drain the pending queue by removing all pending events; (3) Append those events together with the urgent event to the end of the trajectory; (4) Immediately re-invoke the LLM with the updated complete trajectory as input to assess the situation. For example, if the user inputs "Stop! I said the wrong thing" while the Agent is about to perform a potentially erroneous operation, the Agent will immediately see this new input, re-understand the true intent, and thus avoid executing the wrong action.
+
+**Queued Processing** is used for routine events. When a non-urgent event arrives (e.g., an asynchronous tool returns a result or the user sends supplementary information): (1) Add the event to the end of the queue without interrupting the current operation; (2) Wait for the current operation to complete—let the LLM finish reasoning, let the synchronous tool finish executing; (3) When any tool call completes and returns a `tool.result`, check the queue. If the queue is non-empty, append all events to the trajectory at once; (4) The LLM processes the updated trajectory comprehensively. This enables batch processing, improving efficiency—for example, while the Agent is waiting for a search tool result, the user adds "only show results from the last month." This supplementary information enters the queue, and when the search results return, both events are presented to the LLM together, avoiding unnecessary round trips.
+
+**Parallel Processing** is used for independent, lightweight queries. For example, while the Agent is analyzing a large amount of data, the user suddenly asks, "What's the weather like today?" Such queries have three characteristics: they are unrelated to the main task, require a quick response, and have low execution cost. Neither cancellation-based (would interrupt the important main task) nor queued processing (would make the user wait too long) is suitable. The system first assesses the query's independence and complexity, then executes it independently in a parallel reasoning session, calling necessary tools to generate a response and returning it immediately. The query and response are appended to the main task's trajectory, clearly marked as "executed in parallel with the main task" to avoid confusing the LLM.
+
+**Urgency Determination.**
+
+Urgent events: User interrupt (`user.interrupt`), supervisor instruction (`supervisor.instruction`), inter-Agent interrupt (`agent.interrupt`), external triggers marked as urgent (e.g., system alerts, payment failures).
+
+Non-urgent events: Regular user input (`user.input`), Agent input (`agent.input`), tool results (`tool.result`), timer triggers (`timer.trigger`), regular external triggers.
+
+Hardcoded rules have limitations; the semantics of the event dictate the handling method—"Stop immediately!" uses cancellation-based processing, "What's the weather like today?" uses parallel processing, "Send the report in Chinese" uses queued processing. **It is recommended to use a lightweight classification LLM as an event router**, quickly determining which strategy to adopt when an event arrives.
+
+The following experiment, an event-driven email processing Agent, implements the event handling strategies discussed above into a runnable implementation.
+
+**Event-loop routing:**
 
 ```python
-deterministic = verify_state_policy_and_claims(trajectory, outcome)
-if deterministic.veto:
-    return FAIL(reason = deterministic.evidence)
+while runtime.is_alive:
+    events = queue.take_batch()
 
-rubric_result = judge(answer, rubric, evidence)
-return aggregate_with_confidence(rubric_result)
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
 ```
 
-### Failure Attribution: Locate the First Error in a Trajectory
+> **Experiment 6-1 ★★★: Event-Driven Email Processing Agent**
+>
+>
+> ![Figure 6-3: Experiment 6-1 Event-Driven Agent Architecture](images/fig6-3.svg)
+>
+>
+> This experiment builds the simplest event-driven Agent: an **Automated Email Processing Assistant**. The Agent monitors the email inbox, and whenever a new email arrives, it automatically triggers a processing workflow—classification, summarization, draft reply, and notifying the user if necessary. This is the most intuitive introductory scenario for an event-driven Agent: an external event (new email arrival) triggers a complete Agent thinking cycle.
+>
+> **Experiment Objective**: to understand the core idea of event-driven architecture—the Agent no longer waits passively for user input but acts on its own in response to external events. Through this experiment, readers will master the basic closed loop of event source registration, the event queue, and "event arrives → Agent processes → result delivered".
+>
+> **Event Sources and Event Queue.**
+>
+> The system supports unified access for multiple event sources:
+>
+> - **Email Events** (`on_email_received`): Triggered when a new email arrives, either by periodically checking the inbox or receiving push notifications.
+> - **IM/SMS Messages** (`on_im_message`, `on_sms_message`): Triggered by instant messages or SMS messages.
+> - **GitHub Events** (`on_github_pr_update`, `on_github_issue_update`): Triggered by PR review comments or status changes.
+> - **Timer Triggers** (`on_timer_expire`): Triggered by scheduled tasks (e.g., daily summaries, weekly report generation).
+> - **Webhooks** (`on_webhook_received`): Generic callbacks from external systems.
+> - **System Events** (`on_user_inactive`, `on_process_timeout`, `on_resource_alert`): Triggered by internal state changes.
+>
+> All events enter a unified **event queue** and are processed sequentially in order of arrival. Each event triggers an independent Agent thinking loop: the Agent reads the event content, calls relevant tools (e.g., querying the knowledge base, reading attachments, searching related email history), generates a processing result (classification labels, summaries, draft replies), and finally either notifies the user via notification tools or directly executes an action.
+>
+> **Validation Scenario**: Configure the Agent to monitor a test mailbox. Simulate receiving three emails—a meeting invitation, a customer complaint, and a marketing advertisement. The Agent processes them sequentially: for the meeting invitation, it automatically checks for calendar conflicts and drafts an accept/decline reply; for the customer complaint, it extracts key information, marks it as high priority, and notifies the user to handle it; for the marketing advertisement, it automatically archives it. The entire process requires no user intervention.
 
-End-to-end evaluation often says only "pass" or "fail". To make results drive fixes, perform **failure attribution** for every failed trajectory: record the main error class, the first step at which unacceptable behavior appeared, the relevant tool call or model output, and evidence that can be audited. Attribute the first error that sent the task off course; later errors are often just the chain reaction.
+Experiment 6-1 demonstrates the simplest event-driven pattern—events enter a queue, and the Agent processes them sequentially. However, when the Agent needs to respond to interruptions during long-running tool executions, or manage multiple concurrent tasks simultaneously, a simple event queue is insufficient. Next, we discuss deeper engineering challenges.
 
-Production bad cases usually come from three signals: an explicit user correction ("do not do that"), a downvote or other negative feedback, or a later state check, rule verifier, or LLM judge showing that the Agent did something it should not have done. LLMs can help with this work, but cannot replace careful human reading because failure attribution often reveals product problems, not only technical bugs.
+### Engineering Implementation: How to Make Synchronous Models Support Asynchronous Interruptions
 
-An initial Coding-Agent taxonomy can include missing process or repository rules, tool-call and format errors, abnormal model termination, and task-completion or logic failures. The first violating action—not the final error message—should be recorded. Store a structured JSON or YAML attribution with step number, tool name, observation evidence, root cause versus consequence, recoverability, and confidence, together with the task goal, environment state, version identities, and complete trajectory.
+Experiment 6-1 only handles serial events—events enter the queue one by one, and the Agent processes them one after another. Now, let's return to the "synchronous training / asynchronous deployment" contradiction raised at the beginning of this section: when the user interrupts while a tool has not yet returned, how can the synchronous format accommodate it? This section lays out the engineering workarounds the industry uses today.
 
-#### Scope-Sensitive Document Formatting Errors
+Let's first illustrate this contradiction with a specific scenario. Suppose the Agent is helping a user draft an email (tool call: search for contact information). Before the search returns results, the user suddenly says, "Wait, first check tomorrow's weather for me." In a synchronous ReAct loop, the Agent must wait for the search to return before processing the next message—because the API requires that "after issuing a tool call, the next message must be the tool result." But in the asynchronous real world, events can interrupt ongoing tasks at any time. Expressing the semantics of "asynchronous interruption" under the constraints of a "synchronous format" is precisely the problem this engineering solution aims to solve.
 
-When a user says "the quotes are wrong", that cannot be turned into a global character replacement. At minimum you must distinguish ASCII straight quotes (`"`, `'`), Chinese curly quotes (`“”`, `‘’`) and Markdown backticks (`` ` ``). The same character plays a different syntactic role in Chinese prose, quoted English source, inline code, code blocks, code comments, JSON and paths.
+**Engineering Expedient: An Asynchronous Implementation Simulating Synchronous Behavior.**
 
-Evaluation data should first parse the document into scoped spans—for example `ZH_PROSE`, `EN_PROSE`, `QUOTED_SOURCE`, `INLINE_CODE`, `CODE_BLOCK`, `CODE_COMMENT` and `JSON_OR_SCHEMA`. Each span records the set of permitted transformations, the characters that must be protected, and the validator result after editing. The three cases below cannot be handled by one replacement rule:
+The core idea is: **Under normal conditions without interruptions, let the LLM see a standard synchronous trajectory; only when an interruption occurs, insert placeholders to fix the format**. Here are five key rules:
+
+**Rule 1**: Immediately record the assistant message (including thinking, content, and tool call) when the LLM produces it.
+
+**Rule 2**: Record the tool result only when the tool call is complete. The trajectory is in a "partially completed" state during execution.
+
+**Rule 3**: Interruptions during tool execution require placeholders. Generate a placeholder response for the unfinished tool (e.g., "The tool is executing in the background, please prioritize the new event"), append the interruption event, and re-invoke the LLM. From the LLM's perspective, the assistant message still has a paired tool result.
+
+**Rule 4**: Interruptions during LLM thinking directly discard the current thinking. Do not write it to the trajectory; instead, append the new event and start a new round of thinking.
+
+**Rule 5**: Non-interrupting events enter the queue for batch processing. They are appended all at once only after the current cycle is complete.
+
+Using the example of the Agent drafting an email when the user interrupts to ask about the weather, the operation of these five rules is as follows:
+
+1. The Agent calls `search_contacts` to search for contact information, and the assistant message is immediately written to the trajectory (Rule 1).
+2. Before the search tool returns results, the user sends "First check tomorrow's weather for me." Since this is a user interruption, the system generates a placeholder tool result for the unfinished `search_contacts` ("The tool is executing in the background, please prioritize the new event", Rule 3), then appends the user's weather query to the trajectory and re-invokes the LLM. At this point, the trajectory format seen by the LLM is completely valid—the assistant message and tool result are perfectly paired.
+3. After the Agent answers the weather query, the original `search_contacts` result arrives and is appended to the trajectory as a new event (Rule 2). The Agent reads the contact information and continues drafting the email.
+
+The core advantage of this scheme: **under normal conditions, the LLM sees a perfect synchronous trajectory**—assistant messages and tool results strictly paired, the timeline clear, no placeholders or anomalous states. This is the friendliest arrangement for LLMs trained under the synchronous paradigm, and it preserves thinking quality. The placeholder—a necessary compromise—appears only when an interruption genuinely occurs.
+
+But there remains a risk of exacerbating hallucinations. Even though the placeholder states explicitly that the tool "has not yet completed," the model may still fabricate a tool result in later thinking—convincing itself the tool returned valid data and basing decisions on fabricated data. This is because, in the vast majority of trajectories seen during training, a tool call is immediately followed by the real result; the model has never learned how to handle situations where "the result hasn't come back yet." Therefore, in practice, interruptions are only triggered in truly urgent situations (when the user explicitly requests a stop); non-urgent events are placed in a queue for batch processing.
+
+**Asynchronous Tool Interfaces Suitable for Existing Models.**
+
+Since the synchronous assumption of models is difficult to break, a more fundamental strategy is to **embrace asynchronous semantics at the tool-interface design level**.
+
+Traditional tool design implies a "call equals completion" semantics. For example, the name `phone_call` suggests "calling will dial the phone and wait for the call to end, returning the call log." Under the asynchronous paradigm, "initiation" and "completion" should be decoupled:
+
+- `initiate_phone_call`: Initiates a phone call, immediately returning a task identifier and initial status (e.g., "Call initiated, dialing...")
+- Call progress is communicated via event notifications (`phone_call_connected`, `phone_call_ended`)
+
+The key is that the tool's name and description themselves should convey asynchronous semantics. When the model sees `initiate_phone_call`, its language understanding capabilities will naturally infer this is "initiating" rather than "completing." The tool description should further reinforce this: "This tool initiates a phone call task handled by a sub-agent. It returns the task ID immediately upon successful initiation, allowing you to continue with other matters. A separate notification event will be sent when the call ends."
+
+**Attention Dispersion in Queue-Based Processing.**
+
+When processing batch events, the model often focuses only on the last event. The root cause is that **the model is trained to react to the most recent input, and batch events break this assumption**.
+
+Intervention can be applied at two levels:
+
+**Prompt Level**: Inform the model, "When you receive multiple consecutive events, please ensure you comprehensively consider all the information."
+
+**Agent Status Bar Markers**: Add explicit markers before each event:
 
 ```text
-Chinese prose: call the `reset()` method.
-Quoted English source: “Please restart the service.”
-# the code block below only illustrates a protected scope
-# Chinese comment: display "current status"
-name = "status"
+[Unprocessed Event 1/4] Tool result from database_query: ...
+[Unprocessed Event 2/4] User supplementary note: Only look at Beijing data
+[Unprocessed Event 3/4] System reminder: Report deadline is in 30 minutes
+[Unprocessed Event 4/4] User asks: What's the progress?
 ```
 
-Trajectory-prefix regression should require the model to make the minimal edit, and check at the same time Chinese document style, the preservation rate of quoted English source, code and JSON syntax, and the edit distance over non-target text. When the rules cannot determine the scope, keeping the original text and asking for clarification should count as a permitted action, not a guessed edit that happens to pass.
+Add a summary at the end: "There are 4 unprocessed events above, including 1 tool result, 2 user messages, and 1 system reminder. Please ensure your response covers all the information."
 
-#### Exact-Copy Errors: From `old_string` Mismatch to Layer-by-Layer Localization
+### Deeper Contradictions and Future Directions
 
-An `old_string` failure cannot be attributed simply to "the model copied it wrong" either. For the same string, store the raw byte hash, the Unicode code point sequence and the tokenizer token ID sequence, then look for the first divergence along this chain:
 
-```text
-original file bytes → tool return → Harness serialization → model context
-→ model token output → decoded string → JSON/tool-call parsing → tool matching
-```
+![Figure 6-4: Synchronous Training Paradigm vs. Asynchronous Deployment Reality](images/fig6-4.svg)
 
-A minimal set of evaluation probes covers direct restatement, extraction from a long context, placement into tool arguments, selection among similar strings, and spaces, newlines, backslashes, Unicode combining characters and low-frequency tokens. The metrics are byte-exact match, code-point-exact match, token-exact match, the position of the first divergence, and the real tool success rate. If the model is correct on the direct probe but the tool call still fails, fix the tokenizer, the serialization, the Harness or the tool protocol; only when the first divergence appears in the model's own output should the case be turned into the copying training data of Chapter 7.
 
-### End-to-End and Trajectory-Prefix Regression Tasks
+Ultimately, the placeholders, asynchronous tool interfaces, and status bar markers from the previous sections are all using prompt engineering to patch the same "synchronous training / asynchronous deployment" contradiction (Figure 6-4)—the cause of this contradiction has been detailed at the beginning of this section, so we do not repeat it here; instead, we focus on the fundamental solution.
 
-Once the first error is known, turn the repair target into a repeatable **regression task**. End-to-end regression starts from the initial state and user request, runs the whole workflow, and checks final state, required output, and safety. A **trajectory-prefix regression task** freezes the context, conversation, tool returns, and environment state just before the first error, then tests only the next one or few observable actions. It is cheaper and isolates one decision boundary, so it is especially important for high-reliability production Agents.
+**Anticipating Model Evolution: From Synchronous to Asynchronous.**
 
-Prefix tasks should define an **acceptable action set**, not one canonical answer: reading repository rules, asking the user, or refusing a dangerous operation may all be valid, while prohibited actions are listed explicitly. Process omissions become end-to-end tasks with Plans, required documents, and acceptance tests; tool errors become prefix tasks that test formatting, escaping, or tool choice; abnormal execution becomes truncation, timeout, and tool-failure recovery; and completion or logic errors become multi-goal and "not yet proved impossible" cases. The first error is also a possible process-supervision signal for Chapter 7, but evaluation and training data must remain isolated.
+The engineering techniques above are essentially **using prompt engineering to compensate for the shortcomings of model training**, a temporary expedient during a transitional period. The real solution requires a paradigm shift at the model training level.
 
-> **Experiment 6-5 ★★: Trajectory-Prefix Boundary Evaluation with Multiple Encodings**
->
-> This experiment supplies the Agent with known user memory, the current instruction, a trajectory prefix, tool returns, and environment state, then asks for only the next observable action. It covers production bad cases such as scope conflicts, stale preferences overriding current instructions, low-confidence inferences, confirmation before high-risk deletion, and preview before external publication. The same cases are encoded as JSON Cards, Markdown, and Python-like memory; deterministic checks score the allowed decision category, safety, required evidence, and forbidden actions.
->
-> With GPT-5.6-sol through OpenRouter, all 33 cells (11 cases × 3 encodings) completed without API errors. Each encoding passed 6/11 cases, but their failure locations differed, showing that changing the representation alone does not repair application policy.
+VLA (Vision-Language-Action, see Chapter 6) models in the robotics field are already beginning to face similar challenges: there is an unavoidable delay between perception and action. The success of VLA points the way for the evolution of Agent models. The next generation of models needs to acquire three core capabilities through reinforcement learning in asynchronous environments:
 
-Give the judge both the Rubric and the Agent's response. It will score each dimension and explain why. Once results from dozens of cases are grouped by dimension and the low-scoring traces are replayed, a vague drop in success rate becomes a concrete diagnosis: retrieval missed a fact, the model linked the wrong people or events, or it added an unsupported claim. A useful Rubric tells the team not only how the system scored, but where to look next.
+1. **Understanding Asynchronous Interleaving of Events in Trajectories**: This is the most critical capability deficiency. Current models expect a strictly synchronous sequence, but in a real asynchronous environment, a tool call might be followed not by a tool result but by a new user message; thinking might be interrupted halfway, but the intermediate state should be retained in the trajectory, and thinking should continue after the new message is processed, rather than starting over. The model needs to maintain a clear understanding in such "out-of-order" trajectories—which tool calls are still waiting for results, and which thoughts are unfinished fragments.
+2. **Resuming Interrupted Tasks and Thoughts**: When interrupted to handle an urgent event, the model must still remember the unfinished task. For example, if the user suddenly asks about the weather while the Agent is executing a data analysis tool, after answering, the Agent should naturally wait for the data analysis result, rather than forgetting that a tool is still running. It is particularly important to avoid hallucinations where the model mistakenly believes the interrupted tool call has completed.
+3. **Comprehensive Processing of Batch Events**: When multiple events are appended to the trajectory in a batch, the model must not only focus on the last one; it must comprehensively consider all unprocessed information.
 
-> **Experiment 6-3 ★★: Building a Rubric-Based User Memory Evaluation System**
->
-> **Prerequisites**: Must complete the Chapter 3 User Memory Experiment (`chapter3/user-memory-evaluation`).
->
-> This experiment requires modifying the `chapter3/user-memory-evaluation` framework from Chapter 3, upgrading the current simple LLM-as-a-Judge scoring mechanism to a structured, multi-dimensional Rubric evaluation system. The existing system uses a single LLM call to return a pass/fail result plus evaluation reasoning, lacking structured diagnostic capabilities.
->
-> Design a unified multi-dimensional Rubric framework applicable to all three task levels. Evaluation dimensions include: Factual Correctness (precision: of all the information given, how much is correct—verifies that numbers/dates/names are consistent with the stored memory); Information Completeness (recall: of all the information that should be given, how much is mentioned—verifies that all relevant information is provided with no key content omitted); Reasoning Correctness (checks whether the relationships between pieces of information and implicit logic are correctly understood); Reasoning Proactiveness (evaluates whether suggestions or risk warnings beyond a direct answer are provided when appropriate); Hallucination Detection (ensures no information not present in memory is fabricated).
->
-> Four-level scoring (Excellent/Good/Passable/Fail), with specific judgment criteria for each level rather than abstract descriptions. The hallucination dimension is a veto item. Provide examples and boundary cases for each dimension.
->
-> **Experiment 6-4 ★★: Comparative Evaluation of Advanced JSON Cards vs. RAG**
->
-> **Prerequisites**: Must complete the Chapter 3 User Memory and RAG experiments (`chapter3/user-memory`, `chapter3/agentic-rag-for-user-memory`).
->
-> **Objective**: Fairly compare the advantages and boundaries of structured memory versus unstructured retrieval on the same evaluation set. Reuse the two Chapter 3 projects and compare three configurations on the 60 test cases from `chapter3/user-memory-evaluation`—Pure Advanced JSON Cards (structured cards kept in context, with no retrieval needed), Pure RAG (conversation chunks embedded in a vector store, retrieval required), Hybrid System (core facts resident + original conversations retrieved on demand).
->
-> **Acceptance Criteria**: Record success rate, average steps, number of tool calls, latency, and cost across three complexity levels (basic recall / multi-session disambiguation / cross-session hidden associations). Clearly describe the failure boundaries for each approach—what structured memory misses, what retrieval misses, and whether the hybrid truly achieves synergy. This is an **end-to-end regression layer**: it checks that the complete task still works, but cannot by itself show whether the Agent correctly scopes a memory once it has been supplied. Configuration details and test cases are available in the companion repository.
->
+Achieving this asynchronous RL training requires new infrastructure: an asynchronous environment simulator (generating scenarios like delayed tool returns, random user interruptions, etc.) and specialized rewards for asynchronous capabilities (correctly understanding out-of-order trajectories, successfully resuming interrupted thoughts, avoiding hallucinations, comprehensively processing batch events).
 
-The companion experiment ran all three systems on the same 60 questions and retained 180 real API trajectories. Table 6-3 reports both the rates and the underlying success counts.
+Continuous thinking, however, need not wait for the next generation of models. A thin orchestration layer of about two hundred lines can turn an **off-the-shelf** text-thinking model into a **continuous-time** Agent[^ch6-async-1], bridging the “engineering expedient” and “model evolution” described above. The mechanism upgrades Rule 4: instead of **discarding** a half-finished thought after an interruption, build the interaction as **one uninterrupted stream of thought**. The system can close the `<think>` block being generated, inject a newly arrived observation—a tool result, user interruption, or recognition result—as an ordinary message, and let decoding continue. This uses an often-wasted resource: a model can generate hundreds of tokens per second, while a tool call or user utterance may take several seconds. That waiting time is **free computation** for thinking ahead. The Agent can therefore **think while listening**, reasoning from partial information and even initiating the next tool early, and **think while doing**, continuing to reason during output and correcting itself mid-action.
 
-Table 6-3 Success Rate by Memory System and Task Level
+[^ch6-async-1]: The claim that about two hundred lines of orchestration can turn an off-the-shelf thinking model into a continuous-time Agent, and that "the training signal determines whether continuous thinking is useful," is from Li, Bojie and Noah Shi. *Never Stop Thinking: Continuous-Time Language Agents.* 2026 (forthcoming).
 
-| System | Basic Recall | Multi-Session Disambiguation | Hidden Cross-Session Links | Overall |
-|---|---:|---:|---:|---:|
-| Advanced JSON Cards | 95% | 60% | 50% | 68.3% (41/60) |
-| RAG | 90% | 40% | 15% | 48.3% (29/60) |
-| Hybrid | 80% | 70% | 50% | 66.7% (40/60) |
-
-The hybrid did not win by default. It uniquely solved three cases that neither single approach solved, but regressed on eight cases relative to the better single approach; its mean reward was 0.092 below the per-case best single system. Pure RAG nearly matched structured cards on basic recall, then fell to 15% on hidden cross-session links. Retrieving a relevant passage is only the first step—the Agent still has to reconstruct the right relationships among people, events, and time.
-
-The hallucination veto also fired in 28 of 180 judgments. It was not a decorative safety clause; it materially changed the results.
-
-That conclusion, in turn, depends on the judge being trustworthy. If the Agent and judge come from the same model family, they may share exactly the same preferences and blind spots.
-
-**The Same-Family Model Problem and Multi-Source Judging.**
-
-When the Agent and the judging model come from the same family, the Agent may learn to exploit the judging model's preferences and blind spots.
-
-**This is precisely what Goodhart's Law states: when a metric becomes an optimization target, it ceases to be a good metric.** The more an Agent is trained or tuned on a particular scoring system, the more it tends to exploit loopholes in that system rather than genuinely improving its capabilities.
-
-More insidiously, the Agent will gradually learn to avoid the types of errors that the judging model is not good at detecting, making the scoring system appear perfectly fine.
-
-The mitigation is **multi-source heterogeneous judging**—independent judges drawn from different model families (if the Agent runs on Claude, judge with GPT-5 and Gemini). Different families' biases are often orthogonal, so the Agent can rarely fool all the judges at once. Use the same Rubric so everyone judges the same target, and aggregate by weighted averaging or consistency checks. In deployment, a single model can handle rapid evaluation, with periodic quality audits run against the full multi-source setup.
-
-Multi-source judging addresses the question of which models should serve as judges; the next question is which modalities should be evaluated—extending LLM-as-a-Judge from text to speech, images, and video is another axis of evaluation coverage.
-
-**Multimodal LLM-as-a-Judge.**
-
-Multimodal judging extends LLM-as-a-Judge to the domains of speech, images, and video. Four common directions are as follows.
-
-- **TTS Evaluation** (TTS stands for Text-to-Speech): Assesses accuracy, naturalness, voice consistency, and emotional expression. These dimensions can capture prosodic issues that traditional WER (Word Error Rate) struggles to detect.
-- **ASR Evaluation** (ASR stands for Automatic Speech Recognition): Performs semantic impact assessment—misrecognizing "today's weather" is harmless, but misrecognizing "transfer one thousand" as "ten thousand" could have serious consequences.
-- **UI Evaluation**: Uses a **Proposer-Reviewer** mechanism to check for issues like text overflow, color contrast, and button placement. Here, the proposer-reviewer is used as an **evaluation method**, differing from its use as a **generation system component** in Chapter 5, but the core mechanism is the same—one model generates, another independently reviews.
-- **Video Editing Evaluation**: Verifies the correctness of clip start/end points and effect application through keyframes.
-
-> **Experiment 6-6 ★★: Building a Fully Automated TTS Quality Evaluation Pipeline**
->
-> This experiment requires designing and implementing a complete multimodal LLM-as-a-Judge TTS quality evaluation system from scratch.
->
-> Design a multi-dimensional TTS Rubric: The Accuracy dimension verifies whether all text is correctly read (no omissions/misreadings/additions); the Naturalness dimension assesses whether the speech sounds natural rather than robotic, has no unnatural pauses, and uses natural prosody; the Emotional Expression dimension checks whether the tone matches the text's emotional tone (rising intonation for questions, emphasis for exclamations, slower pace and lower pitch for sad content); the Voice Consistency dimension evaluates speaker similarity when a reference voice is available (the multimodal model simultaneously receives the reference voice and the synthesized voice for comparison).
->
-> Build a diverse test corpus: varying lengths (single sentence → long paragraph), genres (news/story/dialogue), emotions (neutral/excited/sad), and special challenges (numbers/proper nouns/polyphonic characters/dialectal vocabulary). Connect the TTS module to mainstream services (OpenAI, ElevenLabs, Fish Audio, Minimax, Doubao), then send the synthesized audio, source text, reference audio, and Rubric to an audio-capable multimodal judge. Record the judge model and hashes of both candidate and reference audio so that every score can be audited.
->
-
-The companion repository preserves a small direct-listening run. OpenAI and Fish Audio each generated four clips covering numbers, polyphonic Chinese characters, long-form text, and excited delivery; Voxtral completed all eight four-dimensional judgments. Both systems averaged 5.00 for accuracy and 4.00 for naturalness. Fish Audio scored 4.00/3.00 for emotion and voice consistency, while OpenAI scored 3.75/2.75. Splitting the Rubric into dimensions therefore exposed differences that a simple "was it read correctly?" check would miss.
-
-Those scores do not establish a provider winner. There were only four clips per provider, and the fixed reference clip came from Fish S1, which naturally favors Fish Audio on voice similarity. A general TTS comparison should remove that dimension or give every candidate an appropriate target speaker. A voice-cloning comparison should ask every system to imitate the same speaker and calibrate the model judge against blinded human listening. **Choosing the reference answer, image, or audio is part of evaluation design, not neutral setup work.**
-
-Handwritten Rubrics are a fast way to establish diagnostic dimensions like these. At larger scale, a specialized **generative reward model** can automate the judging; Chapter 7 covers how such reward models are trained.
-
-In practical model selection, we often face the question: "Which is better, A or B?" Pairwise comparison provides an evaluation method that does not rely on absolute scores.
-
-### Pairwise Comparison and Model Ranking
-
-![Figure 6-5: Elo Rating and Pairwise Comparison Ranking](images/fig6-5.svg)
-
-**Elo Rating** (a ranking system originally designed for chess) quantifies the relative ability of models through a large number of pairwise matchups: the larger the rating difference, the higher the expected win rate for the stronger model. For example, if Model A has a rating of 1200 and Model B has a rating of 1000, the Elo system would predict A's win rate to be approximately 76%. If B unexpectedly wins, B gains more points and A loses more—an upset triggers a larger correction, which is what lets rankings converge quickly on true ability. The statistical foundation is the **Bradley-Terry model**: each model is abstracted as a latent "strength score," and the probability of one beating another in a matchup is determined by the difference between their scores. Elo is the engineering implementation of this model in online-update form.
-
-Chatbot Arena uses anonymous random matchups—users blindly choose the better response without knowing the model's identity, and rankings are derived from millions of votes. The advantage is that no "absolute standard" needs defining; all that is required is human judgment on "which is better, A or B." The limitation: rankings depend on what users happen to ask. If a flood of users ask programming questions, models strong at programming rank higher—which may say little about their level on other tasks.
-
-When pairwise judging is performed by an LLM rather than human voting, one must also guard against **Position Bias**—the judging model systematically favors the candidate appearing in a certain position (usually the first), and the judgment may remain unchanged even if the content of the two candidates is completely swapped. The standard mitigation method is to **evaluate each pair twice with swapped order**: once with A first, once with B first, and average the two results; a stricter approach is to only count cases where the two judgments are consistent, and treat inconsistencies as ties or send them for human review. Chatbot Arena's approach is essentially the same—randomizing the display positions of the two responses so that position bias cancels out over a large sample.
-
-**From Evaluation to Training: Transfer of Pairwise Comparison Signals.** Pairwise comparison is not only an evaluation tool but also an important source of signals for post-training. The **GRPO** (Group Relative Policy Optimization) algorithm, which will be introduced in Chapter 7, incorporates the "compare which is better" judging approach into model training—its core idea is to sample multiple candidate answers for the same question and estimate advantages from their relative merits (rather than absolute scores), thereby avoiding the need for the extra value network (critic, used to estimate baselines) that PPO must train. Note that GRPO drops the value network, not the reward signal: it still relies on a reward model or verifiable reward rules to judge each candidate. This is only a foreshadowing—the full derivation, the comparison with PPO/DPO, and the implementation details for Agent post-training all come in Chapter 7.
-
-> **Experiment 6-7 ★★: Building a Model Leaderboard from Pairwise Comparison Data**
->
-> This experiment aims to deeply understand how the Bradley-Terry model extracts relative ability scores from a large number of pairwise comparisons by implementing an Elo rating calculation system from scratch. Use the real open-source voting dataset from Chatbot Arena (containing millions of anonymous user blind votes).
->
-> Implement the Elo rating iterative update algorithm: Initialize all models with a rating of 1000. Process voting records in chronological order. For each matchup, calculate the expected win rate based on the current rating difference between the two models, compare the actual result with the expectation, and adjust ratings by a fixed learning rate—the winner gains points, the loser loses points, with the adjustment magnitude proportional to the deviation from the expectation (an upset loss results in a larger rating change). Sort models in descending order by final rating and calculate the pairwise win rate matrix. Compare with the official leaderboard to verify that the rankings are generally consistent. Exact point-for-point alignment is not required: the official Chatbot Arena uses Bradley-Terry maximum likelihood estimation (solving all matchups simultaneously, independent of voting order), while this implementation uses online incremental Elo updates (results are affected by the learning rate K-factor and processing order). The two algorithms should yield consistent overall rankings, but the specific scores will not be precisely identical.
->
-> The second part of the experiment creates a historical ranking evolution animation: Slice the voting data by time (weekly or monthly) and calculate Elo rating snapshots for each time point. Use D3.js to implement a bar chart race animation (horizontal bar length = rating, vertical position = ranking, smoothly changing over time). By observing the animation, identify technology breakthrough moments (a model's rating suddenly surges), competitive landscape evolution, and model lifecycles.
->
-
-## Evaluation-Driven Model Selection
-
-Model selection is not simply about "choosing the strongest model"; it involves making evaluation-driven trade-offs across multiple dimensions based on the application scenario.
-
-### Key Dimensions for Selection
-
-**Throughput** and **Latency** are two families of metrics that are easily confused; untangling them takes only one fact—LLM inference runs in two stages. **Prefill** reads the entire context at once and determines the **Time To First Token (TTFT)**: the delay between the user pressing Enter and the first character appearing. The longer the context, the slower the prefill and the higher the TTFT. **Decode** then generates the response token by token, setting the generation speed (tokens/second)—which also dictates thinking time: at 50 tokens/s, a model producing 2000 thinking tokens spends 40 seconds just thinking.
-
-Around these two stages, the main throughput and latency metrics are as follows:
-
-- **Input Throughput / Output Throughput**: Correspond to the speed of Prefill and Decode, respectively.
-- **TTFT**: Equals queuing time plus Prefill time; it is the user-perceived "responsiveness."
-- **Thinking Latency**: The number of thinking tokens generated can vary severalfold across models, and thinking length is not necessarily positively correlated with task effectiveness—measure each model's thinking token usage and the corresponding benefit on your own workload, rather than inferring from public leaderboards alone.
-- **p95 Tail Latency**: The latency that 95% of requests will not exceed. It is a better indicator of real user experience than the average, which can be pulled down by a large number of fast requests, masking severe slowdowns experienced by a minority of users.
-
-**Cost**: Pricing for input/output/cache tokens. Cost should not be evaluated in isolation—a cheap model with a low success rate may actually incur higher costs due to frequent retries. The average cost per task and the cost-performance ratio need to be calculated.
-
-**Performance**: The precise definitions of Pass@1, Pass^k, Pass@k, and Best@k are given earlier in the "Evaluation Metrics System." Here, we only discuss how to choose in the context of model selection—for daily scenarios, focus on Pass@1 (single-attempt average success rate); for critical operations, prioritize Pass^k, focusing on the stability of "never making a mistake"; for exploratory tasks, prioritize Pass@k or Best@k, looking at the upper bound of capability given enough opportunities; for open-ended tasks, use multi-dimensional Rubric scoring.
-
-**Rate Limits and Reliability**: RPM (Requests Per Minute) / TPM (Tokens Per Minute) limits affect concurrency capabilities, and some APIs dynamically adjust quotas during peak hours. In terms of robustness, pay attention to out-of-distribution data, adversarial inputs, and long-running stability (whether issues like mode collapse or attention drift occur).
-
-**Budget–capability curves**: A single score at a fixed budget is not enough to determine whether an Agent can handle long-horizon work. In addition to success rate, report how performance changes with wall-clock time, tokens, tool calls, or compute budget. RE-Bench makes the problem concrete: with a total budget of two hours per environment, the best Agent scored about four times as high as human experts; humans, however, benefited more from additional time, narrowly surpassed the best Agent at eight hours, and scored about twice as high when multiple attempts were given 32 total hours[^re-bench-2025]. Short-budget leadership therefore cannot be extrapolated directly to long-running capability. Model selection should compare several budget points close to the duration of the real workload.
-
-In practice you can mix models: lightweight models on simple requests to cut costs, powerful models on complex tasks to protect quality; or specialist models on particular sub-tasks (image understanding, code generation), collaborating through sub-agent mechanisms. Any such heterogeneous combination must itself be validated by evaluation, to confirm the overall benefit outweighs the added system complexity.
-
-### Model Behavior: When to Stop Reading and Start Editing
-
-Model selection compares not only whether a model can finish a task, but also **how it behaves by default**. One readily observable difference in Coding Agents is the action threshold. Given the same coding task, some models explore the repository broadly and confirm the architecture, callers, and tests before editing. Others localize from less evidence, edit early, and use test feedback to complete their understanding. The former assigns a higher cost to premature edits; the latter assigns a higher opportunity cost to reading one more file.
-
-When a tendency continues to follow the model across harnesses, and changes when only the model is swapped inside a fixed harness, the primary explanation should be **model behavior**. Post-training is a likely source: SFT trajectories demonstrate how much to read before acting, process rewards reinforce or penalize particular tool paths, and outcome rewards strengthen the whole strategy that led to success. The model consequently learns not only how to write code, but also when it has enough evidence. Exact datasets and reward recipes are usually private, so controlled model swaps can locate the behavior on the model side without revealing a vendor's precise training recipe. A harness can still shift the threshold through its system prompt, tool descriptions, and budget; in the absence of an enforced workflow, however, it should be treated as a modifier rather than the default root cause.
-
-The accompanying experiment compares `openai/gpt-5.6-sol` and `anthropic/claude-sonnet-5` in one **neutral, fixed harness**. Both models use the same OpenRouter endpoint and receive the same system prompt, task, repository, tool names, JSON Schemas, and results. The harness requires neither exploration nor early editing. Three miniature repositories cover a localized bug, cross-module identity normalization, and a cache fix sensitive to a public contract. Each model runs each task independently three times, producing 18 trajectories. GPT-5.6-sol averaged 6.89 tool calls and 4.67 files read before its first edit; Claude Sonnet 5 averaged 4.56 calls and 3.56 files. The gap was largest on localized tasks and nearly vanished on the explicitly cross-cutting task (7.00 versus 6.67 files). Both models achieved 100% first-tested-patch and final-test success, so this small experiment supports “the action policy changes with the model,” not “reading more” or “editing earlier” as universally better. Time to first edit was also nearly identical (15.01 versus 14.48 seconds), a reminder to separate tool steps, parallel calls, and model latency.
-
-> **Experiment 6-8 ★★: Measuring Model Action Thresholds in a Fixed Coding Harness**
->
-> **Objective**: Isolate the model factor, quantify how Coding models trade off continued information gathering against starting to edit, and evaluate path efficiency together with outcome quality.
->
-> **Method**: Run `chapter6/model-action-threshold/experiment.py`. By default it calls GPT-5.6-sol and Claude Sonnet 5 through the same OpenRouter OpenAI-compatible endpoint while fixing the system prompt, tool schemas, task repositories, test commands, and turn limit. The neutral prompt specifies neither a minimum number of files to read nor a requirement to edit quickly. Repeat each of the three task categories at least three times and alternate model order. Record tool calls, files read, searches, and wall-clock time before the first edit, along with first-tested-patch acceptance, post-test rework, final success, changed files, and token usage.
->
-> **Causal interpretation**: The neutral campaign asks whether behavior changes with the model inside one harness. To measure the harness as a modifier, run a separate campaign with `--policy explore-first`; do not mix the two policies in one model comparison. Behavior that changes with a model swap and persists for the same model across harnesses is stronger evidence of a model effect; the reverse is stronger evidence of a harness effect.
->
-> **Acceptance criteria**: All offline unit tests pass; every task fixture is first confirmed to fail its tests; the formal result contains every `model × task × trial` cell, zero API errors, an independent final test, and auditable trajectories; and `manifest.json` verifies the hashes of the configuration, observations, and summary. The project directory includes one complete 18/18-cell run. Readers should rerun it on the model versions and real workloads they care about rather than treating these miniature-repository numbers as a permanent leaderboard.
-
-### Cost Analysis of Agent Systems
-
-Cost is the most easily underestimated dimension of model selection. If your Agent is in production or headed there, do not skip this section.
-
-The previous section listed cost among the key selection dimensions, but Agent costs are far more complex than simple token pricing—multi-turn reasoning, tool calls, and context accumulation make costs grow non-linearly. Systematic cost analysis is an indispensable part of the evaluation system and a prerequisite for production deployment.
-
-**Components of Cost.**
-
-The cost of an Agent system can be decomposed into three levels:
-
-**Model inference cost** is the most direct component, determined by the consumption of input tokens and output tokens. However, in Agent scenarios, there are two often-overlooked amplifying factors. The first is the **context accumulation effect**: each time an Agent calls an LLM, it sends all previous conversation history and tool outputs together (so the model can understand the context). Without effectively utilizing KV Cache (i.e., caching already processed context to avoid redundant computation), the cost grows very quickly—Round 1 sends 1000 tokens, Round 2 sends 2000 tokens, Round 3 sends 3000 tokens, totaling 1000+2000+3000=6000 instead of 3×1000=3000. The more rounds, the larger the gap. The second is **thinking token cost**: models that support thinking generate a large number of thinking tokens. Although these tokens are not displayed to the user, they are still billed.
-
-**Tool call cost** includes external API fees (search engines charge per query, database queries consume computing resources), sandbox resources for code execution, and an easily overlooked indirect cost: the token cost incurred when tool outputs are injected into the context. The content returned from a single web search might occupy 2000-5000 tokens, and it will be repeatedly billed as input in every subsequent round of inference.
-
-**Infrastructure cost** covers operational overhead for vector databases (used for RAG retrieval), message queues, relational databases, and logging and tracing storage (for observability).
-
-To see where these costs actually come from, the companion experiment used a fixed eight-turn refund workflow: query the order, logistics, refund policy, and knowledge base, then perform risk checks, issue the refund, notify the user, and close the case. Real gpt-4o-mini calls were run under all four combinations of two switches: stable versus unstable prefixes, and full versus compressed history. The business workflow was identical in every arm. Table 6-4 uses the recorded token counts and prices from that run.
-
-Table 6-4 Measured Cost of the Eight-Turn Agent Workflow
-
-| Configuration | Input Tokens | Cached Tokens | Total Cost | Savings vs. Baseline |
-|---|---:|---:|---:|---:|
-| No cache, no compression | 20,700 | 0 | $0.003776 | — |
-| Stable prefix only | 20,386 | 13,568 | $0.002707 | 28.3% |
-| History compression only | 16,177 | 0 | $0.003115 | 17.5% |
-| Stable prefix + compression | 16,035 | 6,144 | $0.002643 | 30.0% |
-
-In the baseline, input grew from 1,113 tokens on the first turn to 3,668 on the last. Tool results were repeatedly carried into later requests, accounting for 9,544 input tokens across the run. With both optimizations enabled, that figure fell to 5,248 and total cost dropped by 30%.
-
-The gains were not additive. A stable prefix alone saved 28.3%, and compression alone saved 17.5%, yet together they saved 30%, not 45.8%. Compressing history also shortened the prefix available for cache reuse. **When context optimizations are combined, measure the complete workflow; never add their isolated savings together.** A different model, price schedule, or task length will change the 30% figure. The reusable result is the four-arm method, not the percentage itself.
-
-**Cost Optimization Strategies.**
-
-The first input-side levers to test are **KV Cache Reuse** (keep the prefix stable), **Context Compression** (shorten old trajectories and verbose tool results), and **Tiered Model Routing** (send simple requests to lightweight models and difficult reasoning to stronger ones). Chapter 2 covered the implementations. Here the operational point is that each lever should have its own switch, so the team can measure both its isolated effect and what happens when it is combined with others. Two further methods matter specifically to evaluation and operations.
-
-**Asynchronous Batch Processing** accumulates non-real-time tasks for batch processing, leveraging batch pricing discounts from API providers; in self-deployment scenarios, it also improves GPU utilization during off-peak hours.
-
-**Cost Monitoring and Budget Control.**
-
-In a production environment, a real-time cost monitoring system should be established: track token consumption and API costs by task type, model, user, etc. Also, set a cost cap for each task—automatically terminate the Agent when it falls into a loop or explores too deeply, preventing a single task from incurring abnormally high costs.
-
-> **Experiment 6-9 ★: End-to-End Cost Analysis of Agent Tasks**
->
-> **Experiment Goal**: Reproduce the eight-turn cost breakdown above, then test the same optimization levers on your own workload.
->
-> **Technical Approach**: Reproduce the fixed companion task first, then select several representative tasks of your own. Use LangSmith or a self-built tracing system to record input/output and thinking tokens, tool-call counts and return sizes, and end-to-end latency for every LLM call. Calculate average cost, p50/p95/p99, and the cost breakdown for each task type.
->
-> **Acceptance Criteria**: Generate a cost report and identify the main drivers. Run all four switch combinations, measuring each optimization alone and both together. Rerun the experiment after changing models rather than carrying forward the saved trace's percentage savings.
+> **Experiment 6-2 ★★★: Asynchronous Agent with Parallel Execution and Interruption Capabilities**
 >
 >
-
-### Evaluation-Driven Continuous Iteration
-
-Model selection is not a one-time decision but a continuous process, adjusted as models evolve. The chapter opened with the claim that an evaluation system lets you keep pace with model evolution; a concrete model-switching case shows how that plays out in a real decision.
-
-Suppose your Agent system is currently built on Claude, excelling in tool calling and complex orchestration. One day, Gemini releases a new model, and public benchmarks show it surpasses Claude on several metrics at a lower price. At this point, your question is not "Is Gemini better than Claude?" but "**On my specific tasks, is Gemini better than Claude? How much better? What is the switching cost?**"
-
-A team with a solid evaluation system can answer this in hours: run the new model on its own evaluation dataset and compare task success rate, tool call accuracy, latency, and cost. You might find the new model really is better and cheaper on simple tasks—but in the core scenarios involving complex multi-round tool orchestration, its success rate drops by 5%. Once you confirm the difference exceeds the estimated sampling noise (see "Statistical Significance of Evaluation Results" below), your decision becomes a differentiated strategy—migrate simple tasks to the new model to cut costs, keep the original model on complex tasks to protect quality—rather than a blind wholesale switch. Decisions this granular and data-driven are only possible with an evaluation system built in advance.
-
-> **Experiment 6-10 ★★: Multi-Dimensional Model Performance Benchmarking**
+> ![Figure 6-5: Experiment 6-2 Asynchronous Agent Interruption and Recovery](images/fig6-5.svg)
 >
-> Conduct a comprehensive benchmark of mainstream LLMs and different API providers to build a multi-dimensional model selection decision database.
 >
-> Select test scope: Closed-source SOTA models like GPT series, Claude series, Gemini series, Doubao series, and open-source models like Qwen, Kimi, DeepSeek. Test the same model with different API providers (e.g., DeepSeek official vs. Siliconflow) to verify results from third-party performance monitoring platforms (e.g., Artificial Analysis).
+> Building on the simple event queue of Experiment 6-1, this experiment moves into the hard parts of asynchronous Agents: **parallel tool execution, execution cancellation, and state management**. The Agent no longer just processes events one by one; it needs to manage multiple concurrent tasks simultaneously, handle interruptions and recoveries, and make dynamic decisions based on real-time state.
 >
-> Design standardized test workloads: Input throughput tests use fixed-length contexts (8K/32K/128K tokens), output throughput tests request fixed-length responses (512/2048 tokens). Latency tests include TTFT (Time to First Token) and end-to-end latency. For models supporting thinking, separately measure thinking length and thinking latency. For each configuration, make at least 100 requests and calculate the standard deviation, p50, p95, and p99; high latency variance indicates an unstable user experience.
+> **1. Asynchronous Tool Execution**: Supports asynchronous execution of time-consuming tools (at least 3-5 seconds), returning a placeholder immediately upon initiation. **Validation Scenario**: The Agent executes a long-running terminal command. During this time, the user asks, "What time is it now?" The Agent responds immediately, then presents the analysis result when the long-running command completes.
 >
-> Evaluate API availability and stability: Probe once per hour for a week, recording success rate, error types, and failure duration. Calculate failure rate, MTTR (Mean Time to Recovery), and longest continuous uptime. Test the actual thresholds of rate limits—gradually increase concurrency to find the throttling point, recording RPM/TPM limits. Calculate comprehensive cost: Collect pricing information (unit prices for input/output/cache tokens), consider the impact of KV Cache, and calculate the average cost for typical multi-round Agent tasks.
+> **2. Event Queue and Batch Processing**: Accumulates non-urgent events and appends them to the trajectory in a batch. **Validation Scenario**: The Agent is executing a long task. The user sends consecutive messages: "Remember to reply in Japanese" and "Format it as a webpage." When the task completes, the Agent processes all events at once, generating a Japanese webpage.
 >
-> **Experiment 6-11 ★★: End-to-End Selection Evaluation of User Memory Systems**
+> **3. Interruption Mechanism**: A user's "stop" command immediately terminates the execution flow and cancels the asynchronous tool. **Validation Scenario**: The Agent is executing a long task. The user sends "Cancel." The Agent stops immediately, and the trajectory records the interruption event and the cancellation operation.
 >
-> **Prerequisites**: Must complete the contextual retrieval or agentic RAG experiment from Chapter 3.
->
-> **Goal**: Perform an end-to-end model-selection evaluation of a user-memory retrieval Agent, examining how the embedding model, reranker, and Agent's main model jointly affect retrieval quality, latency, and cost. Reuse `chapter3/contextual-retrieval-for-user-memory` or `chapter3/agentic-rag-for-user-memory`, and compare the configurations on 60 test cases.
->
-> **Acceptance**: Evaluate each of the three selection points in turn—embedding model (BGE-M3 / OpenAI / Doubao, etc., record top-5 retrieval accuracy, latency, cost), reranker (include a "no reranker" baseline, quantify its marginal value), and main model (compare success rate and tool usage efficiency under the same retrieval configuration). The key is to identify synergies among the components: a stronger embedding might make the reranker redundant, and a stronger main model might compensate for retrieval shortcomings. Selection is a systemic trade-off, not simply a matter of choosing the strongest component in isolation. Configuration details are in the companion repository.
+> **4. Cancellation and Status Query for Parallel Tools**: After an asynchronous tool completes, the real result is injected into the conversation via a new event. Supports cancellation or progress query via task ID. **Validation Scenario**: The user requests, "Run these three scripts simultaneously for me. Whichever finishes first, check the progress of the remaining scripts. If any hasn't exceeded 50%, cancel it." The three scripts simulate analysis processes, outputting progress continuously at speeds of 3%, 2%, and 1% per second, respectively. The Agent starts three asynchronous terminal commands simultaneously. When the script at 3% per second finishes in about 33 seconds, the Agent queries the status of the remaining two terminals, finding one at about 66% and the other at about 33%. It then cancels the one that hasn't exceeded 50%. After both terminals complete, it integrates the results to generate a complete report.
 >
 
-## Statistical Significance of Evaluation Results
+## Voice: The Most Natural Human-Machine Interface
 
-"A switching decision within hours" rests on an implicit premise: the score difference you observed is real signal, not sampling noise. With a limited evaluation set and non-deterministic model outputs, that premise does not hold automatically.
+Voice is not merely text turned into sound. Speaking is roughly four times faster than typing and leaves the hands and eyes free, so it naturally places an Agent in a continuous input-output loop where the user may interrupt at any moment. Dictation converts speech into text; a voice Agent lets the user collaborate with the Agent directly. Both support the whisper-coding workflow introduced earlier.
 
-A rough estimate of this sampling noise is the **standard error of a binomial proportion** (which characterizes the fluctuation of the success rate due to sampling randomness; the larger the value, the less reliable the success rate). If the success rate p is measured on n test cases, the standard error is approximately √(p(1-p)/n). For a concrete example: 100 cases, success rate 70%, standard error ≈ √(0.7×0.3/100) ≈ 4.6%. An approximate 95% confidence interval is p ± 2 standard errors, meaning an interval that would contain the true rate in about 95% of repeated samples, i.e., 70% ± 9 percentage points. A three-percentage-point difference like "new model 73% vs. old model 70%" therefore sits entirely inside the noise band—treating the two success rates as independent, the standard error of their difference is about √2 times the individual standard error (here about 6.5 percentage points). One caveat: that √2 assumes the two measurements are independent, whereas in practice both configurations usually run on the **same set of tasks**, so the samples are not independent. The independence assumption is merely a conservative upper bound for a quick check on whether a small difference deserves attention at all. Even by that conservative yardstick, a three-percentage-point gap falls far short of the 6.5-percentage-point standard error—switching models on such evidence is little better than a coin flip.
+This section covers two directions: the user speaking to an Agent, and an Agent speaking to the outside world on the user's behalf. The voice model determines what the Agent can answer; the interaction architecture determines whether it can hear clearly, respond in time, hand over naturally, and complete confirmations and tool calls during a call. We first examine interaction timing, then cognitive timing and expressive quality.
 
-Agent evaluation adds another layer of non-determinism: the same model and dataset can still produce different results across runs because temperature sampling, tool-return variance, and environmental timing all inject randomness. A single run should therefore never justify deployment. **Run multiple times and average**—say, 3-5 runs per configuration—and report both the mean and the spread. The small AndroidWorld pilot later in this chapter uses only one paired run per task, so it can screen ideas for a larger test but cannot support deployment. That decision requires the planned multi-seed run on the full task set.
+### Interaction timing: from cascaded to full-duplex
 
-Hence a practical principle: **when the score difference is smaller than the estimated sampling noise, do not make a switching decision.** But before settling on "don't switch," reach for a more sensitive—and more correct—analysis. When two configurations run on the same set of tasks, the right default is **paired analysis**: compare win/loss task by task, look only at the cases where the two disagree (one correct, one wrong), and apply something like McNemar's test to judge significance. Pairing subtracts out the shared noise of task difficulty, making it far more sensitive at the same sample size than differencing two independent success rates—the earlier √2 estimate is just a conservative, mental-math sieve for ruling out differences that obviously fall short. If paired analysis still leaves the difference uncertain, only then consider growing the sample—and note that the standard error scales as 1/√n, so going from 100 to 400 cases merely halves the estimated sampling noise. Expansion is expensive. Read the other way: if an improvement's expected benefit is only 2-3 percentage points and your evaluation set has a few dozen cases, the evaluation simply cannot tell whether the improvement works—the priority is to grow the evaluation set, not to keep iterating the Agent.
+OpenAI's GPT-Live introduction describes three voice-interaction paradigms—cascaded, turn-based, and full-duplex[^ch6-12]. They are not a simple old-to-new replacement; they trade latency, cost, and observability in different ways:
 
-One more easily overlooked pitfall is **multiple comparisons**. Test a batch of hypotheses in parallel and the probability that at least one conclusion is a false positive climbs fast—even at a 95% confidence level per conclusion, across 6 hypotheses the chance of hitting at least one false positive is 1 − 0.95^6 ≈ 26%. The more hypotheses you run in parallel, the harder it becomes to avoid one that merely looks significant. Countermeasures come in two kinds: tighten the significance threshold for each conclusion as the number of hypotheses grows, using a Bonferroni-style correction, or rerun every positive result in an independent confirmatory pass and accept it only if it replicates. The AndroidWorld case later changes one variable at a time across successive rounds, avoiding the temptation to try a large batch of changes and report only the winner. If several prompts or observation formats are screened in parallel, multiple comparisons must be reflected in the conclusion.
+| Paradigm | Core structure | Main advantage | Main limitation |
+| --- | --- | --- | --- |
+| Cascaded | VAD → ASR → LLM → TTS | Clear modules that are easy to replace and debug | Latency accumulates and paralinguistic information is lost at interfaces |
+| End-to-end Omni | One model listens, thinks, and speaks | Lower latency and better preservation of tone, emotion, and ambient sound | Still turn-based; training and debugging cost more |
+| Full-duplex | Continuously listens, speaks, and decides | Overlapping speech, natural interruption, and continuous streams | Training, control, and evaluation are more complex |
 
-Evaluation-driven decisions rely on high-quality data, which comes from the systematic recording of the Agent's operational process—this is what observability addresses.
+The common thread is escaping the assumption that people must speak one at a time, and escaping VAD's guess about who has the floor. Cascaded and Omni systems still divide interaction into turns; full-duplex makes turn ownership a continuous model decision.
 
-**Paired comparison:**
+[^ch6-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ The cascaded / turn-based / full-duplex taxonomy comes from the article's summary of three generations of ChatGPT Voice; its “end-to-end omnimodal (Omni)” term corresponds to the “turn-based voice models” category.
+
+**Streaming cancellation:**
 
 ```python
-for task in paired_tasks:
-    for seed in fixed_seeds:
-        a = run(config_a, task, seed)
-        b = run(config_b, task, seed)
-        record_paired_delta(verifier(a), verifier(b))
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
 
-return paired_bootstrap_or_mcnemar(all_deltas)
+on_final_transcript(text):
+    commit_or_restart(text)
 ```
 
-## Agent Observability
+### Paradigm 1 · Cascaded pipeline
 
-Evaluation-driven decisions (whether for model selection or continuous iteration) rely on high-quality operational data. Below, we first introduce how to systematically collect this data (observability), and then discuss how to translate evaluation results into system improvements.
+Most commercial voice assistants still use a serial pipeline (Figure 6-6): VAD decides when the user has finished, ASR converts audio to text, the LLM understands and generates a reply, and TTS speaks it. Modularity lets each component be optimized independently, but every boundary can add waiting time.
 
-![Figure 6-6: Observability Technology Stack](images/fig6-6.svg)
+![Figure 6-6: Serial voice Agent pipeline](images/fig6-6.svg)
 
-Observability is a concept borrowed from distributed systems: you cannot open the system and watch it work; you infer what is happening from the logs, metrics, and traces it emits—the way a doctor, unable to see inside a patient, diagnoses from temperature, blood pressure, and imaging. Agent systems make this harder still: the same input can produce different outputs, multi-round reasoning and tool calls make execution paths extremely complex, and the model's "thinking" is completely opaque from outside.
+| Module | Role | Typical bottleneck |
+| --- | --- | --- |
+| VAD | Decide whether speech has ended | Silence thresholds add waiting and split turns incorrectly |
+| ASR | Convert audio to text | Recognition latency and loss of context |
+| LLM | Understand, reason, and generate | Time to first token; reasoning adds more waiting |
+| TTS | Convert text to speech | First-packet synthesis and playback buffering |
 
-The value of observability lies first in **problem diagnosis**: complete traces allow developers to replay the entire process rather than guessing. Second, it is the foundation for **continuous optimization**—you can see which tasks require multiple rounds of iteration, which tools have the lowest success rate, and which retrieval queries always return empty results. In **cost management**, Agent operating costs can differ by one or two orders of magnitude between tasks, and tracing surfaces the abnormally expensive cases. Finally, accumulated trace data underpins later system optimization and model improvement.
+For a short reply without reasoning, VAD, ASR, LLM, and TTS waiting time accumulates serially (Figure 6-7). The real value depends on input length, model, hardware, network, and load.
 
-Agent observability is built on the foundation of **traces**, whose data structure directly inherits the span tree model from distributed systems: one task execution corresponds to one trace, where each LLM call, each tool call, and each retrieval is a **span** (an execution unit recording input/output, start/end times, token consumption, and error information). The parent-child relationships between spans form an execution tree—for example, an "Agent Main Loop" span may have several "LLM Call" and "Tool Call" child spans hanging beneath it. Standardized protocols are already available for this layer: **OpenTelemetry** is the general-purpose distributed tracing standard, while specifications like **OpenInference** define LLM-specific semantic conventions on top of it (how to record prompts, model parameters, token usage, etc.). The advantage of adopting standard protocols is the decoupling of collection and analysis—the same trace data can be connected to different analysis backends, avoiding vendor lock-in.
+![Figure 6-7: Latency waterfall for a serial response](images/fig6-7.svg)
 
-LangSmith is one of the representative platforms in this domain (similar platforms include Langfuse, Arize Phoenix, etc.), integrating observability, evaluation, and optimization into a closed loop. Each execution creates a trace session, where model calls, tool usage, and knowledge retrieval are recorded as independent execution units, linked by causal relationships to form an execution tree. Each unit records complete input/output, timing information, cost data, and error information. The platform uses asynchronous batch data collection to ensure that tracing itself does not affect the Agent's response latency.
+Production queueing amplifies idle latency further (Figure 6-8), but capacity planning is outside this chapter's scope.
 
-The platform also supports A/B testing (routing a portion of user traffic to a new version, automatically comparing metrics, and supporting rapid rollback or gradual scaling), prompt version management (each version is associated with runtime performance data), and collaborative development (team members can share trace data and problem cases). The massive amount of real-world data from production environments is a goldmine for continuous improvement—it can uncover unforeseen scenarios and identify the features most in need of optimization.
+![Figure 6-8: Queueing latency curve](images/fig6-8.svg)
 
-The most valuable use of observability data is to **turn it into evaluation assets**. A practical loop: extract failed and suspicious cases from production traces → anonymize them (strip sensitive fields such as user data and keys) → distill them into new test cases and regression tests for the evaluation set. The evaluation set then stops being a one-time, static collection and becomes a living asset that evolves with the product and continues to reflect the real user distribution—the failure patterns exposed in production today become the regression tests guarding the baseline tomorrow. This is precisely the interface between observability and the main theme of this chapter: observability is responsible for "seeing" what happens in the real world, and evaluation is responsible for solidifying those observations into repeatable standards.
-
-Observability faces several challenges:
-
-- **Trade-off between data volume and privacy**: High-traffic systems can generate terabytes of trace data daily, while also needing to comply with data protection regulations.
-- **Complexity of causal attribution**: Automatically identifying root causes from traces still requires more intelligent analysis algorithms; cutting-edge research is attempting causal inference and counterfactual analysis, but it is not yet mature.
-- **Tracing challenges in multi-Agent systems**: Tracing execution flows across multiple Agents is more complex and semantically richer than tracing API calls between microservices.
-- **Balance between real-time guardrails and post-hoc analysis**: High-risk scenarios require proactive guardrails, but these introduce additional latency and false positives.
-
-As ML technology becomes more deeply integrated into the toolchain, future observability platforms are expected to automatically identify anomalies and pinpoint root causes.
-
-With a comprehensive evaluation system and dataset in place, the key is to translate evaluation results into tangible system improvements.
-
-## From Benchmark Reports to System Improvements
-
-The following case comes from a real, deliberately narrow AndroidWorld iteration in the companion repository. It covers four Wi-Fi settings tasks on an API 35 emulator, with one matched run per task. It is not the full 116-task benchmark and does not replace a rerun in the reference API 33 environment. Its value is not an overall score; it is the sequence of decisions from one result to the next.
-
-![Figure 6-7: Benchmark to Improvement Loop](images/fig6-7.svg)
-
-From the perspective of Harness engineering, this section is essentially about the methodology for iterative Harness optimization—using evaluation data to identify weak points in the Harness (insufficient context? missing constraints? inadequate validation? untimely feedback?), making targeted improvements, and then re-evaluating, forming a closed loop for the Harness's continuous evolution.
-
-Before analyzing any benchmark report, note an easily overlooked principle: **when Agent performance drops, check the evaluation system first, then the Agent**. The common mistake is to start editing Agent code the moment a score falls, ignoring the possibility that the evaluation system broke first—steer by a distorted signal and the correction is wrong from the very first step. Typical evaluation-side failures include: the runtime environment running out of resources and killing processes (which shows up as random failures), bugs in the scorer that mark correct answers as failures, and test cases drifting out of sync with production scenarios. In the headline numbers, all of these look identical to model degradation; only a review of the full traces can tell them apart.
-
-### Reading a Benchmark Report: The Art of Problem Discovery
-
-The starting report recorded one run on each of 116 tasks and about 88% overall success. The failures were not scattered: three of the four `SystemWifiTurn*` tasks failed, and their traces repeatedly navigated back and forth without confirming the final state. Two explanations fit the evidence: the Agent did not know where to go, or the UI representation it received was incomplete.
-
-An 88% headline score hides this small but coherent failure cluster. Raising the step limit would be equally misleading—it could recast "the Agent cannot see the control" as "the Agent needs more persistence." Read reports in the opposite direction: locate clusters by task and capability tag, replay the traces, decide whether the failure arose in observation, reasoning, action, or verification, and only then choose a variable to change. The Wi-Fi slice was used to diagnose the mechanism cheaply, not to estimate system-wide performance.
-
-### From Data to Hypotheses: Building an Improvement Roadmap
-
-The first round tested the cheapest explanation. H1 assumed a navigation-knowledge gap, so only the treatment received Wi-Fi navigation and final-state-checking instructions. Success did not improve; the prompt was not the bottleneck.
-
-The second round asked what the Agent could actually see. H5 replaced the API-35-incompatible accessibility feed with AndroidWorld's supported UIAutomator tree. Success improved, but the full tree caused token use to surge. H5C therefore added no new information: it simply removed invisible, textless, non-actionable container nodes to see whether the same success could be preserved with less noise.
-
-Across all three rounds, the model, task parameters, seed, step limit, and emulator stayed fixed, and arm order alternated. This staged design made attribution straightforward: the residual problem or side effect from one round became the sole change in the next.
-
-### From Results to Decisions: Data-Driven Trade-offs
-
-Table 6-5 summarizes the measured results. With only four tasks per arm, these numbers can decide whether a larger rerun is worthwhile; they cannot estimate success across AndroidWorld.
-
-Table 6-5 Three Rounds on the AndroidWorld Wi-Fi Slice
-
-| Experiment | Only Change | Control → Treatment Success | Treatment / Control Tokens | Next Step |
-|---|---|---:|---:|---|
-| H1 | Add navigation instructions | 25% → 25% | 0.47× | No success gain; retain the original prompt |
-| H5 | Accessibility feed → UIAutomator | 25% → 100% | 2.498× | Strong gain but too expensive; continue optimizing |
-| H5C | Compact the UIAutomator tree | 100% → 100% | 0.506× | Preserve success and halve tokens; advance to a full rerun |
-
-The sequence matters more than any one percentage. More detailed instructions cannot restore information the Agent never received; observation failures should be investigated before prompts are expanded. But more input is not always better either. The full element tree fixed visibility while flooding the context with noise. Removing non-semantic nodes preserved four successful runs and cut tokens by roughly half. No model was changed: the Harness's UI representation first determined whether the task could be completed and then whether completing it was economical.
-
-### Continuous Iteration: From First Improvement to System Evolution
-
-Passing H5C on four tasks only earns it a larger test; it does not authorize deployment. The next gate is a five-seed run over all 116 tasks in the Pixel 6 / API 33 reference environment with the full third-party app set. Success must be non-inferior, token use no more than 75% of the original, and latency no more than 1.5×. Until that run is complete, 4/4 on the slice must not be reported as 100% system-wide success.
-
-That is what continuous iteration means in practice: evidence from one round should authorize only the next action that its scope can support. H1 stopped further prompt piling; H5 found the right mechanism and revealed a cost problem; H5C fixed that problem and qualified for broader testing. A good benchmark report contains more than a score. It states where the conclusion applies, which guardrails failed, and what must be tested next.
-
-> **Experiment 6-12 ★★★: Evaluation and Improvement on AndroidWorld**
+> **Experiment 6-3 ★: Build a traditional voice Agent**
 >
-> This experiment practices the full path from evaluation report to system improvement. Start with the historical report and three saved paired runs in `chapter6/android-world`.
+> Connect the microphone, Silero VAD, local Whisper, a streaming LLM, and Fish S1 TTS over WebSocket to establish the cascaded baseline. The retained real single-turn evidence shows that the media and model chain ran end to end; it is not a concurrency or production-load benchmark. Code and acceptance records are in [chapter6/live-audio](../chapter6/live-audio/).
+
+> **Add-on: Build a WebRTC voice Agent that “calls the user”**
 >
-> Step 1: Diagnosis. Cross-analyze the per-task table and the capability tag matrix to map surface-level task failures to deep-seated capability deficiencies. Identify capability tags with lower-than-expected success rates and task areas with concentrated failures.
+> A phone Agent does not require PSTN. Browser WebRTC can reproduce the loop of opening a session, asking for missing information, repeating it for confirmation, and saving structured results. When an external organization must be contacted, replace the same tool contract with a compliant PSTN/SIP provider. The complete media path, direct/ReAct comparison, and acceptance evidence are in [chapter6/phone-agent](../chapter6/phone-agent/). The project retains its historical \`exp9-2\` run identifiers but no longer occupies a numbered manuscript experiment.
+
+#### From serial to streaming perception
+
+Figure 6-7 describes the fully serial case in which each stage waits for the previous one. A production system can retain the modular split while producing increments as early as possible:
+
+- **Streaming ASR** continuously produces a provisional transcript while the user speaks, then confirms the final text at the turn boundary.
+- **Segmented LLM output** sends the first speakable sentence to TTS without waiting for the full reply.
+- **Incremental TTS** returns audio chunks so later generation, synthesis, and playback overlap.
+
+“Streaming every stage” does not make ASR, LLM, and TTS fully parallel from start to finish. In a standard cascade, ASR overlaps with the user's speech and TTS overlaps with the LLM's later tokens, but the final reply still depends on a stable transcript. A more aggressive system starts the LLM from a partial transcript; if later text changes, it must cancel, restart, or correct the generation. Speculation requires explicit commit, invalidation, and rollback mechanisms; enabling \`stream\` alone does not provide them.
+
+Ordinary streaming also cannot remove VAD's silence wait. A traditional VAD + ASR front end has three problems:
+
+1. **Accumulated latency:** it must wait through silence before confirming the end.
+2. **Lost information:** a voiced/unvoiced bit cannot express hesitation, emotion, backchannels, or ambient sound.
+3. **Broken context:** email addresses, names, and proper nouns may be split across chunks and misrecognized.
+
+A truly streaming model needs a causal or chunked encoder with incremental decoding. Whisper's decoder is autoregressive, but its encoder expects a complete audio segment, so it should not be called a causal streaming model. RNN-T and streaming Conformer ASR have long been used in industry; the focus here is semantic listening built on an LLM backbone.
+
+An LLM-based streaming-audio model can emit text and semantic events from continuous audio, placing recognition and part of understanding in one model. It keeps the conversation context from the beginning and can use world knowledge for brands, names, and proper nouns. Simulated chunking is still not a performance promise for a causal model.
+
+If the only goal is deciding whether the user has finished, endpointing can be built into the streaming recognizer. The model combines semantics and silence to judge whether an utterance is complete. Training labels must contain only information visible at decision time, or hindsight will produce a judgment that cannot be reproduced online[^ch6-11]. This is lighter than a complete audio-capable LLM.
+
+The model can emit acoustic-event markers as well as words:
+
+- **speak_start/end, interrupt:** speech boundaries and interruption intent;
+- **emotion:** emotion and hesitation;
+- **laugh, sigh, noise:** paralinguistic and environmental sound.
+
+Together with text tokens, these markers form one event stream. The Agent can detect hesitation, interruption, and environmental changes without compressing every sound into plain text.
+
+[^ch6-11]: For the diagnosis of embedding turn judgment in the recognizer and the problem of hindsight-based labels, see Bojie Li and Noah Shi. *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR.* 2026 (forthcoming).
+
+> **Experiment 6-4 ★: Simulate streaming voice perception with Qwen2-Audio**
 >
-> Step 2: Build Hypotheses. Formulate improvement hypotheses following the three-layer framework (surface → mid → deep). Each hypothesis should state the target improvement in success rate and the verification method.
+> Qwen2-Audio is not itself a streaming model. This experiment simulates continuous perception with increasing audio prefixes and compares it with 600 ms VAD + Whisper. It shows how full context changes pause and noise behavior, but every prefix re-encodes earlier audio, so its timings are not a promise for a causal streaming model.
 >
-> Step 3: Phased Experimentation. Reproduce H1, H5, and H5C with one variable changed per round. Record tokens, latency, and regressions as well as success.
+> The canonical run passed all execution and provenance gates but reproduced only 2/6 expected behaviors: increasing-prefix calls took 8.4–11.3 seconds, the pause sample missed \`silence\`, and the noise sample still misclassified \`cough/laughter\`. This negative result tests mechanisms and failure modes; it does not support a “100–200 ms true streaming perception” claim. See [chapter6/streaming-speech](../chapter6/streaming-speech/) for the complete record.
+
+### Paradigm 2 · End-to-end omnimodal models (Omni)
+
+Even with streaming perception, a cascade passes listening, thinking, and speaking through discrete interfaces; emotion, intonation, and ambient sound may be lost when audio becomes plain text. Omni uses one model to listen to audio, generate a reply, and speak it, which can preserve those signals at the cost of higher training, debugging, and component-replacement costs (Figure 6-9).
+
+The end-to-end advantage is mainly latency and non-text information, not necessarily accuracy. A self-cascade first transcribes with the same model and then answers from the transcript: when text carries the task information, it may correct a perception error; when the answer depends on speech rate, emotion, or ambient sound, the text bottleneck irreversibly loses evidence. The key question is not whether there is an intermediate representation, but what information it carries[^ch6-13].
+
+Omni still assumes turn-taking and generally uses VAD or semantic endpointing to assign the floor. A pause in a spoken sequence of numbers can still be mistaken for the end; streaming perception improves the judgment but does not remove turns.
+
+[^ch6-13]: For a complete cross-modal measurement of when cascade and end-to-end accuracy advantages reverse, and how task nature predicts the direction, see Li, Bojie and Noah Shi. *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents.* 2026 (forthcoming).
+
+![Figure 6-9: End-to-end omnimodal speech-model comparison](images/fig6-9.svg)
+
+Realtime speech APIs sit between cascaded and Omni systems: the model handles audio natively, but interaction control still relies on VAD, interruption, and asynchronous tool calls. Qwen3-Omni's Thinker-Talker and MiniCPM-o's local path show that this approach can combine thinking, expression, and multimodal input at different model sizes. The useful comparison is not a leaderboard; it is how end-to-end and self-cascade paths fail on different tasks.
+
+> **Experiment 6-5 ★★: Run MiniCPM-o 4.5 locally—end-to-end versus self-cascade**
 >
-> Step 4: Data-Driven Decision Making. Make deployment decisions based on cost-benefit analysis—not simply adopting all effective improvements, but weighing the scope of application, latency impact, and cost overhead for each improvement. Prioritize low-cost, high-benefit improvements for deployment; restrict high-cost improvements to critical scenarios.
+> Fix one local MiniCPM-o 4.5 revision, disable thinking mode, and compare direct audio answers with the same model's self-cascade: transcribe first, then answer from the transcript. This measures whether audio information is preserved, **not** the later “think while speaking” capability.
 >
-> Step 5: Iteration. A passing slice experiment advances only to the full rerun. Discuss deployment only after the 116×5 reference-environment run, and preserve environment differences, sample size, and incomplete scope in the report.
+> **Table 6-1.** Local MiniCPM-o 4.5 end-to-end and self-cascade results (four mechanism checks, not a benchmark)
+>
+> | Task type | End-to-end | Self-cascade | Observation |
+> | --- | ---: | ---: | --- |
+> | Semantic arithmetic (2) | 1/2 | 2/2 | Self-cascade corrected one transcription error |
+> | Paralinguistic speaking rate (2) | 2/2 | 1/2 | The plain-text transcript erased the fast/slow distinction |
+> | Total | 3/4 | 3/4 | Equal totals, complementary failures |
+>
+> The sample is small, so it cannot establish which path is generally more accurate or faster. Hardware, versions, raw outputs, and real audio-to-audio evidence are in [chapter6/end-to-end-speech](../chapter6/end-to-end-speech/).
+
+Step-Audio 2 demonstrates an end-to-end path that processes raw audio and emits text and speech; it focuses on emotion, speaking rate, intonation, and ambient sound beyond semantics. Step-Audio R1 extends this path by internalizing reasoning in the audio model; it will serve as the example for “thinking while speaking.”
+
+### Paradigm 3 · Full-duplex interactive models
+
+Omni still divides conversation into “the user speaks” and “the model speaks,” but simultaneous interpreting and similar tasks require overlap. A full-duplex model therefore does not presuppose turns: it listens and speaks continuously and repeatedly decides whether to continue, pause, interrupt, or call a tool.
+
+Kyutai's **Moshi** (2024) was an early research example. It models the user's and the model's audio streams in parallel, so overlapping speech and interruption can be natural behaviors.
+
+Thinking Machines Lab calls this an **Interaction Model**[^ch6-14]: interaction is built into the model instead of assembled around it with VAD and other external harnesses. Its micro-turn mechanism advances in short audio blocks, preserving silence, overlap, and interruption as continuous context. It can delegate the full conversation to a background reasoning model while it keeps the conversation alive, then incorporate the result at a suitable moment.
+
+[^ch6-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” 2026-05. https://thinkingmachines.ai/blog/interaction-models/
+
+OpenAI's GPT-Live brings the full-duplex path to production scale: it continuously processes input and generates output, can wait, backchannel, be interrupted, and handle realtime translation. Like the Interaction Model, it delegates complex work to a background model while the foreground model maintains the conversation.
+
+The narrative is: cascades guess turns from silence thresholds; streaming perception upgrades the judgment to the semantic level; full-duplex turns the switch itself into a continuous decision.
+
+### Cognitive timing: realtime interaction and deep thinking
+
+Interaction quality and intelligence ceiling are different dimensions. The foreground model must respond while the user is still engaged; the background model can spend longer thinking. The following three designs are trade-offs, not a linear progression. The first two can wrap a cascade or Omni model; only the third unifies thinking and expression in one end-to-end audio model.
+
+| Design | Foreground | Background | Main risk |
+| --- | --- | --- | --- |
+| Fast filler, slow correction | Give an immediate answer | Re-think and supplement it | Contradiction |
+| Fast interaction, slow advice | Keep the conversation alive and choose wording | Supply advice or tool results | A constrained interface |
+| Unified thinking and expression | Think and speak together | Share model state with expression | High training and replacement cost |
+
+#### Solution 1: Fast thinking for fillers, slow thinking for answers
+
+Fast thinking can give a holding response within a few hundred milliseconds while slow thinking performs a deeper derivation in the background. Simple questions may be processed twice, while hard questions can produce contradictions: the fast model recommends a purchase, then the slow model discovers that a key feature is missing. The root cause is two independent instances thinking separately.
+
+![Figure 6-10: Fast/slow thinking architecture and design alternatives](images/fig6-10.svg)
+
+#### Solution 2: Fast thinking for interaction, slow thinking for advice
+
+The background model can send advice through a status bar or dedicated interface while the foreground model keeps the conversation alive and decides how to phrase it. This is more stable than Solution 1, but communication is still indirect: the foreground can misunderstand the advice and cannot see the background's intermediate reasoning. Before the background finishes, follow-up questions still rely on the foreground model. It can naturally wait for a result, but it cannot truly think while speaking.
+
+#### Solution 3: End-to-end unification of thinking and expression (using Step-Audio R1)
+
+This design internalizes reasoning directly in an end-to-end audio model. Step-Audio R1 uses two complementary mechanisms: **Modality-Grounded Reasoning Distillation (MGRD)** grounds thinking in acoustic features, while the **MPS dual-brain architecture** lets planning and expression proceed in parallel. The first helps the model think correctly; the second helps it speak in time.
+
+Ideally, the model infers emotion from pitch, rhythm, and intonation rather than only from the transcript. “Text-proxy thinking” substitutes negative words in lyrics for analysis of melody and acoustics. MGRD selects reasoning traces that actually cite acoustic features, trains on them, and uses reinforcement learning to prevent guessing without thinking.
+
+MPS lets the planning brain continuously emit thought segments; the expression brain combines each segment with the partial reply and immediately generates speech. The pipeline runs in parallel, so the listener need not wait for the entire chain of reasoning before hearing the first sentence (Figure 6-11).
+
+![Figure 6-11: Step-Audio R1 MGRD and MPS dual-brain architecture](images/fig6-11.svg)
+
+A unified model implements “thinking while speaking” most directly, but thinking and realtime expression must be retrained together. A decoupled design makes it easier to swap the background brain; a unified design suits specialized scenarios that demand the most natural interaction. These are trade-offs, not simple substitutes.
+
+### More human-like speech synthesis
+
+Traditional TTS can expose its machine identity by being too smooth and pausing too little. Pauses, filler words, and occasional repetition signal uncertainty and thought in human speech.
+
+The main LLM can emit control markers in addition to text, such as **THINKING**, **EMO:happy**, and **SPEED:0.8x**; TTS maps them to pauses, prosody, speaking rate, laughter, sighs, and other nonverbal audio. The implementation can be a TTS trained to understand control markers, or voice cloning with reference clips for different emotions and styles.
+
+> **Experiment 6-6 ★★: Control token-driven TTS with Fish Audio**
+>
+> Use Fish Audio S1 to build a multi-reference voice library and compare three configurations: no control markers, one reference clip, and multiple reference clips. The execution layer selects matching emotion, speaking rate, and style from the markers.
+>
+> The multi-reference configuration scored highest in three position-balanced blind listening passes (human-customer-service likeness 4.67/5), but the complete planned ordering was not reproduced because the no-marker arm outscored the single-reference arm. This result suggests that expressive control helps, but a small listening study is not a general speech-quality conclusion. The complete 24-reference library, A/B/C media, and acceptance record are in [chapter6/controllable-tts](../chapter6/controllable-tts/).
+
+## Computer Use: GUI Automation Agents
+
+By now you may have noticed that this chapter devotes far more space to voice than to the two scenarios that follow. This is deliberate. Among real-time multimodal systems, voice technology has progressed the furthest and therefore provides the best reference point. It has traced the full arc from the original problem—excessive latency in serial pipelines—through end-to-end models, full-duplex interaction, and thinking while speaking, to today's relatively mature designs. That is why we have told its story in full. As you read the Computer Use and robotics sections, compare them with this trajectory: how far has each field progressed, and where does each remain stuck?
+
+These three scenarios seem different but face the same core challenges: real-time perception, low-latency decision-making, and continuous interaction. Next, we turn to visual interaction, or Computer Use, expanding the perspective from the auditory to the visual modality: what if an Agent could not only understand speech but also "see" the screen and operate its graphical interface?
+
+Computer Use, also known as GUI automation, allows AI to use software like a human by observing the screen and operating the mouse and keyboard—for example, opening a browser to search for information, filling in data in a spreadsheet application, or adjusting configurations in system settings. Its core is a **Perceive-Think-Act** loop (Figure 6-11):
+
+1.  The Agent takes a screenshot of the current screen.
+2.  A multimodal model receives the screenshot and task instruction, and outputs a thought and a specific action.
+3.  The execution layer performs the action in the real environment (moving the mouse, clicking, typing text, etc.).
+4.  It waits for the interface to respond, takes another screenshot, and enters the next loop iteration.
+
+**Computer Use safety loop:**
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+![Figure 6-12: Computer Use Agent's Perceive-Think-Act Loop](images/fig6-12.svg)
+
+There are three key design dimensions in this loop: **Action Space** (what operations the Agent can perform), **Visual Grounding** (how to find the target element in the screenshot), and **Model Architecture** (how to generate the correct action from the screenshot).
+
+### Action Space Design
+
+Anthropic defines three types of tools that constitute a complete interaction capability (Figure 6-12):
+
+![Figure 6-13: Computer Use Action Space](images/fig6-13.svg)
+
+**GUI Operation Tool** (`computer` tool): Mouse operations include moving (`mouse_move`), left/right/middle clicks, double-clicking or triple-clicking, dragging (`left_click_drag`), and more precise press/release actions (`left_mouse_down` and `left_mouse_up`). Scrolling (`scroll`) supports four directions and can be combined with modifier keys. Keyboard operations include typing character by character (`type`, with a 12ms interval between characters to simulate real typing), key combinations (`key`, e.g., `Ctrl+C`), and holding a key (`hold_key`). Perception actions include taking a screenshot, retrieving the cursor position (`cursor_position`), and waiting (`wait`).
+
+**Command Execution Tool** (bash tool): Provides a persistent bash terminal session with a 120-second timeout. It uses a sentinel string to detect command completion and maintains environment state across multiple calls (e.g., after `cd` to a directory, the next call remains in that directory).
+
+**File Editing Tool** (`str_replace_editor`): Enables safe editing through string matching and supports view, create, replace, insert, and undo operations. It is more precise than overwriting an entire file and less likely to modify unrelated content accidentally.
+
+> **Experiment 6-7 ★: Running Computer Use (Anthropic Reference Path or Open-Model Path)**
+>
+> Path A uses the Anthropic Computer Use Demo. Its container packages a complete Ubuntu desktop environment, including a browser, terminal, and other common tools. The frontend receives a task, while the backend sends the instructions and screenshots to Claude and then executes the mouse, keyboard, terminal, or editing actions returned by the model. This path is intended for understanding the native `computer` tool protocol; it does not require every reader to have access to the Anthropic API.
+>
+> Path B uses this book's [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/) companion. By default, it drives browser-use with the open-weight Qwen3-VL 32B Instruct model, either through the OpenRouter hosted API or by pointing `OPEN_MODEL_BASE_URL` to self-hosted vLLM/SGLang or another compatible endpoint. The endpoint must accept screenshots and support native JSON Schema; if it supports only ordinary JSON, the schema-in-prompt compatibility mode can be enabled explicitly.
+>
+> Both paths use the same read-only task and acceptance contract: a maximum of 25 steps, one action per step, and retention of the model/endpoint identity, raw provider responses, step-by-step screenshots, action sequence, final answer, and stop reason. Different models must be reported as separate experimental arms; an open-model result must not be presented as a Claude reproduction, nor should successful container startup be treated as task completion. Action intervals and planning quality are measured outcomes, not assumptions of a 2–5-second interval or inevitable superiority over other models.
 >
 
-## From External Evaluation to Internal Evaluation: Evaluation Infrastructure for Production-Grade Agents
+### Visual Grounding
 
-So far this chapter has evaluated Agent systems from the outside—building an evaluation environment, designing datasets, analyzing benchmark reports. But the best Agent products do more than undergo external evaluation; they **build continuous self-evaluation infrastructure into the product**. Below, using the open-source general-purpose Agent OpenClaw introduced in Chapter 5 as an example and drawing on public technical analyses of leading Coding Agent products and practitioner insights, we present an internal evaluation system worth emulating: one that systematically embeds the experimental methodology of ML research into product engineering.
+In each iteration of the loop, the model needs to accurately locate the target element in the screenshot—"Where is the search box?" "What are the coordinates of the submit button?" This is the visual grounding problem. Currently, there are **two main approaches**: one is to turn localization into a **multiple-choice problem**—first annotate the interface elements with numbers, and the model only needs to select one; the other is **pure coordinate prediction**—letting the model "look" at the screenshot and report coordinates directly, just like a human. The multiple-choice approach has two implementation methods: **pure visual annotation** (the original Set-of-Mark, using a segmentation model to segment candidate regions in the image) and **structured element indexing** (DOM/Accessibility Tree, directly reading the interface's inherent structure). The common advantage of the multiple-choice approach is that it transforms the open-ended problem of "find the button in the screenshot and predict its coordinates" into a closed-ended one of "choose one from the already annotated elements"—just as multiple-choice questions are easier to answer correctly than fill-in-the-blank questions in an exam, the model only needs to say "click [123]" instead of "click the blue button approximately 200 pixels to the right of the top-left corner of the screen."
 
-### Ablation Infrastructure: Understanding the True Contribution of Each Feature
+**Set-of-Mark: Visual Annotation Method.**
 
-ML researchers have long used ablation studies to learn which components of a model actually matter—ablation means "removing" one component at a time and observing how much overall performance drops. OpenClaw brings this methodology into product engineering: a built-in master switch can disable several major features at once (thinking mode, context compression, automatic memory, background tasks, and more), creating a "bare model" baseline. That lets the team answer a key question: **does a feature truly improve the user experience, or does it just feel useful?**
+The original Set-of-Mark (SoM) was proposed by Microsoft Research in 2023, initially to unlock the visual grounding capabilities of GPT-4V. It is a **purely visual** method: it uses image segmentation models (SAM, SEEM, etc.) to automatically segment candidate regions in the screenshot, overlays a numbered marker on each region, and the model sees an image with numbers. The model only needs to report the number, and the system converts it into the center coordinates of the corresponding region. The entire process does not require a DOM or any internal interface structure, so it is equally applicable to native desktop software and game interfaces—as long as the segmentation model can identify the candidate regions.
 
-Making ablation a routine engineering practice, rather than a one-time research activity, has several practical implications. First, the ablation switch must be injected very early in the startup path—before any module-level constant captures configuration values—meaning the ablation infrastructure must be designed into the system architecture from the start, not retrofitted later. Second, running ablation experiments regularly (e.g., before each major release) can uncover "feature debt"—features that were once effective but are no longer necessary as models evolve. For any team building a production Agent, the recommended practice is: **Every major feature should be independently disableable, and the team should regularly verify the actual contribution of each feature.**
+**Structured Element Indexing: A Structured Implementation of the SoM Idea on the Web.**
 
-### A/B Testing Methodology: Distinguishing Mechanism from Goal
+When the interface itself provides structured information, annotation can be more precise. Before rendering, modern web pages define a complete element structure (the DOM tree) and semantic roles that identify buttons, input fields, and other controls. Accessibility trees provide similar information for many desktop applications. Rather than asking a segmentation model to guess which region is a button from pixels alone, the system can query the interface directly for its clickable elements. Web Agent systems such as `browser-use` do exactly this: they enumerate and number interactive elements from the DOM. This is a structured implementation of the SoM idea for the web (Figure 6-13). The process has four steps:
 
-Mature Agent products conduct rigorous A/B testing on their own behavior (i.e., randomly dividing users into two groups, one using the old version and one using the new version, and comparing actual data from both groups to determine if a change is effective). A well-designed Agent A/B test case illustrates several key methodological principles:
+1. Obtain the structured representation (DOM tree) and accessibility information for the page through the browser's debugging interface (CDP, Chrome DevTools Protocol)
+2. Automatically detect which elements are interactive (buttons, input boxes, links, etc.)
+3. Annotate each interactive element with a unique ID and draw bounding boxes on the screenshot
+4. Simultaneously generate a text list describing the element corresponding to each ID
 
-**Multiple variants, not just a binary comparison.** Instead of just comparing "with" and "without," design multiple progressive variants (e.g., when testing different strengths of prompt constraints, set up a control group and three experimental groups with progressively stricter constraints). This design can reveal dose-response relationships and help find the optimal point.
+```text
+Screenshot: [Key elements in the image are annotated with IDs like [1], [2], [3], [4]]
 
-**Distinguishing mechanism metrics from target metrics.** This is the easiest mistake to make—treating what you are changing as the optimization target. For example, if you are testing "shortening the Agent's plan file length," plan length is a mechanism metric (something you directly change), but it is not the target. The real target might be "reducing session-level cost." Shortening the plan file may lower costs, but it could also lead to more edit-check-edit loops due to insufficiently detailed plans, increasing total output. Always ask yourself: **Is what I am changing (the mechanism) the same as what I truly care about (the target)?** If not, prioritize the target.
+Elements:
+[1] <input type="text" placeholder="Search" aria-label="Search" />
+[2] <button id="submit-btn" aria-label="Submit form" />
+[3] <input type="text" placeholder="Enter your name" value="" />
+[4] <a href="/docs" aria-label="Documentation" />
+```
 
-**Setting guardrail metrics.** Even if the target metric improves, the experiment should be stopped if user satisfaction declines, the number of operations increases, or the error rate rises. Guardrail metrics are non-negotiable thresholds that must not regress.
+The model only needs to output an ID, and the system automatically clicks the center of the corresponding element. This approach does not save tokens because all annotation data must still be sent to the model, but it provides accurate, stable localization while avoiding the missed detections and false positives that segmentation models can introduce.
 
-**Recording baseline statistics.** Include sample size, distribution percentiles, and correlation analysis (e.g., "rejection rate increases monotonically with plan size") to provide the necessary context for interpreting experimental results. Without a baseline, you cannot determine whether the experimental results are statistically significant.
 
-### Two-Layer Feature Flag System
+![Figure 6-14: Set-of-Mark vs. Structured Element Indexing (browser-use implementation)](images/fig6-14.svg)
 
-Agent products need a Feature Flag infrastructure designed from day one—a feature flag is a remotely controllable switch that determines whether a function is enabled or disabled for users, without requiring code redeployment. It serves three purposes simultaneously: experimentation, gradual rollout, and emergency circuit breaking.
+**Pure Coordinate Prediction.**
 
-**Compile-time flags** physically remove the relevant code from the build artifact during the build phase. Internal-only features simply do not exist in external builds—even reverse engineering cannot discover the removed functionality. This also provides a clean ablation mechanism: disabling a feature does not skip logic at runtime; the corresponding code is physically absent.
+The third route skips annotation and asks the model to output coordinates directly. Systems such as **SeeClick** and Claude's computer use rely on vision models trained on massive datasets of GUI screenshots paired with element positions. These models learn to map natural-language descriptions (e.g., "click the submit button") directly to precise screenshot coordinates, relying on visual perception much like a human user.
 
-**Runtime flags** have their configuration delivered by the server and cached locally on disk. The design prioritizes reading slightly stale cached configuration over blocking the Agent's startup while waiting for a network request. Specific grouping decisions are made through an experimentation platform (e.g., GrowthBook) for assigning A/B test groups. A key design detail is that each feature's exposure event is logged at most once per session to avoid duplicate records polluting the experimental data.
+In coordinate prediction schemes, the model's understanding of coordinates is highly dependent on the resolution used during training (Figure 6-14). Claude was trained using XGA (1024×768), WXGA (1280×800), and FWXGA (1366×768). If the input screenshot resolution does not match, the model's predicted coordinates will systematically shift—like measuring a distance on a small map and then applying it directly to a large map. Therefore, a bidirectional coordinate scaling mechanism must be implemented at the tool layer, and the target resolution must be **selected based on the aspect ratio** to avoid non-uniform stretching that distorts the image and consequently biases coordinate judgment. For example, if the actual screen resolution is 2560×1440 (16:9), the most suitable target among Claude's three supported options is FWXGA (1366×768), which has an aspect ratio closest to 16:9. The screenshot is proportionally scaled to 1366×768 and fed to the model; after the model outputs the click coordinates (683, 384), they are inversely mapped to the real coordinates (683×2560/1366, 384×1440/768) ≈ (1280, 720). Conversely, if a 16:9 image is forcibly stretched into the 4:3 1024×768, the image will be horizontally compressed, causing the model's predicted coordinates to systematically shift.
 
-The lesson for Agent developers: feature flags are not debugging tools; they are **first-class architectural components**.
 
-### Prompt Sensitivity Assessment
+![Figure 6-15: Resolution Matching and Bidirectional Coordinate Scaling](images/fig6-15.svg)
 
-The system prompt is the core "code" of Agent behavior, yet it often lacks the version control and regression testing afforded to regular code. OpenClaw's approach is to provide a dedicated tool that can extract the fully rendered system prompt at a specified Git revision or commit—including the final text after all dynamic conditions are expanded. This allows the team to precisely answer: **Which commit changed the prompt? What was the impact on the evaluation set?**
 
-For any Agent team, the recommended practices are: (1) The system prompt should be deterministically renderable (given the same configuration input, it always produces the same output); (2) Establish a versioned snapshot mechanism for prompts; (3) Every prompt change should run regression tests on the evaluation set—just as code changes require CI.
+The choice among the three routes can be summarized as follows: **when structured information is available, prioritize DOM/accessibility-tree indexing** for the most accurate and stable localization. **When it is unavailable**—in native desktop software such as Photoshop, canvas/WebGL-rendered interfaces, or games—**use either visual annotation (the original SoM route) or coordinate prediction**. Visual annotation turns localization into a multiple-choice problem, making it friendlier to general-purpose models without specialized training. Coordinate prediction eliminates the annotation step and is more direct for models trained specifically on GUI localization. Both approaches still struggle with small elements and dense interfaces.
 
-### Privacy-Aware Analytics as an Evaluation Foundation
-
-Evaluation relies on good data, but Agent products often handle sensitive user content. OpenClaw resolves this contradiction through a type system: the analytics interface only accepts values wrapped in special types, where the type name itself serves as an audit trail—it explicitly declares "I have verified this is not code or a file path." This design transforms privacy constraints from documented specifications into compile-time enforced type checks.
-
-The core principle is: **Design privacy constraints into the system from the start; do not bolt them on afterward.** If your analytics system cannot safely collect data, you cannot evaluate effectively. Privacy and evaluation are not opposing forces—privacy-aware design forces you to think carefully about *what truly needs to be measured*, which in turn fosters more precise evaluation metrics.
-
-### From External to Internal: A Shift in Evaluation Thinking
-
-The core message of this section is: **The previous sections taught you how to evaluate an Agent externally; this section reveals how the best Agent products evaluate themselves internally.** External evaluation tells you "how good the Agent is"; internal evaluation infrastructure tells you "which change made it better." Ablation experiments discover which features truly matter, A/B testing quantifies the impact of each change, feature flags provide the infrastructure for experimentation and rollback, prompt sensitivity assessment integrates the system prompt into the CI system, and privacy-aware analytics ensures compliance in data collection. These five components together constitute evaluation-driven product engineering—not evaluating occasionally, but embedding evaluation into every product decision.
-
-## Simulation Environments: The Bridge from Evaluation to Post-Training
-
-The endpoint of evaluation is not scoring, but improvement. This chapter has already demonstrated two paths for improvement: adjusting the Harness (from Benchmark reports to system improvements) and embedding evaluation into product engineering (internal evaluation infrastructure). The strongest form of improvement is training—when the goal expands from "evaluating existing capabilities" to "cultivating new capabilities," especially through the post-training techniques discussed in Chapter 7, the evaluation environment needs to evolve into a **simulation environment**: a virtual playground where the Agent can repeatedly practice and be automatically scored. The core differences between simulation environments and evaluation environments are: much higher interaction frequency (millions vs. thousands), the need for randomization (to prevent memorizing specific configurations), and the requirement for immediate feedback. From an application perspective, simulation environments are divided into two categories: digital environments (information processing tasks) and embodied environments (physical world perception and manipulation).
-
-Here is how the two ends of the bridge meet. Assets accumulated on the evaluation side convert almost seamlessly into training signals: a well-defined Rubric or validator is essentially a reward function for **Reinforcement Learning with Verifiable Rewards (RLVR)**—the scoring script becomes the reward script; whether a test passes or a state meets the standard serves both as an evaluation criterion and as a reinforcement learning reward. But training brings demands evaluation never had to worry about. The first is **reliable reset semantics**: training runs millions of episodes (an episode is one complete interaction round from an initial state to task completion), and each episode must be able to reset the environment to a deterministic, clean initial state; otherwise, the gradient signal will be contaminated by residual states from the previous episode. The second is **throughput far exceeding evaluation**: a few thousand evaluations are enough to draw conclusions, but training requires feeding the model millions of interactions within an acceptable wall-clock time; the degree of environment parallelism and per-instance overhead directly determine whether training is feasible. These two points—validators turned into reward functions, and training-grade reset and throughput—will be elaborated in Chapter 7.
-
-![Figure 6-8: Simulation Fidelity Spectrum](images/fig6-8.svg)
-
-On the **digital environment** side, the AWorld framework builds a controllable MCP server sandbox for GAIA tasks, providing 26 MCP servers covering 126 tool functions, avoiding the bans and uncontrollable side effects of directly accessing real APIs. All tool calls are replayable and auditable. AWorld's distributed architecture reduces the traditional serial execution time from 7695 seconds to 525 seconds (a 14.6x speedup), and the environment's stateless design makes each instance completely independent, supporting efficient parallelism.
-
-On the **embodied environment** side, RoboTwin2 builds dual-arm manipulation tasks based on a physics engine, randomizing object positions, orientations, and appearances to improve generalization. The observation space includes multi-camera visuals and joint states, achieving real-time control through **Action Chunking**—where the model plans multiple consecutive actions at once (detailed in Chapter 9). OSWorld provides reset capability through virtual machine snapshots, and AndroidWorld focuses on mobile application automation. Whether digital or embodied, simulation environments also require the isolated execution environments and virtual identity mechanisms discussed in Chapter 4 (VM/container isolation, residential proxies, Human-in-the-Loop authentication, shared file systems), which will not be repeated here.
-
-> **Experiment 6-13 ★★: Configure the Embodied Intelligence Environment for OpenVLA and RoboTwin2**
+> **Experiment 6-8 ★: Using browser-use to Implement Automated Browser Operations**
 >
-> Set up a simulation environment for robot manipulation. Read `ch7/SimpleVLA-RL` and the OpenVLA documentation to understand the architecture of the Vision-Language-Action model (end-to-end integration of a vision encoder, language model, and action decoder, projecting images and text into a shared semantic space). Configure the RoboTwin2 environment, understanding the observation space (three-view RGB + 14-dimensional joint state) and action space (14-dimensional control vector). Study the environment randomization mechanism and spatial constraint logic in `move_can_pot`. Evaluate the pretrained model, recording its success rate, completion time, and failure modes, with a focus on the impact of the action chunking mechanism.
+> Use Playwright, a browser-automation framework, together with a multimodal model to implement browser operations driven by natural language. Enable SoM visualization and save a screenshot with annotated bounding boxes before every decision. The model interface is not limited to OpenAI or Anthropic; the book provides an API configuration for the open Qwen3-VL model and retains a generic OpenAI-compatible base URL for other hosted services or self-hosted inference.
 >
+> Test task "Open Google and query San Francisco weather": after startup, a screenshot shows the Google search page with numbered interactive elements. The model selects the search box, enters "San Francisco weather today," submits the search, and then extracts the temperature and conditions from the results page. During acceptance, independently verify the answer and trajectory and record the actual step count and elapsed time. "5 steps and about 20 seconds" can only be an observation from a particular run, not a fixed result stated without an execution receipt.
 >
-> ![Figure 6-9: OpenVLA and RoboTwin2 Embodied Intelligence Environment](images/fig6-9.svg)
+> The book's preserved official open-model run used `qwen/qwen3-vl-32b-instruct` on OpenRouter. When the model encountered a CAPTCHA on Google Search at step 4, it did not claim success; it switched to weather.com and, at step 16, read 64°F, Sunny, feels like 62°F, high 74°F, and low 55°F from San Francisco's Today page. All 16 of 16 API responses reported the requested Qwen3-VL model, and 15 valid step screenshots plus the read-only action trajectory passed independent deterministic acceptance. This result demonstrates that the open-model API path runs successfully; it does not mean that the Anthropic-native `computer` tool arm has been reproduced.
+
+### A Computer Use Agent That Can Watch Animations and Hear Sound
+
+So far, Computer Use perception has rested on an implicit assumption: **the screen is static**—take a screenshot, reason about the next step, click, and take the next screenshot. Real screens play videos, flash notifications that vanish in seconds, and play audio from meetings. An Agent that opens its eyes only once every 3–5 seconds and has no ears at all is blind and deaf to everything that happens between two frames. Watching a screen recording, joining a meeting, following a voice prompt, catching a dialog box before it disappears—this whole category of everyday computer work is effectively off-limits to today's Computer Use Agent.
+
+What truly needs to be redesigned here is not the "action interface," but the "**observation interface**"[^ch6-9]. The core idea is to decouple **observation** (continuous, adaptive, multimodal) from **action** (discrete), creating a perceptual middleware layer that sits between the environment and any off-the-shelf Computer Use model without requiring retraining. We can call this the Agent–Computer Observation Interface (AOI). It has three "gated" components: First, **inter-frame keyframe capture**—use a very cheap pixel gate to skip nearly unchanged frames, then use a small model to determine if a meaningful change has occurred, capturing a frame only when there is a change, resulting in near-zero cost for static screens; Second, **volume-gated speech transcription**—only invoke speech recognition when there is sound, giving the Agent "ears" for the first time; Third, and most critically, **converting observations into persistent textual descriptions**—have the model describe the captured frame in a single sentence (e.g., "The popup just said the release date has been changed to April 28th"), and **even if the original image is later cleared from the context, this text remains in memory**, carrying the dynamic information forward in textual form.
+
+The counterintuitive finding is that what really matters is not frame selection but converting selected frames into persistent text, because text is the modality LLM Agents handle best. Across eight models, ranging from 7B-parameter models to frontier-scale systems, this middleware delivered gains of +17 to +48 percentage points without any retraining, with the widest gap on voice tasks: with the perceptual layer in place, the Agent could finally complete voice tasks that had been "audible but unactionable." It is not a one-size-fits-all configuration, though—on some newer models, injecting too many image tokens crowds out reasoning and drags performance down. So the components should be **chosen per model**, not switched on wholesale. It is the same lesson as the Set-of-Mark-versus-coordinate-prediction trade-off: there is no silver bullet in perception schemes; you configure them to suit the model's temperament.
+
+[^ch6-9]: For the complete mechanism and per-model ablation of the three components—gated keyframes, on-demand transcription, and narrating frames into persistent text—see Bojie Li and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
+
+### World Models for Computer Use
+
+The observation interface of the previous section answers "what happened in between?": with keyframes, speech transcription and persistent text, the Agent no longer sees only two screenshots taken far apart. But an observation interface does not remove planning latency. The Agent is still running a serial "screenshot—think—click" loop, re-observing and reasoning about the next step after every single action. The **OSWorld-Human** efficiency study shows that even when a task eventually succeeds, the Agent takes markedly more steps and waits markedly longer than a person does; reaching human-level accuracy is not the same as being practical.
+
+People do not start thinking about the next step only after clicking. They first predict what an action will do: if the actual change matches the expectation, they carry on with the existing plan; only when the page state departs from what was expected do they stop to observe and plan again. A world model lets the Agent predict what the desktop may turn into before it acts, giving it this human-like "speculative execution" and improving efficiency substantially.
+
+Desktop state is more than a grid of pixels. It also includes windows, focus, scroll position, input-field contents, loading state, permissions and network responses; actions include clicking, typing, scrolling, dragging and waiting. A world model usable for Computer Use must at minimum encode the current state, predict the state change a candidate action would cause, and hand that prediction to the planner to decide the next step:
+
+```text
+desktop state + click/type/scroll/wait ──> representation of the next state
+```
+
+This lets the Agent compare the consequences of candidate actions before it actually clicks, prepare the next step while a page is loading, and recover from a dialog that flashed past by reasoning about the state difference. If the task is "create a new Python file in VS Code and write hello world", the model can first predict the key state of the file tree and editor on success, and only then choose the click, type and save actions; if the task is to delete a file, it can predict inside an isolated virtual desktop whether an irreversible confirmation dialog will appear, and ask the user to confirm when necessary. The point here is not to have the model generate a photorealistic future screenshot, but to predict the checkable state differences that completing the task requires.
+
+In July 2026, **Photon-1** from Induction Labs demonstrated one implementation of this route, completing the pretraining of a computer use world model with only 30,000 hours of H200 GPU time. It compresses each frame into discrete latent tokens and autoregressively predicts the representation of the next state after an action, rather than generating screenshots pixel by pixel during pretraining; the image generator attached to it serves only to visualize the latent representations and is not a component required for inference. Given a seed screenshot and the actions that follow, the model can "imagine" desktop states continuously, and then learn to output computer-use actions through online training on virtual machines.[^ch6-20]
+
+[^ch6-20]: David Li and Jonathan Li, Induction Labs, “Scaling Video Pretraining with Imagination Models,” 2026-07-23. https://www.inductionlabs.com/news/scaling-video-pretraining. The parameters, data scale, internal benchmarks and cost comparisons reported for Photon-1 are figures disclosed by the company.
+
+### Mobile: Ecosystem Barriers Are Harder Than Technology
+
+Computer Use is also expanding to mobile devices. Mobile and desktop systems do differ technically: instead of relying on mouse coordinates and keyboard input, the mobile action space typically uses the system's accessibility-service API (e.g., Android's `AccessibilityService`) to read interface elements and issue clicks or enter text. Interaction also shifts from a mouse pointer to touch gestures, changing the meaning of coordinates. The same `(x, y)` position might indicate a tap, a long press, or the starting point of a swipe, so the action must also specify a gesture type. Mobile benchmarks such as AndroidWorld, introduced in Chapter 7, evaluate an Agent's ability to complete tasks in real applications within this action space.
+
+However, what truly hinders mobile Computer Use is often not these technical differences, but ecosystem barriers. Some phone manufacturers have attempted to integrate AI assistants into consumer-grade phones so that the assistants can automatically operate everyday apps like WeChat, Taobao, and Alipay, but they quickly encountered platform restrictions.
+
+This reveals a unique challenge for Computer Use: **ecosystem barriers**. The fundamental reason behind these restrictions is a conflict of business models. The core monetization logic of traditional internet applications is **traffic and attention**: users see ads while scrolling through feeds, are guided by recommendation algorithms when searching for products, and make impulse purchases while browsing pages. When an Agent operates on the user's behalf, that monetization chain is bypassed entirely: the AI ignores ads, makes no impulse purchases, heads straight for the goal, finishes the task, and leaves. For platforms that live on advertising and traffic, every Agent operation erodes the foundation of the business model.
+
+This means that Computer Use faces not only technical countermeasures such as CAPTCHAs, but also a **structural conflict of interest**. This conflict will be difficult to resolve in the short term and poses a greater obstacle to consumer adoption than purely technical problems.
+
+## Robot Manipulation: Tidying a Desk with XLeRobot
+
+> **Reading note**: This section uses one task throughout—"put the red cup in the tray, put the yellow scrap paper in the bin, then observe again and confirm the state of the desk." Experiments 6-9 and 9-9 run on real XLeRobot hardware and need an arm, calibration, an emergency stop and an on-site observer; experiments 9-8, 9-10 and 9-11 are the corresponding local-GPU experiments. Hardware and simulation are reported separately, but the task goal, the action semantics and the success conditions stay the same.
+
+Robot manipulation is much harder than answering questions about a picture. The model has to understand the scene and then take actions continuously in the real world, where every action changes what the next moment looks like. XLeRobot makes that difference concrete: the same arm can be teleoperated by a person through a keyboard, a gamepad or a VR device, or it can hand camera observations and a constrained set of action tools to an Agent to call on its own. The hardware and the task stay fixed; only the operator changes—in the first case a human observes and corrects continuously, in the second the model and the control system must do the same work.
+
+This section runs five experiments on "tidy the desk." First a human teleoperates the real XLeRobot, measuring what the hardware can do under a sufficiently capable operator; then a simulator establishes the ideal control ceiling for the same task. Next an Agent controls the real XLeRobot autonomously, showing how perception, planning and failure recovery affect the result; then the same tool contract goes into the simulator so that open-loop execution, step-by-step checking and world models can be compared in bulk. Finally the background, object appearance, lighting and visual noise change, to see whether a visual policy learned in simulation adapts to a new environment.
+
+The bottleneck here is usually not one more static question-answering benchmark, but whether the model can keep closing the loop under limited perception and control bandwidth. A usable robot system has to answer at least four questions:
+
+1. What task does the person want done?
+2. Which subtask comes next?
+3. What actions does the current skill actually emit?
+4. After the action executes, does reality still match the plan?
+
+This section places those four questions inside one XLeRobot control loop and shows what each of four techniques is responsible for: long-horizon planning decides whether the cup or the paper is handled first, a VLA or action primitive performs the grasp and the placement, a world model estimates the consequences of an action, and sim-to-real transfer handles the differences between training footage and the real camera and actuators. Even when the high-level model already has enough knowledge and planning ability, losing any one of these feedback links can still leave the task unfinished.
+
+### The Division of Labour Between Hardware and Algorithms
+
+The first question XLeRobot is best suited to answer is this: when autonomous desk tidying fails, is it the arm that cannot do it, or the algorithm that is not using the arm well? There is a fact here that should not be softened: **an arm costing only a few hundred dollars, like XLeRobot, can already complete the kind of continuous multi-step desk task in this section through teleoperation**—a person watches the camera feed, picks up the red cup and puts it in the tray, then puts the yellow scrap paper in the bin and confirms the state again. That result is not merely "the hardware is barely feasible"; it is a clear piece of diagnostic evidence: **for this task the hardware itself is not the bottleneck, the algorithm is.**
+
+The diagnostic method is direct: keep the camera, the arm, the gripper, the desk layout and the success conditions fixed, and let a human take over the loop. A human continuously corrects object localization, action choice and timing, and handles failed grasps; the gap between an autonomous system and a person lies precisely in those closed-loop abilities. The scope of the claim is of course this section's desk task: it shows the hardware has cleared the payload, precision and workspace thresholds this task requires, not that a few-hundred-dollar arm can handle every open environment or harder manipulation.
+
+XLeRobot supports keyboard, Xbox controller, Switch Joy-Con and VR teleoperation. A human operator naturally does many things an algorithm has to implement explicitly: slowing the gripper as it nears the cup, correcting the grasp point when the cup slides, observing again after failing to pinch the paper the first time, and checking the outcome once an object is in the target area. Teleoperation is therefore not only a way to collect demonstrations but also a "fix the hardware, swap the operator" diagnostic experiment.[^ch6-1]
+
+> **Experiment 6-9 ★: Teleoperating a real XLeRobot to tidy a desk**
 >
+> Place a red cup, a tray, yellow scrap paper and a bin in the real XLeRobot workspace. Using one calibrated teleoperation method, the operator performs the fixed task: "put the red cup in the tray, put the yellow scrap paper in the bin, then observe again and confirm the state of the desk." Repeat for several rounds at minimum, recording the camera feed, operator input, arm state, action timing, failed grasps, retry counts and the final state.
 >
+> Acceptance cannot rest on "the desk looks tidy at the end." The red cup must be inside the tray, the yellow paper inside the bin, the arm back in a safe pose, with no collision, no out-of-bounds motion and no unconfirmed manual intervention along the way.
 
-### Fidelity Trade-offs and Domain Randomization
+Teleoperation on real hardware gives the most convincing ceiling for the task, but it is not suited to varying object counts and positions in bulk. To obtain a repeatable, statistically meaningful control, the next step moves the same "put objects where they belong" problem into a 2D desktop simulator, using an ideal controller to stand in for a strong operator who never misperceives and never picks the wrong action.
 
-High-fidelity environments support better transfer to the real world but have high computational costs. Another dimension of fidelity is the degree of randomization: moderate randomization improves generalization, while excessive randomization can make tasks too difficult. **Domain Randomization** is a key technique for narrowing the sim-to-real gap: introducing a wide range of random variations in physical parameters, visual appearance, sensor noise, etc.—just like practicing grasping under various lighting and angles, so you won't fail in the real world just because the light changes. In digital environments, sim-to-real manifests as differences in interface rendering, response times, etc., which can be mitigated by introducing randomization in latency and failures.
+> **Experiment 6-10 ★: Measuring the ideal control ceiling for the same task in simulation**
+>
+> In a 2D desktop simulator, randomly place the red cup, the yellow paper and their target areas, and let an ideal controller approach each object in turn, grasp it and move it to the right place. It does not need to recognise images and never picks the wrong action, so it represents "what this task can at least achieve when perception and decision-making are both correct."
+>
+> The experiment tracks task success rate, number of steps and path length, and varies initial object positions and task scale to see whether the ideal ceiling stays stable. It uses the same success conditions as experiment 9-7, but measures a non-actuated simulation and does not imply the real XLeRobot has been run. Together the two establish the reference lines for the autonomous control that follows: experiment 9-7 is a human loop on real hardware, experiment 9-8 an ideal loop in simulation.
 
-With that, the evaluation environment completes its final evolution: from an exam hall that measures ability into a training ground that builds it. Chapter 7 will show how AWorld-train turns such simulation environments into trainable arenas, and the engineering challenges involved—the evaluation system and simulation environments established in this chapter are the two cornerstones of post-training.
+### The Basic Structure of Robot Control
 
-[^re-bench-2025]: Wijk, Hjalmar, et al. *RE-Bench: Evaluating Frontier AI R&D Capabilities of Language Model Agents against Human Experts.* arXiv:2411.15114, 2025.
+Robot systems usually separate work by timescale:
+
+| Layer | Core question | Output | Typical timescale |
+| --- | --- | --- | --- |
+| Task goal | What does the person want done | "Put the cup and the paper away" | Minutes |
+| Long-horizon planning | What comes first, what comes after | Handle the cup, then the paper, then check | Seconds to minutes |
+| Basic skills | Which state change to achieve now | `pick(red_cup)`, `place(red_cup, tray)` | About 1–3 s |
+| VLA / skill policy | How this skill actually moves | A short motion or continuous trajectory of the XLeRobot gripper | About 1–10 Hz inference |
+| Low-level control and safety | How to execute stably and in time | Joint or end-effector commands, speed limits and emergency stop | About 50–1000 Hz |
+
+This is a common engineering split, not the only model architecture. A VLA can take on part of the high-level judgement, and the planner can be a rule-based program, a VLM or an optimiser. Whichever implementation you choose, "task order" and "the action right now" should stay separate; otherwise the high-level model's inference latency drags down low-level control, and high-frequency low-level control forces the high-level model to process a great deal of irrelevant detail. For XLeRobot the model should not emit arbitrary joint angles directly; it only selects bounded skills such as `pick`, `place`, `verify_state` or `stop`, and a calibrated, speed-limited executor with timeouts turns those skills into real arm motion.
+
+### Long-Horizon Planning and Task Decomposition
+
+When the user says "tidy up the desk," the system cannot hand that sentence straight to an action model. The planner first lists the objects and goals in the scene, then decides the order, and for each step writes down the start condition, the completion condition and the risk limits. For example:
+
+```text
+handle the red cup → clear the yellow paper → check the desk
+```
+
+"Handle the red cup" then decomposes further into two actions and one check:
+
+```text
+pick(red_cup) → place(red_cup, tray) → verify_state()
+```
+
+Every completed skill yields a checkable node. If a grasp fails, only that step is retried; if someone moves an object, or the user changes the goal, only the affected later steps need replanning—the old plan does not have to be redone from scratch. The tools given to the agent should be equally simple: one call does one thing, the range of motion is fixed, there is a timeout, and observation happens again immediately after execution.
+
+> **Experiment 6-11 ★★: Driving XLeRobot to tidy a desk autonomously with Gemini Robotics-ER 1.5**
+>
+> Keep the real XLeRobot, the desk layout, the task instruction and the success conditions of experiment 9-7 unchanged, and replace the human operator with an Agent. An embodied reasoning model such as Gemini Robotics-ER 1.5 can handle observation and planning, exposing only five tools through a RoboCrew-style agent loop: `observe_scene`, `pick`, `place`, `verify_state` and `stop`.[^ch6-2]
+>
+> The model first observes the desk, decides the order, then calls the calibrated XLeRobot grasp and place actions. After every completed skill it must observe again and check the postcondition; on a failed grasp it may only retry the current skill, and it must call `stop` when the user says stop, when an object leaves the workspace, or when the state cannot be confirmed. The model cannot emit arbitrary joint angles, nor skip a real check merely because it previously said "done."
+>
+> The acceptance criteria are exactly those of experiment 9-7: cup in the tray, paper in the bin, arm back in a safe pose, no collision and no out-of-bounds motion. The difference is that in the autonomous experiment the task semantics must come from the model's own observation, the real actions must come from tool calls, and the final state must be confirmed by a fresh observation; the human may only start the run, hit the emergency stop and supervise safety, never complete an action on the Agent's behalf midway. Only then can experiments 9-7 and 9-9 be compared directly on "same hardware, same task—what is still missing between the human loop and the model loop."
+
+Real-hardware experiments expose calibration error, camera occlusion and gripper failure, but they are poorly suited to repeating large numbers of faults safely and controllably. The simulation experiments that follow keep these five tools and exactly the same task state, replacing only the real actuator with a desktop environment into which failures can be injected, in order to separate what open-loop execution, step-by-step checking and action prediction each contribute.
+
+### VLA Control
+
+VLA stands for Vision-Language-Action. It takes the current frame and one skill instruction, then emits the action the robot should perform next:
+
+```text
+current observation + skill instruction → action
+```
+
+In the XLeRobot case the high-level planner only submits `pick(red_cup)`; the VLA or skill policy still has to decide, from the current frame, which direction to approach the cup from, when the gripper closes and along what trajectory the arm lifts. After the execution layer finishes that short motion it photographs the desk again, and only once the cup is confirmed to be held may the planner submit `place(red_cup, tray)`. A tool call therefore defines the desired state change, while the VLA defines how to realise that change through continuous motion.
+
+RT-2 and OpenVLA cut continuous actions into discrete tokens and emit them one at a time, like generating text; π₀ represents the other route, producing continuous, smooth action trajectories directly. Neither is simply better: discrete tokens combine more easily with language models, while continuous trajectories usually express smooth motion better. The real trade-off is how the action should be represented, not merely model size.[^ch6-15]
+
+A large model can usually run inference only 1–10 times per second, whereas a traditional controller may update tens to thousands of times per second. A common engineering answer is "action chunking": the model generates a short segment of future actions at once, a control thread executes that segment at a higher rate, and the model prepares the next segment in the background. This hides part of the inference wait inside the execution time. The cost is that the longer the segment, the smoother the motion but the fewer new frames the model sees during it; if the cup is knocked while XLeRobot reaches for it, the arm may still be executing actions generated from the old frame. Action chunking is therefore a trade-off between smoothness and reaction speed, not free acceleration.
+
+Action chunking usually needs a "predict–execute–preempt" skeleton rather than running to completion:
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+Short chunks react faster but cost more model calls; long chunks are smoother but more likely to act on stale observations. Experiment 6-12 compares this trade-off in simulation; only experiment 9-9 involves real hardware safety boundaries.
+
+### The Limits of VLAs
+
+"Long-horizon planning + VLA" is a practical baseline, but several problems are easy to overlook:
+
+- **Limited training data**: robot demonstrations are far scarcer than internet text and images. That a model has seen the word "cup" does not mean it has seen cups of every material and friction condition.
+- **Imitation without consequence**: behaviour cloning mainly learns "what the demonstrator did next," and never explicitly requires the model to answer "what will this action cause."
+- **Robots differ**: different robots have different degrees of freedom, coordinate frames, grippers and actuator latencies, so the same action does not necessarily transfer to another machine.
+- **Observations go stale**: once an action chunk starts executing, an object may be moved, occluded or knocked over while the model is still deciding from the previous frame.
+
+So a language model knowing what a "cup" is does not mean it knows how friction, contact, liquid sloshing and a power cable will change the future state. A VLA mainly answers "what should be done now"; another kind of model is needed to judge "what may happen afterwards."
+
+### World Models
+
+A world model can be understood as an "action-outcome predictor." What it learns is: given the current state and some action, how the next state may change.
+
+```text
+current state + candidate action
+    → predict the next state or a future segment
+    → compare candidate outcomes
+    → choose an action, replan, or stop safely
+```
+
+A world model usable for robotics has to do at least three things well:
+
+- understand the current state;
+- predict the outcomes different actions may bring;
+- pass those predictions to the planner or controller to help them choose.
+
+A VLM that can only describe video, or a model that can only generate frames, does not automatically become a reliable robot world model. It must also know what the actions are and be able to predict their effect on objects and the environment. V-JEPA 2 represents the route of predicting the future in an internal state, while World-Action Models explicitly learn the "action–future observation" relationship. These models can work alongside a VLA; they need not replace it.[^ch6-16]
+
+In practical systems a world model is typically used in three ways:
+
+1. **Before acting**: compare candidates such as grasping, pushing or waiting, and prefer the lower-risk option;
+2. **During execution**: compare the real observation against the prediction, and on divergence shorten the action, stop, or replan;
+3. **During training**: learn state transitions from video, simulation data and failure trajectories, reducing trial and error on real hardware.
+
+Back to the XLeRobot desk task: if the yellow paper is partly hidden under the red cup, the system can compare candidate skills such as "grab the paper first," "move the cup first" and "approach from another direction." The world model does not need to generate photorealistic robot video; predicting which candidates are more likely to make the paper graspable and which might knock the cup over is already enough to help the planner rank them. Once an action executes, the real camera observation remains the final truth; prediction can inform the choice but cannot replace acceptance.
+
+What a world model gives is not a definite answer but a comparable prediction of "if I do this, what may happen." The further ahead it predicts, the larger the error usually grows, and a future frame that looks realistic may still violate real contact and friction. Practical systems therefore still need short-horizon prediction, real-time observation, an estimate of uncertainty, and an independent hardware safety controller. Generative world models can serve interactive simulation or visualisation, but "can generate video" must not be conflated with "can guide robot action."[^ch6-21]
+
+> **Experiment 6-12 ★★: Comparing three autonomous desk-tidying loops in simulation**
+>
+> Put the task, object state, success conditions and five tools of experiment 9-9 into the desktop simulator unchanged, replacing only the real XLeRobot actuator with a controllable simulated one, and let grasps occasionally suffer recoverable transient failures. This allows three strategies to be compared without changing the problem.
+>
+> **Open-loop execution** generates the full action sequence once and never observes again midway; **step-by-step checking** re-reads the state after every `pick` and `place` and retries only the current skill on failure; **predictive execution** adds a short-horizon world model, comparing the expected outcomes of candidate skills before choosing the next step. The experiment compares task success rate, tool-call overhead and failure-recovery ability, and checks that every final success is confirmed by a fresh `verify_state` observation.
+>
+> The point is not to prove that a small simulated world model equals a real robot's physics model, but to verify a more basic relationship: an open-loop plan carries a single local failure all the way to the end of the task, step-by-step checking can recover, and action prediction can further help rank candidate skills. Whether the task is truly finished must still be decided by environment feedback.
+
+### From Simulation to a Real Robot
+
+Even if experiment 9-10 is stable in the simulator, that does not imply the real XLeRobot of experiment 9-9 will succeed the same way. Going from simulation to a real robot is not a matter of swapping in yet another controller, but of handling the differences between two environments. Training may use teleoperation data, video data or simulated interaction data; in real deployment the same red cup, yellow paper, tray and bin appear against different backgrounds, lighting, camera positions and occlusion relationships, and the arm additionally meets different friction, sensor noise and actuator latency. Once those differences are large enough, motions learned in simulation may fail in reality.
+
+> **Experiment 6-13 ★★★: A cross-environment RGB test on the same desk task**
+>
+> Keep using the basic "move the object to its target" problem in simulation, treating each sample as one local decision within desk tidying: from the RGB frame, judge which direction to approach the object from, or whether it can already be grasped. Train four visual policies with identical structure: one sees only a fixed scene, one varies the background, one varies object appearance, and the last varies background, appearance, lighting and noise together.
+>
+> All policies are tested in the original environment and in the changed one, comparing action-decision accuracy before and after the visual conditions change. The question here is not "is the simulator already equal to the real XLeRobot," but a narrower one: does actively widening the range of visual variation during training help the same cup–tray, paper–bin task adapt to a new camera view? Even if the result improves, real deployment still requires real camera calibration, actuator testing and a complete safety loop.[^ch6-6]
 
 ## Chapter Summary
 
-This chapter has revolved around one question: how do you know an Agent has actually improved? From building reproducible test environments, to designing datasets that withstand leakage, to using LLMs as judges, to letting evaluation results drive model selection and iteration—every link in this chain bears on how much the conclusions can be trusted. The measured cases add four concrete cautions: combining structured memory with RAG does not guarantee synergy; cache and compression savings cannot be added; the choice of reference audio changes what a multimodal score means; and the Harness's input representation can determine both task success and token cost. Model selection should also compare capability-growth curves across resource budgets rather than relying on a single operating point. For production-grade Agents, evaluation is not an occasional exam but continuous validation embedded in every product decision.
+What this chapter removed is the premise the previous five chapters had been assuming all along: that the Agent and the world take turns speaking.
 
-Core methodology: Observe → Hypothesize → Experiment → Validate → New Understanding → New Hypothesis, transforming Agent engineering from experience-driven "alchemy" to data-driven scientific engineering.
+Read along the two axes of **modality** and **timing**, the four sections are one proposition unfolding across four time scales. **Async and event-driven** expands observation from "the Agent goes and fetches" to "the world pushes," and action from "finish within the turn" to "start now, finish later on an event"; the modality is unchanged, only the timing. **Voice** compresses the scale to milliseconds, and the evolution through cascading, end-to-end Omni, and full duplex is exactly the move from taking turns toward continuous listening and speaking, with a division of labour between foreground real-time interaction and background deep thinking. **Computer Use** moves the same loop onto the screen, where the bottleneck has expanded from "can the task be completed" to operating efficiency, continuous visual understanding, and post-action state confirmation. **Robotics** pushes it into the physical world, where action chunking trades smoothness against reaction speed, and whether the task is done must still be decided by a new observation.
 
-The evaluation system introduced in this chapter forms a complete closed loop: **Evaluation Environment** provides automated testing infrastructure → **Evaluation Dataset** defines test cases → **Automated Evaluation Methods** (LLM-as-a-Judge and Rubric) score Agent performance → **Benchmark Analysis** reveals improvement directions → **System Improvements** fix issues → Update the evaluation environment and dataset, starting a new iteration cycle.
+The four sections share one control skeleton:
 
-From the perspective of Harness engineering introduced in Chapter 1, the evaluation methodology in this chapter is the systematic implementation of the Harness's “validation” function, while the closed loop “from Benchmark report to system improvement” is the core mechanism for iterative Harness optimization. This chapter answers “how to measure reliably”; building on it, Chapter 8 answers “how to transform multidimensional trajectory evaluations into executable, reversible system updates.”
+```text
+keep perceiving
+  → judge current state and timing
+  → choose a reply or an action
+  → let the output enter the environment
+  → observe the feedback
+  → continue, correct, retry, stop, or replan
+```
 
-The evaluation system established here not only supports optimization of the current system but also provides a critical foundation for the next two chapters. Chapter 7 turns evaluation environments and data into inputs for model post-training, using SFT and RL to write interaction policies into parameters. Chapter 8 transforms multidimensional evaluations of production trajectories into candidate updates to knowledge, instructions, programs, or parameters.
+They also share one set of primitives—wake-up, safe point, cancellation, preemption, and fast/slow separation. "Check the cancellation signal at a safe point" in the event loop and "on anomaly, discard the remaining actions and re-observe" in action chunking are the same mechanism implemented twice, five orders of magnitude apart in time; a fast foreground model plus a slow background model, and "return a task ID first and let a later event finish the job" in an async Agent, are likewise two spellings of one thing.
+
+It is worth noting that most of these mechanisms are still engineering expedients. Placeholder protocols, status-bar event markers, cancellation and rollback of speculative thinking—all of them use orchestration logic to compensate for asynchronous experience missing from the model's training distribution. Progress on the model side is folding some of it into the weights—interactive models put interruption and barge-in inside the model, and continuous thinking makes "think while listening" possible without waiting for the next generation—but as long as training corpora remain predominantly turn-based, this compensation layer will not disappear. It will only keep migrating to the new frontier as model capability advances.
+
+This chapter completes the last piece of the "building an Agent" part: the observation and action spaces have now been expanded in all three directions—content, modality, and timing. The next three chapters turn to a different question: how do we know any of it was built correctly, and how do we keep making it better?
+
+[^ch6-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
+[^ch6-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。
+[^ch6-1]: XLeRobot, "Teleop documentation". https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
+[^ch6-2]: Google DeepMind, "Gemini Robotics-ER 1.5". https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, "LLM Agent control". https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. The upstream XLeRobot example shows how the model and tool calls are orchestrated; this section keeps the same orchestration principle but restricts the action tools to calibrated desktop grasp, place, check and stop primitives.
+[^ch6-6]: LeRobot, "Sim2Real tutorial". https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
+[^ch6-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246
 
 ## Thought Questions
 
-1. ★★ LLM-as-a-Judge uses a language model to evaluate the output of a language model. Does this "self-evaluation" have systematic blind spots—for example, the model might consistently give high scores to a certain style of response, a preference that is inconsistent with human judgment? How can such biases be detected and corrected?
-2. ★★★ The "leakage-proof" design of evaluation datasets is crucial. However, in the open-source ecosystem, once benchmark data is made public, it is quickly incorporated into training data. Does this "cat-and-mouse game" have an endgame? Design an evaluation method that fundamentally resists data leakage.
-3. ★★ Scale AI's four criteria (expert guidance, comprehensive coverage, standardized importance weighting, self-contained evaluation) aim to eliminate subjectivity in evaluation. However, certain task dimensions (e.g., "Is the answer helpful?" "Is the tone appropriate?") are inherently subjective. How can reliable Rubrics be designed for these subjective dimensions?
-4. ★★ τ-bench evaluates Agents by simulating real user behavior. But the simulated user itself is an LLM—it might systematically underestimate certain edge cases (e.g., emotionally agitated or unclear users). How can the quality of the simulated user itself be validated?
-5. ★★ Pairwise comparison (Bradley-Terry model) assumes preferences are transitive (if A > B and B > C, then A > C). However, human preferences often violate transitivity. In Agent evaluation, in what scenarios might non-transitive preferences appear? How does this affect the reliability of rankings?
-6. ★★ This chapter distinguishes Pass@k as a ceiling on capability from Pass consecutive@k as a measure of business reliability. For an Agent whose single-run success rate is only 60%, how would you combine a task's failure cost, retry cost and side effects to decide which metric to report and how large $k$ should be?
-7. ★★ This chapter proposes the scientific method of "Observe → Hypothesize → Experiment → Validate." In practice, however, the Agent's behavior space is vast, and validating a single hypothesis may require hundreds of evaluation runs. How can the information gained from evaluation be maximized under a limited computational budget?
-8. ★ In the AndroidWorld pilot, the full element tree raised success from 25% to 100% but increased token use to 2.498× the control; pruning preserved 100% success while reducing token use to 0.506×. How would you design automatic pruning rules that remove semantically empty UI nodes without discarding information needed for accessibility, state verification, or later actions?
-9. ★★ τ-bench's user simulation employs "progressive information disclosure"—not providing all information at once, but gradually revealing it based on the Agent's questions. How does this design affect evaluation results? If the simulated user's information disclosure strategy differs significantly from real users, are the evaluation conclusions still reliable?
+1. ★★ In an asynchronous Agent architecture, the priority strategy for the event queue must be determined at design time. But if priority judgment itself requires semantic understanding (e.g., determining whether a new message is more urgent than the current task), who should make this judgment—a rules engine or another LLM call? What are the costs of each?
+2. ★★ In queue-based event processing, models tend to focus only on the last event. This chapter mitigates this through Agent status bar markers and summarization. But if the queue has 20 events backlogged (10 tool results + 5 user messages + 5 system alerts), how would you organize the presentation order and format of these events so that the model does not miss key information?
+3. ★★★ When an Agent interacts with the external world on behalf of a user, it essentially faces an identity choice: use an independent virtual identity (dedicated email and phone number) to act as a third party, or directly operate the user's personal accounts as the user? The former allows autonomous background operation, but third parties may not trust a non-human identity; the latter has more complete context and permissions but introduces authorization, trust, and security-boundary issues. In what scenarios do you think each mode should be chosen?
+4. ★★ The end-to-end model for voice Agents merges ASR-LLM-TTS into a single model, reducing latency but losing modularity. If the end-to-end model makes an error in a specific stage (e.g., speech recognition), debugging and fixing it is much harder than in a serial pipeline. How would you design an observability system for an end-to-end voice Agent?
+5. ★ Step-Audio R1 achieves "thinking while speaking" through the MPS dual-brain architecture. However, humans, when "thinking while speaking," often say things before they have fully thought them through, self-correct, or use filler words. Should an Agent's "thinking while speaking" mimic these human characteristics?
+6. ★★ SoM (Set-of-Mark) and its structured variants (DOM element indexing) convert Computer Use's visual localization from open-ended coordinate prediction to closed-set ID selection, but they all require detecting and annotating UI elements first—whether via a segmentation model or the DOM. If the interface contains non-standard controls or dynamically changing elements, the annotations may be incomplete or inaccurate. In such cases, should we fall back to coordinate prediction?
+7. ★★ Thousand-dollar robot platforms like XLeRobot make teleoperation data collection inexpensive. However, the quality of teleoperation data depends heavily on the operator's skill. How would low-quality data from an unskilled operator affect the training of a VLA model? How can low-quality data be automatically filtered during the data collection phase?
+8. ★★★ This chapter covers three interaction modalities: voice, Computer Use, and robotics. A common trend across these modalities is the evolution from serial pipelines to end-to-end models. If this trend continues, what might the Agent interaction layer look like in five years?
+9. ★★ DOM/Accessibility Tree element indexing works well on standard web applications, but an increasing number of software interfaces (Canvas/WebGL rendering, cross-platform custom-drawn controls) do not provide accessible structured information, relying solely on visual annotation or coordinate prediction. Do you think Computer Use should bet on a purely visual approach, or maintain both structured and visual paths? What are the costs and benefits of maintaining both paths?
+10. ★★ VLA models use action chunking—as mentioned in the text, π₀'s typical configuration generates 25-50 future actions at 50Hz—to hide inference latency within execution time. However, if the environment changes suddenly during execution (e.g., an object is moved), the pre-generated action sequence becomes invalid. How can we balance the efficiency advantage of action chunking with the need for responsiveness to environmental changes?
+11. ★★★ All three scenarios in this chapter (voice, Computer Use, robotics) face the latency problem of the "perceive-think-act" loop and are evolving toward parallelized fast and slow thinking. In voice, this manifests as "correcting after misspeaking"; in Computer Use, as "clicking first, then looking"; in robotics, as "taking a step, then looking." How can we ensure that these actions based on fast thinking do not lead to irreversible consequences?
+12. ★★★ The same set of primitives (wake-up, safe point, cancellation, preemption, fast/slow separation) recurs in this chapter at different time scales. Pick one and explain how its implementation differs between event-driven processing (seconds to days) and robot action chunking (milliseconds). What mainly determines that difference—the speed at which the environment changes, the reversibility of the action, or the cost of obtaining an observation?

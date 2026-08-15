@@ -1,19 +1,66 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 260" width="820" height="260" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 4, 0 8" fill="#333333" /></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999" /></marker></defs>
-<rect x="30" y="44" width="560" height="64" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="310.0" y="58.64" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17.86" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Cấp độ 1: Đánh giá môi trường</text>
-<text x="310.0" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16.07" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="310" dy="76.97">"Nơi đo lường" — Loại lệnh gọi tool/Loại tương tác giữa</tspan><tspan x="310" dy="17.36">người và máy tính/Môi trường mô phỏng</tspan></text>
-<line x1="310.0" y1="109" x2="310.0" y2="121" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
-<rect x="30" y="124" width="560" height="64" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="310.0" y="138.64" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17.86" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Cấp độ thứ hai: phương pháp đánh giá</text>
-<text x="310.0" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16.07" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="310" dy="156.97">"Cách đánh giá" — Thiết kế bộ dữ liệu · LLM-as-a-Judge ·</tspan><tspan x="310" dy="17.36">So sánh và xếp hạng theo cặp</tspan></text>
-<line x1="310.0" y1="189" x2="310.0" y2="201" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
-<rect x="30" y="204" width="560" height="64" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="310.0" y="218.64" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17.86" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Cấp độ 3: Đánh giá thúc đẩy quyết định</text>
-<text x="310.0" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16.07" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="310" dy="236.97">"Những gì đã được đo lường" — Lựa chọn mô hình · Tối ưu</tspan><tspan x="310" dy="17.36">hóa kiến ​​trúc · Lặp lại liên tục</tspan></text>
-<rect x="620" y="44" width="170" height="224" rx="6" fill="#f3f0e8" stroke="#333333" stroke-width="2" />
-<text x="705" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="705" dy="105.24">Các chủ đề kỹ thuật</tspan><tspan x="705" dy="15.12">xuyên suốt chương</tspan></text>
-<text x="705" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="705" dy="136.56">• Khả năng quan</tspan><tspan x="705" dy="17.28">sát</tspan></text>
-<text x="705" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="705" dy="171.12">• Môi trường mô</tspan><tspan x="705" dy="17.28">phỏng</tspan></text>
-<text x="705" y="205.68" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">• Đánh giá nội bộ</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 500" width="880" height="500" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333" /></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999" /></marker></defs>
+<text x="97.5" y="65" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">nguồn sự kiện</text>
+<rect x="20" y="85" width="155" height="40" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
+<text x="97.5" y="105.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Email</text>
+<text x="25" y="141" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">on_email_reply</text>
+<text x="25" y="159" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">{"from":"alice@...",</text>
+<text x="25" y="175" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">"subject://Re:Hội thảo"}</text>
+<rect x="20" y="195" width="155" height="40" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
+<text x="97.5" y="215.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Timer</text>
+<text x="25" y="251" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">on_timer_expire</text>
+<text x="25" y="269" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">{"task_id":"daily_report",</text>
+<text x="25" y="285" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">"scheduled":"09:00"}</text>
+<rect x="20" y="305" width="155" height="40" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
+<text x="97.5" y="325.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Webhook</text>
+<text x="25" y="361" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">on_webhook</text>
+<text x="25" y="379" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">{"repo":"agent-lib",</text>
+<text x="25" y="395" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">"event":"pr_merged"}</text>
+<rect x="20" y="415" width="155" height="40" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
+<text x="97.5" y="435.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">User</text>
+<text x="25" y="471" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">on_user_message</text>
+<text x="25" y="489" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">{"text:giúp tôi kiểm tra</text>
+<text x="25" y="505" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">Thời tiết ngày mai"}</text>
+<text x="310.0" y="65" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">hàng đợi sự kiện</text>
+<rect x="215" y="85" width="190" height="390" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" />
+<rect x="225" y="105" width="170" height="60" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="310.0" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">user.input</text>
+<text x="310.0" y="149" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Ưu tiên: Chung</text>
+<rect x="225" y="190" width="170" height="60" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="310.0" y="212" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">email.reply</text>
+<text x="310.0" y="234" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Ưu tiên: Chung</text>
+<rect x="225" y="275" width="170" height="60" rx="4" fill="#999999" stroke="#333333" stroke-width="2" />
+<text x="310.0" y="297" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">user.interrupt</text>
+<text x="310.0" y="319" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">Ưu tiên: Khẩn cấp!</text>
+<rect x="225" y="360" width="170" height="60" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="310.0" y="382" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">timer.trigger</text>
+<text x="310.0" y="404" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Ưu tiên: Chung</text>
+<line x1="177" y1="105" x2="213" y2="120" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<line x1="177" y1="215" x2="213" y2="205" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<line x1="177" y1="325" x2="213" y2="290" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<line x1="177" y1="435" x2="213" y2="375" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<text x="650" y="65" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Luồng xử lý Agent</text>
+<line x1="407" y1="280" x2="448" y2="280" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<text x="427.5" y="270.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">Nhận sự kiện</text>
+<rect x="450" y="110" width="360" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
+<text x="540" y="135.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">bộ định tuyến</text>
+<text x="800" y="135.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">LLM Xác định mức độ khẩn cấp</text>
+<line x1="630.0" y1="162" x2="630.0" y2="188" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<rect x="450" y="190" width="360" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="540" y="215.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">nối thêm vào theo dõi</text>
+<text x="800" y="215.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">Định dạng sự kiện có cấu trúc</text>
+<line x1="630.0" y1="242" x2="630.0" y2="268" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<rect x="450" y="270" width="360" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="540" y="295.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Lý luận LLM</text>
+<text x="800" y="295.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">Quan sát → Suy nghĩ → Hành động</text>
+<line x1="630.0" y1="322" x2="630.0" y2="348" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<rect x="450" y="350" width="360" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="540" y="375.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">thực thi tool</text>
+<text x="800" y="375.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">Công văn không đồng bộ/đồng bộ</text>
+<line x1="630.0" y1="402" x2="630.0" y2="428" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<rect x="450" y="430" width="360" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
+<text x="540" y="455.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Xử lý kết quả</text>
+<text x="800" y="455.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">thông báo/phản hồi/lưu trữ</text>
+<path d="M 810,450 Q 760.0,290.0 810,130" fill="none" stroke="#999999" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah-light)" />
+<text x="785.0" y="280.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">xe đạp</text>
 </svg>

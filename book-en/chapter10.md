@@ -342,7 +342,7 @@ The Manager calls specialized Agents sequentially. Each Agent returns results up
 >
 > Book translation is a complex task well suited to multi-agent collaboration. Translating a technical book involves not just converting text from one language to another, but also ensuring consistent specialized terminology, contextual accuracy, and overall fluency. For example, an English book about large language models may use many recurring terms with several conventional translations. Consistency must be maintained throughout the book: if `agent` is rendered as "智能体" ("intelligent entity," the standard Chinese term) in Chapter 1, the book cannot switch to the alternative rendering "代理" ("proxy") later.
 >
-> Using a single Agent creates serious context-management problems. As the Agent processes the book chapter by chapter, its context accumulates the full-book glossary, translated chapters, the current paragraph, translation work traces, and tool results. A technical book several hundred pages long, together with these intermediate materials, can easily exceed the context window. More critically, an Agent working with an overly long context is prone to "getting lost": it may forget earlier terminology conventions and use a different translation in Chapter 8 than in Chapter 2, waste resources on redundant checks during proofreading, or even "remember" terminology rules that do not exist because its attention is spread too thin.
+> Using a single Agent creates serious context-management problems. As the Agent processes the book chapter by chapter, its context accumulates the full-book glossary, translated chapters, the current paragraph, translation work traces, and tool results. A technical book several hundred pages long, together with these intermediate materials, can easily exceed the context window. More critically, an Agent working with an overly long context is prone to "getting lost": it may forget earlier terminology conventions and use a different translation in Chapter 9 than in Chapter 2, waste resources on redundant checks during proofreading, or even "remember" terminology rules that do not exist because its attention is spread too thin.
 >
 > The manager pattern addresses these issues through task decomposition and responsibility separation:
 >
@@ -382,7 +382,7 @@ The rest of Lingtai's design also echoes earlier sections. Knowledge lives in ea
 
 > **Experiment 10-3 ★★★: Autonomous Phone and Computer Agents**
 >
-> **Prerequisites**: This experiment integrates the Computer Use and Voice Agent technologies from Chapter 9.
+> **Prerequisites**: This experiment integrates the Computer Use and Voice Agent technologies from Chapter 6.
 >
 > **Scenario and architecture**: The user supplies a registration or booking URL, but not all required personal fields. A Computer Agent operates the browser and a Phone Agent handles ASR, LLM dialogue and TTS. They exchange structured messages (sender, receiver, type and payload) through point-to-point tools or a message bus. A local WebRTC audio page is sufficient; PSTN/E.164 is optional.
 >
@@ -540,7 +540,7 @@ Consider a specific scenario. Suppose a translation system uses a manager patter
 Terminology Agent: Translates "reasoning" as "推理", but "推理" in Chinese is more commonly used for inference, creating ambiguity
         ↓ writes to glossary.json
 Translation Agent A: Translates Chapter 2, reads from the glossary, translates "reasoning tokens" as "推理 token"
-Translation Agent B: Translates Chapter 7, translates "inference latency" as "推理 latency"
+Translation Agent B: Translates Chapter 8, translates "inference latency" as "推理 latency"
         ↓ writes to each chapter's translation
 Proofreading Agent: Sees the entire book consistently uses "推理", considers the terminology consistent and the translation correct ✗
 ```
@@ -591,7 +591,7 @@ The intelligence of these Agents is built on three core components:
 
 **Reflection Mechanism**: Agents periodically pause their daily activities to review recent experiences and ask abstract questions about themselves and others ("What is Klaus Mueller researching?" "Who is my closest friend?"). Through this self-questioning, the Agent elevates specific event memories into generalized insights, storing them back into the memory stream as a basis for future decisions. Reflection not only helps the Agent understand the external world but also promotes self-awareness—the Agent begins to "realize" its own role, relationships, and goals.
 
-Note that this reflection differs from the continuous evolution discussed in Chapter 8: it occurs during a generative Agent's daily activities and aims to update immediate internal state and goals. In Chapter 8, post-task reflection is at most a candidate lesson; it becomes a long-term capability update only after outcome evaluation, cross-trajectory synthesis, and subsequent validation.
+Note that this reflection differs from the continuous evolution discussed in Chapter 9: it occurs during a generative Agent's daily activities and aims to update immediate internal state and goals. In Chapter 9, post-task reflection is at most a candidate lesson; it becomes a long-term capability update only after outcome evaluation, cross-trajectory synthesis, and subsequent validation.
 
 **Planning and Reacting**: Agents plan their daily activities (e.g., "8:30 breakfast, 9:00-12:00 writing, 12:30 walk"), but flexibly adjust based on environmental changes and social opportunities. The combination of planning and real-time reaction makes the Agent's behavior both goal-oriented and adaptable to the unpredictability of social interactions.
 

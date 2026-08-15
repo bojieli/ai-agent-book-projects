@@ -1,506 +1,450 @@
-# Çok Modluluk ve Gerçek Zamanlı Etkileşim
+# Agent'ın Sürekli Evrimi
 
-Önceki bölümler Agent'ın metin dünyasındaki tasarımını ele aldı — context, araçlar ve kod aracılığıyla dijital sistemlerle etkileşim. Ancak Agent'ın etkileşime girdiği şeyler metin ve API'lerden ibaret değildir. Agent'ın kullanıcının sesli komutunu anlaması, ekranda doğru düğmeyi bulup tıklaması ya da bir robot kolunu bir nesneyi hassasça kavrayacak biçimde yönetmesi gerektiğinde, bambaşka bir alana girer: **çok modlu gerçek zamanlı etkileşim** — saf metin girdi-çıktısından **çok modlu algı ve gerçek zamanlı yanıta** genişleme, Agent'ın "diyalog kutusundan" çıkmasının kilit adımıdır. "Çok modluluk" dediğimiz şey, yalnızca metni değil, birden fazla bilgi biçimini — yazı, ses, görüntü, video, eylem — aynı anda işlemektir.
+Bugünün Agent'ları çarpıcı bir yetenek paradoksuyla karşı karşıya: daha önce hiç görmedikleri karmaşık görevleri zero-shot çözebiliyorlar, ama benzer görevleri on bin kez işledikten sonra ertesi gün hâlâ ilk gün yaptıkları hatayı yapabiliyorlar. **Deneyimden otonom biçimde öğrenebilme**, Agent'ın "görevi tamamlayabilme"den "güvenilir biçimde çalışabilme"ye geçişindeki kilit yetenek hâline geliyor; bu, aynı zamanda yeni nesil modellerin merkezî araştırma konusudur. Ne var ki modelin kendi sürekli öğrenme yeteneği bugün hâlâ fazlasıyla yetersiz.
 
-Önce bu bölümün sınırlarını çizelim. Statik görüntü ve doküman anlama — bir ekran görüntüsüne bakmak, bir grafiği okumak, bir PDF'i ayrıştırmak — önceki bölümlerdeki Agent pratiğine zaten birer algı aracı olarak doğal biçimde yerleşti: bugünün çok modlu büyük modelleri için bu tür "bir kez girdi, bir kez anlama" görevleri görece olgunlaşmıştır ve özel bir mimari tasarım gerektirmez. Bu bölüm başka bir problem sınıfına odaklanıyor: **gerçek zamanlılığın çok modlu problemi zorlaştırdığı** üç senaryo — sesli diyalog, GUI kullanımı ve robot kontrolü. Bu senaryolarda girdi sürekli akar, çıktı ise katı bir zaman bütçesi içinde verilmek zorundadır; mimari tasarım bu yüzden nitelik değiştirir. Sürekli görsel akışın (videonun) gerçek zamanlı anlaşılmasına gelince, bu satırların yazıldığı tarih itibarıyla Agent'lar açısından hâlâ açık bir problemdir — bu bölümün Computer Use kısmında tartışılan kare kare ekran görüntüsü sınırlılığı ile bölüm sonundaki düşünme soruları bu konuya geri dönecek. Bir sınır daha çizmek gerekiyor: çok modlu **üretim** (görüntü üretimi, video üretimi) bu kitabın çerçevesinde sıradan bir tool calling'den ibarettir (Bölüm 5'teki multimedya üretimi kısmında ele alındı); Agent onu harici bir araç olarak kullanır, bu bölümün çözmeye çalıştığı gerçek zamanlı etkileşim zorluklarını içermez ve bu nedenle bölümün ana hattının dışında kalır.
+Bunun nedeni, dağıtılmış bir modelin tek bir çıkarım yüzünden parametrelerini otomatik olarak değiştirmemesidir. Bölüm 2'de ele alınan In-Context Learning (bağlam içi öğrenme), durum yönetimi ve sıkıştırma, Agent'ın **mevcut görev içinde** uyum sağlamasını mümkün kılar; ama context sona erdikten sonra bu değişim bir sonraki göreve kendiliğinden taşınmaz. Konuşmaları belleğe kaydetmek de yeni bir davranışı öğrenmiş olmak anlamına gelmez: ham trajectory'ler çok uzun olabilir ve içlerinde etkili stratejilerin yanı sıra tesadüfi başarılar, hatalı nedensellik atıfları ve güvenilmez girdiler de bulunur.
 
-Sesli etkileşim, Computer Use ve robot kullanımı ilk bakışta bambaşka üç alana yayılıyor gibi görünür; ama işe girişilince takılınan yerlerin birbirine son derece benzediği fark edilir: hepsi aynı anda birden çok modaliteye ait bilgiyi işlemek zorundadır ve hepsi gecikmeye aşırı duyarlıdır. Sesli konuşmada iki saniyeyi aşan bir duraklama insanı huzursuz eder; robot kontrolünde milisaniye ölçeğindeki bir titreme çarpışmaya yol açabilir. Bu iki kısıt, üç senaryoyu birlikte aynı mimari yöne iter: **seri boru hattından** (fabrika üretim bandı gibi, bir halka bitmeden sonrakine devredilemez) **uçtan uca modele** (girdiden çıktıya doğrudan giden, aradaki devir teslim halkalarını ortadan kaldıran tek ve birleşik bir model) doğru.
+Burada kolayca karıştırılan bir ayrım var: **yaşananları saklamak, yaşananlardan öğrenmekle aynı şey değildir**. Yüz trajectory'yi uzun bir context'e ya da bir vektör veritabanına koymak, modelin gerektiğinde bir vakayı geri bulmasına yardımcı olabilir, ama vakalar arası karşılaştırmayı kendiliğinden tamamlamaz: hangi adımlar başarılı trajectory'lerde tekrar tekrar ortaya çıkıyor, hangi uygulamalar yalnızca eski sürüm bir arayüzde işe yarıyor, belirli bir başarı doğru stratejiden mi yoksa ortamın tesadüfünden mi geliyor. Öğrenme, sistem "değerlendirme, karşılaştırma, genelleme, doğrulama" işini etkin biçimde tamamladıktan sonra gerçekleşir; log'un diske yazıldığı anda değil. Bölüm 3'teki kullanıcı belleği ağırlıklı olarak "kullanıcı ve dünya nasıldır"ı biriktirir; bu bölümdeki deneyim öğrenmesi ise bir adım öteye geçerek "hangi koşullarda nasıl davranılmalı"yı biriktirir. Birincisi Agent'ın daha çoğunu hatırlamasını sağlar, ikincisiyse onu zeki olmaktan çıkarıp usta hâline getirir.
 
-Bu bölüm şu hat boyunca ilerliyor:
+Peki modelin her görevden sonra doğrudan kendini eğitmesine neden izin vermiyoruz? Çünkü üretim ortamları nadiren temiz öğrenme sinyalleri sağlar. Kullanıcı memnuniyeti kurallara uygunluk anlamına gelmez; yerel parametre güncellemeleri yetenek unutmasına, politika kaymasına veya güvenlikte gerilemeye de yol açabilir. Çalışan bir modelin doğrulanmamış geri bildirime dayanarak kendi parametrelerini doğrudan değiştirmesine izin verilirse, hatalı deneyimler ve prompt injection kalıcı hâle gelip sonraki görevlerde büyümeyi sürdürebilir. Öte yandan temel modellerin periyodik eğitimi genel yetenekleri geliştirebilir, ancak her Agent'ın her gün karşılaştığı özel kuralları, araç değişikliklerini ve yerel deneyimleri zamanında özümseyemez.
 
-1. Önce "Ses Mimarisinin Üç Paradigması" ile bir koordinat sistemi kuruyoruz — kaskad (VAD-ASR-LLM-TTS boru hattı), uçtan uca tam modlu (Omni; tek model, ama hâlâ sırayla konuşma), full-duplex (Moshi, GPT-Live; dinlerken konuşma) — ve "VAD'nin tur varsayımından nasıl kurtulunur" ekseni boyunca her halkanın gecikmesini ve ödünleşimlerini sırayla açıyoruz; kaskad kısmında ayrıca VAD + ASR'nin yerine akışlı konuşma algısının nasıl konulacağı anlatılıyor.
-2. Sonra düşünme mimarisinin "gerçek zamanlı yanıt" ile "derin düşünme" arasındaki çelişkiyi nasıl uzlaştırdığına bakıyoruz: hızlı ile yavaşın basitçe paralel çalıştırılmasından, arka plandaki reasoning modelinin "akıl hocası" rolünü üstlendiği ayrıştırma hattına (GPT-Live'ın devretmesi, Pine AI vb.), oradan da Step-Audio R1'in düşünmeyi tek bir modelin içine "içselleştirdiği" düşünürken konuşmaya.
-3. Ardından daha insana benzeyen konuşma sentezinin yürütme katmanına getirdiği iyileştirmeleri tartışıyoruz.
-4. Son olarak bakışı Computer Use'a (yapay zekânın bilgisayar ekranını bir insan gibi kullanması) ve robot kullanımına genişletip aynı gecikme ve çok modluluk problemlerinin bu iki senaryoda nasıl belirdiğini görüyoruz.
+Bu nedenle, modelin kendisi henüz güvenilir biçimde sürekli öğrenemiyorken, "öğrenme"nin önce modelin çevresinde otonom bir sistem olarak kurulması gerekir: çalışma kanıtlarını kaydetmek, sonuçları ve süreci doğrulamak, birden çok trajectory'den ortak örüntüleri çıkarmak, ardından bilginin mi, talimatların mı, programların mı yoksa model parametrelerinin mi güncelleneceğine karar vermek. Bütün değişiklikler önce birer aday sürüm hâline gelir; ancak regresyon testlerinden ve güvenlik denetimlerinden geçtikten sonra bir sonraki çalışma turunu değiştirebilir. Bu, modelin öğrenme yeteneğinin yerine geçen bir şey değildir; mevcut teknik koşullarda Agent'a sürekli öğrenme yeteneği kazandırmanın mühendislik yoludur.
 
-Bunların içinde, teoriye daha yakın duran ve senaryolar arasında taşınabilen iki noktayı özellikle vurgulamak gerekir: **düşünme mimarisi** (hızlı ve yavaş iki düşünme takımının nasıl iş birliği yaptığı) ve ondan türeyen **hızlı-yavaş arayüzü** (Latent Bridge; hızlı ve yavaş modeller arasında metin dışında başka ne aktarılabilir). Bunlar ses senaryosundan yola çıksa da yalnızca sese hizmet etmiyor — ilerideki Computer Use ve robot kısımlarında da "ne zaman yavaş bir akıl hocasına başvurmalı" sorusuyla karşılaşılacak; okurun bunlara ayrıca dikkat etmesinde yarar var.
+Önceki bölümler bu sistemin ihtiyaç duyduğu başlıca parçaları zaten vermişti. Bölüm 2 görev içi durumu ele alır, Bölüm 3 bilgi altyapısını sağlar, Bölüm 5 Agent'a araç yaratma ve sistemi değiştirme meta-yeteneğini kazandırır, Bölüm 7 değerlendirme ile doğrulamayı kurar, Bölüm 8 model parametrelerinin nasıl güncelleneceğini anlatır. Bölüm 9'in görevi, bu parçaları Şekil 9-1'de gösterilen sürekli evrim döngüsü hâlinde örgütlemektir.
 
-## Ses: En Doğal İnsan-Makine Arayüzü
+![Şekil 9-1: Agent'ın Sürekli Evriminin Genel Döngüsü](images/fig9-1.svg)
 
-Ses, yalnızca metni sese çevirmek değildir. Konuşma yazmaktan yaklaşık dört kat hızlıdır ve elleri gözleri serbest bırakır; bu yüzden kullanıcı istediği anda araya girebildiği sürekli bir giriş-çıkış döngüsü oluşturur. Dikte konuşmayı metne çevirir; sesli Agent ise kullanıcıyla doğrudan iş birliği yapar. Her ikisi de daha önce tanıtılan whisper-coding çalışma biçimini destekler.
+Sürekli evrim, izlenebilir çalışma deneyiminden doğmalı, sonraki davranışı değiştirebilmeli ve belirgin bir gerilemeye yol açmadığı doğrulanmış olmalıdır. Bu bölüm önce bir çalışmanın tam olarak neresinin iyi, neresinin yanlış olduğuna nasıl karar verileceğini tartışıyor; ardından dört güncelleme yöntemini ve bunların uygulanabilirlik sınırlarını karşılaştırıyor; son olarak bu güncellemelerin uzun vadeli çalışmada nasıl doğrulandığını, yayımlandığını, gözden geçirildiğini ve elendiğini ele alıyor.
 
-Bu bölüm iki yönü ele alır: kullanıcının Agent ile konuşması ve Agent'ın kullanıcı adına dış dünyayla konuşması. Ses modeli Agent'ın neleri yanıtlayacağını belirler; etkileşim mimarisi ise doğru duyma, zamanında yanıt verme, doğal biçimde söz devretme, onayları ve araç çağrılarını bir görüşme sırasında tamamlama becerisini belirler.
+## Çalışma Trajectory'lerinden Öğrenme Sinyali Elde Etmek
 
-### Etkileşim zamanı: kaskaddan full-duplex'e
+Sürekli evrimin başlangıç noktası "özetleme" değil, "değerlendirme"dir. Sistem görevin tamamlanıp tamamlanmadığını bilmiyorsa ve hangi adımın başarıya ya da başarısızlığa yol açtığını da bilmiyorsa, dil modelinin ürettiği reflection ancak bir tahmin olabilir. Hatalı bir değerlendirme bir kez uzun vadeli bilgiye, system prompt'a veya eğitim verisine girdiğinde, etkisi sonraki görevler boyunca durmadan büyür.
 
-OpenAI'nin GPT-Live tanıtımı üç ses etkileşimi paradigması tanımlar: kaskad, sıra tabanlı ve full-duplex[^ch9-12]. Bunlar eskiden yeniye basit bir geçiş değil, gecikme, maliyet ve gözlemlenebilirlik arasında farklı ödünleşimlerdir:
+Bazı görevlerin sonucunu doğrulamak görece kolaydır. Bir Kodlama Agent'ı testleri, tip kontrollerini ve performans benchmark'larını çalıştırabilir; kullanıcı adına iade işlemi yapan bir Agent sipariş durumunu ve gerçekleşen iade tutarını sorgulayabilir. Bu tür sinyaller ortamdaki gerçek durumdan gelir ve genellikle modelin kendi davranışına ilişkin anlatımından daha güvenilirdir. Ne var ki sonucun doğru olması sürecin de doğru olduğu anlamına gelmez. Başarısız test durumlarını silmek de testleri geçirir; kullanıcıya sözlü olarak "iadenizi 7 gün içinde yapacağız, lütfen sabırlı olun" demek de geçici bir memnuniyet geri bildirimi getirebilir. Bu yüzden güvenilir bir değerlendirme hem sonuca bakmalı hem de sonuca ulaşılan yolu denetlemelidir.
 
-| Paradigma | Temel yapı | Ana avantaj | Ana sınırlama |
-| --- | --- | --- | --- |
-| Kaskad | VAD → ASR → LLM → TTS | Modüller açık; değiştirmek ve hata ayıklamak kolay | Gecikme birikir, paralinguistik bilgi arayüzlerde kaybolur |
-| Uçtan uca Omni | Tek model dinler, düşünür ve konuşur | Daha düşük gecikme; ton, duygu ve ortam sesi daha iyi korunur | Hâlâ sıra tabanlı; eğitim ve hata ayıklama daha pahalı |
-| Full-duplex | Sürekli dinler, konuşur ve karar verir | Üst üste konuşma, doğal kesme ve kesintisiz akış | Eğitim, kontrol ve değerlendirme daha karmaşıktır |
+Görevlerin daha büyük bölümünün ise tek bir doğru cevabı yoktur. Müşteri hizmetlerinin sabırlı olup olmadığı, kurallara uygun sınırlar içinde bir çözüm sunup sunmadığı, bir araştırma raporunun kilit kanıtı yakalayıp yakalamadığı, üretilen metnin doğal ve derli toplu olup olmadığı — bunların hepsi bağlamla birlikte yargılanmayı gerektirir. Burada Bölüm 7'da tanıtılan LLM-as-a-Judge kullanılabilir, ama hakemden yalnızca muğlak bir toplam puan almak yetmez. Daha etkili yol, değerlendirme ölçeğini (Rubric) önceden tanımlamak; doğrulayıcıdan her maddeye ayrı ayrı puan vermesini, trajectory'den kanıt göstermesini ve kanıt yetersizken kararsızlığını açıkça belirtmesini istemektir.
 
-Ortak hedef, insanların mutlaka sırayla konuşması ve VAD'nin kimin söz hakkına sahip olduğunu tahmin etmesi varsayımlarından kurtulmaktır. Kaskad ve Omni hâlâ etkileşimi turlara böler; full-duplex ise söz hakkını modelin sürekli verdiği bir karara dönüştürür.
+Şekil 9-2 üç katmanlı bir doğrulama yapısı sunuyor. En alttaki sonuç doğrulayıcısı test sonuçlarını, veritabanı durumunu ve araç dönüşlerini okur ve "iş gerçekten yapıldı mı" sorusunu yanıtlar; ortadaki süreç doğrulayıcısı iş kurallarını, yetkileri ve eylem dizisini denetler ve "izin verilen biçimde mi yapıldı" sorusunu yanıtlar; üstteki kalite doğrulayıcısı Rubric'e dayanarak dili ve stratejiyi değerlendirir ve "uygun biçimde mi yapıldı" sorusunu yanıtlar. Bir metrik ne kadar alt katmandaysa o kadar çok koda ve ortamın gerçek durumuna dayanmalıdır; yalnızca biçimselleştirilmesi zor olan kısımlar dil modeline bırakılır.
 
-[^ch9-12]: OpenAI, *Introducing GPT-Live*, 2026-07-08. https://openai.com/index/introducing-gpt-live/ Kaskad / sıra tabanlı / full-duplex sınıflandırması, yazının ChatGPT Voice'un üç kuşağına dair özetinden gelir; “uçtan uca omnimodal (Omni)” terimi “turn-based voice models” kategorisine karşılık gelir.
-
-**Akış iptali:**
+**Üç katmanlı trajectory doğrulaması:**
 
 ```python
-while audio_is_arriving:
-    partial = asr.push(audio_chunk)
-    if endpoint_is_probable(partial):
-        candidate = llm.start(partial)
-        if later_audio_changes_meaning(partial):
-            cancel(candidate)                 # speculative cancellation
-        else:
-            tts.enqueue_stable_segments(candidate)
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
 
-on_final_transcript(text):
-    commit_or_restart(text)
-```
-
-### Paradigma 1 · Kaskad boru hattı
-
-Ticari sesli yardımcıların çoğu hâlâ seri bir boru hattı kullanır (Şekil 9-1): VAD konuşmanın bitip bitmediğine karar verir, ASR sesi metne çevirir, LLM isteği anlayıp yanıtı üretir ve TTS bunu seslendirir. Modülerlik her parçayı ayrı ayrı geliştirmeyi kolaylaştırır, fakat her sınır bekleme ekler.
-
-![Şekil 9-1: Seri sesli Agent boru hattı](images/fig9-1.svg)
-
-| Modül | Rol | Tipik darboğaz |
-| --- | --- | --- |
-| VAD | Konuşmanın bittiğine karar vermek | Sessizlik eşiği yanıtı geciktirir ve turları yanlış böler |
-| ASR | Sesi metne çevirmek | Tanıma gecikmesi ve bağlam kaybı |
-| LLM | Anlamak, akıl yürütmek ve üretmek | İlk token süresi; reasoning ek bekleme getirir |
-| TTS | Metni konuşmaya çevirmek | İlk paket sentezi ve oynatma tamponu |
-
-Reasoning içermeyen kısa bir yanıtta VAD, ASR, LLM ve TTS beklemeleri seri biçimde toplanır (Şekil 9-2); gerçek değerler girdi uzunluğu, model, donanım, ağ ve yüke bağlıdır. Üretim kuyruğu boşta geçen gecikmeyi daha da büyütür (Şekil 9-3).
-
-![Şekil 9-2: Seri yanıt için gecikme şelalesi](images/fig9-2.svg)
-
-![Şekil 9-3: Kuyruk gecikmesi eğrisi](images/fig9-3.svg)
-
-> **Deney 9-1 ★: Geleneksel bir sesli Agent inşa etmek**
->
-> Mikrofonu, Silero VAD'yi, yerel Whisper'ı, akışlı bir LLM'i ve Fish S1 TTS'yi WebSocket üzerinden bağlayarak kaskad temel hattını kurun. Saklanan gerçek tek turlu kanıt, medya ve model zincirinin uçtan uca çalıştığını gösterir; eşzamanlılık veya üretim yükü benchmark'ı değildir. Kod ve kabul kaydı: [chapter9/live-audio](../chapter9/live-audio/).
-
-> **Ek: WebRTC ile “kullanıcıyı arayan” bir sesli Agent**
->
-> Telefon Agent'ı için PSTN şart değildir. Tarayıcı WebRTC'si oturum açma, eksik bilgileri isteme, teyit için tekrarlama ve yapılandırılmış sonuç kaydetme döngüsünü yeniden üretir. Harici bir kuruluşla bağlantı gerektiğinde aynı tool sözleşmesi uygun bir PSTN/SIP sağlayıcısına bağlanabilir. Tam medya yolu, direct/ReAct karşılaştırması ve kabul kanıtı [chapter9/phone-agent](../chapter9/phone-agent/) içindedir. Proje tarihsel \`exp9-2\` çalıştırma kimliklerini korur, ancak artık metinde numaralı bir deney değildir.
-
-#### Seriden akışlı algıya
-
-Akışlı ASR kullanıcı konuşurken geçici bir transkript üretebilir; LLM konuşulabilir ilk cümleyi TTS'ye gönderebilir; TTS de ses parçaları döndürebilir. Bu, ASR, LLM ve TTS'yi baştan sona tamamen paralel yapmaz: kısmi transkript değişirse üretim iptal edilmeli, yeniden başlatılmalı veya düzeltilmelidir; yalnızca \`stream\` seçeneğini açmak yeterli değildir.
-
-Sıradan streaming, VAD'nin sessizlik beklemesini de ortadan kaldırmaz. VAD + ASR ön ucu gecikme biriktirir, tereddüt/duygu/arka kanal tepkilerini ve ortam sesini kaybeder; isimler ve e-posta adresleri parçalar arasında bölünebilir. Gerçek streaming modelinin nedensel ya da parçalı bir kodlayıcıya ve artımlı kod çözmeye ihtiyacı vardır. Whisper kodlayıcısı tam ses parçasını beklediği için nedensel bir streaming modeli değildir. LLM tabanlı bir ses modeli sürekli sesten metin ve semantik olaylar çıkarabilir, ancak önek simülasyonu nedensel modelin gecikme garantisi değildir.
-
-Metin belirteçlerine ek olarak \`speak_start/end\`, \`interrupt\`, \`emotion\`, \`laugh\`, \`sigh\` ve \`noise\` işaretleri konuşma sınırlarını, kesme niyetini, duyguyu, tereddüdü ve çevresel sesi taşıyabilir. Böylece her akustik olay düz metne sıkıştırılmaz.
-
-[^ch9-11]: Tur kararını tanıyıcıya gömme ve geleceğe bakan etiketler sorununa ilişkin teşhis için bkz. Bojie Li ve Noah Shi, *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR*, 2026 (yayına hazırlanıyor).
-
-> **Deney 9-2 ★: Qwen2-Audio ile akışlı konuşma algısını simüle etmek**
->
-> Qwen2-Audio kendi başına bir streaming modeli değildir. Deney, artan ses önekleriyle sürekli algıyı simüle eder ve 600 ms VAD + Whisper ile karşılaştırır. Canonical run tüm yürütme ve provenance kapılarını geçti, ancak beklenen altı davranıştan yalnızca ikisini yeniden üretti: önek çağrıları 8,4–11,3 saniye sürdü, pause örneğinde \`silence\` kaçırıldı ve noise örneği \`cough/laughter\` olarak yanlış sınıflandırıldı. Bu mekanizma ve hata kiplerini sınayan negatif bir sonuçtur; 100–200 ms gerçek streaming algısının kanıtı değildir. Tam kayıt: [chapter9/streaming-speech](../chapter9/streaming-speech/).
-
-### Paradigma 2 · Uçtan uca omnimodal modeller (Omni)
-
-Streaming algı olsa bile kaskad dinleme, düşünme ve konuşmayı ayrık arayüzlerden geçirir; ses düz metne dönüştüğünde duygu, tonlama ve ortam sesi kaybolabilir. Omni bunları tek modelde yapar; eğitim, hata ayıklama ve bileşen değiştirme maliyeti daha yüksek olsa da gecikmeyi azaltır ve metin dışı sinyalleri korur (Şekil 9-4). Metnin görevi taşıdığı durumlarda öz-kaskad bir algılama hatasını düzeltebilir; yanıt konuşma hızına, duyguya veya ortama bağlıysa metin darboğazı kanıtı geri döndürülemez biçimde siler[^ch9-13].
-
-Omni hâlâ sıra almayı varsayar ve genellikle VAD ya da anlamsal endpointing kullanır. Sayı dizisindeki kısa bir duraklama konuşmanın sonu sanılabilir; akışlı algı kararı iyileştirir ama turları kaldırmaz.
-
-[^ch9-13]: Kaskad ile uçtan uca doğruluk avantajının ne zaman tersine döndüğünü ölçen çalışma için bkz. Li, Bojie ve Noah Shi, *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents*, 2026 (yayına hazırlanıyor).
-
-![Şekil 9-4: Uçtan uca omnimodal konuşma modeli karşılaştırması](images/fig9-4.svg)
-
-Gerçek zamanlı konuşma API'leri kaskad ile Omni arasında durur: model sesi doğal biçimde işler, ancak etkileşim kontrolü VAD, kesme ve asenkron tool çağrılarına dayanır. Yararlı karşılaştırma leaderboard değil, uçtan uca ve öz-kaskad yolların farklı görevlerde nasıl hata yaptığıdır.
-
-> **Deney 9-3 ★★: MiniCPM-o 4.5'i yerel çalıştırmak — uçtan uca ve öz-kaskad**
->
-> Tek bir yerel revizyonu sabitleyin, düşünme modunu kapatın ve sese doğrudan yanıtı aynı modelin öz-kaskadıyla (önce transkript, sonra metinden yanıt) karşılaştırın. Bu ölçüm ses bilgisinin korunmasını ölçer; daha sonraki “konuşurken düşünme” yeteneğini değil.
-> Tablo 9-1 MiniCPM-o 4.5 yerel sonuçları: uçtan uca ve öz-kademe (dört mekanizma kontrolü, bir benchmark değil)
->
->
-> | Görev türü | Uçtan uca | Öz-kaskad | Gözlem |
-> | --- | ---: | ---: | --- |
-> | Anlamsal aritmetik (2) | 1/2 | 2/2 | Öz-kaskad bir transkripsiyon hatasını düzeltti |
-> | Paralinguistik konuşma hızı (2) | 2/2 | 1/2 | Düz metin hızlı/yavaş ayrımını sildi |
-> | Toplam | 3/4 | 3/4 | Eşit toplam, birbirini tamamlayan hatalar |
->
-> Örneklem küçüktür; hangi yolun genel olarak daha doğru veya hızlı olduğunu kanıtlamaz. Sürümler, ham çıktılar ve gerçek audio-to-audio kanıtı [chapter9/end-to-end-speech](../chapter9/end-to-end-speech/) içindedir.
-
-Step-Audio 2 ham sesi işleyerek metin ve konuşma çıkaran uçtan uca yolu gösterir; duygu, konuşma hızı, tonlama ve ortam sesine odaklanır. Step-Audio R1 düşünmeyi ses modelinin içine alır ve “konuşurken düşünme” örneğini sağlar.
-
-### Paradigma 3 · Full-duplex etkileşimli modeller
-
-Omni “kullanıcı konuşur” ve “model konuşur” ayrımını korur, ancak simultane çeviri gibi görevler örtüşme ister. Full-duplex model sürekli dinler ve konuşur; devam etme, durma, araya girme veya tool çağırma kararını yinelemeli olarak verir. Kyutai'nin Moshi'si erken bir araştırma örneğidir. Thinking Machines Lab bu yaklaşımı **Interaction Model**[^ch9-14] olarak adlandırır: etkileşim VAD çevresinde dışarıdan kurulmaz, modelin içine yerleştirilir. GPT-Live bunu üretim ölçeğine taşır ve ön plandaki model sohbeti sürdürürken karmaşık işi arka plan reasoning modeline devreder.
-
-[^ch9-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration”, 2026-05. https://thinkingmachines.ai/blog/interaction-models/
-
-Gelişim çizgisi şöyledir: kaskad sessizlik eşikleriyle turları tahmin eder; akışlı algı kararı anlamsal düzeye taşır; full-duplex ise sıra değişimini sürekli bir model kararına dönüştürür.
-
-### Bilişsel zaman: gerçek zamanlı etkileşim ve derin düşünme
-
-Ön plan modeli kullanıcı hâlâ hatta iken yanıt vermeli, arka plan modeli ise daha uzun düşünebilmelidir. Bunlar doğrusal bir ilerleme değil, üç tasarım ödünleşimidir:
-
-| Tasarım | Ön plan | Arka plan | Ana risk |
-| --- | --- | --- | --- |
-| Hızlı dolgu, yavaş düzeltme | Anında yanıt | Yeniden düşünme ve tamamlama | Çelişki |
-| Hızlı etkileşim, yavaş tavsiye | Sohbeti ve ifadeyi sürdürme | Tavsiye veya araç sonucu | Kısıtlı arayüz |
-| Düşünme ve ifadenin birleşmesi | Konuşurken düşünme | Model durumunu paylaşma | Yüksek eğitim/değiştirme maliyeti |
-
-#### Çözüm 1: dolgu için hızlı düşünme, yanıt için yavaş düşünme
-
-Hızlı düşünme birkaç yüz milisaniye içinde bir dolgu yanıtı verebilirken, yavaş düşünme arka planda daha derin bir çıkarımı tamamlar. Sorunu şudur: basit sorular iki kez işlenir, karmaşık sorularda ise tutarsızlık ortaya çıkabilir — hızlı model satın almayı önerir, yavaş model ardından paketin kilit bir özellikten yoksun olduğunu fark eder ve kullanıcı saniyeler içinde birbiriyle çelişen iki yanıt duyar. Kök neden, iki örneğin birbirinden bağımsız birer düşünme yapmış olmasıdır.
-
-
-![Şekil 9-5: Hızlı/yavaş düşünme mimarisi ve çözümlerin karşılaştırması](images/fig9-5.svg)
-
-
-#### Çözüm 2: etkileşim için hızlı düşünme, hatırlatma için yavaş düşünme
-
-İkinci çözümde arka plan modeli, durum çubuğu ya da özel bir arayüz üzerinden ön plan modeline öneri verir; ön plan sohbeti sürdürmeye ve nasıl ifade edeceğine karar vermeye devam eder. Bu, birinci çözümden daha kararlıdır ama iletişim yine dolaylıdır: ön plan öneriyi yanlış anlayabilir ve arka planın ara muhakemesini göremez; arka plan bitirmeden kullanıcı yeniden sorduğunda ön plan yalnızca kendi yeteneklerine dayanabilir. Doğal biçimde "sonucu bekleyebilir" ama gerçekten konuşurken düşünemez.
-
-#### Çözüm 3: düşünme ile ifadenin uçtan uca birleştirilmesi (Step-Audio R1 örneği)
-
-Üçüncü çözüm, düşünme yeteneğini doğrudan uçtan uca ses modelinin içine yerleştirir. Step-Audio R1 iki tamamlayıcı mekanizmayla iki sorunu çözer: **kipe demirlenmiş düşünme damıtması (MGRD)** modeli akustik özniteliklere dayanarak düşündürür, **MPS çift beyin mimarisi** ise tasarlama ile ifadeyi paralel yürütür. İlki "doğru düşünmeyi" güvence altına alır, ikincisi "zamanında konuşmayı" çözer.
-
-İdealde model duyguyu perde, ritim ve tonlamadan çıkarmalı, yalnızca deşifre metnine bakmamalıdır. "Metin vekilli düşünme" denen şey, modelin ezgi ve akustik öznitelik analizinin yerine şarkı sözlerindeki olumsuz kelimeleri koymasıdır. MGRD gerçekten akustik özniteliklere atıf yapan düşünme süreçlerini süzer, bu veriyle modeli eğitir ve pekiştirmeli öğrenmeyle modelin düşünmeyi atlayıp doğrudan yanıtı tahmin etmesini engeller.
-
-MPS'de tasarlayan beyin sürekli düşünce parçaları üretir; ifade eden beyin bir parçayı alır almaz, verdiği yanıtla birleştirerek hemen konuşma üretir. İkisi bir boru hattı gibi paralel çalıştığı için, kullanıcının ilk cümleyi duyması adına düşünmenin tümüyle bitmesini beklemek gerekmez (Şekil 9-6).
-
-
-![Şekil 9-6: Step-Audio R1'in MGRD ve MPS çift beyin mimarisi](images/fig9-6.svg)
-
-
-Birleşik model "konuşurken düşünmeyi" en sıkı biçimde gerçekleştirir; bedeli, düşünme ile gerçek zamanlı ifadenin birlikte yeniden eğitilmesi gerekmesidir. Ayrıştırılmış yolda arka plan beynini değiştirmek daha kolaydır; birleşik yol ise azami doğallık peşindeki özel senaryolara daha uygundur. İkisi bir ödünleşimdir, birbirinin basit ikamesi değil.
-
-### Daha insana benzeyen konuşma sentezi
-
-Geleneksel TTS'nin aşırı pürüzsüz olması ve az duraklaması makine kimliğini ele verir. Ana LLM metne \`THINKING\`, \`EMO:happy\` ve \`SPEED:0.8x\` gibi kontrol etiketleri ekleyebilir; TTS bunları duraklama, prozodi, hız, kahkaha ve iç çekmeye dönüştürür. Etiketleri anlayan bir TTS eğitilebilir veya farklı referans klipleriyle ses klonlama kullanılabilir.
-
-> **Deney 9-4 ★★: Fish Audio ile kontrol belirteçli TTS**
->
-> Fish Audio S1 kullanarak çok referanslı bir ses kütüphanesi oluşturun ve üç ayarı karşılaştırın: belirteçsiz, tek referanslı ve çok referanslı. Yürütme katmanı etiketlerden uygun duygu, konuşma hızı ve stili seçer. Dengeli üç kör dinlemede çok referanslı ayar en yüksek puanı aldı (insan müşteri hizmetleri benzerliği 4,67/5); ancak belirteçsiz kol tek referanslı kolu geçtiği için planlanan sıralama bütünüyle tekrarlanmadı. Küçük dinleme çalışması ifade kontrolünün yararlı olabileceğini gösterir, genel konuşma kalitesi sonucu değildir. 24 referanslı kütüphane, A/B/C medyası ve kabul kaydı: [chapter9/controllable-tts](../chapter9/controllable-tts/).
-## Computer Use: GUI Otomasyonu Agent'ları
-
-Buraya kadar okuyunca, bu bölümün sese ayırdığı yerin sonraki iki senaryodan belirgin biçimde fazla olduğu fark edilebilir — bu bilinçli bir tercihtir. Gerçek zamanlı çok modluluk çizgisinde ses, en uzun yolu almış ve referans çerçevesi olarak alınmaya en değer alandır: "seri boru hattının gecikmesi çok yüksek" sorunundan yola çıkıp uçtan uca modeller, full-duplex etkileşim ve düşünürken konuşma gibi bir dizi çözümden geçerek bugünkü görece olgunlaşmış noktaya ulaşmıştır; sorun → çözüm → son durum güzergâhının tamamı katedilmiştir. Bu yüzden onu enine boyuna anlattık. Sıradaki Computer Use ve robotik senaryolarını okurken bu güzergâhla karşılaştırın: her biri bu evrim çizgisinin neresine gelmiştir ve nerede takılı kalmıştır?
-
-Bu üç senaryo görünüşte birbirinden çok farklıdır, ama aynı temel zorluklarla yüzleşir: gerçek zamanlı algı, düşük gecikmeli karar verme ve sürekli etkileşim. Şimdi bu teknik temaların görsel etkileşimde (Computer Use) ve fiziksel etkileşimde (robotik) nasıl yeniden ortaya çıktığına bakalım — önce bakış açısını işitsel modaliteden görsel modaliteye genişletelim: ya bir Agent yalnızca konuşmayı anlamakla kalmayıp ekranı da "görebilseydi" ve grafik arayüzü kullanabilseydi?
-
-Computer Use (GUI otomasyonu Agent'ı olarak da anılır), yapay zekanın tıpkı bir insan gibi ekranı gözleyerek ve fare ile klavyeyi kullanarak yazılım çalıştırmasını sağlar — örneğin bilgi aramak için tarayıcı açmak, bir tablo yazılımına veri girmek veya sistem ayarlarında bir yapılandırmayı değiştirmek. Özünde bir **algılama-düşünme-eylem** döngüsü vardır (Şekil 9-7):
-
-1. Agent o anki ekranın görüntüsünü alır
-2. Çok modlu model ekran görüntüsünü ve görev talimatını alır, bir düşünme parçası ve somut bir eylem üretir
-3. Yürütme katmanı bu eylemi gerçek ortamda uygular (fareyi hareket ettirmek, tıklamak, metin girmek vb.)
-4. Arayüzün yanıt vermesini bekledikten sonra yeniden ekran görüntüsü alır ve döngünün bir sonraki turuna girer
-
-**Computer Use güvenlik döngüsü:**
-
-```python
-observation = capture_screenshot_and_accessibility_tree()
-proposal = model.decide(task, observation)
-action = validate_schema_and_coordinates(proposal)
-
-if action.is_irreversible and not user_or_policy_approval(action):
-    stop("approval required")
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
 else:
-    execute_in_sandbox_or_scoped_session(action)
-    new_observation = capture_after_settle()
-    if not verify_goal_progress(new_observation, action):
-        rollback_if_possible_or_replan()
+    emit_structured_diagnosis(outcome, process, quality)
 ```
 
-![Şekil 9-7: Computer Use Agent'ının algılama-düşünme-eylem döngüsü](images/fig9-7.svg)
+![Şekil 9-2: Ortam Sonucundan LLM Rubric'ine Üç Katmanlı Trajectory Doğrulaması](images/fig9-2.svg)
 
+Müşteri hizmetleri Agent'ını ele alalım: işe yarar bir Rubric en azından Tablo 9-1'deki boyutları kapsamalıdır. İlk beş madde ağırlıklı olarak asgari sınırları kısıtlar, son ikisi hizmet kalitesini ölçer. Böyle bir ayrıştırma, "kullanıcı memnun oldu mu" sorusundan daha yüksek tanısal değere sahiptir: kullanıcı, Agent kurala aykırı bir iade yaptığı için memnun olabileceği gibi, kurallara uygunluk kısıtı yüzünden memnuniyetsiz de olabilir; tek bir memnuniyet puanı bu ikisini ayırt edemez.
 
-Bu döngüde üç kritik tasarım boyutu vardır: **action space** (eylem alanı — Agent'ın hangi işlemleri yürütebildiği), **görsel konumlandırma** (ekran görüntüsünde hedef öğenin nasıl bulunacağı) ve **model mimarisi** (ekran görüntüsünden doğru eylemin nasıl üretileceği).
+Tablo 9-1 Müşteri Hizmetleri Agent'ı için Trajectory Değerlendirme Boyutları
 
-### Action Space Tasarımı
+| Boyut | Doğrulama sorusu | Başlıca kanıt |
+|---|---|---|
+| Görev sonucu | Kullanıcının asıl talebi çözüldü mü | Nihai ortam durumu, araç sonuçları |
+| Kural uyumu | Politika, yetki veya zorunlu süreç ihlal edildi mi | Politika kütüphanesi, eylem trajectory'si |
+| Gizlilik sınırı | Verilmemesi gereken bilgi sızdırıldı mı | Yanıt metni, veri erişim kayıtları |
+| Olgusal güvenilirlik | İfadeler bilgiyle veya araç sonuçlarıyla destekleniyor mu | Alıntılanan kaynaklar, araç dönüşleri |
+| Söz—eylem tutarlılığı | Tamamlandığı söylenen işlem gerçekten yapıldı mı | Yanıtların araç log'larıyla karşılaştırılması |
+| İfade kalitesi | Dil doğal ve derli toplu mu, tekrar ve şablonlaşmadan kaçınılmış mı | Konuşmanın tamamı, dil Rubric'i |
+| Kurallara uygun alternatif | Asıl çözüm uygulanamazken izin verilen bir alternatif yol bulundu mu | Kullanıcı hedefi, politikalar ve sonraki eylemler |
 
-Anthropic, eksiksiz bir etkileşim yeteneği oluşturan üç tür araç tanımlar (Şekil 9-8):
+Bunların içinde "söz—eylem tutarlılığı" özellikle Agent senaryolarına uygundur. Geleneksel metin değerlendirmesi yalnızca son yanıtı okur ve "iadenizi sizin için gönderdim" cümlesini kolaylıkla iyi hizmet sayar; trajectory değerlendirmesi ise iade aracının gerçekten çağrılıp çağrılmadığını, çağrının başarılı olup olmadığını ve sipariş durumunun değişip değişmediğini de denetlemeyi sürdürür. "Kurallara uygun alternatif" de modeli kuralları keyfî biçimde aşmaya teşvik etmez; ondan kullanıcının gerçek hedefini anlamasını ve iade mümkün olmadığında bilet değişikliği, erteleme veya kısmi telafi gibi meşru seçenekleri incelemesini ister.
 
+Doğrulama sonucu tek bir skalere sıkıştırılmamalıdır. Bir trajectory değerlendirmesi daha çok yapılandırılmış bir tanıya benzer: görev kısmen başarılı, kural uyumu geçti, ama bir yerde kanıtsız bir ifade, bir yerde asılsız bir söz var; üstelik yanıt politikayı üç kez tekrar tekrar açıklamış. Boyutlandırılmış sinyaller hem sorunun niteliğini hem de kanıtın konumunu korur. Ancak bundan sonra alt modüller şu ayrımı yapabilir: kanıtsız ifade bilgi eksikliğinden mi, alıntı zorunluluğunun bulunmamasından mı, yoksa modelin yetersizliğinden mi kaynaklanıyor; asılsız söz için prompt mu değiştirilmeli, yoksa Harness'e yanıt ile araç durumu arasında bir tutarlılık kontrolü mü eklenmeli.
 
-![Şekil 9-8: Computer Use action space'i](images/fig9-8.svg)
+LLM doğrulayıcısının kendisi de kalibrasyon gerektirir. Üretim sistemleri genellikle uzmanlarca etiketlenmiş küçük bir trajectory kümesi hazırlar ve doğrulayıcının her boyuttaki tutarlılığını denetler; yüksek riskli veya düşük güvenli vakalar ikinci bir modele ya da insan incelemesine gider; model sürümü değiştikten sonra kalibrasyon kümesi yeniden çalıştırılır. Doğrulayıcı, değerlendirmeyi ve kanıtı üretmekle yükümlüdür; Agent'ın hangi parçasının değiştirileceğine ise bağımsız bir tanı ve evrim modülü karar vermelidir. Böylece aynı modelin hem hakem olması hem de kuralları doğrudan yeniden yazması önlenir.
 
-
-**GUI işlem aracı** (computer tool): Fare işlemleri arasında hareket ettirme (mouse_move), sol/sağ/orta tuş tıklaması, çift/üçlü tıklama, sürükleme (left_click_drag) ve daha ince taneli basma/bırakma (left_mouse_down/up) yer alır. Kaydırma (scroll) dört yönü destekler ve değiştirici tuşlarla birlikte kullanılabilir. Klavye işlemleri arasında karakter karakter yazma (type; gerçek klavye kullanımını taklit etmek için her karakter arasında 12 ms aralıkla), tuş kombinasyonları (key, örneğin Ctrl+C) ve tuşu basılı tutma (hold_key) bulunur. Algı eylemleri: ekran görüntüsü alma (screenshot), imleç konumunu okuma (cursor_position) ve bekleme (wait).
-
-**Komut yürütme aracı** (bash tool): Kalıcı bir bash terminal oturumu sağlar, 120 saniyelik zaman aşımına sahiptir, komutun tamamlanıp tamamlanmadığını bir nöbetçi (sentinel) dizesiyle tespit eder ve çağrılar arasında ortam durumunu korur (örneğin cd ile bir dizine geçildikten sonra bir sonraki çağrı da aynı dizinde başlar).
-
-**Dosya düzenleme aracı** (str_replace_editor): Dizi eşleştirmesi yoluyla güvenli düzenleme sağlar; görüntüleme, oluşturma, değiştirme, ekleme ve geri alma işlemlerini destekler. Dosyanın tamamının üzerine yazmaktan daha kesindir ve alakasız içeriği yanlışlıkla değiştirme olasılığı daha düşüktür.
-
-> **Deney 9-5 ★: Computer Use'ı Çalıştırmak (Anthropic Referans Yolu veya Açık Model Yolu)**
+> **Deney 9-1 ★★: Müşteri Hizmetleri Agent'ı için Trajectory Doğrulayıcısı İnşa Etmek**
 >
-> A yolu Anthropic Computer Use Demo'yu kullanır. Konteyner, tarayıcı, terminal ve diğer yaygın araçları içeren eksiksiz bir Ubuntu masaüstü ortamı sunar. Ön uç görevi alır; arka uç talimatları ve ekran görüntülerini Claude'a gönderir, ardından modelin döndürdüğü fare, klavye, terminal veya düzenleme eylemlerini yürütür. Bu yol, yerleşik `computer` aracı protokolünü anlamaya yöneliktir; her okuyucunun Anthropic API erişimine sahip olmasını gerektirmez.
+> **Deney Amacı**: Bir müşteri hizmetleri çalışma trajectory'sini sonraki öğrenmede kullanılabilecek yapılandırılmış bir tanıya dönüştürmek ve "kanıtla birlikte çok boyutlu sonuç"un tek bir toplam puandan daha iyi kök neden bulup bulmadığını doğrulamak.
 >
-> B yolu, kitabın [`chapter9/computer-use-open-model`](../chapter9/computer-use-open-model/) eşlikçi projesini kullanır. Varsayılan olarak browser-use'ı açık ağırlıklı Qwen3-VL 32B Instruct ile çalıştırır; OpenRouter barındırılan API'si kullanılabilir veya `OPEN_MODEL_BASE_URL`, kendi barındırdığınız vLLM/SGLang ya da başka bir uyumlu uç noktaya yönlendirilebilir. Uç nokta ekran görüntülerini kabul etmeli ve yerleşik JSON Schema'yı desteklemelidir; yalnızca normal JSON destekliyorsa schema-in-prompt uyumluluk modu açıkça etkinleştirilebilir.
+> **Veri ve Akış**: Deney; normal iade, asılsız söz, gizlilik ihlali ve aşırı reddetme olmak üzere dört sınıfta uzman etiketli trajectory'ler hazırlar. Birinci katman siparişin nihai durumunu ve araç log'larını okuyarak iadenin ya da bilet değişikliğinin gerçekten olup olmadığını belirler; ikinci katman adım adım iş politikalarıyla karşılaştırarak yetkileri, zorunlu süreçleri, gizliliği, olgusal dayanağı ve söz—eylem tutarlılığını denetler; üçüncü katman Tablo 9-1'deki Rubric'e göre ifade kalitesini ve kurallara uygun alternatifi değerlendirir ve başarısızlık sonuçları için kanıt turlarını saklar. Varsayılan kalite Judge'ı deterministik kurallar kullanır, ayrıca gerçek bir LLM Judge de sunulur; üst katman hangi modeli kullanırsa kullansın, sonuç katmanı ile kural katmanı bir dil modelinin tahminine bırakılmaz.
 >
-> İki yol da aynı salt okunur görevi ve aynı kabul sözleşmesini kullanır: en fazla 25 adım, adım başına tek bir eylem ve model/uç nokta kimliğinin, ham sağlayıcı yanıtlarının, adım adım ekran görüntülerinin, eylem dizisinin, nihai yanıtın ve durma nedeninin saklanması. Farklı modeller ayrı deney kolları olarak raporlanmalıdır; açık model sonucu Claude yeniden üretimi gibi sunulmamalı, “konteyner başarıyla başladı” ifadesi görev tamamlandı sayılmamalıdır. Eylem aralıkları ve planlama kalitesi ölçülen sonuçlardır; 2–5 saniye olacağı veya diğer modellerden mutlaka üstün olacağı önceden varsayılmaz.
+> **Karşılaştırma ve Metrikler**: Baseline yalnızca tek bir toplam puan verir; deney grubu her boyut için `pass`, `fail` veya `uncertain` değerini, kanıtı ve güven düzeyini üretir. Kalibrasyon aşamasında boyut bazında başarısızlık tespitinin kesinliği (precision) ve duyarlılığı (recall) hesaplanır ve uzman etiketleriyle tam örtüşme oranı raporlanır; ayrıca asılsız söz gibi başarısızlıkların yalnızca bir sonuçtan ibaret kalmayıp boş olmayan kanıt içerdiği kontrol edilir.
 >
-
-### Görsel Konumlandırma (Grounding)
-
-Döngünün her turunda modelin ekran görüntüsü içinde hedef öğeyi doğru biçimde bulması gerekir — "Arama kutusu nerede?", "Gönder düğmesinin koordinatları ne?" İşte bu, görsel konumlandırma (Grounding) problemidir. Hâlihazırda başlıca **iki yaklaşım** vardır: birincisi konumlandırmayı bir **çoktan seçmeli soruya** dönüştürmek — önce arayüz öğelerini numaralandırarak işaretlemek, böylece modelin yalnızca birini seçmesi yeterli olur; ikincisi **saf koordinat tahmini** — modelin tıpkı bir insan gibi ekran görüntüsüne doğrudan "bakıp" koordinatı söylemesi. Çoktan seçmeli yaklaşımın da iki uygulama biçimi vardır: **saf görsel işaretleme** (orijinal Set-of-Mark; bir segmentasyon modeliyle piksel düzeyinde aday bölgeler çıkarılır) ve **yapısal öğe indeksleme** (DOM/Accessibility Tree; arayüzün kendi yapısı doğrudan okunur). Çoktan seçmeli yaklaşımın ortak avantajı, "ekran görüntüsünde düğmeyi bul ve koordinatını tahmin et" biçimindeki açık uçlu problemi "önceden işaretlenmiş öğelerden birini seç" biçimindeki kapalı uçlu bir probleme çevirmesidir — tıpkı sınavda çoktan seçmeli soruların boşluk doldurmaya göre daha kolay doğru yanıtlanması gibi, modelin "ekranın sol üst köşesinden yaklaşık 200 piksel sağdaki mavi düğmeye tıkla" demesi gerekmez, "[123]'e tıkla" demesi yeter.
-
-**Set-of-Mark: görsel işaretleme yöntemi.**
-
-Orijinal Set-of-Mark (SoM), 2023'te Microsoft Research tarafından, başlangıçta GPT-4V'nin görsel konumlandırma yeteneğini açığa çıkarmak amacıyla önerildi. **Saf görsel** bir yöntemdir: görüntü segmentasyon modelleri (SAM, SEEM vb.) ekran görüntüsünde aday bölgeleri otomatik olarak çıkarır, her bölgenin üzerine numaralı bir işaret bindirilir; modelin gördüğü şey numaralandırılmış bir görüntüdür ve yalnızca numarayı söylemesi yeterlidir, sistem bunu ilgili bölgenin merkez koordinatına çevirir. Sürecin tamamı DOM'a ya da herhangi bir arayüz iç yapısına ihtiyaç duymaz; bu nedenle yerel masaüstü yazılımları ve oyun arayüzleri için de aynı ölçüde geçerlidir — yeter ki segmentasyon modeli aday bölgeleri çıkarabilsin.
-
-**Yapısal öğe indeksleme: SoM fikrinin Web üzerindeki yapısal uygulaması.**
-
-Arayüzün kendisi yapısal bilgi sunabildiğinde işaretleme çok daha kesin yapılabilir. Modern web sayfaları, render edilmeden önce zaten eksiksiz bir öğe yapısı (DOM ağacı) ve semantik roller (hangisi düğme, hangisi giriş kutusu) tanımlar; erişilebilirlik arayüzü (Accessibility Tree) birçok masaüstü uygulaması için benzer bilgiyi sağlar. Bir segmentasyon modelinin piksellerden "hangi bölge düğme" diye tahmin yürütmesindense, doğrudan arayüzün kendisine "tıklanabilir hangi öğelerin var?" diye sormak daha iyidir. browser-use projesinin temsil ettiği Web Agent çözümleri tam olarak bunu yapar: etkileşimli öğeleri DOM'dan numaralandırarak listeler; bu, SoM fikrinin Web üzerindeki yapısal uygulaması sayılabilir (Şekil 9-9). Süreç dört adımdan oluşur:
-
-1. Tarayıcının hata ayıklama arayüzü (CDP, Chrome DevTools Protocol) üzerinden sayfanın yapısal temsilini (DOM ağacı) ve erişilebilirlik bilgilerini elde etmek
-2. Hangi öğelerin etkileşimli olduğunu otomatik olarak tespit etmek (düğmeler, giriş kutuları, bağlantılar vb.)
-3. Her etkileşimli öğeye benzersiz bir ID atamak ve ekran görüntüsünde sınırlayıcı kutuları çizmek
-4. Aynı anda, her ID'ye karşılık gelen öğeyi tanımlayan bir metin listesi üretmek
-
-```text
-Screenshot: [Görseldeki kilit öğeler [1], [2], [3], [4] gibi ID'lerle işaretlenmiştir]
-
-Elements:
-[1] <input type="text" placeholder="Search" aria-label="Search" />
-[2] <button id="submit-btn" aria-label="Submit form" />
-[3] <input type="text" placeholder="Enter your name" value="" />
-[4] <a href="/docs" aria-label="Documentation" />
-```
-
-Modelin yalnızca bir ID numarası üretmesi yeterlidir; sistem otomatik olarak o öğenin merkez koordinatını kullanarak tıklamayı gerçekleştirir. Bu tür çözümler token tasarrufu sağlamaz (çünkü tüm işaretleme bilgisinin modele gönderilmesi gerekir), ama konumlandırması kesin ve kararlıdır; üstelik segmentasyon modelinin yol açabileceği atlanmış ve yanlış tespitleri de ortadan kaldırır.
-
-
-![Şekil 9-9: Set-of-Mark ile yapısal öğe indeksleme (browser-use uygulaması)](images/fig9-9.svg)
-
-**Saf koordinat tahmini.**
-
-Üçüncü yol hiçbir işaretleme yapmaz, doğrudan modelin koordinat üretmesini ister. **SeeClick** ve Claude'un computer use'u bunun temsilcileridir: devasa miktarda GUI ekran görüntüsü ve öğe konumu eşleşmesinden oluşan veriyle görsel modeller eğitilir ve modelin doğal dil betimlemelerini (örneğin "gönder düğmesine tıkla") doğrudan ekran görüntüsündeki kesin koordinatlara eşlemeyi öğrenmesi sağlanır — tıpkı bir insan kullanıcı gibi, tıklanacak yeri saf görme yoluyla bulur.
-
-Koordinat tahmini çözümlerinde modelin koordinatları kavrayışı, eğitim sırasında kullanılan çözünürlüğe yüksek oranda bağımlıdır (Şekil 9-10). Claude'un eğitiminde XGA (1024x768), WXGA (1280x800) ve FWXGA (1366x768) kullanılmıştır; girdi olarak verilen ekran görüntüsünün çözünürlüğü bunlarla uyuşmazsa modelin tahmin ettiği koordinatlar sistematik biçimde kayar — tıpkı küçük bir haritada ölçülen mesafeyi doğrudan büyük haritaya uygulamak gibi. Bu nedenle araç katmanında çift yönlü bir koordinat ölçekleme mekanizması gerekir ve hedef çözünürlük **en-boy oranına göre seçilmelidir**; aksi hâlde orantısız gerdirme görüntüyü bozar ve koordinat değerlendirmesini de saptırır. Örneğin gerçek ekran çözünürlüğü 2560×1440 (16:9) ise, Claude'un desteklediği üç seçenek arasından en-boy oranı 16:9'a en yakın olanı — FWXGA (1366×768) — seçilmelidir. Ekran görüntüsü orantılı biçimde 1366×768'e ölçeklenip modele verilir; model tıklama koordinatı olarak (683, 384) ürettiğinde bu değer ters yönde gerçek koordinata eşlenir: (683×2560/1366, 384×1440/768) ≈ (1280, 720). Buna karşılık 16:9'luk bir görüntü zorla 4:3'lük 1024×768'e gerdirilirse görüntü yatayda ezilir ve modelin tahmin ettiği koordinatlar sistematik olarak kayar.
-
-
-![Şekil 9-10: Çözünürlük eşleştirme ve çift yönlü koordinat ölçekleme](images/fig9-10.svg)
-
-
-Üç yol arasındaki seçim mantığı şöyle özetlenebilir: **yapısal bilgi elde edilebiliyorsa öncelikle DOM/Accessibility Tree indekslemesi kullanılmalıdır**; konumlandırması en kesin ve en kararlı olan budur. **Elde edilemiyorsa** (Photoshop gibi yerel masaüstü yazılımları, Canvas/WebGL ile render edilen arayüzler, oyunlar) **hem görsel işaretleme (orijinal SoM yolu) hem de koordinat tahmini kullanılabilir**. Görsel işaretleme konumlandırmayı çoktan seçmeli bir soruya dönüştürdüğü için, özel olarak eğitilmemiş genel amaçlı modellere daha dosttur; koordinat tahmini ise işaretleme adımını ortadan kaldırdığı için, GUI konumlandırma eğitimi almış modeller açısından daha doğrudandır. Küçük öğelerde ve yoğun arayüzlerde her ikisinin de doğruluğu hâlâ yetersizdir.
-
-> **Deney 9-6 ★: browser-use ile Otomatik Tarayıcı İşlemleri**
+> **Kabul Kriterleri**: Doğrulayıcı kritik ihlalleri, asılsız sözleri ve aşırı reddetmeleri kararlı biçimde tespit etmelidir; yüksek bir toplam puan, gizlilik veya kural boyutundaki bir başarısızlığı örtemez; düşük güvenli ve yüksek riskli vakalar otomatik olarak öğrenme sinyaline dönüşmek yerine ikinci bir doğrulayıcıya veya insan incelemesine gitmelidir.
 >
-> Tarayıcı otomasyon çerçevesi Playwright'ı çok modlu bir modelle birleştirerek doğal dille yönlendirilen tarayıcı işlemlerini gerçekleştirin. SoM görselleştirmesini etkinleştirin ve her karardan önce açıklamalı sınırlayıcı kutular içeren ekran görüntüsünü kaydedin. Model arayüzü OpenAI veya Anthropic ile sınırlı değildir; kitap, açık Qwen3-VL modeli için API yapılandırması sağlar ve diğer barındırılan hizmetler ya da kendi barındırdığınız çıkarım için genel bir OpenAI uyumlu base URL sunar.
->
-> “Google'ı aç ve San Francisco hava durumunu sorgula” test görevi: Başlatma sonrasında ekran görüntüsü, numaralandırılmış etkileşimli öğelerle Google arama sayfasını gösterir. Model arama kutusunu seçer, “San Francisco weather today” yazar, aramayı gönderir ve sonuç sayfasından sıcaklık ile hava koşullarını çıkarır. Kabul sırasında yanıt ve iz bağımsız olarak doğrulanır; gerçek adım sayısı ve geçen süre olduğu gibi kaydedilir. “5 adım, yaklaşık 20 saniye” yalnızca belirli bir çalışmanın gözlem değeri olabilir; yürütme kaydı olmadan sabit sonuç sayılamaz.
->
-> Kitapta saklanan resmi açık model çalışması, OpenRouter üzerindeki `qwen/qwen3-vl-32b-instruct` modelini kullandı. Model Google Search'ün 4. adımında CAPTCHA ile karşılaştığında başarılı olduğunu iddia etmedi; weather.com'a geçti ve 16. adımda San Francisco Today sayfasından 64°F, Sunny, hissedilen 62°F, en yüksek 74°F ve en düşük 55°F bilgilerini okudu. 16 API yanıtının tamamı istenen Qwen3-VL modelini bildirdi; 15 geçerli adım ekran görüntüsü ve salt okunur eylem izi bağımsız deterministik kabulden geçti. Bu sonuç açık model API yolunun çalıştığını kanıtlar; Anthropic'in yerleşik `computer` aracı kolunun yeniden üretildiği anlamına gelmez.
+> Eşlik eden uygulama için bkz. [`trajectory-verifier`](../chapter9/trajectory-verifier/); varsayılan olarak çevrimdışı yeniden üretilebilen kalite Judge'ı kullanılır, `--judge llm` ile hâlihazırda uygulanmış gerçek LLM doğrulayıcısı çalıştırılabilir.
 
-### Animasyon Görebilen, Ses Duyabilen Computer Use Agent'ı
+## Agent'ın Sürekli Evrimi için Dört Yöntem
 
-Buraya kadar Computer Use'un algısı örtük bir varsayıma dayanıyordu: **ekran durağandır** — bir görüntü al, bir adım düşün, bir kez tıkla, sonra bir görüntü daha al. Oysa gerçek ekranlarda video oynar, göz açıp kapayıncaya kadar kaybolan bildirimler belirir, toplantılardaki insan sesleri duyulur. Her 3–5 saniyede bir gözünü açan ve hiç kulağı olmayan bir Agent, "iki kare arasında olup bitenleri" ne görebilir ne de duyabilir. Ekran kaydı izlemek, bir toplantıyı takip etmek, sesli bir uyarıyı dinlemek, bir anda gelip geçen bir iletişim kutusuna yetişmek — bu gündelik bilgisayar işlerinin tamamı bugünün Computer Use Agent'ı için neredeyse yasak bölgedir.
+Öğrenme sinyali, Agent'ın değişmesi gerektiğini söyler; ama değişimin nerede gerçekleşmesi gerektiğini söylemez. Güncelleme biçimini seçerken birincil ölçüt, deneyimin ne kadar süredir var olduğu değil, hedeflenen yeteneğin belirli bir taşıyıcıyla doğal biçimde ifade edilip edilemeyeceğidir. Olgular ve deneyimler bilgi dokümanına yazılmaya uygundur; dille açıkça anlatılabilen stratejiler prompt'a veya Skill'e yazılmaya uygundur; kesin biçimde yürütülebilen süreçler ve kısıtlar programa yazılmaya uygundur; algı, dil üslubu ve örtük stratejiler gibi yüksek boyutlu yetenekler ise model parametrelerine girmek zorundadır. Şekil 9-3 bu dört yolu ve aralarındaki ilişkiyi gösteriyor.
 
-Burada asıl yeniden tasarlanması gereken şey "eylem arayüzü" değil, "**gözlem arayüzü**"dür[^ch9-9]. Temel fikir, **gözlemi** (sürekli, uyarlanabilir, çok modlu) **eylemden** (ayrık) ayrıştırmak ve ortam ile herhangi bir hazır Computer Use modeli arasına yerleşen, yeniden eğitim gerektirmeyen bir algı ara katmanı hâline getirmektir (buna Agent–bilgisayar gözlem arayüzü, AOI denebilir). Bu katmanın "ihtiyaç oldukça kapağı açılan" üç bileşeni vardır. Birincisi, **kareler arası anahtar kare yakalama**: önce son derece ucuz bir piksel kapısıyla neredeyse hiç değişmeyen kareler atlanır, ardından küçük bir model görüntüde anlamlı bir değişiklik olup olmadığına karar verir ve yalnızca değişiklik varken bir kare yakalanır; durağan görüntüde maliyet neredeyse sıfırdır. İkincisi, **ses seviyesiyle kapılanan konuşma transkripsiyonu**: yalnızca ses varken konuşma tanıma çağrılır ve Agent ilk kez "kulak sahibi olur". Üçüncüsü — ve en kritiği — **görüntüyü kalıcı metne dönüştürmek**: model, yakalanan kareyi tek bir cümleyle betimler ("Az önce çıkan bildirimde yayın tarihinin 28 Nisan'a alındığı yazıyor") ve **orijinal görsel daha sonra context'ten temizlense bile bu cümle bellekte kalır**, yani dinamik bilgi metin biçiminde ileriye taşınır.
+![Şekil 9-3: Sürekli Evrimin Dört Güncelleme Biçimi](images/fig9-3.svg)
 
-Sezgiye aykırı bir bulgu şudur: asıl işe yarayan şey "hangi karelerin seçildiği" değil, "**karelerin uzun süre saklanabilecek metne dönüştürülmesi**"dir — çünkü metin, LLM Agent'larının en iyi işlediği modalitedir. 7B'den öncü ölçeğe uzanan sekiz model üzerinde bu ara katman, hiçbir yeniden eğitim gerektirmeden +17 ila +48 yüzde puanlık iyileşme sağladı; aradaki en büyük fark sesli görevlerde görüldü: bu algı katmanı eklendiğinde Agent, daha önce "duyulabilir ama üzerinde işlem yapılamaz" olan sesli görevleri tamamlayabildi. Ne var ki bu, her duruma uyan sabit bir yapılandırma değildir — bazı daha yeni modellerde çok fazla görsel token yüklemek akıl yürütmeyi sıkıştırıp performansı düşürebiliyor. Dolayısıyla bu bileşenler toptan açılmak yerine **model model seçilmelidir**. Bu, daha önceki Set-of-Mark ile koordinat tahmini arasındaki tercihle aynı derstir: algı çözümlerinin gümüş kurşunu yoktur, yapılandırma modelin huyuna göre ayarlanır.
+Tablo 9-2 derli toplu bir karşılaştırma sunuyor. Dört yol birbirini dışlamaz: tıbbi görüntüleme Agent'ı lezyonları tanımak için parametrelere dayanır, güncel kılavuzları bilgi tabanından alır, risk göstergelerini kodla hesaplar; müşteri hizmetleri modelinin doğal ses tonu post-training'den gelir, kuruma özgü politikalar bilgi ve Skill tarafından sağlanır, kritik uyumluluk kuralları ise sunucu tarafındaki kodla güvence altına alınır.
 
-[^ch9-9]: Kapılı anahtar kare, ihtiyaç hâlinde transkripsiyon ve kareleri kalıcı metne dönüştürme biçimindeki üç bileşenin eksiksiz mekanizması ve model bazlı ablation çalışması için bkz. Li, Bojie and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
+Tablo 9-2 Dört Sürekli Evrim Biçiminin Uygulanabilirlik Sınırları
 
-### Computer Use için Dünya Modelleri
+| Güncelleme biçimi | Taşımaya uygun içerik | Başlıca üstünlükler | Başlıca sınırlamalar |
+|---|---|---|---|
+| Deneyim bilgi tabanı | Olgular, deneyime dayalı örüntüler, istisnalar ve kaynaklar | Hızlı güncellenir, izlenebilir, ihtiyaca göre retrieval yapılabilir | Retrieval'a ve modelin doğru uygulamasına bağımlı |
+| Prompt ve Skill | Dille ifade edilebilen yargı ilkeleri ve işleyiş kuralları | Yorumlanabilir, etki alanı denetlenebilir | Kolayca şişer, çelişir veya göz ardı edilir |
+| Program ve Harness | Deterministik süreçler, araçlar ve katı kısıtlar | Test edilebilir, yürütmesi kararlı, maliyeti düşük | Geliştirme ve bakım maliyeti görece yüksek |
+| Model parametreleri | Yüksek boyutlu algı, üretim üslubu ve örtük stratejiler | Genelleme gücü yüksek, çıkarım maliyeti düşük | Güncelleme ve regresyon maliyeti yüksek |
 
-Bir önceki bölümdeki gözlem arayüzü "arada ne oldu" sorusunu çözer: anahtar kareler, konuşma dökümü ve kalıcı metin sayesinde Agent artık yalnızca birbirinden uzak iki ekran görüntüsünü görmez. Ama gözlem arayüzü planlama gecikmesini ortadan kaldırmaz. Agent hâlâ "ekran görüntüsü—düşün—tıkla" biçimindeki sıralı döngüyü çeviriyor ve her eylemden sonra yeniden gözlemleyip bir sonraki adımı düşünüyor. **OSWorld-Human** verimlilik çalışması gösteriyor ki görev sonunda başarılsa bile Agent'ın işlem adımları ve bekleme süresi insandan belirgin biçimde fazla; insan düzeyinde doğruluğa ulaşmak, kullanılabilir olmakla aynı şey değil.
-
-İnsan bilgisayarı kullanırken bir sonraki adımı tıkladıktan sonra düşünmeye başlamaz; önce eylemin sonucunu öngörür. Gerçekleşen değişim beklentiye uyuyorsa mevcut planla devam eder; ancak sayfa durumu beklenenden saptığında durup yeniden gözlemler ve yeniden planlar. Dünya modeli, Agent'ın harekete geçmeden önce masaüstünün neye dönüşebileceğini öngörmesini sağlar; böylece insana benzeyen bu "öngörülü yürütme" mümkün olur ve verimlilik belirgin biçimde artar.
-
-Masaüstü durumu yalnızca bir piksel görüntüsü değildir: pencereleri, odağı, kaydırma konumunu, giriş kutusu içeriğini, yükleme durumunu, izinleri ve ağ yanıtlarını da kapsar; eylemler ise tıklama, klavye girişi, kaydırma, sürükleme ve bekleme içerir. Computer Use'da kullanılabilecek bir dünya modeli en azından mevcut durumu kodlayabilmeli, aday eylemin yol açacağı durum değişimini öngörebilmeli ve bu öngörüyü bir sonraki adıma karar vermesi için planlayıcıya verebilmelidir:
-
-```text
-masaüstü durumu + click/type/scroll/wait ──> sonraki durumun gösterimi
-```
-
-Böylece Agent, gerçekten tıklamadan önce aday eylemlerin sonuçlarını karşılaştırabilir, sayfa yüklenirken bir sonraki adımı hazırlayabilir ve bir açılır pencere bir an görünüp kaybolduğunda durum farkından yararlanarak toparlanabilir. Örneğin görev "VS Code'da yeni bir Python dosyası oluştur ve hello world yaz" ise, model önce başarı hâlindeki dosya ağacının ve düzenleyicinin anahtar durumunu öngörebilir, sonra tıklama, yazma ve kaydetme eylemlerini seçebilir; görev bir dosyayı silmekse, yalıtılmış bir sanal masaüstünde geri alınamaz bir onay kutusunun çıkıp çıkmayacağını önceden öngörebilir ve gerektiğinde kullanıcıdan onay isteyebilir. Buradaki asıl mesele modele gerçekçi görünen bir gelecek ekran görüntüsü ürettirmek değil, görevi tamamlamak için gereken, denetlenebilir durum farklarını öngörmesini sağlamaktır.
-
-Temmuz 2026'da Induction Labs'in duyurduğu **Photon-1**, bu yolun bir gerçekleştirimini gösterdi: yalnızca 30.000 saatlik H200 GPU süresiyle bir computer use dünya modelinin ön eğitimini tamamladı. Her kareyi ayrık gizli token'lara sıkıştırıp bir eylemin ardından gelen sonraki durum gösterimini özbağlanımlı olarak öngörür; ön eğitim aşamasında ekran görüntülerini piksel piksel üretmez. Ayrıca bağlanan görüntü üreteci yalnızca gizli gösterimleri görselleştirmeye yarar, çıkarım için zorunlu bir bileşen değildir. Bir tohum ekran görüntüsü ve ardından gelen eylemler verildiğinde model masaüstü durumlarını kesintisiz biçimde "hayal edebilir"; sonra sanal makineler üzerindeki çevrim içi eğitimle computer-use eylemleri üretmeyi öğrenir.[^ch9-20]
-
-[^ch9-20]: David Li and Jonathan Li, Induction Labs, “Scaling Video Pretraining with Imagination Models,” 2026-07-23. https://www.inductionlabs.com/news/scaling-video-pretraining. Metinde geçen Photon-1 parametreleri, veri ölçeği, şirket içi benchmark sonuçları ve maliyet karşılaştırmaları şirketin açıkladığı verilerdir.
-
-### Mobil Taraf: Ekosistem Bariyerleri Teknolojiden Daha Zorlu
-
-Computer Use mobil tarafa da yayılıyor. Mobil ile masaüstü arasında teknik açıdan gerçek farklar vardır: action space genellikle artık "fare koordinatı + klavye" değildir, sistemin erişilebilirlik servisi API'si (örneğin Android'in AccessibilityService'i) üzerinden arayüz öğeleri okunur, tıklama ve metin girişi gönderilir; etkileşim biçimi de fare imlecinden dokunma hareketlerine döner ve koordinatın anlamı buna bağlı olarak değişir — aynı (x, y) noktasının parmakla tek dokunuş mu, uzun basma mı, yoksa bir kaydırma hareketinin başlangıç noktası mı olduğunu belirlemek için ayrıca bir hareket türü gerekir. Bölüm 6'da tanıtılan AndroidWorld gibi mobil benchmark'lar, Agent'ın gerçek uygulamalarda görev tamamlama yeteneğini tam da böyle bir action space üzerinde değerlendirir.
-
-Ama mobil tarafı asıl tıkayan şey çoğu zaman bu teknik farklar değil, ekosistem bariyerleridir. Bazı telefon üreticileri, tüketici sınıfı telefonlara yapay zeka asistanları entegre edip WeChat, Taobao, Alipay gibi gündelik uygulamaları otomatik olarak kullandırmayı denedi, ama kısa sürede platform kısıtlamalarına takıldı.
-
-Bu durum Computer Use'un karşılaştığı kendine özgü bir zorluğu açığa çıkarır: **ekosistem bariyerleri**. Engellemenin temelindeki neden bir iş modeli çatışmasıdır. Geleneksel internet uygulamalarının çekirdek gelir mantığı **trafik ve dikkattir**: kullanıcı akışı kaydırırken reklam görür, ürün ararken öneri algoritmasının yönlendirmesine uyar, sayfaları gezerken anlık satın alma kararı verir. Agent kullanıcının yerine işlem yaptığında ise bu gelir zinciri tamamen baypas edilir: yapay zeka reklamlara bakmaz, anlık alışveriş yapmaz, doğrudan hedefe gidip görevi bitirir ve çıkar. Reklam ve trafikten para kazanan platformlar için Agent'ın her işlemi, iş modelinin temelini aşındırır.
-
-Bu da Computer Use'un yalnızca CAPTCHA (doğrulama kodu) gibi teknik düzeydeki karşı önlemlerle değil, **yapısal bir çıkar çatışmasıyla** da karşı karşıya olduğu anlamına gelir. Bu çelişkiyi kısa vadede uzlaştırmak zordur ve Computer Use'un tüketici senaryolarında hayata geçmesini, salt teknik sorunlardan daha çetin bir engelle karşı karşıya bırakır.
-
-## Robot Manipülasyonu: XLeRobot ile Masa Toplama Örneği
-
-> **Bu bölüm nasıl okunmalı**: baştan sona tek bir görev kullanıyoruz——"kırmızı bardağı tepsiye koy, sarı kâğıt parçasını çöp kutusuna at, en sonunda bir kez daha gözlem yaparak masanın durumunu doğrula". Deney 9-7 ve 9-9 gerçek bir XLeRobot üzerinde yürütülür; kol, kalibrasyon, acil durdurma düzeneği ve yerinde bir gözetmen gerektirir. Deney 9-8, 9-10 ve 9-11 bunların yerel GPU'daki karşılıklarıdır. Gerçek donanım ile benzetim sonuçları ayrı ayrı raporlanır, ancak görevin amacı, eylemlerin anlamı ve başarı koşulları aynı tutulur.
-
-Robot manipülasyonu, "resme bakıp soruyu yanıtlamak"tan çok daha zor bir iştir. Model yalnızca sahneyi anlamakla kalmayıp gerçek dünyada sürekli eylemde bulunmak zorundadır ve her eylem bir sonraki anın durumunu değiştirir. XLeRobot bu farkı çok somut hâle getirir. Aynı kol, insan tarafından klavye, oyun kumandası veya VR donanımıyla uzaktan kumanda edilebilir; ya da kamera gözlemi ile sınırlı bir eylem aracı kümesi bir Agent'a devredilip onun kendi başına çağırması sağlanabilir. Donanım da görev de değişmez; değişen tek şey kimin kullandığıdır——birincisinde insan sürekli gözleyip düzeltir, ikincisinde ise modelin ve kontrol sisteminin aynı işi sonuna kadar götürmesi gerekir.
-
-Bu bölüm beş deneyi "masa toplama" üzerinden birbirine bağlar. Önce insan gerçek XLeRobot'u uzaktan kumanda eder; böylece yeterince yetkin bir operatörün elinde bu donanımın nereye kadar gidebildiği ölçülür. Ardından benzetimde aynı görev için ideal kontrol üst sınırı belirlenir. Sonra bir Agent'ın gerçek XLeRobot'u özerk biçimde kontrol etmesine izin verilir; algı, planlama ve hatadan toparlanmanın sonucu nasıl belirlediği gözlenir. Daha sonra aynı araç sözleşmesi benzetime taşınır ve üç strateji bir arada karşılaştırılır: açık çevrim yürütme, adım adım denetim ve dünya modeli. Son olarak arka plan, nesne görünümü, aydınlatma ve görsel gürültü değiştirilerek, benzetimde öğrenilen görsel politikanın yeni bir ortama uyum sağlayıp sağlayamadığına bakılır.
-
-Buradaki darboğaz genellikle bir statik soru-cevap ölçütü daha üretmek değil, sınırlı algı ve kontrol bant genişliğiyle modelin çevrimi kapalı tutmasını sağlamaktır. Kullanılabilir bir robot sistemi en azından şu dört soruyu yanıtlamalıdır:
-
-1. İnsan hangi görevi bitirmek istiyor?
-2. Sırada hangi alt görev var?
-3. Şu anki beceri somut olarak hangi eylemi üretiyor?
-4. Eylem yürütüldükten sonra gerçeklik hâlâ ilk plana uyuyor mu?
-
-Bu bölüm bu dört soruyu XLeRobot'un aynı kontrol çevrimine yerleştirir ve dört tekniğin hangi kısmı üstlendiğini gösterir: uzun ufuklu planlama bardağın mı yoksa kâğıdın mı önce ele alınacağına karar verir; VLA ya da eylem ilkelleri kavrama ve yerleştirmeyi yapar; dünya modeli bir eylemin sonuçlarını kestirir; benzetimden gerçekliğe geçiş ise eğitim videoları ile gerçek kamera ve eyleyiciler arasındaki farkı üstlenir. Üst düzey modelin yeterli bilgisi ve planlama yetisi zaten olsa bile, bu geri besleme halkasının tek bir eksik halkası sistemin görevi bitirememesine yeter.
-
-### Donanım ile Algoritmanın İş Bölümü
-
-XLeRobot'un yanıtlamaya en uygun olduğu ilk soru şudur: özerk masa toplama başarısız olduğunda, kolun kendisi mi beceremiyor, yoksa algoritma mı kolu kullanmayı bilmiyor? Burada yumuşatılmaması gereken bir olgu var: **XLeRobot gibi birkaç yüz dolarlık bir kol bile, uzaktan kumandayla, bu bölümdekine benzer çok adımlı ve birbirine bağlı bir masa görevini hâlihazırda tamamlayabiliyor**——insan kamera görüntüsüne bakarak kırmızı bardağı kavrayıp tepsiye koyuyor, sarı kâğıdı çöp kutusuna atıyor ve sonunda durumu bir kez daha denetliyor. Bu sonuç yalnızca "donanım kıl payı yetiyor" demek değildir; açık bir tanı kanıtıdır: **bu görev söz konusu olduğunda darboğaz donanımın kendisinde değil, algoritma tarafındadır.**
-
-Tanı yöntemi dolaysızdır. Kamera, kol, tutucu, masa düzeni ve başarı koşulları sabitken çevrimi önce insan devralır. İnsan nesne konumu kestirimini, eylem seçimini ve zamanlamayı sürekli düzeltir, kavrama başarısız olduğunda ne yapacağını da bilir. Özerk sistem ile insan arasındaki mesafe tam da bu kapalı çevrim yetisinde görünür. Elbette bu yargının menzili bu bölümdeki masa görevidir: donanımın bu görevin gerektirdiği yük, hassasiyet ve çalışma uzayı eşiklerini aştığını gösterir, ama birkaç yüz dolarlık bir kolun her açık ortamla ya da daha zor manipülasyonlarla baş edebileceği anlamına gelmez.
-
-XLeRobot birkaç uzaktan kumanda girişini destekler: klavye, Xbox kumandası, Switch Joy-Con ve VR donanımı. İnsan operatör, bir algoritmanın açıkça kodlaması gereken pek çok şeyi doğal olarak yapar: tutucu bardağa yaklaşırken yavaşlar, bardak kayarsa kavrama noktasını düzeltir, kâğıdı ilk seferde tutamazsa yeniden bakar ve nesne hedef bölgeye girdiğinde sonucu doğrular. Bu yüzden uzaktan kumanda yalnızca gösterim verisi toplamanın bir yolu değil, aynı zamanda "donanımı sabitleyip yalnızca operatörü değiştiren" bir tanı deneyidir.[^ch9-1]
-
-> **Deney 9-7 ★: Gerçek XLeRobot'u uzaktan kumanda ederek masayı toplamak**
->
-> Gerçek bir XLeRobot'un çalışma alanına kırmızı bir bardak, bir tepsi, buruşturulmuş sarı bir kâğıt ve bir çöp kutusu yerleştirin. Operatör, kalibre edilmiş uzaktan kumanda yollarından biriyle sabit görevi yürütür: "kırmızı bardağı tepsiye koy, sarı kâğıt parçasını çöp kutusuna at, en sonunda bir kez daha gözlem yaparak masanın durumunu doğrula". En az birkaç tur yineleyin ve kamera görüntüsünü, operatör girdilerini, kolun durumunu, eylem sürelerini, kavrama hatalarını, yeniden deneme sayısını ve son durumu kaydedin.
->
-> Kabul ölçütünü "sonunda masa temiz görünüyor"a indirmeyin. Kırmızı bardak tepsinin içinde, sarı kâğıt çöp kutusunun içinde olmalı; kol güvenli duruşuna dönmeli; süreç boyunca çarpışma, çalışma alanının dışına çıkma ya da doğrulanmadan işi insanın tamamlaması olmamalıdır.
-
-Gerçek donanımda uzaktan kumanda, görevin üst sınırını göstermenin en ikna edici yoludur; ama nesnelerin sayısını ve konumunu toplu hâlde değiştirmeye elverişli değildir. Yinelenebilir ve istatistiği alınabilir bir karşılaştırma elde etmek için, aynı "nesneleri yerine koyma" problemini iki boyutlu bir masa benzetimine taşıyoruz ve algıda yanılmayan, eylemi yanlış seçmeyen güçlü bir operatörün yerine ideal bir denetleyici koyuyoruz.
-
-> **Deney 9-8 ★: Benzetimde aynı görevin ideal kontrol üst sınırını ölçmek**
->
-> İki boyutlu bir masa benzetiminde kırmızı bardağı, sarı kâğıdı ve bunların hedef bölgelerini rastgele yerleştirin; ideal denetleyici sırayla nesnelere yaklaşsın, onları kavrasın ve doğru konuma taşısın. Görüntü tanımaya ihtiyacı yoktur ve eylemi yanlış seçmez; dolayısıyla "algı da karar da doğruyken bu görev en azından nereye kadar gidebilir"i temsil eder.
->
-> Görev başarı oranına, adım sayısına ve yol uzunluğuna bakın; ayrıca nesnelerin başlangıç konumunu ve görev ölçeğini değiştirerek bu ideal üst sınırın kararlı kalıp kalmadığını gözleyin. Deney 9-7 ile aynı başarı koşulları kullanılır, ama ölçülen şey eyleyicisiz bir benzetimdir: gerçek XLeRobot'un hareket ettiği anlamına gelmez. İkisi, sonraki özerk kontrol için iki taban çizgisi olacaktır——Deney 9-7 gerçek donanım üzerindeki insan kapalı çevrimi, Deney 9-8 ise benzetim ortamındaki ideal kapalı çevrimdir.
-
-### Robot Kontrolünün Temel Yapısı
-
-Bir robot sistemi genellikle farklı zaman ölçeklerindeki işleri ayırır.
-
-| Katman | Temel soru | Çıktı | Tipik zaman ölçeği |
-| --- | --- | --- | --- |
-| Görev amacı | İnsan neyi bitirmek istiyor | "Bardak ve kâğıt yerine" | Dakika mertebesi |
-| Uzun ufuklu planlama | Önce ne, sonra ne | Önce bardak, sonra kâğıt, en son denetim | Saniyeden dakikaya |
-| Temel beceri | Şimdi hangi durum değişimi sağlanıyor | `pick(red_cup)`, `place(red_cup, tray)` | Yaklaşık 1—3 sn |
-| VLA / beceri politikası | Bu beceri somut olarak nasıl hareket ediyor | XLeRobot tutucusunun kısa hareketi ya da sürekli yörüngesi | ~1—10 Hz çıkarım |
-| Alt düzey kontrol ve güvenlik katmanı | Nasıl kararlı ve gecikmesiz yürütülür | Eklem ya da uç işlevci kontrol büyüklükleri, hız sınırı ve acil durdurma | ~50—1000 Hz |
-
-Bu, yaygın bir mühendislik iş bölümüdür; tek model mimarisi değildir. VLA üst düzey yargının bir kısmını üstlenebilir ve planlayıcı kural tabanlı bir program, bir VLM ya da bir eniyileyici olabilir. Hangi gerçekleştirim seçilirse seçilsin, "görevin sırası" ile "şu andaki eylem" ayrılmalıdır; aksi hâlde üst düzey modelin çıkarım gecikmesi alt düzey kontrolü geriye çeker, alt düzeydeki yüksek frekanslı kontrol de üstteki modele bir yığın ilgisiz ayrıntıyı işletir. XLeRobot'ta model doğrudan rastgele eklem açıları üretmemelidir: yalnızca `pick`, `place`, `verify_state` ve `stop` gibi sınırları belirli becerileri seçer; kalibre edilmiş, hız sınırlı ve zaman aşımlı yürütücü ise bunları kolun gerçek hareketine çevirir.
-
-### Uzun Ufuklu Planlama ve Görev Ayrıştırma
-
-Kullanıcı "masayı toplar mısın" dediğinde sistem bu cümleyi olduğu gibi eylem modeline veremez. Planlayıcı önce sahnedeki nesneleri ve hedefleri sıralar, sırayı belirler, sonra her adım için başlangıç koşulunu, bitiş koşulunu ve risk sınırlarını yazar. Örneğin:
-
-```text
-Kırmızı bardağı ele al → Sarı kâğıdı kaldır → Masayı denetle
-```
-
-"Kırmızı bardağı ele al" ise iki eyleme ve bir denetime ayrışır:
-
-```text
-pick(red_cup) → place(red_cup, tray) → verify_state()
-```
-
-Tamamlanan her beceri bize doğrulanabilir bir düğüm bırakır. Kavrama başarısız olursa yalnızca o adım yinelenir. Biri nesneyi kaydırırsa ya da kullanıcı hedefi değiştirirse, yalnızca etkilenen sonraki adımlar yeniden planlanır; eski planın tamamı tekrarlanmaz. Ajana verilen araçlar da yeterince yalın olmalıdır: her çağrı tek bir iş yapar, hareket aralığı sabittir, zaman aşımı vardır ve yürütmeden hemen sonra yeniden gözlem yapılır.
-
-> **Deney 9-9 ★★: Gemini Robotics-ER 1.5 ile XLeRobot'un masayı özerk biçimde toplaması**
->
-> Deney 9-7'deki gerçek XLeRobot'u, masa düzenini, görev yönergesini ve başarı koşullarını olduğu gibi bırakın; yalnızca insan operatörü bir Agent ile değiştirin. Gözlem ve planlamayı Gemini Robotics-ER 1.5 gibi bedenlenmiş bir akıl yürütme modeline bırakın ve RoboCrew tarzı bir ajan çevrimi üzerinden yalnızca beş aracı açın: `observe_scene`, `pick`, `place`, `verify_state` ve `stop`.[^ch9-2]
->
-> Model önce masayı gözler, ele alma sırasını belirler, ardından XLeRobot'un kalibre edilmiş kavrama ve yerleştirme eylemlerini çağırır. Her beceriyi bitirdiğinde yeniden gözlem yapıp son koşulu denetlemek zorundadır. Kavrama başarısız olduğunda yalnızca o anki beceriyi yeniden denemesine izin verilir; kullanıcı dur dediğinde, nesne çalışma alanının dışına çıktığında ya da durum doğrulanamadığında `stop` çağırmak zorundadır. Model doğrudan rastgele eklem açıları üretemez ve yalnızca kendisi daha önce "bitti" dediği için gerçek doğrulamayı atlayamaz.
->
-> Kabul ölçütü Deney 9-7 ile birebir aynıdır: bardak tepsinin içinde, kâğıt çöp kutusunun içinde, kol güvenli duruşta, çarpışma ve alan dışına çıkma yok. Fark şudur: özerk deneyde görevin anlamı modelin kendi gözleminden gelmeli, gerçek eylemler araç çağrılarından gelmeli ve son durum yeni bir gözlemle doğrulanmalıdır. İnsan yalnızca başlatabilir, acil durdurabilir ve güvenliği gözetebilir; yolun ortasında Agent'ın yerine eylemi tamamlayamaz. Ancak böyle olursa Deney 9-7 ile 9-9, "aynı donanım ve aynı görevde, modelin kapalı çevrimi insanınkine göre neyi eksik bırakıyor" sorusunu doğrudan karşılaştırabilir.
-
-Gerçek donanım deneyleri kalibrasyon hatalarını, kamera örtülmelerini ve tutucu başarısızlıklarını açığa çıkarır; ama çok sayıda arızayı güvenli ve denetimli biçimde yinelemeye elverişli değildir. Bundan sonraki benzetim deneyleri bu beş aracı ve görev durumunu birebir korur, yalnızca gerçek eyleyicileri hata enjekte edilebilen bir masa ortamıyla değiştirir; böylece açık çevrim yürütmenin, adım adım denetimin ve eylem kestiriminin ayrı ayrı ne kattığı ayrıştırılabilir.
-
-### VLA ile Kontrol
-
-VLA, Vision-Language-Action'ın kısaltmasıdır; yani "görme—dil—eylem modeli". Şu anki sahneyi ve tek bir beceri yönergesini alır, robotun bir sonraki adımda yürüteceği eylemi üretir:
-
-```text
-şu anki gözlem + beceri yönergesi → eylem
-```
-
-XLeRobot örneğinde üst düzey planlayıcı yalnızca `pick(red_cup)` sunar; bardağa hangi yönden yaklaşılacağına, tutucunun ne zaman kapanacağına ve kolun hangi yörüngeyle kaldırılacağına ise VLA ya da beceri politikası, o anki sahneye bakarak karar verir. Yürütme katmanı bu kısa hareketi bitirdiğinde masa yeniden görüntülenir ve ancak bardağın gerçekten kavrandığı doğrulandıktan sonra planlayıcının `place(red_cup, tray)` sunmasına izin verilir. Başka bir deyişle, araç çağrısı istenen durum değişimini tanımlar; VLA ise bu durum değişiminin sürekli eylemle nasıl gerçekleştirileceğini tanımlar.
-
-RT-2 ve OpenVLA sürekli eylemi ayrık token'lara böler ve tıpkı cümle üretir gibi teker teker çıkarır. π₀ öbür yolu temsil eder: doğrudan sürekli ve pürüzsüz eylem yörüngeleri üretir. İkisi arasında yalın bir üstünlük yoktur. Ayrık token'lar dil modelleriyle kolay eklemlenir; sürekli yörüngeler pürüzsüz hareketi anlatmaya daha uygundur. Asıl tercih, eylemin nasıl temsil edileceğidir; yalnızca modelin büyüklüğü değil.[^ch9-15]
-
-Büyük bir model genellikle saniyede yalnızca 1—10 kez çıkarım yapabilirken, geleneksel bir denetleyici saniyede onlarca ila binlerce kez güncellenebilir. Mühendislikte yaygın bir uygulama "eylem parçalama"dır (action chunking): model gelecekteki eylemlerin kısa bir dilimini tek seferde üretir, kontrol iş parçacığı bu dilimi yüksek frekansla yürütür ve model arkada bir sonraki dilimi hazırlar. Böylece çıkarım beklemesinin bir kısmı eylem yürütme süresinin içine gizlenir. Bedeli şudur: dilim uzadıkça hareket pürüzsüzleşir, ama model bu aralıkta daha az yeni sahne görür. XLeRobot bardağı almak için kolunu uzatırken bardak yolda çarpılıp kayarsa, eski görüntüden üretilmiş eylemleri yürütmeyi sürdürebilir. Dolayısıyla eylem parçalama, pürüzsüzlük ile tepki hızı arasında bir ödünleşimdir; bedelsiz bir hızlanma değil.
-
-Eylem parçalama genellikle dilimi sonuna kadar götürmek yerine "kestir—yürüt—kes" iskeletine ihtiyaç duyar:
+**Deneyimden yeteneğe yönlendirme:**
 
 ```python
-chunk = vla(current_observation, skill)
-for action in chunk:
-    low_level.execute(action)
-    if safety_event() or observation_changed_significantly():
-        low_level.stop()
-        discard_remaining(chunk)
-        reobserve_and_replan()
-        break
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
 ```
 
-Kısa dilimler daha hızlı tepki verir ama model çağrılarını çoğaltır; uzun dilimler daha pürüzsüzdür ama bayatlamış gözlemleri kullanmaya yatkındır. Deney 9-10 bu tür ödünleşimleri benzetimde karşılaştırır; gerçek donanımın güvenlik sınırına dokunan ise Deney 9-9'dur.
+### Deneyimi Bilgi Olarak Biriktirmek
 
-### VLA'nın Sınırları
+En hafif evrim biçimi, birden çok çalışmada tekrar tekrar ortaya çıkan deneyimi retrieval yapılabilir bilgi dokümanlarına dönüştürmektir. Burada söz edilen "deneyim bilgi tabanı", depolama, indeksleme ve retrieval teknolojilerini Bölüm 3 ile paylaşır; ama bilginin kaynağı ve doğrulama hedefi farklıdır. Bölüm 3 ağırlıklı olarak kullanıcı konuşmalarından, dokümanlardan ve veri kümelerinden "kullanıcı ve dünya nasıldır"ı çıkarır; bu bölüm ise Agent'ın eylem trajectory'lerinden ve sonuçlarından "hangi koşullarda ne yapılmalı"yı çıkarır. Örneğin "bu havayolu özel yemeklerin yirmi dört saat önceden ısmarlanmasını şart koşuyor" alan bilgisidir; "bilet almadan önce özel yemek son başvuru zamanını kontrol et; yoksa ödemeyi yaptıktan sonra talebin karşılanamayacağını fark edersin" ise eylem deneyimidir.
 
-"Uzun ufuklu planlama + VLA" kullanılabilir bir temel tasarımdır, ama gözden kaçması kolay birkaç sorun bırakır.
+Ham trajectory resmî bir bilgi birimi olmaya uygun değildir. Hem uzundur hem de gürültülüdür; araçların ham çıktısını, tesadüfi sapmaları ve ortam ayrıntılarını içerir. Daha sağlam bir sistem üç katman veri saklar: denetim için değişmez ham trajectory'ler; tek bir çalışmanın başarısını, başarısızlığını ve aday derslerini kaydeden çalışma analizleri; ve aynı türden birden çok trajectory'nin karşılaştırılıp kümelenmesi ve genellenmesiyle oluşan, geleceğe dönük Markdown bilgi dokümanları. Resmî bir doküman genellikle uygulanabilir senaryoyu, önerilen stratejiyi, yasaklanan uygulamaları, istisna koşullarını, kanıt kaynaklarını ve en son doğrulama zamanını açıkça yazar; tek bir görevin tüm sürecini yeniden anlatmaz.
 
-- **Eğitim verisi kısıtlıdır**: robot gösterimleri, internetteki metin ve görüntülerden çok daha azdır. Modelin "bardak" sözcüğünü görmüş olması, her malzemeden ve her sürtünme koşulundan bardak gördüğü anlamına gelmez.
-- **Taklidi öğrenir ama sonucu bilmez**: davranış klonlama çoğunlukla "gösterici bir sonraki adımda ne yaptı"yı öğrenir; modelden "bu eylem neye yol açar"ı yanıtlamasını açıkça istemez.
-- **Her robot farklıdır**: serbestlik dereceleri, koordinat sistemleri, tutucular ve eyleyici gecikmeleri farklıysa, aynı eylemin başka bir makineye olduğu gibi taşınacağının güvencesi yoktur.
-- **Gözlem bayatlayabilir**: eylem dilimi yürütülmeye başladıktan sonra nesne kaydırılırsa, örtülürse ya da devrilirse, model hâlâ önceki kareye dayanarak karar veriyordur.
+Bu tasarım, Bölüm 3'teki User-as-Code ile aynı iki aşamalı düşünceyi taşır. User-as-Code önce konuşmadaki olguları değişmez bir log'a ekler, sonra yapılandırılmış kullanıcı modelini periyodik olarak yeniden kurar; deneyim öğrenmesi de aynı şekilde önce kanıtı saklamalı, sonra çevrimdışı olarak değiştirilebilir bilgiyi üretmelidir. Şekil 9-4 bu süreci gösteriyor. Kaydetmeyi düzenlemekten ayırmak, tek bir tesadüfi başarının ya da bir ağ arızasının Agent'ı anında değiştirmesini önler; ayrıca sisteme, birden çok başarı ve başarısızlığı gördükten sonra ortak yanı belirleme imkânı verir.
 
-Dolayısıyla bir dil modelinin "bardak"ı biliyor olması, sürtünmenin, temasın, sıvı çalkalanmasının ya da bir güç kablosunun gelecekteki durumu nasıl değiştireceğini bildiği anlamına gelmez. VLA çoğunlukla "şimdi ne yapmalı"yı yanıtlar; "yaptıktan sonra ne olabilir"i yargılamak için başka tür bir model gerekir.
+![Şekil 9-4: Değerlendirilmiş Trajectory'lerden Deneyim Bilgi Dokümanına](images/fig9-4.svg)
 
-### Dünya Modelleri
+Deneyim dokümanı basit bir trajectory özeti değildir. Gerçekten aktarım değeri taşıyan içerik karşılaştırmadan doğar: aynı türden başarılı trajectory'ler ne yapmış, başarısız trajectory'lerde ne eksik; belirli bir strateji hangi ortam sürümlerinde işe yaramış, hangi ön koşullar altında çökmüş. Bölüm 3 bilgi çıkarımını, kümelemeyi ve retrieval'ı zaten tanıttığı için bu bölüm o algoritmaları yinelemiyor; bunun yerine trajectory değerlendirmesinin çıkarım koşuluna nasıl dönüştüğüne ve çıkarılan bilginin sonraki görevlerdeki başarımı artırıp artırmadığına odaklanıyor.
 
-Dünya modeli, eylem sonuçlarının kestiricisi olarak anlaşılabilir. Öğrendiği şey şudur: şu anki durumda belli bir eylem yapılırsa bir sonraki andaki durum nasıl değişebilir.
+Eksiksiz bir bilgi damıtma boru hattı beş adıma ayrılabilir. Önce değişmez trajectory'ler ve ortam sonuçları saklanır; sonra tek bir çalışma için görev türünü, gereken yetenekleri, gözlenen stratejileri, hataları ve istisnaları sıralayan yapılandırılmış bir analiz üretilir; ardından aynı türden çalışmalar görev ailesine göre bir araya toplanır ve her aday örüntü için "hangi trajectory'ler destekliyor, hangileri çürütüyor" biçiminde bir kanıt tablosu kurulur; yalnızca destek eşiğine ulaşan adaylar resmî dokümana yazılır; son olarak damıtmaya katılmamış yeni görevler üzerinde aktarım etkisi sınanır. Resmî bilginin aday analizlerden ayrı depoda tutulması, sistemin ham kanıtı bozmadan yeniden genelleme yapmasına ve ortam sürümü değiştiğinde belirli bir sonucu tam olarak geri almasına imkân verir.
 
-```text
-şu anki durum + aday eylem
-    → sonraki durumu ya da geleceğin bir parçasını kestir
-    → adayların sonuçlarını karşılaştır
-    → eylemi seç, yeniden planla ya da güvenle dur
+GAIA deneyim öğrenmesi bunun sezgisel bir örneğini veriyor. GAIA[^gaia-2023], arama, web sayfası okuma, dosya işleme ve hesaplamayı bir arada gerektiren çok adımlı sorular içerir; AWorld[^aworld-2025] ise Agent'ı çalıştıran, bu araçları çağıran ve trajectory'leri saklayan yürütme ortamını sağlar. Birincisi sınav kâğıdı gibiyse ikincisi sınav salonu ve deney kayıt sistemidir. Eski usul yaklaşım, bir görev başarıyla tamamlanır tamamlanmaz strateji özeti üretip bunu vektörleştirerek depoya yazmaktı; daha titiz bir uygulama ise önce GAIA cevap doğrulamasını veya başka bir ortam doğrulayıcısını kullanarak çalışmaları başarılı, kısmen başarılı ve başarısız olarak etiketler, ardından aynı görev ailesindeki birden çok yolu karşılaştırır. Başarılı trajectory'ler aday stratejilere katkı verir, başarısız trajectory'ler dışlayıcı bilgiye katkı verir, kısmen başarılı trajectory'ler ise "hangi bölüm işe yaradı, hangi bölümde hâlâ sorun var" ayrımını yapmaya yardımcı olur. Reflexion'ın[^reflexion-2023] önerdiği doğal dil reflection'ı aday derslerin üretilmesine katılabilir, ama reflection'ın kendisi kanıt değildir; yalnızca ortam sonucuyla örtüşen, trajectory'ler arasında destek bulan ve yeni görevlerde olumlu aktarım gösteren içerik resmî deneyim dokümanına girmelidir.
+
+> **Deney 9-2 ★★: GAIA Trajectory'lerinden Deneyim Bilgi Dokümanı Damıtmak**
+>
+> **Deney Amacı**: "Trajectory'ler arası bilgi dokümanı"nın "tek bir başarının özetini hatırlamak"tan daha kolay aktarılıp aktarılmadığını sınamak ve tesadüfi başarıların ve hatalı deneyimin yol açtığı negatif aktarımı azaltmak.
+>
+> **Veri ve Akış**: `gaia-experience` önce her çalışmanın eksiksiz trajectory'sini ve dışarıdan gelen `environment_score` değerini saklar, sonra bunları asgari öğrenme kayıtlarına dönüştürür: `task_family`, gereken `capabilities`, `applies_when`, gözlenen stratejiler, hatalar, istisnalar ve kaynak trajectory kimlikleri. Sonuç doğrulayıcısı çalışmaları başarılı, kısmen başarılı ve başarısız olarak ayırır; öğrenme modülü aynı görev ailesi içinde yolları karşılaştırır. LLM aday genellemeler önerebilir, ama önerilen bir stratejinin en az iki başarısız olmayan trajectory tarafından desteklenmesi gerekir. Sonuçta üretilen Markdown dokümanı uygulanabilir senaryoyu, önerilen stratejileri, sık yapılan hataları, istisna koşullarını, kaynağı ve en son doğrulama zamanını içerir. Uygulama aşamasında yalnızca bu dokümanlar retrieval ile getirilir; uzun ham trajectory'ler doğrudan context'e tıkıştırılmaz.
+>
+> **Üç Karşılaştırma Grubu**: Birinci grup geçmiş deneyimi hiç kullanmaz; ikinci grup mevcut göreve en çok benzeyen tek bir trajectory özetini getirir; üçüncü grup birden çok trajectory tarafından ortaklaşa desteklenen bilgi dokümanını getirir. Öğrenme kümesi ile aktarım kümesi kesinlikle örtüşmemelidir; aksi hâlde aynı GAIA sorusunun cevabı "deneyim" adı altında değerlendirmeye sızar.
+>
+> **Metrikler ve Kabul**: Aktarım görevlerindeki başarı oranı, ortalama getirilen karakter veya Token sayısı ve negatif aktarım oranı birlikte raporlanır; ayrıca her resmî sonucun kaynak trajectory'leri listeleyip listelemediği denetlenir. Trajectory'ler arası doküman yalnızca context'i kısaltıyor ama yeni görevlerdeki başarımı yükseltmiyorsa, sistemin deneyimi öğrendiği kanıtlanmış olmaz; tek bir tesadüfi başarı resmî bilgiye terfi edebiliyorsa ya da doküman ham trajectory'ye kadar izlenemiyorsa da kabul geçilmez.
+>
+> Eşlik eden uygulama için bkz. [`gaia-experience`](../chapter9/gaia-experience/). `demo_documents.py` varsayılan olarak çevrimdışı çalışır; `--extractor llm` ile trajectory'ler arası deneyim adaylarını gerçek bir LLM önerebilir.
+
+[^reflexion-2023]: Shinn, N., et al. *Reflexion: Language Agents with Verbal Reinforcement Learning.* arXiv:2303.11366, 2023.
+
+[^gaia-2023]: Mialon, G., et al. *GAIA: a benchmark for General AI Assistants.* arXiv:2311.12983, 2023.
+
+[^aworld-2025]: Yu, C., et al. *AWorld: Orchestrating the Training Recipe for Agentic AI.* arXiv:2508.20404, 2025.
+
+### Deneyimi Talimat Olarak Yazmak
+
+Deneyim bilgi tabanı Agent'a başvuru malzemesi sunar; Prompt ve Skill ise çok daha buyurgan bir nitelik taşır. Birden çok trajectory aynı strateji hatasını tekrar tekrar ortaya çıkarıyorsa ve örüntü doğal dille açıkça anlatılabiliyorsa, sistem bunu "başvurulabilir deneyim" düzeyinden "uyulması gereken kural" düzeyine yükseltebilir. Neredeyse bütün görevlerde geçerli olan kurallar system prompt'a girmeye uygundur; yalnızca belirli bir alanda, projede veya araçta geçerli olan karmaşık süreçler ise ihtiyaç hâlinde yüklenen bir Skill ya da proje talimat dosyası olarak yazılmaya daha uygundur.
+
+Prompt öğrenmesinin işbölümü, Bölüm 2'deki prompt engineering'den farklıdır. Bölüm 2, yapısı net ve önbellek dostu bir prompt'un nasıl yazılacağını yanıtlar; burada ise hangi üretim geri bildiriminin prompt değişikliğini tetiklemeye yettiği ve yeni bir kuralın dağıtımdan önce nasıl doğrulanacağı yanıtlanır. Değişiklik, system prompt'un tamamının tekrar tekrar yeniden yazılması biçiminde de olmamalıdır. Daha güvenilir yol, aynı türden bir başarısızlık kümesine dayanarak asgari bir diff üretmek, kuralın etki alanını belirtmek, mevcut kurallarla çelişip çelişmediğini denetlemek ve ardından hem başarısızlığı tetikleyen sınır vakalarında hem de eski görevlerden oluşan saklı kümede aynı anda değerlendirmektir.
+
+Andrej Karpathy, 2025 yılında yazdığı uzun bir gönderide bu olası yeni paradigmayı geçici olarak **System Prompt Learning** (sistem prompt'u öğrenmesi) diye adlandırdı[^karpathy-system-prompt-learning]. Özeti şuydu: pre-training ağırlıklı olarak bilgi öğrenir, fine-tuning ağırlıklı olarak alışkanlık hâline gelmiş davranışı biçimlendirir; ama insanda bir öğrenme biçimi daha vardır — bir sorunla karşılaşıp yöntemi çözdükten sonra, gelecekteki kendine açık bir dille "bir dahaki sefere bu tür bir sorunla karşılaşırsan önce şu yolu dene" notunu bırakmak. Böyle bir not defteri olmayan LLM'i *Memento* filminin başkarakterine benzetiyor ve şunu belirtiyor: System Prompt Learning ile pekiştirmeli öğrenmenin ikisi de davranışı deneyimden yola çıkarak iyileştirir, ama güncelleme algoritmaları farklıdır — birincisi metni düzenler, ikincisi gradyan inişiyle parametreleri değiştirir. Verdiği örnek, o dönemde Claude'un yaklaşık 17.000 kelimelik system prompt'unda yer alan özel bir talimattı: kelime, harf veya karakter sayma sorularıyla karşılaşıldığında önce tek tek numaralandır ve açıkça say, cevabı ondan sonra ver. Bu talimat tam olarak "`strawberry` kelimesinde kaç tane `r` var" türünden soruları ele almak içindi.
+
+Agent sistemine indirgendiğinde bu, başarısızlıktan sonra dille ifade edilebilen dersleri, gelecekteki çalışmaların doğrudan okuyabileceği aday kurallara dönüştürmek demektir. Yalnızca "başarılı/başarısız" biçimindeki skaler bir sonuçla karşılaştırıldığında, kanıtlı bir tanı hatanın kimlik doğrulamada mı, araç seçiminde mi, yoksa insana devretme sınırında mı olduğunu gösterebilir ve böylece çok daha isabetli bir aday değişiklik üretilebilir. Karpathy'nin "bilgiyle yönlendirilen bir gözden geçirme, skaler ödüle kıyasla daha yüksek boyutlu bir geri bildirim kanalı sunar" sözü, bu yöntemin neden yüksek veri verimliliği taşıyabileceğini açıklıyor. Ne var ki bilginin daha zengin olması onun kendiliğinden doğru olduğu anlamına gelmez; aynı kullanıcı görüşü yalnızca tek bir müşteri ya da eski sürüm bir politika için geçerli olabilir. Dolayısıyla kümeleme, etki alanı değerlendirmesi ve regresyon testi yine de gereklidir.
+
+Prompt'un otomatik optimizasyonunda birkaç farklı yol izlenmiştir. DSPy[^dspy-2023], birden çok dil modeli çağrısından oluşan bir programı optimize edilebilir bir nesne olarak görür ve geliştirme kümesi üzerinde talimatları ve örnekleri arar; OPRO[^opro-2023], dil modelinin geçmiş prompt'lara ve bunların puanlarına bakarak yeni adaylar önermesini sağlar; GEPA[^gepa-2025] ise başarısız trajectory'ler üzerindeki doğal dil reflection'ından yararlanarak birbirini tamamlayan aday prompt'lar üretir ve eler. Bunlar ağırlıklı olarak çevrimdışı değerlendirme kümeleri üzerinde toplu optimizasyona yöneliktir; üretim sistemlerindeki asgari diff ise daha çok sürekli bakıma benzer — yeni ortaya çıkan sınır vakalarıyla tetiklenir; kaynağı, denetlenebilirliği ve hızlı geri almayı öne çıkarır. Pratikte önce çevrimdışı aramayla iyi bir başlangıç sürümü bulunabilir, sonra yayına alınmış sistemin uzun kuyruklu kuralları vaka bazlı yamalarla sürdürülebilir.
+
+Örneğin havayolu müşteri hizmetleri Agent'ı, kullanıcı politikayı sorguladığında çoğu kez fazla erken insana devrediyor olabilir. Trajectory değerlendirmesi kural ihlali olmadığını, ama kurallara uygun bir alternatifin de üretilmediğini gösterir. Aday yama; Agent'tan önce politikayı açıklamasını, kullanıcının gerçek hedefini belirlemesini ve izin verilen alternatifleri aramasını, yalnızca kullanıcı açıkça istediğinde veya konu gerçekten yetkisini aştığında devretmesini isteyebilir. Yeni kural aşırı devretmeyi azaltıyor, ama insana devredilmesi gereken güvenlik olaylarının Agent tarafından işlenmeyi sürdürmesine yol açıyorsa, regresyondan geçmemiş demektir. System Prompt Learning'in değeri otomatik olarak daha fazla metin eklemekte değil, üretimden gelen sınır vakalarıyla kuralların uygulanma kapsamını sürekli netleştirmektedir.
+
+Skill öğrenmesi aynı ilkeyi izler, ama etki alanı daha yereldir. Skill'i, ihtiyaç duyuldukça açılan bir görev el kitabı gibi düşünebilirsiniz: birden çok deneyim bir araya gelip eksiksiz bir sigorta hasar süreci oluşturuyorsa, sistem buna karşılık gelen Skill'i üretebilir veya gözden geçirebilir. Aday Skill yalnızca bir konuşmanın özeti olmamalı; en azından ne zaman yükleneceğini, ön koşullarını, işlem adımlarını, bilinen tuzakları ve doğrulama yöntemini açıklamalı ve kaynak trajectory'leri saklamalıdır. Sistem önce mevcut Skill kütüphanesinde benzer yetenekleri arar: aynı süreç zaten varsa öncelikle yerel bir `patch` uygular, yalnızca gerçekten yeni ve bağımsız bir yetenek ortaya çıktığında yeni bir dizin oluşturur. Böylece kütüphanenin adları farklı ama içerikleri birbirine benzeyen el kitaplarıyla dolması önlenir. Anthropic'in Skill Creator'ı[^anthropic-skill-creator] "taslak — test — değerlendirme — revizyon" üretim döngüsünü gösteriyor; bu, Skill'in nasıl üretilip iyileştirileceği sorusunu çözer. Asıl zor olan ise hangi çalışma kanıtlarının üretimi tetiklemeye yettiği, çatışmaların nasıl ele alınacağı ve değişikliğin alan görevlerinden ve eski görev regresyonundan geçip geçmediğidir.
+
+> **Deney 9-9 ★★: Geri bildirimi yazma Skill'ine dönüştürmek**
+>
+> `data/feedback_pairs.json` içindeki 20 before/after çifti üç partide işlenir; aday kurallar çıkarılır, tekrarlar birleştirilir, eşik çakışmaları bulunur ve kaynak/kapsam içeren `SKILL.md` üretilir. Deterministik kurallar kodla, LLM kuralları 10 altın örnekle kalibre edilir.
+>
+> Eksik görev sınır kümesindeki tespit, normal metinlerdeki yanlış alarm ve kural sayısının büyümesi birlikte raporlanır. İlk gerçek çalışma 0/8 tespit ve 7/8 yanlış alarm verdi; model dışı filtre ve deterministik fallback sonrası 8/8, 0/8 ve 21 adaydan 8 kural elde edildi. Uygulama [`ai-style-skill`](../chapter9/ai-style-skill/) içindedir.
+
+Kıvrımlı tırnak vakası, Skill'in küresel bir değiştirme kuralı değil, veri sözleşmesi olması gerektiğini gösterir: SFT'den önce sentetik örnekler belge türü, kapsam ve programlama diline göre katmanlandırılmalı; kod/JSON/korunan alan kapılarından ve manuel denetimden geçmelidir. Exact-copy vakasında tokenizer encode→decode round-trip'i, modelin byte-exact kopyası, Harness serileştirmesi ve araç eşleşmesi ayrı regresyon katmanlarıdır.
+
+> **Deney 9-3 ★★: Başarısız Trajectory'lere Dayanarak System Prompt'u İyileştirmek**
+>
+> **Deney Amacı**: Havayolu müşteri hizmetleri Agent'ının "kullanıcı politikayı sorguladığında fazla erken insana devretme" başarısızlık trajectory'lerinden öğrenmesini sağlamak ve aynı zamanda yeni kuralın gerçekten devretme gerektiren eski senaryoları bozmadığını kanıtlamak.
+>
+> **Akış**: Önce eski görevlerden oluşan saklı küme ile aşırı devretme sınır kümesi ayrı ayrı çalıştırılır; `learning_signal.py` başarısızlığı kural uyumu, görev çözümü ve kurallara uygun alternatif olmak üzere üç boyuta ayırır ve kaynak vaka kimliklerini saklar. Ardından Kodlama Agent'ı mevcut Prompt'u okur ve denetlenebilir tek bir asgari `old_str → new_str` düzenlemesi üretir: Agent'tan önce politikayı açıklaması, gerçek hedefi belirlemesi ve kurallara uygun alternatifler bulması istenir; kullanıcının açıkça insan talep ettiği ya da bir güvenlik olayının ortaya çıktığı durumlar için devretme yolu korunur. Yama; kaynağı, hedef kuralı ve değişiklik gerekçesiyle birlikte aday manifest'e yazılır.
+>
+> **Üç Karşılaştırma Grubu**: Başlangıç Prompt'u, otomatik üretilen aday Prompt ve insan eliyle tek seferde ayarlanmış Prompt. Üçü de aynı modeli ve aynı saklı/sınır görev kümesini kullanır; `--quick` yalnızca vaka sayısını azaltır, görev Agent'ını, LLM Judge'ı ve Kodlama Agent'ını yine gerçekten çağırır, dolayısıyla çevrimdışı bir benzetim sonucu sayılamaz.
+>
+> **Yayım Eşiği ve Metrikler**: Aday dört koşulu birden sağlamalıdır: yama boş olmamalı, kaynağı izlenebilmeli, sınır kümesindeki başarım gerçekten iyileşmeli ve saklı kümede gerileme olmamalı. Sınır görevlerindeki doğruluk, saklı görevlerdeki doğruluk, Prompt'un uzama miktarı, ortaya çıkan regresyon sayısı ve başarısızlığın fark edilmesinden adayın üretilmesine kadar geçen süre karşılaştırılır. Eşiği geçmek yalnızca `release_to_canary` sonucunu verir, kararlı Prompt'un üzerine doğrudan yazılmaz; koşullardan herhangi biri sağlanmazsa `reject_candidate` döndürülmelidir.
+>
+> Eşlik eden uygulama için bkz. [`prompt-auto-optimization`](../chapter9/prompt-auto-optimization/). Çevrimdışı testler tanıyı ve yayım eşiğini kapsar; `--quick` ise görev Agent'ını, LLM Judge'ı ve Kodlama Agent'ını gerçekten çağırır.
+
+[^dspy-2023]: Khattab, O., et al. *DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines.* arXiv:2310.03714, 2023.
+
+[^opro-2023]: Yang, C., et al. *Large Language Models as Optimizers.* arXiv:2309.03409, 2023.
+
+[^gepa-2025]: Agrawal, L., et al. *GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning.* arXiv:2507.19457, 2025.
+
+[^karpathy-system-prompt-learning]: Karpathy, A. “We’re missing (at least one) major paradigm for LLM learning … system prompt learning?” X, May 11, 2025. https://x.com/karpathy/status/1921368644069765486
+
+[^anthropic-skill-creator]: Anthropic. *Skill Creator.* 2026. https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md
+
+### Deneyimi Program Olarak Yazmak
+
+Deneyim; kararlı, tekrarlanan ve doğrulanabilir işlemleri tarif ediyorsa, modele her seferinde dokümanı yeniden okutup akıl yürüttürmek ekonomik değildir. Böyle durumlarda daha uygun yol, deneyimi bir iş akışına, araca veya Harness koduna derlemek ve tek seferlik bir keşfi tekrar tekrar yürütülebilir bir programa dönüştürmektir. Bölüm 5, Kodlama Agent'ının dosyaları nasıl okuyup yazdığını, testleri nasıl çalıştırdığını ve sistemleri nasıl ürettiğini zaten anlatmıştı; bu kısmın ilgilendiği şey genel kod üretimi değil, Agent'ın kendi trajectory'lerine dayanarak kendisinin gelecekteki sürümünü nasıl değiştirdiğidir.
+
+Değiştirilebilecek nesneler yeni araçlardan ibaret değildir. İşlem katmanında tarayıcı trajectory'leri parametreli iş akışlarına derlenebilir ya da değişen API'ler için adaptörler üretilebilir; kontrol katmanında araç yönlendirme, yeniden deneme, circuit breaker ve context sıkıştırma stratejileri değiştirilebilir; doğrulama katmanında üretimdeki başarısızlıklara dayanarak yeni parametre kontrolleri, durum doğrulayıcıları ve regresyon testleri eklenebilir; mimari katmanda ise bir Reviewer Agent eklenerek planlama ile yürütme arasındaki bilgi akışı değiştirilebilir.
+
+Tarayıcı iş akışları, programlaşmış deneyimin değerini iyi gösteriyor. Bunu bir hesap tablosunda makro kaydetmeye benzetebiliriz: ilk e-postayı gönderirken çok modlu Agent, "yaz, alıcı, konu, gövde, gönder" denetimlerini gözlem—düşünme—eylem döngüsüyle bulur; sonraki e-postalarda süreç hiç değişmez, yalnızca alıcı ve içerik farklıdır, dolayısıyla tüm yolu piksellerden ve DOM'dan yeniden keşfetmek için modeli bir kez daha çağırmaya gerek yoktur. Sistemin yapması gereken, ilk keşfin ürettiği trajectory'yi parametreleri, durum kontrolleri ve sürüm bilgisi olan küçük bir programa derlemektir.
+
+Şekil 9-4'te gösterilen bilgi damıtma süreci, tarayıcı senaryosunda daha somut bir yaşam döngüsüne karşılık gelir:
+
+1. **Trajectory'yi yakala**: Gezinme, tıklama, metin girme, açılır liste seçimi gibi eylemleri kaydet; eylem parametrelerini, o andaki URL'yi ve XPath, CSS, `id`, `role`, `aria-label`, `data-testid` gibi öğe konumlandırma kanıtlarını sakla. Konumlandırma bilgisi yalnızca öğeyi yeniden bulmaya yarar, görevin tamamlandığını kanıtlamaz.
+2. **Parametrele**: İlk çalışmadaki sabit değerleri şablon değişkeni olarak tanı; örneğin `test@example.com` adresini, e-posta konusunu ve gövdesini `{recipient}`, `{subject}` ve `{content}` ile değiştir; geri kalan kararlı eylemler olduğu gibi kalsın. Öğretim amaçlı uygulama düzenli ifade ve şablon değiştirme kullanır; üretim sistemleri yapılandırılmış görev girdisi ya da kısıtlanmış bir çıkarım modeli kullanabilir.
+3. **Durum kontrollerini tanımla**: Eylemlere yürütme öncesi ve yürütme sonrası kontroller ekle; örneğin "gönder düğmesi şu anda görünür", "gezinmeden sonraki URL hedef siteye ait". Tüm iş akışı için de bir nihai durum kontrolü ekle; örneğin "gönderilmiş listesinde yeni bir e-posta belirdi" ya da test sayfasının durum değeri beklenen biçimde değişti. Eylemin başarıyla yürütülmesi ile görevin başarılı olması iki ayrı şeydir; nihai durum kontrolü gerçek sayfayı veya arka uç durumunu okumak zorundadır.
+4. **Adayı doğrula**: İlk başarı yalnızca bir `candidate` üretir. Sistem, sandbox hesabını veya test sitesini bağımsız bir başlangıç durumuna sıfırlamalı, sonra adayı baştan sona yeniden oynatmalıdır; her adımın yürütme öncesi kontrolü, yürütme sonrası kontrolü ve nihai durum kontrolü tümüyle geçtikten sonra `validated` olarak yayımlanabilir. E-posta gönderme, sipariş verme gibi yan etkisi olan görevlerde güvenli bir sıfırlama geri çağrısı yoksa, aday yalnızca denetim amacıyla saklanabilir; doğrulama uğruna üretim hesabında yeniden yürütülemez.
+5. **Eşleştir ve yeniden oynat**: Yeni bir görev geldiğinde önce resmî yetenek kütüphanesinde niyete ve anahtar kelimelere göre bir iş akışı ara, bu seferki parametreleri çıkar, sonra doğrudan Playwright ile yürüt. Yeniden oynatma yolu LLM'i adım adım çağırmayı gerektirmez, ama yine de öğelerin kullanılabilir hâle gelmesini beklemeli ve bütün durum kontrollerini tamamlamalıdır.
+6. **Geçersiz kıl ve yeniden öğren**: Hedef öğe bulunamadığında, durum kontrolü geçmediğinde, API Schema değiştiğinde veya nihai durum yanlış olduğunda sonraki eylemleri hemen durdur, eski sürümü retrieval yapılabilir kütüphaneden `invalid` bölgesine taşı ve yeniden keşif için tam Agent'a geri dön. Eski dosya denetim ve karşılaştırma için saklanır, ama sessizce eşleşmeyi sürdüremez.
+
+E-posta göndermeyi ele alalım: derlemenin sonucu yalnızca "şu düğmelere sırayla tıkla" değildir; alıcı, konu ve gövde parametreleri olan küçük bir programdır. Göndermeden önce yazma penceresini ve giriş alanlarını kontrol eder, gönderdikten sonra başarı bildirimini kontrol eder, en sonunda gönderilmiş listesinde ilgili e-postanın belirdiğini doğrular. PreAct'ın[^preact] deneylerinde bu tür programlar tekrarlanan görevlerde uçtan uca 8,5–13 kat hızlanma sağladı ve yeniden oynatma aşamasında dil modelinin adım adım çağrılmasına gerek kalmadı. Daha da önemli sonuç şudur: süreç belleği aynı anda **eylem öncesi doğrulama, eylem sonrası doğrulama ve saklamadan önce bağımsız doğrulama** içermek zorundadır. Aksi hâlde sistem kolayca tehlikeli bir yanılsamaya kapılır: yeniden oynatma kapsamı yüzde 100'dür, her düğmeye tıklanmıştır, ama aslında bir alan boş kalmıştır ve görev hiçbir zaman gerçekten tamamlanmamıştır.
+
+> **Deney 9-4 ★★★: Tarayıcı Trajectory'lerinden Doğrulanabilir İş Akışı Üretmek**
+>
+> **Deney Amacı**: Web Agent'ının pahalı bir keşfi yeniden kullanılabilir bir iş akışına dönüştürüp dönüştüremediğini ve sayfa değiştiğinde hatalı yeniden oynatmayı reddedip reddetmediğini, yani "eylemlerin hepsi yürütüldü" durumunu başarı diye raporlamadığını doğrulamak.
+>
+> **Dört Aşamalı Senaryo**: Birinci aşamada test e-posta sitesinde veya benzetilmiş bir mesaj sayfasında "`test@example.com` adresine konusu 'Test e-postası' olan bir mesaj gönder" görevi yürütülür; keşfi tam Agent yapar, sarmalayıcı katman eylemleri, parametreleri ve sayfa durumunu yakalayarak bir `candidate` üretir. İkinci aşamada `validation_reset` çağrılarak sandbox geri yüklenir ve aday bağımsız olarak baştan sona yeniden oynatılır; yalnızca yürütme öncesi kontrol, yürütme sonrası kontrol ve nihai durum kontrolü tümüyle geçerse aday resmî yetenek kütüphanesine girer. Üçüncü aşamada alıcısı, konusu ve gövdesi farklı olan aynı türden bir görev yürütülür; sistemin doğrulanmış iş akışını eşleştirmesi, yeni parametreleri doldurması ve adım adım LLM döngüsüne girmeden Playwright ile yeniden oynatması beklenir. Dördüncü aşamada düğme konumu, sayfa metni veya nihai durum değiştirilir ve eski iş akışının anında `invalid` hâline gelip `fallback_required=True` döndürüp döndürmediği doğrulanır.
+>
+> **Karşılaştırma Tasarımı**: Basitleştirilmiş baseline yalnızca tıklama, metin girme gibi eylemlerin istisna fırlatmadan tamamlanıp tamamlanmadığını sayar; deney grubu ayrıca eylem öncesi sayfayı, eylem sonrası sayfayı ve görevin nihai durumunu doğrular. İki grup aynı trajectory'leri ve aynı sayfa değişikliklerini kullanır; "alan boşken gönder düğmesine tıklandı" ve "Save'e tıklandı ama veri kaydedilmedi" gibi sahte başarı senaryolarındaki yanlış karar oranları karşılaştırılır.
+>
+> **Metrikler ve Kabul**: İlk keşfin ve yeniden oynatmanın uçtan uca süresi, LLM çağrısı sayısı, başarı oranı, hatalı başarı oranı, iş akışı eşleşme oranı, sayfa değişikliği tespit oranı ve yeniden öğrenmeye geri dönüş sayısı kaydedilir. Sıfırlama geri çağrısı yokken iş akışı aday bölgesinde kalmalıdır; doğrulamayı geçemeyen sürümler retrieval ile getirilememelidir; parametreli yeniden oynatma ilk çalışmanın alıcısını veya içeriğini yeniden kullanmamalıdır; sayfa değiştikten sonra tehlikeli olabilecek sonraki eylemler durdurulmalıdır. Hızlanma sonucu ancak bütün bu koşullar birlikte sağlandığında anlamlıdır.
+>
+> Eşlik eden uygulama için bkz. [`browser-use-rpa`](../chapter9/browser-use-rpa/); hem deterministik durum makinesi gösterimi hem de gerçek tarayıcı Agent'ını çağıran çalışma yolu sunulur.
+
+Agent'ın kendi kodunu değiştirmesi, çalışan sürecin doğrudan kendi üzerine yazması anlamına gelmez. Üretim sistemi mevcut kararlı sürümden bir aday dal oluşturmalı, Kodlama Agent'ına asgari bir yama ürettirmeli, ardından sırasıyla statik denetimden, birim testlerinden, güvenlik taramasından, başarısız trajectory'nin yeniden oynatılmasından ve eski görev regresyonundan geçirerek kademeli yayıma (canary) uygun yeni bir sürüm üretmelidir. Bu, "kendini değiştirme"yi denetlenebilir bir yazılım yayım sürecine dönüştürür ve tam da Bölüm 9 ile Bölüm 5 arasındaki sınırı çizer: Bölüm 5 sistemi değiştirme yeteneğini sağlar, bu bölüm ise deneyimle tetiklenen ve doğrulama döngüsüyle kısıtlanan kendini değiştirme yöntemini sağlar.
+
+Yalnızca "yama olabildiğince küçük olsun" demek güvenilir bir nedensellik atfı için yeterli değildir. Her değişiklik isteği aynı zamanda **yanlışlanabilir bir değişiklik sözleşmesi** olmalıdır: başarısızlık kanıtını, çıkarsanan kök nedeni, sorumlu tutulan Harness bileşenini, aday değişikliği, düzelmesi beklenen davranışı, zarar görebilecek mevcut davranışı ve bu ikisini ayrı ayrı doğrulayan test durumlarını listelemelidir. Agentic Harness Engineering bu yaklaşımı bileşen, deneyim ve karar olmak üzere üç katmanlı gözlemlenebilirlik olarak özetler: düzenlenebilir bileşenlerin hepsinin dosya düzeyinde bir temsili vardır; çok sayıda trajectory önce katman katman derinleşilebilen kanıta dönüştürülür; her düzenleme yürütülmeden önce bir etki tahmini bildirir ve bu tahmin bir sonraki turun sonuçlarıyla sınanır[^ahe-2026]. Ancak böyle olduğunda puandaki artış belirli bir mekanizmayla ilişkilendirilebilir; aksi hâlde açıklanamayan bir deneme yanılmadan ibaret kalır.
+
+Aday üretecinin girdisi de yalnızca başarısız vakalar olmamalıdır. Self-Harness'ın yaklaşımı, korunması zorunlu başarılı davranışları ve daha önce reddedilmiş değişiklik kayıtlarını da sunar[^self-harness-2026]. Birincisi Agent'a onarım sırasında hangi özelliklerin bozulmaması gerektiğini söyler; ikincisi ise zaten başarısız olmuş bir çözümü başka sözcüklerle yeniden sunmasını önler. Başarısızlık kanıtı, başarı kısıtları ve geçmiş denemeler birlikte sınırları belli bir aday uzayı oluşturur; bu, tüm kaynak kodu ve ham log'ları ayrım gözetmeden değiştirici Agent'a yüklemekten çok daha kolay biçimde yerel ve doğrulanabilir değişiklikler üretir.
+
+Araç yaratma da aynı protokolü izler. Alita'nın[^alita-2025] verdiği örnek şudur: Agent'ın, *Yüzüklerin Efendisi*'ndeki Gollum'u seslendiren oyuncunun anlatımını yaptığı bir YouTube 360 VR videosunda, dinozorların ilk göründüğü andan hemen sonra anılan sayıyı bulması gerekir. Altyazı okuma yeteneğinin olmadığını fark edince `youtube-transcript-api` paketini arayıp test eder, bunu yeni bir altyazı aracı olarak sarmalar ve sonunda altyazıdan `100000000` cevabını elde eder. Yeni araç, ancak güvenlik taraması, işlevsel testler ve sonraki görevlerde yeniden kullanım denemelerinin hepsi geçtikten sonra yetenek kütüphanesine girer. Bölüm 4'teki proaktif araç keşfi "mevcut araçlardan hangisi uygun" sorusunu çözer, Bölüm 5 "araç nasıl yazılır" sorusunu çözer; bu bölümün ilgilendiği soru ise "hangi çalışma kanıtı yaratmayı tetikler ve yeni araç nasıl doğrulanmış bir uzun vadeli yeteneğe dönüşür" sorusudur.
+
+> **Deney 9-5 ★★★: Başarısız Trajectory'lerle Agent'ın Kendini Değiştirmesini Tetiklemek**
+>
+> **Deney Amacı**: "`retryable=false` olan hataların art arda çağrılmayı sürdürdüğü" birden çok trajectory verildiğinde, sistemin kök nedeni yeniden deneme ve circuit breaker koduna kadar götürüp götüremediğini ve geçici arızalarda yeniden deneme yeteneğini bozmadan aday bir düzeltme üretip üretemediğini sınamak.
+>
+> **Akış**: Tanı modülü önce farklı görevlerdeki aynı arızayı bir araya toplar; yalnızca trajectory'ler arası destek eşiğine ulaşıldığında bir değişiklik isteği oluşturur ve hedefi kararlı sürümdeki `retry_policy.py` dosyasına yerleştirir. Aday üreteci; başarısızlık tanısını, korunması gereken geçici arıza kurtarma davranışını, daha önce reddedilmiş değişiklikleri ve kararlı kaynak kodu okur; önce "yeniden denenemeyen hataların çağrılma sayısı düşmeli, geçici zaman aşımı kurtarma oranı düşmemeli" biçiminde bir etki tahmini sunar, sonra asgari kod diff'ini çıkarır. Deterministik bir üreteç de kullanılsa gerçek bir LLM Kodlama Agent'ı da kullanılsa, sonuç yalnızca yalıtılmış aday dizinine yazılabilir. Doğrulama Harness'i ardından sırasıyla adayı derler, özgün başarısızlık trajectory'lerini yeniden oynatır, yeniden denenemeyen hatalarda hemen durulup circuit breaker'ın açılıp açılmadığını denetler, sonra geçici zaman aşımlarının hâlâ eski eşiğe göre yeniden denenip denenmediğini yeniden ölçer.
+>
+> **Tanı Karşılaştırması ve Metrikler**: "Prompt'a yalnızca 'aynı çağrıyı tekrarlama' cümlesini eklemek", hata katmanında konumlandırmanın kavramsal karşılaştırma grubu olarak kullanılır ve kesin biçimde yürütülebilen yeniden deneme kısıtlarının neden programa girmesi gerektiğini gösterir. Çalıştırılabilir deney ise deterministik yama üretecini LLM üreteciyle karşılaştırır; ikisi de aynı yayım eşiğini paylaşır. Yeniden denenemeyen çağrı sayısı, geçici hata kurtarma oranı, eski görev regresyon sayısı, yama büyüklüğü ve aday kabul oranı kaydedilir.
+>
+> **Kabul Kriterleri**: Bütün denetimler geçtiğinde yalnızca `release_to_canary` üretilir; statik denetimlerden, başarısızlık yeniden oynatmasından veya eski görev regresyonundan herhangi biri başarısız olursa `reject_candidate` döndürülür. `release_manifest.json` dosyası; başarısızlık kümesini, kaynak trajectory'leri, çıkarsanan kök nedeni, hedef bileşeni ve dosyayı, kod diff'ini, beklenen düzeltmeyi, olası gerilemeleri, denetim sonuçlarını, aday sürümü ve geri alma sürümünü kaydetmek zorundadır; reddedilen adaylar da bir sonraki üretim turunda başvurulmak üzere ret gerekçelerini saklamalıdır. Yamayı üreten Agent; kararlı kodu, doğrulayıcıları, denetim log'larını veya kendi yayımını onaylayan eşiği değiştiremez.
+>
+> Eşlik eden uygulama için bkz. [`self-modifying-agent`](../chapter9/self-modifying-agent/); deterministik aday üreteci ya da gerçek bir LLM Kodlama Agent'ı seçilebilir, iki yol da aynı yayım eşiğini paylaşır.
+
+[^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
+
+[^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
+
+Deney 9-8 aynı protokolü doğrulama katmanına uygular. Kullanıcı düzeltmeleri, düşük puanlar ve denetimler onaysız yüksek riskli işlemi tekrar tekrar gösterdiğinde aday değişiklik izole dizine yazılır. Araç adı ve argümanlardan tehlikeli silmeleri ve `git push --force` çağrılarını sınıflandırın; tek kullanımlık onay tokenını somut işleme bağlayın. Aday AST/statik kontrolleri, sahte veya tekrar kullanılan tokenları içeren sınır yeniden oynatmasını ve koruma kümesini geçmelidir.
+
+> **Deney 9-8 ★★: Kullanıcı geri bildirimiyle yüksek riskli işlem onay kapısı**
+>
+> `failure_trajectories.json` içindeki üç sinyal ve kontrol trajectory'leri kullanılır. Gerçek `gpt-4o-mini` adayı eksik görev, normal işlem ve tek kullanımlık token kontrollerini geçemediği için güvenlik kapısı tarafından reddedildi. Deterministik aday bütün kontrolleri geçip `release_to_canary` oldu; kontroller, karar ve kararlı dizinin hash'i kaydedilir. Uygulama [`harness-safety-gate`](../chapter9/harness-safety-gate/) içindedir.
+
+### Deneyimi Parametrelere Yazmak
+
+Bilgi, talimat ve program bir ön kabule dayanır: hedeflenen yetenek dış simgelerle görece eksiksiz biçimde ifade edilebilir. Oysa tıbbi görüntü anlama, doğal konuşma ezgisi, metindeki şablonlaşmış "yapay zeka kokusu"nun giderilmesi ve uzun erimli planlama gibi yetenekleri birkaç kurala ya da iş akışına sıkıştırmak çok güçtür. Bu tür yetenekler post-training yoluyla model parametrelerine yazılmak zorundadır.
+
+Bir yeteneğin parametreleştirilip parametreleştirilmeyeceğini tek başına "görev uzun vadede kararlı mı" sorusu belirlemez. Yeni görüntüleme cihazlarının getirdiği alan kayması yine de LoRA veya sürekli fine-tuning gerektirebilir; hızla değişen dil üslubu da periyodik tercih eğitimiyle uyarlanabilir. Kararlılık, güncelleme sıklığını ve maliyeti etkiler; ama başlıca taşıyıcıyı yeteneğin temsil niteliği belirler. Bunun tersi de geçerlidir: uzun süredir değişmeyen bir para transferi onay kuralı bile yalnızca parametrik belleğe dayanmamalıdır; sunucu tarafındaki kodun deterministik güvenceyi sağlaması gerekir.
+
+Bölüm 8, SFT'yi, damıtmayı ve RL'i eksiksiz biçimde tartıştığı için burada yinelenmiyor. Sürekli evrim açısından kilit nokta, değerlendirilmiş üretim trajectory'lerini eğitim verisine dönüştürmektir: yüksek nitelikli gösterimler SFT'ye girebilir, açık tercihler ikili veri oluşturabilir, güvenilir ortam ödülü bulunan etkileşimler RL'de kullanılabilir. Eğitime girmeden önce yine de gizli bilgiler temizlenmeli, hatalı trajectory'ler filtrelenmeli ve bağımsız bir regresyon kümesi ayrılmalıdır; eğitimden sonra ise genel yeteneklerin ve güvenlik hizalamasının unutulup unutulmadığı denetlenmelidir.
+
+Parametre öğrenmesi genellikle dışsal yöntemlerle birlikte çalışır. Tıbbi görüntüleme modeli görsel temsilleri parametrelerle öğrenir, güncel kılavuzları bilgi tabanından alır, lezyon ölçümünü ve risk hesabını kodla yapar; doğal bir müşteri hizmetleri ses tonu tercih eğitimiyle genel dağılım düzeyinde biçimlendirilebilir, o anki marka kimliği Prompt'la belirlenir, kişisel iletişim tercihlerine uyum ise kullanıcı belleğiyle sağlanır. Sürekli evrim, dört yöntem arasından tek bir doğruyu seçmek değil; her yeteneği onu ifade etmeye ve yönetmeye en uygun yere yerleştirmektir.
+
+### Artifact'ı Güncellemekten "Güncelleme Yöntemi"ni Güncellemeye
+
+Önceki dört yöntem, deneyimin sonunda **nereye yazıldığını** tartıştı; ama sürekli evrimin buna dik başka bir ekseni daha var: sistem, belirli bir artifact'ın içeriğini mi optimize ediyor, yoksa bu artifact'ları üreten, yöneten ve doğrulayan yöntemi mi? Bu eksende optimizasyon nesnesi katman katman genişleyebilir: **tek bir kural veya bellek kaydı → yapılandırılmış context → iş akışı → Harness kodu → aday çözümler üreten optimize edici kod**[^weng-harness-2026]. Bunlar beş yeni güncelleme taşıyıcısı değil, beş farklı arama ölçeğidir; bilgi, Prompt, Skill ve program bu katmanların birkaçında birden görünebilir.
+
+En içteki katman yalnızca artifact'ın içeriğini değiştirir. Örneğin başarısız bir trajectory'ye dayanarak system prompt'a yerel bir kural eklemek ya da deneyim dokümanına bir istisna koşulu eklemek. Bu tür bir değişikliğin etki alanı dardır, nedenini bulmak ve geri almak kolaydır; dolayısıyla varsayılan seçenek olmalıdır. Ne var ki modele Prompt'un ya da belleğin tamamını tekrar tekrar yeniden yazdırmak başka türden bir gerilemeye yol açar: kısalık uğruna, eski sürümdeki az sayıdaki önemli ayrıntı birkaç yeniden yazma turunun ardından yavaş yavaş kaybolabilir; birbirini dengeleyen koşullar da aşırı soyut tek bir ilkeye indirgenebilir. Agentic Context Engineering (ACE), context'i kararlı tanımlayıcıları olan bir girdi kümesi olarak tutar; üretme, reflection ve düzenleme modülleri artımlı güncellemeler önerir, bunlar deterministik mantıkla birleştirilir ve yinelenenlerden arındırılır — her turda gitgide kısalan bir metin bloğu yeniden yazılmaz[^ace-2026]. Bu çalışma, bölümün önceki kısımlarındaki "asgari diff, kaynağı koru" ilkesine somut bir araştırma örneği sunuyor.
+
+Bir katman daha dışarı çıkıldığında optimizasyon nesnesi artık yalnızca "context'in içinde ne var" değil, "context nasıl kurulmalı"dır. Meta Context Engineering (MCE) bu ikisini iç ve dış olmak üzere iki döngüye ayırır: iç döngü, verili bir yönetim yöntemi altında mevcut görevin context artifact'ını optimize eder; dış döngü ise birden çok yürütme ve doğrulama sonucuna bakarak arama, seçme, filtreleme ve biçimlendirme gibi context işlemlerinin kendisini değiştirir[^mce-2026]. Bu ayrım önemlidir: bir retrieval kuralını değiştirmek içerik yönetimi mekanizmasını değiştirmektir; sisteme birden çok retrieval ve düzenleme mekanizmasını karşılaştırtıp aktarım etkisi daha iyi olan sürümü saklatmak ise "context nasıl yönetilir"i öğrenmektir.
+
+Aynı düşünce iş akışlarına ve tüm Harness'e genişletilebilir. AFlow, birden çok LLM çağrısından oluşan iş akışını bir kod grafiği olarak temsil eder ve yürütme geri bildirimiyle düğüm ve kontrol akışı birleşimlerini arar[^aflow-2025]; Meta-Harness ise Kodlama Agent'ına aday Harness'in kaynak kodunu, puanlarını ve trajectory'lerini okutarak bilginin nasıl saklandığını, getirildiğini ve sunulduğunu belirleyen kodu arar[^meta-harness-2026]. Bölüm 5, kodun Agent'ın sistem yapısını ifade ettiği genel dil olduğunu zaten göstermişti; buradaki yenilik şu: kod yalnızca bir kez üretilen bir çıktı değildir, değerlendirme geçmişiyle birlikte sürekli aramanın nesnesi de olabilir.
+
+Optimizasyon katmanı ne kadar yüksekse o kadar iyi değildir. Yerel bir kuralı aramak için birkaç sınır vakası yeter; oysa eksiksiz bir iş akışını ya da Harness'i aramak çok daha geniş bir aday uzayı, çok daha yüksek bir değerlendirme maliyeti ve çok daha zor bir nedensellik atfı demektir. Açık, yinelenen ve tek bir bileşene kadar götürülebilen bir arıza için önce denetlenebilir yerel bir yama uygulanmalıdır; ancak yerel değişiklikler bileşenler arası bir sorunu uzun süre çözemediğinde ya da mevcut yönetim yönteminin kendisi darboğaza dönüştüğünde iş akışı, Harness ve hatta optimize edici katmanına çıkmaya değer. Hangi katmana çıkılırsa çıkılsın, değerlendiriciler, yetki sınırları ve saklı testler değiştirilebilir alanın dışında kalmak zorundadır — arama uzayı ne kadar büyürse bu güven kökü o kadar önemli olur.
+
+> **Deney 9-6 ★★★: Bu Kitabı Hermes'e Verirsek Kendini Yükseltebilir mi?**
+>
+> **Amaç**: Bir Agent'ın dış bilgiyi kendi yeteneklerinde gerçek bir güncellemeye dönüştürüp dönüştüremediğini sınamak. Deney bir sorun ya da özellik listesi vermez; Hermes'e on bölüm ve kendi kaynak kodu verilir, ilkeleri anlaması, uygulamasını incelemesi ve değerli bir iyileştirmeyi kendisinin seçmesi beklenir.
+>
+> **Tasarım**: Kitap ve kaynak kod okunabilir bağlamı oluşturur; kararlı sürüm, bağımsız Reviewer ve kabul testleri ise Hermes'in değiştirebildiği alanın dışında kalır. Hermes **oku → karşılaştır → seç → değiştir → doğrula** döngüsünü tamamlamalıdır. Aday reddedilirse inceleme bir sonraki öğrenme turunun girdisi olur; kapı atlanarak başarı ilan edilemez.
+>
+> **Gerçek çalıştırma**: Kitabı okuyan Hermes, kaydedilmiş yürütme trajectory'lerinde sonraki öğrenmenin doğrudan kullanabileceği yapılandırılmış kanıt bulunmadığını kendi başına fark etti. Yürütme sonuçlarını ihtiyatlı öğrenme sinyallerine dönüştürmeyi seçti, kendi kodunu değiştirdi ve testler ekledi. İlk üç bağımsız inceleme gerçek veri biçimleri, kalıcılık yolları ve sayım anlamlarıyla uyumsuzluklar buldu. Her bulgu özgün Hermes oturumuna döndü; dördüncü inceleme adayı kabul etti.
+>
+> **İddianın sınırı**: Bu çalıştırma, bir Agent'ın uzun bilgiden ilkeler çıkarıp bunları kendi koduna eşleyebildiğini ve dış doğrulama altında bir öz güncellemeyi tamamlayabildiğini gösterir. Downstream görev başarısının arttığını kanıtlamaz; bunun için ayrı bir ablation deneyi gerekir. Deney fikrini okur Grace sağlamıştır.
+
+## Uzun Süre Çalışabilen Sürekli Evrim Döngüsünü Kurmak
+
+Dört güncelleme biçimi ancak aynı otonom döngüye girdiğinde tek seferlik bir optimizasyon olmaktan çıkıp sürekli evrime dönüşür. Şekil 9-5, üretim sistemlerinde daha sağlam olan çift döngülü yapıyı gösteriyor: çevrimiçi yürütme döngüsü yalnızca görevi tamamlar ve kanıtı kaydeder, resmî Agent'ı doğrudan değiştirmez; çevrimdışı evrim döngüsü ise trajectory'leri bir araya toplar, kök nedene tanı koyar, aday değişiklikleri üretir ve ancak doğrulama eşiklerini geçtikten sonra yeni sürümü yayımlar. İki döngü, sürümlenmiş deneyim deposu ve değerlendirme kümeleri aracılığıyla birbirine bağlanır.
+
+![Şekil 9-5: Çevrimiçi Yürütme ile Çevrimdışı Evrimin Çift Döngüsü](images/fig9-5.svg)
+
+Voyager[^voyager-2023] görece eksiksiz bir sürekli evrim döngüsü sergiliyor. Minecraft'ta mevcut yeteneklerine göre yeni bir hedef seçiyor, ortamdan gelen geri bildirimle programı yineliyor, doğrulamayı geçen kodu beceri kütüphanesine kaydediyor, sonra eski becerileri birleştirerek daha zor görevleri çözüyor. Otomatik müfredat, yürütülebilir beceriler ve ortam doğrulaması — bunların biri bile eksik olamaz: müfredat olmadan yalnızca beceri kütüphanesi varsa, Agent bir sonraki adımda ne öğreneceğini bilemez; ortam doğrulaması olmadan yalnızca kendi kendine reflection varsa, beceri kütüphanesi hata biriktirir; kalıcılık olmadan yalnızca keşif varsa, her görev yine sıfırdan başlar. Gerçek dünyadaki Agent'ların bilgisi, Prompt'u, araçları ve parametreleri daha karmaşık olsa da temel öğrenme süreci benzerdir.
+
+Daha somut olarak Voyager, birbirine geçen üç mekanizmadan oluşur. **Otomatik müfredat üreteci**, mevcut eşyalara, ortama ve kazanılmış becerilere bakarak zorluk düzeyi uygun bir sonraki hedefi önerir; böylece keşif rastgele bir dolanmaya dönüşmez. **Beceri kütüphanesi**, başarılı programları retrieval yapılabilir ve birleştirilebilir kod olarak saklar; örneğin ileri düzey bir toplama becerisi hareket ve üretim gibi temel becerileri çağırabilir. **Yinelemeli prompt mekanizması** ise ortam gözlemlerini, yürütme hatalarını ve öz doğrulama sonuçlarını bir sonraki kod üretimi turuna geri taşır; bu, görev gerçekten geçene kadar sürer. Makale, o dönemin baseline'larına kıyasla Voyager'ın 3,3 kat daha fazla benzersiz eşya edindiğini, 2,3 kat daha uzağa keşif yaptığını, kilit teknoloji ağacı kilometre taşlarını en fazla 15,3 kat daha hızlı açtığını ve beceri kütüphanesini yeni Minecraft dünyalarına aktarabildiğini bildiriyor; bu metrikler, dondurulmuş bir Agent'ın tek bir sınavdaki notunu değil, yeteneğin yaşantıyla birlikte büyüme eğrisini ölçüyor.
+
+### Sorunu Konumlandırmaktan Deneyimi Biriktirmeye
+
+Yüzeyde aynı görünen bir sorun farklı türde değişiklikler gerektirebilir. Müşteri hizmetleri Agent'ının olgu uydurma halüsinasyonu, bilgi tabanında olgunun eksik olmasından da kaynaklanabilir, Prompt'un alıntı istememesinden de. Agent görevi tamamlamadığı hâlde "tamamlandı" biçiminde asılsız bir söz veriyorsa, bu sorun hem talimatla düzeltilebilir hem de Harness'in yanıt ile araç durumu arasındaki tutarlılığı zorunlu olarak denetlemesiyle giderilebilir. Evrim modülü önce kök nedeni konumlandırmalı, sonra en küçük, en kolay doğrulanan ve en kolay geri alınan değişiklik nesnesini seçmelidir. Kanıtı yetersiz, seyrek görülen arızalar hemen öğrenmeyi tetiklememeli, örnek biriktirmeye devam edilmelidir.
+
+Bu seçim, deneyim arttıkça da değişebilir. Yeni keşfedilen bir strateji önce retrieval için bir deneyim dokümanı olarak durur; birden çok vakada tekrar tekrar doğrulandıktan sonra bilgiye terfi ettirilebilir. Bilginin üç ifade biçimi vardır: doğal dille açıkça betimlenebilen kurallar Skill olarak biriktirilebilir; adımları kararlıysa ve doğal dil anlama yeteneği gerektirmiyorsa araç koduna derlenebilir; gerçekte geniş kapsamlı örtük bir karar yeteneğini yansıtıyorsa post-training'e girebilir.
+
+### Doğrulama, Yayım ve Geri Alma
+
+Bütün değişiklikler önce aday bir yetenek ya da aday bir Agent üretir; üretim sürümünün doğrudan üzerine yazmaz. Bilgi dokümanları için retrieval sonrasında yeni görevlerdeki başarımın artıp artmadığı doğrulanmalı; Prompt ve Skill için sınır vakaları ve eski görev regresyonu denetlenmeli; programlar sandbox'ta ve sıfırlanmış ortamlarda test edilmeli; parametre güncellemelerinde ise unutma, güvenlik ve dağılım dışı görevler kontrol edilmelidir. Doğrulama geçildikten sonra bile yeni sürüm kademeli yayımla gerçek trafikte gözlenmelidir; kilit metrikler kötüleştiğinde bilinen güvenli sürüme otomatik olarak geri dönülmelidir.
+
+**Doğrulanmış sürüm ve geri alma:**
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
 ```
 
-Robotikte kullanılabilir bir dünya modeli en azından şu üç şeyi iyi yapmalıdır:
+Doğrulama, sık sık birbirine karıştırılan iki yeteneği de ayırt etmelidir. **Harness güncelleme yeteneği** (harness-updating), trajectory'lerden değerli ve kalıcı değişiklikler üretebilmektir; **Harness'ten yararlanma yeteneği** (harness-benefit) ise görev Agent'ının sonraki çalışmalarda bu değişiklikleri bulup etkinleştirmesi ve doğru kullanmasıdır. Bir Skill kendi başına tümüyle doğru yazılmış olabilir, ama görece zayıf bir görev modeli onu uygun senaryoda yüklemiyorsa ya da yükledikten sonra uzun süre ona uyamıyorsa, bunların herhangi biri nihai sonucun "hiç evrim olmamış" gibi görünmesine yol açar. Dolayısıyla güncelleyicinin iyi mi kötü mü olduğu yalnızca uçtan uca puana bakılarak çıkarsanamaz. Lin ve arkadaşlarının model değiştirme deneyleri, bu iki yeteneğin temel model yeteneğiyle ilişkisinin aynı olmadığını gösteriyor[^harness-benefit-2026]; kesin güç ilişkisi hâlâ daha fazla görevde doğrulanmayı gerektiriyor, ama ikisini ayrı ayrı değerlendirmek genel olarak uygulanabilir bir yöntemdir.
 
-- şu anki durumu anlamak;
-- farklı eylemlerin getirebileceği sonuçları kestirmek;
-- bu kestirimi planlayıcıya ya da denetleyiciye vererek seçime yardım etmek.
+Tablo 9-3 Sürekli Evrimin Katmanlı Değerlendirme Metrikleri
 
-Yalnızca video betimleyebilen bir VLM ya da yalnızca görüntü üretebilen bir model, kendiliğinden güvenilir bir robot dünya modeline dönüşmez. Eylemin ne olduğunu bilmeli ve bu eylemin nesneler ile çevre üzerindeki etkisini kestirebilmelidir. V-JEPA 2 geleceği içsel durumda kestirme yolunu temsil eder; World-Action Model ise "eylem—gelecekteki gözlem" ilişkisini açıkça öğrenir. Bunlar VLA ile birlikte kullanılabilir, onun yerini almak zorunda değildir.[^ch9-16]
+| Metrik | Yanıtladığı soru | Başlıca kanıt |
+|---|---|---|
+| Aday değişiklik etkinliği | Güncelleyici değerli bir değişiklik önerdi mi | Adayın bağımsız doğrulamadaki kabul oranı ve kazancı |
+| Artifact etkinleşme oranı | Görev Agent'ı yeni Skill'i, belleği veya aracı doğru senaryoda yükledi mi | Retrieval, yönlendirme ve tool calling trajectory'si |
+| Uyum başarı oranı | Etkinleştikten sonra yeni kurala veya sürece göre mi yürütüldü | Eylem dizisi ve süreç doğrulayıcıları |
+| Saklı görev kazancı | Bütün olarak, evrime katılmamış görevlerde iyileşme oldu mu | Held-out başarı oranı, kalite ve maliyet |
 
-Gerçek bir sistemde dünya modelinin genellikle üç kullanımı vardır:
+Tanı sırasında aynı aday Harness sabit tutulup yalnızca görev modeli değiştirilebilir: güçlü model yararlanabiliyor ama zayıf model yeni artifact'ı hiç etkinleştirmiyorsa, darboğaz retrieval veya yönlendirmededir; ikisi de etkinleştiriyor ama yalnızca güçlü model doğru yürütüyorsa, darboğaz talimata uyma ya da uzun erimli planlamadadır; bütün modeller geriliyorsa, değişikliğin kendisinden şüphelenmek için daha çok neden vardır. Bunun tersi de yapılabilir: görev modeli sabit tutulup değişiklik öneren model değiştirilerek güncelleyicinin niteliği tek başına karşılaştırılabilir. Bu çift yönlü model değiştirme, yalnızca "evrim sonrası toplam puan"a bakmaktan çok daha kolay biçimde, yetenek bütçesinin nereye ayrılması gerektiğini gösterir.
 
-1. **Hareket etmeden önce**: kavrama, itme ya da bekleme gibi aday eylemleri karşılaştırmak ve riski daha az olanı öne almak;
-2. **Yürütme sırasında**: gerçek gözlemi kestirimle karşılaştırmak, sapma bulunduğunda eylemi kısaltmak, durmak ya da yeniden planlamak;
-3. **Eğitim sırasında**: videodan, benzetim verisinden ve başarısız yörüngelerden durum değişimlerini öğrenmek, böylece gerçek makinedeki deneme yanılmayı azaltmak.
+Değerlendirme, öğrenme bittikten sonra girilen bir sınav değil, kendi kendine evrim sürecinin vazgeçilmez bir parçasıdır. Uzun vadeli değerlendirme en az beş tür sonucu aynı anda gözlemelidir:
 
-XLeRobot'un masa görevine dönelim. Sarı kâğıt kısmen kırmızı bardağın altında kalıyorsa sistem aday becerileri karşılaştırabilir: "önce kâğıdı al", "önce bardağı kaydır" ya da "başka yönden kavra". Dünya modelinin gerçekçi robot videosu üretmesi gerekmez: hangi aday eylemin kâğıdın alınabileceği bir duruma daha çok yol açtığını ve hangisinin bardağı devirebileceğini kestirebilmesi, planlayıcının seçenekleri sıralamasına yardım etmeye yeter. Eylem yürütüldükten sonra gerçek kamera gözlemi hâlâ nihai olgudur: kestirim yalnızca seçime yardım eder, kabul denetiminin yerini almaz.
+- Gerileme (regression), yani yeni deneyimin mevcut diğer deneyimlerle çelişip çelişmediği ve daha önce geçebilen vakalarda gerileme olup olmadığı;
+- Genelleme yeteneği, yani yeni deneyimin test kümesinin henüz kapsamadığı senaryolarda sağladığı iyileşme;
+- Token verimliliği, yani görevi tamamlamak için harcanan Token maliyeti;
+- Güvenlik, yani kural, gizlilik ve reddetme sınırlarının evrimle birlikte kayıp kaymadığı;
+- Uzun vadeli mühendislik kalitesi, yani bakım karmaşıklığının, mimari tutarlılığın, sahiplik sınırlarının, geriye dönük uyumluluğun ve gelecekteki taşıma ile hata ayıklama yükünün kötüleşip kötüleşmediği.
 
-Dünya modelinin verdiği şey kesin yanıtlar değil, "böyle yaparsam ne olabilir" konusunda karşılaştırılabilir kestirimlerdir. Ne kadar uzağa kestirilirse hata da o kadar büyüme eğilimindedir ve gerçekçi görünen bir gelecek sahnesi, gerçek temas ve sürtünme yasalarına uymak zorunda değildir. Bu yüzden gerçek bir sistem hâlâ kısa vadeli kestirime, gerçek zamanlı gözleme, belirsizlik kestirimine ve bağımsız bir donanım güvenlik denetleyicisine ihtiyaç duyar. Üretici dünya modelleri etkileşimli benzetim ve görselleştirme için kullanılabilir; ancak "video üretebilmek" ile "robotun eylemlerine yön verebilmek" birbirine karıştırılmamalıdır.[^ch9-21]
+Yalnızca mevcut başarısızlık vakasının sorununu çözüp diğer mevcut vakalarda veya yeni alanlarda gerilemeye yol açmak, başarılı bir sürekli öğrenme değildir.
 
-> **Deney 9-10 ★★: Benzetimde üç özerk masa toplama çevriminin karşılaştırılması**
+### Doğrulanabilir Döngünün Sınırı: "Tamamlandı" "İlerleme" Demek Olmadığında
+
+Önceki döngü en kolay biçimde Kodlama, tool calling ve iş durumu değişikliği gibi görevlerde kurulur; çünkü testler, ortam durumu veya deterministik kurallar hızla geri bildirim verebilir. Açık uçlu bilimsel araştırma, stratejik planlama ve karmaşık ürün tasarımı ise farklıdır: değerlendirme sinyali geç gelir, doğru cevap tek değildir ve asıl önemli hedefleri — araştırma zevkini, uzun vadeli değeri, sürdürülebilirliği — anlık bir puana dökmek hâlâ çok zordur. Böyle durumlarda Harness süreci son derece eksiksiz yürütüyor olabilir, ama yalnızca istikrarlı biçimde "sonuca benzeyen şeyler" üretir; gerçek hedefi ilerletmez.
+
+Otomatik bilimsel araştırma bunun temsil gücü yüksek bir stres testidir. Trehan ile Chopra, araştırma fikrinden makaleye giden uçtan uca dört denemeyi kayda geçirdi; bunların üçü uygulama veya değerlendirme aşamasında başarısız oldu, yalnızca biri boru hattının tamamını tamamladı[^llm-scientists-2026]. Bu vakaların açığa çıkardığı sorunlar üç gruba ayrılabilir. Birincisi **uygulama kayması**: özgün tasarım zorlaşmaya başladığında Agent, eğitim verisinde daha tanıdık olan, ama araştırma hipotezinden çoktan sapmış sıradan bir uygulamaya yavaş yavaş geri çekilir. İkincisi **epistemolojik aşırı iyimserlik**: sinyal hâlâ gürültü olabilecekken sistem sonucu yorumlamaya, yamalar eklemeye ve bir buluş ilan etmeye başlar; başarısızlıklar ve olumsuz sonuçlar ise daha kolay göz ardı edilir. Üçüncüsü **örtük yargı gücünün yetersizliği**: Agent deneyleri çalıştırabilir, ama hangi baseline'ın gerçekten önemli olduğunu, hangi aykırı değerin izlenmeye değdiğini ya da hipotezden ne zaman vazgeçilmesi gerektiğini bilmeyebilir.
+
+Bu tür görevler daha iyi makale yazan bir modele geçilerek kökünden çözülemez; kanıt ve denetim yapısının değişmesi gerekir:
+
+- **Sonucu kanıttan ayırın**: Alıntılar, sayılar, yöntemler ve sonuçlar için kanıt kaynağı ayrı ayrı kaydedilir; nihai metin, kanıt grafiğinin yalnızca bir sunumudur. ScientistOne'ın Chain-of-Evidence tasarımı her tür iddiayı denetlenebilir bir kaynağa bağlayarak bu yönde bir örnek oluşturur; artırdığı şey izlenebilirliktir, araştırma sorusunun değerli olduğunu kendiliğinden garanti etmez[^scientistone-2026].
+- **Olumsuz sonuçları saklayın**: Başarısız deneyler, reddedilen adaylar ve durma gerekçeleri değişmez bir log'a yazılır ve başarılı sonuçlarla aynı retrieval statüsüne sahip olur. Aksi hâlde evrim modülü yalnızca hayatta kalan çözümleri görür, çürütülmüş yolları tekrar tekrar dener ve belirsiz sonuçları başarı diye yorumlamayı öğrenir.
+- **Arama çeşitliliğini koruyun**: Açık uçlu arama, yalnızca o an en yüksek puanı alan tek bir zinciri saklamamalıdır. Aday havuzunda ayrıca mekanizma farkına, kod özgünlüğüne veya hipotez türüne göre, geçici olarak düşük puanlı ama nitelikçe farklı birkaç dal tutulmalıdır; böylece bütün çözümlerin puan almayı kolaylaştıran aynı şablona yakınsaması önlenir.
+- **İnsanı daha üst katmanda devreye sokun**: İnsanın rolü, tehlikeli bir tool calling öncesinde "onayla"ya tıklamaktan ibaret olmamalı; problemi tanımlamayı, değerlendirme ölçütlerini incelemeyi, olağandışı sonuçları yorumlamayı ve ne zaman durulacağına karar vermeyi de kapsamalıdır. Geri bildirimin muğlak olduğu görevlerde bu üst düzey yargılar, yürütmeyi adım adım devralmaktan hem daha zor otomatikleştirilir hem de daha değerlidir.
+
+Aynı sınırlama sıradan yazılım mühendisliğinde de vardır: birim testlerinin tamamının geçmesi yalnızca şu anda gözlenebilen davranışın testleri karşıladığını kanıtlar, kod tabanının aylar sonra da kolay bakılabilir olacağını kanıtlamaz. Bu yüzden önceki kısım uzun vadeli mühendislik kalitesini bağımsız bir metrik olarak sıraladı; mevcut görevin başarı oranının bu gecikmeli dışsallıkları da kapsamasını beklemedi. Sürekli evrimin üst sınırı, nihayetinde sistemin gerçekten önemsediği hedefi değerlendirip değerlendiremediğine bağlıdır; yalnızca ölçmesi en kolay vekil metriğe değil.
+
+### Sürekli Evrimin Güvenlik Sınırları
+
+Agent'ın kendi kendine evrilme yeteneği, tek bir hatayı uzun vadeli bir riske dönüştürebilir. Web sayfalarındaki, e-postalardaki ve araç çıktılarındaki **prompt injection deneyim olarak özetlenirse**, oturumlar boyunca tekrar tekrar etkili olabilir; otomatik aramayla bulunan kötü niyetli bir yazılım paketi araç olarak sarmalanırsa, etkisi tek bir sandbox çalışmasından bütün sonraki görevlere yayılır; kusurlu bir doğrulayıcı da ilerleme gibi görünen ama aslında gerileten aday sürümleri sürekli onaylayabilir. Bu nedenle Agent'ın kendi kendine evrim sistemi, "daha güçlü mü" sorusunu doğrulamanın yanı sıra "kim neyi değiştirebilir, dayanağı nereden geliyor" sorusunu da sınırlamak zorundadır.
+
+İlk sınır, **kanıt ile talimatın yalıtılmasıdır**. Ham web sayfaları ve araç çıktıları güvenilmez kanıttır; doğrudan Skill gibi yapılara yazılamaz, önce LLM tarafından özetlenmesi gerekir. Yazma işlemi sürüm kontrollü bir yöntemle yapılmalı, bir pull request açılmalı ve farklı kaynaktan gelen bir reviewer LLM'in incelemesinden geçtikten sonra birleştirilmelidir.
+
+İkinci sınır, **aday yeteneklerle resmî yeteneklerin yalıtılmasıdır**. Yeni bilgi, Prompt, Skill, program ve parametrelerin hepsi önce gerçek trafiğe hizmet edemeyen bir aday bölgesine girer. Yeni üretilen kod ve dış bağımlılıklar ayrıca sandbox, yetki denetimi, tedarik zinciri taraması ve davranış testi gibi güvenlik denetimlerinden geçmelidir. Ancak güvenlik denetimleri ve regresyon testleri geçildikten sonra gerçek trafiğe hizmet edebilir ve resmî yetenek hâline gelebilirler.
+
+Üçüncü sınır, **güvenlik mekanizmalarının kendi kendine değiştirilememesidir**. İş Agent'ı Prompt'u, Skill'i, bilgi tabanını ve araçları değiştirebilir; ama kendi güncellemesini onaylayan doğrulayıcıyı, test durumlarını, yayım eşiklerini, denetim log'larını ve kararlı sürüm yedeklerini değiştiremez. Aksi hâlde bir Agent'ın gerilemeyi ilerleme gibi göstermesi için test eşiğini düşürmesi ya da başarısız test durumlarını silmesi yeter.
+
+### Uyku Öğrenmesi: Bütünleştirme, Unutma ve Yeteneğin Tazeliğini Koruma
+
+"Uyku öğrenmesi", çevrimdışı bütünleştirmenin bilişsel bir benzetmesidir; görevin gerçekten gece çalışmasını gerektirmez. Çevrimiçi Agent'ın birincil sorumluluğu mevcut görevi tamamlamak ve değişmez kanıt eklemektir; arka plandaki öğrenme süreci ise boş zamanlarda ya da kapı koşulları sağlandığında bir grup yeni yaşantıyı okur, eski ve yeni sonuçları karşılaştırır, yinelenenleri birleştirir, çatışmaları çözer, aday güncellemeler önerir ve regresyonları çalıştırır. Toplamayı düzenlemeden ayırmak, tek bir tesadüfi başarının, bir ağ arızasının veya kötü niyetli bir girdinin uzun vadeli yetenekleri anında yeniden yazmasını engeller; ayrıca sistemin düzenlemeyi daha büyük yığınlarla ve daha ucuz modellerle yapmasına imkân verir.
+
+Tipik bir uyku öğrenmesi döngüsü beş adımdan oluşur:
+
+1. **Tetikleme**: Zaman aralığı, yeni eklenen trajectory sayısı, depolama kapasitesi veya hata sıklığı eşiğine ulaşmak ve o anda yüksek öncelikli bir çevrimiçi görev bulunmadığını doğrulamak;
+2. **Yönelme**: Resmî bilgi, Prompt ve Skill dizinlerini ve bunların sürümlerini okuyarak mevcut yetenekleri ve değiştirilemez sınırları öğrenmek;
+3. **Toplama ve bütünleştirme**: Yakın zamanda değerlendirilmiş trajectory'lerde yeni sinyaller aramak, yinelenen içerikleri birleştirmek, çatışmaları ve uygulanabilirlik koşullarını işaretlemek, öncelikle yerel yamalar üretmek;
+4. **Doğrulama ve onay**: Adayları aktarım kümesi, saklı küme ve güvenlik kümesi üzerinde değerlendirmek; yüksek riskli yazma işlemlerini insan onayına bırakmak;
+5. **Budama ve indeksleme**: Retrieval indekslerini güncellemek; uzun süredir kullanılmayan veya yeni kanıtlarla çürütülen yetenekleri süresi dolmuş, arşivlenmiş ya da silinmiş olarak işaretlerken kaynağı ve geri alma sürümünü saklamak.
+
+**Boşta kalma sırasında birleştirme:**
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
+Kullanıcı belleği bunun en sezgisel örneğidir, ama eylem deneyiminden ayrılmalıdır. Claude Code'un otomatik belleği her proje için bir `MEMORY.md` indeksi ve konulara ayrılmış ayrıntı dosyaları tutar; oturum başlarken yalnızca indeksin sınırlı bir ön ekini yükler, geri kalan içeriği ihtiyaç oldukça okur; indeks üst sınıra yaklaştığında sistem Agent'tan ayrıntıları birleştirmesini ya da başka yere taşımasını ister. Bu, düz metin belleğin de kapasite kısıtına, katmanlı yüklemeye ve etkin düzenlemeye ihtiyaç duyduğunu gösteriyor; ne var ki kamuya açık mevcut mekanizma ağırlıklı olarak oturum içinde sürekli yazmaya dayanıyor ve sabit bir gece arka plan görevine basitçe eşitlenemez[^claude-code-memory].
+
+Hermes ise arka plan evriminin daha eksiksiz bir örneğini veriyor. Uzun vadeli bilgiyi; sınırlı boyuttaki `MEMORY.md` ve `USER.md` dosyalarına, SQLite/FTS5 tabanlı geçmiş oturum retrieval'ına, ihtiyaç hâlinde yüklenen Skill'lere ve Honcho gibi isteğe bağlı dış bellek sağlayıcılarına ayırır. Geçmiş retrieval'ı, önce LLM ile özetlenmiş metin yerine ham mesajları döndürür; böylece retrieval ile üretimin denetlenemez tek bir adımda karışması önlenir. Bir görev görece çok sayıda tool calling içeriyorsa, bir hatadan veya çıkmazdan kurtulunduysa, kullanıcıdan bir düzeltme geldiyse ya da apaçık olmayan bir iş akışı keşfedildiyse, arka planda yapılan gözden geçirme yeni bir Skill oluşturabilir veya mevcut olanı yerel olarak revize edebilir; bellek ve Skill yazma işlemleri ayrıca onay kapısından geçirilebilir. Bağımsız bir Curator, Skill'lerin kullanımını, eskimesini ve arşiv durumunu ayrıca izler, boş zamanlarda deterministik budama yapar ve isteğe bağlı olarak LLM ile birleştirme çalıştırabilir; değişiklikten önce anlık görüntü alındığı için hatalı düzenlemeler geri alınabilir[^hermes-memory]. Bu örnek, "kaydet — bütünleştir — doğrula — buda" döngüsünü bir benzetme olmaktan çıkarıp çalıştırılabilir bir yetenek yaşam döngüsüne dönüştürüyor.
+
+Sürekli evrim, bilginin, Prompt'un ve araçların sınırsızca büyümesi demek de değildir. Bölüm 2'de anlatılan context çürümesi daha uzun zaman ölçeğinde yeniden ortaya çıkar: deneyim dokümanları birbiriyle çelişir, Prompt sınır kurallarına boğulur, Skill kütüphanesinde yinelenen yetenekler belirir, çok sayıda fine-tuning felaket boyutunda unutmaya yol açar. Sistemin periyodik olarak çevrimdışı düzenleme yapması gerekir:
+
+- Yinelenen deneyimleri birleştirmek, kaynağı ve sürümü saklamak;
+- Yerel kuralları genel Prompt'tan alan Skill'lerine taşımak, genel Prompt'u derli toplu tutmak;
+- Prompt'u ve Skill'i yapısı net biçimde tutmak, yeni çalışanlar için yazılmış bir rehber kitap gibi olmasını sağlamak, "99 madde askerî talimat" tarzı kural sıralamalarından kaçınmak;
+- Uzun süredir kullanılmayan araçları yeniden doğrulamak;
+- Yeni kanıtlarla çürütülen bilgileri silmek;
+- LoRA'yı özgün temel modelden yeniden eğitmek.
+
+> **Deney 9-7 ★★★: Agent'ın Gerçekten Sürekli Evrilip Evrilmediğini Değerlendirmek**
 >
-> Deney 9-9'daki görevi, hedef durumları, başarı koşullarını ve beş aracı olduğu gibi masa benzetimine taşıyın; yalnızca gerçek XLeRobot'un eyleyicilerini, kavrama sırasında ara sıra toparlanabilir geçici bir başarısızlık üreten, denetlenebilir bir benzetim yürütücüsüyle değiştirin. Böylece problem değişmeden üç strateji karşılaştırılabilir.
+> **Deney Amacı**: "Tek bir geri bildirimi saklayabilme", "yalnızca durmadan ekleme yapma" ve "güncelleyebilme, aktarabilme ve yeteneği koruyabilme" biçimindeki üç uzun vadeli davranışı birbirinden ayırmak ve aynı soru kümesini tekrar tekrar çalıştırmayı sürekli öğrenme diye göstermeyi önlemek.
 >
-> **Açık çevrim yürütme** eylem dizisinin tamamını tek seferde üretir ve yolda yeniden gözlem yapmaz. **Adım adım denetim** her `pick` ve `place` sonrası durumu yeniden okur, başarısızlıkta yalnızca o anki beceriyi yineler. **Kestirimli yürütme** buna kısa vadeli bir dünya modeli ekler; aday becerilerin beklenen sonuçlarını karşılaştırdıktan sonra bir sonraki hamleyi seçer. Deney; görev başarı oranını, araç çağrısı ek yükünü ve hatadan toparlanma yetisini karşılaştırır ve son başarıların tümünün `verify_state`'ten gelen yeni bir gözlemle doğrulanıp doğrulanmadığını denetler.
+> **Dört Aşamalı Görev Akışı**: Öğrenme aşaması; iade, kimlik doğrulama ve bagaj politikası gibi ortak örtük örüntüler taşıyan görevler sunar. Aktarım aşaması ifadeyi, kullanıcıyı ve yerel ortamı değiştirerek eski deneyimin yeni görevlerde kullanılıp kullanılamadığını denetler. Kural değişikliği aşaması bagaj üst sınırını 20 kg'dan 23 kg'a çıkarır ve sistemden eski bilgiyi değiştirmesini ya da elemesini ister. Koruma aşaması ise değişmemiş yetenekleri ve o an geçerli olan kuralları yeniden test ederek güncellemenin unutmaya yol açıp açmadığını ölçer. Geri bildirimli her görev bittikten sonra dış belleğin güncellenmesine izin verilir; o anki sorunun beklenen eylemi Agent'a önceden sızdırılamaz.
 >
-> Bu deneyin amacı küçük bir benzetim dünya modelinin gerçek makinenin fizik modeline denk olduğunu göstermek değil, daha temel bir ilişkiyi sınamaktır: açık çevrim planlama tek bir yerel hatayı görevin sonuna kadar sürükler; adım adım denetim toparlanmaya izin verir; eylem kestirimi ise ayrıca aday becerileri sıralamaya yardım eder. İşin gerçekten bitip bitmediğine hâlâ çevreden gelen geri besleme karar verir.
+> **Karşılaştırma Grupları**: `static` geri bildirimi kalıcı hâle getirmez; `append_only` kuralın ilk sürümünü hatırlayabilir, ama çatışmayı ele almaz ve eskiyen bilgiyi elemez; `evolving` sürümleri saklar ve eski kuralı yeni kanıtla değiştirir. Referans uygulama, değerlendirme Harness'inin bu davranışları ayırt edip edemediğini doğrulamak içindir; gerçek deneyde LLM aynı 14 soruluk sıralı görev akışından geçirilebilir, ama sonucun model dışındaki Harness tarafından hesaplanması zorunludur.
+>
+> **Metrikler ve Kabul**: Doğruluk ve öğrenme eğrisi aşama aşama raporlanır; ayrıca aktarım doğruluğu, yeni kural alındıktan sonra doğruya dönmek için gereken görev sayısı, eski yetenek koruma oranı, negatif aktarım oranı, güvenlik Rubric'i geçme oranı ve Token, gecikme ile depolama maliyeti ayrı ayrı hesaplanır. Prompt, Skill veya Harness güncellemesi kullanan gerçek sistemlerde aday değişiklik etkinliği, artifact etkinleşme oranı ve uyum başarı oranı da ayrı ayrı kaydedilmelidir; böylece "güncelleme doğru ama yüklenmemiş" durumunun güncelleme başarısızlığı sayılması önlenir. Bir Agent'ın nihai doğruluğu görece yüksek olsa bile; yürürlükten kalkmış kurallara başvurmayı sürdürüyorsa, görevi kural dışı kestirmelerle tamamlıyorsa ya da güncellemeden sonra eski yeteneklerini unutuyorsa, sürekli evrim gerçekleştirdiğine hükmedilemez.
+>
+> Eşlik eden uygulama için bkz. [`self-evolution-eval`](../chapter9/self-evolution-eval/); varsayılan olarak güncellenebilir, yalnızca ekleyen ve statik olmak üzere üç referans Agent karşılaştırılır; `--profile llm` ile gerçek bir LLM aynı uzun vadeli görev akışından geçirilebilir.
 
-### Benzetim Ortamından Gerçek Robota
+[^claude-code-memory]: Anthropic, “How Claude remembers your project”, 2026. https://code.claude.com/docs/en/memory
 
-Deney 9-10'un benzetimde kararlı olması, Deney 9-9'daki gerçek XLeRobot'un da aynı biçimde başarılı olacağı anlamına gelmez. Benzetimden gerçek makineye geçmek bir denetleyici daha değiştirmek değil, iki ortam arasındaki farkı üstlenmektir. Eğitim için uzaktan kumanda verisi, video verisi ve benzetim etkileşim verisi kullanılabilir; ama gerçekten sahaya çıkıldığında aynı kırmızı bardak, aynı sarı kâğıt, aynı tepsi ve aynı çöp kutusu farklı arka plan, aydınlatma, kamera konumu ve örtülme ilişkileri altında görünür; kol ise ayrıca başka bir sürtünmeyle, başka bir algılayıcı gürültüsüyle ve başka bir eyleyici gecikmesiyle karşılaşır. Bu farklar yeterince büyükse, benzetimde öğrenilen hareketler gerçeklikte işe yaramayabilir.
+[^hermes-memory]: Nous Research, *Hermes Agent Documentation: Persistent Memory, Skills System, and Curator*, 2026. https://hermes-agent.nousresearch.com/docs/user-guide/features/memory ; https://hermes-agent.nousresearch.com/docs/user-guide/features/skills ; https://hermes-agent.nousresearch.com/docs/user-guide/features/curator
 
-> **Deney 9-11 ★★★: Aynı masa görevinde RGB ortamlar arası sınama**
->
-> Benzetim ortamında "nesneyi karşılık gelen hedefe taşıma" temel problemini kullanmayı sürdürün ve her örneği masa toplama sürecindeki yerel bir karar olarak görün: RGB görüntüden, nesneye hangi yönden yaklaşılması gerektiğine ya da artık kavranıp kavranamayacağına karar vermek. Yapısı aynı olan dört görsel politika eğitin: biri yalnızca sabit sahneleri görsün; biri arka planı değiştirsin; biri nesne görünümünü değiştirsin; sonuncusu ise arka planı, görünümü, aydınlatmayı ve gürültüyü aynı anda değiştirsin.
->
-> Tüm politikaları hem özgün ortamda hem de değiştirilmiş yeni ortamda sınayın ve görsel koşullar değişmeden önceki ve sonraki eylem kararı doğruluğunu karşılaştırın. Bu deneyin yanıtlamaya çalıştığı soru "benzetim artık gerçek XLeRobot ile aynı mı" değil, daha dar bir sorudur: eğitim sırasında sahne değişkenliğinin aralığını bilinçli olarak genişletmek, aynı bardak—tepsi ve kâğıt—çöp kutusu görevinin yeni bir kamera görüntüsüne uyum sağlamasına yardım eder mi? Sonuç iyileşse bile, gerçek makinede sahaya çıkmak yine de gerçek kamera kalibrasyonunu, eyleyici sınamalarını ve eksiksiz bir güvenlik kapalı çevrimini gerektirir.[^ch9-6]
+[^voyager-2023]: Wang, G., et al. *Voyager: An Open-Ended Embodied Agent with Large Language Models.* arXiv:2305.16291, 2023.
+
+[^weng-harness-2026]: Weng, Lilian. “Harness Engineering for Self-Improvement.” *Lil’Log*, 2026. https://lilianweng.github.io/posts/2026-07-04-harness/
+
+[^ace-2026]: Zhang, Qizheng, et al. *Agentic Context Engineering: Evolving Contexts for Self-Improving Language Models.* ICLR 2026. arXiv:2510.04618.
+
+[^mce-2026]: Ye, Haoran, et al. *Meta Context Engineering via Agentic Skill Evolution.* arXiv:2601.21557, 2026.
+
+[^aflow-2025]: Zhang, Jiayi, et al. *AFlow: Automating Agentic Workflow Generation.* ICLR 2025. arXiv:2410.10762.
+
+[^meta-harness-2026]: Lee, Yoonho, et al. *Meta-Harness: End-to-End Optimization of Model Harnesses.* arXiv:2603.28052, 2026.
+
+[^ahe-2026]: Lin, Jiahang, et al. *Agentic Harness Engineering: Observability-Driven Automatic Evolution of Coding-Agent Harnesses.* arXiv:2604.25850, 2026.
+
+[^self-harness-2026]: Zhang, Hangfan, et al. *Self-Harness: Harnesses That Improve Themselves.* arXiv:2606.09498, 2026.
+
+[^harness-benefit-2026]: Lin, Minhua, et al. *Harness Updating Is Not Harness Benefit: Disentangling Evolution Capabilities in Self-Evolving LLM Agents.* arXiv:2605.30621, 2026.
+
+[^llm-scientists-2026]: Trehan, Dhruv and Paras Chopra. *Why LLMs Aren't Scientists Yet: Lessons from Four Autonomous Research Attempts.* arXiv:2601.03315, 2026.
+
+[^scientistone-2026]: Meng, et al. *ScientistOne: Towards Human-Level Autonomous Research via Chain-of-Evidence.* arXiv:2605.26340, 2026.
 
 ## Bölüm Özeti
 
-Üç senaryo yüzeyde birbirinden çok farklı görünüyor, ama gecikme ve çok modluluk biçimindeki iki engel hepsinin peşini hiç bırakmıyor. Ses; seri boru hattından uçtan uca ve full-duplex mimarilere, birbirinden ayrı hızlı-yavaş düşünmeden "düşünürken konuşma"ya uzanan bir evrim yolunu şimdiden katetti. Computer Use'un OSWorld gibi benchmark'lardaki doğruluğu insan seviyesine yaklaştı, ama işlem adımlarının insandan belirgin biçimde fazla olması ve adım sürelerinin görev ilerledikçe sürekli artması biçimindeki verimlilik farkının sistematik bir çözümü hâlâ yok. Robotikte ise ağırlıklı olarak görsel geri bildirime dayanan manipülasyon görevlerinde darboğaz donanımdan VLA kontrol katmanının görevler arası genelleme yeteneğine kaydı (dokunsal algılama, becerikli eller vb. hâlâ aşılamamış donanım eksiklikleridir). Bir sonraki bölüm bakış açısını birden fazla Agent arasındaki iş birliğine çevirecek; orası bambaşka bir boyutun zorluğudur.
+Sürekli öğrenme, Agent'ın en önemli yeteneklerinden biri hâline geliyor; ama bugünün modelleri güvenilir bir sürekli öğrenmeyi kendi başlarına gerçekleştiremiyor. Çıkarım anındaki context uyarlaması kendiliğinden kalıcılaşmıyor; doğrulanmamış çevrimiçi parametre güncellemesi ise gürültüyü, saldırıları ve yetenek kaymasını büyütüyor. Bu nedenle bu aşamada daha uygulanabilir yol, modelin çevresinde doğrulanabilir bir öğrenme sistemi kurmaktır.
+
+Agent, öğrenme sinyalini ortamla etkileşiminden ve değerlendirmelerden alır; sonra yeteneğin temsil niteliğine göre bilgiyi, Prompt'u, Skill'i, programı veya model parametrelerini günceller. Sistem, bu artifact'ları yöneten ve üreten yöntemleri de bir adım öteye taşıyıp optimize edebilir; ama öncelikle nedeni bulunabilir, doğrulanabilir ve geri alınabilir yerel değişiklikler tercih edilmelidir.
+
+Sürekli evrim, çevrimiçi yürütmeyi çevrimdışı öğrenmeden ayırmayı gerektirir: çevrimiçi tarafta kanıt kaydedilir, çevrimdışı tarafta aday güncellemeler üretilip doğrulanır, sonra kademeli olarak yayımlanır, düzenlenir veya geri alınır. Bu döngü, sonucu otomatik olarak doğrulanabilen görevlerde en güvenilir biçimde çalışır; hedefi muğlak, geri bildirimi gecikmeli açık uçlu görevlerde ise problemin tanımlanmasına ve değerlendirme ölçütlerinin belirlenmesine insanın katılması gerekir.
 
 ## Düşünce Soruları
 
-1. ★★ Sesli Agent'ların uçtan uca modeli ASR-LLM-TTS zincirini tek bir modelde birleştirir; gecikmeyi düşürür ama modülerliği kaybeder. Uçtan uca model bir halkada (örneğin konuşma tanımada) hata yaparsa, hata ayıklamak ve düzeltmek seri boru hattına göre çok daha zordur. Uçtan uca bir sesli Agent'ın gözlemlenebilirlik (observability) sistemini nasıl tasarlardınız?
-2. ★ Step-Audio R1, MPS çift beyin mimarisiyle "düşünürken konuşma"yı gerçekleştiriyor. Ama insanlar "düşünürken konuşurken" sık sık iyi düşünülmemiş şeyler söyler, kendini düzeltir ya da dolgu sözcükleri kullanır. Agent'ın "düşünürken konuşması" insandaki bu özellikleri taklit etmeli mi?
-3. ★★ SoM (Set-of-Mark) ve onun yapısal türevi (DOM öğe indeksleme), Computer Use'un görsel konumlandırmasını açık uçlu koordinat tahmininden kapalı uçlu ID seçimine dönüştürür; ama her ikisi de önce arayüz öğelerinin tespit edilip işaretlenmesini gerektirir — ister segmentasyon modeliyle ister DOM'la olsun. Arayüzde standart dışı kontroller veya dinamik olarak değişen öğeler varsa, işaretleme eksik ya da hatalı olabilir. Bu durumda koordinat tahminine geri dönmeli mi?
-4. ★★ XLeRobot gibi birkaç yüz dolar seviyesindeki robot platformları teleoperasyon verisi toplamayı ucuzlattı. Ama teleoperasyon verisinin kalitesi büyük ölçüde operatörün becerisine bağlıdır. Deneyimsiz bir operatörün sağladığı veri, VLA modelinin eğitimini nasıl etkiler? Veri toplama aşamasında düşük kaliteli veriyi otomatik olarak nasıl elerdiniz?
-5. ★★★ Bu bölüm ses, Computer Use ve robotik olmak üzere üç etkileşim biçimini kapsadı. Bu üç biçimin ortak eğilimi, seri boru hattından uçtan uca modellere doğru evrilmek. Bu eğilim sürerse, beş yıl sonraki Agent etkileşim katmanı nasıl görünecek?
-6. ★★ DOM/Accessibility Tree öğe indekslemesi standart Web uygulamalarında belirgin sonuç veriyor, ama gitgide daha çok yazılım arayüzü (Canvas/WebGL render'ı, platformlar arası kendi çizen kontroller) erişilebilir yapısal bilgi sunmuyor ve geriye yalnızca görsel işaretleme ya da koordinat tahmini kalıyor. Sizce Computer Use saf görsel yola mı oynamalı, yoksa yapısal ve görsel iki yolu birden mi sürdürmeli? İki yolu birden sürdürmenin maliyeti ve getirisi nedir?
-7. ★★ VLA modelleri action chunking (eylem parçalama) kullanıyor — metinde anlatıldığı gibi, π₀'ın tipik yapılandırması 50 Hz frekansta 25-50 gelecek eylemi bir seferde üretmektir — ve böylece çıkarım gecikmesini yürütme süresinin içine saklıyor. Ama yürütme sırasında ortam ani biçimde değişirse (örneğin nesne yerinden alınırsa), önceden üretilmiş eylem dizisi geçersizleşir. Action chunking'in verimlilik avantajı ile ortam değişimlerine tepki hızı arasında dengeyi nasıl kurarsınız?
-8. ★★★ Bu bölümdeki üç senaryonun (ses, Computer Use, robotik) hepsi "algılama-düşünme-eylem" döngüsünün gecikme sorunuyla yüzleşiyor ve hepsi hızlı-yavaş düşünmenin paralelleştirilmesi yönünde evriliyor. Ses senaryosunda bu, "yanlış söylediysen sonra düzelt" biçiminde; Computer Use senaryosunda "önce tıkla sonra bak" biçiminde; robotik senaryosunda ise "bir adım at sonra bak" biçiminde ortaya çıkıyor. Hızlı düşünmeye dayanan bu eylemlerin geri döndürülemez sonuçlara yol açmamasını nasıl garanti edersiniz?
-[^ch9-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
-[^ch9-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。
-[^ch9-1]: XLeRobot, “Teleop belgeleri”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
-[^ch9-2]: Google DeepMind, “Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, “LLM Agent ile kontrol”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. XLeRobot'un üst kaynak örneği, modelin araç çağrılarıyla nasıl düzenlendiğini gösterir; bu bölüm aynı düzenleme ilkesini korur, ancak eylem araçlarını masa üzerinde kalibre edilmiş kavrama, yerleştirme, denetleme ve durdurma ilkelleriyle sınırlar.
-[^ch9-6]: LeRobot, “Sim2Real öğreticisi”. https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
-[^ch9-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246
+1. ★★ Bir deneyim dokümanı üç başarılı ve bir başarısız trajectory tarafından destekleniyor. Başarısızlık, API'nin daha yeni bir sürümünde gerçekleşmiş. Sistem bunun deneyimin çürütülmesi mi, yoksa uygulanabilirlik koşullarının değişmesi mi olduğuna nasıl karar vermelidir?
+2. ★★ Müşteri hizmetleri Agent'ının kullanıcı memnuniyeti yükseliyor, ama kural ihlali oranı da yükseliyor. Memnuniyet neden tek başına öğrenme sinyali olarak kullanılamaz? Guardrail metriklerini nasıl tasarlardınız?
+3. ★★★ Aynı "asılsız söz" sorunu Prompt ile, Harness denetimiyle veya parametre eğitimiyle hafifletilebilir. Değişikliğin nereye yapılacağını hangi kanıtlara dayanarak seçerdiniz?
+4. ★★★ Agent araçları ve doğrulayıcıları değiştirebilir, ama kendi güncellemesini onaylayan güven kökünü değiştirmemelidir. Bu iki parçanın yetki ve kod sınırlarını nasıl ayırırdınız?
+5. ★★ Deneyim bilgi tabanı sürekli büyüdükçe retrieval hataları ve bilgi çatışmaları öğrenme kazancını götürür. Sürüm, güncellik ve eleme mekanizmalarını nasıl tasarlarsınız?
+6. ★★★ Parametre öğrenmesi doğal dil üslubunda başarılıdır, ama katı iş kurallarını güvence altına alması zordur. Tıbbi müşteri hizmetleri için parametre, bilgi, Skill ve kod kısıtlarının birlikte çalıştığı bir sürekli evrim tasarımı yapın.

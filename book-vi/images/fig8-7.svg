@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 480" width="780" height="480" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="5" markerHeight="4" refX="5" refY="2" orient="auto"><polygon points="0 0, 5 2, 0 4" fill="#333333" /></marker><marker id="ah-light" markerWidth="5" markerHeight="4" refX="5" refY="2" orient="auto"><polygon points="0 0, 5 2, 0 4" fill="#999999" /></marker></defs>
+
+<rect x="20" y="55" width="350" height="310" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" />
+<text x="32" y="73" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">Q-learning Agent</text>
+<rect x="410" y="55" width="350" height="310" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" />
+<text x="422" y="73" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">LLM Agent（Kimi K2）</text>
+<rect x="35" y="85" width="320" height="48" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2" />
+<text x="195.0" y="109.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Trạng thái: Mã hóa băm 0x3A7F</text>
+<text x="195" y="123" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">room=2, items=[key], doors=[N]</text>
+<rect x="35" y="147" width="320" height="48" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="195.0" y="158.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.79" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Tra cứu bảng Q</text>
+<text x="195" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.2" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="195" dy="171.86">Trạng thái 145 × hành động 7 = các mục</tspan><tspan x="195" dy="12.1">nhập 1015</tspan></text>
+<line x1="195" y1="135" x2="195" y2="145" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<rect x="35" y="209" width="320" height="48" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="195.0" y="233.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">ε-sự lựa chọn tham lam</text>
+<text x="195" y="247" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">ε=0.1 → 90% tối ưu / 10% ngẫu nhiên</text>
+<line x1="195" y1="197" x2="195" y2="207" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<rect x="35" y="271" width="320" height="48" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2" />
+<text x="195.0" y="282.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.79" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Hành động: Số nguyên ID</text>
+<text x="195" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.2" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="195" dy="295.86">a=3 → "Di chuyển về phía bắc" (không hiểu</tspan><tspan x="195" dy="12.1">ngữ nghĩa)</tspan></text>
+<line x1="195" y1="259" x2="195" y2="269" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<rect x="425" y="85" width="320" height="48" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2" />
+<text x="585.0" y="96.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.79" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Trạng thái: Mô tả ngôn ngữ tự nhiên</text>
+<text x="585" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.2" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="585" dy="109.86">"Có chìa khóa đỏ trong phòng chứa đồ và</tspan><tspan x="585" dy="12.1">cửa phía bắc bị khóa"</tspan></text>
+<rect x="425" y="147" width="320" height="48" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="585.0" y="158.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.79" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Bộ đệm kinh nghiệm + lý luận LLM</text>
+<text x="585" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.2" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="585" dy="171.86">Lý do: "Cửa khóa → cần chìa khóa → lấy chìa</tspan><tspan x="585" dy="12.1">khóa"</tspan></text>
+<line x1="585" y1="135" x2="585" y2="145" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<rect x="425" y="209" width="320" height="48" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="585.0" y="220.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.79" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Lựa chọn hành động ngữ nghĩa</text>
+<text x="585" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.2" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="585" dy="233.86">Hiểu các mối quan hệ khái niệm và đưa ra</tspan><tspan x="585" dy="12.1">quyết định có mục đích</tspan></text>
+<line x1="585" y1="197" x2="585" y2="207" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<rect x="425" y="271" width="320" height="48" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2" />
+<text x="585.0" y="295.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Hành động: Hướng dẫn có cấu trúc</text>
+<text x="585" y="309" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">{"action":"pick_up","target":"red_key"}</text>
+<line x1="585" y1="259" x2="585" y2="269" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<rect x="30" y="382" width="720" height="105" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2" />
+<text x="390" y="404" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">So sánh hiệu suất</text>
+<text x="200" y="424" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">chỉ mục</text>
+<text x="380" y="424" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Q-learning</text>
+<text x="600" y="424" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM Agent</text>
+<text x="200" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Thanh toán bù trừ lần đầu</text>
+<text x="380" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">~7000 episodes</text>
+<text x="600" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Trò chơi 1 (bước 17)</text>
+<text x="200" y="460" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">tỷ lệ thắng cuối cùng</text>
+<text x="380" y="460" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">100% (sau 10K ep)</text>
+<text x="600" y="460" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">~90% (ngay lập tức)</text>
+<text x="200" y="478" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Tính chi phí</text>
+<text x="380" y="478" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">10 giây / 10K ep</text>
+<text x="600" y="478" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">1-2 phút/vòng</text>
+</svg>

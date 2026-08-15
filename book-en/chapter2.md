@@ -804,7 +804,7 @@ A common misconception needs clarification: “KV Cache-friendly” does not mea
 
 ### Relationship Between Skills and Tools
 
-From a context-management perspective, the Skills mechanism is highly KV Cache-friendly. If all specialized code-tool definitions were placed in the system prompt, their proliferation would consume many tokens and interfere with the model's attention. Under the Skill + generic executor model, however, the tool set remains small—as Chapter 5 shows, only seven core tools are required—and Skill content is loaded on demand through the progressive-disclosure mechanism described above, without affecting the cached prefix. Chapter 4 provides a detailed comparison and selection framework for these two forms, while Chapter 8 examines how an Agent undergoing continuous evolution decides whether an experience should be encoded as knowledge, instructions, a program, or model parameters.
+From a context-management perspective, the Skills mechanism is highly KV Cache-friendly. If all specialized code-tool definitions were placed in the system prompt, their proliferation would consume many tokens and interfere with the model's attention. Under the Skill + generic executor model, however, the tool set remains small—as Chapter 5 shows, only seven core tools are required—and Skill content is loaded on demand through the progressive-disclosure mechanism described above, without affecting the cached prefix. Chapter 4 provides a detailed comparison and selection framework for these two forms, while Chapter 9 examines how an Agent undergoing continuous evolution decides whether an experience should be encoded as knowledge, instructions, a program, or model parameters.
 
 > **Experiment 2-6 ★★: Generate a Presentation from a Paper Using Agent Skills**
 >
@@ -1066,7 +1066,7 @@ The experiment above demonstrates the performance differences among compression 
 
 ### Design Principles for Compression Strategies
 
-We have already analyzed the two motivations for compression—controlling length and improving reasoning quality—and the internal mechanism by which “in-context learning is essentially retrieval.” On that basis, we can distill four principles to guide the design of specific compression strategies. The compression discussed here serves the current task; when trajectories from multiple tasks must be consolidated offline into persistent experience, the problem becomes one of continuous evolution, as discussed in Chapter 8.
+We have already analyzed the two motivations for compression—controlling length and improving reasoning quality—and the internal mechanism by which “in-context learning is essentially retrieval.” On that basis, we can distill four principles to guide the design of specific compression strategies. The compression discussed here serves the current task; when trajectories from multiple tasks must be consolidated offline into persistent experience, the problem becomes one of continuous evolution, as discussed in Chapter 9.
 
 - **Non-Uniform Distribution of Information Value**: Key decision points, such as personnel lists, have greater value than supporting evidence, such as news details; supporting evidence, in turn, has greater value than redundant noise, such as navigation bars and footer ads.
 - **Semantic Integrity**: "Sutskever left OpenAI in May 2024" cannot be compressed to "Sutskever left"—the time and company name are critical, non-negotiable information.

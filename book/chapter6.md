@@ -396,11 +396,11 @@ on_final_transcript(text):
 
 > **实验 6-3 ★：构建传统语音 Agent**
 >
-> 本实验用 WebSocket 串起麦克风、Silero VAD、本地 Whisper、流式 LLM 和 Fish S1 TTS，建立后续方案的级联基线。保留的真实单轮证据证明媒体和模型链路确实跑通，但不把一次空载运行解释成并发或生产负载 benchmark。代码与验收记录见 [chapter9/live-audio](../chapter9/live-audio/)。
+> 本实验用 WebSocket 串起麦克风、Silero VAD、本地 Whisper、流式 LLM 和 Fish S1 TTS，建立后续方案的级联基线。保留的真实单轮证据证明媒体和模型链路确实跑通，但不把一次空载运行解释成并发或生产负载 benchmark。代码与验收记录见 [chapter6/live-audio](../chapter6/live-audio/)。
 
 > **附加项目：使用 WebRTC 构建“呼叫用户”的语音 Agent**
 >
-> 电话 Agent 不一定要接入 PSTN。浏览器 WebRTC 就能复现“主动建立会话、询问缺失信息、复述确认并保存结构化结果”的闭环；需要联系外部机构时，再把同一个工具契约替换为合规的 PSTN/SIP 供应商。完整媒体链路、直接/ReAct 对照和验收证据见 [chapter9/phone-agent](../chapter9/phone-agent/)。该项目保留原有 exp9-2 运行标识，但不再占用正文实验编号。
+> 电话 Agent 不一定要接入 PSTN。浏览器 WebRTC 就能复现“主动建立会话、询问缺失信息、复述确认并保存结构化结果”的闭环；需要联系外部机构时，再把同一个工具契约替换为合规的 PSTN/SIP 供应商。完整媒体链路、直接/ReAct 对照和验收证据见 [chapter6/phone-agent](../chapter6/phone-agent/)。该项目保留原有 exp9-2 运行标识，但不再占用正文实验编号。
 
 #### 从串行到流式感知
 
@@ -438,7 +438,7 @@ on_final_transcript(text):
 >
 > Qwen2-Audio 本身不是流式模型。本实验用递增音频前缀模拟连续感知，并与 600ms VAD + Whisper 对照。它演示完整上下文对停顿和噪声场景的影响，但每次都会重新编码此前音频，因此不能把结果当作真流式模型的延迟承诺。
 >
-> 当前 canonical run 通过全部执行与溯源门禁，但只复现了 2/6 项预期行为：递增前缀实测为 8.4–11.3 秒，pause 样本漏报 silence，noise 样本仍误报 cough/laughter。这个负结果说明实验适合检查机制和失败方式，不能支持“一二百毫秒真流式感知”的结论。完整记录见 [chapter9/streaming-speech](../chapter9/streaming-speech/)。
+> 当前 canonical run 通过全部执行与溯源门禁，但只复现了 2/6 项预期行为：递增前缀实测为 8.4–11.3 秒，pause 样本漏报 silence，noise 样本仍误报 cough/laughter。这个负结果说明实验适合检查机制和失败方式，不能支持“一二百毫秒真流式感知”的结论。完整记录见 [chapter6/streaming-speech](../chapter6/streaming-speech/)。
 
 ### 范式二 · 端到端全模态模型（Omni）
 
@@ -468,7 +468,7 @@ Omni 仍然假设轮流说话，通常要靠 VAD 或语义端点划分发言权�
 > | 副语言语速（2 条） | 2/2 | 1/2 | 纯文本转录抹掉了快慢差异 |
 > | 合计 | 3/4 | 3/4 | 总分相同，失败位置互补 |
 >
-> 样本很小，不能据此声称哪条路径整体更准确或更快。完整硬件、版本、原始输出和真实 audio-to-audio 证据见 [chapter9/end-to-end-speech](../chapter9/end-to-end-speech/)。
+> 样本很小，不能据此声称哪条路径整体更准确或更快。完整硬件、版本、原始输出和真实 audio-to-audio 证据见 [chapter6/end-to-end-speech](../chapter6/end-to-end-speech/)。
 
 Step-Audio 2 展示了直接处理原始音频、同时输出文本和语音的端到端路线；它关注语义之外的情绪、语速、语调和环境声。Step-Audio R1 在此基础上进一步把思考能力内化到音频模型中，后文把它作为“边想边说”的案例。
 
@@ -532,7 +532,7 @@ MPS 让构思脑持续产出思考片段，表达脑收到片段后结合已有�
 >
 > 使用 Fish Audio S1 构建多参考语音库，比较无控制标记、单一参考音和多参考音三种配置。执行层根据标记选择匹配的情绪、语速和风格。
 >
-> 多参考语音配置在三次位置平衡的音频盲评中获得最高分，真人客服感为 4.67/5；但预设的全部排序没有完全复现，因为无控制标记组高于单一参考音组。这个结果说明表达控制有帮助，却不能把一次小规模听感实验当作普遍的音质结论。完整的 24 条参考音频、A/B/C 媒体和验收记录见 [chapter9/controllable-tts](../chapter9/controllable-tts/)。
+> 多参考语音配置在三次位置平衡的音频盲评中获得最高分，真人客服感为 4.67/5；但预设的全部排序没有完全复现，因为无控制标记组高于单一参考音组。这个结果说明表达控制有帮助，却不能把一次小规模听感实验当作普遍的音质结论。完整的 24 条参考音频、A/B/C 媒体和验收记录见 [chapter6/controllable-tts](../chapter6/controllable-tts/)。
 
 ## Computer Use：GUI 自动化 Agent
 
@@ -589,7 +589,7 @@ Anthropic 的参考实现把完整交互能力分成三类工具（图6-13）。
 >
 > 路径 A 使用 Anthropic Computer Use Demo：容器打包完整的 Ubuntu 桌面环境（含浏览器、终端等常用工具），前端接收任务，后端把指令与截图发送给 Claude，再执行模型返回的鼠标、键盘、终端或编辑动作。这条路径用于理解原生 `computer` 工具协议，不要求所有读者拥有 Anthropic API。
 >
-> 路径 B 使用本书的 [`chapter9/computer-use-open-model`](../chapter9/computer-use-open-model/) companion：默认以开放权重的 Qwen3-VL 32B Instruct 驱动 browser-use，可通过 OpenRouter 托管 API，也可把 `OPEN_MODEL_BASE_URL` 指向自托管 vLLM/SGLang 或其他兼容端点。端点必须接收截图，并支持原生 JSON Schema；若只支持普通 JSON，可显式启用 schema-in-prompt 兼容模式。
+> 路径 B 使用本书的 [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/) companion：默认以开放权重的 Qwen3-VL 32B Instruct 驱动 browser-use，可通过 OpenRouter 托管 API，也可把 `OPEN_MODEL_BASE_URL` 指向自托管 vLLM/SGLang 或其他兼容端点。端点必须接收截图，并支持原生 JSON Schema；若只支持普通 JSON，可显式启用 schema-in-prompt 兼容模式。
 >
 > 两条路径使用同一只读任务和同一验收契约：最多 25 步，每步只执行一个动作，保留模型/端点身份、原始提供商响应、逐步截图、动作序列、最终答案和停止原因。模型不同就必须作为不同实验臂分别报告，不能把开放模型的结果冒充 Claude 复现，也不能把“容器启动成功”当成任务完成。动作间隔和规划质量是实测结果，不预设为 2–5 秒或必然优于其他模型。
 >

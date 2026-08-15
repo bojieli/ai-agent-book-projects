@@ -1,61 +1,53 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 480" width="780" height="480" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
-<style>text { font-family: Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif !important; }</style>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 380" width="1000" height="380" style="background:#ffffff">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 Z" fill="#33434d"/></marker>
+    <style>
+      .t{font-family:Arial,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic','PingFang SC','Microsoft YaHei',sans-serif;fill:#26343c}
+      .h{font-size:19px;font-weight:700}
+      .s{font-size:15px;fill:#52636d}
+      .note{font-size:14px;fill:#52636d}
+      .box{fill:#f5f7f8;stroke:#33434d;stroke-width:2}
+      .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
+      .line{fill:none;stroke:#33434d;stroke-width:2;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <text x="500" y="30" text-anchor="middle" class="t h">경험의 지식화: 원시 궤적은 증거이며 지식 문서가 재사용 단위입니다</text>
 
-<rect x="32" y="58" width="170" height="195" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="117" y="80" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">OpenAI Realtime</text>
-<rect x="42" y="94" width="150" height="24" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="117" y="106" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">gpt-realtime</text>
-<text x="117" y="136" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">서버 측 VAD + 턴 감지</text>
-<text x="117" y="158" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">비동기 함수 호출</text>
-<text x="117" y="180" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">끼어들기: 현재 생성 중단</text>
-<text x="117" y="200" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">본질은 여전히 VAD 프레임워크</text>
-<text x="117" y="222" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#999999" text-anchor="middle" dominant-baseline="central" font-weight="normal">2024 프리뷰 · GPT-4o 기반</text>
-<rect x="214" y="58" width="170" height="195" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="299" y="80" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Gemini Live</text>
-<rect x="224" y="94" width="150" height="24" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="299" y="106" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Gemini 2.0</text>
-<text x="299" y="136" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">VAD 민감도 설정 가능</text>
-<text x="299" y="158" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">끼어들어도 전송 정보 유지</text>
-<text x="299" y="180" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">대화 일관성 최적화</text>
-<text x="299" y="202" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">OpenAI와 유사한 전략</text>
-<rect x="396" y="58" width="170" height="195" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="481" y="80" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Qwen3-Omni</text>
-<rect x="406" y="94" width="150" height="24" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="481" y="106" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Thinker-Talker MoE</text>
-<text x="481" y="136" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">사고(이해) + 표현(생성)</text>
-<text x="481" y="158" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">다중 코드북 음성 인코딩</text>
-<text x="481" y="180" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">첫 패킷 지연 234ms</text>
-<text x="481" y="202" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">36개 중 22개 SOTA</text>
-<rect x="578" y="58" width="170" height="195" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="663" y="80" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Step-Audio 2</text>
-<rect x="588" y="94" width="150" height="24" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="663" y="106" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">잠재 오디오 인코딩 + RL</text>
-<text x="663" y="136" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">종단 간 음성 토큰</text>
-<text x="663" y="158" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">준언어 이해 83.09%</text>
-<text x="663" y="180" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">CoT 사고 + RAG + 도구</text>
-<text x="663" y="202" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Qwen2.5-Omni(44.18%)를 능가</text>
-<rect x="40" y="273" width="700" height="100" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="390" y="295" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">대부분 해법의 공통 한계: 여전히 턴 감지 메커니즘에 의존</text>
-<text x="180" y="321" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">턴 감지의 한계</text>
-<text x="180" y="341" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">사용자 멈춤 ≠ 발화 종료</text>
-<text x="180" y="357" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">망설일 때 능동적 유도 필요</text>
-<text x="400" y="321" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">단순한 끼어들기 판단</text>
-<text x="400" y="341" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;음&quot;, &quot;네&quot;는 맞장구 ≠ 끼어들기</text>
-<text x="400" y="357" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">배경 소음을 발화로 오인</text>
-<text x="620" y="321" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">근본 원인</text>
-<text x="620" y="341" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">VAD는 음향 신호 기반</text>
-<text x="620" y="357" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">의미 수준 정보 포착 불가</text>
-<rect x="40" y="388" width="700" height="120" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="390" y="408" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">입력/출력 아키텍처 비교</text>
-<text x="60" y="430" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">기존 직렬형</text>
-<text x="210" y="430" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">오디오→VAD→ASR→텍스트→LLM→텍스트→TTS→오디오</text>
-<text x="60" y="445" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">OpenAI/Gemini</text>
-<text x="210" y="445" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">오디오→종단 간 모델(VAD 내장)→오디오/텍스트</text>
-<text x="60" y="460" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Qwen3-Omni</text>
-<text x="210" y="460" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">오디오/이미지/동영상→Thinker(MoE)→Talker→음성 코덱</text>
-<text x="60" y="475" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Step-Audio 2</text>
-<text x="210" y="475" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">원본 오디오→잠재 인코더→LLM+RL→오디오+텍스트 토큰</text>
-<text x="60" y="491" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">전이중 Moshi</text>
-<text x="210" y="491" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">병렬 이중 오디오 스트림 + 내적 독백 텍스트 스트림 → VAD / 턴 감지 불필요</text>
+  <rect x="22" y="78" width="168" height="96" rx="8" class="box"/>
+  <text x="106" y="111" text-anchor="middle" class="t h">원시 궤적</text>
+  <text x="106" y="139" text-anchor="middle" class="t s">행동·결과·환경</text>
+  <text x="106" y="160" text-anchor="middle" class="t s">변경 불가 증거</text>
+
+  <rect x="215" y="78" width="168" height="96" rx="8" class="box"/>
+  <text x="299" y="111" text-anchor="middle" class="t h">단일 평가</text>
+  <text x="299" y="139" text-anchor="middle" class="t s">성공·실패·태그</text>
+  <text x="299" y="160" text-anchor="middle" class="t s">증거 위치 보존</text>
+
+  <rect x="408" y="63" width="184" height="126" rx="8" class="accent"/>
+  <text x="500" y="97" text-anchor="middle" class="t h">궤적 간 비교</text>
+  <text x="500" y="128" text-anchor="middle" class="t s">동종 업무 집계</text>
+  <text x="500" y="151" text-anchor="middle" class="t s">성공·실패 대조</text>
+  <text x="500" y="174" text-anchor="middle" class="t s">공통점·경계 추출</text>
+
+  <rect x="617" y="63" width="184" height="126" rx="8" class="accent"/>
+  <text x="709" y="97" text-anchor="middle" class="t h">Markdown 문서</text>
+  <text x="709" y="128" text-anchor="middle" class="t s">적용 상황·전략</text>
+  <text x="709" y="151" text-anchor="middle" class="t s">예외·금지 영역·출처</text>
+  <text x="709" y="174" text-anchor="middle" class="t s">버전·검증 시각</text>
+
+  <rect x="826" y="78" width="152" height="96" rx="8" class="box"/>
+  <text x="902" y="111" text-anchor="middle" class="t h">검색 적용</text>
+  <text x="902" y="139" text-anchor="middle" class="t s">새 업무에 필요시 로드</text>
+  <text x="902" y="160" text-anchor="middle" class="t s">계속 피드백 생성</text>
+
+  <path d="M190 126 H213" class="line"/>
+  <path d="M383 126 H406" class="line"/>
+  <path d="M592 126 H615" class="line"/>
+  <path d="M801 126 H824" class="line"/>
+
+  <path d="M902 174 V244 H500 V191" class="line" stroke-dasharray="7 5"/>
+  <text x="700" y="270" text-anchor="middle" class="t s">새 증거로 기존 지식을 수정·한정·폐기합니다</text>
+
+  <rect x="215" y="302" width="586" height="48" rx="8" fill="#fafbfb" stroke="#9aa8af"/>
+  <text x="508" y="332" text-anchor="middle" class="t note">3장과 추출·검색 인프라를 공유하고, 이 장에서는 궤적 평가·행동 개선 루프를 추가합니다</text>
 </svg>

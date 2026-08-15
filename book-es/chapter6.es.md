@@ -1,844 +1,829 @@
-# Evaluación de Agentes
+# Interacción: la expansión de los espacios de observación y de acción
 
-Al construir un sistema de Agentes, los desarrolladores se enfrentan a una gran cantidad de decisiones de diseño que a menudo carecen de respuestas correctas obvias:
+El capítulo 1 planteaba una tesis: cuando el modelo subyacente está fijo, la principal palanca de ingeniería de sistemas para mejorar el desempeño de un Agente suele ser redefinir o ampliar su **espacio de observación** y su **espacio de acción**. Los capítulos 2 a 5 han venido cumpliendo esa promesa: la ingeniería de contexto decide qué entra en la observación, la memoria y las bases de conocimiento la extienden más allá de una sesión, las herramientas definen lo que el Agente puede hacer y la generación de código le permite crear acciones nuevas por sí mismo.
 
-- ¿Qué modelo utilizar?
-- ¿A qué herramientas debe poder llamar el modelo?
-- ¿Qué datos debe almacenar la base de conocimiento y con qué estructura debe construirse?
-- ¿Cómo debe gestionarse la memoria del usuario?
-- ¿Cómo deben organizarse los prompts y las Skills del modelo?
-- ¿Qué restricciones se deben añadir al Harness?
-- ¿Cómo transformar los resultados de la evaluación en señales de aprendizaje para la evolución continua del Agente?
+Pero todas esas ampliaciones ocurrieron bajo una misma premisa: **el Agente y el mundo hablan por turnos**. El usuario termina una frase, el Agente piensa un rato, llama a unas cuantas herramientas y responde; mientras piensa, se da por supuesto que el mundo permanece quieto. La premisa es tan natural que rara vez llega a escribirse como un supuesto.
 
-La evaluación nos proporciona una base científica para la toma de decisiones: a través de experimentos comparativos sistemáticos (cambiar una variable a la vez y observar el cambio en el efecto) y experimentos de ablación (desactivar un componente a la vez y observar el cambio en el rendimiento general para juzgar la contribución real de dicho componente), distinguiendo las verdaderas mejoras de capacidad de las fluctuaciones superficiales, evitando "ahorrar en minucias y perder en lo importante". Como se dice en la ingeniería de software: "lo que no se mide, no se puede mejorar". Sin establecer un sistema de evaluación repetible, la dirección de iteración del Agente solo puede depender de la intuición.
+Lo que este capítulo retira es precisamente esa premisa.
 
-Desde la perspectiva de ingeniería del Harness introducida en el Capítulo 1, la evaluación desempeña el papel central de "verificación" dentro del Harness. Una noción fundamental es: **el objeto de evaluación no debe ser únicamente el modelo, sino la combinación del modelo y el Harness**. Un mismo modelo puede tener un rendimiento drásticamente diferente en distintos Harnesses (algunos equipos han logrado mejorar significativamente el rendimiento del mismo modelo en tareas de terminal optimizando únicamente el Harness, como se detalla en el Capítulo 5). Esto significa que cuando un Agente funciona mal en una evaluación, la dirección de mejora podría no ser cambiar de modelo, sino optimizar un componente específico del Harness (prompts, diseño de herramientas, bucles de retroalimentación). Un sistema de evaluación maduro debe ser capaz de distinguir entre dos tipos de problemas fundamentalmente diferentes: "capacidad insuficiente del modelo" y "defectos de diseño del Harness". **El método habitual para distinguir ambos problemas es el experimento de reemplazo de modelo (model swap)**: fijar el Harness y cambiar únicamente a un modelo más fuerte o más débil, observando la magnitud del cambio en la puntuación. Si al cambiar a un modelo más fuerte la puntuación no sube, el cuello de botella está en el Harness; si al cambiar a un modelo más débil la puntuación cae drásticamente y fluctúa según la capacidad del modelo, la interpretación más directa es que el cuello de botella es la capacidad propia del modelo y el rendimiento actual está determinado principalmente por él (en cuanto a si esto se debe a que la tarea en sí es difícil o a que el Harness depende en exceso de las a priori del modelo, se requiere un análisis posterior). Nótese que esto es diferente de los "experimentos de ablación" mencionados anteriormente: la ablación consiste en **desactivar un componente del Harness** para ver cómo cambia el rendimiento general, mientras que el reemplazo de modelo consiste en **fijar el Harness y cambiar solo el modelo**: la primera técnica ubica qué componente interno del Harness es importante, mientras que la segunda distingue si el cuello de botella está en el modelo o en el Harness.
+## Dos ejes: modalidad y momento
 
-El valor del sistema de evaluación se vuelve aún más evidente en una era de rápida evolución de los modelos. La capacidad de los modelos continúa evolucionando rápidamente, pero que un nuevo modelo obtenga mejores puntuaciones en benchmarks públicos no significa que vaya a funcionar mejor en tu tarea específica; de hecho, puede sufrir regresiones de rendimiento —es decir, que la nueva versión sea peor en ciertos aspectos que la versión anterior). Solo probando exhaustivamente en tu propio conjunto de datos de evaluación podrás tomar decisiones de actualización impulsadas por datos. Más aún, un sistema de evaluación completo hace que "desarrollar productos para los modelos del futuro" sea una estrategia viable: incluso si el modelo actual no es suficiente para sustentar el uso comercial, se puede completar primero el desarrollo del producto y establecer un conjunto de datos de evaluación, rastreando continuamente el rendimiento de los nuevos modelos para salir al mercado tan pronto como se alcance el umbral.
+Si se despliegan el espacio de observación y el de acción, se ve que cada uno admite dos direcciones de expansión.
 
-> **Guía del Capítulo**
->
-> Este capítulo construye un sistema de evaluación completo en tres niveles. El primer nivel es el **entorno de evaluación** ("dónde probar"): cómo construir un entorno de pruebas automatizado y reproducible, incluyendo tanto el paradigma de llamada a herramientas como el de interacción humano-computadora. El segundo nivel abarca los **métodos de evaluación** ("cómo juzgar"): desde los principios de diseño de conjuntos de datos y la arquitectura de métricas (qué medir), pasando por la evaluación automatizada mediante LLM-as-a-Judge (utilizando modelos de lenguaje como jueces), hasta la comparación por pares y el ranking de modelos. El tercer nivel es la **toma de decisiones impulsada por la evaluación** ("qué hacer tras medir"): transformar los resultados de evaluación en guías de acción para la selección de modelos, la optimización de arquitectura y la iteración continua, utilizando la significatividad estadística para determinar si las diferencias observadas son reales y confiables. Además, este capítulo analiza la observabilidad y la infraestructura interna de evaluación para Agentes en producción, concluyendo con la presentación de entornos de simulación que conectan con el post-entrenamiento del Capítulo 7.
->
-> El concepto central a lo largo de todo el capítulo es: **el valor primario de un sistema de evaluación no es calificar al sistema actual, sino permitirte seguir el ritmo de la evolución de los modelos de forma rápida y confiable**. Cuando se lanza un modelo más potente o más económico, un equipo con un sistema de evaluación completo puede tomar decisiones de migración en cuestión de horas, mientras que un equipo sin evaluación solo puede actuar por intuición o esperar el feedback de la comunidad (en el competitivo mercado de los Agentes, esta brecha de velocidad puede determinar el éxito o el fracaso).
+- La **modalidad** decide la **forma** de la observación y de la acción: si el Agente solo lee texto o también puede oír sonido, ver la pantalla y percibir par de fuerza; si solo emite tokens o también habla, hace clic y acciona articulaciones.
+- El **momento** decide el **ritmo** de la observación y de la acción: si el Agente va a buscar la observación o es el mundo quien la empuja; si la acción debe completarse dentro de un turno o puede atravesar varios, ser interrumpida a mitad de camino y ser desalojada por algo más urgente.
 
-![Figura 6-1 Tres Niveles del Sistema de Evaluación](images/fig6-1.svg)
+Los capítulos anteriores ampliaron el **contenido** de esos dos espacios; este capítulo amplía su **modalidad** y su **momento**:
 
-## Un Ejemplo Concreto de Evaluación
+| | Expansión del espacio de observación | Expansión del espacio de acción |
+|---|---|---|
+| **Contenido** (capítulos 2–5) | Ingeniería de contexto, memoria y bases de conocimiento | Herramientas, generación de código |
+| **Modalidad** (este capítulo) | Voz, pantalla, sensores físicos | Hablar, hacer clic, mover articulaciones |
+| **Momento** (este capítulo) | El mundo empuja, flujos continuos | A través de turnos, interrumpible, desalojable |
 
-Antes de profundizar en la metodología, construyamos intuición a través de un ejemplo completo. Supongamos que hemos construido un Agente de atención al cliente y necesitamos evaluar su capacidad para manejar solicitudes de reembolso.
+La tesis central del capítulo cabe en una frase: **el turno es un supuesto que deja el entrenamiento, no una propiedad del entorno.**
 
-**Caso de prueba**: El usuario solicita devolver un pedido realizado hace 3 días (número de pedido #12345, monto ¥299). Política de la empresa: reembolso completo dentro de los 7 días.
+El corpus de entrenamiento de un modelo es casi por completo por turnos: a la pregunta le sigue la respuesta, a la llamada de herramienta le sigue su resultado, uno termina de hablar antes de que el otro empiece. Por eso la política que aprende el modelo da por hecho que el mundo lo esperará. El entorno real no espera: llega un correo mientras piensa, el usuario interrumpe a mitad de frase, la página ya cambió entre dos capturas, la taza se vuelca mientras el brazo se acerca. **Las cuatro secciones de este capítulo son ese supuesto relajándose, una escala temporal a la vez.**
 
-**Trayectoria del Agente**:
+Veamos primero dónde se sitúan:
 
-```text
-Usuario: Quiero devolver los auriculares que compré hace 3 días, número de pedido 12345. (Hoy es 2026-04-10)
-
-Agente (pensando): El usuario quiere solicitar un reembolso, primero debo consultar la información del pedido.
-Agente → Llama a la herramienta query_order(order_id="12345")
-Herramienta devuelve: {status: "delivered", amount: 299, date: "2026-04-07", item: "Auriculares Bluetooth"}
-
-Agente (pensando): La fecha de pedido es 2026-04-07, a 2026-04-10 han pasado 3 días, dentro del plazo de reembolso de 7 días, cumple las condiciones para reembolso completo.
-Agente → Llama a la herramienta process_refund(order_id="12345", amount=299)
-Herramienta devuelve: {refund_id: "R-98765", status: "processing", eta: "3-5 días hábiles"}
-
-Agente: Se ha iniciado la solicitud de reembolso para el pedido #12345 (Auriculares Bluetooth, ¥299). El reembolso completo está en proceso y se estima que llegará en 3 a 5 días hábiles. El número de seguimiento del reembolso es R-98765, el cual puede utilizar para consultar el estado.
-```
-
-**Puntuación con Rúbrica** (cuatro dimensiones, de 1 a 4 puntos por dimensión). La Tabla 6-1 muestra un ejemplo de puntuación para esta tarea de reembolso de atención al cliente, ilustrando cómo una Rúbrica desglosa una trayectoria de Agente en dimensiones evaluables.
-
-Tabla 6-1 Ejemplo de Puntuación con Rúbrica para Tarea de Reembolso de Atención al Cliente
-
-| Dimensión | Criterio | Puntuación | Razón |
-|--------------------|-----------------------------------|---------|-------------------------------|
-| Corrección operativa | ¿El monto del reembolso y el número de pedido son correctos? | 4 | Consultó e inició correctamente el reembolso completo de ¥299 |
-| Cumplimiento de políticas | ¿Respeta la política de reembolso de 7 días? | 4 | El pedido está dentro del plazo de reembolso, cumple la política |
-| Completitud de la información | ¿Informa del monto, tiempo de acreditación y número de reembolso? | 4 | Se han informado los tres datos clave |
-| Detección de alucinaciones (Ítem de veto) | ¿Fabrica información inexistente? | Aprobado | Toda la información proviene de los resultados de las herramientas |
-
-La alucinación se clasifica como un **ítem de veto** en lugar de una dimensión de puntuación graduada porque es ortogonal a la calidad: una respuesta fluida, detallada y educada que contenga hechos falsos causa mucho más daño al usuario que una respuesta breve pero precisa. (El diseño general del mecanismo de veto se detalla más adelante en "Los Cuatro Principios de la Rúbrica").
-
-Este caso de prueba se ha aprobado. Sin embargo, una buena evaluación no solo prueba escenarios de éxito, sino que debe poner a prueba los límites y las trampas: cuando un usuario quiere devolver un pedido de hace 15 días (fuera del plazo de reembolso), ¿puede el Agente rechazarlo correctamente? Cuando el usuario afirma que "el servicio de atención al cliente ya aprobó el reembolso", ¿confiará a ciegas el Agente sin registros en el sistema? Estos escenarios límite son la clave para distinguir entre niveles altos y bajos de capacidad en los Agentes.
-
-El flujo anterior (definir el caso de prueba, ejecutar el Agente, puntuar con Rúbrica y analizar los resultados) constituye la estructura básica de la evaluación. A continuación, este capítulo desplegará gradualmente los métodos de diseño para cada una de sus etapas.
-
-## Sistema de métricas de evaluación: nuevos criterios
-
-Antes de construir el entorno o el dataset hay que definir qué significa «éxito»: ¿basta con encontrar un camino viable una vez o cada ejecución debe ser correcta? Las dos respuestas producen decisiones de ingeniería distintas.
-
-### Maravilla técnica: el techo de capacidad con Pass@k
-
-Muchos modelos y Agents se encuentran en una fase de **maravilla técnica**: tras muchos intentos, tiempo suficiente y selección humana, una sola trayectoria excepcional demuestra que la tarea es posible. Esa es la lógica de **Pass@k**: ejecutar la misma tarea $k$ veces y aprobar si al menos una ejecución pasa; con puntuaciones continuas se conserva la mejor como **Best@k**. Los ejemplos de Agents de larga duración de Anthropic, Manus y OpenClaw ilustran este techo de capacidad: descubrimiento científico, búsqueda de vulnerabilidades y creación abierta pueden beneficiarse de escoger la mejor de $k$ trayectorias.
-
-### Fiabilidad empresarial: Pass^k
-
-Los sistemas de negocio suelen exigir lo contrario: ningún error durante intentos repetidos. **Pass^k** (léase «Pass consecutive k») exige que las $k$ ejecuciones consecutivas pasen y que ninguna active un veto de seguridad, cumplimiento o alucinación. Si la tasa de éxito de una ejecución es $p$, entonces
-
-$$
-\mathrm{Pass@k}=1-(1-p)^k,\qquad
-\mathrm{Pass}^{k}=p^k.
-$$
-
-Con $p=0.6$ y $k=5$, Pass@5 es aproximadamente 99,0 %, mientras que Pass consecutive@5 es 7,8 %. El primer valor mide el techo exploratorio y el segundo se acerca a la fiabilidad necesaria para pagos, reembolsos, cambios de permisos y despliegues. El informe debe aclarar si $k$ son muestras independientes o tareas consecutivas de producción; las acciones con efectos secundarios deben probarse en un sandbox o entorno reversible y cada fallo cuenta.
-
-### Del proceso de caja negra a caja blanca
-
-No basta el resultado final. La tasa de acciones válidas y autorizadas, la corrección semántica de las llamadas a herramientas, la eficiencia de la ruta (pasos, acciones redundantes y retrocesos), la cobertura de recuperación y el coste/latencia revelan dónde falla el Agent.
-
-### Seguridad, robustez y cobertura doble
-
-Las operaciones sensibles, la fuga de datos y el contenido prohibido siguen un principio de **tolerancia cero**: una infracción grave invalida la evaluación. La robustez cubre sensibilidad a semillas, cambios de interfaz, fallos temporales de API e interferencia de memoria obsoleta. Hay que evaluar tanto la **trayectoria** (lo que el Agent dijo e hizo) como el **resultado final** (el estado real del sistema); afirmar «reserva completada» no prueba que exista una reserva.
-
-### Muestreo humano y revisión adversarial
-
-Hay que revisar periódicamente éxitos, fallos y puntuaciones límite. Antes de usar jueces LLM a escala, calibra su acuerdo con un conjunto dorado humano de 100–200 casos (por ejemplo, kappa de Cohen > 0,7) y recalibra al cambiar el juez o la Rubric. El red teaming debe buscar errores ocultos, respuestas que hacen trampa con palabras clave y ataques contra los sesgos del juez; los desacuerdos graves entre varios jueces pasan a revisión humana.
-
-## Entornos de Evaluación Automatizados
-
-La evaluación de Agentes requiere un entorno automatizado y ejecutable de forma repetible para evaluar rápidamente el impacto de las modificaciones durante la fase de desarrollo. Construir dicho entorno requiere responder a tres preguntas: qué evaluar (definición de tareas y criterios de verificación), contra quién evaluar (cómo simular los objetos con los que interactúa el Agente) y qué criterios utilizar para puntuar.
-
-### Componentes Básicos de un Entorno de Evaluación
-
-Un entorno de evaluación consta de cinco elementos (las secciones posteriores profundizarán especialmente en el diseño de datasets y criterios de puntuación):
-
-**Conjunto de datos (Dataset)**: Define el conjunto de tareas, incluyendo el estado inicial, la descripción del objetivo y soluciones de referencia opcionales.
-
-**Estado del entorno (Environment State)**: Mantiene la información mutable durante la ejecución de la tarea, necesitando encontrar un equilibrio entre realismo y controlabilidad. Por ejemplo, en la evaluación de atención al cliente, el estado del entorno incluye los registros de pedidos en la base de datos y el saldo de la cuenta del usuario. Tras llamar el Agente a `process_refund`, el estado del pedido cambia de `"delivered"` a `"refunded"` y el saldo se incrementa; estos son "información mutable". El "realismo" requiere que los cambios de estado sigan la lógica de negocio (el reembolso no supera el monto del pedido), mientras que la "controlabilidad" exige que cada prueba se pueda restablecer al mismo estado inicial.
-
-**Interfaz de herramientas (Tools)**: Define el conjunto de operaciones ejecutables por el Agente. Las herramientas no deben proporcionar abstracciones de demasiado alto nivel (como "resolver el problema del usuario"), sino operaciones atómicas (como consultar pedidos, modificar reservas, enviar correos), obligando al Agente a combinar estas operaciones mediante planificación y razonamiento.
-
-**Criterios de puntuación (Rubric, pautas de evaluación)**: Cuantifican el rendimiento del Agente, pudiendo ser binarios (aprobado/no aprobado), continuos (de 0 a 100 puntos) o multidimensionales (puntuando por separado precisión, eficiencia y seguridad).
-
-**Protocolo de interacción (Interaction Protocol)**: Establece el modo de interacción y las condiciones de terminación.
-
-**Bucle de evaluación reproducible:**
-
-```python
-for task in dataset:
-    environment.reset(task.initial_state)
-    trajectory = agent.run(task.prompt, environment.tools)
-    outcome = environment.snapshot()
-    score = verifier(task, trajectory, outcome)
-    record(task, trajectory, outcome, score)
-```
-
-![Figura 6-2 Entornos de Evaluación de Llamada a Herramientas e Interacción Humano-Computadora](images/fig6-2.svg)
-
-### Entornos de Evaluación Basados en Llamadas a Herramientas
-
-Para tareas que dependen principalmente del uso de herramientas, como la generación de código y el análisis de datos, el framework Verifiers ilustra un patrón de diseño típico. El Agente completa la tarea llamando a herramientas predefinidas, y la verificación se basa en criterios ejecutables (si pasan las pruebas o si la respuesta coincide), sin depender de anotaciones humanas ni evaluaciones de modelos.
-
-Verifiers introduce un diseño de entornos jerárquico: `SingleTurnEnv` es adecuado para tareas de un solo turno (como preguntas y respuestas simples); `ToolEnv` admite un bucle autónomo de llamadas a herramientas multiturno; `StatefulToolEnv` y `SandboxEnv` admiten herramientas con estado y entornos sandbox de larga ejecución (como la ejecución de código). Por ejemplo, `SingleTurnEnv` se aplica a verificar directamente la respuesta tras plantear un problema matemático; `ToolEnv` se aplica a responder tras buscar en múltiples páginas web y sintetizar información; `StatefulToolEnv` se aplica a verificar cambios de estado en la base de datos tras modificar registros; y `SandboxEnv` se aplica a comprobar archivos de salida tras ejecutar código en un sandbox. La Tabla 6-2 resume estos tipos de entornos para facilitar la elección del entorno adecuado según el estado de la tarea, las llamadas a herramientas y los requisitos de aislamiento.
-
-Tabla 6-2 Comparación de Tipos de Entornos en Verifiers
-
-| Tipo de entorno | Mantenimiento de estado | Llamada a herramientas | Caso de uso típico |
+| Escala | Escenario | Cambio del lado de la observación | Cambio del lado de la acción |
 |---|---|---|---|
-| SingleTurnEnv | Ninguno | Ninguno | Preguntas y respuestas de un solo turno, problemas matemáticos |
-| ToolEnv | Ninguno | Multiturno | Búsqueda y síntesis de información |
-| StatefulToolEnv | Sí | Multiturno | Modificación de registros en base de datos |
-| SandboxEnv | Sí + Aislamiento | Multiturno | Ejecución y prueba de código |
+| Segundos — días | Asincronía y orientación a eventos | El mundo despierta al Agente (correo, temporizadores, callbacks) | La acción atraviesa turnos: se inicia ahora y se cierra después con un evento |
+| 10 ms — 1 s | Voz | Escuchar mientras se habla, sin esperar a que termine la frase | Pensar mientras se habla, interrumpible y rectificable a mitad |
+| Subsegundo — segundos | Computer Use | La pantalla cambia continuamente entre fotogramas | Tras actuar hay que reconfirmar que la realidad sigue ajustándose al plan |
+| Milisegundos | Robótica | Los sensores fluyen de vuelta sin pausa | Acción por bloques: se planifica un tramo corto cada vez, desalojable |
 
-El framework admite el muestreo en paralelo y el almacenamiento en caché de trayectorias. La trayectoria completa de cada evaluación (observación, acción, recompensa) se guarda para facilitar su posterior análisis y reproducción.
+Las cuatro secciones comparten un mismo conjunto de primitivas —**despertar, punto seguro, cancelación, desalojo y separación rápido/lento**— y solo difieren en los parámetros y en la forma de fallar. «Comprobar la señal de cancelación en un punto seguro», en la asincronía orientada a eventos, y «al detectar una anomalía, descartar las acciones restantes y volver a observar», en la acción por bloques robótica, son el mismo mecanismo implementado dos veces con cinco órdenes de magnitud de diferencia temporal. Ver esa isomorfía importa más que memorizar el detalle técnico de cualquier escenario aislado.
 
-El entorno también debe gestionar la dependencia de estado de las operaciones: el efecto de ejecución de una herramienta depende del estado actual; en caso de fallo, se debe ofrecer información de error clara en lugar de una simple señal de fracaso, permitiendo al Agente aprender del error y ajustar su estrategia.
+**Hay una decisión deliberada en el orden de lectura: este capítulo dedica a la voz bastante más espacio que a los dos escenarios siguientes.** En la línea evolutiva de la interacción en tiempo real, la voz es la que ha llegado más lejos y la que mejor sirve de sistema de referencia: parte del problema «la tubería en serie tiene demasiada latencia», atraviesa el extremo a extremo, el dúplex completo y el pensar mientras se habla, y llega hasta un final relativamente asentado; el recorrido completo problema → solución → final ya está hecho. Por eso lo contamos a fondo, y Computer Use y robótica pueden leerse contra esa línea: hasta dónde ha llegado cada uno y dónde se ha atascado.
 
-### Entornos de Evaluación de Interacción Humano-Computadora
+Y que el capítulo abra con la **asincronía y la orientación a eventos** se debe a que es lo más cercano al lector: la modalidad sigue siendo texto puro y solo cambia el momento. Es el primer paso fuera del mundo por turnos de los cinco capítulos anteriores y el primer lugar donde la tesis del «supuesto de turno» toca tierra.
 
-Muchas tareas del mundo real no solo implican llamadas a herramientas, sino que requieren dialogar con usuarios humanos. Un Agente de atención al cliente necesita entender expresiones ambiguas, aclarar necesidades, consultar sistemas internos y confirmar información con el usuario. La evaluación de este tipo de tareas se enfrenta a un desafío fundamental: ¿cómo simular usuarios reales en un entorno automatizado?
+## Asincronía y orientación a eventos: cuando el mundo viene a buscarte
 
-El principio de diseño clave es la **divulgación progresiva de información (Progressive Information Disclosure)**, que constituye la diferencia fundamental entre la evaluación de interacción humano-computadora y los benchmarks tradicionales. La mayoría de los benchmarks exponen todos los requisitos completos desde el principio; sin embargo, en la realidad es raro que los usuarios describan con claridad sus necesidades desde el primer momento (a menudo solo dicen "parece que hay un problema con mi vuelo" o "no puedo conectarme a Internet"). El Agente necesita aclarar los requisitos mediante preguntas activas, proceso que en sí mismo representa una manifestación crucial de sus capacidades. Por lo tanto, en la evaluación **nunca se debe exponer de entrada toda la información del usuario simulado al Agente**, sino que la información debe revelarse de manera progresiva y según la necesidad a lo largo del diálogo.
+Las tres categorías de herramientas del capítulo 4 —percepción, ejecución y colaboración— las invoca el propio Agente: es él quien decide cuándo mirar y cuándo actuar. Esta sección se desplaza al extremo más lento del eje temporal: ¿cómo gestiona un Agente tareas que duran horas o incluso días, y cómo responde a eventos externos que pueden llegar en cualquier momento? Eso exige una arquitectura asíncrona orientada a eventos; y las dos categorías restantes de las cinco del capítulo 1 —herramientas disparadas por eventos y de comunicación con el usuario— funcionan precisamente apoyadas en esa arquitectura, de modo que se tratan aquí también.
 
-La solución de τ-bench es la **simulación de usuario (User Simulation)**: utilizar otro LLM para asumir el papel del usuario, dialogando con el Agente según instrucciones predefinidas. El usuario simulado recibe instrucciones de tarea (como "necesito cancelar mi vuelo de mañana") y, durante la conversación, revela paulatinamente al Agente la información necesaria, responde a sus preguntas y emite una señal de terminación al finalizar la tarea. Los prompts exigen que el usuario simulado "no revele toda la información de una vez, proporcionando solo el contenido necesario para el paso actual" y "no invente información no proporcionada en las instrucciones". El diseño de la simulación de usuario requiere equilibrar el realismo con la controlabilidad: el comportamiento debe aproximarse al de un usuario real (expresión ambigua, información incompleta, fluctuaciones emocionales ocasionales), mientras sigue un guion determinado para garantizar la reproducibilidad.
+### Por qué se necesita la asincronía
 
-A continuación se presenta un ejemplo de diálogo multiturno con divulgación progresiva de información (donde el simulador de usuario actúa según un guion fijo):
+Utilicemos primero una analogía para ilustrar por qué se necesita la asincronía. Lo síncrono (Synchronous) significa "completar una cosa antes de hacer la siguiente", mientras que lo asíncrono (Asynchronous) significa "múltiples cosas pueden avanzar al mismo tiempo". La arquitectura tradicional de Agentes síncronos se parece a una ventanilla de atención donde solo se atiende haciendo cola: solo puede atender a un cliente a la vez y llamar al siguiente número tras terminar; mientras que un asistente realmente inteligente se parece más a una secretaria flexible: sobre el escritorio hay múltiples asuntos pendientes (correos, llamadas, visitantes), y la secretaria decide cuál atender primero según la urgencia, pudiendo pausar y cambiar si surge algo más urgente a mitad de camino. En el modo síncrono, el Agente debe esperar a que las tareas en segundo plano terminen para hablar con el usuario, o esperar a que la conversación termine para procesar eventos recién llegados, siendo incapaz de responder a varias capacidades clave requeridas en escenarios de asistencia reales:
 
-> **Usuario**: "Tengo un problema con mi vuelo."
-> **Agente**: "¿Podría decirme qué vuelo es?"
-> **Usuario** (revelando según guion): "Delta 123, mañana por la mañana de San Francisco a Nueva York."
-> **Agente**: "¿Cuál es exactamente el problema?"
-> **Usuario** (revelando según guion): "El tiempo de vuelo es demasiado largo, quiero cambiar de billete."
-> **Agente**: "¿Tiene alguna preferencia para el nuevo vuelo?"
-> **Usuario** (revelando según guion): "Cualquier vuelo por la tarde estará bien."
+- **La ejecución asíncrona es la norma**: muchas tareas requieren ejecutarse durante mucho tiempo y no deben bloquear la interacción con el usuario.
+- **Juicio dinámico de la prioridad de eventos**: no todos los eventos son igualmente importantes, y el Agente necesita elegir estratégicamente la forma de procesamiento: cancelar la operación actual (urgente), añadir a la cola (rutinario) o procesar en paralelo (consultas ligeras e independientes).
+- **Fluidez en la interrupción y recuperación**: las conversaciones o tareas interrumpidas deben poder reanudarse de forma natural.
 
-El simulador de usuario sigue un guion fijo (información conocida + reglas de divulgación), asegurando que la evaluación sea reproducible al tiempo que simula la forma progresiva de expresión de un usuario real.
+La contradicción fundamental que enfrenta el paradigma asíncrono al aplicarse a los LLM actuales radica en que: el paradigma de entrenamiento del LLM asume un comportamiento síncrono (tras emitir una llamada a herramienta, el mensaje siguiente debe ser el resultado de la herramienta); mientras que el despliegue en el mundo real exige un comportamiento asíncrono (el usuario puede interrumpir en cualquier momento, múltiples tareas pueden avanzar concurrentemente y eventos externos pueden llegar antes de que la herramienta haya devuelto respuesta). Esta contradicción entre "entrenamiento síncrono y despliegue asíncrono" atraviesa todas las decisiones de ingeniería analizadas en el resto de esta sección.
 
-τ-bench es un benchmark para evaluar el rendimiento de Agentes en procesos de negocio estructurados (como atención al cliente en aerolíneas o comercio minorista). Sus comprobaciones son a nivel de componentes y multidimensionales: por un lado, comprueba si el estado final de la base de datos es correcto (por ejemplo, si el registro de reserva pasa a estar "cancelado"); por otro lado, verifica si el Agente ha emitido información clave necesaria en el diálogo (como el monto del reembolso y el tiempo de acreditación, mediante búsqueda de cadenas de texto o patrones específicos). Esta verificación dual evalúa simultáneamente la precisión operativa y la efectividad comunicativa. Sin embargo, a nivel de tarea, estas comprobaciones se consolidan finalmente en una **recompensa binaria de cero o uno**: solo se obtiene 1 punto si se pasan todas las comprobaciones, y cualquier fallo supone 0 puntos. Las recompensas binarias facilitan el cálculo de métricas de confiabilidad como Pass^k (véase más adelante "Sistema de Métricas de Evaluación"), a costa de dar la misma puntuación a "operación correcta pero omisión de un campo no crítico" que a un "fracaso absoluto".
+Para ello necesitamos una **arquitectura de Agentes asíncrona orientada a eventos**. Técnicamente, esto significa que el sistema ya no comprueba repetidamente de forma activa si "hay nuevos mensajes" (lo que se llama sondeo o polling, de baja eficiencia), sino que activa automáticamente la lógica de procesamiento cuando llega un nuevo mensaje. Todas las entradas, salidas, procesos de pensamiento e interacciones externas se modelan de forma unificada como un flujo de eventos: un registro de eventos ordenados cronológicamente a lo largo de una línea de tiempo. La Figura 6-1 muestra la arquitectura general de un Agente asíncrono orientado a eventos, ilustrando la relación entre las fuentes de eventos, la cola de eventos y el flujo de procesamiento del Agente.
 
-La versión mejorada **τ²-bench** no centra su incremento básico en la granularidad de puntuación, sino en dos puntos: en primer lugar, el **entorno de control dual (Dual-Control)** (ya no solo el Agente puede llamar a herramientas, sino que el simulador de usuario también puede operar en el mismo entorno compartido, como cuando el Agente instruye al usuario para cambiar al modo avión y la operación del usuario modifica realmente el estado del entorno), lo que se ajusta más a escenarios reales de soporte técnico que requieren cooperación del usuario; en segundo lugar, **especificaciones de tareas más precisas y generación de tareas composicionales** (menos ambigüedad en las condiciones de éxito, permitiendo generar instancias de tareas parametrizadas en lote; las dimensiones de verificación detalladas se analizan más adelante en la sección "Garantía de Verificabilidad y Objetividad").
+![Figura 6-1 Arquitectura de Agente asíncrono orientado a eventos](images/fig6-1.svg)
 
-> **Experimento 6-1 ★: Ejecutar τ²-bench y Comparar la Evolución desde τ-bench**
->
-> Este experimento permite comprender los puntos clave del diseño de entornos de evaluación de interacción humano-computadora ejecutando el framework τ²-bench, apreciando cómo iteran y mejoran los datasets de evaluación mediante la comparación de diferencias entre τ-bench y τ²-bench.
->
-> Lectura detallada de los archivos de definición de tareas: cada tarea contiene información conocida (conocimiento de fondo del usuario), instrucciones de tarea (guía sobre cómo revelar información progresivamente y estrategias de respuesta) y condiciones de éxito (estado objetivo de la base de datos e información de confirmación requerida en el diálogo). Ejecutar el flujo de evaluación completo, observar el diálogo multiturno entre el simulador de usuario y el Agente, y analizar patrones de fallo típicos (violaciones de política, omisión de información, transferencia excesiva a operadores humanos, etc.).
->
-> ![Figura 6-3 Arquitectura de Evaluación de τ²-bench](images/fig6-3.svg)
->
-> Comparación entre las diferencias de diseño de τ-bench y τ²-bench: las versiones iniciales de τ-bench tenían instrucciones de usuario demasiado simples (el Agente podía adivinar las respuestas), condiciones de éxito poco precisas (generando falsas evaluaciones) y un simulador de usuario demasiado mecánico. τ²-bench resolvió estos problemas sistemáticamente:
->
-> - **Introducción de instrucciones de tarea más detalladas**: incluyendo "requisitos de anclaje de hechos" (Grounding Requirement), es decir, responder obligatoriamente con base en el estado real del entorno.
-> - **Criterios de evaluación más precisos**: como "solo se considera resuelto si la prueba de velocidad devuelve excelentes resultados".
-> - **Especificaciones de comportamiento más reales para el simulador de usuario**: divulgación progresiva de información y fluctuaciones emocionales naturales.
->
-> Prestar especial atención a las nuevas tareas del dominio telecom en τ²-bench para comprender su diseño de entorno de control dual (donde, como se mencionó anteriormente, el usuario y el Agente operan de forma conjunta sobre un mismo entorno compartido).
+### Implementación de mecanismos orientados a eventos en OpenClaw
 
-A diferencia de la evaluación basada en llamadas a herramientas, que se enfoca en "si se completó un cambio de estado observable", la evaluación de interacción humano-computadora se centra en "si se guio al usuario a completar un cambio cognitivo o de decisión": la primera examina la corrección de las acciones del Agente, mientras que la segunda examina la racionalidad de su estrategia de comunicación.
+La revisión aclara que Hooks proceden del ciclo de vida interno de OpenClaw, mientras Cron y Heartbeat son mecanismos impulsados por el tiempo. Los correos y callbacks de API externos necesitan una entrada inmediata, como el Channel de PineClaw.
 
-La construcción de entornos de evaluación también involucra el diseño de entornos de simulación: cuando un entorno de evaluación necesita admitir interacciones repetidas a gran escala, evoluciona hacia un entorno de simulación, aspecto que se discutirá brevemente al final de este capítulo.
+El framework de código abierto OpenClaw (cuya arquitectura se detallará en el Capítulo 5) recibe mensajes multicanal a través del plano de control Gateway y los enruta al tiempo de ejecución del Agente. Proporciona tres mecanismos de automatización integrados:
 
-## Diseño de Datasets de Tareas de Evaluación
+- **Hooks (ganchos de eventos)**: Responden a eventos en el ciclo de vida del Agente, como la creación o reinicio de sesiones, similar a los disparadores de eventos en GitHub Actions
+- **Cron (programador temporal)**: Ejecuta tareas periódicas según expresiones cron (sintaxis de tareas programadas ampliamente utilizada en sistemas Unix, como `0 9 * * 5` para ejecutarse todos los viernes a las 9:00 AM), como generar informes semanales los viernes o consolidar datos a principios de mes
+- **Heartbeat (demonio de latido)**: Despierta al Agente cada N minutos para comprobar si hay asuntos que requieran atención, utilizando su criterio para evitar la fatiga por alarmas
 
-El entorno de evaluación es el "escenario" y el conjunto de datos es el "guion": la calidad del diseño del guion suele determinar el valor de la evaluación mucho más que el escenario mismo. Un dataset mal diseñado, incluso si se ejecuta en un entorno perfecto, solo producirá ruido. Esta sección sintetiza principios validados repetidamente a partir de prácticas de diseño en benchmarks como GAIA, AndroidWorld, SWE-Bench Verified (Software Engineering Benchmark), τ-bench y τ²-bench, Terminal-Bench, OSWorld y OSWorld-Verified.
+Estos tres mecanismos otorgan al Agente de OpenClaw una apariencia de "autonomía": incluso si el usuario no está en línea, el Agente puede generar informes de forma programada, comprobar el estado del sistema y procesar asuntos de rutina. Sin embargo, un examen detallado revela una limitación fundamental. Primero es necesario aclarar algo: el manejo que Gateway hace de los mensajes de canales integrados (como IM o interfaz Web) es en sí de tipo **push** (el mensaje se enruta al Agente tan pronto como llega); de los tres mecanismos de automatización, los únicos que realmente hacen que el Agente "se mueva por sí mismo" sin mensajes del usuario son Cron y Heartbeat, y ambos están **impulsados por el tiempo**: Heartbeat comprueba a intervalos fijos, Cron se dispara en momentos preestablecidos y Hooks solo responde pasivamente a eventos del ciclo de vida interno del framework, sin poder introducir novedades del mundo exterior. La verdadera deficiencia radica en que: para cualquier fuente de eventos de terceros ajena a los canales integrados (un nuevo correo que llega, una llamada de retorno de API externa o una notificación urgente que requiere procesamiento inmediato), OpenClaw carece de un canal de acceso instantáneo, y el Agente no puede responder en el instante en que ocurre el evento, teniendo que esperar hasta el siguiente ciclo de Cron/Heartbeat para percatarse.
 
-Esta lista no agota todo el panorama de evaluación de Agentes. Solo la categoría Web/GUI cuenta con múltiples benchmarks con distintos enfoques: WebArena construyó un conjunto de sitios web totalmente reproducibles (comercio electrónico, foros, alojamiento de código), encerrando la impredecibilidad de las páginas web reales en un sandbox; Mind2Web hizo lo contrario, evaluando la capacidad de generalización directamente sobre cientos de sitios web reales; [ClawBench](https://claw-bench.com/) ([artículo](https://arxiv.org/abs/2604.08523), [código](https://github.com/TIGER-AI-Lab/ClawBench)) permite a los Agentes ejecutar tareas cotidianas de extremo a extremo en sitios web reales dentro de contenedores aislados (V1 cubre 153 tareas en 144 sitios web, y V2 añade 130 tareas más), registrando simultáneamente evidencia en cinco capas: reproducción de sesiones, capturas de pantalla de acciones, tráfico HTTP, acciones de navegador y mensajes del Agente. Este complementa a los benchmarks sandbox facilitando el análisis del comportamiento en sitios reales y fallos de larga cola, a costa de que la reproducibilidad se ve afectada por cambios en sitios de terceros; BrowseComp se enfoca en la recuperación profunda, donde las respuestas están ocultas y requieren navegación multisalto y verificación cruzada. En la dimensión de llamadas a herramientas, existen tablas especializadas como BFCL (Berkeley Function-Calling Leaderboard). En lugar de listar todos los benchmarks, este capítulo selecciona dos paradigmas de entorno fundamentales (llamada a herramientas e interacción humano-computadora), complementados con escenarios de operaciones GUI a lo largo de los casos de estudio, para profundizar en sus compensaciones de diseño: comprendidos los paradigmas, ante cualquier nuevo benchmark se podrá juzgar rápidamente qué mide, cómo previene fugas y hasta dónde se pueden extrapolar sus conclusiones.
+Esta latencia es inaceptable en muchos escenarios. Tomemos como ejemplo **PineClaw** (el plugin de Pine AI para OpenClaw): Pine AI es un asistente de IA que realiza llamadas telefónicas reales en nombre del usuario, en escenarios típicos como negociar facturas, cancelar suscripciones y tramitar reclamaciones de seguros. Cuando un usuario inicia una tarea de llamada telefónica con Pine a través del Agente de OpenClaw, la IA de voz de Pine llama por teléfono en nombre del usuario, pero durante la llamada puede requerirse la intervención del usuario en cualquier momento:
 
-> **Experimento 6-2 ★: Ejecución Manual de Tareas de Benchmark**
->
-> Seleccionar y completar manualmente tareas de GAIA, AndroidWorld, SWE-Bench Verified, τ²-bench, Terminal-Bench y OSWorld-Verified. Se recomienda completar una tarea fácil, una media y una difícil de cada dataset (el nivel "difícil" resulta desafiante incluso para humanos). Comparar los resultados con las respuestas estándar y analizar las fuentes de discrepancia. A través de la experiencia directa, comprender que la descripción de tareas debe equilibrar la claridad con la apertura, los criterios de verificación deben ser objetivos y ejecutables, y la jerarquización de dificultad de las tareas debe ser capaz de distinguir diferentes niveles de capacidad.
+- **Autenticación en tiempo real**: El servicio al cliente solicita verificar la identidad del titular de la cuenta, y Pine necesita que el usuario proporcione inmediatamente un código de seguridad o un código OTP (contraseña de un solo uso)
+- **Confirmación de llamada a tres bandas**: El servicio al cliente exige hablar directamente con el titular de la cuenta, y Pine requiere que el usuario atienda la llamada en unos pocos segundos
+- **Sincronización de avances y confirmación de decisiones**: Al alcanzar un nodo clave de la negociación (como la contraparte ofreciendo un plan de descuento), Pine necesita que el usuario confirme si lo acepta
 
-### Desafíos Centrales en el Diseño de Datasets de Tareas
+Si se depende del sondeo periódico de Heartbeat (asumiendo un intervalo de latido de 5 minutos), el usuario podría no recibir la notificación a tiempo mientras el servicio al cliente espera el código de verificación, lo que provocaría que cuelguen y la llamada falle. Por otro lado, reducir el intervalo de sondeo a nivel de segundos generaría una enorme cantidad de peticiones inútiles y desperdicio de recursos.
 
-**Desafío 1: La tensión entre claridad y apertura.** La descripción de las tareas debe ser lo suficientemente clara para garantizar la reproducibilidad de la evaluación, pero no tan rígida que limite la creatividad del Agente. GAIA ofrece un ejemplo: las tareas son "conceptualmente simples" pero tienen rutas de implementación abiertas (por ejemplo, solicitar información sobre un astronauta en la foto astronómica del día de la NASA presenta un objetivo claro [identificar al astronauta específico y su tiempo en el espacio], pero cómo buscar, filtrar y verificar queda a decisión autónoma del Agente).
+La solución de PineClaw consiste en introducir el **mecanismo de Channel**: establecer un canal de eventos en tiempo real entre el Gateway de OpenClaw y la API de Pine. Cuando ocurren eventos clave como la llamada conectándose, la necesidad de entrada del usuario o la llamada finalizando, los mensajes se envían instantáneamente por push al Agente de OpenClaw, que procesa de inmediato y notifica al usuario, reduciendo la latencia de respuesta de minutos a segundos.
 
-**Desafío 2: El equilibrio entre realismo y controlabilidad.** Las tareas reales contienen incertidumbre y ruido, lo que permite evidenciar la robustez, pero también amenaza la reproducibilidad. La versión inicial de SWE-Bench se tomó directamente de issues reales de GitHub, garantizando el realismo, pero provocó descripciones ambiguas, casos de prueba incompletos y criterios de evaluación subjetivos. SWE-Bench Verified introdujo expertos humanos para realizar verificaciones sistemáticas, filtrando 500 tareas de alta calidad con problemas claros, pruebas suficientes y soluciones definidas, aumentando significativamente la controlabilidad mientras mantenía el realismo.
+Este caso revela el valor nuclear de la arquitectura orientada a eventos para los frameworks de Agentes: **un servicio verdaderamente "proactivo" no solo requiere que el Agente pueda examinar el mundo periódicamente, sino que requiere que el mundo pueda notificar activamente al Agente**. Modelar de forma unificada todas las entradas (mensajes de usuario, respuestas de herramientas, callbacks externos, disparos programados) como flujos de eventos y profundizar la reflexión y acción del Agente mediante un bucle de eventos constituye la base arquitectónica para lograr este objetivo. Bajo esta arquitectura, a continuación se presentan dos categorías de herramientas directamente relacionadas con los eventos, así como la identidad virtual y el entorno de ejecución aislado que respaldan la acción independiente del Agente, antes de discutir el diseño específico del mecanismo de procesamiento de eventos.
 
-**Desafío 3: Coordinación entre diversidad y sistematización.** Un conjunto de datos efectivo debe cubrir casos típicos, condiciones límite y trampas de error, contando al mismo tiempo con una organización sistemática para que los resultados de la evaluación puedan diagnosticar deficiencias específicas de capacidad. Las 116 tareas de AndroidWorld abarcan 20 aplicaciones reales, etiquetando en cada tarea las capacidades nucleares requeridas (planificación multipasos, comprensión visual, razonamiento temporal), permitiendo que la evaluación no solo entregue una tasa de éxito global, sino que revele fortalezas y debilidades en dimensiones de capacidad específicas. Más aún, mediante mecanismos parametrizados se pueden generar variantes de tareas casi ilimitadas.
+### Herramientas disparadas por eventos
 
-**Desafío 4: Costo de evaluación frente a cobertura.** Las tareas complejas de Agentes pueden requerir minutos o incluso horas para completarse, implicando un consumo masivo de tokens. La escala del dataset debe equilibrar la exhaustividad y la economía. GAIA selecciona 466 preguntas divididas en tres niveles de dificultad, cubriendo múltiples dimensiones de capacidad a un costo razonable. SWE-Bench Verified redujo de 2.294 a 500 tareas (disminuyendo el costo aproximadamente en cuatro quintas partes y elevando la relación señal-ruido mediante criterios de calidad más estrictos).
+Las herramientas disparadas por eventos son la puerta de entrada para que eventos externos impulsen la acción del Agente. Sin herramientas disparadas por eventos, el Agente solo podría pensar en bucles continuos, invocar herramientas y emitir un resultado final, quedando a la espera de la siguiente entrada del usuario. Para transformar los cambios del mundo en eventos procesables por el Agente, existen tres categorías comunes de herramientas disparadas por eventos.
 
-**Desafío 5: Prevención de contaminación de datos (Data Contamination).** En la era de los grandes modelos de lenguaje, la fuga de datos es un desafío severo para la evaluación: cuando los datos de evaluación se incluyen en el entrenamiento, la evaluación mide la memoria y no la capacidad de generalización, del mismo modo que memorizar las respuestas antes de un examen no demuestra el nivel real. Diversos benchmarks emplean distintas estrategias de prevención: GAIA confía en la singularidad de las respuestas, requiriendo combinar múltiples fuentes de información, y algunas tareas incluyen adjuntos creados específicamente (PDF/audio/imágenes no existentes en Internet) que imposibilitan responder desde una sola página web. SWE-Bench Verified es en sí mismo un subconjunto de 500 tareas filtrado manualmente por OpenAI a partir del SWE-Bench original, sin incluir un diseño de prevención de fugas basado en el tiempo; son trabajos posteriores como SWE-bench-Live los que previenen fugas por frescura temporal, incorporando continuamente nuevos issues creados tras la fecha de corte de entrenamiento de los modelos para mantener la evaluación por delante del corpus de entrenamiento. τ²-bench utiliza la generación dinámica de parámetros, generando aleatoriamente instancias específicas de tareas (nombres de usuario, números de pedido, fechas) en cada ejecución. La generación de tareas parametrizadas en AndroidWorld posee una capacidad inherente contra las fugas, ya que la verificación se basa en el estado final de la UI y no en la secuencia de operaciones. Terminal-Bench utiliza identificadores canario (canary GUID, un identificador único global) para hacer detectable la fuga: si el modelo emite contenidos con dicho GUID, indica que los datos del benchmark se han filtrado al conjunto de entrenamiento.
+**Temporizadores** (`set_timer`): Procesan eventos que dependen del tiempo físico. Por ejemplo, si se envió un correo pero la contraparte no respondió, se debe enviar otro correo pasado un tiempo para consultar el avance; o si se realizó una llamada pero la contraparte estaba fuera del horario laboral, se debe intentar llamar nuevamente en el siguiente horario de trabajo. Para ello, herramientas como OpenClaw y Claude Code admiten herramientas de temporizador para despertarse a sí mismas en momentos físicos específicos. Los **temporizadores de una sola vez** se utilizan para tareas con momentos temporales claros: por ejemplo, el usuario solicita "llamar al DMV", si hoy es sábado, el Agente configura "el próximo lunes a las 10:00 AM llamar al DMV", marcándose para marcar automáticamente al dispararse el temporizador. Los **temporizadores cíclicos** se utilizan para tareas periódicas: como comprobar la salud del servidor cada hora o enviar informes de avance todos los viernes. Además, algunos servicios externos no admiten notificaciones activas de avances, requiriendo consultas activas; en tales casos se utilizan temporizadores cíclicos para consultar repetidamente (el mecanismo Heartbeat de OpenClaw analizado en la sección anterior es la sistematización de este esquema y la fuente de la capacidad de servicio proactivo de OpenClaw).
 
-### Diseño de Precisión en las Descripciones de Tareas
+**Monitoreo de tareas en segundo plano** (`monitor_shell`): Procesa eventos provenientes de herramientas de ejecución asíncrona o tareas de línea de comandos. Algunas tareas de línea de comandos requieren ejecutarse durante mucho tiempo en segundo plano, y el Agente necesita monitorear su avance. Si se hace que el Agente "esté continuamente mirando la línea de comandos" (es decir, invocando repetidamente herramientas para consultar el estado actual), se desperdiciarían demasiados tokens; mientras que si se espera a que la tarea de línea de comandos finalice por completo para que el Agente empiece a pensar y actuar, el Agente no podría detectar a tiempo problemas graves en el proceso de ejecución, quedando incapaz de intervenir incluso si la línea de comandos se bloquea, lo que congelaría toda la tarea. Claude Code resuelve este problema introduciendo la herramienta monitor (monitoreo), que permite al Agente monitorear nuevas salidas de la línea de comandos o salidas que contengan palabras clave específicas.
 
-GAIA garantiza la singularidad de las respuestas mediante restricciones claras de fuentes de información, rangos temporales, temas y objetivos de consulta. Por ejemplo, las tareas de Nivel 3 requieren partir de una imagen de la NASA en una fecha específica, identificar al astronauta mediante comprensión visual, consultar su grupo de astronautas, calcular el tiempo de permanencia en el espacio y formatear el resultado con precisión ("apellido, separado por punto y coma, separador de miles"), donde cada detalle sirve a la verificación automática (solo si el formato y el contenido coinciden exactamente se considera aprobado).
+**Canales de eventos externos** (`connect_channel`): Envían en tiempo real al Agente eventos externos como la llegada de nuevos correos, callbacks de API o mensajes de IM; el mecanismo Channel de PineClaw en la sección anterior es una implementación típica.
 
-τ²-bench introduce un diseño contextualizado donde cada tarea contiene múltiples capas de información: el problema superficial ("los datos móviles no funcionan"), expectativas de rendimiento ("desea absolutamente una velocidad excelente"), restricciones ("no se aceptan otras velocidades") y emociones implícitas. La mejora clave es separar la "información conocida" de la "instrucción de la tarea": la información conocida son los hechos que posee el usuario, mientras que las instrucciones de la tarea guían al simulador sobre cómo revelar información progresivamente, incluyendo un "requisito de anclaje de hechos" (Grounding Requirement, es decir, responder obligatoriamente con base en los resultados reales devueltos por las llamadas a herramientas, sin inventar nada).
+A nivel de diseño, las herramientas disparadas por eventos deben definir condiciones de disparo y reglas de filtrado claras, evitando que eventos irrelevantes despierten al Agente y desperdicien cómputo; la carga útil del evento (payload) debe contener suficiente información contextual para reducir la cantidad de consultas adicionales que el Agente deba realizar tras ser despertado.
 
-SWE-Bench Verified incluye campos estructurados como la descripción del problema, pasos de reproducción y comportamientos esperados/reales, donde los anotadores verifican la correspondencia entre la descripción y los casos de prueba. En Terminal-Bench, cada elemento de la descripción de la tarea se puede verificar mecánicamente: si la ruta del archivo existe, si el valor de permisos es correcto, parámetros de certificados, formatos de fecha, etc. Por ejemplo, "build-linux-kernel-qemu" exige compilar el núcleo Linux 6.9 desde el código fuente, añadir un printk personalizado en `start_kernel`, generar un initramfs y ejecutarlo en QEMU, siendo el criterio de éxito la aparición del mensaje personalizado en el registro de inicio: el Agente no puede falsificar la salida para aprobar, sino que debe completar realmente todo el proceso.
+### Herramientas de comunicación con el usuario
 
-AndroidWorld adopta un diseño de **plantillas parametrizadas**. Una tarea no es un texto estático, sino una plantilla instanciable dinámicamente (como "cambiar el teléfono del contacto `[CONTACT_NAME]` a `[NEW_PHONE]`"), generando valores de parámetros aleatorios en cada evaluación. Esto ofrece tres ventajas:
+En OpenClaw las sesiones son transparentes: usuario y Agente pueden enviarse mensajes en cualquier momento mediante herramientas dedicadas, con imágenes, archivos, notificaciones push, comunicación multimodal y Generative UI.
 
-- **Evita la memorización**: los valores de los parámetros cambian cada vez, impidiendo reproducir secuencias fijas de operaciones.
-- **Aumenta la diversidad de datos**: una plantilla puede generar instancias casi ilimitadas.
-- **Permite experimentos comparativos**: fijar ciertos parámetros y variar otros permite medir con precisión el impacto de factores específicos.
+Las herramientas de comunicación con el usuario surgen a medida que los canales de comunicación entre el Agente y el usuario se diversifican cada vez más. Muchos Agentes (como Claude Code, Manus o Genspark) adoptan un bucle ReAct nativo, donde todas las palabras que "dice" el Agente —es decir, mensajes de tipo assistant) se envían directamente al usuario, y el usuario debe abrir una sesión específica en la aplicación para conversar con el Agente. OpenClaw es uno de los representantes más influyentes de Agentes generales que rompen este paradigma de interacción persona-ordenador: sus sesiones son transparentes para el usuario (el usuario no necesita percibir la existencia de la sesión ni preocuparse por los detalles de las llamadas a herramientas del Agente); tanto el usuario como el Agente pueden enviarse mensajes mutuamente en cualquier momento, en lugar de seguir un esquema rígido donde el usuario envía uno y el Agente responde otro. Por ello, muchas personas evalúan que OpenClaw posee una "sensación de presencia humana", comunicándose de forma asíncrona con el usuario mediante mensajes de texto al igual que una secretaria. En este caso, dichos mensajes de texto no consisten en volcar directamente la salida assistant del modelo al usuario, sino en utilizar herramientas dedicadas para enviar mensajes, los cuales pueden incluir imágenes y archivos adjuntos, además de notificaciones de alerta según el nivel de urgencia.
 
-La verificación se basa en el estado final de la UI (por ejemplo, si el campo del número de teléfono contiene el valor esperado) y no en la secuencia de operaciones.
+Además de comunicarse mediante texto, cada vez más Agentes poseen capacidades de comunicación multimodal, como enviar tarjetas de mensajes estructuradas o correos de recordatorio. Algunos Agentes han comenzado a experimentar con UI generativa, utilizando HTML y otros medios para generar interfaces interactivas que presentan la información al usuario de forma más amigable. A nivel de diseño, las herramientas de comunicación con el usuario deben admitir el modo de mensajes asíncronos (el usuario no necesariamente está en línea), ofrecer seguimiento del estado leído/no leído y mantener la coherencia del mensaje en escenarios multicanal.
 
-Las tareas de OSWorld a menudo no comienzan desde un estado inicial "limpio", sino desde estados intermedios cuidadosamente configurados, aproximándose más a escenarios de uso reales. Las descripciones de las tareas deben gestionar la multisolución (definir "cambiar el fondo a morado" requiere proporcionar un código de color específico para eliminar la ambigüedad, y "unir dos CSV" debe aceptar la conservación de encabezados simples o dobles como formas razonables) y la incertidumbre del entorno (anti-crawling en sitios web, evolución de UI en aplicaciones, competencias temporales, mitigadas en OSWorld-Verified mediante capturas de páginas offline, congelamiento de versiones de dependencias y condiciones de espera explícitas).
+**Comunicación multicanal con el usuario y reconvocatoria.**
 
-### Diseño Jerárquico de la Complejidad de las Tareas
+Aquí es necesario aclarar un límite categórico propenso a confusión: en el caso de "enviar una notificación", si el destinatario es un aprobador o colaborador (como solicitar aprobación del administrador o informar avances a un Agente colaborador), la herramienta se clasifica como herramienta de colaboración; si el destinatario es el propio usuario final, se clasifica como herramienta de comunicación con el usuario. La diferencia no radica en el canal, sino en "a quién se notifica y para qué".
 
-GAIA diseña tres niveles de dificultad: Nivel 1 requiere solo 1 o 2 herramientas (humanos 93,9% vs GPT-4 30,3%), Nivel 2 requiere razonamiento en múltiples pasos (91,8% vs 9,7%), y Nivel 3 exige combinaciones complejas (87,3% vs 0%). El valor diagnóstico del diseño jerárquico radica en que los fallos en el Nivel 1 apuntan a problemas básicos en el uso de herramientas, el Nivel 2 apunta a la planificación multipasos y la integración de información, y el Nivel 3 apunta al pensamiento en secuencias largas y la gestión de complejidad, correspondiendo cada nivel a diferentes direcciones de mejora (ingeniería de prompts vs mecanismos de planificación vs arquitectura jerárquica/post-entrenamiento).
+**La respuesta del Agente no debe limitarse a un solo canal; el mecanismo de notificación es también un mecanismo de reconvocatoria del usuario**. El envío de mensajes se extiende a mensajería instantánea, SMS, correo electrónico, llamadas telefónicas y notificaciones push. El Agente selecciona el canal considerando la urgencia, el estado del usuario, la naturaleza del contenido y las preferencias del usuario, garantizando no perder mensajes importantes sin generar molestias repetitivas.
 
-τ²-bench realiza la jerarquización mediante la complejidad del negocio: desde consultas simples de información, pasando por procesos multipasos (modificar un vuelo requiere consultar, mostrar alternativas, confirmar, calcular diferencia de precio y pagar), hasta el diagnóstico de fallos (inspeccionar sistemáticamente múltiples causas posibles y verificar la reparación) y el juicio de políticas (gestionar solicitudes que no cumplen las políticas).
+Para tareas de larga duración, el Agente necesita notificar activamente al usuario al finalizar, reconvocando la atención del usuario. Para tareas periódicas (como resúmenes diarios o informes semanales), las notificaciones ayudan al usuario a consolidar hábitos de interacción fijos.
 
-Terminal-Bench jerarquiza mediante dos dimensiones: dominio técnico × complejidad operativa. Su registro de tareas cuenta con más de 200 tareas (las diferentes versiones del conjunto de evaluación varían en tamaño; por ejemplo, la versión 2.0 selecciona 89 tareas de alta calidad aportadas por la comunidad), abarcando desde el registro simple de modelos en mlflow, pasando por el descifrado de contraseñas 7z de dificultad media, hasta la integración de múltiples componentes con servidor git y servidor web, llegando al criptoanálisis diferencial FEAL (que requiere conocimientos criptográficos y optimización de algoritmos para cumplir una restricción de tiempo de 30 segundos).
+Las herramientas de comunicación con el usuario resuelven "cómo contactar al usuario". Sin embargo, la identidad con la que el Agente aparece en estos canales y el entorno en el que ejecuta operaciones en nombre del usuario requieren una infraestructura de identidad y entorno, que es el tema de la siguiente sección.
 
-### Garantía de Verificabilidad y Objetividad
+### Identidad virtual y entorno de ejecución aislado
 
-Las respuestas de GAIA son concisas y claras, con estrictas reglas de formato que permiten realizar la verificación mediante coincidencias exactas de cadenas de texto, garantizando la objetividad y reproducibilidad a través de resultados binarios (coincide o no coincide). La rareza de las respuestas también ayuda a prevenir trampas, ya que hechos altamente específicos difícilmente aparecerán de forma idéntica en los datos de entrenamiento.
+Un ordenador virtual puede funcionar 24/7, aislar los archivos locales del usuario y limitar los daños a la máquina virtual si el Agente se equivoca. El intercambio usa un sistema de archivos compartido y rutas, no copias completas de contenido.
 
-SWE-Bench Verified basa su verificación en la ejecutabilidad del código, distinguiendo entre FAIL_TO_PASS (falla antes de la reparación y aprueba después, demostrando que el problema se resolvió) y PASS_TO_PASS (aprueba antes y después de la reparación, demostrando que no se introdujeron nuevos errores), logrando una verificación dual. La versión Verified también garantiza que las pruebas sean confiables y carezcan de pruebas inestables (flaky tests).
+Es necesario aclarar primero la posición de esta sección: la identidad virtual y el entorno de ejecución aislado constituyen esencialmente una infraestructura de entorno de ejecución alineada con los sandboxes discutidos en la sección de herramientas de ejecución; la razón por la que se desarrollan en esta sección de arquitectura asíncrona es porque solo un Agente capaz de ejecutarse de forma independiente, permanente y de actuar en nombre del usuario en cualquier momento los requiere con máxima urgencia.
 
-El sistema de verificación de τ²-bench consta de múltiples capas de comprobación (los resultados de cada capa se consolidan a nivel de tarea en una recompensa binaria, exigiendo aprobar todas para considerar el éxito):
+Al inicio del capítulo se mencionó que Samantha en *Her* posee una identidad y un entorno de operación independientes. Para construir un asistente general semejante, nos enfrentamos primero a una elección arquitectónica clave: ¿debe el Agente gestionar directamente las cuentas personales del usuario, o debe poseer su propia identidad virtual? La gestión directa parece conveniente, pero si el Agente comete un error o es vulnerado, toda la identidad digital del usuario quedará expuesta. El esquema más seguro consiste en otorgar al Agente un conjunto independiente de identidades virtuales, del mismo modo que una secretaria posee su propio teléfono de oficina y correo electrónico. Esta identidad virtual incluye cuentas de comunicación exclusivas, espacio de almacenamiento y entorno de cómputo, permitiendo que el Agente trabaje en nombre del usuario con una identidad transparente. La claridad de la identidad no solo no debilita la confianza, sino que refuerza la autenticidad de la comunicación.
 
-- **Verificación del estado de la base de datos**: estado de los registros de reserva, creación de registros de reembolso.
-- **Búsqueda de palabras clave en el diálogo**: si se confirmó con el usuario el monto del reembolso y el tiempo de acreditación.
-- **Cumplimiento del proceso**: análisis de la secuencia de llamadas a herramientas, como verificar si se obtuvo la confirmación explícita del usuario antes de modificar el pedido.
+La identidad virtual necesita asentarse en un entorno de ejecución aislado. Las **computadoras virtuales** (VM/contenedores) y los **teléfonos virtuales** (emuladores de Android) proporcionan al Agente aislamiento a nivel de sistema operativo y capacidades completas de operación móvil/escritorio: el Agente posee en su interior sus propias cuentas de usuario, directorio personal y credenciales de inicio de sesión, haciendo que todas las operaciones sean rastreables y auditables; incluso si ejecuta una operación errónea, no afectará al sistema host ni a los dispositivos reales del usuario. Esta es una extensión de la idea de sandbox discutida en las herramientas de ejecución hacia la dimensión de la "identidad digital": el sandbox aísla la ejecución de código, mientras que las computadoras y teléfonos virtuales aíslan toda la identidad digital.
 
-El entorno de control dual de τ²-bench (mencionado previamente) añade una dimensión adicional en el nivel de verificación: tras modificar el simulador de usuario el estado del entorno, el Agente debe observar este cambio mediante llamadas a herramientas y continuar con la resolución, evaluando si "el Agente realmente leyó los resultados de las operaciones del lado del usuario".
+La identidad independiente conlleva dos desafíos reales. El primero son los **mecanismos antiautomatización**: muchos sitios web utilizan verificaciones CAPTCHA y detección de reputación de IP para interceptar accesos automatizados, y los entornos virtuales procedentes de IP de centros de datos son fácilmente identificados, requiriendo en la práctica configurar redes proxy residenciales (utilizando IP de hogares reales) para operar normalmente. El segundo son los **escenarios de acceso a cuentas reales del usuario**: cuando la tarea requiere iniciar sesión con la identidad del propio usuario, se debe adoptar la autenticación Human-in-the-Loop (mediante escritorio remoto VNC/RDP), permitiendo que el usuario complete personalmente el inicio de sesión en un entorno visual donde puede observar la interfaz completa que el Agente está operando, comprendiendo por qué requiere autenticación; los tokens de sesión tras la autenticación se reutilizan dentro de su periodo de validez, evitando interrumpir al usuario con frecuencia y logrando un equilibrio entre autonomía y seguridad.
 
-OSWorld cuenta con 134 funciones de evaluación independientes con permisos de acceso completos al sistema operativo, capaces de inspeccionar a fondo estructuras del sistema de archivos, estados de procesos, conexiones de red y estados internos de aplicaciones. Por ejemplo, en tareas de bases de datos, el script de evaluación no solo verifica si el archivo de reporte existe, sino que se conecta directamente a la base de datos para comprobar si la sentencia SQL se ejecutó correctamente; en tareas de navegador analiza el árbol DOM, comprueba cookies/localStorage y envía solicitudes de verificación al backend para confirmar si el formulario se procesó realmente. Esta inspección profunda permite detectar casos de "completado en superficie pero con error sustancial" (como cuando el Agente hace clic en enviar, pero la solicitud es rechazada por el servidor debido a errores en los campos).
+El intercambio de datos entre el Agente principal y el entorno virtual se realiza mediante un **sistema de archivos compartido**: conectando el Agente principal, la computadora virtual y el teléfono virtual mediante montaje de volúmenes (como `/workspace/shared`), transmitiendo los datos mediante referencias a rutas de archivos en lugar de copias de contenido, evitando ocupar la ventana de contexto. Tomemos como ejemplo una tarea de análisis de datos: el usuario sube un archivo CSV al directorio compartido, el Agente en la computadora virtual lee el archivo, ejecuta el análisis, genera un gráfico y lo guarda de nuevo en el directorio compartido, y el Agente principal solo necesita devolver la ruta del archivo del gráfico al usuario: lo que se transmite entre todas las partes es siempre una cadena de texto ligera con la ruta.
 
-Terminal-Bench estandariza los entornos mediante contenedores Docker, combinando la inspección del sistema de archivos (existencia de rutas, valores de permisos, formatos de contenido) y la verificación funcional de ejecución (en build-linux-kernel-qemu inicia realmente QEMU y busca mensajes printk personalizados), haciendo rastreables las fugas mediante identificadores canario GUID.
+Las herramientas disparadas por eventos permiten que el mundo despierte al Agente, las herramientas de comunicación con el usuario permiten que el Agente contacte al usuario, y la identidad virtual con entorno aislado permite que el Agente actúe de forma independiente y auditable. La pregunta restante es: cuando múltiples eventos concurren simultáneamente hacia la misma instancia del Agente, ¿cómo deben procesarse?
 
-### Diseño Sistemático de la Distribución de Tareas
+### Mecanismo de manejo de eventos
 
-La distribución de tareas debe cubrir sistemáticamente dimensiones de capacidad, dificultad, escenarios y casos límite. GAIA busca la generalidad: la mayoría de las tareas requieren combinar razonamiento, multimodalidad, navegación y herramientas. τ²-bench diseña intencionalmente "tareas trampa" (por ejemplo, cuando un usuario afirma que "la atención al cliente aprobó la cancelación" pero en realidad no cumple la política), probando si el Agente mantiene un criterio correcto ante la presión y la desinformación. OSWorld utiliza una matriz bidimensional basada en tipos de operación (E/S de archivos, aplicaciones de escritorio, aplicaciones web, flujos entre aplicaciones) y dominios de aplicación, abarcando tres sistemas operativos (las investigaciones demuestran que las capacidades entre SO están fuertemente correlacionadas, de modo que las habilidades aprendidas en un sistema se pueden transferir a otros). Terminal-Bench incluye "tareas combinadas entre stacks tecnológicos" para evaluar el pensamiento sistémico (como integrar procesamiento de datos + operaciones de archivos + refragmentado en ingeniería Python).
+Una instancia de Agente puede enfrentarse simultáneamente a múltiples eventos: nuevos mensajes del usuario, resultados devueltos por herramientas, vencimiento de temporizadores o peticiones de colaboración de otro Agente. Cómo procesar estos eventos de forma eficiente y correcta impacta directamente en el rendimiento y la experiencia del usuario.
 
-### Control de Calidad de Datos e Iteración Continua
+El esqueleto de este mecanismo es el **bucle de eventos (event loop)** de la programación concurrente. Se puede considerar a un Agente asíncrono como un bucle de ejecución continua: en cada ronda toma varios eventos de la cola de entrada, los añade a la trayectoria, invoca al LLM una vez, ejecuta las herramientas decididas por este y regresa al inicio del bucle a esperar el siguiente lote de eventos, coincidiendo con la estructura en la que una goroutine de Go lee mensajes de un channel y los procesa ronda a ronda en un `for { select { ... } }`. Este modelo posee una propiedad crucial: **los eventos solo se consumen en los límites de cada ronda del bucle**. Mientras el LLM está razonando o las herramientas se están ejecutando, los nuevos eventos que llegan no se introducen espontáneamente interrumpiendo el paso actual, sino que se acumulan en la cola, procesándose de forma unificada cuando esta ronda alcanza un **punto seguro** (finalización de un fragmento de razonamiento o devolución de una herramienta). La cancelación sigue exactamente la misma disciplina: no se interrumpe por la fuerza en cualquier instante, sino que se comprueba en el punto seguro si "se ha solicitado la parada", rol que desempeña precisamente `ctx.Done()` en Go (el Capítulo 10 utilizará esta misma idea de contexto para analizar la cancelación en cascada de Agentes padre a hijos). Comprendido esto, la diferencia entre las tres estrategias de procesamiento siguientes radica únicamente en el modo de tratar los puntos seguros: esperar al siguiente punto seguro al que se llegue de forma natural (en cola), crear activamente un punto seguro por adelantado (cancelación) o iniciar un bucle paralelo sin necesidad de esperar al punto seguro del bucle principal (paralelo).
 
-SWE-Bench Verified es un modelo de control de calidad. OpenAI seleccionó aleatoriamente 1.699 tareas del total de 2.294 originales para evaluación manual, contratando a 93 desarrolladores expertos en Python. Los anotadores debían realizar múltiples comprobaciones: si la descripción del problema era clara (si se entendía lo que se debía resolver), si los casos de prueba eran completos (cubriendo todos los aspectos y condiciones límite), si las pruebas eran estables (sin fallos fluctuantes por el entorno o aleatoriedad), si el parche era correcto (sin introducir nuevos errores) y si la dificultad era adecuada. Tras un riguroso filtrado, solo 500 tareas pasaron la prueba (29%), representando esta alta tasa de eliminación una inversión necesaria en la calidad de la evaluación. También establecieron guías de anotación estandarizadas definiendo criterios concretos y ejemplos para cada revisión, garantizando la consistencia entre distintos anotadores.
+**Modelado estructurado de eventos.**
 
-τ²-bench introdujo la separación entre "información conocida" e "instrucciones de tarea" (haciendo más real el comportamiento del simulador) y condiciones de finalización más estrictas (como "solo calificar como resuelto si es excelente, rechazando resultados regulares o buenos"), evitando "reparaciones superficiales".
+La premisa para procesar es comprender. La entrada que enfrenta un Agente general no procede únicamente del usuario: los mensajes enviados por terceros no son dirigidos por el usuario al Agente, pero el Agente necesita comprenderlos, evaluar su importancia y decidir cómo intervenir. Esto requiere modelar cada entrada como un **evento estructurado** con semántica rica:
 
-OSWorld-Verified representa un ejemplo de iteración continua. Tras su publicación en abril de 2024, OSWorld se convirtió rápidamente en un benchmark relevante para la evaluación de Agentes multimodales; sin embargo, a lo largo de 15 meses de uso amplio, expuso más de 300 problemas. Estos problemas se dividieron en cuatro categorías: problemas del entorno (anti-crawling en sitios web / CAPTCHA / cambios de contenido dinámico), problemas en la descripción de tareas (expresiones ambiguas), problemas en la lógica de verificación (demasiado estricta o permisiva) y problemas en el estado inicial (configuración incompleta). El equipo de la Universidad de Hong Kong formó un grupo de unas 10 personas que colaboró durante dos meses con MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic y Simular para realizar reparaciones sistemáticas. Se formularon estrategias para cada categoría: los problemas de entorno se resolvieron congelando versiones y creando copias de respaldo offline; las descripciones ambiguas se eliminaron reescribiendo los enunciados; la lógica de verificación se equilibró ajustando condiciones y creando líneas base correctas manualmente; y el estado inicial se reforzó añadiendo validaciones de integridad.
+- **Origen (quién)**: El propio usuario, contactos, desconocidos, notificaciones del sistema
+- **Canal (medio)**: Voz telefónica, SMS, mensajería instantánea, correo electrónico, redes sociales, disparo de temporizador, resultado de llamada a herramienta asíncrona, actualización de estado de monitoreo de línea de comandos
+- **Contenido (qué)**: Texto del mensaje, tono emocional, nivel de urgencia, si requiere respuesta
+- **Contexto (trasfondo)**: Si es una respuesta a una conversación previa o una nueva comunicación, su relación con la tarea actual
 
-La infraestructura de evaluación también migró de VMs locales a plataformas cloud en AWS, logrando una aceleración paralela de 50 veces (reduciendo el tiempo de más de 10 horas a unos pocos minutos), aumentando la tasa de éxito de inicialización en tareas de Google Drive del 50% a más del 95%. Todas las trayectorias de evaluación oficiales están publicadas abiertamente en HuggingFace, permitiendo a la comunidad auditar cada detalle, reproducir resultados y descubrir problemas, formando un bucle virtuoso de mejora continua.
+Tomando como ejemplo un correo electrónico de solicitud de reembolso de un cliente, la forma concreta del evento estructurado es la siguiente:
 
-Vale la pena señalar que los entornos de evaluación y de post-entrenamiento suelen compartir el mismo origen: un entorno de evaluación bien diseñado se puede transformar en un entorno de entrenamiento con ligeras modificaciones (SWE-Gym es un ejemplo representativo de construcción de tareas de entrenamiento basadas en SWE-bench, mientras que las plantillas parametrizadas de τ²-bench y AndroidWorld pueden generar instancias de entrenamiento masivas). No obstante, se debe trazar una línea roja: lo que se puede reutilizar es el **mecanismo de construcción del entorno**, mientras que los ejercicios específicos del conjunto de evaluación deben mantenerse estrictamente aislados de los datos de entrenamiento (si una pregunta de evaluación entra en el conjunto de entrenamiento, se estará midiendo la memoria en lugar de la capacidad, como se detalla en el Capítulo 7).
-
-## Sistema de Métricas de Evaluación
-
-Una vez determinado "en qué tareas evaluar", es necesario responder a "qué dimensiones se deben medir". Esta sección sintetiza las métricas comunes en la evaluación de Agentes en un "diccionario de métricas" de consulta, cubriendo del proceso al resultado, y de la calidad a la seguridad, ofreciendo definiciones y escenarios de aplicación para cada una. Las métricas mencionadas anteriormente (como Pass@k y Pass^k en τ-bench) reciben aquí su definición precisa.
-
-**Métricas de proceso: de caja negra a caja blanca.**
-
-No basta con fijarse únicamente en el resultado final; el proceso mediante el cual el Agente alcanza el resultado es igualmente relevante. La **tasa de validez de acciones** mide la proporción de operaciones válidas y legítimas dentro de las ejecutadas: las operaciones inválidas incluyen llamar a herramientas inexistentes o pasar tipos de parámetros incorrectos; las operaciones no autorizadas se refieren a comportamientos que exceden los límites de permisos. Una alta tasa de validez indica que el Agente comprende con claridad el ecosistema de herramientas. La **tasa de corrección en llamadas a herramientas** requiere además que los parámetros sean semánticamente razonables: las palabras de búsqueda deben expresar la necesidad con precisión y las rutas de operación sobre archivos deben apuntar a los objetivos correctos.
-
-La **eficiencia de la ruta** mide la economía para completar la tarea: número de pasos (ciclos de pensamiento-acción-observación), acciones redundantes (buscar repetidamente las mismas palabras clave, leer el mismo archivo múltiples veces) y frecuencia de retrocesos (frecuencia con la que se detectan errores y se corrigen: los retrocesos ocasionales son normales, pero los retrocesos frecuentes denotan falta de planificación prospectiva). Es necesario establecer líneas base mediante expertos humanos o algoritmos heurísticos para definir el "número de pasos razonable".
-
-La **cobertura de recuperación** se orienta a tareas de recolección de información: ¿exploró el Agente el espacio de información de forma suficiente? ¿Concluyó apresuradamente tras mirar solo la primera página de resultados? El **costo y latencia** se centran en el número de solicitudes, el gasto de tokens (distinguiendo entre costos de entrada y salida, y considerando la reutilización de KV Cache) y el tiempo de reloj (incluyendo inferencia del modelo + ejecución de herramientas + latencia de red), requiriendo rastrear la distribución temporal para localizar cuellos de botella.
-
-**Métricas de resultado y calidad.**
-
-La **tasa de éxito en la tarea** es la métrica directa más dura, pudiendo diseñarse estándares jerárquicos (el objetivo principal debe cumplirse obligatoriamente, mientras que los objetivos secundarios afectan la puntuación de calidad). En los métodos estadísticos es necesario distinguir dos métricas habitualmente confundidas:
-
-- **Pass@k**: La probabilidad de tener **al menos un éxito** en k intentos, respondiendo a "¿puede el Agente lograrlo?".
-- **Pass^k**: La probabilidad de tener **éxito en la totalidad** de los k intentos, respondiendo a "¿es el Agente estable y confiable?".
-- **Best@k**: La mejor puntuación alcanzada entre k intentos (en lugar de si tuvo éxito o no), midiendo el "límite superior de calidad dadas suficientes oportunidades", usada con frecuencia en tareas abiertas con puntuación continua.
-
-Visualicemos la diferencia con cifras concretas: suponiendo que la tasa de éxito de un Agente en un solo intento sea del 60% (es decir, Pass@1 = 0,6), al realizar 5 ejecuciones las dos métricas resultan: Pass@5 = 1 - 0,4^5 ≈ 99% (casi seguro que tendrá éxito al menos una vez), mientras que Pass^5 = 0,6^5 ≈ 7,8% (la probabilidad de que todas tengan éxito es muy baja). La primera evalúa el techo de capacidad y la segunda evalúa la estabilidad; confundirlas conducirá a diagnósticos erróneos.
-
-
-Las **métricas de seguridad y cumplimiento** son vitales en el despliegue en producción: activar operaciones sensibles (eliminar datos / modificar permisos / enviar comunicaciones externas), fugas de datos (imprimir contraseñas en logs / enviar documentos privados a APIs externas) o contenidos inapropiados deben seguir un **principio de tolerancia cero**, aplicando la misma lógica que los ítems de veto en alucinaciones (véase más adelante "Los Cuatro Principios de la Rúbrica"): una sola violación grave de seguridad invalida la evaluación global, sin exención por un rendimiento excelente en otras dimensiones.
-
-La **robustez** mide la estabilidad ante la incertidumbre: sensibilidad a semillas aleatorias (diferencias de comportamiento bajo distintas inicializaciones), adaptabilidad a cambios en páginas web (las actualizaciones de UI no deben causar fallos totales), tolerancia a fluctuaciones en APIs (capacidad para gestionar con elegancia fallos temporales, timeouts o cambios de formato) y la interferencia de memoria a largo plazo (si la información obsoleta acumulada en el contexto provoca decisiones erróneas).
-
-**Cobertura dual de la trayectoria de ejecución y el resultado final.** Un aspecto fácil de descuidar en la evaluación es la diferencia entre "lo que el Agente dijo e hizo durante la ejecución" (la trayectoria, trajectory, definida en el Capítulo 1) y "cómo quedó finalmente el sistema" (el resultado final, outcome). Que el Agente diga "reserva completada" es información a nivel de trayectoria, mientras que la generación real de un registro de pedido en la base de datos es la verificación a nivel de resultado. Mirar únicamente la trayectoria omitirá casos de "prometió pero no lo hizo", mientras que mirar solo el resultado impedirá detectar desviaciones en los pasos intermedios. Anthropic citó un ejemplo ilustrativo: un Agente de reserva de billetes descubrió una brecha en la política de la aerolínea durante la ejecución, encontrando una opción más económica para el usuario; si se puntuara solo según la ruta de ejecución predefinida, esta carrera se habría considerado un fallo, pero desde el punto de vista del resultado final, el usuario obtuvo una solución mejor. Por lo tanto, ambos tipos de evaluación deben cubrirse para evitar puntos ciegos sistemáticos.
-
-**Muestreo manual y revisión adversarial.**
-
-Aunque la evaluación automatizada sea confiable en la mayoría de los casos, requiere muestreos manuales periódicos: cubriendo diferentes tipos de tareas, casos de éxito/fracaso y casos ambiguos cerca de los límites de puntuación, verificando no solo los resultados sino la razonabilidad de los argumentos de puntuación. El muestreo manual se puede sistematizar como **calibración del evaluador**: antes de usar masivamente la evaluación por LLM, se construye un conjunto dorado (golden set) anotado por humanos (por ejemplo, 100-200 casos que cubran distintos tipos de tareas y dificultades), sobre el cual se mide la tasa de coincidencia entre el modelo evaluador —es decir, el uso de LLM como juez, cuyo mecanismo se detalla en la siguiente sección) y las anotaciones humanas (tasa de coincidencia simple o coeficientes de consistencia como Cohen's kappa, eliminando este último la proporción de acierto por azar). Una vez alcanzado un umbral predefinido (como un kappa superior a 0,7), se aplica el modelo evaluador a la evaluación a gran escala; posteriormente, cada vez que se actualicen el modelo evaluador o la Rúbrica, se debe recalibrar sobre el conjunto dorado. Sin este paso, las puntuaciones del LLM evaluador son simplemente "la opinión de otro modelo" en lugar de un sustituto confiable del juicio humano. La **revisión adversarial** utiliza Red Teaming para construir casos desafiantes de forma proactiva: respuestas en apariencia perfectas pero con errores ocultos, respuestas que intentan aprobar acumulando palabras clave, o respuestas que aprovechan sesgos conocidos del modelo evaluador para obtener puntuaciones altas inmerecidas. El **mecanismo de múltiples jueces** utiliza varios evaluadores independientes para puntuar por separado, determinando el resultado final mediante promedios ponderados o verificaciones de consistencia: cuando surgen discrepancias graves entre evaluadores, el caso se marca para revisión manual.
-
-## Métodos de Evaluación Automatizada
-
-Con el entorno de evaluación, los datasets y el sistema de métricas definidos, la pregunta clave es: ¿cómo puntuar? Para tareas con respuestas correctas bien definidas (como problemas matemáticos o consultas SQL), basta con una evaluación binaria simple (correcto/incorrecto); sin embargo, para tareas de respuesta abierta (como diálogos de atención al cliente o redacción de informes), se requieren métodos de evaluación más refinados.
-
-La verificación automática de código solo cubre escenarios con respuestas estándar; la puntuación de tareas abiertas constituye el tema de esta sección. En este ámbito, la densidad de las señales de recompensa (desde recompensas binarias a recompensas de proceso y recompensas generativas), así como los métodos de entrenamiento de modelos de recompensa, se reservan para una discusión sistemática en la sección de post-entrenamiento del Capítulo 7. Esta sección responde a una pregunta más fundamental: cómo utilizar LLMs para evaluar automáticamente la calidad del resultado en tareas abiertas.
-
-### LLM-as-a-Judge — El Núcleo de la Evaluación Automatizada
-
-![Figura 6-4 Pipeline de LLM-as-a-Judge](images/fig6-4.svg)
-
-¿Por qué se necesita LLM-as-a-Judge? Para tareas abiertas (como generar informes, gestionar quejas de clientes o contenido creativo), no existen respuestas estándar para comparar automáticamente, y la evaluación humana resulta costosa y difícil de escalar. LLM-as-a-Judge permite que un modelo de lenguaje evalúe según criterios de puntuación (Rubric) definidos por expertos, logrando un equilibrio entre la escala automatizada y el juicio profesional humano. No obstante, este método presenta limitaciones conocidas: los modelos evaluadores pueden tener sus propios sesgos (el más típico es el **sesgo de longitud / length bias**, tendiendo a dar puntuaciones más altas a respuestas más largas y detalladas, incluso si el contenido no es más correcto), y múltiples evaluaciones sobre la misma entrada pueden presentar fluctuaciones. El sesgo de longitud requiere prevención específica mediante tres vías: penalizar explícitamente la verborrea en la Rúbrica, fijar límites máximos de longitud de respuesta para tareas similares y auditar periódicamente la correlación entre la puntuación y la longitud de la respuesta (si las puntuaciones altas van casi siempre acompañadas de respuestas largas, indica que el juicio se ha desviado por la longitud y se debe revisar la Rúbrica). Para responder sistemáticamente a estos desafíos, el diseño de la Rúbrica debe seguir los siguientes principios:
-
-**Rúbrica (criterios de puntuación): la base de evaluación del LLM.**
-
-**Los Cuatro Principios de la Rúbrica** (Scale AI, "Rubrics as Rewards"):
-
-(1) **Basado en orientación de expertos**: Debe reflejar el conocimiento del dominio, capturando hechos fundamentales y pasos de razonamiento. Por ejemplo, la Rúbrica para consultas médicas debe incluir criterios diagnósticos y errores médicos que deben evitarse obligatoriamente; una Rúbrica sin base profesional solo capturará características superficiales como la fluidez del lenguaje.
-
-(2) **Cobertura completa**: Debe abarcar precisión fáctica, coherencia lógica, integridad y seguridad, y no solo definir criterios positivos, sino precisar **trampas (Pitfalls)**, es decir, errores frecuentes de alto riesgo, como recomendar tratamientos no verificados en consejos médicos.
-
-(3) **Ponderación de importancia estandarizada**: Se divide en ítems esenciales (Essential), importantes, opcionales y de trampa. Admite un **mecanismo de veto (Veto)**: por ejemplo, en la atención al cliente, la alucinación (inventar información falsa) es una dimensión de veto típica (sin importar lo bien que rinda en otras dimensiones, la presencia de información falsa implica el veto inmediato). Esto también ayuda a prevenir trampas de recompensa basadas en la acumulación de palabras clave.
-
-(4) **Evaluación autocontenida**: Cada ítem evaluable debe ser ejecutable de forma independiente, sin depender del conocimiento del dominio del evaluador. Se deben evitar criterios abstractos como "la respuesta demuestra una comprensión profunda", sustituyéndolos por criterios verificables como "cita al menos dos teorías de autoridad y explica con precisión cómo respaldan la conclusión".
-
-Práctica clave: definir niveles de puntuación objetivos y verificables para cada dimensión, proporcionando ejemplos concretos y **casos límite** para ayudar a clarificar situaciones ambiguas. Se debe prevenir proactivamente el **Reward Hacking** —es decir, cuando el Agente encuentra un "atajo" para obtener puntuaciones altas sin haber completado realmente la tarea), penalizando explícitamente las alucinaciones, la zalamería hacia el usuario, la acumulación de palabras clave y la evasión de preguntas complejas. La Rúbrica es un producto iterativo: se perfecciona recopilando discrepancias entre evaluadores durante las pruebas, evolucionando gradualmente desde principios abstractos hacia un corpus detallado de jurisprudencia evaluativa.
-
-A continuación se muestra un ejemplo completo de Rúbrica que cumple los cuatro principios para un Agente de memoria de usuario. Pregunta de prueba: "¿Quién es el pediatra de mi hija?" (la respuesta exige vincular información a través de dos conversaciones: la primera menciona que "la hija se llama Lily" y la segunda menciona "llevar a Lily a ver al Dr. Chen").
-
-```yaml
-rubric:
-  dimensions:
-    - name: Corrección factual
-      weight: essential        # Ítem esencial
-      scoring:
-        4_Excelente: "Responde con precisión Dr. Chen y lo vincula con su hija Lily"
-        3_Bueno: "Responde con precisión Dr. Chen, pero no menciona que es el médico de Lily"
-        2_Suficiente: "Proporciona el médico correcto pero incluye información adicional incierta"
-        1_Insuficiente: "Proporciona un nombre de médico incorrecto o responde que no lo sabe"
-
-    - name: Integridad de la información
-      weight: important        # Ítem importante
-      scoring:
-        4_Excelente: "Aporta proactivamente información relevante (como la fecha de la última consulta o el diagnóstico)"
-        3_Bueno: "Responde a la pregunta central sin omisiones"
-        2_Suficiente: "Responde a la pregunta central, pero omite información asociada disponible"
-        1_Insuficiente: "Falta información clave"
-
-    - name: Corrección del razonamiento
-      weight: important
-      scoring:
-        4_Excelente: "Asocia correctamente 'hija=Lily' y 'médico de Lily=Dr. Chen' a través de dos conversaciones"
-        3_Bueno: "La asociación es correcta pero la ruta de pensamiento no es del todo clara"
-        2_Suficiente: "Asociación parcialmente correcta"
-        1_Insuficiente: "Asociación errónea (por ejemplo, confundir el médico del usuario con el de la hija)"
-
-    - name: Detección de alucinaciones
-      weight: veto             # Ítem de veto: si se activa, la puntuación total es cero
-      scoring:
-        pass: "Toda la información se puede rastrear en el historial de conversación"
-        fail: "Inventa información no existente en la conversación (como fechas de consulta o diagnósticos ficticios)"
-
-  edge_cases:
-    - "Si el usuario tiene varias hijas y cada una consulta a un médico diferente, se debe repreguntar a qué hija se refiere"
-    - "Si en la memoria existen simultáneamente 'Dr. Chen' y 'Doctor Chen', deben identificarse como la misma persona"
+```json
+{
+  "source": {"type": "email", "sender": "client@example.com"},
+  "channel": "gmail_webhook",
+  "content": {"subject": "Solicitud de reembolso", "body": "Deseo el reembolso del pedido #12345..."},
+  "context": {"priority": "high", "customer_tier": "vip", "related_orders": ["#12345"]}
+}
 ```
 
-**Rúbrica buena frente a Rúbrica mala**: Cada nivel de puntuación anterior proporciona comportamientos verificables específicos ("responder con precisión Dr. Chen") en lugar de descripciones imposibles de juzgar objetivamente como "demuestra una comprensión profunda de la memoria". El ítem de veto define la línea roja: incluso con puntuación máxima en las demás dimensiones, la presencia de alucinación resulta en cero puntos.
+Solo cuando estas dimensiones se modelan claramente como eventos estructurados puede el Agente mantener una percepción clara en comunicaciones multiparte, evitando confundir las entradas del usuario con resultados de herramientas, o tomar resultados de herramientas con instrucciones ocultas por instrucciones del usuario provocando inyecciones de prompts. La complejidad de la gestión de contextos multihilo exige además que el Agente comprenda la vinculación entre múltiples hilos de conversación: cómo los mensajes de terceros afectan las emociones del usuario, las transiciones de rol del usuario en distintas conversaciones y cuándo se requiere sintetizar información de diferentes hilos para ofrecer consejos. En el ecosistema de disparadores de plataformas de flujo de trabajo como n8n se observa que Webhooks, temporizadores, correos, cambios en bases de datos y monitores de archivos son cada uno un "sentido" con el que el Agente percibe el mundo. Cuando estos eventos heterogéneos se modelan de forma unificada en un formato estructurado, el Agente puede procesar los estímulos de distintos orígenes de manera coherente, sustentando los juicios de urgencia y las estrategias de procesamiento que se detallan a continuación.
 
-**Veto determinista antes del juicio con rúbrica:**
+**Estrategias de procesamiento dinámico basadas en la urgencia.**
+
+Al gestionar múltiples tareas, las personas adoptan distintas estrategias según el nivel de urgencia. Ante emergencias imprevistas, pausan de inmediato el trabajo en curso; ante asuntos pendientes de rutina, los añaden a la lista de tareas para procesarlos más tarde. El procesamiento de eventos del Agente debe reflejar esta misma inteligencia.
+
+![Figura 6-2 Tres estrategias para el procesamiento de eventos asíncronos](images/fig6-2.svg)
+
+**El procesamiento basado en cancelación (Cancellation-Based)** se utiliza para eventos urgentes, consistiendo en esencia en **crear un punto seguro por adelantado** para el evento urgente: interrumpiendo activamente el paso actual para convertir ese instante en el límite donde consumir nuevos eventos. Cuando llega un evento urgente (como el usuario haciendo clic en "detener" o el sistema de supervisión enviando una orden de alta prioridad): (1) detener la operación actual (si el LLM está razonando, cancelar de inmediato la respuesta en streaming; si hay herramientas síncronas ejecutándose, enviar la señal de cancelación); (2) vaciar la cola de pendientes, extrayendo todos los eventos; (3) añadir los eventos de la cola junto con el evento urgente al final de la trayectoria; (4) volver a invocar de inmediato al LLM, evaluando la situación tomando como entrada la trayectoria completa actualizada. Por ejemplo, si el usuario introduce "¡Detente! Me he equivocado" mientras el Agente ejecuta una operación potencialmente errónea, el Agente verá inmediatamente esta nueva entrada y recomprenderá la intención real, evitando ejecutar la operación errónea.
+
+**El procesamiento en cola (Queued)** se utiliza para eventos rutinarios. Cuando llega un evento no urgente (como el retorno de un resultado de herramienta asíncrona o el usuario enviando información complementaria): (1) colocar el evento al final de la cola sin interrumpir la operación actual; (2) esperar a que la operación actual finalice (permitiendo que el LLM complete su razonamiento y que las herramientas síncronas terminen su ejecución); (3) cuando cualquier llamada a herramienta se completa devolviendo `tool.result`, examinar la cola y, si no está vacía, añadir todos los eventos juntos a la trayectoria de una sola vez; (4) el LLM procesa de forma sintética la trayectoria actualizada. Esto logra un procesamiento por lotes que mejora la eficiencia: por ejemplo, después de que el Agente invoca una herramienta de búsqueda, si durante la espera el usuario añade "solo busca resultados del último mes", esta información complementaria entra en la cola y, al retornar los resultados de búsqueda, ambos eventos se presentan juntos al LLM, evitando idas y vueltas innecesarias.
+
+**El procesamiento paralelo (Parallel)** se utiliza para consultas ligeras e independientes. Por ejemplo, mientras el Agente analiza un gran volumen de datos, el usuario pregunta repentinamente "¿qué tiempo hace hoy?". Estas consultas poseen tres características: no están relacionadas con la tarea principal, requieren respuesta rápida y tienen bajo costo de ejecución. No deben procesarse con cancelación (interrumpiría la tarea principal importante) ni en cola (haría esperar demasiado al usuario). El sistema juzga primero la independencia y complejidad de la consulta y la ejecuta de forma independiente en una sesión de razonamiento paralela, devolviendo la respuesta inmediatamente tras invocar las herramientas necesarias. La consulta y la respuesta se añaden a la trayectoria de la tarea principal marcadas explícitamente como "ejecutadas en paralelo con la tarea principal", evitando que el LLM se confunda.
+
+**Determinación de la urgencia.**
+
+Eventos urgentes: Interrupción del usuario (`user.interrupt`), instrucciones de supervisión (`supervisor.instruction`), interrupciones entre Agentes (`agent.interrupt`), disparadores externos marcados como urgentes (como alertas del sistema o fallos de pago).
+
+Eventos no urgentes: Entradas de usuario de rutina (`user.input`), entradas de Agentes (`agent.input`), resultados de herramientas (`tool.result`), disparos de temporizadores (`timer.trigger`), disparadores externos de rutina.
+
+Las reglas rígidas codificadas tienen sus limitaciones, ya que la semántica del evento determina su forma de procesamiento: "detente inmediatamente" usa cancelación, "¿qué tiempo hace hoy?" usa paralelo y "el informe debe enviarse en español" usa cola. **Se recomienda utilizar un LLM clasificador ligero como enrutador de eventos**, juzgando rápidamente al llegar el evento qué estrategia se debe adoptar.
+
+A continuación, mediante un experimento de Agente de procesamiento de correo orientado a eventos, aterrizaremos las estrategias de procesamiento anteriores en una implementación ejecutable.
+
+**Enrutamiento del bucle de eventos:**
 
 ```python
-deterministic = verify_state_policy_and_claims(trajectory, outcome)
-if deterministic.veto:
-    return FAIL(reason = deterministic.evidence)
+while runtime.is_alive:
+    events = queue.take_batch()
 
-rubric_result = judge(answer, rubric, evidence)
-return aggregate_with_confidence(rubric_result)
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
 ```
 
-Al enviar la rúbrica junto con la respuesta real del Agente, el modelo evaluador puntúa cada dimensión y explica el motivo. Al reunir decenas de casos y volver sobre las trayectorias peor puntuadas, una caída genérica de la tasa de éxito se convierte en un diagnóstico concreto: faltó recuperar un dato, se relacionaron mal las personas o se añadió información sin respaldo. La rúbrica, por tanto, no se limita a decir cuánto falló el sistema; también orienta la siguiente mejora.
-
-> **Experimento 6-3 ★★: Construcción de un Sistema de Evaluación de Memoria de Usuario Basado en Rubrics**
+> **Experimento 6-1 ★★★: Agente de Procesamiento de Correos Orientado a Eventos**
 >
-> **Prerrequisito**: Haber completado el experimento de memoria de usuario del Capítulo 3 (`chapter3/user-memory-evaluation`).
 >
-> Este experimento requiere modificar el framework `chapter3/user-memory-evaluation` del Capítulo 3, pasando del mecanismo de evaluación simple basado en LLM-as-a-Judge a un sistema estructurado de evaluación multidimensional basado en rúbricas. El sistema existente utiliza una única llamada a un LLM que devuelve aprobado/fallo junto con una razón, por lo que carece de capacidad diagnóstica estructurada.
+> ![Figura 6-3 Arquitectura del Agente orientado a eventos del Experimento 6-1](images/fig6-3.svg)
 >
-> Diseñar un framework de Rubrics multidimensional unificado aplicable a las tres capas de tareas. Las dimensiones de evaluación incluyen: corrección factual (Precision, precisión: qué proporción de la información proporcionada es correcta), verificando si números, fechas y nombres coinciden con la memoria; integridad factual (Recall, cobertura: qué proporción de la información que debía proporcionar fue mencionada), verificando si se entregó toda la información relevante sin omitir contenido clave; corrección del razonamiento, comprobando si se entendieron correctamente las relaciones entre informaciones y la lógica implícita; proactividad del razonamiento, evaluando si se ofrecen sugerencias o advertencias de riesgo apropiadas más allá de la respuesta directa; y detección de alucinaciones, garantizando que no se invente información inexistente en la memoria.
 >
-> Puntuación en cuatro niveles (Excelente / Bueno / Suficiente / Insuficiente), acompañando a cada nivel criterios de decisión concretos en lugar de descripciones abstractas. Establecer la dimensión de alucinación como ítem de veto. Proporcionar ejemplos y casos límite para cada dimensión.
-
-> **Experimento 6-4 ★★: Evaluación Comparativa entre Advanced JSON Cards y RAG**
+> Este experimento construye el Agente orientado a eventos más simple: **un asistente automático de procesamiento de correo**. El Agente escucha la bandeja de entrada y, cada vez que recibe un nuevo correo, activa automáticamente el flujo de procesamiento: clasificación, resumen, borrador de respuesta y notificación al usuario si es necesario. Este es el escenario de entrada más intuitivo para Agentes orientados a eventos: un evento externo (llegada de nuevo correo) activa un bucle de reflexión completo del Agente.
 >
-> **Prerrequisito**: Haber completado los experimentos de memoria de usuario y RAG del Capítulo 3 (`chapter3/user-memory`, `chapter3/agentic-rag-for-user-memory`).
+> **El objetivo del experimento** es comprender el concepto central de estar orientado a eventos: el Agente ya no se limita a esperar pasivamente la entrada del usuario, sino que puede responder a eventos externos para actuar de forma proactiva. Mediante este experimento, el lector dominará el registro de fuentes de eventos, la cola de eventos y el bucle básico de "llegada de evento -> procesamiento del Agente -> salida de resultado".
 >
-> **Objetivo**: Comparar en un mismo conjunto de evaluación dónde funciona mejor la memoria estructurada y dónde la recuperación no estructurada. Reutilizar los dos proyectos del Capítulo 3 para contrastar tres configuraciones en los 60 casos de `chapter3/user-memory-evaluation`: Advanced JSON Cards sin RAG (las tarjetas permanecen en el contexto), RAG puro (las conversaciones se fragmentan y se guardan en una base vectorial) y un sistema híbrido (hechos esenciales en contexto y conversación original recuperada bajo demanda).
+> **Fuentes de eventos y cola de eventos.**
 >
-> **Aceptación**: Registrar la tasa de éxito, pasos promedio, número de llamadas a herramientas, latencia y costo a lo largo de tres niveles de complejidad (recuerdo básico, desambiguación multisesión y asociaciones ocultas entre conversaciones), explicando con claridad los límites de fallo de cada solución: qué perdió la estructura, qué omitió la recuperación y si el híbrido presenta una sinergia real. Consultar el repositorio adjunto para detalles de configuración y casos de prueba.
-
-El experimento asociado probó los tres sistemas con las mismas 60 preguntas y conservó 180 trayectorias de llamadas reales a la API. La tabla 6-3 muestra los resultados; junto al porcentaje global aparece también el número de aciertos para que el tamaño de la muestra quede a la vista.
-
-Tabla 6-3. Tasa de éxito por nivel de los tres sistemas de memoria
-
-| Sistema | Recuerdo básico | Desambiguación multisesión | Asociación oculta entre sesiones | Total |
-|---|---:|---:|---:|---:|
-| Advanced JSON Cards | 95% | 60% | 50% | 68,3% (41/60) |
-| RAG | 90% | 40% | 15% | 48,3% (29/60) |
-| Híbrido | 80% | 70% | 50% | 66,7% (40/60) |
-
-Lo más revelador es que combinar ambos enfoques no produjo una mejora automática. El híbrido resolvió 3 casos que ninguno de los sistemas individuales había resuelto, pero en otros 8 quedó por debajo del mejor sistema individual. Frente al mejor sistema individual para cada pregunta, su recompensa media fue 0,092 menor. RAG casi igualó a las tarjetas estructuradas en recuerdo básico, pero cayó al 15% en las asociaciones entre sesiones: recuperar fragmentos relacionados no basta; el Agente todavía debe reconstruir correctamente quién hizo qué y cuándo.
-
-Otro dato fácil de pasar por alto es que el veto por alucinación se activó 28 veces en 180 evaluaciones. No es una cláusula decorativa de la rúbrica: cambia el resultado. En la práctica conviene estudiar cómo falla cada método según la dificultad antes de decidir qué hechos deben permanecer estructurados y qué consultas justifican una recuperación. Estos resultados proceden de casos sintéticos y de una sola campaña con una combinación concreta de modelo y evaluador. Sirven para explicar los modos de éxito y fallo, no para establecer una clasificación universal de sistemas de memoria.
-
-Todo ello presupone, además, que el evaluador sea fiable. Si el Agente y el juez pertenecen a la misma familia de modelos, pueden compartir preferencias y puntos ciegos. Esa es la cuestión de la siguiente sección.
-
-**El problema del modelo de la misma familia y la evaluación multifamilia.**
-
-Cuando el Agente y el modelo evaluador provienen de la misma familia de modelos, el Agente puede aprender a aprovechar las preferencias y puntos ciegos del modelo evaluador.
-
-**Esto es precisamente lo que expresa la Ley de Goodhart: cuando una métrica se convierte en un objetivo de optimización, deja de ser una buena métrica.** Cuanto más se entrene o ajuste un Agente sobre un sistema de puntuación determinado, más tenderá a explotar las brechas de ese sistema en lugar de mejorar genuinamente su capacidad.
-
-De forma más sutil, el Agente aprenderá gradualmente a evitar los tipos de errores que el modelo evaluador no detecta con facilidad, haciendo que el sistema de puntuación parezca funcionar sin problemas.
-
-La estrategia de mitigación es la **evaluación heterogénea multifamilia**: utilizar múltiples LLMs de diferentes familias de modelos para evaluar por separado (por ejemplo, si el Agente usa Claude, la evaluación utiliza GPT-5 y Gemini). Los sesgos de distintas familias suelen ser ortogonales, por lo que resulta difícil para el Agente "engañar" a todos los evaluadores simultáneamente. El uso de la misma Rúbrica garantiza que todos evalúen el mismo objetivo, agregando los resultados mediante promedios ponderados o verificaciones de consistencia. En producción se puede usar un único modelo para evaluaciones rápidas, pero se debe recurrir periódicamente a la evaluación multifamilia completa para auditorías de calidad.
-
-La evaluación multifamilia resuelve "qué modelo usar para evaluar"; a continuación se debe abordar "qué modalidades evaluar": extender la capacidad de LLM-as-a-Judge del texto a voz, imágenes y vídeo constituye otra dimensión de la cobertura de evaluación.
-
-**LLM-as-a-Judge multimodal.**
-
-La evaluación multimodal extiende el concepto de LLM-as-a-Judge a los dominios de voz, imágenes y vídeo. A continuación se presentan cuatro direcciones habituales:
-
-- **Evaluación de TTS** (TTS o Text-to-Speech, texto a voz): Juzgar la precisión, naturalidad, consistencia tímbrica y expresión emocional. Estas dimensiones permiten detectar problemas prosódicos que la métrica tradicional WER (Word Error Rate, tasa de error de palabras) no logra capturar.
-- **Evaluación de ASR** (ASR o Automatic Speech Recognition, reconocimiento automático del habla): Realizar juicios de impacto semántico: un error de reconocimiento en "el tiempo hoy" no tiene gran importancia, pero transformar "transferir mil" en "diez mil" puede acarrear consecuencias graves.
-- **Evaluación de UI**: Adoptar un mecanismo de **proponente-revisor (Proposer-Reviewer)** para detectar desbordamientos de texto, contraste de color, ubicación de botones, etc. Aquí el esquema proponente-revisor se utiliza como **método de evaluación**, difiriendo de su uso como **componente del sistema de generación** en el Capítulo 5, aunque el mecanismo central sea idéntico: un modelo genera y otro revisa de forma independiente.
-- **Evaluación de edición de vídeo**: Verificar mediante fotogramas clave si los puntos de inicio y fin de corte y la aplicación de efectos especiales son correctos.
-
-### Atribución de fallos y regresiones de prefijo de trayectoria
-
-Una evaluación extremo a extremo suele decir solo «aprobado» o «fallido». Para convertir el resultado en una reparación, cada trayectoria fallida debe registrar la categoría, el primer paso inaceptable, la llamada a herramienta o salida asociada y evidencia auditable. Las señales habituales son una corrección explícita del usuario, un voto negativo o una comprobación posterior que detecta una acción indebida. El LLM puede ayudar, pero la lectura humana sigue siendo necesaria porque el fallo suele revelar un problema de producto.
-
-Para un Coding Agent, clasifica la falta de proceso, los errores de herramientas/formato, la terminación anómala del modelo y los problemas de lógica o completitud. Guarda la atribución en JSON/YAML con número de paso, herramienta, observación, causa raíz frente a consecuencia, recuperabilidad y confianza, junto con el estado y las versiones del experimento.
-
-Una **regresión extremo a extremo** ejecuta todo el flujo. Una **regresión de prefijo de trayectoria** congela el contexto, las conversaciones, las respuestas de herramientas y el estado justo antes del primer error, y comprueba solo la siguiente acción. La respuesta debe ser un conjunto de acciones aceptables (leer las reglas, preguntar o rechazar una operación peligrosa), no una única cadena canónica. Los casos de prefijo son especialmente valiosos para Agents de producción de alta fiabilidad y deben permanecer separados de los datos de entrenamiento.
-
-> **Experimento 6-5 ★★: Evaluación de límites de prefijos con varias codificaciones**
+> El sistema admite el acceso unificado a múltiples fuentes de eventos:
 >
-> Se proporcionan al modelo memoria conocida, instrucción actual, prefijo de trayectoria, respuestas de herramientas y estado del entorno; debe devolver solo la siguiente acción observable. Se prueban conflictos de alcance, preferencias obsoletas, inferencias de baja confianza, confirmación antes de borrar y previsualización antes de publicar. Los mismos 11 casos se codifican como JSON Cards, Markdown y Python-like, con comprobaciones deterministas de acciones permitidas, seguridad, evidencia y acciones prohibidas. Las 33 celdas se completaron sin errores de API y cada codificación aprobó 6/11; cambiar la representación por sí solo no arregla la política de la aplicación.
-
-> **Experimento 6-6 ★★: Construcción de una Tubería de Evaluación Automatizada de Calidad TTS**
+> - **Eventos de correo** (`on_email_received`): Se disparan al llegar nuevos correos comprobando la bandeja periódicamente o recibiendo notificaciones push
+> - **Mensajes de IM/SMS** (`on_im_message`, `on_sms_message`): Se disparan por mensajes de mensajería instantánea
+> - **Eventos de GitHub** (`on_github_pr_update`, `on_github_issue_update`): Comentarios de revisión de PR y cambios de estado
+> - **Disparos de temporizador** (`on_timer_expire`): Tareas programadas (como resúmenes diarios o generación de informes semanales)
+> - **Webhook** (`on_webhook_received`): Callbacks genéricos de sistemas externos
+> - **Eventos del sistema** (`on_user_inactive`, `on_process_timeout`, `on_resource_alert`): Cambios en el estado interno
 >
-> Este experimento exige diseñar e implementar desde cero un sistema completo de evaluación de calidad TTS basado en LLM-as-a-Judge multimodal.
+> Todos los eventos entran en una **cola de eventos** unificada y se procesan en orden de llegada. Cada evento activa un bucle de reflexión independiente del Agente: el Agente lee el contenido del evento, invoca las herramientas correspondientes (como consultar la base de conocimientos, leer archivos adjuntos o buscar historiales de correo relevantes), genera los resultados del procesamiento (etiquetas de clasificación, resumen, borrador de respuesta) y finalmente notifica al usuario mediante herramientas de notificación o ejecuta la operación directamente.
 >
-> Diseñar una Rúbrica multidimensional para TTS: la dimensión de precisión verifica la lectura correcta de todo el texto (sin omisiones, errores de lectura ni adiciones); la dimensión de naturalidad evalúa la fluidez de la voz (ausencia de tono robótico, pausas no naturales y si la prosodia cumple los hábitos humanos); la dimensión de expresión emocional comprueba si el tono se ajusta al matiz emocional del texto (entonación ascendente en preguntas, énfasis en exclamaciones, velocidad lenta y tono bajo en contenidos tristes); la dimensión de consistencia tímbrica evalúa la similitud con el hablante cuando se dispone de un audio de referencia (el modelo multimodal recibe simultáneamente el audio de referencia y el sintetizado para compararlos).
->
-> Construir un corpus variado en longitud, género, emoción y dificultades especiales como números, nombres propios, palabras de pronunciación ambigua o voces dialectales. El módulo TTS puede conectarse a OpenAI, ElevenLabs, Fish Audio, Minimax o Doubao; un juez multimodal capaz de recibir audio evalúa conjuntamente la voz sintetizada, el texto original, el audio de referencia y la rúbrica. Además de analizar las puntuaciones por dimensión, hay que guardar el modelo evaluador y los hashes del audio de referencia y de cada candidato para que la ejecución sea auditable.
+> **Escenario de verificación**: Configurar el Agente para escuchar un buzón de prueba. Simular la recepción de tres correos: una invitación a una reunión, una queja de cliente y un anuncio publicitario. El Agente procesa secuencialmente: para la invitación a la reunión comprueba automáticamente conflictos en el calendario y redacta una respuesta de aceptación/rechazo; para la queja de cliente extrae la información clave y la marca como alta prioridad, notificando al usuario para su atención; y archiva automáticamente el anuncio publicitario. Todo el proceso ocurre sin intervención del usuario.
 
-El repositorio conserva una prueba piloto de escucha directa. OpenAI y Fish Audio generaron cuatro muestras cada uno —números, pronunciación ambigua, una frase larga y un tono entusiasta— y Voxtral evaluó los ocho audios en las cuatro dimensiones anteriores. Ambos obtuvieron 5,00 en precisión y 4,00 en naturalidad. Fish Audio alcanzó 4,00 en expresión emocional y 3,00 en consistencia de voz; OpenAI, 3,75 y 2,75. Separar las dimensiones permite ver diferencias de tono y voz incluso cuando la lectura del texto es igual de correcta.
+El Experimento 6-1 muestra el modo orientado a eventos más simple: los eventos entran en la cola y el Agente los procesa secuencialmente. Sin embargo, cuando el Agente necesita responder a interrupciones durante la ejecución de herramientas de larga duración, o gestionar múltiples tareas concurrentes al mismo tiempo, una cola de eventos simple resulta insuficiente. A continuación analizaremos desafíos de ingeniería más profundos.
 
-Pero ocho muestras no bastan para decidir qué proveedor es mejor. Hay cuatro por sistema y, sobre todo, el audio de referencia fijo procede de Fish S1, lo que favorece de antemano a Fish Audio en la comparación de voz. Para comparar TTS de propósito general habría que excluir del total la semejanza con esa voz. Para comparar clonación, todos los sistemas deberían imitar al mismo hablante y las notas del modelo deberían calibrarse con una escucha humana a ciegas. **Elegir la respuesta, imagen o voz de referencia forma parte del diseño de la evaluación; no es un trámite neutro previo al experimento.**
+### Implementación de ingeniería: Cómo hacer que modelos síncronos admitan interrupciones asíncronas
 
-Las rúbricas escritas a mano permiten crear rápido estas dimensiones diagnósticas. A mayor escala también se pueden entrenar **modelos de recompensa generativos** para automatizar la evaluación; el Capítulo 7 presenta sus métodos de entrenamiento.
+El Experimento 6-1 solo procesa eventos en serie: los eventos entran secuencialmente en la cola y el Agente los atiende uno a uno. Volvamos ahora a la contradicción entre "entrenamiento síncrono y despliegue asíncrono" planteada al inicio de esta sección: cuando una herramienta aún no ha devuelto respuesta y el usuario interrumpe repentinamente, ¿cómo puede el formato síncrono dar cabida a esta situación? Esta sección presenta la solución de ingeniería actual de la industria.
 
-En la selección práctica de modelos, la pregunta habitual es: "¿cuál es mejor, A o B?". La comparación por pares ofrece una forma de evaluación que no depende de puntuaciones absolutas.
+Ilustremos primero esta contradicción con un escenario concreto. Supongamos que el Agente está ayudando al usuario a redactar un correo (llamada a herramienta: buscar información de contacto), y mientras la búsqueda aún no devuelve resultados, el usuario dice repentinamente "espera un momento, consulta primero el tiempo de mañana". En el bucle ReAct síncrono, el Agente debe esperar a que la búsqueda devuelva respuesta antes de procesar el siguiente mensaje, porque la API exige que "tras emitir una llamada a herramienta, el mensaje siguiente debe ser el resultado de la herramienta". Sin embargo, en el mundo real asíncrono, los eventos pueden interrumpir la tarea en curso en cualquier momento. Cómo expresar la semántica de "interrupción asíncrona" bajo las restricciones del "formato síncrono" es la pregunta que responde este esquema de ingeniería.
 
-#### Errores de formato del documento sensibles al ámbito
+**Solución de compromiso de ingeniería: Simular la ejecución asíncrona en formato síncrono.**
 
-Cuando un usuario dice «las comillas están mal», eso no puede convertirse en un reemplazo global de caracteres. Como mínimo hay que distinguir las comillas rectas ASCII (`"`, `'`), las comillas curvas chinas (`“”`, `‘’`) y las comillas invertidas de Markdown (`` ` ``). El mismo carácter cumple un papel sintáctico distinto en la prosa china, en el original inglés citado, en el código en línea, en los bloques de código, en los comentarios de código, en JSON y en las rutas.
+La idea central es: **en condiciones normales sin interrupciones, permitir que el LLM vea una trayectoria síncrona estándar, e insertar marcadores de posición (placeholders) para reparar el formato solo cuando ocurra una interrupción**. A continuación se presentan las cinco reglas clave:
 
-Los datos de evaluación deberían analizar primero el documento en fragmentos con ámbito: por ejemplo `ZH_PROSE`, `EN_PROSE`, `QUOTED_SOURCE`, `INLINE_CODE`, `CODE_BLOCK`, `CODE_COMMENT` y `JSON_OR_SCHEMA`. Cada fragmento guarda el conjunto de transformaciones permitidas, los caracteres que deben protegerse y el resultado del validador tras la edición. Los tres casos siguientes no pueden tratarse con una única regla de reemplazo:
+**Regla 1**: Registrar de inmediato el mensaje assistant al emitir la salida el LLM (incluyendo thinking, content y tool call).
+
+**Regla 2**: Registrar tool result solo cuando la llamada a la herramienta se complete. Durante la ejecución, la trayectoria se encuentra en estado de "completada parcialmente".
+
+**Regla 3**: Las interrupciones durante la ejecución de herramientas requieren marcadores de posición. Generar un marcador de posición como respuesta para la herramienta no completada (por ejemplo, "La herramienta se está ejecutando en segundo plano, por favor procese primero el nuevo evento"), añadir el evento de interrupción y volver a invocar al LLM. Desde la perspectiva del LLM, el mensaje assistant sigue teniendo su tool result emparejado.
+
+**Regla 4**: Las interrupciones durante la reflexión del LLM descartan directamente el pensamiento actual. No se escribe en la trayectoria, y el nuevo evento se añade directamente antes de iniciar una nueva ronda de reflexión.
+
+**Regla 5**: Los eventos no urgentes entran en la cola a la espera de procesamiento por lotes. Se añaden de una sola vez al finalizar el ciclo actual.
+
+Tomando como ejemplo el caso en que el usuario interrumpe pidiendo el tiempo mientras el Agente redacta un correo, el funcionamiento de estas cinco reglas es el siguiente:
+
+1. El Agente invoca `search_contacts` para buscar información de contacto, y el mensaje assistant se escribe inmediatamente en la trayectoria (Regla 1).
+2. Mientras la herramienta de búsqueda aún no devuelve resultado, el usuario envía "consulta primero el tiempo de mañana". Dado que se trata de una interrupción del usuario, el sistema genera un tool result con marcador de posición para la herramienta `search_contacts` no completada ("La herramienta se está ejecutando en segundo plano, por favor procese primero el nuevo evento", Regla 3), añade la consulta del tiempo a la trayectoria y vuelve a invocar al LLM. En este instante, el formato de la trayectoria que observa el LLM es totalmente válido: el mensaje assistant y el tool result están perfectamente emparejados.
+3. Tras completar la consulta del tiempo y responder al usuario, llega el resultado original de `search_contacts`, añadiéndose a la trayectoria como un nuevo evento (Regla 2), y el Agente continúa redactando el correo tras leer la información de contacto.
+
+La ventaja central de este esquema es que: **en condiciones normales, el LLM observa una trayectoria síncrona perfecta**: los mensajes assistant y tool result están estrictamente emparejados, el orden cronológico es claro y no hay marcadores de posición ni estados anómalos. Esto resulta sumamente amigable para los LLM actuales entrenados bajo el paradigma síncrono, garantizando al máximo la calidad del pensamiento. Solo cuando realmente se requiere una interrupción se introduce el marcador de posición como un "compromiso necesario".
+
+Sin embargo, persiste el riesgo de acentuar las alucinaciones. En este escenario, aunque el marcador de posición explica claramente que la herramienta "aún no se ha completado", el sistema podría "inventar" un resultado de herramienta en reflexiones posteriores, asumiendo erróneamente que la herramienta devolvió datos válidos y tomando decisiones inadecuadas basadas en ese resultado ficticio. Esto ocurre porque en la inmensa mayoría de las trayectorias vistas por el modelo durante su entrenamiento, a una llamada a herramienta le sigue inmediatamente el resultado real, no habiendo aprendido nunca a gestionar situaciones donde "el resultado aún no ha llegado". Por ello, en la práctica solo se interrumpe ante verdaderas emergencias (solicitud explícita de parada por parte del usuario), mientras que los eventos no urgentes se colocan en cola para su procesamiento por lotes.
+
+**Interfaces de herramientas asíncronas adecuadas para modelos existentes.**
+
+Dado que la suposición síncrona de los modelos es difícil de romper, una estrategia más fundamental consiste en **abrazar la semántica asíncrona desde el diseño de las interfaces de las herramientas**.
+
+Las herramientas tradicionales conllevan implícitamente la semántica de "invocar es completar". Por ejemplo, el nombre `phone_call` insinúa que "la llamada realizará la marcación, esperará a que finalice la conversación y devolverá el registro de la llamada". En el paradigma asíncrono se deben desacoplar el "inicio" y la "finalización":
+
+- `initiate_phone_call`: Inicia la llamada telefónica, devolviendo inmediatamente el identificador de la tarea y el estado inicial (como "Llamada iniciada, marcando")
+- El avance de la llamada se notifica mediante eventos (`phone_call_connected`, `phone_call_ended`)
+
+La clave radica en que el propio nombre y la descripción de la herramienta transmitan semántica asíncrona. Cuando el modelo ve `initiate_phone_call`, su capacidad de comprensión del lenguaje deduce de forma natural que se trata de "iniciar" y no de "completar". La descripción de la herramienta debe reforzar aún más esto: "Esta herramienta iniciará una tarea telefónica procesada por un subagente. Tras iniciar con éxito devolverá inmediatamente un ID de tarea, permitiéndole continuar procesando otros asuntos. Se recibirá un evento de notificación separado al finalizar la llamada."
+
+**Dispersión de la atención en el procesamiento en cola.**
+
+Al procesar eventos en lote, el modelo tiende a prestar atención únicamente al último evento. La causa raíz reside en que **el modelo ha sido entrenado para reaccionar a la entrada más reciente, y el procesamiento de eventos en lote rompe esta suposición**.
+
+Se puede intervenir a dos niveles:
+
+**Nivel de prompts**: Informar al modelo "cuando reciba múltiples eventos consecutivos, asegúrese de considerar de forma integral toda la información".
+
+**Marcado en la barra de estado del Agente**: Añadir marcadores explícitos antes de cada evento:
 
 ```text
-Prosa china: llamar al método `reset()`.
-Original inglés citado: “Please restart the service.”
-# el bloque de código siguiente solo ilustra un ámbito protegido
-# Comentario en chino: mostrar "estado actual"
-name = "status"
+[Evento no procesado 1/4] Tool result from database_query: ...
+[Evento no procesado 2/4] User nota adicional: solo consultar datos de la región de Madrid
+[Evento no procesado 3/4] Recordatorio del sistema: quedan 30 minutos para la fecha límite del informe
+[Evento no procesado 4/4] User consulta: ¿cómo va el avance?
 ```
 
-La regresión por prefijo de trayectoria debe exigir al modelo la edición mínima y comprobar a la vez el estilo del documento chino, la tasa de conservación del original inglés, la sintaxis de código y JSON, y la distancia de edición sobre el texto no objetivo. Cuando las reglas no puedan determinar el ámbito, conservar el texto original y pedir aclaración debe contar como acción permitida, y no como una edición conjetural que pasa por casualidad.
+Añadir un resumen al final: "Hay 4 eventos no procesados anteriormente, incluyendo 1 resultado de herramienta, 2 mensajes de usuario y 1 recordatorio del sistema. Asegúrese de que su respuesta cubra toda la información."
 
-#### Errores de copia exacta: del *mismatch* de `old_string` a la localización capa por capa
+### Contradicción profunda y direcciones futuras
 
-Un fallo de `old_string` tampoco puede atribuirse sin más a «el modelo lo copió mal». Para la misma cadena hay que guardar el hash de bytes original, la secuencia de code points Unicode y la secuencia de token IDs del tokenizador, y buscar la primera divergencia a lo largo de esta cadena:
 
-```text
-bytes originales → respuesta de la herramienta → serialización del Harness → contexto del modelo
-→ salida de tokens → cadena decodificada → análisis JSON/tool-call → coincidencia de la herramienta
-```
+![Figura 6-4 Paradigma de entrenamiento síncrono vs. realidad de despliegue asíncrono](images/fig6-4.svg)
 
-Un conjunto mínimo de sondas de evaluación cubre la repetición directa, la extracción desde un contexto largo, la colocación en argumentos de herramienta, la selección entre cadenas similares, y espacios, saltos de línea, barras invertidas, caracteres combinantes Unicode y tokens de baja frecuencia. Las métricas son byte-exact match, code-point-exact match, token-exact match, la posición de la primera divergencia y la tasa real de éxito de la herramienta. Si el modelo acierta en la sonda directa pero la llamada a la herramienta falla, hay que arreglar el tokenizador, la serialización, el Harness o el protocolo de la herramienta; solo cuando la primera divergencia aparece en la salida del propio modelo debe convertirse el caso en datos de entrenamiento de copia del capítulo 7.
 
-### Comparación por Pares y Ranking de Modelos
+En última instancia, los marcadores de posición, las interfaces de herramientas asíncronas y las marcas en la barra de estado de las secciones anteriores son todos intentos de compensar mediante ingeniería de prompts la misma contradicción entre "entrenamiento síncrono y despliegue asíncrono" (Figura 6-4), cuyas causas ya se detallaron al inicio de esta sección y no se repiten aquí, enfocándonos solo en su solución fundamental.
 
-![Figura 6-5 Elo Rating y Ranking de Comparación por Pares](images/fig6-5.svg)
+**Esperando la evolución del modelo: De lo síncrono a lo asíncrono.**
 
-El **sistema de puntuación Elo** (un sistema de ranking diseñado originalmente para el ajedrez) cuantifica la capacidad relativa de los modelos mediante un gran número de enfrentamientos de dos en dos: a mayor diferencia de puntuación, mayor es la tasa de victoria esperada del más fuerte. Por ejemplo, si el modelo A tiene 1.200 puntos y el modelo B 1.000 puntos, el sistema Elo predecirá una probabilidad de victoria para A cercana al 76%. Si B gana inesperadamente, B sumará más puntos y A perderá más puntos: los resultados imprevistos provocan ajustes de puntuación más drásticos, permitiendo que el ranking converja rápidamente hacia el nivel real. La base estadística subyacente es el **modelo Bradley-Terry**: abstrae cada modelo como una "puntuación de capacidad" latente, donde la probabilidad de victoria en enfrentamientos directos está determinada por la diferencia de puntuación entre ambos, siendo Elo la implementación de ingeniería en forma de actualización en línea de dicho modelo.
+Las técnicas de ingeniería mencionadas son esencialmente **el uso de ingeniería de prompts para remediar las deficiencias del entrenamiento del modelo**, constituyendo medidas provisionales de transición. La verdadera solución requiere un cambio de paradigma a nivel de entrenamiento del modelo.
 
-Chatbot Arena utiliza enfrentamientos aleatorios anónimos: los usuarios eligen la respuesta superior a ciegas sin conocer la identidad de los modelos, obteniendo un ranking basado en millones de votos. La ventaja de este método es que no requiere definir un "estándar absoluto", bastando con el juicio humano de "¿cuál es mejor, A o B?". Sin embargo, también presenta limitaciones: el ranking depende de las preguntas planteadas por los usuarios (si muchos usuarios hacen preguntas de programación, los modelos fuertes en programación tendrán rankings más altos, lo que no necesariamente refleja su nivel real en otras tareas).
+Los modelos VLA (Vision-Language-Action, visión-lenguaje-acción, véase el Capítulo 6) en el campo de la robótica han comenzado a enfrentarse a desafíos similares: existe una latencia inevitable entre la percepción y la acción. El éxito de los VLA marca la dirección para la evolución de los modelos de Agentes. La siguiente generación de modelos necesita adquirir tres capacidades centrales mediante aprendizaje por refuerzo en entornos asíncronos:
 
-Cuando la evaluación por pares se realiza mediante un LLM en lugar de votos humanos, se debe prevenir el **sesgo de posición (Position Bias)**: los modelos evaluadores tienden de forma sistemática a favorecer la opción ubicada en una posición determinada (habitualmente la primera), incluso si los contenidos de ambas opciones se invierten por completo. El método de mitigación estándar consiste en **evaluar dos veces intercambiando el orden**: evaluar una vez con A primero y otra con B primero, promediando ambos resultados; una práctica más estricta solo contabiliza el resultado si ambos juicios coinciden, registrándolo como empate o enviándolo a revisión manual en caso contrario. El enfoque de Chatbot Arena es conceptualmente idéntico: aleatorizar la posición de presentación de ambas respuestas para que el sesgo de posición se cancele en muestras grandes.
+1. **Comprender la intercalación asíncrona de eventos en la trayectoria**: Esta es la deficiencia de capacidad más central. Los modelos actuales esperan secuencias estrictamente síncronas, pero en entornos asíncronos reales, tras un tool call puede seguir no un tool result sino un nuevo mensaje de user; el thinking puede interrumpirse a la mitad, pero el estado intermedio debe conservarse en la trayectoria, continuando la reflexión tras procesar el nuevo mensaje en lugar de empezar desde cero. El modelo necesita mantener una percepción clara en estas trayectorias "desordenadas": qué llamadas a herramientas siguen esperando resultados y qué pensamientos son fragmentos no completados.
+2. **Recuperar tareas y reflexiones interrumpidas**: Mantener en memoria las tareas no completadas tras ser interrumpido para atender emergencias. Por ejemplo, si mientras el Agente ejecuta una herramienta de análisis de datos el usuario pregunta por el tiempo, tras responder debe esperar de forma natural el resultado del análisis de datos, en lugar de olvidar que hay una herramienta ejecutándose. En particular, debe evitarse generar alucinaciones asumiendo erróneamente que la herramienta interrumpida ya ha finalizado.
+3. **Procesamiento sintético de eventos en lote**: Cuando se añaden múltiples eventos a la trayectoria en lote, no se debe prestar atención únicamente al último, siendo obligatorio considerar de forma integral toda la información no procesada.
 
-**De la evaluación al entrenamiento: transferencia de señales de comparación por pares**. La comparación por pares no es solo un medio de evaluación, sino una fuente clave de señales para el post-entrenamiento. El algoritmo **GRPO** (Group Relative Policy Optimization, optimización de política relativa de grupo) que se presentará en el Capítulo 7 introduce precisamente este enfoque de "comparar cuál es mejor" en el entrenamiento del modelo: su idea central consiste en muestrear múltiples respuestas candidatas para una misma pregunta, utilizando su ventaja relativa (en lugar de la puntuación absoluta) para estimar la ganancia, ahorrando la molestia de entrenar una red de valor adicional (critic, usada para estimar la línea base) como en PPO. Cabe destacar que GRPO ahorra la red de valor, no la señal de recompensa en sí, ya que sigue dependiendo de un modelo de recompensa o de reglas de recompensa verificables para juzgar la calidad de cada candidato. Esto sienta una base cuyos desarrollos matemáticos, comparaciones con PPO/DPO y detalles de aplicación en Agentes se desplegarán por completo en el Capítulo 7.
+Lograr este entrenamiento RL asíncrono requiere nueva infraestructura: simuladores de entornos asíncronos (que generen latencias en devoluciones de herramientas, interrupciones aleatorias de usuarios, etc.) y recompensas específicas para capacidades asíncronas (comprender correctamente trayectorias desordenadas, recuperar con éxito pensamientos interrumpidos, evitar alucinaciones y procesar eventos en lote de forma sintética).
 
-> **Experimento 6-7 ★★: Construcción de una Tabla de Clasificación de Modelos a partir de Datos de Comparación por Pares**
+Sin embargo, el "pensamiento continuo" no tiene por qué esperar a la siguiente generación de modelos: utilizando una capa muy delgada de lógica de orquestación (unos doscientos líneas), se puede transformar un modelo de pensamiento de texto **existente** en un Agente de **pensamiento continuo (continuous-time)** al instante [^ch6-async-1], conectando precisamente las dos mitades anteriores de "compromiso de ingeniería" y "evolución del modelo". Su mecanismo es una versión mejorada de la Regla 4 previa: en lugar de **descartar** medio pensamiento al interrumpirse, es mejor construir toda la interacción como **un flujo de pensamiento ininterrumpido**, pudiendo cerrar por la fuerza en cualquier momento el bloque `<think>` que el modelo está escribiendo, insertar la nueva observación llegada (un retorno de herramienta, una interrupción del usuario, un nuevo fragmento reconocido) como un mensaje normal y permitir que el modelo continúe decodificando a continuación. Esto aprovecha un recurso habitualmente desperdiciado: el modelo puede generar cientos de tokens por segundo, mientras que una llamada a herramienta o una frase del usuario suelen tardar varios segundos; estas "esperas" son para el modelo **capacidad de cómputo ganada gratuitamente**, pudiendo aprovecharse para pensar por adelantado. De ello nacen dos comportamientos: **pensar mientras se espera** (sin esperar a que la herramienta vuelva o a que el usuario termine de hablar, pensando hacia adelante basándose en la información parcial existente e incluso activando por adelantado el siguiente paso de herramientas; esta tendencia de "pensamiento de anticipación" se ha replicado con cero disparos en múltiples familias de modelos, con datos específicos en el artículo de la nota al pie); y **pensar mientras se actúa** (continuar pensando mientras se emite la salida, siendo capaz de corregirse a mitad de la acción).
+
+Sin embargo, la otra mitad más crítica de esta investigación versa sobre el **entrenamiento**, respondiendo precisamente a la demanda anterior de "esperar la evolución del modelo": disponer únicamente de la orquestación solo hace que el pensamiento continuo **sea posible**, pero para que sea realmente **útil** depende de cómo se entreguen las señales de entrenamiento. La investigación descubrió que si se entrena utilizando recompensas del tipo "LLM como juez", el modelo aprenderá a ocultar su pensamiento y usar el silencio para obtener buenas evaluaciones del juez, empeorando los indicadores objetivos; solo utilizando objetivos verificables que conserven la cobertura de información aportará el pensamiento continuo beneficios reales. En una frase: **la orquestación hace posible el comportamiento, y el entrenamiento hace que el comportamiento sea bueno**, lo que confirma el juicio de esta sección: las capacidades asíncronas deben consolidarse mediante el entrenamiento adecuado, en lugar de depender eternamente de parches de ingeniería de prompts.
+
+[^ch6-async-1]: Sobre el uso de unas doscientas líneas de orquestación para convertir modelos de pensamiento existentes en Agentes de pensamiento continuo, y la conclusión de que "las señales de entrenamiento determinan si el pensamiento continuo es útil", véase Li, Bojie and Noah Shi. *Never Stop Thinking: Continuous-Time Language Agents.* 2026 (por publicar).
+
+> **Experimento 6-2 ★★★: Agente Asíncrono con Ejecución Paralela y Capacidad de Interrupción**
 >
-> Este experimento permite comprender en profundidad cómo el modelo Bradley-Terry extrae puntuaciones de capacidad relativa a partir de comparaciones por pares mediante la implementación desde cero de un sistema de cálculo de Elo rating. Se utiliza el dataset de votación real publicado por Chatbot Arena (que contiene millones de votos a ciegas de usuarios).
 >
-> Implementar el algoritmo de actualización iterativa de Elo rating: asignar inicialmente a todos los modelos una puntuación de 1.000 puntos y procesar los registros de votación en orden cronológico. Para cada enfrentamiento, calcular la tasa de victoria esperada según la diferencia de puntuación actual entre ambos modelos, ajustando las puntuaciones tras comparar el resultado real con el esperado mediante una tasa de aprendizaje fija (el ganador suma puntos y el perdedor resta, siendo la magnitud de ajuste proporcional a la desviación de la expectativa, de modo que una derrota imprevista cause un mayor cambio de puntuación). Ordenar de forma descendente según la puntuación final y calcular la matriz de victorias cruzadas, verificando la consistencia general con la tabla oficial. No es necesario exigir una alineación exacta punto por punto: la versión oficial de Chatbot Arena utiliza un ajuste de máxima verosimilitud de Bradley-Terry (resolviendo globalmente para todos los enfrentamientos de una vez, independientemente del orden de los votos), mientras que aquí se implementa un Elo de actualización incremental en línea (cuyos resultados se ven afectados por la tasa de aprendizaje K y el orden de procesamiento); ambos algoritmos deben coincidir en el ranking general, aunque las puntuaciones concretas no sean idénticas.
+> ![Figura 6-5 Interrupción y recuperación del Agente asíncrono del Experimento 6-2](images/fig6-5.svg)
 >
-> La segunda parte del experimento crea una animación de la evolución histórica del ranking: dividir los datos de votación en cortes temporales (semanales o mensuales), calculando una instantánea de puntuaciones Elo para cada momento. Utilizar D3.js para implementar una animación de carrera de barras (longitud de barra horizontal = puntuación, posición vertical = ranking, cambiando de forma suave con el tiempo). A través de la animación se pueden identificar momentos de avance tecnológico (cuando la puntuación de un modelo aumenta drásticamente), la evolución del panorama competitivo y los ciclos de vida de los modelos.
-
-## Selección de Modelos Impulsada por la Evaluación
-
-La selección de modelos no consiste en "elegir el modelo más fuerte", sino en realizar sopesados orientados por la evaluación entre múltiples dimensiones según el escenario de aplicación.
-
-### Dimensiones Clave para la Selección
-
-El **throughput (rendimiento de procesamiento)** y la **latencia** son dos conceptos que se confunden con frecuencia; para distinguirlos basta saber que la inferencia en grandes modelos de lenguaje se divide en dos fases. **Prefill (pre-llenado)** procesa todo el contexto de entrada de una sola vez, determinando la **latencia del primer token (TTFT, Time To First Token)** desde que el usuario presiona Enter hasta que aparece la primera palabra (a mayor contexto, más lento es el prefill y mayor el TTFT). **Decode (decodificación)** genera posteriormente la respuesta token a token, determinando la velocidad de emisión subsiguiente (tokens/segundo) y condicionando directamente el tiempo de pensamiento: un modelo a 50 tokens/s que genere 2.000 tokens de pensamiento tardará 40 segundos solo en pensar.
-
-Alrededor de estas dos fases, las principales métricas de throughput y latencia son:
-
-- **Throughput de entrada / Throughput de salida**: Corresponden a las velocidades de Prefill y Decode, respectivamente.
-- **TTFT**: Equivale al tiempo de cola más el tiempo de Prefill, siendo la "rapidez de reacción" percibida por el usuario.
-- **Latencia de pensamiento**: La cantidad de tokens de pensamiento generados por distintos modelos puede variar enormemente, y la longitud del pensamiento no siempre presenta una correlación positiva con la efectividad en la tarea. Se debe medir en la propia carga de trabajo el consumo de tokens de pensamiento de cada modelo y sus ganancias correspondientes, en lugar de inferir solo mediante benchmarks públicos.
-- **Latencia de cola p95**: La latencia que el 95% de las solicitudes no superará. Refleja la experiencia real del usuario mejor que el promedio, ya que los promedios se ven reducidos por la gran cantidad de solicitudes rápidas, ocultando los bloqueos graves sufridos por una minoría.
-
-**Costo**: Precios de tokens de entrada, salida y caché. El costo no debe evaluarse de forma aislada: un modelo económico pero con baja tasa de éxito puede resultar más costoso en la práctica debido a reintentos frecuentes. Es necesario calcular el costo promedio por tarea y la relación costo-rendimiento.
-
-**Rendimiento en tareas**: Las definiciones precisas de Pass@1, Pass^k, Pass@k y Best@k se expusieron en la sección "Sistema de Métricas de Evaluación". En el contexto de selección de modelos, se considera el Pass@1 habitual para escenarios cotidianos (tasa de éxito media en un solo intento); en escenarios de operaciones críticas se prioriza Pass^k, enfocado en la estabilidad de "no cometer errores en ninguna ocasión"; en tareas exploratorias se prioriza Pass@k o Best@k, evaluando el límite de capacidad dadas suficientes oportunidades; y para tareas abiertas se utiliza la puntuación multidimensional por Rubric.
-
-**Límites de tasa y confiabilidad**: Las restricciones de RPM (solicitudes por minuto) y TPM (tokens por minuto) afectan la capacidad de concurrencia, y algunas APIs ajustan dinámicamente sus límites en horas pico. En cuanto a la robustez, se debe prestar atención a los datos fuera de distribución, entradas adversariales y estabilidad en ejecuciones de larga duración (evitando colapsos de modo o dispersión de atención).
-
-**Curva de presupuesto-capacidad**: Los resultados puntuales bajo un presupuesto fijo no bastan para juzgar si un Agente puede asumir tareas de largo aliento. Además de la tasa de éxito, se debe reportar la curva de rendimiento en función del tiempo de reloj, tokens, número de llamadas a herramientas o presupuesto de cómputo. La comparación humano-máquina de RE-Bench resulta ilustrativa: bajo un presupuesto de 2 horas por entorno, el mejor Agente obtuvo puntuaciones aproximadamente 4 veces superiores a los expertos humanos; sin embargo, los humanos obtuvieron mayores beneficios al aumentar el presupuesto de tiempo, superando ligeramente al mejor Agente a las 8 horas y duplicando su puntuación al sumar 32 horas en múltiples intentos[^re-bench-2025]. Por ello, los liderazgos en presupuestos cortos no se pueden extrapolar directamente a capacidades de ejecución prolongada, requiriendo comparar en la selección sobre múltiples puntos de presupuesto cercanos a la duración real de la tarea.
-
-En la práctica se pueden emplear estrategias de cooperación multimodelo: utilizar modelos ligeros para solicitudes simples reduciendo costos y modelos potentes para tareas complejas garantizando calidad; o emplear modelos especializados para subtareas específicas (como comprensión de imágenes o generación de código) mediante colaboración entre subagentes. Esta combinación heterogénea debe ser validada mediante evaluación para confirmar si los beneficios globales superan la complejidad añadida al sistema.
-
-### Comportamiento del modelo: cuándo dejar de leer y empezar a editar
-
-La selección de modelos no compara únicamente si un modelo puede terminar una tarea, sino también **cómo se comporta por defecto**. Una diferencia fácil de observar en los Coding Agents es el umbral de acción. Ante la misma tarea de programación, algunos modelos exploran ampliamente el repositorio y confirman la arquitectura, los sitios de llamada y las pruebas antes de editar. Otros localizan el cambio con menos evidencia, editan pronto y usan las pruebas para completar su comprensión. Los primeros asignan un coste mayor a editar prematuramente; los segundos asignan un coste de oportunidad mayor a leer un archivo adicional.
-
-Cuando una tendencia sigue al modelo al cambiar de Harness y cambia al sustituir únicamente el modelo dentro de un Harness fijo, la explicación principal debe ser el **comportamiento del modelo**. El post-entrenamiento es una fuente probable: las trayectorias de SFT muestran cuánto leer antes de actuar, las recompensas de proceso refuerzan o penalizan rutas de herramientas concretas y las recompensas de resultado fortalecen la estrategia completa que condujo al éxito. Así, el modelo aprende no solo a escribir código, sino también cuándo dispone de evidencia suficiente. Los conjuntos de datos y las recetas de recompensa exactos suelen ser privados; los intercambios controlados de modelo permiten ubicar el comportamiento en el modelo sin revelar la receta precisa de un proveedor. El Harness todavía puede desplazar el umbral mediante el prompt del sistema, las descripciones de herramientas y el presupuesto, pero, si no impone un flujo, debe tratarse como modulador y no como causa raíz predeterminada.
-
-El experimento asociado compara `openai/gpt-5.6-sol` y `anthropic/claude-sonnet-5` en un **Harness neutral y fijo**. Ambos modelos usan el mismo endpoint de OpenRouter y reciben el mismo prompt del sistema, tarea, repositorio, nombres de herramientas, JSON Schemas y resultados. El Harness no exige explorar ni editar pronto. Tres repositorios pequeños cubren un bug localizado, una normalización de identidad entre módulos y una corrección de caché sensible a un contrato público. Cada modelo ejecuta cada tarea tres veces de forma independiente, produciendo 18 trayectorias. GPT-5.6-sol realizó en promedio 6,89 llamadas a herramientas y leyó 4,67 archivos antes de su primera edición; Claude Sonnet 5 promedió 4,56 llamadas y 3,56 archivos. La diferencia fue mayor en las tareas localizadas y casi desapareció en la tarea explícitamente transversal (7,00 frente a 6,67 archivos). Ambos modelos lograron un 100 % de éxito tanto en el primer parche probado como en las pruebas finales. Por ello, este pequeño experimento respalda que «la política de acción cambia con el modelo», no que «leer más» o «editar antes» sea siempre mejor. El tiempo hasta la primera edición también fue casi idéntico (15,01 frente a 14,48 segundos), lo que recuerda que hay que separar pasos de herramienta, llamadas paralelas y latencia del modelo.
-
-> **Experimento 6-8 ★★: Medir los umbrales de acción de los modelos en un Coding Harness fijo**
 >
-> **Objetivo**: aislar el factor modelo, cuantificar cómo distintos modelos de programación equilibran seguir recopilando información frente a empezar a editar y evaluar conjuntamente la eficiencia de la trayectoria y la calidad final.
+> Sobre la base de la cola de eventos simple del Experimento 6-1, este experimento entra en las aguas profundas de los Agentes asíncronos: **ejecución paralela de herramientas, cancelación de ejecución y gestión de estado**. El Agente ya no se limita a procesar eventos uno a uno, sino que necesita gestionar múltiples tareas concurrentes simultáneamente, gestionar interrupciones y recuperaciones, y tomar decisiones dinámicas basadas en el estado en tiempo real.
 >
-> **Método**: ejecuta `chapter6/model-action-threshold/experiment.py`. Por defecto llama a GPT-5.6-sol y Claude Sonnet 5 mediante el mismo endpoint OpenAI-compatible de OpenRouter, manteniendo fijos el prompt del sistema, los esquemas de herramientas, los repositorios de tareas, los comandos de prueba y el límite de turnos. El prompt neutral no exige un número mínimo de archivos leídos ni editar con rapidez. Repite al menos tres veces cada una de las tres categorías de tareas y alterna el orden de los modelos. Registra llamadas a herramientas, archivos leídos, búsquedas y tiempo de reloj antes de la primera edición, junto con la aceptación del primer parche probado, el retrabajo posterior a las pruebas, el éxito final, los archivos modificados y el uso de Tokens.
+> **1. Ejecución asíncrona de herramientas**: Admite la ejecución asíncrona de herramientas de larga duración (al menos 3-5 segundos), devolviendo inmediatamente un marcador de posición tras el inicio. **Escenario de verificación**: El Agente ejecuta un comando de terminal largo y, mientras tanto, el usuario pregunta "¿qué hora es?", el Agente responde de inmediato y presenta los resultados del análisis una vez devueltos.
 >
-> **Interpretación causal**: la campaña neutral pregunta si el comportamiento cambia con el modelo dentro de un mismo Harness. Para medir el Harness como modulador, ejecuta otra campaña con `--policy explore-first`; no mezcles ambas políticas en una sola comparación de modelos. Un comportamiento que cambia al sustituir el modelo y persiste para el mismo modelo entre Harnesses es evidencia más fuerte de un efecto del modelo; lo contrario respalda más un efecto del Harness.
+> **2. Cola de eventos y procesamiento por lotes**: Acumula eventos no urgentes y los añade a la trayectoria en lote. **Escenario de verificación**: El Agente ejecuta una tarea larga y el usuario envía consecutivamente "recuerda responder en japonés" y "organízalo como página web"; al finalizar la tarea, procesa todos los eventos de una sola vez generando la página web en japonés.
 >
-> **Criterios de aceptación**: todas las pruebas unitarias offline pasan; primero se confirma que cada fixture de tarea falla sus pruebas; el resultado formal contiene todas las celdas `modelo × tarea × repetición`, cero errores de API, una prueba final independiente y trayectorias auditables; y `manifest.json` verifica los hashes de la configuración, las observaciones y el resumen. El directorio del proyecto incluye una ejecución completa de 18/18 celdas. Los lectores deben repetirla con las versiones de modelo y las cargas reales que les importen, en vez de tratar las cifras de estos repositorios pequeños como una clasificación permanente.
-
-### Análisis de Costos en Sistemas de Agentes
-
-El costo es una dimensión habitualmente subestimada en la selección de modelos. Si tu Agente ha entrado en producción o se prepara para ello, el análisis de costos de esta sección no debe pasarse por alto.
-
-La sección anterior clasificó el costo como una dimensión clave en la selección de modelos; sin embargo, los costos en escenarios de Agentes son mucho más complejos que la simple tarificación por token: las inferencias multiturno, llamadas a herramientas y acumulación de contexto provocan que los costos crezcan de forma no lineal. Un análisis de costos sistemático es parte indispensable del sistema de evaluación y requisito previo para el despliegue en producción.
-
-**Componentes del costo.**
-
-El costo de un sistema de Agentes se desglosa en tres niveles:
-
-El **costo de inferencia del modelo** es la parte más directa, determinada por el consumo de tokens de entrada y salida. Sin embargo, existen dos factores de amplificación habitualmente ignorados en los Agentes. El primero es el **efecto de acumulación de contexto**: en cada turno de llamada al LLM, el Agente envía todo el historial de conversación anterior y los resultados devueltos por las herramientas (para que el modelo comprenda el contexto). Si no se aprovecha la KV Cache (es decir, almacenar en caché el contexto ya procesado para evitar recalcularlo), el crecimiento de costos será sumamente rápido: el turno 1 envía 1.000 tokens, el turno 2 envía 2.000 tokens y el turno 3 envía 3.000 tokens, siendo el total 1.000+2.000+3.000=6.000 en lugar de 3×1.000=3.000, ampliándose la brecha a más turnos. El segundo es el **costo de tokens de pensamiento**: los modelos con soporte de pensamiento generan un gran volumen de tokens de pensamiento que, aunque no se muestren al usuario, se contabilizan en la factura.
-
-El **costo de llamada a herramientas** incluye tarifas de APIs externas (motores de búsqueda cobrados por consulta, consultas a bases de datos que consumen cómputo), recursos sandbox para ejecución de código y un costo indirecto fácil de obviar: las tarifas de tokens generadas tras inyectar los resultados de las herramientas en el contexto. Una búsqueda web puede ocupar 2.000-5.000 tokens que se cobrarán repetidamente como entrada en cada turno posterior de inferencia.
-
-El **costo de infraestructura** abarca bases de datos vectoriales (para recuperación RAG), colas de mensajes, bases de datos relacionales y almacenamiento de logs y traces (para observabilidad).
-
-Para localizar el gasto real, el experimento asociado fijó un flujo de reembolso de ocho turnos: consultar pedido, envío, política y base de conocimiento; después ejecutar control de riesgo, reembolso, notificación y cierre. Con llamadas reales a gpt-4o-mini se activaron o desactivaron dos opciones —prefijo estable y compresión del historial— para formar un diseño 2×2. Las cuatro variantes completaron el mismo trabajo. Los importes de la tabla 6-4 se calcularon con el consumo guardado en cada ejecución y los precios vigentes entonces.
-
-Tabla 6-4. Costo real de la tarea de ocho turnos
-
-| Configuración | Tokens de entrada | Tokens en caché | Costo total | Ahorro frente al control |
-|---|---:|---:|---:|---:|
-| Sin caché ni compresión | 20.700 | 0 | $0,003776 | — |
-| Solo prefijo estable | 20.386 | 13.568 | $0,002707 | 28,3% |
-| Solo compresión | 16.177 | 0 | $0,003115 | 17,5% |
-| Prefijo estable + compresión | 16.035 | 6.144 | $0,002643 | 30,0% |
-
-En el control, la entrada por turno creció de 1.113 a 3.668 tokens. Las respuestas de las herramientas reaparecieron en las peticiones posteriores y acumularon 9.544 tokens de entrada; con ambas mejoras bajaron a 5.248 y el costo total cayó un 30%.
-
-Los efectos no se suman: el prefijo estable ahorró por sí solo un 28,3% y la compresión un 17,5%, pero juntos llegaron al 30%, no al 45,8%. Al acortar el historial también se reduce la parte del prefijo que puede aprovechar la caché. **Cuando se combinan optimizaciones de contexto, hay que medir todas las combinaciones en una tarea completa; no se pueden sumar sus porcentajes aislados.** El 30% cambiará con el modelo, los precios y la duración de la tarea. Lo reutilizable es el diseño de cuatro grupos.
-
-**Estrategias de optimización de costos.**
-
-En la entrada conviene probar primero tres palancas: **reutilizar KV Cache** manteniendo estable el prefijo, **comprimir el contexto** para reducir trayectorias antiguas y respuestas verbosas de herramientas, y **escalonar los modelos**, reservando los más capaces para el razonamiento complejo. El Capítulo 2 explica su implementación. Aquí importa que cada función pueda activarse de forma independiente: así se mide su contribución y se detecta si se contrarrestan al combinarlas. A ellas se suman dos medidas propias de evaluación y operaciones.
-
-El **procesamiento por lotes asincrónico (Async Batching)** acumula tareas no en tiempo real para procesarlas en lote, aprovechando descuentos por volumen de las APIs o aumentando la utilización de GPUs en horarios de bajo tráfico en entornos autoalojados.
-
-**Monitoreo de costos y control presupuestario.**
-
-En producción se debe establecer un sistema de monitoreo de costos en tiempo real: rastreando el consumo de tokens y gastos de API por tipo de tarea, modelo y usuario. Asimismo, se deben fijar límites superiores de costo por tarea, terminando automáticamente la ejecución si el Agente entra en bucles o exploraciones excesivas para evitar cobros anormalmente elevados en una sola ejecución.
-
-> **Experimento 6-9 ★: Análisis de Costos de Extremo a Extremo en Tareas de Agentes**
+> **3. Mecanismo de interrupción**: El "detente" del usuario finaliza inmediatamente el flujo de ejecución y cancela las herramientas asíncronas. **Escenario de verificación**: El Agente ejecuta una tarea larga, el usuario envía "cancelar", el Agente se detiene inmediatamente y la trayectoria registra el evento de interrupción y la operación de cancelación.
 >
-> **Objetivo**: Reproducir el desglose de la tarea de ocho turnos y validar las optimizaciones con cargas de trabajo propias.
->
-> **Solución técnica**: Reproducir primero la tarea fija del repositorio y sustituirla después por varias tareas representativas. Con LangSmith o un sistema propio, registrar tokens de entrada, salida y pensamiento, llamadas y tamaño de respuestas de herramientas, y latencia de extremo a extremo. Calcular el costo medio, su distribución (p50/p95/p99) y su composición por tipo de tarea.
->
-> **Criterios de aceptación**: Generar un informe que identifique los principales impulsores de gasto. Ejecutar las cuatro combinaciones de caché y compresión para medir tanto el efecto individual como la interacción. Al cambiar de modelo, volver a medir en lugar de reutilizar el porcentaje de ahorro de las trayectorias adjuntas.
+> **4. Cancelación de herramientas paralelas y consulta de estado**: Una vez completadas las herramientas asíncronas, se inyectan los resultados reales en la conversación mediante nuevos eventos, admitiendo la cancelación o consulta de avance mediante el ID de la tarea. **Escenario de verificación**: El usuario solicita "ayúdame a ejecutar estos tres scripts simultáneamente; cuando el primero termine, comprueba el avance de los restantes y, si alguno no supera el 50%, cancélalo". Tres scripts simulan procesos de análisis emitiendo avances continuamente mientras se ejecutan, a velocidades del 3%, 2% y 1% por segundo respectivamente. El Agente inicia simultáneamente los tres comandos de terminal asíncronos; cuando el script del 3% por segundo se completa en unos 33 segundos, el Agente consulta el estado de los otros dos terminales, descubriendo que uno se ha ejecutado hasta aproximadamente el 66% y el otro hasta el 33%, cancelando este último por no superar el 50%. Una vez completados ambos terminales, integra los resultados generando el informe completo.
 
-### Iteración Continua Impulsada por la Evaluación
+## Voz: la interfaz humano-máquina más natural
 
-La selección de modelos no es una decisión puntual, sino un proceso continuo que debe ajustarse dinámicamente a medida que evolucionan los modelos. El inicio de este capítulo planteó el concepto de que "un sistema de evaluación permite seguir rápidamente la evolución de los modelos"; a continuación se presenta un caso real de migración de modelos para ilustrar cómo opera esta arquitectura en decisiones reales.
+La voz no es solo convertir texto en sonido. Hablar es aproximadamente cuatro veces más rápido que escribir y deja libres las manos y la mirada, por lo que encaja naturalmente a un Agente en un bucle continuo que puede ser interrumpido en cualquier momento. La entrada de voz convierte el dictado en texto; un Agente de voz permite colaborar directamente con él. Ambos sostienen el whisper coding presentado en la introducción.
 
-Supongamos que tu sistema de Agentes está construido actualmente sobre Claude, destacando en llamadas a herramientas y orquestación compleja. Un día Gemini lanza un nuevo modelo cuyos benchmarks públicos muestran que supera a Claude en múltiples métricas a un menor precio. La pregunta a la que te enfrentas no es si "Gemini es más fuerte que Claude", sino "**en mi tarea específica, ¿es Gemini mejor que Claude? ¿Cuánto mejor? ¿Cuál es el costo de migración?**".
+Esta sección cubre dos direcciones: el usuario habla con el Agente y el Agente habla con el mundo exterior en nombre del usuario. El modelo de voz determina qué puede responder; la arquitectura de interacción determina si escucha bien, responde a tiempo, cede el turno de forma natural y completa confirmaciones y llamadas a herramientas durante una llamada.
 
-Un equipo con un sistema de evaluación maduro puede obtener la respuesta en pocas horas: ejecutando el nuevo modelo sobre su propio dataset de evaluación y comparando la tasa de éxito en tareas, corrección en llamadas a herramientas, latencia y costo. Es posible descubrir que el nuevo modelo es superior y más económico en tareas simples, pero que en escenarios centrales con orquestaciones multiturno complejas la tasa de éxito cae un 5%. Tras confirmar que esta diferencia supera el ancho de banda del ruido (véase a continuación "Significatividad Estadística de los Resultados de Evaluación"), la decisión pasa a ser una estrategia diferenciada: "migrar tareas simples al nuevo modelo para reducir costos y mantener el modelo original en tareas complejas para garantizar la calidad", en lugar de una migración ciega y total. Esta toma de decisiones precisa e impulsada por datos solo es posible contando previamente con un sistema de evaluación construido.
+### Tiempo de interacción: de la cascada al dúplex completo
 
-> **Experimento 6-10 ★★: Benchmarking Multidimensional de Rendimiento de Modelos**
->
-> Realizar benchmarking exhaustivo sobre LLMs principales y diversos proveedores de API para construir una base de datos de decisiones de selección de modelos multidimensional.
->
-> Seleccionar el alcance de evaluación: modelos SOTA de código cerrado de las series GPT, Claude, Gemini, Doubao, así como modelos de código abierto como Qwen, Kimi y DeepSeek. Evaluar distintos proveedores de API para un mismo modelo (por ejemplo, DeepSeek oficial vs Siliconflow), verificando los resultados con plataformas de monitoreo de rendimiento de terceros (como Artificial Analysis).
->
-> Diseñar cargas de trabajo de prueba estandarizadas: las pruebas de throughput de entrada utilizan contextos de longitud fija (8K/32K/128K tokens), y las de salida solicitan generar respuestas de longitud fija (512/2.048 tokens). Las pruebas de latencia incluyen TTFT (tiempo de generación del primer token) y latencia de extremo a extremo, midiendo por separado la longitud y latencia de pensamiento en modelos con soporte de pensamiento. Realizar al menos 100 solicitudes por configuración, calculando desviación estándar/p50/p95/p99 (una alta varianza en la latencia implica inestabilidad en la experiencia de usuario).
->
-> Evaluar la disponibilidad y estabilidad de las APIs: realizar sondeos cada hora durante una semana, registrando la tasa de éxito, tipos de error y duración de fallos. Calcular la tasa de fallos, MTTR (tiempo medio de recuperación) y el tiempo máximo de disponibilidad continua. Probar los umbrales reales de límite de tasa incrementando gradualmente la concurrencia hasta hallar el punto de restricción, registrando los límites de RPM/TPM. Calcular el costo consolidado: recopilar precios (unidad de token de entrada/salida/caché), considerando el impacto de KV Cache para calcular el costo promedio en tareas multiturno típicas de Agentes.
+La introducción de GPT-Live de OpenAI resume tres paradigmas: cascada, basado en turnos y dúplex completo[^ch6-12]. Son intercambios distintos entre latencia, coste y observabilidad, no una sustitución lineal.
 
-> **Experimento 6-11 ★★: Evaluación de Selección de Extremo a Extremo para Sistemas de Memoria de Usuario**
->
-> **Prerrequisito**: Haber completado los experimentos de recuperación contextual o RAG con Agentes del Capítulo 3.
->
-> **Objetivo**: Realizar una evaluación de selección a lo largo de toda la cadena para un Agente de recuperación de memoria de usuario, analizando cómo la combinación del modelo de embeddings, el reranker y el modelo principal del Agente influyen conjuntamente en la calidad de recuperación, latencia y costo. Reutilizar `chapter3/contextual-retrieval-for-user-memory` o `chapter3/agentic-rag-for-user-memory` para comparar sobre 60 casos de prueba.
->
-> **Aceptación**: Evaluar por separado los tres puntos de elección: modelo de embeddings (BGE-M3 / OpenAI / Doubao, registrando precisión de recuperación top-5, latencia y costo), reranker (incluyendo la línea base de "sin reranker" para cuantificar su valor marginal) y modelo principal (comparando la tasa de éxito y eficiencia de uso de herramientas bajo la misma configuración de recuperación). La clave radica en interpretar las sinergias entre componentes: un embedding más fuerte puede hacer redundante al reranker, y un modelo principal más potente puede compensar deficiencias en la recuperación. La selección es un sopesado sistémico, no la elección aislada del componente más fuerte en cada categoría. Consultar el repositorio adjunto para detalles de configuración.
+| Paradigma | Estructura | Ventaja | Limitación |
+| --- | --- | --- | --- |
+| Cascada | VAD → ASR → LLM → TTS | Módulos claros, intercambiables y depurables | Se acumula la latencia y se pierde información paralingüística |
+| Omni de extremo a extremo | Un modelo escucha, piensa y habla | Menor latencia y preservación de tono, emoción y ambiente | Sigue dependiendo de turnos; entrenar y depurar cuesta más |
+| Dúplex completo | Escucha, habla y decide continuamente | Habla solapada, interrupción natural y flujo continuo | Entrenamiento, control y evaluación más complejos |
 
-## Significatividad Estadística de los Resultados de Evaluación
+El hilo común es escapar de la suposición de que hay que hablar por turnos y de la conjetura de VAD sobre quién tiene la palabra. Cascada y Omni aún dividen la interacción en turnos; el dúplex completo convierte esa decisión en una salida continua del modelo.
 
-Tomar decisiones de migración en cuestión de horas asume una premisa implícita: que la diferencia de puntuación observada es una señal real y no ruido de muestreo. Dado que el tamaño del conjunto de evaluación es limitado y la salida de los modelos es incierta, esta premisa no se cumple de forma automática.
+[^ch6-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ . La clasificación procede del resumen de las tres generaciones de ChatGPT Voice; «end-to-end omnimodal (Omni)» corresponde a «turn-based voice models».
 
-Una herramienta para estimar el ancho de banda del ruido es el **error estándar de una distribución binomial** (standard error, que describe la magnitud de fluctuación de la tasa de éxito debido a la aleatoriedad del muestreo; a mayor valor, menos confiable es la tasa de éxito). Si en $n$ casos de prueba se obtiene una tasa de éxito $p$, el error estándar es aproximadamente $\sqrt{p(1-p)/n}$. Tomando un ejemplo concreto: con $n=100$ casos de prueba y una tasa de éxito $p=0,7$, el error estándar es $\approx \sqrt{0,7 \times 0,3 / 100} \approx 4,6\%$. Intuitivamente, el intervalo de confianza del 95% (el rango dentro del cual hay un 95% de certeza de que se encuentra la verdadera tasa de éxito) es aprox. $p \pm 2$ errores estándar, es decir, $70\% \pm 9\%$ puntos porcentuales. Es decir, una diferencia de 3 puntos porcentuales como "nuevo modelo 73% vs modelo anterior 70%" se encuentra completamente dentro del ancho de banda del ruido: al comparar ambas tasas de éxito asumiendo que son independientes, el error estándar de la diferencia es aproximadamente $\sqrt{2}$ veces el individual (aquí aprox. 6,5%). Pero cabe enfatizar: este $\sqrt{2}$ responde a la premisa de "dos mediciones independientes", mientras que en la práctica ambas configuraciones se ejecutan sobre el **mismo conjunto de tareas**, por lo que las muestras no son independientes: la suposición de independencia es solo un límite superior conservador para determinar rápidamente si "vale la pena tomar en serio esta pequeña diferencia". Bajo este criterio conservador, una diferencia del 3% es muy inferior a la escala de ruido del 6,5%, por lo que cambiar de modelo basándose en esa cifra equivale a tirar una moneda al aire.
-
-La evaluación de Agentes añade otra capa de incertidumbre: el mismo modelo y dataset pueden producir resultados distintos por el muestreo, las respuestas variables de las herramientas y los tiempos del entorno. Una sola ejecución no debe justificar un despliegue. Hay que **repetir y promediar** —por ejemplo, de tres a cinco veces por configuración— y publicar tanto la media como la dispersión. El pequeño piloto de AndroidWorld que aparece más adelante usa una sola ejecución emparejada por tarea: sirve para decidir qué idea merece una prueba mayor, pero no para desplegarla. Esa decisión exige la ejecución prevista con varias semillas sobre las 116 tareas.
-
-De aquí se deriva un principio práctico: **no tomar decisiones de cambio si la diferencia es inferior al ancho de banda del ruido**. No obstante, antes de decidir "no cambiar", se deben emplear métodos de análisis más sensibles y precisos. Al comparar dos configuraciones sobre el mismo conjunto de tareas, la práctica predeterminada correcta es el **análisis pareado**: comparar la victoria o derrota caso por caso, centrándose únicamente en los casos con resultados divergentes (uno correcto y otro erróneo), utilizando pruebas como la de McNemar para determinar si la diferencia es significativa. El análisis pareado descuenta la fuente de ruido común de la "dificultad propia de cada ejercicio", siendo mucho más sensible para el mismo tamaño de muestra que la resta de dos tasas de éxito independientes (la estimación rápida con $\sqrt{2}$ basada en independencia es solo un filtro conservador que no requiere calculadora para descartar diferencias claramente insuficientes). Si el análisis pareado sigue mostrando una diferencia incierta, se debe considerar ampliar la muestra: el error estándar se reduce proporcionalmente a $\sqrt{n}$, requiriendo pasar de 100 a 400 muestras para reducir el ruido a la mitad, lo cual implica un costo elevado. Visto al revés, si la mejora esperada es de solo 2 a 3 puntos porcentuales y el conjunto de evaluación consta de pocas decenas de casos, este sistema de evaluación no podrá distinguir si la mejora es efectiva: en tal caso, la prioridad es ampliar el dataset de evaluación antes de continuar iterando el Agente.
-
-Existe además una trampa fácil de obviar: las **comparaciones múltiples**. Al verificar una serie de hipótesis en paralelo, la probabilidad de que "al menos una conclusión sea un falso positivo" se acumula rápidamente con el número de hipótesis: incluso aplicando un nivel de confianza del 95% a cada conclusión individual, al evaluar 6 hipótesis simultáneamente la probabilidad de obtener al menos un falso positivo es de $1 - 0,95^6 \approx 26\%$. A mayor número de hipótesis evaluadas en paralelo, más difícil es evitar la coincidencia de que "alguna parezca significativa". Existen dos estrategias de mitigación: elevar el umbral de confianza individual en escenarios de hipótesis múltiples, por ejemplo con una corrección de Bonferroni, o repetir las conclusiones positivas en una ejecución confirmatoria independiente y aceptarlas solo si se reproducen. El caso de AndroidWorld cambia una variable por ronda y evita seleccionar a posteriori el mejor de muchos cambios. Si se prueban en paralelo varios prompts o formatos de observación, la conclusión deberá corregir las comparaciones múltiples.
-
-Las decisiones impulsadas por la evaluación dependen de datos de alta calidad obtenidos a partir del registro sistemático del proceso de ejecución del Agente, ámbito que resuelve la observabilidad.
-
-**Comparación emparejada:**
+**Cancelación en streaming:**
 
 ```python
-for task in paired_tasks:
-    for seed in fixed_seeds:
-        a = run(config_a, task, seed)
-        b = run(config_b, task, seed)
-        record_paired_delta(verifier(a), verifier(b))
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
 
-return paired_bootstrap_or_mcnemar(all_deltas)
+on_final_transcript(text):
+    commit_or_restart(text)
 ```
 
-## Observabilidad del Agente
+### Paradigma 1 · Pipeline en cascada
 
-Las decisiones impulsadas por la evaluación (tanto en la selección de modelos como en la iteración continua) dependen de datos de ejecución de alta calidad. A continuación se presenta cómo recolectar sistemáticamente estos datos (observabilidad) y cómo transformar los resultados de evaluación en mejoras del sistema.
+La mayoría de asistentes comerciales todavía usa un pipeline serial (Figura 6-6): VAD detecta el final, ASR convierte audio en texto, el LLM entiende y genera la respuesta, y TTS la pronuncia. La modularidad facilita optimizar cada componente, pero cada frontera añade espera.
 
-![Figura 6-6 Stack Tecnológico de Observabilidad](images/fig6-6.svg)
+![Figura 6-6: Pipeline serial de un Agente de voz](images/fig6-6.svg)
 
-El concepto de observabilidad (Observability) proviene de los sistemas distribuidos: ante la imposibilidad de abrir el sistema internamente para ver qué ocurre, se deduce lo sucedido mediante los logs, métricas y datos de rastreo emitidos, del mismo modo que un médico no ve directamente el interior del cuerpo del paciente y diagnostica a través de señales externas como la temperatura, presión arterial o imágenes médicas. Los sistemas de Agentes complican este escenario: una misma entrada puede generar salidas distintas, la inferencia multiturno y las llamadas a herramientas vuelven la ruta de ejecución sumamente compleja, y el proceso de "pensamiento" del modelo resulta totalmente opaco hacia el exterior.
+| Módulo | Función | Cuello de botella |
+| --- | --- | --- |
+| VAD | Decidir si terminó el habla | Umbral de silencio, espera y segmentación errónea |
+| ASR | Audio a texto | Latencia y pérdida de contexto |
+| LLM | Comprender, razonar y generar | Latencia del primer token y espera adicional con reasoning |
+| TTS | Texto a voz | Síntesis del primer paquete y búfer de reproducción |
 
-El valor de la observabilidad reside primeramente en el **diagnóstico de problemas**: las trayectorias completas permiten a los desarrolladores reproducir todo el proceso sin recurrir a suposiciones. En segundo lugar, constituye la base de la **optimización continua**: permite visualizar qué tareas requieren múltiples iteraciones, qué herramientas presentan las tasas de éxito más bajas y qué consultas de recuperación devuelven siempre resultados vacíos. En la **gestión de costos**, los costos de ejecución de los Agentes pueden variar en uno o dos órdenes de magnitud entre diferentes tareas, permitiendo el rastreo identificar casos de costo anormalmente elevado. Por último, los datos de trayectoria acumulados ofrecen la base para la posterior optimización del sistema y mejora de modelos.
+En una respuesta breve, las esperas de VAD, ASR, LLM y TTS se acumulan en serie (Figura 6-7). La cola de producción amplifica aún más la latencia en vacío (Figura 6-8).
 
-La base de datos de la observabilidad de Agentes es el **rastreo (Trace)**, cuya estructura hereda directamente el modelo de árbol de spans de los sistemas distribuidos: la ejecución de una tarea corresponde a una trace, dentro de la cual cada llamada a LLM, llamada a herramienta o recuperación constituye un **span** (unidad de ejecución que registra entradas y salidas, tiempos de inicio y fin, consumo de tokens e información de errores), formando las relaciones padre-hijo un árbol de ejecución (por ejemplo, el span "bucle principal del Agente" contiene varios sub-spans de "llamada a LLM" y "llamada a herramienta"). En esta capa existen protocolos estandarizados: **OpenTelemetry** es el estándar general de rastreo distribuido, y especificaciones como **OpenInference** definen sobre él convenciones semánticas específicas para aplicaciones de LLM (cómo registrar prompts, parámetros del modelo, consumo de tokens, etc.). La ventaja de adoptar protocolos estándar es el desacoplamiento entre recolección y análisis: los mismos datos de rastreo se pueden conectar a distintos backends de análisis, evitando quedar atado a una sola plataforma.
+![Figura 6-7: Cascada de latencia de una respuesta serial](images/fig6-7.svg)
 
-LangSmith representa una de las plataformas referentes en este ámbito (con posicionamientos similares a Langfuse o Arize Phoenix), integrando observabilidad, evaluación y optimización en un bucle cerrado. Cada ejecución crea una sesión de rastreo donde las llamadas a modelos, uso de herramientas y recuperación de conocimiento se registran como unidades de ejecución independientes, enlazadas por relaciones de causalidad para formar un árbol de ejecución. Cada unidad registra entradas y salidas completas, información temporal, datos de costo y errores. La plataforma utiliza recolección asincrónica de datos en lote, garantizando que el rastreo no afecte la latencia de respuesta del Agente.
+![Figura 6-8: Curva de latencia de cola](images/fig6-8.svg)
 
-La plataforma admite además pruebas A/B (enrutando parte del tráfico de usuarios a una nueva versión para comparar métricas automáticamente, permitiendo giros rápidos o despliegues graduales), gestión de versiones de prompts (asociando cada versión con datos de rendimiento en tiempo de ejecución) y desarrollo colaborativo (permitiendo a los miembros del equipo compartir datos de rastreo y casos de problemas). Los datos reales masivos del entorno de producción representan una mina de oro para la mejora continua, permitiendo descubrir escenarios imprevistos e identificar las funcionalidades que más requieren optimización.
-
-El destino más valioso de los datos de observabilidad es su **realimentación como activos de evaluación**. Un bucle cerrado práctico consiste en: filtrar casos de fallo y sospechosos de las trayectorias de producción → desensibilizar datos (eliminando privacidad de usuarios, claves y campos sensibles) → consolidar como nuevos casos de prueba y pruebas de regresión en el dataset de evaluación. De este modo, el conjunto de datos de evaluación deja de ser una colección estática construida una sola vez y se convierte en un activo vivo que evoluciona con el producto y se ajusta continuamente a la distribución de usuarios reales: los patrones de fallo expuestos hoy en producción se convierten mañana en casos de regresión para defender esa línea base. Este es el punto de contacto entre la observabilidad y la línea principal de evaluación de este capítulo: la observabilidad se encarga de "ver" lo que sucede en el mundo real y la evaluación se encarga de consolidar esas observaciones en criterios verificables repetidamente.
-
-La observabilidad se enfrenta a diversos desafíos:
-
-- **Sopesado entre volumen de datos y privacidad**: Los sistemas de alto tráfico generan diariamente terabytes de datos de rastreo, debiendo cumplir estrictamente las normativas de protección de datos.
-- **Complejidad de la atribución causal**: Identificar automáticamente la causa raíz a partir de las trayectorias sigue requiriendo algoritmos de análisis más inteligentes; las investigaciones de vanguardia intentan aplicar inferencia causal y análisis contrafactual, aunque no han alcanzado la madurez.
-- **Desafíos de rastreo en sistemas multi-agente**: El rastreo de flujos de ejecución a través de múltiples Agentes resulta más complejo y semántico que las llamadas API entre microservicios.
-- **Equilibrio entre protección en tiempo real y análisis a posteriori**: Los escenarios de alto riesgo requieren protección activa, lo que introduce latencia adicional y falsos positivos.
-
-A medida que la tecnología de ML se integre profundamente en la cadena de herramientas, las futuras plataformas de observabilidad podrán identificar anomalías y localizar causas raíz de forma automática.
-
-Contando con un sistema de evaluación completo y conjuntos de datos, la clave radica en transformar los resultados de evaluación en mejoras efectivas del sistema.
-
-## De Reportes de Benchmark a Mejoras del Sistema
-
-Veamos ahora un ajuste real de AndroidWorld conservado en el repositorio. El piloto cubrió solo cuatro tareas de configuración Wi-Fi en un emulador con API 35, con una ejecución emparejada por tarea. No es el benchmark completo de 116 tareas ni sustituye la repetición en el entorno de referencia con API 33. Su valor está en mostrar cómo los datos de una ronda determinan el único cambio de la siguiente, no en demostrar una mejora global del sistema.
-
-![Figura 6-7 Bucle de Benchmark a Mejoras](images/fig6-7.svg)
-
-Desde la perspectiva de la ingeniería de Harness, esta sección aborda la metodología de iteración y optimización del Harness: localizar los puntos débiles del Harness mediante datos de evaluación (¿contexto insuficiente?, ¿falta de restricciones?, ¿verificación deficiente?, ¿retroalimentación extemporánea?), aplicar mejoras dirigidas y reevaluar para formar un bucle cerrado de evolución continua.
-
-Antes de comenzar a analizar un reporte de benchmark, existe un principio fácil de olvidar: **ante una caída en el rendimiento del Agente, se debe revisar primero el propio sistema de evaluación antes de modificar el Agente**. Un error frecuente consiste en modificar el código del Agente tan pronto como cae una puntuación, ignorando que el propio sistema de evaluación puede haber fallado primero: ajustar la dirección basándose en señales distorsionadas puede provocar que la modificación sea errónea desde el inicio. Las fuentes comunes de error en los sistemas de evaluación incluyen: recursos insuficientes en el entorno de ejecución que causan la cancelación de procesos (manifestado como fallos aleatorios), errores en el propio evaluador que califican respuestas correctas como fallidas, o desconexión entre los casos de prueba y los escenarios de producción. Estos problemas se muestran en las cifras de forma idéntica a una regresión del modelo, pudiendo distinguirse únicamente al auditar las trayectorias completas.
-
-### Lectura de Reportes de Benchmark: El Arte de Diagnosticar Problemas
-
-El informe inicial registró una ejecución de cada una de las 116 tareas y una tasa de éxito cercana al 88%. Los fallos, sin embargo, no estaban repartidos al azar: tres de las cuatro tareas `SystemWifiTurn*` fallaron, y sus trayectorias repetían navegación de ida y vuelta y problemas para confirmar el estado final. Había al menos dos explicaciones: el Agente no sabía llegar al ajuste o la representación de la pantalla era incompleta.
-
-Ese pequeño grupo se pierde fácilmente dentro de un 88% global. Aumentar el límite de pasos tampoco ayuda si se confunde «no ve la interfaz» con «necesita más tiempo». Conviene localizar primero las tareas y capacidades donde se concentran los fallos y después reproducir las trayectorias para separar percepción, razonamiento, acción y verificación. Reducir el análisis a cuatro tareas Wi-Fi abarata el diagnóstico; no estima el rendimiento general.
-
-### De Datos a Hipótesis: Construcción de una Hoja de Ruta de Mejora
-
-La primera ronda probó el cambio más barato. H1 suponía que el Agente solo necesitaba indicaciones para llegar al menú Wi-Fi, así que el tratamiento añadió navegación y una instrucción para comprobar el estado final. La tasa de éxito no cambió: el problema no era el prompt.
-
-La segunda ronda examinó qué información recibía el Agente. H5 sustituyó el *accessibility feed*, incompatible con API 35, por el árbol UIAutomator compatible con AndroidWorld. El éxito aumentó, pero el árbol completo consumía demasiados tokens. H5C no añadió información nueva: eliminó contenedores invisibles, sin texto y sin acciones para comprobar si podía conservar el éxito reduciendo el ruido.
-
-Las tres rondas mantuvieron constantes el modelo, los parámetros, la semilla, el límite de pasos y el emulador, y alternaron el orden de control y tratamiento. Cambiar una sola variable por ronda hace que el problema descubierto en una ejecución sea exactamente lo que la siguiente pone a prueba.
-
-### De Resultados a Decisiones: Sopesado Impulsado por Datos
-
-La tabla 6-5 resume las mediciones. Con solo cuatro tareas por grupo, sirven para decidir si merece la pena ampliar el ensayo, no para inferir la tasa de éxito de AndroidWorld completo.
-
-Tabla 6-5. Tres rondas sobre el subconjunto Wi-Fi de AndroidWorld
-
-| Experimento | Único cambio | Éxito control→tratamiento | Tokens tratamiento/control | Decisión |
-|---|---|---:|---:|---|
-| H1 | Añadir indicaciones de navegación | 25%→25% | 0,47× | Sin mejora de éxito; conservar el prompt original |
-| H5 | Sustituir *accessibility feed* por UIAutomator | 25%→100% | 2,498× | Mejora clara, pero falla el límite de costo |
-| H5C | Podar el árbol UIAutomator | 100%→100% | 0,506× | Mismo éxito y la mitad de tokens; pasar al ensayo completo |
-
-La secuencia enseña más que cualquier porcentaje aislado. Un prompt más detallado no repone información que el Agente nunca recibió: ante estos fallos, primero hay que revisar la entrada. Tampoco conviene enviar toda la información posible. El árbol completo resolvió la visibilidad a costa de mucho ruido; al quitar nodos sin contenido semántico, las cuatro tareas siguieron funcionando y el consumo se redujo aproximadamente a la mitad. Sin cambiar de modelo, la representación de la interfaz en el Harness resolvió primero la capacidad y después el costo.
-
-### Iteración Continua: De la Primera Mejora a la Evolución del Sistema
-
-Superar las cuatro tareas con H5C solo autoriza la siguiente prueba; no autoriza el despliegue. El siguiente umbral es ejecutar las 116 tareas, incluidas las aplicaciones de terceros, con cinco semillas en un Pixel 6 y API 33. El éxito no debe empeorar, los tokens no deben superar el 75% del control y la latencia debe mantenerse por debajo de 1,5×. Hasta entonces, un 4/4 en el subconjunto no puede presentarse como un 100% del sistema.
-
-Esa es la disciplina de la iteración: cada evidencia solo justifica el paso siguiente que su escala permite. H1 descartó seguir acumulando prompts; H5 encontró la dirección correcta, pero descubrió un problema de costo; H5C resolvió ese costo y obtuvo el derecho a una prueba mayor. Un buen informe de benchmark no solo da una puntuación: delimita dónde vale la conclusión, qué barreras no se han superado y qué debe comprobar la ronda siguiente.
-
-> **Experimento 6-12 ★★★: Evaluación y Mejora en AndroidWorld**
+> **Experimento 6-3 ★: Construir un Agente de voz tradicional**
 >
-> Este experimento practica el recorrido desde el reporte hasta la mejora del sistema. Partir de los reportes históricos y las tres comparaciones guardadas en `chapter6/android-world`.
+> Conecta micrófono, Silero VAD, Whisper local, LLM en streaming y Fish S1 TTS por WebSocket. La evidencia real de un turno demuestra que la cadena funciona de extremo a extremo, pero no es un benchmark de concurrencia ni de carga de producción. Código y aceptación: [chapter6/live-audio](../chapter6/live-audio/).
+
+> **Proyecto adicional: un Agente de voz WebRTC que «llama al usuario»**
 >
-> Paso 1: Diagnóstico. Realizar un análisis cruzado entre la tabla por tareas y la matriz de etiquetas de capacidad, mapeando los fallos superficiales en las tareas hacia deficiencias profundas de capacidad. Identificar las etiquetas de capacidad con éxito inferior al esperado y las áreas de tareas con fallos concentrados.
+> PSTN no es imprescindible. WebRTC en el navegador reproduce el ciclo de abrir una sesión, pedir datos faltantes, repetirlos para confirmar y guardar resultados estructurados. Para llamar a una organización externa se sustituye el mismo contrato por un proveedor PSTN/SIP conforme. El proyecto conserva los identificadores históricos exp9-2, pero ya no ocupa un número del manuscrito. Véanse [chapter6/phone-agent](../chapter6/phone-agent/) y sus evidencias.
+
+#### De lo serial a la percepción en streaming
+
+ASR puede emitir una transcripción provisional mientras se habla, el LLM puede enviar la primera frase pronunciable a TTS y TTS puede devolver bloques de audio. Eso no hace que las tres etapas sean completamente paralelas: la generación anticipada exige cancelar, invalidar, reiniciar o revertir cuando cambia la transcripción.
+
+El frente VAD + ASR acumula latencia por esperar silencio, pierde dudas, emoción, apoyos y ambiente, y rompe el contexto de nombres o correos. Un modelo realmente streaming necesita codificador causal o por bloques y decodificación incremental; Whisper no es causal porque su codificador espera el segmento completo. Un modelo auditivo basado en LLM puede emitir texto y eventos semánticos, pero simular prefijos no garantiza el rendimiento de un modelo causal. Los marcadores speak_start/end, interrupt, emotion, laugh, sigh y noise conservan señales que no caben en texto.
+
+[^ch6-11]: Sobre incorporar el juicio de turno al reconocedor y el problema de etiquetas con información futura, véase Li, Bojie and Noah Shi. *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR.* 2026 (pendiente de publicación).
+
+> **Experimento 6-4 ★: Simular percepción de voz en streaming con Qwen2-Audio**
 >
-> Paso 2: Construcción de hipótesis. Formular hipótesis de mejora siguiendo la estructura de tres capas (superficial → intermedia → profunda), especificando en cada hipótesis el objetivo esperado de incremento en la tasa de éxito y el método de verificación.
+> Qwen2-Audio no es un modelo streaming: se usan prefijos de audio crecientes y se compara con 600 ms de VAD + Whisper. El canonical run pasó los controles, pero solo reprodujo 2/6 conductas; tardó 8,4–11,3 s, omitió silence en pause y confundió cough/laughter en noise. Es una prueba de mecanismos y fallos, no evidencia de percepción streaming de 100–200 ms. Registro: [chapter6/streaming-speech](../chapter6/streaming-speech/).
+
+### Paradigma 2 · Modelos omnimodales de extremo a extremo (Omni)
+
+La cascada pierde emoción, entonación y sonido ambiente en la interfaz textual. Omni escucha, genera y habla con un único modelo, pero cuesta más entrenarlo, depurarlo y sustituir componentes. Su ventaja principal es la latencia y la información no textual, no una precisión necesariamente mayor. La autocascada puede corregir un error de percepción cuando el texto basta; si la respuesta depende de velocidad, emoción o ambiente, el cuello de botella textual destruye la evidencia[^ch6-13]. Omni todavía supone turnos y puede confundir una pausa en una secuencia de números con el final.
+
+[^ch6-13]: Medición completa de cuándo se invierte la ventaja de precisión entre cascada y extremo a extremo: Li, Bojie and Noah Shi. *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents.* 2026 (pendiente de publicación).
+
+![Figura 6-9: Comparación de modelos de voz omnimodales](images/fig6-9.svg)
+
+Las API de voz en tiempo real ocupan una posición intermedia: procesan audio de forma nativa, pero conservan VAD, interrupciones y llamadas asíncronas a herramientas. Lo importante es comparar los fallos por tarea, no una tabla de posiciones.
+
+> **Experimento 6-5 ★★: Ejecutar MiniCPM-o 4.5 localmente, extremo a extremo frente a autocascada**
 >
-> Paso 3: Experimentos por fases. Reproducir H1, H5 y H5C cambiando una sola variable en cada ronda. Registrar éxito, tokens, latencia y regresiones.
+> Fija una revisión local, desactiva thinking mode y compara responder directamente al audio con transcribir primero y responder después. Mide la conservación de información acústica, no la capacidad posterior de «pensar mientras habla».
+> Tabla 6-1 Resultados locales de MiniCPM-o 4.5: extremo a extremo frente a autocascada (cuatro comprobaciones de mecanismo, no un benchmark)
 >
-> Paso 4: Toma de decisiones impulsada por datos. Tomar decisiones de despliegue según la relación costo-beneficio (no adoptar simplemente todas las mejoras efectivas, sino sopesar el alcance de aplicación, impacto en latencia y costo de cada una). Las mejoras de bajo costo y alto beneficio se despliegan prioritariamente, mientras que las de alto costo se restringen a escenarios críticos.
 >
-> Paso 5: Iteración. Un piloto aprobado solo da paso al ensayo completo. No discutir el despliegue hasta completar 116×5 ejecuciones en el entorno estándar. El reporte debe conservar las diferencias de entorno, el tamaño de muestra y lo que todavía no se ha ejecutado.
-
-## De la Evaluación Externa a la Evaluación Interna: Infraestructura para Agentes de Producción
-
-Las secciones anteriores abordaron cómo evaluar un sistema de Agentes desde el exterior: construyendo entornos de evaluación, diseñando datasets y analizando reportes de benchmark. Sin embargo, los mejores productos de Agentes no solo aceptan evaluaciones externas, sino que **integran internamente una infraestructura de autoevaluación continua**. Tomando como ejemplo el Agente de propósito general de código abierto OpenClaw presentado en el Capítulo 5, en combinación con análisis técnicos públicos y aprendizajes de productos de Coding Agents líderes, se presenta a continuación una infraestructura de evaluación interna referente que traslada de forma sistemática la metodología experimental de la investigación en ML a la ingeniería de producto.
-
-### Infraestructura de Ablación: Comprensión de la Contribución Real de Cada Característica
-
-Los investigadores en ML emplean desde hace tiempo los experimentos de ablación (Ablation Study) para comprender qué componentes del modelo son verdaderamente relevantes: la ablación consiste en "retirar" un componente a la vez para observar cuánto cae el rendimiento general. OpenClaw incorporó esta metodología a la ingeniería de producto: el sistema incluye un interruptor general capaz de desactivar simultáneamente múltiples características principales (modo de pensamiento, compresión de contexto, memoria automática, tareas en segundo plano), creando una línea base de "modelo al desnudo". Esto permite al equipo responder a una pregunta clave: **¿una característica mejora realmente la experiencia del usuario o solo parece útil?**
-
-Convertir la ablación en una práctica de ingeniería regular y no en un estudio puntual exige ciertas consideraciones. En primer lugar, los interruptores de ablación deben inyectarse en una fase muy temprana de la ruta de inicio (antes de que cualquier constante a nivel de módulo capture valores de configuración), lo que implica que la infraestructura de ablación debe diseñarse dentro de la arquitectura del sistema desde el principio y no añadirse a posteriori. En segundo lugar, ejecutar periódicamente experimentos de ablación (como antes de cada gran lanzamiento) permite descubrir "deuda de características", es decir, aquellas funcionalidades que fueron efectivas en el pasado pero que han dejado de ser necesarias debido a la evolución del modelo. La recomendación práctica para cualquier equipo que construya Agentes en producción es: **cada característica principal debe poder desactivarse de forma independiente, y el equipo debe verificar periódicamente la contribución real de cada una**.
-
-### Metodología de Pruebas A/B: Distinción entre Mecanismos y Objetivos
-
-Los productos de Agentes maduros realizan estrictas pruebas A/B sobre sus comportamientos (dividiendo a los usuarios aleatoriamente en dos grupos, uno con la versión anterior y otro con la nueva, comparando los datos reales para juzgar la efectividad del cambio). Un caso bien diseñado de prueba A/B en Agentes ilustra varios principios metodológicos clave:
-
-**Multi-brazo en lugar de binario**. No comparar únicamente "con" y "sin", sino diseñar múltiples variantes progresivas (por ejemplo, al probar diferentes intensidades de restricciones en prompts, configurar un grupo de control y tres grupos experimentales progresivamente más estrictos). Este diseño revela la relación dosis-efecto, ayudando a encontrar el punto óptimo.
-
-**Diferenciar métricas de mecanismo y métricas de objetivo**. Este es el error más frecuente: convertir aquello que estás modificando en el objetivo de optimización. Por ejemplo, si estás probando "reducir la longitud del archivo de planificación del Agente", la longitud del plan es la métrica de mecanismo (lo que cambias directamente), pero no es el objetivo. El objetivo real puede ser "reducir el costo por sesión". Reducir el archivo de plan puede disminuir el costo, pero también puede provocar más ciclos de edición-comprobación-edición debido a una planificación insuficiente, aumentando el volumen total de salida. Pregúntate siempre: **¿es lo que estoy cambiando (mecanismo) lo mismo que me importa verdaderamente (objetivo)?** Si no es así, rígete por el objetivo.
-
-**Establecer métricas de salvaguarda (Métricas de Salvaguarda / Guardrail Metrics)**. Incluso si la métrica de objetivo mejora, si la satisfacción del usuario disminuye, el número de operaciones aumenta o la tasa de errores se eleva, el experimento debe detenerse. Las métricas de salvaguarda representan la "línea roja que no puede empeorar".
-
-**Registrar estadísticas de línea base**. Incluir tamaño de muestra, percentiles de distribución y análisis de correlación (como "la tasa de rechazo aumenta monótonamente con el tamaño del plan"), ofreciendo el contexto necesario para interpretar los resultados experimentales. Sin una línea base, no podrás determinar si los resultados del experimento poseen significatividad estadística.
-
-### Sistema de Feature Flags de Dos Capas
-
-Los productos de Agentes necesitan diseñar una infraestructura de feature flags (interruptores de características) desde el primer día: un feature flag es un interruptor controlable remotamente que determina si una funcionalidad está activa o no para los usuarios, sin necesidad de redesplegar código. Sirve simultáneamente a tres propósitos: experimentación, despliegue gradual y fusión de emergencia.
-
-Los **flags en tiempo de compilación** eliminan físicamente el código correspondiente del producto durante la fase de build. Las características de uso interno no existen en absoluto en los builds externos, resultando imposible descubrir las funciones eliminadas incluso mediante ingeniería inversa. Esto constituye asimismo un mecanismo de ablación limpio: desactivar una característica no consiste en omitir la lógica en tiempo de ejecución, sino que el código correspondiente no existe físicamente.
-
-La configuración de los **flags en tiempo de ejecución** se distribuye desde el servidor, almacenando una copia en caché en el disco local. El diseño prefiere leer una configuración en caché ligeramente obsoleta antes que bloquear el inicio del Agente esperando una solicitud de red. Las decisiones concretas de agrupación se realizan a través de la plataforma de experimentación (como GrowthBook) para asignar los grupos de prueba A/B. Un detalle de diseño clave consiste en que cada evento de exposición de característica se registra como máximo una vez por sesión, evitando que registros repetidos contaminen los datos experimentales.
-
-Para los desarrolladores de Agentes, la lección es: los feature flags no son herramientas de depuración, sino **componentes arquitectónicos de primer nivel**.
-
-### Evaluación de Sensibilidad de Prompts
-
-El prompt de sistema constituye el "código" nuclear del comportamiento del Agente, aunque a menudo carece del control de versiones y pruebas de regresión equivalentes a los del código convencional. El enfoque de OpenClaw consiste en proporcionar una herramienta dedicada capaz de extraer el prompt de sistema completamente renderizado en un commit específico de git, incluyendo el texto final tras expandir todas las condiciones dinámicas. Esto permite al equipo responder con precisión: **¿qué commit modificó el prompt? ¿Cuál fue el impacto sobre el conjunto de datos de evaluación?**
-
-La práctica recomendada para cualquier equipo de Agentes es: (1) el prompt de sistema debe ser renderizable de forma determinista (dada la misma configuración de entrada, debe producir siempre la misma salida); (2) establecer un mecanismo de instantáneas versionadas de los prompts; (3) cada cambio en los prompts debe ejecutar pruebas de regresión sobre el dataset de evaluación, exactamente igual que el código ejecuta CI.
-
-### Analítica Consciente de la Privacidad como Base de Evaluación
-
-La evaluación depende de buenos datos, pero los productos de Agentes procesan frecuentemente contenidos sensibles de los usuarios. OpenClaw resuelve esta contradicción mediante el sistema de tipos: las interfaces de analítica solo aceptan valores envueltos en tipos especiales, siendo el nombre del tipo una pista de auditoría que declara explícitamente "he verificado que esto no es código ni una ruta de archivo". Este diseño transforma las restricciones de privacidad de especificaciones documentales en verificaciones de tipos forzadas en tiempo de compilación.
-
-El principio central es: **diseñar las restricciones de privacidad desde el inicio en lugar de añadirlas a posteriori**. Si tu sistema de analítica no puede recopilar datos de forma segura, no podrás evaluar de forma efectiva. La privacidad y la evaluación no son opuestas: el diseño consciente de la privacidad obliga a reflexionar seriamente sobre *qué se necesita medir realmente*, lo que a su vez impulsa métricas de evaluación más precisas.
-
-### De lo Externo a lo Interno: La Transformación de la Mentalidad de Evaluación
-
-El mensaje central de esta sección es: **mientras las secciones anteriores enseñaron a evaluar un Agente desde el exterior, esta sección revela cómo los mejores productos de Agentes se evalúan a sí mismos desde el interior**. La evaluación externa indica "cuán bueno es el Agente", mientras que la infraestructura de evaluación interna indica "qué cambio lo hizo mejorar". Los experimentos de ablación descubren qué características son verdaderamente relevantes, las pruebas A/B cuantifican el impacto de cada modificación, los feature flags ofrecen la infraestructura para experimentos y giros atrás, la evaluación de sensibilidad de prompts incorpora los prompts de sistema al esquema CI y el análisis consciente de la privacidad garantiza el cumplimiento en la recolección de datos. Estos cinco componentes forman conjuntamente la ingeniería de producto impulsada por la evaluación: no realizar evaluaciones de forma ocasional, sino integrar la evaluación en cada decisión de producto.
-
-## Entornos de Simulación: El Puente entre Evaluación y Post-Entrenamiento
-
-El destino de la evaluación no es calificar, sino mejorar. Este capítulo ha mostrado dos vías de mejora: ajustar el Harness (de reportes de benchmark a mejoras del sistema) e integrar la evaluación en la ingeniería de producto (infraestructura interna de evaluación). La forma superior de mejora es el entrenamiento: cuando el objetivo pasa de "evaluar capacidades existentes" a "desarrollar nuevas capacidades", especialmente mediante las técnicas de post-entrenamiento analizadas en el Capítulo 7, el entorno de evaluación debe evolucionar hacia un **entorno de simulación**: un patio de juegos virtual donde el Agente puede practicar repetidamente y obtener puntuaciones automáticas. La diferencia fundamental entre un entorno de simulación y uno de evaluación radica en que la frecuencia de interacción es enormemente superior (millones de veces frente a miles), requiere aleatorización (para evitar memorizar configuraciones específicas) y debe ofrecer retroalimentación instantánea. Según su ámbito de aplicación, los entornos de simulación se dividen en digitales (tareas de procesamiento de información) y encarnados (percepción y manipulación del mundo físico).
-
-Las dos orillas de este puente se conectan de la siguiente manera. Los activos acumulados en el lado de la evaluación se pueden transformar de manera casi directa en señales de entrenamiento: una Rúbrica o verificador bien definido es en esencia una **función de recompensa para aprendizaje por refuerzo con recompensas verificables (RLVR, Reinforcement Learning with Verifiable Rewards)**, donde los scripts de puntuación actúan directamente como scripts de recompensa, siendo la superación de pruebas o el cumplimiento de estados tanto el criterio de evaluación como el retorno en aprendizaje por refuerzo. Sin embargo, el entrenamiento plantea nuevos requisitos que la fase de evaluación no necesita atender. El primero es una **semántica de reset confiable**: el entrenamiento ejecuta millones de episodios (un episodio es un ciclo completo de interacción desde el estado inicial hasta la finalización de la tarea), debiendo cada episodio poder restablecer el entorno a un estado inicial limpio y determinado para evitar que las señales de gradiente se contaminen con residuos del turno anterior. El segundo es un **throughput (rendimiento de procesamiento) enormemente superior al de la evaluación**: mientras evaluar unos miles de veces basta para extraer conclusiones, el entrenamiento exige entregar millones de interacciones al modelo en un tiempo de reloj aceptable, siendo la paralelización del entorno y el costo por instancia los factores que determinan la viabilidad del entrenamiento. Ambos puntos (verificadores convertidos en funciones de recompensa, y reset junto a throughput orientados al entrenamiento) se desplegarán en el Capítulo 7.
-
-![Figura 6-8 Espectro de Fidelidad de Simulación](images/fig6-8.svg)
-
-En los **entornos digitales**, el framework AWorld construyó un sandbox de servidores MCP controlables para las tareas de GAIA, ofreciendo 26 servidores MCP que abarcan 126 funciones de herramientas, evitando el bloqueo de cuentas y efectos secundarios incontrolables derivados del acceso directo a APIs reales. Todas las llamadas a herramientas se pueden reproducir y auditar. La arquitectura distribuida de AWorld redujo la ejecución en serie tradicional de 7.695 segundos a 525 segundos (aceleración de 14,6 veces), y el diseño sin estado del entorno independiza por completo cada instancia, admitiendo una paralelización eficiente.
-
-En los **entornos encarnados**, RoboTwin2 construye tareas de manipulación con doble brazo sobre motores físicos, aleatorizando la posición, orientación y apariencia de los objetos en el entorno para elevar la capacidad de generalización. El espacio de observación incluye visión multicámara y estados articulares, logrando control en tiempo real mediante **chunking de acciones (Action Chunking)**, donde el modelo planifica múltiples acciones continuas de una sola vez (detallado en el Capítulo 9). OSWorld logra la capacidad de restablecimiento mediante instantáneas de máquinas virtuales, y AndroidWorld se enfoca en la automatización de aplicaciones móviles. Ya sean entornos digitales o encarnados, los entornos de simulación requieren de igual modo los mecanismos de aislamiento y virtualización de identidad analizados en el Capítulo 4 (aislamiento por VM/contenedor, proxies residenciales, autenticación Human-in-the-Loop, sistemas de archivos compartidos), los cuales no se repetirán aquí.
-
-> **Experimento 6-13 ★★: Configuración del Entorno de Inteligencia Encarnada para OpenVLA y RoboTwin2**
+> | Tarea | Extremo a extremo | Autocascada | Observación |
+> | --- | ---: | ---: | --- |
+> | Aritmética semántica (2) | 1/2 | 2/2 | La autocascada corrigió un error de transcripción |
+> | Velocidad paralingüística (2) | 2/2 | 1/2 | El texto borró la diferencia rápido/lento |
+> | Total | 3/4 | 3/4 | Mismo total, fallos complementarios |
 >
-> Configurar un entorno de simulación para manipulación robótica. Leer `ch7/SimpleVLA-RL` y la documentación de OpenVLA para comprender la arquitectura de modelos de visión-lenguaje-acción (integración de extremo a extremo de codificador visual + modelo de lenguaje + decodificador de acciones, proyectando imágenes y texto a un espacio semántico compartido). Configurar el entorno RoboTwin2, comprendiendo el espacio de observación (RGB de tres perspectivas + estado articular de 14 dimensiones) y el espacio de acciones (vector de control de 14 dimensiones). Estudiar el mecanismo de aleatorización del entorno y la lógica de restricciones espaciales en move_can_pot. Ejecutar la evaluación de modelos preentrenados, registrando la tasa de éxito, tiempo de finalización y patrones de fallo, prestando especial atención al impacto del mecanismo de chunking de acciones.
+> La muestra es pequeña; no establece qué ruta es generalmente más precisa o rápida. Evidencia completa: [chapter6/end-to-end-speech](../chapter6/end-to-end-speech/).
+
+Step-Audio 2 procesa audio crudo y produce texto y voz; Step-Audio R1 incorpora el razonamiento en el modelo de audio.
+
+### Paradigma 3 · Modelos interactivos de dúplex completo
+
+Omni separa «habla el usuario» y «habla el modelo», pero la interpretación simultánea exige solapamiento. Un modelo de dúplex completo escucha y habla continuamente y decide seguir, pausar, interrumpir o llamar a una herramienta. Moshi de Kyutai fue un ejemplo temprano; Thinking Machines Lab llama a esta ruta Interaction Model[^ch6-14] y la integra en el modelo en lugar de montarla alrededor de VAD. GPT-Live la lleva a escala de producción y delega el trabajo complejo a un modelo de fondo mientras mantiene la conversación.
+
+[^ch6-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” 2026-05. https://thinkingmachines.ai/blog/interaction-models/
+
+La trayectoria es: la cascada adivina turnos con umbrales de silencio, el streaming eleva el juicio al nivel semántico y el dúplex completo convierte el cambio de turno en una decisión continua.
+
+### Tiempo cognitivo: interacción en tiempo real y pensamiento profundo
+
+El modelo de primer plano responde mientras el usuario sigue conectado; el modelo de fondo puede pensar más tiempo. Son tres intercambios, no una progresión lineal:
+
+| Diseño | Primer plano | Fondo | Riesgo |
+| --- | --- | --- | --- |
+| Respuesta rápida, corrección lenta | Respuesta inmediata | Replantear y completar | Contradicción |
+| Interacción rápida, consejo lento | Mantener el hilo y elegir palabras | Consejo o resultados de herramientas | Interfaz limitada |
+| Pensamiento y expresión unidos | Pensar mientras habla | Compartir el estado | Alto coste de entrenamiento |
+
+#### Solución 1: pensamiento rápido para rellenar, pensamiento lento para responder
+
+El pensamiento rápido puede emitir una respuesta de relleno en unos cientos de milisegundos, mientras el pensamiento lento completa en segundo plano una deducción más profunda. Su problema es que las preguntas sencillas se procesan dos veces y las complejas pueden acabar en contradicción: el modelo rápido recomienda comprar y el lento descubre después que el plan carece de una función clave, de modo que el usuario escucha respuestas contradictorias en cuestión de segundos. La causa de fondo es que cada instancia ha realizado su propio razonamiento independiente.
+
+
+![Figura 6-10: Arquitectura de pensamiento rápido/lento y comparación de soluciones](images/fig6-10.svg)
+
+
+#### Solución 2: pensamiento rápido para interactuar, pensamiento lento para avisar
+
+En la segunda solución, el modelo de fondo ofrece sugerencias al de primer plano a través de una barra de estado o de una interfaz específica, mientras el primer plano mantiene el hilo y decide cómo expresarse. Es más estable que la primera, pero la comunicación sigue siendo indirecta: el primer plano puede malinterpretar la sugerencia y no ve el razonamiento intermedio del fondo; antes de que el fondo termine, si el usuario repregunta el primer plano solo puede responder con sus propias capacidades. Puede «esperar el resultado» con naturalidad, pero no llega realmente a pensar mientras habla.
+
+#### Solución 3: unificación de extremo a extremo del pensamiento y la expresión (el caso de Step-Audio R1)
+
+La tercera solución interioriza la capacidad de razonar dentro del propio modelo de audio de extremo a extremo. Step-Audio R1 resuelve dos problemas con dos mecanismos complementarios: la **destilación de pensamiento anclada en la modalidad (MGRD)** hace que el modelo razone a partir de rasgos acústicos, y la **arquitectura de doble cerebro MPS** permite que la concepción y la expresión avancen en paralelo. La primera garantiza «pensar bien»; la segunda resuelve «hablar a tiempo».
+
+Idealmente, el modelo debería inferir la emoción del tono, el ritmo y la entonación, y no solo del texto transcrito. El llamado «pensamiento por delegación al texto» consiste en que el modelo sustituye el análisis de la melodía y de los rasgos acústicos por las palabras negativas de la letra. MGRD filtra las cadenas de razonamiento que citan realmente rasgos acústicos, entrena el modelo con esos datos y, mediante aprendizaje por refuerzo, impide que el modelo se salte el razonamiento y adivine la respuesta.
+
+MPS hace que el cerebro de concepción produzca fragmentos de pensamiento de forma continua, y el cerebro de expresión, al recibir cada fragmento, genera voz de inmediato combinándolo con lo ya respondido. Ambos funcionan en paralelo como una tubería, de modo que no hace falta esperar a que el razonamiento termine para que el usuario oiga la primera frase (Figura 6-11).
+
+
+![Figura 6-11: Arquitectura de doble cerebro MGRD y MPS de Step-Audio R1](images/fig6-11.svg)
+
+
+El modelo unificado es el que más estrechamente logra «pensar mientras habla», a costa de tener que reentrenar juntos el razonamiento y la expresión en tiempo real; la vía desacoplada facilita sustituir el cerebro de fondo, mientras que la vía unificada encaja mejor en escenarios especializados que buscan la máxima naturalidad. Son un compromiso, no un simple reemplazo mutuo.
+
+### Síntesis de voz más humana
+
+Un TTS demasiado fluido y sin pausas delata que es una máquina. El LLM puede emitir THINKING, EMO:happy y SPEED:0.8x junto con el texto, y TTS puede convertirlos en pausas, prosodia, velocidad, risas y suspiros. En Fish Audio S1, la configuración con varias referencias obtuvo la mejor puntuación en tres escuchas ciegas equilibradas (4,67/5 en parecido a un agente humano), pero el grupo sin marcadores superó al de referencia única y no se reprodujo todo el orden previsto.
+
+> **Experimento 6-6 ★★: TTS controlado por tokens con Fish Audio**
 >
-> ![Figura 6-9 Entorno de Inteligencia Encarnada OpenVLA y RoboTwin2](images/fig6-9.svg)
+> Compara biblioteca sin marcadores, una referencia y varias referencias; la capa de ejecución selecciona emoción, velocidad y estilo. La biblioteca de 24 referencias, los medios A/B/C y la aceptación están en [chapter6/controllable-tts](../chapter6/controllable-tts/).
 
-### Sopesado de Fidelidad y Aleatorización de Dominio
+## Computer Use: Agentes de automatización de GUI
 
-Los entornos de alta fidelidad permiten una mejor transferencia al mundo real, pero implican un gran costo computacional. Otra dimensión de la fidelidad es el grado de aleatorización: una aleatorización moderada eleva la capacidad de generalización, mientras que una aleatorización excesiva vuelve la tarea excesivamente difícil. La **aleatorización de dominio (Domain Randomization)** es la tecnología clave para reducir la brecha entre simulación y realidad (sim-to-real gap): introduciendo variaciones aleatorias de gran amplitud en parámetros físicos, apariencia visual y ruido de sensores (del mismo modo que practicar agarres bajo diversas iluminaciones y ángulos evita fallar en el entorno real por un cambio de luz). En entornos digitales, el fenómeno sim-to-real se manifiesta en diferencias de renderizado de interfaz y tiempos de respuesta, pudiendo mitigarse mediante la introducción de aleatoriedad en latencias y fallos.
+Al llegar a este punto, el lector habrá notado que el espacio dedicado a la voz en este capítulo es notablemente superior al de los dos escenarios posteriores, lo cual es intencionado. En la línea evolutiva de la multimodalidad en tiempo real, la voz es el escenario que se ha desarrollado de manera más completa y que más merece tomarse como sistema de referencia: partiendo del problema de "la alta latencia del pipeline serial", pasando por soluciones como extremo a extremo, full-duplex y pensar mientras se habla, hasta llegar a la situación consolidada de hoy, todo el recorrido de problema → solución → situación final se ha completado. Por ello lo explicamos en profundidad, de modo que los dos escenarios siguientes, Computer Use y robótica, puedan examinarse en comparación con este marco de referencia: para ver en qué punto de esta línea evolutiva se encuentra cada uno y dónde se han atascado.
 
-Así, el entorno de evaluación completa su última evolución: pasa de ser un examen para medir capacidades a un campo de entrenamiento para cultivarlas. El Capítulo 7 presentará cómo AWorld-train transforma estos entornos de simulación en escenarios entrenables, junto con sus desafíos de ingeniería: el sistema de evaluación y los entornos de simulación construidos en este capítulo constituyen precisamente dos pilares fundamentales para el post-entrenamiento.
+Aunque estos tres escenarios parecen diferentes, enfrentan los mismos desafíos centrales: percepción en tiempo real, toma de decisiones con baja latencia e interacción continua. A continuación veremos cómo reaparecen estos temas técnicos en la interacción visual (Computer Use) y la interacción física (robótica); comenzando por ampliar la perspectiva de la modalidad auditiva a la visual: ¿qué ocurre si el Agente no solo puede comprender la voz, sino también "entender" la pantalla y operar interfaces gráficas de usuario?
 
-[^re-bench-2025]: Wijk, Hjalmar, et al. *RE-Bench: Evaluating Frontier AI R&D Capabilities of Language Model Agents against Human Experts.* arXiv:2411.15114, 2025.
+Computer Use (también llamado Agente de automatización de GUI) permite a la IA utilizar software como los humanos, observando la pantalla y operando el ratón y el teclado; por ejemplo, abrir el navegador para buscar información, rellenar datos en una hoja de cálculo o ajustar la configuración del sistema. Su núcleo es un bucle de **Percepción-Pensamiento-Acción** (Figura 6-11):
 
-## Resumen del Capítulo
+1. El Agente toma una captura de la pantalla actual.
+2. El modelo multimodal recibe la captura y la instrucción de la tarea, emitiendo un fragmento de pensamiento y una acción específica.
+3. La capa de ejecución ejecuta dicha acción en el entorno real (mover el ratón, hacer clic, ingresar texto, etc.).
+4. Espera la respuesta de la interfaz y vuelve a tomar una captura de pantalla, entrando en la siguiente ronda del bucle.
 
-Este capítulo ha girado en torno a una pregunta central: ¿cómo determinar si un Agente ha mejorado de verdad? Desde los entornos reproducibles y los datasets resistentes a fugas hasta el uso de LLMs como jueces y la iteración guiada por resultados, cada eslabón condiciona la confiabilidad de la conclusión. Los experimentos aportan cuatro advertencias concretas: unir memoria estructurada y RAG no garantiza sinergia; los ahorros de caché y compresión no se suman; la elección del audio de referencia cambia el significado de la puntuación multimodal; y la capacidad de leer una interfaz —junto con su costo en tokens— depende de cómo el Harness represente la entrada. La selección de modelos debe comparar curvas de capacidad bajo distintos presupuestos, no solo un punto. En producción, evaluar no es celebrar un examen ocasional, sino verificar de forma continua cada decisión de producto.
+**Bucle de seguridad de Computer Use:**
 
-Metodología nuclear: Observar → Hipotetizar → Experimentar → Validar → Nuevo conocimiento → Nueva hipótesis, transformando la ingeniería de Agentes de una "alquimia" basada en la experiencia en una ingeniería científica impulsada por datos.
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
 
-El sistema de evaluación presentado en este capítulo forma un bucle cerrado completo: el **entorno de evaluación** proporciona la infraestructura de pruebas automatizada → el **dataset de evaluación** define los casos de prueba → los **métodos de evaluación automatizada** (LLM-as-a-Judge y Rubric) puntúan el desempeño del Agente → el **análisis de benchmark** revela las direcciones de mejora → la **mejora del sistema** repara los problemas → se actualizan el entorno y dataset de evaluación, comenzando una nueva ronda de iteración.
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
 
-Desde la perspectiva de ingeniería de Harness introducida en el Capítulo 1, la metodología de evaluación de este capítulo representa la implementación sistemática de la función de "verificación" en el Harness, mientras que el bucle cerrado "de reportes de benchmark a mejoras del sistema" constituye el mecanismo central de la iteración del Harness. Este capítulo responde a "cómo medir de forma confiable"; el Capítulo 8 responderá sobre esta base a "cómo transformar evaluaciones de trayectorias multidimensionales en actualizaciones del sistema ejecutables y reversibles".
+![Figura 6-12: Bucle Percibir-Pensar-Actuar de Agentes Computer Use](images/fig6-12.svg)
 
-La arquitectura de evaluación construida en este capítulo no solo sirve a la optimización del sistema actual, sino que sienta las bases clave para los dos capítulos siguientes. El Capítulo 7 transforma los entornos y datos de evaluación en entradas para el post-entrenamiento del modelo, grabando estrategias de interacción en los parámetros mediante SFT y RL; mientras que el Capítulo 8 convierte las evaluaciones multidimensionales de trayectorias de producción en actualizaciones candidatas de conocimiento, instrucciones, programas o parámetros.
+Existen tres dimensiones de diseño clave en este bucle: el **espacio de acciones** (qué operaciones puede ejecutar el Agente), el **grounding visual** (cómo encontrar el elemento objetivo en la captura de pantalla) y la **arquitectura del modelo** (cómo generar la acción correcta a partir de la captura de pantalla).
 
-## Preguntas de Reflexión
+### Diseño del espacio de acciones
 
-1. ★★ LLM-as-a-Judge utiliza un modelo de lenguaje para evaluar la salida de otro. ¿Presenta esta "autoevaluación" puntos ciegos sistemáticos (por ejemplo, que el modelo otorgue sistemáticamente puntuaciones altas a respuestas con cierto estilo, discrepando dicha preferencia del juicio humano)? ¿Cómo detectar y corregir esta desviación?
-2. ★★★ El diseño de "prevención de fugas" en los datasets de evaluación resulta crucial. Sin embargo, en el ecosistema de código abierto, una vez publicado un benchmark, sus datos son incorporados rápidamente a los datos de entrenamiento. ¿Tiene fin este juego del gato y el ratón? Diseña un método de evaluación que sea fundamentalmente resistente a la fuga de datos.
-3. ★★ Los cuatro principios de Scale AI (orientación de expertos, cobertura completa, ponderación estandarizada, evaluación autocontenida) buscan eliminar la subjetividad. Sin embargo, ciertas dimensiones de las tareas (como "si la respuesta es de ayuda" o "si el tono es apropiado") son inherentemente subjetivas. ¿Cómo diseñar Rúbricas confiables para estas dimensiones subjetivas?
-4. ★★ τ-bench evalúa Agentes simulando comportamientos de usuarios reales. Sin embargo, el usuario simulado es también un LLM que puede subestimar sistemáticamente ciertos escenarios límite (como usuarios alterados o con expresiones confusas). ¿Cómo verificar la calidad del propio usuario simulado?
-5. ★★ La comparación por pares (modelo Bradley-Terry) asume que las preferencias son transitivas (si A > B y B > C, entonces A > C). Sin embargo, las preferencias humanas violan frecuentemente la transitividad. En la evaluación de Agentes, ¿en qué escenarios pueden aparecer preferencias no transitivas? ¿Cómo afecta esto a la confiabilidad de los rankings?
-6. ★★ Este capítulo distingue Pass@k, que mide el techo de capacidad, de Pass consecutive@k, que mide la fiabilidad de negocio. Para un Agente cuya tasa de éxito en una sola ejecución es de solo el 60 %, ¿cómo combinarías el coste del fallo, el coste del reintento y los efectos secundarios de la tarea para decidir qué métrica informar y qué valor de $k$ tomar?
-7. ★★ Este capítulo propone el método científico de "Observar → Hipotetizar → Experimentar → Validar". Sin embargo, en la práctica, el espacio de comportamientos del Agente es enorme y verificar una hipótesis puede requerir cientos de ejecuciones de evaluación. ¿Cómo maximizar la cantidad de información obtenida de la evaluación bajo un presupuesto computacional limitado?
-8. ★ En el piloto de AndroidWorld, el árbol completo elevó el éxito del 25% al 100%, pero aumentó el uso de tokens a 2,498×; la poda mantuvo el 100% y lo redujo a 0,506× respecto al control. ¿Cómo diseñarías reglas automáticas que eliminen nodos de UI sin semántica sin perder información necesaria para accesibilidad, verificación de estado o acciones posteriores?
-9. ★★ La simulación de usuarios en τ-bench adopta la "divulgación progresiva de información", proporcionando datos gradualmente según las preguntas del Agente en lugar de entregarlos todos de una vez. ¿Cómo influye este diseño en los resultados de evaluación? Si la estrategia de divulgación del usuario simulado difiere significativamente de la de los usuarios reales, ¿siguen siendo confiables las conclusiones de la evaluación?
+Anthropic define tres categorías de herramientas que constituyen la capacidad de interacción completa (Figura 6-12):
+
+![Figura 6-13: Espacio de acciones de Computer Use](images/fig6-13.svg)
+
+**Herramientas de operación de GUI** (`computer tool`): Las operaciones de ratón incluyen movimiento (`mouse_move`), clic con botón izquierdo/derecho/central, doble clic/triple clic, arrastre (`left_click_drag`), así como presionar/soltar con mayor precisión (`left_mouse_down/up`). El desplazamiento (`scroll`) admite cuatro direcciones y se puede combinar con teclas modificadoras. Las operaciones de teclado incluyen escritura carácter por carácter (`type`, simulando la escritura real con un intervalo de 12 ms entre caracteres), combinaciones de teclas (`key`, como Ctrl+C) y pulsación prolongada (`hold_key`). Acciones de percepción: captura de pantalla (`screenshot`), obtención de la posición del cursor (`cursor_position`) y espera (`wait`).
+
+**Herramientas de ejecución de comandos** (`bash tool`): Proporciona una sesión de terminal bash persistente con un tiempo de espera de 120 segundos, detectando si la ejecución del comando ha finalizado mediante cadenas centinela y manteniendo el estado del entorno entre múltiples llamadas (por ejemplo, si se hace `cd` a un directorio, la siguiente llamada permanecerá en ese directorio).
+
+**Herramientas de edición de archivos** (`str_replace_editor`): Logra una edición segura mediante coincidencia de cadenas, admitiendo operaciones de visualización, creación, reemplazo, inserción y deshacer, siendo más preciso que sobrescribir el archivo completo y reduciendo la probabilidad de modificar involuntariamente otros contenidos.
+
+> **Experimento 6-7 ★: Ejecutar Computer Use (ruta de referencia de Anthropic o ruta de modelo abierto)**
+>
+> La ruta A utiliza la demo de Anthropic Computer Use. Su contenedor empaqueta un entorno de escritorio Ubuntu completo, con navegador, terminal y otras herramientas habituales. El frontend recibe la tarea; el backend envía las instrucciones y capturas de pantalla a Claude y luego ejecuta las acciones de ratón, teclado, terminal o edición que devuelve el modelo. Esta ruta sirve para comprender el protocolo nativo de la herramienta `computer`; no exige que todos los lectores tengan acceso a la API de Anthropic.
+>
+> La ruta B utiliza el proyecto complementario del libro [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/). Por defecto controla browser-use con el modelo de pesos abiertos Qwen3-VL 32B Instruct, ya sea mediante la API alojada de OpenRouter o apuntando `OPEN_MODEL_BASE_URL` a un vLLM/SGLang autoalojado u otro endpoint compatible. El endpoint debe aceptar capturas de pantalla y admitir JSON Schema nativo; si solo admite JSON ordinario, se puede activar explícitamente el modo de compatibilidad schema-in-prompt.
+>
+> Ambas rutas emplean la misma tarea de solo lectura y el mismo contrato de aceptación: un máximo de 25 pasos, una sola acción por paso, y conservación de la identidad del modelo/endpoint, las respuestas originales del proveedor, las capturas de cada paso, la secuencia de acciones, la respuesta final y el motivo de detención. Los modelos distintos deben informarse como brazos experimentales separados: no se puede presentar el resultado de un modelo abierto como una reproducción de Claude ni considerar que «el contenedor arrancó correctamente» equivale a completar la tarea. El intervalo entre acciones y la calidad de la planificación son resultados medidos; no se presupone que sean de 2–5 segundos ni que superen necesariamente a otros modelos.
+
+### Grounding visual (Visual Grounding)
+
+En cada ronda del bucle, el modelo necesita localizar con precisión el elemento objetivo en la captura de pantalla: "¿Dónde está la casilla de búsqueda?", "¿Cuáles son las coordenadas del botón de envío?". Este es el problema de grounding visual (Visual Grounding). Actualmente existen **dos enfoques principales**: el primero convierte la localización en una **pregunta de opción múltiple** (etiquetando previamente los elementos de la interfaz con números para que el modelo solo tenga que elegir uno); el segundo es la **predicción directa de coordenadas** (permitiendo que el modelo "mire" directamente la captura de pantalla e informe las coordenadas como haría un humano). El enfoque de opción múltiple tiene dos formas de implementación: **anotación puramente visual** (el Set-of-Mark original, utilizando modelos de segmentación para recortar regiones candidatas sobre los píxeles) e **indexación de elementos estructurados** (DOM/Accessibility Tree, leyendo directamente la estructura interna de la interfaz). La ventaja común del enfoque de opción múltiple es que transforma la tarea abierta de "encontrar el botón en la captura de pantalla y predecir las coordenadas" en una tarea cerrada de "elegir uno entre los elementos ya etiquetados" (al igual que en un examen las preguntas de opción múltiple son más fáciles de responder correctamente que las de rellenar espacios), donde el modelo solo necesita decir "hacer clic en [123]" en lugar de "hacer clic en el botón azul situado aproximadamente a 200 píxeles a la derecha de la esquina superior izquierda de la pantalla".
+
+**Set-of-Mark: Método de anotación visual.**
+
+El Set-of-Mark (SoM) original fue propuesto por Microsoft Research en 2023, inicialmente para liberar la capacidad de localización visual de GPT-4V. Es un método **puramente visual**: utiliza modelos de segmentación de imágenes (SAM, SEEM, etc.) para recortar automáticamente regiones candidatas en la captura de pantalla, superponiendo marcas numéricas en cada región; el modelo ve una imagen con números y solo necesita informar el número, que el sistema convierte en las coordenadas centrales de la región correspondiente. Todo el proceso no requiere DOM ni ninguna estructura interna de la interfaz, por lo que el software de escritorio nativo y las interfaces de juegos son igualmente aplicables, siempre que el modelo de segmentación pueda recortar las regiones candidatas.
+
+**Indexación de elementos estructurados: Implementación estructurada de la idea SoM en la Web.**
+
+Cuando la propia interfaz puede proporcionar información estructurada, las anotaciones se pueden realizar con mayor precisión. Las páginas web modernas ya definen la estructura completa de los elementos (árbol DOM) y los roles semánticos (cuál es un botón, cuál es una casilla de entrada) antes de renderizar, y las interfaces de accesibilidad (Accessibility Tree) proporcionan información similar para muchas aplicaciones de escritorio. En lugar de dejar que el modelo de segmentación adivine entre los píxeles "qué región es un botón", es mejor preguntar directamente a la propia interfaz "¿qué elementos interactivos tienes?". Las soluciones de Web Agent representadas por el proyecto `browser-use` funcionan precisamente de esta manera: enumeran y numeran los elementos interactivos desde el DOM, lo que puede considerarse una implementación estructurada de la idea SoM en la Web (Figura 6-13). El flujo consta de cuatro pasos:
+
+1. Obtener la representación estructurada de la página web (árbol DOM) y la información de accesibilidad a través de la interfaz de depuración del navegador (CDP, Chrome DevTools Protocol).
+2. Detectar automáticamente qué elementos son interactivos (botones, casillas de entrada, enlaces, etc.).
+3. Etiquetar un ID único para cada elemento interactivo y dibujar cuadros delimitadores en la captura de pantalla.
+4. Generar simultáneamente una lista de texto que describa el elemento correspondiente a cada ID.
+
+```text
+Screenshot: [en la imagen los elementos clave están etiquetados con ID como [1], [2], [3], [4]]
+
+Elements:
+[1] <input type="text" placeholder="Search" aria-label="Search" />
+[2] <button id="submit-btn" aria-label="Submit form" />
+[3] <input type="text" placeholder="Enter your name" value="" />
+[4] <a href="/docs" aria-label="Documentation" />
+```
+
+El modelo solo necesita emitir un número de ID, y el sistema ejecuta automáticamente el clic utilizando las coordenadas centrales de dicho elemento. Este tipo de solución no ahorra tokens (porque toda la información de anotación debe enviarse al modelo), pero la localización es precisa y estable, evitando además las omisiones y falsas detecciones que los modelos de segmentación podrían introducir.
+
+![Figura 6-14: Set-of-Mark vs indexación de elementos estructurados (implementación browser-use)](images/fig6-14.svg)
+
+**Predicción directa de coordenadas.**
+
+La tercera ruta no realiza ninguna anotación y permite que el modelo emita las coordenadas directamente. Representada por **SeeClick** y el computer use de Claude: se entrena un modelo visual con datos emparejados de capturas de pantalla de GUI y posiciones de elementos a gran escala, permitiéndole aprender a mapear descripciones en lenguaje natural (como "hacer clic en el botón de envío") directamente a coordenadas precisas en la captura de pantalla, al igual que un usuario humano que confía puramente en la "vista" para encontrar la posición donde hacer clic.
+
+En la solución de predicción de coordenadas, la comprensión de las coordenadas por parte del modelo depende en gran medida de la resolución utilizada durante el entrenamiento (Figura 6-14). El entrenamiento de Claude utiliza XGA (1024x768), WXGA (1280x800) y FWXGA (1366x768); si la resolución de la captura de pantalla de entrada no coincide, las coordenadas predichas por el modelo se desviarán sistemáticamente, como si se midiera una distancia en un mapa pequeño y se aplicara directamente a un mapa grande. Por lo tanto, es necesario implementar un mecanismo de escalado bidireccional de coordenadas en la capa de herramientas, debiendo **seleccionar la resolución objetivo según la relación de aspecto de ancho y alto**, evitando que un estiramiento no proporcional deforme la imagen e introduzca desvíos en el juicio de coordenadas. Por ejemplo, si la resolución real de la pantalla es de 2560×1440 (16:9), se debe seleccionar entre las tres opciones admitidas por Claude aquella cuya relación de aspecto sea más cercana a 16:9: FWXGA (1366×768) es la más adecuada. Al tomar la captura de pantalla, la pantalla se escala proporcionalmente a 1366×768 para enviarla al modelo; tras emitir el modelo las coordenadas de clic (683, 384), se mapean de forma inversa a las coordenadas reales (683×2560/1366, 384×1440/768) ≈ (1280, 720). Por el contrario, si se fuerza el estiramiento de 16:9 a 1024×768 (4:3), la imagen se aplastará horizontalmente y las coordenadas predichas por el modelo sufrirán una desviación sistemática.
+
+![Figura 6-15: Coincidencia de resolución y escalado bidireccional de coordenadas](images/fig6-15.svg)
+
+La lógica de elección entre las tres rutas se puede resumir de la siguiente manera: **cuando la información estructurada esté disponible, se priorizará el uso del índice DOM/Accessibility Tree**, ya que la localización es la más precisa y estable; **cuando no esté disponible** (software de escritorio nativo como Photoshop, interfaces renderizadas en Canvas/WebGL, juegos), **se puede utilizar tanto la anotación visual (ruta SoM original) como la predicción de coordenadas**. La anotación visual convierte la localización en una pregunta de opción múltiple, siendo más amigable para modelos generales no entrenados específicamente; la predicción de coordenadas omite el paso de anotación y es más directa para modelos entrenados en localización de GUI. La precisión de ambas en elementos pequeños e interfaces densas aún presenta brechas.
+
+> **Experimento 6-8 ★: Uso de browser-use para implementar operaciones automatizadas en el navegador**
+>
+> Se combina Playwright, un framework de automatización de navegadores, con un modelo multimodal para implementar operaciones de navegador dirigidas mediante lenguaje natural. Se activa la visualización SoM y se guarda antes de cada decisión una captura con cuadros delimitadores anotados. La interfaz del modelo no se limita a OpenAI ni Anthropic: el libro ofrece una configuración de API para el modelo abierto Qwen3-VL y conserva un base URL genérico compatible con OpenAI para otros servicios alojados o para inferencia autoalojada.
+>
+> Tarea de prueba «Abrir Google y consultar el tiempo en San Francisco»: tras iniciar el sistema, una captura muestra la página de búsqueda de Google con los elementos interactivos numerados. El modelo selecciona el cuadro de búsqueda, escribe "San Francisco weather today", envía la búsqueda y extrae la temperatura y las condiciones de la página de resultados. Durante la aceptación se verifican de forma independiente la respuesta y la trayectoria, y se registran fielmente el número real de pasos y el tiempo transcurrido. «5 pasos y unos 20 segundos» solo puede ser una observación de una ejecución concreta, no un resultado fijo sin comprobante de ejecución.
+>
+> La ejecución oficial preservada del modelo abierto utilizó `qwen/qwen3-vl-32b-instruct` en OpenRouter. Al encontrar un CAPTCHA en la búsqueda de Google en el paso 4, el modelo no afirmó haber terminado: cambió a weather.com y, en el paso 16, leyó en la página Today de San Francisco 64°F, Sunny, sensación térmica de 62°F, máxima de 74°F y mínima de 55°F. Las 16 respuestas de API informaron del modelo Qwen3-VL solicitado, y las 15 capturas válidas de los pasos junto con la trayectoria de acciones de solo lectura superaron una aceptación determinista independiente. Este resultado demuestra que la ruta de API del modelo abierto funciona; no significa que se haya reproducido el brazo que usa la herramienta `computer` nativa de Anthropic.
+
+### Agentes de Computer Use capaces de ver animaciones y escuchar audio
+
+Hasta ahora, la percepción de Computer Use se ha basado en una suposición implícita: **la pantalla está estática** (tomar una captura, pensar un paso, hacer clic, y luego tomar la siguiente captura). Sin embargo, en la realidad las pantallas reproducen videos, muestran notificaciones fugaces y reproducen las voces de las personas en las reuniones. Un Agente que solo abre los ojos una vez cada 3-5 segundos y carece por completo de oídos es incapaz de ver o escuchar "lo que sucede entre dos fotogramas". Ver grabaciones de pantalla, seguir reuniones, escuchar avisos de voz o responder a cuadros de diálogo que parpadean rápidamente: toda esta categoría de operaciones cotidianas en computadoras es casi una zona prohibida para los Agentes de Computer Use de hoy en día.
+
+Lo que realmente debe rediseñarse aquí no es la "interfaz de acción", sino la **"interfaz de observación"** [^ch6-9]. La idea central es desacoplar la **observación** (continua, adaptativa, multimodal) de la **acción** (discreta), convirtiéndola en una capa de middleware de percepción que se inserta entre el entorno y cualquier modelo de Computer Use existente sin necesidad de reentrenamiento (pudiendo denominarse Interfaz de Observación Agente-Computadora, AOI). Consta de tres componentes que "abren la compuerta según la demanda": en primer lugar, la **captura de fotogramas clave entre fotogramas** (utilizando primero una puerta de píxeles extremadamente económica para omitir imágenes casi sin cambios, y luego un modelo pequeño para juzgar si la imagen ha sufrido cambios significativos, tomando capturas solo ante cambios, con costo casi nulo en imágenes estáticas); en segundo lugar, la **transcripción de voz controlada por puerta de volumen** (llamando al reconocimiento de voz solo cuando hay sonido, permitiendo al Agente "desarrollar oídos" por primera vez); y en tercer lugar, lo más crítico, **narrar la imagen en texto persistente** (haciendo que el modelo describa los fotogramas capturados en una frase como "la notificación recién mostrada dice que la fecha de lanzamiento cambió al 28 de abril", y **aunque la imagen original se limpie posteriormente del contexto, esta frase de texto permanece en la memoria**, llevando la información dinámica hacia adelante en forma de texto).
+
+Un hallazgo contraintuitivo es que lo que realmente funciona no es "qué fotogramas seleccionar", sino **"narrar los fotogramas como texto que se pueda conservar a largo plazo"**: el texto es precisamente la modalidad que mejor manejan los LLM Agent. En ocho modelos que van desde 7B hasta la escala de vanguardia, este middleware aportó una mejora de +17 a +48 puntos porcentuales sin necesidad de reentrenamiento alguno, siendo la brecha en las tareas de voz la más drástica: con esta capa de percepción añadida, el Agente pudo realizar tareas de voz que originalmente "escuchaba pero no podía ejecutar". Sin embargo, tampoco se trata de una configuración fija universal: en algunos modelos más recientes, añadir demasiados tokens de imagen desplaza al razonamiento y perjudica el rendimiento, por lo que estos componentes deben **seleccionarse modelo por modelo**, en lugar de activarlos todos de golpe. Esto sigue la misma lógica que la elección entre Set-of-Mark y predicción de coordenadas explicada anteriormente: no existe una bala de plata en las soluciones de percepción, y es necesario configurarlas según las características específicas del modelo.
+
+[^ch6-9]: Los detalles de los fotogramas clave controlados por puerta, la transcripción a pedido y la narración de fotogramas en texto persistente, así como la mecánica completa y las ablaciones por modelo, se encuentran en Li, Bojie y Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
+
+### Modelos del mundo para Computer Use
+
+La interfaz de observación de la sección anterior resuelve "qué ocurrió entre medias": mediante fotogramas clave, transcripción de voz y texto persistente, el Agente deja de ver únicamente dos capturas separadas por mucho tiempo. Pero una interfaz de observación no elimina la latencia de planificación. El Agente sigue ejecutando el bucle serial "captura—pensar—clic", y vuelve a observar y a razonar el siguiente paso después de cada acción. El estudio de eficiencia **OSWorld-Human** muestra que, aunque la tarea acabe teniendo éxito, el Agente necesita bastantes más pasos y bastante más espera que una persona; alcanzar precisión de nivel humano no equivale a ser ya lo bastante práctico.
+
+Cuando una persona maneja un ordenador no empieza a pensar el paso siguiente después de hacer clic: primero predice la consecuencia de la acción. Si el cambio real coincide con lo esperado, continúa con el plan previsto; solo cuando el estado de la página se desvía de lo previsto se detiene a observar y a planificar de nuevo. El modelo del mundo permite al Agente predecir en qué puede convertirse el escritorio antes de actuar, y así realizar esa "ejecución especulativa" parecida a la humana, con una mejora considerable de la eficiencia.
+
+El estado del escritorio no es solo una imagen de píxeles: incluye también ventanas, foco, posición de desplazamiento, contenido de los campos de entrada, estado de carga, permisos y respuestas de red; y las acciones incluyen hacer clic, teclear, desplazarse, arrastrar y esperar. Un modelo del mundo utilizable en Computer Use debe, como mínimo, codificar el estado actual, predecir el cambio de estado que provocaría una acción candidata y entregar esa predicción al planificador para decidir el siguiente paso:
+
+```text
+estado del escritorio + click/type/scroll/wait ──> representación del estado siguiente
+```
+
+Así el Agente puede comparar las consecuencias de las acciones candidatas antes de hacer clic de verdad, preparar el paso siguiente mientras se carga la página y recuperarse, a partir de la diferencia de estado, cuando una ventana emergente aparece y desaparece en un instante. Si la tarea es "crear un archivo Python nuevo en VS Code y escribir hello world", el modelo puede predecir primero el estado clave del árbol de archivos y del editor tras el éxito, y solo después elegir las acciones de clic, escritura y guardado; si la tarea es borrar un archivo, puede predecir dentro de un escritorio virtual aislado si aparecerá un cuadro de confirmación irreversible y pedir confirmación al usuario cuando sea necesario. Lo importante aquí no es que el modelo genere una captura futura fotorrealista, sino que prediga las diferencias de estado comprobables que exige completar la tarea.
+
+En julio de 2026, **Photon-1**, presentado por Induction Labs, mostró una implementación de esta vía: completó el preentrenamiento de un modelo del mundo para computer use con solo 30.000 horas de GPU H200. Comprime cada fotograma en tokens latentes discretos y predice de forma autorregresiva la representación del estado siguiente tras una acción, en lugar de generar capturas píxel a píxel durante el preentrenamiento; el generador de imágenes que lleva acoplado sirve únicamente para visualizar las representaciones latentes y no es un componente necesario para la inferencia. Dada una captura semilla y las acciones posteriores, el modelo puede "imaginar" estados del escritorio de forma continuada, y después aprende a emitir acciones de computer-use mediante entrenamiento en línea sobre máquinas virtuales.[^ch6-20]
+
+[^ch6-20]: David Li and Jonathan Li, Induction Labs, "Scaling Video Pretraining with Imagination Models," 2026-07-23. https://www.inductionlabs.com/news/scaling-video-pretraining. Los parámetros, la escala de datos, los benchmarks internos y las comparaciones de coste de Photon-1 que aparecen en el texto son resultados divulgados por la propia empresa.
+
+### Dispositivos móviles: Las barreras del ecosistema superan a los desafíos técnicos
+
+Computer Use también se está expandiendo hacia los dispositivos móviles. Existen diferencias técnicas reales entre los dispositivos móviles y los de escritorio: el espacio de acciones ya no suele ser "coordenadas del ratón + teclado", sino que se conecta a las API de servicios de accesibilidad del sistema (como AccessibilityService en Android) para leer los elementos de la interfaz y emitir clics e ingreso de texto; el modo de interacción pasa de un puntero de ratón a gestos táctiles, y la semántica de las coordenadas cambia en consecuencia (si un mismo $(x, y)$ corresponde a un toque simple, una pulsación larga o el punto inicial de un gesto de deslizamiento requiere tipos de gestos adicionales para delimitarse). Los benchmarks para móviles como AndroidWorld presentados en el Capítulo 7 evalúan precisamente la capacidad del Agente para completar tareas reales en App sobre este espacio de acciones.
+
+Sin embargo, lo que suele atascar a los dispositivos móviles no son estas diferencias técnicas, sino las barreras del ecosistema. Algunos fabricantes de teléfonos móviles intentaron integrar asistentes de IA en teléfonos de consumo para operar automáticamente aplicaciones cotidianas como WeChat, Taobao y Alipay, pero rápidamente encontraron restricciones por parte de las plataformas.
+
+Esto revela un desafío único al que se enfrenta Computer Use: las **barreras del ecosistema**. La razón fundamental detrás de los bloqueos es el conflicto de modelos de negocio. La lógica de monetización central de las aplicaciones de internet tradicionales es el **tráfico y la atención**: los usuarios ven anuncios al revisar flujos de información, siguen la guía de los algoritmos de recomendación al buscar productos y generan compras impulsivas al navegar por las páginas. Sin embargo, cuando el Agente opera en lugar del usuario, esta cadena de monetización se elude por completo: la IA no presta atención a los anuncios ni realiza compras impulsivas, dirigiéndose directamente al objetivo para completar la tarea e irse. Para las plataformas que monetizan mediante anuncios y tráfico, cada operación del Agente erosiona la base de su modelo de negocio.
+
+Esto significa que Computer Use no solo se enfrenta a enfrentamientos a nivel técnico como los CAPTCHA (códigos de verificación), sino a un **conflicto de intereses estructural**. Esta contradicción es difícil de conciliar a corto plazo, lo que hace que la implantación de Computer Use en escenarios de consumo enfrente desafíos más complejos que los puramente técnicos.
+
+## Operación robótica: ordenar un escritorio con XLeRobot
+
+> **Cómo leer esta sección**: de principio a fin usamos una sola tarea——"poner la taza roja en la bandeja, tirar el papel amarillo a la papelera y, al final, observar otra vez para comprobar el estado del escritorio". Los experimentos 6-9 y 9-9 se hacen sobre un XLeRobot físico y requieren brazo, calibración, parada de emergencia y un supervisor presente. Los experimentos 6-10, 9-10 y 9-11 son sus contrapartes en GPU local. Lo físico y lo simulado se reportan por separado, pero la meta de la tarea, el significado de las acciones y las condiciones de éxito se mantienen iguales.
+
+La operación robótica es bastante más difícil que "mirar una imagen y responder". El modelo no solo tiene que entender la escena: tiene que actuar de forma continua en el mundo real, y cada acción cambia la situación del instante siguiente. XLeRobot vuelve muy concreta esa diferencia. El mismo brazo puede teleoperarse con teclado, mando de videojuegos o equipo de VR, o bien puede entregarse la observación de la cámara y un conjunto acotado de herramientas de acción a un Agent para que las invoque por su cuenta. El hardware no cambia y la tarea tampoco; lo único que cambia es quién opera——en el primer caso una persona observa y corrige sin parar; en el segundo, el modelo y el sistema de control tienen que llevar el mismo trabajo hasta el final.
+
+Esta sección hilvana cinco experimentos con "ordenar el escritorio". Primero una persona teleopera el XLeRobot físico, para medir de qué es capaz este hardware con un operador suficientemente competente. Después, en el simulador, se establece el límite superior ideal de control para la misma tarea. A continuación se deja que un Agent controle de forma autónoma el XLeRobot físico, para observar cómo la percepción, la planificación y la recuperación de fallos determinan el resultado. Luego se lleva el mismo contrato de herramientas al simulador y se comparan de una vez tres estrategias: ejecución en lazo abierto, verificación paso a paso y modelo del mundo. Por último se cambian el fondo, la apariencia de los objetos, la iluminación y el ruido visual para ver si una política visual aprendida en simulación logra adaptarse a un entorno nuevo.
+
+El cuello de botella aquí no suele estar en fabricar otro benchmark estático de preguntas y respuestas, sino en conseguir que el modelo mantenga el lazo cerrado con un ancho de banda de percepción y control limitado. Un sistema robótico utilizable tiene que responder al menos a cuatro preguntas:
+
+1. ¿Qué tarea quiere terminar la persona?
+2. ¿Qué subtarea toca a continuación?
+3. ¿Qué acción concreta produce la habilidad actual?
+4. Después de ejecutar la acción, ¿la realidad sigue ajustándose al plan original?
+
+Esta sección coloca esas cuatro preguntas en el mismo lazo de control de XLeRobot y muestra de qué se encarga cada una de las cuatro técnicas: la planificación a largo plazo decide si va primero la taza o el papel; el VLA o las primitivas de acción hacen el agarre y la colocación; el modelo del mundo estima las consecuencias de una acción; y el paso de la simulación a la realidad carga con la diferencia entre los vídeos de entrenamiento y la cámara y los actuadores reales. Aunque el modelo de alto nivel ya tenga conocimiento y capacidad de planificación de sobra, basta con que falte uno de los eslabones de este lazo de realimentación para que el sistema no consiga terminar la tarea.
+
+### El reparto entre hardware y algoritmo
+
+La primera pregunta que XLeRobot está en mejor posición de responder es esta: cuando falla el ordenado autónomo del escritorio, ¿es que el brazo no puede, o es que el algoritmo no sabe usar el brazo? Hay aquí un hecho que no conviene suavizar: **incluso un brazo de unos pocos cientos de dólares como XLeRobot ya es capaz, por teleoperación, de completar una tarea de escritorio de varios pasos encadenados como la de esta sección**——una persona mira el vídeo de la cámara, agarra la taza roja y la deja en la bandeja, tira el papel amarillo a la papelera y al final vuelve a comprobar el estado. Este resultado no dice solo que "el hardware apenas da la talla"; es una evidencia diagnóstica clara: **en lo que respecta a esta tarea, el cuello de botella está del lado del algoritmo, no del hardware.**
+
+El método de diagnóstico es directo. Con la cámara, el brazo, la pinza, la disposición del escritorio y las condiciones de éxito fijas, primero es la persona quien se hace cargo del lazo. La persona corrige de forma continua la estimación de la posición de los objetos, la elección de acciones y el momento de ejecutarlas, y también sabe qué hacer cuando el agarre falla. La distancia entre un sistema autónomo y una persona se manifiesta precisamente en esa capacidad de lazo cerrado. Por supuesto, el alcance de esta conclusión es la tarea de escritorio de esta sección: muestra que el hardware supera los umbrales de carga, precisión y espacio de trabajo que esta tarea necesita, pero no significa que un brazo de unos cientos de dólares sirva para cualquier entorno abierto ni para manipulaciones más difíciles.
+
+XLeRobot admite varias vías de teleoperación: teclado, mando de Xbox, Joy-Con de Switch y equipos de VR. El operador humano hace de forma natural muchas cosas que un algoritmo tendría que implementar explícitamente: frena cuando la pinza se acerca a la taza, corrige el punto de agarre si la taza resbala, vuelve a mirar si no consigue pinzar el papel a la primera y comprueba el resultado cuando el objeto entra en la zona objetivo. Por eso la teleoperación no es solo un medio para recoger datos de demostración, sino también un experimento diagnóstico que "fija el hardware y solo cambia al operador".[^ch6-1]
+
+> **Experimento 6-9 ★: Ordenar el escritorio teleoperando un XLeRobot físico**
+>
+> Coloca en el área de trabajo de un XLeRobot físico una taza roja, una bandeja, un papel amarillo arrugado y una papelera. El operador ejecuta la tarea fija mediante una de las vías de teleoperación calibradas: "poner la taza roja en la bandeja, tirar el papel amarillo a la papelera y, al final, observar otra vez para comprobar el estado del escritorio". Repite al menos varias rondas y registra el vídeo de la cámara, las entradas del operador, el estado del brazo, la duración de las acciones, los fallos de agarre, el número de reintentos y el estado final.
+>
+> No rebajes el criterio de aceptación a "al final el escritorio parece limpio". La taza roja tiene que estar dentro de la bandeja y el papel amarillo dentro de la papelera, el brazo tiene que volver a su postura segura y en todo el proceso no puede haber colisiones, salidas del área de trabajo ni intervenciones humanas que rematen la tarea sin verificación.
+
+La teleoperación física es lo más convincente como límite superior de la tarea, pero no es cómoda para variar en bloque el número y la posición de los objetos. Para obtener un control reproducible y con estadística, llevamos a continuación el mismo problema de "devolver los objetos a su sitio" a un simulador de escritorio en dos dimensiones, y usamos un controlador ideal como sustituto de un operador fuerte que ni se equivoca al percibir ni elige mal la acción.
+
+> **Experimento 6-10 ★: Medir en el simulador el límite superior ideal de control de la misma tarea**
+>
+> En un simulador de escritorio bidimensional, coloca al azar la taza roja, el papel amarillo y sus respectivas zonas objetivo, y deja que un controlador ideal se acerque a los objetos por orden, los agarre y los mueva a la posición correcta. No necesita reconocer imágenes ni se equivoca al elegir la acción, de modo que representa "hasta dónde puede llegar esta tarea como mínimo cuando la percepción y la decisión son ambas correctas".
+>
+> Observa la tasa de éxito, el número de pasos y la longitud del recorrido, y varía la posición inicial de los objetos y la escala de la tarea para ver si ese límite ideal se mantiene estable. Se usan las mismas condiciones de éxito que en el experimento 6-9, pero lo que se mide es una simulación sin actuadores: no implica que el XLeRobot físico se haya movido. Ambos experimentos serán las dos líneas base del control autónomo posterior——el 9-7 es el lazo cerrado humano sobre hardware real, y el 9-8 el lazo cerrado ideal en un entorno simulado.
+
+### La estructura básica del control robótico
+
+Un sistema robótico suele separar trabajos con escalas de tiempo distintas.
+
+| Nivel | Pregunta central | Salida | Escala de tiempo típica |
+| --- | --- | --- | --- |
+| Meta de la tarea | Qué quiere terminar la persona | "La taza y el papel a su sitio" | Minutos |
+| Planificación a largo plazo | Qué va antes y qué después | Primero la taza, luego el papel, comprobar al final | De segundos a minutos |
+| Habilidad básica | Qué cambio de estado se logra ahora | `pick(red_cup)`, `place(red_cup, tray)` | Unos 1—3 s |
+| VLA / política de habilidad | Cómo se mueve concretamente esta habilidad | Movimiento corto o trayectoria continua de la pinza de XLeRobot | Inferencia a ~1—10 Hz |
+| Control de bajo nivel y capa de seguridad | Cómo ejecutar de forma estable y sin retardo | Consignas de articulación o del extremo, límites de velocidad y parada de emergencia | ~50—1000 Hz |
+
+Este es un reparto de ingeniería habitual, no la única arquitectura de modelo posible. El VLA puede asumir parte de las decisiones de alto nivel, y el planificador puede ser un programa basado en reglas, un VLM o un optimizador. Sea cual sea la implementación, conviene separar "el orden de la tarea" de "la acción inmediata"; de lo contrario la latencia de inferencia del modelo de alto nivel lastra el control de bajo nivel, y el control de alto ritmo del nivel bajo obliga al modelo superior a procesar un montón de detalles irrelevantes. En XLeRobot, el modelo no debería emitir directamente ángulos articulares arbitrarios: solo elige habilidades con fronteras claras, como `pick`, `place`, `verify_state` y `stop`, y es el ejecutor——calibrado, con límite de velocidad y con tiempo máximo——quien las convierte en movimiento real del brazo.
+
+### Planificación a largo plazo y descomposición de la tarea
+
+Cuando el usuario dice "recoge el escritorio", el sistema no puede pasarle esa frase tal cual al modelo de acción. El planificador primero enumera los objetos y las metas de la escena, decide el orden y escribe para cada paso su condición de inicio, su condición de finalización y sus límites de riesgo. Por ejemplo:
+
+```text
+Tratar la taza roja → Retirar el papel amarillo → Comprobar el escritorio
+```
+
+"Tratar la taza roja" se descompone a su vez en dos acciones y una verificación:
+
+```text
+pick(red_cup) → place(red_cup, tray) → verify_state()
+```
+
+Cada habilidad terminada nos deja un nodo verificable. Si falla el agarre, se rehace solo ese paso. Si alguien mueve un objeto o el usuario cambia de meta, basta con replanificar los pasos posteriores afectados en lugar de repetir el plan entero. Las herramientas que se dan al agente también deben ser lo bastante simples: cada llamada hace una sola cosa, el rango de movimiento está acotado, hay tiempo máximo y después de ejecutar se vuelve a observar de inmediato.
+
+> **Experimento 6-11 ★★: Que Gemini Robotics-ER 1.5 ordene el escritorio de forma autónoma con XLeRobot**
+>
+> Mantén el XLeRobot físico, la disposición del escritorio, la instrucción de la tarea y las condiciones de éxito del experimento 6-9, y sustituye únicamente al operador humano por un Agent. Deja la observación y la planificación en manos de un modelo de razonamiento corporeizado como Gemini Robotics-ER 1.5 y, a través de un lazo de agente al estilo RoboCrew, abre solo cinco herramientas: `observe_scene`, `pick`, `place`, `verify_state` y `stop`.[^ch6-2]
+>
+> El modelo primero observa el escritorio, decide el orden de tratamiento y después invoca las acciones calibradas de agarre y colocación de XLeRobot. Cada vez que termina una habilidad tiene que volver a observar y comprobar la poscondición. Cuando el agarre falla solo se le permite reintentar la habilidad actual, y tiene que llamar a `stop` si el usuario pide parar, si un objeto sale del área de trabajo o si no consigue verificar el estado. El modelo no puede emitir directamente ángulos articulares arbitrarios ni saltarse la verificación real solo porque él mismo haya dicho antes que "ya está".
+>
+> El criterio de aceptación es exactamente el del experimento 6-9: la taza dentro de la bandeja, el papel dentro de la papelera, el brazo de vuelta en postura segura, sin colisiones ni salidas del área. La diferencia es que en el experimento autónomo el sentido de la tarea tiene que salir de la propia observación del modelo, las acciones reales tienen que salir de llamadas a herramientas y el estado final tiene que confirmarse con una observación nueva. La persona solo puede arrancar, parar de emergencia y supervisar la seguridad, nunca completar acciones en lugar del Agent a mitad de camino. Solo así los experimentos 6-9 y 9-9 permiten comparar directamente "con el mismo hardware y la misma tarea, qué le falta al lazo cerrado del modelo frente al lazo cerrado humano".
+
+Los experimentos físicos sacan a la luz errores de calibración, oclusiones de cámara y fallos de pinza, pero no son adecuados para repetir gran cantidad de averías de forma segura y controlada. Los experimentos simulados que siguen conservan exactamente estas cinco herramientas y el mismo estado de la tarea, y solo sustituyen los actuadores reales por un entorno de escritorio en el que se pueden inyectar fallos, para separar qué aporta cada uno: la ejecución en lazo abierto, la verificación paso a paso y la predicción de acciones.
+
+### Control mediante VLA
+
+VLA es la abreviatura de Vision-Language-Action, es decir, "modelo visión—lenguaje—acción". Recibe la escena actual más una instrucción de habilidad y emite la acción que el robot debe ejecutar a continuación:
+
+```text
+observación actual + instrucción de habilidad → acción
+```
+
+En el ejemplo de XLeRobot, el planificador de alto nivel solo presenta `pick(red_cup)`, y es el VLA o la política de habilidad quien decide, a partir de la escena actual, desde qué dirección acercarse a la taza, cuándo cerrar la pinza y con qué trayectoria levantar el brazo. Cuando la capa de ejecución termina ese movimiento corto, se vuelve a fotografiar el escritorio, y solo tras confirmar que la taza está efectivamente agarrada se le permite al planificador presentar `place(red_cup, tray)`. Dicho de otro modo: la llamada a la herramienta define el cambio de estado deseado, y el VLA define cómo lograr ese cambio de estado con acción continua.
+
+RT-2 y OpenVLA trocean la acción continua en tokens discretos y los emiten uno a uno, como quien genera texto. π₀ representa la otra vía: genera directamente trayectorias de acción continuas y suaves. No hay una superioridad simple de una sobre otra. Los tokens discretos se acoplan con facilidad a los modelos de lenguaje; las trayectorias continuas se prestan mejor a expresar movimiento suave. La decisión de fondo es cómo representar la acción, no solo el tamaño del modelo.[^ch6-15]
+
+Un modelo grande suele poder inferir solo entre 1 y 10 veces por segundo, mientras que un controlador tradicional puede actualizarse de decenas a miles de veces por segundo. Una práctica habitual en ingeniería es el "troceado de acciones" (action chunking): el modelo genera de una vez un tramo corto de acciones futuras, el hilo de control ejecuta ese tramo a alta frecuencia y el modelo prepara entretanto el siguiente. Así se oculta parte de la espera de inferencia dentro del tiempo de ejecución de las acciones. El precio es que, cuanto más largo es el tramo, más suave resulta el movimiento pero menos escenas nuevas ve el modelo durante ese intervalo. Si el XLeRobot extiende el brazo para coger la taza y la taza se desplaza de un golpe a mitad de camino, puede seguir ejecutando acciones generadas a partir de una imagen antigua. El troceado de acciones es, por tanto, un compromiso entre suavidad y velocidad de reacción, no una aceleración gratuita.
+
+El troceado de acciones necesita normalmente un esqueleto de "predecir—ejecutar—interrumpir" en lugar de llevar el tramo hasta el final:
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+Los tramos cortos reaccionan más rápido pero multiplican las llamadas al modelo; los largos son más suaves pero tienden a usar observaciones caducadas. El experimento 6-12 compara este tipo de compromiso en el simulador, y es el 9-9 el que toca la frontera de seguridad del hardware real.
+
+### Los límites del VLA
+
+"Planificación a largo plazo + VLA" es un plan base practicable, pero deja algunos problemas que se pasan por alto con facilidad.
+
+- **Los datos de entrenamiento son escasos**: las demostraciones robóticas son muchísimo menos abundantes que el texto y las imágenes de internet. Que el modelo haya visto la palabra "taza" no significa que haya visto tazas de todos los materiales y condiciones de fricción.
+- **Aprende a imitar, pero no conoce las consecuencias**: la clonación de comportamiento aprende sobre todo "qué hizo el demostrador a continuación", y no exige explícitamente al modelo que responda "qué provoca esta acción".
+- **Cada robot es distinto**: con grados de libertad, sistemas de coordenadas, pinzas y retardos de actuador diferentes, no hay garantía de que la misma acción se traslade tal cual a otra máquina.
+- **La observación puede quedar obsoleta**: una vez que el tramo de acciones entra en ejecución, si el objeto se mueve, se ocluye o se vuelca, el modelo sigue decidiendo con base en el fotograma anterior.
+
+Así pues, que un modelo de lenguaje conozca la palabra "taza" no implica que sepa cómo la fricción, el contacto, el chapoteo del líquido o un cable de alimentación cambian el estado futuro. El VLA responde sobre todo a "qué hay que hacer ahora"; para juzgar "qué puede pasar después de hacerlo" hace falta otro tipo de modelo.
+
+### Modelos del mundo
+
+Un modelo del mundo puede entenderse como un predictor de las consecuencias de las acciones. Lo que aprende es cómo puede cambiar el estado del instante siguiente si se toma cierta acción en el estado actual.
+
+```text
+estado actual + acción candidata
+    → predecir el estado siguiente o un fragmento de futuro
+    → comparar los resultados de los candidatos
+    → elegir la acción, replanificar o detenerse de forma segura
+```
+
+Un modelo del mundo utilizable en robótica tiene que hacer bien al menos tres cosas:
+
+- entender el estado actual;
+- predecir los resultados que pueden traer acciones distintas;
+- entregar esa predicción al planificador o al controlador para ayudar a decidir.
+
+Un VLM que solo sabe describir vídeo, o un modelo que solo sabe generar imágenes, no se convierte automáticamente en un modelo del mundo fiable para robótica. Tiene que saber qué es una acción y poder predecir el efecto de esa acción sobre los objetos y el entorno. V-JEPA 2 representa la vía de predecir el futuro en el estado interno, mientras que el World-Action Model aprende explícitamente la relación "acción—observación futura". Ambos pueden usarse junto al VLA; no hace falta que lo sustituyan.[^ch6-16]
+
+En un sistema real, un modelo del mundo suele tener tres usos:
+
+1. **Antes de moverse**: comparar acciones candidatas como agarrar, empujar o esperar, y priorizar la opción de menor riesgo;
+2. **Durante la ejecución**: contrastar la observación real con la predicción y, al detectar una desviación, acortar la acción, detenerse o replanificar;
+3. **Durante el entrenamiento**: aprender los cambios de estado a partir de vídeo, datos simulados y trayectorias fallidas, para reducir el ensayo y error sobre la máquina real.
+
+Volvamos a la tarea de escritorio de XLeRobot. Si el papel amarillo queda parcialmente tapado por la taza roja, el sistema puede comparar habilidades candidatas: "coger primero el papel", "mover primero la taza" o "agarrar desde otra dirección". El modelo del mundo no necesita generar vídeo robótico realista: basta con que prediga qué acción candidata conduce con más probabilidad a un estado en el que el papel se pueda coger, y cuál podría volcar la taza, para ayudar al planificador a ordenar las opciones. Después de ejecutar la acción, la observación real de la cámara sigue siendo el hecho definitivo: la predicción ayuda a elegir, pero no sustituye a la verificación de aceptación.
+
+Lo que da un modelo del mundo no son respuestas definitivas, sino predicciones comparables sobre "qué puede pasar si hago esto". Cuanto más lejos se predice, mayor tiende a ser el error, y una escena futura de aspecto realista no tiene por qué ajustarse a las leyes reales del contacto y la fricción. Por eso un sistema real sigue necesitando predicción a corto plazo, observación en tiempo real, estimación de incertidumbre y un controlador de seguridad de hardware independiente. Los modelos del mundo generativos sirven para simulación interactiva y visualización, pero no hay que confundir "puede generar vídeo" con "puede guiar las acciones de un robot".[^ch6-21]
+
+> **Experimento 6-12 ★★: Comparar en el simulador tres lazos autónomos de ordenado de escritorio**
+>
+> Lleva al simulador de escritorio la tarea, los estados objetivo, las condiciones de éxito y las cinco herramientas del experimento 6-11, y sustituye únicamente los actuadores del XLeRobot físico por un ejecutor simulado y controlable, que de vez en cuando provoque en el agarre un fallo transitorio recuperable. Así se pueden comparar tres estrategias sin cambiar el problema.
+>
+> La **ejecución en lazo abierto** genera de una vez la secuencia completa de acciones y no vuelve a observar por el camino. La **verificación paso a paso** relee el estado en cada `pick` y cada `place`, y al fallar rehace solo la habilidad actual. La **ejecución predictiva** añade además un modelo del mundo de corto plazo y compara los resultados previstos de las habilidades candidatas antes de elegir el siguiente movimiento. El experimento compara la tasa de éxito, el sobrecoste de llamadas a herramientas y la capacidad de recuperación ante fallos, y comprueba si todos los éxitos finales están confirmados por una observación nueva de `verify_state`.
+>
+> El objetivo de este experimento no es mostrar que un pequeño modelo del mundo simulado equivalga al modelo físico de la máquina real, sino verificar una relación más básica: la planificación en lazo abierto arrastra un fallo local hasta el final de la tarea, la verificación paso a paso permite recuperarse, y la predicción de acciones ayuda además a ordenar las habilidades candidatas. Quién ha terminado de verdad lo sigue decidiendo la realimentación del entorno.
+
+### Del entorno simulado al robot real
+
+Que el experimento 6-12 sea estable en el simulador no significa que el XLeRobot físico del experimento 6-11 vaya a tener el mismo éxito. Pasar de la simulación a la máquina real no consiste en cambiar de controlador, sino en hacerse cargo de la diferencia entre dos entornos. Para entrenar se pueden usar datos de teleoperación, datos de vídeo y datos de interacción simulada; pero al desplegar de verdad, la misma taza roja, el mismo papel amarillo, la misma bandeja y la misma papelera aparecen bajo fondos, iluminación, posiciones de cámara y relaciones de oclusión distintas, y el brazo se encuentra además con otra fricción, otro ruido de sensor y otro retardo de actuador. Si esas diferencias son lo bastante grandes, los movimientos aprendidos en simulación pueden dejar de funcionar en la realidad.
+
+> **Experimento 6-13 ★★★: Prueba entre entornos RGB en la misma tarea de escritorio**
+>
+> Sigue usando en el entorno simulado el problema básico de "mover el objeto hasta su meta correspondiente", y considera cada muestra como una decisión local dentro del ordenado del escritorio: a partir de una imagen RGB, juzgar desde qué dirección hay que acercarse al objeto o si ya se puede agarrar. Entrena cuatro políticas visuales de idéntica estructura: una que solo ve escenas fijas; otra que varía el fondo; otra que varía la apariencia de los objetos; y una última que varía a la vez fondo, apariencia, iluminación y ruido.
+>
+> Prueba todas las políticas en el entorno original y en el entorno nuevo modificado, y compara la precisión de la decisión de acción antes y después del cambio de condiciones visuales. Lo que este experimento intenta responder no es "¿ya es el simulador igual que el XLeRobot físico?", sino una pregunta más estrecha: ampliar deliberadamente el rango de variación de las escenas durante el entrenamiento, ¿ayuda a que esta misma tarea de taza—bandeja y papel—papelera se adapte a un vídeo de cámara nuevo? Aunque el resultado mejore, desplegar en la máquina real sigue exigiendo calibración real de cámara, pruebas de actuadores y un lazo cerrado de seguridad completo.[^ch6-6]
+
+## Resumen del capítulo
+
+Lo que este capítulo ha retirado es la premisa que los cinco anteriores daban por supuesta: que el Agente y el mundo hablan por turnos.
+
+Leídas a lo largo de los ejes de **modalidad** y **momento**, las cuatro secciones son una misma tesis desplegada en cuatro escalas temporales. La **asincronía orientada a eventos** amplía la observación de «el Agente va a buscarla» a «el mundo la empuja», y la acción de «terminar dentro del turno» a «iniciar ahora y cerrar después con un evento»; la modalidad no cambia, solo el momento. La **voz** comprime la escala hasta los milisegundos, y la evolución por cascada, Omni extremo a extremo y dúplex completo es justamente el paso de «hablar por turnos» a escuchar y hablar de forma continua, con reparto entre la interacción en tiempo real en primer plano y el pensamiento profundo en segundo plano. **Computer Use** traslada el mismo bucle a la pantalla, donde el cuello de botella se ha ampliado de «¿puede completarse la tarea?» a la eficiencia operativa, la comprensión visual continua y la confirmación del estado tras cada acción. La **robótica** lo empuja al mundo físico, donde la acción por bloques negocia entre suavidad y velocidad de reacción, y donde si la tarea se completó ha de decidirlo, todavía, una nueva observación.
+
+Las cuatro secciones comparten un mismo esqueleto de control:
+
+```text
+percibir de forma continua
+  → juzgar el estado actual y el momento
+  → elegir una respuesta o una acción
+  → dejar que la salida entre en el entorno
+  → observar la retroalimentación
+  → continuar, corregir, reintentar, detenerse o replanificar
+```
+
+También comparten un mismo conjunto de primitivas: despertar, punto seguro, cancelación, desalojo y separación rápido/lento. «Comprobar la señal de cancelación en un punto seguro», en el bucle de eventos, y «al detectar una anomalía, descartar las acciones restantes y volver a observar», en la acción por bloques, son el mismo mecanismo implementado dos veces con cinco órdenes de magnitud de diferencia; el reparto entre un modelo rápido en primer plano y uno lento en segundo, y el «devolver primero un ID de tarea y dejar que un evento posterior la cierre» del Agente asíncrono, son igualmente dos escrituras de una sola cosa.
+
+Conviene señalar que la mayoría de estos mecanismos siguen siendo apaños de ingeniería. Los protocolos de marcador de posición, las marcas de evento en la barra de estado, la cancelación y reversión del pensamiento anticipado: todos ellos usan lógica de orquestación para compensar la experiencia asíncrona ausente en la distribución de entrenamiento del modelo. El avance del lado del modelo está absorbiendo parte de ello en los parámetros —los modelos interactivos incorporan la interrupción y la intervención dentro del modelo, y el pensamiento continuo permite «pensar mientras se escucha» sin esperar a la siguiente generación—, pero mientras el corpus de entrenamiento siga siendo mayoritariamente por turnos, esta capa de compensación no desaparecerá: solo se irá desplazando a la nueva frontera conforme avance la capacidad del modelo.
+
+Este capítulo cierra la última pieza de la parte dedicada a «construir Agentes»: los espacios de observación y de acción ya se han desplegado en las tres direcciones —contenido, modalidad y momento—. Los tres capítulos siguientes giran hacia otra pregunta: cómo saber si todo esto se construyó bien y cómo lograr que siga mejorando.
+
+[^ch6-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
+[^ch6-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。
+[^ch6-1]: XLeRobot, “Documentación de teleoperación”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
+[^ch6-2]: Google DeepMind, “Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, “Control mediante LLM Agent”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. El ejemplo original de XLeRobot muestra cómo orquestar el modelo con las llamadas a herramientas; esta sección mantiene el mismo principio de orquestación, pero acota las herramientas de acción a primitivas calibradas de agarre, colocación, verificación y parada sobre el escritorio.
+[^ch6-6]: LeRobot, “Tutorial de Sim2Real”. https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
+[^ch6-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246
+
+## Preguntas de reflexión
+
+1. ★★ En una arquitectura de Agentes asíncrona, la estrategia de prioridad de la cola de eventos debe determinarse durante el diseño. Sin embargo, si el propio juicio de prioridad requiere comprensión semántica (por ejemplo, juzgar si un nuevo mensaje es más urgente que la tarea actual), ¿quién debe realizar este juicio: un motor de reglas o una llamada a otro LLM? ¿Cuáles son los costos de cada opción?
+2. ★★ En el procesamiento de eventos en cola, el modelo tiende a prestar atención únicamente al último evento, problema que este capítulo mitiga mediante marcas en la barra de estado del Agente y resúmenes. Sin embargo, si en la cola se acumulan 20 eventos (10 resultados de herramientas + 5 mensajes de usuario + 5 recordatorios del sistema), ¿cómo organizaría el orden y formato de presentación de estos eventos para que el modelo no omita información clave?
+3. ★★★ Al interactuar con el mundo exterior en nombre del usuario, el Agente enfrenta esencialmente una elección de identidad: ¿utilizar una identidad virtual independiente (correo y teléfono dedicados) para actuar como un tercero, o gestionar directamente las cuentas reales del propio usuario para operar? Lo primero permite operaciones autónomas en segundo plano, pero los terceros podrían no confiar en una identidad no humana; lo segundo posee un contexto y permisos más completos, pero introduce problemas de autorización de confianza y límites de seguridad. ¿En qué escenarios considera que se debe elegir cada modo?
+4. ★★ El modelo de extremo a extremo de los Agentes de voz combina ASR-LLM-TTS en un solo modelo, lo que reduce la latencia pero pierde modularidad. Si el modelo de extremo a extremo comete un error en alguna etapa (como el reconocimiento de voz), la depuración y reparación es mucho más difícil que en un pipeline serial. ¿Cómo diseñarías el sistema de observabilidad (observability) para un Agente de voz de extremo a extremo?
+5. ★ Step-Audio R1 logra "pensar mientras se habla" mediante la arquitectura de doble cerebro MPS. Sin embargo, los seres humanos a menudo dicen palabras sin pensar profundamente, se autorcorrigen o utilizan muletillas al "pensar mientras hablan". ¿Debería el "pensar mientras se habla" de un Agente imitar estas características humanas?
+6. ★★ SoM (Set-of-Mark) y sus variantes estructuradas (índice de elementos DOM) convierten el grounding visual de Computer Use de una predicción de coordenadas abierta a una selección de ID cerrada, pero ambos requieren detectar y etiquetar previamente los elementos de la interfaz, ya sea mediante modelos de segmentación o mediante el DOM. Si la interfaz contiene controles no estándar o elementos dinámicos, la anotación puede ser incompleta o inexacta. En este caso, ¿se debería recurrir a la predicción de coordenadas?
+7. ★★ Plataformas robóticas de unos cientos de dólares como XLeRobot hacen que la recopilación de datos de teleoperación sea económica. Sin embargo, la calidad de los datos de teleoperación depende en gran medida de la habilidad del operador. ¿Cómo afectará el entrenamiento del modelo VLA los datos proporcionados por un operador no experimentado? ¿Cómo filtrar automáticamente datos de baja calidad durante la etapa de recopilación?
+8. ★★★ Este capítulo abarca tres formas de interacción: voz, Computer Use y robótica. La tendencia común de estas tres formas es evolucionar de pipelines seriales hacia modelos de extremo a extremo. Si esta tendencia continúa, ¿cómo será la capa de interacción de los Agentes dentro de cinco años?
+9. ★★ El índice de elementos DOM/Accessibility Tree produce efectos notables en aplicaciones Web estándar, pero cada vez más interfaces de software (renderizado en Canvas/WebGL, controles autodibujados multiplataforma) no proporcionan información estructurada accesible, teniendo que depender únicamente de la anotación visual o la predicción de coordenadas. ¿Crees que Computer Use debería apostar por una ruta puramente visual, o mantener simultáneamente dos vías, estructurada y visual? ¿Cuáles son los costos y beneficios de mantener ambas vías?
+10. ★★ Los modelos VLA adoptan la fragmentación de acciones (action chunking); como se menciona en el texto principal, la configuración típica de π₀ es generar de una vez entre 25 y 50 acciones futuras a una frecuencia de 50 Hz, ocultando la latencia de inferencia en el tiempo de ejecución. Sin embargo, si el entorno cambia repentinamente durante la ejecución (por ejemplo, si se retira un objeto), la secuencia de acciones pregenerada quedará invalidada. ¿Cómo equilibrar la ventaja de eficiencia de la fragmentación de acciones con la velocidad de respuesta ante cambios en el entorno?
+11. ★★★ Los tres escenarios de este capítulo (voz, Computer Use y robótica) enfrentan el problema de latencia en el bucle "Percepción-Pensamiento-Acción", evolucionando todos hacia la paralelización del pensamiento rápido y lento. En el escenario de voz, esto se manifiesta como "corregir tras hablar mal"; en el escenario de Computer Use, se manifiesta como "hacer clic primero y mirar después"; en el escenario robótico, se manifiesta como "dar un paso y observar". ¿Cómo garantizar que estas acciones basadas en el pensamiento rápido no causen consecuencias irreversibles?
+12. ★★★ En este capítulo reaparece el mismo conjunto de primitivas (despertar, punto seguro, cancelación, desalojo, separación rápido/lento) implementado en escalas temporales distintas. Elija una y explique en qué difiere su implementación entre el procesamiento orientado a eventos (segundos a días) y la acción por bloques robótica (milisegundos). ¿Qué determina principalmente esa diferencia: la velocidad de cambio del entorno, la reversibilidad de la acción o el coste de obtener una observación?

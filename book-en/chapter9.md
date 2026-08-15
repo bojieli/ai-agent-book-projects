@@ -1,538 +1,450 @@
-# Multimodality and Real-Time Interaction
+# Continual Evolution of Agents
 
-The previous chapters explored how Agents operate in a text-based world, interacting with digital systems through context, tools, and code. But an Agent's world extends beyond text and APIs. The moment it needs to understand a spoken command, find and click the right button on a screen, or steer a robotic arm to grasp an object, it enters new territory: **multimodal real-time interaction**. This shift from pure text input and output to **multimodal perception and real-time response** is the crucial step that takes an Agent beyond the "dialog box." "Multimodal" simply means handling multiple forms of information at once—text, speech, images, video, and actions—rather than text alone.
+Today’s Agents face a striking capability paradox: they can solve previously unseen complex tasks zero-shot, yet after handling ten thousand similar tasks, they may still repeat tomorrow the mistakes they made on the first day. **The ability to learn autonomously from experience** is becoming essential for Agents to progress from “being able to complete tasks” to “being able to work reliably,” and it is also a central research topic for the next generation of models. Yet current models remain far from capable of continual learning on their own.
 
-First, let us define the scope of this chapter. Static image and document understanding—examining a screenshot, reading a chart, or parsing a PDF—has already become a natural part of the Agent workflows in previous chapters. For today's multimodal LLMs, these single-input understanding tasks are relatively mature and require no special architecture. This chapter tackles a different class of problems: three scenarios in which **real-time constraints make multimodal problems hard**—voice dialogue, GUI operation, and robot control. In these settings, input arrives continuously and output must meet a strict time budget, fundamentally changing the architecture. Real-time understanding of continuous visual streams, or video, remains an open problem for Agents at the time of writing. We will return to it when the Computer Use section examines the limits of frame-by-frame screenshots, and again in the end-of-chapter questions. One more boundary: in this book's framework, multimodal **generation** (image or video generation) is simply an ordinary tool call, as covered in Chapter 5 on Multimedia Generation. The Agent uses it as an external tool, so it raises none of the real-time interaction challenges addressed here and remains outside the chapter's main thread.
+A deployed model does not automatically change its parameters after an inference. The in-context learning, state maintenance, and compression discussed in Chapter 2 allow an Agent to adapt **within the current task**; once the context ends, however, these changes do not naturally carry over to the next task. Storing conversations in memory is not equivalent to learning new behavior. Raw trajectories may be lengthy and contain effective strategies alongside accidental successes, incorrect attributions, and untrusted inputs.
 
-Voice interaction, Computer Use, and robot operation may seem like three entirely different fields, but systems in all three run into strikingly similar problems: they must process several modalities at once, and they are acutely sensitive to latency. A pause of more than two seconds in a voice conversation makes people restless; millisecond-level jitter in robot control can cause a collision. Together, these constraints push all three scenarios in the same architectural direction: away from the **serial pipeline** (like a factory assembly line, where one step must finish before the next begins) and toward the **end-to-end model** (a unified model that goes directly from input to output, eliminating intermediate handoffs).
+An important distinction is easy to miss here: **preserving experience is not the same as learning from it**. Placing a hundred trajectories in a long context or vector store may help the model retrieve a case when needed, but it does not automatically compare cases: which steps recur across successful trajectories, which practices work only with an older interface, or whether a success came from a sound strategy rather than environmental chance. Learning occurs only after the system actively evaluates, compares, generalizes, and validates the evidence—not when a log is written to disk. User memory in Chapter 3 primarily captures “what the user and the world are like”; experience learning in this chapter goes further, capturing “what to do under which conditions.” The former helps an Agent remember more; the latter helps it become more proficient rather than merely more knowledgeable.
 
-This chapter unfolds along the following lines:
+Why not let the model train itself directly after every task? Because production environments rarely provide clean learning signals. User satisfaction does not imply compliance; local parameter updates can also cause capability forgetting, policy drift, or safety degradation. If a running model is allowed to modify its own parameters directly based on unverified feedback, erroneous experience and Prompt injection may become entrenched and continue to amplify across later tasks. On the other hand, periodic training of foundation models can improve general capabilities, but it cannot promptly absorb the private rules, tool changes, and local experience encountered daily by each Agent.
 
-1.  First, we use three voice-architecture paradigms as a framework: cascaded (a VAD-ASR-LLM-TTS pipeline), end-to-end omnimodal (Omni, a single model that still relies on turn-taking), and full-duplex (Moshi and GPT-Live, which listen and speak simultaneously). We compare their latency and trade-offs by asking how far each paradigm moves beyond VAD's assumption of discrete turns. The cascaded section also discusses replacing VAD + ASR with streaming voice perception.
-2.  Next, we examine how the thinking architecture reconciles the conflict between "real-time response" and "deep thinking": from simple parallelization of fast and slow, to the decoupled approach where a background reasoning model acts as a "strategist" (GPT-Live delegation, Pine AI, etc.), to Step-Audio R1's "internalization" of thinking into a single model that "thinks while speaking."
-3.  Then, we discuss how more human-like speech synthesis optimizes the execution layer.
-4.  Finally, we extend the perspective to Computer Use (enabling AI to operate a computer screen like a human) and robot operation, observing how the same latency and multimodality issues manifest in these two scenarios.
+Therefore, while models themselves cannot yet learn continually and reliably, “learning” must first be constructed as an autonomous system around the model: record operational evidence, verify outcomes and processes, extract common patterns from multiple trajectories, and then decide whether to update knowledge, instructions, programs, or model parameters. Every modification must first become a candidate version and may alter the next round of operation only after regression testing and safety checks. This does not replace a model’s learning capability; rather, under current technical constraints, it is an engineering path for giving Agents continual learning capabilities.
 
-Two more theoretical themes carry across these scenarios and deserve special attention: the **thinking architecture** (how fast and slow thinking collaborate) and the **fast-slow interface** that follows from it (the **Latent Bridge**—what fast and slow models can exchange besides text). Although introduced in the context of voice, these ideas are not limited to it. The Computer Use and robotics sections encounter the same question of when to consult a slow strategist, so keep both themes in mind.
+The preceding chapters have already introduced the principal components required by this system. Chapter 2 addresses within-task state, Chapter 3 provides knowledge infrastructure, Chapter 5 gives Agents the meta-capability to create tools and modify systems, Chapter 7 establishes evaluation and verification, and Chapter 8 explains how to update model parameters. The task of Chapter 9 is to organize these components into the continual evolution loop shown in Figure 9-1.
 
-## Voice: The Most Natural Human-Machine Interface
+![Figure 9-1 Overall loop of continual Agent evolution](images/fig9-1.svg)
 
-Voice is not merely text turned into sound. Speaking is roughly four times faster than typing and leaves the hands and eyes free, so it naturally places an Agent in a continuous input-output loop where the user may interrupt at any moment. Dictation converts speech into text; a voice Agent lets the user collaborate with the Agent directly. Both support the whisper-coding workflow introduced earlier.
+Continual evolution must arise from traceable operational experience, change subsequent behavior, and be verified not to cause significant degradation. This chapter first discusses how to determine what exactly went well or wrong in a run; it then compares four update methods and their applicable boundaries; finally, it examines how these updates are verified, released, revised, and retired during long-term operation.
 
-This section covers two directions: the user speaking to an Agent, and an Agent speaking to the outside world on the user's behalf. The voice model determines what the Agent can answer; the interaction architecture determines whether it can hear clearly, respond in time, hand over naturally, and complete confirmations and tool calls during a call. We first examine interaction timing, then cognitive timing and expressive quality.
+## Deriving Learning Signals from Operational Trajectories
 
-### Interaction timing: from cascaded to full-duplex
+The starting point of continual evolution is not “summarization,” but “evaluation.” If the system does not know whether a task was completed or which step caused success or failure, reflections generated by a language model can only be guesses. Once an incorrect evaluation enters long-term knowledge, a system Prompt, or training data, its effects can compound across subsequent tasks.
 
-OpenAI's GPT-Live introduction describes three voice-interaction paradigms—cascaded, turn-based, and full-duplex[^ch9-12]. They are not a simple old-to-new replacement; they trade latency, cost, and observability in different ways:
+The outcomes of some tasks are relatively easy to verify. A Coding Agent can run tests, type checks, and performance benchmarks; an Agent processing a refund for a user can query the order status and actual refund amount. Such signals come from real environmental states and are generally more reliable than the model’s descriptions of its own behavior. A correct outcome, however, does not imply a correct process. Deleting failing test cases can also make tests pass, while telling a user, “We will issue your refund within seven days; please be patient,” may produce temporary satisfaction. Reliable evaluation must therefore assess both the outcome and the path taken to achieve it.
 
-| Paradigm | Core structure | Main advantage | Main limitation |
-| --- | --- | --- | --- |
-| Cascaded | VAD → ASR → LLM → TTS | Clear modules that are easy to replace and debug | Latency accumulates and paralinguistic information is lost at interfaces |
-| End-to-end Omni | One model listens, thinks, and speaks | Lower latency and better preservation of tone, emotion, and ambient sound | Still turn-based; training and debugging cost more |
-| Full-duplex | Continuously listens, speaks, and decides | Overlapping speech, natural interruption, and continuous streams | Training, control, and evaluation are more complex |
+Many other tasks have no single correct answer. Whether customer service is patient, whether it offers compliant alternatives, whether a research report identifies the key evidence, and whether generated text is natural and concise all require contextual judgment. LLM-as-a-Judge, introduced in Chapter 7, can be used here, but the judge should not merely assign a vague overall score. A more effective approach is to define a Rubric in advance and require the verifier to score each item, cite trajectory evidence, and explicitly indicate uncertainty when evidence is insufficient.
 
-The common thread is escaping the assumption that people must speak one at a time, and escaping VAD's guess about who has the floor. Cascaded and Omni systems still divide interaction into turns; full-duplex makes turn ownership a continuous model decision.
+Figure 9-2 presents a three-layer verification structure. The bottom-layer outcome verifier reads test results, database states, and tool returns to answer, “Was the task actually completed?” The middle-layer process verifier checks business rules, permissions, and action sequences to answer, “Was it completed in an allowed manner?” The upper-layer quality verifier evaluates language and strategy according to the Rubric to answer, “Was it handled appropriately?” Lower-level metrics should rely more heavily on code and environmental ground truth; only aspects that are difficult to formalize should be delegated to a language model.
 
-[^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ The cascaded / turn-based / full-duplex taxonomy comes from the article's summary of three generations of ChatGPT Voice; its “end-to-end omnimodal (Omni)” term corresponds to the “turn-based voice models” category.
-
-**Streaming cancellation:**
+**Three-layer trajectory verification:**
 
 ```python
-while audio_is_arriving:
-    partial = asr.push(audio_chunk)
-    if endpoint_is_probable(partial):
-        candidate = llm.start(partial)
-        if later_audio_changes_meaning(partial):
-            cancel(candidate)                 # speculative cancellation
-        else:
-            tts.enqueue_stable_segments(candidate)
-
-on_final_transcript(text):
-    commit_or_restart(text)
-```
-
-### Paradigm 1 · Cascaded pipeline
-
-Most commercial voice assistants still use a serial pipeline (Figure 9-1): VAD decides when the user has finished, ASR converts audio to text, the LLM understands and generates a reply, and TTS speaks it. Modularity lets each component be optimized independently, but every boundary can add waiting time.
-
-![Figure 9-1: Serial voice Agent pipeline](images/fig9-1.svg)
-
-| Module | Role | Typical bottleneck |
-| --- | --- | --- |
-| VAD | Decide whether speech has ended | Silence thresholds add waiting and split turns incorrectly |
-| ASR | Convert audio to text | Recognition latency and loss of context |
-| LLM | Understand, reason, and generate | Time to first token; reasoning adds more waiting |
-| TTS | Convert text to speech | First-packet synthesis and playback buffering |
-
-For a short reply without reasoning, VAD, ASR, LLM, and TTS waiting time accumulates serially (Figure 9-2). The real value depends on input length, model, hardware, network, and load.
-
-![Figure 9-2: Latency waterfall for a serial response](images/fig9-2.svg)
-
-Production queueing amplifies idle latency further (Figure 9-3), but capacity planning is outside this chapter's scope.
-
-![Figure 9-3: Queueing latency curve](images/fig9-3.svg)
-
-> **Experiment 9-1 ★: Build a traditional voice Agent**
->
-> Connect the microphone, Silero VAD, local Whisper, a streaming LLM, and Fish S1 TTS over WebSocket to establish the cascaded baseline. The retained real single-turn evidence shows that the media and model chain ran end to end; it is not a concurrency or production-load benchmark. Code and acceptance records are in [chapter9/live-audio](../chapter9/live-audio/).
-
-> **Add-on: Build a WebRTC voice Agent that “calls the user”**
->
-> A phone Agent does not require PSTN. Browser WebRTC can reproduce the loop of opening a session, asking for missing information, repeating it for confirmation, and saving structured results. When an external organization must be contacted, replace the same tool contract with a compliant PSTN/SIP provider. The complete media path, direct/ReAct comparison, and acceptance evidence are in [chapter9/phone-agent](../chapter9/phone-agent/). The project retains its historical \`exp9-2\` run identifiers but no longer occupies a numbered manuscript experiment.
-
-#### From serial to streaming perception
-
-Figure 9-2 describes the fully serial case in which each stage waits for the previous one. A production system can retain the modular split while producing increments as early as possible:
-
-- **Streaming ASR** continuously produces a provisional transcript while the user speaks, then confirms the final text at the turn boundary.
-- **Segmented LLM output** sends the first speakable sentence to TTS without waiting for the full reply.
-- **Incremental TTS** returns audio chunks so later generation, synthesis, and playback overlap.
-
-“Streaming every stage” does not make ASR, LLM, and TTS fully parallel from start to finish. In a standard cascade, ASR overlaps with the user's speech and TTS overlaps with the LLM's later tokens, but the final reply still depends on a stable transcript. A more aggressive system starts the LLM from a partial transcript; if later text changes, it must cancel, restart, or correct the generation. Speculation requires explicit commit, invalidation, and rollback mechanisms; enabling \`stream\` alone does not provide them.
-
-Ordinary streaming also cannot remove VAD's silence wait. A traditional VAD + ASR front end has three problems:
-
-1. **Accumulated latency:** it must wait through silence before confirming the end.
-2. **Lost information:** a voiced/unvoiced bit cannot express hesitation, emotion, backchannels, or ambient sound.
-3. **Broken context:** email addresses, names, and proper nouns may be split across chunks and misrecognized.
-
-A truly streaming model needs a causal or chunked encoder with incremental decoding. Whisper's decoder is autoregressive, but its encoder expects a complete audio segment, so it should not be called a causal streaming model. RNN-T and streaming Conformer ASR have long been used in industry; the focus here is semantic listening built on an LLM backbone.
-
-An LLM-based streaming-audio model can emit text and semantic events from continuous audio, placing recognition and part of understanding in one model. It keeps the conversation context from the beginning and can use world knowledge for brands, names, and proper nouns. Simulated chunking is still not a performance promise for a causal model.
-
-If the only goal is deciding whether the user has finished, endpointing can be built into the streaming recognizer. The model combines semantics and silence to judge whether an utterance is complete. Training labels must contain only information visible at decision time, or hindsight will produce a judgment that cannot be reproduced online[^ch9-11]. This is lighter than a complete audio-capable LLM.
-
-The model can emit acoustic-event markers as well as words:
-
-- **speak_start/end, interrupt:** speech boundaries and interruption intent;
-- **emotion:** emotion and hesitation;
-- **laugh, sigh, noise:** paralinguistic and environmental sound.
-
-Together with text tokens, these markers form one event stream. The Agent can detect hesitation, interruption, and environmental changes without compressing every sound into plain text.
-
-[^ch9-11]: For the diagnosis of embedding turn judgment in the recognizer and the problem of hindsight-based labels, see Bojie Li and Noah Shi. *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR.* 2026 (forthcoming).
-
-> **Experiment 9-2 ★: Simulate streaming voice perception with Qwen2-Audio**
->
-> Qwen2-Audio is not itself a streaming model. This experiment simulates continuous perception with increasing audio prefixes and compares it with 600 ms VAD + Whisper. It shows how full context changes pause and noise behavior, but every prefix re-encodes earlier audio, so its timings are not a promise for a causal streaming model.
->
-> The canonical run passed all execution and provenance gates but reproduced only 2/6 expected behaviors: increasing-prefix calls took 8.4–11.3 seconds, the pause sample missed \`silence\`, and the noise sample still misclassified \`cough/laughter\`. This negative result tests mechanisms and failure modes; it does not support a “100–200 ms true streaming perception” claim. See [chapter9/streaming-speech](../chapter9/streaming-speech/) for the complete record.
-
-### Paradigm 2 · End-to-end omnimodal models (Omni)
-
-Even with streaming perception, a cascade passes listening, thinking, and speaking through discrete interfaces; emotion, intonation, and ambient sound may be lost when audio becomes plain text. Omni uses one model to listen to audio, generate a reply, and speak it, which can preserve those signals at the cost of higher training, debugging, and component-replacement costs (Figure 9-4).
-
-The end-to-end advantage is mainly latency and non-text information, not necessarily accuracy. A self-cascade first transcribes with the same model and then answers from the transcript: when text carries the task information, it may correct a perception error; when the answer depends on speech rate, emotion, or ambient sound, the text bottleneck irreversibly loses evidence. The key question is not whether there is an intermediate representation, but what information it carries[^ch9-13].
-
-Omni still assumes turn-taking and generally uses VAD or semantic endpointing to assign the floor. A pause in a spoken sequence of numbers can still be mistaken for the end; streaming perception improves the judgment but does not remove turns.
-
-[^ch9-13]: For a complete cross-modal measurement of when cascade and end-to-end accuracy advantages reverse, and how task nature predicts the direction, see Li, Bojie and Noah Shi. *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents.* 2026 (forthcoming).
-
-![Figure 9-4: End-to-end omnimodal speech-model comparison](images/fig9-4.svg)
-
-Realtime speech APIs sit between cascaded and Omni systems: the model handles audio natively, but interaction control still relies on VAD, interruption, and asynchronous tool calls. Qwen3-Omni's Thinker-Talker and MiniCPM-o's local path show that this approach can combine thinking, expression, and multimodal input at different model sizes. The useful comparison is not a leaderboard; it is how end-to-end and self-cascade paths fail on different tasks.
-
-> **Experiment 9-3 ★★: Run MiniCPM-o 4.5 locally—end-to-end versus self-cascade**
->
-> Fix one local MiniCPM-o 4.5 revision, disable thinking mode, and compare direct audio answers with the same model's self-cascade: transcribe first, then answer from the transcript. This measures whether audio information is preserved, **not** the later “think while speaking” capability.
->
-> **Table 9-1.** Local MiniCPM-o 4.5 end-to-end and self-cascade results (four mechanism checks, not a benchmark)
->
-> | Task type | End-to-end | Self-cascade | Observation |
-> | --- | ---: | ---: | --- |
-> | Semantic arithmetic (2) | 1/2 | 2/2 | Self-cascade corrected one transcription error |
-> | Paralinguistic speaking rate (2) | 2/2 | 1/2 | The plain-text transcript erased the fast/slow distinction |
-> | Total | 3/4 | 3/4 | Equal totals, complementary failures |
->
-> The sample is small, so it cannot establish which path is generally more accurate or faster. Hardware, versions, raw outputs, and real audio-to-audio evidence are in [chapter9/end-to-end-speech](../chapter9/end-to-end-speech/).
-
-Step-Audio 2 demonstrates an end-to-end path that processes raw audio and emits text and speech; it focuses on emotion, speaking rate, intonation, and ambient sound beyond semantics. Step-Audio R1 extends this path by internalizing reasoning in the audio model; it will serve as the example for “thinking while speaking.”
-
-### Paradigm 3 · Full-duplex interactive models
-
-Omni still divides conversation into “the user speaks” and “the model speaks,” but simultaneous interpreting and similar tasks require overlap. A full-duplex model therefore does not presuppose turns: it listens and speaks continuously and repeatedly decides whether to continue, pause, interrupt, or call a tool.
-
-Kyutai's **Moshi** (2024) was an early research example. It models the user's and the model's audio streams in parallel, so overlapping speech and interruption can be natural behaviors.
-
-Thinking Machines Lab calls this an **Interaction Model**[^ch9-14]: interaction is built into the model instead of assembled around it with VAD and other external harnesses. Its micro-turn mechanism advances in short audio blocks, preserving silence, overlap, and interruption as continuous context. It can delegate the full conversation to a background reasoning model while it keeps the conversation alive, then incorporate the result at a suitable moment.
-
-[^ch9-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” 2026-05. https://thinkingmachines.ai/blog/interaction-models/
-
-OpenAI's GPT-Live brings the full-duplex path to production scale: it continuously processes input and generates output, can wait, backchannel, be interrupted, and handle realtime translation. Like the Interaction Model, it delegates complex work to a background model while the foreground model maintains the conversation.
-
-The narrative is: cascades guess turns from silence thresholds; streaming perception upgrades the judgment to the semantic level; full-duplex turns the switch itself into a continuous decision.
-
-### Cognitive timing: realtime interaction and deep thinking
-
-Interaction quality and intelligence ceiling are different dimensions. The foreground model must respond while the user is still engaged; the background model can spend longer thinking. The following three designs are trade-offs, not a linear progression. The first two can wrap a cascade or Omni model; only the third unifies thinking and expression in one end-to-end audio model.
-
-| Design | Foreground | Background | Main risk |
-| --- | --- | --- | --- |
-| Fast filler, slow correction | Give an immediate answer | Re-think and supplement it | Contradiction |
-| Fast interaction, slow advice | Keep the conversation alive and choose wording | Supply advice or tool results | A constrained interface |
-| Unified thinking and expression | Think and speak together | Share model state with expression | High training and replacement cost |
-
-#### Solution 1: Fast thinking for fillers, slow thinking for answers
-
-Fast thinking can give a holding response within a few hundred milliseconds while slow thinking performs a deeper derivation in the background. Simple questions may be processed twice, while hard questions can produce contradictions: the fast model recommends a purchase, then the slow model discovers that a key feature is missing. The root cause is two independent instances thinking separately.
-
-![Figure 9-5: Fast/slow thinking architecture and design alternatives](images/fig9-5.svg)
-
-#### Solution 2: Fast thinking for interaction, slow thinking for advice
-
-The background model can send advice through a status bar or dedicated interface while the foreground model keeps the conversation alive and decides how to phrase it. This is more stable than Solution 1, but communication is still indirect: the foreground can misunderstand the advice and cannot see the background's intermediate reasoning. Before the background finishes, follow-up questions still rely on the foreground model. It can naturally wait for a result, but it cannot truly think while speaking.
-
-#### Solution 3: End-to-end unification of thinking and expression (using Step-Audio R1)
-
-This design internalizes reasoning directly in an end-to-end audio model. Step-Audio R1 uses two complementary mechanisms: **Modality-Grounded Reasoning Distillation (MGRD)** grounds thinking in acoustic features, while the **MPS dual-brain architecture** lets planning and expression proceed in parallel. The first helps the model think correctly; the second helps it speak in time.
-
-Ideally, the model infers emotion from pitch, rhythm, and intonation rather than only from the transcript. “Text-proxy thinking” substitutes negative words in lyrics for analysis of melody and acoustics. MGRD selects reasoning traces that actually cite acoustic features, trains on them, and uses reinforcement learning to prevent guessing without thinking.
-
-MPS lets the planning brain continuously emit thought segments; the expression brain combines each segment with the partial reply and immediately generates speech. The pipeline runs in parallel, so the listener need not wait for the entire chain of reasoning before hearing the first sentence (Figure 9-6).
-
-![Figure 9-6: Step-Audio R1 MGRD and MPS dual-brain architecture](images/fig9-6.svg)
-
-A unified model implements “thinking while speaking” most directly, but thinking and realtime expression must be retrained together. A decoupled design makes it easier to swap the background brain; a unified design suits specialized scenarios that demand the most natural interaction. These are trade-offs, not simple substitutes.
-
-### More human-like speech synthesis
-
-Traditional TTS can expose its machine identity by being too smooth and pausing too little. Pauses, filler words, and occasional repetition signal uncertainty and thought in human speech.
-
-The main LLM can emit control markers in addition to text, such as **THINKING**, **EMO:happy**, and **SPEED:0.8x**; TTS maps them to pauses, prosody, speaking rate, laughter, sighs, and other nonverbal audio. The implementation can be a TTS trained to understand control markers, or voice cloning with reference clips for different emotions and styles.
-
-> **Experiment 9-4 ★★: Control token-driven TTS with Fish Audio**
->
-> Use Fish Audio S1 to build a multi-reference voice library and compare three configurations: no control markers, one reference clip, and multiple reference clips. The execution layer selects matching emotion, speaking rate, and style from the markers.
->
-> The multi-reference configuration scored highest in three position-balanced blind listening passes (human-customer-service likeness 4.67/5), but the complete planned ordering was not reproduced because the no-marker arm outscored the single-reference arm. This result suggests that expressive control helps, but a small listening study is not a general speech-quality conclusion. The complete 24-reference library, A/B/C media, and acceptance record are in [chapter9/controllable-tts](../chapter9/controllable-tts/).
-
-## Computer Use: GUI Automation Agents
-
-By now you may have noticed that this chapter devotes far more space to voice than to the two scenarios that follow. This is deliberate. Among real-time multimodal systems, voice technology has progressed the furthest and therefore provides the best reference point. It has traced the full arc from the original problem—excessive latency in serial pipelines—through end-to-end models, full-duplex interaction, and thinking while speaking, to today's relatively mature designs. That is why we have told its story in full. As you read the Computer Use and robotics sections, compare them with this trajectory: how far has each field progressed, and where does each remain stuck?
-
-These three scenarios seem different but face the same core challenges: real-time perception, low-latency decision-making, and continuous interaction. Next, we turn to visual interaction, or Computer Use, expanding the perspective from the auditory to the visual modality: what if an Agent could not only understand speech but also "see" the screen and operate its graphical interface?
-
-Computer Use, also known as GUI automation, allows AI to use software like a human by observing the screen and operating the mouse and keyboard—for example, opening a browser to search for information, filling in data in a spreadsheet application, or adjusting configurations in system settings. Its core is a **Perceive-Think-Act** loop (Figure 9-6):
-
-1.  The Agent takes a screenshot of the current screen.
-2.  A multimodal model receives the screenshot and task instruction, and outputs a thought and a specific action.
-3.  The execution layer performs the action in the real environment (moving the mouse, clicking, typing text, etc.).
-4.  It waits for the interface to respond, takes another screenshot, and enters the next loop iteration.
-
-**Computer Use safety loop:**
-
-```python
-observation = capture_screenshot_and_accessibility_tree()
-proposal = model.decide(task, observation)
-action = validate_schema_and_coordinates(proposal)
-
-if action.is_irreversible and not user_or_policy_approval(action):
-    stop("approval required")
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
+
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
 else:
-    execute_in_sandbox_or_scoped_session(action)
-    new_observation = capture_after_settle()
-    if not verify_goal_progress(new_observation, action):
-        rollback_if_possible_or_replan()
+    emit_structured_diagnosis(outcome, process, quality)
 ```
 
-![Figure 9-7: Computer Use Agent's Perceive-Think-Act Loop](images/fig9-7.svg)
+![Figure 9-2 Three-layer trajectory verification from environmental outcomes to an LLM Rubric](images/fig9-2.svg)
 
-There are three key design dimensions in this loop: **Action Space** (what operations the Agent can perform), **Visual Grounding** (how to find the target element in the screenshot), and **Model Architecture** (how to generate the correct action from the screenshot).
+For a customer-service Agent, a useful Rubric should cover at least the dimensions listed in Table 9-1. The first five primarily enforce baseline requirements, while the final two measure service quality. This decomposition is more diagnostically useful than asking whether the user was satisfied: a user may be satisfied because the Agent issued a noncompliant refund, or dissatisfied because of a compliance restriction. A single satisfaction score cannot distinguish the two.
 
-### Action Space Design
+Table 9-1 Trajectory evaluation dimensions for a customer-service Agent
 
-Anthropic defines three types of tools that constitute a complete interaction capability (Figure 9-7):
+| Dimension | Verification question | Primary evidence |
+|---|---|---|
+| Task outcome | Was the user’s core request resolved? | Final environmental state, tool results |
+| Rule compliance | Were any policies, permissions, or required procedures violated? | Policy repository, action trajectory |
+| Privacy boundaries | Was any information disclosed that should not have been provided? | Response text, data-access records |
+| Factual reliability | Are statements supported by knowledge or tool results? | Cited sources, tool returns |
+| Promise–action consistency | Did the actions claimed as completed actually occur? | Comparison of responses and tool logs |
+| Expression quality | Is the language natural and concise, without repetition or templated phrasing? | Full conversation, language Rubric |
+| Compliant alternatives | When the original plan was infeasible, was an allowed alternative found? | User goal, policies, and subsequent actions |
 
-![Figure 9-8: Computer Use Action Space](images/fig9-8.svg)
+“Promise–action consistency” is particularly suitable for Agent scenarios. Traditional text evaluation reads only the final response and may easily regard “I have submitted your refund” as good service. Trajectory evaluation instead continues by checking whether the refund tool was actually called, whether the call succeeded, and whether the order status changed. “Compliant alternatives” does not encourage the model to disregard rules at will; it requires the model to understand the user’s true goal and, when a refund is unavailable, examine lawful options such as rescheduling, extension, or partial compensation.
 
-**GUI Operation Tool** (`computer` tool): Mouse operations include moving (`mouse_move`), left/right/middle clicks, double-clicking or triple-clicking, dragging (`left_click_drag`), and more precise press/release actions (`left_mouse_down` and `left_mouse_up`). Scrolling (`scroll`) supports four directions and can be combined with modifier keys. Keyboard operations include typing character by character (`type`, with a 12ms interval between characters to simulate real typing), key combinations (`key`, e.g., `Ctrl+C`), and holding a key (`hold_key`). Perception actions include taking a screenshot, retrieving the cursor position (`cursor_position`), and waiting (`wait`).
+Verification results should not be compressed into a scalar. A trajectory evaluation is closer to a structured diagnosis: the task partially succeeded and rule compliance passed, but there was one unsupported statement, one false promise, and the response repeated the policy explanation three times. Dimensional signals preserve both the nature of each issue and the location of its evidence. Only then can downstream modules determine whether an unsupported statement reflects missing knowledge, absent citation requirements, or insufficient model capability, and whether a false promise calls for Prompt revision or a consistency check between responses and tool states in the Harness.
 
-**Command Execution Tool** (bash tool): Provides a persistent bash terminal session with a 120-second timeout. It uses a sentinel string to detect command completion and maintains environment state across multiple calls (e.g., after `cd` to a directory, the next call remains in that directory).
+LLM verifiers also require calibration. Production systems typically maintain a small set of expert-annotated trajectories to check verifier consistency on each dimension; high-risk or low-confidence cases are referred to a second model or human reviewer; and the calibration set is rerun after model-version changes. The verifier should provide evaluations and evidence, while an independent diagnosis and evolution module should decide which part of the Agent to modify. This prevents the same model from acting as judge while directly rewriting the rules.
 
-**File Editing Tool** (`str_replace_editor`): Enables safe editing through string matching and supports view, create, replace, insert, and undo operations. It is more precise than overwriting an entire file and less likely to modify unrelated content accidentally.
-
-> **Experiment 9-5 ★: Running Computer Use (Anthropic Reference Path or Open-Model Path)**
+> **Experiment 9-1 ★★: Build a Trajectory Verifier for a Customer-Service Agent**
 >
-> Path A uses the Anthropic Computer Use Demo. Its container packages a complete Ubuntu desktop environment, including a browser, terminal, and other common tools. The frontend receives a task, while the backend sends the instructions and screenshots to Claude and then executes the mouse, keyboard, terminal, or editing actions returned by the model. This path is intended for understanding the native `computer` tool protocol; it does not require every reader to have access to the Anthropic API.
+> **Objective:** Convert a customer-service trajectory into a structured diagnosis that can support subsequent learning, and test whether “multidimensional conclusions with evidence” identify root causes better than a single overall score.
 >
-> Path B uses this book's [`chapter9/computer-use-open-model`](../chapter9/computer-use-open-model/) companion. By default, it drives browser-use with the open-weight Qwen3-VL 32B Instruct model, either through the OpenRouter hosted API or by pointing `OPEN_MODEL_BASE_URL` to self-hosted vLLM/SGLang or another compatible endpoint. The endpoint must accept screenshots and support native JSON Schema; if it supports only ordinary JSON, the schema-in-prompt compatibility mode can be enabled explicitly.
+> **Data and procedure:** Prepare expert-labeled trajectories covering four categories: normal refunds, false promises, privacy disclosures, and excessive refusals. The first layer reads the final order state and tool logs to determine whether a refund or rescheduling actually occurred. The second checks every step against business policies, including permissions, required procedures, privacy, factual support, and promise–action consistency. The third evaluates language quality and compliant alternatives against the Rubric in Table 9-1 and retains the relevant turns as evidence for each failure. The default quality Judge uses deterministic rules, with a real LLM Judge also available. Regardless of the upper-layer model, the outcome and rule layers must not be left for a language model to guess.
 >
-> Both paths use the same read-only task and acceptance contract: a maximum of 25 steps, one action per step, and retention of the model/endpoint identity, raw provider responses, step-by-step screenshots, action sequence, final answer, and stop reason. Different models must be reported as separate experimental arms; an open-model result must not be presented as a Claude reproduction, nor should successful container startup be treated as task completion. Action intervals and planning quality are measured outcomes, not assumptions of a 2–5-second interval or inevitable superiority over other models.
+> **Controls and metrics:** The baseline outputs only an overall score; the experimental condition outputs `pass`, `fail`, or `uncertain` for each dimension, together with evidence and confidence. During calibration, measure precision and recall for detecting failures in each dimension and report exact agreement with expert labels. Also verify that failures such as false promises contain nonempty evidence rather than unsupported conclusions.
 >
-
-### Visual Grounding
-
-In each iteration of the loop, the model needs to accurately locate the target element in the screenshot—"Where is the search box?" "What are the coordinates of the submit button?" This is the visual grounding problem. Currently, there are **two main approaches**: one is to turn localization into a **multiple-choice problem**—first annotate the interface elements with numbers, and the model only needs to select one; the other is **pure coordinate prediction**—letting the model "look" at the screenshot and report coordinates directly, just like a human. The multiple-choice approach has two implementation methods: **pure visual annotation** (the original Set-of-Mark, using a segmentation model to segment candidate regions in the image) and **structured element indexing** (DOM/Accessibility Tree, directly reading the interface's inherent structure). The common advantage of the multiple-choice approach is that it transforms the open-ended problem of "find the button in the screenshot and predict its coordinates" into a closed-ended one of "choose one from the already annotated elements"—just as multiple-choice questions are easier to answer correctly than fill-in-the-blank questions in an exam, the model only needs to say "click [123]" instead of "click the blue button approximately 200 pixels to the right of the top-left corner of the screen."
-
-**Set-of-Mark: Visual Annotation Method.**
-
-The original Set-of-Mark (SoM) was proposed by Microsoft Research in 2023, initially to unlock the visual grounding capabilities of GPT-4V. It is a **purely visual** method: it uses image segmentation models (SAM, SEEM, etc.) to automatically segment candidate regions in the screenshot, overlays a numbered marker on each region, and the model sees an image with numbers. The model only needs to report the number, and the system converts it into the center coordinates of the corresponding region. The entire process does not require a DOM or any internal interface structure, so it is equally applicable to native desktop software and game interfaces—as long as the segmentation model can identify the candidate regions.
-
-**Structured Element Indexing: A Structured Implementation of the SoM Idea on the Web.**
-
-When the interface itself provides structured information, annotation can be more precise. Before rendering, modern web pages define a complete element structure (the DOM tree) and semantic roles that identify buttons, input fields, and other controls. Accessibility trees provide similar information for many desktop applications. Rather than asking a segmentation model to guess which region is a button from pixels alone, the system can query the interface directly for its clickable elements. Web Agent systems such as `browser-use` do exactly this: they enumerate and number interactive elements from the DOM. This is a structured implementation of the SoM idea for the web (Figure 9-8). The process has four steps:
-
-1. Obtain the structured representation (DOM tree) and accessibility information for the page through the browser's debugging interface (CDP, Chrome DevTools Protocol)
-2. Automatically detect which elements are interactive (buttons, input boxes, links, etc.)
-3. Annotate each interactive element with a unique ID and draw bounding boxes on the screenshot
-4. Simultaneously generate a text list describing the element corresponding to each ID
-
-```text
-Screenshot: [Key elements in the image are annotated with IDs like [1], [2], [3], [4]]
-
-Elements:
-[1] <input type="text" placeholder="Search" aria-label="Search" />
-[2] <button id="submit-btn" aria-label="Submit form" />
-[3] <input type="text" placeholder="Enter your name" value="" />
-[4] <a href="/docs" aria-label="Documentation" />
-```
-
-The model only needs to output an ID, and the system automatically clicks the center of the corresponding element. This approach does not save tokens because all annotation data must still be sent to the model, but it provides accurate, stable localization while avoiding the missed detections and false positives that segmentation models can introduce.
-
-
-![Figure 9-9: Set-of-Mark vs. Structured Element Indexing (browser-use implementation)](images/fig9-9.svg)
-
-**Pure Coordinate Prediction.**
-
-The third route skips annotation and asks the model to output coordinates directly. Systems such as **SeeClick** and Claude's computer use rely on vision models trained on massive datasets of GUI screenshots paired with element positions. These models learn to map natural-language descriptions (e.g., "click the submit button") directly to precise screenshot coordinates, relying on visual perception much like a human user.
-
-In coordinate prediction schemes, the model's understanding of coordinates is highly dependent on the resolution used during training (Figure 9-9). Claude was trained using XGA (1024×768), WXGA (1280×800), and FWXGA (1366×768). If the input screenshot resolution does not match, the model's predicted coordinates will systematically shift—like measuring a distance on a small map and then applying it directly to a large map. Therefore, a bidirectional coordinate scaling mechanism must be implemented at the tool layer, and the target resolution must be **selected based on the aspect ratio** to avoid non-uniform stretching that distorts the image and consequently biases coordinate judgment. For example, if the actual screen resolution is 2560×1440 (16:9), the most suitable target among Claude's three supported options is FWXGA (1366×768), which has an aspect ratio closest to 16:9. The screenshot is proportionally scaled to 1366×768 and fed to the model; after the model outputs the click coordinates (683, 384), they are inversely mapped to the real coordinates (683×2560/1366, 384×1440/768) ≈ (1280, 720). Conversely, if a 16:9 image is forcibly stretched into the 4:3 1024×768, the image will be horizontally compressed, causing the model's predicted coordinates to systematically shift.
-
-
-![Figure 9-10: Resolution Matching and Bidirectional Coordinate Scaling](images/fig9-10.svg)
-
-
-The choice among the three routes can be summarized as follows: **when structured information is available, prioritize DOM/accessibility-tree indexing** for the most accurate and stable localization. **When it is unavailable**—in native desktop software such as Photoshop, canvas/WebGL-rendered interfaces, or games—**use either visual annotation (the original SoM route) or coordinate prediction**. Visual annotation turns localization into a multiple-choice problem, making it friendlier to general-purpose models without specialized training. Coordinate prediction eliminates the annotation step and is more direct for models trained specifically on GUI localization. Both approaches still struggle with small elements and dense interfaces.
-
-> **Experiment 9-6 ★: Using browser-use to Implement Automated Browser Operations**
+> **Acceptance criteria:** The verifier should reliably detect critical violations, false promises, and excessive refusals. A high overall score must not conceal a privacy or policy failure. Low-confidence and high-risk cases should be sent to a second verifier or human review instead of automatically becoming learning signals.
 >
-> Use Playwright, a browser-automation framework, together with a multimodal model to implement browser operations driven by natural language. Enable SoM visualization and save a screenshot with annotated bounding boxes before every decision. The model interface is not limited to OpenAI or Anthropic; the book provides an API configuration for the open Qwen3-VL model and retains a generic OpenAI-compatible base URL for other hosted services or self-hosted inference.
->
-> Test task "Open Google and query San Francisco weather": after startup, a screenshot shows the Google search page with numbered interactive elements. The model selects the search box, enters "San Francisco weather today," submits the search, and then extracts the temperature and conditions from the results page. During acceptance, independently verify the answer and trajectory and record the actual step count and elapsed time. "5 steps and about 20 seconds" can only be an observation from a particular run, not a fixed result stated without an execution receipt.
->
-> The book's preserved official open-model run used `qwen/qwen3-vl-32b-instruct` on OpenRouter. When the model encountered a CAPTCHA on Google Search at step 4, it did not claim success; it switched to weather.com and, at step 16, read 64°F, Sunny, feels like 62°F, high 74°F, and low 55°F from San Francisco's Today page. All 16 of 16 API responses reported the requested Qwen3-VL model, and 15 valid step screenshots plus the read-only action trajectory passed independent deterministic acceptance. This result demonstrates that the open-model API path runs successfully; it does not mean that the Anthropic-native `computer` tool arm has been reproduced.
+> The accompanying implementation is available at [`trajectory-verifier`](../chapter9/trajectory-verifier/). By default, it uses a quality Judge that can be reproduced offline; use `--judge llm` to run the implemented real LLM verifier.
 
-### A Computer Use Agent That Can Watch Animations and Hear Sound
+## Four Methods for Continual Agent Evolution
 
-So far, Computer Use perception has rested on an implicit assumption: **the screen is static**—take a screenshot, reason about the next step, click, and take the next screenshot. Real screens play videos, flash notifications that vanish in seconds, and play audio from meetings. An Agent that opens its eyes only once every 3–5 seconds and has no ears at all is blind and deaf to everything that happens between two frames. Watching a screen recording, joining a meeting, following a voice prompt, catching a dialog box before it disappears—this whole category of everyday computer work is effectively off-limits to today's Computer Use Agent.
+Learning signals indicate that an Agent should change, but not where that change should occur. The primary basis for choosing an update method is not how long an experience has persisted, but whether the target capability can be naturally represented by a particular medium. Facts and experience are suited to knowledge documents; strategies that can be clearly expressed in language belong in Prompts or Skills; precisely executable procedures and constraints should be encoded as programs; and high-dimensional capabilities such as perception, language style, and implicit strategies must enter model parameters. Figure 9-3 shows these four methods and their relationships.
 
-What truly needs to be redesigned here is not the "action interface," but the "**observation interface**"[^ch9-9]. The core idea is to decouple **observation** (continuous, adaptive, multimodal) from **action** (discrete), creating a perceptual middleware layer that sits between the environment and any off-the-shelf Computer Use model without requiring retraining. We can call this the Agent–Computer Observation Interface (AOI). It has three "gated" components: First, **inter-frame keyframe capture**—use a very cheap pixel gate to skip nearly unchanged frames, then use a small model to determine if a meaningful change has occurred, capturing a frame only when there is a change, resulting in near-zero cost for static screens; Second, **volume-gated speech transcription**—only invoke speech recognition when there is sound, giving the Agent "ears" for the first time; Third, and most critically, **converting observations into persistent textual descriptions**—have the model describe the captured frame in a single sentence (e.g., "The popup just said the release date has been changed to April 28th"), and **even if the original image is later cleared from the context, this text remains in memory**, carrying the dynamic information forward in textual form.
+![Figure 9-3 Four update methods for continual evolution](images/fig9-3.svg)
 
-The counterintuitive finding is that what really matters is not frame selection but converting selected frames into persistent text, because text is the modality LLM Agents handle best. Across eight models, ranging from 7B-parameter models to frontier-scale systems, this middleware delivered gains of +17 to +48 percentage points without any retraining, with the widest gap on voice tasks: with the perceptual layer in place, the Agent could finally complete voice tasks that had been "audible but unactionable." It is not a one-size-fits-all configuration, though—on some newer models, injecting too many image tokens crowds out reasoning and drags performance down. So the components should be **chosen per model**, not switched on wholesale. It is the same lesson as the Set-of-Mark-versus-coordinate-prediction trade-off: there is no silver bullet in perception schemes; you configure them to suit the model's temperament.
+Table 9-2 provides a concise comparison. The four methods are not mutually exclusive: a medical-imaging Agent relies on parameters to identify lesions, uses a knowledge base to provide current guidelines, and employs code to calculate risk indicators. A customer-service model derives its natural tone from post-training, obtains enterprise-specific policies from knowledge and Skills, and relies on server-side code to enforce critical compliance requirements.
 
-[^ch9-9]: For the complete mechanism and per-model ablation of the three components—gated keyframes, on-demand transcription, and narrating frames into persistent text—see Bojie Li and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
+Table 9-2 Applicable boundaries of four continual evolution methods
 
-### World Models for Computer Use
+| Update method | Suitable content | Primary advantages | Primary limitations |
+|---|---|---|---|
+| Experience knowledge base | Facts, experiential patterns, exceptions, and sources | Fast updates, traceability, on-demand retrieval | Depends on retrieval and correct model application |
+| Prompt and Skill | Linguistically expressible judgment principles and operating procedures | Interpretable, controllable scope | Prone to bloat, conflict, or being ignored |
+| Programs and Harness | Deterministic procedures, tools, and hard constraints | Testable, stable execution, low cost | Higher development and maintenance costs |
+| Model parameters | High-dimensional perception, generation style, and implicit strategies | Strong generalization, low inference overhead | High update and regression costs |
 
-The observation interface of the previous section answers "what happened in between?": with keyframes, speech transcription and persistent text, the Agent no longer sees only two screenshots taken far apart. But an observation interface does not remove planning latency. The Agent is still running a serial "screenshot—think—click" loop, re-observing and reasoning about the next step after every single action. The **OSWorld-Human** efficiency study shows that even when a task eventually succeeds, the Agent takes markedly more steps and waits markedly longer than a person does; reaching human-level accuracy is not the same as being practical.
-
-People do not start thinking about the next step only after clicking. They first predict what an action will do: if the actual change matches the expectation, they carry on with the existing plan; only when the page state departs from what was expected do they stop to observe and plan again. A world model lets the Agent predict what the desktop may turn into before it acts, giving it this human-like "speculative execution" and improving efficiency substantially.
-
-Desktop state is more than a grid of pixels. It also includes windows, focus, scroll position, input-field contents, loading state, permissions and network responses; actions include clicking, typing, scrolling, dragging and waiting. A world model usable for Computer Use must at minimum encode the current state, predict the state change a candidate action would cause, and hand that prediction to the planner to decide the next step:
-
-```text
-desktop state + click/type/scroll/wait ──> representation of the next state
-```
-
-This lets the Agent compare the consequences of candidate actions before it actually clicks, prepare the next step while a page is loading, and recover from a dialog that flashed past by reasoning about the state difference. If the task is "create a new Python file in VS Code and write hello world", the model can first predict the key state of the file tree and editor on success, and only then choose the click, type and save actions; if the task is to delete a file, it can predict inside an isolated virtual desktop whether an irreversible confirmation dialog will appear, and ask the user to confirm when necessary. The point here is not to have the model generate a photorealistic future screenshot, but to predict the checkable state differences that completing the task requires.
-
-In July 2026, **Photon-1** from Induction Labs demonstrated one implementation of this route, completing the pretraining of a computer use world model with only 30,000 hours of H200 GPU time. It compresses each frame into discrete latent tokens and autoregressively predicts the representation of the next state after an action, rather than generating screenshots pixel by pixel during pretraining; the image generator attached to it serves only to visualize the latent representations and is not a component required for inference. Given a seed screenshot and the actions that follow, the model can "imagine" desktop states continuously, and then learn to output computer-use actions through online training on virtual machines.[^ch9-20]
-
-[^ch9-20]: David Li and Jonathan Li, Induction Labs, “Scaling Video Pretraining with Imagination Models,” 2026-07-23. https://www.inductionlabs.com/news/scaling-video-pretraining. The parameters, data scale, internal benchmarks and cost comparisons reported for Photon-1 are figures disclosed by the company.
-
-### Mobile: Ecosystem Barriers Are Harder Than Technology
-
-Computer Use is also expanding to mobile devices. Mobile and desktop systems do differ technically: instead of relying on mouse coordinates and keyboard input, the mobile action space typically uses the system's accessibility-service API (e.g., Android's `AccessibilityService`) to read interface elements and issue clicks or enter text. Interaction also shifts from a mouse pointer to touch gestures, changing the meaning of coordinates. The same `(x, y)` position might indicate a tap, a long press, or the starting point of a swipe, so the action must also specify a gesture type. Mobile benchmarks such as AndroidWorld, introduced in Chapter 6, evaluate an Agent's ability to complete tasks in real applications within this action space.
-
-However, what truly hinders mobile Computer Use is often not these technical differences, but ecosystem barriers. Some phone manufacturers have attempted to integrate AI assistants into consumer-grade phones so that the assistants can automatically operate everyday apps like WeChat, Taobao, and Alipay, but they quickly encountered platform restrictions.
-
-This reveals a unique challenge for Computer Use: **ecosystem barriers**. The fundamental reason behind these restrictions is a conflict of business models. The core monetization logic of traditional internet applications is **traffic and attention**: users see ads while scrolling through feeds, are guided by recommendation algorithms when searching for products, and make impulse purchases while browsing pages. When an Agent operates on the user's behalf, that monetization chain is bypassed entirely: the AI ignores ads, makes no impulse purchases, heads straight for the goal, finishes the task, and leaves. For platforms that live on advertising and traffic, every Agent operation erodes the foundation of the business model.
-
-This means that Computer Use faces not only technical countermeasures such as CAPTCHAs, but also a **structural conflict of interest**. This conflict will be difficult to resolve in the short term and poses a greater obstacle to consumer adoption than purely technical problems.
-
-## Robot Manipulation: Tidying a Desk with XLeRobot
-
-> **Reading note**: This section uses one task throughout—"put the red cup in the tray, put the yellow scrap paper in the bin, then observe again and confirm the state of the desk." Experiments 9-7 and 9-9 run on real XLeRobot hardware and need an arm, calibration, an emergency stop and an on-site observer; experiments 9-8, 9-10 and 9-11 are the corresponding local-GPU experiments. Hardware and simulation are reported separately, but the task goal, the action semantics and the success conditions stay the same.
-
-Robot manipulation is much harder than answering questions about a picture. The model has to understand the scene and then take actions continuously in the real world, where every action changes what the next moment looks like. XLeRobot makes that difference concrete: the same arm can be teleoperated by a person through a keyboard, a gamepad or a VR device, or it can hand camera observations and a constrained set of action tools to an Agent to call on its own. The hardware and the task stay fixed; only the operator changes—in the first case a human observes and corrects continuously, in the second the model and the control system must do the same work.
-
-This section runs five experiments on "tidy the desk." First a human teleoperates the real XLeRobot, measuring what the hardware can do under a sufficiently capable operator; then a simulator establishes the ideal control ceiling for the same task. Next an Agent controls the real XLeRobot autonomously, showing how perception, planning and failure recovery affect the result; then the same tool contract goes into the simulator so that open-loop execution, step-by-step checking and world models can be compared in bulk. Finally the background, object appearance, lighting and visual noise change, to see whether a visual policy learned in simulation adapts to a new environment.
-
-The bottleneck here is usually not one more static question-answering benchmark, but whether the model can keep closing the loop under limited perception and control bandwidth. A usable robot system has to answer at least four questions:
-
-1. What task does the person want done?
-2. Which subtask comes next?
-3. What actions does the current skill actually emit?
-4. After the action executes, does reality still match the plan?
-
-This section places those four questions inside one XLeRobot control loop and shows what each of four techniques is responsible for: long-horizon planning decides whether the cup or the paper is handled first, a VLA or action primitive performs the grasp and the placement, a world model estimates the consequences of an action, and sim-to-real transfer handles the differences between training footage and the real camera and actuators. Even when the high-level model already has enough knowledge and planning ability, losing any one of these feedback links can still leave the task unfinished.
-
-### The Division of Labour Between Hardware and Algorithms
-
-The first question XLeRobot is best suited to answer is this: when autonomous desk tidying fails, is it the arm that cannot do it, or the algorithm that is not using the arm well? There is a fact here that should not be softened: **an arm costing only a few hundred dollars, like XLeRobot, can already complete the kind of continuous multi-step desk task in this section through teleoperation**—a person watches the camera feed, picks up the red cup and puts it in the tray, then puts the yellow scrap paper in the bin and confirms the state again. That result is not merely "the hardware is barely feasible"; it is a clear piece of diagnostic evidence: **for this task the hardware itself is not the bottleneck, the algorithm is.**
-
-The diagnostic method is direct: keep the camera, the arm, the gripper, the desk layout and the success conditions fixed, and let a human take over the loop. A human continuously corrects object localization, action choice and timing, and handles failed grasps; the gap between an autonomous system and a person lies precisely in those closed-loop abilities. The scope of the claim is of course this section's desk task: it shows the hardware has cleared the payload, precision and workspace thresholds this task requires, not that a few-hundred-dollar arm can handle every open environment or harder manipulation.
-
-XLeRobot supports keyboard, Xbox controller, Switch Joy-Con and VR teleoperation. A human operator naturally does many things an algorithm has to implement explicitly: slowing the gripper as it nears the cup, correcting the grasp point when the cup slides, observing again after failing to pinch the paper the first time, and checking the outcome once an object is in the target area. Teleoperation is therefore not only a way to collect demonstrations but also a "fix the hardware, swap the operator" diagnostic experiment.[^ch9-1]
-
-> **Experiment 9-7 ★: Teleoperating a real XLeRobot to tidy a desk**
->
-> Place a red cup, a tray, yellow scrap paper and a bin in the real XLeRobot workspace. Using one calibrated teleoperation method, the operator performs the fixed task: "put the red cup in the tray, put the yellow scrap paper in the bin, then observe again and confirm the state of the desk." Repeat for several rounds at minimum, recording the camera feed, operator input, arm state, action timing, failed grasps, retry counts and the final state.
->
-> Acceptance cannot rest on "the desk looks tidy at the end." The red cup must be inside the tray, the yellow paper inside the bin, the arm back in a safe pose, with no collision, no out-of-bounds motion and no unconfirmed manual intervention along the way.
-
-Teleoperation on real hardware gives the most convincing ceiling for the task, but it is not suited to varying object counts and positions in bulk. To obtain a repeatable, statistically meaningful control, the next step moves the same "put objects where they belong" problem into a 2D desktop simulator, using an ideal controller to stand in for a strong operator who never misperceives and never picks the wrong action.
-
-> **Experiment 9-8 ★: Measuring the ideal control ceiling for the same task in simulation**
->
-> In a 2D desktop simulator, randomly place the red cup, the yellow paper and their target areas, and let an ideal controller approach each object in turn, grasp it and move it to the right place. It does not need to recognise images and never picks the wrong action, so it represents "what this task can at least achieve when perception and decision-making are both correct."
->
-> The experiment tracks task success rate, number of steps and path length, and varies initial object positions and task scale to see whether the ideal ceiling stays stable. It uses the same success conditions as experiment 9-7, but measures a non-actuated simulation and does not imply the real XLeRobot has been run. Together the two establish the reference lines for the autonomous control that follows: experiment 9-7 is a human loop on real hardware, experiment 9-8 an ideal loop in simulation.
-
-### The Basic Structure of Robot Control
-
-Robot systems usually separate work by timescale:
-
-| Layer | Core question | Output | Typical timescale |
-| --- | --- | --- | --- |
-| Task goal | What does the person want done | "Put the cup and the paper away" | Minutes |
-| Long-horizon planning | What comes first, what comes after | Handle the cup, then the paper, then check | Seconds to minutes |
-| Basic skills | Which state change to achieve now | `pick(red_cup)`, `place(red_cup, tray)` | About 1–3 s |
-| VLA / skill policy | How this skill actually moves | A short motion or continuous trajectory of the XLeRobot gripper | About 1–10 Hz inference |
-| Low-level control and safety | How to execute stably and in time | Joint or end-effector commands, speed limits and emergency stop | About 50–1000 Hz |
-
-This is a common engineering split, not the only model architecture. A VLA can take on part of the high-level judgement, and the planner can be a rule-based program, a VLM or an optimiser. Whichever implementation you choose, "task order" and "the action right now" should stay separate; otherwise the high-level model's inference latency drags down low-level control, and high-frequency low-level control forces the high-level model to process a great deal of irrelevant detail. For XLeRobot the model should not emit arbitrary joint angles directly; it only selects bounded skills such as `pick`, `place`, `verify_state` or `stop`, and a calibrated, speed-limited executor with timeouts turns those skills into real arm motion.
-
-### Long-Horizon Planning and Task Decomposition
-
-When the user says "tidy up the desk," the system cannot hand that sentence straight to an action model. The planner first lists the objects and goals in the scene, then decides the order, and for each step writes down the start condition, the completion condition and the risk limits. For example:
-
-```text
-handle the red cup → clear the yellow paper → check the desk
-```
-
-"Handle the red cup" then decomposes further into two actions and one check:
-
-```text
-pick(red_cup) → place(red_cup, tray) → verify_state()
-```
-
-Every completed skill yields a checkable node. If a grasp fails, only that step is retried; if someone moves an object, or the user changes the goal, only the affected later steps need replanning—the old plan does not have to be redone from scratch. The tools given to the agent should be equally simple: one call does one thing, the range of motion is fixed, there is a timeout, and observation happens again immediately after execution.
-
-> **Experiment 9-9 ★★: Driving XLeRobot to tidy a desk autonomously with Gemini Robotics-ER 1.5**
->
-> Keep the real XLeRobot, the desk layout, the task instruction and the success conditions of experiment 9-7 unchanged, and replace the human operator with an Agent. An embodied reasoning model such as Gemini Robotics-ER 1.5 can handle observation and planning, exposing only five tools through a RoboCrew-style agent loop: `observe_scene`, `pick`, `place`, `verify_state` and `stop`.[^ch9-2]
->
-> The model first observes the desk, decides the order, then calls the calibrated XLeRobot grasp and place actions. After every completed skill it must observe again and check the postcondition; on a failed grasp it may only retry the current skill, and it must call `stop` when the user says stop, when an object leaves the workspace, or when the state cannot be confirmed. The model cannot emit arbitrary joint angles, nor skip a real check merely because it previously said "done."
->
-> The acceptance criteria are exactly those of experiment 9-7: cup in the tray, paper in the bin, arm back in a safe pose, no collision and no out-of-bounds motion. The difference is that in the autonomous experiment the task semantics must come from the model's own observation, the real actions must come from tool calls, and the final state must be confirmed by a fresh observation; the human may only start the run, hit the emergency stop and supervise safety, never complete an action on the Agent's behalf midway. Only then can experiments 9-7 and 9-9 be compared directly on "same hardware, same task—what is still missing between the human loop and the model loop."
-
-Real-hardware experiments expose calibration error, camera occlusion and gripper failure, but they are poorly suited to repeating large numbers of faults safely and controllably. The simulation experiments that follow keep these five tools and exactly the same task state, replacing only the real actuator with a desktop environment into which failures can be injected, in order to separate what open-loop execution, step-by-step checking and action prediction each contribute.
-
-### VLA Control
-
-VLA stands for Vision-Language-Action. It takes the current frame and one skill instruction, then emits the action the robot should perform next:
-
-```text
-current observation + skill instruction → action
-```
-
-In the XLeRobot case the high-level planner only submits `pick(red_cup)`; the VLA or skill policy still has to decide, from the current frame, which direction to approach the cup from, when the gripper closes and along what trajectory the arm lifts. After the execution layer finishes that short motion it photographs the desk again, and only once the cup is confirmed to be held may the planner submit `place(red_cup, tray)`. A tool call therefore defines the desired state change, while the VLA defines how to realise that change through continuous motion.
-
-RT-2 and OpenVLA cut continuous actions into discrete tokens and emit them one at a time, like generating text; π₀ represents the other route, producing continuous, smooth action trajectories directly. Neither is simply better: discrete tokens combine more easily with language models, while continuous trajectories usually express smooth motion better. The real trade-off is how the action should be represented, not merely model size.[^ch9-15]
-
-A large model can usually run inference only 1–10 times per second, whereas a traditional controller may update tens to thousands of times per second. A common engineering answer is "action chunking": the model generates a short segment of future actions at once, a control thread executes that segment at a higher rate, and the model prepares the next segment in the background. This hides part of the inference wait inside the execution time. The cost is that the longer the segment, the smoother the motion but the fewer new frames the model sees during it; if the cup is knocked while XLeRobot reaches for it, the arm may still be executing actions generated from the old frame. Action chunking is therefore a trade-off between smoothness and reaction speed, not free acceleration.
-
-Action chunking usually needs a "predict–execute–preempt" skeleton rather than running to completion:
+**Experience-to-capability routing:**
 
 ```python
-chunk = vla(current_observation, skill)
-for action in chunk:
-    low_level.execute(action)
-    if safety_event() or observation_changed_significantly():
-        low_level.stop()
-        discard_remaining(chunk)
-        reobserve_and_replan()
-        break
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
 ```
 
-Short chunks react faster but cost more model calls; long chunks are smoother but more likely to act on stale observations. Experiment 9-10 compares this trade-off in simulation; only experiment 9-9 involves real hardware safety boundaries.
+### Consolidating Experience into Knowledge
 
-### The Limits of VLAs
+The most lightweight form of evolution is to organize recurring experience from multiple runs into retrievable knowledge documents. The “experience knowledge base” described here shares storage, indexing, and retrieval technologies with Chapter 3, but differs in its knowledge sources and verification objectives. Chapter 3 primarily extracts “what the user and the world are like” from user conversations, documents, and datasets; this chapter extracts “what should be done under which conditions” from Agent action trajectories and outcomes. For example, “This airline requires special meals to be reserved twenty-four hours in advance” is domain knowledge, whereas “Check the special-meal deadline before booking to avoid discovering only after payment that the request cannot be fulfilled” is action experience.
 
-"Long-horizon planning + VLA" is a practical baseline, but several problems are easy to overlook:
+Raw trajectories are unsuitable as formal knowledge units. They are lengthy and noisy, containing raw tool output, incidental detours, and environmental details. A more robust system retains three layers of data: immutable raw trajectories for auditing; per-run analyses recording the outcome and candidate lessons; and comparisons, clustering, and induction across multiple similar trajectories to produce future-oriented Markdown knowledge documents. A formal document typically specifies applicable scenarios, recommended strategies, prohibited practices, exceptions, evidence sources, and the latest verification time rather than retelling the complete course of a single task.
 
-- **Limited training data**: robot demonstrations are far scarcer than internet text and images. That a model has seen the word "cup" does not mean it has seen cups of every material and friction condition.
-- **Imitation without consequence**: behaviour cloning mainly learns "what the demonstrator did next," and never explicitly requires the model to answer "what will this action cause."
-- **Robots differ**: different robots have different degrees of freedom, coordinate frames, grippers and actuator latencies, so the same action does not necessarily transfer to another machine.
-- **Observations go stale**: once an action chunk starts executing, an object may be moved, occluded or knocked over while the model is still deciding from the previous frame.
+This design shares the same two-stage principle as User-as-Code in Chapter 3. User-as-Code first appends conversational facts to an immutable log and then periodically rebuilds a structured user model. Experience learning should likewise preserve evidence first and generate mutable knowledge offline afterward. Figure 9-4 illustrates this process. Separating recording from organization prevents a single accidental success or network failure from immediately changing the Agent, while allowing the system to identify common patterns only after observing multiple successes and failures.
 
-So a language model knowing what a "cup" is does not mean it knows how friction, contact, liquid sloshing and a power cable will change the future state. A VLA mainly answers "what should be done now"; another kind of model is needed to judge "what may happen afterwards."
+![Figure 9-4 From evaluated trajectories to experience knowledge documents](images/fig9-4.svg)
 
-### World Models
+Experience documents are not simple trajectory summaries. Transferable content emerges from comparison: what successful trajectories of the same type did, what failed trajectories lacked, in which environment versions a strategy was effective, and under which prerequisites it failed. Chapter 3 has already introduced knowledge extraction, clustering, and retrieval, so this chapter does not repeat those algorithms. Instead, it focuses on how trajectory evaluation becomes a condition for extraction and whether the extracted knowledge improves performance on subsequent tasks.
 
-A world model can be understood as an "action-outcome predictor." What it learns is: given the current state and some action, how the next state may change.
+A complete knowledge-distillation pipeline can be divided into five steps. First, preserve immutable trajectories and environmental outcomes. Next, produce a structured analysis for each run, listing the task type, required capabilities, observed strategies, errors, and exceptions. Then aggregate runs by task family and build an evidence table showing which trajectories support or contradict each candidate pattern. Only candidates that meet the support threshold enter formal documents. Finally, evaluate transfer on new tasks that were not used during distillation. Keeping formal knowledge separate from candidate analyses allows the system to generalize again without altering the original evidence and to revoke a conclusion precisely when the environment changes.
 
-```text
-current state + candidate action
-    → predict the next state or a future segment
-    → compare candidate outcomes
-    → choose an action, replan, or stop safely
+GAIA experience learning provides an intuitive example. GAIA[^gaia-2023] contains multistep problems that combine search, web reading, file processing, and computation, while AWorld[^aworld-2025] provides the environment for running Agents, invoking those tools, and recording trajectories: the former is like the exam, and the latter is the exam room and laboratory record system. A simplistic approach generates a strategy summary and immediately vectorizes it after one successful run. A stricter implementation first uses a GAIA answer verifier or another environmental verifier to label runs as successful, partially successful, or failed, and then compares multiple paths within the same task family. Successful trajectories contribute candidate strategies, failures contribute exclusionary knowledge, and partial successes reveal which segment worked and which still failed. The natural-language reflection proposed by Reflexion[^reflexion-2023] can help generate candidate lessons, but reflection itself is not evidence. Only content consistent with environmental outcomes, supported across trajectories, and showing positive transfer on new tasks should enter formal experience documents.
+
+> **Experiment 9-2 ★★: Distill Experience Knowledge Documents from GAIA Trajectories**
+>
+> **Objective:** Test whether cross-trajectory knowledge documents transfer better than a summary of a single success and reduce negative transfer from accidental successes and incorrect experience.
+>
+> **Data and procedure:** `gaia-experience` first stores the full trajectory and external `environment_score` for each run, then converts them into minimal learning records containing `task_family`, required `capabilities`, `applies_when`, observed strategies, errors, exceptions, and source trajectory IDs. An outcome verifier classifies runs as successful, partially successful, or failed. The learning module compares paths within the same task family. An LLM may propose candidate generalizations, but a recommended strategy must be supported by at least two non-failed trajectories. The resulting Markdown document includes applicable scenarios, recommended strategies, common pitfalls, exceptions, provenance, and the latest validation time. During application, only these documents are retrieved; lengthy raw trajectories are not inserted directly into the context.
+>
+> **Three controls:** The first condition uses no historical experience; the second retrieves the one trajectory summary most similar to the current task; the third retrieves a knowledge document supported by multiple trajectories. The learning and transfer sets must be disjoint so that answers to the same GAIA question do not leak into evaluation as “experience.”
+>
+> **Metrics and acceptance:** Report transfer-task success rate, average retrieved characters or Tokens, and negative-transfer rate, and verify that every formal conclusion cites its source trajectories. If cross-trajectory documents merely shorten the context without improving new-task performance, they do not demonstrate learned experience. The experiment also fails if one accidental success can be promoted directly to formal knowledge or if a document cannot be traced to its original trajectories.
+>
+> The accompanying implementation is available at [`gaia-experience`](../chapter9/gaia-experience/). `demo_documents.py` runs offline by default; with `--extractor llm`, a real LLM can propose cross-trajectory experience candidates.
+
+[^reflexion-2023]: Shinn, N., et al. *Reflexion: Language Agents with Verbal Reinforcement Learning.* arXiv:2303.11366, 2023.
+
+[^gaia-2023]: Mialon, G., et al. *GAIA: a benchmark for General AI Assistants.* arXiv:2311.12983, 2023.
+
+[^aworld-2025]: Yu, C., et al. *AWorld: Orchestrating the Training Recipe for Agentic AI.* arXiv:2508.20404, 2025.
+
+### Encoding Experience as Instructions
+
+An experience knowledge base provides reference material for an Agent, whereas Prompts and Skills are more prescriptive. When multiple trajectories repeatedly reveal the same strategic error, and the pattern can be clearly expressed in natural language, the system can elevate it from “experience for reference” to “a rule that must be followed.” Rules that apply to nearly all tasks are suitable for inclusion in the system Prompt; complex procedures that apply only to a particular domain, project, or tool are better written as on-demand Skills or project instruction files.
+
+Prompt learning serves a different role from the Prompt engineering discussed in Chapter 2. Chapter 2 explains how to write structurally clear, cache-friendly Prompts; this section addresses what production feedback is sufficient to trigger a Prompt revision and how new rules should be validated before deployment. Revision should not mean repeatedly rewriting the entire system Prompt. A more reliable approach is to generate a minimal diff from a group of similar failures, specify the rule’s scope, check for conflicts with existing rules, and evaluate it against both the boundary cases that triggered the failures and a retention set of old tasks.
+
+In a 2025 long-form post, Andrej Karpathy provisionally called this possible new paradigm **System Prompt Learning**[^karpathy-system-prompt-learning]. His summary was that pretraining primarily learns knowledge and fine-tuning primarily shapes habitual behavior, while another kind of human learning occurs when we solve a problem and leave an explicit note to our future selves: “Next time I encounter this kind of problem, I should try this approach first.” He compared an LLM without such a notebook to the protagonist of the film *Memento* and noted that System Prompt Learning and reinforcement learning both improve behavior from experience but use different update algorithms—the former edits text, while the latter changes parameters through gradient descent. His example was an instruction in Claude’s then roughly 17,000-word system Prompt requiring the model to number and explicitly count words, letters, or characters before answering, precisely to handle questions such as “How many `r`s are in `strawberry`?”
+
+In an Agent system, this means turning lessons that can be expressed in language into candidate rules that future runs can read directly. Compared with a scalar success/failure result, an evidence-backed diagnosis can identify whether the error was in identity verification, tool selection, or escalation boundaries, enabling a more targeted candidate change. Karpathy’s observation that a knowledge-guided review is a higher-dimensional feedback channel than a scalar reward helps explain the method’s potential data efficiency. Richer information is not automatically correct, however: one user’s feedback may apply only to that customer or an outdated policy, so clustering, scope analysis, and regression testing remain necessary.
+
+Several established approaches automate Prompt optimization in different ways. DSPy[^dspy-2023] treats a program composed of multiple language-model calls as an optimizable object and searches instructions and examples on a development set. OPRO[^opro-2023] asks a language model to propose new candidates from the history of Prompts and their scores. GEPA[^gepa-2025] uses natural-language reflection over failed trajectories to generate and select complementary candidate Prompts. These methods primarily perform batch optimization on offline evaluation sets; minimal production diffs are closer to continual maintenance, triggered by newly observed boundary cases and designed for provenance, auditing, and rapid rollback. In practice, offline search can establish a strong initial version, followed by case-by-case patches for long-tail production rules.
+
+For example, an airline customer-service Agent may escalate to a human too early when users challenge a policy. Trajectory evaluation shows that it violates no rules but lacks compliant flexibility. A candidate patch can require the Agent to explain the policy first, identify the user’s actual goal, and seek permitted alternatives, escalating only when the user explicitly requests it or the issue genuinely exceeds the Agent’s authority. If the new rule reduces unnecessary escalation but causes the Agent to continue handling safety incidents that should be escalated, it has failed regression testing. The value of system Prompt learning lies not in automatically appending more text, but in continually clarifying the scope of rules through production boundary cases.
+
+Skill learning follows the same principle, but with a more localized scope. A Skill can be understood as an on-demand operating manual for a particular job: if multiple experiences collectively form a complete insurance claims process, the system can generate or revise the corresponding Skill. A candidate Skill should not merely summarize one conversation; at minimum, it should specify when to load, prerequisites, operating steps, known pitfalls, validation methods, and source trajectories. The system first searches the existing Skill library for similar capabilities, preferring a local `patch` when the same process already exists and creating a new directory only for a genuinely independent capability. This prevents the library from filling with manuals that differ in name but duplicate one another. Anthropic’s Skill Creator[^anthropic-skill-creator] demonstrates a draft–test–evaluate–revise loop. It addresses how to create and improve a Skill; the harder questions remain what operational evidence is sufficient to trigger creation, how to resolve conflicts, and whether the revision passes domain-specific and old-task regression tests.
+
+> **Experiment 9-9 ★★: Turning Feedback into a Writing Skill**
+>
+> Process the 20 before/after pairs in `data/feedback_pairs.json` in three batches. Extract candidate rules, merge duplicate patterns, detect threshold conflicts, and generate a sourced, scoped `SKILL.md`. Check deterministic rules in code and calibrate LLM rules on ten gold examples.
+>
+> Report detection on the unfinished-task boundary set, false positives on the normal-text holdout, and rule-count growth together. The first real run produced 0/8 detection and 7/8 false positives; after model-external filtering and deterministic fallback it produced 8/8, 0/8, and merged 21 candidates into 8 rules. Implementation: [`ai-style-skill`](../chapter9/ai-style-skill/).
+
+The curved-quote case shows why a Skill should become a data contract rather than a global replacement rule: synthetic examples must be stratified by article type, scope, and programming language, pass code/JSON/protected-region gates, and receive manual audits before SFT. The exact-string case adds a tokenizer audit: encode→decode round-trip, model byte-exact copying, Harness serialization, and tool matching are separate regression layers.
+
+> **Experiment 9-3 ★★: Optimizing System Prompts from Failure Trajectories**
+>
+> **Objective:** Teach an airline customer-service Agent from trajectories in which it escalates too quickly when a user challenges a policy, while demonstrating that the new rule does not break older scenarios that genuinely require escalation.
+>
+> **Procedure:** First run the old-task retention set and the excessive-escalation boundary set separately. `learning_signal.py` decomposes failures into rule adherence, task resolution, and compliant flexibility, while retaining source case IDs. A Coding Agent then reads the existing Prompt and produces exactly one auditable `old_str → new_str` minimal edit: require the Agent to explain the policy, identify the actual goal, and seek compliant alternatives before escalating, while preserving escalation when the user explicitly requests a human or a safety incident occurs. The patch, provenance, target rule, and rationale are written into a candidate manifest.
+>
+> **Three controls:** Compare the initial Prompt, the automatically generated candidate Prompt, and a one-time manually optimized Prompt. All three use the same model and the same retention and boundary tasks. `--quick` only reduces the number of cases; it still makes real calls to the task Agent, LLM Judge, and Coding Agent and must not be reported as an offline simulation.
+>
+> **Release gate and metrics:** A candidate must pass four conditions: a nonempty patch, traceable provenance, measurable improvement on the boundary set, and no degradation on the retention set. Compare boundary-task accuracy, retention-task accuracy, Prompt growth, regressions introduced, and time from failure discovery to candidate generation. Passing the gate produces only `release_to_canary`, never a direct overwrite of the stable Prompt; failure of any condition returns `reject_candidate`.
+>
+> The accompanying implementation is available at [`prompt-auto-optimization`](../chapter9/prompt-auto-optimization/). Offline tests cover diagnosis and release gates, while `--quick` makes real calls to the task Agent, LLM Judge, and Coding Agent.
+
+[^dspy-2023]: Khattab, O., et al. *DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines.* arXiv:2310.03714, 2023.
+
+[^opro-2023]: Yang, C., et al. *Large Language Models as Optimizers.* arXiv:2309.03409, 2023.
+
+[^gepa-2025]: Agrawal, L., et al. *GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning.* arXiv:2507.19457, 2025.
+
+[^karpathy-system-prompt-learning]: Karpathy, A. “We’re missing (at least one) major paradigm for LLM learning … system prompt learning?” X, May 11, 2025. https://x.com/karpathy/status/1921368644069765486
+
+[^anthropic-skill-creator]: Anthropic. *Skill Creator.* 2026. https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md
+
+### Encoding Experience as Programs
+
+When experience describes operations that are stable, repetitive, and verifiable, it is inefficient to have the model reread documentation and reason through them each time. A more appropriate approach is to compile the experience into workflows, tools, or Harness code, turning a one-time exploration into a repeatedly executable program. Chapter 5 explained how Coding Agents read and write files, run tests, and generate systems; this section focuses not on general code generation, but on how an Agent modifies future versions of itself based on its own trajectories.
+
+The modifiable objects extend far beyond new tools. At the operation layer, browser trajectories can be compiled into parameterized workflows, or adapters can be generated for changing APIs. At the control layer, tool routing, retries, circuit breakers, and context compression strategies can be modified. At the validation layer, parameter checks, state validators, and regression tests can be added in response to production failures. At the architecture layer, a Reviewer Agent can be added or the information flow between planning and execution can be changed.
+
+Browser workflows illustrate the value of programmatic experience. They are analogous to recording a spreadsheet macro. The first time an email is sent, a multimodal Agent uses an observe–reason–act loop to find the compose, recipient, subject, body, and send controls. For another email, the process is unchanged; only the recipient and content differ, so there is no need to call the model again to rediscover the entire path from pixels and the DOM. The system compiles the first exploratory trajectory into a small program containing parameters, state checks, and version information.
+
+In the browser setting, the knowledge-distillation process shown in Figure 9-4 becomes a more concrete lifecycle:
+
+1. **Capture the trajectory:** Record navigation, clicks, text entry, and drop-down selection, together with action parameters, the current URL, and element-locator evidence such as XPath, CSS, `id`, `role`, `aria-label`, and `data-testid`. Locator evidence only helps find an element again; it does not prove that the task was completed.
+2. **Parameterize:** Replace literals from the first run with template variables—for example, convert `test@example.com`, the subject, and the body into `{recipient}`, `{subject}`, and `{content}`—while leaving stable actions unchanged. The teaching implementation uses regular expressions and template replacement; a production system may use structured task input or a constrained extraction model.
+3. **Define state checks:** Add checks before and after actions, such as “the send button is visible” and “the URL after navigation belongs to the target site.” Add a final-state check for the workflow as a whole, such as “the sent-mail list contains the new message” or “the test page’s state value changed as expected.” Successfully executing an action is not the same as successfully completing the task; the final check must read the real page or backend state.
+4. **Validate the candidate:** A first success produces only a `candidate`. The system must reset the sandbox account or test site to an independent initial state and replay the candidate in full. It can be published as `validated` only if all before-action, after-action, and final-state checks pass. If a side-effecting task such as sending mail or placing an order has no safe reset callback, the workflow may be retained as an auditable candidate but must not be validated by repeating the action in a production account.
+5. **Match and replay:** When a new task arrives, search the formal capability library for a workflow by intent and keywords, extract the current parameters, and execute it directly with Playwright. Replay requires no step-by-step LLM calls, but it must still wait for elements to become available and complete every state check.
+6. **Invalidate and relearn:** If the target element cannot be found, a state check fails, the API Schema changes, or the final state is wrong, stop subsequent actions immediately, move the old version from the searchable library to the `invalid` area, and fall back to the full Agent for fresh exploration. Retain the old file for audit and comparison, but never let it continue to match silently.
+
+For an email workflow, the compiled result is not merely “click these buttons in order,” but a small program parameterized by recipient, subject, and body: it checks the compose window and fields before sending, checks the success indicator afterward, and finally confirms that the corresponding message appears in the sent list. In PreAct[^preact], such programs delivered an 8.5–13× end-to-end speedup on repeated tasks and required no step-by-step language-model calls during replay. More importantly, process memory needs **before-action validation, after-action validation, and independent pre-storage validation**. Otherwise, the system can produce a dangerous illusion: replay coverage is 100 percent and every button was clicked, yet one field was empty and the task was never actually completed.
+
+> **Experiment 9-4 ★★★: Generating Verifiable Workflows from Browser Trajectories**
+>
+> **Objective:** Determine whether a web Agent can turn one expensive exploration into a reusable workflow and reject an incorrect replay when the page changes, rather than reporting success merely because every action ran.
+>
+> **Four-stage scenario:** In the first stage, run “send a message with the subject ‘Test Email’ to `test@example.com`” on a test mail site or simulated messaging page. The full Agent explores, while a wrapper captures actions, parameters, and page states and produces a `candidate`. In the second stage, call `validation_reset` to restore the sandbox and independently replay the entire workflow; the candidate enters the formal capability library only if all before-action, after-action, and final-state checks pass. In the third stage, perform the same kind of task with a different recipient, subject, and body. The system should match the validated workflow, fill the new parameters, and replay it through Playwright without entering the step-by-step LLM loop. In the fourth stage, change a button locator, page text, or final state and verify that the old workflow immediately becomes `invalid` and returns `fallback_required=True`.
+>
+> **Control design:** A simplified baseline records only whether clicks, text entry, and other actions complete without exceptions. The experimental condition also validates the page before each action, the page after each action, and the final task state. Both conditions use the same trajectories and page changes. Compare their false-positive rates on cases such as “the send button was clicked while a field was empty” and “Save was clicked but the data was not persisted.”
+>
+> **Metrics and acceptance:** Record end-to-end time for initial exploration and replay, number of LLM calls, success rate, false-success rate, workflow match rate, page-change detection rate, and number of fallbacks to relearning. Without a reset callback, a workflow must remain a candidate; a version that fails validation must not be retrievable; parameterized replay must not reuse the first run’s recipient or content; and after a page change, dangerous subsequent actions must stop. Acceleration matters only if all these conditions are satisfied.
+>
+> The accompanying implementation is available at [`browser-use-rpa`](../chapter9/browser-use-rpa/), which provides both a deterministic state-machine demonstration and an execution path that invokes a real browser Agent.
+
+An Agent modifying its own code does not mean that the running process directly overwrites itself. A production system should create a candidate branch from the current stable version, have a Coding Agent generate a minimal patch, and then sequentially run static checks, unit tests, security scans, failure-trajectory replay, and regression tests on old tasks before producing a new version eligible for canary deployment. This turns “self-modification” into an auditable software release process and defines the boundary between Chapters 9 and 5: Chapter 5 provides the capability to modify systems, while this chapter provides a method for self-modification that is triggered by experience and constrained by a validation loop.
+
+Making the patch small is not enough for reliable attribution. Each modification request should also be a **falsifiable change contract** that records the failure evidence, inferred root cause, responsible Harness component, candidate change, behavior expected to improve, existing behavior that may regress, and tests for both. Agentic Harness Engineering describes this in terms of component-, experience-, and decision-level observability: every editable component has a file-level representation; large collections of trajectories are distilled into evidence that can be inspected at increasing levels of detail; and every edit declares an impact prediction before execution, which the next round of results then tests[^ahe-2026]. A higher score can then be connected to a specific mechanism rather than remaining an uninterpretable trial.
+
+The candidate generator should not receive only failed cases. Self-Harness also supplies successful behavior that must be preserved and records of previously rejected modifications[^self-harness-2026]. The former tells the Agent what the repair must not break; the latter prevents it from resubmitting the same failed idea in different words. Failure evidence, success constraints, and prior attempts together define a bounded candidate space and are more useful than indiscriminately loading all source code and raw logs into the modifying Agent.
+
+Tool creation follows the same protocol. Alita[^alita-2025] presents a case in which an Agent must identify the number mentioned immediately after dinosaurs first appear in a YouTube 360 VR video narrated by the voice actor for Gollum in *The Lord of the Rings*. After recognizing that it lacks subtitle-reading capability, the Agent finds and tests `youtube-transcript-api`, wraps it as a new subtitle tool, and extracts the answer `100000000` from the transcript. A new tool enters the capability library only after safety scanning, functional tests, and successful reuse on later tasks. Chapter 4’s proactive tool discovery asks which existing tool fits; Chapter 5 asks how to write a tool; this chapter asks what operational evidence should trigger creation and how a new tool becomes a validated long-term capability.
+
+> **Experiment 9-5 ★★★: Triggering Agent Self-Modification from Failure Trajectories**
+>
+> **Objective:** Given multiple trajectories in which errors marked `retryable=false` are still called repeatedly, determine whether the system can locate the root cause in retry and circuit-breaker code and produce a candidate fix without breaking recovery from transient failures.
+>
+> **Procedure:** The diagnosis module first aggregates the same fault across different tasks. It creates a modification request only after the cross-trajectory support threshold is met and targets `retry_policy.py` in the stable version. The candidate generator reads the failure diagnosis, the transient-failure recovery behavior that must be preserved, previously rejected changes, and the stable source. Before emitting a minimal code diff, it predicts that calls after non-retryable errors should fall while transient-timeout recovery should not. Whether the generator is deterministic or a real LLM Coding Agent, it may write only to an isolated candidate directory. The validation Harness then compiles the candidate, replays the original failure trajectories, verifies that a non-retryable error stops immediately and opens the circuit breaker, and retests that transient timeouts still retry according to the original threshold.
+>
+> **Diagnostic control and metrics:** Treat “add one sentence to the Prompt telling the Agent not to repeat the call” as a conceptual example of choosing the wrong modification layer, demonstrating why a deterministically enforceable retry constraint belongs in code. The executable experiment compares deterministic and LLM patch generators under the same release gate. Record the number of calls after non-retryable errors, transient-error recovery rate, regressions on old tasks, patch size, and candidate acceptance rate.
+>
+> **Acceptance criteria:** Passing every check produces only `release_to_canary`. Failure of any static check, failure replay, or old-task regression returns `reject_candidate`. `release_manifest.json` must record the failure cluster, source trajectories, inferred root cause, target component and file, code diff, expected repair, possible regressions, check results, candidate version, and rollback version. Rejected candidates must retain their failure reasons for the next generation round. The patch-generating Agent must not modify stable code, validators, audit logs, or the gate that approves its own release.
+>
+> The accompanying implementation is available at [`self-modifying-agent`](../chapter9/self-modifying-agent/). It supports either a deterministic candidate generator or a real LLM Coding Agent, with both paths sharing the same release gate.
+
+[^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
+
+[^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
+
+Experiment 9-8 applies the same protocol to the verification layer. Only repeated user corrections, downvotes, and audits pointing to an unconfirmed high-risk operation create a change request; the candidate is written to an isolated directory. Classify dangerous deletions and `git push --force` from tool names and arguments, and bind a one-time confirmation token to the concrete operation. A candidate must pass AST/static checks, boundary replay (including forged and reused tokens), and holdout replay before canary release.
+
+> **Experiment 9-8 ★★: A User-Feedback-Triggered Confirmation Gate for High-Risk Operations**
+>
+> Use the three signal types and control trajectories in `failure_trajectories.json`. The real `gpt-4o-mini` candidate failed unfinished-task replay, normal-operation replay, and one-time-token checks, so the safety gate rejected it. The deterministic candidate passed all checks and received `release_to_canary`; record checks, the release decision, and the stable-directory hash. Implementation: [`harness-safety-gate`](../chapter9/harness-safety-gate/).
+
+### Encoding Experience in Parameters
+
+Knowledge, instructions, and programs all rest on one premise: the target capability can be expressed relatively completely through external symbols. Yet capabilities such as medical-image understanding, natural speech prosody, removing a formulaic “AI feel” from text, and long-horizon planning are difficult to compress into a few rules or workflows. Such capabilities must be written into model parameters through post-training.
+
+Whether a capability should be parameterized is not determined solely by whether the task is stable over the long term. Domain shifts caused by new imaging equipment may still require LoRA or continual fine-tuning; rapidly changing linguistic styles can also be accommodated through periodic preference training. Stability affects update frequency and cost, but the representational nature of the capability determines its primary medium. Conversely, a long-stable rule for approving transfers should not rely solely on parametric memory; server-side code must still provide deterministic guarantees.
+
+Chapter 8 provided a complete discussion of SFT, distillation, and RL, so this section does not repeat it. For continual evolution, the key is to transform evaluated production trajectories into training data: high-quality demonstrations can be used for SFT, explicit preferences can form paired data, and interactions with reliable environmental rewards can be used for RL. Before training, private information must still be removed, erroneous trajectories filtered out, and an independent regression set retained. After training, the system must check whether general capabilities or safety alignment have been forgotten.
+
+Parameter learning usually works in conjunction with external methods. A medical-imaging model can learn visual representations through parameters, obtain the latest guidelines from a knowledge base, and use code to measure lesions and calculate risk. A natural customer-service tone can be shaped at the distributional level through preference training, while a Prompt specifies the current brand identity and user memory adapts communication to individual preferences. Continual evolution does not mean selecting a single answer from among the four methods, but placing each capability in the medium best suited to expressing and governing it.
+
+### From Updating Artifacts to Updating the “Update Method”
+
+The preceding four methods ask **where experience is written**, but continual evolution has another, orthogonal axis: is the system optimizing the contents of an artifact, or the method used to produce, manage, and validate artifacts? Along this axis, the optimization target can expand from **an individual rule or memory → structured context → workflow → Harness code → optimizer code that generates candidate solutions**[^weng-harness-2026]. These are not five new update carriers but five search scales; knowledge, Prompts, Skills, and programs may appear at several of them.
+
+The innermost level changes only artifact content—for example, adding a local rule to a system Prompt after a failed trajectory or adding an exception to an experience document. Such changes have a small blast radius and are easier to attribute and roll back, so they should be the default. Repeatedly asking a model to rewrite an entire Prompt or memory, however, introduces another form of degradation: successive attempts at brevity can gradually erase rare but important details, and interacting constraints can be collapsed into an overgeneral principle. Agentic Context Engineering (ACE) maintains context as a collection of entries with stable identifiers. Generation, reflection, and curation modules propose incremental updates, which deterministic logic merges and deduplicates instead of rewriting an ever-shorter text block each round[^ace-2026]. It is a concrete research example of this chapter's earlier principles of minimal diffs and retained provenance.
+
+At the next level, the optimization target is no longer merely what context contains but how context is constructed. Meta Context Engineering (MCE) separates the two into inner and outer loops: the inner loop optimizes the context artifact for the current task under a given management method, while the outer loop uses results from multiple executions and validations to modify the context operations themselves—search, selection, filtering, and formatting[^mce-2026]. The distinction matters. Editing a retrieval rule changes a content-management mechanism; comparing several retrieval and curation mechanisms and retaining the one with better transfer is learning how to manage context.
+
+The same idea extends to workflows and the entire Harness. AFlow represents workflows composed of multiple LLM calls as code graphs and searches over combinations of nodes and control flow using execution feedback[^aflow-2025]. Meta-Harness has a Coding Agent inspect candidate Harness source, scores, and trajectories to search the code that determines how information is stored, retrieved, and presented[^meta-harness-2026]. Chapter 5 established code as a general language for expressing Agent system structure. The additional point here is that code, together with its evaluation history, can itself become the object of continual search rather than a one-time output.
+
+Higher levels are not automatically better. Searching for a local rule may require only a few edge cases, whereas searching an entire workflow or Harness faces a much larger candidate space, higher evaluation cost, and harder attribution. A clear, recurring fault localized to one component should first receive an auditable local patch. Only when local changes repeatedly fail to address a cross-component problem, or when the current management method itself becomes the bottleneck, is it worth moving outward to the workflow, Harness, or optimizer. At every level, evaluators, permission boundaries, and held-out tests must remain outside the editable scope—the larger the search space, the more important this trusted root becomes.
+
+> **Experiment 9-6 ★★★: Give Hermes This Book: Can It Upgrade Itself?**
+>
+> **Objective:** Test whether an Agent can turn external knowledge into an update to its own capabilities. The experiment supplies no problem statement and no feature checklist. Hermes receives all ten chapters and its own source, then must understand the principles, inspect its implementation, and choose a worthwhile improvement itself.
+>
+> **Design:** The book and source are readable context, while the stable version, independent Reviewer, and acceptance tests remain outside Hermes' editable scope. Hermes must complete **read → compare → choose → change → verify**. If a candidate is rejected, the review becomes input to the next learning round; Hermes cannot bypass the gate and declare success.
+>
+> **Real run:** After reading the book, Hermes independently noticed that its saved trajectories lacked structured evidence that later learning could use directly. It chose to turn execution outcomes into conservative learning signals, then edited its own source and added tests. The first three independent reviews found mismatches with real data formats, persistence paths, and counting semantics. Each finding went back to the original Hermes session for another correction; the fourth review accepted the candidate. Rejection was not the end of the experiment, but part of the improvement loop.
+>
+> **Claim boundary:** This run shows that an Agent can extract principles from long-form knowledge, map them onto its own code, and complete a self-update under external verification. It does not show that the update already improves downstream task success; that requires a separate ablation experiment. Reader Grace contributed the experiment idea.
+
+## Building a Continual-Evolution Closed Loop for Long-Term Operation
+
+The four update methods become continual evolution rather than one-off optimization only when incorporated into the same autonomous loop. Figure 9-5 shows a more robust dual-loop architecture for production systems: the online execution loop only completes tasks and records evidence, without directly rewriting the production Agent; the offline evolution loop aggregates trajectories, diagnoses root causes, generates candidate modifications, and releases new versions only after they pass validation gates. The two loops are connected through versioned experience repositories and evaluation sets.
+
+![Figure 9-5 Dual loops for online execution and offline evolution](images/fig9-5.svg)
+
+Voyager[^voyager-2023] demonstrates a relatively complete continual-evolution loop. In Minecraft, it selects new goals based on its current capabilities, iteratively refines programs using environmental feedback, stores successfully validated code in a skill library, and then combines existing skills to solve harder tasks. An automatic curriculum, executable skills, and environmental validation are all indispensable: with a skill library but no curriculum, the Agent does not know what to learn next; with self-reflection but no environmental validation, the skill library accumulates errors; with exploration but no persistence, every task must still begin from scratch. Although the knowledge, Prompt, tools, and parameters of real-world Agents are more complex, the basic learning process is similar.
+
+More specifically, Voyager consists of three interlocking mechanisms. The **automatic curriculum generator** proposes a suitably challenging next objective from the current inventory, environment, and acquired skills, so exploration does not become random wandering. The **skill library** stores successful programs as retrievable, composable code; an advanced gathering skill, for example, can invoke basic movement and crafting skills. The **iterative prompting mechanism** feeds environmental observations, execution errors, and self-verification results back into the next round of code generation until the task actually passes. Compared with the baselines used in the paper, Voyager obtained 3.3× as many unique items, traveled 2.3× as far, unlocked key technology-tree milestones up to 15.3× faster, and transferred its skill library to new Minecraft worlds. These metrics measure how capability grows with experience rather than how a frozen Agent performs on a single examination.
+
+### From Problem Diagnosis to Experience Consolidation
+
+The same surface-level problem may require different forms of modification. When a customer-service Agent hallucinates fabricated facts, the cause may be missing information in the knowledge base, or the Prompt may fail to require citations. When an Agent falsely promises “it has been completed” before completing a task, the problem can be corrected through instructions or by having the Harness enforce consistency between the response and tool state. The evolution module should first identify the root cause and then select the smallest modification target that is easiest to validate and roll back. Sporadic failures with insufficient evidence should not immediately trigger learning; the system should continue collecting examples instead.
+
+This choice may also change as experience accumulates. A newly discovered strategy can initially be stored as an experience document for retrieval; after repeated validation across multiple cases, it can be promoted to knowledge. Knowledge can be expressed in three ways: rules that can be clearly described in natural language can be consolidated into a Skill; stable procedures that require no natural-language understanding can be compiled into tool code; and capabilities that actually reflect broad, implicit decision-making can enter post-training.
+
+### Validation, Release, and Rollback
+
+Every modification should first produce a candidate capability or candidate Agent rather than directly overwrite the production version. Knowledge documents must be tested to determine whether retrieval improves performance on new tasks; Prompts and Skills must be checked against edge cases and for regressions on previous tasks; programs must be tested in sandboxes and reset environments; and parameter updates must be evaluated for forgetting, safety, and out-of-distribution performance. Even after validation, a new version should be released gradually and monitored on real traffic; if key metrics deteriorate, the system should automatically roll back to a known safe version.
+
+**Validated release and rollback:**
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
 ```
 
-A world model usable for robotics has to do at least three things well:
+Validation must also separate two capabilities that are often conflated. **Harness updating** is the ability to produce valuable persistent changes from trajectories; **Harness benefit** is the task Agent's ability to find, activate, and correctly use those changes later. A Skill may be correct in itself, yet a weaker task model may fail to load it in the right situation or fail to follow it over a long trajectory. Either failure makes the final score look as if no evolution occurred. End-to-end performance alone therefore cannot diagnose the updater. Model-swapping experiments by Lin et al. indicate that the two abilities relate differently to base-model capability[^harness-benefit-2026]. The exact relationship requires validation on more tasks, but evaluating them separately is broadly useful.
 
-- understand the current state;
-- predict the outcomes different actions may bring;
-- pass those predictions to the planner or controller to help them choose.
+Table 9-3 Layered evaluation metrics for continual evolution
 
-A VLM that can only describe video, or a model that can only generate frames, does not automatically become a reliable robot world model. It must also know what the actions are and be able to predict their effect on objects and the environment. V-JEPA 2 represents the route of predicting the future in an internal state, while World-Action Models explicitly learn the "action–future observation" relationship. These models can work alongside a VLA; they need not replace it.[^ch9-16]
+| Metric | Question answered | Primary evidence |
+|---|---|---|
+| Candidate-change validity | Does the updater propose useful changes? | Acceptance rate and gain in independent validation |
+| Artifact activation rate | Does the task Agent load the new Skill, memory, or tool in the right situation? | Retrieval, routing, and tool-call traces |
+| Successful adherence rate | After activation, does the Agent follow the new rule or process? | Action sequences and process verifiers |
+| Held-out task gain | Does the whole system improve on tasks not used during evolution? | Held-out success, quality, and cost |
 
-In practical systems a world model is typically used in three ways:
+For diagnosis, hold a candidate Harness fixed and swap only the task model. If a strong model benefits while a weak model never activates the new artifact, retrieval or routing is the bottleneck. If both activate it but only the strong model executes it correctly, instruction following or long-horizon planning is the bottleneck. If every model regresses, the change itself is more suspect. Conversely, hold the task model fixed and swap the model that proposes changes to compare updater quality directly. This two-way model swap locates where capability budget should be spent more effectively than a single post-evolution score.
 
-1. **Before acting**: compare candidates such as grasping, pushing or waiting, and prefer the lower-risk option;
-2. **During execution**: compare the real observation against the prediction, and on divergence shorten the action, stop, or replan;
-3. **During training**: learn state transitions from video, simulation data and failure trajectories, reducing trial and error on real hardware.
+Evaluation is not an examination performed after learning ends, but an indispensable part of self-evolution. Long-term evaluation should observe at least five types of outcomes simultaneously:
 
-Back to the XLeRobot desk task: if the yellow paper is partly hidden under the red cup, the system can compare candidate skills such as "grab the paper first," "move the cup first" and "approach from another direction." The world model does not need to generate photorealistic robot video; predicting which candidates are more likely to make the paper graspable and which might knock the cup over is already enough to help the planner rank them. Once an action executes, the real camera observation remains the final truth; prediction can inform the choice but cannot replace acceptance.
+- Regression, namely whether new experience conflicts with other existing experience and whether previously successful cases begin to fail;
+- Generalization, namely the improvements produced by new experience in scenarios not yet covered by the test set;
+- Token efficiency, namely the token cost of completing tasks;
+- Safety, namely whether rules, privacy protections, and refusal boundaries drift during evolution;
+- Long-term engineering quality, namely whether maintenance complexity, architectural consistency, ownership boundaries, backward compatibility, and future migration and debugging costs deteriorate.
 
-What a world model gives is not a definite answer but a comparable prediction of "if I do this, what may happen." The further ahead it predicts, the larger the error usually grows, and a future frame that looks realistic may still violate real contact and friction. Practical systems therefore still need short-horizon prediction, real-time observation, an estimate of uncertainty, and an independent hardware safety controller. Generative world models can serve interactive simulation or visualisation, but "can generate video" must not be conflated with "can guide robot action."[^ch9-21]
+Fixing only the current failed case while degrading performance on other existing cases or in new domains does not constitute successful continual learning.
 
-> **Experiment 9-10 ★★: Comparing three autonomous desk-tidying loops in simulation**
+### The Boundary of a Verifiable Loop: When “Done” Does Not Mean “Progress”
+
+The preceding loop works most naturally for Coding, tool use, and business-state changes, where tests, environment state, or deterministic rules can provide rapid feedback. Open-ended research, strategic planning, and complex product design are different: feedback is delayed, there may be no unique correct answer, and the objectives that matter most—research taste, long-term value, and maintainability—are difficult to turn into an immediate score. A Harness can then execute the process flawlessly while merely producing things that look like results rather than advancing the real objective.
+
+Autonomous research is a useful stress test. Trehan and Chopra documented four end-to-end attempts to turn research ideas into papers. Three failed during implementation or evaluation, and only one completed the full pipeline[^llm-scientists-2026]. The failures fall into three groups. First, **implementation drift**: once the proposed method becomes difficult, the Agent retreats toward a familiar implementation from its training distribution that no longer tests the original hypothesis. Second, **epistemic over-optimism**: while the signal may still be noise, the system begins explaining it, patching the method, and announcing a finding, while failures and negative results are more easily ignored. Third, **missing tacit judgment**: an Agent may be able to run experiments without knowing which baseline matters, which anomaly deserves investigation, or when a hypothesis should be abandoned.
+
+These tasks require changes to the evidence and supervision structure, not merely a model that writes better papers:
+
+- **Separate claims from evidence:** Record provenance separately for citations, numbers, methods, and conclusions; the final document is only one rendering of the evidence graph. ScientistOne's Chain-of-Evidence design links each class of claim to auditable sources. This improves traceability but does not by itself make the research question valuable[^scientistone-2026].
+- **Retain negative results:** Write failed experiments, rejected candidates, and stopping reasons to an immutable log with the same retrieval status as successes. Otherwise the evolution module sees only survivors, revisits disproved paths, and learns to interpret ambiguous results as success.
+- **Preserve search diversity:** Open-ended search should not retain only the currently highest-scoring chain. The candidate pool should also preserve some lower-scoring but meaningfully different branches by mechanism, code novelty, or hypothesis type, so that every solution does not converge on the same easy-to-score template.
+- **Move human involvement upward:** Human input is not limited to approving dangerous tool calls. It also includes defining problems, reviewing evaluation criteria, interpreting anomalous results, and deciding when to stop. With ambiguous feedback, these high-level judgments are harder to automate—and more valuable—than taking over individual execution steps.
+
+The same limitation appears in ordinary software engineering. Passing every unit test proves only that currently observable behavior satisfies the tests; it does not prove that the codebase will remain maintainable months later. That is why the previous section treats long-term engineering quality as an independent metric rather than expecting present task success to cover delayed externalities. The ceiling of continual evolution is ultimately set by whether the system can evaluate what it actually cares about, not merely the easiest proxy to measure.
+
+### Safety Boundaries for Continual Evolution
+
+An Agent’s self-evolution capability can turn a single error into a long-term risk. **If Prompt injection in web pages, email, or tool output is summarized as experience**, it may take effect repeatedly across sessions. If a malicious package found through automated search is wrapped as a tool, its impact can spread from one sandbox run to every subsequent task. A defective verifier may also continue approving candidates that appear to improve but actually regress. An Agent self-evolution system must therefore ask not only whether a candidate is stronger, but also who may modify what and what evidence justifies the change.
+
+The first boundary is **separating evidence from instructions**. Raw web pages, tool output, and any LLM summaries of them are untrusted evidence: they must not be executed as instructions or promoted directly into a Skill or similar long-term capability. LLM summarization is a transformation for readability and processing, not a sanitization step that makes the input harmless. The system should extract claims, source locations, and collection times into a fixed schema while preserving the raw content and provenance; extracted strings must never be executed as instructions. Model-produced confidence is likewise an unverified estimate, not an approval gate. Candidates must also pass deterministic schema, allowlist, and provenance checks before being submitted as version-controlled pull requests. A reviewer independent of the generator should compare the change with the original evidence, with human approval added for high-risk Skill promotion.
+
+The second boundary is **separating candidate capabilities from production capabilities**. New knowledge, Prompts, Skills, programs, and parameters first enter a candidate area that cannot serve real traffic. Newly generated code and external dependencies must also pass security checks such as sandbox execution, permission review, supply-chain scanning, and behavioral testing. Only after security checks and regression tests pass may a candidate serve real traffic as a production capability.
+
+The third boundary is that **safety mechanisms must not be self-modifiable**. A business Agent may modify Prompts, Skills, the knowledge base, and tools, but it must not modify the validators, test cases, release thresholds, audit logs, or stable-version backups that approve its own updates. Otherwise, an Agent can disguise regression as progress simply by lowering a test threshold or deleting failing cases.
+
+### Sleep Learning: Consolidation, Forgetting, and Capability Maintenance
+
+“Sleep learning” is a cognitive analogy for offline consolidation; it does not require the process to run literally at night. The online Agent’s primary responsibility is to complete the current task and append immutable evidence. A background learning process reads a batch of new experience during idle periods or when gating conditions are met, compares old and new conclusions, merges duplicates, resolves conflicts, proposes candidate updates, and runs regressions. Separating collection from organization prevents an accidental success, network failure, or malicious input from immediately rewriting long-term capabilities, and it allows consolidation to use larger batches and cheaper models.
+
+A typical sleep-learning cycle has five steps:
+
+1. **Trigger:** Reach a threshold for elapsed time, number of new trajectories, storage use, or error frequency, while confirming that no high-priority online task is running.
+2. **Orient:** Read the production knowledge, Prompt, and Skill directories and their versions to understand existing capabilities and immutable boundaries.
+3. **Collect and consolidate:** Find new signals in recently evaluated trajectories, merge duplicates, mark conflicts and applicability conditions, and prefer local patches.
+4. **Validate and approve:** Evaluate candidates on transfer, retention, and safety sets; high-risk writes wait for human approval.
+5. **Prune and index:** Update retrieval indexes and mark capabilities that are long unused or contradicted by new evidence as expired, archived, or deleted, while retaining provenance and rollback versions.
+
+**Sleep-time consolidation:**
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
+User memory is the most intuitive example, but it must be distinguished from action experience. Claude Code’s auto memory maintains a `MEMORY.md` index and topic-specific detail files for each project. At session startup it loads only a bounded prefix of the index and reads the remaining content on demand; when the index approaches its limit, the Agent is instructed to merge or move details elsewhere. This shows that even plain-text memory requires capacity limits, layered loading, and active organization. The currently documented mechanism primarily writes memory during sessions and should not simply be equated with a fixed nightly background task[^claude-code-memory].
+
+Hermes provides a more complete example of background evolution. It separates long-term information into bounded `MEMORY.md` and `USER.md` files, SQLite/FTS5 search over prior sessions, on-demand Skills, and optional external memory providers such as Honcho. Session search returns original messages rather than first summarizing them with an LLM, keeping retrieval distinct from generation and auditable. When a task contains many tool calls, recovers from an error or dead end, receives a user correction, or discovers a non-obvious workflow, a background review can create or locally revise a Skill; memory and Skill writes can also pass through an approval gate. A separate Curator tracks Skill usage, staleness, and archival status, performs deterministic pruning while idle, and may optionally invoke an LLM to merge content. It snapshots changes first so that incorrect consolidation can be rolled back[^hermes-memory]. This turns “record–consolidate–validate–prune” from a metaphor into an operational capability lifecycle.
+
+Continual evolution does not mean allowing knowledge, Prompts, and tools to grow without limit. The context corruption discussed in Chapter 2 reappears over longer timescales: experience documents conflict with one another, Prompts become overwhelmed by boundary rules, Skill libraries accumulate duplicate capabilities, and repeated fine-tuning causes catastrophic forgetting. The system therefore requires periodic offline consolidation:
+
+- Merge duplicate experience while retaining provenance and version information;
+- Move local rules from the global Prompt into domain-specific Skills to keep the global Prompt clean;
+- Keep Prompts and Skills clearly structured, like a handbook for new employees, and avoid enumerations resembling “99 ironclad rules.”
+- Revalidate tools that have not been used for a long time;
+- Delete knowledge invalidated by new evidence;
+- Retrain LoRA from the original base model.
+
+> **Experiment 9-7 ★★★: Evaluating Whether an Agent Is Continually Evolving**
 >
-> Put the task, object state, success conditions and five tools of experiment 9-9 into the desktop simulator unchanged, replacing only the real XLeRobot actuator with a controllable simulated one, and let grasps occasionally suffer recoverable transient failures. This allows three strategies to be compared without changing the problem.
+> **Objective:** Distinguish among three long-term behaviors—saving one piece of feedback, merely appending forever, and genuinely updating, transferring, and retaining capabilities—so that repeatedly running the same tasks is not mistaken for continual learning.
 >
-> **Open-loop execution** generates the full action sequence once and never observes again midway; **step-by-step checking** re-reads the state after every `pick` and `place` and retries only the current skill on failure; **predictive execution** adds a short-horizon world model, comparing the expected outcomes of candidate skills before choosing the next step. The experiment compares task success rate, tool-call overhead and failure-recovery ability, and checks that every final success is confirmed by a fresh `verify_state` observation.
+> **Four-stage task stream:** The learning stage presents refund, identity-verification, and baggage-policy tasks that share latent patterns. The transfer stage changes the phrasing, user, and local environment to test whether old experience applies to new tasks. The rule-change stage updates the baggage limit from 20 kg to 23 kg and requires the system to replace or retire obsolete knowledge. The retention stage retests unchanged capabilities and currently valid rules to measure forgetting. External memory may be updated only after each feedback-bearing task ends; the expected action for the current task must never be leaked to the Agent in advance.
 >
-> The point is not to prove that a small simulated world model equals a real robot's physics model, but to verify a more basic relationship: an open-loop plan carries a single local failure all the way to the end of the task, step-by-step checking can recover, and action prediction can further help rank candidate skills. Whether the task is truly finished must still be decided by environment feedback.
+> **Control groups:** `static` persists no feedback. `append_only` remembers the first version of a rule but cannot resolve conflicts or retire it. `evolving` stores versions and replaces old rules with new evidence. The reference implementation verifies that the evaluation Harness can distinguish these behaviors. A real experiment can put an LLM through the same ordered stream of 14 tasks, but outcomes must be computed by a Harness outside the model.
+>
+> **Metrics and acceptance:** Report accuracy and the learning curve for each stage, and separately calculate transfer accuracy, tasks needed to recover after a new rule, old-capability retention, negative-transfer rate, safety-Rubric pass rate, and Token, latency, and storage costs. For real systems that update Prompts, Skills, or a Harness, also record candidate-change validity, artifact activation rate, and successful adherence rate, so that “the update was correct but never loaded” is not misclassified as a failed update. Even an Agent with high final accuracy does not qualify as continually evolving if it still cites retired rules, succeeds through unsafe shortcuts, or forgets existing capabilities after an update.
+>
+> The accompanying implementation is available at [`self-evolution-eval`](../chapter9/self-evolution-eval/). By default, it compares three reference Agents: updatable, append-only, and static. Use `--profile llm` to have a real LLM undergo the same long-term task stream.
 
-### From Simulation to a Real Robot
+[^claude-code-memory]: Anthropic, “How Claude remembers your project”, 2026. https://code.claude.com/docs/en/memory
 
-Even if experiment 9-10 is stable in the simulator, that does not imply the real XLeRobot of experiment 9-9 will succeed the same way. Going from simulation to a real robot is not a matter of swapping in yet another controller, but of handling the differences between two environments. Training may use teleoperation data, video data or simulated interaction data; in real deployment the same red cup, yellow paper, tray and bin appear against different backgrounds, lighting, camera positions and occlusion relationships, and the arm additionally meets different friction, sensor noise and actuator latency. Once those differences are large enough, motions learned in simulation may fail in reality.
+[^hermes-memory]: Nous Research, *Hermes Agent Documentation: Persistent Memory, Skills System, and Curator*, 2026. https://hermes-agent.nousresearch.com/docs/user-guide/features/memory ; https://hermes-agent.nousresearch.com/docs/user-guide/features/skills ; https://hermes-agent.nousresearch.com/docs/user-guide/features/curator
 
-> **Experiment 9-11 ★★★: A cross-environment RGB test on the same desk task**
->
-> Keep using the basic "move the object to its target" problem in simulation, treating each sample as one local decision within desk tidying: from the RGB frame, judge which direction to approach the object from, or whether it can already be grasped. Train four visual policies with identical structure: one sees only a fixed scene, one varies the background, one varies object appearance, and the last varies background, appearance, lighting and noise together.
->
-> All policies are tested in the original environment and in the changed one, comparing action-decision accuracy before and after the visual conditions change. The question here is not "is the simulator already equal to the real XLeRobot," but a narrower one: does actively widening the range of visual variation during training help the same cup–tray, paper–bin task adapt to a new camera view? Even if the result improves, real deployment still requires real camera calibration, actuator testing and a complete safety loop.[^ch9-6]
+[^voyager-2023]: Wang, G., et al. *Voyager: An Open-Ended Embodied Agent with Large Language Models.* arXiv:2305.16291, 2023.
+
+[^weng-harness-2026]: Weng, Lilian. “Harness Engineering for Self-Improvement.” *Lil’Log*, 2026. https://lilianweng.github.io/posts/2026-07-04-harness/
+
+[^ace-2026]: Zhang, Qizheng, et al. *Agentic Context Engineering: Evolving Contexts for Self-Improving Language Models.* ICLR 2026. arXiv:2510.04618.
+
+[^mce-2026]: Ye, Haoran, et al. *Meta Context Engineering via Agentic Skill Evolution.* arXiv:2601.21557, 2026.
+
+[^aflow-2025]: Zhang, Jiayi, et al. *AFlow: Automating Agentic Workflow Generation.* ICLR 2025. arXiv:2410.10762.
+
+[^meta-harness-2026]: Lee, Yoonho, et al. *Meta-Harness: End-to-End Optimization of Model Harnesses.* arXiv:2603.28052, 2026.
+
+[^ahe-2026]: Lin, Jiahang, et al. *Agentic Harness Engineering: Observability-Driven Automatic Evolution of Coding-Agent Harnesses.* arXiv:2604.25850, 2026.
+
+[^self-harness-2026]: Zhang, Hangfan, et al. *Self-Harness: Harnesses That Improve Themselves.* arXiv:2606.09498, 2026.
+
+[^harness-benefit-2026]: Lin, Minhua, et al. *Harness Updating Is Not Harness Benefit: Disentangling Evolution Capabilities in Self-Evolving LLM Agents.* arXiv:2605.30621, 2026.
+
+[^llm-scientists-2026]: Trehan, Dhruv and Paras Chopra. *Why LLMs Aren't Scientists Yet: Lessons from Four Autonomous Research Attempts.* arXiv:2601.03315, 2026.
+
+[^scientistone-2026]: Meng, et al. *ScientistOne: Towards Human-Level Autonomous Research via Chain-of-Evidence.* arXiv:2605.26340, 2026.
 
 ## Chapter Summary
 
-On the surface the three scenarios could hardly differ more, yet the twin hurdles of latency and multimodality shadow them all. Voice Agents have evolved from serial pipelines to end-to-end and full-duplex systems, and from separate fast and slow thinking to thinking while speaking. Computer Use now approaches human accuracy on benchmarks like OSWorld, but it takes far more steps than a human, and each step takes longer as the task progresses—an efficiency gap with no systematic solution yet. For robots performing visually guided manipulation tasks, the bottleneck has moved from hardware to the VLA control layer's ability to generalize across tasks (tactile sensing and dexterous hands remain unresolved hardware limitations). The next chapter turns to collaboration among multiple Agents—a challenge of a different dimension.
+Continual learning is becoming one of the most important capabilities of Agents, but today's models still cannot perform it reliably on their own. Contextual adaptation during inference does not persist automatically, while unvalidated online parameter updates amplify noise, attacks, and capability drift. The more practical approach today is therefore to build a verifiable learning system around the model.
 
-## Thought Questions
+An Agent obtains learning signals from interaction and evaluation, then updates knowledge, Prompts, Skills, programs, or model parameters according to how the capability is represented. The system can also optimize the methods used to manage and generate these artifacts, but it should prefer local changes that are attributable, verifiable, and reversible.
 
-1. ★★ The end-to-end model for voice Agents merges ASR-LLM-TTS into a single model, reducing latency but losing modularity. If the end-to-end model makes an error in a specific stage (e.g., speech recognition), debugging and fixing it is much harder than in a serial pipeline. How would you design an observability system for an end-to-end voice Agent?
-2. ★ Step-Audio R1 achieves "thinking while speaking" through the MPS dual-brain architecture. However, humans, when "thinking while speaking," often say things before they have fully thought them through, self-correct, or use filler words. Should an Agent's "thinking while speaking" mimic these human characteristics?
-3. ★★ SoM (Set-of-Mark) and its structured variants (DOM element indexing) convert Computer Use's visual localization from open-ended coordinate prediction to closed-set ID selection, but they all require detecting and annotating UI elements first—whether via a segmentation model or the DOM. If the interface contains non-standard controls or dynamically changing elements, the annotations may be incomplete or inaccurate. In such cases, should we fall back to coordinate prediction?
-4. ★★ Thousand-dollar robot platforms like XLeRobot make teleoperation data collection inexpensive. However, the quality of teleoperation data depends heavily on the operator's skill. How would low-quality data from an unskilled operator affect the training of a VLA model? How can low-quality data be automatically filtered during the data collection phase?
-5. ★★★ This chapter covers three interaction modalities: voice, Computer Use, and robotics. A common trend across these modalities is the evolution from serial pipelines to end-to-end models. If this trend continues, what might the Agent interaction layer look like in five years?
-6. ★★ DOM/Accessibility Tree element indexing works well on standard web applications, but an increasing number of software interfaces (Canvas/WebGL rendering, cross-platform custom-drawn controls) do not provide accessible structured information, relying solely on visual annotation or coordinate prediction. Do you think Computer Use should bet on a purely visual approach, or maintain both structured and visual paths? What are the costs and benefits of maintaining both paths?
-7. ★★ VLA models use action chunking—as mentioned in the text, π₀'s typical configuration generates 25-50 future actions at 50Hz—to hide inference latency within execution time. However, if the environment changes suddenly during execution (e.g., an object is moved), the pre-generated action sequence becomes invalid. How can we balance the efficiency advantage of action chunking with the need for responsiveness to environmental changes?
-8. ★★★ All three scenarios in this chapter (voice, Computer Use, robotics) face the latency problem of the "perceive-think-act" loop and are evolving toward parallelized fast and slow thinking. In voice, this manifests as "correcting after misspeaking"; in Computer Use, as "clicking first, then looking"; in robotics, as "taking a step, then looking." How can we ensure that these actions based on fast thinking do not lead to irreversible consequences?
-[^ch9-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
-[^ch9-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。
-[^ch9-1]: XLeRobot, "Teleop documentation". https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
-[^ch9-2]: Google DeepMind, "Gemini Robotics-ER 1.5". https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, "LLM Agent control". https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. The upstream XLeRobot example shows how the model and tool calls are orchestrated; this section keeps the same orchestration principle but restricts the action tools to calibrated desktop grasp, place, check and stop primitives.
-[^ch9-6]: LeRobot, "Sim2Real tutorial". https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
-[^ch9-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246
+Continual evolution should separate online execution from offline learning: record evidence online; generate and validate candidate updates offline; then release, consolidate, or roll them back gradually. This loop is most reliable when outcomes are automatically verifiable. For open-ended tasks with ambiguous objectives and delayed feedback, people must still participate in problem definition and the design of evaluation criteria.
+
+## Questions for Reflection
+
+1. ★★ An experience document is supported by three successful trajectories and one failed trajectory. The failure occurred with a newer API version. How should the system determine whether the experience has been invalidated or its applicability conditions have changed?
+2. ★★ A customer-service Agent’s user satisfaction increases, but its rate of rule violations also rises. Why can satisfaction not serve as the sole learning signal? How would you design guardrail metrics?
+3. ★★★ The same “false promise” problem can be mitigated through a Prompt, Harness checks, or parameter training. What evidence would you use to choose where to make the modification?
+4. ★★★ An Agent may modify tools and validators, but it should not be allowed to modify the trusted root that approves its own updates. How would you separate the permissions and code boundaries of these two parts?
+5. ★★ As the experience knowledge base grows, retrieval errors and knowledge conflicts may offset the benefits of learning. How should versioning, freshness, and retirement mechanisms be designed?
+6. ★★★ Parameter learning is effective for natural-language style but struggles to guarantee strict business rules. Design a continual-evolution scheme for medical customer service that coordinates parameters, knowledge, Skills, and code-level constraints.

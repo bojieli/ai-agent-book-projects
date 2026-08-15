@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 480" width="780" height="480" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="5" markerHeight="4" refX="5" refY="2" orient="auto"><polygon points="0 0, 5 2, 0 4" fill="#333333"/></marker><marker id="ah-light" markerWidth="5" markerHeight="4" refX="5" refY="2" orient="auto"><polygon points="0 0, 5 2, 0 4" fill="#999999"/></marker></defs>
+
+<rect x="20" y="55" width="350" height="310" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="32" y="73" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">Q-learning Agent</text>
+<rect x="410" y="55" width="350" height="310" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="422" y="73" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">LLM Agent（Kimi K2）</text>
+<rect x="35" y="85" width="320" height="48" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="195.0" y="109.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">狀態：雜湊編碼 0x3A7F</text>
+<text x="195" y="123" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">room=2, items=[key], doors=[N]</text>
+<rect x="35" y="147" width="320" height="48" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="195.0" y="171.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Q 表查詢</text>
+<text x="195" y="185" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">145 個狀態 × 7 個動作 = 1015 條目</text>
+<line x1="195" y1="135" x2="195" y2="145" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="35" y="209" width="320" height="48" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="195.0" y="233.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">ε-貪婪選擇</text>
+<text x="195" y="247" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">ε=0.1 → 90% 最優 / 10% 隨機</text>
+<line x1="195" y1="197" x2="195" y2="207" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="35" y="271" width="320" height="48" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="195.0" y="295.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">動作：整數 ID</text>
+<text x="195" y="309" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">a=3 → &quot;向北移動&quot;（無語義理解）</text>
+<line x1="195" y1="259" x2="195" y2="269" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="425" y="85" width="320" height="48" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="585.0" y="109.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">狀態：自然語言描述</text>
+<text x="585" y="123" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;儲藏室有紅鑰匙，北門被鎖&quot;</text>
+<rect x="425" y="147" width="320" height="48" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="585.0" y="171.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM 推理 + 經驗緩衝</text>
+<text x="585" y="185" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">推理：&quot;門被鎖→需要鑰匙→拿鑰匙&quot;</text>
+<line x1="585" y1="135" x2="585" y2="145" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="425" y="209" width="320" height="48" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="585.0" y="233.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">語義動作選擇</text>
+<text x="585" y="247" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">理解概念關係，有目的地決策</text>
+<line x1="585" y1="197" x2="585" y2="207" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="425" y="271" width="320" height="48" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="585.0" y="295.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">動作：結構化指令</text>
+<text x="585" y="309" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">{&quot;action&quot;:&quot;pick_up&quot;,&quot;target&quot;:&quot;red_key&quot;}</text>
+<line x1="585" y1="259" x2="585" y2="269" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="30" y="382" width="720" height="105" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="390" y="404" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">效能對比</text>
+<text x="200" y="424" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">指標</text>
+<text x="380" y="424" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Q-learning</text>
+<text x="600" y="424" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM Agent</text>
+<text x="200" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">首次通關</text>
+<text x="380" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">~7000 episodes</text>
+<text x="600" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">第 1 局（17 步）</text>
+<text x="200" y="460" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">最終勝率</text>
+<text x="380" y="460" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">100%（10K ep 後）</text>
+<text x="600" y="460" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">~90%（即時）</text>
+<text x="200" y="478" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">計算成本</text>
+<text x="380" y="478" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">10 秒 / 10K ep</text>
+<text x="600" y="478" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">1-2 分鐘 / 局</text>
+</svg>

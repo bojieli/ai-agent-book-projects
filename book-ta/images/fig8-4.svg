@@ -1,52 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 380" width="1000" height="380" style="background:#ffffff">
-  <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 Z" fill="#33434d"/></marker>
-    <style>
-      .t{font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;fill:#26343c}
-      .h{font-size:19px;font-weight:700}
-      .s{font-size:15px;fill:#52636d}
-      .box{fill:#f5f7f8;stroke:#33434d;stroke-width:2}
-      .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
-      .line{fill:none;stroke:#33434d;stroke-width:2;marker-end:url(#arrow)}
-    </style>
-  </defs>
-  <text x="500" y="30" text-anchor="middle" class="t h">அனுபவத்தை அறிவாக்குதல்: பாதைகள் சான்று, ஆவணமே மறுபயன்பாட்டு அலகு</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 330" width="780" height="330" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
 
-  <rect x="22" y="78" width="168" height="96" rx="8" class="box"/>
-  <text x="106" y="111" text-anchor="middle" class="t h">மூலப் பாதை</text>
-  <text x="106" y="139" text-anchor="middle" class="t s" style="font-size:10.5px">செயல்கள், முடிவுகள், சூழல்</text>
-  <text x="106" y="160" text-anchor="middle" class="t s">மாறாத சான்று</text>
-
-  <rect x="215" y="78" width="168" height="96" rx="8" class="box"/>
-  <text x="299" y="111" text-anchor="middle" class="t h" style="font-size:16.5px">ஒற்றை மதிப்பீடு</text>
-  <text x="299" y="139" text-anchor="middle" class="t s" style="font-size:11px">வெற்றி, தோல்வி, சிட்டைகள்</text>
-  <text x="299" text-anchor="middle" class="t s" y="151.3" style="font-size:15px">சான்றின் இடத்தைத்</text><text x="299" text-anchor="middle" class="t s" y="168.7" style="font-size:15px">தக்கவைக்கும்</text>
-
-  <rect x="408" y="63" width="184" height="126" rx="8" class="accent"/>
-  <text x="500" y="97" text-anchor="middle" class="t h" style="font-size:12px">பாதைகளுக்கிடையே ஒப்பீடு</text>
-  <text x="500" y="128" text-anchor="middle" class="t s" style="font-size:14px">ஒத்த பணிகளைத் திரட்டு</text>
-  <text x="500" text-anchor="middle" class="t s" y="142.59" style="font-size:14.5px">வெற்றியையும்</text><text x="500" text-anchor="middle" class="t s" y="159.41" style="font-size:14.5px">தோல்வியையும் ஒப்பிடு</text>
-  <text x="500" text-anchor="middle" class="t s" y="166.75" style="font-size:12.5px">பொதுத்தன்மையையும்</text><text x="500" text-anchor="middle" class="t s" y="181.25" style="font-size:12.5px">எல்லைகளையும் பிரித்தெடு</text>
-
-  <rect x="617" y="63" width="184" height="126" rx="8" class="accent"/>
-  <text x="709" y="97" text-anchor="middle" class="t h">Markdown ஆவணம்</text>
-  <text x="709" y="128" text-anchor="middle" class="t s" style="font-size:9px">பொருந்தும் சூழல்களும் உத்தியும்</text>
-  <text x="709" text-anchor="middle" class="t s" y="143.75" style="font-size:12.5px">விதிவிலக்குகள்,</text><text x="709" text-anchor="middle" class="t s" y="158.25" style="font-size:12.5px">தடைப்பகுதிகள், மூலங்கள்</text>
-  <text x="709" y="174" text-anchor="middle" class="t s" style="font-size:10px">பதிப்பும் சரிபார்ப்பு நேரமும்</text>
-
-  <rect x="826" y="78" width="152" height="96" rx="8" class="box"/>
-  <text x="902" text-anchor="middle" class="t h" y="102.01" style="font-size:15.5px">மீட்டெடுத்துப்</text><text x="902" text-anchor="middle" class="t h" y="119.99" style="font-size:15.5px">பயன்படுத்து</text>
-  <text x="902" text-anchor="middle" class="t s" y="131.46" style="font-size:13px">புதிய பணிகளுக்குத்</text><text x="902" text-anchor="middle" class="t s" y="146.54" style="font-size:13px">தேவைக்கேற்ப ஏற்று</text>
-  <text x="902" text-anchor="middle" class="t s" y="152.17" style="font-size:13.5px">தொடர்ந்து</text><text x="902" text-anchor="middle" class="t s" y="167.83" style="font-size:13.5px">பின்னூட்டம் தரும்</text>
-
-  <path d="M190 126 H213" class="line"/>
-  <path d="M383 126 H406" class="line"/>
-  <path d="M592 126 H615" class="line"/>
-  <path d="M801 126 H824" class="line"/>
-
-  <path d="M902 174 V244 H500 V191" class="line" stroke-dasharray="7 5"/>
-  <text x="700" y="270" text-anchor="middle" class="t s">புதிய சான்று பழைய அறிவைத் திருத்தும், வரையறுக்கும் அல்லது நீக்கும்</text>
-
-  <rect x="215" y="302" width="586" height="48" rx="8" fill="#fafbfb" stroke="#9aa8af"/>
-  <text x="508" text-anchor="middle" class="t s" y="325.33" style="font-size:11.5px">மூன்றாம் அத்தியாயத்தின் பிரித்தெடுப்பு மற்றும் மீட்டெடுப்புக் கட்டமைப்பைப் பகிர்கிறது;</text><text x="508" text-anchor="middle" class="t s" y="338.67" style="font-size:11.5px">இவ்வத்தியாயம் பாதை மதிப்பீட்டையும் நடத்தை மேம்பாட்டு வளையத்தையும் சேர்க்கிறது</text>
+<text x="390" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Q(s,a) ← Q(s,a) + α [ r + γ max Q(s',a') − Q(s,a) ]</text>
+<text x="390" y="108" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">                              TD Target                 Current Estimate</text>
+<rect x="30" y="155" width="720" height="170" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="390" y="177" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Concrete example: Agent picks up the red key in the storage room</text>
+<text x="80" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Current state s</text>
+<text x="80" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Storage room</text>
+<text x="80" y="250" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Holding: empty</text>
+<text x="230" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Action a</text>
+<text x="230" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Pick up red key</text>
+<text x="370" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Reward r</text>
+<text x="370" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">+5</text>
+<text x="510" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">New state s'</text>
+<text x="510" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Storage room</text>
+<text x="510" y="250" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Holding: red key</text>
+<text x="670" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">max Q(s',a')</text>
+<text x="670" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">0.63</text>
+<text x="670" y="250" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">(Open door north)</text>
+<text x="50" y="283" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Calculation:</text>
+<text x="110" y="283" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Q(storage room, pick up key) ← 0.25 + 0.2 × [5 + 0.99×0.63 − 0.25]</text>
+<text x="110" y="307" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">                    = 0.25 + 0.2 × [5.624 − 0.25] = 0.25 + 1.075 = 1.325</text>
+<text x="150" y="345" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">TD error = 5.374</text>
+<text x="400" y="345" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">→ Positive update: Q value increases significantly</text>
+<text x="660" y="345" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Reward propagation</text>
 </svg>

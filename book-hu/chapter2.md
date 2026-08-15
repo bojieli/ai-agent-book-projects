@@ -804,7 +804,7 @@ Egy gyakori tévhit tisztázásra szorul: a „KV-gyorsítótár-barát” nem j
 
 ### A készségek és az eszközök kapcsolata
 
-A kontextuskezelés szempontjából a Skills mechanizmus rendkívül KV-gyorsítótár-barát. Ha minden speciális kódeszköz definícióját a rendszerpromptba tennénk, a növekvő eszközszám sok tokent fogyasztana, és zavarná a modell figyelmét. A Skill + általános végrehajtó modellben viszont az eszközkészlet kicsi marad – amint az 5. fejezet mutatja, mindössze hét alapvető eszközre van szükség –, a Skill tartalma pedig a fent leírt progresszív közzététellel, igény szerint töltődik be, anélkül hogy érintené a gyorsítótárazott előtagot. A 4. fejezet részletes összehasonlítást és választási keretet ad, a 8. fejezet pedig azt vizsgálja, hogyan dönti el egy folyamatosan fejlődő ügynök, hogy egy tapasztalatot tudásként, utasításként, programként vagy modellparaméterként rögzítsen.
+A kontextuskezelés szempontjából a Skills mechanizmus rendkívül KV-gyorsítótár-barát. Ha minden speciális kódeszköz definícióját a rendszerpromptba tennénk, a növekvő eszközszám sok tokent fogyasztana, és zavarná a modell figyelmét. A Skill + általános végrehajtó modellben viszont az eszközkészlet kicsi marad – amint az 5. fejezet mutatja, mindössze hét alapvető eszközre van szükség –, a Skill tartalma pedig a fent leírt progresszív közzététellel, igény szerint töltődik be, anélkül hogy érintené a gyorsítótárazott előtagot. A 4. fejezet részletes összehasonlítást és választási keretet ad, a 9. fejezet pedig azt vizsgálja, hogyan dönti el egy folyamatosan fejlődő ügynök, hogy egy tapasztalatot tudásként, utasításként, programként vagy modellparaméterként rögzítsen.
 
 > **2-6. kísérlet ★★: Készítsen prezentációt papírból ügynöki készségekkel**
 >
@@ -1068,7 +1068,7 @@ A fenti kísérlet bemutatja a tömörítési stratégiák közötti teljesítm�
 
 ### Tömörítési Stratégiák Tervezési Elvei
 
-Már elemeztük a tömörítés két motivációját – a hossz szabályozása és az érvelés minőségének javítása – valamint azt a belső mechanizmust, hogy "a kontextuson belüli tanulás lényegében visszakeresés." Ennek alapján négy elvet desztillálhatunk, amelyek irányítják a konkrét tömörítési stratégiák tervezését. Az itt tárgyalt tömörítés a jelenlegi feladatot szolgálja; amikor több feladatból származó trajektóriákat kell offline konszolidálni tartós tapasztalattá, a probléma folyamatos evolúcióvá válik, amelyet a 8. fejezet tárgyal.
+Már elemeztük a tömörítés két motivációját – a hossz szabályozása és az érvelés minőségének javítása – valamint azt a belső mechanizmust, hogy "a kontextuson belüli tanulás lényegében visszakeresés." Ennek alapján négy elvet desztillálhatunk, amelyek irányítják a konkrét tömörítési stratégiák tervezését. Az itt tárgyalt tömörítés a jelenlegi feladatot szolgálja; amikor több feladatból származó trajektóriákat kell offline konszolidálni tartós tapasztalattá, a probléma folyamatos evolúcióvá válik, amelyet a 9. fejezet tárgyal.
 
 - **Az Információérték Nem Egyenletes Eloszlása**: A kulcsfontosságú döntési pontok, mint a személyi listák, nagyobb értékkel bírnak, mint a támogató bizonyítékok, mint a hírrészletek; a támogató bizonyítékok nagyobb értékkel bírnak, mint a redundáns zaj, mint a navigációs sávok és lábléc hirdetések.
 - **Szemantikai Integritás**: "Sutskever elhagyta az OpenAI-t 2024 májusában" nem tömöríthető "Sutskever elhagyta" formára – az idő és a cég neve kritikus, nem alku tárgyát képező információ.

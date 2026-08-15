@@ -1,66 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 430" width="1000" height="430" style="background:#ffffff">
-  <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
-      <path d="M0,0 L10,4 L0,8 Z" fill="#33434d"/>
-    </marker>
-    <style>
-      .t{font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;fill:#26343c}
-      .h{font-size:20px;font-weight:700}
-      .s{font-size:15px;fill:#52636d}
-      .label{font-size:13px;font-weight:700;fill:#2f617a}
-      .value{font-size:15px;fill:#3f515c}
-      .box{fill:#f5f7f8;stroke:#33434d;stroke-width:2}
-      .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
-      .line{fill:none;stroke:#33434d;stroke-width:2;marker-end:url(#arrow)}
-    </style>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 380" width="780" height="380" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
 
-  <text x="500" y="30" text-anchor="middle" class="t h">மூன்று அடுக்கு பாதை சரிபார்ப்பு: சான்று நிஜச் சூழலிலிருந்து வரட்டும்</text>
-
-  <!-- 三类验证器 -->
-  <rect x="30" y="76" width="245" height="82" rx="8" class="box"/>
-  <text x="152.5" y="107" text-anchor="middle" class="t h" style="font-size:18.5px">முடிவு சரிபார்ப்பான்</text>
-  <text x="152.5" y="135" text-anchor="middle" class="t s" style="font-size:11px">சோதனைகள், தொகைகள், ஆர்டரின் இறுதி நிலை</text>
-
-  <rect x="30" y="174" width="245" height="82" rx="8" class="box"/>
-  <text x="152.5" y="205" text-anchor="middle" class="t h" style="font-size:16px">செயல்முறை சரிபார்ப்பான்</text>
-  <text x="152.5" y="233" text-anchor="middle" class="t s" style="font-size:11px">கொள்கை, அனுமதி, செயல்கள், உறுதிமொழிகள்</text>
-
-  <rect x="30" y="272" width="245" height="82" rx="8" class="accent"/>
-  <text x="152.5" y="303" text-anchor="middle" class="t h">LLM Rubric</text>
-  <text x="152.5" y="331" text-anchor="middle" class="t s" style="font-size:9px">இயல்பு, சுருக்கம், விதிக்கு உட்பட்ட மாற்று வழி</text>
-
-  <!-- 结构化评价：改用纵向字段，避免中文字体宽度导致双列重叠 -->
-  <rect x="342" y="62" width="320" height="340" rx="10" class="accent"/>
-  <text x="502" y="97" text-anchor="middle" class="t h" style="font-size:16.5px">கட்டமைக்கப்பட்ட பாதை மதிப்பீடு</text>
-  <line x1="374" y1="117" x2="630" y2="117" stroke="#89a0ac"/>
-
-  <text x="376" y="145" class="t label">பணி முடிவு</text>
-  <text x="376" y="168" class="t value">வெற்றி, பகுதி வெற்றி அல்லது தோல்வி</text>
-
-  <text x="376" y="198" class="t label">பரிமாண வாரியான மதிப்பீடு</text>
-  <text x="376" y="221" class="t value" style="font-size:12px">மொத்தம் மட்டுமல்ல, ஒவ்வொன்றுக்கும் மதிப்பெண்</text>
-
-  <text x="376" y="251" class="t label">சான்றின் இடம்</text>
-  <text x="376" y="274" class="t value" style="font-size:13px">உரையாடல் சுற்றையும் கருவி நிலையையும் குறி</text>
-
-  <text x="376" y="304" class="t label">தோல்விச் சிட்டைகள்</text>
-  <text x="376" y="327" class="t value" style="font-size:12px">பிந்தைய கண்டறிதலுக்கு சிக்கல் வகையை வைத்திரு</text>
-
-  <line x1="374" y1="348" x2="630" y2="348" stroke="#b6c7cf"/>
-  <text x="502" y="378" text-anchor="middle" class="t s" style="font-size:14.5px">சான்று போதாதபோது மதிப்பிட மறுக்கலாம்</text>
-
-  <!-- 供进化模块使用的诊断信号 -->
-  <rect x="712" y="119" width="258" height="202" rx="10" class="box"/>
-  <text x="841" y="156" text-anchor="middle" class="t h" style="font-size:13.5px">கற்கக்கூடிய கண்டறிதல் சமிக்ஞை</text>
-  <text x="841" y="199" text-anchor="middle" class="t s" style="font-size:10.5px">வெற்றி தோல்வியின் இடத்தைத் தக்கவைக்கும்</text>
-  <text x="841" y="234" text-anchor="middle" class="t s" style="font-size:12px">சான்றையும் சிக்கல் வகையையும் கூறும்</text>
-  <text x="841" text-anchor="middle" class="t s" y="260.3" style="font-size:15px">புதுப்பிக்கும் இலக்கைத் தனி</text><text x="841" text-anchor="middle" class="t s" y="277.7" style="font-size:15px">தொகுதி தேர்வு செய்யட்டும்</text>
-
-  <!-- 数据流 -->
-  <path d="M275 117 H307 V151 H340" class="line"/>
-  <path d="M275 215 H340" class="line"/>
-  <path d="M275 313 H307 V279 H340" class="line"/>
-  <path d="M662 220 H710" class="line"/>
+<rect x="55" y="175" width="130" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="120.0" y="200.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Entrance Hall</text>
+<rect x="255" y="95" width="130" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="320.0" y="120.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Storage Room</text>
+<rect x="255" y="255" width="130" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="320.0" y="280.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Northern Corridor</text>
+<rect x="475" y="175" width="130" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="540.0" y="200.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Guard Room</text>
+<rect x="635" y="175" width="130" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="700.0" y="200.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Treasure Room</text>
+<path d="M 183.13641498019763,189.6010610620851 Q 233.6463345290627,180.16485122599818 252.22120156537608,132.25589231968542" fill="none" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="225.66257140092478" y="160.54666395844174" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">East/Take Key</text>
+<path d="M 183.13641498019763,210.3989389379149 Q 233.6463345290627,219.83514877400182 252.22120156537608,267.7441076803146" fill="none" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="225.66257140092478" y="219.45333604155826" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">North (with key)</text>
+<line x1="383.90595279721373" y1="129.56880576642772" x2="471.3950800853441" y2="188.72247891813876" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="427.6505164412789" y="149.14564234228322" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">North→West</text>
+<line x1="383.90595279721373" y1="270.4311942335723" x2="471.3950800853441" y2="211.27752108186124" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="427.6505164412789" y="230.85435765771678" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">East</text>
+<line x1="607" y1="200" x2="633" y2="200" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="620" y="238" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle">Attack (Silver Sword)</text>
+<text x="700" y="155" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">R=+100</text>
+<text x="390" y="365" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">MDP Quintuple: (S, A, P, R, γ)</text>
+<text x="390" y="390" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">S=5 states  A={East, West, South, North, Take, Attack, Combine}  P(s'|s,a)=deterministic  γ=0.99</text>
 </svg>

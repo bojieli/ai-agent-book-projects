@@ -1,66 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 430" width="1000" height="430" style="background:#ffffff">
-  <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
-      <path d="M0,0 L10,4 L0,8 Z" fill="#33434d"/>
-    </marker>
-    <style>
-      .t{font-family:Arial,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic','PingFang SC','Microsoft YaHei',sans-serif;fill:#26343c}
-      .h{font-size:20px;font-weight:700}
-      .s{font-size:15px;fill:#52636d}
-      .label{font-size:13px;font-weight:700;fill:#2f617a}
-      .value{font-size:15px;fill:#3f515c}
-      .box{fill:#f5f7f8;stroke:#33434d;stroke-width:2}
-      .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
-      .line{fill:none;stroke:#33434d;stroke-width:2;marker-end:url(#arrow)}
-    </style>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 380" width="780" height="380" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
 
-  <text x="500" y="30" text-anchor="middle" class="t h">3계층 궤적 검증: 증거는 가능한 한 실제 환경에서</text>
-
-  <!-- 세 가지 검증기 -->
-  <rect x="30" y="76" width="245" height="82" rx="8" class="box"/>
-  <text x="152.5" y="107" text-anchor="middle" class="t h">결과 검증기</text>
-  <text x="152.5" y="135" text-anchor="middle" class="t s">테스트·금액·주문의 최종 상태</text>
-
-  <rect x="30" y="174" width="245" height="82" rx="8" class="box"/>
-  <text x="152.5" y="205" text-anchor="middle" class="t h">과정 검증기</text>
-  <text x="152.5" y="233" text-anchor="middle" class="t s">정책·권한·행동·약속</text>
-
-  <rect x="30" y="272" width="245" height="82" rx="8" class="accent"/>
-  <text x="152.5" y="303" text-anchor="middle" class="t h">LLM 루브릭</text>
-  <text x="152.5" y="331" text-anchor="middle" class="t s">자연성·간결성·규정 내 대안</text>
-
-  <!-- 구조화된 평가: 한글이 겹치지 않도록 세로 필드 사용 -->
-  <rect x="342" y="62" width="320" height="340" rx="10" class="accent"/>
-  <text x="502" y="97" text-anchor="middle" class="t h">구조화된 궤적 평가</text>
-  <line x1="374" y1="117" x2="630" y2="117" stroke="#89a0ac"/>
-
-  <text x="376" y="145" class="t label">업무 결과</text>
-  <text x="376" y="168" class="t value">성공·부분 성공·실패</text>
-
-  <text x="376" y="198" class="t label">차원별 평가</text>
-  <text x="376" y="221" class="t value">총점이 아닌 항목별 평가</text>
-
-  <text x="376" y="251" class="t label">증거 위치</text>
-  <text x="376" y="274" class="t value">대화 턴과 도구 상태 표시</text>
-
-  <text x="376" y="304" class="t label">실패 태그</text>
-  <text x="376" y="327" class="t value">후속 진단용 문제 유형 보존</text>
-
-  <line x1="374" y1="348" x2="630" y2="348" stroke="#b6c7cf"/>
-  <text x="502" y="378" text-anchor="middle" class="t s">증거 부족 시 평가 거부 가능</text>
-
-  <!-- 진화 모듈에 전달할 진단 신호 -->
-  <rect x="712" y="119" width="258" height="202" rx="10" class="box"/>
-  <text x="841" y="156" text-anchor="middle" class="t h">학습 가능한 진단 신호</text>
-  <text x="841" y="199" text-anchor="middle" class="t s">성공·실패 위치 보존</text>
-  <text x="841" y="234" text-anchor="middle" class="t s">증거와 문제 유형 명시</text>
-  <text x="841" y="269" text-anchor="middle" class="t s">독립 모듈이 갱신 대상 선택</text>
-
-  <!-- 데이터 흐름 -->
-  <path d="M275 117 H307 V151 H340" class="line"/>
-  <path d="M275 215 H340" class="line"/>
-  <path d="M275 313 H307 V279 H340" class="line"/>
-  <path d="M662 220 H710" class="line"/>
+<rect x="55" y="175" width="130" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="120.0" y="200.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">입구 홀</text>
+<rect x="255" y="95" width="130" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="320.0" y="120.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">창고</text>
+<rect x="255" y="255" width="130" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="320.0" y="280.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">북쪽 복도</text>
+<rect x="475" y="175" width="130" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="540.0" y="200.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">경비실</text>
+<rect x="635" y="175" width="130" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="700.0" y="200.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">보물 방</text>
+<path d="M 183.13641498019763,189.6010610620851 Q 233.6463345290627,180.16485122599818 252.22120156537608,132.25589231968542" fill="none" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="225.66257140092478" y="160.54666395844174" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">동쪽/열쇠 줍기</text>
+<path d="M 183.13641498019763,210.3989389379149 Q 233.6463345290627,219.83514877400182 252.22120156537608,267.7441076803146" fill="none" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="225.66257140092478" y="219.45333604155826" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">북쪽(열쇠 보유)</text>
+<line x1="383.90595279721373" y1="129.56880576642772" x2="471.3950800853441" y2="188.72247891813876" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="427.6505164412789" y="149.14564234228322" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">북쪽→서쪽</text>
+<line x1="383.90595279721373" y1="270.4311942335723" x2="471.3950800853441" y2="211.27752108186124" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="427.6505164412789" y="230.85435765771678" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">동쪽</text>
+<line x1="607" y1="200" x2="633" y2="200" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="620" y="238" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle">공격(은검)</text>
+<text x="700" y="155" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">R=+100</text>
+<text x="390" y="365" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">MDP 5-튜플: (S, A, P, R, γ)</text>
+<text x="390" y="390" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">S=상태 5개  A={동,서,남,북,줍기,공격,조합}  P(s'|s,a)=결정론적  γ=0.99</text>
 </svg>

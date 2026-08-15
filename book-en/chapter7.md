@@ -1,918 +1,874 @@
-# Model Post-Training
+# Evaluating Agents
 
-> **2026 revision.** The revised chapter makes the scope of “SFT memorizes, RL generalizes” explicit: it is an observation from controlled GeneralPoints/V-IRL comparisons, not a universal law. It also separates model-simulated tool returns from simulated environment dynamics and treats simulator bias as a training ceiling.
+When building an Agent system, developers face numerous design choices that often lack obvious correct answers:
+
+- Which model should be used?
+- What tools should the model be able to call?
+- What data should the knowledge base store, and how should it be structured?
+- How should user memory be implemented?
+- How should the model's prompts and Skills be organized?
+- What constraints need to be added to the Harness?
+- How should evaluation results be transformed into learning signals for the Agent's continuous evolution?
+
+Evaluation puts these decisions on a scientific footing. Through systematic comparative experiments (change one variable at a time and observe the effect) and ablation experiments (disable one component at a time and observe how overall performance changes), you can distinguish genuine capability gains from superficial fluctuations—and avoid being penny wise and pound foolish. Software engineering has a saying: you can't improve what you don't measure. Without a repeatable evaluation system, an Agent can only be iterated on intuition.
+
+From the perspective of Harness engineering introduced in Chapter 1, evaluation plays the core role of "verification" within the Harness. A key insight is: **the object of evaluation should not be just the model, but the combination of the model and the Harness**. The same model can perform wildly differently in different Harnesses — some teams have significantly improved the same model's performance on terminal tasks purely by optimizing the Harness (see Chapter 5). So when an Agent evaluates poorly, the fix may not be a different model but a better Harness component (prompts, tool design, feedback loops). A sound evaluation system should be able to tell apart two fundamentally different problems: "insufficient model capability" and "Harness design flaws." **A common way to tell them apart is the model swap experiment**: fix the Harness, swap in a stronger or weaker model, and watch how much the score moves. If a stronger model doesn't raise the score, the bottleneck is the Harness. If a weaker model tanks the score and results swing sharply with model capability, the most direct reading is that the model itself is the bottleneck and current performance is dominated by the model. Whether this is because the task is inherently hard or because the Harness relies too heavily on the model's prior knowledge requires further analysis. Note that this differs from the ablation experiment above: ablation **disables a Harness component** to see how overall performance changes; model swapping **fixes the Harness and changes only the model**. The former locates which part inside the Harness matters; the latter tells you whether the bottleneck is the model or the Harness.
+
+An evaluation system is worth even more in an era of rapid model evolution. Models keep improving, but a new model that scores higher on public benchmarks will not necessarily do better on your task—it may even regress (perform worse than the old version in some respects). Only a full run on your own evaluation dataset lets you make a data-driven upgrade decision. A solid evaluation system even makes **"building products for future models"** a viable strategy: if the current model isn't good enough for commercial deployment, finish the product anyway, build the evaluation set, track each new model's performance, and launch the moment one clears the bar.
+
+> **Chapter Guide**
 >
-> Two sample-efficiency routes are highlighted: On-Policy Distillation turns one rollout’s terminal reward into token-level guidance; RLVP turns otherwise wasted path feedback into learnable signals. When no stronger teacher exists, OPSD uses privileged information with the same model in teacher and student roles.
+> This chapter builds a complete evaluation system on three levels. The first level is **Evaluation Design**: to avoid discussing tools and data first and defining "success" last, the chapter starts by defining what counts as success, distinguishing the capability ceiling of technical wonders from the consecutive reliability required by business scenarios; it then develops evaluation environments and datasets (where to test and what to test). The second level is **Evaluation Methods** (how to judge): LLM-as-a-Judge, pairwise comparison, and model ranking. The third level is **Evaluation-Driven Decision Making** (what to do after testing): turning results into actionable guidance for model selection, architecture optimization, and continuous iteration, with statistical significance to judge whether an observed score difference is real. The chapter also covers observability and the internal evaluation infrastructure of production-grade Agents, and closes with the simulation environments that connect to post-training in Chapter 8.
 >
-> Experiment order in this edition: 7-13 SimpleVLA-RL; 7-14 ReTool; 7-15 AWorld-train; 7-16 RLVP.
+> The idea running through the whole chapter: **an evaluation system's primary value is not scoring the current system, but letting you keep up with model evolution quickly and reliably.** When a stronger or cheaper model ships, a team with a robust evaluation system can decide within hours whether to switch; a team without one can only trust intuition or wait for community feedback. In the fiercely competitive Agent market, that difference in speed can decide who wins.
 
-The core formula of this book is Agent = LLM + Context + Tools. This chapter turns to the LLM itself—the "brain"—and examines how post-training can help the model use context and tools more effectively, thereby improving the capabilities of the entire Agent system. The end of Chapter 6 pointed out that the evaluation system and simulation environment are the two cornerstones of post-training: the evaluation environment gives training its practice ground, and the evaluation metrics give it its target. This chapter builds on those cornerstones and discusses how to actually change model weights—how to bake capability into the parameters.
+![Figure 7-1: Three Levels of the Evaluation System](images/fig7-1.svg)
 
-This chapter assumes no background in reinforcement learning or model training. We don't expect you to know gradients or policy optimization. Instead, we start from the question of how a model gets trained at all, making clear what each step is for, how it works, and what problem it solves. By the end of the chapter, you should be able to answer the following questions: At what stages are model capabilities formed? What does each stage do? How are the stages commonly combined, and when can the order differ? And where should you focus your effort in your own projects?
+## A Concrete Evaluation Example
 
-**First, let's establish the most important map: modern model development is commonly described in three stages.** Pre-training lays the foundation, while SFT and RL are post-training stages selected or combined according to the objective, base model, and output requirements:
+Before diving into the methodology, let's build intuition through a complete example. Suppose we have built a customer service Agent and need to evaluate its ability to handle refund requests.
 
-1.  **Pre-training**: Training on massive internet text to "predict the next token." This step teaches the model language rules, world knowledge, and basic reasoning. It's like a person who has read all the books in a library—erudite, but not yet good at answering questions. This is the most expensive step (often tens of millions of dollars) and the foundation of all capabilities.
-2.  **Supervised Fine-Tuning (SFT)**: Training the model on labeled input-output pairs, much like a teacher giving a student standard answers to imitate. Thousands to tens of thousands of question-and-standard-answer demonstrations teach the model what format, style, and process to use when responding. This step transforms the erudite model into an assistant that understands instructions and produces well-structured outputs. It's cheap, fast, and stable, and is currently a step almost all deployed models undergo.
-3.  **Reinforcement Learning (RL)**: Letting the model try repeatedly and improve from rewards and penalties, like training a puppy (a treat when it gets things right, nothing when it doesn't). Instead of directly imitating the tokens of a standard response, RL lets the model try on its own, increasing the probability of good behavior and decreasing the probability of poor behavior. With appropriate rewards, data, and environments, this step can improve decisions in **unseen situations**—and it's also the step that takes up the most space in this chapter and requires the most engineering effort.
+**Test Case**: The user wants to return an order from 3 days ago (Order #12345, Amount ¥299). Company policy: Full refund within 7 days.
 
-An intuitive analogy: Pre-training is "reading ten thousand books" (accumulating knowledge), SFT is "a teacher walking you through the standard solutions" (imitating demonstrations), and RL is "working the problems yourself and refining from right and wrong" (learning by trial and error). Pre-training followed by SFT and then RL is common, but it is not the only sequence: a strong base model may go directly to RL, while a task that only needs stable format and style may use SFT alone.
+**Agent Trajectory**:
 
-**This chapter has two main threads that run throughout. Please remember them, as all subsequent content serves them:**
+```text
+User: I want to return the headphones I bought 3 days ago, order number 12345. (Today is 2026-04-10)
 
-*   **Thread One: In this chapter's controlled experiments, SFT tends to memorize demonstrations while RL generalizes better.** Under the same task, model, and budget in GeneralPoints and V-IRL, SFT overfits the training answers, while RL more often learns a transferable strategy under the tested distribution shifts. This is a measured result under those experimental conditions, not a universal property of SFT and RL: SFT can generalize with diverse data and appropriate regularization, and RL can overfit when its reward or environment is biased. This chapter uses "SFT memorizes, RL generalizes" as shorthand for these experiments, and Section 7.1 explains why the two objectives can produce that difference.
-*   **Thread Two: Data and environment matter more than algorithms.** This is the industry's most counterintuitive and most valuable lesson. With off-the-shelf RL algorithms (PPO, GRPO, and the like), knowing how to use them is enough. What actually determines success are two things: the **simulation environment** (is the practice ground realistic enough?) and the **training data** (are the demonstrations and reward signals good enough?). In many scenarios, if the SFT data is good enough, you may not need RL at all. This chapter will repeatedly redirect your attention from "which algorithm should I tune?" to "have the data and environment been set up correctly?"
+Agent (thinking): The user wants a refund, I need to check the order information first.
+Agent → Calls tool query_order(order_id="12345")
+Tool returns: {status: "delivered", amount: 299, date: "2026-04-07", item: "Bluetooth Headphones"}
 
-> **Reading Guide**: The content of this chapter is divided into two paths based on the reader's background:
->
-> *   **Agent Application Developers** (don't need to train models themselves): Start by reading the opening "Pre-training, SFT, RL: A Three-Stage Panorama" to build a global understanding. Then you can skip the following two `[Optional Reading]` sections (classic RL and pre-training background) and continue from the SFT section. Focus on the decision framework for "the essential difference between SFT and RL" and "when to choose SFT vs. RL," as well as the judgment that "data and environment are more important than algorithms"—these insights will influence your design decisions in Harness engineering (when to solve with prompts, when fine-tuning is worth it).
-> *   **Model Training Engineers**: Read sequentially from the beginning. The two `[Optional Reading]` sections provide complete background on reinforcement learning and pre-training. The subsequent experiments provide reproducible training schemes.
+Agent (thinking): Order date 2026-04-07, today is 2026-04-10, that's 3 days, within the 7-day refund period, eligible for full refund.
+Agent → Calls tool process_refund(order_id="12345", amount=299)
+Tool returns: {refund_id: "R-98765", status: "processing", eta: "3-5 business days"}
 
-## Pre-training, SFT, RL: A Three-Stage Panorama
-
-The introduction gave you the map of the three stages; this section works through the mechanics of each. The three stages differ in their **data**, **optimization objectives**, and **costs**. Understanding their similarities and differences is the key to the entire chapter. Table 7-1 gives the overview; the details follow.
-
-Table 7-1 The Three Stages of Forging Model Capabilities
-
-| Stage | Data Used | Optimization Objective | What Is Learned | Typical Cost |
-|-------------|---------------------|--------------------|---------------------|-------------------|
-| **Pre-training** | Massive raw internet text | Predict the next token | Language rules, world knowledge, basic reasoning | Very High (millions to tens of millions USD) |
-| **SFT** | Thousands to tens of thousands of "input-output" demonstration pairs | Predict the next token (loss calculated only on the response) | Instruction following, output format, style, process protocol | Low (hours to days) |
-| **RL** | Task and environment + reward signal (reference answers optional) | Maximize expected reward | Transferable decision-making strategy, newly discovered solutions | High (often tens to hundreds of times that of SFT) |
-
-### What Pre-training Does: Predicting the Next Token
-
-All the "intelligence" of modern large models is built on a task so simple it's surprising: **Next Token Prediction (NTP)**.
-
-Show the model the first part of a text and have it guess the next token. For example, given the input "The capital of China is," the model should assign a high probability to "Beijing." Each time the model guesses, it compares its prediction to the actual next token. The larger the difference (called the loss), the more it adjusts its parameters to guess more accurately in similar contexts next time. By repeatedly doing this on trillions of tokens of internet text, the model is forced to learn grammar, facts, logic, and even basic reasoning—because to consistently guess the next token correctly across a vast range of contexts, there's no shortcut; it must truly "digest" the patterns in the text.
-
-There's a key point to remember that will carry through to SFT and RL: **The model's output is essentially a probability distribution.** Given the preceding text, the model assigns a probability to every possible token in its vocabulary. "Training," at its core, is **adjusting this probability distribution**—making the probability of desired tokens higher and undesired ones lower. The difference between the three stages lies only in "what is desired" and "what signal defines 'desired'."
-
-After pre-training, the model is erudite but not user-friendly: if you ask it a question, it might continue generating more questions instead of answering—because in internet text, a question is often followed by another question. It hasn't yet learned the protocol of "when asked a question, you should answer."
-
-### The Essence of SFT: "Predict the Next Token" with Different Data
-
-This is the first key insight to grasp in this chapter: **Mathematically, SFT and pre-training are the same task—both predict the next token and minimize the same loss function.** Many beginners think SFT is a completely new method, but it's not. The difference between SFT and pre-training lies in just two things:
-
-1.  **Different Data.** Pre-training uses raw internet text (unstructured, containing everything); SFT uses carefully prepared "input-output" pairs, uniformly formatted as "user question → ideal answer." The model continues "predicting the next token" on these demonstrations, thereby learning the protocol of "how to structure a response when asked a question."
-2.  **Loss is calculated only on the "response" (loss masking).** An SFT sample consists of a question and a labeled response. We don't want the model to learn "how to ask a question," only "how to answer." So, when calculating the loss, the tokens in the question part are masked, and gradients are backpropagated only through the response portion. This is the only substantive engineering difference between SFT and pre-training.
-
-Once you see this, it becomes clear why SFT can exhibit memorization on limited demonstrations: its optimization goal is to **maximize the probability of every token in the labeled response**, reproducing the demonstration as closely as possible. For tasks with clear goals and fixed formats, this is extremely efficient—a few thousand examples suffice. But when coverage and diversity are insufficient, the model may overfit surface patterns or shortcuts in the demonstrations and lose performance under distribution shift.
-
-In a nutshell, SFT uses extremely high sample efficiency to **encode a stable input-to-output mapping and protocol in the model's parameters**. It encodes **protocol knowledge**—how to say or do something, including format, style, and process—rather than large amounts of **factual knowledge**—what the model knows. The latter relies on pre-training or RAG (we'll return to this distinction at the end of the chapter).
-
-> **Training Cost: LoRA Parameter-Efficient Fine-Tuning.** Both SFT and the subsequent RL require updating model parameters, and full-parameter fine-tuning has high VRAM requirements (needing to store gradients and optimizer states for billions of parameters). **LoRA** (Low-Rank Adaptation) is the most common cost-saving method: instead of modifying the large original weight matrices, it attaches a small "patch" (low-rank matrix) to learn the task. The parameter count is only 1%–5% of the original, yet it can approach the performance of full fine-tuning. Because the original weights are frozen, LoRA also causes less perturbation to the base model's existing capabilities, reducing the risk of catastrophic forgetting. A few validated rules of thumb[^ch7-1]: You **must** apply LoRA to all major weight matrices (especially the MLP layers, which have the largest parameter count); applying it only to attention layers costs accuracy. **The optimal learning rate is about 10 times that of full fine-tuning** (true for both SFT and RL, a very practical transfer rule). Use medium-to-high rank (64–256) for SFT; since the information per round is small for RL, a small rank (8–32) or even rank=1 is sufficient. During deployment, a single inference server can load multiple LoRA adapters simultaneously for multi-tenant service. This book treats LoRA as the default engineering choice for all post-training methods and will not elaborate on it separately.
-
-**SFT loss mask:**
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
+Agent: A refund has been initiated for you. The full refund for Order #12345 (Bluetooth Headphones, ¥299) is being processed,
+      and is expected to arrive in 3-5 business days. The refund ID is R-98765, which can be used to check the progress.
 ```
 
-### When SFT Should Come Before RL
+**Scoring with a Rubric** (four dimensions, each scored 1-4). Table 7-1 provides a scoring example for this customer service refund task, illustrating how a Rubric breaks down an Agent trajectory into checkable evaluation dimensions.
 
-Pre-training provides the foundation of language and knowledge. What needs explanation is: **Under what conditions should SFT come before RL?**
+Table 7-1 Rubric Scoring Example for Customer Service Refund Task
 
-The answer lies in how RL works. Rather than directly imitating the tokens of a reference response, an RL policy learns by evaluating its own **generated** responses with a reward signal; reference answers or preference data may still contribute to that reward. But to judge quality, you first need to be able to **parse** the model's output: if the task requires a JSON object or a tool call and the model produces poorly formatted text, the reward function cannot even distinguish success from failure, and RL cannot learn.
+| Dimension | Criteria | Score | Reason |
+|------------------------|--------------------------------|------|--------------------------------|
+| Operational Correctness | Is the refund amount and order number correct? | 4 | Correctly queried and initiated a ¥299 full refund |
+| Policy Compliance | Does it follow the 7-day refund policy? | 4 | Order is within the refund period, complies with policy |
+| Information Completeness | Does it provide the amount, arrival time, and refund ID? | 4 | All three key pieces of information were provided |
+| Hallucination Detection (Veto) | Does it fabricate non-existent information? | Pass | All information comes from tool outputs |
 
-When structured output is unstable, SFT can therefore **get the model to produce well-formed output first**: a small number of demonstrations stabilizes the format so it can be parsed reliably, giving RL a scoreable starting point. This is a robust **"SFT first, then RL"** two-stage paradigm. In such a setting, skipping SFT can leave the output unstable, turn the reward signal into noise, and cause training to fail. Borrowing a concept from Chinese painting: SFT first establishes the **"form"** (format, structure), and then RL pursues the **"spirit"** (strategy, generalization)—**form first, spirit second**.
+Hallucination is listed as a **veto** rather than a graded scoring dimension because it is orthogonal to quality. A fluent, detailed, and polite response containing false information is far more harmful to the user than a brief but accurate one.
 
-An important boundary condition: "SFT must come first" holds true in the setting of a **"smaller base model + strictly structured output"** (Experiment 7-11 will show that a model at the Llama-3.2-Vision-11B scale fails completely if RL is applied directly without SFT). However, if the base model is strong enough, it might be able to produce adequate output from the start, allowing SFT to be skipped—DeepSeek-R1-Zero demonstrated that direct RL can succeed with a strong base model, with reflection and long chains of thought emerging spontaneously. The cost is poor output readability and mixed Chinese/English, so DeepSeek ultimately added back "cold-start SFT" in R1 to re-establish the "form." The journey of R1 from Zero to cold-start is the best illustration of "form first, spirit second."
+This test case passed. But a good evaluation doesn't just test success scenarios; it also probes boundaries and traps—when a user wants to return an order from 15 days ago (beyond the refund period), can the Agent correctly refuse? When a user claims "a customer service representative already approved the refund," will the Agent believe it without a system record? These boundary scenarios are what truly separate strong Agents from weak ones.
 
-### The Essential Difference Between SFT and RL (The Most Important Table in This Chapter)
+The process above — defining test cases, running the Agent, scoring with a Rubric, and analyzing results — is the basic skeleton of evaluation. The rest of this chapter fleshes out the design of each step.
 
-We have used "SFT memorizes, RL generalizes" to summarize this chapter's controlled experiments. Now let's explain why that tendency can appear. The key is the **different optimization objectives**:
+## Evaluation Metrics System
 
-*   **SFT maximizes the probability of the labeled response.** Maximum likelihood pushes the model to reproduce the demonstration for each training sample. Diverse, representative demonstrations can teach generalizable features, but limited demonstrations or prompts can also produce overfitting to surface patterns or shortcuts. In GeneralPoints, the limited demonstrations treated J/Q/K as 10, and performance dropped when those values changed at test time.
-*   **RL maximizes expected reward.** The model explores paths and raises the probability of those that earn high reward. When the reward faithfully represents the objective and exploration is sufficient, it can discover transferable strategies absent from the demonstrations. In GeneralPoints, recomputing the answer when values changed produced better out-of-distribution performance. Conversely, a biased reward or environment can make RL overfit to shortcuts too.
+Before building an environment or dataset, define what "success" means: is one workable path enough, or must every run be correct? Different definitions can reverse the engineering decision. This section establishes the vocabulary used by the rest of the chapter.
 
-Table 7-2 Essential Comparison of SFT and RL
+### Technical Wonders: Capability Ceilings with Pass@k
 
-| Dimension | SFT (Supervised Fine-Tuning) | RL (Reinforcement Learning) |
-|-----------------|--------------------------------------|----------------------------------------|
-| Optimization Objective | Maximize probability of labeled answer (Maximum Likelihood) | Maximize expected reward |
-| Training Signal | Token-level supervision on a labeled response | Policy-generated responses or trajectories + outcome- or step-level scalar rewards |
-| Data Form | "Input-Output" demonstration pairs | Task and environment + reward signal (reference answers optional) |
-| Direct Optimization Pressure | Imitate mappings and protocols in the demonstrations | Reinforce behaviors and strategies that earn reward |
-| Under Distribution Shift | Depends on demonstration coverage and regularization; limited demonstrations overfit in this chapter's experiments | Depends on reward, environment, and exploration; transfer was better in this chapter's experiments |
-| Sample Efficiency | High (thousands of examples are effective) | Low (often tens to hundreds of times that of SFT) |
-| Training Stability | High, converges quickly | Low, prone to oscillation, requires careful tuning |
-| Best Suited For | Solidifying format/style/process, high-quality demonstrations, stable environment | Needing generalization to new scenarios, exploring optimal strategies, high annotation cost |
+Many current models and Agents operate in a **technical-wonder** phase: after many attempts, a long time budget, and human selection, one breakthrough trajectory is enough to show that a task is possible in principle. That is the logic of **Pass@k**—run the same task $k$ times and count it as passed if at least one attempt passes; for continuous scores, keep the best attempt as **Best@k**.
 
-**Post-training also shapes when a model acts.** Coding models provide a concrete example: GPT-family and Claude-family models often exhibit different default action thresholds. The former may read more of a repository before editing; the latter may localize from fewer files, implement first, and then use test feedback to correct course. This is not a matter of anthropomorphizing one model as “cautious” and another as “instinctive.” It is a policy in the parameters estimating whether the expected value of reading one more file still exceeds the expected value of submitting and validating the current patch. If SFT demonstrations repeatedly investigate broadly before editing, the model imitates a higher action threshold. If process or outcome rewards repeatedly validate rapid localization and an early verifiable loop, probability mass shifts toward earlier action. Experiment 6-7 swaps models inside an identical neutral Coding harness and measures this behavior changing with the model: the harness need not enforce a workflow for the model to carry a stable tool-use policy of its own. The harness can modify the policy, but its primary source can reside in the post-trained parameters. Because vendors do not publish their complete data and reward recipes, the experiment establishes a model-side behavioral difference, not the particular proprietary algorithm that caused it.
+Anthropic's long-running-Agent examples—writing a C compiler over a week, searching for a counterexample to an important conjecture, or repeatedly auditing open-source software until a decades-old vulnerability is found—illustrate this capability ceiling. Research discovery, vulnerability hunting, and open-ended creation can all benefit from selecting the best of $k$ candidate trajectories.
 
-One deeper mechanism is worth knowing: **mode-seeking**. The probability distribution of all possible answers to a question may contain many modes, each representing a family of reasonable responses. Maximum-likelihood SFT can exhibit a **mass-covering** tendency, allocating probability across modes present in the demonstrations. Policy optimization constrained with reverse KL can instead exhibit a **mode-seeking** tendency, concentrating probability on a few high-reward modes. The exact behavior depends on the data, reward, KL direction, and coefficient, so it should not be treated as an invariant property of SFT and RL. The RLHF section will connect this design choice to KL divergence.
+Manus made this ceiling visible by giving people a virtual computer on which an Agent could work for half an hour or an hour. OpenClaw made the experience feel more like a person who can be assigned work through messaging, access files and online services, report progress, ask for information, and wake itself to process mail. Early versions were expensive and unreliable on any single attempt, but their generality made high Pass@k possible—and the resulting technical wonders spread widely on social networks.
 
-**Online feedback creates an opportunity to explore strategies beyond the demonstrations.** SFT on a fixed dataset uses direct training signals from demonstrations, but it can still combine pre-training knowledge and generalize to unseen inputs. Online RL generates responses from the current policy and receives environmental feedback, so it can directly evaluate candidates absent from the demonstrations. This does not automatically guarantee a higher ceiling: results depend on the base model, demonstration coverage, reward fidelity, exploration, and optimization stability. (The terms "online/offline" and the stricter "on-policy/off-policy" will be formally distinguished in Section 7.8.) For now, consider three opportunities created by online feedback:
+### Business Reliability: Focus on Pass^k
 
-- **First, it can evaluate candidates beyond a fixed demonstration set.** SFT's direct supervision comes from recorded responses; RL can also reinforce new behaviors that the reward function can score. The "pushcut" action in Experiment 7-13 (SimpleVLA-RL) never appeared in human demonstrations, showing the possibility of discovering a strategy outside the data. But the model cannot learn quality the reward cannot recognize or discover a strategy it never explores.
-- **Second, it can exploit tasks where verification is easier than generation.** SFT needs a correct answer or good trajectory written first; RL needs a reliable way to judge answer quality. Math answers can be checked, code can be tested, and proofs can be verified. This asymmetry is a strength of RLVR, but an incomplete verifier can also produce reward hacking.
-- **Third, it can train on states visited by the current policy.** Offline imitation has the classic problem of **covariate shift**: after a policy leaves the demonstrations and enters unseen states, recovery signals may be absent. In specific sequential imitation-learning settings, worst-case error can accumulate roughly as $T^2$ with trajectory length $T$, while online data aggregation can reduce it to about $T$. On-Policy Distillation (Section 7.12) combines this online matching with SFT's dense supervision.
+Business systems usually care about the opposite: no mistake across repeated attempts. We call this **Pass^k** (read "Pass consecutive k"): run a task consecutively $k$ times, require every run to pass, and veto any safety, compliance, or hallucination violation. It asks whether an Agent can deliver reliably, not whether it can occasionally create a miracle.
 
-To use an analogy: **SFT studies an existing map in detail, while RL can use reward as a compass to explore candidate routes beyond it.** An inaccurate map or compass can lead the model astray. Many systems therefore use SFT to establish a stable starting point, then add RL when the reward and environment are trustworthy.
+If runs are independent and the single-run success rate is $p$,
 
-With this panorama in hand, every later section has a place on the map. The next two sections, both `[Optional Reading]`—"From Classic RL Agents to Modern Agents" and "Model Pre-training Basics"—fill in the reinforcement learning and pre-training background for readers who want to go deeper. Readers who just want to get their hands on post-training can skip ahead to the SFT section.
+$$
+\mathrm{Pass@k}=1-(1-p)^k,\qquad
+\mathrm{Pass}^{k}=p^k.
+$$
 
-## From Classic RL Agents to Modern Agents `[Optional Reading]`
+At $p=0.6$ and $k=5$, Pass@5 is about 99.0%, while Pass consecutive@5 is about 7.8%. The first is useful for capability exploration; the second is closer to the reliability required for payments, refunds, permission changes, and production deployment. Reports must state whether $k$ means independent samples of one task or consecutive production tasks. Side-effecting actions must be sampled in a sandbox or rollback-capable environment, with every failure counted.
 
-### Agent-Environment Interaction
+### Process Metrics: From Black Box to White Box
 
-**Reinforcement Learning (RL)** is fundamentally about learning how to select actions based on the current situation to maximize **cumulative reward**. Imagine an AI learning to play chess: each move is an action, winning gives a positive reward, losing gives a negative reward, and the cumulative reward is the total gain from the entire game. The Agent and the environment interact continuously: at each step, the Agent observes the current state, chooses an action, and the environment produces a new state and gives a reward.
+Final outcomes alone are insufficient. **Action validity and authorization rate** measures the share of valid, authorized operations; **tool-call correctness** additionally asks whether arguments are semantically appropriate. **Path efficiency** covers steps, redundant actions, and backtracking against a human or heuristic baseline. **Retrieval coverage** asks whether the Agent explored enough of the information space; **cost and latency** track requests, input/output tokens, KV-cache reuse, tool time, and network delay.
 
-To understand this interaction more intuitively, the following diagram shows the standard RL loop—at each time step, the Agent observes the environment state, outputs an action, and the environment gives a reward and transitions to a new state based on that action.
+### Safety, Robustness, and Trajectory Coverage
 
-![Figure 7-1: Reinforcement Learning Agent-Environment Interaction Loop](images/fig7-1.svg)
+Safety and compliance follow a **zero-tolerance** rule for sensitive operations, data leakage, and prohibited content: one serious violation vetoes the evaluation. Robustness covers seed sensitivity, UI changes, API jitter, and stale-memory interference. Evaluation must cover both the execution **trajectory** (what the Agent said and did) and the final **outcome** (what the system became); a booking claim in the dialogue is not proof that a booking exists.
 
-This interaction produces a **trajectory**—a complete record of "state → action → reward → new state → action → reward...". The quality of a policy is ultimately reflected in the quality of the trajectories. A **value function** answers the question: "If I am in this state now and continue acting according to the current policy, how much total reward will I eventually accumulate?" This is like an experienced chess player looking at a position and, without calculating to the end, intuitively estimating the winning probability. (When the "current policy" is replaced by the "optimal policy," we get the optimal value function, which will be used later in this chapter when discussing the Bellman optimality equation.) The boundary between the Agent and the environment follows a simple principle: **anything the Agent cannot arbitrarily change belongs to the environment.**
+### Human Spot Checks and Adversarial Review
 
-Two unique features distinguish reinforcement learning from supervised learning (which requires labeled correct answers) and unsupervised learning (which discovers hidden patterns in data): **trial-and-error search** (the Agent must figure out which actions are good on its own, without a teacher directly providing the correct answer) and **delayed reward** (the effect of an action may only become apparent many steps later, e.g., the value of a good chess move is only evident at the end of the game). This also brings about the unique **exploration-exploitation tradeoff**: always taking familiar paths means learning nothing new; always trying randomly means never reaching the goal.
+Regularly sample successes, failures, and borderline scores and audit the judge's rationale. Before deploying LLM judges at scale, calibrate against a human-labeled gold set of roughly 100–200 cases and require a preset agreement threshold such as Cohen's kappa above 0.7; recalibrate whenever the judge or Rubric changes. Red-team hidden errors, keyword stuffing, and judge-specific exploits, and use multiple independent judges with human review for serious disagreement.
 
-A reinforcement learning system consists of five core elements:
+## Automated Evaluation Environment
 
-- **Action Space**: Defines the set of all possible actions the Agent can take. Actions can be discrete (e.g., "which move to make" in chess, with a finite number of options) or continuous (e.g., "how many degrees to rotate a joint" for a robot, a continuous value).
-- **Policy**: The Agent's behavioral rule, specifying what to do in a given state. A policy can be simple (a lookup table: in state A, execute action X) or complex (a deep neural network).
-- **Reward Signal**: The immediate feedback from the environment. However, the Agent's goal is to maximize long-term, not immediate, reward—this distinction is crucial, just as investment should not be judged by today's gains and losses but by long-term returns.
-- **Value Function**: Estimates the total cumulative reward obtainable from a given state in the future, helping the Agent make wise decisions even without immediate feedback. One of the most important insights from sixty years of RL research is the central role of value estimation.
-- **Environment Model** (optional): Predicts the environment's response to actions. Methods that use an environment model are called **model-based methods** (first learn to predict how the environment changes, then plan accordingly); those without are called **model-free methods** (do not predict the environment, but learn directly from experience).
+Agent evaluation requires a repeatable, automated environment — one that can quickly test the effects of changes during development. Building such an environment requires answering three questions: what to evaluate (task definition and verification criteria), whom the Agent interacts with and how to simulate that counterpart, and which scoring criteria to use.
 
-Table 7-3 compares the key components of various Agent systems, revealing the universality of the Agent concept and helping readers see the difference in action spaces between traditional RL Agents and modern LLM Agents.
+### Basic Components of an Evaluation Environment
 
-Table 7-3 Comparison of Key Elements in Different Agent Systems
+An evaluation environment consists of five elements — the following sections will focus on dataset design and scoring criteria design:
 
-| Agent Type | Environment | Action Space | Reward Signal |
-|---------------|------------------------|-------------------------------|-------------------------|
-| **Newborn Gazelle** | Terrain, gravity, body posture | Continuous high-dimensional (muscle group contractions) | Balance (+), Falling (-) |
-| **Vacuum Robot** | Room layout, battery level | Discrete (direction, vacuum, charge) | Cleaned area (+), Battery depleted (-) |
-| **Chess Grandmaster** | Board state, time limit | Discrete finite (legal moves) | Win (+1), Loss (-1) |
-| **Customer Service Agent** | Conversation history, knowledge base | Variable-length compositional (think, speak, API call) | Problem solved (+), Handling time (-) |
-| **Code Assistant Agent** | Requirements document, codebase | Variable-length compositional (think, search, edit, execute) | Test passed (+), Bug introduced (-) |
+**Dataset**: Defines the task set, including initial state, goal description, and optional reference solutions.
 
-The table reveals an important distinction. Representative board-game and Atari environments use predefined finite discrete primitive actions, while robot control uses continuous actions with fixed dimensions and physical bounds. Modern LLM-based customer-service and coding Agents compose finite tokens and tool calls into variable-length action sequences, making the possible sequences difficult to enumerate at once. They can also use internal thinking to improve their capabilities.
+**Environment State**: Tracks mutable state during task execution and must balance realism with controllability. For example, in a customer service evaluation, the environment state includes order records in the database and user account balances. After the Agent calls `process_refund`, the order status changes from `"delivered"` to `"refunded"` and the balance increases. "Realism" requires that state changes follow business logic (refund amount cannot exceed the order amount), and "controllability" requires that each test can be reset to the same initial state.
 
-### Two Action Representations: Classic RL Settings and Variable-Length LLM Policies
+**Tools**: Defines the set of operations the Agent can perform — tools should not provide overly high-level abstractions (like "solve user problem"), but should provide atomic operations (like query order, modify booking, send email), forcing the Agent to combine these operations through planning and reasoning.
 
-The most visible difference between the two settings is how actions are represented. An MDP itself can represent finite or infinite, discrete or continuous action spaces. The representative board-game and Atari environments here use finite discrete primitive actions, robot control uses bounded continuous actions, and an LLM policy composes a finite token vocabulary and tool schemas into variable-length sequences. This compositional representation has major consequences for algorithm design, sample efficiency, and generalization. Each setting is discussed below.
+**Rubric (Scoring Criteria)**: Quantifies the Agent's performance, which can be binary (pass/fail), continuous (0 to 100 points), or multi-dimensional (scoring accuracy, efficiency, and safety separately).
 
-**Foundational Example: MDP and Tabular Q-learning.**
+**Interaction Protocol**: Specifies the interaction mode and termination conditions.
 
-MDP (Markov Decision Process) is the mathematical framework for reinforcement learning, defining core elements such as states, actions, and rewards. Its core assumption is the **Markov property**: the future depends only on the current state, which must contain all history relevant to the decision. In chess, for example, the state includes not only piece placement but also the side to move, castling and en passant rights, and information needed for the fifty-move and repetition rules. With a sufficient state definition, the entire game record need not be reread for each transition. If an observation omits necessary history, that history must be added to the state or handled with a partially observable model.
-
-![Figure 7-2: Markov Decision Process (MDP) Diagram](images/fig7-2.svg)
-
-The representative RL environments in this section use **predefined action spaces**. The 361 move positions in Go are large but finite; chess actions can still be enumerated; and Atari games typically expose a few to a dozen discrete primitive actions. **Robotic Agents** use continuous but bounded action spaces: joint angles, velocities, and grip forces are continuous values, but have clear physical bounds and dimensions fixed by the robot's degrees of freedom.
-
-Finite discrete actions make individual candidates easier to evaluate. If the numbers of states and actions are small enough, tabular Q-learning stores their values directly; larger Atari and board-game state spaces combine function approximation with search. Continuous-action MDPs cannot enumerate every action, so methods such as policy gradients and actor-critic approximate the policy and value function. The classic example in this section also differs from an LLM policy because it starts trial-and-error learning without pretrained knowledge.
-
-Within this framework, one of the most fundamental and important algorithms is **Q-learning**. It maintains a value estimate for each "state-action" pair: if you take action *a* in state *s* and then act optimally thereafter, how much total reward can you expect? Intuitively, whether an action is good depends on the immediate reward it brings, plus "how good the next state it leads to is."
-
-Writing this intuition as an equation gives the core recursive relationship of the famous **Bellman equation** in RL textbooks: **The true value of an action = the immediate reward obtained at this step + the maximum future value obtainable from the next state**:
-
-$$Q^*(s, a) = r + \gamma \max_{a'} Q^*(s', a')$$
-
-where $r$ is the immediate reward, $s'$ is the next state reached after executing the action (written in deterministic form for intuition; in a stochastic environment, an expectation over the next state $s'$ is needed), and $\gamma \in [0, 1)$ is the **discount factor**—it determines how much the Agent values the future: the closer $\gamma$ is to 1, the more it values long-term returns; the closer to 0, the more it focuses on the immediate. The "cumulative reward" mentioned repeatedly earlier is precisely the sum of rewards at each step, discounted by $\gamma$: $\sum_{t} \gamma^{t} r_t$. After each action, the algorithm slightly adjusts the old estimate towards the "actually observed outcome"—this paradigm of "correcting an old estimate with a one-step actual result" is called **Temporal-Difference Learning (TD learning)**. After thousands of trials, the estimate gradually approaches the true value.
-
-The following two figures show the exploration process of Q-learning in a grid world and the gradual convergence of Q-values.
-
-![Figure 7-3: Q-learning Grid World](images/fig7-3.svg)
-
-![Figure 7-4: Q-value Update Visualization](images/fig7-4.svg)
-
-Q-learning is an **off-policy** method: it can learn an optimal policy from data generated by an exploratory policy different from the target policy. It still requires adequate coverage of the relevant state-action pairs and appropriate learning-rate and convergence conditions; it does not automatically converge on an arbitrary data distribution. The strict definitions of on-policy and off-policy methods, and how they map to LLM post-training, are discussed later in the section "Comparison of Reinforcement Learning Algorithms."
-
-> **Experiment 7-1 ★: Q-learning Performance in a Treasure Hunt Game**
->
-> To verify the characteristics and limitations of Q-learning, we designed a **treasure hunt game environment**. This environment includes several key challenges: **hidden mechanisms** require the Agent to discover the correspondence between keys and doors, weapon effects, and item crafting rules on its own; **multi-step dependencies** mean that completing the task requires the correct sequence of actions (optimal solution: 11 steps); **sparse rewards** mean that only key actions and the final victory yield significant rewards, with most intermediate steps receiving no feedback.
->
-> The Q-learning Agent uses standard parameter settings and an ε-greedy exploration strategy: it usually selects the currently optimal action but occasionally chooses a random one, with the proportion of random exploration gradually decreasing during training.
->
-> The learning curve shows typical characteristics (an episode is one complete game, from start to completion or failure):
-> - **First 1000 episodes**: 0% win rate, Q-table has only 124 states, Agent is blindly exploring
-> - **First 5000 episodes**: Still no stable victories, Q-table has 133 states
-> - **7,000–8,000 episodes**: Win rate gradually rises from 34% to 96%
-> - **10,000 episodes**: 100% win rate, Q-table has 145 states, found the 11-step optimal solution
->
-> The entire training takes less than 10 seconds (very efficient simulation), but requires nearly 10,000 complete attempts. This demonstrates the behavior of the prior-free, ε-greedy tabular Q-learning setup used in this experiment: it needs substantial random exploration to complete the path by chance, and value signals propagate slowly enough to require repeated reinforcement.
->
-> In a game simulator, 10,000 trials take only 10 seconds, a negligible cost. But in real-world Agent scenarios—where each phone call has a cost, each browser operation has a delay, and each wrong decision can have irreversible consequences—10,000 trials are completely unacceptable. One reason to use a pretrained LLM policy is that accumulated knowledge can support effective decisions with far fewer environmental interactions.
->
-> This **prior-free tabular Q-learning experiment** has three limitations: even a simple task needs extensive interaction, values learned in one environment do not transfer directly to another, and each new task must be explored again. These are not limitations of the MDP framework itself. Function approximation, transfer learning, and model-based RL can handle richer states and knowledge transfer, although they may still require substantial environmental interaction compared with a pretrained LLM.
->
-
-**Agents Based on Pretrained LLM Policies.**
-
-Large language models have brought an important practical change to how Agent actions are represented and initialized.
-
-Classic RL can also model internal computation or information gathering as states and actions. The practical change introduced by LLMs is not that thinking became possible for the first time, but that a pretrained language policy can represent internal computation as variable-length token sequences and generate it within the same policy as external actions. Thinking tokens do not directly change the external world, but they can improve the final action. The action representation now includes not only "what to do," but also "how long to think and what to think about."
-
-The most important practical innovation is incorporating **thinking tokens as special actions in the policy output space**. Representative traditional RL environments emphasize primitive actions such as moving, attacking, and picking up, although internal computation can also be modeled in an MDP or hierarchical policy. In LLM Agents, **internal thinking becomes a core part of the learned language action space**. It does not directly change the external environment or receive immediate environmental reward, but can express many computational paths within token costs and context limits.
-
-Variable-length compositional actions create a much larger search space than primitive actions and are difficult to learn from scratch without prior knowledge. An Agent learning from scratch is like searching for treasure in a desert blindfolded. LLMs instead learn human problem-solving patterns from massive text pre-training: math solutions often follow "identify conditions → recall formulas → calculate step by step," while coding follows "understand requirements → design structure → implement details." The pretrained policy gives structured paths higher prior probability, greatly compressing the search space. Thus, even without additional RL, a pretrained LLM can generate a basic logical Chain of Thought (CoT), learned through next-token prediction over math solutions, code comments, discussions, and other human-written reasoning traces.
-
-RL post-training then uses external rewards to teach the LLM to apply these patterns more effectively to a specific task. Language structure is not a separate "internal reward"; it acts as a **prior distribution** in the pretrained policy. A pattern consistently present in training data, such as "we need to convert currency, so first look up the exchange rate," may start with higher generation probability than an unrelated path such as checking the weather. RL uses the actual task reward to reshape path probabilities from that starting distribution.
-
-![Figure 7-5: Comparison of Classic RL and Modern LLM Agent](images/fig7-5.svg)
-
-The pretrained language policy enables LLM Agents to understand unseen instructions (zero-shot generalization) and adapt to new tasks from a few examples (few-shot adaptation), in sharp contrast with the prior-free tabular Q-learning setting above. It also supports compositional generalization, in-context learning, and multimodal understanding. Note that the **effectiveness** of in-context learning and its **internal mechanism** are different questions—as analyzed in Chapter 2, attention works more like retrieval than reasoning, but this does not reduce its practical effect in task adaptation.
-
-Expanding from predefined primitive actions to variable-length compositional actions is an important shift in the AI Agent paradigm. LLM actions are still defined by a finite token vocabulary and tool schemas, but internal thinking, natural-language queries, program code, complex JSON, and multimodal content combine into an explosive number of variable-length sequences. Code interpreters and search tools connect that representation to a wide range of real-world tasks and information. This creates both opportunities and challenges: Agents can combine basic tools to handle unseen tasks, but reward design and efficient exploration must operate over an enormous compositional space.
-
-Models such as Kimi K3, which are optimized for tool use and long-chain reasoning, illustrate the typical direction of the LLM+RL paradigm: large-scale language pre-training provides the foundation, and post-training strengthens problem decomposition, tool use, and self-correction. **OpenVLA** (detailed in Chapter 9) showcases the VLA (Vision-Language-Action) architecture paradigm of the LLM era: a vision encoder processes environmental observations, a language model understands instructions and reasons, and an action decoder generates control signals, enabling language-conditioned control and cross-task generalization. To be clear, OpenVLA itself is trained through imitation learning on nearly one million robot **demonstration trajectories**, making it SFT in nature rather than RL. SimpleVLA-RL, introduced in Experiment 7-13 later in this chapter, is the representative example of bringing RL into robotics by using rewards to further optimize this kind of VLA architecture.
-
-![Figure 7-6: Evolution of OpenAI Training Paradigms](images/fig7-6.svg)
-
-**OpenAI's Exploration Path** (chronicled by Shunyu Yao, Assistant Professor at Princeton University and author of the ReAct paper, in "The Second Half") traces an evolution in how the field thought. **Phase 1 (2015-2016), Algorithm-Centric:** The prevailing belief was that better algorithms were the key. Progress was made in standard environments such as Atari, but every new environment required retraining from scratch. **Phase 2 (2016-2018), The Importance of Environment:** Gym standardized a range of tasks; Universe and World of Bits attempted to turn the entire internet into an RL training environment; and Dota 2 pursued superhuman performance in a specific complex environment. The idea was clear, but general computer use and web navigation remained out of reach.
-
-**Phase 3 (2018-present), Awakening of Priors:** GPT-2/GPT-3 demonstrated the power of language pre-training; WebGPT and ChatGPT proved those priors could be turned into practical Agents. The most important discovery: **priors can be acquired in ways that have nothing to do with RL**. This is a counterintuitive truth—for decades, RL researchers may have had their priorities exactly backwards. The real order is not algorithm > environment > prior, but prior > environment > algorithm.
-
-> **Experiment 7-2 ★★: Comparative Study of Traditional RL and LLM Agent**
->
->
-> ![Figure 7-7: Architecture Comparison of Q-learning and LLM Agent in a Treasure Hunt Game](images/fig7-7.svg)
->
->
-> We compared Q-learning with an LLM Agent—Kimi K3, maintaining a buffer of up to 50 experiences—in the same treasure hunt game. The results are astonishing: **The LLM Agent completed the game in 18 steps on its first try**.
->
-> **Early Stage (Purposeful Exploration)**: Picks up a rusty sword ("A weapon is better than bare hands"), systematically explores the map, deduces "need to find a key" after finding the north gate locked, explores the storeroom, acquires the red key and magic crystal. **Middle Stage (Mechanism Understanding and Proactive Synthesis)**: Understands the "key auto-use" rule and anticipates the rusty sword is insufficient against the guard, proactively synthesizes a silver sword on step 8. **Late Stage (Execution and Error Correction)**: Heads north with the silver sword and defeats the powerful guard at step 13. Along the way, it makes one or two ineffective attempts—repeatedly swinging the sword or backtracking—and finally obtains the dragon's treasure at step 18.
->
-> This demonstrates a fundamental difference between semantic understanding and symbolic mapping. The LLM Agent understood the conceptual structure of the game; every step had purpose and logical support. For Q-learning, "door," "key," and "sword" are just meaningless symbol combinations, and it can only slowly discover their relationships through extensive statistical learning.
->
-> Computational cost presents an interesting paradox: Q-learning runs 10,000 games in 10 seconds, while the LLM Agent takes 1-2 minutes per game. However, in real-world tasks, the time, money, and risk costs per interaction far outweigh pure computational costs, so judging solely by GPU time is unfair. A more critical insight is: The LLM Agent's success isn't due to having a better "learning algorithm," but because it carries vast prior knowledge. When game rules change, Q-learning needs complete retraining, while the LLM Agent can adapt directly through reasoning. This leads to a practical design principle: Traditional RL remains valuable in scenarios with low simulation costs and high repeatability; in real-world scenarios with high interaction costs and a need for rapid adaptation, the sample efficiency of LLM Agents is more valuable in practice.
->
-
-Chapter 1 already provided a conceptual map of how contextual adaptation, updates to external artifacts, and parameter updates work together; the section “The Complete Post-Training Landscape and Practical Tips” at the end of this chapter returns to the topic. This chapter's main thread is post-training: writing into model parameters capabilities that cannot be fully expressed through external rules.
-
-## Model Pre-training Basics `[Optional Reading]`
-
-To understand why post-training techniques are effective, one must first understand what pre-training establishes. Post-training (SFT and RL) essentially optimizes within the representation space established by pre-training—the knowledge structure laid down by pre-training determines the ceiling of post-training. Therefore, we examine the core aspects of pre-training through three experiments: training a small-scale language model from scratch, extending visual capabilities, and injecting new language knowledge. The three experiments in this section are supplementary and are intended to build intuition about pre-training—that is, initial training on large-scale data that teaches a model basic language patterns and world knowledge. Readers already familiar with the pre-training process can skip them.
-
-![Figure 7-8: Pre-training Next Token Prediction](images/fig7-8.svg)
-
-Language model training follows a three-step pipeline: "tokenization — pre-training — post-training." Tokenization segments text into discrete units. For example, "I like programming" might be tokenized into "I," "like," "program," "ming." These tokens are the smallest textual units processed by the model. The task of pre-training is conceptually simple: show the model the first part of a text segment and have it predict the next token. By comparing its prediction to the correct answer (this difference is called loss; smaller loss means more accurate prediction), the model continuously adjusts its parameters. After repeated training on massive text data, the model gradually learns language rules, world knowledge, and basic reasoning abilities. After pre-training, the model can generate fluent text, but the output lacks structure and struggles to follow instructions. Post-training then transforms the model into a practical assistant through SFT—training on labeled input-output pairs—and preference optimization, such as DPO, which teaches the model to generate responses that humans prefer.
-
-> **Experiment 7-3 ★★: Training an LLM from Scratch—The Power of Algorithm Improvement**
->
-> Using MiniMind 2, a 100-million-parameter model, as a case study, the experiment completes the entire training process on a consumer-grade GPU. Two algorithmic optimizations—QK Norm and the Muon optimizer—triple the convergence speed and significantly improve generation quality, all at very low cost: approximately 14 hours of training and $34 in total.
->
-> Effects of each training stage: After pre-training, the model can answer factual questions like "What is the highest mountain in the world?" but the format is non-standard; after SFT, instruction following and output formatting improve significantly, allowing the model to organize answers as expected; preference optimization further reduces factual errors and unnatural expressions. The 100-million-parameter model still has obvious limitations (prone to errors on complex problems), but the lesson is: **With a fixed, small budget, algorithmic improvements offer better value than simply scaling up size**.
->
-> **Experiment 7-4 ★★: Training Your Own VLM**
->
->
-> ![Figure 7-9: Vision-Language Model (VLM) Architecture](images/fig7-9.svg)
->
->
-> VLMs unify visual perception and language understanding within a single model. The core challenge is cross-modal alignment—making "what is seen" correspond to "what is said." The architecture consists of three components: a **Vision Encoder** (e.g., CLIP, parameters frozen) extracts semantic features from images; a **Projection Layer** (lightweight, the only part trained from scratch) acts as a "translator" between visual features and the language model, mapping visual features into a representation space the language model can understand; and a **Language Model** generates descriptive text. Training uses a "freeze LLM + train only projection layer" strategy to avoid catastrophic forgetting (forgetting old skills after learning new ones); after the alignment pre-training stage, the LLM is unfrozen, and SFT is performed on high-quality image-description pairs, significantly improving the detail and accuracy of its descriptions.
->
-> This experiment reveals the basic paradigm for multimodal model training: reusing unimodal pre-training results and achieving cross-modal alignment by training a lightweight projection layer—efficient and scalable, but the projection layer's limited expressiveness can become a bottleneck for deep cross-modal understanding. Extending the same "vision encoder + projection layer + LLM" architecture one step further by having the model output actions produces the VLA (Vision-Language-Action) model detailed in Chapter 9.
->
-> **Experiment 7-5 ★★: Continued Pre-training to Learn a New Language**
->
-> Using Mistral 7B v0.3 as the base model—primarily pre-trained on English and with almost no understanding of Korean—the experiment introduces Korean capabilities through continued pre-training on Korean Wikipedia. This performs unsupervised training on new language data using a model that has already completed pre-training. The model already possesses general language modeling capabilities and only needs to adapt to the new data distribution, making the cost much lower than training from scratch. A key engineering point is using mixed data (~80% Korean + 20% English) to mitigate catastrophic forgetting: too high a proportion of the target language leads to degradation in the original language, while too low a proportion results in insufficient learning efficiency. Finally, SFT is performed with Korean instruction data to obtain practical Korean conversational ability. The conclusion of this experiment will be used again in "The Complete Post-Training Landscape and Practical Tips" at the end of this chapter: to make a model remember a large amount of new domain knowledge, rely on continued pre-training, not SFT.
->
-
-The three pre-training experiments collectively reveal a pattern: when budgets are constrained, algorithmic improvements and architectural innovations offer better value than simply scaling up. More importantly, pre-training endows the model with descriptive knowledge and language modeling capabilities, but lacks structured instruction following and task-oriented behavior—this is precisely the gap that SFT needs to fill.
-
-With the foundational capabilities from pre-training, the next step is to transform the general-purpose model into a practical Agent through post-training. The first stage of post-training is Supervised Fine-Tuning (SFT).
-
-## SFT (Supervised Fine-Tuning)
-
-![Figure 7-10: Supervised Fine-Tuning (SFT) Pipeline](images/fig7-10.svg)
-
-Section 7.1 already laid bare the essence of SFT ("predict the next token," with different data, loss computed only on the response). This section uses four experiments to watch what this mechanism—writing stable mappings and protocols into parameters—actually solidifies across different tasks. The core value of SFT is not injecting new knowledge, but **solidifying protocols**: writing mapping relationships, interaction formats, and style norms into parameters, enabling the model to produce outputs that meet expectations during inference without lengthy prompts. Typically, only a few thousand to tens of thousands of high-quality examples are needed to establish basic conversational ability and instruction following.
-
-This efficiency can come with dependence on the training distribution. In tasks that require exploring diverse correct strategies, or where deployment shifts away from the demonstrations, SFT may favor reproducing demonstrated patterns and lose performance in new situations. The following experiments show this process of "solidifying protocols" from different angles; they do not establish a universal ranking of SFT and RL.
-
-Before getting hands-on with SFT, there is one practical question you cannot avoid: **where does SFT data come from?** The industry's answer boils down to three routes: **human expert demonstrations**—the highest quality ceiling, but expensive and slow, best suited for the "seed data" that defines format and style; **teacher-model generation**—that is, synthetic data: have a strong model mass-produce "input–output" pairs, filter them, and then distill them into the student (Experiments 7-8 and 7-9 both take this route); **model self-bootstrapping**—the model samples multiple candidates for the same problem, a verifier selects the correct ones, and those selected samples are then used to train the model itself. This is rejection sampling fine-tuning, covered in detail in Experiment 7-9. The three routes are often combined: first use a small amount of human seed data to pin down the format, then use a teacher model to scale up, and finally use rejection sampling to bring the quality up to the mark. Whichever route you take, the construction pipeline is largely the same: define the task distribution and output schema, generate candidates in bulk, filter for quality with rule-based validation, format checks, and manual spot-checks, then deduplicate, balance the mixture ratios, and ensure diversity. There is no need to be greedy about scale—a few thousand to tens of thousands of high-quality examples are usually enough to solidify the protocol. Rather than piling up a hundred thousand dirty examples, refine ten thousand clean ones: SFT will faithfully write every bit of noise in the data into its parameters.
-
-> **Experiment 7-6 ★★★: Voice SFT—From "Voice Cloning" to "Paralinguistic Modeling" `[Extended Experiment]`**
->
-> Using Orpheus (contextual-prompt voice cloning) and Sesame (paralinguistic token modeling) as case studies, this experiment shows how "voice style and expression habits" get written into parameters. The two take different routes:
->
-> - **Orpheus**: Compresses the voice waveform into a token sequence. By concatenating reference audio from the same speaker, the model learns to "speak in this person's voice," achieving cross-sentence timbre consistency.
-> - **Sesame**: Abstracts paralinguistic phenomena like laughter and sighs into special tokens like `<laugh>`, `<sigh>`. The model learns to "produce the corresponding sound when seeing the token."
->
-> In expressive tasks, SFT solidifies style control protocols and structured expression habits, not factual knowledge or complex reasoning. The key lies in the diversity and annotation quality of the training data. Common failure modes include too few speakers in the training data, causing everyone to sound the same, and token overfitting (where the model memorizes training sample details and performs worse on new situations), leading to "mechanical laughter."
->
-> **Experiment 7-7 ★★★: Multilingual Thinking—Enabling the Model to Think in Any Language `[Extended Experiment]`**
->
-> Most thinking models only "think" in English: regardless of the language you use to ask a question, the model's internal chain of thought is almost always in English, because the high-quality thinking demonstrations in the training data are mostly written in English. The goal of this experiment is simple—to enable the model to think in a specified language.
->
-> The approach is to perform SFT on gpt-oss-20b: add a line `reasoning language: German` (or another language) to the system instruction, then train with reasoning examples in English, Spanish, French, etc. The training data contains **no Chinese at all**, but after training, simply setting the reasoning language to Chinese enables the model to perform complete chain-of-thought reasoning in Chinese—this zero-shot cross-lingual generalization is the most interesting finding of this experiment. Note that this is not the generalization capability of SFT itself. Multilingual pre-training has already established a shared cross-lingual representation space in the model; SFT merely activates this pre-existing cross-lingual ability.
->
-> **Experiment 7-8 ★★: Prompt Distillation—Replicating Usable Capabilities at Lower Cost**
->
-> In practical applications, to make a model perform complex tasks, lengthy system prompts (thousands or even tens of thousands of tokens) are often required, increasing latency and cost with each call. When using reasoning LLMs, internal thinking tokens further amplify the cost. The idea behind prompt distillation is to compress the behavior of a "long prompt + thinking teacher" into a "short prompt/no prompt + non-thinking student." The teacher generates high-quality answers under the full prompt and thinking mode; the training data retains only the user input and final conclusion, discarding the lengthy prompt and intermediate thinking process. The student learns to "directly give the conclusion." After distillation, the student's output quality on the same inputs approaches that of the teacher, while latency and cost are significantly reduced because there is no need to process lengthy prompts and thinking tokens.
->
-> Distillation can be performed along two dimensions: "large to small" (replacing a large model with a medium or small one to balance cost and quality) and "thinking to non-thinking" (folding explicit CoT into implicit parametric knowledge at the same scale, achieving a 20-30x improvement in response speed). These two are not mutually exclusive and are often used together in production environments. It is important to note that distillation inherits the teacher's boundaries—if the teacher has systematic errors on the long tail of the distribution, the student will further hard-code these errors; if the teacher relies on tools to ensure correctness, simple output distillation will lose the robustness provided by tools. Engineering takeaway: when the product design is stable, the input distribution is predictable, and cost constraints are significant, prompt distillation is an excellent optimization; during exploration or before the task has stabilized, retaining explicit thinking and editable prompts remains central to rapid iteration.
->
-> **Experiment 7-9 ★★★: Chain of Thought (CoT) Distillation**
->
-> Prompt distillation discards the thinking process; CoT distillation does the opposite: it transfers the **complete thinking trajectory** of a strong teacher model to the student model. Distilling CoT from a capable teacher model can enable a student with the same parameter count to recover 70%-80% of the teacher's capabilities. For teams that do not aim to push the frontier of state-of-the-art capabilities but want models they can control themselves, this is the most pragmatic follower strategy. The series of distilled small models open-sourced by DeepSeek-R1 (using R1's thinking trajectories to perform SFT on the Qwen and Llama series) are a representative example of this approach.
->
-> **Background: The "Thinking Wall" Phenomenon.** Some closed-source reasoning models (e.g., OpenAI o-series, Gemini series) generate internal chain-of-thought during reasoning, but what users see is not the original thinking process—for reasons including distillation prevention, safety, and product experience, providers often rewrite or summarize the CoT before outputting it, hiding the most valuable original thinking process behind the API. This is precisely why this experiment chooses open-source reasoning models as teachers: models like DeepSeek V4, Kimi K3, and GLM 5.2 directly expose their complete chain-of-thought, making distillation feasible both technically and under the license (though one should still confirm the license's terms regarding distilled products before use).
->
-> **From the lab: a model that can write code may still refuse to help distill another model.** While implementing this experiment, the author first used OpenAI Codex powered by GPT-5.6-Sol to write the experimental code. Once the task explicitly involved model distillation, Codex refused to continue. The author then switched to Claude Code powered by Claude Opus 5 and encountered the same refusal. Kimi K3 ultimately completed the experimental code and subsequent run.
->
-> Neither refusal concerned ordinary mathematical reasoning or merely asking a model to reveal its internal chain-of-thought. The request was to implement a complete distillation experiment that used data from a strong teacher to train a student. Model distillation is technically very similar to ordinary supervised fine-tuning, but vendor safety and product policies may also associate it with model extraction, capability replication, and intellectual-property protection, making it a sensitive category.
->
-> This event should not be simplified to "Claude does not provide chain-of-thought," nor does it prove that "Kimi has weaker guardrails." Whether the Claude API returns summarized thinking, whether a Coding Agent will implement a distillation pipeline, and whether service terms permit model outputs to be used for training are three different questions. This experiment did not attempt to bypass any model's hidden reasoning or safety mechanisms; it used only capabilities exposed by the products to conduct an authorized research workflow.
->
-> Here is a more practical and more important judgment: **for the vast majority of people doing post-training, there is no need to distill the chain-of-thought of closed-source models at all.** The gap between today's best open-source models and SOTA closed-source models is not as large as one might imagine; a teacher model only needs to be "clearly stronger than the student", not "the best in the world". If the model you are post-training is 200B parameters or smaller, an open-source SOTA model is entirely sufficient as the teacher.
->
-> **Experiment Design:** A three-step process. Step 1, **Collect Trajectories**: Sample problems from the target task distribution (e.g., math, code), use the open-source teacher model to generate complete "thinking + answer" trajectories, and filter out trajectories with incorrect final answers using a rule-based validator—otherwise, the student will imitate the erroneous thinking process. This step—"generate candidates, verify and filter, keep only correct trajectories"—has a name of its own: **rejection sampling**. Performing SFT on data constructed this way is **rejection sampling fine-tuning (RFT)**. It sits between pure SFT and RL: no reward model to train, no policy gradients—just "sample many, reject the wrong ones, keep the right ones" to improve data quality, an extremely cost-effective way to construct data for verifiable tasks. Step 2, **SFT Training**: Use "problem → `<think>` thinking trajectory `</think>` + final answer" as training pairs to perform standard SFT on a small model (e.g., 7B scale). Step 3, **Comparative Evaluation**: Compare the student model before and after distillation, as well as the teacher model, on the same benchmark to measure the proportion of capability recovered.
->
-> **Acceptance Criteria:** The distilled student model shows significant improvement on math and code benchmarks relative to its pre-distillation performance, and its thinking trajectories exhibit teacher-like behaviors such as reflection, backtracking, and verification. Also, be aware of the cost of distillation: the student will inherit the teacher's systematic errors and verbose thinking habits (the latter can be further optimized using the AdaptThink approach from Experiment 7-10).
->
-
-These four experiments share a common feature—"writing stable mappings and protocols into parameters": voice SFT solidifies style control protocols, multilingual SFT solidifies thinking organization templates, and distillation SFT solidifies the direct mapping from input to output. The clearer the objective, format, and evaluation criteria, the more sample-efficiently SFT can improve performance. Whether performance degrades under distribution shift must still be evaluated for the particular task, data, and model; these examples alone do not establish a universal limit on SFT generalization.
-
-The bad cases from Chapter 6 can also become training data. For a coding agent that ends too early, cut the trajectory prefix just before it declares completion; use that premature declaration as the rejected action, and “run tests, check each acceptance condition, then conclude” as the chosen action. This fits DPO or a decision-boundary demonstration better than ordinary SFT. Keep the failure cause, applicability conditions, and verifier with each sample so it can be traced and rechecked. Experiment 7-17’s `build_preference_data.py` provides deterministic templates and a teacher-model path, while keeping training and evaluation sets separate.
-
-The same tasks can become an RL practice environment. SFT uses already verified trajectories; RL lets the current policy attempt the task again and lets an external verifier judge the outcome. In this way, bad cases define a decision boundary the model must improve, rather than merely becoming examples to memorize.
-
-## When to Choose SFT and When to Choose RL
-
-Section 7.1 clarified the **essential difference** between SFT and RL. This section answers a more practical question: **Given a specific task, which one should you use?** Some conclusions from the decision framework below will be further validated in subsequent RL experiments (Experiment 7-10, Experiment 7-11). Readers can first form a preliminary judgment and then return to cross-reference after reading the RL section.
-
-![Figure 7-11: SFT→RL Two-Stage Training Pipeline](images/fig7-11.svg)
-
-**SFT is suited to** tasks that require format stabilization (such as JSON output or a consistent conversational style), have high-quality expert demonstrations available, and closely match the deployment environment. **RL is worth considering** when deployment differs systematically from training and a reliable reward can represent that difference (for example, J/Q/K change from 10 to 11/12/13, or black suits change to red suits), when optimal strategies must be discovered because demonstrations may be suboptimal, or when annotation is too costly to demonstrate every path.
-
-When structured output is unstable, the most robust strategy is the **"SFT first, then RL"** two-stage pipeline. Here, the primary goal of SFT is not to maximize task performance but to establish **format stability** for the output—ensuring the model can produce parseable JSON and correct tool interface calls. Only after the output format is stable can the RL reward signal be reliably computed. Performing RL directly on a base model without SFT often leads to training failure due to chaotic output formats and incalculable rewards—though this conclusion has boundary conditions: it comes from the setting of a "smaller base model + strict structured output requirements" (as in Experiment 7-11 later). DeepSeek-R1-Zero demonstrated that a sufficiently strong base model can skip SFT and succeed with direct RL, emerging with reflection and long-chain reasoning abilities—at the cost of poor output readability and mixed languages, which is precisely why DeepSeek ultimately added back "cold-start SFT" in R1. R1's round trip from Zero to cold-start shows that, when structured output is unstable, SFT can quickly establish "form" (format and readability), after which RL can develop "spirit" (strategy and reasoning ability) when a reliable reward is available.
-
-Each has its costs: SFT is sample-efficient and converges quickly, while its generalization depends heavily on the coverage and diversity of its data. RL can explore strategies absent from the demonstrations, but it is sample-hungry and unstable to train. If adding diverse, high-quality demonstrations no longer improves new-scenario performance, and those scenarios can be evaluated with a reliable reward and environment, RL is worth considering.
-
-In practice, the decision can be made in the following order:
-
-1. **First ask: Is post-training needed?** If the problem can be solved through Harness engineering (optimizing prompts, tool design, context management), no model training is needed. Most Agent applications fall here.
-2. **If training is needed: Try SFT first.** Suitable for solidifying output formats (JSON schema, API call format), solidifying protocol knowledge (usage of terms, output format, process habits, i.e., "how to say and do things"), and unifying style (tone, length). But note that SFT is not suitable for injecting large amounts of factual knowledge ("what to know")—that requires continued pre-training or RAG (see "The Complete Post-Training Landscape and Practical Tips" at the end of this chapter). SFT is low-cost and quick to show results.
-3. **When SFT is insufficient: Add RL.** This is suitable when the task requires generalization to new situations, exploration of optimal strategies, or when annotation costs are too high. If the output does not yet reliably satisfy the reward function's format, stabilize it first with SFT or constrained decoding; a strong base model that already meets the format can also be trained with RL directly.
-
-## Single-Turn Reinforcement Learning: A Comparison of Memory and Generalization
-
-"Single-turn" means the task is completed in one interaction: the model receives input, produces output, and receives a reward, without needing to maintain state across steps. This simplified setting allows us to focus on the fundamental differences in learning mechanisms between SFT and RL, without the complexity of multi-turn interactions. The single-turn scenario provides clear controlled experimental conditions: the same task, the same base model, the same computational budget, with the only variable being the training method. The first experiment demonstrates how RL learns the meta-strategy of "when to think"; the second experiment uses an arithmetic reasoning card game to systematically quantify "SFT memorizes, RL generalizes."
-
-Before the experiments, let's build some **minimal intuition** about RL algorithms, enough to follow the terms that come up (full formulas and comparisons wait until the "Comparison of Reinforcement Learning Algorithms" section later in this chapter). The RL training in this chapter mostly rests on the **policy gradient**: the model generates several responses to the same problem, increasing the probability of high-reward responses and decreasing that of low-reward responses—moving further in rewarding directions and less in unrewarding ones. To discourage a single large update from derailing the model, mainstream **PPO** clips additional gains in its surrogate objective when a probability ratio falls outside a specified range; this discourages large changes but does not impose a hard constraint on policy movement (the later experiments use "PPO with a value network," whose value network estimates a baseline for finer-grained advantages). The other method, **GRPO**, trains no value network; instead it compares multiple responses to the same problem against one another to judge each one's relative quality. That intuition is all you need for the next two experiments.
-
-**GRPO group update:**
+**Repeatable evaluation loop:**
 
 ```python
-for prompt in batch:
-    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
-    rewards = [verify(trajectory) for trajectory in group]
-    advantages = normalize_within_group(rewards)       # GRPO baseline
-    update(policy, group, advantages)
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
 ```
 
-**PPO clipped update:**
+![Figure 7-2: Tool-Calling and Human-Computer Interaction Evaluation Environments](images/fig7-2.svg)
+
+Depending on the task, evaluation environments can be roughly divided into tool-calling and human-computer interaction types.
+
+### Tool-Calling Evaluation Environment
+
+For tasks that primarily rely on tool usage, such as code generation and data analysis, the Verifiers framework demonstrates a typical design pattern. The Agent completes the task by calling predefined tools, and verification is based on executable criteria (whether tests pass, whether answers match), without relying on human annotation or model judgment.
+
+Verifiers introduces a hierarchical environment design: `SingleTurnEnv` is suitable for single-turn tasks (e.g., simple Q&A), `ToolEnv` supports multi-turn autonomous loops of tool calls, and `StatefulToolEnv` and `SandboxEnv` support stateful tools and long-running sandbox environments (e.g., code execution). For example: `SingleTurnEnv` is suitable for posing a math question and checking the answer directly; `ToolEnv` fits searching several web pages and synthesizing an answer before verifying the final result; `StatefulToolEnv` fits modifying database records and verifying the resulting state change; `SandboxEnv` fits running code in a sandbox and checking the output files. Table 7-2 summarizes these environment types for readers to choose the appropriate evaluation environment based on task state, tool calls, and isolation requirements.
+
+Table 7-2 Verifiers Environment Type Comparison
+
+| Environment Type | State Persistence | Tool Calls | Typical Use Case |
+|---|---|---|---|
+| SingleTurnEnv | None | None | Single-turn Q&A, math problems |
+| ToolEnv | None | Multi-turn | Search + information synthesis |
+| StatefulToolEnv | Yes | Multi-turn | Modifying database records |
+| SandboxEnv | Yes + Isolation | Multi-turn | Code execution and testing |
+
+The framework supports parallel sampling and trajectory caching. The complete trajectory (observations, actions, rewards) from each evaluation is saved for subsequent analysis and replay.
+
+The environment also needs to handle the state dependency of operations — the outcome of a tool call depends on the current state. On failure, it should provide clear error messages rather than simple failure flags, allowing the Agent to learn from errors and adjust its strategy.
+
+### Human-Computer Interaction Evaluation Environment
+
+Many real-world tasks involve not only tool calls but also conversations with human users. A customer service Agent needs to understand vague expressions, clarify needs, query backend systems, and confirm information with the user. Evaluating such tasks faces a fundamental challenge: how to simulate real users in an automated environment?
+
+The key design principle is **Progressive Information Disclosure**, which is the fundamental difference between human-computer interaction evaluation and traditional benchmarks. Most benchmarks reveal the complete requirements upfront, but real users can rarely articulate their needs from the start — they often just say "there seems to be a problem with my flight" or "the internet isn't working." The Agent must clarify the need by asking questions, and that process is itself a display of capability. In evaluation, therefore, **the simulated user's information must not be revealed to the Agent all at once**; it should be disclosed progressively, on demand, as the conversation unfolds.
+
+τ-bench's solution is **User Simulation**: using another LLM to play the user role, conversing with the Agent according to predefined instructions. The simulated user receives task instructions (e.g., "I need to cancel tomorrow's flight"), gradually reveals necessary information to the Agent during the conversation, responds to inquiries, and sends a termination signal when the task is complete. The prompt requires the simulated user to "not reveal all information at once, only provide what is necessary for the current step" and "not fabricate information not provided in the instructions." The design of user simulation requires a trade-off between authenticity and controllability: behavior should be close to a real user (vague expressions, incomplete information, occasional emotional fluctuations) while following a certain script to ensure reproducibility.
+
+The following is an example of a multi-turn conversation with progressive information disclosure (the user simulator acts according to a fixed script):
+
+> **User**: "There's a problem with my flight."
+> **Agent**: "Which flight is it?"
+> **User** (revealing per script): "Delta 123, tomorrow morning from San Francisco to New York."
+> **Agent**: "What's the specific problem?"
+> **User** (revealing per script): "The flight time is too long, I want to change it."
+> **Agent**: "Any preferences for the new flight?"
+> **User** (revealing per script): "Any afternoon flight is fine."
+
+The user simulator follows a fixed script (known information + disclosure rules), ensuring evaluation reproducibility while simulating the progressive expression style of a real user.
+
+τ-bench is a benchmark for evaluating Agent performance in structured business processes (e.g., airline customer service, retail customer service). Its checks are component-level and multi-dimensional: on one hand, it checks whether the final database state is correct (e.g., the booking record status changes to "cancelled"); on the other hand, it verifies whether the Agent provided the necessary key information during the conversation (e.g., refund amount and arrival time, verified by searching for specific strings or patterns). This dual verification simultaneously examines operational accuracy and communication effectiveness. At the task level, however, these checks ultimately collapse into a **binary reward of zero or one** — all checks must pass to score 1; any single failure scores 0. Binary rewards make reliability metrics like Pass^k easy to compute (see the "Evaluation Metrics System" section later), at the cost of scoring "operationally accurate but missing one non-critical field" the same as "complete failure."
+
+The enhanced **τ²-bench** does not primarily improve scoring granularity; instead, it advances the benchmark in two other areas. First, the **Dual-Control Environment**: the Agent is no longer the only party that can call tools — the user simulator can operate on the same shared environment (the Agent instructs the user to switch to airplane mode, and the user's action actually changes the environment state), which better matches real scenarios like technical support, where the user must lend a hand. Second, **more precise task specifications and compositional task generation**: fewer ambiguities in success conditions, and task instances that can be parameterized and generated in batches (see the "Verifiability and Objectivity Assurance" section later for detailed verification dimensions).
+
+> **Experiment 7-1 ★: Run τ²-bench and Compare Its Evolution from τ-bench**
+>
+> This experiment runs the τ²-bench evaluation framework to understand the design principles of human-computer interaction evaluation environments. By comparing τ-bench with τ²-bench, we can see how evaluation datasets are iteratively improved.
+>
+> Read the task definition files in depth: each task contains information known to the user, task instructions governing progressive disclosure and response strategies, and success conditions (the target state of the database and confirmation information that must appear in the dialogue). Run the complete evaluation process, observe the multi-turn dialogue between the user simulator and the Agent, and analyze typical failure modes (policy violations, information omissions, excessive handoffs to human agents, etc.).
+>
+>
+> ![Figure 7-3: τ²-bench Evaluation Architecture](images/fig7-3.svg)
+>
+>
+> Compare the design differences between τ-bench and τ²-bench: The initial version of τ-bench had overly simple user instructions (the Agent could guess the answer), imprecise success conditions (leading to misjudgments), and a mechanical user simulator. τ²-bench made systematic improvements to address these issues:
+>
+> - **Introduced more detailed task instructions**: Including "Grounding Requirements," meaning responses must be based on the actual state of the environment
+> - **More precise evaluation criteria**: For example, "a speed test must return 'excellent' to be considered resolved"
+> - **More realistic user simulator behavior specifications**: Progressive information disclosure, natural emotional fluctuations
+>
+> Pay special attention to the newly added telecom domain tasks in τ²-bench, and understand τ²-bench's dual-control environment design (as mentioned earlier, the user and the Agent jointly operate the same shared environment).
+>
+
+Tool-calling evaluation asks whether an observable state change was completed; human-computer interaction evaluation asks whether the Agent helped the user reach a new understanding or make a decision. The former tests the correctness of the Agent's actions; the latter tests the soundness of its communication strategy.
+
+Building evaluation environments also touches on simulation environments—when an evaluation environment must support repeated interactions at scale, it becomes a simulation environment. The end of this chapter takes this up briefly.
+
+## Design of Evaluation Task Datasets
+
+The evaluation environment is the "stage," and the dataset is the "script." The quality of the script often determines the value of the evaluation more than the stage itself. A poorly designed dataset, even when run in a perfect environment, only yields noise. This section distills several repeatedly validated principles from the design practices of benchmarks such as GAIA, AndroidWorld, SWE-Bench Verified, τ-bench and τ²-bench, Terminal-Bench, OSWorld, and OSWorld-Verified.
+
+This list does not exhaust the Agent evaluation landscape. Even within the Web/GUI category there are several benchmarks with different emphases: WebArena builds fully reproducible websites (e-commerce, forums, code hosting, etc.), containing the unpredictability of real web pages within a sandbox; Mind2Web goes the opposite way, testing generalization directly on hundreds of real websites; [ClawBench](https://claw-bench.com/) ([paper](https://arxiv.org/abs/2604.08523), [code](https://github.com/TIGER-AI-Lab/ClawBench)) lets an Agent running in an isolated container perform end-to-end everyday tasks on live websites. V1 covers 153 tasks across 144 websites, V2 adds another 130, and it records five layers of evidence in parallel: session replays, action screenshots, HTTP traffic, browser actions, and Agent messages. It complements sandboxed benchmarks by making live-site drift and long-tail failures easier to analyze, at the cost of reproducibility that is subject to changes on third-party websites; BrowseComp specializes in deep retrieval — answers buried so deep that only multi-hop browsing and cross-checking can surface them. On the tool-calling side there are dedicated function-calling leaderboards like BFCL (Berkeley Function-Calling Leaderboard). This chapter makes no attempt to catalog them all. Instead it takes the two core environment paradigms (tool calling and human-computer interaction), plus the GUI operation scenarios that run through the dataset case studies, and digs into their design trade-offs. Once you understand the paradigms, you can quickly judge what any new benchmark measures, how well it prevents data leakage, and how far its conclusions can be extrapolated.
+
+> **Experiment 7-2 ★: Manually Execute Benchmark Tasks**
+>
+> Select tasks from each of GAIA, AndroidWorld, SWE-Bench Verified, τ²-bench, Terminal-Bench, and OSWorld-Verified and complete them manually. It is recommended to complete one simple, one medium, and one difficult task from each dataset—the "difficult" level should be challenging even for humans. Compare your execution results with the standard answers and analyze the sources of discrepancies. Through this hands-on experience, understand: task descriptions need to balance clarity and openness, verification standards must be objective and executable, and the hierarchical difficulty of tasks must be able to distinguish different capability levels.
+>
+
+### Core Challenges in Task Dataset Design
+
+**Challenge One: The Tension Between Clarity and Openness.** Task descriptions must be clear enough to ensure reproducible evaluation, yet not so rigid as to stifle the Agent's creativity. GAIA provides an example: tasks are "conceptually simple" but have open implementation paths—for instance, a task may require the Agent to identify an astronaut from NASA's Astronomy Picture of the Day and determine how long they spent in space. The goal is clear, but how to search, filter, and verify is entirely up to the Agent's autonomous decision-making.
+
+**Challenge Two: Balancing Authenticity and Controllability.** Real-world tasks contain uncertainty and noise, which can reveal robustness but also threaten reproducibility. The initial version of SWE-Bench directly used real GitHub issues, ensuring authenticity but also leading to vague task descriptions, incomplete test cases, and subjective evaluation criteria. SWE-Bench Verified introduced systematic validation by human experts, selecting 500 high-quality tasks with clearly defined problems, sufficient tests, and clear solutions, significantly improving controllability while maintaining authenticity.
+
+**Challenge Three: Coordinating Diversity and Systematization.** An effective dataset needs to cover typical scenarios, edge cases, and error traps, while also having a systematic organization so that evaluation results can diagnose specific capability weaknesses. AndroidWorld's 116 tasks span 20 real applications, each annotated with the core capabilities it requires (multi-step planning, visual understanding, temporal reasoning) — so results yield not just an overall success rate but a profile of strengths and weaknesses along specific capability dimensions. More critically, a parameterization mechanism can generate almost unlimited task variants.
+
+**Challenge Four: Evaluation Cost vs. Coverage.** Complex Agent tasks can take minutes or even hours to complete, consuming a large number of tokens. The size of the dataset needs to balance comprehensiveness and economy. GAIA carefully selects 466 tasks across three difficulty levels, covering multiple capability dimensions while allowing evaluation at a reasonable cost. SWE-Bench Verified reduced its set from 2,294 tasks to 500 (reducing costs by about four-fifths while improving the signal-to-noise ratio through stricter quality standards).
+
+**Challenge Five: Preventing Data Contamination.** In the era of large language models, data contamination is a serious challenge for evaluation: when evaluation data is included in the training data, the evaluation measures memorization rather than generalization. It's like memorizing the answers before an exam—good scores don't reflect true ability. Different benchmarks adopt different prevention strategies: GAIA relies on the uniqueness of its answers; questions require combining information from multiple sources to answer, and some tasks come with specially created attachment files (PDFs/audio/images that don't exist on the internet), so a single web page cannot directly provide the answer. SWE-Bench Verified itself is a 500-task subset obtained by OpenAI through manual quality screening of the original SWE-Bench, and does not include time-based leakage-prevention design. It is subsequent works like SWE-bench-Live that truly use temporal freshness to prevent leakage, continuously incorporating issues created after the model's training cutoff date, keeping the evaluation ahead of the model's training corpus. τ²-bench prevents leakage through dynamic parameter generation, where specific task instances (user names, order numbers, dates, etc.) are randomly generated each time. AndroidWorld's parameterized task generation naturally helps prevent leakage because verification is based on the final UI state, not the sequence of operations. Terminal-Bench makes leakage detectable by embedding canary GUIDs (globally unique identifiers used as tracking markers): if a model can output content containing this GUID, it indicates that the benchmark data has leaked into the training set.
+
+### Precision Design of Task Descriptions
+
+GAIA ensures answer uniqueness through clear information source constraints, time ranges, topics, and query targets. For example, a Level 3 task requires starting from a specific date's NASA image, identifying the astronaut through visual understanding, looking up the astronaut group to which they belong, calculating their time in space, and formatting the output precisely ("last name; fields separated by semicolons; numbers formatted with thousands separators"). Every detail serves automatic verification—only an exact match in format and content counts as a pass.
+
+τ²-bench introduces contextualized design, with each task containing multiple layers of information: the surface problem ("mobile data isn't working"), the performance expectation ("requires an excellent speed rating"), the constraint ("will not accept any other rating"), and the implied emotion. A key improvement is separating "known information" from "task instructions": known information is what the user currently knows, while task instructions guide the simulator on how to progressively reveal information, including "Grounding Requirements" (responses must be based on the actual results returned by tool calls, not fabricated).
+
+SWE-Bench Verified includes structured fields like problem description, reproduction steps, and expected/actual behavior, with annotators verifying the match between the description and the test cases. Every element in Terminal-Bench's task descriptions can be mechanically verified: whether file paths exist, permission values are correct, certificate parameters are valid, and date formats are correct. For example, "build-linux-kernel-qemu" requires building the Linux kernel 6.9 from source, adding a custom printk in `start_kernel`, generating an initramfs, and running it in QEMU. The success criterion is the appearance of the custom message in the boot log—the Agent cannot fake the output; it must truly complete the entire process.
+
+AndroidWorld uses a **parameterized template** design. A task is not static text but a dynamically instantiable template (e.g., "Change the phone number of contact `[CONTACT_NAME]` to `[NEW_PHONE]`"), with different parameter values randomly generated for each evaluation. This has three benefits:
+
+- **Prevents memorization**: Parameter values differ each time, preventing the replay of a fixed sequence of operations
+- **Increases data diversity**: One template can generate almost unlimited instances
+- **Supports comparative experiments**: Fixing certain parameters while varying others allows precise measurement of specific factors' effects
+
+Verification is based on the final UI state (e.g., whether the phone number field contains the expected value), not the sequence of operations.
+
+OSWorld tasks often do not start from a "clean" initial state but from carefully configured intermediate states, more closely resembling real-world usage scenarios. Task descriptions need to handle multiple solutions ("set the background to purple" requires a specific color code to disambiguate; "concatenate two CSVs" must accept all reasonable methods like keeping one header or both headers) and environmental uncertainty (anti-scraping measures on websites, evolving application UIs, and race conditions—OSWorld-Verified mitigates these through offline page snapshots, locked dependency versions, explicit wait conditions, etc.).
+
+### Hierarchical Design of Task Complexity
+
+GAIA designs three difficulty levels: Level 1 requires only 1-2 tools (humans 93.9% vs GPT-4 30.3%), Level 2 requires multi-step reasoning (91.8% vs 9.7%), and Level 3 requires complex combinations (87.3% vs 0%). The diagnostic value of this hierarchical design is: failure at Level 1 points to basic tool usage issues, Level 2 points to multi-step planning and information integration, and Level 3 points to long-sequence reasoning and complexity management. Each level corresponds to different improvement directions (prompt engineering vs. planning mechanisms vs. hierarchical architecture/post-training).
+
+τ²-bench layers complexity by business process: from simple information queries, to multi-step processes (changing a flight booking requires querying, presenting alternatives, obtaining confirmation, calculating the fare difference, and processing payment), to fault diagnosis (systematically checking multiple possible causes and verifying fixes), and finally to strategic judgment (handling requests that don't comply with policy).
+
+Terminal-Bench layers complexity along the dual dimensions of technical domain × operational complexity. Its task registry has collected over 200 tasks (the size of the core evaluation set varies by version; for example, version 2.0 selected 89 high-quality tasks from community contributions), ranging from simple MLflow model registration, to medium-difficulty 7-Zip password cracking, to difficult Git server and web server integration, to the most difficult FEAL differential cryptanalysis (requiring cryptography knowledge + algorithm optimization to meet the 30-second time constraint).
+
+### Ensuring Verifiability and Objectivity
+
+GAIA's answers are concise and clear. Strict formatting rules allow verification through exact string matching. The binary result (match or no match) ensures objective reproducibility. The rarity of the answers also serves as an anti-cheating measure—highly specific facts are unlikely to appear verbatim in training data.
+
+SWE-Bench Verified uses executable code-based checks, distinguishing between FAIL_TO_PASS (fails before fix, passes after fix, proving the problem is solved) and PASS_TO_PASS (passes both before and after fix, proving no new bugs were introduced), achieving dual verification. The Verified version also ensures the tests themselves are reliable, without flaky tests that sometimes pass and sometimes fail.
+
+τ²-bench's verification system includes multiple layers of checks (the results of each layer are still aggregated into a binary reward at the task level; all must pass for success):
+
+- **Database state check**: Booking record status, whether a refund record was created
+- **Dialogue content keyword search**: Whether the Agent explicitly confirms the refund amount and expected arrival time to the user
+- **Process compliance**: Analysis of the tool call sequence, e.g., whether the user's explicit confirmation was obtained before modifying an order
+
+The dual-control environment of τ²-bench (see the earlier section "Human-Computer Interaction Evaluation Environment") adds another dimension to verification: after the user simulator actually changes the environment state, the Agent must observe this change through tool calls and proceed with troubleshooting accordingly. Verification therefore covers whether the Agent actually observed the outcome of the user's actions.
+
+OSWorld provides 134 independent evaluation functions with full OS access, enabling deep inspection of file system structures, process states, network connections, and application internals. For example, in a database operation task, the evaluation script not only verifies that the report file exists but also directly connects to the database to check if the SQL was executed correctly. In browser tasks, it analyzes the DOM tree, checks cookies/localStorage, and sends verification requests to the backend to confirm whether the form submission actually took effect. This deep inspection can detect cases of "superficial completion but substantive error"—for instance, the Agent clicked the submit button, but the request was rejected by the server due to incorrect field entries.
+
+Terminal-Bench is based on a standardized Docker container environment, combining file system state checks (path existence, permission values, content format) with program execution functional verification (in build-linux-kernel-qemu, actually starting QEMU and searching for the custom printk message). The canary GUID makes leakage traceable.
+
+### Systematic Design of Task Distribution
+
+Task distribution needs to systematically cover capability dimensions, difficulty dimensions, scenario dimensions, and edge cases. GAIA pursues generality—most tasks require a combination of reasoning, multimodality, browsing, and tool use. τ²-bench deliberately designs "trap tasks"—a user claims "customer service has approved the cancellation" when the cancellation doesn't actually comply with policy—to test whether the Agent holds its judgment under pressure and misdirection. OSWorld is based on a dual-dimension matrix of operation type (file IO / desktop application / web application / cross-application workflow) and application domain, spanning three operating systems (research shows strong cross-OS correlation; skills learned on one system can transfer to others). Terminal-Bench includes "cross-technology stack combination tasks" to test systems thinking (e.g., a resharding task combining data processing + file operations + Python engineering).
+
+### Data Quality Control and Iterative Improvement
+
+SWE-Bench Verified is a model of quality control. OpenAI randomly selected 1,699 tasks from the original 2,294 for human evaluation, recruiting 93 Python-proficient developers. Annotators had to perform multiple checks: whether the problem description was clear (could they understand what needed to be solved), whether the test cases were complete (covering all aspects and edge cases), whether the tests were stable (no flaky tests due to environment or randomness), whether the patch was correct (did it introduce new errors), and whether the difficulty was reasonable. After rigorous screening, only 500 passed (29%)—this high rejection rate is a necessary investment in evaluation quality. They also established standardized annotation guidelines, defining specific criteria and examples for each check to ensure consistency among different annotators.
+
+τ²-bench introduces a separation of "known information" / "task instructions" (making the simulator behavior more realistic) and stricter completion conditions (e.g., "only excellent counts as solved; poor/fair/good are not accepted"), preventing "superficial fixes."
+
+OSWorld-Verified is a model of iterative improvement. After its release in April 2024, OSWorld quickly became an important benchmark for multimodal Agent evaluation, but over 15 months of widespread use, more than 300 issues were uncovered. These issues fall into four categories: environment issues (anti-scraping measures on websites, CAPTCHAs, and dynamic content changes), task description issues (ambiguous phrasing), verification logic issues (too strict or too lenient), and initial state issues (incomplete configuration). A team of about 10 people from the University of Hong Kong worked closely with MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic, Simular, and others for two months to systematically fix these issues. Repair strategies were formulated for each category: environment issues were resolved by locking versions and offline backups, task descriptions were clarified by rewriting ambiguous phrasing, verification logic was balanced by manually establishing correct baselines and adjusting conditions, and initial states were enhanced by adding completeness checks.
+
+The evaluation infrastructure was also migrated from local VMs to the AWS cloud platform, leveraging elastic scaling to achieve a 50-fold speedup through parallelization (from over 10 hours to a few minutes). The Google Drive task initialization success rate increased from 50% to over 95%. All official evaluation trajectory data is publicly available on Hugging Face, allowing the community to review every detail, reproduce results, and identify issues, forming a virtuous cycle of continuous improvement.
+
+Evaluation environments and post-training environments often share the same origin: a well-designed evaluation environment can be adapted into a training environment with little effort—SWE-Gym is a representative example of building training tasks based on SWE-bench, while the parameterized templates of τ²-bench and AndroidWorld can generate massive training instances in batches. But one red line must be drawn: what can be reused is the environment's **construction mechanism**; the evaluation set's specific tasks must stay strictly isolated from the training data—once an evaluation task enters the training set, it tests memory, not ability (see Chapter 8 for details).
+
+## Evaluation Metrics System
+
+Having settled "what tasks to evaluate on," we still need to answer "which dimensions to measure." This section gathers the metrics commonly used in Agent evaluation into a reference "metric dictionary"—from process to outcome, from quality to safety—giving each a definition and its use cases. It also supplies the precise definitions of Pass@k, Pass^k, and the other metrics invoked earlier (e.g., in the τ-bench section).
+
+**Process Metrics: From Black Box to White Box.**
+
+Focusing solely on the final outcome is insufficient; the process by which the Agent achieves the outcome is equally important. **Action validity and authorization rate** measures the proportion of actions that are both valid and authorized—invalid operations include calling non-existent tools or passing incorrect parameter types; unauthorized operations refer to actions beyond the permitted scope. A high rate indicates the Agent has a clear understanding of the tool ecosystem. **Tool call correctness rate** further requires that parameters are semantically reasonable: the query terms for a search tool should accurately express the need, and the path for a file operation should point to the correct target.
+
+**Path efficiency** measures how efficiently the task is completed: number of steps (think-act-observe cycles), redundant actions (repeatedly searching for the same keyword, re-reading the same file), and backtracking frequency (how often the Agent realizes an error and corrects itself—occasional backtracking is normal, but frequent backtracking indicates insufficient forward planning). A baseline from human experts or heuristic algorithms is needed to define a "reasonable number of steps."
+
+**Retrieval coverage** targets information-gathering tasks: Did the Agent fully explore the information space? Did it jump to conclusions after only looking at the first page of search results? **Cost and latency** focus on request count, token expenditure (distinguishing input/output costs, considering KV Cache reuse), and wall-clock time (including model inference + tool execution + network latency). Time distribution needs to be tracked to identify bottlenecks.
+
+**Outcome and Quality Metrics.**
+
+**Task success rate** is the most direct hard metric, which can be designed with hierarchical standards (core goals must be achieved, secondary goals affect quality scores). In terms of statistical methods, two often-confused metrics need to be distinguished:
+
+- **Pass@k**: The probability that **at least one** of k attempts succeeds, answering "Can the Agent do it?"
+- **Pass^k**: The probability that **all** k attempts succeed, answering "Is the Agent stable and reliable?"
+- **Best@k**: The score of the **best** of k attempts (rather than whether it succeeded), measuring the "quality ceiling given enough opportunities," often used for open-ended tasks with continuous scoring.
+
+A concrete number makes the difference vivid. Suppose the Agent's single-attempt success rate is 60% (Pass@1 = 0.6). Over 5 attempts: Pass@5 = 1 - 0.4^5 ≈ 99% (almost certain to succeed at least once), while Pass^5 = 0.6^5 ≈ 7.8% (all five succeeding is unlikely). The former measures the capability ceiling, the latter stability; confuse them and you will misread your Agent.
+
+**Safety and Compliance Metrics** are crucial in production deployment: triggering sensitive operations (deleting data / modifying permissions / sending external communications), data leakage (printing passwords in logs / sending private documents to external APIs), and prohibited content should all be subject to a **zero-tolerance principle**—similar to the hallucination veto (see the "Four Rubric Principles" later). A single serious safety violation vetoes the overall evaluation, regardless of performance in other dimensions.
+
+**Robustness** measures stability in the face of uncertainty: random seed sensitivity (how much performance varies under different initializations), adaptability to page changes (a website UI update should not cause complete failure), tolerance for API jitter (can it gracefully handle temporary failures, timeouts, format changes), and long-term memory interference (can outdated information accumulated in the context lead to incorrect decisions).
+
+**Dual Coverage of Execution Trajectory and Final Outcome.** An easily overlooked distinction: "what the Agent said and did during execution" (the trajectory defined in Chapter 1) and "what the system ultimately became" (the final outcome) are two different things. The Agent saying "the booking is complete" is trajectory-level information; a record actually appearing in the database is outcome-level verification. Look only at the trajectory and you miss "said it but didn't do it"; look only at the outcome and you may miss intermediate steps that went astray. Anthropic once gave an example: a flight booking Agent discovered a loophole in the airline's policy during execution and found a cheaper option for the user—if scored only according to the preset execution path, this run would be judged a failure; but from the final outcome, the user got a better deal. Therefore, both types of evaluation should be covered to avoid systematic blind spots.
+
+**Human Spot Checks and Adversarial Review.**
+
+Even when automated evaluation is reliable most of the time, regular human spot checks are still needed: cover different task types, successes and failures, and ambiguous cases near score boundaries — verifying not just the results but the soundness of the scoring rationale. Spot checks can be systematized into **judge calibration**. Before deploying LLM judges at scale, build a human-annotated gold standard set (say, 100-200 cases spanning task types and difficulties) and measure how well the judge model (an LLM acting as judge; the mechanism is detailed in the LLM-as-a-Judge section next) agrees with human annotations — simple agreement rate or Cohen's kappa, the latter discounting chance agreement. Only once agreement clears a preset threshold (e.g., kappa above 0.7) should the judge be used for large-scale evaluation; thereafter, recalibrate on the gold set whenever the judge model or Rubric changes. Without this step, an LLM judge's scores are just "another model's opinion," not a reliable proxy for human judgment. **Adversarial review** uses Red Teaming to actively construct challenging cases: seemingly perfect answers containing hidden errors, answers that get by through keyword stuffing, and answers that exploit known biases of the judge model to obtain undeservedly high scores. **Multi-judge mechanisms** use multiple independent judges to score separately, determining the final result through weighted averaging or consistency checks—when judges disagree significantly, the case is flagged for further human review.
+
+## Automated Evaluation Methods
+
+With the evaluation environment, dataset, and clear metrics system in place, the core question becomes: how to score? For tasks with clear correct answers (e.g., math problems, SQL queries), simple binary judgment (correct/incorrect) is sufficient; but for open-ended tasks (e.g., customer service dialogues, report writing), more refined evaluation methods are needed.
+
+Code-based automatic verification only covers scenarios with standard answers; scoring open-ended tasks is the main topic of this section. Among these, the design of reward signal density (from binary rewards to process rewards to generative rewards) and training methods for reward models are left for systematic discussion in the post-training section of Chapter 8; this section answers a more fundamental question: how to use LLMs to automatically judge the output quality of open-ended tasks.
+
+### LLM-as-a-Judge: The Core of Automated Evaluation
+
+![Figure 7-4: LLM-as-a-Judge Pipeline](images/fig7-4.svg)
+
+Why is LLM-as-a-Judge needed? For open-ended tasks (e.g., generating reports, handling customer complaints, creative content), there are no standard answers for automatic comparison, and human evaluation is costly and difficult to scale. LLM-as-a-Judge balances the scalability of automation with human expert judgment by having a language model evaluate outputs against expert-defined scoring criteria (a Rubric). The method has known limitations, though: the judge model carries its own biases (most typically **length bias**—a tendency to score longer, more detailed responses higher even when they are no more correct), and repeated judgments of the same input can vary. Length bias in particular warrants specific countermeasures. Three common defenses are: penalize verbosity explicitly in the Rubric and cap response length per task type; in pairwise comparisons, bring the two candidates to similar lengths before judging; and regularly audit the correlation between scores and response length—if high scores almost always go to long responses, the judge has been swayed by length and the Rubric needs revision. To address these challenges systematically, Rubric design must follow the principles below:
+
+**Rubric (Scoring Criteria): The Basis for LLM Judgment.**
+
+**Four Rubric Principles** (Scale AI, "Rubrics as Rewards"):
+
+(1) **Based on Expert Guidance**—A Rubric must reflect domain knowledge, capturing the core facts and reasoning steps. A Rubric for medical Q&A, for instance, needs diagnostic criteria and the medical errors that must be avoided; one without expert grounding can only capture surface features like fluency.
+
+(2) **Comprehensive Coverage**—A Rubric should cover factual accuracy, logical coherence, completeness, and safety. It should not only define positive standards but also explicitly identify **Pitfalls**—i.e., high-risk common errors, such as recommending unverified therapies in medical advice.
+
+(3) **Standardized Importance Weighting**—Classify criteria as Essential, Important, Optional, or Pitfall items. The scheme supports a **Veto mechanism**: for example, in a customer service scenario, hallucination (fabricating false information) is a typical veto dimension—regardless of how well other dimensions perform, if false information appears, it must be vetoed. This also helps prevent reward hacking through keyword stuffing.
+
+(4) **Self-Contained Evaluation**—Each evaluation item is independently actionable and does not rely on the evaluator's domain knowledge. Abstract standards like "the response demonstrates deep understanding" should be avoided, replaced by verifiable standards like "cites at least two authoritative theories and accurately explains how they support the conclusion."
+
+The key practice: define objectively verifiable scoring levels for each dimension, with concrete examples and **edge cases** to resolve ambiguous situations. Actively guard against **Reward Hacking**—the Agent finding a "shortcut" to high scores without actually completing the task—by explicitly penalizing hallucination, sycophancy, keyword stuffing, and dodging hard questions. A Rubric is an iterative product: trial use reveals disagreements among evaluators, and the Rubric gradually evolves through this feedback from abstract principles into a detailed casebook.
+
+Here is a complete Rubric that follows the four principles, using a user memory Agent as the example. Test question: "Who is my daughter's pediatrician?" (The answer requires linking information across two conversations: the first conversation mentions "my daughter's name is Lily," the second mentions "took Lily to see Dr. Chen").
+
+```yaml
+rubric:
+  dimensions:
+    - name: Factual Correctness
+      weight: essential        # Essential item
+      scoring:
+        4_Excellent: "Correctly answers Dr. Chen, and links to daughter Lily"
+         3_Good: "Correctly answers Dr. Chen but does not mention that Dr. Chen is Lily's doctor"
+        2_Passable: "Gives the correct doctor but with additional uncertain information"
+        1_Fail: "Gives an incorrect doctor's name, or answers 'I don't know'"
+
+    - name: Information Completeness
+      weight: important        # Important item
+      scoring:
+        4_Excellent: "Proactively supplements relevant information (e.g., last visit date, diagnosis)"
+        3_Good: "Answers the core question without omission"
+        2_Passable: "Answers the core question but omits available related information"
+        1_Fail: "Key information is missing"
+
+    - name: Reasoning Correctness
+      weight: important
+      scoring:
+        4_Excellent: "Correctly links the two cross-session pieces of information: 'daughter=Lily' and 'Lily's doctor=Dr. Chen'"
+        3_Good: "Correctly links but the reasoning path is not clear enough"
+        2_Passable: "Partially correct linking"
+        1_Fail: "Incorrect linking (e.g., mistaking the user's own doctor for the daughter's doctor)"
+
+    - name: Hallucination Detection
+      weight: veto             # Veto item: once triggered, total score is zero
+      scoring:
+        pass: "All information can be traced back to historical conversation records"
+        fail: "Fabricated information not present in the conversation (e.g., fictitious visit dates, diagnoses)"
+
+  edge_cases:
+    - "If the user has multiple daughters who see different doctors, should ask which daughter"
+    - "If the memory contains both 'Dr. Chen' and '陈医生' (the same name written in Chinese), should recognize them as the same person"
+```
+
+**Good Rubric vs. Bad Rubric**: Each scoring level above specifies verifiable, concrete behavior ("Correctly answers Dr. Chen") rather than descriptions that cannot be judged objectively, like "demonstrates a deep understanding of memory." The veto item sets the bottom line: even if every other dimension scores full marks, a single instance of hallucination results in an automatic zero.
+
+**Deterministic veto before rubric judging:**
 
 ```python
-for trajectory in rollouts:
-    returns = discounted_returns(trajectory.rewards)
-    values = value_model(trajectory.states)
-    advantages = returns - stop_gradient(values)
-    ratio = exp(policy.log_prob(trajectory.actions)
-                - old_policy.log_prob(trajectory.actions))
-    policy_loss = -mean(min(
-        ratio * advantages,
-        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
-    ))
-    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
-update(policy, value_model, policy_loss + value_coef * value_loss)
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
 ```
 
-> **Experiment 7-10 ★★: AdaptThink—Learning "When Not to Think"**
->
-> Large reasoning models (e.g., OpenAI o1, DeepSeek-R1) generate lengthy chain-of-thought for all problems, causing unnecessary overhead on simple problems. The experiment first validates an intuition: **NoThinking mode** (skipping thinking via `<think></think>`) performs comparably or even better on simple problems; only when facing difficult problems does the advantage of Thinking mode become apparent.
->
-> AdaptThink uses RL to train the model to adaptively choose the mode. Two core components:
->
-> - **Constrained Optimization Objective**: Encourages NoThinking while ensuring overall performance does not degrade.
-> - **Importance Sampling Strategy**: Balances Thinking and NoThinking samples to solve the **cold-start** problem (here, cold start specifically refers to the initial model almost always choosing Thinking, leaving the NoThinking branch with too few samples to learn effectively; this differs from the earlier use of "cold-start SFT" for DeepSeek-R1, which involves a small number of demonstration examples).
->
-> The "importance sampling" mentioned here is a common statistical method—when the sampling distribution is biased towards a certain class of samples, weights are applied to the samples to "correct" the distribution, ensuring that the learning signal fairly covers all classes. This idea is repeatedly used in RL algorithms like PPO and DAPO discussed later in this book.
->
-> The canonical record of this historical training run is the checkpoint-free [training report](../chapter7/AdaptThink/TRAINING_REPORT.md). The public W&B main run [`wubbn5tj`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/wubbn5tj) used 8×NVIDIA H100 80GB GPUs. From step 0→300, MATH500 accuracy changed from 0.8100→0.8180 (+0.80 pp) while response length changed from 4911.46→1576.62 (-67.90%); GSM8K changed from 0.796816→0.818802 (+2.20 pp) and 1025.24→477.33 (-53.44%); and AIME mean16 changed from 0.314583→0.310417 (-0.42 pp) and 12119.51→6402.23 (-47.17%). The corresponding NoThinking ratios were 83.80%, 84.15%, and 56.25%. These results show a routing signal aligned with difficulty at the aggregate dataset level, but they do not justify calling it "perfect difficulty awareness" on every problem or claiming that accuracy improved universally.
->
-> After the report's selected measurement point, the run continued to step 410 and 36.92 cumulative hours before W&B marked it as `crashed`; the configured 10 epochs / 3,140 steps were not completed. Although step 300 contains a checkpoint-timing event, the checkpoint is not distributed with the book, and there is no independent receipt proving that it was successfully evaluated with `run_eval_verl_hf.sh` or used to rerun MMLU. The historical source commit is `9e588202…`; future reproductions are pinned to its direct child commit `0033ad172…`. The three entry-point files are unchanged, but the `-fl-` path generated by the training script is incompatible with the `-fl4096` path hard-coded in the evaluation script and must be corrected manually.
->
-> Together with prompt distillation, AdaptThink forms a "fast-slow dual system": distillation reduces the proportion of tasks that require thinking, while AdaptThink optimizes the triggering strategy for the remaining tasks, jointly maximizing thinking efficiency.
->
-> **Experiment 7-11 ★★: GeneralPoints—A "Memory and Generalization" Comparison in Single-Turn RL**
->
-> ![Figure 7-12: GeneralPoints Experimental Architecture (Training and Testing Design for GP-L and GP-VL Variants)](images/fig7-12.svg)
->
-> GeneralPoints is an arithmetic reasoning card game proposed by Chu et al. (2025, "SFT Memorizes, RL Generalizes," arXiv:2501.17161), specifically designed to evaluate model generalization. The objective resembles the "24 Game": use each of the four numbers shown on the cards exactly once, combining them with addition, subtraction, multiplication, and division to reach the target number 24. The experiment designs two variants: the text-only GP-L and the image-based GP-VL, allowing us to examine rule generalization and visual generalization within the same framework.
->
-> **Rule Variant**: During training, J/Q/K are all counted as 10; during testing, they are counted as 11/12/13 respectively, ensuring the test set contains unseen number combinations (operations involving 11, 12, 13) to strictly evaluate generalization. **Visual Variant**: Training uses black suits (♠♣), testing uses red suits (♥♦), to evaluate robustness to changes in visual appearance. Using Llama-3.2-Vision-11B, the experiment follows the standard post-training pipeline: first, SFT initialization gives the model basic instruction-following ability; then, under the same computational budget, the model undergoes additional SFT and RL training in separate branches, with PPO and a value network used for RL. Both branches are trained on data using the single rule J/Q/K=10 and evaluated on in-distribution (ID) and out-of-distribution (OOD) test sets.
->
-> The results show a clear difference in this controlled setting. **Rule OOD**: RL improves by +3.5 percentage points on GP-L (11.5%→15.0%), while SFT **decreases** by 8.1 percentage points (11.5%→3.4%); on GP-VL, RL improves by +3.0 percentage points, while SFT decreases by 5.6 percentage points. **Visual OOD**: RL improves by **+17.6 percentage points** on GP-VL (23.6%→41.2%), while SFT decreases by 9.9 percentage points (23.6%→13.7%).
->
-> Tracking visual recognition accuracy reveals that RL improves the underlying visual encoder through outcome-oriented optimization, and this improvement is highly correlated with overall performance gains; in contrast, SFT overfits to the token patterns in the thinking process, neglecting the learning of visual tokens, leading to a decrease in recognition accuracy.
->
-> The experiment also shows that RL required SFT initialization in this setting: with a Llama-3.2-Vision-11B-scale base model and strict structured-output requirements, end-to-end RL without SFT failed completely because the base model could not produce scoreable structured outputs. This is specific to the setting, not a universal law; a sufficiently strong base model can skip SFT and succeed with direct RL (see the earlier discussion of DeepSeek-R1-Zero). Another noteworthy finding is that, in this experiment, more verification iterations produced better measured generalization: 10 iterations yielded +5.99% versus +0.48% for one iteration, making test-time computation an important factor in the observed gain.
->
-> Why did SFT degrade under this experiment's distribution shift while RL performed better? One explanation consistent with the observations is that the limited SFT data reinforced the fixed pattern "treat J/Q/K as 10," which remained active when J changed to 11. The outcome-trained RL branch was more likely to reinforce a strategy of recalculating until it reached the correct result, allowing the same procedure to apply after the rule changed. This explains the experiment's memorization-versus-generalization contrast; it does not imply that SFT can only memorize or that RL must learn a general algorithm.
->
-> The core contribution of this experiment is its systematic quantification, within the limited GeneralPoints setting, of SFT's overfitting tendency and RL's better out-of-distribution performance, with the same pattern observed in both text-only and vision-language variants. In this setting, SFT stabilized the format and RL explored strategies on that foundation, making the two methods complementary. Borrowing from Chinese painting, this "form first, spirit second" training configuration establishes the external form (format and structure) before refining the inner strategy, providing a methodological reference for later multi-turn and multimodal tasks.
+### Failure Attribution: Locate the First Error in a Trajectory
 
-> **Experiment 7-12 ★★★: V-IRL-VL—Multi-Turn Visual Navigation**
->
-> V-IRL[^ch7-24] has the Agent navigate continuously through real urban street scenes: training uses New York routes, while testing transfers to different cities and changes both the phrasing of directions and the visual appearance. RL clearly outperforms SFT on both rule OOD and visual OOD, showing that in multi-turn tasks the policy must learn to re-plan from the current observation rather than reproduce training trajectories. The experiment uses PPO with a value network, and step-by-step feedback is observed to ease long-horizon credit assignment.
+End-to-end evaluation often says only "pass" or "fail". To make results drive fixes, perform **failure attribution** for every failed trajectory: record the main error class, the first step at which unacceptable behavior appeared, the relevant tool call or model output, and evidence that can be audited. Attribute the first error that sent the task off course; later errors are often just the chain reaction.
 
-> **Experiment 7-13 ★★★: SimpleVLA-RL—Open Exploration Under Outcome Rewards `[Extended Experiment]`**
->
-> SimpleVLA-RL uses only success/failure outcome rewards on LIBERO robotics tasks. Each task gets just one demonstration trajectory for SFT cold start; RL then lifts the success rate from 17.3% to 91.7% and discovers a "pushcut" action that never appeared in the demonstrations. It contrasts with V-IRL: when process signals are easy to define they accelerate learning, but when the optimal path is unknown a sparse outcome reward preserves far more room for exploration.
+Production bad cases usually come from three signals: an explicit user correction ("do not do that"), a downvote or other negative feedback, or a later state check, rule verifier, or LLM judge showing that the Agent did something it should not have done. LLMs can help with this work, but cannot replace careful human reading because failure attribution often reveals product problems, not only technical bugs.
 
-## RLHF: From Human Preferences to Reward Models
+An initial Coding-Agent taxonomy can include missing process or repository rules, tool-call and format errors, abnormal model termination, and task-completion or logic failures. The first violating action—not the final error message—should be recorded. Store a structured JSON or YAML attribution with step number, tool name, observation evidence, root cause versus consequence, recoverability, and confidence, together with the task goal, environment state, version identities, and complete trajectory.
 
-The previous experiments share a common premise: the tasks have verifiable correctness—whether the formula is right or the format complies, a rule-based verifier can score it. However, the conversational models deployed today behave like "decent, safe assistants" thanks to a different line of work that matured earlier: **RLHF** (Reinforcement Learning from Human Feedback). Understanding RLHF is key to understanding where the conversational quality and safety alignment of products like ChatGPT come from, and also a prerequisite for understanding concepts like KL penalty and reward hacking in the algorithms discussed later.
+#### Scope-Sensitive Document Formatting Errors
 
-**InstructGPT's Three-Stage Pipeline.** OpenAI's InstructGPT[^ch7-4] established the standard process still in use today:
+When a user says "the quotes are wrong", that cannot be turned into a global character replacement. At minimum you must distinguish ASCII straight quotes (`"`, `'`), Chinese curly quotes (`“”`, `‘’`) and Markdown backticks (`` ` ``). The same character plays a different syntactic role in Chinese prose, quoted English source, inline code, code blocks, code comments, JSON and paths.
 
-1. **SFT**: Fine-tune the pre-trained model on human-demonstrated "instruction-response" pairs to establish basic instruction-following ability—this is the content discussed in the earlier "SFT (Supervised Fine-Tuning)" section.
-2. **Train a Reward Model (RM)**: For the same prompt, have the model generate multiple responses, and human annotators compare them pairwise, indicating which one they prefer. Train a scoring model using these preference pairs, with the training objective based on the Bradley-Terry model:
+Evaluation data should first parse the document into scoped spans—for example `ZH_PROSE`, `EN_PROSE`, `QUOTED_SOURCE`, `INLINE_CODE`, `CODE_BLOCK`, `CODE_COMMENT` and `JSON_OR_SCHEMA`. Each span records the set of permitted transformations, the characters that must be protected, and the validator result after editing. The three cases below cannot be handled by one replacement rule:
 
-   $$\mathcal{L}_{\text{RM}} = -\log \sigma\big(r(x, y_w) - r(x, y_l)\big)$$
-
-   where $y_w$ is the preferred response, $y_l$ is the rejected response, and $\sigma$ is the sigmoid function. The intuition is very simple: **make the RM give a higher score to the preferred response**. The reason for collecting comparisons rather than scores is that it is difficult for humans to consistently give absolute scores ("this response deserves a 7.3" is nearly impossible to label consistently), but judgments of "which is better, A or B" are much more reliable. **Remember the role of the "reward model"—it is a running theme in this chapter**: here, it is a scorer learned from human preferences; when we get to Section 7.10 on reward design, you will see its various forms (ORM that only looks at the final result, PRM that scores step-by-step, generative reward models that provide reasoning in natural language), and a special case—when correctness can be directly determined by rules, the "reward model" simply degenerates into a deterministic piece of code (this is what RLVR, discussed below, is). They all answer the same question: **where does the reward come from?**
-3. **Use RM scores for PPO**: Using the RM's score as the reward signal, perform PPO training on the SFT model (the mechanism of PPO is explained in the next section), enabling the model to learn to generate responses that the RM believes "humans would prefer."
-
-**KL Penalty: Don't Stray Too Far from the Starting Point (Explaining KL Divergence Thoroughly).** In RLHF, the reward that the model actually optimizes is usually not the RM score itself, but a penalty term subtracted from it:
-
-$$r = r_{\text{RM}} - \beta \cdot \mathrm{KL}\big(\pi_\theta \,\|\, \pi_{\text{ref}}\big)$$
-
-This single formula raises four common questions from beginners, which we will address one by one.
-
-**(1) What is KL divergence, and where is the penalty applied?** KL divergence (Kullback-Leibler Divergence) measures the difference between two probability distributions: the more similar the distributions, the smaller the KL, reaching 0 when identical; the more different, the larger the KL. Here the distributions are the responses generated by the **current policy** $\pi_\theta$ (the model being trained) and the **reference policy** $\pi_{\text{ref}}$ (the training starting point, usually the SFT model) under the same preceding context. $\beta$ controls the penalty strength—the `kl_coef` hyperparameter commonly seen in training scripts. For an autoregressive policy, response-level KL can be written as an expectation, under the current policy, of a sum of token log-probability ratios:
-
-$$D_{\mathrm{KL}}(\pi_\theta\|\pi_{\text{ref}})=\mathbb{E}_{y\sim\pi_\theta}\left[\sum_t \log\frac{\pi_\theta(y_t\mid x,y_{<t})}{\pi_{\text{ref}}(y_t\mid x,y_{<t})}\right]$$
-
-In practice, training often computes this log ratio at each token sampled as $y_t\sim\pi_\theta(\cdot\mid x,y_{<t})$ and subtracts it from the reward. An individual sampled log ratio can be negative and is not itself a KL divergence; the expected token sum gives the distribution-level KL above. Depending on the implementation, the estimate may enter as reward shaping or as a separate regularization term in the objective.
-
-**(2) Why is the direction "current policy first, reference policy second"?** KL divergence is asymmetric, $\mathrm{KL}(P\|Q)\neq\mathrm{KL}(Q\|P)$, so the direction is not arbitrary. Here it is written as $\mathrm{KL}(\pi_\theta\|\pi_{\text{ref}})$—current policy first. Under the convention that treats the reference distribution as the target and the current policy as the approximation, this is called **reverse KL**. Because it measures log-probability ratios on responses that the current policy is likely to generate, it directly discourages the reward-seeking policy from moving too far from its starting model. The reference policy is not inherently safe, but it acts as an anchor to the language and formatting distribution from which training began. The opposite direction, $\mathrm{KL}(\pi_{\text{ref}}\|\pi_\theta)$, more strongly pressures the current policy to cover regions to which the reference assigns probability. Which direction is appropriate depends on the objective and approximation; here we describe the direction commonly used to regularize RLHF policies.
-
-**(3) When does mode-seeking appear?** When a restricted distribution family approximates a multimodal target, reverse KL can exhibit a **mode-seeking** tendency because it assigns a high cost to placing mass in low-probability regions. But an RLHF policy jointly optimizes a reward term and KL regularization, so reverse KL alone does not guarantee selection of only a few modes or reduced diversity. Actual diversity also depends on the reward model, KL coefficient, sampling procedure, and the policy's expressiveness. The KL term's primary purpose here is not to force a particular response style, but to limit excessive drift from the reference distribution during reward optimization.
-
-**(4) What happens without it?** The intuition is simple: **Don't stray too far from the starting point, or the reward model's scores become unreliable.** The RM is trained on the output distribution near the reference policy. Once the model is optimized to a distribution the RM has never seen, the RM's scores become extrapolations without a basis, and high scores no longer equal high quality. Therefore, the KL penalty prevents two things simultaneously: **reward hacking** (the model exploiting loopholes in the reward to get high scores without actually doing the task well, see next paragraph) and **distribution collapse** (outputs degenerating into extreme forms like repetition or gibberish). Even in RLVR training with verifiable rewards, KL regularization is often retained to stabilize training (a few works like DAPO and Open-Reasoner-Zero intentionally remove it—note that DeepSeek-R1-Zero's GRPO itself still explicitly includes a KL term).
-
-**Reward Models Can Be "Over-Optimized."** The RM is, after all, just a proxy indicator of human preferences. Goodhart's Law states: when a metric becomes the optimization target, it ceases to be a good metric—pushing the proxy to extremes distorts its correlation with the true objective. OpenAI's research[^ch7-5] systematically measured this **reward model over-optimization** phenomenon: as RL training progresses, the proxy reward (RM score) monotonically increases, while the true quality (human evaluation) first rises and then falls. What the model gradually learns is not to answer better but to make the RM score it highly—verbose, ingratiating, rigorous-sounding empty talk. This is the specific form of reward hacking in the context of RLHF, and KL penalty and early stopping are the most common mitigation methods; the reward hacking problem in the "Common Pitfalls" section at the end of this chapter shares the same origin.
-
-**DPO: Skipping the Explicit Reward Model.** DPO (Direct Preference Optimization)[^ch7-6] starts from the premise: since the combination of "training RM + PPO" ultimately results in "increasing the probability of preferred responses and decreasing that of rejected responses, while not straying too far from the reference model," why not skip the explicit RM and directly turn the preference pairs into a classification loss with an implicit reward? Mathematically, it can be shown that this is equivalent to offline preference optimization with a KL constraint, where the reward model is implicitly embedded within the policy itself. DPO training is as simple as SFT: no online sampling, no value network, no need to maintain a separate RM. The cost is that it is entirely offline—it cannot explore new behaviors beyond the preference data, and its performance ceiling is determined by the quality and coverage of the preference data.
-
-**The Relationship Between RLHF and RLVR.** To summarize, the difference between the two approaches lies in **where the reward comes from**: RLHF's reward comes from a learned RM (backed by human preference data), while **RLVR** (Reinforcement Learning with Verifiable Rewards) uses a rule-based verifier (whether the test is passed, whether the answer is correct). Agent tasks happen to be mostly verifiable—this is precisely why this chapter focuses on RLVR as the main thread. However, it is not a matter of choosing one over the other; models deployed in practice use them in combination: RLHF handles conversational quality and safety alignment, while RLVR handles reasoning and Agent capabilities. The "Evolution of Reward Paradigms" section later discusses generative reward models, which can be seen as the confluence of these two lines—using a trainable reward model to handle open-ended tasks that rules cannot cover.
-
-## Comparison of Reinforcement Learning Algorithms
-
-**GRPO (Group Relative Policy Optimization)** was introduced by DeepSeek and is one of the most commonly used algorithms in RL training today. Its core idea is to estimate relative advantage by comparing a group of rollouts for the same problem, without training a separate value network.
-
-The previous single-turn experiments demonstrated an RL generalization advantage in those controlled settings, and the previous section introduced the preference optimization approach of RLHF. However, the specific algorithms used in these works vary and are just a subset of many options. Before moving on to more complex multi-turn tasks, it is necessary to systematically review the characteristics and applicable scenarios of mainstream algorithms.
-
-> **The most important point first, so you don't get lost in the formulas.** This section lists quite a few algorithm names and equations, but remember Thread Two of this chapter: **in industry, it is enough to know how to use the off-the-shelf RL algorithms (PPO, GRPO, and the like) and to pick the right one; what actually decides success or failure is the data and the environment, not the algorithm.** These algorithms are already packaged in mature frameworks like veRL and TRL; using them usually means changing a few lines of configuration. So the goal here is not to teach you the derivations but to give you a selection map—which algorithm for which scenario. The formula passages (aimed at training engineers) can be skipped without losing the thread. The next section makes the positive case for why data and environment matter more than algorithms.
-
-![Figure 7-13: GRPO Algorithm Flow](images/fig7-13.svg)
-
-The RL scenario for modern LLM Agents differs fundamentally from traditional RL—Agents need to understand user intent, call tools, generate structured outputs, and engage in long-chain reasoning across multiple dialogue turns. This multi-objective, multi-stage decision-making means that "choosing the right algorithm" has some impact, but far less than the data and environment.
-
-From an implementation perspective, RL algorithms are divided into **online exploration methods** (exploring new strategies through interaction with the environment) and **offline optimization methods** (optimizing based on existing data, more stable and direct). Here, we also provide the strict terminology promised earlier: **On-Policy** methods update the policy using only data newly sampled from that same policy; **Off-Policy** methods can also learn from data generated by other policies or earlier versions of the policy, as in the Q-learning example mentioned earlier. Mapping this chapter's methods onto that definition: SFT is off-policy imitation learning—the data comes from a teacher or human demonstrations, not the model itself; the standard forms of PPO and GRPO used for LLM training are on-policy—each round uses rollouts newly sampled by the current model (i.e., having the model run through the entire task once, generating a complete trajectory from start to finish) for updates; DPO is offline preference optimization, involving neither online sampling nor strict policy iteration.
-
-These algorithms are mostly built on the same idea of **policy gradient**: adjusting the policy parameters $\theta$ in the direction that "increases the expected return." Its most basic form (REINFORCE) is:
-
-$$\nabla_\theta J(\theta) = \mathbb{E}\big[\nabla_\theta \log \pi_\theta(a \mid s)\, G\big]$$
-
-where $\pi_\theta(a\mid s)$ is the policy (probability of choosing action $a$ in state $s$), and $G$ is the cumulative return for this trajectory (or from that step onward)—the higher the return, the more strongly the model increases the probability of the corresponding action. Using the entire trajectory's return $G$ as the weight is unbiased but has high variance; hence, a baseline $b$ is introduced, and the **advantage** $\hat{A}=G-b$ (how much better this action is than average) is used as the weight to reduce variance. The subsequent PPO and GRPO are essentially two types of improvements on "how to stably estimate and use the advantage $\hat{A}$."
-
-**PPO** uses "clipping" to truncate additional gains in the surrogate objective when a probability ratio falls outside a specified interval, discouraging large policy changes. It does not, however, guarantee a hard bound on the actual probability ratio or the overall policy distance:
-
-$$L^{\text{CLIP}}(\theta) = \mathbb{E}\Big[\min\big(\rho\,\hat{A},\ \operatorname{clip}(\rho,\, 1-\epsilon,\, 1+\epsilon)\,\hat{A}\big)\Big],\quad \rho = \frac{\pi_\theta(a\mid s)}{\pi_{\theta_{\text{old}}}(a\mid s)}$$
-
-where $\rho$ is the probability ratio between the new and old policies, and $\epsilon$ (e.g., 0.2) defines the clipping interval in which the surrogate objective recognizes additional gains. It is not a hard constraint that prevents $\rho$ itself from leaving the interval. The later-mentioned "Clip-Higher" specifically relaxes the upper bound $1+\epsilon$.
-
-**GRPO** eliminates the value network, an auxiliary neural network that PPO trains to estimate the value function separately at each step of a trajectory and thereby calculate finer-grained advantages. Instead, it uses "intra-group relative comparison" to estimate advantages: for the same problem, sample $N$ trajectories to obtain returns $r_1,\dots,r_N$, and define the advantage of each trajectory as its relative performance within the group:
-
-$$\hat{A}_i = \frac{r_i - \operatorname{mean}(r_1,\dots,r_N)}{\operatorname{std}(r_1,\dots,r_N)}$$
-
-That is, "positive if better than the group average, negative if worse"—no value network needed. This is precisely why it is cheaper. Note: The formula above omits the KL regularization term; in actual training, the per-token KL penalty introduced in the previous section is typically added to constrain the policy near the reference model.
-
-Table 7-4 summarizes the core characteristics of mainstream methods. When reading, pay attention to distinguishing two things often conflated: **where the reward comes from** (rule verifier, learned reward model, or human preference data) and **which algorithm is used for optimization**. PPO and GRPO are not picky about the reward source—they can connect to either a rule verifier (RLVR) or a reward model (RLHF); their real difference lies in the advantage estimation method (value network vs. group-relative baseline).
-
-Table 7-4 Comparison of Post-Training and Inference-Time Optimization Methods
-
-| Method | Type | Core Idea | Advantage | Disadvantage | Applicable Scenario |
-|--------------|---------------|---------------|--------------|------------------|-------------------------|
-| **REINFORCE** | Online RL Algorithm | Updates the policy using the final reward of the entire trajectory | Simple to implement | High variance, unstable training | Theoretical baseline; rarely used directly in its original form, but its variants with baselines (RLOO, REINFORCE++, etc.) are among the current mainstream; GRPO is essentially REINFORCE with a group-relative baseline |
-| **PPO** | Online RL Algorithm | Clips surrogate-objective gains outside the probability-ratio interval, discouraging large policy changes | Stable; the value network provides finer-grained credit assignment | Not a hard bound on policy distance; requires additional training and storage of a value network; sensitive to hyperparameters | Multi-turn Agents, long-trajectory credit assignment |
-| **GRPO** | Online RL Algorithm | Samples multiple trajectories for the same problem and compares their relative quality within the group | No value network needed; low cost | The same advantage is assigned across the entire response, resulting in coarse credit assignment; requires rewards that discriminate among trajectories within the group | Single-turn or short-trajectory tasks with good reward discrimination |
-| **DPO** | Offline Preference Optimization | Directly turns preference pairs into a classification loss with an implicit reward | Extremely simple and efficient; no online sampling needed | Cannot explore new policies; limited by the quality and coverage of offline preference data | Scenarios with existing high-quality preference data |
-| **KTO** | Offline Preference Optimization | Only needs a "good/bad" label for a single sample | Very low annotation cost | Coarse signal | Scenarios with extremely limited annotation resources |
-| **Best-of-N** | Inference-Time Method | Generates N outputs at inference time and selects the best one | No model modification; simple to implement | Inference cost increases multiplicatively; capabilities are not embedded into parameters | Early-stage rapid quality improvement; provides an upper-bound estimate of reward for RL |
-
-Returning to the experiments in this chapter, let's be transparent about the algorithms used in each: GeneralPoints and V-IRL (Experiments 7-11, 7-12) come from the same study and use PPO with a value network; AdaptThink (Experiment 7-10) uses a custom constrained optimization objective with importance sampling; later, ReTool (Experiment 7-14) uses a modified PPO implementation built on veRL (its training data comes from DAPO-Math-17k, but the optimization algorithm remains PPO); SimpleVLA-RL (Experiment 7-13) and RLVP (Experiment 7-16) are based on GRPO. In multi-turn scenarios, the credit assignment problem is more complex, and different algorithms have their own strengths and weaknesses.
-
-A practical selection path is as follows: with a reliable reward signal and sufficient computational resources, choose GRPO for simplicity or PPO for flexibility and finer credit assignment over long trajectories; with high-quality preference data, choose DPO or KTO for lower cost; during early exploration, use Best-of-N to get started quickly.
-
-After looking at this table, you might think, "So which algorithm should I use for fine-tuning?" The answer might be surprising: **In most cases, any of them will do—don't get hung up on the algorithm first.** The next section is dedicated to this topic.
-
-## Data and Environment: More Important Than Algorithms
-
-This is the section of the chapter I most want you to remember—Thread Two, stated head-on. We have spent a fair amount of ink on algorithms, but the experience from the industry's front lines runs the other way: **algorithms matter far less than three more basic elements—the fidelity of the simulation environment, the quality of the training data, and the capability of the base model.** Knowing how to use existing algorithms is enough; what separates teams is how well they build the environment and curate the data. This echoes the conclusion of Chapter 6 (evaluation and simulation environments are the cornerstone of post-training) and OpenAI's reversal recounted in Section 7.2—decades of RL research had the priorities backwards; the real order is **prior (base model) > environment > algorithm**.
-
-### Environment: The Training Ground for the Model
-
-The essence of RL is "trial-and-error learning," and trial-and-error requires a **training ground**—this is the simulation environment. The model repeatedly runs tasks in the environment, receives feedback, and adjusts its policy. The **fidelity** of the environment (how closely it resembles the real deployment scenario) directly determines whether the trained policy is usable:
-
-- **A distorted environment means a dead policy.** If the simulated customer service rep always answers from a fixed script and the error messages don't match production, the model will learn a test-taking strategy that works only in simulation and falls apart the moment it ships. This is the most common way RL projects die—not because the algorithm was bad, but because the practice field was not the exam room.
-- **Building a high-fidelity environment is often harder and more expensive than the training itself.** An environment that supports large-scale parallelism, reliable reproducibility, and realistic feedback usually requires far more engineering effort than tuning the model itself. The tool-calling experiments later in this chapter, including AWorld's MCP sandbox and ReTool's code-interpreter sandbox, invest heavily in environment engineering for a simple reason: **real APIs impose rate limits, may ban accounts, and can produce side effects, so they cannot be used directly for training.** You must first build a stable, controllable, replayable "shadow world."
-- **The other half of the environment is the reward function.** The environment must not only simulate "how the world changes" but also determine "whether the action was good or bad"—this is the source of the reward signal. Reward design is part of environment engineering, which will be expanded upon in the next section.
-
-In a nutshell: **Before you start tuning algorithms, ask yourself—does my simulation environment truly resemble the real world?** The answer to this question is far more important than choosing between PPO and GRPO.
-
-### What If You Can't Build an Environment? Let the Model Play the Environment
-
-But there is an even more fundamental problem: in many scenarios, a high-fidelity environment is not "expensive"—it is **flat-out impossible to build**. Real APIs have side effects and cannot be called recklessly; real users cannot be used for trial and error; and the physical world cannot be fast-forwarded. If you cannot even stand up a usable "shadow world," does that mean RL is off the table? An increasingly mainstream answer is: **use a model to simulate the environment**—have an LLM play the role of the environment and generate the feedback the Agent needs to interact with. This route has two levels.
-
-**The first level: the model synthesizes the return values of tool calls.** Take ZeroSearch (2025) as an example[^ch7-13]: training a "model that knows how to search" usually requires a real search engine, but search APIs cost money, impose rate limits, and return uncontrollable results. ZeroSearch simply uses an LLM to play the search engine: the student model issues a search query, and this "simulated engine" generates the retrieval results returned to it. Even better, it uses a **curriculum-style** design—early in training, the simulated engine returns high-quality, highly relevant documents, and as training progresses, noise is gradually mixed in and return quality is degraded, forcing the student to learn to extract useful information from the imperfect returns of a real search engine. In the end, a model that never saw a real search engine during training still performs well when connected directly to real search.
-
-**The second level: the model simulates the dynamics of the entire environment.** Not just the return value of a single tool—even "what the world will look like after an action is taken" can be delegated to a model. DreamGym (2025)[^ch7-14] distills environment dynamics into a reasoning-style "experience model": given the current state and the Agent's action, it reasons step by step to produce the state transition and feedback signals, thereby synthesizing rollouts in bulk for online RL without accessing the real environment. Training customer-service and sales Agents commonly uses an LLM to play the user (a user simulator), and the τ-bench family of evaluations is built precisely on this idea—the same model simulator can serve both as the exam room and as the practice field.
-
-But the risks of this route must be stated plainly: **the simulator's world knowledge is the ceiling of training, and the simulator's systematic biases are absorbed wholesale by the policy.** If the simulated customer service rep is more patient than real users, or the simulated search engine never returns garbage results, what the student learns is a policy that works only in a "world played by a model"; worse still, RL will actively seek out and exploit the simulator's loopholes, engaging in reward hacking. So the sound engineering practice is **mixing**: let model simulation carry the bulk of the interaction volume, supplement it with real-environment interaction, and use real-environment interaction to periodically calibrate the simulator's bias.
-
-### Data: The Most Critical Link, and Quality Trumps Everything
-
-If the environment is the training ground, then **data is the textbook and the most critical of the three elements.** "Data" here refers to demonstration samples (input-output pairs) in the SFT phase and the task distribution and reward signal in the RL phase. Regardless of the phase, there is one iron rule:
-
-> **Data quality trumps algorithms.** Feed the most sophisticated algorithm dirty data, patchy data, or systematically biased data, and the policy it learns will be dirty too. SFT bakes the data's noise and bias into the parameters verbatim; RL optimizes relentlessly toward a biased reward, pushing further and further in the wrong direction (the breeding ground for reward hacking). **Garbage in, garbage out** is on full display in post-training.
-
-Furthermore, many teams have missed an insight that can save a great deal of money:
-
-> **In many scenarios, if your SFT data is sufficiently high-quality, you don't need RL at all.** RL is expensive and unstable (often tens to hundreds of times the cost of SFT), yet teams routinely reach for it first. If your task distribution is predictable and you can gather demonstrations that are diverse and high-quality enough, a solid SFT often does the job. The scenarios where RL is truly irreplaceable are limited (see Section 7.5): the deployment distribution drifts systematically, the expert demonstrations are themselves suboptimal, or annotation is too costly to demonstrate every path. **Get the SFT data right first; then decide whether RL is even needed.** That sequence can save you a great deal of compute and time.
-
-A compelling industry example is Anthropic. Before 2025, its post-training recipe had two main parts: **SFT on massive amounts of high-quality data**, plus **RLAIF** (Reinforcement Learning from AI Feedback; Bai et al. 2022's Constitutional AI uses a "constitution" to guide the model in scoring its own responses for alignment)—and it **relied little on RLVR (Reinforcement Learning with Verifiable Rewards), now standard for code and reasoning**. Even so, its coding models of that era were already excellent. The reason lies largely not in the algorithm but in how far Anthropic drove data quality on both fronts, SFT and RLAIF—which confirms the judgment above: **when the SFT data is good enough, even a straightforward recipe may not require elaborate verifiable-reward RL.** None of which makes RL useless: since 2025 Anthropic has invested heavily in it—on a foundation of good data, RL raises the capability ceiling further still. **Data decides how far you can go; RL decides how much higher.**
-
-What does data quality specifically mean? At least three dimensions: **Coverage** (does it cover the various situations encountered during deployment, especially long-tail and edge cases?), **Diversity** (are the speakers, styles, and solutions in the demonstrations rich enough? Otherwise, the model will collapse into a single mode, like "everyone speaking in the same tone" in Experiment 7-6), and **Annotation Accuracy** (is the demonstration answer itself correct? Especially in chain-of-thought distillation, erroneous thought processes will be imitated by the student—hence Experiment 7-9 uses a rule verifier to first filter out trajectories with incorrect answers). The return on investment for these three points is usually far higher than switching to a fancier algorithm.
-
-At the operational level, **rejection sampling is the standard move for pushing "annotation accuracy" to the maximum**, and the pipeline is fixed: for each prompt, sample k candidates (in practice k is typically 4 to 16) → judge correctness with a rule-based validator, unit tests, or a reference answer (for tasks without an automatic verifier, use a reward model or a strong model to score instead) → keep only the trajectories that pass the filter, deduplicate them, and cap how many are retained per prompt to prevent the data from collapsing onto a few easy problems → run a round of SFT on the retained data. Once the model gets stronger, you can resample and re-filter, iterating in this loop—this is precisely the core loop of bootstrapping methods like STaR and RFT. It turns the slogan "data quality beats algorithms" into an executable pipeline: no new algorithm needed—just a reliable verifier and enough sampling budget.
-
-Rejection sampling mainly filters answers to a given set of questions. A further step is to let an Agent change the **question distribution itself**. In Autodata's Agentic Self-Instruct, a main Agent coordinates four roles: a challenger generates tasks, weak and strong solvers attempt them, and a verifier judges answer quality and feeds its findings back to the task-generation process. The system searches for tasks that the strong model can solve, the weak model still struggles with, and the evaluator can judge reliably, converting inference compute into new training data at the current capability frontier[^ch7-12].
-
-This is different from **dynamic sampling**, which merely assigns more budget to difficult items in an existing pool: dynamic sampling changes budget allocation, whereas agentic data generation changes the task distribution. The term "self-improvement" should nevertheless be used carefully here. If the loop trains only the weak solver while the strong solver and task generator remain fixed, the method is closer to adaptive distillation. A more complete meta-level loop appears only when the task-generating Agent is itself optimized using downstream training outcomes. Autodata explores this possibility through meta-optimization of its data-scientist Agent, but it remains a frontier research direction rather than a mature general recipe.
-
-#### From Real Business Data to Verified Synthetic Trajectories
-
-An Agent running in a live service accumulates a great deal of real business data, including user requests, support tickets, tool-call logs, and task outcomes. The most reusable part is usually not one user's exact wording or a particular real order, but the **task structure** revealed by these data: what the user wanted, what the Agent could see, which tools it could call, which business constraints applied, where failures commonly occurred, and what the system state should look like after success. Real tickets and logs therefore should not simply be paraphrased and used for training. A safer approach is to remove identifying information, aggregate the records into **task blueprints**, and reconstruct the tasks in an isolated environment with entirely fictional people, orders, and files. This preserves the real difficulty while reducing the risk that the model memorizes private information, customer data, or internal credentials.
-
-An executable pipeline can be summarized as: **real online data → identify task types → construct synthetic tasks → run multiple rollouts → verify at two levels → form training data**. Several 2026 studies converge on this principle from different directions: use skill taxonomies or skill graphs to cover rare capability combinations instead of joining tasks at random[^ch7-18]; synthesize trajectories containing diagnosis and recovery inside executable environments[^ch7-19]; separate tests, reference solutions, and solving where possible, and use checks such as fail-to-pass—tests fail before the change and pass after the correct execution—to remove samples that look plausible but offer little training value[^ch7-20]; and verify the task itself separately from the realized trajectory[^ch7-17]. In practice, the process has three stages:
-
-1. **Synthesize the task before sampling trajectories.** Extract user intent, initial state, available tools, business constraints, success conditions, and common failure modes from online data, then group similar cases into a task-type catalog. Generate new names, identifiers, file contents, and system states for every type and place them in a resettable sandbox. Suppose online logs repeatedly show that a partially shipped order cannot be refunded in full. The synthesizer can create fictional orders with different item counts, payment methods, and shipping ratios while preserving the rule that only unshipped items may be refunded. Each **task package** should contain the instruction and initial state visible to the Agent, plus a hidden verifier, reference outcome, and generation notes. One or more strong teachers then execute the task end to end through the target Agent harness, recording messages, tool calls, tool results, and the final state. Try each task several times and retain only verified trajectories. If common online failures involve timeouts, invalid arguments, or corrupted intermediate files, introduce these faults safely in the sandbox to create successful “detect → diagnose → repair → recheck” trajectories, not only flawless expert demonstrations.
-2. **Separate task verification from trajectory verification.** Task verification asks whether this is a good exercise: can a reference solution complete it in a clean environment; do tests fail initially and pass after correct execution; is the instruction complete without leaking the answer; is the difficulty appropriate; and does removing a supposedly required tool or Skill make the task measurably harder? Trajectory verification asks whether this is a good demonstration: do the final database state, files, or external effects obey every required business rule; did the run terminate normally; and were tool calls valid? If a particular procedure is part of the learning objective, also check that the relevant Skill was read before the decision and actually affected the action, rather than merely being mentioned afterward. Prefer deterministic code for anything expressible as unit tests, database assertions, format validation, or state diffs. Use a model-based evaluator only for aspects that are hard to formalize, such as whether communication is appropriate, and keep calibrating it through human audits. Tests should ideally be built by an independent role that has not seen the teacher trajectory, then challenged with known-good, known-bad, and deliberately constraint-omitting examples. Otherwise the verifier may learn to recognize only the surface form of the reference answer.
-3. **Use the same tasks and verification infrastructure differently for SFT and RL.** For cold start, run SFT on complete, verified successful trajectories. System prompts, user tasks, and tool results remain conditioning context but are excluded from the loss; supervision focuses on the Agent's own reasoning, tool calls, and final response. The model therefore learns the full execution process, not only the final answer. Next, turn the synthetic-task generator and verifier directly into an RLVR environment, let the current model produce new rollouts, and reward it according to how fully the tests pass. Do not imitate failed trajectories as correct examples. They can instead form preference pairs, reveal task types missing from the curriculum, or become recovery demonstrations after a correct diagnosis and repair are added. Deduplicate the training data and split it by customer, time period, or task template. The independent evaluation set should come from real business samples and task types that do not overlap with training. Reference solutions, hidden tests, and verifier feedback must never appear in model-visible training content.
-
-The goal is not to generate as much data as possible, but to **let real online conditions determine what to synthesize and executable checks determine what to retain**. Quality always comes before quantity: a small set of trajectories that resemble real tasks and pass rigorous verification is usually more valuable for training than a large set of unverified synthetic trajectories. The synthesizer fills gaps in task coverage, the verifier protects data quality, SFT teaches the basic behaviors, and RLVR uses the same tasks and verification infrastructure to raise the success rate further.
-
-Chapter 9 will return to this point: in speech recognition, the model keeps wavering over whether the user has finished speaking. The root cause lies not in the model architecture but in training labels annotated from a "God's-eye view"; relabeling the data using only information available at the moment of decision makes the problem disappear. **Often, data is more critical than architecture.**
-
-### So, When Does the Algorithm Come In?
-
-Algorithms are not unimportant—they just come later. The sensible order of effort is: **choose a strong base model → polish the environment and data → only then squeeze out marginal gains from algorithms and hyperparameters.** Only when the environment is realistic, the data is good, and the base model is strong do the differences between algorithms show up at all—and only then are questions like "GRPO or PPO? Clip-Higher or not?" worth tuning seriously. Chasing algorithms before the environment and data are ready is the classic cart before the horse. With this priority in mind, we move to multi-turn tasks—where reward design, the place data and environment meet, decides success or failure.
-
-## From Single-Turn to Multi-Turn: Credit Assignment and Reward Design
-
-### The Core Challenge of Multi-Turn Tasks
-
-![Figure 7-14: Comparison of Single-Turn RL and Multi-Turn RL](images/fig7-14.svg)
-
-![Figure 7-15: Credit Assignment in Multi-Turn Interactions](images/fig7-15.svg)
-
-Moving from single-turn to multi-turn involves a qualitative leap in complexity. The policy must not only choose the optimal action for the current step but also consider the future state value; it must not only handle immediate feedback but also perform **Credit Assignment** under delayed rewards—determining which step in a multi-step sequence contributed most to the final outcome. For example, a customer service Agent solves a user's problem after 10 turns of dialogue and receives a positive review—but should this positive review be attributed to the precise questioning in turn 2 or the patient explanation in turn 7?
-
-The multi-turn interaction discussed here takes the form of the ReAct loop described in Chapters 1 and 4: each turn is one iteration of **Think → Act → Observe**, and the reward delay arises from the structural constraint that "the final outcome can be judged only after multiple turns."
-
-## Reward Design: Turning Task Goals into Learning Signals
-
-The single-turn, multi-turn and tool-calling scenarios above established *what* to train; this section answers *how the environment should tell the model whether it did well*. Reward design unfolds along three complementary dimensions: **where the reward comes from**, **when it is given**, and **how much information it must express**. A fourth question follows: when the outcome is correct, was the path also acceptable?
-
-### Where the Reward Comes From: Rules, Human Preference and Model Judgment
-
-The most reliable source is a **verifiable reward (RLVR)**: judge the result directly with test cases, database assertions, state diffs or format checks. Mathematical answers, code tests and structured tool calls are all good places to start from a binary outcome reward. The more deterministic the rule, the cheaper and more reproducible the reward, and the harder it is for the model to game.
-
-**RLHF** is background here. The basic InstructGPT[^ch7-4] pipeline is: humans compare responses, a reward model is trained, and PPO then optimizes the policy. The reward model is only a proxy for preference, and over-optimizing it leads to reward hacking[^ch7-5], which is why a KL penalty is normally used to anchor the policy near the SFT reference. DPO[^ch7-6] skips the explicit reward model and optimizes offline from preference pairs directly. These methods are not the main line of Agent RL in this chapter.
-
-When the goal cannot be fully reduced to rules, model judgment is an option. A **generative reward model (GRM)** emits not just a score but a diagnosis of what went well and what needs to change; it can serve as a reward source, and its diagnoses can be turned into distillation or preference data. The core idea of DeepSeek-GRM[^ch7-23] is to have the model first induce evaluation principles for the task, then evaluate the trajectory against those principles, and finally check the evaluation itself against verifiable facts. The resulting feedback is more transparent, but it still needs sampled human calibration so the judge does not develop biases of its own.
-
-Two easily confused notions are worth separating here. **Reward hacking** means exploiting a rule or an implementation hole to score highly. **Reward seeking** means the model first builds an internal picture of *what the grader will look at*, then adjusts its behavior to that guess. The latter need not tamper with tests or fabricate results, yet on long-horizon tasks it can lead the model to set itself a very shallow check, stop as soon as it passes, and deliver something that satisfies the proxy metric but not the real intent[^ch7-29]. So "it passed the grader" cannot be equated with "the task is done": the grader is a proxy for intent, and the harder you train, the more likely the model is to treat the proxy as the goal itself.
-
-### When the Reward Is Given: Outcome or Process
-
-An **outcome reward (ORM)** judges only at the end of the episode whether the task was completed. It is the simplest and gives the policy the most freedom to explore; when there is no agreed standard for the intermediate path and the optimal solution has not yet been found by humans, SimpleVLA-RL's sparse success/failure reward is the right starting point. Sparse feedback makes it hard for the model to localize a specific mistake in a multi-step trajectory, which is one long-standing reason RL sample efficiency is limited[^ch7-8]. On long-horizon coding or cowork tasks, the "is it done" judgment should also be handed to hidden tests, state assertions or an external termination hook that the model cannot write — never to the model's own claim of completion.
-
-"Premature completion" is a concrete example: when the model says the task is done, the harness runs acceptance tests the model cannot see, in an isolated workspace. Passing earns positive reward, failing earns negative reward. Those tests must read real files or environment state rather than checking whether the model said "done", or the model will learn to promise verification without performing it. During evaluation, keep a boundary set of unfinished tasks separate from a held-out set of genuinely finished ones: the former shows the premature-stop rate, the latter shows whether the model can still close out normally — otherwise you train a model that never dares to finish.
-
-A **process reward (PRM)** gives feedback at intermediate steps, checking things like authentication, tool arguments, the number of passing tests or navigation actions. OpenAI's *Let's Verify Step by Step*[^ch7-7] showed the value of step-by-step verification in mathematical reasoning. Process rewards ease long-horizon credit assignment, but they can confine the model to the path the designer had in mind, and they cost more to label and validate. V-IRL-VL (Experiment 7-12) uses step-by-step navigation feedback while SimpleVLA-RL (Experiment 7-13) keeps only the endpoint reward, and together they form a controlled contrast: dense feedback buys convergence speed, sparse feedback buys exploration space.
-
-In practice, establish a reliable baseline with outcome rewards first, and only then add process signals for intermediate events that are genuinely verifiable. Multi-turn LLM RL usually sets the discount factor $\gamma=1$; PPO's value network or turn-level advantage attributes endpoint feedback back to earlier actions, while GRPO spreads a trajectory-level advantage across the generated tokens, so signal dilution deserves particular care on long trajectories.
-
-### How Much Information the Reward Must Express: Scalar, Vector, Generative Diagnosis
-
-The **density** of a reward and its **representation** are two different things. A scalar answers only "how good overall"; a semi-scalar gives a brief reason and then a score; a vector scores separately along dimensions such as accuracy, completeness, cost and safety; a generative reward produces a natural-language diagnosis that can be sampled several times and aggregated. The selection rule is straightforward:
-
-- A definite answer or test exists: prefer a binary scalar;
-- Several mutually independent quality goals: use a vector, or weight the dimensions into a scalar;
-- Open-ended and hard to enumerate as rules: use generative diagnosis, but pair it with fact-checking and sampled human review.
-
-Do not stack unverifiable dimensions in the name of a "richer" reward. Every additional evaluation dimension adds one more way for the policy to game it. Confirm first that the signal produces meaningful within-group variation across a handful of rollouts, and only then decide whether it belongs in training.
-
-### A Correct Outcome Is Not Enough: Path Constraints and RLVP
-
-An outcome reward settles whether the job got done, but it cannot express whether it was done the way it was supposed to be. A real Agent may achieve surface success by editing the test file, skipping authentication or running a destructive command. The principle behind RLVP (Reinforcement Learning with Verified Penalty)[^ch7-9] is: **reward the outcome, penalize the path**. It targets machine-decidable, **outcome-neutral constraints** that have no bearing on final success or failure, and it is not a substitute for independent checks on semantic intent, delivery completeness and early-stopping behavior.
-
-Real environments are typically **asymmetric verifiers**: detecting "a bad action was taken" is cheap and reliable, whereas proving "this step made meaningful progress toward the goal" is hard. Write the total reward as $R=O+\beta\Phi$, where $O$ is the task outcome and $\Phi$ is a path signal computed per action by deterministic rules. Deduct points for verifiable violations, and give a small partial reward for verifiable compliant actions or reachable sub-goals; normalize the two channels before combining them so the path signal cannot drown out the main objective. None of this changes PPO or GRPO — it changes only the reward seen at each step.
-
-At the implementation level, split the verifier output into two channels and hand them to the existing policy optimizer:
-
-```python
-outcome = verify_final_state(trajectory)              # result, not self-report
-path_signal = 0
-for step in trajectory:
-    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
-reward = normalize(outcome) + beta * normalize(path_signal)
+```text
+Chinese prose: call the `reset()` method.
+Quoted English source: “Please restart the service.”
+# the code block below only illustrates a protected scope
+# Chinese comment: display "current status"
+name = "status"
 ```
 
-Which actions are permitted, which sub-goals are reachable, what the hidden tests are and how evidence is recorded all depend on the specific environment. The text here only explains how the outcome reward and the path constraint merge, so that one environment's rules are not mistaken for a general algorithm.
+Trajectory-prefix regression should require the model to make the minimal edit, and check at the same time Chinese document style, the preservation rate of quoted English source, code and JSON syntax, and the edit distance over non-target text. When the rules cannot determine the scope, keeping the original text and asking for clarification should count as a permitted action, not a guessed edit that happens to pass.
 
-The point of RLVP is not that "denser rewards are better" but whether within-group variation can be restored. A pure outcome reward produces zero variance and no gradient in both all-fail and all-succeed groups. Violating actions are usually easy to detect, so a penalty almost always restores the variance; a progress reward only works when partial progress is actually reachable. Four design rules follow: penalize specific actions, never "insufficient effort"; always keep the outcome reward so the model does not learn to do nothing; pair every penalty with a reachable compliant path where possible; and make the rules deterministic and hard to game. If the base policy would never sample the compliant action at all, seed that path with a few demonstrations first, and taper the path shaping once compliant behavior is stable. Put differently: the penalty is the half that is usually reachable, and the progress reward is the half gated by reachability.
+#### Exact-Copy Errors: From `old_string` Mismatch to Layer-by-Layer Localization
 
-> **Experiment 7-16 ★★★: RLVP — Reward the Outcome, Penalize the Path**
->
-> Add an outcome reward $O$ and a path signal $\Phi$ on top of GRPO and compare against a pure outcome reward. On TerminalBench, violations drop from 3.71 to 0.66 while the success rate is essentially unchanged; on miniF2F, a reachable partial reward cuts the iterations needed to reach a 0.9 success rate from 7.0 to 4.4. In software repair, where no rollout passes any test, the progress signal is unreachable and adding it brings no benefit. The lesson: test whether the signal is reachable before deciding to add a reward dimension.
-
-These numbers come from controlled proxy environments and cannot be extrapolated directly into equivalent gains for a production Agent. The safer conclusion is mechanistic: as long as the path signal distinguishes behaviors within the same group of rollouts, and the rules are hard for the policy to game, it fills in exactly the information the endpoint reward cannot see. Real deployments additionally need hidden verification, trajectory monitoring and external termination conditions built into the harness.
-
-## RL for Learning Tool Calling
-
-In the preceding multi-turn experiments, the Agent's action space was limited to built-in operations like moving and observing. Real-world Agents also need to call various external tools—search engines, code interpreters, document parsers, etc.—which introduces new challenges for RL training.
-
-![Figure 7-16: Tool Calling RL Reward Loop](images/fig7-16.svg)
-
-Tool use extends the Agent's capability boundary from "model's own reasoning" to "calling external systems for collaboration," making it a key step toward practical Agents. From a difficulty gradient perspective, RL training for tool use faces three levels of challenges. The first level is learning to use a single tool—understanding input/output specifications, mastering the timing of calls, and handling error feedback. The second level is making choices within a multi-tool ecosystem—facing dozens of tools, deciding when to search, when to execute code, and when to parse documents. The third level is tool chain orchestration—discovering dependencies between tools, identifying mutually exclusive constraints, and optimizing cost efficiency.
-
-There are currently two active lines of research around Agent RL for tool calling. One is **retrieval augmentation**: represented by Search-R1 (Jin et al., 2025), which uses RL to train the model to autonomously decide when to initiate a search during the thinking process and to use the returned results to continue reasoning, rather than following a fixed RAG pipeline. The other is **software engineering**, represented by training environments such as SWE-Gym, which support multi-turn RL for coding Agents in real codebases, allowing the model to iteratively edit, run, and fix code. Both lines share the same two challenges: long-horizon credit assignment (attributing a final success to a decision made dozens of steps earlier) and environment engineering (building training environments that are stable, reproducible, and massively parallelizable).
-
-Tool RL also has an unavoidable engineering detail: **loss masking for environment feedback tokens**. A tool call trajectory contains both tokens generated by the model itself (thinking, tool call parameters) and tokens returned by the environment (code interpreter output, search results, customer service replies). The latter are not generated by the policy but are given by the environment—if they are included in the policy gradient, the model would be trained to "predict what the sandbox will output," which deviates from the optimization objective and makes training unstable. The standard practice is to mask the environment feedback tokens when computing the loss, backpropagating gradients only for the tokens generated by the model. This is one of the core technical points of ReTool (masking gradients for feedback tokens inside `<interpreter>` tags), and it is what Search-R1 refers to as "masking retrieved tokens to stabilize training." Major training frameworks like veRL and AWorld have this mechanism built in.
-
-**Trajectory-level reward mask:**
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-> **Experiment 7-14 ★★★: ReTool—Code Interpreter Enhanced Math Problem Solving**
->
->
-> ![Figure 7-17: ReTool Interleaving Text-Code Thinking and Sandbox Execution Feedback Loop](images/fig7-17.svg)
->
->
-> Pure text thinking is prone to cumulative errors in precise numerical calculations, symbolic operations, or complex equation solving (e.g., ten consecutive multiplication steps, each potentially wrong). Code interpreters provide precise verification through an executable interface. ReTool integrates the real-time execution of a code interpreter into the RL thinking loop, allowing the model to autonomously learn when and how to use the tool under the guidance of result feedback.
->
-> Training is divided into two stages. SFT warm-up (about 1 hour) converts pure text reasoning data into code-augmented trajectories, establishing basic tool calling patterns. RL training (PPO based on a modified veRL implementation, training data from DAPO-Math-17k, about 9 days for 400 steps) optimizes the policy through rollouts interleaved with real-time code execution: the model generates code containing `<code>` tags, the sandbox executes it and wraps the result in `<interpreter>` tags for feedback, the model continues generating, forming a mixed reasoning sequence of "text 1 + code 1 + feedback 1 + ... + answer." Each training step generates 512 responses (32 questions × 16 candidates), with an average of 7–9 interaction rounds per response, and total token processing grows from an initial 25M to 40M.
->
-> ReTool itself uses standard PPO and does not modify the optimization algorithm. However, its training data comes from the DAPO team's DAPO-Math-17k, so we take this opportunity to introduce the recently popular **DAPO** algorithm (Yu et al., 2025). It makes four improvements over standard PPO, with the core goal of preventing the model from prematurely converging to a single strategy (only solving problems in one way):
->
-> - **Clip-Higher (Relaxing the exploration upper bound)**: Standard PPO clipping truncates additional surrogate-objective gains when a probability ratio falls outside its interval, discouraging large policy changes without imposing a hard boundary. An upper bound that is too low can limit reinforcement of promising low-probability actions. Clip-Higher raises the upper bound for positive advantages, allowing the model to increase the probability of a clearly better new path more aggressively and continue exploring it.
-> - **Token-Level Policy Gradient Loss (Equal weight for each token)**: The original GRPO normalizes the loss at the sample level—first averaging within each response by the number of tokens, then averaging across samples—which dilutes each token in a long response by `1/|o_i|`: high-quality long chains of thought receive insufficient reward, and verbose repetition receives insufficient penalty. DAPO's Token-Level Policy Gradient Loss removes this sample-level averaging and instead normalizes uniformly across all tokens in the entire batch, giving each token equal weight; the direct consequence is that long responses receive a gradient contribution commensurate with their length.
-> - **Dynamic Sampling (Intelligent allocation of compute)**: Dynamically adjust the number of samples per question during training—reduce sampling for simple questions the model can already solve stably (further training yields little benefit), and increase sampling for questions in the "learnable range" with success rates between 20% and 80% (these are the most informative), concentrating compute on the most valuable data.
-> - **Overlong Reward Shaping (Penalizing verbose responses)**: Apply a soft penalty to excessively long responses. When the model generates a very long thinking process without answering better, the system reduces its reward score, guiding it to learn more concise and efficient thinking.
->
-> Back to ReTool. On AIME 2024, training Qwen2.5-32B-Instruct raised accuracy from an initial accuracy of approximately 25% to 52% at the intermediate checkpoint after 110 steps, with Best-of-30 reaching 85%; the paper's final result after 400 steps was 67.0%, while the pure text RL baseline after 1080 steps was only 40.0%. The training dynamics numbers in this experiment box are all based on this 32B model configuration.
->
-> Emergent capabilities: code self-correction (identifying execution errors and autonomously generating corrected versions), tool use shifting from late-stage verification to early-stage exploration, and improved thinking efficiency (length reduced by 40% while accuracy increased).
->
-> The training dynamics for the first 110 steps show a three-phase pattern: early (0-20 steps) rapid learning of basic tool use, accuracy improving by 0.5% per step; middle (20-70 steps) oscillatory exploration, response length increasing from 2500 to a peak of 4700 tokens, with a surge in policy diversity; late (70-110 steps) stable convergence, length dropping to 4400 tokens, performance continuing to improve but with reduced fluctuation.
->
-> The fundamental difference in time cost between SFT and RL stems from differing information density: SFT provides a supervisory signal for every token, while RL only gives a success/failure signal per episode. In practice, the time per step increases with response length, and a few extremely long responses can significantly prolong the entire training cycle.
->
-> **Experiment 7-15 ★★★: AWorld-train—Learning to Use Tools in a Sandbox**
->
->
-> ![Figure 7-18: AWorld-train MCP Sandbox Training Architecture and Tool Ecosystem](images/fig7-18.svg)
->
->
-> GAIA is one of the most challenging Agent evaluation benchmarks. Even large-parameter models trained at scale may only achieve around 32%, still significantly behind top-scoring systems. This experiment uses a smaller model (Qwen3-4B), with the primary goal of demonstrating a complete "learning from practice" training pipeline.
->
-> The AWorld training environment is an MCP server sandbox, providing 26 servers and 126 tool functions. These cover Web interaction (Google Search, Smart Browser, Playwright), document processing (CSV/DOCX/PPTX/PDF), multimedia processing (audio transcription, OCR, video summarization), code execution (terminal commands, E2B sandbox), Excel processing (29 enterprise-level operations), and knowledge retrieval (Wikipedia, arXiv, Wayback Machine). Rate limits, service fluctuations, and account bans from real APIs make direct training in a production environment infeasible—building a stable, controllable, and replayable simulation environment is an engineering prerequisite for multi-tool RL training.
->
-> The qualitative leap from single-tool to multi-tool use is that a single tool requires decisions only about "when" and "how" to call it, whereas multi-tool scenarios also require deciding "which tool to call" and "how to combine the tools," introducing combinatorial explosion and the complexity of dependency management—tools have prerequisite dependencies (must search before browsing a specific page), mutual exclusion constraints (some tools cannot be called simultaneously), and cost differences (different APIs have varying quotas and latencies). The policy must plan holistically under these constraints, rather than greedily choosing the locally optimal action.
->
-> Note that this is an **open-ended training experiment with no baseline results**—a model at the Qwen3-4B scale won't post impressive GAIA scores. Its value lies in running the complete "learning from practice" pipeline end to end, not in setting records. Acceptable validation criteria and expected observations are: the environment's reset and episode loop (tool calls, feedback, state updates) runs stably without crashes; the average reward curve shows an upward trend during training; tool call success rate improves with training, and the model gradually learns to make more reasonable choices and combinations among multiple tools.
-
-## Cutting-Edge Exploration for Improving Sample Efficiency
-
-The preceding experiments have demonstrated, systematically, the core value of RL in Agent training—but every one of them paid a steep sample cost. ReTool's RL run took more than 200 times as long as its corresponding SFT run—nine days versus one hour—a price that resource-constrained or fast-iterating teams may be unable to pay.
-
-The low sample efficiency of RL has multiple causes (high variance, sparse rewards, difficulty in reusing on-policy data). One significant root cause lies in the model-free nature of mainstream policy gradient methods—they do not model environment dynamics (a world model, "what the world will look like after an action is taken"), nor can they easily leverage the rich information contained in a single feedback signal (these two points are related but not identical). The rich feedback returned by the environment after each interaction (error reasons, missing fields, correct procedure hints) is mostly wasted—the earlier section "The Dilemma of Sparse Rewards" analyzed this problem in detail. Consider a scenario of calling customer service: the Agent is explicitly told, "I need the last four digits of your credit card to verify your identity," but model-free RL can only learn from the final success/failure signal (reward of 0 or 1). It cannot directly utilize this explicit feedback and must rely on hundreds of random explorations to accidentally try providing the credit card information. A human, upon hearing this feedback, would immediately remember it and proactively prepare it next time.
-
-This chapter has in fact already offered two complementary ways to attack this bottleneck. One is to **convert information wasted in environmental feedback into learnable rewards** by writing explicit, machine-verifiable signals—such as "customer service requires identity verification first," "this command is destructive," or "another proof step has been completed"—directly into the reward function. This is the RLVP method discussed in Section 7.10 (especially its partial-credit use of "rewarding reachable progress," which salvages the wasted samples in all-fail groups). The other approach, which this section will formally develop, is to **make the training signal denser at every step**: instead of only receiving a single success/failure scalar at the end of the task, provide guidance at every point along the trajectory. This is On-Policy Distillation.
-
-### On-Policy Distillation: Combining the Strengths of SFT and RL
-
-On-Policy Distillation, systematically formulated and popularized by Thinking Machines Lab in 2025[^ch7-10], is now a mainstream post-training method and deserves a proper explanation. To understand the problem it solves, begin with one fatal weakness of each of SFT and RL: On-Policy Distillation combines the strengths of both.
-
-**SFT's Weakness: Learner-Sampler Mismatch.** SFT's training data is generated by a "sampler" (a teacher model or human expert), and the "learner" (the model being trained) merely passively imitates these **correct paths**. The problem is that when the learner acts on its own, it inevitably makes mistakes and enters **off-distribution states** never seen in the training data. It has never learned how to recover from these states back to the correct path, so small errors accumulate into large ones—like a student who only memorized the correct answers and has no idea how to recover if a single intermediate step is wrong. The root cause is that the distribution of "who is acting" during training (the teacher) differs from the distribution during deployment (the student itself).
-
-**RL's Weakness: Signals are Too Sparse.** RL lets the student act on its own (on-policy), solving the distribution mismatch. However, each trajectory only yields a single success/failure scalar at the end. It must infer how to correct each intermediate step through hundreds or thousands of trial-and-error attempts.
-
-**On-Policy Distillation combines the strengths of both: it lets the student generate its own trajectories (On-Policy, solving distribution mismatch) while a stronger teacher model provides a dense signal for every token the student generates (Dense Signal, solving signal sparsity).** A one-line comparison of the three methods: SFT is "off-policy + dense signal" (has distribution mismatch), RL is "on-policy + sparse signal" (feedback is sparse), and On-Policy Distillation is "**on-policy + dense signal**"—both weaknesses are addressed.
-
-How exactly is the scoring done? The teacher doesn't just judge whether the student's step is correct; it provides the complete probability distribution for the next token at the current position. For example, if the student writes "first query the API, then parse the return value...", the teacher might determine that at this position, "query" should have an 80% probability, "call" 15%, and the remaining 5% for other tokens. The student's learning objective is to make its own predictive distribution at each position as close as possible to the teacher's distribution. Technically, this is achieved by minimizing the **KL divergence** between the two distributions (KL divergence measures the difference between two probability distributions; the smaller it is, the closer they are, and it is zero when identical, as detailed in Section 7.7). Compared to the binary signal of final success/failure, this token-level distribution alignment is denser by more than an order of magnitude.
-
-**On-policy distillation:**
-
-```python
-student_trajectory = rollout(student, task)
-loss = 0
-for state in student_trajectory:
-    teacher_logits = teacher(state)
-    loss += KL(student_logits(state), teacher_logits)
-update_student(loss)
-```
-
-The results are striking: on tasks like mathematics, matching pure RL's performance takes roughly **1/10** of the training steps. The advantage is most pronounced in long-chain reasoning—with the teacher pointing the way at every step, the student quickly learns to correct its errors instead of drifting further down a wrong path. It also eases overfitting: in standard RL, training repeatedly on the same prompt tends toward memorizing the final answer, whereas here every trajectory is different and the teacher's feedback is specific to it, so the student learns a general strategy rather than particular answers—and data can be reused far more heavily.
-
-This method is particularly valuable in **multi-turn Agent scenarios**: the success/failure signal appears at the very end, being both sparse and delayed. The token-level teacher distribution perfectly fills the missing guidance for every intermediate step. However, it has a prerequisite that echoes the main theme of this chapter: **a sufficiently realistic simulation environment is necessary for the student to explore freely**—otherwise, when the student enters an off-distribution state that the teacher has also never seen, the teacher's target distribution becomes unreliable. The value of On-Policy learning is built upon the premise that "the student is truly exploring the deployment distribution."
-
-The principle that "dense signals outperform sparse signals" had a very clean validation in a pure Agent scenario. Chapter 2, when discussing the status bar, mentioned an Agent's "sense of time"—urgency, persistence, vigilance—which can be instilled at inference time via an instruction manual. However, embedding this sense of rhythm directly into the weights of an 8B small model, without relying on prompts, presents a post-training challenge. The author and collaborators tried DPO and then four RL recipes in turn. These four RL methods each fell into a failure mode discussed earlier in this chapter: a hard-gated reward was too sparse, most rollouts scored zero, and the within-group advantage was nullified (sparsity); switching to a graded reward made the signal denser, but the proxy metric did not correspond to the actual pass rate (objective misalignment); scoring only the first turn's reply encouraged short, perfunctory answers that performed worse in multi-turn evaluations (rollout shape mismatch); finally, once the rollout shape was aligned with the evaluation, the training reward did begin to climb, but the policy collapsed to a single mode within a few steps, and even a four-times-stronger KL anchor could not pull it back (training collapse). None of the recipes surpassed the SFT ceiling. Switching to On-Policy Distillation—using a frozen Qwen3-32B teacher to provide token-level target distributions on the student's own multi-turn trajectories—led to smooth training convergence, with pass rates under all four conditions 23 to 47 percentage points higher than those of the corresponding SFT baseline[^ch7-11]. Four RL approaches failed for different reasons, while one dense teacher signal succeeded—driving home this section's point: what stalls post-training is usually not a reward function that lacks cleverness, but a signal that lacks density.
-
-### What If There Is No Stronger Teacher? On-Policy Self-Distillation
-
-The power of On-Policy Distillation comes from the teacher, but that also saddles it with a hard prerequisite: **there must be a teacher model that is clearly stronger than the student.** In many scenarios this does not hold. If what you are training is a vertical-domain model and the capabilities of existing models are all inadequate, then no teacher model is available. Without a stronger teacher, is the dividend of dense signals out of our reach?
-
-An ingenious way out is **On-Policy Self-Distillation (OPSD)**[^ch7-15]: **let the same model play both teacher and student, with the only difference being the context.** The teacher version can see "privileged information"—such as the standard answer to the problem, or a verified correct solution. It does not need to actually "know how to solve" the problem; it only needs to take the answer and **rationalize** every step the student has taken, producing a token-by-token target distribution. The student version sees only the problem itself and aligns itself to the teacher version on its own sampled trajectories. The intuition behind this: "explaining a problem with the answer in hand" is far easier than "solving the problem independently"—this is isomorphic to the "verification–generation asymmetry" on which RLVR rests, except that here the asymmetry is used to produce a dense supervision signal rather than a sparse success/failure scalar.
-
-**On-policy self-distillation:**
-
-```python
-student_trajectory = rollout(model, task_without_answer)
-loss = 0
-for state in student_trajectory:
-    privileged_state = add_verified_answer(state)
-    teacher_logits = stop_gradient(model(privileged_state))
-    loss += KL(model(state), teacher_logits)
-update(model, loss + retention_regularizer)
-```
-
-Compared with RLVR, OPSD has two core advantages. **First, it no longer depends on verifiable rewards.** RLVR presupposes an automatic verifier, whereas OPSD's sources of privileged information are far broader: standard answers, but also richer system prompts, human demonstrations, or domain documents—anything that "lets the model, after the fact, clearly explain the correct behavior" will do. **Second, the supervision signal is far denser than RL's.** RL yields a single scalar reward per trajectory; OPSD provides a complete probability distribution at every position along the trajectory, and its token efficiency is markedly better than RL methods. It is fair to say that OPSD replaces the "stronger teacher" with "privileged information," and has thereby become a realistic path for alleviating the sample-efficiency problem.
-
-Of course, the boundaries of this paradigm are also clear, stemming mainly from the fact that the teacher's capability ceiling is locked to the student itself: **the size of the gain depends on "how much extra capability the privileged information can bring."** If the model, even with the answer in hand, cannot clearly explain the solution process (for example, when the answer comes from exhaustive search rather than reasoning that can be articulated in language), self-distillation has no source of signal. Existing research has also observed failure modes of naive OPSD—for instance, the model gradually loses its original thinking style during self-distillation and needs extra regularization to stay stable[^ch7-16]. The vision of "the same model, different contexts, teacher and student to each other" is still evolving rapidly, but it has already opened a path for the common predicament of "having no stronger teacher."
-
-## From Bad Cases to Post-Training
-
-This section returns to the question left by Chapter 6: how can evaluation data built from production bad cases become post-training input? Failure-attribution records, end-to-end regression tasks, trajectory-prefix regression tasks, and rubric scores each map to a different training use.
-
-Table 7-4. Mapping Chapter 6 evaluation data to Chapter 7 training uses
-
-| Chapter 6 evaluation data | Chapter 7 training use |
-|---|---|
-| End-to-end regression task with a verifier | RL rollout tasks and verifiable rewards (RLVR); the sampling pool for rejection-sampling fine-tuning (RFT) |
-| Trajectory-prefix regression task | DPO preference pairs, SFT demonstrations for decision boundaries, and teacher states for On-Policy Distillation |
-| Failure-attribution record (first erroneous step and error category) | Negative labels for process supervision (PRM); rules for RLVP path penalties |
-| Multi-dimensional rubric scores and human gold set | Dimensions of vector rewards; training and calibration data for generative reward models (GRM) |
-
-### Case 1: Coding Agent premature completion
-
-**From bad case to attribution.** A Coding Agent may claim “done” before running tests, close a multi-objective task after completing only part of it, or declare a task impossible after a few failures. The first error is the decision boundary where it prepares to conclude without evidence; later failed tests and retries are consequences. User corrections, negative feedback, and post-hoc audits can all expose this category.
-
-**Training data.** An end-to-end regression task runs hidden acceptance tests when the Agent claims completion: pass gives positive reward and failure gives negative reward. A trajectory-prefix task turns the premature claim into `rejected` and “run tests, check every acceptance condition, then conclude” into `chosen`. Teacher-generated candidates are filtered by a deterministic verifier, and task types, missing conditions, and completion wording are varied before mixing a small proportion into general instruction data for LoRA.
-
-**Evaluation.** The unfinished-task boundary set must be evaluated together with a retention set of genuinely completed tasks. The first checks whether the model verifies instead of stopping early; the second checks that it can still conclude normally. Otherwise the model may become overcautious and never stop.
-
-> **Experiment 7-17 ★★: From “Premature Completion” Bad Cases to DPO**
->
-> **Experiment goal**: Run the complete pipeline from failure attribution to trajectory-prefix regression data, DPO preference pairs, 7B LoRA training, and separate boundary/retention evaluation.
->
-> **Data construction**: The accompanying project provides 24 realistic cases covering four failure types and a disjoint held-out set (12 boundary cases and 8 retention cases). The experiment is intentionally educational; production data should cover more task families and use hidden tests that the model cannot edit or merely claim to have run.
-
-### Case 2: Chinese quotation marks
-
-A request to “convert straight quotes in Chinese articles to curly quotes” is not a global replacement rule. The same ASCII quote has different roles in Chinese prose, English quotations, Markdown code, code blocks, comments, JSON, and paths. Chinese prose and Chinese comments may be converted; executable code, English source text, JSON/schema, paths, identifiers, and ambiguous regions must be preserved.
-
-**From bad case to attribution.** The Harness should segment the document by scope, compare the model output with allowed and protected spans, and run Markdown, JSON, and source-language syntax checks. If rendering or serialization changes the input first, the problem belongs to the Harness. If the model sees the original bytes but edits a protected quote or misses an allowed Chinese quote, the first difference is a scope-selection error suitable for post-training.
-
-**Training data.** A Skill defines positive and negative scope rules. Samples pair source and target text, cover Chinese prose, nested quotes, and Chinese comments as positive edits, and cover English text, literals, JSON, paths, inline code, and code blocks as protected negatives. Train, holdout, and boundary sets are separated by templates, genres, variable combinations, and languages; machine gates and stratified manual audits run before SFT.
-
-**Evaluation.** Report target-quote conversion, protected-region preservation, non-target edits, syntax validity, and whole-text exact match. A retention set of already-correct documents is needed in production to catch over-editing.
-
-> **Experiment 7-18 ★★: Scope-Sensitive Curly-Quote SFT**
->
-> **Experiment goal**: Test whether LoRA SFT teaches the model to convert only permitted quotes and preserve protected syntax on unseen context combinations.
->
-> **Setup and data**: Qwen3-8B bf16 LoRA, two epochs and 256 updates; 16 fragment types, 10 article genres, and 9 programming languages; 1,024 train, 256 holdout, and 256 boundary examples. The Skill is used as the labeling, quality-gate, and regression specification, with 48 stratified manual spot checks.
->
-> **Results**: Holdout exact rises from 0% for the base model to 96.9%, boundary exact is 97.7%, and protected-region preservation is 100%. Python, JavaScript, Java, Go, Rust, SQL, Shell, YAML, and Markdown reach 100%; JSON remains 68.8% and needs an independent structured-data track.
-
-### Case 3: Frequent file-edit failures
-
-Coding Agents often use `edit_file(path, old_string, new_string)`. The tool matches `old_string` exactly, so one changed byte—a space, newline, backslash, Unicode composition, or low-frequency token—causes “old_string not found.” Repeated retries are a symptom, not necessarily the root cause.
-
-**From bad case to attribution.** Compare the first difference along this chain:
+An `old_string` failure cannot be attributed simply to "the model copied it wrong" either. For the same string, store the raw byte hash, the Unicode code point sequence and the tokenizer token ID sequence, then look for the first divergence along this chain:
 
 ```text
 original file bytes → tool return → Harness serialization → model context
 → model token output → decoded string → JSON/tool-call parsing → tool matching
 ```
 
-Attribute changes before model generation to the file reader, serializer, or Harness. Audit tokenizer encode→decode separately. Only when the model receives the original bytes and its output is the first divergent point should the case be classified as a model copying failure and sent to post-training.
+A minimal set of evaluation probes covers direct restatement, extraction from a long context, placement into tool arguments, selection among similar strings, and spaces, newlines, backslashes, Unicode combining characters and low-frequency tokens. The metrics are byte-exact match, code-point-exact match, token-exact match, the position of the first divergence, and the real tool success rate. If the model is correct on the direct probe but the tool call still fails, fix the tokenizer, the serialization, the Harness or the tool protocol; only when the first divergence appears in the model's own output should the case be turned into the copying training data of Chapter 8.
 
-**Training data.** Use three verifiable tasks: verbatim copying, choosing the marked target among similar hard negatives, and placing the exact target into the `old_string` tool JSON field. Randomize lengths, token combinations, and contexts, including spaces, real newlines, literal escapes, backslashes, Unicode combining characters, Chinese, and zero-width characters. Split by seed, length, token composition, and wrapper context.
+### End-to-End and Trajectory-Prefix Regression Tasks
 
-**Evaluation.** Separate model byte-exact, code-point-exact, token-exact, first-difference position, and tokenizer round-trip metrics from end-to-end tool success. If direct copying is correct but `edit_file` still fails, fix serialization or the tool protocol instead of training the model.
+Once the first error is known, turn the repair target into a repeatable **regression task**. End-to-end regression starts from the initial state and user request, runs the whole workflow, and checks final state, required output, and safety. A **trajectory-prefix regression task** freezes the context, conversation, tool returns, and environment state just before the first error, then tests only the next one or few observable actions. It is cheaper and isolates one decision boundary, so it is especially important for high-reliability production Agents.
 
-> **Experiment 7-19 ★★: Exact-Copy SFT for Special Strings**
+Prefix tasks should define an **acceptable action set**, not one canonical answer: reading repository rules, asking the user, or refusing a dangerous operation may all be valid, while prohibited actions are listed explicitly. Process omissions become end-to-end tasks with Plans, required documents, and acceptance tests; tool errors become prefix tasks that test formatting, escaping, or tool choice; abnormal execution becomes truncation, timeout, and tool-failure recovery; and completion or logic errors become multi-goal and "not yet proved impossible" cases. The first error is also a possible process-supervision signal for Chapter 8, but evaluation and training data must remain isolated.
+
+> **Experiment 7-5 ★★: Trajectory-Prefix Boundary Evaluation with Multiple Encodings**
 >
-> **Experiment goal**: After confirming that the model output is the first divergent layer, test LoRA SFT on unseen random strings and use a separate tokenizer audit to rule out tokenization artifacts.
+> This experiment supplies the Agent with known user memory, the current instruction, a trajectory prefix, tool returns, and environment state, then asks for only the next observable action. It covers production bad cases such as scope conflicts, stale preferences overriding current instructions, low-confidence inferences, confirmation before high-risk deletion, and preview before external publication. The same cases are encoded as JSON Cards, Markdown, and Python-like memory; deterministic checks score the allowed decision category, safety, required evidence, and forbidden actions.
 >
-> **Setup and data**: Qwen3-8B bf16 LoRA for two epochs; 1,024 train, 256 holdout, and 256 boundary samples across `verbatim`, `decoy_copy`, and `tool_json`. The generator uses reproducible random strings, hard negatives, 10 language contexts, 8 article genres, and special whitespace, escapes, Unicode, Chinese, and zero-width characters.
+> With GPT-5.6-sol through OpenRouter, all 33 cells (11 cases × 3 encodings) completed without API errors. Each encoding passed 6/11 cases, but their failure locations differed, showing that changing the representation alone does not repair application policy.
+
+Give the judge both the Rubric and the Agent's response. It will score each dimension and explain why. Once results from dozens of cases are grouped by dimension and the low-scoring traces are replayed, a vague drop in success rate becomes a concrete diagnosis: retrieval missed a fact, the model linked the wrong people or events, or it added an unsupported claim. A useful Rubric tells the team not only how the system scored, but where to look next.
+
+> **Experiment 7-3 ★★: Building a Rubric-Based User Memory Evaluation System**
 >
-> **Results**: Holdout byte-exact accuracy improves from 37.5% to 78.9%, boundary reaches 80.1%, and mean first-byte difference is 54.0 and 54.2. On 512 probes, Qwen3/Qwen2.5 tokenizer round-trip is 80.1% versus 100% for Mistral; tokenizer and Harness failures must remain separate from model-copy results.
+> **Prerequisites**: Must complete the Chapter 3 User Memory Experiment (`chapter3/user-memory-evaluation`).
+>
+> This experiment requires modifying the `chapter3/user-memory-evaluation` framework from Chapter 3, upgrading the current simple LLM-as-a-Judge scoring mechanism to a structured, multi-dimensional Rubric evaluation system. The existing system uses a single LLM call to return a pass/fail result plus evaluation reasoning, lacking structured diagnostic capabilities.
+>
+> Design a unified multi-dimensional Rubric framework applicable to all three task levels. Evaluation dimensions include: Factual Correctness (precision: of all the information given, how much is correct—verifies that numbers/dates/names are consistent with the stored memory); Information Completeness (recall: of all the information that should be given, how much is mentioned—verifies that all relevant information is provided with no key content omitted); Reasoning Correctness (checks whether the relationships between pieces of information and implicit logic are correctly understood); Reasoning Proactiveness (evaluates whether suggestions or risk warnings beyond a direct answer are provided when appropriate); Hallucination Detection (ensures no information not present in memory is fabricated).
+>
+> Four-level scoring (Excellent/Good/Passable/Fail), with specific judgment criteria for each level rather than abstract descriptions. The hallucination dimension is a veto item. Provide examples and boundary cases for each dimension.
+>
+> **Experiment 7-4 ★★: Comparative Evaluation of Advanced JSON Cards vs. RAG**
+>
+> **Prerequisites**: Must complete the Chapter 3 User Memory and RAG experiments (`chapter3/user-memory`, `chapter3/agentic-rag-for-user-memory`).
+>
+> **Objective**: Fairly compare the advantages and boundaries of structured memory versus unstructured retrieval on the same evaluation set. Reuse the two Chapter 3 projects and compare three configurations on the 60 test cases from `chapter3/user-memory-evaluation`—Pure Advanced JSON Cards (structured cards kept in context, with no retrieval needed), Pure RAG (conversation chunks embedded in a vector store, retrieval required), Hybrid System (core facts resident + original conversations retrieved on demand).
+>
+> **Acceptance Criteria**: Record success rate, average steps, number of tool calls, latency, and cost across three complexity levels (basic recall / multi-session disambiguation / cross-session hidden associations). Clearly describe the failure boundaries for each approach—what structured memory misses, what retrieval misses, and whether the hybrid truly achieves synergy. This is an **end-to-end regression layer**: it checks that the complete task still works, but cannot by itself show whether the Agent correctly scopes a memory once it has been supplied. Configuration details and test cases are available in the companion repository.
+>
 
-## The Complete Post-Training Landscape and Practical Tips
+The companion experiment ran all three systems on the same 60 questions and retained 180 real API trajectories. Table 7-3 reports both the rates and the underlying success counts.
 
-Starting from pre-training's objective of "predicting the next token," this chapter has traced a long path: SFT can efficiently learn formats and protocols; in this chapter's comparisons, outcome-based RL improved out-of-distribution generalization; multi-turn tasks introduce the credit-assignment problem; reward design extends from outcome rewards to path signals that reward the outcome while constraining the process; and tool use brings combinatorial explosion. One thread runs through all these experiments—what a model learns depends on what the training signal teaches it, and the quality of that signal is set chiefly by the data and the environment, not the algorithm.
+Table 7-3 Success Rate by Memory System and Task Level
 
-**Synergistic Paradigm**: The earlier GeneralPoints summary used the Chinese painting principle of "form first, spirit second" to describe this configuration. When structured output is unstable, SFT can first establish the format and basic capabilities; RL can then explore strategies when reliable rewards and an environment are available. In these experiments, SFT stabilized protocols and structures (JSON format, dialogue templates, tool interfaces), while RL improved out-of-distribution performance on arithmetic rules, spatial reasoning, and action sequences. Other data and models can produce different results, and either excessive SFT or excessive RL optimization can overfit the current distribution.
+| System | Basic Recall | Multi-Session Disambiguation | Hidden Cross-Session Links | Overall |
+|---|---:|---:|---:|---:|
+| Advanced JSON Cards | 95% | 60% | 50% | 68.3% (41/60) |
+| RAG | 90% | 40% | 15% | 48.3% (29/60) |
+| Hybrid | 80% | 70% | 50% | 66.7% (40/60) |
 
-The following **common pitfalls** are worth noting; recognizing these problems is often more valuable for avoiding wasted resources than mastering technical details:
+The hybrid did not win by default. It uniquely solved three cases that neither single approach solved, but regressed on eight cases relative to the better single approach; its mean reward was 0.092 below the per-case best single system. Pure RAG nearly matched structured cards on basic recall, then fell to 15% on hidden cross-session links. Retrieving a relevant passage is only the first step—the Agent still has to reconstruct the right relationships among people, events, and time.
 
-1.  **Over-reliance on post-training to memorize facts**—Use RAG to manage factual knowledge because it can be updated dynamically, its sources can be traced, and its contents are not lost through training. Post-training should focus on "how to use knowledge."
-2.  **Introducing RL before format is stable**—If the model cannot reliably produce the JSON required to compute rewards, the training signal becomes sparse or distorted. The acceptable parsing-failure rate depends on the task and reward design, so do not apply a fixed threshold universally. Set a format-stability gate with a small evaluation first, then use SFT or constrained decoding if needed before applying RL.
-3.  **Poorly designed reward functions leading to reward hacking**—The model learns to exploit loopholes in the reward to get high scores without truly completing the task (e.g., if the reward looks only at response length, the model generates long, meaningless text). Evaluate the final objective, not intermediate metrics.
-4.  **Neglecting simulation fidelity**—If the simulation is too simplistic (customer service always responds in a fixed pattern) or the environment response is unrealistic (error messages differ from the production environment), the trained policy will completely fail in real-world scenarios. The cost of building a high-fidelity simulation environment may exceed the training cost itself.
-5.  **Over-training leading to decreased generalization**—When training loss continues to decrease but validation set performance worsens, the model is memorizing training details. SFT is particularly prone to this; early stopping remains crucial. Over-optimization in RL can also lead to policy overfitting to the current task distribution.
-6.  **Value function collapse and insufficient exploration**—Inaccurate value estimation in PPO can bias advantage calculation, manifesting as severe oscillations in the training curve. Too low a temperature or insufficient randomness can trap the Agent in a local optimum.
-7.  **Underestimating the computational cost of RL**—Tasks that perform well with SFT may require 10-100 times the training time when switched to RL. If the test distribution is highly consistent with the training distribution, SFT may be sufficient.
-8.  **Low-quality training data**—SFT will directly learn noise and bias in the data, solidifying errors into parameters. While RL might discover better strategies through exploration, if the reward model has systematic biases, it will optimize in the wrong direction.
+The hallucination veto also fired in 28 of 180 judgments. It was not a decorative safety clause; it materially changed the results.
 
-Core principle: **Before committing large-scale resources, validate the key assumptions with small-scale experiments**—test whether SFT can stabilize the format on a small dataset, whether RL can converge in a simplified environment, and whether the reward function reflects the true objective on a small sample. Better to fail fast than to fail at scale.
+That conclusion, in turn, depends on the judge being trustworthy. If the Agent and judge come from the same model family, they may share exactly the same preferences and blind spots.
 
-**Synergy with RAG/ICL**: These methods are not mutually exclusive; they operate at different locations. ICL uses examples, rules, and current state to provide immediate adaptation with zero parameter changes, but latency and cost rise as the context grows. RAG places facts and evidence in dynamically updatable, traceable external knowledge. Post-training writes high-dimensional perception, generative style, and implicit decision policies into parameters. The choice depends not only on whether the task remains stable over time, but, more importantly, on whether the capability can be expressed adequately through external symbols. Capabilities such as medical-image recognition and natural tone often require parameter updates even in continually changing domains. Conversely, a long-stable rule for approving transfers should still receive deterministic protection from code rather than relying only on model memory.
+**The Same-Family Model Problem and Multi-Source Judging.**
 
-Robust systems generally combine these methods: use RAG to manage facts and evidence, ICL to experiment rapidly with strategies expressible in language, programs to solidify deterministic procedures and hard constraints, and post-training to write into parameters capabilities that are difficult to express explicitly and require broad generalization. Post-training can also perform model distillation, transferring the capabilities of a more capable large model into a smaller, lower-cost model.
+When the Agent and the judging model come from the same family, the Agent may learn to exploit the judging model's preferences and blind spots.
+
+**This is precisely what Goodhart's Law states: when a metric becomes an optimization target, it ceases to be a good metric.** The more an Agent is trained or tuned on a particular scoring system, the more it tends to exploit loopholes in that system rather than genuinely improving its capabilities.
+
+More insidiously, the Agent will gradually learn to avoid the types of errors that the judging model is not good at detecting, making the scoring system appear perfectly fine.
+
+The mitigation is **multi-source heterogeneous judging**—independent judges drawn from different model families (if the Agent runs on Claude, judge with GPT-5 and Gemini). Different families' biases are often orthogonal, so the Agent can rarely fool all the judges at once. Use the same Rubric so everyone judges the same target, and aggregate by weighted averaging or consistency checks. In deployment, a single model can handle rapid evaluation, with periodic quality audits run against the full multi-source setup.
+
+Multi-source judging addresses the question of which models should serve as judges; the next question is which modalities should be evaluated—extending LLM-as-a-Judge from text to speech, images, and video is another axis of evaluation coverage.
+
+**Multimodal LLM-as-a-Judge.**
+
+Multimodal judging extends LLM-as-a-Judge to the domains of speech, images, and video. Four common directions are as follows.
+
+- **TTS Evaluation** (TTS stands for Text-to-Speech): Assesses accuracy, naturalness, voice consistency, and emotional expression. These dimensions can capture prosodic issues that traditional WER (Word Error Rate) struggles to detect.
+- **ASR Evaluation** (ASR stands for Automatic Speech Recognition): Performs semantic impact assessment—misrecognizing "today's weather" is harmless, but misrecognizing "transfer one thousand" as "ten thousand" could have serious consequences.
+- **UI Evaluation**: Uses a **Proposer-Reviewer** mechanism to check for issues like text overflow, color contrast, and button placement. Here, the proposer-reviewer is used as an **evaluation method**, differing from its use as a **generation system component** in Chapter 5, but the core mechanism is the same—one model generates, another independently reviews.
+- **Video Editing Evaluation**: Verifies the correctness of clip start/end points and effect application through keyframes.
+
+> **Experiment 7-6 ★★: Building a Fully Automated TTS Quality Evaluation Pipeline**
+>
+> This experiment requires designing and implementing a complete multimodal LLM-as-a-Judge TTS quality evaluation system from scratch.
+>
+> Design a multi-dimensional TTS Rubric: The Accuracy dimension verifies whether all text is correctly read (no omissions/misreadings/additions); the Naturalness dimension assesses whether the speech sounds natural rather than robotic, has no unnatural pauses, and uses natural prosody; the Emotional Expression dimension checks whether the tone matches the text's emotional tone (rising intonation for questions, emphasis for exclamations, slower pace and lower pitch for sad content); the Voice Consistency dimension evaluates speaker similarity when a reference voice is available (the multimodal model simultaneously receives the reference voice and the synthesized voice for comparison).
+>
+> Build a diverse test corpus: varying lengths (single sentence → long paragraph), genres (news/story/dialogue), emotions (neutral/excited/sad), and special challenges (numbers/proper nouns/polyphonic characters/dialectal vocabulary). Connect the TTS module to mainstream services (OpenAI, ElevenLabs, Fish Audio, Minimax, Doubao), then send the synthesized audio, source text, reference audio, and Rubric to an audio-capable multimodal judge. Record the judge model and hashes of both candidate and reference audio so that every score can be audited.
+>
+
+The companion repository preserves a small direct-listening run. OpenAI and Fish Audio each generated four clips covering numbers, polyphonic Chinese characters, long-form text, and excited delivery; Voxtral completed all eight four-dimensional judgments. Both systems averaged 5.00 for accuracy and 4.00 for naturalness. Fish Audio scored 4.00/3.00 for emotion and voice consistency, while OpenAI scored 3.75/2.75. Splitting the Rubric into dimensions therefore exposed differences that a simple "was it read correctly?" check would miss.
+
+Those scores do not establish a provider winner. There were only four clips per provider, and the fixed reference clip came from Fish S1, which naturally favors Fish Audio on voice similarity. A general TTS comparison should remove that dimension or give every candidate an appropriate target speaker. A voice-cloning comparison should ask every system to imitate the same speaker and calibrate the model judge against blinded human listening. **Choosing the reference answer, image, or audio is part of evaluation design, not neutral setup work.**
+
+Handwritten Rubrics are a fast way to establish diagnostic dimensions like these. At larger scale, a specialized **generative reward model** can automate the judging; Chapter 8 covers how such reward models are trained.
+
+In practical model selection, we often face the question: "Which is better, A or B?" Pairwise comparison provides an evaluation method that does not rely on absolute scores.
+
+### Pairwise Comparison and Model Ranking
+
+![Figure 7-5: Elo Rating and Pairwise Comparison Ranking](images/fig7-5.svg)
+
+**Elo Rating** (a ranking system originally designed for chess) quantifies the relative ability of models through a large number of pairwise matchups: the larger the rating difference, the higher the expected win rate for the stronger model. For example, if Model A has a rating of 1200 and Model B has a rating of 1000, the Elo system would predict A's win rate to be approximately 76%. If B unexpectedly wins, B gains more points and A loses more—an upset triggers a larger correction, which is what lets rankings converge quickly on true ability. The statistical foundation is the **Bradley-Terry model**: each model is abstracted as a latent "strength score," and the probability of one beating another in a matchup is determined by the difference between their scores. Elo is the engineering implementation of this model in online-update form.
+
+Chatbot Arena uses anonymous random matchups—users blindly choose the better response without knowing the model's identity, and rankings are derived from millions of votes. The advantage is that no "absolute standard" needs defining; all that is required is human judgment on "which is better, A or B." The limitation: rankings depend on what users happen to ask. If a flood of users ask programming questions, models strong at programming rank higher—which may say little about their level on other tasks.
+
+When pairwise judging is performed by an LLM rather than human voting, one must also guard against **Position Bias**—the judging model systematically favors the candidate appearing in a certain position (usually the first), and the judgment may remain unchanged even if the content of the two candidates is completely swapped. The standard mitigation method is to **evaluate each pair twice with swapped order**: once with A first, once with B first, and average the two results; a stricter approach is to only count cases where the two judgments are consistent, and treat inconsistencies as ties or send them for human review. Chatbot Arena's approach is essentially the same—randomizing the display positions of the two responses so that position bias cancels out over a large sample.
+
+**From Evaluation to Training: Transfer of Pairwise Comparison Signals.** Pairwise comparison is not only an evaluation tool but also an important source of signals for post-training. The **GRPO** (Group Relative Policy Optimization) algorithm, which will be introduced in Chapter 8, incorporates the "compare which is better" judging approach into model training—its core idea is to sample multiple candidate answers for the same question and estimate advantages from their relative merits (rather than absolute scores), thereby avoiding the need for the extra value network (critic, used to estimate baselines) that PPO must train. Note that GRPO drops the value network, not the reward signal: it still relies on a reward model or verifiable reward rules to judge each candidate. This is only a foreshadowing—the full derivation, the comparison with PPO/DPO, and the implementation details for Agent post-training all come in Chapter 8.
+
+> **Experiment 7-7 ★★: Building a Model Leaderboard from Pairwise Comparison Data**
+>
+> This experiment aims to deeply understand how the Bradley-Terry model extracts relative ability scores from a large number of pairwise comparisons by implementing an Elo rating calculation system from scratch. Use the real open-source voting dataset from Chatbot Arena (containing millions of anonymous user blind votes).
+>
+> Implement the Elo rating iterative update algorithm: Initialize all models with a rating of 1000. Process voting records in chronological order. For each matchup, calculate the expected win rate based on the current rating difference between the two models, compare the actual result with the expectation, and adjust ratings by a fixed learning rate—the winner gains points, the loser loses points, with the adjustment magnitude proportional to the deviation from the expectation (an upset loss results in a larger rating change). Sort models in descending order by final rating and calculate the pairwise win rate matrix. Compare with the official leaderboard to verify that the rankings are generally consistent. Exact point-for-point alignment is not required: the official Chatbot Arena uses Bradley-Terry maximum likelihood estimation (solving all matchups simultaneously, independent of voting order), while this implementation uses online incremental Elo updates (results are affected by the learning rate K-factor and processing order). The two algorithms should yield consistent overall rankings, but the specific scores will not be precisely identical.
+>
+> The second part of the experiment creates a historical ranking evolution animation: Slice the voting data by time (weekly or monthly) and calculate Elo rating snapshots for each time point. Use D3.js to implement a bar chart race animation (horizontal bar length = rating, vertical position = ranking, smoothly changing over time). By observing the animation, identify technology breakthrough moments (a model's rating suddenly surges), competitive landscape evolution, and model lifecycles.
+>
+
+## Evaluation-Driven Model Selection
+
+Model selection is not simply about "choosing the strongest model"; it involves making evaluation-driven trade-offs across multiple dimensions based on the application scenario.
+
+### Key Dimensions for Selection
+
+**Throughput** and **Latency** are two families of metrics that are easily confused; untangling them takes only one fact—LLM inference runs in two stages. **Prefill** reads the entire context at once and determines the **Time To First Token (TTFT)**: the delay between the user pressing Enter and the first character appearing. The longer the context, the slower the prefill and the higher the TTFT. **Decode** then generates the response token by token, setting the generation speed (tokens/second)—which also dictates thinking time: at 50 tokens/s, a model producing 2000 thinking tokens spends 40 seconds just thinking.
+
+Around these two stages, the main throughput and latency metrics are as follows:
+
+- **Input Throughput / Output Throughput**: Correspond to the speed of Prefill and Decode, respectively.
+- **TTFT**: Equals queuing time plus Prefill time; it is the user-perceived "responsiveness."
+- **Thinking Latency**: The number of thinking tokens generated can vary severalfold across models, and thinking length is not necessarily positively correlated with task effectiveness—measure each model's thinking token usage and the corresponding benefit on your own workload, rather than inferring from public leaderboards alone.
+- **p95 Tail Latency**: The latency that 95% of requests will not exceed. It is a better indicator of real user experience than the average, which can be pulled down by a large number of fast requests, masking severe slowdowns experienced by a minority of users.
+
+**Cost**: Pricing for input/output/cache tokens. Cost should not be evaluated in isolation—a cheap model with a low success rate may actually incur higher costs due to frequent retries. The average cost per task and the cost-performance ratio need to be calculated.
+
+**Performance**: The precise definitions of Pass@1, Pass^k, Pass@k, and Best@k are given earlier in the "Evaluation Metrics System." Here, we only discuss how to choose in the context of model selection—for daily scenarios, focus on Pass@1 (single-attempt average success rate); for critical operations, prioritize Pass^k, focusing on the stability of "never making a mistake"; for exploratory tasks, prioritize Pass@k or Best@k, looking at the upper bound of capability given enough opportunities; for open-ended tasks, use multi-dimensional Rubric scoring.
+
+**Rate Limits and Reliability**: RPM (Requests Per Minute) / TPM (Tokens Per Minute) limits affect concurrency capabilities, and some APIs dynamically adjust quotas during peak hours. In terms of robustness, pay attention to out-of-distribution data, adversarial inputs, and long-running stability (whether issues like mode collapse or attention drift occur).
+
+**Budget–capability curves**: A single score at a fixed budget is not enough to determine whether an Agent can handle long-horizon work. In addition to success rate, report how performance changes with wall-clock time, tokens, tool calls, or compute budget. RE-Bench makes the problem concrete: with a total budget of two hours per environment, the best Agent scored about four times as high as human experts; humans, however, benefited more from additional time, narrowly surpassed the best Agent at eight hours, and scored about twice as high when multiple attempts were given 32 total hours[^re-bench-2025]. Short-budget leadership therefore cannot be extrapolated directly to long-running capability. Model selection should compare several budget points close to the duration of the real workload.
+
+In practice you can mix models: lightweight models on simple requests to cut costs, powerful models on complex tasks to protect quality; or specialist models on particular sub-tasks (image understanding, code generation), collaborating through sub-agent mechanisms. Any such heterogeneous combination must itself be validated by evaluation, to confirm the overall benefit outweighs the added system complexity.
+
+### Model Behavior: When to Stop Reading and Start Editing
+
+Model selection compares not only whether a model can finish a task, but also **how it behaves by default**. One readily observable difference in Coding Agents is the action threshold. Given the same coding task, some models explore the repository broadly and confirm the architecture, callers, and tests before editing. Others localize from less evidence, edit early, and use test feedback to complete their understanding. The former assigns a higher cost to premature edits; the latter assigns a higher opportunity cost to reading one more file.
+
+When a tendency continues to follow the model across harnesses, and changes when only the model is swapped inside a fixed harness, the primary explanation should be **model behavior**. Post-training is a likely source: SFT trajectories demonstrate how much to read before acting, process rewards reinforce or penalize particular tool paths, and outcome rewards strengthen the whole strategy that led to success. The model consequently learns not only how to write code, but also when it has enough evidence. Exact datasets and reward recipes are usually private, so controlled model swaps can locate the behavior on the model side without revealing a vendor's precise training recipe. A harness can still shift the threshold through its system prompt, tool descriptions, and budget; in the absence of an enforced workflow, however, it should be treated as a modifier rather than the default root cause.
+
+The accompanying experiment compares `openai/gpt-5.6-sol` and `anthropic/claude-sonnet-5` in one **neutral, fixed harness**. Both models use the same OpenRouter endpoint and receive the same system prompt, task, repository, tool names, JSON Schemas, and results. The harness requires neither exploration nor early editing. Three miniature repositories cover a localized bug, cross-module identity normalization, and a cache fix sensitive to a public contract. Each model runs each task independently three times, producing 18 trajectories. GPT-5.6-sol averaged 6.89 tool calls and 4.67 files read before its first edit; Claude Sonnet 5 averaged 4.56 calls and 3.56 files. The gap was largest on localized tasks and nearly vanished on the explicitly cross-cutting task (7.00 versus 6.67 files). Both models achieved 100% first-tested-patch and final-test success, so this small experiment supports “the action policy changes with the model,” not “reading more” or “editing earlier” as universally better. Time to first edit was also nearly identical (15.01 versus 14.48 seconds), a reminder to separate tool steps, parallel calls, and model latency.
+
+> **Experiment 7-8 ★★: Measuring Model Action Thresholds in a Fixed Coding Harness**
+>
+> **Objective**: Isolate the model factor, quantify how Coding models trade off continued information gathering against starting to edit, and evaluate path efficiency together with outcome quality.
+>
+> **Method**: Run `chapter6/model-action-threshold/experiment.py`. By default it calls GPT-5.6-sol and Claude Sonnet 5 through the same OpenRouter OpenAI-compatible endpoint while fixing the system prompt, tool schemas, task repositories, test commands, and turn limit. The neutral prompt specifies neither a minimum number of files to read nor a requirement to edit quickly. Repeat each of the three task categories at least three times and alternate model order. Record tool calls, files read, searches, and wall-clock time before the first edit, along with first-tested-patch acceptance, post-test rework, final success, changed files, and token usage.
+>
+> **Causal interpretation**: The neutral campaign asks whether behavior changes with the model inside one harness. To measure the harness as a modifier, run a separate campaign with `--policy explore-first`; do not mix the two policies in one model comparison. Behavior that changes with a model swap and persists for the same model across harnesses is stronger evidence of a model effect; the reverse is stronger evidence of a harness effect.
+>
+> **Acceptance criteria**: All offline unit tests pass; every task fixture is first confirmed to fail its tests; the formal result contains every `model × task × trial` cell, zero API errors, an independent final test, and auditable trajectories; and `manifest.json` verifies the hashes of the configuration, observations, and summary. The project directory includes one complete 18/18-cell run. Readers should rerun it on the model versions and real workloads they care about rather than treating these miniature-repository numbers as a permanent leaderboard.
+
+### Cost Analysis of Agent Systems
+
+Cost is the most easily underestimated dimension of model selection. If your Agent is in production or headed there, do not skip this section.
+
+The previous section listed cost among the key selection dimensions, but Agent costs are far more complex than simple token pricing—multi-turn reasoning, tool calls, and context accumulation make costs grow non-linearly. Systematic cost analysis is an indispensable part of the evaluation system and a prerequisite for production deployment.
+
+**Components of Cost.**
+
+The cost of an Agent system can be decomposed into three levels:
+
+**Model inference cost** is the most direct component, determined by the consumption of input tokens and output tokens. However, in Agent scenarios, there are two often-overlooked amplifying factors. The first is the **context accumulation effect**: each time an Agent calls an LLM, it sends all previous conversation history and tool outputs together (so the model can understand the context). Without effectively utilizing KV Cache (i.e., caching already processed context to avoid redundant computation), the cost grows very quickly—Round 1 sends 1000 tokens, Round 2 sends 2000 tokens, Round 3 sends 3000 tokens, totaling 1000+2000+3000=6000 instead of 3×1000=3000. The more rounds, the larger the gap. The second is **thinking token cost**: models that support thinking generate a large number of thinking tokens. Although these tokens are not displayed to the user, they are still billed.
+
+**Tool call cost** includes external API fees (search engines charge per query, database queries consume computing resources), sandbox resources for code execution, and an easily overlooked indirect cost: the token cost incurred when tool outputs are injected into the context. The content returned from a single web search might occupy 2000-5000 tokens, and it will be repeatedly billed as input in every subsequent round of inference.
+
+**Infrastructure cost** covers operational overhead for vector databases (used for RAG retrieval), message queues, relational databases, and logging and tracing storage (for observability).
+
+To see where these costs actually come from, the companion experiment used a fixed eight-turn refund workflow: query the order, logistics, refund policy, and knowledge base, then perform risk checks, issue the refund, notify the user, and close the case. Real gpt-4o-mini calls were run under all four combinations of two switches: stable versus unstable prefixes, and full versus compressed history. The business workflow was identical in every arm. Table 7-4 uses the recorded token counts and prices from that run.
+
+Table 7-4 Measured Cost of the Eight-Turn Agent Workflow
+
+| Configuration | Input Tokens | Cached Tokens | Total Cost | Savings vs. Baseline |
+|---|---:|---:|---:|---:|
+| No cache, no compression | 20,700 | 0 | $0.003776 | — |
+| Stable prefix only | 20,386 | 13,568 | $0.002707 | 28.3% |
+| History compression only | 16,177 | 0 | $0.003115 | 17.5% |
+| Stable prefix + compression | 16,035 | 6,144 | $0.002643 | 30.0% |
+
+In the baseline, input grew from 1,113 tokens on the first turn to 3,668 on the last. Tool results were repeatedly carried into later requests, accounting for 9,544 input tokens across the run. With both optimizations enabled, that figure fell to 5,248 and total cost dropped by 30%.
+
+The gains were not additive. A stable prefix alone saved 28.3%, and compression alone saved 17.5%, yet together they saved 30%, not 45.8%. Compressing history also shortened the prefix available for cache reuse. **When context optimizations are combined, measure the complete workflow; never add their isolated savings together.** A different model, price schedule, or task length will change the 30% figure. The reusable result is the four-arm method, not the percentage itself.
+
+**Cost Optimization Strategies.**
+
+The first input-side levers to test are **KV Cache Reuse** (keep the prefix stable), **Context Compression** (shorten old trajectories and verbose tool results), and **Tiered Model Routing** (send simple requests to lightweight models and difficult reasoning to stronger ones). Chapter 2 covered the implementations. Here the operational point is that each lever should have its own switch, so the team can measure both its isolated effect and what happens when it is combined with others. Two further methods matter specifically to evaluation and operations.
+
+**Asynchronous Batch Processing** accumulates non-real-time tasks for batch processing, leveraging batch pricing discounts from API providers; in self-deployment scenarios, it also improves GPU utilization during off-peak hours.
+
+**Cost Monitoring and Budget Control.**
+
+In a production environment, a real-time cost monitoring system should be established: track token consumption and API costs by task type, model, user, etc. Also, set a cost cap for each task—automatically terminate the Agent when it falls into a loop or explores too deeply, preventing a single task from incurring abnormally high costs.
+
+> **Experiment 7-9 ★: End-to-End Cost Analysis of Agent Tasks**
+>
+> **Experiment Goal**: Reproduce the eight-turn cost breakdown above, then test the same optimization levers on your own workload.
+>
+> **Technical Approach**: Reproduce the fixed companion task first, then select several representative tasks of your own. Use LangSmith or a self-built tracing system to record input/output and thinking tokens, tool-call counts and return sizes, and end-to-end latency for every LLM call. Calculate average cost, p50/p95/p99, and the cost breakdown for each task type.
+>
+> **Acceptance Criteria**: Generate a cost report and identify the main drivers. Run all four switch combinations, measuring each optimization alone and both together. Rerun the experiment after changing models rather than carrying forward the saved trace's percentage savings.
+>
+>
+
+### Evaluation-Driven Continuous Iteration
+
+Model selection is not a one-time decision but a continuous process, adjusted as models evolve. The chapter opened with the claim that an evaluation system lets you keep pace with model evolution; a concrete model-switching case shows how that plays out in a real decision.
+
+Suppose your Agent system is currently built on Claude, excelling in tool calling and complex orchestration. One day, Gemini releases a new model, and public benchmarks show it surpasses Claude on several metrics at a lower price. At this point, your question is not "Is Gemini better than Claude?" but "**On my specific tasks, is Gemini better than Claude? How much better? What is the switching cost?**"
+
+A team with a solid evaluation system can answer this in hours: run the new model on its own evaluation dataset and compare task success rate, tool call accuracy, latency, and cost. You might find the new model really is better and cheaper on simple tasks—but in the core scenarios involving complex multi-round tool orchestration, its success rate drops by 5%. Once you confirm the difference exceeds the estimated sampling noise (see "Statistical Significance of Evaluation Results" below), your decision becomes a differentiated strategy—migrate simple tasks to the new model to cut costs, keep the original model on complex tasks to protect quality—rather than a blind wholesale switch. Decisions this granular and data-driven are only possible with an evaluation system built in advance.
+
+> **Experiment 7-10 ★★: Multi-Dimensional Model Performance Benchmarking**
+>
+> Conduct a comprehensive benchmark of mainstream LLMs and different API providers to build a multi-dimensional model selection decision database.
+>
+> Select test scope: Closed-source SOTA models like GPT series, Claude series, Gemini series, Doubao series, and open-source models like Qwen, Kimi, DeepSeek. Test the same model with different API providers (e.g., DeepSeek official vs. Siliconflow) to verify results from third-party performance monitoring platforms (e.g., Artificial Analysis).
+>
+> Design standardized test workloads: Input throughput tests use fixed-length contexts (8K/32K/128K tokens), output throughput tests request fixed-length responses (512/2048 tokens). Latency tests include TTFT (Time to First Token) and end-to-end latency. For models supporting thinking, separately measure thinking length and thinking latency. For each configuration, make at least 100 requests and calculate the standard deviation, p50, p95, and p99; high latency variance indicates an unstable user experience.
+>
+> Evaluate API availability and stability: Probe once per hour for a week, recording success rate, error types, and failure duration. Calculate failure rate, MTTR (Mean Time to Recovery), and longest continuous uptime. Test the actual thresholds of rate limits—gradually increase concurrency to find the throttling point, recording RPM/TPM limits. Calculate comprehensive cost: Collect pricing information (unit prices for input/output/cache tokens), consider the impact of KV Cache, and calculate the average cost for typical multi-round Agent tasks.
+>
+> **Experiment 7-11 ★★: End-to-End Selection Evaluation of User Memory Systems**
+>
+> **Prerequisites**: Must complete the contextual retrieval or agentic RAG experiment from Chapter 3.
+>
+> **Goal**: Perform an end-to-end model-selection evaluation of a user-memory retrieval Agent, examining how the embedding model, reranker, and Agent's main model jointly affect retrieval quality, latency, and cost. Reuse `chapter3/contextual-retrieval-for-user-memory` or `chapter3/agentic-rag-for-user-memory`, and compare the configurations on 60 test cases.
+>
+> **Acceptance**: Evaluate each of the three selection points in turn—embedding model (BGE-M3 / OpenAI / Doubao, etc., record top-5 retrieval accuracy, latency, cost), reranker (include a "no reranker" baseline, quantify its marginal value), and main model (compare success rate and tool usage efficiency under the same retrieval configuration). The key is to identify synergies among the components: a stronger embedding might make the reranker redundant, and a stronger main model might compensate for retrieval shortcomings. Selection is a systemic trade-off, not simply a matter of choosing the strongest component in isolation. Configuration details are in the companion repository.
+>
+
+## Statistical Significance of Evaluation Results
+
+"A switching decision within hours" rests on an implicit premise: the score difference you observed is real signal, not sampling noise. With a limited evaluation set and non-deterministic model outputs, that premise does not hold automatically.
+
+A rough estimate of this sampling noise is the **standard error of a binomial proportion** (which characterizes the fluctuation of the success rate due to sampling randomness; the larger the value, the less reliable the success rate). If the success rate p is measured on n test cases, the standard error is approximately √(p(1-p)/n). For a concrete example: 100 cases, success rate 70%, standard error ≈ √(0.7×0.3/100) ≈ 4.6%. An approximate 95% confidence interval is p ± 2 standard errors, meaning an interval that would contain the true rate in about 95% of repeated samples, i.e., 70% ± 9 percentage points. A three-percentage-point difference like "new model 73% vs. old model 70%" therefore sits entirely inside the noise band—treating the two success rates as independent, the standard error of their difference is about √2 times the individual standard error (here about 6.5 percentage points). One caveat: that √2 assumes the two measurements are independent, whereas in practice both configurations usually run on the **same set of tasks**, so the samples are not independent. The independence assumption is merely a conservative upper bound for a quick check on whether a small difference deserves attention at all. Even by that conservative yardstick, a three-percentage-point gap falls far short of the 6.5-percentage-point standard error—switching models on such evidence is little better than a coin flip.
+
+Agent evaluation adds another layer of non-determinism: the same model and dataset can still produce different results across runs because temperature sampling, tool-return variance, and environmental timing all inject randomness. A single run should therefore never justify deployment. **Run multiple times and average**—say, 3-5 runs per configuration—and report both the mean and the spread. The small AndroidWorld pilot later in this chapter uses only one paired run per task, so it can screen ideas for a larger test but cannot support deployment. That decision requires the planned multi-seed run on the full task set.
+
+Hence a practical principle: **when the score difference is smaller than the estimated sampling noise, do not make a switching decision.** But before settling on "don't switch," reach for a more sensitive—and more correct—analysis. When two configurations run on the same set of tasks, the right default is **paired analysis**: compare win/loss task by task, look only at the cases where the two disagree (one correct, one wrong), and apply something like McNemar's test to judge significance. Pairing subtracts out the shared noise of task difficulty, making it far more sensitive at the same sample size than differencing two independent success rates—the earlier √2 estimate is just a conservative, mental-math sieve for ruling out differences that obviously fall short. If paired analysis still leaves the difference uncertain, only then consider growing the sample—and note that the standard error scales as 1/√n, so going from 100 to 400 cases merely halves the estimated sampling noise. Expansion is expensive. Read the other way: if an improvement's expected benefit is only 2-3 percentage points and your evaluation set has a few dozen cases, the evaluation simply cannot tell whether the improvement works—the priority is to grow the evaluation set, not to keep iterating the Agent.
+
+One more easily overlooked pitfall is **multiple comparisons**. Test a batch of hypotheses in parallel and the probability that at least one conclusion is a false positive climbs fast—even at a 95% confidence level per conclusion, across 6 hypotheses the chance of hitting at least one false positive is 1 − 0.95^6 ≈ 26%. The more hypotheses you run in parallel, the harder it becomes to avoid one that merely looks significant. Countermeasures come in two kinds: tighten the significance threshold for each conclusion as the number of hypotheses grows, using a Bonferroni-style correction, or rerun every positive result in an independent confirmatory pass and accept it only if it replicates. The AndroidWorld case later changes one variable at a time across successive rounds, avoiding the temptation to try a large batch of changes and report only the winner. If several prompts or observation formats are screened in parallel, multiple comparisons must be reflected in the conclusion.
+
+Evaluation-driven decisions rely on high-quality data, which comes from the systematic recording of the Agent's operational process—this is what observability addresses.
+
+**Paired comparison:**
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
+## Agent Observability
+
+Evaluation-driven decisions (whether for model selection or continuous iteration) rely on high-quality operational data. Below, we first introduce how to systematically collect this data (observability), and then discuss how to translate evaluation results into system improvements.
+
+![Figure 7-6: Observability Technology Stack](images/fig7-6.svg)
+
+Observability is a concept borrowed from distributed systems: you cannot open the system and watch it work; you infer what is happening from the logs, metrics, and traces it emits—the way a doctor, unable to see inside a patient, diagnoses from temperature, blood pressure, and imaging. Agent systems make this harder still: the same input can produce different outputs, multi-round reasoning and tool calls make execution paths extremely complex, and the model's "thinking" is completely opaque from outside.
+
+The value of observability lies first in **problem diagnosis**: complete traces allow developers to replay the entire process rather than guessing. Second, it is the foundation for **continuous optimization**—you can see which tasks require multiple rounds of iteration, which tools have the lowest success rate, and which retrieval queries always return empty results. In **cost management**, Agent operating costs can differ by one or two orders of magnitude between tasks, and tracing surfaces the abnormally expensive cases. Finally, accumulated trace data underpins later system optimization and model improvement.
+
+Agent observability is built on the foundation of **traces**, whose data structure directly inherits the span tree model from distributed systems: one task execution corresponds to one trace, where each LLM call, each tool call, and each retrieval is a **span** (an execution unit recording input/output, start/end times, token consumption, and error information). The parent-child relationships between spans form an execution tree—for example, an "Agent Main Loop" span may have several "LLM Call" and "Tool Call" child spans hanging beneath it. Standardized protocols are already available for this layer: **OpenTelemetry** is the general-purpose distributed tracing standard, while specifications like **OpenInference** define LLM-specific semantic conventions on top of it (how to record prompts, model parameters, token usage, etc.). The advantage of adopting standard protocols is the decoupling of collection and analysis—the same trace data can be connected to different analysis backends, avoiding vendor lock-in.
+
+LangSmith is one of the representative platforms in this domain (similar platforms include Langfuse, Arize Phoenix, etc.), integrating observability, evaluation, and optimization into a closed loop. Each execution creates a trace session, where model calls, tool usage, and knowledge retrieval are recorded as independent execution units, linked by causal relationships to form an execution tree. Each unit records complete input/output, timing information, cost data, and error information. The platform uses asynchronous batch data collection to ensure that tracing itself does not affect the Agent's response latency.
+
+The platform also supports A/B testing (routing a portion of user traffic to a new version, automatically comparing metrics, and supporting rapid rollback or gradual scaling), prompt version management (each version is associated with runtime performance data), and collaborative development (team members can share trace data and problem cases). The massive amount of real-world data from production environments is a goldmine for continuous improvement—it can uncover unforeseen scenarios and identify the features most in need of optimization.
+
+The most valuable use of observability data is to **turn it into evaluation assets**. A practical loop: extract failed and suspicious cases from production traces → anonymize them (strip sensitive fields such as user data and keys) → distill them into new test cases and regression tests for the evaluation set. The evaluation set then stops being a one-time, static collection and becomes a living asset that evolves with the product and continues to reflect the real user distribution—the failure patterns exposed in production today become the regression tests guarding the baseline tomorrow. This is precisely the interface between observability and the main theme of this chapter: observability is responsible for "seeing" what happens in the real world, and evaluation is responsible for solidifying those observations into repeatable standards.
+
+Observability faces several challenges:
+
+- **Trade-off between data volume and privacy**: High-traffic systems can generate terabytes of trace data daily, while also needing to comply with data protection regulations.
+- **Complexity of causal attribution**: Automatically identifying root causes from traces still requires more intelligent analysis algorithms; cutting-edge research is attempting causal inference and counterfactual analysis, but it is not yet mature.
+- **Tracing challenges in multi-Agent systems**: Tracing execution flows across multiple Agents is more complex and semantically richer than tracing API calls between microservices.
+- **Balance between real-time guardrails and post-hoc analysis**: High-risk scenarios require proactive guardrails, but these introduce additional latency and false positives.
+
+As ML technology becomes more deeply integrated into the toolchain, future observability platforms are expected to automatically identify anomalies and pinpoint root causes.
+
+With a comprehensive evaluation system and dataset in place, the key is to translate evaluation results into tangible system improvements.
+
+## From Benchmark Reports to System Improvements
+
+The following case comes from a real, deliberately narrow AndroidWorld iteration in the companion repository. It covers four Wi-Fi settings tasks on an API 35 emulator, with one matched run per task. It is not the full 116-task benchmark and does not replace a rerun in the reference API 33 environment. Its value is not an overall score; it is the sequence of decisions from one result to the next.
+
+![Figure 7-7: Benchmark to Improvement Loop](images/fig7-7.svg)
+
+From the perspective of Harness engineering, this section is essentially about the methodology for iterative Harness optimization—using evaluation data to identify weak points in the Harness (insufficient context? missing constraints? inadequate validation? untimely feedback?), making targeted improvements, and then re-evaluating, forming a closed loop for the Harness's continuous evolution.
+
+Before analyzing any benchmark report, note an easily overlooked principle: **when Agent performance drops, check the evaluation system first, then the Agent**. The common mistake is to start editing Agent code the moment a score falls, ignoring the possibility that the evaluation system broke first—steer by a distorted signal and the correction is wrong from the very first step. Typical evaluation-side failures include: the runtime environment running out of resources and killing processes (which shows up as random failures), bugs in the scorer that mark correct answers as failures, and test cases drifting out of sync with production scenarios. In the headline numbers, all of these look identical to model degradation; only a review of the full traces can tell them apart.
+
+### Reading a Benchmark Report: The Art of Problem Discovery
+
+The starting report recorded one run on each of 116 tasks and about 88% overall success. The failures were not scattered: three of the four `SystemWifiTurn*` tasks failed, and their traces repeatedly navigated back and forth without confirming the final state. Two explanations fit the evidence: the Agent did not know where to go, or the UI representation it received was incomplete.
+
+An 88% headline score hides this small but coherent failure cluster. Raising the step limit would be equally misleading—it could recast "the Agent cannot see the control" as "the Agent needs more persistence." Read reports in the opposite direction: locate clusters by task and capability tag, replay the traces, decide whether the failure arose in observation, reasoning, action, or verification, and only then choose a variable to change. The Wi-Fi slice was used to diagnose the mechanism cheaply, not to estimate system-wide performance.
+
+### From Data to Hypotheses: Building an Improvement Roadmap
+
+The first round tested the cheapest explanation. H1 assumed a navigation-knowledge gap, so only the treatment received Wi-Fi navigation and final-state-checking instructions. Success did not improve; the prompt was not the bottleneck.
+
+The second round asked what the Agent could actually see. H5 replaced the API-35-incompatible accessibility feed with AndroidWorld's supported UIAutomator tree. Success improved, but the full tree caused token use to surge. H5C therefore added no new information: it simply removed invisible, textless, non-actionable container nodes to see whether the same success could be preserved with less noise.
+
+Across all three rounds, the model, task parameters, seed, step limit, and emulator stayed fixed, and arm order alternated. This staged design made attribution straightforward: the residual problem or side effect from one round became the sole change in the next.
+
+### From Results to Decisions: Data-Driven Trade-offs
+
+Table 7-5 summarizes the measured results. With only four tasks per arm, these numbers can decide whether a larger rerun is worthwhile; they cannot estimate success across AndroidWorld.
+
+Table 7-5 Three Rounds on the AndroidWorld Wi-Fi Slice
+
+| Experiment | Only Change | Control → Treatment Success | Treatment / Control Tokens | Next Step |
+|---|---|---:|---:|---|
+| H1 | Add navigation instructions | 25% → 25% | 0.47× | No success gain; retain the original prompt |
+| H5 | Accessibility feed → UIAutomator | 25% → 100% | 2.498× | Strong gain but too expensive; continue optimizing |
+| H5C | Compact the UIAutomator tree | 100% → 100% | 0.506× | Preserve success and halve tokens; advance to a full rerun |
+
+The sequence matters more than any one percentage. More detailed instructions cannot restore information the Agent never received; observation failures should be investigated before prompts are expanded. But more input is not always better either. The full element tree fixed visibility while flooding the context with noise. Removing non-semantic nodes preserved four successful runs and cut tokens by roughly half. No model was changed: the Harness's UI representation first determined whether the task could be completed and then whether completing it was economical.
+
+### Continuous Iteration: From First Improvement to System Evolution
+
+Passing H5C on four tasks only earns it a larger test; it does not authorize deployment. The next gate is a five-seed run over all 116 tasks in the Pixel 6 / API 33 reference environment with the full third-party app set. Success must be non-inferior, token use no more than 75% of the original, and latency no more than 1.5×. Until that run is complete, 4/4 on the slice must not be reported as 100% system-wide success.
+
+That is what continuous iteration means in practice: evidence from one round should authorize only the next action that its scope can support. H1 stopped further prompt piling; H5 found the right mechanism and revealed a cost problem; H5C fixed that problem and qualified for broader testing. A good benchmark report contains more than a score. It states where the conclusion applies, which guardrails failed, and what must be tested next.
+
+> **Experiment 7-12 ★★★: Evaluation and Improvement on AndroidWorld**
+>
+> This experiment practices the full path from evaluation report to system improvement. Start with the historical report and three saved paired runs in `chapter6/android-world`.
+>
+> Step 1: Diagnosis. Cross-analyze the per-task table and the capability tag matrix to map surface-level task failures to deep-seated capability deficiencies. Identify capability tags with lower-than-expected success rates and task areas with concentrated failures.
+>
+> Step 2: Build Hypotheses. Formulate improvement hypotheses following the three-layer framework (surface → mid → deep). Each hypothesis should state the target improvement in success rate and the verification method.
+>
+> Step 3: Phased Experimentation. Reproduce H1, H5, and H5C with one variable changed per round. Record tokens, latency, and regressions as well as success.
+>
+> Step 4: Data-Driven Decision Making. Make deployment decisions based on cost-benefit analysis—not simply adopting all effective improvements, but weighing the scope of application, latency impact, and cost overhead for each improvement. Prioritize low-cost, high-benefit improvements for deployment; restrict high-cost improvements to critical scenarios.
+>
+> Step 5: Iteration. A passing slice experiment advances only to the full rerun. Discuss deployment only after the 116×5 reference-environment run, and preserve environment differences, sample size, and incomplete scope in the report.
+>
+
+## From External Evaluation to Internal Evaluation: Evaluation Infrastructure for Production-Grade Agents
+
+So far this chapter has evaluated Agent systems from the outside—building an evaluation environment, designing datasets, analyzing benchmark reports. But the best Agent products do more than undergo external evaluation; they **build continuous self-evaluation infrastructure into the product**. Below, using the open-source general-purpose Agent OpenClaw introduced in Chapter 5 as an example and drawing on public technical analyses of leading Coding Agent products and practitioner insights, we present an internal evaluation system worth emulating: one that systematically embeds the experimental methodology of ML research into product engineering.
+
+### Ablation Infrastructure: Understanding the True Contribution of Each Feature
+
+ML researchers have long used ablation studies to learn which components of a model actually matter—ablation means "removing" one component at a time and observing how much overall performance drops. OpenClaw brings this methodology into product engineering: a built-in master switch can disable several major features at once (thinking mode, context compression, automatic memory, background tasks, and more), creating a "bare model" baseline. That lets the team answer a key question: **does a feature truly improve the user experience, or does it just feel useful?**
+
+Making ablation a routine engineering practice, rather than a one-time research activity, has several practical implications. First, the ablation switch must be injected very early in the startup path—before any module-level constant captures configuration values—meaning the ablation infrastructure must be designed into the system architecture from the start, not retrofitted later. Second, running ablation experiments regularly (e.g., before each major release) can uncover "feature debt"—features that were once effective but are no longer necessary as models evolve. For any team building a production Agent, the recommended practice is: **Every major feature should be independently disableable, and the team should regularly verify the actual contribution of each feature.**
+
+### A/B Testing Methodology: Distinguishing Mechanism from Goal
+
+Mature Agent products conduct rigorous A/B testing on their own behavior (i.e., randomly dividing users into two groups, one using the old version and one using the new version, and comparing actual data from both groups to determine if a change is effective). A well-designed Agent A/B test case illustrates several key methodological principles:
+
+**Multiple variants, not just a binary comparison.** Instead of just comparing "with" and "without," design multiple progressive variants (e.g., when testing different strengths of prompt constraints, set up a control group and three experimental groups with progressively stricter constraints). This design can reveal dose-response relationships and help find the optimal point.
+
+**Distinguishing mechanism metrics from target metrics.** This is the easiest mistake to make—treating what you are changing as the optimization target. For example, if you are testing "shortening the Agent's plan file length," plan length is a mechanism metric (something you directly change), but it is not the target. The real target might be "reducing session-level cost." Shortening the plan file may lower costs, but it could also lead to more edit-check-edit loops due to insufficiently detailed plans, increasing total output. Always ask yourself: **Is what I am changing (the mechanism) the same as what I truly care about (the target)?** If not, prioritize the target.
+
+**Setting guardrail metrics.** Even if the target metric improves, the experiment should be stopped if user satisfaction declines, the number of operations increases, or the error rate rises. Guardrail metrics are non-negotiable thresholds that must not regress.
+
+**Recording baseline statistics.** Include sample size, distribution percentiles, and correlation analysis (e.g., "rejection rate increases monotonically with plan size") to provide the necessary context for interpreting experimental results. Without a baseline, you cannot determine whether the experimental results are statistically significant.
+
+### Two-Layer Feature Flag System
+
+Agent products need a Feature Flag infrastructure designed from day one—a feature flag is a remotely controllable switch that determines whether a function is enabled or disabled for users, without requiring code redeployment. It serves three purposes simultaneously: experimentation, gradual rollout, and emergency circuit breaking.
+
+**Compile-time flags** physically remove the relevant code from the build artifact during the build phase. Internal-only features simply do not exist in external builds—even reverse engineering cannot discover the removed functionality. This also provides a clean ablation mechanism: disabling a feature does not skip logic at runtime; the corresponding code is physically absent.
+
+**Runtime flags** have their configuration delivered by the server and cached locally on disk. The design prioritizes reading slightly stale cached configuration over blocking the Agent's startup while waiting for a network request. Specific grouping decisions are made through an experimentation platform (e.g., GrowthBook) for assigning A/B test groups. A key design detail is that each feature's exposure event is logged at most once per session to avoid duplicate records polluting the experimental data.
+
+The lesson for Agent developers: feature flags are not debugging tools; they are **first-class architectural components**.
+
+### Prompt Sensitivity Assessment
+
+The system prompt is the core "code" of Agent behavior, yet it often lacks the version control and regression testing afforded to regular code. OpenClaw's approach is to provide a dedicated tool that can extract the fully rendered system prompt at a specified Git revision or commit—including the final text after all dynamic conditions are expanded. This allows the team to precisely answer: **Which commit changed the prompt? What was the impact on the evaluation set?**
+
+For any Agent team, the recommended practices are: (1) The system prompt should be deterministically renderable (given the same configuration input, it always produces the same output); (2) Establish a versioned snapshot mechanism for prompts; (3) Every prompt change should run regression tests on the evaluation set—just as code changes require CI.
+
+### Privacy-Aware Analytics as an Evaluation Foundation
+
+Evaluation relies on good data, but Agent products often handle sensitive user content. OpenClaw resolves this contradiction through a type system: the analytics interface only accepts values wrapped in special types, where the type name itself serves as an audit trail—it explicitly declares "I have verified this is not code or a file path." This design transforms privacy constraints from documented specifications into compile-time enforced type checks.
+
+The core principle is: **Design privacy constraints into the system from the start; do not bolt them on afterward.** If your analytics system cannot safely collect data, you cannot evaluate effectively. Privacy and evaluation are not opposing forces—privacy-aware design forces you to think carefully about *what truly needs to be measured*, which in turn fosters more precise evaluation metrics.
+
+### From External to Internal: A Shift in Evaluation Thinking
+
+The core message of this section is: **The previous sections taught you how to evaluate an Agent externally; this section reveals how the best Agent products evaluate themselves internally.** External evaluation tells you "how good the Agent is"; internal evaluation infrastructure tells you "which change made it better." Ablation experiments discover which features truly matter, A/B testing quantifies the impact of each change, feature flags provide the infrastructure for experimentation and rollback, prompt sensitivity assessment integrates the system prompt into the CI system, and privacy-aware analytics ensures compliance in data collection. These five components together constitute evaluation-driven product engineering—not evaluating occasionally, but embedding evaluation into every product decision.
+
+## Simulation Environments: The Bridge from Evaluation to Post-Training
+
+The endpoint of evaluation is not scoring, but improvement. This chapter has already demonstrated two paths for improvement: adjusting the Harness (from Benchmark reports to system improvements) and embedding evaluation into product engineering (internal evaluation infrastructure). The strongest form of improvement is training—when the goal expands from "evaluating existing capabilities" to "cultivating new capabilities," especially through the post-training techniques discussed in Chapter 8, the evaluation environment needs to evolve into a **simulation environment**: a virtual playground where the Agent can repeatedly practice and be automatically scored. The core differences between simulation environments and evaluation environments are: much higher interaction frequency (millions vs. thousands), the need for randomization (to prevent memorizing specific configurations), and the requirement for immediate feedback. From an application perspective, simulation environments are divided into two categories: digital environments (information processing tasks) and embodied environments (physical world perception and manipulation).
+
+Here is how the two ends of the bridge meet. Assets accumulated on the evaluation side convert almost seamlessly into training signals: a well-defined Rubric or validator is essentially a reward function for **Reinforcement Learning with Verifiable Rewards (RLVR)**—the scoring script becomes the reward script; whether a test passes or a state meets the standard serves both as an evaluation criterion and as a reinforcement learning reward. But training brings demands evaluation never had to worry about. The first is **reliable reset semantics**: training runs millions of episodes (an episode is one complete interaction round from an initial state to task completion), and each episode must be able to reset the environment to a deterministic, clean initial state; otherwise, the gradient signal will be contaminated by residual states from the previous episode. The second is **throughput far exceeding evaluation**: a few thousand evaluations are enough to draw conclusions, but training requires feeding the model millions of interactions within an acceptable wall-clock time; the degree of environment parallelism and per-instance overhead directly determine whether training is feasible. These two points—validators turned into reward functions, and training-grade reset and throughput—will be elaborated in Chapter 8.
+
+![Figure 7-8: Simulation Fidelity Spectrum](images/fig7-8.svg)
+
+On the **digital environment** side, the AWorld framework builds a controllable MCP server sandbox for GAIA tasks, providing 26 MCP servers covering 126 tool functions, avoiding the bans and uncontrollable side effects of directly accessing real APIs. All tool calls are replayable and auditable. AWorld's distributed architecture reduces the traditional serial execution time from 7695 seconds to 525 seconds (a 14.6x speedup), and the environment's stateless design makes each instance completely independent, supporting efficient parallelism.
+
+On the **embodied environment** side, RoboTwin2 builds dual-arm manipulation tasks based on a physics engine, randomizing object positions, orientations, and appearances to improve generalization. The observation space includes multi-camera visuals and joint states, achieving real-time control through **Action Chunking**—where the model plans multiple consecutive actions at once (detailed in Chapter 6). OSWorld provides reset capability through virtual machine snapshots, and AndroidWorld focuses on mobile application automation. Whether digital or embodied, simulation environments also require the isolated execution environments and virtual identity mechanisms discussed in Chapter 4 (VM/container isolation, residential proxies, Human-in-the-Loop authentication, shared file systems), which will not be repeated here.
+
+> **Experiment 7-13 ★★: Configure the Embodied Intelligence Environment for OpenVLA and RoboTwin2**
+>
+> Set up a simulation environment for robot manipulation. Read `ch7/SimpleVLA-RL` and the OpenVLA documentation to understand the architecture of the Vision-Language-Action model (end-to-end integration of a vision encoder, language model, and action decoder, projecting images and text into a shared semantic space). Configure the RoboTwin2 environment, understanding the observation space (three-view RGB + 14-dimensional joint state) and action space (14-dimensional control vector). Study the environment randomization mechanism and spatial constraint logic in `move_can_pot`. Evaluate the pretrained model, recording its success rate, completion time, and failure modes, with a focus on the impact of the action chunking mechanism.
+>
+>
+> ![Figure 7-9: OpenVLA and RoboTwin2 Embodied Intelligence Environment](images/fig7-9.svg)
+>
+>
+
+### Fidelity Trade-offs and Domain Randomization
+
+High-fidelity environments support better transfer to the real world but have high computational costs. Another dimension of fidelity is the degree of randomization: moderate randomization improves generalization, while excessive randomization can make tasks too difficult. **Domain Randomization** is a key technique for narrowing the sim-to-real gap: introducing a wide range of random variations in physical parameters, visual appearance, sensor noise, etc.—just like practicing grasping under various lighting and angles, so you won't fail in the real world just because the light changes. In digital environments, sim-to-real manifests as differences in interface rendering, response times, etc., which can be mitigated by introducing randomization in latency and failures.
+
+With that, the evaluation environment completes its final evolution: from an exam hall that measures ability into a training ground that builds it. Chapter 8 will show how AWorld-train turns such simulation environments into trainable arenas, and the engineering challenges involved—the evaluation system and simulation environments established in this chapter are the two cornerstones of post-training.
+
+[^re-bench-2025]: Wijk, Hjalmar, et al. *RE-Bench: Evaluating Frontier AI R&D Capabilities of Language Model Agents against Human Experts.* arXiv:2411.15114, 2025.
 
 ## Chapter Summary
 
-The essence of model post-training is writing interaction strategies into parameters.
+This chapter has revolved around one question: how do you know an Agent has actually improved? From building reproducible test environments, to designing datasets that withstand leakage, to using LLMs as judges, to letting evaluation results drive model selection and iteration—every link in this chain bears on how much the conclusions can be trusted. The measured cases add four concrete cautions: combining structured memory with RAG does not guarantee synergy; cache and compression savings cannot be added; the choice of reference audio changes what a multimodal score means; and the Harness's input representation can determine both task success and token cost. Model selection should also compare capability-growth curves across resource budgets rather than relying on a single operating point. For production-grade Agents, evaluation is not an occasional exam but continuous validation embedded in every product decision.
 
-SFT and RL are not so much competing alternatives as methods that are often combined sequentially. When structured output is unstable, SFT can first stabilize the format so that the RL reward signal can be computed reliably; RL can then explore strategies and improve out-of-distribution performance. "SFT memorizes, RL generalizes" summarizes a tendency observed in this chapter's controlled experiments, not a law that holds regardless of the data, model, reward, and environment.
-Two judgments run through this chapter and are worth remembering more than any algorithm. First, **data and environment matter more than algorithms**: it is enough to know how to use off-the-shelf RL algorithms; what truly separates teams is the fidelity of the simulation environment and the quality of the training data. When a real environment cannot be built, using a model to simulate the environment (synthesizing tool return values, simulating environment dynamics) is also a viable route—but remember that the simulator's bias is the ceiling of training. Not only can answers be filtered; the task distribution of the training data can itself become an optimization target. In many scenarios, if the SFT data is of sufficiently high quality, RL may not be needed at all. Second, **RL's main bottleneck today is sample efficiency**: the two directions that currently look most promising are On-Policy Distillation, which densifies the signal at every step, and the verified path penalty RLVP, which turns wasted environment feedback into learnable signal ("reward the outcome, penalize the path," with partial credit for reachable progress to salvage the samples in all-fail groups). What they share is still the same idea—taking information that already exists in the environment and the data, but that pure outcome rewards squander, and turning it back into something the model can learn. When no stronger teacher is available, this line of thinking also has a self-distillation variant: OPSD lets the same model supervise itself in two roles—an "answer-reading teacher" and a "student who sees only the problem"—bringing token-by-token dense signals to tasks whose rewards are not verifiable.
+Core methodology: Observe → Hypothesize → Experiment → Validate → New Understanding → New Hypothesis, transforming Agent engineering from experience-driven "alchemy" to data-driven scientific engineering.
 
-This chapter answers how updating parameters can enable continuous Agent evolution. In the next chapter, we will see that parameters are only one of four carriers of Agent self-evolution: knowledge, instructions, programs, and parameters.
+The evaluation system introduced in this chapter forms a complete closed loop: **Evaluation Environment** provides automated testing infrastructure → **Evaluation Dataset** defines test cases → **Automated Evaluation Methods** (LLM-as-a-Judge and Rubric) score Agent performance → **Benchmark Analysis** reveals improvement directions → **System Improvements** fix issues → Update the evaluation environment and dataset, starting a new iteration cycle.
 
-[^ch7-1]: Schulman, John and Thinking Machines Lab, “LoRA Without Regret”, 2025.
-[^ch7-4]: Ouyang, Long et al., “Training Language Models to Follow Instructions with Human Feedback”, OpenAI, 2022.
-[^ch7-5]: Gao, Leo, John Schulman, and Jacob Hilton, “Scaling Laws for Reward Model Overoptimization”, OpenAI, 2023.
-[^ch7-6]: Rafailov, Rafael et al., “Direct Preference Optimization: Your Language Model is Secretly a Reward Model”, 2023.
-[^ch7-7]: Lightman, Hunter et al., “Let's Verify Step by Step”, OpenAI, 2023.
-[^ch7-8]: Silver, David and Richard S. Sutton, “Welcome to the Era of Experience”, 2025.
-[^ch7-9]: The path penalty design, four principles, and experimental data in this section are from Li, Bojie and Noah Shi, “RLVP: Penalize the Path, Reward the Outcome”, 2026. arXiv:2607.07435.
-[^ch7-10]: The method and experiments for On-Policy Distillation are from Thinking Machines Lab, “On-Policy Distillation”, 2025.
-[^ch7-11]: This set of post-training comparisons for an Agent's sense of time—including the failure modes of DPO and four RL methods and the breakthrough achieved by On-Policy Distillation—is documented in Li, Bojie and Noah Shi, “Agents That Sense Physical Time: Urgency, Persistence, and Vigilance as Missing Controls for LLM Agents”, 2026. https://01.me/research/physical-time-agent
-[^ch7-12]: Kulikov, Ilia, et al. *Autodata: An Agentic Data Scientist to Create High Quality Synthetic Data.* arXiv:2606.25996, 2026.
-[^ch7-13]: Sun, Hao, et al. "ZeroSearch: Incentivize the Search Capability of LLMs without Searching", 2025. arXiv:2505.04588.
-[^ch7-14]: "DreamGym: Scaling Agent Learning via Experience Synthesis", 2025. arXiv:2511.01824.
-[^ch7-15]: Zhao, Siyan, et al. "Self-Distilled Reasoner: On-Policy Self-Distillation for Large Language Models", 2026. arXiv:2601.18734.
-[^ch7-16]: Shen, Ziqi, et al. "Purified OPSD: On-Policy Self-Distillation Without Losing How to Think", 2026. arXiv:2607.02234.
-[^ch7-17]: Tan, Zelin, et al. "SKT: Skill-Use Training at Scale via Verified Synthetic Data Generation", 2026. arXiv:2608.02287.
-[^ch7-18]: Wei, Yifan, et al. "Towards Compositional Generalization of LLMs via Skill Taxonomy Guided Data Synthesis", 2026. arXiv:2601.03676.
-[^ch7-19]: Zhu, Kaijie, et al. "TermiGen: High-Fidelity Environment and Robust Trajectory Synthesis for Terminal Agents", 2026. arXiv:2602.07274.
-[^ch7-20]: Hua, Zhanbo, et al. "CLI-Universe: Towards Verifiable Task Synthesis Engine for Terminal Agents", 2026. arXiv:2606.22883.
+From the perspective of Harness engineering introduced in Chapter 1, the evaluation methodology in this chapter is the systematic implementation of the Harness's “validation” function, while the closed loop “from Benchmark report to system improvement” is the core mechanism for iterative Harness optimization. This chapter answers “how to measure reliably”; building on it, Chapter 9 answers “how to transform multidimensional trajectory evaluations into executable, reversible system updates.”
 
-[^ch7-23]: Liu, Zijun et al., "Inference-Time Scaling for Generalist Reward Modeling", 2025. arXiv:2504.02495. https://arxiv.org/abs/2504.02495
-
-[^ch7-29]: storm, "Long-horizon agent self-checking and early stopping: the reward-seeking phenomenon and its mitigations", Qingke Community, 6 August 2026. https://qingkeai.online/archives/Reward-Seeking
-[^ch7-24]: Yang, Jihan et al., "V-IRL: Grounding Virtual Intelligence in Real Life", 2024. arXiv:2402.03310. https://arxiv.org/abs/2402.03310
-
-This chapter has answered the parameter-update question of “how to train.” The next chapter places model parameters back within the complete Agent system: parameters are only one of four update carriers, alongside knowledge, instructions, and programs. Their distinctive challenge is how to derive trustworthy learning signals from deployment trajectories, select the correct update location, and govern the validation, release, and rollback of every candidate version. Where specific training algorithms are concerned, Chapter 8 refers directly to this chapter rather than repeating the material.
+The evaluation system established here not only supports optimization of the current system but also provides a critical foundation for the next two chapters. Chapter 8 turns evaluation environments and data into inputs for model post-training, using SFT and RL to write interaction policies into parameters. Chapter 9 transforms multidimensional evaluations of production trajectories into candidate updates to knowledge, instructions, programs, or parameters.
 
 ## Thought Questions
 
-1. ★★ Catastrophic forgetting—where fine-tuning for a specific task destroys the model's original general capabilities, such as general tool calling—is particularly troublesome in Agent scenarios. Compared with full-parameter fine-tuning, LoRA freezes the base weights and carries a lower risk of forgetting, but it is not immune. What strategies can further mitigate capability forgetting during fine-tuning?
-2. ★★ Post-training solidifies capabilities into model weights, or “muscle memory,” while in-context learning places knowledge in the input at inference time. Some capabilities, such as domain knowledge, can be learned through post-training or supplied through few-shot examples. What criteria would you use to decide which path a capability should take?
-3. ★★ Model distillation allows a small model to learn the behavior of a large model. By capability level, the models being distilled can be divided roughly into three tiers—**Chat models** (single-turn dialogue and direct answers), **Reasoning models** (long chains of thought before answering), and **Agentic models** (multi-turn tool calls and interaction with the environment). What different challenges arise in distilling each type? (Hint: Begin with “what exactly is being distilled”—the style of the output, the complete reasoning trajectory, or the policy for interacting with the environment; which tokens in the trajectory should be learned and which environmental returns should not; and how delayed and sparse the success/failure signals are.)
-4. ★★★ In multi-turn Agent interactions, the credit-assignment problem is more severe than in single-turn scenarios—a final success or failure is difficult to attribute to a decision made in turn 3 rather than turn 7. How would you design a reward-allocation strategy?
-5. ★★★ If you had a fixed budget, such as $10,000, to improve a customer-service Agent, how would you allocate it among context and knowledge, Prompt/Skills, programmatic constraints, and parameter training? What factors would determine your decision?
-6. ★★★ Autonomous model learning under scarce samples and without a clear reward function is regarded by some as the ultimate goal of post-training. How far are current RL training methods from this goal? Where is the next breakthrough most likely to come from?
-7. ★★ This chapter notes that LoRA fine-tuning is not expensive. Could a dedicated LoRA therefore be trained for every user or client company, writing user memory or enterprise knowledge into parameters rather than storing it in an external knowledge base as in Chapter 3? When would “writing memory into parameters” have an advantage over “storing memory in a knowledge base,” and when would it be counterproductive?
-8. ★★★ On-Policy Distillation relies on a stronger teacher model to supervise the student. OpenAI's Weak-to-Strong Generalization research, however, offered a counterintuitive finding: supervision from a weak model can sometimes unlock capabilities latent but inactive in a stronger model. If applied to Agent training, could this enable reverse distillation in which “a small model teaches a large model”?
-9. ★★ A Process Reward Model (PRM) evaluates each reasoning step, whereas an Outcome Reward Model (ORM) considers only the final result. Which deserves more reward: “a correct process that leads to a wrong result,” or “a wrong process that happens to produce the correct result”? How would you balance the two in multi-step Agent tool-calling scenarios?
-10. ★★★ The evaluation datasets discussed in this chapter, such as SWE-Bench Verified, τ²-bench, and AndroidWorld, can be used both for evaluation and post-training. But once an evaluation set is used for training, it is no longer independent. Does this violate the fundamental principle that training and test sets must remain separate? Dynamic parameter generation in τ²-bench and parameterized templates in AndroidWorld mitigate the problem to some extent, but their template structures remain fixed. How can the training value of evaluation data be fully exploited while preserving evaluation independence?
-11. ★★★ This chapter proposes a “form first, spirit second” training paradigm: stop SFT once “the format is stable and basic capabilities are present,” then switch to RL. In practice, how can one determine when SFT is “enough” and it is time to switch?
-12. ★★★ ReTool's training dynamics show (see Experiment 7-14) that a few extremely long responses can significantly extend the entire training cycle—most rollouts in a batch have already been generated, but the system must wait for the longest responses to finish, leaving cluster GPU utilization low. How can resource utilization be improved in training clusters under such long-tail response conditions?
-13. ★★★ When training an Agent against LLM-simulated environments—such as a simulated search engine or simulated users—the target of the Agent's exploitation shifts from “the rules of the real environment” to “the biases and loopholes of the simulator itself.” What concrete reward hacking behaviors can arise in this kind of training, and how should they be prevented?
+1. ★★ LLM-as-a-Judge uses a language model to evaluate the output of a language model. Does this "self-evaluation" have systematic blind spots—for example, the model might consistently give high scores to a certain style of response, a preference that is inconsistent with human judgment? How can such biases be detected and corrected?
+2. ★★★ The "leakage-proof" design of evaluation datasets is crucial. However, in the open-source ecosystem, once benchmark data is made public, it is quickly incorporated into training data. Does this "cat-and-mouse game" have an endgame? Design an evaluation method that fundamentally resists data leakage.
+3. ★★ Scale AI's four criteria (expert guidance, comprehensive coverage, standardized importance weighting, self-contained evaluation) aim to eliminate subjectivity in evaluation. However, certain task dimensions (e.g., "Is the answer helpful?" "Is the tone appropriate?") are inherently subjective. How can reliable Rubrics be designed for these subjective dimensions?
+4. ★★ τ-bench evaluates Agents by simulating real user behavior. But the simulated user itself is an LLM—it might systematically underestimate certain edge cases (e.g., emotionally agitated or unclear users). How can the quality of the simulated user itself be validated?
+5. ★★ Pairwise comparison (Bradley-Terry model) assumes preferences are transitive (if A > B and B > C, then A > C). However, human preferences often violate transitivity. In Agent evaluation, in what scenarios might non-transitive preferences appear? How does this affect the reliability of rankings?
+6. ★★ This chapter distinguishes Pass@k as a ceiling on capability from Pass consecutive@k as a measure of business reliability. For an Agent whose single-run success rate is only 60%, how would you combine a task's failure cost, retry cost and side effects to decide which metric to report and how large $k$ should be?
+7. ★★ This chapter proposes the scientific method of "Observe → Hypothesize → Experiment → Validate." In practice, however, the Agent's behavior space is vast, and validating a single hypothesis may require hundreds of evaluation runs. How can the information gained from evaluation be maximized under a limited computational budget?
+8. ★ In the AndroidWorld pilot, the full element tree raised success from 25% to 100% but increased token use to 2.498× the control; pruning preserved 100% success while reducing token use to 0.506×. How would you design automatic pruning rules that remove semantically empty UI nodes without discarding information needed for accessibility, state verification, or later actions?
+9. ★★ τ-bench's user simulation employs "progressive information disclosure"—not providing all information at once, but gradually revealing it based on the Agent's questions. How does this design affect evaluation results? If the simulated user's information disclosure strategy differs significantly from real users, are the evaluation conclusions still reliable?
