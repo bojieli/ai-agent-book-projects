@@ -192,8 +192,6 @@ El procesamiento nativo ofrece el techo de capacidad más alto: codificadores co
 
 ## Herramientas de ejecución
 
-La revisión también distingue el aislamiento a nivel de proceso para Agentes de bajo riesgo, contenedores o microVM para entradas no confiables y cuotas de recursos en todos los niveles. Un Sidecar ligero revisa los campos estructurados de cada llamada como puerta de seguridad; tras varios rechazos debe activar un interruptor de circuito y pedir la decisión del usuario. Las operaciones no idempotentes siguen un flujo de «precomprobación y confirmación».
-
 Si las herramientas de percepción son los "sentidos" del Agente, las herramientas de ejecución son sus "manos y pies". Sin embargo, a diferencia de las herramientas de percepción, el costo de los errores en las herramientas de ejecución puede ser extremadamente alto: los archivos eliminados por error no se pueden recuperar, comandos de sistema incorrectos pueden causar interrupciones en el servicio y llamadas a API indebidas pueden generar pérdidas financieras reales. Por lo tanto, el diseño de las herramientas de ejecución requiere lograr un sutil equilibrio entre la **apertura de capacidades** y las **restricciones de seguridad**.
 
 **Diseño en capas de los mecanismos de seguridad.**

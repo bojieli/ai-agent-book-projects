@@ -60,8 +60,6 @@ Untuk mengatasinya, kita memerlukan **arsitektur Agent asinkron berbasis peristi
 
 ### Implementasi Mekanisme Berbasis Peristiwa di OpenClaw
 
-Versi baru menegaskan bahwa Hooks berasal dari siklus hidup internal OpenClaw, sedangkan Cron dan Heartbeat digerakkan oleh waktu. Email dan callback API eksternal memerlukan jalur masuk segera seperti Channel pada PineClaw.
-
 Kerangka kerja (*framework*) *open-source* OpenClaw (arsitekturnya akan dirinci di Bab 5) menerima pesan multi-saluran melalui bidang kendali (*control plane*) Gateway dan merutekannya ke *runtime* Agent. Kerangka kerja ini menyediakan tiga mekanisme otomatisasi bawaan:
 
 - **Hooks**: Merespons peristiwa dalam siklus hidup Agent, seperti pembuatan dan penyetelan ulang sesi, mirip dengan pemicu peristiwa di GitHub Actions

@@ -1,11 +1,5 @@
 # Model Post-Training
 
-> **2026 güncellemesi.** Gözden geçirilen bölüm, “SFT ezberler, RL geneller” ifadesinin GeneralPoints/V-IRL kontrollü karşılaştırmalarında gözlenen bir eğilim olduğunu, evrensel bir yasa olmadığını açıkça belirtir. Araç dönüşlerinin modelle simüle edilmesi ile tüm ortam dinamiklerinin simüle edilmesini ayırır ve simülatör yanlılığını eğitimin tavanı olarak ele alır.
->
-> Örnek verimliliğini artıran iki yol öne çıkarılır: On-Policy Distillation bir rollout’un son ödülünü token düzeyinde rehberliğe dönüştürür; RLVP normalde boşa giden yol geri bildirimini öğrenilebilir bir sinyale çevirir. Daha güçlü bir öğretmen yoksa OPSD ayrıcalıklı bilgiyi kullanır ve aynı model öğretmen ile öğrenci rollerini üstlenir.
->
-> Bu sürümde deney sırası: 7-13 SimpleVLA-RL; 7-14 ReTool; 7-15 AWorld-train; 7-16 RLVP.
-
 Bu kitabın temel formülü Agent = LLM + Context + Tools'tur. Bu bölüm, LLM denen o "beyni" optimize etmeye odaklanıyor: post-training yoluyla modelin context'i ve araçları daha iyi kullanmasını sağlayarak Agent sisteminin bütününün yeteneğini yükseltmek. Bölüm 7'nın sonunda belirtildiği gibi, değerlendirme sistemi ile simülasyon ortamı post-training'in iki temel taşıdır: değerlendirme ortamı eğitime bir alıştırma sahası sunar, değerlendirme metrikleri ise eğitimin hedefini tanımlar. Bu bölüm işte o iki temel taşın üzerine kuruluyor ve model ağırlıklarının gerçekten nasıl değiştirileceğini, yeteneğin parametrelere nasıl çökeltileceğini tartışıyor.
 
 Bu bölüm, pekiştirmeli öğrenme ya da model eğitimi konusunda hiçbir arka planı olmayan okurlar için yazıldı. Gradyanları veya policy optimizasyonunu bildiğinizi varsaymıyoruz; bunun yerine "bir model nasıl eğitilir" sorusunun kendisinden başlayıp her adımın amacını, çalışma ilkesini ve çözdüğü problemi açık açık anlatıyoruz. Bu bölümü bitirdiğinizde şunlara yanıt verebilmelisiniz: Bir modelin yeteneği kaç adımda dövülür, her adım ne yapar, neden bu sıraya uyulması zorunludur ve kendi projenizde hangi adıma emek harcamalısınız?

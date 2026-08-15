@@ -60,8 +60,6 @@ Ennek megoldásához egy "eseményvezérelt aszinkron Agent architektúrára" va
 
 ### Eseményvezérelt mechanizmusok megvalósítása az OpenClawban
 
-A frissített leírás szerint a Hooks az OpenClaw belső életciklusából származik, míg a Cron és a Heartbeat idővezérelt. A külső e-mailek és API-visszahívások azonnali csatornát, például a PineClaw Channel mechanizmusát igénylik.
-
 A nyílt forráskódú OpenClaw keretrendszer (architektúráját az 5. fejezet részletezi) egy Gateway vezérlősíkon keresztül fogadja a többcsatornás üzeneteket, és irányítja azokat az Agent futásidejű környezetébe. Három beépített automatizálási mechanizmust kínál:
 
 - **Hooks (Horgok)**: Reagálnak az Agent életciklus-eseményeire, mint a munkamenet létrehozása és visszaállítása, hasonlóan a GitHub Actions eseménytriggereihez

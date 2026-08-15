@@ -1,11 +1,5 @@
 # Modell poszt-tréning
 
-> **2026-os frissítés.** A fejezet pontosítja, hogy az „SFT memorizál, az RL általánosít” állítás a GeneralPoints/V-IRL kontrollált összehasonlításainak megfigyelése, nem egyetemes törvény. Különválasztja az eszközválaszok modellalapú és a teljes környezeti dinamika szimulációját is, és a szimulátor torzítását a tréning plafonjaként kezeli.
->
-> Két, a minta-hatékonyságot javító út kap hangsúlyt: az On-Policy Distillation egy rollout végső jutalmát tokenenkénti útmutatássá alakítja, az RLVP pedig a különben elvesző útvonal-visszajelzést tanulható jellé teszi. Erősebb tanár hiányában az OPSD privilegizált információt használ, miközben ugyanaz a modell tölti be a tanár és a tanuló szerepét.
->
-> A kísérletek sorrendje ebben a kiadásban: 7-13 SimpleVLA-RL; 7-14 ReTool; 7-15 AWorld-train; 7-16 RLVP.
-
 A könyv alapképlete: Ágens = LLM + Kontextus + Eszközök. Ez a fejezet magára az LLM-re – az "agyra" – összpontosít, és azt vizsgálja, hogy a poszt-tréning hogyan segíthet a modellnek hatékonyabban használni a kontextust és az eszközöket, ezáltal javítva az egész Ágensrendszer képességeit. A 7. fejezet vége rámutatott, hogy az értékelő rendszer és a szimulációs környezet a poszt-tréning két sarokköve: az értékelő környezet adja a gyakorlóterepet, az értékelési metrikák pedig a célt. Ez a fejezet ezekre a sarokkövekre építve tárgyalja, hogyan lehet ténylegesen megváltoztatni a modell súlyait – hogyan lehet képességeket a paraméterekbe sütni.
 
 Ez a fejezet nem feltételez semmilyen előzetes ismeretet a megerősítéses tanulásról vagy modelltréningről. Nem várjuk el, hogy ismerd a gradienseket vagy a policy-optimalizálást. Ehelyett abból a kérdésből indulunk ki, hogy hogyan tanul egy modell egyáltalán, világossá téve, hogy az egyes lépések mire valók, hogyan működnek, és milyen problémát oldanak meg. A fejezet végére képesnek kell lenned megválaszolni a következő kérdéseket: Hány szakaszból áll egy modell képességeinek kialakítása? Mit csinál az egyes szakaszok? Miért kell ebben a sorrendben történniük? És hova érdemes koncentrálnod a saját projektjeidben?

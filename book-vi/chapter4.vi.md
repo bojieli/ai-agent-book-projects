@@ -197,8 +197,6 @@ Xử lý gốc có trần năng lực cao nhất; các bộ mã hóa như Vision
 
 ## Công cụ thực thi
 
-Thiết kế bảo mật được cập nhật dùng cô lập cấp tiến trình cho Agent rủi ro thấp, container hoặc microVM cho đầu vào không đáng tin cậy và hạn ngạch tài nguyên ở mọi tầng. Sidecar nhẹ kiểm tra các trường có cấu trúc của lệnh gọi như một cổng trước khi thực thi; nếu bị từ chối liên tiếp, bộ ngắt mạch sẽ chuyển sang yêu cầu người dùng quyết định. Tác vụ không idempotent dùng hai bước “kiểm tra trước–xác nhận”.
-
 Nếu công cụ nhận thức là “giác quan” của Agent thì công cụ thực thi là “tay chân” của Agent. Nhưng không giống như các công cụ nhận thức, lỗi trong công cụ thực thi có thể cực kỳ tốn kém: không thể khôi phục các tệp vô tình bị xóa, các lệnh hệ thống không chính xác có thể gây gián đoạn dịch vụ và các lệnh gọi API không đúng cách có thể gây ra tổn thất tài chính thực sự. Do đó, việc thiết kế các công cụ thực thi đòi hỏi sự cân bằng tinh tế giữa **sự bộc lộ khả năng** và **các ràng buộc bảo mật**.
 
 **Thiết kế phân cấp của cơ chế an toàn.**

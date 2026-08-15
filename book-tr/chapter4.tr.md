@@ -197,8 +197,6 @@ Yerel işleme en yüksek yetenek tavanına sahiptir; Vision Transformer gibi kod
 
 ## Yürütme Araçları
 
-Güncellenen güvenlik tasarımı düşük riskli Agent'lar için süreç düzeyi izolasyonu, güvenilmeyen girdiler için container veya microVM'i ve her katmanda kaynak kotalarını kullanır. Hafif Sidecar, yapılandırılmış araç çağrısını yürütme geçidi olarak denetler; art arda retlerde devre kesici çalıştırılıp kullanıcı kararına dönülmelidir. İdempotent olmayan işlemler “ön kontrol–onay” olmak üzere iki aşamalıdır.
-
 Algı araçları Agent'ın "duyularıysa", yürütme araçları onun "el ve ayaklarıdır". Ama algı araçlarından farklı olarak, yürütme araçları pahalı biçimde başarısız olabilir: yanlışlıkla silinen bir dosya sonsuza dek gider, kötü bir sistem komutu bir servisi çökertebilir, yanlış değerlendirilmiş bir API çağrısı gerçek para kaybettirebilir. Bu yüzden tasarımları **yetenek açıklığı** ile **güvenlik kısıtları** arasında hassas bir denge kurmalıdır.
 
 **Güvenlik Mekanizmalarının Hiyerarşik Tasarımı.**

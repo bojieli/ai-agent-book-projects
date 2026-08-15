@@ -1,11 +1,5 @@
 # Post-training mô hình
 
-> **Cập nhật năm 2026.** Bản sửa đổi làm rõ rằng “SFT ghi nhớ, RL khái quát hóa” là quan sát từ các so sánh có kiểm soát GeneralPoints/V-IRL, không phải quy luật phổ quát. Bản này cũng tách việc mô phỏng kết quả trả về của công cụ khỏi việc mô phỏng động lực của toàn bộ môi trường, đồng thời xem độ lệch của bộ mô phỏng là trần của quá trình huấn luyện.
->
-> Hai hướng nâng cao hiệu quả mẫu được nhấn mạnh: On-Policy Distillation biến phần thưởng cuối của một rollout thành hướng dẫn theo từng token; RLVP biến phản hồi đường đi vốn bị lãng phí thành tín hiệu có thể học. Khi không có giáo viên mạnh hơn, OPSD dùng thông tin đặc quyền và để cùng một mô hình đóng vai giáo viên lẫn học sinh.
->
-> Thứ tự thí nghiệm trong bản này: 7-13 SimpleVLA-RL; 7-14 ReTool; 7-15 AWorld-train; 7-16 RLVP.
-
 Công thức cốt lõi của cuốn sách này là Agent = LLM + context + tools. Chương này tập trung vào việc tối ưu hóa "bộ não" của LLM - cho phép mô hình tận dụng tốt hơn ngữ cảnh và công cụ thông qua post-training, từ đó cải thiện khả năng của toàn bộ hệ thống Agent. Cuối Chương 7 đã chỉ ra rằng hệ thống đánh giá và môi trường mô phỏng là hai nền tảng của quá trình post-training: môi trường đánh giá cung cấp nền tảng thực hành cho đào tạo và các chỉ số đánh giá xác định mục tiêu đào tạo. Chương này xây dựng trên hai nền tảng này và thảo luận cách thực sự thay đổi trọng số của mô hình và kết nạp các khả năng thành các tham số.
 
 Chương này dành cho những độc giả chưa có nền tảng về học tăng cường hoặc đào tạo mô hình. Chúng tôi không cho rằng bạn hiểu độ dốc và tối ưu hóa chính sách, nhưng chúng tôi bắt đầu từ chủ đề "cách đào tạo một mô hình" và giải thích rõ ràng mục đích, nguyên tắc và vấn đề mà nó giải quyết ở mỗi bước. Sau khi đọc chương này, bạn sẽ có thể trả lời: Cần bao nhiêu bước để phát triển các khả năng của mô hình, mỗi bước làm gì, tại sao nó phải theo thứ tự này và bạn nên thực hiện bước nào trong dự án của riêng mình.

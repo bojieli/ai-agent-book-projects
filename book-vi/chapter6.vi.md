@@ -60,8 +60,6 @@ Mâu thuẫn cơ bản gặp phải khi triển khai mô hình không đồng b�
 
 ### Triển khai cơ chế hướng sự kiện trong OpenClaw
 
-Bản cập nhật làm rõ rằng Hooks phát sinh từ vòng đời nội bộ của OpenClaw, còn Cron và Heartbeat được điều khiển theo thời gian. Email và callback API bên ngoài cần đường vào tức thời như Channel của PineClaw.
-
 Khung công tác nguồn mở OpenClaw (có kiến trúc sẽ được mô tả chi tiết trong Chương 5) nhận các tin nhắn đa kênh thông qua mặt phẳng điều khiển Gateway và định tuyến chúng đến thời gian chạy Agent. Nó cung cấp ba cơ chế tự động hóa tích hợp:
 
 - **Hooks (móc sự kiện)**: phản hồi các sự kiện trong vòng đời Agent, chẳng hạn như tạo phiên, đặt lại, v.v., tương tự như trình kích hoạt sự kiện trong Hành động GitHub
