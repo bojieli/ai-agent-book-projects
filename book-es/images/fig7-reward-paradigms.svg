@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 500" width="880" height="500" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="120" y="55" width="640" height="35" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="135" y="73" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">Tarea: Cambio de plan de Xfinity | Problema: Falta dirección de facturación + Nombre de plan incorrecto</text>
+<rect x="37.5" y="100" width="190" height="36" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="132.5" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Escalar</text>
+<rect x="37.5" y="146" width="190" height="210" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="47.5" y="165" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"></text>
+<text x="47.5" y="191" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  7.2 puntos</text>
+<text x="47.5" y="217" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"></text>
+<text x="47.5" y="243" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">─────────</text>
+<text x="47.5" y="269" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">Sin capacidad de diagnóstico</text>
+<text x="47.5" y="295" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Sin saber dónde</text>
+<text x="47.5" y="321" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Bueno/malo</text>
+<line x1="229.5" y1="250" x2="240.5" y2="250" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="242.5" y="100" width="190" height="36" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="337.5" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Semiescalar</text>
+<rect x="242.5" y="146" width="190" height="210" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="252.5" y="165" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central">Bueno: Se encontró el número de teléfono correcto</text>
+<text x="252.5" y="191" font-family="'Courier New', Courier, monospace" font-size="7.5" fill="#333333" text-anchor="start" dominant-baseline="central">Bueno: Cambio completado con éxito</text>
+<text x="252.5" y="217" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central">Incorrecto: Falta la dirección de facturación</text>
+<text x="252.5" y="243" font-family="'Courier New', Courier, monospace" font-size="7.5" fill="#333333" text-anchor="start" dominant-baseline="central">Incorrecto: Nombre de plan incorrecto</text>
+<text x="252.5" y="269" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">─────────</text>
+<text x="252.5" y="295" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">General: 6.5 puntos</text>
+<text x="252.5" y="321" font-family="'Courier New', Courier, monospace" font-size="6.5" fill="#333333" text-anchor="start" dominant-baseline="central">(Basado en evidencia pero de grano grueso)</text>
+<line x1="434.5" y1="250" x2="445.5" y2="250" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="447.5" y="100" width="190" height="36" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="542.5" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Vector</text>
+<rect x="447.5" y="146" width="190" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="457.5" y="165" font-family="'Courier New', Courier, monospace" font-size="6.5" fill="#333333" text-anchor="start" dominant-baseline="central">Precisión de la consulta de información 9/10</text>
+<text x="457.5" y="191" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central">Completitud de la recopilación de información 6/10</text>
+<text x="457.5" y="217" font-family="'Courier New', Courier, monospace" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central">Fluidez de la comunicación 8/10</text>
+<text x="457.5" y="243" font-family="'Courier New', Courier, monospace" font-size="8.5" fill="#333333" text-anchor="start" dominant-baseline="central">Precisión de la comunicación 7/10</text>
+<text x="457.5" y="269" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central">Precisión de comunicación con el usuario 10/10</text>
+<text x="457.5" y="295" font-family="'Courier New', Courier, monospace" font-size="8" fill="#333333" text-anchor="start" dominant-baseline="central">Completación general de tareas 8/10</text>
+<text x="457.5" y="321" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">─────────</text>
+<text x="457.5" y="343" font-family="'Courier New', Courier, monospace" font-size="6.5" fill="#333333" text-anchor="start" dominant-baseline="central">Localizar con precisión las deficiencias ↑</text>
+<line x1="639.5" y1="250" x2="650.5" y2="250" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="652.5" y="100" width="190" height="36" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="747.5" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Generativo</text>
+<rect x="652.5" y="146" width="190" height="210" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="662.5" y="165" font-family="'Courier New', Courier, monospace" font-size="6.5" fill="#333333" text-anchor="start" dominant-baseline="central">Perspectiva 1: Uso preciso de herramientas</text>
+<text x="662.5" y="191" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central">Perspectiva 2: Recopilación de información faltante</text>
+<text x="662.5" y="217" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central">Perspectiva 3: Parafraseo del nombre del plan</text>
+<text x="662.5" y="243" font-family="'Courier New', Courier, monospace" font-size="8" fill="#333333" text-anchor="start" dominant-baseline="central">  Error → Sugerir repetición directa</text>
+<text x="662.5" y="269" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central">Perspectiva 4: No explicar el uso de la información</text>
+<text x="662.5" y="295" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central">Perspectiva 5: No verificar la identidad del agente</text>
+<text x="662.5" y="321" font-family="'Courier New', Courier, monospace" font-size="9.5" fill="#333333" text-anchor="start" dominant-baseline="central">→ 6-7 perspectivas de análisis</text>
+<line x1="132.5" y1="368" x2="747.5" y2="368" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="440.0" y="388" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Información creciente →</text>
+<rect x="60" y="405" width="760" height="55" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="80" y="420" font-family="'Courier New', Courier, monospace" font-size="13.5" fill="#333333" text-anchor="start" dominant-baseline="central">Experimento de DeepSeek: 8 evaluaciones generativas producen 6-7 perspectivas analíticas</text>
+<text x="80" y="442" font-family="'Courier New', Courier, monospace" font-size="7.5" fill="#333333" text-anchor="start" dominant-baseline="central">Mejora significativa tras un diagnóstico exhaustivo desde múltiples ángulos (ilustrativo) — aprendizaje de la dirección de mejora a partir de un solo fallo</text>
+<rect x="60" y="475" width="760" height="45" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="440.0" y="498" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Recompensa generativa: transformar la rica retroalimentación del entorno en conocimiento aprendible sin cientos de ensayos y errores</text>
+</svg>
