@@ -392,7 +392,7 @@ Tiến hóa liên tục cũng không có nghĩa là để tri thức, Prompt và
 - duy trì cấu trúc rõ ràng cho Prompt và Skill, giống một cuốn sổ hướng dẫn dành cho nhân viên mới, tránh liệt kê quy tắc theo kiểu “99 điều quân luật”;
 - xác minh lại các công cụ lâu ngày không được sử dụng;
 - xóa tri thức bị bằng chứng mới bác bỏ;
-- huấn luyện lại LoRA từ mô hình nền tảng gốc.
+- huấn luyện lại LoRA từ mô hình nền tảng gốc. Đạo lý giống hệt tầng dữ liệu ở Chương 1: bảo đảm thật sự phải đến từ tầng mà bên sửa đổi không chạm tới được.
 
 > **Thí nghiệm 9-7 ★★★: Đánh giá Agent có đang tiến hóa liên tục hay không**
 >

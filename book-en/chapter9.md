@@ -392,7 +392,7 @@ Continual evolution does not mean allowing knowledge, Prompts, and tools to grow
 - Keep Prompts and Skills clearly structured, like a handbook for new employees, and avoid enumerations resembling “99 ironclad rules.”
 - Revalidate tools that have not been used for a long time;
 - Delete knowledge invalidated by new evidence;
-- Retrain LoRA from the original base model.
+- Retrain LoRA from the original base model. The reasoning is the same as for the data layer in Chapter 1: a real guarantee must come from a layer the modifier cannot reach.
 
 > **Experiment 9-7 ★★★: Evaluating Whether an Agent Is Continually Evolving**
 >
