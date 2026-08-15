@@ -1,11 +1,5 @@
 # Post-entrenamiento de Modelos
 
-> **Revisión de 2026.** La edición revisada aclara que «el SFT memoriza y el RL generaliza» es una observación de las comparaciones controladas GeneralPoints/V-IRL, no una ley universal. También distingue entre simular las respuestas de herramientas y simular la dinámica completa del entorno, y considera el sesgo del simulador como el techo del entrenamiento.
->
-> Se destacan dos vías para mejorar la eficiencia de muestras: la Destilación en la Política convierte la recompensa final de un rollout en orientación token a token; RLVP convierte la retroalimentación de la trayectoria que normalmente se desperdicia en una señal aprendible. Cuando no existe un profesor más fuerte, OPSD usa información privilegiada y el mismo modelo asume los papeles de profesor y estudiante.
->
-> Orden de los experimentos en esta edición: 7-13 SimpleVLA-RL; 7-14 ReTool; 7-15 AWorld-train; 7-16 RLVP.
-
 La fórmula central de este libro es Agente = LLM + Contexto + Herramientas. Este capítulo se centra en optimizar el LLM, el "cerebro" del sistema: a través del post-entrenamiento, el modelo aprende a aprovechar el contexto y las herramientas de manera más efectiva, elevando así la capacidad de todo el sistema de Agentes. Al final del Capítulo 7 se señaló que el sistema de evaluación y el entorno de simulación son las dos piedras angulares del post-entrenamiento: el entorno de evaluación proporciona el campo de práctica y las métricas de evaluación definen el objetivo. Este capítulo se construye sobre esas dos piedras angulares y analiza cómo modificar realmente los pesos del modelo para consolidar las capacidades directamente en los parámetros.
 
 Este capítulo está dirigido a lectores sin experiencia previa en aprendizaje por refuerzo o entrenamiento de modelos. No asumimos que entiendas de gradientes o de optimización de políticas; en cambio, explicamos desde cero cómo se entrena un modelo, aclarando el propósito, el principio y el problema que resuelve cada paso. Al terminar de leer este capítulo, deberías poder responder a las siguientes preguntas: en cuántas etapas se forjan las capacidades de un modelo, qué se hace en cada etapa, por qué deben seguir este orden estricto y en qué etapa debes enfocar tus esfuerzos según las necesidades de tu propio proyecto.

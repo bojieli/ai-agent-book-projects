@@ -60,8 +60,6 @@ Bunun için, bir **olay güdümlü asenkron Agent mimarisine** ihtiyacımız var
 
 ### OpenClaw'da Olay Güdümlü Mekanizmaların Uygulanması
 
-Güncellenen metin, Hooks'un OpenClaw'ın iç yaşam döngüsünden geldiğini, Cron ve Heartbeat'in ise zaman güdümlü olduğunu açıklar. Harici e-posta ve API geri çağrıları için PineClaw'daki Channel gibi anlık bir giriş yolu gerekir.
-
 Açık kaynak çerçevesi OpenClaw (mimarisi Bölüm 5'te ayrıntılı olarak ele alınacak), bir Gateway kontrol düzlemi aracılığıyla çok kanallı mesajları alır ve bunları Agent çalışma zamanına yönlendirir. Üç yerleşik otomasyon mekanizması sağlar:
 
 - **Hooks**: GitHub Actions'daki olay tetikleyicilerine benzer biçimde, oturum oluşturma ve sıfırlama gibi Agent yaşam döngüsündeki olaylara yanıt verir

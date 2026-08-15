@@ -1,11 +1,5 @@
 # Pascapelatihan Model
 
-> **Pembaruan 2026.** Edisi revisi memperjelas bahwa “SFT menghafal, RL menggeneralisasi” adalah pengamatan dari perbandingan terkontrol GeneralPoints/V-IRL, bukan hukum universal. Edisi ini juga memisahkan simulasi keluaran tool dari simulasi dinamika lingkungan secara menyeluruh, serta memperlakukan bias simulator sebagai batas atas pelatihan.
->
-> Dua jalur untuk meningkatkan efisiensi sampel ditonjolkan: On-Policy Distillation mengubah reward akhir sebuah rollout menjadi panduan per token; RLVP mengubah umpan balik jalur yang biasanya terbuang menjadi sinyal yang dapat dipelajari. Jika tidak ada guru yang lebih kuat, OPSD menggunakan informasi istimewa dengan model yang sama sebagai guru dan siswa.
->
-> Urutan eksperimen dalam edisi ini: 7-13 SimpleVLA-RL; 7-14 ReTool; 7-15 AWorld-train; 7-16 RLVP.
-
 Formula inti dari buku ini adalah Agent = LLM + Context + Tools. Bab ini beralih ke LLM itu sendiri—"otak"-nya—dan menguji bagaimana post-training dapat membantu model menggunakan context dan tools secara lebih efektif, sehingga meningkatkan kapabilitas dari seluruh sistem Agent. Akhir dari Bab 7 menunjukkan bahwa sistem evaluasi dan lingkungan simulasi adalah dua batu loncatan dari post-training: lingkungan evaluasi memberikan tempat latihan untuk training, dan metrik evaluasi memberikan targetnya. Bab ini dibangun di atas batu loncatan tersebut dan membahas bagaimana cara yang sebenarnya untuk mengubah bobot model—bagaimana menanamkan kapabilitas ke dalam parameter.
 
 Bab ini mengasumsikan tidak adanya latar belakang tentang reinforcement learning atau model training. Kami tidak mengharapkan Anda mengetahui gradien atau policy optimization. Alih-alih, kami memulai dari pertanyaan tentang bagaimana sebuah model dilatih pada awalnya, memperjelas apa tujuan setiap langkah, bagaimana cara kerjanya, dan masalah apa yang dipecahkannya. Pada akhir bab ini, Anda seharusnya dapat menjawab pertanyaan-pertanyaan berikut: Berapa banyak tahapan yang terlibat dalam membentuk kapabilitas model? Apa yang dilakukan pada setiap tahap? Mengapa mereka harus terjadi dalam urutan ini? Dan di mana Anda harus memfokuskan upaya dalam proyek Anda sendiri?

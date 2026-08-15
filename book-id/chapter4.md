@@ -190,8 +190,6 @@ Pemrosesan asli memiliki batas kemampuan tertinggi; encoder seperti Vision Trans
 
 ## Tool Eksekusi
 
-Revisi ini juga membedakan isolasi tingkat proses untuk Agent berisiko rendah, container atau microVM untuk input tak tepercaya, serta kuota sumber daya di setiap tingkat. Sidecar ringan memeriksa bidang terstruktur setiap panggilan sebagai gerbang keamanan; setelah penolakan berulang, gunakan pemutus sirkuit dan minta keputusan pengguna. Operasi yang tidak idempoten memakai alur “pra-pemeriksaan lalu konfirmasi”.
-
 Jika tool persepsi adalah "indra" Agent, tool eksekusi adalah "tangan dan kaki"-nya. Namun berbeda dengan tool persepsi, tool eksekusi bisa gagal dengan harga mahal: file yang terhapus secara tidak sengaja akan hilang selamanya, perintah sistem yang buruk bisa melumpuhkan layanan, panggilan API yang salah perhitungan bisa menghabiskan uang nyata. Oleh karena itu, desain mereka harus mencapai keseimbangan yang rapuh antara **keterbukaan kemampuan** dan **batasan keamanan**.
 
 **Desain Hierarkis dari Mekanisme Keamanan.**

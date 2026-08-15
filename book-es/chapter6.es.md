@@ -60,8 +60,6 @@ Para ello necesitamos una **arquitectura de Agentes asíncrona orientada a event
 
 ### Implementación de mecanismos orientados a eventos en OpenClaw
 
-La revisión aclara que Hooks proceden del ciclo de vida interno de OpenClaw, mientras Cron y Heartbeat son mecanismos impulsados por el tiempo. Los correos y callbacks de API externos necesitan una entrada inmediata, como el Channel de PineClaw.
-
 El framework de código abierto OpenClaw (cuya arquitectura se detallará en el Capítulo 5) recibe mensajes multicanal a través del plano de control Gateway y los enruta al tiempo de ejecución del Agente. Proporciona tres mecanismos de automatización integrados:
 
 - **Hooks (ganchos de eventos)**: Responden a eventos en el ciclo de vida del Agente, como la creación o reinicio de sesiones, similar a los disparadores de eventos en GitHub Actions

@@ -190,8 +190,6 @@ A natív feldolgozás adja a legmagasabb képességplafont; a Vision Transformer
 
 ## Végrehajtó Eszközök
 
-A frissített biztonsági réteg alacsony kockázatnál folyamat-szintű izolációt, megbízhatatlan bemenetnél konténert vagy microVM-et, minden szinten pedig erőforrás-kvótákat használ. A könnyű Sidecar strukturált mezőkön kapuzza az eszközhívást; ismételt elutasításkor megszakítót kell aktiválni és emberi döntésre visszatérni. A nem idempotens műveletek „előzetes ellenőrzés–megerősítés” kétlépcsős folyamatot igényelnek.
-
 Ha az észlelő eszközök az Agent "érzékszervei", akkor a végrehajtó eszközök a "kezei és lábai". De az észlelő eszközökkel ellentétben a végrehajtó eszközök drágán hibázhatnak: egy véletlenül törölt fájl örökre eltűnik, egy rossz rendszerparancs leállíthat egy szolgáltatást, egy rosszul megítélt API hívás valódi pénzbe kerülhet. Tervezésüknek ezért finom egyensúlyt kell teremtenie a "képesség nyitottsága" és a "biztonsági korlátozások" között.
 
 **A Biztonsági Mechanizmusok Hierarchikus Tervezése.**

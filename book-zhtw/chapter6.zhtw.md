@@ -60,8 +60,6 @@
 
 ### OpenClaw 的事件驅動機制實現
 
-更新後的內容明確指出，Hooks 來自 OpenClaw 內部生命週期，Cron 與 Heartbeat 則由時間驅動；外部郵件和 API 回呼需要像 PineClaw Channel 那樣的即時入口。
-
 開源框架 OpenClaw（第五章將詳細介紹其架構）透過 Gateway 控制平面接收多渠道訊息並路由到 Agent 執行時。它提供了三種內建的自動化機制：
 
 - **Hooks（事件掛鉤）**：響應 Agent 生命週期中的事件，如會話建立、重置等，類似 GitHub Actions 中的事件觸發器
