@@ -750,6 +750,8 @@ A face's appearance or a person's voice is difficult to describe in words and ca
 
 This chapter built the AI Agent's persistent memory system at two scales: user memory for the individual, and a shared knowledge base for everyone.
 
+In terms of the book's larger structure, this chapter builds the **proposal** segment of Chapter 1's discovery loop: turning one piece of evidence into a minimal, reviewable, reversible change—not judging whether the system as a whole got better.
+
 For **user memory**, we explored four progressive strategies, from atomic facts (Simple Notes) to contextualized knowledge management (Advanced JSON Cards), exposing the fundamental tension in information representation between simplicity and expressiveness. Frameworks like Mem0 and Memobase supply engineered memory management, and privacy protection keeps sensitive information safe throughout.
 
 For **knowledge acquisition**, the core stack is: document chunking defines retrieval units, dense embeddings capture semantics, sparse embeddings match keywords, result fusion merges candidates into a single pool, neural reranking refines the final order, and metrics like recall@k measure retrieval quality.

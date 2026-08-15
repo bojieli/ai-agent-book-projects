@@ -772,6 +772,8 @@ Bir yüzün görünümünü veya bir insanın sesini kelimelerle anlatmak zordur
 
 Bu bölüm, AI Agent'ın kalıcı bellek sistemini iki ölçekte inşa etti: birey için kullanıcı belleği ve herkes için paylaşılan bir bilgi tabanı.
 
+Kitabın bütünsel yapısı açısından bu bölüm, Bölüm 1'deki keşif döngüsünün **öneri** kesitini kurar: bir kanıtı en küçük, incelenebilir ve geri alınabilir tek bir değişikliğe dönüştürmek—sistemin bütününün iyileşip iyileşmediğine karar vermek değil.
+
 **Kullanıcı belleği** için, atomik gerçeklerden (Simple Notes) bağlamsallaştırılmış bilgi yönetimine (Advanced JSON Cards) kadar dört kademeli stratejiyi keşfettik, bilgi temsilindeki basitlik ile ifade gücü arasındaki temel gerilimi ortaya koyduk. Mem0 ve Memobase gibi çerçeveler mühendislik odaklı bellek yönetimi sağlar ve gizlilik koruması hassas bilgiyi her aşamada güvende tutar.
 
 **Bilgi edinimi** için, temel yığın şöyle işler: doküman chunking retrieval birimlerini işaretler, dense embedding'ler semantiği yakalar, sparse embedding'ler anahtar kelimeleri eşleştirir, sonuç füzyonu adayları tek bir havuzda birleştirir, neural reranking nihai hassasiyet geçişini yapar ve recall@k gibi metrikler her şeyin ne kadar iyi çalıştığını ölçer.

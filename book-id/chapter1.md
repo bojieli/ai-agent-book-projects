@@ -514,6 +514,29 @@ Sembilan bab berikutnya berulang kali memakai sekumpulan struktur yang sama. Str
 
 Kelima pola ini berbagi satu motif yang sama: **memindahkan penilaian dari "model sendiri yang memutuskan" ke "mekanisme di luar model yang memutuskan"**—peninjau berada di luar konteks, katalog di luar isi, cache di luar perubahan, himpunan retensi di luar himpunan batas, pembalikan di luar commit. Guardrail tiga lapis yang diberikan sebelumnya di bab ini adalah motif itu yang diterapkan pada keamanan. Ketika pola-pola ini muncul lagi nanti, buku ini cukup menyebut namanya beserta perbedaan di bab bersangkutan, tanpa menurunkannya kembali.
 
+## Lingkar Penemuan: Bukti, Usulan, Eksperimen, Umpan Balik
+
+Lima pola pada bagian sebelumnya adalah struktur lokal. Ada satu struktur yang lebih besar membentang di tiga bab, tetapi karena dibangun terpisah-pisah, ia mudah disangka tiga jalur yang berdiri sendiri.
+
+Bab 7 harus menemukan kesalahan pertama pada trajektori yang gagal dan menetapkan jenisnya. Bab 3 harus mengubah satu bukti baru menjadi perubahan basis pengetahuan yang sekecil dan seberdasar mungkin. Bab 9 harus menilai apakah sebuah perubahan benar-benar membuat sistem lebih baik, lalu memutuskan merilis atau membalikkannya. Ketiganya memakai mekanisme yang sama sekali berbeda—atribusi bersandar pada rubrik dan pelokalan kesalahan pertama, usulan pada Pengusul-Peninjau, validasi pada himpunan batas dan himpunan retensi dengan rilis kanari serta pembalikan—sehingga ketiganya **bukan tiga pengulangan satu mekanisme**, dan menyeragamkan istilahnya secara paksa justru akan menutupi perbedaan yang penting.
+
+Yang benar-benar mereka bagi adalah posisi: masing-masing menempati satu ruas dari lingkar yang sama.
+
+```text
+Bukti (Bab 7): trajektori gagal → kesalahan pertama + jenis kesalahan
+  → Usulan (Bab 3): bukti → satu perubahan minimal, dapat ditinjau, dapat dibalik
+  → Eksperimen (Bab 9): pengukuran pada himpunan batas dan retensi, rilis kanari
+  → Umpan balik: hasil pengukuran dan trajektori gagal yang baru kembali ke ruas bukti
+```
+
+Lingkar ini baru-baru ini diberi nama dan didorong ke arah otomatisasi oleh Discovery Loop, perusahaan yang didirikan Jeff Dean bersama rekan-rekannya: mengusulkan eksperimen, mengimplementasikan yang dibutuhkan, mengevaluasinya, membawa hasilnya ke putaran berikutnya, dan memparalelkan proses yang dahulu berjalan serial[^ch1-discovery-loop]. Perlu dikatakan terus terang: perusahaan itu berdiri pada Agustus 2026 dan sejauh ini hanya mengumumkan misinya, tanpa hasil teknis publik; buku ini mengutipnya karena **penamaannya atas lingkar tersebut**, bukan sebagai bukti—persis pembedaan yang akan ditegaskan berulang kali di Bab 7.
+
+Menaruh lingkar sistem Agent ini berdampingan dengan lingkar riset murni memperlihatkan dua batasan tambahan, dan justru itulah yang dibahas panjang lebar di sisa buku ini. **Pertama, eksperimen harus berakar pada observasi nyata.** Dalam lingkar riset, "eksperimen" bisa berupa satu kali proses pelatihan; dalam sistem Agent, ia mengubah sistem yang sedang melayani pengguna, sehingga putusannya harus datang dari keadaan nyata lingkungan—apakah pengujian lolos, keadaan akhir basis data, apa yang dikembalikan tool—bukan dari penuturan model tentang perbuatannya sendiri. **Kedua, setiap eksperimen harus menjawab sekaligus "apa yang diperbaikinya" dan "apa yang dirusaknya".** Lingkar riset biasanya hanya mengejar naiknya metrik; sistem Agent harus pula membuktikan perilaku yang semula benar tidak menjadi rusak. Itulah alasan keberadaan himpunan batas dan himpunan retensi pada bagian sebelumnya.
+
+Tiga bab berikutnya masing-masing hanya membahas ruasnya sendiri dan tidak mengulang seluruh lingkar: Bab 3 tentang apa yang membuat sebuah usulan berdasar, Bab 7 tentang apa yang membuat bukti tepercaya, Bab 9 tentang apa yang membuat eksperimen dan umpan balik terus berjalan dalam jangka panjang tanpa melenceng.
+
+[^ch1-discovery-loop]: Discovery Loop diumumkan pada 5 Agustus 2026 oleh Jeff Dean, Sanjay Ghemawat, Quoc Le, dan Oriol Vinyals sebagai public benefit corporation yang bermisi mengotomatiskan pembelajaran mesin, sains, dan rekayasa; deskripsi publiknya adalah mengotomatiskan lingkar eksperimen yang utuh dan memparalelkan secara besar-besaran apa yang dahulu berjalan serial. Lihat https://techcrunch.com/2026/08/05/jeff-dean-and-other-top-ai-researchers-are-leaving-google-to-launch-their-own-startup/ . Hingga buku ini ditulis, belum ada hasil teknis yang dapat direproduksi yang dipublikasikan.
+
 ## Ringkasan Bab
 
 Bab ini telah membangun kerangka kerja yang mengutamakan praktik (practice-first framework) untuk memahami dan membangun AI Agent.
@@ -527,6 +550,8 @@ Bab ini telah membangun kerangka kerja yang mengutamakan praktik (practice-first
 **Dari Workflow ke Autonomous Agent**: Terapkan prompt terlebih dahulu, lalu workflow, baru autonomous Agent terakhir—urutan tersebut adalah cara paling praktis untuk mengurangi perilaku tak terduga. Setiap orchestration pattern memiliki situasi tersendiri di mana ia cocok diterapkan; tidak ada pola tunggal yang terbaik di mana-mana.
 
 **Lima pola membentang sepanjang buku**: Pengusul-Peninjau, pengungkapan bertahap, hanya tambah, himpunan batas + himpunan retensi, serta diff minimal yang dapat dibalik—semuanya berbagi satu motif, yaitu memindahkan penilaian dari model itu sendiri ke mekanisme di luarnya. Bab-bab berikutnya memanggilnya dengan nama, bukan menurunkannya lagi.
+
+**Lingkar penemuan membentang di tiga bab**: bukti (atribusi kegagalan di Bab 7) → usulan (pembaruan pengetahuan di Bab 3) → eksperimen dan umpan balik (validasi dan rilis di Bab 9). Ketiga ruas memakai mekanisme yang memang berbeda; yang mereka bagi adalah posisi, bukan istilah. Dibanding lingkar riset murni, lingkar sistem Agent menambah dua batasan—eksperimen harus berakar pada observasi nyata, dan setiap putaran harus menjawab sekaligus apa yang diperbaiki dan apa yang dirusak.
 
 **Keamanan Adalah Isu Arsitektur**: Guardrail, intervensi human-in-the-loop, alignment (menjaga perilaku model agar tetap konsisten dengan niat manusia)—keamanan harus dirancang sedari baris kode pertama, bukan ditambalkan (patched on) sebelum peluncuran. Guardrail terbagi menjadi tiga lapis—konteks, eksekusi, dan data—yang diurutkan menurut seberapa sulit dilewati, dan pembahasan keamanan pada bab-bab berikutnya bergantung pada kerangka itu.
 
