@@ -147,6 +147,8 @@ Hai lần gọi trong hình đều chỉ **lần gọi API mô hình**, chứ kh
 }
 ```
 
+Danh sách `tools` này là siêu dữ liệu tĩnh của công cụ mà lập trình viên đã đăng ký từ trước: tên công cụ, mô tả và schema tham số đều được viết trong mã nguồn và không liên quan gì đến việc lần này người dùng hỏi gì. Dù người dùng hỏi thời tiết ở Vancouver hay yêu cầu Agent đặt vé máy bay, danh sách được gửi đi vẫn là một. Ví dụ chỉ liệt kê hai công cụ liên quan để phần thân yêu cầu ngắn gọn hơn, còn một Agent thực tế thường khai báo hàng chục công cụ cùng lúc. **Không phải Agent đã chia đầu vào của người dùng thành hai tác vụ con “tra thời gian” và “tra thời tiết” trước, rồi mới sinh ra các mô tả công cụ tương ứng** — việc phân rã diễn ra ở phía mô hình, và chính là `tool_calls` trong phản hồi bên dưới.
+
 **Mô hình trả về yêu cầu gọi công cụ (không phải phản hồi cuối cùng):**
 
 ```javascript

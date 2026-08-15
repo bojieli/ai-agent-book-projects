@@ -147,6 +147,8 @@ Az ábrán látható mindkét hívás **a modell API-jának hívására** utal, 
 }
 ```
 
+Ez a `tools` lista statikus eszköz-metaadat, amelyet a fejlesztő előre regisztrált: az eszköznevek, a leírások és a paramétersémák a kódban szerepelnek, és semmi közük ahhoz, hogy a felhasználó éppen mit kérdezett. Akár a vancouveri időjárásról kérdez a felhasználó, akár repülőjegyet foglaltat az ügynökkel, ugyanaz a lista megy ki; a példa csak a két releváns eszközt sorolja fel, hogy rövidebb legyen a kérés, egy valódi ügynök viszont gyakran több tucat eszközt ad meg egyszerre. **Nem arról van szó, hogy az ügynök először két részfeladatra – „idő lekérdezése” és „időjárás lekérdezése” – bontja a felhasználói bemenetet, majd ehhez igazítva állítja elő az eszközleírásokat**: a felbontás a modell oldalán történik, és éppen az alábbi válasz `tool_calls` mezője.
+
 **A modell visszaad egy eszközhívási kérelmet (nem egy végső választ):**
 
 ```javascript

@@ -148,6 +148,8 @@ Las dos llamadas de la figura se refieren a **llamadas a la API del modelo**, no
 }
 ```
 
+Esta lista de `tools` está formada por metadatos estáticos de herramientas que el desarrollador registró de antemano: los nombres de las herramientas, sus descripciones y los esquemas de parámetros están escritos en el código y no tienen nada que ver con lo que el usuario pregunta en esta ocasión. Tanto si el usuario pregunta por el tiempo en Vancouver como si le pide al Agente que reserve un vuelo, se envía la misma lista; en el ejemplo solo aparecen las dos herramientas relevantes para acortar la petición, mientras que un Agente real suele declarar decenas de ellas a la vez. **No es que el Agente divida primero la entrada del usuario en dos subtareas, «consultar la hora» y «consultar el tiempo meteorológico», y genere después las descripciones de herramientas correspondientes**: esa descomposición ocurre del lado del modelo y es precisamente el campo `tool_calls` de la respuesta que aparece a continuación.
+
 **El modelo devuelve solicitudes de llamada a herramientas (no la respuesta final):**
 
 ```javascript

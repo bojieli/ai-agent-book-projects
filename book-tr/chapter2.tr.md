@@ -147,6 +147,8 @@ Gerçek bir Agent senaryosu, tek turlu bir soru-cevaptan çok daha karmaşıktı
 }
 ```
 
+Bu `tools` listesi, geliştiricinin önceden kaydettiği statik araç meta verisidir: araç adları, açıklamalar ve parametre şemaları koda yazılmıştır ve kullanıcının bu seferki sorusuyla ilgisi yoktur. Kullanıcı ister Vancouver'ın hava durumunu sorsun ister Agent'tan uçak bileti almasını istesin, gönderilen liste aynıdır; örnekte yalnızca ilgili iki aracın yer alması isteği kısa tutmak içindir, gerçek bir Agent ise çoğu zaman onlarca aracı aynı anda tanımlar. **Agent, kullanıcı girdisini önce “saati sorgula” ve “hava durumunu sorgula” diye iki alt göreve ayırıp ardından bunlara uygun araç açıklamalarını üretmiş değildir**; bu ayrıştırma modelin tarafında gerçekleşir ve tam olarak aşağıdaki yanıttaki `tool_calls` alanıdır.
+
 **Model bir araç çağrısı isteği döndürür (nihai yanıt değil):**
 
 ```javascript
