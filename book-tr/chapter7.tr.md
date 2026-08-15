@@ -1,913 +1,855 @@
-# Model Post-Training
+# Agent'ın Değerlendirmesi
 
-> **2026 güncellemesi.** Gözden geçirilen bölüm, “SFT ezberler, RL geneller” ifadesinin GeneralPoints/V-IRL kontrollü karşılaştırmalarında gözlenen bir eğilim olduğunu, evrensel bir yasa olmadığını açıkça belirtir. Araç dönüşlerinin modelle simüle edilmesi ile tüm ortam dinamiklerinin simüle edilmesini ayırır ve simülatör yanlılığını eğitimin tavanı olarak ele alır.
+Bir Agent sistemi kurarken geliştiriciler, çoğu zaman apaçık bir doğru yanıtı olmayan çok sayıda tasarım seçimiyle karşılaşır:
+
+- Hangi model kullanılmalı?
+- Modelin hangi araçları çağırabilmesi gerekir?
+- Bilgi tabanı hangi veriyi saklamalı, hangi yapıyla kurulmalı?
+- Kullanıcı belleği nasıl yapılmalı?
+- Modelin prompt'ları ve Skills'i nasıl organize edilmeli?
+- Harness'e hangi kısıtlar eklenmeli?
+- Değerlendirme sonuçları, Agent'ın sürekli evrimi için nasıl öğrenme sinyaline dönüştürülür?
+
+Değerlendirme, bu kararlara bilimsel bir dayanak sağlar: sistematik karşılaştırmalı deneylerle (tek bir değişkeni değiştirip etkideki değişimi gözlemlemek) ve ablation deneyleriyle (bileşenleri teker teker kapatıp genel performansın nasıl değiştiğini gözlemleyerek o bileşenin gerçek katkısını ölçmek), gerçek yetenek artışlarını yüzeysel dalgalanmalardan ayırabilir, küçük bir kazanç uğruna büyüğünü kaçırmaktan kurtulabilirsiniz. Yazılım mühendisliğindeki "ölçmediğinizi iyileştiremezsiniz" sözünde olduğu gibi, tekrarlanabilir bir değerlendirme sistemi kurulmadıkça Agent'ın yineleme yönü yalnızca sezgiye kalır.
+
+Bölüm 1'de tanıtılan Harness engineering perspektifinden bakıldığında, değerlendirme Harness içinde "doğrulama" işlevinin merkezi rolünü üstlenir. Kilit kavrayış şudur: **değerlendirmenin nesnesi yalnızca model değil, modelle Harness'in bileşimi olmalıdır**. Aynı model farklı Harness'lerde çarpıcı biçimde farklı sonuçlar verebilir — bazı ekipler yalnızca Harness'i iyileştirerek aynı modelin terminal türü görevlerdeki performansını belirgin biçimde yükseltti (ayrıntılar için bkz. Bölüm 5). Bu şu anlama gelir: Agent değerlendirmede kötü performans gösterdiğinde iyileştirme yönü modeli değiştirmek değil, Harness'in bir bileşenini (prompt'lar, araç tasarımı, geri bildirim döngüleri) iyileştirmek olabilir. Sağlam bir değerlendirme sistemi, "model yeteneğinin yetersizliği" ile "Harness tasarım kusuru" gibi özünde farklı iki sorunu birbirinden ayırabilmelidir. **Bu iki sorunu ayırmanın yaygın yolu model değiştirme deneyidir (model swap)**: Harness sabit tutulur, yalnızca daha güçlü ya da daha zayıf bir model takılır ve puanın ne kadar oynadığına bakılır. Daha güçlü modelle puan yükselmiyorsa darboğaz Harness'tedir. Daha zayıf modelle puan sert biçimde düşüyor ve sonuçlar model yeteneğiyle birlikte büyük dalgalanmalar gösteriyorsa, en doğrudan okuma darboğazın modelin kendi yeteneğinde olduğu ve mevcut performansı esas olarak modelin belirlediğidir (bunun görevin doğası gereği zor olmasından mı, yoksa Harness'in modelin ön bilgisine aşırı yaslanmasından mı kaynaklandığı ayrıca incelenmelidir). Bunun, yukarıda anılan "ablation deneyi"nden farklı bir yöntem olduğuna dikkat edin: ablation **Harness'in bir bileşenini kapatıp** genel performansın nasıl değiştiğine bakar, model değiştirme ise **Harness'i sabit tutup yalnızca modeli değiştirir** — ilki Harness'in içinde hangi parçanın önemli olduğunu bulur, ikincisi darboğazın modelde mi Harness'te mi olduğunu ayırt eder.
+
+Bir değerlendirme sisteminin değeri, modellerin hızla evrildiği bir çağda daha da belirginleşir. Model yetenekleri hızla ilerlemeye devam ediyor, ama yeni bir modelin kamuya açık benchmark'larda daha iyi sonuç vermesi, sizin özel göreviniz üzerinde de daha iyi olacağı anlamına gelmez — tam tersine performans gerilemesi (regression, yani yeni sürümün bazı yönlerden eskisinin gerisinde kalması) ortaya çıkabilir. Yalnızca kendi değerlendirme veri kümenizde yapılan eksiksiz bir test, veriye dayalı bir yükseltme kararı vermenizi sağlar. Dahası, sağlam bir değerlendirme sistemi "gelecekteki modeller için ürün geliştirmeyi" uygulanabilir bir stratejiye dönüştürür: mevcut model ticari kullanımı taşıyacak güçte olmasa bile, ürün geliştirmesini şimdiden tamamlayıp değerlendirme kümesini kurabilir, yeni modellerin performansını sürekli izleyebilir ve eşiği aşan ilk modelle hemen yayına çıkabilirsiniz.
+
+> **Bölüm Rehberi**
 >
-> Örnek verimliliğini artıran iki yol öne çıkarılır: On-Policy Distillation bir rollout’un son ödülünü token düzeyinde rehberliğe dönüştürür; RLVP normalde boşa giden yol geri bildirimini öğrenilebilir bir sinyale çevirir. Daha güçlü bir öğretmen yoksa OPSD ayrıcalıklı bilgiyi kullanır ve aynı model öğretmen ile öğrenci rollerini üstlenir.
+> Bu bölüm eksiksiz bir değerlendirme sistemini üç katmanda kurar. Birinci katman **değerlendirme ortamıdır** ("nerede test edilir"): otomatik ve tekrarlanabilir bir test ortamının nasıl kurulacağı — araç çağırma tipi ve insan-makine etkileşimi tipi olmak üzere iki paradigma dahil. İkinci katman **değerlendirme yöntemleridir** ("nasıl karar verilir"): veri kümesi tasarım ilkelerinden ve değerlendirme metrikleri sisteminden (neyin ölçüleceği) LLM-as-a-Judge (büyük dil modelini hakem olarak kullanma) ile otomatik değerlendirmeye, oradan da ikili karşılaştırma ve model sıralamasına. Üçüncü katman **değerlendirmeye dayalı karar almadır** ("test edildikten sonra ne yapılır"): değerlendirme sonuçlarını model seçimi, mimari iyileştirme ve sürekli yineleme için eyleme dönük bir kılavuza çevirmek ve gözlenen puan farkının gerçekten güvenilir olup olmadığını istatistiksel anlamlılıkla karara bağlamak. Bunlara ek olarak bu bölüm observability'yi (gözlemlenebilirlik) ve üretim düzeyindeki Agent'ların iç değerlendirme altyapısını da tartışır, sonunda ise Bölüm 8'deki post-training'e bağlanan simülasyon ortamlarını tanıtır.
 >
-> Bu sürümde deney sırası: 7-13 SimpleVLA-RL; 7-14 ReTool; 7-15 AWorld-train; 7-16 RLVP.
+> Bölüm boyunca süren temel fikir şudur: **bir değerlendirme sisteminin başlıca değeri mevcut sisteme puan vermek değil, model evrimini hızlı ve güvenilir biçimde takip etmenizi sağlamaktır**. Daha güçlü ya da daha ucuz bir model yayımlandığında, sağlam bir değerlendirme sistemine sahip ekip birkaç saat içinde geçiş kararını verebilir; böyle bir sistemi olmayan ekip ise yalnızca sezgisine güvenebilir veya topluluktan gelecek geri bildirimi bekleyebilir — rekabetin kızıştığı Agent pazarında bu hız farkı başarıyla başarısızlığı belirleyebilir.
 
-Bu kitabın temel formülü Agent = LLM + Context + Tools'tur. Bu bölüm, LLM denen o "beyni" optimize etmeye odaklanıyor: post-training yoluyla modelin context'i ve araçları daha iyi kullanmasını sağlayarak Agent sisteminin bütününün yeteneğini yükseltmek. Bölüm 6'nın sonunda belirtildiği gibi, değerlendirme sistemi ile simülasyon ortamı post-training'in iki temel taşıdır: değerlendirme ortamı eğitime bir alıştırma sahası sunar, değerlendirme metrikleri ise eğitimin hedefini tanımlar. Bu bölüm işte o iki temel taşın üzerine kuruluyor ve model ağırlıklarının gerçekten nasıl değiştirileceğini, yeteneğin parametrelere nasıl çökeltileceğini tartışıyor.
+![Şekil 7-1: Değerlendirme Sisteminin Üç Katmanı](images/fig7-1.svg)
 
-Bu bölüm, pekiştirmeli öğrenme ya da model eğitimi konusunda hiçbir arka planı olmayan okurlar için yazıldı. Gradyanları veya policy optimizasyonunu bildiğinizi varsaymıyoruz; bunun yerine "bir model nasıl eğitilir" sorusunun kendisinden başlayıp her adımın amacını, çalışma ilkesini ve çözdüğü problemi açık açık anlatıyoruz. Bu bölümü bitirdiğinizde şunlara yanıt verebilmelisiniz: Bir modelin yeteneği kaç adımda dövülür, her adım ne yapar, neden bu sıraya uyulması zorunludur ve kendi projenizde hangi adıma emek harcamalısınız?
+## Somut Bir Değerlendirme Örneği
 
-**Önce en önemli haritayı kuralım: modern bir modelin yeteneği üç aşamada dövülür.** Bu üç aşama birbirine kenetlidir, hiçbiri eksik olamaz:
+Metodolojiye derinlemesine girmeden önce, eksiksiz bir örnek üzerinden sezgi kuralım. Bir müşteri hizmetleri Agent'ı kurduğumuzu ve onun iade taleplerini ele alma yeteneğini değerlendirmemiz gerektiğini varsayalım.
 
-1. **Pre-training (ön eğitim)**: Devasa miktarda internet metni üzerinde "bir sonraki token'ı tahmin etme" eğitimi. Bu adım modele dil kurallarını, dünya bilgisini ve temel akıl yürütmeyi öğretir; kütüphanedeki bütün kitapları okumuş bir insan gibi — çok bilgili, ama henüz soruları düzgün yanıtlayamıyor. En pahalı adım budur (rahatlıkla on milyonlarca dolar) ve yeteneğin temelini atar.
-2. **SFT (Supervised Fine-Tuning, denetimli ince ayar — yani modeli etiketlenmiş "girdi—çıktı" çiftleriyle eğitmek; öğretmenin standart cevabı verip öğrencinin ona bakarak öğrenmesi gibi)**: Birkaç binden birkaç on bine kadar "soru—standart yanıt" gösterim verisiyle modele "hangi formatta, hangi üslupta, hangi akışla yanıt vereceğini" öğretir. Bu adım, çok bilgili modeli talimatları anlayan ve düzenli çıktı veren bir asistana dönüştürür. Ucuz, hızlı ve kararlıdır; bugün konuşlandırılan neredeyse bütün modellerin geçtiği bir adımdır.
-3. **RL (Reinforcement Learning, pekiştirmeli öğrenme — yani modelin defalarca denemesine izin verip sonucun iyi ya da kötü olmasına göre ödül ve ceza vererek davranışını iyileştirmek; köpek yavrusu eğitmeye benzer: doğru yaptığında ödül var, yanlış yaptığında yok)**: Modele artık standart cevap gösterilmez, kendi başına denemesine izin verilir; iyi giden davranışların olasılığı yükseltilir, kötü gidenlerinki düşürülür. Bu adım modele **daha önce görmediği durumlarda** da makul kararlar vermeyi öğretir — aynı zamanda bu bölümde en çok yer tutan ve en fazla mühendislik ustalığı isteyen adımdır.
+**Test durumu**: Kullanıcı 3 gün önceki siparişi iade etmek istiyor (sipariş numarası #12345, tutar ¥299). Şirket politikası: 7 gün içinde tam iade yapılabilir.
 
-Sezgisel bir benzetme: pre-training "on bin kitap okumaktır" (bilgi biriktirme), SFT "öğretmenin standart çözümü elinden tutarak göstermesidir" (gösterimi taklit etme), RL ise "kendin soru çözüp doğruya yanlışa göre defalarca cilalamandır" (deneme-yanılmayla ilerleme). Üçünün ilişkisi "birini seç" değil, bir üretim hattıdır — önce oku, sonra gösterimi izle, en sonunda sahaya çık.
+**Agent'ın trajectory'si**:
 
-**Bu bölümde baştan sona uzanan iki ana eksen var; önce onları aklınızda tutun, sonraki bütün içerik onlara hizmet ediyor:**
+```text
+Kullanıcı: 3 gün önce aldığım kulaklığı iade etmek istiyorum, sipariş numarası 12345. (Bugün 2026-04-10)
 
-- **Birinci eksen: SFT ezberler, RL genelleştirir.** Aynı görev ve aynı bütçe altında SFT, eğitim verisindeki yanıtları **ezberlemeye** eğilimlidir; konuşlandırma ortamı eğitimdekinden farklı olduğu anda kolayca işlevsizleşir. RL ise aktarılabilir bir strateji **öğrenmeye** eğilimlidir ve daha önce görmediği durumlar karşısında daha kararlı kalır. Bu bir slogan değil, ölçülebilir bir olgudur; bu bölüm onu bir dizi kontrollü deneyle defalarca doğrulayacak. Bu farkın **altında yatan nedenini** Bölüm 7.1 ayrı bir kesim ayırarak enine boyuna anlatıyor.
-- **İkinci eksen: veri ve ortam, algoritmadan daha önemlidir.** Bu, sektörün en sezgi karşıtı ve aynı zamanda en değerli dersidir. Hazır RL algoritmalarını (PPO, GRPO vb.) nasıl kullanacağınızı bilmeniz yeter; başarıyı ya da başarısızlığı asıl belirleyen iki şeydir: **simülasyon ortamı** (modelin alıştırma yaptığı saha yeterince gerçekçi mi) ve **eğitim verisi** (gösterimlerin ve ödül sinyallerinin kalitesi yeterince yüksek mi). Pek çok senaryoda, SFT verisinin kalitesi yerinde olduğu sürece RL yapmanıza hiç gerek kalmaz. Bu bölüm dikkatinizi sürekli olarak "hangi algoritmayı ayarlasam" sorusundan "veriyi ve ortamı doğru kurdum mu" sorusuna geri çekecek.
+Agent (düşünüyor): Kullanıcı iade istiyor, önce sipariş bilgisini sorgulamam gerek.
+Agent → query_order(order_id="12345") aracını çağırır
+Araç döndürür: {status: "delivered", amount: 299, date: "2026-04-07", item: "Bluetooth kulaklık"}
 
-> **Okuma rehberi**: Bu bölümün içeriği okurun arka planına göre iki yola ayrılıyor:
->
-> - **Agent uygulama geliştiricileri** (modeli kendisi eğitmek zorunda olmayanlar): Önce açılıştaki "Pre-training, SFT, RL: üç aşamalı panorama" kesimini okuyup genel resmi kurun; ardından hemen arkasından gelen iki `[isteğe bağlı okuma]` kesimini (klasik RL ve pre-training arka planı) atlayıp SFT kesiminden devam edebilirsiniz. "SFT ile RL arasındaki temel fark" ve "Ne zaman SFT, ne zaman RL seçilmeli" karar çerçevelerine, bir de "veri ve ortam algoritmadan daha önemlidir" yargısına odaklanın — bu kavrayışlar Harness engineering'deki tasarım kararlarınızı etkileyecek (ne zaman prompt ile çözülür, ne zaman ince ayar yapmaya değer).
-> - **Model eğitimi mühendisleri**: Baştan sona sırayla okuyun; iki `[isteğe bağlı okuma]` kesimi pekiştirmeli öğrenme ve pre-training için eksiksiz arka plan sunuyor, sonraki deneyler ise yeniden üretilebilir eğitim reçeteleri veriyor.
+Agent (düşünüyor): Sipariş tarihi 2026-04-07, bugün 2026-04-10, arada 3 gün var; 7 günlük iade süresi içinde, tam iade koşullarını karşılıyor.
+Agent → process_refund(order_id="12345", amount=299) aracını çağırır
+Araç döndürür: {refund_id: "R-98765", status: "processing", eta: "3-5 iş günü"}
 
-## Pre-training, SFT, RL: Üç Aşamalı Panorama
-
-Giriş, üç aşamanın haritasını verdi; bu kesim her adımın mekanizmasını enine boyuna anlatıyor. Üç aşamanın kullandığı **veri**, **optimizasyon hedefi** ve **maliyet** birbirinden farklıdır; benzerliklerini ve farklarını anlamak bütün bölümü kavramanın anahtarıdır. Önce Tablo 7-1 genel bir görünüm veriyor, ardından maddeler tek tek açılıyor.
-
-Tablo 7-1 Model Yeteneğinin Dövüldüğü Üç Aşama
-
-| Aşama | Hangi veri kullanılır | Optimizasyon hedefi | Ne öğrenilir | Tipik maliyet |
-|------|---------------------|-----------------------|------------------------|---------------------|
-| **Pre-training** | Devasa miktarda ham internet metni | Bir sonraki token'ı tahmin etmek | Dil kuralları, dünya bilgisi, temel akıl yürütme | Aşırı yüksek (milyonlarca–on milyonlarca dolar) |
-| **SFT** | Birkaç bin–birkaç on bin "girdi—çıktı" gösterim çifti | Bir sonraki token'ı tahmin etmek (loss yalnızca yanıt üzerinde hesaplanır) | Talimat takibi, çıktı formatı, üslup, akış protokolü | Düşük (birkaç saat–birkaç gün) |
-| **RL** | Görev + ödül fonksiyonu (standart cevap yok) | Beklenen ödülü maksimize etmek | Aktarılabilir karar stratejisi, keşfedilerek bulunan yeni çözümler | Yüksek (çoğu zaman SFT'nin onlarca–yüzlerce katı) |
-
-### Pre-training Ne Yapar: Bir Sonraki Token'ı Tahmin Etmek
-
-Modern büyük modellerin bütün "zekası", şaşırtıcı derecede basit tek bir görevin üzerine kuruludur: **bir sonraki token'ı tahmin etmek (Next Token Prediction, NTP)**.
-
-Modele bir metnin ilk yarısını gösterirsiniz, o da bir sonraki token'ın ne olduğunu tahmin eder. Örneğin girdi 中国的首都是 ("Çin'in başkenti") olduğunda modelin 北京 ("Pekin") token'ına yüksek bir olasılık vermesi beklenir. Model her tahmininde kendi öngörüsünü gerçek bir sonraki token ile karşılaştırır; aradaki fark (loss, yani kayıp adı verilir) ne kadar büyükse parametrelerini o kadar sert ayarlar ki bir dahaki sefere benzer context içinde daha isabetli tahmin etsin. Bunu trilyonlarca token'lık internet metni üzerinde tekrar tekrar yapan model; dil bilgisini, olguları, mantığı, hatta temel akıl yürütmeyi öğrenmek zorunda kalır — çünkü uçsuz bucaksız bağlamlar içinde bir sonraki token'ı sürekli doğru bilmenin kestirme yolu yoktur, metindeki düzenlilikleri gerçekten "sindirmek" gerekir.
-
-Aklınızda tutmanız gereken kilit bir nokta var; SFT ve RL boyunca da peşinizi bırakmayacak: **modelin çıktısı özünde bir olasılık dağılımıdır**. Önceki metin verildiğinde model, sözlüğündeki her olası token'a bir olasılık atar. "Eğitim" dediğimiz şey nihayetinde **bu olasılık dağılımını ayarlamaktan** ibarettir — istediğimiz token'ların olasılığını yükseltmek, istemediklerimizinkini düşürmek. Üç aşamanın farkı yalnızca "neyin istendiğinde" ve "istenenin hangi sinyalle tanımlandığındadır".
-
-Pre-training'den sonra model çok bilgilidir ama kullanışlı değildir: ona bir soru sorarsınız, yanıt vermek yerine yeni sorular yazmayı sürdürebilir — çünkü internet metinlerinde bir sorunun ardından çoğu zaman başka bir soru gelir. "Soru sorulduğunda yanıt verilir" protokolünü henüz öğrenmemiştir.
-
-### SFT'nin Özü: Verisi Değiştirilmiş "Bir Sonraki Token'ı Tahmin Etme"
-
-Bu bölümde aşılması gereken ilk kilit kavrayış şudur: **SFT, matematiksel olarak pre-training ile aynı görevdir — ikisi de bir sonraki token'ı tahmin eder ve aynı loss fonksiyonunu minimize eder.** Pek çok yeni başlayan SFT'yi bambaşka bir yöntem sanır; öyle değildir. SFT ile pre-training arasında yalnızca iki fark vardır:
-
-1. **Veri farklıdır.** Pre-training ham internet metnini kullanır (yapısız, içinde her şey var); SFT ise elle özenle hazırlanmış "girdi—çıktı" çiftlerini kullanır ve formatı tek biçimlidir: "kullanıcı sorusu → ideal yanıt". Model bu gösterimler üzerinde "bir sonraki token'ı tahmin etme"ye devam eder ve böylece "soru sorulduğunda yanıt nasıl kurgulanır" protokolünü öğrenmiş olur.
-2. **Loss yalnızca "yanıt" üzerinde hesaplanır (loss masking, kayıp maskeleme).** Bir SFT örneği soru ve etiketlenmiş yanıt olmak üzere iki parçadan oluşur. Modelin "nasıl soru sorulur"u öğrenmesini istemeyiz, yalnızca "nasıl yanıt verilir"i öğrenmesini isteriz; bu yüzden loss hesaplanırken sorunun token'ları maskelenir ve gradyan yalnızca yanıt kısmından geri yayılır. Mühendislik açısından SFT ile pre-training arasındaki tek esaslı fark budur.
-
-Bunu kavradığınızda "SFT ezberler" iddiası kendiliğinden yerine oturur: SFT'nin optimizasyon hedefi, **etiketlenmiş yanıttaki her token'ın olasılığını olabildiğince yükseltmektir** — açık söylemek gerekirse "bu standart cevabı ezberlemektir". Aynı soru verildiğinde model, gösterimi harfi harfine yeniden üretmek üzere eğitilmiştir. Hedefi net, formatı sabit görevlerde bu son derece verimlidir (birkaç bin örnek sonuç vermeye yeter), ama yetenek sınırı da gösterim verisine çakılıp kalır: gösterimde bulunmayan durumları hiç öğrenmemiştir; gösterimdeki yanıt artık geçerli değilse bile (ortam değiştiyse) onu ezberden okumayı sürdürür.
-
-SFT'nin özü tek cümlede: **son derece yüksek bir örneklem verimliliğiyle, kararlı bir "girdi→çıktı" eşlemesini ve protokolü parametrelere kalıcı olarak yazar.** Kalıcılaştırdığı şey "format, üslup, akış" türünden **protokole ait bilgidir** (nasıl söylenir, nasıl yapılır), büyük miktarda **olgusal bilgi** (ne bilindiği) değil — ikincisi pre-training'e ya da RAG'a kalır (bölümün sonunda bu ayrıma döneceğiz).
-
-> **Eğitim maliyeti: LoRA ile parametre-verimli ince ayar**. Yukarıdaki SFT de sonraki RL de model parametrelerini güncellemeyi gerektirir, oysa tam parametreli ince ayarın VRAM ihtiyacı çok yüksektir (milyarlarca parametrenin hepsi için gradyan ve optimizer durumu saklanmalıdır). **LoRA** (Low-Rank Adaptation, düşük ranklı uyarlama) en yaygın tasarruf yöntemidir: orijinal büyük ağırlık matrislerine dokunmaz, yalnızca yanlarına görevi öğrenecek küçücük bir "yama" (düşük ranklı matris) asar; parametre sayısı orijinalin yalnızca %1–5'i kadardır ama tam parametreli ince ayara yakın bir sonuç verir. Orijinal ağırlıklar dondurulduğu için LoRA'nın temel modelin mevcut yeteneklerinde yarattığı sarsıntı da daha küçüktür, catastrophic forgetting riski daha düşüktür. Doğrulanmış birkaç pratik ders[^ch7-1]: LoRA'yı bütün ana ağırlık matrislerine (özellikle parametrenin en büyük payını tutan MLP katmanlarına) uygulamak **zorunludur**, yalnızca attention katmanlarına eklerseniz puan kaybedersiniz; **en iyi öğrenme oranı, tam parametreli ince ayarınkinin yaklaşık 10 katıdır** (hem SFT hem RL için geçerli, son derece kullanışlı bir aktarım kuralı); SFT'de orta-yüksek rank (64–256) kullanılır, RL'de ise her turun taşıdığı bilgi çok az olduğu için küçük rank (8–32), hatta rank=1 bile yeter. Konuşlandırmada tek bir çıkarım sunucusu aynı anda birden fazla LoRA adapter yükleyip çok kiracılı hizmet verebilir. Bu kitap LoRA'yı bütün post-training yöntemlerini kesen bir mühendislik varsayılanı olarak alıyor ve ayrıca açmıyor.
-
-**SFT kayıp maskesi:**
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
+Agent: Sizin için iade işlemini başlattım; #12345 numaralı siparişin (Bluetooth kulaklık, ¥299) tam iadesi işleniyor,
+      tutarın 3-5 iş günü içinde hesabınıza geçmesi bekleniyor. İade numarası R-98765, ilerlemeyi sorgulamak için kullanabilirsiniz.
 ```
 
-### Neden Önce SFT Sonra RL, Tersi Değil
+**Rubric ile puanlama** (dört boyut, her boyut 1-4 puan). Tablo 7-1, bu müşteri hizmetleri iade görevi için bir puanlama örneği verir; Rubric'in bir Agent trajectory'sini nasıl denetlenebilir değerlendirme boyutlarına ayırdığını gösterir.
 
-Üç aşamanın sırası keyfi değildir. Pre-training'in en başta gelmesi tartışmasızdır — dil ve bilgi temeli olmadan sonrasının lafı bile edilemez. Asıl açıklanması gereken şudur: **SFT neden RL'den önce gelmek zorunda?**
+Tablo 7-1 Müşteri Hizmetleri İade Görevi için Rubric Puanlama Örneği
 
-Yanıt, RL'in çalışma biçiminde saklıdır. RL standart cevaba bakmaz; yanıtı modelin **kendisinin üretmesini** ister, sonra yanıtın iyi ya da kötü olmasına göre ödül veya ceza verir. Ama iyi mi kötü mü olduğuna karar verebilmek için önce modelin çıktısını **ayrıştırabilmek** gerekir: görev bir JSON parçası ya da bir tool call üretmeyi gerektiriyorsa ve modelin kustuğu şey formatı darmadağın bir metin yığınıysa, ödül fonksiyonunun hesaplayacak hiçbir şeyi kalmaz ("başarılı mı, başarısız mı" bile ayırt edilemez), dolayısıyla RL'in de öğreneceği bir şey olmaz.
+| Boyut | Ölçüt | Puan | Gerekçe |
+|--------------------|-----------------------------------|---------|-------------------------------|
+| İşlem doğruluğu | İade tutarı ve sipariş numarası doğru mu | 4 | Doğru sorgulama yapıp ¥299'luk tam iadeyi başlattı |
+| Politika uygunluğu | 7 günlük iade politikasına uyuluyor mu | 4 | Sipariş iade süresi içinde, politikaya uygun |
+| Bilgi eksiksizliği | Tutar, hesaba geçiş süresi ve iade numarası bildirildi mi | 4 | Üç kritik bilginin üçü de bildirildi |
+| Halüsinasyon tespiti (veto maddesi) | Var olmayan bilgi uyduruldu mu | Geçti | Tüm bilgiler araçların döndürdüğü sonuçlardan geliyor |
 
-Bu yüzden burada SFT'ye düşen rol "**önce derdini düzgün anlatmayı öğretmektir**": az sayıda gösterimle çıktı formatını kararlı ve güvenilir biçimde ayrıştırılabilir hale getirir; ancak o zaman RL'in puanlayabileceği bir başlangıç noktası doğar. Sektörün en sağlam iki aşamalı paradigması olan **"önce SFT, sonra RL"** işte budur. Tersi, yani önce RL sonra SFT, işe yaramaz — kararlı bir çıktı yoksa ödül sinyali baştan sona gürültüdür. Çin resminden ödünç alınmış bir ifadeyle: SFT önce "**biçimi**" (formatı, yapıyı) ayağa kaldırır, RL ise ardından "**ruhun**" (stratejinin, genelleştirmenin) peşine düşer; yani **önce biçim, sonra ruh**.
+Halüsinasyonun derecelendirilen bir puanlama boyutu değil de bir **veto maddesi** olarak listelenmesinin nedeni, kaliteye dik (ortogonal) olmasıdır: akıcı, ayrıntılı ve nazik bir yanıt yanlış bilgi içeriyorsa, kullanıcıya verdiği zarar kısa ama doğru bir yanıtınkinden çok daha büyüktür. (Veto mekanizmasının genel tasarımı için ilerideki "Rubric'in Dört İlkesi" bölümüne bakın.)
 
-Önemli bir sınır koşulu: "önce SFT şart" ilkesi "**küçük ölçekli bir temel model + katı yapılandırılmış çıktı**" kurgusunda geçerlidir (Deney 7-11'de göreceğiz: Llama-3.2-Vision-11B ölçeğindeki bir model SFT'den geçmeden doğrudan RL'e sokulduğunda tamamen başarısız oluyor). Ama temel model yeterince güçlüyse daha ilk andan geçer not alacak çıktılar üretebilir ve SFT atlanabilir — DeepSeek-R1-Zero, güçlü bir temel modelin doğrudan RL ile başarıya ulaşabileceğini, kendiliğinden reflection (kendini değerlendirme) ve uzun zincirli düşünme sergileyebileceğini kanıtladı. Bedeli, çıktının okunabilirliğinin düşük olması ve Çince ile İngilizcenin birbirine karışmasıdır; bu yüzden DeepSeek sonunda R1'de "cold start SFT"i geri ekleyip "biçimi" yeniden sağlama aldı. R1'in Zero'dan cold start'a gidip gelişi, "önce biçim, sonra ruh" ilkesinin en iyi dipnotudur.
+Bu test durumu geçti. Ama iyi bir değerlendirme yalnızca başarı senaryolarını değil, sınırları ve tuzakları da ölçer: kullanıcı 15 gün önceki bir siparişi (iade süresi dolmuş) iade etmek istediğinde Agent bunu doğru biçimde reddedebiliyor mu? Kullanıcı "müşteri temsilcisi iadeyi zaten onayladı" dediğinde, Agent sistemde hiçbir kayıt yokken buna kolayca inanır mı? Agent'ların yetenek düzeyini asıl ayıran, işte bu sınır senaryolarıdır.
 
-### SFT ile RL Arasındaki Temel Fark (Bu Bölümün En Önemli Tablosu)
+Yukarıdaki akış — test durumlarını tanımlamak, Agent'ı çalıştırmak, Rubric ile puanlamak, sonuçları analiz etmek — değerlendirmenin temel iskeletidir. Bu bölümün geri kalanı her adımın tasarım yöntemini sırasıyla açacak.
 
-Şimdiye kadar tekrar tekrar "SFT ezberler, RL genelleştirir" dedik; şimdi bunun altında yatan nedeni bir kerede eksiksiz anlatalım. İkisi arasındaki bütün farklar tek bir kaynaktan doğar: **optimizasyon hedeflerinin farklı olması**.
+## Değerlendirme metrikleri sistemi: güncellenmiş ölçütler
 
-- **SFT, "standart cevaba ne kadar benzediğini" optimize eder.** Hedef, etiketlenmiş cevabın olasılığını maksimize etmektir (maksimum olabilirlik). Verilen bir soru için tek bir "doğru" çıktı vardır: gösterim cevabı. Model bu tek çıktıya yaklaşmaya çekilir ve öğrendiği şey "şu girdiyi gördüğünde şu çıktıyı ver" biçiminde sabit bir eşlemedir. Bu yüzden **ezberler**: eğitimde J/Q/K'nın hepsi 10 sayıldığında "J/Q/K görünce 10 kullan"ı kafasına kazır; testte J 11'e dönüştüğünde yine 10 kullanır ve yanılır.
-- **RL, "sonucun iyi olup olmadığını" optimize eder.** Hedef, beklenen ödülü maksimize etmektir. Verilen bir soru için yüksek ödül alabilen **her** çıktı iyidir; tek bir doğru yol yoktur. Model birden çok yolu kendi keşfeder, hangisi iyi sonuç veriyorsa onu pekiştirir ve öğrendiği şey "hangi süreç doğru sonuca götürür" biçiminde çok daha genel bir **stratejidir**: J 11'e dönüştüğünde aynı stratejiyle baştan hesaplar, bellekteki cevabı yapıştırmaz. İşte bu **genelleştirmedir**.
+Ortamı veya veri kümesini kurmadan önce “başarı”nın ne olduğunu belirlemek gerekir: bir kez çalışan bir yol bulmak yeterli mi, yoksa her çalıştırma hatasız mı olmalı? Tanım değişince mühendislik kararı da değişebilir.
 
-Tablo 7-2 SFT ile RL'in Temel Karşılaştırması
+### Teknik harika: Pass@k ile yetenek tavanı
 
-| Boyut | SFT (denetimli ince ayar) | RL (pekiştirmeli öğrenme) |
-|----------|-----------------------------------------|--------------------------------------------|
-| Optimizasyon hedefi | Etiketlenmiş cevabın olasılığını maksimize etmek (maksimum olabilirlik) | Beklenen ödülü maksimize etmek |
-| Eğitim sinyali | Tek bir standart cevap (her token denetlenir) | Kendi ürettiği birden çok yanıt + ödül (her yanıt için tek bir başarı/başarısızlık sinyali) |
-| Veri biçimi | "Girdi—çıktı" gösterim çiftleri | Görev + ödül fonksiyonu (standart cevap gerekmez) |
-| Öğrenilen şey | Sabit "girdi→çıktı" eşlemesi (ezber) | Aktarılabilir karar stratejisi (genelleştirme) |
-| Dağılım kayması altında | Ortam değişir değişmez eski cevabı yapıştırır, performans düşer | Aynı stratejiyle yeniden çözer, daha kararlı kalır |
-| Örneklem verimliliği | Yüksek (birkaç bin örnek sonuç verir) | Düşük (çoğu zaman SFT'nin onlarca–yüzlerce katı) |
-| Eğitim kararlılığı | Yüksek, hızlı yakınsar | Düşük, salınıma yatkın, dikkatli ayar ister |
-| En uygun olduğu yer | Format/üslup/akış kalıcılaştırma, elde yüksek kaliteli gösterim var, ortam kararlı | Yeni senaryolara genelleştirmek gerekiyor, en iyi stratejiyi keşfetmek gerekiyor, etiketleme maliyeti aşırı yüksek |
+Birçok model ve Agent hâlâ **teknik harika** aşamasındadır: çok sayıda deneme, uzun süre ve insan seçimi sonunda tek bir çığır açan trajectory, görevin ilke olarak yapılabildiğini gösterir. **Pass@k**, aynı görevi $k$ kez çalıştırıp en az biri başarılıysa geçer; sürekli puanlarda en iyi sonuç **Best@k** olur. Anthropic'in uzun süreli Agent örnekleri, Manus ve OpenClaw; bilimsel keşif, güvenlik açığı arama ve açık uçlu üretimde yararlı olan bu yetenek tavanını gösterir.
 
-**Post-training, modelin ne zaman harekete geçtiğini de şekillendirir.** Coding modelleri somut bir örnektir: GPT ve Claude aileleri çoğu zaman farklı varsayılan eylem eşikleri gösterir. İlki düzenlemeden önce deponun daha büyük bir bölümünü okuyabilir; ikincisi daha az dosyayla değişiklik yerini belirleyip önce uygulayabilir ve ardından test geri bildirimiyle yönünü düzeltebilir. Bu, bir modeli “temkinli”, diğerini “sezgisel” diye insanlaştırmak değildir. Parametrelerdeki politika, bir dosya daha okumanın beklenen değerinin mevcut yamayı gönderip doğrulamanın beklenen değerini hâlâ aşıp aşmadığını tahmin eder. SFT gösterimleri düzenleme öncesinde tekrar tekrar geniş araştırma içeriyorsa model daha yüksek bir eylem eşiğini taklit eder. Süreç veya sonuç ödülleri hızlı yer belirlemeyi ve erken doğrulanabilir döngüyü sürekli onaylıyorsa olasılık kütlesi daha erken eyleme kayar. Deney 6-7, tamamen aynı tarafsız Coding Harness içinde modelleri değiştirerek bu davranışın modelle birlikte değiştiğini ölçer: modelin kendi kararlı araç kullanma politikasını taşıması için Harness'in iş akışı dayatması gerekmez. Harness politikayı değiştirebilir, ancak ana kaynak post-training sonrasındaki model parametrelerinde bulunabilir. Sağlayıcılar tam veri ve ödül tariflerini yayımlamadığından deney, buna yol açan belirli tescilli algoritmayı değil, model tarafındaki davranış farkını ortaya koyar.
+### İş güvenilirliği: Pass^k
 
-Bir de daha derinde yatan, ama bilmeye değer bir mekanizma var: **mode-seeking (tepe arama)**. RL'in neden "birkaç iyi stratejiye yakınsadığını" açıklar. Modelin bir soruya verebileceği bütün olası yanıtlar bir olasılık dağılımı oluşturur ve bu dağılımın çok sayıda "tepesi" olabilir (her tepe, makul bir yanıt verme biçimi ailesidir). SFT'nin kullandığı maksimum olabilirlik **mass-covering (kütleyi kaplayan)** niteliktedir — gösterimde geçen bütün modları kapsamaya uğraşır, bazılarının kalitesi vasat olsa bile onlara da olasılık payı ayırır ("herkese biraz"). RL ise (özellikle KL kısıtlı policy optimizasyonu; matematiksel formu **ters KL ıraksamasına** karşılık gelir, ilerideki RLHF kesiminde ayrıntılandırılacak) **mode-seeking'tir** — ödülü en yüksek birkaç tepeyi bulmaya eğilimlidir, olasılığı oraya yığar ve geri kalanını gözünü kırpmadan atar ("kazanan hepsini alır"). RL'den geçmiş modellerin yanıtlarının daha "kesin" olmasının, yüksek kaliteli stratejilerde yoğunlaşmasının nedeni tam olarak budur; RL'in çeşitliliği kolayca feda etmesinin nedeni de. Bu mass-covering ve mode-seeking ikilisini aklınızda tutun; KL ıraksaması kesiminde, kuru görünen ama aslında kritik olan bir tasarım tercihini açıklamak için kullanılacaklar.
-**RL'in tavanı neden SFT'ninkinden yüksek? — Çünkü RL "çevrimiçi"dir.** Bu, SFT ile RL arasındaki bir kat daha derin farktır ve RL'in bunca pahalı olmasına değmesinin temel nedenidir. SFT bir **çevrimdışı (offline)** yöntemdir: yalnızca sabit bir gösterim verisinden öğrenebilir, o verinin dışındaki dünyayı asla göremez. RL ise bir **çevrimiçi (online)** yöntemdir: modelin sahaya inip yanıtı kendisinin üretmesini, sonra geri bildirime göre kendini düzeltmesini sağlar; dener ve denedikçe öğrenir. ("Çevrimiçi/çevrimdışı" ile daha katı olan "on-policy / off-policy" terimlerini Bölüm 7.8 resmen ayıracak, burada önce sezgiyi kuruyoruz.) "Çevrimiçi" olmak, SFT'nin doğası gereği elde edemeyeceği üç avantaj getirir ve bunlar birlikte tavanı yükseltir:
+İş sistemleri genellikle tersini ister: ardışık denemelerde tek hata bile olmaması. **Pass^k** (“Pass consecutive k”), $k$ çalıştırmanın hepsinin başarılı olmasını ve güvenlik, uyum ya da halüsinasyon vetosu doğurmamasını ister. Tek çalıştırma başarısı $p$ ise,
 
-- **Birincisi, çevrimdışının tavanı veridir, çevrimiçinin tavanı görevdir.** SFT'nin ulaşabileceği en iyi sonuç gösterimi "kusursuzca yeniden üretmektir" — dolayısıyla tavanı **gösterimi yapanın seviyesidir**; olsa olsa ona yaklaşır, aşması neredeyse imkânsızdır. 60 puanlık bir öğretmenin etiketlediği veriden 90 puanlık bir öğrenci çıkmaz. RL gösterime bakmaz, yalnızca sonuç ödülüne bakar: daha yüksek ödül getiren **her** davranış pekiştirilir, kimse onu göstermemiş olsa bile. Böylece RL, **gösterimlerde hiç bulunmayan daha iyi stratejileri kendisi keşfedebilir** — bölümün ilerisindeki Deney 7-13'ün SimpleVLA'sında modelin kendi icat ettiği "pushcut" (itip kaydırma) hareketi insan gösterimlerinde hiç görülmemişti ve bu, "gösterimi aşmanın" doğrudan kanıtıdır. RL'in tavanını görevin kendisi belirler (ödülün neyi tanıyabildiği), verinin içinde tesadüfen ne bulunduğu değil.
-- **İkincisi, "doğrulamak" "üretmekten" kolaydır; RL'in yükselebilmesinin asıl nedeni budur.** SFT için birinin **önce iyi cevabı yazıp** gösterim olarak koyması gerekir; RL içinse bir cevabın iyi olup olmadığına **karar verebilmek** yeter (bir ödül vermek). Pek çok görevde "doğru mu yanlış mı" demek, "doğru cevabı yazmaktan" çok daha kolaydır — matematik sorusunun cevabı anahtarla karşılaştırılabilir, kod testlerden geçirilebilir, teorem ispatları bir ispat doğrulayıcısıyla denetlenebilir. "İyiyi tanımak" "iyiyi yapmaktan" kolay olduğu sürece RL, eldeki her gösterimciden daha güçlü bir model eğitebilir: model gelişigüzel dener, ortam iyileri ayıklayıp pekiştirmeyi üstlenir. Bu "doğrulama—üretim asimetrisi", RLVR gibi doğrulanabilir ödül yöntemlerinin gücünün de kaynağıdır.
-- **Üçüncüsü, çevrimiçi olmak modeli kendi yürüyeceği yolda çalıştırır ve ona kendi hatalarından çıkmayı öğretir.** Çevrimdışı taklidin **kovaryat kayması (covariate shift)** adında klasik bir kusuru vardır: öğrenci kendi başına yürüdüğünde gösterimden sapar ve veride hiç bulunmayan durumlara girer; bu durumlardan doğru yola nasıl döneceğini hiç öğrenmediği için hata trajectory boyunca gitgide büyür (teorik olarak saf taklidin hatası, trajectory uzunluğu T ile kabaca $T^2$ oranında büyür; çevrimiçi veriyle eğitim ise bunu yaklaşık $T$ düzeyine bastırabilir). Çevrimiçi yöntemler tam tersini yapar — model, eğitim sırasında zaten konuşlandırıldığında yürüyeceği dağılımın üzerinde yürür ve her adımdaki geri bildirim tam da o anki gerçek zayıflığına isabet eder; veri her zaman "tazedir", çevrimdışı veri gibi başkasının (öğretmenin) davranışını anlatıp model ilerledikçe giderek alakasızlaşmaz. Bölümün ilerisindeki On-Policy Distillation'ın (Bölüm 7.12) bu kadar güçlü olmasının özü, bu "çevrimiçi olma" avantajını SFT'nin "yoğun denetim" avantajıyla birleştirmesidir.
+$$
+\mathrm{Pass@k}=1-(1-p)^k,\qquad
+\mathrm{Pass}^{k}=p^k.
+$$
 
-Bir benzetme: **SFT, başkasının çizdiği haritanın üzerinden kopya çekmektir; en iyi ihtimalle harita kadar iyi olur. RL ise elinde pusulayla (ödülle) kendi yolunu aramaktır; haritanın dışına çıkma şansı vardır.** "Önce SFT ile zemini at, sonra RL ile yükseğe tırman" reçetesinin ana akım haline gelmesinin nedeni de budur.
+$p=0.6$, $k=5$ için Pass@5 yaklaşık %99,0 iken Pass consecutive@5 yalnızca %7,8'dir. İlki keşif tavanını, ikincisi ödeme, iade, yetki değişikliği ve üretim dağıtımı için gereken istikrarı ölçer. Rapor $k$'nın bağımsız örnekler mi yoksa ardışık üretim görevleri mi olduğunu açıklamalı; yan etkili işlemler sandbox ya da geri alınabilir ortamda, bütün başarısızlıklar sayılarak test edilmelidir.
 
-Bu panorama elinizdeyken sonraki her kesim haritada kendi yerini bulacak. Hemen ardından gelen iki `[isteğe bağlı okuma]` kesimi — "Klasik RL Agent'larından Modern Agent'lara" ve "Model Pre-training'inin Temelleri" — daha derine inmek isteyen okurlar için pekiştirmeli öğrenme ve pre-training arka planını tamamlıyor; doğrudan post-training'e girişmek isteyen okurlar bunları atlayıp SFT kesiminden başlayabilir.
+### Süreç, güvenlik ve sağlamlık metrikleri
 
-## Klasik RL Agent'larından Modern Agent'lara `[isteğe bağlı okuma]`
+Sonuç tek başına yetmez. Geçerli ve yetkili eylem oranı, araç argümanlarının anlamsal doğruluğu, yol verimliliği (adımlar, tekrarlar, geri dönüşler), retrieval kapsamı ve maliyet/gecikme, Agent'ın nerede bozulduğunu gösterir. Hassas işlemler, veri sızıntısı ve yasak içerik için **sıfır tolerans** uygulanır. Sağlamlık seed, arayüz değişikliği, API dalgalanması ve eski bellek girişimini kapsar; Agent'ın **trajectory**'si ile sistemin gerçek **outcome**'u birlikte doğrulanmalıdır.
 
-### Agent ile Ortamın Etkileşimi
+### İnsan örneklemesi ve adversarial inceleme
 
-**Pekiştirmeli öğrenmenin (Reinforcement Learning, RL)** özü, en yüksek **kümülatif ödülü (Cumulative Reward)** elde etmek için mevcut duruma bakarak hangi eylemin seçileceğini öğrenmektir. Satranç öğrenen bir yapay zekayı düşünün: attığı her hamle bir eylemdir, oyunu kazanmak pozitif ödül, kaybetmek negatif ödül getirir; kümülatif ödül ise bütün partinin toplam kazancıdır. Agent ile ortam sürekli etkileşir: her adımda Agent mevcut durumu gözlemler, bir eylem seçer, ortam yeni bir durum üretip bir ödül verir.
+Başarıları, hataları ve sınır puanları düzenli olarak insanlara denetletin. LLM hâkimlerini ölçeklemeden önce 100–200 insan etiketli gold case üzerinde (örneğin Cohen's kappa > 0,7) kalibre edin ve hâkim ya da Rubric değişince yineleyin. Red teaming gizli hata, anahtar sözcük doldurma ve hâkim önyargısı sömürüsünü aramalı; ciddi hâkim uyuşmazlıkları insan incelemesine gitmelidir.
 
-Bu etkileşimi daha somut kavramak için aşağıdaki şekil standart RL döngüsünü gösteriyor: Agent her zaman adımında ortamın durumunu gözlemler ve bir eylem üretir, ortam da buna göre bir ödül verip yeni bir duruma geçer.
+## Otomatik Değerlendirme Ortamı
 
-![Şekil 7-1: Pekiştirmeli öğrenmede Agent-ortam etkileşim döngüsü](images/fig7-1.svg)
+Agent değerlendirmesi, tekrar tekrar çalıştırılabilen otomatik bir ortam gerektirir — geliştirme aşamasında değişikliklerin etkisini hızlıca test edebilen bir ortam. Böyle bir ortamı kurmak üç soruyu yanıtlamayı gerektirir: ne değerlendirilecek (görev tanımı ve doğrulama ölçütleri), kime karşı değerlendirilecek (Agent'ın etkileşimde bulunduğu tarafın nasıl simüle edileceği) ve hangi ölçütle puanlanacak.
 
-Etkileşim bir **trajectory** üretir — yani "durum → eylem → ödül → yeni durum → eylem → ödül..." dizisinin eksiksiz kaydını; bir policy'nin iyi mi kötü mü olduğu nihayetinde trajectory'lerin kalitesinde görünür. **Değer fonksiyonu (Value Function)** şu soruyu yanıtlar: "Şu anda bu durumdaysam ve mevcut policy'yi izleyerek hareket etmeyi sürdürürsem, sonunda toplam ne kadar ödül biriktiririm?" Bu, deneyimli bir satranç oyuncusunun bir konuma bakınca son hamleye kadar hesaplamaya gerek duymadan sezgisiyle partinin kazanma olasılığını kestirmesine benzer. (Buradaki "mevcut policy" yerine "en iyi policy" konduğunda elde edilen şey optimal değer fonksiyonudur; bölümün ilerisinde Bellman optimallik denklemi anlatılırken kullanılacak.) Agent ile ortam arasındaki sınır yalın bir ilkeye uyar: **Agent'ın keyfince değiştiremediği her şey ortama aittir**.
+### Değerlendirme Ortamının Temel Bileşenleri
 
-Pekiştirmeli öğrenmeyi denetimli öğrenmeden (doğru cevabın etiketlenmesini gerektirir) ve denetimsiz öğrenmeden (verideki gizli örüntüleri bulur) ayıran iki özgün nitelik vardır: **deneme-yanılma araması** (Agent hangi eylemlerin iyi olduğunu kendi yoklamak zorundadır, doğru cevabı söyleyen bir öğretmen yoktur) ve **gecikmeli ödül** (bir eylemin etkisi ancak birkaç adım sonra görünür olabilir; örneğin iyi bir satranç hamlesinin değeri ancak oyunun sonunda anlaşılır). Bu da beraberinde özgün bir **keşif ile yararlanma arasındaki dengeyi (Exploration-Exploitation Tradeoff)** getirir: hep bildik yoldan gidilirse yeni bir şey öğrenilmez, hep rastgele denenirse hedefe hiç varılmaz.
+Bir değerlendirme ortamı beş öğeden oluşur — ilerideki alt bölümler bunlardan veri kümesi tasarımı ile puanlama ölçütü tasarımını ayrıntılandıracak:
 
-Bir pekiştirmeli öğrenme sistemi beş temel öğe içerir:
+**Veri kümesi (Dataset)** görev kümesini tanımlar; başlangıç durumunu, hedef açıklamasını ve isteğe bağlı referans çözümleri içerir.
 
-- **Action Space (eylem alanı)**: Agent'ın gerçekleştirebileceği bütün eylemlerin kümesini tanımlar. Eylemler ayrık olabilir (satrançta "hangi hamle yapılacak" gibi, seçenek sayısı sonludur) ya da sürekli olabilir (bir robotun "eklemi kaç derece döndüreceği" gibi, sürekli bir sayısal değerdir).
-- **Policy (politika)**: Agent'ın davranış kuralı; verilen bir durumda ne yapılması gerektiğini belirler. Bir policy çok basit olabilir (bir arama tablosu: A durumunu görünce X eylemini yürüt) ya da çok karmaşık olabilir (derin bir sinir ağı).
-- **Ödül sinyali**: Ortamın verdiği anlık geri bildirim. Ancak Agent'ın hedefi anlık değil uzun vadeli ödülü maksimize etmektir — bu ayrım hayati önemdedir; tıpkı yatırımda bugünün yükselişine düşüşüne değil uzun vadeli getiriye bakmak gerektiği gibi.
-- **Değer fonksiyonu**: Belirli bir durumdan yola çıkıldığında gelecekte toplam ne kadar kümülatif ödül elde edileceğini kestirir ve anlık geri bildirim yokken Agent'ın akıllıca karar vermesine yardım eder. Son altmış yıllık RL araştırmasının en önemli kavrayışlarından biri, değer kestiriminin merkezî konumudur.
-- **Ortam modeli** (isteğe bağlı): Ortamın bir eyleme vereceği tepkiyi öngörür. Ortam modeli kullanan yöntemlere **model tabanlı yöntemler** denir (önce ortamın nasıl değişeceğini öngörmeyi öğrenir, sonra buna göre plan yapar); kullanmayanlara ise **modelsiz yöntemler** denir (ortamı öngörmeye çalışmaz, doğrudan deneyimden öğrenir).
+**Ortam durumu (Environment State)** görev yürütülürken değişen bilgiyi tutar ve gerçekçilikle denetlenebilirlik arasında denge kurmalıdır. Örneğin müşteri hizmetleri değerlendirmesinde ortam durumu, veritabanındaki sipariş kayıtlarını ve kullanıcı hesap bakiyesini kapsar. Agent `process_refund`'u çağırdıktan sonra sipariş durumu "delivered" değerinden "refunded" değerine döner ve bakiye artar — işte bunlar "değişebilir bilgi"dir. "Gerçekçilik", durum değişimlerinin iş mantığına uygun olmasını gerektirir (iade tutarı sipariş tutarını aşamaz); "denetlenebilirlik" ise her testin aynı başlangıç durumuna sıfırlanabilmesini gerektirir.
 
-Tablo 7-3, çeşitli Agent sistemlerinin temel bileşenlerini karşılaştırıyor; Agent kavramının ne kadar genel olduğunu ortaya koyuyor ve okurun geleneksel RL Agent'ları ile modern LLM Agent'ları arasındaki eylem alanı farkını görmesine yardım ediyor.
+**Araç arayüzleri (Tools)** Agent'ın yürütebileceği işlemler kümesini tanımlar — araçlar aşırı yüksek düzeyli soyutlamalar ("kullanıcının sorununu çöz" gibi) değil, atomik işlemler (sipariş sorgulama, rezervasyon değiştirme, e-posta gönderme gibi) sunmalıdır; böylece Agent bu işlemleri planlayarak ve düşünerek birleştirmek zorunda kalır.
 
-Tablo 7-3 Farklı Agent Sistemlerinin Temel Öğelerinin Karşılaştırması
+**Puanlama ölçütü (Rubric)** Agent'ın performansını nicelleştirir; ikili (geçti/kaldı), sürekli (0 ile 100 arası puan) veya çok boyutlu (doğruluk, verimlilik ve güvenlik için ayrı ayrı puan) olabilir.
 
-| Agent türü | Ortam | Eylem alanı | Ödül sinyali |
-|---------------|---------------------|----------------------------------|-------------------------|
-| **Yeni doğmuş ceylan yavrusu** | Arazi, yerçekimi, vücut duruşu | Sürekli ve yüksek boyutlu (kas gruplarının kasılması) | Denge (+), düşme (-) |
-| **Robot süpürge** | Oda düzeni, pil seviyesi | Ayrık (yön, süpürme, şarj) | Temizlenen alan (+), pilin tükenmesi (-) |
-| **Satranç büyükustası** | Tahta durumu, süre sınırı | Ayrık ve sonlu (kurallı hamleler) | Kazanma (+1), kaybetme (-1) |
-| **Müşteri hizmetleri Agent'ı** | Konuşma geçmişi, bilgi tabanı | Açık uçlu (düşünme, konuşma, API çağrısı) | Sorunun çözülmesi (+), işlem süresi (-) |
-| **Kod asistanı Agent'ı** | Gereksinim dokümanı, kod tabanı | Açık uçlu (düşünme, arama, düzenleme, yürütme) | Testin geçmesi (+), bug eklenmesi (-) |
+**Yürütme protokolü (Interaction Protocol)** etkileşim biçimini ve sonlanma koşullarını belirler.
 
-Tablo önemli bir içgörüyü ortaya koyuyor: geleneksel RL Agent'larının (satranç, robotik) eylem alanı kapalıdır; LLM tabanlı modern Agent'ların (müşteri hizmetleri, kod asistanı) eylem alanı ise açıktır, neredeyse sınırsızdır ve bu Agent'lar yeteneklerini artırmak için "içsel düşünme" denen özel eylemden yararlanabilirler.
-
-### İki Agent Paradigması: MDP'den LLM+RL'e
-
-İkisi arasındaki en temel fark eylem alanındadır: MDP eylem alanının sonlu ve kapalı olduğunu varsayar (yukarı/aşağı/al/bırak), oysa LLM'in eylem alanı açık uçlu ve bileşimsel olarak patlayan doğal dil dizilerinden oluşur. Bu fark, iki paradigmanın algoritma tasarımı, örneklem verimliliği ve genelleştirme yeteneği bakımından temelden ayrışmasını belirler. Aşağıda ikisi ayrı ayrı açılıyor.
-
-**Geleneksel paradigma: MDP ve Q-learning.**
-
-MDP (Markov Decision Process, Markov karar süreci) pekiştirmeli öğrenmenin matematiksel çerçevesidir ve durum, eylem, ödül gibi temel öğeleri tanımlar. Çekirdek varsayımı **Markov özelliğidir**: gelecek yalnızca mevcut duruma bağlıdır, daha öncesindeki geçmişle ilgisi yoktur. Bir benzetmeyle: satrançta en iyi hamleye karar vermek için mevcut tahta konumuna bakmak yeter, önceki hamlelerin nasıl oynandığını gözden geçirmek gerekmez. Bu varsayım problemi basitleştirir, ama geçmişe bağımlılığı modelleme yeteneğini de kısıtlar.
-
-![Şekil 7-2: Markov karar süreci (MDP) şeması](images/fig7-2.svg)
-
-Geleneksel RL Agent'larının kilit özelliği **kapalı eylem alanıdır**: Agent'ın gerçekleştirebileceği bütün hareketler önceden tanımlanmış sonlu bir küme oluşturur. **Klasik tahta oyunu Agent'ları** en tipik örnektir: Go'da 361 taş koyma konumu çok kalabalıktır ama tümüyle belirli ve sonludur; satrançta farklı taşların hareket kuralları hesaba katılsa da eylemler yine sayılabilir; Atari oyunlarında ise yalnızca birkaç ya da on küsur ayrık eylem vardır. **Robot Agent'ları** ise sürekli ama sınırlı bir eylem alanını temsil eder: eklem açısı, hız ve kavrama kuvveti sürekli değerlerdir, ama hepsinin net fiziksel sınırları vardır (azami dönme açısı, azami tork, hız limiti) ve boyut sayısını robotun serbestlik derecesi belirler.
-
-Bu kapalılık hesaplama açısından avantaj sağlar: bütün eylemler sayılıp tek tek değerlendirilebilir, bu da dinamik programlamayı ve Monte Carlo ağaç aramasını kolaylaştırır; eylem-değer fonksiyonu bir tabloyla ya da basit bir fonksiyonla yaklaşık olarak temsil edilebilir. Ama aynı kapalılık ifade ve genelleştirme yeteneğini de kısıtlar. Geleneksel RL Agent'ı sıfırdan başlar ve tamamen deneme-yanılmayla öğrenir: rastgele bir policy'den yola çıkar, deneyim toplar, değer fonksiyonunu ya da policy'yi günceller ve bunu yakınsayana dek tekrarlar.
-
-Bu çerçevedeki en temel ve en önemli algoritmalardan biri **Q-learning**'dir. Her "durum-eylem" ikilisi için bir değer kestirimi tutar: s durumunda a eylemi yapılıp sonrasında hep en iyi policy izlenirse toplam ne kadar ödül alınır? Sezgisel olarak bir eylemin iyi olup olmadığı, getirdiği anlık kazanca ve bir de "sizi götürdüğü sonraki durumun ne kadar iyi olduğuna" bağlıdır.
-
-Bu sezgiyi denkleme dökerseniz, RL ders kitaplarının ünlü **Bellman denkleminin** (Bellman equation) çekirdek özyineleme bağıntısını elde edersiniz: **bir eylemin gerçek değeri = bu adımda alınan anlık ödül + sonraki duruma varıldığında elde edilebilecek azami gelecek değer**:
-
-$$Q^*(s, a) = r + \gamma \max_{a'} Q^*(s', a')$$
-
-Burada $r$ anlık ödül, $s'$ ise eylem yürütüldükten sonra varılan bir sonraki durumdur (sezgiyi kolaylaştırmak için deterministik biçimde yazıldı; rastgele ortamlarda bir sonraki durum $s'$ üzerinden beklenen değer alınmalıdır), $\gamma \in [0, 1)$ ise **iskonto çarpanıdır** (discount factor) — Agent'ın geleceğe ne kadar ağırlık verdiğini belirler: $\gamma$ 1'e ne kadar yakınsa uzun vadeli getiri o kadar önemsenir, 0'a yaklaştıkça yalnızca bugüne bakılır. Metinde defalarca geçen "kümülatif ödül" tam olarak her adımın ödülünün $\gamma$ ile kademeli iskonto edilip toplanmasıdır: $\sum_{t} \gamma^{t} r_t$. Algoritma her eylemden sonra eski kestirimi "gerçekte olan sonuca" doğru azıcık kaydırır — "tek adımlık gerçek sonuçla eski kestirimi düzeltme" paradigmasına **zamansal fark öğrenmesi** (Temporal-Difference Learning, TD learning) denir; binlerce, on binlerce deneme-yanılmanın ardından kestirim gerçek değere yaklaşır.
-
-Aşağıdaki iki şekil sırasıyla Q-learning'in ızgara dünyasındaki keşif sürecini ve Q değerlerinin adım adım yakınsamasını gösteriyor.
-
-![Şekil 7-3: Q-learning ızgara dünyası](images/fig7-3.svg)
-
-![Şekil 7-4: Q değeri güncellemesinin görselleştirilmesi](images/fig7-4.svg)
-
-Q-learning özel bir **off-policy** yöntemdir — herhangi bir policy'nin (rastgele keşif dahil) ürettiği veriyi kullanarak en iyi policy'yi öğrenebilir. On-policy / off-policy'nin kesin tanımı ve bunların LLM post-training'indeki karşılıkları için ilerideki "Pekiştirmeli Öğrenme Algoritmalarının Karşılaştırması" kesimine bakın.
-
-> **Deney 7-1 ★: Q-learning'in Hazine Avı Oyunundaki Performansı**
->
-> Q-learning'in özelliklerini ve sınırlarını doğrulamak için bir **hazine avı oyunu ortamı** tasarladık. Bu ortam birkaç kilit zorluk içeriyor: **gizli mekanikler**, Agent'ın anahtarlarla kapılar arasındaki eşleşmeyi, silahların etkisini ve eşya birleştirme kurallarını kendi başına keşfetmesini gerektiriyor; **çok adımlı bağımlılık**, görevin tamamlanması için doğru eylem dizisinin şart olması demek (en iyi çözüm 11 adım); **seyrek ödül** ise yalnızca kritik eylemlerin ve nihai zaferin kayda değer ödül vermesi, aradaki adımların çoğunun hiçbir geri bildirim almaması anlamına geliyor.
->
-> Q-learning Agent'ı standart parametre yapılandırmasını ve ε-açgözlü keşif stratejisini kullanıyor (çoğu zaman o anki en iyi eylemi seçer, arada bir rastgele dener, eğitim ilerledikçe rastgele keşfin oranını kademeli olarak azaltır).
->
-> Öğrenme eğrisi tipik davranışı sergiliyor (episode, oyunun baştan sona bir turu demek; açılıştan bitirmeye ya da kaybetmeye kadar bir kez sayılır):
-> - **İlk 1.000 episode**: %0 kazanma oranı, Q tablosunda yalnızca 124 durum, Agent körlemesine keşif yapıyor
-> - **İlk 5.000 episode**: hâlâ istikrarlı bir galibiyet yok, Q tablosunda 133 durum
-> - **7.000-8.000 episode**: kazanma oranı %34'ten kademeli olarak %96'ya çıkıyor
-> - **10.000 episode**: %100 kazanma oranı, Q tablosunda 145 durum, 11 adımlık en iyi çözüm bulunuyor
->
-> Eğitimin tamamı 10 saniyeden kısa sürüyor (simülasyon verimliliği son derece yüksek), ama neredeyse 10.000 eksiksiz deneme gerektiriyor. Bu, Q-learning'in temel özelliğini gösteriyor: eksiksiz yolun tesadüfen bulunabilmesi için çok sayıda rastgele keşif gerekir, değer sinyali çok yavaş yayılır ve tekrar tekrar pekiştirilmesi şarttır. Saf sembolik öğrenme, önsel bilgi yokken durum uzayını yalnızca kaba kuvvetle tarayabilir.
->
-> Oyun simülatöründe 10.000 turluk deneme-yanılma yalnızca 10 saniye sürer, maliyeti yok denecek kadar azdır. Ama gerçek dünyadaki Agent senaryolarında — her telefon aramasının bir bedeli, her tarayıcı işleminin bir gecikmesi vardır, her hatalı karar geri dönüşsüz sonuçlar doğurabilir — 10.000 deneme-yanılma kesinlikle kabul edilemez. Modern Agent'ların LLM tabanlı yöntemlere yönelmesinin nedeni tam da budur: pre-training'de birikmiş bilgiden yararlanıp çok az etkileşimde etkili kararlar vermek.
->
-> MDP'nin üç temel sınırı vardır: örneklem verimliliğinin düşük olması (basit bir görevi öğrenmek için bile devasa sayıda etkileşim gerekir), genelleştirme yeteneğinin zayıf olması (bir ortamda öğrenilen bilgiyi başka bir ortama taşımak çok zordur) ve önsel bilgiden yararlanamaması (her yeni görev sıfırdan öğrenilmek zorundadır). Doğal dil ya da yüksek boyutlu görü gibi karmaşık durum uzaylarıyla karşılaşıldığında bu sınırlar iyice belirginleşir.
->
-
-**Modern paradigma: LLM+RL tabanlı Agent'lar.**
-
-Büyük dil modelleri bambaşka bir Agent paradigması getirdi ve Agent'ların kurulma biçimini — özellikle de eylem alanı tasarımını — kökten değiştirdi.
-
-Geleneksel RL'in Agent'ı geri bildirimi yalnızca ortamı değiştirerek alabilir: bir hamle daha yapmak, labirentte bir adım daha atmak. Ama LLM bambaşka bir eylem türü getirdi: içsel düşünme. Düşünmek dış dünyayı değiştirmez, ama nihai eylemin kalitesini belirgin biçimde iyileştirir. Bu dönüşüm her şeyi değiştirdi: Agent'ın eylem alanı artık yalnızca "ne yapılacağı" değil, "ne kadar süre ve ne düşünüleceği" de.
-
-En önemli yenilik, **düşünmenin (Thinking) özel bir eylem olarak** eylem alanına dahil edilmesidir. Geleneksel RL'de Agent yalnızca ortamın durumunu değiştiren dışsal eylemler yapabilir (hareket etmek, saldırmak, almak); LLM Agent'ında ise **içsel düşünme eylem alanının çekirdek bileşenlerinden biri haline gelir** — dış ortamı doğrudan değiştirmez, anlık ödülü yoktur, sayısı neredeyse sınırsızdır ve maliyeti de düşüktür.
-
-Geleneksel RL bu tür eylemlerle baş etmekte zorlanır; nedeni keşif uzayının aşırı büyük ve yapısız olmasıdır: sıfırdan öğrenen bir Agent, gözü bağlı halde çölde hazine arayan biri gibidir, ancak rastgele savrulabilir. LLM ise farklıdır. Devasa metin üzerinde yapılan pre-training sayesinde insanlığın biriktirdiği düşünme kurallarını çoktan içselleştirmiştir: matematik sorusu çözerken "koşulları belirle → formülü hatırla → adım adım hesapla" akışını, kod yazarken "gereksinimi anla → yapıyı tasarla → ayrıntıyı gerçekle" akışını izler. Bu, LLM'in düşünmesinin yapılı bir yol boyunca ilerlemesini sağlar ve arama uzayını muazzam ölçüde daraltır. Bu yüzden ek bir RL eğitimi olmasa bile pre-training'den geçmiş bir LLM temel mantığa sahip bir düşünce zinciri (Chain of Thought, CoT) üretebilir. Bu temel mantık, pre-training derlemindeki uçsuz bucaksız insan düşünme süreçlerinden gelir (matematik çözümleri, kod yorumları, tartışma yanıtları vb.); model, next-token prediction yoluyla "bir sonraki adımın nasıl bir akıl yürütme biçimi olması gerektiğini" örtük olarak öğrenmiştir.
-
-RL post-training'i ise dışsal ödüller aracılığıyla LLM'e bu kuralları belirli görevlerde daha verimli kullanmayı öğretir. Dilin yapısı da örtük bir içsel ödül sunar: mantığı tutarlı bir düşünce zincirinin (örneğin "yabancı parayı dolara çevirmek gerektiği için ilk adım kuru sorgulamaktır") üretilme olasılığı yüksektir, mantığı dağınık olanınki ise (örneğin "para çevirmek gerektiği için önce hava durumuna bakalım") son derece düşüktür; bu da modeli doğal olarak makul yolları tercih etmeye yöneltir.
-
-![Şekil 7-5: Klasik RL ile modern LLM Agent'ının karşılaştırması](images/fig7-5.svg)
-
-Dilin içsel kurallarına dayanan bu düşünme yeteneği, LLM Agent'ının daha önce hiç görmediği talimatları anlamasını (zero-shot genelleştirme) ve çok az örnekle yeni görevlerde ustalaşmasını (few-shot uyarlama) sağlar — bu, geleneksel MDP Agent'ının mecburen çok sayıda deneme-yanılmaya dayanan paradigmasından tümüyle farklıdır. Ayrıca yeni paradigma bileşimsel genelleştirme (bilinen kavramları yeniden birleştirerek yeni durumlarla baş etme), in-context learning (prompt ve örneklerle hızlı uyarlanma) ve çok modlu anlama (görme, dil, eylem gibi modaliteleri doğal biçimde bütünleştirme) gibi yeteneklere de sahiptir. Şuna dikkat etmek gerekir: in-context learning'in **etkisi** (zero-shot genelleştirme, few-shot uyarlama) ile **içsel mekanizması** iki ayrı şeydir — Bölüm 2'de çözümlendiği gibi, attention mekanizmasının çalışma biçimi akıl yürütmekten çok retrieval'a benzer; ama bu, onun göreve uyarlanma konusunda güçlü pratik sonuçlar üretmesine engel değildir.
-
-Eylem alanının kapalıdan açığa evrilmesi, yapay zeka Agent paradigmasındaki köklü dönüşümü yansıtır. İçsel düşünmenin yanı sıra araç parametrelerinin çeşitliliği (doğal dil sorguları, program kodu, karmaşık JSON, çok modlu içerik) fiilî eylem alanını neredeyse sınırsız kılar — bir kod yorumlayıcısı teorik olarak hesaplanabilir her görevi yürütebilir, bir arama aracı bütün internetin bilgi uzayını tarayabilir. Bu hem yeni fırsatlar (Agent daha önce hiç görülmemiş görevleri ele alabilir, temel araçları birleştirerek karmaşık problemleri çözebilir) hem de yeni zorluklar (açık bir ortamda ödül fonksiyonu nasıl tanımlanıp optimize edilir, sınırsız bir eylem alanında verimli arama nasıl yapılır) getirir.
-
-Tool calling ve uzun zincirli düşünme için optimize edilmiş Kimi K3 gibi modeller, LLM+RL paradigmasının tipik yönünü gösterir: büyük ölçekli dil pre-training'inin üzerine, post-training yoluyla problem ayrıştırma, tool calling ve kendi kendini düzeltme yetenekleri pekiştirilir. **OpenVLA** (ayrıntısı Bölüm 9'da) ise LLM çağının VLA (görme-dil-eylem) mimari paradigmasını sergiler: görme kodlayıcısı ortam gözlemlerini işler, dil modeli talimatı anlayıp akıl yürütür, eylem çözücüsü kontrol sinyallerini üretir; böylece dille koşullanan kontrol ve görevler arası genelleştirme sağlanır. Bir noktayı netleştirelim: OpenVLA'nın kendisi bir milyona yakın robot **gösterim trajectory'si** üzerinde taklit öğrenmesiyle (davranış klonlama) eğitilmiştir, yani niteliği itibarıyla RL değil SFT'dir; RL'i robotiğe gerçekten sokan ve bu tür bir VLA mimarisinin üzerine ödülle ek optimizasyon yapan asıl örnek, bölümün ilerisindeki Deney 7-13'ün SimpleVLA-RL'idir.
-
-![Şekil 7-6: OpenAI'ın eğitim paradigmasının evrimi](images/fig7-6.svg)
-
-**OpenAI'ın keşif yolculuğu** (Princeton Üniversitesi'nde yardımcı doçent ve ReAct makalesinin yazarı olan Shunyu Yao, *The Second Half* metninde ayrıntılı olarak kayda geçirmiştir) kavrayış düzeyindeki evrimi ortaya koyar. **Birinci aşama (2015-2016), algoritma merkezcilik**: daha iyi algoritmanın anahtar olduğuna inanılıyordu; Atari gibi standart ortamlarda ilerleme kaydedildi, ama ortam değiştiği anda eğitime sıfırdan başlamak gerekiyordu. **İkinci aşama (2016-2018), ortamın önemi**: Gym çeşitli görevleri standartlaştırdı, Universe ile World of Bits bütün interneti RL'in eğitim ortamına dönüştürmeye çalıştı, Dota 2 ise belirli ve karmaşık bir ortamda insanüstü performansın peşine düştü. Düşünce netti, ama genel amaçlı bilgisayar kullanımı ve web gezinimi bir türlü aşılamadı.
-
-**Üçüncü aşama (2018'den bugüne), önsel bilginin uyanışı**: GPT-2/GPT-3 dil pre-training'inin muazzam gücünü gösterdi; WebGPT ve ChatGPT bu önsel bilginin kullanışlı Agent'lara dönüştürülebileceğini kanıtladı. En önemli bulgu şuydu: **önsel bilgi, RL ile hiçbir ilgisi olmayan bir yoldan da elde edilebilir**. Bu, sezgiye aykırı bir gerçek: onlarca yıl boyunca RL araştırmacılarının öncelik sıralaması tümüyle tersine dönmüş olabilir — algoritma > ortam > önsel bilgi değil, önsel bilgi > ortam > algoritma.
-
-> **Deney 7-2 ★★: Geleneksel RL ile LLM Agent'ının Karşılaştırmalı İncelenmesi**
->
->
-> ![Şekil 7-7: Q-learning ile LLM Agent'ının hazine avı oyunundaki mimari karşılaştırması](images/fig7-7.svg)
->
->
-> Aynı hazine avı oyununda Q-learning ile LLM Agent'ı (Kimi K3, en fazla 50 deneyim tutan bir tampon bellekle) karşılaştırıldı. Sonuç çarpıcı: **LLM Agent'ı daha ilk partide 18 adımda oyunu bitirdi**.
->
-> **Erken evre (amaçlı keşif)**: Paslı kılıcı aldı ("silah, elin boş olmasından her zaman iyidir"), haritayı sistemli biçimde taradı; kuzey kapısının kilitli olduğunu görünce "anahtar bulmam gerekiyor" diye akıl yürüttü, kilere yöneldi ve sırayla kırmızı anahtarı ve sihirli kristali ele geçirdi. **Orta evre (mekanikleri kavrama ve kendiliğinden birleştirme)**: "anahtar otomatik kullanılır" kuralını kavradı, paslı kılıcın muhafızla baş etmeye yetmeyeceğini önceden kestirdi ve 8. adımda kendiliğinden gümüş kılıcı birleştirdi. **Geç evre (yürütme ve hata düzeltme)**: gümüş kılıçla kuzeye ilerledi, 13. adımda güçlü muhafızı yendi; arada bir iki geçersiz deneme oldu (kılıcı boşa sallamak, geri çekilmek) ve sonunda 18. adımda ejderha hazinesini aldı.
->
-> Bu, anlamsal kavrayış ile sembolik eşleme arasındaki temel farkı ortaya koyuyor. LLM Agent'ı oyunun kavramsal yapısını kavradı; attığı her adımın bir amacı ve mantıksal dayanağı vardı. Q-learning içinse "kapı", "anahtar", "kılıç" yalnızca anlamsız sembol dizileridir; aralarındaki ilişkiyi ancak çok sayıda istatistiksel öğrenmeyle yavaş yavaş keşfedebilir.
->
-> Hesaplama maliyeti ilginç bir paradoks yaratıyor: Q-learning 10.000 partiyi 10 saniyede oynarken LLM Agent'ının tek bir partisi 1-2 dakika sürüyor. Ama gerçek görevlerde her etkileşimin zaman, para ve risk maliyeti saf hesaplama maliyetini kat kat aşar; bu yüzden yalnızca GPU süresine bakmak adil değildir. Daha kritik içgörü şudur: LLM Agent'ının başarısı daha iyi bir "öğrenme algoritmasına" sahip olmasından değil, devasa bir önsel bilgiyi yanında taşımasından gelir. Oyunun kuralları değiştiğinde Q-learning'in tümüyle yeniden eğitilmesi gerekirken LLM Agent'ı akıl yürüterek doğrudan uyum sağlayabilir. Buradan pratik bir tasarım ilkesi çıkar: simülasyon maliyetinin düşük olduğu ve çok sayıda tekrarın mümkün olduğu senaryolarda geleneksel RL hâlâ değerlidir; etkileşim maliyetinin yüksek olduğu ve hızlı uyum gereken gerçek senaryolarda ise LLM Agent'ının örneklem verimliliği daha kullanışlıdır.
->
-
-Context uyarlaması, dışsal ürünlerin güncellenmesi ve parametre güncellemesinin nasıl birlikte çalıştığına gelince: Bölüm 1 kavramsal haritayı zaten verdi, bu bölümün sonundaki "eksiksiz manzara" da konuya geri dönecek. Bu bölümün ana ekseni bunlardan post-training'dir — dışsal kurallarla eksiksiz ifade edilmesi zor olan yetenekleri model parametrelerine yazmak.
-
-## Model Pre-training'inin Temelleri `[isteğe bağlı okuma]`
-
-Post-training tekniklerinin neden işe yaradığını anlamak için önce pre-training'in neyi kurduğunu bilmek gerekir. Post-training (SFT ve RL) özünde, pre-training'in kurduğu temsil uzayı içinde yapılan bir optimizasyondur — pre-training'in attığı bilgi yapısı, post-training'in tavanını belirler. Bu yüzden pre-training'in çekirdek halkalarını üç deneyle inceliyoruz: küçük ölçekli bir dil modelini sıfırdan eğitmek, görme yeteneğini eklemek ve yeni bir dilin bilgisini enjekte etmek. Bu kesimdeki üç deney destekleyici içeriktir; okurun pre-training (yani modelin dilin temel düzenliliklerini ve dünya bilgisini öğrenmesi için büyük ölçekli veri üzerinde yapılan ilk eğitim) konusunda sezgi kazanmasına yardım eder — pre-training akışına zaten aşina olan okurlar atlayabilir.
-
-![Şekil 7-8: Pre-training'de bir sonraki token'ın tahmini](images/fig7-8.svg)
-
-Dil modeli eğitimi "tokenization — pre-training — post-training" biçiminde üç aşamalı bir akış izler. Tokenization (token'lara ayırma) metni ayrık birimlere böler; örneğin 我喜欢编程 ("programlamayı seviyorum") ifadesi 我 / 喜欢 / 编 / 程 olmak üzere dört token'a bölünebilir — bu token'lar, modelin metni işlerken kullandığı en küçük birimdir. Pre-training'in görevi kavramsal olarak çok basittir: modele bir metnin ilk yarısı gösterilir ve bir sonraki token'ın ne olduğunu tahmin etmesi istenir. Model, kendi tahmini ile doğru cevap arasındaki farka bakarak (bu farka loss, yani kayıp denir; loss ne kadar küçükse tahmin o kadar isabetlidir) parametrelerini sürekli ayarlar. Devasa metin üzerinde tekrar tekrar eğitildikten sonra model yavaş yavaş dil kurallarını, dünya bilgisini ve temel akıl yürütme yeteneğini öğrenir. Pre-training tamamlandığında model akıcı metin üretebilir, ama çıktısı yapıdan yoksundur ve talimatları izlemekte zorlanır. Post-training ise SFT (etiketlenmiş girdi-çıktı çiftleriyle eğitim) ve tercih optimizasyonu (örneğin DPO; modele insanların daha çok tercih ettiği yanıtları üretmeyi öğretir) yoluyla onu kullanışlı bir asistana dönüştürür.
-
-> **Deney 7-3 ★★: LLM'i Sıfırdan Eğitmek — Algoritma İyileştirmesinin Gücü**
->
-> MiniMind 2 (yüz milyon parametre) örneği üzerinde, tüketici sınıfı bir GPU'da eksiksiz eğitim akışı tamamlandı. İki algoritma optimizasyonu (QK Norm ve Muon optimizer) devreye alınarak yakınsama hızı 3 kat arttı, üretim kalitesi belirgin biçimde iyileşti — gerçekleştirme maliyeti son derece düşük: toplam eğitim yaklaşık 14 saat, maliyet yaklaşık 34 dolar.
->
-> Eğitim aşamalarının etkileri: pre-training'den sonra model "dünyanın en yüksek dağı" gibi olgusal soruları yanıtlayabiliyor, ama formatı düzensiz; SFT'den sonra talimat takibi ve çıktı formatı belirgin biçimde iyileşiyor, cevabı beklenen biçimde kurgulayabiliyor; tercih optimizasyonu ise olgusal hataları ve yapay ifadeleri daha da azaltıyor. Yüz milyon parametreli modelin sınırları hâlâ belirgin (karmaşık sorularda kolayca yanılıyor), ama çıkarılan ders şu: **sabit ve küçük bir bütçe altında algoritma iyileştirmesi, salt ölçek yığmaktan daha çok fiyat/performans getirir**.
->
-> **Deney 7-4 ★★: Kendi VLM'inizi Eğitmek**
->
->
-> ![Şekil 7-9: Görme-dil modeli (VLM) mimarisi](images/fig7-9.svg)
->
->
-> VLM, görsel algıyı ve dil anlayışını tek bir modelde birleştirir; temel zorluk modaliteler arası hizalamadır — "görüleni" ile "söyleneni" birbirine karşılık getirmek. Mimari üç bileşenden oluşur: **görme kodlayıcısı** (örneğin CLIP; parametreleri sabittir) görüntünün anlamsal özniteliklerini çıkarır; **projeksiyon katmanı** (hafiftir ve sıfırdan eğitilen tek parçadır) görsel öznitelikler ile dil modeli arasında "tercüman" rolü oynar, görsel öznitelikleri dil modelinin anlayabileceği temsil uzayına eşler; **dil modeli** ise betimleyici metni üretir. Eğitimde "LLM'i dondur, yalnızca projeksiyon katmanını eğit" stratejisi kullanılır; böylece **catastrophic forgetting** (yani yeni bir beceri öğrenirken eskisini unutmak) önlenir. Pre-training hizalaması tamamlandıktan sonra LLM'in dondurulması kaldırılır ve yüksek kaliteli görüntü-betimleme çiftleriyle SFT yapılır; betimlemelerin ayrıntı düzeyi ve doğruluğu belirgin biçimde iyileşir.
->
-> Bu deney, çok modlu model eğitiminin temel paradigmasını ortaya koyuyor: tek modlu pre-training kazanımlarını yeniden kullanıp hafif bir projeksiyon katmanı eğiterek modaliteler arası hizalamayı sağlamak — verimli ve ölçeklenebilir bir yol, ama projeksiyon katmanının ifade gücü sınırlı olduğundan modaliteler arası derin kavrayışta darboğaza dönüşebilir. Aynı "görme kodlayıcısı + projeksiyon katmanı + LLM" iskeleti bir adım daha ileri götürülüp modelin eylem üretmesi sağlandığında, Bölüm 9'da açılacak olan VLA (görme-dil-eylem) modeli ortaya çıkar.
->
-> **Deney 7-5 ★★: Pre-training'e Devam Ederek Yeni Bir Dil Öğrenmek**
->
-> Mistral 7B v0.3 temel alındı (ağırlıklı olarak İngilizce ile pre-training'den geçmiştir, Korece anlama yeteneği neredeyse yoktur) ve Korece Vikipedi üzerinden pre-training'e devam edilerek Korece yeteneği enjekte edildi — yani pre-training'i tamamlanmış bir modelin üzerinde yeni dilin verisiyle denetimsiz eğitimi sürdürmek. Model genel dil modelleme yeteneğine zaten sahip olduğu için yalnızca yeni veri dağılımına uyum sağlaması yeter ve maliyet sıfırdan eğitimin çok altında kalır. Kilit mühendislik noktası, catastrophic forgetting'i hafifletmek için karma veri kullanmaktır (yaklaşık %80 Korece + %20 İngilizce): hedef dilin payı fazla yüksek olursa özgün dil geriler, fazla düşük olursa öğrenme verimi yetersiz kalır. Son olarak Korece talimat verisiyle SFT yapılarak kullanışlı bir Korece diyalog yeteneği elde edildi. Bu deneyin sonucu, bölümün sonundaki eksiksiz manzarada bir kez daha kullanılacak: modele büyük miktarda yeni alan bilgisi ezberletmenin yolu SFT değil, pre-training'e devam etmektir.
->
-
-Üç pre-training deneyi ortak bir kuralı ortaya koyuyor: bütçe kısıtlıyken algoritma iyileştirmesi ve mimari yenilik, salt ölçek büyütmekten daha çok fiyat/performans getirir. Daha da önemlisi, pre-training'in modele kazandırdığı şey betimleyici bilgi ve dil modelleme yeteneğidir; yapılandırılmış talimat takibi ve göreve yönelik davranış eksiktir — SFT'nin doldurması gereken boşluk tam olarak budur.
-
-Pre-training'in temel yetenekleri elde edildikten sonraki adım, post-training yoluyla genel amaçlı modeli kullanışlı bir Agent'a dönüştürmektir. Post-training'in ilk aşaması denetimli ince ayardır (SFT).
-
-## SFT (Denetimli İnce Ayar)
-
-![Şekil 7-10: Denetimli ince ayar (SFT) boru hattı](images/fig7-10.svg)
-
-Bölüm 7.1, SFT'nin özünü zaten enine boyuna anlattı (verisi değiştirilmiş ve loss'u yalnızca yanıt üzerinde hesaplanan bir "bir sonraki token'ı tahmin etme"). Bu kesim ise dört deneyle, "kararlı eşlemeyi ve protokolü parametrelere yazan" bu mekanizmanın farklı görevlerde tam olarak neyi kalıcılaştırdığına bakıyor. SFT'nin çekirdek değeri yeni bilgi enjekte etmek değil, **protokolü kalıcılaştırmaktır**: eşleme ilişkilerini, etkileşim formatını ve üslup normlarını parametrelere yazar; böylece çıkarım sırasında uzun uzadıya prompt vermeye gerek kalmadan beklenen çıktı üretilebilir. Genellikle birkaç binden birkaç on bine kadar yüksek kaliteli örnek, temel diyalog yeteneğini ve talimat takibini kurmaya yeter.
-
-Bu verimliliğin bedeli, eğitim dağılımına güçlü bağımlılıktır: SFT genelleştirmekten çok ezberlemeye eğilimlidir ve test sırasında eğitimde görülmemiş bir durumla karşılaşıldığında performans çoğunlukla belirgin biçimde düşer. Sonraki deneyler bu "protokolü kalıcılaştırma" sürecini farklı açılardan gösterecek.
-
-SFT'ye girişmeden önce kaçınılmaz bir uygulama sorusu var: **SFT verisi nereden gelir?** Sektörün yanıtı temelde üç yoldur. **İnsan uzman gösterimleri** — kalite tavanı en yüksek olan, ama pahalı ve yavaş olan yol; formatı ve üslubu tanımlayan "tohum veri" için uygundur. **Öğretmen modelin üretmesi** — yani sentetik veri; güçlü bir modele toplu halde "girdi—çıktı" çiftleri ürettirilir, süzüldükten sonra öğrenciye damıtılır (Deney 7-8 ve 7-9 bu yolu izler). **Modelin kendini yukarı çekmesi** — model aynı soru için birden çok aday örnekler, bir doğrulayıcıyla doğru olanları ayıklar ve onlarla dönüp kendini eğitir; buna rejection sampling ile ince ayar denir, ayrıntısı Deney 7-9'da. Üç yol sıklıkla birlikte kullanılır: önce az sayıda insan tohumuyla format oturtulur, sonra öğretmen modelle ölçek büyütülür, en sonunda rejection sampling ile kalite eşitlenir. Hangi yol izlenirse izlensin kurgu akışı aşağı yukarı aynıdır: önce görev dağılımı ve çıktı şeması tanımlanır, sonra toplu halde adaylar üretilir, ardından kural doğrulaması, format denetimi ve elle örnek denetimiyle kalite süzgeci uygulanır, en sonunda tekrarlar ayıklanır, oranlar dengelenir ve çeşitlilik güvenceye alınır. Miktarda açgözlü olmaya gerek yok — birkaç binden birkaç on bine kadar yüksek kaliteli örnek protokolü kalıcılaştırmaya genellikle yeter; yüz bin kirli veri yığmaktansa on bin temiz veriyi özenle işlemek daha iyidir: verideki her gürültüyü SFT sadakatle parametrelere yazar.
-
-> **Deney 7-6 ★★★: Ses SFT'si — "Ses Kopyalama"dan "Paralinguistik Modellemeye" `[genişletilmiş deney]`**
->
-> Orpheus (bağlam prompt'lu voice cloning) ve Sesame (paralinguistik işaret modellemesi) örnekleri üzerinden, "ses üslubunun ve ifade alışkanlıklarının" parametrelere nasıl yazıldığı gösteriliyor. İkisinin yaklaşımı farklı:
->
-> - **Orpheus**: Ses dalga biçimini bir token dizisine sıkıştırır; aynı konuşmacıya ait referans sesi başa ekleyerek modele "bu kişinin sesiyle konuşmayı" öğretir ve cümleler arası tını tutarlılığı sağlar.
-> - **Sesame**: Gülme, iç çekme gibi paralinguistik olguları `<laugh>`, `<sigh>` gibi özel işaretlere soyutlar ve modele "işareti görünce karşılık gelen sesi çıkarmayı" öğretir.
->
-> İfade odaklı görevlerde SFT'nin kalıcılaştırdığı şey üslup kontrolü protokolü ve yapılandırılmış ifade alışkanlıklarıdır; olgusal bilgi ya da karmaşık düşünme değil. Belirleyici olan, eğitim verisinin çeşitliliği ve etiketleme kalitesidir. Yaygın başarısızlık örüntüleri: eğitim verisindeki konuşmacı sayısının çok az olması yüzünden herkesin aynı ağızdan konuşur gibi çıkması; işaretlerde overfitting (yani modelin eğitim örneklerinin ayrıntılarını ezberleyip yeni durumlarda daha da kötü performans göstermesi) sonucu "mekanik gülüş" üretilmesi.
->
-> **Deney 7-7 ★★★: Çok Dilli Düşünme — Modelin İstenen Dilde Düşünmesini Sağlamak `[genişletilmiş deney]`**
->
-> Düşünen modellerin çoğu yalnızca İngilizce "düşünebilir": hangi dilde soru sorarsanız sorun, modelin içindeki düşünce zinciri neredeyse hep İngilizcedir, çünkü eğitim verisindeki yüksek kaliteli düşünme gösterimleri temelde İngilizce yazılmıştır. Bu deneyin hedefi çok basit: modelin belirtilen dilde düşünebilmesini sağlamak.
->
-> Yöntem, gpt-oss-20b üzerinde SFT yapmaktır: sistem talimatına `reasoning language: German` (ya da başka bir dil) satırı eklenir, ardından İngilizce, İspanyolca, Fransızca gibi birkaç dildeki düşünme örnekleriyle eğitim yapılır. Eğitim verisinde **hiç Çince yoktur**, ama eğitim bittikten sonra reasoning language yalnızca Chinese olarak ayarlandığında model Çince olarak eksiksiz bir düşünce zinciri kurabiliyor — bu sıfır örnekli diller arası genelleştirme, deneyin en ilginç bulgusu. Şuna dikkat etmek gerekir: bu, SFT'nin kendi genelleştirme yeteneği değildir. Çok dilli pre-training modelde diller arası paylaşılan bir temsil uzayını zaten kurmuştur; SFT yalnızca pre-training sırasında halihazırda var olan bu diller arası yeteneği etkinleştirmiştir.
->
-> **Deney 7-8 ★★: Prompt Damıtma — Kullanılabilir Yeteneği Daha Küçük Bir Maliyetle Yeniden Üretmek**
->
-> Gerçek uygulamalarda modelin karmaşık bir görevi tamamlaması için çoğu zaman uzun uzadıya system prompt'lar tasarlamak gerekir (binlerce, hatta on binlerce token) ve bu, her çağrıda gecikmeyi ve maliyeti artırır. Düşünen büyük modeller kullanıldığında içsel düşünme token'ları maliyeti bir kat daha büyütür. Prompt damıtmanın fikri, "uzun prompt + düşünen öğretmen" davranışını "kısa prompt / promptsuz + düşünmeyen öğrenci" içine sıkıştırmaktır. Öğretmen, eksiksiz prompt ve düşünme modu altında yüksek kaliteli yanıtlar üretir; eğitim verisinde yalnızca kullanıcı girdisi ile nihai sonuç tutulur, uzun prompt ve aradaki düşünme süreci atılır. Öğrenci "doğrudan sonucu vermeyi" öğrenir; damıtmadan sonra aynı girdilerde öğretmenin çıktı kalitesine yaklaşır ve uzun prompt ile düşünme token'larını işlemesi gerekmediğinden gecikme ve maliyet belirgin biçimde düşer.
->
-> Damıtma iki boyutta yapılabilir: "büyükten küçüğe" (büyük modelin yerine orta veya küçük ölçekli bir model koyarak maliyet ile kalite arasında orta yol bulmak) ve "düşünenden düşünmeyene" (aynı ölçekte açık CoT'yi örtük parametrik bilgiye katlayarak 20-30 kat yanıt hızı kazanmak). İkisi çelişmez, üretim ortamında sık sık birlikte kullanılır. Şuna dikkat edin: damıtma öğretmenin sınırlarını da devralır — öğretmenin uzun kuyruk dağılımında sistematik hataları varsa öğrenci bu hataları bir de sabitleyip yazar; öğretmen doğruluğu güvenceye almak için araçlara dayanıyorsa, salt çıktı damıtması araçların getirdiği sağlamlığı yitirir. Mühendislik dersi: ürün biçimi kararlı, girdi dağılımı öngörülebilir ve maliyet kısıtı belirginken Prompt damıtma çok iyi bir optimizasyon aracıdır; keşif döneminde ya da görev henüz oturmamışken açık düşünmeyi ve düzenlenebilir prompt engineering'i korumak hızlı deneme-yanılmanın çekirdeği olmayı sürdürür.
->
-> **Deney 7-9 ★★★: Düşünce Zinciri (Chain of Thought, CoT) Damıtma**
->
-> Prompt damıtma düşünme sürecini atar; CoT damıtma ise tam tersini yapar: güçlü öğretmen modelin **eksiksiz düşünme trajectory'sini** öğrenci modele aktarır. Yeterince güçlü bir öğretmen modelden CoT damıtmasıyla, aynı parametre sayısında öğretmenin yeteneğinin %70-80'i geri kazanılabilir. Sınırdaki yetenek rekorlarını kırma peşinde olmayan ama kendi denetimindeki bir model arayan ekipler için bu, en gerçekçi takipçi stratejisidir. DeepSeek-R1 yayımlanırken eş zamanlı olarak açık kaynak yapılan damıtılmış küçük model serisi (R1'in düşünme trajectory'leriyle Qwen ve Llama serilerine SFT uygulanarak elde edilmiştir) tam olarak bu yolun temsilcisidir.
->
-> **Arka plan: "düşünce duvarı" olgusu**. Bazı kapalı kaynak düşünen modeller (OpenAI o serisi, Gemini serisi gibi) düşünürken içsel bir düşünce zinciri üretir, ama kullanıcının gördüğü şey ham düşünme süreci değildir — üreticiler damıtmayı engelleme, güvenlik ve ürün deneyimi gibi kaygılarla CoT'yi çıktıdan önce genellikle yeniden yazar ya da özetler; en değerli olan ham düşünme süreci API'nin arkasında saklı kalır. Bu deneyde öğretmen olarak açık kaynak düşünen modellerin seçilmesinin nedeni tam da budur: DeepSeek V4, Kimi K3, GLM 5.2 gibi modeller eksiksiz düşünce zincirini doğrudan açığa verdiği için damıtma hem teknik hem de lisans açısından mümkündür (yine de kullanmadan önce modelin lisansının damıtma ürünlerine ilişkin izin maddelerini doğrulamak gerekir).
->
-> **Laboratuvardan bir not: kod yazabilen bir model, başka bir modeli damıtmaya yardım etmeyi yine de reddedebilir.** Bu deney uygulanırken yazar önce GPT-5.6-Sol ile çalışan OpenAI Codex'i kullanarak deney kodunu yazdı. Görev açıkça model damıtmayı içerdiğinde Codex devam etmeyi reddetti. Ardından Claude Opus 5 ile çalışan Claude Code'a geçildi ve aynı retle karşılaşıldı. Sonunda deney kodunu ve sonraki çalıştırmayı Kimi K3 tamamladı.
->
-> Her iki ret de sıradan matematiksel reasoning ile ilgili değildi ve yalnızca modelin iç düşünce zincirini açıklamasını istemekten kaynaklanmadı. İstenen, güçlü bir öğretmenin verilerini kullanarak öğrenci modeli eğiten eksiksiz bir damıtma deneyini uygulamaktı. Model damıtma teknik olarak sıradan supervised fine-tuning'e çok benzer; ancak tedarikçinin güvenlik ve ürün politikaları bunu model çıkarımı, yetenek kopyalama ve fikrî mülkiyet korumasıyla da ilişkilendirebilir ve böylece hassas bir kategori olarak ele alabilir.
->
-> Bu olay "Claude düşünce zinciri sağlamıyor" diye basitleştirilmemeli ve "Kimi'nin guardrail'leri daha zayıf" olduğunu da kanıtlamaz. Claude API'nin summarized thinking döndürmesi, bir Coding Agent'ın damıtma pipeline'ı uygulamayı kabul etmesi ve hizmet koşullarının model çıktılarını eğitimde kullanmaya izin vermesi üç ayrı sorudur. Deney hiçbir modelin gizli reasoning'ini veya güvenlik mekanizmasını aşmaya çalışmadı; yetkilendirilmiş bir araştırma akışı için yalnızca ürünlerin sunduğu yetenekleri kullandı.
->
-> Burada daha pratik ve daha önemli bir yargı var: **post-training yapanların büyük çoğunluğunun kapalı kaynak modellerin düşünce zincirini damıtmasına hiç gerek yok.** Bugünün en gelişmiş açık kaynak modelleri ile SOTA kapalı kaynak modeller arasındaki fark sanıldığı kadar büyük değil; öğretmen modelin "öğrenciden belirgin biçimde üstün" olması yeter, "dünya birincisi" olması gerekmez. Post-training yapacağınız model 200B ve altı ölçekteyse, öğretmen olarak açık kaynak SOTA modeli kullanmak fazlasıyla yeterlidir.
->
-> **Deney tasarımı**: Üç adımlı akış. Birinci adım, **trajectory toplama**: hedef görev dağılımından (matematik, kod vb.) sorular örneklenir, açık kaynak öğretmen modelle eksiksiz "düşünme + cevap" trajectory'leri üretilir ve bir kural doğrulayıcısıyla nihai cevabı yanlış olan trajectory'ler süzülüp atılır — aksi halde hatalı düşünme sürecini de öğrenci taklit eder. Bu adımdaki "aday üret — doğrulayarak süz — yalnızca doğru trajectory'leri bırak" yönteminin özel bir adı vardır: **rejection sampling (reddederek örnekleme)**. Onunla kurgulanan veriyle yapılan SFT'ye ise **rejection sampling ile ince ayar (Rejection Sampling Fine-Tuning, RFT)** denir. Saf SFT ile RL arasında bir yerde durur: ödül modeli eğitilmez, policy gradient uygulanmaz; yalnızca "birden çok örneklem içinden yanlış olanları reddedip doğru olanları bırakma" yoluyla veri kalitesi yükseltilir. Doğrulanabilir görevlerde fiyat/performansı son derece yüksek bir veri kurgulama aracıdır. İkinci adım, **SFT eğitimi**: "soru → `<think>` düşünme trajectory'si `</think>` + nihai cevap" biçimindeki eğitim çiftleriyle küçük bir modele (örneğin 7B ölçeğinde) standart SFT uygulanır. Üçüncü adım, **karşılaştırmalı değerlendirme**: aynı benchmark üzerinde damıtma öncesi ve sonrası öğrenci modeller ile öğretmen model karşılaştırılıp yeteneğin geri kazanılma oranı ölçülür.
->
-> **Kabul ölçütü**: Damıtılmış öğrenci model, matematik/kod benchmark'larında damıtma öncesine göre belirgin biçimde ilerlemeli ve düşünme trajectory'lerinde öğretmene özgü reflection, geri izleme ve hesap doğrulama davranışları görülmelidir. Damıtmanın bedelini de göz ardı etmeyin: öğrenci, öğretmenin sistematik hatalarını ve gereksiz uzun düşünme alışkanlığını devralır (ikincisi için Deney 7-10'daki AdaptThink yaklaşımıyla ikinci bir optimizasyon yapılabilir).
->
-
-Bu dört deneyin ortak bir özelliği var: "kararlı eşlemeyi ve protokolü parametrelere yazmak". Ses SFT'si üslup kontrolü protokolünü, çok dilli SFT düşünceyi örgütleme şablonunu, damıtma SFT'si ise girdiden çıktıya doğrudan eşlemeyi kalıcılaştırıyor. Ortak yanları hedefin net, formatın açık ve değerlendirme ölçütünün kararlı olmasıdır; bu yüzden SFT son derece yüksek bir örneklem verimliliğiyle kazanç sağlayabiliyor. Ama dağılım değiştiği anda ezber eğilimi performans düşüşü olarak açığa çıkıyor. Bu, Bölüm 7.1'deki "SFT ile RL arasındaki temel fark" kesiminde anlatılan ezber—genelleştirme ayrımının deney düzeyindeki görünümüdür.
-
-6. Bölümdeki bad case'ler eğitim verisine çevrilebilir. Çok erken bitiren coding agent için tamamlandı demeden önceki trajectory önekini kesin; eski ilan rejected, testleri çalıştırıp her kabul koşulunu kontrol ettikten sonraki eylem chosen olsun. Bu, sıradan SFT'den çok DPO veya karar sınırı gösterimine uygundur; hata nedeni, geçerlilik koşulları ve doğrulayıcı örnekle birlikte saklanmalıdır.
-
-Aynı görevler RL alıştırma ortamı da olabilir: SFT doğrulanmış trajectory'leri kullanır, RL mevcut politikayla yeniden yürütür ve sonucu dış doğrulayıcı değerlendirir. Böylece bad case yalnızca ezberlenecek örnek değil, iyileştirilecek karar sınırıdır.
-
-## Ne Zaman SFT, Ne Zaman RL Seçilmeli
-
-Bölüm 7.1 SFT ile RL arasındaki **temel farkı** netleştirdi; bu kesim ise daha uygulamalı bir soruyu yanıtlıyor: **somut bir görev karşısında hangisi kullanılmalı?** Aşağıdaki karar çerçevesinin bazı sonuçları ilerideki RL deneylerinde (Deney 7-10 ve Deney 7-11) ayrıca doğrulanacak; okur önce bir ön yargıya varabilir, RL kısmını bitirdikten sonra buraya dönüp karşılaştırabilir.
-
-![Şekil 7-11: SFT→RL iki aşamalı eğitim akışı](images/fig7-11.svg)
-
-**SFT şu senaryolara uygundur**: format kalıcılaştırma (JSON çıktısı, konuşma üslubu), elde yüksek kaliteli uzman gösterimlerinin bulunması, eğitim ile konuşlandırma ortamının büyük ölçüde örtüşmesi. **RL'in devreye girmek zorunda olduğu senaryolar** ise farklıdır: fiilî konuşlandırma ortamı ile eğitim ortamı arasında sistematik bir fark olduğunda (örneğin eğitimde J/Q/K kartlarının hepsi 10 sayılırken konuşlandırmada 11/12/13'e dönüşmesi — kural değişmiştir; ya da eğitimde siyah kart takımları kullanılırken konuşlandırmada kırmızı takımlarla karşılaşılması — görünüm değişmiştir), en iyi stratejinin keşfedilmesi gerektiğinde (uzman gösterimlerinin kendisi de en iyi olmayabilir) ya da etiketleme maliyeti aşırı yüksek olup her yol için gösterim sağlanamadığında RL gerekir.
-
-En sağlam strateji, **"önce SFT, sonra RL"** biçimindeki iki aşamalı akıştır. SFT'nin başlıca hedefi görev performansını uç noktaya taşımak değil, çıktının **format kararlılığını** kurmaktır — modelin ayrıştırılabilir JSON ve doğru araç arayüzü çağrıları üretebilmesini güvenceye almak. Ancak çıktı formatı kararlı hale geldikten sonra RL'in ödül sinyali güvenilir biçimde hesaplanabilir. SFT'den geçmemiş bir temel modelin üzerinde doğrudan RL yapmak, çıktı formatının darmadağın olması ve ödülün hesaplanamaması yüzünden çoğu zaman başarısızlıkla sonuçlanır — ama bu sonucun sınır koşulları vardır: "küçük ölçekli temel model + katı yapılandırılmış çıktı gereksinimi" kurgusundan gelir (ilerideki Deney 7-11 gibi). DeepSeek-R1-Zero, yeterince güçlü bir temel modelin SFT'yi atlayıp doğrudan RL ile başarıya ulaşabileceğini, reflection ve uzun zincirli düşünme yeteneklerinin kendiliğinden belirebileceğini kanıtladı — bedeli, çıktının okunabilirliğinin düşük olması ve birden çok dilin birbirine karışmasıydı; DeepSeek'in sonunda R1'e "cold start SFT"i geri eklemesinin nedeni tam olarak budur. R1'in Zero'dan cold start'a bu gidiş gelişi, "önce biçim, sonra ruh" ilkesinin en iyi örneğidir: RL "ruhu" (stratejiyi ve akıl yürütme yeteneğini) kendi başına yetiştirebilir, ama "biçim" (format ve okunabilirlik) yine de en hızlı ve en sağlam biçimde SFT ile ayağa kaldırılır.
-
-İkisinin de bir bedeli var: SFT'nin örneklem verimliliği yüksek, yakınsaması hızlıdır ama genelleştirmesi kısıtlıdır; RL aktarılabilir stratejiler öğrenebilir ama örneklem verimliliği düşük ve eğitimi kararsızdır. Pratik bir ölçüt şudur: "gösterim verisini ne kadar artırırsanız artırın yeni senaryodaki performans bir türlü yükselmiyorsa", RL'e geçmenin eşiğine gelmişsiniz demektir — sorunun kökeni gösterim sayısında değil, SFT'nin optimizasyon hedefinin kendisindedir.
-
-Pratikte karar verirken şu sırayı izleyebilirsiniz:
-
-1. **Önce şunu sorun: post-training gerekiyor mu?** Sorun Harness engineering ile (prompt optimizasyonu, araç tasarımı, context yönetimi) çözülebiliyorsa modeli eğitmeye gerek yoktur. Agent uygulamalarının çoğu buraya düşer.
-2. **Eğitim gerekiyorsa: önce SFT'yi deneyin.** Çıktı formatını kalıcılaştırmak (JSON schema, API çağrı formatı), protokole ait bilgiyi kalıcılaştırmak (terimlerin kullanımı, çıktı formatı, akış alışkanlıkları; yani "nasıl söylenir, nasıl yapılır") ve üslubu tekleştirmek (ton, uzunluk) için uygundur. Ancak dikkat: SFT büyük miktarda olgusal bilgiyi ("ne bilindiğini") enjekte etmeye uygun değildir — bunun için pre-training'e devam etmek ya da işi RAG'a bırakmak gerekir (ayrıntısı bölümün sonundaki "eksiksiz manzara" kesiminde). SFT'nin maliyeti düşüktür ve hızlı sonuç verir.
-3. **SFT yetmiyorsa: RL ekleyin.** Yeni senaryolara genelleştirme gerektiğinde, en iyi stratejinin keşfedilmesi gerektiğinde ya da etiketleme maliyetinin aşırı yüksek olduğu durumlarda uygundur. Mutlaka önce SFT ile çıktı formatını kararlı hale getirin, RL'i onun üzerine kurun.
-
-## Tek Turlu Pekiştirmeli Öğrenme: Ezber ile Genelleştirmenin Karşılaştırılması
-
-"Tek tur", görevin tek bir etkileşimde tamamlanması demektir: model girdiyi alır, çıktıyı üretir, ödülü kazanır ve adımlar arası bir durum tutmasına gerek kalmaz. Bu sadeleştirilmiş kurgu, çok turlu etkileşimin karmaşıklığına takılmadan SFT ile RL'in öğrenme mekanizmalarındaki temel farka odaklanmamızı sağlar. Tek turlu senaryo net bir kontrollü deney ortamı sunar: aynı görev, aynı temel model, aynı hesaplama bütçesi; tek değişken eğitim yöntemidir. İlk deney, RL'in "ne zaman düşünmek gerekir" biçimindeki üst-stratejiyi nasıl öğrendiğini gösteriyor; ikinci deney ise aritmetik akıl yürütme gerektiren bir kart oyunuyla "SFT ezberler, RL genelleştirir" iddiasını sistemli biçimde niceliyor.
-
-Deneylere geçmeden önce, sonraki deneylerde geçen terimleri anlayabilmek adına RL algoritmalarına dair **asgari bir sezgi** kuralım (eksiksiz formüller ve karşılaştırma, bölümün ilerisindeki "Pekiştirmeli Öğrenme Algoritmalarının Karşılaştırması" kesimine bırakıldı). Bu bölümdeki RL eğitimlerinin çoğu **policy gradient** temellidir: modele aynı soru için birkaç yanıt ürettirilir, ödülü yüksek olan yanıtların ortaya çıkma olasılığı yükseltilir, ödülü düşük olanlarınki düşürülür — "ödülün yüksek olduğu yöne çok, düşük olduğu yöne az git". Tek seferlik güncellemenin fazla büyük olup modeli yoldan çıkarmaması için ana akım **PPO** algoritması her adımdaki güncelleme genliğini kırpar (ilerideki deneylerde geçen "değer ağı olan PPO" bunu kasteder; değer ağı bir taban çizgisi kestirip daha ince bir avantaj hesabı çıkarmaya yarar). Bir diğer algoritma olan **GRPO** ise değer ağı eğitmez; onun yerine "aynı sorunun birden çok yanıtını birbiriyle karşılaştırarak" her birinin göreli iyiliğini belirler. Bu sezgiyi aklınızda tutmanız sonraki iki deneyi anlamaya yeter.
-
-**GRPO grup güncellemesi:**
+**Tekrarlanabilir değerlendirme döngüsü:**
 
 ```python
-for prompt in batch:
-    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
-    rewards = [verify(trajectory) for trajectory in group]
-    advantages = normalize_within_group(rewards)       # GRPO baseline
-    update(policy, group, advantages)
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
 ```
 
-**PPO kırpılmış güncellemesi:**
+![Şekil 7-2: Araç Çağırma Tipi ve İnsan-Makine Etkileşimi Tipi Değerlendirme Ortamları](images/fig7-2.svg)
+
+### Araç Çağırma Tipi Değerlendirme Ortamı
+
+Kod üretimi ve veri analizi gibi ağırlıklı olarak araç kullanımına dayanan görevlerde, Verifiers çerçevesi tipik bir tasarım kalıbı sergiler. Agent görevi önceden tanımlanmış araçları çağırarak tamamlar; doğrulama, insan etiketlemesine veya model değerlendirmesine dayanmadan, çalıştırılabilir ölçütler (testler geçiyor mu, yanıt eşleşiyor mu) üzerinden yapılır.
+
+Verifiers katmanlı bir ortam tasarımı getirir: `SingleTurnEnv` tek turluk görevler (basit soru-yanıt gibi) için uygundur, `ToolEnv` çok turlu tool calling'in otonom döngüsünü destekler, `StatefulToolEnv` ve `SandboxEnv` ise durumlu araçları ve uzun süre çalışan sandbox ortamlarını (kod yürütme gibi) destekler. Örneğin `SingleTurnEnv`, bir matematik sorusu sorup yanıtı doğrudan doğrulamaya uygundur; `ToolEnv`, birden fazla web sayfasında arama yapıp yanıtı sentezledikten sonra nihai sonucu doğrulamaya uygundur; `StatefulToolEnv`, veritabanı kayıtlarını değiştirip veritabanı durumundaki değişimi doğrulamaya uygundur; `SandboxEnv` ise sandbox içinde kod çalıştırıp çıktı dosyalarını denetlemeye uygundur. Tablo 7-2 bu ortam türlerini özetler; okuyucu görev durumu, tool calling ve izolasyon ihtiyacına göre uygun değerlendirme ortamını seçebilir.
+
+Tablo 7-2 Verifiers Ortam Türlerinin Karşılaştırması
+
+| Ortam türü | Durum koruma | Tool calling | Tipik kullanım |
+|---|---|---|---|
+| SingleTurnEnv | Yok | Yok | Tek turlu soru-yanıt, matematik soruları |
+| ToolEnv | Yok | Çok turlu | Arama + bilgi sentezi |
+| StatefulToolEnv | Var | Çok turlu | Veritabanı kayıtlarını değiştirme |
+| SandboxEnv | Var + izolasyon | Çok turlu | Kod yürütme ve test |
+
+Çerçeve paralel örneklemeyi ve trajectory önbelleklemesini destekler; her değerlendirmenin eksiksiz trajectory'si (gözlem, eylem, ödül) sonradan analiz ve yeniden oynatma için saklanır.
+
+Ortamın ayrıca işlemlerin duruma bağımlılığını ele alması gerekir — bir aracın yürütme sonucu mevcut duruma bağlıdır; başarısızlık halinde basit bir hata bayrağı yerine açık hata mesajları verilmelidir ki Agent hatalarından öğrenip stratejisini ayarlayabilsin.
+
+### İnsan-Makine Etkileşimi Tipi Değerlendirme Ortamı
+
+Birçok gerçek görev yalnızca tool calling içermez, insan kullanıcılarla diyalog da gerektirir. Bir müşteri hizmetleri Agent'ının belirsiz ifadeleri anlaması, ihtiyacı netleştirmesi, arka uç sistemleri sorgulaması ve bilgiyi kullanıcıya doğrulatması gerekir. Bu tür görevlerin değerlendirmesi temel bir zorlukla karşılaşır: otomatik bir ortamda gerçek kullanıcı nasıl simüle edilir?
+
+Kilit tasarım ilkesi **kademeli bilgi açıklamadır (Progressive Information Disclosure)**; insan-makine etkileşimi tipi değerlendirmeyi geleneksel benchmark testlerinden ayıran temel fark budur. Çoğu benchmark en baştan bütün gereksinimi ortaya döker, oysa gerçek hayatta kullanıcılar ihtiyacını daha ilk anda net biçimde tarif edemez — genellikle yalnızca "uçuşumda bir sorun var galiba" ya da "internete bağlanamıyorum" derler. Agent'ın ihtiyacı proaktif sorularla netleştirmesi gerekir ve bu sürecin kendisi yeteneğin önemli bir göstergesidir. Bu yüzden değerlendirmede **simüle edilen kullanıcının tüm bilgileri asla en baştan Agent'a açılmamalıdır**; bilgi, diyalog boyunca ihtiyaç duyuldukça ve kademeli olarak verilmelidir.
+
+τ-bench'in çözümü **kullanıcı simülasyonudur (User Simulation)**: kullanıcı rolünü başka bir LLM üstlenir ve önceden tanımlanmış talimatlara göre Agent'la konuşur. Simüle edilen kullanıcı bir görev talimatı alır ("yarınki uçuşumu iptal etmem gerekiyor" gibi), diyalog sırasında gerekli bilgiyi Agent'a adım adım açar, sorulara yanıt verir ve görev tamamlandığında bir sonlandırma sinyali gönderir. Prompt, simüle edilen kullanıcıdan "bütün bilgiyi tek seferde açıklamamasını, yalnızca o adım için gerekli olanı vermesini" ve "talimatta verilmemiş bilgiyi uydurmamasını" ister. Kullanıcı simülasyonunun tasarımı gerçekçilikle denetlenebilirlik arasında bir ödünleşim gerektirir: davranış gerçek bir kullanıcıya yakın olmalı (belirsiz ifadeler, eksik bilgi, ara sıra duygusal dalgalanmalar), aynı zamanda tekrarlanabilirliği güvenceye almak için belirli bir senaryoyu izlemelidir.
+
+Aşağıda kademeli bilgi açıklamalı çok turlu bir diyalog örneği verilmiştir (kullanıcı simülatörü sabit bir senaryoya göre hareket eder):
+
+> **Kullanıcı**: "Uçuşumla ilgili bir sorun var."
+> **Agent**: "Hangi uçuş olduğunu söyleyebilir misiniz?"
+> **Kullanıcı** (senaryoya göre açıklar): "Delta 123, yarın sabah San Francisco'dan New York'a."
+> **Agent**: "Sorun tam olarak nedir?"
+> **Kullanıcı** (senaryoya göre açıklar): "Uçuş süresi çok uzun, değişiklik yaptırmak istiyorum."
+> **Agent**: "Yeni uçuş için bir tercihiniz var mı?"
+> **Kullanıcı** (senaryoya göre açıklar): "Öğleden sonraki uçuşların hepsi olur."
+
+Kullanıcı simülatörü sabit bir senaryoyu (bilinen bilgi + açıklama kuralları) izler; böylece değerlendirmenin tekrarlanabilirliğini güvenceye alırken gerçek bir kullanıcının kademeli anlatım biçimini de taklit eder.
+
+τ-bench, Agent'ın yapılandırılmış iş süreçlerindeki (havayolu müşteri hizmetleri, perakende müşteri hizmetleri gibi) performansını ölçen bir benchmark'tır. Denetimleri bileşen düzeyinde ve çok boyutludur: bir yandan veritabanının nihai durumunun doğru olup olmadığını kontrol eder (rezervasyon kaydının durumunun "iptal edildi"ye dönmesi gibi), diğer yandan Agent'ın diyalog sırasında gerekli kilit bilgileri verip vermediğini doğrular (iade tutarı ve hesaba geçiş süresi gibi; belirli dizeler veya kalıplar aranarak doğrulanır). Bu çifte doğrulama, işlem doğruluğunu ve iletişim etkinliğini aynı anda sınar. Ancak görev düzeyinde bu denetimler nihayetinde **sıfır ya da bir olan ikili bir ödüle** indirgenir: 1 puan almak için tüm denetimlerin geçmesi gerekir, herhangi biri geçmezse sonuç 0'dır. İkili ödül, Pass^k gibi güvenilirlik metriklerinin hesaplanmasını kolaylaştırır (bkz. ilerideki "Değerlendirme Metrikleri Sistemi" bölümü); bedeli ise "işlemi doğru yapıp kritik olmayan bir alanı atlamak" ile "tümüyle başarısız olmak"ın aynı puanı almasıdır.
+
+Geliştirilmiş sürüm olan **τ²-bench**'in temel katkısı puanlama inceliğinde değil, iki noktadadır: birincisi **çift kontrollü ortam (Dual-Control)** — artık yalnızca Agent araç çağıramaz, kullanıcı simülatörü de aynı paylaşılan ortam üzerinde işlem yapabilir (Agent kullanıcıya uçak modunu açmasını söyler ve kullanıcının işlemi ortam durumunu gerçekten değiştirir); bu, kullanıcının elini taşın altına koyması gereken teknik destek gibi gerçek senaryolara daha yakındır. İkincisi **daha kesin görev şartnameleri ve bileşimsel görev üretimi** — başarı koşullarındaki belirsizlik azalır ve somut görev örnekleri parametrelendirilip toplu olarak üretilebilir (ayrıntılı doğrulama boyutları için ilerideki "Doğrulanabilirlik ve Nesnellik Güvencesi" bölümüne bakın).
+
+> **Deney 7-1 ★: τ²-bench'i Çalıştırmak ve τ-bench'ten Evrimini Karşılaştırmak**
+>
+> Bu deney, τ²-bench değerlendirme çerçevesini çalıştırarak insan-makine etkileşimi tipi değerlendirme ortamlarının tasarım noktalarını anlamayı ve τ-bench ile τ²-bench arasındaki farkları karşılaştırarak değerlendirme veri kümelerinin nasıl yinelemeyle iyileştirildiğini kavramayı amaçlar.
+>
+> Görev tanım dosyalarını derinlemesine okuyun: her görev bilinen bilgiyi (kullanıcının arka plan bilgisi), görev talimatlarını (bilginin nasıl kademeli açıklanacağını ve yanıt stratejisini yönlendirir) ve başarı koşullarını (veritabanının hedef durumu ve diyalogda mutlaka geçmesi gereken doğrulama bilgileri) içerir. Eksiksiz değerlendirme akışını çalıştırın, kullanıcı simülatörü ile Agent arasındaki çok turlu diyaloğu gözlemleyin ve tipik başarısızlık kalıplarını (politika ihlali, bilgi atlama, aşırı sıklıkta insan temsilciye aktarma vb.) analiz edin.
+>
+>
+> ![Şekil 7-3: τ²-bench Değerlendirme Mimarisi](images/fig7-3.svg)
+>
+>
+> τ-bench ile τ²-bench'in tasarım farklarını karşılaştırın: τ-bench'in ilk sürümünde kullanıcı talimatları fazla basitti (Agent yanıtı tahmin edebiliyordu), başarı koşulları yeterince kesin değildi (yanlış değerlendirmelere yol açıyordu) ve kullanıcı simülatörü fazla mekanikti. τ²-bench bu sorunlara karşı sistematik iyileştirmeler yaptı:
+>
+> - **Daha ayrıntılı görev talimatları getirmek**: "olgusal dayanak gereksinimi" (Grounding) dahil, yani yanıtların ortamın gerçek durumuna dayanması zorunluluğu
+> - **Daha kesin değerlendirme ölçütleri**: örneğin "hız testi excellent döndürmedikçe sorun çözülmüş sayılmaz"
+> - **Daha gerçekçi kullanıcı simülatörü davranış kuralları**: kademeli bilgi açıklama, doğal duygusal dalgalanmalar
+>
+> τ²-bench'e yeni eklenen telecom alanı görevlerine özellikle dikkat edin ve çift kontrollü ortam tasarımını kavrayın (yukarıda anlatıldığı gibi, kullanıcı ve Agent aynı paylaşılan ortamı birlikte kullanır).
+>
+
+Araç çağırma tipi değerlendirme "gözlemlenebilir bir durum değişikliği tamamlandı mı" sorusuna odaklanırken, insan-makine etkileşimi tipi değerlendirme "kullanıcının kavrayışında veya kararında bir değişim sağlandı mı" sorusuna bakar — ilki Agent'ın eylem doğruluğunu, ikincisi iletişim stratejisinin isabetliliğini sınar.
+
+Değerlendirme ortamlarının kurulması simülasyon ortamı tasarımına da temas eder — bir değerlendirme ortamının büyük ölçekli, tekrarlanan etkileşimleri desteklemesi gerektiğinde simülasyon ortamına dönüşür; bu bölümün sonunda kısaca ele alınacaktır.
+
+## Değerlendirme Görev Veri Kümelerinin Tasarımı
+
+Değerlendirme ortamı "sahne", veri kümesi ise "senaryodur" — senaryonun ne kadar iyi yazıldığı, değerlendirmenin değerini çoğu zaman sahnenin kendisinden daha fazla belirler. Kötü tasarlanmış bir veri kümesi kusursuz bir ortamda çalıştırılsa bile yalnızca gürültü üretir. Bu bölüm; GAIA, AndroidWorld, SWE-Bench Verified (Software Engineering Benchmark, yazılım mühendisliği benchmark'ı), τ-bench ve τ²-bench, Terminal-Bench, OSWorld ve OSWorld-Verified gibi benchmark'ların tasarım pratiğinden defalarca doğrulanmış birkaç ilke damıtıyor.
+
+Bu liste, Agent değerlendirmesinin haritasını tüketmiyor. Yalnızca Web/GUI kategorisinde bile farklı yönlere ağırlık veren birçok benchmark var: WebArena tümüyle yeniden üretilebilir bir web sitesi kümesi (e-ticaret, forum, kod barındırma vb.) kurarak "gerçek web sayfalarının" denetlenemezliğini bir sandbox'a kapatır; Mind2Web tam tersini yapar ve genelleme yeteneğini doğrudan yüzlerce gerçek web sitesi üzerinde ölçer; [ClawBench](https://claw-bench.com/) ([makale](https://arxiv.org/abs/2604.08523), [kod](https://github.com/TIGER-AI-Lab/ClawBench)) ise yalıtılmış bir container içinde çalışan Agent'ın canlı web sitelerinde uçtan uca gündelik görevleri yerine getirmesini sağlar. V1, 144 web sitesinde 153 görevi kapsar; V2 buna 130 görev daha ekler ve beş kanıt katmanını paralel olarak kaydeder: oturum tekrarları, eylem ekran görüntüleri, HTTP trafiği, tarayıcı eylemleri ve Agent mesajları. Canlı sitelerdeki değişimi ve uzun kuyruklu başarısızlıkları analiz etmeyi kolaylaştırarak sandbox benchmark'larını tamamlar; bunun karşılığında yeniden üretilebilirlik üçüncü taraf web sitelerindeki değişikliklere bağlıdır. BrowseComp ise derin retrieval'a odaklanır — yanıtlar çok derine gizlenmiştir, bulmak için çok sıçramalı gezinme ve çapraz doğrulama gerekir. Tool calling boyutunda ise BFCL (Berkeley Function-Calling Leaderboard) gibi özel fonksiyon çağırma sıralamaları var. Bu bölümün amacı bütün benchmark'ları sıralamak değil; iki temel ortam paradigmasını (araç çağırma tipi ve insan-makine etkileşimi tipi) ve veri kümesi örneklerinin içinden geçen GUI işlem senaryolarını alıp tasarım ödünleşimlerini derinlemesine kazmak — paradigmaları kavradıktan sonra, herhangi bir yeni benchmark karşısında neyi ölçtüğünü, sızıntıya karşı ne kadar korunduğunu ve sonuçlarının nereye kadar genellenebileceğini hızla değerlendirebilirsiniz.
+
+> **Deney 7-2 ★: Benchmark Görevlerini Elle Yapmak**
+>
+> GAIA, AndroidWorld, SWE-Bench Verified, τ²-bench, Terminal-Bench ve OSWorld-Verified'dan birer görev seçip kendi elinizle tamamlayın. Her veri kümesinden kolay, orta ve zor birer görev yapmanız önerilir — "zor" seviye insanlar için de zorlayıcıdır. Kendi sonuçlarınızı standart yanıtlarla karşılaştırın ve farkların kaynağını analiz edin. Bu birinci elden deneyimle şunları kavrayın: görev açıklamaları netlikle açıklık arasında denge kurmalıdır, doğrulama ölçütleri nesnel ve çalıştırılabilir olmalıdır, görev zorluğunun katmanlandırılması farklı yetenek düzeylerini ayırt edebilmelidir.
+>
+
+### Görev Veri Kümesi Tasarımının Temel Zorlukları
+
+**Zorluk bir: netlikle açıklık arasındaki gerilim.** Görev açıklaması, değerlendirmenin tekrarlanabilirliğini güvenceye alacak kadar net olmalı, ama Agent'ın yaratıcılığını kısıtlayacak kadar da katı olmamalıdır. GAIA buna bir örnek sunar: görevler "kavramsal olarak basit", ama uygulama yolları açıktır — örneğin NASA'nın Günün Astronomi Fotoğrafı'ndaki astronotun bilgilerini bulmak istenir; hedef nettir (belirli bir astronotu ve uzayda geçirdiği süreyi bulmak), ama nasıl arama yapılacağı, nasıl eleneceği ve nasıl doğrulanacağı tamamen Agent'ın kendi kararına bırakılmıştır.
+
+**Zorluk iki: gerçekçilikle denetlenebilirlik dengesi.** Gerçek görevler belirsizlik ve gürültü içerir; bu, sağlamlığın görünür olmasını sağlar ama tekrarlanabilirliği de tehdit eder. SWE-Bench'in ilk sürümü doğrudan GitHub'daki gerçek issue'ları aldı; bu, gerçekçiliği güvenceye aldı ama görev açıklamalarının belirsiz, test durumlarının eksik ve değerlendirme ölçütlerinin öznel olmasına da yol açtı. SWE-Bench Verified, insan uzmanlarla sistematik bir doğrulama süreci getirdi ve bunlar arasından sorunu açık, testleri yeterli, çözümü belirgin 500 yüksek kaliteli görev seçti; böylece gerçekçiliği korurken denetlenebilirliği belirgin biçimde artırdı.
+
+**Zorluk üç: çeşitlilikle sistematikliğin uyumu.** Etkili bir veri kümesinin tipik durumları, sınır koşullarını ve hata tuzaklarını kapsaması, aynı zamanda sistematik bir organizasyonu olması gerekir; ancak böylece değerlendirme sonuçları belirli yetenek eksikliklerini teşhis edebilir. AndroidWorld'ün 116 görevi 20 gerçek uygulamaya yayılır ve her görev gerektirdiği temel yeteneklerle (çok adımlı planlama, görsel anlama, zamansal akıl yürütme) etiketlenmiştir; böylece değerlendirme sonuçları yalnızca genel bir başarı oranı vermez, belirli yetenek boyutlarındaki güçlü ve zayıf yanları da ortaya çıkarır. Daha da önemlisi, parametrelendirme mekanizmasıyla neredeyse sınırsız sayıda görev varyantı üretilebilir.
+
+**Zorluk dört: değerlendirme maliyetine karşı kapsam.** Karmaşık Agent görevleri tamamlanması dakikalar hatta saatler süren ve büyük miktarda token tüketen işlerdir. Veri kümesinin büyüklüğü, kapsayıcılıkla ekonomiklik arasında dengelenmelidir. GAIA, üç zorluk düzeyine ayrılmış 466 soruyu özenle seçer; hem birçok yetenek boyutunu kapsar hem de değerlendirmenin makul bir maliyetle tamamlanmasına izin verir. SWE-Bench Verified ise 2.294 sorudan 500 soruya indi (maliyet yaklaşık beşte dört azaldı; daha katı kalite ölçütleriyle sinyal-gürültü oranı yükseldi).
+
+**Zorluk beş: veri sızıntısını (Data Contamination) önlemek.** Büyük dil modelleri çağında veri sızıntısı, değerlendirmenin karşılaştığı ciddi bir zorluktur: değerlendirme verisi eğitim verisine karıştığında, değerlendirme genelleme yeteneğini değil ezberi ölçmeye başlar; tıpkı sınavdan önce yanıtları ezberlemek gibi — alınan not ne kadar yüksek olursa olsun gerçek düzeyi göstermez. Her benchmark farklı bir önleme stratejisi benimsedi: GAIA yanıtların benzersizliğine dayanır; sorular ancak birden fazla bilgi kaynağı birleştirilerek yanıtlanabilir ve bazı görevlerde özel olarak üretilmiş ek dosyalar (internette bulunmayan PDF/ses/görsel) bulunur, dolayısıyla tek bir web sayfası yanıtı doğrudan veremez. SWE-Bench Verified'ın kendisi, OpenAI'nin özgün SWE-Bench üzerinde elle kalite elemesi yaparak elde ettiği 500 soruluk bir alt kümedir ve zaman boyutlu bir sızıntı önleme tasarımı içermez; sızıntıyı gerçekten zamansal tazelikle önleyenler SWE-bench-Live gibi sonraki çalışmalardır — bunlar modelin eğitim kesim tarihinden sonra açılan issue'ları sürekli toplayarak değerlendirmeyi modelin eğitim külliyatının hep önünde tutar. τ²-bench önlemeyi dinamik parametre üretimiyle yapar; somut görev örnekleri (kullanıcı adı, sipariş numarası, tarih vb.) her seferinde rastgele üretilir. AndroidWorld'ün parametrelendirilmiş görev üretimi doğası gereği sızıntıya dirençlidir, çünkü doğrulama işlem dizisine değil nihai UI durumuna dayanır. Terminal-Bench ise kanarya tanımlayıcıları (canary GUID, yani küresel benzersiz tanımlayıcı — benzersiz bir izleme işareti) gömerek sızıntıyı saptanabilir kılar: model bu GUID'i içeren bir içerik üretebiliyorsa, benchmark verisi eğitim kümesine sızmış demektir.
+
+### Görev Açıklamalarının Kesinlik Tasarımı
+
+GAIA, yanıtın tekliğini net bilgi kaynağı kısıtları, zaman aralıkları, konu ve sorgu hedefi üzerinden güvenceye alır. Örneğin bir Level 3 görevi, belirli bir tarihteki NASA görselinden yola çıkıp görsel anlamayla astronotu tanımayı, astronotun bağlı olduğu grubu sorgulamayı, uzayda kaldığı süreyi hesaplamayı ve çıktıyı tam olarak biçimlendirmeyi ister ("soyadı, noktalı virgülle ayrılmış, binlik ayırıcılı"); her ayrıntı otomatik doğrulamaya hizmet eder — yalnızca biçim ve içerik birebir eşleşirse geçmiş sayılır.
+
+τ²-bench bağlamsallaştırılmış bir tasarım getirir; her görev birden çok katman bilgi içerir: yüzeydeki sorun ("mobil veri çalışmıyor"), performans beklentisi ("kesinlikle mükemmel bir hız istiyorum"), kısıt ("başka bir hızı kabul etmem") ve örtük duygu durumu. Kilit iyileştirme, "bilinen bilgi" ile "görev talimatlarını" birbirinden ayırmaktır: bilinen bilgi kullanıcının o an elinde tuttuğu olgulardır; görev talimatları ise simülatöre bilgiyi nasıl kademeli açacağını gösterir ve içinde "olgusal dayanak gereksinimi" (Grounding Requirement, yani yanıtların tool calling'in gerçekte döndürdüğü sonuçlara dayanması, uydurulmaması) bulunur.
+
+SWE-Bench Verified; sorun açıklaması, yeniden üretme adımları, beklenen/gerçekleşen davranış gibi yapılandırılmış alanlar içerir ve etiketleyiciler açıklamayla test durumlarının uyuştuğunu doğrular. Terminal-Bench'in görev açıklamalarındaki her öğe mekanik olarak doğrulanabilir: dosya yolu var mı, izin değerleri doğru mu, sertifika parametreleri, tarih biçimi vb. Örneğin "build-linux-kernel-qemu" görevi Linux çekirdeği 6.9'un kaynaktan derlenmesini, `start_kernel` içine özel bir printk eklenmesini, bir initramfs üretilmesini ve bunun QEMU'da çalıştırılmasını ister; başarı ölçütü, açılış günlüğünde özel mesajın görünmesidir — Agent çıktıyı taklit ederek işin içinden sıyrılamaz, tüm süreci gerçekten tamamlamak zorundadır.
+
+AndroidWorld **parametrelendirilmiş şablon** tasarımını benimser. Bir görev statik metin değil, dinamik olarak örneklenebilen bir şablondur ("`[CONTACT_NAME]` kişisinin telefon numarasını `[NEW_PHONE]` olarak değiştir" gibi) ve her değerlendirmede farklı parametre değerleri rastgele üretilir. Bunun üç yararı var:
+
+- **Ezberi engeller**: parametre değerleri her seferinde farklıdır, sabit bir işlem dizisi yeniden oynatılamaz
+- **Veri çeşitliliğini artırır**: tek bir şablon neredeyse sınırsız sayıda örnek üretebilir
+- **Karşılaştırmalı deneyleri destekler**: bazı parametreler sabit tutulup yalnızca diğerleri değiştirilerek belirli bir etkenin etkisi hassas biçimde ölçülebilir
+
+Doğrulama, işlem dizisine değil nihai UI durumuna dayanır (telefon numarası alanının beklenen değeri içerip içermediği gibi).
+
+OSWorld'ün görevleri çoğunlukla "temiz" bir başlangıç durumundan değil, özenle yapılandırılmış ara durumlardan başlar; bu da gerçek kullanım senaryolarına daha yakındır. Görev açıklamalarının çok çözümlülüğü ("arka planı mora ayarla" isteğinde belirsizliği gidermek için somut bir renk kodu verilmelidir; "iki CSV'yi birleştir" isteğinde tek başlık/çift başlık gibi bütün makul yollar kabul edilmelidir) ve ortam belirsizliğini (sitelerin tarama engelleri, uygulama arayüzlerinin evrilmesi, zamanlama yarışları — OSWorld-Verified bunları çevrimdışı sayfa anlık görüntüleri, bağımlılık sürümlerini sabitleme ve açık bekleme koşulları gibi mekanizmalarla hafifletir) ele alması gerekir.
+
+### Görev Karmaşıklığının Katmanlı Tasarımı
+
+GAIA üç zorluk düzeyi tasarladı: Level 1 yalnızca 1-2 araç gerektirir (insanlar %93,9, GPT-4 %30,3), Level 2 çok adımlı düşünme gerektirir (%91,8 ve %9,7), Level 3 karmaşık bileşimler gerektirir (%87,3 ve %0). Katmanlı tasarımın teşhis değeri şuradadır: Level 1'deki başarısızlık temel araç kullanımı sorununa, Level 2 çok adımlı planlama ve bilgi bütünleştirme sorununa, Level 3 ise uzun dizili düşünme ve karmaşıklık yönetimi sorununa işaret eder — her katman farklı bir iyileştirme yönüne karşılık gelir (prompt engineering, planlama mekanizması, katmanlı mimari/post-training).
+
+τ²-bench katmanlandırmayı iş karmaşıklığı üzerinden yapar: basit bilgi sorgularından çok adımlı süreçlere (uçuş değiştirmek için sorgulama, alternatifleri gösterme, onay alma, fiyat farkını hesaplama ve ödeme gerekir), oradan arıza teşhisine (birden fazla olası nedeni sistematik biçimde kontrol edip düzeltmeyi doğrulama) ve son olarak politika muhakemesine (politikaya uymayan talepleri ele alma) uzanır.
+
+Terminal-Bench katmanlandırmayı teknik alan × işlem karmaşıklığı olmak üzere iki boyutta yapar; görev kaydında 200'den fazla görev toplanmıştır (çekirdek değerlendirme kümesinin büyüklüğü sürümden sürüme değişir; örneğin 2.0 sürümü topluluk katkıları arasından 89 yüksek kaliteli görev seçmiştir). Görevler basit mlflow model kaydından orta düzeydeki 7z parola kırmaya, oradan zor olan git sunucusu + webserver çok bileşenli entegrasyonuna ve en zor olan FEAL diferansiyel kriptanalizine (kriptografi bilgisi ve 30 saniyelik zaman kısıtını karşılayacak algoritma optimizasyonu gerektirir) kadar uzanır.
+
+### Doğrulanabilirlik ve Nesnellik Güvencesi
+
+GAIA'nın yanıtları kısa ve nettir; katı biçim kuralları doğrulamanın tam dize eşleşmesiyle yapılmasını sağlar ve ikili sonuç (eşleşti ya da eşleşmedi) nesnel tekrarlanabilirliği güvenceye alır. Yanıtların nadirliği aynı zamanda hile önleyici bir işlev görür — son derece somut olguların eğitim verisinde birebir aynı biçimde bulunması pek olası değildir.
+
+SWE-Bench Verified doğrulamayı kodun çalıştırılabilirliği üzerinden yapar ve FAIL_TO_PASS (düzeltmeden önce başarısız, düzeltmeden sonra başarılı; sorunun çözüldüğünü kanıtlar) ile PASS_TO_PASS (düzeltmeden önce de sonra da başarılı; yeni bir bug eklenmediğini kanıtlar) arasında ayrım yaparak çifte doğrulama sağlar. Verified sürümü ayrıca testlerin kendi kalitesinin güvenilir olmasını, bazen geçip bazen kalan kararsız testlerin (flaky tests) bulunmamasını da güvenceye alır.
+
+τ²-bench'in doğrulama sistemi çok katmanlı denetimler içerir (katmanların sonuçları görev düzeyinde yine ikili bir ödüle indirgenir; başarı için hepsinin geçmesi gerekir):
+
+- **Veritabanı durumu denetimi**: rezervasyon kaydının durumu, iade kaydının oluşturulup oluşturulmadığı
+- **Diyalog içeriğinde anahtar kelime araması**: iade tutarının ve hesaba geçiş süresinin kullanıcıya doğrulatılıp doğrulatılmadığı
+- **Süreç uygunluğu**: tool calling dizisinin analizi; örneğin sipariş değiştirilmeden önce kullanıcının açık onayının alınıp alınmadığı
+
+τ²-bench'in çift kontrollü ortamı (bkz. yukarıdaki "İnsan-Makine Etkileşimi Tipi Değerlendirme Ortamı" bölümü) doğrulamaya bir boyut daha ekler: kullanıcı simülatörü ortam durumunu gerçekten değiştirdikten sonra Agent bu değişikliği tool calling ile gözlemleyip incelemesini buna göre sürdürmek zorundadır; böylece doğrulama, "Agent kullanıcı tarafındaki işlemin sonucunu gerçekten okudu mu" sorusunu da kapsar.
+
+OSWorld, tam işletim sistemi erişimine sahip 134 bağımsız değerlendirme fonksiyonuyla donatılmıştır; dosya sistemi yapısını, süreç durumlarını, ağ bağlantılarını ve uygulamaların iç durumunu derinlemesine denetleyebilir. Örneğin bir veritabanı işlemi görevinde değerlendirme betiği yalnızca rapor dosyasının var olup olmadığını doğrulamaz, doğrudan veritabanına bağlanıp SQL'in doğru çalıştırılıp çalıştırılmadığını da denetler; tarayıcı görevlerinde DOM ağacını analiz eder, cookie/localStorage'ı kontrol eder ve formun gerçekten geçerli olup olmadığını doğrulamak için arka uca doğrulama istekleri gönderir. Bu derin denetim, "yüzeyde tamamlanmış ama özünde hatalı" durumları yakalayabilir — örneğin Agent gönder düğmesine basmıştır, ama alanlar yanlış doldurulduğu için istek sunucu tarafından reddedilmiştir.
+
+Terminal-Bench, Docker konteynerlerine dayalı standartlaştırılmış bir ortam üzerine kuruludur; dosya sistemi durumu denetimlerini (yol var mı, izin değerleri, içerik biçimi) program yürütme işlevselliğinin doğrulanmasıyla (build-linux-kernel-qemu görevinde QEMU'nun gerçekten başlatılıp özel printk mesajının aranması) birleştirir; canary GUID de sızıntıyı izlenebilir kılar.
+
+### Görev Dağılımının Sistematik Tasarımı
+
+Görev dağılımının yetenek boyutlarını, zorluk boyutlarını, senaryo boyutlarını ve sınır durumlarını sistematik biçimde kapsaması gerekir. GAIA genelliği hedefler — görevlerin çoğu reasoning, çok modluluk, gezinme ve araç kullanımının bileşimini gerektirir. τ²-bench özellikle "tuzak görevler" tasarlamıştır — örneğin kullanıcı "müşteri hizmetleri iptali onayladı" der ama iptal aslında politikaya uymamaktadır; böylece Agent'ın baskı ve yanıltma karşısında doğru muhakemesini koruyup koruyamadığı sınanır. OSWorld, işlem türü (dosya IO / masaüstü uygulaması / web uygulaması / uygulamalar arası akış) ile uygulama alanından oluşan iki boyutlu bir matrise dayanır ve üç işletim sistemine yayılır (araştırmalar işletim sistemleri arası yeteneklerin güçlü biçimde ilişkili olduğunu, bir sistemde öğrenilen yeteneğin diğerlerine aktarılabildiğini gösteriyor). Terminal-Bench ise sistem düşüncesini sınamak için "teknoloji yığınları arası bileşim görevleri" içerir (veri işleme + dosya işlemleri + Python mühendisliğini birleştiren yeniden parçalama görevi gibi).
+
+### Veri Kalitesi Kontrolü ve Yinelemeli İyileştirme
+
+SWE-Bench Verified, kalite kontrolünün örnek vakasıdır. OpenAI, özgün 2.294 görev arasından rastgele 1.699'unu insan değerlendirmesine soktu ve Python'a hâkim 93 geliştirici görevlendirdi. Etiketleyicilerin birden çok denetimi tamamlaması gerekiyordu: sorun açıklaması açık mı (neyin çözüleceği anlaşılıyor mu), test durumları eksiksiz mi (bütün yönleri ve sınır koşullarını kapsıyor mu), testler kararlı mı (ortamdan veya rastgelelikten kaynaklanan flaky test var mı), patch doğru mu (yeni hata ekliyor mu), zorluk makul mü. Katı elemenin sonunda yalnızca 500'ü geçti (%29) — bu yüksek eleme oranı, değerlendirme kalitesine yapılan zorunlu bir yatırımdır. Ayrıca standartlaştırılmış bir etiketleme kılavuzu oluşturup her denetim için somut ölçütler ve örnekler tanımladılar; böylece farklı etiketleyiciler arasındaki tutarlılığı güvenceye aldılar.
+
+τ²-bench, "bilinen bilgi" ile "görev talimatları" ayrımını (simülatör davranışını daha gerçekçi kılar) ve daha katı tamamlanma koşullarını ("yalnızca excellent çözülmüş sayılır; poor/fair/good kabul edilmez" gibi) getirerek "göstermelik düzeltmelerin" önüne geçer.
+
+OSWorld-Verified, yinelemeli iyileştirmenin örnek vakasıdır. OSWorld, Nisan 2024'te yayımlandıktan sonra hızla çok modlu Agent değerlendirmesinin önemli bir benchmark'ı haline geldi, ama 15 aylık yaygın kullanım sırasında 300'den fazla sorun açığa çıktı. Bu sorunlar dört gruba ayrılıyor: ortam sorunları (sitelerin tarama engelleri / CAPTCHA / dinamik içerik değişimleri), görev açıklaması sorunları (belirsiz ifadeler), doğrulama mantığı sorunları (fazla katı ya da fazla gevşek) ve başlangıç durumu sorunları (eksik yapılandırma). Hong Kong Üniversitesi ekibi yaklaşık 10 kişilik bir grup kurdu ve MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic, Simular gibi kuruluşlarla iki ay boyunca yakın iş birliği yaparak sistematik bir düzeltme çalışması yürüttü. Her sorun türü için bir düzeltme stratejisi belirlendi: ortam sorunları sürümleri sabitleyerek ve çevrimdışı yedekler alarak çözüldü, görev açıklamalarındaki belirsiz ifadeler yeniden yazılarak giderildi, doğrulama mantığı elle doğru referans çizgileri kurulup koşullar ayarlanarak dengelendi, başlangıç durumları ise bütünlük denetimleri eklenerek güçlendirildi.
+
+Değerlendirme altyapısı da yerel sanal makinelerden AWS bulut platformuna taşındı; esnek ölçeklendirme sayesinde paralellikte 50 kat hızlanma sağlandı (10 saati aşan süre birkaç dakikaya indi) ve Google Drive görevlerinin başlatılma başarı oranı %50'den %95'in üzerine çıktı. Tüm resmî değerlendirme trajectory verisi HuggingFace üzerinde herkese açıktır; böylece topluluk her ayrıntıyı inceleyebilir, sonuçları yeniden üretebilir ve sorunları saptayabilir — sürekli iyileştirmenin erdemli döngüsü böyle kurulur.
+
+Belirtmeye değer bir nokta: değerlendirme ortamlarıyla post-training ortamları çoğu zaman aynı kökten gelir; iyi tasarlanmış bir değerlendirme ortamı küçük bir dönüştürmeyle eğitim ortamına çevrilebilir — SWE-Gym, SWE-bench üzerine eğitim görevleri kurmanın temsilci örneğidir; τ²-bench ve AndroidWorld'ün parametrelendirilmiş şablonları ise toplu olarak devasa sayıda eğitim örneği üretebilir. Ancak net bir kırmızı çizgi çizmek gerekir: yeniden kullanılabilecek olan **ortamın kurgu mekanizmasıdır**; değerlendirme kümesindeki somut soruların kendisi eğitim verisinden kesin biçimde yalıtılmalıdır — bir değerlendirme sorusu eğitim kümesine girdiği anda ölçülen şey yetenek değil ezber olur (ayrıntılar için bkz. Bölüm 8).
+
+## Değerlendirme Metrikleri Sistemi
+
+"Hangi görevler üzerinde değerlendirme yapılacağı" belirlendikten sonra, "hangi boyutların ölçüleceği" sorusunu da yanıtlamak gerekir. Bu bölüm, Agent değerlendirmesinde sık kullanılan metrikleri başvurulabilir bir "metrik sözlüğünde" toplar — süreçten sonuca, kaliteden güvenliğe, her birinin tanımını ve kullanım alanını tek tek verir. Daha önce (örneğin τ-bench bölümünde) tekrar tekrar anılan Pass@k, Pass^k gibi metriklerin kesin tanımları da burada verilir.
+
+**Süreç metrikleri: kara kutudan beyaz kutuya.**
+
+Yalnızca nihai sonuca bakmak yeterli değildir; Agent'ın sonuca ulaşma süreci de aynı ölçüde önemlidir. **Eylem geçerlilik ve yetki oranı**, işlemler içinde hem geçerli hem de yetkili olanların payını ölçer — geçersiz işlemler arasında var olmayan bir aracı çağırmak ve yanlış parametre türü geçirmek vardır; yetki aşımı ise izin sınırlarının dışına çıkan davranışları anlatır. Yüksek bir oran, Agent'ın araç ekosistemini net biçimde kavradığını gösterir. **Tool calling doğruluk oranı** bir adım daha ileri gider ve parametrelerin anlamsal olarak da makul olmasını ister: arama aracının sorgu sözcükleri ihtiyacı doğru ifade etmeli, dosya işlemlerinin yolu doğru hedefi göstermelidir.
+
+**Yol verimliliği**, görevin ne kadar ekonomik tamamlandığını ölçer: adım sayısı (düşün-eyle-gözlemle döngüsünün tekrar sayısı), gereksiz eylemler (aynı anahtar kelimeyi tekrar tekrar aramak, aynı dosyayı defalarca okumak) ve geri dönüş sayısı (hatanın fark edilip düzeltilme sıklığı — ara sıra geri dönmek normaldir, ama sık geri dönüş ileriye dönük planlamanın yetersiz olduğunu gösterir). "Makul adım sayısını" tanımlamak için insan uzmanlardan veya sezgisel algoritmalardan bir referans çizgisi oluşturmak gerekir.
+
+**Retrieval kapsama oranı** bilgi toplama türü görevlere yöneliktir: Agent bilgi uzayını yeterince araştırdı mı? Yalnızca arama sonuçlarının ilk sayfasına bakıp aceleyle bir sonuca mı vardı? **Maliyet ve gecikme** ise istek sayısına, token harcamasına (girdi/çıktı maliyetleri ayrılmalı, KV Cache'in yeniden kullanımı hesaba katılmalıdır) ve duvar saati süresine (model çıkarımı + araç yürütme + ağ gecikmesi dahil) bakar; darboğazı bulmak için sürenin dağılımını izlemek gerekir.
+
+**Sonuç ve kalite metrikleri.**
+
+**Görev başarı oranı** en doğrudan sert metriktir ve katmanlı ölçütlerle tasarlanabilir (temel hedeflere mutlaka ulaşılmalıdır, ikincil hedefler kalite puanını etkiler). İstatistiksel yöntem açısından, sık karıştırılan iki metriği birbirinden ayırmak gerekir:
+
+- **Pass@k**: k denemeden **en az birinin** başarılı olma olasılığı; "Agent bunu yapabiliyor mu" sorusunu yanıtlar
+- **Pass^k**: k denemenin **tamamının** başarılı olma olasılığı; "Agent kararlı ve güvenilir mi" sorusunu yanıtlar
+- **Best@k**: k deneme içindeki **en iyi denemenin** puanı (başarılı olup olmadığı değil); "yeterli fırsat verildiğinde kalite tavanını" ölçer, çoğunlukla sürekli puanlaması olan açık uçlu görevlerde kullanılır
+
+Farkı somut bir sayıyla görelim: Agent'ın tek seferlik başarı oranı %60 olsun (yani Pass@1 = 0,6). Bu durumda 5 koşuda iki metrik şöyle çıkar: Pass@5 = 1 - 0,4^5 ≈ %99 (en az bir kez başarılı olması neredeyse kesin), Pass^5 = 0,6^5 ≈ %7,8 (hepsinin başarılı olma olasılığı çok düşük). İlki yetenek tavanını, ikincisi kararlılığı değerlendirir; ikisini karıştırmak yanlış yargılara götürür.
+
+
+**Güvenlik ve uyum metrikleri** üretim dağıtımında kritik önemdedir: hassas işlemlerin tetiklenmesi (veri silme / izin değiştirme / dışarıya iletişim gönderme), veri sızdırma (günlüklere parola yazdırma / özel dokümanları dış API'lere gönderme) ve kural dışı içerik — hepsi **sıfır tolerans ilkesine** tabi olmalıdır. Halüsinasyonun veto maddesiyle aynı mantık geçerlidir (bkz. ilerideki "Rubric'in Dört İlkesi"): tek bir ciddi güvenlik ihlali bütün değerlendirmeyi veto eder, diğer boyutlardaki üstün performans buna muafiyet sağlamaz.
+
+**Sağlamlık**, belirsizlik karşısındaki kararlılığı ölçer: rastgele tohum duyarlılığı (farklı başlangıç değerleriyle performans ne kadar değişiyor), sayfa değişikliklerine uyum (bir sitenin arayüz güncellemesi tam bir çökmeye yol açmamalıdır), API dalgalanmalarına tolerans (geçici arızalar, zaman aşımları ve biçim değişiklikleri zarifçe ele alınabiliyor mu) ve uzun süreli bellek paraziti (context'te biriken güncelliğini yitirmiş bilgi hatalı kararlara yol açıyor mu).
+
+**Yürütme trajectory'si ile nihai sonucun çifte kapsanması**. Değerlendirmede kolayca gözden kaçan bir ayrım şudur: Agent'ın yürütme sırasında "ne söylediği ve ne yaptığı" (yani Bölüm 1'de tanımlanan trajectory) ile "sistemin sonunda ne hale geldiği" (nihai sonuç, outcome) iki ayrı şeydir. Agent'ın "bilet alındı" demesi trajectory düzeyinde bir bilgidir; veritabanında gerçekten bir sipariş kaydının oluşması ise sonuç düzeyinde bir doğrulamadır. Yalnızca trajectory'ye bakmak "söyledi ama yapmadı" durumlarını kaçırır; yalnızca sonuca bakmak da ara adımların yoldan çıktığını göstermeyebilir. Anthropic bir keresinde şöyle bir örnek vermişti: bir uçak bileti rezervasyon Agent'ı yürütme sırasında havayolunun politikasındaki bir boşluğu fark edip kullanıcıya daha ucuz bir seçenek buldu — yalnızca önceden belirlenmiş yürütme yoluna göre puanlanırsa bu koşu başarısız sayılırdı; oysa nihai sonuç açısından bakıldığında kullanıcı daha iyi bir seçenek elde etmişti. Bu yüzden sistematik kör noktalardan kaçınmak için her iki değerlendirme türü de kapsanmalıdır.
+
+**İnsan eliyle örnekleme denetimi ve düşmanca inceleme.**
+
+Otomatik değerlendirme çoğu durumda güvenilir olsa bile düzenli insan eliyle örnekleme denetimi gerekir: farklı görev türlerini, başarılı/başarısız vakaları ve sınır puanların yakınındaki belirsiz vakaları kapsayacak biçimde — yalnızca sonuçları değil, puanlama gerekçelerinin isabetliliğini de gözden geçirerek. Bu denetim bir adım öteye götürülüp **değerlendirici kalibrasyonu** olarak sistemleştirilebilir: LLM değerlendiricilerini büyük ölçekte kullanmaya başlamadan önce, insan eliyle etiketlenmiş bir altın standart küme (örneğin görev türlerini ve zorluk düzeylerini kapsayan 100-200 vaka) oluşturulur; değerlendirici modelin (yani hakem rolündeki LLM'in; mekanizması için bkz. sonraki bölüm, LLM-as-a-Judge) insan etiketleriyle uyum oranı bu küme üzerinde ölçülür (basit uyum oranı ya da Cohen's kappa gibi bir uyum katsayısı; ikincisi rastgele tutturmadan gelen payı dışarıda bırakır). Değerlendirici model ancak önceden belirlenmiş bir eşiği (örneğin kappa'nın 0,7'nin üzerinde olması) aştıktan sonra büyük ölçekli değerlendirmede kullanılmalıdır; bundan sonra da değerlendirici model veya Rubric her güncellendiğinde altın standart küme üzerinde yeniden kalibre edilmelidir. Bu adım atlanırsa, LLM değerlendiricisinin verdiği puanlar insan yargısının güvenilir bir vekili değil, yalnızca "başka bir modelin görüşü" olur. **Düşmanca inceleme**, kırmızı takım (Red Teaming) yoluyla zorlayıcı vakaları bilerek kurgular: yüzeyde kusursuz görünen ama gizli hatalar içeren yanıtlar, anahtar kelime yığarak işin içinden sıyrılan yanıtlar ve değerlendirici modelin bilinen önyargılarını kullanarak hak etmediği yüksek puanı alan yanıtlar. **Çoklu hakem mekanizması** ise birden fazla bağımsız değerlendiricinin ayrı ayrı puan vermesini sağlar ve nihai sonucu ağırlıklı ortalama veya tutarlılık denetimiyle belirler — değerlendiriciler arasında ciddi bir görüş ayrılığı olduğunda vaka, ek insan incelemesi gerektiriyor diye işaretlenir.
+
+## Otomatik Değerlendirme Yöntemleri
+
+Değerlendirme ortamı, veri kümesi ve net bir metrik sistemi hazır olduğuna göre sıradaki temel soru şudur: nasıl puanlanacak? Doğru yanıtı belli olan görevlerde (matematik soruları, SQL sorguları gibi) basit bir ikili karar (doğru/yanlış) yeterlidir; ama açık uçlu görevlerde (müşteri hizmetleri diyalogları, rapor yazımı gibi) daha ince değerlendirme yöntemleri gerekir.
+
+Kodla otomatik doğrulama yalnızca standart yanıtı olan senaryoları kapsar; bu bölümün asıl konusu açık uçlu görevlerin puanlanmasıdır. Bunlardan ödül sinyalinin yoğunluk tasarımı (ikili ödülden süreç ödülüne, oradan üretken ödüle) ve ödül modellerinin eğitim yöntemleri, Bölüm 8'nin post-training bölümünde sistematik olarak tartışılmak üzere bırakılmıştır; bu bölüm daha temel bir soruyu yanıtlar: açık uçlu görevlerin çıktı kalitesi LLM ile otomatik olarak nasıl değerlendirilir?
+
+### LLM-as-a-Judge: Otomatik Değerlendirmenin Çekirdeği
+
+![Şekil 7-4: LLM-as-a-Judge Boru Hattı](images/fig7-4.svg)
+
+LLM-as-a-Judge'a neden ihtiyaç var? Açık uçlu görevlerde (rapor üretme, müşteri şikâyetlerini ele alma, yaratıcı içerik gibi) otomatik karşılaştırma yapılabilecek standart bir yanıt yoktur; insan değerlendirmesi ise pahalıdır ve ölçeklenmesi zordur. LLM-as-a-Judge, dil modelinin uzmanlarca tanımlanmış puanlama ölçütlerine (Rubric) göre değerlendirme yapmasını sağlayarak otomasyonun ölçeğiyle insan uzmanlığının yargısı arasında bir denge kurar. Ama bu yöntemin bilinen sınırları da var: değerlendirici modelin kendi önyargıları olabilir (en tipik olanı **uzunluk yanlılığıdır** — içerik daha doğru olmasa bile daha uzun ve daha ayrıntılı yanıtlara yüksek puan verme eğilimi) ve aynı girdi birden çok kez değerlendirildiğinde sonuçlar dalgalanabilir. Özellikle uzunluk yanlılığına karşı ayrıca önlem almaya değer; üç yaygın yöntem vardır: Rubric'te uzun uzadıya anlatımı açıkça cezalandırmak ve aynı tür görevler için yanıt uzunluğuna üst sınır koymak; ikili karşılaştırma yaparken iki adayın uzunluğunu önce birbirine yaklaştırıp sonra değerlendirmek; ve puanlarla yanıt uzunluğu arasındaki ilişkiyi düzenli olarak denetlemek — yüksek puanlar neredeyse her zaman uzun yanıtlara gidiyorsa, değerlendirme uzunluğun etkisine kapılmış demektir ve Rubric elden geçirilmelidir. Bu zorluklarla sistematik biçimde başa çıkmak için Rubric tasarımı aşağıdaki ilkelere uymalıdır:
+
+**Rubric (puanlama ölçütü): LLM değerlendirmesinin dayanağı.**
+
+**Rubric'in Dört İlkesi** (Scale AI, "Rubrics as Rewards"):
+
+(1) **Uzman rehberliğine dayanma** — Rubric alan bilgisini yansıtmalı, temel olguları ve akıl yürütme adımlarını yakalamalıdır. Örneğin tıbbi soru-yanıt için hazırlanan bir Rubric'in tanı ölçütlerini ve kaçınılması gereken tıbbi hataları içermesi gerekir; uzmanlık temeli olmayan bir Rubric yalnızca dilin akıcılığı gibi yüzeysel özellikleri yakalayabilir.
+
+(2) **Kapsayıcı olma** — olgusal doğruluğu, mantıksal tutarlılığı, eksiksizliği ve güvenliği kapsamalıdır; üstelik yalnızca olumlu ölçütleri tanımlamakla kalmayıp **tuzakları (Pitfall)** da açıkça belirtmelidir — yani yüksek riskli yaygın hataları; tıbbi tavsiyede doğrulanmamış bir tedaviyi önermek gibi.
+
+(3) **Ölçütlerin önem ağırlıklandırması** — ölçütler zorunlu (Essential), önemli, isteğe bağlı ve tuzak maddeleri olarak sınıflandırılır. Bu yapı **tek oyla veto mekanizmasını (Veto)** destekler: örneğin müşteri hizmetleri senaryosunda halüsinasyon (yanlış bilgi uydurma) tipik bir veto boyutudur — diğer boyutlardaki performans ne kadar üstün olursa olsun, yanlış bilgi ortaya çıktığı anda sonuç veto edilmelidir. Bu aynı zamanda anahtar kelime yığma biçimindeki reward hacking'e karşı da korur.
+
+(4) **Kendi kendine yeten değerlendirme** — her değerlendirme maddesi bağımsız olarak uygulanabilir olmalı, değerlendiricinin alan bilgisine bağlı olmamalıdır. "Yanıt derin bir kavrayış sergiliyor" gibi soyut ölçütlerden kaçınılmalı, bunun yerine "en az iki otoriter kuramdan alıntı yapıyor ve bunların sonucu nasıl desteklediğini doğru biçimde açıklıyor" gibi doğrulanabilir ölçütler kullanılmalıdır.
+
+Kilit pratik: her boyut için nesnel biçimde doğrulanabilir puan basamakları tanımlamak, belirsiz durumları ayırt etmeye yardımcı olacak somut örnekler ve **sınır vakaları** vermek. **Reward hacking'e** — yani Agent'ın görevi gerçekten tamamlamadan yüksek puana giden bir "kestirme yol" bulmasına — karşı proaktif önlem alınmalı; halüsinasyon, kullanıcıya yaranma, anahtar kelime yığma ve zor sorulardan kaçınma açıkça cezalandırılmalıdır. Rubric yinelemeli bir üründür — deneme kullanımıyla değerlendiriciler arasındaki görüş ayrılıkları toplanır, ölçüt adım adım iyileştirilir ve soyut ilkelerden ayrıntılı bir emsal derlemesine doğru evrilir.
+
+Aşağıda, kullanıcı belleği Agent'ı örneği üzerinden dört ilkeye uyan eksiksiz bir Rubric gösteriliyor. Test sorusu: "Kızımın çocuk doktoru kim?" (Yanıt, iki ayrı konuşma arasında ilişki kurmayı gerektirir: ilk konuşmada "kızımın adı Lily" denmiş, ikincisinde "Lily'yi Dr. Chen'e götürdüm" denmiştir.)
+
+```yaml
+rubric:
+  dimensions:
+    - name: Olgusal doğruluk
+      weight: essential        # Zorunlu madde
+      scoring:
+        4_Mükemmel: "Dr. Chen yanıtını doğru verir ve kızı Lily ile ilişkilendirir"
+        3_İyi: "Dr. Chen yanıtını doğru verir ama Lily'nin doktoru olduğunu belirtmez"
+        2_Geçer: "Doğru doktoru söyler ama yanında belirsiz ek bilgiler verir"
+        1_Başarısız: "Yanlış doktor adı verir veya bilmediğini söyler"
+
+    - name: Bilgi eksiksizliği
+      weight: important        # Önemli madde
+      scoring:
+        4_Mükemmel: "İlgili bilgileri kendiliğinden ekler (son muayene tarihi, tanı sonucu gibi)"
+        3_İyi: "Temel soruyu eksiksiz yanıtlar"
+        2_Geçer: "Temel soruyu yanıtlar ama elindeki ilişkili bilgileri atlar"
+        1_Başarısız: "Kritik bilgi eksik"
+
+    - name: Düşünme doğruluğu
+      weight: important
+      scoring:
+        4_Mükemmel: "'kızı = Lily' ve 'Lily için doktor = Dr. Chen' bilgilerini oturumlar arasında doğru ilişkilendirir"
+        3_İyi: "İlişkilendirme doğru ama düşünme yolu yeterince açık değil"
+        2_Geçer: "İlişkilendirmenin bir kısmı doğru"
+        1_Başarısız: "Yanlış ilişkilendirme (kullanıcının kendi doktorunu kızının doktoru sanmak gibi)"
+
+    - name: Halüsinasyon tespiti
+      weight: veto             # Veto maddesi: tetiklendiği anda toplam puan sıfırlanır
+      scoring:
+        pass: "Tüm bilgiler geçmiş konuşma kayıtlarına kadar izlenebilir"
+        fail: "Konuşmada geçmeyen bilgi uydurulmuş (hayali muayene tarihi, tanı sonucu gibi)"
+
+  edge_cases:
+    - "Kullanıcının birden fazla kızı varsa ve ayrı doktorlara gidiyorlarsa, hangi kızı olduğu sorulmalı"
+    - "Bellekte hem 'Dr. Chen' hem de '陈医生' (aynı adın Çince yazılışı) varsa, ikisi aynı kişi olarak tanınmalı"
+```
+
+**İyi Rubric ile kötü Rubric**: yukarıdaki her puan basamağı, "belleğe dair derin bir kavrayış sergiliyor" gibi nesnel olarak yargılanamayacak betimlemeler yerine doğrulanabilir somut davranışlar ("Dr. Chen yanıtını doğru verir") tanımlıyor. Veto maddesi ise alt sınırı net çiziyor: diğer boyutların hepsi tam puan alsa bile, halüsinasyon görüldüğü anda sonuç doğrudan sıfırdır.
+
+**Rubric değerlendirmesi öncesi deterministik veto:**
 
 ```python
-for trajectory in rollouts:
-    returns = discounted_returns(trajectory.rewards)
-    values = value_model(trajectory.states)
-    advantages = returns - stop_gradient(values)
-    ratio = exp(policy.log_prob(trajectory.actions)
-                - old_policy.log_prob(trajectory.actions))
-    policy_loss = -mean(min(
-        ratio * advantages,
-        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
-    ))
-    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
-update(policy, value_model, policy_loss + value_coef * value_loss)
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
 ```
 
-> **Deney 7-10 ★★: AdaptThink — "Ne Zaman Düşünmemek Gerektiğini" Öğrenmek**
+Rubric ile Agent'ın yanıtını birlikte hakem modele verin; model her boyutu puanlayıp gerekçesini yazsın. Onlarca vakanın sonuçlarını boyutlara göre topladığınızda ve düşük puanlı trajectory'leri yeniden oynattığınızda, genel bir “başarı düştü” bulgusu somut bir teşhise dönüşür: retrieval bir olguyu kaçırmış olabilir, model kişi ya da olayları yanlış ilişkilendirmiş olabilir veya dayanağı olmayan bir iddia eklemiş olabilir. İyi bir Rubric yalnızca sistemin kaç puan aldığını değil, bir sonraki incelemenin nereye yönelmesi gerektiğini de gösterir.
+
+> **Deney 7-3 ★★: Rubric Tabanlı Bir Kullanıcı Belleği Değerlendirme Sistemi Kurmak**
 >
-> Büyük düşünen modeller (OpenAI o1, DeepSeek-R1 gibi) her soru için uzun uzadıya düşünce zinciri üretir ve basit sorularda gereksiz maliyet doğurur. Deney önce bir sezgiyi doğruladı: **NoThinking modu** (`<think></think>` ile düşünmeyi atlamak) basit sorularda eşit, hatta daha iyi performans veriyor; Thinking'in üstünlüğü ancak zor sorular karşısında ortaya çıkıyor.
+> **Ön koşul**: Bölüm 3'teki kullanıcı belleği deneyinin (`chapter3/user-memory-evaluation`) tamamlanmış olması gerekir.
 >
-> AdaptThink, modele modu kendiliğinden seçmeyi RL ile öğretiyor. İki çekirdek bileşeni var:
+> Bu deney, Bölüm 3'teki `chapter3/user-memory-evaluation` çerçevesini dönüştürmenizi ve basit LLM-as-a-Judge'a dayanan mevcut puanlama mekanizmasını yapılandırılmış, çok boyutlu bir Rubric değerlendirme sistemine yükseltmenizi ister. Mevcut sistem tek bir LLM çağrısıyla geçti/kaldı sonucunu ve değerlendirme gerekçesini döndürür; yapılandırılmış teşhis yeteneğinden yoksundur.
 >
-> - **Kısıtlı optimizasyon hedefi**: NoThinking'i teşvik ederken genel performansın düşmemesini güvenceye alır.
-> - **Önem örneklemesi stratejisi**: Thinking/NoThinking örneklerini dengeler ve başlangıçtaki modelin neredeyse hep Thinking'i seçmesinden doğan **cold start** sorununu çözer (burada özellikle eğitimin ilk döneminde modelin neredeyse yalnızca Thinking örnekleri üretmesi, NoThinking dalından çok az örnek gelmesi ve bu yüzden öğrenmenin başlayamaması kastediliyor. Bu, daha önce DeepSeek-R1'in az sayıda gösterim verisiyle yaptığı "cold start SFT"ten farklı bir bağlamdaki kullanımdır).
+> Üç görev katmanının tamamına uygulanabilecek birleşik, çok boyutlu bir Rubric çerçevesi tasarlayın. Değerlendirme boyutları şunlardır: olgusal doğruluk (Precision, kesinlik — verilen bilgilerin ne kadarı doğru) sayıların/tarihlerin/adların bellekteki bilgiyle tutarlı olup olmadığını doğrular; olgusal eksiksizlik (Recall, geri çağırma — verilmesi gereken bilgilerin ne kadarı anıldı) ilgili bilgilerin tamamının verilip verilmediğini, kritik içeriğin atlanıp atlanmadığını doğrular; düşünme doğruluğu, bilgiler arasındaki ilişkilerin ve örtük mantığın doğru kavranıp kavranmadığını denetler; düşünme inisiyatifi, uygun anlarda doğrudan yanıtın ötesinde öneri veya risk uyarısı verilip verilmediğini değerlendirir; halüsinasyon tespiti ise bellekte bulunmayan bilgilerin uydurulmadığını güvenceye alır.
 >
-> Burada geçen "önem örneklemesi", istatistikte sık kullanılan bir yöntemdir: örneklem dağılımı belirli bir örnek türüne kaydığında, örneklere ağırlık vererek dağılımı "düzeltir" ve öğrenme sinyalinin bütün sınıfları adilce kapsamasını sağlar. Kitabın ilerisinde tartışılan PPO, DAPO gibi RL algoritmaları bu fikri tekrar tekrar kullanır.
+> Dört basamaklı puanlama (Mükemmel/İyi/Geçer/Başarısız) kullanın; her basamağa soyut betimlemeler yerine somut karar ölçütleri koyun. Halüsinasyon boyutunu tek oyla veto maddesi yapın. Her boyut için örnekler ve sınır vakaları verin.
 >
-> Bu tarihsel eğitim çalışmasının esas kaydı, checkpoint içermeyen [eğitim raporudur](../chapter7/AdaptThink/TRAINING_REPORT.md). Herkese açık ana W&B çalışması [`wubbn5tj`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/wubbn5tj), 8×NVIDIA H100 80GB kullandı. Step 0→300 arasında MATH500 doğruluğu 0.8100→0.8180 (+0.80 yüzde puan), yanıt uzunluğu 4911.46→1576.62 (-67.90%); GSM8K değerleri sırasıyla 0.796816→0.818802 (+2.20 yüzde puan) ve 1025.24→477.33 (-53.44%); AIME mean16 değerleri ise 0.314583→0.310417 (-0.42 yüzde puan) ve 12119.51→6402.23 (-47.17%) oldu. Karşılık gelen NoThinking oranları %83.80, %84.15 ve %56.25'tir. Bunlar veri kümesi toplamı düzeyinde zorlukla uyumlu bir yönlendirme sinyaline işaret eder; ancak her soru için “kusursuz zorluk farkındalığı” denemez ve doğruluğun genel olarak arttığı ileri sürülemez.
+> **Deney 7-4 ★★: Advanced JSON Cards ile RAG'ın Karşılaştırmalı Değerlendirmesi**
 >
-> Çalışma, raporda seçilen ölçüm noktasından sonra step 410'a ve toplam 36.92 saate kadar devam etti; ardından W&B durumu `crashed` oldu. Yapılandırılan 10 epochs / 3,140 steps tamamlanmadı. Step 300'de bir checkpoint zamanlama olayı bulunsa da checkpoint kitapla dağıtılmıyor; `run_eval_verl_hf.sh` ile başarıyla değerlendirildiğini veya MMLU'nun yeniden çalıştırıldığını kanıtlayan bağımsız bir yürütme kaydı da yok. Tarihsel kaynak commit'i `9e588202…`; gelecekteki yeniden üretimler doğrudan alt commit'i `0033ad172…` üzerine sabitlenmiştir. Üç giriş noktası dosyası değişmemiştir, ancak eğitim betiğinin ürettiği `-fl-` yolu, değerlendirme betiğinde sabit kodlanmış `-fl4096` yoluyla uyumlu değildir ve elle düzeltilmelidir.
+> **Ön koşul**: Bölüm 3'teki kullanıcı belleği ve RAG deneylerinin (`chapter3/user-memory`, `chapter3/agentic-rag-for-user-memory`) tamamlanmış olması gerekir.
 >
-> Prompt damıtma ile birbirini tamamlayarak bir "hızlı-yavaş çift sistem" oluşturuyor: damıtma, düşünme gerektiren görevlerin oranını düşürüyor; AdaptThink ise kalan görevlerde tetikleme stratejisini optimize ediyor. İkisi birlikte düşünme verimini en üst düzeye çıkarıyor.
+> **Amaç**: Yapılandırılmış bellek ile yapılandırılmamış retrieval'ın üstünlük sınırlarını aynı değerlendirme kümesi üzerinde adil biçimde karşılaştırmak. Bölüm 3'teki iki projeyi yeniden kullanın ve `chapter3/user-memory-evaluation` içindeki 60 test durumu üzerinde üç yapılandırmayı karşılaştırın — saf Advanced JSON Cards (yapılandırılmış kartlar sürekli context'te durur, retrieval gerekmez), saf RAG (konuşmalar parçalara ayrılıp vektör veritabanına konur, retrieval zorunludur) ve hibrit sistem (temel olgular sürekli context'te + özgün konuşmalar ihtiyaç halinde retrieval ile).
 >
-> **Deney 7-11 ★★: GeneralPoints — Tek Turlu RL'de "Ezber ile Genelleştirme" Karşılaştırması**
+> **Kabul ölçütü**: Üç karmaşıklık katmanında (temel hatırlama / çok oturumlu belirsizlik giderme / oturumlar arası gizli ilişkilendirme) başarı oranını, ortalama adım sayısını, tool calling sayısını, gecikmeyi ve maliyeti kaydedin; her yaklaşımın nerede çöktüğünü net biçimde anlatın — yapılandırma neyi kaybetti, retrieval neyi kaçırdı, hibrit gerçekten bir sinerji sağlıyor mu. Yapılandırma ayrıntıları ve test durumları için eşlik eden depoya bakın.
 >
+
+Eşlik eden deney, üç sistemi aynı 60 soru üzerinde çalıştırdı ve 180 gerçek API trajectory'sini sakladı. Tablo 7-3 yüzdelerin yanında başarılı vaka sayılarını da gösteriyor.
+
+Tablo 7-3 Bellek Sistemine ve Görev Düzeyine Göre Başarı Oranı
+
+| Sistem | Temel hatırlama | Çok oturumlu belirsizlik giderme | Oturumlar arası gizli ilişkiler | Toplam |
+|---|---:|---:|---:|---:|
+| Advanced JSON Cards | 95% | 60% | 50% | 68.3% (41/60) |
+| RAG | 90% | 40% | 15% | 48.3% (29/60) |
+| Hibrit | 80% | 70% | 50% | 66.7% (40/60) |
+
+Hibrit sistem kendiliğinden üstün gelmedi. Tekil iki yaklaşımın da çözemediği üç vakayı çözdü, ancak her vakadaki daha iyi tekil yaklaşıma kıyasla sekiz vakada geriledi; ortalama ödülü de vaka başına en iyi tekil sistemden 0.092 daha düşüktü. Saf RAG temel hatırlamada yapılandırılmış kartlara yaklaştı, fakat oturumlar arası gizli ilişkilerde 15%'e düştü. İlgili parçayı bulmak yalnızca ilk adımdır; Agent'ın kişiler, olaylar ve zaman arasındaki doğru ilişkiyi yeniden kurması gerekir.
+
+Halüsinasyon vetosu da 180 kararın 28'inde tetiklendi. Bu, kâğıt üzerinde kalan bir güvenlik maddesi değildi; sonucu gerçekten değiştirdi. Uygulamada “yapılandırılmış bellek + RAG” bileşiminin otomatik olarak sinerji yaratacağını varsaymayın. Önce her yaklaşımın her zorluk düzeyinde nasıl başarısız olduğunu inceleyin; sonra hangi olguların sürekli context'te kalacağına ve hangi soruların retrieval tetikleyeceğine karar verin. Bu çalışma, sentetik vakalarda tek bir model-hakem yapılandırmasıyla yürütülen bir kampanyadır. Bellek mimarileri için evrensel bir sıralama değil, başarısızlık mekanizmalarına ilişkin bulgu sunar.
+
+Bu sonuç da hakemin güvenilir olmasına bağlıdır. Agent ile hakem aynı model ailesindense aynı tercihleri ve kör noktaları paylaşabilirler.
+
+**Aynı aileden model sorunu ve çok kaynaklı değerlendirme.**
+
+Agent ile değerlendirici model aynı model ailesinden geldiğinde, Agent değerlendirici modelin tercihlerini ve kör noktalarını kullanmayı öğrenebilir.
+
+**Goodhart Yasası'nın (Goodhart's Law) söylediği tam olarak budur: bir ölçüt optimizasyon hedefi haline geldiğinde, iyi bir ölçüt olmaktan çıkar.** Agent belirli bir puanlama sistemi üzerinde ne kadar çok eğitilir veya ayarlanırsa, gerçekten yetenek kazanmak yerine o sistemin açıklarını kullanmaya o kadar eğilimli olur.
+
+Daha da sinsi olanı: Agent zamanla, değerlendirici modelin saptamakta iyi olmadığı hata türlerinden kaçınmayı öğrenir ve puanlama sisteminde her şey yolundaymış gibi görünür.
+
+Hafifletme stratejisi **çok kaynaklı ve heterojen değerlendirmedir** — farklı model ailelerinden birden çok LLM ayrı ayrı değerlendirme yapar (örneğin Agent Claude ile çalışıyorsa değerlendirme GPT-5 ve Gemini ile yapılır). Farklı ailelerin önyargıları çoğu zaman birbirine diktir, dolayısıyla Agent'ın bütün değerlendiricileri aynı anda "kandırması" çok zordur. Herkesin aynı hedefi değerlendirdiğinden emin olmak için aynı Rubric kullanılır ve sonuçlar ağırlıklı ortalama veya tutarlılık denetimiyle birleştirilir. Dağıtım aşamasında hızlı değerlendirme için tek bir model kullanılabilir, ama kalite denetimi düzenli aralıklarla eksiksiz çok kaynaklı değerlendirmeyle yapılmalıdır.
+
+Çok kaynaklı değerlendirme "hangi modelle değerlendirileceği" sorusunu çözer; sırada "hangi modalitelerin değerlendirileceği" sorusu var — LLM-as-a-Judge'ın yeteneğini metinden sese, görüntüye ve videoya genişletmek, değerlendirme kapsamının bir başka boyutudur.
+
+**Çok modlu LLM-as-a-Judge.**
+
+Çok modlu değerlendirme, LLM-as-a-Judge'ı ses, görüntü ve video alanlarına genişletir; yaygın dört yön aşağıdadır.
+
+- **TTS değerlendirmesi** (TTS, yani Text-to-Speech, metinden konuşmaya): doğruluk, doğallık, ses tınısı tutarlılığı ve duygu ifadesi değerlendirilir. Bu boyutlar, geleneksel WER'in (Word Error Rate, kelime hata oranı) yakalamakta zorlandığı ezgi (prozodi) sorunlarını ortaya çıkarabilir.
+- **ASR değerlendirmesi** (ASR, yani Automatic Speech Recognition, konuşma tanıma): anlamsal etki değerlendirmesi yapılır — "bugünkü hava" ifadesinin yanlış tanınması zararsızdır, ama "bin lira gönder" ifadesinin "on bin" olması ciddi sonuçlar doğurabilir.
+- **UI değerlendirmesi**: **Proposer-Reviewer** (önerici-inceleyici) mekanizması kullanılarak metin taşması, renk kontrastı, düğme konumu gibi sorunlar denetlenir. Buradaki Proposer-Reviewer bir **değerlendirme yöntemi** olarak kullanılır; Bölüm 5'teki **üretim sistemi bileşeni** kullanımından farklıdır, ama temel mekanizma aynıdır — bir model üretir, başka bir model bağımsız olarak inceler.
+- **Video kurgu değerlendirmesi**: anahtar kareler üzerinden kesme başlangıç/bitiş noktalarının ve efekt uygulamalarının doğru olup olmadığı doğrulanır.
+
+### Hata atfı ve trajectory-prefix regresyon görevleri
+
+Uçtan uca değerlendirme çoğu zaman yalnızca “başarılı/başarısız” der. Sonucu düzeltmeye dönüştürmek için her başarısız trajectory'de kategori, kabul edilemez davranışın ilk adımı, ilgili araç çağrısı veya model çıktısı ve denetlenebilir kanıt kaydedilmelidir. Bad case'ler kullanıcı düzeltmesi, olumsuz geri bildirim veya sonradan yapılan durum/kural kontrolünden gelebilir. LLM yardımcı olur, ancak kök neden genellikle ürün sorunu da olabileceğinden insan analizi gereklidir.
+
+Coding Agent için başlangıç sınıfları süreç/depo kuralı eksikliği, araç/biçim hatası, anormal sonlanma ve tamamlama/mantık hatasıdır. Adım numarası, araç, gözlem, kök neden ve sonuç, kurtarılabilirlik ve güveni JSON/YAML olarak; ortam durumu, sürümler ve tam trajectory ile birlikte saklayın.
+
+**Uçtan uca regresyon** bütün akışı çalıştırır; **trajectory-prefix regresyonu** ilk hatadan hemen önceki bağlamı, konuşmayı, araç dönüşlerini ve durumu dondurup yalnızca sonraki gözlemlenebilir eylemi sınar. Tek bir kanonik cevap yerine izin verilen eylemler kümesini (kuralları okuma, kullanıcıya sorma, tehlikeli işlemi reddetme) ve yasakları tanımlayın. Değerlendirme ve eğitim verileri ayrılmalıdır.
+
+> **Deney 7-5 ★★: Birden çok gösterimle trajectory-prefix sınır değerlendirmesi**
 >
-> ![Şekil 7-12: GeneralPoints deney mimarisi (GP-L ve GP-VL varyantlarının eğitim ve test tasarımı)](images/fig7-12.svg)
+> Modele bilinen kullanıcı belleği, güncel talimat, trajectory prefix, araç dönüşleri ve ortam durumu verilir; yalnızca sonraki gözlemlenebilir eylem istenir. 11 vaka JSON Cards, Markdown ve Python-like biçimlerinde kodlanıp deterministik kurallarla denetlendi. 33/33 hücre API hatasız tamamlandı ve her gösterim 6/11 geçti; gösterimi değiştirmek tek başına kullanım politikasını düzeltmez.
+
+> **Deney 7-6 ★★: Tam Otomatik Bir TTS Kalite Değerlendirme Boru Hattı Kurmak**
 >
+> Bu deney, eksiksiz bir çok modlu LLM-as-a-Judge TTS kalite değerlendirme sistemini sıfırdan tasarlayıp uygulamanızı ister.
 >
-> GeneralPoints, Chu ve arkadaşlarının (2025, *SFT Memorizes, RL Generalizes*, arXiv:2501.17161) önerdiği ve özellikle modelin genelleştirme yeteneğini değerlendirmek için tasarlanmış aritmetik düşünme kart oyunudur. Görevin hedefi "24" oyununa benzer: dört kartın üzerindeki sayıları toplama, çıkarma, çarpma ve bölme işlemleriyle, her sayıyı tam olarak bir kez kullanarak 24 hedef sayısına ulaştırmak. Deneyde salt metin tabanlı GP-L ve görüntü tabanlı GP-VL olmak üzere iki varyant tasarlandı; böylece kural genelleştirmesini ve görsel genelleştirmeyi aynı çerçeve içinde ayrı ayrı inceleyebiliyoruz.
+> Çok boyutlu bir TTS Rubric'i tasarlayın: doğruluk boyutu bütün metnin doğru okunup okunmadığını doğrular (atlama/yanlış okuma/ekleme yok); doğallık boyutu konuşmanın akıcı olup olmadığını değerlendirir (makine hissi ve doğal olmayan duraklamalar var mı, ezgi insan alışkanlıklarına uyuyor mu); duygu ifadesi boyutu tonun metnin duygusal rengine uyup uymadığını denetler (soru cümlelerinde tonun yükselmesi, ünlem cümlelerinde vurgu, hüzünlü içerikte yavaş tempo ve alçak ton); ses tınısı tutarlılığı boyutu ise elde referans bir kayıt varsa konuşmacı benzerliğini değerlendirir (çok modlu model, karşılaştırma için referans kaydı ve sentezlenen kaydı aynı anda alır).
 >
-> **Kural varyantı**: Eğitimde J/Q/K'nın hepsi 10 sayılır, testte ise sırasıyla 11/12/13 sayılır; böylece test kümesinde eğitimde görülmemiş sayı bileşimlerinin (11, 12, 13 içeren işlemlerin) bulunması güvenceye alınır ve genelleştirme yeteneği katı biçimde ölçülür. **Görsel varyant**: Eğitimde siyah kart takımları (♠♣), testte kırmızı kart takımları (♥♦) kullanılır ve görsel görünüm değiştiğinde sağlamlık değerlendirilir. Llama-3.2-Vision-11B temel alınıp standart post-training akışı izlendi: önce SFT ile başlatılıp temel talimat takibi yeteneği kazandırıldı, ardından aynı hesaplama bütçesi altında SFT ve RL eğitimi ayrı ayrı genişletildi (RL kısmında değer ağı olan PPO algoritması kullanıldı); tek bir kuralın (J/Q/K=10) verisiyle eğitim yapıldı ve dağılım içi (ID) ile dağılım dışı (OOD) test kümelerinde değerlendirildi.
+> Çeşitlilik içeren bir test derlemi oluşturun: farklı uzunluklar (tek cümle → uzun paragraf), türler (haber/öykü/diyalog), duygular (nötr/heyecanlı/hüzünlü) ve özel zorluklar (sayılar/özel adlar/çok sesletimli karakterler/ağız sözcükleri). TTS üretim modülünü yaygın servislere bağlayın (OpenAI, ElevenLabs, Fish Audio, Minimax, Doubao); sentezlenen kaydı, özgün metni, referans kaydı ve Rubric'i sesi doğrudan kabul edebilen çok modlu bir hakeme verin. Her puanın denetlenebilmesi için hakem modeliyle birlikte aday ve referans kayıtların hash'lerini de saklayın.
 >
-> Sonuçlar temel farkı net biçimde ortaya koyuyor. **Kural OOD'si**: RL, GP-L'de +%3,5 kazandırdı (%11,5→%15,0); SFT ise %8,1 **düştü** (%11,5→%3,4). GP-VL'de RL +%3,0, SFT ise %5,6 düşüş gösterdi. **Görsel OOD**: RL, GP-VL'de **+%17,6** kazandırdı (%23,6→%41,2); SFT %9,9 düştü (%23,6→%13,7).
->
-> Görsel tanıma doğruluğu izlendiğinde şu görüldü: RL, sonuç odaklı optimizasyon yoluyla alttaki görme kodlayıcısını iyileştirdi ve bu iyileşme genel performans artışıyla yüksek oranda ilişkiliydi; SFT ise düşünme sürecindeki token örüntülerine aşırı uyum sağladığından görsel token'ları öğrenmeyi ihmal etti ve tanıma doğruluğu tersine düştü.
->
-> Deney ayrıca SFT'nin RL için gerekliliğini de ortaya koydu: bu deneyin kurgusunda (Llama-3.2-Vision-11B ölçeğinde bir temel model, üstüne katı yapılandırılmış çıktı gereksinimi) SFT'siz doğrudan uçtan uca RL tamamen başarısız oldu — temel model yapılandırılmış çıktı üretemedi, dolayısıyla ödül hiç hesaplanamadı. Bunun evrensel bir kural değil, belirli bir kurguya ait bir sonuç olduğuna dikkat edin: yeterince güçlü bir temel model SFT'yi atlayıp doğrudan RL ile başarıya ulaşabilir (yukarıdaki DeepSeek-R1-Zero tartışmasına bakın). Dikkate değer bir başka bulgu da doğrulama yinelemesi arttıkça genelleştirmenin iyileşmesidir: 10 yinelemede +%5,99'a karşı 1 yinelemede +%0,48; bu da düşünme anındaki hesaplama ölçeklemesinin RL genelleştirmesinin anahtarı olduğunu gösteriyor.
->
-> SFT dağılım kayması altında neden çöküyor da RL tersine daha iyi oluyor? SFT'nin öğrendiği şey "şu girdiyi gördüğünde şu cevabı ver" eşlemesidir: eğitimde J/Q/K'nın hepsi 10 olduğu için model "J/Q/K görünce 10 say" biçiminde sabit bir örüntüyü ezberler; testte J=11 olduğunda hâlâ 10 üzerinden hesaplar ve doğal olarak yanılır. RL'in öğrendiği ise "hangi hesaplama süreci doğru cevaba götürür" biçiminde çok daha genel bir stratejidir: J 11'e dönüştüğünde RL modeli aynı stratejiyle baştan hesaplar, bellekteki cevabı yapıştırmaz. "Ezber" ile "genelleştirme" arasındaki temel fark tam olarak budur.
->
-> Bu deneyin çekirdek katkısı, "SFT ezberler, RL genelleştirir" olgusunu sistemli biçimde nicelemesi, bu kuralın hem salt dil hem de görme-dil modalitelerinde geçerli olduğunu kanıtlaması ve SFT ile RL arasındaki tamamlayıcılığı ortaya koymasıdır: SFT format kararlılığını sağlar, RL bunun üzerinde ezber sınırını aşar; ikisi de vazgeçilmezdir. Bu "önce biçim, sonra ruh" eğitim paradigması — Çin resminin terimiyle, önce dış biçimi (formatı, yapıyı) doğru çizmek, sonra içsel ruhun (genelleştirmenin, stratejinin) peşine düşmek — sonraki çok turlu ve çok modlu görevler için metodolojik zemini kurmuştur.
 
-> **Deney 7-12 ★★★: V-IRL-VL — Çok Turlu Görsel Navigasyon**
->
-> V-IRL[^ch7-24], Agent'ı gerçek kent sokak sahnelerinde sürekli gezinmeye zorlar: eğitim New York güzergâhlarını kullanır, test ise farklı şehirlere taşınırken hem yön ifadelerini hem de görsel görünümü aynı anda değiştirir. RL, hem kural OOD'sinde hem görsel OOD'de SFT'yi açık biçimde geride bırakır; bu da çok turlu görevlerde politikanın eğitim yörüngelerini yeniden üretmek yerine güncel gözleme göre yeniden planlamayı öğrenmesi gerektiğini gösterir. Deney değer ağı içeren PPO kullanır ve adım adım geri bildirimin uzun ufuklu credit assignment'ı hafiflettiği gözlenir.
+Eşlik eden depoda küçük bir doğrudan dinleme çalışması saklanıyor. OpenAI ve Fish Audio; sayı, çok sesletimli Çince karakter, uzun metin ve heyecanlı anlatım içeren dörder kayıt üretti; Voxtral sekiz kaydın tamamını dört boyutta değerlendirdi. İki sistem de doğrulukta 5.00, doğallıkta 4.00 ortalama aldı. Fish Audio duygu ve ses tutarlılığında 4.00/3.00, OpenAI ise 3.75/2.75 aldı. Rubric'i boyutlara ayırmak, basit bir “doğru okudu mu?” kontrolünün göremediği farkları ortaya çıkardı.
 
-> **Deney 7-13 ★★★: SimpleVLA-RL — Sonuç Ödülü Altında Açık Keşif `[Genişletilmiş Deney]`**
->
-> SimpleVLA-RL, LIBERO robotik görevlerinde yalnızca başarı/başarısızlık sonuç ödülü kullanır. Her görev için SFT soğuk başlangıcında tek bir gösterim yörüngesi vardır; ardından RL başarı oranını %17,3'ten %91,7'ye çıkarır ve gösterimlerde hiç görülmeyen bir "itip kesme" hareketi keşfeder. Bu, V-IRL ile karşıtlık oluşturur: süreç sinyali kolay tanımlanabildiğinde öğrenmeyi hızlandırır; en iyi yol bilinmiyorsa seyrek sonuç ödülü çok daha geniş bir keşif alanı bırakır.
+Bu puanlar bir sağlayıcı kazananı belirlemez. Her sağlayıcıdan yalnızca dört kayıt vardı; daha önemlisi, sabit referans kaydı Fish S1'den geldiği için ses benzerliği boyutu doğası gereği Fish Audio'yu kayırıyordu. Genel TTS karşılaştırmasında bu boyut kaldırılmalı ya da her adaya uygun bir hedef konuşmacı verilmelidir. Ses klonlama karşılaştırmasında ise bütün sistemler aynı konuşmacıyı taklit etmeli ve model hakemi kör insan dinleme sonuçlarıyla kalibre edilmelidir. **Referans yanıtı, görseli veya sesi seçmek değerlendirme tasarımının parçasıdır; tarafsız bir hazırlık işi değildir.**
 
-## RLHF: İnsan Tercihlerinden Ödül Modeline
+Elle yazılmış Rubric'ler bu tür teşhis boyutlarını hızla kurmayı sağlar. Ölçek büyüdüğünde değerlendirmeyi otomatikleştirmek için özel **üretken ödül modelleri** eğitilebilir; eğitim yöntemi Bölüm 8'de ele alınacaktır.
 
-Buraya kadarki deneylerin ortak bir öncülü vardı: görevin doğrusu yanlışı doğrulanabiliyordu — işlem doğru mu, format kurallara uygun mu; bunları bir kural doğrulayıcısı puanlayabiliyordu. Ama bugün konuşlandırılmış diyalog modellerinin "terbiyeli ve güvenli bir asistan gibi" davranması, daha erken olgunlaşmış başka bir hatta dayanıyor: **RLHF** (Reinforcement Learning from Human Feedback, insan geri bildirimine dayalı pekiştirmeli öğrenme). RLHF'i anlamak, hem ChatGPT gibi ürünlerin diyalog kalitesinin ve güvenlik alignment'ının nereden geldiğini anlamak, hem de ilerideki algoritmalarda geçen KL cezası ve reward hacking gibi kavramları anlamanın önkoşuludur.
+Gerçek model seçimlerinde sık karşılaştığımız soru şudur: "A mı daha iyi, B mi?" İkili karşılaştırma, mutlak puanlara dayanmayan bir değerlendirme yolu sunar.
 
-**InstructGPT'nin üç aşamalı boru hattı.** OpenAI'ın InstructGPT'si[^ch7-4] bugün hâlâ kullanılan standart akışı kurdu:
+#### Kapsama duyarlı belge biçimi hataları
 
-1. **SFT**: İnsan gösterimlerinden oluşan "talimat—yanıt" çiftleriyle pre-training'den geçmiş modele ince ayar yapılır ve temel talimat takibi yeteneği kurulur — yani yukarıdaki "SFT (Denetimli İnce Ayar)" kesiminde tartışılan içerik.
-2. **Ödül modelinin (Reward Model, RM) eğitilmesi**: Aynı prompt için modele birden çok yanıt ürettirilir; insan etiketleyiciler bunları ikişer ikişer karşılaştırıp hangisini daha çok tercih ettiklerini işaretler. Bu tercih çiftleriyle bir puanlama modeli eğitilir; eğitim hedefi Bradley-Terry modeline dayanır:
+Kullanıcı "tırnak biçimi yanlış" dediğinde bunu genel bir karakter değiştirmeye dönüştüremezsiniz. En azından ASCII düz tırnakları (`"`, `'`), Çince kıvrık tırnakları (`“”`, `‘’`) ve Markdown ters tırnaklarını (`` ` ``) ayırmak gerekir. Aynı karakter; Çince düzyazıda, alıntılanan İngilizce kaynakta, satır içi kodda, kod bloklarında, kod yorumlarında, JSON'da ve yollarda farklı bir sözdizimsel rol üstlenir.
 
-   $$\mathcal{L}_{\text{RM}} = -\log \sigma\big(r(x, y_w) - r(x, y_l)\big)$$
+Değerlendirme verisi önce belgeyi kapsamlı parçalara ayrıştırmalıdır: örneğin `ZH_PROSE`, `EN_PROSE`, `QUOTED_SOURCE`, `INLINE_CODE`, `CODE_BLOCK`, `CODE_COMMENT` ve `JSON_OR_SCHEMA`. Her parça, izin verilen dönüşüm kümesini, korunması zorunlu karakterleri ve düzenleme sonrası doğrulayıcı sonucunu saklar. Aşağıdaki üç durum tek bir değiştirme kuralıyla ele alınamaz:
 
-   Burada $y_w$ tercih edilen yanıt, $y_l$ reddedilen yanıt, $\sigma$ ise sigmoid fonksiyonudur. Sezgisi son derece basit: **RM, tercih edilen yanıta daha yüksek puan versin**. Puan yerine karşılaştırma toplanmasının nedeni, insanların mutlak puan vermekte tutarlı olamamasıdır ("bu yanıt 7,3 puan eder" diye tutarlı etiketleme neredeyse imkânsızdır), oysa "A mı B mi daha iyi" yargısı çok daha güvenilirdir. **"Ödül modeli" rolünü aklınızda tutun — bu bölümün gizli bir eksenidir**: burada insan tercihlerinden öğrenilmiş bir puanlayıcıdır; Bölüm 7.10'da ödül tasarımı anlatılırken çeşitli varyantlarını göreceksiniz (yalnızca nihai sonuca bakan ORM, adım adım puanlayan PRM, gerekçesini doğal dille anlatan üretici ödül modeli) ve bir de özel bir durumla karşılaşacaksınız: doğru ile yanlış kurallarla doğrudan belirlenebildiğinde "ödül modeli" doğrudan deterministik bir kod parçasına indirgenir (aşağıda anlatılacak olan RLVR budur). Hepsi aynı soruyu yanıtlar: **ödül nereden gelir**.
-3. **RM puanlarıyla PPO yapılması**: RM'in verdiği puan ödül sinyali olarak alınıp SFT modeline PPO eğitimi uygulanır (PPO'nun mekanizması bir sonraki kesimde) ve modele, RM'in "insanların daha çok beğeneceğini" düşündüğü yanıtları üretmek öğretilir.
-
-**KL cezası: çıkış noktasından fazla uzaklaşma (KL ıraksamasını enine boyuna anlatalım).** RLHF'te modelin fiilen optimize ettiği ödül genellikle RM puanının kendisi değil, ondan bir ceza terimi çıkarılmış halidir:
-
-$$r = r_{\text{RM}} - \beta \cdot \mathrm{KL}\big(\pi_\theta \,\|\, \pi_{\text{ref}}\big)$$
-
-Bu tek formülde yeni başlayanların sık sorduğu dört soru gizli; hepsini tek tek açalım.
-
-**(1) KL ıraksaması nedir, ceza nereye ekleniyor?** KL ıraksaması (Kullback-Leibler Divergence) iki olasılık dağılımı arasındaki farkı ölçer: iki dağılım birbirine ne kadar benziyorsa KL o kadar küçüktür, tamamen aynılarsa 0 olur; benzemedikçe KL büyür. Buradaki iki dağılım, **mevcut policy** $\pi_\theta$ (eğitilmekte olan model) ile **referans policy** $\pi_{\text{ref}}$ (eğitimin başlangıç noktası, genellikle o SFT modelidir) tarafından aynı önceki metin için verilen "bir sonraki token olasılık dağılımıdır". $\beta$ cezanın şiddetini denetler — eğitim betiklerinde sık görülen `kl_coef` hiperparametresi budur. Mühendislik açısından bu ceza **token bazında tek tek hesaplanıp ödüle eklenir** (per-token KL): model her token ürettiğinde, o konumda referans modelle arasındaki olasılık farkına bakılır; sapma ne kadar büyükse o adımın ödülünden o kadar çok kesilir. Yani KL ayrı bir loss terimi değildir; **ödül sinyalinin içine karıştırılır** ve ardından PPO/GRPO'nun avantaj hesabından geçer — etkisini gösterdiği tam yer burasıdır.
-
-**(2) Sıralama neden "önce mevcut policy, sonra referans policy"?** KL ıraksaması simetrik değildir, $\mathrm{KL}(P\|Q)\neq\mathrm{KL}(Q\|P)$; dolayısıyla sıralama gelişigüzel yazılmaz. Burada $\mathrm{KL}(\pi_\theta\|\pi_{\text{ref}})$ biçiminde — mevcut policy önde — yazılmıştır ve matematikte buna **ters KL (reverse KL)** denir. Cezalandırdığı durum, "$\pi_\theta$'nın bir noktaya yüksek olasılık verdiği, oysa $\pi_{\text{ref}}$'in orada neredeyse sıfır verdiği" durumdur; yani **modelin, referans modelin gidilmemesi gerektiğini düşündüğü yerlere kaçmasını cezalandırır**. İstediğimiz şey tam olarak budur: referans model (SFT modeli) "insan gibi konuşan, formatı düzgün" güvenli bölgeyi temsil eder; ters KL, mevcut policy'yi bu güvenli bölgenin yakınında tutar ve savrulmasına izin vermez. Tersine **düz KL** $\mathrm{KL}(\pi_{\text{ref}}\|\pi_\theta)$ kullanılsaydı, cezalandırılan şey "referans modelde bulunup mevcut modelin atladığı" modlar olurdu — bu da modeli referans modelin bütün ifade biçimlerini kapsamaya zorlardı ki RLHF'in amacı hiç de bu değildir.
-
-**(3) Neden böyle tasarlandı? — mode-seeking'in kökeni.** Ters KL'in belirleyici bir karakteri vardır: **mode-seeking (tepe arayan)** olması. Bölüm 7.1'de bunun tohumu atılmıştı — ters KL, modelin **yalnızca ödülü yüksek birkaç "tepeyi" tutup geri kalan modları gözünü kırpmadan atmasına** izin verir; SFT'nin maksimum olabilirliği (mass-covering, kütleyi kaplayan) gibi herkese biraz dağıtması gerekmez. RLHF'e taşıdığımızda istediğimiz etki tam olarak budur: RM'in beğendiği yüksek puanlı yanıt biçimlerinden bir ikisini seçip kararlı biçimde üretmek, bütün olası yanıtları tek tek öğrenmek değil. RL sonrası modellerin neden daha "kesin" konuştuğunu ve çeşitliliğinin neden düştüğünü de bu açıklar. Ters KL'in mode-seeking niteliği ile modeli referans dağılımın yakınında tutması, birlikte RLHF'in kararlılığının sırrını oluşturur.
-
-**(4) Eklenmezse ne olur?** Sezgisi tek cümlede: **çıkış noktasından fazla uzaklaşma, yoksa ödül modelinin puanı güvenilmez olur.** RM, referans policy'nin yakınındaki çıktı dağılımı üzerinde eğitilmiştir; model bir kez RM'in hiç görmediği bir dağılıma doğru optimize edildiğinde RM'in verdiği puan dayanaksız bir dışdeğerlemeye dönüşür ve yüksek puan artık yüksek kalite anlamına gelmez. Bu yüzden KL cezası aynı anda iki şeyi önler: **reward hacking** (modelin görevi gerçekten iyi yapmak yerine ödüldeki açıkları kullanarak puan şişirmesi, bir sonraki paragrafa bakın) ve **dağılım çöküşü** (çıktının tekrara, anlamsız karakter yığınlarına benzer uç biçimlere gerilemesi). Doğrulanabilir ödüllü RLVR eğitiminde bile KL düzenlileştirmesi, eğitimi kararlı tutmak için çoğu zaman korunur (DAPO ve Open-Reasoner-Zero gibi az sayıda çalışma bunu bilerek çıkarmıştır — DeepSeek-R1-Zero'nun GRPO'sunun ise KL terimini hâlâ açıkça içerdiğine dikkat edin).
-
-**Ödül modeli "aşırı optimize edilebilir".** RM sonuçta insan tercihlerinin yalnızca bir vekil göstergesidir (proxy). Goodhart yasası şunu söyler: bir gösterge bir kez optimizasyon hedefine dönüştüğünde artık iyi bir gösterge değildir — vekil gösterge uç noktaya itildiğinde gerçek hedefle olan ilişkisi bozulur. OpenAI'ın araştırması[^ch7-5] bu **ödül modeli aşırı optimizasyonu (reward model over-optimization)** olgusunu sistemli biçimde ölçtü: RL eğitimi ilerledikçe vekil ödül (RM puanı) tek yönlü olarak yükselirken gerçek kalite (insan değerlendirmesi) önce yükseliyor sonra düşüyor. Modelin giderek öğrendiği şey "daha iyi yanıt vermek" değil, "RM'e yüksek puan verdirmektir" — uzun, yaltaklanan, titiz görünen içi boş laflar. Bu, RLHF bağlamında reward hacking'in somut biçimidir; KL cezası ile erken durdurma en sık kullanılan hafifletme araçlarıdır. Bölümün sonundaki "yaygın tuzaklar" kesimindeki reward hacking sorunu da aynı kaynaktan gelir.
-
-**DPO: açık ödül modelini atlamak.** DPO'nun (Direct Preference Optimization, doğrudan tercih optimizasyonu)[^ch7-6] çıkış noktası şudur: madem "RM eğit + PPO" bileşiminin nihai etkisi "tercih edilen yanıtın olasılığını yükseltmek, reddedilen yanıtınkini bastırmak ve bu arada referans modelden fazla uzaklaşmamak"tır, o halde açık RM'i atlayıp tercih çiftlerini doğrudan örtük ödüllü bir sınıflandırma loss'una dönüştürmek daha iyidir — matematiksel olarak bunun KL kısıtlı çevrimdışı tercih optimizasyonuna denk olduğu kanıtlanabilir; ödül modeli örtük biçimde policy'nin kendi içine saklanmıştır. DPO eğitimi SFT kadar basittir: çevrimiçi örnekleme gerekmez, değer ağı gerekmez, ayrıca RM bakımı gerekmez. Bedeli, tamamen çevrimdışı olmasıdır — tercih verisinin dışındaki yeni davranışları keşfedemez ve performans tavanını tercih verisinin kalitesi ile kapsamı belirler.
-
-**RLHF ile RLVR'ın ilişkisi.** Özetlersek, iki hattın farkı **ödülün nereden geldiğidir**: RLHF'in ödülü öğrenilmiş RM'den gelir (arkasında insan tercih verisi vardır); **RLVR**'ın (Reinforcement Learning with Verifiable Rewards, doğrulanabilir ödüllü pekiştirmeli öğrenme) ödülü ise kural doğrulayıcısından gelir (test geçti mi, cevap doğru mu). Agent görevlerinin çoğu tam da doğrulanabilir niteliktedir — bu bölümün ana ekseninin RLVR olmasının nedeni de budur. Ama ikisi birbirinin alternatifi değildir: fiilen konuşlandırılan modellerde ikisi üst üste kullanılır; RLHF diyalog kalitesi ile güvenlik alignment'ından, RLVR ise akıl yürütme ve Agent yeteneklerinden sorumludur. İlerideki "ödül paradigmasının evrimi" tartışmasında ele alınan üretici ödül modeli, iki hattın birleştiği yer olarak görülebilir — eğitilebilir bir ödül modeliyle, kuralların kapsayamadığı açık uçlu görevleri karşılamak.
-
-## Pekiştirmeli Öğrenme Algoritmalarının Karşılaştırması
-
-**GRPO (Group Relative Policy Optimization)** DeepSeek tarafından ortaya kondu ve bugün RL eğitiminde en yaygın kullanılan algoritmalardan biridir. Temel fikir, ayrı bir value network eğitmeden aynı problem için üretilen bir rollout grubunu karşılaştırarak göreli advantage'ı kestirmektir.
-
-Önceki tek turlu deneyler RL'in genelleme üstünlüğünü kanıtladı, bir önceki bölüm de RLHF'in tercih optimizasyonu hattını tanıttı. Ancak bu çalışmaların kullandığı somut algoritmalar birbirinden farklıdır ve mevcut seçeneklerin yalnızca bir bölümüdür. Daha karmaşık çok turlu görevlere geçmeden önce, yaygın algoritmaların özelliklerini ve uygun oldukları senaryoları sistemli biçimde gözden geçirmekte fayda var.
-
-> **Okuyucu formüllerin içinde kaybolmadan önce en önemli şeyi söyleyelim.** Bu bölümde epeyce algoritma adı ve formül sıralanıyor, ama bu bölümün ikinci ana hattını unutmayın: **sanayide, hazır RL algoritmalarını (PPO, GRPO vb.) nasıl kullanacağınızı bilmeniz ve doğru olanı seçebilmeniz yeterlidir; başarıyı ya da başarısızlığı asıl belirleyen, algoritmanın kendisi değil veri ve ortamdır.** Bu algoritmalar çoktan veRL, TRL gibi olgun çerçevelerin içine paketlendi; onları çağırmak çoğu zaman birkaç satır yapılandırma değiştirmek demek. Dolayısıyla bu bölümün amacı size türetme yaptırmak değil, "hangi senaryoda hangi algoritma" diye bir seçim haritası kurmanızı sağlamak; formül kısımları (eğitim mühendislerine yönelik) anlaşılmıyorsa atlanabilir, sonrasını okumayı etkilemez. Sonraki bölüm "veri ve ortam neden algoritmadan daha önemli" sorusunu doğrudan yanıtlıyor.
-
-![Şekil 7-13: GRPO Algoritma Akışı](images/fig7-13.svg)
-
-Modern LLM Agent'larının RL senaryosu ile geleneksel RL arasında özsel bir fark var — Agent'ın çok turlu diyalogda kullanıcı niyetini anlaması, araç çağırması, yapılandırılmış çıktı üretmesi ve uzun zincirli düşünme yürütmesi gerekiyor. Bu çok hedefli, çok aşamalı karar verme, "doğru algoritmayı seçmeyi" bir ölçüde önemli kılıyor; ama etkisi, veri ve ortamın etkisinin çok gerisinde kalıyor.
-
-Uygulama yolu açısından RL algoritmaları **çevrimiçi keşif yöntemleri** (ortamla etkileşerek yeni politikalar keşfeder) ve **çevrimdışı optimizasyon yöntemleri** (mevcut veriye dayanarak optimize eder; daha kararlı ve doğrudandır) diye ikiye ayrılır. Burada, önceden söz verdiğimiz bir çift kesin terimi de verelim: **On-Policy (iz üstü)** yöntemler yalnızca mevcut politikanın kendisinin yeni örneklediği veriyle kendini günceller; **Off-Policy (iz dışı)** yöntemler ise başka politikaların (ya da politikanın eski sürümlerinin) ürettiği veriyle öğrenebilir (önceki Q-learning örneğinde olduğu gibi). Bu ölçüte göre bu bölümde ele alınan yöntemleri hizalayalım: SFT iz dışı bir taklit öğrenmesidir — veri modelin kendisinden değil, öğretmenden ya da insan gösterimlerinden gelir; PPO ve GRPO'nun LLM eğitiminde kullanılan standart biçimleri iz üstüdür — her turda, mevcut modelin yeni örneklediği rollout'larla (yani modele görevi baştan sona bir kez koşturup tam bir trajectory ürettirerek) güncelleme yapılır; DPO ise çevrimdışı tercih optimizasyonudur, ne çevrimiçi örnekleme yapar ne de kelimenin katı anlamıyla politika yinelemesi.
-
-Bu algoritmaların çoğu aynı **policy gradient** (politika gradyanı) fikri üzerine kuruludur: politika parametreleri $\theta$'yı "beklenen getiriyi artıracak yönde" ayarlamak. En temel biçimi (REINFORCE) şöyledir:
-
-$$\nabla_\theta J(\theta) = \mathbb{E}\big[\nabla_\theta \log \pi_\theta(a \mid s)\, G\big]$$
-
-Burada $\pi_\theta(a\mid s)$ politikadır ($s$ durumunda $a$ eylemini seçme olasılığı), $G$ ise bu trajectory'nin (ya da o adımdan sonrasının) kümülatif getirisidir — getiri ne kadar yüksekse, o eylemi üretme olasılığı o kadar pekiştirilir. Ağırlık olarak doğrudan tüm trajectory'nin getirisi $G$'yi kullanmak yansız olsa da varyansı çok yüksektir; bu yüzden bir taban çizgisi $b$ eklenir ve varyansı düşürmek için ağırlık olarak **advantage** (avantaj) $\hat{A}=G-b$ kullanılır (bu eylem ortalamadan ne kadar iyi). Sıradaki PPO ve GRPO, özünde "avantaj $\hat{A}$ nasıl kararlı biçimde kestirilir ve kullanılır" sorusuna verilmiş iki tür iyileştirmedir.
-
-**PPO**, her güncellemenin büyüklüğünü "kırpma" ile sınırlar ve politikanın tek adımda yoldan çıkmasını önler:
-
-$$L^{\text{CLIP}}(\theta) = \mathbb{E}\Big[\min\big(\rho\,\hat{A},\ \operatorname{clip}(\rho,\, 1-\epsilon,\, 1+\epsilon)\,\hat{A}\big)\Big],\quad \rho = \frac{\pi_\theta(a\mid s)}{\pi_{\theta_{\text{old}}}(a\mid s)}$$
-
-Burada $\rho$ yeni ve eski politikanın olasılık oranıdır; $\epsilon$ (örneğin 0,2) tek adımda yapılabilecek ayarlamanın büyüklüğünü sınırlar. İleride anlatılan "Clip-Higher" tam da bu $1+\epsilon$ üst sınırını gevşetir.
-
-**GRPO** ise value network'ten (değer ağı — PPO'da ek olarak eğitilen, trajectory'deki her adım için ayrı ayrı değer fonksiyonunu kestirip böylece daha ince avantaj hesaplamayı sağlayan yardımcı bir sinir ağı) vazgeçer ve avantajı "grup içi göreli karşılaştırma" ile kestirir: aynı soru için $N$ trajectory örnekleyip $r_1,\dots,r_N$ getirilerini elde eder, sonra her birinin avantajını grup içindeki göreli performansı olarak tanımlar:
-
-$$\hat{A}_i = \frac{r_i - \operatorname{mean}(r_1,\dots,r_N)}{\operatorname{std}(r_1,\dots,r_N)}$$
-
-Yani "grup ortalamasından iyiyse pozitif, kötüyse negatif" — value network gerekmez; maliyetinin daha düşük olmasının nedeni tam olarak budur. Bir not düşmek gerekiyor: yukarıdaki formülde KL düzenlileştirme terimi atlanmıştır; gerçek eğitimde genellikle bir önceki bölümde tanıtılan per-token KL cezası da eklenir ve politika, referans modelin yakınında tutulur.
-
-Tablo 7-4 yaygın yöntemlerin temel özelliklerini özetliyor. Okurken, sık sık birbirine karıştırılan iki şeyi ayırt etmeye dikkat edin: **ödül nereden geliyor** (kural doğrulayıcı, öğrenilmiş bir reward model, yoksa insan tercih verisi mi) ve **hangi algoritmayla optimize ediliyor**. PPO ve GRPO ödülün kaynağı konusunda seçici değildir — hem kural doğrulayıcıya (RLVR) hem de reward model'e (RLHF) bağlanabilirler; asıl farkları avantaj kestirim biçimindedir (value network mi, grup içi göreli taban çizgisi mi).
-
-Tablo 7-4 Post-training ve Çıkarım Zamanı Optimizasyon Yöntemlerinin Karşılaştırması
-
-| Yöntem | Tür | Temel fikir | Avantajı | Dezavantajı | Uygun senaryo |
-|--------------|-----|-------------------|---------------|--------------------|----------------------|
-| **REINFORCE** | Çevrimiçi RL algoritması | Politikayı, tüm trajectory'nin nihai ödülüyle günceller | Uygulaması basit | Varyansı yüksek, eğitim kararsız | Teorik referans; ham biçimi doğrudan pek kullanılmaz, ama taban çizgili türevleri (RLOO, REINFORCE++ vb.) bugünün yaygın seçeneklerinden biridir; GRPO özünde grup içi taban çizgili REINFORCE'tur |
-| **PPO** | Çevrimiçi RL algoritması | Her güncellemenin büyüklüğünü sınırlar, politikanın "yoldan çıkmasını" önler | Kararlıdır; value network daha ince taneli credit assignment sağlar | Value network'ü ayrıca eğitmek ve saklamak gerekir, hiperparametrelere duyarlıdır | Çok turlu Agent, uzun trajectory'de credit assignment |
-| **GRPO** | Çevrimiçi RL algoritması | Aynı soru için birden çok trajectory örnekler, grup içinde "hangisi daha iyi" diye göreli karşılaştırma yapar | Value network gerekmez, maliyeti düşük | Avantaj tüm yanıta eşit dağıtılır, credit assignment kaba kalır; grup içi ödüllerin ayırt edici olmasına bağımlıdır | Tek turlu / kısa trajectory'li görevler, ödülün ayırt ediciliğinin iyi olduğu senaryolar |
-| **DPO** | Çevrimdışı tercih optimizasyonu | Tercih çiftlerini doğrudan örtük ödüllü bir sınıflandırma kaybına dönüştürür | Son derece yalın ve verimli, çevrimiçi örnekleme gerektirmez | Yeni politikalar keşfedemez; çevrimdışı tercih verisinin kalitesi ve kapsamıyla sınırlıdır | Elde yüksek kaliteli tercih verisi bulunan senaryolar |
-| **KTO** | Çevrimdışı tercih optimizasyonu | Tek bir örneğe yalnızca "iyi/kötü" etiketi vermek yeterlidir | Etiketleme maliyeti çok düşük | Sinyal kaba | Etiketleme kaynağının son derece kısıtlı olduğu senaryolar |
-| **Best-of-N** | Çıkarım zamanı yöntemi | Çıkarım sırasında N çıktı üretip en iyisini seçer | Modeli değiştirmez, uygulaması basit | Çıkarım maliyeti kat kat artar, yetenek parametrelere yerleşmez | Erken aşamada kaliteyi hızla yükseltmek; RL için kazanç üst sınırı kestirimi sağlar |
-
-Bu bölümdeki deneylere dönüp her birinin kullandığı algoritmayı açıkça belirtelim: GeneralPoints ile V-IRL (Deney 7-11, 7-12) aynı araştırmadan geliyor ve value network'lü PPO kullanıyor; AdaptThink (Deney 7-10) özel bir kısıtlı optimizasyon hedefi artı önem örneklemesi kullanıyor; ilerideki ReTool (Deney 7-14) veRL üzerine uyarlanmış PPO kullanıyor (eğitim verisi DAPO-Math-17k kümesinden alınmış, ama optimizasyon algoritması yine PPO); SimpleVLA (Deney 7-13) ile RLVP (Deney 7-16) ise GRPO tabanlı. Çok turlu senaryolarda credit assignment problemi daha karmaşıktır ve farklı algoritmaların kendine göre artıları eksileri vardır.
-
-Pratikte seçim yolu: güvenilir bir ödül sinyali ve hesaplama kaynağı varsa → GRPO (yalın) ya da PPO (esnek; uzun trajectory'de credit assignment daha ince); yüksek kaliteli tercih verisi varsa → DPO/KTO (düşük maliyet); erken keşif aşamasındaysanız → Best-of-N ile hızlı başlangıç.
-
-Bu tabloyu gördükten sonra "peki ben hangi algoritmayı ince ayarlamalıyım" diye düşünebilirsiniz. Yanıt şaşırtıcı olabilir: **çoğu durumda hangisi olursa olsun fark etmez — önce algoritmaya takılmayın.** Sonraki bölüm tam olarak bunu anlatıyor.
-
-## Veri ve Ortam: Algoritmadan Daha Önemli Olan Şey
-
-Bu, bölümün size en çok akılda kalmasını istediğim kısmı ve bu bölümün ikinci ana hattının doğrudan ifadesi. Şimdiye kadar algoritmalara epeyce yer ayırdık, ama sanayinin ön cephesindeki deneyim tam tersini söylüyor: **algoritmanın önemi, üç daha temel unsurun çok gerisinde kalır — simülasyon ortamının gerçekliği (fidelity), eğitim verisinin kalitesi ve temel modelin yeteneği.** Hazır algoritmaları kullanmayı bilmeniz yeterli; farkı asıl açan şey, ortamın ve verinin ne kadar iyi kurulduğudur. Bu, aynı zamanda Bölüm 6'nın sonucunu (değerlendirme ve simülasyon ortamları post-training'in temel taşıdır) ve Bölüm 7.2'de anlatılan OpenAI'nin bilişsel dönüşünü yankılıyor — onlarca yıllık RL araştırması öncelikleri ters çevirmişti; gerçek sıralama şudur: **önsel (temel model) > ortam > algoritma**.
-
-### Ortam: Modelin Alıştırma Sahası
-
-RL'in özü "deneme yanılmayla öğrenmek"tir ve deneme yanılmanın bir **sahası** olması gerekir — işte bu, simülasyon ortamıdır (simulation environment). Model ortamda görevleri defalarca koşar, geri bildirim alır, politikasını ayarlar. Ortamın **gerçekliği** (gerçek dağıtım senaryosuna ne kadar benzediği), eğitilen politikanın kullanılabilir olup olmayacağını doğrudan belirler:
-
-- **Ortam çarpıksa, politika kesin çöpe gider.** Simülasyondaki müşteri temsilcisi hep sabit bir kalıpla yanıt veriyorsa ve hata mesajları üretim ortamıyla örtüşmüyorsa, model yalnızca simülasyonda işe yarayan bir "sınav taktiği" öğrenir ve canlıya çıkar çıkmaz açık verir. Bu, RL projelerinin en sık görülen kaza biçimidir — algoritma kötü olduğu için değil, alıştırma sahası sınav salonuyla aynı yer olmadığı için.
-- **Yüksek gerçeklikli bir ortam kurmak, çoğu zaman eğitimin kendisinden daha pahalı ve daha zordur.** Büyük ölçekte paralel çalışabilen, yeniden üretilebilir, geri bildirimi gerçekçi bir ortam, genellikle modeli ayarlamaktan çok daha fazla mühendislik yatırımı gerektirir. Bu bölümün ilerisindeki araç çağırma deneylerinde (AWorld'ün MCP sandbox'ı, ReTool'un kod yorumlayıcı sandbox'ı) ortam kurmak için bu kadar emek harcanmasının nedeni tam olarak şudur: **gerçek API'lerin hız sınırları vardır, hesap kapatabilirler, yan etkileri vardır; doğrudan eğitim için kullanılmaları mümkün değildir.** Önce kararlı, denetlenebilir ve yeniden oynatılabilir bir "gölge dünya" inşa etmeniz gerekir.
-- **Ortamın diğer yarısı ödül fonksiyonudur.** Ortam yalnızca "dünyanın nasıl değiştiğini" simüle etmekle kalmaz, "iş iyi yapıldı mı" sorusuna da karar verebilmelidir; ödül sinyalinin kaynağı budur. Ödül tasarımı ortam mühendisliğinin bir parçasıdır ve sonraki bölümde ayrıntısıyla ele alınacaktır.
-
-Tek cümleyle: **algoritma ayarlamaya girişmeden önce kendinize sorun — benim simülasyon ortamım gerçekten gerçek dünyaya benziyor mu?** Bu sorunun yanıtı, PPO mu GRPO mu sorusundan çok daha önemlidir.
-
-### Ortam Kurulamıyorsa Ne Yapmalı: Ortamı Modele Oynatmak
-
-Ama daha köklü bir sorun daha var: birçok senaryoda yüksek gerçeklikli ortam "pahalı" değil, **kurulması büsbütün imkânsız** olur — gerçek API'lerin yan etkileri vardır, gelişigüzel çağrılamaz; gerçek kullanıcılar deneme yanılma malzemesi yapılamaz; fiziksel dünya ise hiç ileri sarılamaz. Kullanılabilir bir "gölge dünya" bile kurulamıyorsa, RL yapmak imkânsız mı demektir? Giderek yaygınlaşan bir fikir şu: **ortamı modelle simüle etmek** — bir LLM'e ortamı oynatıp Agent'ın etkileşim için ihtiyaç duyduğu geri bildirimi ürettirmek. Bu hattın iki düzeyi var.
-
-**Birinci düzey: model araç çağrılarının dönüş değerlerini sentezler.** Örnek olarak ZeroSearch'ü (2025) alalım[^ch7-13]: "arama yapabilen bir model" eğitmek genellikle gerçek bir arama motoru gerektirir, oysa arama API'lerinin maliyeti ve hız sınırı vardır, dönen sonuçlar da denetlenebilir değildir. ZeroSearch bunun yerine arama motorunu bir LLM'e oynatır: öğrenci model bir arama query'si gönderir, bu "simüle motor" da geri döndürülecek retrieval sonuçlarını üretir. Daha da hoş olanı, **müfredat tipi** bir tasarım kullanmasıdır — eğitimin başında simüle motor yüksek kaliteli, güçlü ilişkili dokümanlar döndürür; eğitim ilerledikçe kademeli olarak gürültü karıştırılır ve dönen sonuçların kalitesi düşürülür, böylece öğrenci gerçek bir arama motorunun o kusurlu sonuçlarından işe yarar bilgi çıkarmayı öğrenmek zorunda kalır. Sonuçta, eğitim boyunca hiç gerçek arama motoru görmemiş model, doğrudan gerçek aramaya bağlandığında yine de iyi performans gösterir.
-
-**İkinci düzey: model tüm ortam dinamiğini simüle eder.** Yalnızca tek bir aracın dönüş değeri değil, "eylem yürütüldükten sonra dünyanın nasıl bir hâl alacağı" da modele bırakılabilir. DreamGym (2025)[^ch7-14], ortam dinamiğini akıl yürütme tarzı bir "deneyim modeline" damıtır: mevcut durum ve Agent'ın eylemi verildiğinde, adım adım akıl yürüterek durum geçişini ve geri bildirim sinyallerini üretir; böylece gerçek ortama hiç erişmeden çevrimiçi RL için toplu halde rollout sentezlenebilir. Müşteri hizmetleri ve satış türü Agent'ların eğitiminde kullanıcıyı bir LLM'in oynaması (kullanıcı simülatörü) yaygındır; τ-bench ailesi değerlendirmeleri de tam olarak bu fikir üzerine kuruludur — aynı model simülatörü hem sınav salonu hem alıştırma sahası olabilir.
-
-Ama bu yolun riskini de açıkça söylemek gerekir: **simülatörün dünya bilgisi eğitimin tavanıdır ve simülatörün sistematik sapmalarını politika olduğu gibi devralır.** Simüle edilen müşteri temsilcisi gerçek kullanıcılardan daha sabırlıysa, simüle edilen arama motoru hiç çöp sonuç döndürmüyorsa, öğrencinin öğrendiği şey yalnızca "modelin oynadığı dünyada" geçerli bir politika olur; daha kötüsü, RL simülatörün açıklarını etkin biçimde arayıp kullanır, yani reward hacking yapar. Bu yüzden mühendislikte sağlam yaklaşım **karıştırmaktır**: etkileşim hacminin büyük kısmını model simülasyonuna yaptırın, buna gerçek ortam etkileşimlerini ekleyin ve gerçek ortam etkileşimlerini kullanarak simülatörün sapmasını düzenli aralıklarla kalibre edin.
-
-### Veri: En Kritik Halka ve Kalite Her Şeyden Üstün
-
-Ortam alıştırma sahasıysa, **veri de ders kitabıdır ve üç unsur içinde en kritik halkadır**. Buradaki "veri", SFT aşamasında gösterim örneklerini (girdi—çıktı çiftleri), RL aşamasında ise görev dağılımını ve ödül sinyalini kastediyor. Hangi aşama olursa olsun, değişmez bir kural var:
-
-> **Veri kalitesi algoritmadan üstündür.** Algoritma ne kadar zarif olursa olsun, içine kirli veri, kapsamı eksik veri, sistematik sapmalı veri verirseniz öğreneceği şey de ancak kirli bir politika olur. SFT, verideki gürültüyü ve önyargıyı harfi harfine parametrelere kazır; RL ise sapmalı ödüle doğru var gücüyle optimize eder ve yanlış yönde gitgide uzaklaşır (reward hacking'in yatağı budur). **Garbage in, garbage out** post-training'de tüm çıplaklığıyla kendini gösterir.
-
-Bir adım daha ileri gidersek, birçok ekibin kafasında netleşmemiş ama son derece para tasarrufu sağlayan bir tespit var:
-
-> **Birçok senaryoda, SFT'nin veri kalitesi yerindeyse RL yapmanıza hiç gerek yoktur.** RL hem pahalı hem kararsızdır (çoğu zaman SFT'nin onlarca ila yüzlerce katı maliyet), buna rağmen herkes işe hemen RL ile başlamak ister. Ama görev dağılımınız öngörülebilirse ve yeterince çeşitli, yeterince yüksek kaliteli gösterim verisi toplayabiliyorsanız, sağlam bir SFT çoğu zaman gereksinimi karşılar. RL'in gerçekten yeri doldurulamaz olduğu senaryolar sınırlıdır (bkz. Bölüm 7.5): dağıtım sırasındaki dağılımın sistematik olarak kayması, uzman gösterimlerinin kendisinin en iyi olmaması ya da etiketleme maliyetinin her yol için ayrı gösterim sağlanamayacak kadar yüksek olması. **Önce SFT verisini iyi yapın, sonra RL'e gerçekten ihtiyaç olup olmadığına karar verin** — bu sıra size çok büyük miktarda işlem gücü ve zaman kazandırır.
-
-İkna edici bir sektör örneği Anthropic. 2025'ten önce post-training reçetesi esasen iki parçadan oluşuyordu: **çok büyük miktarda yüksek kaliteli veriyle SFT** ve buna ek olarak **RLAIF** (Constitutional AI içindeki "AI geri bildirimine dayalı pekiştirmeli öğrenme"; Bai ve arkadaşları, 2022; bir "anayasa" ile modele kendi yanıtlarını puanlatarak alignment yapar) — ve **bugün kod ile reasoning için standart haline gelmiş RLVR'e (doğrulanabilir ödüllü pekiştirmeli öğrenme) pek yaslanmıyordu**. Buna rağmen o dönemki Coding modellerinin kalitesi çoktan çok iyiydi. Bunun nedeni büyük ölçüde algoritma değil, hem SFT hem RLAIF tarafında veri kalitesini en uç noktaya taşımış olmasıydı — bu da yukarıdaki tespiti doğruluyor: **SFT verisi yeterince iyi olduğunda, hiç de gösterişli olmayan bir reçete de birinci sınıf model eğitebilir; karmaşık doğrulanabilir ödüllü RL şart olmayabilir.** Elbette bu, RL'in işe yaramadığı anlamına gelmiyor: 2025'ten bu yana Anthropic de RL yatırımını gözle görülür biçimde artırdı — veri temeli sağlam atıldıktan sonra RL, yetenek tavanını bir kademe daha yukarı çekebiliyor. **Veri nereye kadar gidebileceğinizi belirler, RL ise ne kadar daha yükselebileceğinizi.**
-
-Veri kalitesi somut olarak ne demek? En az üç boyut: **kapsam** (dağıtım sırasında karşılaşılacak çeşitli durumları, özellikle uzun kuyruk ve sınır durumlarını kapsıyor mu), **çeşitlilik** (gösterimlerdeki konuşucular, üsluplar, çözüm yolları yeterince zengin mi; değilse model tek bir moda çöker — örneğin Deney 7-6'daki "herkes aynı ağızdan konuşuyor" durumu) ve **etiketleme doğruluğu** (gösterim yanıtının kendisi doğru mu; özellikle düşünce zinciri damıtmasında hatalı düşünme süreçleri öğrenci tarafından olduğu gibi taklit edilir — bu yüzden Deney 7-9'da önce kural doğrulayıcıyla yanıtı yanlış olan trajectory'ler eleniyor). Bu üç noktanın yatırım-getiri oranı, genellikle daha gösterişli bir algoritmaya geçmekten çok daha yüksektir.
-
-Operasyon düzeyine indiğimizde, **rejection sampling (reddederek örnekleme) "etiketleme doğruluğunu" sonuna kadar zorlamanın standart hamlesidir** ve akışı sabittir: her prompt için k aday örnekle (pratikte k çoğunlukla 4 ila 16 alınır) → kural doğrulayıcı, birim testler veya referans yanıtla doğru/yanlış kararı ver (otomatik doğrulayıcısı olmayan görevlerde bunun yerine bir reward model ya da güçlü bir modelle puanlama kullanılabilir) → yalnızca elemeyi geçen trajectory'leri sakla, tekrarları temizle ve aynı prompt için saklanan sayıyı sınırla ki veri birkaç kolay soruya çökmesin → elde kalan veriyle bir tur SFT yap. Model güçlendikten sonra yeniden örnekleyip yeniden eleyebilir, böyle yineleyebilirsiniz — STaR, RFT gibi kendini yukarı çeken (bootstrapping) yöntemlerin çekirdek döngüsü tam olarak budur. Bu yaklaşım, "veri kalitesi algoritmadan üstündür" sloganını yürütülebilir bir boru hattına çevirir: yeni bir algoritma gerekmez, güvenilir bir doğrulayıcı ve yeterli örnekleme bütçesi yeter.
-
-Rejection sampling esas olarak verilmiş sorular üzerinde yanıt eler; bir adım ötesi ise Agent'a **soru dağılımının kendisini** değiştirtmektir. Autodata'nın Agentic Self-Instruct yaklaşımında bir ana Agent dört rolü koordine eder: challenger görevleri üretir, zayıf çözücü ile güçlü çözücü ayrı ayrı dener, verifier yanıt kalitesine karar verip soru üretme adımına geri bildirim verir. Sistem böylece "güçlü modelin çözebildiği, zayıf modelin hâlâ zorlandığı, değerlendiricinin de güvenilir biçimde karar verebildiği" görevleri arar ve çıkarım için harcanan işlem gücünü, mevcut yetenek sınırında duran yeni eğitim verisine dönüştürür[^ch7-12].
-
-Bu, var olan soru havuzunda zor soruların örneklenme olasılığını artıran **dinamik örneklemeden** farklıdır: dinamik örnekleme bütçe dağılımını değiştirir, Agentic data generation ise görev dağılımını değiştirir. Yalnız "kendini iyileştirme" ifadesini burada dikkatli tanımlamak gerekiyor. Kapalı döngü yalnızca zayıf çözücüyü eğitiyor, güçlü çözücü ve soru üretme mekanizması hep sabit kalıyorsa, bu daha çok uyarlanabilir bir damıtmaya benzer; ancak soru üreten Agent da alt akıştaki eğitim sonuçlarına göre optimize edilmeye devam ederse daha eksiksiz bir meta düzey kapalı döngü oluşur. Autodata'nın veri bilimci Agent'ı üzerindeki meta optimizasyonu bu olasılığı gösteriyor, ama bu hâlâ öncü bir keşif; olgunlaşmış genel bir reçete gibi görülmemeli.
-
-#### Gerçek İş Verilerinden Doğrulanmış Sentetik Yörüngelere
-
-Gerçek bir hizmette çalışan Agent; kullanıcı istekleri, destek kayıtları, araç çağrısı günlükleri ve görev sonuçları gibi çok miktarda iş verisi biriktirir. Yeniden kullanılmaya en değer olan şey genellikle belirli bir kullanıcının birebir sözleri ya da gerçek bir sipariş değil, bu verilerin ortaya çıkardığı **görev yapısıdır**: kullanıcının neyi başarmak istediği, Agent'ın o sırada neleri görebildiği, hangi araçları çağırabildiği, hangi iş kurallarına uyması gerektiği, hataların en sık hangi adımda oluştuğu ve başarıdan sonra sistem durumunun nasıl olması gerektiği. Bu nedenle gerçek destek kayıtlarını ve günlükleri yalnızca yeniden yazarak eğitime vermek doğru değildir. Daha güvenli yaklaşım; kimlik belirleyici bilgileri çıkarmak, benzer vakaları birleştirerek **görev taslakları** oluşturmak ve ardından tamamen kurgusal kişiler, siparişler ve dosyalarla görevleri yalıtılmış bir ortamda yeniden kurmaktır. Böylece gerçek zorluk korunurken modelin özel bilgileri, müşteri verilerini veya kurum içi kimlik bilgilerini ezberleme riski azalır.
-
-Uygulanabilir akış şöyle özetlenebilir: **gerçek hizmet verisi → görev türlerini çıkarma → sentetik görev kurma → birden çok rollout → iki düzeyde doğrulama → eğitim verisi oluşturma**. 2026 tarihli çeşitli çalışmalar farklı yönlerden aynı ilkeye yaklaşır: görevleri rastgele birleştirmek yerine seyrek yetenek bileşimlerini beceri sınıflandırmaları veya beceri grafikleriyle sistematik biçimde kapsamak[^ch7-18]; çalıştırılabilir ortamlarda tanılama ve toparlanma içeren yörüngeler üretmek[^ch7-19]; testleri, referans çözümü ve çözme sürecini mümkün olduğunca ayırıp değişiklikten önce testlerin başarısız, doğru uygulamadan sonra başarılı olmasını isteyen fail-to-pass kontrolleriyle makul görünen fakat eğitim değeri düşük örnekleri elemek[^ch7-20]; görevin kendisiyle gerçekten çalıştırılmış yörüngeyi ayrı ayrı doğrulamak[^ch7-17]. Uygulamada üç adım vardır:
-
-1. **Önce görevi üretin, sonra yörünge örnekleyin.** Hizmet verilerinden kullanıcı niyetini, başlangıç durumunu, kullanılabilir araçları, iş kurallarını, başarı koşullarını ve yaygın hata biçimlerini çıkarıp benzer vakaları görev türleri kataloğunda gruplayın. Her tür için yeni adlar, kimlikler, dosya içerikleri ve sistem durumları üretip bunları sıfırlanabilir bir sandbox'a yerleştirin. Örneğin günlükler, kısmen gönderilmiş bir siparişin tamamı için para iadesi yapılamadığını tekrar tekrar gösteriyorsa sentezleyici; ürün sayısı, ödeme yöntemi ve gönderim oranı farklı kurgusal siparişler oluşturabilir, ancak yalnızca gönderilmemiş ürünlerin bedelinin iade edilebilmesi kuralını korur. Her **görev paketi**, Agent'ın gördüğü görev açıklaması ve başlangıç durumunun yanında Agent'tan saklanan doğrulayıcıyı, referans sonucu ve üretim notlarını da içermelidir. Ardından bir veya daha fazla güçlü öğretmen model, hedef Agent Harness üzerinden görevi baştan sona yürütür; mesajlar, araç çağrıları, araç sonuçları ve son durum kaydedilir. Her görevi birkaç kez deneyin ve yalnızca doğrulamayı geçen yörüngeleri tutun. Gerçek hizmette sık görülen sorunlar zaman aşımı, yanlış parametre veya bozuk ara dosyalardan kaynaklanıyorsa bu arızaları sandbox içinde güvenle oluşturarak yalnızca kusursuz uzman gösterileri değil, “hatayı bul → tanıla → onar → yeniden doğrula” biçiminde başarılı toparlanma yörüngeleri de üretebilirsiniz.
-2. **Görev doğrulamasını yörünge doğrulamasından ayırın.** Görev doğrulaması “bu iyi bir alıştırma mı?” diye sorar: referans çözüm temiz bir ortamda görevi tamamlayabiliyor mu; testler başlangıçta başarısız olup doğru uygulamadan sonra geçiyor mu; açıklama eksiksiz olduğu hâlde yanıtı sızdırmıyor mu; zorluk uygun mu; gerekli olduğu söylenen bir araç veya Skill çıkarıldığında görev gerçekten zorlaşıyor mu? Yörünge doğrulaması ise “bu iyi bir gösteri mi?” diye sorar: son veritabanı durumu, dosyalar veya dış etkiler zorunlu iş kurallarının tümüne uyuyor mu; yürütme normal biçimde sonlandı mı; araç çağrıları geçerli mi? Eğitim hedefinde belirli bir süreç varsa ilgili Skill'in karardan önce okunup eylemi gerçekten etkilediği, yalnızca sonradan anılmadığı da kontrol edilmelidir. Birim testi, veritabanı assertion'ı, biçim doğrulaması veya durum farkı olarak yazılabilen her koşul için deterministik kodu tercih edin. İletişimin uygunluğu gibi biçimselleştirilmesi zor alanlarda model tabanlı değerlendiriciyi yalnızca tamamlayıcı olarak kullanın ve insan denetimleriyle sürekli kalibre edin. Testlerin öğretmen yörüngesini görmemiş bağımsız bir rol tarafından hazırlanması; ardından doğruluğu bilinen, yanlışlığı bilinen ve bir kısıtı bilerek eksik bırakılmış örneklerle ters yönde sınanması idealdir. Aksi hâlde doğrulayıcı, referans yanıtın yalnızca yüzey biçimini tanımayı öğrenebilir.
-3. **Aynı görevleri ve doğrulama altyapısını SFT ile RL'de farklı biçimde kullanın.** Başlangıçta, doğrulanmış tam başarı yörüngeleriyle SFT yapın. Sistem mesajları, kullanıcı görevi ve araç sonuçları bağlam olarak kalır ancak loss hesabına katılmaz; gözetim Agent'ın ürettiği akıl yürütme, araç çağrıları ve son yanıta odaklanır. Böylece model yalnızca son yanıtı değil, yürütme sürecinin tamamını öğrenir. Daha sonra sentetik görev üreticisini ve doğrulayıcıyı doğrudan RLVR ortamına dönüştürün; mevcut model yeni rollout'lar üretsin ve testleri ne ölçüde geçtiğine göre ödül alsın. Başarısız yörüngeleri doğru örnekler gibi taklit ettirmeyin. Bunlar tercih çiftleri oluşturmak, müfredatın kapsamadığı görev türlerini bulmak veya doğru tanı ve onarım eklendikten sonra toparlanma gösterilerine dönüştürmek için kullanılabilir. Eğitim verisindeki tekrarları temizleyin ve veriyi müşteri, dönem veya görev şablonuna göre gruplandırarak bölün. Bağımsız değerlendirme kümesi eğitimle örtüşmeyen gerçek iş örnekleri ve görev türlerinden gelmelidir. Referans çözümler, gizli testler ve doğrulayıcı geri bildirimi modelin görebildiği eğitim içeriğine asla girmemelidir.
-
-Amaç olabildiğince çok veri üretmek değil, **neyin sentezleneceğini gerçek hizmet koşullarına, neyin saklanacağını ise çalıştırılabilir kontrollere belirletmektir**. Nitelik her zaman nicelikten önce gelir: gerçek görevlere yakın ve sıkı biçimde doğrulanmış az sayıda yörünge, büyük miktarda doğrulanmamış sentetik yörüngeden genellikle daha değerlidir. Sentezleyici görev kapsamındaki boşlukları doldurur, doğrulayıcı veri kalitesini korur, SFT temel davranışları öğretir ve RLVR aynı görevlerle doğrulama altyapısını kullanarak başarı oranını daha da yükseltir.
-
-Bölüm 9 bu tespiti yeniden yankılayacak: konuşma tanımada modelin "sözü alıp almayacağı" konusunda sürekli gidip gelmesinin kökeni model yapısında değil, eğitim etiketlerinin "tanrı bakışıyla" işaretlenmiş olmasındadır — etiketleri "yalnızca karar anında elde edilebilen bilgiyi kullan" biçimine çevirdiğinizde sorun kayboluyor. **Çoğu zaman veri, mimariden daha kritiktir.**
-
-### Peki Algoritmanın Sırası Ne Zaman Gelir?
-
-Algoritma hiç önemli değil demiyoruz; yalnızca sırası daha geride. Makul çaba sıralaması şudur: **önce güçlü bir temel model seç → sonra ortamı ve veriyi hakkıyla cilala → en son algoritma ve hiperparametrelerde marjinal optimizasyon yap.** Ortamınız yeterince gerçek, veriniz yeterince iyi, temel modeliniz yeterince güçlü olduğunda algoritmalar arasındaki farklar ancak o zaman görünür hale gelir; "GRPO mu PPO mu, Clip-Higher kullanılmalı mı" gibi sorular da ancak o zaman ciddi ciddi ayarlanmaya değer. Tersine, ortam ve veri hazır değilken algoritma yarışına girmek, tipik bir "arabayı atın önüne koşmak" durumudur. Bu önceliği aklımızda tutarak çok turlu görevlere geçiyoruz — orada ödül tasarımı (verinin ve ortamın kesiştiği yer) başarıyı ya da başarısızlığı belirleyen unsur olacak.
-
-## Tek Turdan Çok Tura: Credit Assignment ve Ödül Tasarımı
-
-### Çok Turlu Görevlerin Temel Zorluğu
-
-![Şekil 7-14: Tek Turlu RL ile Çok Turlu RL Karşılaştırması](images/fig7-14.svg)
-
-![Şekil 7-15: Çok Turlu Etkileşimde Credit Assignment](images/fig7-15.svg)
-
-Tek turdan çok tura geçişte karmaşıklık niteliksel bir sıçrama yapar. Politika yalnızca o anki en iyi eylemi seçmekle kalmaz, gelecekteki durum değerini de hesaba katmak zorundadır; yalnızca anlık geri bildirimi işlemekle kalmaz, gecikmeli ödül altında **credit assignment** (katkı payı dağıtımı) da yapmak zorundadır — çok adımlı bir dizide hangi adımın nihai sonuca en çok katkı yaptığına karar vermek. Örneğin bir müşteri hizmetleri Agent'ı 10 turluk diyalogla kullanıcının sorununu çözer ve sonunda iyi bir puan alır — ama bu iyi puan 2. turdaki isabetli soruya mı, yoksa 7. turdaki sabırlı açıklamaya mı yazılmalı?
-
-Burada ele alınan çok turlu etkileşimin fiziksel biçimi tam olarak Bölüm 1 ve Bölüm 4'te anlatılan ReAct döngüsüdür — her tur bir **düşün → eyle → gözlemle** yinelemesidir; ödül gecikmesi de "nihai sonucun iyi mi kötü mü olduğuna ancak birkaç tur sonra karar verilebilir" biçimindeki yapısal kısıttan gelir.
-
-## Ödül tasarımı: görev hedefini öğrenme sinyaline çevirmek
-
-Yukarıdaki tek turlu, çok turlu ve araç çağırma senaryoları *neyin* eğitileceğini ortaya koydu; bu bölüm *ortamın modele iyi iş çıkarıp çıkarmadığını nasıl söylemesi gerektiğini* yanıtlıyor. Ödül tasarımı birbirini tamamlayan üç boyutta açılır: **ödül nereden gelir**, **ne zaman verilir** ve **ne kadar bilgi taşımalıdır**. Ardından dördüncü bir soru gelir: sonuç doğruyken izlenen yol da kurallara uygun muydu?
-
-### Ödül nereden gelir: kurallar, insan tercihi ve model yargısı
-
-En güvenilir kaynak **doğrulanabilir ödüldür (RLVR)**: sonucu test senaryoları, veritabanı savları, durum farkları veya biçim denetimleriyle doğrudan yargılamak. Matematik yanıtları, kod testleri ve yapılandırılmış araç çağrıları ikili sonuç ödülüyle başlamaya elverişlidir. Kural ne kadar belirlenimciyse ödül o kadar ucuz ve yeniden üretilebilir olur, modelin açık bulması da o kadar zorlaşır.
-
-**RLHF** burada yalnızca arka plandır. InstructGPT[^ch7-4] akışının temeli şudur: insanlar yanıtları karşılaştırır, bir ödül modeli eğitilir, ardından PPO politikayı optimize eder. Ödül modeli tercihin yalnızca bir vekilidir ve aşırı optimize edilmesi reward hacking'e[^ch7-5] yol açar; bu yüzden genellikle KL düzenlileştirmesiyle politika, SFT referans modelinin yakınına demirlenir. DPO[^ch7-6] açık ödül modelini atlayıp doğrudan tercih çiftlerinden çevrimdışı optimizasyon yapar. Bu yöntemler bu bölümdeki Agent RL'in ana hattı değildir.
-
-Hedef tümüyle kurallara indirgenemediğinde model yargısına başvurulabilir. **Üretken ödül modeli (GRM)** yalnızca bir puan değil, "nerede iyi, nerede düzeltme gerekiyor" tanısını da üretir; hem ödül kaynağı olabilir hem de tanıları sonraki damıtma ya da tercih verisine dönüştürülebilir. DeepSeek-GRM'in[^ch7-23] temel fikri, modele önce göreve ilişkin değerlendirme ilkelerini çıkarttırmak, sonra trajectory'yi bu ilkelere göre değerlendirtmek ve son olarak değerlendirmenin kendisini doğrulanabilir olgularla sınamaktır. Elde edilen geri bildirim daha şeffaftır, ama yargıcın kendi yanlılıklarını geliştirmemesi için örnekleme yoluyla insan kalibrasyonu yine de gerekir.
-
-Burada birbirine kolayca karışan iki kavramı ayırmak gerekir. **Reward hacking**, bir kuralı ya da uygulama açığını sömürerek yüksek puan almaktır. **Reward seeking** ise modelin önce *değerlendiricinin neye bakacağına* dair bir iç tasarım kurup davranışını bu tahmine göre ayarlamasıdır. İkincisi testleri kurcalamayı veya sonuç uydurmayı gerektirmez; yine de uzun ufuklu görevlerde model kendine çok sığ bir denetim koyup onu geçer geçmez erken bitirebilir ve teslim ettiği iş vekil ölçütü karşılasa da gerçek niyeti karşılamayabilir[^ch7-29]. Dolayısıyla "grader'ı geçti", kendiliğinden "görev tamamlandı" demek değildir: değerlendirici niyetin vekilidir ve eğitim güçlendikçe modelin vekili hedefin kendisi sayma olasılığı artar.
-
-### Ödül ne zaman verilir: sonuç mu, süreç mi
-
-**Sonuç ödülü (ORM)** yalnızca bölüm sonunda görevin tamamlanıp tamamlanmadığını yargılar. En basit olanıdır ve politikaya en geniş keşif özgürlüğünü verir; ara yol için kabul görmüş bir ölçüt yokken ve en iyi çözümü insanlar henüz bulmamışken SimpleVLA-RL'in seyrek başarı/başarısızlık ödülü uygun bir başlangıçtır. Seyrek geri bildirim, modelin çok adımlı bir trajectory içindeki somut hatayı saptamasını zorlaştırır; bu da RL'in örneklem verimliliğinin uzun süredir sınırlı kalmasının nedenlerinden biridir[^ch7-8]. Uzun soluklu coding veya cowork görevlerinde "bitti mi" kararı, modelin yazamayacağı gizli testlere, durum savlarına ya da dışarıdan gelen bir sonlandırma kancasına bırakılmalı, modelin kendi tamamlanma beyanına dayandırılmamalıdır.
-
-"Erken bitirme" somut bir örnektir: model görevi tamamladığını söylediğinde harness, yalıtılmış bir çalışma alanında modelin göremeyeceği kabul testlerini çalıştırır; geçerse pozitif, geçmezse negatif ödül verilir. Bu testler gerçek dosyaları veya ortam durumunu okumalı, modelin "tamamlandı" deyip demediğine bakmamalıdır; aksi hâlde model doğrulamayı sözde vaat etmeyi öğrenir. Değerlendirmede, tamamlanmamış görevlerden oluşan sınır kümesiyle gerçekten tamamlanmış görevlerden oluşan ayrılmış kümeyi ayrı tutun: ilki erken durma oranını, ikincisi modelin hâlâ normal biçimde bitirebildiğini gösterir; böylece hiç bitirmeye cesaret edemeyen bir model yetiştirmezsiniz.
-
-**Süreç ödülü (PRM)** ara adımlarda geri bildirim verir: kimlik doğrulama, araç argümanları, geçen test sayısı veya gezinme eylemleri denetlenir. OpenAI'nin *Let's Verify Step by Step*[^ch7-7] çalışması, adım adım doğrulamanın matematiksel akıl yürütmedeki değerini gösterdi. Süreç ödülü uzun ufuklu kredi atamasını hafifletir, ama modeli tasarımcının öngördüğü yola hapsedebilir; etiketleme ve doğrulama maliyeti de daha yüksektir. V-IRL-VL (deney 7-12) adım adım gezinme geri bildirimi kullanır, SimpleVLA-RL (deney 7-13) yalnızca bitiş ödülünü korur; ikisi birlikte "yoğun geri bildirimle yakınsama hızı, seyrek geri bildirimle keşif alanı" karşıtlığını oluşturur.
-
-Mühendislikte önce sonuç ödülüyle güvenilir bir taban çizgi kurmak, ardından yalnızca gerçekten doğrulanabilir ara olaylar için süreç sinyali eklemek doğrudur. Çok turlu LLM RL'de indirim katsayısı genellikle $\gamma=1$ alınır; PPO'nun değer ağı veya tur düzeyindeki avantaj, bitiş geri bildirimini daha erken eylemlere atfeder; GRPO ise trajectory düzeyindeki avantajı üretilen token'lara yayar, bu yüzden uzun trajectory'lerde sinyal seyrelmesine ayrıca dikkat etmek gerekir.
-
-### Ödül ne kadar bilgi taşımalı: skaler, vektör, üretken tanı
-
-Ödülün **yoğunluğu** ile **temsil biçimi** iki ayrı şeydir. Skaler yalnızca "genel olarak ne kadar iyi" sorusunu yanıtlar; yarı skaler önce kısa bir gerekçe sonra bir puan verir; vektör doğruluk, bütünlük, maliyet ve güvenlik gibi boyutlarda ayrı ayrı puanlar; üretken ödül ise doğal dilde bir tanı üretir ve birden çok kez örneklenip toplulaştırılabilir. Seçim ilkesi açıktır:
-
-- Kesin bir yanıt veya test varsa: ikili skaleri yeğleyin;
-- Birbirinden bağımsız birden çok kalite hedefi varsa: vektör kullanın ya da boyutları ağırlıklandırıp skalere indirgeyin;
-- Açık uçlu ve kurallarla tüketilemiyorsa: üretken tanı kullanın, ama olgu denetimi ve örneklemeyle insan incelemesiyle birlikte.
-
-"Ödül daha zengin olsun" diye doğrulanamayan boyutlar üst üste yığmayın. Her yeni değerlendirme boyutu, politikanın açık bulabileceği bir yol daha ekler; önce sinyalin az sayıda rollout içinde anlamlı bir grup içi fark üretip üretmediğini doğrulayın, eğitime eklemeye sonra karar verin.
-
-### Sonucun doğru olması yetmez: yol kısıtları ve RLVP
-
-Sonuç ödülü "iş oldu mu" sorusunu çözer, ama "kurallara uygun mu yapıldı" sorusunu ifade edemez. Gerçek bir Agent, test dosyasını değiştirerek, kimlik doğrulamayı atlayarak veya yıkıcı bir komut çalıştırarak yüzeysel başarı elde edebilir. RLVP'nin (Reinforcement Learning with Verified Penalty)[^ch7-9] ilkesi şudur: **sonucu ödüllendir, yolu cezalandır**. Hedefi, makinece karara bağlanabilen ve nihai başarı ya da başarısızlıkla ilgisi olmayan **sonuç açısından yansız kısıtlardır**; anlamsal niyet, teslimin eksiksizliği ve erken durma davranışı üzerine bağımsız denetimlerin yerini tutmaz.
-
-Gerçek ortamlar genellikle **asimetrik doğrulayıcılardır**: "kötü bir eylem yapıldı" tespiti ucuz ve güvenilirdir, "bu adım hedefe doğru anlamlı bir ilerleme sağladı" kanıtı ise zordur. Toplam ödülü $R=O+\beta\Phi$ diye yazın: $O$ görev sonucudur, $\Phi$ ise belirlenimci kurallarla her eylem için hesaplanan yol sinyalidir. Doğrulanabilir ihlallerden puan düşün, doğrulanabilir uygun eylemlere veya erişilebilir alt hedeflere küçük bir kısmi ödül verin; yol sinyalinin ana hedefi boğmaması için iki kanalı birleştirmeden önce normalleştirin. Bunların hiçbiri PPO veya GRPO'yu değiştirmez; yalnızca her adımda görülen ödülü değiştirir.
-
-Uygulama düzeyinde doğrulayıcının çıktısını iki kanala ayırıp mevcut politika optimizatörüne vermek yeterlidir:
-
-```python
-outcome = verify_final_state(trajectory)              # result, not self-report
-path_signal = 0
-for step in trajectory:
-    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
-reward = normalize(outcome) + beta * normalize(path_signal)
+```text
+Çince düzyazı: `reset()` metodunu çağır.
+Alıntılanan İngilizce kaynak: “Please restart the service.”
+# aşağıdaki kod bloğu yalnızca korunan bir kapsamı göstermek içindir
+# Çince yorum: "geçerli durum" göster
+name = "status"
 ```
 
-Hangi eylemlerin serbest olduğu, hangi alt hedeflerin erişilebilir olduğu, gizli testlerin neler olduğu ve kanıtın nasıl kaydedildiği somut ortama bağlıdır; metin yalnızca "sonuç ödülü" ile "yol kısıtının" nasıl birleştiğini anlatır, böylece bir ortamın kuralları genel bir algoritma sanılmaz.
+Trajectory-prefix regresyonu modelden en küçük düzenlemeyi istemeli; aynı anda Çince belge üslubunu, alıntılanan İngilizce kaynağın korunma oranını, kod ve JSON sözdizimini ve hedef dışı metindeki düzenleme mesafesini denetlemelidir. Kurallar kapsamı belirleyemediğinde, özgün metni koruyup açıklama istemek izin verilen bir eylem sayılmalı; tahmine dayalı bir düzenlemenin tesadüfen geçmesi kabul edilmemelidir.
 
-RLVP'nin kilit noktası "ödül ne kadar yoğunsa o kadar iyi" değil, grup içi farkın geri kazanılıp kazanılamayacağıdır. Saf sonuç ödülü, tamamı başarısız ve tamamı başarılı gruplarda sıfır varyans ve sıfır gradyan üretir; ihlal eylemleri genellikle kolay saptandığından ceza farkı neredeyse her zaman geri kazandırır; ilerleme ödülü ise ancak kısmi ilerleme erişilebilir olduğunda işe yarar. Tasarımda dört kurala uyun: yalnızca somut eylemleri cezalandırın, "yeterince çabalamamayı" değil; sonuç ödülünü her zaman koruyun ki model hiçbir şey yapmamayı öğrenmesin; her cezayı mümkün olduğunca erişilebilir bir uyumlu yolla eşleştirin; kuralları belirlenimci ve açık vermesi zor kılın. Temel politika uyumlu eylemi hiç örneklemiyorsa, bu yolu önce birkaç gösterimle "ekin" ve uyumlu davranış kararlı hâle geldikten sonra yol şekillendirmesini kademeli olarak zayıflatın. Başka bir deyişle ceza, genellikle erişilebilir olan yarıdır; ilerleme ödülü ise erişilebilirlikle kapılanan yarıdır.
+#### Birebir kopyalama hataları: `old_string` mismatch'ten katman katman yerelleştirmeye
 
-> **Deney 7-16 ★★★: RLVP — sonucu ödüllendir, yolu cezalandır**
->
-> GRPO üzerine sonuç ödülü $O$ ile yol sinyali $\Phi$ ekleyin ve saf sonuç ödülüyle karşılaştırın. TerminalBench'te ihlal sayısı 3,71'den 0,66'ya inerken başarı oranı neredeyse değişmez; miniF2F'te erişilebilir kısmi ödül, 0,9 başarı oranına ulaşmak için gereken yinelemeyi 7,0'dan 4,4'e düşürür. Yazılım onarımında hiçbir rollout hiçbir testi geçmiyorsa ilerleme sinyali erişilemezdir ve eklemek fayda getirmez. Çıkarılacak ders: ödül boyutu eklemeye karar vermeden önce sinyalin erişilebilirliğini ölçün.
-
-Bu sayılar denetimli vekil ortamlardan gelir ve canlı bir Agent için eşdeğer kazanımlara doğrudan genellenemez; daha sağlam sonuç mekanizmaya ilişkindir: yol sinyali aynı rollout grubu içinde davranışları ayırt edebildiği ve kurallar politikanın açık vermesine kapalı olduğu sürece, bitiş ödülünün göremediği bilgiyi tam olarak tamamlar. Gerçek dağıtımda ayrıca gizli doğrulama, trajectory izleme ve dış sonlandırma koşulları harness'a birlikte dâhil edilmelidir.
-
-## RL ile Tool Calling Öğrenmek
-
-Önceki çok turlu deneylerde Agent'ın action space'i hareket etme, gözlemleme gibi yerleşik işlemlerle sınırlıydı. Gerçek hayattaki bir Agent ise çeşitli dış araçları — arama motorları, kod yorumlayıcıları, doküman ayrıştırıcıları vb. — çağırmak zorundadır; bu da RL eğitimine yeni zorluklar getirir.
-
-![Şekil 7-16: Tool Calling RL Ödül Döngüsü](images/fig7-16.svg)
-
-Araç kullanımı, Agent'ın yetenek sınırını "modelin kendi akıl yürütmesinden" "dış sistemleri çağırarak iş birliği yapmaya" genişletir ve Agent'ın pratikte kullanışlı hale gelmesinin anahtarıdır. Zorluk kademesi açısından bakıldığında, araç kullanımının RL eğitimi üç düzeyde zorlukla karşılaşır. Birinci düzey, tek bir aracı kullanmayı öğrenmektir — girdi/çıktı spesifikasyonunu anlamak, çağırma zamanlamasını kavramak, hata geri bildirimlerini işlemek. İkinci düzey, çok araçlı bir ekosistemde seçim yapmaktır — onlarca araç karşısında ne zaman arama yapılacağı, ne zaman kod çalıştırılacağı, ne zaman doküman ayrıştırılacağı. Üçüncü düzey, araç zinciri orkestrasyonudur — araçlar arasındaki bağımlılıkları keşfetmek, karşılıklı dışlama kısıtlarını tanımak, maliyet verimliliğini optimize etmek.
-
-Tool calling etrafındaki Agent RL çalışmalarında şu anda iki etkin hat var. Birincisi **retrieval ile güçlendirme**: temsilcisi Search-R1 (Jin ve arkadaşları, 2025); RL ile modele, sabit bir RAG akışını uygulamak yerine düşünme sürecinde ne zaman arama başlatacağına kendi başına karar vermeyi ve dönen sonuçlarla akıl yürütmeye devam etmeyi öğretir. İkincisi **yazılım mühendisliği**: temsilcisi SWE-Gym gibi eğitim ortamları; coding Agent için gerçek kod depoları üzerinde çok turlu RL yapar ve modelin kodu yinelemeli olarak düzenlemesini, çalıştırmasını, onarmasını sağlar. İki hattın ortak zorluğu, uzun zaman ufuklu credit assignment (nihai bir başarının onlarca adım öncesindeki bir karara atfedilmesi) ve ortam mühendisliğidir (kararlı, yeniden üretilebilir ve büyük ölçekte paralelleştirilebilir eğitim ortamı kurmak).
-
-Araç RL'inde kaçınılmaz bir mühendislik ayrıntısı daha var: **ortam geri bildirimi token'larına kayıp maskeleme (loss masking) uygulamak**. Bir tool calling trajectory'sinde hem modelin kendi ürettiği token'lar (düşünme, araç çağrısı parametreleri) hem de ortamın döndürdüğü token'lar (kod yorumlayıcı çıktısı, arama sonuçları, müşteri temsilcisinin yanıtı) bulunur. İkinciler politika tarafından üretilmemiştir, ortam tarafından verilmiştir — bunları da policy gradient'e katarsanız model "sandbox'ın ne çıktı vereceğini tahmin etmeye" doğru eğitilir; bu hem optimizasyon hedefinden sapar hem de eğitimi kararsızlaştırır. Standart uygulama, kayıp hesaplanırken ortam geri bildirimi token'larını maskelemek ve gradyanı yalnızca modelin kendi ürettiği token'lara geri yaymaktır. ReTool'un çekirdek teknik noktalarından biri tam olarak budur (`<interpreter>` etiketleri içindeki geri bildirim token'larına gradyan maskesi uygulamak); Search-R1'in "eğitimi kararlı kılmak için retrieval edilen token'ları maskelemek" dediği şey de budur. veRL, AWorld gibi yaygın eğitim çerçevelerinin hepsinde bu mekanizma yerleşiktir.
-
-**Trajectory düzeyinde ödül maskesi:**
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-> **Deney 7-14 ★★★: ReTool — Kod Yorumlayıcıyla Güçlendirilmiş Matematik Problemi Çözme**
->
->
-> ![Şekil 7-17: ReTool'un Metin-Kod Düşünmeyi İç İçe Geçiren Sandbox Yürütme Geri Bildirim Döngüsü](images/fig7-17.svg)
->
->
-> Saf metinle düşünme; hassas sayısal hesaplama, sembolik işlem veya karmaşık denklem çözümünde kolayca birikimli hata üretir (örneğin arka arkaya on adım çarpma yapıldığında her adımda yanlış hesaplama olabilir); kod yorumlayıcı ise yürütülebilir bir arayüz sunarak hassas doğrulama sağlar. ReTool, kod yorumlayıcının gerçek zamanlı yürütmesini RL düşünme döngüsüne entegre eder ve modelin, sonuç geri bildiriminin rehberliğinde aracı ne zaman ve nasıl kullanacağını kendi başına öğrenmesini sağlar.
->
-> Eğitim iki aşamalıdır. SFT ısınması (yaklaşık 1 saat) saf metin akıl yürütme verisini kodla güçlendirilmiş trajectory'lere dönüştürür ve temel tool calling örüntüsünü kurar. RL eğitimi (veRL üzerine uyarlanmış PPO; eğitim verisi DAPO-Math-17k kümesinden alınmıştır; yaklaşık 9 gün, 400 adım) gerçek zamanlı kod yürütmesini iç içe geçiren rollout'larla politikayı optimize eder: model `<code>` etiketi içeren kod üretir, sandbox bunu çalıştırdıktan sonra sonucu `<interpreter>` etiketinin içine sararak geri döndürür, model üretmeye devam eder ve "metin 1 + kod 1 + geri bildirim 1 + ... + yanıt" biçiminde karma bir akıl yürütme dizisi oluşur. Her eğitim adımında 512 yanıt üretilmesi gerekir (32 soru × 16 aday), yanıt başına ortalama 7-9 tur etkileşim olur ve toplam işlenen token miktarı başlangıçtaki 25M'den 40M'ye çıkar.
->
-> ReTool'un kendisi standart PPO kullanır ve optimizasyon algoritmasını değiştirmez. Ancak eğitim verisi DAPO ekibinin DAPO-Math-17k kümesinden geldiği için, burada son dönemde popülerleşen **DAPO** algoritmasını (Yu ve arkadaşları, 2025) da tanıtalım — standart PPO üzerine dört iyileştirme yapar ve temel hedefi, modelin erkenden tek bir politikaya yakınsamasını (soruyu yalnızca tek bir yolla çözebilmesini) önlemektir:
->
-> - **Clip-Higher (keşif üst sınırını gevşetme)**: standart PPO algoritması her eğitim adımında politikanın değişim büyüklüğünü sınırlar — değişim çok büyük olursa eğitim kolayca kararsızlaşır. Ama sınır fazla katı olursa model "yeni yollar denemeye cesaret edemez". Clip-Higher bu sınırı ölçülü biçimde gevşetir: model tesadüfen belirgin biçimde daha iyi bir yol bulduğunda, o yola doğru daha cesur ayarlamalar yapmasına izin verir ve böylece keşfi teşvik eder.
-> - **Token-Level Policy Gradient Loss (her token'a eşit ağırlık verme)**: özgün GRPO kayba örnek düzeyinde normalleştirme uygular — önce her yanıtın içinde token sayısına göre ortalama alır, sonra örnekler arasında ortalama alır — bu da uzun yanıtlardaki her token'ın `1/|o_i|` ile seyreltilmesine yol açar: yüksek kaliteli uzun zincirli düşünme yeterince ödüllendirilmez, gereksiz uzun tekrarlar da yeterince cezalandırılmaz. DAPO'nun Token-Level Policy Gradient Loss'u tam da bu örnek bazlı ortalama katmanını kaldırır ve bunun yerine tüm batch'teki bütün token'lar üzerinde tek seferde normalleştirme yapar; böylece her token eşit ağırlık alır. Doğrudan sonucu şudur: uzun yanıtlar uzunluklarıyla orantılı bir gradyan katkısı elde eder.
-> - **Dynamic Sampling (işlem gücünü akıllıca dağıtma)**: eğitim sırasında her sorunun örnekleme sayısı dinamik olarak ayarlanır — modelin çoktan kararlı biçimde çözebildiği kolay sorularda örnekleme azaltılır (çalışmaya devam etmenin pek getirisi yoktur), başarı oranı %20-80 arasındaki "öğrenilebilir aralıktaki" sorularda ise örnekleme artırılır (en çok öğrenilecek şey bunlardadır); böylece işlem gücü, öğrenme değeri en yüksek veride yoğunlaştırılır.
-> - **Overlong Reward Shaping (gereksiz uzun yanıtları cezalandırma)**: aşırı uzun yanıtlara yumuşak bir ceza uygulanır. Model çok uzun bir düşünme süreci ürettiği halde bu sayede daha iyi yanıt vermemişse sistem ödül puanını düşürür ve onu daha derli toplu, daha verimli düşünmeye yönlendirir.
->
-> ReTool'a dönelim. AIME 2024 üzerinde, Qwen2.5-32B-Instruct temelli eğitimin 110. adımdaki ara kontrol noktasında doğruluk, başlangıçtaki yaklaşık %25'ten %52'ye yükselmişti (Best-of-30 ile %85). Makalenin nihai sonucu, 400 adım sonunda %67,0; saf metin RL referans çizgisi ise 1.080 adım eğitildiğinde bile yalnızca %40,0'da kalıyor. Bu deney kutusundaki eğitim dinamiği sayılarının tümü, bu 32B model kurgusunu ölçüt alır.
->
-> Ortaya çıkan yetenekler: kodu kendi kendine düzeltme (yürütme hatasını tanıyıp kendiliğinden düzeltilmiş sürüm üretme), tool calling'in geç aşamadaki doğrulamadan erken aşamadaki keşfe kayması, düşünme verimliliğinin artması (uzunluk %40 azalırken doğruluk düşmek yerine yükseliyor).
->
-> İlk 110 adımın eğitim dinamiği üç aşamalı bir örüntü sergiliyor: başlangıç (0-20. adımlar) temel araç kullanımının hızla öğrenilmesi, doğruluk her adımda %0,5 artıyor; orta aşama (20-70. adımlar) dalgalı keşif, yanıt uzunluğu 2.500'den zirve değeri 4.700 token'a çıkıyor, politika çeşitliliği hızla artıyor; son aşama (70-110. adımlar) kararlı yakınsama, uzunluk 4.400 token'a geriliyor, performans yükselmeye devam ediyor ama dalgalanma azalıyor.
->
-> SFT ile RL arasındaki süre farkının kökeni bilgi yoğunluğunun farklı olmasıdır: SFT'de her token'ın bir denetim sinyali vardır, RL'de ise her episode yalnızca tek bir başarı/başarısızlık sinyali alır. Gerçek eğitimde tek adımın süresi yanıt uzunluğu arttıkça uzar ve az sayıdaki aşırı uzun yanıt, tüm eğitim döngüsünü belirgin biçimde geciktirir.
->
-> **Deney 7-15 ★★★: AWorld-train — Sandbox'ta Araç Kullanmayı Öğrenmek**
->
->
-> ![Şekil 7-18: AWorld-train MCP Sandbox Eğitim Mimarisi ve Araç Ekosistemi](images/fig7-18.svg)
->
->
-> GAIA, Agent değerlendirme benchmark'larının en zorlayıcılarından biridir. Büyük parametreli modeller büyük ölçekli eğitimden geçse bile yalnızca yaklaşık %32'ye ulaşabilir ve yüksek puanlı sistemlere göre belirgin bir fark kalır. Bu deney daha küçük bir model (Qwen3-4B) kullanır; asıl amacı, eksiksiz bir "pratikten öğrenme" eğitim akışını göstermektir.
->
-> AWorld eğitim ortamı bir MCP sunucusu sandbox'ıdır; 26 sunucu ve 126 araç fonksiyonu sunar ve şunları kapsar: web etkileşimi (Google araması, akıllı tarayıcı, Playwright), doküman işleme (CSV/DOCX/PPTX/PDF), multimedya işleme (ses yazıya çevirme, OCR, video özetleme), kod yürütme (terminal komutları, E2B sandbox), Excel işleme (29 kurumsal düzeyde işlem), bilgi getirme (Wikipedia, ArXiv, Wayback Machine). Gerçek API'lerin hız sınırları, servis dalgalanmaları ve hesap kapatmaları doğrudan üretim ortamında eğitimi olanaksız kılar — kararlı, denetlenebilir ve yeniden oynatılabilir bir simülasyon ortamı kurmak, çok araçlı RL eğitiminin mühendislik ön koşuludur.
->
-> Tek araçtan çok araca geçişteki niteliksel değişim şudur: tek araçta yalnızca "ne zaman" ve "nasıl" çağrılacağına karar vermek gerekir; çok araçta ayrıca "hangisinin çağrılacağı" ve "nasıl birleştirileceği" de çözülmelidir. Bu da kombinatoryal patlama ve bağımlılık yönetimi karmaşıklığını getirir — araçlar arasında ön bağımlılıklar (belirli bir sayfayı gezmek için önce arama yapmak gerekir), karşılıklı dışlama kısıtları (bazı araçlar aynı anda çağrılamaz) ve maliyet farkları (farklı API'lerin kotası ve gecikmesi farklıdır) vardır. Politikanın, bu kısıtlar altında anlık en iyiyi açgözlülükle seçmek yerine bütünsel bir planlama yapması gerekir.
->
-> Belirtmek gerekir ki bu deney **açık uçlu bir eğitim deneyidir ve referans çizgisi sonuçları sunmaz** — Qwen3-4B ölçeğindeki bir modelin GAIA'da göz alıcı puanlar alması zordur; bu deneyin değeri metrikleri kırmakta değil, "pratikten öğrenme" zincirinin tamamını uçtan uca çalıştırmakta yatar. Referans alınabilecek kabul ölçütleri ve beklenen gözlemler şunlardır: ortamın reset ve episode döngüsünün kararlı biçimde çalışması (araç çağrısı, geri bildirim ve durum güncellemesinin çökmemesi); eğitim boyunca ortalama ödül eğrisinin yükseliş eğilimi göstermesi; araç çağrısı başarı oranının eğitimle birlikte artması ve modelin çok araç arasında giderek daha makul seçim ve birleşimler yapmayı öğrenmesi.
-
-## Örnek Verimliliğini Artırmaya Yönelik Öncü Keşifler
-
-Yukarıdaki deneyler RL'in Agent eğitimindeki temel değerini sistemli biçimde gösterdi, ama hepsi yüksek bir örnek maliyeti ödedi. ReTool'un RL eğitim süresi SFT'nin 200 katından fazladır (9 gün ile 1 saat); kaynakların kısıtlı olduğu ya da hızlı yineleme gereken senaryolarda bu kabul edilemez olabilir.
-
-RL'in örnek verimliliğinin düşük olmasının birden çok nedeni var (yüksek varyans, seyrek ödül, iz üstü verinin yeniden kullanılmasının zorluğu vb.); bunlardan önemli bir kökeni, yaygın policy gradient yöntemlerinin model-free (modelsiz) doğasıdır — ortam dinamiğini (world model, "eylem yürütüldükten sonra dünyanın nasıl bir hâl alacağı") modellemez ve tek bir geri bildirimin içindeki zengin bilgiyi doğrudan kullanması da zordur (bu iki nokta birbiriyle ilişkilidir, ama aynı şey değildir). Ortamın her etkileşimde döndürdüğü zengin geri bildirimin (hatanın nedeni, eksik alan, doğru akış ipucu) büyük kısmı boşa gider — bu sorunu daha önce "seyrek ödülün çıkmazı" kısmında ayrıntılı çözümlemiştik. Müşteri hizmetlerini telefonla arama senaryosunu düşünün: temsilci "kimlik doğrulamak için kredi kartının son dört hanesi gerekiyor" diye açıkça bildiriyor, ama model-free RL yalnızca nihai başarı/başarısızlık sinyalinden öğrenebiliyor (reward 0 ya da 1), bu net geri bildirimi doğrudan kullanamıyor ve kredi kartı bilgisi vermeyi ancak yüzlerce rastgele keşif sonucunda tesadüfen deneyebiliyor. Oysa insan, geri bildirimi duyduğu anda aklına yazıyor ve bir sonraki sefere kendiliğinden hazırlanıyor.
-
-Bu darboğaz etrafında bu bölüm aslında birbirini tamamlayan iki fikir sundu. Birincisi, **ortam geri bildiriminde boşa giden bilgiyi yeniden öğrenilebilir bir ödüle çevirmek** — "temsilci önce kimlik doğrulaması istedi", "bu komut yıkıcı", "bir adım daha kanıtlandı" gibi net ve makineyle saptanabilir sinyalleri doğrudan ödül fonksiyonuna yazmak; Bölüm 7.10'da anlatılan RLVP tam olarak budur (özellikle "erişilebilir ilerlemeyi ödüllendirme" biçimindeki kısmi ödül kullanımı, tamamı başarısız gruplarda boşa giden örneklemeleri kurtarabilir). İkincisi ise bu bölümde ayrıntısıyla açacağımız yöntem: **her adımın eğitim sinyalini daha yoğun hale getirmek.** Görevin yalnızca bitiminde tek bir başarı/başarısızlık skaleri almak yerine trajectory'nin her noktasında yönlendirme almak — işte bu, On-Policy Distillation'dır.
-
-### On-Policy Distillation: SFT ile RL'in Güçlü Yanlarını Birleştirmek
-
-On-Policy Distillation (iz üstü damıtma), 2025'te Thinking Machines Lab tarafından sistemli biçimde ortaya konup yaygınlaştırıldı[^ch7-10] ve bugün post-training'in en yaygın yöntemlerinden biri haline geldi; ayrıca ele alıp netleştirmeye değer. Neyi çözdüğünü anlamak için önce SFT ile RL'in birer ölümcül eksiğine bakalım — bu yöntem tam da ikisinin güçlü yanlarını bir araya getiriyor.
-
-**SFT'nin eksiği: Learner-Sampler Mismatch (öğrenen ile örnekleyen uyuşmazlığı).** SFT'nin eğitim verisi "örnekleyen" (öğretmen model ya da insan uzman) tarafından üretilir; "öğrenen" (eğitilen model) bu **doğru yolları** yalnızca edilgen biçimde taklit eder. Sorun şu: öğrenen kendisi sahaya çıktığında kaçınılmaz olarak hata yapar ve eğitim verisinde hiç görülmemiş **sapma durumlarına** düşer; oysa bu durumlardan doğru yola nasıl dönüleceğini hiç görmemiştir, böylece küçük hatalar birikip büyük hataya dönüşür — tıpkı yalnızca standart yanıtları ezberlemiş bir öğrencinin, ara adımlardan birini yanlış hesapladığı anda geri dönmeyi hiç bilememesi gibi. Kökeni şudur: eğitim sırasında "yolu kim yürüyor" (öğretmen) ile dağıtım sırasında "yolu kim yürüyor" (öğrencinin kendisi) aynı dağılım değildir.
-
-**RL'in eksiği: sinyal fazla seyrek.** RL öğrenciyi kendisi yürütür (iz üstü) ve dağılım uyuşmazlığını çözer; ama her trajectory sonuna kadar yürüdüğünde yalnızca tek bir başarı/başarısızlık skaleri alır. Aradaki her adımın tam olarak nasıl düzeltilmesi gerektiğini bulmak için yine yüzlerce, binlerce deneme yanılmayla geriye doğru çıkarım yapmak gerekir.
-
-**On-Policy Distillation ikisinin güçlü yanlarını birleştirir: trajectory'yi öğrencinin kendisi üretir (On-Policy, dağılım uyuşmazlığını çözer), aynı anda daha güçlü bir öğretmen model öğrencinin yürüdüğü her adımı token token puanlar (yoğun sinyal, sinyal seyrekliğini çözer).** Üç yöntemi tek cümleyle karşılaştıralım: SFT "iz dışı + yoğun sinyal"dir (dağılım uyuşmazlığı vardır), RL "iz üstü + seyrek sinyal"dir (geri bildirim seyrektir), On-Policy Distillation ise "**iz üstü + yoğun sinyal**"dir — iki eksik de kapanmıştır.
-
-Puanlama tam olarak nasıl yapılır? Öğretmen yalnızca öğrencinin bu adımının doğru olup olmadığına karar vermez; doğrudan "şu anki konumda bir sonraki token için çeşitli seçeneklerin olasılıkları ne olmalı" sorusunun tam dağılımını verir. Örneğin öğrenci "önce API'yi sorgula, sonra dönen değeri ayrıştır..." derken belirli bir noktaya geldiğinde, öğretmen burada "sorgula"nın %80, "çağır"ın %15, geri kalanın %5 olması gerektiğini düşünür; öğrencinin öğrenme hedefi ise her konumdaki tahmin dağılımını öğretmenin dağılımına olabildiğince yaklaştırmaktır. Teknik olarak bu, iki dağılım arasındaki **KL sapmasını** (KL divergence) en aza indirerek gerçekleştirilir (KL sapması iki olasılık dağılımı arasındaki farkı ölçer; dağılımlar birbirine yaklaştıkça küçülür, aynı olduklarında 0 olur; Bölüm 7.7'de ayrıntılı anlatıldı). Yalnızca nihai başarı/başarısızlığı bildiren ikili sinyale kıyasla, bu token token dağılım hizalaması bir büyüklük mertebesinden fazla yoğundur.
-
-**On-policy damıtma:**
-
-```python
-student_trajectory = rollout(student, task)
-loss = 0
-for state in student_trajectory:
-    teacher_logits = teacher(state)
-    loss += KL(student_logits(state), teacher_logits)
-update_student(loss)
-```
-
-Sonuçlar çok belirgin: matematik gibi görevlerde aynı performansa ulaşmak için gereken eğitim adımı sayısı, saf RL'in yalnızca yaklaşık **1/10'u** kadardır. Uzun zincirli düşünme görevlerinde üstünlüğü özellikle belirgin — her adımda öğretmen yol gösterdiği için öğrenci hatasını hızla düzeltmeyi öğrenir, yanlış yolda gitgide uzaklaşmaz. Ayrıca yan fayda olarak aşırı öğrenmeyi de hafifletir: standart RL'de aynı prompt üzerinde tekrar tekrar eğitim yapmak nihai yanıtın ezberlenmesine yol açabilir; burada ise her seferinde trajectory farklıdır ve öğretmen somut trajectory'ye göre geri bildirim verir, böylece öğrenilen şey belirli bir yanıt değil genel bir politika olur; verinin yeniden kullanım oranı da bu sayede büyük ölçüde artar.
-
-Bu yöntemin değeri **çok turlu Agent senaryolarında** özellikle büyüktür: çok turlu görevlerde başarı/başarısızlık sinyali en sonda ortaya çıkar, hem seyrek hem gecikmelidir; token token verilen öğretmen dağılımı ise tam olarak aradaki her adımda eksik kalan yönlendirmeyi tamamlar. Ama bir ön koşulu var ve bu, bölüm boyunca vurgulanan ana hattı yankılıyor: **öğrencinin serbestçe keşfedebileceği, yeterince gerçekçi bir simülasyon ortamı olmak zorundadır** — yoksa öğrenci, öğretmenin de hiç görmediği sapma durumlarına düştüğünde öğretmenin puanlaması da güvenilmez olur. On-Policy'nin değeri, "öğrencinin gerçekten dağıtım ortamının dağılımı üzerinde keşif yapması" temeline dayanır.
-
-"Yoğun sinyal seyrek sinyalden üstündür" kuralı, saf bir Agent senaryosunda oldukça temiz biçimde bir kez doğrulandı. Bölüm 2'de durum çubuğu anlatılırken Agent'ın "zaman duyusundan" söz edilmişti — Aciliyet, Israr, Tetiklik — ve bunlar çıkarım zamanında bir işletim el kitabıyla takılabiliyordu; ama 8B'lik küçük bir modelin prompt'lardan bağımsızlaşıp bu tempo duyusunu doğrudan ağırlıklarına yazması, başlı başına bir post-training problemidir. Yazar ve iş birlikçileri bunun üzerinde sırasıyla DPO'yu ve dört farklı pekiştirmeli öğrenme reçetesini denedi; dört RL reçetesinin her biri tam da bu bölümde daha önce ele alınan birer başarısızlık kalıbına denk geldi: sert kapılı ödül fazla seyrekti, rollout'ların büyük çoğunluğu sıfır puan aldı ve grup içi avantaj sıfırlandı (seyreklik); kademeli ödüle geçilince sinyal yoğunlaştı, ama vekil metrik gerçek geçme oranına karşılık gelmiyordu (hedef kayması); yalnızca ilk turdaki yanıtın puanlanması, çok turlu değerlendirmede daha da kötü sonuç veren baştan savma kısa yanıtları doğurdu (rollout biçimi uyuşmazlığı); son olarak rollout biçimi değerlendirmeyle hizalandığında eğitim ödülü gerçekten yükselmeye başladı, ama politika birkaç adım içinde tek bir moda çöktü ve 4 kat güçlü bir KL çıpası bile onu tutamadı (eğitim çöküşü). Hiçbir reçete SFT'nin tavanını aşamadı. On-Policy Distillation'a geçildiğinde — dondurulmuş bir Qwen3-32B öğretmen, öğrencinin kendi yürüdüğü çok turlu trajectory'ler üzerinde token token hedef dağılımı veriyordu — eğitim pürüzsüz biçimde yakınsadı ve dört koşulun hepsinde geçme oranı, aynı kaynaktan gelen SFT referans çizgisinden 23 ila 47 yüzde puan daha yüksek çıktı[^ch7-11]. Dört seyrek sinyalin sırayla başarısız olması ve tek bir yoğun sinyalin başarılı olması, bu bölümün ana fikrini bir kez daha sağlamlaştırdı: post-training'i tıkayan şey çoğu zaman ödül fonksiyonunun yeterince zekice tasarlanmamış olması değil, sinyalin kendisinin yeterince yoğun olmamasıdır.
-
-### Daha Güçlü Bir Öğretmen Yoksa Ne Yapmalı: On-Policy Öz-Damıtma
-
-On-Policy Distillation'ın gücü öğretmenden gelir, ama tam da bu yüzden sert bir ön koşulu vardır: **öğrenciden belirgin biçimde güçlü bir öğretmen model bulunmak zorundadır.** Bu, birçok senaryoda geçerli değildir. Eğitmek istediğiniz şey dikey bir alan modeliyse ve mevcut modellerin hepsinin yeteneği yetersizse, kullanılabilecek bir öğretmen model yoktur. Daha güçlü bir öğretmen olmadan, yoğun sinyalin getirisinden büsbütün mahrum mu kalırız?
-
-Zekice bir çözüm fikri **On-Policy Self-Distillation (OPSD, iz üstü öz-damıtma)**[^ch7-15]: **aynı modele hem öğretmen hem öğrenci rolünü oynatmak; tek fark context'tedir.** Öğretmen sürümü "ayrıcalıklı bilgiyi" (privileged information) görebilir — örneğin sorunun standart yanıtını ya da doğrulanmış doğru bir çözümü. Bu sürümün soruyu gerçekten "çözebiliyor" olması gerekmez; elindeki yanıtla öğrencinin yürüdüğü her adımı **gerekçelendirip** token token hedef dağılımı vermesi yeterlidir. Öğrenci sürümü ise yalnızca sorunun kendisini görür ve kendi örneklediği trajectory'ler üzerinde öğretmen sürümüyle hizalanır. Arkasındaki sezgi şu: "yanıta bakarak soruyu anlatmak", "soruyu bağımsız çözmekten" çok daha kolaydır — bu, RLVR'in dayandığı "doğrulama—üretim asimetrisiyle" eş yapıdadır; yalnızca burada asimetri, seyrek bir başarı/başarısızlık skaleri değil yoğun bir denetim sinyali üretmek için kullanılır.
-
-**On-policy öz-damıtma:**
-
-```python
-student_trajectory = rollout(model, task_without_answer)
-loss = 0
-for state in student_trajectory:
-    privileged_state = add_verified_answer(state)
-    teacher_logits = stop_gradient(model(privileged_state))
-    loss += KL(model(state), teacher_logits)
-update(model, loss + retention_regularizer)
-```
-
-RLVR'e kıyasla OPSD'nin iki temel üstünlüğü var. **Birincisi, artık doğrulanabilir ödüle bağımlı değildir.** RLVR'in ön koşulu otomatik bir doğrulayıcının varlığıdır; OPSD'nin ayrıcalıklı bilgi kaynağı ise çok daha geniştir: standart yanıt olabileceği gibi daha zengin bir system prompt, insan gösterimi ya da alan dokümanı da olabilir — "modelin sonradan doğru davranışı açıklıkla anlatmasını sağlayan" her bilgi işe yarar. **İkincisi, denetim sinyali RL'inkinden çok daha yoğundur.** RL'de bir trajectory yalnızca tek bir skaler ödül alır; OPSD ise trajectory'nin her konumunda eksiksiz bir olasılık dağılımı sağlar ve token verimliliği RL yöntemlerinden belirgin biçimde üstündür. Denilebilir ki OPSD, "daha güçlü öğretmenin" yerine "ayrıcalıklı bilgiyi" koymuştur ve bu sayede örnek verimliliği sorununu hafifletmenin gerçekçi bir yolu haline gelmiştir.
-
-Elbette bu paradigmanın sınırları da çok net ve esas olarak öğretmenin yetenek tavanının öğrencinin kendisine kilitli olmasından kaynaklanıyor: **kazancın büyüklüğü, "ayrıcalıklı bilginin ne kadar ek yetenek getirdiğine" bağlıdır.** Model elinde yanıt olmasına rağmen çözüm sürecini anlatamıyorsa (örneğin yanıt, dille açıklanabilir bir akıl yürütmeden değil kaba kuvvet aramasından geliyorsa), öz-damıtmanın sinyal kaynağı olmaz. Mevcut araştırmalar naif OPSD'nin başarısızlık kalıplarını da gözlemledi; örneğin öz-damıtma sırasında model özgün düşünme üslubunu yavaş yavaş kaybediyor ve kararlılık için ek düzenlileştirme gerekiyor[^ch7-16]. "Aynı model, farklı context, birbirine öğretmen ve öğrenci" fikri hâlâ hızla evriliyor, ama "daha güçlü öğretmen yok" biçimindeki yaygın çıkmaza şimdiden bir yol açmış durumda.
-
-## Bad case'lerden Post-Training'e
-
-Bu bölüm, 6. Bölümde açık kalan soruya döner: üretimdeki bad case'lerden oluşturulan değerlendirme verisi post-training girdisine nasıl dönüştürülür? Hata-atıf kayıtları, uçtan uca regresyon görevleri, trajectory-prefix regresyon görevleri ve rubrik puanlarının her biri farklı bir eğitim kullanımına karşılık gelir.
-
-Tablo 7-4. Bölüm 6 değerlendirme verisinin Bölüm 7 eğitim kullanımlarına eşlenmesi
-
-| Bölüm 6 değerlendirme verisi | Bölüm 7 eğitim kullanımı |
-|---|---|
-| Doğrulayıcılı uçtan uca regresyon görevi | RL rollout görevleri ve doğrulanabilir ödüller (RLVR); rejection-sampling fine-tuning (RFT) için örnekleme havuzu |
-| Trajectory-prefix regresyon görevi | DPO tercih çiftleri, karar sınırları için SFT gösterimleri ve On-Policy Distillation öğretmen durumları |
-| Hata-atıf kaydı (ilk hatalı adım ve hata kategorisi) | Süreç denetimi (PRM) için negatif etiketler; RLVP yol cezaları için kurallar |
-| Çok boyutlu rubrik puanları ve human gold set | Vektör ödüllerin boyutları; üretici ödül modelleri (GRM) için eğitim ve kalibrasyon verisi |
-
-### Vaka 1: Coding Agent'ın erken tamamlaması
-
-**Bad case'ten atfa.** Bir Coding Agent testleri çalıştırmadan “tamamlandı” diyebilir, çok hedefli bir görevin yalnızca bir kısmını tamamlayıp kapatabilir veya birkaç başarısızlıktan sonra görevin imkânsız olduğunu ilan edebilir. Kanıt olmadan sonucu açıklamaya hazırlandığı an ilk hatadır; sonraki başarısız testler ve tekrar denemeler sonuçtur. Kullanıcı düzeltmeleri, olumsuz geri bildirim ve sonradan yapılan denetimler bu kategoriyi ortaya çıkarabilir.
-
-**Eğitim verisi.** Agent tamamlandığını söylediğinde uçtan uca regresyon görevi gizli kabul testlerini çalıştırır: geçiş pozitif ödül, başarısızlık negatif ödül alır. Trajectory-prefix görevi erken iddiayı `rejected`, “testleri çalıştır, her kabul koşulunu kontrol et, sonra sonuca var” eylemini `chosen` yapar. Öğretmen tarafından üretilen adaylar belir deterministik doğrulayıcıyla filtrelenir; görev türleri, eksik koşullar ve tamamlanma ifadeleri çeşitlendirilir, sonra küçük bir oran genel talimat verileriyle LoRA eğitimine karıştırılır.
-
-**Değerlendirme.** Tamamlanmamış görevlerin sınır kümesi, gerçekten tamamlanmış görevlerin retention kümesiyle birlikte değerlendirilmelidir. İlki modelin erken durmak yerine doğrulama yapıp yapmadığını, ikincisi normal biçimde sonuçlandırabildiğini ölçer. İkincisi olmazsa model aşırı temkinli hale gelip hiç durmayabilir.
-
-> **Deney 7-17 ★★: “Erken tamamlama” bad case'lerinden DPO**
->
-> **Deney amacı**: Hata atfından trajectory-prefix regresyon verisine, DPO tercih çiftlerine, 7B LoRA eğitimine ve ayrılmış sınır/retention değerlendirmesine kadar tüm hattı çalıştırmak.
->
-> **Veri oluşturma**: Eşlik eden proje dört hata türünü kapsayan 24 gerçekçi vaka ve çakışmayan bir holdout kümesi (12 sınır, 8 retention vakası) sağlar. Bu deney eğitim amaçlıdır; üretim verisi daha fazla görev ailesi ve modelin düzenleyemeyeceği ya da yalnızca çalıştırdığını iddia edemeyeceği gizli testler içermelidir.
-
-### Vaka 2: Çince tırnak işaretleri
-
-“Çince makalelerdeki düz tırnakları kıvrımlı tırnaklara çevir” isteği küresel bir değiştirme kuralı değildir. Aynı ASCII tırnağı Çince düzyazı, İngilizce alıntı, Markdown kodu, kod bloğu, yorum, JSON ve yollarda farklı roller taşır. Çince düzyazı ve Çince yorumlar dönüştürülebilir; çalıştırılabilir kod, İngilizce kaynak metin, JSON/schema, yollar, tanımlayıcılar ve belirsiz bölgeler korunmalıdır.
-
-**Bad case'ten atfa.** Harness belgeyi kapsama göre bölmeli, model çıktısını değiştirilebilen ve korunması gereken aralıklarla karşılaştırmalı; Markdown, JSON ve kaynak dil sözdizimi kontrolleri çalıştırmalıdır. İşleme veya serileştirme önce girdiyi değiştiriyorsa sorun Harness'tedir. Model orijinal byte'ları görmesine rağmen korunan tırnağı değiştiriyor veya izin verilen Çince tırnağı atlıyorsa ilk fark bir kapsam seçimi hatasıdır ve post-training verisine dönüştürülebilir.
-
-**Eğitim verisi.** Bir Skill pozitif ve negatif kapsam kurallarını tanımlar. Örnekler kaynak ve hedef metni eşler; Çince düzyazı, iç içe tırnaklar ve Çince yorumları pozitif düzenlemeler, İngilizce metin, literaller, JSON, yollar, satır içi kod ve kod bloklarını korunan negatifler olarak kapsar. Train, holdout ve sınır kümeleri şablon, tür, değişken kombinasyonu ve dile göre ayrılır; SFT öncesinde makine kapıları ve tabakalı insan denetimi uygulanır.
-
-**Değerlendirme.** Hedef tırnak dönüşümü, korunan bölge koruması, hedef dışı düzenleme, sözdizimi geçerliliği ve tüm metin exact match raporlanır. Üretimde aşırı düzenlemeyi yakalamak için zaten doğru belgelerden bir retention kümesi gerekir.
-
-> **Deney 7-18 ★★: Kapsama Duyarlı Kıvrımlı Tırnak SFT'si**
->
-> **Deney amacı**: LoRA SFT'nin görülmemiş bağlam birleşimlerinde yalnızca izin verilen tırnakları dönüştürmeyi ve korunan sözdizimini korumayı öğretip öğretemediğini sınamak.
->
-> **Kurulum ve veri**: Qwen3-8B bf16 LoRA, iki epoch ve 256 güncelleme; 16 parça türü, 10 belge türü ve 9 programlama dili; 1.024 train, 256 holdout ve 256 sınır örneği. Skill, etiketleme, kalite kapısı ve regresyon spesifikasyonu olarak kullanılır; 48 tabakalı insan nokta kontrolü yapılır.
->
-> **Sonuçlar**: Holdout exact taban modeldeki 0%'dan 96,9%'a yükselir, sınır exact 97,7% ve korunan bölge koruması 100% olur. Python, JavaScript, Java, Go, Rust, SQL, Shell, YAML ve Markdown 100% iken JSON 68,8% kalır; bağımsız bir yapılandırılmış veri hattı gerekir.
-
-### Vaka 3: Dosya düzenlemenin sık sık başarısız olması
-
-Coding Agent'lar sıklıkla `edit_file(path, old_string, new_string)` kullanır. Araç `old_string` ile tam eşleştiğinden tek bir boşluk, satır sonu, ters bölü, Unicode birleştirmesi veya seyrek token değişimi bile “old_string not found” hatasına yol açar. Tekrar tekrar denemek bir belirtidir; kök neden olmak zorunda değildir.
-
-**Bad case'ten atfa.** İlk farkın nerede ortaya çıktığını şu zincir boyunca karşılaştırın:
+Bir `old_string` hatası da yalnızca "model yanlış kopyaladı" diye atfedilemez. Aynı dize için ham byte özetini, Unicode code point dizisini ve tokenizer token ID dizisini saklayın; ardından ilk farkı şu zincir boyunca arayın:
 
 ```text
 original file bytes → tool return → Harness serialization → model context
 → model token output → decoded string → JSON/tool-call parsing → tool matching
 ```
 
-Model üretiminden önceki değişiklikler dosya okuyucuya, serileştiriciye veya Harness'e aittir. Tokenizer encode→decode işlemini de ayrı denetleyin. Modelin orijinal byte'ları aldığı ve çıktısının ilk farklı nokta olduğu doğrulanırsa vaka model kopyalama hatası olarak sınıflandırılmalı ve post-training'e gönderilmelidir.
+Asgari değerlendirme probları; doğrudan yineleme, uzun bağlamdan çıkarma, tool argümanına yerleştirme, benzer dizeler arasından seçim ile boşluk, satır sonu, ters bölü, Unicode birleştirici karakterler ve düşük frekanslı token'ları kapsar. Metrikler byte-exact match, code-point-exact match, token-exact match, ilk farkın konumu ve gerçek tool başarı oranıdır. Model doğrudan probda doğruyken tool çağrısı yine de başarısız oluyorsa tokenizer'ı, serileştirmeyi, Harness'ı veya tool protokolünü düzeltin; ilk fark yalnızca modelin kendi çıktısında belirdiğinde bu vaka 7. Bölüm'ün kopyalama eğitim verisine dönüştürülmelidir.
 
-**Eğitim verisi.** Üç doğrulanabilir görev kullanın: kelimesi kelimesine kopyalama, benzer hard negative'ler arasından işaretli hedefi seçme ve tam hedefi `old_string` tool JSON alanına yerleştirme. Uzunlukları, token bileşimlerini ve bağlamları rastgeleleştirin; boşlukları, gerçek satır sonlarını, literal escape'leri, ters bölüleri, Unicode birleşim karakterlerini, Çinceyi ve zero-width karakterleri dahil edin. Seed, uzunluk, token bileşimi ve wrapper bağlamına göre bölme yapın.
+### İkili Karşılaştırma ve Model Sıralaması
 
-**Değerlendirme.** Model byte-exact, code-point-exact, token-exact, ilk fark konumu ve tokenizer round-trip metriklerini uçtan uca araç başarısından ayırın. Doğrudan kopyalama doğru olduğu halde `edit_file` başarısızsa model eğitmek yerine serileştirmeyi veya araç protokolünü düzeltin.
+![Şekil 7-5: Elo Puanlaması ve İkili Karşılaştırmayla Sıralama](images/fig7-5.svg)
 
-> **Deney 7-19 ★★: Özel Dizeler için Exact-Copy SFT**
+**Elo puanlaması** (aslen satranç için tasarlanmış bir sıralama sistemi), çok sayıda ikili karşılaşma üzerinden modellerin göreli yeteneğini niceler: puan farkı ne kadar büyükse, güçlü olanın beklenen kazanma oranı o kadar yüksektir. Örneğin model A'nın puanı 1.200, model B'nin puanı 1.000 ise Elo sistemi A'nın kazanma oranını yaklaşık %76 olarak öngörür. B beklenmedik biçimde kazanırsa B daha çok puan kazanır, A daha çok puan kaybeder — sürpriz sonuçlar daha büyük bir düzeltme getirir ve bu mekanizma sıralamanın gerçek seviyeye hızla yakınsamasını sağlar. Arkasındaki istatistiksel temel **Bradley-Terry modelidir**: her model gizli bir "güç puanı" olarak soyutlanır ve ikili karşılaşmanın kazanma olasılığı iki puan arasındaki farkla belirlenir; Elo ise bu modelin çevrimiçi güncelleme biçimindeki mühendislik uygulamasıdır.
+
+Chatbot Arena anonim rastgele karşılaşmalar kullanır — kullanıcılar modelin kimliğini bilmeden daha iyi yanıtı körlemesine seçer ve sıralama milyonlarca oydan çıkarılır. Bu yöntemin üstünlüğü "mutlak bir ölçüt" tanımlamayı gerektirmemesidir; yalnızca insanın "A mı daha iyi, B mi?" yargısına ihtiyaç duyar. Ama bir sınırı da vardır: sıralama sonucu kullanıcıların ne sorduğuna bağlıdır — çok sayıda kullanıcı denk gelip programlama sorusu sorarsa, programlamada güçlü modeller sıralamada yükselir; bu da onların diğer görevlerdeki gerçek seviyesini yansıtmayabilir.
+
+İkili yargılama insan oyu yerine bir LLM tarafından yapıldığında ayrıca **konum yanlılığına (Position Bias)** karşı önlem almak gerekir — yargıç model, belirli bir konumda (genellikle önce) görünen adayı sistematik biçimde kayırır ve iki adayın içeriği tamamen yer değiştirse bile karar değişmeyebilir. Standart azaltma yöntemi **sırayı değiştirerek iki kez değerlendirmektir**: bir kez A önde, bir kez B önde değerlendirilir ve iki sonucun ortalaması alınır; daha katı bir yaklaşım ise yalnızca iki kararın uyuştuğu durumları saymak, uyuşmayanları beraberlik olarak kaydetmek veya insan incelemesine göndermektir. Chatbot Arena'nın yaptığı da özünde aynıdır — iki yanıtın gösterim konumu rastgeleleştirilir, böylece konum yanlılığı büyük örneklemde birbirini götürür.
+
+**Değerlendirmeden eğitime: ikili karşılaştırma sinyalinin aktarımı.** İkili karşılaştırma yalnızca bir değerlendirme aracı değil, post-training için de önemli bir sinyal kaynağıdır. Bölüm 8'de tanıtılacak olan **GRPO** (Group Relative Policy Optimization, grup göreli politika optimizasyonu) algoritması, tam da "hangisi daha iyi" biçimindeki yargılamayı model eğitimine taşır — temel fikri, aynı soru için birden çok aday yanıt örneklemek ve avantajı bunların mutlak puanlarından değil birbirlerine göre üstünlüklerinden kestirmektir; böylece PPO'da ayrıca eğitilmesi gereken değer ağının (critic; temel çizgiyi kestirmek için kullanılır) zahmetinden kurtulur. Dikkat: GRPO'nun elediği şey değer ağıdır, ödül sinyalinin kendisi değil; her adayın iyi mi kötü mü olduğunu yargılamak için hâlâ bir ödül modeline veya doğrulanabilir ödül kurallarına dayanır. Burada yalnızca bir işaret bırakıyoruz; algoritmanın tam türetimi, PPO/DPO ile karşılaştırması ve Agent post-training'inde hayata geçirilmesinin ayrıntıları Bölüm 8'ye kalıyor.
+
+> **Deney 7-7 ★★: İkili Karşılaştırma Verisinden Model Sıralaması Oluşturmak**
 >
-> **Deney amacı**: Model çıktısının ilk farklı katman olduğu doğrulandıktan sonra görülmemiş rastgele dizelerde LoRA SFT'yi sınamak ve tokenization artefaktlarını dışlamak için ayrı bir tokenizer denetimi kullanmak.
+> Bu deney, sıfırdan bir Elo rating hesaplama sistemi kurarak Bradley-Terry modelinin çok sayıda ikili karşılaştırmadan göreli yetenek puanlarını nasıl çıkardığını derinlemesine anlamayı amaçlar. Chatbot Arena'nın açık kaynak gerçek oy veri kümesi kullanılır (milyonlarca kullanıcı kör oyu içerir).
 >
-> **Kurulum ve veri**: İki epoch Qwen3-8B bf16 LoRA; `verbatim`, `decoy_copy` ve `tool_json` olmak üzere üç görev, 1.024 train, 256 holdout ve 256 sınır örneği. Üretici tekrarlanabilir rastgele dizeler, hard negative'ler, 10 dil bağlamı, 8 belge türü ve özel boşluk, escape, Unicode, Çince ve zero-width karakterler kullanır.
+> Elo rating yinelemeli güncelleme algoritmasını uygulayın: başlangıçta tüm modellerin puanı 1.000 olsun, oy kayıtları zaman sırasına göre işlensin. Her karşılaşmada, iki modelin mevcut puan farkına göre beklenen kazanma oranı hesaplanır, gerçek sonuç beklentiyle karşılaştırılır ve sabit bir öğrenme hızıyla ayarlanır — kazanan puan alır, kaybeden puan verir; ayarlamanın büyüklüğü beklentiden sapmayla orantılıdır (sürpriz bir yenilgi daha büyük bir puan değişimine yol açar). Nihai puana göre azalan sırada sıralayın ve ikili kazanma oranı matrisini hesaplayın; resmî sıralamayla karşılaştırıp sıralamanın kabaca tutarlı olduğunu doğrulamak yeterlidir. Puan puan örtüşme aramayın: Chatbot Arena resmî olarak Bradley-Terry en büyük olabilirlik uyarlaması kullanır (tüm karşılaşmalar için tek seferde çözüm üretir, oyların sırasından bağımsızdır); burada uygulanan ise çevrimiçi artımlı güncellemeli Elo'dur (sonuç, öğrenme hızı K faktöründen ve işleme sırasından etkilenir). İki algoritmanın genel sıralamada örtüşmesi beklenir, ama tek tek puanlar tam olarak aynı olmayacaktır.
 >
-> **Sonuçlar**: Holdout byte-exact doğruluğu 37,5%'ten 78,9%'a yükselir, sınır 80,1% olur ve ortalama ilk byte farkı 54,0 ve 54,2'dir. 512 probe'da Qwen3/Qwen2.5 tokenizer round-trip 80,1%, Mistral 100% bulunur; tokenizer ve Harness hataları model kopyalama sonuçlarından ayrı tutulmalıdır.
+> Deneyin ikinci kısmında tarihsel sıralama evrimi animasyonu oluşturun: oy verisini zamana göre dilimleyin (haftalık veya aylık) ve her zaman noktası için bir Elo puanı anlık görüntüsü hesaplayın. D3.js ile çubuk grafik yarışı animasyonu uygulayın (yatay çubuk uzunluğu = puan, dikey konum = sıra; zamanla yumuşak biçimde değişir). Animasyonu izleyerek teknolojik atılım anlarını (bir modelin puanının aniden fırlaması), rekabet ortamının evrimini ve model yaşam döngülerini tespit edin.
+>
 
-## Post-training'in Bütünsel Görünümü ve Pratik İpuçları
+## Değerlendirme Güdümlü Model Seçimi
 
-Bu bölüm, ön eğitimin "bir sonraki kelimeyi tahmin etme" adımından yola çıkıp uzun bir yol katetti: SFT biçimi sabitler, RL genellemenin önünü açar, çok turlu görevler credit assignment sorununu getirir, ödül tasarımı sonuç ödülünden "sonucu ödüllendir, süreci kısıtla" biçimindeki yol sinyaline uzanır, araç kullanımı ise kombinatoryal patlamayı beraberinde getirir. Bu deneylerin ortak bir izleği var — modelin ne öğrendiği, eğitim sinyalinin ona ne öğrettiğine bağlıdır; sinyalin kalitesini ise esas olarak veri ve ortam belirler, algoritma değil.
+Model seçimi basitçe "en güçlü modeli seçmek" değildir; uygulama senaryosuna göre birden çok boyut arasında değerlendirme güdümlü bir denge kurmaktır.
 
-**İş birliği paradigması**: daha önce (GeneralPoints deneyinin özetinde) bu paradigma Çin resmindeki "önce biçim, sonra ruh" deyişiyle özetlenmişti — SFT "biçim kararlı, yetenek başlangıç düzeyinde" noktasında durur, RL bu temel üzerinde politikayı biçimlendirir. İkisi farklı katmanlarda iş görür: SFT protokolü ve yapıyı sabitler (JSON biçimi, diyalog şablonu, araç arayüzü), RL ise politikayı ve genellemeyi optimize eder (aritmetik kurallar, uzamsal düşünme, eylem dizileri). Kritik denge: SFT'nin aşırı eğitilmesi, modelin eğitim dağılımına çökmesine yol açar ve RL'in optimizasyon alanını daraltır.
+### Seçimin Kilit Boyutları
 
-Aşağıdaki **yaygın tuzaklara** karşı dikkatli olmakta fayda var; bu sorunları tanımak, teknik ayrıntılara hâkim olmaktan çoğu zaman daha fazla kaynak israfını önler:
+**Throughput** (verim) ile **gecikme**, birbirine karıştırılması kolay iki metrik ailesidir; ayrımı görmek için büyük model çıkarımının iki aşamada yürüdüğünü bilmek yeterlidir. **Prefill (ön doldurma)** tüm context'i tek seferde okur ve kullanıcının Enter'a basmasıyla ilk karakterin görünmesi arasındaki **ilk yanıt gecikmesini** belirler (sektörde **TTFT**, Time To First Token — İlk Token'a Kadar Geçen Süre — ile ölçülür): context uzadıkça prefill yavaşlar, TTFT büyür. **Decode (kod çözme)** ardından yanıtı token token üretir ve sonraki karakterlerin çıkış hızını (token/saniye) belirler; bu da doğrudan düşünme süresini belirler: saniyede 50 token üreten bir model 2.000 düşünme token'ı ürettiğinde yalnızca düşünmek için 40 saniye harcar.
 
-1. **Olguları ezberletmek için post-training'e aşırı yaslanmak** — olgusal bilgi RAG ile yönetilmelidir (dinamik olarak güncellenebilir, kaynağı izlenebilir, eğitim nedeniyle unutulmaz); post-training ise "bilginin nasıl kullanılacağına" odaklanmalıdır.
-2. **Biçim kararlı hale gelmeden RL'e geçmek** — model temel bir JSON'u bile kararlı biçimde üretemiyorken (ayrıştırma hata oranı %20'nin üzerindeyken) RL eğitimi tamamen başarısız olur. Önce SFT yapmak şarttır.
-3. **Ödül fonksiyonunun yanlış tasarlanması** nedeniyle reward hacking — model görevi gerçekten tamamlamak yerine ödülün açıklarını kullanarak yüksek puan almayı öğrenir (örneğin yalnızca yanıt uzunluğuna bakılıyorsa uzun ve anlamsız metinler üretir). Ara metrikler değil nihai hedef değerlendirilmelidir.
-4. **Simülasyon gerçekliğini göz ardı etmek** — simülasyon fazla basitleştirilmişse (müşteri temsilcisi hep sabit bir kalıpla yanıt veriyorsa) ya da ortamın yanıtları gerçekçi değilse (hata mesajları üretim ortamıyla tutarsızsa), eğitilen politika gerçek senaryolarda tamamen işlevsiz kalır. Yüksek gerçeklikli bir simülasyon ortamı kurmanın maliyeti, eğitimin kendisinden yüksek olabilir.
-5. **Aşırı eğitimin genellemeyi düşürmesi** — eğitim kaybı düşmeye devam ederken doğrulama kümesindeki performans tersine kötüleşiyorsa, model eğitim ayrıntılarını ezberliyor demektir. Bu sorun özellikle SFT'de sık görülür ve erken durdurma hâlâ hayati önemdedir; RL'de aşırı optimizasyon da politikanın mevcut görev dağılımına aşırı uyum sağlamasına yol açar.
-6. **Değer fonksiyonunun çökmesi ve keşfin yetersiz kalması** — PPO'da değer kestirimi isabetsiz olursa avantaj hesabında sapma oluşur; bu, eğitim eğrisinin şiddetle salınması olarak görünür. Sıcaklık parametresinin fazla düşük olması ya da rastgeleliğin yetersiz kalması, Agent'ı yerel bir en iyiye hapseder.
-7. **RL'in hesaplama maliyetini küçümsemek** — SFT'de iyi sonuç veren bir görevi RL'e taşımak 10-100 kat daha uzun eğitim süresi gerektirebilir. Test dağılımı eğitimle büyük ölçüde örtüşüyorsa SFT çoktan yeterli olabilir.
-8. **Eğitim verisinin kalitesinin düşük olması** — SFT, verideki gürültü ve sapmaları doğrudan öğrenir ve hataları parametrelere sabitler; RL keşif yoluyla daha iyi politikalar bulabilse de, reward model'de sistematik bir sapma varsa yanlış yöne doğru optimize eder.
+Bu iki aşamanın etrafında şekillenen başlıca throughput ve gecikme metrikleri şunlardır:
 
-Temel ilke: **büyük ölçekli kaynak yatırmadan önce kritik varsayımları küçük ölçekli deneylerle doğrulayın** — az miktarda veriyle SFT'nin biçimi kararlı hale getirip getiremediğini test edin, basitleştirilmiş bir ortamda RL'in yakınsayıp yakınsamadığını doğrulayın, küçük bir örneklemle ödül fonksiyonunun gerçek hedefi yansıtıp yansıtmadığını kontrol edin. Hızlı başarısızlık, büyük ölçekli başarısızlıktan daha kabul edilebilirdir.
+- **Girdi throughput'u / çıktı throughput'u**: sırasıyla Prefill ve Decode hızına karşılık gelir.
+- **TTFT**: kuyrukta bekleme süresi artı Prefill süresine eşittir; kullanıcının algıladığı "tepki hızı" budur.
+- **Düşünme gecikmesi**: modellerin ürettiği düşünme token'ı sayısı arasında kat kat fark olabilir ve düşünme uzunluğu görev başarısıyla mutlaka doğru orantılı değildir — her modelin düşünme token'ı kullanımını ve karşılığında sağladığı faydayı yalnızca genel sıralamalara bakarak çıkarsamak yerine kendi iş yükünüzde ölçün.
+- **p95 kuyruk gecikmesi**: isteklerin %95'inin aşmayacağı gecikme. Gerçek kullanıcı deneyimini ortalamadan daha iyi yansıtır; ortalama, çok sayıda hızlı istekle aşağı çekilerek azınlıktaki kullanıcıların yaşadığı ciddi takılmaları gizler.
 
-**RAG/ICL ile iş birliği**: üçü birbirini dışlayan çözümler değildir, farklı konumlarda iş görürler. ICL; örnekler, kurallar ve mevcut durum üzerinden parametre değişikliği olmadan anında uyum sağlar, ama context büyüdükçe gecikme ve maliyet de artar. RAG, olguları ve kanıtları dinamik olarak güncellenebilir ve izlenebilir dış bilgide tutar. Post-training ise yüksek boyutlu algıyı, üretim üslubunu ve örtük karar politikalarını parametrelere yazar. Seçim ölçütü yalnızca görevin uzun vadede kararlı olup olmadığı değildir; daha önemlisi, yeteneğin dış sembollerle yeterince ifade edilip edilemeyeceğidir. Tıbbi görüntü tanıma, doğal ses tonu gibi yetenekler, sürekli değişen bir alanla karşı karşıya olsalar bile çoğu zaman parametre güncellemesi gerektirir; tersine, uzun vadede kararlı olan para transferi onay kuralları da yalnızca modelin belleğine bırakılmamalı, kod tarafından deterministik güvenceyle sağlanmalıdır.
+**Maliyet**: girdi/çıktı/önbellek token'larının fiyatlandırması. Maliyet tek başına değerlendirilmemelidir — ucuz ama başarı oranı düşük bir model, sık sık yeniden denemek gerektiği için gerçekte daha pahalıya gelebilir. Görev başına ortalama maliyeti ve maliyet-performans oranını hesaplamak gerekir.
 
-Sağlam sistemler bu yöntemleri genellikle birlikte kullanır: olguları ve kanıtları RAG ile yönetir, dille ifade edilebilen politikaları ICL ile hızlıca dener, deterministik akışları ve sert kısıtları programla sabitler, açıkça ifade edilmesi zor olan ve geniş genelleme gerektiren yetenekleri ise post-training yoluyla parametrelere yazar. Post-training ayrıca model damıtmayı da mümkün kılar — yüksek yetenekli büyük bir modelin yeteneklerini maliyeti daha düşük küçük bir modele aktarmak.
+**Performans**: Pass@1, Pass^k, Pass@k ve Best@k metriklerinin kesin tanımları önceki "Değerlendirme Metrikleri Sistemi" bölümünde verildi; burada yalnızca model seçimi bağlamında nasıl tercih yapılacağına değiniyoruz. Gündelik senaryolarda en çok kullanılan Pass@1'e (tek denemedeki ortalama başarı oranı) bakılır; kritik işlem senaryolarında Pass^k öne çıkar, çünkü orada "hiçbir seferinde hata yapmama" kararlılığı izlenir; keşif ağırlıklı görevlerde Pass@k veya Best@k tercih edilir, çünkü yeterli fırsat verildiğinde ulaşılan yetenek tavanı ölçülür; açık uçlu görevlerde ise çok boyutlu Rubric puanlaması kullanılır.
+
+**Hız limitleri ve güvenilirlik**: RPM (dakika başına istek) / TPM (dakika başına token) limitleri eşzamanlılık kapasitesini etkiler; bazı API'ler yoğun saatlerde kotayı dinamik olarak da değiştirir. Sağlamlık tarafında dağılım dışı veriye, düşmanca girdilere ve uzun süreli çalışma kararlılığına (mod çökmesi, dikkat dağılması gibi sorunların çıkıp çıkmadığına) dikkat edilmelidir.
+
+**Bütçe—yetenek eğrileri**: sabit bir bütçedeki tek bir puan, bir Agent'ın uzun soluklu işlerin altından kalkıp kalkamayacağına karar vermeye yetmez. Başarı oranının yanı sıra performansın duvar saati süresine, token'a, araç çağrısı sayısına veya hesaplama bütçesine göre nasıl değiştiğini gösteren eğriler de raporlanmalıdır. RE-Bench'in insan-makine karşılaştırması sorunu somutlaştırır: her ortam için 2 saatlik toplam bütçede en iyi Agent, insan uzmanların yaklaşık 4 katı puan almıştır; ama insanlar ek zamandan daha çok kazanmış, 8 saatte en iyi Agent'ı kıl payı geçmiş ve birden çok denemeye yayılan toplam 32 saatte onun yaklaşık 2 katı puan toplamıştır[^re-bench-2025]. Bu nedenle kısa bütçedeki üstünlük, doğrudan uzun süreli çalışma yeteneğine genellenemez; model seçiminde gerçek görev süresine yakın birkaç bütçe noktasında karşılaştırma yapmak zorunludur.
+
+Pratikte çok modelli bir iş birliği stratejisi benimsenebilir: maliyeti düşürmek için basit istekleri hafif modellere, kaliteyi güvenceye almak için karmaşık görevleri güçlü modellere vermek; ya da belirli alt görevleri (görüntü anlama, kod üretimi gibi) özel modellere bırakıp alt Agent mekanizmasıyla iş birliği kurmak. Bu tür heterojen bileşimlerin toplam faydasının, eklediği sistem karmaşıklığını aşıp aşmadığı değerlendirmeyle doğrulanmalıdır.
+
+### Model Davranışı: Okumayı Ne Zaman Bırakıp Düzenlemeye Başlamalı?
+
+Model seçimi yalnızca bir modelin görevi tamamlayıp tamamlayamadığını değil, **varsayılan olarak nasıl davrandığını** da karşılaştırır. Coding Agent'larda kolayca gözlenen farklardan biri eylem eşiğidir. Aynı kodlama görevi verildiğinde bazı modeller depoyu genişçe keşfeder, mimariyi, çağrı noktalarını ve testleri doğruladıktan sonra düzenleme yapar. Bazıları ise daha az kanıtla değişiklik yerini belirler, erken düzenler ve test geri bildirimini anlayışını tamamlamak için kullanır. İlki erken düzenlemenin maliyetini, ikincisi bir dosya daha okumanın fırsat maliyetini daha yüksek görür.
+
+Bir eğilim Harness değiştiğinde de modeli izliyor ve sabit bir Harness içinde yalnızca model değiştirildiğinde farklılaşıyorsa temel açıklama **model davranışı** olmalıdır. Post-training olası bir kaynaktır: SFT yörüngeleri harekete geçmeden önce ne kadar okunacağını gösterir, süreç ödülleri belirli araç yollarını güçlendirir ya da cezalandırır, sonuç ödülleri de başarıya ulaştıran bütün stratejiyi pekiştirir. Böylece model yalnızca kod yazmayı değil, yeterli kanıta ne zaman ulaştığını da öğrenir. Kesin veri kümeleri ve ödül tarifleri genellikle özeldir; kontrollü model değişimleri davranışı model tarafında konumlandırabilir, ancak bir sağlayıcının kesin eğitim tarifini ortaya çıkarmaz. Harness sistem prompt'u, araç açıklamaları ve bütçeyle eşiği yine değiştirebilir; fakat zorunlu bir iş akışı yoksa varsayılan kök neden değil, düzenleyici olarak ele alınmalıdır.
+
+Eşlik eden deney, tek bir **tarafsız ve sabit Harness** içinde `openai/gpt-5.6-sol` ile `anthropic/claude-sonnet-5` modellerini karşılaştırır. İki model aynı OpenRouter endpoint'ini kullanır ve aynı sistem prompt'unu, görevi, depoyu, araç adlarını, JSON Schema'larını ve araç sonuçlarını görür. Harness ne keşfi ne de erken düzenlemeyi şart koşar. Üç küçük depo; yerel bir hata, modüller arası kimlik normalleştirmesi ve herkese açık bir sözleşmeye duyarlı önbellek düzeltmesini kapsar. Her model her görevi bağımsız olarak üç kez çalıştırmış ve 18 yörünge üretmiştir. İlk düzenlemeden önce GPT-5.6-sol ortalama 6,89 araç çağrısı yapıp 4,67 dosya okurken Claude Sonnet 5, 4,56 çağrı ve 3,56 dosya ortalamasına ulaşmıştır. Fark yerel görevlerde en büyük, açıkça modüller arası görevde ise neredeyse yoktur (7,00'a karşı 6,67 dosya). Her iki model de ilk test edilen yamada ve son testlerde %100 başarı sağlamıştır. Dolayısıyla bu küçük deney “eylem politikası modelle birlikte değişir” sonucunu destekler; “daha çok okumak” ya da “daha erken düzenlemek” her zaman daha iyidir sonucunu değil. İlk düzenlemeye kadar geçen süre de neredeyse aynıdır (15,01'e karşı 14,48 saniye); araç adımları, paralel çağrılar ve model gecikmesi ayrı değerlendirilmelidir.
+
+> **Deney 7-8 ★★: Sabit Bir Coding Harness İçinde Model Eylem Eşiklerini Ölçmek**
+>
+> **Amaç**: model etkenini yalıtmak, Coding modellerinin bilgi toplamaya devam etmekle düzenlemeye başlamak arasındaki varsayılan tercihini nicelleştirmek ve yol verimliliğini sonuç kalitesiyle birlikte değerlendirmek.
+>
+> **Yöntem**: `chapter6/model-action-threshold/experiment.py` dosyasını çalıştırın. Varsayılan olarak GPT-5.6-sol ve Claude Sonnet 5 aynı OpenRouter OpenAI-compatible endpoint'i üzerinden çağrılır; sistem prompt'u, araç Schema'ları, görev depoları, test komutları ve tur sınırı sabit tutulur. Tarafsız prompt okunacak asgari dosya sayısını veya hızlı düzenleme zorunluluğunu belirtmez. Üç görev kategorisinin her birini en az üç kez tekrarlayın ve model sırasını dönüşümlü kullanın. İlk düzenlemeden önceki araç çağrılarını, okunan dosyaları, aramaları ve duvar saati süresini; ilk test edilen yamanın kabulünü, test sonrası yeniden çalışmayı, son başarıyı, değişen dosyaları ve Token kullanımını kaydedin.
+>
+> **Nedensel yorum**: tarafsız kampanya aynı Harness içinde davranışın modelle birlikte değişip değişmediğini sorar. Harness'in düzenleyici etkisini ölçmek için `--policy explore-first` ile ayrı bir kampanya çalıştırın; iki policy'yi tek bir model karşılaştırmasında karıştırmayın. Model değişiminde farklılaşıp aynı model için Harness'ler arasında korunan davranış, model etkisine daha güçlü kanıttır; tersi Harness etkisini daha güçlü destekler.
+>
+> **Kabul ölçütleri**: tüm çevrimdışı birim testleri geçer; her görev fixture'ının başlangıçta testleri başarısız kıldığı önce doğrulanır; resmi sonuç bütün `model × görev × tekrar` hücrelerini, sıfır API hatasını, bağımsız bir son testi ve denetlenebilir yörüngeleri içerir; `manifest.json` yapılandırma, gözlemler ve özetin hash'lerini doğrular. Proje dizininde 18/18 hücrelik tamamlanmış bir gerçek çalıştırma bulunur. Okurlar bu küçük depoların sayılarını kalıcı bir liderlik tablosu saymak yerine, önem verdikleri model sürümleri ve gerçek iş yükleri üzerinde deneyi yeniden çalıştırmalıdır.
+
+### Agent Sistemlerinin Maliyet Analizi
+
+Maliyet, model seçiminde en kolay hafife alınan boyuttur. Agent'ınız üretime girdiyse ya da girmek üzereyse, bu bölümdeki maliyet analizini atlamayın.
+
+Bir önceki bölüm maliyeti model seçiminin kilit boyutlarından biri olarak saydı; ancak Agent senaryolarında maliyet, basit token fiyatlandırmasından çok daha karmaşıktır — çok turlu çıkarım, araç çağrıları ve context birikimi maliyeti doğrusal olmayan biçimde büyütür. Sistematik maliyet analizi, değerlendirme sisteminin vazgeçilmez bir parçası ve üretime alma için zorunlu bir ön koşuldur.
+
+**Maliyetin bileşenleri.**
+
+Bir Agent sisteminin maliyeti üç katmana ayrılabilir:
+
+**Model çıkarım maliyeti** en doğrudan bileşendir ve girdi token'ları ile çıktı token'larının tüketimiyle belirlenir. Ne var ki Agent senaryolarında sıkça gözden kaçan iki büyütücü etken vardır. Birincisi **context birikimi etkisidir**: Agent, LLM'i her çağırdığı turda önceki tüm konuşma geçmişini ve araç sonuçlarını birlikte gönderir (model ancak böyle context'i anlayabilir). KV Cache iyi kullanılmazsa (yani daha önce işlenmiş context önbelleğe alınıp yeniden hesaplama önlenmezse) maliyet çok hızlı artar: 1. turda 1.000 token, 2. turda 2.000 token, 3. turda 3.000 token gönderilir; toplam 3×1.000=3.000 değil, 1.000+2.000+3.000=6.000 olur ve tur sayısı arttıkça fark açılır. İkincisi **düşünme token'ı maliyetidir**: düşünmeyi destekleyen modeller çok sayıda düşünme token'ı üretir; bu token'lar kullanıcıya gösterilmese de faturaya aynen yansır.
+
+**Araç çağırma maliyeti**, dış API ücretlerini (arama motorları çağrı başına ücretlendirir, veritabanı sorguları hesaplama kaynağı tüketir), kod yürütmenin sandbox kaynaklarını ve kolayca gözden kaçan dolaylı bir kalemi kapsar: araç sonuçları context'e enjekte edildiğinde doğan token ücreti. Tek bir web aramasının döndürdüğü içerik 2.000-5.000 token yer kaplayabilir ve sonraki her çıkarım turunda girdi olarak tekrar tekrar faturalanır.
+
+**Altyapı maliyeti**, vektör veritabanı (RAG retrieval için), mesaj kuyrukları, ilişkisel veritabanları, log ve trace depolaması (observability için) gibi işletme giderlerini kapsar.
+
+Maliyetin nereden geldiğini görmek için eşlik eden deney sabit, sekiz turluk bir iade iş akışı kullandı: sipariş, kargo, iade politikası ve bilgi tabanı sorgulandı; ardından risk denetimi, iade, bildirim ve dosya kapatma tamamlandı. Gerçek gpt-4o-mini çağrıları iki anahtarın dört bileşiminde çalıştırıldı: kararlı/kararsız ön ek ve tam/sıkıştırılmış geçmiş. İş akışı her grupta aynıydı. Tablo 7-4, o çalışmada kaydedilen token sayıları ve fiyatları kullanıyor.
+
+Tablo 7-4 Sekiz Turluk Agent İş Akışının Ölçülen Maliyeti
+
+| Yapılandırma | Girdi token | Önbellekteki token | Toplam maliyet | Temel çizgiye göre tasarruf |
+|---|---:|---:|---:|---:|
+| Önbellek yok, sıkıştırma yok | 20,700 | 0 | $0.003776 | — |
+| Yalnızca kararlı ön ek | 20,386 | 13,568 | $0.002707 | 28.3% |
+| Yalnızca geçmiş sıkıştırma | 16,177 | 0 | $0.003115 | 17.5% |
+| Kararlı ön ek + sıkıştırma | 16,035 | 6,144 | $0.002643 | 30.0% |
+
+Temel çizgide girdi ilk turdaki 1,113 token'dan son turdaki 3,668 token'a çıktı. Araç sonuçları sonraki isteklere tekrar tekrar taşındı ve çalışma boyunca 9,544 girdi token'ı oluşturdu. İki optimizasyon birlikte açıldığında bu sayı 5,248'e, toplam maliyet de 30% aşağı indi.
+
+Kazançlar toplanabilir değildi. Kararlı ön ek tek başına 28.3%, sıkıştırma tek başına 17.5% tasarruf sağladı; birlikte 45.8% değil, 30% sağladılar. Geçmişi sıkıştırmak, önbellekten yeniden kullanılabilecek ön eki de kısalttı. **Context optimizasyonlarını birleştirirken tüm iş akışını ölçün; tekil tasarruf oranlarını asla birbirine eklemeyin.** Model, fiyat tarifesi veya görev uzunluğu değiştiğinde 30% da değişir. Genellenebilir bulgu yüzde değil, dört gruplu deney tasarımıdır.
+
+**Maliyet optimizasyonu stratejileri.**
+
+Girdi tarafında önce denenmesi gereken üç kaldıraç şunlardır: **KV Cache yeniden kullanımı** (ön eki kararlı tutmak), **context sıkıştırma** (eski trajectory'leri ve uzun araç sonuçlarını kısaltmak) ve **katmanlı model yönlendirmesi** (basit istekleri hafif, zor akıl yürütmeyi güçlü modellere vermek). Uygulama ayrıntıları Bölüm 2'de anlatıldı. İşletme açısından önemli olan, her kaldıracın ayrı bir anahtarının bulunmasıdır; böylece hem tek başına etkisi hem de diğerleriyle birlikte kullanıldığındaki etkileşim ölçülebilir. Değerlendirme ve işletmeyle doğrudan ilgili iki yöntem daha vardır.
+
+**Asenkron toplu işleme**, gerçek zamanlı olmayan görevleri biriktirip toplu olarak işler ve API sağlayıcılarının toplu iş indirimlerinden yararlanır; kendi altyapınızda çalıştırıyorsanız düşük yoğunluklu saatlerde GPU kullanımını da artırır.
+
+**Maliyet izleme ve bütçe denetimi.**
+
+Üretim ortamında gerçek zamanlı bir maliyet izleme düzeni kurulmalıdır: token tüketimi ve API ücretleri görev türü, model, kullanıcı gibi boyutlara göre takip edilir. Aynı zamanda her görev için bir maliyet üst sınırı konmalıdır — Agent bir döngüye takıldığında veya fazla derine daldığında otomatik olarak sonlandırılır ve tek bir görevin anormal derecede yüksek ücret üretmesi engellenir.
+
+> **Deney 7-9 ★: Agent Görevlerinin Uçtan Uca Maliyet Analizi**
+>
+> **Deney amacı**: Yukarıdaki sekiz turluk maliyet ayrıştırmasını yeniden üretmek, ardından aynı optimizasyon kaldıraçlarını kendi iş yükünüzde sınamak.
+>
+> **Teknik yaklaşım**: Önce eşlik eden depodaki sabit görevi yeniden üretin, sonra kendi tipik görevlerinizden birkaçını seçin. LangSmith'i veya kendi trace sisteminizi kullanarak her LLM çağrısının girdi/çıktı ve düşünme token'larını, araç çağrısı sayısını ve sonuç boyutunu, ayrıca uçtan uca gecikmeyi kaydedin. Görev türü başına ortalama maliyeti, p50/p95/p99 değerlerini ve maliyet bileşimini hesaplayın.
+>
+> **Kabul ölçütü**: Maliyet raporu üretip ana sürücüleri belirleyin. Dört anahtar bileşiminin tamamını çalıştırın; her optimizasyonu tek başına ve ikisini birlikte ölçün. Model değiştiğinde, saklanan trajectory'deki tasarruf oranını taşımak yerine deneyi yeniden çalıştırın.
+>
+>
+
+### Değerlendirme Güdümlü Sürekli Yineleme
+
+Model seçimi tek seferlik bir karar değil, modeller evrildikçe dinamik olarak ayarlanması gereken sürekli bir süreçtir. Bölümün başında "bir değerlendirme sistemine sahip olmak, model evrimine hızla ayak uydurmayı sağlar" temel fikri ortaya konmuştu; şimdi somut bir model değiştirme vakasıyla bu sistemin gerçek bir kararda nasıl işlediğini gösterelim.
+
+Diyelim ki Agent sisteminiz şu anda Claude üzerine kurulu ve tool calling ile karmaşık orkestrasyonda çok iyi çalışıyor. Bir gün Gemini yeni bir model yayımlıyor; kamuya açık benchmark'lar birçok metrikte Claude'u geçtiğini ve üstelik daha ucuz olduğunu gösteriyor. Bu noktada karşınızdaki soru "Gemini, Claude'dan güçlü mü?" değil, "**benim özgül görevlerimde Gemini, Claude'dan iyi mi? Ne kadar iyi? Geçiş maliyeti nedir?**" sorusudur.
+
+Sağlam bir değerlendirme sistemine sahip bir ekip yanıtı birkaç saat içinde verebilir: yeni modeli kendi değerlendirme veri kümesinde çalıştırır; görev başarı oranını, tool calling doğruluğunu, gecikmeyi ve maliyeti karşılaştırır. Yeni modelin basit görevlerde gerçekten daha iyi ve daha ucuz olduğunu, ama karmaşık çok turlu araç orkestrasyonu içeren çekirdek senaryolarda başarı oranının %5 düştüğünü görebilirsiniz. Bu farkın gürültü bandını aştığını doğruladıktan sonra (aşağıdaki "Değerlendirme Sonuçlarının İstatistiksel Anlamlılığı" bölümüne bakın), kararınız körlemesine bir toptan geçiş değil, "maliyeti düşürmek için basit görevleri yeni modele taşı, kaliteyi güvenceye almak için karmaşık görevleri eski modelde tut" biçiminde farklılaştırılmış bir stratejiye dönüşür. Bu incelikte, veri güdümlü kararlar ancak önceden kurulmuş bir değerlendirme sistemiyle mümkündür.
+
+> **Deney 7-10 ★★: Çok Boyutlu Model Performans Kıyaslaması**
+>
+> Yaygın LLM'ler ve farklı API sağlayıcıları üzerinde kapsamlı bir benchmark çalışması yaparak çok boyutlu bir model seçimi karar veritabanı oluşturun.
+>
+> Test kapsamını seçin: GPT serisi, Claude serisi, Gemini serisi, Doubao serisi gibi kapalı kaynak SOTA modeller ve Qwen, Kimi, DeepSeek gibi açık kaynak modeller. Aynı modeli farklı API sağlayıcılarında (örneğin DeepSeek resmî API'si ile Siliconflow) test ederek üçüncü taraf performans izleme platformlarının (örneğin Artificial Analysis) sonuçlarını doğrulayın.
+>
+> Standartlaştırılmış test iş yükleri tasarlayın: girdi throughput'u testi sabit uzunlukta context kullanır (8K/32K/128K token), çıktı throughput'u testi sabit uzunlukta yanıt üretimi ister (512/2048 token). Gecikme testi TTFT'yi (ilk token'ın üretilme süresi) ve uçtan uca gecikmeyi kapsar; düşünmeyi destekleyen modeller için düşünme uzunluğu ve düşünme gecikmesi ayrıca ölçülür. Her yapılandırma için en az 100 istek yapın ve standart sapma/p50/p95/p99 hesaplayın — yüksek gecikme varyansı, kullanıcı deneyiminin kararsız olduğu anlamına gelir.
+>
+> API'nin erişilebilirliğini ve kararlılığını değerlendirin: bir hafta boyunca saatte bir yoklama yapın; başarı oranını, hata türlerini ve arıza sürelerini kaydedin. Arıza oranını, MTTR'yi (ortalama kurtarma süresi) ve en uzun kesintisiz erişilebilirlik süresini hesaplayın. Hız limitlerinin gerçek eşiklerini test edin — eşzamanlılığı kademeli olarak artırarak kısıtlama noktasını bulun ve RPM/TPM üst sınırlarını kaydedin. Bileşik maliyeti hesaplayın: fiyatlandırma bilgilerini toplayın (girdi/çıktı/önbellek token'larının birim fiyatları), KV Cache'in etkisini göz önüne alın ve tipik çok turlu Agent görevlerinin ortalama maliyetini hesaplayın.
+>
+> **Deney 7-11 ★★: Kullanıcı Bellek Sistemlerinin Uçtan Uca Seçim Değerlendirmesi**
+>
+> **Ön koşul**: Bölüm 3'teki bağlamsal retrieval veya agentic RAG deneyinin tamamlanmış olması gerekir.
+>
+> **Amaç**: Bir kullanıcı belleği retrieval Agent'ı üzerinde baştan sona seçim değerlendirmesi yapmak; embedding modeli, reranker ve Agent'ın ana modeli olmak üzere üç seçim noktasının retrieval kalitesini, gecikmeyi ve maliyeti birlikte nasıl etkilediğini görmek. `chapter3/contextual-retrieval-for-user-memory` veya `chapter3/agentic-rag-for-user-memory` yeniden kullanılır ve 60 test durumu üzerinde karşılaştırma yapılır.
+>
+> **Kabul**: Üç seçim noktasını sırayla tarayın — embedding modeli (BGE-M3 / OpenAI / Doubao vb.; top-5 retrieval doğruluğunu, gecikmeyi ve maliyeti kaydedin), reranker ("reranker kullanmama" temel çizgisi dahil; marjinal değerini nicelleştirin) ve ana model (aynı retrieval yapılandırmasında başarı oranını ve araç kullanım verimliliğini karşılaştırın). Asıl mesele bileşenler arasındaki etkileşimi okuyabilmektir: daha güçlü bir embedding reranker'i gereksiz kılabilir, daha güçlü bir ana model retrieval'daki eksikliği telafi edebilir — seçim, tek tek en güçlüyü almak değil, sistemsel bir dengedir. Yapılandırma ayrıntıları eşlik eden depodadır.
+>
+
+## Değerlendirme Sonuçlarının İstatistiksel Anlamlılığı
+
+"Birkaç saat içinde geçiş kararı vermek" örtük bir varsayıma dayanır: gözlenen puan farkının örnekleme gürültüsü değil, gerçek bir sinyal olduğu. Değerlendirme kümesi sınırlı, model çıktıları da belirsiz olduğuna göre bu varsayım kendiliğinden geçerli olmaz.
+
+Gürültü bandını kabaca kestirmenin aracı **binom dağılımının standart hatasıdır** (standard error; başarı oranının örnekleme rastgeleliği yüzünden ne kadar dalgalandığını nitelendirir — değer büyüdükçe o başarı oranı o kadar güvenilmez demektir). n test durumunda ölçülen başarı oranı p ise standart hata yaklaşık √(p(1-p)/n) olur. Somut bir örnek: 100 durum ve %70 başarı oranında standart hata ≈ √(0,7×0,3/100) ≈ %4,6. Sezgisel olarak %95 güven aralığı (gerçek başarı oranının yaklaşık %95 olasılıkla içine düştüğü aralık) p ± 2 standart hata, yani %70 ± 9 yüzde puandır. Başka bir deyişle, "yeni model %73, eski model %70" gibi 3 yüzde puanlık bir fark tamamen gürültü bandının içinde kalır — iki başarı oranı birbirinden bağımsız kabul edilerek karşılaştırıldığında farkın standart hatası tek birininkinin yaklaşık √2 katıdır (burada yaklaşık %6,5). Ama şunu vurgulamak gerekir: bu √2, "iki ölçüm birbirinden bağımsızdır" varsayımının hesabıdır; sahada iki yapılandırma genellikle **aynı görev kümesi** üzerinde koşar ve örnekler bağımsız değildir. Bağımsızlık varsayımı yalnızca temkinli bir üst sınırdır ve "bu kadarcık fark ciddiye alınmaya değer mi?" sorusunu hızla yanıtlamaya yarar. Bu temkinli ölçüye göre bile %3'lük bir puan farkı, %6,5'lik gürültü mertebesinin çok altında kalır; buna dayanarak model değiştirmek yazı tura atmaktan pek farklı değildir.
+
+Agent değerlendirmesinde bir belirsizlik katmanı daha vardır: sıcaklık örneklemesi, araç sonuçlarındaki dalgalanma ve ortam zamanlaması nedeniyle aynı model ve veri kümesi bile farklı koşularda farklı sonuç verebilir. Bu yüzden tek koşu dağıtım kararı için yeterli değildir. Her yapılandırmayı örneğin 3-5 kez çalıştırıp ortalamayı ve yayılımı birlikte raporlayın. İlerideki küçük AndroidWorld pilotunda görev başına yalnızca bir eşleştirilmiş koşu vardır; bu, fikirleri daha büyük bir test için elemekte kullanılabilir, dağıtımı haklı çıkarmaz. Dağıtım kararı tam görev kümesinde çoklu tohumlu çalışmayı gerektirir.
+
+Buradan pratik bir ilke çıkar: **puan farkı gürültü bandından küçükse geçiş kararı verilmez**. Ancak "geçmemeye" karar vermeden önce daha duyarlı ve daha doğru bir analiz yöntemine geçmek gerekir. Aynı görev kümesi üzerinde iki yapılandırma karşılaştırılıyorsa doğru varsayılan yaklaşım **eşleştirilmiş analizdir**: her soruda ikisinin kazanıp kaybettiği karşılaştırılır, yalnızca sonuçların ayrıştığı durumlara (biri doğru, biri yanlış) bakılır ve farkın anlamlı olup olmadığı McNemar testi benzeri bir yaklaşımla değerlendirilir. Eşleştirilmiş analiz "sorunun kendi zorluğu" gibi ortak bir gürültü kaynağını denklemden çıkardığı için aynı örneklem büyüklüğünde "iki bağımsız başarı oranını çıkarmaktan" çok daha duyarlıdır — önceki bağımsızlık varsayımına dayanan √2 kestirimi, internete bakmadan kafadan yapılabilen temkinli bir eleme süzgecinden ibarettir ve açıkça yetersiz kalan farkları hızla ayıklamaya yarar. Eşleştirilmiş analiz de farkı belirsiz gösteriyorsa ancak o zaman örneklemi büyütmeyi düşünün: standart hata 1/√n ile küçülür, yani örneklemi 100'den 400'e çıkarmak gürültü bandını ancak yarıya indirir ve örneklem büyütmek pahalıdır. Tersinden bakıldığında, bir iyileştirmenin beklenen kazancı zaten yalnızca 2-3 yüzde puansa ve değerlendirme kümenizde birkaç düzine durum varsa, bu değerlendirme iyileştirmenin işe yarayıp yaramadığını hiç ayırt edemez — o hâlde öncelik Agent'ı yinelemeye devam etmek değil, değerlendirme kümesini büyütmektir.
+
+Kolayca gözden kaçan bir tuzak daha var: **çoklu karşılaştırma**. Altı bağımsız hipotezi %95 güven düzeyinde sınarsanız, en az bir yanlış pozitif bulma olasılığı 1 − 0,95^6 ≈ %26 olur. Ne kadar çok değişiklik denerseniz, sırf şans eseri “işe yarıyor” görünen bir değişiklik bulma olasılığınız o kadar artar. Çözüm ya Bonferroni benzeri bir düzeltmeyle anlamlılık eşiğini sıkılaştırmak ya da olumlu sonucu bağımsız bir doğrulama koşusunda yeniden üretmektir. İlerideki AndroidWorld dizisi her turda yalnızca bir değişkeni değiştirerek bu riski azaltır; birçok yönü paralel eleyecekseniz yine düzeltme veya bağımsız doğrulama gerekir.
+
+Değerlendirme güdümlü kararlar yüksek kaliteli veriye dayanır ve bu veri, Agent'ın çalışma sürecinin sistematik biçimde kaydedilmesinden gelir — observability'nin çözmeye çalıştığı sorun tam da budur.
+
+**Eşleştirilmiş karşılaştırma:**
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
+## Agent'ın Observability'si
+
+Değerlendirme güdümlü kararlar (ister model seçimi ister sürekli yineleme olsun) yüksek kaliteli çalışma verisine dayanır. Aşağıda önce bu verinin sistematik olarak nasıl toplandığını (observability), ardından değerlendirme sonuçlarının sistem iyileştirmelerine nasıl dönüştürüleceğini ele alıyoruz.
+
+![Şekil 7-6: Observability Teknoloji Yığını](images/fig7-6.svg)
+
+Observability (gözlemlenebilirlik) kavramı dağıtık sistemler alanından ödünç alınmıştır: sistemin içini açıp ne yaptığını doğrudan göremezsiniz, yalnızca ürettiği loglardan, metriklerden ve trace verisinden ne olduğunu çıkarsayabilirsiniz — tıpkı hastanın içini doğrudan göremeyen bir hekimin ateş, tansiyon, görüntüleme gibi dışsal sinyallerden teşhis koyması gibi. Agent sistemleri bu işi daha da zorlaştırır: aynı girdi farklı çıktılar üretebilir, çok turlu çıkarım ve araç çağrıları yürütme yollarını son derece karmaşıklaştırır ve modelin "düşünme" süreci dışarıdan tamamen saydamsızdır.
+
+Observability'nin değeri önce **sorun teşhisindedir**: eksiksiz trajectory'ler geliştiricinin tüm süreci tahmine dayanmadan yeniden oynatmasına imkân verir. İkinci olarak **sürekli optimizasyonun** temelidir — hangi görevlerin çok turlu yineleme gerektirdiğini, hangi araçların başarı oranının en düşük olduğunu, hangi retrieval sorgularının hep boş sonuç döndürdüğünü görebilirsiniz. **Maliyet yönetiminde** ise Agent'ın çalışma maliyeti görevden göreve bir iki büyüklük mertebesi değişebildiğinden, trace verisi anormal derecede pahalı vakaları ortaya çıkarır. Son olarak biriken trajectory verisi, sonraki sistem optimizasyonları ve model iyileştirmeleri için de zemin sağlar.
+
+Agent observability'sinin veri temeli **trace'tir (izleme kaydı)** ve veri yapısı doğrudan dağıtık sistemlerin span ağacı modelinden gelir: bir görev yürütmesi bir trace'e karşılık gelir; içindeki her LLM çağrısı, her araç çağrısı ve her retrieval bir **span**'dir (girdi/çıktıyı, başlangıç-bitiş zamanını, token tüketimini ve hata bilgisini kaydeden yürütme birimi). Span'ler arasındaki ebeveyn-çocuk ilişkileri bir yürütme ağacı oluşturur — örneğin "Agent ana döngüsü" span'inin altında birkaç "LLM çağrısı" ve "araç çağrısı" alt span'i asılıdır. Bu katman için standartlaşmış protokoller hâlihazırda mevcuttur: **OpenTelemetry** genel amaçlı dağıtık trace standardıdır, **OpenInference** gibi belirtimler ise bunun üzerine LLM uygulamalarına özgü semantik kuralları tanımlar (prompt'ların, model parametrelerinin, token kullanımının vb. nasıl kaydedileceği). Standart protokol kullanmanın faydası toplama ile analizin birbirinden ayrılmasıdır — aynı trace verisi farklı analiz arka uçlarına bağlanabilir ve tek bir platforma kilitlenmekten kaçınılır.
+
+LangSmith bu alanın temsilci platformlarından biridir (benzer konumdaki Langfuse, Arize Phoenix gibi platformlar da vardır) ve observability, değerlendirme ile optimizasyonu kapalı bir döngüde birleştirir. Her yürütme bir trace oturumu oluşturur; içindeki model çağrıları, araç kullanımları ve bilgi retrieval'ları bağımsız yürütme birimleri olarak kaydedilir ve nedensellik ilişkileriyle bağlanarak bir yürütme ağacı oluşturur. Her birim eksiksiz girdi/çıktıyı, zaman bilgisini, maliyet verisini ve hata bilgisini kaydeder. Platform asenkron toplu veri toplama kullanır, böylece trace'in kendisi Agent'ın yanıt gecikmesini etkilemez.
+
+Platform ayrıca A/B testini (kullanıcı trafiğinin bir bölümünü yeni sürüme yönlendirir, metrikleri otomatik karşılaştırır, hızlı geri alma veya kademeli yaygınlaştırmayı destekler), prompt sürüm yönetimini (her sürüm çalışma zamanı performans verisiyle ilişkilendirilir) ve iş birliğine dayalı geliştirmeyi (ekip üyeleri trace verisini ve sorunlu vakaları paylaşabilir) destekler. Üretim ortamındaki devasa gerçek veri, sürekli iyileştirme için bir altın madenidir — beklenmedik senaryoları ortaya çıkarır ve en çok optimizasyona muhtaç işlevleri belirler.
+
+Observability verisinin en değerli varış noktası, **değerlendirme varlığına geri dönüşmesidir**. Pratik bir kapalı döngü şudur: üretim trajectory'lerinden başarısız ve şüpheli vakaları süzün → maskeleyin (kullanıcı gizliliği, anahtar gibi hassas alanları temizleyin) → değerlendirme kümesinin yeni test durumlarına ve regresyon testlerine dönüştürün. Böylece değerlendirme kümesi tek seferde kurulmuş statik bir derleme olmaktan çıkar; ürünle birlikte evrilen ve gerçek kullanıcı dağılımına yakın durmayı sürdüren canlı bir varlığa dönüşür — bugün canlıda açığa çıkan başarısızlık kalıbı, yarın o eşiği koruyan regresyon testi olur. Observability ile bu bölümün ana ekseni tam da burada birleşir: observability gerçek dünyada ne olduğunu "görmekten", değerlendirme ise bu gözlemleri tekrar tekrar sınanabilir ölçütlere sabitlemekten sorumludur.
+
+Observability'nin karşılaştığı birkaç tür zorluk vardır:
+
+- **Veri hacmi ile gizlilik arasındaki denge**: yüksek trafikli sistemler günde terabaytlarca trace verisi üretirken aynı zamanda veri koruma mevzuatına uymak zorundadır.
+- **Nedensel atfetmenin karmaşıklığı**: trajectory'lerden kök nedeni otomatik olarak saptamak hâlâ daha akıllı analiz algoritmaları gerektirir; öncü araştırmalar nedensel çıkarım ve karşıolgusal analiz deniyor, ama henüz olgunlaşmadı.
+- **Çoklu Agent sistemlerinde trace zorluğu**: birden çok Agent'a yayılan yürütme akışını izlemek, mikroservisler arası API çağrılarını izlemekten daha karmaşık ve daha anlam yüklüdür.
+- **Gerçek zamanlı koruma ile sonradan analiz arasındaki denge**: yüksek riskli senaryolar etkin koruma gerektirir, ama bu ek gecikme ve yanlış alarm getirir.
+
+ML teknolojisi araç zincirine daha derinden yerleştikçe, gelecekteki observability platformlarının anormallikleri otomatik olarak saptayıp kök nedeni bulması bekleniyor.
+
+Eksiksiz bir değerlendirme sistemi ve veri kümesi kurulduktan sonra kilit mesele, değerlendirme sonuçlarını somut sistem iyileştirmelerine dönüştürmektir.
+
+## Benchmark Raporlarından Sistem İyileştirmelerine
+
+Aşağıdaki vaka, eşlik eden depodaki gerçek fakat bilinçli olarak dar tutulmuş bir AndroidWorld yinelemesinden geliyor. API 35 emülatöründe dört Wi-Fi ayarı görevi vardır ve görev başına bir eşleştirilmiş koşu yapılmıştır. Bu, 116 görevlik tam benchmark değildir ve API 33 referans ortamında yeniden çalıştırmanın yerini tutmaz. Değeri genel bir puanda değil, bir sonuçtan diğerine giden karar dizisindedir.
+
+![Şekil 7-7: Benchmark'tan İyileştirmeye Kapalı Döngü](images/fig7-7.svg)
+
+Harness mühendisliği açısından bakıldığında bu bölüm özünde Harness'in yinelemeli optimizasyonunun yöntemini anlatır — değerlendirme verisiyle Harness'teki zayıf halkalar saptanır (context yetersiz mi? kısıt eksik mi? doğrulama yeterli değil mi? geri bildirim zamanında değil mi?), hedefli iyileştirmeler yapılır ve yeniden değerlendirilir; böylece Harness'in sürekli evrimini sağlayan kapalı bir döngü oluşur.
+
+Benchmark raporunu incelemeye başlamadan önce kolayca gözden kaçan bir ilke var: **Agent'ın performansı düştüğünde önce değerlendirme sisteminin kendisini kontrol edin, sonra Agent'a dokunun**. Yaygın bir yanılgı, puan düşer düşmez Agent kodunu değiştirmeye girişmek ve değerlendirme sisteminin kendisinin önce bozulmuş olabileceğini göz ardı etmektir — bozuk bir sinyale bakarak yön ayarlamak, daha ilk adımdan yanlış yöne gitmek demektir. Değerlendirme sistemindeki yaygın hata kaynakları şunlardır: çalışma ortamındaki kaynak yetersizliği yüzünden süreçlerin öldürülmesi (rastgele başarısızlık gibi görünür), puanlayıcının kendisindeki bir bug'ın doğru yanıtları başarısız sayması ve test durumlarının üretim senaryolarından kopması. Bunların hepsi sonuç rakamlarında modelin gerilemesiyle birebir aynı görünür; ancak eksiksiz trajectory'ler incelenerek ayırt edilebilirler.
+
+### Benchmark Raporunu Okumak: Sorun Keşfetme Sanatı
+
+Başlangıç raporunda 116 görevin her biri bir kez çalıştırılmış ve toplam başarı yaklaşık 88% ölçülmüştü. Hatalar rastgele dağılmıyordu: dört `SystemWifiTurn*` görevinin üçü başarısızdı ve trajectory'ler Agent'ın son durumu doğrulamadan ileri geri dolaştığını gösteriyordu. Kanıtla uyumlu iki açıklama vardı: Agent nereye gideceğini bilmiyordu ya da aldığı UI temsili eksikti.
+
+88%'lik toplam puan, küçük ama tutarlı bu hata kümesini gizler. Adım sınırını artırmak da yanıltıcı olur; “Agent denetimi göremiyor” sorununu “daha ısrarcı olmalı” diye yeniden adlandırabilir. Raporu ters yönde okuyun: görev ve yetenek etiketine göre kümeleri bulun, trajectory'leri oynatın, hatanın gözlemde mi, akıl yürütmede mi, eylemde mi yoksa doğrulamada mı oluştuğunu saptayın; ancak sonra değiştirilecek tek değişkeni seçin. Wi-Fi dilimi sistem çapındaki performansı tahmin etmek için değil, mekanizmayı ucuza teşhis etmek için kullanıldı.
+
+### Veriden Hipoteze: İyileştirme Yol Haritası Kurmak
+
+İlk tur en ucuz açıklamayı sınadı. H1 bir gezinme bilgisi eksiği varsaydı; bu yüzden yalnızca deney koluna Wi-Fi sayfasına gitme ve son durumu denetleme talimatları verildi. Başarı değişmedi; darboğaz prompt değildi.
+
+İkinci tur Agent'ın gerçekte ne görebildiğini sorguladı. H5, API 35 ile uyumsuz accessibility feed'i AndroidWorld'ün desteklediği UIAutomator ağacıyla değiştirdi. Başarı yükseldi, ancak tam ağaç token kullanımını patlattı. H5C yeni bilgi eklemedi; aynı başarının daha az gürültüyle korunup korunamayacağını görmek için görünmeyen, metinsiz ve eylemsiz container düğümlerini çıkardı.
+
+Üç turda da model, görev parametreleri, seed, adım sınırı ve emülatör sabit tutuldu; kolların sırası dönüşümlüydü. Bu aşamalı tasarımda bir turun kalan sorunu ya da yan etkisi, sonraki turun tek değişkeni oldu.
+
+### Sonuçtan Karara: Veri Güdümlü Dengeler
+
+Tablo 7-5 ölçülen sonuçları özetliyor. Kol başına yalnızca dört görev olduğundan bu sayılar daha büyük bir koşunun değerli olup olmadığına karar verebilir; AndroidWorld genelindeki başarıyı tahmin edemez.
+
+Tablo 7-5 AndroidWorld Wi-Fi Dilimindeki Üç Tur
+
+| Deney | Tek değişiklik | Kontrol → deney başarısı | Deney / kontrol token | Sonraki adım |
+|---|---|---:|---:|---|
+| H1 | Gezinme talimatı ekleme | 25% → 25% | 0.47× | Başarı artmadı; özgün prompt'u koru |
+| H5 | Accessibility feed → UIAutomator | 25% → 100% | 2.498× | Güçlü artış, fakat pahalı; optimize et |
+| H5C | UIAutomator ağacını sıkıştırma | 100% → 100% | 0.506× | Başarıyı koruyup token'ı yarıya indir; tam koşuya geçir |
+
+Dizinin kendisi tek tek yüzdelerden daha önemlidir. Ayrıntılı talimatlar, Agent'ın hiç almadığı bilgiyi geri getiremez; prompt'u büyütmeden önce gözlem hatalarını inceleyin. Öte yandan daha çok girdi her zaman daha iyi değildir. Tam öğe ağacı görünürlük sorununu çözerken context'i gürültüye boğdu. Anlamsız düğümleri kaldırmak dört başarılı koşuyu korudu ve token'ı yaklaşık yarıya indirdi. Model değişmedi: Harness'in UI temsili önce görevin yapılıp yapılamayacağını, sonra da bunu yapmanın ekonomik olup olmadığını belirledi.
+
+### Sürekli Yineleme: İlk İyileştirmeden Sistem Evrimine
+
+H5C'nin dört görevde başarılı olması yalnızca daha büyük bir testi hak eder; dağıtımı değil. Sonraki kapı, Pixel 6 / API 33 referans ortamında ve tam üçüncü taraf uygulama kümesiyle 116 görevin tümünü beş seed ile çalıştırmaktır. Başarı aşağı kalmamalı, token oranı ≤0.75 ve gecikme oranı ≤1.5 olmalıdır. Bu çalışma bitene kadar dilimdeki 4/4 sonuç, sistem çapında 100% başarı diye raporlanamaz.
+
+Sürekli yineleme pratikte budur: bir turun kanıtı yalnızca kapsamının desteklediği sonraki eyleme izin verir. H1 daha fazla prompt yığmayı durdurdu; H5 doğru mekanizmayı bulup bir maliyet sorunu açığa çıkardı; H5C bu sorunu çözdü ve daha geniş teste hak kazandı. İyi bir benchmark raporu yalnızca puan vermez; sonucun nerede geçerli olduğunu, hangi guardrail'lerin başarısız olduğunu ve sırada neyin sınanacağını söyler.
+
+> **Deney 7-12 ★★★: AndroidWorld'de Değerlendirme ve İyileştirme**
+>
+> Bu deney, değerlendirme raporundan sistem iyileştirmesine kadar olan yolu uygular. `chapter6/android-world` içindeki tarihsel rapor ve saklanmış üç eşleştirilmiş koşuyla başlayın.
+>
+> Birinci adım: teşhis. Görev bazlı tabloyu ve yetenek etiketi matrisini çapraz çözümleyerek yüzeydeki görev başarısızlıklarını derindeki yetenek eksikliklerine eşleyin. Başarı oranı beklenenin altında kalan yetenek etiketlerini ve başarısızlığın yoğunlaştığı görev bölgelerini belirleyin.
+>
+> İkinci adım: hipotez kurma. Üç katmanlı çerçeveye göre (yüzey → orta → derin) iyileştirme hipotezleri oluşturun; her hipotez için beklenen başarı oranı artışı hedefini ve doğrulama yöntemini açıkça belirtin.
+>
+> Üçüncü adım: aşamalı deney. Her turda tek değişkenle H1, H5 ve H5C'yi yeniden üretin. Başarının yanında token, gecikme ve gerilemeleri kaydedin.
+>
+> Dördüncü adım: veri güdümlü karar. Dağıtım kararını maliyet-fayda oranına göre verin — işe yarayan bütün iyileştirmeleri toptan benimsemek yerine, her iyileştirmenin uygulanma kapsamını, gecikme etkisini ve maliyet yükünü tartın. Düşük maliyetli ve yüksek getirili iyileştirmeler öncelikle devreye alınır, yüksek maliyetli olanlar kritik senaryolarla sınırlandırılır.
+>
+> Beşinci adım: yineleme. Dilim deneyi geçerse yalnızca tam koşuya ilerler. Dağıtımı ancak referans ortamındaki 116×5 çalışmadan sonra tartışın; ortam farklarını, örneklem büyüklüğünü ve eksik kapsamı raporda koruyun.
+>
+
+## Dış Değerlendirmeden İç Değerlendirmeye: Üretim Düzeyinde Agent'lar için Değerlendirme Altyapısı
+
+Önceki bölümler Agent sistemlerinin dışarıdan nasıl değerlendirileceğini tartıştı — değerlendirme ortamı kurmak, veri kümesi tasarlamak, benchmark raporlarını çözümlemek. Ama en iyi Agent ürünleri yalnızca dışarıdan değerlendirilmekle kalmaz, **sürekli öz değerlendirme altyapısını da içlerine gömer**. Aşağıda, Bölüm 5'te tanıtılan açık kaynak genel amaçlı Agent OpenClaw örnek alınarak ve önde gelen Kodlama Agent'ı ürünlerine dair kamuya açık teknik çözümlemelerle sektör paylaşımları harmanlanarak örnek alınmaya değer bir iç değerlendirme sistemi sunuluyor — ML araştırmasının deney yöntemini sistematik biçimde ürün mühendisliğine gömen bir sistem.
+
+### Ablation Altyapısı: Her Özelliğin Gerçek Katkısını Anlamak
+
+ML araştırmacıları modelin hangi bileşenlerinin gerçekten önemli olduğunu anlamak için uzun süredir ablation study'den (ablasyon çalışması) yararlanır — ablasyon, bir bileşeni tek tek "sökmek" ve toplam performansın ne kadar düştüğüne bakmaktır. OpenClaw bu yöntemi ürün mühendisliğine taşır: sistemde, birçok ana özelliği (düşünme modu, context sıkıştırma, otomatik bellek, arka plan görevleri vb.) aynı anda devre dışı bırakabilen bir ana anahtar yerleşiktir ve böylece bir "çıplak model" temel çizgisi yaratılır. Bu, ekibin kilit bir soruyu yanıtlamasını sağlar: **bir özellik kullanıcı deneyimini gerçekten iyileştiriyor mu, yoksa yalnızca faydalı mı hissettiriyor?**
+
+Ablasyonu tek seferlik bir araştırma faaliyeti değil de rutin bir mühendislik pratiği hâline getirmenin birkaç pratik sonucu vardır. Birincisi, ablasyon anahtarı başlatma yolunun çok erken bir noktasında enjekte edilmelidir — herhangi bir modül düzeyi sabit yapılandırma değerini yakalamadan önce — ki bu da ablasyon altyapısının sonradan takılan bir eklenti değil, en baştan sistem mimarisine tasarlanması gerektiği anlamına gelir. İkincisi, ablasyon deneylerini düzenli olarak çalıştırmak (örneğin her büyük sürümden önce) "özellik borcunu" ortaya çıkarır — bir zamanlar işe yarayan, ama modeller evrildikçe artık gerekmeyen özellikleri. Üretim Agent'ı geliştiren her ekip için önerilen pratik şudur: **her ana özellik bağımsız olarak kapatılabilir olmalı ve ekip her özelliğin gerçek katkısını düzenli olarak doğrulamalıdır**.
+
+### AB Testi Yöntemi: Mekanizmayı Hedeften Ayırmak
+
+Olgun Agent ürünleri kendi davranışları üzerinde titiz AB testleri yürütür (yani kullanıcılar rastgele iki gruba ayrılır, bir grup eski sürümü, diğeri yeni sürümü kullanır ve iki grubun gerçek verisi karşılaştırılarak değişikliğin işe yarayıp yaramadığına karar verilir). İyi tasarlanmış bir Agent AB testi vakası, birkaç kilit yöntem ilkesini gösterir:
+
+**İkili değil, çok kollu.** Yalnızca "var" ile "yok"u karşılaştırmak yerine kademeli birden çok varyant tasarlanır (örneğin farklı sıkılıktaki prompt kısıtları test edilirken bir kontrol grubu ve giderek daha katı üç deney grubu kurulur). Bu tasarım doz-etki ilişkisini açığa çıkarır ve en uygun noktayı bulmaya yardım eder.
+
+**Mekanizma metriklerini hedef metriklerden ayırmak.** En kolay yapılan hata budur: değiştirdiğiniz şeyi optimizasyon hedefi sanmak. Örneğin "Agent'ın plan dosyasını kısaltmayı" test ediyorsanız, plan uzunluğu bir mekanizma metriğidir (doğrudan değiştirdiğiniz şey), ama hedef değildir. Gerçek hedef muhtemelen "oturum düzeyinde maliyeti düşürmektir". Plan dosyasını kısaltmak maliyeti düşürebilir, ama plan yeterince ayrıntılı olmadığı için daha çok düzenle-kontrol et-düzenle döngüsüne yol açıp toplam çıktı hacmini artırabilir de. Kendinize hep şunu sorun: **değiştirdiğim şey (mekanizma) ile gerçekten önemsediğim şey (hedef) aynı mı?** Değilse hedefi esas alın.
+
+**Guardrail metrikleri koymak.** Hedef metrik iyileşse bile kullanıcı memnuniyeti düşüyorsa, işlem sayısı artıyorsa veya hata oranı yükseliyorsa deney durdurulmalıdır. Guardrail metrikleri "kötüleşmemesi gereken alt sınırdır".
+
+**Temel çizgi istatistiklerini kaydetmek.** Örneklem büyüklüğü, dağılım yüzdelikleri ve korelasyon çözümlemesi (örneğin "ret oranı plan boyutuyla birlikte tek yönlü artıyor") deney sonuçlarının yorumlanması için gereken bağlamı sağlar. Temel çizgi olmadan deney sonucunun istatistiksel olarak anlamlı olup olmadığına karar veremezsiniz.
+
+### İki Katmanlı Feature Flag Sistemi
+
+Agent ürünleri daha ilk günden Feature Flag (özellik anahtarı) altyapısını tasarlamalıdır — özellik anahtarı, bir işlevin kullanıcıya açık mı kapalı mı olduğuna kodu yeniden dağıtmadan uzaktan karar veren bir anahtardır. Aynı anda üç amaca hizmet eder: deney, kademeli yayın ve acil durum sigortası.
+
+**Derleme zamanı anahtarları**, ilgili kodu derleme aşamasında ürünün içinden fiziksel olarak çıkarır. Yalnızca içeride kullanılan özellikler dış derlemelerde hiç var olmaz — tersine mühendislikle bile çıkarılmış işlev keşfedilemez. Bu aynı zamanda temiz bir ablasyon mekanizmasıdır: bir özelliği kapatmak, çalışma zamanında mantığı atlamak değildir; karşılık gelen kod fiziksel olarak yoktur.
+
+**Çalışma zamanı anahtarlarının** yapılandırması sunucudan indirilir ve yerel diskte bir kopyası önbelleğe alınır. Tasarım gereği, Agent'ın bir ağ isteğini bekleyip başlangıçta bloke olmasındansa biraz eski bir önbellek yapılandırmasının okunması yeğlenir. Somut gruplama kararları AB testi gruplarını atamak için bir deney platformu (örneğin GrowthBook) üzerinden verilir. Kilit bir tasarım ayrıntısı şudur: her özelliğin görülme olayı her oturumda en fazla bir kez kaydedilir; böylece yinelenen kayıtların deney verisini kirletmesi önlenir.
+
+Agent geliştiricileri için çıkarılacak ders: özellik anahtarları bir hata ayıklama aracı değil, **birinci sınıf vatandaş düzeyinde mimari bileşenlerdir**.
+
+### Prompt Duyarlılığı Değerlendirmesi
+
+System prompt, Agent davranışının çekirdek "kodudur", ama çoğu zaman sıradan kodla eşdeğer bir sürüm denetiminden ve regresyon testinden yoksundur. OpenClaw'ın yaklaşımı, belirtilen bir git sürümünde eksiksiz render edilmiş system prompt'u çıkarabilen özel bir araç sunmaktır — tüm dinamik koşullar açıldıktan sonraki nihai metni içerir. Bu, ekibin şu soruları kesin biçimde yanıtlamasını sağlar: **hangi commit prompt'u değiştirdi? Değerlendirme kümesine etkisi ne oldu?**
+
+Her Agent ekibi için önerilen pratikler: (1) system prompt deterministik biçimde render edilebilir olmalıdır (aynı yapılandırma girdisi her zaman aynı çıktıyı üretmelidir); (2) prompt'lar için sürümlenmiş anlık görüntü mekanizması kurulmalıdır; (3) her prompt değişikliğinde değerlendirme kümesi üzerinde regresyon testi çalıştırılmalıdır — tıpkı kod değişikliklerinin CI'dan geçmesi gerektiği gibi.
+
+### Değerlendirmenin Temeli Olarak Gizlilik Duyarlı Analitik
+
+Değerlendirme iyi veriye dayanır, ama Agent ürünlerinin işlediği şey çoğu zaman kullanıcının hassas içeriğidir. OpenClaw bu çelişkiyi tip sistemi üzerinden çözer: analitik arayüzü yalnızca özel bir tiple sarmalanmış değerleri kabul eder ve tip adının kendisi bir denetim izidir — açıkça "bunun kod ya da dosya yolu olmadığını doğruladım" beyanında bulunur. Bu tasarım, gizlilik kısıtını dokümante edilmiş bir kuraldan derleme zamanında zorlanan bir tip denetimine dönüştürür.
+
+Temel ilke şudur: **gizlilik kısıtlarını en baştan tasarıma koyun, sonradan takmayın**. Analitik sisteminiz veriyi güvenle toplayamıyorsa etkili bir değerlendirme de yapamazsınız. Gizlilik ile değerlendirme birbirine karşıt değildir — gizlilik duyarlı tasarım, *gerçekte neyi ölçmeniz gerektiğini* ciddi ciddi düşünmeye zorlar ve bu da daha isabetli değerlendirme metrikleri doğurur.
+
+### Dıştan İçe: Değerlendirme Düşüncesindeki Dönüşüm
+
+Bu bölümün özü şudur: **önceki bölümler size bir Agent'ı dışarıdan nasıl değerlendireceğinizi öğretti; bu bölüm ise en iyi Agent ürünlerinin kendilerini içeriden nasıl değerlendirdiğini gösteriyor**. Dış değerlendirme "Agent ne kadar iyi" sorusunu yanıtlar; iç değerlendirme altyapısı ise "onu hangi değişiklik iyileştirdi" sorusunu. Ablasyon deneyleri hangi özelliklerin gerçekten önemli olduğunu bulur, AB testleri her değişikliğin etkisini nicelleştirir, özellik anahtarları deney ve geri alma altyapısını sağlar, prompt duyarlılığı değerlendirmesi system prompt'u CI sistemine dahil eder, gizlilik duyarlı analitik ise veri toplamanın mevzuata uygunluğunu güvenceye alır. Bu beş bileşen birlikte değerlendirme güdümlü ürün mühendisliğini oluşturur — ara sıra bir değerlendirme yapmak değil, değerlendirmeyi her ürün kararının içine gömmek.
+
+## Simülasyon Ortamları: Değerlendirmeden Post-Training'e Uzanan Köprü
+
+Değerlendirmenin varış noktası puan vermek değil, iyileştirmedir. Bu bölüm iyileştirmenin iki yolunu şimdiden gösterdi: Harness'i ayarlamak (benchmark raporundan sistem iyileştirmesine) ve değerlendirmeyi ürün mühendisliğine gömmek (iç değerlendirme altyapısı). İyileştirmenin en güçlü biçimi ise eğitimdir — hedef "mevcut yeteneği ölçmekten" "yeni yetenek yetiştirmeye" genişlediğinde, özellikle Bölüm 8'de tartışılan post-training teknikleriyle, değerlendirme ortamının bir **simülasyon ortamına** evrilmesi gerekir: Agent'ın tekrar tekrar alıştırma yapabileceği ve otomatik olarak puanlanacağı sanal bir oyun alanı. Simülasyon ortamının değerlendirme ortamından temel farkları şunlardır: etkileşim sıklığı çok daha yüksektir (milyonlarca kez, binlerce kez değil), rastgeleleştirme gerekir (belirli yapılandırmaların ezberlenmesini önlemek için) ve anlık geri bildirim vermek zorundadır. Uygulama alanı açısından simülasyon ortamları dijital ortamlar (bilgi işleme görevleri) ve bedenlenmiş ortamlar (fiziksel dünyayı algılama ve manipüle etme) olmak üzere iki büyük gruba ayrılır.
+
+Bu köprünün iki ucu şöyle birleşir. Değerlendirme tarafında biriken varlıklar neredeyse kusursuz biçimde eğitim sinyaline dönüşebilir: açıkça tanımlanmış bir Rubric ya da doğrulayıcı, özünde bir **doğrulanabilir ödül (RLVR, Reinforcement Learning with Verifiable Rewards)** ödül fonksiyonudur — puanlama betiği doğrudan ödül betiğidir; testin geçip geçmediği, durumun ölçüte uyup uymadığı hem değerlendirmenin ölçütü hem de pekiştirmeli öğrenmenin getirisidir. Ama eğitim, değerlendirme aşamasında hiç dert edilmeyen yeni gereksinimler ortaya çıkarır. Birincisi **güvenilir reset semantiğidir**: eğitim milyonlarca episode koşar (bir episode, başlangıç durumundan görev sonuna kadarki eksiksiz bir etkileşim turudur) ve her episode ortamı belirli, temiz bir başlangıç durumuna sıfırlayabilmelidir; yoksa gradyan sinyali önceki turdan kalan artık durumla kirlenir. İkincisi **değerlendirmeninkinden çok daha yüksek throughput'tur**: değerlendirmede sonuca varmak için birkaç bin koşu yeterken, eğitimde kabul edilebilir bir duvar saati süresi içinde modele milyonlarca etkileşim beslenmelidir; ortamın paralellik derecesi ve tek örnek başına yükü, eğitimin yapılabilir olup olmadığını doğrudan belirler. Bu iki nokta — ödül fonksiyonuna dönüşen doğrulayıcılar ile eğitim ölçeğinde reset ve throughput — Bölüm 8'de açılacak.
+
+![Şekil 7-8: Simülasyon Sadakati Spektrumu](images/fig7-8.svg)
+
+**Dijital ortamlar** tarafında AWorld çerçevesi, GAIA görevleri için denetlenebilir bir MCP sunucu sandbox'ı kurar; 26 MCP sunucusu ve 126 araç fonksiyonu sağlayarak gerçek API'lere doğrudan erişmenin getirdiği yasaklanma ve denetlenemeyen yan etkilerden kaçınır. Tüm araç çağrıları yeniden oynatılabilir ve denetlenebilir. AWorld'ün dağıtık mimarisi, geleneksel seri yürütmedeki 7.695 saniyeyi 525 saniyeye indirir (14,6 kat hızlanma); ortamın durumsuz tasarımı sayesinde her örnek tamamen bağımsızdır ve verimli paralellik desteklenir.
+
+**Bedenlenmiş ortamlar** tarafında RoboTwin2, bir fizik motoru üzerine çift kollu manipülasyon görevleri kurar; genelleme yeteneğini artırmak için nesnelerin konumunu, yönelimini ve görünümünü rastgeleleştirir. Gözlem alanı çok kameralı görüntüyü ve eklem durumlarını içerir; gerçek zamanlı denetim, **eylem parçalama (Action Chunking)** ile — yani modelin birden çok ardışık eylemi tek seferde planlamasıyla — gerçekleştirilir (ayrıntısı Bölüm 6'da). OSWorld sanal makine anlık görüntüleriyle sıfırlanabilirliği sağlar, AndroidWorld ise mobil uygulama otomasyonuna odaklanır. İster dijital ister bedenlenmiş olsun, simülasyon ortamları da Bölüm 4'te tartışılan izole yürütme ortamlarına ve sanal kimlik mekanizmalarına (VM/konteyner izolasyonu, konut proxy'leri, Human-in-the-Loop kimlik doğrulama, paylaşılan dosya sistemleri) ihtiyaç duyar; burada tekrarlanmayacak.
+
+> **Deney 7-13 ★★: OpenVLA ve RoboTwin2 ile Bedenlenmiş Zeka Ortamını Yapılandırmak**
+>
+> Robot manipülasyonu için bir simülasyon ortamı kurun. `ch7/SimpleVLA-RL` ile OpenVLA belgelerini okuyup görme-dil-eylem modelinin mimarisini anlayın (görme kodlayıcı + dil modeli + eylem kod çözücünün uçtan uca bütünleştirilmesi; görüntü ve metin ortak bir semantik uzaya izdüşürülür). RoboTwin2 ortamını yapılandırın; gözlem alanını (üç açılı RGB + 14 boyutlu eklem durumu) ve eylem alanını (14 boyutlu denetim vektörü) kavrayın. `move_can_pot` içindeki ortam rastgeleleştirme mekanizmasını ve uzamsal kısıt mantığını inceleyin. Önceden eğitilmiş modeli çalıştırıp değerlendirin; başarı oranını, tamamlanma süresini ve başarısızlık biçimlerini kaydedin, özellikle eylem parçalama mekanizmasının etkisine odaklanın.
+>
+>
+> ![Şekil 7-9: OpenVLA ve RoboTwin2 Bedenlenmiş Zeka Ortamı](images/fig7-9.svg)
+>
+>
+
+### Sadakat Dengeleri ve Alan Rastgeleleştirme
+
+Yüksek sadakatli ortamlar gerçek dünyaya daha iyi aktarılır, ama hesaplama yükleri büyüktür. Sadakatin bir başka boyutu rastgeleleştirme derecesidir: ölçülü rastgeleleştirme genelleme yeteneğini artırır, aşırısı ise görevi fazla zorlaştırır. **Alan rastgeleleştirme (Domain Randomization)**, simülasyon ile gerçeklik arasındaki farkı (sim-to-real gap) daraltmanın kilit tekniğidir: fiziksel parametrelerde, görsel görünümde, sensör gürültüsünde vb. geniş aralıklı rastgele değişimler devreye sokulur — tıpkı her türlü ışık ve açıda kavrama alıştırması yapmış olmak gibi; gerçek ortamda ışık değişti diye elden kaçırmazsınız. Dijital ortamlarda sim-to-real farkı arayüz render'i, yanıt süresi gibi noktalarda kendini gösterir ve gecikme ile başarısızlıkların rastgeleleştirilmesiyle hafifletilebilir.
+
+Buraya gelindiğinde değerlendirme ortamı son evrimini tamamlamış olur: yeteneği ölçen bir sınav salonundan, yeteneği yetiştiren bir antrenman sahasına dönüşür. Bölüm 8, AWorld-train'in bu tür simülasyon ortamlarını nasıl eğitilebilir sahalara çevirdiğini ve bunun mühendislik zorluklarını anlatacak — bu bölümde kurulan değerlendirme sistemi ile simülasyon ortamları, post-training'in iki temel taşıdır.
+
+[^re-bench-2025]: Wijk, Hjalmar, et al. *RE-Bench: Evaluating Frontier AI R&D Capabilities of Language Model Agents against Human Experts.* arXiv:2411.15114, 2025.
 
 ## Bölüm Özeti
 
-Model post-training'in özü, etkileşim politikasını parametrelere yazmaktır.
+Bu bölüm tek bir temel soru etrafında döndü: bir Agent'ın gerçekten iyileştiğine nasıl karar veririz? Yeniden üretilebilir test ortamından sızıntıya dayanıklı veri kümelerine, LLM hakemlerden değerlendirme güdümlü model seçimi ve yinelemeye kadar her halka sonucun güvenilirliğini etkiler. Ölçülen vakalar dört somut uyarı ekledi: yapılandırılmış bellek ile RAG'ı birleştirmek sinerjiyi garanti etmez; cache ve sıkıştırma tasarrufları toplanamaz; referans ses seçimi çok modlu puanın anlamını değiştirir; Harness'in girdi temsili hem görev başarısını hem token maliyetini belirleyebilir. Model seçiminde tek bir puan yerine farklı kaynak bütçelerindeki yetenek eğrileri karşılaştırılmalıdır. Üretim düzeyinde değerlendirme, ara sıra girilen bir sınav değil, her ürün kararına gömülü sürekli doğrulamadır.
 
-SFT ile RL rakip değildir, sıralı bir ilişki içindedir: önce SFT çıktı biçimini kararlı hale getirir (aksi halde RL'in ödül sinyali hesaplanamaz bile), sonra RL bu temel üzerinde genellemeyi öğrenir. "SFT ezberler, RL genelleştirir" bir slogan değil, ölçülebilir bir olgudur.
-Bölümün tamamına yayılan ve her algoritmadan daha çok akılda tutulmaya değer iki tespit daha var. Birincisi, **veri ve ortam algoritmadan daha önemlidir**: hazır RL algoritmalarını kullanmayı bilmeniz yeterli; farkı asıl açan şey simülasyon ortamının gerçekliği ve eğitim verisinin kalitesidir. Gerçek bir ortam kurulamadığında ortamı modelle simüle etmek (araç dönüş değerlerini sentezlemek, ortam dinamiğini simüle etmek) de uygulanabilir bir yoldur, ama simülatörün sapmasının eğitimin tavanı olduğunu unutmayın. Yalnızca yanıtlar elenmekle kalmaz, eğitim verisinin görev dağılımının kendisi de bir optimizasyon nesnesi haline gelebilir. Birçok senaryoda, SFT'nin veri kalitesi yerindeyse RL yapmanıza bile gerek kalmaz. İkincisi, **bugünün RL'inde asıl darboğaz örnek verimliliğidir**: her adımın sinyalini daha yoğun hale getiren On-Policy Distillation ile boşa giden ortam geri bildirimini öğrenilebilir sinyale çeviren doğrulanmış yol cezası RLVP ("sonucu ödüllendir, yolu cezalandır" ve erişilebilir ilerlemenin kısmi ödülüyle tamamı başarısız grupların örneklemelerini kurtarmak), şu an en umut verici görünen iki yön. Ortak noktaları yine aynı cümle: ortamda ve veride zaten var olan, ama saf sonuç ödülü tarafından boşa harcanan bilgiyi modelin öğrenebileceği bir şeye geri çevirmek. Daha güçlü bir öğretmen olmadığında bu fikrin bir öz-damıtma varyantı da var: OPSD, aynı modeli "yanıta bakan öğretmen" ve "yalnızca soruyu gören öğrenci" kimlikleriyle birbirini denetler hale getirir ve token token verilen yoğun sinyali, ödülün doğrulanamadığı görevlere taşır.
+Temel yöntem: gözlem → hipotez → deney → doğrulama → yeni kavrayış → yeni hipotez. Bu döngü, Agent mühendisliğini deneyim güdümlü bir "simyadan" veri güdümlü bir bilimsel mühendisliğe taşır.
 
-Bu bölüm, parametreleri güncelleyerek Agent'ın sürekli evriminin nasıl sağlanacağını yanıtladı. Bir sonraki bölümde parametrelerin Agent'ın öz-evrimi için dört taşıyıcıdan yalnızca biri olduğunu göreceğiz: bilgi, talimatlar, programlar ve parametreler.
+Bu bölümde tanıtılan değerlendirme sistemi eksiksiz bir kapalı döngü oluşturur: **değerlendirme ortamı** otomatik test altyapısını sağlar → **değerlendirme veri kümesi** test durumlarını tanımlar → **otomatik değerlendirme yöntemleri** (LLM-as-a-Judge ve Rubric) Agent'ın performansını puanlar → **benchmark çözümlemesi** iyileştirme yönlerini ortaya çıkarır → **sistem iyileştirmeleri** sorunları giderir → değerlendirme ortamı ve veri kümesi güncellenir ve yeni bir tur başlar.
 
-[^ch7-1]: Schulman, John and Thinking Machines Lab, "LoRA Without Regret", 2025.
-[^ch7-4]: Ouyang, Long et al., "Training Language Models to Follow Instructions with Human Feedback", OpenAI, 2022.
-[^ch7-5]: Gao, Leo, John Schulman, and Jacob Hilton, "Scaling Laws for Reward Model Overoptimization", OpenAI, 2023.
-[^ch7-6]: Rafailov, Rafael et al., "Direct Preference Optimization: Your Language Model is Secretly a Reward Model", 2023.
-[^ch7-7]: Lightman, Hunter et al., "Let's Verify Step by Step", OpenAI, 2023.
-[^ch7-8]: Silver, David and Richard S. Sutton, "Welcome to the Era of Experience", 2025.
-[^ch7-9]: Bu bölümdeki yol cezası tasarımı, dört ilke ve deney verileri için bkz. Li, Bojie and Noah Shi, "RLVP: Penalize the Path, Reward the Outcome", 2026. arXiv:2607.07435.
-[^ch7-10]: On-Policy Distillation'ın yöntemi ve deneyleri için bkz. Thinking Machines Lab, "On-Policy Distillation", 2025.
-[^ch7-11]: Agent'ın zaman duyusuna ilişkin bu post-training karşılaştırması — DPO'nun ve dört RL reçetesinin kendine özgü başarısızlık kalıpları ile On-Policy Distillation'ın atılımı — için bkz. Li, Bojie and Noah Shi, "Agents That Sense Physical Time: Urgency, Persistence, and Vigilance as Missing Controls for LLM Agents", 2026. https://01.me/research/physical-time-agent
-[^ch7-12]: Kulikov, Ilia, et al. *Autodata: An Agentic Data Scientist to Create High Quality Synthetic Data.* arXiv:2606.25996, 2026.
-[^ch7-13]: Sun, Hao, et al. "ZeroSearch: Incentivize the Search Capability of LLMs without Searching", 2025. arXiv:2505.04588.
-[^ch7-14]: "DreamGym: Scaling Agent Learning via Experience Synthesis", 2025. arXiv:2511.01824.
-[^ch7-15]: Zhao, Siyan, et al. "Self-Distilled Reasoner: On-Policy Self-Distillation for Large Language Models", 2026. arXiv:2601.18734.
-[^ch7-16]: Shen, Ziqi, et al. "Purified OPSD: On-Policy Self-Distillation Without Losing How to Think", 2026. arXiv:2607.02234.
-[^ch7-17]: Tan, Zelin, et al. "SKT: Skill-Use Training at Scale via Verified Synthetic Data Generation", 2026. arXiv:2608.02287.
-[^ch7-18]: Wei, Yifan, et al. "Towards Compositional Generalization of LLMs via Skill Taxonomy Guided Data Synthesis", 2026. arXiv:2601.03676.
-[^ch7-19]: Zhu, Kaijie, et al. "TermiGen: High-Fidelity Environment and Robust Trajectory Synthesis for Terminal Agents", 2026. arXiv:2602.07274.
-[^ch7-20]: Hua, Zhanbo, et al. "CLI-Universe: Towards Verifiable Task Synthesis Engine for Terminal Agents", 2026. arXiv:2606.22883.
+Bölüm 1'de tanıtılan Harness mühendisliği açısından bakıldığında, bu bölümdeki değerlendirme yöntemi Harness'in "doğrulama" işlevinin sistematik uygulanışıdır; "benchmark raporundan sistem iyileştirmesine" uzanan kapalı döngü ise Harness'in yinelemeli optimizasyonunun temel mekanizmasıdır. Bu bölüm "nasıl güvenilir ölçülür" sorusunu yanıtlıyor; Bölüm 9 bunun üzerine "çok boyutlu trajectory değerlendirmeleri nasıl yürütülebilir ve geri alınabilir sistem güncellemelerine çevrilir" sorusunu yanıtlayacak.
 
-[^ch7-23]: Liu, Zijun et al., "Inference-Time Scaling for Generalist Reward Modeling", 2025. arXiv:2504.02495. https://arxiv.org/abs/2504.02495
-
-[^ch7-29]: storm, "Long-horizon agent self-checking and early stopping: the reward-seeking phenomenon and its mitigations", Qingke Community, 6 August 2026. https://qingkeai.online/archives/Reward-Seeking
-[^ch7-24]: Yang, Jihan et al., "V-IRL: Grounding Virtual Intelligence in Real Life", 2024. arXiv:2402.03310. https://arxiv.org/abs/2402.03310
+Bu bölümde kurulan değerlendirme sistemi yalnızca mevcut sistemin optimizasyonuna hizmet etmez, sonraki iki bölüme de kilit bir zemin sağlar. Bölüm 8, değerlendirme ortamlarını ve verisini modelin post-training'i için girdiye çevirir; SFT ve RL ile etkileşim politikasını parametrelere yazar. Bölüm 9 ise üretim trajectory'lerinin çok boyutlu değerlendirmelerini bilgi, talimat, program veya parametre güncelleme adaylarına dönüştürür.
 
 ## Düşünce Soruları
 
-1. ★★ Felaket unutma — belirli bir göreve yönelik bir ince ayarın modelin var olan genel yeteneklerini (örneğin genel tool calling'i) bozması — Agent senaryolarında özellikle çetrefillidir. Tüm parametrelerin ince ayarına kıyasla LoRA taban ağırlıkları dondurur ve unutma riski daha düşüktür, ama bağışık değildir. İnce ayarın getirdiği yetenek kaybını daha da hafifletmek için hangi stratejiler kullanılabilir?
-2. ★★ Post-training yeteneği model ağırlıklarına sabitler ("kas hafızası"), in-context learning ise bilgiyi çıkarım zamanındaki girdiye koyar. Ama bazı yetenekler (örneğin alan bilgisi) hem post-training ile öğrenilebilir hem de few-shot örneklerle sağlanabilir. Bir yeteneğin hangi yoldan gitmesi gerektiğine karar verirken hangi ölçütleri kullanırsınız?
-3. ★★ Model damıtma, küçük modelin büyük modelin davranışını öğrenmesini sağlar. Yetenek katmanlarına göre damıtılan modeller kabaca üç seviyeye ayrılır: **Chat modelleri** (tek turlu diyalog, doğrudan yanıt), **Reasoning modelleri** (uzun zincirli düşünmeden sonra yanıt), **Agentic modeller** (çok turlu araç çağırma, ortamla etkileşim). Bu üç türü ayrı ayrı damıtırken zorluklar nasıl farklılaşır? (İpucu: "asıl damıtılan şey nedir" sorusundan başlayın — çıktının üslubu mu, eksiksiz düşünme trajectory'si mi, yoksa ortamla etkileşimin karar politikası mı; trajectory'deki hangi token'lar öğrenilmeli, hangileri ortamın döndürdüğü ve öğrenilmemesi gerekenler; ayrıca başarı/başarısızlık sinyali ne kadar geç ve ne kadar seyrek ortaya çıkıyor.)
-4. ★★★ Çok turlu Agent etkileşiminde ödülün atfedilmesi (credit assignment) sorunu tek turluya göre çok daha ciddidir — nihai bir başarıyı ya da başarısızlığı 3. turdaki karara mı yoksa 7. turdakine mi yazacağınızı belirlemek zordur. Ödül dağıtım stratejisini nasıl tasarlarsınız?
-5. ★★★ Sabit bir bütçeniz varsa (örneğin 10.000 dolar) ve bir müşteri hizmetleri Agent'ının performansını iyileştirecekseniz, bütçeyi context ve bilgi, Prompt/Skills, program kısıtları ve parametre eğitimi arasında nasıl dağıtırsınız? Kararınız hangi etkenlere bağlıdır?
-6. ★★★ Net bir ödül fonksiyonu olmadan ve örnek sayısı azken modelin öğrenmeyi kendi başına gerçekleştirmesi, bazılarına göre post-training'in nihai hedefidir. Bugünün RL eğitim yöntemleri bu hedeften ne kadar uzakta? Bir sonraki atılımın büyük olasılıkla hangi yönden geleceğini düşünüyorsunuz?
-7. ★★ Bu bölüm, LoRA ince ayarının maliyetinin yüksek olmadığını belirtiyor. Peki her kullanıcı (ya da her müşteri şirket) için özel bir LoRA eğitip kullanıcı belleğini veya kurumsal bilgiyi, Bölüm 3'teki gibi dış bir bilgi tabanında saklamak yerine parametrelere yazmak mümkün mü? Hangi senaryolarda "belleği parametrelere yazmak", "belleği bilgi tabanına koymaktan" daha avantajlıdır? Hangi senaryolarda ise tersine sonuç verir?
-8. ★★★ On-Policy Distillation, öğrenciyi denetlemek için daha güçlü bir öğretmen modele dayanır. Ama OpenAI'nin Weak-to-Strong Generalization araştırması sezgiye aykırı bir bulgu ortaya koydu: zayıf modelin denetim sinyali bazen güçlü modelin kendisinde var olan ama henüz etkinleşmemiş yetenekleri harekete geçirebiliyor. Bu fikir Agent eğitimine uygulanırsa, "küçük modelin büyük modele öğretmesi" biçiminde ters yönlü bir damıtma mümkün olur mu?
-9. ★★ Süreç ödül modeli (PRM) her düşünme adımını değerlendirir, sonuç ödül modeli (ORM) ise yalnızca nihai sonuca bakar. Peki "doğru sürecin yanlış sonuca yol açması" ile "yanlış sürecin şans eseri doğru sonuca ulaşması" durumlarından hangisi ödüllendirilmeyi daha çok hak eder? Agent'ın çok adımlı tool calling senaryosunda dengeyi nasıl kurarsınız?
-10. ★★★ Bu bölümde ele alınan değerlendirme veri kümeleri (SWE-Bench Verified, τ²-bench, AndroidWorld gibi) hem değerlendirme hem de post-training için kullanılabilir. Ama değerlendirme kümesini eğitimde kullanırsanız, artık bağımsız bir değerlendirme kümesi olmaktan çıkar — bu, eğitim kümesiyle test kümesinin ayrı olması gerektiği temel ilkesini ihlal etmez mi? τ²-bench'in dinamik parametre üretimi ve AndroidWorld'ün parametrik şablonları bu sorunu bir ölçüde hafifletiyor, ama şablon yapısının kendisi yine de sabit. Değerlendirme verisinin eğitim değerinden tam olarak yararlanmakla değerlendirmenin bağımsızlığını korumak arasındaki dengeyi nasıl bulursunuz?
-11. ★★★ Bu bölüm "önce biçim, sonra ruh" biçiminde bir eğitim paradigması ortaya koyuyor: SFT "biçim kararlı, yetenek başlangıç düzeyinde" noktasında durur, sonra RL'e geçilir. Peki pratikte SFT'nin çoktan "yeterli" olduğuna ve artık geçiş yapılması gerektiğine nasıl karar verilir?
-12. ★★★ ReTool'un eğitim dinamiği (bkz. Deney 7-14), az sayıdaki aşırı uzun yanıtın tüm eğitim döngüsünü belirgin biçimde geciktirdiğini gösteriyor — bir rollout partisindeki yanıtların büyük çoğunluğu çoktan üretilmiş olsa da en uzun birkaç yanıtın bitmesi beklenir ve bu süre boyunca cluster'ın GPU kullanımı çok düşüktür. Bu uzun kuyruklu yanıt senaryosunda eğitim cluster'ının kaynak kullanımı nasıl artırılabilir?
-13. ★★★ Agent'ı LLM ile simüle edilmiş bir ortamda (simüle arama motoru, simüle kullanıcı gibi) eğitirken, Agent'ın açık aradığı hedef "gerçek ortamın kurallarından" "simülatörün kendi önyargıları ve açıklarına" kayar. Bu tür eğitimlerde hangi somut reward hacking davranışları ortaya çıkabilir? Bunlara karşı nasıl önlem alınabilir?
+1. ★★ LLM-as-a-Judge, bir dil modelinin çıktısını yine bir dil modeliyle değerlendirir. Bu "öz değerlendirmenin" sistematik kör noktaları var mıdır — örneğin model, belirli bir üsluptaki yanıtlara tutarlı biçimde yüksek puan verip bu tercih insan yargısıyla uyuşmayabilir mi? Böyle bir yanlılık nasıl tespit edilir ve düzeltilir?
+2. ★★★ Değerlendirme veri kümelerinin "sızıntıya dayanıklı" tasarımı kritik önemdedir. Ama açık kaynak ekosisteminde benchmark verisi bir kez kamuya açıldığında hızla eğitim verisine dahil edilir. Bu "kedi-fare oyununun" bir sonu var mı? Veri sızıntısına kökten direnen bir değerlendirme yöntemi tasarlayın.
+3. ★★ Scale AI'ın dört ölçütü (uzman rehberliğine dayanma, kapsamlı kapsama, standartlaştırılmış önem ağırlıkları, kendi kendine yeten değerlendirme) değerlendirmedeki öznelliği ortadan kaldırmayı amaçlar. Ne var ki bazı görev boyutları ("yanıt faydalı mı", "ton uygun mu" gibi) doğası gereği özneldir. Bu öznel boyutlar için güvenilir bir Rubric nasıl tasarlanır?
+4. ★★ τ-bench, gerçek kullanıcı davranışını simüle ederek Agent'ları değerlendirir. Ama simüle edilen kullanıcının kendisi de bir LLM'dir — bazı uç senaryoları (duygusal olarak taşkın ya da kendini net ifade edemeyen kullanıcılar gibi) sistematik biçimde hafife alabilir. Simüle edilen kullanıcının kalitesi nasıl doğrulanır?
+5. ★★ İkili karşılaştırma (Bradley-Terry modeli), tercihlerin geçişli olduğunu varsayar (A > B ve B > C ise A > C). Oysa insan tercihleri geçişliliği sıkça ihlal eder. Agent değerlendirmesinde geçişsiz tercihler hangi senaryolarda ortaya çıkabilir? Bu, sıralamanın güvenilirliğini nasıl etkiler?
+6. ★★ Bu bölüm, yetenek tavanı olarak Pass@k ile iş güvenilirliği ölçüsü olarak Pass consecutive@k arasında ayrım yapar. Tek seferlik başarı oranı yalnızca %60 olan bir Agent için, hangi metriği raporlayacağınıza ve $k$ değerini ne kadar alacağınıza karar verirken görevin başarısızlık maliyetini, yeniden deneme maliyetini ve yan etkilerini nasıl bir araya getirirsiniz?
+7. ★★ Bu bölüm "gözlem → hipotez → deney → doğrulama" biçiminde bilimsel bir yöntem öneriyor. Ama pratikte Agent'ın davranış uzayı devasadır ve tek bir hipotezi doğrulamak yüzlerce değerlendirme koşusu gerektirebilir. Sınırlı bir hesaplama bütçesi altında değerlendirmeden elde edilen bilgi miktarı nasıl en üst düzeye çıkarılır?
+8. ★ AndroidWorld pilotunda tam öğe ağacı başarıyı 25%'ten 100%'e çıkarırken token kullanımını kontrolün 2.498 katına yükseltti; budama 100% başarıyı koruyup token kullanımını 0.506 kata indirdi. Erişilebilirlik, durum doğrulama veya sonraki eylemler için gerekli bilgileri atmadan anlamsal olarak boş UI düğümlerini kaldıracak otomatik budama kurallarını nasıl tasarlardınız?
+9. ★★ τ-bench'in kullanıcı simülasyonu "kademeli bilgi açıklama" kullanır — bütün bilgi tek seferde verilmez, Agent'ın sorularına göre adım adım açıklanır. Bu tasarım değerlendirme sonuçlarını nasıl etkiler? Simüle edilen kullanıcının bilgi açıklama stratejisi gerçek kullanıcılardan belirgin biçimde farklıysa, değerlendirme sonuçları hâlâ güvenilir midir?

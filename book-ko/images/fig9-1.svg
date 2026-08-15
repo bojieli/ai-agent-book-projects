@@ -1,42 +1,55 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 300" width="780" height="300" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
-<style>text { font-family: Arial, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif !important; }</style>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 360" width="1000" height="360" style="background:#ffffff">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#33434d"/>
+    </marker>
+    <style>
+      .t{font-family:Arial,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic','PingFang SC','Microsoft YaHei',sans-serif;fill:#26343c}
+      .h{font-size:20px;font-weight:700}
+      .s{font-size:15px;fill:#52636d}
+      .box{fill:#f5f7f8;stroke:#33434d;stroke-width:2}
+      .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
+      .line{fill:none;stroke:#33434d;stroke-width:2;marker-end:url(#arrow)}
+    </style>
+  </defs>
 
-<rect x="47" y="60" width="155" height="140" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="124" y="82" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">VAD</text>
-<text x="124" y="104" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">음성 활동 감지</text>
-<rect x="62" y="122" width="125" height="28" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="124" y="136" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">500-800ms</text>
-<text x="124" y="162" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Silero VAD</text>
-<text x="124" y="180" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">ONNX Runtime</text>
-<rect x="224" y="60" width="155" height="140" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="301" y="82" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">ASR</text>
-<text x="301" y="104" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">자동 음성 인식</text>
-<rect x="239" y="122" width="125" height="28" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="301" y="136" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">50-200ms</text>
-<text x="301" y="162" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Whisper</text>
-<text x="301" y="180" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">SenseVoice</text>
-<line x1="204" y1="130" x2="222" y2="130" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="401" y="60" width="155" height="140" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="478" y="82" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM</text>
-<text x="478" y="104" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">언어 모델 추론</text>
-<rect x="416" y="122" width="125" height="28" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="478" y="136" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">100-500ms</text>
-<text x="478" y="162" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">GPT-4o</text>
-<text x="478" y="180" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Doubao Flash</text>
-<line x1="381" y1="130" x2="399" y2="130" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="578" y="60" width="155" height="140" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="655" y="82" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">TTS</text>
-<text x="655" y="104" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">음성 합성</text>
-<rect x="593" y="122" width="125" height="28" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="655" y="136" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">200-500ms</text>
-<text x="655" y="162" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Fish Audio S1</text>
-<text x="655" y="180" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">신경망 합성</text>
-<line x1="558" y1="130" x2="576" y2="130" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<g fill="#333333"><rect x="12" y="112" width="10" height="18" rx="5"/><path d="M9,127 a8,8 0 0 0 16,0" fill="none" stroke="#333333" stroke-width="2"/><rect x="16" y="135" width="2" height="7"/><rect x="11" y="142" width="12" height="2"/></g>
-<g fill="#333333"><path d="M740,124 h6 l8,-7 v26 l-8,-7 h-6 z"/><path d="M757,120 a10,10 0 0 1 0,20" fill="none" stroke="#333333" stroke-width="2"/><path d="M757,125 a5,5 0 0 1 0,10" fill="none" stroke="#333333" stroke-width="2"/></g>
-<rect x="40" y="225" width="700" height="75" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="390" y="245" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">직렬 블로킹: 각 단계는 이전 단계가 끝날 때까지 대기</text>
-<text x="390" y="267" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">사용자 발화 2~3초 → VAD 대기 → ASR 대기 → LLM 유휴 → 모든 대기 구간을 낭비</text>
-<text x="390" y="287" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">기술 스택: Node.js WebSocket + AudioWorklet (128 샘플 ≈ 2.7ms) + FFmpeg</text>
+  <text x="500" y="28" text-anchor="middle" class="t h">지속적 진화: 실행 경험에서 새 에이전트 버전으로</text>
+
+  <rect x="25" y="72" width="150" height="90" rx="8" class="box"/>
+  <text x="100" y="100" text-anchor="middle" class="t h">업무 실행</text>
+  <text x="100" y="128" text-anchor="middle" class="t s">사용자·환경·도구와</text>
+  <text x="100" y="149" text-anchor="middle" class="t s">상호 작용</text>
+
+  <rect x="205" y="72" width="150" height="90" rx="8" class="box"/>
+  <text x="280" y="105" text-anchor="middle" class="t h">궤적 기록</text>
+  <text x="280" y="134" text-anchor="middle" class="t s">행동·결과·피드백</text>
+
+  <rect x="385" y="72" width="150" height="90" rx="8" class="accent"/>
+  <text x="460" y="105" text-anchor="middle" class="t h">신호 형성</text>
+  <text x="460" y="134" text-anchor="middle" class="t s">결과·과정·품질</text>
+
+  <rect x="565" y="55" width="230" height="124" rx="8" class="accent"/>
+  <text x="680" y="84" text-anchor="middle" class="t h">후보 갱신 생성</text>
+  <rect x="582" y="102" width="92" height="27" rx="5" fill="#ffffff" stroke="#66808e"/>
+  <rect x="686" y="102" width="92" height="27" rx="5" fill="#ffffff" stroke="#66808e"/>
+  <rect x="582" y="139" width="92" height="27" rx="5" fill="#ffffff" stroke="#66808e"/>
+  <rect x="686" y="139" width="92" height="27" rx="5" fill="#ffffff" stroke="#66808e"/>
+  <text x="628" y="121" text-anchor="middle" class="t s">지식</text>
+  <text x="732" y="121" text-anchor="middle" class="t s">지침</text>
+  <text x="628" y="158" text-anchor="middle" class="t s">프로그램</text>
+  <text x="732" y="158" text-anchor="middle" class="t s">매개변수</text>
+
+  <rect x="825" y="72" width="150" height="90" rx="8" class="box"/>
+  <text x="900" y="105" text-anchor="middle" class="t h">검증·릴리스</text>
+  <text x="900" y="134" text-anchor="middle" class="t s">회귀·카나리·롤백</text>
+
+  <path d="M175 117 H203" class="line"/>
+  <path d="M355 117 H383" class="line"/>
+  <path d="M535 117 H563" class="line"/>
+  <path d="M795 117 H823" class="line"/>
+
+  <path d="M900 162 V238 H100 V164" class="line" stroke-dasharray="7 5"/>
+  <text x="500" y="265" text-anchor="middle" class="t h">새 에이전트가 다음 실행 주기에 진입</text>
+  <text x="500" y="294" text-anchor="middle" class="t s">후속 행동을 바꾸고 검증을 통과한 갱신만 지속적 진화를 이룹니다</text>
+  <line x1="260" y1="318" x2="740" y2="318" stroke="#9aa8af" stroke-width="1"/>
 </svg>

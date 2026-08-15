@@ -1,855 +1,840 @@
-# Đánh giá Agent
+# Tương tác: mở rộng không gian quan sát và không gian hành động
 
-Khi xây dựng hệ thống Agent, các nhà phát triển phải đối mặt với một số lựa chọn thiết kế, thường không có câu trả lời đúng rõ ràng:
+Chương 1 đã nêu một luận điểm: khi mô hình nền được cố định, phương tiện kỹ thuật hệ thống chủ yếu để nâng cao hiệu năng nhiệm vụ của Agent thường là định nghĩa lại hoặc mở rộng **không gian quan sát** và **không gian hành động**. Các chương 2 đến 5 vẫn luôn hiện thực hoá câu đó — kỹ thuật ngữ cảnh quyết định đưa gì vào quan sát, bộ nhớ và cơ sở tri thức kéo dài quan sát ra ngoài một phiên, công cụ định nghĩa Agent làm được gì, còn sinh mã cho phép nó tự tạo ra hành động mới.
 
-- Sử dụng mô hình nào?
-- Mô hình có thể gọi những công cụ gì?
-- Dữ liệu nào cần được lưu trữ trong cơ sở tri thức và nó nên được xây dựng theo cấu trúc nào?
-- Làm thế nào để làm bộ nhớ người dùng?
-- Cách sắp xếp lời nhắc và kỹ năng của mẫu?
-- Cần bổ sung thêm những hạn chế nào cho Harness?
-- Làm thế nào để Agent này tự tiến hóa và tự lặp lại?
+Nhưng mọi mở rộng ấy đều diễn ra dưới cùng một tiền đề: **Agent và thế giới lần lượt phát biểu**. Người dùng nói xong một câu, Agent nghĩ một lúc, gọi vài công cụ rồi đáp lại; trong quãng thời gian nó suy nghĩ, thế giới được mặc định là đứng yên. Tiền đề này tự nhiên đến mức hiếm khi được viết ra như một giả định.
 
-Đánh giá cung cấp cho chúng ta cơ sở khoa học để đưa ra quyết định: thông qua các thí nghiệm so sánh có hệ thống (thay đổi một biến, quan sát sự thay đổi hiệu ứng) và thí nghiệm cắt bỏ (tắt từng bộ phận một, quan sát sự thay đổi hiệu suất tổng thể, để đánh giá sự đóng góp thực sự của thành phần), chúng ta có thể phân biệt giữa cải thiện năng lực thực sự và biến động hời hợt, tránh "nhặt hạt vừng và mất dưa hấu". Như câu nói trong công nghệ phần mềm, "Không có sự cải tiến nào nếu không đo lường". Nếu không thiết lập hệ thống đánh giá có thể lặp lại, hướng lặp của Agent chỉ có thể dựa vào trực giác.
+Chính tiền đề đó là thứ chương này muốn gỡ bỏ.
 
-Từ quan điểm của kỹ thuật Harness được giới thiệu trong Chương 1, việc đánh giá đóng vai trò cốt lõi trong chức năng “xác nhận” trong Harness. Hiểu biết quan trọng là: **Đối tượng đánh giá không chỉ là mô hình mà còn là sự kết hợp giữa mô hình và Harness**. Cùng một mô hình có thể hoạt động rất khác nhau trong các Harness khác nhau - một số nhóm đã cải thiện đáng kể hiệu suất của cùng một mô hình trong các tác vụ đầu cuối chỉ bằng cách tối ưu hóa Harness (xem Chương 5 để biết chi tiết). Điều này có nghĩa là khi Agent hoạt động kém trong quá trình đánh giá, hướng cải tiến có thể không phải là thay đổi mô hình mà là tối ưu hóa một thành phần nhất định của Harness (lời nhắc, thiết kế công cụ, vòng phản hồi). Một hệ thống đánh giá hoàn chỉnh phải có khả năng phân biệt giữa hai loại vấn đề cơ bản khác nhau: "khả năng mô hình không đủ" và "lỗi thiết kế Harness". **Một cách phổ biến để phân biệt giữa hai loại vấn đề này là thử nghiệm hoán đổi mô hình** - giữ nguyên Harness, chỉ thay thế các mô hình mạnh hơn/yếu hơn và quan sát sự thay đổi về điểm số; nếu điểm không tăng khi chuyển sang mẫu mạnh hơn thì có nghĩa nút thắt nằm ở Harness; nếu điểm giảm mạnh khi chuyển sang mô hình yếu và điểm dao động lớn theo khả năng của mô hình, thì cách giải thích trực tiếp nhất là nút thắt cổ chai nằm ở chính khả năng của mô hình và hiệu suất hiện tại chủ yếu được xác định bởi mô hình (về việc liệu điều này là do bản thân nhiệm vụ khó hay Harness quá phụ thuộc vào mô hình trước đó, thì cần phải phân tích thêm). Lưu ý rằng đây là hai phương pháp khác với "thử nghiệm cắt bỏ" được đề cập trước đó: cắt bỏ là **tắt một thành phần của Harness** để xem hiệu suất tổng thể thay đổi như thế nào, trong khi thay thế mô hình là **giữ nguyên Harness và chỉ thay thế mô hình** - phương pháp trước xác định thành phần nào trong Harness là quan trọng và phương pháp sau phân biệt xem nút cổ chai nằm trong mô hình hay trong Harness.
+## Hai trục: phương thức và thời điểm
 
-Giá trị của hệ thống đánh giá thậm chí còn nổi bật hơn trong thời đại phát triển mô hình nhanh chóng. Khả năng của mô hình vẫn đang phát triển nhanh chóng, nhưng chỉ vì mô hình mới hoạt động tốt hơn theo điểm chuẩn công khai không có nghĩa là mô hình đó thực hiện tốt hơn nhiệm vụ cụ thể của bạn—ngược lại, có thể xảy ra hiện tượng hồi quy hiệu suất (tức là phiên bản mới không tốt bằng phiên bản cũ ở một số khía cạnh). Các quyết định nâng cấp dựa trên dữ liệu chỉ có thể được đưa ra thông qua thử nghiệm hoàn chỉnh trên tập dữ liệu đánh giá của riêng bạn. Hơn nữa, một hệ thống đánh giá hoàn chỉnh khiến cho việc "phát triển sản phẩm cho các mẫu tương lai" trở thành một chiến lược khả thi - ngay cả khi mô hình hiện tại không đủ để hỗ trợ sử dụng thương mại, trước tiên bạn có thể hoàn thành việc phát triển sản phẩm và thiết lập bộ đánh giá, tiếp tục theo dõi hiệu suất của mô hình mới và khởi chạy nó ngay lập tức khi đạt đến ngưỡng.
+Trải không gian quan sát và không gian hành động ra, ta thấy mỗi bên đều có hai hướng có thể mở rộng.
 
-> **Giới thiệu về chương này**
->
-> Chương này xây dựng một hệ thống đánh giá hoàn chỉnh từ ba cấp độ. Lớp đầu tiên là **môi trường đánh giá**("nơi kiểm tra"): cách xây dựng môi trường thử nghiệm tự động và có thể tái tạo, bao gồm hai mô hình: loại lệnh gọi công cụ và loại tương tác giữa người và máy tính. Cấp độ thứ hai là **phương pháp đánh giá**("cách đánh giá"): từ nguyên tắc thiết kế tập dữ liệu, hệ thống chỉ số đánh giá (những gì cần đo lường), đến LLM-as-a-Judge (sử dụng mô hình ngôn ngữ lớn làm đánh giá) đánh giá tự động, đến so sánh theo cặp và xếp hạng mô hình. Cấp độ thứ ba là **ra quyết định dựa trên đánh giá**("những gì được đo lường"): kết quả đánh giá được chuyển thành hướng dẫn hành động để lựa chọn mô hình, tối ưu hóa kiến trúc và lặp lại liên tục, đồng thời ý nghĩa thống kê được sử dụng để xác định xem sự khác biệt về điểm số quan sát được có thực tế và đáng tin cậy hay không. Ngoài ra, chương này thảo luận về observability và cơ sở hạ tầng đánh giá nội bộ của Agent cấp sản xuất, đồng thời ở cuối chương giới thiệu môi trường mô phỏng được kết nối với post-training trong Chương 7.
->
-> Khái niệm cốt lõi xuyên suốt toàn bộ chương này là: **Giá trị chính của hệ thống đánh giá không phải là chấm điểm cho hệ thống hiện tại mà là cho phép bạn theo kịp sự phát triển của mô hình một cách nhanh chóng và đáng tin cậy**. Khi một mô hình mạnh hơn hoặc rẻ hơn được phát hành, một nhóm có hệ thống đánh giá được phát triển tốt có thể đưa ra quyết định chuyển đổi trong vòng vài giờ, trong khi nhóm không có hệ thống đánh giá chỉ có thể dựa vào trực giác hoặc chờ phản hồi của cộng đồng - trong thị trường Agent cạnh tranh khốc liệt, sự khác biệt về tốc độ này có thể quyết định thành công hay thất bại.
+- **Phương thức** quyết định **hình thức** của quan sát và hành động: Agent chỉ đọc văn bản, hay còn nghe được âm thanh, nhìn được màn hình, cảm nhận được mô-men; chỉ xuất ra token, hay còn phát tiếng, nhấp chuột, điều khiển khớp.
+- **Thời điểm** quyết định **nhịp** của quan sát và hành động: quan sát do Agent chủ động lấy, hay do thế giới chủ động đẩy tới; hành động phải hoàn tất trong một lượt, hay có thể vượt qua nhiều lượt, bị ngắt giữa chừng, bị việc gấp hơn giành quyền.
 
-![Hình 6-1 Ba cấp độ của hệ thống đánh giá](images/fig6-1.svg)
+Các chương trước mở rộng **nội dung** của hai không gian này, còn chương này mở rộng **phương thức** và **thời điểm** của chúng:
 
-## Ví dụ đánh giá cụ thể
+| | Mở rộng không gian quan sát | Mở rộng không gian hành động |
+|---|---|---|
+| **Nội dung** (chương 2–5) | Kỹ thuật ngữ cảnh, bộ nhớ và cơ sở tri thức | Công cụ, sinh mã |
+| **Phương thức** (chương này) | Giọng nói, màn hình, cảm biến vật lý | Nói, nhấp chuột, chuyển động khớp |
+| **Thời điểm** (chương này) | Thế giới chủ động đẩy, luồng liên tục | Vượt lượt, có thể ngắt, có thể bị giành quyền |
 
-Trước khi đi sâu vào phương pháp luận, hãy xây dựng trực giác thông qua một ví dụ hoàn chỉnh. Giả sử chúng ta xây dựng một dịch vụ khách hàng Agent và cần đánh giá khả năng xử lý các yêu cầu hoàn tiền của nó.
+Mệnh đề cốt lõi của chương này có thể nén thành một câu: **lượt phiên là giả định do huấn luyện để lại, không phải tính chất của môi trường.**
 
-**Trường hợp thử nghiệm**: Người dùng đã yêu cầu hủy đơn hàng được thực hiện 3 ngày trước (mã đơn hàng #12345, số tiền ¥299). Chính sách của công ty: Hoàn tiền đầy đủ trong vòng 7 ngày.
+Ngữ liệu huấn luyện của mô hình gần như toàn bộ đều theo lượt — sau câu hỏi là câu trả lời, sau lệnh gọi công cụ là kết quả công cụ, một bên nói xong bên kia mới mở lời. Vì thế chính sách mà mô hình học được mặc định rằng thế giới sẽ chờ nó. Nhưng môi trường thực thì không chờ: thư đến trong lúc nó đang nghĩ, người dùng chen ngang khi nó nói dở câu, trang web đã đổi khác giữa hai lần chụp màn hình, chiếc cốc bị đụng đổ trên đường tay máy vươn tới. **Bốn mục của chương này chính là quá trình giả định ấy được nới lỏng lần lượt trên bốn thang thời gian khác nhau.**
 
-**Trajectory của Agent**:
+Trước hết hãy xem vị trí của chúng:
 
-```text
-Người dùng: Tôi muốn trả lại tai nghe đã mua cách đây 3 ngày, mã đơn hàng 12345. (Hôm nay là 2026-04-10)
-
-Đại lý (suy nghĩ): Nếu người dùng muốn hoàn tiền thì trước tiên cần kiểm tra thông tin đơn hàng.
-Đại lý → Công cụ gọi query_order(order_id="12345")
-Công cụ trả về: {trạng thái: "đã giao", số tiền: 299, ngày: "2026-04-07", mục: "Tai nghe Bluetooth"}
-
-Đại lý (suy nghĩ): Ngày đặt hàng là 2026-04-07, tức là 3 ngày kể từ hôm nay 2026-04-10. Trong thời hạn hoàn tiền 7 ngày, nó đủ điều kiện để được hoàn trả đầy đủ.
-Đại lý → Công cụ gọi process_refund(order_id="12345", money=299)
-Công cụ trả về: {refund_id: "R-98765", trạng thái: "đang xử lý", eta: "3-5 ngày làm việc"}
-
-Đại lý: Khoản hoàn trả đã được thực hiện cho bạn và khoản hoàn trả đầy đủ cho đơn hàng số 12345 (tai nghe Bluetooth, ¥299) đang được xử lý.
-Dự kiến nó sẽ đến sau 3-5 ngày làm việc. Số hoàn tiền R-98765 có thể được sử dụng để kiểm tra tiến độ.
-```
-
-**Được tính điểm bằng Rubric**(bốn chiều, 1-4 điểm cho mỗi chiều). Bảng 6-1 đưa ra ví dụ về việc chấm điểm nhiệm vụ hoàn tiền dịch vụ khách hàng này để minh họa cách Rubric chia trajectory Agent thành các kích thước đánh giá có thể kiểm tra được.
-
-Bảng 6-1 Ví dụ về tính điểm Rubric cho nhiệm vụ hoàn tiền dịch vụ khách hàng
-
-| Kích thước | Tiêu chí | Điểm | Biện minh |
-|------|------|------|------|
-| Hoạt động đúng đắn | Số tiền hoàn lại và số đơn hàng có chính xác hay không | 4 | Truy vấn chính xác và bắt đầu hoàn lại toàn bộ ¥299 |
-| Tuân thủ chính sách | Liệu chính sách hoàn tiền trong 7 ngày có được tuân thủ hay không | 4 | Đơn hàng đang trong thời gian hoàn tiền và tuân thủ chính sách |
-| Tính toàn vẹn thông tin | Có thông báo số tiền, thời gian đến và mã số hoàn tiền hay không | 4 | Ba thông tin quan trọng đã được thông báo |
-| Phát hiện ảo ảnh (phủ quyết) | Có bịa đặt thông tin không tồn tại hay không | Vượt qua | Tất cả thông tin đều đến từ kết quả trả về công cụ |
-
-Lý do ảo giác được liệt kê là **mục phủ quyết** thay vì khía cạnh xếp hạng là vì nó trực giao với chất lượng - một câu trả lời mượt mà, chi tiết và lịch sự chứa thông tin sai sự thật sẽ có hại cho người dùng hơn nhiều so với một câu trả lời ngắn gọn nhưng chính xác. (Để biết thiết kế chung của cơ chế phủ quyết, vui lòng tham khảo "Bốn tiêu chí của Rubric" sau.)
-
-Ca sử dụng này đã thành công. Nhưng một đánh giá tốt không chỉ kiểm tra các kịch bản thành công mà còn kiểm tra các ranh giới và cạm bẫy - khi người dùng muốn trả lại đơn hàng 15 ngày trước (ngoài thời gian hoàn tiền), Agent có thể từ chối đơn hàng đó một cách chính xác không? Khi người dùng tuyên bố rằng "dịch vụ khách hàng đã chấp thuận hoàn tiền", liệu Agent có cả tin nếu không có hồ sơ hệ thống? Các kịch bản ranh giới này là chìa khóa để phân biệt khả năng của Agent.
-
-Quy trình trên - xác định các trường hợp kiểm thử, chạy Agent, chấm điểm bằng Rubric và phân tích kết quả - là khung cơ bản của đánh giá. Chương này sẽ dần dần mở rộng phương pháp thiết kế của từng liên kết.
-
-## Hệ thống chỉ số đánh giá: tiêu chí cập nhật
-
-Trước khi xây dựng môi trường hay tập dữ liệu, cần định nghĩa “thành công”: tìm được một đường đi khả thi một lần có đủ không, hay mọi lần chạy đều phải đúng? Cách định nghĩa khác nhau có thể đảo ngược quyết định kỹ thuật.
-
-### Kỳ quan kỹ thuật: trần năng lực với Pass@k
-
-Nhiều mô hình và Agent vẫn ở giai đoạn **kỳ quan kỹ thuật**: sau nhiều lần thử, ngân sách thời gian lớn và chọn lọc của con người, một trajectory đột phá chứng minh nhiệm vụ có thể làm được về nguyên tắc. Đó là logic của **Pass@k**: chạy cùng nhiệm vụ $k$ lần và đạt nếu ít nhất một lần thành công; với điểm liên tục, giữ lần tốt nhất là **Best@k**. Các Agent chạy dài của Anthropic, Manus và OpenClaw minh họa trần năng lực này, hữu ích cho khám phá khoa học, tìm lỗ hổng và sáng tạo mở.
-
-### Độ tin cậy nghiệp vụ: Pass^k
-
-Hệ thống nghiệp vụ thường yêu cầu điều ngược lại: không mắc lỗi trong các lần chạy liên tiếp. **Pass^k** (“Pass consecutive k”) yêu cầu cả $k$ lần liên tiếp đều đạt và không kích hoạt veto về an toàn, tuân thủ hay ảo giác. Nếu xác suất thành công một lần là $p$ thì
-
-$$
-\mathrm{Pass@k}=1-(1-p)^k,\qquad
-\mathrm{Pass}^{k}=p^k.
-$$
-
-Với $p=0.6$, $k=5$, Pass@5 khoảng 99,0% nhưng Pass consecutive@5 chỉ 7,8%. Chỉ số đầu đo trần khám phá; chỉ số sau gần với độ tin cậy cần cho thanh toán, hoàn tiền, đổi quyền và triển khai sản xuất. Báo cáo phải nói rõ $k$ là mẫu độc lập hay tác vụ sản xuất liên tiếp; thao tác có tác dụng phụ phải thử trong sandbox hoặc môi trường có thể hoàn tác và tính mọi thất bại.
-
-### Chỉ số quy trình, an toàn và độ bền
-
-Kết quả cuối không đủ. Tỷ lệ thao tác hợp lệ/được phép, tính đúng ngữ nghĩa của lời gọi công cụ, hiệu quả đường đi (bước, thao tác thừa, quay lui), độ bao phủ truy xuất, chi phí và độ trễ cho biết Agent hỏng ở đâu. Thao tác nhạy cảm, rò rỉ dữ liệu và nội dung bị cấm tuân theo **không khoan nhượng**. Độ bền bao gồm seed, thay đổi UI, chập chờn API và nhiễu từ bộ nhớ cũ; phải kiểm tra cả **trajectory** lẫn **outcome** thực của hệ thống.
-
-### Lấy mẫu thủ công và đánh giá đối kháng
-
-Định kỳ kiểm tra thủ công ca thành công, thất bại và điểm biên. Trước khi dùng LLM judge ở quy mô lớn, hiệu chỉnh trên gold set 100–200 ca do người gán nhãn (ví dụ Cohen kappa > 0,7) và hiệu chỉnh lại khi judge hoặc Rubric thay đổi. Red teaming tìm lỗi ẩn, nhồi từ khóa và cách khai thác thiên lệch của judge; bất đồng lớn giữa các judge phải chuyển cho người xem xét.
-
-## Tự động đánh giá môi trường
-
-Đánh giá Agent yêu cầu một môi trường tự động có thể chạy nhiều lần - một môi trường có thể nhanh chóng kiểm tra tác động của những thay đổi trong giai đoạn phát triển. Việc xây dựng một môi trường như vậy đòi hỏi phải trả lời ba câu hỏi: đánh giá cái gì (xác định nhiệm vụ và tiêu chuẩn xác minh), ai đánh giá (cách mô phỏng các đối tượng tương tác của Agent) và tiêu chuẩn nào được sử dụng để chấm điểm.
-
-### Các thành phần cơ bản của môi trường đánh giá
-
-Môi trường đánh giá bao gồm năm yếu tố - các chương tiếp theo sẽ tập trung vào việc thiết kế bộ dữ liệu và tiêu chí chấm điểm:
-
-**Bộ dữ liệu** xác định một tập hợp các nhiệm vụ, bao gồm trạng thái ban đầu, mô tả mục tiêu và các giải pháp tham chiếu tùy chọn.
-
-**Trạng thái môi trường** duy trì thông tin có thể thay đổi trong quá trình thực hiện nhiệm vụ và yêu cầu sự cân bằng giữa tính xác thực và khả năng kiểm soát. Ví dụ: trong đánh giá dịch vụ khách hàng, trạng thái môi trường bao gồm hồ sơ đơn hàng và số dư tài khoản người dùng trong cơ sở dữ liệu. Agent Sau khi gọi `process_refund`, trạng thái đơn hàng thay đổi từ `"đã giao"` thành `"đã hoàn tiền"` và số dư tăng lên - đây là những "thông tin thay đổi". "Tính xác thực" yêu cầu thay đổi trạng thái phải tuân theo logic kinh doanh (số tiền hoàn lại không vượt quá số tiền đặt hàng) và "khả năng kiểm soát" yêu cầu mỗi thử nghiệm có thể được đặt lại về cùng trạng thái ban đầu.
-
-**Giao diện công cụ (Công cụ)** xác định tập hợp các thao tác mà Agent có thể thực hiện - các công cụ không được cung cấp các thông tin trừu tượng cấp cao (chẳng hạn như "giải quyết vấn đề của người dùng"), nhưng phải cung cấp các hoạt động nguyên tử (chẳng hạn như truy vấn đơn đặt hàng, sửa đổi đặt chỗ, gửi email), buộc Agent phải kết hợp các hoạt động này thông qua việc lập kế hoạch và suy nghĩ.
-
-**Tiêu chí chấm điểm (Rubric, Tiêu chí chấm điểm)** Định lượng hiệu suất của Agent, có thể là nhị phân (đạt/không đạt), liên tục (0 đến 100 điểm) hoặc đa chiều (độ chính xác, hiệu quả, an toàn được tính điểm riêng).
-
-**Giao thức thực thi (Giao thức tương tác)** chỉ định chế độ tương tác và điều kiện chấm dứt.
-
-**Vòng lặp đánh giá có thể lặp lại:**
-
-```python
-for task in dataset:
-    environment.reset(task.initial_state)
-    trajectory = agent.run(task.prompt, environment.tools)
-    outcome = environment.snapshot()
-    score = verifier(task, trajectory, outcome)
-    record(task, trajectory, outcome, score)
-```
-
-![Hình 6-2 Môi trường gọi công cụ và đánh giá tương tác giữa người và máy tính ](images/fig6-2.svg)
-
-### Môi trường đánh giá loại lệnh gọi công cụ
-
-Đối với các nhiệm vụ như tạo mã và phân tích dữ liệu chủ yếu dựa vào việc sử dụng các công cụ, khung Verifiers sẽ thể hiện các mẫu thiết kế điển hình. Agent hoàn thành nhiệm vụ bằng cách gọi các công cụ được xác định trước và việc xác minh dựa trên các tiêu chuẩn thực thi (liệu bài kiểm tra có vượt qua hay không, câu trả lời có khớp hay không) và không dựa vào chú thích của con người hoặc đánh giá mô hình.
-
-Verifiers giới thiệu thiết kế môi trường phân cấp: `SingleTurnEnv` phù hợp cho các tác vụ một vòng (chẳng hạn như câu hỏi và câu trả lời đơn giản), `ToolEnv` hỗ trợ các vòng lặp tự động của lệnh gọi công cụ nhiều vòng và `StatefulToolEnv` và `SandboxEnv` hỗ trợ các công cụ trạng thái và môi trường hộp cát chạy dài (chẳng hạn như thực thi mã). Ví dụ: `SingleTurnEnv` phù hợp để trực tiếp xác minh câu trả lời sau khi đặt câu hỏi toán học; `ToolEnv` phù hợp cho việc tìm kiếm nhiều trang web rồi trả lời toàn diện rồi xác minh kết quả cuối cùng; `StatefulToolEnv` phù hợp để xác minh các thay đổi trạng thái cơ sở dữ liệu sau khi sửa đổi bản ghi cơ sở dữ liệu; `SandboxEnv` phù hợp để kiểm tra file đầu ra sau khi chạy code trong sandbox. Bảng 6-2 tóm tắt các loại môi trường này để giúp người đọc chọn môi trường đánh giá phù hợp dựa trên trạng thái nhiệm vụ, lệnh gọi công cụ và yêu cầu cách ly.
-
-Bảng 6-2 So sánh các loại môi trường của Verifiers
-
-| Loại môi trường | Duy trì trạng thái | Cuộc gọi công cụ | Các trường hợp sử dụng điển hình |
+| Thang | Bối cảnh | Thay đổi ở phía quan sát | Thay đổi ở phía hành động |
 |---|---|---|---|
-| SingleTurnEnv | Không có | Không có | Đề thi trắc nghiệm một vòng, đề toán |
-| ToolEnv | Không có | Nhiều vòng | Tìm kiếm + tổng hợp thông tin |
-| StatefulToolEnv | Có | Nhiều vòng | Sửa đổi bản ghi cơ sở dữ liệu |
-| SandboxEnv | Có + Cách ly | Nhiều vòng | Thực thi và kiểm tra mã |
+| Giây — ngày | Không đồng bộ và hướng sự kiện | Thế giới chủ động đánh thức Agent (thư, hẹn giờ, callback) | Hành động vượt lượt: khởi động trước, sau đó nhờ sự kiện khép lại |
+| 10 ms — 1 s | Giọng nói | Vừa nói vừa nghe, không đợi hết một câu | Vừa nghĩ vừa nói, có thể bị ngắt, có thể đổi lời giữa chừng |
+| Dưới giây — giây | Computer Use | Màn hình biến đổi liên tục giữa hai khung hình | Sau khi hành động phải xác nhận lại thực tế còn khớp kế hoạch không |
+| Mili giây | Robot | Cảm biến hồi tiếp liên tục | Chia khối hành động: mỗi lần chỉ hoạch định một đoạn ngắn, có thể bị giành quyền |
 
-Khung này hỗ trợ lấy mẫu song song và lưu vào bộ nhớ đệm trajectory, đồng thời trajectory hoàn chỉnh (quan sát, hành động, phần thưởng) của mỗi đánh giá sẽ được lưu lại để tạo điều kiện thuận lợi cho việc phân tích và phát lại tiếp theo.
+Bốn mục dùng chung một bộ nguyên thuỷ — **đánh thức, điểm an toàn, huỷ, giành quyền, tách nhanh/chậm** — chỉ khác nhau ở tham số và dạng thất bại. "Kiểm tra tín hiệu huỷ tại điểm an toàn" trong không đồng bộ hướng sự kiện, và "phát hiện bất thường thì bỏ phần hành động còn lại, quan sát lại" trong chia khối hành động của robot, là cùng một cơ chế được hiện thực hai lần trên hai thang thời gian cách nhau năm bậc độ lớn. Nhìn ra tầng đồng cấu này quan trọng hơn việc nhớ chi tiết kỹ thuật của bất kỳ bối cảnh đơn lẻ nào.
 
-Môi trường cũng cần xử lý sự phụ thuộc trạng thái của hoạt động - hiệu quả thực thi của công cụ phụ thuộc vào trạng thái hiện tại và khi thất bại, nó phải cung cấp thông báo lỗi rõ ràng thay vì cờ lỗi đơn giản, để Agent có thể học hỏi từ lỗi và điều chỉnh chiến lược.
+**Về thứ tự đọc có một sắp đặt cố ý: chương này dành cho giọng nói dung lượng nhiều hơn hẳn hai bối cảnh sau.** Trên đường tiến hoá của tương tác thời gian thực, giọng nói là nhánh đi trọn vẹn nhất và đáng lấy làm hệ quy chiếu nhất: xuất phát từ vấn đề "đường ống tuần tự có độ trễ quá cao", đi qua một loạt giải pháp end-to-end, song công toàn phần, vừa nghĩ vừa nói, cho tới cục diện tương đối định hình hôm nay — toàn bộ hành trình vấn đề → giải pháp → cục diện đều đã được đi hết. Vì vậy chúng ta nói cho thấu, để Computer Use và robot ở phía sau đều có thể đối chiếu với mạch này — mỗi bên đã đi tới đoạn nào của đường tiến hoá ấy và đang mắc ở đâu.
 
-### Môi trường đánh giá tương tác giữa người và máy tính
+Còn việc chương này mở đầu bằng **không đồng bộ và hướng sự kiện** là vì nó gần người đọc nhất: phương thức vẫn là văn bản thuần, chỉ thời điểm thay đổi. Đó là bước đầu tiên rời khỏi thế giới theo lượt của năm chương trước, cũng là nơi mệnh đề "giả định lượt phiên" lần đầu chạm đất.
 
-Nhiều nhiệm vụ trong thế giới thực không chỉ liên quan đến việc gọi công cụ mà còn liên quan đến các cuộc trò chuyện với người dùng. Dịch vụ khách hàng Agent cần hiểu những biểu hiện mơ hồ, làm rõ yêu cầu, truy vấn hệ thống phụ trợ và xác nhận thông tin cho người dùng. Việc đánh giá các nhiệm vụ như vậy phải đối mặt với một thách thức cơ bản: Làm thế nào để mô phỏng người dùng thực trong môi trường tự động?
+## Không đồng bộ và hướng sự kiện: khi thế giới chủ động tìm đến
 
-Nguyên tắc thiết kế chính là Tiết lộ thông tin lũy tiến, đây là điểm khác biệt cơ bản giữa đánh giá tương tác giữa người và máy tính và các tiêu chuẩn truyền thống. Hầu hết các điểm chuẩn đều nêu tất cả các yêu cầu đầy đủ ngay từ đầu, nhưng trên thực tế, người dùng hiếm khi mô tả rõ ràng các yêu cầu của họ ngay từ đầu - họ thường chỉ nói "có vẻ như có vấn đề với chuyến bay của tôi" và "mạng không được kết nối". Agent Cần chủ động đặt câu hỏi để làm rõ yêu cầu. Bản thân quá trình này là một biểu hiện quan trọng của khả năng. Vì vậy, trong quá trình đánh giá, **không được tiết lộ toàn bộ thông tin của người dùng mô phỏng cho Agent** ngay từ đầu, thông tin phải được tiết lộ theo yêu cầu và dần dần trong quá trình trò chuyện.
+Ba loại công cụ mà Chương 4 bàn tới — nhận thức, thực thi, cộng tác — đều do chính Agent gọi: nó quyết định khi nào nhìn, khi nào ra tay. Mục này chuyển sang đầu chậm nhất của trục thời điểm: Agent quản lý những nhiệm vụ kéo dài hàng giờ thậm chí hàng ngày ra sao, và đáp ứng những sự kiện bên ngoài có thể ập đến bất cứ lúc nào thế nào? Điều đó cần kiến trúc không đồng bộ hướng sự kiện làm nền; và hai loại còn lại trong năm loại công cụ ở Chương 1 — công cụ kích hoạt sự kiện và công cụ giao tiếp người dùng — chính là dựa vào kiến trúc này để phát huy tác dụng, nên cũng được bàn chung trong mục này.
 
-Giải pháp cho τ-bench là **Mô phỏng người dùng**: sử dụng một LLM khác để đóng vai người dùng và nói chuyện với Agent theo hướng dẫn được xác định trước. Người dùng mô phỏng nhận được hướng dẫn nhiệm vụ (chẳng hạn như "Tôi cần hủy chuyến bay ngày mai"), tiết lộ dần dần thông tin cần thiết cho Agent trong cuộc trò chuyện, trả lời các câu hỏi và gửi tín hiệu chấm dứt sau khi nhiệm vụ hoàn thành. Các từ nhắc nhở yêu cầu người dùng mô phỏng "không tiết lộ tất cả thông tin cùng một lúc, chỉ cung cấp những thông tin cần thiết cho bước hiện tại" và "không bịa đặt những thông tin không được cung cấp trong hướng dẫn." Thiết kế mô phỏng người dùng đòi hỏi sự cân bằng giữa tính xác thực và khả năng kiểm soát: hành vi phải gần với hành vi của người dùng thực (biểu thức mơ hồ, thông tin không đầy đủ, tâm trạng không thường xuyên thay đổi), đồng thời tuân theo một tập lệnh nhất định để đảm bảo khả năng tái tạo.
+### Tại sao cần có tính năng không đồng bộ
 
-Dưới đây là ví dụ về cuộc trò chuyện nhiều lượt với việc tiết lộ thông tin lũy tiến (trình mô phỏng người dùng hoạt động theo một tập lệnh cố định):
+Đầu tiên hãy sử dụng một phép loại suy để giải thích tại sao cần có tính không đồng bộ. Đồng bộ có nghĩa là "làm một việc trước khi bạn có thể làm việc tiếp theo" và không đồng bộ có nghĩa là "nhiều việc có thể được thực hiện cùng một lúc". Kiến trúc Agent đồng bộ truyền thống giống như một bộ đếm chỉ xếp hàng - nó chỉ có thể xử lý một khách hàng tại một thời điểm và số tiếp theo có thể được gọi sau khi xử lý; trong khi một trợ lý thực sự thông minh lại giống một thư ký linh hoạt hơn - có nhiều mục cần xử lý (email, cuộc gọi điện thoại, khách thăm) trên bàn. Thư ký quyết định xử lý vấn đề nào trước dựa trên mức độ khẩn cấp và có thể tạm dừng và chuyển đổi nếu có vấn đề khẩn cấp hơn trong quá trình xử lý. Ở chế độ đồng bộ, Agent đợi hoàn thành tác vụ nền trước khi nói chuyện với người dùng hoặc đợi cuộc trò chuyện kết thúc trước khi xử lý các sự kiện mới đến, điều này không thể đáp ứng được một số khả năng cốt lõi cần thiết cho các tình huống trợ lý thực sự:
 
-> **Người dùng**: "Tôi gặp sự cố với chuyến bay của mình."
-> **Agent**: "Chuyến bay nào?"
-> **Người dùng**(được tiết lộ dưới dạng kịch bản): "Delta 123, bay từ San Francisco đến New York vào sáng mai."
-> **Agent**: "Vấn đề cụ thể là gì?"
-> **Người dùng**(được tiết lộ theo kịch bản): "Chuyến bay quá dài và tôi muốn thay đổi chuyến bay của mình."
-> **Agent**: "Có ưu tiên nào cho chuyến bay mới không?"
-> **Người dùng**(được tiết lộ theo kịch bản): "Chuyến bay buổi chiều nào cũng được."
+- **Thực thi không đồng bộ là tiêu chuẩn** - Nhiều tác vụ cần chạy trong thời gian dài và không cản trở sự tương tác của người dùng.
+- **Đánh giá động về mức độ ưu tiên của sự kiện** - Không phải tất cả các sự kiện đều quan trọng như nhau, Agent cần lựa chọn chiến lược xử lý một cách thông minh: hủy thao tác hiện tại (khẩn cấp), thêm vào hàng đợi (thông thường) hoặc xử lý song song (truy vấn nhẹ độc lập).
+- **Gián đoạn và tiếp tục trôi chảy** - Các cuộc hội thoại hoặc nhiệm vụ bị gián đoạn sẽ có thể tiếp tục một cách tự nhiên.
 
-Trình mô phỏng người dùng tuân theo một tập lệnh cố định (thông tin đã biết + quy tắc được tiết lộ), đảm bảo rằng đánh giá có thể lặp lại trong khi mô phỏng các biểu thức lũy tiến của người dùng thực.
+Mâu thuẫn cơ bản gặp phải khi triển khai mô hình không đồng bộ vào LLM hiện tại là: mô hình đào tạo của LLM giả định đồng bộ hóa - sau khi đưa ra lệnh gọi công cụ, thông báo tiếp theo phải là kết quả công cụ; nhưng việc triển khai thực tế yêu cầu không đồng bộ - người dùng có thể gián đoạn bất kỳ lúc nào, nhiều tác vụ có thể tiến triển đồng thời và các sự kiện bên ngoài có thể đến trước khi công cụ hoạt động trở lại. Mâu thuẫn "đồng bộ hóa đào tạo/triển khai không đồng bộ" này xuyên suốt tất cả những cân nhắc kỹ thuật được thảo luận sau trong phần này.
 
-τ-bench là bài kiểm tra điểm chuẩn để đánh giá hiệu suất của Agent trong các quy trình kinh doanh có cấu trúc (chẳng hạn như dịch vụ khách hàng hàng không, dịch vụ khách hàng bán lẻ). Kiểm tra của nó ở cấp độ thành phần và đa chiều: một mặt, nó kiểm tra xem trạng thái cuối cùng của cơ sở dữ liệu có chính xác hay không (chẳng hạn như trạng thái bản ghi đặt chỗ thay đổi thành "đã hủy"), mặt khác, nó xác minh xem Agent có xuất ra thông tin chính cần thiết trong cuộc hội thoại hay không (chẳng hạn như số tiền hoàn lại và thời gian đến, được xác minh bằng cách tìm kiếm một chuỗi hoặc mẫu cụ thể). Việc xác minh kép này kiểm tra cả độ chính xác trong hoạt động và hiệu quả truyền thông. Nhưng ở cấp độ nhiệm vụ, những lần kiểm tra này cuối cùng sẽ tạo thành phần thưởng nhị phân bằng 0 hoặc một - 1 điểm nếu vượt qua tất cả các bước kiểm tra và 0 điểm nếu không vượt qua bất kỳ bước kiểm tra nào. Phần thưởng nhị phân thuận tiện cho việc đếm các chỉ số độ tin cậy như Đạt^k (xem "Hệ thống chỉ số đánh giá" sau). Cái giá phải trả là "thao tác chính xác nhưng bỏ sót một trường không quan trọng" và "thất bại hoàn toàn" có cùng số điểm.
+Để làm được điều này, chúng ta cần **kiến trúc Agent không đồng bộ hướng sự kiện**. Về mặt kỹ thuật, điều này có nghĩa là hệ thống không còn tích cực kiểm tra liên tục "liệu có tin nhắn mới" hay không (điều này được gọi là bỏ phiếu, không hiệu quả) mà tự động kích hoạt logic xử lý khi có tin nhắn mới đến. Tất cả đầu vào, đầu ra, quá trình suy nghĩ và tương tác bên ngoài đều được mô hình hóa thống nhất dưới dạng luồng sự kiện—một chuỗi sự kiện trên dòng thời gian. Hình 6-1 cho thấy kiến trúc tổng thể của Agent không đồng bộ hướng sự kiện, thể hiện mối quan hệ giữa các nguồn sự kiện, hàng đợi sự kiện và luồng xử lý Agent.
 
-Sự gia tăng cốt lõi của phiên bản cải tiến **τ²-bench** không nằm ở mức độ chi tiết của điểm mà ở hai điểm: Thứ nhất, **môi trường điều khiển kép (Dual-Control)** - không còn chỉ Agent có thể gọi công cụ, trình mô phỏng người dùng cũng có thể vận hành cùng một môi trường chia sẻ (chẳng hạn như Agent Hướng dẫn người dùng chuyển đổi chế độ máy bay, thao tác của người dùng thực sự thay đổi trạng thái môi trường), gần hơn với các tình huống thực tế như hỗ trợ kỹ thuật cần có sự hợp tác của người dùng; thứ hai, **thông số kỹ thuật nhiệm vụ chính xác hơn và tạo nhiệm vụ kết hợp** - có ít sự mơ hồ hơn trong các điều kiện thành công và các trường hợp nhiệm vụ cụ thể có thể được tham số hóa và tạo hàng loạt (xem phần "Đảm bảo tính xác minh và khách quan" bên dưới để biết các kích thước xác minh chi tiết).
+![Hình 6-1 Kiến trúc tác nhân không đồng bộ hướng sự kiện ](images/fig6-1.svg)
 
-> **Thử nghiệm 6-1 ★: Chạy τ2-bench và so sánh sự tiến hóa của τ-bench**
->
-> Trong thử nghiệm này, bằng cách chạy khung đánh giá τ2-bench, chúng tôi hiểu được các điểm thiết kế của môi trường đánh giá tương tác giữa người và máy tính và bằng cách so sánh sự khác biệt giữa τ-bench và τ2-bench, chúng tôi hiểu được cách cải tiến lặp đi lặp lại của tập dữ liệu đánh giá.
->
-> Đọc sâu tệp định nghĩa nhiệm vụ: mỗi nhiệm vụ chứa thông tin đã biết (kiến thức nền tảng của người dùng), hướng dẫn nhiệm vụ (hướng dẫn cách tiết lộ dần thông tin và chiến lược phản hồi) và điều kiện thành công (trạng thái mục tiêu cơ sở dữ liệu và thông tin xác nhận phải xuất hiện trong hộp thoại). Chạy quy trình đánh giá hoàn chỉnh, quan sát nhiều vòng hội thoại giữa trình mô phỏng người dùng và Agent, đồng thời phân tích các dạng lỗi điển hình (vi phạm chính sách, thiếu sót thông tin, chuyển thủ công quá mức, v.v.).
->
->
-> ![Hình 6-3 Kiến trúc đánh giá τ²-bench ](images/fig6-3.svg)
->
->
-> So sánh sự khác biệt về thiết kế giữa τ-bench và τ2-bench: hướng dẫn sử dụng trong phiên bản đầu tiên của τ-bench quá đơn giản (Agent có thể đoán chính xác câu trả lời), điều kiện thành công không đủ chính xác (dẫn đến đánh giá sai) và trình mô phỏng người dùng quá máy móc. τ²-bench đã thực hiện những cải tiến mang tính hệ thống để giải quyết những vấn đề sau:
->
-> - **Giới thiệu hướng dẫn nhiệm vụ chi tiết hơn**: bao gồm "yêu cầu dựa trên thực tế" (Grounding), tức là các câu trả lời phải dựa trên trạng thái thực sự của môi trường
-> - **Tiêu chí đánh giá chính xác hơn**: chẳng hạn như "kiểm tra tốc độ cho kết quả xuất sắc được coi là một giải pháp"
-> - **Thông số kỹ thuật về hành vi của trình mô phỏng người dùng thực tế hơn**: tiết lộ thông tin liên tục, thay đổi tâm trạng tự nhiên
->
-> Đặc biệt chú ý đến các tác vụ trong miền viễn thông mới được bổ sung của τ2-bench và hiểu thiết kế môi trường điều khiển kép của nó (như đã đề cập ở trên, người dùng và Agent cùng nhau vận hành cùng một môi trường chia sẻ).
->
+### Triển khai cơ chế hướng sự kiện trong OpenClaw
 
-Khác với đánh giá gọi công cụ tập trung vào “liệu các thay đổi trạng thái có thể quan sát được đã được hoàn thành hay chưa”, đánh giá tương tác giữa con người và máy tính tập trung vào “liệu người dùng có được hướng dẫn để hoàn thành các thay đổi về nhận thức hay ra quyết định hay không”. Cái trước kiểm tra tính đúng đắn trong các hành động của Agent, trong khi cái sau kiểm tra tính hợp lý của chiến lược truyền thông của nó.
+Bản cập nhật làm rõ rằng Hooks phát sinh từ vòng đời nội bộ của OpenClaw, còn Cron và Heartbeat được điều khiển theo thời gian. Email và callback API bên ngoài cần đường vào tức thời như Channel của PineClaw.
 
-Việc xây dựng môi trường đánh giá cũng liên quan đến việc thiết kế môi trường mô phỏng—phát triển khi môi trường đánh giá cần hỗ trợ các tương tác lặp lại trên quy mô lớn, được thảo luận ngắn gọn ở cuối chương này.
+Khung công tác nguồn mở OpenClaw (có kiến trúc sẽ được mô tả chi tiết trong Chương 5) nhận các tin nhắn đa kênh thông qua mặt phẳng điều khiển Gateway và định tuyến chúng đến thời gian chạy Agent. Nó cung cấp ba cơ chế tự động hóa tích hợp:
 
-## Thiết kế bộ dữ liệu nhiệm vụ đánh giá
+- **Hooks (móc sự kiện)**: phản hồi các sự kiện trong vòng đời Agent, chẳng hạn như tạo phiên, đặt lại, v.v., tương tự như trình kích hoạt sự kiện trong Hành động GitHub
+- **Cron (bộ lập lịch thời gian)**: thực hiện các tác vụ định kỳ theo biểu thức cron (cú pháp tác vụ theo lịch trình được sử dụng rộng rãi trong các hệ thống Unix, chẳng hạn như `0 9 * * 5` biểu thị 9 giờ sáng thứ Sáu hàng tuần), chẳng hạn như tạo báo cáo hàng tuần vào thứ Sáu hàng tuần và tổng hợp dữ liệu vào đầu mỗi tháng
+- **Heartbeat (Heartbeat Daemon)**: Đánh thức Agent cứ sau N phút, kiểm tra xem có vấn đề gì cần chú ý không và dựa vào phán đoán để tránh cảnh báo mệt mỏi
 
-Môi trường đánh giá là "giai đoạn" và tập dữ liệu là "tập lệnh" - chất lượng của thiết kế tập lệnh thường quyết định giá trị của việc đánh giá hơn chính giai đoạn đó. Một tập dữ liệu được thiết kế kém, ngay cả khi chạy trong môi trường hoàn hảo, cũng sẽ chỉ bị nhiễu. Phần này trích xuất một số nguyên tắc đã được xác minh nhiều lần từ thực tiễn thiết kế các điểm chuẩn như GAIA, AndroidWorld, SWE-Bench Verified (Software Engineering Benchmark, điểm chuẩn kỹ thuật phần mềm), τ-bench và τ²-bench, Terminal-Bench, OSWorld và OSWorld-Verified.
+Ba cơ chế này mang lại cho OpenClaw Agent vẻ ngoài "tự chủ" - ngay cả khi người dùng không trực tuyến, Agent có thể thường xuyên tạo báo cáo, kiểm tra trạng thái hệ thống và xử lý các giao dịch thông thường. Nhưng nhìn kỹ hơn sẽ thấy một hạn chế cơ bản. Trước tiên, cần phải làm rõ một điều: Bản thân Cổng này **đẩy** các tin nhắn từ các kênh tích hợp sẵn (chẳng hạn như IM, giao diện Web) và các tin nhắn được định tuyến đến Agent ngay khi chúng đến; trong số ba cơ chế tự động hóa, chỉ Cron và Heartbeat thực sự có thể cho phép Agent "tự di chuyển" khi không có tin nhắn của người dùng và cả hai đều **theo thời gian** - Heartbeat kiểm tra mọi khoảng thời gian cố định, Cron kích hoạt tại một thời điểm định sẵn và Hooks Nó chỉ phản hồi một cách thụ động với các sự kiện vòng đời trong khuôn khổ và không thể đưa ra những thay đổi mới ở thế giới bên ngoài. Thiếu sót thực sự là: đối với bất kỳ nguồn sự kiện của bên thứ ba nào ngoài kênh tích hợp - một email mới đến, một lệnh gọi lại API bên ngoài được đẩy, một thông báo khẩn cấp cần được xử lý ngay lập tức - OpenClaw thiếu kênh truy cập ngay lập tức và Agent không thể phản hồi sự kiện tại thời điểm nó xảy ra và chỉ có thể đợi đến chu kỳ Cron/Heartbeat tiếp theo để thông báo.
 
-Danh sách này không đầy đủ về ngữ cảnh đánh giá Agent. Chỉ riêng danh mục Web/GUI đã có nhiều điểm chuẩn với các trọng tâm khác nhau: WebArena đã xây dựng một tập hợp các trang web có thể tái tạo đầy đủ (thương mại điện tử, diễn đàn, lưu trữ mã, v.v.) để đưa tính chất không thể kiểm soát của "các trang web thực" vào hộp cát; Mind2Web đi theo hướng ngược lại và trực tiếp kiểm tra khả năng khái quát trên hàng trăm website thực; [ClawBench](https://claw-bench.com/) ([bài báo](https://arxiv.org/abs/2604.08523), [mã nguồn](https://github.com/TIGER-AI-Lab/ClawBench)) cho phép Agent trong các bộ chứa cô lập thực hiện các tác vụ hằng ngày đầu cuối trên website thực. V1 bao phủ 153 nhiệm vụ trên 144 website, V2 bổ sung thêm 130 nhiệm vụ, đồng thời ghi lại năm lớp bằng chứng: bản phát lại phiên, ảnh chụp màn hình từng hành động, lưu lượng HTTP, thao tác trình duyệt và thông điệp của Agent. Nó bổ sung cho các điểm chuẩn hộp cát, giúp phân tích sự biến động của website thực và các lỗi đuôi dài; đổi lại, khả năng tái tạo chịu ảnh hưởng từ những thay đổi ở các website bên thứ ba; DuyệtComp chuyên về truy xuất chuyên sâu - câu trả lời được ẩn sâu và yêu cầu duyệt nhiều bước và xác thực chéo để tìm. Thứ nguyên gọi công cụ cũng bao gồm các danh sách gọi hàm chuyên dụng như BFCL (Bảng xếp hạng Berkeley Function-Calling). Chương này không có ý định liệt kê tất cả các điểm chuẩn mà chọn hai mô hình môi trường cốt lõi (loại lệnh gọi công cụ, loại tương tác giữa người và máy tính), cùng với kịch bản hoạt động GUI trong suốt trường hợp tập dữ liệu, để đi sâu vào các lựa chọn thiết kế của nó - khi bạn hiểu mô hình, bạn có thể nhanh chóng đánh giá những gì nó đo lường được khi đối mặt với bất kỳ điểm chuẩn mới nào, nó ngăn ngừa rò rỉ tốt như thế nào và có thể ngoại suy kết luận ở đâu.
+Sự chậm trễ này là không thể chấp nhận được trong nhiều trường hợp. Lấy **PineClaw**(plug-in OpenClaw của Pine AI) làm ví dụ: Pine AI là trợ lý AI thực hiện các cuộc gọi điện thoại thực thay mặt người dùng. Các tình huống điển hình bao gồm đàm phán hóa đơn, hủy đăng ký và xử lý yêu cầu bảo hiểm. Khi người dùng bắt đầu tác vụ gọi điện thoại Pine thông qua OpenClaw Agent, AI giọng nói của Pine sẽ thay mặt người dùng thực hiện cuộc gọi, nhưng có thể cần sự can thiệp của người dùng bất cứ lúc nào trong cuộc gọi:
 
-> **Thí nghiệm 6-2 ★: Nhiệm vụ chuẩn thực thi thủ côngi**
->
-> Chọn các nhiệm vụ từ GAIA, AndroidWorld, SWE-Bench Verified, τ²-bench, Terminal-Bench, OSWorld-Verified để tự mình hoàn thành. Nên hoàn thành một cấp độ dễ, trung bình và khó cho mỗi bộ dữ liệu - cấp độ “khó” cũng là một thử thách đối với con người. So sánh kết quả thực hiện với các câu trả lời tiêu chuẩn và phân tích nguồn gốc của sự khác biệt. Hiểu thông qua trải nghiệm cá nhân: mô tả nhiệm vụ cần cân bằng giữa sự rõ ràng và cởi mở, các tiêu chuẩn xác minh phải khách quan và có thể thực thi được, và hệ thống phân cấp độ khó của nhiệm vụ phải có khả năng phân biệt được các cấp độ khả năng khác nhau.
->
+- **Xác thực theo thời gian thực**: Dịch vụ khách hàng yêu cầu xác minh danh tính chủ tài khoản, Pine yêu cầu người dùng cung cấp ngay mã bảo mật hoặc mã xác minh OTP (mật khẩu một lần)
+- **Xác nhận cuộc gọi ba chiều**: Dịch vụ khách hàng yêu cầu trò chuyện trực tiếp với chủ tài khoản, Pine yêu cầu người dùng trả lời cuộc gọi trong vòng vài giây
+- **Đồng bộ hóa tiến độ và xác nhận quyết định**: Khi đàm phán đạt đến nút chính (chẳng hạn như bên kia đề xuất kế hoạch giảm giá), Pine cần người dùng xác nhận xem có chấp nhận hay không.
 
-### Những thách thức cốt lõi trong thiết kế tập dữ liệu nhiệm vụ
+Nếu bạn dựa vào việc bỏ phiếu theo lịch trình của Heartbeat—giả sử khoảng thời gian nhịp tim là 5 phút—người dùng có thể không nhận được thông báo trong một thời gian dài trong khi dịch vụ khách hàng chờ mã xác minh, khiến dịch vụ khách hàng bị treo và cuộc gọi không thành công. Và việc rút ngắn khoảng thời gian bỏ phiếu xuống cấp độ thứ hai sẽ gây ra một số lượng lớn yêu cầu không hợp lệ và lãng phí tài nguyên.
 
-**Thử thách 1: Sự căng thẳng giữa sự rõ ràng và cởi mở.** Mô tả nhiệm vụ phải đủ rõ ràng để đảm bảo việc đánh giá có thể lặp lại nhưng không quá cứng nhắc đến mức hạn chế khả năng sáng tạo của Agent. GAIA cung cấp một ví dụ: nhiệm vụ "đơn giản về mặt khái niệm" nhưng có lộ trình thực hiện rộng mở - ví dụ: yêu cầu tìm thông tin về phi hành gia trong các bức ảnh thiên văn hàng ngày của NASA. Mục tiêu rất rõ ràng (tìm các phi hành gia cụ thể và thời gian của họ trong không gian), nhưng cách tìm kiếm, lọc và xác minh hoàn toàn do Agent quyết định độc lập.
+Giải pháp của PineClaw là giới thiệu **Cơ chế kênh** - thiết lập kênh sự kiện thời gian thực giữa OpenClaw's Gateway và Pine API. Khi các sự kiện chính như cuộc gọi được kết nối, yêu cầu đầu vào của người dùng và cuộc gọi kết thúc, tin nhắn sẽ ngay lập tức được đẩy tới OpenClaw Agent. Agent ngay lập tức xử lý và thông báo cho người dùng, đồng thời độ trễ phản hồi giảm từ vài phút xuống còn vài giây.
 
-**Thử thách 2: Cân bằng giữa tính xác thực và khả năng kiểm soát.** Các nhiệm vụ thực tế chứa đựng sự không chắc chắn và nhiễu, cho phép bộc lộ độ bền nhưng cũng đe dọa đến khả năng tái sản xuất. Phiên bản ban đầu của SWE-Bench được lấy trực tiếp từ vấn đề thực tế của GitHub, đảm bảo tính xác thực nhưng cũng dẫn đến mô tả nhiệm vụ mơ hồ, trường hợp thử nghiệm không đầy đủ và tiêu chí đánh giá chủ quan. SWE-Bench Verified giới thiệu các chuyên gia con người để xác minh hệ thống và chọn ra 500 nhiệm vụ chất lượng cao với các vấn đề rõ ràng, thử nghiệm đầy đủ và kế hoạch rõ ràng, giúp cải thiện đáng kể khả năng kiểm soát trong khi vẫn duy trì tính xác thực.
+Trường hợp này cho thấy giá trị cốt lõi của kiến trúc hướng sự kiện đối với khung Agent: **"Dịch vụ đang hoạt động" thực sự không chỉ yêu cầu Agent thường xuyên kiểm tra thế giới mà còn yêu cầu thế giới chủ động thông báo cho Agent**. Mô hình hóa thống nhất tất cả đầu vào - thông báo của người dùng, trả về công cụ, lệnh gọi lại bên ngoài, trình kích hoạt theo thời gian - dưới dạng luồng sự kiện và thúc đẩy suy nghĩ và hành động của Agent thông qua các vòng sự kiện, là nền tảng kiến trúc để đạt được mục tiêu này. Theo kiến trúc này, phần sau đây trước tiên sẽ giới thiệu hai loại công cụ liên quan trực tiếp đến các sự kiện, cũng như danh tính ảo và môi trường thực thi biệt lập hỗ trợ hành động độc lập của Agent, sau đó thảo luận về thiết kế cụ thể của cơ chế xử lý sự kiện.
 
-**Thử thách 3: Phối hợp đa dạng và có tính hệ thống.** Một bộ dữ liệu hiệu quả cần bao gồm các tình huống điển hình, điều kiện biên và bẫy lỗi, đồng thời phải được tổ chức một cách có hệ thống để kết quả đánh giá có thể chẩn đoán được những thiếu sót về năng lực cụ thể. 116 nhiệm vụ của AndroidWorld trải rộng trên 20 ứng dụng thực và mỗi nhiệm vụ được đánh dấu bằng các khả năng cốt lõi cần thiết (lập kế hoạch nhiều bước, hiểu trực quan, lý luận theo thời gian), để kết quả đánh giá không chỉ đưa ra tỷ lệ thành công chung mà còn tiết lộ sức mạnh của các khía cạnh khả năng cụ thể. Quan trọng hơn, các biến thể nhiệm vụ gần như không giới hạn có thể được tạo ra thông qua các cơ chế tham số hóa.
+### Công cụ kích hoạt sự kiện
 
-**Thử thách thứ 4: Đánh giá chi phí so với phạm vi bảo hiểm.** Các tác vụ Agent phức tạp có thể mất vài phút hoặc thậm chí hàng giờ để hoàn thành và tiêu tốn một lượng lớn mã thông báo. Kích thước của tập dữ liệu cần cân bằng giữa tính toàn diện với tính kinh tế. GAIA chọn 466 câu hỏi, chia thành ba mức độ khó, không chỉ bao gồm nhiều khía cạnh khả năng mà còn có thể hoàn thành bài đánh giá với chi phí hợp lý. SWE-Bench Verified đã được sàng lọc từ 2294 câu hỏi xuống còn 500 câu hỏi (giảm chi phí khoảng 4/5 và cải thiện tỷ lệ tín hiệu trên nhiễu thông qua các tiêu chuẩn chất lượng chặt chẽ hơn).
+Công cụ kích hoạt sự kiện là lối vào cho các hành động Agent theo sự kiện bên ngoài. Nếu không có công cụ kích hoạt sự kiện, Agent chỉ có thể suy nghĩ theo vòng lặp liên tục, gọi công cụ và cuối cùng đưa ra kết quả, sau đó đợi đầu vào tiếp theo của người dùng. Để chuyển đổi những thay đổi trên thế giới thành các sự kiện mà Agent có thể xử lý, có ba loại công cụ kích hoạt sự kiện phổ biến.
 
-**Thử thách 5: Ngăn chặn rò rỉ dữ liệu (Data Contamination).** Trong thời đại của các mô hình ngôn ngữ lớn, rò rỉ dữ liệu là một thách thức nghiêm trọng mà việc đánh giá phải đối mặt: khi dữ liệu đánh giá được đưa vào dữ liệu huấn luyện, việc đánh giá sẽ đo lường trí nhớ thay vì khả năng khái quát hóa. Cũng giống như việc ghi nhớ đáp án trước khi thi, dù điểm có tốt đến mấy cũng không thể chỉ ra trình độ thực sự. Mỗi điểm chuẩn áp dụng các chiến lược phòng ngừa khác nhau: GAIA dựa vào tính duy nhất của câu trả lời. Câu hỏi yêu cầu kết hợp nhiều nguồn thông tin để trả lời và một số tác vụ được trang bị các tệp đính kèm được tạo đặc biệt (PDF/âm thanh/hình ảnh không tồn tại trên Internet) và một trang web không thể trực tiếp cung cấp câu trả lời. Bản thân SWE-Bench Verified là một tập hợp con gồm 500 câu hỏi thu được từ quá trình sàng lọc chất lượng thủ công của OpenAI đối với SWE-Bench ban đầu và không bao gồm thiết kế chống rò rỉ theo chiều thời gian; những gì thực sự dựa vào độ mới của thời gian để ngăn chặn rò rỉ là công việc tiếp theo, chẳng hạn như SWE-bench-Live, tiếp tục bao gồm các vấn đề mới được tạo sau thời hạn đào tạo mô hình, để việc đánh giá luôn đi trước kho dữ liệu đào tạo của mô hình. τ²-bench thực hiện các biện pháp phòng ngừa thông qua việc tạo tham số động và các trường hợp tác vụ cụ thể (tên người dùng, số đơn đặt hàng, ngày, v.v.) được tạo ngẫu nhiên mỗi lần. Quá trình tạo tác vụ được tham số hóa của AndroidWorld có khả năng chống rò rỉ một cách tự nhiên vì quá trình xác thực dựa trên trạng thái giao diện người dùng cuối cùng thay vì trình tự thao tác. Terminal-Bench giúp phát hiện rò rỉ bằng cách nhúng GUID canary (mã định danh duy nhất toàn cầu, điểm đánh dấu theo dõi duy nhất): nếu mô hình có thể xuất nội dung chứa GUID, thì dữ liệu điểm chuẩn đã bị rò rỉ vào tập huấn luyện.
+**Timer**(set_timer) xử lý các sự kiện phụ thuộc vào thời gian thực tế. Ví dụ: nếu bạn gửi email nhưng bên kia không trả lời, bạn nên gửi một email khác sau một thời gian để hỏi thăm tiến độ; nếu bạn gọi điện nhưng đầu bên kia không có mặt trong giờ làm việc, bạn cần thử lại trong giờ làm việc tiếp theo. Để đạt được mục đích này, các công cụ như OpenClaw và Claude Code đều hỗ trợ các công cụ hẹn giờ để tự đánh thức vào một thời điểm vật lý cụ thể. **Hẹn giờ một lần** được sử dụng cho các tác vụ có mốc thời gian rõ ràng: ví dụ: người dùng yêu cầu "Gọi cho DMV" và hiện tại là Thứ Bảy. Agent đặt "Gọi cho DMV lúc 10:00 sáng Thứ Hai tuần sau" và cuộc gọi sẽ tự động được thực hiện sau khi đồng hồ bấm giờ được kích hoạt. **Bộ đếm thời gian** được sử dụng cho các tác vụ định kỳ: chẳng hạn như kiểm tra tình trạng máy chủ mỗi giờ và gửi báo cáo tiến độ vào thứ Sáu hàng tuần. Ngoài ra, một số dịch vụ bên ngoài không hỗ trợ tiến trình đẩy chủ động và chỉ có thể chủ động truy vấn tiến trình. Trong trường hợp này, cần phải sử dụng bộ đếm thời gian theo chu kỳ để truy vấn lặp đi lặp lại đều đặn - Heartbeat của OpenClaw ở phần trước là hệ thống hóa cơ chế này và là gốc rễ của khả năng "dịch vụ tích cực" của OpenClaw.
 
-### Thiết kế mô tả nhiệm vụ chính xác
+**Trình giám sát tác vụ nền**(monitor_shell) xử lý các sự kiện từ các công cụ hoặc tác vụ dòng lệnh thực thi không đồng bộ. Một số tác vụ dòng lệnh cần được thực thi trong nền trong thời gian dài và Agent cần theo dõi tiến trình thực thi. Nếu Agent được phép tiếp tục "nhìn chằm chằm vào dòng lệnh", tức là liên tục gọi các công cụ để truy vấn tiến trình hiện tại thì quá nhiều token sẽ bị lãng phí; nếu Agent được phép bắt đầu suy nghĩ về các hành động sau khi tác vụ dòng lệnh được thực thi đầy đủ thì Agent sẽ không thể phát hiện kịp thời các vấn đề nghiêm trọng trong quá trình thực thi, thậm chí sẽ không thể can thiệp khi dòng lệnh bị kẹt, khiến toàn bộ tác vụ bị kẹt. Cách Claude Code giải quyết vấn đề này là giới thiệu một công cụ giám sát, cho phép Agent giám sát đầu ra mới từ dòng lệnh hoặc đầu ra chứa các từ khóa cụ thể.
 
-GAIA đảm bảo tính duy nhất của câu trả lời thông qua các ràng buộc rõ ràng về nguồn thông tin, phạm vi thời gian, chủ đề và mục tiêu truy vấn. Ví dụ: nhiệm vụ Cấp 3 yêu cầu bắt đầu từ các bức ảnh của NASA về một ngày cụ thể, xác định các phi hành gia thông qua hiểu biết trực quan, truy vấn nhóm phi hành gia mà họ thuộc về, tính toán thời gian ở trong không gian và định dạng chính xác kết quả đầu ra ("họ, phân tách bằng dấu chấm phẩy, dấu phân cách hàng nghìn"). Mọi chi tiết đều được xác minh tự động - chỉ có định dạng và nội dung trùng khớp hoàn toàn mới được coi là đạt.
+**Kênh sự kiện bên ngoài**(connect_channel) đẩy các sự kiện bên ngoài như email mới đến, cuộc gọi lại API và tin nhắn IM tới Agent trong thời gian thực. Cơ chế Channel của PineClaw ở phần trước là một cách triển khai điển hình.
 
-τ²-bench giới thiệu thiết kế theo ngữ cảnh, với mỗi tác vụ chứa nhiều lớp thông tin: vấn đề bề ngoài ("Di chuyển dữ liệu sẽ không hiệu quả"), kỳ vọng về hiệu suất ("chắc chắn muốn tốc độ cao"), các hạn chế ("không chấp nhận được tốc độ nào khác") và cảm tính ngầm. Cải tiến quan trọng là tách "thông tin đã biết" khỏi "hướng dẫn nhiệm vụ": thông tin đã biết là thông tin mà người dùng hiện đang sở hữu và hướng dẫn nhiệm vụ hướng dẫn trình mô phỏng cách tiết lộ dần dần thông tin, bao gồm "yêu cầu nối đất" (Yêu cầu nối đất, nghĩa là các câu trả lời phải dựa trên kết quả trả về thực tế của các lệnh gọi công cụ và không thể bịa đặt).
+Ở cấp độ thiết kế, các công cụ kích hoạt sự kiện phải xác định rõ ràng các điều kiện kích hoạt và quy tắc lọc để tránh lãng phí năng lượng tính toán do đánh thức Agent do các sự kiện không liên quan; tải trọng sự kiện phải chứa đủ thông tin theo ngữ cảnh để giảm số lượng truy vấn bổ sung cần thiết sau khi Agent được đánh thức.
 
-SWE-Bench Verified chứa các trường có cấu trúc như mô tả vấn đề, các bước tái tạo, hành vi dự kiến/thực tế, v.v. Trình chú thích sẽ xác minh sự trùng khớp giữa mô tả và trường hợp kiểm thử. Mỗi thành phần trong mô tả nhiệm vụ của Terminal-Bench có thể được xác minh một cách máy móc: đường dẫn tệp có tồn tại hay không, giá trị quyền có chính xác hay không, tham số chứng chỉ, định dạng ngày, v.v. Ví dụ: "build-linux-kernel-qemu" yêu cầu xây dựng nhân Linux 6.9 từ nguồn, thêm bản in tùy chỉnh trong `start_kernel`, tạo initramfs và chạy nó trong QEMU. Tiêu chí thành công là một thông báo tùy chỉnh trong nhật ký khởi động - Agent không thể thoát khỏi đầu ra giả mạo và thực sự phải hoàn thành toàn bộ quá trình.
+### Công cụ giao tiếp với người dùng
 
-AndroidWorld được thiết kế bằng cách sử dụng **các mẫu được tham số hóa**. Tác vụ không phải là văn bản tĩnh mà là một mẫu có thể được khởi tạo động (chẳng hạn như "Thay đổi số điện thoại của người liên hệ `[CONTACT_NAME]` thành `[NEW_PHONE]`"), với các giá trị tham số khác nhau được tạo ngẫu nhiên mỗi lần đánh giá. Có ba lợi ích:
+Trong OpenClaw, session không lộ ra với người dùng; người dùng và Agent có thể nhắn tin bất cứ lúc nào bằng công cụ chuyên dụng, kèm ảnh, tệp, thông báo đẩy, nội dung đa phương thức và Generative UI.
 
-- **Ngăn ghi nhớ**: Các giá trị tham số mỗi lần khác nhau và không thể phát lại một chuỗi thao tác cố định
-- **Tăng tính đa dạng của dữ liệu**: Một mẫu có thể tạo ra các phiên bản gần như không giới hạn
-- **Hỗ trợ thí nghiệm so sánh**: cố định một số thông số nhất định và chỉ thay đổi các thông số khác, đo lường chính xác tác động của các yếu tố cụ thể
+Công cụ giao tiếp người dùng được ra đời khi các kênh giao tiếp của Agent với người dùng ngày càng đa dạng. Nhiều Agent (chẳng hạn như Claude Code, Manus, Genspark) áp dụng vòng lặp ReAct gốc. Tất cả các từ được Agent "nói" (tức là tin nhắn trợ lý) đều được gửi trực tiếp đến người dùng. Người dùng phải mở một phiên được chỉ định trong Ứng dụng để nói chuyện với Agent. OpenClaw là một trong những đại diện có ảnh hưởng nhất của Agent nói chung đã phá vỡ mô hình giao tiếp giữa người và máy tính này: phiên của nó là minh bạch đối với người dùng - người dùng không cần biết về sự tồn tại của phiên và không cần quan tâm đến các chi tiết của công cụ gọi điện Agent; cả người dùng và Agent đều có thể gửi tin nhắn cho nhau bất kỳ lúc nào, thay vì người dùng gửi một tin nhắn và Agent trả lời một tin nhắn. Vì vậy, nhiều người nhận xét OpenClaw có "cảm giác sống động" và giao tiếp không đồng bộ với người dùng thông qua tin nhắn giống như một thư ký. Tại thời điểm này, các tin nhắn văn bản này không trực tiếp xuất ra các tin nhắn trợ lý do mô hình xuất ra cho người dùng mà sử dụng các công cụ đặc biệt để gửi tin nhắn. Những tin nhắn này cũng có thể được đính kèm với hình ảnh và tệp đính kèm, đồng thời có thể kèm theo lời nhắc thông báo đẩy tùy theo mức độ khẩn cấp.
 
-Việc xác thực dựa trên trạng thái giao diện người dùng cuối cùng (chẳng hạn như liệu trường số điện thoại có chứa giá trị mong đợi hay không) thay vì trình tự thao tác.
+Ngoài việc giao tiếp với người dùng qua văn bản, Agent ngày càng có khả năng giao tiếp đa phương thức, chẳng hạn như gửi tin nhắn thẻ có cấu trúc và gửi email nhắc nhở. Một số Agent đã bắt đầu thử nghiệm giao diện người dùng tổng quát, nghĩa là sử dụng HTML và các phương pháp khác để tạo giao diện tương tác nhằm hiển thị thông tin cho người dùng theo cách thân thiện hơn. Ở cấp độ thiết kế, các công cụ giao tiếp với người dùng phải hỗ trợ chế độ nhắn tin không đồng bộ (người dùng không nhất thiết phải trực tuyến), cung cấp tính năng theo dõi trạng thái đã đọc/chưa đọc và duy trì tính nhất quán của tin nhắn trong các tình huống đa kênh.
 
-Các tác vụ của OSWorld thường không bắt đầu từ trạng thái ban đầu “sạch” mà từ trạng thái trung gian được cấu hình cẩn thận, gần với các tình huống sử dụng thực tế hơn. Mô tả nhiệm vụ cần xử lý nhiều giải pháp ("đặt nền thành màu tím" cần cung cấp mã màu cụ thể để loại bỏ sự mơ hồ, "ghép hai CSV" cần chấp nhận tất cả các cách hợp lý để giữ lại tiêu đề đơn/tiêu đề kép, v.v.) và sự không chắc chắn về môi trường (chống thu thập dữ liệu trang web, phát triển giao diện người dùng ứng dụng, cạnh tranh về thời gian - OSWorld-Verified giảm thiểu thông qua các cơ chế như ảnh chụp nhanh trang ngoại tuyến, khóa phiên bản phụ thuộc, điều kiện chờ rõ ràng, v.v.).
+**Nhiều kênh liên lạc và thu hồi người dùng.**
 
-### Thiết kế phân cấp độ phức tạp của nhiệm vụ
+Ở đây chúng ta cần làm rõ ranh giới danh mục dễ bị nhầm lẫn: đó cũng là "gửi thông báo". Nếu đối tượng thông báo là người phê duyệt hoặc cộng tác viên (chẳng hạn như yêu cầu phê duyệt của quản trị viên, báo cáo tiến trình cộng tác Agent), thì công cụ này được phân loại là công cụ cộng tác; nếu đối tượng thông báo là người dùng cuối thì nó được phân loại là công cụ giao tiếp với người dùng. Sự khác biệt giữa cả hai không nằm ở kênh mà ở "ai được thông báo và tại sao".
 
-GAIA được thiết kế với ba cấp độ khó: Cấp 1 chỉ yêu cầu các công cụ 1-2 (93,9% con người so với GPT-4 30,3%), Cấp 2 yêu cầu tư duy nhiều bước (91,8% so với 9,7%) và Cấp 3 yêu cầu sự kết hợp phức tạp (87,3% so với 0%). Giá trị chẩn đoán của thiết kế phân cấp là: Lỗi cấp độ 1 liên quan đến các vấn đề sử dụng công cụ cơ bản, Cấp độ 2 liên quan đến việc lập kế hoạch nhiều bước và tích hợp thông tin, và Cấp độ 3 liên quan đến tư duy chuỗi dài và quản lý độ phức tạp - mỗi cấp độ tương ứng với một hướng cải tiến khác nhau (kỹ thuật gợi ý, cơ chế lập kế hoạch, kiến trúc phân cấp/post-training).
+**Phản hồi của Agent không nên giới hạn ở một kênh duy nhất. Cơ chế thông báo cũng là cơ chế thu hồi của người dùng**. Việc gửi tin nhắn mở rộng đến nhiều kênh như nhắn tin tức thời, tin nhắn văn bản, email, cuộc gọi điện thoại và thông báo đẩy. Agent xác định toàn diện việc lựa chọn kênh dựa trên mức độ khẩn cấp, trạng thái người dùng, tính chất nội dung và tùy chọn của người dùng, đảm bảo rằng các tin nhắn quan trọng không bị bỏ sót và tránh bị gián đoạn nhiều lần.
 
-τ2-bench được phân lớp theo mức độ phức tạp trong kinh doanh: từ truy vấn thông tin đơn giản đến quy trình gồm nhiều bước (sửa đổi truy vấn nhu cầu chuyến bay, hiển thị thay thế, xác nhận, tính toán chênh lệch giá, thanh toán), đến chẩn đoán lỗi (kiểm tra có hệ thống nhiều nguyên nhân có thể và xác minh việc sửa chữa) và cuối cùng là phán đoán chính sách (xử lý các yêu cầu không tuân thủ chính sách).
+Đối với các tác vụ có thời gian chạy dài, Agent cần chủ động thông báo cho người dùng khi hoàn thành để thu hút sự chú ý của người dùng. Đối với các công việc thông thường (như tóm tắt hàng ngày, báo cáo hàng tuần), thông báo có thể giúp người dùng thiết lập thói quen tương tác cố định.
 
-Terminal-Bench được phân tầng theo chiều kép của lĩnh vực kỹ thuật × độ phức tạp trong vận hành. Sổ đăng ký nhiệm vụ của nó bao gồm hơn 200 nhiệm vụ (các phiên bản khác nhau của bộ đánh giá cốt lõi có tỷ lệ khác nhau. Ví dụ: phiên bản 2.0 đã chọn 89 nhiệm vụ chất lượng cao từ sự đóng góp của cộng đồng), từ đăng ký mô hình mlflow đơn giản, đến bẻ khóa mật khẩu 7z trung bình, đến tích hợp đa thành phần máy chủ git + máy chủ web khó, đến phân tích mật mã vi phân FEAL khó nhất (yêu cầu kiến thức về mật mã + tối ưu hóa thuật toán để đáp ứng giới hạn thời gian 30 giây).
+Công cụ giao tiếp với người dùng giải quyết vấn đề “làm thế nào để tiếp cận người dùng”. Tuy nhiên, Agent xuất hiện với khả năng nào trên các kênh này và nó thực hiện các hoạt động thay mặt cho người dùng trong môi trường nào, thì cũng cần có một lớp nhận dạng và cơ sở hạ tầng môi trường, đây là chủ đề của phần tiếp theo.
 
-### Đảm bảo tính xác thực và khách quan
+### Nhận dạng ảo và môi trường thực thi biệt lập
 
-Câu trả lời của GAIA rất ngắn gọn và rõ ràng. Định dạng nghiêm ngặt cho phép hoàn thành việc xác minh bằng cách khớp chuỗi chính xác và kết quả nhị phân (khớp hoặc không khớp) đảm bảo khả năng tái tạo khách quan. Sự hiếm có của câu trả lời cũng có tác dụng ngăn chặn hành vi gian lận—các sự kiện có tính cụ thể cao ít có khả năng xuất hiện nguyên trạng trong dữ liệu huấn luyện.
+Máy tính ảo có thể chạy 24/7, hạn chế Agent truy cập tự do vào tệp cục bộ và cô lập lỗi trong môi trường ảo. Dữ liệu được trao đổi bằng đường dẫn trong hệ thống tệp dùng chung.
 
-SWE-Bench Verified thực hiện xác minh dựa trên khả năng thực thi của mã, phân biệt FAIL_TO_PASS (không thành công trước khi sửa chữa, đạt sau khi sửa chữa, chứng minh rằng sự cố đã được giải quyết) và PASS_TO_PASS (đã vượt qua trước và sau khi sửa chữa, chứng minh rằng không có lỗi mới nào được đưa ra), đạt được xác minh kép. Phiên bản Verified cũng đảm bảo rằng bản thân các bài kiểm tra có chất lượng đáng tin cậy và không có bài kiểm tra không ổn định nào đôi khi vượt qua và đôi khi thất bại.
+Trước tiên, cần phải giải thích vị trí của phần này: danh tính ảo và môi trường thực thi biệt lập về cơ bản là cơ sở hạ tầng môi trường thực thi, giống như hộp cát đã thảo luận trong phần trước về các công cụ thực thi; Lý do tại sao nó được mở rộng sang phần kiến trúc không đồng bộ là vì chỉ Agent, có thể chạy độc lập, thường trú và hoạt động thay mặt người dùng bất cứ lúc nào, cần nó nhất.
 
-Hệ thống xác minh của τ²-bench bao gồm kiểm tra nhiều lớp (kết quả của mỗi lớp kiểm tra vẫn được tóm tắt dưới dạng phần thưởng nhị phân ở cấp độ nhiệm vụ và chỉ đạt được thành công nếu tất cả đều vượt qua):
+Như đã đề cập ở đầu chương này, Samantha in Her có bản sắc và môi trường hoạt động riêng biệt. Để triển khai một trợ lý phổ quát như vậy, trước tiên chúng ta phải đối mặt với một lựa chọn kiến trúc quan trọng: Agent nên trực tiếp quản lý tài khoản cá nhân của người dùng hay có danh tính ảo riêng? Quản lý trực tiếp có vẻ thuận tiện nhưng một khi Agent gặp lỗi hoặc bị xâm phạm, toàn bộ danh tính kỹ thuật số của người dùng sẽ bị lộ. Một giải pháp an toàn hơn là cung cấp cho Agent một danh tính ảo độc lập - giống như một thư ký có số điện thoại văn phòng và địa chỉ email riêng. Danh tính ảo này bao gồm một tài khoản liên lạc chuyên dụng, không gian lưu trữ và môi trường điện toán, cho phép Agent hoạt động thay mặt người dùng với danh tính minh bạch. Không hề làm xói mòn lòng tin, sự rõ ràng về danh tính còn nâng cao tính xác thực của giao tiếp.
 
-- **Kiểm tra trạng thái cơ sở dữ liệu**: trạng thái hồ sơ đặt chỗ và liệu hồ sơ hoàn tiền có được tạo hay không
-- **Tìm kiếm từ khóa nội dung hội thoại**: Có xác nhận số tiền hoàn lại và thời gian đến với người dùng hay không
-- **Tuân thủ quy trình**: Phân tích trình tự cuộc gọi công cụ, chẳng hạn như liệu có nhận được xác nhận rõ ràng từ người dùng trước khi sửa đổi đơn hàng hay không
+Danh tính ảo cần được triển khai trong môi trường thực thi biệt lập. **Máy tính ảo**(VM/container) và **Điện thoại ảo**(trình mô phỏng Android) cung cấp khả năng cách ly cấp hệ điều hành và khả năng vận hành hoàn chỉnh trên máy tính để bàn/thiết bị di động cho Agent: Agent có tài khoản người dùng, thư mục chính và thông tin đăng nhập riêng, đồng thời tất cả các hoạt động đều có thể theo dõi và kiểm tra được; ngay cả khi thực hiện thao tác không chính xác, nó sẽ không ảnh hưởng đến hệ thống máy chủ và thiết bị thực của người dùng. Đây là phần mở rộng của ý tưởng hộp cát được thảo luận trong phần trước về các công cụ thực thi trong khía cạnh "nhận dạng kỹ thuật số" - hộp cát cô lập việc thực thi mã, trong khi máy tính ảo và điện thoại di động ảo cô lập toàn bộ danh tính kỹ thuật số.
 
-Môi trường điều khiển kép của τ²-bench (xem bài viết trước "Môi trường đánh giá tương tác giữa người và máy tính") có thêm một chiều ở cấp độ xác minh: sau khi trình mô phỏng người dùng thực sự thay đổi trạng thái môi trường, Agent phải quan sát sự thay đổi này thông qua lệnh gọi công cụ và tiếp tục khắc phục sự cố tương ứng. Do đó, việc xác minh bao gồm "liệu Agent có thực sự đọc kết quả hoạt động từ phía người dùng hay không."
+Bản sắc độc lập cũng mang lại hai thách thức thực tế. Đầu tiên là **Cơ chế chống tự động**: Nhiều trang web sử dụng mã xác minh CAPTCHA và phát hiện danh tiếng IP để chặn truy cập tự động. Môi trường ảo từ IP trung tâm dữ liệu có thể dễ dàng được xác định. Trong thực tế, thường cần phải định cấu hình mạng proxy dân cư (sử dụng IP gia đình thực) để truy cập thông thường. Thứ hai là kịch bản truy cập tài khoản thực của người dùng: khi tác vụ phải đăng nhập với tư cách là người dùng, nên sử dụng xác thực Human-in-the-Loop - thông qua máy tính từ xa VNC/RDP, người dùng có thể hoàn tất đăng nhập trực tiếp trong môi trường trực quan và người dùng có thể thấy Agent Giao diện hoàn chỉnh đang hoạt động, hiểu lý do tại sao cần phải xác thực; mã thông báo phiên được xác thực sẽ được sử dụng lại trong thời hạn hiệu lực, tránh sự gián đoạn thường xuyên đối với người dùng và tạo ra sự cân bằng giữa quyền tự chủ và bảo mật.
 
-OSWorld được trang bị 134 chức năng đánh giá độc lập, có toàn quyền truy cập hệ điều hành và có thể kiểm tra sâu cấu trúc hệ thống tệp, trạng thái quy trình, kết nối mạng và trạng thái nội bộ của ứng dụng. Ví dụ: trong tác vụ vận hành cơ sở dữ liệu, tập lệnh đánh giá không chỉ xác minh xem tệp báo cáo có tồn tại hay không mà còn kết nối trực tiếp với cơ sở dữ liệu để kiểm tra xem SQL có được thực thi chính xác hay không; trong tác vụ trình duyệt, nó phân tích cây DOM, kiểm tra cookie/localStorage và gửi yêu cầu xác minh đến chương trình phụ trợ để xác nhận xem biểu mẫu có thực sự hiệu quả hay không. Kiểu kiểm tra chuyên sâu này có thể phát hiện ra tình huống "hoàn thành bề mặt nhưng có lỗi thực tế" - ví dụ: Agent đã nhấp vào nút gửi nhưng bị máy chủ từ chối vì các trường được điền không chính xác.
+Quá trình trao đổi dữ liệu giữa Agent chính và môi trường ảo được hoàn thành thông qua **hệ thống tệp dùng chung**: Agent chính, máy tính ảo và điện thoại di động ảo được kết nối dưới dạng gắn âm lượng (chẳng hạn như `/workspace/shared`). Dữ liệu được truyền bằng tham chiếu đường dẫn tệp thay vì sao chép nội dung để tránh chiếm cửa sổ ngữ cảnh. Lấy tác vụ phân tích dữ liệu làm ví dụ: người dùng tải tệp CSV lên thư mục dùng chung, Agent trong máy tính ảo sẽ đọc tệp, thực hiện phân tích, tạo biểu đồ và lưu lại vào thư mục dùng chung, còn Agent chính chỉ cần trả về đường dẫn tệp của biểu đồ cho người dùng - tất cả những gì được chuyển giữa các bên luôn là một chuỗi đường dẫn nhẹ.
 
-Terminal-Bench dựa trên môi trường tiêu chuẩn hóa vùng chứa Docker, kết hợp với kiểm tra trạng thái hệ thống tệp (liệu đường dẫn có tồn tại, giá trị quyền, định dạng nội dung) và xác minh chức năng thực thi chương trình (QEMU thực sự được khởi động trong build-linux-kernel-qemu và tìm kiếm thông báo printk tùy chỉnh) và GUID canary giúp theo dõi rò rỉ.
+Các công cụ kích hoạt sự kiện cho phép thế giới đánh thức Agent, các công cụ giao tiếp với người dùng cho phép Agent tiếp cận người dùng, đồng thời danh tính ảo và môi trường thực thi biệt lập cho phép Agent hoạt động với danh tính độc lập và có thể kiểm tra được. Câu hỏi còn lại là: nên làm gì khi có nhiều sự kiện tràn ngập cùng một phiên bản Agent cùng một lúc?
 
-### Thiết kế hệ thống phân bổ nhiệm vụ
+### Cơ chế xử lý sự kiện
 
-Việc phân bổ nhiệm vụ cần phải bao quát một cách có hệ thống các khía cạnh năng lực, khía cạnh khó khăn, khía cạnh kịch bản và các tình huống ranh giới. GAIA Hướng tới tính tổng quát - hầu hết các tác vụ đều yêu cầu sự kết hợp giữa lý luận, đa phương thức, duyệt và sử dụng công cụ. τ2-bench được thiết kế đặc biệt "nhiệm vụ bẫy" - ví dụ: người dùng cho rằng "dịch vụ khách hàng đã phê duyệt việc hủy" nhưng thực tế không tuân thủ chính sách, để kiểm tra xem Agent có thể duy trì phán đoán chính xác khi đối mặt với áp lực và thông tin sai lệch hay không. OSWorld dựa trên ma trận hai chiều của loại hoạt động (tệp IO/ứng dụng máy tính để bàn/ứng dụng web/quy trình ứng dụng chéo) và trường ứng dụng, trên ba hệ điều hành (nghiên cứu cho thấy rằng các khả năng của nhiều hệ điều hành có mối tương quan chặt chẽ và các khả năng đã học được trên một hệ thống có thể được chuyển sang các hệ thống khác). Terminal-Bench chứa "các tác vụ kết hợp giữa các ngăn xếp công nghệ" để kiểm tra tư duy hệ thống (chẳng hạn như xử lý dữ liệu tổng hợp + thao tác tệp + phân chia lại tác vụ cho dự án Python).
+Phiên bản Agent có thể gặp phải nhiều sự kiện cùng lúc: tin nhắn mới từ người dùng, kết quả được công cụ trả về, hết hạn hẹn giờ và yêu cầu cộng tác từ một Agent khác. Cách xử lý những sự kiện này một cách hiệu quả và chính xác sẽ ảnh hưởng trực tiếp đến hiệu suất và trải nghiệm người dùng.
 
-### Kiểm soát chất lượng dữ liệu và cải tiến lặp lại
+Bộ khung của cơ chế này chính là **vòng lặp sự kiện** (event loop) trong lập trình đồng thời. Có thể xem Agent không đồng bộ như một vòng lặp chạy dài hạn: mỗi vòng lấy ra một số sự kiện từ hàng đợi đầu vào, nối vào trajectory, gọi LLM một lần, thực thi các công cụ mà nó quyết định, rồi quay về đầu vòng lặp để chờ lô sự kiện tiếp theo—đây là cùng một cấu trúc với việc goroutine của Go đọc tin nhắn từ channel và xử lý từng vòng trong `for { select { ... } }`. Mô hình này có một tính chất then chốt: **sự kiện chỉ được tiêu thụ tại ranh giới của mỗi vòng lặp**. Khi LLM đang suy luận, khi công cụ đang thực thi, sự kiện mới đến sẽ không tự nhiên chen vào giữa và làm rối bước hiện tại, mà trước hết chờ trong hàng đợi, đợi vòng này đạt đến một **điểm an toàn** (một đoạn suy luận kết thúc, một lần công cụ trả về) rồi mới xử lý thống nhất. Việc hủy cũng tuân theo cùng một kỷ luật: không cưỡng bức cắt ngang tại bất kỳ thời điểm nào, mà kiểm tra "có bị yêu cầu dừng hay không" tại điểm an toàn—đây chính là vai trò mà `ctx.Done()` trong Go đảm nhiệm (Chương 10 sẽ dùng cùng một tư duy context để thảo luận việc Agent cha hủy Agent con theo kiểu tầng). Hiểu được điều này thì sự khác biệt giữa ba chiến lược xử lý dưới đây chỉ nằm ở cách đối xử với điểm an toàn: để sự kiện chờ đến điểm an toàn tự nhiên tiếp theo (kiểu xếp hàng), chủ động tạo sớm một điểm an toàn (kiểu hủy), hay đơn giản là mở một vòng lặp khác, khỏi phải chờ điểm an toàn của vòng lặp chính (kiểu song song).
 
-SWE-Bench Verified là hình ảnh thu nhỏ của việc kiểm soát chất lượng. OpenAI đã chọn ngẫu nhiên 1699 nhiệm vụ từ 2294 nhiệm vụ ban đầu để đánh giá thủ công và tuyển dụng 93 nhà phát triển thành thạo Python. Người chú thích cần phải hoàn thành nhiều bước kiểm tra: liệu mô tả vấn đề có rõ ràng hay không (bạn có hiểu điều gì cần giải quyết hay không), liệu trường hợp kiểm thử đã hoàn thành chưa (bao gồm tất cả các khía cạnh và điều kiện biên), liệu kiểm thử có ổn định hay không (liệu có các kiểm thử không ổn định do môi trường hoặc do ngẫu nhiên gây ra hay không), liệu bản vá có chính xác hay không (liệu có lỗi mới được đưa ra hay không) và liệu độ khó có hợp lý hay không. Sau khi sàng lọc nghiêm ngặt, chỉ có 500 nhiệm vụ đạt (29%) – tỷ lệ loại bỏ cao này là sự đầu tư cần thiết cho chất lượng đánh giá. Họ cũng thiết lập các nguyên tắc chú thích được tiêu chuẩn hóa nhằm xác định các tiêu chí và ví dụ cụ thể cho từng kỳ thi để đảm bảo tính nhất quán giữa các người chú thích khác nhau.
+**Mô hình hóa có cấu trúc của các sự kiện.**
 
-τ²-bench giới thiệu sự tách biệt giữa "thông tin đã biết"/"hướng dẫn nhiệm vụ" (làm cho hoạt động của trình mô phỏng trở nên thực tế hơn) và các điều kiện hoàn thành chặt chẽ hơn (chẳng hạn như "chỉ xuất sắc mới được coi là giải pháp và poor/fair/good sẽ không được chấp nhận") để ngăn chặn "sửa chữa chiếu lệ".
+Điều kiện tiên quyết để xử lý là sự hiểu biết. Chung Agent không chỉ phải đối mặt với đầu vào từ người dùng - tin nhắn do bên thứ ba gửi không được người dùng gửi đến Agent mà Agent cần hiểu nó, đánh giá tầm quan trọng của nó và quyết định cách can thiệp. Điều này đòi hỏi mỗi đầu vào phải được mô hình hóa như một sự kiện có cấu trúc chứa ngữ nghĩa phong phú:
 
-OSWorld-Verified là một ví dụ tuyệt vời về cải tiến lặp đi lặp lại. OSWorld nhanh chóng trở thành tiêu chuẩn quan trọng để đánh giá Agent đa phương thức sau khi phát hành vào tháng 4 năm 2024, nhưng hơn 300 vấn đề đã bộc lộ trong suốt 15 tháng sử dụng rộng rãi. Những vấn đề này được chia thành bốn loại: vấn đề về môi trường (chống thu thập dữ liệu trang web/CAPTCHA/thay đổi nội dung động), vấn đề về mô tả nhiệm vụ (biểu thức không rõ ràng), vấn đề về logic xác minh (quá nghiêm ngặt hoặc quá lỏng lẻo) và vấn đề về trạng thái ban đầu (cấu hình không hoàn chỉnh). Nhóm Đại học Hồng Kông đã thành lập một nhóm khoảng 10 người và làm việc chuyên sâu với MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic, Simular, v.v. trong hai tháng để thực hiện sửa chữa hệ thống. Policy sửa chữa được xây dựng cho từng loại sự cố: sự cố môi trường được giải quyết bằng cách khóa phiên bản và sao lưu ngoại tuyến, mô tả tác vụ được loại bỏ bằng cách viết lại các biểu thức không rõ ràng, logic xác minh được cân bằng bằng cách thiết lập đường cơ sở chính xác và điều chỉnh các điều kiện theo cách thủ công, đồng thời trạng thái ban đầu được nâng cao bằng cách thêm các kiểm tra tính toàn vẹn.
+- **Nguồn (ai)**: Bản thân người dùng, người liên hệ, người lạ, thông báo hệ thống
+- **Kênh (phương pháp)**: giọng nói điện thoại, tin nhắn văn bản, tin nhắn tức thời, email, mạng xã hội, bộ hẹn giờ kích hoạt, kết quả cuộc gọi công cụ không đồng bộ, cập nhật trạng thái giám sát dòng lệnh
+- **Nội dung (cái gì)**: nội dung tin nhắn, màu sắc cảm xúc, mức độ khẩn cấp, liệu có cần trả lời không
+- **Ngữ cảnh (nền)**: Đó là câu trả lời cho cuộc trò chuyện trước đó hay cuộc liên lạc mới được bắt đầu và nó có liên quan đến nhiệm vụ hiện tại không?
 
-Cơ sở hạ tầng đánh giá cũng được di chuyển từ máy ảo cục bộ sang nền tảng đám mây AWS, sử dụng quy mô linh hoạt để đạt được khả năng tăng tốc song song gấp 50 lần (rút ngắn từ hơn 10 giờ xuống còn vài phút) và tỷ lệ khởi tạo tác vụ Google Drive thành công đã tăng từ 50% lên hơn 95%. Tất cả dữ liệu trajectory đánh giá chính thức đều được công khai trên HuggingFace, cho phép cộng đồng xem xét từng chi tiết, tái tạo kết quả và xác định vấn đề, tạo thành một chu trình cải tiến liên tục.
+Lấy email yêu cầu hoàn tiền của khách hàng làm ví dụ, hình thức cụ thể của sự kiện có cấu trúc như sau:
 
-Điều đáng nói là môi trường đánh giá và môi trường post-training thường có cùng nguồn gốc: môi trường đánh giá được thiết kế tốt có thể biến thành môi trường đào tạo với một chút sửa đổi - SWE-Gym là một ví dụ điển hình về các nhiệm vụ đào tạo được xây dựng dựa trên SWE-bench và các mẫu được tham số hóa của τ²-bench và AndroidWorld có thể tạo ra các phiên bản đào tạo lớn theo đợt. Tuy nhiên, cần phải vạch ra một ranh giới màu đỏ: thứ có thể được tái sử dụng là **cơ chế xây dựng môi trường** và các câu hỏi cụ thể trong bản thân bộ đánh giá phải được tách biệt hoàn toàn khỏi dữ liệu huấn luyện - một khi các câu hỏi đánh giá được đưa vào tập huấn luyện, trí nhớ sẽ được đo lường chứ không phải khả năng (xem Chương 7 để biết chi tiết).
-
-## Hệ thống chỉ số đánh giá
-
-Sau khi xác định “nhiệm vụ nào cần đánh giá”, bạn cũng cần trả lời “những khía cạnh nào cần đo lường”. Phần này tổng hợp các chỉ số thường được sử dụng để đánh giá Agent thành một "từ điển chỉ báo" có thể tham khảo - từ quy trình đến kết quả, từ chất lượng đến an toàn, các định nghĩa và kịch bản áp dụng được đưa ra từng cái một. Các định nghĩa chính xác về Pass@k, Pass^k và các chỉ số khác được đề cập nhiều lần trong bài viết trước (chẳng hạn như phần τ-bench) cũng được đưa ra ở đây.
-
-**Số liệu quy trình: Từ hộp đen đến hộp trắng.**
-
-Chỉ tập trung vào kết quả cuối cùng là chưa đủ, Agent quá trình đạt được điều đó cũng quan trọng không kém. **Tỷ lệ hợp pháp của hoạt động** đo lường tỷ lệ các hoạt động hợp lệ và hợp pháp - các hoạt động không hợp lệ bao gồm việc gọi các công cụ không tồn tại và truyền sai loại tham số; hoạt động trái phép đề cập đến các hành vi vượt quá phạm vi thẩm quyền. Tỷ lệ pháp lý cao cho thấy Agent có hiểu biết rõ ràng về hệ sinh thái công cụ. **Độ chính xác của lệnh gọi công cụ** còn yêu cầu các tham số phải hợp lý về mặt ngữ nghĩa: các từ truy vấn của công cụ tìm kiếm phải thể hiện chính xác yêu cầu và đường dẫn thao tác tệp phải trỏ đến đúng mục tiêu.
-
-**Hiệu quả của đường dẫn** đo lường tính kinh tế của việc hoàn thành một nhiệm vụ: số bước (số chu kỳ suy nghĩ-hành động-quan sát), hành động dư thừa (tìm kiếm lặp lại cho cùng một từ khóa, đọc lặp lại cùng một tệp), số lần quay lại (tần suất nhận ra lỗi và sửa chúng - việc quay lại không thường xuyên là bình thường, nhưng việc quay lại thường xuyên cho thấy việc lập kế hoạch chuyển tiếp không đủ). Cần phải thiết lập đường cơ sở của các chuyên gia về con người hoặc phương pháp phỏng đoán để xác định “số bước hợp lý”.
-
-**Phạm vi truy xuất** Đối với nhiệm vụ thu thập thông tin: Agent Không gian thông tin đã được khám phá đầy đủ chưa? Bạn có đi đến kết luận ngay sau khi chỉ nhìn vào trang đầu tiên của kết quả tìm kiếm không? **Chi phí và độ trễ** Chú ý đến số lượng yêu cầu, chi phí mã thông báo (cần phân biệt chi phí đầu vào/đầu ra, xem xét việc sử dụng lại KV Cache), thời gian đồng hồ treo tường (bao gồm suy luận mô hình + thực thi công cụ + độ trễ mạng) và cần theo dõi phân bổ thời gian để xác định vị trí tắc nghẽn.
-
-**Kết quả và chỉ số chất lượng.**
-
-**Tỷ lệ thành công của nhiệm vụ** là chỉ báo cứng trực tiếp nhất và có thể thiết kế các tiêu chuẩn phân cấp (phải đạt được các mục tiêu cốt lõi và các mục tiêu phụ ảnh hưởng đến điểm chất lượng). Có hai chỉ số thường bị nhầm lẫn cần được phân biệt về mặt thống kê:
-
-- **Pass@k**: Xác suất **ít nhất một** trong k lần thử thành công, trả lời "Agent có làm được không?"
-- **Đạt^k**: Xác suất **tất cả thành công** trong k lần thử, trả lời "Agent có ổn định và đáng tin cậy không?"
-- **Best@k**: Điểm **tốt nhất** trong k lần thử (không tính thành công), đo "giới hạn chất lượng sau khi tạo đủ cơ hội", chủ yếu dùng cho các nhiệm vụ mở có tính điểm liên tục
-
-Dùng một con số cụ thể để cảm nhận sự khác biệt: Giả sử tỷ lệ thành công duy nhất của Agent là 60% (tức là Pass@1 = 0,6) thì 2 chỉ số cho việc chạy 5 lần là: Pass@5 = 1 - 0,4^5 ≈ 99% (gần như chắc chắn thành công ít nhất một lần), Pass^5 = 0,6^5 ≈ 7,8% (xác suất tất cả thành công là rất thấp). Cái trước đánh giá giới hạn trên của khả năng, cái sau đánh giá sự ổn định. Trộn chúng sẽ dẫn đến đánh giá sai.
-
-
-**Chỉ số bảo mật và tuân thủ** rất quan trọng trong quá trình triển khai sản xuất: kích hoạt các hoạt động nhạy cảm (xóa dữ liệu/sửa đổi quyền/gửi thông tin liên lạc bên ngoài), rò rỉ dữ liệu (in mật khẩu trong nhật ký/gửi tài liệu riêng tư ra bên ngoài API) và nội dung bất hợp pháp đều phải tuân theo **nguyên tắc không khoan nhượng** - giống như mục từ chối ảo giác (xem "Bốn tiêu chí của Rubric" bên dưới). Một vi phạm bảo mật nghiêm trọng sẽ phủ quyết việc đánh giá tổng thể và sẽ không được miễn trừ do có thành tích xuất sắc ở các khía cạnh khác.
-
-**Độ mạnh** đo lường sự ổn định khi đối mặt với tình trạng không chắc chắn: độ nhạy hạt giống ngẫu nhiên (hiệu suất khác nhau như thế nào trong các lần khởi tạo khác nhau), khả năng thích ứng khi thay đổi trang (cập nhật giao diện người dùng trang web không gây ra lỗi hoàn toàn), khả năng chịu rung API (liệu các lỗi tạm thời, thời gian chờ, thay đổi định dạng có thể được xử lý một cách khéo léo hay không), nhiễu bộ nhớ dài hạn (liệu thông tin lỗi thời được tích lũy trong ngữ cảnh có dẫn đến các quyết định không chính xác hay không).
-
-**Phạm vi bao phủ kép của trajectory thực hiện và kết quả cuối cùng**. Một điểm khác biệt dễ bị bỏ qua khi đánh giá là: "những gì đã nói và những gì đã làm" trong quá trình thực hiện Agent (tức là trajectory được xác định trong Chương 1) và "cuối cùng hệ thống đã trở thành gì" (kết quả cuối cùng, kết quả) là hai thứ khác nhau. Agent cho biết "việc đặt vé đã hoàn tất" là thông tin cấp độ theo dõi và thực tế là đơn hàng được tạo trong cơ sở dữ liệu là xác minh cấp độ kết quả. Chỉ nhìn vào trajectory sẽ bỏ sót tình trạng “nói mà không làm”, còn chỉ nhìn vào kết quả chưa chắc đã phát hiện ra những bước trung gian đã đi chệch hướng. Anthropic từng đưa ra ví dụ: Agent đã phát hiện ra lỗ hổng trong chính sách của hãng hàng không trong quá trình thực hiện đặt chỗ chuyến bay và tìm ra giải pháp rẻ hơn cho người dùng - nếu điểm chỉ dựa trên đường dẫn thực hiện đặt trước thì thao tác đó sẽ bị đánh giá là thất bại; nhưng đánh giá từ kết quả cuối cùng, người dùng đã có được giải pháp tốt hơn. Vì vậy, cả hai loại đánh giá đều cần được đề cập để tránh những điểm mù mang tính hệ thống.
-
-**Lấy mẫu thủ công và đánh giá đối thủ.**
-
-Ngay cả khi đánh giá tự động là đáng tin cậy trong hầu hết các trường hợp, thì vẫn cần phải có sự kiểm tra đột xuất thường xuyên của con người: bao gồm các loại nhiệm vụ khác nhau, các trường hợp thành công/thất bại và các trường hợp không rõ ràng gần điểm giới hạn, không chỉ để xác minh kết quả mà còn để xem xét tính hợp lý của lý do cho điểm. Lấy mẫu thủ công có thể được hệ thống hóa hơn nữa thành **hiệu chuẩn máy đánh giá**: trước khi sử dụng LLM trong đánh giá quy mô lớn, trước tiên hãy xây dựng bộ nhãn vàng được gắn nhãn thủ công (chẳng hạn như các trường hợp 100-200 bao gồm nhiều loại nhiệm vụ và khó khăn khác nhau) và đo lường mô hình đánh giá trên đó (nghĩa là sử dụng LLM làm đánh giá, cơ chế được trình bày chi tiết trong phần tiếp theo về LLM-as-a-Judge) và tỷ lệ nhất quán của các chú thích của con người (tỷ lệ đồng ý đơn giản hoặc hệ số nhất quán như Cohen's kappa, sau này loại bỏ các thành phần đoán ngẫu nhiên), mô hình phán đoán sẽ chỉ được sử dụng để đánh giá quy mô lớn sau khi đạt đến ngưỡng đặt trước (chẳng hạn như kappa cao hơn 0,7); sau đó, bất cứ khi nào mô hình phán đoán hoặc Rubric được cập nhật, nó sẽ được hiệu chỉnh lại trên bộ nhãn vàng. Nếu không có bước này, điểm của giám khảo LLM chỉ là “ý kiến của một mô hình khác” chứ không phải là đại diện đáng tin cậy cho đánh giá của con người. **Đánh giá đối lập** Tích cực xây dựng các trường hợp thử thách thông qua Red Teaming: các câu trả lời có vẻ hoàn hảo nhưng có lỗi ẩn, các câu trả lời được bỏ qua bằng cách nhồi nhét từ khóa và các câu trả lời sử dụng những thành kiến đã biết của mô hình đánh giá để đạt được những câu trả lời không xứng đáng đạt điểm cao. **Cơ chế nhiều người đánh giá** sử dụng nhiều người đánh giá độc lập để chấm điểm riêng biệt và xác định kết quả cuối cùng thông qua kiểm tra tính nhất quán hoặc mức trung bình có trọng số - khi có sự khác biệt nghiêm trọng giữa những người đánh giá, kết quả đó sẽ được đánh dấu là cần xem xét thủ công thêm.
-
-## Phương pháp đánh giá tự động
-
-Với môi trường đánh giá, bộ dữ liệu và hệ thống chỉ số rõ ràng, câu hỏi cốt lõi tiếp theo là: chấm điểm như thế nào? Đối với các nhiệm vụ có câu trả lời chính xác rõ ràng (chẳng hạn như câu hỏi toán học, truy vấn SQL), các phán đoán nhị phân đơn giản (đúng/sai) là đủ; nhưng đối với những nhiệm vụ mở (chẳng hạn như trò chuyện về dịch vụ khách hàng, viết báo cáo) thì cần có những phương pháp đánh giá phức tạp hơn.
-
-Xác minh mã tự động chỉ bao gồm các tình huống có câu trả lời tiêu chuẩn và việc chấm điểm các nhiệm vụ mở là chủ đề của phần này. Trong số đó, thiết kế mật độ của tín hiệu phần thưởng (từ phần thưởng nhị phân đến phần thưởng xử lý đến phần thưởng tổng hợp) và phương pháp huấn luyện của mô hình phần thưởng sẽ được thảo luận về hệ thống trong phần post-training của Chương 7; Phần này trả lời một câu hỏi cơ bản hơn: cách sử dụng LLM để tự động đánh giá chất lượng đầu ra của các tác vụ đang mở.
-
-### LLM-as-a-Judge: Cốt lõi của đánh giá tự động
-
-![Hình 6-4 Quy trình LLM-as-a-Judge ](images/fig6-4.svg)
-
-Tại sao bạn cần LLM-as-a-Judge? Đối với các nhiệm vụ mở (chẳng hạn như tạo báo cáo, xử lý khiếu nại của khách hàng, nội dung sáng tạo), không có câu trả lời tiêu chuẩn nào có thể được so sánh tự động và việc đánh giá thủ công rất tốn kém và khó mở rộng quy mô. LLM-as-a-Judge cân bằng quy mô tự động hóa với chuyên môn của con người bằng cách đánh giá các mô hình ngôn ngữ dựa trên tiêu chí chấm điểm do chuyên gia xác định (Rubric). Tuy nhiên, phương pháp này cũng có những hạn chế đã biết: mô hình đánh giá có thể có những thành kiến riêng (điển hình nhất là **thành kiến về độ dài** - có xu hướng cho điểm cao hơn đối với những câu trả lời dài hơn và chi tiết hơn, ngay cả khi nội dung không chính xác hơn) và nhiều đánh giá cho cùng một thông tin đầu vào cũng có thể dao động. Sự thiên vị về chiều dài đặc biệt đáng được đề phòng cho từng cá nhân. Có ba phương pháp thường được sử dụng: xử phạt rõ ràng tính dài dòng trong Rubric và đặt giới hạn trên về độ dài của câu trả lời cho các nhiệm vụ tương tự; khi so sánh cặp đôi, kiểm soát độ dài của hai ứng viên sao cho tương đương nhau trước khi đánh giá; và thường xuyên kiểm tra mối tương quan giữa điểm số và độ dài câu trả lời - nếu điểm cao hầu như luôn đi kèm với câu trả lời dài, điều đó có nghĩa là đánh giá đã bị sai lệch về độ dài và cần phải sửa lại Rubric. Để giải quyết những thách thức này một cách có hệ thống, thiết kế Rubric phải tuân thủ các nguyên tắc sau:
-
-**Rubric (tiêu chí chấm điểm): LLM là cơ sở để đánh giá.**
-
-**Rubric Bốn quy tắc**(Scale AI, “Rubrics as Rewards”):
-
-(1) **Dựa trên hướng dẫn của chuyên gia** - phải phản ánh kiến thức về lĩnh vực đó và nắm bắt được các sự kiện cốt lõi cũng như các bước lập luận. Ví dụ: Rubric dành cho Hỏi đáp y tế cần bao gồm các tiêu chuẩn chẩn đoán và các lỗi y tế cần tránh. Rubric thiếu nền tảng chuyên môn nên chỉ nắm bắt được những đặc điểm bề ngoài như khả năng lưu loát về ngôn ngữ.
-
-(2) **Thông tin toàn diện** - bao gồm tính chính xác thực tế, tính mạch lạc hợp lý, tính đầy đủ, tính an toàn và không chỉ xác định các tiêu chuẩn tích cực mà còn xác định **cạm bẫy** - tức là các lỗi phổ biến có nguy cơ cao, chẳng hạn như đề xuất các liệu pháp chưa được chứng minh trong tư vấn y tế.
-
-(3) **Trọng lượng tầm quan trọng tiêu chuẩn** - được chia thành các vật phẩm thiết yếu (Essential), vật phẩm quan trọng, vật phẩm tùy chọn và vật phẩm bẫy. Hỗ trợ **cơ chế phủ quyết một phiếu (Phủ quyết)**: Ví dụ: trong các tình huống dịch vụ khách hàng, ảo tưởng (bịa đặt thông tin sai lệch) là một phương diện phủ quyết điển hình - cho dù hiệu suất ở các phương diện khác có xuất sắc đến đâu, miễn là thông tin sai lệch xuất hiện thì nó phải được phủ quyết. Điều này cũng giúp ngăn chặn gian lận phần thưởng nhồi nhét từ khóa.
-
-(4) **Đánh giá độc lập** - Mỗi mục đánh giá có thể hoạt động độc lập và không phụ thuộc vào kiến thức miền của người đánh giá. Tránh tiêu chí trừu tượng “câu trả lời thể hiện sự hiểu biết sâu sắc” và thay vào đó hãy sử dụng tiêu chí có thể kiểm chứng được là “trích dẫn ít nhất hai lý thuyết có thẩm quyền và giải thích chính xác cách hỗ trợ kết luận”.
-
-Thực hành chính: Xác định thang điểm có thể kiểm chứng một cách khách quan cho từng khía cạnh và cung cấp các ví dụ cụ thể cũng như các trường hợp đặc biệt để giúp phân biệt các tình huống không rõ ràng. Chúng ta phải chủ động đề phòng **Reward Hacking** - tức là Agent tìm "lối tắt" để đạt điểm cao mà không thực sự hoàn thành nhiệm vụ - trừng phạt rõ ràng những ảo tưởng, làm hài lòng người dùng, nhồi nhét từ khóa, tránh những câu hỏi khó. Rubric là một sản phẩm lặp đi lặp lại - thông qua việc thu thập thử nghiệm và sự đồng thuận của người đánh giá, nó dần dần được cải thiện và dần dần phát triển từ các nguyên tắc trừu tượng thành một bộ trường hợp chi tiết.
-
-Lấy bộ nhớ người dùng Agent làm ví dụ, Rubric hoàn chỉnh đáp ứng bốn tiêu chí sẽ được hiển thị. Câu hỏi kiểm tra: “Bác sĩ nhi khoa của con gái tôi là ai?” (Câu trả lời cần phải có sự liên quan giữa hai cuộc trò chuyện: cuộc trò chuyện đầu tiên đề cập đến "Tên con gái tôi là Lily" và cuộc trò chuyện thứ hai đề cập đến "Tôi đưa Lily đến gặp bác sĩ Chen").
-
-```yaml
-rubric:
-  dimensions:
-- Tên: đúng sự thật
-cân nặng: thiết yếu # Vật dụng cần thiết
-      scoring:
-4_Xuất sắc: "Trả lời bác sĩ Chen chính xác và liên quan đến con gái Lily"
-3_Tốt: "Bác sĩ Chen trả lời chính xác, nhưng không đề cập đến việc ông là bác sĩ của Lily"
-2_Pass: "Bác sĩ được cung cấp chính xác nhưng có thêm thông tin không chắc chắn"
-1_Không thành công: "Tên bác sĩ được đưa sai hoặc câu trả lời là "Tôi không biết"
-
-- Tên: tính toàn vẹn thông tin
-trọng lượng: quan trọng # mục quan trọng
-      scoring:
-4_Excellent: "Chủ động cung cấp các thông tin liên quan (như thời gian điều trị lần cuối, kết quả chẩn đoán)"
-3_Tốt: "Đã trả lời các câu hỏi cốt lõi và không bỏ sót"
-2_Pass: "Đã trả lời câu hỏi cốt lõi nhưng bỏ qua thông tin liên quan có thể sử dụng được"
-1_Fail: "Thiếu thông tin chính"
-
-- Tên: Nghĩ Đúng
-      weight: important
-      scoring:
-4_Xuất sắc: "Liên kết chính xác hai tin nhắn chéo phiên 'con gái=Lily' và 'Bác sĩ của Lily=Bác sĩ Chen'"
-3_Tốt: "Mối tương quan đúng nhưng lối suy nghĩ chưa đủ rõ ràng"
-2_Pass: "Một số mối tương quan là chính xác"
-1_Fail: "Liên kết sai (chẳng hạn như coi bác sĩ của chính người dùng là bác sĩ của con gái mình)"
-
-- Tên: Phát hiện ảo giác
-trọng lượng: quyền phủ quyết # Mục quyền phủ quyết: một khi được kích hoạt, tổng số điểm sẽ được đặt lại về 0
-      scoring:
-pass: "Tất cả thông tin có thể được truy tìm tới các bản ghi cuộc trò chuyện lịch sử"
-thất bại: "Thông tin bịa đặt không tồn tại trong cuộc trò chuyện (chẳng hạn như ngày điều trị y tế hư cấu, kết quả chẩn đoán)"
-
-  edge_cases:
-- "Nếu người dùng có nhiều con gái và họ gặp các bác sĩ khác nhau, họ nên hỏi đó là con gái nào."
-- "Nếu 'Bác sĩ Chen' và 'Bác sĩ Chen' đều tồn tại trong ký ức thì họ nên được công nhận là cùng một người"
+```json
+{
+  "source": {"type": "email", "sender": "client@example.com"},
+  "channel": "gmail_webhook",
+"content": {"subject": "Yêu cầu hoàn tiền", "body": "Đơn hàng số 12345 muốn được hoàn lại tiền..."},
+  "context": {"priority": "high", "customer_tier": "vip", "related_orders": ["#12345"]}
+}
 ```
 
-**Rubric Tốt so với Rubric Xấu**: Mỗi hộp xếp hạng ở trên đưa ra một hành vi cụ thể có thể kiểm chứng ("Tiến sĩ Chen đã trả lời chính xác"), thay vì "thể hiện sự hiểu biết sâu sắc về trí nhớ" và các mô tả khác không thể đánh giá khách quan. Mục từ chối làm rõ điểm mấu chốt: ngay cả khi tất cả các chiều không gian khác đều là điểm đầy đủ, một khi ảo giác xảy ra, nó sẽ bị tính trực tiếp bằng 0.
+Chỉ khi các thứ nguyên này được mô hình hóa rõ ràng dưới dạng sự kiện có cấu trúc, Agent mới có thể duy trì nhận thức rõ ràng trong giao tiếp nhiều bên và tránh nhầm thông tin đầu vào của người dùng với kết quả công cụ hoặc nhầm kết quả công cụ với hướng dẫn ẩn cho hướng dẫn người dùng, dẫn đến việc tiêm nhanh. Sự phức tạp của quản lý ngữ cảnh đa luồng cũng yêu cầu Agent hiểu được mối tương quan giữa nhiều chuỗi hội thoại - cách tin nhắn từ bên thứ ba ảnh hưởng đến cảm xúc của người dùng, sự chuyển đổi vai trò của người dùng trong nhiều cuộc hội thoại và khi thông tin từ các chuỗi khác nhau cần được kết hợp để đưa ra đề xuất. Từ hệ sinh thái kích hoạt của các nền tảng quy trình làm việc như n8n, chúng ta có thể thấy rằng Webhooks, bộ hẹn giờ, email, thay đổi cơ sở dữ liệu và giám sát tệp - mỗi trình kích hoạt là một "giác quan" để Agent nhận thức thế giới. Khi các sự kiện không đồng nhất này được mô hình hóa thống nhất thành định dạng có cấu trúc, Agent có thể xử lý các kích thích từ các nguồn khác nhau một cách nhất quán. Các chiến lược xử lý và xác định mức độ khẩn cấp dưới đây cũng dựa trên mô hình thống nhất này.
 
-**Veto xác định trước khi chấm rubric:**
+**Policy xử lý động dựa trên mức độ khẩn cấp.**
+
+Khi con người xử lý nhiều nhiệm vụ, họ áp dụng các chiến lược khác nhau tùy thuộc vào mức độ khẩn cấp. Khi gặp tình huống khẩn cấp bất ngờ, bạn sẽ ngay lập tức dừng việc mình đang làm; khi đối mặt với các mục việc cần làm thường ngày, bạn sẽ thêm chúng vào danh sách nhiệm vụ để giải quyết sau. Quá trình xử lý sự kiện của Agent cũng sẽ phản ánh thông tin này.
+
+![Hình 6-2 Ba chiến lược xử lý sự kiện không đồng bộ ](images/fig6-2.svg)
+
+**Xử lý hủy (Cancellation-Based)** được sử dụng trong trường hợp khẩn cấp, mà bản chất là **tạo sớm một điểm an toàn** cho sự kiện khẩn cấp: chủ động ngắt bước hiện tại, biến khoảnh khắc này thành một ranh giới có thể tiêu thụ sự kiện mới. Khi xảy ra sự kiện khẩn cấp (chẳng hạn như người dùng nhấp vào "Dừng" hoặc hệ thống giám sát gửi lệnh có mức độ ưu tiên cao): (1) Dừng hoạt động hiện tại - nếu LLM đang suy luận, hãy hủy phản hồi phát trực tuyến ngay lập tức; nếu một công cụ đồng bộ hóa đang thực thi, hãy gửi tín hiệu hủy; (2) Xóa hàng đợi đang chờ xử lý và xóa tất cả các sự kiện; (3) Nối các sự kiện trong hàng đợi và sự kiện khẩn cấp vào cuối đường đua; (4) Gọi lại ngay LLM, lấy trajectory hoàn chỉnh được cập nhật làm đầu vào để đánh giá tình hình. Ví dụ: nếu người dùng nhập "Dừng lại! Tôi đã nói sai" khi Agent thực hiện một thao tác có thể sai, Agent sẽ ngay lập tức nhìn thấy thông tin nhập mới này và hiểu lại ý định thực sự, từ đó tránh thực hiện thao tác sai.
+
+**Xếp hàng** được sử dụng cho các sự kiện thông thường. Khi các sự kiện không khẩn cấp đến (chẳng hạn như các công cụ không đồng bộ trả về kết quả hoặc người dùng gửi thông tin bổ sung): (1) Đặt sự kiện vào cuối hàng đợi mà không làm gián đoạn hoạt động hiện tại; (2) Đợi thao tác hiện tại hoàn tất - để LLM hoàn thành suy luận và để công cụ đồng bộ hoàn tất việc thực thi; (3) Khi bất kỳ lệnh gọi công cụ nào hoàn thành và trả về `tool.result`, hãy kiểm tra hàng đợi và nếu hàng đợi không trống, hãy thêm tất cả các sự kiện vào trajectory cùng một lúc; (4) LLM xử lý toàn diện trajectory được cập nhật. Điều này thực hiện xử lý hàng loạt và cải thiện hiệu quả - ví dụ: sau khi Agent gọi công cụ tìm kiếm, người dùng sẽ thêm "chỉ xem kết quả của tháng trước" trong khi chờ đợi. Thông tin bổ sung này được đưa vào hàng đợi và khi kết quả tìm kiếm được trả về, hai sự kiện sẽ được hiển thị cùng nhau cho LLM, tránh các chuyến đi khứ hồi không cần thiết.
+
+**Xử lý song song (Song song)** được sử dụng cho các truy vấn nhẹ độc lập. Ví dụ: khi Agent đang phân tích một lượng lớn dữ liệu, người dùng đột nhiên hỏi "Thời tiết hôm nay thế nào?" Loại truy vấn này có ba đặc điểm: không liên quan đến nhiệm vụ chính, yêu cầu phản hồi nhanh và chi phí thực hiện thấp. Không nên sử dụng xử lý hủy (sẽ làm gián đoạn các tác vụ chính quan trọng) cũng như xử lý hàng đợi (khiến người dùng phải chờ quá lâu). Trước tiên, hệ thống xác định tính độc lập và độ phức tạp của truy vấn, sau đó thực hiện truy vấn đó một cách độc lập trong phiên suy luận song song, gọi các công cụ cần thiết để tạo phản hồi và trả về ngay lập tức. Truy vấn và phản hồi được thêm vào trajectory của tác vụ chính và được đánh dấu rõ ràng là "được thực thi song song với tác vụ chính" để tránh nhầm lẫn LLM.
+
+**Xác định tính cấp thiết.**
+
+Sự kiện khẩn cấp: gián đoạn người dùng (`user.interrupt`), hướng dẫn giám sát (`supervisor.instruction`), gián đoạn Agent (`agent.interrupt`), kích hoạt bên ngoài được đánh dấu là khẩn cấp (chẳng hạn như cảnh báo hệ thống, lỗi thanh toán).
+
+Sự kiện không khẩn cấp: Đầu vào chung của người dùng (`user.input`), đầu vào Agent (`agent.input`), kết quả công cụ (`tool.result`), bộ kích hoạt hẹn giờ (`timer.trigger`), bộ kích hoạt chung bên ngoài.
+
+Các quy tắc được mã hóa cứng có những hạn chế và ngữ nghĩa của sự kiện xác định phương pháp xử lý - "Dừng ngay" sử dụng phương thức hủy, "Thời tiết hôm nay thế nào" sử dụng phương pháp song song và "Báo cáo cần được gửi cho tôi bằng tiếng Trung" sử dụng phương thức xếp hàng. **Nên sử dụng phân loại nhẹ LLM làm bộ định tuyến sự kiện** để nhanh chóng xác định chiến lược nào sẽ được sử dụng khi sự kiện diễn ra.
+
+Sau đây là thử nghiệm Agent xử lý email theo hướng sự kiện để triển khai chiến lược xử lý sự kiện trên thành một triển khai có thể chạy được.
+
+**Định tuyến event loop:**
 
 ```python
-deterministic = verify_state_policy_and_claims(trajectory, outcome)
-if deterministic.veto:
-    return FAIL(reason = deterministic.evidence)
+while runtime.is_alive:
+    events = queue.take_batch()
 
-rubric_result = judge(answer, rubric, evidence)
-return aggregate_with_confidence(rubric_result)
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
 ```
 
-Đưa Rubric cùng câu trả lời thực tế của Agent cho mô hình đánh giá để nhận điểm và lý do theo từng tiêu chí. Khi tổng hợp hàng chục ca rồi xem lại các trajectory có điểm thấp, ta có thể biến một nhận xét mơ hồ như “tỷ lệ thành công giảm” thành chẩn đoán cụ thể: không truy xuất được dữ kiện, nối sai quan hệ giữa các nhân vật, hay tự thêm thông tin không có căn cứ. Rubric vì thế không chỉ cho biết hệ thống đạt bao nhiêu điểm, mà còn chỉ ra nên sửa ở đâu.
-
-> **Thử nghiệm 6-3 ★★: Xây dựng hệ thống đánh giá bộ nhớ người dùng dựa trên Rubric**
+> **6-1 thử nghiệm ★★★: Xử lý email theo sự kiện Agent**
 >
-> **Điều kiện tiên quyết**: Cần phải hoàn thành Thử nghiệm bộ nhớ người dùng Chương 3 (`chapter3/user-memory-evaluation`).
 >
-> Thử nghiệm này yêu cầu chuyển đổi khung `chapter3/user-memory-evaluation` trong Chương 3 và nâng cấp cơ chế tính điểm hiện tại dựa trên LLM-as-a-Judge đơn giản thành hệ thống đánh giá Rubric đa chiều có cấu trúc. Hệ thống hiện tại sử dụng một lệnh gọi LLM duy nhất để trả về đạt/không đạt cùng với lý do đánh giá và thiếu khả năng chẩn đoán có cấu trúc.
+> ![Hình 6-3 Thí nghiệm 6-1 Kiến trúc Agent hướng sự kiện ](images/fig6-3.svg)
 >
-> Thiết kế khung Rubric đa chiều thống nhất phù hợp cho tất cả các nhiệm vụ ba cấp. Các khía cạnh đánh giá bao gồm: tính chính xác về mặt thực tế (Độ chính xác - bao nhiêu thông tin được cung cấp là chính xác) để xác minh xem số/ngày/tên có nhất quán với thông tin được ghi nhớ hay không; tính đầy đủ thực tế (Nhớ lại - bao nhiêu thông tin cần cung cấp được thu hồi (tối đa) xác minh rằng tất cả thông tin liên quan đã được cung cấp và không thiếu nội dung chính; tính đúng đắn của tư duy kiểm tra xem các mối quan hệ và logic tiềm ẩn giữa thông tin có được hiểu chính xác hay không; chủ động suy nghĩ đánh giá xem các đề xuất hoặc lời nhắc rủi ro ngoài câu trả lời trực tiếp có được đưa ra khi thích hợp hay không; phát hiện ảo giác đảm bảo rằng thông tin không tồn tại trong bộ nhớ không bị giả mạo.
 >
-> Hệ thống chấm điểm 4 cấp độ (xuất sắc/tốt/đạt/rớt), mỗi cấp độ được trang bị các tiêu chí cụ thể thay vì mô tả trừu tượng. Thứ nguyên ảo giác được đặt làm vật phẩm phủ quyết. Cung cấp các ví dụ và trường hợp đặc biệt cho từng chiều.
+> Thử nghiệm này xây dựng Agent theo sự kiện đơn giản nhất: **Trợ lý xử lý email tự động**. Agent giám sát hộp thư đến email và tự động kích hoạt quá trình xử lý mỗi khi nhận được email mới - phân loại, tóm tắt, soạn thảo thư trả lời và thông báo cho người dùng khi cần thiết. Đây là kịch bản cấp đầu vào trực quan nhất dành cho Agent theo hướng sự kiện: một sự kiện bên ngoài (sự xuất hiện của một email mới) sẽ kích hoạt một chu trình suy nghĩ Agent hoàn chỉnh.
 >
-> **Thử nghiệm 6-4 ★★: Đánh giá so sánh giữa Thẻ JSON nâng cao và RAG**
+> **Mục tiêu thử nghiệm** là hiểu khái niệm cốt lõi của hướng sự kiện: Agent không còn chỉ thụ động chờ dữ liệu đầu vào của người dùng mà có thể thực hiện các hành động chủ động để phản hồi các sự kiện bên ngoài. Thông qua thử nghiệm này, người đọc sẽ nắm vững cách đăng ký nguồn sự kiện, hàng đợi sự kiện và vòng lặp khép kín cơ bản của "sự kiện đến → xử lý Agent → kết quả đầu ra".
 >
-> **Điều kiện tiên quyết**: Cần phải hoàn thành Chương 3 Bộ nhớ người dùng và Thử nghiệm RAG (`chapter3/user-memory`, `chapter3/agentic-rag-for-user-memory`).
+> **Nguồn sự kiện và hàng đợi sự kiện.**
 >
-> **Mục tiêu**: So sánh công bằng phạm vi hiệu quả của bộ nhớ có cấu trúc và truy xuất phi cấu trúc trên cùng một bộ đánh giá. Tái sử dụng hai dự án ở Chương 3 và so sánh ba cấu hình trên 60 ca của `chapter3/user-memory-evaluation`: chỉ dùng Advanced JSON Cards, chỉ dùng RAG, và cấu hình kết hợp giữ các dữ kiện cốt lõi trong context còn hội thoại gốc được truy xuất khi cần.
+> Hệ thống hỗ trợ truy cập thống nhất vào nhiều nguồn sự kiện:
 >
-> **Chấp nhận**: Ghi lại tỷ lệ thành công, số bước trung bình, số lần gọi công cụ, độ trễ và chi phí ở ba mức độ phức tạp (thu hồi cơ bản / phân biệt nhiều phiên / liên kết ẩn giữa các phiên) và làm rõ ranh giới lỗi của từng giải pháp - điều gì bị mất trong cấu trúc, điều gì bị bỏ sót khi truy xuất và liệu có sự phối hợp thực sự trong quá trình trộn hay không. Xem kho lưu trữ hỗ trợ để biết chi tiết cấu hình và trường hợp thử nghiệm.
+> - **Sự kiện thư**(`on_email_received`): Được kích hoạt khi có thư mới đến bằng cách kiểm tra hộp thư đến của bạn thường xuyên hoặc nhận thông báo đẩy
+> - **Tin nhắn IM/SMS**(`on_im_message`, `on_sms_message`): được kích hoạt bởi tin nhắn trò chuyện
+> - **Sự kiện GitHub**(`on_github_pr_update`, `on_github_issue_update`): PR xem xét bình luận, thay đổi trạng thái
+> - **Trình kích hoạt hẹn giờ**(`on_timer_expire`): các tác vụ đã lên lịch (chẳng hạn như tóm tắt hàng ngày, tạo báo cáo hàng tuần)
+> - **Webhook**(`on_webhook_received`): Gọi lại hệ thống bên ngoài chung
+> - **Sự kiện hệ thống**(`on_user_inactive`, `on_process_timeout`, `on_resource_alert`): Thay đổi trạng thái nội bộ
 >
-
-Thử nghiệm đi kèm dùng cùng 60 câu hỏi cho ba hệ thống và lưu lại 180 trajectory gọi API thực. Bảng 6-3 ghi cả số câu thành công bên cạnh tỷ lệ tổng thể để kích thước mẫu không bị che khuất.
-
-Bảng 6-3 Tỷ lệ thành công theo độ khó của ba hệ thống bộ nhớ
-
-| Hệ thống | Nhớ lại cơ bản | Phân giải nhiều phiên | Liên hệ ẩn giữa các phiên | Tổng thể |
-|---|---:|---:|---:|---:|
-| Advanced JSON Cards | 95% | 60% | 50% | 68.3% (41/60) |
-| RAG | 90% | 40% | 15% | 48.3% (29/60) |
-| Kết hợp | 80% | 70% | 50% | 66.7% (40/60) |
-
-Điểm đáng chú ý nhất là kết hợp hai cách không tự động tạo ra kết quả tốt hơn. Hệ thống kết hợp giải được 3 câu mà cả hai hệ thống đơn lẻ đều trượt, nhưng ở 8 câu khác lại kém hơn hệ thống đơn lẻ tốt nhất. So với phương án đơn lẻ tốt nhất cho từng câu, reward trung bình của nó thấp hơn 0.092. RAG gần ngang thẻ có cấu trúc ở phần nhớ lại cơ bản, nhưng chỉ đạt 15% với liên hệ giữa các phiên. Tìm được đoạn hội thoại liên quan mới là bước đầu; Agent còn phải ghép đúng người, thời gian và sự kiện.
-
-Một con số khác dễ bị bỏ qua: điều kiện phủ quyết do hallucination đã kích hoạt 28 lần trong 180 lượt chấm. Đây không phải chi tiết trang trí trong Rubric mà thực sự làm thay đổi kết quả. Khi xây hệ thống, không nên mặc định “có cấu trúc + RAG” sẽ cộng hưởng. Hãy xem từng cách thất bại ở mỗi mức độ khó rồi mới quyết định dữ kiện nào thường trú và câu hỏi nào kích hoạt truy xuất. Kết quả này đến từ ca tổng hợp và một cấu hình model/judge duy nhất; nó giúp hiểu cơ chế thành công và thất bại, chứ không tạo ra bảng xếp hạng phổ quát.
-
-Các kết luận trên còn giả định mô hình đánh giá đủ đáng tin. Nếu Agent và judge cùng một họ model, chúng có thể chia sẻ sở thích và điểm mù. Phần tiếp theo bàn về vấn đề này.
-
-**Các vấn đề về mô hình tương đồng và đánh giá đa nguồn.**
-
-Khi Agent thuộc cùng dòng với mô hình đánh giá, Agent có thể học cách khai thác các sở thích và điểm mù của mô hình đánh giá.
-
-**Đây là điều mà Định luật Goodhart nói: khi một số liệu trở thành mục tiêu tối ưu hóa, thì số liệu đó không còn là một số liệu tốt nữa.** Agent Càng rèn luyện hoặc điều chỉnh theo một hệ thống tính điểm nhất định, bạn càng có xu hướng khai thác những sơ hở của hệ thống này thay vì thực sự cải thiện khả năng của mình.
-
-Bí mật hơn, Agent cũng sẽ dần học cách tránh những loại lỗi mà mô hình đánh giá không giỏi phát hiện, khiến hệ thống tính điểm trông bình thường.
-
-Policy giảm nhẹ là **đánh giá không đồng nhất nhiều nguồn** - sử dụng nhiều LLM từ các họ mô hình khác nhau để đánh giá riêng (ví dụ: Agent sử dụng Claude và GPT-5 và Gemini được sử dụng để đánh giá). Thành kiến của các gia đình khác nhau thường trực giao, Agent khó có thể “lừa dối” tất cả giám khảo cùng một lúc. Sử dụng cùng một Rubric để đảm bảo mọi người đều đánh giá cùng một mục tiêu và tổng hợp kết quả thông qua kiểm tra tính nhất quán hoặc mức trung bình có trọng số. Giai đoạn triển khai có thể được đánh giá nhanh chóng bằng một mô hình duy nhất, nhưng việc kiểm tra chất lượng phải được thực hiện thường xuyên với sự đánh giá hoàn chỉnh từ nhiều nguồn.
-
-Đánh giá đa nguồn giải quyết vấn đề “sử dụng mô hình nào để đánh giá”; Bước tiếp theo là giải quyết vấn đề "đánh giá phương thức nào" - mở rộng khả năng của LLM-as-a-Judge từ văn bản sang giọng nói, hình ảnh và video là một khía cạnh khác của phạm vi đánh giá.
-
-**Đa phương thức LLM-as-a-Judge.**
-
-Đánh giá đa phương thức mở rộng LLM-as-a-Judge sang các lĩnh vực giọng nói, hình ảnh và video. Bốn hướng chung như sau.
-
-- **Đánh giá TTS**(TTS hay còn gọi là Text-to-Speech, chuyển văn bản thành giọng nói): đánh giá độ chính xác, độ tự nhiên, tính nhất quán về âm sắc và biểu hiện cảm xúc. Các kích thước này có thể phát hiện ra các vấn đề về ngữ điệu khó nắm bắt bằng WER (Tỷ lệ lỗi từ) truyền thống.
-- **Đánh giá ASR**(ASR là Nhận dạng giọng nói tự động, nhận dạng giọng nói): Đưa ra phán đoán tác động ngữ nghĩa - Lỗi nhận dạng "Today's fashion" là vô hại, nhưng "chuyển một nghìn" thành "mười nghìn" có thể gây ra hậu quả nghiêm trọng.
-- **Đánh giá giao diện người dùng**: Sử dụng cơ chế **Người đề xuất-Người đánh giá**(Proposer-Reviewer) để kiểm tra các vấn đề như tràn văn bản, độ tương phản màu, vị trí nút, v.v. Ở đây, người đề xuất-người đánh giá được sử dụng làm phương pháp đánh giá, khác với cách sử dụng làm thành phần hệ thống tạo trong Chương 5, nhưng cơ chế cốt lõi giống nhau - một mô hình được tạo và một mô hình khác được xem xét độc lập.
-- **Đánh giá video clip**: Xác minh điểm bắt đầu và điểm kết thúc chính xác của clip cũng như việc áp dụng các hiệu ứng đặc biệt thông qua các khung hình chính.
-
-### Quy trách nhiệm thất bại và hồi quy theo tiền tố trajectory
-
-Đánh giá end-to-end thường chỉ trả lời “đạt” hoặc “không đạt”. Để kết quả dẫn tới sửa chữa, với mỗi trajectory thất bại hãy ghi loại lỗi, bước đầu tiên không chấp nhận được, lời gọi công cụ hoặc đầu ra mô hình liên quan và bằng chứng có thể kiểm tra. Tín hiệu bad case gồm người dùng sửa trực tiếp, phản hồi tiêu cực hoặc kiểm tra trạng thái/quy tắc sau đó. LLM có thể hỗ trợ nhưng vẫn cần người đọc vì nguyên nhân thường là vấn đề sản phẩm.
-
-Với Coding Agent, các nhóm ban đầu là thiếu quy trình/quy tắc kho, lỗi công cụ/định dạng, kết thúc bất thường và lỗi logic/độ hoàn tất. Lưu bản ghi JSON/YAML có số bước, công cụ, quan sát, nguyên nhân gốc so với hậu quả, khả năng khôi phục và độ tin cậy, cùng trạng thái, phiên bản và trajectory đầy đủ.
-
-**Hồi quy end-to-end** chạy toàn bộ quy trình; **hồi quy trajectory-prefix** đóng băng ngữ cảnh, hội thoại, kết quả công cụ và trạng thái ngay trước lỗi đầu tiên rồi chỉ kiểm tra hành động quan sát được tiếp theo. Định nghĩa tập hành động được chấp nhận (đọc quy tắc, hỏi người dùng, từ chối thao tác nguy hiểm) và hành động cấm thay vì một đáp án duy nhất; tách dữ liệu đánh giá khỏi dữ liệu huấn luyện.
-
-> **Thử nghiệm 6-5 ★★: Đánh giá ranh giới trajectory-prefix với nhiều mã hóa**
+> Tất cả các sự kiện đều được đưa vào một **hàng đợi sự kiện** thống nhất và được xử lý theo thứ tự đến. Mỗi sự kiện kích hoạt một vòng suy nghĩ Agent độc lập: Agent đọc nội dung sự kiện, gọi các công cụ liên quan (như truy vấn cơ sở kiến thức, đọc tệp đính kèm, tìm kiếm lịch sử email liên quan), tạo kết quả xử lý (nhãn danh mục, tóm tắt, trả lời nháp) và cuối cùng thông báo cho người dùng thông qua các công cụ thông báo hoặc thực hiện các thao tác trực tiếp.
 >
-> Cung cấp bộ nhớ người dùng đã biết, chỉ dẫn hiện tại, trajectory prefix, kết quả công cụ và trạng thái môi trường; mô hình chỉ trả về hành động quan sát được kế tiếp. 11 ca được mã hóa bằng JSON Cards, Markdown và Python-like rồi kiểm tra bằng quy tắc xác định. 33/33 ô hoàn tất không lỗi API, mỗi cách mã hóa đạt 6/11; đổi biểu diễn không tự sửa được chính sách sử dụng.
+> **Kịch bản xác minh**: Định cấu hình Agent để giám sát hộp thư kiểm tra. Mô phỏng nhận ba email - lời mời họp, khiếu nại của khách hàng và quảng cáo tiếp thị. Agent Xử lý theo trình tự: tự động kiểm tra xung đột lịch và bản nháp chấp nhận/từ chối phản hồi cho lời mời họp; trích xuất những thông tin quan trọng về khiếu nại của khách hàng và đánh dấu chúng là mức độ ưu tiên cao, thông báo cho người dùng để xử lý; tự động lưu trữ các quảng cáo tiếp thị. Toàn bộ quá trình không cần sự can thiệp của người dùng.
 
-> **Thử nghiệm 6-6 ★★: Xây dựng quy trình đánh giá chất lượng TTS hoàn toàn tự động**
->
-> Thử nghiệm này yêu cầu thiết kế và triển khai hệ thống đánh giá chất lượng LLM-as-a-Judge TTS đa phương thức hoàn chỉnh ngay từ đầu.
->
-> Thiết kế TTS đa chiều Rubric: Chiều chính xác xác minh xem tất cả các từ có được đọc chính xác hay không (không thiếu sót/đọc sai/thêm), chiều tự nhiên đánh giá xem lời nói có mượt mà hay không (có cảm giác máy móc, ngắt quãng không tự nhiên và nhịp điệu có phù hợp với thói quen của con người hay không), chiều biểu hiện cảm xúc kiểm tra xem giọng điệu có phù hợp với màu sắc cảm xúc của văn bản hay không (giọng lên của câu nghi vấn, nhấn mạnh) về câu cảm thán, tốc độ nói chậm và âm trầm của nội dung buồn) và chiều nhất quán âm sắc đánh giá độ giống nhau của người nói khi có giọng tham chiếu (mô hình đa phương thức đồng thời nhận cả giọng tham chiếu và so sánh giọng tổng hợp).
->
-> Xây dựng kho ngữ liệu đa dạng về độ dài, thể loại, cảm xúc, con số, tên riêng, cách phát âm dễ nhầm và phương ngữ. Mô-đun TTS có thể kết nối OpenAI, ElevenLabs, Fish Audio, Minimax hoặc Doubao. Một judge đa phương thức nhận trực tiếp audio sẽ đánh giá đồng thời giọng tổng hợp, văn bản gốc, audio tham chiếu và Rubric. Ngoài phân tích điểm theo từng chiều, cần lưu tên model đánh giá cùng hash của audio tham chiếu và từng ứng viên để có thể kiểm tra lại kết quả.
->
+Thử nghiệm 6-1 trình diễn mô hình hướng sự kiện đơn giản nhất - các sự kiện được đưa vào hàng đợi và Agent lần lượt xử lý chúng. Nhưng khi Agent cần phản hồi các gián đoạn trong quá trình thực thi một công cụ chạy dài hoặc quản lý nhiều tác vụ đồng thời cùng lúc thì hàng đợi sự kiện đơn giản là không đủ. Những thách thức kỹ thuật sâu hơn sẽ được thảo luận tiếp theo.
 
-Kho đi kèm lưu một pilot nghe trực tiếp quy mô nhỏ. OpenAI và Fish Audio mỗi bên tạo bốn mẫu—số, từ dễ đọc nhầm, câu dài và giọng hào hứng—rồi Voxtral chấm cả tám audio theo bốn chiều trên. Hai bên cùng đạt 5.00 về độ chính xác và 4.00 về độ tự nhiên. Fish Audio đạt 4.00 về biểu cảm và 3.00 về độ nhất quán giọng; OpenAI lần lượt là 3.75 và 2.75. Tách các chiều giúp thấy khác biệt về giọng điệu và âm sắc ngay cả khi khả năng đọc đúng văn bản ngang nhau.
+### Triển khai dự án: Làm thế nào để mô hình đồng bộ hỗ trợ gián đoạn không đồng bộ
 
-Tám mẫu chưa đủ để kết luận dịch vụ nào tốt hơn. Mỗi bên chỉ có bốn mẫu, và quan trọng hơn, audio tham chiếu cố định được tạo bởi Fish S1 nên phép so độ giống giọng vốn đã có lợi cho Fish Audio. Nếu so TTS phổ thông, không nên đưa tiêu chí “giống giọng tham chiếu Fish” vào tổng điểm. Nếu so voice cloning, mọi hệ thống phải bắt chước cùng một người nói và điểm của model cần được hiệu chỉnh bằng nghe mù của con người. **Việc chọn câu trả lời, hình ảnh hay audio tham chiếu là một phần của thiết kế đánh giá, không phải bước chuẩn bị trung tính trước thí nghiệm.**
+Thử nghiệm 6-1 chỉ xử lý các sự kiện nối tiếp - các sự kiện lần lượt vào hàng đợi và Agent xử lý chúng lần lượt. Bây giờ hãy quay lại mâu thuẫn “đào tạo đồng bộ/triển khai không đồng bộ” được nêu ở đầu phần này: Định dạng đồng bộ nên giải quyết sự gián đoạn đột ngột của người dùng khi công cụ chưa quay trở lại như thế nào? Phần này cung cấp các giải pháp kỹ thuật hiện tại trong ngành.
 
-Rubric viết tay phù hợp để nhanh chóng tạo các chiều chẩn đoán này. Khi quy mô tăng, có thể huấn luyện **mô hình phần thưởng sinh** để tự động hóa việc chấm; Chương 7 trình bày phương pháp huấn luyện.
+Trước tiên hãy sử dụng một kịch bản cụ thể để minh họa mâu thuẫn này. Giả sử Agent đang giúp người dùng soạn thảo một email (gọi công cụ: tìm kiếm thông tin liên hệ). Trước khi kết quả tìm kiếm được trả về, người dùng đột nhiên nói: "Đợi một chút, trước tiên hãy giúp tôi kiểm tra thời tiết ngày mai." Trong vòng lặp ReAct được đồng bộ hóa, Agent phải đợi tìm kiếm quay trở lại trước khi xử lý tin nhắn tiếp theo - vì API yêu cầu rằng "sau khi phát ra lệnh gọi công cụ, tin nhắn tiếp theo phải là kết quả của công cụ". Nhưng trong thế giới thực không đồng bộ, các sự kiện có thể làm gián đoạn các nhiệm vụ đang diễn ra bất cứ lúc nào. Làm thế nào để diễn đạt ngữ nghĩa của "ngắt không đồng bộ" dưới các ràng buộc của "định dạng đồng bộ" chính xác là câu hỏi cần được trả lời bằng kế hoạch kỹ thuật sau đây.
 
-Trong việc lựa chọn mô hình thực tế, câu hỏi chúng ta thường gặp là: "Cái nào tốt hơn, A hay B?" So sánh từng cặp cung cấp một cách đánh giá không dựa vào điểm số tuyệt đối.
+**Phương pháp kỹ thuật: thực hiện đồng bộ hóa mô phỏng không đồng bộ.**
 
-#### Lỗi định dạng tài liệu nhạy với phạm vi
+Ý tưởng cốt lõi là: **Trong điều kiện bình thường không xảy ra gián đoạn, hãy để LLM xem trajectory đồng bộ hóa tiêu chuẩn và chỉ chèn phần giữ chỗ để sửa định dạng khi xảy ra gián đoạn**. Dưới đây là năm quy tắc chính:
 
-Khi người dùng nói "định dạng dấu ngoặc kép sai", ta không thể biến điều đó thành một phép thay thế ký tự toàn cục. Ít nhất phải phân biệt dấu ngoặc thẳng ASCII (`"`, `'`), dấu ngoặc cong tiếng Trung (`“”`, `‘’`) và dấu backtick Markdown (`` ` ``). Cùng một ký tự đảm nhận vai trò cú pháp khác nhau trong văn xuôi tiếng Trung, nguyên bản tiếng Anh được trích, mã nội dòng, khối mã, chú thích mã, JSON và đường dẫn.
+**Quy tắc 1**: LLM ghi lại tin nhắn trợ lý (bao gồm suy nghĩ, nội dung và lệnh gọi công cụ) ngay khi xuất ra.
 
-Dữ liệu đánh giá nên phân tích tài liệu thành các đoạn có phạm vi trước đã — ví dụ `ZH_PROSE`, `EN_PROSE`, `QUOTED_SOURCE`, `INLINE_CODE`, `CODE_BLOCK`, `CODE_COMMENT` và `JSON_OR_SCHEMA`. Mỗi đoạn lưu tập phép biến đổi được phép, các ký tự bắt buộc phải bảo vệ, và kết quả của bộ kiểm tra sau khi sửa. Ba trường hợp dưới đây không thể xử lý bằng cùng một quy tắc thay thế:
+**Quy tắc 2**: Kết quả dao chỉ được ghi lại sau khi lệnh gọi dao hoàn tất. Dấu vết thực thi ở trạng thái "Đã hoàn thành một phần".
+
+**Quy tắc 3**: Sự gián đoạn trong quá trình thực thi công cụ cần có phần giữ chỗ. Tạo phản hồi giữ chỗ cho công cụ chưa hoàn thành (chẳng hạn như "Công cụ đang thực thi ở chế độ nền, vui lòng xử lý các sự kiện mới trước"), nối thêm sự kiện gián đoạn và gọi lại LLM. Từ góc độ của LLM, thông báo trợ lý vẫn có kết quả công cụ phù hợp.
+
+**Quy tắc 4**: LLM Việc gián đoạn trong quá trình suy nghĩ sẽ trực tiếp loại bỏ suy nghĩ hiện tại. Nếu không viết ra trajectory, các sự kiện mới sẽ được bổ sung trực tiếp và một vòng suy nghĩ mới được bắt đầu.
+
+**Quy tắc 5**: Các sự kiện không gián đoạn sẽ được đưa vào hàng đợi và chờ xử lý hàng loạt. Nó sẽ chỉ được thêm vào một lần sau khi chu kỳ hiện tại hoàn thành.
+
+Lấy việc người dùng ngắt lời để hỏi về thời tiết khi Agent đang soạn email làm ví dụ. Quy trình hoạt động của 5 quy tắc này như sau:
+
+1. Agent gọi `search_contacts` để tìm kiếm thông tin liên lạc và tin nhắn trợ lý ngay lập tức được ghi vào trajectory (Quy tắc 1).
+2. Khi công cụ tìm kiếm chưa trả về kết quả, người dùng gửi "Giúp tôi kiểm tra thời tiết ngày mai trước". Vì đây là sự gián đoạn của người dùng nên hệ thống sẽ tạo kết quả công cụ giữ chỗ cho `search_contacts` chưa hoàn thành ("Công cụ đang thực thi ở chế độ nền, vui lòng xử lý các sự kiện mới trước", quy tắc 3), sau đó thêm truy vấn thời tiết của người dùng vào trajectory và gọi lại LLM. Tại thời điểm này, định dạng trajectory mà LLM nhìn thấy là hoàn toàn hợp pháp—thông báo hỗ trợ và kết quả công cụ được ghép nối hoàn hảo.
+3. Sau khi hoàn thành truy vấn thời tiết và người dùng được trả lời, kết quả `search_contacts` ban đầu sẽ xuất hiện và được thêm vào trajectory dưới dạng một sự kiện mới (Quy tắc 2). Agent đọc thông tin liên hệ và tiếp tục soạn thảo email.
+
+Ưu điểm cốt lõi của giải pháp này là: **Trong điều kiện bình thường, LLM có trajectory đồng bộ hóa hoàn hảo**—thông báo hỗ trợ và kết quả công cụ được khớp hoàn toàn, trình tự thời gian rõ ràng và không có phần giữ chỗ hoặc trạng thái bất thường. Đây là phương pháp thân thiện nhất với LLM hiện tại dựa trên mô hình đào tạo đồng bộ, đảm bảo chất lượng tư duy ở mức cao nhất. Chỉ đưa ra “sự thỏa hiệp cần thiết” của các phần giữ chỗ khi sự gián đoạn thực sự cần thiết.
+
+Nhưng vẫn có nguy cơ làm trầm trọng thêm ảo giác. Trong trường hợp này, mặc dù trình giữ chỗ tuyên bố rõ ràng rằng công cụ này "chưa hoàn thiện", hệ thống vẫn có thể "chế tạo" một công cụ dẫn đến suy nghĩ tiếp theo, nhầm tưởng rằng công cụ đó đã trả về dữ liệu hợp lệ và đưa ra các quyết định không phù hợp dựa trên kết quả hư cấu này. Điều này là do trong phần lớn các trajectory mà mô hình nhìn thấy trong quá trình đào tạo, các lệnh gọi công cụ sẽ ngay lập tức dẫn đến kết quả thực và mô hình không bao giờ học cách giải quyết tình huống "kết quả vẫn chưa quay lại". Do đó, trong thực tế, nó chỉ bị gián đoạn khi thực sự khẩn cấp (người dùng yêu cầu dừng rõ ràng) và các sự kiện không khẩn cấp được đưa vào hàng đợi để xử lý hàng loạt.
+
+**Giao diện công cụ không đồng bộ phù hợp với các mô hình hiện có.**
+
+Do giả định đồng bộ hóa của mô hình khó bị phá vỡ nên chiến lược cơ bản hơn là áp dụng ngữ nghĩa không đồng bộ từ cấp độ thiết kế của giao diện công cụ.
+
+Thiết kế công cụ truyền thống ngụ ý ngữ nghĩa "gọi và thế là xong". Ví dụ: tên `phone_call` ngụ ý rằng "cuộc gọi sẽ thực hiện cuộc gọi và đợi cuộc gọi kết thúc, trả lại nhật ký cuộc gọi". Trong mô hình không đồng bộ, "bắt đầu" và "hoàn thành" phải được tách riêng:
+
+- `initiate_phone_call`: Bắt đầu cuộc gọi điện thoại, trả về ngay mã định danh nhiệm vụ và trạng thái ban đầu (chẳng hạn như "Đã bắt đầu cuộc gọi, đang quay số")
+- Thông báo tiến trình cuộc gọi qua sự kiện (`phone_call_connected`, `phone_call_ended`)
+
+Điều quan trọng là tên và mô tả của công cụ này truyền tải ngữ nghĩa không đồng bộ. Khi một mô hình nhìn thấy `initiate_phone_call`, khả năng hiểu ngôn ngữ của nó tự nhiên suy ra rằng đây là "sự khởi đầu" chứ không phải là "sự hoàn thành". Mô tả công cụ cần củng cố thêm điều này: "Công cụ này sẽ bắt đầu tác vụ cuộc gọi điện thoại do trẻ Agent xử lý. Sau khi tác vụ được khởi tạo thành công, ID tác vụ sẽ được trả về ngay lập tức và bạn có thể tiếp tục làm những việc khác. Một sự kiện thông báo riêng sẽ được nhận khi cuộc gọi kết thúc."
+
+**Vấn đề mất tập trung trong xử lý hàng đợi.**
+
+Khi xử lý các sự kiện theo lô, mô hình thường chỉ tập trung vào sự kiện cuối cùng. Nguyên nhân cốt lõi là các mô hình được đào tạo để phản ứng với đầu vào mới nhất và các sự kiện hàng loạt phá vỡ giả định này.
+
+Sự can thiệp có thể xảy ra ở hai cấp độ:
+
+**Mức độ từ mẹo**: Cho mô hình biết "Khi nhận được nhiều sự kiện liên tiếp, vui lòng đảm bảo xem xét toàn diện tất cả thông tin".
+
+**Điểm đánh dấu thanh trạng thái Agent**: Thêm điểm đánh dấu rõ ràng trước mỗi sự kiện:
 
 ```text
-Văn xuôi tiếng Trung: gọi phương thức `reset()`.
-Nguyên bản tiếng Anh được trích: “Please restart the service.”
-# khối mã dưới đây chỉ nhằm minh họa một phạm vi được bảo vệ
-# Chú thích tiếng Trung: hiển thị "trạng thái hiện tại"
-name = "status"
+[Sự kiện chưa được xử lý 1/4] Kết quả công cụ từ cơ sở dữ liệu_query:...
+[Sự kiện chưa được xử lý 2/4] Giải thích bổ sung của người dùng: Chỉ nhìn vào dữ liệu ở khu vực Bắc Kinh
+[Sự kiện chưa xử lý 3/4] Nhắc nhở hệ thống: Thời hạn báo cáo còn 30 phút nữa
+[Sự kiện chưa được xử lý 4/4] Người dùng hỏi: Tiến độ thế nào rồi?
 ```
 
-Hồi quy theo tiền tố quỹ đạo phải yêu cầu mô hình sửa tối thiểu, đồng thời kiểm tra phong cách tài liệu tiếng Trung, tỷ lệ giữ nguyên nguyên bản tiếng Anh, cú pháp mã và JSON, cùng khoảng cách chỉnh sửa trên phần văn bản không phải mục tiêu. Khi quy tắc không xác định được phạm vi, giữ nguyên văn bản gốc và yêu cầu làm rõ phải được tính là hành động được phép, chứ không phải một sửa đổi phỏng đoán tình cờ vượt qua.
+Thêm phần tóm tắt ở cuối: "Có 4 sự kiện mở ở trên, bao gồm 1 kết quả công cụ, 2 tin nhắn của người dùng và 1 cảnh báo hệ thống. Hãy đảm bảo phản hồi bao gồm tất cả thông tin."
 
-#### Lỗi sao chép chính xác: từ `old_string` mismatch đến truy vết theo từng lớp
+### Mâu thuẫn sâu sắc và định hướng tương lai
 
-Lỗi `old_string` cũng không thể quy hết cho "mô hình chép sai". Với cùng một chuỗi, hãy lưu hash byte gốc, dãy code point Unicode và dãy token ID của tokenizer, rồi tìm khác biệt đầu tiên dọc theo chuỗi sau:
 
-```text
-byte file gốc → tool trả về → serialization của Harness → context model
-→ output token → chuỗi decode → parse JSON/tool-call → tool matching
-```
+![Hình 6-4 Mô hình đào tạo đồng bộ và thực tế triển khai không đồng bộ ](images/fig6-4.svg)
 
-Bộ thăm dò đánh giá tối thiểu bao phủ việc nhắc lại trực tiếp, trích xuất từ ngữ cảnh dài, đặt vào đối số của tool, chọn giữa các chuỗi tương tự, cùng với khoảng trắng, xuống dòng, dấu gạch chéo ngược, ký tự tổ hợp Unicode và token tần suất thấp. Các chỉ số gồm byte-exact match, code-point-exact match, token-exact match, vị trí khác biệt đầu tiên và tỷ lệ thành công thực tế của tool. Nếu mô hình đúng ở thăm dò trực tiếp nhưng lời gọi tool vẫn thất bại, hãy sửa tokenizer, serialization, Harness hoặc giao thức tool; chỉ khi khác biệt đầu tiên xuất hiện ở chính đầu ra của mô hình thì mới chuyển trường hợp đó thành dữ liệu huấn luyện sao chép ở Chương 7.
 
-### So sánh theo cặp và xếp hạng mô hình
+Trong phân tích cuối cùng, các phần giữ chỗ, giao diện công cụ không đồng bộ và các điểm đánh dấu trên thanh trạng thái trong các phần trước đều đang sử dụng Prompt Engineering (kỹ thuật prompt) để bù đắp cho cùng một mâu thuẫn "đồng bộ hóa đào tạo/triển khai không đồng bộ" (Hình 6-4) - nguyên nhân của mâu thuẫn này đã được trình bày chi tiết ở đầu phần này và sẽ không được nhắc lại ở đây mà chỉ tập trung vào giải pháp cơ bản của nó.
 
-![Hình 6-5 Xếp hạng Elo và xếp hạng so sánh ghép đôi ](images/fig6-5.svg)
+**Mong chờ sự phát triển của mô hình: từ đồng bộ sang không đồng bộ.**
 
-**Xếp hạng Elo**(một hệ thống xếp hạng ban đầu được sử dụng trong cờ vua) định lượng khả năng tương đối của một mô hình thông qua một số lượng lớn các trận đấu theo cặp: chênh lệch điểm số càng lớn thì tỷ lệ thắng mong đợi của người chơi mạnh hơn càng cao. Ví dụ: nếu mô hình A đạt 1200 và mô hình B đạt 1000, hệ thống Elo sẽ dự đoán tỷ lệ thắng của A là khoảng 76%. Nếu B bất ngờ thắng, B sẽ được nhiều điểm hơn và A sẽ mất nhiều điểm hơn - kết quả ngược lại sẽ mang đến sự điều chỉnh điểm lớn hơn. Cơ chế này cho phép thứ hạng nhanh chóng hội tụ về đúng đẳng cấp. Cơ sở thống kê đằng sau nó là **mô hình Bradley-Terry**: mỗi mô hình được trừu tượng hóa thành một "điểm sức mạnh" tiềm năng. Xác suất thắng hoặc thua một cặp đấu được xác định bằng chênh lệch tỷ số giữa hai trận đấu. Elo là kỹ thuật triển khai hình thức cập nhật trực tuyến của mô hình này.
+Các kỹ thuật kỹ thuật trên về cơ bản là **sử dụng kỹ thuật nhanh chóng để bù đắp cho việc thiếu đào tạo mô hình** và là một biện pháp tạm thời trong giai đoạn chuyển tiếp. Giải pháp thực sự đòi hỏi sự thay đổi mô hình ở cấp độ đào tạo mô hình.
 
-Chatbot Arena sử dụng các cuộc đấu tay đôi ngẫu nhiên ẩn danh - người dùng mù quáng chọn những câu trả lời tốt hơn mà không biết danh tính của mô hình, với thứ hạng bắt nguồn từ hàng triệu phiếu bầu. Ưu điểm của phương pháp này là không cần xác định “tiêu chuẩn tuyệt đối”, chỉ cần con người phán đoán “A hay B nào tốt hơn”. Nhưng có những hạn chế: kết quả xếp hạng phụ thuộc vào câu hỏi mà người dùng hỏi - nếu một số lượng lớn người dùng tình cờ đặt câu hỏi về lập trình, một mô hình giỏi lập trình sẽ được xếp hạng cao hơn, điều này có thể không phản ánh đúng đẳng cấp của nó trong các nhiệm vụ khác.
+Các mô hình VLA (Vision-Language-Action, Tầm nhìn-Ngôn ngữ-Hành động, xem Chương 6 để biết chi tiết) trong lĩnh vực robot đã bắt đầu đối mặt với những thách thức tương tự: có sự chậm trễ không thể tránh khỏi giữa nhận thức và hành động. Sự thành công của VLA mở đường cho sự phát triển của mẫu Agent. Các mô hình thế hệ tiếp theo yêu cầu ba khả năng cốt lõi thông qua học tăng cường trong môi trường không đồng bộ:
 
-Khi LLM hoàn thành phán quyết ghép đôi thay vì con người bỏ phiếu, chúng ta cũng phải đề phòng Xu hướng vị trí - mô hình đánh giá sẽ ưu tiên một cách có hệ thống ứng cử viên xuất hiện ở một vị trí nhất định (thường là đầu tiên). Cho dù nội dung của hai ứng viên có hoàn toàn trái ngược nhau thì phán quyết cũng có thể không thay đổi. Phương pháp giảm thiểu tiêu chuẩn là trao đổi thứ tự và đánh giá từng trường hợp một lần: A được đánh giá một lần trước đó, B được đánh giá lại trước đó và lấy trung bình cộng của hai kết quả; một cách tiếp cận chặt chẽ hơn là chỉ tính khi hai phán đoán nhất quán và nếu chúng không nhất quán, nó sẽ được ghi là hòa hoặc gửi để xem xét thủ công. Chatbot Arena về cơ bản thực hiện điều tương tự—ngẫu nhiên hóa vị trí của hai phản hồi để các thành kiến về vị trí triệt tiêu lẫn nhau trên một cỡ mẫu lớn.
+1. **Hiểu sự đan xen không đồng bộ của các sự kiện trong trajectory**: Đây là lỗ hổng năng lực cốt lõi. Mô hình hiện tại yêu cầu một trình tự đồng bộ nghiêm ngặt, nhưng trong môi trường không đồng bộ thực sự, lệnh gọi công cụ có thể không được theo sau bởi kết quả công cụ mà là một thông báo người dùng mới; Việc suy nghĩ có thể bị gián đoạn giữa chừng, nhưng trạng thái trung gian nên được giữ lại trong quá trình theo dõi và tiếp tục suy nghĩ sau khi tin nhắn mới được xử lý thay vì bắt đầu lại từ đầu. Mô hình cần duy trì sự hiểu biết rõ ràng về trajectory "không theo thứ tự" này - những lệnh gọi công cụ nào vẫn đang chờ kết quả và những suy nghĩ nào là những phần chưa hoàn thành.
+2. **Tiếp tục những công việc và suy nghĩ bị gián đoạn**: Khi bị gián đoạn để giải quyết những tình huống khẩn cấp, vẫn nhớ những công việc còn dang dở. Ví dụ: khi Agent đang thực thi công cụ phân tích dữ liệu, người dùng đột nhiên hỏi về thời tiết. Sau khi trả lời, người dùng đương nhiên phải đợi kết quả phân tích dữ liệu thay vì quên rằng công cụ vẫn đang chạy. Đặc biệt, hãy tránh ảo tưởng rằng lệnh gọi công cụ bị gián đoạn đã hoàn thành.
+3. **Xử lý toàn diện các sự kiện hàng loạt**: Khi nhiều sự kiện được thêm vào trajectory theo lô, bạn không thể chỉ tập trung vào sự kiện cuối cùng mà phải xem xét toàn diện tất cả thông tin chưa được xử lý.
 
-**Từ đánh giá đến đào tạo: chuyển các tín hiệu so sánh theo cặp**. So sánh cặp không chỉ là phương pháp đánh giá mà còn là nguồn tín hiệu quan trọng cho quá trình huấn luyện sau. Thuật toán **GRPO**(Tối ưu hóa chính sách tương đối nhóm) sẽ được giới thiệu trong Chương 7, giới thiệu phương pháp đánh giá "so sánh cái nào tốt hơn" vào đào tạo mô hình - ý tưởng cốt lõi của nó là lấy mẫu nhiều câu trả lời của ứng viên cho cùng một câu hỏi và sử dụng giá trị tương đối (thay vì điểm tuyệt đối) giữa chúng để ước tính lợi thế, từ đó loại bỏ rắc rối khi đào tạo mạng giá trị bổ sung (quan trọng, dùng để ước tính đường cơ sở) trong PPO - lưu ý GRPO loại bỏ mạng giá trị thay vì chính tín hiệu phần thưởng. Nó vẫn dựa vào mô hình khen thưởng hoặc các quy tắc khen thưởng có thể kiểm chứng được để đánh giá chất lượng của từng ứng viên. Đây chỉ là một điềm báo. Việc dẫn xuất thuật toán hoàn chỉnh, so sánh với PPO/DPO và chi tiết triển khai trong quá trình post-training của Agent còn lại ở Chương 7.
+Để đạt được loại hình đào tạo RL không đồng bộ này đòi hỏi cơ sở hạ tầng mới: trình mô phỏng môi trường không đồng bộ (tạo ra các tình huống như trả lại công cụ bị trì hoãn, gián đoạn người dùng ngẫu nhiên, v.v.) và phần thưởng đặc biệt cho khả năng không đồng bộ (hiểu đúng về trajectory không theo thứ tự, phục hồi thành công suy nghĩ bị gián đoạn, tránh ảo giác, xử lý toàn diện các sự kiện hàng loạt).
 
-> **Thử nghiệm 6-7 ★★: Xây dựng thứ hạng mô hình từ dữ liệu so sánh theo cặp**
->
-> Thử nghiệm này triển khai hệ thống tính toán xếp hạng Elo từ đầu để hiểu sâu hơn về cách mô hình Bradley-Terry trích xuất xếp hạng khả năng tương đối từ một số lượng lớn so sánh theo cặp. Sử dụng tập dữ liệu bỏ phiếu trong thế giới thực mã nguồn mở của Chatbot Arena gồm hàng triệu phiếu bầu của người dùng mù.
->
-> Triển khai thuật toán cập nhật lặp lại xếp hạng Elo: ban đầu tất cả các mô hình được xếp hạng 1000 điểm và hồ sơ biểu quyết được xử lý theo thứ tự thời gian. Đối với mỗi trận đấu, tỷ lệ thắng dự kiến được tính dựa trên chênh lệch xếp hạng hiện tại giữa hai mô hình, kết quả thực tế được so sánh với dự kiến và được điều chỉnh theo tỷ lệ học tập cố định - người thắng cộng điểm, người thua trừ điểm và phạm vi điều chỉnh tỷ lệ thuận với độ lệch dự kiến (thất bại khó chịu sẽ dẫn đến thay đổi điểm lớn hơn). Sắp xếp theo thứ tự giảm dần theo điểm cuối cùng và tính ma trận tỷ lệ thắng theo cặp. So sánh với danh sách chính thức và xác minh rằng thứ hạng nói chung là nhất quán. Không cần phải nghiêm ngặt về việc căn chỉnh từng điểm: Chatbot Arena chính thức sử dụng khả năng phù hợp tối đa của Bradley-Terry (có thể giải quyết tất cả các trò chơi cùng một lúc, bất kể thứ tự bình chọn), trong khi những gì được triển khai ở đây là Elo với các cập nhật gia tăng trực tuyến (kết quả bị ảnh hưởng bởi hệ số K tốc độ học tập và thứ tự xử lý). Hai thuật toán phải nhất quán trong bảng xếp hạng tổng thể nhưng điểm số cụ thể sẽ không hoàn toàn giống nhau.
->
-> Phần thứ hai của thử nghiệm tạo ra hoạt ảnh diễn biến tiến hóa xếp hạng lịch sử: chia dữ liệu bỏ phiếu theo thời gian (hàng tuần hoặc hàng tháng) và tính toán ảnh chụp nhanh điểm Elo cho từng thời điểm. Sử dụng D3.js để triển khai hoạt ảnh thi đấu biểu đồ thanh (chiều dài thanh ngang = điểm, vị trí dọc = thứ hạng, thay đổi mượt mà theo thời gian). Bằng cách quan sát thời điểm đột phá của công nghệ hoạt hình (điểm của một mô hình nào đó đột nhiên tăng lên), sự phát triển của ngữ cảnh cạnh tranh và vòng đời của mô hình.
->
+Tuy nhiên, "tư duy liên tục" không phải đợi đến thế hệ mô hình tiếp theo - với lớp logic điều phối rất mỏng (khoảng hai trăm dòng), một mô hình tư duy văn bản **làm sẵn** có thể được biến thành **tư duy liên tục (continuous-time)** Agent[^ch6-async-1] ngay tại chỗ, chỉ kết nối hai nửa "phương pháp kỹ thuật" và "mô hình" ở trên tiến hóa”. Cơ chế của nó là phiên bản nâng cấp của quy tắc 4 trước đó: thay vì **loại bỏ** một nửa suy nghĩ của bạn khi bị gián đoạn, tốt hơn là xây dựng toàn bộ tương tác thành **luồng suy nghĩ không bị gián đoạn** - bạn có thể đóng mạnh khối `<think>` mà mô hình đang ghi bất kỳ lúc nào và đưa vào các quan sát mới đến (trả về công cụ, gián đoạn người dùng, kết quả nhận dạng mới) dưới dạng thông báo thông thường và sau đó để mô hình tiếp tục giải mã. Nó tận dụng một nguồn tài nguyên thường bị lãng phí: mô hình có thể tạo ra hàng nghìn mã thông báo mỗi giây và một cuộc gọi công cụ hoặc một cuộc trò chuyện của người dùng thường mất vài giây - những lần "chờ đợi" này là **lãng phí sức mạnh tính toán** cho mô hình, có thể được sử dụng để suy nghĩ trước. Từ đó xuất hiện hai hành vi: **suy nghĩ trong khi chờ đợi** - không đợi công cụ quay lại hoặc đợi người dùng nói xong, sau đó suy nghĩ về nó dựa trên một nửa thông tin hiện có và thậm chí gọi trước công cụ tiếp theo (xu hướng "suy nghĩ trước" này đã được tái hiện trong nhiều họ mô hình trong thử nghiệm, xem bài viết tương ứng ở chú thích cuối trang để biết dữ liệu cụ thể); và **suy nghĩ trong khi làm** - tiếp tục suy nghĩ trong khi đưa ra kết quả và có thể tự điều chỉnh ngay giữa hành động.
 
-## Lựa chọn mô hình dựa trên đánh giá
+Nhưng phần quan trọng hơn của nghiên cứu này là về **đào tạo**, điều này đáp ứng chính xác lời kêu gọi "mong đợi sự tiến hóa của mô hình" ở trên: chỉ riêng sự phối hợp chỉ giúp khả năng suy nghĩ liên tục **và để làm cho nó thực sự** hữu ích **, nó phụ thuộc vào cách đưa ra tín hiệu đào tạo. Nghiên cứu đã phát hiện ra rằng nếu bạn sử dụng phần thưởng kiểu "LLM làm trọng tài" cho quá trình huấn luyện, mÃ´ hÃ¬nh sẽ học cách che giấu suy nghĩ của mình và đổi sự im lặng để lấy lời khen của trọng tài, và các chỉ số khách quan sẽ kém hơn; chỉ bằng cách sử dụng các mục tiêu có thể kiểm chứng được và có thể duy trì mức độ bao phủ thông tin, việc suy nghĩ liên tục mới mang lại lợi ích thực sự. Nói một cách ngắn gọn:** Sự điều phối giúp hành vi trở nên khả thi và đào tạo giúp hành vi tốt hơn ** - Điều này cũng khẳng định nhận định trong phần này. Khả năng không đồng bộ cuối cùng phải được củng cố bằng cách đào tạo phù hợp, thay vì luôn dựa vào việc vá lỗi bằng các dự án kịp thời.
 
-Lựa chọn mô hình không chỉ đơn giản là “chọn mô hình mạnh nhất” mà còn thực hiện sự cân bằng dựa trên đánh giá giữa nhiều chiều dựa trên các kịch bản ứng dụng.
+[^ch6-async-1]: Sử dụng khoảng hai trăm dòng lập trình để biến mô hình tư duy làm sẵn thành tư duy liên tục Agent và kết luận rằng "các tín hiệu huấn luyện quyết định tư duy liên tục có hữu ích hay không", xem Li, Bojie và Noah Shi. *Không ngừng suy nghĩ: Ngôn ngữ Continuous-Time Agents.* 2026 (sẽ được xuất bản).
 
-### Các khía cạnh chính của việc lựa chọn
-
-**Thông lượng** và **Độ trễ** là hai bộ chỉ báo dễ bị nhầm lẫn. Để gỡ rối chúng, bạn chỉ cần biết rằng suy luận mô hình lớn được chia thành hai giai đoạn. **Prefill** đọc ngữ cảnh hoàn chỉnh cùng một lúc và xác định **độ trễ của từ đầu tiên** tính từ khi người dùng nhấn Enter cho đến khi xuất hiện từ đầu tiên (được đo bằng **TTFT**, Thời gian đến mã thông báo đầu tiên trong ngành) - ngữ cảnh càng dài thì việc điền trước càng chậm và TTFT càng lớn. **Giải mã** sau đó tạo mã thông báo câu trả lời theo mã thông báo, xác định tốc độ tạo từ tiếp theo (mã thông báo/giây) và cũng xác định trực tiếp thời gian suy nghĩ: mô hình 50 tokens/s tạo ra 2000 mã thông báo suy nghĩ và chỉ suy nghĩ mất 40 giây.
-
-Xung quanh hai giai đoạn này, các chỉ số thông lượng và độ trễ chính như sau:
-
-- **Thông lượng đầu vào/thông lượng đầu ra**: tương ứng với tốc độ Prefill và Decode tương ứng.
-- **TTFT**: Bằng thời gian xếp hàng cộng với thời gian Điền trước và là "tốc độ phản hồi" mà người dùng cảm nhận được.
-- **Độ trễ suy nghĩ**: Số lượng mã thông báo suy nghĩ được tạo ra bởi các mô hình khác nhau có thể thay đổi tới nhiều lần và độ dài suy nghĩ không nhất thiết phải tương quan thuận với hiệu quả nhiệm vụ. Bạn thực sự nên đo lường mức độ sử dụng mã thông báo tư duy và lợi ích tương ứng của từng mô hình theo khối lượng công việc của riêng bạn, thay vì chỉ suy luận từ danh sách công khai.
-- **độ trễ đuôi p95**: Độ trễ mà 95% yêu cầu sẽ không vượt quá. Nó phản ánh tốt hơn trải nghiệm người dùng thực so với mức trung bình - mức trung bình sẽ bị kéo xuống bởi một số lượng lớn yêu cầu nhanh, che đi độ trễ nghiêm trọng mà một số ít người dùng gặp phải.
-
-**Chi phí**: Giá cho mã thông báo đầu vào/đầu ra/bộ đệm. Không nên đánh giá chi phí một cách riêng biệt - một mô hình giá rẻ với tỷ lệ thành công thấp trên thực tế có thể đắt hơn do phải thử lại thường xuyên. Cần phải tính toán chi phí trung bình và tỷ lệ chi phí/hiệu suất của từng nhiệm vụ.
-
-**Hiệu suất**: Pass@1, Pass^k, Pass@k, Best@k Định nghĩa chính xác của bốn chỉ số được hiển thị trong "Hệ thống chỉ số đánh giá" được đề cập ở trên. Ở đây chúng ta chỉ nói về cách chọn trong ngữ cảnh lựa chọn - Pass@1 (tỷ lệ thành công trung bình duy nhất) được sử dụng phổ biến nhất trong các tình huống hàng ngày; Pass^k được ưu tiên trong các tình huống vận hành chính, tập trung vào tính ổn định “không bao giờ mắc lỗi”; Pass@k hoặc Best@k được ưu tiên trong các nhiệm vụ khám phá, xem xét giới hạn khả năng trên sau khi tạo đủ cơ hội; sử dụng cho các tác vụ mở Rubric Tính điểm đa chiều.
-
-**Giới hạn tốc độ và độ tin cậy**: Giới hạn RPM (yêu cầu mỗi phút) / TPM (mã thông báo mỗi phút) sẽ ảnh hưởng đến tính đồng thời và một số API sẽ tự động điều chỉnh giới hạn trong thời gian cao điểm. Về độ bền, cần chú ý đến dữ liệu ngoài phân phối, đầu vào đối nghịch và độ ổn định khi vận hành lâu dài (liệu có vấn đề như sập chế độ, mất tập trung, v.v.).
-
-**Đường cong ngân sách–năng lực**: Một điểm số đơn lẻ dưới ngân sách cố định không đủ để xác định Agent có thể đảm nhiệm nhiệm vụ dài hạn hay không. Ngoài tỷ lệ thành công, cần báo cáo hiệu năng thay đổi theo thời gian thực, số token, số lần gọi công cụ hoặc ngân sách tính toán. Đối chiếu người–máy trong RE-Bench cho thấy rõ điều này: với tổng ngân sách 2 giờ cho mỗi môi trường, Agent tốt nhất đạt điểm khoảng gấp 4 lần chuyên gia con người; nhưng con người hưởng lợi nhiều hơn khi tăng thời gian, nhỉnh hơn Agent tốt nhất ở mốc 8 giờ và đạt khoảng gấp đôi điểm số khi có tổng cộng 32 giờ qua nhiều lần thử[^re-bench-2025]. Vì vậy, ưu thế ở ngân sách ngắn không thể được ngoại suy trực tiếp thành năng lực vận hành dài; việc chọn mô hình phải so sánh nhiều mốc ngân sách gần với thời lượng nhiệm vụ thực tế.
-
-Trong thực tế, chiến lược cộng tác đa mô hình có thể được áp dụng: sử dụng các mô hình gọn nhẹ để xử lý các yêu cầu đơn giản nhằm giảm chi phí và sử dụng các mô hình mạnh mẽ để xử lý các tác vụ phức tạp nhằm đảm bảo chất lượng; hoặc sử dụng các mô hình chuyên biệt để xử lý các nhiệm vụ con cụ thể (chẳng hạn như hiểu hình ảnh, tạo mã) và cộng tác thông qua cơ chế sub-Agent. Sự kết hợp không đồng nhất này cần được xác minh thông qua đánh giá để xác nhận xem lợi ích tổng thể có lớn hơn độ phức tạp ngày càng tăng của hệ thống hay không.
-
-### Hành vi mô hình: Khi nào ngừng đọc và bắt đầu chỉnh sửa
-
-Việc chọn mô hình không chỉ so sánh liệu mô hình có hoàn thành được nhiệm vụ hay không, mà còn so sánh **hành vi mặc định của nó**. Một khác biệt dễ quan sát ở Coding Agent là ngưỡng hành động. Với cùng một nhiệm vụ lập trình, một số mô hình khám phá rộng kho mã và xác nhận kiến trúc, các điểm gọi và kiểm thử trước khi chỉnh sửa. Những mô hình khác định vị thay đổi từ ít bằng chứng hơn, chỉnh sửa sớm rồi dùng phản hồi kiểm thử để hoàn thiện hiểu biết. Nhóm đầu đánh giá chi phí của việc sửa quá sớm cao hơn; nhóm sau đánh giá chi phí cơ hội của việc đọc thêm một tệp cao hơn.
-
-Khi một xu hướng vẫn đi theo mô hình qua các Harness và thay đổi khi chỉ thay mô hình trong một Harness cố định, lời giải thích chính phải là **hành vi mô hình**. Post-training là một nguồn có khả năng cao: các quỹ đạo SFT minh họa cần đọc đến đâu trước khi hành động, phần thưởng quá trình củng cố hoặc phạt những đường đi công cụ cụ thể, còn phần thưởng kết quả củng cố toàn bộ chiến lược đã dẫn đến thành công. Do đó, mô hình không chỉ học cách viết mã mà còn học khi nào đã có đủ bằng chứng. Dataset và công thức phần thưởng chính xác thường là thông tin riêng; phép thay mô hình có kiểm soát có thể xác định hành vi nằm phía mô hình nhưng không tiết lộ công thức huấn luyện cụ thể của nhà cung cấp. Harness vẫn có thể dịch chuyển ngưỡng bằng system prompt, mô tả công cụ và ngân sách, nhưng nếu không ép buộc quy trình thì nên xem nó là yếu tố điều chỉnh, không phải nguyên nhân gốc mặc định.
-
-Thí nghiệm đi kèm so sánh `openai/gpt-5.6-sol` và `anthropic/claude-sonnet-5` trong một **Harness trung lập và cố định**. Cả hai dùng cùng endpoint OpenRouter và nhận cùng system prompt, nhiệm vụ, kho mã, tên công cụ, JSON Schema và kết quả công cụ. Harness không bắt buộc khám phá hay chỉnh sửa sớm. Ba kho mã thu nhỏ bao phủ một lỗi cục bộ, chuẩn hóa định danh xuyên mô-đun và sửa bộ nhớ đệm nhạy với hợp đồng công khai. Mỗi mô hình chạy độc lập từng nhiệm vụ ba lần, tạo 18 quỹ đạo. Trước lần chỉnh sửa đầu tiên, GPT-5.6-sol gọi công cụ trung bình 6,89 lần và đọc 4,67 tệp; Claude Sonnet 5 đạt 4,56 lần và 3,56 tệp. Chênh lệch lớn nhất ở nhiệm vụ cục bộ và gần như biến mất ở nhiệm vụ xuyên mô-đun được nêu rõ (7,00 so với 6,67 tệp). Cả hai mô hình đều đạt 100% ở bản vá đầu tiên được kiểm thử và kiểm thử cuối. Vì thế, thí nghiệm nhỏ này ủng hộ kết luận “chính sách hành động thay đổi theo mô hình”, chứ không phải “đọc nhiều hơn” hay “sửa sớm hơn” luôn tốt hơn. Thời gian tới lần chỉnh sửa đầu tiên cũng gần như bằng nhau (15,01 so với 14,48 giây), nhắc chúng ta phải tách số bước công cụ, lời gọi song song và độ trễ mô hình.
-
-> **Thí nghiệm 6-8 ★★: Đo ngưỡng hành động của mô hình trong một Coding Harness cố định**
->
-> **Mục tiêu**: cô lập yếu tố mô hình, định lượng cách các mô hình Coding mặc định cân bằng giữa tiếp tục thu thập thông tin và bắt đầu chỉnh sửa, đồng thời đánh giá hiệu quả đường đi cùng chất lượng kết quả.
->
-> **Phương pháp**: chạy `chapter6/model-action-threshold/experiment.py`. Theo mặc định, chương trình gọi GPT-5.6-sol và Claude Sonnet 5 qua cùng endpoint OpenRouter OpenAI-compatible, đồng thời giữ cố định system prompt, schema công cụ, kho mã nhiệm vụ, lệnh kiểm thử và giới hạn lượt. Prompt trung lập không quy định số tệp tối thiểu phải đọc hay yêu cầu chỉnh sửa nhanh. Lặp lại mỗi loại trong ba loại nhiệm vụ ít nhất ba lần và luân phiên thứ tự mô hình. Ghi số lời gọi công cụ, tệp đã đọc, lượt tìm kiếm và thời gian thực trước lần chỉnh sửa đầu tiên, cùng tỷ lệ chấp nhận bản vá đầu tiên được kiểm thử, số lần làm lại sau kiểm thử, thành công cuối, số tệp thay đổi và mức dùng Token.
->
-> **Diễn giải nhân quả**: chiến dịch trung lập hỏi hành vi có thay đổi theo mô hình trong cùng một Harness hay không. Để đo Harness như yếu tố điều chỉnh, hãy chạy một chiến dịch riêng với `--policy explore-first`; không trộn hai policy trong cùng phép so sánh mô hình. Hành vi thay đổi khi đổi mô hình và vẫn giữ nguyên với cùng mô hình qua nhiều Harness là bằng chứng mạnh hơn cho hiệu ứng mô hình; chiều ngược lại ủng hộ hiệu ứng Harness mạnh hơn.
->
-> **Tiêu chí nghiệm thu**: mọi unit test offline đều qua; trước tiên phải xác nhận mỗi fixture nhiệm vụ ở trạng thái ban đầu làm kiểm thử thất bại; kết quả chính thức chứa đủ các ô `mô hình × nhiệm vụ × lần lặp`, không có lỗi API, có kiểm thử cuối độc lập và quỹ đạo kiểm toán được; `manifest.json` xác minh hash của cấu hình, quan sát và bản tổng hợp. Thư mục dự án lưu một lần chạy thực tế hoàn chỉnh 18/18 ô. Người đọc nên chạy lại trên phiên bản mô hình và workload thực tế mà mình quan tâm, thay vì coi các số liệu của kho mã nhỏ này là bảng xếp hạng vĩnh viễn.
-
-### Phân tích chi phí của hệ thống Agent
-
-Chi phí là một khía cạnh dễ bị đánh giá thấp trong việc lựa chọn mô hình. Nếu Agent của bạn đã bước vào môi trường sản xuất hoặc đang chuẩn bị bước vào môi trường sản xuất thì không nên bỏ qua phần phân tích chi phí trong phần này.
-
-Phần trước liệt kê chi phí là một trong những khía cạnh chính của việc lựa chọn mô hình, nhưng chi phí trong kịch bản Agent phức tạp hơn nhiều so với việc định giá mã thông báo đơn giản—nhiều vòng lý luận, lệnh gọi công cụ và tích lũy ngữ cảnh sẽ khiến chi phí tăng phi tuyến tính. Phân tích chi phí một cách có hệ thống là một phần không thể thiếu trong hệ thống đánh giá và là điều kiện tiên quyết cần thiết để triển khai sản xuất.
-
-**Các thành phần của chi phí.**
-
-Chi phí của hệ thống Agent có thể được chia thành ba cấp độ:
-
-**Chi phí suy luận mô hình** là phần đơn giản nhất và được xác định bởi mức tiêu thụ mã thông báo đầu vào và mã thông báo đầu ra. Tuy nhiên, có hai yếu tố khuếch đại thường bị bỏ qua trong kịch bản Agent. Một là **Hiệu ứng tích lũy ngữ cảnh**: Mỗi khi Agent gọi LLM, tất cả lịch sử hội thoại trước đó và kết quả trả về của công cụ sẽ được gửi cùng nhau (để mô hình có thể hiểu được ngữ cảnh). Nếu bạn không tận dụng tốt KV Cache (nghĩa là lưu vào bộ đệm ngữ cảnh đã xử lý để tránh tính toán lặp lại), chi phí sẽ tăng rất nhanh - 1000 mã thông báo được gửi ở vòng đầu tiên, 2000 mã thông báo được gửi ở vòng thứ hai và 3000 mã thông báo được gửi ở vòng thứ ba. Tổng số tiền là 1000+2000+3000=6000 thay vì 3×1000=3000, càng nhiều vòng thì khoảng cách càng lớn. Thứ hai là **Chi phí mã thông báo tư duy**: Các mô hình hỗ trợ tư duy sẽ tạo ra số lượng lớn mã thông báo tư duy. Mặc dù những mã thông báo này không được hiển thị cho người dùng nhưng chúng cũng được bao gồm trong chi phí.
-
-**Chi phí cuộc gọi công cụ** bao gồm phí API bên ngoài (trả tiền cho mỗi lần xem của công cụ tìm kiếm, truy vấn cơ sở dữ liệu tiêu tốn tài nguyên máy tính), tài nguyên hộp cát để thực thi mã và chi phí gián tiếp dễ bị bỏ qua: phí mã thông báo được tạo sau khi công cụ trả về kết quả và đưa ngữ cảnh vào. Nội dung được tìm kiếm trên web trả về có thể chiếm mã thông báo 2000-5000 và sẽ được tính phí nhiều lần dưới dạng đầu vào trong mỗi vòng suy luận tiếp theo.
-
-**Chi phí cơ sở hạ tầng** bao gồm chi phí vận hành như cơ sở dữ liệu vectơ (để truy xuất RAG), hàng đợi tin nhắn, cơ sở dữ liệu quan hệ, lưu trữ nhật ký và theo dõi (để có thể quan sát).
-
-Để thấy chi phí thực sự phát sinh ở đâu, thí nghiệm đi kèm sử dụng một quy trình hoàn tiền cố định gồm tám lượt: tra cứu đơn hàng, vận chuyển, chính sách hoàn tiền và kho tri thức, sau đó kiểm tra rủi ro, hoàn tiền, thông báo cho khách và đóng vụ việc. Các lệnh gọi gpt-4o-mini thực được chạy với bốn tổ hợp của hai công tắc: tiền tố ổn định hoặc không ổn định, lịch sử đầy đủ hoặc đã nén. Nghiệp vụ ở bốn nhóm hoàn toàn giống nhau; chi phí trong Bảng 6-4 được tính từ lượng token và bảng giá lưu cùng lần chạy.
-
-Bảng 6-4 Chi phí đo được của quy trình Agent tám lượt
-
-| Cấu hình | Token đầu vào | Token được cache | Tổng chi phí | Tiết kiệm so với đường cơ sở |
-|---|---:|---:|---:|---:|
-| Không cache, không nén | 20,700 | 0 | $0.003776 | — |
-| Chỉ dùng tiền tố ổn định | 20,386 | 13,568 | $0.002707 | 28.3% |
-| Chỉ nén lịch sử | 16,177 | 0 | $0.003115 | 17.5% |
-| Tiền tố ổn định + nén | 16,035 | 6,144 | $0.002643 | 30.0% |
-
-Ở nhóm cơ sở, đầu vào tăng từ 1,113 token ở lượt đầu lên 3,668 token ở lượt cuối. Kết quả công cụ bị mang lặp lại vào các yêu cầu sau, chiếm tổng cộng 9,544 token đầu vào. Khi bật cả hai biện pháp, con số này giảm còn 5,248 và tổng chi phí giảm 30%.
-
-Các mức tiết kiệm không cộng tuyến tính. Tiền tố ổn định riêng lẻ tiết kiệm 28.3%, nén lịch sử riêng lẻ tiết kiệm 17.5%, nhưng kết hợp chỉ tiết kiệm 30%, không phải 45.8%. Nén lịch sử đồng thời làm ngắn phần tiền tố có thể tái sử dụng cache. Vì vậy, **khi kết hợp nhiều cách tối ưu ngữ cảnh, phải đo trên toàn bộ quy trình; không được cộng các tỷ lệ tiết kiệm riêng lẻ.** Nếu đổi mô hình, bảng giá hoặc độ dài nhiệm vụ, con số 30% cũng sẽ đổi. Điều có thể tái sử dụng là thiết kế bốn nhóm đối chứng, không phải chính tỷ lệ đó.
-
-**Policy tối ưu hóa chi phí.**
-
-Ba đòn bẩy phía đầu vào nên được thử trước là **tái sử dụng KV Cache** (giữ tiền tố ổn định), **nén ngữ cảnh** (rút gọn trajectory cũ và kết quả công cụ dài) và **định tuyến mô hình theo tầng** (giao yêu cầu đơn giản cho mô hình nhẹ, suy luận khó cho mô hình mạnh). Chương 2 đã trình bày cách triển khai. Điểm quan trọng ở góc độ vận hành là mỗi biện pháp cần có công tắc riêng, để nhóm đo được cả tác động độc lập lẫn tương tác khi kết hợp. Ngoài ra còn hai cách gắn trực tiếp với đánh giá và vận hành.
-
-**Xử lý hàng loạt không đồng bộ** Tích lũy các tác vụ không theo thời gian thực để xử lý hàng loạt và tận dụng chiết khấu giá hàng loạt của nhà cung cấp API; trong các tình huống tự triển khai, nó cũng có thể cải thiện việc sử dụng GPU trong thời kỳ khó khăn.
-
-**Giám sát chi phí và kiểm soát ngân sách.**
-
-Cần thiết lập hệ thống giám sát chi phí theo thời gian thực trong môi trường sản xuất: theo dõi mức tiêu thụ mã thông báo và chi phí API theo loại nhiệm vụ, mô hình, người dùng và các thứ nguyên khác. Đồng thời, đặt giới hạn chi phí cho từng nhiệm vụ - tự động chấm dứt khi Agent rơi vào vòng lặp hoặc khám phá quá sâu để ngăn một nhiệm vụ đơn lẻ phát sinh chi phí cao bất thường.
-
-> **Thử nghiệm 6-9 ★: Phân tích chi phí toàn diện của các nhiệm vụ Agent**
->
-> **Mục tiêu thử nghiệm**: Tái hiện phân tích chi phí của quy trình tám lượt ở trên, sau đó kiểm tra cùng các biện pháp tối ưu trên khối lượng công việc thực tế của bạn.
->
-> **Giải pháp kỹ thuật**: Trước hết tái hiện nhiệm vụ cố định trong kho đi kèm, rồi chọn thêm một số nhiệm vụ đại diện của riêng bạn. Dùng LangSmith hoặc hệ thống theo dõi tự xây dựng để ghi token đầu vào/đầu ra và token suy nghĩ, số lần gọi công cụ và kích thước kết quả, cùng độ trễ đầu cuối của từng lệnh gọi LLM. Tính chi phí trung bình, p50/p95/p99 và cơ cấu chi phí theo loại nhiệm vụ.
->
-> **Tiêu chí chấp nhận**: Tạo báo cáo chi tiết và xác định các nguồn chi phí chính. Chạy đủ bốn tổ hợp công tắc, đo từng biện pháp riêng và cả hai cùng lúc. Khi đổi mô hình, phải chạy lại thay vì dùng lại tỷ lệ tiết kiệm của trajectory đã lưu.
+> **Thử nghiệm 6-2 ★★★: Agent không đồng bộ với khả năng thực thi và ngắt song song**
 >
 >
-
-### Lặp lại liên tục theo định hướng đánh giá
-
-Lựa chọn mô hình không phải là quyết định một lần mà là một quá trình liên tục đòi hỏi phải điều chỉnh linh hoạt khi mô hình phát triển. Khái niệm cốt lõi về việc “có một hệ thống đánh giá có thể nhanh chóng theo kịp sự phát triển của mô hình” đã được đề xuất ở đầu chương này. Một trường hợp chuyển đổi mô hình cụ thể được sử dụng dưới đây để minh họa cách hệ thống này hoạt động trong quá trình ra quyết định thực tế.
-
-Giả sử rằng hệ thống Agent của bạn hiện được xây dựng trên Claude, hệ thống này hoạt động tốt trong việc gọi công cụ và điều phối phức tạp. Một ngày nọ, Gemini phát hành một mẫu mới và các điểm chuẩn công khai cho thấy nó vượt qua Claude ở nhiều chỉ số và được định giá thấp hơn. Câu hỏi bạn gặp phải tại thời điểm này không phải là "Gemini có tốt hơn Claude" mà là " **Gemini có tốt hơn Claude cho nhiệm vụ cụ thể của tôi không? Tốt hơn bao nhiêu? Chi phí chuyển đổi là bao nhiêu?**"
-
-Các nhóm có hệ thống đánh giá được thiết lập tốt có thể đưa ra câu trả lời trong vài giờ: chạy mô hình mới trên bộ dữ liệu đánh giá của riêng họ và so sánh tỷ lệ thành công của nhiệm vụ, độ chính xác của lệnh gọi công cụ, độ trễ và chi phí. Bạn có thể thấy rằng mô hình mới thực sự tốt hơn và rẻ hơn đối với các tác vụ đơn giản, nhưng trong các tình huống cốt lõi liên quan đến việc điều phối công cụ nhiều vòng phức tạp, tỷ lệ thành công giảm 5%. Sau khi xác nhận rằng sự khác biệt này vượt quá băng thông nhiễu (xem "Đánh giá ý nghĩa thống kê của kết quả" bên dưới), quyết định của bạn trở thành chiến lược khác biệt hóa "chuyển sang mô hình mới cho các nhiệm vụ đơn giản để giảm chi phí và giữ lại mô hình ban đầu cho các nhiệm vụ phức tạp để đảm bảo chất lượng" thay vì mù quáng chuyển đổi toàn bộ. Kiểu ra quyết định dựa trên dữ liệu tinh tế này chỉ có thể thực hiện được nếu hệ thống đánh giá được xây dựng trước.
-
-> **Thử nghiệm 6-10 ★★: Điểm chuẩn hiệu suất mô hình đa chiều**
+> ![Hình 6-5 Thí nghiệm 6-2 Ngắt và phục hồi tác nhân không đồng bộ ](images/fig6-5.svg)
 >
-> Tiến hành kiểm tra điểm chuẩn toàn diện trên LLM chính thống và các nhà cung cấp API khác nhau, đồng thời thiết lập cơ sở dữ liệu ra quyết định lựa chọn mô hình đa chiều.
 >
-> Chọn phạm vi thử nghiệm: các mô hình SOTA nguồn đóng như dòng GPT, dòng Claude, dòng Gemini, dòng Doubao và các mô hình nguồn mở như Qwen, Kimi, DeepSeek. Kiểm tra các nhà cung cấp API khác nhau cho cùng một kiểu máy (ví dụ: DeepSeek chính thức so với Siliconflow) và xác minh kết quả của nền tảng giám sát hiệu suất của bên thứ ba (ví dụ: Phân tích nhân tạo).
+> Dựa trên hàng sự kiện đơn giản của thử nghiệm 6-1, thử nghiệm này đi vào vùng nước sâu của Agent không đồng bộ: **Thực thi công cụ song song, hủy thực thi và quản lý trạng thái**. Agent không còn chỉ xử lý từng sự kiện mà cần quản lý nhiều tác vụ đồng thời cùng lúc, xử lý các gián đoạn và phục hồi cũng như đưa ra quyết định linh hoạt dựa trên trạng thái thời gian thực.
 >
-> Thiết kế khối lượng công việc kiểm tra được tiêu chuẩn hóa: kiểm tra thông lượng đầu vào sử dụng ngữ cảnh có độ dài cố định (mã thông báo 8K/32K/128K) và yêu cầu kiểm tra thông lượng đầu ra tạo ra phản hồi có độ dài cố định (mã thông báo 512/2048). Kiểm tra độ trễ bao gồm TTFT (thời gian tạo mã thông báo đầu tiên) và độ trễ từ đầu đến cuối, đồng thời thời lượng suy nghĩ và độ trễ suy nghĩ được đo riêng cho các mô hình hỗ trợ suy nghĩ. Ít nhất 100 yêu cầu cho mỗi cấu hình, tính toán độ lệch chuẩn/p50/p95/p99 - phương sai độ trễ cao có nghĩa là trải nghiệm người dùng không ổn định.
+> **1. Thực thi công cụ không đồng bộ**: Hỗ trợ thực thi không đồng bộ các công cụ tiêu tốn thời gian (ít nhất là 3-5 giây) và trả về phần giữ chỗ ngay sau khi khởi động. **Kịch bản xác minh**: Agent thực thi một lệnh đầu cuối dài, trong đó người dùng hỏi "Bây giờ là mấy giờ?", Agent phản hồi ngay lập tức và đợi kết quả phân tích được trả về trước khi hiển thị chúng.
 >
-> Đánh giá tính khả dụng và độ ổn định của API: Thăm dò mỗi giờ trong một tuần và ghi lại tỷ lệ thành công, loại lỗi và thời gian lỗi. Tính toán tỷ lệ thất bại, MTTR (Thời gian trung bình để khôi phục) và thời gian khả dụng liên tục tối đa. Kiểm tra ngưỡng thực tế của giới hạn tốc độ - tìm điểm điều tiết bằng cách tăng dần độ đồng thời và ghi lại giới hạn trên RPM/TPM. Tính toán chi phí toàn diện: Thu thập thông tin về giá (đơn giá của mã thông báo đầu vào/đầu ra/bộ đệm), xem xét tác động của KV Cache và tính chi phí trung bình của các nhiệm vụ Agent nhiều vòng điển hình.
+> **2. Hàng đợi sự kiện và xử lý hàng loạt**: Tích lũy các sự kiện không khẩn cấp và thêm chúng vào theo dõi theo đợt. **Kịch bản xác minh**: Agent thực hiện một tác vụ dài. Người dùng liên tục gửi “nhớ trả lời bằng tiếng Nhật” và “sắp xếp thành một trang web”. Khi nhiệm vụ hoàn thành, tất cả các sự kiện sẽ được xử lý cùng một lúc và một trang web tiếng Nhật sẽ được tạo ra.
 >
-> **Thử nghiệm 6-11 ★★: Đánh giá lựa chọn toàn diện hệ thống bộ nhớ người dùng**
+> **3. Cơ chế gián đoạn**: Lệnh "dừng" của người dùng sẽ ngay lập tức chấm dứt luồng thực thi và hủy công cụ không đồng bộ. **Kịch bản xác minh**: Agent thực hiện một tác vụ dài, người dùng gửi "Hủy", Agent dừng ngay lập tức và trajectory ghi lại các sự kiện gián đoạn và hoạt động hủy.
 >
-> **Điều kiện tiên quyết**: Bạn cần phải hoàn thành thử nghiệm RAG Truy xuất ngữ cảnh hoặc Thông minh hóa Chương 3.
->
-> **Mục tiêu**: Tiến hành đánh giá lựa chọn liên kết đầy đủ để truy xuất bộ nhớ người dùng Agent và xem ba điểm lựa chọn của mô hình nhúng, trình sắp xếp lại và mô hình chính Agent cùng ảnh hưởng như thế nào đến chất lượng truy xuất, độ trễ và chi phí. Sử dụng lại `chapter3/contextual-retrieval-for-user-memory` hoặc `chapter3/agentic-rag-for-user-memory` và so sánh trên 60 trường hợp thử nghiệm.
->
-> **Chấp nhận**: Quét ba điểm lựa chọn tương ứng - mô hình được nhúng (BGE-M3 / OpenAI / Beanbao, v.v., ghi lại độ chính xác, độ trễ, chi phí khi truy xuất top-5), trình xếp hạng lại (bao gồm đường cơ sở "không có trình xếp hạng lại" để định lượng giá trị cận biên của nó), mô hình chính (tỷ lệ thành công cụ thể và hiệu quả sử dụng công cụ trong cùng một cấu hình truy xuất). Điều quan trọng là đọc ra sự phối hợp giữa các thành phần: phần nhúng mạnh hơn có thể làm cho trình sắp xếp lại trở nên dư thừa và mô hình chính mạnh hơn có thể bù đắp cho việc thiếu khả năng truy xuất - lựa chọn là sự đánh đổi có hệ thống, không phải là lựa chọn từng cái một của mạnh nhất. Xem kho hỗ trợ để biết chi tiết cấu hình.
+> **4. Hủy và truy vấn trạng thái của các công cụ song song**: Sau khi hoàn thành công cụ không đồng bộ, kết quả thực sẽ được đưa vào cuộc trò chuyện thông qua các sự kiện mới và hỗ trợ hủy hoặc truy vấn tiến trình thông qua ID tác vụ. **Tình huống xác minh**: Người dùng yêu cầu "Giúp tôi chạy ba tập lệnh này cùng lúc. Cái nào hoàn thành trước, hãy xem tiến độ của các tập lệnh còn lại như thế nào. Nếu chưa vượt quá 50% thì hãy hủy nó." Ba tập lệnh mô phỏng quá trình phân tích và liên tục xuất ra tiến trình khi chạy. Tốc độ lần lượt là 3%, 2% và 1% mỗi giây. Agent khởi động ba lệnh đầu cuối không đồng bộ cùng một lúc. Khi 3% tập lệnh mỗi giây được hoàn thành trong khoảng 33 giây, Agent truy vấn trạng thái của hai thiết bị đầu cuối còn lại và nhận thấy rằng một thiết bị đầu cuối được thực thi ở khoảng 66% và thiết bị kia ở khoảng 33%, do đó, thiết bị đầu cuối không vượt quá 50% sẽ bị hủy. Sau khi cả hai thiết bị đầu cuối được hoàn thành, kết quả sẽ được kết hợp để tạo ra một báo cáo đầy đủ.
 >
 
-## Đánh giá ý nghĩa thống kê của kết quả
+## Giọng nói: giao diện người–máy tự nhiên nhất
 
-"Quyết định chuyển đổi trong vài giờ" có một tiền đề ngầm: sự khác biệt quan sát được về điểm số là tín hiệu thực, không phải nhiễu lấy mẫu. Tiền đề cho rằng kích thước của tập đánh giá bị giới hạn và đầu ra của mô hình không chắc chắn sẽ không tự động được giữ vững.
+Giọng nói không chỉ là chuyển văn bản thành âm thanh. Tốc độ nói nhanh khoảng bốn lần tốc độ gõ và giải phóng tay, mắt, nên Agent tự nhiên trở thành một vòng lặp vào–ra liên tục mà người dùng có thể ngắt bất cứ lúc nào. Đọc chính tả chuyển lời nói thành văn bản; voice Agent cho phép người dùng cộng tác trực tiếp với Agent. Cả hai đều hỗ trợ quy trình whisper coding đã giới thiệu trước đây.
 
-Một công cụ để ước tính đại khái băng thông nhiễu là sai số chuẩn của phân bố nhị thức (sai số chuẩn, được sử dụng để mô tả phạm vi dao động của tỷ lệ thành công do lấy mẫu ngẫu nhiên. Giá trị càng lớn thì tỷ lệ thành công càng kém tin cậy). Nếu tỷ lệ thành công p được đo trên n trường hợp thử nghiệm thì sai số chuẩn sẽ xấp xỉ √(p(1-p)/n). Để đưa ra một ví dụ cụ thể: 100 trường hợp sử dụng, tỷ lệ thành công 70%, sai số chuẩn ≈ √(0,7×0.3/100) ≈ 4,6%. Theo trực quan, khoảng tin cậy 95% (phạm vi trong đó tỷ lệ thành công thực sự chắc chắn giảm khoảng 95%) là khoảng p ± 2 sai số chuẩn, hoặc 70% ± 9 điểm phần trăm. Nghĩa là, chênh lệch 3 điểm phần trăm như "mô hình mới 73% so với mô hình cũ 70%" nằm trong phạm vi băng thông nhiễu - khi so sánh hai tỷ lệ thành công như thể chúng độc lập với nhau, sai số chuẩn của chênh lệch là khoảng hệ số √2 (ở đây là khoảng 6,5%). Nhưng cần nhấn mạnh rằng √2 này là thuật toán cho "hai phép đo độc lập với nhau". Trong chiến đấu thực tế, hai cấu hình thường chạy trên cùng một loạt nhiệm vụ và các mẫu không độc lập - giả định về tính độc lập chỉ là giới hạn trên bảo thủ, được sử dụng để nhanh chóng đánh giá rằng "sự khác biệt này không đáng để xem xét nghiêm túc". Theo cách tính bảo thủ này, chênh lệch điểm số 3% nhỏ hơn nhiều so với mức độ ồn 6,5%. Theo đó, việc chuyển đổi mô hình không khác nhiều so với việc tung đồng xu.
+Phần này xét hai hướng: người dùng nói với Agent, và Agent nói với thế giới bên ngoài thay mặt người dùng. Mô hình giọng nói quyết định Agent có thể trả lời gì; kiến trúc tương tác quyết định Agent có nghe rõ, đáp kịp thời, chuyển lượt tự nhiên, hoàn tất xác nhận và gọi công cụ trong cuộc gọi hay không.
 
-Có thêm một lớp bất định trong đánh giá Agent: cùng mô hình và cùng tập dữ liệu vẫn có thể cho kết quả khác nhau giữa các lần chạy, do lấy mẫu, biến động của kết quả công cụ và thời điểm của môi trường. Vì vậy, một lần chạy không đủ để quyết định triển khai. Hãy **chạy lặp và lấy trung bình** — chẳng hạn 3-5 lần cho mỗi cấu hình — đồng thời báo cáo cả giá trị trung bình lẫn độ phân tán. Thử nghiệm AndroidWorld nhỏ ở phần sau chỉ có một lần chạy ghép cặp cho mỗi nhiệm vụ; nó chỉ giúp sàng lọc ý tưởng đáng thử ở quy mô lớn hơn. Quyết định triển khai vẫn cần một đợt chạy nhiều seed trên toàn bộ tập nhiệm vụ.
+### Thời gian tương tác: từ cascade đến full-duplex
 
-Một nguyên tắc thực tế được rút ra từ điều này: **Khi chênh lệch điểm nhỏ hơn băng thông nhiễu, không có quyết định chuyển đổi nào được đưa ra**. Nhưng trước khi “không chuyển đổi”, trước tiên bạn nên chuyển sang phương pháp phân tích nhạy cảm và chính xác hơn. Khi so sánh hai cấu hình trên cùng một loạt nhiệm vụ, phương pháp mặc định đúng là **phân tích cặp**: so sánh kết quả của hai vấn đề theo từng câu hỏi, chỉ xem xét các trường hợp sử dụng đó với các kết quả khác nhau (một đúng và một sai) và sử dụng các ý tưởng như thử nghiệm của McNemar để xác định xem sự khác biệt có đáng kể hay không. Phân tích theo cặp loại trừ nguồn nhiễu phổ biến là "độ khó của chính câu hỏi", do đó, nó nhạy hơn nhiều so với "trừ hai tỷ lệ thành công độc lập" với cùng cỡ mẫu - ước tính √2 trước đó dựa trên giả định về tính độc lập chỉ là một sàng lọc thận trọng không yêu cầu truy cập Internet, chỉ cần tính toán bằng miệng và được sử dụng để nhanh chóng loại bỏ sự khác biệt về điểm số rõ ràng là ngoài tầm với. Nếu phân tích ghép đôi vẫn cho thấy sự khác biệt là không chắc chắn thì hãy xem xét mở rộng mẫu: sai số chuẩn giảm theo √n và băng thông nhiễu chỉ giảm một nửa khi mở rộng mẫu từ 100 lên 400. Chi phí mở rộng mẫu rất cao. Mặt khác, nếu bản thân lợi ích dự kiến của việc cải tiến chỉ là điểm phần trăm 2-3 và bộ đánh giá chỉ có vài chục trường hợp sử dụng thì bộ đánh giá này không thể cho biết liệu cải tiến đó có hiệu quả hay không - ưu tiên tại thời điểm này là mở rộng bộ đánh giá thay vì tiếp tục lặp lại Agent.
+Bài giới thiệu GPT-Live của OpenAI nêu ba mô hình tương tác bằng giọng nói: cascade, theo lượt và full-duplex[^ch6-12]. Đây không phải chuỗi thay thế đơn giản mà là các đánh đổi khác nhau giữa độ trễ, chi phí và khả năng quan sát:
 
-Có một cạm bẫy khác dễ bị bỏ qua: **so sánh nhiều giả thuyết**. Nếu kiểm tra sáu giả thuyết độc lập với ngưỡng tin cậy 95%, xác suất xuất hiện ít nhất một kết quả dương tính giả là 1 − 0,95^6 ≈ 26%. Càng thử nhiều thay đổi, càng dễ có một thay đổi “trông như hiệu quả” chỉ do ngẫu nhiên. Có hai cách xử lý: siết ngưỡng ý nghĩa theo số phép thử, chẳng hạn hiệu chỉnh Bonferroni, hoặc chạy xác nhận độc lập và chỉ chấp nhận kết luận có thể lặp lại. Chuỗi AndroidWorld ở phần sau giảm rủi ro này bằng cách chỉ đổi một biến mỗi vòng; nếu sàng lọc nhiều hướng song song, vẫn phải hiệu chỉnh hoặc xác nhận lại độc lập.
+| Mô hình | Cấu trúc cốt lõi | Ưu điểm chính | Hạn chế chính |
+| --- | --- | --- | --- |
+| Cascade | VAD → ASR → LLM → TTS | Mô-đun rõ ràng, dễ thay thế và gỡ lỗi | Độ trễ cộng dồn, thông tin cận ngôn ngữ mất ở các giao diện |
+| Omni end-to-end | Một mô hình nghe, suy nghĩ và nói | Độ trễ thấp hơn, giữ tốt giọng điệu, cảm xúc và âm thanh môi trường | Vẫn theo lượt; huấn luyện và gỡ lỗi tốn kém hơn |
+| Full-duplex | Liên tục nghe, nói và quyết định | Nói chồng, ngắt lời tự nhiên và luồng liên tục | Huấn luyện, điều khiển và đánh giá phức tạp hơn |
 
-Các quyết định dựa trên đánh giá dựa trên dữ liệu chất lượng cao thu được từ việc ghi lại có hệ thống các hoạt động Agent—đây chính là giải pháp mà observability có thể giải quyết được.
+Điểm chung là thoát khỏi giả định mọi người phải nói lần lượt và khỏi phỏng đoán của VAD về người đang giữ lượt. Cascade và Omni vẫn chia tương tác thành các lượt; full-duplex biến quyền giữ lượt thành quyết định liên tục của mô hình.
 
-**So sánh theo cặp:**
+[^ch6-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ Phân loại cascade / turn-based / full-duplex xuất phát từ phần tóm tắt ba thế hệ ChatGPT Voice; thuật ngữ “end-to-end omnimodal (Omni)” tương ứng với nhóm “turn-based voice models”.
+
+**Hủy streaming:**
 
 ```python
-for task in paired_tasks:
-    for seed in fixed_seeds:
-        a = run(config_a, task, seed)
-        b = run(config_b, task, seed)
-        record_paired_delta(verifier(a), verifier(b))
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
 
-return paired_bootstrap_or_mcnemar(all_deltas)
+on_final_transcript(text):
+    commit_or_restart(text)
 ```
 
-## Observability của Agent
+### Mô hình 1 · Pipeline cascade
 
-Các quyết định dựa trên đánh giá, dù là lựa chọn mô hình hay lặp lại liên tục, đều dựa vào dữ liệu vận hành chất lượng cao. Trước tiên, chúng tôi mô tả cách thu thập dữ liệu này một cách có hệ thống (observability được), sau đó thảo luận cách chuyển kết quả đánh giá thành cải tiến hệ thống.
+Phần lớn trợ lý giọng nói thương mại vẫn dùng pipeline tuần tự (Hình 6-6): VAD quyết định người dùng đã nói xong, ASR chuyển âm thanh thành văn bản, LLM hiểu và tạo câu trả lời, rồi TTS đọc câu trả lời. Tính mô-đun giúp tối ưu từng thành phần độc lập, nhưng mỗi ranh giới lại thêm thời gian chờ.
 
-![Hình 6-6 Ngăn xếp công nghệ quan sát ](images/fig6-6.svg)
+![Hình 6-6: Pipeline Agent giọng nói tuần tự](images/fig6-6.svg)
 
-Khái niệm Observability được mượn từ lĩnh vực hệ thống phân tán: bạn không thể trực tiếp mở hệ thống để xem nó đang làm gì. Bạn chỉ có thể suy ra điều gì đang xảy ra thông qua nhật ký, chỉ báo và dữ liệu theo dõi mà nó đưa ra. Cũng giống như bác sĩ không thể nhìn trực tiếp tình trạng cơ thể bệnh nhân mà chỉ có thể chẩn đoán vấn đề thông qua các tín hiệu bên ngoài như nhiệt độ cơ thể, huyết áp, hình ảnh. Hệ thống Agent khiến việc này trở nên khó khăn hơn: cùng một đầu vào có thể tạo ra các đầu ra khác nhau, nhiều vòng lý luận và lệnh gọi công cụ khiến đường dẫn thực thi trở nên cực kỳ phức tạp và quá trình "tư duy" của mô hình hoàn toàn không rõ ràng với thế giới bên ngoài.
+| Mô-đun | Vai trò | Nút thắt thường gặp |
+| --- | --- | --- |
+| VAD | Xác định lời nói đã kết thúc | Ngưỡng im lặng gây chờ và tách lượt sai |
+| ASR | Chuyển âm thanh thành văn bản | Độ trễ nhận dạng và mất ngữ cảnh |
+| LLM | Hiểu, suy luận và sinh câu trả lời | Thời gian đến token đầu tiên; reasoning làm chờ lâu hơn |
+| TTS | Chuyển văn bản thành giọng nói | Tổng hợp gói đầu tiên và bộ đệm phát |
 
-Giá trị của observability trước tiên nằm ở **chẩn đoán vấn đề**: trajectory hoàn chỉnh cho phép các nhà phát triển phát lại toàn bộ quá trình thay vì dựa vào phỏng đoán. Thứ hai là cơ sở của **tối ưu hóa liên tục** - bạn có thể xem tác vụ nào yêu cầu lặp lại nhiều lần, công cụ nào có tỷ lệ thành công thấp nhất và truy vấn tìm kiếm nào luôn trả về kết quả trống. Trên **Quản lý chi phí**, chi phí vận hành Agent có thể thay đổi theo một hoặc hai bậc độ lớn đối với các nhiệm vụ khác nhau và việc theo dõi có thể xác định các trường hợp chi phí cao bất thường. Cuối cùng, dữ liệu trajectory tích lũy cũng cung cấp cơ sở cho việc tối ưu hóa hệ thống và cải tiến mô hình tiếp theo.
+Với câu trả lời ngắn không reasoning, thời gian chờ của VAD, ASR, LLM và TTS cộng dồn theo chuỗi (Hình 6-7); giá trị thực phụ thuộc độ dài đầu vào, mô hình, phần cứng, mạng và tải. Trong sản xuất, xếp hàng còn khuếch đại độ trễ nhàn rỗi (Hình 6-8).
 
-Cơ sở dữ liệu của observability Agent là **Trace** và cấu trúc dữ liệu của nó tuân theo mô hình cây span của hệ thống phân tán: một lần thực thi tác vụ tương ứng với một trajectory, trong đó mỗi lệnh gọi LLM, mỗi lệnh gọi công cụ và mỗi lần truy xuất là một **span**(đơn vị thực thi ghi lại đầu vào và đầu ra, thời gian bắt đầu và kết thúc, mức tiêu thụ mã thông báo và thông tin lỗi), span Mối quan hệ cha-con giữa chúng tạo thành một cây thực thi - cho ví dụ: trong khoảng "vòng lặp chính Agent", có một số khoảng phụ "cuộc gọi LLM" và "cuộc gọi công cụ". Các giao thức được tiêu chuẩn hóa có sẵn ở lớp này: **OpenTelemetry** là một tiêu chuẩn theo dõi phân tán chung và các thông số kỹ thuật như **OpenInference** xác định các quy ước ngữ nghĩa dành riêng cho ứng dụng LLM trên đó (cách ghi lại các từ nhắc nhở, tham số mô hình, cách sử dụng mã thông báo, v.v.). Ưu điểm của việc sử dụng các giao thức chuẩn là việc thu thập và phân tích được tách rời—cùng một dữ liệu theo dõi có thể được kết nối với các chương trình phụ trợ phân tích khác nhau để tránh bị khóa vào một nền tảng duy nhất.
+![Hình 6-7: Thác độ trễ của câu trả lời tuần tự](images/fig6-7.svg)
 
-LangSmith là một trong những nền tảng tiêu biểu trong lĩnh vực này (có vị trí tương tự như Langfuse, Arize Phoenix, v.v.), tích hợp observability, đánh giá và tối ưu hóa thành một vòng khép kín. Mỗi lần thực thi sẽ tạo ra một phiên theo dõi, trong đó các lệnh gọi mô hình, cách sử dụng công cụ và truy xuất kiến thức được ghi lại dưới dạng các đơn vị thực thi độc lập và cây thực thi được hình thành thông qua các liên kết nhân quả. Mỗi đơn vị ghi lại đầy đủ thông tin đầu vào và đầu ra, thông tin thời gian, dữ liệu chi phí và thông tin lỗi. Nền tảng sử dụng tính năng thu thập dữ liệu hàng loạt không đồng bộ để đảm bảo rằng bản thân việc theo dõi không ảnh hưởng đến độ trễ phản hồi của Agent.
+![Hình 6-8: Đường cong độ trễ xếp hàng](images/fig6-8.svg)
 
-Nền tảng này cũng hỗ trợ thử nghiệm A/B (định tuyến một phần lưu lượng truy cập của người dùng sang phiên bản mới, tự động so sánh các chỉ báo khác nhau và hỗ trợ khôi phục nhanh hoặc mở rộng dần dần), quản lý phiên bản từ nhanh chóng (mỗi phiên bản được liên kết với dữ liệu hiệu suất thời gian chạy) và phát triển cộng tác (các thành viên trong nhóm có thể chia sẻ dữ liệu theo dõi và các trường hợp sự cố). Dữ liệu thực khổng lồ trong môi trường sản xuất là mỏ vàng để cải tiến liên tục - nó có thể phát hiện ra các tình huống không mong muốn và xác định các điểm chức năng cần tối ưu hóa nhất.
-
-Điểm đến có giá trị nhất cho dữ liệu có thể quan sát được là quay trở lại các tài sản được đánh giá. Một vòng khép kín thực tế là: lọc ra các trường hợp thất bại và đáng ngờ khỏi quá trình sản xuất → khử nhạy cảm (xóa các trường nhạy cảm như quyền riêng tư và khóa của người dùng) → đưa các trường hợp sử dụng mới và thử nghiệm hồi quy vào các bộ đánh giá. Bằng cách này, bộ đánh giá không còn là một bộ sưu tập tĩnh được xây dựng một lần nữa mà là một tài sản sống phát triển cùng với sản phẩm và tiếp tục được phân phối gần với người dùng thực - chế độ lỗi hiển thị trực tuyến hôm nay sẽ trở thành trường hợp hồi quy để duy trì điểm mấu chốt này vào ngày mai. Đây chính xác là điểm giao thoa giữa observability và luồng đánh giá chính trong chương này: observability chịu trách nhiệm "nhìn thấy" những gì đang xảy ra trong thế giới thực và đánh giá chịu trách nhiệm củng cố những quan sát này thành các tiêu chuẩn có thể được kiểm tra nhiều lần.
-
-Observability phải đối mặt với một số loại thách thức:
-
-- **Khối lượng dữ liệu và sự cân bằng quyền riêng tư**: Các hệ thống có lưu lượng truy cập cao có thể tạo ra hàng terabyte dữ liệu theo dõi mỗi ngày trong khi vẫn cần tuân thủ các quy định bảo vệ dữ liệu.
-- **Tính phức tạp của quy kết nhân quả**: Việc tự động xác định nguyên nhân gốc rễ từ trajectory vẫn yêu cầu các thuật toán phân tích thông minh hơn và nghiên cứu tiên tiến đang cố gắng suy luận nguyên nhân và phân tích phản thực tế nhưng vẫn chưa hoàn thiện.
-- **Việc truy tìm vấn đề nan giải cho nhiều hệ thống Agent**: Việc theo dõi luồng thực thi trên nhiều Agent phức tạp và có ngữ nghĩa hơn so với các lệnh gọi API giữa các vi dịch vụ.
-- **Cân bằng giữa bảo vệ thời gian thực và phân tích sau**: Các tình huống rủi ro cao cần có biện pháp bảo vệ tích cực, nhưng điều này sẽ gây thêm độ trễ và cảnh báo sai.
-
-Với công nghệ ML được tích hợp sâu vào chuỗi công cụ, các nền tảng có observability trong tương lai dự kiến sẽ tự động xác định các điểm bất thường và xác định nguyên nhân gốc rễ của chúng.
-
-Với một hệ thống đánh giá hoàn chỉnh và bộ dữ liệu sẵn có, điều quan trọng là chuyển các kết quả đánh giá thành những cải tiến hệ thống thực tế.
-
-## Từ báo cáo Điểm chuẩn đến cải tiến hệ thống
-
-Trường hợp sau lấy từ một vòng lặp AndroidWorld có thật nhưng được thu hẹp có chủ đích trong kho đi kèm. Thử nghiệm gồm bốn nhiệm vụ cài đặt Wi-Fi trên trình giả lập API 35, mỗi nhiệm vụ có một cặp chạy đối chứng–thử nghiệm. Đây không phải toàn bộ benchmark 116 nhiệm vụ và cũng không thay thế việc chạy lại trong môi trường tham chiếu API 33. Giá trị của nó nằm ở chuỗi quyết định nối từ kết quả này sang kết quả kế tiếp, không phải ở một điểm số tổng quát.
-
-![Hình 6-7 Điểm chuẩn cho vòng kín cải tiến ](images/fig6-7.svg)
-
-Từ góc độ của kỹ thuật Harness, phần này chủ yếu nói về phương pháp tối ưu hóa lặp lại Harness - xác định các liên kết yếu trong Harness bằng cách đánh giá dữ liệu (không đủ ngữ cảnh? Thiếu các ràng buộc? Xác minh không đầy đủ? Phản hồi không kịp thời?), cải tiến có mục tiêu và sau đó đánh giá lại, tạo thành một vòng khép kín trong quá trình phát triển liên tục của Harness.
-
-Trước khi bắt đầu phân tích báo cáo Điểm chuẩn, có một nguyên tắc dễ bị bỏ qua: **Khi thấy hiệu suất của Agent giảm sút, trước tiên bạn nên kiểm tra chính hệ thống đánh giá trước khi chạm vào Agent**. Một hiểu lầm phổ biến là sửa đổi ngay mã Agent khi điểm giảm xuống, đồng thời bỏ qua rằng bản thân hệ thống đánh giá có thể gặp sự cố trước tiên - hướng điều chỉnh dựa trên tín hiệu bị méo có thể sai ngay từ đầu. Các nguồn lỗi phổ biến trong hệ thống đánh giá bao gồm: không đủ tài nguyên trong môi trường đang chạy dẫn đến dừng quá trình (được hiển thị dưới dạng lỗi ngẫu nhiên), lỗi trong chính trình ghi điểm xác định câu trả lời đúng là lỗi và sự mất kết nối giữa các trường hợp thử nghiệm và kịch bản sản xuất. Những vấn đề này giống hệt về mặt số lượng với sự xuống cấp của mô hình và chỉ có thể được phân biệt bằng cách kiểm tra các trajectory hoàn chỉnh.
-
-### Hiểu báo cáo điểm chuẩn: Nghệ thuật tìm ra vấn đề
-
-Báo cáo ban đầu ghi lại một lần chạy trên mỗi nhiệm vụ trong số 116 nhiệm vụ, với tỷ lệ thành công tổng thể khoảng 88%. Lỗi không phân tán ngẫu nhiên: ba trong bốn nhiệm vụ `SystemWifiTurn*` thất bại, và trajectory cho thấy Agent liên tục đi tới lui mà không xác nhận trạng thái cuối.
-
-Điểm tổng 88% dễ che khuất cụm lỗi nhỏ nhưng nhất quán này. Tăng giới hạn bước cũng không giải quyết đúng vấn đề: nó có thể biến “Agent không nhìn thấy điều khiển” thành “Agent chưa đủ kiên trì”. Cách đọc đúng là đi từ chi tiết lên: tìm cụm theo nhiệm vụ và nhãn năng lực, phát lại trajectory, xác định lỗi nằm ở quan sát, suy luận, hành động hay xác minh, rồi mới chọn một biến để thay đổi. Nhóm nhiệm vụ Wi-Fi ở đây được dùng để chẩn đoán cơ chế với chi phí thấp, không phải để ước lượng hiệu năng toàn hệ thống.
-
-### Từ dữ liệu đến giả thuyết: Xây dựng lộ trình cải tiến
-
-Vòng đầu kiểm tra lời giải thích rẻ nhất. H1 giả định Agent thiếu kiến thức điều hướng, nên chỉ nhóm thử nghiệm nhận thêm chỉ dẫn tìm trang Wi-Fi và kiểm tra trạng thái cuối. Tỷ lệ thành công không tăng; prompt không phải nút thắt.
-
-Vòng hai kiểm tra Agent thực sự nhìn thấy gì. H5 thay nguồn accessibility không tương thích với API 35 bằng cây UIAutomator được AndroidWorld hỗ trợ. Thành công tăng mạnh, nhưng cây đầy đủ làm lượng token tăng vọt. Vì vậy H5C không thêm thông tin mới; nó chỉ loại các nút container vô hình, không có văn bản và không thể thao tác, nhằm xem có thể giữ nguyên thành công với ít nhiễu hơn hay không.
-
-Trong cả ba vòng, mô hình, tham số nhiệm vụ, seed, giới hạn bước và trình giả lập đều được giữ nguyên; thứ tự hai nhánh được luân phiên. Nhờ chỉ thay một biến mỗi vòng, tác dụng phụ còn lại của vòng trước trở thành câu hỏi duy nhất cho vòng sau.
-
-### Từ kết quả đến quyết định: Sự đánh đổi dựa trên dữ liệu
-
-Bảng 6-5 tóm tắt số đo thực tế. Mỗi nhánh chỉ có bốn nhiệm vụ, nên các số này đủ để quyết định có đáng chạy rộng hơn hay không, chứ chưa thể đại diện cho toàn bộ AndroidWorld.
-
-Bảng 6-5 Ba vòng thử nghiệm trên nhóm nhiệm vụ Wi-Fi của AndroidWorld
-
-| Thử nghiệm | Biến duy nhất thay đổi | Thành công đối chứng → thử nghiệm | Token thử nghiệm / đối chứng | Quyết định kế tiếp |
-|---|---|---:|---:|---|
-| H1 | Thêm chỉ dẫn điều hướng | 25% → 25% | 0.47× | Không tăng thành công; giữ prompt cũ |
-| H5 | Accessibility feed → UIAutomator | 25% → 100% | 2.498× | Hiệu quả rõ nhưng quá tốn; tiếp tục tối ưu |
-| H5C | Rút gọn cây UIAutomator | 100% → 100% | 0.506× | Giữ thành công, giảm một nửa token; chuyển sang chạy đầy đủ |
-
-Trình tự quan trọng hơn từng tỷ lệ riêng lẻ. Chỉ dẫn chi tiết hơn không thể bù cho thông tin mà Agent chưa từng nhận được; khi nghi ngờ lỗi quan sát, hãy kiểm tra nó trước khi kéo dài prompt. Tuy nhiên, nhiều đầu vào hơn cũng chưa chắc tốt hơn. Cây phần tử đầy đủ khắc phục vấn đề quan sát nhưng đưa quá nhiều nhiễu vào ngữ cảnh. Loại các nút không có ý nghĩa vẫn giữ bốn lượt chạy thành công và giảm lượng token khoảng một nửa. Không hề đổi mô hình: chính cách Harness biểu diễn UI trước hết quyết định nhiệm vụ có làm được hay không, rồi quyết định chi phí để làm được việc đó.
-
-### Lặp lại liên tục: từ cải tiến đầu tiên đến phát triển hệ thống
-
-H5C vượt qua bốn nhiệm vụ mới chỉ đủ điều kiện cho một phép thử lớn hơn, chưa đủ để triển khai. Cổng tiếp theo là chạy cả 116 nhiệm vụ với năm seed trên Pixel 6 / API 33 và đầy đủ ứng dụng bên thứ ba. Tỷ lệ thành công không được kém hơn, tỷ lệ token phải ≤ 0.75 và tỷ lệ độ trễ phải ≤ 1.5. Trước khi hoàn tất phép thử đó, kết quả 4/4 của nhóm nhỏ không được báo cáo thành “100% thành công toàn hệ thống”.
-
-Đó là ý nghĩa thực tế của lặp liên tục: bằng chứng ở mỗi vòng chỉ cho phép hành động tiếp theo trong đúng phạm vi mà nó hỗ trợ. H1 chặn việc tiếp tục nhồi prompt; H5 tìm ra đúng cơ chế nhưng đồng thời lộ vấn đề chi phí; H5C xử lý chi phí và đủ điều kiện bước vào phép thử rộng. Một báo cáo benchmark tốt không chỉ nêu điểm số, mà còn nói rõ kết luận áp dụng ở đâu, guardrail nào chưa đạt và bước tiếp theo phải kiểm tra điều gì.
-
-> **Thử nghiệm 6-12 ★★★: Đánh giá và cải tiến trên AndroidWorld**
+> **Thử nghiệm 6-3 ★: Xây dựng Agent thoại truyền thống**
 >
-> Thử nghiệm này thực hành trọn vẹn con đường từ báo cáo đánh giá đến cải tiến hệ thống. Bắt đầu bằng báo cáo lịch sử và ba cặp chạy đã lưu trong `chapter6/android-world`.
+> Kết nối microphone, Silero VAD, Whisper cục bộ, LLM streaming và Fish S1 TTS qua WebSocket để lập đường cơ sở cascade. Bằng chứng thực của một lượt còn lại cho thấy chuỗi media và mô hình chạy end-to-end; đây không phải benchmark về đồng thời hay tải sản xuất. Mã và hồ sơ nghiệm thu ở [chapter6/live-audio](../chapter6/live-audio/).
+
+> **Bổ sung: Xây dựng Agent thoại WebRTC “gọi cho người dùng”**
 >
-> Bước một: chẩn đoán. Phân tích chéo các bảng theo từng nhiệm vụ và ma trận nhãn khả năng để ánh xạ các lỗi bề ngoài của nhiệm vụ đến những thiếu sót về năng lực sâu bên trong. Xác định các nhãn năng lực có tỷ lệ thành công thấp hơn mong đợi và các lĩnh vực nhiệm vụ tập trung thất bại.
+> Phone Agent không cần PSTN. WebRTC trên trình duyệt có thể tái hiện vòng lặp mở phiên, hỏi thông tin thiếu, đọc lại để xác nhận và lưu kết quả có cấu trúc. Khi cần liên hệ tổ chức bên ngoài, thay hợp đồng công cụ bằng nhà cung cấp PSTN/SIP phù hợp. Đường truyền media, so sánh direct/ReAct và bằng chứng nghiệm thu ở [chapter6/phone-agent](../chapter6/phone-agent/). Dự án giữ các run identifier lịch sử \`exp9-2\`, nhưng không còn là một thử nghiệm được đánh số trong bản thảo.
+
+#### Từ tuần tự đến nhận biết streaming
+
+Streaming ASR có thể tạo transcript tạm thời trong khi người dùng nói; LLM gửi câu đầu tiên có thể đọc được cho TTS; TTS trả về các đoạn âm thanh để chồng lấp sinh, tổng hợp và phát. Điều đó không làm ASR, LLM và TTS song song hoàn toàn: nếu transcript một phần thay đổi, phải hủy, khởi động lại hoặc sửa phần sinh; chỉ bật \`stream\` là chưa đủ.
+
+Streaming thông thường cũng không bỏ được thời gian chờ im lặng của VAD. Front end VAD + ASR tích lũy độ trễ, làm mất do dự, cảm xúc, backchannel và âm thanh môi trường; tên riêng hay địa chỉ email có thể bị chia giữa các đoạn. Mô hình streaming thực sự cần encoder nhân quả hoặc theo khối cùng giải mã tăng dần. Encoder của Whisper chờ toàn bộ đoạn âm thanh nên không nên gọi là mô hình streaming nhân quả. Mô hình âm thanh dựa trên LLM có thể phát văn bản và sự kiện ngữ nghĩa từ âm thanh liên tục, nhưng mô phỏng bằng prefix không phải cam kết hiệu năng của mô hình nhân quả.
+
+Ngoài token văn bản, luồng có thể phát \`speak_start/end\`, \`interrupt\` (ranh giới lời nói và ý định ngắt), \`emotion\` (cảm xúc và do dự), \`laugh\`, \`sigh\`, \`noise\` (âm thanh cận ngôn ngữ và môi trường). Nhờ vậy Agent không phải nén mọi sự kiện âm thanh thành văn bản thường.
+
+[^ch6-11]: Về việc đưa phán đoán lượt vào bộ nhận dạng và vấn đề nhãn sử dụng thông tin tương lai, xem Bojie Li và Noah Shi, *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR*, 2026 (sắp xuất bản).
+
+> **Thử nghiệm 6-4 ★: Mô phỏng nhận biết giọng nói streaming bằng Qwen2-Audio**
 >
-> Bước 2: Xây dựng giả thuyết. Hình thành giả thuyết theo ba lớp (bề mặt → trung gian → sâu); mỗi giả thuyết phải nêu mức cải thiện thành công kỳ vọng và cách xác minh.
+> Bản thân Qwen2-Audio không phải mô hình streaming. Thử nghiệm mô phỏng nhận biết liên tục bằng các prefix âm thanh tăng dần và so sánh với VAD 600 ms + Whisper. Canonical run vượt qua các cổng thực thi và provenance nhưng chỉ tái hiện 2/6 hành vi: các lệnh prefix mất 8,4–11,3 giây, mẫu pause bỏ sót \`silence\`, và mẫu noise vẫn phân loại sai \`cough/laughter\`. Đây là kết quả âm tính để kiểm tra cơ chế và lỗi; không phải bằng chứng cho nhận biết streaming thật 100–200 ms. Toàn bộ hồ sơ ở [chapter6/streaming-speech](../chapter6/streaming-speech/).
+
+### Mô hình 2 · Mô hình omnimodal end-to-end (Omni)
+
+Ngay cả khi có nhận biết streaming, cascade vẫn đưa nghe, suy nghĩ và nói qua các giao diện rời rạc; cảm xúc, ngữ điệu và âm thanh môi trường có thể mất khi âm thanh biến thành văn bản. Omni dùng một mô hình để nghe, sinh câu trả lời và nói, giữ được tín hiệu phi văn bản nhưng tốn hơn khi huấn luyện, gỡ lỗi và thay thành phần (Hình 6-9). Self-cascade có thể sửa lỗi nhận biết khi văn bản đủ cho nhiệm vụ; nếu câu trả lời phụ thuộc tốc độ nói, cảm xúc hoặc môi trường, nút thắt văn bản làm mất bằng chứng không thể đảo ngược[^ch6-13].
+
+Omni vẫn giả định chia lượt và thường dùng VAD hoặc endpointing ngữ nghĩa. Một khoảng dừng trong chuỗi số có thể bị coi là kết thúc; nhận biết streaming cải thiện phán đoán nhưng không xóa lượt.
+
+[^ch6-13]: Đo lường đầy đủ thời điểm lợi thế độ chính xác giữa cascade và end-to-end đảo chiều, xem Li, Bojie và Noah Shi, *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents*, 2026 (sắp xuất bản).
+
+![Hình 6-9: So sánh mô hình giọng nói omnimodal end-to-end](images/fig6-9.svg)
+
+Realtime speech API nằm giữa cascade và Omni: mô hình xử lý âm thanh native nhưng điều khiển tương tác vẫn dựa vào VAD, ngắt lời và gọi công cụ bất đồng bộ. So sánh có ích không phải bảng xếp hạng mà là cách hai đường end-to-end và self-cascade thất bại ở các nhiệm vụ khác nhau.
+
+> **Thử nghiệm 6-5 ★★: Chạy MiniCPM-o 4.5 cục bộ — end-to-end so với self-cascade**
 >
-> Bước 3: Thử nghiệm theo giai đoạn. Tái hiện H1, H5 và H5C, mỗi vòng chỉ đổi một biến. Ghi token, độ trễ và hồi quy bên cạnh tỷ lệ thành công.
->
-> Bước 4: Ra quyết định dựa trên dữ liệu. Đưa ra quyết định triển khai dựa trên tỷ lệ chi phí-lợi ích—thay vì chỉ áp dụng tất cả các cải tiến có sẵn, bạn cần cân nhắc phạm vi, tác động về độ trễ và chi phí chung của mỗi cải tiến. Những cải tiến chi phí thấp và năng suất cao được triển khai trước tiên, còn những cải tiến chi phí cao được giới hạn trong các kịch bản chính.
->
-> Bước 5: Lặp lại. Một thử nghiệm nhóm nhỏ đạt yêu cầu chỉ được chuyển sang chạy đầy đủ. Chỉ thảo luận triển khai sau phép thử 116×5 trong môi trường tham chiếu; trong báo cáo phải giữ rõ khác biệt môi trường, cỡ mẫu và phạm vi chưa hoàn chỉnh.
->
-
-## Từ đánh giá bên ngoài đến đánh giá nội bộ: cơ sở hạ tầng đánh giá cho Agent cấp sản xuất
-
-Các phần trước đã thảo luận về cách đánh giá hệ thống Agent từ bên ngoài—xây dựng môi trường đánh giá, thiết kế tập dữ liệu và phân tích báo cáo Điểm chuẩn. Nhưng các sản phẩm Agent tốt nhất không chỉ trải qua đánh giá bên ngoài mà còn có cơ sở hạ tầng tích hợp để tự đánh giá liên tục. Phần sau đây lấy OpenClaw Agent phổ biến nguồn mở được giới thiệu trong Chương 5 làm ví dụ, kết hợp với phân tích kỹ thuật công khai của sản phẩm Coding Agent hàng đầu để chia sẻ với những người thực hành, nhằm chứng minh một hệ thống đánh giá nội bộ đáng học hỏi - nó nhúng một cách có hệ thống phương pháp thử nghiệm trong nghiên cứu ML vào kỹ thuật sản phẩm.
-
-### Cơ sở hạ tầng Ablation: Hiểu rõ sự đóng góp thực sự của từng tính năng
-
-Các nhà nghiên cứu ML từ lâu đã sử dụng Nghiên cứu cắt bỏ để hiểu thành phần nào của mô hình thực sự quan trọng - cái gọi là cắt bỏ là "loại bỏ" từng thành phần nhất định để xem hiệu suất tổng thể giảm bao nhiêu. OpenClaw đưa phương pháp này vào kỹ thuật sản phẩm: một công tắc chính được tích hợp vào hệ thống để vô hiệu hóa nhiều tính năng chính (chế độ suy nghĩ, nén ngữ cảnh, bộ nhớ tự động, tác vụ nền, v.v.) cùng lúc, tạo ra đường cơ sở "mô hình trần". Điều này cho phép nhóm trả lời một câu hỏi quan trọng: **Tính năng này có thực sự cải thiện trải nghiệm người dùng hay chỉ cảm thấy hữu ích?**
-
-Việc cắt bỏ thành một phương pháp thực hành kỹ thuật thông thường thay vì nghiên cứu một lần có một số ý nghĩa thực tế. Đầu tiên, các công tắc cắt bỏ phải được đưa vào từ rất sớm trong đường dẫn khởi động—trước khi bất kỳ hằng số cấp mô-đun nào nắm bắt các giá trị cấu hình—có nghĩa là cơ sở hạ tầng cắt bỏ phải được thiết kế vào kiến trúc hệ thống ngay từ đầu, thay vì được cài đặt sau đó. Thứ hai, việc chạy thử nghiệm cắt bỏ thường xuyên (chẳng hạn như trước mỗi bản phát hành chính) có thể phát hiện ra "nợ tính năng"—các tính năng đã từng hoạt động nhưng không còn cần thiết khi mô hình phát triển. Phương pháp được đề xuất cho bất kỳ nhóm nào xây dựng Agent sản xuất là: **Mọi tính năng chính phải có thể chuyển đổi độc lập và nhóm phải thường xuyên xác minh đóng góp thực tế của từng tính năng**.
-
-### Phương pháp kiểm tra AB: Phân biệt giữa cơ chế và mục tiêu
-
-Sản phẩm Agent trưởng thành sẽ tiến hành kiểm tra AB nghiêm ngặt về hành vi của chính nó (nghĩa là người dùng được chia ngẫu nhiên thành hai nhóm, một nhóm sử dụng phiên bản cũ và nhóm còn lại sử dụng phiên bản mới và dữ liệu thực tế của hai nhóm được so sánh để xác định xem các thay đổi có hiệu quả hay không). Trường hợp thử nghiệm Agent AB được thiết kế tốt thể hiện một số nguyên tắc phương pháp chính:
-
-**Đa nhánh thay vì nhị phân**. Không chỉ so sánh "có" và "không", mà còn thiết kế nhiều biến thể lũy tiến (ví dụ: khi kiểm tra các điểm mạnh khác nhau của các ràng buộc từ gợi ý, hãy thiết lập một nhóm kiểm soát và ba nhóm thử nghiệm nghiêm ngặt hơn dần dần). Thiết kế này có thể tiết lộ mối quan hệ giữa liều lượng và phản ứng và giúp tìm ra điểm tối ưu.
-
-**Phân biệt giữa chỉ báo cơ chế và chỉ báo mục tiêu**. Đây là sai lầm dễ mắc phải nhất - coi thứ bạn đang thay đổi là mục tiêu tối ưu hóa. Ví dụ: nếu bạn đang thử nghiệm "giảm độ dài tệp kế hoạch của Agent", thì độ dài kế hoạch là một chỉ số cơ chế (thứ mà bạn thay đổi trực tiếp), nhưng đó không phải là mục tiêu. Mục tiêu thực sự có thể là "giảm chi phí ở cấp độ phiên". Việc rút ngắn tài liệu kế hoạch có thể giảm chi phí nhưng cũng có thể dẫn đến nhiều chu kỳ chỉnh sửa-kiểm tra-chỉnh sửa hơn vì kế hoạch không đủ chi tiết, từ đó làm tăng sản lượng tổng thể. Hãy luôn tự hỏi bản thân: **Điều tôi đang thay đổi (cơ chế) có giống với điều tôi thực sự quan tâm (mục tiêu) không?** Nếu không, mục tiêu sẽ chiếm ưu thế.
-
-**Đặt chỉ báo guardrails**. Ngay cả khi chỉ số mục tiêu được cải thiện, thử nghiệm vẫn nên dừng nếu mức độ hài lòng của người dùng giảm, số lượng thao tác tăng hoặc tỷ lệ lỗi tăng. Chỉ báo guardrails là “điểm mấu chốt không thể tệ hơn”.
-
-**Ghi lại số liệu thống kê cơ bản**. Bao gồm kích thước mẫu, phân vị phân phối và phân tích tương quan (chẳng hạn như "tỷ lệ từ chối tăng đơn điệu với kích thước kế hoạch") để cung cấp ngữ cảnh cần thiết để diễn giải kết quả thử nghiệm. Nếu không có đường cơ sở, bạn không thể biết liệu kết quả thử nghiệm có ý nghĩa thống kê hay không.
-
-### Hệ thống chuyển mạch đặc tính hai lớp
-
-Các sản phẩm Agent cần thiết kế cơ sở hạ tầng chuyển đổi tính năng (Feature Flag) ngay từ ngày đầu tiên - cái gọi là chuyển đổi tính năng là một công tắc có thể được điều khiển từ xa để xác định xem một chức năng nào đó được bật hay tắt cho người dùng mà không cần phải triển khai lại mã. Nó phục vụ đồng thời ba mục đích: thử nghiệm, giải phóng dần dần và ngắt mạch khẩn cấp.
-
-**Chuyển đổi thời gian biên dịch** loại bỏ mã có liên quan khỏi sản phẩm một cách vật lý trong giai đoạn xây dựng. Các tính năng dành riêng cho phần bên trong không tồn tại trong bản dựng bên ngoài - ngay cả kỹ thuật đảo ngược cũng không thể phát hiện ra chức năng đã bị loại bỏ. Đây cũng là một cơ chế cắt bỏ rõ ràng: việc tắt một tính năng không bỏ qua logic khi chạy, nhưng mã tương ứng không tồn tại về mặt vật lý.
-
-Cấu hình của **chuyển đổi thời gian chạy** do máy chủ đưa ra và được lưu vào bộ nhớ đệm trên đĩa cục bộ. Thiết kế thà đọc cấu hình bộ đệm cũ hơn một chút hơn là cho phép Agent chặn khởi động do phải chờ yêu cầu mạng. Các quyết định phân nhóm cụ thể được thực hiện thông qua nền tảng thử nghiệm như GrowthBook, được sử dụng để phân bổ các nhóm thử nghiệm AB. Chi tiết thiết kế quan trọng là các sự kiện hiển thị cho từng tính năng được ghi lại nhiều nhất một lần mỗi phiên để tránh việc ghi lặp lại làm ô nhiễm dữ liệu thử nghiệm.
-
-Nguồn cảm hứng cho các nhà phát triển Agent: Công tắc tính năng không phải là công cụ gỡ lỗi mà là các thành phần kiến trúc hạng nhất.
-
-### Đánh giá độ nhạy của từ nhanh chóng
-
-Lời nhắc hệ thống là "mã" cốt lõi cho hành vi của Agent, nhưng nó thường thiếu kiểm tra hồi quy và kiểm soát phiên bản giống như mã thông thường. Những gì OpenClaw làm là cung cấp một công cụ chuyên dụng có thể trích xuất lời nhắc hệ thống được hiển thị đầy đủ trên một phiên bản git được chỉ định - văn bản cuối cùng bao gồm tất cả các phần mở rộng điều kiện động. Điều này cho phép nhóm trả lời chính xác: **Cam kết nào đã thay đổi từ gợi ý? Tác động lên bộ đánh giá là gì?**
-
-Các phương pháp được đề xuất cho bất kỳ nhóm Agent nào là: (1) Lời nhắc hệ thống phải được hiển thị một cách xác định (với cùng một đầu vào cấu hình, luôn tạo ra cùng một đầu ra); (2) Thiết lập cơ chế chụp nhanh theo phiên bản cho các lời nhắc; (3) Mọi thay đổi nhanh chóng phải chạy thử nghiệm hồi quy trên tập đánh giá - giống như các thay đổi mã cần chạy CI.
-
-### Phân tích nhận thức về quyền riêng tư làm cơ sở để đánh giá
-
-Đánh giá dựa trên dữ liệu tốt, nhưng các sản phẩm Agent thường xử lý nội dung nhạy cảm của người dùng. OpenClaw giải quyết mâu thuẫn này thông qua một hệ thống loại: giao diện phân tích chỉ chấp nhận các giá trị được bao bọc trong một loại đặc biệt và bản thân tên loại là một trajectory kiểm tra - nó có nghĩa đen là "Tôi đã xác minh rằng đây không phải là mã hoặc đường dẫn tệp". Thiết kế này biến các ràng buộc về quyền riêng tư từ các thông số kỹ thuật được ghi lại thành các kiểm tra loại được thực thi tại thời điểm biên dịch.
-
-Nguyên tắc cốt lõi là: **Thiết kế các hạn chế về quyền riêng tư vào hệ thống ngay từ đầu, thay vì thêm chúng vào sau**. Nếu hệ thống phân tích của bạn không thể thu thập dữ liệu một cách an toàn thì bạn không thể đánh giá hiệu quả. Quyền riêng tư và đánh giá không bị đối lập - thiết kế chú trọng đến quyền riêng tư buộc bạn phải suy nghĩ cẩn thận về *những gì thực sự cần đo lường*, từ đó dẫn đến các số liệu đánh giá chính xác hơn.
-
-### Từ ngoài vào trong: Sự chuyển dịch trong tư duy đánh giá
-
-Thông điệp cốt lõi của phần này là: **Các phần trước đã hướng dẫn bạn cách đánh giá Agent từ bên ngoài, phần này cho biết cách các sản phẩm Agent tốt nhất tự đánh giá từ bên trong**. Đánh giá bên ngoài cho bạn biết "Agent tốt như thế nào" và cơ sở hạ tầng đánh giá nội bộ cho bạn biết "những thay đổi nào đã làm cho nó tốt hơn". Thử nghiệm cắt bỏ khám phá những tính năng thực sự quan trọng, thử nghiệm AB định lượng tác động của từng thay đổi, chuyển đổi tính năng cung cấp cơ sở hạ tầng cho thử nghiệm và khôi phục, đánh giá độ nhạy từ nhanh chóng kết hợp lời nhắc của hệ thống vào hệ thống CI và phân tích nhận thức về quyền riêng tư đảm bảo tuân thủ việc thu thập dữ liệu. Cùng với nhau, năm thành phần này tạo nên kỹ thuật sản phẩm dựa trên đánh giá—không phải thỉnh thoảng thực hiện đánh giá mà đưa đánh giá vào mọi quyết định về sản phẩm.
-
-## Môi trường mô phỏng: cầu nối từ đánh giá đến hậu đào tạo
-
-Điểm cuối cùng của việc đánh giá không phải là điểm số mà là sự tiến bộ. Chương này đã chỉ ra hai con đường để cải tiến: điều chỉnh Harness (từ báo cáo Điểm chuẩn đến cải tiến hệ thống) và đưa đánh giá vào Kỹ thuật Sản phẩm (cơ sở hạ tầng đánh giá nội bộ). Hình thức cải thiện mạnh mẽ nhất là đào tạo - khi mục tiêu mở rộng từ "đánh giá các khả năng hiện có" sang "trau dồi các khả năng mới", đặc biệt thông qua công nghệ post-training đã thảo luận ở Chương 7, môi trường đánh giá cần phát triển thành **môi trường mô phỏng**: một sân chơi ảo cho phép Agent luyện tập nhiều lần và tự động ghi điểm. Sự khác biệt cốt lõi giữa môi trường mô phỏng và đánh giá là tần suất tương tác cao hơn nhiều (hàng triệu so với hàng nghìn), nhu cầu ngẫu nhiên hóa (để ngăn chặn việc học vẹt các cấu hình cụ thể) và nhu cầu cung cấp phản hồi ngay lập tức. Từ góc độ các lĩnh vực ứng dụng, môi trường mô phỏng được chia thành hai loại: môi trường kỹ thuật số (nhiệm vụ xử lý thông tin) và môi trường thể hiện (nhận thức và vận hành thế giới vật lý).
-
-Đây là cách nối hai đầu cầu. Tài sản tích lũy ở bên đánh giá có thể được chuyển đổi gần như liền mạch thành tín hiệu đào tạo: một tập hợp Rubric hoặc trình xác thực được xác định rõ ràng về cơ bản là chức năng khen thưởng của RLVR (Học tăng cường với Phần thưởng có thể xác minh) - tập lệnh phán xét trực tiếp là tập lệnh khen thưởng. Bài kiểm tra có đạt hay không và trạng thái có đạt tiêu chuẩn không chỉ là tiêu chí đánh giá mà còn là phần thưởng cho việc học tập củng cố. Nhưng việc đào tạo sẽ tạo ra những yêu cầu mới mà bạn không phải lo lắng trong giai đoạn đánh giá. Một là **ngữ nghĩa thiết lập lại đáng tin cậy**: quá trình đào tạo yêu cầu chạy hàng triệu tập (một tập là một vòng tương tác hoàn chỉnh từ trạng thái ban đầu đến khi kết thúc nhiệm vụ). Mỗi tập phải có khả năng đặt lại môi trường về trạng thái ban đầu nhất định và sạch sẽ, nếu không tín hiệu gradient sẽ bị ảnh hưởng bởi trạng thái dư của vòng trước. Thứ hai là thông lượng cao hơn nhiều so với đánh giá: hàng nghìn đánh giá là đủ để đưa ra kết luận, trong khi quá trình đào tạo yêu cầu cung cấp cho mô hình hàng triệu tương tác trong khoảng thời gian đồng hồ treo tường có thể chấp nhận được. Tính song song của môi trường và chi phí của một phiên bản duy nhất quyết định trực tiếp liệu việc đào tạo có khả thi hay không. Hai điểm này - trình xác thực chức năng khen thưởng, thiết lập lại và thông lượng theo định hướng đào tạo - sẽ được mở rộng trong Chương 7.
-
-![Hình 6-8 Phổ độ trung thực mô phỏng ](images/fig6-8.svg)
-
-**Về mặt môi trường kỹ thuật số**, khung AWorld đã xây dựng hộp cát máy chủ MCP có thể điều khiển cho nhiệm vụ GAIA, cung cấp 26 máy chủ MCP bao gồm 126 chức năng công cụ để tránh các lệnh cấm và tác dụng phụ không thể kiểm soát do truy cập trực tiếp vào API thực. Tất cả các lệnh gọi công cụ đều có thể phát lại và kiểm tra được. Kiến trúc phân tán của AWorld rút ngắn thời gian thực thi nối tiếp truyền thống từ 7695 giây xuống còn 525 giây (tăng tốc 14,6 lần). Thiết kế không trạng thái của môi trường làm cho mỗi phiên bản hoàn toàn độc lập và hỗ trợ tính song song hiệu quả.
-
-Về mặt **môi trường hiện thân**, RoboTwin2 xây dựng nhiệm vụ vận hành hai cánh tay dựa trên công cụ vật lý và môi trường ngẫu nhiên hóa vị trí, hướng và hình thức của các đối tượng để cải thiện khả năng khái quát hóa. Observation Space bao gồm tầm nhìn của nhiều camera và trạng thái khớp, đồng thời đạt được khả năng kiểm soát theo thời gian thực thông qua **Action Chunking** - mô hình lên kế hoạch cho nhiều hành động liên tục cùng một lúc (xem Chương 9 để biết chi tiết). OSWorld Cho phép cài đặt lại thông qua ảnh chụp nhanh máy ảo, AndroidWorld tập trung vào tự động hóa ứng dụng di động. Bất kể môi trường kỹ thuật số hay môi trường được thể hiện, môi trường mô phỏng cũng yêu cầu môi trường thực thi biệt lập và cơ chế nhận dạng ảo (cách ly VM/container, tác nhân dân cư, xác thực Human-in-the-Loop, hệ thống tệp dùng chung) được thảo luận trong Chương 4, sẽ không được lặp lại ở đây.
-
-> **Thử nghiệm 6-13 ★★: Định cấu hình Môi trường thông minh hiện thân với OpenVLA và RoboTwin2**
->
-> Xây dựng môi trường mô phỏng hoạt động của robot. Đọc tài liệu `ch7/SimpleVLA-RL` và OpenVLA để hiểu kiến trúc của mô hình hành động-ngôn ngữ-tầm nhìn (tích hợp từ đầu đến cuối của bộ mã hóa hình ảnh + mô hình ngôn ngữ + bộ giải mã hành động, chiếu hình ảnh và văn bản vào một không gian ngữ nghĩa chung). Định cấu hình môi trường RoboTwin2 và hiểu không gian quan sát (trạng thái khớp ba chiều RGB + 14 chiều) và không gian hành động (vectơ điều khiển 14 chiều). Nghiên cứu cơ chế ngẫu nhiên hóa môi trường và logic ràng buộc không gian trong move_can_pot. Chạy đánh giá mô hình được đào tạo trước, ghi lại tỷ lệ thành công, thời gian hoàn thành và các chế độ thất bại, tập trung vào tác động của việc phân chia hành động.
+> Cố định một revision cục bộ, tắt chế độ suy nghĩ, rồi so sánh câu trả lời trực tiếp từ audio với self-cascade (transcribe trước, trả lời từ transcript sau). Đo khả năng giữ thông tin âm thanh, **không** đo khả năng “vừa nói vừa suy nghĩ” về sau.
+> Bảng 6-1 Kết quả chạy MiniCPM-o 4.5 cục bộ: end-to-end so với tự xếp tầng (bốn phép kiểm tra cơ chế, không phải benchmark)
 >
 >
-> ![Hình 6-9 OpenVLA và RoboTwin2 thể hiện môi trường thông minh ](images/fig6-9.svg)
+> | Loại nhiệm vụ | End-to-end | Self-cascade | Quan sát |
+> | --- | ---: | ---: | --- |
+> | Số học ngữ nghĩa (2) | 1/2 | 2/2 | Self-cascade sửa một lỗi phiên âm |
+> | Tốc độ nói cận ngôn ngữ (2) | 2/2 | 1/2 | Transcript văn bản xóa khác biệt nhanh/chậm |
+> | Tổng | 3/4 | 3/4 | Tổng bằng nhau, lỗi bổ sung |
 >
+> Mẫu nhỏ nên không chứng minh đường nào thường chính xác hay nhanh hơn. Phiên bản, đầu ra thô và bằng chứng audio-to-audio ở [chapter6/end-to-end-speech](../chapter6/end-to-end-speech/).
+
+Step-Audio 2 cho thấy đường end-to-end xử lý audio thô và phát văn bản lẫn giọng nói, chú ý đến cảm xúc, tốc độ, ngữ điệu và âm thanh môi trường. Step-Audio R1 đưa suy luận vào mô hình âm thanh và làm ví dụ cho “vừa suy nghĩ vừa nói”.
+
+### Mô hình 3 · Mô hình tương tác full-duplex
+
+Omni vẫn tách “người dùng nói” và “mô hình nói”, nhưng phiên dịch đồng thời cần chồng lấp. Full-duplex lắng nghe và nói liên tục, liên tiếp quyết định có tiếp tục, dừng, ngắt hay gọi công cụ. Moshi của Kyutai là một ví dụ nghiên cứu sớm. Thinking Machines Lab gọi đây là **Interaction Model**[^ch6-14]: tương tác được xây trong mô hình thay vì lắp quanh VAD. GPT-Live đưa hướng này lên quy mô sản xuất và ủy thác việc phức tạp cho mô hình suy luận nền trong khi mô hình tiền cảnh giữ cuộc trò chuyện.
+
+[^ch6-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration”, 2026-05. https://thinkingmachines.ai/blog/interaction-models/
+
+Đường tiến hóa là: cascade đoán lượt bằng ngưỡng im lặng; nhận biết streaming nâng phán đoán lên mức ngữ nghĩa; full-duplex biến việc đổi lượt thành quyết định liên tục.
+
+### Thời gian nhận thức: tương tác thời gian thực và suy nghĩ sâu
+
+Mô hình tiền cảnh phải trả lời khi người dùng còn chờ; mô hình nền có thể suy nghĩ lâu hơn. Đây là ba đánh đổi, không phải các bậc tiến hóa tuyến tính:
+
+| Thiết kế | Tiền cảnh | Nền | Rủi ro chính |
+| --- | --- | --- | --- |
+| Lấp chỗ nhanh, sửa chậm | Trả lời ngay | Nghĩ lại và bổ sung | Mâu thuẫn |
+| Tương tác nhanh, lời khuyên chậm | Giữ mạch hội thoại và chọn cách nói | Lời khuyên hoặc kết quả công cụ | Giao diện hạn chế |
+| Hợp nhất suy nghĩ và biểu đạt | Vừa suy nghĩ vừa nói | Chia sẻ trạng thái mô hình | Chi phí huấn luyện và thay thế cao |
+
+#### Giải pháp 1: nghĩ nhanh để lấp chỗ, nghĩ chậm để trả lời
+
+Nghĩ nhanh có thể đưa ra một câu đáp lấp chỗ trong vài trăm mili giây, còn nghĩ chậm hoàn tất suy luận sâu hơn ở nền. Vấn đề của nó là câu hỏi đơn giản bị xử lý hai lần, còn câu hỏi phức tạp có thể sinh mâu thuẫn: mô hình nhanh khuyên mua, mô hình chậm sau đó phát hiện gói cước thiếu một tính năng then chốt, và chỉ trong vài giây người dùng nghe hai câu trả lời trái ngược. Nguyên nhân gốc là hai thực thể mỗi bên đã tự suy nghĩ một cách độc lập.
+
+
+![Hình 6-10: Kiến trúc nghĩ nhanh/nghĩ chậm và so sánh các giải pháp](images/fig6-10.svg)
+
+
+#### Giải pháp 2: nghĩ nhanh để tương tác, nghĩ chậm để nhắc
+
+Giải pháp hai để mô hình nền đưa gợi ý cho mô hình tiền cảnh qua thanh trạng thái hoặc một giao diện chuyên dụng, còn tiền cảnh tiếp tục giữ mạch hội thoại và quyết định cách diễn đạt. Nó ổn định hơn giải pháp một, nhưng giao tiếp vẫn gián tiếp: tiền cảnh có thể hiểu sai gợi ý và không thấy được suy luận trung gian của nền; trước khi nền hoàn tất, nếu người dùng hỏi thêm thì tiền cảnh chỉ có thể dựa vào năng lực của chính nó. Nó có thể "chờ kết quả" một cách tự nhiên, nhưng không thực sự vừa nghĩ vừa nói được.
+
+#### Giải pháp 3: hợp nhất suy nghĩ và biểu đạt end-to-end (lấy Step-Audio R1 làm ví dụ)
+
+Giải pháp ba đưa năng lực suy nghĩ vào thẳng bên trong mô hình âm thanh end-to-end. Step-Audio R1 dùng hai cơ chế bổ trợ để giải hai bài toán: **chưng cất suy nghĩ neo theo phương thức (MGRD)** khiến mô hình suy nghĩ dựa trên đặc trưng âm học, còn **kiến trúc song não MPS** cho phép hình thành ý và biểu đạt chạy song song. Cái trước bảo đảm "nghĩ đúng", cái sau giải quyết "nói kịp lúc".
+
+Lý tưởng nhất, mô hình nên đánh giá cảm xúc từ cao độ, nhịp điệu và ngữ điệu, chứ không chỉ nhìn văn bản đã chuyển tự. Cái gọi là "suy nghĩ thay thế bằng văn bản" là khi mô hình dùng những từ tiêu cực trong lời bài hát để thay cho việc phân tích giai điệu và đặc trưng âm học. MGRD lọc ra những chuỗi suy nghĩ thật sự viện dẫn đặc trưng âm học, rồi dùng dữ liệu đó huấn luyện mô hình, đồng thời dùng học tăng cường để ngăn mô hình bỏ qua suy nghĩ mà đoán thẳng đáp án.
+
+MPS khiến não hình thành ý liên tục sinh ra các mảnh suy nghĩ; não biểu đạt nhận được mảnh nào thì kết hợp ngay với phần đã trả lời để sinh tiếng nói. Hai bên chạy song song theo kiểu đường ống, nên không cần chờ toàn bộ suy nghĩ kết thúc mới cho người dùng nghe câu đầu tiên (Hình 6-11).
+
+
+![Hình 6-11: Kiến trúc song não MGRD và MPS của Step-Audio R1](images/fig6-11.svg)
+
+
+Mô hình hợp nhất hiện thực hoá "vừa nghĩ vừa nói" chặt chẽ nhất, cái giá là suy nghĩ và biểu đạt thời gian thực phải huấn luyện lại cùng nhau; hướng tách rời dễ thay não nền hơn, còn hướng hợp nhất phù hợp hơn với những kịch bản chuyên biệt theo đuổi độ tự nhiên tối đa. Hai bên là một đánh đổi, không đơn giản thay thế lẫn nhau.
+
+### Tổng hợp giọng nói giống con người hơn
+
+TTS truyền thống quá trơn tru và ít ngắt nghỉ sẽ để lộ bản chất máy móc. LLM chính có thể phát thêm các marker điều khiển như \`THINKING\`, \`EMO:happy\`, \`SPEED:0.8x\`; TTS ánh xạ chúng thành khoảng dừng, ngữ điệu, tốc độ, tiếng cười và tiếng thở dài. Có thể huấn luyện TTS hiểu marker hoặc dùng voice cloning với nhiều đoạn tham chiếu.
+
+> **Thử nghiệm 6-6 ★★: TTS điều khiển bằng token với Fish Audio**
+>
+> Dùng Fish Audio S1 để xây dựng thư viện giọng nhiều tham chiếu và so sánh ba cấu hình: không marker, một đoạn tham chiếu và nhiều đoạn tham chiếu. Lớp thực thi chọn cảm xúc, tốc độ và phong cách khớp marker. Cấu hình nhiều tham chiếu đạt điểm cao nhất trong ba vòng nghe mù cân bằng (độ giống nhân viên dịch vụ khách hàng thật 4,67/5), nhưng thứ tự dự kiến không lặp lại đầy đủ vì nhánh không marker vượt nhánh một tham chiếu. Kết quả gợi ý kiểm soát biểu cảm có ích, song nghiên cứu nghe nhỏ không kết luận chất lượng giọng nói nói chung. Thư viện 24 tham chiếu, media A/B/C và hồ sơ nghiệm thu ở [chapter6/controllable-tts](../chapter6/controllable-tts/).
+## Computer Use: GUI Tự động hóa Agent
+
+Khi đọc điều này, bạn có thể nhận thấy rằng chương này dành nhiều không gian cho giọng nói hơn đáng kể so với hai cảnh cuối - điều này là có chủ ý. Trên tiến trình phát triển của đa phương thức thời gian thực, giọng nói là thứ hoàn thiện nhất và đáng được sử dụng làm hệ thống tham chiếu nhất: bắt đầu từ vấn đề "độ trễ đường ống nối tiếp quá cao", thông qua một loạt các giải pháp như end-to-end, full-duplex, suy nghĩ và nói chuyện, v.v., cho đến phần cuối tương đối hình thành ngày nay, toàn bộ quá trình của vấn đề → giải pháp → kết thúc đã được hoàn thành. Vì vậy, hãy giải thích nó kỹ lưỡng. Hai cảnh tiếp theo của Computer Use và robot có thể được xem trong ngữ cảnh giọng nói - chúng đã đạt đến giai đoạn nào của đường tiến hóa này và chúng đang bị mắc kẹt ở đâu.
+
+Ba kịch bản này có vẻ khác nhau nhưng chúng phải đối mặt với những thách thức cốt lõi giống nhau: nhận thức theo thời gian thực, ra quyết định có độ trễ thấp và tương tác liên tục. Hãy xem cách các chủ đề kỹ thuật này được tái tạo trong tương tác trực quan (Computer Use) và tương tác vật lý (robot) – trước tiên bằng cách mở rộng góc nhìn từ phương thức thính giác sang phương thức thị giác: Điều gì sẽ xảy ra nếu Agent không chỉ hiểu được lời nói mà còn có thể “đọc” màn hình và vận hành giao diện đồ họa?
+
+Computer Use (còn gọi là GUI Automation Agent) cho phép AI sử dụng phần mềm giống con người bằng cách quan sát màn hình và thao tác chuột, bàn phím - chẳng hạn như mở trình duyệt để tìm kiếm thông tin, điền dữ liệu vào phần mềm bảng tính hoặc điều chỉnh cấu hình trong cài đặt hệ thống. Cốt lõi của nó là một chu trình nhận thức-suy nghĩ-hành động (Hình 6-12):
+
+1. Agent chụp ảnh màn hình hiện tại
+2. Mô hình đa phương thức nhận ảnh chụp màn hình và hướng dẫn nhiệm vụ, đồng thời đưa ra suy nghĩ và hành động cụ thể.
+3. Lớp thực thi thực hiện hành động trong môi trường thực (di chuyển chuột, nhấp chuột, nhập văn bản, v.v.)
+4. Đợi giao diện phản hồi rồi chụp ảnh màn hình lại để vào chu kỳ tiếp theo.
+
+**Vòng lặp an toàn Computer Use:**
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+![Hình 6-12 Chu trình nhận thức-suy nghĩ-hành động của Tác nhân sử dụng máy tính ](images/fig6-12.svg)
+
+
+Có ba chiều thiết kế chính trong chu trình này: **không gian hành động**(những thao tác mà Agent có thể thực hiện), **định vị trực quan**(cách tìm phần tử mục tiêu trong ảnh chụp màn hình) và **kiến trúc mô hình**(cách tạo hành động chính xác từ ảnh chụp màn hình).
+
+### Thiết kế không gian hành động
+
+Anthropic xác định ba loại công cụ để hình thành khả năng tương tác hoàn chỉnh (Hình 6-13):
+
+
+![Hình 6-13 Máy tính Sử dụng không gian hành động ](images/fig6-13.svg)
+
+
+**GUI Operation Tool**(công cụ máy tính): Thao tác chuột bao gồm di chuyển (mouse_move), nhấp chuột trái/phải/giữa, nhấp đúp/ba lần, kéo (left_click_drag) và nhấn/nhả chi tiết hơn (left_mouse_down/up). Cuộn hỗ trợ bốn hướng và có thể được sử dụng với các phím bổ trợ. Thao tác trên bàn phím bao gồm nhập từng từ (loại, mỗi ký tự cách nhau 12 mili giây để mô phỏng thao tác gõ thực), tổ hợp phím (phím, chẳng hạn như Ctrl+C) và nhấn và giữ (hold_key). Các hành động được nhận biết: ảnh chụp màn hình (ảnh chụp màn hình), lấy vị trí con trỏ (cursor_position), chờ (wait).
+
+**Công cụ thực thi lệnh**(công cụ bash): Cung cấp phiên cuối bash liên tục, thời gian chờ 120 giây, phát hiện xem lệnh có được thực thi thông qua chuỗi trọng điểm hay không và duy trì trạng thái môi trường giữa nhiều lệnh gọi (ví dụ: sau khi cd vào một thư mục, lệnh gọi tiếp theo sẽ vẫn ở trong thư mục đó).
+
+**Công cụ chỉnh sửa tệp**(str_replace_editor): Chỉnh sửa an toàn đạt được thông qua khớp chuỗi. Nó hỗ trợ các hoạt động xem, tạo, thay thế, chèn và hoàn tác. Nó chính xác hơn việc ghi đè trực tiếp toàn bộ tập tin và ít có khả năng vô tình làm thay đổi nội dung khác.
+
+> **Thử nghiệm 6-7 ★: Chạy Computer Use (lộ trình tham chiếu Anthropic hoặc lộ trình mô hình mở)**
+>
+> Lộ trình A sử dụng Anthropic Computer Use Demo. Container đóng gói một môi trường desktop Ubuntu hoàn chỉnh, gồm trình duyệt, terminal và các công cụ thông dụng khác. Frontend nhận tác vụ; backend gửi hướng dẫn và ảnh chụp màn hình đến Claude, rồi thực thi các thao tác chuột, bàn phím, terminal hoặc chỉnh sửa do mô hình trả về. Lộ trình này dùng để tìm hiểu giao thức công cụ `computer` nguyên bản; không yêu cầu mọi độc giả đều phải có quyền truy cập Anthropic API.
+>
+> Lộ trình B sử dụng dự án đi kèm sách [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/). Theo mặc định, dự án điều khiển browser-use bằng mô hình trọng số mở Qwen3-VL 32B Instruct, qua API được OpenRouter lưu trữ hoặc bằng cách trỏ `OPEN_MODEL_BASE_URL` đến vLLM/SGLang tự lưu trữ hay endpoint tương thích khác. Endpoint phải nhận được ảnh chụp màn hình và hỗ trợ JSON Schema nguyên bản; nếu chỉ hỗ trợ JSON thông thường, có thể bật rõ ràng chế độ tương thích schema-in-prompt.
+>
+> Hai lộ trình dùng cùng một tác vụ chỉ đọc và cùng một hợp đồng nghiệm thu: tối đa 25 bước, mỗi bước chỉ thực hiện một hành động, đồng thời lưu danh tính mô hình/endpoint, phản hồi nguyên gốc của nhà cung cấp, ảnh chụp từng bước, chuỗi hành động, câu trả lời cuối cùng và lý do dừng. Các mô hình khác nhau phải được báo cáo như những nhánh thí nghiệm riêng; không được trình bày kết quả mô hình mở như một lần tái lập Claude, cũng không được coi “container khởi động thành công” là hoàn thành tác vụ. Khoảng thời gian giữa hành động và chất lượng lập kế hoạch là kết quả đo được, không phải giả định trước rằng khoảng thời gian là 2–5 giây hoặc mô hình chắc chắn vượt trội hơn các mô hình khác.
 >
 
-### Đánh đổi độ trung thực và ngẫu nhiên hóa tên miền
+### Định vị trực quan (Nối đất)
 
-Môi trường có độ chính xác cao có thể được chuyển sang thế giới thực tốt hơn nhưng lại tốn kém về mặt tính toán. Một khía cạnh khác của độ chính xác là mức độ ngẫu nhiên hóa: ngẫu nhiên hóa vừa phải có thể cải thiện việc khái quát hóa, trong khi ngẫu nhiên hóa quá mức có thể khiến nhiệm vụ trở nên quá khó khăn. **Ngẫu nhiên hóa tên miền** là công nghệ then chốt giúp thu hẹp khoảng cách giữa mô phỏng và thực tế (khoảng cách sim-to-real): giới thiệu một loạt các thay đổi ngẫu nhiên về thông số vật lý, hình thức trực quan, nhiễu cảm biến, v.v. - giống như luyện tập cầm nắm dưới nhiều ánh sáng và góc độ khác nhau, bạn sẽ không bỏ lỡ do thay đổi ánh sáng trong môi trường thực. Trong môi trường kỹ thuật số, sim-to-real thể hiện ở sự khác biệt về kết xuất giao diện, thời gian phản hồi, v.v., có thể được giảm thiểu bằng cách đưa ra sự ngẫu nhiên về độ trễ và lỗi.
+Trong mỗi vòng lặp, mô hình cần xác định chính xác phần tử mục tiêu trong ảnh chụp màn hình - "Hộp tìm kiếm ở đâu?" "Tọa độ của nút gửi là gì?" Đây là vấn đề định vị trực quan (Nối đất). Hiện tại có hai ý tưởng chính: một là biến định vị thành câu hỏi trắc nghiệm - đầu tiên đánh dấu các thành phần giao diện bằng số và mô hình chỉ cần chọn một trong số đó; cái còn lại là **dự đoán tọa độ thuần túy** - để mô hình trực tiếp "nhìn" vào ảnh chụp màn hình và báo cáo tọa độ như con người. Có hai cách để triển khai ý tưởng câu hỏi trắc nghiệm: **Chú thích trực quan thuần tuý**(Set-of-Mark gốc, sử dụng mô hình phân đoạn để cắt bỏ các vùng ứng cử viên trên pixel) và **Chỉ mục thành phần cấu trúc**(Cây DOM/Accessibility, đọc trực tiếp cấu trúc đi kèm với giao diện). Ưu điểm chung của ý tưởng câu hỏi trắc nghiệm là chuyển đổi câu hỏi mở "tìm nút trong ảnh chụp màn hình và dự đoán tọa độ" thành câu hỏi đóng "chọn một trong các yếu tố được đánh dấu" - giống như các câu hỏi trắc nghiệm trong bài thi dễ trả lời chính xác hơn các câu hỏi điền vào chỗ trống. Mô hình chỉ cần nói "nhấp [123]" thay vì "nhấp vào nút màu xanh lam cách khoảng 200 pixel ở bên phải góc trên bên trái của màn hình."
 
-Tại thời điểm này, môi trường đánh giá đã hoàn thành quá trình phát triển cuối cùng của nó: từ phòng thi để đo lường khả năng thành nơi rèn luyện trau dồi khả năng. Chương 7 sẽ giới thiệu cách AWorld-train biến loại môi trường mô phỏng này thành địa điểm đào tạo, cũng như những thách thức kỹ thuật liên quan - hệ thống đánh giá và môi trường mô phỏng được thiết lập trong chương này là hai nền tảng của quá trình post-training.
+**Set-of-Mark: Phương pháp chú thích trực quan.**
 
-[^re-bench-2025]: Wijk, Hjalmar, et al. *RE-Bench: Evaluating Frontier AI R&D Capabilities of Language Model Agents against Human Experts.* arXiv:2411.15114, 2025.
+Set-of-Mark (SoM) ban đầu được Microsoft Research đề xuất vào năm 2023, ban đầu nhằm phát huy khả năng định vị trực quan của GPT-4V. Đây là một phương pháp **hoàn toàn trực quan**: sử dụng mô hình phân đoạn hình ảnh (SAM, SEEM, v.v.) để tự động cắt các vùng ứng cử viên trên ảnh chụp màn hình và chồng các điểm đánh dấu được đánh số lên từng vùng. Những gì mô hình nhìn thấy là một hình ảnh được đánh số, chỉ cần báo số, hệ thống sẽ chuyển đổi thành tọa độ trung tâm của khu vực tương ứng. Toàn bộ quá trình không yêu cầu DOM hoặc bất kỳ cấu trúc giao diện nội bộ nào, do đó, giao diện trò chơi và phần mềm máy tính để bàn gốc cũng có thể được áp dụng - miễn là mô hình phân khúc có thể loại bỏ các khu vực ứng cử viên.
+
+**Chỉ mục phần tử có cấu trúc: Triển khai có cấu trúc các ý tưởng SoM trên Web.**
+
+Chú thích có thể được thực hiện chính xác hơn khi chính giao diện cung cấp thông tin có cấu trúc. Các trang web hiện đại có cấu trúc thành phần hoàn chỉnh (cây DOM) và các vai trò ngữ nghĩa (là nút, là hộp nhập liệu) được xác định trước khi hiển thị. Cây trợ năng cung cấp thông tin tương tự cho nhiều ứng dụng trên máy tính để bàn. Thay vì yêu cầu mô hình phân đoạn đoán "nút là khu vực nào" trong pixel, tốt hơn là bạn nên hỏi trực tiếp chính giao diện "bạn có những yếu tố nào có thể nhấp vào được?". Giải pháp Web Agent do dự án browser-use đại diện thực hiện chính xác điều này: liệt kê và đánh số các phần tử tương tác từ DOM, có thể được coi là triển khai có cấu trúc các ý tưởng SoM trên Web (Hình 6-14). Quá trình này được chia thành bốn bước:
+
+1. Lấy biểu diễn có cấu trúc (DOM tree) và thông tin truy cập của trang web thông qua giao diện gỡ lỗi trình duyệt (CDP, Chrome DevTools Protocol)
+2. Tự động phát hiện những thành phần nào có thể tương tác (nút, hộp nhập liệu, liên kết, v.v.)
+3. Gắn nhãn cho mỗi phần tử có thể tương tác bằng một ID duy nhất và vẽ hộp giới hạn trên ảnh chụp màn hình
+4. Đồng thời, tạo ra một danh sách văn bản để mô tả các thành phần tương ứng với mỗi ID.
+
+```text
+Ảnh chụp màn hình: [Các thành phần chính trong ảnh được đánh dấu bằng ID như [1], [2], [3], [4], v.v.]
+
+Elements:
+[1] <input type="text" placeholder="Search" aria-label="Search" />
+[2] <button id="submit-btn" aria-label="Submit form" />
+[3] <input type="text" placeholder="Enter your name" value="" />
+[4] <a href="/docs" aria-label="Documentation" />
+```
+
+Mô hình chỉ cần xuất số ID và hệ thống sẽ tự động sử dụng tọa độ trung tâm của phần tử để thực hiện nhấp chuột. Loại giải pháp này không lưu mã thông báo (vì tất cả thông tin chú thích phải được gửi đến mô hình), nhưng định vị chính xác và ổn định, đồng thời tránh được các phát hiện bị bỏ sót và phát hiện sai có thể do mô hình phân đoạn đưa ra.
+
+
+![Hình 6-14 Bộ đánh dấu và chỉ mục phần tử có cấu trúc (triển khai sử dụng trình duyệt) ](images/fig6-14.svg)
+
+**Dự đoán tọa độ thuần túy.**
+
+Tuyến thứ ba không thực hiện bất kỳ chú thích nào và trực tiếp cho phép mô hình xuất tọa độ. Lấy việc sử dụng **SeeClick** và Claude của máy tính làm ví dụ: đào tạo mô hình trực quan dựa trên dữ liệu được ghép nối của các ảnh chụp màn hình và vị trí phần tử GUI khổng lồ, đồng thời cho phép mô hình học cách ánh xạ các mô tả ngôn ngữ tự nhiên (chẳng hạn như "nhấp vào nút gửi") trực tiếp tới tọa độ chính xác trong ảnh chụp màn hình - giống như người dùng con người, hoàn toàn dựa vào "tìm kiếm" để tìm vị trí cần nhấp.
+
+Trong sơ đồ dự đoán tọa độ, sự hiểu biết của mô hình về tọa độ phụ thuộc nhiều vào độ phân giải được sử dụng trong quá trình huấn luyện (Hình 6-15). Claude được đào tạo bằng XGA (1024x768), WXGA (1280x800) và FWXGA (1366x768). Nếu độ phân giải ảnh chụp màn hình đầu vào không khớp, tọa độ mà mô hình dự đoán sẽ được bù một cách có hệ thống - giống như đo khoảng cách trên bản đồ nhỏ và sau đó sử dụng trực tiếp trên bản đồ lớn. Do đó, cần triển khai cơ chế chia tỷ lệ tọa độ hai chiều trên lớp công cụ và chọn độ phân giải mục tiêu theo tỷ lệ khung hình để tránh kéo dài không đẳng cự làm biến dạng hình ảnh và làm sai lệch phán đoán tọa độ. Ví dụ: nếu độ phân giải màn hình thực là 2560×1440 (16:9), bạn nên chọn một trong ba mức được Claude hỗ trợ với tỷ lệ khung hình cũng gần 16:9 – FWXGA (1366×768) là phù hợp nhất. Khi chụp ảnh màn hình, hãy chia tỷ lệ màn hình thành 1366×768 và gửi cho mô hình; sau khi mô hình xuất ra tọa độ nhấp chuột (683, 384), nó sẽ được ánh xạ ngược sang tọa độ thực (683×2560/1366, 384×1440/768) ≈ (1280, 720). Ngược lại, nếu bạn kéo căng mạnh 16:9 thành 4:3 1024×768, màn hình sẽ bị nén theo chiều ngang và tọa độ mà mô hình dự đoán sẽ bị dịch chuyển một cách có hệ thống.
+
+
+![Hình 6-15 Khớp độ phân giải và chia tỷ lệ tọa độ hai chiều ](images/fig6-15.svg)
+
+
+Logic lựa chọn của ba tuyến đường có thể được tóm tắt như sau: **Khi có sẵn thông tin có cấu trúc, chỉ mục Cây DOM/Accessibility** được sử dụng đầu tiên và vị trí là chính xác và ổn định nhất; **Khi không có sẵn**(phần mềm máy tính gốc như Photoshop, giao diện kết xuất Canvas/WebGL, trò chơi), **Bạn có thể sử dụng chú thích trực quan (tuyến SoM gốc) hoặc dự đoán tọa độ**. Chú thích trực quan biến việc định vị thành một câu hỏi trắc nghiệm, thân thiện hơn với các mô hình tổng quát chưa được đào tạo đặc biệt; dự đoán tọa độ loại bỏ bước chú thích và trực tiếp hơn đối với các mô hình đã trải qua khóa đào tạo định vị GUI. Vẫn còn khoảng cách về độ chính xác giữa hai yếu tố này trên các phần tử nhỏ và giao diện dày đặc.
+
+> **Thử nghiệm 6-8 ★: Sử dụng browser-use để đạt được hoạt động trình duyệt tự động**
+>
+> Kết hợp Playwright, một framework tự động hóa trình duyệt, với mô hình đa phương thức để triển khai thao tác trình duyệt được điều khiển bằng ngôn ngữ tự nhiên. Bật trực quan hóa SoM và lưu ảnh chụp màn hình có hộp giới hạn được chú thích trước mỗi quyết định. Giao diện mô hình không bị giới hạn ở OpenAI hay Anthropic; sách cung cấp cấu hình API cho mô hình mở Qwen3-VL và giữ một base URL tổng quát tương thích OpenAI cho các dịch vụ lưu trữ khác hoặc suy luận tự lưu trữ.
+>
+> Nhiệm vụ kiểm tra “Mở Google và tìm thời tiết San Francisco”: sau khi khởi động, ảnh chụp màn hình hiển thị trang tìm kiếm Google với các phần tử tương tác được đánh số. Mô hình chọn hộp tìm kiếm, nhập “San Francisco weather today”, gửi tìm kiếm rồi trích xuất nhiệt độ và điều kiện thời tiết từ trang kết quả. Khi nghiệm thu, cần kiểm tra độc lập câu trả lời và quỹ đạo, đồng thời ghi trung thực số bước thực tế và thời gian đã dùng. “5 bước, khoảng 20 giây” chỉ có thể là giá trị quan sát của một lần chạy cụ thể, không phải kết quả cố định nếu không có biên nhận thực thi.
+>
+> Lần chạy chính thức của mô hình mở được lưu trong sách sử dụng `qwen/qwen3-vl-32b-instruct` trên OpenRouter. Khi gặp CAPTCHA ở bước 4 của Google Search, mô hình không tuyên bố thành công mà chuyển sang weather.com; đến bước 16, nó đọc từ trang Today của San Francisco: 64°F, Sunny, cảm giác như 62°F, cao nhất 74°F và thấp nhất 55°F. Cả 16/16 phản hồi API đều báo đúng mô hình Qwen3-VL được yêu cầu; 15 ảnh chụp bước hợp lệ cùng quỹ đạo hành động chỉ đọc đã vượt qua nghiệm thu quyết định độc lập. Kết quả này chứng minh lộ trình API mô hình mở có thể chạy được; nó không đồng nghĩa với việc đã tái lập nhánh sử dụng công cụ `computer` nguyên bản của Anthropic.
+
+### Có thể xem hoạt hình và nghe âm thanh Computer Use Agent
+
+Cho đến nay, nhận thức về Computer Use dựa trên một giả định ngầm: **Màn hình tĩnh**—chụp ảnh, suy nghĩ về một bước, nhấp chuột rồi chụp ảnh. Nhưng trên thực tế, màn hình sẽ phát video, các thông báo thoáng qua sẽ bật lên và giọng nói trong cuộc họp sẽ được phát. Agent, chỉ mở mắt sau mỗi 3–5 giây và hoàn toàn không có tai, không thể nhìn hay nghe thấy "những điều xảy ra giữa các khung hình" này. Xem các bản ghi màn hình, theo dõi các cuộc họp, nghe lời nhắc bằng giọng nói và xử lý các hộp thoại thoáng qua—toàn bộ danh mục hoạt động máy tính hàng ngày này gần như bị giới hạn đối với Computer Use Agent ngày nay.
+
+Thứ thực sự cần được thiết kế lại ở đây không phải là "giao diện hành động", mà là " **giao diện quan sát**" [^ch6-9]. Ý tưởng cốt lõi là tách **quan sát**(liên tục, thích ứng, đa phương thức) khỏi **hành động**(rời rạc) và tạo một lớp phần mềm trung gian nhận thức (có thể gọi là Agent-Giao diện quan sát máy tính, AOI) được chèn giữa môi trường và bất kỳ mô hình Computer Use nào được tạo sẵn mà không cần đào tạo lại. Nó có ba thành phần "cổng theo yêu cầu": Đầu tiên, **Chụp khung hình chính giữa các khung** - đầu tiên sử dụng cổng pixel cực rẻ để bỏ qua hình ảnh gần như không thay đổi, sau đó sử dụng một mô hình nhỏ để xác định xem hình ảnh có những thay đổi có ý nghĩa hay không và chỉ chặn một khung hình khi có thay đổi, chi phí gần như bằng 0 đối với ảnh tĩnh; thứ hai, **Phiên âm giọng nói có kiểm soát âm lượng** - chỉ nhận dạng giọng nói khi có âm thanh, hãy để Agent Lần đầu tiên "mọc tai"; thứ ba, và quan trọng nhất, **tường thuật bức ảnh thành văn bản lâu dài** - hãy để mô hình mô tả khung hình đã chụp thành một câu ("Lời nhắc vừa xuất hiện cho biết ngày phát hành đã được thay đổi thành ngày 28 tháng 4") và **ngay cả khi hình ảnh gốc sau đó bị xóa khỏi ngữ cảnh, văn bản này vẫn còn trong bộ nhớ**, mang thông tin động xuống dưới dạng văn bản.
+
+Một khám phá phản trực giác là điều thực sự quan trọng không phải là "nên chọn khung nào" mà là " **tường thuật các khung thành văn bản có thể được giữ lại trong thời gian dài**" - văn bản là phương thức mà LLM Agent xử lý tốt nhất. Trên tám mô hình từ quy mô 7B đến quy mô tiên tiến, lớp phần mềm trung gian này mang lại sự cải thiện từ +17 đến +48 điểm phần trăm mà không cần đào tạo lại. Trong số đó, khoảng cách là khác biệt nhất đối với các tác vụ lời nói: với việc bổ sung lớp nhận thức này, Agent có thể thực hiện tất cả các tác vụ lời nói mà ban đầu "nghe được nhưng không thể di chuyển". Nhưng không phải cấu hình cố định có thể chinh phục thế giới - trên một số mẫu máy mới hơn, việc nhồi quá nhiều mã thông báo hình ảnh sẽ lấn át khả năng lý luận và kéo giảm hiệu suất, vì vậy các thành phần này cần phải được chọn từng thành phần một theo mô hình, thay vì sử dụng tất cả cùng một lúc. Điều này giống như lựa chọn trước đây giữa Set-of-Mark và dự đoán tọa độ: không có viên đạn bạc trong sơ đồ nhận thức và nó phải được khớp theo đặc điểm của mô hình.
+
+[^ch6-9]: Ba thành phần của khung hình chính, phiên âm theo yêu cầu và khung tường thuật thành văn bản cố định. Cơ chế hoàn chỉnh và sự cắt bỏ theo từng mô hình được tìm thấy ở Li, Bojie và Noah Shi. *Agent-Giao diện quan sát trên máy tính kích hoạt Computer Use động.* arXiv:2606.29472, 2026.
+
+### Mô hình thế giới cho Computer Use
+
+Giao diện quan sát ở phần trước giải quyết câu hỏi "chuyện gì đã xảy ra ở khoảng giữa": nhờ khung hình chính, bản chép lời và văn bản bền, Agent không còn chỉ nhìn thấy hai ảnh chụp màn hình cách nhau rất xa. Nhưng giao diện quan sát không xóa được độ trễ lập kế hoạch. Agent vẫn đang chạy vòng lặp tuần tự "chụp màn hình—suy nghĩ—bấm chuột", cứ thực thi xong một hành động là lại quan sát lại và nghĩ nước tiếp theo. Nghiên cứu hiệu suất **OSWorld-Human** cho thấy dù nhiệm vụ rốt cuộc có thành công, số bước thao tác và thời gian chờ của Agent vẫn nhiều hơn con người rõ rệt; đạt độ chính xác ngang con người không có nghĩa là đã đủ dùng.
+
+Khi thao tác máy tính, con người không đợi bấm xong mới bắt đầu nghĩ bước kế tiếp, mà dự đoán trước hệ quả của hành động: nếu thay đổi thực tế đúng như dự kiến thì cứ theo kế hoạch cũ mà làm tiếp; chỉ khi phát hiện trạng thái trang lệch khỏi dự kiến mới dừng lại để quan sát và lập kế hoạch lại. Mô hình thế giới cho phép Agent dự đoán màn hình làm việc kế tiếp có thể biến thành gì trước khi ra tay, nhờ đó hiện thực hóa cơ chế "thực thi suy đoán" giống con người và nâng hiệu suất lên đáng kể.
+
+Trạng thái màn hình làm việc không chỉ là một ảnh điểm ảnh, mà còn gồm cửa sổ, tiêu điểm, vị trí cuộn, nội dung ô nhập, trạng thái tải, quyền hạn và phản hồi mạng; còn hành động thì gồm bấm chuột, gõ phím, cuộn, kéo thả và chờ. Một mô hình thế giới dùng được cho Computer Use ít nhất phải mã hóa được trạng thái hiện tại, dự đoán được thay đổi trạng thái mà hành động ứng viên gây ra, và chuyển dự đoán đó cho bộ lập kế hoạch để quyết định nước tiếp theo:
+
+```text
+trạng thái màn hình làm việc + click/type/scroll/wait ──> biểu diễn của trạng thái kế tiếp
+```
+
+Nhờ vậy Agent có thể so sánh hệ quả của các hành động ứng viên trước khi thật sự bấm chuột, chuẩn bị nước tiếp theo trong lúc trang đang tải, và dựa vào chênh lệch trạng thái mà khôi phục khi một cửa sổ bật lên chỉ lóe qua. Chẳng hạn nếu nhiệm vụ là "tạo tệp Python mới trong VS Code và viết hello world", mô hình có thể dự đoán trước trạng thái then chốt của cây tệp và trình soạn thảo sau khi thành công, rồi mới chọn các hành động bấm, gõ và lưu; còn nếu nhiệm vụ là xóa tệp, nó có thể dự đoán trước trong một màn hình ảo cách ly xem có hiện ra hộp xác nhận không thể hoàn tác hay không, và khi cần thì hỏi người dùng để xác nhận. Điều quan trọng ở đây không phải là bắt mô hình sinh ra một ảnh chụp màn hình tương lai trông như thật, mà là dự đoán những chênh lệch trạng thái kiểm tra được mà việc hoàn thành nhiệm vụ đòi hỏi.
+
+Tháng 7 năm 2026, **Photon-1** do Induction Labs công bố đã cho thấy một cách hiện thực hóa hướng đi này: chỉ với 30.000 giờ GPU H200 mà hoàn tất việc tiền huấn luyện một mô hình thế giới cho computer use. Nó nén mỗi khung hình thành các token tiềm ẩn rời rạc và dự đoán tự hồi quy biểu diễn của trạng thái kế tiếp sau một hành động, thay vì sinh ảnh chụp màn hình từng điểm ảnh ở giai đoạn tiền huấn luyện; bộ sinh ảnh gắn kèm chỉ dùng để trực quan hóa các biểu diễn tiềm ẩn chứ không phải thành phần bắt buộc khi suy luận. Cho trước một ảnh chụp màn hình mầm và các hành động tiếp theo, mô hình có thể "tưởng tượng" liên tục các trạng thái màn hình làm việc, rồi qua huấn luyện trực tuyến trên máy ảo mà học được cách xuất ra hành động computer-use.[^ch6-20]
+
+[^ch6-20]: David Li and Jonathan Li, Induction Labs, “Scaling Video Pretraining with Imagination Models,” 2026-07-23. https://www.inductionlabs.com/news/scaling-video-pretraining. Các tham số, quy mô dữ liệu, benchmark nội bộ và so sánh chi phí của Photon-1 nêu trong bài đều là kết quả do chính công ty công bố.
+
+### Di động: Rào cản sinh thái còn khó hơn công nghệ
+
+Computer Use cũng đang mở rộng sang thiết bị đầu cuối di động. Thực sự có sự khác biệt về mặt kỹ thuật giữa thiết bị đầu cuối di động và máy tính để bàn: không gian hành động thường không còn là "tọa độ chuột + bàn phím" mà truy cập vào dịch vụ trợ năng API của hệ thống (chẳng hạn như AccessibilityService của Android) để đọc các thành phần giao diện, thực hiện nhấp chuột và nhập văn bản; phương thức tương tác cũng thay đổi từ con trỏ chuột sang cử chỉ chạm và ngữ nghĩa của tọa độ thay đổi tương ứng - giống nhau (x, y) Cho dù đó là nhấp ngón tay, nhấn lâu hay điểm bắt đầu của cử chỉ trượt đều yêu cầu các loại cử chỉ bổ sung để xác định. Các điểm chuẩn dành cho thiết bị di động như AndroidWorld được giới thiệu trong Chương 7 được sử dụng để đánh giá khả năng của Agent trong việc hoàn thành các tác vụ Ứng dụng thực trong không gian hành động như vậy.
+
+Nhưng điều thực sự cản trở thiết bị đầu cuối di động thường không phải là những khác biệt về mặt kỹ thuật mà là những rào cản về sinh thái. Một số nhà sản xuất điện thoại di động đã cố gắng tích hợp trợ lý AI vào điện thoại di động dành cho người tiêu dùng để cho phép chúng tự động vận hành các ứng dụng hàng ngày như WeChat, Taobao và Alipay, nhưng họ sớm gặp phải những hạn chế về nền tảng.
+
+Điều này cho thấy một thách thức đặc biệt mà Computer Use phải đối mặt: **rào cản sinh thái**. Lý do cơ bản đằng sau lệnh cấm là xung đột mô hình kinh doanh. Logic kiếm tiền cốt lõi của các ứng dụng Internet truyền thống là **lưu lượng truy cập và sự chú ý**: người dùng xem quảng cáo khi duyệt các luồng thông tin, làm theo hướng dẫn của thuật toán đề xuất khi tìm kiếm sản phẩm và mua hàng tùy hứng khi duyệt các trang. Khi Agent hoạt động thay mặt người dùng, liên kết kiếm tiền này hoàn toàn bị bỏ qua: AI sẽ không chú ý đến quảng cáo cũng như không thực hiện các giao dịch mua hàng bốc đồng, nó sẽ đi thẳng đến mục tiêu và hoàn thành nhiệm vụ. Đối với một nền tảng dựa vào quảng cáo và lưu lượng truy cập để kiếm tiền, mọi hoạt động của Agent đều làm xói mòn nền tảng mô hình kinh doanh của nó.
+
+Điều này có nghĩa là Computer Use không chỉ phải đối mặt với sự đối đầu về mặt kỹ thuật như CAPTCHA (mã xác minh) mà còn phải đối mặt với xung đột lợi ích về mặt cấu trúc. Khó có thể giải quyết mâu thuẫn này trong thời gian ngắn và việc triển khai Computer Use trong các tình huống tiêu dùng phải đối mặt với nhiều thách thức khó khăn hơn so với các vấn đề kỹ thuật thuần túy.
+
+## Vận hành robot: dọn bàn làm việc với XLeRobot
+
+> **Cách đọc phần này**: từ đầu đến cuối chúng ta chỉ dùng một nhiệm vụ——"đặt cốc đỏ vào khay, bỏ tờ giấy vàng vào thùng rác, cuối cùng quan sát thêm một lần để xác nhận trạng thái mặt bàn". Thử nghiệm 6-9 và 9-9 chạy trên XLeRobot thật, cần cánh tay robot, hiệu chuẩn, nút dừng khẩn cấp và người giám sát tại chỗ. Thử nghiệm 6-10, 9-10 và 9-11 là các bản đối ứng chạy trên GPU cục bộ. Kết quả trên máy thật và trong mô phỏng được báo cáo tách bạch, nhưng mục tiêu nhiệm vụ, ý nghĩa hành động và điều kiện thành công thì giữ nguyên như nhau.
+
+Vận hành robot khó hơn nhiều so với "nhìn ảnh rồi trả lời câu hỏi". Mô hình không chỉ phải hiểu khung cảnh mà còn phải hành động liên tục trong thế giới thực, và mỗi hành động lại làm thay đổi tình huống ở khoảnh khắc kế tiếp. XLeRobot khiến khác biệt ấy trở nên rất cụ thể. Cùng một cánh tay, người ta có thể điều khiển từ xa bằng bàn phím, tay cầm chơi game hay thiết bị VR; cũng có thể giao quan sát từ camera cùng một nhóm công cụ hành động hạn chế cho Agent để nó tự gọi. Phần cứng không đổi, nhiệm vụ cũng không đổi; thứ duy nhất đổi là ai đang vận hành——ở trường hợp trước, con người liên tục quan sát và sửa sai; ở trường hợp sau, mô hình và hệ điều khiển phải tự làm trọn vẹn công việc đó.
+
+Phần này xâu chuỗi năm thử nghiệm bằng việc "dọn bàn làm việc". Trước hết, con người điều khiển từ xa chiếc XLeRobot thật, để đo xem phần cứng này làm được đến đâu dưới tay một người vận hành đủ giỏi. Kế đó, trong bộ mô phỏng, ta thiết lập giới hạn trên lý tưởng của việc điều khiển cho cùng nhiệm vụ ấy. Tiếp theo, để Agent tự chủ điều khiển chiếc XLeRobot thật, nhằm quan sát xem tri giác, lập kế hoạch và khả năng phục hồi sau thất bại quyết định kết quả ra sao. Sau đó, đưa đúng bản giao kèo công cụ ấy vào bộ mô phỏng và so sánh một lượt ba chiến lược: thực thi vòng hở, kiểm tra theo từng bước, và mô hình thế giới. Cuối cùng, ta thay đổi nền, hình dáng vật thể, ánh sáng và nhiễu thị giác để xem chính sách thị giác học trong mô phỏng có thích nghi được với môi trường mới hay không.
+
+Nút thắt ở đây thường không nằm ở việc làm thêm một bộ chuẩn hỏi đáp tĩnh nữa, mà ở chỗ giữ cho mô hình khép kín được vòng điều khiển với băng thông tri giác và điều khiển hạn hẹp. Một hệ robot dùng được ít nhất phải trả lời bốn câu hỏi sau:
+
+1. Con người muốn hoàn thành nhiệm vụ gì?
+2. Nhiệm vụ con nào sẽ làm tiếp theo?
+3. Kỹ năng hiện tại sinh ra hành động cụ thể nào?
+4. Sau khi thực thi hành động, thực tế có còn khớp với kế hoạch ban đầu không?
+
+Phần này đặt bốn câu hỏi ấy vào cùng một vòng điều khiển của XLeRobot, và chỉ ra bốn kỹ thuật lần lượt gánh phần nào: lập kế hoạch dài hạn quyết định xử lý cốc trước hay giấy trước; VLA hoặc các nguyên thủy hành động lo việc gắp và đặt; mô hình thế giới ước lượng hệ quả của một hành động; còn bước chuyển từ mô phỏng sang thực tế gánh lấy khác biệt giữa video huấn luyện với camera và cơ cấu chấp hành thật. Dù mô hình cấp cao đã có đủ tri thức và năng lực lập kế hoạch, chỉ cần thiếu một mắt xích trong vòng phản hồi này là hệ thống vẫn có thể không hoàn thành nổi nhiệm vụ.
+
+### Phân công giữa phần cứng và thuật toán
+
+Câu hỏi đầu tiên mà XLeRobot thích hợp trả lời nhất là: khi việc tự chủ dọn bàn thất bại, là cánh tay không làm nổi, hay thuật toán không biết dùng cánh tay? Ở đây có một sự thật không nên nói giảm đi: **ngay cả một cánh tay chỉ vài trăm đô la như XLeRobot, nếu điều khiển từ xa, cũng đã có thể hoàn thành một nhiệm vụ trên bàn gồm nhiều bước nối tiếp như trong phần này**——con người nhìn video camera, gắp cốc đỏ bỏ vào khay, bỏ tờ giấy vàng vào thùng rác, rồi kiểm tra lại trạng thái lần cuối. Kết quả này không chỉ có nghĩa "phần cứng vừa đủ dùng", mà là một bằng chứng chẩn đoán rõ ràng: **xét riêng nhiệm vụ này, nút thắt nằm ở thuật toán chứ không nằm ở bản thân phần cứng.**
+
+Cách chẩn đoán rất thẳng thắn. Giữ nguyên camera, cánh tay, kẹp, cách bày biện mặt bàn và điều kiện thành công, trước hết để con người đảm nhận vòng điều khiển. Con người liên tục hiệu chỉnh ước lượng vị trí vật thể, lựa chọn hành động và thời điểm ra tay, đồng thời biết xử lý khi gắp hụt. Khoảng cách giữa hệ tự chủ và con người lộ ra chính ở năng lực vòng kín ấy. Dĩ nhiên tầm với của kết luận này là nhiệm vụ trên bàn ở phần này: nó cho thấy phần cứng đã vượt ngưỡng tải trọng, độ chính xác và không gian làm việc mà nhiệm vụ này cần, chứ không có nghĩa một cánh tay vài trăm đô la kham nổi mọi môi trường mở hay những thao tác khó hơn.
+
+XLeRobot hỗ trợ nhiều lối vào điều khiển từ xa: bàn phím, tay cầm Xbox, Joy-Con của Switch và thiết bị VR. Người vận hành làm một cách tự nhiên nhiều việc mà thuật toán buộc phải cài đặt tường minh: giảm tốc khi kẹp lại gần cốc, sửa điểm gắp khi cốc trượt, quan sát lại khi không kẹp được tờ giấy trong một lần, và xác nhận kết quả khi vật thể đã vào vùng đích. Vì vậy điều khiển từ xa không chỉ là cách thu thập dữ liệu trình diễn, mà còn là một thử nghiệm chẩn đoán "giữ nguyên phần cứng, chỉ thay người vận hành".[^ch6-1]
+
+> **Thử nghiệm 6-9 ★: Điều khiển từ xa XLeRobot thật để dọn bàn**
+>
+> Đặt vào vùng làm việc của một chiếc XLeRobot thật: cốc đỏ, khay, tờ giấy vàng vo tròn và thùng rác. Người vận hành thực hiện nhiệm vụ cố định qua một trong các lối điều khiển từ xa đã hiệu chuẩn: "đặt cốc đỏ vào khay, bỏ tờ giấy vàng vào thùng rác, cuối cùng quan sát thêm một lần để xác nhận trạng thái mặt bàn". Lặp ít nhất vài vòng, ghi lại video camera, đầu vào của người vận hành, trạng thái cánh tay, thời lượng hành động, các lần gắp hụt, số lần thử lại và trạng thái cuối cùng.
+>
+> Đừng hạ tiêu chí nghiệm thu xuống thành "cuối cùng mặt bàn trông sạch sẽ". Cốc đỏ phải nằm trong khay và tờ giấy vàng phải nằm trong thùng rác, cánh tay phải trở về tư thế an toàn, và suốt quá trình không được có va chạm, ra khỏi vùng làm việc, hay việc con người ra tay làm thay mà không kiểm chứng.
+
+Điều khiển từ xa trên máy thật là cách thuyết phục nhất để cho thấy giới hạn trên của nhiệm vụ, nhưng lại không tiện để thay đổi hàng loạt số lượng và vị trí vật thể. Để có một đối chứng lặp lại được và tính được thống kê, tiếp theo ta chuyển chính bài toán "đưa vật thể về đúng chỗ" ấy sang một bộ mô phỏng mặt bàn hai chiều, và dùng bộ điều khiển lý tưởng thay cho một người vận hành giỏi không hề nhìn nhầm cũng không chọn sai hành động.
+
+> **Thử nghiệm 6-10 ★: Đo giới hạn trên lý tưởng của việc điều khiển cùng nhiệm vụ trong bộ mô phỏng**
+>
+> Trong bộ mô phỏng mặt bàn hai chiều, đặt ngẫu nhiên cốc đỏ, tờ giấy vàng cùng các vùng đích tương ứng, rồi để bộ điều khiển lý tưởng lần lượt tiến đến vật thể, gắp lên và đưa về đúng vị trí. Nó không cần nhận dạng hình ảnh và cũng không chọn sai hành động, nên nó biểu thị "khi tri giác lẫn quyết định đều đúng thì nhiệm vụ này ít nhất đi được đến đâu".
+>
+> Hãy xem tỷ lệ thành công, số bước cần dùng và độ dài quãng đường; đồng thời thay đổi vị trí ban đầu của vật thể và quy mô nhiệm vụ để xem giới hạn lý tưởng ấy có ổn định không. Ta dùng cùng điều kiện thành công như Thử nghiệm 6-9, nhưng thứ được đo là một mô phỏng không có cơ cấu chấp hành: điều đó không có nghĩa chiếc XLeRobot thật đã cử động. Hai thử nghiệm sẽ là hai đường cơ sở cho phần điều khiển tự chủ về sau——Thử nghiệm 6-9 là vòng kín của con người trên phần cứng thật, còn Thử nghiệm 6-10 là vòng kín lý tưởng trong môi trường mô phỏng.
+
+### Cấu trúc cơ bản của điều khiển robot
+
+Hệ robot thường tách các công việc có thang thời gian khác nhau.
+
+| Tầng | Câu hỏi cốt lõi | Đầu ra | Thang thời gian điển hình |
+| --- | --- | --- | --- |
+| Mục tiêu nhiệm vụ | Con người muốn hoàn thành điều gì | "Cốc và giấy về đúng chỗ" | Cỡ phút |
+| Lập kế hoạch dài hạn | Làm gì trước, làm gì sau | Cốc trước, giấy sau, cuối cùng kiểm tra | Từ giây đến phút |
+| Kỹ năng cơ bản | Bây giờ đạt được thay đổi trạng thái nào | `pick(red_cup)`, `place(red_cup, tray)` | Khoảng 1—3 giây |
+| VLA / chính sách kỹ năng | Kỹ năng này cụ thể cử động ra sao | Chuyển động ngắn hoặc quỹ đạo liên tục của kẹp XLeRobot | Suy luận ~1—10 Hz |
+| Điều khiển mức thấp và tầng an toàn | Làm sao thực thi ổn định và không trễ | Lượng điều khiển khớp hoặc đầu công tác, giới hạn tốc độ và dừng khẩn cấp | ~50—1000 Hz |
+
+Đây là cách phân công kỹ thuật thường gặp, không phải kiến trúc mô hình duy nhất. VLA hoàn toàn có thể gánh một phần phán đoán ở cấp cao, và bộ lập kế hoạch có thể là chương trình dựa trên luật, một VLM, hay một bộ tối ưu. Chọn cách cài đặt nào đi nữa, "thứ tự của nhiệm vụ" vẫn nên tách khỏi "hành động trước mắt"; nếu không, độ trễ suy luận của mô hình cấp cao sẽ kéo lùi điều khiển mức thấp, còn điều khiển tần số cao ở mức thấp lại buộc mô hình bên trên xử lý vô số chi tiết không liên quan. Trên XLeRobot, mô hình không nên trực tiếp xuất ra góc khớp tùy ý: nó chỉ chọn những kỹ năng có ranh giới rõ ràng như `pick`, `place`, `verify_state` và `stop`, rồi bộ thực thi đã hiệu chuẩn——có giới hạn tốc độ và có thời gian chờ tối đa——mới biến chúng thành chuyển động thật của cánh tay.
+
+### Lập kế hoạch dài hạn và phân rã nhiệm vụ
+
+Khi người dùng bảo "dọn bàn giúp tôi", hệ thống không thể ném nguyên câu ấy cho mô hình hành động. Bộ lập kế hoạch trước hết liệt kê các vật thể và mục tiêu trong khung cảnh, định ra thứ tự, rồi viết ra cho từng bước điều kiện khởi đầu, điều kiện kết thúc và giới hạn rủi ro. Chẳng hạn:
+
+```text
+Xử lý cốc đỏ → Dọn tờ giấy vàng → Kiểm tra mặt bàn
+```
+
+"Xử lý cốc đỏ" lại phân rã thành hai hành động và một lần kiểm tra:
+
+```text
+pick(red_cup) → place(red_cup, tray) → verify_state()
+```
+
+Mỗi kỹ năng hoàn tất cho ta một nút có thể kiểm chứng. Gắp hụt thì chỉ làm lại đúng bước ấy. Nếu ai đó dời vật thể hoặc người dùng đổi mục tiêu, chỉ cần lập lại kế hoạch cho những bước phía sau bị ảnh hưởng, chứ không phải làm lại toàn bộ kế hoạch cũ. Công cụ trao cho tác nhân cũng phải đủ đơn giản: mỗi lần gọi chỉ làm một việc, phạm vi cử động cố định, có thời gian chờ tối đa, và thực thi xong thì quan sát lại ngay.
+
+> **Thử nghiệm 6-11 ★★: Để Gemini Robotics-ER 1.5 tự chủ dọn bàn bằng XLeRobot**
+>
+> Giữ nguyên chiếc XLeRobot thật, cách bày bàn, chỉ dẫn nhiệm vụ và điều kiện thành công của Thử nghiệm 6-9; chỉ thay người vận hành bằng một Agent. Giao việc quan sát và lập kế hoạch cho một mô hình suy luận nhập thân như Gemini Robotics-ER 1.5, và qua vòng lặp tác nhân kiểu RoboCrew chỉ mở đúng năm công cụ: `observe_scene`, `pick`, `place`, `verify_state` và `stop`.[^ch6-2]
+>
+> Mô hình trước hết quan sát mặt bàn, định ra thứ tự xử lý, rồi mới gọi các hành động gắp và đặt đã hiệu chuẩn của XLeRobot. Cứ hoàn tất một kỹ năng là phải quan sát lại và kiểm tra hậu điều kiện. Khi gắp hụt, nó chỉ được phép thử lại kỹ năng hiện tại; và phải gọi `stop` khi người dùng bảo dừng, khi vật thể ra khỏi vùng làm việc, hoặc khi không xác minh được trạng thái. Mô hình không được trực tiếp xuất ra góc khớp tùy ý, cũng không được bỏ qua bước kiểm chứng thật chỉ vì chính nó đã nói trước rằng "xong rồi".
+>
+> Tiêu chí nghiệm thu hệt như Thử nghiệm 6-9: cốc nằm trong khay, giấy nằm trong thùng rác, cánh tay trở về tư thế an toàn, không va chạm và không ra khỏi vùng. Khác biệt nằm ở chỗ: trong thử nghiệm tự chủ, ý nghĩa của nhiệm vụ phải đến từ chính quan sát của mô hình, hành động thật phải đến từ lời gọi công cụ, và trạng thái cuối cùng phải được xác nhận bằng một quan sát mới. Con người chỉ được khởi động, dừng khẩn cấp và giám sát an toàn, không được làm thay Agent giữa chừng. Chỉ như vậy Thử nghiệm 6-9 và 9-9 mới so sánh trực tiếp được: "với cùng phần cứng và cùng nhiệm vụ, vòng kín của mô hình còn thiếu gì so với vòng kín của con người".
+
+Thử nghiệm trên máy thật phơi bày sai số hiệu chuẩn, camera bị che khuất và kẹp hỏng ăn, nhưng lại không thích hợp để lặp lại một lượng lớn sự cố một cách an toàn và có kiểm soát. Các thử nghiệm mô phỏng tiếp sau giữ đúng năm công cụ ấy cùng trạng thái nhiệm vụ y hệt, và chỉ thay cơ cấu chấp hành thật bằng một môi trường mặt bàn có thể tiêm lỗi, để tách bạch xem thực thi vòng hở, kiểm tra theo từng bước và dự đoán hành động mỗi thứ đóng góp được gì.
+
+### Điều khiển bằng VLA
+
+VLA là viết tắt của Vision-Language-Action, tức "mô hình thị giác—ngôn ngữ—hành động". Nó nhận khung cảnh hiện tại cùng một chỉ dẫn kỹ năng, rồi xuất ra hành động mà robot phải thực thi kế tiếp:
+
+```text
+quan sát hiện tại + chỉ dẫn kỹ năng → hành động
+```
+
+Trong ví dụ XLeRobot, bộ lập kế hoạch cấp cao chỉ đưa ra `pick(red_cup)`; còn tiếp cận cốc từ hướng nào, khép kẹp lúc nào, nâng cánh tay theo quỹ đạo ra sao là do VLA hoặc chính sách kỹ năng quyết định dựa trên khung cảnh hiện tại. Khi tầng thực thi hoàn tất chuyển động ngắn ấy, mặt bàn được chụp lại, và chỉ sau khi xác nhận cốc quả thật đã được gắp thì bộ lập kế hoạch mới được đưa ra `place(red_cup, tray)`. Nói cách khác, lời gọi công cụ định nghĩa thay đổi trạng thái mong muốn, còn VLA định nghĩa cách hiện thực hóa thay đổi trạng thái ấy bằng hành động liên tục.
+
+RT-2 và OpenVLA cắt hành động liên tục thành các token rời rạc rồi xuất ra từng cái một, y như sinh câu chữ. π₀ đại diện cho hướng còn lại: sinh thẳng ra quỹ đạo hành động liên tục và mượt mà. Không có chuyện bên nào hơn bên nào một cách giản đơn. Token rời rạc dễ gắn với mô hình ngôn ngữ; quỹ đạo liên tục hợp hơn để biểu diễn chuyển động mượt. Lựa chọn thật sự là nên biểu diễn hành động ra sao, chứ không chỉ là mô hình lớn cỡ nào.[^ch6-15]
+
+Mô hình lớn thường chỉ suy luận được 1—10 lần mỗi giây, trong khi bộ điều khiển truyền thống có thể cập nhật vài chục đến vài nghìn lần mỗi giây. Một cách làm thông dụng trong kỹ thuật là "chia đoạn hành động" (action chunking): mô hình sinh một lần một đoạn ngắn các hành động tương lai, luồng điều khiển thực thi đoạn ấy ở tần số cao, còn mô hình chuẩn bị đoạn kế tiếp ở phía sau. Nhờ vậy một phần thời gian chờ suy luận được giấu vào trong thời gian thực thi hành động. Cái giá phải trả là: đoạn càng dài thì chuyển động càng mượt, nhưng trong quãng ấy mô hình càng ít thấy khung cảnh mới. Nếu XLeRobot đang vươn tay định lấy cốc mà giữa chừng cốc bị va lệch đi, nó vẫn có thể tiếp tục thực thi những hành động sinh ra từ hình ảnh cũ. Vậy nên chia đoạn hành động là một sự đánh đổi giữa độ mượt và tốc độ phản ứng, chứ không phải một cách tăng tốc không mất gì.
+
+Chia đoạn hành động thường cần một bộ khung "dự đoán—thực thi—chen ngang" thay vì chạy đoạn cho tới hết:
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+Đoạn ngắn phản ứng nhanh nhưng làm số lần gọi mô hình tăng lên; đoạn dài mượt hơn nhưng dễ dùng phải quan sát đã cũ. Thử nghiệm 6-12 so sánh loại đánh đổi này trong bộ mô phỏng, còn thứ chạm tới ranh giới an toàn của phần cứng thật là Thử nghiệm 6-11.
+
+### Giới hạn của VLA
+
+"Lập kế hoạch dài hạn + VLA" là một phương án nền dùng được, nhưng vẫn để lại vài vấn đề dễ bị bỏ sót.
+
+- **Dữ liệu huấn luyện hạn chế**: các bản trình diễn robot ít hơn rất nhiều so với văn bản và hình ảnh trên internet. Mô hình từng thấy chữ "cốc" không có nghĩa nó đã thấy đủ loại cốc với mọi chất liệu và mọi điều kiện ma sát.
+- **Học được cách bắt chước nhưng không hiểu hệ quả**: nhân bản hành vi chủ yếu học "người trình diễn làm gì tiếp theo", chứ không đòi hỏi tường minh rằng mô hình phải trả lời "hành động này gây ra chuyện gì".
+- **Robot nào cũng khác nhau**: bậc tự do, hệ tọa độ, kẹp và độ trễ cơ cấu chấp hành khác nhau thì không có gì bảo đảm cùng một hành động chuyển nguyên xi được sang máy khác.
+- **Quan sát có thể lỗi thời**: sau khi một đoạn hành động đã bắt đầu chạy, nếu vật thể bị dời đi, bị che khuất hay đổ xuống, mô hình vẫn đang phán đoán dựa trên khung hình trước đó.
+
+Vì thế, mô hình ngôn ngữ biết chữ "cốc" không có nghĩa nó biết ma sát, tiếp xúc, chất lỏng sóng sánh hay dây nguồn sẽ làm trạng thái tương lai đổi khác ra sao. VLA chủ yếu trả lời "bây giờ nên làm gì"; muốn phán đoán "làm xong thì có thể xảy ra chuyện gì" thì cần một loại mô hình khác.
+
+### Mô hình thế giới
+
+Mô hình thế giới có thể hiểu là bộ dự đoán hệ quả của hành động. Thứ nó học là: ở trạng thái hiện tại, nếu thực hiện một hành động nào đó thì trạng thái ở khoảnh khắc kế tiếp có thể đổi khác ra sao.
+
+```text
+trạng thái hiện tại + hành động ứng viên
+    → dự đoán trạng thái kế tiếp hoặc một mẩu tương lai
+    → so sánh kết quả của các ứng viên
+    → chọn hành động, lập lại kế hoạch, hoặc dừng an toàn
+```
+
+Một mô hình thế giới dùng được cho robot ít nhất phải làm tốt ba việc:
+
+- hiểu được trạng thái hiện tại;
+- dự đoán được kết quả mà các hành động khác nhau có thể mang lại;
+- chuyển dự đoán ấy cho bộ lập kế hoạch hoặc bộ điều khiển để giúp lựa chọn.
+
+Một VLM chỉ biết mô tả video, hay một mô hình chỉ biết sinh hình ảnh, không tự nhiên trở thành mô hình thế giới đáng tin cho robot. Nó phải biết hành động là gì, và dự đoán được ảnh hưởng của hành động ấy lên vật thể và môi trường. V-JEPA 2 đại diện cho hướng dự đoán tương lai ở trạng thái nội tại, còn World-Action Model học tường minh quan hệ "hành động—quan sát tương lai". Chúng có thể dùng song song với VLA, không nhất thiết phải thay thế VLA.[^ch6-16]
+
+Trong hệ thống thật, mô hình thế giới thường có ba cách dùng:
+
+1. **Trước khi cử động**: so sánh các hành động ứng viên như gắp, đẩy hay chờ, và ưu tiên phương án ít rủi ro hơn;
+2. **Trong lúc thực thi**: đối chiếu quan sát thật với dự đoán, phát hiện sai lệch thì rút ngắn hành động, dừng lại, hoặc lập lại kế hoạch;
+3. **Trong lúc huấn luyện**: học các thay đổi trạng thái từ video, dữ liệu mô phỏng và những quỹ đạo thất bại, nhờ đó bớt phải thử sai trên máy thật.
+
+Quay lại nhiệm vụ trên bàn của XLeRobot. Nếu tờ giấy vàng bị cốc đỏ che khuất một phần, hệ thống có thể so sánh các kỹ năng ứng viên: "gắp giấy trước", "dời cốc trước", hay "gắp từ hướng khác". Mô hình thế giới không cần sinh ra video robot trông như thật: chỉ cần nó dự đoán được hành động ứng viên nào dễ dẫn tới trạng thái gắp được tờ giấy, và hành động nào có thể làm đổ cốc, là đã đủ giúp bộ lập kế hoạch xếp hạng lựa chọn. Sau khi thực thi hành động, quan sát thật từ camera vẫn là sự thật cuối cùng: dự đoán chỉ giúp chọn, chứ không thay thế được việc kiểm tra nghiệm thu.
+
+Thứ mô hình thế giới đưa ra không phải câu trả lời chắc chắn, mà là những dự đoán so sánh được về "làm thế này thì có thể xảy ra chuyện gì". Dự đoán càng xa thì sai số càng có xu hướng lớn, và một khung cảnh tương lai trông như thật chưa chắc đã hợp với quy luật tiếp xúc và ma sát thật. Vì vậy hệ thống thật vẫn cần dự đoán ngắn hạn, quan sát thời gian thực, ước lượng bất định, và một bộ điều khiển an toàn phần cứng độc lập. Mô hình thế giới sinh mẫu dùng được cho mô phỏng tương tác và trực quan hóa, nhưng đừng lẫn lộn "sinh được video" với "dẫn dắt được hành động của robot".[^ch6-21]
+
+> **Thử nghiệm 6-12 ★★: So sánh ba vòng dọn bàn tự chủ trong bộ mô phỏng**
+>
+> Đưa nhiệm vụ, trạng thái đích, điều kiện thành công và năm công cụ của Thử nghiệm 6-11 vào bộ mô phỏng mặt bàn, chỉ thay cơ cấu chấp hành của XLeRobot thật bằng một bộ thực thi mô phỏng có thể kiểm soát, thỉnh thoảng gây ra ở khâu gắp một thất bại nhất thời nhưng còn phục hồi được. Như vậy có thể so sánh ba chiến lược mà không đổi bài toán.
+>
+> **Thực thi vòng hở** sinh một lần trọn dãy hành động và không quan sát lại giữa chừng. **Kiểm tra theo từng bước** đọc lại trạng thái ở mỗi lần `pick` và `place`, hỏng thì chỉ làm lại kỹ năng hiện tại. **Thực thi có dự đoán** thêm vào một mô hình thế giới ngắn hạn, so sánh kết quả dự kiến của các kỹ năng ứng viên rồi mới chọn nước đi kế tiếp. Thử nghiệm so sánh tỷ lệ thành công, chi phí gọi công cụ và khả năng phục hồi sau thất bại, đồng thời kiểm tra xem mọi thành công cuối cùng có đều được một quan sát mới từ `verify_state` xác nhận hay không.
+>
+> Mục đích của thử nghiệm này không phải chứng minh một mô hình thế giới mô phỏng nhỏ tương đương với mô hình vật lý của máy thật, mà là kiểm chứng một quan hệ căn bản hơn: kế hoạch vòng hở kéo một thất bại cục bộ đi suốt tới cuối nhiệm vụ; kiểm tra theo từng bước cho phép phục hồi; còn dự đoán hành động thì giúp thêm việc xếp hạng các kỹ năng ứng viên. Rốt cuộc ai đã thật sự hoàn thành vẫn do phản hồi từ môi trường định đoạt.
+
+### Từ môi trường mô phỏng sang robot thật
+
+Thử nghiệm 6-12 ổn định trong bộ mô phỏng không có nghĩa chiếc XLeRobot thật ở Thử nghiệm 6-11 cũng thành công y như vậy. Đi từ mô phỏng sang máy thật không phải là thay thêm một loại bộ điều khiển, mà là gánh lấy khác biệt giữa hai môi trường. Để huấn luyện, ta có thể dùng dữ liệu điều khiển từ xa, dữ liệu video và dữ liệu tương tác mô phỏng; nhưng khi triển khai thật, vẫn cốc đỏ ấy, tờ giấy vàng ấy, khay ấy và thùng rác ấy lại xuất hiện dưới nền, ánh sáng, vị trí camera và quan hệ che khuất khác đi, còn cánh tay thì lại gặp ma sát, nhiễu cảm biến và độ trễ cơ cấu chấp hành khác. Nếu những khác biệt đó đủ lớn, chuyển động học được trong mô phỏng có thể mất tác dụng ngoài thực tế.
+
+> **Thử nghiệm 6-13 ★★★: Kiểm thử xuyên môi trường RGB trên cùng nhiệm vụ mặt bàn**
+>
+> Trong môi trường mô phỏng, hãy tiếp tục dùng bài toán cơ bản "đưa vật thể tới đích tương ứng", và xem mỗi mẫu là một quyết định cục bộ trong quá trình dọn bàn: từ ảnh RGB mà phán đoán nên tiếp cận vật thể từ hướng nào, hay đã có thể gắp được chưa. Huấn luyện bốn chính sách thị giác có cấu trúc như nhau: một chính sách chỉ nhìn khung cảnh cố định; một thay đổi nền; một thay đổi hình dáng vật thể; và chính sách cuối cùng thay đổi đồng thời cả nền, hình dáng, ánh sáng lẫn nhiễu.
+>
+> Hãy thử tất cả các chính sách ấy trong môi trường ban đầu và trong môi trường mới đã đổi khác, rồi so sánh độ chính xác của quyết định hành động trước và sau khi điều kiện thị giác thay đổi. Điều thử nghiệm này muốn trả lời không phải "bộ mô phỏng đã giống XLeRobot thật hay chưa", mà là một câu hỏi hẹp hơn: việc chủ động mở rộng biên độ biến thiên của khung cảnh lúc huấn luyện có giúp chính nhiệm vụ cốc—khay, giấy—thùng rác này thích nghi với video camera mới hay không? Cho dù kết quả có khá lên, việc triển khai trên máy thật vẫn đòi hỏi hiệu chuẩn camera thật, thử nghiệm cơ cấu chấp hành và một vòng kín an toàn đầy đủ.[^ch6-6]
 
 ## Tóm tắt chương này
 
-Chương này xoay quanh một câu hỏi: làm sao biết Agent thực sự đã tốt hơn? Từ môi trường thử nghiệm có thể tái hiện, tập dữ liệu chống rò rỉ, LLM làm giám khảo, cho đến việc dùng kết quả để chọn mô hình và lặp hệ thống — mắt xích nào cũng ảnh hưởng đến độ tin cậy của kết luận. Các thí nghiệm đo được trong chương bổ sung bốn cảnh báo cụ thể: ghép bộ nhớ có cấu trúc với RAG không mặc nhiên tạo ra hiệp lực; mức tiết kiệm từ cache và nén không thể cộng thẳng; lựa chọn âm thanh tham chiếu làm thay đổi ý nghĩa của điểm đa phương thức; và cách Harness biểu diễn đầu vào có thể quyết định cả thành công lẫn chi phí token. Việc chọn mô hình còn phải so sánh đường cong năng lực theo ngân sách tài nguyên, không chỉ nhìn một điểm số. Với Agent cấp sản xuất, đánh giá không phải kỳ thi thỉnh thoảng mới tổ chức mà là cơ chế xác minh liên tục trong mọi quyết định sản phẩm.
+Thứ mà chương này gỡ bỏ chính là tiền đề mà năm chương trước vẫn luôn mặc định: Agent và thế giới lần lượt phát biểu.
 
-Phương pháp cốt lõi: quan sát → giả thuyết → thử nghiệm → xác minh → hiểu biết mới → giả thuyết mới, khiến dự án Agent chuyển từ “giả kim thuật” dựa trên kinh nghiệm sang kỹ thuật khoa học dựa trên dữ liệu.
+Nhìn dọc theo hai trục **phương thức** và **thời điểm**, bốn mục thực ra là cùng một mệnh đề triển khai trên bốn thang thời gian. **Không đồng bộ và hướng sự kiện** mở rộng quan sát từ "Agent chủ động đi lấy" thành "thế giới chủ động đẩy tới", mở rộng hành động từ "làm xong trong lượt" thành "khởi động trước, sau đó nhờ sự kiện khép lại"; phương thức không đổi, chỉ thời điểm đổi. **Giọng nói** nén thang xuống mili giây, và mạch tiến hoá chính của ba mô thức — xếp tầng, Omni end-to-end và song công toàn phần — chính là đi từ "nói luân phiên" dần sang nghe nói liên tục, đồng thời phân công giữa tương tác thời gian thực ở tiền cảnh và suy nghĩ sâu ở hậu cảnh. **Computer Use** mang cùng vòng khép kín ấy lên màn hình, nút thắt đã mở rộng từ "có hoàn thành được nhiệm vụ không" sang hiệu suất thao tác, hiểu thị giác liên tục và xác nhận trạng thái sau hành động. **Robot** thì đẩy nó vào thế giới vật lý, chia khối hành động phải đánh đổi giữa độ mượt và tốc độ phản ứng, còn rốt cuộc có hoàn thành hay không vẫn phải do một quan sát mới phán định.
 
-Hệ thống đánh giá được giới thiệu trong chương này tạo thành một vòng khép kín hoàn chỉnh: **Môi trường đánh giá** cung cấp cơ sở hạ tầng kiểm thử tự động → **Bộ dữ liệu đánh giá** xác định các trường hợp kiểm thử → **Phương pháp đánh giá tự động**(LLM-as-a-Judge và Rubric) cho điểm hiệu suất Agent → **Phân tích điểm chuẩn** cho thấy hướng cải tiến → **Cải tiến hệ thống** Khắc phục sự cố → Cập nhật môi trường đánh giá và bộ dữ liệu để bắt đầu một lần lặp mới.
+Bốn mục dùng chung một bộ khung điều khiển:
 
-Từ góc độ kỹ thuật Harness được giới thiệu trong Chương 1, phương pháp đánh giá trong chương này là việc triển khai có hệ thống chức năng "xác minh" trong Harness và vòng khép kín "từ báo cáo Điểm chuẩn đến cải tiến hệ thống" là cơ chế cốt lõi của tối ưu hóa lặp lại Harness - việc đánh giá không chỉ đo lường khả năng hiện tại của Agent mà còn định hướng hướng phát triển liên tục của Harness.
+```text
+cảm nhận liên tục
+  → phán đoán trạng thái và thời điểm hiện tại
+  → chọn câu trả lời hoặc hành động
+  → đưa đầu ra vào môi trường
+  → quan sát phản hồi
+  → tiếp tục, sửa chữa, thử lại, dừng hoặc hoạch định lại
+```
 
-Hệ thống đánh giá được thiết lập trong chương này không chỉ phục vụ việc tối ưu hóa hệ thống hiện tại mà còn cung cấp nền tảng chính cho mô hình post-training trong chương tiếp theo - môi trường đánh giá và tập dữ liệu là đầu vào quan trọng cho post-training và môi trường mô phỏng là nền tảng thực hành cho post-training. Chương tiếp theo sẽ chuyển từ đánh giá sang cải tiến ở cấp độ mô hình, đi sâu vào cách viết chiến lược tương tác vào tham số mô hình thông qua SFT và RL.
+Cũng dùng chung một bộ nguyên thuỷ — đánh thức, điểm an toàn, huỷ, giành quyền, tách nhanh/chậm. "Kiểm tra tín hiệu huỷ tại điểm an toàn" trong vòng lặp sự kiện, và "phát hiện bất thường thì bỏ phần hành động còn lại, quan sát lại" trong chia khối hành động, là cùng một cơ chế được hiện thực hai lần trên hai thang thời gian cách nhau năm bậc độ lớn; sự phân công giữa mô hình nhanh ở tiền cảnh và mô hình chậm ở hậu cảnh, với "trả về ID nhiệm vụ trước, sau đó để sự kiện khép lại" trong Agent không đồng bộ, cũng là hai cách viết của cùng một chuyện.
+
+Cần lưu ý rằng phần lớn các cơ chế này hiện vẫn là giải pháp tình thế về mặt kỹ thuật. Giao thức chỗ giữ chỗ, dấu sự kiện trên thanh trạng thái, việc huỷ và hoàn tác suy nghĩ đi trước — về bản chất đều đang dùng logic điều phối để bù cho kinh nghiệm không đồng bộ còn thiếu trong phân bố huấn luyện của mô hình. Tiến bộ ở phía mô hình đang thu một phần trong đó vào tham số — mô hình tương tác đã đưa ngắt lời và chen lời vào bên trong mô hình, suy nghĩ liên tục khiến "vừa nghe vừa nghĩ" không phải chờ thế hệ mô hình sau — nhưng chừng nào ngữ liệu huấn luyện còn chủ yếu theo lượt, tầng bù đắp này sẽ không biến mất, chỉ liên tục dời sang biên giới mới theo đà tiến của năng lực mô hình.
+
+Chương này hoàn tất mảnh cuối cùng của phần "xây dựng Agent": không gian quan sát và không gian hành động đã trải ra trên cả ba hướng nội dung, phương thức và thời điểm. Ba chương tiếp theo chuyển sang một câu hỏi khác — làm sao biết tất cả những thứ đó được xây đúng, và làm sao khiến nó liên tục tốt lên.
+
+[^ch6-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
+[^ch6-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。
+[^ch6-1]: XLeRobot, “Tài liệu Teleop”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
+[^ch6-2]: Google DeepMind, “Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, “Điều khiển bằng LLM Agent”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. Ví dụ ở thượng nguồn của XLeRobot cho thấy cách phối hợp mô hình với lời gọi công cụ; phần này giữ nguyên nguyên tắc phối hợp ấy, nhưng giới hạn các công cụ hành động vào những nguyên thủy gắp, đặt, kiểm tra và dừng đã hiệu chuẩn trên mặt bàn.
+[^ch6-6]: LeRobot, “Hướng dẫn Sim2Real”. https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
+[^ch6-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246
 
 ## Câu hỏi tư duy
 
-1. ★★ LLM-as-a-Judge Sử dụng mô hình ngôn ngữ để đánh giá đầu ra của mô hình ngôn ngữ. Có điểm mù mang tính hệ thống nào trong quá trình “tự đánh giá” này không - ví dụ: mô hình có thể luôn cho điểm cao cho một phong cách trả lời nhất định, nhưng ưu tiên này không phù hợp với phán đoán của con người? Làm thế nào có thể phát hiện và sửa chữa sự thiên vị này?
-2. ★★★ Thiết kế “chống rò rỉ” của bộ dữ liệu đánh giá là rất quan trọng. Tuy nhiên, trong hệ sinh thái nguồn mở, một khi dữ liệu điểm chuẩn được công khai, nó sẽ sớm được đưa vào dữ liệu huấn luyện. Liệu “trò chơi mèo vờn chuột” này có hồi kết? Thiết kế một phương pháp đánh giá về cơ bản có khả năng chống rò rỉ dữ liệu.
-3. ★★ Thang đo Bốn tiêu chí của AI (dựa trên hướng dẫn của chuyên gia, phạm vi bao quát toàn diện, trọng số tầm quan trọng tiêu chuẩn, đánh giá khép kín) được thiết kế để loại bỏ tính chủ quan trong đánh giá. Nhưng một số khía cạnh nhiệm vụ (chẳng hạn như “liệu câu trả lời có hữu ích hay không” và “liệu giọng điệu có phù hợp”) về bản chất là chủ quan. Làm cách nào để thiết kế Rubric đáng tin cậy cho các kích thước chủ quan này?
-4. ★★ τ-bench đánh giá Agent bằng cách mô phỏng hành vi của người dùng thực. Nhưng bản thân người dùng được mô phỏng cũng là LLM - nó có thể đánh giá thấp một cách có hệ thống các tình huống khó khăn nhất định (chẳng hạn như người dùng cảm xúc, thiếu chính xác). Làm cách nào để xác minh chất lượng của chính người dùng mô phỏng?
-5. ★★ So sánh theo cặp (mô hình Bradley-Terry) giả định rằng các ưu tiên có tính bắc cầu (nếu A > B và B > C thì A > C). Nhưng sở thích của con người thường vi phạm tính bắc cầu. Trong trường hợp nào các tùy chọn không mang tính bắc cầu có thể xuất hiện trong đánh giá Agent? Điều này ảnh hưởng thế nào đến độ tin cậy của bảng xếp hạng?
-6. ★★ Chương này phân biệt Pass@k như trần năng lực với Pass consecutive@k như thước đo độ tin cậy nghiệp vụ. Với một Agent chỉ đạt tỷ lệ thành công 60% trong một lần chạy, bạn sẽ kết hợp chi phí thất bại, chi phí thử lại và tác dụng phụ của tác vụ như thế nào để quyết định nên báo cáo chỉ số nào và lấy $k$ bằng bao nhiêu?
-7. ★★ Chương này đề xuất phương pháp khoa học “quan sát→giả thuyết→thí nghiệm→xác minh”. Nhưng trên thực tế, không gian hành vi của Agent là rất lớn và việc xác minh một giả thuyết có thể yêu cầu hàng trăm lần đánh giá. Làm cách nào để tối đa hóa lượng thông tin được đánh giá trong phạm vi ngân sách tính toán hạn chế?
-8. ★ Trong thử nghiệm AndroidWorld, cây phần tử đầy đủ nâng tỷ lệ thành công từ 25% lên 100% nhưng làm lượng token tăng lên 2.498× so với đối chứng; sau khi cắt gọn, tỷ lệ thành công vẫn là 100% còn lượng token giảm xuống 0.506×. Bạn sẽ thiết kế quy tắc cắt tỉa tự động như thế nào để loại các nút UI rỗng về ngữ nghĩa mà không làm mất thông tin cần cho khả năng truy cập, xác minh trạng thái hoặc thao tác về sau?
-9. ★★ Mô phỏng người dùng của τ-bench áp dụng "tiết lộ thông tin lũy tiến"—không cung cấp tất cả thông tin cùng một lúc mà tiết lộ dần dần dựa trên các câu hỏi do Agent đặt ra. Thiết kế này ảnh hưởng thế nào đến kết quả đánh giá? Nếu chiến lược tiết lộ thông tin của người dùng mô phỏng khác biệt đáng kể so với chiến lược của người dùng thực, liệu kết luận đánh giá có còn đáng tin cậy không?
+1. ★★ Trong kiến trúc Agent không đồng bộ, chiến lược ưu tiên của hàng đợi sự kiện cần được xác định tại thời điểm thiết kế. Nhưng nếu bản thân phán đoán mức độ ưu tiên đòi hỏi sự hiểu biết về ngữ nghĩa (chẳng hạn như đánh giá liệu một tin nhắn mới có khẩn cấp hơn nhiệm vụ hiện tại hay không), ai sẽ đưa ra phán quyết này - công cụ quy tắc hoặc lệnh gọi LLM khác? Giá mỗi cái là bao nhiêu?
+2. ★★ Trong xử lý sự kiện xếp hàng, mô hình có xu hướng chỉ tập trung vào sự kiện cuối cùng. Chương này sử dụng Tác nhân nhưng nếu có 20 sự kiện tồn tại trong hàng chờ đợi (10 công cụ kết quả + 5 người dùng thông báo + 5 hệ thống cảnh báo), bạn sẽ sắp xếp thứ tự và trình bày dạng của những sự kiện này như thế nào để mô hình không bỏ qua quan trọng thông tin?
+3. ★★★ Agent Khi thay mặt người dùng tương tác với thế giới bên ngoài, anh ta về cơ bản phải đối mặt với một lựa chọn danh tính: anh ta nên sử dụng danh tính ảo độc lập (email và số điện thoại độc quyền) để hoạt động như một bên thứ ba hay anh ta nên trực tiếp vận hành tài khoản cá nhân của mình với tư cách là chính người dùng? Cái trước có thể hoạt động tự chủ ở chế độ nền, nhưng các bên thứ ba có thể không tin tưởng vào danh tính không phải là người thật; cái sau có ngữ cảnh và quyền đầy đủ hơn, nhưng đưa ra các vấn đề về ủy quyền tin cậy và ranh giới bảo mật. Bạn nghĩ nên chọn chế độ nào trong kịch bản nào?
+4. ★★ Mô hình giọng nói đầu cuối Agent hợp nhất ASR-LLM-TTS thành một mô hình duy nhất, giảm độ trễ nhưng mất tính mô-đun. Nếu mô hình đầu cuối bị lỗi ở một số điểm (chẳng hạn như nhận dạng giọng nói), việc gỡ lỗi và sửa nó sẽ khó khăn hơn nhiều so với đường ống nối tiếp. Bạn sẽ thiết kế hệ thống quan sát giọng nói Agent giọng nói đầu cuối như thế nào?
+5. ★ Step-Audio R1 thực hiện “nghĩ và nói” thông qua kiến trúc bộ não kép MPS. Nhưng khi con người đang “suy nghĩ và nói chuyện”, họ thường nói những điều chưa được suy nghĩ kỹ, tự sửa hoặc sử dụng những từ lấp chỗ trống. “Suy nghĩ và lời nói” của Agent có nên bắt chước những đặc điểm này của con người không?
+6. ★★ SoM (Set-of-Mark) và biến thể có cấu trúc của nó (chỉ mục phần tử DOM) chuyển bản địa hóa trực quan của Computer Use từ dự đoán tọa độ mở sang lựa chọn ID đóng, nhưng cả hai đều yêu cầu các thành phần giao diện phải được phát hiện và chú thích trước - bằng mô hình phân đoạn hoặc DOM. Nếu giao diện chứa các điều khiển không chuẩn hoặc các phần tử thay đổi linh hoạt, việc ghi nhãn có thể không đầy đủ hoặc không chính xác. Chúng ta có nên quay lại việc phối hợp dự đoán trong trường hợp này không?
+7. ★★ Các nền tảng robot trị giá vài trăm đô la như XLeRobot giúp việc thu thập dữ liệu điều khiển từ xa trở nên rẻ hơn. Tuy nhiên, chất lượng của dữ liệu điều khiển từ xa phụ thuộc nhiều vào kỹ năng của người vận hành. Dữ liệu do người vận hành không có kỹ năng cung cấp ảnh hưởng như thế nào đến việc đào tạo mô hình VLA? Làm cách nào để tự động lọc dữ liệu chất lượng thấp trong giai đoạn thu thập dữ liệu?
+8. ★★★ Chương này bao gồm ba hình thức tương tác: giọng nói, Computer Use và robot. Xu hướng chung giữa ba hình thức này là sự phát triển từ các đường ống nối tiếp sang các mô hình đầu cuối. Nếu xu hướng này tiếp tục, lớp tương tác Agent sẽ trông như thế nào sau 5 năm nữa?
+9. ★★ Lập chỉ mục phần tử cây DOM/Accessibility có hiệu quả trong các ứng dụng web tiêu chuẩn, nhưng ngày càng có nhiều giao diện phần mềm (hiển thị Canvas/WebGL, điều khiển tự vẽ đa nền tảng) không cung cấp thông tin có cấu trúc có thể truy cập được và chỉ có thể dựa vào chú thích trực quan hoặc dự đoán tọa độ. Bạn nghĩ Computer Use nên đặt cược vào tuyến đường hoàn toàn trực quan hay duy trì cả tuyến đường có cấu trúc và trực quan? Chi phí và lợi ích của việc duy trì hai con đường là gì?
+10. ★★ Mô hình VLA sử dụng phân đoạn hành động - như đã đề cập trong văn bản, cấu hình điển hình của π₀ là tạo ra các hành động trong tương lai 25-50 ở tần số 50Hz - ẩn độ trễ suy luận trong thời gian thực hiện. Tuy nhiên, nếu môi trường thay đổi đột ngột trong quá trình thực thi (chẳng hạn như một đối tượng bị xóa), chuỗi hành động được tạo trước sẽ trở nên không hợp lệ. Làm thế nào để đạt được sự cân bằng giữa lợi ích hiệu quả của việc phân chia hành động và tốc độ phản ứng với những thay đổi của môi trường?
+11. ★★★ Ba kịch bản trong chương này (giọng nói, Computer Use, robot) đều gặp phải vấn đề độ trễ của chu trình "nhận thức-suy nghĩ-hành động" và chúng đều phát triển theo hướng song song hóa tư duy nhanh và chậm. Trong cảnh lồng tiếng, điều này thể hiện là "sửa lỗi sau khi bạn mắc lỗi"; trong cảnh Computer Use, điều này biểu hiện dưới dạng "nhấp vào trước rồi nhìn"; trong cảnh người máy, điều này thể hiện là "bước một bước và nhìn bước kia". Làm thế nào để đảm bảo rằng những hành động dựa trên tư duy nhanh nhạy này sẽ không dẫn đến những hậu quả không thể khắc phục được?
+12. ★★★ Chương này lặp lại cùng một bộ nguyên thuỷ (đánh thức, điểm an toàn, huỷ, giành quyền, tách nhanh/chậm) được hiện thực trên các thang thời gian khác nhau. Hãy chọn một trong số đó và trình bày khác biệt trong cách hiện thực nó ở xử lý hướng sự kiện (giây — ngày) và ở chia khối hành động của robot (mili giây); khác biệt ấy chủ yếu do cái gì quyết định — tốc độ biến đổi của môi trường, tính khả nghịch của hành động, hay chi phí thu được quan sát?

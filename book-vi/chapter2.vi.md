@@ -801,7 +801,7 @@ Một hiểu lầm phổ biến cần được làm rõ: “thân thiện với 
 
 ### Mối quan hệ giữa Kỹ năng và công cụ
 
-Xét về quản lý context, cơ chế Skills rất thân thiện với KV Cache. Nếu đặt định nghĩa của mọi công cụ mã chuyên dụng vào system prompt, số lượng tăng lên sẽ tiêu tốn nhiều token và làm nhiễu sự chú ý của mô hình. Với mô hình Skill + bộ thực thi chung, số công cụ luôn ít (như Chương 5 cho thấy, chỉ cần bảy công cụ cốt lõi); nội dung Skill được tải khi cần thông qua cơ chế tiết lộ lũy tiến đã nêu và không ảnh hưởng đến prefix đã lưu trong cache. Chương 4 trình bày so sánh chi tiết và khung lựa chọn giữa hai hình thức; Chương 8 bàn về cách một Agent liên tục tiến hóa quyết định nên ghi một kinh nghiệm thành kiến thức, chỉ dẫn, chương trình hay tham số mô hình.
+Xét về quản lý context, cơ chế Skills rất thân thiện với KV Cache. Nếu đặt định nghĩa của mọi công cụ mã chuyên dụng vào system prompt, số lượng tăng lên sẽ tiêu tốn nhiều token và làm nhiễu sự chú ý của mô hình. Với mô hình Skill + bộ thực thi chung, số công cụ luôn ít (như Chương 5 cho thấy, chỉ cần bảy công cụ cốt lõi); nội dung Skill được tải khi cần thông qua cơ chế tiết lộ lũy tiến đã nêu và không ảnh hưởng đến prefix đã lưu trong cache. Chương 4 trình bày so sánh chi tiết và khung lựa chọn giữa hai hình thức; Chương 9 bàn về cách một Agent liên tục tiến hóa quyết định nên ghi một kinh nghiệm thành kiến thức, chỉ dẫn, chương trình hay tham số mô hình.
 
 > **Thử nghiệm 2-6 ★★: Tạo bài thuyết trình từ một bài báo bằng Kỹ năng Agent**
 >
@@ -1062,7 +1062,7 @@ Các thí nghiệm trên cho thấy sự khác biệt về hiệu quả của c�
 
 ### Nguyên tắc thiết kế chiến lược nén
 
-Trước đây chúng tôi đã phân tích hai động cơ nén (kiểm soát độ dài và nâng cao chất lượng tư duy) và cơ chế bên trong của “học ngữ cảnh về cơ bản là truy xuất”. Trên cơ sở đó, chúng ta có thể rút ra bốn nguyên tắc để hướng dẫn thiết kế các chiến lược nén cụ thể (Chương 8 sẽ thảo luận về cách Claude Code trực tiếp thiết kế phép ẩn dụ về hợp nhất bộ nhớ thành một hệ thống tích hợp bộ nhớ ngoại tuyến định kỳ):
+Trước đây chúng tôi đã phân tích hai động cơ nén (kiểm soát độ dài và nâng cao chất lượng tư duy) và cơ chế bên trong của “học ngữ cảnh về cơ bản là truy xuất”. Trên cơ sở đó, chúng ta có thể rút ra bốn nguyên tắc để hướng dẫn thiết kế các chiến lược nén cụ thể (Chương 9 sẽ thảo luận về cách Claude Code trực tiếp thiết kế phép ẩn dụ về hợp nhất bộ nhớ thành một hệ thống tích hợp bộ nhớ ngoại tuyến định kỳ):
 
 - **Phân phối giá trị thông tin không đồng đều**: Giá trị của các điểm quyết định quan trọng (như danh sách nhân sự) cao hơn bằng chứng hỗ trợ (như chi tiết tin tức) và cao hơn tiếng ồn dư thừa (như thanh điều hướng web, quảng cáo ở chân trang, v.v.)
 - **Tính đầy đủ về mặt ngữ nghĩa**: Không thể nén "Sutskever left OpenAI vào tháng 5 năm 2024" thành "Sutskever left" - thời gian và tên công ty là những thông tin quan trọng không thể bị mất

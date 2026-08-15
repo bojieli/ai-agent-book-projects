@@ -12,7 +12,7 @@ Bu bölüm pratikten başlayıp bir AI Agent'ın temel bileşenlerine doğru ile
 
 Modern bir Agent sisteminin özü, tek ve öz bir formülde toplanır: **Agent = LLM (Büyük Dil Modeli) + Context + Tools**. Bu formül basit ve pratiktir—yeter ki her terim geniş anlamıyla okunsun:
 
-- **LLM, Agent'ın beynidir**: Sadece bir model parametreleri kümesi değil, Agent'ın niyeti anladığı, düşündüğü, plan yaptığı ve karar verdiği bütün karar alma çekirdeğidir. Tıpkı insan beyninin salt nöronlar topluluğundan ibaret olmayıp deneyimle şekillenen düşünme biçimlerini de taşıması gibi, bir LLM'in yeteneği de iki kaynaktan gelir: **pre-training** (ön eğitim) yoluyla biriktirilen dünya bilgisi ve dil yeteneği, ve **post-training** (sonradan eğitim) ile kalıcı hale gelen karar alma stratejileri (denetimli ince ayar ve pekiştirmeli öğrenme gibi teknikleri Bölüm 7'nin konusudur).
+- **LLM, Agent'ın beynidir**: Sadece bir model parametreleri kümesi değil, Agent'ın niyeti anladığı, düşündüğü, plan yaptığı ve karar verdiği bütün karar alma çekirdeğidir. Tıpkı insan beyninin salt nöronlar topluluğundan ibaret olmayıp deneyimle şekillenen düşünme biçimlerini de taşıması gibi, bir LLM'in yeteneği de iki kaynaktan gelir: **pre-training** (ön eğitim) yoluyla biriktirilen dünya bilgisi ve dil yeteneği, ve **post-training** (sonradan eğitim) ile kalıcı hale gelen karar alma stratejileri (denetimli ince ayar ve pekiştirmeli öğrenme gibi teknikleri Bölüm 8'nin konusudur).
 - **Context, Agent'ın gözleridir**: Sadece modele verilen metin değil, Agent'ın her karar noktasında görebildiği her şeydir—ortam, kullanıcı belleği, alan bilgisi, kendi durumu ve görev ilerlemesi. Tıpkı bir kişinin karar verirken durumu değerlendirmesi, ilgili deneyimi hatırlaması ve referanslara başvurması gerektiği gibi, Agent'ın context penceresi de o anda görebildiği her şeydir.
 - **Tools, Agent'ın el ve ayaklarıdır**: Bir avuç çağrılabilir API fonksiyonu değil, Agent'ın yapabildiği her şeyin tam kümesidir—önceden tanımlanmış araç çağrılarından ihtiyaç halinde yüklenen becerilere (Skills), yeni yetenekler yaratmak için anlık kod üretmekten alt Agent'lara (sub-agent) iş devretmeye, kullanıcıya ulaşmaktan dış olaylara yanıt vermeye kadar uzanır.
 
@@ -26,7 +26,7 @@ Klasik pekiştirmeli öğrenme ve kontrol teorisi bakışında Agent ve Ortam, k
 
 Mühendislik formülü bu nedenle şöyle açılır: LLM Model'e karşılık gelir, Context + Tools asgari Harness'i oluşturur; üretim sistemleri aynı sınır içinde kısıtlama, doğrulama ve düzeltme ekler. Bölümün geri kalanı bu sınırı izler.
 
-Bu üç bileşen RL'deki (Pekiştirmeli Öğrenme; bkz. Bölüm 7) üç temel kavramla ilişkilidir, ancak katı birer bir eşdeğer değildir: context, gözlemler ile geçmişin Agent içindeki temsilidir; araçlar gözlem/eylem arayüzlerini tanımlar, bunların arkasındaki nesneler ise Ortam'a ait kalır.
+Bu üç bileşen RL'deki (Pekiştirmeli Öğrenme; bkz. Bölüm 8) üç temel kavramla ilişkilidir, ancak katı birer bir eşdeğer değildir: context, gözlemler ile geçmişin Agent içindeki temsilidir; araçlar gözlem/eylem arayüzlerini tanımlar, bunların arkasındaki nesneler ise Ortam'a ait kalır.
 
 | Sezgisel Karşılık | Uygulama Bileşeni | Akademik Kavram | Anlamı |
 |---------------|----------------|------------------|---------------------------------------------|
@@ -130,9 +130,9 @@ Yukarıdaki tartışma, bir modelin araç kullanma politikalarını pekiştirmel
 
 **Context uyarlaması** mevcut görevin içinde gerçekleşir. Örnekler, durum ve retrieval sonuçları context'e girdikten sonra model davranışını hemen ayarlayabilir; ancak bu, sonraki oturumun kalıcı durumunu değiştirmez. Avantajları hız ve düşük maliyet, sınırlamaları ise context penceresi ile bilginin düzenlenme biçimidir. Bölüm 2 bu uyarlama biçiminin nasıl çalıştığını ayrıntılı olarak açıklar.
 
-Değişikliklerin görevler arasında kalıcı olması için sistem **harici artefaktları** güncelleyebilir: gerçekler ve deneyim bilgi dokümanlarında düzenlenebilir, dilde ifade edilebilen stratejiler bir Prompt veya Skill'e yazılabilir, deterministik prosedürler ve kısıtlar programlarda ve Harness'lerde kodlanabilir. Bu artefaktlar denetlenebilir ve değiştirilebilir, ancak Agent'ın yürütme sırasında bunlara yine context ya da araç arayüzleri üzerinden erişmesi gerekir. Bölüm 3-5 bilgi ve programların temellerini kurar; Bölüm 8 ise bu tür güncellemelerin değerlendirilmiş operasyon trajectory'lerinden nasıl üretilebileceğini tartışır.
+Değişikliklerin görevler arasında kalıcı olması için sistem **harici artefaktları** güncelleyebilir: gerçekler ve deneyim bilgi dokümanlarında düzenlenebilir, dilde ifade edilebilen stratejiler bir Prompt veya Skill'e yazılabilir, deterministik prosedürler ve kısıtlar programlarda ve Harness'lerde kodlanabilir. Bu artefaktlar denetlenebilir ve değiştirilebilir, ancak Agent'ın yürütme sırasında bunlara yine context ya da araç arayüzleri üzerinden erişmesi gerekir. Bölüm 3-5 bilgi ve programların temellerini kurar; Bölüm 9 ise bu tür güncellemelerin değerlendirilmiş operasyon trajectory'lerinden nasıl üretilebileceğini tartışır.
 
-Hedef, tıbbi görüntü anlama, doğal dil üslubu veya örtük bir karar politikası gibi harici kurallarla bütünüyle ifade edilemeyen yüksek boyutlu bir yetenek olduğunda, **model parametreleri** post-training yoluyla güncellenmelidir. Parametre güncellemelerinin dağıtım maliyeti daha yüksektir, ancak doğal ve geniş bir genelleme sağlayabilir; Bölüm 7 yöntemlerini sistematik biçimde sunar. Dolayısıyla bu üç yol birbirini dışlayan kategoriler değil, farklı zaman ölçeklerinde çalışan eşgüdümlü mekanizmalardır: context anlık uyarlamayı destekler, harici artefaktlar kontrollü birikimi sağlar, parametreler ise açıkça ifade edilmesi güç yetenekleri içselleştirir.
+Hedef, tıbbi görüntü anlama, doğal dil üslubu veya örtük bir karar politikası gibi harici kurallarla bütünüyle ifade edilemeyen yüksek boyutlu bir yetenek olduğunda, **model parametreleri** post-training yoluyla güncellenmelidir. Parametre güncellemelerinin dağıtım maliyeti daha yüksektir, ancak doğal ve geniş bir genelleme sağlayabilir; Bölüm 8 yöntemlerini sistematik biçimde sunar. Dolayısıyla bu üç yol birbirini dışlayan kategoriler değil, farklı zaman ölçeklerinde çalışan eşgüdümlü mekanizmalardır: context anlık uyarlamayı destekler, harici artefaktlar kontrollü birikimi sağlar, parametreler ise açıkça ifade edilmesi güç yetenekleri içselleştirir.
 
 ### Context: Agent'ın Gözleri
 
@@ -363,7 +363,7 @@ Orkestrasyon kalıplarına geçmeden önce pratik bir soru: Agent'ınızı hangi
 
 Model, Agent'ın zeka altyapısıdır ve doğru olanı seçmek çoğu zaman herhangi bir prompt ince ayarından daha etkilidir. Modeller belirli sürüm önerilerinin geçerliliğini koruyamayacak kadar hızlı yineleniyor, bu yüzden bu bölüm öneri yerine yönler sunuyor.
 
-**Kapalı Kaynak Modeller.** Günümüz Agent geliştirmesinde en yaygın kullanılan iki kapalı kaynak model sağlayıcısı OpenAI (GPT/o serisi) ve Anthropic'tir (Claude serisi). Kapalı kaynak modeller genellikle yetenek bakımından öndedir, ancak daha pahalıdır ve sağlayıcının API politikalarıyla sınırlıdır. Bir model seçerken yalnızca lider tablolarına bakmayın; **kendi görevleriniz üzerinde değerlendirin** (bkz. Bölüm 6).
+**Kapalı Kaynak Modeller.** Günümüz Agent geliştirmesinde en yaygın kullanılan iki kapalı kaynak model sağlayıcısı OpenAI (GPT/o serisi) ve Anthropic'tir (Claude serisi). Kapalı kaynak modeller genellikle yetenek bakımından öndedir, ancak daha pahalıdır ve sağlayıcının API politikalarıyla sınırlıdır. Bir model seçerken yalnızca lider tablolarına bakmayın; **kendi görevleriniz üzerinde değerlendirin** (bkz. Bölüm 7).
 
 **Açık Kaynak Modeller.** Bu kitap yazılırken açık ve kapalı kaynak modeller arasındaki fark altı aydan azdı, buna karşılık açık kaynak modellerin maliyeti belirgin ölçüde daha düşüktü. İş senaryonuz en yüksek model yeteneklerini gerektirmiyorsa, açık kaynak model pragmatik bir seçimdir. Açık kaynak modeller düşük maliyetlidir, özel dağıtımı destekler ve fine-tuning ile özelleştirilebilir; bu da onları maliyete duyarlı veya veri uyumluluğu gerektiren senaryolara uygun kılar. DeepSeek, Kimi ve GLM, Agent yetenekleri güçlü Çin modelleridir. Modellerin tool calling yetenekleri önemli ölçüde farklılık gösterdiğinden, karar vermeden önce kendi senaryonuzda test edin.
 
@@ -489,10 +489,10 @@ Harness engineering merceğinden bakıldığında, bu kitabın her bölümü Har
 | Context Genişletme (Bilgi Kalıcılığı) | Bölüm 3 (Bilgi Tabanı) | Kullanıcı belleği, RAG, yapılandırılmış indeksleme, agentic RAG | Hassas bilgi ifşası, gizlilik koruması |
 | Araç Tasarımı ve Güvenlik Kısıtları | Bölüm 4 (Araç Tasarımı) | Araç sınıflandırması, izin kontrolü, MCP standardı, asenkron mimari | Yanlış işlem, yetkisiz erişim, geri alınamaz işlemler |
 | Araç Doğrulama ve Düzeltme | Bölüm 5 (Kod Üretimi) | Kodlama Agent'ının Harness'i, test odaklı geliştirme, kodlaştırılmış kurallar | Kimlik taklidi, sorumluluk atfı |
-| Sistem Düzeyinde Doğrulama | Bölüm 6 (Değerlendirme) | Değerlendirme ortamı, veri kümeleri, otomatik değerlendirme, gözlemlenebilirlik | — |
-| Model Düzeyinde Düzeltme | Bölüm 7 (Post-Training) | SFT (Denetimli İnce Ayar), Pekiştirmeli Öğrenme—Harness'te biriken geri bildirim sinyallerini model parametrelerine yazmak, Harness engineering'in bir uzantısı olarak görülür | Hedef uyumsuzluğu, alignment ve sağlamlık |
-| Sistem Düzeyinde Düzeltme | Bölüm 8 (Kendi Kendine Evrim) | Externalized learning, araç yaratma, deneyim birikimi | — |
-| Çok Modlu Context ve Tools | Bölüm 9 (Çok Modlu ve Gerçek Zamanlı Etkileşim) | Sesli Agent, Computer Use, robotik işlem | Çok modlu girdinin güvenlik filtrelemesi, gerçek zamanlı etkileşimde izin kontrolü |
+| Sistem Düzeyinde Doğrulama | Bölüm 7 (Değerlendirme) | Değerlendirme ortamı, veri kümeleri, otomatik değerlendirme, gözlemlenebilirlik | — |
+| Model Düzeyinde Düzeltme | Bölüm 8 (Post-Training) | SFT (Denetimli İnce Ayar), Pekiştirmeli Öğrenme—Harness'te biriken geri bildirim sinyallerini model parametrelerine yazmak, Harness engineering'in bir uzantısı olarak görülür | Hedef uyumsuzluğu, alignment ve sağlamlık |
+| Sistem Düzeyinde Düzeltme | Bölüm 9 (Kendi Kendine Evrim) | Externalized learning, araç yaratma, deneyim birikimi | — |
+| Çok Modlu Context ve Tools | Bölüm 6 (Çok Modlu ve Gerçek Zamanlı Etkileşim) | Sesli Agent, Computer Use, robotik işlem | Çok modlu girdinin güvenlik filtrelemesi, gerçek zamanlı etkileşimde izin kontrolü |
 | Çoklu Agent'lar Arasında Kısıtlama ve Düzeltmeler | Bölüm 10 (Multi-Agent İş Birliği) | İş birliği mimarisi, başarısızlık modları, Agent toplumu | Agent'lar arası güven sınırı ihlalleri, paylaşılan kaynak çatışmaları |
 
 Anthropic'in uzun süre çalışan Agent'lar inşa etme pratiği, Harness tasarımının modelin kendisinin çözemediği sorunları nasıl çözebildiğini gösterir. Uzun görevlerin iki başarısızlık modunu—context'in tükenmesi ve görevin erken bitmiş sayılması—ele almak için yapılandırılmış bir Harness kullanarak, karmaşık görevleri bir "Başlatma Agent'ı" (ortamı kurar, görev listesini ayrıştırır) ile bir "Yürütme Agent'ı" (her oturumda artımlı ilerleme kaydeder ve net devir teslim çıktıları bırakır) arasında bölerler. İlerideki bölümler Harness'i bileşen bileşen ele alır—Bölüm 2, en merkezi olanla, context engineering ile başlar, Bölüm 5 ise Kodlama Agent'larında Harness engineering'in eksiksiz pratiğini ortaya koyar.
@@ -513,7 +513,7 @@ Bu bölüm, pratikten başlayarak AI Agent'ları anlamak ve inşa etmek için te
 
 **Güvenlik Mimari Bir Meseledir**: Guardrail'ler, human-in-the-loop müdahalesi, alignment (modelin davranışını insan niyetiyle tutarlı tutmak)—güvenlik, lansmandan önce yamalanacak bir şey değil, kodun ilk satırından itibaren tasarlanması gereken bir şeydir. Beş düzeyi kapsar: model, context, tools, iş birliği ve toplum.
 
-Sonraki bölüm, Harness'in en merkezi bileşenine—context engineering'e—derinlemesine iner. Agent kavramının pekiştirmeli öğrenmedeki akademik köklerine ve geleneksel RL ile modern LLM Agent'larının daha kapsamlı bir karşılaştırmasına gelince, Bölüm 7 ikisini de sistematik olarak ele alır.
+Sonraki bölüm, Harness'in en merkezi bileşenine—context engineering'e—derinlemesine iner. Agent kavramının pekiştirmeli öğrenmedeki akademik köklerine ve geleneksel RL ile modern LLM Agent'larının daha kapsamlı bir karşılaştırmasına gelince, Bölüm 8 ikisini de sistematik olarak ele alır.
 
 Aşağıdaki düşünce soruları, bölümün temel kavramlarını bir düzey daha derinleştirmek için tasarlanmıştır; standart cevapları yoktur.
 

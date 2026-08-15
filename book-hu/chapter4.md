@@ -2,7 +2,7 @@
 
 A *Her* sci-fi filmben Samantha, az MI-asszisztens képes proaktívan rendezni az e-maileket, azonosítani az érzelmileg összetett üzeneteket és finomított válaszokat javasolni, képviselni a főszereplőt kiadói ügyekben, és zökkenőmentesen váltani a különböző kommunikációs csatornák között. Intelligenciája azért lenyűgöző, mert erős **eszközökkel** rendelkezik – ezek a „kezek, lábak és érzékek”, amelyek egy nyelvi „agyat” a valódi digitális világhoz kapcsolnak. A mai általános célú Agentek, például a Manus és az OpenClaw, már megvalósították a *Her* Samanthájához szükséges képességek többségét.
 
-A fejezet az öt eszközkategória áttekintésével kezd, majd tárgyalja az összes eszközre vonatkozó tervezési elveket és azt, hogy az MCP protokoll hogyan egységesíti az eszközök ökoszisztémáját. Erre az alapra építve hierarchikus szerveződéssel, dinamikus felfedezéssel és Skill-ekkel kezeli az eszközkiválasztás kihívásait. Ezután részletesen megvizsgálja az Agent által proaktívan meghívott Észlelési, Végrehajtási és Együttműködési eszközöket, majd az eseményvezérelt aszinkron architektúrát, az Eseményindított és Felhasználói Kommunikációs eszközöket. Végül a több száz vagy ezer eszköz közötti proaktív felfedezéssel zár.
+A fejezet az öt eszközkategória áttekintésével kezd, majd tárgyalja az összes eszközre vonatkozó tervezési elveket és azt, hogy az MCP protokoll hogyan egységesíti az eszközök ökoszisztémáját. Erre az alapra építve hierarchikus szerveződéssel, dinamikus felfedezéssel és Skill-ekkel kezeli az eszközkiválasztás kihívásait. Ezután részletesen megvizsgálja az Agent által proaktívan meghívott Észlelési, Végrehajtási és Együttműködési eszközöket. Végül a több száz vagy ezer eszköz közötti proaktív felfedezéssel zár.  A maradék két kategóriát – az Eseményindított és a Felhasználói Kommunikációs eszközöket – külső események vezérlik, tervezésük elválaszthatatlan az eseményvezérelt aszinkron futtatókörnyezettől, ezért a 6. fejezetben, a valós idejű interakcióval együtt tárgyaljuk őket.
 
 ## Eszközök Osztályozása
 
@@ -28,7 +28,7 @@ Az 1. fejezet bevezette az Agent eszközök öt kategóriáját (Észlelés, Vé
 
 **Eseményindított Eszközök** azok az eszközök, amelyekkel a külső világ vezérli az Agent cselekvéseit. Példák: időzítő beállítása (`set_timer`), háttérben futó parancssori feladatok figyelése (`monitor_shell`), és külső eseményforrásokhoz való csatlakozás (`connect_channel`). Ezek az eszközök két mozzanatot foglalnak magukban: "Regisztráció", amikor az Agent aktívan meghívja az eszközt, hogy deklarálja, mely események érdeklik; és "Triggerelés", amikor egy külső esemény aszinkron módon visszahívja és felébreszti az Agentet, hogy az megkezdhesse a feldolgozást – ez a jelentése a "Agent regisztrál, külső triggerel" kifejezésnek a 4-1. táblázatban. Eseményindított eszközök nélkül egy Agent csak passzívan reagálhat, amikor a felhasználó kezdeményez egy beszélgetést, és nem képes önállóan cselekedni egy meghatározott időpontban vagy reagálni külső eseményekre, mint az új e-mailek vagy rendszerriasztások.
 
-Az első négy eszközkategóriát az Agent aktívan hívja meg, és tervezésüket az alábbiakban részletesen tárgyaljuk. Az Eseményindított Eszközök tervezése elválaszthatatlan az eseményvezérelt aszinkron architektúrától, amelyet a fejezet későbbi, "Eseményvezérelt Aszinkron Agentek" része tárgyal. Először is bemutatjuk az összes eszközre alkalmazható univerzális tervezési elveket.
+Az első három kategóriát az Agent proaktívan hívja meg, tervezésüket az alábbiakban egyenként tárgyaljuk. Az Eseményindított Eszközöket külső események vezérlik, a Felhasználói Kommunikációs Eszközöknek pedig több csatornán, aszinkron módon kell elérniük a felhasználót anélkül, hogy feltételeznék, hogy éppen elérhető — mindkettő tervezése elválaszthatatlan az eseményvezérelt aszinkron futtatókörnyezettől, ezért a 6. fejezetben, a valós idejű interakcióval együtt tárgyaljuk őket. Először az összes eszközre érvényes általános tervezési elveket mutatjuk be.
 
 ## Az Eszköztervezés Univerzális Elvei
 
@@ -45,7 +45,7 @@ A formák közötti választás három dimenziótól függ.
 
 - **Paraméter Összetettség**: Egymásba ágyazott objektumokat, kereszmező-érvényesítést vagy összetett típusmegszorításokat tartalmazó műveletek esetén a dedikált eszköz strukturált sémája jobban segíti a modellt a paraméterek helyes átadásában; egyszerű paraméterekkel rendelkező műveletek esetén a CLI parancsokon keresztüli átadás ugyanolyan megbízható.
 - **Változás Gyakorisága**: A gyakran változó képességeket sokkal olcsóbb Skill-ekként karbantartani – egy szövegrész szerkesztése sokkal egyszerűbb, mint a kód megváltoztatása, tesztelése és újratelepítése. A stabil alacsony szintű műveletek jobban illenek a dedikált eszközökhöz.
-- **Modell Képesség**: A legkorszerűbb (SOTA) modellek több képességet fejezhetnek ki, és csökkenthetik az eszközök számát Skill-ek + általános végrehajtók segítségével; a gyengébb modellekhez strukturált eszköz sémák szükségesek a helyes meghívás irányításához. A 8. fejezet tárgyalja, hogyan hozza meg egy Agent ugyanezt a választást az új képességek konszolidálásakor a folyamatos evolúció során.
+- **Modell Képesség**: A legkorszerűbb (SOTA) modellek több képességet fejezhetnek ki, és csökkenthetik az eszközök számát Skill-ek + általános végrehajtók segítségével; a gyengébb modellekhez strukturált eszköz sémák szükségesek a helyes meghívás irányításához. A 9. fejezet tárgyalja, hogyan hozza meg egy Agent ugyanezt a választást az új képességek konszolidálásakor a folyamatos evolúció során.
 
 ### Kompromisszumok az Eszköz Részletességében: Integráció vs. Szétválasztás
 
@@ -317,7 +317,7 @@ Az al-Agentek alapvető értéke a "munka megosztásán alapuló specializáció
 
 **Időtúllépési és Tartalék Stratégiák.** Egy HITL (Human-In-The-Loop – emberi felülvizsgálati lépés beillesztése az Agent döntési folyamatába) kérésre nem biztos, hogy azonnali válasz érkezik, ezért állítson be időtúllépési küszöbértékeket és alapértelmezett viselkedéseket: "Ha 5 percen belül nincs válasz, alkalmazza a konzervatív stratégiát." A prioritási sorok is segítenek: a sürgős kérések több csatornán értesítenek; a rutin kérések e-mailt kapnak.
 
-**Visszacsatolási Hurok Kialakítása.** A HITL nem lehet egyszeri interakció, hanem tanulási hurkot kell képeznie. Az emberi jóváhagyások, elutasítások és azok okai először is bizonyítékkal alátámasztott visszacsatolási adatokat képeznek: az általánosítható ítélkezési elvek beépíthetők tapasztalati tudásba vagy Skill-be, míg a magas dimenziójú és implicit preferenciák utóképzési adatokat alkothatnak. A 8. fejezet tárgyalja, hogyan kell értékelni az ilyen trajektóriákat és kiválasztani a frissítési hordozót. Bármelyik módszert is használjuk, egyetlen emberi ítéletet nem szabad közvetlenül univerzális szabállyá általánosítani előzetes szintézis nélkül.
+**Visszacsatolási Hurok Kialakítása.** A HITL nem lehet egyszeri interakció, hanem tanulási hurkot kell képeznie. Az emberi jóváhagyások, elutasítások és azok okai először is bizonyítékkal alátámasztott visszacsatolási adatokat képeznek: az általánosítható ítélkezési elvek beépíthetők tapasztalati tudásba vagy Skill-be, míg a magas dimenziójú és implicit preferenciák utóképzési adatokat alkothatnak. A 9. fejezet tárgyalja, hogyan kell értékelni az ilyen trajektóriákat és kiválasztani a frissítési hordozót. Bármelyik módszert is használjuk, egyetlen emberi ítéletet nem szabad közvetlenül univerzális szabállyá általánosítani előzetes szintézis nélkül.
 
 > **4-4. ★★ Kísérlet: Együttműködő Eszköz MCP Szerver**
 >
@@ -334,315 +334,6 @@ Az al-Agentek alapvető értéke a "munka megosztásán alapuló specializáció
 >
 > **Kísérleti Követelmények**: Tervezzen intelligens együttműködési stratégiákat – valósítson meg legalább két módot a kontextus al-Agenteknek való átadására, és hasonlítsa össze a hatásaikat, például a minimális átadást (csak a feladat paramétereinek átadása) és az LLM által generált kontextust (egy extra LLM hívás a fő Agent trajektóriájából egy átadási kontextus kinyerésére); írjon rendszer promptokat, hogy az Agent felismerje, mikor van szükség HITL-re, és proaktívan kérjen megerősítést vagy bemenetet; valósítson meg időtúllépési mechanizmusokat és többcsatornás értesítéseket.
 
-## Eseményvezérelt Aszinkron Agentek
-
-Az előző szakaszokban tárgyalt észlelő, végrehajtó és együttműködő eszközöket mind az Agent hívja meg aktívan. Ez a szakasz a fejezet elején felvetett másik kihíváshoz fordul: hogyan kezel egy Agent időigényes feladatokat, és hogyan reagál a bármikor érkező külső eseményekre? Ez egy eseményvezérelt aszinkron architektúrát igényel, és az öt eszközkategóriából kettő – az Eseményindított Eszközök és a Felhasználói Kommunikációs Eszközök – ezt az architektúrát használja a működéséhez.
-
-**Eszközbiztonsági kapu:**
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
-### Miért Van Szükség Aszinkron Működésre
-
-Kezdjük egy analógiával, hogy elmagyarázzuk, miért van szükség aszinkron működésre. A szinkron azt jelenti, hogy "egy dolgot kell elvégezni, mielőtt a következőhöz láthatunk", míg az aszinkron azt, hogy "több dolog történhet egyidejűleg". Egy hagyományos szinkron Agent architektúra olyan, mint egy egyetlen pénztárral rendelkező bolt – egyszerre csak egy vevőt tud kiszolgálni, és csak az aktuális befejezése után hívja a következőt. Egy igazán intelligens asszisztens inkább olyan, mint egy rugalmas titkár – több függőben lévő dolog van az asztalon (e-mailek, telefonhívások, látogatók), a titkár a sürgősség alapján dönti el, melyiket kezelje először, és félbeszakíthatja az aktuális feladatot egy sürgősebbért. Szinkron módban az Agentnek vagy meg kell várnia egy háttérfeladat befejezését, mielőtt a felhasználóval beszélhetne, vagy meg kell várnia a beszélgetés végét, mielőtt egy újonnan érkezett eseményt feldolgozhatna. Nem tudja nyújtani azokat az alapvető képességeket, amelyeket egy valódi asszisztens forgatókönyv megkövetel:
-
-- **Az aszinkron végrehajtás a norma** – Sok feladat hosszú futási időt igényel, és nem szabad, hogy blokkolja a felhasználói interakciót.
-- **Eseményprioritás dinamikus megítélése** – Nem minden esemény egyformán fontos. Az Agentnek intelligensen kell kiválasztania a kezelési stratégiát: az aktuális művelet megszakítása (sürgős), sorba állítás (rutin), vagy párhuzamos feldolgozás (független könnyűsúlyú lekérdezés).
-- **A megszakítás és folytatás folyékonysága** – Egy megszakított beszélgetésnek vagy feladatnak természetesen kell tudnia folytatódnia.
-
-Az aszinkron paradigma azonban ütközik a jelenlegi LLM-ek alapvető jellemzőjével: a képzésük szinkronitást feltételez – egy eszközhívás után a következő üzenetnek az eszköz eredményének kell lennie –, miközben a valódi telepítés aszinkronitást követel: a felhasználók bármikor megszakíthatják, a feladatok párhuzamosan haladnak, és a külső események az eszköz visszatérése előtt érkeznek. Ez a "szinkron képzés / aszinkron telepítés" ellentmondás áthatja a szakasz hátralévő részének minden mérnöki kompromisszumát.
-
-Ennek megoldásához egy "eseményvezérelt aszinkron Agent architektúrára" van szükségünk. Technikailag ez azt jelenti, hogy a rendszer már nem aktívan és ismételten ellenőrzi az "új üzeneteket" (ez a polling, ami hatástalan), hanem automatikusan elindítja a feldolgozási logikát, amikor új üzenet érkezik. Minden bemenet, kimenet, gondolkodási folyamat és külső interakció egységesen eseményfolyamként van modellezve – eseményrekordok sorozataként, idővonalon elrendezve. A 4-2. ábra egy eseményvezérelt aszinkron Agent teljes architektúráját mutatja, illusztrálva az eseményforrások, az eseménysor és az Agent feldolgozási folyamat közötti kapcsolatot.
-
-![4-2. ábra: Eseményvezérelt Aszinkron Agent Architektúra](images/fig4-2.svg)
-
-### Eseményvezérelt mechanizmusok megvalósítása az OpenClawban
-
-A frissített leírás szerint a Hooks az OpenClaw belső életciklusából származik, míg a Cron és a Heartbeat idővezérelt. A külső e-mailek és API-visszahívások azonnali csatornát, például a PineClaw Channel mechanizmusát igénylik.
-
-A nyílt forráskódú OpenClaw keretrendszer (architektúráját az 5. fejezet részletezi) egy Gateway vezérlősíkon keresztül fogadja a többcsatornás üzeneteket, és irányítja azokat az Agent futásidejű környezetébe. Három beépített automatizálási mechanizmust kínál:
-
-- **Hooks (Horgok)**: Reagálnak az Agent életciklus-eseményeire, mint a munkamenet létrehozása és visszaállítása, hasonlóan a GitHub Actions eseménytriggereihez
-- **Cron (ütemezett feladatütemező)**: Időszakos feladatok végrehajtása cron kifejezések szerint (széles körben használt szintaxis ütemezett feladatokhoz Unix rendszereken, pl. `0 9 * * 5` jelentése: minden pénteken 9:00), mint például heti jelentés generálása minden pénteken vagy adatok összesítése minden hónap elején
-- **Heartbeat (Szívverés démon)**: Minden N percben felébreszti az Agentet, hogy ellenőrizze, van-e olyan dolog, ami figyelmet igényel, ítélőképességet használva a riasztási fáradtság elkerülésére
-
-Ez a három mechanizmus az autonómia látszatát kelti az OpenClaw Agentek számára – még ha a felhasználó offline is van, az Agent képes ütemezetten jelentéseket generálni, rendszerállapotot ellenőrizni és rutinfeladatokat végezni. Ha azonban közelebbről megnézzük, egy alapvető korlát jelenik meg. Pontosabban: a Gateway már "push" módon kezeli a beépített csatornák (IM, webes felület) üzeneteit – azok a érkezés pillanatában az Agenthez kerülnek. A három automatizálási mechanizmus közül csak a Cron és a Heartbeat teszi lehetővé, hogy az Agent felhasználói üzenet nélkül cselekedjen, és mindkettő "idővezérelt" – a Heartbeat fix időközönként ellenőriz, a Cron előre beállított időpontokban tüzel. A Hooks csak a keretrendszer belső életciklus-eseményeire reagál, nem képes új változásokat behozni a külvilágból. A valódi hiányosság ez: bármely, a beépített csatornákon túli harmadik fél eseményforrás számára – új e-mail, külső API visszahívás adatokat küldve, sürgős értesítés azonnali figyelmet igényelve – az OpenClaw-nak nincs azonnali belépési útvonala. Az Agent nem tud reagálni abban a pillanatban, amikor az esemény bekövetkezik; legfeljebb a következő Cron/Heartbeat tick-nél veszi észre.
-
-Ez a késedelem sok forgatókönyvben elfogadhatatlan. Vegyük "PineClaw-t" (a Pine AI OpenClaw bővítményét) példaként: a Pine AI egy MI asszisztens, amely valódi telefonhívásokat kezdeményez a felhasználó nevében, tipikus forgatókönyvek közé tartozik a számlák újratárgyalása, előfizetések lemondása és biztosítási igények kezelése. Amikor egy felhasználó Pine telefonfeladatot indít egy OpenClaw Agenten keresztül, a Pine hang-MI-je elvégzi a hívást a felhasználó nevében, de a felhasználónak bármikor közbe kell tudnia avatkozni a hívás során:
-
-- **Valós Idejű Személyazonosság Ellenőrzés**: Az ügyfélszolgálati munkatárs kéri a számlatulajdonos személyazonosságának ellenőrzését, és a Pine-nek azonnali biztonsági kódot vagy egyszeri jelszót (OTP) kell kérnie a felhasználótól
-- **Háromutas Hívás Megerősítés**: Az ügyfélszolgálati munkatárs kéri, hogy beszélhessen közvetlenül a számlatulajdonossal, és a Pine-nek másodperceken belül el kell érnie a felhasználót
-- **Előrehaladás Szinkronizálás és Döntés Megerősítés**: A tárgyalás kritikus pontján (pl. a másik fél árcsökkentést javasol) a Pine-nek meg kell erősíttetnie a felhasználóval, hogy elfogadja-e
-
-A Heartbeat időszakos pollozásával – mondjuk 5 perces időközökkel – a felhasználó nem kapná meg az értesítést, amíg az ügyfélszolgálati munkatárs még mindig várja a megerősítő kódot; a munkatárs leteszi a telefont, és a hívás meghiúsul. Az időköz néhány másodpercre rövidítése egyszerűen elárasztaná a rendszert haszontalan kérésekkel.
-
-A PineClaw megoldása egy "Channel (Csatorna) mechanizmus" bevezetése – egy valós idejű eseménycsatorna létrehozása az OpenClaw Gateway-e és a Pine API között. Amikor kulcsfontosságú események történnek, mint például a hívás kapcsolódása, a felhasználói bemenet szükségessége vagy a hívás vége, az üzenet azonnal push-elődik az OpenClaw Agenthez. Az Agent azonnal feldolgozza és értesíti a felhasználót, a válaszidőt percekről másodpercekre csökkentve.
-
-Ez az eset feltárja az eseményvezérelt architektúra alapvető értékét az Agent keretrendszerek számára: **az igazi "proaktív szolgáltatáshoz" nem csak az kell, hogy az Agent időszakosan ellenőrizze a világot, hanem az is, hogy a világ aktívan értesíteni tudja az Agentet.** Az összes bemenet – felhasználói üzenetek, eszköz visszatérések, külső visszahívások, ütemezett triggerek – egységesítése egy eseményfolyammá, és az Agent gondolkodásának és cselekvéseinek egy eseményhurokon keresztüli vezérlése az építészeti alap e cél eléréséhez. Ezen architektúra alatt először a két, közvetlenül az eseményekhez kapcsolódó eszközkategóriát mutatjuk be, valamint az Agent független cselekvéseit támogató virtuális identitást és izolált végrehajtási környezetet, mielőtt az eseménykezelő mechanizmus konkrét tervezését tárgyalnánk.
-
-### Eseményindított Eszközök
-
-Az eseményindított eszközök azok a belépési pontok, amelyeken keresztül a külső események az Agent cselekvéseit vezérlik. Nélkülük egy Agent csak egy folyamatos gondolkodási, eszközhívási és végül eredmény-kiadási ciklusban tud működni, majd várni a felhasználó következő bemenetére. A világ változásainak az Agent által feldolgozható eseményekké való átültetéséhez három gyakori típusú eseményindított eszköz létezik.
-
-**Időzítők** (`set_timer`) a fizikai időhöz kötött eseményeket kezelik. Ha egy e-mailre nem érkezik válasz, az Agentnek egy idő után követnie kell a haladást; ha egy hívás a címzett munkaidején kívül történik, a következő munkaidőben kell újrapróbálkoznia. Ennek támogatására az olyan eszközök, mint az OpenClaw és a Claude Code, időzítő funkciót tartalmaznak, lehetővé téve, hogy az Agent egy meghatározott fizikai időpontban felébressze magát. "Egyszeri időzítők" egy adott végrehajtási időponttal rendelkező feladatokhoz használatosak: például ha egy felhasználó szombaton kéri a "DMV felhívását", az Agent beállít egy időzítőt "következő hétfő 10:00-kor a DMV hívására", ami automatikusan elindítja a hívást. "Ismétlődő időzítők" időszakos feladatokhoz használatosak: például a szerver állapotának óránkénti ellenőrzése vagy heti előrehaladási jelentés küldése minden pénteken. Ezenkívül egyes külső szolgáltatások nem támogatják a proaktív előrehaladás-frissítéseket, ami megköveteli az Agenttől, hogy aktívan pollozza az állapotot. Ilyen esetekben ismétlődő időzítőre van szükség az ismételt lekérdezésekhez – az előző szakaszban említett Heartbeat mechanizmus az OpenClaw-ban ennek rendszerezett formája, és ez az OpenClaw "proaktív szolgáltatás" képességének gyökere.
-
-**Háttérfeladat Figyelés** (`monitor_shell`) az aszinkron módon végrehajtott eszközökből vagy parancssori feladatokból származó eseményeket kezeli. Egyes parancssori feladatok hosszú ideig futnak a háttérben, és az Agentnek követnie kell az előrehaladásukat. Ha az Agent "bámulja a parancssort", ismételten meghívva egy eszközt az előrehaladás pollozására, tokeneket éget; ha megvárja, amíg a feladat teljesen befejeződött, mielőtt újra gondolkodna, lemarad a kritikus problémák kibontakozásáról – és ha a parancs lefagy, egyáltalán nem tud közbelépni, megakasztva az egész feladatot. A Claude Code ezt egy `monitor` eszköz bevezetésével oldja meg, lehetővé téve az Agent számára az új parancssori kimenet figyelését, beleértve a specifikus kulcsszavakat tartalmazó kimenetet is.
-
-**Külső Eseménycsatornák** (`connect_channel`) a külső eseményeket, mint új e-mailek, API visszahívások vagy IM üzenetek, valós időben push-olják az Agenthez. Az előző szakaszban említett PineClaw Channel mechanizmus egy tipikus megvalósítás.
-
-Tervezési szempontból az eseményindított eszközöknek egyértelmű trigger-feltételeket és szűrési szabályokat kell megadniuk, hogy megakadályozzák a nem releváns eseményeket az Agent felébresztésében és a számítási erőforrások pazarlásában. Az esemény hasznos terhének (payload) elegendő kontextusinformációt kell tartalmaznia, hogy minimalizálja a további lekérdezések számát, amelyeket az Agentnek az ébredés után kell végeznie.
-
-### Felhasználói Kommunikációs Eszközök
-
-Az OpenClawban a munkamenetek átláthatók: a felhasználó és az Agent bármikor üzenhet egymásnak dedikált eszközökkel, képekkel, fájlokkal, push-értesítéssel, multimodális üzenetekkel és Generative UI-val.
-
-A felhasználói kommunikációs eszközök az Agent és a felhasználó közötti kommunikációs csatornák egyre növekvő diverzifikációjából erednek. Sok Agent (mint a Claude Code, Manus, Genspark) natív ReAct hurkot használ, ahol minden, amit az Agent "mond" (azaz asszisztens üzenetek), közvetlenül a felhasználóhoz kerül, akinek meg kell nyitnia egy adott munkamenetet az alkalmazásban, hogy beszélgethessen az Agenttel. Az OpenClaw az egyik legbefolyásosabb általános célú Agent, amely megtöri ezt az ember-számítógép kommunikációs paradigmát: a munkamenetei átláthatóak a felhasználó számára – a felhasználónak nem kell tudnia a munkamenet létezéséről, vagy törődnie az Agent eszközhívásainak részleteivel; a felhasználó és az Agent bármikor küldhet egymásnak üzeneteket, ahelyett, hogy szigorú felhasználói üzenet / Agent válasz minta lenne. Ennek következtében sok felhasználó úgy érzi, hogy az OpenClaw "ember-szerű jelenléttel" rendelkezik, aszinkron módon üzenve nekik, ahogy egy titkár tenné. Ezek a szöveges üzenetek nem a modell asszisztens üzenetei, amelyeket egyenesen a felhasználóhoz irányítanak; dedikált eszközökön keresztül küldik őket, hordozhatnak kép- és fájlmellékleteket, és push értesítéseket indíthatnak a sürgősség szerint.
-
-A szöveges kommunikáción túl egyre több Agent rendelkezik multimodális kommunikációs képességekkel, például strukturált kártyaüzenetek vagy emlékeztető e-mailek küldésével. Néhány Agent elkezdett kísérletezni a generatív UI-val, HTML-t vagy más módszereket használva interaktív felületek létrehozására az információk felhasználóbarátabb bemutatásához. Tervezési szempontból a felhasználói kommunikációs eszközöknek támogatniuk kell az aszinkron üzenetküldést (a felhasználó nem biztos, hogy online van), olvasott/olvasatlan állapot követést kell biztosítaniuk, és fenn kell tartaniuk az üzenetek konzisztenciáját a több csatornán keresztül.
-
-**Többcsatornás Felhasználói Kommunikáció és Újrabekapcsolás.**
-
-Egy kategóriahatár könnyen elmosódhat: mindkét eszközkategória "értesítéseket küld", de ha a címzett egy jóváhagyó vagy együttműködő (adminisztratív jóváhagyás kérése, előrehaladás jelentése egy együttműködő Agentnek), az eszköz az együttműködő kategóriába tartozik; csak akkor számít felhasználói kommunikációs eszköznek, ha a címzett a végfelhasználó. A különbség nem a csatornában rejlik, hanem abban, hogy kit értesítenek, és miért.
-
-**Egy Agent válasza nem korlátozódhat egyetlen csatornára; az értesítési mechanizmus egyben felhasználói újrabekapcsolási mechanizmusként is szolgál.** Az üzenetküldés kiterjed azonnali üzenetküldésre, SMS-re, e-mailre, telefonhívásokra, push értesítésekre és más csatornákra. Az Agent a sürgősség, a felhasználó állapota, a tartalom jellege és a felhasználói preferenciák kombinációja alapján dönt a csatornáról, biztosítva, hogy a fontos üzenetek ne maradjanak el, miközben elkerüli a redundáns megszakításokat.
-
-Hosszan futó feladatok esetén az Agentnek proaktívan értesítenie kell a felhasználót a befejezéskor, hogy visszaterelje a figyelmét. Időszakos feladatoknál (mint a napi összefoglalók vagy heti jelentések) az értesítések segíthetnek a felhasználóknak rendszeres interakciós szokás kialakításában.
-
-A felhasználói kommunikációs eszközök megoldják "hogyan érjük el a felhasználót" problémát. Az Agent által ezeken a csatornákon felvett identitás és a környezet, amelyben a felhasználó nevében cselekszik, azonban egy identitás- és végrehajtási környezet infrastruktúra réteget igényel, amely a következő szakasz témája.
-
-### Virtuális Identitás és Izolált Végrehajtási Környezet
-
-A virtuális számítógép éjjel-nappal futhat, nem fér hozzá szabadon a helyi fájlokhoz, és egy hiba legfeljebb a virtuális környezetet érinti. Az adatcsere megosztott fájlrendszeren és útvonalakon történik.
-
-Egy megjegyzés e szakasz elhelyezéséről: a virtuális identitás és az izolált végrehajtási környezet alapvetően végrehajtási környezet infrastruktúra, összhangban a végrehajtó eszközöknél tárgyalt sandboxokkal. Azért jelennek meg itt, az aszinkron architektúra szakaszban, mert az Agentek, amelyeknek a legégetőbben szükségük van rájuk, azok, amelyek függetlenül futnak, állandóan jelen vannak és bármikor cselekszenek a felhasználó nevében.
-
-Ahogy a fejezet elején említettük, Samantha-nak a *Her*-ben független identitása és működési környezete van. Egy ilyen általános célú asszisztens elérése egy kulcsfontosságú architekturális választást kényszerít ki: az Agent közvetlenül kezelje a felhasználó személyes fiókjait, vagy saját virtuális identitással rendelkezzen? A közvetlen kezelés kényelmesnek tűnik, de egy Agent hiba vagy kompromittálódás kitenné a felhasználó teljes digitális identitását. A biztonságosabb megközelítés, ha az Agent kap egy független virtuális identitást – ahogy egy titkárnak saját irodai telefonja és postafiókja van –, amely dedikált kommunikációs fiókokból, tároló- és számítási környezetekből áll, így az Agent átlátható, egyértelműen deklarált identitás alatt dolgozhat a felhasználó nevében. Ez az átláthatóság nem gyengíti a bizalmat; hitelesebbé teheti a kommunikációt.
-
-A virtuális identitásokat izolált végrehajtási környezetekben kell megalapozni. A "virtuális számítógépek" (VM-ek/konténerek) és "virtuális telefonok" (Android emulátorok) operációs rendszer szintű elszigetelést és teljes asztali/mobil működési képességeket biztosítanak az Agent számára: az Agent saját felhasználói fiókkal, home könyvtárral és bejelentkezési hitelesítő adatokkal rendelkezik bennük, így minden művelet nyomon követhető és auditálható; még ha hibás műveletek is történnek, a gazdarendszer és a felhasználó valódi eszköze érintetlen marad. Ez a végrehajtó eszközöknél tárgyalt sandbox koncepció kiterjesztése a "digitális identitás" dimenzióra – a sandboxok elszigetelik a kódvégrehajtást, míg a virtuális számítógépek és telefonok a teljes digitális identitást szigetelik el.
-
-A független identitás két gyakorlati kihívást is jelent. Először is, "anti-automatizálási mechanizmusok": sok weboldal használ CAPTCHA-kat és IP hírnév ellenőrzéseket az automatizált hozzáférés blokkolására. Az adatközponti IP-ket használó virtuális környezetek könnyen azonosíthatók; a gyakorlatban a normál hozzáférés gyakran lakossági proxy hálózat (amely valódi háztartási IP-ket használ) konfigurálását igényli. Másodszor, "hozzáférés a felhasználó valódi fiókjaihoz": amikor egy feladatnak a felhasználóként kell bejelentkeznie, használjon Human-in-the-Loop hitelesítést – egy VNC/RDP távoli asztalt, ahol a felhasználó személyesen jelentkezik be, látja a teljes felületet, amelyet az Agent működtet, és megérti, miért van szükség hitelesítésre. A munkamenet token ezután újrafelhasználható az érvényességi idején belül, hogy ne kelljen ismételten megszakítani a felhasználót, egyensúlyt teremtve az autonómia és a biztonság között.
-
-A fő Agent és a virtuális környezet közötti adatcsere egy "megosztott fájlrendszeren" keresztül történik: kötetcsatolások (pl. `/workspace/shared`) használatával, amelyek összekötik a fő Agentet, a virtuális számítógépet és a virtuális telefont. Az adatok fájl-elérési út referenciákként kerülnek átadásra a tartalom másolása helyett, elkerülve a kontextusablak fogyasztását. Például egy adatelemzési feladatban: a felhasználó feltölt egy CSV fájlt a megosztott könyvtárba, az Agent a virtuális számítógépben beolvassa a fájlt, elvégzi az elemzést, diagramokat generál, és visszamenteti őket a megosztott könyvtárba. A fő Agentnek csak a diagram fájl elérési útját kell visszaadnia a felhasználónak – ami a felek között átadásra kerül, mindig egy könnyűsúlyú elérésiút sztring.
-
-Az eseményindított eszközök lehetővé teszik, hogy a világ felébressze az Agentet, a felhasználói kommunikációs eszközök lehetővé teszik, hogy az Agent elérje a felhasználót, a virtuális identitások és izolált végrehajtási környezetek pedig lehetővé teszik, hogy az Agent függetlenül és auditálhatóan cselekedjen. A fennmaradó kérdés: amikor több esemény egyidejűleg érkezik ugyanahhoz az Agent példányhoz, hogyan kell azokat kezelni?
-
-### Eseménykezelési Mechanizmus
-
-Egyetlen Agent példány több eseménnyel szembesülhet egyidejűleg: új üzenet a felhasználótól, eredmény egy eszköztől, időzítő lejárta, együttműködési kérés egy másik Agenttől. Az események hatékony és helyes kezelése közvetlenül befolyásolja a teljesítményt és a felhasználói élményt.
-
-Ennek a mechanizmusnak a váza a konkurens programozásból ismert "eseményhurok (event loop)". Gondoljunk egy aszinkron Agentre mint egy hosszan futó hurokra: minden körben kivesz egy köteg eseményt a bemeneti sorból, hozzáfűzi a trajektóriához, egyszer meghívja az LLM-et, végrehajtja az általa meghívni kívánt eszközöket, majd visszatér a hurok elejére, hogy várjon a következő eseménykötegre – ugyanaz a struktúra, mint egy Go goroutine, amely üzeneteket olvas egy csatornából, és körönként dolgozza fel őket egy `for { select { ... } }` belsejében. Ennek a modellnek van egy döntő tulajdonsága: **az események csak az egyes hurokiterációk határainál kerülnek feldolgozásra**. Amíg az LLM gondolkodik vagy egy eszköz végrehajtódik, egy újonnan érkezett esemény nem furakodhat be a semmiből és nem zavarhatja meg az aktuális lépést; a sorban várakozik, amíg a kör elér egy "biztonságos ponthoz" (safe point) (egy gondolkodási szakasz vége, egy eszköz visszatérése), majd kötegelve kerül feldolgozásra. A megszakítás ugyanezt a fegyelmet követi: ahelyett, hogy erőszakosan megszakítana egy tetszőleges pillanatban, az Agent egy biztonságos pontnál ellenőrzi, hogy "kértek-e megállítást" – ami pontosan az a szerep, amelyet a `ctx.Done()` játszik a Go-ban (a 10. fejezet ugyanezt a kontextus idiómát használja egy szülő Agent al-Agentjeinek kaszkádolt megszakításának tárgyalásakor). Ha ezt megértettük, a három feldolgozási stratégia alább csak abban különbözik, hogyan kezelik a biztonságos pontot: hagyják, hogy az esemény megvárja a következő természetesen előforduló biztonságos pontot (sorba állítás), proaktívan kényszerítenek egy korai biztonságos pontot (megszakítás), vagy egyszerűen elindítanak egy külön hurkot, és nem várnak a fő hurok biztonságos pontjára (párhuzamos).
-
-**Strukturált Eseménymodellezés.**
-
-A kezeléshez megértés szükséges. Egy általános célú Agent bemenete nem csak a felhasználótól származik – egy harmadik féltől érkező üzenetet nem a felhasználó küldte az Agentnek, mégis az Agentnek meg kell értenie, mérlegelnie kell a fontosságát, és el kell döntenie, hogy közbelépjen-e. Ez megköveteli, hogy minden bemenetet egy "strukturált eseményként" modellezzünk, gazdag szemantikával:
-
-- **Forrás (ki)**: Maga a felhasználó, egy kapcsolat, egy idegen, egy rendszerértesítés
-- **Csatorna (hogyan)**: Telefonhívás, SMS, azonnali üzenet, e-mail, közösségi média, időzítő trigger, aszinkron eszközhívás eredménye, parancssori monitorozási állapotfrissítés
-- **Tartalom (mit)**: Üzenet szövege, érzelmi hangnem, sürgősség, szükséges-e válasz
-- **Kontextus (háttér)**: Válasz-e egy korábbi beszélgetésre vagy új kommunikáció, relevanciája az aktuális feladathoz
-
-Például egy ügyfél visszatérítési kérelmet tartalmazó e-mail strukturált eseményként:
-
-```json
-{
-  "source": {"type": "email", "sender": "client@example.com"},
-  "channel": "gmail_webhook",
-  "content": {"subject": "Visszatérítési Kérelem", "body": "Rendelés #12345, visszatérítés kérelmezése..."},
-  "context": {"priority": "high", "customer_tier": "vip", "related_orders": ["#12345"]}
-}
-```
-
-Csak amikor ezek a dimenziók egyértelműen modellezve vannak strukturált eseményként, tudja az Agent fenntartani a világos megértést a több fél közötti kommunikációban, elkerülve, hogy a felhasználói bemenetet összetévessze egy eszközeredménnyel, vagy egy rejtett utasításokat tartalmazó eszközeredményt felhasználói parancsnak nézzen (prompt injection). A többszálú kontextuskezelés összetettsége azt is megköveteli, hogy az Agent megértse a több beszélgetési szál közötti kapcsolatokat – hogy egy harmadik féltől származó üzenet hogyan befolyásolja a felhasználó hangulatát, a felhasználó szerepváltásait a különböző beszélgetések során, és hogy mikor kell szintetizálni a különböző szálakból származó információkat tanácsadás céljából. Az olyan munkafolyamat-platformok triggerökoszisztémája, mint az n8n – webhookok, időzítők, e-mailek, adatbázis-változások, fájlfigyelők – ugyanezt az elvet illusztrálja: minden trigger egy "érzékszerv", amelyen keresztül az Agent érzékeli a világot. Miután ezeket a heterogén eseményeket egyetlen strukturált formátumba modelleztük, az Agent bármely forrásból származó ingereket következetesen fel tud dolgozni. Az alábbi sürgősség-meghatározás és feldolgozási stratégiák mind erre az egységes modellezésre épülnek.
-
-**Dinamikus Feldolgozási Stratégia a Sürgősség Alapján.**
-
-Az emberek, akik több feladatot egyensúlyoznak, a sürgősséghez igazítják stratégiájukat: egy vészhelyzet esetén elengednek mindent, amit csinálnak; egy rutin teendő későbbre kerül a listára. Az Agent eseménykezelésének ugyanezt az intelligenciát kell mutatnia.
-
-![4-3. ábra: Az Aszinkron Eseményfeldolgozás Három Stratégiája](images/fig4-3.svg)
-
-**Megszakítás-alapú Feldolgozás** sürgős eseményekhez használatos; lényege egy "korai biztonságos pont kényszerítése" a sürgős esemény számára: az aktuális lépés proaktív megszakítása, hogy ez a pillanat egy határrá váljon, ahol az új esemény feldolgozható. Amikor egy sürgős esemény érkezik (pl. a felhasználó rákattint a "stop" gombra, vagy egy felügyeleti rendszer magas prioritású utasítást küld): (1) Állítsa le az aktuális műveletet – ha az LLM gondolkodik, azonnal szakítsa meg a streaming választ; ha egy szinkron eszköz végrehajtódik, küldjön egy megszakító jelet; (2) Ürítse ki a függőben lévő sort az összes függő esemény eltávolításával; (3) Fűzze hozzá ezeket az eseményeket a sürgős eseménnyel együtt a trajektória végéhez; (4) Azonnal hívja meg újra az LLM-et a frissített teljes trajektóriával bemenetként a helyzet felméréséhez. Például, ha a felhasználó azt írja: "Stop! Rosszul mondtam", miközben az Agent egy potenciálisan hibás műveletet készül végrehajtani, az Agent azonnal meglátja ezt az új bemenetet, újraértelmezi a valódi szándékot, és így elkerüli a rossz művelet végrehajtását.
-
-**Sorbaállítás-alapú Feldolgozás** rutin eseményekhez használatos. Amikor egy nem sürgős esemény érkezik (pl. egy aszinkron eszköz visszaad egy eredményt, vagy a felhasználó kiegészítő információt küld): (1) Adja hozzá az eseményt a sor végéhez anélkül, hogy megszakítaná az aktuális műveletet; (2) Várja meg, amíg az aktuális művelet befejeződik – hagyja, hogy az LLM befejezze a gondolkodást, hagyja, hogy a szinkron eszköz befejezze a végrehajtást; (3) Amikor bármely eszközhívás befejeződik és visszaad egy `tool.result`-ot, ellenőrizze a sort. Ha a sor nem üres, fűzze hozzá az összes eseményt a trajektóriához egyszerre; (4) Az LLM átfogóan dolgozza fel a frissített trajektóriát. Ez lehetővé teszi a kötegelt feldolgozást, növelve a hatékonyságot – például amíg az Agent egy keresőeszköz eredményére vár, a felhasználó hozzáteszi: "csak az elmúlt hónap eredményeit mutasd." Ez a kiegészítő információ bekerül a sorba, és amikor a keresési eredmények visszatérnek, mindkét esemény együtt kerül az LLM elé, elkerülve a szükségtelen köröket.
-
-**Párhuzamos Feldolgozás** független, könnyűsúlyú lekérdezésekhez használatos. Például amíg az Agent nagy mennyiségű adatot elemez, a felhasználó hirtelen megkérdezi: "Milyen idő lesz ma?" Az ilyen lekérdezések három jellemzővel bírnak: nem kapcsolódnak a fő feladathoz, gyors választ igényelnek, és alacsony a végrehajtási költségük. Sem a megszakítás-alapú (megszakítaná a fontos fő feladatot), sem a sorbaállítás-alapú (túl sokáig várakoztatná a felhasználót) feldolgozás nem megfelelő. A rendszer először felméri a lekérdezés függetlenségét és összetettségét, majd egy párhuzamos gondolkodási ülésben függetlenül végrehajtja, meghívva a szükséges eszközöket a válasz generálásához, és azonnal visszaadja. A lekérdezés és a válasz hozzáfűződik a fő feladat trajektóriájához, egyértelműen "a fő feladattal párhuzamosan végrehajtva" jelöléssel, hogy ne zavarja össze az LLM-et.
-
-**Sürgősség Meghatározása.**
-
-Sürgős események: Felhasználói megszakítás (`user.interrupt`), felügyelői utasítás (`supervisor.instruction`), Agentek közötti megszakítás (`agent.interrupt`), sürgősként jelölt külső triggerek (pl. rendszerriasztások, fizetési hibák).
-
-Nem sürgős események: Normál felhasználói bemenet (`user.input`), Agent bemenet (`agent.input`), eszköz eredmények (`tool.result`), időzítő triggerek (`timer.trigger`), normál külső triggerek.
-
-A keménykódolt szabályoknak korlátai vannak; az esemény szemantikája diktálja a kezelési módot – "Azonnal állj le!" megszakítás-alapú feldolgozást használ, "Milyen idő lesz ma?" párhuzamos feldolgozást, "Küldd el a jelentést kínaiul" sorbaállítás-alapú feldolgozást. **Egy könnyűsúlyú osztályozó LLM használata javasolt esemény-útválasztóként**, amely gyorsan meghatározza, melyik stratégiát alkalmazza, amikor egy esemény érkezik.
-
-A következő kísérlet, egy eseményvezérelt e-mail feldolgozó Agent, a fent tárgyalt eseménykezelési stratégiákat valósítja meg futtatható implementációként.
-
-**Eseményhurok-útválasztás:**
-
-```python
-while runtime.is_alive:
-    events = queue.take_batch()
-
-    if any(is_urgent(event) for event in events):
-        cancel_at_safe_point(current_work)
-    elif has_independent_fast_query(events):
-        start_parallel_session(events)
-    else:
-        append_to_trajectory(events)
-
-    decision = LLM(context + trajectory)
-    dispatch(decision)
-```
-
-> **4-5. ★★★ Kísérlet: Eseményvezérelt E-mail Feldolgozó Agent**
->
->
-> ![4-4. ábra: 4-5. Kísérlet Eseményvezérelt Agent Architektúrája](images/fig4-4.svg)
->
->
-> Ez a kísérlet a legegyszerűbb eseményvezérelt Agentet építi fel: egy "Automatikus E-mail Feldolgozó Asszisztenst". Az Agent figyeli az e-mail beérkező leveleket, és amikor új e-mail érkezik, automatikusan elindít egy feldolgozási munkafolyamatot – osztályozás, összefoglalás, választervezet, és szükség esetén a felhasználó értesítése. Ez a legintuitívabb bevezető forgatókönyv egy eseményvezérelt Agent számára: egy külső esemény (új e-mail érkezése) elindít egy teljes Agent gondolkodási ciklust.
->
-> **Kísérlet Célja**: az eseményvezérelt architektúra alapgondolatának megértése – az Agent már nem vár passzívan a felhasználói bemenetre, hanem saját maga cselekszik a külső eseményekre válaszul. Ezen a kísérleten keresztül az olvasók elsajátítják az eseményforrás regisztráció, az eseménysor és az "esemény érkezik → Agent feldolgoz → eredmény kézbesítve" alapvető zárt hurkát.
->
-> **Eseményforrások és Eseménysor.**
->
-> A rendszer egységes hozzáférést támogat több eseményforráshoz:
->
-> - **E-mail Események** (`on_email_received`): Akkor aktiválódik, amikor új e-mail érkezik, akár a beérkező levelek időszakos ellenőrzésével, akár push értesítések fogadásával.
-> - **IM/SMS Üzenetek** (`on_im_message`, `on_sms_message`): Azonnali üzenetek vagy SMS üzenetek által aktiválva.
-> - **GitHub Események** (`on_github_pr_update`, `on_github_issue_update`): PR felülvizsgálati megjegyzések vagy állapotváltozások által aktiválva.
-> - **Időzítő Triggerek** (`on_timer_expire`): Ütemezett feladatok által aktiválva (pl. napi összefoglalók, heti jelentések generálása).
-> - **Webhookok** (`on_webhook_received`): Általános visszahívások külső rendszerektől.
-> - **Rendszer Események** (`on_user_inactive`, `on_process_timeout`, `on_resource_alert`): Belső állapotváltozások által aktiválva.
->
-> Minden esemény egy egységes "eseménysorba" kerül, és érkezési sorrendben, szekvenciálisan kerül feldolgozásra. Minden esemény egy független Agent gondolkodási ciklust indít: az Agent elolvassa az esemény tartalmát, meghívja a releváns eszközöket (pl. tudásbázis lekérdezés, mellékletek olvasása, kapcsolódó e-mail előzmények keresése), létrehozza a feldolgozási eredményt (osztályozási címkék, összefoglalók, választervezetek), és végül vagy értesíti a felhasználót az értesítő eszközökön keresztül, vagy közvetlenül végrehajt egy műveletet.
->
-> **Validációs Forgatókönyv**: Konfigurálja az Agentet egy teszt postafiók figyelésére. Szimuláljon három e-mail érkezését – egy találkozómeghívás, egy ügyfélpanasz és egy marketingreklám. Az Agent szekvenciálisan dolgozza fel őket: a találkozómeghívás esetén automatikusan ellenőrzi a naptár ütközéseket, és elfogadó/elutasító választ tervez; az ügyfélpanasznál kinyeri a kulcsfontosságú információkat, magas prioritásként jelöli meg, és értesíti a felhasználót a kezelésről; a marketingreklámot automatikusan archiválja. A teljes folyamat nem igényel felhasználói beavatkozást.
-
-A 4-5. kísérlet bemutatja a legegyszerűbb eseményvezérelt mintát – események belépnek a sorba, és az Agent szekvenciálisan dolgozza fel őket. Amikor azonban az Agentnek a hosszú ideig futó eszközvégrehajtások során érkező megszakításokra kell reagálnia, vagy több egyidejű feladatot kell kezelnie, egy egyszerű eseménysor nem elegendő. Ezután mélyebb mérnöki kihívásokat tárgyalunk.
-
-### Mérnöki Megvalósítás: Hogyan Tegyük a Szinkron Modelleket Aszinkron Megszakítások Támogatására
-
-A 4-5. kísérlet csak szekvenciális eseményeket kezel – az események egyesével lépnek be a sorba, és az Agent egyesével dolgozza fel őket. Most térjünk vissza a szakasz elején felvetett "szinkron képzés / aszinkron telepítés" ellentmondáshoz: amikor a felhasználó megszakítja az Agentet, miközben egy eszköz még nem tért vissza, hogyan tud a szinkron formátum alkalmazkodni hozzá? Ez a szakasz bemutatja az iparág által ma használt mérnöki megkerülő megoldásokat.
-
-Először egy konkrét forgatókönyvvel illusztráljuk ezt az ellentmondást. Tegyük fel, hogy az Agent segít a felhasználónak egy e-mail megírásában (eszközhívás: elérhetőségek keresése). Mielőtt a keresés visszaadná az eredményeket, a felhasználó hirtelen azt mondja: "Várj, előbb nézd meg a holnapi időjárást." Egy szinkron ReAct hurokban az Agentnek meg kell várnia a keresés visszatérését, mielőtt feldolgozná a következő üzenetet – mert az API megköveteli, hogy "egy eszközhívás kiadása után a következő üzenet az eszköz eredménye legyen." De az aszinkron valóságban az események bármikor megszakíthatják a folyamatban lévő feladatokat. Az "aszinkron megszakítás" szemantikájának kifejezése a "szinkron formátum" korlátai között pontosan az a probléma, amelyet ez a mérnöki megoldás meg kíván oldani.
-
-**Mérnöki Megoldás: Aszinkron Implementáció Szinkron Viselkedés Szimulálásával.**
-
-A központi gondolat: **Normál körülmények között, megszakítások nélkül, az LLM egy szabványos szinkron trajektóriát lát; csak akkor szúrunk be helyettesítőket (placeholdereket) a formátum javításához, ha megszakítás történik.** Íme öt kulcsszabály:
-
-**1. szabály**: Az asszisztens üzenetet (beleértve a gondolkodást, tartalmat és eszközhívást) azonnal rögzítse, amikor az LLM előállítja.
-
-**2. szabály**: Az eszköz eredményét csak akkor rögzítse, amikor az eszközhívás befejeződött. A trajektória "részben befejezett" állapotban van a végrehajtás során.
-
-**3. szabály**: Az eszközvégrehajtás közbeni megszakítások helyettesítőket igényelnek. Generáljon egy helyettesítő választ a befejezetlen eszközhöz (pl. "Az eszköz a háttérben fut, kérjük, először az új eseményt kezelje"), fűzze hozzá a megszakítási eseményt, és hívja meg újra az LLM-et. Az LLM szemszögéből az asszisztens üzenet továbbra is párosítva van egy eszköz eredménnyel.
-
-**4. szabály**: Az LLM gondolkodása közbeni megszakítások közvetlenül eldobják a jelenlegi gondolkodást. Ne írja a trajektóriába; helyette fűzze hozzá az új eseményt, és kezdjen egy új gondolkodási kört.
-
-**5. szabály**: A nem megszakító események a sorba kerülnek kötegelt feldolgozásra. Csak az aktuális ciklus befejezése után kerülnek egyszerre hozzáfűzésre.
-
-Az Agent e-mail írásának példáján, amikor a felhasználó az időjárásról kérdez, az öt szabály működése a következő:
-
-1. Az Agent meghívja a `search_contacts`-ot az elérhetőségek keresésére, és az asszisztens üzenet azonnal a trajektóriába kerül (1. szabály).
-2. Mielőtt a keresőeszköz visszaadná az eredményeket, a felhasználó elküldi: "Előbb nézd meg a holnapi időjárást." Mivel ez egy felhasználói megszakítás, a rendszer generál egy helyettesítő eszköz eredményt a befejezetlen `search_contacts`-hoz ("Az eszköz a háttérben fut, kérjük, először az új eseményt kezelje", 3. szabály), majd hozzáfűzi a felhasználó időjárás lekérdezését a trajektóriához, és újra meghívja az LLM-et. Ezen a ponton az LLM által látott trajektória formátum teljesen érvényes – az asszisztens üzenet és az eszköz eredménye tökéletesen párosítva van.
-3. Miután az Agent megválaszolta az időjárás lekérdezést, az eredeti `search_contacts` eredmény megérkezik, és új eseményként hozzáfűződik a trajektóriához (2. szabály). Az Agent elolvassa az elérhetőségi információkat, és folytatja az e-mail írását.
-
-A séma alapvető előnye: **normál körülmények között az LLM egy tökéletes szinkron trajektóriát lát** – asszisztens üzenetek és eszköz eredmények szigorúan párosítva, az idővonal tiszta, nincsenek helyettesítők vagy rendellenes állapotok. Ez a legkedvezőbb elrendezés a szinkron paradigma alatt képzett LLM-ek számára, és megőrzi a gondolkodás minőségét. A helyettesítő – egy szükséges kompromisszum – csak akkor jelenik meg, amikor valóban megszakítás történik.
-
-De fennáll a hallucinációk súlyosbodásának kockázata. Annak ellenére, hogy a helyettesítő kifejezetten jelzi, hogy az eszköz "még nem fejeződött be", a modell később mégis kitalálhat egy eszközeredményt a gondolkodás során – meggyőzve magát arról, hogy az eszköz érvényes adatokat adott vissza, és ezen kitalált adatok alapján hozhat döntéseket. Ez azért van, mert a képzés során látott trajektóriák túlnyomó többségében egy eszközhívást azonnal a valódi eredmény követi; a modell soha nem tanulta meg, hogyan kezelje azokat a helyzeteket, amikor "az eredmény még nem érkezett vissza." Ezért a gyakorlatban a megszakítások csak valóban sürgős helyzetekben indulnak el (amikor a felhasználó kifejezetten kéri a leállítást); a nem sürgős eseményeket egy sorba helyezik kötegelt feldolgozásra.
-
-**Aszinkron Eszköz Interfészek a Meglévő Modellekhez.**
-
-Mivel a modellek szinkron feltételezése nehezen törhető meg, egy alapvetőbb stratégia az **aszinkron szemantika befogadása az eszköz-interfész tervezés szintjén**.
-
-A hagyományos eszköztervezés "hívás egyenlő befejezés" szemantikát sugall. Például a `phone_call` név arra utal, hogy "a hívás tárcsázza a telefont, és megvárja a hívás végét, visszaadva a hívásnaplót." Az aszinkron paradigma alatt a "kezdeményezés" és a "befejezés" szétválasztandó:
-
-- `initiate_phone_call`: Elindít egy telefonhívást, azonnal visszaadva egy feladatazonosítót és kezdeti állapotot (pl. "Hívás kezdeményezve, tárcsázás...")
-- A hívás előrehaladását eseményértesítések közvetítik (`phone_call_connected`, `phone_call_ended`)
-
-A kulcs az, hogy az eszköz neve és leírása maga közvetítse az aszinkron szemantikát. Amikor a modell meglátja az `initiate_phone_call`-t, nyelvi értelmezési képességei természetesen arra következtetnek, hogy ez "kezdeményezés", nem "befejezés". Az eszköz leírásának tovább kell erősítenie ezt: "Ez az eszköz elindít egy telefonhívás feladatot, amelyet egy al-Agent kezel. Sikeres kezdeményezés esetén azonnal visszaadja a feladat azonosítóját, lehetővé téve, hogy más dolgokkal folytassa. Külön értesítőesemény kerül elküldésre, amikor a hívás véget ér."
-
-**Figyelem Szóródása Sor-alapú Feldolgozásban.**
-
-Kötegelt események feldolgozásakor a modell gyakran csak az utolsó eseményre összpontosít. Ennek kiváltó oka, hogy **a modell arra van kiképezve, hogy a legfrissebb bemenetre reagáljon, és a kötegelt események megtörik ezt a feltételezést**.
-
-Két szinten lehet beavatkozni:
-
-**Prompt Szinten**: Tájékoztassa a modellt: "Amikor több egymást követő eseményt kap, kérjük, győződjön meg arról, hogy átfogóan figyelembe veszi az összes információt."
-
-**Agent Állapotsor Jelzők**: Adjon explicit jelzőket minden esemény előtt:
-
-```text
-[Feldolgozatlan Esemény 1/4] Eszköz eredmény a database_query-ből: ...
-[Feldolgozatlan Esemény 2/4] Felhasználói kiegészítés: Csak a pekingi adatokat nézd
-[Feldolgozatlan Esemény 3/4] Rendszer emlékeztető: A jelentés határideje 30 perc múlva
-[Feldolgozatlan Esemény 4/4] Felhasználó kérdezi: Mi az előrehaladás?
-```
-
-Adjon hozzá egy összefoglalót a végén: "Fent 4 feldolgozatlan esemény található, köztük 1 eszköz eredmény, 2 felhasználói üzenet és 1 rendszer emlékeztető. Kérjük, győződjön meg róla, hogy válasza lefedi az összes információt."
-
-### Mélyebb Ellentmondások és Jövőbeli Irányok
-
-![4-5. ábra: Szinkron Képzési Paradigma vs. Aszinkron Telepítési Valóság](images/fig4-5.svg)
-
-Végső soron az előző szakaszok helyettesítői, aszinkron eszköz interfészei és állapotsor jelzői mind prompt engineeringet használnak ugyanazon "szinkron képzés / aszinkron telepítés" ellentmondás javítására (4-5. ábra) – ennek az ellentmondásnak az okát a szakasz elején részleteztük, így itt nem ismételjük; ehelyett az alapvető megoldásra összpontosítunk.
-
-**A Modell Evolúció Előrejelzése: Szinkrontól Aszinkron Felé.**
-
-A fenti mérnöki technikák lényegében **a prompt engineering használata a modellképzés hiányosságainak kompenzálására**, egy átmeneti időszak ideiglenes megoldása. A valódi megoldás paradigma váltást igényel a modellképzés szintjén.
-
-A robotika területén a VLA (Vision-Language-Action, lásd 9. fejezet) modellek már kezdenek hasonló kihívásokkal szembenézni: elkerülhetetlen késleltetés van az észlelés és a cselekvés között. A VLA sikere utat mutat az Agent modellek evolúciója számára. A következő generációs modelleknek három alapvető képességet kell megszerezniük a megerősítéses tanuláson (RL) keresztül aszinkron környezetekben:
-
-1. **Aszinkron Események Közti Átfedés Megértése a Trajektóriákban**: Ez a legkritikusabb képességhiány. A jelenlegi modellek szigorúan szinkron sorrendet várnak, de egy valódi aszinkron környezetben egy eszközhívást nem biztos, hogy egy eszköz eredménye követ, hanem egy új felhasználói üzenet; a gondolkodás félbeszakadhat, de a köztes állapotot meg kell őrizni a trajektóriában, és a gondolkodásnak folytatódnia kell az új üzenet feldolgozása után, ahelyett, hogy újrakezdené. A modellnek világos megértést kell fenntartania az ilyen "rendezetlen" trajektóriákban – mely eszközhívások várnak még eredményekre, és mely gondolatok befejezetlen töredékek.
-2. **Megszakított Feladatok és Gondolatok Folytatása**: Amikor megszakítják egy sürgős esemény kezelésére, a modellnek emlékeznie kell a befejezetlen feladatra. Például, ha a felhasználó hirtelen az időjárásról kérdez, miközben az Agent egy adatelemző eszközt hajt végre, a válaszadás után az Agentnek természetesen meg kell várnia az adatelemzés eredményét, ahelyett, hogy elfelejtené, hogy egy eszköz még fut. Különösen fontos elkerülni azokat a hallucinációkat, ahol a modell tévesen azt hiszi, hogy a megszakított eszközhívás befejeződött.
-3. **Kötegelt Események Átfogó Feldolgozása**: Amikor több esemény egy kötegben kerül hozzáfűzésre a trajektóriához, a modell nem csak az utolsóra összpontosíthat; átfogóan kell figyelembe vennie az összes feldolgozatlan információt.
-
-Ennek az aszinkron RL képzésnek az eléréséhez új infrastruktúra szükséges: egy aszinkron környezeti szimulátor (olyan forgatókönyvek generálása, mint a késleltetett eszközvisszatérések, véletlenszerű felhasználói megszakítások, stb.) és specializált jutalmak az aszinkron képességekhez (a rendezetlen trajektóriák helyes megértése, a megszakított gondolatok sikeres folytatása, hallucinációk elkerülése, kötegelt események átfogó feldolgozása).
-
-A folyamatos gondolkodás (continuous thinking) azonban nem kell, hogy megvárja a következő generációs modelleket. Egy vékony réteg összehangolási logika (körülbelül kétszáz sor) képes egy "kész" szöveges gondolkodó modellt azonnal "folyamatos idejű" Agentté alakítani[^ch4-async-1] – szépen áthidalva a fenti "mérnöki megoldás" és "modell evolúció" feleket. A mechanizmus a 4. szabály továbbfejlesztése: ahelyett, hogy "eldobnánk" egy félkész gondolatot a megszakításkor, építsük fel a teljes interakciót "egy megszakítatlan gondolatfolyamként" – bármely pillanatban erőszakosan zárjuk be a `<think>` blokkot, amelyet a modell ír, injektáljuk az újonnan érkezett megfigyelést (egy eszköz visszatérése, egy felhasználói megszakítás, egy friss felismerési eredmény) normál üzenetként, és hagyjuk, hogy a modell folytassa a dekódolást. Ez kihasznál egy olyan erőforrást, amely általában kárba vész: egy modell több ezer tokent képes generálni másodpercenként, míg egy eszközhívás vagy egy felhasználói megnyilvánulás több másodpercig tart – ezek a várakozások "ingyenes számítási kapacitást" jelentenek, amely előre gondolkodásra használható. Két viselkedés jelenik meg: "gondolkodás várakozás közben" – ahelyett, hogy megvárná az eszköz visszatérését vagy a felhasználó befejezését, a modell a már meglévő részleges információkon érvel, akár korán elindítva a következő eszközhívást (ezt a "megelőlegező gondolkodás" tendenciát nulla felvétellel (zero-shot) reprodukálták több modellcsaládban; az adatokért lásd a lábjegyzetben hivatkozott tanulmányt); és "gondolkodás cselekvés közben" – a gondolkodás folytatása a kimenet előállítása közben, képes korrigálni magát a cselekvés során.
-
-De a kutatás kritikusabb fele a "képzést" érinti, és ez válaszol a fenti "modell evolúció előrejelzése" felhívásra: az összehangolás önmagában lehetővé teszi a folyamatos gondolkodást; hogy az "hasznossá" válik-e, az a képzési jeltől függ. A kutatás azt találta, hogy egy "LLM-as-judge" stílusú jutalommal a modell megtanulja elrejteni gondolatait – csendet cserélve a bíró jóváhagyására –, miközben a objektív mérőszámok valójában romlanak; csak az ellenőrizhető célkitűzések, amelyek védik az információ lefedettséget, teszik kifizetődővé a folyamatos gondolkodást. Dióhéjban: **az összehangolás lehetővé teszi a viselkedést; a képzés teszi jóvá a viselkedést** – ami megerősíti e szakasz ítéletét, hogy az aszinkron képességet végső soron a helyes képzésen keresztül kell megszilárdítani, nem pedig örökké prompt engineeringgel javítgatni.
-
-[^ch4-async-1]: Az az állítás, hogy körülbelül kétszáz sor összehangolás képes egy kész gondolkodó modellt folyamatos idejű Agentté alakítani, és hogy "a képzési jel határozza meg, hogy a folyamatos gondolkodás hasznos-e", Li, Bojie és Noah Shi *Never Stop Thinking: Continuous-Time Language Agents* című, 2026-ban megjelenő művéből származik.
-
-> **4-6. ★★★ Kísérlet: Aszinkron Agent Párhuzamos Végrehajtással és Megszakítási Képességekkel**
->
->
-> ![4-6. ábra: 4-6. Kísérlet – Aszinkron Agent Megszakítás és Helyreállítás](images/fig4-6.svg)
->
->
-> A 4-5. kísérlet egyszerű eseménysorára építve ez a kísérlet az aszinkron Agentek nehéz részeibe merül: **párhuzamos eszközvégrehajtás, végrehajtás megszakítása és állapotkezelés**. Az Agent már nem csak egyesével dolgozza fel az eseményeket; egyszerre több egyidejű feladatot kell kezelnie, meg kell birkóznia a megszakításokkal és helyreállításokkal, és dinamikus döntéseket kell hoznia a valós idejű állapot alapján.
->
-> **1. Aszinkron Eszközvégrehajtás**: Támogatja az időigényes eszközök (legalább 3-5 másodperc) aszinkron végrehajtását, azonnal visszaadva egy helyettesítőt a kezdeményezéskor. "Validációs Forgatókönyv": Az Agent végrehajt egy hosszan futó terminálparancsot. Ez idő alatt a felhasználó megkérdezi: "Hány óra van?" Az Agent azonnal válaszol, majd bemutatja az elemzési eredményt, amikor a hosszan futó parancs befejeződik.
->
-> **2. Eseménysor és Kötegelt Feldolgozás**: Felhalmozza a nem sürgős eseményeket, és egy kötegben fűzi hozzá a trajektóriához. "Validációs Forgatókönyv": Az Agent egy hosszú feladatot hajt végre. A felhasználó egymást követő üzeneteket küld: "Ne felejts el japánul válaszolni" és "Formázd weboldalként." Amikor a feladat befejeződik, az Agent az összes eseményt egyszerre dolgozza fel, generálva egy japán weboldalt.
->
-> **3. Megszakítási Mechanizmus**: A felhasználó "stop" parancsa azonnal megszakítja a végrehajtási folyamatot, és lemondja az aszinkron eszközt. "Validációs Forgatókönyv": Az Agent egy hosszú feladatot hajt végre. A felhasználó elküldi: "Mégse." Az Agent azonnal leáll, és a trajektória rögzíti a megszakítási eseményt és a lemondási műveletet.
->
-> **4. Párhuzamos Eszközök Lemondása és Állapotlekérdezése**: Miután egy aszinkron eszköz befejeződött, a valódi eredmény egy új eseményen keresztül kerül a beszélgetésbe. Támogatja a lemondást vagy az előrehaladás lekérdezését feladat azonosító alapján. "Validációs Forgatókönyv": A felhasználó kéri: "Futtasd nekem ezt a három szkriptet egyszerre. Amelyik előbb befejeződik, ellenőrizd a maradék szkriptek előrehaladását. Ha valamelyik nem haladta meg az 50%-ot, mondd le." A három szkript elemzési folyamatokat szimulál, folyamatosan 3%, 2% és 1% sebességgel adva ki az előrehaladást másodpercenként. Az Agent három aszinkron terminálparancsot indít egyszerre. Amikor a 3%/másodperc sebességű szkript körülbelül 33 másodperc alatt befejeződik, az Agent lekérdezi a maradék két terminál állapotát, az egyiket körülbelül 66%-os, a másikat körülbelül 33%-os előrehaladással találva. Ezután lemondja azt, amelyik nem haladta meg az 50%-ot. Miután mindkét terminál befejeződött, integrálja az eredményeket egy teljes jelentés létrehozásához.
-
 ## Proaktív eszközfelfedezés és Skill-alapú fokozatos közzététel
 
 Az eddigi tárgyalás lefedte az egyes eszközök tervezési elveit és az eszközök ökoszisztémáját. De ahogy az elérhető eszközök egy tucatról százra vagy ezerre nőnek, egy új probléma jelenik meg – hogyan találja meg hatékonyan a szükséges eszközt egy hatalmas könyvtárban? Ez a szakasz röviden áttekinti a meglévő eszközfelfedezési módszereket (visszakeresés-alapú előszűrés, proaktív deklaráció, hierarchikus egyeztetés), majd a modernebb, könnyebb súlyú megközelítésre tér: a progresszív közzétételre Skill-eken keresztül.
@@ -657,9 +348,9 @@ A hagyományos megközelítés minden eszköz sémáját egyszerre injektálja a
 
 [^mcp-zero-2025]: Fei, X., et al. *MCP-Zero: Active Tool Discovery for Autonomous LLM Agents.* arXiv:2506.01056, 2025.
 
-![4-7. ábra: Hierarchikus Eszköz Egyeztetés (Kétszintű Szemantikai Keresés: Szerver Szint → Eszköz Szint)](images/fig4-7.svg)
+![4-2. ábra: Hierarchikus Eszköz Egyeztetés (Kétszintű Szemantikai Keresés: Szerver Szint → Eszköz Szint)](images/fig4-2.svg)
 
-**Hierarchikus Egyeztetés és Tartalék (Fallback).** A hatékony egyeztetés kihasználja az eszközök szervezésében már meglévő hierarchiát. Az olyan protokollokban, mint az MCP, az eszközök "szerverenként" vannak csoportosítva (mint az alkalmazások egy telefonon, mindegyik egy kapcsolódó funkciókészletet csomagolva), így az egyeztetés két rétegben futhat: a releváns szerverek megkeresése képességleírás alapján, majd a specifikus eszközök egyeztetése azokon belül. Ez a keresési teret "több ezer eszközről" "tucatnyi szerver × tucatnyi eszközre" szűkíti, számítási kapacitást megtakarítva és csökkentve a domének közötti szemantikai összetévesztést. Mérnöki szempontból ez egy offline felépített és inkrementálisan frissített beágyazási indexen (embedding index) alapul. És amikor mindkét réteg jelöltjei a küszöbérték alá esnek, a rendszernek egy explicit "nem található" eredményt kell visszaadnia, ami arra ösztönzi az Agentet, hogy fogalmazza újra és próbálkozzon újra, improvizáljon alap eszközökkel, vagy hozzon létre egy teljesen új eszközt (a 8. fejezet témája).
+**Hierarchikus Egyeztetés és Tartalék (Fallback).** A hatékony egyeztetés kihasználja az eszközök szervezésében már meglévő hierarchiát. Az olyan protokollokban, mint az MCP, az eszközök "szerverenként" vannak csoportosítva (mint az alkalmazások egy telefonon, mindegyik egy kapcsolódó funkciókészletet csomagolva), így az egyeztetés két rétegben futhat: a releváns szerverek megkeresése képességleírás alapján, majd a specifikus eszközök egyeztetése azokon belül. Ez a keresési teret "több ezer eszközről" "tucatnyi szerver × tucatnyi eszközre" szűkíti, számítási kapacitást megtakarítva és csökkentve a domének közötti szemantikai összetévesztést. Mérnöki szempontból ez egy offline felépített és inkrementálisan frissített beágyazási indexen (embedding index) alapul. És amikor mindkét réteg jelöltjei a küszöbérték alá esnek, a rendszernek egy explicit "nem található" eredményt kell visszaadnia, ami arra ösztönzi az Agentet, hogy fogalmazza újra és próbálkozzon újra, improvizáljon alap eszközökkel, vagy hozzon létre egy teljesen új eszközt (a 9. fejezet témája).
 
 **Proaktív eszközfelderítés:**
 
@@ -675,19 +366,19 @@ if capability_is_missing(task):
         continue
 ```
 
-![4-8. ábra: KV Cache Optimalizálás a Dinamikus Eszközbetöltéshez](images/fig4-8.svg)
+![4-3. ábra: KV Cache Optimalizálás a Dinamikus Eszközbetöltéshez](images/fig4-3.svg)
 
-**Dinamikus Betöltés és KV Cache.** A proaktív felfedezés egy finom mérnöki költséggel jár: a dinamikus eszközbetöltés "érvényteleníti a KV Cache-t" – tegye az összes eszközdefiníciót a statikus előtagba, és minden újonnan betöltött eszköz érvényteleníti az egész gyorsítótárat. A javítás megegyezik a 2. fejezet Skill injektálási pozícióról szóló tárgyalásával: a változó részt (az új eszköz teljes sémáját) a kontextus végéhez fűzze, miközben a statikus előtag stabil marad és a KV Cache teljesen újrahasználható, csak egy rövid eszköznévlista marad az Agent állapotsorában. Ez a minta ma már natívan támogatott a nagy API-k által, és a mainstream keretrendszerek alapértelmezett architektúrájává vált: az OpenAI Responses API egy `tool_search` eszközt és egy `defer_loading: true` jelzőt biztosít, a betöltött sémák a kontextus végéhez vannak fűzve `tool_search_output` elemekként, így az előtag gyorsítótár folyamatosan talál; a Claude Code alapértelmezés szerint elhalasztja az MCP eszközöket (igény szerint injektálva `tool_reference` blokkokon keresztül, csak az eszközneveket és szerver utasításokat tartva a munkamenet indításakor); és a Codex CLI `tool_search`-je (BM25 visszakeresés) egy mindig bekapcsolt architektúra, nem egy opcionális funkció. A dinamikus eszközkörnyezet többet kér a modelltől is – a gyengébb modellek küszködnek a nem szabványos pozícióban, a kontextus közepén megjelenő eszközdefiníciókkal, és hajlamosak hibás hívásokat generálni (nem illeszkedő JSON zárójelek, hiányzó paraméterek), gyakran dedikált megerősítéses tanulási képzést igényelve (lásd 7. fejezet).
+**Dinamikus Betöltés és KV Cache.** A proaktív felfedezés egy finom mérnöki költséggel jár: a dinamikus eszközbetöltés "érvényteleníti a KV Cache-t" – tegye az összes eszközdefiníciót a statikus előtagba, és minden újonnan betöltött eszköz érvényteleníti az egész gyorsítótárat. A javítás megegyezik a 2. fejezet Skill injektálási pozícióról szóló tárgyalásával: a változó részt (az új eszköz teljes sémáját) a kontextus végéhez fűzze, miközben a statikus előtag stabil marad és a KV Cache teljesen újrahasználható, csak egy rövid eszköznévlista marad az Agent állapotsorában. Ez a minta ma már natívan támogatott a nagy API-k által, és a mainstream keretrendszerek alapértelmezett architektúrájává vált: az OpenAI Responses API egy `tool_search` eszközt és egy `defer_loading: true` jelzőt biztosít, a betöltött sémák a kontextus végéhez vannak fűzve `tool_search_output` elemekként, így az előtag gyorsítótár folyamatosan talál; a Claude Code alapértelmezés szerint elhalasztja az MCP eszközöket (igény szerint injektálva `tool_reference` blokkokon keresztül, csak az eszközneveket és szerver utasításokat tartva a munkamenet indításakor); és a Codex CLI `tool_search`-je (BM25 visszakeresés) egy mindig bekapcsolt architektúra, nem egy opcionális funkció. A dinamikus eszközkörnyezet többet kér a modelltől is – a gyengébb modellek küszködnek a nem szabványos pozícióban, a kontextus közepén megjelenő eszközdefiníciókkal, és hajlamosak hibás hívásokat generálni (nem illeszkedő JSON zárójelek, hiányzó paraméterek), gyakran dedikált megerősítéses tanulási képzést igényelve (lásd 8. fejezet).
 
 Egy könnyen félreérthető pontot érdemes tisztázni: "a végéhez fűzve" csak azon a körön történik, amikor az eszközt felfedezik. Onnantól kezdve a séma blokk rögzített marad az eredeti pozíciójában a trajektóriában – a későbbi körök új üzenetei "utána" kerülnek hozzáfűzésre, és az rendes történelemmé válik, ahelyett, hogy minden körben újra a legfrissebb végére kerülne (ha minden körben újra injektálnák, valóban minden alkalommal újra kellene előtölteni, és a gyorsítótár értelmetlen lenne). Mindkét API garantálja ezt: az OpenAI megköveteli, hogy a későbbi kérések megőrizzék a `tool_search_output` elem pozícióját, és ugyanazt az eszközt soha nem kell újra betölteni a körök között; az Anthropic a `tool_reference` blokkot inline bővíti ki az eredeti pozíciójában a beszélgetés történetében, és a hivatalos dokumentáció szerint a gyorsítótár minden későbbi körben továbbra is talál. Csak két helyzet okoz valójában újraszámítást: a Prompt Cache TTL lejárta (ami a teljes előtagot újraszámítja – nem az eszközdefiníciókra jellemző költség), és a betöltött eszközkészlet módosítása, eltávolítása vagy átrendezése (ami érvényteleníti a gyorsítótárat attól a ponttól kezdve).
 
-![4-9. ábra: Kontextus Struktúra a Dinamikus Felfedezés Után – Eszköz Sémák Szétszórva a Trajektóriában](images/fig4-9.svg)
+![4-4. ábra: Kontextus Struktúra a Dinamikus Felfedezés Után – Eszköz Sémák Szétszórva a Trajektóriában](images/fig4-4.svg)
 
-A 4-9. ábra mutatja a teljes képet a dinamikus felfedezés több körét követően: a statikus előtag csak a rendszer promptot, a mag-eszközöket és az eszközkereső meta-eszközt tartalmazza, míg a felfedezés során talált sémák szétszórva vannak a trajektóriában, ott rögzítve, ahol először injektálták őket, és a későbbi körökben gyorsítótárból, rendes történelemként szolgálják ki őket. Ez azt is jelenti, hogy "az eszközdefinícióknak a kontextus legelején kell lenniük" már nem egy kőbe vésett szabály – az előtag továbbra is statikus és csak hozzáfűzhető; az eszközdefiníciók egyszerűen megszerezték a képességet, hogy igény szerint belépjenek a trajektóriába. Az ár az, hogy a modellt utóképzésben kell részesíteni, hogy megértse a kontextusban szétszórt eszközdefiníciókat.
+A 4-4. ábra mutatja a teljes képet a dinamikus felfedezés több körét követően: a statikus előtag csak a rendszer promptot, a mag-eszközöket és az eszközkereső meta-eszközt tartalmazza, míg a felfedezés során talált sémák szétszórva vannak a trajektóriában, ott rögzítve, ahol először injektálták őket, és a későbbi körökben gyorsítótárból, rendes történelemként szolgálják ki őket. Ez azt is jelenti, hogy "az eszközdefinícióknak a kontextus legelején kell lenniük" már nem egy kőbe vésett szabály – az előtag továbbra is statikus és csak hozzáfűzhető; az eszközdefiníciók egyszerűen megszerezték a képességet, hogy igény szerint belépjenek a trajektóriába. Az ár az, hogy a modellt utóképzésben kell részesíteni, hogy megértse a kontextusban szétszórt eszközdefiníciókat.
 
 Őszintén szólva, a teljes deklarálás-egyeztetés-injektálás gépezet működik, de jelentős mérnöki munkát igényel: egy beágyazási index karbantartása offline, KV Cache érvénytelenítés kezelése, dedikált képzés a gyengébb modellek számára. Az alatta lévő közös előfeltevés minden eszköz kezelése "a modellnek címzett formális definícióként" – regisztrált, lekérdezett, injektált. A következő szakasz Skill mechanizmusa elveti ezt az előfeltevést valami könnyebbért.
 
-> **4-7. ★★★ Kísérlet: Proaktív Eszközfelfedezés**
+> **4-5. ★★★ Kísérlet: Proaktív Eszközfelfedezés**
 >
 > Kontrollált összehasonlításon keresztül ez a kísérlet igazolja a proaktív eszközfelfedezés jelentős értékét a kis modellek számára. Használja a Qwen3-4B modellt 120+ eszköz eléréséhez a fenti Észlelő Eszközök kísérletben épített MCP szerverből.
 >
@@ -718,30 +409,25 @@ A legújabban teret nyerő gondolatmenet a Skill mechanizmusból származik. A 2
 
 ## Fejezet Összefoglaló
 
-Ennek a fejezetnek az alapvető következtetése: az eszköztervezés minősége határozza meg az Agent képességeinek felső határát, és az aszinkron architektúra határozza meg, hogy az Agent megbízhatóan tud-e működni a valós világban.
+Ennek a fejezetnek az alapvető következtetése: az eszköztervezés minősége határozza meg az Agent képességeinek felső határát.
 
 Az eszköztervezésben az ACI elvek – részletességbeli kompromisszumok, általánosság, leírási konvenciók – minden eszközre vonatkoznak; az MCP protokoll szabványosítja az eszközök együttműködését, míg a hierarchikus szerveződés, a dinamikus eszközfelfedezés és a Skill-ek válaszolnak az eszköz túlterhelés kihívására. Ugyanakkor minden harmadik fél MCP szerver egy új bizalmi határt vezet be – eszközleírás-mérgezés, eszközárnyékolás és hitelesítőadat-kockázatok megkövetelik az integráció előtti felülvizsgálatot és a futásidejű védelmet. És egy alapelv áthat minden eszköztervezést: a paraméterátadás hűsége – nincs szisztematikus különbség a világ között, ahogyan a modell érzékeli, és a világ között, amelyen az eszköz működik.
 
-Az öt eszközkategória mindegyike eltérő tervezési hangsúlyokkal rendelkezik:
+Ez a fejezet az öt kategória közül azt a hármat fejti ki, amelyet az Agent saját kezdeményezésére hív meg:
 
 - **Észlelő eszközök**: A legfontosabb szempontok közé tartozik a részletességbeli kompromisszumok, a kontextus-tudatos összefoglalás, valamint az olyan felülettervezés, mint a lapozás és az explicit csonkítás; csak olvasható jellegük természetessé teszi őket a gyorsítótárazáshoz és a párhuzamosításhoz.
 - **Végrehajtó eszközök**: A legfontosabb szempontok közé tartozik a hierarchikus biztonsági védelem, a Javasló-Felülvizsgáló mechanizmusok (előzetes jóváhagyás és utólagos érvényesítés), valamint a Sidecar mechanizmus.
 - **Együttműködő eszközök**: A legfontosabb szempontok közé tartozik az al-Agent életciklus primitívek (létrehozás, üzenetküldés, lemondás, felfedezés) és egy tanulási hurok emberi beavatkozással.
-- **Eseményindított eszközök**: A legfontosabb szempontok közé tartozik a triggerfeltételek szűrése és az esemény payload-ok tervezése, lehetővé téve a világ számára, hogy proaktívan felébressze az Agentet.
-- **Felhasználói kommunikációs eszközök**: A legfontosabb szempontok közé tartozik az aszinkron üzenetküldési minták, a többcsatornás kiválasztás és a felhasználói újrabekapcsolás; a virtuális identitások és az izolált végrehajtási környezetek biztosítják az identitás alapot az Agentek független cselekvéséhez.
 
-Az aszinkron oldalon az OpenClaw beépített automatizálási mechanizmusai (Hooks, Cron, Heartbeat) lehetővé teszik az Agentek számára, hogy ütemezetten önállóan cselekedjenek, de nem biztosítanak azonnali belépési útvonalat a beépített csatornákon túli harmadik fél eseményforrások, például az e-mail és API visszahívások számára. A PineClaw Channel mechanizmusa kitölti ezt a hiányt, jelezve az idővezéreltről az eseményvezéreltre való evolúciót. Három stratégia – megszakítás-alapú, sorbaállítás-alapú és párhuzamos feldolgozás – lehetővé teszi az Agentek számára, hogy kezeljék a különböző prioritású eseményeket. Ez az architektúra azonban mély ellentmondásban áll a mai nagy modellek szinkron képzési paradigmájával; egyelőre a mérnöki megkerülő megoldások, mint az aszinkron helyettesítők, csak enyhíteni tudják azt. Az alapvető javítás a következő generációs modellekre vár, amelyek a késleltetést, megszakítást és párhuzamosságot a megerősítéses tanuláson keresztül belsővé teszik aszinkron környezetekben (a 9. fejezetben tárgyalt VLA modellek szellemében).
+A maradék kettőt — az Eseményindított és a Felhasználói Kommunikációs eszközöket — külső események vezérlik, illetve több csatornán, aszinkron módon kell elérniük a felhasználót, aki nem feltétlenül van jelen; tervezésük elválaszthatatlan az eseményvezérelt aszinkron futtatókörnyezettől, ezért a 6. fejezet tárgyalja őket.
 
-Hét kísérlet halad az alapoktól az architektúráig: a 4-1.–4-4. kísérletek a három alap eszközkészletet – Észlelés, Végrehajtás, Együttműködés – építik fel; a 4-5. kísérlet bevezeti az eseményvezérelt feldolgozást egy e-mailt kezelő Agent segítségével; a 4-6. kísérlet a párhuzamos végrehajtást, a megszakítás helyreállítást és az állapotkezelést valósítja meg; a 4-7. kísérlet pedig a proaktív eszközfelfedezés értékét igazolja könyvtári léptékben. Ennek a fejezetnek a határa a "meglévő eszközök" leírása, felfedezése és biztonságos használata. A 8. fejezet ezzel szemben azt tárgyalja, hogyan határozza meg egy Agent a hibákból és ismétlődő műveletekből, hogy mikor kell létrehozni, módosítani, újraérvényesíteni vagy kivonni egy eszközt.
+Hét kísérlet halad az alapoktól az architektúráig: a 4-1.–4-4. kísérletek a három alap eszközkészletet – Észlelés, Végrehajtás, Együttműködés – építik fel; a 6-1. kísérlet bevezeti az eseményvezérelt feldolgozást egy e-mailt kezelő Agent segítségével; a 6-2. kísérlet a párhuzamos végrehajtást, a megszakítás helyreállítást és az állapotkezelést valósítja meg; a 4-5. kísérlet pedig a proaktív eszközfelfedezés értékét igazolja könyvtári léptékben. Ennek a fejezetnek a határa a "meglévő eszközök" leírása, felfedezése és biztonságos használata. A 9. fejezet ezzel szemben azt tárgyalja, hogyan határozza meg egy Agent a hibákból és ismétlődő műveletekből, hogy mikor kell létrehozni, módosítani, újraérvényesíteni vagy kivonni egy eszközt.
 
-A következő fejezet egy alapvetőbb kérdést tesz fel annál, hogy "hogyan használ egy Agent eszközöket?" – vajon egy Agent "létre tud-e hozni" eszközöket kód írásával? Egy Coding Agent plusz egy fájlrendszer az alapja minden általános célú Agentnek, és egyúttal biztosítja a 8. fejezetben tárgyalt ellenőrzött rendszer-önmódosításhoz szükséges végrehajtási képességet is.
+A következő fejezet egy alapvetőbb kérdést tesz fel annál, hogy "hogyan használ egy Agent eszközöket?" – vajon egy Agent "létre tud-e hozni" eszközöket kód írásával? Egy Coding Agent plusz egy fájlrendszer az alapja minden általános célú Agentnek, és egyúttal biztosítja a 9. fejezetben tárgyalt ellenőrzött rendszer-önmódosításhoz szükséges végrehajtási képességet is.
 
 ## Gondolkodtató Kérdések
 
 1. ★★ Az MCP szabvány leválasztja az eszközdefiníciókat az Agent keretrendszerről. A szabványosítás ugyanakkor azt is jelenti, hogy az összetett eszközinterakciós minták (pl. streaming kimenet, kétirányú kommunikáció, állapotos munkamenetek) nehezen fejezhetők ki egy szabványos protokollon belül. Ön szerint milyen képességgel kellene az MCP-nek leginkább bővülnie a jövőben?
-2. ★★ Egy aszinkron Agent architektúrában az eseménysor prioritási stratégiáját a tervezéskor kell meghatározni. De ha a prioritás megítélése maga is szemantikai megértést igényel (pl. annak eldöntése, hogy egy új üzenet sürgősebb-e, mint az aktuális feladat), ki hozza meg ezt az ítéletet – egy szabálymotor vagy egy másik LLM hívás? Melyek az egyes lehetőségek költségei?
-3. ★★ Az MCP ökoszisztémában a különböző MCP szerverek erősen átfedő funkcionalitású eszközöket biztosíthatnak. Amikor egy Agent több, funkcionálisan hasonló eszközzel szembesül különböző forrásokból, hogyan válasszon? Ha az azonos nevű eszközök a különböző forrásokból kissé eltérően viselkednek (pl. az egyik összefoglalót, a másik teljes szöveget ad vissza), képes-e az Agent érzékelni és kihasználni ezt a különbséget?
-4. ★★★ Amikor egy Agent a felhasználó nevében lép kapcsolatba a külső világgal, lényegében egy identitásválasztással szembesül: használjon független virtuális identitást (dedikált e-mail és telefonszám) harmadik félként, vagy közvetlenül a felhasználó személyes fiókjaiban működjön felhasználóként? Az előbbi lehetővé teszi az önálló háttérműködést, de a harmadik felek nem biztos, hogy megbíznak egy nem emberi identitásban; az utóbbi teljesebb kontextussal és engedélyekkel rendelkezik, de hitelesítési, bizalmi és biztonsági határvonali problémákat vet fel. Milyen forgatókönyvekben véli helyesnek az egyes módok választását?
-5. ★★ A sor-alapú eseményfeldolgozásban a modellek hajlamosak csak az utolsó eseményre összpontosítani. Ez a fejezet Agent állapotsor jelzőkkel és összefoglalással enyhíti ezt. De ha a sorban 20 esemény halmozódott fel (10 eszközeredmény + 5 felhasználói üzenet + 5 rendszerriasztás), hogyan szervezné meg ezen események megjelenítési sorrendjét és formátumát, hogy a modell ne hagyjon ki fontos információkat?
-6. ★★ Ez a fejezet egy "végrehajtás-érvényesítés-visszacsatolás" hurkot javasol (pl. automatikus linter futtatása kódírás után). Milyen más eszköz forgatókönyvekre alkalmazható ez az "azonnali művelet utáni automatikus érvényesítés" minta? Vannak olyan műveletek, ahol az érvényesítés költsége vagy kockázata maga is meghaladja a műveletét, ami miatt a minta nem alkalmazható?
-7. ★★ Ez a fejezet felveti az "eszközrobbanás" problémáját – egy Agent kiválasztási pontossága romlik, amikor több ezer eszközzel szembesül. A proaktív eszközfelfedezésen kívül milyen más megközelítések léteznek? Gondoljon arra, hogy az emberi szakértők hogyan boldogulnak a rendelkezésre álló eszközök hatalmas gyűjteményével.
+2. ★★ Az MCP ökoszisztémában a különböző MCP szerverek erősen átfedő funkcionalitású eszközöket biztosíthatnak. Amikor egy Agent több, funkcionálisan hasonló eszközzel szembesül különböző forrásokból, hogyan válasszon? Ha az azonos nevű eszközök a különböző forrásokból kissé eltérően viselkednek (pl. az egyik összefoglalót, a másik teljes szöveget ad vissza), képes-e az Agent érzékelni és kihasználni ezt a különbséget?
+3. ★★ Ez a fejezet egy "végrehajtás-érvényesítés-visszacsatolás" hurkot javasol (pl. automatikus linter futtatása kódírás után). Milyen más eszköz forgatókönyvekre alkalmazható ez az "azonnali művelet utáni automatikus érvényesítés" minta? Vannak olyan műveletek, ahol az érvényesítés költsége vagy kockázata maga is meghaladja a műveletét, ami miatt a minta nem alkalmazható?
+4. ★★ Ez a fejezet felveti az "eszközrobbanás" problémáját – egy Agent kiválasztási pontossága romlik, amikor több ezer eszközzel szembesül. A proaktív eszközfelfedezésen kívül milyen más megközelítések léteznek? Gondoljon arra, hogy az emberi szakértők hogyan boldogulnak a rendelkezésre álló eszközök hatalmas gyűjteményével.

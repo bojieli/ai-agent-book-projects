@@ -800,7 +800,7 @@ Yaygın bir yanlış anlama netleştirilmeli: “KV Cache dostu” “sıfır ma
 
 ### Skills ve Tools Arasındaki İlişki
 
-Context yönetimi açısından Skills mekanizması KV Cache ile son derece uyumludur. Tüm özelleşmiş kod aracı tanımları system prompt'a yerleştirilseydi, sayılarının artması çok fazla token tüketir ve modelin dikkatini dağıtırdı. Skill + genel yürütücü modelinde ise araç sayısı küçük kalır (Bölüm 5'te gösterildiği gibi yalnızca yedi temel araç gerekir); Skill içeriği yukarıda anlatılan kademeli açığa çıkarma mekanizmasıyla ihtiyaç halinde yüklenir ve önbelleğe alınmış ön eki etkilemez. İki biçimin ayrıntılı karşılaştırması ve seçim çerçevesi Bölüm 4'te, sürekli gelişen bir Agent'ın bir deneyimi bilgi, talimat, program veya model parametresi olarak yazıp yazmamaya nasıl karar verdiği ise Bölüm 8'de ele alınır.
+Context yönetimi açısından Skills mekanizması KV Cache ile son derece uyumludur. Tüm özelleşmiş kod aracı tanımları system prompt'a yerleştirilseydi, sayılarının artması çok fazla token tüketir ve modelin dikkatini dağıtırdı. Skill + genel yürütücü modelinde ise araç sayısı küçük kalır (Bölüm 5'te gösterildiği gibi yalnızca yedi temel araç gerekir); Skill içeriği yukarıda anlatılan kademeli açığa çıkarma mekanizmasıyla ihtiyaç halinde yüklenir ve önbelleğe alınmış ön eki etkilemez. İki biçimin ayrıntılı karşılaştırması ve seçim çerçevesi Bölüm 4'te, sürekli gelişen bir Agent'ın bir deneyimi bilgi, talimat, program veya model parametresi olarak yazıp yazmamaya nasıl karar verdiği ise Bölüm 9'de ele alınır.
 
 > **Deney 2-6 ★★: Agent Skills Kullanarak Bir Makaleden Sunum Oluşturma**
 >
@@ -1064,7 +1064,7 @@ Yukarıdaki deney, çeşitli sıkıştırma stratejileri arasındaki performans 
 
 ### Sıkıştırma Stratejileri için Tasarım İlkeleri
 
-Sıkıştırmanın iki motivasyonunu (uzunluğu kontrol etmek ve düşünme kalitesini artırmak) ve "bağlam içi öğrenmenin özünde retrieval olduğu" içsel mekanizmayı zaten analiz ettik. Buna dayanarak, belirli sıkıştırma stratejilerinin tasarımına rehberlik edecek dört ilke damıtabiliriz. Burada tartışılan sıkıştırma mevcut göreve hizmet eder; birden fazla görevin trajectory'leri çevrimdışı olarak kalıcı deneyime dönüştürülmek üzere birleştirilecekse, sorun Bölüm 8'de ele alınan sürekli evrim alanına girer.
+Sıkıştırmanın iki motivasyonunu (uzunluğu kontrol etmek ve düşünme kalitesini artırmak) ve "bağlam içi öğrenmenin özünde retrieval olduğu" içsel mekanizmayı zaten analiz ettik. Buna dayanarak, belirli sıkıştırma stratejilerinin tasarımına rehberlik edecek dört ilke damıtabiliriz. Burada tartışılan sıkıştırma mevcut göreve hizmet eder; birden fazla görevin trajectory'leri çevrimdışı olarak kalıcı deneyime dönüştürülmek üzere birleştirilecekse, sorun Bölüm 9'de ele alınan sürekli evrim alanına girer.
 
 - **Bilgi Değerinin Eşit Olmayan Dağılımı**: Kilit karar noktaları (örn. bir personel listesi), destekleyici kanıttan (örn. haber ayrıntıları) daha değerlidir, bu da gereksiz gürültüden (örn. web sayfası navigasyon çubukları, altbilgi reklamları) daha değerlidir.
 - **Semantik Bütünlük**: "Sutskever, OpenAI'den Mayıs 2024'te ayrıldı" ifadesi "Sutskever ayrıldı"ya sıkıştırılamaz—zaman ve şirket adı kritik, pazarlığa kapalı bilgidir.

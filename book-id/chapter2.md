@@ -804,7 +804,7 @@ Sebuah kesalahpahaman umum perlu diklarifikasi: “ramah KV Cache” tidak berar
 
 ### Hubungan Antara Skills dan Tool
 
-Dari perspektif pengelolaan context, mekanisme Skills sangat ramah terhadap KV Cache. Jika semua definisi tool kode khusus ditempatkan di dalam system prompt, pertambahan jumlahnya akan menghabiskan banyak token dan mengganggu perhatian model. Sebaliknya, dalam pola Skill + eksekutor umum, jumlah tool tetap sedikit (seperti ditunjukkan pada Bab 5, hanya dibutuhkan tujuh tool inti), sedangkan konten Skill dimuat sesuai kebutuhan melalui mekanisme progressive disclosure di atas tanpa memengaruhi prefix yang telah di-cache. Bab 4 menyajikan perbandingan terperinci dan kerangka pemilihannya, sementara Bab 8 membahas bagaimana Agent yang terus berevolusi menentukan apakah suatu pengalaman perlu ditulis sebagai pengetahuan, instruksi, program, atau parameter model.
+Dari perspektif pengelolaan context, mekanisme Skills sangat ramah terhadap KV Cache. Jika semua definisi tool kode khusus ditempatkan di dalam system prompt, pertambahan jumlahnya akan menghabiskan banyak token dan mengganggu perhatian model. Sebaliknya, dalam pola Skill + eksekutor umum, jumlah tool tetap sedikit (seperti ditunjukkan pada Bab 5, hanya dibutuhkan tujuh tool inti), sedangkan konten Skill dimuat sesuai kebutuhan melalui mekanisme progressive disclosure di atas tanpa memengaruhi prefix yang telah di-cache. Bab 4 menyajikan perbandingan terperinci dan kerangka pemilihannya, sementara Bab 9 membahas bagaimana Agent yang terus berevolusi menentukan apakah suatu pengalaman perlu ditulis sebagai pengetahuan, instruksi, program, atau parameter model.
 
 > **Eksperimen 2-6 ★★: Hasilkan Presentasi dari Paper Menggunakan Agent Skills**
 >
@@ -1065,7 +1065,7 @@ Eksperimen di atas menunjukkan perbedaan kinerja antarstrategi kompresi. Dalam p
 
 ### Prinsip Desain untuk Strategi Kompresi
 
-Kita telah membahas alasan kompresi—membatasi panjang dan meningkatkan penalaran—serta sifat dasar in-context learning sebagai "pencarian (retrieval)". Kita dapat menyimpulkan empat prinsip desain kompresi. Kompresi melayani tugas saat ini; jika riwayat dari berbagai tugas digabungkan secara offline, ini disebut evolusi berkelanjutan (Bab 8).
+Kita telah membahas alasan kompresi—membatasi panjang dan meningkatkan penalaran—serta sifat dasar in-context learning sebagai "pencarian (retrieval)". Kita dapat menyimpulkan empat prinsip desain kompresi. Kompresi melayani tugas saat ini; jika riwayat dari berbagai tugas digabungkan secara offline, ini disebut evolusi berkelanjutan (Bab 9).
 
 - **Distribusi Nilai Informasi Tidak Seragam**: Titik keputusan kunci seperti daftar personil lebih penting daripada detail berita. Detail berita lebih penting daripada noise seperti bar navigasi.
 - **Integritas Semantik**: "Sutskever meninggalkan OpenAI pada Mei 2024" tak boleh disingkat jadi "Sutskever pergi". Waktu dan nama adalah hal mutlak.

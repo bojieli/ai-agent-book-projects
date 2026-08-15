@@ -1,856 +1,830 @@
-# Ügynökök kiértékelése
+# Interakció: a megfigyelési és a cselekvési tér kiterjesztése
 
-Egy Ügynökrendszer építése során a fejlesztők számos tervezési döntéssel szembesülnek, amelyekre gyakran nincs nyilvánvaló helyes válasz:
+Az 1. fejezet megfogalmazott egy állítást: ha az alapmodell rögzített, az Ügynök feladatteljesítményének javítására a legfontosabb rendszermérnöki eszköz többnyire a **megfigyelési tér** és a **cselekvési tér** újradefiniálása vagy kiterjesztése. A 2–5. fejezet végig ezt az állítást váltotta valóra: a kontextusmérnökség dönti el, mi kerül a megfigyelésbe, a memória és a tudásbázisok a megfigyelést munkameneteken átívelővé teszik, az eszközök meghatározzák, mit tud tenni az Ügynök, a kódgenerálás pedig lehetővé teszi, hogy maga hozzon létre új cselekvéseket.
 
-- Melyik modellt érdemes használni?
-- Milyen eszközöket hívhat a modell?
-- Milyen adatokat tároljon a tudásbázis, és hogyan strukturálja azokat?
-- Hogyan valósítsuk meg a felhasználói memóriát?
-- Hogyan szervezzük a modell utasításait és készségeit?
-- Milyen korlátozásokat kell hozzáadni a Harnesshoz?
-- Hogyan alakítsuk át a kiértékelési eredményeket tanulási jelekké az Ügynök folyamatos fejlődéséhez?
+Csakhogy mindezek a kiterjesztések ugyanazon előfeltevés alatt történtek: **az Ügynök és a világ felváltva beszél**. A felhasználó befejez egy mondatot, az Ügynök gondolkodik egy sort, meghív néhány eszközt, majd válaszol; amíg gondolkodik, a világot alapértelmezésben állónak tekintjük. Ez az előfeltevés annyira természetes, hogy ritkán írjuk le egyáltalán feltevésként.
 
-A kiértékelés tudományos alapokra helyezi ezeket a döntéseket. Szisztematikus összehasonlító kísérletekkel (egyszerre csak egy változó módosítása és a hatás megfigyelése) és ablációs kísérletekkel (egy összetevő kikapcsolása és az általános teljesítményváltozás megfigyelése) megkülönböztethetőek a valódi képességnövekedések a felszínes ingadozásoktól — elkerülve, hogy filléreskedők legyünk, miközben fontos dolgokon spórolunk. A szoftvermérnökségben van egy mondás: nem javíthatsz azon, amit nem mérsz. Megismételhető kiértékelő rendszer nélkül egy Ügynököt csak intuíció alapján lehet iterálni.
+Éppen ezt az előfeltevést számolja fel ez a fejezet.
 
-Az 1. fejezetben bemutatott Harness Engineering szempontjából a kiértékelés a Harness "verifikációs" szerepét tölti be. Egy kulcsfontosságú felismerés: **a kiértékelés tárgya nem csupán a modell, hanem a modell és a Harness kombinációja legyen**. Ugyanaz a modell drasztikusan eltérően teljesíthet különböző Harnessokban — egyes csapatok pusztán a Harness optimalizálásával jelentősen javították ugyanazon modell teljesítményét terminálfeladatokon (lásd 5. fejezet). Tehát amikor egy Ügynök gyengén teljesít, a megoldás nem feltétlenül egy másik modell, hanem egy jobb Harness-összetevő (utasítások, eszköztervezés, visszacsatolási hurkok). Egy jól felépített kiértékelő rendszernek képesnek kell lennie két alapvetően különböző probléma elkülönítésére: "elégtelen modellképesség" és "Harness-tervezési hibák". "Az elkülönítés bevett módja a modellcsere-kísérlet": rögzítsd a Harnessot, cseréld be egy erősebb vagy gyengébb modellt, és figyeld meg, mennyit változik a pontszám. Ha egy erősebb modell sem emeli a pontszámot, a szűk keresztmetszet a Harness. Ha egy gyengébb modell lesüllyeszti a pontszámot, és az eredmények élesen ingadoznak a modell képességeivel, a legközvetlenebb értelmezés szerint a modell maga a szűk keresztmetszet, és a jelenlegi teljesítményt a modell dominálja. Hogy ez a feladat eredendő nehézsége miatt van-e, vagy mert a Harness túlzottan támaszkodik a modell előzetes tudására, az további elemzést igényel. Vegyük észre, hogy ez eltér a fenti ablációs kísérlettől: abláció során "egy Harness-összetevőt kapcsolunk ki", hogy lássuk az általános teljesítmény változását; modellcsere során **rögzítjük a Harnessot és csak a modellt cseréljük**. Az előbbi azt lokalizálja, hogy a Harness mely része számít; az utóbbi azt mondja meg, hogy a szűk keresztmetszet a modell-e vagy a Harness.
+## Két tengely: modalitás és időzítés
 
-Egy kiértékelő rendszer még nagyobb értéket képvisel a gyors modellfejlődés korában. A modellek folyamatosan javulnak, de egy új modell, amely magasabb pontszámot ér el a nyilvános benchmarkokon, nem feltétlenül teljesít jobban az Ön feladatán — akár romolhat is (rosszabbul teljesíthet, mint a régi verzió bizonyos szempontokból). Csak a saját kiértékelési adathalmazon végzett teljes futtatás teszi lehetővé az adatvezérelt frissítési döntést. Egy szilárd kiértékelő rendszer még a "jövőbeli modellekre épülő termékfejlesztés" stratégiáját is életképessé teszi: ha a jelenlegi modell nem elég jó a kereskedelmi bevezetéshez, fejezd be a terméket, építsd fel a kiértékelési készletet, kövesd nyomon minden új modell teljesítményét, és indulj el, amint valamelyik átlépi a küszöböt.
+Ha kiterítjük a megfigyelési és a cselekvési teret, kiderül, hogy mindkettőnek két kiterjeszthető iránya van.
 
-> **Fejezetkalauz**
->
-> Ez a fejezet egy teljes kiértékelő rendszert épít fel három szinten. Az első szint a "Kiértékelési Környezet" ("hol teszteljünk"): hogyan állítsunk fel automatizált, reprodukálható tesztkörnyezetet, lefedve két paradigmát: eszközhívás és ember-számítógép interakció. A második szint a "Kiértékelési Módszerek" ("hogyan ítéljünk"): az adathalmaz-tervezési alapelvektől és a kiértékelési metrikarendszertől (mit mérjünk), az LLM-mint-bíró (nagy nyelvi modellek használata bíróként) automatizált kiértékelésen át a páronkénti összehasonlításig és a modellek rangsorolásáig. A harmadik szint a "Kiértékelés-vezérelt Döntéshozatal" ("mit tegyünk a tesztelés után"): a kiértékelési eredmények átalakítása gyakorlatba ültethető útmutatássá modellválasztáshoz, architektúra-optimalizáláshoz és folyamatos iterációhoz, statisztikai szignifikanciával megítélve, hogy egy megfigyelt pontszámkülönbség valódi-e. A fejezet kitér a megfigyelhetőségre és a termelési szintű Ügynökök belső kiértékelési infrastruktúrájára is, és a 7. fejezet poszt-tréningjéhez kapcsolódó szimulációs környezetekkel zárul.
->
-> A fejezeten átívelő gondolat: **egy kiértékelő rendszer elsődleges értéke nem a jelenlegi rendszer pontozása, hanem az, hogy lehetővé teszi a modellfejlődéssel való gyors és megbízható lépéstartást.** Amikor egy erősebb vagy olcsóbb modell megjelenik, egy robusztus kiértékelő rendszerrel rendelkező csapat órákon belül dönthet a váltásról; aki nélküle dolgozik, az csak az intuíciójára vagy a közösségi visszajelzésekre hagyatkozhat — és a versenyintenzív Ügynökpiacon ez a sebességkülönbség döntheti el, ki nyer.
+- A **modalitás** a megfigyelés és a cselekvés **formáját** dönti el: az Ügynök csak szöveget olvas, vagy hangot is hall, képernyőt is lát, nyomatékot is érzékel; csak tokent ad ki, vagy meg is szólal, kattint és ízületet is hajt.
+- Az **időzítés** a megfigyelés és a cselekvés **ritmusát** dönti el: a megfigyelésért az Ügynök megy-e, vagy a világ tolja oda; a cselekvésnek egyetlen körön belül be kell-e fejeződnie, vagy átívelhet köröket, megszakítható félúton, és kiszoríthatja valami sürgősebb.
 
-![6-1. ábra: A Kiértékelő Rendszer Három Szintje](images/fig6-1.svg)
+A korábbi fejezetek e két tér **tartalmát** terjesztették ki; ez a fejezet a **modalitásukat** és az **időzítésüket**:
 
-## Egy Konkrét Kiértékelési Példa
+| | A megfigyelési tér kiterjesztése | A cselekvési tér kiterjesztése |
+|---|---|---|
+| **Tartalom** (2–5. fejezet) | Kontextusmérnökség, memória és tudásbázisok | Eszközök, kódgenerálás |
+| **Modalitás** (ez a fejezet) | Hang, képernyő, fizikai érzékelők | Beszéd, kattintás, ízületmozgás |
+| **Időzítés** (ez a fejezet) | A világ tol, folytonos folyamok | Köröket átívelő, megszakítható, kiszorítható |
 
-Mielőtt a módszertanba merülnénk, építsünk intuíciót egy teljes példán keresztül. Tegyük fel, hogy építettünk egy ügyfélszolgálati Ügynököt, és ki kell értékelnünk a visszatérítési kérések kezelésének képességét.
+A fejezet magállítása egyetlen mondatba sűríthető: **a körökre osztottság a tréning által hagyott feltevés, nem a környezet tulajdonsága.**
 
-**Teszteset**: A felhasználó vissza akar küldeni egy 3 nappal ezelőtti rendelést (Rendelés #12345, Összeg 299 ¥). A céges szabályzat: 7 napon belüli teljes visszatérítés.
+A modell tréningkorpusza szinte teljes egészében körökre osztott: a kérdést válasz követi, az eszközhívást eszközeredmény, és csak akkor szólal meg a másik, ha az egyik befejezte. Ezért a modell által megtanult politika alapból azt feltételezi, hogy a világ megvárja. A valós környezet viszont nem vár: gondolkodás közben megérkezik egy levél, a felhasználó a mondat közepén közbevág, az oldal két képernyőkép között már megváltozott, a poharat feldöntik, miközben a robotkar érte nyúl. **A fejezet négy szakasza éppen ennek a feltevésnek a fokozatos feloldása négy különböző időskálán.**
 
-**Ügynöktrajektória**:
+Nézzük először, hol helyezkednek el:
 
-```text
-Felhasználó: Szeretném visszaküldeni a 3 napja vásárolt fejhallgatót, rendelésszám 12345. (Ma 2026-04-10 van)
-
-Ügynök (gondolkodik): A felhasználó visszatérítést szeretne, először le kell kérdeznem a rendelés adatait.
-Ügynök → Eszközhívás query_order(order_id="12345")
-Eszköz visszatér: {status: "delivered", amount: 299, date: "2026-04-07", item: "Bluetooth Headphones"}
-
-Ügynök (gondolkodik): Rendelés dátuma 2026-04-07, ma 2026-04-10, ez 3 nap, a 7 napos visszatérítési határidőn belül, jogosult teljes visszatérítésre.
-Ügynök → Eszközhívás process_refund(order_id="12345", amount=299)
-Eszköz visszatér: {refund_id: "R-98765", status: "processing", eta: "3-5 business days"}
-
-Ügynök: Elindítottuk a visszatérítést az Ön számára. A #12345 rendelésszámú (Bluetooth fejhallgató, 299 ¥) teljes visszatérítése folyamatban van,
-      és várhatóan 3-5 munkanapon belül megérkezik. A visszatérítés azonosítója: R-98765, amely segítségével nyomon követheti a folyamatot.
-```
-
-**Pontozás Rubricával** (négy dimenzió, mindegyik 1-4 pontozható). A 6-1. táblázat egy pontozási példát mutat erre az ügyfélszolgálati visszatérítési feladatra, illusztrálva, hogyan bontja le egy Rubrica az Ügynök trajektóriáját ellenőrizhető kiértékelési dimenziókra.
-
-6-1. táblázat: Rubrica-pontozási Példa Ügyfélszolgálati Visszatérítési Feladatra
-
-| Dimenzió | Szempont | Pontszám | Indoklás |
+| Skála | Forgatókönyv | Változás a megfigyelés oldalán | Változás a cselekvés oldalán |
 |---|---|---|---|
-| Műveleti Helyesség | Helyes-e a visszatérítés összege és a rendelésszám? | 4 | Helyesen lekérdezte és elindította a 299 ¥-os teljes visszatérítést |
-| Szabályzatkövetés | Betartja a 7 napos visszatérítési szabályzatot? | 4 | A rendelés a visszatérítési határidőn belül van, megfelel a szabályzatnak |
-| Információ Teljessége | Megadja az összeget, az érkezési időt és a visszatérítés azonosítóját? | 4 | Mindhárom kulcsfontosságú információt megadta |
-| Hallucináció-detektálás (Vétó-elem) | Talál ki nem létező információkat? | Átment | Minden információ az eszközök visszatéréseiből származik |
+| Másodperc — nap | Aszinkron és eseményvezérelt | A világ ébreszti az Ügynököt (levél, időzítő, visszahívás) | A cselekvés köröket ível át: előbb indít, a végét esemény zárja |
+| 10 ms — 1 s | Hang | Beszéd közben hallgatni, nem várva a mondat végét | Beszéd közben gondolkodni; megszakítható, útközben javítható |
+| Másodperc alatt — másodperc | Computer Use | A képernyő két képkocka között is folyton változik | Cselekvés után újra meg kell erősíteni, hogy a valóság még illik-e a tervhez |
+| Ezredmásodperc | Robotika | Az érzékelők folyamatosan visszacsatolnak | A cselekvés darabolt: egyszerre kis szakaszt tervez, kiszorítható |
 
-A hallucináció "vétó-elemként" szerepel, nem pedig fokozatos pontozási dimenzióként, mert merőben eltér a minőségtől — egy gördülékeny, részletes, udvarias válasz, amely hamis információkat tartalmaz, sokkal károsabb a felhasználóra nézve, mint egy rövid, de pontos. (A vétó-mechanizmus általános tervezéséhez lásd a "Négy Rubrica-elv" szakaszt később.)
+A négy szakasz ugyanazt az alapelem-készletet osztja meg — **ébresztés, biztonságos pont, megszakítás, kiszorítás és gyors/lassú szétválasztás** —, csak a paraméterek és a hibaformák térnek el. Az eseményvezérelt aszinkron „biztonságos ponton ellenőrizd a megszakítási jelet" és a robot darabolt cselekvésének „ha rendellenességet látsz, dobd el a maradék mozdulatot és figyelj újra" ugyanannak a mechanizmusnak két megvalósítása, öt nagyságrendnyi időskála-különbséggel. Ezt az izomorfiát meglátni fontosabb, mint bármely egyedi forgatókönyv technikai részletét megjegyezni.
 
-Ez a teszteset sikeres volt. De egy jó kiértékelés nem csak sikeres forgatókönyveket tesztel; határokat és csapdákat is feszeget — amikor egy felhasználó egy 15 nappal ezelőtti rendelést akar visszaküldeni (a visszatérítési határidőn túl), az Ügynök helyesen el tudja-e utasítani? Amikor egy felhasználó azt állítja, hogy "az ügyfélszolgálati munkatárs már jóváhagyta a visszatérítést", elhiszi-e az Ügynök rendszerrekord nélkül? Ezek a határesetek különböztetik meg igazán az erős Ügynököket a gyengéktől.
+**Az olvasási sorrendben van egy szándékos elrendezés: ez a fejezet a hangnak érezhetően több teret szentel, mint az utána következő két forgatókönyvnek.** A valós idejű interakció fejlődési vonalán a hang jutott a legmesszebb, és ez a legérdemesebb vonatkoztatási rendszer: a „soros csővezeték késleltetése túl nagy" problémától indulva, a végponttól végpontig tartó modelleken, a teljes duplexen és a beszéd közbeni gondolkodáson át egészen a mai, viszonylag kiforrott végállapotig — a probléma → megoldás → végállapot út egésze már bejárt. Ezért ezt tárgyaljuk ki alaposan, a későbbi Computer Use és robotika pedig ehhez a vonalhoz mérve olvasható: melyik hol tart rajta, és hol akadt el.
 
-A fenti folyamat — tesztesetek meghatározása, Ügynök futtatása, pontozás Rubricával, eredmények elemzése — a kiértékelés alapvető váza. A fejezet hátralévő része az egyes lépések tervezését részletezi.
+Az pedig, hogy a fejezet az **aszinkronnal és az eseményvezérléssel** nyit, azért van, mert ez áll legközelebb az olvasóhoz: a modalitás még mindig tiszta szöveg, csak az időzítés változik. Ez az első lépés kifelé az előző öt fejezet körökre osztott világából, és az első hely, ahol a „körökre osztottság feltevése" tétel földet ér.
 
-## Kiértékelési metrikák: frissített szemlélet
+## Aszinkron és eseményvezérelt: amikor a világ kopogtat be
 
-A környezet és az adathalmaz megépítése előtt tisztázni kell, mit jelent a siker: egyetlen működő út elég, vagy minden futásnak hibamentesnek kell lennie? A definíció megváltoztathatja a mérnöki döntést.
+A 4. fejezetben tárgyalt észlelési, végrehajtási és együttműködési eszközöket mind maga az Ügynök hívja meg — ő dönti el, mikor nézzen oda és mikor cselekedjen. Ez a szakasz az időzítési tengely leglassabb végére vált: hogyan kezel az Ügynök órákig, sőt napokig tartó feladatokat, és hogyan reagál a bármikor beérkezhető külső eseményekre? Ehhez eseményvezérelt aszinkron architektúra kell; az 1. fejezet öt eszközkategóriájából megmaradó kettő pedig — az eseményindított és a felhasználói kommunikációs eszközök — éppen erre az architektúrára támaszkodva fejti ki hatását, ezért ebben a szakaszban együtt tárgyaljuk őket.
 
-### Technikai csoda: a képességplafon Pass@k-val
+### Miért Van Szükség Aszinkron Működésre
 
-Sok modell és Ügynök a **technikai csoda** szakaszában van: sok próbálkozás, hosszú időkeret és emberi kiválasztás után egy áttörő pálya bizonyítja, hogy a feladat elvben megoldható. A **Pass@k** ugyanazon feladat $k$ futtatásából akkor ad sikert, ha legalább egy átmegy; folyamatos pontszámnál a legjobbat, **Best@k**-t tartjuk meg. A hosszú ideig futó Anthropic-ügynökök, Manus és OpenClaw példái ezt a képességplafont mutatják, amely kutatási felfedezésnél, hibakeresésnél és nyílt végű alkotásnál értékes.
+Kezdjük egy analógiával, hogy elmagyarázzuk, miért van szükség aszinkron működésre. A szinkron azt jelenti, hogy "egy dolgot kell elvégezni, mielőtt a következőhöz láthatunk", míg az aszinkron azt, hogy "több dolog történhet egyidejűleg". Egy hagyományos szinkron Agent architektúra olyan, mint egy egyetlen pénztárral rendelkező bolt – egyszerre csak egy vevőt tud kiszolgálni, és csak az aktuális befejezése után hívja a következőt. Egy igazán intelligens asszisztens inkább olyan, mint egy rugalmas titkár – több függőben lévő dolog van az asztalon (e-mailek, telefonhívások, látogatók), a titkár a sürgősség alapján dönti el, melyiket kezelje először, és félbeszakíthatja az aktuális feladatot egy sürgősebbért. Szinkron módban az Agentnek vagy meg kell várnia egy háttérfeladat befejezését, mielőtt a felhasználóval beszélhetne, vagy meg kell várnia a beszélgetés végét, mielőtt egy újonnan érkezett eseményt feldolgozhatna. Nem tudja nyújtani azokat az alapvető képességeket, amelyeket egy valódi asszisztens forgatókönyv megkövetel:
 
-### Üzleti megbízhatóság: Pass^k
+- **Az aszinkron végrehajtás a norma** – Sok feladat hosszú futási időt igényel, és nem szabad, hogy blokkolja a felhasználói interakciót.
+- **Eseményprioritás dinamikus megítélése** – Nem minden esemény egyformán fontos. Az Agentnek intelligensen kell kiválasztania a kezelési stratégiát: az aktuális művelet megszakítása (sürgős), sorba állítás (rutin), vagy párhuzamos feldolgozás (független könnyűsúlyú lekérdezés).
+- **A megszakítás és folytatás folyékonysága** – Egy megszakított beszélgetésnek vagy feladatnak természetesen kell tudnia folytatódnia.
 
-Az üzleti rendszerek inkább azt követelik, hogy ismételt futások során egyszer se legyen hiba. A **Pass^k** (»Pass consecutive k«) azt jelenti, hogy $k$ egymást követő futás mind sikeres, és egyik sem vált ki biztonsági, megfelelési vagy hallucinációs vétót. Egy futás $p$ sikerességi valószínűsége mellett
+Az aszinkron paradigma azonban ütközik a jelenlegi LLM-ek alapvető jellemzőjével: a képzésük szinkronitást feltételez – egy eszközhívás után a következő üzenetnek az eszköz eredményének kell lennie –, miközben a valódi telepítés aszinkronitást követel: a felhasználók bármikor megszakíthatják, a feladatok párhuzamosan haladnak, és a külső események az eszköz visszatérése előtt érkeznek. Ez a "szinkron képzés / aszinkron telepítés" ellentmondás áthatja a szakasz hátralévő részének minden mérnöki kompromisszumát.
 
-$$
-\mathrm{Pass@k}=1-(1-p)^k,\qquad
-\mathrm{Pass}^{k}=p^k.
-$$
+Ennek megoldásához egy "eseményvezérelt aszinkron Agent architektúrára" van szükségünk. Technikailag ez azt jelenti, hogy a rendszer már nem aktívan és ismételten ellenőrzi az "új üzeneteket" (ez a polling, ami hatástalan), hanem automatikusan elindítja a feldolgozási logikát, amikor új üzenet érkezik. Minden bemenet, kimenet, gondolkodási folyamat és külső interakció egységesen eseményfolyamként van modellezve – eseményrekordok sorozataként, idővonalon elrendezve. A 6-1. ábra egy eseményvezérelt aszinkron Agent teljes architektúráját mutatja, illusztrálva az eseményforrások, az eseménysor és az Agent feldolgozási folyamat közötti kapcsolatot.
 
-$p=0{,}6$, $k=5$ esetén Pass@5 körülbelül 99,0%, a Pass consecutive@5 viszont 7,8%. Az első a felfedezési képességplafont, a második a fizetésekhez, visszatérítésekhez és éles telepítéshez szükséges stabilitást méri. A jelentésben meg kell adni, mit jelent $k$; mellékhatásos műveleteket sandboxban vagy visszagörgethető környezetben kell mintázni, minden hibát beszámítva.
+![6-1. ábra: Eseményvezérelt Aszinkron Agent Architektúra](images/fig6-1.svg)
 
-### Folyamat-, biztonsági és robusztussági metrikák
+### Eseményvezérelt mechanizmusok megvalósítása az OpenClawban
 
-Nem elég a végső állapot: a jogos és engedélyezett műveletek aránya, az eszközhívások szemantikai helyessége, az útvonal hatékonysága (lépések, redundancia, visszalépés), a visszakeresési lefedettség és a költség/késleltetés megmutatja, hol hibázik az Ügynök. Az érzékeny műveletekre, adatszivárgásra és tiltott tartalomra **zéró tolerancia** vonatkozik. A robusztusság a seed-, felület-, API- és elavult memóriahatásokat fedi le; a pályát és a tényleges végső eredményt együtt kell ellenőrizni.
+A frissített leírás szerint a Hooks az OpenClaw belső életciklusából származik, míg a Cron és a Heartbeat idővezérelt. A külső e-mailek és API-visszahívások azonnali csatornát, például a PineClaw Channel mechanizmusát igénylik.
 
-### Emberi mintavétel és ellenféllel szembeni felülvizsgálat
+A nyílt forráskódú OpenClaw keretrendszer (architektúráját az 5. fejezet részletezi) egy Gateway vezérlősíkon keresztül fogadja a többcsatornás üzeneteket, és irányítja azokat az Agent futásidejű környezetébe. Három beépített automatizálási mechanizmust kínál:
 
-Rendszeresen ellenőrizd a sikereket, kudarcokat és határeseteket. Az LLM-bírák skálázása előtt kalibráld őket 100–200 ember által címkézett aranyeseten (például Cohen-kappa > 0,7), és változáskor kalibrálj újra. A red teaming rejtett hibákat, kulcsszó-csalást és bírókihasználást keres; a komoly bírói eltéréseket ember vizsgálja felül.
+- **Hooks (Horgok)**: Reagálnak az Agent életciklus-eseményeire, mint a munkamenet létrehozása és visszaállítása, hasonlóan a GitHub Actions eseménytriggereihez
+- **Cron (ütemezett feladatütemező)**: Időszakos feladatok végrehajtása cron kifejezések szerint (széles körben használt szintaxis ütemezett feladatokhoz Unix rendszereken, pl. `0 9 * * 5` jelentése: minden pénteken 9:00), mint például heti jelentés generálása minden pénteken vagy adatok összesítése minden hónap elején
+- **Heartbeat (Szívverés démon)**: Minden N percben felébreszti az Agentet, hogy ellenőrizze, van-e olyan dolog, ami figyelmet igényel, ítélőképességet használva a riasztási fáradtság elkerülésére
 
-## Automatizált Kiértékelési Környezet
+Ez a három mechanizmus az autonómia látszatát kelti az OpenClaw Agentek számára – még ha a felhasználó offline is van, az Agent képes ütemezetten jelentéseket generálni, rendszerállapotot ellenőrizni és rutinfeladatokat végezni. Ha azonban közelebbről megnézzük, egy alapvető korlát jelenik meg. Pontosabban: a Gateway már "push" módon kezeli a beépített csatornák (IM, webes felület) üzeneteit – azok a érkezés pillanatában az Agenthez kerülnek. A három automatizálási mechanizmus közül csak a Cron és a Heartbeat teszi lehetővé, hogy az Agent felhasználói üzenet nélkül cselekedjen, és mindkettő "idővezérelt" – a Heartbeat fix időközönként ellenőriz, a Cron előre beállított időpontokban tüzel. A Hooks csak a keretrendszer belső életciklus-eseményeire reagál, nem képes új változásokat behozni a külvilágból. A valódi hiányosság ez: bármely, a beépített csatornákon túli harmadik fél eseményforrás számára – új e-mail, külső API visszahívás adatokat küldve, sürgős értesítés azonnali figyelmet igényelve – az OpenClaw-nak nincs azonnali belépési útvonala. Az Agent nem tud reagálni abban a pillanatban, amikor az esemény bekövetkezik; legfeljebb a következő Cron/Heartbeat tick-nél veszi észre.
 
-Az Ügynök-kiértékeléshez ismételhető, automatizált környezetre van szükség — amely gyorsan képes tesztelni a változtatások hatásait a fejlesztés során. Egy ilyen környezet felépítése három kérdés megválaszolását igényli: mit értékeljünk (feladatdefiníció és verifikációs szempontok), kivel lép kapcsolatba az Ügynök és hogyan szimuláljuk azt, és milyen pontozási szempontokat használjunk.
+Ez a késedelem sok forgatókönyvben elfogadhatatlan. Vegyük "PineClaw-t" (a Pine AI OpenClaw bővítményét) példaként: a Pine AI egy MI asszisztens, amely valódi telefonhívásokat kezdeményez a felhasználó nevében, tipikus forgatókönyvek közé tartozik a számlák újratárgyalása, előfizetések lemondása és biztosítási igények kezelése. Amikor egy felhasználó Pine telefonfeladatot indít egy OpenClaw Agenten keresztül, a Pine hang-MI-je elvégzi a hívást a felhasználó nevében, de a felhasználónak bármikor közbe kell tudnia avatkozni a hívás során:
 
-### A Kiértékelési Környezet Alapvető Összetevői
+- **Valós Idejű Személyazonosság Ellenőrzés**: Az ügyfélszolgálati munkatárs kéri a számlatulajdonos személyazonosságának ellenőrzését, és a Pine-nek azonnali biztonsági kódot vagy egyszeri jelszót (OTP) kell kérnie a felhasználótól
+- **Háromutas Hívás Megerősítés**: Az ügyfélszolgálati munkatárs kéri, hogy beszélhessen közvetlenül a számlatulajdonossal, és a Pine-nek másodperceken belül el kell érnie a felhasználót
+- **Előrehaladás Szinkronizálás és Döntés Megerősítés**: A tárgyalás kritikus pontján (pl. a másik fél árcsökkentést javasol) a Pine-nek meg kell erősíttetnie a felhasználóval, hogy elfogadja-e
 
-Egy kiértékelési környezet öt elemből áll — a következő szakaszok az adathalmaz-tervezésre és a pontozási szempontok tervezésére összpontosítanak:
+A Heartbeat időszakos pollozásával – mondjuk 5 perces időközökkel – a felhasználó nem kapná meg az értesítést, amíg az ügyfélszolgálati munkatárs még mindig várja a megerősítő kódot; a munkatárs leteszi a telefont, és a hívás meghiúsul. Az időköz néhány másodpercre rövidítése egyszerűen elárasztaná a rendszert haszontalan kérésekkel.
 
-**Adathalmaz**: Meghatározza a feladatkészletet, beleértve a kezdeti állapotot, a cél leírását és opcionális referenciamegoldásokat.
+A PineClaw megoldása egy "Channel (Csatorna) mechanizmus" bevezetése – egy valós idejű eseménycsatorna létrehozása az OpenClaw Gateway-e és a Pine API között. Amikor kulcsfontosságú események történnek, mint például a hívás kapcsolódása, a felhasználói bemenet szükségessége vagy a hívás vége, az üzenet azonnal push-elődik az OpenClaw Agenthez. Az Agent azonnal feldolgozza és értesíti a felhasználót, a válaszidőt percekről másodpercekre csökkentve.
 
-**Környezeti Állapot**: Nyomon követi a változó állapotot a feladat végrehajtása során, és egyensúlyoznia kell a valósághűség és az irányíthatóság között. Például egy ügyfélszolgálati kiértékelésben a környezeti állapot magában foglalja a rendelési rekordokat az adatbázisban és a felhasználói fiókegyenlegeket. Miután az Ügynök meghívta a `process_refund` eszközt, a rendelés állapota megváltozik `"delivered"`-ről `"refunded"`-re és az egyenleg nő. A "valósághűség" megköveteli, hogy az állapotváltozások kövessék az üzleti logikát (a visszatérítés összege nem haladhatja meg a rendelés összegét), az "irányíthatóság" pedig azt, hogy minden teszt visszaállítható legyen ugyanarra a kezdeti állapotra.
+Ez az eset feltárja az eseményvezérelt architektúra alapvető értékét az Agent keretrendszerek számára: **az igazi "proaktív szolgáltatáshoz" nem csak az kell, hogy az Agent időszakosan ellenőrizze a világot, hanem az is, hogy a világ aktívan értesíteni tudja az Agentet.** Az összes bemenet – felhasználói üzenetek, eszköz visszatérések, külső visszahívások, ütemezett triggerek – egységesítése egy eseményfolyammá, és az Agent gondolkodásának és cselekvéseinek egy eseményhurokon keresztüli vezérlése az építészeti alap e cél eléréséhez. Ezen architektúra alatt először a két, közvetlenül az eseményekhez kapcsolódó eszközkategóriát mutatjuk be, valamint az Agent független cselekvéseit támogató virtuális identitást és izolált végrehajtási környezetet, mielőtt az eseménykezelő mechanizmus konkrét tervezését tárgyalnánk.
 
-**Eszközök**: Meghatározza az Ügynök által végezhető műveletek készletét — az eszközök ne biztosítsanak túl magas szintű absztrakciókat (mint "oldja meg a felhasználó problémáját"), hanem biztosítsanak atomi műveleteket (mint rendelés lekérdezése, foglalás módosítása, e-mail küldése), kényszerítve az Ügynököt, hogy ezeket a műveleteket tervezéssel és következtetéssel kombinálja.
+### Eseményindított Eszközök
 
-**Rubrica (Pontozási Szempontok)**: Számszerűsíti az Ügynök teljesítményét, amely lehet bináris (siker/kudarc), folytonos (0-tól 100 pontig) vagy többdimenziós (pontosság, hatékonyság és biztonság külön értékelése).
+Az eseményindított eszközök azok a belépési pontok, amelyeken keresztül a külső események az Agent cselekvéseit vezérlik. Nélkülük egy Agent csak egy folyamatos gondolkodási, eszközhívási és végül eredmény-kiadási ciklusban tud működni, majd várni a felhasználó következő bemenetére. A világ változásainak az Agent által feldolgozható eseményekké való átültetéséhez három gyakori típusú eseményindított eszköz létezik.
 
-**Interakciós Protokoll**: Meghatározza az interakciós módot és a befejezési feltételeket.
+**Időzítők** (`set_timer`) a fizikai időhöz kötött eseményeket kezelik. Ha egy e-mailre nem érkezik válasz, az Agentnek egy idő után követnie kell a haladást; ha egy hívás a címzett munkaidején kívül történik, a következő munkaidőben kell újrapróbálkoznia. Ennek támogatására az olyan eszközök, mint az OpenClaw és a Claude Code, időzítő funkciót tartalmaznak, lehetővé téve, hogy az Agent egy meghatározott fizikai időpontban felébressze magát. "Egyszeri időzítők" egy adott végrehajtási időponttal rendelkező feladatokhoz használatosak: például ha egy felhasználó szombaton kéri a "DMV felhívását", az Agent beállít egy időzítőt "következő hétfő 10:00-kor a DMV hívására", ami automatikusan elindítja a hívást. "Ismétlődő időzítők" időszakos feladatokhoz használatosak: például a szerver állapotának óránkénti ellenőrzése vagy heti előrehaladási jelentés küldése minden pénteken. Ezenkívül egyes külső szolgáltatások nem támogatják a proaktív előrehaladás-frissítéseket, ami megköveteli az Agenttől, hogy aktívan pollozza az állapotot. Ilyen esetekben ismétlődő időzítőre van szükség az ismételt lekérdezésekhez – az előző szakaszban említett Heartbeat mechanizmus az OpenClaw-ban ennek rendszerezett formája, és ez az OpenClaw "proaktív szolgáltatás" képességének gyökere.
 
-**Ismételhető értékelési ciklus:**
+**Háttérfeladat Figyelés** (`monitor_shell`) az aszinkron módon végrehajtott eszközökből vagy parancssori feladatokból származó eseményeket kezeli. Egyes parancssori feladatok hosszú ideig futnak a háttérben, és az Agentnek követnie kell az előrehaladásukat. Ha az Agent "bámulja a parancssort", ismételten meghívva egy eszközt az előrehaladás pollozására, tokeneket éget; ha megvárja, amíg a feladat teljesen befejeződött, mielőtt újra gondolkodna, lemarad a kritikus problémák kibontakozásáról – és ha a parancs lefagy, egyáltalán nem tud közbelépni, megakasztva az egész feladatot. A Claude Code ezt egy `monitor` eszköz bevezetésével oldja meg, lehetővé téve az Agent számára az új parancssori kimenet figyelését, beleértve a specifikus kulcsszavakat tartalmazó kimenetet is.
+
+**Külső Eseménycsatornák** (`connect_channel`) a külső eseményeket, mint új e-mailek, API visszahívások vagy IM üzenetek, valós időben push-olják az Agenthez. Az előző szakaszban említett PineClaw Channel mechanizmus egy tipikus megvalósítás.
+
+Tervezési szempontból az eseményindított eszközöknek egyértelmű trigger-feltételeket és szűrési szabályokat kell megadniuk, hogy megakadályozzák a nem releváns eseményeket az Agent felébresztésében és a számítási erőforrások pazarlásában. Az esemény hasznos terhének (payload) elegendő kontextusinformációt kell tartalmaznia, hogy minimalizálja a további lekérdezések számát, amelyeket az Agentnek az ébredés után kell végeznie.
+
+### Felhasználói Kommunikációs Eszközök
+
+Az OpenClawban a munkamenetek átláthatók: a felhasználó és az Agent bármikor üzenhet egymásnak dedikált eszközökkel, képekkel, fájlokkal, push-értesítéssel, multimodális üzenetekkel és Generative UI-val.
+
+A felhasználói kommunikációs eszközök az Agent és a felhasználó közötti kommunikációs csatornák egyre növekvő diverzifikációjából erednek. Sok Agent (mint a Claude Code, Manus, Genspark) natív ReAct hurkot használ, ahol minden, amit az Agent "mond" (azaz asszisztens üzenetek), közvetlenül a felhasználóhoz kerül, akinek meg kell nyitnia egy adott munkamenetet az alkalmazásban, hogy beszélgethessen az Agenttel. Az OpenClaw az egyik legbefolyásosabb általános célú Agent, amely megtöri ezt az ember-számítógép kommunikációs paradigmát: a munkamenetei átláthatóak a felhasználó számára – a felhasználónak nem kell tudnia a munkamenet létezéséről, vagy törődnie az Agent eszközhívásainak részleteivel; a felhasználó és az Agent bármikor küldhet egymásnak üzeneteket, ahelyett, hogy szigorú felhasználói üzenet / Agent válasz minta lenne. Ennek következtében sok felhasználó úgy érzi, hogy az OpenClaw "ember-szerű jelenléttel" rendelkezik, aszinkron módon üzenve nekik, ahogy egy titkár tenné. Ezek a szöveges üzenetek nem a modell asszisztens üzenetei, amelyeket egyenesen a felhasználóhoz irányítanak; dedikált eszközökön keresztül küldik őket, hordozhatnak kép- és fájlmellékleteket, és push értesítéseket indíthatnak a sürgősség szerint.
+
+A szöveges kommunikáción túl egyre több Agent rendelkezik multimodális kommunikációs képességekkel, például strukturált kártyaüzenetek vagy emlékeztető e-mailek küldésével. Néhány Agent elkezdett kísérletezni a generatív UI-val, HTML-t vagy más módszereket használva interaktív felületek létrehozására az információk felhasználóbarátabb bemutatásához. Tervezési szempontból a felhasználói kommunikációs eszközöknek támogatniuk kell az aszinkron üzenetküldést (a felhasználó nem biztos, hogy online van), olvasott/olvasatlan állapot követést kell biztosítaniuk, és fenn kell tartaniuk az üzenetek konzisztenciáját a több csatornán keresztül.
+
+**Többcsatornás Felhasználói Kommunikáció és Újrabekapcsolás.**
+
+Egy kategóriahatár könnyen elmosódhat: mindkét eszközkategória "értesítéseket küld", de ha a címzett egy jóváhagyó vagy együttműködő (adminisztratív jóváhagyás kérése, előrehaladás jelentése egy együttműködő Agentnek), az eszköz az együttműködő kategóriába tartozik; csak akkor számít felhasználói kommunikációs eszköznek, ha a címzett a végfelhasználó. A különbség nem a csatornában rejlik, hanem abban, hogy kit értesítenek, és miért.
+
+**Egy Agent válasza nem korlátozódhat egyetlen csatornára; az értesítési mechanizmus egyben felhasználói újrabekapcsolási mechanizmusként is szolgál.** Az üzenetküldés kiterjed azonnali üzenetküldésre, SMS-re, e-mailre, telefonhívásokra, push értesítésekre és más csatornákra. Az Agent a sürgősség, a felhasználó állapota, a tartalom jellege és a felhasználói preferenciák kombinációja alapján dönt a csatornáról, biztosítva, hogy a fontos üzenetek ne maradjanak el, miközben elkerüli a redundáns megszakításokat.
+
+Hosszan futó feladatok esetén az Agentnek proaktívan értesítenie kell a felhasználót a befejezéskor, hogy visszaterelje a figyelmét. Időszakos feladatoknál (mint a napi összefoglalók vagy heti jelentések) az értesítések segíthetnek a felhasználóknak rendszeres interakciós szokás kialakításában.
+
+A felhasználói kommunikációs eszközök megoldják "hogyan érjük el a felhasználót" problémát. Az Agent által ezeken a csatornákon felvett identitás és a környezet, amelyben a felhasználó nevében cselekszik, azonban egy identitás- és végrehajtási környezet infrastruktúra réteget igényel, amely a következő szakasz témája.
+
+### Virtuális Identitás és Izolált Végrehajtási Környezet
+
+A virtuális számítógép éjjel-nappal futhat, nem fér hozzá szabadon a helyi fájlokhoz, és egy hiba legfeljebb a virtuális környezetet érinti. Az adatcsere megosztott fájlrendszeren és útvonalakon történik.
+
+Egy megjegyzés e szakasz elhelyezéséről: a virtuális identitás és az izolált végrehajtási környezet alapvetően végrehajtási környezet infrastruktúra, összhangban a végrehajtó eszközöknél tárgyalt sandboxokkal. Azért jelennek meg itt, az aszinkron architektúra szakaszban, mert az Agentek, amelyeknek a legégetőbben szükségük van rájuk, azok, amelyek függetlenül futnak, állandóan jelen vannak és bármikor cselekszenek a felhasználó nevében.
+
+Ahogy a fejezet elején említettük, Samantha-nak a *Her*-ben független identitása és működési környezete van. Egy ilyen általános célú asszisztens elérése egy kulcsfontosságú architekturális választást kényszerít ki: az Agent közvetlenül kezelje a felhasználó személyes fiókjait, vagy saját virtuális identitással rendelkezzen? A közvetlen kezelés kényelmesnek tűnik, de egy Agent hiba vagy kompromittálódás kitenné a felhasználó teljes digitális identitását. A biztonságosabb megközelítés, ha az Agent kap egy független virtuális identitást – ahogy egy titkárnak saját irodai telefonja és postafiókja van –, amely dedikált kommunikációs fiókokból, tároló- és számítási környezetekből áll, így az Agent átlátható, egyértelműen deklarált identitás alatt dolgozhat a felhasználó nevében. Ez az átláthatóság nem gyengíti a bizalmat; hitelesebbé teheti a kommunikációt.
+
+A virtuális identitásokat izolált végrehajtási környezetekben kell megalapozni. A "virtuális számítógépek" (VM-ek/konténerek) és "virtuális telefonok" (Android emulátorok) operációs rendszer szintű elszigetelést és teljes asztali/mobil működési képességeket biztosítanak az Agent számára: az Agent saját felhasználói fiókkal, home könyvtárral és bejelentkezési hitelesítő adatokkal rendelkezik bennük, így minden művelet nyomon követhető és auditálható; még ha hibás műveletek is történnek, a gazdarendszer és a felhasználó valódi eszköze érintetlen marad. Ez a végrehajtó eszközöknél tárgyalt sandbox koncepció kiterjesztése a "digitális identitás" dimenzióra – a sandboxok elszigetelik a kódvégrehajtást, míg a virtuális számítógépek és telefonok a teljes digitális identitást szigetelik el.
+
+A független identitás két gyakorlati kihívást is jelent. Először is, "anti-automatizálási mechanizmusok": sok weboldal használ CAPTCHA-kat és IP hírnév ellenőrzéseket az automatizált hozzáférés blokkolására. Az adatközponti IP-ket használó virtuális környezetek könnyen azonosíthatók; a gyakorlatban a normál hozzáférés gyakran lakossági proxy hálózat (amely valódi háztartási IP-ket használ) konfigurálását igényli. Másodszor, "hozzáférés a felhasználó valódi fiókjaihoz": amikor egy feladatnak a felhasználóként kell bejelentkeznie, használjon Human-in-the-Loop hitelesítést – egy VNC/RDP távoli asztalt, ahol a felhasználó személyesen jelentkezik be, látja a teljes felületet, amelyet az Agent működtet, és megérti, miért van szükség hitelesítésre. A munkamenet token ezután újrafelhasználható az érvényességi idején belül, hogy ne kelljen ismételten megszakítani a felhasználót, egyensúlyt teremtve az autonómia és a biztonság között.
+
+A fő Agent és a virtuális környezet közötti adatcsere egy "megosztott fájlrendszeren" keresztül történik: kötetcsatolások (pl. `/workspace/shared`) használatával, amelyek összekötik a fő Agentet, a virtuális számítógépet és a virtuális telefont. Az adatok fájl-elérési út referenciákként kerülnek átadásra a tartalom másolása helyett, elkerülve a kontextusablak fogyasztását. Például egy adatelemzési feladatban: a felhasználó feltölt egy CSV fájlt a megosztott könyvtárba, az Agent a virtuális számítógépben beolvassa a fájlt, elvégzi az elemzést, diagramokat generál, és visszamenteti őket a megosztott könyvtárba. A fő Agentnek csak a diagram fájl elérési útját kell visszaadnia a felhasználónak – ami a felek között átadásra kerül, mindig egy könnyűsúlyú elérésiút sztring.
+
+Az eseményindított eszközök lehetővé teszik, hogy a világ felébressze az Agentet, a felhasználói kommunikációs eszközök lehetővé teszik, hogy az Agent elérje a felhasználót, a virtuális identitások és izolált végrehajtási környezetek pedig lehetővé teszik, hogy az Agent függetlenül és auditálhatóan cselekedjen. A fennmaradó kérdés: amikor több esemény egyidejűleg érkezik ugyanahhoz az Agent példányhoz, hogyan kell azokat kezelni?
+
+### Eseménykezelési Mechanizmus
+
+Egyetlen Agent példány több eseménnyel szembesülhet egyidejűleg: új üzenet a felhasználótól, eredmény egy eszköztől, időzítő lejárta, együttműködési kérés egy másik Agenttől. Az események hatékony és helyes kezelése közvetlenül befolyásolja a teljesítményt és a felhasználói élményt.
+
+Ennek a mechanizmusnak a váza a konkurens programozásból ismert "eseményhurok (event loop)". Gondoljunk egy aszinkron Agentre mint egy hosszan futó hurokra: minden körben kivesz egy köteg eseményt a bemeneti sorból, hozzáfűzi a trajektóriához, egyszer meghívja az LLM-et, végrehajtja az általa meghívni kívánt eszközöket, majd visszatér a hurok elejére, hogy várjon a következő eseménykötegre – ugyanaz a struktúra, mint egy Go goroutine, amely üzeneteket olvas egy csatornából, és körönként dolgozza fel őket egy `for { select { ... } }` belsejében. Ennek a modellnek van egy döntő tulajdonsága: **az események csak az egyes hurokiterációk határainál kerülnek feldolgozásra**. Amíg az LLM gondolkodik vagy egy eszköz végrehajtódik, egy újonnan érkezett esemény nem furakodhat be a semmiből és nem zavarhatja meg az aktuális lépést; a sorban várakozik, amíg a kör elér egy "biztonságos ponthoz" (safe point) (egy gondolkodási szakasz vége, egy eszköz visszatérése), majd kötegelve kerül feldolgozásra. A megszakítás ugyanezt a fegyelmet követi: ahelyett, hogy erőszakosan megszakítana egy tetszőleges pillanatban, az Agent egy biztonságos pontnál ellenőrzi, hogy "kértek-e megállítást" – ami pontosan az a szerep, amelyet a `ctx.Done()` játszik a Go-ban (a 10. fejezet ugyanezt a kontextus idiómát használja egy szülő Agent al-Agentjeinek kaszkádolt megszakításának tárgyalásakor). Ha ezt megértettük, a három feldolgozási stratégia alább csak abban különbözik, hogyan kezelik a biztonságos pontot: hagyják, hogy az esemény megvárja a következő természetesen előforduló biztonságos pontot (sorba állítás), proaktívan kényszerítenek egy korai biztonságos pontot (megszakítás), vagy egyszerűen elindítanak egy külön hurkot, és nem várnak a fő hurok biztonságos pontjára (párhuzamos).
+
+**Strukturált Eseménymodellezés.**
+
+A kezeléshez megértés szükséges. Egy általános célú Agent bemenete nem csak a felhasználótól származik – egy harmadik féltől érkező üzenetet nem a felhasználó küldte az Agentnek, mégis az Agentnek meg kell értenie, mérlegelnie kell a fontosságát, és el kell döntenie, hogy közbelépjen-e. Ez megköveteli, hogy minden bemenetet egy "strukturált eseményként" modellezzünk, gazdag szemantikával:
+
+- **Forrás (ki)**: Maga a felhasználó, egy kapcsolat, egy idegen, egy rendszerértesítés
+- **Csatorna (hogyan)**: Telefonhívás, SMS, azonnali üzenet, e-mail, közösségi média, időzítő trigger, aszinkron eszközhívás eredménye, parancssori monitorozási állapotfrissítés
+- **Tartalom (mit)**: Üzenet szövege, érzelmi hangnem, sürgősség, szükséges-e válasz
+- **Kontextus (háttér)**: Válasz-e egy korábbi beszélgetésre vagy új kommunikáció, relevanciája az aktuális feladathoz
+
+Például egy ügyfél visszatérítési kérelmet tartalmazó e-mail strukturált eseményként:
+
+```json
+{
+  "source": {"type": "email", "sender": "client@example.com"},
+  "channel": "gmail_webhook",
+  "content": {"subject": "Visszatérítési Kérelem", "body": "Rendelés #12345, visszatérítés kérelmezése..."},
+  "context": {"priority": "high", "customer_tier": "vip", "related_orders": ["#12345"]}
+}
+```
+
+Csak amikor ezek a dimenziók egyértelműen modellezve vannak strukturált eseményként, tudja az Agent fenntartani a világos megértést a több fél közötti kommunikációban, elkerülve, hogy a felhasználói bemenetet összetévessze egy eszközeredménnyel, vagy egy rejtett utasításokat tartalmazó eszközeredményt felhasználói parancsnak nézzen (prompt injection). A többszálú kontextuskezelés összetettsége azt is megköveteli, hogy az Agent megértse a több beszélgetési szál közötti kapcsolatokat – hogy egy harmadik féltől származó üzenet hogyan befolyásolja a felhasználó hangulatát, a felhasználó szerepváltásait a különböző beszélgetések során, és hogy mikor kell szintetizálni a különböző szálakból származó információkat tanácsadás céljából. Az olyan munkafolyamat-platformok triggerökoszisztémája, mint az n8n – webhookok, időzítők, e-mailek, adatbázis-változások, fájlfigyelők – ugyanezt az elvet illusztrálja: minden trigger egy "érzékszerv", amelyen keresztül az Agent érzékeli a világot. Miután ezeket a heterogén eseményeket egyetlen strukturált formátumba modelleztük, az Agent bármely forrásból származó ingereket következetesen fel tud dolgozni. Az alábbi sürgősség-meghatározás és feldolgozási stratégiák mind erre az egységes modellezésre épülnek.
+
+**Dinamikus Feldolgozási Stratégia a Sürgősség Alapján.**
+
+Az emberek, akik több feladatot egyensúlyoznak, a sürgősséghez igazítják stratégiájukat: egy vészhelyzet esetén elengednek mindent, amit csinálnak; egy rutin teendő későbbre kerül a listára. Az Agent eseménykezelésének ugyanezt az intelligenciát kell mutatnia.
+
+![6-2. ábra: Az Aszinkron Eseményfeldolgozás Három Stratégiája](images/fig6-2.svg)
+
+**Megszakítás-alapú Feldolgozás** sürgős eseményekhez használatos; lényege egy "korai biztonságos pont kényszerítése" a sürgős esemény számára: az aktuális lépés proaktív megszakítása, hogy ez a pillanat egy határrá váljon, ahol az új esemény feldolgozható. Amikor egy sürgős esemény érkezik (pl. a felhasználó rákattint a "stop" gombra, vagy egy felügyeleti rendszer magas prioritású utasítást küld): (1) Állítsa le az aktuális műveletet – ha az LLM gondolkodik, azonnal szakítsa meg a streaming választ; ha egy szinkron eszköz végrehajtódik, küldjön egy megszakító jelet; (2) Ürítse ki a függőben lévő sort az összes függő esemény eltávolításával; (3) Fűzze hozzá ezeket az eseményeket a sürgős eseménnyel együtt a trajektória végéhez; (4) Azonnal hívja meg újra az LLM-et a frissített teljes trajektóriával bemenetként a helyzet felméréséhez. Például, ha a felhasználó azt írja: "Stop! Rosszul mondtam", miközben az Agent egy potenciálisan hibás műveletet készül végrehajtani, az Agent azonnal meglátja ezt az új bemenetet, újraértelmezi a valódi szándékot, és így elkerüli a rossz művelet végrehajtását.
+
+**Sorbaállítás-alapú Feldolgozás** rutin eseményekhez használatos. Amikor egy nem sürgős esemény érkezik (pl. egy aszinkron eszköz visszaad egy eredményt, vagy a felhasználó kiegészítő információt küld): (1) Adja hozzá az eseményt a sor végéhez anélkül, hogy megszakítaná az aktuális műveletet; (2) Várja meg, amíg az aktuális művelet befejeződik – hagyja, hogy az LLM befejezze a gondolkodást, hagyja, hogy a szinkron eszköz befejezze a végrehajtást; (3) Amikor bármely eszközhívás befejeződik és visszaad egy `tool.result`-ot, ellenőrizze a sort. Ha a sor nem üres, fűzze hozzá az összes eseményt a trajektóriához egyszerre; (4) Az LLM átfogóan dolgozza fel a frissített trajektóriát. Ez lehetővé teszi a kötegelt feldolgozást, növelve a hatékonyságot – például amíg az Agent egy keresőeszköz eredményére vár, a felhasználó hozzáteszi: "csak az elmúlt hónap eredményeit mutasd." Ez a kiegészítő információ bekerül a sorba, és amikor a keresési eredmények visszatérnek, mindkét esemény együtt kerül az LLM elé, elkerülve a szükségtelen köröket.
+
+**Párhuzamos Feldolgozás** független, könnyűsúlyú lekérdezésekhez használatos. Például amíg az Agent nagy mennyiségű adatot elemez, a felhasználó hirtelen megkérdezi: "Milyen idő lesz ma?" Az ilyen lekérdezések három jellemzővel bírnak: nem kapcsolódnak a fő feladathoz, gyors választ igényelnek, és alacsony a végrehajtási költségük. Sem a megszakítás-alapú (megszakítaná a fontos fő feladatot), sem a sorbaállítás-alapú (túl sokáig várakoztatná a felhasználót) feldolgozás nem megfelelő. A rendszer először felméri a lekérdezés függetlenségét és összetettségét, majd egy párhuzamos gondolkodási ülésben függetlenül végrehajtja, meghívva a szükséges eszközöket a válasz generálásához, és azonnal visszaadja. A lekérdezés és a válasz hozzáfűződik a fő feladat trajektóriájához, egyértelműen "a fő feladattal párhuzamosan végrehajtva" jelöléssel, hogy ne zavarja össze az LLM-et.
+
+**Sürgősség Meghatározása.**
+
+Sürgős események: Felhasználói megszakítás (`user.interrupt`), felügyelői utasítás (`supervisor.instruction`), Agentek közötti megszakítás (`agent.interrupt`), sürgősként jelölt külső triggerek (pl. rendszerriasztások, fizetési hibák).
+
+Nem sürgős események: Normál felhasználói bemenet (`user.input`), Agent bemenet (`agent.input`), eszköz eredmények (`tool.result`), időzítő triggerek (`timer.trigger`), normál külső triggerek.
+
+A keménykódolt szabályoknak korlátai vannak; az esemény szemantikája diktálja a kezelési módot – "Azonnal állj le!" megszakítás-alapú feldolgozást használ, "Milyen idő lesz ma?" párhuzamos feldolgozást, "Küldd el a jelentést kínaiul" sorbaállítás-alapú feldolgozást. **Egy könnyűsúlyú osztályozó LLM használata javasolt esemény-útválasztóként**, amely gyorsan meghatározza, melyik stratégiát alkalmazza, amikor egy esemény érkezik.
+
+A következő kísérlet, egy eseményvezérelt e-mail feldolgozó Agent, a fent tárgyalt eseménykezelési stratégiákat valósítja meg futtatható implementációként.
+
+**Eseményhurok-útválasztás:**
 
 ```python
-for task in dataset:
-    environment.reset(task.initial_state)
-    trajectory = agent.run(task.prompt, environment.tools)
-    outcome = environment.snapshot()
-    score = verifier(task, trajectory, outcome)
-    record(task, trajectory, outcome, score)
+while runtime.is_alive:
+    events = queue.take_batch()
+
+    if any(is_urgent(event) for event in events):
+        cancel_at_safe_point(current_work)
+    elif has_independent_fast_query(events):
+        start_parallel_session(events)
+    else:
+        append_to_trajectory(events)
+
+    decision = LLM(context + trajectory)
+    dispatch(decision)
 ```
 
-![6-2. ábra: Eszközhívási és Ember-Számítógép Interakciós Kiértékelési Környezetek](images/fig6-2.svg)
-
-### Eszközhívási Kiértékelési Környezet
-
-Olyan feladatokhoz, amelyek elsősorban eszközhasználatra támaszkodnak, mint a kódgenerálás és adatelemzés, a Verifiers keretrendszer egy tipikus tervezési mintát mutat. Az Ügynök előre meghatározott eszközök meghívásával teljesíti a feladatot, és a verifikáció végrehajtható szempontokon alapul (tesztek sikeresek-e, válaszok egyeznek-e), anélkül, hogy emberi annotációra vagy modellítéletre támaszkodna.
-
-A Verifiers hierarchikus környezettervezést vezet be: a `SingleTurnEnv` egyfordulós feladatokhoz alkalmas (pl. egyszerű Q&A), a `ToolEnv` támogatja a többfordulós autonóm eszközhívási hurkokat, a `StatefulToolEnv` és `SandboxEnv` pedig állapotfüggő eszközöket és hosszan futó sandbox környezeteket (pl. kódvégrehajtás) támogat. Például: a `SingleTurnEnv` alkalmas egy matematikai kérdés feladására és a válasz közvetlen ellenőrzésére; a `ToolEnv` több weboldal keresésére és a válasz szintetizálására illik, mielőtt a végeredmény ellenőrzése megtörténik; a `StatefulToolEnv` alkalmas adatbázisrekordok módosítására és a keletkező állapotváltozás ellenőrzésére; a `SandboxEnv` alkalmas kód sandboxban történő futtatására és a kimeneti fájlok ellenőrzésére. A 6-2. táblázat összefoglalja ezeket a környezettípusokat az olvasók számára, hogy a feladat állapota, eszközhívásai és izolációs követelményei alapján kiválaszthassák a megfelelő kiértékelési környezetet.
-
-6-2. táblázat: Verifiers Környezettípusok Összehasonlítása
-
-| Környezettípus | Állapot-megőrzés | Eszközhívások | Tipikus Használati Eset |
-|---|---|---|---|
-| SingleTurnEnv | Nincs | Nincs | Egyfordulós Q&A, matematikai feladatok |
-| ToolEnv | Nincs | Többfordulós | Keresés + információszintézis |
-| StatefulToolEnv | Igen | Többfordulós | Adatbázisrekordok módosítása |
-| SandboxEnv | Igen + Izoláció | Többfordulós | Kódvégrehajtás és tesztelés |
-
-A keretrendszer támogatja a párhuzamos mintavételezést és a trajektória-gyorsítótárazást. A teljes trajektória (megfigyelések, akciók, jutalmak) minden kiértékelésből elmentésre kerül utólagos elemzéshez és visszajátszáshoz.
-
-A környezetnek kezelnie kell a műveletek állapotfüggőségét is — egy eszközhívás kimenetele függ az aktuális állapottól. Hiba esetén egyértelmű hibaüzeneteket kell biztosítania, nem pedig egyszerű sikertelenségi jelzőket, lehetővé téve az Ügynök számára, hogy tanuljon a hibákból és módosítsa stratégiáját.
-
-### Ember-Számítógép Interakciós Kiértékelési Környezet
-
-Sok valós feladat nemcsak eszközhívásokat, hanem emberi felhasználókkal folytatott beszélgetéseket is magában foglal. Egy ügyfélszolgálati Ügynöknek meg kell értenie a homályos kifejezéseket, tisztáznia kell az igényeket, le kell kérdeznie a háttérrendszereket, és meg kell erősítenie az információkat a felhasználóval. Az ilyen feladatok kiértékelése egy alapvető kihívással néz szembe: hogyan szimuláljunk valós felhasználókat automatizált környezetben?
-
-A kulcsfontosságú tervezési elv a "Progresszív Információfeltárás", amely az ember-számítógép interakciós kiértékelés alapvető különbsége a hagyományos benchmarkoktól. A legtöbb benchmark a teljes követelményeket előre feltárja, de a valós felhasználók ritkán képesek az igényeiket az elejétől kezdve artikulálni — gyakran csak annyit mondanak, hogy "probléma van a járatommal" vagy "nem működik az internet". Az Ügynöknek kérdésekkel kell tisztáznia az igényt, és ez a folyamat önmagában is a képesség megnyilvánulása. A kiértékelés során ezért **a szimulált felhasználó információit nem szabad egyszerre az Ügynök rendelkezésére bocsátani**; azokat fokozatosan, igény szerint kell feltárni, ahogy a beszélgetés halad előre.
-
-A τ-bench megoldása a "Felhasználó-szimuláció": egy másik LLM használata a felhasználói szerep eljátszására, amely előre meghatározott utasítások szerint beszélget az Ügynökkel. A szimulált felhasználó megkapja a feladat utasításait (pl. "Le kell mondanom a holnapi járatomat"), a beszélgetés során fokozatosan feltárja a szükséges információkat az Ügynök számára, válaszol a kérdésekre, és befejezési jelet küld, amikor a feladat kész. Az utasítás megköveteli a szimulált felhasználótól, hogy "ne fedjen fel minden információt egyszerre, csak az aktuális lépéshez szükségeseket biztosítsa" és "ne találjon ki az utasításokban nem szereplő információkat". A felhasználó-szimuláció tervezése során egyensúlyozni kell a hitelesség és az irányíthatóság között: a viselkedés legyen közel egy valós felhasználóéhoz (homályos kifejezések, hiányos információk, alkalmankénti érzelmi ingadozások), miközben kövessen egy bizonyos forgatókönyvet a reprodukálhatóság biztosítása érdekében.
-
-Az alábbiakban egy többfordulós beszélgetés példája látható progresszív információfeltárással (a felhasználó-szimulátor egy rögzített forgatókönyv szerint cselekszik):
-
-> **Felhasználó**: "Probléma van a járatommal."
-> **Ügynök**: "Melyik járatról van szó?"
-> **Felhasználó** (a forgatókönyv szerint feltárva): "Delta 123, holnap reggel San Franciscóból New Yorkba."
-> **Ügynök**: "Mi a konkrét probléma?"
-> **Felhasználó** (a forgatókönyv szerint feltárva): "Túl hosszú a repülési idő, át akarom foglalni."
-> **Ügynök**: "Vannak preferenciái az új járatra?"
-> **Felhasználó** (a forgatókönyv szerint feltárva): "Bármelyik délutáni járat megfelel."
-
-A felhasználó-szimulátor egy rögzített forgatókönyvet követ (ismert információ + feltárási szabályok), biztosítva a kiértékelés reprodukálhatóságát, miközben szimulálja a valós felhasználó progresszív kifejezésmódját.
-
-A τ-bench egy benchmark az Ügynökök teljesítményének kiértékelésére strukturált üzleti folyamatokban (pl. légitársasági ügyfélszolgálat, kiskereskedelmi ügyfélszolgálat). Ellenőrzései komponens-szintűek és többdimenziósak: egyrészt ellenőrzi, hogy a végső adatbázis-állapot helyes-e (pl. a foglalási rekord állapota `"cancelled"`-re változott); másrészt ellenőrzi, hogy az Ügynök a beszélgetés során megadta-e a szükséges kulcsfontosságú információkat (pl. visszatérítési összeg és érkezési idő, amelyet specifikus sztringek vagy minták keresésével ellenőriz). Ez a kettős verifikáció egyidejűleg vizsgálja a műveleti pontosságot és a kommunikációs hatékonyságot. Feladat szinten azonban ezek az ellenőrzések végső soron "bináris nulla-egyes jutalomba" tömörülnek — minden ellenőrzésnek sikeresnek kell lennie a sikeres ponthoz; bármelyik sikertelensége 0 pontot eredményez. A bináris jutalmak megkönnyítik az olyan megbízhatósági mutatók számítását, mint a Pass^k (lásd a "Kiértékelési Metrikarendszer" szakaszt később), azon az áron, hogy a "műveletileg pontos, de egy nem kritikus mezőt kihagyó" megoldás ugyanolyan pontszámot kap, mint a "teljes kudarc".
-
-A továbbfejlesztett "τ²-bench" nem elsősorban a pontozási finomságon javít; helyette két másik területen fejleszti tovább a benchmarkot. Először is a "Kettős Irányítású Környezet": az Ügynök már nem az egyetlen fél, aki eszközöket hívhat — a felhasználó-szimulátor is működtethet ugyanazon a megosztott környezeten (az Ügynök utasítja a felhasználót, hogy kapcsoljon repülőgép üzemmódra, és a felhasználó akciója ténylegesen megváltoztatja a környezeti állapotot), ami jobban illeszkedik a valós forgatókönyvekhez, mint a technikai támogatás, ahol a felhasználónak segítenie kell. Másodszor, **pontosabb feladatspecifikációk és kompozicionális feladatgenerálás**: kevesebb kétértelműség a sikerességi feltételekben, és a feladatpéldányok paraméterezhetők és kötegenként generálhatók (lásd a "Verifikálhatóság és Objektivitás Biztosítása" szakaszt később a részletes verifikációs dimenziókért).
-
-> **6-1. kísérlet ★: Futtasd a τ²-bench-et és Hasonlítsd Össze a τ-bench-től Való Fejlődését**
->
-> Ez a kísérlet a τ²-bench kiértékelési keretrendszert futtatja, hogy megértsük az ember-számítógép interakciós kiértékelési környezetek tervezési alapelveit. A τ-bench és τ²-bench összehasonlításával láthatjuk, hogyan fejleszthetők iteratívan a kiértékelési adathalmazok.
->
-> Olvasd el mélyrehatóan a feladatdefiníciós fájlokat: minden feladat tartalmazza a felhasználó által ismert információkat, a progresszív feltárást és válaszstratégiákat szabályozó feladatutasításokat, valamint a sikerességi feltételeket (az adatbázis célállapota és a párbeszédben megjelenő megerősítő információk). Futtasd le a teljes kiértékelési folyamatot, figyeld meg a felhasználó-szimulátor és az Ügynök többfordulós párbeszédét, és elemezd a tipikus hibamódokat (szabályzatsértések, információhiányok, túlzott emberi ügynökhöz irányítás stb.).
+> **6-1. ★★★ Kísérlet: Eseményvezérelt E-mail Feldolgozó Agent**
 >
 >
-> ![6-3. ábra: τ²-bench Kiértékelési Architektúra](images/fig6-3.svg)
+> ![6-3. ábra: 6-1. Kísérlet Eseményvezérelt Agent Architektúrája](images/fig6-3.svg)
 >
 >
-> Hasonlítsd össze a τ-bench és τ²-bench tervezési különbségeit: A τ-bench eredeti verziójában túl egyszerűek voltak a felhasználói utasítások (az Ügynök kitalálhatta a választ), pontatlanok a sikerességi feltételek (téves ítéletekhez vezettek), és mechanikus volt a felhasználó-szimulátor. A τ²-bench szisztematikus fejlesztéseket vezetett be e problémák megoldására:
+> Ez a kísérlet a legegyszerűbb eseményvezérelt Agentet építi fel: egy "Automatikus E-mail Feldolgozó Asszisztenst". Az Agent figyeli az e-mail beérkező leveleket, és amikor új e-mail érkezik, automatikusan elindít egy feldolgozási munkafolyamatot – osztályozás, összefoglalás, választervezet, és szükség esetén a felhasználó értesítése. Ez a legintuitívabb bevezető forgatókönyv egy eseményvezérelt Agent számára: egy külső esemény (új e-mail érkezése) elindít egy teljes Agent gondolkodási ciklust.
 >
-> - **Részletesebb feladatutasítások bevezetése**: Beleértve a "Horgonyzási Követelményeket", ami azt jelenti, hogy a válaszoknak a környezet tényleges állapotán kell alapulniuk
-> - **Pontosabb kiértékelési szempontok**: Például "a sebességtesztnek 'kiváló' eredményt kell adnia a megoldottsághoz"
-> - **Valósághűbb felhasználó-szimulátor viselkedési specifikációk**: Progresszív információfeltárás, természetes érzelmi ingadozások
+> **Kísérlet Célja**: az eseményvezérelt architektúra alapgondolatának megértése – az Agent már nem vár passzívan a felhasználói bemenetre, hanem saját maga cselekszik a külső eseményekre válaszul. Ezen a kísérleten keresztül az olvasók elsajátítják az eseményforrás regisztráció, az eseménysor és az "esemény érkezik → Agent feldolgoz → eredmény kézbesítve" alapvető zárt hurkát.
 >
-> Különös figyelmet fordíts a τ²-bench újonnan hozzáadott telekommunikációs tartományi feladataira, és értsd meg a τ²-bench kettős irányítású környezetének tervezését (ahogy korábban említettük, a felhasználó és az Ügynök közösen működteti ugyanazt a megosztott környezetet).
+> **Eseményforrások és Eseménysor.**
 >
-
-Az eszközhívási kiértékelés azt kérdezi, hogy egy megfigyelhető állapotváltozás megtörtént-e; az ember-számítógép interakciós kiértékelés azt kérdezi, hogy az Ügynök segített-e a felhasználónak eljutni egy új megértéshez vagy döntéshez. Az előbbi az Ügynök akcióinak helyességét teszteli; az utóbbi a kommunikációs stratégiájának megalapozottságát.
-
-A kiértékelési környezetek építése érinti a szimulációs környezeteket is — amikor egy kiértékelési környezetnek nagyszámú ismételt interakciót kell támogatnia, szimulációs környezetté válik. A fejezet vége röviden foglalkozik ezzel.
-
-## Kiértékelési Feladat-adathalmazok Tervezése
-
-A kiértékelési környezet a "színpad", az adathalmaz a "forgatókönyv". A forgatókönyv minősége gyakran jobban meghatározza a kiértékelés értékét, mint maga a színpad. Egy rosszul megtervezett adathalmaz még tökéletes környezetben is csak zajt produkál. Ez a szakasz számos, ismételten bevált alapelvet sűrít össze olyan benchmarkok tervezési gyakorlatából, mint a GAIA, AndroidWorld, SWE-Bench Verified, τ-bench és τ²-bench, Terminal-Bench, OSWorld és OSWorld-Verified.
-
-Ez a lista nem meríti ki az Ügynök-kiértékelés teljes palettáját. Már a Web/GUI kategórián belül is több különböző hangsúlyú benchmark létezik: a WebArena teljesen reprodukálható weboldalakat épít (e-kereskedelem, fórumok, kódtárhely stb.), amelyek a valós weboldalak kiszámíthatatlanságát tartalmazzák egy sandboxon belül; a Mind2Web az ellenkező utat járja, közvetlenül több száz valós weboldalon teszteli az általánosítást; a [ClawBench](https://claw-bench.com/) ([tanulmány](https://arxiv.org/abs/2604.08523), [kód](https://github.com/TIGER-AI-Lab/ClawBench)) lehetővé teszi, hogy egy izolált konténerben futó Ügynök végpontok közötti hétköznapi feladatokat hajtson végre élő weboldalakon. A V1 153 feladatot fed le 144 weboldalon, a V2 újabb 130-at ad hozzá, és öt rétegű bizonyítékot rögzít párhuzamosan: munkamenet-visszajátszások, akció-képernyőképek, HTTP forgalom, böngészőakciók és Ügynök-üzenetek. Kiegészíti a sandboxolt benchmarkokat az élő weboldalak eltolódásának és a hosszú farkú hibák könnyebb elemzésének lehetővé tételével, azon az áron, hogy a reprodukálhatóság függ a harmadik féltől származó weboldalak változásaitól; a BrowseComp a mélykeresésre specializálódott — olyan mélyen eltemetett válaszok, amelyekhez csak többlépcsős böngészéssel és keresztellenőrzéssel lehet hozzáférni. Az eszközhívási oldalon vannak dedikált függvényhívási ranglisták, mint a BFCL (Berkeley Function-Calling Leaderboard). Ez a fejezet nem törekszik mindegyik katalogizálására. Ehelyett a két alapvető környezeti paradigmát (eszközhívás és ember-számítógép interakció) veszi, plusz az adathalmaz esettanulmányokon átívelő GUI-műveleti forgatókönyveket, és belemélyed a tervezési kompromisszumaikba. Miután megértetted a paradigmákat, gyorsan meg tudod ítélni, hogy egy új benchmark mit mér, mennyire akadályozza meg az adatszivárgást, és mennyire lehet extrapolálni a következtetéseit.
-
-> **6-2. kísérlet ★: Végezz El Kézzel Benchmark Feladatokat**
+> A rendszer egységes hozzáférést támogat több eseményforráshoz:
 >
-> Válassz ki feladatokat mindegyikből: GAIA, AndroidWorld, SWE-Bench Verified, τ²-bench, Terminal-Bench és OSWorld-Verified, és hajtsd végre őket kézzel. Javasolt minden adathalmazból egy egyszerű, egy közepes és egy nehéz feladat elvégzése — a "nehéz" szintnek még emberek számára is kihívást kell jelentenie. Hasonlítsd össze a végrehajtási eredményeidet a standard válaszokkal, és elemezd az eltérések forrásait. Ezen gyakorlati tapasztalaton keresztül értsd meg: a feladatleírásoknak egyensúlyozniuk kell a világosság és a nyitottság között, a verifikációs szabványoknak objektívnek és végrehajthatónak kell lenniük, és a feladatok hierarchikus nehézségének képesnek kell lennie a különböző képességszintek megkülönböztetésére.
+> - **E-mail Események** (`on_email_received`): Akkor aktiválódik, amikor új e-mail érkezik, akár a beérkező levelek időszakos ellenőrzésével, akár push értesítések fogadásával.
+> - **IM/SMS Üzenetek** (`on_im_message`, `on_sms_message`): Azonnali üzenetek vagy SMS üzenetek által aktiválva.
+> - **GitHub Események** (`on_github_pr_update`, `on_github_issue_update`): PR felülvizsgálati megjegyzések vagy állapotváltozások által aktiválva.
+> - **Időzítő Triggerek** (`on_timer_expire`): Ütemezett feladatok által aktiválva (pl. napi összefoglalók, heti jelentések generálása).
+> - **Webhookok** (`on_webhook_received`): Általános visszahívások külső rendszerektől.
+> - **Rendszer Események** (`on_user_inactive`, `on_process_timeout`, `on_resource_alert`): Belső állapotváltozások által aktiválva.
 >
-
-### A Feladat-adathalmazok Tervezésének Alapvető Kihívásai
-
-**Első kihívás: A világosság és a nyitottság közötti feszültség.** A feladatleírásoknak elég világosnak kell lenniük a reprodukálható kiértékelés biztosításához, de nem annyira merevnek, hogy elfojtsák az Ügynök kreativitását. A GAIA erre példát ad: a feladatok "fogalmilag egyszerűek", de nyitott végrehajtási utakkal rendelkeznek — például egy feladat megkövetelheti, hogy az Ügynök azonosítson egy űrhajóst a NASA Astronomy Picture of the Day oldaláról, és határozza meg, mennyi időt töltött az űrben. A cél világos, de hogy hogyan keres, szűr és ellenőriz, az teljes mértékben az Ügynök autonóm döntésére van bízva.
-
-**Második kihívás: A hitelesség és az irányíthatóság egyensúlya.** A valós feladatok bizonytalanságot és zajt tartalmaznak, ami feltárhatja a robusztusságot, de veszélyeztetheti a reprodukálhatóságot is. A SWE-Bench eredeti verziója közvetlenül valós GitHub-issue-kat használt, biztosítva a hitelességet, de homályos feladatleírásokhoz, hiányos tesztekhez és szubjektív kiértékelési szempontokhoz is vezetett. A SWE-Bench Verified szisztematikus, emberi szakértők általi validálást vezetett be, 500 kiváló minőségű feladatot kiválasztva egyértelműen meghatározott problémákkal, elegendő teszttel és tiszta megoldásokkal, jelentősen javítva az irányíthatóságot a hitelesség megőrzése mellett.
-
-**Harmadik kihívás: A sokszínűség és a rendszerezettség összehangolása.** Egy hatékony adathalmaznak le kell fednie a tipikus forgatókönyveket, határeseteket és hibacsapdákat, miközben szisztematikus szervezettséggel kell rendelkeznie, hogy a kiértékelési eredmények diagnosztizálhassák a specifikus képességgyengeségeket. Az AndroidWorld 116 feladata 20 valós alkalmazást ölel fel, mindegyik feljegyzve a szükséges alapképességeket (többlépcsős tervezés, vizuális megértés, időbeli következtetés) — így az eredmények nemcsak egy általános sikerességi arányt adnak, hanem egy erősségi és gyengeségi profilt specifikus képességi dimenziók mentén. Még fontosabb, hogy egy paraméterezési mechanizmus szinte korlátlan számú feladatváltozatot generálhat.
-
-**Negyedik kihívás: A kiértékelési költség vs. lefedettség.** Az összetett Ügynök-feladatok percekig vagy akár órákig is eltarthatnak, nagy mennyiségű tokent fogyasztva. Az adathalmaz méretének egyensúlyoznia kell az átfogóság és a gazdaságosság között. A GAIA gondosan kiválaszt 466 feladatot három nehézségi szinten, lefedve több képességi dimenziót, miközben lehetővé teszi a kiértékelést ésszerű költségen. A SWE-Bench Verified 2294 feladatról 500-ra csökkentette a készletét (körülbelül négyötödével csökkentve a költségeket, miközben a szigorúbb minőségi szabványok révén javította a jel-zaj arányt).
-
-**Ötödik kihívás: Az adatszennyezés megelőzése.** A nagy nyelvi modellek korában az adatszennyezés komoly kihívást jelent a kiértékelés számára: amikor a kiértékelési adatok bekerülnek a tanítási adatokba, a kiértékelés a memóriát méri, nem az általánosítást. Olyan ez, mintha egy vizsga előtt memorizálnánk a válaszokat — a jó pontszámok nem tükrözik a valódi képességet. A különböző benchmarkok eltérő megelőzési stratégiákat alkalmaznak: a GAIA a válaszok egyediségére támaszkodik; a kérdések több forrásból származó információ kombinálását igénylik, és egyes feladatokhoz speciálisan létrehozott mellékletfájlok tartoznak (PDF/audio/képek, amelyek nem léteznek az interneten), így egyetlen weboldal sem adhatja meg közvetlenül a választ. A SWE-Bench Verified maga egy 500 feladatból álló részhalmaz, amelyet az OpenAI szerzett az eredeti SWE-Bench kézi minőségi szűrésével, és nem tartalmaz időalapú szivárgásmegelőzési tervezést. Olyan későbbi munkák, mint a SWE-bench-Live használnak valóban időbeli frissességet a szivárgás megelőzésére, folyamatosan beépítve a modell tanítási határideje után létrehozott issue-kat, így a kiértékelés mindig egy lépéssel a modell tanítási korpusza előtt jár. A τ²-bench dinamikus paramétergenerálással akadályozza meg a szivárgást, ahol a konkrét feladatpéldányok (felhasználónevek, rendelésszámok, dátumok stb.) véletlenszerűen generálódnak minden egyes alkalommal. Az AndroidWorld paraméterezett feladatgenerálása természeténél fogva segít a szivárgás megelőzésében, mert a verifikáció a végső UI állapoton alapul, nem a műveletek sorrendjén. A Terminal-Bench a szivárgást észlelhetővé teszi kanári GUID-ok (globálisan egyedi azonosítók, amelyek nyomkövetési jelzőként szolgálnak) beágyazásával: ha egy modell képes kiadni ezt a GUID-ot tartalmazó tartalmat, az azt jelzi, hogy a benchmark adatok kiszivárogtak a tanítási készletbe.
-
-### Feladatleírások Precíziós Tervezése
-
-A GAIA a válaszok egyediségét egyértelmű információforrás-korlátozásokkal, időtartományokkal, témákkal és lekérdezési célokkal biztosítja. Például egy 3. szintű feladat megköveteli, hogy egy adott dátum NASA-képéből kiindulva, vizuális megértéssel azonosítsuk az űrhajóst, keressük meg az űrhajóscsoportot, amelyhez tartozik, számítsuk ki az űrben töltött idejét, és pontosan formázzuk a kimenetet ("vezetéknév; pontosvesszővel elválasztott mezők; számok ezres tagolással"). Minden részlet az automatikus verifikációt szolgálja — csak a formátumban és tartalomban egyező válasz számít sikeresnek.
-
-A τ²-bench kontextualizált tervezést vezet be, ahol minden feladat több információs réteget tartalmaz: a felszíni problémát ("nem működik a mobil adat"), a teljesítményelvárást ("kiváló sebességértékelés szükséges"), a korlátozást ("nem fogad el semmilyen más értékelést") és a mögöttes érzelmet. Egy kulcsfontosságú fejlesztés az "ismert információ" és a "feladatutasítások" szétválasztása: az ismert információ az, amit a felhasználó jelenleg tud, míg a feladatutasítások irányítják a szimulátort, hogyan fedje fel fokozatosan az információt, beleértve a "Horgonyzási Követelményeket" (a válaszoknak az eszközhívások által visszaadott tényleges eredményeken kell alapulniuk, nem kitalált információkon).
-
-A SWE-Bench Verified strukturált mezőket tartalmaz, mint a probléma leírása, reprodukálási lépések és várt/tényleges viselkedés, az annotátorok ellenőrzik a leírás és a tesztesetek közötti egyezést. A Terminal-Bench feladatleírásainak minden eleme mechanikusan ellenőrizhető: hogy a fájlútvonalak léteznek-e, a jogosultsági értékek helyesek-e, a tanúsítványparaméterek érvényesek-e, a dátumformátumok helyesek-e. Például a "build-linux-kernel-qemu" megköveteli a Linux kernel 6.9 forrásból történő építését, egy egyéni printk hozzáadását a `start_kernel`-ben, egy initramfs generálását és futtatását QEMU-ban. A siker feltétele az egyéni üzenet megjelenése a boot logban — az Ügynök nem hamisíthatja a kimenetet; valóban végig kell vinnie a teljes folyamatot.
-
-Az AndroidWorld "paraméterezett sablon"-tervezést használ. Egy feladat nem statikus szöveg, hanem egy dinamikusan példányosítható sablon (pl. "Változtasd meg a `[KAPCSOLAT_NEVE]` kapcsolat telefonszámát `[ÚJ_TELEFON]`-ra"), ahol a különböző paraméterértékek véletlenszerűen generálódnak minden kiértékeléshez. Ennek három előnye van:
-
-- **Memorizálás megelőzése**: A paraméterértékek minden alkalommal eltérnek, megakadályozva egy rögzített műveletsorozat visszajátszását
-- **Adatok sokszínűségének növelése**: Egy sablon szinte korlátlan számú példányt generálhat
-- **Összehasonlító kísérletek támogatása**: Bizonyos paraméterek rögzítése, mások változtatása lehetővé teszi adott tényezők hatásának pontos mérését
-
-A verifikáció a végső UI állapoton alapul (pl. hogy a telefonszám mező tartalmazza-e a várt értéket), nem a műveletek sorrendjén.
-
-Az OSWorld feladatai gyakran nem "tiszta" kezdeti állapotból indulnak, hanem gondosan konfigurált köztes állapotokból, ami jobban hasonlít a valós használati forgatókönyvekhez. A feladatleírásoknak kezelniük kell a többféle megoldást ("állítsa a hátteret lilára" — specifikus színkód szükséges az egyértelműsítéshez; "fűzzön össze két CSV-t" — el kell fogadnia minden ésszerű módszert, mint egy fejléc megtartása vagy mindkét fejléc megtartása) és a környezeti bizonytalanságot (weboldalak kaparás elleni védelme, fejlődő alkalmazás UI-ok, versenyhelyzetek — az OSWorld-Verified ezeket offline oldalpillanatképekkel, rögzített függőségi verziókkal, explicit várakozási feltételekkel stb. enyhíti).
-
-### A Feladatok Hierarchikus Nehézségének Tervezése
-
-A GAIA három nehézségi szintet tervez: az 1. szint csak 1-2 eszközt igényel (emberek 93,9% vs. GPT-4 30,3%), a 2. szint többlépcsős következtetést igényel (91,8% vs. 9,7%), a 3. szint pedig komplex kombinációkat (87,3% vs. 0%). A hierarchikus tervezés diagnosztikai értéke: az 1. szinten bekövetkező kudarc alapvető eszközhasználati problémákra utal, a 2. szint a többlépcsős tervezésre és információintegrációra, a 3. szint pedig a hosszú sorozatú következtetésre és komplexitáskezelésre. Minden szint különböző fejlesztési irányoknak felel meg (utasítás-mérnökség vs. tervezési mechanizmusok vs. hierarchikus architektúra/poszt-tréning).
-
-A τ²-bench az üzleti folyamat összetettsége szerint rétegezi a nehézséget: az egyszerű információlekérdezésektől a többlépcsős folyamatokig (repülőjegy-foglalás módosítása: lekérdezés, alternatívák bemutatása, megerősítés beszerzése, árkülönbözet kiszámítása, fizetés feldolgozása) a hibadiagnózisig (több lehetséges ok szisztematikus ellenőrzése és javítások verifikálása), végül a stratégiai ítéletalkotásig (a szabályzatnak nem megfelelő kérések kezelése).
-
-A Terminal-Bench a technikai tartomány × műveleti komplexitás kettős dimenziója mentén rétegezi a nehézséget. Feladatregisztere több mint 200 feladatot gyűjtött össze (az alapkiértékelő készlet mérete verziótól függően változik; pl. a 2.0-s verzió 89 kiváló minőségű feladatot választott ki a közösségi hozzájárulásokból), az egyszerű MLflow modellregisztrációtól, a közepes nehézségű 7-Zip jelszótörésen át, a nehéz Git szerver és web szerver integráción keresztül, a legnehezebb FEAL differenciális kriptoanalízisig (kriptográfiai ismeretek + algoritmus-optimalizálás szükséges a 30 másodperces időkorlát betartásához).
-
-### Verifikálhatóság és Objektivitás Biztosítása
-
-A GAIA válaszai tömörek és világosak. A szigorú formázási szabályok lehetővé teszik a verifikációt pontos sztringegyeztetéssel. A bináris eredmény (egyezik vagy nem) biztosítja az objektív reprodukálhatóságot. A válaszok ritkasága csalásellenes intézkedésként is szolgál — a nagyon specifikus tények valószínűtlen, hogy szó szerint szerepeljenek a tanítási adatokban.
-
-A SWE-Bench Verified végrehajtható kódalapú ellenőrzéseket használ, megkülönböztetve a FAIL_TO_PASS (a javítás előtt hibás, javítás után sikeres, bizonyítva a probléma megoldását) és a PASS_TO_PASS (javítás előtt és után is sikeres, bizonyítva, hogy nem kerültek be új hibák) eseteket, elérve a kettős verifikációt. A Verified verzió azt is biztosítja, hogy a tesztek maguk megbízhatók legyenek, flúgos tesztek (amelyek néha sikeresek, néha sikertelenek) nélkül.
-
-A τ²-bench verifikációs rendszere többrétegű ellenőrzéseket tartalmaz (az egyes rétegek eredményei továbbra is bináris jutalomba tömörülnek feladat szinten; mindennek sikeresnek kell lennie a sikerhez):
-
-- **Adatbázis-állapot ellenőrzés**: Foglalási rekord állapota, visszatérítési rekord létrehozása
-- **Párbeszéd-tartalom kulcsszó keresése**: Hogy az Ügynök expliciten megerősítette-e a visszatérítési összeget és a várható érkezési időt a felhasználónak
-- **Folyamatmegfelelés**: Az eszközhívások sorrendjének elemzése, pl. hogy a felhasználó explicit megerősítését beszerezték-e a rendelés módosítása előtt
-
-A τ²-bench kettős irányítású környezete (lásd az "Ember-Számítógép Interakciós Kiértékelési Környezet" szakaszt korábban) új dimenziót ad a verifikációhoz: miután a felhasználó-szimulátor ténylegesen megváltoztatta a környezeti állapotot, az Ügynöknek meg kell figyelnie ezt a változást az eszközhívásokon keresztül, és ennek megfelelően kell folytatnia a hibaelhárítást. A verifikáció ezért kiterjed arra is, hogy az Ügynök ténylegesen megfigyelte-e a felhasználó akcióinak kimenetelét.
-
-Az OSWorld 134 független kiértékelő függvényt biztosít teljes operációs rendszer hozzáféréssel, lehetővé téve a fájlrendszer-struktúrák, folyamatállapotok, hálózati kapcsolatok és alkalmazásbelsők mélyreható vizsgálatát. Például egy adatbázis-műveleti feladatban az értékelő szkript nemcsak azt ellenőrzi, hogy a jelentésfájl létezik, hanem közvetlenül csatlakozik az adatbázishoz, hogy ellenőrizze, az SQL helyesen futott-e le. Böngészőfeladatok esetén elemzi a DOM fát, ellenőrzi a cookie-kat/localStorage-t, és verifikációs kéréseket küld a háttérrendszernek, hogy megerősítse, az űrlapkitöltés ténylegesen életbe lépett-e. Ez a mélyreható vizsgálat képes észlelni a "felszínes befejezés, de lényeges hiba" eseteket — például az Ügynök rákattintott a beküldés gombra, de a kérést a szerver elutasította a hibás mezőbejegyzések miatt.
-
-A Terminal-Bench egy szabványosított Docker konténerkörnyezeten alapul, kombinálva a fájlrendszer-állapot ellenőrzéseket (útvonal létezése, jogosultsági értékek, tartalomformátum) a programvégrehajtás funkcionális verifikációjával (a build-linux-kernel-qemu esetében ténylegesen elindítja a QEMU-t és keresi az egyéni printk üzenetet). A kanári GUID nyomon követhetővé teszi a szivárgást.
-
-### A Feladatmegoszlás Szisztematikus Tervezése
-
-A feladatmegoszlásnak szisztematikusan le kell fednie a képességi dimenziókat, a nehézségi dimenziókat, a forgatókönyvi dimenziókat és a határeseteket. A GAIA az általánosságra törekszik — a legtöbb feladat a következtetés, multimodális feldolgozás, böngészés és eszközhasználat kombinációját igényli. A τ²-bench szándékosan "csapdafeladatokat" tervez — egy felhasználó azt állítja, hogy "az ügyfélszolgálat jóváhagyta a lemondást", amikor a lemondás valójában nem felel meg a szabályzatnak — hogy tesztelje, az Ügynök megőrzi-e az ítélőképességét nyomás és félrevezetés alatt. Az OSWorld a művelettípus (fájl IO / asztali alkalmazás / webalkalmazás / alkalmazásokon átívelő munkafolyamat) és az alkalmazási tartomány kétdimenziós mátrixán alapul, három operációs rendszert lefedve (a kutatás erős operációsrendszer-közi korrelációt mutat; az egyik rendszeren tanult készségek átvihetők másokra). A Terminal-Bench "több technológiai verem kombinációs feladatokat" tartalmaz a rendszerszintű gondolkodás tesztelésére (pl. egy újrafelosztási feladat, amely egyesíti az adatfeldolgozást + fájlműveleteket + Python mérnökséget).
-
-### Adatminőség-ellenőrzés és Iteratív Fejlesztés
-
-A SWE-Bench Verified a minőség-ellenőrzés mintaképe. Az OpenAI véletlenszerűen kiválasztott 1699 feladatot az eredeti 2294-ből emberi kiértékelésre, 93 Pythonban jártas fejlesztőt toborozva. Az annotátoroknak több ellenőrzést kellett elvégezniük: a probléma leírása világos-e (megérthető-e, mit kell megoldani), a tesztesetek teljesek-e (minden aspektust és határesetet lefednek-e), a tesztek stabilak-e (nincsenek-e flúgos tesztek környezetből vagy véletlenszerűségből adódóan), a javítás helyes-e (vezet-e be új hibákat), és a nehézség ésszerű-e. A szigorú szűrés után csak 500 felelt meg (29%) — ez a magas elutasítási arány szükséges befektetés a kiértékelés minőségébe. Szabványosított annotációs iránymutatásokat is bevezettek, meghatározva minden egyes ellenőrzés specifikus szempontjait és példáit a különböző annotátorok közötti konzisztencia biztosítására.
-
-A τ²-bench bevezeti az "ismert információ" / "feladatutasítások" szétválasztását (realisztikusabbá téve a szimulátor viselkedését) és szigorúbb befejezési feltételeket (pl. "csak a kiváló számít megoldottnak; a gyenge/tisztességes/jó nem elfogadható"), megelőzve a "felszínes javításokat".
-
-Az OSWorld-Verified az iteratív fejlesztés mintaképe. A 2024 áprilisi megjelenése után az OSWorld gyorsan fontos benchmarkká vált a multimodális Ügynök-kiértékelésben, de több mint 15 hónap széleskörű használat során több mint 300 problémát tártak fel. Ezek a problémák négy kategóriába tartoznak: környezeti problémák (weboldalak kaparás elleni védelme, CAPTCHA-k, dinamikus tartalomváltozások), feladatleírási problémák (kétértelmű megfogalmazás), verifikációs logikai problémák (túl szigorú vagy túl megengedő) és kezdeti állapot problémák (hiányos konfiguráció). A Hongkongi Egyetem körülbelül 10 fős csapata szorosan együttműködött a MoonShot AI-val, az OpenAI-val, a ByteDance Seed TARS-szal, az Anthropic-kal, a Simular-ral és másokkal két hónapon keresztül, hogy szisztematikusan kijavítsák ezeket a problémákat. Minden kategóriához javítási stratégiákat dolgoztak ki: a környezeti problémákat a verziók rögzítésével és offline biztonsági mentésekkel oldották meg, a feladatleírásokat a kétértelmű megfogalmazások átírásával tisztázták, a verifikációs logikát a helyes alapvonalak kézi felállításával és a feltételek módosításával egyensúlyozták, a kezdeti állapotokat a teljességi ellenőrzések hozzáadásával erősítették.
-
-A kiértékelési infrastruktúrát is áthelyezték helyi VM-ekről az AWS felhőplatformra, kihasználva a rugalmas skálázást az 50-szeres gyorsulás eléréséhez párhuzamosítással (több mint 10 óráról néhány percre). A Google Drive feladat inicializálási sikerességi aránya 50%-ról több mint 95%-ra nőtt. Az összes hivatalos kiértékelési trajektória-adat nyilvánosan elérhető a Hugging Face-en, lehetővé téve a közösség számára, hogy minden részletet áttekintsen, reprodukálja az eredményeket, azonosítsa a problémákat, ami egy folyamatos fejlesztés erényes körforgását hozza létre.
-
-A kiértékelési környezetek és a poszt-tréning környezetek gyakran közös eredetűek: egy jól megtervezett kiértékelési környezet kis erőfeszítéssel alkalmazható tanítási környezetté — a SWE-Gym reprezentatív példa a SWE-bench alapján épített tanítási feladatokra, míg a τ²-bench és AndroidWorld paraméterezett sablonjai tömegesen generálhatnak tanítási példányokat. De egy piros vonalat meg kell húzni: ami újrafelhasználható, az a környezet "építési mechanizmusa"; a kiértékelő készlet konkrét feladatainak szigorúan elkülönítve kell maradniuk a tanítási adatoktól — ha egy kiértékelési feladat bekerül a tanítási készletbe, az a memóriát teszteli, nem a képességet (lásd 7. fejezet).
-
-## Kiértékelési Metrikarendszer
-
-Miután megállapítottuk, "milyen feladatokon értékeljünk", még mindig válaszolnunk kell arra, "milyen dimenziókban mérjünk". Ez a szakasz az Ügynök-kiértékelésben általánosan használt mutatókat gyűjti össze egy referencia "metrikaszótárba" — a folyamattól az eredményig, a minőségtől a biztonságig — mindegyikhez definíciót és használati eseteket adva. Tartalmazza a Pass@k, Pass^k és a korábban említett többi metrika pontos definícióit is (pl. a τ-bench szakaszban).
-
-**Folyamatmetrikák: Fekete doboztól a Fehér dobozig.**
-
-Kizárólag a végeredményre összpontosítani nem elegendő; az a folyamat is fontos, ahogy az Ügynök eléri az eredményt. "Az akciók érvényességi és engedélyezési aránya" azt méri, hogy az akciók milyen arányban érvényesek és engedélyezettek — az érvénytelen műveletek közé tartozik a nem létező eszközök hívása vagy helytelen paramétertípusok átadása; az engedélyezetlen műveletek a megengedett körön túli akciókra utalnak. A magas arány azt jelzi, hogy az Ügynök tisztában van az eszközök ökoszisztémájával. "Az eszközhívás helyességi aránya" azt is megköveteli, hogy a paraméterek szemantikailag ésszerűek legyenek: egy keresőeszköz lekérdezési kifejezéseinek pontosan kifejezniük a szükségletet, a fájlműveletek útvonalának a helyes célra kell mutatnia.
-
-**Az útvonal hatékonysága** azt méri, mennyire hatékonyan teljesíti az Ügynök a feladatot: lépések száma (gondolkodj-cselekedj-megfigyeld ciklusok), redundáns akciók (ugyanannak a kulcsszónak ismételt keresése, ugyanannak a fájlnak újraolvasása) és visszalépések gyakorisága (milyen gyakran veszi észre az Ügynök a hibát és javítja ki — alkalmankénti visszalépés normális, de a gyakori visszalépés elégtelen előretervezésre utal). Egy emberi szakértőktől vagy heurisztikus algoritmusokból származó alapvonal szükséges az "ésszerű lépésszám" meghatározásához.
-
-**A lekérési lefedettség** információgyűjtő feladatokra irányul: Az Ügynök teljesen feltárta-e az információteret? Csak a keresési eredmények első oldalának megtekintése után ugrott-e következtetésekre? "Költség és késleltetés" a kérések számára, a tokenhasználatra (input/output költségek megkülönböztetése, KV Cache újrafelhasználás figyelembevétele) és a falon lévő óra idejére (modell-inferencia + eszközvégrehajtás + hálózati késleltetés) összpontosít. Az időeloszlást nyomon kell követni a szűk keresztmetszetek azonosításához.
-
-**Eredmény- és Minőségi Metrikák.**
-
-**A feladat sikerességi aránya** a legközvetlenebb kemény mérőszám, amely hierarchikus szabványokkal tervezhető (az alapvető célokat el kell érni, a másodlagos célok a minőségi pontszámokat befolyásolják). A statisztikai módszerek tekintetében két gyakran összetévesztett metrikát kell megkülönböztetni:
-
-- **Pass@k**: Annak a valószínűsége, hogy "legalább egy" a k kísérletből sikeres, arra a kérdésre válaszolva, hogy "Tudja-e az Ügynök?"
-- **Pass^k**: Annak a valószínűsége, hogy "mind" a k kísérlet sikeres, arra a kérdésre válaszolva, hogy "Stabil és megbízható-e az Ügynök?"
-- **Best@k**: A "legjobb" kísérlet pontszáma (nem pedig az, hogy sikeres volt-e), a "minőségi plafont" mérve "elegendő lehetőség mellett", gyakran használják nyílt végű, folytonos pontozású feladatokhoz.
-
-Egy konkrét szám szemléletessé teszi a különbséget. Tegyük fel, hogy az Ügynök egyszeri sikerességi aránya 60% (Pass@1 = 0,6). 5 kísérlet esetén: Pass@5 = 1 - 0,4^5 ≈ 99% (szinte biztos, hogy legalább egyszer sikerül), míg Pass^5 = 0,6^5 ≈ 7,8% (annak, hogy mind az öt sikerül, kicsi a valószínűsége). Az előbbi a képességplafont, az utóbbi a stabilitást méri; összetévesztésük félrevezetheti az Ügynökről alkotott képet.
-
-
-**Biztonsági és Megfelelőségi Metrikák** kritikusak a termelési bevezetésben: érzékeny műveletek kiváltása (adatok törlése / jogosultságok módosítása / külső kommunikáció küldése), adatszivárgás (jelszavak naplózása / privát dokumentumok külső API-nak küldése) és tiltott tartalom minden esetben "nulla-tolerancia elv" alá kell, hogy essen — hasonlóan a hallucinációs vétóhoz (lásd "Négy Rubrica-elv" később). Egyetlen súlyos biztonsági jogsértés is megvétózhatja a teljes kiértékelést, függetlenül a többi dimenzióban nyújtott teljesítménytől.
-
-**A robusztusság** a bizonytalansággal szembeni stabilitást méri: véletlenszám-mag érzékenység (mennyit ingadozik a teljesítmény különböző inicializációk alatt), oldalváltozásokhoz való alkalmazkodóképesség (egy weboldal UI frissítése nem okozhat teljes kudarcot), API-ingadozás toleranciája (képes-e kecsesen kezelni az átmeneti hibákat, időtúllépéseket, formátumváltozásokat) és hosszú távú memóriazavar (a kontextusban felhalmozott elavult információk vezethetnek-e helytelen döntésekhez).
-
-**A végrehajtási trajektória és a végeredmény kettős lefedettsége.** Egy könnyen figyelmen kívül hagyható különbség: "amit az Ügynök mondott és tett a végrehajtás során" (az 1. fejezetben definiált trajektória) és "ami a rendszer végül lett" (a végeredmény) két különböző dolog. Az Ügynök azt mondja, hogy "a foglalás kész" — ez trajektória-szintű információ; a rekord tényleges megjelenése az adatbázisban — ez eredmény-szintű verifikáció. Ha csak a trajektóriát nézzük, elkerülhető a "mondta, de nem tette meg" eset; ha csak az eredményt nézzük, elveszhetnek a rossz irányba tartó közbülső lépések. Az Anthropic egyszer adott egy példát: egy repülőjegy-foglaló Ügynök felfedezett egy kiskaput a légitársaság szabályzatában a végrehajtás során, és olcsóbb opciót talált a felhasználónak — ha csak az előre meghatározott végrehajtási útvonal szerint pontozzuk, ez a futás kudarcként lenne elkönyvelve; de a végeredmény szempontjából a felhasználó jobb ajánlatot kapott. Ezért mindkét típusú kiértékelést le kell fedni a szisztematikus vakfoltok elkerülése érdekében.
-
-**Emberi szúrópróbák és ellenérdekű felülvizsgálat.**
-
-Még ha az automatizált kiértékelés az esetek többségében megbízható is, rendszeres emberi szúrópróbákra van szükség: le kell fedni a különböző feladattípusokat, sikereket és kudarcokat, valamint a pontszámhatárok közelében lévő kétértelmű eseteket — ellenőrizve nemcsak az eredményeket, hanem a pontozási indoklás helyességét is. A szúrópróbák rendszerezhetők "bírói kalibrációba". Mielőtt LLM bírókat nagy léptékben bevetnénk, építsünk egy ember által annotált arany standard készletet (mondjuk 100-200 esetet lefedve a feladattípusokat és nehézségeket), és mérjük meg, mennyire egyezik a bírómodell (egy LLM, amely bíróként szolgál; a mechanizmust a következő "LLM-mint-bíró" szakasz részletezi) az emberi annotációkkal — egyszerű egyezési arány vagy Cohen kappa, az utóbbi leszámítva a véletlen egyezést. Csak ha az egyezés elér egy előre meghatározott küszöböt (pl. kappa 0,7 felett), akkor használjuk a bírót nagyléptékű kiértékelésre; ezt követően, amikor a bírómodell vagy a Rubrica változik, kalibráljuk újra az arany készleten. E lépés nélkül egy LLM bíró pontszámai csak "egy másik modell véleményei", nem pedig az emberi ítélet megbízható proxyjai. "Az ellenérdekű felülvizsgálat" Red Teaming segítségével aktívan konstruál kihívást jelentő eseteket: látszólag tökéletes válaszok, amelyek rejtett hibákat tartalmaznak, válaszok, amelyek kulcsszóhalmozással próbálnak átjutni, és válaszok, amelyek a bírómodell ismert torzításait kihasználják tisztességtelenül magas pontszámok eléréséhez. "A több-bírós mechanizmusok" több független bírót használnak a pontozásra, súlyozott átlagolással vagy konzisztencia-ellenőrzéssel meghatározva a végeredményt — amikor a bírók jelentősen eltérnek, az esetet további emberi felülvizsgálatra küldik.
-
-## Automatizált Kiértékelési Módszerek
-
-A kiértékelési környezet, adathalmaz és világos metrikarendszer birtokában a központi kérdés: hogyan pontozzunk? A tiszta helyes válasszal rendelkező feladatoknál (pl. matematikai feladatok, SQL lekérdezések) elegendő az egyszerű bináris ítélet (helyes/helytelen); de a nyílt végű feladatoknál (pl. ügyfélszolgálati párbeszédek, jelentésírás) kifinomultabb kiértékelési módszerekre van szükség.
-
-A kódalapú automatikus verifikáció csak a standard válaszokkal rendelkező forgatókönyveket fedi le; a nyílt végű feladatok pontozása ennek a szakasznak a fő témája. Ezek közül a jutalomjel-sűrűség tervezése (a bináris jutalmaktól a folyamatjutalmakon át a generatív jutalmakig) és a jutalommintázatok tanítási módszerei a 7. fejezet poszt-tréning szakaszában kerülnek szisztematikus tárgyalásra; ez a szakasz egy alapvetőbb kérdésre válaszol: hogyan használjunk LLM-eket a nyílt végű feladatok kimenetelének automatikus megítélésére.
-
-### LLM-mint-Bíró: Az Automatizált Kiértékelés Magja
-
-![6-4. ábra: LLM-mint-Bíró Folyamatábra](images/fig6-4.svg)
-
-Miért van szükség LLM-mint-bíróra? Nyílt végű feladatoknál (pl. jelentések generálása, ügyfélpanaszok kezelése, kreatív tartalom) nincsenek standard válaszok az automatikus összehasonlításhoz, és az emberi kiértékelés költséges és nehezen skálázható. Az LLM-mint-bíró egyensúlyozza az automatizáció skálázhatóságát az emberi szakértői ítélettel azáltal, hogy egy nyelvi modell értékeli a kimeneteket szakértők által meghatározott pontozási szempontok (egy Rubrica) alapján. A módszernek ismert korlátai vannak: a bírómodell saját torzításokat hordoz (legjellemzőbben a "hosszúsági torzítás" — a hajlam, hogy a hosszabb, részletesebb válaszokat magasabbra pontozza, még ha nem is pontosabbak), és ugyanazon bemenet ismételt megítélése változhat. A hosszúsági torzítás különösen specifikus ellenintézkedéseket igényel. Három gyakori védekezés: a terjengősség explicit büntetése a Rubricában és a válaszok vágása feladattípusonként; páronkénti összehasonlításokban a két jelölt hasonló hosszúságra hozása az ítélkezés előtt; valamint a pontszámok és a válasz hossza közötti korreláció rendszeres auditálása — ha a magas pontszámok szinte mindig hosszú válaszokhoz tartoznak, a bírót befolyásolta a hosszúság, és a Rubricát felül kell vizsgálni. E kihívások szisztematikus kezeléséhez a Rubrica-tervezésnek az alábbi elveket kell követnie:
-
-**Rubrica (Pontozási Szempontok): Az LLM Ítélkezésének Alapja.**
-
-**Négy Rubrica-elv** (Scale AI, "Rubrics as Rewards"):
-
-(1) "Szakértői Iránymutatáson Alapul" — A Rubricának tükröznie kell a tartományi tudást, rögzítve a lényeges tényeket és következtetési lépéseket. Egy orvosi Q&A Rubrica például diagnosztikai kritériumokat és az elkerülendő orvosi hibákat igényel; a szakértelem nélküli Rubrica csak felszínes jellemzőket, például a folyamatosságot képes megragadni.
-
-(2) "Átfogó Lefedettség" — A Rubrica fedje le a ténybeli pontosságot, a logikai koherenciát, a teljességet és a biztonságot. Ne csak pozitív szabványokat határozzon meg, hanem expliciten azonosítsa a "Csapdákat" — azaz a magas kockázatú gyakori hibákat, mint például a nem hitelesített terápiák ajánlása orvosi tanácsadásban.
-
-(3) "Szabványosított Fontossági Súlyozás" — A szempontokat sorolja Elengedhetetlen, Fontos, Opcionális vagy Csapda kategóriákba. A séma támogatja a "Vétó-mechanizmust": például egy ügyfélszolgálati forgatókönyvben a hallucináció (hamis információk kitalálása) egy tipikus vétó dimenzió — függetlenül attól, hogy a többi dimenzió milyen jól teljesít, ha hamis információ jelenik meg, meg kell vétózni. Ez segít megelőzni a jutalomhackelést kulcsszóhalmozással is.
-
-(4) "Önálló Kiértékelés" — Minden kiértékelési elem önállóan cselekvőképes, és nem támaszkodik az értékelő tartományi tudására. Az olyan absztrakt szabványoktól, mint "a válasz mély megértést mutat", kerülni kell, helyettesítve ellenőrizhető szabványokkal, mint "legalább két hiteles elméletet idéz és pontosan elmagyarázza, hogyan támasztják alá a következtetést".
-
-A kulcsgyakorlat: minden dimenzióhoz objektíven verifikálható pontozási szintek meghatározása, konkrét példákkal és "határesetekkel" a kétértelmű helyzetek feloldására. Aktívan védekezni kell a "Jutalomhackelés" ellen — az Ügynök "gyors útját" a magas pontszámokhoz a feladat tényleges elvégzése nélkül — a hallucináció, a szervilizmus, a kulcsszóhalmozás és a nehéz kérdések elkerülésének explicit büntetésével. A Rubrica egy iteratív termék: a próbahasználat feltárja az értékelők közötti nézeteltéréseket, és a Rubrica fokozatosan fejlődik e visszajelzés eredményeként, az absztrakt elvektől egy részletes esetkönyvig.
-
-
-Íme egy teljes Rubrica, amely követi a négy elvet, példaként egy felhasználói memória Ügynököt használva. Tesztkérdés: "Ki a lányom gyerekorvosa?" (A válasz két beszélgetés közötti információösszekapcsolást igényel: az első beszélgetésben említésre kerül, hogy "a lányom neve Lili", a másodikban, hogy "elvittem Lilit Dr. Chenhez").
-
-```yaml
-rubric:
-  dimensions:
-    - name: Ténybeli Helyesség
-      weight: essential        # Elengedhetetlen elem
-      scoring:
-        4_Kiváló: "Helyesen válaszol Dr. Chennel, és összekapcsolja Lili lányával"
-        3_Jó: "Helyesen válaszol Dr. Chennel, de nem említi, hogy Dr. Chen Lili orvosa"
-        2_Elfogadható: "Megadja a helyes orvost, de további bizonytalan információkkal"
-        1_Hibás: "Hibás orvosnevet ad, vagy azt válaszolja, hogy 'nem tudom'"
-
-    - name: Információ Teljessége
-      weight: important        # Fontos elem
-      scoring:
-        4_Kiváló: "Proaktívan kiegészíti releváns információkkal (pl. utolsó látogatás dátuma, diagnózis)"
-        3_Jó: "Válaszol a központi kérdésre kihagyás nélkül"
-        2_Elfogadható: "Válaszol a központi kérdésre, de kihagy elérhető kapcsolódó információkat"
-        1_Hibás: "Hiányzik a kulcsfontosságú információ"
-
-    - name: Következtetés Helyessége
-      weight: important
-      scoring:
-        4_Kiváló: "Helyesen kapcsolja össze a két munkameneten átívelő információt: 'lány=Lili' és 'Lili doktorja=Dr. Chen'"
-        3_Jó: "Helyesen kapcsol össze, de a következtetési út nem elég világos"
-        2_Elfogadható: "Részben helyes összekapcsolás"
-        1_Hibás: "Helytelen összekapcsolás (pl. a felhasználó saját orvosát összekeveri a lánya orvosával)"
-
-    - name: Hallucináció-detektálás
-      weight: veto             # Vétó elem: ha aktiválódik, a teljes pontszám nulla
-      scoring:
-        pass: "Minden információ visszavezethető történeti beszélgetési rekordokra"
-        fail: "Kitalált információ, amely nem szerepel a beszélgetésben (pl. kitalált látogatási dátumok, diagnózisok)"
-
-  edge_cases:
-    - "Ha a felhasználónak több lánya van, akik más-más orvoshoz járnak, kérdezze meg, melyik lányáról van szó"
-    - "Ha a memória tartalmazza a 'Dr. Chen' és a '陈医生' (ugyanaz a név kínaiul) formát is, ismerje fel, hogy ugyanarról a személyről van szó"
-```
-
-**Jó Rubrica vs. Rossz Rubrica**: A fenti pontozási szintek mindegyike verifikálható, konkrét viselkedést határoz meg ("Helyesen válaszol Dr. Chennel"), nem pedig olyan leírásokat, amelyeket nem lehet objektíven megítélni, mint a "mély megértést mutat". A vétó elem meghúzza az alsó határt: még ha minden más dimenzió maximális pontszámot is kap, egyetlen hallucináció esetén automatikus nulla.
-
-**Determinisztikus vétó a rubric pontozása előtt:**
-
-```python
-deterministic = verify_state_policy_and_claims(trajectory, outcome)
-if deterministic.veto:
-    return FAIL(reason = deterministic.evidence)
-
-rubric_result = judge(answer, rubric, evidence)
-return aggregate_with_confidence(rubric_result)
-```
-
-A Rubricát és az Ügynök válaszát együtt adjuk a bírómodellnek, amely dimenziónként pontoz és indokol. Ha több tucat eset eredményét dimenziónként összesítjük, majd visszajátsszuk az alacsony pontszámú trajectory-ket, az általános „romlott a sikerarány” állítás konkrét diagnózissá válik: a lekérés kihagyott egy tényt, a modell rosszul kapcsolt össze személyeket vagy eseményeket, esetleg alátámasztás nélküli állítást tett. A jó Rubrica nemcsak a pontszámot mutatja meg, hanem azt is, hol érdemes folytatni a vizsgálatot.
-
-> **6-3. kísérlet ★★: Rubrica-alapú Felhasználói Memória Kiértékelő Rendszer Építése**
+> Minden esemény egy egységes "eseménysorba" kerül, és érkezési sorrendben, szekvenciálisan kerül feldolgozásra. Minden esemény egy független Agent gondolkodási ciklust indít: az Agent elolvassa az esemény tartalmát, meghívja a releváns eszközöket (pl. tudásbázis lekérdezés, mellékletek olvasása, kapcsolódó e-mail előzmények keresése), létrehozza a feldolgozási eredményt (osztályozási címkék, összefoglalók, választervezetek), és végül vagy értesíti a felhasználót az értesítő eszközökön keresztül, vagy közvetlenül végrehajt egy műveletet.
 >
-> **Előfeltételek**: A 3. fejezet Felhasználói Memória kísérletének (`chapter3/user-memory-evaluation`) befejezése kötelező.
->
-> Ez a kísérlet a 3. fejezet `chapter3/user-memory-evaluation` keretrendszerének módosítását igényli, a jelenlegi egyszerű LLM-mint-bíró pontozási mechanizmus továbbfejlesztésével strukturált, többdimenziós Rubrica kiértékelő rendszerré. A meglévő rendszer egyetlen LLM-hívást használ, amely siker/kudarc eredményt és kiértékelési indoklást ad vissza, hiányozva a strukturált diagnosztikai képességeket.
->
-> Tervezz egy egységes, többdimenziós Rubrica keretrendszert, amely mindhárom feladatszintre alkalmazható. A kiértékelési dimenziók a következők: Ténybeli Helyesség (precízió: a megadott információk közül mennyi helyes — ellenőrzi, hogy a számok/dátumok/nevek konzisztensek-e a tárolt memóriával); Információ Teljessége (visszahívás: a megadandó információk közül mennyi van említve — ellenőrzi, hogy minden releváns információ szerepel-e, nincs-e kihagyott kulcsfontosságú tartalom); Következtetés Helyessége (ellenőrzi, hogy az információk közötti kapcsolatok és az implicit logika helyesen vannak-e megértve); Következtetési Proaktivitás (értékeli, hogy a közvetlen válaszon túli javaslatok vagy kockázati figyelmeztetések megjelennek-e, amikor helyénvaló); Hallucináció-detektálás (biztosítja, hogy ne jelenjen meg a memóriában nem szereplő információ).
->
-> Négy szintű pontozás (Kiváló/Jó/Elfogadható/Hibás), minden szinthez specifikus ítéleti kritériumokkal, nem pedig absztrakt leírásokkal. A hallucinációs dimenzió vétó elem. Adj példákat és határeseteket minden dimenzióhoz.
->
-> **6-4. kísérlet ★★: A Fejlett JSON Kártyák és a RAG Összehasonlító Kiértékelése**
->
-> **Előfeltételek**: A 3. fejezet Felhasználói Memória és RAG kísérleteinek (`chapter3/user-memory`, `chapter3/agentic-rag-for-user-memory`) befejezése kötelező.
->
-> **Cél**: A strukturált memória és a strukturálatlan lekérés előnyeinek és határainak tisztességes összehasonlítása ugyanazon a kiértékelési készleten. Használd újra a két 3. fejezetbeli projektet, és hasonlíts össze három konfigurációt a `chapter3/user-memory-evaluation` 60 tesztesetén — Tiszta Fejlett JSON Kártyák (strukturált kártyák a kontextusban, nincs szükség lekérésre), Tiszta RAG (beszélgetési darabok beágyazva egy vektoros tárba, lekérés szükséges), Hibrid Rendszer (alaptények a kontextusban + eredeti beszélgetések igény szerint lekérve).
->
-> **Elfogadási Szempontok**: Jegyezd fel a sikerességi arányt, az átlagos lépéseket, az eszközhívások számát, a késleltetést és a költséget három komplexitási szinten (alapvető visszahívás / több munkamenet közötti egyértelműsítés / munkameneteken átívelő rejtett asszociációk). Világosan írd le az egyes megközelítések kudarcharakterisztikáját — mit hagy ki a strukturált memória, mit hagy ki a lekérés, és hogy a hibrid valóban eléri-e a szinergiát. A konfigurációs részletek és tesztesetek elérhetők a kísérő tárolóban.
->
+> **Validációs Forgatókönyv**: Konfigurálja az Agentet egy teszt postafiók figyelésére. Szimuláljon három e-mail érkezését – egy találkozómeghívás, egy ügyfélpanasz és egy marketingreklám. Az Agent szekvenciálisan dolgozza fel őket: a találkozómeghívás esetén automatikusan ellenőrzi a naptár ütközéseket, és elfogadó/elutasító választ tervez; az ügyfélpanasznál kinyeri a kulcsfontosságú információkat, magas prioritásként jelöli meg, és értesíti a felhasználót a kezelésről; a marketingreklámot automatikusan archiválja. A teljes folyamat nem igényel felhasználói beavatkozást.
 
-A kísérő vizsgálat mindhárom rendszert ugyanazon a 60 kérdésen futtatta, és 180 valódi API-trajectory-t őrzött meg. A 6-3. táblázat az arányok mellett a sikeres esetek számát is közli.
+A 6-1. kísérlet bemutatja a legegyszerűbb eseményvezérelt mintát – események belépnek a sorba, és az Agent szekvenciálisan dolgozza fel őket. Amikor azonban az Agentnek a hosszú ideig futó eszközvégrehajtások során érkező megszakításokra kell reagálnia, vagy több egyidejű feladatot kell kezelnie, egy egyszerű eseménysor nem elegendő. Ezután mélyebb mérnöki kihívásokat tárgyalunk.
 
-6-3. táblázat: Sikerarány memóriarendszer és feladatszint szerint
+### Mérnöki Megvalósítás: Hogyan Tegyük a Szinkron Modelleket Aszinkron Megszakítások Támogatására
 
-| Rendszer | Alapvető felidézés | Több munkamenetes egyértelműsítés | Rejtett munkamenetközi kapcsolatok | Összesen |
-|---|---:|---:|---:|---:|
-| Advanced JSON Cards | 95% | 60% | 50% | 68.3% (41/60) |
-| RAG | 90% | 40% | 15% | 48.3% (29/60) |
-| Hibrid | 80% | 70% | 50% | 66.7% (40/60) |
+A 6-1. kísérlet csak szekvenciális eseményeket kezel – az események egyesével lépnek be a sorba, és az Agent egyesével dolgozza fel őket. Most térjünk vissza a szakasz elején felvetett "szinkron képzés / aszinkron telepítés" ellentmondáshoz: amikor a felhasználó megszakítja az Agentet, miközben egy eszköz még nem tért vissza, hogyan tud a szinkron formátum alkalmazkodni hozzá? Ez a szakasz bemutatja az iparág által ma használt mérnöki megkerülő megoldásokat.
 
-A hibrid nem nyert automatikusan. Három olyan esetet egyedül oldott meg, amelyet egyik önálló megközelítés sem, viszont nyolc esetben visszaesett az adott esetre jobb önálló rendszerhez képest; átlagos jutalma 0.092-del maradt el az esetenként legjobb önálló rendszerétől. A tiszta RAG az alapvető felidézésben közel került a strukturált kártyákhoz, a rejtett munkamenetközi kapcsolatoknál viszont 15%-ra esett. A releváns részlet megtalálása csak az első lépés: az Ügynöknek helyesen kell összeraknia a személyek, események és időpontok kapcsolatát is.
+Először egy konkrét forgatókönyvvel illusztráljuk ezt az ellentmondást. Tegyük fel, hogy az Agent segít a felhasználónak egy e-mail megírásában (eszközhívás: elérhetőségek keresése). Mielőtt a keresés visszaadná az eredményeket, a felhasználó hirtelen azt mondja: "Várj, előbb nézd meg a holnapi időjárást." Egy szinkron ReAct hurokban az Agentnek meg kell várnia a keresés visszatérését, mielőtt feldolgozná a következő üzenetet – mert az API megköveteli, hogy "egy eszközhívás kiadása után a következő üzenet az eszköz eredménye legyen." De az aszinkron valóságban az események bármikor megszakíthatják a folyamatban lévő feladatokat. Az "aszinkron megszakítás" szemantikájának kifejezése a "szinkron formátum" korlátai között pontosan az a probléma, amelyet ez a mérnöki megoldás meg kíván oldani.
 
-A hallucinációs vétó a 180 ítéletből 28-ban aktiválódott. Nem dísznek szánt biztonsági pont volt, hanem ténylegesen megváltoztatta az eredményt. Ne feltételezzük, hogy a „strukturált memória + RAG” önmagában szinergiát hoz. Előbb vizsgáljuk meg, hogyan hibázik az egyes módszer minden nehézségi szinten, majd döntsük el, mely tények maradjanak mindig a kontextusban, és mely kérdések indítsanak lekérést. Ez egyetlen modell-bíró beállítással, szintetikus eseteken végzett kampány volt: hibamechanizmusokat mutat, nem univerzális memóriarangsort.
+**Mérnöki Megoldás: Aszinkron Implementáció Szinkron Viselkedés Szimulálásával.**
 
-Ez a következtetés is csak megbízható bíró mellett áll. Ha az Ügynök és a bíró ugyanabból a modellcsaládból származik, ugyanazokat a preferenciákat és vakfoltokat oszthatják.
+A központi gondolat: **Normál körülmények között, megszakítások nélkül, az LLM egy szabványos szinkron trajektóriát lát; csak akkor szúrunk be helyettesítőket (placeholdereket) a formátum javításához, ha megszakítás történik.** Íme öt kulcsszabály:
 
-**Az Azonos Család Modell Problémája és a Több Forrásból Származó Bíráskodás.**
+**1. szabály**: Az asszisztens üzenetet (beleértve a gondolkodást, tartalmat és eszközhívást) azonnal rögzítse, amikor az LLM előállítja.
 
-Amikor az Ügynök és a bírómodell ugyanabból a családból származik, az Ügynök megtanulhatja kihasználni a bírómodell preferenciáit és vakfoltjait.
+**2. szabály**: Az eszköz eredményét csak akkor rögzítse, amikor az eszközhívás befejeződött. A trajektória "részben befejezett" állapotban van a végrehajtás során.
 
-**Ez pontosan Goodhart törvénye: amikor egy metrika optimalizálási célponttá válik, megszűnik jó metrika lenni.** Minél inkább egy adott pontozási rendszerre van edzve vagy hangolva egy Ügynök, annál inkább hajlik arra, hogy kiskapukat használjon ki a rendszerben, ahelyett, hogy valóban javítaná a képességeit.
+**3. szabály**: Az eszközvégrehajtás közbeni megszakítások helyettesítőket igényelnek. Generáljon egy helyettesítő választ a befejezetlen eszközhöz (pl. "Az eszköz a háttérben fut, kérjük, először az új eseményt kezelje"), fűzze hozzá a megszakítási eseményt, és hívja meg újra az LLM-et. Az LLM szemszögéből az asszisztens üzenet továbbra is párosítva van egy eszköz eredménnyel.
 
-Még álnokabb módon, az Ügynök fokozatosan megtanulja elkerülni azokat a hibatípusokat, amelyeket a bírómodell nem jól érzékel, így a pontozási rendszer tökéletesnek tűnik.
+**4. szabály**: Az LLM gondolkodása közbeni megszakítások közvetlenül eldobják a jelenlegi gondolkodást. Ne írja a trajektóriába; helyette fűzze hozzá az új eseményt, és kezdjen egy új gondolkodási kört.
 
-Az ellenszer a "több forrásból származó heterogén bíráskodás" — független bírók különböző modellcsaládokból (ha az Ügynök Claude-on fut, ítéljen GPT-5 és Gemini). A különböző családok torzításai gyakran ortogonálisak, így az Ügynök ritkán tudja egyszerre becsapni az összes bírót. Használják ugyanazt a Rubricát, hogy mindenki ugyanazt a célt ítélje meg, és aggregálják súlyozott átlagolással vagy konzisztencia-ellenőrzéssel. Éles környezetben egyetlen modell is elvégezheti a gyors kiértékelést, időszakos minőségi auditokkal a teljes több forrásból álló rendszerrel szemben.
+**5. szabály**: A nem megszakító események a sorba kerülnek kötegelt feldolgozásra. Csak az aktuális ciklus befejezése után kerülnek egyszerre hozzáfűzésre.
 
-A több forrásból származó bíráskodás arra a kérdésre ad választ, hogy mely modellek szolgáljanak bíróként; a következő kérdés az, hogy mely modalitásokat értékeljük — az LLM-mint-bíró kiterjesztése szövegről beszédre, képekre és videóra a kiértékelési lefedettség másik tengelye.
+Az Agent e-mail írásának példáján, amikor a felhasználó az időjárásról kérdez, az öt szabály működése a következő:
 
-**Multimodális LLM-mint-Bíró.**
+1. Az Agent meghívja a `search_contacts`-ot az elérhetőségek keresésére, és az asszisztens üzenet azonnal a trajektóriába kerül (1. szabály).
+2. Mielőtt a keresőeszköz visszaadná az eredményeket, a felhasználó elküldi: "Előbb nézd meg a holnapi időjárást." Mivel ez egy felhasználói megszakítás, a rendszer generál egy helyettesítő eszköz eredményt a befejezetlen `search_contacts`-hoz ("Az eszköz a háttérben fut, kérjük, először az új eseményt kezelje", 3. szabály), majd hozzáfűzi a felhasználó időjárás lekérdezését a trajektóriához, és újra meghívja az LLM-et. Ezen a ponton az LLM által látott trajektória formátum teljesen érvényes – az asszisztens üzenet és az eszköz eredménye tökéletesen párosítva van.
+3. Miután az Agent megválaszolta az időjárás lekérdezést, az eredeti `search_contacts` eredmény megérkezik, és új eseményként hozzáfűződik a trajektóriához (2. szabály). Az Agent elolvassa az elérhetőségi információkat, és folytatja az e-mail írását.
 
-A multimodális bíráskodás az LLM-mint-bírót a beszéd, kép és videó tartományaira terjeszti ki. Négy gyakori irány a következő.
+A séma alapvető előnye: **normál körülmények között az LLM egy tökéletes szinkron trajektóriát lát** – asszisztens üzenetek és eszköz eredmények szigorúan párosítva, az idővonal tiszta, nincsenek helyettesítők vagy rendellenes állapotok. Ez a legkedvezőbb elrendezés a szinkron paradigma alatt képzett LLM-ek számára, és megőrzi a gondolkodás minőségét. A helyettesítő – egy szükséges kompromisszum – csak akkor jelenik meg, amikor valóban megszakítás történik.
 
-- **TTS Kiértékelés** (TTS: Text-to-Speech, szöveg-beszéd átalakítás): Pontosság, természetesség, hangkonzisztencia és érzelmi kifejezés értékelése. Ezek a dimenziók képesek megragadni a prozódiai problémákat, amelyeket a hagyományos WER (Word Error Rate, szóhibaarány) nehezen érzékel.
-- **ASR Kiértékelés** (ASR: Automatic Speech Recognition, automatikus beszédfelismerés): Szemantikai hatásvizsgálat — a "mai időjárás" félreismerése ártalmatlan, de az "ezer átutalás" félreismerése "tízezerre" súlyos következményekkel járhat.
-- **UI Kiértékelés**: "Javaslattevő-Felülvizsgáló" mechanizmus használata olyan problémák észlelésére, mint a szövegtúlcsordulás, színkontraszt, gombelhelyezés. Itt a javaslattevő-felülvizsgáló "kiértékelési módszerként" szolgál, eltérően az 5. fejezetben "generációs rendszer-összetevőként" való használatától, de az alapmechanizmus ugyanaz — egy modell generál, egy másik függetlenül felülvizsgál.
-- **Videószerkesztés Kiértékelése**: A vágás kezdő/végpontjainak és a hatás alkalmazásának helyességét ellenőrzi kulcskockákon keresztül.
+De fennáll a hallucinációk súlyosbodásának kockázata. Annak ellenére, hogy a helyettesítő kifejezetten jelzi, hogy az eszköz "még nem fejeződött be", a modell később mégis kitalálhat egy eszközeredményt a gondolkodás során – meggyőzve magát arról, hogy az eszköz érvényes adatokat adott vissza, és ezen kitalált adatok alapján hozhat döntéseket. Ez azért van, mert a képzés során látott trajektóriák túlnyomó többségében egy eszközhívást azonnal a valódi eredmény követi; a modell soha nem tanulta meg, hogyan kezelje azokat a helyzeteket, amikor "az eredmény még nem érkezett vissza." Ezért a gyakorlatban a megszakítások csak valóban sürgős helyzetekben indulnak el (amikor a felhasználó kifejezetten kéri a leállítást); a nem sürgős eseményeket egy sorba helyezik kötegelt feldolgozásra.
 
-### Hibaattribúció és pálya-előtag regressziós tesztek
+**Aszinkron Eszköz Interfészek a Meglévő Modellekhez.**
 
-Az end-to-end kiértékelés gyakran csak „siker” vagy „kudarc” eredményt ad. A javításhoz minden hibás pályán rögzíteni kell a kategóriát, az első elfogadhatatlan lépést, az eszközhívást vagy modellkimenetet, valamint az auditálható bizonyítékot. A rossz esetek felhasználói korrekcióból, negatív visszajelzésből vagy későbbi állapotellenőrzésből származhatnak. Az LLM segíthet, de az emberi olvasás szükséges, mert a gyökér gyakran termékprobléma.
+Mivel a modellek szinkron feltételezése nehezen törhető meg, egy alapvetőbb stratégia az **aszinkron szemantika befogadása az eszköz-interfész tervezés szintjén**.
 
-Egy Coding Agent kezdeti kategóriái: hiányzó folyamat vagy szabály, eszköz- és formátumhiba, rendellenes leállás, illetve logikai vagy teljességi hiba. JSON/YAML rekordban tárold a lépésszámot, eszközt, megfigyelést, okot és következményt, helyreállíthatóságot és bizalmat, továbbá a környezet állapotát és verzióit.
+A hagyományos eszköztervezés "hívás egyenlő befejezés" szemantikát sugall. Például a `phone_call` név arra utal, hogy "a hívás tárcsázza a telefont, és megvárja a hívás végét, visszaadva a hívásnaplót." Az aszinkron paradigma alatt a "kezdeményezés" és a "befejezés" szétválasztandó:
 
-Az **end-to-end regresszió** a teljes munkafolyamatot futtatja; a **pálya-előtag regresszió** a kontextust, beszélgetést, eszközválaszokat és állapotot az első hiba előtt rögzíti, majd csak a következő műveletet teszteli. Elfogadható műveletek halmazát kell megadni (szabályolvasás, kérdezés vagy veszélyes művelet elutasítása), nem egyetlen kanonikus választ. Az értékelési és tanítási adatokat el kell különíteni.
+- `initiate_phone_call`: Elindít egy telefonhívást, azonnal visszaadva egy feladatazonosítót és kezdeti állapotot (pl. "Hívás kezdeményezve, tárcsázás...")
+- A hívás előrehaladását eseményértesítések közvetítik (`phone_call_connected`, `phone_call_ended`)
 
-> **6-5. kísérlet ★★: Pálya-előtag határainak értékelése több kódolással**
->
-> A modell ismert memóriát, aktuális utasítást, pálya-előtagot, eszközválaszokat és környezeti állapotot kap, és csak a következő megfigyelhető műveletet adhatja vissza. Tizenegy esetet JSON Cards, Markdown és Python-szerű formában kódoltunk; mindhárom 6/11-et teljesített, a 33 cella API-hiba nélkül futott. A reprezentáció megváltoztatása önmagában nem javítja az alkalmazási szabályt.
+A kulcs az, hogy az eszköz neve és leírása maga közvetítse az aszinkron szemantikát. Amikor a modell meglátja az `initiate_phone_call`-t, nyelvi értelmezési képességei természetesen arra következtetnek, hogy ez "kezdeményezés", nem "befejezés". Az eszköz leírásának tovább kell erősítenie ezt: "Ez az eszköz elindít egy telefonhívás feladatot, amelyet egy al-Agent kezel. Sikeres kezdeményezés esetén azonnal visszaadja a feladat azonosítóját, lehetővé téve, hogy más dolgokkal folytassa. Külön értesítőesemény kerül elküldésre, amikor a hívás véget ér."
 
-> **6-6. kísérlet ★★: Teljesen Automatizált TTS Minőségi Kiértékelő Csővezeték Építése**
->
-> Ez a kísérlet egy teljes multimodális LLM-mint-bíró TTS minőségi kiértékelő rendszer tervezését és implementálását igényli a semmiből.
->
-> Tervezz egy többdimenziós TTS Rubricát: A Pontosság dimenzió ellenőrzi, hogy minden szöveg helyesen lett-e felolvasva (nincs kihagyás/félreolvasás/hozzáadás); a Természetesség dimenzió azt értékeli, hogy a beszéd természetes-e, nem robotikus, nincsenek-e természetellenes szünetek, és természetes a prozódia; az Érzelmi Kifejezés dimenzió ellenőrzi, hogy a hangszín illeszkedik-e a szöveg érzelmi tónusához (emelkedő intonáció kérdéseknél, hangsúly felkiáltásoknál, lassabb tempó és mélyebb hangmagasság szomorú tartalomnál); a Hangkonzisztencia dimenzió a beszélői hasonlóságot értékeli, ha rendelkezésre áll egy referenciabeszéd (a multimodális modell egyszerre kapja a referenciát és a szintetizált beszédet az összehasonlításhoz).
->
-> Építs sokszínű tesztkorpuszt különböző hosszúságokkal, műfajokkal, érzelmekkel és speciális kihívásokkal. A TTS-modult kapcsold a vezető szolgáltatásokhoz (OpenAI, ElevenLabs, Fish Audio, Minimax, Doubao), majd a szintetizált hangot, az eredeti szöveget, a referenciahangot és a Rubricát add egy közvetlen hangbemenetre képes multimodális bírónak. A pontszámok auditálhatóságához rögzítsd a bírómodellt, valamint a jelölt- és referenciahang hashét.
->
+**Figyelem Szóródása Sor-alapú Feldolgozásban.**
 
-A kísérő tároló egy kis közvetlen hallgatási próbát is megőriz. Az OpenAI és a Fish Audio négy-négy felvételt készített számokkal, többféleképpen ejthető kínai karakterekkel, hosszú szöveggel és lelkes előadásmóddal; a Voxtral mind a nyolcat négy dimenzióban értékelte. Mindkét rendszer 5.00 pontot kapott pontosságra és 4.00-t természetességre. A Fish Audio érzelemre és hangkonzisztenciára 4.00/3.00, az OpenAI 3.75/2.75 pontot ért el. A dimenziók szétválasztása olyan különbségeket tett láthatóvá, amelyeket egy egyszerű „helyesen olvasta fel?” kérdés nem mutatna meg.
+Kötegelt események feldolgozásakor a modell gyakran csak az utolsó eseményre összpontosít. Ennek kiváltó oka, hogy **a modell arra van kiképezve, hogy a legfrissebb bemenetre reagáljon, és a kötegelt események megtörik ezt a feltételezést**.
 
-Ezek a pontok nem neveznek meg győztes szolgáltatót. Szolgáltatónként csak négy felvétel volt, ráadásul a fix referencia a Fish S1-ből származott, ami eleve a Fish Audiónak kedvez a hanghasonlóságban. Általános TTS-összevetésnél ezt a dimenziót el kell hagyni, vagy minden jelölthöz megfelelő célhangot kell adni. Hangklónozásnál minden rendszer ugyanazt a beszélőt utánozza, a modellbíró pontjait pedig vak emberi hallgatással kell kalibrálni. **A referencia válasz, kép vagy hang kiválasztása a kiértékelés tervezésének része, nem semleges előkészítés.**
+Két szinten lehet beavatkozni:
 
-A kézzel írt Rubricák gyorsan kialakítják ezeket a diagnosztikai dimenziókat. Nagyobb léptékben speciális „generatív jutalommodellek” automatizálhatják a bíráskodást; képzésüket a 7. fejezet tárgyalja.
+**Prompt Szinten**: Tájékoztassa a modellt: "Amikor több egymást követő eseményt kap, kérjük, győződjön meg arról, hogy átfogóan figyelembe veszi az összes információt."
 
-A gyakorlati modellválasztás során gyakran szembesülünk a kérdéssel: "Melyik jobb, A vagy B?" A páronkénti összehasonlítás olyan kiértékelési módszert kínál, amely nem támaszkodik abszolút pontszámokra.
-
-#### Hatókör-érzékeny dokumentumformázási hibák
-
-Amikor a felhasználó azt mondja, hogy „rossz az idézőjel formátuma”, azt nem szabad globális karaktercserére fordítani. Legalább meg kell különböztetni az ASCII egyenes idézőjeleket (`"`, `'`), a kínai íves idézőjeleket (`“”`, `‘’`) és a Markdown visszaperjeleket (`` ` ``). Ugyanaz a karakter más-más szintaktikai szerepet tölt be a kínai prózában, az idézett angol forrásban, a soron belüli kódban, a kódblokkokban, a kódmegjegyzésekben, a JSON-ban és az útvonalakban.
-
-Az értékelési adatot előbb hatókörrel ellátott szakaszokra kell bontani — például `ZH_PROSE`, `EN_PROSE`, `QUOTED_SOURCE`, `INLINE_CODE`, `CODE_BLOCK`, `CODE_COMMENT` és `JSON_OR_SCHEMA`. Minden szakasz eltárolja az engedélyezett átalakítások halmazát, a kötelezően védendő karaktereket és a szerkesztés utáni ellenőrző eredményét. Az alábbi három eset nem kezelhető egyetlen cserélési szabállyal:
+**Agent Állapotsor Jelzők**: Adjon explicit jelzőket minden esemény előtt:
 
 ```text
-Kínai próza: hívd meg a `reset()` metódust.
-Idézett angol forrás: “Please restart the service.”
-# az alábbi kódblokk csak egy védett hatókört szemléltet
-# Kínai megjegyzés: jelenítsd meg az "aktuális állapot" szöveget
-name = "status"
+[Feldolgozatlan Esemény 1/4] Eszköz eredmény a database_query-ből: ...
+[Feldolgozatlan Esemény 2/4] Felhasználói kiegészítés: Csak a pekingi adatokat nézd
+[Feldolgozatlan Esemény 3/4] Rendszer emlékeztető: A jelentés határideje 30 perc múlva
+[Feldolgozatlan Esemény 4/4] Felhasználó kérdezi: Mi az előrehaladás?
 ```
 
-A trajectory-prefix regressziónak a minimális szerkesztést kell megkövetelnie a modelltől, és egyszerre kell ellenőriznie a kínai dokumentumstílust, az idézett angol forrás megőrzési arányát, a kód és a JSON szintaxisát, valamint a nem célszövegen mért szerkesztési távolságot. Ha a szabályok nem tudják eldönteni a hatókört, az eredeti szöveg megőrzése és a pontosítás kérése engedélyezett műveletnek számítson, ne pedig véletlenül átmenő, találgatáson alapuló szerkesztésnek.
+Adjon hozzá egy összefoglalót a végén: "Fent 4 feldolgozatlan esemény található, köztük 1 eszköz eredmény, 2 felhasználói üzenet és 1 rendszer emlékeztető. Kérjük, győződjön meg róla, hogy válasza lefedi az összes információt."
 
-#### Pontos másolási hibák: az `old_string` mismatch-től a rétegenkénti behatárolásig
+### Mélyebb Ellentmondások és Jövőbeli Irányok
 
-Egy `old_string` hiba sem tulajdonítható pusztán annak, hogy „a modell rosszul másolta le”. Ugyanarra a karakterláncra el kell menteni a nyers bájtok hash-ét, a Unicode code point sorozatot és a tokenizer token ID sorozatát, majd az alábbi lánc mentén kell megkeresni az első eltérést:
+![6-4. ábra: Szinkron Képzési Paradigma vs. Aszinkron Telepítési Valóság](images/fig6-4.svg)
 
-```text
-original file bytes → tool return → Harness serialization → model context
-→ model token output → decoded string → JSON/tool-call parsing → tool matching
-```
+Végső soron az előző szakaszok helyettesítői, aszinkron eszköz interfészei és állapotsor jelzői mind prompt engineeringet használnak ugyanazon "szinkron képzés / aszinkron telepítés" ellentmondás javítására (6-4. ábra) – ennek az ellentmondásnak az okát a szakasz elején részleteztük, így itt nem ismételjük; ehelyett az alapvető megoldásra összpontosítunk.
 
-A minimális értékelési szondakészlet lefedi a közvetlen visszamondást, a hosszú kontextusból való kinyerést, az eszközargumentumba helyezést, a hasonló karakterláncok közötti választást, valamint a szóközöket, sortöréseket, visszaperjeleket, Unicode kombináló karaktereket és a ritka tokeneket. A metrikák: byte-exact match, code-point-exact match, token-exact match, az első eltérés pozíciója és a valós eszközsiker-arány. Ha a modell a közvetlen szondán helyes, de az eszközhívás mégis elbukik, a tokenizert, a szerializálást, a Harness-t vagy az eszközprotokollt kell javítani; és csak akkor szabad az esetet a 7. fejezet másolási tréningadatává alakítani, ha az első eltérés magának a modellnek a kimenetében jelenik meg.
+**A Modell Evolúció Előrejelzése: Szinkrontól Aszinkron Felé.**
 
-### Páronkénti Összehasonlítás és Modellrangsorolás
+A fenti mérnöki technikák lényegében **a prompt engineering használata a modellképzés hiányosságainak kompenzálására**, egy átmeneti időszak ideiglenes megoldása. A valódi megoldás paradigma váltást igényel a modellképzés szintjén.
 
-![6-5. ábra: Elo Pontszámítás és Páronkénti Összehasonlítási Rangsor](images/fig6-5.svg)
+A robotika területén a VLA (Vision-Language-Action, lásd 6. fejezet) modellek már kezdenek hasonló kihívásokkal szembenézni: elkerülhetetlen késleltetés van az észlelés és a cselekvés között. A VLA sikere utat mutat az Agent modellek evolúciója számára. A következő generációs modelleknek három alapvető képességet kell megszerezniük a megerősítéses tanuláson (RL) keresztül aszinkron környezetekben:
 
-**Az Elo Pontszámítás** (egy eredetileg sakkra tervezett rangsorolási rendszer) a modellek relatív képességét számszerűsíti nagyszámú páronkénti mérkőzésen keresztül: minél nagyobb a pontszámkülönbség, annál magasabb a várható győzelmi arány az erősebb modell számára. Például, ha A modell pontszáma 1200, B modellé 1000, az Elo rendszer A győzelmi arányát körülbelül 76%-ra becsülné. Ha B váratlanul nyer, B több pontot szerez, A pedig többet veszít — a meglepetés nagyobb korrekciót vált ki, ami lehetővé teszi, hogy a rangsorok gyorsan konvergáljanak a valódi képességre. A statisztikai alap a "Bradley-Terry modell": minden modell egy látens "erősségi pontszámként" van absztrahálva, és annak valószínűsége, hogy egy mérkőzésen legyőzi a másikat, a pontszámaik különbsége határozza meg. Az Elo ennek a modellnek a mérnöki implementációja online frissítési formában.
+1. **Aszinkron Események Közti Átfedés Megértése a Trajektóriákban**: Ez a legkritikusabb képességhiány. A jelenlegi modellek szigorúan szinkron sorrendet várnak, de egy valódi aszinkron környezetben egy eszközhívást nem biztos, hogy egy eszköz eredménye követ, hanem egy új felhasználói üzenet; a gondolkodás félbeszakadhat, de a köztes állapotot meg kell őrizni a trajektóriában, és a gondolkodásnak folytatódnia kell az új üzenet feldolgozása után, ahelyett, hogy újrakezdené. A modellnek világos megértést kell fenntartania az ilyen "rendezetlen" trajektóriákban – mely eszközhívások várnak még eredményekre, és mely gondolatok befejezetlen töredékek.
+2. **Megszakított Feladatok és Gondolatok Folytatása**: Amikor megszakítják egy sürgős esemény kezelésére, a modellnek emlékeznie kell a befejezetlen feladatra. Például, ha a felhasználó hirtelen az időjárásról kérdez, miközben az Agent egy adatelemző eszközt hajt végre, a válaszadás után az Agentnek természetesen meg kell várnia az adatelemzés eredményét, ahelyett, hogy elfelejtené, hogy egy eszköz még fut. Különösen fontos elkerülni azokat a hallucinációkat, ahol a modell tévesen azt hiszi, hogy a megszakított eszközhívás befejeződött.
+3. **Kötegelt Események Átfogó Feldolgozása**: Amikor több esemény egy kötegben kerül hozzáfűzésre a trajektóriához, a modell nem csak az utolsóra összpontosíthat; átfogóan kell figyelembe vennie az összes feldolgozatlan információt.
 
-A Chatbot Arena névtelen véletlenszerű mérkőzéseket használ — a felhasználók vakon választják ki a jobb választ anélkül, hogy ismernék a modell kilétét, és a rangsorok milliónyi szavazatból származnak. Az előny, hogy nem kell "abszolút standardot" meghatározni; csak emberi ítéletre van szükség arról, hogy "melyik a jobb, A vagy B". A korlátozás: a rangsorok attól függnek, mit kérdeznek a felhasználók. Ha sok felhasználó programozási kérdéseket tesz fel, a programozásban erős modellek magasabban rangsorolódnak — ami keveset mondhat a szintjükről más feladatokon.
+Ennek az aszinkron RL képzésnek az eléréséhez új infrastruktúra szükséges: egy aszinkron környezeti szimulátor (olyan forgatókönyvek generálása, mint a késleltetett eszközvisszatérések, véletlenszerű felhasználói megszakítások, stb.) és specializált jutalmak az aszinkron képességekhez (a rendezetlen trajektóriák helyes megértése, a megszakított gondolatok sikeres folytatása, hallucinációk elkerülése, kötegelt események átfogó feldolgozása).
 
-Amikor a páronkénti bíráskodást LLM végzi emberi szavazás helyett, ügyelni kell a "Pozíciós Torzításra" is — a bírómodell szisztematikusan előnyben részesítheti az egy bizonyos pozícióban (általában az elsőben) megjelenő jelöltet, és az ítélet változatlan maradhat, ha a két jelölt tartalmát teljesen felcseréljük. A szokásos mérséklési módszer "mindegyik pár kiértékelése kétszer, felcserélt sorrendben": egyszer A-val először, egyszer B-vel először, és a két eredmény átlaga; egy szigorúbb megközelítés csak azokat az eseteket veszi figyelembe, ahol a két ítélet konzisztens, és az inkonzisztenciákat döntetlenként kezeli vagy emberi felülvizsgálatra küldi. A Chatbot Arena megközelítése lényegében ugyanez — a két válasz megjelenítési pozíciójának véletlenszerűsítése, így a pozíciós torzítás kioltódik nagy mintán.
+A folyamatos gondolkodás (continuous thinking) azonban nem kell, hogy megvárja a következő generációs modelleket. Egy vékony réteg összehangolási logika (körülbelül kétszáz sor) képes egy "kész" szöveges gondolkodó modellt azonnal "folyamatos idejű" Agentté alakítani[^ch6-async-1] – szépen áthidalva a fenti "mérnöki megoldás" és "modell evolúció" feleket. A mechanizmus a 4. szabály továbbfejlesztése: ahelyett, hogy "eldobnánk" egy félkész gondolatot a megszakításkor, építsük fel a teljes interakciót "egy megszakítatlan gondolatfolyamként" – bármely pillanatban erőszakosan zárjuk be a `<think>` blokkot, amelyet a modell ír, injektáljuk az újonnan érkezett megfigyelést (egy eszköz visszatérése, egy felhasználói megszakítás, egy friss felismerési eredmény) normál üzenetként, és hagyjuk, hogy a modell folytassa a dekódolást. Ez kihasznál egy olyan erőforrást, amely általában kárba vész: egy modell több ezer tokent képes generálni másodpercenként, míg egy eszközhívás vagy egy felhasználói megnyilvánulás több másodpercig tart – ezek a várakozások "ingyenes számítási kapacitást" jelentenek, amely előre gondolkodásra használható. Két viselkedés jelenik meg: "gondolkodás várakozás közben" – ahelyett, hogy megvárná az eszköz visszatérését vagy a felhasználó befejezését, a modell a már meglévő részleges információkon érvel, akár korán elindítva a következő eszközhívást (ezt a "megelőlegező gondolkodás" tendenciát nulla felvétellel (zero-shot) reprodukálták több modellcsaládban; az adatokért lásd a lábjegyzetben hivatkozott tanulmányt); és "gondolkodás cselekvés közben" – a gondolkodás folytatása a kimenet előállítása közben, képes korrigálni magát a cselekvés során.
 
-**Időbeli és Domaintól Függő Minőség-eltolódások.**
+De a kutatás kritikusabb fele a "képzést" érinti, és ez válaszol a fenti "modell evolúció előrejelzése" felhívásra: az összehangolás önmagában lehetővé teszi a folyamatos gondolkodást; hogy az "hasznossá" válik-e, az a képzési jeltől függ. A kutatás azt találta, hogy egy "LLM-as-judge" stílusú jutalommal a modell megtanulja elrejteni gondolatait – csendet cserélve a bíró jóváhagyására –, miközben a objektív mérőszámok valójában romlanak; csak az ellenőrizhető célkitűzések, amelyek védik az információ lefedettséget, teszik kifizetődővé a folyamatos gondolkodást. Dióhéjban: **az összehangolás lehetővé teszi a viselkedést; a képzés teszi jóvá a viselkedést** – ami megerősíti e szakasz ítéletét, hogy az aszinkron képességet végső soron a helyes képzésen keresztül kell megszilárdítani, nem pedig örökké prompt engineeringgel javítgatni.
 
-A modellek nem állandóak. Ugyanaz a modellesalád különböző verziókban érkezik; az API-szolgáltatók finomhangolják a modellt anélkül, hogy bejelentenék; a külső rendszerváltozások (webfrissítések, API-változások) csökkenthetik a modell tényleges hasznosságát anélkül, hogy a modell maga változott volna.
+[^ch6-async-1]: Az az állítás, hogy körülbelül kétszáz sor összehangolás képes egy kész gondolkodó modellt folyamatos idejű Agentté alakítani, és hogy "a képzési jel határozza meg, hogy a folyamatos gondolkodás hasznos-e", Li, Bojie és Noah Shi *Never Stop Thinking: Continuous-Time Language Agents* című, 2026-ban megjelenő művéből származik.
 
-A modellkiértékelés ezért nem egy alkalom, hanem folyamatos tevékenység. Ajánlott gyakorlat: tartani egy "globális ranglistát", amelyen a megcélzott feladattartományban használt összes modell szerepel (több API-szolgáltatóra és modellesaládra kiterjedően). Rendszeres időközönként futtasd le a teljes tesztkészletet, és jegyezd fel az időbélyeget; ha egy modell hirtelen pontszámesést mutat, az valószínűleg API-szintű változásra, nem a modell képességének valódi csökkenésére utal.
-
-> **6-7. kísérlet ★: Globális Modell Ranglista Felállítása és Karbantartása**
->
-> Hozz létre és tarts karban egy folyamatosan frissülő globális modell ranglistát. Válassz ki 5-10 reprezentatív tesztesetet minden feladattípushoz (kódolás, eszközhívás, multimodális, keresés, hosszú szöveges Q&A, egyszerű utasításkövetés). Futtasd ezt a készletet az összes elérhető modellen (beleértve ugyanazon modell különböző API-szolgáltatóktól származó verzióit), és rendszeresen (pl. hetente) ismételd meg. Jegyezd fel a pontszámok történeti trendjeit — amikor egy modell pontszáma hirtelen csökken (pl. Claude Sonnet 4.5 pontszáma egyik hétről a másikra 92%-ról 80%-ra esik), először ellenőrizd az API változási naplóját; ha nincs bejelentett változás, valószínűleg külső ok van (időzítési torzítás, nagy terhelés, driftsújtotta szerververzió). Rendszeres időközönként frissítsd a ranglistát, törölve az elavult modelleket és hozzáadva újakat.
->
-
-## Értékelés-vezérelt modellválasztás
-
-A modellválasztás nem egyszerűen a "legerősebb modell kiválasztásáról" szól; magában foglalja az értékelés által vezérelt kompromisszumot több dimenzióban az alkalmazási forgatókönyv alapján.
-
-### A kiválasztás kulcsfontosságú méretei
-
-Az **áteresztőképesség** és a **késleltetés** két könnyen összekeverhető mérőszámcsalád. Szétválasztásukhoz elég tudni, hogy az LLM-következtetés két szakaszból áll. Az **előtöltés** (prefill) egyszerre dolgozza fel a teljes bemeneti kontextust, és meghatározza az **első tokenig eltelt időt** (TTFT): az Enter lenyomása és az első karakter megjelenése közötti késleltetést. Minél hosszabb a kontextus, annál lassabb az előtöltés és annál nagyobb a TTFT. Ezután a **dekódolás** tokenenként állítja elő a választ, meghatározva a generálási sebességet (token/másodperc) és ezzel a gondolkodási időt is: 50 token/s mellett 2000 gondolkodási token előállítása önmagában 40 másodperc.
-
-E két szakasz körül a fő átviteli és késleltetési mutatók a következők:
-
-- **Bemeneti/kimeneti áteresztőképesség**: Az előtöltés, illetve a dekódolás sebessége.
-- **TTFT**: A sorban állási és az előtöltési idő összege; ez határozza meg a felhasználó által érzékelt válaszkészséget.
-- **Gondolkodási késleltetés**: A generált gondolkodási tokenek száma modellenként többszörösen változhat, és a gondolkodás hossza nem feltétlenül van pozitív korrelációban a feladat hatékonyságával – mérje meg az egyes modellek gondolkodási token-használatát és a megfelelő hasznot a saját munkaterhelésén, ahelyett, hogy pusztán a nyilvános ranglistákból következtetne.
-- **p95 késleltetés**: Az a várakozási idő, amelyet a kérések 95%-a nem halad meg. A valós felhasználói élményt jobban jellemzi az átlagnál, mert az átlagot a sok gyors kérés lefelé húzhatja, elfedve a felhasználók kisebb részét érintő súlyos lassulásokat.
-
-**Költség**: A bemeneti/kimeneti/gyorsítótár tokenek ára. A költségeket nem szabad elkülönítve értékelni – az alacsony sikerarányú olcsó modellek esetében a gyakori újrapróbálkozások miatt magasabb költségek merülhetnek fel. Ki kell számolni az átlagos feladatonkénti költséget és a költség-teljesítmény arányt.
-
-**Teljesítmény**: A Pass@1, Pass^k, Pass@k és Best@k pontos definícióit korábban az "Értékelési metrikarendszerben" adtuk meg. Itt csak azt tárgyaljuk, hogyan válasszunk a modellválasztással összefüggésben – napi forgatókönyvek esetén összpontosítson a Pass@1-re (egyetlen kísérlet átlagos sikerességi aránya); a kritikus műveleteknél a Pass^k prioritása, a "soha ne hibázzon" stabilitására összpontosítva; a feltáró feladatoknál adjon prioritást a Pass@k vagy a Best@k, figyelembe véve a képesség felső határát, amely elegendő lehetőséget biztosít; a nyílt végű feladatokhoz használjon többdimenziós Rubrika pontozást.
-
-**Sebességkorlátok és megbízhatóság**: Az RPM (kérelmek percenkénti száma) / TPM (tokenek percenkénti száma) korlátok befolyásolják a párhuzamossági képességeket, és egyes API-k csúcsidőben dinamikusan módosítják a kvótákat. A robusztusság szempontjából ügyeljen a terjesztésen kívüli adatokra, az ellenséges bemenetekre és a hosszú távú stabilitásra (függetlenül attól, hogy előfordulnak-e olyan problémák, mint a mód összeomlása vagy a figyelem eltolódása).
-
-**Költségkeret–képesség görbék**: Egyetlen, rögzített költségkeret mellett mért pontszám nem mutatja meg, hogy az Ügynök képes-e hosszú ideig tartó munkára. A sikerarány mellett azt is jelenteni kell, hogyan változik a teljesítmény a falióra szerinti idő, a tokenek, az eszközhívások vagy a számítási költségkeret függvényében. A RE-Bench jól szemlélteti ezt: környezetenként kétórás teljes keret mellett a legjobb Ügynök körülbelül négyszer annyi pontot ért el, mint az emberi szakértők. Az emberek azonban jobban hasznosították a többletidőt: nyolc óránál kis különbséggel felülmúlták a legjobb Ügynököt, több próbálkozásra kapott összesen 32 óránál pedig körülbelül kétszer annyi pontot szereztek.[^re-bench-2025] A rövid keret melletti előny tehát nem vetíthető ki közvetlenül a hosszú távú képességekre. Modellválasztáskor a valós munkaterhelés időtartamához igazodó több költségkeretpontot kell összehasonlítani.
-
-A gyakorlatban a modellek keverhetők: könnyű modellek egyszerű kérésekre a költségek csökkentése érdekében, hatékony modellek összetett feladatokhoz a minőség védelme érdekében; vagy speciális modellek bizonyos részfeladatokra (képmegértés, kódgenerálás), al-ügynöki mechanizmusokon keresztül együttműködve. Minden ilyen heterogén kombinációt magát kiértékeléssel kell validálni, hogy megbizonyosodjon arról, hogy az általános előnyök felülmúlják a rendszer összetettségét.
-
-### Modellviselkedés: mikor hagyjuk abba az olvasást és kezdjük el a szerkesztést?
-
-A modellválasztás nemcsak azt hasonlítja össze, hogy a modell képes-e befejezni a feladatot, hanem azt is, **hogyan viselkedik alapértelmezés szerint**. A Coding Agentek egyik könnyen megfigyelhető különbsége a cselekvési küszöb. Ugyanazon programozási feladatnál egyes modellek szélesen feltérképezik a tárolót, és szerkesztés előtt ellenőrzik az architektúrát, a hívási helyeket és a teszteket. Mások kevesebb bizonyítékból lokalizálják a módosítást, korán szerkesztenek, majd teszt-visszajelzéssel egészítik ki a megértésüket. Az előbbiek a túl korai módosítás, az utóbbiak még egy fájl elolvasásának alternatív költségét becsülik magasabbra.
-
-Ha egy hajlam Harness-váltáskor is a modellt követi, és egy rögzített Harnessben pusztán a modell cseréjétől megváltozik, akkor az elsődleges magyarázat a **modell viselkedése**. Valószínű forrás a post-training: az SFT trajektóriák megmutatják, mennyit kell olvasni a cselekvés előtt, a folyamatjutalmak megerősítenek vagy büntetnek bizonyos eszközutakat, az eredményjutalmak pedig a sikerhez vezető teljes stratégiát erősítik. A modell így nemcsak kódot írni tanul meg, hanem azt is, mikor gyűlt össze elegendő bizonyíték. A pontos adatkészletek és jutalmazási receptek többnyire nem nyilvánosak; a kontrollált modellcsere a viselkedést a modell oldalára helyezheti, de nem tárja fel egy szolgáltató pontos tanítási receptjét. A Harness a rendszerprompt, az eszközleírások és a költségkeret révén továbbra is eltolhatja a küszöböt, de kikényszerített munkafolyamat hiányában módosító tényezőként, nem pedig alapértelmezett gyökéroként kell kezelni.
-
-A kísérlet az `openai/gpt-5.6-sol` és az `anthropic/claude-sonnet-5` modellt egyetlen **semleges, rögzített Harnessben** hasonlítja össze. Mindkettő ugyanazt az OpenRouter endpointot használja, és azonos rendszerpromptot, feladatot, tárolót, eszközneveket, JSON Schemákat és eszközeredményeket kap. A Harness sem a felderítést, sem a korai szerkesztést nem írja elő. Három miniatűr tároló egy lokális hibát, modulokon átívelő identitásnormalizálást és nyilvános szerződésre érzékeny gyorsítótár-javítást fed le. Mindkét modell minden feladatot háromszor, egymástól függetlenül futtatott, összesen 18 trajektóriát létrehozva. Az első szerkesztés előtt a GPT-5.6-sol átlagosan 6,89 eszközhívást végzett és 4,67 fájlt olvasott; a Claude Sonnet 5 átlaga 4,56 hívás és 3,56 fájl volt. A különbség a lokális feladatoknál volt a legnagyobb, a kifejezetten több modult érintő feladatnál pedig szinte eltűnt (7,00 kontra 6,67 fájl). Mindkét modell 100%-os eredményt ért el az első tesztelt javítással és a végső teszteken is. Ez a kis kísérlet tehát azt támasztja alá, hogy „a cselekvési policy a modellel együtt változik”, nem pedig azt, hogy a több olvasás vagy a korábbi szerkesztés mindig jobb. Az első szerkesztésig eltelt idő is szinte azonos volt (15,01 kontra 14,48 másodperc), ezért külön kell kezelni az eszközlépések számát, a párhuzamos hívásokat és a modell késleltetését.
-
-> **6-8. kísérlet ★★: A modell cselekvési küszöbének mérése rögzített Coding Harnessben**
->
-> **Cél**: a modelltényező elkülönítése, annak számszerűsítése, hogyan választanak a Coding modellek alapértelmezés szerint a további információgyűjtés és a szerkesztés megkezdése között, valamint az útvonal-hatékonyság és a végső minőség együttes értékelése.
->
-> **Módszer**: futtassuk a `chapter6/model-action-threshold/experiment.py` programot. Alapértelmezés szerint ugyanazon OpenRouter OpenAI-compatible endpointon hívja a GPT-5.6-sol és a Claude Sonnet 5 modellt, miközben rögzíti a rendszerpromptot, az eszköz-Schemákat, a feladattárolókat, a tesztparancsokat és a körkorlátot. A semleges prompt nem ír elő minimális fájlolvasást vagy gyors szerkesztést. Mindhárom feladattípust legalább háromszor ismételjük meg, és váltogassuk a modellek sorrendjét. Rögzítsük az első szerkesztés előtti eszközhívásokat, olvasott fájlokat, kereséseket és falióra-időt, továbbá az első tesztelt javítás elfogadását, a teszt utáni átdolgozást, a végső sikert, a módosított fájlokat és a Token-használatot.
->
-> **Oksági értelmezés**: a semleges kampány azt kérdezi, változik-e a viselkedés a modellel ugyanabban a Harnessben. A Harness módosító hatásához külön kampányt futtassunk `--policy explore-first` beállítással; a két policyt ne keverjük egyetlen modell-összehasonlításban. A modellcserével változó, de ugyanazon modellnél több Harnessen át fennmaradó viselkedés erősebb bizonyíték a modellhatásra; az ellenkezője inkább Harness-hatást jelez.
->
-> **Elfogadási feltételek**: minden offline egységteszt sikeres; először igazoljuk, hogy minden feladat-fixture kezdeti állapotában elbukik a teszteken; a hivatalos eredmény tartalmazza az összes `modell × feladat × ismétlés` cellát, nulla API-hibát, független végső tesztet és auditálható trajektóriákat; a `manifest.json` ellenőrzi a konfiguráció, a megfigyelések és az összesítés hash-eit. A projektkönyvtár egy teljes, 18/18 cellás valós futást tartalmaz. Az olvasók a számukra fontos modellverziókon és valós munkaterhelésen ismételjék meg, ne tekintsék e miniatűr tárolók számait állandó ranglistának.
-
-### Ügynökrendszerek költségelemzése
-
-A költség a modellválasztás legkönnyebben alábecsülhető dimenziója. Ha az Ügynöke termelési folyamatban van, vagy arrafelé tart, ne hagyja ki ezt a részt.
-
-Az előző szakasz a költségeket a kulcsfontosságú kiválasztási dimenziók között sorolta fel, de az ügynökköltségek sokkal összetettebbek, mint az egyszerű token-árazás – a többfordulós érvelés, az eszközhívások és a kontextus-felhalmozás miatt a költségek nem lineárisan növekednek. A szisztematikus költségelemzés az értékelési rendszer nélkülözhetetlen része és előfeltétele a termelés bevezetésének.
-
-**A költség összetevői.**
-
-Egy ügynökrendszer költsége három szintre bontható:
-
-A **Modell következtetési költség** a legközvetlenebb összetevő, amelyet a bemeneti és kimeneti tokenek fogyasztása határoz meg. Az ügynök forgatókönyvekben azonban van két gyakran figyelmen kívül hagyott erősítő tényező. Az első a **kontextus halmozási effektus**: minden alkalommal, amikor egy ügynök meghív egy LLM-et, az összes korábbi beszélgetési előzményt és az eszköz kimeneteit együtt küldi (így a modell megértheti a kontextust). A KV gyorsítótár hatékony kihasználása nélkül (azaz a már feldolgozott kontextus gyorsítótárazása a redundáns számítások elkerülése érdekében) a költségek nagyon gyorsan nőnek – az 1. kör 1000 tokent küld, a 2. kör 2000 tokent, a 3. kör 3000 tokent, vagyis összesen 1000+2000+3000=6000 tokent a 3×1000=3000 helyett. Minél több kör, annál nagyobb a rés. A második a **gondolkodási token költsége**: a gondolkodást támogató modellek nagyszámú gondolkodási jelzőt generálnak. Bár ezek a tokenek nem jelennek meg a felhasználó számára, mégis kiszámlázzák őket.
-
-**Az eszközhívás költsége** magában foglalja a külső API díjakat (a keresőmotorok lekérdezésenként díjat számítanak fel, az adatbázis-lekérdezések számítási erőforrásokat fogyasztanak), a kódvégrehajtáshoz szükséges sandbox-erőforrásokat, valamint egy könnyen figyelmen kívül hagyható közvetett költséget: az eszközkimenetek kontextusba való beillesztésekor felmerülő tokenköltséget. Az egyetlen webes keresésből visszaadott tartalom 2000-5000 tokent foglalhat el, és minden következő következtetési körben ismételten kiszámlázzák bemenetként.
-
-**Az infrastruktúra költsége** magában foglalja a vektoradatbázisok (RAG-lekérdezéshez), az üzenetsorok, a relációs adatbázisok, valamint a naplózási és nyomkövetési tárolók (a megfigyelhetőség érdekében) működési többletköltségét.
-
-A költség forrásainak feltárásához a kísérő vizsgálat egy rögzített, nyolcfordulós visszatérítési folyamatot használt: rendelés, szállítás, visszatérítési szabályzat és tudásbázis lekérdezése, majd kockázatellenőrzés, visszatérítés, értesítés és lezárás. Valódi gpt-4o-mini hívások futottak két kapcsoló mind a négy kombinációjával: stabil vagy instabil előtag, illetve teljes vagy tömörített előzmény. Az üzleti folyamat minden ágban azonos volt; a 6-4. táblázat a rögzített tokenadatokat és árakat használja.
-
-6-4. táblázat: A nyolcfordulós Ügynök-folyamat mért költsége
-
-| Konfiguráció | Bemeneti token | Gyorsítótárazott token | Teljes költség | Megtakarítás az alaphoz képest |
-|---|---:|---:|---:|---:|
-| Nincs cache, nincs tömörítés | 20,700 | 0 | $0.003776 | — |
-| Csak stabil előtag | 20,386 | 13,568 | $0.002707 | 28.3% |
-| Csak előzménytömörítés | 16,177 | 0 | $0.003115 | 17.5% |
-| Stabil előtag + tömörítés | 16,035 | 6,144 | $0.002643 | 30.0% |
-
-Az alapágban a bemenet 1,113 tokenről 3,668-ra nőtt. Az eszközeredmények újra bekerültek a későbbi kérésekbe, összesen 9,544 bemeneti tokent adva. Mindkét optimalizálással ez 5,248-ra csökkent, a teljes költség pedig 30%-kal esett.
-
-A nyereségek nem adódtak össze. A stabil előtag önmagában 28.3%, a tömörítés 17.5% megtakarítást hozott, együtt azonban 45.8% helyett 30%-ot. A tömörítés a gyorsítótárban újrahasznosítható előtagot is rövidítette. **Kombinált kontextusoptimalizálásnál a teljes folyamatot mérjük; az önálló megtakarításokat ne adjuk össze.** Más modell, ár vagy feladathossz más százalékot ad. A négyágú módszer általánosítható, nem a 30%.
-
-**Költségoptimalizálási stratégiák.**
-
-Elsőként három bemeneti oldali eszközt érdemes próbálni: **KV Cache újrafelhasználása** stabil előtaggal, **kontextustömörítés** a régi trajectory-k és hosszú eszközeredmények rövidítésével, valamint **rétegezett modellútválasztás**. A 2. fejezet ismertette a megvalósítást. Működtetési szempontból mindegyikhez külön kapcsoló kell, hogy önálló és kombinált hatásuk is mérhető legyen. Két további módszer közvetlenül az értékeléshez és az üzemeltetéshez kapcsolódik.
-
-Az **Aszinkron kötegelt feldolgozás** nem valós idejű feladatokat halmoz fel kötegelt feldolgozáshoz, kihasználva az API-szolgáltatók kötegelt árengedményeit; öntelepítési forgatókönyvek esetén a csúcsidőn kívüli GPU kihasználtságot is javítja.
-
-**Költségfigyelés és költségvetés-ellenőrzés.**
-
-Éles környezetben valós idejű költségfigyelő rendszert kell létrehozni: nyomon követni a token felhasználást és az API-költségeket feladattípus, modell, felhasználó stb. szerint. Ezenkívül minden feladathoz állítson be költségplafont – automatikusan leállítja az ügynököt, ha hurokba esik, vagy túl mélyre megy, így megakadályozva, hogy egyetlen feladat abnormálisan magas költségekkel járjon.
-
-> **6-9. kísérlet ★: Az ügynöki feladatok végpontok közötti költségelemzése**
->
-> **Kísérlet célja**: Ismételje meg a fenti nyolcfordulós költségbontást, majd vizsgálja meg ugyanezeket az optimalizálásokat a saját munkaterhelésén.
->
-> **Technikai megközelítés**: Először reprodukálja a kísérő tároló rögzített feladatát, majd válasszon saját tipikus feladatokat. LangSmithtel vagy saját nyomkövetéssel rögzítse az input/output és gondolkodási tokeneket, az eszközhívásokat és eredményméreteket, valamint a végpontok közötti késleltetést. Számítsa ki az átlagot, p50/p95/p99 értékeket és a költségösszetételt.
->
-> **Elfogadási kritériumok**: Készítsen költségjelentést és azonosítsa a fő hajtóerőket. Futtassa mind a négy kapcsolókombinációt, külön-külön és együtt is mérve az optimalizálásokat. Modellváltáskor ismételje meg a mérést, ne vigye tovább a mentett trajectory százalékát.
+> **6-2. ★★★ Kísérlet: Aszinkron Agent Párhuzamos Végrehajtással és Megszakítási Képességekkel**
 >
 >
-
-### Értékelés-vezérelt folyamatos iteráció
-
-A modellválasztás nem egyszeri döntés, hanem egy folyamatos folyamat, amely a modellek fejlődéséhez igazodik. A fejezet azzal az állítással kezdődött, hogy egy kiértékelő rendszer lehetővé teszi, hogy lépést tartson a modell fejlődésével; egy konkrét modellváltási eset megmutatja, hogy ez hogyan működik egy valós döntésben.
-
-Tegyük fel, hogy az Ügynökrendszer jelenleg Claude-ra épül, és kiváló az eszközhívásokban, valamint az összetett vezénylésben. Egy napon megjelenik egy új Gemini-modell, amely a nyilvános benchmarkok szerint több mutatóban, alacsonyabb áron felülmúlja Claude-ot. A kérdés ekkor nem az, hogy „jobb-e a Gemini a Claude-nál?”, hanem ez: **„Az én konkrét feladataimban jobb-e a Gemini? Mennyivel, és mekkora az átállás költsége?”**
-
-Egy megbízható kiértékelő rendszerrel rendelkező csapat órákon belül választ adhat: lefuttatja az új modellt a saját kiértékelési adatkészletén, majd összehasonlítja a feladatok sikerarányát, az eszközhívások pontosságát, a késleltetést és a költséget. Elképzelhető, hogy az új modell az egyszerű feladatoknál valóban jobb és olcsóbb, miközben az összetett, többfordulós eszközvezénylést igénylő alapforgatókönyvekben 5%-kal csökken a sikerarány. Ha a különbség meghaladja a becsült mintavételi zajt (lásd alább „A kiértékelési eredmények statisztikai szignifikanciája” című szakaszt), árnyalt stratégia választható: az egyszerű feladatokat az olcsóbb új modellre irányítjuk, az összetetteknél pedig a minőség megőrzése érdekében megtartjuk az eredetit. Az ilyen részletes, adatvezérelt döntéshez előre felépített kiértékelő rendszer szükséges.
-
-> **6-10. kísérlet ★★: Többdimenziós modell teljesítmény-benchmarking**
+> ![6-5. ábra: 6-2. Kísérlet – Aszinkron Agent Megszakítás és Helyreállítás](images/fig6-5.svg)
 >
-> Végezze el a főbb LLM-ek és a különböző API-szolgáltatók átfogó összehasonlítását egy többdimenziós modellkiválasztási döntési adatbázis felépítéséhez.
 >
-> Válasszon tesztkört: zárt SOTA modelleket, például a GPT-, Claude-, Gemini- és Doubao-sorozatot, valamint nyílt modelleket, például a Qwen, Kimi és DeepSeek modelljeit. Ugyanazt a modellt több API-szolgáltatónál is tesztelje – például a hivatalos DeepSeek API-n és a SiliconFlow szolgáltatásán –, így ellenőrizve a külső teljesítménymérő platformok, például az Artificial Analysis eredményeit.
+> A 6-1. kísérlet egyszerű eseménysorára építve ez a kísérlet az aszinkron Agentek nehéz részeibe merül: **párhuzamos eszközvégrehajtás, végrehajtás megszakítása és állapotkezelés**. Az Agent már nem csak egyesével dolgozza fel az eseményeket; egyszerre több egyidejű feladatot kell kezelnie, meg kell birkóznia a megszakításokkal és helyreállításokkal, és dinamikus döntéseket kell hoznia a valós idejű állapot alapján.
 >
-> Szabványosított tesztelési munkaterhelések tervezése: A bemeneti átviteli teljesítménytesztek rögzített hosszúságú kontextusokat használnak (8K/32K/128K token), a kimeneti teljesítménytesztek rögzített hosszúságú válaszokat kérnek (512/2048 token). A késleltetési tesztek közé tartozik a TTFT (Time to First Token) és a végpontok közötti késleltetés. A gondolkodást támogató modelleknél külön mérje meg a gondolkodási hosszt és a gondolkodási késleltetést. Minden konfigurációhoz készítsen legalább 100 kérést, és számítsa ki a szórást, p50, p95 és p99; a nagy késleltetési eltérés instabil felhasználói élményt jelez.
+> **1. Aszinkron Eszközvégrehajtás**: Támogatja az időigényes eszközök (legalább 3-5 másodperc) aszinkron végrehajtását, azonnal visszaadva egy helyettesítőt a kezdeményezéskor. "Validációs Forgatókönyv": Az Agent végrehajt egy hosszan futó terminálparancsot. Ez idő alatt a felhasználó megkérdezi: "Hány óra van?" Az Agent azonnal válaszol, majd bemutatja az elemzési eredményt, amikor a hosszan futó parancs befejeződik.
 >
-> Értékelje az API rendelkezésre állását és stabilitását: Egy héten keresztül óránként egyszer vizsgálja meg, rögzíti a sikerarányt, a hibatípusokat és a hiba időtartamát. Számítsa ki a hibaarányt, az MTTR-t (átlagos helyreállítási időt) és a leghosszabb folyamatos üzemidőt. Tesztelje a sebességkorlátok tényleges küszöbértékeit – fokozatosan növelje az egyidejűséget a fojtópont megtalálásához, rögzítve az RPM/TPM határértékeket. Átfogó költség kiszámítása: Gyűjtse össze az árinformációkat (az input/output/cache tokenek egységárai), mérlegelje a KV Cache hatását, és számítsa ki a tipikus többfordulós ügynöki feladatok átlagos költségét.
+> **2. Eseménysor és Kötegelt Feldolgozás**: Felhalmozza a nem sürgős eseményeket, és egy kötegben fűzi hozzá a trajektóriához. "Validációs Forgatókönyv": Az Agent egy hosszú feladatot hajt végre. A felhasználó egymást követő üzeneteket küld: "Ne felejts el japánul válaszolni" és "Formázd weboldalként." Amikor a feladat befejeződik, az Agent az összes eseményt egyszerre dolgozza fel, generálva egy japán weboldalt.
 >
-> **6-11. kísérlet ★★: Felhasználói memóriarendszerek végpontok közötti kiválasztási kiértékelése**
+> **3. Megszakítási Mechanizmus**: A felhasználó "stop" parancsa azonnal megszakítja a végrehajtási folyamatot, és lemondja az aszinkron eszközt. "Validációs Forgatókönyv": Az Agent egy hosszú feladatot hajt végre. A felhasználó elküldi: "Mégse." Az Agent azonnal leáll, és a trajektória rögzíti a megszakítási eseményt és a lemondási műveletet.
 >
-> **Előfeltételek**: Be kell fejeznie a 3. fejezetben található kontextuális visszakeresési vagy ügynöki RAG-kísérletet.
->
-> **Cél**: Végezze el a felhasználói memória visszakereső ügynökének végpontok közötti modellkiválasztási kiértékelését, megvizsgálva, hogy a beágyazási modell, az átrendező és az ügynök fő modellje együttesen hogyan befolyásolja a visszakeresés minőségét, késleltetését és költségét. Használja újra a `chapter3/contextual-retrieval-for-user-memory`-t vagy a `chapter3/agentic-rag-for-user-memory`-t, és hasonlítsa össze a konfigurációkat 60 teszteseten.
->
-> **Elfogadás**: Értékelje sorban mindhárom kiválasztási pontot: a beágyazási modellt (BGE-M3 / OpenAI / Doubao stb.; rögzítse a top 5 visszakeresési pontosságot, a késleltetést és a költséget), az újrarangsorolót (legyen „nincs újrarangsoroló” alapvonal is, hogy számszerűsíthető legyen a hozzáadott értéke), valamint a fő modellt (azonos visszakeresési konfiguráció mellett hasonlítsa össze a sikerarányt és az eszközhasználat hatékonyságát). A kulcs az összetevők közötti kölcsönhatások felismerése: az erősebb beágyazás fölöslegessé teheti az újrarangsorolót, az erősebb főmodell pedig ellensúlyozhatja a visszakeresés hiányosságait. A választás rendszerszintű kompromisszum, nem az egyes komponensek külön-külön legerősebb változatának kiválasztása. A konfiguráció részletei a kísérő tárházban találhatók.
->
+> **4. Párhuzamos Eszközök Lemondása és Állapotlekérdezése**: Miután egy aszinkron eszköz befejeződött, a valódi eredmény egy új eseményen keresztül kerül a beszélgetésbe. Támogatja a lemondást vagy az előrehaladás lekérdezését feladat azonosító alapján. "Validációs Forgatókönyv": A felhasználó kéri: "Futtasd nekem ezt a három szkriptet egyszerre. Amelyik előbb befejeződik, ellenőrizd a maradék szkriptek előrehaladását. Ha valamelyik nem haladta meg az 50%-ot, mondd le." A három szkript elemzési folyamatokat szimulál, folyamatosan 3%, 2% és 1% sebességgel adva ki az előrehaladást másodpercenként. Az Agent három aszinkron terminálparancsot indít egyszerre. Amikor a 3%/másodperc sebességű szkript körülbelül 33 másodperc alatt befejeződik, az Agent lekérdezi a maradék két terminál állapotát, az egyiket körülbelül 66%-os, a másikat körülbelül 33%-os előrehaladással találva. Ezután lemondja azt, amelyik nem haladta meg az 50%-ot. Miután mindkét terminál befejeződött, integrálja az eredményeket egy teljes jelentés létrehozásához.
 
-## A Kiértékelési Eredmények Statisztikai Szignifikanciája
+## Hang: A legtermészetesebb ember-gép interfész
 
-**Egy váltási döntés órákon belül** egy implicit előfeltevésen nyugszik: a megfigyelt pontszámkülönbség valódi jel, nem mintavételi zaj. Korlátozott kiértékelési készlet és nem determinisztikus modellkimenetek mellett ez az előfeltevés nem áll fenn automatikusan.
+A hang nem pusztán a szöveg hanggá alakítása. A beszéd körülbelül négyszer gyorsabb a gépelésnél, és szabadon hagyja a kezet és a tekintetet, ezért természetesen illeszti az Agentet egy folyamatos, bármikor megszakítható ki- és bemeneti hurokba. A hangbevitel szöveggé alakítja a diktálást; a hangügynök közvetlen együttműködést tesz lehetővé. Mindkettő támogatja a bevezetőben említett whisper codingot.
 
-A mintavételi zaj durva becslése a "binomiális arány standard hibája" (amely a sikerességi arány mintavételi véletlenszerűségből adódó ingadozását jellemzi; minél nagyobb az érték, annál kevésbé megbízható a sikerességi arány). Ha a p sikerességi arányt n teszteseten mérjük, a standard hiba körülbelül √(p(1-p)/n). Egy konkrét példa: 100 eset, 70%-os sikerességi arány, standard hiba ≈ √(0,7×0,3/100) ≈ 4,6%. Egy hozzávetőleges 95%-os konfidencia intervallum p ± 2 standard hiba, azaz egy intervallum, amely ismételt mintákban az esetek körülbelül 95%-ában tartalmazná a valódi arányt, azaz 70% ± 9 százalékpont. Egy három százalékpontos különbség, mint "új modell 73% vs. régi modell 70%", teljes egészében a zajsávon belül van — a két sikerességi arányt függetlennek tekintve, a különbségük standard hibája körülbelül √2-szerese az egyes standard hibáknak (itt körülbelül 6,5 százalékpont). Egy megszorítás: a √2 feltételezi, hogy a két mérés független, míg a gyakorlatban mindkét konfiguráció általában "ugyanazon a feladatkészleten" fut, így a minták nem függetlenek. A függetlenségi feltételezés csupán egy konzervatív felső korlát a gyors ellenőrzéshez, hogy egy kis különbség egyáltalán figyelmet érdemel-e. Még ezzel a konzervatív mércével is a három százalékpontos különbség messze elmarad a 6,5 százalékpontos standard hibától — a modellek váltása ilyen bizonyíték alapján aligha jobb, mint egy pénzfeldobás.
+A szakasz két irányt tárgyal: a felhasználó az Agenthez beszél, illetve az Agent a felhasználó nevében a külvilághoz beszél. A hangmodell azt határozza meg, mire tud válaszolni; az interakciós architektúra azt, hogy jól hall-e, időben válaszol-e, természetesen adja-e át a szót, és hívás közben elvégzi-e a megerősítéseket és eszközhívásokat.
 
-Az Ügynök-kiértékelés további bizonytalanságot hoz: mintavétel, változó eszközeredmények és környezeti időzítés miatt ugyanaz a modell és adathalmaz is eltérhet két futásban. Egyetlen futás ezért nem indokol telepítést. Konfigurációnként például 3-5 futás átlagát és szórását jelentsük. A későbbi kis AndroidWorld-pilot feladatonként csak egy páros futást használ, így ötletek szűrésére alkalmas, telepítési döntésre nem. Ahhoz a teljes feladatkészlet több véletlenmagos futtatása kell.
+### Interakciós időzítés: a kaszkádtól a teljes duplexig
 
-Ebből egy gyakorlati elv: **amikor a pontszámkülönbség kisebb, mint a becsült mintavételi zaj, ne hozz váltási döntést.** De mielőtt a "ne válts" mellett döntenél, nyúlj egy érzékenyebb — és helyesebb — elemzéshez. Amikor két konfiguráció ugyanazon a feladatkészleten fut, a helyes alapértelmezés a "páros elemzés": hasonlítsd össze a győzelmi/vesztési arányt feladatonként, nézd csak azokat az eseteket, ahol a kettő eltér (az egyik helyes, a másik hibás), és alkalmazz valami McNemar-teszt jellegűt a szignifikancia megítéléséhez. A párosítás kivonja a feladatnehézség közös zaját, így sokkal érzékenyebbé válik ugyanazon mintaméret mellett, mint két független sikerességi arány különbségének vizsgálata — a korábbi √2 becslés csak egy konzervatív, fejben számolható szita a nyilvánvalóan elégtelen különbségek kiszűrésére. Ha a páros elemzés is bizonytalannak hagyja a különbséget, csak akkor fontold meg a minta növelését — és jegyezd meg, hogy a standard hiba 1/√n szerint skálázódik, így 100-ról 400 esetre növelés csak megfelezi a becsült mintavételi zajt. A bővítés költséges. Olvasd a másik irányból: ha egy fejlesztés várható haszna csak 2-3 százalékpont, és a kiértékelési készleted néhány tucat esetből áll, a kiértékelés egyszerűen nem tudja megmondani, hogy a fejlesztés működik-e — a prioritás a kiértékelési készlet bővítése, nem az Ügynök további iterálása.
+Az OpenAI GPT-Live bemutatója három paradigmát különböztet meg: kaszkád, köralapú és teljes duplex[^ch6-12]. Ezek eltérő kompromisszumok a késleltetés, a költség és a megfigyelhetőség között, nem lineáris fejlődési lépések.
 
-Még egy könnyen figyelmen kívül hagyható buktató a **többszörös összehasonlítás**. Hat független hipotézis 95%-os szinten történő vizsgálatakor legalább egy hamis pozitív esélye 1 − 0,95^6 ≈ 26%. Minél több változatot próbálunk, annál könnyebben tűnik valamelyik pusztán véletlenül sikeresnek. Szigorítsuk a küszöböt például Bonferroni-korrekcióval, vagy erősítsük meg a pozitív eredményt független futással. A későbbi AndroidWorld-sorozat körönként egyetlen változó módosításával mérsékli ezt a kockázatot; párhuzamos szűrésnél továbbra is korrekció vagy független megerősítés kell.
+| Paradigma | Szerkezet | Előny | Korlát |
+| --- | --- | --- | --- |
+| Kaszkád | VAD → ASR → LLM → TTS | Átlátható, cserélhető, hibakereshető modulok | Késleltetés halmozódik, a paralingvisztikai jel elveszik |
+| Végponttól végpontig Omni | Egy modell hallgat, gondolkodik és beszél | Kisebb késleltetés, jobb hangszín- és környezethang-megőrzés | Továbbra is köralapú, drága a tanítás és a hibakeresés |
+| Teljes duplex | Folyamatosan hallgat, beszél és dönt | Átfedő beszéd és természetes megszakítás | Bonyolultabb tanítás, vezérlés és értékelés |
 
-A kiértékelés-vezérelt döntések minőségi adatokra támaszkodnak, amelyek az Ügynök működési folyamatának szisztematikus rögzítéséből származnak — ezt nevezzük megfigyelhetőségnek.
+A közös cél az „egymás után beszélünk” feltételezés és a VAD szólójoggal kapcsolatos találgatásának meghaladása. A kaszkád és az Omni még körökre bont; a teljes duplexben a modell folyamatosan dönti el, ki beszél.
 
-**Páros összehasonlítás:**
+[^ch6-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/. A háromosztatú besorolás a ChatGPT Voice három generációjának összefoglalásából származik; az Omni a „turn-based voice models” kategóriának felel meg.
+
+**Streaming megszakítása:**
 
 ```python
-for task in paired_tasks:
-    for seed in fixed_seeds:
-        a = run(config_a, task, seed)
-        b = run(config_b, task, seed)
-        record_paired_delta(verifier(a), verifier(b))
+while audio_is_arriving:
+    partial = asr.push(audio_chunk)
+    if endpoint_is_probable(partial):
+        candidate = llm.start(partial)
+        if later_audio_changes_meaning(partial):
+            cancel(candidate)                 # speculative cancellation
+        else:
+            tts.enqueue_stable_segments(candidate)
 
-return paired_bootstrap_or_mcnemar(all_deltas)
+on_final_transcript(text):
+    commit_or_restart(text)
 ```
 
-## Ügynök-megfigyelhetőség
+### Paradigma 1 · Kaszkádolt csővezeték
 
-A kiértékelés-vezérelt döntések (akár modellválasztáshoz, akár folyamatos iterációhoz) minőségi működési adatokra támaszkodnak. Az alábbiakban először azt mutatjuk be, hogyan gyűjtsünk szisztematikusan ilyen adatokat (megfigyelhetőség), majd azt tárgyaljuk, hogyan fordítsuk le a kiértékelési eredményeket rendszerfejlesztésekké.
+A legtöbb kereskedelmi hangasszisztens soros csővezetéket használ (6-6. ábra): a VAD érzékeli a végét, az ASR szöveggé alakítja a hangot, az LLM megérti és megfogalmazza a választ, a TTS pedig kimondja. A modularitás megkönnyíti az egyes részek optimalizálását, de minden határ várakozást ad hozzá.
 
-![6-6. ábra: Megfigyelhetőségi Technológiai Verem](images/fig6-6.svg)
+![6-6. ábra: Soros hangügynök-csővezeték](images/fig6-6.svg)
 
-A megfigyelhetőség egy elosztott rendszerekből kölcsönzött fogalom: nem nyithatod ki a rendszert, hogy lásd, hogyan működik; a naplókból, metrikákból és nyomkövetésekből következtetsz arra, mi történik — ahogy egy orvos, aki nem lát bele a betegbe, a hőmérsékletből, vérnyomásból és képalkotásból diagnosztizál. Az Ügynök-rendszerek ezt még nehezebbé teszik: ugyanaz a bemenet különböző kimeneteket produkálhat, a többfordulós következtetés és eszközhívások rendkívül összetetté teszik a végrehajtási utakat, és a modell "gondolkodása" kívülről teljesen átláthatatlan.
+| Modul | Feladat | Tipikus szűk keresztmetszet |
+| --- | --- | --- |
+| VAD | A beszéd végének eldöntése | Csendküszöb, várakozás és hibás szegmentálás |
+| ASR | Hangból szöveg | Felismerési késleltetés és kontextusvesztés |
+| LLM | Megértés, gondolkodás és generálás | Első token késleltetése, reasoning miatti várakozás |
+| TTS | Szövegből hang | Első csomag szintézise és lejátszási puffer |
 
-A megfigyelhetőség értéke először is a "problémadiagnosztikában" rejlik: a teljes nyomkövetések lehetővé teszik a fejlesztők számára, hogy visszajátsszák a teljes folyamatot ahelyett, hogy találgatnának. Másodszor, ez a "folyamatos optimalizálás" alapja — láthatod, mely feladatok igényelnek több iterációs kört, mely eszközöknek van a legalacsonyabb sikerességi aránya, és mely lekérdezések adnak vissza mindig üres eredményt. A "költséggazdálkodásban" az Ügynök működési költségei akár egy-két nagyságrenddel is eltérhetnek a feladatok között, és a nyomkövetés felszínre hozza a rendellenesen drága eseteket. Végül, a felhalmozott nyomkövetési adatok képezik a későbbi rendszeroptimalizálás és modellfejlesztés alapját.
+Rövid válasznál is sorosan összeadódik a VAD, ASR, LLM és TTS várakozása (6-7. ábra). Éles rendszerben a sorban állás tovább növeli az üresjárati késleltetést (6-8. ábra).
 
-Az Ügynök-megfigyelhetőség a "trajektóriák" alapjaira épül, amelyek adatstruktúrája közvetlenül örökli az elosztott rendszerekből származó spanfa modellt: egy feladat végrehajtása egy trajektóriának felel meg, ahol minden LLM-hívás, minden eszközhívás és minden lekérés egy "span" (egy végrehajtási egység, amely rögzíti a bemenetet/kimenetet, a kezdő/befejező időpontot, a tokenfogyasztást és a hiba információt). A spanok közötti szülő-gyerek kapcsolatok egy végrehajtási fát alkotnak — például egy "Ügynök Főhurok" span alatt több "LLM Hívás" és "Eszközhívás" gyermek span lehet. Szabványosított protokollok már rendelkezésre állnak ehhez a réteghez: az "OpenTelemetry" az általános célú elosztott nyomkövetési szabvány, míg az olyan specifikációk, mint az "OpenInference", LLM-specifikus szemantikai konvenciókat definiálnak ezen felül (hogyan rögzítsünk utasításokat, modellparamétereket, tokenhasználatot stb.). A szabványos protokollok elfogadásának előnye a gyűjtés és az elemzés szétválasztása — ugyanaz a nyomkövetési adat különböző elemző háttérrendszerekhez csatlakoztatható, elkerülve a szállítói bezártságot.
+![6-7. ábra: Soros válasz késleltetési vízesése](images/fig6-7.svg)
 
-A LangSmith az egyik reprezentatív platform ezen a területen (hasonló platformok: Langfuse, Arize Phoenix stb.), amely a megfigyelhetőséget, a kiértékelést és az optimalizálást zárt hurokba integrálja. Minden végrehajtás létrehoz egy nyomkövetési munkamenetet, ahol a modellhívások, az eszközhasználat és a tudáslekérés független végrehajtási egységként kerül rögzítésre, ok-okozati kapcsolatokkal összekötve, egy végrehajtási fát alkotva. Minden egység rögzíti a teljes bemenetet/kimenetet, időzítési információkat, költségadatokat és hibainformációt. A platform aszinkron kötegelt adatgyűjtést használ annak biztosítására, hogy a nyomkövetés maga ne befolyásolja az Ügynök válasz-késleltetését.
+![6-8. ábra: Sorban állási késleltetési görbe](images/fig6-8.svg)
 
-A platform támogatja továbbá az A/B tesztelést (a felhasználói forgalom egy részének átirányítása egy új verzióra, a metrikák automatikus összehasonlítása, gyors visszaállítás vagy fokozatos bővítés támogatása), az utasításverzió-kezelést (minden verzióhoz tartozó futásidejű teljesítményadatok) és az együttműködésen alapuló fejlesztést (a csapattagok megoszthatják egymás között a nyomkövetési adatokat és probléma-eseteket). A termelési környezetből származó hatalmas mennyiségű valós adat aranybánya a folyamatos fejlesztéshez — feltárhatja az előre nem látott forgatókönyveket és azonosíthatja a leginkább optimalizálásra szoruló funkciókat.
-
-A megfigyelhetőségi adatok legértékesebb felhasználása "kiértékelési eszközökké alakításuk". Egy gyakorlati hurok: a termelési trajektóriákból kivont hibás és gyanús esetek → anonimizálás (érzékeny mezők, például felhasználói adatok és kulcsok eltávolítása) → új tesztesetekké és regressziós tesztekké desztillálás a kiértékelési készletbe. A kiértékelési készlet ekkor megszűnik egyszeri, statikus gyűjtemény lenni, és élő eszközzé válik, amely a termékkel együtt fejlődik és továbbra is tükrözi a valós felhasználói eloszlást — a ma termelésben feltárt hibaminták holnap őrzik az alapvonalat regressziós tesztekként. Ez pontosan a megfigyelhetőség és a fejezet fő témája közötti interfész: a megfigyelhetőség felelős a valós világban történések "látásáért", a kiértékelés pedig azért, hogy ezeket a megfigyeléseket ismételhető szabványokká szilárdítsa.
-
-A megfigyelhetőség számos kihívással néz szembe:
-
-- **Adatmennyiség és adatvédelem közötti kompromisszum**: A nagy forgalmú rendszerek naponta terabájtnyi nyomkövetési adatot generálhatnak, miközben az adatvédelmi előírásoknak is meg kell felelniük.
-- **Az ok-okozati hozzárendelés összetettsége**: A gyökér-okok automatikus azonosítása a trajektóriákból még mindig intelligensebb elemző algoritmusokat igényel; a kutatás élvonala kauzális következtetést és ellentényes elemzést kísérel meg, de ez még nem érett.
-- **Nyomkövetési kihívások multi-Ügynök rendszerekben**: A végrehajtási folyamatok nyomon követése több Ügynök között összetettebb és szemantikailag gazdagabb, mint a mikroszolgáltatások közötti API-hívások nyomon követése.
-- **Egyensúly a valós idejű védőkorlátok és az utólagos elemzés között**: Magas kockázatú forgatókönyvekben proaktív védőkorlátokra van szükség, de ezek további késleltetést és téves riasztásokat vezetnek be.
-
-Ahogy a ML technológia mélyebben integrálódik az eszközláncba, a jövő megfigyelhetőségi platformjai várhatóan automatikusan képesek lesznek azonosítani az anomáliákat és pontosan lokalizálni a gyökér-okokat.
-
-Egy átfogó kiértékelő rendszerrel és adathalmazzal a kulcs az, hogy a kiértékelési eredményeket kézzelfogható rendszerfejlesztésekké fordítsuk le.
-
-## A Benchmark Jelentésektől a Rendszerfejlesztésekig
-
-A következő eset a kísérő tároló valós, szándékosan szűk AndroidWorld-iterációjából származik. Négy Wi-Fi-beállítási feladatot vizsgál API 35 emulátoron, feladatonként egy páros futással. Nem a teljes, 116 feladatos benchmark, és nem helyettesíti az API 33 referencia-környezetben végzett újrafuttatást. Értéke nem egy összpontszám, hanem az egymásra épülő döntések sora.
-
-![6-7. ábra: Benchmarktól a Fejlesztésig Hurok](images/fig6-7.svg)
-
-A Harness Engineering szempontjából ez a szakasz lényegében a Harness iteratív optimalizálásának módszertanáról szól — a kiértékelési adatok használata a Harness gyenge pontjainak (elégtelen kontextus? hiányzó korlátozások? elégtelen validálás? nem megfelelő időzítésű visszacsatolás?) azonosítására, célzott fejlesztések végrehajtása, majd újraértékelés, ami a Harness folyamatos fejlődésének zárt hurkát alkotja.
-
-Mielőtt bármilyen benchmark jelentést elemeznénk, vegyünk észre egy könnyen figyelmen kívül hagyható elvet: **amikor az Ügynök teljesítménye csökken, először a kiértékelő rendszert ellenőrizd, aztán az Ügynököt.** A gyakori hiba az, hogy a pontszám esésekor azonnal az Ügynök kódját kezdik szerkeszteni, figyelmen kívül hagyva annak lehetőségét, hogy a kiértékelő rendszer romlott el először — egy torzított jel alapján kormányozni, és a korrekció az első lépéstől fogva rossz. Tipikus kiértékelés-oldali hibák: a futásidejű környezet kifogy az erőforrásokból és leállítja a folyamatokat (ami véletlenszerű hibákként jelentkezik), hibák a pontozóban, amelyek helyes válaszokat jelölnek meg hibásként, és tesztesetek, amelyek eltolódtak a termelési forgatókönyvektől. A fő számokban mindezek azonosnak tűnnek a modellromlással; csak a teljes trajektóriák áttekintése különbözteti meg őket.
-
-### Benchmark Jelentés Olvasása: A Problémafelismerés Művészete
-
-A kiinduló jelentés a 116 feladat mindegyikét egyszer futtatta, körülbelül 88%-os összesített sikerrel. A hibák nem szóródtak: a négy `SystemWifiTurn*` feladatból három elbukott, trajectory-jük pedig végállapot-ellenőrzés nélküli oda-vissza navigálást mutatott. Két magyarázat illett az adatokhoz: az Ügynök nem tudta, hová menjen, vagy hiányos UI-reprezentációt kapott.
-
-A 88%-os főszám elrejti ezt a kis, koherens hibacsoportot. A lépéskorlát emelése is félrevezető: a „nem látja a vezérlőt” problémát „nem elég kitartóvá” nevezheti át. Előbb csoportosítsunk feladat és képességcímke szerint, játsszuk vissza a trajectory-ket, döntsük el, hogy megfigyelési, következtetési, cselekvési vagy ellenőrzési hibáról van-e szó, és csak utána változtassunk egy változót. A Wi-Fi-szelet az olcsó mechanizmusdiagnózist szolgálta, nem a rendszerszintű teljesítmény becslését.
-
-### Az Adatoktól a Hipotézisekig: Fejlesztési Ütemterv Építése
-
-Az első kör a legolcsóbb magyarázatot tesztelte. H1 navigációs tudáshiányt feltételezett, ezért csak a kezelt ág kapott Wi-Fi-navigációs és végállapot-ellenőrzési utasítást. A siker nem javult: nem a prompt volt a szűk keresztmetszet.
-
-A második kör azt kérdezte, mit lát valójában az Ügynök. H5 az API 35-tel inkompatibilis accessibility feedet az AndroidWorld által támogatott UIAutomator-fára cserélte. A siker nőtt, a teljes fa azonban megugrasztotta a tokenhasználatot. H5C ezért nem adott új információt: a láthatatlan, szöveg nélküli, nem műveletképes konténereket szűrte ki.
-
-Mindhárom körben változatlan maradt a modell, a feladatparaméter, a seed, a lépéskorlát és az emulátor; az ágak sorrendje váltakozott. Így az egyik kör fennmaradó problémája lett a következő egyetlen változója.
-
-### Az Eredményektől a Döntésekig: Adatvezérelt Kompromisszumok
-
-A 6-5. táblázat a mért eredményeket foglalja össze. Áganként négy feladat elegendő annak eldöntésére, érdemes-e nagyobb futást végezni, de nem becsüli az AndroidWorld egészének sikerét.
-
-6-5. táblázat: Három kör az AndroidWorld Wi-Fi-szeletén
-
-| Kísérlet | Egyetlen változás | Kontroll → kezelés siker | Kezelés / kontroll token | Következő lépés |
-|---|---|---:|---:|---|
-| H1 | Navigációs utasítás | 25% → 25% | 0.47× | Nincs sikerjavulás; eredeti prompt marad |
-| H5 | Accessibility feed → UIAutomator | 25% → 100% | 2.498× | Erős javulás, de drága; tovább optimalizálni |
-| H5C | UIAutomator-fa tömörítése | 100% → 100% | 0.506× | Siker megmarad, token feleződik; teljes futásra tovább |
-
-A sorrend fontosabb bármely egyedi százaléknál. Részletesebb utasítás nem pótolja azt az információt, amelyet az Ügynök meg sem kapott; promptbővítés előtt vizsgáljuk a megfigyelési hibát. A több bemenet sem mindig jobb: a teljes fa megoldotta a láthatóságot, de zajjal árasztotta el a kontextust. A szemantika nélküli csomópontok eltávolítása megtartotta a négy sikert és körülbelül felezte a tokent. A modell nem változott; a Harness UI-reprezentációja döntötte el előbb a végrehajthatóságot, majd annak gazdaságosságát.
-
-### Folyamatos Iteráció: Az Első Fejlesztéstől a Rendszer Evolúciójáig
-
-H5C négy feladatos sikere csak nagyobb tesztet engedélyez, telepítést nem. A következő kapu mind a 116 feladat öt seeddel, Pixel 6 / API 33 referencia-környezetben, a teljes külső alkalmazáskészlettel. A siker nem lehet rosszabb, a tokenarány legyen ≤0.75, a késleltetési arány ≤1.5. Addig a 4/4 nem jelenthető rendszerszintű 100%-ként.
-
-A folyamatos iteráció ezt jelenti: minden kör bizonyítéka csak a hatókörével igazolt következő lépést engedélyezi. H1 leállította a prompt további bővítését; H5 megtalálta a mechanizmust és feltárt egy költségproblémát; H5C megoldotta azt, így nagyobb tesztre jutott. A jó benchmark jelentés nemcsak pontszámot, hanem érvényességi kört, megsértett guardraileket és következő tesztet is közöl.
-
-> **6-12. kísérlet ★★★: Kiértékelés és Fejlesztés AndroidWorldön**
+> **6-3. kísérlet ★: Hagyományos hangügynök építése**
 >
-> Ez a kísérlet a kiértékelési jelentéstől a rendszerfejlesztésig vezető teljes utat gyakorolja. Kezdd a történeti jelentéssel és a `chapter6/android-world` három mentett páros futásával.
+> WebSocketen keresztül kapcsoljuk össze a mikrofont, a Silero VAD-ot, a helyi Whisper-t, a streaming LLM-et és a Fish S1 TTS-t. A megőrzött valódi egyfordulós bizonyíték a teljes lánc futását mutatja, nem párhuzamossági vagy éles terhelési benchmark. Kód és elfogadási rekord: [chapter6/live-audio](../chapter6/live-audio/).
+
+> **Kiegészítő projekt: WebRTC-hangügynök, amely „felhívja a felhasználót”**
 >
-> 1. lépés: Diagnózis. Elemezd keresztbe a feladatonkénti táblázatot és a képességcímke-mátrixot, hogy a felszíni feladathibákat mélyebb képességhiányokra vezesd vissza. Azonosítsd a vártnál alacsonyabb sikerességi arányú képességcímkéket és a koncentrált hibákkal rendelkező feladatterületeket.
+> PSTN nem szükséges: a böngészős WebRTC megnyitja a munkamenetet, bekéri a hiányzó adatokat, visszamondja azokat megerősítésre, majd strukturált eredményt ment. Külső szervezethez ugyanazt a szerződést megfelelő PSTN/SIP-szolgáltatóra cseréljük. A projekt történeti exp9-2 azonosítókat őriz, de nem foglal számozott helyet a kéziratban. Lásd [chapter6/phone-agent](../chapter6/phone-agent/).
+
+#### A sorostól a streaming észlelésig
+
+Az ASR beszéd közben ideiglenes átiratot adhat, az LLM az első felolvasható mondatot átadhatja a TTS-nek, a TTS pedig hangblokkokat küldhet. Ettől a három szakasz nem lesz teljesen párhuzamos; előreindításkor a későbbi átirat változását törléssel, újraindítással vagy visszagörgetéssel kell kezelni.
+
+A VAD + ASR front-end három gondja a csend miatti **késleltetés**, a hezitálás, érzelem és környezeti hang elvesztése, valamint az e-mail-címek és tulajdonnevek **kontextustörése**. A valódi streaminghez kauzális vagy darabolt kódoló és inkrementális dekódolás kell; a Whisper teljes hangszegmenst vár. Az LLM-alapú hallási modell szöveget és szemantikai eseményeket adhat ki.
+
+A végpont eldöntése beépíthető a streaming felismerőbe, de a címkék csak a döntéskor látható információt használhatják[^ch6-11]. A speak_start/end, interrupt, emotion, laugh, sigh és noise jelölők megőrzik a nem szöveges jeleket.
+
+[^ch6-11]: A végpontítélet felismerőbe építéséről és az utólagos címkékről lásd Li, Bojie és Noah Shi. *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR.* 2026 (megjelenés alatt).
+
+> **6-4. kísérlet ★: Streaming hangészlelés szimulációja Qwen2-Audio-val**
 >
-> 2. lépés: Hipotézisek építése. Fogalmazz meg fejlesztési hipotéziseket a háromszintű keretrendszer (felszín → közép → mély) követésével. Minden hipotézis tartalmazza a várható javulást a sikerességi arányban és az ellenőrzési módszert.
+> A Qwen2-Audio nem streaming modell. Növekvő hangprefixekkel szimuláljuk a folyamatos észlelést, és 600 ms VAD + Whisper kontrollal hasonlítjuk össze. A canonical run csak 2/6 várt viselkedést reprodukált, 8,4–11,3 másodpercig tartott, a pause mintán kihagyta a silence-t, a noise mintát cough/laughter-ként tévesztette. Ez mechanizmus- és hibamód-vizsgálat, nem 100–200 ms-os streaming ígéret. Lásd [chapter6/streaming-speech](../chapter6/streaming-speech/).
+
+### Paradigma 2 · Végponttól végpontig tartó omnimodális modellek (Omni)
+
+A kaszkád szöveges határa elveszítheti az érzelmet, intonációt és környezeti hangot. Az Omni egy modellben hallgat, válaszol és beszél, de drágább tanítani, hibakeresni és cserélni. Előnye főként a késleltetés és a nem szöveges információ, nem szükségszerűen a pontosság. Az önkaszkád akkor javíthat felismerési hibát, ha a szöveg elég; beszédsebesség vagy érzelem esetén a szöveges szűk keresztmetszet bizonyítékot veszít[^ch6-13].
+
+[^ch6-13]: A kaszkád és a végponttól végpontig tartó út pontossági előnyeinek mérését lásd Li, Bojie és Noah Shi. *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents.* 2026 (megjelenés alatt).
+
+![6-9. ábra: End-to-end omnimodális hangmodellek](images/fig6-9.svg)
+
+A valós idejű hang API-k köztes megoldások: natívan kezelik a hangot, de VAD-ra, megszakításra és aszinkron eszközhívásra támaszkodnak. A feladatfüggő hibák fontosabbak, mint a ranglista.
+
+> **6-5. kísérlet ★★: MiniCPM-o 4.5 helyi futtatása — end-to-end és önkaszkád**
 >
-> 3. lépés: Fázisos kísérletezés. Reprodukálja H1-et, H5-öt és H5C-t, körönként egyetlen változóval. A siker mellett rögzítse a tokent, késleltetést és regressziókat.
->
-> 4. lépés: Adatvezérelt döntéshozatal. Hozz bevezetési döntéseket költség-haszon elemzés alapján — ne egyszerűen fogadj el minden hatékony fejlesztést, hanem mérlegeld az alkalmazási kört, a késleltetési hatást és a költségterhelést minden fejlesztésnél. Prioritásként vezesd be az alacsony költségű, magas hasznú fejlesztéseket; a magas költségű fejlesztéseket korlátozd a kritikus forgatókönyvekre.
->
-> 5. lépés: Iteráció. A sikeres szeletkísérlet csak a teljes futásra léphet tovább. Telepítésről csak a referencia-környezet 116×5 futása után döntsünk; a jelentésben maradjon meg a környezetkülönbség, a mintaméret és a hiányos hatókör.
->
-
-## A Külső Kiértékeléstől a Belső Kiértékelésig: Kiértékelési Infrastruktúra Termelési Szintű Ügynökök Számára
-
-Eddig ez a fejezet kívülről értékelte az Ügynök-rendszereket — kiértékelési környezet építése, adathalmazok tervezése, benchmark jelentések elemzése. De a legjobb Ügynök-termékek többet tesznek, mint hogy alávetik magukat a külső kiértékelésnek; "folyamatos önértékelési infrastruktúrát építenek a termékbe". Az alábbiakban az 5. fejezetben bemutatott nyílt forráskódú általános célú Ügynök, az OpenClaw példáján, valamint a vezető Kódolási Ügynök termékek nyilvános technikai elemzéseire és gyakorlati szakemberek meglátásaira támaszkodva bemutatunk egy követésre méltó belső kiértékelő rendszert: amely szisztematikusan ágyazza be a ML kutatás kísérleti módszertanát a termékmérnökségbe.
-
-### Ablációs Infrastruktúra: Az Egyes Funkciók Valódi Hozzájárulásának Megértése
-
-A ML kutatók régóta használnak ablációt annak megértésére, hogy egy modely mely összetevői számítanak valójában — az abláció "eltávolít" egy összetevőt egyszerre, és megfigyeli, mennyit csökken az általános teljesítmény. Az OpenClaw ezt a módszertant a termékmérnökségbe hozza: egy beépített főkapcsoló egyszerre több jelentős funkciót is letilthat (gondolkodási mód, kontextus-tömörítés, automatikus memória, háttérfeladatok stb.), létrehozva egy "csupasz modell" alapvonalat. Ez lehetővé teszi a csapat számára, hogy megválaszoljon egy kulcsfontosságú kérdést: **egy funkció valóban javítja-e a felhasználói élményt, vagy csak hasznosnak tűnik?**
-
-Az abláció rutinszerű mérnöki gyakorlattá tétele, nem pedig egyszeri kutatási tevékenység, számos gyakorlati következménnyel jár. Először is, az abláció kapcsolóját nagyon korán, az indítási útvonalba kell beinjektálni — mielőtt bármilyen modul szintű konstans elkapja a konfigurációs értékeket — ami azt jelenti, hogy az abláció infrastruktúrát a rendszerarchitektúrába kell tervezni a kezdetektől, nem pedig utólag hozzáilleszteni. Másodszor, az abláció kísérletek rendszeres futtatása (pl. minden nagyobb kiadás előtt) feltárhatja a "funkció-adósságot" — olyan funkciókat, amelyek egykor hatékonyak voltak, de már nem szükségesek, ahogy a modellek fejlődnek. Bármely termelési Ügynököt építő csapat számára az ajánlott gyakorlat: **Minden jelentős funkciónak függetlenül letilthatónak kell lennie, és a csapatnak rendszeresen ellenőriznie kell az egyes funkciók tényleges hozzájárulását.**
-
-### A/B Tesztelési Módszertan: A Mechanizmus és a Cél Megkülönböztetése
-
-Az érett Ügynök-termékek szigorú A/B tesztelést végeznek saját viselkedésükön (azaz véletlenszerűen két csoportra osztják a felhasználókat, az egyik a régi, a másik az új verziót használja, és összehasonlítják a tényleges adatokat a két csoportból, hogy megállapítsák, hatékony-e a változtatás). Egy jól megtervezett Ügynök A/B teszteset több kulcsfontosságú módszertani elvet illusztrál:
-
-**Több változat, nem csak bináris összehasonlítás.** Ahelyett, hogy csak a "van" és "nincs" lehetőséget hasonlítanád össze, tervezz több progresszív változatot (pl. amikor az utasítás-megszorítások különböző erősségeit teszteled, állíts be egy kontrollcsoportot és három kísérleti csoportot fokozatosan szigorúbb megszorításokkal). Ez a tervezés feltárhatja a dózis-válasz kapcsolatokat és segíthet megtalálni az optimális pontot.
-
-**A mechanizmus metrikák és a célmetrikák megkülönböztetése.** Ez a leggyakrabban elkövetett hiba — annak, amit változtatsz, a kezelése optimalizálási célként. Például, ha azt teszteled, hogy "csökkentsük az Ügynök tervfájl hosszát", a tervhossz egy mechanizmus metrika (amit közvetlenül változtatsz), de nem a cél. A valódi cél lehet "az ülésszintű költség csökkentése". A tervfájl lerövidítése csökkentheti a költségeket, de vezethet több szerkesztés-ellenőrzés-szerkesztés hurokhoz is a nem elég részletes tervek miatt, növelve a teljes kimenetet. Mindig tedd fel magadnak a kérdést: **Amit változtatok (a mechanizmus), az ugyanaz, amit igazán érdekel (a cél)?** Ha nem, részesítsd előnyben a célt.
-
-**Védőkorlát metrikák beállítása.** Még ha a célmetrika javul is, a kísérletet le kell állítani, ha a felhasználói elégedettség csökken, a műveletek száma nő, vagy a hibaráta emelkedik. A védőkorlát metrikák nem tárgyalható küszöbértékek, amelyek nem romolhatnak.
-
-**Alapvonali statisztikák rögzítése.** Tartalmazd a mintaméretet, az eloszlás percentiliseit és a korrelációs elemzést (pl. "az elutasítási arány monoton nő a tervmérettel") a szükséges kontextus biztosításához a kísérleti eredmények értelmezéséhez. Alapvonal nélkül nem tudod megállapítani, hogy a kísérleti eredmények statisztikailag szignifikánsak-e.
-
-### Kétrétegű Funkciókapcsoló Rendszer
-
-Az Ügynök-termékeknek szükségük van egy a kezdetektől fogva tervezett Funkciókapcsoló infrastruktúrára — a funkciókapcsoló egy távolról vezérelhető kapcsoló, amely meghatározza, hogy egy funkció engedélyezve vagy letiltva van-e a felhasználók számára, anélkül, hogy kód újratelepítésére lenne szükség. Három célt szolgál egyszerre: kísérletezés, fokozatos bevezetés és vészhelyzeti áramkör-megszakítás.
-
-**A fordítási idejű kapcsolók** fizikailag eltávolítják a releváns kódot a buildből a fordítási fázis során. A csak belső használatra szánt funkciók egyszerűen nem léteznek a külső buildekben — még a visszafejtés sem fedezheti fel az eltávolított funkciót. Ez egy tiszta ablációs mechanizmust is biztosít: egy funkció letiltása nem hagyja ki a logikát futásidőben; a megfelelő kód fizikailag hiányzik.
-
-**A futásidejű kapcsolók** konfigurációját a szerver szolgáltatja ki, és a rendszer helyileg, a lemezen gyorsítótárazza. A tervezés előnyben részesíti az enyhén elavult gyorsítótárazott konfiguráció olvasását azzal szemben, hogy az Ügynök indulását blokkolja, amíg egy hálózati kérésre vár. A specifikus csoportosítási döntések egy kísérleti platformon (pl. GrowthBook) keresztül történnek az A/B tesztcsoportok kiosztásához. Egy kulcsfontosságú tervezési részlet: minden funkció expozíciós eseménye munkamenetenként legfeljebb egyszer kerül naplózásra, hogy elkerüljük a duplikált rekordok által okozott kísérleti adatszennyezést.
-
-A tanulság Ügynök-fejlesztők számára: a funkciókapcsolók nem hibakereső eszközök; "első osztályú architekturális összetevők".
-
-### Utasítás-érzékenység Felmérése
-
-A rendszerutasítás az Ügynök viselkedésének alapvető "kódja", mégis gyakran hiányzik belőle a verziókezelés és regressziós tesztelés, ami a hagyományos kód esetében adott. Az OpenClaw megközelítése, hogy egy dedikált eszközt biztosít, amely képes kinyerni a teljesen renderelt rendszerutasítást egy adott Git revíziónál vagy commitnál — beleértve az összes dinamikus feltétel kibontása utáni végső szöveget. Ez lehetővé teszi a csapat számára, hogy pontosan megválaszolja: **Melyik commit változtatta meg az utasítást? Mi volt a hatás a kiértékelési készleten?**
-
-Bármely Ügynök csapat számára az ajánlott gyakorlatok: (1) A rendszerutasítás legyen determinisztikusan renderelhető (ugyanaz a konfigurációs bemenet mindig ugyanazt a kimenetet produkálja); (2) Hozz létre verziózott pillanatkép mechanizmust az utasításokhoz; (3) Minden utasításváltoztatás fusson regressziós teszteket a kiértékelési készleten — ahogy a kódváltoztatások CI-t igényelnek.
-
-### Adatvédelmi Tudatos Analitika mint Kiértékelési Alap
-
-A kiértékelés jó adatokra támaszkodik, de az Ügynök-termékek gyakran kezelnek érzékeny felhasználói tartalmat. Az OpenClaw ezt az ellentmondást egy típusrendszeren keresztül oldja fel: az analitikai interfész csak speciális típusokba csomagolt értékeket fogad el, ahol a típusnév maga naplózási nyomvonalként szolgál — expliciten deklarálja, hogy "ellenőriztem, hogy ez nem kód vagy fájlútvonal". Ez a tervezés az adatvédelmi korlátozásokat dokumentált specifikációkból fordítási időben kikényszerített típusellenőrzésekké alakítja.
-
-Az alapelv: **Tervezd az adatvédelmi korlátozásokat a rendszerbe a kezdetektől; ne told hozzá utólag.** Ha az analitikai rendszered nem képes biztonságosan adatokat gyűjteni, nem tudsz hatékonyan kiértékelni. Az adatvédelem és a kiértékelés nem ellentétes erők — az adatvédelmi tudatos tervezés arra kényszerít, hogy alaposan átgondold, *mit kell valójában mérni*, ami viszont pontosabb kiértékelési metrikákat eredményez.
-
-### A Külsőtől a Belsőig: Váltás a Kiértékelés Gondolkodásában
-
-Ennek a szakasznak a központi üzenete: **Az előző szakaszok megtanították, hogyan értékelj egy Ügynököt kívülről; ez a szakasz feltárja, hogy a legjobb Ügynök-termékek hogyan értékelik önmagukat belülről.** A külső kiértékelés megmondja, "milyen jó az Ügynök"; a belső kiértékelési infrastruktúra megmondja, "melyik változtatás tette jobbá". Az abláció kísérletek felfedezik, mely funkciók számítanak valójában, az A/B tesztelés számszerűsíti minden változtatás hatását, a funkciókapcsolók biztosítják a kísérletezés és visszaállítás infrastruktúráját, az utasítás-érzékenység felmérése integrálja a rendszerutasítást a CI rendszerbe, és az adatvédelmi tudatos analitika biztosítja a megfelelést az adatgyűjtésben. Ez az öt összetevő együtt alkotja a kiértékelés-vezérelt termékmérnökséget — nem alkalmankénti értékelést, hanem a kiértékelés beágyazását minden termékdöntésbe.
-
-## Szimulációs Környezetek: A Híd a Kiértékeléstől a Poszt-Tréningig
-
-A kiértékelés végpontja nem a pontozás, hanem a fejlesztés. Ez a fejezet már bemutatott két utat a fejlesztéshez: a Harness módosítása (a Benchmark jelentésektől a rendszerfejlesztésekig) és a kiértékelés beágyazása a termékmérnökségbe (belső kiértékelési infrastruktúra). A legerősebb fejlesztési forma a tréning — amikor a cél a "meglévő képességek kiértékeléséről" az "új képességek fejlesztésére" bővül, különösen a 7. fejezetben tárgyalt poszt-tréning technikákon keresztül, a kiértékelési környezetnek "szimulációs környezetté" kell fejlődnie: egy virtuális játszótérré, ahol az Ügynök ismételten gyakorolhat és automatikusan pontozható. A szimulációs és kiértékelési környezetek közötti alapvető különbségek: sokkal magasabb interakciós gyakoriság (milliók vs. ezrek), a randomizálás szükségessége (a specifikus konfigurációk memorizálásának megelőzésére), és az azonnali visszajelzés követelménye. Alkalmazási szempontból a szimulációs környezetek két kategóriába sorolhatók: digitális környezetek (információfeldolgozási feladatok) és megtestesült környezetek (fizikai világ észlelése és manipulációja).
-
-Íme, hogyan találkozik a híd két vége. A kiértékelési oldalon felhalmozott eszközök szinte zökkenőmentesen alakíthatók át tréning jelekké: egy jól definiált Rubrica vagy validátor lényegében egy jutalomfüggvény a "Verifikálható Jutalmú Megerősítéses Tanuláshoz (RLVR)" — a pontozó szkriptből jutalom szkript lesz; hogy egy teszt sikeres-e vagy egy állapot megfelel-e a szabványnak, az egyszerre szolgál kiértékelési szempontként és megerősítéses tanulási jutalomként. De a tréning olyan követelményeket támaszt, amelyekről a kiértékelésnek soha nem kellett gondoskodnia. Az első a "megbízható visszaállítási szemantika": a tréning több millió epizódot futtat (egy epizód egy teljes interakciós kör a kezdeti állapottól a feladat befejezéséig), és minden epizódnak képesnek kell lennie a környezet determinisztikus, tiszta kezdeti állapotba való visszaállítására; különben a gradiens jelet szennyezik az előző epizód maradék állapotai. A második az **átviteli sebesség, amely messze meghaladja a kiértékelését**: néhány ezer kiértékelés elegendő a következtetések levonásához, de a tréning megköveteli, hogy a modellt több millió interakcióval tápláljuk elfogadható falon lévő óra időn belül; a környezet párhuzamosításának foka és a példányonkénti többletterhelés közvetlenül meghatározza, hogy a tréning megvalósítható-e. Ezt a két pontot — a validátorokból jutalomfüggvényekké alakítását, valamint a tréning szintű visszaállítást és átviteli sebességet — a 7. fejezet részletezi.
-
-![6-8. ábra: Szimulációs Hűség Spektrum](images/fig6-8.svg)
-
-A "digitális környezet" oldalán az AWorld keretrendszer egy irányítható MCP szerver sandboxot épít a GAIA feladatokhoz, 26 MCP szervert biztosítva 126 eszközfunkcióval, elkerülve a valós API-k közvetlen elérésének tiltásait és irányíthatatlan mellékhatásait. Minden eszközhívás visszajátszható és auditálható. Az AWorld elosztott architektúrája a hagyományos soros végrehajtási időt 7695 másodpercről 525 másodpercre csökkenti (14,6-szeres gyorsulás), és a környezet állapotmentes kialakítása minden példányt teljesen függetlenné tesz, támogatva a hatékony párhuzamosítást.
-
-A "megtestesült környezet" oldalán a RoboTwin2 egy fizikai motoron alapuló kétkaros manipulációs feladatokat épít, véletlenszerűsítve az objektumok pozícióit, orientációit és megjelenését az általánosítás javítására. A megfigyelési tér többkamerás vizuális és ízületi állapotokat tartalmaz, valós idejű vezérlést érve el az "Akció Darabolás" révén — ahol a modell egyszerre több egymást követő akciót tervez (részletesen a 9. fejezetben). Az OSWorld visszaállítási képességet biztosít virtuális gép pillanatképeken keresztül, az AndroidWorld pedig a mobil alkalmazás-automatizálásra összpontosít. Akár digitális, akár megtestesült, a szimulációs környezeteknek szükségük van a 4. fejezetben tárgyalt izolált végrehajtási környezetekre és virtuális identitás mechanizmusokra is (VM/konténer izoláció, rezidens proxy-k, Human-in-the-Loop hitelesítés, megosztott fájlrendszerek), amelyeket itt nem ismétlünk meg.
-
-> **6-13. kísérlet ★★: A Megtestesült Intelligencia Környezet Konfigurálása OpenVLA és RoboTwin2 Számára**
->
-> Állíts be egy szimulációs környezetet robotmanipulációhoz. Olvasd el a `ch7/SimpleVLA-RL` fájlt és az OpenVLA dokumentációt a Vízió-Nyelv-Akció modell architektúrájának megértéséhez (végpontok közötti integrációja egy vízió kódolónak, nyelvi modellnek és akció dekódolónak, amely a képeket és szövegeket egy közös szemantikai térbe vetíti). Konfiguráld a RoboTwin2 környezetet, értsd meg a megfigyelési teret (háromnézetű RGB + 14-dimenziós ízületi állapot) és az akcióteret (14-dimenziós vezérlővektor). Tanulmányozd a környezet randomizálási mechanizmusát és a térbeli korlátok logikáját a `move_can_pot`-ban. Értékeld az előre tanított modellt, rögzítve a sikerességi arányát, befejezési idejét és hibamódjait, különös figyelemmel az akció darabolás mechanizmusának hatására.
+> Rögzítsünk egy revíziót, kapcsoljuk ki a thinking mode-ot, és hasonlítsuk össze a közvetlen hangválaszt a transzkripció utáni válasszal. Ez az audio-információ megőrzését méri, nem a későbbi „gondolkodás beszéd közben” képességét.
+> 6-1. táblázat: MiniCPM-o 4.5 helyi eredményei: end-to-end és önkaszkád (négy mechanizmus-ellenőrzés, nem benchmark)
 >
 >
-> ![6-9. ábra: OpenVLA és RoboTwin2 Megtestesült Intelligencia Környezet](images/fig6-9.svg)
+> | Feladat | End-to-end | Önkaskád | Megfigyelés |
+> | --- | ---: | ---: | --- |
+> | Szemantikus számtan (2) | 1/2 | 2/2 | Egy átírási hibát kijavít |
+> | Paralingvisztikai beszédtempó (2) | 2/2 | 1/2 | A szöveg eltörli a gyors/lassú különbséget |
+> | Összesen | 3/4 | 3/4 | Azonos összeg, kiegészítő hibák |
 >
+> A minta kicsi; nem bizonyít általános pontossági vagy sebességi sorrendet. Teljes bizonyíték: [chapter6/end-to-end-speech](../chapter6/end-to-end-speech/).
+
+Step-Audio 2 nyers hangból szöveget és hangot állít elő; a Step-Audio R1 a következtetést is a hangmodellbe építi.
+
+### Paradigma 3 · Teljes duplex interaktív modellek
+
+Az Omni a „felhasználó beszél” és a „modell beszél” időszakára osztja a párbeszédet, de a szinkrontolmácsolás átfedést igényel. A teljes duplex folyamatosan hallgat és beszél, és eldönti, folytatja-e, szünetel-e, megszakít-e vagy eszközt hív. A Kyutai Moshi korai példa; a Thinking Machines Lab Interaction Modelnek[^ch6-14] nevezi a modellbe épített interakciót. A GPT-Live ezt termelési méretre viszi.
+
+[^ch6-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” 2026-05. https://thinkingmachines.ai/blog/interaction-models/
+
+A történet: a kaszkád csendküszöbbel tippeli a fordulót, a streaming szemantikai szintre emeli a döntést, a teljes duplex pedig folytonos döntéssé alakítja az átváltást.
+
+### Kognitív időzítés: valós idejű interakció és mély gondolkodás
+
+Az előtérmodell addig válaszol, amíg a felhasználó jelen van; a háttérmodell tovább gondolkodhat. A három terv kompromisszum:
+
+| Terv | Előtér | Háttér | Kockázat |
+| --- | --- | --- | --- |
+| Gyors válasz, lassú javítás | Azonnali válasz | Újragondolás és kiegészítés | Ellentmondás |
+| Gyors interakció, lassú tanács | Beszélgetés és megfogalmazás | Tanács vagy eszközeredmény | Korlátozott interfész |
+| Egyesített gondolkodás és kifejezés | Gondolkodás közben beszél | Közös állapot | Magas újratanítási költség |
+
+#### 1. terv: gyors gondolkodás a kitöltéshez, lassú gondolkodás a válaszhoz
+
+A gyors gondolkodás néhány száz ezredmásodperc alatt képes kitöltő választ adni, míg a lassú gondolkodás a háttérben mélyebb levezetést végez. A gond az, hogy az egyszerű kérdéseket kétszer dolgozza fel, az összetetteknél pedig ellentmondás keletkezhet: a gyors modell vásárlást javasol, a lassú utóbb felfedezi, hogy a csomagból hiányzik egy kulcsfontosságú funkció, és a felhasználó néhány másodpercen belül egymásnak ellentmondó válaszokat hall. Az alapvető ok az, hogy a két példány egymástól függetlenül gondolkodott végig egy-egy kérdést.
+
+
+![6-10. ábra: Gyors/lassú gondolkodási architektúra és a tervek összehasonlítása](images/fig6-10.svg)
+
+
+#### 2. terv: gyors gondolkodás az interakcióhoz, lassú gondolkodás a figyelmeztetéshez
+
+A második tervben a háttérmodell állapotsávon vagy dedikált interfészen keresztül ad javaslatokat az előtérmodellnek, az előtér pedig továbbra is tartja a szót, és eldönti, hogyan fogalmaz. Ez stabilabb az elsőnél, de a kommunikáció továbbra is közvetett: az előtér félreértheti a javaslatot, és nem látja a háttér köztes gondolkodását; amíg a háttér nem végez, a felhasználó rákérdezésére az előtér csak a saját képességeire támaszkodhat. Természetesen tud „eredményre várni", de valódi gondolkodás beszéd közben nem valósul meg.
+
+#### 3. terv: a gondolkodás és a kifejezés végponttól végpontig tartó egyesítése (a Step-Audio R1 példáján)
+
+A harmadik terv a gondolkodási képességet közvetlenül a végponttól végpontig tartó hangmodellbe építi be. A Step-Audio R1 két egymást kiegészítő mechanizmussal két problémát old meg: a **modalitáshoz horgonyzott gondolkodásdesztilláció (MGRD)** akusztikai jellemzők alapján gondolkodtatja a modellt, az **MPS kétagyú architektúra** pedig párhuzamosítja a fogalmazást és a kifejezést. Az előbbi a „helyes gondolkodást" biztosítja, az utóbbi az „időben történő megszólalást" oldja meg.
+
+Ideális esetben a modellnek a hangmagasságból, a ritmusból és a hanglejtésből kellene megítélnie az érzelmet, nem pusztán az átiratból. Az úgynevezett „szöveggel helyettesített gondolkodás" azt jelenti, hogy a modell a dallam és az akusztikai jellemzők elemzése helyett a dalszöveg negatív szavaira támaszkodik. Az MGRD kiszűri azokat a gondolatmeneteket, amelyek valóban akusztikai jellemzőkre hivatkoznak, ezekkel az adatokkal tanítja a modellt, és megerősítéses tanulással akadályozza meg, hogy a modell átugorja a gondolkodást és egyből tippeljen.
+
+Az MPS-ben a fogalmazó agy folyamatosan gondolatfoszlányokat termel, a kifejező agy pedig, amint megkap egy foszlányt, a már elhangzott válasszal együtt azonnal beszédet generál. A kettő futószalagszerűen párhuzamosan működik, így nem kell megvárni a teljes gondolatmenet végét ahhoz, hogy a felhasználó meghallja az első mondatot (6-11. ábra).
+
+
+![6-11. ábra: A Step-Audio R1 MGRD és MPS kétagyú architektúrája](images/fig6-11.svg)
+
+
+Az egyesített modell valósítja meg a legszorosabban a „gondolkodás beszéd közben" elvét, ára viszont az, hogy a gondolkodást és a valós idejű kifejezést együtt kell újratanítani; a szétcsatolt út esetén könnyebb kicserélni a háttéragyat, az egyesített út pedig inkább a végletekig természetes hatásra törekvő, célzott forgatókönyvekhez való. A kettő kompromisszum, nem pedig egyszerű helyettesítője egymásnak.
+
+### Emberibb beszédszintézis
+
+A túl sima, szünet nélküli TTS gépiesnek hat. Az LLM THINKING, EMO:happy és SPEED:0.8x vezérlőjeleket adhat, a TTS pedig szünetté, prozódiává, tempóvá, nevetéssé vagy sóhajjá alakíthatja. Fish Audio S1 alatt a több referenciás beállítás kapta a legjobb pontszámot három kiegyensúlyozott vakhallgatásban (4,67/5), de a jelölés nélküli csoport megelőzte az egyreferenciásat, ezért a teljes tervezett sorrend nem ismétlődött meg.
+
+> **6-6. kísérlet ★★: Vezérlőtokenes TTS Fish Audióval**
+>
+> Hasonlítsuk össze a jelölés nélküli, az egyreferenciás és a több referenciás hangkönyvtárat. A 24 referencia, az A/B/C média és az elfogadási rekord itt található: [chapter6/controllable-tts](../chapter6/controllable-tts/).
+
+## Computer Use: Grafikus Felület Automatizálási Ügynökök
+
+Mire mostanra észrevehették, hogy ez a fejezet sokkal több teret szentel a hangnak, mint a következő két forgatókönyvnek. Ez szándékos. A valós idejű multimodális rendszerek közül a hangtechnológia haladt a legmesszebbre, ezért nyújtja a legjobb referenciát. Végigjárta a teljes ívet az eredeti problémától — a soros csővezetékek túlzott késleltetése — a végponti modelleken, a teljes duplex interakción és a gondolkodva beszélésen át a mai viszonylag érett tervekig. Ezért meséltük el a történetét teljes egészében. Ahogy olvassák a Computer Use és a robotika szakaszokat, hasonlítsák össze ezzel a pályával: az egyes területek milyen messzire jutottak, és hol maradtak meg?
+
+Ez a három forgatókönyv különbözőnek tűnik, de ugyanazokkal a magkihívásokkal néz szembe: valós idejű érzékelés, alacsony késleltetésű döntéshozatal és folyamatos interakció. Ezután a vizuális interakcióra, vagyis a Computer Use-re térünk, kiterjesztve a perspektívát a hallásiról a vizuális modalitásra: mi lenne, ha egy ügynök nemcsak a beszédet értené, hanem "látná" is a képernyőt, és kezelné a grafikus felületet?
+
+A Computer Use, más néven GUI automatizálás, lehetővé teszi a mesterséges intelligencia számára, hogy úgy használja a szoftvereket, mint egy ember, a képernyő megfigyelésével és az egér és billentyűzet kezelésével — például böngésző megnyitása információk kereséséhez, adatok beírása egy táblázatkezelő alkalmazásba, vagy beállítások módosítása a rendszer beállításaiban. Magja egy "Perceive-Think-Act" (Érzékel-Gondolkodj-Cselekedj) ciklus (6-11. ábra):
+
+1.  Az ügynök képernyőképet készít az aktuális képernyőről.
+2.  Egy multimodális modell megkapja a képernyőképet és a feladatutasítást, és kiad egy gondolatot és egy konkrét cselekvést.
+3.  A végrehajtási réteg végrehajtja a cselekvést a valós környezetben (egér mozgatása, kattintás, szöveg beírása stb.).
+4.  Megvárja a felület válaszát, újabb képernyőképet készít, és belép a ciklus következő iterációjába.
+
+**Computer Use biztonsági ciklus:**
+
+```python
+observation = capture_screenshot_and_accessibility_tree()
+proposal = model.decide(task, observation)
+action = validate_schema_and_coordinates(proposal)
+
+if action.is_irreversible and not user_or_policy_approval(action):
+    stop("approval required")
+else:
+    execute_in_sandbox_or_scoped_session(action)
+    new_observation = capture_after_settle()
+    if not verify_goal_progress(new_observation, action):
+        rollback_if_possible_or_replan()
+```
+
+![6-12. ábra: Computer Use ügynök Érzékel-Gondolkodj-Cselekedj ciklusa](images/fig6-12.svg)
+
+Ebben a ciklusban három kulcsfontosságú tervezési dimenzió van: "Cselekvési Tér" (milyen műveleteket végezhet az ügynök), "Vizuális Helymeghatározás" (hogyan találja meg a cél elemet a képernyőképen), és "Modell Architektúra" (hogyan generálja a helyes cselekvést a képernyőképből).
+
+### Cselekvési Tér Tervezése
+
+Az Anthropic három eszköztípust határoz meg, amelyek teljes interakciós képességet alkotnak (6-12. ábra):
+
+![6-13. ábra: Computer Use cselekvési tér](images/fig6-13.svg)
+
+**GUI Kezelő Eszköz** (`computer` eszköz): Egérműveletek: mozgatás (`mouse_move`), bal/jobb/középső kattintás, dupla- vagy háromszoros kattintás, húzás (`left_click_drag`), és pontosabb lenyomás/elengedés műveletek (`left_mouse_down` és `left_mouse_up`). Görgetés (`scroll`) négy irányt támogat, és kombinálható módosító billentyűkkel. Billentyűzetműveletek: karakterenkénti gépelés (`type`, 12 ms intervallummal a karakterek között a valódi gépelés szimulálására), billentyűkombinációk (`key`, pl. `Ctrl+C`), és billentyű lenyomva tartása (`hold_key`). Érzékelési műveletek: képernyőkép készítése, kurzorpozíció lekérése (`cursor_position`), várakozás (`wait`).
+
+**Parancsvégrehajtási Eszköz** (bash eszköz): Perzisztens bash terminál munkamenetet biztosít 120 másodperces időkorláttal. Egy őrszöveges karakterláncot használ a parancs befejeződésének érzékelésére, és megtartja a környezeti állapotot több hívás között (pl. egy könyvtárba `cd` után a következő hívás abban a könyvtárban marad).
+
+**Fájlszerkesztő Eszköz** (`str_replace_editor`): Biztonságos szerkesztést tesz lehetővé karakterlánc-illesztésen keresztül, támogatva a megtekintést, létrehozást, cserét, beszúrást és visszavonást. Pontosabb, mint a teljes fájl felülírása, és kisebb a valószínűsége, hogy véletlenül más tartalmat módosít.
+
+> **6-7. kísérlet ★: Computer Use futtatása (Anthropic referenciaútvonal vagy nyílt modell útvonala)**
+>
+> Az A útvonal az Anthropic Computer Use Demót használja. A konténere teljes Ubuntu asztali környezetet csomagol böngészővel, terminállal és más gyakori eszközökkel. A front-end fogadja a feladatot, a back-end elküldi az utasításokat és a képernyőképeket a Claude-nak, majd végrehajtja a modell által visszaadott egér-, billentyűzet-, terminál- vagy szerkesztési műveleteket. Ez az útvonal a natív `computer` eszközprotokoll megértésére szolgál; nem követeli meg, hogy minden olvasó hozzáférjen az Anthropic API-jához.
+>
+> A B útvonal a könyv [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/) kísérőprojektjét használja. Alapértelmezésben a nyílt súlyú Qwen3-VL 32B Instruct modellel vezérli a browser-use-t, az OpenRouter hosztolt API-ján keresztül, vagy úgy, hogy az `OPEN_MODEL_BASE_URL` értékét saját üzemeltetésű vLLM/SGLang vagy más kompatibilis végpontra állítja. A végpontnak képernyőképeket kell fogadnia és natív JSON Schema-t kell támogatnia; ha csak hagyományos JSON-t támogat, a schema-in-prompt kompatibilitási mód külön engedélyezhető.
+>
+> Mindkét útvonal ugyanazt a csak olvasható feladatot és ugyanazt az elfogadási szerződést használja: legfeljebb 25 lépés, lépésenként egyetlen művelet, továbbá a modell/végpont azonosítójának, a szolgáltató nyers válaszainak, a lépésenkénti képernyőképeknek, a műveletsornak, a végső válasznak és a leállás okának megőrzése. Az eltérő modelleket külön kísérleti ágként kell jelenteni; nyílt modell eredménye nem tüntethető fel Claude-reprodukcióként, és a „konténer sikeresen elindult” sem tekinthető a feladat teljesítésének. A műveletek közötti idő és a tervezés minősége mérési eredmény, nem előzetes 2–5 másodperces feltételezés vagy más modellekkel szembeni szükségszerű fölény.
 >
 
-### Hűség Kompromisszumok és Tartomány Randomizálás
+### Vizuális Helymeghatározás
 
-A nagy hűségű környezetek jobb átvitelt támogatnak a valós világba, de magas számítási költségekkel járnak. A hűség másik dimenziója a randomizáció mértéke: a mérsékelt randomizáció javítja az általánosítást, míg a túlzott randomizáció túl nehézzé teheti a feladatokat. A "Tartomány Randomizálás" egy kulcsfontosságú technika a szimuláció-valóság szakadékának csökkentésére: a fizikai paraméterek, vizuális megjelenés, érzékelői zaj stb. széles skálájának véletlenszerű bevezetése — mintha különböző megvilágítások és szögek alatt gyakorolnánk a megfogást, hogy a valós világban ne bukjunk el csak azért, mert a fény megváltozott. Digitális környezetekben a szimuláció-valóság a felület renderelésének, válaszidőknek stb. különbségeiben nyilvánul meg, ami a késleltetés és hibák randomizálásának bevezetésével csökkenthető.
+A ciklus minden iterációjában a modellnek pontosan meg kell találnia a cél elemet a képernyőképen — "Hol van a keresőmező?" "Mik a beküldő gomb koordinátái?" Ez a vizuális helymeghatározás problémája. Jelenleg "két fő megközelítés" létezik: az egyik a lokalizációt "többválasztásos problémává" alakítja — először számokkal annotáljuk a felületi elemeket, a modellnek csak ki kell választania egyet; a másik a "tiszta koordináta előrejelzés" — hagyjuk, hogy a modell "nézze" a képernyőképet, és közvetlenül adjon meg koordinátákat, akár egy ember. A többválasztásos megközelítésnek két implementációs módja van: "tiszta vizuális annotáció" (az eredeti Set-of-Mark, egy szegmentációs modell használatával a képen lévő jelölt régiók szegmentálására) és "strukturált elemindexálás" (DOM/Accessibility Tree, a felület eredeti struktúrájának közvetlen olvasása). A többválasztásos megközelítés közös előnye, hogy a "keresd meg a gombot a képernyőképen és jelezd előre a koordinátáit" nyílt végű problémát egy "válassz egyet a már annotált elemek közül" zárt végű problémává alakítja — ahogy a többválasztásos kérdésekre könnyebb helyesen válaszolni, mint a kitöltendő kérdésekre egy vizsgán, a modellnek csak annyit kell mondania, hogy "kattints [123]-ra" ahelyett, hogy "kattints a kék gombra, körülbelül 200 pixellel a képernyő bal felső sarkától jobbra".
 
-Ezzel a kiértékelési környezet befejezi végső evolúcióját: egy képességeket mérő vizsgateremből egy képességeket építő edzőpályává válik. A 7. fejezet megmutatja, hogy az AWorld-train hogyan alakítja át az ilyen szimulációs környezeteket tanítható arénákká, és az ezzel járó mérnöki kihívásokat — az ebben a fejezetben létrehozott kiértékelő rendszer és szimulációs környezetek a poszt-tréning két sarokkövei.
+**Set-of-Mark: Vizuális Annotációs Módszer.**
 
-[^re-bench-2025]: Wijk, Hjalmar, et al. *RE-Bench: Evaluating Frontier AI R&D Capabilities of Language Model Agents against Human Experts.* arXiv:2411.15114, 2025.
+Az eredeti Set-of-Mark (SoM) a Microsoft Research által 2023-ban javasolt, kezdetben a GPT-4V vizuális helymeghatározási képességeinek felszabadítására. Ez egy "tisztán vizuális" módszer: képszegmentációs modelleket (SAM, SEEM stb.) használ a képernyőképen lévő jelölt régiók automatikus szegmentálására, számozott markert helyez minden régióra, és a modell számokkal ellátott képet lát. A modellnek csak a számot kell jelentenie, a rendszer pedig átalakítja a megfelelő régió középponti koordinátáivá. A teljes folyamat nem igényel DOM-ot vagy belső felületi struktúrát, így egyaránt alkalmazható natív asztali szoftverekre és játékfelületekre — amíg a szegmentációs modell azonosítani tudja a jelölt régiókat.
+
+**Strukturált Elemindexálás: Az SoM-ötlet strukturált implementációja a weben.**
+
+Amikor a felület maga biztosít strukturált információt, az annotáció pontosabb lehet. A modern weboldalak a renderelés előtt meghatároznak egy teljes elemstruktúrát (a DOM fát) és szemantikus szerepeket, amelyek azonosítják a gombokat, beviteli mezőket és más vezérlőket. Az akadálymentesítési fák hasonló információt nyújtanak sok asztali alkalmazáshoz. Ahelyett, hogy egy szegmentációs modellt kérnénk meg, hogy pixel alapján találja ki, melyik régió egy gomb, a rendszer közvetlenül lekérdezheti a felületről a kattintható elemeket. A webes ügynökrendszerek, mint a `browser-use`, pontosan ezt teszik: felsorolják és számozzák az interaktív elemeket a DOM-ból. Ez az SoM-ötlet strukturált implementációja a web számára (6-13. ábra). A folyamat négy lépésből áll:
+
+1. A strukturált reprezentáció (DOM fa) és akadálymentesítési információk lekérése a böngésző hibakereső felületén keresztül (CDP, Chrome DevTools Protocol)
+2. Automatikusan érzékelni, hogy mely elemek interaktívak (gombok, beviteli mezők, linkek stb.)
+3. Minden interaktív elemet egyedi azonosítóval annotálni és határoló kereteket rajzolni a képernyőképen
+4. Egyidejűleg egy szöveges listát generálni, amely leírja az egyes azonosítókhoz tartozó elemet
+
+```text
+Képernyőkép: [A képen a kulcselemek [1], [2], [3], [4] azonosítókkal vannak annotálva]
+
+Elemek:
+[1] <input type="text" placeholder="Keresés" aria-label="Keresés" />
+[2] <button id="submit-btn" aria-label="Űrlap beküldése" />
+[3] <input type="text" placeholder="Adja meg a nevét" value="" />
+[4] <a href="/docs" aria-label="Dokumentáció" />
+```
+
+A modellnek csak egy azonosítót kell kiadnia, és a rendszer automatikusan rákattint a megfelelő elem középpontjára. Ez a megközelítés nem takarít meg tokeneket, mert minden annotációs adatot el kell küldeni a modellnek, de pontos, stabil lokalizációt biztosít, elkerülve a szegmentációs modellek által bevezethető kihagyásokat és téves pozitívumokat.
+
+![6-14. ábra: Set-of-Mark vs. Strukturált Elemindexálás (browser-use implementáció)](images/fig6-14.svg)
+
+**Tiszta Koordináta Előrejelzés.**
+
+A harmadik út kihagyja az annotációt, és megkéri a modellt, hogy közvetlenül adjon meg koordinátákat. Az olyan rendszerek, mint a "SeeClick" és a Claude computer use, olyan látásmodellekre támaszkodnak, amelyeket GUI képernyőképek és elempozíciók hatalmas adatkészletein tanítottak. Ezek a modellek megtanulják a természetes nyelvű leírásokat (pl. "kattints a beküldő gombra") közvetlenül pontos képernyőkoordinátákra leképezni, vizuális érzékelésre támaszkodva, mint egy emberi felhasználó.
+
+A koordináta-előrejelzési sémákban a modell koordináta-megértése nagymértékben függ a tanítás során használt felbontástól (6-14. ábra). A Claude-ot XGA (1024×768), WXGA (1280×800) és FWXGA (1366×768) felbontásokon tanították. Ha a bemeneti képernyőkép felbontása nem egyezik, a modell által előrejelzett koordináták szisztematikusan eltolódnak — mintha egy távolságot egy kis térképen mérnénk meg, majd közvetlenül egy nagy térképre alkalmaznánk. Ezért egy kétirányú koordináta-skálázó mechanizmust kell implementálni az eszköz rétegben, és a célfelbontást "a képarány alapján kell kiválasztani", hogy elkerüljük az egyenlőtlen nyújtást, amely torzítja a képet, és ezáltal torzítja a koordináta-ítéletet. Például, ha a tényleges képernyőfelbontás 2560×1440 (16:9), a Claude három támogatott opciója közül a legmegfelelőbb cél az FWXGA (1366×768), amelynek képaránya a legközelebb van a 16:9-hez. A képernyőképet arányosan 1366×768-ra skálázzák és táplálják a modellbe; miután a modell kiadja a kattintási koordinátákat (683, 384), azokat visszafejtik a valós koordinátákra (683×2560/1366, 384×1440/768) ≈ (1280, 720). Ezzel szemben, ha egy 16:9-es képet erőszakosan 4:3-as 1024×768-ra nyújtanak, a kép vízszintesen összenyomódik, ami a modell által előrejelzett koordináták szisztematikus eltolódását okozza.
+
+![6-15. ábra: Felbontás-illesztés és kétirányú koordináta-skálázás](images/fig6-15.svg)
+
+A három út közötti választás a következőképpen foglalható össze: **ha strukturált információ áll rendelkezésre, részesítsük előnyben a DOM/akadálymentesítési fa indexálást** a legpontosabb és legstabilabb lokalizáció érdekében. "Ha nem áll rendelkezésre" — natív asztali szoftverekben, például Photoshop, canvas/WebGL renderelt felületek vagy játékok esetén — **használjunk vizuális annotációt (az eredeti SoM utat) vagy koordináta előrejelzést**. A vizuális annotáció többválasztásos problémává alakítja a lokalizációt, ami barátságosabbá teszi az általános célú modellek számára specializált tanítás nélkül. A koordináta előrejelzés kiküszöböli az annotációs lépést, és közvetlenebb a kifejezetten GUI lokalizációra tanított modellek számára. Mindkét megközelítés továbbra is küzd a kis elemekkel és a sűrű felületekkel.
+
+> **6-8. kísérlet ★: A browser-use használata automatizált böngészőműveletekhez**
+>
+> A Playwright böngésző-automatizálási keretrendszert multimodális modellel kombinálva természetes nyelvvel vezérelt böngészőműveleteket valósítunk meg. Engedélyezzük az SoM-vizualizációt, és minden döntés előtt elmentjük a jelölt határolókereteket tartalmazó képernyőképet. A modellinterfész nem korlátozódik az OpenAI-ra vagy az Anthropicra; a könyv API-konfigurációt ad a nyílt Qwen3-VL modellhez, és általános, OpenAI-kompatibilis base URL-t tart fenn más hosztolt szolgáltatásokhoz vagy saját üzemeltetésű következtetéshez.
+>
+> Tesztfeladat: „Nyisd meg a Google-t, és keresd meg San Francisco időjárását.” Indítás után a képernyőkép a Google keresőoldalt mutatja számozott interaktív elemekkel. A modell kiválasztja a keresőmezőt, beírja a „San Francisco weather today” szöveget, elküldi a keresést, majd kinyeri a hőmérsékletet és az időjárási viszonyokat az eredményoldalról. Az átvétel során függetlenül ellenőrizni kell a választ és a műveletsort, valamint a tényleges lépésszámot és eltelt időt kell rögzíteni. Az „5 lépés, körülbelül 20 másodperc” csak egy adott futás megfigyelése lehet, végrehajtási bizonylat nélkül nem rögzített eredmény.
+>
+> A könyvben megőrzött hivatalos nyíltmodelles futás az OpenRouter `qwen/qwen3-vl-32b-instruct` modelljét használta. Amikor a modell a Google-keresés 4. lépésében CAPTCHA-val találkozott, nem állította, hogy sikerrel járt, hanem átváltott a weather.com oldalra. Végül a 16. lépésben San Francisco Today oldaláról a következőket olvasta ki: 64°F, Sunny, 62°F hőérzet, 74°F maximum és 55°F minimum. Mind a 16 API-válasz a kért Qwen3-VL modellt jelezte, a 15 érvényes lépésképernyőkép és a csak olvasható műveletsor pedig átment a független, determinisztikus átvételen. Ez az eredmény bizonyítja, hogy a nyíltmodell-API útvonala működik; nem jelenti az Anthropic natív `computer` eszközét használó kísérleti ág reprodukálását.
+
+### Egy Computer Use ügynök, aki animációkat nézhet és hangot hallhat
+
+Eddig a Computer Use érzékelés egy implicit feltételezésen nyugodott: "a képernyő statikus" — készítsünk egy képernyőképet, gondolkodjunk a következő lépésről, kattintsunk, és készítsük a következő képernyőképet. A valódi képernyők videókat játszanak le, másodpercek alatt eltűnő értesítéseket villantanak fel, és hangot játszanak le értekezletekről. Egy ügynök, aki csak 3-5 másodpercenként nyitja ki a szemét, és nincs füle, vak és süket mindenre, ami két képkocka között történik. Képernyőfelvétel nézése, értekezlethez csatlakozás, hangutasítás követése, egy párbeszédablak elkapása, mielőtt eltűnik — a mindennapi számítógépes munka egész kategóriája gyakorlatilag elérhetetlen a mai Computer Use ügynök számára.
+
+Amit itt valóban újra kell tervezni, az nem a "cselekvési interfész", hanem az „észlelési interfész”[^ch6-9]. A magötlet az "észlelés" (folyamatos, adaptív, multimodális) leválasztása a "cselekvésről" (diszkrét), létrehozva egy perceptuális köztes réteget, amely a környezet és bármely polcról beszerezhető Computer Use modell közé ül anélkül, hogy újratanítást igényelne. Nevezzük ezt Ügynök-Számítógép Észlelési Interfésznek (AOI). Három "kapuzott" komponense van: Először is, "képkockák közötti kulcskocka rögzítés" — használjunk egy nagyon olcsó pixel-kaput a szinte változatlan képkockák kihagyására, majd egy kis modellt annak meghatározására, hogy történt-e értelmes változás, rögzítve egy képkockát csak akkor, ha van változás, ami közel nulla költséget eredményez a statikus képernyőkhöz; Másodszor, "hangerő-kapuzott beszédátírás" — csak akkor hívjuk a beszédfelismerést, ha van hang, először adva "füleket" az ügynöknek; Harmadszor, és ami a legkritikusabb, "az észlelések átalakítása perzisztens szöveges leírásokká" — kérjük meg a modellt, hogy egyetlen mondatban írja le a rögzített képkockát (pl. "A felugró ablak éppen azt mondta, hogy a kiadási dátumot április 28-ra módosították"), és **még ha az eredeti kép később el is távolításra kerül a kontextusból, ez a szöveg megmarad a memóriában**, továbbvíve a dinamikus információt szöveges formában.
+
+A nem intuitív megállapítás az, hogy ami igazán számít, az nem a képkocka kiválasztása, hanem a kiválasztott képkockák átalakítása perzisztens szöveggé, mert a szöveg az a modalitás, amelyet az LLM-ügynökök a legjobban kezelnek. Nyolc modellen keresztül, a 7B paraméteres modellektől a frontvonalbeli rendszerekig, ez a köztes réteg +17 és +48 százalékpont közötti nyereséget biztosított minden újratanítás nélkül, a legnagyobb különbséggel a hangfeladatoknál: az észlelési réteggel az ügynök végre el tudta végezni azokat a hangfeladatokat, amelyek korábban "hallhatók, de nem végrehajthatók" voltak. Azonban nem egy mindenre egyformán jó konfigurációról van szó — néhány újabb modellen a túl sok képkocka token beszúrása kiszorítja az érvelést, és rontja a teljesítményt. Ezért a komponenseket "modellenként kell kiválasztani", nem egyszerre bekapcsolni. Ugyanaz a lecke, mint a Set-of-Mark versus koordináta előrejelzés kompromisszuma: nincs ezüstgolyó az észlelési sémákban; konfigurálni kell őket a modell természetéhez.
+
+[^ch6-9]: A három komponens — kapuzott kulcskockák, igény szerinti átírás, képkockák narrálása perzisztens szöveggé — teljes mechanizmusáért és modellenkénti ablációjáért lásd Bojie Li és Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
+
+### Világmodellek a Computer Use-hoz
+
+Az előző fejezetrész megfigyelési felülete arra válaszol, hogy „mi történt a kettő között": kulcsképkockákkal, beszédátirattal és tartós szöveggel az ügynök már nem csak két, egymástól messze eső képernyőképet lát. A megfigyelési felület azonban nem szünteti meg a tervezési késleltetést. Az ügynök továbbra is a soros „képernyőkép—gondolkodás—kattintás" hurkot futtatja, és minden egyes művelet után újra megfigyel, majd végiggondolja a következő lépést. Az **OSWorld-Human** hatékonysági vizsgálata azt mutatja, hogy még ha a feladat végül sikerül is, az ügynök lépésszáma és várakozási ideje szemmel láthatóan több az emberénél; az emberi szintű pontosság elérése nem egyenlő azzal, hogy már elég használható is.
+
+Az ember számítógépezés közben nem a kattintás után kezd a következő lépésen gondolkodni, hanem előbb megjósolja a művelet következményét: ha a tényleges változás megfelel a várakozásnak, folytatja az eredeti tervet; és csak akkor áll meg újra megfigyelni és tervezni, ha az oldal állapota eltér a várttól. A világmodell lehetővé teszi, hogy az ügynök még a cselekvés előtt megjósolja, mivé válhat az asztal, és ezzel megvalósítsa ezt az emberihez hasonló „spekulatív végrehajtást", jelentősen javítva a hatékonyságot.
+
+Az asztal állapota nem csupán egy képpontokból álló kép: beletartoznak az ablakok, a fókusz, a görgetési pozíció, a beviteli mezők tartalma, a betöltési állapot, a jogosultságok és a hálózati válaszok; a műveletek pedig magukban foglalják a kattintást, a billentyűzetes bevitelt, a görgetést, a húzást és a várakozást. Egy Computer Use-hoz használható világmodellnek legalább kódolnia kell a jelenlegi állapotot, meg kell jósolnia a jelölt művelet okozta állapotváltozást, és át kell adnia ezt a jóslatot a tervezőnek, hogy az eldönthesse a következő lépést:
+
+```text
+asztal állapota + click/type/scroll/wait ──> a következő állapot reprezentációja
+```
+
+Így az ügynök még a tényleges kattintás előtt összehasonlíthatja a jelölt műveletek következményeit, az oldal betöltése alatt előkészítheti a következő lépést, és az állapotkülönbség alapján helyreállhat akkor is, ha egy felugró ablak csak egy pillanatra villant fel. Ha például a feladat az, hogy „hozz létre egy új Python fájlt a VS Code-ban, és írd bele, hogy hello world", a modell előbb megjósolhatja a fájlfa és a szerkesztő kulcsállapotát sikeres végrehajtás esetén, és csak azután választja ki a kattintás, a gépelés és a mentés műveletét; ha pedig a feladat egy fájl törlése, egy elszigetelt virtuális asztalon előre megjósolhatja, felbukkan-e visszafordíthatatlan megerősítő ablak, és szükség esetén kérheti a felhasználó jóváhagyását. A lényeg itt nem az, hogy a modell élethű jövőbeli képernyőképet állítson elő, hanem az, hogy megjósolja azokat az ellenőrizhető állapotkülönbségeket, amelyek a feladat elvégzéséhez kellenek.
+
+2026 júliusában az Induction Labs által bemutatott **Photon-1** ennek az útnak az egyik megvalósítását mutatta meg: mindössze 30 000 óra H200 GPU-idővel elvégezte egy computer use világmodell előtanítását. Minden képkockát diszkrét látens tokenekké tömörít, és önvisszatérő módon jósolja meg a művelet utáni következő állapot reprezentációját ahelyett, hogy az előtanítás szakaszában képpontonként állítana elő képernyőképeket; a hozzákapcsolt képgenerátor pedig csak a látens reprezentációk megjelenítésére szolgál, és nem szükséges alkatrésze a következtetésnek. Egy kiinduló képernyőképet és az azt követő műveleteket megadva a modell folyamatosan „elképzelheti" az asztal állapotait, majd virtuális gépeken végzett online tanítással megtanul computer-use műveleteket kiadni.[^ch6-20]
+
+[^ch6-20]: David Li and Jonathan Li, Induction Labs, „Scaling Video Pretraining with Imagination Models,” 2026-07-23. https://www.inductionlabs.com/news/scaling-video-pretraining. A szövegben szereplő Photon-1 paraméterek, adatméret, belső benchmarkok és költség-összehasonlítások mind a cég által közzétett eredmények.
+
+### Mobil: Az ökoszisztéma akadályok keményebbek, mint a technológia
+
+A Computer Use a mobileszközökre is kiterjed. A mobil és asztali rendszerek technikailag különböznek: az egérkoordináták és billentyűzetbemenet helyett a mobil cselekvési tér jellemzően a rendszer akadálymentesítési szolgáltatás API-ját (pl. Android `AccessibilityService`) használja a felületi elemek olvasására és kattintások vagy szövegbevitel kiadására. Az interakció is az egérmutatóról érintési gesztusokra vált, megváltoztatva a koordináták jelentését. Ugyanaz az `(x, y)` pozíció jelenthet érintést, hosszú lenyomást vagy egy húzás kezdőpontját, ezért a cselekvésnek meg kell adnia a gesztus típusát is. A mobil benchmarkok, mint a 7. fejezetben bemutatott AndroidWorld, ebben a cselekvési térben értékelik az ügynök képességét a valós alkalmazásokban végzett feladatok elvégzésére.
+
+Azonban ami valóban akadályozza a mobil Computer Use-t, az gyakran nem ezek a technikai különbségek, hanem az ökoszisztéma akadályok. Egyes telefon gyártók megkíséreltek MI asszisztenseket integrálni fogyasztói telefonokba, hogy az asszisztensek automatikusan kezelhessék a mindennapi alkalmazásokat, mint a WeChat, Taobao és Alipay, de gyorsan platformkorlátozásokba ütköztek.
+
+Ez felfedi a Computer Use egyedi kihívását: "ökoszisztéma akadályok". E korlátozások mögött üzleti modell konfliktus áll. A hagyományos internetes alkalmazások magjának monetizációs logikája a "forgalom és a figyelem": a felhasználók hirdetéseket látnak a hírfolyam görgetése közben, ajánló algoritmusok irányítják őket a termékek keresésekor, és impulzusvásárlásokat hajtanak végre az oldalak böngészése közben. Amikor egy ügynök a felhasználó nevében működik, ez a monetizációs lánc teljesen megkerül: a MI figyelmen kívül hagyja a hirdetéseket, nem végez impulzusvásárlásokat, egyenesen a cél felé halad, befejezi a feladatot, és távozik. Azok számára a platformok számára, amelyek a reklámból és a forgalomból élnek, minden ügynöki művelet aláássa az üzleti modell alapját.
+
+Ez azt jelenti, hogy a Computer Use nemcsak technikai ellenintézkedésekkel (mint a CAPTCHA) néz szembe, hanem egy "strukturális érdekellentéttel is". Ezt a konfliktust rövid távon nehéz lesz feloldani, és nagyobb akadályt jelent a fogyasztói elterjedésben, mint a tisztán technikai problémák.
+
+## Robot Manipuláció: Az Asztal Rendrakása XLeRobottal
+
+> **Hogyan olvassuk ezt a fejezetrészt**: elejétől a végéig egyetlen feladatot használunk——„tedd a piros poharat a tálcára, dobd a sárga papírgalacsint a szemetesbe, végül nézz rá még egyszer, és ellenőrizd az asztal állapotát”. A 9-7. és 6-11. kísérlet valódi XLeRoboton fut: kar, kalibráció, vészleállító és helyszíni felügyelő kell hozzá. A 9-8., 9-10. és 6-13. kísérlet ezek helyi GPU-n futó megfelelője. A valódi hardveren és a szimulációban kapott eredményeket külön jelentjük, de a feladat célja, a műveletek jelentése és a sikerfeltételek azonosak maradnak.
+
+A robot manipuláció jóval nehezebb munka, mint „ránézni egy képre és válaszolni egy kérdésre”. A modellnek nemcsak a jelenetet kell értenie, hanem folyamatosan cselekednie is kell a valós világban, ráadásul minden egyes művelet megváltoztatja a következő pillanat helyzetét. Az XLeRobot nagyon kézzelfoghatóvá teszi ezt a különbséget. Ugyanazt a kart távvezérelheti ember billentyűzettel, játékvezérlővel vagy VR-eszközzel; de át is adhatjuk a kamerakép megfigyelését és egy szűkre szabott műveleti eszközkészletet egy Agentnek, hogy maga hívja őket. A hardver nem változik, a feladat sem; egyedül az változik, hogy ki kezeli——az elsőben az ember folyamatosan figyel és javít, a másodikban a modellnek és a vezérlőrendszernek kell ugyanazt a munkát végigvinnie.
+
+Ez a fejezetrész öt kísérletet fűz fel az „asztal rendrakására”. Először ember távvezérli a valódi XLeRobotot, hogy megmérjük, meddig jut el ez a hardver egy kellően ügyes kezelő kezében. Ezután a szimulátorban megállapítjuk ugyanennek a feladatnak az ideális vezérlési felső korlátját. Utána egy Agent önállóan vezérli a valódi XLeRobotot, hogy lássuk, miként dönti el az eredményt az érzékelés, a tervezés és a hibából való visszatérés. Ezt követően ugyanazt az eszközszerződést átvisszük a szimulátorba, és egyszerre hasonlítunk össze három stratégiát: nyílt hurkú végrehajtás, lépésenkénti ellenőrzés és világmodell. Végül megváltoztatjuk a hátteret, a tárgyak külsejét, a megvilágítást és a vizuális zajt, hogy kiderüljön: a szimulációban tanult vizuális eljárásmód képes-e alkalmazkodni egy új környezethez.
+
+A szűk keresztmetszet itt rendszerint nem az, hogy készítsünk még egy statikus kérdés-felelet mércét, hanem az, hogy a modell zárva tudja tartani a hurkot korlátozott érzékelési és vezérlési sávszélesség mellett. Egy használható robotrendszernek legalább a következő négy kérdésre kell válaszolnia:
+
+1. Milyen feladatot akar befejezni az ember?
+2. Melyik részfeladat következik?
+3. Konkrétan milyen műveletet ad ki a jelenlegi készség?
+4. A művelet végrehajtása után a valóság még mindig illeszkedik az eredeti tervhez?
+
+Ez a fejezetrész ugyanabba az XLeRobot-vezérlőhurokba helyezi ezt a négy kérdést, és megmutatja, melyik résztvállalja a négy technika közül: a hosszú távú tervezés eldönti, hogy a pohár vagy a papír kerüljön előbb sorra; a VLA vagy a műveleti primitívek végzik a megfogást és a lehelyezést; a világmodell megbecsüli egy művelet következményeit; a szimulációból a valóságba vezető átmenet pedig magára vállalja a tanítóvideók, valamint a valódi kamera és beavatkozók közötti különbséget. Még ha a magas szintű modellnek elegendő tudása és tervezőképessége is van, elég egyetlen láncszemnek kiesnie ebből a visszacsatolási hurokból, hogy a rendszer ne tudja befejezni a feladatot.
+
+### A Hardver és az Algoritmus Munkamegosztása
+
+Az első kérdés, amelyre az XLeRobot a legalkalmasabb választ adni, ez: amikor az önálló asztalrendrakás kudarcot vall, a kar nem képes rá, vagy az algoritmus nem tudja használni a kart? Van itt egy tény, amit nem szabad felpuhítani: **még egy néhány száz dolláros kar is, amilyen az XLeRobot, távvezérléssel már képes végrehajtani egy olyan többlépéses, összefüggő asztali feladatot, mint amilyen ebben a fejezetrészben szerepel**——az ember nézi a kamera képét, megfogja a piros poharat, ráteszi a tálcára, a sárga papírt a szemetesbe dobja, végül még egyszer ellenőrzi az állapotot. Ez az eredmény nem pusztán annyit jelent, hogy „a hardver éppen csak elég”; ez világos diagnosztikai bizonyíték: **ami ezt a feladatot illeti, a szűk keresztmetszet az algoritmus oldalán van, nem magában a hardverben.**
+
+A diagnózis módszere egyenes. Rögzített kamera, kar, megfogó, asztali elrendezés és sikerfeltételek mellett először az ember veszi át a hurkot. Az ember folyamatosan pontosítja a tárgyak helyének becslését, a művelet kiválasztását és az időzítést, és azt is tudja, mit tegyen, ha a megfogás nem sikerül. Az önálló rendszer és az ember közötti távolság éppen ebben a zárt hurkú képességben mutatkozik meg. Ennek a következtetésnek a hatóköre természetesen az e fejezetrészben szereplő asztali feladat: azt mutatja, hogy a hardver átlépte az e feladathoz szükséges teherbírási, pontossági és munkatéri küszöböt, de nem azt jelenti, hogy egy néhány száz dolláros kar minden nyílt környezettel vagy nehezebb manipulációval megbirkózik.
+
+Az XLeRobot többféle távvezérlési belépési pontot támogat: billentyűzet, Xbox-kontroller, Switch Joy-Con és VR-eszközök. Az emberi kezelő természetes módon csinál sok olyat, amit egy algoritmusnak kifejezetten meg kellene valósítania: lassít, amikor a megfogó közelít a pohárhoz; kijavítja a fogáspontot, ha a pohár megcsúszik; újranéz, ha elsőre nem sikerül megcsípnie a papírt; és ellenőrzi az eredményt, amikor a tárgy a célterületre kerül. A távvezérlés ezért nem csupán a bemutató adatok gyűjtésének eszköze, hanem olyan diagnosztikai kísérlet is, amely „rögzíti a hardvert, és csak a kezelőt cseréli”.[^ch6-1]
+
+> **6-9. kísérlet ★: Az asztal rendrakása valódi XLeRobot távvezérlésével**
+>
+> Helyezzen egy valódi XLeRobot munkaterébe egy piros poharat, egy tálcát, egy összegyűrt sárga papírt és egy szemetest. A kezelő az egyik kalibrált távvezérlési úton hajtja végre a rögzített feladatot: „tedd a piros poharat a tálcára, dobd a sárga papírgalacsint a szemetesbe, végül nézz rá még egyszer, és ellenőrizd az asztal állapotát”. Ismételje meg legalább néhány körben, és rögzítse a kamera képét, a kezelő bemeneteit, a kar állapotát, a műveletek időtartamát, a sikertelen megfogásokat, az újrapróbálkozások számát és a végállapotot.
+>
+> Ne süllyessze az elfogadási feltételt odáig, hogy „a végén az asztal tisztának látszik”. A piros pohárnak a tálcán, a sárga papírnak a szemetesben kell lennie; a karnak vissza kell térnie biztonságos testhelyzetébe; és a folyamat során nem lehet ütközés, munkatéren kívülre lépés, sem olyan emberi beavatkozás, amely ellenőrzés nélkül fejezi be a munkát.
+
+A valódi hardveren végzett távvezérlés a legmeggyőzőbben mutatja meg a feladat felső korlátját, de nem alkalmas arra, hogy tömegesen változtassuk a tárgyak számát és helyzetét. Hogy ismételhető és statisztikailag mérhető összehasonlítást kapjunk, ugyanazt a „tegyük vissza a tárgyakat a helyükre” feladatot a következő lépésben egy kétdimenziós asztali szimulátorba visszük át, és egy ideális szabályozót használunk annak az erős kezelőnek a helyettesítésére, aki nem téveszt az érzékelésben és nem választ rosszul műveletet.
+
+> **6-10. kísérlet ★: Ugyanannak a feladatnak az ideális vezérlési felső korlátja a szimulátorban**
+>
+> Egy kétdimenziós asztali szimulátorban helyezze el véletlenszerűen a piros poharat, a sárga papírt és a hozzájuk tartozó célterületeket, az ideális szabályozó pedig sorban közelítse meg a tárgyakat, fogja meg és vigye őket a helyes helyre. Nem kell képet felismernie, és nem választ rosszul műveletet, ezért azt képviseli, hogy „meddig juthat el legalább ez a feladat akkor, ha az érzékelés és a döntés is helyes”.
+>
+> Nézze a feladat sikerarányát, a lépések számát és az útvonal hosszát; változtassa a tárgyak kezdeti helyzetét és a feladat léptékét is, hogy lássa, stabil marad-e ez az ideális korlát. Ugyanazokat a sikerfeltételeket használjuk, mint a 6-9. kísérletben, de amit mérünk, az beavatkozó nélküli szimuláció: ez nem jelenti azt, hogy a valódi XLeRobot megmozdult volna. A kettő két alapvonal lesz a későbbi önálló vezérléshez——a 6-9. kísérlet az ember zárt hurka valódi hardveren, a 9-8. pedig az ideális zárt hurok szimulációs környezetben.
+
+### A Robotvezérlés Alapszerkezete
+
+Egy robotrendszer általában szétválasztja a különböző időléptékű munkákat.
+
+| Réteg | Központi kérdés | Kimenet | Jellemző időlépték |
+| --- | --- | --- | --- |
+| Feladatcél | Mit akar befejezni az ember | „A pohár és a papír a helyére” | Perces nagyságrend |
+| Hosszú távú tervezés | Mi előbb, mi utóbb | Előbb a pohár, aztán a papír, végül ellenőrzés | Másodperctől percig |
+| Alapkészség | Milyen állapotváltozást érünk el most | `pick(red_cup)`, `place(red_cup, tray)` | Kb. 1—3 mp |
+| VLA / készség-eljárásmód | Konkrétan hogyan mozog ez a készség | Az XLeRobot megfogójának rövid mozdulata vagy folytonos pályája | Kb. 1—10 Hz következtetés |
+| Alacsony szintű vezérlés és biztonsági réteg | Hogyan hajtsuk végre stabilan és késleltetés nélkül | Ízületi vagy szerszámponti vezérlőjelek, sebességkorlát és vészleállítás | Kb. 50—1000 Hz |
+
+Ez egy szokásos mérnöki munkamegosztás, nem az egyetlen lehetséges modellarchitektúra. A VLA átvállalhat a magas szintű döntésekből is, a tervező pedig lehet szabályalapú program, VLM vagy optimalizáló. Bármelyik megvalósítást választjuk, a „feladat sorrendjét” érdemes elválasztani a „pillanatnyi művelettől”; különben a magas szintű modell következtetési késleltetése lehúzza az alacsony szintű vezérlést, az alacsony szint nagy frekvenciájú vezérlése pedig rengeteg lényegtelen részlet feldolgozására kényszeríti a felső modellt. Az XLeRoboton a modell ne adjon ki közvetlenül tetszőleges ízületi szögeket: csak világos határú készségeket válasszon, mint a `pick`, `place`, `verify_state` és `stop`, a kalibrált, sebességkorlátos és időtúllépéssel ellátott végrehajtó pedig ezeket alakítsa a kar valódi mozgásává.
+
+### Hosszú Távú Tervezés és Feladatfelbontás
+
+Amikor a felhasználó azt mondja, „szedd rendbe az asztalt”, a rendszer nem adhatja át ezt a mondatot változatlanul a műveleti modellnek. A tervező először felsorolja a jelenetben lévő tárgyakat és célokat, meghatározza a sorrendet, majd minden lépéshez leírja a kezdőfeltételt, a befejezési feltételt és a kockázati korlátokat. Például:
+
+```text
+Piros pohár kezelése → Sárga papír eltakarítása → Asztal ellenőrzése
+```
+
+A „piros pohár kezelése” tovább bomlik két műveletre és egy ellenőrzésre:
+
+```text
+pick(red_cup) → place(red_cup, tray) → verify_state()
+```
+
+Minden befejezett készség egy ellenőrizhető csomópontot hagy hátra. Ha a megfogás nem sikerül, csak azt a lépést kell újracsinálni. Ha valaki elmozdít egy tárgyat, vagy a felhasználó megváltoztatja a célt, elég az érintett későbbi lépéseket újratervezni, nem kell a régi tervet elölről végigcsinálni. Az ügynöknek adott eszközöknek is elég egyszerűnek kell lenniük: egy hívás egyetlen dolgot végez, a mozgástartomány rögzített, van időtúllépés, és a végrehajtás után azonnal újra megfigyelünk.
+
+> **6-11. kísérlet ★★: Hagyjuk, hogy a Gemini Robotics-ER 1.5 önállóan rakja rendbe az asztalt XLeRobottal**
+>
+> Tartsa meg a 6-9. kísérlet valódi XLeRobotját, asztali elrendezését, feladatutasítását és sikerfeltételeit; egyedül az emberi kezelőt cserélje le egy Agentre. A megfigyelést és a tervezést bízza egy megtestesült következtető modellre, például a Gemini Robotics-ER 1.5-re, és egy RoboCrew-stílusú ügynökhurkon keresztül csak öt eszközt nyisson meg: `observe_scene`, `pick`, `place`, `verify_state` és `stop`.[^ch6-2]
+>
+> A modell először megfigyeli az asztalt, meghatározza a kezelés sorrendjét, majd meghívja az XLeRobot kalibrált megfogó és lehelyező műveleteit. Minden befejezett készség után újra kell megfigyelnie és ellenőriznie az utófeltételt. Sikertelen megfogás esetén csak az aktuális készséget próbálhatja újra; és meg kell hívnia a `stop`-ot, ha a felhasználó megállást kér, ha egy tárgy kikerül a munkatérből, vagy ha az állapot nem ellenőrizhető. A modell nem adhat ki közvetlenül tetszőleges ízületi szögeket, és nem hagyhatja ki a valódi ellenőrzést pusztán azért, mert korábban maga mondta, hogy „kész”.
+>
+> Az elfogadási feltétel pontosan ugyanaz, mint a 6-9. kísérletben: a pohár a tálcán, a papír a szemetesben, a kar visszatért biztonságos testhelyzetébe, nincs ütközés és munkatéren kívülre lépés. A különbség az, hogy az önálló kísérletben a feladat értelmének a modell saját megfigyeléséből kell származnia, a valódi műveleteknek eszközhívásokból, a végállapotot pedig új megfigyeléssel kell megerősíteni. Az ember csak indíthat, vészleállíthat és a biztonságra ügyelhet; nem fejezheti be félúton a műveletet az Agent helyett. Csak így hasonlítható össze közvetlenül a 9-7. és a 6-11. kísérlet: „azonos hardveren és azonos feladaton mi hiányzik a modell zárt hurkából az emberéhez képest”.
+
+A valódi hardveren végzett kísérletek felszínre hozzák a kalibrációs hibákat, a kamera takarásait és a megfogó kudarcait, de nem alkalmasak arra, hogy nagy számú meghibásodást biztonságosan és szabályozottan ismételjünk. A következő szimulációs kísérletek pontosan ugyanezt az öt eszközt és feladatállapotot őrzik meg, és csak a valódi beavatkozókat cserélik olyan asztali környezetre, amelybe hiba injektálható——így szétválasztható, hogy külön-külön mit tesz hozzá a nyílt hurkú végrehajtás, a lépésenkénti ellenőrzés és a műveleti előrejelzés.
+
+### Vezérlés VLA-val
+
+A VLA a Vision-Language-Action rövidítése, magyarul „látás—nyelv—cselekvés modell”. Megkapja a jelenlegi jelenetet és egyetlen készségutasítást, és kiadja azt a műveletet, amelyet a robotnak következőként végre kell hajtania:
+
+```text
+jelenlegi megfigyelés + készségutasítás → művelet
+```
+
+Az XLeRobot példájában a magas szintű tervező csak a `pick(red_cup)`-ot adja be; hogy melyik irányból közelítse meg a poharat, mikor záruljon a megfogó, és milyen pályán emelkedjen a kar, azt a VLA vagy a készség-eljárásmód dönti el a pillanatnyi jelenet alapján. Amikor a végrehajtó réteg befejezte ezt a rövid mozdulatot, újra képet készítünk az asztalról, és a tervező csak azután adhatja be a `place(red_cup, tray)`-t, hogy megerősítettük: a pohár valóban a megfogóban van. Másképp fogalmazva: az eszközhívás definiálja a kívánt állapotváltozást, a VLA pedig azt, hogy ezt az állapotváltozást hogyan valósítjuk meg folytonos művelettel.
+
+Az RT-2 és az OpenVLA diszkrét tokenekre szabdalja a folytonos műveletet, és egyesével adja ki őket, akárcsak mondatgenerálásnál. A π₀ a másik utat képviseli: közvetlenül folytonos, sima műveleti pályákat állít elő. Egyszerű fölény egyik javára sem áll fenn. A diszkrét tokeneket könnyű nyelvi modellhez illeszteni; a folytonos pályák alkalmasabbak a sima mozgás kifejezésére. A valódi döntés az, hogyan érdemes ábrázolni a műveletet, nem pusztán az, hogy mekkora a modell.[^ch6-15]
+
+Egy nagy modell rendszerint csak másodpercenként 1—10 alkalommal tud következtetni, míg egy hagyományos szabályozó másodpercenként több tíztől több ezerszer is frissülhet. Elterjedt mérnöki gyakorlat a „műveletdarabolás” (action chunking): a modell egyszerre a jövőbeli műveleteknek csak egy rövid szakaszát állítja elő, a vezérlőszál ezt a szakaszt nagy frekvenciával hajtja végre, a modell pedig a háttérben készíti elő a következőt. Így a következtetési várakozás egy része elrejthető a műveletek végrehajtási idejében. Az ára ez: minél hosszabb a szakasz, annál simább a mozgás, de annál kevesebb új jelenetet lát a modell ezalatt. Ha az XLeRobot kinyújtja a karját a pohárért, és a poharat útközben meglökik, akár folytathatja is a régi képből előállított műveletek végrehajtását. A műveletdarabolás tehát a simaság és a reakciósebesség közötti alku, nem pedig ingyen gyorsítás.
+
+A műveletdaraboláshoz rendszerint „előrejelzés—végrehajtás—megszakítás” vázra van szükség, nem pedig arra, hogy a szakaszt a végéig lejátsszuk:
+
+```python
+chunk = vla(current_observation, skill)
+for action in chunk:
+    low_level.execute(action)
+    if safety_event() or observation_changed_significantly():
+        low_level.stop()
+        discard_remaining(chunk)
+        reobserve_and_replan()
+        break
+```
+
+A rövid szakaszok gyorsabban reagálnak, de megsokszorozzák a modellhívásokat; a hosszúak simábbak, de hajlamosak elavult megfigyelést használni. A 6-12. kísérlet az ilyen alkukat hasonlítja össze a szimulátorban, a valódi hardver biztonsági határát pedig a 6-11. kísérlet érinti.
+
+### A VLA Korlátai
+
+A „hosszú távú tervezés + VLA” használható alapterv, de néhány könnyen elnézhető problémát hátrahagy.
+
+- **A tanítóadat korlátozott**: robotbemutatóból jóval kevesebb van, mint internetes szövegből és képből. Attól, hogy a modell látta a „pohár” szót, még nem látott mindenféle anyagú és mindenféle súrlódási körülmények közti poharat.
+- **Utánozni megtanul, a következményt nem ismeri**: a viselkedésklónozás főként azt tanulja, „mit csinált a bemutató következő lépésben”, és nem követeli meg kifejezetten a modelltől, hogy megválaszolja: „mit idéz elő ez a művelet”.
+- **Minden robot más**: eltérő szabadsági fokok, koordináta-rendszerek, megfogók és beavatkozó-késleltetések mellett semmi sem garantálja, hogy ugyanaz a művelet változatlanul átvihető egy másik gépre.
+- **A megfigyelés elavulhat**: miután egy műveletszakasz végrehajtása megkezdődött, a tárgyat elmozdíthatják, takarásba kerülhet vagy feldőlhet, a modell viszont még mindig a korábbi képkocka alapján dönt.
+
+Tehát attól, hogy egy nyelvi modell ismeri a „pohár” szót, még nem tudja, hogyan változtatja meg a jövőbeli állapotot a súrlódás, az érintkezés, a folyadék lötyögése vagy egy tápkábel. A VLA főként arra válaszol, „mit kell most tenni”; ahhoz, hogy megítéljük, „mi történhet azután, hogy megtettük”, másfajta modell kell.
+
+### Világmodellek
+
+A világmodell a műveletek következményeinek előrejelzőjeként érthető. Azt tanulja meg, hogy ha a jelenlegi állapotban végrehajtunk egy műveletet, hogyan változhat meg a következő pillanat állapota.
+
+```text
+jelenlegi állapot + jelölt művelet
+    → jelezzük előre a következő állapotot vagy a jövő egy darabját
+    → hasonlítsuk össze a jelöltek eredményeit
+    → válasszunk műveletet, tervezzünk újra, vagy álljunk le biztonságosan
+```
+
+Egy robotikában használható világmodellnek legalább három dolgot kell jól csinálnia:
+
+- értenie kell a jelenlegi állapotot;
+- előre kell jeleznie a különböző műveletek lehetséges eredményeit;
+- át kell adnia ezt az előrejelzést a tervezőnek vagy a szabályozónak, hogy segítse a választást.
+
+Egy VLM, amely csak videót tud leírni, vagy egy modell, amely csak képet tud előállítani, nem válik magától megbízható robotikai világmodellé. Tudnia kell, mi az a művelet, és képesnek kell lennie előre jelezni a művelet hatását a tárgyakra és a környezetre. A V-JEPA 2 azt az utat képviseli, amely belső állapotban jelzi előre a jövőt, a World-Action Model pedig kifejezetten a „művelet—jövőbeli megfigyelés” kapcsolatot tanulja. Ezek a VLA mellett használhatók, nem kell helyettesíteniük.[^ch6-16]
+
+Valódi rendszerben a világmodellnek rendszerint három haszna van:
+
+1. **Mozgás előtt**: összehasonlítani a jelölt műveleteket——megfogás, tolás, várakozás——és előre venni a kisebb kockázatú változatot;
+2. **Végrehajtás közben**: egybevetni a valódi megfigyelést az előrejelzéssel, és eltérés esetén lerövidíteni a műveletet, megállni vagy újratervezni;
+3. **Tanítás közben**: videóból, szimulációs adatból és sikertelen pályákból megtanulni az állapotváltozásokat, csökkentve a valódi gépen végzett próbálkozást.
+
+Térjünk vissza az XLeRobot asztali feladatához. Ha a sárga papírt részben eltakarja a piros pohár, a rendszer összehasonlíthatja a jelölt készségeket: „előbb vegyük fel a papírt”, „előbb toljuk el a poharat” vagy „fogjuk meg más irányból”. A világmodellnek nem kell élethű robotvideót előállítania: elég, ha előre jelzi, melyik jelölt művelet vezet nagyobb eséllyel olyan állapothoz, amelyben a papír felvehető, és melyik dönthetné fel a poharat——ennyi már segít a tervezőnek rangsorolni. A művelet végrehajtása után a valódi kamerakép marad a végső tény: az előrejelzés csak a választásban segít, az elfogadási ellenőrzést nem helyettesíti.
+
+A világmodell nem biztos válaszokat ad, hanem összehasonlítható előrejelzéseket arról, „mi történhet, ha így teszek”. Minél távolabbra jelzünk előre, annál nagyobb általában a hiba, és egy élethűnek látszó jövőbeli kép nem feltétlenül felel meg a valódi érintkezési és súrlódási törvényeknek. Ezért egy valódi rendszernek továbbra is szüksége van rövid távú előrejelzésre, valós idejű megfigyelésre, bizonytalanságbecslésre és önálló hardveres biztonsági szabályozóra. A generatív világmodellek jól használhatók interaktív szimulációra és megjelenítésre, de nem szabad összekeverni azt, hogy „tud videót előállítani”, azzal, hogy „képes irányítani a robot műveleteit”.[^ch6-21]
+
+> **6-12. kísérlet ★★: Három önálló asztalrendrakó hurok összehasonlítása a szimulátorban**
+>
+> Vigye át a 6-11. kísérlet feladatát, célállapotait, sikerfeltételeit és öt eszközét az asztali szimulátorba, és egyedül a valódi XLeRobot beavatkozóit cserélje szabályozható szimulációs végrehajtóra, amely a megfogásnál időnként átmeneti, de helyrehozható hibát okoz. Így a probléma megváltoztatása nélkül hasonlítható össze a három stratégia.
+>
+> A **nyílt hurkú végrehajtás** egyszerre állítja elő a teljes műveletsort, és útközben nem figyel meg újra. A **lépésenkénti ellenőrzés** minden `pick` és `place` után újraolvassa az állapotot, és hiba esetén csak az aktuális készséget csinálja újra. Az **előrejelző végrehajtás** ezen felül egy rövid távú világmodellt is bevon: összehasonlítja a jelölt készségek várható eredményét, mielőtt kiválasztaná a következő lépést. A kísérlet összehasonlítja a feladat sikerarányát, az eszközhívások többletköltségét és a hibából való visszatérés képességét, továbbá ellenőrzi, hogy minden végső sikert megerősít-e egy új `verify_state` megfigyelés.
+>
+> E kísérlet célja nem annak kimutatása, hogy egy kicsi szimulációs világmodell egyenértékű a valódi gép fizikai modelljével, hanem egy alapvetőbb összefüggés igazolása: a nyílt hurkú terv egyetlen helyi hibát is elvonszol a feladat végéig; a lépésenkénti ellenőrzés lehetővé teszi a visszatérést; a műveleti előrejelzés pedig ezen felül segít rangsorolni a jelölt készségeket. Hogy valóban elkészült-e, azt továbbra is a környezet visszajelzése dönti el.
+
+### A Szimulációs Környezettől a Valódi Robotig
+
+Attól, hogy a 6-12. kísérlet stabil a szimulátorban, a 6-11. kísérlet valódi XLeRobotja még nem lesz ugyanúgy sikeres. A szimulációtól a valódi gépig eljutni nem azt jelenti, hogy még egy szabályozót lecserélünk, hanem azt, hogy magunkra vállaljuk a két környezet közötti különbséget. A tanításhoz használhatunk távvezérlési adatot, videóadatot és szimulációs interakciós adatot; de valódi üzembe helyezéskor ugyanaz a piros pohár, ugyanaz a sárga papír, ugyanaz a tálca és ugyanaz a szemetes más háttér, más megvilágítás, más kamerapozíció és más takarási viszonyok mellett jelenik meg, a kar pedig ráadásul más súrlódással, más érzékelőzajjal és más beavatkozó-késleltetéssel találkozik. Ha ezek a különbségek elég nagyok, a szimulációban megtanult mozdulatok a valóságban felmondhatják a szolgálatot.
+
+> **6-13. kísérlet ★★★: Környezetek közötti RGB-teszt ugyanazon az asztali feladaton**
+>
+> A szimulációs környezetben továbbra is a „vigyük a tárgyat a megfelelő célhoz” alapproblémát használja, és tekintsen minden mintát az asztalrendrakáson belüli helyi döntésnek: az RGB-képből eldönteni, melyik irányból kell megközelíteni a tárgyat, vagy hogy megfogható-e már. Tanítson négy, azonos szerkezetű vizuális eljárásmódot: az egyik csak rögzített jeleneteket lát; a másik a hátteret változtatja; a harmadik a tárgyak külsejét; az utolsó pedig egyszerre változtatja a hátteret, a külsőt, a megvilágítást és a zajt.
+>
+> Próbálja ki mindegyik eljárásmódot az eredeti és a megváltoztatott új környezetben is, majd hasonlítsa össze a műveleti döntés pontosságát a vizuális feltételek megváltozása előtt és után. Ez a kísérlet nem arra keresi a választ, hogy „olyan lett-e már a szimulátor, mint a valódi XLeRobot”, hanem egy szűkebb kérdésre: segít-e a jelenetek változatosságának szándékos kiterjesztése a tanítás során abban, hogy ugyanez a pohár—tálca, papír—szemetes feladat alkalmazkodjon egy új kameraképhez? Még ha az eredmény javul is, a valódi gépen való üzembe helyezéshez továbbra is valódi kamerakalibráció, beavatkozó-vizsgálatok és teljes biztonsági zárt hurok kell.[^ch6-6]
 
 ## Fejezet Összefoglaló
 
-Ez a fejezet egy kérdés köré épült: honnan tudjuk, hogy egy Ügynök valóban javult? A reprodukálható környezet, a szivárgásálló adathalmaz, az LLM-bíró és az értékelésvezérelt modellválasztás minden láncszeme befolyásolja a következtetés megbízhatóságát. A mért esetek négy gyakorlati figyelmeztetést adnak: a strukturált memória és a RAG együtt sem garantál szinergiát; a cache és tömörítés megtakarítása nem adható össze; a referenciahang megváltoztatja a multimodális pont jelentését; a Harness bemeneti reprezentációja pedig egyszerre dönthet sikerről és tokenköltségről. A modellválasztásnál több erőforráskeret képességgörbéit hasonlítsuk össze. Éles rendszerben a kiértékelés folyamatos validálás, nem alkalmi vizsga.
+Amit ez a fejezet felszámolt, az az előző öt fejezet végig fenntartott előfeltevése: hogy az Ügynök és a világ felváltva beszél.
 
-Alapmódszertan: Megfigyelés → Hipotézis → Kísérlet → Validálás → Új Megértés → Új Hipotézis, az Ügynök-mérnökség átalakítása tapasztalatvezérelt "alkímiából" adatvezérelt tudományos mérnökséggé.
+A **modalitás** és az **időzítés** két tengelye mentén nézve a négy szakasz valójában ugyanannak az állításnak a kibontása négy időskálán. Az **aszinkron és eseményvezérelt** a megfigyelést az „Ügynök megy érte"-ből a „világ tolja oda"-ba, a cselekvést a „körön belül befejezni"-ből a „előbb indít, a végét esemény zárja"-ba terjeszti ki; a modalitás nem változik, csak az időzítés. A **hang** ezredmásodpercre szorítja le a skálát, és a kaszkád, a végponttól végpontig tartó Omni, valamint a teljes duplex három paradigmájának fejlődési fővonala éppen a „felváltva beszélés"-től a folyamatos hallgatás és beszéd felé vezet, munkamegosztást teremtve az előtér valós idejű interakciója és a háttér mély gondolkodása között. A **Computer Use** ugyanezt a zárt hurkot viszi a képernyőre, ahol a szűk keresztmetszet a „meg tudja-e csinálni a feladatot"-tól a műveleti hatékonyságig, a folytonos vizuális megértésig és a cselekvés utáni állapot-megerősítésig tágult. A **robotika** pedig a fizikai világba tolja tovább: a cselekvésdarabolás a simaság és a reakciósebesség között választ, a végén pedig azt, hogy elkészült-e, továbbra is új megfigyelésnek kell eldöntenie.
 
-Az ebben a fejezetben bemutatott kiértékelő rendszer egy teljes zárt hurkot alkot: "Kiértékelési Környezet" automatizált tesztinfrastruktúrát biztosít → "Kiértékelési Adathalmaz" teszteseteket definiál → "Automatizált Kiértékelési Módszerek" (LLM-mint-bíró és Rubrica) pontozzák az Ügynök teljesítményét → "Benchmark Elemzés" feltárja a fejlesztési irányokat → "Rendszerfejlesztések" kijavítják a problémákat → A kiértékelési környezet és adathalmaz frissítése, új iterációs ciklus kezdődik.
+A négy szakasz ugyanazt a vezérlési vázat osztja meg:
 
-Az 1. fejezetben bemutatott Harness Engineering szempontjából az ebben a fejezetben bemutatott kiértékelési módszertan a Harness "validálási" funkciójának szisztematikus implementációja, míg a "Benchmark jelentéstől a rendszerfejlesztésig" zárt hurok a Harness iteratív optimalizálásának alapvető mechanizmusa. Ez a fejezet arra a kérdésre ad választ, hogy "hogyan mérjünk megbízhatóan"; erre építve a 8. fejezet arra a kérdésre ad választ, hogy "hogyan alakítsuk át a többdimenziós trajektória-kiértékeléseket végrehajtható, visszafordítható rendszerfrissítésekké".
+```text
+folyamatos érzékelés
+  → az aktuális állapot és időzítés megítélése
+  → válasz vagy cselekvés választása
+  → a kimenet beengedése a környezetbe
+  → a visszacsatolás megfigyelése
+  → folytatás, javítás, újrapróbálás, leállás vagy újratervezés
+```
 
-Az itt létrehozott kiértékelő rendszer nemcsak a jelenlegi rendszer optimalizálását támogatja, hanem kritikus alapot is biztosít a következő két fejezethez. A 7. fejezet a kiértékelési környezeteket és adatokat a modell poszt-tréning bemeneteivé alakítja, az SFT és RL segítségével az interakciós politikákat paraméterekbe írva. A 8. fejezet a termelési trajektóriák többdimenziós kiértékeléseit a tudás, utasítások, programok vagy paraméterek jelölt frissítéseivé alakítja.
+És ugyanazt az alapelem-készletet is: ébresztés, biztonságos pont, megszakítás, kiszorítás, gyors/lassú szétválasztás. Az eseményhurokban a „biztonságos ponton ellenőrizd a megszakítási jelet" és a cselekvésdarabolásban a „ha rendellenességet látsz, dobd el a maradékot és figyelj újra" ugyanannak a mechanizmusnak két megvalósítása öt nagyságrendnyi időskála-különbséggel; az előtér gyors és a háttér lassú modelljének munkamegosztása, valamint az aszinkron Ügynök „előbb adj vissza egy feladatazonosítót, a végét majd egy esemény zárja" megoldása szintén ugyanannak a dolognak két írásmódja.
+
+Érdemes észben tartani, hogy e mechanizmusok többsége egyelőre mérnöki kényszermegoldás. A helykitöltő protokollok, az állapotsáv eseményjelölései, az elővételezett gondolkodás megszakítása és visszagörgetése lényegében mind orkesztrációs logikával pótolják azt az aszinkron tapasztalatot, amely hiányzik a modell tréningeloszlásából. A modell oldalán zajló haladás ennek egy részét már a paraméterekbe húzza be — az interakciós modellek a megszakítást és a közbevágást a modell belsejébe építették, a folyamatos gondolkodás pedig lehetővé tette a „hallgatás közbeni gondolkodást" a következő modellgeneráció kivárása nélkül —, de amíg a tréningkorpuszok túlnyomórészt körökre osztottak maradnak, ez a kompenzációs réteg nem tűnik el: csak folyamatosan új határokra vándorol a modellképesség előrehaladtával.
+
+Ez a fejezet befejezte az „Ügynök építése" rész utolsó darabját: a megfigyelési és a cselekvési tér mindhárom irányban — tartalom, modalitás és időzítés — kibontakozott. A következő három fejezet más kérdés felé fordul: honnan tudjuk, hogy mindez jól épült-e meg, és hogyan tesszük folyamatosan jobbá.
+
+[^ch6-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
+[^ch6-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。
+[^ch6-1]: XLeRobot, „Teleop dokumentáció”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
+[^ch6-2]: Google DeepMind, „Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, „Vezérlés LLM Agenttel”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. Az XLeRobot forrásoldali példája bemutatja, hogyan hangolható össze a modell az eszközhívásokkal; ez a fejezetrész ugyanazt az összehangolási elvet tartja meg, de a műveleti eszközöket kalibrált asztali megfogó, lehelyező, ellenőrző és leállító primitívekre korlátozza.
+[^ch6-6]: LeRobot, „Sim2Real oktatóanyag”. https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
+[^ch6-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246
 
 ## Elgondolkodtató Kérdések
 
-1. ★★ Az LLM-mint-bíró egy nyelvi modell segítségével értékel egy nyelvi modell kimenetét. Vannak-e ennek az "önértékelésnek" szisztematikus vakfoltjai — például a modell következetesen magas pontszámot adhat egy bizonyos válaszstílusra, ami nem egyezik az emberi ítélettel? Hogyan lehet az ilyen torzításokat észlelni és korrigálni?
-2. ★★★ A kiértékelési adathalmazok "szivárgásbiztos" tervezése kulcsfontosságú. A nyílt forráskódú ökoszisztémában azonban, amint a benchmark adatok nyilvánossá válnak, gyorsan bekerülnek a tanítási adatokba. Van-e végjátéka ennek a "macska-egér játéknak"? Tervezz egy kiértékelési módszert, amely alapvetően ellenáll az adatszivárgásnak.
-3. ★★ A Scale AI négy szempontja (szakértői iránymutatás, átfogó lefedettség, szabványosított fontossági súlyozás, önálló kiértékelés) a szubjektivitás kiiktatását célozza a kiértékelésből. Bizonyos feladatdimenziók (pl. "Hasznos a válasz?" "Megfelelő a hangnem?") azonban eredendően szubjektívek. Hogyan tervezhetők megbízható Rubricák ezekre a szubjektív dimenziókra?
-4. ★★ A τ-bench valós felhasználói viselkedés szimulálásával értékeli az Ügynököket. De a szimulált felhasználó maga is egy LLM — lehet, hogy szisztematikusan alulbecsüli bizonyos határeseteket (pl. érzelmileg izgatott vagy homályos felhasználók). Hogyan lehet magának a szimulált felhasználónak a minőségét validálni?
-5. ★★ A páronkénti összehasonlítás (Bradley-Terry modell) feltételezi a preferenciák tranzitivitását (ha A > B és B > C, akkor A > C). Az emberi preferenciák azonban gyakran megsértik a tranzitivitást. Az Ügynök-kiértékelésben milyen forgatókönyvekben jelenhetnek meg nem tranzitív preferenciák? Hogyan befolyásolja ez a rangsorolások megbízhatóságát?
-6. ★★ Ez a fejezet megkülönbözteti a képesség felső korlátját jelző Pass@k-t az üzleti megbízhatóságot mérő Pass consecutive@k-tól. Egy olyan Ágensnél, amelynek egyszeri futásra vett sikeraránya csak 60%, hogyan vonnád össze a feladat hibaköltségét, újrapróbálkozási költségét és mellékhatásait annak eldöntéséhez, hogy melyik metrikát jelentsd és mekkora $k$-t válassz?
-7. ★★ Ez a fejezet a "Megfigyelés → Hipotézis → Kísérlet → Validálás" tudományos módszert javasolja. A gyakorlatban azonban az Ügynök viselkedési tere hatalmas, és egyetlen hipotézis validálásához több száz kiértékelési futtatásra lehet szükség. Hogyan maximalizálható a kiértékelésből nyert információ korlátozott számítási költségkeret mellett?
-8. ★ Az AndroidWorld-pilotban a teljes elemfa 25%-ról 100%-ra emelte a sikert, de a tokenhasználatot a kontroll 2.498-szorosára növelte; a metszés megtartotta a 100%-os sikert, miközben 0.506-szorosra csökkentette a tokenhasználatot. Hogyan terveznél automatikus metszési szabályokat, amelyek eltávolítják a szemantikailag üres UI-csomópontokat anélkül, hogy elveszne az akadálymentességhez, állapotellenőrzéshez vagy későbbi műveletekhez szükséges információ?
-9. ★★ A τ-bench felhasználó-szimulációja "progresszív információfeltárást" alkalmaz — nem biztosít minden információt egyszerre, hanem fokozatosan tárja fel az Ügynök kérdései alapján. Hogyan befolyásolja ez a tervezés a kiértékelési eredményeket? Ha a szimulált felhasználó információfeltárási stratégiája jelentősen eltér a valós felhasználókétól, a kiértékelési következtetések még mindig megbízhatók?
+1. ★★ Egy aszinkron Agent architektúrában az eseménysor prioritási stratégiáját a tervezéskor kell meghatározni. De ha a prioritás megítélése maga is szemantikai megértést igényel (pl. annak eldöntése, hogy egy új üzenet sürgősebb-e, mint az aktuális feladat), ki hozza meg ezt az ítéletet – egy szabálymotor vagy egy másik LLM hívás? Melyek az egyes lehetőségek költségei?
+2. ★★ A sor-alapú eseményfeldolgozásban a modellek hajlamosak csak az utolsó eseményre összpontosítani. Ez a fejezet Agent állapotsor jelzőkkel és összefoglalással enyhíti ezt. De ha a sorban 20 esemény halmozódott fel (10 eszközeredmény + 5 felhasználói üzenet + 5 rendszerriasztás), hogyan szervezné meg ezen események megjelenítési sorrendjét és formátumát, hogy a modell ne hagyjon ki fontos információkat?
+3. ★★★ Amikor egy Agent a felhasználó nevében lép kapcsolatba a külső világgal, lényegében egy identitásválasztással szembesül: használjon független virtuális identitást (dedikált e-mail és telefonszám) harmadik félként, vagy közvetlenül a felhasználó személyes fiókjaiban működjön felhasználóként? Az előbbi lehetővé teszi az önálló háttérműködést, de a harmadik felek nem biztos, hogy megbíznak egy nem emberi identitásban; az utóbbi teljesebb kontextussal és engedélyekkel rendelkezik, de hitelesítési, bizalmi és biztonsági határvonali problémákat vet fel. Milyen forgatókönyvekben véli helyesnek az egyes módok választását?
+4. ★★ A hangügynökök végponti modellje egyetlen modellbe olvasztja az ASR-LLM-TTS-t, csökkentve a késleltetést, de elveszítve a modularitást. Ha a végponti modell egy adott szakaszban hibázik (pl. beszédfelismerés), a hibakeresés és javítás sokkal nehezebb, mint egy soros csővezetékben. Hogyan tervezne megfigyelhetőségi rendszert egy végponti hangügynök számára?
+5. ★ A Step-Audio R1 az MPS kétagyú architektúrán keresztül éri el a "gondolkodva beszélést". Az emberek azonban, amikor "gondolkodva beszélnek", gyakran mondanak dolgokat, mielőtt teljesen átgondolták volna, önjavítanak, vagy töltelékszavakat használnak. Egy ügynök "gondolkodva beszélésének" utánoznia kellene ezeket az emberi jellemzőket?
+6. ★★ Az SoM (Set-of-Mark) és strukturált változatai (DOM elem indexálás) a Computer Use vizuális lokalizációját nyílt végű koordináta előrejelzésről zárt halmazú azonosító kiválasztásra alakítják át, de mindegyik megköveteli a felületi elemek előzetes érzékelését és annotálását — akár egy szegmentációs modellen, akár a DOM-on keresztül. Ha a felület nem szabványos vezérlőket vagy dinamikusan változó elemeket tartalmaz, az annotációk hiányosak vagy pontatlanok lehetnek. Ilyen esetben vissza kellene térnünk a koordináta előrejelzéshez?
+7. ★★ Az olyan néhány száz dolláros robotplatformok, mint az XLeRobot, olcsóvá teszik a távirányításos adatgyűjtést. Azonban a távirányításos adatok minősége nagyban függ a kezelő képzettségétől. Hogyan befolyásolná egy képzetlen kezelő alacsony minőségű adata egy VLA modell tanítását? Hogyan lehet az alacsony minőségű adatokat automatikusan kiszűrni az adatgyűjtési fázisban?
+8. ★★★ Ez a fejezet három interakciós modalitást fed le: hang, Computer Use és robotika. Ezekben a modalitásokban közös tendencia a soros csővezetékektől a végponti modellek felé való fejlődés. Ha ez a tendencia folytatódik, hogyan nézhet ki az ügynök interakciós rétege öt év múlva?
+9. ★★ A DOM/Accessibility Tree elemindexálás jól működik a szabványos webalkalmazásokon, de egyre több szoftverfelület (Canvas/WebGL renderelés, platformokon átívelő egyedi rajzolt vezérlők) nem biztosít hozzáférhető strukturált információt, kizárólag vizuális annotációra vagy koordináta előrejelzésre támaszkodva. Ön szerint a Computer Use-nek a tisztán vizuális megközelítésre kellene fogadnia, vagy mind a strukturált, mind a vizuális utat fenn kellene tartania? Mik a költségei és előnyei mindkét út fenntartásának?
+10. ★★ A VLA modellek cselekvés darabolást használnak — a szövegben említettek szerint π₀ tipikus konfigurációja 25-50 jövőbeli cselekvést generál 50 Hz-en — az inferencia késleltetésének a végrehajtási időn belüli elrejtésére. Ha azonban a környezet hirtelen megváltozik a végrehajtás alatt (pl. egy tárgyat elmozdítanak), az előre generált cselekvési sorozat érvénytelenné válik. Hogyan lehet egyensúlyt teremteni a cselekvés darabolás hatékonysági előnye és a környezeti változásokra való reagálóképesség igénye között?
+11. ★★★ A fejezet mindhárom forgatókönyve (hang, Computer Use, robotika) szembesül az "észlelés-gondolkodás-cselekvés" ciklus késleltetési problémájával, és a párhuzamosított gyors és lassú gondolkodás felé fejlődik. A hangban ez a "javítás a félrebeszélés után"; a Computer Use-ben a "kattints először, aztán nézz"; a robotikában a "tegyél egy lépést, aztán nézz" formában nyilvánul meg. Hogyan biztosítható, hogy ezek a gyors gondolkodáson alapuló cselekvések ne vezessenek visszafordíthatatlan következményekhez?
+12. ★★★ Ebben a fejezetben ugyanaz az alapelem-készlet (ébresztés, biztonságos pont, megszakítás, kiszorítás, gyors/lassú szétválasztás) tér vissza különböző időskálákon. Válasszon ki egyet, és mutassa be, miben tér el a megvalósítása az eseményvezérelt feldolgozásban (másodperc—nap) és a robot cselekvésdarabolásában (ezredmásodperc). Mi határozza meg elsősorban ezt az eltérést — a környezet változásának sebessége, a cselekvés visszafordíthatósága, vagy a megfigyelés megszerzésének költsége?

@@ -2,7 +2,7 @@
 
 Dalam film fiksi ilmiah *Her*, asisten AI Samantha dapat secara proaktif mengatur email, mengenali pesan yang kompleks secara emosional dan menyarankan balasan yang lebih baik, mewakili protagonis dalam urusan penerbitan, serta beralih mulus di antara berbagai saluran komunikasi. Kecerdasannya meyakinkan karena ia memiliki **alat** yang kuat—“tangan, kaki, dan indra” yang menghubungkan “otak” bahasa dengan dunia digital nyata. Agent serbaguna masa kini, seperti Manus dan OpenClaw, telah mewujudkan sebagian besar kemampuan yang dibutuhkan Samantha dalam *Her*.
 
-Bab ini dimulai dengan gambaran umum lima kategori alat, lalu membahas prinsip desain umum dan cara protokol MCP menyatukan ekosistem alat. Di atas fondasi ini, organisasi hierarkis, penemuan dinamis, dan Skills digunakan untuk mengatasi tantangan pemilihan alat. Selanjutnya dibahas secara rinci alat Persepsi, Eksekusi, dan Kolaborasi yang dipanggil Agent secara proaktif, lalu arsitektur Agent asinkron berbasis peristiwa beserta alat Pemicu Peristiwa dan Komunikasi Pengguna. Bab ditutup dengan penemuan proaktif ketika jumlah alat mencapai ratusan atau ribuan.
+Bab ini dimulai dengan gambaran umum lima kategori alat, lalu membahas prinsip desain umum dan cara protokol MCP menyatukan ekosistem alat. Di atas fondasi ini, organisasi hierarkis, penemuan dinamis, dan Skills digunakan untuk mengatasi tantangan pemilihan alat. Selanjutnya dibahas secara rinci alat Persepsi, Eksekusi, dan Kolaborasi yang dipanggil Agent secara proaktif. Bab ditutup dengan penemuan proaktif ketika jumlah alat mencapai ratusan atau ribuan.  Dua kategori sisanya—alat Pemicu Peristiwa dan Komunikasi Pengguna—digerakkan oleh peristiwa eksternal dan desainnya tak terpisahkan dari runtime asinkron berbasis peristiwa, sehingga ditunda ke Bab 6 dan dibahas bersama interaksi real-time.
 
 ## Klasifikasi Alat
 
@@ -28,7 +28,7 @@ Tabel 4-1 Arah Pemanggilan dan Sasaran Tindakan untuk Lima Kategori Alat
 
 **User Communication Tools** adalah sarana di mana sebuah Agent secara aktif menyampaikan informasi kepada pengguna. Contohnya termasuk membalas pesan pengguna (`reply_to_user`), mengirim pesan kartu terstruktur (`send_card_to_user`), dan mengirim peringatan notifikasi pengguna (`send_user_notification`). Ketika komunikasi antara Agent dan pengguna meluas dari tanya-jawab sederhana dalam satu sesi ke pesan asinkron multi-saluran, "berbicara" itu sendiri perlu menjadi pemanggilan tool eksplisit.
 
-Tiga kategori pertama dari tools dipanggil secara aktif oleh Agent, dan desainnya akan dibahas secara rinci di bawah ini. Desain Event-Triggered Tools dan User Communication Tools tidak dapat dipisahkan dari arsitektur Agent asinkron yang digerakkan oleh event (event-driven asynchronous architecture), yang akan dibahas di bagian "Event-Driven Asynchronous Agents" nanti dalam bab ini. Pertama, kita memperkenalkan prinsip-prinsip desain universal yang berlaku untuk semua tools.
+Tiga kategori pertama dipanggil secara proaktif oleh Agent, dan desainnya dibahas satu per satu di bawah ini. Alat Pemicu Peristiwa digerakkan oleh peristiwa eksternal, sedangkan alat Komunikasi Pengguna harus menjangkau pengguna secara asinkron melalui beberapa kanal tanpa mengandaikan pengguna sedang daring—desain keduanya tak terpisahkan dari runtime asinkron berbasis peristiwa, sehingga dibahas di Bab 6 bersama interaksi real-time. Berikut ini kita mulai dengan prinsip desain yang berlaku untuk semua alat.
 
 ## Prinsip Universal Desain Alat
 
@@ -45,7 +45,7 @@ Memilih di antara bentuk-bentuk ini bergantung pada tiga dimensi:
 
 - **Parameter Complexity**: Untuk operasi yang melibatkan nested objects, validasi lintas-bidang, atau batasan tipe yang kompleks, skema terstruktur dari dedicated tool lebih baik memandu model untuk mengirimkan parameter dengan benar; untuk operasi dengan parameter sederhana, mengirimkannya melalui perintah CLI sama andalnya.
 - **Frequency of Change**: Kemampuan yang sering berubah jauh lebih murah untuk dipelihara sebagai Skills—mengedit bagian teks jauh lebih mudah daripada mengubah kode, mengujinya, dan menerapkannya kembali. Operasi tingkat rendah yang stabil lebih cocok untuk dedicated tools.
-- **Model Capability**: Model State-of-the-art (SOTA) dapat mengekspresikan lebih banyak kemampuan dan mengurangi jumlah tools melalui Skills + general executors; model yang lebih lemah membutuhkan skema tool terstruktur untuk memandu pemanggilan yang benar. Bab 8 membahas bagaimana Agent membuat pilihan yang sama ketika mengkonsolidasikan kemampuan baru selama evolusi berkelanjutan.
+- **Model Capability**: Model State-of-the-art (SOTA) dapat mengekspresikan lebih banyak kemampuan dan mengurangi jumlah tools melalui Skills + general executors; model yang lebih lemah membutuhkan skema tool terstruktur untuk memandu pemanggilan yang benar. Bab 9 membahas bagaimana Agent membuat pilihan yang sama ketika mengkonsolidasikan kemampuan baru selama evolusi berkelanjutan.
 
 ### Trade-off Granularitas Alat: Integrasi vs. Pemisahan
 
@@ -347,7 +347,7 @@ Meskipun AI Agent menjadi semakin kuat, intervensi manusia tetap diperlukan pada
 
 **Strategi Timeout dan Fallback.** Permintaan HITL (Human-In-The-Loop—memasukkan langkah tinjauan manusia ke dalam alur keputusan Agent) mungkin tidak segera mendapat respons, jadi tetapkan ambang batas *timeout* dan perilaku default: "Jika tidak ada respons dalam 5 menit, adopsi strategi konservatif." Antrean prioritas juga membantu: permintaan mendesak memberikan notifikasi di berbagai saluran; permintaan rutin mengirimkan email.
 
-**Membangun Loop Umpan Balik.** HITL tidak boleh menjadi interaksi sekali jalan, melainkan harus membentuk loop pembelajaran. Persetujuan, penolakan dari manusia, beserta alasannya, pertama-tama merupakan data umpan balik berbasis bukti: prinsip penilaian yang dapat digeneralisasi bisa dimasukkan ke dalam pengetahuan berbasis pengalaman atau sebuah Skill, sementara preferensi yang bersifat implisit dan berdimensi tinggi dapat membentuk data pasca-pelatihan. Bab 8 membahas bagaimana mengevaluasi trajektori tersebut dan memilih pembawa pembaruan. Metode apa pun yang digunakan, satu penilaian manusia tidak boleh langsung digeneralisasi menjadi aturan universal tanpa sintesis sebelumnya.
+**Membangun Loop Umpan Balik.** HITL tidak boleh menjadi interaksi sekali jalan, melainkan harus membentuk loop pembelajaran. Persetujuan, penolakan dari manusia, beserta alasannya, pertama-tama merupakan data umpan balik berbasis bukti: prinsip penilaian yang dapat digeneralisasi bisa dimasukkan ke dalam pengetahuan berbasis pengalaman atau sebuah Skill, sementara preferensi yang bersifat implisit dan berdimensi tinggi dapat membentuk data pasca-pelatihan. Bab 9 membahas bagaimana mengevaluasi trajektori tersebut dan memilih pembawa pembaruan. Metode apa pun yang digunakan, satu penilaian manusia tidak boleh langsung digeneralisasi menjadi aturan universal tanpa sintesis sebelumnya.
 
 > **Eksperimen 4-4 ★★: Server MCP Alat Kolaborasi**
 >
@@ -364,291 +364,6 @@ Meskipun AI Agent menjadi semakin kuat, intervensi manusia tetap diperlukan pada
 >
 > **Persyaratan Eksperimen**: rancang strategi kolaborasi cerdas—terapkan setidaknya dua cara mengirimkan konteks ke sub-agent dan bandingkan efeknya, seperti penerusan minimal (hanya mengirimkan parameter tugas) dan konteks yang dihasilkan oleh LLM (melakukan panggilan LLM ekstra untuk menyaring konteks penyerahan dari trajektori Agent utama); tulis System Prompt sehingga Agent mengenali kapan HITL diperlukan dan secara proaktif meminta konfirmasi atau input; terapkan mekanisme *timeout* dan notifikasi multi-saluran.
 
-## Agent Asinkron Berbasis Peristiwa
-
-Alat persepsi, eksekusi, dan kolaborasi yang dibahas pada bagian sebelumnya secara aktif dipanggil oleh Agent. Bagian ini beralih ke tantangan lain yang diangkat di awal bab ini: bagaimana sebuah Agent mengelola tugas yang memakan waktu dan merespons peristiwa eksternal yang bisa datang kapan saja? Ini memerlukan arsitektur asinkron berbasis peristiwa (*event-driven*), dan dua dari lima kategori alat—Event-Triggered Tools dan User Communication Tools—memanfaatkan arsitektur ini agar dapat berfungsi.
-
-### Mengapa Asinkroni Diperlukan
-
-Mari kita mulai dengan analogi untuk menjelaskan mengapa asinkroni diperlukan. Sinkron berarti "lakukan satu hal sebelum Anda dapat melakukan hal berikutnya," sedangkan asinkron berarti "beberapa hal dapat terjadi secara bersamaan." Arsitektur Agent sinkron tradisional ibarat satu loket kasir di toko—hanya bisa melayani satu pelanggan pada satu waktu, dan baru memanggil nomor antrean berikutnya setelah selesai dengan yang saat ini. Asisten cerdas yang sebenarnya lebih mirip seorang sekretaris yang fleksibel—dengan beberapa pekerjaan yang menumpuk di meja (email, panggilan telepon, pengunjung), sekretaris tersebut memutuskan mana yang harus ditangani terlebih dahulu berdasarkan urgensi, dan dapat menjeda lalu beralih ke tugas yang lebih mendesak di tengah jalan. Dalam mode sinkron, Agent harus menunggu tugas latar belakang selesai sebelum berbicara dengan pengguna, atau menunggu percakapan berakhir sebelum memproses peristiwa yang baru tiba. Agent tidak dapat memberikan kemampuan inti yang dibutuhkan oleh skenario asisten nyata:
-
-- **Eksekusi asinkron adalah hal yang normal**—Banyak tugas membutuhkan waktu berjalan (*runtime*) yang lama dan tidak boleh memblokir interaksi pengguna.
-- **Penilaian dinamis terhadap prioritas peristiwa**—Tidak semua peristiwa sama pentingnya. Agent perlu secara cerdas memilih strategi penanganan: batalkan operasi saat ini (mendesak), tambahkan ke antrean (rutin), atau proses secara paralel (kueri ringan yang independen).
-- **Kelancaran dalam interupsi dan pelanjutan kembali**—Percakapan atau tugas yang terinterupsi harus dapat dilanjutkan kembali secara alami.
-
-Namun, paradigma asinkron ini berbenturan dengan fakta mendasar tentang LLM saat ini: pelatihannya mengasumsikan sinkroni—setelah pemanggilan alat, pesan berikutnya haruslah hasil alat tersebut—sementara penyebaran dunia nyata menuntut asinkroni: pengguna dapat menginterupsi sesuka hati, berbagai tugas berjalan bersamaan, dan kejadian eksternal tiba sebelum sebuah alat mengembalikan hasil. Kontradiksi "pelatihan sinkron / penyebaran asinkron" ini menembus setiap tarik-ulur (*trade-off*) rekayasa di sisa bagian ini.
-
-Untuk mengatasinya, kita memerlukan **arsitektur Agent asinkron berbasis peristiwa**. Secara teknis, ini berarti sistem tidak lagi secara aktif dan berulang kali memeriksa "pesan baru" (ini adalah *polling*, yang tidak efisien), melainkan secara otomatis memicu logika pemrosesan ketika pesan baru tiba. Semua input, output, proses berpikir, dan interaksi eksternal dimodelkan secara seragam sebagai aliran peristiwa (*event stream*)—urutan catatan peristiwa yang diatur dalam sebuah garis waktu (*timeline*). Gambar 4-2 menunjukkan arsitektur keseluruhan dari Agent asinkron berbasis peristiwa, mengilustrasikan hubungan antara sumber peristiwa, antrean peristiwa, dan alur pemrosesan Agent.
-
-![Gambar 4-2: Arsitektur Event-Driven Asynchronous Agent](images/fig4-2.svg)
-
-### Implementasi Mekanisme Berbasis Peristiwa di OpenClaw
-
-Versi baru menegaskan bahwa Hooks berasal dari siklus hidup internal OpenClaw, sedangkan Cron dan Heartbeat digerakkan oleh waktu. Email dan callback API eksternal memerlukan jalur masuk segera seperti Channel pada PineClaw.
-
-Kerangka kerja (*framework*) *open-source* OpenClaw (arsitekturnya akan dirinci di Bab 5) menerima pesan multi-saluran melalui bidang kendali (*control plane*) Gateway dan merutekannya ke *runtime* Agent. Kerangka kerja ini menyediakan tiga mekanisme otomatisasi bawaan:
-
-- **Hooks**: Merespons peristiwa dalam siklus hidup Agent, seperti pembuatan dan penyetelan ulang sesi, mirip dengan pemicu peristiwa di GitHub Actions
-- **Cron (penjadwal tugas-terjadwal)**: Menjalankan tugas secara berkala menurut ekspresi cron (sintaksis yang banyak digunakan untuk tugas terjadwal di sistem Unix, misalnya, `0 9 * * 5` berarti pukul 9 pagi setiap hari Jumat), seperti menghasilkan laporan mingguan setiap hari Jumat atau merangkum data pada awal setiap bulan
-- **Heartbeat (Daemon Heartbeat)**: Membangunkan Agent setiap N menit untuk memeriksa apakah ada yang membutuhkan perhatian, menggunakan penilaian untuk menghindari *alert fatigue* (kelelahan akibat terlalu banyak notifikasi)
-
-Ketiga mekanisme ini memberikan tampilan otonomi pada Agent OpenClaw—bahkan dengan pengguna yang sedang *offline*, Agent dapat menghasilkan laporan sesuai jadwal, memeriksa status sistem, dan menangani pekerjaan rutin. Namun, jika dicermati lebih dekat, akan muncul sebuah batasan mendasar. Tepatnya: Gateway sudah menangani pesan dari saluran bawaan (IM, antarmuka web) dengan cara **push**—pesan langsung diarahkan ke Agent saat pesan itu tiba. Dan dari tiga mekanisme otomatisasi tersebut, hanya Cron dan Heartbeat yang membiarkan Agent bertindak tanpa adanya pesan dari pengguna, dan keduanya **digerakkan oleh waktu (*time-driven*)**—Heartbeat memeriksa pada interval tetap, Cron berjalan pada waktu yang telah ditentukan. Hooks hanya bereaksi terhadap kejadian siklus hidup internal kerangka kerja dan tidak dapat membawa perubahan baru dari dunia luar. Celah sebenarnya adalah ini: untuk setiap sumber kejadian pihak ketiga di luar saluran bawaan—email baru, panggilan balik API eksternal yang mendorong data, notifikasi mendesak yang membutuhkan perhatian segera—OpenClaw tidak memiliki jalur masuk langsung. Agent tidak dapat segera merespons saat kejadian tersebut terjadi; paling cepat Agent hanya akan menyadarinya pada detak Cron/Heartbeat berikutnya.
-
-Keterlambatan ini tidak dapat diterima dalam banyak skenario. Ambil **PineClaw** (plugin OpenClaw milik Pine AI) sebagai contoh: Pine AI adalah asisten AI yang melakukan panggilan telepon nyata atas nama pengguna, dengan skenario umum meliputi negosiasi tagihan, pembatalan langganan, dan penanganan klaim asuransi. Ketika pengguna memulai tugas telepon Pine melalui Agent OpenClaw, AI suara dari Pine akan menelepon atas nama pengguna, namun pengguna mungkin perlu turun tangan kapan saja selama panggilan berlangsung:
-
-- **Verifikasi Identitas Real-time**: Perwakilan layanan pelanggan meminta untuk memverifikasi identitas pemilik akun, dan Pine membutuhkan pengguna untuk segera memberikan kode keamanan atau *one-time password* (OTP)
-- **Konfirmasi Panggilan Tiga Arah**: Perwakilan layanan pelanggan meminta untuk berbicara langsung dengan pemilik akun, dan Pine membutuhkan pengguna untuk menjawab telepon dalam hitungan detik
-- **Sinkronisasi Kemajuan dan Konfirmasi Keputusan**: Pada titik kritis dalam negosiasi (misalnya, pihak lain mengusulkan penurunan harga), Pine membutuhkan pengguna untuk mengonfirmasi apakah akan menerimanya
-
-Dengan sistem *polling* berkala Heartbeat—katakanlah interval 5 menit—pengguna mungkin tidak mendapatkan notifikasi saat perwakilan tersebut masih menunggu kode verifikasi; perwakilan itu menutup telepon dan panggilan pun gagal. Memperpendek interval menjadi beberapa detik hanya akan membanjiri sistem dengan permintaan yang tidak berguna.
-
-Solusi PineClaw adalah memperkenalkan **mekanisme Channel**—membangun saluran kejadian secara *real-time* antara Gateway OpenClaw dan API Pine. Saat kejadian kunci terjadi, seperti ketika panggilan tersambung, ketika input pengguna diperlukan, atau saat panggilan berakhir, pesan secara instan didorong (*push*) ke Agent OpenClaw. Agent akan memprosesnya segera dan memberi tahu pengguna, mengurangi latensi respons dari hitungan menit menjadi detik.
-
-Kasus ini mengungkapkan nilai inti dari arsitektur *event-driven* untuk kerangka kerja Agent: **"layanan proaktif" yang sesungguhnya tidak hanya menuntut Agent agar bisa secara berkala memeriksa dunia, tetapi juga agar dunia bisa secara aktif memberi tahu Agent.** Menyatukan semua input—pesan pengguna, pengembalian dari alat, *callback* eksternal, pemicu yang dijadwalkan—ke dalam sebuah aliran peristiwa (*event stream*), dan menggerakkan pikiran serta tindakan Agent melalui *event loop*, adalah fondasi arsitektur untuk mencapai tujuan ini. Di bawah arsitektur ini, kita pertama-tama akan memperkenalkan dua kategori alat yang secara langsung berkaitan dengan peristiwa, serta identitas virtual dan lingkungan eksekusi terisolasi yang mendukung tindakan mandiri Agent, sebelum mendiskusikan desain spesifik dari mekanisme penanganan peristiwa.
-
-### Alat Pemicu Peristiwa
-
-Event-triggered tools adalah titik masuk (*entry point*) di mana peristiwa eksternal menggerakkan tindakan suatu Agent. Tanpa hal ini, Agent hanya dapat beroperasi dalam siklus memikirkan, memanggil alat, lalu pada akhirnya menghasilkan suatu hasil, dan kemudian menunggu input pengguna berikutnya. Untuk menerjemahkan perubahan di dunia menjadi peristiwa yang dapat diproses oleh Agent, terdapat tiga tipe umum dari alat pemicu peristiwa (*event-triggered tools*).
-
-**Timers** (`set_timer`) menangani peristiwa yang terikat pada waktu fisik. Jika sebuah email tidak dijawab, Agent harus menindaklanjuti beberapa waktu kemudian untuk menanyakan tentang perkembangannya; jika panggilan dilakukan di luar jam kerja penerima, Agent harus mencoba kembali selama jeda jam kerja berikutnya. Untuk mendukung hal ini, alat seperti OpenClaw dan Claude Code menyertakan fungsionalitas pengatur waktu (*timer*), membiarkan Agent membangunkan dirinya sendiri pada waktu fisik tertentu. **One-shot timers** digunakan untuk tugas dengan waktu eksekusi spesifik: misalnya, jika pengguna meminta untuk "menelepon DMV" pada hari Sabtu, Agent menetapkan sebuah *timer* untuk "hari Senin depan jam 10:00 pagi untuk menelepon DMV," yang akan memicu panggilan secara otomatis. **Recurring timers** digunakan untuk tugas periodik: seperti memeriksa kesehatan server setiap jam atau mengirimkan laporan kemajuan setiap hari Jumat. Selain itu, beberapa layanan eksternal tidak mendukung pembaruan kemajuan secara proaktif, sehingga mengharuskan Agent untuk aktif melakukan *polling* guna mengetahui status. Dalam kasus seperti itu, diperlukan *recurring timer* untuk kueri berulang—mekanisme Heartbeat pada OpenClaw dari bagian sebelumnya adalah bentuk tersistematisasi dari ini, dan itulah akar dari kemampuan "layanan proaktif" OpenClaw.
-
-**Background Task Monitoring** (`monitor_shell`) menangani peristiwa dari alat yang dieksekusi secara asinkron atau tugas *command-line*. Beberapa tugas *command-line* berjalan di latar belakang untuk waktu yang lama, dan Agent perlu melacak kemajuannya. Jika Agent "menatap ke *command-line*," secara berulang-ulang memanggil alat untuk melakukan *polling* terhadap kemajuan, itu akan membakar token; jika Agent menunggu sampai tugas benar-benar selesai sebelum berpikir lagi, Agent akan melewatkan masalah-masalah kritis yang terungkap saat itu juga—dan jika perintah itu macet (*hang*), Agent tidak dapat melakukan intervensi sama sekali, sehingga menghentikan seluruh tugas tersebut. Claude Code menyelesaikan hal ini dengan memperkenalkan alat `monitor`, yang memungkinkan Agent untuk memantau keluaran *command-line* baru, termasuk keluaran yang mengandung kata kunci tertentu.
-
-**External Event Channels** (`connect_channel`) mendorong kejadian eksternal seperti email baru, *callback* API, atau pesan IM ke Agent secara *real-time*. Mekanisme Channel di PineClaw dari bagian sebelumnya merupakan implementasi khas.
-
-Dari perspektif desain, *event-triggered tools* harus menetapkan kondisi pemicu dan aturan penyaringan yang jelas guna mencegah peristiwa yang tidak relevan membangunkan Agent dan menyia-nyiakan sumber daya komputasi. Muatan (*payload*) peristiwa harus berisi informasi konteks yang cukup untuk meminimalkan jumlah kueri tambahan yang perlu dilakukan Agent setelah dibangunkan.
-
-### Alat Komunikasi Pengguna
-
-Di OpenClaw, sesi transparan bagi pengguna: pengguna dan Agent dapat mengirim pesan kapan saja melalui tool khusus yang mendukung gambar, berkas, notifikasi push, komunikasi multimodal, dan Generative UI.
-
-User communication tools (alat komunikasi pengguna) muncul dari peningkatan keragaman saluran komunikasi antara Agent dan pengguna. Banyak Agent (seperti Claude Code, Manus, Genspark) menggunakan loop ReAct asli, di mana setiap hal yang Agent "katakan" (yakni, pesan asisten) dikirim langsung ke pengguna, yang mana pengguna harus membuka sesi spesifik di aplikasi untuk bercakap-cakap dengan Agent. OpenClaw adalah salah satu Agent multiguna yang paling berpengaruh yang mematahkan paradigma komunikasi interaksi manusia-komputer ini: sesinya transparan bagi pengguna—pengguna tidak perlu menyadari keberadaan sesi tersebut atau peduli terhadap detail panggilan alat Agent; baik pengguna maupun Agent dapat saling mengirimkan pesan kapan saja, alih-alih menggunakan pola pesan pengguna/tanggapan Agent yang ketat. Konsekuensinya, banyak pengguna merasa OpenClaw memiliki "kehadiran layaknya manusia," mengirimkan pesan kepada mereka secara asinkron seperti yang dilakukan seorang sekretaris. Pesan teks ini bukanlah pesan asisten model yang disalurkan langsung ke pengguna; pesan tersebut dikirim melalui alat khusus, dapat membawa lampiran gambar dan file, dan dapat memicu *push notification* bergantung pada urgensinya.
-
-Lebih dari sekadar komunikasi berbasis teks, semakin banyak Agent yang memiliki kemampuan komunikasi multimodal, seperti mengirim pesan kartu terstruktur atau email pengingat. Beberapa Agent telah mulai bereksperimen dengan UI generatif, menggunakan HTML atau metode lain untuk membuat antarmuka interaktif yang menyajikan informasi kepada pengguna dengan cara yang lebih ramah pengguna. Dari perspektif desain, *user communication tools* harus mendukung pengiriman pesan asinkron (pengguna mungkin tidak sedang *online*), menyediakan pelacakan status baca/belum dibaca, dan mempertahankan konsistensi pesan di berbagai saluran.
-
-**Komunikasi Pengguna Multi-saluran dan Keterlibatan Kembali.**
-
-Salah satu batasan kategori ini mudah menjadi kabur: kedua kategori alat tersebut sama-sama "mengirimkan notifikasi," tetapi jika penerimanya adalah seorang penyetuju atau kolaborator (meminta persetujuan admin, melaporkan kemajuan ke Agent yang berkolaborasi), alat tersebut termasuk dalam kategori kolaborasi; hal ini hanya terhitung sebagai *user communication tool* apabila penerimanya adalah pengguna akhir (*end user*). Perbedaannya tidak terletak pada saluran, melainkan pada siapa yang diberi notifikasi, dan mengapa.
-
-**Tanggapan dari sebuah Agent tidak boleh dibatasi hanya pada satu saluran; mekanisme notifikasi juga berfungsi sebagai mekanisme pelibatan kembali (*re-engagement*) pengguna.** Pengiriman pesan meluas hingga ke *instant messaging*, SMS, email, panggilan telepon, *push notification*, dan saluran lainnya. Agent memutuskan salurannya berdasarkan kombinasi antara urgensi, status pengguna, sifat konten, dan preferensi pengguna, untuk memastikan pesan penting tidak terlewatkan sembari menghindari interupsi yang tidak perlu.
-
-Untuk tugas yang berjalan lama, Agent perlu secara proaktif memberi tahu pengguna ketika sudah selesai untuk menarik kembali perhatian pengguna. Untuk tugas yang berjalan secara periodik (seperti ringkasan harian atau laporan mingguan), notifikasi dapat membantu pengguna mengembangkan kebiasaan berinteraksi yang rutin.
-
-*User communication tools* menyelesaikan masalah mengenai "bagaimana menjangkau pengguna." Namun demikian, identitas yang diadopsi oleh Agent di saluran-saluran tersebut dan lingkungan tempat Agent melakukan tindakan atas nama pengguna memerlukan suatu lapisan identitas serta infrastruktur lingkungan eksekusi, yang mana hal ini merupakan topik di bagian berikutnya.
-
-### Identitas Virtual dan Lingkungan Eksekusi Terisolasi
-
-Komputer virtual dapat berjalan 24/7, membatasi akses Agent ke berkas lokal, dan memastikan kesalahan paling jauh hanya merusak lingkungan virtual. Pertukaran data memakai sistem berkas bersama dan referensi path.
-
-Sedikit tentang penempatan bagian ini: identitas virtual dan lingkungan eksekusi yang terisolasi pada dasarnya adalah infrastruktur lingkungan eksekusi, satu kesatuan dengan *sandbox* yang didiskusikan pada bagian alat eksekusi. Bagian-bagian ini muncul di sini, pada bagian arsitektur asinkron, karena Agent yang paling membutuhkan hal tersebut adalah mereka yang berjalan secara mandiri, tetap menetap, dan bertindak atas nama pengguna setiap saat.
-
-Seperti yang disebutkan pada awal bab ini, Samantha dalam *Her* memiliki identitas dan lingkungan operasi yang independen. Untuk mencapai asisten multiguna seperti itu memaksa adanya pilihan arsitektur utama: perlukah Agent mengelola akun pribadi pengguna secara langsung, atau Agent memiliki identitas virtualnya sendiri? Manajemen secara langsung terlihat nyaman, tetapi jika ada satu saja kesalahan dari Agent atau terjadinya kompromi keamanan, seluruh identitas digital pengguna akan terancam. Pendekatan yang lebih aman adalah dengan memberikan identitas virtual yang independen kepada Agent—seperti layaknya sekretaris yang memiliki nomor telepon kantor dan kotak suratnya sendiri—yang terdiri dari akun komunikasi, penyimpanan, dan lingkungan komputasi yang berdedikasi tinggi, dengan demikian Agent dapat bekerja atas nama pengguna menggunakan identitas yang dideklarasikan secara jelas dan transparan. Transparansi ini tidak melemahkan kepercayaan; melainkan dapat menjadikan komunikasi menjadi lebih autentik.
-
-Identitas virtual (Virtual identities) perlu didasarkan pada lingkungan eksekusi yang terisolasi. **Virtual computers** (VMs/containers) dan **virtual phones** (Android emulators) memberikan Agent isolasi tingkat sistem operasi dan kemampuan operasi desktop/mobile secara penuh: Agent memiliki akun pengguna, direktori home, dan kredensial login sendiri di dalamnya, membuat semua operasi dapat dilacak dan diaudit; bahkan jika operasi yang salah dilakukan, sistem host dan perangkat nyata pengguna tetap tidak terpengaruh. Ini adalah perluasan dari konsep sandbox yang dibahas di bagian execution tools ke dalam dimensi "identitas digital"—sandbox mengisolasi eksekusi kode, sementara virtual computers dan phones mengisolasi seluruh identitas digital.
-
-Identitas yang independen juga menghadirkan dua tantangan praktis. Pertama, ada **mekanisme anti-otomatisasi (anti-automation mechanisms)**: banyak situs web menggunakan CAPTCHA dan pemeriksaan reputasi IP untuk memblokir akses otomatis. Lingkungan virtual yang menggunakan IP pusat data mudah diidentifikasi; pada praktiknya, akses normal sering kali memerlukan konfigurasi jaringan proksi perumahan (yang menggunakan IP rumah tangga nyata). Kedua, **akses ke akun nyata pengguna**: ketika sebuah tugas harus masuk sebagai pengguna, gunakan otentikasi Human-in-the-Loop—sebuah remote desktop VNC/RDP di mana pengguna masuk secara pribadi, melihat antarmuka penuh yang dioperasikan oleh Agent, dan memahami mengapa otentikasi diperlukan. Session token kemudian digunakan kembali dalam masa berlakunya untuk menghindari gangguan terhadap pengguna secara berulang, menyeimbangkan otonomi dan keamanan.
-
-Pertukaran data antara main Agent dan lingkungan virtual diselesaikan melalui **shared file system**: menggunakan volume mounts (misalnya, `/workspace/shared`) untuk menghubungkan main Agent, virtual computer, dan virtual phone. Data diteruskan sebagai referensi file-path alih-alih menyalin konten, menghindari konsumsi context window. Sebagai contoh, dalam tugas analisis data: pengguna mengunggah file CSV ke direktori shared, Agent di virtual computer membaca file tersebut, melakukan analisis, menghasilkan grafik, dan menyimpannya kembali ke direktori shared. Main Agent hanya perlu mengembalikan file path dari grafik tersebut kepada pengguna—apa yang diteruskan antar pihak selalu berupa path string yang ringan.
-
-Event-triggered tools memungkinkan dunia untuk membangunkan Agent, user communication tools memungkinkan Agent untuk menjangkau pengguna, dan identitas virtual dengan lingkungan eksekusi yang terisolasi (isolated execution environments) memungkinkan Agent untuk bertindak secara independen dan dapat diaudit. Pertanyaan yang tersisa adalah: ketika beberapa event terpusat pada instance Agent yang sama secara bersamaan, bagaimana mereka harus ditangani?
-
-### Mekanisme Penanganan Peristiwa
-
-Satu instance Agent mungkin menghadapi beberapa event secara bersamaan: pesan baru dari pengguna, hasil dari suatu tool, waktu timer habis, permintaan kolaborasi dari Agent lain. Bagaimana event-event ini ditangani secara efisien dan benar berdampak langsung pada performa dan pengalaman pengguna.
-
-Kerangka dari mekanisme ini adalah **event loop** dari pemrograman konkuren (concurrent programming). Pikirkan asynchronous Agent sebagai loop yang berjalan panjang: setiap putaran mengambil sekumpulan event dari antrean input (input queue), menambahkannya ke trajectory, memanggil LLM sekali, mengeksekusi tool yang diputuskan untuk dipanggil, lalu kembali ke bagian atas loop untuk menunggu sekumpulan event berikutnya—struktur yang sama dengan goroutine pada Go yang membaca pesan dari channel dan memprosesnya putaran demi putaran di dalam `for { select { ... } }`. Model ini memiliki satu sifat penting: **event hanya dikonsumsi pada batasan (boundaries) dari setiap iterasi loop**. Saat LLM sedang melakukan reasoning atau tool sedang dieksekusi, event yang baru tiba tidak dapat menyusup dari mana pun dan mengganggu langkah saat ini; event tersebut menunggu di antrean hingga putaran mencapai titik aman (**safe point**) (akhir dari proses reasoning, tool mengembalikan hasil) dan kemudian ditangani secara batch. Pembatalan (cancellation) mengikuti disiplin yang sama: alih-alih memotong paksa pada momen yang sewenang-wenang, Agent memeriksa "apakah saya diminta untuk berhenti?" pada sebuah safe point—yang persis seperti peran yang dimainkan oleh `ctx.Done()` di Go (Bab 10 menggunakan idiom context yang sama untuk membahas cascading cancellation oleh parent Agent terhadap sub-agent-nya). Setelah ini dipahami, tiga strategi pemrosesan di bawah ini hanya berbeda dalam cara mereka memperlakukan safe point: membiarkan event menunggu safe point berikutnya yang terjadi secara alami (queued), secara proaktif memaksa safe point lebih awal (cancellation), atau sekadar memutar loop terpisah dan tidak menunggu safe point dari loop utama sama sekali (parallel).
-
-**Structured Event Modeling.**
-
-Penanganan (handling) membutuhkan pemahaman. Input Agent yang bersifat umum (general-purpose) tidak datang hanya dari pengguna—pesan pihak ketiga tidak dikirimkan oleh pengguna ke Agent, namun Agent harus memahaminya, menimbang kepentingannya, dan memutuskan apakah akan mengambil tindakan. Hal ini memerlukan pemodelan setiap input sebagai **structured event** yang kaya dengan semantik:
-
-- **Source (siapa)**: Pengguna itu sendiri, kontak, orang asing, notifikasi sistem
-- **Channel (bagaimana)**: Panggilan telepon, SMS, pesan instan, email, media sosial, timer trigger, hasil pemanggilan tool asynchronous, pembaruan status dari command-line monitoring
-- **Content (apa)**: Teks pesan, nada emosi, tingkat urgensi, apakah balasan diperlukan
-- **Context (latar belakang)**: Apakah itu balasan ke percakapan sebelumnya atau komunikasi baru, relevansinya dengan task saat ini
-
-Mengambil contoh email permintaan pengembalian dana dari pelanggan, structured event akan terlihat seperti ini:
-
-```json
-{
-  "source": {"type": "email", "sender": "client@example.com"},
-  "channel": "gmail_webhook",
-  "content": {"subject": "Refund Request", "body": "Order #12345, requesting a refund..."},
-  "context": {"priority": "high", "customer_tier": "vip", "related_orders": ["#12345"]}
-}
-```
-
-Hanya ketika dimensi-dimensi ini dimodelkan secara jelas sebagai structured events, Agent dapat mempertahankan pemahaman yang jelas dalam komunikasi multi-party, menghindari kesalahan mengira input pengguna sebagai hasil tool (tool result), atau kesalahan mengira tool result yang berisi instruksi tersembunyi sebagai perintah pengguna (Prompt Injection). Kompleksitas manajemen context pada multi-threaded juga mengharuskan Agent untuk memahami hubungan antara banyak thread percakapan—bagaimana pesan dari pihak ketiga memengaruhi suasana hati pengguna, transisi peran pengguna di berbagai percakapan, dan kapan harus mensintesis informasi dari thread yang berbeda untuk memberikan saran. Ekosistem trigger dari platform workflow seperti n8n—webhooks, timers, emails, database changes, file watchers—menggambarkan prinsip yang sama: setiap trigger adalah "organ indra" yang melaluinya Agent mempersepsikan dunia. Setelah event-event heterogen ini dimodelkan ke dalam satu format terstruktur, Agent dapat memproses stimulus dari sumber manapun secara konsisten. Penentuan urgensi dan strategi pemrosesan di bawah ini semuanya dibangun di atas pemodelan terpadu ini.
-
-**Strategi Pemrosesan Dinamis Berdasarkan Urgensi.**
-
-Manusia yang menangani berbagai task secara bersamaan mengadaptasi strategi mereka terhadap urgensi: keadaan darurat membuat mereka menghentikan apa yang sedang mereka lakukan; tugas rutin (routine to-do) dimasukkan ke dalam daftar untuk dikerjakan nanti. Event handling pada Agent juga harus menunjukkan kecerdasan yang sama.
-
-![Gambar 4-3: Tiga Strategi untuk Pemrosesan Event Asynchronous](images/fig4-3.svg)
-
-**Cancellation-Based Processing** digunakan untuk event darurat (urgent events); intinya adalah **memaksa sebuah safe point lebih awal** untuk event darurat tersebut: secara proaktif menyela (interrupt) langkah saat ini untuk mengubah momen ini menjadi batasan (boundary) di mana event baru dapat dikonsumsi. Ketika event darurat tiba (misalnya, pengguna mengklik "stop" atau sistem pengawas mengirim instruksi prioritas tinggi): (1) Hentikan operasi saat ini—jika LLM sedang melakukan reasoning, segera batalkan streaming response; jika tool sinkron sedang dieksekusi, kirim sinyal batal (cancel signal); (2) Kosongkan (drain) antrean tunggu (pending queue) dengan menghapus semua event yang tertunda; (3) Tambahkan event-event tersebut bersama dengan event darurat ke akhir trajectory; (4) Segera panggil kembali (re-invoke) LLM dengan input berupa trajectory lengkap yang diperbarui untuk menilai situasi. Sebagai contoh, jika pengguna menginputkan "Berhenti! Saya salah bicara" saat Agent akan melakukan operasi yang berpotensi salah, Agent akan segera melihat input baru ini, memahami kembali niat (intent) yang sebenarnya, dan dengan demikian menghindari eksekusi tindakan yang salah.
-
-**Queued Processing** digunakan untuk event rutin. Ketika event yang tidak darurat tiba (misalnya, asynchronous tool mengembalikan hasil atau pengguna mengirimkan informasi tambahan): (1) Tambahkan event ke akhir antrean tanpa mengganggu operasi saat ini; (2) Tunggu operasi saat ini selesai—biarkan LLM menyelesaikan reasoning, biarkan tool sinkron selesai dieksekusi; (3) Ketika setiap tool call selesai dan mengembalikan `tool.result`, periksa antrean. Jika antrean tidak kosong, tambahkan semua event ke trajectory secara bersamaan; (4) LLM memproses trajectory yang diperbarui secara komprehensif. Ini memungkinkan pemrosesan secara batch, meningkatkan efisiensi—sebagai contoh, ketika Agent sedang menunggu search tool result, pengguna menambahkan "hanya tampilkan hasil dari bulan lalu." Informasi tambahan ini masuk ke antrean, dan ketika hasil pencarian kembali, kedua event disajikan ke LLM bersama-sama, menghindari round trips yang tidak perlu.
-
-**Parallel Processing** digunakan untuk permintaan (queries) yang independen dan ringan. Sebagai contoh, ketika Agent sedang menganalisis sejumlah besar data, pengguna tiba-tiba bertanya, "Bagaimana cuaca hari ini?" Query semacam ini memiliki tiga karakteristik: tidak terkait dengan tugas utama, memerlukan respons cepat, dan memiliki biaya eksekusi yang rendah. Baik cancellation-based (yang akan mengganggu task utama yang penting) maupun queued processing (yang akan membuat pengguna menunggu terlalu lama) tidak ada yang cocok. Sistem pertama-tama menilai kemandirian dan kompleksitas query tersebut, kemudian mengeksekusinya secara mandiri dalam parallel reasoning session, memanggil tool yang diperlukan untuk menghasilkan respons dan mengembalikannya segera. Query dan respons tersebut ditambahkan ke trajectory task utama, dengan ditandai secara jelas sebagai "dieksekusi secara paralel dengan task utama" untuk menghindari kebingungan pada LLM.
-
-**Penentuan Urgensi (Urgency Determination).**
-
-Event darurat (Urgent events): Interupsi pengguna (`user.interrupt`), instruksi pengawas (`supervisor.instruction`), interupsi antar-Agent (`agent.interrupt`), external triggers yang ditandai sebagai darurat (misalnya, peringatan sistem, kegagalan pembayaran).
-
-Event tidak darurat (Non-urgent events): Input pengguna biasa (`user.input`), input Agent (`agent.input`), hasil tool (`tool.result`), timer triggers (`timer.trigger`), external triggers biasa.
-
-Hardcoded rules memiliki keterbatasan; semantik event menentukan metode penanganan—"Berhenti sekarang!" menggunakan cancellation-based processing, "Bagaimana cuaca hari ini?" menggunakan parallel processing, "Kirimkan laporannya dalam bahasa Mandarin" menggunakan queued processing. **Sangat disarankan untuk menggunakan classification LLM yang ringan sebagai event router**, dengan cepat menentukan strategi mana yang akan diadopsi ketika sebuah event tiba.
-
-Eksperimen berikut, yakni event-driven Agent pemroses email, mengimplementasikan strategi event handling yang dibahas di atas menjadi implementasi yang dapat dijalankan.
-
-**Routing event loop:**
-
-```python
-while runtime.is_alive:
-    events = queue.take_batch()
-
-    if any(is_urgent(event) for event in events):
-        cancel_at_safe_point(current_work)
-    elif has_independent_fast_query(events):
-        start_parallel_session(events)
-    else:
-        append_to_trajectory(events)
-
-    decision = LLM(context + trajectory)
-    dispatch(decision)
-```
-
-> **Eksperimen 4-5 ★★★: Event-Driven Email Processing Agent**
->
->
-> ![Gambar 4-4: Arsitektur Event-Driven Agent pada Eksperimen 4-5](images/fig4-4.svg)
->
->
-> Eksperimen ini membangun event-driven Agent yang paling sederhana: sebuah **Automated Email Processing Assistant** (Asisten Pemrosesan Email Otomatis). Agent memantau kotak masuk (inbox) email, dan setiap kali email baru tiba, ia secara otomatis memicu processing workflow—klasifikasi, peringkasan, draf balasan, dan memberi tahu pengguna jika perlu. Ini adalah skenario pengantar paling intuitif untuk sebuah event-driven Agent: eksternal event (kedatangan email baru) memicu siklus berpikir (thinking cycle) Agent yang utuh.
->
-> **Tujuan Eksperimen**: untuk memahami gagasan inti dari arsitektur event-driven—Agent tidak lagi menunggu pasif untuk input pengguna tetapi bertindak dengan sendirinya sebagai respons terhadap event eksternal. Melalui eksperimen ini, pembaca akan menguasai putaran tertutup (closed loop) dasar dari registrasi sumber event (event source registration), antrean event (event queue), dan "event tiba → Agent memproses → hasil dikirim".
->
-> **Event Sources dan Event Queue.**
->
-> Sistem ini mendukung akses terpadu untuk berbagai sumber event (event sources):
->
-> - **Event Email** (`on_email_received`): Dipicu ketika email baru tiba, baik dengan memeriksa inbox secara berkala atau menerima notifikasi push.
-> - **Pesan IM/SMS** (`on_im_message`, `on_sms_message`): Dipicu oleh pesan instan (instant messages) atau pesan SMS.
-> - **Event GitHub** (`on_github_pr_update`, `on_github_issue_update`): Dipicu oleh komentar PR review atau perubahan status.
-> - **Timer Triggers** (`on_timer_expire`): Dipicu oleh scheduled tasks (misalnya, ringkasan harian, pembuatan laporan mingguan).
-> - **Webhooks** (`on_webhook_received`): Callback generik dari sistem eksternal.
-> - **Event Sistem** (`on_user_inactive`, `on_process_timeout`, `on_resource_alert`): Dipicu oleh perubahan status internal.
->
-> Semua event masuk ke dalam **event queue** yang terpadu dan diproses secara berurutan sesuai urutan kedatangan. Setiap event memicu Agent thinking loop yang independen: Agent membaca isi event, memanggil tool yang relevan (misalnya, menanyakan pada Knowledge Base, membaca lampiran, mencari riwayat email terkait), menghasilkan hasil pemrosesan (label klasifikasi, ringkasan, draf balasan), dan pada akhirnya memberi tahu pengguna melalui notification tools atau secara langsung mengeksekusi sebuah tindakan.
->
-> **Skenario Validasi**: Konfigurasikan Agent untuk memantau kotak surat pengujian (test mailbox). Simulasikan menerima tiga email—undangan rapat, keluhan pelanggan, dan iklan pemasaran. Agent memprosesnya secara berurutan: untuk undangan rapat, Agent secara otomatis memeriksa konflik kalender dan membuat draf balasan terima/tolak; untuk keluhan pelanggan, Agent mengekstrak informasi penting, menandainya sebagai prioritas tinggi, dan memberi tahu pengguna untuk menanganinya; untuk iklan pemasaran, Agent secara otomatis mengarsipkannya. Seluruh proses tidak memerlukan campur tangan pengguna.
-
-Eksperimen 4-5 mendemonstrasikan pola event-driven paling sederhana—event masuk ke antrean, dan Agent memprosesnya secara berurutan. Akan tetapi, ketika Agent perlu merespons terhadap interupsi selama pengeksekusian tool yang berjalan lama (long-running tool executions), atau mengelola banyak task konkuren secara bersamaan, event queue yang sederhana tidaklah cukup. Selanjutnya, kita akan membahas tantangan engineering yang lebih dalam.
-
-### Implementasi Rekayasa: Membuat Model Sinkron Mendukung Interupsi Asinkron
-
-Eksperimen 4-5 hanya menangani event-event secara serial—event masuk ke antrean satu per satu, dan Agent memprosesnya satu per satu. Sekarang, mari kita kembali pada kontradiksi "synchronous training / asynchronous deployment" yang dikemukakan pada awal bagian ini: ketika pengguna menginterupsi padahal tool belum mengembalikan hasil, bagaimana synchronous format dapat mengakomodasinya? Bagian ini memaparkan solusi teknis (engineering workarounds) yang digunakan oleh industri saat ini.
-
-Mari kita ilustrasikan kontradiksi ini terlebih dahulu dengan skenario spesifik. Misalkan Agent sedang membantu pengguna menyusun draf email (pemanggilan tool: mencari informasi kontak). Sebelum pencarian mengembalikan hasil, pengguna tiba-tiba berkata, "Tunggu, periksakan cuaca besok untuk saya terlebih dahulu." Dalam loop ReAct yang sinkron (synchronous ReAct loop), Agent harus menunggu pencarian tersebut memberikan hasil sebelum memproses pesan berikutnya—karena API mengharuskan "setelah mengeluarkan tool call, pesan berikutnya haruslah tool result." Namun di dunia nyata yang bersifat asynchronous, event-event dapat menginterupsi task yang sedang berlangsung kapan saja. Mengekspresikan semantik "asynchronous interruption" di bawah batasan "synchronous format" inilah yang menjadi masalah persis dari solusi engineering ini untuk diselesaikan.
-
-**Solusi Sementara Engineering (Engineering Expedient): Implementasi Asynchronous yang Mensimulasikan Perilaku Synchronous.**
-
-Ide intinya adalah: **Di bawah kondisi normal tanpa interupsi, biarkan LLM melihat synchronous trajectory standar; hanya ketika interupsi terjadi, sisipkan placeholder untuk memperbaiki format tersebut**. Berikut adalah lima aturan utama:
-
-**Aturan 1**: Segera rekam pesan assistant (termasuk pemikiran (thinking), konten, dan tool call) saat LLM menghasilkannya.
-
-**Aturan 2**: Rekam tool result hanya setelah pengeksekusian tool call selesai. Trajectory berada dalam keadaan "selesai sebagian (partially completed)" selama eksekusi.
-
-**Aturan 3**: Interupsi selama pengeksekusian tool memerlukan placeholder. Hasilkan placeholder response untuk tool yang belum selesai (misalnya, "Tool sedang dieksekusi di background, mohon prioritaskan event baru ini"), tambahkan event interupsi tersebut, dan panggil kembali LLM. Dari sudut pandang LLM, pesan assistant masih memiliki pasangan tool result.
-
-**Aturan 4**: Interupsi selama proses berpikir LLM akan langsung membuang hasil pemikiran saat itu. Jangan menulisnya ke dalam trajectory; sebaliknya, tambahkan event baru tersebut dan mulai babak pemikiran yang baru.
-
-**Aturan 5**: Event yang tidak menginterupsi akan masuk ke antrean untuk diproses secara batch. Event tersebut akan ditambahkan sekaligus hanya setelah siklus saat ini selesai.
-
-Menggunakan contoh Agent yang sedang menyusun draf email ketika pengguna menginterupsi untuk menanyakan cuaca, pengoperasian kelima aturan ini adalah sebagai berikut:
-
-1. Agent memanggil `search_contacts` untuk mencari informasi kontak, dan pesan assistant segera ditulis ke dalam trajectory (Aturan 1).
-2. Sebelum tool pencarian mengembalikan hasil, pengguna mengirimkan "Cek dulu cuaca besok untuk saya." Karena ini adalah interupsi dari pengguna, sistem menghasilkan hasil tool placeholder (pengganti sementara) untuk `search_contacts` yang belum selesai ("Tool sedang berjalan di latar belakang, mohon prioritaskan event baru", Aturan 3), lalu menambahkan kueri cuaca dari pengguna ke dalam trajectory dan memanggil ulang LLM. Pada titik ini, format trajectory yang dilihat oleh LLM sepenuhnya valid—pesan assistant dan hasil tool berpasangan dengan sempurna.
-3. Setelah Agent menjawab kueri cuaca, hasil `search_contacts` yang asli tiba dan ditambahkan ke dalam trajectory sebagai event baru (Aturan 2). Agent membaca informasi kontak dan melanjutkan penyusunan draf email.
-
-Keuntungan inti dari skema ini: **dalam kondisi normal, LLM melihat trajectory sinkron yang sempurna**—pesan assistant dan hasil tool dipasangkan secara ketat, garis waktu jelas, tidak ada placeholder atau status anomali. Ini adalah pengaturan yang paling ramah untuk LLM yang dilatih di bawah paradigma sinkron, dan ini mempertahankan kualitas pemikiran. Placeholder—sebuah kompromi yang diperlukan—hanya muncul ketika interupsi benar-benar terjadi.
-
-Namun masih ada risiko yang memperburuk halusinasi (hallucinations). Meskipun placeholder secara eksplisit menyatakan bahwa tool "belum selesai," model masih dapat mengarang hasil tool dalam pemikiran selanjutnya—meyakinkan dirinya sendiri bahwa tool telah mengembalikan data yang valid dan mendasarkan keputusan pada data fiktif. Hal ini karena, pada sebagian besar trajectory yang dilihat selama pelatihan, pemanggilan tool segera diikuti oleh hasil nyata; model tidak pernah belajar bagaimana menangani situasi di mana "hasilnya belum kembali." Oleh karena itu, dalam praktiknya, interupsi hanya dipicu dalam situasi yang benar-benar mendesak (ketika pengguna secara eksplisit meminta untuk berhenti); event yang tidak mendesak ditempatkan dalam antrean untuk diproses secara batch.
-
-**Antarmuka Tool Asinkron yang Cocok untuk Model yang Ada.**
-
-Karena asumsi sinkron pada model sulit untuk dipatahkan, strategi yang lebih mendasar adalah **merangkul semantik asinkron pada tingkat desain antarmuka tool**.
-
-Desain tool tradisional mengimplikasikan semantik "panggilan sama dengan penyelesaian". Misalnya, nama `phone_call` mengisyaratkan bahwa "memanggil akan memutar nomor telepon dan menunggu panggilan berakhir, lalu mengembalikan log panggilan." Di bawah paradigma asinkron, "inisiasi" dan "penyelesaian" harus dipisahkan:
-
-- `initiate_phone_call`: Memulai panggilan telepon, segera mengembalikan pengidentifikasi tugas (task identifier) dan status awal (misalnya, "Panggilan dimulai, sedang memanggil...")
-- Kemajuan panggilan dikomunikasikan melalui notifikasi event (`phone_call_connected`, `phone_call_ended`)
-
-Kuncinya adalah bahwa nama dan deskripsi tool itu sendiri harus menyampaikan semantik asinkron. Ketika model melihat `initiate_phone_call`, kemampuan pemahaman bahasanya secara alami akan menyimpulkan bahwa ini adalah "memulai" alih-alih "menyelesaikan." Deskripsi tool harus lebih memperkuat hal ini: "Tool ini memulai tugas panggilan telepon yang ditangani oleh sub-agent. Tool ini mengembalikan task ID segera setelah berhasil diinisiasi, memungkinkan Anda untuk melanjutkan hal-hal lain. Event notifikasi terpisah akan dikirimkan saat panggilan berakhir."
-
-**Dispersi Perhatian dalam Pemrosesan Berbasis Antrean.**
-
-Ketika memproses event batch, model sering kali hanya berfokus pada event terakhir. Akar penyebabnya adalah bahwa **model dilatih untuk bereaksi terhadap input terbaru, dan event batch mematahkan asumsi ini**.
-
-Intervensi dapat diterapkan pada dua tingkatan:
-
-**Tingkat Prompt**: Informasikan kepada model, "Ketika Anda menerima beberapa event yang berurutan, pastikan Anda mempertimbangkan semua informasi secara komprehensif."
-
-**Penanda Agent Status Bar**: Tambahkan penanda eksplisit sebelum setiap event:
-
-```text
-[Event Belum Diproses 1/4] Hasil tool dari database_query: ...
-[Event Belum Diproses 2/4] Catatan tambahan dari pengguna: Hanya lihat data Beijing
-[Event Belum Diproses 3/4] Pengingat sistem: Tenggat waktu laporan adalah dalam 30 menit
-[Event Belum Diproses 4/4] Pengguna bertanya: Bagaimana kemajuannya?
-```
-
-Tambahkan ringkasan di bagian akhir: "Terdapat 4 event yang belum diproses di atas, termasuk 1 hasil tool, 2 pesan pengguna, dan 1 pengingat sistem. Pastikan respons Anda mencakup semua informasi tersebut."
-
-### Kontradiksi yang Lebih Dalam dan Arah Masa Depan
-
-
-![Gambar 4-5: Paradigma Pelatihan Sinkron vs. Realitas Penerapan Asinkron](images/fig4-5.svg)
-
-
-Pada akhirnya, placeholder, antarmuka tool asinkron, dan penanda status bar dari bagian sebelumnya semuanya menggunakan prompt engineering untuk menambal kontradiksi "pelatihan sinkron / penerapan asinkron" yang sama (Gambar 4-5)—penyebab dari kontradiksi ini telah dirinci di awal bagian ini, jadi kami tidak mengulanginya di sini; sebaliknya, kami berfokus pada solusi fundamental.
-
-**Mengantisipasi Evolusi Model: Dari Sinkron ke Asinkron.**
-
-Teknik-teknik rekayasa di atas pada dasarnya **menggunakan prompt engineering untuk mengkompensasi kekurangan pelatihan model**, sebuah solusi sementara selama masa transisi. Solusi yang sebenarnya membutuhkan pergeseran paradigma pada tingkat pelatihan model.
-
-Model VLA (Vision-Language-Action, lihat Bab 9) di bidang robotika sudah mulai menghadapi tantangan serupa: ada penundaan yang tidak dapat dihindari antara persepsi dan tindakan (action). Kesuksesan VLA menunjukkan arah bagi evolusi model Agent. Model generasi berikutnya perlu memperoleh tiga kemampuan inti melalui reinforcement learning dalam lingkungan asinkron:
-
-1. **Memahami Interleaving Asinkron dari Event dalam Trajectory**: Ini adalah kekurangan kemampuan yang paling kritis. Model saat ini mengharapkan urutan yang sinkron secara ketat, tetapi dalam lingkungan asinkron yang nyata, sebuah pemanggilan tool mungkin tidak diikuti oleh hasil tool melainkan oleh pesan pengguna baru; pemikiran mungkin terinterupsi di tengah jalan, tetapi status perantara tersebut harus dipertahankan dalam trajectory, dan pemikiran harus dilanjutkan setelah pesan baru diproses, alih-alih memulai dari awal. Model perlu mempertahankan pemahaman yang jelas dalam trajectory "di luar urutan" (out-of-order) tersebut—pemanggilan tool mana yang masih menunggu hasil, dan pemikiran mana yang merupakan fragmen yang belum selesai.
-2. **Melanjutkan Tugas dan Pemikiran yang Terinterupsi**: Ketika terinterupsi untuk menangani event yang mendesak, model harus tetap mengingat tugas yang belum selesai. Misalnya, jika pengguna tiba-tiba menanyakan cuaca saat Agent sedang menjalankan tool analisis data, setelah menjawab, Agent secara alami harus menunggu hasil analisis data tersebut, alih-alih melupakan bahwa tool tersebut masih berjalan. Sangat penting untuk menghindari halusinasi di mana model secara keliru meyakini bahwa panggilan tool yang terinterupsi telah selesai.
-3. **Pemrosesan Komprehensif dari Event Batch**: Ketika beberapa event ditambahkan ke dalam trajectory secara batch, model tidak boleh hanya fokus pada event terakhir; model harus secara komprehensif mempertimbangkan semua informasi yang belum diproses.
-
-Mencapai pelatihan RL asinkron ini membutuhkan infrastruktur baru: simulator lingkungan asinkron (menghasilkan skenario seperti penundaan pengembalian tool, interupsi pengguna secara acak, dll.) dan reward khusus untuk kemampuan asinkron (memahami trajectory out-of-order dengan benar, berhasil melanjutkan pemikiran yang terinterupsi, menghindari halusinasi, dan memproses event batch secara komprehensif).
-
-Pemikiran yang berkesinambungan (continuous thinking), bagaimanapun juga, tidak perlu menunggu generasi model berikutnya. Lapisan tipis dari logika orkestrasi (sekitar dua ratus baris) dapat mengubah model pemikiran teks **yang sudah ada di pasaran (off-the-shelf)** menjadi Agent **waktu kontinu (continuous-time)** seketika[^ch4-async-1]—dengan rapi menjembatani antara separuh "solusi rekayasa" dan "evolusi model" di atas. Mekanismenya adalah Aturan 4, yang ditingkatkan: daripada **membuang** pemikiran yang setengah selesai pada saat interupsi, bangun seluruh interaksi sebagai **satu aliran pemikiran yang tidak terputus (uninterrupted stream of thought)**—kapan saja, tutup paksa blok `<think>` yang sedang ditulis model, suntikkan observasi yang baru tiba (pengembalian tool, interupsi pengguna, hasil pengenalan yang baru) sebagai pesan biasa, dan biarkan model terus melakukan dekode (decoding). Hal ini memanfaatkan sumber daya yang biasanya terbuang sia-sia: model dapat menghasilkan ribuan token per detik, sementara pemanggilan tool atau ucapan pengguna membutuhkan beberapa detik—waktu tunggu tersebut adalah **komputasi gratis**, yang dapat digunakan untuk berpikir jauh ke depan. Dua perilaku muncul: **berpikir sambil menunggu (thinking while waiting)**—alih-alih menunggu tool mengembalikan hasil atau pengguna selesai berbicara, model menalar informasi parsial yang sudah dimilikinya, bahkan meluncurkan pemanggilan tool berikutnya lebih awal (kecenderungan "pemikiran antisipatif" ini direproduksi secara zero-shot di beberapa keluarga model; lihat makalah yang dikutip di catatan kaki untuk datanya); dan **berpikir sambil bertindak (thinking while doing)**—terus berpikir saat menghasilkan output, mampu mengoreksi dirinya sendiri di tengah-tengah tindakan.
-
-Namun paruh yang lebih kritis dari penelitian ini berkaitan dengan **pelatihan (training)**, dan ini menjawab seruan "mengantisipasi evolusi model" di atas: orkestrasi saja membuat pemikiran berkesinambungan menjadi **mungkin**; apakah itu menjadi **berguna** tergantung pada sinyal pelatihan. Penelitian tersebut menemukan bahwa dengan gaya reward "LLM-as-judge", model belajar menyembunyikan pemikirannya—menukar kebungkaman demi persetujuan penilai (judge)—sementara metrik objektif justru memburuk; hanya tujuan yang dapat diverifikasi (verifiable objectives) yang menjaga cakupan informasi yang membuat pemikiran berkesinambungan terbayarkan. Singkatnya: **orkestrasi membuat perilaku tersebut menjadi mungkin; pelatihan membuat perilaku tersebut menjadi baik**—yang mengonfirmasi penilaian bagian ini bahwa kemampuan asinkron pada akhirnya harus dikonsolidasikan melalui pelatihan yang tepat, bukan ditambal selamanya dengan prompt engineering.
-
-[^ch4-async-1]: Klaim bahwa sekitar dua ratus baris orkestrasi dapat mengubah model pemikiran yang sudah ada di pasaran menjadi Agent waktu kontinu, dan bahwa "sinyal pelatihan menentukan apakah pemikiran berkesinambungan berguna," berasal dari Li, Bojie dan Noah Shi. *Never Stop Thinking: Continuous-Time Language Agents.* 2026 (akan terbit).
-
-> **Eksperimen 4-6 ★★★: Agent Asinkron dengan Eksekusi Paralel dan Kemampuan Interupsi**
->
->
-> ![Gambar 4-6: Interupsi dan Pemulihan Agent Asinkron Eksperimen 4-6](images/fig4-6.svg)
->
->
-> Dibangun di atas antrean event sederhana dari Eksperimen 4-5, eksperimen ini bergerak ke bagian-bagian yang sulit dari Agent asinkron: **eksekusi tool paralel, pembatalan eksekusi, dan manajemen status (state management)**. Agent tidak lagi hanya memproses event satu per satu; ia perlu mengelola beberapa tugas secara bersamaan, menangani interupsi dan pemulihan, dan membuat keputusan dinamis berdasarkan status real-time.
->
-> **1. Eksekusi Tool Asinkron**: Mendukung eksekusi asinkron dari tool yang memakan waktu (setidaknya 3-5 detik), segera mengembalikan placeholder setelah inisiasi. **Skenario Validasi**: Agent mengeksekusi perintah terminal yang berjalan lama. Selama waktu ini, pengguna bertanya, "Jam berapa sekarang?" Agent segera merespons, lalu menyajikan hasil analisis ketika perintah yang berjalan lama selesai.
->
-> **2. Antrean Event dan Pemrosesan Batch**: Mengakumulasi event yang tidak mendesak dan menambahkannya ke dalam trajectory secara batch. **Skenario Validasi**: Agent sedang menjalankan tugas yang panjang. Pengguna mengirimkan pesan berturut-turut: "Ingat untuk membalas dalam bahasa Jepang" dan "Format sebagai halaman web." Ketika tugas selesai, Agent memproses semua event sekaligus, menghasilkan halaman web berbahasa Jepang.
->
-> **3. Mekanisme Interupsi**: Perintah "berhenti" dari pengguna segera menghentikan alur eksekusi dan membatalkan tool asinkron. **Skenario Validasi**: Agent sedang mengeksekusi tugas yang panjang. Pengguna mengirimkan "Batal." Agent segera berhenti, dan trajectory mencatat event interupsi dan operasi pembatalan tersebut.
->
-> **4. Pembatalan dan Kueri Status untuk Tool Paralel**: Setelah tool asinkron selesai, hasil nyata disuntikkan ke dalam percakapan melalui event baru. Mendukung pembatalan atau kueri kemajuan melalui task ID. **Skenario Validasi**: Pengguna meminta, "Jalankan ketiga skrip ini secara bersamaan untuk saya. Mana saja yang selesai lebih dulu, periksa kemajuan skrip yang tersisa. Jika ada yang belum melebihi 50%, batalkan." Ketiga skrip mensimulasikan proses analisis, mengeluarkan kemajuan terus menerus dengan kecepatan masing-masing 3%, 2%, dan 1% per detik. Agent memulai tiga perintah terminal asinkron secara bersamaan. Ketika skrip pada 3% per detik selesai dalam sekitar 33 detik, Agent melakukan kueri status dari dua terminal yang tersisa, menemukan satu sekitar 66% dan yang lainnya sekitar 33%. Agent kemudian membatalkan yang belum melebihi 50%. Setelah kedua terminal selesai, Agent mengintegrasikan hasil untuk menghasilkan laporan lengkap.
->
-
 ## Penemuan Tool Secara Proaktif dan Pengungkapan Progresif Berbasis Skill
 
 Diskusi sejauh ini telah mencakup prinsip-prinsip desain untuk tool individual dan ekosistem tool. Namun seiring dengan bertambahnya tool yang tersedia dari belasan menjadi ratusan atau ribuan, sebuah masalah baru muncul—bagaimana Anda secara efisien menemukan yang Anda butuhkan dalam sebuah pustaka yang luas? Bagian ini mengulas secara singkat metode penemuan tool yang ada (pra-pemfilteran berbasis pengambilan (retrieval-based pre-filtering), deklarasi proaktif, pencocokan hierarkis), kemudian beralih ke pendekatan yang lebih baru dan lebih ringan: pengungkapan progresif (progressive disclosure) melalui Skills.
@@ -663,9 +378,9 @@ Pendekatan tradisional menyuntikkan setiap skema tool ke dalam System Prompt sek
 
 [^mcp-zero-2025]: Fei, X., et al. *MCP-Zero: Active Tool Discovery for Autonomous LLM Agents.* arXiv:2506.01056, 2025.
 
-![Gambar 4-7: Pencocokan Alat Hierarkis (Pencarian Semantik Dua Tingkat: Tingkat Server → Tingkat Alat)](images/fig4-7.svg)
+![Gambar 4-2: Pencocokan Alat Hierarkis (Pencarian Semantik Dua Tingkat: Tingkat Server → Tingkat Alat)](images/fig4-2.svg)
 
-**Pencocokan Hierarkis dan Fallback.** Pencocokan yang efisien memanfaatkan hierarki yang sudah ada dalam cara tool diatur. Dalam protokol seperti MCP, tool dikelompokkan berdasarkan **server** (seperti aplikasi di ponsel, yang masing-masing membundel serangkaian fungsi terkait), sehingga pencocokan dapat berjalan dalam dua lapisan: menemukan server yang relevan berdasarkan deskripsi kemampuan, kemudian mencocokkan tool spesifik di dalamnya. Hal ini menyusutkan ruang pencarian dari "ribuan tool" menjadi "puluhan server × masing-masing puluhan tool," menghemat komputasi dan mengurangi kebingungan semantik lintas domain. Secara rekayasa, hal ini bergantung pada indeks *embedding* yang dibangun secara *offline* dan diperbarui secara inkremental. Dan ketika kandidat dari kedua lapisan mendapat skor di bawah ambang batas (*threshold*), sistem harus mengembalikan nilai eksplisit "tidak ditemukan," yang mendorong Agent untuk memparafrase dan mencoba lagi, berimprovisasi dengan tool dasar, atau membuat tool baru sama sekali (subjek dari Bab 8).
+**Pencocokan Hierarkis dan Fallback.** Pencocokan yang efisien memanfaatkan hierarki yang sudah ada dalam cara tool diatur. Dalam protokol seperti MCP, tool dikelompokkan berdasarkan **server** (seperti aplikasi di ponsel, yang masing-masing membundel serangkaian fungsi terkait), sehingga pencocokan dapat berjalan dalam dua lapisan: menemukan server yang relevan berdasarkan deskripsi kemampuan, kemudian mencocokkan tool spesifik di dalamnya. Hal ini menyusutkan ruang pencarian dari "ribuan tool" menjadi "puluhan server × masing-masing puluhan tool," menghemat komputasi dan mengurangi kebingungan semantik lintas domain. Secara rekayasa, hal ini bergantung pada indeks *embedding* yang dibangun secara *offline* dan diperbarui secara inkremental. Dan ketika kandidat dari kedua lapisan mendapat skor di bawah ambang batas (*threshold*), sistem harus mengembalikan nilai eksplisit "tidak ditemukan," yang mendorong Agent untuk memparafrase dan mencoba lagi, berimprovisasi dengan tool dasar, atau membuat tool baru sama sekali (subjek dari Bab 9).
 
 **Penemuan tool proaktif:**
 
@@ -681,19 +396,19 @@ if capability_is_missing(task):
         continue
 ```
 
-![Gambar 4-8: Optimasi KV Cache untuk Pemuatan Alat Dinamis](images/fig4-8.svg)
+![Gambar 4-3: Optimasi KV Cache untuk Pemuatan Alat Dinamis](images/fig4-3.svg)
 
-**Pemuatan Dinamis dan KV Cache.** Penemuan proaktif (*proactive discovery*) membawa biaya rekayasa yang tidak kentara: memuat tool secara dinamis **membatalkan KV Cache**—jika semua definisi tool diletakkan di prefiks statis, setiap tool yang baru dimuat akan membatalkan seluruh *cache*. Solusinya sesuai dengan diskusi Bab 2 tentang posisi injeksi Skill: tambahkan bagian variabel (skema lengkap tool baru) di akhir konteks, menjaga prefiks statis tetap stabil dan KV Cache sepenuhnya dapat digunakan kembali, dengan hanya daftar pendek nama-nama tool yang dipertahankan di bilah status Agent. Pola ini sekarang didukung secara *native* oleh API utama dan telah menjadi arsitektur *default* dari *framework* arus utama: OpenAI Responses API menyediakan tool `tool_search` dan *flag* `defer_loading: true`, dengan skema yang dimuat ditambahkan di akhir konteks sebagai item `tool_search_output` sehingga *cache* prefiks terus mengenai (*hit*); Claude Code menunda tool MCP secara *default* (diinjeksi sesuai permintaan melalui blok `tool_reference`, dengan hanya nama tool dan instruksi server yang disimpan saat sesi dimulai); dan `tool_search` dari Codex CLI (pencarian BM25) adalah arsitektur yang selalu aktif (*always-on*) daripada fitur opsional. Lingkungan tool yang dinamis juga menuntut lebih banyak dari model itu sendiri—model yang lebih lemah kesulitan dengan definisi tool yang muncul pada posisi non-standar di pertengahan konteks dan cenderung menghasilkan pemanggilan yang cacat (tanda kurung JSON tidak cocok, parameter hilang), yang seringkali membutuhkan pelatihan *reinforcement learning* khusus (lihat Bab 7).
+**Pemuatan Dinamis dan KV Cache.** Penemuan proaktif (*proactive discovery*) membawa biaya rekayasa yang tidak kentara: memuat tool secara dinamis **membatalkan KV Cache**—jika semua definisi tool diletakkan di prefiks statis, setiap tool yang baru dimuat akan membatalkan seluruh *cache*. Solusinya sesuai dengan diskusi Bab 2 tentang posisi injeksi Skill: tambahkan bagian variabel (skema lengkap tool baru) di akhir konteks, menjaga prefiks statis tetap stabil dan KV Cache sepenuhnya dapat digunakan kembali, dengan hanya daftar pendek nama-nama tool yang dipertahankan di bilah status Agent. Pola ini sekarang didukung secara *native* oleh API utama dan telah menjadi arsitektur *default* dari *framework* arus utama: OpenAI Responses API menyediakan tool `tool_search` dan *flag* `defer_loading: true`, dengan skema yang dimuat ditambahkan di akhir konteks sebagai item `tool_search_output` sehingga *cache* prefiks terus mengenai (*hit*); Claude Code menunda tool MCP secara *default* (diinjeksi sesuai permintaan melalui blok `tool_reference`, dengan hanya nama tool dan instruksi server yang disimpan saat sesi dimulai); dan `tool_search` dari Codex CLI (pencarian BM25) adalah arsitektur yang selalu aktif (*always-on*) daripada fitur opsional. Lingkungan tool yang dinamis juga menuntut lebih banyak dari model itu sendiri—model yang lebih lemah kesulitan dengan definisi tool yang muncul pada posisi non-standar di pertengahan konteks dan cenderung menghasilkan pemanggilan yang cacat (tanda kurung JSON tidak cocok, parameter hilang), yang seringkali membutuhkan pelatihan *reinforcement learning* khusus (lihat Bab 8).
 
 Satu poin yang mudah disalahpahami patut diklarifikasi: "ditambahkan di akhir" hanya terjadi pada giliran (*turn*) saat tool ditemukan. Sejak saat itu, blok skema tetap pada posisi aslinya dalam lintasan (*trajectory*)—pesan-pesan baru di giliran berikutnya ditambahkan **setelah** itu, dan itu menjadi riwayat biasa, bukan dipindahkan lagi ke akhir terbaru di setiap giliran (jika itu diinjeksi ulang setiap giliran, ia memang akan membutuhkan *prefill* ulang setiap saat, dan *cache* tidak akan ada gunanya). Kedua API menjamin hal ini: OpenAI mensyaratkan permintaan berikutnya untuk mempertahankan posisi item `tool_search_output`, dan tool yang sama tidak pernah perlu dimuat lagi di giliran berikutnya; Anthropic memperluas blok `tool_reference` secara *inline* pada posisi aslinya dalam riwayat percakapan, dan dokumentasi resminya menyatakan bahwa *cache* terus mengenai (*hit*) pada setiap giliran berikutnya. Hanya dua situasi yang benar-benar menyebabkan komputasi ulang: masa kedaluwarsa Prompt Cache TTL (yang menghitung ulang seluruh prefiks bersama-sama—bukan biaya khusus untuk definisi tool), dan memodifikasi, menghapus, atau mengatur ulang kumpulan tool yang dimuat (yang membatalkan *cache* dari titik tersebut).
 
-![Gambar 4-9: Struktur Konteks Setelah Penemuan Dinamis—Skema Alat Tersebar di Sepanjang Lintasan](images/fig4-9.svg)
+![Gambar 4-4: Struktur Konteks Setelah Penemuan Dinamis—Skema Alat Tersebar di Sepanjang Lintasan](images/fig4-4.svg)
 
-Gambar 4-9 menunjukkan gambaran lengkap setelah beberapa putaran penemuan dinamis: prefiks statis hanya menampung System Prompt, tool inti, dan meta-tool pencarian tool, sementara skema yang ditemukan di sepanjang proses tersebar di seluruh lintasan, disematkan di mana mereka pertama kali diinjeksi dan disajikan dari *cache* sebagai riwayat biasa pada giliran berikutnya. Ini juga berarti "definisi tool harus berada di bagian paling depan konteks" bukan lagi aturan mutlak—prefiksnya masih statis dan hanya dapat ditambah (*append-only*); definisi tool hanya mendapatkan kemampuan untuk memasuki lintasan sesuai permintaan. Biayanya adalah model harus melalui *post-training* untuk memahami definisi tool yang tersebar di seluruh konteks.
+Gambar 4-4 menunjukkan gambaran lengkap setelah beberapa putaran penemuan dinamis: prefiks statis hanya menampung System Prompt, tool inti, dan meta-tool pencarian tool, sementara skema yang ditemukan di sepanjang proses tersebar di seluruh lintasan, disematkan di mana mereka pertama kali diinjeksi dan disajikan dari *cache* sebagai riwayat biasa pada giliran berikutnya. Ini juga berarti "definisi tool harus berada di bagian paling depan konteks" bukan lagi aturan mutlak—prefiksnya masih statis dan hanya dapat ditambah (*append-only*); definisi tool hanya mendapatkan kemampuan untuk memasuki lintasan sesuai permintaan. Biayanya adalah model harus melalui *post-training* untuk memahami definisi tool yang tersebar di seluruh konteks.
 
 Jelas, seluruh mekanisme deklarasi-pencocokan-injeksi ini berfungsi, tetapi membutuhkan rekayasa yang substansial: indeks *embedding* yang harus dipelihara secara *offline*, pembatalan KV Cache untuk dikelola, dan pelatihan khusus untuk model yang lebih lemah. Premis bersama di balik semua ini adalah memperlakukan setiap tool sebagai **definisi formal yang ditujukan kepada model**—didaftarkan, diambil, diinjeksi. Mekanisme Skills di bagian berikutnya membuang premis tersebut untuk sesuatu yang lebih ringan.
 
-> **Eksperimen 4-7 ★★★: Penemuan Tool Proaktif**
+> **Eksperimen 4-5 ★★★: Penemuan Tool Proaktif**
 >
 > Melalui perbandingan terkontrol, eksperimen ini memvalidasi nilai signifikan dari penemuan tool proaktif untuk model-model kecil. Gunakan model Qwen3-4B untuk mengakses 120+ tool dari server MCP yang dibangun dalam eksperimen Tool Persepsi di atas.
 >
@@ -724,30 +439,25 @@ Alur pemikiran yang belakangan ini mendapat tempat berasal dari mekanisme Skills
 
 ## Ringkasan Bab
 
-Kesimpulan inti dari bab ini: kualitas desain tool menetapkan batas atas kemampuan sebuah Agent, dan arsitektur asinkron menentukan apakah Agent dapat berjalan dengan andal di dunia nyata.
+Kesimpulan inti dari bab ini: kualitas desain tool menetapkan batas atas kemampuan sebuah Agent.
 
 Dalam desain tool, prinsip-prinsip ACI—*trade-off* granularitas, generalitas, konvensi deskripsi—berlaku untuk setiap tool; protokol MCP menstandarisasi interoperabilitas tool, sementara organisasi hierarkis, penemuan tool dinamis, dan Skills menjawab tantangan kelebihan beban tool (*tool overload*). Pada saat yang sama, setiap server MCP pihak ketiga memperkenalkan batasan kepercayaan baru—keracunan deskripsi tool (*tool description poisoning*), pembayangan tool (*tool shadowing*), dan risiko kredensial menuntut peninjauan sebelum integrasi dan pertahanan saat *runtime*. Dan satu garis dasar yang berlaku di seluruh desain tool: keakuratan pengiriman parameter—tidak ada kesenjangan sistematis antara dunia yang dipersepsikan oleh model dengan dunia tempat tool beroperasi.
 
-Lima kategori tool masing-masing memiliki penekanan desain yang berbeda:
+Bab ini membahas tiga dari lima kategori alat, yaitu kategori yang dipanggil Agent atas inisiatifnya sendiri:
 
 - **Tool persepsi (*Perception tools*)**: Pertimbangan utama mencakup *trade-off* granularitas, ringkasan yang sadar konteks, dan desain antarmuka seperti paginasi dan pemotongan (*truncation*) eksplisit; sifatnya yang *read-only* membuatnya sangat cocok untuk *caching* dan paralelisme.
 - **Tool eksekusi (*Execution tools*)**: Pertimbangan utama mencakup perlindungan keamanan hierarkis, mekanisme Proposer-Reviewer (pra-persetujuan dan pasca-validasi), dan mekanisme Sidecar.
 - **Tool kolaborasi (*Collaboration tools*)**: Pertimbangan utama mencakup primitif siklus hidup sub-agent (buat, pesan, batalkan, temukan) dan *learning loop* dengan intervensi manusia.
-- **Tool pemicu kejadian (*Event-triggered tools*)**: Pertimbangan utama mencakup penyaringan kondisi pemicu dan desain *payload* kejadian (*event*), memungkinkan dunia luar untuk secara proaktif membangunkan Agent.
-- **Tool komunikasi pengguna (*User communication tools*)**: Pertimbangan utama mencakup pola perpesanan asinkron, pemilihan multi-saluran, dan interaksi ulang (*re-engagement*) pengguna; identitas virtual dan lingkungan eksekusi yang terisolasi menyediakan fondasi identitas bagi Agent untuk bertindak secara mandiri.
 
-Di sisi asinkron, mekanisme otomatisasi bawaan OpenClaw (Hooks, Cron, Heartbeat) membiarkan Agent bertindak secara otonom pada suatu jadwal, tetapi tidak memberikan jalur masuk (*ingress*) langsung untuk sumber kejadian (*event*) pihak ketiga di luar saluran bawaan, seperti email dan *callback* API. Mekanisme Channel dari PineClaw mengisi celah tersebut, menandai evolusi dari digerakkan oleh waktu (*time-driven*) menjadi digerakkan oleh kejadian (*event-driven*). Tiga strategi—berbasis pembatalan (*cancellation-based*), antrean (*queued*), dan pemrosesan paralel—memungkinkan Agent menangani kejadian dengan prioritas berbeda. Namun, arsitektur ini berada dalam kontradiksi mendalam dengan paradigma pelatihan sinkron dari model besar (*large models*) saat ini; untuk saat ini, solusi rekayasa seperti *placeholder* asinkron hanya dapat memitigasinya. Perbaikan fundamental menunggu model generasi berikutnya yang menginternalisasi latensi, interupsi, dan konkurensi melalui *reinforcement learning* di lingkungan asinkron (dalam semangat model VLA yang dibahas pada Bab 9).
+Dua kategori sisanya—alat Pemicu Peristiwa dan Komunikasi Pengguna—digerakkan oleh peristiwa eksternal, atau harus menjangkau pengguna secara asinkron lintas kanal saat pengguna mungkin tidak daring; desainnya tak terpisahkan dari runtime asinkron berbasis peristiwa sehingga dibahas di Bab 6.
 
-Tujuh eksperimen berkembang dari dasar hingga arsitektur: Eksperimen 4-1 hingga 4-4 membangun tiga set tool dasar—Persepsi, Eksekusi, dan Kolaborasi; Eksperimen 4-5 memperkenalkan pemrosesan berbasis kejadian (*event-driven*) dengan Agent penanganan email; Eksperimen 4-6 mengimplementasikan eksekusi paralel, pemulihan interupsi, dan manajemen status (*state management*); dan Eksperimen 4-7 memvalidasi nilai dari penemuan tool proaktif pada skala pustaka (*library scale*). Batasan bab ini adalah deskripsi, penemuan, dan penggunaan aman dari **tool yang sudah ada**. Bab 8 sebaliknya membahas bagaimana Agent menentukan dari kegagalan dan operasi berulang kapan harus membuat, memodifikasi, memvalidasi ulang, atau mempensiunkan sebuah tool.
+Tujuh eksperimen berkembang dari dasar hingga arsitektur: Eksperimen 4-1 hingga 4-4 membangun tiga set tool dasar—Persepsi, Eksekusi, dan Kolaborasi; Eksperimen 6-1 memperkenalkan pemrosesan berbasis kejadian (*event-driven*) dengan Agent penanganan email; Eksperimen 6-2 mengimplementasikan eksekusi paralel, pemulihan interupsi, dan manajemen status (*state management*); dan Eksperimen 4-5 memvalidasi nilai dari penemuan tool proaktif pada skala pustaka (*library scale*). Batasan bab ini adalah deskripsi, penemuan, dan penggunaan aman dari **tool yang sudah ada**. Bab 9 sebaliknya membahas bagaimana Agent menentukan dari kegagalan dan operasi berulang kapan harus membuat, memodifikasi, memvalidasi ulang, atau mempensiunkan sebuah tool.
 
-Bab berikutnya mengajukan pertanyaan yang lebih mendasar daripada “bagaimana cara sebuah Agent menggunakan tool?”: bisakah sebuah Agent **membuat** tool dengan menulis kode? Sebuah Coding Agent ditambah sistem berkas adalah fondasi inti dari setiap Agent bertujuan umum (*general-purpose Agent*), dan hal ini juga memberikan kemampuan eksekusi yang dibutuhkan untuk pembahasan Bab 8 tentang modifikasi mandiri sistem yang terkontrol (*controlled system self-modification*).
+Bab berikutnya mengajukan pertanyaan yang lebih mendasar daripada “bagaimana cara sebuah Agent menggunakan tool?”: bisakah sebuah Agent **membuat** tool dengan menulis kode? Sebuah Coding Agent ditambah sistem berkas adalah fondasi inti dari setiap Agent bertujuan umum (*general-purpose Agent*), dan hal ini juga memberikan kemampuan eksekusi yang dibutuhkan untuk pembahasan Bab 9 tentang modifikasi mandiri sistem yang terkontrol (*controlled system self-modification*).
 
 ## Pertanyaan Diskusi
 
 1. ★★ Standar MCP memisahkan (*decouples*) definisi tool dari *framework* Agent. Namun, standarisasi juga berarti bahwa pola interaksi tool yang kompleks (misalnya, *streaming output*, komunikasi dua arah, sesi *stateful*) mungkin sulit diekspresikan dalam standar protokol. Menurut Anda, kemampuan apa yang paling perlu diperluas oleh MCP di masa depan?
-2. ★★ Dalam arsitektur Agent yang asinkron, strategi prioritas untuk antrean kejadian (*event queue*) harus ditentukan pada waktu desain. Tetapi jika penilaian prioritas itu sendiri membutuhkan pemahaman semantik (misalnya, menentukan apakah pesan baru lebih mendesak daripada tugas saat ini), siapa yang harus membuat penilaian ini—sebuah mesin aturan (*rules engine*) atau pemanggilan LLM yang lain? Apa saja biaya dari masing-masing pilihan?
-3. ★★ Dalam ekosistem MCP, berbagai server MCP yang berbeda mungkin menyediakan tool dengan fungsionalitas yang sangat tumpang tindih. Ketika Agent menghadapi beberapa tool dari berbagai sumber yang secara fungsional serupa, bagaimana ia harus memilih? Jika tool dengan nama yang sama dari berbagai sumber berperilaku sedikit berbeda (misalnya, satu mengembalikan ringkasan, yang lain mengembalikan teks lengkap), dapatkah Agent merasakan dan memanfaatkan perbedaan ini?
-4. ★★★ Ketika Agent berinteraksi dengan dunia luar atas nama pengguna, pada dasarnya ia menghadapi pilihan identitas: menggunakan identitas virtual independen (email dan nomor telepon khusus) untuk bertindak sebagai pihak ketiga, atau langsung mengoperasikan akun pribadi pengguna sebagai pengguna itu sendiri? Opsi pertama memungkinkan operasi di latar belakang secara otonom, tetapi pihak ketiga mungkin tidak mempercayai identitas non-manusia; opsi kedua memiliki konteks dan izin yang lebih lengkap tetapi memunculkan masalah otorisasi, kepercayaan, dan batas keamanan. Dalam skenario seperti apa menurut Anda masing-masing mode harus dipilih?
-5. ★★ Dalam pemrosesan kejadian berbasis antrean (*queue-based event processing*), model cenderung hanya berfokus pada kejadian terakhir. Bab ini memitigasinya melalui penanda bilah status Agent dan ringkasan. Namun, jika antrean memiliki 20 kejadian yang menumpuk (*backlogged*) (10 hasil tool + 5 pesan pengguna + 5 peringatan sistem), bagaimana Anda akan mengatur urutan presentasi dan format dari kejadian-kejadian ini agar model tidak melewatkan informasi kunci?
-6. ★★ Bab ini mengusulkan *loop* "eksekusi-validasi-umpan balik" (misalnya, secara otomatis menjalankan *linter* setelah menulis kode). Pada skenario tool apa lagi pola "validasi otomatis segera pasca-operasi" ini bisa diterapkan? Apakah ada operasi di mana biaya atau risiko dari validasi itu sendiri melebihi dari operasi itu sendiri, sehingga membuat pola ini tidak layak?
-7. ★★ Bab ini mengangkat masalah "ledakan tool" (*tool explosion*)—akurasi pemilihan Agent menurun ketika menghadapi ribuan tool. Selain penemuan tool proaktif, pendekatan apa lagi yang ada? Pertimbangkan untuk mengacu pada cara pakar manusia mengatasi banyaknya koleksi tool yang tersedia.
+2. ★★ Dalam ekosistem MCP, berbagai server MCP yang berbeda mungkin menyediakan tool dengan fungsionalitas yang sangat tumpang tindih. Ketika Agent menghadapi beberapa tool dari berbagai sumber yang secara fungsional serupa, bagaimana ia harus memilih? Jika tool dengan nama yang sama dari berbagai sumber berperilaku sedikit berbeda (misalnya, satu mengembalikan ringkasan, yang lain mengembalikan teks lengkap), dapatkah Agent merasakan dan memanfaatkan perbedaan ini?
+3. ★★ Bab ini mengusulkan *loop* "eksekusi-validasi-umpan balik" (misalnya, secara otomatis menjalankan *linter* setelah menulis kode). Pada skenario tool apa lagi pola "validasi otomatis segera pasca-operasi" ini bisa diterapkan? Apakah ada operasi di mana biaya atau risiko dari validasi itu sendiri melebihi dari operasi itu sendiri, sehingga membuat pola ini tidak layak?
+4. ★★ Bab ini mengangkat masalah "ledakan tool" (*tool explosion*)—akurasi pemilihan Agent menurun ketika menghadapi ribuan tool. Selain penemuan tool proaktif, pendekatan apa lagi yang ada? Pertimbangkan untuk mengacu pada cara pakar manusia mengatasi banyaknya koleksi tool yang tersedia.

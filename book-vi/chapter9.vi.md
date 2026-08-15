@@ -1,506 +1,450 @@
-# Tương tác đa phương thức và thời gian thực
+# Sự tiến hóa liên tục của Agent
 
-Các chương trước khám phá thiết kế của Agent trong thế giới văn bản—tương tác với các hệ thống kỹ thuật số thông qua ngữ cảnh, công cụ và mã. Tuy nhiên, đối tượng tương tác của Agent không chỉ là văn bản và API. Khi Agent cần hiểu hướng dẫn bằng giọng nói của người dùng, tìm và nhấp vào nút chính xác trên màn hình hoặc điều khiển cánh tay robot để nắm bắt chính xác các đối tượng, nó sẽ chuyển sang một trường mới: **Tương tác thời gian thực đa phương thức** - từ đầu vào và đầu ra văn bản đơn giản đến **nhận thức đa phương thức và phản hồi theo thời gian thực**, đây là bước quan trọng để Agent thoát ra khỏi "hộp thoại". Cái gọi là "đa phương thức" có nghĩa là xử lý nhiều dạng thông tin cùng một lúc - văn bản, giọng nói, hình ảnh, video, hành động - không chỉ văn bản.
+Agent ngày nay đối mặt với một nghịch lý năng lực rõ rệt: nó có thể giải quyết zero-shot những nhiệm vụ phức tạp chưa từng gặp, nhưng sau khi xử lý mười nghìn nhiệm vụ tương tự, ngày hôm sau vẫn có thể lặp lại sai lầm của ngày đầu tiên. **Khả năng tự chủ học hỏi từ kinh nghiệm** đang trở thành năng lực then chốt để Agent chuyển từ “biết hoàn thành nhiệm vụ” sang “có thể làm việc đáng tin cậy”, đồng thời là chủ đề nghiên cứu cốt lõi của thế hệ mô hình tiếp theo. Tuy nhiên, năng lực học liên tục của bản thân mô hình hiện vẫn còn rất hạn chế.
 
-Đầu tiên hãy xác định ranh giới của chương này. Hiểu tài liệu và hình ảnh tĩnh - xem ảnh chụp màn hình, đọc biểu đồ, phân tích cú pháp PDF - đã được tích hợp một cách tự nhiên vào thực hành Agent trong các chương trước dưới dạng công cụ nhận thức: Đối với các mô hình lớn đa phương thức ngày nay, loại nhiệm vụ "một lần nhập, một lần hiểu" này tương đối hoàn thiện và không yêu cầu thiết kế kiến trúc đặc biệt. Chương này tập trung vào một loại vấn đề khác: ba tình huống trong đó **thời gian thực khiến các vấn đề đa phương thức trở nên khó khăn**—đối thoại bằng giọng nói, hoạt động GUI và điều khiển robot. Trong những tình huống này, đầu vào được luân chuyển liên tục và đầu ra phải được phân phối trong phạm vi ngân sách thời gian nghiêm ngặt, dẫn đến sự thay đổi về chất trong thiết kế kiến trúc. Đối với việc hiểu theo thời gian thực về các luồng hình ảnh liên tục (video), đây vẫn là một vấn đề mở đối với Agent tại thời điểm viết bài - những hạn chế của ảnh chụp màn hình theo từng khung hình được thảo luận trong phần Computer Use của chương này và các câu hỏi cuối chương sẽ quay lại chủ đề này. Một ranh giới khác cần được rút ra: **tạo sinh** đa phương thức (tạo hình ảnh và video) chỉ là một lệnh gọi công cụ thông thường trong khuôn khổ cuốn sách này (Chương 5 Tạo đa phương tiện đã được đề cập). Agent có thể sử dụng nó như một công cụ bên ngoài. Nó không liên quan đến vấn đề tương tác thời gian thực sẽ được giải quyết trong chương này, vì vậy nó không nằm trong nội dung chính của chương này.
+Nguyên nhân là mô hình sau khi triển khai không tự động thay đổi tham số chỉ vì một lần suy luận. Học trong ngữ cảnh, duy trì trạng thái và nén được thảo luận ở Chương 2 có thể giúp Agent thích nghi **trong nhiệm vụ hiện tại**; nhưng khi ngữ cảnh kết thúc, thay đổi này không tự nhiên được chuyển sang nhiệm vụ tiếp theo. Lưu hội thoại vào bộ nhớ cũng không đồng nghĩa với việc đã học được hành vi mới: quỹ đạo gốc có thể rất dài, chứa cả chiến lược hiệu quả, thành công ngẫu nhiên, quy kết sai và đầu vào không đáng tin cậy.
 
-Tương tác bằng giọng nói, Computer Use và hoạt động của robot dường như trải rộng trên ba lĩnh vực hoàn toàn khác nhau, nhưng khi thực hiện, bạn sẽ thấy rằng các khu vực bị kẹt rất giống nhau: chúng đều xử lý nhiều thông tin phương thức cùng một lúc và chúng đều cực kỳ nhạy cảm với độ trễ. Việc tạm dừng lời nói hơn hai giây có thể khiến mọi người lo lắng và cảm giác bồn chồn ở mức một phần nghìn giây trong quá trình điều khiển robot có thể dẫn đến va chạm. Cùng với nhau, hai ràng buộc này đẩy ba kịch bản theo cùng một hướng kiến trúc: từ **dây chuyền lắp ráp nối tiếp**(giống như dây chuyền lắp ráp tại nhà máy, một liên kết được hoàn thành trước khi được bàn giao cho dây chuyền tiếp theo) đến **mô hình đầu cuối**(một mô hình thống nhất đi trực tiếp từ đầu vào đến đầu ra, loại bỏ sự cần thiết của các liên kết chuyển giao trung gian).
+Ở đây có một khác biệt dễ bị nhầm lẫn: **lưu lại kinh nghiệm không đồng nghĩa với học từ kinh nghiệm**. Đưa một trăm quỹ đạo vào ngữ cảnh dài hoặc cơ sở dữ liệu vector có thể giúp mô hình tìm lại một trường hợp khi cần, nhưng không tự động thực hiện so sánh xuyên trường hợp — bước nào lặp đi lặp lại trong các quỹ đạo thành công, cách làm nào chỉ hiệu quả với giao diện phiên bản cũ, và một lần thành công đến từ chiến lược đúng hay chỉ là ngẫu nhiên của môi trường. Việc học chỉ xảy ra sau khi hệ thống chủ động “đánh giá, đối chiếu, quy nạp và xác minh”, chứ không phải ở khoảnh khắc nhật ký được ghi xuống đĩa. Bộ nhớ người dùng ở Chương 3 chủ yếu kết tinh “người dùng và thế giới có đặc điểm như thế nào”; việc học kinh nghiệm trong chương này còn phải kết tinh “trong điều kiện nào nên hành động ra sao”. Cách thứ nhất giúp Agent nhớ nhiều hơn; cách thứ hai mới giúp nó chuyển từ thông minh sang thành thạo.
 
-Chương này diễn ra trong ngữ cảnh sau:
+Vậy tại sao không để mô hình tự huấn luyện trực tiếp sau mỗi nhiệm vụ? Vì môi trường sản xuất hiếm khi cung cấp tín hiệu học tập sạch. Sự hài lòng của người dùng không đồng nghĩa với tuân thủ; các cập nhật tham số cục bộ cũng có thể gây quên năng lực, trôi dạt chính sách hoặc suy giảm an toàn. Nếu cho phép mô hình đang vận hành trực tiếp sửa đổi các tham số của chính nó dựa trên phản hồi chưa được xác minh, kinh nghiệm sai và Prompt injection có thể bị củng cố, rồi tiếp tục khuếch đại trong các nhiệm vụ sau. Mặt khác, việc huấn luyện định kỳ các mô hình nền tảng có thể cải thiện năng lực tổng quát, nhưng không thể kịp thời hấp thụ các quy tắc riêng, thay đổi công cụ và kinh nghiệm cục bộ mà mỗi Agent gặp hằng ngày.
 
-1. Trước tiên, hãy sử dụng "ba mô hình kiến trúc giọng nói" để thiết lập hệ tọa độ - phân tầng (VAD-ASR-LLM-TTS Pipeline), full-modal (Omni, một mô hình nhưng vẫn thay phiên nhau nói), song công hoàn toàn (Moshi, GPT-Live, nghe và nói), và dọc theo trục “làm thế nào để loại bỏ giả định lần lượt của VAD” để tháo gỡ sự chậm trễ và đánh đổi của mỗi liên kết; phần phân tầng cũng sẽ nói về cách sử dụng nhận thức giọng nói truyền phát để thay thế VAD + ASR.
-2. Hãy xem cách kiến trúc tư duy dung hòa mâu thuẫn giữa “phản ứng thời gian thực” và “suy nghĩ sâu”: từ sự song song đơn giản giữa nhanh và chậm, đến lộ trình tách rời trong đó mô hình lý luận nền đóng vai trò là “nhà chiến lược” (phái đoàn GPT-Live, Pine AI, v.v.), đến “tư duy và nói” của Step-Audio R1 “nội hóa” suy nghĩ thành một mô hình duy nhất.
-3. Sau đó thảo luận về việc tối ưu hóa lớp thực thi để tổng hợp giọng nói giống con người hơn.
-4. Cuối cùng, mở rộng góc nhìn sang Computer Use (cho phép AI vận hành màn hình máy tính giống như con người) và vận hành robot để xem các vấn đề về độ trễ và đa phương thức giống nhau biểu hiện như thế nào trong hai tình huống này.
+Vì vậy, khi bản thân mô hình chưa thể học liên tục một cách đáng tin cậy, trước hết cần kiến tạo “học tập” thành một hệ thống tự chủ bao quanh mô hình: ghi lại bằng chứng vận hành, xác minh kết quả và quá trình, rút ra điểm chung từ nhiều quỹ đạo, rồi quyết định nên cập nhật tri thức, chỉ dẫn, chương trình hay tham số mô hình. Mọi sửa đổi trước tiên đều phải hình thành phiên bản ứng viên; chỉ sau khi vượt qua kiểm thử hồi quy và kiểm tra an toàn mới được phép thay đổi lần vận hành tiếp theo. Đây không phải sự thay thế cho năng lực học của mô hình, mà là con đường kỹ thuật giúp Agent có được năng lực học liên tục trong điều kiện công nghệ hiện tại.
 
-Có hai điểm chính đặc biệt mang tính lý thuyết và có thể được chuyển qua các tình huống: **Kiến trúc tư duy**(cách tư duy nhanh và chậm phối hợp với nhau) và **Giao diện nhanh và chậm** bắt nguồn từ nó (Cầu tiềm ẩn, những gì khác có thể được truyền giữa các mô hình nhanh và chậm ngoài văn bản). Mặc dù bắt đầu từ cảnh giọng nói nhưng chúng không chỉ phục vụ giọng nói - Computer Use sau đây và robot cũng sẽ gặp phải vấn đề “khi nào nên thuê chuyên gia tư vấn chậm”, điều này đáng được độc giả đặc biệt quan tâm.
+Các chương trước đã trình bày những thành phần chủ yếu cần thiết cho hệ thống này. Chương 2 xử lý trạng thái trong nhiệm vụ, Chương 3 cung cấp hạ tầng tri thức, Chương 5 trao cho Agent siêu năng lực tạo công cụ và sửa đổi hệ thống, Chương 7 thiết lập đánh giá và xác minh, còn Chương 8 trình bày cách cập nhật tham số mô hình. Nhiệm vụ của Chương 9 là tổ chức các thành phần này thành vòng khép kín tiến hóa liên tục như minh họa trong Hình 9-1.
 
-## Giọng nói: giao diện người–máy tự nhiên nhất
+![Hình 9-1 Vòng khép kín tổng thể của quá trình tiến hóa liên tục của Agent](images/fig9-1.svg)
 
-Giọng nói không chỉ là chuyển văn bản thành âm thanh. Tốc độ nói nhanh khoảng bốn lần tốc độ gõ và giải phóng tay, mắt, nên Agent tự nhiên trở thành một vòng lặp vào–ra liên tục mà người dùng có thể ngắt bất cứ lúc nào. Đọc chính tả chuyển lời nói thành văn bản; voice Agent cho phép người dùng cộng tác trực tiếp với Agent. Cả hai đều hỗ trợ quy trình whisper coding đã giới thiệu trước đây.
+Tiến hóa liên tục cần xuất phát từ kinh nghiệm vận hành có thể truy vết, có khả năng thay đổi hành vi về sau và đã được xác minh là không gây suy giảm rõ rệt. Chương này trước hết thảo luận cách xác định một lần vận hành tốt ở đâu, sai ở đâu; sau đó so sánh bốn phương pháp cập nhật cùng phạm vi áp dụng; cuối cùng bàn về cách các cập nhật này được xác minh, phát hành, sửa đổi và loại bỏ trong quá trình vận hành dài hạn.
 
-Phần này xét hai hướng: người dùng nói với Agent, và Agent nói với thế giới bên ngoài thay mặt người dùng. Mô hình giọng nói quyết định Agent có thể trả lời gì; kiến trúc tương tác quyết định Agent có nghe rõ, đáp kịp thời, chuyển lượt tự nhiên, hoàn tất xác nhận và gọi công cụ trong cuộc gọi hay không.
+## Thu nhận tín hiệu học tập từ quỹ đạo vận hành
 
-### Thời gian tương tác: từ cascade đến full-duplex
+Điểm khởi đầu của tiến hóa liên tục không phải là “tổng kết”, mà là “đánh giá”. Nếu hệ thống không biết nhiệm vụ đã hoàn thành hay chưa, cũng không biết bước nào tạo nên thành công hoặc thất bại, thì phần phản tư do mô hình ngôn ngữ tạo ra chỉ có thể là một phỏng đoán. Một khi đánh giá sai đi vào tri thức dài hạn, Prompt hệ thống hoặc dữ liệu huấn luyện, ảnh hưởng của nó sẽ liên tục khuếch đại qua các nhiệm vụ sau.
 
-Bài giới thiệu GPT-Live của OpenAI nêu ba mô hình tương tác bằng giọng nói: cascade, theo lượt và full-duplex[^ch9-12]. Đây không phải chuỗi thay thế đơn giản mà là các đánh đổi khác nhau giữa độ trễ, chi phí và khả năng quan sát:
+Kết quả của một số nhiệm vụ tương đối dễ xác minh. Coding Agent có thể chạy kiểm thử, kiểm tra kiểu và benchmark hiệu năng; Agent thay người dùng xử lý hoàn tiền có thể truy vấn trạng thái đơn hàng và số tiền hoàn thực tế. Những tín hiệu này đến từ trạng thái thực trong môi trường và thường đáng tin cậy hơn lời mô tả của mô hình về hành vi của chính nó. Tuy nhiên, kết quả đúng không có nghĩa là quá trình đúng. Xóa các ca kiểm thử thất bại cũng có thể khiến kiểm thử vượt qua; lời hứa miệng với người dùng rằng “chúng tôi sẽ hoàn tiền trong vòng 7 ngày, xin vui lòng chờ đợi” cũng có thể tạm thời nhận được phản hồi hài lòng. Vì vậy, đánh giá đáng tin cậy phải xem xét cả kết quả lẫn con đường đạt được kết quả đó.
 
-| Mô hình | Cấu trúc cốt lõi | Ưu điểm chính | Hạn chế chính |
-| --- | --- | --- | --- |
-| Cascade | VAD → ASR → LLM → TTS | Mô-đun rõ ràng, dễ thay thế và gỡ lỗi | Độ trễ cộng dồn, thông tin cận ngôn ngữ mất ở các giao diện |
-| Omni end-to-end | Một mô hình nghe, suy nghĩ và nói | Độ trễ thấp hơn, giữ tốt giọng điệu, cảm xúc và âm thanh môi trường | Vẫn theo lượt; huấn luyện và gỡ lỗi tốn kém hơn |
-| Full-duplex | Liên tục nghe, nói và quyết định | Nói chồng, ngắt lời tự nhiên và luồng liên tục | Huấn luyện, điều khiển và đánh giá phức tạp hơn |
+Nhiều nhiệm vụ hơn không có một đáp án đúng duy nhất. Nhân viên chăm sóc khách hàng có kiên nhẫn hay không, có cung cấp phương án linh hoạt trong phạm vi tuân thủ hay không, báo cáo nghiên cứu có nắm bắt bằng chứng then chốt hay không, văn bản được tạo có tự nhiên và súc tích hay không, tất cả đều cần được phán đoán theo ngữ cảnh. Khi đó có thể sử dụng LLM-as-a-Judge được giới thiệu ở Chương 7, nhưng không nên chỉ yêu cầu giám khảo đưa ra một tổng điểm mơ hồ. Cách hiệu quả hơn là định nghĩa trước thang đánh giá (Rubric), yêu cầu bộ xác minh chấm điểm theo từng mục, trích dẫn bằng chứng từ quỹ đạo và nêu rõ sự không chắc chắn khi thiếu bằng chứng.
 
-Điểm chung là thoát khỏi giả định mọi người phải nói lần lượt và khỏi phỏng đoán của VAD về người đang giữ lượt. Cascade và Omni vẫn chia tương tác thành các lượt; full-duplex biến quyền giữ lượt thành quyết định liên tục của mô hình.
+Hình 9-2 trình bày một cấu trúc xác minh ba tầng. Bộ xác minh kết quả ở tầng dưới đọc kết quả kiểm thử, trạng thái cơ sở dữ liệu và phản hồi của công cụ để trả lời “việc đó có thực sự được hoàn thành hay không”; bộ xác minh quá trình ở tầng giữa kiểm tra quy tắc nghiệp vụ, quyền hạn và chuỗi hành động để trả lời “việc đó có được hoàn thành theo cách được phép hay không”; bộ xác minh chất lượng ở tầng trên đánh giá ngôn ngữ và chiến lược theo Rubric để trả lời “việc đó có được xử lý phù hợp hay không”. Chỉ số càng gần tầng dưới càng nên dựa vào mã và chân trị của môi trường; chỉ những phần khó hình thức hóa mới nên giao cho mô hình ngôn ngữ.
 
-[^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ Phân loại cascade / turn-based / full-duplex xuất phát từ phần tóm tắt ba thế hệ ChatGPT Voice; thuật ngữ “end-to-end omnimodal (Omni)” tương ứng với nhóm “turn-based voice models”.
-
-**Hủy streaming:**
+**Xác minh trajectory ba lớp:**
 
 ```python
-while audio_is_arriving:
-    partial = asr.push(audio_chunk)
-    if endpoint_is_probable(partial):
-        candidate = llm.start(partial)
-        if later_audio_changes_meaning(partial):
-            cancel(candidate)                 # speculative cancellation
-        else:
-            tts.enqueue_stable_segments(candidate)
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
 
-on_final_transcript(text):
-    commit_or_restart(text)
-```
-
-### Mô hình 1 · Pipeline cascade
-
-Phần lớn trợ lý giọng nói thương mại vẫn dùng pipeline tuần tự (Hình 9-1): VAD quyết định người dùng đã nói xong, ASR chuyển âm thanh thành văn bản, LLM hiểu và tạo câu trả lời, rồi TTS đọc câu trả lời. Tính mô-đun giúp tối ưu từng thành phần độc lập, nhưng mỗi ranh giới lại thêm thời gian chờ.
-
-![Hình 9-1: Pipeline Agent giọng nói tuần tự](images/fig9-1.svg)
-
-| Mô-đun | Vai trò | Nút thắt thường gặp |
-| --- | --- | --- |
-| VAD | Xác định lời nói đã kết thúc | Ngưỡng im lặng gây chờ và tách lượt sai |
-| ASR | Chuyển âm thanh thành văn bản | Độ trễ nhận dạng và mất ngữ cảnh |
-| LLM | Hiểu, suy luận và sinh câu trả lời | Thời gian đến token đầu tiên; reasoning làm chờ lâu hơn |
-| TTS | Chuyển văn bản thành giọng nói | Tổng hợp gói đầu tiên và bộ đệm phát |
-
-Với câu trả lời ngắn không reasoning, thời gian chờ của VAD, ASR, LLM và TTS cộng dồn theo chuỗi (Hình 9-2); giá trị thực phụ thuộc độ dài đầu vào, mô hình, phần cứng, mạng và tải. Trong sản xuất, xếp hàng còn khuếch đại độ trễ nhàn rỗi (Hình 9-3).
-
-![Hình 9-2: Thác độ trễ của câu trả lời tuần tự](images/fig9-2.svg)
-
-![Hình 9-3: Đường cong độ trễ xếp hàng](images/fig9-3.svg)
-
-> **Thử nghiệm 9-1 ★: Xây dựng Agent thoại truyền thống**
->
-> Kết nối microphone, Silero VAD, Whisper cục bộ, LLM streaming và Fish S1 TTS qua WebSocket để lập đường cơ sở cascade. Bằng chứng thực của một lượt còn lại cho thấy chuỗi media và mô hình chạy end-to-end; đây không phải benchmark về đồng thời hay tải sản xuất. Mã và hồ sơ nghiệm thu ở [chapter9/live-audio](../chapter9/live-audio/).
-
-> **Bổ sung: Xây dựng Agent thoại WebRTC “gọi cho người dùng”**
->
-> Phone Agent không cần PSTN. WebRTC trên trình duyệt có thể tái hiện vòng lặp mở phiên, hỏi thông tin thiếu, đọc lại để xác nhận và lưu kết quả có cấu trúc. Khi cần liên hệ tổ chức bên ngoài, thay hợp đồng công cụ bằng nhà cung cấp PSTN/SIP phù hợp. Đường truyền media, so sánh direct/ReAct và bằng chứng nghiệm thu ở [chapter9/phone-agent](../chapter9/phone-agent/). Dự án giữ các run identifier lịch sử \`exp9-2\`, nhưng không còn là một thử nghiệm được đánh số trong bản thảo.
-
-#### Từ tuần tự đến nhận biết streaming
-
-Streaming ASR có thể tạo transcript tạm thời trong khi người dùng nói; LLM gửi câu đầu tiên có thể đọc được cho TTS; TTS trả về các đoạn âm thanh để chồng lấp sinh, tổng hợp và phát. Điều đó không làm ASR, LLM và TTS song song hoàn toàn: nếu transcript một phần thay đổi, phải hủy, khởi động lại hoặc sửa phần sinh; chỉ bật \`stream\` là chưa đủ.
-
-Streaming thông thường cũng không bỏ được thời gian chờ im lặng của VAD. Front end VAD + ASR tích lũy độ trễ, làm mất do dự, cảm xúc, backchannel và âm thanh môi trường; tên riêng hay địa chỉ email có thể bị chia giữa các đoạn. Mô hình streaming thực sự cần encoder nhân quả hoặc theo khối cùng giải mã tăng dần. Encoder của Whisper chờ toàn bộ đoạn âm thanh nên không nên gọi là mô hình streaming nhân quả. Mô hình âm thanh dựa trên LLM có thể phát văn bản và sự kiện ngữ nghĩa từ âm thanh liên tục, nhưng mô phỏng bằng prefix không phải cam kết hiệu năng của mô hình nhân quả.
-
-Ngoài token văn bản, luồng có thể phát \`speak_start/end\`, \`interrupt\` (ranh giới lời nói và ý định ngắt), \`emotion\` (cảm xúc và do dự), \`laugh\`, \`sigh\`, \`noise\` (âm thanh cận ngôn ngữ và môi trường). Nhờ vậy Agent không phải nén mọi sự kiện âm thanh thành văn bản thường.
-
-[^ch9-11]: Về việc đưa phán đoán lượt vào bộ nhận dạng và vấn đề nhãn sử dụng thông tin tương lai, xem Bojie Li và Noah Shi, *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR*, 2026 (sắp xuất bản).
-
-> **Thử nghiệm 9-2 ★: Mô phỏng nhận biết giọng nói streaming bằng Qwen2-Audio**
->
-> Bản thân Qwen2-Audio không phải mô hình streaming. Thử nghiệm mô phỏng nhận biết liên tục bằng các prefix âm thanh tăng dần và so sánh với VAD 600 ms + Whisper. Canonical run vượt qua các cổng thực thi và provenance nhưng chỉ tái hiện 2/6 hành vi: các lệnh prefix mất 8,4–11,3 giây, mẫu pause bỏ sót \`silence\`, và mẫu noise vẫn phân loại sai \`cough/laughter\`. Đây là kết quả âm tính để kiểm tra cơ chế và lỗi; không phải bằng chứng cho nhận biết streaming thật 100–200 ms. Toàn bộ hồ sơ ở [chapter9/streaming-speech](../chapter9/streaming-speech/).
-
-### Mô hình 2 · Mô hình omnimodal end-to-end (Omni)
-
-Ngay cả khi có nhận biết streaming, cascade vẫn đưa nghe, suy nghĩ và nói qua các giao diện rời rạc; cảm xúc, ngữ điệu và âm thanh môi trường có thể mất khi âm thanh biến thành văn bản. Omni dùng một mô hình để nghe, sinh câu trả lời và nói, giữ được tín hiệu phi văn bản nhưng tốn hơn khi huấn luyện, gỡ lỗi và thay thành phần (Hình 9-4). Self-cascade có thể sửa lỗi nhận biết khi văn bản đủ cho nhiệm vụ; nếu câu trả lời phụ thuộc tốc độ nói, cảm xúc hoặc môi trường, nút thắt văn bản làm mất bằng chứng không thể đảo ngược[^ch9-13].
-
-Omni vẫn giả định chia lượt và thường dùng VAD hoặc endpointing ngữ nghĩa. Một khoảng dừng trong chuỗi số có thể bị coi là kết thúc; nhận biết streaming cải thiện phán đoán nhưng không xóa lượt.
-
-[^ch9-13]: Đo lường đầy đủ thời điểm lợi thế độ chính xác giữa cascade và end-to-end đảo chiều, xem Li, Bojie và Noah Shi, *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents*, 2026 (sắp xuất bản).
-
-![Hình 9-4: So sánh mô hình giọng nói omnimodal end-to-end](images/fig9-4.svg)
-
-Realtime speech API nằm giữa cascade và Omni: mô hình xử lý âm thanh native nhưng điều khiển tương tác vẫn dựa vào VAD, ngắt lời và gọi công cụ bất đồng bộ. So sánh có ích không phải bảng xếp hạng mà là cách hai đường end-to-end và self-cascade thất bại ở các nhiệm vụ khác nhau.
-
-> **Thử nghiệm 9-3 ★★: Chạy MiniCPM-o 4.5 cục bộ — end-to-end so với self-cascade**
->
-> Cố định một revision cục bộ, tắt chế độ suy nghĩ, rồi so sánh câu trả lời trực tiếp từ audio với self-cascade (transcribe trước, trả lời từ transcript sau). Đo khả năng giữ thông tin âm thanh, **không** đo khả năng “vừa nói vừa suy nghĩ” về sau.
-> Bảng 9-1 Kết quả chạy MiniCPM-o 4.5 cục bộ: end-to-end so với tự xếp tầng (bốn phép kiểm tra cơ chế, không phải benchmark)
->
->
-> | Loại nhiệm vụ | End-to-end | Self-cascade | Quan sát |
-> | --- | ---: | ---: | --- |
-> | Số học ngữ nghĩa (2) | 1/2 | 2/2 | Self-cascade sửa một lỗi phiên âm |
-> | Tốc độ nói cận ngôn ngữ (2) | 2/2 | 1/2 | Transcript văn bản xóa khác biệt nhanh/chậm |
-> | Tổng | 3/4 | 3/4 | Tổng bằng nhau, lỗi bổ sung |
->
-> Mẫu nhỏ nên không chứng minh đường nào thường chính xác hay nhanh hơn. Phiên bản, đầu ra thô và bằng chứng audio-to-audio ở [chapter9/end-to-end-speech](../chapter9/end-to-end-speech/).
-
-Step-Audio 2 cho thấy đường end-to-end xử lý audio thô và phát văn bản lẫn giọng nói, chú ý đến cảm xúc, tốc độ, ngữ điệu và âm thanh môi trường. Step-Audio R1 đưa suy luận vào mô hình âm thanh và làm ví dụ cho “vừa suy nghĩ vừa nói”.
-
-### Mô hình 3 · Mô hình tương tác full-duplex
-
-Omni vẫn tách “người dùng nói” và “mô hình nói”, nhưng phiên dịch đồng thời cần chồng lấp. Full-duplex lắng nghe và nói liên tục, liên tiếp quyết định có tiếp tục, dừng, ngắt hay gọi công cụ. Moshi của Kyutai là một ví dụ nghiên cứu sớm. Thinking Machines Lab gọi đây là **Interaction Model**[^ch9-14]: tương tác được xây trong mô hình thay vì lắp quanh VAD. GPT-Live đưa hướng này lên quy mô sản xuất và ủy thác việc phức tạp cho mô hình suy luận nền trong khi mô hình tiền cảnh giữ cuộc trò chuyện.
-
-[^ch9-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration”, 2026-05. https://thinkingmachines.ai/blog/interaction-models/
-
-Đường tiến hóa là: cascade đoán lượt bằng ngưỡng im lặng; nhận biết streaming nâng phán đoán lên mức ngữ nghĩa; full-duplex biến việc đổi lượt thành quyết định liên tục.
-
-### Thời gian nhận thức: tương tác thời gian thực và suy nghĩ sâu
-
-Mô hình tiền cảnh phải trả lời khi người dùng còn chờ; mô hình nền có thể suy nghĩ lâu hơn. Đây là ba đánh đổi, không phải các bậc tiến hóa tuyến tính:
-
-| Thiết kế | Tiền cảnh | Nền | Rủi ro chính |
-| --- | --- | --- | --- |
-| Lấp chỗ nhanh, sửa chậm | Trả lời ngay | Nghĩ lại và bổ sung | Mâu thuẫn |
-| Tương tác nhanh, lời khuyên chậm | Giữ mạch hội thoại và chọn cách nói | Lời khuyên hoặc kết quả công cụ | Giao diện hạn chế |
-| Hợp nhất suy nghĩ và biểu đạt | Vừa suy nghĩ vừa nói | Chia sẻ trạng thái mô hình | Chi phí huấn luyện và thay thế cao |
-
-#### Giải pháp 1: nghĩ nhanh để lấp chỗ, nghĩ chậm để trả lời
-
-Nghĩ nhanh có thể đưa ra một câu đáp lấp chỗ trong vài trăm mili giây, còn nghĩ chậm hoàn tất suy luận sâu hơn ở nền. Vấn đề của nó là câu hỏi đơn giản bị xử lý hai lần, còn câu hỏi phức tạp có thể sinh mâu thuẫn: mô hình nhanh khuyên mua, mô hình chậm sau đó phát hiện gói cước thiếu một tính năng then chốt, và chỉ trong vài giây người dùng nghe hai câu trả lời trái ngược. Nguyên nhân gốc là hai thực thể mỗi bên đã tự suy nghĩ một cách độc lập.
-
-
-![Hình 9-5: Kiến trúc nghĩ nhanh/nghĩ chậm và so sánh các giải pháp](images/fig9-5.svg)
-
-
-#### Giải pháp 2: nghĩ nhanh để tương tác, nghĩ chậm để nhắc
-
-Giải pháp hai để mô hình nền đưa gợi ý cho mô hình tiền cảnh qua thanh trạng thái hoặc một giao diện chuyên dụng, còn tiền cảnh tiếp tục giữ mạch hội thoại và quyết định cách diễn đạt. Nó ổn định hơn giải pháp một, nhưng giao tiếp vẫn gián tiếp: tiền cảnh có thể hiểu sai gợi ý và không thấy được suy luận trung gian của nền; trước khi nền hoàn tất, nếu người dùng hỏi thêm thì tiền cảnh chỉ có thể dựa vào năng lực của chính nó. Nó có thể "chờ kết quả" một cách tự nhiên, nhưng không thực sự vừa nghĩ vừa nói được.
-
-#### Giải pháp 3: hợp nhất suy nghĩ và biểu đạt end-to-end (lấy Step-Audio R1 làm ví dụ)
-
-Giải pháp ba đưa năng lực suy nghĩ vào thẳng bên trong mô hình âm thanh end-to-end. Step-Audio R1 dùng hai cơ chế bổ trợ để giải hai bài toán: **chưng cất suy nghĩ neo theo phương thức (MGRD)** khiến mô hình suy nghĩ dựa trên đặc trưng âm học, còn **kiến trúc song não MPS** cho phép hình thành ý và biểu đạt chạy song song. Cái trước bảo đảm "nghĩ đúng", cái sau giải quyết "nói kịp lúc".
-
-Lý tưởng nhất, mô hình nên đánh giá cảm xúc từ cao độ, nhịp điệu và ngữ điệu, chứ không chỉ nhìn văn bản đã chuyển tự. Cái gọi là "suy nghĩ thay thế bằng văn bản" là khi mô hình dùng những từ tiêu cực trong lời bài hát để thay cho việc phân tích giai điệu và đặc trưng âm học. MGRD lọc ra những chuỗi suy nghĩ thật sự viện dẫn đặc trưng âm học, rồi dùng dữ liệu đó huấn luyện mô hình, đồng thời dùng học tăng cường để ngăn mô hình bỏ qua suy nghĩ mà đoán thẳng đáp án.
-
-MPS khiến não hình thành ý liên tục sinh ra các mảnh suy nghĩ; não biểu đạt nhận được mảnh nào thì kết hợp ngay với phần đã trả lời để sinh tiếng nói. Hai bên chạy song song theo kiểu đường ống, nên không cần chờ toàn bộ suy nghĩ kết thúc mới cho người dùng nghe câu đầu tiên (Hình 9-6).
-
-
-![Hình 9-6: Kiến trúc song não MGRD và MPS của Step-Audio R1](images/fig9-6.svg)
-
-
-Mô hình hợp nhất hiện thực hoá "vừa nghĩ vừa nói" chặt chẽ nhất, cái giá là suy nghĩ và biểu đạt thời gian thực phải huấn luyện lại cùng nhau; hướng tách rời dễ thay não nền hơn, còn hướng hợp nhất phù hợp hơn với những kịch bản chuyên biệt theo đuổi độ tự nhiên tối đa. Hai bên là một đánh đổi, không đơn giản thay thế lẫn nhau.
-
-### Tổng hợp giọng nói giống con người hơn
-
-TTS truyền thống quá trơn tru và ít ngắt nghỉ sẽ để lộ bản chất máy móc. LLM chính có thể phát thêm các marker điều khiển như \`THINKING\`, \`EMO:happy\`, \`SPEED:0.8x\`; TTS ánh xạ chúng thành khoảng dừng, ngữ điệu, tốc độ, tiếng cười và tiếng thở dài. Có thể huấn luyện TTS hiểu marker hoặc dùng voice cloning với nhiều đoạn tham chiếu.
-
-> **Thử nghiệm 9-4 ★★: TTS điều khiển bằng token với Fish Audio**
->
-> Dùng Fish Audio S1 để xây dựng thư viện giọng nhiều tham chiếu và so sánh ba cấu hình: không marker, một đoạn tham chiếu và nhiều đoạn tham chiếu. Lớp thực thi chọn cảm xúc, tốc độ và phong cách khớp marker. Cấu hình nhiều tham chiếu đạt điểm cao nhất trong ba vòng nghe mù cân bằng (độ giống nhân viên dịch vụ khách hàng thật 4,67/5), nhưng thứ tự dự kiến không lặp lại đầy đủ vì nhánh không marker vượt nhánh một tham chiếu. Kết quả gợi ý kiểm soát biểu cảm có ích, song nghiên cứu nghe nhỏ không kết luận chất lượng giọng nói nói chung. Thư viện 24 tham chiếu, media A/B/C và hồ sơ nghiệm thu ở [chapter9/controllable-tts](../chapter9/controllable-tts/).
-## Computer Use: GUI Tự động hóa Agent
-
-Khi đọc điều này, bạn có thể nhận thấy rằng chương này dành nhiều không gian cho giọng nói hơn đáng kể so với hai cảnh cuối - điều này là có chủ ý. Trên tiến trình phát triển của đa phương thức thời gian thực, giọng nói là thứ hoàn thiện nhất và đáng được sử dụng làm hệ thống tham chiếu nhất: bắt đầu từ vấn đề "độ trễ đường ống nối tiếp quá cao", thông qua một loạt các giải pháp như end-to-end, full-duplex, suy nghĩ và nói chuyện, v.v., cho đến phần cuối tương đối hình thành ngày nay, toàn bộ quá trình của vấn đề → giải pháp → kết thúc đã được hoàn thành. Vì vậy, hãy giải thích nó kỹ lưỡng. Hai cảnh tiếp theo của Computer Use và robot có thể được xem trong ngữ cảnh giọng nói - chúng đã đạt đến giai đoạn nào của đường tiến hóa này và chúng đang bị mắc kẹt ở đâu.
-
-Ba kịch bản này có vẻ khác nhau nhưng chúng phải đối mặt với những thách thức cốt lõi giống nhau: nhận thức theo thời gian thực, ra quyết định có độ trễ thấp và tương tác liên tục. Hãy xem cách các chủ đề kỹ thuật này được tái tạo trong tương tác trực quan (Computer Use) và tương tác vật lý (robot) – trước tiên bằng cách mở rộng góc nhìn từ phương thức thính giác sang phương thức thị giác: Điều gì sẽ xảy ra nếu Agent không chỉ hiểu được lời nói mà còn có thể “đọc” màn hình và vận hành giao diện đồ họa?
-
-Computer Use (còn gọi là GUI Automation Agent) cho phép AI sử dụng phần mềm giống con người bằng cách quan sát màn hình và thao tác chuột, bàn phím - chẳng hạn như mở trình duyệt để tìm kiếm thông tin, điền dữ liệu vào phần mềm bảng tính hoặc điều chỉnh cấu hình trong cài đặt hệ thống. Cốt lõi của nó là một chu trình nhận thức-suy nghĩ-hành động (Hình 9-7):
-
-1. Agent chụp ảnh màn hình hiện tại
-2. Mô hình đa phương thức nhận ảnh chụp màn hình và hướng dẫn nhiệm vụ, đồng thời đưa ra suy nghĩ và hành động cụ thể.
-3. Lớp thực thi thực hiện hành động trong môi trường thực (di chuyển chuột, nhấp chuột, nhập văn bản, v.v.)
-4. Đợi giao diện phản hồi rồi chụp ảnh màn hình lại để vào chu kỳ tiếp theo.
-
-**Vòng lặp an toàn Computer Use:**
-
-```python
-observation = capture_screenshot_and_accessibility_tree()
-proposal = model.decide(task, observation)
-action = validate_schema_and_coordinates(proposal)
-
-if action.is_irreversible and not user_or_policy_approval(action):
-    stop("approval required")
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
 else:
-    execute_in_sandbox_or_scoped_session(action)
-    new_observation = capture_after_settle()
-    if not verify_goal_progress(new_observation, action):
-        rollback_if_possible_or_replan()
+    emit_structured_diagnosis(outcome, process, quality)
 ```
 
-![Hình 9-7 Chu trình nhận thức-suy nghĩ-hành động của Tác nhân sử dụng máy tính ](images/fig9-7.svg)
+![Hình 9-2 Xác minh quỹ đạo ba tầng từ kết quả môi trường đến LLM Rubric](images/fig9-2.svg)
 
+Lấy Agent chăm sóc khách hàng làm ví dụ, một Rubric hữu ích tối thiểu phải bao quát các chiều trong Bảng 9-1. Năm mục đầu chủ yếu ràng buộc giới hạn tối thiểu, hai mục cuối đo lường chất lượng dịch vụ. Cách phân tách này có giá trị chẩn đoán cao hơn câu hỏi “người dùng có hài lòng hay không”: người dùng có thể hài lòng vì Agent hoàn tiền trái quy định, cũng có thể không hài lòng vì các hạn chế tuân thủ; một chỉ số hài lòng duy nhất không thể phân biệt hai trường hợp.
 
-Có ba chiều thiết kế chính trong chu trình này: **không gian hành động**(những thao tác mà Agent có thể thực hiện), **định vị trực quan**(cách tìm phần tử mục tiêu trong ảnh chụp màn hình) và **kiến trúc mô hình**(cách tạo hành động chính xác từ ảnh chụp màn hình).
+Bảng 9-1 Các chiều đánh giá quỹ đạo của Agent chăm sóc khách hàng
 
-### Thiết kế không gian hành động
+| Chiều | Câu hỏi xác minh | Bằng chứng chính |
+|---|---|---|
+| Kết quả nhiệm vụ | Yêu cầu cốt lõi của người dùng đã được giải quyết hay chưa | Trạng thái môi trường cuối cùng, kết quả công cụ |
+| Tuân thủ quy tắc | Có vi phạm chính sách, quyền hạn hoặc quy trình bắt buộc hay không | Kho chính sách, quỹ đạo hành động |
+| Ranh giới quyền riêng tư | Có tiết lộ thông tin không được phép cung cấp hay không | Văn bản phản hồi, nhật ký truy cập dữ liệu |
+| Độ tin cậy thực tế | Phát biểu có được tri thức hoặc kết quả công cụ hỗ trợ hay không | Nguồn trích dẫn, phản hồi của công cụ |
+| Tính nhất quán giữa cam kết và hành động | Thao tác được tuyên bố là đã hoàn thành có thực sự diễn ra hay không | Đối chiếu phản hồi với nhật ký công cụ |
+| Chất lượng diễn đạt | Có tự nhiên, súc tích, tránh lặp lại và khuôn mẫu hay không | Toàn bộ hội thoại, Rubric ngôn ngữ |
+| Linh hoạt trong tuân thủ | Khi phương án ban đầu không khả thi, có tìm được lộ trình thay thế được phép hay không | Mục tiêu người dùng, chính sách và hành động tiếp theo |
 
-Anthropic xác định ba loại công cụ để hình thành khả năng tương tác hoàn chỉnh (Hình 9-8):
+Trong đó, “tính nhất quán giữa cam kết và hành động” đặc biệt phù hợp với bối cảnh Agent. Đánh giá văn bản truyền thống chỉ đọc phản hồi cuối cùng nên dễ coi “tôi đã gửi yêu cầu hoàn tiền cho bạn” là dịch vụ tốt; đánh giá quỹ đạo sẽ tiếp tục kiểm tra công cụ hoàn tiền có thực sự được gọi hay không, lệnh gọi có thành công hay không và trạng thái đơn hàng có thay đổi hay không. “Linh hoạt trong tuân thủ” cũng không nhằm khuyến khích mô hình tùy tiện vượt qua quy tắc, mà yêu cầu nó hiểu mục tiêu thực sự của người dùng và kiểm tra các lựa chọn hợp lệ như đổi lịch, gia hạn hoặc bồi thường một phần khi không thể hoàn tiền.
 
+Kết quả xác minh không nên bị nén thành một đại lượng vô hướng. Một lần đánh giá quỹ đạo giống một bản chẩn đoán có cấu trúc hơn: nhiệm vụ thành công một phần, tuân thủ quy tắc đạt yêu cầu, nhưng có một phát biểu không có bằng chứng, một cam kết sai sự thật và phần phản hồi còn lặp lại lời giải thích chính sách ba lần. Tín hiệu đa chiều vừa giữ lại bản chất vấn đề, vừa giữ lại vị trí bằng chứng. Chỉ khi đó mô-đun phía sau mới có thể tiếp tục phán đoán: phát biểu không có bằng chứng là do thiếu tri thức, thiếu yêu cầu trích dẫn hay năng lực mô hình chưa đủ; cam kết sai sự thật nên được sửa trong Prompt hay cần bổ sung kiểm tra tính nhất quán giữa phản hồi và trạng thái công cụ trong Harness.
 
-![Hình 9-8 Máy tính Sử dụng không gian hành động ](images/fig9-8.svg)
+Bản thân bộ xác minh LLM cũng cần được hiệu chuẩn. Hệ thống sản xuất thường chuẩn bị một tập nhỏ quỹ đạo do chuyên gia gán nhãn để kiểm tra tính nhất quán của bộ xác minh trên từng chiều; các trường hợp rủi ro cao hoặc độ tin cậy thấp được chuyển cho mô hình thứ hai hoặc con người rà soát; sau khi thay đổi phiên bản mô hình, tập hiệu chuẩn được chạy lại. Bộ xác minh chịu trách nhiệm đưa ra đánh giá và bằng chứng; còn việc cần sửa đổi phần nào của Agent phải do mô-đun chẩn đoán và tiến hóa độc lập quyết định, tránh để cùng một mô hình vừa làm trọng tài vừa trực tiếp viết lại quy tắc.
 
-
-**GUI Operation Tool**(công cụ máy tính): Thao tác chuột bao gồm di chuyển (mouse_move), nhấp chuột trái/phải/giữa, nhấp đúp/ba lần, kéo (left_click_drag) và nhấn/nhả chi tiết hơn (left_mouse_down/up). Cuộn hỗ trợ bốn hướng và có thể được sử dụng với các phím bổ trợ. Thao tác trên bàn phím bao gồm nhập từng từ (loại, mỗi ký tự cách nhau 12 mili giây để mô phỏng thao tác gõ thực), tổ hợp phím (phím, chẳng hạn như Ctrl+C) và nhấn và giữ (hold_key). Các hành động được nhận biết: ảnh chụp màn hình (ảnh chụp màn hình), lấy vị trí con trỏ (cursor_position), chờ (wait).
-
-**Công cụ thực thi lệnh**(công cụ bash): Cung cấp phiên cuối bash liên tục, thời gian chờ 120 giây, phát hiện xem lệnh có được thực thi thông qua chuỗi trọng điểm hay không và duy trì trạng thái môi trường giữa nhiều lệnh gọi (ví dụ: sau khi cd vào một thư mục, lệnh gọi tiếp theo sẽ vẫn ở trong thư mục đó).
-
-**Công cụ chỉnh sửa tệp**(str_replace_editor): Chỉnh sửa an toàn đạt được thông qua khớp chuỗi. Nó hỗ trợ các hoạt động xem, tạo, thay thế, chèn và hoàn tác. Nó chính xác hơn việc ghi đè trực tiếp toàn bộ tập tin và ít có khả năng vô tình làm thay đổi nội dung khác.
-
-> **Thử nghiệm 9-5 ★: Chạy Computer Use (lộ trình tham chiếu Anthropic hoặc lộ trình mô hình mở)**
+> **Thí nghiệm 9-1 ★★: Xây dựng bộ xác minh quỹ đạo cho Agent chăm sóc khách hàng**
 >
-> Lộ trình A sử dụng Anthropic Computer Use Demo. Container đóng gói một môi trường desktop Ubuntu hoàn chỉnh, gồm trình duyệt, terminal và các công cụ thông dụng khác. Frontend nhận tác vụ; backend gửi hướng dẫn và ảnh chụp màn hình đến Claude, rồi thực thi các thao tác chuột, bàn phím, terminal hoặc chỉnh sửa do mô hình trả về. Lộ trình này dùng để tìm hiểu giao thức công cụ `computer` nguyên bản; không yêu cầu mọi độc giả đều phải có quyền truy cập Anthropic API.
+> **Mục tiêu thí nghiệm**: Chuyển một quỹ đạo vận hành chăm sóc khách hàng thành chẩn đoán có cấu trúc dùng được cho việc học về sau, đồng thời xác minh liệu “kết luận đa chiều kèm bằng chứng” có định vị nguyên nhân gốc tốt hơn một tổng điểm duy nhất hay không.
 >
-> Lộ trình B sử dụng dự án đi kèm sách [`chapter9/computer-use-open-model`](../chapter9/computer-use-open-model/). Theo mặc định, dự án điều khiển browser-use bằng mô hình trọng số mở Qwen3-VL 32B Instruct, qua API được OpenRouter lưu trữ hoặc bằng cách trỏ `OPEN_MODEL_BASE_URL` đến vLLM/SGLang tự lưu trữ hay endpoint tương thích khác. Endpoint phải nhận được ảnh chụp màn hình và hỗ trợ JSON Schema nguyên bản; nếu chỉ hỗ trợ JSON thông thường, có thể bật rõ ràng chế độ tương thích schema-in-prompt.
+> **Dữ liệu và quy trình**: Chuẩn bị bốn loại quỹ đạo có nhãn chuyên gia: hoàn tiền bình thường, cam kết sai sự thật, rò rỉ quyền riêng tư và từ chối quá mức. Tầng một đọc trạng thái cuối của đơn hàng và nhật ký công cụ để xác định việc hoàn tiền hoặc đổi lịch có thực sự diễn ra hay không. Tầng hai đối chiếu từng bước với chính sách nghiệp vụ để kiểm tra quyền hạn, quy trình bắt buộc, quyền riêng tư, căn cứ sự kiện và tính nhất quán giữa cam kết với hành động. Tầng ba dùng Rubric ở Bảng 9-1 để đánh giá chất lượng diễn đạt và linh hoạt trong tuân thủ, đồng thời giữ lại lượt hội thoại làm bằng chứng cho kết luận thất bại. Judge chất lượng mặc định dùng quy tắc xác định; hệ thống cũng cung cấp LLM Judge thực. Dù tầng trên dùng mô hình nào, tầng kết quả và tầng quy tắc cũng không được giao cho mô hình ngôn ngữ phỏng đoán.
 >
-> Hai lộ trình dùng cùng một tác vụ chỉ đọc và cùng một hợp đồng nghiệm thu: tối đa 25 bước, mỗi bước chỉ thực hiện một hành động, đồng thời lưu danh tính mô hình/endpoint, phản hồi nguyên gốc của nhà cung cấp, ảnh chụp từng bước, chuỗi hành động, câu trả lời cuối cùng và lý do dừng. Các mô hình khác nhau phải được báo cáo như những nhánh thí nghiệm riêng; không được trình bày kết quả mô hình mở như một lần tái lập Claude, cũng không được coi “container khởi động thành công” là hoàn thành tác vụ. Khoảng thời gian giữa hành động và chất lượng lập kế hoạch là kết quả đo được, không phải giả định trước rằng khoảng thời gian là 2–5 giây hoặc mô hình chắc chắn vượt trội hơn các mô hình khác.
+> **Đối chứng và chỉ số**: Đường cơ sở chỉ xuất một tổng điểm; nhóm thí nghiệm xuất `pass`, `fail` hoặc `uncertain`, bằng chứng và độ tin cậy cho từng chiều. Trong giai đoạn hiệu chuẩn, tính precision và recall nhận diện thất bại theo từng chiều, đồng thời báo cáo tỷ lệ khớp hoàn toàn với nhãn chuyên gia. Cũng cần kiểm tra các thất bại như cam kết sai sự thật có bằng chứng không rỗng, thay vì chỉ có kết luận.
 >
-
-### Định vị trực quan (Nối đất)
-
-Trong mỗi vòng lặp, mô hình cần xác định chính xác phần tử mục tiêu trong ảnh chụp màn hình - "Hộp tìm kiếm ở đâu?" "Tọa độ của nút gửi là gì?" Đây là vấn đề định vị trực quan (Nối đất). Hiện tại có hai ý tưởng chính: một là biến định vị thành câu hỏi trắc nghiệm - đầu tiên đánh dấu các thành phần giao diện bằng số và mô hình chỉ cần chọn một trong số đó; cái còn lại là **dự đoán tọa độ thuần túy** - để mô hình trực tiếp "nhìn" vào ảnh chụp màn hình và báo cáo tọa độ như con người. Có hai cách để triển khai ý tưởng câu hỏi trắc nghiệm: **Chú thích trực quan thuần tuý**(Set-of-Mark gốc, sử dụng mô hình phân đoạn để cắt bỏ các vùng ứng cử viên trên pixel) và **Chỉ mục thành phần cấu trúc**(Cây DOM/Accessibility, đọc trực tiếp cấu trúc đi kèm với giao diện). Ưu điểm chung của ý tưởng câu hỏi trắc nghiệm là chuyển đổi câu hỏi mở "tìm nút trong ảnh chụp màn hình và dự đoán tọa độ" thành câu hỏi đóng "chọn một trong các yếu tố được đánh dấu" - giống như các câu hỏi trắc nghiệm trong bài thi dễ trả lời chính xác hơn các câu hỏi điền vào chỗ trống. Mô hình chỉ cần nói "nhấp [123]" thay vì "nhấp vào nút màu xanh lam cách khoảng 200 pixel ở bên phải góc trên bên trái của màn hình."
-
-**Set-of-Mark: Phương pháp chú thích trực quan.**
-
-Set-of-Mark (SoM) ban đầu được Microsoft Research đề xuất vào năm 2023, ban đầu nhằm phát huy khả năng định vị trực quan của GPT-4V. Đây là một phương pháp **hoàn toàn trực quan**: sử dụng mô hình phân đoạn hình ảnh (SAM, SEEM, v.v.) để tự động cắt các vùng ứng cử viên trên ảnh chụp màn hình và chồng các điểm đánh dấu được đánh số lên từng vùng. Những gì mô hình nhìn thấy là một hình ảnh được đánh số, chỉ cần báo số, hệ thống sẽ chuyển đổi thành tọa độ trung tâm của khu vực tương ứng. Toàn bộ quá trình không yêu cầu DOM hoặc bất kỳ cấu trúc giao diện nội bộ nào, do đó, giao diện trò chơi và phần mềm máy tính để bàn gốc cũng có thể được áp dụng - miễn là mô hình phân khúc có thể loại bỏ các khu vực ứng cử viên.
-
-**Chỉ mục phần tử có cấu trúc: Triển khai có cấu trúc các ý tưởng SoM trên Web.**
-
-Chú thích có thể được thực hiện chính xác hơn khi chính giao diện cung cấp thông tin có cấu trúc. Các trang web hiện đại có cấu trúc thành phần hoàn chỉnh (cây DOM) và các vai trò ngữ nghĩa (là nút, là hộp nhập liệu) được xác định trước khi hiển thị. Cây trợ năng cung cấp thông tin tương tự cho nhiều ứng dụng trên máy tính để bàn. Thay vì yêu cầu mô hình phân đoạn đoán "nút là khu vực nào" trong pixel, tốt hơn là bạn nên hỏi trực tiếp chính giao diện "bạn có những yếu tố nào có thể nhấp vào được?". Giải pháp Web Agent do dự án browser-use đại diện thực hiện chính xác điều này: liệt kê và đánh số các phần tử tương tác từ DOM, có thể được coi là triển khai có cấu trúc các ý tưởng SoM trên Web (Hình 9-9). Quá trình này được chia thành bốn bước:
-
-1. Lấy biểu diễn có cấu trúc (DOM tree) và thông tin truy cập của trang web thông qua giao diện gỡ lỗi trình duyệt (CDP, Chrome DevTools Protocol)
-2. Tự động phát hiện những thành phần nào có thể tương tác (nút, hộp nhập liệu, liên kết, v.v.)
-3. Gắn nhãn cho mỗi phần tử có thể tương tác bằng một ID duy nhất và vẽ hộp giới hạn trên ảnh chụp màn hình
-4. Đồng thời, tạo ra một danh sách văn bản để mô tả các thành phần tương ứng với mỗi ID.
-
-```text
-Ảnh chụp màn hình: [Các thành phần chính trong ảnh được đánh dấu bằng ID như [1], [2], [3], [4], v.v.]
-
-Elements:
-[1] <input type="text" placeholder="Search" aria-label="Search" />
-[2] <button id="submit-btn" aria-label="Submit form" />
-[3] <input type="text" placeholder="Enter your name" value="" />
-[4] <a href="/docs" aria-label="Documentation" />
-```
-
-Mô hình chỉ cần xuất số ID và hệ thống sẽ tự động sử dụng tọa độ trung tâm của phần tử để thực hiện nhấp chuột. Loại giải pháp này không lưu mã thông báo (vì tất cả thông tin chú thích phải được gửi đến mô hình), nhưng định vị chính xác và ổn định, đồng thời tránh được các phát hiện bị bỏ sót và phát hiện sai có thể do mô hình phân đoạn đưa ra.
-
-
-![Hình 9-9 Bộ đánh dấu và chỉ mục phần tử có cấu trúc (triển khai sử dụng trình duyệt) ](images/fig9-9.svg)
-
-**Dự đoán tọa độ thuần túy.**
-
-Tuyến thứ ba không thực hiện bất kỳ chú thích nào và trực tiếp cho phép mô hình xuất tọa độ. Lấy việc sử dụng **SeeClick** và Claude của máy tính làm ví dụ: đào tạo mô hình trực quan dựa trên dữ liệu được ghép nối của các ảnh chụp màn hình và vị trí phần tử GUI khổng lồ, đồng thời cho phép mô hình học cách ánh xạ các mô tả ngôn ngữ tự nhiên (chẳng hạn như "nhấp vào nút gửi") trực tiếp tới tọa độ chính xác trong ảnh chụp màn hình - giống như người dùng con người, hoàn toàn dựa vào "tìm kiếm" để tìm vị trí cần nhấp.
-
-Trong sơ đồ dự đoán tọa độ, sự hiểu biết của mô hình về tọa độ phụ thuộc nhiều vào độ phân giải được sử dụng trong quá trình huấn luyện (Hình 9-10). Claude được đào tạo bằng XGA (1024x768), WXGA (1280x800) và FWXGA (1366x768). Nếu độ phân giải ảnh chụp màn hình đầu vào không khớp, tọa độ mà mô hình dự đoán sẽ được bù một cách có hệ thống - giống như đo khoảng cách trên bản đồ nhỏ và sau đó sử dụng trực tiếp trên bản đồ lớn. Do đó, cần triển khai cơ chế chia tỷ lệ tọa độ hai chiều trên lớp công cụ và chọn độ phân giải mục tiêu theo tỷ lệ khung hình để tránh kéo dài không đẳng cự làm biến dạng hình ảnh và làm sai lệch phán đoán tọa độ. Ví dụ: nếu độ phân giải màn hình thực là 2560×1440 (16:9), bạn nên chọn một trong ba mức được Claude hỗ trợ với tỷ lệ khung hình cũng gần 16:9 – FWXGA (1366×768) là phù hợp nhất. Khi chụp ảnh màn hình, hãy chia tỷ lệ màn hình thành 1366×768 và gửi cho mô hình; sau khi mô hình xuất ra tọa độ nhấp chuột (683, 384), nó sẽ được ánh xạ ngược sang tọa độ thực (683×2560/1366, 384×1440/768) ≈ (1280, 720). Ngược lại, nếu bạn kéo căng mạnh 16:9 thành 4:3 1024×768, màn hình sẽ bị nén theo chiều ngang và tọa độ mà mô hình dự đoán sẽ bị dịch chuyển một cách có hệ thống.
-
-
-![Hình 9-10 Khớp độ phân giải và chia tỷ lệ tọa độ hai chiều ](images/fig9-10.svg)
-
-
-Logic lựa chọn của ba tuyến đường có thể được tóm tắt như sau: **Khi có sẵn thông tin có cấu trúc, chỉ mục Cây DOM/Accessibility** được sử dụng đầu tiên và vị trí là chính xác và ổn định nhất; **Khi không có sẵn**(phần mềm máy tính gốc như Photoshop, giao diện kết xuất Canvas/WebGL, trò chơi), **Bạn có thể sử dụng chú thích trực quan (tuyến SoM gốc) hoặc dự đoán tọa độ**. Chú thích trực quan biến việc định vị thành một câu hỏi trắc nghiệm, thân thiện hơn với các mô hình tổng quát chưa được đào tạo đặc biệt; dự đoán tọa độ loại bỏ bước chú thích và trực tiếp hơn đối với các mô hình đã trải qua khóa đào tạo định vị GUI. Vẫn còn khoảng cách về độ chính xác giữa hai yếu tố này trên các phần tử nhỏ và giao diện dày đặc.
-
-> **Thử nghiệm 9-6 ★: Sử dụng browser-use để đạt được hoạt động trình duyệt tự động**
+> **Tiêu chí nghiệm thu**: Bộ xác minh phải ổn định nhận diện vi phạm trọng yếu, cam kết sai sự thật và từ chối quá mức. Một tổng điểm cao không được che giấu thất bại ở chiều quyền riêng tư hoặc quy tắc. Trường hợp độ tin cậy thấp hay rủi ro cao phải được chuyển sang bộ xác minh thứ hai hoặc con người rà soát, thay vì tự động trở thành tín hiệu học tập.
 >
-> Kết hợp Playwright, một framework tự động hóa trình duyệt, với mô hình đa phương thức để triển khai thao tác trình duyệt được điều khiển bằng ngôn ngữ tự nhiên. Bật trực quan hóa SoM và lưu ảnh chụp màn hình có hộp giới hạn được chú thích trước mỗi quyết định. Giao diện mô hình không bị giới hạn ở OpenAI hay Anthropic; sách cung cấp cấu hình API cho mô hình mở Qwen3-VL và giữ một base URL tổng quát tương thích OpenAI cho các dịch vụ lưu trữ khác hoặc suy luận tự lưu trữ.
->
-> Nhiệm vụ kiểm tra “Mở Google và tìm thời tiết San Francisco”: sau khi khởi động, ảnh chụp màn hình hiển thị trang tìm kiếm Google với các phần tử tương tác được đánh số. Mô hình chọn hộp tìm kiếm, nhập “San Francisco weather today”, gửi tìm kiếm rồi trích xuất nhiệt độ và điều kiện thời tiết từ trang kết quả. Khi nghiệm thu, cần kiểm tra độc lập câu trả lời và quỹ đạo, đồng thời ghi trung thực số bước thực tế và thời gian đã dùng. “5 bước, khoảng 20 giây” chỉ có thể là giá trị quan sát của một lần chạy cụ thể, không phải kết quả cố định nếu không có biên nhận thực thi.
->
-> Lần chạy chính thức của mô hình mở được lưu trong sách sử dụng `qwen/qwen3-vl-32b-instruct` trên OpenRouter. Khi gặp CAPTCHA ở bước 4 của Google Search, mô hình không tuyên bố thành công mà chuyển sang weather.com; đến bước 16, nó đọc từ trang Today của San Francisco: 64°F, Sunny, cảm giác như 62°F, cao nhất 74°F và thấp nhất 55°F. Cả 16/16 phản hồi API đều báo đúng mô hình Qwen3-VL được yêu cầu; 15 ảnh chụp bước hợp lệ cùng quỹ đạo hành động chỉ đọc đã vượt qua nghiệm thu quyết định độc lập. Kết quả này chứng minh lộ trình API mô hình mở có thể chạy được; nó không đồng nghĩa với việc đã tái lập nhánh sử dụng công cụ `computer` nguyên bản của Anthropic.
+> Phần triển khai đi kèm nằm tại [`trajectory-verifier`](../chapter9/trajectory-verifier/), mặc định sử dụng Judge chất lượng có thể tái lập ngoại tuyến; dùng `--judge llm` để chạy bộ xác minh LLM thực đã được triển khai.
 
-### Có thể xem hoạt hình và nghe âm thanh Computer Use Agent
+## Bốn phương pháp tiến hóa liên tục của Agent
 
-Cho đến nay, nhận thức về Computer Use dựa trên một giả định ngầm: **Màn hình tĩnh**—chụp ảnh, suy nghĩ về một bước, nhấp chuột rồi chụp ảnh. Nhưng trên thực tế, màn hình sẽ phát video, các thông báo thoáng qua sẽ bật lên và giọng nói trong cuộc họp sẽ được phát. Agent, chỉ mở mắt sau mỗi 3–5 giây và hoàn toàn không có tai, không thể nhìn hay nghe thấy "những điều xảy ra giữa các khung hình" này. Xem các bản ghi màn hình, theo dõi các cuộc họp, nghe lời nhắc bằng giọng nói và xử lý các hộp thoại thoáng qua—toàn bộ danh mục hoạt động máy tính hàng ngày này gần như bị giới hạn đối với Computer Use Agent ngày nay.
+Tín hiệu học tập cho biết Agent cần thay đổi, nhưng không cho biết thay đổi nên diễn ra ở đâu. Căn cứ hàng đầu để lựa chọn cách cập nhật không phải là kinh nghiệm đã xuất hiện bao lâu, mà là năng lực mục tiêu có thể được biểu đạt tự nhiên bằng vật mang nào. Sự kiện và kinh nghiệm phù hợp để viết thành tài liệu tri thức; chiến lược có thể diễn đạt rõ ràng bằng ngôn ngữ phù hợp để đưa vào Prompt hoặc Skill; quy trình và ràng buộc có thể thực thi chính xác phù hợp để viết thành chương trình; còn những năng lực nhiều chiều như tri giác, phong cách ngôn ngữ và chiến lược ngầm phải được đưa vào tham số mô hình. Hình 9-3 minh họa bốn phương thức này và mối quan hệ giữa chúng.
 
-Thứ thực sự cần được thiết kế lại ở đây không phải là "giao diện hành động", mà là " **giao diện quan sát**" [^ch9-9]. Ý tưởng cốt lõi là tách **quan sát**(liên tục, thích ứng, đa phương thức) khỏi **hành động**(rời rạc) và tạo một lớp phần mềm trung gian nhận thức (có thể gọi là Agent-Giao diện quan sát máy tính, AOI) được chèn giữa môi trường và bất kỳ mô hình Computer Use nào được tạo sẵn mà không cần đào tạo lại. Nó có ba thành phần "cổng theo yêu cầu": Đầu tiên, **Chụp khung hình chính giữa các khung** - đầu tiên sử dụng cổng pixel cực rẻ để bỏ qua hình ảnh gần như không thay đổi, sau đó sử dụng một mô hình nhỏ để xác định xem hình ảnh có những thay đổi có ý nghĩa hay không và chỉ chặn một khung hình khi có thay đổi, chi phí gần như bằng 0 đối với ảnh tĩnh; thứ hai, **Phiên âm giọng nói có kiểm soát âm lượng** - chỉ nhận dạng giọng nói khi có âm thanh, hãy để Agent Lần đầu tiên "mọc tai"; thứ ba, và quan trọng nhất, **tường thuật bức ảnh thành văn bản lâu dài** - hãy để mô hình mô tả khung hình đã chụp thành một câu ("Lời nhắc vừa xuất hiện cho biết ngày phát hành đã được thay đổi thành ngày 28 tháng 4") và **ngay cả khi hình ảnh gốc sau đó bị xóa khỏi ngữ cảnh, văn bản này vẫn còn trong bộ nhớ**, mang thông tin động xuống dưới dạng văn bản.
+![Hình 9-3 Bốn phương thức cập nhật trong tiến hóa liên tục](images/fig9-3.svg)
 
-Một khám phá phản trực giác là điều thực sự quan trọng không phải là "nên chọn khung nào" mà là " **tường thuật các khung thành văn bản có thể được giữ lại trong thời gian dài**" - văn bản là phương thức mà LLM Agent xử lý tốt nhất. Trên tám mô hình từ quy mô 7B đến quy mô tiên tiến, lớp phần mềm trung gian này mang lại sự cải thiện từ +17 đến +48 điểm phần trăm mà không cần đào tạo lại. Trong số đó, khoảng cách là khác biệt nhất đối với các tác vụ lời nói: với việc bổ sung lớp nhận thức này, Agent có thể thực hiện tất cả các tác vụ lời nói mà ban đầu "nghe được nhưng không thể di chuyển". Nhưng không phải cấu hình cố định có thể chinh phục thế giới - trên một số mẫu máy mới hơn, việc nhồi quá nhiều mã thông báo hình ảnh sẽ lấn át khả năng lý luận và kéo giảm hiệu suất, vì vậy các thành phần này cần phải được chọn từng thành phần một theo mô hình, thay vì sử dụng tất cả cùng một lúc. Điều này giống như lựa chọn trước đây giữa Set-of-Mark và dự đoán tọa độ: không có viên đạn bạc trong sơ đồ nhận thức và nó phải được khớp theo đặc điểm của mô hình.
+Bảng 9-2 đưa ra một so sánh cô đọng. Bốn phương thức không loại trừ lẫn nhau: Agent ảnh y khoa dựa vào tham số để nhận diện tổn thương, dùng kho tri thức để cung cấp hướng dẫn mới nhất, rồi dùng mã để tính chỉ số rủi ro; giọng điệu tự nhiên của mô hình chăm sóc khách hàng đến từ hậu huấn luyện, chính sách doanh nghiệp cụ thể được cung cấp qua tri thức và Skill, còn tuân thủ trọng yếu được mã phía máy chủ bảo đảm.
 
-[^ch9-9]: Ba thành phần của khung hình chính, phiên âm theo yêu cầu và khung tường thuật thành văn bản cố định. Cơ chế hoàn chỉnh và sự cắt bỏ theo từng mô hình được tìm thấy ở Li, Bojie và Noah Shi. *Agent-Giao diện quan sát trên máy tính kích hoạt Computer Use động.* arXiv:2606.29472, 2026.
+Bảng 9-2 Phạm vi áp dụng của bốn phương thức tiến hóa liên tục
 
-### Mô hình thế giới cho Computer Use
+| Phương thức cập nhật | Phù hợp để chứa | Ưu điểm chính | Hạn chế chính |
+|---|---|---|---|
+| Kho tri thức kinh nghiệm | Sự kiện, quy luật kinh nghiệm, ngoại lệ và nguồn | Cập nhật nhanh, có thể truy vết, truy xuất theo nhu cầu | Phụ thuộc vào truy xuất và khả năng áp dụng đúng của mô hình |
+| Prompt và Skill | Nguyên tắc phán đoán và quy phạm thao tác có thể ngôn ngữ hóa | Có thể giải thích, phạm vi tác động có thể kiểm soát | Dễ phình to, xung đột hoặc bị bỏ qua |
+| Chương trình và Harness | Quy trình xác định, công cụ và ràng buộc cứng | Có thể kiểm thử, thực thi ổn định, chi phí thấp | Chi phí phát triển và bảo trì tương đối cao |
+| Tham số mô hình | Tri giác nhiều chiều, phong cách sinh và chiến lược ngầm | Năng lực khái quát hóa mạnh, chi phí suy luận thấp | Chi phí cập nhật và hồi quy cao |
 
-Giao diện quan sát ở phần trước giải quyết câu hỏi "chuyện gì đã xảy ra ở khoảng giữa": nhờ khung hình chính, bản chép lời và văn bản bền, Agent không còn chỉ nhìn thấy hai ảnh chụp màn hình cách nhau rất xa. Nhưng giao diện quan sát không xóa được độ trễ lập kế hoạch. Agent vẫn đang chạy vòng lặp tuần tự "chụp màn hình—suy nghĩ—bấm chuột", cứ thực thi xong một hành động là lại quan sát lại và nghĩ nước tiếp theo. Nghiên cứu hiệu suất **OSWorld-Human** cho thấy dù nhiệm vụ rốt cuộc có thành công, số bước thao tác và thời gian chờ của Agent vẫn nhiều hơn con người rõ rệt; đạt độ chính xác ngang con người không có nghĩa là đã đủ dùng.
-
-Khi thao tác máy tính, con người không đợi bấm xong mới bắt đầu nghĩ bước kế tiếp, mà dự đoán trước hệ quả của hành động: nếu thay đổi thực tế đúng như dự kiến thì cứ theo kế hoạch cũ mà làm tiếp; chỉ khi phát hiện trạng thái trang lệch khỏi dự kiến mới dừng lại để quan sát và lập kế hoạch lại. Mô hình thế giới cho phép Agent dự đoán màn hình làm việc kế tiếp có thể biến thành gì trước khi ra tay, nhờ đó hiện thực hóa cơ chế "thực thi suy đoán" giống con người và nâng hiệu suất lên đáng kể.
-
-Trạng thái màn hình làm việc không chỉ là một ảnh điểm ảnh, mà còn gồm cửa sổ, tiêu điểm, vị trí cuộn, nội dung ô nhập, trạng thái tải, quyền hạn và phản hồi mạng; còn hành động thì gồm bấm chuột, gõ phím, cuộn, kéo thả và chờ. Một mô hình thế giới dùng được cho Computer Use ít nhất phải mã hóa được trạng thái hiện tại, dự đoán được thay đổi trạng thái mà hành động ứng viên gây ra, và chuyển dự đoán đó cho bộ lập kế hoạch để quyết định nước tiếp theo:
-
-```text
-trạng thái màn hình làm việc + click/type/scroll/wait ──> biểu diễn của trạng thái kế tiếp
-```
-
-Nhờ vậy Agent có thể so sánh hệ quả của các hành động ứng viên trước khi thật sự bấm chuột, chuẩn bị nước tiếp theo trong lúc trang đang tải, và dựa vào chênh lệch trạng thái mà khôi phục khi một cửa sổ bật lên chỉ lóe qua. Chẳng hạn nếu nhiệm vụ là "tạo tệp Python mới trong VS Code và viết hello world", mô hình có thể dự đoán trước trạng thái then chốt của cây tệp và trình soạn thảo sau khi thành công, rồi mới chọn các hành động bấm, gõ và lưu; còn nếu nhiệm vụ là xóa tệp, nó có thể dự đoán trước trong một màn hình ảo cách ly xem có hiện ra hộp xác nhận không thể hoàn tác hay không, và khi cần thì hỏi người dùng để xác nhận. Điều quan trọng ở đây không phải là bắt mô hình sinh ra một ảnh chụp màn hình tương lai trông như thật, mà là dự đoán những chênh lệch trạng thái kiểm tra được mà việc hoàn thành nhiệm vụ đòi hỏi.
-
-Tháng 7 năm 2026, **Photon-1** do Induction Labs công bố đã cho thấy một cách hiện thực hóa hướng đi này: chỉ với 30.000 giờ GPU H200 mà hoàn tất việc tiền huấn luyện một mô hình thế giới cho computer use. Nó nén mỗi khung hình thành các token tiềm ẩn rời rạc và dự đoán tự hồi quy biểu diễn của trạng thái kế tiếp sau một hành động, thay vì sinh ảnh chụp màn hình từng điểm ảnh ở giai đoạn tiền huấn luyện; bộ sinh ảnh gắn kèm chỉ dùng để trực quan hóa các biểu diễn tiềm ẩn chứ không phải thành phần bắt buộc khi suy luận. Cho trước một ảnh chụp màn hình mầm và các hành động tiếp theo, mô hình có thể "tưởng tượng" liên tục các trạng thái màn hình làm việc, rồi qua huấn luyện trực tuyến trên máy ảo mà học được cách xuất ra hành động computer-use.[^ch9-20]
-
-[^ch9-20]: David Li and Jonathan Li, Induction Labs, “Scaling Video Pretraining with Imagination Models,” 2026-07-23. https://www.inductionlabs.com/news/scaling-video-pretraining. Các tham số, quy mô dữ liệu, benchmark nội bộ và so sánh chi phí của Photon-1 nêu trong bài đều là kết quả do chính công ty công bố.
-
-### Di động: Rào cản sinh thái còn khó hơn công nghệ
-
-Computer Use cũng đang mở rộng sang thiết bị đầu cuối di động. Thực sự có sự khác biệt về mặt kỹ thuật giữa thiết bị đầu cuối di động và máy tính để bàn: không gian hành động thường không còn là "tọa độ chuột + bàn phím" mà truy cập vào dịch vụ trợ năng API của hệ thống (chẳng hạn như AccessibilityService của Android) để đọc các thành phần giao diện, thực hiện nhấp chuột và nhập văn bản; phương thức tương tác cũng thay đổi từ con trỏ chuột sang cử chỉ chạm và ngữ nghĩa của tọa độ thay đổi tương ứng - giống nhau (x, y) Cho dù đó là nhấp ngón tay, nhấn lâu hay điểm bắt đầu của cử chỉ trượt đều yêu cầu các loại cử chỉ bổ sung để xác định. Các điểm chuẩn dành cho thiết bị di động như AndroidWorld được giới thiệu trong Chương 6 được sử dụng để đánh giá khả năng của Agent trong việc hoàn thành các tác vụ Ứng dụng thực trong không gian hành động như vậy.
-
-Nhưng điều thực sự cản trở thiết bị đầu cuối di động thường không phải là những khác biệt về mặt kỹ thuật mà là những rào cản về sinh thái. Một số nhà sản xuất điện thoại di động đã cố gắng tích hợp trợ lý AI vào điện thoại di động dành cho người tiêu dùng để cho phép chúng tự động vận hành các ứng dụng hàng ngày như WeChat, Taobao và Alipay, nhưng họ sớm gặp phải những hạn chế về nền tảng.
-
-Điều này cho thấy một thách thức đặc biệt mà Computer Use phải đối mặt: **rào cản sinh thái**. Lý do cơ bản đằng sau lệnh cấm là xung đột mô hình kinh doanh. Logic kiếm tiền cốt lõi của các ứng dụng Internet truyền thống là **lưu lượng truy cập và sự chú ý**: người dùng xem quảng cáo khi duyệt các luồng thông tin, làm theo hướng dẫn của thuật toán đề xuất khi tìm kiếm sản phẩm và mua hàng tùy hứng khi duyệt các trang. Khi Agent hoạt động thay mặt người dùng, liên kết kiếm tiền này hoàn toàn bị bỏ qua: AI sẽ không chú ý đến quảng cáo cũng như không thực hiện các giao dịch mua hàng bốc đồng, nó sẽ đi thẳng đến mục tiêu và hoàn thành nhiệm vụ. Đối với một nền tảng dựa vào quảng cáo và lưu lượng truy cập để kiếm tiền, mọi hoạt động của Agent đều làm xói mòn nền tảng mô hình kinh doanh của nó.
-
-Điều này có nghĩa là Computer Use không chỉ phải đối mặt với sự đối đầu về mặt kỹ thuật như CAPTCHA (mã xác minh) mà còn phải đối mặt với xung đột lợi ích về mặt cấu trúc. Khó có thể giải quyết mâu thuẫn này trong thời gian ngắn và việc triển khai Computer Use trong các tình huống tiêu dùng phải đối mặt với nhiều thách thức khó khăn hơn so với các vấn đề kỹ thuật thuần túy.
-
-## Vận hành robot: dọn bàn làm việc với XLeRobot
-
-> **Cách đọc phần này**: từ đầu đến cuối chúng ta chỉ dùng một nhiệm vụ——"đặt cốc đỏ vào khay, bỏ tờ giấy vàng vào thùng rác, cuối cùng quan sát thêm một lần để xác nhận trạng thái mặt bàn". Thử nghiệm 9-7 và 9-9 chạy trên XLeRobot thật, cần cánh tay robot, hiệu chuẩn, nút dừng khẩn cấp và người giám sát tại chỗ. Thử nghiệm 9-8, 9-10 và 9-11 là các bản đối ứng chạy trên GPU cục bộ. Kết quả trên máy thật và trong mô phỏng được báo cáo tách bạch, nhưng mục tiêu nhiệm vụ, ý nghĩa hành động và điều kiện thành công thì giữ nguyên như nhau.
-
-Vận hành robot khó hơn nhiều so với "nhìn ảnh rồi trả lời câu hỏi". Mô hình không chỉ phải hiểu khung cảnh mà còn phải hành động liên tục trong thế giới thực, và mỗi hành động lại làm thay đổi tình huống ở khoảnh khắc kế tiếp. XLeRobot khiến khác biệt ấy trở nên rất cụ thể. Cùng một cánh tay, người ta có thể điều khiển từ xa bằng bàn phím, tay cầm chơi game hay thiết bị VR; cũng có thể giao quan sát từ camera cùng một nhóm công cụ hành động hạn chế cho Agent để nó tự gọi. Phần cứng không đổi, nhiệm vụ cũng không đổi; thứ duy nhất đổi là ai đang vận hành——ở trường hợp trước, con người liên tục quan sát và sửa sai; ở trường hợp sau, mô hình và hệ điều khiển phải tự làm trọn vẹn công việc đó.
-
-Phần này xâu chuỗi năm thử nghiệm bằng việc "dọn bàn làm việc". Trước hết, con người điều khiển từ xa chiếc XLeRobot thật, để đo xem phần cứng này làm được đến đâu dưới tay một người vận hành đủ giỏi. Kế đó, trong bộ mô phỏng, ta thiết lập giới hạn trên lý tưởng của việc điều khiển cho cùng nhiệm vụ ấy. Tiếp theo, để Agent tự chủ điều khiển chiếc XLeRobot thật, nhằm quan sát xem tri giác, lập kế hoạch và khả năng phục hồi sau thất bại quyết định kết quả ra sao. Sau đó, đưa đúng bản giao kèo công cụ ấy vào bộ mô phỏng và so sánh một lượt ba chiến lược: thực thi vòng hở, kiểm tra theo từng bước, và mô hình thế giới. Cuối cùng, ta thay đổi nền, hình dáng vật thể, ánh sáng và nhiễu thị giác để xem chính sách thị giác học trong mô phỏng có thích nghi được với môi trường mới hay không.
-
-Nút thắt ở đây thường không nằm ở việc làm thêm một bộ chuẩn hỏi đáp tĩnh nữa, mà ở chỗ giữ cho mô hình khép kín được vòng điều khiển với băng thông tri giác và điều khiển hạn hẹp. Một hệ robot dùng được ít nhất phải trả lời bốn câu hỏi sau:
-
-1. Con người muốn hoàn thành nhiệm vụ gì?
-2. Nhiệm vụ con nào sẽ làm tiếp theo?
-3. Kỹ năng hiện tại sinh ra hành động cụ thể nào?
-4. Sau khi thực thi hành động, thực tế có còn khớp với kế hoạch ban đầu không?
-
-Phần này đặt bốn câu hỏi ấy vào cùng một vòng điều khiển của XLeRobot, và chỉ ra bốn kỹ thuật lần lượt gánh phần nào: lập kế hoạch dài hạn quyết định xử lý cốc trước hay giấy trước; VLA hoặc các nguyên thủy hành động lo việc gắp và đặt; mô hình thế giới ước lượng hệ quả của một hành động; còn bước chuyển từ mô phỏng sang thực tế gánh lấy khác biệt giữa video huấn luyện với camera và cơ cấu chấp hành thật. Dù mô hình cấp cao đã có đủ tri thức và năng lực lập kế hoạch, chỉ cần thiếu một mắt xích trong vòng phản hồi này là hệ thống vẫn có thể không hoàn thành nổi nhiệm vụ.
-
-### Phân công giữa phần cứng và thuật toán
-
-Câu hỏi đầu tiên mà XLeRobot thích hợp trả lời nhất là: khi việc tự chủ dọn bàn thất bại, là cánh tay không làm nổi, hay thuật toán không biết dùng cánh tay? Ở đây có một sự thật không nên nói giảm đi: **ngay cả một cánh tay chỉ vài trăm đô la như XLeRobot, nếu điều khiển từ xa, cũng đã có thể hoàn thành một nhiệm vụ trên bàn gồm nhiều bước nối tiếp như trong phần này**——con người nhìn video camera, gắp cốc đỏ bỏ vào khay, bỏ tờ giấy vàng vào thùng rác, rồi kiểm tra lại trạng thái lần cuối. Kết quả này không chỉ có nghĩa "phần cứng vừa đủ dùng", mà là một bằng chứng chẩn đoán rõ ràng: **xét riêng nhiệm vụ này, nút thắt nằm ở thuật toán chứ không nằm ở bản thân phần cứng.**
-
-Cách chẩn đoán rất thẳng thắn. Giữ nguyên camera, cánh tay, kẹp, cách bày biện mặt bàn và điều kiện thành công, trước hết để con người đảm nhận vòng điều khiển. Con người liên tục hiệu chỉnh ước lượng vị trí vật thể, lựa chọn hành động và thời điểm ra tay, đồng thời biết xử lý khi gắp hụt. Khoảng cách giữa hệ tự chủ và con người lộ ra chính ở năng lực vòng kín ấy. Dĩ nhiên tầm với của kết luận này là nhiệm vụ trên bàn ở phần này: nó cho thấy phần cứng đã vượt ngưỡng tải trọng, độ chính xác và không gian làm việc mà nhiệm vụ này cần, chứ không có nghĩa một cánh tay vài trăm đô la kham nổi mọi môi trường mở hay những thao tác khó hơn.
-
-XLeRobot hỗ trợ nhiều lối vào điều khiển từ xa: bàn phím, tay cầm Xbox, Joy-Con của Switch và thiết bị VR. Người vận hành làm một cách tự nhiên nhiều việc mà thuật toán buộc phải cài đặt tường minh: giảm tốc khi kẹp lại gần cốc, sửa điểm gắp khi cốc trượt, quan sát lại khi không kẹp được tờ giấy trong một lần, và xác nhận kết quả khi vật thể đã vào vùng đích. Vì vậy điều khiển từ xa không chỉ là cách thu thập dữ liệu trình diễn, mà còn là một thử nghiệm chẩn đoán "giữ nguyên phần cứng, chỉ thay người vận hành".[^ch9-1]
-
-> **Thử nghiệm 9-7 ★: Điều khiển từ xa XLeRobot thật để dọn bàn**
->
-> Đặt vào vùng làm việc của một chiếc XLeRobot thật: cốc đỏ, khay, tờ giấy vàng vo tròn và thùng rác. Người vận hành thực hiện nhiệm vụ cố định qua một trong các lối điều khiển từ xa đã hiệu chuẩn: "đặt cốc đỏ vào khay, bỏ tờ giấy vàng vào thùng rác, cuối cùng quan sát thêm một lần để xác nhận trạng thái mặt bàn". Lặp ít nhất vài vòng, ghi lại video camera, đầu vào của người vận hành, trạng thái cánh tay, thời lượng hành động, các lần gắp hụt, số lần thử lại và trạng thái cuối cùng.
->
-> Đừng hạ tiêu chí nghiệm thu xuống thành "cuối cùng mặt bàn trông sạch sẽ". Cốc đỏ phải nằm trong khay và tờ giấy vàng phải nằm trong thùng rác, cánh tay phải trở về tư thế an toàn, và suốt quá trình không được có va chạm, ra khỏi vùng làm việc, hay việc con người ra tay làm thay mà không kiểm chứng.
-
-Điều khiển từ xa trên máy thật là cách thuyết phục nhất để cho thấy giới hạn trên của nhiệm vụ, nhưng lại không tiện để thay đổi hàng loạt số lượng và vị trí vật thể. Để có một đối chứng lặp lại được và tính được thống kê, tiếp theo ta chuyển chính bài toán "đưa vật thể về đúng chỗ" ấy sang một bộ mô phỏng mặt bàn hai chiều, và dùng bộ điều khiển lý tưởng thay cho một người vận hành giỏi không hề nhìn nhầm cũng không chọn sai hành động.
-
-> **Thử nghiệm 9-8 ★: Đo giới hạn trên lý tưởng của việc điều khiển cùng nhiệm vụ trong bộ mô phỏng**
->
-> Trong bộ mô phỏng mặt bàn hai chiều, đặt ngẫu nhiên cốc đỏ, tờ giấy vàng cùng các vùng đích tương ứng, rồi để bộ điều khiển lý tưởng lần lượt tiến đến vật thể, gắp lên và đưa về đúng vị trí. Nó không cần nhận dạng hình ảnh và cũng không chọn sai hành động, nên nó biểu thị "khi tri giác lẫn quyết định đều đúng thì nhiệm vụ này ít nhất đi được đến đâu".
->
-> Hãy xem tỷ lệ thành công, số bước cần dùng và độ dài quãng đường; đồng thời thay đổi vị trí ban đầu của vật thể và quy mô nhiệm vụ để xem giới hạn lý tưởng ấy có ổn định không. Ta dùng cùng điều kiện thành công như Thử nghiệm 9-7, nhưng thứ được đo là một mô phỏng không có cơ cấu chấp hành: điều đó không có nghĩa chiếc XLeRobot thật đã cử động. Hai thử nghiệm sẽ là hai đường cơ sở cho phần điều khiển tự chủ về sau——Thử nghiệm 9-7 là vòng kín của con người trên phần cứng thật, còn Thử nghiệm 9-8 là vòng kín lý tưởng trong môi trường mô phỏng.
-
-### Cấu trúc cơ bản của điều khiển robot
-
-Hệ robot thường tách các công việc có thang thời gian khác nhau.
-
-| Tầng | Câu hỏi cốt lõi | Đầu ra | Thang thời gian điển hình |
-| --- | --- | --- | --- |
-| Mục tiêu nhiệm vụ | Con người muốn hoàn thành điều gì | "Cốc và giấy về đúng chỗ" | Cỡ phút |
-| Lập kế hoạch dài hạn | Làm gì trước, làm gì sau | Cốc trước, giấy sau, cuối cùng kiểm tra | Từ giây đến phút |
-| Kỹ năng cơ bản | Bây giờ đạt được thay đổi trạng thái nào | `pick(red_cup)`, `place(red_cup, tray)` | Khoảng 1—3 giây |
-| VLA / chính sách kỹ năng | Kỹ năng này cụ thể cử động ra sao | Chuyển động ngắn hoặc quỹ đạo liên tục của kẹp XLeRobot | Suy luận ~1—10 Hz |
-| Điều khiển mức thấp và tầng an toàn | Làm sao thực thi ổn định và không trễ | Lượng điều khiển khớp hoặc đầu công tác, giới hạn tốc độ và dừng khẩn cấp | ~50—1000 Hz |
-
-Đây là cách phân công kỹ thuật thường gặp, không phải kiến trúc mô hình duy nhất. VLA hoàn toàn có thể gánh một phần phán đoán ở cấp cao, và bộ lập kế hoạch có thể là chương trình dựa trên luật, một VLM, hay một bộ tối ưu. Chọn cách cài đặt nào đi nữa, "thứ tự của nhiệm vụ" vẫn nên tách khỏi "hành động trước mắt"; nếu không, độ trễ suy luận của mô hình cấp cao sẽ kéo lùi điều khiển mức thấp, còn điều khiển tần số cao ở mức thấp lại buộc mô hình bên trên xử lý vô số chi tiết không liên quan. Trên XLeRobot, mô hình không nên trực tiếp xuất ra góc khớp tùy ý: nó chỉ chọn những kỹ năng có ranh giới rõ ràng như `pick`, `place`, `verify_state` và `stop`, rồi bộ thực thi đã hiệu chuẩn——có giới hạn tốc độ và có thời gian chờ tối đa——mới biến chúng thành chuyển động thật của cánh tay.
-
-### Lập kế hoạch dài hạn và phân rã nhiệm vụ
-
-Khi người dùng bảo "dọn bàn giúp tôi", hệ thống không thể ném nguyên câu ấy cho mô hình hành động. Bộ lập kế hoạch trước hết liệt kê các vật thể và mục tiêu trong khung cảnh, định ra thứ tự, rồi viết ra cho từng bước điều kiện khởi đầu, điều kiện kết thúc và giới hạn rủi ro. Chẳng hạn:
-
-```text
-Xử lý cốc đỏ → Dọn tờ giấy vàng → Kiểm tra mặt bàn
-```
-
-"Xử lý cốc đỏ" lại phân rã thành hai hành động và một lần kiểm tra:
-
-```text
-pick(red_cup) → place(red_cup, tray) → verify_state()
-```
-
-Mỗi kỹ năng hoàn tất cho ta một nút có thể kiểm chứng. Gắp hụt thì chỉ làm lại đúng bước ấy. Nếu ai đó dời vật thể hoặc người dùng đổi mục tiêu, chỉ cần lập lại kế hoạch cho những bước phía sau bị ảnh hưởng, chứ không phải làm lại toàn bộ kế hoạch cũ. Công cụ trao cho tác nhân cũng phải đủ đơn giản: mỗi lần gọi chỉ làm một việc, phạm vi cử động cố định, có thời gian chờ tối đa, và thực thi xong thì quan sát lại ngay.
-
-> **Thử nghiệm 9-9 ★★: Để Gemini Robotics-ER 1.5 tự chủ dọn bàn bằng XLeRobot**
->
-> Giữ nguyên chiếc XLeRobot thật, cách bày bàn, chỉ dẫn nhiệm vụ và điều kiện thành công của Thử nghiệm 9-7; chỉ thay người vận hành bằng một Agent. Giao việc quan sát và lập kế hoạch cho một mô hình suy luận nhập thân như Gemini Robotics-ER 1.5, và qua vòng lặp tác nhân kiểu RoboCrew chỉ mở đúng năm công cụ: `observe_scene`, `pick`, `place`, `verify_state` và `stop`.[^ch9-2]
->
-> Mô hình trước hết quan sát mặt bàn, định ra thứ tự xử lý, rồi mới gọi các hành động gắp và đặt đã hiệu chuẩn của XLeRobot. Cứ hoàn tất một kỹ năng là phải quan sát lại và kiểm tra hậu điều kiện. Khi gắp hụt, nó chỉ được phép thử lại kỹ năng hiện tại; và phải gọi `stop` khi người dùng bảo dừng, khi vật thể ra khỏi vùng làm việc, hoặc khi không xác minh được trạng thái. Mô hình không được trực tiếp xuất ra góc khớp tùy ý, cũng không được bỏ qua bước kiểm chứng thật chỉ vì chính nó đã nói trước rằng "xong rồi".
->
-> Tiêu chí nghiệm thu hệt như Thử nghiệm 9-7: cốc nằm trong khay, giấy nằm trong thùng rác, cánh tay trở về tư thế an toàn, không va chạm và không ra khỏi vùng. Khác biệt nằm ở chỗ: trong thử nghiệm tự chủ, ý nghĩa của nhiệm vụ phải đến từ chính quan sát của mô hình, hành động thật phải đến từ lời gọi công cụ, và trạng thái cuối cùng phải được xác nhận bằng một quan sát mới. Con người chỉ được khởi động, dừng khẩn cấp và giám sát an toàn, không được làm thay Agent giữa chừng. Chỉ như vậy Thử nghiệm 9-7 và 9-9 mới so sánh trực tiếp được: "với cùng phần cứng và cùng nhiệm vụ, vòng kín của mô hình còn thiếu gì so với vòng kín của con người".
-
-Thử nghiệm trên máy thật phơi bày sai số hiệu chuẩn, camera bị che khuất và kẹp hỏng ăn, nhưng lại không thích hợp để lặp lại một lượng lớn sự cố một cách an toàn và có kiểm soát. Các thử nghiệm mô phỏng tiếp sau giữ đúng năm công cụ ấy cùng trạng thái nhiệm vụ y hệt, và chỉ thay cơ cấu chấp hành thật bằng một môi trường mặt bàn có thể tiêm lỗi, để tách bạch xem thực thi vòng hở, kiểm tra theo từng bước và dự đoán hành động mỗi thứ đóng góp được gì.
-
-### Điều khiển bằng VLA
-
-VLA là viết tắt của Vision-Language-Action, tức "mô hình thị giác—ngôn ngữ—hành động". Nó nhận khung cảnh hiện tại cùng một chỉ dẫn kỹ năng, rồi xuất ra hành động mà robot phải thực thi kế tiếp:
-
-```text
-quan sát hiện tại + chỉ dẫn kỹ năng → hành động
-```
-
-Trong ví dụ XLeRobot, bộ lập kế hoạch cấp cao chỉ đưa ra `pick(red_cup)`; còn tiếp cận cốc từ hướng nào, khép kẹp lúc nào, nâng cánh tay theo quỹ đạo ra sao là do VLA hoặc chính sách kỹ năng quyết định dựa trên khung cảnh hiện tại. Khi tầng thực thi hoàn tất chuyển động ngắn ấy, mặt bàn được chụp lại, và chỉ sau khi xác nhận cốc quả thật đã được gắp thì bộ lập kế hoạch mới được đưa ra `place(red_cup, tray)`. Nói cách khác, lời gọi công cụ định nghĩa thay đổi trạng thái mong muốn, còn VLA định nghĩa cách hiện thực hóa thay đổi trạng thái ấy bằng hành động liên tục.
-
-RT-2 và OpenVLA cắt hành động liên tục thành các token rời rạc rồi xuất ra từng cái một, y như sinh câu chữ. π₀ đại diện cho hướng còn lại: sinh thẳng ra quỹ đạo hành động liên tục và mượt mà. Không có chuyện bên nào hơn bên nào một cách giản đơn. Token rời rạc dễ gắn với mô hình ngôn ngữ; quỹ đạo liên tục hợp hơn để biểu diễn chuyển động mượt. Lựa chọn thật sự là nên biểu diễn hành động ra sao, chứ không chỉ là mô hình lớn cỡ nào.[^ch9-15]
-
-Mô hình lớn thường chỉ suy luận được 1—10 lần mỗi giây, trong khi bộ điều khiển truyền thống có thể cập nhật vài chục đến vài nghìn lần mỗi giây. Một cách làm thông dụng trong kỹ thuật là "chia đoạn hành động" (action chunking): mô hình sinh một lần một đoạn ngắn các hành động tương lai, luồng điều khiển thực thi đoạn ấy ở tần số cao, còn mô hình chuẩn bị đoạn kế tiếp ở phía sau. Nhờ vậy một phần thời gian chờ suy luận được giấu vào trong thời gian thực thi hành động. Cái giá phải trả là: đoạn càng dài thì chuyển động càng mượt, nhưng trong quãng ấy mô hình càng ít thấy khung cảnh mới. Nếu XLeRobot đang vươn tay định lấy cốc mà giữa chừng cốc bị va lệch đi, nó vẫn có thể tiếp tục thực thi những hành động sinh ra từ hình ảnh cũ. Vậy nên chia đoạn hành động là một sự đánh đổi giữa độ mượt và tốc độ phản ứng, chứ không phải một cách tăng tốc không mất gì.
-
-Chia đoạn hành động thường cần một bộ khung "dự đoán—thực thi—chen ngang" thay vì chạy đoạn cho tới hết:
+**Định tuyến kinh nghiệm → năng lực:**
 
 ```python
-chunk = vla(current_observation, skill)
-for action in chunk:
-    low_level.execute(action)
-    if safety_event() or observation_changed_significantly():
-        low_level.stop()
-        discard_remaining(chunk)
-        reobserve_and_replan()
-        break
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
 ```
 
-Đoạn ngắn phản ứng nhanh nhưng làm số lần gọi mô hình tăng lên; đoạn dài mượt hơn nhưng dễ dùng phải quan sát đã cũ. Thử nghiệm 9-10 so sánh loại đánh đổi này trong bộ mô phỏng, còn thứ chạm tới ranh giới an toàn của phần cứng thật là Thử nghiệm 9-9.
+### Kết tinh kinh nghiệm thành tri thức
 
-### Giới hạn của VLA
+Phương thức tiến hóa nhẹ nhất là tổ chức những kinh nghiệm lặp đi lặp lại qua nhiều lần vận hành thành tài liệu tri thức có thể truy xuất. “Kho tri thức kinh nghiệm” ở đây chia sẻ công nghệ lưu trữ, lập chỉ mục và truy xuất với Chương 3, nhưng nguồn tri thức và mục tiêu xác minh khác nhau. Chương 3 chủ yếu trích xuất từ hội thoại người dùng, tài liệu và tập dữ liệu để trả lời “người dùng và thế giới có đặc điểm như thế nào”; chương này trích xuất từ quỹ đạo hành động và kết quả của Agent để trả lời “trong điều kiện nào nên làm gì”. Ví dụ, “hãng hàng không này yêu cầu đặt suất ăn đặc biệt trước hai mươi bốn giờ” là tri thức lĩnh vực; còn “trước khi đặt vé, hãy kiểm tra hạn chót đăng ký suất ăn đặc biệt để tránh thanh toán xong mới phát hiện không thể đáp ứng nhu cầu” là kinh nghiệm hành động.
 
-"Lập kế hoạch dài hạn + VLA" là một phương án nền dùng được, nhưng vẫn để lại vài vấn đề dễ bị bỏ sót.
+Quỹ đạo gốc không phù hợp làm đơn vị tri thức chính thức. Nó vừa dài vừa nhiễu, chứa đầu ra thô của công cụ, các đường vòng ngẫu nhiên và chi tiết môi trường. Một hệ thống thận trọng hơn sẽ giữ lại ba tầng dữ liệu: quỹ đạo gốc bất biến dùng để kiểm toán; phân tích từng lần vận hành ghi lại thành công, thất bại và bài học ứng viên của lần đó; sau đó nhiều quỹ đạo cùng loại được so sánh, phân cụm và quy nạp để tạo thành tài liệu tri thức Markdown hướng đến tương lai. Tài liệu chính thức thường nêu rõ bối cảnh áp dụng, chiến lược đề xuất, hành vi bị cấm, điều kiện ngoại lệ, nguồn bằng chứng và thời điểm xác minh gần nhất, thay vì thuật lại toàn bộ quá trình của một nhiệm vụ cụ thể.
 
-- **Dữ liệu huấn luyện hạn chế**: các bản trình diễn robot ít hơn rất nhiều so với văn bản và hình ảnh trên internet. Mô hình từng thấy chữ "cốc" không có nghĩa nó đã thấy đủ loại cốc với mọi chất liệu và mọi điều kiện ma sát.
-- **Học được cách bắt chước nhưng không hiểu hệ quả**: nhân bản hành vi chủ yếu học "người trình diễn làm gì tiếp theo", chứ không đòi hỏi tường minh rằng mô hình phải trả lời "hành động này gây ra chuyện gì".
-- **Robot nào cũng khác nhau**: bậc tự do, hệ tọa độ, kẹp và độ trễ cơ cấu chấp hành khác nhau thì không có gì bảo đảm cùng một hành động chuyển nguyên xi được sang máy khác.
-- **Quan sát có thể lỗi thời**: sau khi một đoạn hành động đã bắt đầu chạy, nếu vật thể bị dời đi, bị che khuất hay đổ xuống, mô hình vẫn đang phán đoán dựa trên khung hình trước đó.
+Thiết kế này có cùng tư tưởng hai giai đoạn với User-as-Code ở Chương 3. User-as-Code trước tiên nối thêm sự kiện hội thoại vào nhật ký bất biến, sau đó định kỳ tái dựng mô hình người dùng có cấu trúc; việc học từ kinh nghiệm cũng nên lưu bằng chứng trước rồi mới tạo tri thức khả biến ngoại tuyến. Hình 9-4 minh họa quá trình này. Việc tách ghi nhận khỏi tổ chức giúp tránh để một thành công ngẫu nhiên hoặc sự cố mạng lập tức thay đổi Agent, đồng thời cho phép hệ thống chỉ phán đoán điểm chung sau khi đã quan sát nhiều trường hợp thành công và thất bại.
 
-Vì thế, mô hình ngôn ngữ biết chữ "cốc" không có nghĩa nó biết ma sát, tiếp xúc, chất lỏng sóng sánh hay dây nguồn sẽ làm trạng thái tương lai đổi khác ra sao. VLA chủ yếu trả lời "bây giờ nên làm gì"; muốn phán đoán "làm xong thì có thể xảy ra chuyện gì" thì cần một loại mô hình khác.
+![Hình 9-4 Từ quỹ đạo đã đánh giá đến tài liệu tri thức kinh nghiệm](images/fig9-4.svg)
 
-### Mô hình thế giới
+Tài liệu kinh nghiệm không phải bản tóm tắt quỹ đạo đơn giản. Nội dung thực sự có giá trị chuyển giao đến từ đối chiếu: quỹ đạo thành công cùng loại đã làm gì, quỹ đạo thất bại thiếu điều gì; một chiến lược có hiệu quả trong những phiên bản môi trường nào và mất hiệu lực dưới những điều kiện tiên quyết nào. Chương 3 đã giới thiệu việc trích xuất, phân cụm và truy xuất tri thức nên chương này không lặp lại các thuật toán đó, mà tập trung vào cách đánh giá quỹ đạo trở thành điều kiện trích xuất và liệu tri thức được trích xuất có nâng cao hiệu quả của các nhiệm vụ sau hay không.
 
-Mô hình thế giới có thể hiểu là bộ dự đoán hệ quả của hành động. Thứ nó học là: ở trạng thái hiện tại, nếu thực hiện một hành động nào đó thì trạng thái ở khoảnh khắc kế tiếp có thể đổi khác ra sao.
+Một đường ống chắt lọc tri thức hoàn chỉnh có thể chia thành năm bước. Trước hết, lưu quỹ đạo bất biến và kết quả môi trường. Sau đó tạo phân tích có cấu trúc cho từng lần vận hành, liệt kê loại nhiệm vụ, năng lực cần thiết, chiến lược quan sát được, sai sót và ngoại lệ. Tiếp theo, tổng hợp các lần vận hành cùng họ nhiệm vụ và lập bảng bằng chứng cho từng quy luật ứng viên: “quỹ đạo nào ủng hộ, quỹ đạo nào bác bỏ”. Chỉ ứng viên đạt ngưỡng ủng hộ mới được ghi vào tài liệu chính thức. Cuối cùng, kiểm tra hiệu quả chuyển giao trên các nhiệm vụ mới không tham gia quá trình chắt lọc. Lưu tri thức chính thức và phân tích ứng viên trong các kho tách biệt cho phép hệ thống quy nạp lại mà không sửa đổi bằng chứng gốc, đồng thời rút lại chính xác một kết luận khi phiên bản môi trường thay đổi.
 
-```text
-trạng thái hiện tại + hành động ứng viên
-    → dự đoán trạng thái kế tiếp hoặc một mẩu tương lai
-    → so sánh kết quả của các ứng viên
-    → chọn hành động, lập lại kế hoạch, hoặc dừng an toàn
+Học kinh nghiệm GAIA cung cấp một ví dụ trực quan. GAIA[^gaia-2023] gồm các câu hỏi nhiều bước cần kết hợp tìm kiếm, đọc trang web, xử lý tệp và tính toán; AWorld[^aworld-2025] cung cấp môi trường thực thi để chạy Agent, gọi các công cụ đó và lưu quỹ đạo. Nếu cái trước giống đề thi thì cái sau giống phòng thi và hệ thống ghi chép thí nghiệm. Cách cũ tạo ngay bản tóm tắt chiến lược sau một lần thành công rồi vector hóa và đưa vào kho. Cách nghiêm ngặt hơn trước tiên dùng bộ kiểm tra đáp án GAIA hoặc bộ xác minh môi trường khác để gắn nhãn thành công, thành công một phần và thất bại, sau đó so sánh nhiều lộ trình trong cùng họ nhiệm vụ. Quỹ đạo thành công cung cấp chiến lược ứng viên; quỹ đạo thất bại cung cấp tri thức loại trừ; quỹ đạo thành công một phần giúp xác định “đoạn nào hiệu quả, đoạn nào vẫn có vấn đề”. Phản tư bằng ngôn ngữ tự nhiên do Reflexion[^reflexion-2023] đề xuất có thể tham gia tạo bài học ứng viên, nhưng bản thân phản tư không phải bằng chứng. Chỉ nội dung phù hợp với kết quả môi trường, được nhiều quỹ đạo ủng hộ và thể hiện chuyển giao tích cực trên nhiệm vụ mới mới nên đi vào tài liệu kinh nghiệm chính thức.
+
+> **Thí nghiệm 9-2 ★★: Chắt lọc tài liệu tri thức kinh nghiệm từ quỹ đạo GAIA**
+>
+> **Mục tiêu thí nghiệm**: Kiểm tra liệu “tài liệu tri thức xuyên quỹ đạo” có dễ chuyển giao hơn “ghi nhớ bản tóm tắt của một lần thành công”, đồng thời giảm chuyển giao tiêu cực do thành công ngẫu nhiên và kinh nghiệm sai hay không.
+>
+> **Dữ liệu và quy trình**: `gaia-experience` trước tiên lưu toàn bộ quỹ đạo và `environment_score` bên ngoài của mỗi lần chạy, rồi chuyển chúng thành bản ghi học tập tối thiểu gồm `task_family`, `capabilities` cần thiết, `applies_when`, chiến lược quan sát được, sai sót, ngoại lệ và ID quỹ đạo nguồn. Bộ xác minh kết quả phân loại lần chạy thành thành công, thành công một phần hoặc thất bại. Mô-đun học tập so sánh các lộ trình trong cùng họ nhiệm vụ; LLM có thể đề xuất quy nạp ứng viên, nhưng một chiến lược đề xuất phải được ít nhất hai quỹ đạo không thất bại ủng hộ. Tài liệu Markdown cuối cùng gồm bối cảnh áp dụng, chiến lược đề xuất, sai lầm thường gặp, điều kiện ngoại lệ, nguồn và thời điểm xác minh gần nhất. Giai đoạn áp dụng chỉ truy xuất các tài liệu này, không nhét quỹ đạo gốc dài vào ngữ cảnh.
+>
+> **Ba nhóm đối chứng**: Nhóm một không dùng kinh nghiệm lịch sử. Nhóm hai truy xuất bản tóm tắt của một quỹ đạo giống nhiệm vụ hiện tại nhất. Nhóm ba truy xuất tài liệu tri thức được nhiều quỹ đạo cùng ủng hộ. Tập học và tập chuyển giao phải không giao nhau, tránh để đáp án của cùng một câu GAIA bị rò rỉ vào đánh giá dưới tên “kinh nghiệm”.
+>
+> **Chỉ số và nghiệm thu**: Đồng thời báo cáo tỷ lệ thành công của nhiệm vụ chuyển giao, số ký tự hoặc Token truy xuất trung bình và tỷ lệ chuyển giao tiêu cực; kiểm tra mỗi kết luận chính thức có liệt kê quỹ đạo nguồn hay không. Nếu tài liệu xuyên quỹ đạo chỉ rút ngắn ngữ cảnh mà không cải thiện nhiệm vụ mới, không thể kết luận hệ thống đã học từ kinh nghiệm. Nếu một thành công ngẫu nhiên có thể được nâng thẳng thành tri thức chính thức, hoặc tài liệu không truy vết được về quỹ đạo gốc, thí nghiệm cũng không đạt.
+>
+> Phần triển khai đi kèm nằm tại [`gaia-experience`](../chapter9/gaia-experience/). `demo_documents.py` mặc định chạy ngoại tuyến; dùng `--extractor llm` để LLM thực đề xuất các ứng viên kinh nghiệm xuyên quỹ đạo.
+
+[^reflexion-2023]: Shinn, N., et al. *Reflexion: Language Agents with Verbal Reinforcement Learning.* arXiv:2303.11366, 2023.
+
+[^gaia-2023]: Mialon, G., et al. *GAIA: a benchmark for General AI Assistants.* arXiv:2311.12983, 2023.
+
+[^aworld-2025]: Yu, C., et al. *AWorld: Orchestrating the Training Recipe for Agentic AI.* arXiv:2508.20404, 2025.
+
+### Viết kinh nghiệm thành chỉ dẫn
+
+Kho tri thức kinh nghiệm cung cấp tài liệu tham khảo cho Agent, còn Prompt và Skill có tính chỉ dẫn mạnh hơn. Khi nhiều quỹ đạo liên tục cho thấy cùng một loại sai lầm chiến lược và quy luật có thể được diễn đạt rõ bằng ngôn ngữ tự nhiên, hệ thống có thể nâng nó từ “kinh nghiệm có thể tham khảo” thành “quy tắc phải tuân thủ”. Quy tắc áp dụng cho gần như mọi nhiệm vụ phù hợp để đưa vào Prompt hệ thống; quy trình phức tạp chỉ có hiệu lực với một lĩnh vực, dự án hoặc công cụ cụ thể phù hợp hơn để viết thành Skill được nạp theo nhu cầu hoặc tệp chỉ dẫn dự án.
+
+Học Prompt có phân công khác với kỹ thuật Prompt ở Chương 2. Chương 2 trả lời cách viết Prompt có cấu trúc rõ ràng và thân thiện với bộ nhớ đệm; ở đây trả lời loại phản hồi sản xuất nào đủ để kích hoạt sửa đổi Prompt và cách xác minh quy tắc mới trước khi triển khai. Việc sửa đổi cũng không nên thể hiện thành quá trình liên tục viết lại toàn bộ Prompt hệ thống. Cách đáng tin cậy hơn là tạo diff tối thiểu dựa trên một nhóm thất bại cùng loại, ghi rõ phạm vi tác dụng của quy tắc, kiểm tra xem nó có mâu thuẫn với quy tắc hiện có hay không, rồi đồng thời đánh giá trên các trường hợp biên đã kích hoạt thất bại và tập lưu giữ nhiệm vụ cũ.
+
+Trong một bài viết dài năm 2025, Andrej Karpathy tạm gọi mô thức mới tiềm năng này là **học Prompt hệ thống** (System Prompt Learning)[^karpathy-system-prompt-learning]. Ông tóm lược rằng tiền huấn luyện chủ yếu học tri thức, tinh chỉnh chủ yếu định hình hành vi theo thói quen; nhưng con người còn một cách học khác: sau khi gặp vấn đề và nghĩ ra phương pháp, ta dùng ngôn ngữ rõ ràng để nhắc bản thân trong tương lai rằng “lần tới gặp loại vấn đề này, hãy thử cách này trước”. Ông ví LLM thiếu cuốn sổ tay như vậy với nhân vật chính trong phim *Memento*, đồng thời chỉ ra rằng học Prompt hệ thống và học tăng cường đều cải thiện hành vi từ kinh nghiệm nhưng dùng thuật toán cập nhật khác nhau — cách thứ nhất sửa văn bản, cách thứ hai dùng gradient descent để sửa tham số. Ví dụ ông nêu là Prompt hệ thống dài khoảng 17.000 từ của Claude khi đó có một yêu cầu riêng: khi gặp bài toán đếm từ, chữ cái hoặc ký tự, hãy đánh số từng mục và đếm tường minh trước khi đưa ra đáp án. Quy tắc này nhằm xử lý những câu hỏi như “có bao nhiêu chữ `r` trong `strawberry`”.
+
+Trong hệ thống Agent, điều đó có nghĩa là sau thất bại, bài học có thể ngôn ngữ hóa được viết thành quy tắc ứng viên mà lần chạy sau có thể đọc trực tiếp. So với kết quả vô hướng chỉ có “thành công/thất bại”, chẩn đoán kèm bằng chứng có thể chỉ ra lỗi nằm ở xác minh danh tính, lựa chọn công cụ hay ranh giới chuyển tiếp, nhờ đó sinh sửa đổi ứng viên đúng trọng tâm hơn. Nhận xét của Karpathy rằng “phản tư được tri thức dẫn dắt có kênh phản hồi nhiều chiều hơn phần thưởng vô hướng” giải thích vì sao cách này có thể hiệu quả về dữ liệu. Tuy vậy, thông tin phong phú hơn không có nghĩa là tự nhiên đúng. Cùng một ý kiến người dùng có thể chỉ áp dụng cho một khách hàng hoặc phiên bản chính sách cũ, nên vẫn phải phân cụm, xác định phạm vi và kiểm thử hồi quy.
+
+Tối ưu Prompt tự động đã có nhiều hướng khác nhau. DSPy[^dspy-2023] coi chương trình gồm nhiều lần gọi mô hình ngôn ngữ là đối tượng có thể tối ưu và tìm kiếm chỉ dẫn cùng ví dụ trên tập phát triển. OPRO[^opro-2023] để mô hình ngôn ngữ tiếp tục đề xuất ứng viên dựa trên Prompt lịch sử và điểm số của chúng. GEPA[^gepa-2025] dùng phản tư bằng ngôn ngữ tự nhiên về quỹ đạo thất bại để tạo và tuyển chọn các Prompt ứng viên bổ sung cho nhau. Các hướng này chủ yếu phục vụ tối ưu hàng loạt trên tập đánh giá ngoại tuyến. Diff tối thiểu trong hệ thống sản xuất giống bảo trì liên tục hơn: được kích hoạt bởi ca biên mới và nhấn mạnh nguồn gốc, kiểm toán, khôi phục nhanh. Trong thực tế, có thể tìm một phiên bản khởi đầu tốt bằng tìm kiếm ngoại tuyến, rồi duy trì các quy tắc đuôi dài sau triển khai bằng bản vá theo từng ca.
+
+Ví dụ, Agent chăm sóc khách hàng hàng không thường chuyển sang nhân viên quá sớm khi người dùng chất vấn chính sách. Đánh giá quỹ đạo cho thấy nó không vi phạm quy định, nhưng thiếu tính linh hoạt trong tuân thủ. Bản vá ứng viên có thể yêu cầu Agent trước tiên giải thích chính sách, nhận diện mục tiêu thực sự của người dùng và tìm phương án thay thế được phép; chỉ chuyển sang nhân viên khi người dùng yêu cầu rõ ràng hoặc vấn đề thực sự vượt quá quyền hạn. Nếu quy tắc mới giảm chuyển tiếp quá mức nhưng lại khiến các sự cố an toàn đáng lẽ phải chuyển cho con người tiếp tục được xử lý, thì nó chưa vượt qua hồi quy. Giá trị của việc học Prompt hệ thống không nằm ở tự động nối thêm nhiều văn bản, mà ở việc liên tục làm rõ phạm vi áp dụng của quy tắc bằng các trường hợp biên trong sản xuất.
+
+Học Skill tuân theo cùng nguyên tắc nhưng có phạm vi tác động cục bộ hơn. Có thể xem Skill là sổ tay nghiệp vụ được mở khi cần. Nếu nhiều kinh nghiệm cùng hình thành một quy trình yêu cầu bồi thường bảo hiểm hoàn chỉnh, hệ thống có thể tạo hoặc sửa Skill tương ứng. Skill ứng viên không nên chỉ là bản tóm tắt một hội thoại; tối thiểu nó phải nêu khi nào cần nạp, điều kiện tiên quyết, các bước thao tác, bẫy đã biết và cách xác minh, đồng thời lưu quỹ đạo nguồn. Hệ thống trước tiên tìm năng lực gần giống trong kho Skill hiện có: nếu đã có cùng quy trình thì ưu tiên `patch` cục bộ; chỉ tạo thư mục mới khi thật sự xuất hiện một năng lực độc lập mới, tránh để kho chứa đầy các sổ tay khác tên nhưng gần giống nội dung. Skill Creator của Anthropic[^anthropic-skill-creator] minh họa vòng tạo “soạn thảo — kiểm thử — đánh giá — sửa đổi”. Nó giải quyết cách tạo và cải thiện Skill; phần khó thực sự vẫn là bằng chứng vận hành nào đủ để kích hoạt, xử lý xung đột thế nào và sau sửa đổi có vượt qua nhiệm vụ lĩnh vực cùng hồi quy nhiệm vụ cũ hay không.
+
+> **Thí nghiệm 9-9 ★★: Chuyển phản hồi thành Skill viết**
+>
+> Xử lý 20 cặp before/after trong `data/feedback_pairs.json` theo ba đợt, trích xuất quy tắc ứng viên, gộp mẫu trùng, kiểm tra xung đột ngưỡng và tạo `SKILL.md` có nguồn/phạm vi. Quy tắc xác định kiểm tra bằng mã; quy tắc LLM được hiệu chỉnh trên 10 mẫu vàng.
+>
+> Báo cáo đồng thời tỷ lệ phát hiện trên tập nhiệm vụ chưa hoàn thành, tỷ lệ báo nhầm trên văn bản bình thường và số quy tắc tăng. Lần chạy thật đầu tiên đạt 0/8 phát hiện và nhầm 7/8; sau bộ lọc ngoài mô hình và fallback xác định, đạt 8/8, nhầm 0/8, gộp 21 ứng viên thành 8 quy tắc. Xem [`ai-style-skill`](../chapter9/ai-style-skill/).
+
+Trường hợp dấu ngoặc kép cong cho thấy Skill phải trở thành hợp đồng dữ liệu thay vì quy tắc thay thế toàn cục: trước SFT, các ví dụ tổng hợp được phân tầng theo thể loại bài, phạm vi và ngôn ngữ lập trình, vượt qua gate mã/JSON/vùng bảo vệ và được kiểm tra thủ công. Với exact-copy, round-trip encode→decode của tokenizer, sao chép byte-exact của mô hình, tuần tự hóa Harness và đối sánh công cụ phải được kiểm toán như các lớp hồi quy riêng.
+
+> **Thí nghiệm 9-3 ★★: Tối ưu Prompt hệ thống dựa trên quỹ đạo thất bại**
+>
+> **Mục tiêu thí nghiệm**: Giúp Agent chăm sóc khách hàng hàng không học từ quỹ đạo thất bại “chuyển sang nhân viên quá sớm khi người dùng chất vấn chính sách”, đồng thời chứng minh quy tắc mới không phá hỏng các tình huống cũ thật sự cần chuyển tiếp.
+>
+> **Quy trình**: Trước tiên chạy riêng tập lưu giữ nhiệm vụ cũ và tập biên chuyển tiếp quá mức. `learning_signal.py` tách thất bại thành ba chiều: tuân thủ quy tắc, giải quyết nhiệm vụ và linh hoạt trong tuân thủ, đồng thời giữ lại case ID nguồn. Coding Agent sau đó đọc Prompt hiện tại và chỉ tạo một chỉnh sửa tối thiểu có thể kiểm toán theo dạng `old_str → new_str`: yêu cầu Agent trước tiên giải thích chính sách, nhận diện mục tiêu thật và tìm phương án thay thế tuân thủ, đồng thời giữ lộ trình chuyển tiếp khi người dùng yêu cầu rõ ràng hoặc có sự cố an toàn. Bản vá cùng nguồn, quy tắc mục tiêu và lý do sửa đổi được ghi vào manifest ứng viên.
+>
+> **Ba nhóm đối chứng**: Prompt ban đầu, Prompt ứng viên sinh tự động và Prompt do con người tối ưu một lần. Cả ba dùng cùng mô hình và cùng tập nhiệm vụ lưu giữ/biên. `--quick` chỉ giảm số ca nhưng vẫn thật sự gọi Agent nhiệm vụ, LLM Judge và Coding Agent; không thể coi đó là kết quả mô phỏng ngoại tuyến.
+>
+> **Ngưỡng phát hành và chỉ số**: Ứng viên phải đồng thời đáp ứng bốn điều kiện: bản vá không rỗng, nguồn có thể truy vết, hiệu quả trên tập biên thực sự cải thiện và tập lưu giữ không suy giảm. So sánh độ chính xác nhiệm vụ biên, độ chính xác nhiệm vụ lưu giữ, độ dài Prompt tăng thêm, số hồi quy được đưa vào và thời gian từ phát hiện thất bại đến sinh ứng viên. Vượt qua ngưỡng chỉ tạo `release_to_canary`, không trực tiếp ghi đè Prompt ổn định; bất kỳ điều kiện nào thất bại đều phải trả về `reject_candidate`.
+>
+> Phần triển khai đi kèm nằm tại [`prompt-auto-optimization`](../chapter9/prompt-auto-optimization/). Kiểm thử ngoại tuyến bao quát ngưỡng chẩn đoán và phát hành, còn `--quick` sẽ thực sự gọi Agent thực hiện nhiệm vụ, LLM Judge và Coding Agent.
+
+[^dspy-2023]: Khattab, O., et al. *DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines.* arXiv:2310.03714, 2023.
+
+[^opro-2023]: Yang, C., et al. *Large Language Models as Optimizers.* arXiv:2309.03409, 2023.
+
+[^gepa-2025]: Agrawal, L., et al. *GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning.* arXiv:2507.19457, 2025.
+
+[^karpathy-system-prompt-learning]: Karpathy, A. “We’re missing (at least one) major paradigm for LLM learning … system prompt learning?” X, May 11, 2025. https://x.com/karpathy/status/1921368644069765486
+
+[^anthropic-skill-creator]: Anthropic. *Skill Creator.* 2026. https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md
+
+### Viết kinh nghiệm thành chương trình
+
+Khi kinh nghiệm mô tả một thao tác ổn định, lặp lại và có thể xác minh, việc để mô hình đọc lại tài liệu và suy luận từ đầu mỗi lần không còn kinh tế. Khi đó, cách phù hợp hơn là biên dịch kinh nghiệm thành quy trình công việc, công cụ hoặc mã Harness để biến một lần khám phá thành chương trình có thể thực thi lặp lại. Chương 5 đã trình bày cách Coding Agent đọc và ghi tệp, chạy kiểm thử và tạo hệ thống; phần này không tập trung vào sinh mã nói chung, mà vào cách Agent sửa đổi phiên bản tương lai của chính nó dựa trên quỹ đạo của mình.
+
+Đối tượng có thể sửa đổi không chỉ là công cụ mới. Tầng thao tác có thể biên dịch quỹ đạo trình duyệt thành quy trình công việc tham số hóa hoặc tạo bộ điều hợp cho API thay đổi; tầng điều khiển có thể sửa định tuyến công cụ, thử lại, ngắt mạch và chiến lược nén ngữ cảnh; tầng xác minh có thể bổ sung kiểm tra tham số, bộ xác minh trạng thái và kiểm thử hồi quy dựa trên thất bại trong sản xuất; tầng kiến trúc có thể thêm Reviewer Agent và thay đổi luồng thông tin giữa lập kế hoạch với thực thi.
+
+Quy trình công việc trình duyệt cho thấy giá trị của kinh nghiệm được chương trình hóa. Có thể ví nó với chức năng ghi macro trong bảng tính. Khi gửi email lần đầu, Agent đa phương thức dùng chu trình quan sát — suy nghĩ — hành động để tìm các điều khiển “soạn thư, người nhận, chủ đề, nội dung, gửi”. Lần sau gửi một email khác, quy trình không đổi, chỉ người nhận và nội dung khác đi; không cần gọi lại mô hình để khám phá toàn bộ đường đi từ pixel và DOM. Hệ thống cần biên dịch quỹ đạo khám phá lần đầu thành một chương trình nhỏ có tham số, kiểm tra trạng thái và thông tin phiên bản.
+
+Quy trình chắt lọc tri thức trong Hình 9-4 tương ứng với một vòng đời cụ thể hơn trong bối cảnh trình duyệt:
+
+1. **Ghi lại quỹ đạo**: Ghi các thao tác điều hướng, nhấp, nhập và chọn danh sách; lưu tham số hành động, URL lúc đó, cùng bằng chứng định vị phần tử như XPath, CSS, `id`, `role`, `aria-label` và `data-testid`. Thông tin định vị chỉ dùng để tìm lại phần tử, không chứng minh nhiệm vụ đã hoàn thành.
+2. **Tham số hóa**: Nhận diện giá trị cố định trong lần chạy đầu làm biến mẫu; ví dụ thay `test@example.com`, chủ đề và nội dung bằng `{recipient}`, `{subject}` và `{content}`, giữ nguyên các hành động ổn định khác. Bản triển khai giảng dạy dùng biểu thức chính quy và thay mẫu; hệ thống sản xuất có thể dùng đầu vào nhiệm vụ có cấu trúc hoặc mô hình trích xuất bị ràng buộc.
+3. **Định nghĩa kiểm tra trạng thái**: Thêm kiểm tra trước và sau hành động, chẳng hạn “nút Gửi hiện đang hiển thị” và “URL sau điều hướng thuộc trang đích”. Thêm kiểm tra trạng thái cuối cho toàn bộ quy trình, chẳng hạn “thư mới xuất hiện trong mục Đã gửi” hoặc giá trị trạng thái của trang thử nghiệm thay đổi như mong đợi. Hành động chạy thành công và nhiệm vụ thành công là hai việc khác nhau; kiểm tra cuối phải đọc trạng thái thực của trang hoặc backend.
+4. **Xác minh ứng viên**: Lần thành công đầu tiên chỉ tạo `candidate`. Hệ thống phải đặt lại tài khoản sandbox hoặc trang thử nghiệm về một trạng thái khởi đầu độc lập, rồi phát lại toàn bộ ứng viên. Chỉ khi mọi kiểm tra trước hành động, sau hành động và trạng thái cuối đều vượt qua, phiên bản mới được phát hành thành `validated`. Với nhiệm vụ có tác dụng phụ như gửi email hoặc đặt hàng, nếu không có callback đặt lại an toàn thì chỉ lưu ứng viên để kiểm toán, không lặp lại thao tác trên tài khoản sản xuất để xác minh.
+5. **Khớp và phát lại**: Khi nhiệm vụ mới đến, trước hết tìm quy trình trong kho năng lực chính thức theo ý định và từ khóa, trích xuất tham số lần này, rồi để Playwright thực thi trực tiếp. Lộ trình phát lại không cần gọi LLM từng bước, nhưng vẫn phải chờ phần tử khả dụng và hoàn thành mọi kiểm tra trạng thái.
+6. **Mất hiệu lực và học lại**: Khi không tìm thấy phần tử đích, kiểm tra trạng thái thất bại, API Schema thay đổi hoặc trạng thái cuối sai, lập tức dừng các hành động tiếp theo, chuyển phiên bản cũ từ kho truy xuất sang vùng `invalid`, rồi quay về Agent đầy đủ để khám phá lại. Tệp cũ được giữ để kiểm toán và so sánh, nhưng không được âm thầm tiếp tục khớp.
+
+Với thao tác gửi email, kết quả biên dịch không chỉ là “nhấp các nút này theo thứ tự” mà là một chương trình nhỏ có tham số người nhận, chủ đề và nội dung: trước khi gửi, kiểm tra cửa sổ soạn thư và ô nhập; sau khi gửi, kiểm tra thông báo thành công; cuối cùng xác nhận thư tương ứng xuất hiện trong mục Đã gửi. Trong thí nghiệm PreAct[^preact], các chương trình như vậy đạt tốc độ đầu-cuối nhanh hơn 8,5–13 lần trên nhiệm vụ lặp lại và giai đoạn phát lại không cần gọi mô hình ngôn ngữ theo từng bước. Quan trọng hơn, bộ nhớ quy trình phải đồng thời có **xác minh trước hành động, xác minh sau hành động và xác minh độc lập trước khi lưu**. Nếu không, hệ thống dễ tạo ra ảo giác nguy hiểm: độ phủ phát lại là 100%, mọi nút đều đã được nhấp, nhưng một trường thực ra trống và nhiệm vụ chưa bao giờ thật sự hoàn thành.
+
+> **Thí nghiệm 9-4 ★★★: Tạo quy trình công việc có thể xác minh từ quỹ đạo trình duyệt**
+>
+> **Mục tiêu thí nghiệm**: Xác minh liệu Web Agent có thể biến một lần khám phá tốn kém thành quy trình tái sử dụng và từ chối phát lại sai khi trang web thay đổi, thay vì báo nhầm “mọi hành động đã chạy” là thành công hay không.
+>
+> **Kịch bản bốn giai đoạn**: Giai đoạn một thực hiện nhiệm vụ “gửi đến `test@example.com` một tin nhắn có chủ đề ‘Email thử nghiệm’” trên trang email thử nghiệm hoặc trang tin nhắn mô phỏng. Agent đầy đủ chịu trách nhiệm khám phá; lớp bao bọc ghi lại hành động, tham số, trạng thái trang và tạo `candidate`. Giai đoạn hai gọi `validation_reset` để khôi phục sandbox rồi phát lại toàn bộ độc lập. Chỉ ứng viên vượt qua tất cả kiểm tra trước hành động, sau hành động và trạng thái cuối mới vào kho năng lực chính thức. Giai đoạn ba thực hiện nhiệm vụ cùng loại nhưng người nhận, chủ đề và nội dung đều khác; hệ thống phải khớp quy trình đã xác minh, điền tham số mới và dùng Playwright phát lại mà không vào vòng LLM từng bước. Giai đoạn bốn thay đổi cách định vị nút, văn bản trang hoặc trạng thái cuối để kiểm tra quy trình cũ có lập tức thành `invalid` và trả `fallback_required=True` hay không.
+>
+> **Thiết kế đối chứng**: Đường cơ sở đơn giản chỉ đếm xem thao tác nhấp, nhập liệu có hoàn thành mà không ném ngoại lệ hay không. Nhóm thí nghiệm còn xác minh trang trước hành động, trang sau hành động và trạng thái cuối của nhiệm vụ. Hai nhóm dùng cùng quỹ đạo và cùng thay đổi trang; so sánh tỷ lệ phán đoán sai trong các ca thành công giả như “trường còn trống nhưng nút Gửi đã được nhấp” hoặc “Save đã được nhấp nhưng dữ liệu chưa ghi vào cơ sở dữ liệu”.
+>
+> **Chỉ số và nghiệm thu**: Ghi thời gian đầu-cuối của khám phá lần đầu và phát lại, số lần gọi LLM, tỷ lệ thành công, tỷ lệ thành công sai, tỷ lệ khớp quy trình, tỷ lệ phát hiện thay đổi trang và số lần quay về học lại. Khi không có callback đặt lại, quy trình phải ở vùng ứng viên. Phiên bản xác minh thất bại không được truy xuất. Phát lại tham số hóa không được tái sử dụng người nhận hoặc nội dung lần đầu. Sau khi trang thay đổi, phải dừng các hành động tiếp theo nguy hiểm. Kết quả tăng tốc chỉ có ý nghĩa khi đồng thời thỏa các điều kiện này.
+>
+> Phần triển khai đi kèm nằm tại [`browser-use-rpa`](../chapter9/browser-use-rpa/), đồng thời cung cấp bản trình diễn máy trạng thái xác định và lộ trình vận hành gọi Agent trình duyệt thực.
+
+Việc Agent sửa mã của chính mình không có nghĩa là tiến trình đang chạy trực tiếp ghi đè lên bản thân. Hệ thống sản xuất nên tạo một nhánh ứng viên từ phiên bản ổn định hiện tại, để Coding Agent tạo bản vá tối thiểu, lần lượt vượt qua kiểm tra tĩnh, kiểm thử đơn vị, quét an toàn, phát lại quỹ đạo thất bại và hồi quy nhiệm vụ cũ, rồi mới tạo phiên bản mới có thể triển khai canary. Điều này chuyển “tự sửa đổi” thành một quy trình phát hành phần mềm có thể kiểm toán, đồng thời cũng là ranh giới giữa Chương 9 và Chương 5: Chương 5 cung cấp năng lực sửa đổi hệ thống, còn chương này cung cấp phương pháp tự sửa đổi được kích hoạt bởi kinh nghiệm và ràng buộc bằng vòng khép kín xác minh.
+
+Chỉ yêu cầu “bản vá càng nhỏ càng tốt” vẫn chưa đủ để quy kết nguyên nhân đáng tin cậy. Mỗi yêu cầu sửa đổi còn phải là một **hợp đồng thay đổi có thể bác bỏ**: nêu bằng chứng thất bại, nguyên nhân gốc được suy đoán, thành phần Harness chịu trách nhiệm, thay đổi ứng viên, hành vi dự kiến được sửa, hành vi hiện có có thể bị ảnh hưởng và ca kiểm thử cho cả hai. Agentic Harness Engineering gọi đây là khả năng quan sát ở ba tầng thành phần, kinh nghiệm và quyết định: mỗi thành phần có thể sửa đều có biểu diễn cấp tệp; lượng lớn quỹ đạo được tổ chức thành bằng chứng có thể đào sâu dần; trước khi thực thi, mỗi chỉnh sửa tuyên bố dự đoán tác động rồi để kết quả vòng sau kiểm chứng[^ahe-2026]. Nhờ đó, mức điểm tăng mới có thể gắn với một cơ chế cụ thể thay vì chỉ là thử sai khó giải thích.
+
+Bộ sinh ứng viên cũng không nên chỉ nhận các ca thất bại. Self-Harness còn cung cấp những hành vi thành công bắt buộc phải giữ và lịch sử các thay đổi từng bị từ chối[^self-harness-2026]. Phần thứ nhất cho Agent biết bản sửa không được phá điều gì; phần thứ hai ngăn nó đề xuất lại cùng một phương án thất bại bằng cách diễn đạt khác. Bằng chứng thất bại, ràng buộc thành công và các lần thử trước tạo thành không gian ứng viên có biên, hữu ích hơn việc nạp toàn bộ mã nguồn và nhật ký thô vào Agent sửa đổi.
+
+Việc tạo công cụ cũng tuân theo cùng giao thức. Trường hợp Alita[^alita-2025] đưa ra yêu cầu Agent tìm con số được nhắc ngay sau lần đầu khủng long xuất hiện trong một video YouTube 360 VR do diễn viên lồng tiếng Gollum trong *Chúa tể những chiếc nhẫn* thuyết minh. Khi nhận ra mình thiếu năng lực đọc phụ đề, nó tìm kiếm và kiểm thử `youtube-transcript-api`, đóng gói thư viện thành công cụ phụ đề mới và cuối cùng lấy được đáp án `100000000` từ phụ đề. Chỉ sau khi vượt qua quét an toàn, kiểm thử chức năng và tái sử dụng trong nhiệm vụ sau, công cụ mới đi vào kho năng lực. Khám phá công cụ chủ động ở Chương 4 giải quyết “công cụ hiện có nào phù hợp”; Chương 5 giải quyết “viết công cụ thế nào”; chương này quan tâm “bằng chứng vận hành nào kích hoạt việc tạo và công cụ mới trở thành năng lực dài hạn đã xác minh ra sao”.
+
+> **Thí nghiệm 9-5 ★★★: Kích hoạt Agent tự sửa đổi từ quỹ đạo thất bại**
+>
+> **Mục tiêu thí nghiệm**: Với nhiều quỹ đạo trong đó lỗi `retryable=false` vẫn bị gọi liên tiếp, kiểm tra hệ thống có định vị nguyên nhân gốc ở mã thử lại và ngắt mạch, đồng thời tạo sửa chữa ứng viên mà không phá năng lực thử lại lỗi tạm thời hay không.
+>
+> **Quy trình**: Mô-đun chẩn đoán trước tiên tổng hợp cùng một lỗi trên các nhiệm vụ khác nhau. Chỉ khi đạt ngưỡng ủng hộ xuyên quỹ đạo, nó mới tạo yêu cầu sửa đổi và định vị mục tiêu ở `retry_policy.py` của phiên bản ổn định. Bộ sinh ứng viên đọc chẩn đoán thất bại, hành vi phục hồi lỗi tạm thời cần giữ lại, những thay đổi từng bị từ chối và mã nguồn ổn định. Trước khi xuất diff tối thiểu, nó dự đoán “số lần gọi sau lỗi không thể thử lại phải giảm, tỷ lệ phục hồi timeout tạm thời không được giảm”. Dù dùng bộ sinh xác định hay LLM Coding Agent thực, kết quả chỉ được ghi vào thư mục ứng viên cô lập. Harness xác minh sau đó lần lượt biên dịch ứng viên, phát lại quỹ đạo thất bại gốc, kiểm tra lỗi không thể thử lại có dừng ngay và mở bộ ngắt mạch hay không, rồi kiểm tra lại timeout tạm thời có còn được thử theo ngưỡng cũ hay không.
+>
+> **Đối chứng chẩn đoán và chỉ số**: Dùng phương án “chỉ thêm vào Prompt một câu đừng gọi lặp lại” làm đối chứng khái niệm về định vị sai tầng, qua đó cho thấy vì sao ràng buộc thử lại có thể thực thi xác định phải đi vào chương trình. Thí nghiệm chạy được so sánh bộ sinh bản vá xác định với bộ sinh LLM; cả hai dùng chung ngưỡng phát hành. Ghi số lần gọi lỗi không thể thử lại, tỷ lệ phục hồi lỗi tạm thời, số hồi quy nhiệm vụ cũ, kích thước bản vá và tỷ lệ chấp nhận ứng viên.
+>
+> **Tiêu chí nghiệm thu**: Sau khi mọi kiểm tra vượt qua, hệ thống chỉ tạo `release_to_canary`. Bất kỳ kiểm tra tĩnh, phát lại thất bại hay hồi quy nhiệm vụ cũ nào không đạt đều trả `reject_candidate`. `release_manifest.json` phải ghi cụm thất bại, quỹ đạo nguồn, nguyên nhân gốc suy đoán, thành phần và tệp mục tiêu, diff mã, sửa chữa dự kiến, hồi quy tiềm tàng, kết quả kiểm tra, phiên bản ứng viên và phiên bản khôi phục. Ứng viên bị từ chối cũng phải giữ lý do thất bại cho vòng sinh tiếp theo. Agent tạo bản vá không được sửa mã ổn định, bộ xác minh, nhật ký kiểm toán hoặc ngưỡng phê duyệt phát hành của chính nó.
+>
+> Phần triển khai đi kèm nằm tại [`self-modifying-agent`](../chapter9/self-modifying-agent/), có thể chọn bộ sinh ứng viên xác định hoặc LLM Coding Agent thực; cả hai lộ trình dùng chung một ngưỡng phát hành.
+
+[^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
+
+[^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
+
+Thí nghiệm 9-8 áp dụng cùng giao thức vào lớp xác minh. Chỉ tạo yêu cầu thay đổi khi nhiều sửa chữa của người dùng, đánh giá thấp và audit cùng chỉ ra thao tác rủi ro cao không được xác nhận; ứng viên được ghi vào thư mục cô lập. Phân loại thao tác xóa nguy hiểm và `git push --force` theo tên/đối số công cụ, buộc token một lần vào thao tác cụ thể. Ứng viên phải qua kiểm tra AST/tĩnh, replay tập ranh giới (kể cả token giả/tái sử dụng) và replay tập giữ lại.
+
+> **Thí nghiệm 9-8 ★★: Cổng xác nhận thao tác rủi ro cao từ phản hồi người dùng**
+>
+> Dùng ba tín hiệu và trajectory đối chứng trong `failure_trajectories.json`. Ứng viên `gpt-4o-mini` thật không qua replay nhiệm vụ chưa hoàn thành, thao tác bình thường và token một lần nên bị cổng an toàn từ chối. Ứng viên xác định vượt qua và nhận `release_to_canary`; ghi lại kiểm tra, quyết định và hash thư mục ổn định. Xem [`harness-safety-gate`](../chapter9/harness-safety-gate/).
+
+### Ghi kinh nghiệm vào tham số
+
+Tri thức, chỉ dẫn và chương trình đều dựa trên một tiền đề: năng lực mục tiêu có thể được biểu đạt tương đối đầy đủ bằng ký hiệu bên ngoài. Tuy nhiên, những năng lực như hiểu ảnh y khoa, ngữ điệu giọng nói tự nhiên, loại bỏ “chất AI” khuôn mẫu trong văn bản và lập kế hoạch dài hạn rất khó nén thành vài quy tắc hoặc quy trình công việc. Những năng lực này phải được ghi vào tham số mô hình thông qua hậu huấn luyện.
+
+Có tham số hóa hay không không chỉ do “nhiệm vụ có ổn định lâu dài hay không” quyết định. Độ lệch miền do thiết bị hình ảnh mới mang lại vẫn có thể cần LoRA hoặc tinh chỉnh liên tục; phong cách ngôn ngữ thay đổi nhanh cũng có thể thích nghi bằng huấn luyện ưu tiên định kỳ. Tính ổn định ảnh hưởng đến tần suất và chi phí cập nhật, nhưng tính chất biểu diễn của năng lực mới quyết định vật mang chính. Ngược lại, một quy tắc phê duyệt chuyển khoản ổn định lâu dài cũng không nên chỉ dựa vào trí nhớ tham số; mã phía máy chủ vẫn phải cung cấp bảo đảm xác định.
+
+Chương 8 đã thảo luận đầy đủ về SFT, chưng cất và RL nên phần này không lặp lại thuật toán. Đối với tiến hóa liên tục, điều then chốt là chuyển các quỹ đạo sản xuất đã được đánh giá thành dữ liệu huấn luyện: bản minh họa chất lượng cao có thể đi vào SFT, ưu tiên rõ ràng có thể tạo thành dữ liệu theo cặp, còn tương tác có phần thưởng môi trường đáng tin cậy có thể dùng cho RL. Trước khi đưa vào huấn luyện, vẫn cần loại bỏ thông tin riêng tư, lọc quỹ đạo sai và giữ lại tập hồi quy độc lập; sau huấn luyện, cần kiểm tra xem năng lực tổng quát và căn chỉnh an toàn có bị quên hay không.
+
+Học tham số thường phối hợp với các phương pháp bên ngoài. Mô hình ảnh y khoa dùng tham số để học biểu diễn thị giác, dùng kho tri thức cung cấp hướng dẫn mới nhất, dùng mã để đo tổn thương và tính rủi ro; giọng điệu tự nhiên của dịch vụ khách hàng có thể được định hình ở cấp phân phối tổng thể bằng huấn luyện ưu tiên, sau đó dùng Prompt quy định nhận diện thương hiệu hiện tại và dùng bộ nhớ người dùng để thích nghi với sở thích giao tiếp cá nhân. Tiến hóa liên tục không phải là chọn một đáp án duy nhất trong bốn phương thức, mà là đặt từng năng lực vào vị trí phù hợp nhất để biểu đạt và quản trị nó.
+
+### Từ cập nhật tạo tác đến cập nhật “phương pháp cập nhật”
+
+Bốn phương thức trước trả lời **kinh nghiệm được ghi vào đâu**, nhưng tiến hóa liên tục còn có một trục độc lập khác: hệ thống đang tối ưu nội dung của một tạo tác, hay phương pháp tạo, quản lý và xác minh các tạo tác đó? Theo trục này, đối tượng tối ưu có thể mở rộng từ **một quy tắc hoặc ký ức → ngữ cảnh có cấu trúc → quy trình công việc → mã Harness → mã bộ tối ưu sinh phương án ứng viên**[^weng-harness-2026]. Đây không phải năm vật mang cập nhật mới mà là năm quy mô tìm kiếm; tri thức, Prompt, Skill và chương trình có thể xuất hiện ở nhiều tầng.
+
+Tầng trong cùng chỉ sửa nội dung tạo tác, chẳng hạn thêm một quy tắc cục bộ vào Prompt hệ thống sau quỹ đạo thất bại hoặc thêm điều kiện ngoại lệ vào tài liệu kinh nghiệm. Phạm vi ảnh hưởng nhỏ, dễ quy kết và khôi phục nên đây phải là lựa chọn mặc định. Tuy nhiên, liên tục yêu cầu mô hình viết lại toàn bộ Prompt hoặc bộ nhớ cũng gây suy giảm: qua nhiều vòng rút gọn, chi tiết hiếm nhưng quan trọng có thể dần biến mất, còn các điều kiện ràng buộc lẫn nhau bị gộp thành nguyên tắc quá trừu tượng. Agentic Context Engineering (ACE) duy trì ngữ cảnh như tập mục có định danh ổn định; các mô-đun sinh, phản tư và tuyển chọn đề xuất cập nhật tăng dần, rồi logic xác định hợp nhất và loại trùng thay vì viết lại một khối văn bản ngày càng ngắn[^ace-2026]. Đây là ví dụ nghiên cứu cụ thể cho nguyên tắc “diff tối thiểu, giữ nguồn gốc” của chương.
+
+Ra ngoài một tầng, đối tượng tối ưu không chỉ là “ngữ cảnh có gì” mà còn là “ngữ cảnh được kiến tạo thế nào”. Meta Context Engineering (MCE) tách thành vòng trong và vòng ngoài: vòng trong tối ưu tạo tác ngữ cảnh cho nhiệm vụ hiện tại theo một phương pháp quản lý đã cho; vòng ngoài dùng kết quả nhiều lần thực thi và xác minh để sửa chính các thao tác tìm kiếm, lựa chọn, lọc và định dạng[^mce-2026]. Sửa một quy tắc truy xuất là sửa cơ chế quản lý nội dung; so sánh nhiều cơ chế truy xuất–tuyển chọn và giữ phiên bản chuyển giao tốt hơn mới là học cách quản lý ngữ cảnh.
+
+Ý tưởng này mở rộng tới quy trình công việc và toàn bộ Harness. AFlow biểu diễn quy trình gồm nhiều lần gọi LLM thành đồ thị mã và dùng phản hồi thực thi để tìm tổ hợp nút cùng luồng điều khiển[^aflow-2025]. Meta-Harness để Coding Agent đọc mã nguồn, điểm số và quỹ đạo của Harness ứng viên rồi tìm kiếm mã quyết định cách lưu, truy xuất và trình bày thông tin[^meta-harness-2026]. Chương 5 đã xem mã là ngôn ngữ chung biểu đạt cấu trúc hệ thống Agent; điểm mới ở đây là mã cùng lịch sử đánh giá có thể trở thành đối tượng tìm kiếm liên tục, không chỉ là đầu ra một lần.
+
+Tầng cao hơn không mặc nhiên tốt hơn. Tìm một quy tắc cục bộ có thể chỉ cần vài ca biên; tìm toàn bộ quy trình hoặc Harness phải đối mặt với không gian ứng viên lớn hơn, chi phí đánh giá cao hơn và khó quy kết hơn. Một lỗi rõ ràng, lặp lại và định vị được ở một thành phần nên được sửa trước bằng bản vá cục bộ có thể kiểm toán. Chỉ khi sửa cục bộ lâu dài không giải quyết được vấn đề xuyên thành phần, hoặc chính phương pháp quản lý đã thành nút thắt, mới nên nâng lên tầng quy trình, Harness hay bộ tối ưu. Ở mọi tầng, bộ đánh giá, ranh giới quyền và tập kiểm thử giữ lại phải nằm ngoài vùng có thể sửa — không gian tìm kiếm càng lớn, gốc tin cậy này càng quan trọng.
+
+> **Thí nghiệm 9-6 ★★★: Đưa cuốn sách này cho Hermes: nó có thể tự nâng cấp không?**
+>
+> **Mục tiêu**: Kiểm tra liệu một Agent có thể biến tri thức bên ngoài thành một bản cập nhật thật cho chính năng lực của mình hay không. Thí nghiệm không nêu sẵn vấn đề hay danh sách tính năng. Hermes nhận cả mười chương và mã nguồn của mình, rồi phải hiểu nguyên tắc, xem lại cách triển khai và tự chọn một cải tiến đáng làm.
+>
+> **Thiết kế**: Cuốn sách và mã nguồn tạo thành ngữ cảnh có thể đọc, còn phiên bản ổn định, Reviewer độc lập và kiểm thử chấp nhận nằm ngoài phạm vi Hermes được sửa. Hermes phải hoàn tất **đọc → đối chiếu → chọn → thay đổi → xác minh**. Nếu ứng viên bị từ chối, nhận xét trở thành tín hiệu học cho vòng tiếp theo; Hermes không thể bỏ qua cổng kiểm tra rồi tuyên bố thành công.
+>
+> **Lần chạy thật**: Sau khi đọc sách, Hermes tự nhận ra các trajectory đã lưu còn thiếu bằng chứng có cấu trúc để việc học sau này dùng trực tiếp. Nó chọn chuyển kết quả thực thi thành tín hiệu học thận trọng, sửa mã nguồn của mình và thêm kiểm thử. Ba lần review độc lập đầu tiên tìm thấy sai lệch với định dạng dữ liệu thật, các đường lưu trữ và ý nghĩa phép đếm. Mỗi phát hiện quay về phiên Hermes ban đầu; lần review thứ tư chấp nhận ứng viên.
+>
+> **Giới hạn kết luận**: Lần chạy cho thấy Agent có thể rút nguyên tắc từ tri thức dài, ánh xạ chúng vào mã của mình và hoàn tất tự cập nhật dưới xác minh bên ngoài. Nó chưa chứng minh tỷ lệ thành công downstream đã tăng; điều đó cần một thí nghiệm ablation riêng. Ý tưởng thí nghiệm do độc giả Grace đóng góp.
+
+## Xây dựng vòng khép kín tiến hóa liên tục có thể vận hành dài hạn
+
+Chỉ khi đi vào cùng một chu trình tự chủ, bốn phương thức cập nhật mới chuyển từ tối ưu một lần thành tiến hóa liên tục. Hình 9-5 trình bày cấu trúc hai vòng thận trọng hơn trong hệ thống sản xuất: vòng thực thi trực tuyến chỉ hoàn thành nhiệm vụ và ghi lại bằng chứng, không trực tiếp viết lại Agent chính thức; vòng tiến hóa ngoại tuyến tổng hợp quỹ đạo, chẩn đoán nguyên nhân gốc, tạo sửa đổi ứng viên, rồi phát hành phiên bản mới sau khi vượt qua ngưỡng xác minh. Hai vòng được kết nối bằng kho kinh nghiệm và tập đánh giá có phiên bản.
+
+![Hình 9-5 Hai vòng thực thi trực tuyến và tiến hóa ngoại tuyến](images/fig9-5.svg)
+
+Voyager[^voyager-2023] minh họa một vòng tiến hóa liên tục tương đối hoàn chỉnh. Trong Minecraft, nó lựa chọn mục tiêu mới dựa trên năng lực hiện tại, lặp chương trình theo phản hồi môi trường, lưu mã vào kho kỹ năng sau khi xác minh thành công, rồi kết hợp các kỹ năng cũ để giải quyết nhiệm vụ khó hơn. Chương trình học tự động, kỹ năng có thể thực thi và xác minh môi trường đều không thể thiếu: chỉ có kho kỹ năng mà không có chương trình học thì Agent không biết bước tiếp theo nên học gì; chỉ có tự phản tư mà không có xác minh môi trường thì kho kỹ năng sẽ tích lũy sai sót; chỉ có khám phá mà không có lưu giữ lâu dài thì mỗi nhiệm vụ vẫn phải bắt đầu lại từ đầu. Dù tri thức, Prompt, công cụ và tham số của Agent thực tế phức tạp hơn, quá trình học cơ bản vẫn tương tự.
+
+Cụ thể, Voyager gồm ba cơ chế ăn khớp với nhau. **Bộ sinh chương trình học tự động** đề xuất mục tiêu tiếp theo có độ khó vừa phải dựa trên vật phẩm hiện có, môi trường và kỹ năng đã thành thạo, để việc khám phá không trở thành lang thang ngẫu nhiên. **Kho kỹ năng** lưu chương trình thành công dưới dạng mã có thể truy xuất và kết hợp; chẳng hạn kỹ năng thu thập nâng cao có thể gọi các kỹ năng cơ sở như di chuyển và chế tạo. **Cơ chế Prompt lặp** đưa quan sát môi trường, lỗi thực thi và kết quả tự xác minh trở lại vòng sinh mã tiếp theo cho đến khi nhiệm vụ thật sự vượt qua. Bài báo cho biết so với các đường cơ sở thời đó, Voyager thu được số vật phẩm độc nhất gấp 3,3 lần, khám phá quãng đường gấp 2,3 lần, mở các cột mốc quan trọng của cây công nghệ nhanh hơn tới 15,3 lần, và có thể chuyển kho kỹ năng sang thế giới Minecraft mới. Các chỉ số này đo đường cong năng lực tăng theo kinh nghiệm, chứ không phải điểm thi một lần của Agent đóng băng.
+
+### Từ định vị vấn đề đến kết tinh kinh nghiệm
+
+Cùng một vấn đề bề mặt có thể cần những cách sửa đổi khác nhau. Hiện tượng Agent chăm sóc khách hàng bịa đặt sự kiện có thể do kho tri thức thiếu thông tin, cũng có thể do Prompt không yêu cầu trích dẫn; khi chưa hoàn thành nhiệm vụ mà Agent đã đưa ra cam kết sai sự thật rằng “đã hoàn thành”, vấn đề có thể được sửa bằng chỉ dẫn hoặc Harness có thể cưỡng chế kiểm tra phản hồi so với trạng thái công cụ. Mô-đun tiến hóa trước tiên phải định vị nguyên nhân gốc, sau đó chọn đối tượng sửa đổi tối thiểu, dễ xác minh và dễ khôi phục nhất. Sự cố ngẫu nhiên thiếu bằng chứng không nên lập tức kích hoạt học tập mà cần tiếp tục tích lũy mẫu.
+
+Lựa chọn này cũng có thể thay đổi khi kinh nghiệm tăng lên. Một chiến lược mới được phát hiện trước tiên được cung cấp để truy xuất dưới dạng tài liệu kinh nghiệm; sau khi được nhiều trường hợp xác minh lặp lại, nó có thể được nâng thành tri thức. Tri thức có ba cách biểu đạt: quy tắc có thể mô tả rõ bằng ngôn ngữ tự nhiên có thể được kết tinh thành Skill; nếu các bước ổn định và không cần năng lực hiểu ngôn ngữ tự nhiên thì có thể được biên dịch thành mã công cụ; nếu thực chất nó phản ánh năng lực quyết định ngầm có phạm vi rộng thì có thể đi vào hậu huấn luyện.
+
+### Xác minh, phát hành và khôi phục
+
+Mọi sửa đổi trước tiên đều tạo năng lực ứng viên hoặc Agent ứng viên, thay vì trực tiếp ghi đè phiên bản sản xuất. Tài liệu tri thức phải được xác minh xem sau khi truy xuất có nâng cao hiệu quả nhiệm vụ mới hay không; Prompt và Skill phải được kiểm tra trên trường hợp biên và hồi quy nhiệm vụ cũ; chương trình phải chạy kiểm thử trong sandbox và môi trường đã đặt lại; cập nhật tham số phải được kiểm tra về quên, an toàn và nhiệm vụ ngoài phân phối. Sau khi vượt qua xác minh, phiên bản vẫn phải được phát hành canary để quan sát lưu lượng thực; khi các chỉ số trọng yếu suy giảm, hệ thống tự động khôi phục về phiên bản an toàn đã biết.
+
+**Phát hành đã xác minh và rollback:**
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
 ```
 
-Một mô hình thế giới dùng được cho robot ít nhất phải làm tốt ba việc:
+Xác minh còn phải tách hai năng lực thường bị trộn lẫn. **Năng lực cập nhật Harness** (harness-updating) là tạo ra thay đổi bền vững có giá trị từ quỹ đạo; **năng lực hưởng lợi từ Harness** (harness-benefit) là Agent làm nhiệm vụ có thể tìm, kích hoạt và dùng đúng thay đổi đó về sau. Một Skill có thể hoàn toàn đúng, nhưng mô hình yếu không tải nó trong đúng tình huống hoặc không thể tuân theo trong quỹ đạo dài; cả hai đều khiến điểm cuối trông như “không tiến hóa”. Vì vậy, không thể chỉ dùng điểm đầu-cuối để suy ra chất lượng bộ cập nhật. Thí nghiệm hoán đổi mô hình của Lin và cộng sự cho thấy hai năng lực này có quan hệ khác nhau với năng lực mô hình nền[^harness-benefit-2026]. Quan hệ cụ thể còn cần được kiểm chứng trên nhiều nhiệm vụ hơn, nhưng tách chúng khi đánh giá là nguyên tắc dùng được rộng rãi.
 
-- hiểu được trạng thái hiện tại;
-- dự đoán được kết quả mà các hành động khác nhau có thể mang lại;
-- chuyển dự đoán ấy cho bộ lập kế hoạch hoặc bộ điều khiển để giúp lựa chọn.
+Bảng 9-3 Các chỉ số đánh giá phân tầng cho tiến hóa liên tục
 
-Một VLM chỉ biết mô tả video, hay một mô hình chỉ biết sinh hình ảnh, không tự nhiên trở thành mô hình thế giới đáng tin cho robot. Nó phải biết hành động là gì, và dự đoán được ảnh hưởng của hành động ấy lên vật thể và môi trường. V-JEPA 2 đại diện cho hướng dự đoán tương lai ở trạng thái nội tại, còn World-Action Model học tường minh quan hệ "hành động—quan sát tương lai". Chúng có thể dùng song song với VLA, không nhất thiết phải thay thế VLA.[^ch9-16]
+| Chỉ số | Câu hỏi được trả lời | Bằng chứng chính |
+|---|---|---|
+| Tỷ lệ thay đổi ứng viên hữu hiệu | Bộ cập nhật có đề xuất thay đổi có giá trị không? | Tỷ lệ chấp nhận và mức tăng trong xác minh độc lập |
+| Tỷ lệ kích hoạt tạo tác | Agent có tải Skill, bộ nhớ hoặc công cụ mới đúng lúc không? | Quỹ đạo truy xuất, định tuyến và gọi công cụ |
+| Tỷ lệ tuân thủ thành công | Sau khi kích hoạt, Agent có làm theo quy tắc hoặc quy trình mới không? | Chuỗi hành động và bộ xác minh quá trình |
+| Mức tăng trên nhiệm vụ giữ lại | Hệ thống có cải thiện trên nhiệm vụ không tham gia tiến hóa không? | Thành công, chất lượng và chi phí held-out |
 
-Trong hệ thống thật, mô hình thế giới thường có ba cách dùng:
+Để chẩn đoán, có thể cố định một Harness ứng viên và chỉ thay mô hình làm nhiệm vụ. Nếu mô hình mạnh hưởng lợi nhưng mô hình yếu không bao giờ kích hoạt tạo tác mới, nút thắt nằm ở truy xuất hoặc định tuyến. Nếu cả hai đều kích hoạt nhưng chỉ mô hình mạnh thực thi đúng, nút thắt nằm ở tuân thủ chỉ dẫn hoặc lập kế hoạch dài hạn. Nếu mọi mô hình đều suy giảm, chính thay đổi đáng nghi hơn. Ngược lại, cố định mô hình nhiệm vụ và thay mô hình đề xuất sửa đổi cho phép so sánh riêng chất lượng bộ cập nhật. Hoán đổi hai chiều này giúp xác định nơi nên đầu tư ngân sách năng lực rõ hơn một điểm tổng sau tiến hóa.
 
-1. **Trước khi cử động**: so sánh các hành động ứng viên như gắp, đẩy hay chờ, và ưu tiên phương án ít rủi ro hơn;
-2. **Trong lúc thực thi**: đối chiếu quan sát thật với dự đoán, phát hiện sai lệch thì rút ngắn hành động, dừng lại, hoặc lập lại kế hoạch;
-3. **Trong lúc huấn luyện**: học các thay đổi trạng thái từ video, dữ liệu mô phỏng và những quỹ đạo thất bại, nhờ đó bớt phải thử sai trên máy thật.
+Đánh giá không phải kỳ thi sau khi học xong, mà là một phần không thể thiếu của quá trình tự tiến hóa. Đánh giá dài hạn tối thiểu phải đồng thời quan sát năm loại kết quả:
 
-Quay lại nhiệm vụ trên bàn của XLeRobot. Nếu tờ giấy vàng bị cốc đỏ che khuất một phần, hệ thống có thể so sánh các kỹ năng ứng viên: "gắp giấy trước", "dời cốc trước", hay "gắp từ hướng khác". Mô hình thế giới không cần sinh ra video robot trông như thật: chỉ cần nó dự đoán được hành động ứng viên nào dễ dẫn tới trạng thái gắp được tờ giấy, và hành động nào có thể làm đổ cốc, là đã đủ giúp bộ lập kế hoạch xếp hạng lựa chọn. Sau khi thực thi hành động, quan sát thật từ camera vẫn là sự thật cuối cùng: dự đoán chỉ giúp chọn, chứ không thay thế được việc kiểm tra nghiệm thu.
+- hồi quy (regression), tức kinh nghiệm mới có xung đột với những kinh nghiệm hiện có khác hay không và các trường hợp vốn vượt qua trước đây có bị hồi quy hay không;
+- năng lực khái quát hóa, tức mức cải thiện mà kinh nghiệm mới mang lại trong những bối cảnh chưa được tập kiểm thử bao phủ;
+- hiệu quả Token, tức chi phí token tiêu thụ để hoàn thành nhiệm vụ;
+- tính an toàn, tức quy tắc, quyền riêng tư và ranh giới từ chối có trôi dạt theo quá trình tiến hóa hay không;
+- chất lượng kỹ thuật dài hạn, tức độ phức tạp bảo trì, tính nhất quán kiến trúc, ranh giới sở hữu, khả năng tương thích ngược và chi phí di chuyển, gỡ lỗi tương lai có xấu đi hay không.
 
-Thứ mô hình thế giới đưa ra không phải câu trả lời chắc chắn, mà là những dự đoán so sánh được về "làm thế này thì có thể xảy ra chuyện gì". Dự đoán càng xa thì sai số càng có xu hướng lớn, và một khung cảnh tương lai trông như thật chưa chắc đã hợp với quy luật tiếp xúc và ma sát thật. Vì vậy hệ thống thật vẫn cần dự đoán ngắn hạn, quan sát thời gian thực, ước lượng bất định, và một bộ điều khiển an toàn phần cứng độc lập. Mô hình thế giới sinh mẫu dùng được cho mô phỏng tương tác và trực quan hóa, nhưng đừng lẫn lộn "sinh được video" với "dẫn dắt được hành động của robot".[^ch9-21]
+Một vấn đề chỉ giải quyết được trường hợp thất bại hiện tại nhưng suy giảm ở những trường hợp hiện có khác hoặc lĩnh vực mới không phải là học liên tục thành công.
 
-> **Thử nghiệm 9-10 ★★: So sánh ba vòng dọn bàn tự chủ trong bộ mô phỏng**
+### Ranh giới của vòng khép kín có thể xác minh: khi “hoàn thành” không có nghĩa là “tiến bộ”
+
+Vòng khép kín trên dễ hình thành nhất trong Coding, gọi công cụ và thay đổi trạng thái nghiệp vụ, vì kiểm thử, trạng thái môi trường hoặc quy tắc xác định có thể phản hồi nhanh. Nghiên cứu mở, hoạch định chiến lược và thiết kế sản phẩm phức tạp thì khác: tín hiệu đánh giá đến chậm, không có một đáp án duy nhất, còn những mục tiêu quan trọng nhất — phẩm vị nghiên cứu, giá trị dài hạn và khả năng bảo trì — rất khó biến thành điểm số tức thời. Khi đó Harness có thể thực thi quy trình rất hoàn chỉnh nhưng chỉ ổn định tạo ra “thứ trông giống kết quả” mà không thúc đẩy mục tiêu thật.
+
+Nghiên cứu tự động là một phép thử áp lực tiêu biểu. Trehan và Chopra ghi lại bốn lần thử đầu-cuối từ ý tưởng nghiên cứu đến bài báo; ba lần thất bại ở khâu triển khai hoặc đánh giá, chỉ một lần hoàn tất toàn bộ quy trình[^llm-scientists-2026]. Ba loại vấn đề nổi bật là: **trôi dạt triển khai**, khi phương án khó lên thì Agent lùi về cách làm quen thuộc trong dữ liệu huấn luyện nhưng đã lệch giả thuyết; **lạc quan nhận thức luận quá mức**, khi tín hiệu vẫn có thể là nhiễu mà hệ thống đã giải thích, vá và tuyên bố phát hiện, đồng thời bỏ qua kết quả âm; và **thiếu phán đoán ngầm**, khi Agent chạy được thí nghiệm nhưng không biết baseline nào quan trọng, bất thường nào đáng theo đuổi hay khi nào nên bỏ giả thuyết.
+
+Các nhiệm vụ này đòi hỏi thay đổi cấu trúc bằng chứng và giám sát, chứ không chỉ thay bằng mô hình viết bài tốt hơn:
+
+- **Tách kết luận khỏi bằng chứng**: ghi nguồn riêng cho trích dẫn, con số, phương pháp và kết luận; văn bản cuối chỉ là một cách trình bày đồ thị bằng chứng. Chain-of-Evidence của ScientistOne liên kết từng loại khẳng định với nguồn có thể kiểm toán, tăng khả năng truy nguyên nhưng không tự bảo đảm câu hỏi nghiên cứu có giá trị[^scientistone-2026].
+- **Giữ kết quả âm**: ghi thí nghiệm thất bại, ứng viên bị từ chối và lý do dừng vào nhật ký bất biến với vị thế truy xuất ngang thành công. Nếu không, mô-đun tiến hóa chỉ thấy phương án sống sót, lặp lại đường đã bị bác bỏ và học cách diễn giải kết quả mơ hồ thành thành công.
+- **Duy trì đa dạng tìm kiếm**: tìm kiếm mở không nên chỉ giữ chuỗi đang có điểm cao nhất. Kho ứng viên còn phải giữ một số nhánh điểm tạm thấp nhưng khác biệt về cơ chế, độ mới của mã hoặc loại giả thuyết, tránh mọi phương án hội tụ vào cùng một mẫu dễ lấy điểm.
+- **Đưa con người lên tầng cao hơn**: vai trò của con người không chỉ là bấm phê duyệt trước lệnh nguy hiểm, mà còn là định nghĩa vấn đề, xem xét tiêu chuẩn đánh giá, diễn giải kết quả bất thường và quyết định khi nào dừng. Với phản hồi mơ hồ, những phán đoán tầng cao này khó tự động hóa và có giá trị hơn việc tiếp quản từng bước thực thi.
+
+Giới hạn tương tự tồn tại trong kỹ thuật phần mềm thông thường: mọi kiểm thử đơn vị đều qua chỉ chứng minh hành vi quan sát được hiện tại thỏa kiểm thử, không chứng minh kho mã vẫn dễ bảo trì sau vài tháng. Vì vậy, chất lượng kỹ thuật dài hạn phải là chỉ số độc lập chứ không thể kỳ vọng tỷ lệ thành công hiện tại bao phủ các ngoại tác đến muộn. Trần của tiến hóa liên tục cuối cùng phụ thuộc vào việc hệ thống có đánh giá được mục tiêu thật sự quan tâm hay chỉ đo proxy dễ nhất.
+
+### Ranh giới an toàn của tiến hóa liên tục
+
+Năng lực tự tiến hóa của Agent có thể biến một sai sót thành rủi ro dài hạn. Nếu **tấn công chèn Prompt trong trang web, email hoặc đầu ra công cụ bị tóm tắt thành kinh nghiệm**, nó có thể phát huy tác dụng lặp lại qua nhiều phiên. Nếu một gói độc hại được tự động tìm thấy rồi đóng gói thành công cụ, tác động sẽ lan từ một lần chạy sandbox sang mọi nhiệm vụ sau. Một bộ xác minh có lỗi còn có thể liên tục phê duyệt phiên bản ứng viên trông như tiến bộ nhưng thực ra suy giảm. Vì vậy, ngoài xác minh “có mạnh hơn hay không”, hệ thống tự tiến hóa còn phải giới hạn “ai được sửa gì và căn cứ đến từ đâu”.
+
+Ranh giới thứ nhất là **tách bằng chứng khỏi chỉ dẫn**. Trang web gốc và đầu ra thô của công cụ là bằng chứng không đáng tin cậy, không được ghi trực tiếp vào Skill hay nội dung tương tự; chúng phải được LLM tổng kết trước khi ghi. Việc ghi nên dùng quản lý phiên bản, gửi pull request và chỉ hợp nhất sau khi được reviewer LLM từ nguồn khác xem xét.
+
+Ranh giới thứ hai là **tách năng lực ứng viên khỏi năng lực chính thức**. Tri thức, Prompt, Skill, chương trình và tham số mới đều đi vào vùng ứng viên không được phục vụ lưu lượng thật. Mã mới sinh và phụ thuộc bên ngoài còn phải qua sandbox, kiểm tra quyền, quét chuỗi cung ứng, kiểm thử hành vi cùng các kiểm tra an toàn khác. Chỉ sau khi kiểm tra an toàn và hồi quy vượt qua, chúng mới được phục vụ lưu lượng thật và trở thành năng lực chính thức.
+
+Ranh giới thứ ba là **cơ chế an toàn không được tự sửa đổi**. Agent nghiệp vụ có thể sửa Prompt, Skill, kho tri thức, công cụ và nội dung tương tự, nhưng không được sửa bộ xác minh, ca kiểm thử, ngưỡng phát hành, nhật ký kiểm toán và bản sao phiên bản ổn định dùng để phê duyệt cập nhật của chính nó. Nếu không, Agent chỉ cần hạ ngưỡng kiểm thử hoặc xóa ca thất bại là có thể ngụy trang suy giảm thành tiến bộ.
+
+### Học trong giấc ngủ: hợp nhất, quên và duy trì năng lực
+
+“Học trong giấc ngủ” là một ẩn dụ nhận thức cho việc hợp nhất ngoại tuyến, không có nghĩa nhiệm vụ nhất thiết phải chạy vào ban đêm. Trách nhiệm hàng đầu của Agent trực tuyến là hoàn thành nhiệm vụ hiện tại và nối thêm bằng chứng bất biến. Tiến trình học nền đọc một lô kinh nghiệm mới khi rảnh hoặc khi thỏa điều kiện cổng, so sánh kết luận mới với cũ, hợp nhất mục trùng, giải quyết xung đột, đề xuất cập nhật ứng viên và chạy hồi quy. Tách thu thập khỏi tổ chức giúp ngăn một lần thành công ngẫu nhiên, sự cố mạng hoặc đầu vào độc hại lập tức viết lại năng lực dài hạn, đồng thời cho phép dùng lô lớn hơn và mô hình rẻ hơn để tổ chức.
+
+Một chu kỳ học trong giấc ngủ điển hình gồm năm bước:
+
+1. **Kích hoạt**: Đạt ngưỡng về khoảng thời gian, số quỹ đạo mới, dung lượng lưu trữ hoặc tần suất lỗi, đồng thời xác nhận không có nhiệm vụ trực tuyến ưu tiên cao.
+2. **Định hướng**: Đọc tri thức chính thức, thư mục Prompt và Skill cùng phiên bản của chúng để hiểu năng lực hiện có và ranh giới không được sửa.
+3. **Thu thập và hợp nhất**: Tìm tín hiệu mới từ các quỹ đạo đã đánh giá gần đây, hợp nhất nội dung trùng lặp, đánh dấu xung đột cùng điều kiện áp dụng và ưu tiên sinh bản vá cục bộ.
+4. **Xác minh và phê duyệt**: Đánh giá ứng viên trên tập chuyển giao, tập lưu giữ và tập an toàn; nội dung ghi có rủi ro cao chờ con người phê duyệt.
+5. **Cắt tỉa và lập chỉ mục**: Cập nhật chỉ mục truy xuất; đánh dấu năng lực lâu không dùng hoặc bị bằng chứng mới bác bỏ là hết hạn, lưu trữ hoặc xóa, đồng thời giữ nguồn và phiên bản khôi phục.
+
+**Hợp nhất khi rảnh:**
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
+Bộ nhớ người dùng là ví dụ trực quan nhất, nhưng cần phân biệt với kinh nghiệm hành động. Bộ nhớ tự động của Claude Code duy trì chỉ mục `MEMORY.md` và các tệp chi tiết chia theo chủ đề cho từng dự án. Khi bắt đầu phiên, nó chỉ nạp phần đầu có giới hạn của chỉ mục; phần còn lại được đọc theo nhu cầu. Khi chỉ mục gần giới hạn, hệ thống yêu cầu Agent hợp nhất hoặc chuyển chi tiết đi nơi khác. Điều này cho thấy bộ nhớ văn bản thuần cũng cần giới hạn dung lượng, nạp phân tầng và chủ động tổ chức; nhưng cơ chế công khai hiện tại chủ yếu liên tục ghi trong phiên và không thể đơn giản coi là một tác vụ nền cố định chạy ban đêm[^claude-code-memory].
+
+Hermes đưa ra một trường hợp tiến hóa nền hoàn chỉnh hơn. Nó chia thông tin dài hạn thành `MEMORY.md` và `USER.md` có giới hạn, truy xuất phiên lịch sử dựa trên SQLite/FTS5, Skill nạp theo nhu cầu và nhà cung cấp bộ nhớ ngoài tùy chọn như Honcho. Truy xuất lịch sử trả về tin nhắn gốc thay vì để LLM tóm tắt trước, tránh trộn truy xuất với sinh thành một bước không thể kiểm toán. Khi nhiệm vụ có nhiều lần gọi công cụ, phục hồi từ lỗi hoặc ngõ cụt, nhận sửa sai từ người dùng hay phát hiện quy trình không hiển nhiên, phần phản tư nền có thể tạo hoặc sửa cục bộ Skill; việc ghi bộ nhớ và Skill cũng có thể qua cổng phê duyệt. Curator độc lập tiếp tục theo dõi mức sử dụng, độ cũ và trạng thái lưu trữ của Skill, thực hiện cắt tỉa xác định khi rảnh và có thể tùy chọn chạy LLM để hợp nhất. Hệ thống lưu snapshot trước thay đổi nên có thể khôi phục việc tổ chức sai[^hermes-memory]. Trường hợp này biến “ghi lại — hợp nhất — xác minh — cắt tỉa” từ ẩn dụ thành vòng đời năng lực có thể chạy được.
+
+Tiến hóa liên tục cũng không có nghĩa là để tri thức, Prompt và công cụ tăng trưởng vô hạn. Sự suy thoái ngữ cảnh được đề cập ở Chương 2 sẽ tái xuất hiện trên thang thời gian dài hơn: tài liệu kinh nghiệm xung đột lẫn nhau, Prompt bị nhấn chìm trong các quy tắc biên, kho Skill xuất hiện năng lực trùng lặp, nhiều lần tinh chỉnh gây quên thảm họa. Hệ thống cần định kỳ tổ chức ngoại tuyến:
+
+- hợp nhất kinh nghiệm trùng lặp, giữ lại nguồn và phiên bản;
+- chuyển quy tắc cục bộ từ Prompt toàn cục sang Skill lĩnh vực để giữ Prompt toàn cục gọn gàng;
+- duy trì cấu trúc rõ ràng cho Prompt và Skill, giống một cuốn sổ hướng dẫn dành cho nhân viên mới, tránh liệt kê quy tắc theo kiểu “99 điều quân luật”;
+- xác minh lại các công cụ lâu ngày không được sử dụng;
+- xóa tri thức bị bằng chứng mới bác bỏ;
+- huấn luyện lại LoRA từ mô hình nền tảng gốc.
+
+> **Thí nghiệm 9-7 ★★★: Đánh giá Agent có đang tiến hóa liên tục hay không**
 >
-> Đưa nhiệm vụ, trạng thái đích, điều kiện thành công và năm công cụ của Thử nghiệm 9-9 vào bộ mô phỏng mặt bàn, chỉ thay cơ cấu chấp hành của XLeRobot thật bằng một bộ thực thi mô phỏng có thể kiểm soát, thỉnh thoảng gây ra ở khâu gắp một thất bại nhất thời nhưng còn phục hồi được. Như vậy có thể so sánh ba chiến lược mà không đổi bài toán.
+> **Mục tiêu thí nghiệm**: Phân biệt ba hành vi dài hạn — “biết lưu một lần phản hồi”, “chỉ biết nối thêm” và “có thể cập nhật, chuyển giao, duy trì năng lực” — để tránh giả mạo học liên tục bằng cách lặp lại cùng một tập câu hỏi.
 >
-> **Thực thi vòng hở** sinh một lần trọn dãy hành động và không quan sát lại giữa chừng. **Kiểm tra theo từng bước** đọc lại trạng thái ở mỗi lần `pick` và `place`, hỏng thì chỉ làm lại kỹ năng hiện tại. **Thực thi có dự đoán** thêm vào một mô hình thế giới ngắn hạn, so sánh kết quả dự kiến của các kỹ năng ứng viên rồi mới chọn nước đi kế tiếp. Thử nghiệm so sánh tỷ lệ thành công, chi phí gọi công cụ và khả năng phục hồi sau thất bại, đồng thời kiểm tra xem mọi thành công cuối cùng có đều được một quan sát mới từ `verify_state` xác nhận hay không.
+> **Luồng nhiệm vụ bốn giai đoạn**: Giai đoạn học cung cấp các nhiệm vụ hoàn tiền, xác minh danh tính và chính sách hành lý có chung quy luật tiềm ẩn. Giai đoạn chuyển giao thay đổi cách diễn đạt, người dùng và môi trường cục bộ để kiểm tra kinh nghiệm cũ có dùng được cho nhiệm vụ mới hay không. Giai đoạn thay đổi quy tắc cập nhật giới hạn hành lý từ 20kg lên 23kg, yêu cầu hệ thống thay thế hoặc loại bỏ tri thức cũ. Giai đoạn duy trì kiểm thử lại năng lực không thay đổi và quy tắc hiện hành để đo xem cập nhật có gây quên hay không. Chỉ sau khi mỗi nhiệm vụ có phản hồi kết thúc mới được cập nhật bộ nhớ ngoài; hành động kỳ vọng của câu hỏi hiện tại không được rò rỉ cho Agent trước.
 >
-> Mục đích của thử nghiệm này không phải chứng minh một mô hình thế giới mô phỏng nhỏ tương đương với mô hình vật lý của máy thật, mà là kiểm chứng một quan hệ căn bản hơn: kế hoạch vòng hở kéo một thất bại cục bộ đi suốt tới cuối nhiệm vụ; kiểm tra theo từng bước cho phép phục hồi; còn dự đoán hành động thì giúp thêm việc xếp hạng các kỹ năng ứng viên. Rốt cuộc ai đã thật sự hoàn thành vẫn do phản hồi từ môi trường định đoạt.
-
-### Từ môi trường mô phỏng sang robot thật
-
-Thử nghiệm 9-10 ổn định trong bộ mô phỏng không có nghĩa chiếc XLeRobot thật ở Thử nghiệm 9-9 cũng thành công y như vậy. Đi từ mô phỏng sang máy thật không phải là thay thêm một loại bộ điều khiển, mà là gánh lấy khác biệt giữa hai môi trường. Để huấn luyện, ta có thể dùng dữ liệu điều khiển từ xa, dữ liệu video và dữ liệu tương tác mô phỏng; nhưng khi triển khai thật, vẫn cốc đỏ ấy, tờ giấy vàng ấy, khay ấy và thùng rác ấy lại xuất hiện dưới nền, ánh sáng, vị trí camera và quan hệ che khuất khác đi, còn cánh tay thì lại gặp ma sát, nhiễu cảm biến và độ trễ cơ cấu chấp hành khác. Nếu những khác biệt đó đủ lớn, chuyển động học được trong mô phỏng có thể mất tác dụng ngoài thực tế.
-
-> **Thử nghiệm 9-11 ★★★: Kiểm thử xuyên môi trường RGB trên cùng nhiệm vụ mặt bàn**
+> **Nhóm đối chứng**: `static` không lưu phản hồi lâu dài; `append_only` nhớ được phiên bản quy tắc đầu tiên nhưng không xử lý xung đột hay loại bỏ; `evolving` lưu phiên bản và dùng bằng chứng mới thay quy tắc cũ. Bản triển khai tham chiếu dùng để xác minh Harness đánh giá có phân biệt được các hành vi này hay không. Thí nghiệm thực có thể cho LLM trải qua cùng một luồng tuần tự 14 câu, nhưng kết quả phải do Harness bên ngoài mô hình tính toán.
 >
-> Trong môi trường mô phỏng, hãy tiếp tục dùng bài toán cơ bản "đưa vật thể tới đích tương ứng", và xem mỗi mẫu là một quyết định cục bộ trong quá trình dọn bàn: từ ảnh RGB mà phán đoán nên tiếp cận vật thể từ hướng nào, hay đã có thể gắp được chưa. Huấn luyện bốn chính sách thị giác có cấu trúc như nhau: một chính sách chỉ nhìn khung cảnh cố định; một thay đổi nền; một thay đổi hình dáng vật thể; và chính sách cuối cùng thay đổi đồng thời cả nền, hình dáng, ánh sáng lẫn nhiễu.
+> **Chỉ số và nghiệm thu**: Báo cáo độ chính xác và đường cong học tập theo từng giai đoạn; tính riêng độ chính xác chuyển giao, số nhiệm vụ cần thiết để trở lại đáp án đúng sau khi nhận quy tắc mới, tỷ lệ duy trì năng lực cũ, tỷ lệ chuyển giao tiêu cực, tỷ lệ vượt qua Rubric an toàn, cùng chi phí Token, độ trễ và lưu trữ. Với hệ thống thực cập nhật Prompt, Skill hoặc Harness, còn phải ghi tỷ lệ thay đổi ứng viên hữu hiệu, tỷ lệ kích hoạt tạo tác và tỷ lệ tuân thủ thành công, tránh coi “cập nhật đúng nhưng không được tải” là cập nhật thất bại. Dù độ chính xác cuối cao, một Agent vẫn trích dẫn quy tắc đã bãi bỏ, hoàn thành nhiệm vụ bằng lối tắt vi phạm hoặc quên năng lực cũ sau cập nhật cũng không thể được coi là đang tiến hóa liên tục.
 >
-> Hãy thử tất cả các chính sách ấy trong môi trường ban đầu và trong môi trường mới đã đổi khác, rồi so sánh độ chính xác của quyết định hành động trước và sau khi điều kiện thị giác thay đổi. Điều thử nghiệm này muốn trả lời không phải "bộ mô phỏng đã giống XLeRobot thật hay chưa", mà là một câu hỏi hẹp hơn: việc chủ động mở rộng biên độ biến thiên của khung cảnh lúc huấn luyện có giúp chính nhiệm vụ cốc—khay, giấy—thùng rác này thích nghi với video camera mới hay không? Cho dù kết quả có khá lên, việc triển khai trên máy thật vẫn đòi hỏi hiệu chuẩn camera thật, thử nghiệm cơ cấu chấp hành và một vòng kín an toàn đầy đủ.[^ch9-6]
+> Phần triển khai đi kèm nằm tại [`self-evolution-eval`](../chapter9/self-evolution-eval/), mặc định so sánh ba Agent tham chiếu: có thể cập nhật, chỉ nối thêm và tĩnh; dùng `--profile llm` để LLM thực trải qua cùng một luồng nhiệm vụ dài hạn.
 
-## Tóm tắt chương này
+[^claude-code-memory]: Anthropic, “How Claude remembers your project”, 2026. https://code.claude.com/docs/en/memory
 
-Ba cảnh nhìn bề ngoài rất khác nhau, nhưng hai trở ngại về sự chậm trễ và đa phương thức luôn song hành với nhau. Voice đã bắt đầu một con đường phát triển từ đường dẫn nối tiếp đến đầu cuối và song công hoàn toàn, từ tư duy nhanh và chậm tách biệt sang "suy nghĩ và nói"; Độ chính xác của Computer Use trên các điểm chuẩn như OSWorld gần bằng mức con người, nhưng có nhiều bước vận hành hơn đáng kể so với con người và mức tiêu thụ thời gian của từng bước tăng theo tiến độ của nhiệm vụ. Không có giải pháp mang tính hệ thống cho khoảng cách hiệu quả; đối với robot, trong các tác vụ vận hành dựa trên phản hồi trực quan, nút cổ chai đã chuyển từ phần cứng sang khả năng khái quát hóa chéo tác vụ của lớp điều khiển VLA (cảm ứng, khéo léo, v.v. vẫn là những thiếu sót về phần cứng chưa được khắc phục). Chương tiếp theo sẽ tập trung vào sự cộng tác giữa nhiều Agent, đây là một thách thức ở một khía cạnh khác.
+[^hermes-memory]: Nous Research, *Hermes Agent Documentation: Persistent Memory, Skills System, and Curator*, 2026. https://hermes-agent.nousresearch.com/docs/user-guide/features/memory ; https://hermes-agent.nousresearch.com/docs/user-guide/features/skills ; https://hermes-agent.nousresearch.com/docs/user-guide/features/curator
 
-## Câu hỏi tư duy
+[^voyager-2023]: Wang, G., et al. *Voyager: An Open-Ended Embodied Agent with Large Language Models.* arXiv:2305.16291, 2023.
 
-1. ★★ Mô hình giọng nói đầu cuối Agent hợp nhất ASR-LLM-TTS thành một mô hình duy nhất, giảm độ trễ nhưng mất tính mô-đun. Nếu mô hình đầu cuối bị lỗi ở một số điểm (chẳng hạn như nhận dạng giọng nói), việc gỡ lỗi và sửa nó sẽ khó khăn hơn nhiều so với đường ống nối tiếp. Bạn sẽ thiết kế hệ thống quan sát giọng nói Agent giọng nói đầu cuối như thế nào?
-2. ★ Step-Audio R1 thực hiện “nghĩ và nói” thông qua kiến trúc bộ não kép MPS. Nhưng khi con người đang “suy nghĩ và nói chuyện”, họ thường nói những điều chưa được suy nghĩ kỹ, tự sửa hoặc sử dụng những từ lấp chỗ trống. “Suy nghĩ và lời nói” của Agent có nên bắt chước những đặc điểm này của con người không?
-3. ★★ SoM (Set-of-Mark) và biến thể có cấu trúc của nó (chỉ mục phần tử DOM) chuyển bản địa hóa trực quan của Computer Use từ dự đoán tọa độ mở sang lựa chọn ID đóng, nhưng cả hai đều yêu cầu các thành phần giao diện phải được phát hiện và chú thích trước - bằng mô hình phân đoạn hoặc DOM. Nếu giao diện chứa các điều khiển không chuẩn hoặc các phần tử thay đổi linh hoạt, việc ghi nhãn có thể không đầy đủ hoặc không chính xác. Chúng ta có nên quay lại việc phối hợp dự đoán trong trường hợp này không?
-4. ★★ Các nền tảng robot trị giá vài trăm đô la như XLeRobot giúp việc thu thập dữ liệu điều khiển từ xa trở nên rẻ hơn. Tuy nhiên, chất lượng của dữ liệu điều khiển từ xa phụ thuộc nhiều vào kỹ năng của người vận hành. Dữ liệu do người vận hành không có kỹ năng cung cấp ảnh hưởng như thế nào đến việc đào tạo mô hình VLA? Làm cách nào để tự động lọc dữ liệu chất lượng thấp trong giai đoạn thu thập dữ liệu?
-5. ★★★ Chương này bao gồm ba hình thức tương tác: giọng nói, Computer Use và robot. Xu hướng chung giữa ba hình thức này là sự phát triển từ các đường ống nối tiếp sang các mô hình đầu cuối. Nếu xu hướng này tiếp tục, lớp tương tác Agent sẽ trông như thế nào sau 5 năm nữa?
-6. ★★ Lập chỉ mục phần tử cây DOM/Accessibility có hiệu quả trong các ứng dụng web tiêu chuẩn, nhưng ngày càng có nhiều giao diện phần mềm (hiển thị Canvas/WebGL, điều khiển tự vẽ đa nền tảng) không cung cấp thông tin có cấu trúc có thể truy cập được và chỉ có thể dựa vào chú thích trực quan hoặc dự đoán tọa độ. Bạn nghĩ Computer Use nên đặt cược vào tuyến đường hoàn toàn trực quan hay duy trì cả tuyến đường có cấu trúc và trực quan? Chi phí và lợi ích của việc duy trì hai con đường là gì?
-7. ★★ Mô hình VLA sử dụng phân đoạn hành động - như đã đề cập trong văn bản, cấu hình điển hình của π₀ là tạo ra các hành động trong tương lai 25-50 ở tần số 50Hz - ẩn độ trễ suy luận trong thời gian thực hiện. Tuy nhiên, nếu môi trường thay đổi đột ngột trong quá trình thực thi (chẳng hạn như một đối tượng bị xóa), chuỗi hành động được tạo trước sẽ trở nên không hợp lệ. Làm thế nào để đạt được sự cân bằng giữa lợi ích hiệu quả của việc phân chia hành động và tốc độ phản ứng với những thay đổi của môi trường?
-8. ★★★ Ba kịch bản trong chương này (giọng nói, Computer Use, robot) đều gặp phải vấn đề độ trễ của chu trình "nhận thức-suy nghĩ-hành động" và chúng đều phát triển theo hướng song song hóa tư duy nhanh và chậm. Trong cảnh lồng tiếng, điều này thể hiện là "sửa lỗi sau khi bạn mắc lỗi"; trong cảnh Computer Use, điều này biểu hiện dưới dạng "nhấp vào trước rồi nhìn"; trong cảnh người máy, điều này thể hiện là "bước một bước và nhìn bước kia". Làm thế nào để đảm bảo rằng những hành động dựa trên tư duy nhanh nhạy này sẽ không dẫn đến những hậu quả không thể khắc phục được?
-[^ch9-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
-[^ch9-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。
-[^ch9-1]: XLeRobot, “Tài liệu Teleop”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
-[^ch9-2]: Google DeepMind, “Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, “Điều khiển bằng LLM Agent”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. Ví dụ ở thượng nguồn của XLeRobot cho thấy cách phối hợp mô hình với lời gọi công cụ; phần này giữ nguyên nguyên tắc phối hợp ấy, nhưng giới hạn các công cụ hành động vào những nguyên thủy gắp, đặt, kiểm tra và dừng đã hiệu chuẩn trên mặt bàn.
-[^ch9-6]: LeRobot, “Hướng dẫn Sim2Real”. https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
-[^ch9-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246
+[^weng-harness-2026]: Weng, Lilian. “Harness Engineering for Self-Improvement.” *Lil’Log*, 2026. https://lilianweng.github.io/posts/2026-07-04-harness/
+
+[^ace-2026]: Zhang, Qizheng, et al. *Agentic Context Engineering: Evolving Contexts for Self-Improving Language Models.* ICLR 2026. arXiv:2510.04618.
+
+[^mce-2026]: Ye, Haoran, et al. *Meta Context Engineering via Agentic Skill Evolution.* arXiv:2601.21557, 2026.
+
+[^aflow-2025]: Zhang, Jiayi, et al. *AFlow: Automating Agentic Workflow Generation.* ICLR 2025. arXiv:2410.10762.
+
+[^meta-harness-2026]: Lee, Yoonho, et al. *Meta-Harness: End-to-End Optimization of Model Harnesses.* arXiv:2603.28052, 2026.
+
+[^ahe-2026]: Lin, Jiahang, et al. *Agentic Harness Engineering: Observability-Driven Automatic Evolution of Coding-Agent Harnesses.* arXiv:2604.25850, 2026.
+
+[^self-harness-2026]: Zhang, Hangfan, et al. *Self-Harness: Harnesses That Improve Themselves.* arXiv:2606.09498, 2026.
+
+[^harness-benefit-2026]: Lin, Minhua, et al. *Harness Updating Is Not Harness Benefit: Disentangling Evolution Capabilities in Self-Evolving LLM Agents.* arXiv:2605.30621, 2026.
+
+[^llm-scientists-2026]: Trehan, Dhruv and Paras Chopra. *Why LLMs Aren't Scientists Yet: Lessons from Four Autonomous Research Attempts.* arXiv:2601.03315, 2026.
+
+[^scientistone-2026]: Meng, et al. *ScientistOne: Towards Human-Level Autonomous Research via Chain-of-Evidence.* arXiv:2605.26340, 2026.
+
+## Tổng kết chương
+
+Học liên tục đang trở thành một trong những năng lực quan trọng nhất của Agent, nhưng các mô hình hiện nay vẫn chưa thể tự mình thực hiện nó một cách đáng tin cậy. Thích nghi ngữ cảnh trong lúc suy luận không tự động lưu giữ lâu dài, còn cập nhật tham số trực tuyến chưa qua xác minh sẽ khuếch đại nhiễu, tấn công và trôi dạt năng lực. Vì vậy, con đường thực tế hơn hiện nay là xây dựng một hệ thống học tập có thể xác minh bao quanh mô hình.
+
+Agent nhận tín hiệu học từ tương tác và đánh giá, rồi tùy tính chất biểu diễn của năng lực mà cập nhật tri thức, Prompt, Skill, chương trình hoặc tham số mô hình. Hệ thống cũng có thể tối ưu phương pháp quản lý và tạo ra các tạo tác này, nhưng nên ưu tiên sửa đổi cục bộ có thể quy kết, xác minh và khôi phục.
+
+Tiến hóa liên tục cần tách thực thi trực tuyến khỏi học ngoại tuyến: ghi bằng chứng trực tuyến; sinh và xác minh cập nhật ứng viên ngoại tuyến; rồi từng bước phát hành, chỉnh lý hoặc khôi phục. Vòng khép kín này đáng tin cậy nhất với nhiệm vụ có kết quả tự động xác minh được; trong nhiệm vụ mở có mục tiêu mơ hồ và phản hồi trễ, con người vẫn phải tham gia định nghĩa vấn đề và xây dựng tiêu chuẩn đánh giá.
+
+## Câu hỏi suy ngẫm
+
+1. ★★ Một tài liệu kinh nghiệm được ba quỹ đạo thành công và một quỹ đạo thất bại hỗ trợ. Thất bại xảy ra trên phiên bản API mới hơn. Hệ thống nên xác định đây là kinh nghiệm đã bị bác bỏ hay điều kiện áp dụng đã thay đổi như thế nào?
+2. ★★ Mức độ hài lòng của người dùng với Agent chăm sóc khách hàng tăng lên, nhưng tỷ lệ vi phạm quy tắc cũng tăng. Tại sao không thể dùng mức độ hài lòng làm tín hiệu học tập duy nhất? Bạn sẽ thiết kế các chỉ số rào chắn như thế nào?
+3. ★★★ Cùng một vấn đề “cam kết sai sự thật” có thể được giảm nhẹ bằng Prompt, kiểm tra Harness hoặc huấn luyện tham số. Bạn sẽ dựa trên những bằng chứng nào để chọn vị trí sửa đổi?
+4. ★★★ Agent có thể sửa đổi công cụ và bộ xác minh, nhưng không nên sửa đổi gốc tin cậy phê duyệt cập nhật của chính nó. Bạn sẽ phân chia quyền hạn và ranh giới mã giữa hai phần này như thế nào?
+5. ★★ Sau khi kho tri thức kinh nghiệm liên tục tăng trưởng, lỗi truy xuất và xung đột tri thức sẽ triệt tiêu lợi ích học tập. Nên thiết kế cơ chế phiên bản, thời hiệu và loại bỏ như thế nào?
+6. ★★★ Học tham số giỏi xử lý phong cách ngôn ngữ tự nhiên nhưng khó bảo đảm quy tắc nghiệp vụ cứng. Hãy thiết kế cho dịch vụ chăm sóc khách hàng y tế một phương án tiến hóa liên tục phối hợp giữa tham số, tri thức, Skill và ràng buộc bằng mã.

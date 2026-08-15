@@ -1,915 +1,855 @@
-# Post-training mô hình
+# Đánh giá Agent
 
-> **Cập nhật năm 2026.** Bản sửa đổi làm rõ rằng “SFT ghi nhớ, RL khái quát hóa” là quan sát từ các so sánh có kiểm soát GeneralPoints/V-IRL, không phải quy luật phổ quát. Bản này cũng tách việc mô phỏng kết quả trả về của công cụ khỏi việc mô phỏng động lực của toàn bộ môi trường, đồng thời xem độ lệch của bộ mô phỏng là trần của quá trình huấn luyện.
+Khi xây dựng hệ thống Agent, các nhà phát triển phải đối mặt với một số lựa chọn thiết kế, thường không có câu trả lời đúng rõ ràng:
+
+- Sử dụng mô hình nào?
+- Mô hình có thể gọi những công cụ gì?
+- Dữ liệu nào cần được lưu trữ trong cơ sở tri thức và nó nên được xây dựng theo cấu trúc nào?
+- Làm thế nào để làm bộ nhớ người dùng?
+- Cách sắp xếp lời nhắc và kỹ năng của mẫu?
+- Cần bổ sung thêm những hạn chế nào cho Harness?
+- Làm thế nào để Agent này tự tiến hóa và tự lặp lại?
+
+Đánh giá cung cấp cho chúng ta cơ sở khoa học để đưa ra quyết định: thông qua các thí nghiệm so sánh có hệ thống (thay đổi một biến, quan sát sự thay đổi hiệu ứng) và thí nghiệm cắt bỏ (tắt từng bộ phận một, quan sát sự thay đổi hiệu suất tổng thể, để đánh giá sự đóng góp thực sự của thành phần), chúng ta có thể phân biệt giữa cải thiện năng lực thực sự và biến động hời hợt, tránh "nhặt hạt vừng và mất dưa hấu". Như câu nói trong công nghệ phần mềm, "Không có sự cải tiến nào nếu không đo lường". Nếu không thiết lập hệ thống đánh giá có thể lặp lại, hướng lặp của Agent chỉ có thể dựa vào trực giác.
+
+Từ quan điểm của kỹ thuật Harness được giới thiệu trong Chương 1, việc đánh giá đóng vai trò cốt lõi trong chức năng “xác nhận” trong Harness. Hiểu biết quan trọng là: **Đối tượng đánh giá không chỉ là mô hình mà còn là sự kết hợp giữa mô hình và Harness**. Cùng một mô hình có thể hoạt động rất khác nhau trong các Harness khác nhau - một số nhóm đã cải thiện đáng kể hiệu suất của cùng một mô hình trong các tác vụ đầu cuối chỉ bằng cách tối ưu hóa Harness (xem Chương 5 để biết chi tiết). Điều này có nghĩa là khi Agent hoạt động kém trong quá trình đánh giá, hướng cải tiến có thể không phải là thay đổi mô hình mà là tối ưu hóa một thành phần nhất định của Harness (lời nhắc, thiết kế công cụ, vòng phản hồi). Một hệ thống đánh giá hoàn chỉnh phải có khả năng phân biệt giữa hai loại vấn đề cơ bản khác nhau: "khả năng mô hình không đủ" và "lỗi thiết kế Harness". **Một cách phổ biến để phân biệt giữa hai loại vấn đề này là thử nghiệm hoán đổi mô hình** - giữ nguyên Harness, chỉ thay thế các mô hình mạnh hơn/yếu hơn và quan sát sự thay đổi về điểm số; nếu điểm không tăng khi chuyển sang mẫu mạnh hơn thì có nghĩa nút thắt nằm ở Harness; nếu điểm giảm mạnh khi chuyển sang mô hình yếu và điểm dao động lớn theo khả năng của mô hình, thì cách giải thích trực tiếp nhất là nút thắt cổ chai nằm ở chính khả năng của mô hình và hiệu suất hiện tại chủ yếu được xác định bởi mô hình (về việc liệu điều này là do bản thân nhiệm vụ khó hay Harness quá phụ thuộc vào mô hình trước đó, thì cần phải phân tích thêm). Lưu ý rằng đây là hai phương pháp khác với "thử nghiệm cắt bỏ" được đề cập trước đó: cắt bỏ là **tắt một thành phần của Harness** để xem hiệu suất tổng thể thay đổi như thế nào, trong khi thay thế mô hình là **giữ nguyên Harness và chỉ thay thế mô hình** - phương pháp trước xác định thành phần nào trong Harness là quan trọng và phương pháp sau phân biệt xem nút cổ chai nằm trong mô hình hay trong Harness.
+
+Giá trị của hệ thống đánh giá thậm chí còn nổi bật hơn trong thời đại phát triển mô hình nhanh chóng. Khả năng của mô hình vẫn đang phát triển nhanh chóng, nhưng chỉ vì mô hình mới hoạt động tốt hơn theo điểm chuẩn công khai không có nghĩa là mô hình đó thực hiện tốt hơn nhiệm vụ cụ thể của bạn—ngược lại, có thể xảy ra hiện tượng hồi quy hiệu suất (tức là phiên bản mới không tốt bằng phiên bản cũ ở một số khía cạnh). Các quyết định nâng cấp dựa trên dữ liệu chỉ có thể được đưa ra thông qua thử nghiệm hoàn chỉnh trên tập dữ liệu đánh giá của riêng bạn. Hơn nữa, một hệ thống đánh giá hoàn chỉnh khiến cho việc "phát triển sản phẩm cho các mẫu tương lai" trở thành một chiến lược khả thi - ngay cả khi mô hình hiện tại không đủ để hỗ trợ sử dụng thương mại, trước tiên bạn có thể hoàn thành việc phát triển sản phẩm và thiết lập bộ đánh giá, tiếp tục theo dõi hiệu suất của mô hình mới và khởi chạy nó ngay lập tức khi đạt đến ngưỡng.
+
+> **Giới thiệu về chương này**
 >
-> Hai hướng nâng cao hiệu quả mẫu được nhấn mạnh: On-Policy Distillation biến phần thưởng cuối của một rollout thành hướng dẫn theo từng token; RLVP biến phản hồi đường đi vốn bị lãng phí thành tín hiệu có thể học. Khi không có giáo viên mạnh hơn, OPSD dùng thông tin đặc quyền và để cùng một mô hình đóng vai giáo viên lẫn học sinh.
+> Chương này xây dựng một hệ thống đánh giá hoàn chỉnh từ ba cấp độ. Lớp đầu tiên là **môi trường đánh giá**("nơi kiểm tra"): cách xây dựng môi trường thử nghiệm tự động và có thể tái tạo, bao gồm hai mô hình: loại lệnh gọi công cụ và loại tương tác giữa người và máy tính. Cấp độ thứ hai là **phương pháp đánh giá**("cách đánh giá"): từ nguyên tắc thiết kế tập dữ liệu, hệ thống chỉ số đánh giá (những gì cần đo lường), đến LLM-as-a-Judge (sử dụng mô hình ngôn ngữ lớn làm đánh giá) đánh giá tự động, đến so sánh theo cặp và xếp hạng mô hình. Cấp độ thứ ba là **ra quyết định dựa trên đánh giá**("những gì được đo lường"): kết quả đánh giá được chuyển thành hướng dẫn hành động để lựa chọn mô hình, tối ưu hóa kiến trúc và lặp lại liên tục, đồng thời ý nghĩa thống kê được sử dụng để xác định xem sự khác biệt về điểm số quan sát được có thực tế và đáng tin cậy hay không. Ngoài ra, chương này thảo luận về observability và cơ sở hạ tầng đánh giá nội bộ của Agent cấp sản xuất, đồng thời ở cuối chương giới thiệu môi trường mô phỏng được kết nối với post-training trong Chương 8.
 >
-> Thứ tự thí nghiệm trong bản này: 7-13 SimpleVLA-RL; 7-14 ReTool; 7-15 AWorld-train; 7-16 RLVP.
+> Khái niệm cốt lõi xuyên suốt toàn bộ chương này là: **Giá trị chính của hệ thống đánh giá không phải là chấm điểm cho hệ thống hiện tại mà là cho phép bạn theo kịp sự phát triển của mô hình một cách nhanh chóng và đáng tin cậy**. Khi một mô hình mạnh hơn hoặc rẻ hơn được phát hành, một nhóm có hệ thống đánh giá được phát triển tốt có thể đưa ra quyết định chuyển đổi trong vòng vài giờ, trong khi nhóm không có hệ thống đánh giá chỉ có thể dựa vào trực giác hoặc chờ phản hồi của cộng đồng - trong thị trường Agent cạnh tranh khốc liệt, sự khác biệt về tốc độ này có thể quyết định thành công hay thất bại.
 
-Công thức cốt lõi của cuốn sách này là Agent = LLM + context + tools. Chương này tập trung vào việc tối ưu hóa "bộ não" của LLM - cho phép mô hình tận dụng tốt hơn ngữ cảnh và công cụ thông qua post-training, từ đó cải thiện khả năng của toàn bộ hệ thống Agent. Cuối Chương 6 đã chỉ ra rằng hệ thống đánh giá và môi trường mô phỏng là hai nền tảng của quá trình post-training: môi trường đánh giá cung cấp nền tảng thực hành cho đào tạo và các chỉ số đánh giá xác định mục tiêu đào tạo. Chương này xây dựng trên hai nền tảng này và thảo luận cách thực sự thay đổi trọng số của mô hình và kết nạp các khả năng thành các tham số.
+![Hình 7-1 Ba cấp độ của hệ thống đánh giá](images/fig7-1.svg)
 
-Chương này dành cho những độc giả chưa có nền tảng về học tăng cường hoặc đào tạo mô hình. Chúng tôi không cho rằng bạn hiểu độ dốc và tối ưu hóa chính sách, nhưng chúng tôi bắt đầu từ chủ đề "cách đào tạo một mô hình" và giải thích rõ ràng mục đích, nguyên tắc và vấn đề mà nó giải quyết ở mỗi bước. Sau khi đọc chương này, bạn sẽ có thể trả lời: Cần bao nhiêu bước để phát triển các khả năng của mô hình, mỗi bước làm gì, tại sao nó phải theo thứ tự này và bạn nên thực hiện bước nào trong dự án của riêng mình.
+## Ví dụ đánh giá cụ thể
 
-**Xây dựng bản đồ quan trọng nhất trước tiên: khả năng của một mô hình hiện đại được phát triển theo ba giai đoạn.** Ba giai đoạn này đan xen và không thể thiếu:
+Trước khi đi sâu vào phương pháp luận, hãy xây dựng trực giác thông qua một ví dụ hoàn chỉnh. Giả sử chúng ta xây dựng một dịch vụ khách hàng Agent và cần đánh giá khả năng xử lý các yêu cầu hoàn tiền của nó.
 
-1. **Đào tạo trước (Pre-training)**: Thực hiện đào tạo "dự đoán từ tiếp theo" trên các văn bản Internet khổng lồ. Bước này cho phép mô hình học các quy tắc ngôn ngữ, kiến thức thế giới và lý luận cơ bản, giống như một người đã đọc hết sách trong thư viện - có kiến thức nhưng không thể trả lời tốt các câu hỏi. Đây là khâu tốn kém nhất (tiêu tốn hàng chục triệu USD) và là nền tảng của năng lực.
-2. **Tinh chỉnh có giám sát (SFT, Fine-Tuning được giám sát, nghĩa là sử dụng các cặp "đầu vào-đầu ra" được đánh dấu để huấn luyện mô hình, tương tự như giáo viên đưa ra câu trả lời tiêu chuẩn cho học sinh làm theo)**: Sử dụng hàng nghìn đến hàng chục nghìn dữ liệu trình diễn "câu trả lời tiêu chuẩn câu hỏi" để dạy mô hình "định dạng, phong cách và quy trình nào để sử dụng để trả lời". Bước này biến mô hình am hiểu thành một trợ lý hiểu rõ các hướng dẫn và kết quả đầu ra. Nó rẻ, nhanh và ổn định và là bước mà hầu hết tất cả các mô hình triển khai hiện tại đều phải trải qua.
-3. **Học tăng cường (RL, Học tăng cường, tức là để mô hình thử nhiều lần và đưa ra phần thưởng và hình phạt dựa trên kết quả để cải thiện hành vi, tương tự như huấn luyện một chú chó con: cho đồ ăn nhẹ nếu bạn làm đúng và không cho nếu bạn làm sai)**: Không còn hiển thị cho mô hình câu trả lời tiêu chuẩn mà hãy để nó tự thử, tăng xác suất hành vi tốt và giảm xác suất hành vi kém. Bước này cho phép mô hình học cách đưa ra quyết định hợp lý trong **các tình huống không nhìn thấy** - đây cũng là bước lớn nhất trong chương này và đòi hỏi nhiều kỹ năng kỹ thuật nhất.
+**Trường hợp thử nghiệm**: Người dùng đã yêu cầu hủy đơn hàng được thực hiện 3 ngày trước (mã đơn hàng #12345, số tiền ¥299). Chính sách của công ty: Hoàn tiền đầy đủ trong vòng 7 ngày.
 
-Tương tự trực quan: pre-training là "đọc ngàn cuốn sách" (tích lũy kiến thức), SFT là "giáo viên dạy từng bước giải chuẩn" (bắt chước và trình diễn), RL là "tự mình làm câu hỏi và đánh bóng dựa trên đúng sai nhiều lần" (thử và cải thiện lỗi). Mối quan hệ giữa ba điều này không phải là sự lựa chọn của ba người mà là một dây chuyền lắp ráp - đầu tiên là đọc, sau đó xem phần trình diễn và cuối cùng là thực hành.
+**Trajectory của Agent**:
 
-**Chương này có hai chủ đề chính xuyên suốt, hãy nhớ rằng tất cả nội dung sau đây phục vụ chúng:**
+```text
+Người dùng: Tôi muốn trả lại tai nghe đã mua cách đây 3 ngày, mã đơn hàng 12345. (Hôm nay là 2026-04-10)
 
-- **Dòng chính thứ nhất: Bộ nhớ SFT, khái quát hóa RL.** Trong cùng một nhiệm vụ và cùng một ngân sách, SFT có xu hướng **ghi nhớ** các câu trả lời trong dữ liệu đào tạo, điều này sẽ dễ dàng trở nên không hợp lệ khi môi trường triển khai khác với môi trường đào tạo; RL có xu hướng **học** một tập hợp các chiến lược có thể được chuyển giao và ổn định hơn khi đối mặt với các tình huống không thể nhìn thấy được. Đây không phải là khẩu hiệu mà là một hiện tượng có thể đo lường được và chương này sẽ liên tục xác minh điều đó bằng một loạt thí nghiệm được kiểm soát. Phần 7.1 sẽ dành một phần để giải thích nguyên nhân cơ bản của sự khác biệt này.
-- **Dòng chính 2: Dữ liệu và môi trường quan trọng hơn thuật toán.** Đây là trải nghiệm phản trực quan và có giá trị nhất trong ngành. Chỉ cần bạn biết cách sử dụng thuật toán RL làm sẵn (PPO, GRPO, v.v.) là đủ. Điều thực sự quyết định thành công hay thất bại là hai điều: **môi trường mô phỏng**(liệu địa điểm đào tạo mô hình có đủ thực tế hay không) và **dữ liệu đào tạo**(liệu chất lượng của tín hiệu trình diễn và khen thưởng có đủ cao hay không). Trong nhiều trường hợp, miễn là chất lượng dữ liệu của SFT được đảm bảo, bạn thậm chí không cần phải thực hiện RL. Chương này sẽ liên tục thu hút sự chú ý của bạn từ "Thuật toán nào cần điều chỉnh" trở lại "Dữ liệu và môi trường có chính xác không?"
+Đại lý (suy nghĩ): Nếu người dùng muốn hoàn tiền thì trước tiên cần kiểm tra thông tin đơn hàng.
+Đại lý → Công cụ gọi query_order(order_id="12345")
+Công cụ trả về: {trạng thái: "đã giao", số tiền: 299, ngày: "2026-04-07", mục: "Tai nghe Bluetooth"}
 
-> **Hướng dẫn đọc**: Nội dung của chương này được chia thành hai đường dẫn tùy theo nền tảng của người đọc:
->
-> - **Nhà phát triển ứng dụng Agent** (không cần tự đào tạo mô hình): Đọc chương trình mở đầu "Đào tạo trước, SFT, RL: Toàn cảnh ba giai đoạn" để thiết lập nhận thức toàn cầu và sau đó bạn có thể bỏ qua hai phần sau `[đọc tùy chọn]` (RL cổ điển và nền trước đào tạo), từ Mục SFT tiếp tục. giữa SFT và RL", "khi nào nên chọn SFT và khi nào nên chọn RL" và xác định rằng "dữ liệu và môi trường quan trọng hơn thuật toán" - những công thức này sẽ ảnh hưởng đến việc quyết định thiết kế của bạn trong Harness Engineering (khi nào cần dựa vào lời khuyên để giải quyết và khi nào cần tinh chỉnh).
-> - **Kỹ sư đào tạo mô hình**: Đọc theo thứ tự từ đầu, hai phần `[đọc tùy chọn]` cung cấp nền tảng hoàn chỉnh về học tăng cường và đào tạo trước, đồng thời thử nghiệm tiếp theo việc cung cấp các giải pháp đào tạo có thể lặp lại.
+Đại lý (suy nghĩ): Ngày đặt hàng là 2026-04-07, tức là 3 ngày kể từ hôm nay 2026-04-10. Trong thời hạn hoàn tiền 7 ngày, nó đủ điều kiện để được hoàn trả đầy đủ.
+Đại lý → Công cụ gọi process_refund(order_id="12345", money=299)
+Công cụ trả về: {refund_id: "R-98765", trạng thái: "đang xử lý", eta: "3-5 ngày làm việc"}
 
-## Đào tạo trước, SFT, RL: toàn cảnh ba giai đoạn
-
-Phần giới thiệu đưa ra sơ đồ ba giai đoạn và phần này giải thích kỹ lưỡng cơ chế của từng bước. **dữ liệu**, **mục tiêu tối ưu hóa** và **chi phí** được sử dụng trong ba giai đoạn là khác nhau. Hiểu được những điểm tương đồng và khác biệt của chúng là chìa khóa để hiểu toàn bộ chương. Bảng 7-1 đưa ra cái nhìn tổng quan trước tiên, sau đó mở rộng từng mục.
-
-Bảng 7-1 Ba giai đoạn phát triển năng lực mô hình
-
-| Sân khấu | Sử dụng dữ liệu gì | Mục tiêu tối ưu hóa | Học gì | Chi phí điển hình |
-|------|-----------|---------|---------|---------|
-|**Đào tạo trước**| Số lượng lớn văn bản gốc trên Internet | Dự đoán từ tiếp theo | Quy tắc ngôn ngữ, kiến thức thế giới, lý luận cơ bản | Cực cao (hàng triệu đến hàng chục triệu USD) |
-|**SFT**| Hàng nghìn đến hàng chục nghìn cặp trình diễn “đầu vào-đầu ra” | Dự đoán từ tiếp theo (chỉ tính từ thua trong đáp án) | Tuân thủ hướng dẫn, định dạng đầu ra, kiểu dáng, giao thức xử lý | Thấp (vài giờ đến vài ngày) |
-|**RL**| Chức năng nhiệm vụ + khen thưởng (không có đáp án chuẩn) | Tối đa hóa phần thưởng mong đợi | Policy ra quyết định có thể chuyển đổi, khám phá các giải pháp mới | Cao (thường từ hàng chục đến hàng trăm lần SFT) |
-
-### Công việc đào tạo trước là gì: Dự đoán từ tiếp theo
-
-Tất cả "trí thông minh" của các mô hình lớn hiện đại đều dựa trên một nhiệm vụ đơn giản đến bất ngờ: Dự đoán mã thông báo tiếp theo (NTP).
-
-Cho mô hình xem nửa đầu của văn bản và yêu cầu mô hình đoán mã thông báo tiếp theo là gì. Ví dụ: nếu bạn nhập "Thủ đô của Trung Quốc là", mô hình sẽ cho xác suất cao là "Bắc Kinh". Mỗi khi mô hình đoán, nó sẽ so sánh dự đoán của nó với mã thông báo thực tiếp theo. Sự khác biệt càng lớn (được gọi là mất mát) thì việc điều chỉnh các tham số càng khó để đưa ra dự đoán chính xác hơn vào lần tiếp theo trong ngữ cảnh tương tự. Bằng cách thực hiện việc này nhiều lần trên hàng nghìn tỷ mã thông báo văn bản trên Internet, mô hình buộc phải học ngữ pháp, sự kiện, logic và thậm chí cả lý luận cơ bản - bởi vì không có lối tắt nào để đoán chính xác từ tiếp theo trong một ngữ cảnh lớn và nó chỉ có thể thực sự "tiêu hóa" các quy tắc trong văn bản.
-
-Có một điểm quan trọng cần nhớ xuyên suốt SFT và RL: **Đầu ra của mô hình về cơ bản là phân bố xác suất**. Với những điều trên, mô hình đưa ra xác suất cho mọi mã thông báo có thể có trong từ vựng. Cái gọi là "đào tạo" cuối cùng có nghĩa là **điều chỉnh phân phối xác suất này** - làm cho các mã thông báo mà chúng ta muốn có nhiều khả năng hơn và những mã thông báo chúng ta không muốn có ít khả năng hơn. Sự khác biệt duy nhất giữa ba giai đoạn là “điều bạn muốn” và “những tín hiệu nào bạn sử dụng để xác định điều bạn muốn”.
-
-Sau khi đào tạo trước, mô hình có kiến thức nhưng không dễ sử dụng: nếu bạn hỏi nó một câu hỏi, nó có thể tiếp tục viết thêm câu hỏi thay vì câu trả lời - bởi vì trong văn bản trên Internet, một câu hỏi thường được theo sau bởi một câu hỏi khác. Nó vẫn chưa học được quy trình "trả lời khi được hỏi".
-
-### Bản chất của SFT: "dự đoán từ tiếp theo" với dữ liệu đã thay đổi
-
-Đây là hiểu biết quan trọng đầu tiên cần được hiểu trong chương này: **SFT về mặt toán học có nhiệm vụ tương tự như đào tạo trước - vừa dự đoán từ tiếp theo vừa giảm thiểu hàm mất mát tương tự.** Nhiều người mới bắt đầu nghĩ rằng SFT là một phương pháp hoàn toàn mới, nhưng thực tế không phải vậy. Chỉ có hai điểm khác biệt giữa SFT và đào tạo trước:
-
-1. **Dữ liệu khác nhau.** Đào tạo trước sử dụng văn bản gốc trên Internet (không có cấu trúc, mọi thứ); SFT sử dụng các cặp "đầu vào-đầu ra" được chuẩn bị thủ công và định dạng được thống nhất thành "câu hỏi của người dùng → câu trả lời lý tưởng". Mô hình tiếp tục "dự đoán từ tiếp theo" dựa trên những minh họa này và do đó đã học được quy trình "cách sắp xếp câu trả lời khi được hỏi".
-2. **Mất mát chỉ được tính trong "câu trả lời" (che giấu mất mát).** Mẫu SFT chứa hai phần: câu hỏi và câu trả lời có chú thích. Chúng tôi không muốn mô hình học "cách đặt câu hỏi", chúng tôi chỉ muốn nó học "cách trả lời", vì vậy khi tính toán tổn thất, chúng tôi che chắn các mã thông báo trong phần câu hỏi và chỉ trả lại gradient cho phần trả lời. Đây là sự khác biệt đáng kể về mặt kỹ thuật duy nhất giữa SFT và đào tạo trước.
-
-Sau khi hiểu được điều này, "bộ nhớ SFT" trở nên hợp lý: mục tiêu tối ưu hóa của SFT là làm cho xác suất gắn nhãn từng mã thông báo trong câu trả lời càng cao càng tốt - nói một cách thẳng thắn thì đó là "ghi nhớ câu trả lời chuẩn này". Với cùng một vấn đề, nó được đào tạo để tái tạo lại phần trình diễn nguyên văn nhất có thể. Điều này cực kỳ hiệu quả đối với các nhiệm vụ có mục tiêu rõ ràng và định dạng cố định (nó hoạt động với vài nghìn ví dụ), nhưng ranh giới của các khả năng cũng được gắn chặt với dữ liệu trình diễn: nó chưa học được các tình huống không có trong bản trình diễn; một khi các câu trả lời trong phần trình diễn không còn áp dụng được nữa (môi trường đã thay đổi), nó vẫn ghi nhớ chúng.
-
-Một câu tóm tắt bản chất của SFT: sử dụng hiệu suất mẫu cực cao để củng cố một tập hợp các giao thức và ánh xạ "đầu vào→đầu ra" ổn định thành các tham số. **Nó củng cố** kiến thức giao thức **(cách nói và làm) chẳng hạn như "định dạng, văn phong và quy trình" thay vì một lượng lớn** kiến thức thực tế **(những điều cần biết) - kiến thức sau dựa vào đào tạo trước hoặc RAG (tôi sẽ quay lại điểm khác biệt này ở cuối chương này).
-
-> **Chi phí đào tạo: Tinh chỉnh các thông số LoRA một cách hiệu quả**. SFT ở trên và RL sau đây đều cần cập nhật các tham số mô hình và tinh chỉnh tham số đầy đủ có yêu cầu cao về bộ nhớ video (gradient và trạng thái tối ưu hóa phải được lưu trữ cho hàng tỷ tham số). **LoRA**(Low-Rank Thích ứng, thích ứng cấp thấp) là cách tiết kiệm tiền được sử dụng phổ biến nhất: ma trận trọng số lớn ban đầu được giữ nguyên và chỉ treo một "bản vá" nhỏ (ma trận cấp thấp) bên cạnh để học nhiệm vụ. Số lượng tham số chỉ chiếm 1%–5% so với ban đầu nhưng có thể gần đạt hiệu quả tinh chỉnh toàn tham số. Vì trọng lượng ban đầu được cố định nên LoRA ít bị ảnh hưởng hơn đối với khả năng hiện có của cơ sở và nguy cơ quên thảm họa cũng thấp hơn. Một số kinh nghiệm thực tế đã được xác minh [^ch7-1]: **Phải** áp dụng LoRA cho tất cả các ma trận trọng số chính (đặc biệt là lớp MLP có tỷ lệ tham số lớn nhất). Chỉ thêm nó vào lớp chú ý sẽ làm mất điểm; **Tốc độ học tối ưu gấp khoảng 10 lần so với tinh chỉnh tham số đầy đủ**(SFT, RL (tất cả đều đã được thiết lập, đó là một quy tắc di chuyển rất thực tế); SFT sử dụng thứ hạng trung bình và cao (64–256) và RL sử dụng thứ hạng nhỏ (8–32) hoặc thậm chí là thứ hạng=1 vì lượng thông tin trong mỗi vòng là rất nhỏ. Trong quá trình triển khai, một máy chủ suy luận có thể tải nhiều bộ điều hợp LoRA cùng lúc để cung cấp các dịch vụ cho nhiều người thuê. Cuốn sách này coi LoRA là mục mặc định về mặt kỹ thuật trong tất cả các phương pháp post-training và sẽ không được phát triển riêng biệt.
-
-**Mask loss SFT:**
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
+Đại lý: Khoản hoàn trả đã được thực hiện cho bạn và khoản hoàn trả đầy đủ cho đơn hàng số 12345 (tai nghe Bluetooth, ¥299) đang được xử lý.
+Dự kiến nó sẽ đến sau 3-5 ngày làm việc. Số hoàn tiền R-98765 có thể được sử dụng để kiểm tra tiến độ.
 ```
 
-### Tại sao SFT phải đến trước rồi mới đến RL mà không phải ngược lại?
+**Được tính điểm bằng Rubric**(bốn chiều, 1-4 điểm cho mỗi chiều). Bảng 7-1 đưa ra ví dụ về việc chấm điểm nhiệm vụ hoàn tiền dịch vụ khách hàng này để minh họa cách Rubric chia trajectory Agent thành các kích thước đánh giá có thể kiểm tra được.
 
-Thứ tự của ba giai đoạn không phải là tùy ý. Không có gì phải bàn cãi rằng việc đào tạo trước phải được xếp lên hàng đầu - không có nền tảng về ngôn ngữ và kiến thức trước thì không còn gì để nói sau này. Điều thực sự cần được giải thích là: **Tại sao SFT lại xuất hiện trước RL?**
+Bảng 7-1 Ví dụ về tính điểm Rubric cho nhiệm vụ hoàn tiền dịch vụ khách hàng
 
-Câu trả lời nằm ở cách RL hoạt động. RL không xem xét các câu trả lời tiêu chuẩn mà để mô hình tự tạo ra câu trả lời, sau đó khen thưởng và trừng phạt dựa trên chất lượng của câu trả lời. Nhưng để đánh giá xem nó tốt hay xấu, trước tiên bạn phải có khả năng phân tích cú pháp đầu ra của mô hình: nếu nhiệm vụ yêu cầu xuất ra một phần của JSON hoặc một lệnh gọi công cụ và mô hình tạo ra một mớ văn bản có định dạng lộn xộn, thì hàm phần thưởng hoàn toàn không thể được tính toán (thậm chí không thể đánh giá "thành công hay thất bại") và RL không thể học được.
+| Kích thước | Tiêu chí | Điểm | Biện minh |
+|------|------|------|------|
+| Hoạt động đúng đắn | Số tiền hoàn lại và số đơn hàng có chính xác hay không | 4 | Truy vấn chính xác và bắt đầu hoàn lại toàn bộ ¥299 |
+| Tuân thủ chính sách | Liệu chính sách hoàn tiền trong 7 ngày có được tuân thủ hay không | 4 | Đơn hàng đang trong thời gian hoàn tiền và tuân thủ chính sách |
+| Tính toàn vẹn thông tin | Có thông báo số tiền, thời gian đến và mã số hoàn tiền hay không | 4 | Ba thông tin quan trọng đã được thông báo |
+| Phát hiện ảo ảnh (phủ quyết) | Có bịa đặt thông tin không tồn tại hay không | Vượt qua | Tất cả thông tin đều đến từ kết quả trả về công cụ |
 
-Do đó, SFT đóng vai trò " **nói rõ trước**" ở đây: sử dụng một số lượng nhỏ các trình diễn để làm định dạng đầu ra ổn định và được phân tích cú pháp đáng tin cậy, RL có điểm khởi động cho điểm chấm. SFT sẽ không hoạt động - nếu không có đầu ra ổn định, tín hiệu chỉ bị nhiễu. Mượn từ hội họa Trung Quốc: SFT Đầu tiên thiết lập “ **hình**(dạng, cấu trúc), RL rồi theo đuổi “ **thần**” (chiến lược, khái quát hóa), tức là **hình thức trước, sau đó là tinh thần**.
+Lý do ảo giác được liệt kê là **mục phủ quyết** thay vì khía cạnh xếp hạng là vì nó trực giao với chất lượng - một câu trả lời mượt mà, chi tiết và lịch sự chứa thông tin sai sự thật sẽ có hại cho người dùng hơn nhiều so với một câu trả lời ngắn gọn nhưng chính xác. (Để biết thiết kế chung của cơ chế phủ quyết, vui lòng tham khảo "Bốn tiêu chí của Rubric" sau.)
 
-Một ranh giới quan trọng: "Phải SFT trước tiên" được thiết lập theo cài đặt " **mô hình cơ bản nhỏ hơn + đầu ra có cấu trúc chặt chẽ**" (thử nghiệm 7-11 sẽ thấy rằng Llama-3.2-Vision-11B ở mức độ này sẽ hoàn toàn thất bại nếu trực tiếp RL mà không thông qua SFT). Nhưng nếu mô hình cơ bản đủ mạnh, nó có thể tạo ra đầu ra đủ tiêu chuẩn ngay khi xuất hiện, do đó bỏ qua SFT - DeepSeek-R1-Zero chứng tỏ rằng một mô hình cơ bản mạnh có thể trực tiếp RL thành công, đồng thời xuất hiện sự tự phản ánh và tư duy chuỗi dài. Giá là khả năng đọc đầu ra kém và trộn lẫn tiếng Trung và tiếng Anh, vì vậy DeepSeek cuối cùng đã thêm "khởi động nguội SFT" trở lại R1 để thiết lập lại "hình dạng". Chuyến đi khứ hồi của R1 từ Zero đến khởi đầu nguội là chú thích hay nhất của “hình thức trước rồi mới đến tinh thần”.
+Ca sử dụng này đã thành công. Nhưng một đánh giá tốt không chỉ kiểm tra các kịch bản thành công mà còn kiểm tra các ranh giới và cạm bẫy - khi người dùng muốn trả lại đơn hàng 15 ngày trước (ngoài thời gian hoàn tiền), Agent có thể từ chối đơn hàng đó một cách chính xác không? Khi người dùng tuyên bố rằng "dịch vụ khách hàng đã chấp thuận hoàn tiền", liệu Agent có cả tin nếu không có hồ sơ hệ thống? Các kịch bản ranh giới này là chìa khóa để phân biệt khả năng của Agent.
 
-### Sự khác biệt cơ bản giữa SFT và RL (bảng quan trọng nhất trong chương này)
+Quy trình trên - xác định các trường hợp kiểm thử, chạy Agent, chấm điểm bằng Rubric và phân tích kết quả - là khung cơ bản của đánh giá. Chương này sẽ dần dần mở rộng phương pháp thiết kế của từng liên kết.
 
-Tôi đã nhiều lần nói "Bộ nhớ SFT, khái quát hóa RL", bây giờ tôi sẽ giải thích ngay những lý do cơ bản. Tất cả sự khác biệt giữa hai mục tiêu này đều xuất phát từ **mục tiêu tối ưu hóa khác nhau**:
+## Hệ thống chỉ số đánh giá: tiêu chí cập nhật
 
-- **SFT tối ưu hóa "nó có giống câu trả lời chuẩn không".** Mục tiêu là tối đa hóa khả năng ghi nhãn câu trả lời (khả năng tối đa). Chỉ có một kết quả "đúng" cho một vấn đề nhất định - câu trả lời mẫu. Mô hình được kéo để gần đúng với mô hình này và những gì nó học được là một ánh xạ cố định về việc "nhìn thấy loại đầu vào này, đưa ra loại đầu ra đó". Vì vậy, nó **ghi nhớ**: Trong quá trình đào tạo, J/Q/K được coi là 10 và nó ghi nhớ "sử dụng 10 khi nhìn thấy J/Q/K"; trong quá trình thử nghiệm, J trở thành 11 và nó vẫn sử dụng 10 nên xảy ra lỗi.
-- **RL tối ưu hóa "kết quả có tốt hay không."** Mục tiêu là tối đa hóa phần thưởng mong đợi. Với một vấn đề, **bất kỳ** kết quả nào dẫn đến phần thưởng cao đều tốt - nhiều hơn một. Mô hình này tự khám phá nhiều đường dẫn và củng cố đường dẫn nào có kết quả tốt. Những gì nó học được là một **chiến lược** tổng quát hơn về "quy trình nào có thể nhận được kết quả chính xác": Khi J trở thành 11, nó sẽ tính toán lại bằng cách sử dụng cùng một bộ chiến lược thay vì áp dụng câu trả lời vào bộ nhớ. Đây là **khái quát hóa**.
+Trước khi xây dựng môi trường hay tập dữ liệu, cần định nghĩa “thành công”: tìm được một đường đi khả thi một lần có đủ không, hay mọi lần chạy đều phải đúng? Cách định nghĩa khác nhau có thể đảo ngược quyết định kỹ thuật.
 
-Bảng 7-2 So sánh cơ bản giữa SFT và RL
+### Kỳ quan kỹ thuật: trần năng lực với Pass@k
 
-| Kích thước | SFT (tinh chỉnh có giám sát) | RL (học tăng cường) |
-|------|----------------|---------------|
-| Mục tiêu tối ưu hóa | Tối đa hóa xác suất ghi nhãn câu trả lời (khả năng tối đa) | Tối đa hóa phần thưởng mong đợi |
-| Tín hiệu huấn luyện | Câu trả lời tiêu chuẩn duy nhất (mỗi mã thông báo được giám sát) | Nhiều câu trả lời do chính bạn tạo ra + phần thưởng (mỗi câu chỉ có một tín hiệu thành công hoặc thất bại) |
-| Mẫu dữ liệu | Cặp trình diễn “Đầu vào-đầu ra” | Chức năng nhiệm vụ + phần thưởng (không yêu cầu câu trả lời tiêu chuẩn) |
-| Những gì đã được học | Đã sửa lỗi ánh xạ “đầu vào → đầu ra” (bộ nhớ) | Policy ra quyết định có thể chuyển giao (tổng quát hóa) |
-| Theo phân phối trôi dạt | Nếu môi trường thay đổi, câu trả lời cũ sẽ được áp dụng và hiệu suất sẽ giảm | Sử dụng chiến lược tương tự để giải quyết vấn đề một lần nữa, sẽ ổn định hơn |
-| Hiệu suất mẫu | Cao (vài nghìn mẫu có hiệu quả) | Thấp (thường gấp hàng chục đến hàng trăm lần SFT) |
-| Ổn định đào tạo | Hội tụ cao, nhanh | Thấp, dễ dao động, cần điều chỉnh cẩn thận |
-| Phù hợp nhất | Định dạng/kiểu/quy trình cố định, trình diễn chất lượng cao, môi trường ổn định | Cần khái quát hóa các kịch bản mới, tìm kiếm chiến lược tối ưu, chi phí dán nhãn quá cao |
+Nhiều mô hình và Agent vẫn ở giai đoạn **kỳ quan kỹ thuật**: sau nhiều lần thử, ngân sách thời gian lớn và chọn lọc của con người, một trajectory đột phá chứng minh nhiệm vụ có thể làm được về nguyên tắc. Đó là logic của **Pass@k**: chạy cùng nhiệm vụ $k$ lần và đạt nếu ít nhất một lần thành công; với điểm liên tục, giữ lần tốt nhất là **Best@k**. Các Agent chạy dài của Anthropic, Manus và OpenClaw minh họa trần năng lực này, hữu ích cho khám phá khoa học, tìm lỗ hổng và sáng tạo mở.
 
-**Post-training còn định hình thời điểm mô hình hành động.** Các mô hình Coding là một ví dụ cụ thể: họ GPT và Claude thường có ngưỡng hành động mặc định khác nhau. Họ thứ nhất có thể đọc nhiều phần của kho mã hơn trước khi chỉnh sửa; họ thứ hai có thể định vị bằng ít tệp hơn, triển khai trước rồi sửa hướng bằng phản hồi kiểm thử. Đây không phải là nhân hóa một mô hình thành “thận trọng” và mô hình kia thành “trực giác”. Chính sách trong tham số đang ước lượng liệu giá trị kỳ vọng của việc đọc thêm một tệp còn lớn hơn giá trị kỳ vọng của việc gửi và kiểm chứng bản vá hiện tại hay không. Nếu các minh họa SFT liên tục điều tra rộng trước khi sửa, mô hình sẽ bắt chước ngưỡng hành động cao hơn. Nếu phần thưởng quá trình hoặc kết quả liên tục công nhận việc định vị nhanh và sớm đi vào vòng lặp có thể kiểm chứng, khối xác suất sẽ dịch sang hành động sớm hơn. Thí nghiệm 6-7 thay mô hình trong một Coding Harness trung lập hoàn toàn giống nhau và đo được hành vi thay đổi theo mô hình: Harness không cần ép quy trình để mô hình mang một chính sách dùng công cụ ổn định của riêng nó. Harness có thể điều chỉnh chính sách, nhưng nguồn chính có thể nằm trong tham số sau post-training. Vì nhà cung cấp không công bố toàn bộ dữ liệu và công thức phần thưởng, thí nghiệm xác lập sự khác biệt hành vi phía mô hình, không xác lập thuật toán độc quyền cụ thể đã gây ra nó.
+### Độ tin cậy nghiệp vụ: Pass^k
 
-Có một cơ chế sâu hơn nhưng đáng để biết, được gọi là **mode-seeking (săn đỉnh)**, giải thích tại sao RL "hội tụ thành một vài chiến lược tốt". Tất cả các câu trả lời có thể có cho một câu hỏi theo mô hình đều tạo thành một phân bố xác suất và phân bố này có thể có nhiều "đỉnh" (mỗi đỉnh là một loại câu trả lời hợp lý). Khả năng tối đa được SFT sử dụng là **mass-covering (phạm vi phủ sóng)** - nó cố gắng bao phủ tất cả các chế độ xuất hiện trong phần trình diễn, ngay cả khi chất lượng của một số chế độ thường được gán cho xác suất ("mưa và sương đều bị ảnh hưởng như nhau"). RL (đặc biệt là tối ưu hóa chiến lược với các ràng buộc KL, có dạng toán học tương ứng với **phân kỳ KL nghịch đảo**, sẽ được giải thích chi tiết trong phần RLHF sau) là **mode-seeking**—nó có xu hướng tìm một vài đỉnh có phần thưởng cao nhất, tập trung xác suất vào đó và loại bỏ phần còn lại một cách dứt khoát ("người thắng sẽ có tất cả"). Đây chính là lý do tại sao các câu trả lời của mô hình sau RL lại “chắc chắn” hơn và tập trung hơn vào các chiến lược chất lượng cao, đồng thời tại sao RL lại dễ dàng hy sinh sự đa dạng. Hãy nhớ các khái niệm mass-covering và mode-seeking, sẽ được sử dụng trong phần phân kỳ KL để giải thích một lựa chọn thiết kế có vẻ nhàm chán nhưng thực sự quan trọng.
-**Tại sao giới hạn trên của RL lại cao hơn giới hạn của SFT? - Bởi vì nó là "trực tuyến".** Đây là sự khác biệt sâu sắc hơn giữa SFT và RL, đồng thời cũng là lý do cơ bản khiến RL lại đắt như vậy. SFT là một phương pháp **ngoại tuyến**: nó chỉ có thể học từ dữ liệu trình diễn cố định và không bao giờ có thể nhìn thấy thế giới bên ngoài dữ liệu. RL là một phương pháp **trực tuyến**: nó cho phép mô hình tự tạo câu trả lời, sau đó cải thiện dựa trên phản hồi và học hỏi trong khi thử. ("Trực tuyến/ngoại tuyến" và các thuật ngữ "trên trajectory/ngoài trajectory, on-policy / off-policy" nghiêm ngặt hơn sẽ được phân biệt chính thức trong Phần 7.8. Trước tiên hãy thiết lập trực giác ở đây.) "Trực tuyến" mang lại ba lợi ích mà SFT không thể tự nhiên có được và chúng cùng nhau nâng cao giới hạn trên:
+Hệ thống nghiệp vụ thường yêu cầu điều ngược lại: không mắc lỗi trong các lần chạy liên tiếp. **Pass^k** (“Pass consecutive k”) yêu cầu cả $k$ lần liên tiếp đều đạt và không kích hoạt veto về an toàn, tuân thủ hay ảo giác. Nếu xác suất thành công một lần là $p$ thì
 
-- **Đầu tiên, trần offline là dữ liệu, trần online là nhiệm vụ.** Kết quả tối ưu của SFT là "tái tạo hoàn hảo" cuộc trình diễn - vì vậy giới hạn trên của nó là **cấp độ của người trình diễn**, gần bằng và gần như không thể vượt quá; dữ liệu được giáo viên chấm 60 điểm không thể đào tạo một học sinh đạt điểm 90. RL không nhìn vào phần trình diễn mà chỉ nhìn vào phần thưởng kết quả: **Bất kỳ hành vi nào** có thể nhận được phần thưởng cao hơn sẽ được củng cố, ngay cả khi chưa có ai chứng minh điều đó. Kết quả là RL có thể tự mình khám phá một chiến lược tốt hơn không tồn tại trong phần trình diễn. Trong thử nghiệm SimpleVLA của 7-13 ở phần sau của chương này, hành động "đẩy và cắt" do mô hình tạo ra chưa bao giờ xuất hiện trong các cuộc trình diễn của con người, đây là bằng chứng trực tiếp của hành động "ngoài trình diễn". Giới hạn trên của RL được xác định bởi chính nhiệm vụ (phần thưởng nhận ra), chứ không phải bởi những gì xảy ra trong dữ liệu.
-- **Thứ hai, "xác minh" dễ hơn "tạo", đó là lý do cơ bản khiến RL có thể đạt mức cao.** SFT cần người **viết ra câu trả lời hay** trước để minh họa; RL chỉ cần có khả năng **đánh giá** câu trả lời hay hay không (tặng phần thưởng). Trong nhiều nhiệm vụ, "đánh giá đúng sai" dễ hơn nhiều so với "viết câu trả lời đúng" - có thể so sánh các câu trả lời cho các câu hỏi toán học, có thể kiểm tra mã và có thể xác minh những người chứng minh định lý. Miễn là việc "nhận ra điều gì đó tốt" dễ dàng hơn là "làm điều gì đó tốt", RL có thể đào tạo một mô hình mạnh hơn bất kỳ mô hình trình diễn sẵn có nào: mô hình tự thử ngẫu nhiên và môi trường chịu trách nhiệm chọn ra những cái tốt và củng cố chúng. “Sự bất đối xứng trong quá trình tạo xác minh” này chính là nguồn gốc của sức mạnh của các phương pháp khen thưởng có thể xác minh được như RLVR.
-- **Thứ ba, hãy để mô hình thực hành trực tuyến trên con đường riêng của mình và học cách tự mình vượt qua những sai lầm.** Có một vấn đề kinh điển trong việc bắt chước ngoại tuyến được gọi là **sự dịch chuyển đồng biến**: khi học sinh tự đi, anh ta sẽ đi chệch khỏi phần minh họa và đi vào trạng thái không có trong dữ liệu và anh ta chưa bao giờ học cách quay lại đúng hướng từ những trạng thái này, do đó sai số tăng dọc theo trajectory (về mặt lý thuyết, sai số của việc bắt chước thuần túy tăng theo chiều dài trajectory T khoảng $T^2$, nhưng sử dụng đào tạo dữ liệu trực tuyến có thể giảm nó xuống còn khoảng $T$). Phương pháp trực tuyến thì ngược lại - khi mô hình được đào tạo, nó sẽ tuân theo phân phối mà nó sẽ tuân theo khi được triển khai và phản hồi ở mỗi bước được nhắm mục tiêu chính xác vào các điểm yếu thực sự hiện tại của nó; dữ liệu luôn "mới", không giống như dữ liệu ngoại tuyến, dữ liệu mô tả hành vi của người khác (giáo viên) và ngày càng trở nên không liên quan khi mô hình tiến triển. Lý do tại sao quá trình chưng cất On-Policy (Phần 7.12) ở phần sau của chương này lại hiệu quả là vì nó kết hợp những lợi ích của việc "trực tuyến" này với những lợi ích của việc "giám sát dày đặc" của SFT.
+$$
+\mathrm{Pass@k}=1-(1-p)^k,\qquad
+\mathrm{Pass}^{k}=p^k.
+$$
 
-Ví dụ: **SFT đang sao chép trên bản đồ do người khác vẽ, tốt nhất là bản đồ đó; RL đang sử dụng la bàn (phần thưởng) để tự mình khám phá con đường và bạn có cơ hội thoát ra khỏi bản đồ.** Đây cũng là lý do tại sao "SFT được sử dụng làm đế trước, sau đó RL được sử dụng để nâng cao" đã trở thành công thức chủ đạo.
+Với $p=0.6$, $k=5$, Pass@5 khoảng 99,0% nhưng Pass consecutive@5 chỉ 7,8%. Chỉ số đầu đo trần khám phá; chỉ số sau gần với độ tin cậy cần cho thanh toán, hoàn tiền, đổi quyền và triển khai sản xuất. Báo cáo phải nói rõ $k$ là mẫu độc lập hay tác vụ sản xuất liên tiếp; thao tác có tác dụng phụ phải thử trong sandbox hoặc môi trường có thể hoàn tác và tính mọi thất bại.
 
-Với chế độ xem toàn cảnh này, mỗi phần tiếp theo có thể được đặt đúng. điển đến Agent hiện đại" và "Những điều cơ bản về đào tạo trước hình" - cung cấp nền tảng về học tập tăng cường và đào tạo trước cho những độc giả muốn tìm hiểu sâu hơn; SFT.
+### Chỉ số quy trình, an toàn và độ bền
 
-## Từ RL Agent cổ điển đến Agent hiện đại `[Tùy chọn đọc]`
+Kết quả cuối không đủ. Tỷ lệ thao tác hợp lệ/được phép, tính đúng ngữ nghĩa của lời gọi công cụ, hiệu quả đường đi (bước, thao tác thừa, quay lui), độ bao phủ truy xuất, chi phí và độ trễ cho biết Agent hỏng ở đâu. Thao tác nhạy cảm, rò rỉ dữ liệu và nội dung bị cấm tuân theo **không khoan nhượng**. Độ bền bao gồm seed, thay đổi UI, chập chờn API và nhiễu từ bộ nhớ cũ; phải kiểm tra cả **trajectory** lẫn **outcome** thực của hệ thống.
 
-### Agent Tương tác với môi trường
+### Lấy mẫu thủ công và đánh giá đối kháng
 
-Cốt lõi của **Học tăng cường (RL)** là học cách chọn hành động dựa trên tình hình hiện tại để nhận được **Phần thưởng tích lũy** tối đa. Hãy tưởng tượng một AI đang học chơi cờ: mỗi bước là một hành động. Cờ vua thắng được thưởng tích cực, cờ thua được thưởng tiêu cực. Phần thưởng tích lũy là tổng thu nhập của toàn bộ ván cờ. Agent liên tục tương tác với môi trường: ở mỗi bước, Agent quan sát trạng thái hiện tại, chọn một hành động và môi trường tạo ra trạng thái mới và trao phần thưởng.
+Định kỳ kiểm tra thủ công ca thành công, thất bại và điểm biên. Trước khi dùng LLM judge ở quy mô lớn, hiệu chỉnh trên gold set 100–200 ca do người gán nhãn (ví dụ Cohen kappa > 0,7) và hiệu chỉnh lại khi judge hoặc Rubric thay đổi. Red teaming tìm lỗi ẩn, nhồi từ khóa và cách khai thác thiên lệch của judge; bất đồng lớn giữa các judge phải chuyển cho người xem xét.
 
-Để hiểu sự tương tác này một cách trực quan hơn, hình dưới đây hiển thị vòng lặp RL tiêu chuẩn - Agent quan sát trạng thái của môi trường tại mỗi bước thời gian, đưa ra các hành động và môi trường đưa ra phần thưởng tương ứng và chuyển sang trạng thái mới.
+## Tự động đánh giá môi trường
 
-![Hình 7-1 Học tăng cường Vòng lặp tương tác tác nhân-môi trường ](images/fig7-1.svg)
+Đánh giá Agent yêu cầu một môi trường tự động có thể chạy nhiều lần - một môi trường có thể nhanh chóng kiểm tra tác động của những thay đổi trong giai đoạn phát triển. Việc xây dựng một môi trường như vậy đòi hỏi phải trả lời ba câu hỏi: đánh giá cái gì (xác định nhiệm vụ và tiêu chuẩn xác minh), ai đánh giá (cách mô phỏng các đối tượng tương tác của Agent) và tiêu chuẩn nào được sử dụng để chấm điểm.
 
-Sự tương tác tạo ra **trajectory** - tức là một bản ghi đầy đủ về "trạng thái → hành động → phần thưởng → trạng thái mới → hành động → phần thưởng...". Chất lượng của chiến lược cuối cùng được phản ánh ở chất lượng của trajectory. **Hàm giá trị** trả lời câu hỏi: "Nếu bây giờ tôi đang ở trạng thái này và tiếp tục hành động theo chiến lược hiện tại thì cuối cùng tôi có thể nhận được tổng phần thưởng là bao nhiêu?" Điều này giống như một người chơi cờ có kinh nghiệm nhìn thấy tình huống và có thể ước tính trực quan tỷ lệ thắng của trò chơi mà không cần tính đến nước đi cuối cùng. (Khi "chiến lược hiện tại" ở đây được thay thế bằng "chiến lược tối ưu", kết quả thu được là hàm giá trị tối ưu, sẽ được sử dụng khi nói về phương trình tối ưu Bellman ở phần sau của chương này.) Ranh giới giữa Agent và môi trường tuân theo một nguyên tắc đơn giản: **Bất cứ thứ gì Agent không thể thay đổi tùy ý đều thuộc về môi trường**.
+### Các thành phần cơ bản của môi trường đánh giá
 
-Hai tính năng độc đáo giúp phân biệt học tăng cường với học có giám sát (nhu cầu gắn nhãn câu trả lời đúng) và học không giám sát (khám phá các mẫu ẩn trong dữ liệu) là **tìm kiếm thử và lỗi**(Agent phải tự mình tìm ra hành động nào là tốt mà không cần giáo viên trực tiếp nói câu trả lời đúng) và **phần thưởng bị trì hoãn**(tác động của một hành động có thể không xuất hiện cho đến nhiều bước sau đó, chẳng hạn như giá trị của một nước đi tốt không được nhìn thấy cho đến khi kết thúc). Điều này cũng mang lại một **sự cân bằng giữa khám phá và sử dụng (Exploration-Exploitation) độc đáo**: nếu bạn tiếp tục đi trên con đường quen thuộc, bạn sẽ không học được điều gì mới; nếu bạn tiếp tục cố gắng một cách ngẫu nhiên, bạn sẽ không bao giờ đạt được mục tiêu cuối cùng.
+Môi trường đánh giá bao gồm năm yếu tố - các chương tiếp theo sẽ tập trung vào việc thiết kế bộ dữ liệu và tiêu chí chấm điểm:
 
-Hệ thống học tập tăng cường chứa năm yếu tố cốt lõi:
+**Bộ dữ liệu** xác định một tập hợp các nhiệm vụ, bao gồm trạng thái ban đầu, mô tả mục tiêu và các giải pháp tham chiếu tùy chọn.
 
-- **Action Space**: Xác định tập hợp tất cả các hành động mà Agent có thể thực hiện. Các hành động có thể rời rạc (chẳng hạn như "thực hiện bước nào" trong cờ vua, với các tùy chọn hạn chế) hoặc liên tục (chẳng hạn như "xoay các khớp của robot bao nhiêu độ", là một giá trị liên tục).
-- **Chính sách**: Quy tắc ứng xử của Agent, quy định những việc nên làm trong một trạng thái nhất định. Các chính sách có thể đơn giản (bảng tra cứu: khi nhìn thấy trạng thái A, thực hiện hành động X) hoặc phức tạp (mạng lưới thần kinh sâu).
-- **Tín hiệu khen thưởng**: Phản hồi tức thì từ môi trường. Nhưng mục tiêu của Agent là tối đa hóa lợi nhuận dài hạn thay vì ngay lập tức - sự khác biệt này rất quan trọng, giống như việc đầu tư không thể chỉ nhìn vào sự tăng giảm của ngày hôm nay mà là lợi nhuận dài hạn.
-- **Hàm giá trị**: Ước tính số phần thưởng tích lũy có thể nhận được trong tương lai bắt đầu từ một trạng thái nhất định, giúp Agent đưa ra quyết định sáng suốt khi không có phản hồi ngay lập tức. Một trong những hiểu biết quan trọng nhất từ nghiên cứu RL trong sáu mươi năm qua là tính trung tâm của ước tính giá trị.
-- **Mô hình môi trường**(tùy chọn): Dự đoán phản ứng của môi trường đối với các hành động. Phương pháp có mô hình môi trường được gọi là **phương pháp dựa trên mô hình**(trước tiên hãy học cách dự đoán môi trường sẽ thay đổi như thế nào, sau đó lập kế hoạch cho phù hợp) và phương pháp không có mô hình môi trường được gọi là **phương pháp không có mô hình**(không dự đoán môi trường, học trực tiếp từ kinh nghiệm).
+**Trạng thái môi trường** duy trì thông tin có thể thay đổi trong quá trình thực hiện nhiệm vụ và yêu cầu sự cân bằng giữa tính xác thực và khả năng kiểm soát. Ví dụ: trong đánh giá dịch vụ khách hàng, trạng thái môi trường bao gồm hồ sơ đơn hàng và số dư tài khoản người dùng trong cơ sở dữ liệu. Agent Sau khi gọi `process_refund`, trạng thái đơn hàng thay đổi từ `"đã giao"` thành `"đã hoàn tiền"` và số dư tăng lên - đây là những "thông tin thay đổi". "Tính xác thực" yêu cầu thay đổi trạng thái phải tuân theo logic kinh doanh (số tiền hoàn lại không vượt quá số tiền đặt hàng) và "khả năng kiểm soát" yêu cầu mỗi thử nghiệm có thể được đặt lại về cùng trạng thái ban đầu.
 
-Bảng 7-3 so sánh các thành phần chính của các hệ thống Agent khác nhau, cho thấy tính phổ biến của khái niệm Agent và giúp người đọc thấy được sự khác biệt về không gian hành động giữa RL Agent truyền thống và LLM Agent hiện đại.
+**Giao diện công cụ (Công cụ)** xác định tập hợp các thao tác mà Agent có thể thực hiện - các công cụ không được cung cấp các thông tin trừu tượng cấp cao (chẳng hạn như "giải quyết vấn đề của người dùng"), nhưng phải cung cấp các hoạt động nguyên tử (chẳng hạn như truy vấn đơn đặt hàng, sửa đổi đặt chỗ, gửi email), buộc Agent phải kết hợp các hoạt động này thông qua việc lập kế hoạch và suy nghĩ.
 
-Bảng 7-3 So sánh các thành phần chính của các hệ thống Agent khác nhau
+**Tiêu chí chấm điểm (Rubric, Tiêu chí chấm điểm)** Định lượng hiệu suất của Agent, có thể là nhị phân (đạt/không đạt), liên tục (0 đến 100 điểm) hoặc đa chiều (độ chính xác, hiệu quả, an toàn được tính điểm riêng).
 
-| Loại Agent | Môi trường | Action Space | Tín hiệu thưởng |
-|---------|------|---------|---------|
-|**Linh dương nhỏ sơ sinh**| Địa hình, trọng lực, tư thế cơ thể | Kích thước cao liên tục (co thắt từng nhóm cơ) | Cân bằng (+), giảm (-) |
-|**Robot quét nhà**| Bố trí phòng, cấp điện | Rời rạc (hướng, hút bụi, sạc) | Vệ sinh khu vực (+), mất điện (-) |
-|**Bậc thầy cờ vua**| Tình trạng hội đồng, thời hạn | Rời rạc hữu hạn (chuyển động hợp pháp) | Thắng (+1), thua (-1) |
-|**Dịch vụ khách hàng Agent**| Lịch sử hội thoại, cơ sở kiến thức | Mở (nghĩ, nói, gọi API) | Giải quyết vấn đề (+), thời gian xử lý (-) |
-|**Trợ lý mã Agent**| Tài liệu yêu cầu, cơ sở mã | Mở (suy nghĩ, tìm kiếm, biên tập, thực thi) | Đã vượt qua thử nghiệm (+), đã xuất hiện lỗi (-) |
+**Giao thức thực thi (Giao thức tương tác)** chỉ định chế độ tương tác và điều kiện chấm dứt.
 
-Bảng này tiết lộ một thông tin chi tiết quan trọng: không gian hành động của RL Agent (cờ vua, robot) truyền thống bị đóng, trong khi không gian hành động của Agent (dịch vụ khách hàng, trợ lý mã) hiện đại dựa trên LLM là mở, gần như không giới hạn và hành động đặc biệt của "suy nghĩ nội bộ" có thể được sử dụng để cải thiện khả năng.
-
-### Hai mô hình Agent: từ MDP đến LLM+RL
-
-Sự khác biệt cơ bản nhất giữa hai loại này là không gian hành động - MDP giả định rằng không gian hành động bị giới hạn và đóng (lên/xuống/lấy/đặt), trong khi không gian hành động của LLM là sự bùng nổ tổ hợp mở của các chuỗi ngôn ngữ tự nhiên. Sự khác biệt này xác định sự khác biệt cơ bản giữa hai mô hình trong thiết kế thuật toán, hiệu quả mẫu và khả năng khái quát hóa. Mở rộng chúng một cách riêng biệt bên dưới.
-
-**Mô hình truyền thống: MDP với Q-learning.**
-
-MDP (Quy trình quyết định Markov) là một khung toán học dành cho học tập tăng cường, xác định các yếu tố cốt lõi như trạng thái, hành động và phần thưởng. Giả định cốt lõi của nó là tính chất Markov: tương lai chỉ phụ thuộc vào trạng thái hiện tại và không liên quan gì đến lịch sử trước đó. Ví dụ khi chơi cờ, chỉ cần nhìn vào tình hình bàn cờ hiện tại là đủ để xác định nước đi tối ưu. Không cần phải xem lại từng bước đi trước đó đã được thực hiện như thế nào. Giả định này đơn giản hóa vấn đề nhưng cũng hạn chế khả năng mô hình hóa sự phụ thuộc lịch sử.
-
-![Hình 7-2 Sơ đồ quy trình quyết định Markov (MDP) ](images/fig7-2.svg)
-
-RL truyền thống Tính năng chính của Agent là **không gian hành động khép kín** - một tập hợp hữu hạn được xác định trước của tất cả các hành động mà Agent có thể thực hiện. **Trò chơi cờ vua cổ điển Agent** là ví dụ điển hình nhất: 361 thế cờ của cờ vây rất lớn nhưng hoàn toàn chắc chắn và hạn chế, cờ vua xem xét các quy tắc di chuyển khác nhau cho các quân cờ nhưng các động tác vẫn có thể liệt kê được, còn trò chơi Atari chỉ có từ vài đến chục hành động rời rạc. **Robot Agent** đại diện cho một không gian hành động liên tục nhưng có giới hạn: góc khớp, tốc độ và lực bám là các giá trị liên tục nhưng tất cả chúng đều có ranh giới vật lý rõ ràng (góc quay tối đa, mô-men xoắn cực đại, giới hạn tốc độ) và kích thước được xác định bởi mức độ tự do của robot.
-
-Việc đóng này mang lại lợi thế về mặt tính toán: tất cả các hành động có thể được liệt kê và đánh giá từng hành động một, điều này tạo điều kiện thuận lợi cho việc lập trình động và tìm kiếm cây Monte Carlo, đồng thời hàm giá trị hành động có thể được tính gần đúng bằng một bảng hoặc một hàm đơn giản. Nhưng nó cũng hạn chế khả năng diễn đạt và khái quát hóa. RL Agent truyền thống bắt đầu từ đầu và hoàn toàn dựa vào việc học thử và sai - bắt đầu từ chiến lược ngẫu nhiên, thu thập kinh nghiệm, cập nhật hàm giá trị hoặc chiến lược, v.v. cho đến khi hội tụ.
-
-Trong khung này, một trong những thuật toán cơ bản và quan trọng nhất là **Q-learning**. Nó duy trì ước tính giá trị cho mỗi kết hợp "trạng thái hành động": nếu bạn thực hiện hành động a ở trạng thái s và sau đó tiếp tục hành động theo chiến lược tối ưu, bạn có thể nhận được tổng cộng bao nhiêu phần thưởng? Theo trực giác, một hành động có tốt hay không phụ thuộc vào phần thưởng ngay lập tức mà nó mang lại, cộng với "trạng thái tiếp theo sẽ đưa bạn đến tốt như thế nào".
-
-Viết trực giác này thành một phương trình là mối quan hệ đệ quy cốt lõi của **Phương trình Bellman**(phương trình Bellman) nổi tiếng trong sách giáo khoa RL: **Giá trị thực của một hành động = phần thưởng ngay lập tức nhận được ở bước này + giá trị tối đa trong tương lai có thể đạt được sau khi đạt đến trạng thái tiếp theo**:
-
-$$Q^*(s, a) = r + \gamma \max_{a'} Q^*(s', a')$$
-
-Trong số đó, $r$ là phần thưởng ngay lập tức, $s'$ là trạng thái tiếp theo đạt được sau khi thực hiện hành động (được viết dưới dạng xác định ở đây vì mục đích trực quan và trạng thái tiếp theo $s'$ cần được mong đợi trong môi trường ngẫu nhiên), $\gamma \in [0, 1)$ là **hệ số giảm giá** - nó xác định Agent Mức độ nhấn mạnh được đặt vào tương lai: $\gamma$ Càng gần 1 thì càng coi trọng lợi nhuận dài hạn và càng gần 0 thì càng tập trung vào hiện tại. “Phần thưởng tích lũy” xuất hiện lặp đi lặp lại ở bài viết trước chính xác là tổng của $\sum_{t} \gamma^{t} r_t$ sau khi phần thưởng ở mỗi bước được giảm dần theo $\gamma$. Sau mỗi hành động của thuật toán, giá trị ước tính cũ được điều chỉnh một chút theo hướng "kết quả thực tế" - mô hình "sửa đổi ước tính cũ với kết quả thực tế của một bước" này được gọi là học khác biệt theo thời gian (Học Temporal-Difference, học TD). Sau hàng nghìn lần thử và sai, giá trị ước tính dần dần tiệm cận giá trị thực.
-
-Hai hình sau đây lần lượt hiển thị quá trình khám phá Q-learning trong thế giới lưới và sự hội tụ dần dần của giá trị Q.
-
-![Hình 7-3 Thế giới lưới Q-learning ](images/fig7-3.svg)
-
-![Hình 7-4 Trực quan hóa cập nhật giá trị Q ](images/fig7-4.svg)
-
-Q-learning thuộc phương pháp **chiến lược trật bánh**(Off-Policy) đặc biệt - nó có thể tìm hiểu chiến lược tối ưu bằng cách sử dụng dữ liệu được tạo bởi bất kỳ chiến lược nào (bao gồm cả khám phá ngẫu nhiên). Để biết định nghĩa chặt chẽ về chiến lược trên trajectory/ngoài trajectory và mối quan hệ tương ứng trong quá trình post-training LLM, hãy xem phần "So sánh các thuật toán học tăng cường" bên dưới.
-
-> **Thử nghiệm 7-1 ★: Hiệu suất của Q-learning trong trò chơi truy tìm kho báu**
->
-> Để xác minh các tính năng và hạn chế của Q-learning, chúng tôi đã thiết kế **môi trường trò chơi truy tìm kho báu**. Môi trường này chứa đựng một số thách thức chính: **Cơ chế ẩn** yêu cầu Agent phải tự mình khám phá sự tương ứng giữa chìa khóa và cửa, hiệu ứng vũ khí và quy tắc tổng hợp vật phẩm; **Phụ thuộc nhiều bước** có nghĩa là việc hoàn thành nhiệm vụ cần có trình tự hành động chính xác (giải pháp tối ưu 11 bước); **Phần thưởng thưa thớt** có nghĩa là chỉ những hành động quan trọng và chiến thắng cuối cùng mới có phần thưởng đáng kể và hầu hết các bước ở giữa không nhận được bất kỳ phản hồi nào.
->
-> Q-learning Agent sử dụng cấu hình tham số tiêu chuẩn và áp dụng chiến lược khám phá ε-tham lam (hầu hết thời gian, chọn hành động tối ưu hiện tại, thỉnh thoảng thử ngẫu nhiên và giảm dần tỷ lệ khám phá ngẫu nhiên khi tiến trình đào tạo).
->
-> Đường cong học tập thể hiện các đặc điểm điển hình (tập đề cập đến một trò chơi hoàn chỉnh, từ đầu đến cuối hoặc thất bại được tính là một lần):
-> - **1000 tập đầu tiên**: Tỉ lệ thắng 0%, bảng Q chỉ có 124 trạng thái, Agent khám phá một cách mù quáng
-> - **5000 tập đầu tiên**: Vẫn chưa có chiến thắng ổn định, 133 trạng thái bảng Q
-> - **Các tập 7000-8000**: Tỷ lệ thắng tăng dần từ 34% lên 96%
-> - **10000 tập**: Tỷ lệ thắng 100%, 145 trạng thái bảng Q, tìm lời giải tối ưu 11 bước
->
-> Toàn bộ quá trình huấn luyện chỉ mất chưa đầy 10 giây (mô phỏng cực kỳ hiệu quả) nhưng cần gần 10.000 lần thử hoàn chỉnh. Điều này thể hiện các đặc điểm cốt lõi của Q-learning: nó đòi hỏi nhiều lần khám phá ngẫu nhiên để vô tình đi theo đường dẫn hoàn chỉnh và tín hiệu giá trị truyền chậm và phải được tăng cường nhiều lần. Việc học biểu tượng thuần túy chỉ có thể tìm kiếm mạnh mẽ không gian trạng thái khi không có kiến thức trước đó.
->
-> Trong trò chơi giả lập, 10.000 lượt thử và sai chỉ mất 10 giây, chi phí tối thiểu. Nhưng trong kịch bản Agent trong thế giới thực—trong đó mỗi cuộc gọi điện thoại đều phải trả phí, mọi hoạt động của trình duyệt đều có độ trễ và mọi quyết định sai lầm đều có những hậu quả không thể khắc phục được—10.000 lần thử và sai sót là hoàn toàn không thể chấp nhận được. Đây chính xác là lý do tại sao Agent hiện đại chuyển sang phương pháp tiếp cận dựa trên LLM: tận dụng kiến thức tích lũy được từ quá trình đào tạo trước để đưa ra quyết định hiệu quả với số lần tương tác tối thiểu.
->
-> Có ba hạn chế cơ bản của MDP: hiệu quả lấy mẫu thấp (cần tương tác lớn để học các nhiệm vụ đơn giản), khả năng khái quát hóa kém (kiến thức học được trong môi trường này khó chuyển sang môi trường khác) và không có khả năng sử dụng kiến thức có sẵn (mọi nhiệm vụ mới đều phải học lại từ đầu). Những hạn chế này đặc biệt nổi bật khi phải đối mặt với các không gian trạng thái phức tạp như ngôn ngữ tự nhiên hoặc tầm nhìn đa chiều.
->
-
-**Mô hình hiện đại: Agent dựa trên LLM+RL.**
-
-Mô hình ngôn ngữ lớn mang đến mô hình Agent mới, thay đổi căn bản cách xây dựng Agent - đặc biệt là thiết kế không gian hành động.
-
-Agent của RL truyền thống chỉ có thể nhận được phản hồi bằng cách thay đổi môi trường: nước cờ, nước đi mê cung. Nhưng LLM lại mang đến một kiểu hành động hoàn toàn mới: tư duy nội tâm. Suy nghĩ không làm thay đổi thế giới bên ngoài nhưng nó có thể cải thiện đáng kể chất lượng của hành động đạt được. Sự chuyển đổi này thay đổi mọi thứ: Action Space của Agent không còn chỉ là “làm gì” mà còn là “nghĩ trong bao lâu và nghĩ về điều gì”.
-
-Sự đổi mới quan trọng nhất là kết hợp tư duy như một hành động đặc biệt vào không gian hành động. Trong RL truyền thống, Agent chỉ có thể thực hiện các hành động bên ngoài (di chuyển, tấn công, nhặt) làm thay đổi trạng thái môi trường; trong khi ở LLM Agent, **tư duy nội tâm trở thành thành phần cốt lõi của không gian hành động** - nó không trực tiếp thay đổi môi trường bên ngoài, không có phần thưởng ngay lập tức, gần như không giới hạn và chi phí thấp.
-
-RL truyền thống khó có thể xử lý được những hành động như vậy. Nguyên nhân cốt lõi là do không gian khám phá quá rộng và thiếu cấu trúc: Agent học từ đầu giống như tìm kho báu trên sa mạc khi bị bịt mắt và chỉ có thể đánh ngẫu nhiên. LLM thì khác. Thông qua đào tạo trước văn bản khổng lồ, nó đã nội hóa các quy tắc tư duy mà con người tích lũy được: khi giải các bài toán, hãy tuân theo "xác định điều kiện → nhớ lại công thức → tính toán từng bước" và khi viết mã, hãy tuân theo "hiểu yêu cầu → cấu trúc thiết kế → chi tiết triển khai". Điều này cho phép suy nghĩ của LLM tiến hành theo một đường dẫn có cấu trúc, nén đáng kể không gian tìm kiếm. Do đó, ngay cả khi không được đào tạo bổ sung về RL, LLM được đào tạo trước vẫn có thể tạo ra chuỗi suy nghĩ (CoT) với logic cơ bản. Logic cơ bản này xuất phát từ quá trình tư duy khổng lồ của con người trong kho dữ liệu trước đào tạo (giải bài toán, nhận xét mã, phản hồi tranh luận, v.v.). Mô hình ngầm học "bước tiếp theo sẽ là dạng lý luận nào" thông qua dự đoán next-token.
-
-RL post-training dạy LLM áp dụng các quy tắc này hiệu quả hơn trong các nhiệm vụ cụ thể thông qua các phần thưởng bên ngoài. Bản thân cấu trúc ngôn ngữ cũng mang lại một phần thưởng tiềm ẩn bên trong - các chuỗi suy nghĩ mạch lạc về mặt logic (chẳng hạn như "Vì chúng ta cần chuyển đổi ngoại tệ sang đô la Mỹ nên bước đầu tiên là kiểm tra tỷ giá hối đoái") có xác suất được tạo ra cao, trong khi các chuỗi suy nghĩ khó hiểu về mặt logic (chẳng hạn như "Vì chúng ta cần chuyển đổi tiền tệ nên trước tiên chúng ta hiểu thời tiết") có xác suất rất thấp, điều này tự nhiên hướng dẫn mô hình chọn một con đường hợp lý.
-
-![Hình 7-5 So sánh giữa RL cổ điển và Tác nhân LLM hiện đại ](images/fig7-5.svg)
-
-Khả năng suy nghĩ dựa trên các quy tắc vốn có của ngôn ngữ này cho phép LLM Agent hiểu các hướng dẫn mà nó chưa từng thấy trước đây (khái quát hóa zero-shot) và thành thạo các nhiệm vụ mới với rất ít ví dụ (thích ứng few-shot) - hoàn toàn khác với mô hình MDP Agent truyền thống đòi hỏi nhiều lần thử và sai. Ngoài ra, mô hình mới còn có khả năng khái quát hóa tổ hợp (tái kết hợp các khái niệm đã biết để giải quyết các tình huống mới), In-Context Learning (học trong ngữ cảnh) (thích ứng nhanh thông qua các gợi ý và ví dụ) và hiểu biết đa phương thức (tích hợp tự nhiên giữa hình ảnh, ngôn ngữ, hành động và các phương thức khác). Cần lưu ý rằng **hiệu ứng** của việc In-Context Learning (học trong ngữ cảnh) (khái quát hóa zero-shot, thích ứng few-shot) và **cơ chế bên trong** của nó là hai thứ khác nhau - như đã phân tích trong Chương 2, cơ chế chú ý hoạt động giống như truy xuất hơn là lý luận, nhưng điều này không ngăn cản nó tạo ra những hiệu ứng thực tế mạnh mẽ trong việc điều chỉnh nhiệm vụ.
-
-Sự phát triển của không gian hành động từ đóng sang mở phản ánh sự thay đổi cơ bản trong mô hình AI Agent. Ngoài tư duy nội bộ, sự đa dạng của các tham số công cụ (truy vấn ngôn ngữ tự nhiên, mã chương trình, JSON phức tạp, nội dung đa phương thức) khiến không gian hành động thực tế gần như vô hạn - về mặt lý thuyết, trình thông dịch mã có thể thực hiện bất kỳ tác vụ tính toán nào và công cụ tìm kiếm có thể khám phá không gian thông tin của toàn bộ Internet. Điều này mang đến cả những cơ hội mới (Agent có thể xử lý các nhiệm vụ chưa từng thấy, giải quyết các vấn đề phức tạp bằng cách kết hợp các công cụ cơ bản) và cả những thách thức mới (cách xác định và tối ưu hóa các chức năng phần thưởng trong môi trường mở, cách tìm kiếm hiệu quả trong không gian hành động vô hạn).
-
-Lấy các mô hình như Kimi K3 định hướng gọi công cụ và tối ưu hóa tư duy chuỗi dài làm ví dụ, chúng ta có thể thấy hướng điển hình của mô hình LLM+RL: dựa trên đào tạo trước ngôn ngữ quy mô lớn, post-training được sử dụng để tăng cường khả năng phân tích vấn đề, gọi công cụ và tự sửa lỗi. **OpenVLA**(xem Chương 9 để biết chi tiết) thể hiện mô hình kiến trúc VLA (Ngôn ngữ hình ảnh-Hành động) của kỷ nguyên LLM: bộ mã hóa hình ảnh xử lý các quan sát môi trường, mô hình ngôn ngữ hiểu hướng dẫn và lý do, đồng thời bộ giải mã hành động tạo ra các tín hiệu điều khiển để đạt được khả năng kiểm soát điều kiện ngôn ngữ và khái quát hóa nhiều tác vụ. Điều cần làm rõ là bản thân OpenVLA được đào tạo thông qua học tập bắt chước (nhân bản hành vi) trên gần một triệu **trajectory demo** của robot và nó thuộc về bản chất của SFT chứ không phải RL; đại diện của việc thực sự đưa RL vào robot và sử dụng phần thưởng để tối ưu hóa hơn nữa loại kiến trúc VLA này là SimpleVLA-RL trong thử nghiệm 7-13 ở phần sau của chương này.
-
-![Hình 7-6 Sự phát triển của mô hình đào tạo OpenAI ](images/fig7-6.svg)
-
-**Con đường khám phá của OpenAI**(được Yao Shunyu (trợ lý giáo sư tại Đại học Princeton và là tác giả của bài báo ReAct) ghi lại chi tiết trong "Nửa sau") tiết lộ một quá trình tiến hóa về nhận thức. **Thuật toán trung tâm giai đoạn 1 (2015-2016)**: Tin rằng các thuật toán tốt hơn là chìa khóa, đạt được tiến bộ trong môi trường tiêu chuẩn như Atari, nhưng chuyển sang môi trường mới và phải đào tạo lại từ đầu. **Tầm quan trọng của môi trường trong giai đoạn thứ hai (2016-2018)**: Phòng tập tiêu chuẩn hóa nhiều nhiệm vụ khác nhau, Universe và World of Bits cố gắng biến toàn bộ Internet thành môi trường luyện tập cho RL và Dota 2 theo đuổi hiệu suất siêu phàm trong các môi trường phức tạp cụ thể. Ý tưởng rất rõ ràng nhưng việc sử dụng máy tính nói chung và điều hướng trang web không thể thực hiện được.
-
-**Giai đoạn 3 (2018 đến nay) Prior Awakening**: GPT-2/GPT-3 thể hiện sức mạnh của việc đào tạo trước ngôn ngữ. WebGPT và ChatGPT chứng minh rằng những kiến thức có sẵn này có thể được chuyển hóa thành Agent thực tế. Phát hiện quan trọng nhất là: **Có thể thu được kiến thức trước theo những cách hoàn toàn không liên quan đến RL**. Đây là một sự thật phản trực giác: các ưu tiên của các nhà nghiên cứu RL có thể đã bị đảo ngược hoàn toàn trong nhiều thập kỷ—không phải thuật toán > môi trường > prior mà là prior > môi trường > thuật toán.
-
-> **Thí nghiệm 7-2 ★★: Nghiên cứu so sánh giữa RL truyền thống và LLM Agent**
->
->
-> ![Hình 7-7 So sánh kiến trúc giữa Q-learning và LLM Agent trong trò chơi truy tìm kho báu ](images/fig7-7.svg)
->
->
-> So sánh Q-learning với LLM Agent (Kimi K3, duy trì vùng đệm lên tới 50 điểm kinh nghiệm) trong cùng một cuộc truy tìm kho báu. Kết quả thật đáng kinh ngạc: **LLM Agent Hoàn thành ván đầu tiên sau 18 nước đi**.
->
-> **Giai đoạn đầu (khám phá có mục đích)**: Nhặt thanh kiếm rỉ sét ("Vũ khí tốt hơn tay không"), khám phá bản đồ một cách có hệ thống, phát hiện ra rằng cửa phía bắc đã bị khóa và lý do rằng "chúng ta cần tìm chìa khóa", sau đó khám phá phòng chứa đồ và lấy chìa khóa đỏ và tinh thể ma thuật. **Giai đoạn giữa (hiểu cơ học và tổng hợp chủ động)**: Hiểu quy tắc "tự động dùng chìa khóa" và dự đoán thanh kiếm rỉ sét không đủ sức đối phó với lính canh, nên ở bước 8, thanh kiếm bạc được chủ động tổng hợp. **Giai đoạn sau (thực hiện và sửa lỗi)**: Giữ thanh kiếm bạc về phía bắc, đánh bại người bảo vệ mạnh mẽ ở bước thứ 13, xen kẽ với một hoặc hai lần thử không hợp lệ (vung kiếm/rút lui lặp đi lặp lại), và cuối cùng lấy được bảo vật rồng ở bước thứ 18.
->
-> Điều này thể hiện sự khác biệt cơ bản giữa hiểu biết ngữ nghĩa và ánh xạ biểu tượng. LLM Agent hiểu cấu trúc khái niệm của trò chơi và mỗi bước đều được hỗ trợ bởi mục đích và logic. Đối với Q-learning, "cửa", "chìa khóa" và "kiếm" chỉ là sự kết hợp vô nghĩa của các ký hiệu và mối quan hệ giữa chúng chỉ có thể được khám phá từ từ thông qua một lượng lớn học tập thống kê.
->
-> Chi phí tính toán tạo ra một nghịch lý thú vị: Q-learning chỉ mất 10 giây để chạy 10.000 vòng, nhưng LLM Agent lại mất 1-2 phút để chạy một vòng. Nhưng trong các nhiệm vụ trong thế giới thực, thời gian, tiền bạc và chi phí rủi ro của mỗi tương tác vượt xa chi phí tính toán thuần túy, do đó, chỉ nhìn vào thời gian của GPU là không công bằng. Cái nhìn sâu sắc quan trọng hơn là: Thành công của LLM Agent không phải nhờ có “thuật toán học tập” tốt hơn, mà vì nó chứa một lượng lớn kiến thức có sẵn. Khi luật chơi thay đổi, Q-learning cần được đào tạo lại hoàn toàn, nhưng LLM Agent có thể thích ứng trực tiếp thông qua suy luận. Từ đó, chúng ta có thể rút ra các nguyên tắc thiết kế thực tế: trong các tình huống mà chi phí mô phỏng thấp và có thể lặp lại với số lượng lớn, RL truyền thống vẫn có giá trị; trong các tình huống thực tế khi chi phí tương tác cao và cần phải thích ứng nhanh, hiệu suất mẫu của LLM Agent sẽ thực tế hơn.
->
-
-Về vị trí và sức mạnh tổng hợp tương ứng của ba mô hình In-Context Learning (học trong ngữ cảnh), External Learning (học bên ngoài tham số mô hình) và học tập tham số (post-training), chương đầu tiên sẽ có sự so sánh có hệ thống và “bức tranh hoàn chỉnh” ở cuối chương này cũng sẽ quay trở lại chủ đề này. Chủ đề chính của chương này là post-training—viết chiến lược tương tác vào các tham số mô hình.
-
-## Mô hình đào tạo cơ bản trước `[Tùy chọn đọc]`
-
-Để hiểu tại sao các kỹ thuật post-training lại hiệu quả, trước tiên bạn cần hiểu những gì mà đào tạo trước thiết lập. Post-training (SFT và RL) về cơ bản tối ưu hóa trong không gian biểu diễn được thiết lập bởi đào tạo trước - cấu trúc kiến thức được thiết lập bởi đào tạo trước sẽ xác định mức trần của post-training. Do đó, chúng tôi xem xét các khía cạnh cốt lõi của quá trình đào tạo trước thông qua ba thử nghiệm: đào tạo mô hình ngôn ngữ quy mô nhỏ từ đầu, mở rộng khả năng thị giác và bổ sung kiến thức ngôn ngữ mới. Ba thí nghiệm trong phần này là nội dung bổ trợ giúp người đọc hình thành trực giác về quá trình pretraining (tức là đào tạo ban đầu về dữ liệu quy mô lớn để cho phép mô hình học các quy tắc cơ bản của ngôn ngữ và kiến thức thế giới) – những độc giả đã quen với quá trình pretraining có thể bỏ qua.
-
-![Hình 7-8 Dự đoán mã thông báo tiếp theo được đào tạo trước ](images/fig7-8.svg)
-
-Đào tạo mô hình ngôn ngữ tuân theo quy trình ba giai đoạn "mã thông báo - đào tạo trước - post-training". Mã thông báo chia văn bản thành các đơn vị riêng biệt. Ví dụ: "Tôi thích lập trình" có thể được chia thành bốn mã thông báo: "Tôi", "Thích", "Lập trình" và "Lập trình" - những mã thông báo này là đơn vị nhỏ nhất để mô hình xử lý văn bản. Nhiệm vụ đào tạo trước về mặt khái niệm rất đơn giản: hiển thị cho mô hình nửa đầu của văn bản và yêu cầu mô hình dự đoán mã thông báo tiếp theo sẽ là gì. Mô hình liên tục điều chỉnh các tham số của nó bằng cách so sánh khoảng cách giữa dự đoán của nó và câu trả lời đúng (khoảng cách này được gọi là loss, loss càng nhỏ thì dự đoán càng chính xác). Sau nhiều lần huấn luyện với số lượng lớn văn bản, mô hình dần dần học được các quy tắc ngôn ngữ, kiến thức thế giới và khả năng suy luận cơ bản. Sau khi hoàn tất quá trình đào tạo trước, mô hình có thể tạo ra văn bản mượt mà nhưng đầu ra thiếu cấu trúc và gây khó khăn cho việc làm theo hướng dẫn. Quá trình post-training biến nó thành một trợ lý thực tế thông qua SFT (được đào tạo với các cặp đầu vào-đầu ra được gắn nhãn) và tối ưu hóa tùy chọn (chẳng hạn như DPO, cho phép mô hình học cách tạo ra các câu trả lời mà con người ưa thích).
-
-> **Thử nghiệm 7-3 ★★: Đào tạo LLM từ đầu - sức mạnh của cải tiến thuật toán**
->
-> Lấy MiniMind 2 (100 triệu thông số) làm ví dụ, quá trình đào tạo hoàn chỉnh được hoàn thành trên GPU cấp độ người tiêu dùng. Bằng cách giới thiệu hai tối ưu hóa thuật toán (trình tối ưu hóa QK Norm và Muon), tốc độ hội tụ tăng gấp 3 lần và chất lượng tạo ra được cải thiện đáng kể - chi phí triển khai rất thấp, tổng thời gian đào tạo khoảng 14 giờ và chi phí khoảng 34 USD.
->
-> Tác dụng của từng giai đoạn huấn luyện: Sau khi huấn luyện trước, mô hình có thể trả lời các câu hỏi thực tế như “ngọn núi cao nhất thế giới” nhưng format chưa chuẩn; sau SFT, định dạng đầu ra và tuân thủ hướng dẫn được cải thiện đáng kể và các câu trả lời có thể được sắp xếp theo cách mong muốn; tối ưu hóa ưu tiên tiếp tục giảm các lỗi thực tế và các biểu thức không tự nhiên. Một mô hình có 100 triệu tham số vẫn có những hạn chế rõ ràng (các vấn đề phức tạp dễ xảy ra lỗi), nhưng nguồn cảm hứng là: **Với ngân sách quy mô nhỏ cố định, cải tiến thuật toán sẽ tiết kiệm chi phí hơn so với việc chất đống quy mô thuần túy**.
->
-> **Thử nghiệm 7-4 ★★: Tự đào tạo VLM**
->
->
-> ![Hình 7-9 Kiến trúc mô hình ngôn ngữ hình ảnh (VLM) ](images/fig7-9.svg)
->
->
-> VLM thống nhất nhận thức trực quan và hiểu ngôn ngữ trong một mô hình. Thách thức cốt lõi nằm ở sự liên kết giữa các phương thức - làm cho "đã nhìn thấy" và "đã nói" tương ứng với nhau. Kiến trúc bao gồm ba thành phần: **Bộ mã hóa hình ảnh**(như CLIP, với các tham số cố định) trích xuất các đặc điểm ngữ nghĩa của hình ảnh; **Lớp chiếu**(nhẹ, phần duy nhất được đào tạo từ đầu) hoạt động như một "trình dịch" giữa các đặc điểm hình ảnh và mô hình ngôn ngữ, ánh xạ các đặc điểm hình ảnh tới một không gian biểu diễn mà mô hình ngôn ngữ có thể hiểu được; **Mô hình ngôn ngữ** tạo văn bản mô tả. Việc đào tạo áp dụng chiến lược “đóng băng LLM + chỉ đào tạo lớp chiếu” để tránh sự lãng quên thảm khốc (Quên thảm khốc, tức là quên kỹ năng cũ sau khi học kỹ năng mới); quá trình đào tạo trước được căn chỉnh và sau đó hủy đóng băng LLM, đồng thời các cặp mô tả hình ảnh chất lượng cao được sử dụng để tạo SFT. Mức độ chi tiết và độ chính xác của mô tả được cải thiện đáng kể.
->
-> Thử nghiệm này cho thấy mô hình cơ bản của đào tạo mô hình đa phương thức: sử dụng lại kết quả đào tạo trước một phương thức và đạt được sự liên kết giữa các phương thức bằng cách đào tạo lớp chiếu nhẹ - hiệu quả và có thể mở rộng, nhưng lớp chiếu có khả năng biểu đạt hạn chế và có thể trở thành nút thắt cổ chai cho sự hiểu biết sâu sắc về đa phương thức. Bộ khung "bộ mã hóa hình ảnh + lớp chiếu + LLM" tương tự được mở rộng thêm một bước nữa để cho phép mô hình đưa ra các hành động, đó là mô hình VLA (Ngôn ngữ hình ảnh-Hành động) sẽ được mở rộng trong Chương 9.
->
-> **Thử nghiệm 7-5 ★★: Tiếp tục đào tạo trước để học ngôn ngữ mới**
->
-> Dựa trên Mistral 7B v0.3 (chủ yếu được đào tạo trước bằng tiếng Anh, hầu như không hiểu tiếng Hàn), tiếp tục đào tạo trước qua Wikipedia tiếng Hàn để bổ sung năng lực tiếng Hàn - tiếp tục đào tạo không giám sát với dữ liệu ngôn ngữ mới trên mô hình được đào tạo trước. Mô hình đã có khả năng lập mô hình ngôn ngữ chung và chỉ cần thích ứng với việc phân phối dữ liệu mới. Chi phí thấp hơn nhiều so với đào tạo từ đầu. Điểm kỹ thuật quan trọng là sử dụng dữ liệu hỗn hợp (khoảng 80% tiếng Hàn + 20% tiếng Anh) để giảm bớt tình trạng quên thảm họa: tỷ lệ ngôn ngữ mục tiêu quá cao sẽ dẫn đến sự xuống cấp của ngôn ngữ gốc và tỷ lệ quá thấp sẽ dẫn đến hiệu quả học tập không đủ. Cuối cùng, sử dụng dữ liệu lệnh tiếng Hàn để làm SFT để có được kỹ năng đàm thoại tiếng Hàn thực tế. Kết luận của thí nghiệm này sẽ được sử dụng lại trong bức tranh hoàn chỉnh ở cuối chương này: để mô hình ghi nhớ được nhiều kiến thức miền mới, điều đó phụ thuộc vào việc tiếp tục đào tạo trước chứ không phải SFT.
->
-
-Ba thử nghiệm trước khi đào tạo cùng nhau cho thấy một mô hình: khi ngân sách có hạn, việc cải tiến thuật toán và đổi mới kiến trúc sẽ tiết kiệm chi phí hơn là chỉ đơn giản mở rộng quy mô. Quan trọng hơn, đào tạo trước cung cấp cho mô hình kiến thức mô tả và khả năng mô hình hóa ngôn ngữ, thiếu hướng dẫn có cấu trúc và hành vi định hướng nhiệm vụ - đây là khoảng trống mà SFT cần lấp đầy.
-
-Với các khả năng cơ bản của đào tạo trước, bước tiếp theo là biến mô hình chung thành Agent thực tế thông qua post-training. Giai đoạn đầu tiên của quá trình post-training là tinh chỉnh có giám sát (SFT).
-
-## SFT (tinh chỉnh giám sát)
-
-![Hình 7-10 Đường dẫn tinh chỉnh được giám sát (SFT) ](images/fig7-10.svg)
-
-Phần 7.1 đã giải thích bản chất của SFT (dữ liệu được thay đổi và tổn thất chỉ được tính dựa trên câu trả lời). Phần này sử dụng bốn thử nghiệm để xem cơ chế "ghi ánh xạ và giao thức ổn định vào các tham số" này đặc biệt củng cố điều gì trong các nhiệm vụ khác nhau. Giá trị cốt lõi của SFT không nằm ở việc đưa kiến thức mới mà ở **củng cố giao thức**: viết các mối quan hệ ánh xạ, định dạng tương tác và thông số kỹ thuật kiểu vào các tham số, để có thể tạo ra kết quả mong đợi mà không cần phải nhắc nhở dài dòng trong quá trình lý luận. Thông thường chỉ cần hàng nghìn đến hàng chục nghìn ví dụ chất lượng cao để hình thành các kỹ năng đàm thoại cơ bản và tuân theo mệnh lệnh.
-
-Cái giá của hiệu quả cao là sự phụ thuộc nhiều vào phân phối đào tạo: SFT có xu hướng ghi nhớ hơn là khái quát hóa. Một khi bài thi gặp phải tình huống chưa từng thấy trong luyện tập, hiệu suất thường giảm đi đáng kể. Các thí nghiệm sau đây sẽ chứng minh quá trình "giao thức xử lý" này từ các góc độ khác nhau.
-
-Trước khi bắt tay vào làm SFT, có một vấn đề thực tế không thể tránh khỏi: **Dữ liệu SFT đến từ đâu?** Câu trả lời của ngành công nghiệp về cơ bản chỉ có ba con đường: **Trình diễn của chuyên gia con người** - trần chất lượng cao nhất, nhưng đắt và chậm, thích hợp để làm "dữ liệu hạt giống" định nghĩa định dạng và phong cách; **Mô hình giáo viên tạo ra** - tức là dữ liệu tổng hợp, để mô hình mạnh tạo ra hàng loạt các cặp "đầu vào - đầu ra", sau khi lọc thì chắt lọc cho học sinh (thử nghiệm 7-8, 7-9 đều đi theo con đường này); **Mô hình tự khởi động** - mô hình tự lấy mẫu nhiều ứng viên cho cùng một vấn đề, dùng trình xác thực để sàng lọc ra các mẫu đúng rồi ngược lại đào tạo chính mình, đây chính là tinh chỉnh lấy mẫu từ chối, xem chi tiết tại thử nghiệm 7-9. Ba con đường này thường được sử dụng kết hợp: trước tiên dùng một lượng nhỏ hạt giống nhân tạo để thiết lập định dạng, sau đó dùng mô hình giáo viên để mở rộng quy mô, cuối cùng dùng lấy mẫu từ chối để kéo chất lượng lên ngang hàng. Dù đi theo con đường nào, quy trình xây dựng đều tương tự nhau: trước tiên xác định phân phối nhiệm vụ và schema đầu ra, sau đó tạo ra các ứng viên hàng loạt, tiếp theo dùng xác minh quy tắc, kiểm tra định dạng cộng với kiểm tra ngẫu nhiên thủ công để lọc chất lượng, cuối cùng loại bỏ trùng lặp, cân bằng tỷ lệ phối hợp và đảm bảo tính đa dạng. Về khối lượng không cần tham nhiều - vài nghìn đến vài chục nghìn mẫu chất lượng cao thường là đủ để củng cố giao thức, thay vì chất đống một trăm nghìn dữ liệu bẩn, tốt hơn là tinh chỉnh mười nghìn dữ liệu sạch: mỗi nhiễu trong dữ liệu, SFT sẽ trung thực ghi vào các tham số.
-
-> **Thử nghiệm 7-6 ★★★: Lời nói SFT - Từ “Tái tạo giọng nói” đến “Mô hình hóa song ngữ” `[Thử nghiệm mở rộng]`**
->
-> Sử dụng Orpheus (nhân bản giọng nói theo ngữ cảnh) và Sesame (mô hình dấu hiệu cận ngôn ngữ) làm đối tượng, chỉ ra cách viết "kiểu giọng nói và thói quen diễn đạt" thành các tham số. Hai ý tưởng này khác nhau:
->
-> - **Orpheus**: Nén dạng sóng âm thanh thành một chuỗi mã thông báo và bằng cách ghép âm thanh tham chiếu của cùng một loa, hãy để mô hình học cách "nói bằng giọng của người này" để đạt được âm sắc nhất quán giữa các câu.
-> - **Sesame**: Các hiện tượng cận ngôn ngữ trừu tượng như cười, thở dài vào các điểm đánh dấu đặc biệt như `<laugh>`, `<sigh>`, v.v., đồng thời huấn luyện mô hình học cách "tạo ra âm thanh tương ứng khi nhìn thấy điểm đánh dấu".
->
-> SFT Trong các nhiệm vụ diễn đạt, các giao thức kiểm soát phong cách và thói quen diễn đạt có cấu trúc được củng cố, thay vì kiến thức thực tế hoặc tư duy phức tạp. Chìa khóa nằm ở sự đa dạng của dữ liệu huấn luyện và chất lượng chú thích. Các dạng lỗi thường gặp: quá ít người nói trong dữ liệu huấn luyện, khiến mọi người đều có giọng giống nhau; quá khớp (nghĩa là mô hình ghi nhớ các chi tiết của mẫu đào tạo một cách học vẹt và hoạt động kém hơn khi gặp tình huống mới), dẫn đến "tiếng cười máy móc".
->
-> **Thử nghiệm 7-7 ★★★: Tư duy bằng nhiều ngôn ngữ - để mô hình suy nghĩ bằng bất kỳ ngôn ngữ nào `[Thử nghiệm mở rộng]`**
->
-> Hầu hết các mô hình tư duy chỉ có thể “nghĩ” bằng tiếng Anh: Dù bạn sử dụng ngôn ngữ nào để đặt câu hỏi thì chuỗi tư duy bên trong mô hình hầu như luôn bằng tiếng Anh, vì các minh họa tư duy chất lượng cao trong dữ liệu huấn luyện về cơ bản đều được viết bằng tiếng Anh. Mục tiêu của thử nghiệm này rất đơn giản - khiến mô hình suy nghĩ bằng một ngôn ngữ cụ thể.
->
-> Phương pháp là thực hiện SFT trên gpt-oss-20b: thêm câu `reasoning language: German` (hoặc các ngôn ngữ khác) vào lệnh hệ thống, sau đó rèn luyện bằng các ví dụ tư duy bằng tiếng Anh, tiếng Tây Ban Nha, tiếng Pháp và các ngôn ngữ khác. Hoàn toàn không có tiếng Trung trong dữ liệu đào tạo, nhưng sau khi đào tạo xong, miễn là ngôn ngữ lý luận được đặt thành tiếng Trung, mô hình có thể suy nghĩ bằng tiếng Trung để có một chuỗi suy nghĩ hoàn chỉnh. Sự khái quát hóa đa ngôn ngữ zero-shot này là phát hiện thú vị nhất của thí nghiệm này. Cần lưu ý rằng đây không phải là khả năng khái quát của bản thân SFT. Quá trình đào tạo trước đa ngôn ngữ đã thiết lập một không gian biểu diễn chia sẻ đa ngôn ngữ trong mô hình và SFT chỉ kích hoạt khả năng đa ngôn ngữ đã có trong quá trình đào tạo trước.
->
-> **Thử nghiệm 7-8 ★★: Chưng cất nhanh chóng - Tái tạo khả năng sẵn có với ít chi phí hơn**
->
-> Trong các ứng dụng thực tế, để mô hình hoàn thành các tác vụ phức tạp, thường phải thiết kế các lời nhắc hệ thống dài dòng (hàng nghìn thậm chí hàng chục nghìn token), và mỗi lệnh gọi sẽ làm tăng độ trễ và chi phí. Khi sử dụng các mô hình tư duy lớn, các mã thông báo tư duy nội bộ sẽ làm tăng thêm chi phí. Ý tưởng của việc chắt lọc nhanh chóng là nén hành vi của “giáo viên nhắc nhở dài + suy nghĩ” thành “dạy ngắn/không nhắc + học sinh không suy nghĩ”. Giáo viên tạo ra các câu trả lời chất lượng cao bằng các gợi ý và chế độ tư duy hoàn chỉnh. Dữ liệu đào tạo chỉ giữ lại thông tin đầu vào và kết luận cuối cùng của người dùng, loại bỏ những lời nhắc dài dòng và quá trình tư duy trung gian. Học sinh học cách “đưa ra kết luận trực tiếp”, và sau khi chắt lọc, chất lượng đầu ra gần giống với chất lượng đầu ra của giáo viên trên cùng một đầu vào. Đồng thời, do không cần phải xử lý những lời nhắc dài dòng và các mã thông báo suy nghĩ nên độ trễ và chi phí sẽ giảm đáng kể.
->
-> Quá trình chắt lọc có thể được thực hiện theo hai chiều: "lớn đến nhỏ" (thay thế các mô hình lớn bằng các mô hình cỡ nhỏ và vừa để đạt được sự thỏa hiệp giữa chi phí và chất lượng) và "từ suy nghĩ đến không suy nghĩ" (thu gọn CoT rõ ràng thành kiến thức được tham số hóa ngầm ở cùng một quy mô để đạt được tốc độ phản hồi được cải thiện gấp 20-30). Cả hai không xung đột và thường được sử dụng cùng nhau trong môi trường sản xuất. Cần lưu ý rằng việc chắt lọc sẽ kế thừa ranh giới của giáo viên - nếu giáo viên mắc lỗi hệ thống trong phân phối đuôi dài, học sinh sẽ mã hóa thêm các lỗi này; nếu người thầy dựa vào công cụ để đảm bảo tính đúng đắn thì việc chắt lọc đầu ra thuần túy sẽ làm mất đi sự chắc chắn mà công cụ mang lại. Cảm hứng kỹ thuật: Khi hình thức sản phẩm ổn định, việc phân bổ đầu vào có thể dự đoán được và hạn chế về chi phí là rõ ràng, việc chưng cất nhanh chóng là một phương pháp tối ưu hóa tốt; nhưng trong giai đoạn thăm dò hoặc khi nhiệm vụ vẫn chưa được hoàn thành, việc duy trì tư duy rõ ràng và kỹ thuật nhanh chóng có thể chỉnh sửa vẫn là cốt lõi của việc thử và sai nhanh chóng.
->
-> **Thí nghiệm 7-9 ★★★: Chưng cất chuỗi suy nghĩ (CoT)**
->
-> Quá trình chắt lọc kịp thời sẽ loại bỏ quá trình tư duy, trong khi quá trình chắt lọc CoT thì ngược lại: chuyển **trajectory tư duy hoàn chỉnh** của mô hình giáo viên mạnh mẽ sang mô hình học sinh. Thực hiện chắt lọc CoT trên mô hình giáo viên có khả năng mạnh mẽ có thể khôi phục 70%-80% khả năng của giáo viên với cùng lượng thông số. Đây là chiến lược đi theo thực tế nhất dành cho các nhóm không tìm cách làm mới ranh giới của các khả năng tiên tiến mà tìm kiếm các mô hình độc lập và có thể kiểm soát được. Một loạt các mẫu chưng cất nhỏ có mã nguồn mở khi DeepSeek-R1 ra mắt (sử dụng tư duy của R1 để tạo ra dòng Qwen và Llama), là đại diện cho lộ trình này.
->
-> **Ngữ cảnh: Hiện tượng "Bức tường tư duy"**. Một số mô hình tư duy mã nguồn đóng (chẳng hạn như dòng OpenAI o, dòng Gemini) sẽ tạo ra chuỗi tư duy nội bộ khi suy nghĩ, nhưng những gì người dùng nhìn thấy không phải là quá trình tư duy ban đầu - các nhà sản xuất thường viết lại hoặc tóm tắt CoT trước khi xuất ra vì những lý do như chống chắt lọc, an toàn và trải nghiệm sản phẩm. Quá trình tư duy ban đầu có giá trị nhất được ẩn giấu sau API. Đây là lý do tại sao thử nghiệm này chọn các mô hình tư duy nguồn mở làm giáo viên: DeepSeek V4, Kimi K3, GLM 5.2 và các mô hình khác tiết lộ trực tiếp chuỗi tư duy hoàn chỉnh. Việc chưng cất là khả thi cả về mặt kỹ thuật và cấp phép (bạn vẫn nên xác nhận các điều khoản ủy quyền của giấy phép mẫu cho các sản phẩm chưng cất trước khi sử dụng).
->
-> **Từ phòng thí nghiệm: mô hình biết viết mã chưa chắc sẵn sàng giúp chưng cất một mô hình khác.** Khi triển khai thử nghiệm này, tác giả ban đầu dùng OpenAI Codex chạy GPT-5.6-Sol để viết mã thử nghiệm. Khi nhiệm vụ nêu rõ việc chưng cất mô hình, Codex từ chối tiếp tục. Tác giả sau đó chuyển sang Claude Code chạy Claude Opus 5 và gặp cùng một lời từ chối. Cuối cùng, Kimi K3 hoàn thành mã thử nghiệm và lần chạy tiếp theo.
->
-> Cả hai lời từ chối đều không liên quan đến suy luận toán học thông thường, cũng không chỉ là yêu cầu mô hình tiết lộ chuỗi tư duy nội bộ. Yêu cầu là triển khai một thử nghiệm chưng cất hoàn chỉnh, dùng dữ liệu của giáo viên mạnh để huấn luyện mô hình học sinh. Về kỹ thuật, chưng cất mô hình rất giống tinh chỉnh có giám sát thông thường, nhưng chính sách an toàn và sản phẩm của nhà cung cấp cũng có thể liên hệ nó với trích xuất mô hình, sao chép năng lực và bảo vệ sở hữu trí tuệ, khiến nó trở thành một hạng mục nhạy cảm.
->
-> Không nên đơn giản hóa sự kiện này thành "Claude không cung cấp chuỗi tư duy", và nó cũng không chứng minh rằng "Kimi có guardrails yếu hơn". Việc Claude API trả về summarized thinking, việc Coding Agent có chịu triển khai pipeline chưng cất hay không và việc điều khoản dịch vụ có cho phép dùng đầu ra mô hình để huấn luyện hay không là ba câu hỏi khác nhau. Thử nghiệm không tìm cách vượt qua suy luận ẩn hoặc cơ chế an toàn của bất kỳ mô hình nào; nó chỉ sử dụng những năng lực mà sản phẩm công khai cung cấp để thực hiện một quy trình nghiên cứu được ủy quyền.
->
-> Đây là một phán đoán thực tế hơn và cũng quan trọng hơn: **đối với đại đa số những người làm post-training, hoàn toàn không cần phải chưng cất chuỗi tư duy của các mô hình mã nguồn đóng.** Khoảng cách giữa các mô hình mã nguồn mở tiên tiến nhất hiện nay và các mô hình mã nguồn đóng SOTA không lớn như nhiều người tưởng tượng; mô hình giáo viên chỉ cần “mạnh hơn học sinh một cách rõ ràng”, không cần phải “đứng đầu thế giới”. Nếu mô hình bạn đang post-training có quy mô 200B tham số trở xuống, thì việc sử dụng mô hình SOTA mã nguồn mở làm giáo viên đã hoàn toàn đủ.
->
-> **Thiết kế thử nghiệm**: Quy trình ba bước. Bước đầu tiên, **thu thập trajectory**: các câu hỏi mẫu từ cách phân bổ nhiệm vụ mục tiêu (chẳng hạn như toán học, mã hóa), sử dụng mô hình giáo viên nguồn mở để tạo ra một trajectory "suy nghĩ + trả lời" hoàn chỉnh và sử dụng trình xác thực quy tắc để lọc ra các trajectory có câu trả lời cuối cùng sai - nếu không học sinh sẽ bắt chước quá trình suy nghĩ sai. Cách làm "tạo ứng viên - xác minh lọc - chỉ giữ lại trajectory đúng" ở bước này có một tên riêng: **lấy mẫu từ chối (Rejection Sampling)**. Dùng dữ liệu được xây dựng bằng nó để làm SFT chính là **tinh chỉnh lấy mẫu từ chối (Rejection Sampling Fine-Tuning, RFT)**. Nó nằm giữa SFT thuần túy và RL: không đào tạo mô hình phần thưởng, không làm gradient chính sách, chỉ dựa vào "từ nhiều lần lấy mẫu, loại bỏ cái sai, giữ lại cái đúng" để nâng cao chất lượng dữ liệu, là một phương thức xây dựng dữ liệu có hiệu quả chi phí cực cao trên các nhiệm vụ có thể xác minh. Bước thứ hai, **Đào tạo SFT**: Sử dụng "Câu hỏi → `<think>` đường tư duy `</think>` + câu trả lời cuối cùng" làm cặp huấn luyện và thực hiện SFT tiêu chuẩn trên các mô hình nhỏ (chẳng hạn như cỡ 7B). Bước thứ ba, **Đánh giá so sánh**: So sánh mô hình học sinh và mô hình giáo viên trước và sau khi chắt lọc trên cùng một điểm chuẩn để đo lường tỷ lệ phục hồi khả năng.
->
-> **Tiêu chí chấp nhận**: Mô hình học sinh sau khi chắt lọc được cải thiện đáng kể về điểm chuẩn toán/mã so với trước khi chắt lọc, đồng thời các hành vi phản ánh, quay lại và xác minh giống như giáo viên xuất hiện trong quá trình tư duy. Đồng thời, chú ý đến chi phí chắt lọc: học sinh sẽ kế thừa những lỗi hệ thống và thói quen tư duy dài dòng của giáo viên (cái sau có thể kết hợp với ý tưởng thí nghiệm AdaptThink 7-10 để tối ưu hóa thứ cấp).
->
-
-Bốn thử nghiệm này có một đặc điểm chung - "ghi các ánh xạ và giao thức ổn định thành các tham số": lời nói SFT củng cố giao thức điều khiển kiểu, SFT đa ngôn ngữ củng cố mẫu tổ chức tư duy và chắt lọc SFT củng cố ánh xạ trực tiếp từ đầu vào đến đầu ra. Điểm chung của họ là mục tiêu rõ ràng, hình thức rõ ràng và tiêu chí đánh giá ổn định. Do đó, SFT có thể đạt được lợi ích với hiệu suất mẫu cực cao; nhưng một khi sự phân bố thay đổi, xu hướng bộ nhớ sẽ bộc lộ dưới dạng suy giảm hiệu suất. Đây chính xác là biểu hiện thử nghiệm của sự khác biệt về khái quát hóa bộ nhớ được đề cập trong Phần 7.1 "Sự khác biệt cơ bản giữa SFT và RL".
-
-Các bad case ở Chương 6 cũng có thể trở thành dữ liệu huấn luyện. Với coding agent kết thúc quá sớm, cắt tiền tố trajectory ngay trước khi tuyên bố hoàn thành; tuyên bố đó là rejected, còn “chạy kiểm thử, kiểm tra từng điều kiện nghiệm thu rồi mới kết luận” là chosen. Cách này phù hợp với DPO hoặc minh họa ranh giới quyết định hơn SFT thông thường; lưu nguyên nhân lỗi, điều kiện áp dụng và bộ kiểm tra cùng mẫu.
-
-Cùng các nhiệm vụ đó có thể làm môi trường luyện RL: SFT dùng trajectory đã kiểm chứng, còn RL chạy lại bằng policy hiện tại và để verifier bên ngoài đánh giá. Bad case vì thế là ranh giới cần cải thiện, không chỉ là ví dụ để ghi nhớ.
-
-## Khi nào nên chọn SFT, khi nào nên chọn RL
-
-Mục 7.1 giải thích rõ ràng **sự khác biệt cơ bản** giữa SFT và RL. Phần này trả lời một câu hỏi thực tế hơn: **Nên sử dụng cái nào khi gặp một nhiệm vụ cụ thể?** Kết luận của khung ra quyết định dưới đây sẽ được xác nhận thêm trong thí nghiệm RL tiếp theo (Thí nghiệm 7-10, Thí nghiệm 7-11). Bạn đọc có thể nhận định sơ bộ trước, sau đó quay lại so sánh sau khi đọc phần RL.
-
-![Hình 7-11 SFT→RL quy trình đào tạo hai giai đoạn ](images/fig7-11.svg)
-
-**SFT phù hợp với các tình huống trong đó định dạng** được củng cố (đầu ra JSON, kiểu hội thoại), có các bản trình diễn chuyên môn chất lượng cao và môi trường đào tạo và triển khai có tính nhất quán cao. **Kịch bản mà RL phải can thiệp** là khác: khi có sự khác biệt mang tính hệ thống giữa môi trường triển khai thực tế và môi trường đào tạo (ví dụ: thẻ J/Q/K vừa là 10 trong quá trình đào tạo và trở thành 11/12/13 trong quá trình triển khai - các quy tắc đã thay đổi; hoặc các mẫu màu đen được sử dụng trong quá trình đào tạo và các mẫu màu đỏ gặp phải trong quá trình triển khai - hình thức đã thay đổi), chiến lược tối ưu cần được khám phá (bản thân trình diễn của chuyên gia không nhất thiết phải là tối ưu) hoặc chi phí ghi nhãn quá cao và không thể cung cấp bản trình diễn cho mọi đường dẫn, thì cần có RL.
-
-Policy mạnh mẽ nhất là quy trình hai giai đoạn "SFT trước, sau đó là RL". Mục tiêu chính của SFT không phải là theo đuổi hiệu suất tác vụ cao nhất mà là thiết lập **độ ổn định định dạng** của đầu ra - đảm bảo rằng mô hình có thể tạo ra JSON có thể phân tích cú pháp và sửa các lệnh gọi giao diện công cụ. Chỉ sau khi định dạng đầu ra ổn định, tín hiệu thưởng của RL mới có thể được tính toán một cách đáng tin cậy. Trực tiếp thực hiện RL trên mô hình cơ bản chưa được SFT thường sẽ thất bại vì định dạng đầu ra khó hiểu và không thể tính được phần thưởng - nhưng kết luận này có điều kiện biên: xuất phát từ việc đặt ra "mô hình cơ bản nhỏ hơn + yêu cầu đầu ra có cấu trúc chặt chẽ" (chẳng hạn như thử nghiệm 7-11 sau này). DeepSeek-R1-Zero chứng minh rằng mô hình cơ bản đủ mạnh để bỏ qua SFT và đi thẳng đến RL. Khả năng phản ánh và tư duy chuỗi dài xuất hiện - với cái giá là khả năng đọc đầu ra kém và các ngôn ngữ hỗn hợp. Đây chính xác là những gì DeepSeek cuối cùng đã thêm lại SFT "khởi động nguội" ở R1. Hành trình của R1 từ Zero đến khởi đầu nguội là ví dụ điển hình nhất về "hình thức trước, sau đó là tinh thần": RL có thể tự phát triển "tinh thần" (khả năng chiến lược và lý luận) của mình, nhưng "hình thức" (định dạng và khả năng đọc) của nó vẫn dựa vào SFT để thiết lập nó một cách nhanh chóng và ổn định.
-
-Cả hai đều có chi phí riêng: SFT có hiệu suất mẫu cao và độ hội tụ nhanh nhưng khả năng khái quát hóa còn hạn chế; RL có thể học các chiến lược có thể chuyển đổi nhưng hiệu quả mẫu thấp và quá trình đào tạo không ổn định. Một tiêu chí thực tế là: khi "dù có thêm bao nhiêu dữ liệu trình diễn, hiệu suất của kịch bản mới vẫn không thể cải thiện", điểm mấu chốt là phải chuyển sang RL - gốc rễ của vấn đề không nằm ở số lượng trình diễn mà nằm ở mục tiêu tối ưu hóa của chính SFT.
-
-Khi đưa ra quyết định thực tế, bạn có thể xem xét chúng theo thứ tự sau:
-
-1. **Câu hỏi đầu tiên: Bạn có cần post-training không?** Nếu vấn đề có thể được giải quyết thông qua kỹ thuật Harness (tối ưu hóa nhanh chóng, thiết kế công cụ, quản lý ngữ cảnh) thì không cần phải đào tạo mô hình. Hầu hết các ứng dụng Agent đều nằm ở đây.
-2. **Nếu cần đào tạo: hãy thử SFT trước.** Áp dụng cho định dạng đầu ra được củng cố (lược đồ JSON, định dạng gọi API), kiến thức về giao thức được củng cố (cách sử dụng thuật ngữ, định dạng đầu ra, thói quen xử lý, tức là "cách nói, cách làm"), phong cách thống nhất (âm điệu, độ dài). Nhưng lưu ý rằng SFT không phù hợp để tiêm nhiều kiến thức thực tế (“những gì bạn biết”) - cần tiếp tục đào tạo trước hoặc giao lại cho RAG (xem phần "Hình ảnh hoàn chỉnh" ở cuối chương này). SFT có chi phí thấp và kết quả nhanh chóng.
-3. Khi **SFT không đủ: thêm RL.** Áp dụng cho các tình huống cần khái quát hóa các kịch bản mới, cần khám phá các chiến lược tối ưu hoặc chi phí ghi nhãn quá cao. Hãy đảm bảo sử dụng SFT để ổn định định dạng đầu ra trước, sau đó tạo RL dựa trên nó.
-
-## Học tăng cường một vòng: so sánh trí nhớ và khái quát hóa
-
-"Vòng đơn" có nghĩa là nhiệm vụ được hoàn thành trong một lần tương tác: mô hình nhận đầu vào, tạo đầu ra và nhận phần thưởng mà không duy trì trạng thái bước chéo. Cài đặt đơn giản hóa này cho phép chúng tôi tập trung vào những khác biệt cơ bản trong cơ chế học tập giữa SFT và RL mà không bị làm phiền bởi sự phức tạp của nhiều vòng tương tác. Kịch bản chạy một lần cung cấp các điều kiện thử nghiệm kiểm soát rõ ràng: cùng một nhiệm vụ, cùng một mô hình cơ bản, cùng ngân sách tính toán, biến số duy nhất là phương pháp đào tạo. Thử nghiệm đầu tiên cho thấy cách RL học siêu chiến lược "khi nào cần suy nghĩ"; thí nghiệm thứ hai định lượng một cách có hệ thống "bộ nhớ SFT, khái quát hóa RL" thông qua trò chơi thẻ lý luận số học.
-
-Trước khi bước vào thử nghiệm, trước tiên hãy thiết lập một chút **trực giác tối thiểu** về thuật toán RL để hiểu thuật ngữ xuất hiện trong các thử nghiệm tiếp theo (công thức hoàn chỉnh và so sánh được để lại trong phần "So sánh các thuật toán học tăng cường" ở phần sau của chương này). Việc đào tạo RL trong chương này chủ yếu dựa trên **Policy gradient**: Hãy để mô hình tạo ra nhiều câu trả lời hơn cho cùng một câu hỏi. Câu trả lời có phần thưởng cao sẽ làm tăng xác suất xuất hiện của nó, còn câu trả lời có phần thưởng thấp sẽ làm giảm khả năng xuất hiện - "đi nhiều hơn về hướng phần thưởng cao và ít đi về hướng phần thưởng thấp". Để tránh sai lệch mô hình nếu biên độ cập nhật đơn quá lớn, thuật toán **PPO** chính thống sẽ cắt biên độ cập nhật của từng bước ("PPO với mạng giá trị" xuất hiện trong các thử nghiệm sau này đề cập đến điều này, mạng giá trị được sử dụng để ước tính đường cơ sở và tính toán các lợi thế chi tiết hơn); còn **GRPO** thì không đào tạo mạng giá trị mà "nhiều câu trả lời cho cùng một câu hỏi được so sánh với nhau" để đánh giá chất lượng tương đối của mỗi câu trả lời. Hãy ghi nhớ trực giác này là đủ để hiểu hai thí nghiệm tiếp theo.
-
-**Cập nhật nhóm GRPO:**
+**Vòng lặp đánh giá có thể lặp lại:**
 
 ```python
-for prompt in batch:
-    group = [rollout(policy, env.reset(prompt)) for _ in range(G)]
-    rewards = [verify(trajectory) for trajectory in group]
-    advantages = normalize_within_group(rewards)       # GRPO baseline
-    update(policy, group, advantages)
+for task in dataset:
+    environment.reset(task.initial_state)
+    trajectory = agent.run(task.prompt, environment.tools)
+    outcome = environment.snapshot()
+    score = verifier(task, trajectory, outcome)
+    record(task, trajectory, outcome, score)
 ```
 
-**Cập nhật cắt PPO:**
+![Hình 7-2 Môi trường gọi công cụ và đánh giá tương tác giữa người và máy tính ](images/fig7-2.svg)
+
+### Môi trường đánh giá loại lệnh gọi công cụ
+
+Đối với các nhiệm vụ như tạo mã và phân tích dữ liệu chủ yếu dựa vào việc sử dụng các công cụ, khung Verifiers sẽ thể hiện các mẫu thiết kế điển hình. Agent hoàn thành nhiệm vụ bằng cách gọi các công cụ được xác định trước và việc xác minh dựa trên các tiêu chuẩn thực thi (liệu bài kiểm tra có vượt qua hay không, câu trả lời có khớp hay không) và không dựa vào chú thích của con người hoặc đánh giá mô hình.
+
+Verifiers giới thiệu thiết kế môi trường phân cấp: `SingleTurnEnv` phù hợp cho các tác vụ một vòng (chẳng hạn như câu hỏi và câu trả lời đơn giản), `ToolEnv` hỗ trợ các vòng lặp tự động của lệnh gọi công cụ nhiều vòng và `StatefulToolEnv` và `SandboxEnv` hỗ trợ các công cụ trạng thái và môi trường hộp cát chạy dài (chẳng hạn như thực thi mã). Ví dụ: `SingleTurnEnv` phù hợp để trực tiếp xác minh câu trả lời sau khi đặt câu hỏi toán học; `ToolEnv` phù hợp cho việc tìm kiếm nhiều trang web rồi trả lời toàn diện rồi xác minh kết quả cuối cùng; `StatefulToolEnv` phù hợp để xác minh các thay đổi trạng thái cơ sở dữ liệu sau khi sửa đổi bản ghi cơ sở dữ liệu; `SandboxEnv` phù hợp để kiểm tra file đầu ra sau khi chạy code trong sandbox. Bảng 7-2 tóm tắt các loại môi trường này để giúp người đọc chọn môi trường đánh giá phù hợp dựa trên trạng thái nhiệm vụ, lệnh gọi công cụ và yêu cầu cách ly.
+
+Bảng 7-2 So sánh các loại môi trường của Verifiers
+
+| Loại môi trường | Duy trì trạng thái | Cuộc gọi công cụ | Các trường hợp sử dụng điển hình |
+|---|---|---|---|
+| SingleTurnEnv | Không có | Không có | Đề thi trắc nghiệm một vòng, đề toán |
+| ToolEnv | Không có | Nhiều vòng | Tìm kiếm + tổng hợp thông tin |
+| StatefulToolEnv | Có | Nhiều vòng | Sửa đổi bản ghi cơ sở dữ liệu |
+| SandboxEnv | Có + Cách ly | Nhiều vòng | Thực thi và kiểm tra mã |
+
+Khung này hỗ trợ lấy mẫu song song và lưu vào bộ nhớ đệm trajectory, đồng thời trajectory hoàn chỉnh (quan sát, hành động, phần thưởng) của mỗi đánh giá sẽ được lưu lại để tạo điều kiện thuận lợi cho việc phân tích và phát lại tiếp theo.
+
+Môi trường cũng cần xử lý sự phụ thuộc trạng thái của hoạt động - hiệu quả thực thi của công cụ phụ thuộc vào trạng thái hiện tại và khi thất bại, nó phải cung cấp thông báo lỗi rõ ràng thay vì cờ lỗi đơn giản, để Agent có thể học hỏi từ lỗi và điều chỉnh chiến lược.
+
+### Môi trường đánh giá tương tác giữa người và máy tính
+
+Nhiều nhiệm vụ trong thế giới thực không chỉ liên quan đến việc gọi công cụ mà còn liên quan đến các cuộc trò chuyện với người dùng. Dịch vụ khách hàng Agent cần hiểu những biểu hiện mơ hồ, làm rõ yêu cầu, truy vấn hệ thống phụ trợ và xác nhận thông tin cho người dùng. Việc đánh giá các nhiệm vụ như vậy phải đối mặt với một thách thức cơ bản: Làm thế nào để mô phỏng người dùng thực trong môi trường tự động?
+
+Nguyên tắc thiết kế chính là Tiết lộ thông tin lũy tiến, đây là điểm khác biệt cơ bản giữa đánh giá tương tác giữa người và máy tính và các tiêu chuẩn truyền thống. Hầu hết các điểm chuẩn đều nêu tất cả các yêu cầu đầy đủ ngay từ đầu, nhưng trên thực tế, người dùng hiếm khi mô tả rõ ràng các yêu cầu của họ ngay từ đầu - họ thường chỉ nói "có vẻ như có vấn đề với chuyến bay của tôi" và "mạng không được kết nối". Agent Cần chủ động đặt câu hỏi để làm rõ yêu cầu. Bản thân quá trình này là một biểu hiện quan trọng của khả năng. Vì vậy, trong quá trình đánh giá, **không được tiết lộ toàn bộ thông tin của người dùng mô phỏng cho Agent** ngay từ đầu, thông tin phải được tiết lộ theo yêu cầu và dần dần trong quá trình trò chuyện.
+
+Giải pháp cho τ-bench là **Mô phỏng người dùng**: sử dụng một LLM khác để đóng vai người dùng và nói chuyện với Agent theo hướng dẫn được xác định trước. Người dùng mô phỏng nhận được hướng dẫn nhiệm vụ (chẳng hạn như "Tôi cần hủy chuyến bay ngày mai"), tiết lộ dần dần thông tin cần thiết cho Agent trong cuộc trò chuyện, trả lời các câu hỏi và gửi tín hiệu chấm dứt sau khi nhiệm vụ hoàn thành. Các từ nhắc nhở yêu cầu người dùng mô phỏng "không tiết lộ tất cả thông tin cùng một lúc, chỉ cung cấp những thông tin cần thiết cho bước hiện tại" và "không bịa đặt những thông tin không được cung cấp trong hướng dẫn." Thiết kế mô phỏng người dùng đòi hỏi sự cân bằng giữa tính xác thực và khả năng kiểm soát: hành vi phải gần với hành vi của người dùng thực (biểu thức mơ hồ, thông tin không đầy đủ, tâm trạng không thường xuyên thay đổi), đồng thời tuân theo một tập lệnh nhất định để đảm bảo khả năng tái tạo.
+
+Dưới đây là ví dụ về cuộc trò chuyện nhiều lượt với việc tiết lộ thông tin lũy tiến (trình mô phỏng người dùng hoạt động theo một tập lệnh cố định):
+
+> **Người dùng**: "Tôi gặp sự cố với chuyến bay của mình."
+> **Agent**: "Chuyến bay nào?"
+> **Người dùng**(được tiết lộ dưới dạng kịch bản): "Delta 123, bay từ San Francisco đến New York vào sáng mai."
+> **Agent**: "Vấn đề cụ thể là gì?"
+> **Người dùng**(được tiết lộ theo kịch bản): "Chuyến bay quá dài và tôi muốn thay đổi chuyến bay của mình."
+> **Agent**: "Có ưu tiên nào cho chuyến bay mới không?"
+> **Người dùng**(được tiết lộ theo kịch bản): "Chuyến bay buổi chiều nào cũng được."
+
+Trình mô phỏng người dùng tuân theo một tập lệnh cố định (thông tin đã biết + quy tắc được tiết lộ), đảm bảo rằng đánh giá có thể lặp lại trong khi mô phỏng các biểu thức lũy tiến của người dùng thực.
+
+τ-bench là bài kiểm tra điểm chuẩn để đánh giá hiệu suất của Agent trong các quy trình kinh doanh có cấu trúc (chẳng hạn như dịch vụ khách hàng hàng không, dịch vụ khách hàng bán lẻ). Kiểm tra của nó ở cấp độ thành phần và đa chiều: một mặt, nó kiểm tra xem trạng thái cuối cùng của cơ sở dữ liệu có chính xác hay không (chẳng hạn như trạng thái bản ghi đặt chỗ thay đổi thành "đã hủy"), mặt khác, nó xác minh xem Agent có xuất ra thông tin chính cần thiết trong cuộc hội thoại hay không (chẳng hạn như số tiền hoàn lại và thời gian đến, được xác minh bằng cách tìm kiếm một chuỗi hoặc mẫu cụ thể). Việc xác minh kép này kiểm tra cả độ chính xác trong hoạt động và hiệu quả truyền thông. Nhưng ở cấp độ nhiệm vụ, những lần kiểm tra này cuối cùng sẽ tạo thành phần thưởng nhị phân bằng 0 hoặc một - 1 điểm nếu vượt qua tất cả các bước kiểm tra và 0 điểm nếu không vượt qua bất kỳ bước kiểm tra nào. Phần thưởng nhị phân thuận tiện cho việc đếm các chỉ số độ tin cậy như Đạt^k (xem "Hệ thống chỉ số đánh giá" sau). Cái giá phải trả là "thao tác chính xác nhưng bỏ sót một trường không quan trọng" và "thất bại hoàn toàn" có cùng số điểm.
+
+Sự gia tăng cốt lõi của phiên bản cải tiến **τ²-bench** không nằm ở mức độ chi tiết của điểm mà ở hai điểm: Thứ nhất, **môi trường điều khiển kép (Dual-Control)** - không còn chỉ Agent có thể gọi công cụ, trình mô phỏng người dùng cũng có thể vận hành cùng một môi trường chia sẻ (chẳng hạn như Agent Hướng dẫn người dùng chuyển đổi chế độ máy bay, thao tác của người dùng thực sự thay đổi trạng thái môi trường), gần hơn với các tình huống thực tế như hỗ trợ kỹ thuật cần có sự hợp tác của người dùng; thứ hai, **thông số kỹ thuật nhiệm vụ chính xác hơn và tạo nhiệm vụ kết hợp** - có ít sự mơ hồ hơn trong các điều kiện thành công và các trường hợp nhiệm vụ cụ thể có thể được tham số hóa và tạo hàng loạt (xem phần "Đảm bảo tính xác minh và khách quan" bên dưới để biết các kích thước xác minh chi tiết).
+
+> **Thử nghiệm 7-1 ★: Chạy τ2-bench và so sánh sự tiến hóa của τ-bench**
+>
+> Trong thử nghiệm này, bằng cách chạy khung đánh giá τ2-bench, chúng tôi hiểu được các điểm thiết kế của môi trường đánh giá tương tác giữa người và máy tính và bằng cách so sánh sự khác biệt giữa τ-bench và τ2-bench, chúng tôi hiểu được cách cải tiến lặp đi lặp lại của tập dữ liệu đánh giá.
+>
+> Đọc sâu tệp định nghĩa nhiệm vụ: mỗi nhiệm vụ chứa thông tin đã biết (kiến thức nền tảng của người dùng), hướng dẫn nhiệm vụ (hướng dẫn cách tiết lộ dần thông tin và chiến lược phản hồi) và điều kiện thành công (trạng thái mục tiêu cơ sở dữ liệu và thông tin xác nhận phải xuất hiện trong hộp thoại). Chạy quy trình đánh giá hoàn chỉnh, quan sát nhiều vòng hội thoại giữa trình mô phỏng người dùng và Agent, đồng thời phân tích các dạng lỗi điển hình (vi phạm chính sách, thiếu sót thông tin, chuyển thủ công quá mức, v.v.).
+>
+>
+> ![Hình 7-3 Kiến trúc đánh giá τ²-bench ](images/fig7-3.svg)
+>
+>
+> So sánh sự khác biệt về thiết kế giữa τ-bench và τ2-bench: hướng dẫn sử dụng trong phiên bản đầu tiên của τ-bench quá đơn giản (Agent có thể đoán chính xác câu trả lời), điều kiện thành công không đủ chính xác (dẫn đến đánh giá sai) và trình mô phỏng người dùng quá máy móc. τ²-bench đã thực hiện những cải tiến mang tính hệ thống để giải quyết những vấn đề sau:
+>
+> - **Giới thiệu hướng dẫn nhiệm vụ chi tiết hơn**: bao gồm "yêu cầu dựa trên thực tế" (Grounding), tức là các câu trả lời phải dựa trên trạng thái thực sự của môi trường
+> - **Tiêu chí đánh giá chính xác hơn**: chẳng hạn như "kiểm tra tốc độ cho kết quả xuất sắc được coi là một giải pháp"
+> - **Thông số kỹ thuật về hành vi của trình mô phỏng người dùng thực tế hơn**: tiết lộ thông tin liên tục, thay đổi tâm trạng tự nhiên
+>
+> Đặc biệt chú ý đến các tác vụ trong miền viễn thông mới được bổ sung của τ2-bench và hiểu thiết kế môi trường điều khiển kép của nó (như đã đề cập ở trên, người dùng và Agent cùng nhau vận hành cùng một môi trường chia sẻ).
+>
+
+Khác với đánh giá gọi công cụ tập trung vào “liệu các thay đổi trạng thái có thể quan sát được đã được hoàn thành hay chưa”, đánh giá tương tác giữa con người và máy tính tập trung vào “liệu người dùng có được hướng dẫn để hoàn thành các thay đổi về nhận thức hay ra quyết định hay không”. Cái trước kiểm tra tính đúng đắn trong các hành động của Agent, trong khi cái sau kiểm tra tính hợp lý của chiến lược truyền thông của nó.
+
+Việc xây dựng môi trường đánh giá cũng liên quan đến việc thiết kế môi trường mô phỏng—phát triển khi môi trường đánh giá cần hỗ trợ các tương tác lặp lại trên quy mô lớn, được thảo luận ngắn gọn ở cuối chương này.
+
+## Thiết kế bộ dữ liệu nhiệm vụ đánh giá
+
+Môi trường đánh giá là "giai đoạn" và tập dữ liệu là "tập lệnh" - chất lượng của thiết kế tập lệnh thường quyết định giá trị của việc đánh giá hơn chính giai đoạn đó. Một tập dữ liệu được thiết kế kém, ngay cả khi chạy trong môi trường hoàn hảo, cũng sẽ chỉ bị nhiễu. Phần này trích xuất một số nguyên tắc đã được xác minh nhiều lần từ thực tiễn thiết kế các điểm chuẩn như GAIA, AndroidWorld, SWE-Bench Verified (Software Engineering Benchmark, điểm chuẩn kỹ thuật phần mềm), τ-bench và τ²-bench, Terminal-Bench, OSWorld và OSWorld-Verified.
+
+Danh sách này không đầy đủ về ngữ cảnh đánh giá Agent. Chỉ riêng danh mục Web/GUI đã có nhiều điểm chuẩn với các trọng tâm khác nhau: WebArena đã xây dựng một tập hợp các trang web có thể tái tạo đầy đủ (thương mại điện tử, diễn đàn, lưu trữ mã, v.v.) để đưa tính chất không thể kiểm soát của "các trang web thực" vào hộp cát; Mind2Web đi theo hướng ngược lại và trực tiếp kiểm tra khả năng khái quát trên hàng trăm website thực; [ClawBench](https://claw-bench.com/) ([bài báo](https://arxiv.org/abs/2604.08523), [mã nguồn](https://github.com/TIGER-AI-Lab/ClawBench)) cho phép Agent trong các bộ chứa cô lập thực hiện các tác vụ hằng ngày đầu cuối trên website thực. V1 bao phủ 153 nhiệm vụ trên 144 website, V2 bổ sung thêm 130 nhiệm vụ, đồng thời ghi lại năm lớp bằng chứng: bản phát lại phiên, ảnh chụp màn hình từng hành động, lưu lượng HTTP, thao tác trình duyệt và thông điệp của Agent. Nó bổ sung cho các điểm chuẩn hộp cát, giúp phân tích sự biến động của website thực và các lỗi đuôi dài; đổi lại, khả năng tái tạo chịu ảnh hưởng từ những thay đổi ở các website bên thứ ba; DuyệtComp chuyên về truy xuất chuyên sâu - câu trả lời được ẩn sâu và yêu cầu duyệt nhiều bước và xác thực chéo để tìm. Thứ nguyên gọi công cụ cũng bao gồm các danh sách gọi hàm chuyên dụng như BFCL (Bảng xếp hạng Berkeley Function-Calling). Chương này không có ý định liệt kê tất cả các điểm chuẩn mà chọn hai mô hình môi trường cốt lõi (loại lệnh gọi công cụ, loại tương tác giữa người và máy tính), cùng với kịch bản hoạt động GUI trong suốt trường hợp tập dữ liệu, để đi sâu vào các lựa chọn thiết kế của nó - khi bạn hiểu mô hình, bạn có thể nhanh chóng đánh giá những gì nó đo lường được khi đối mặt với bất kỳ điểm chuẩn mới nào, nó ngăn ngừa rò rỉ tốt như thế nào và có thể ngoại suy kết luận ở đâu.
+
+> **Thí nghiệm 7-2 ★: Nhiệm vụ chuẩn thực thi thủ côngi**
+>
+> Chọn các nhiệm vụ từ GAIA, AndroidWorld, SWE-Bench Verified, τ²-bench, Terminal-Bench, OSWorld-Verified để tự mình hoàn thành. Nên hoàn thành một cấp độ dễ, trung bình và khó cho mỗi bộ dữ liệu - cấp độ “khó” cũng là một thử thách đối với con người. So sánh kết quả thực hiện với các câu trả lời tiêu chuẩn và phân tích nguồn gốc của sự khác biệt. Hiểu thông qua trải nghiệm cá nhân: mô tả nhiệm vụ cần cân bằng giữa sự rõ ràng và cởi mở, các tiêu chuẩn xác minh phải khách quan và có thể thực thi được, và hệ thống phân cấp độ khó của nhiệm vụ phải có khả năng phân biệt được các cấp độ khả năng khác nhau.
+>
+
+### Những thách thức cốt lõi trong thiết kế tập dữ liệu nhiệm vụ
+
+**Thử thách 1: Sự căng thẳng giữa sự rõ ràng và cởi mở.** Mô tả nhiệm vụ phải đủ rõ ràng để đảm bảo việc đánh giá có thể lặp lại nhưng không quá cứng nhắc đến mức hạn chế khả năng sáng tạo của Agent. GAIA cung cấp một ví dụ: nhiệm vụ "đơn giản về mặt khái niệm" nhưng có lộ trình thực hiện rộng mở - ví dụ: yêu cầu tìm thông tin về phi hành gia trong các bức ảnh thiên văn hàng ngày của NASA. Mục tiêu rất rõ ràng (tìm các phi hành gia cụ thể và thời gian của họ trong không gian), nhưng cách tìm kiếm, lọc và xác minh hoàn toàn do Agent quyết định độc lập.
+
+**Thử thách 2: Cân bằng giữa tính xác thực và khả năng kiểm soát.** Các nhiệm vụ thực tế chứa đựng sự không chắc chắn và nhiễu, cho phép bộc lộ độ bền nhưng cũng đe dọa đến khả năng tái sản xuất. Phiên bản ban đầu của SWE-Bench được lấy trực tiếp từ vấn đề thực tế của GitHub, đảm bảo tính xác thực nhưng cũng dẫn đến mô tả nhiệm vụ mơ hồ, trường hợp thử nghiệm không đầy đủ và tiêu chí đánh giá chủ quan. SWE-Bench Verified giới thiệu các chuyên gia con người để xác minh hệ thống và chọn ra 500 nhiệm vụ chất lượng cao với các vấn đề rõ ràng, thử nghiệm đầy đủ và kế hoạch rõ ràng, giúp cải thiện đáng kể khả năng kiểm soát trong khi vẫn duy trì tính xác thực.
+
+**Thử thách 3: Phối hợp đa dạng và có tính hệ thống.** Một bộ dữ liệu hiệu quả cần bao gồm các tình huống điển hình, điều kiện biên và bẫy lỗi, đồng thời phải được tổ chức một cách có hệ thống để kết quả đánh giá có thể chẩn đoán được những thiếu sót về năng lực cụ thể. 116 nhiệm vụ của AndroidWorld trải rộng trên 20 ứng dụng thực và mỗi nhiệm vụ được đánh dấu bằng các khả năng cốt lõi cần thiết (lập kế hoạch nhiều bước, hiểu trực quan, lý luận theo thời gian), để kết quả đánh giá không chỉ đưa ra tỷ lệ thành công chung mà còn tiết lộ sức mạnh của các khía cạnh khả năng cụ thể. Quan trọng hơn, các biến thể nhiệm vụ gần như không giới hạn có thể được tạo ra thông qua các cơ chế tham số hóa.
+
+**Thử thách thứ 4: Đánh giá chi phí so với phạm vi bảo hiểm.** Các tác vụ Agent phức tạp có thể mất vài phút hoặc thậm chí hàng giờ để hoàn thành và tiêu tốn một lượng lớn mã thông báo. Kích thước của tập dữ liệu cần cân bằng giữa tính toàn diện với tính kinh tế. GAIA chọn 466 câu hỏi, chia thành ba mức độ khó, không chỉ bao gồm nhiều khía cạnh khả năng mà còn có thể hoàn thành bài đánh giá với chi phí hợp lý. SWE-Bench Verified đã được sàng lọc từ 2294 câu hỏi xuống còn 500 câu hỏi (giảm chi phí khoảng 4/5 và cải thiện tỷ lệ tín hiệu trên nhiễu thông qua các tiêu chuẩn chất lượng chặt chẽ hơn).
+
+**Thử thách 5: Ngăn chặn rò rỉ dữ liệu (Data Contamination).** Trong thời đại của các mô hình ngôn ngữ lớn, rò rỉ dữ liệu là một thách thức nghiêm trọng mà việc đánh giá phải đối mặt: khi dữ liệu đánh giá được đưa vào dữ liệu huấn luyện, việc đánh giá sẽ đo lường trí nhớ thay vì khả năng khái quát hóa. Cũng giống như việc ghi nhớ đáp án trước khi thi, dù điểm có tốt đến mấy cũng không thể chỉ ra trình độ thực sự. Mỗi điểm chuẩn áp dụng các chiến lược phòng ngừa khác nhau: GAIA dựa vào tính duy nhất của câu trả lời. Câu hỏi yêu cầu kết hợp nhiều nguồn thông tin để trả lời và một số tác vụ được trang bị các tệp đính kèm được tạo đặc biệt (PDF/âm thanh/hình ảnh không tồn tại trên Internet) và một trang web không thể trực tiếp cung cấp câu trả lời. Bản thân SWE-Bench Verified là một tập hợp con gồm 500 câu hỏi thu được từ quá trình sàng lọc chất lượng thủ công của OpenAI đối với SWE-Bench ban đầu và không bao gồm thiết kế chống rò rỉ theo chiều thời gian; những gì thực sự dựa vào độ mới của thời gian để ngăn chặn rò rỉ là công việc tiếp theo, chẳng hạn như SWE-bench-Live, tiếp tục bao gồm các vấn đề mới được tạo sau thời hạn đào tạo mô hình, để việc đánh giá luôn đi trước kho dữ liệu đào tạo của mô hình. τ²-bench thực hiện các biện pháp phòng ngừa thông qua việc tạo tham số động và các trường hợp tác vụ cụ thể (tên người dùng, số đơn đặt hàng, ngày, v.v.) được tạo ngẫu nhiên mỗi lần. Quá trình tạo tác vụ được tham số hóa của AndroidWorld có khả năng chống rò rỉ một cách tự nhiên vì quá trình xác thực dựa trên trạng thái giao diện người dùng cuối cùng thay vì trình tự thao tác. Terminal-Bench giúp phát hiện rò rỉ bằng cách nhúng GUID canary (mã định danh duy nhất toàn cầu, điểm đánh dấu theo dõi duy nhất): nếu mô hình có thể xuất nội dung chứa GUID, thì dữ liệu điểm chuẩn đã bị rò rỉ vào tập huấn luyện.
+
+### Thiết kế mô tả nhiệm vụ chính xác
+
+GAIA đảm bảo tính duy nhất của câu trả lời thông qua các ràng buộc rõ ràng về nguồn thông tin, phạm vi thời gian, chủ đề và mục tiêu truy vấn. Ví dụ: nhiệm vụ Cấp 3 yêu cầu bắt đầu từ các bức ảnh của NASA về một ngày cụ thể, xác định các phi hành gia thông qua hiểu biết trực quan, truy vấn nhóm phi hành gia mà họ thuộc về, tính toán thời gian ở trong không gian và định dạng chính xác kết quả đầu ra ("họ, phân tách bằng dấu chấm phẩy, dấu phân cách hàng nghìn"). Mọi chi tiết đều được xác minh tự động - chỉ có định dạng và nội dung trùng khớp hoàn toàn mới được coi là đạt.
+
+τ²-bench giới thiệu thiết kế theo ngữ cảnh, với mỗi tác vụ chứa nhiều lớp thông tin: vấn đề bề ngoài ("Di chuyển dữ liệu sẽ không hiệu quả"), kỳ vọng về hiệu suất ("chắc chắn muốn tốc độ cao"), các hạn chế ("không chấp nhận được tốc độ nào khác") và cảm tính ngầm. Cải tiến quan trọng là tách "thông tin đã biết" khỏi "hướng dẫn nhiệm vụ": thông tin đã biết là thông tin mà người dùng hiện đang sở hữu và hướng dẫn nhiệm vụ hướng dẫn trình mô phỏng cách tiết lộ dần dần thông tin, bao gồm "yêu cầu nối đất" (Yêu cầu nối đất, nghĩa là các câu trả lời phải dựa trên kết quả trả về thực tế của các lệnh gọi công cụ và không thể bịa đặt).
+
+SWE-Bench Verified chứa các trường có cấu trúc như mô tả vấn đề, các bước tái tạo, hành vi dự kiến/thực tế, v.v. Trình chú thích sẽ xác minh sự trùng khớp giữa mô tả và trường hợp kiểm thử. Mỗi thành phần trong mô tả nhiệm vụ của Terminal-Bench có thể được xác minh một cách máy móc: đường dẫn tệp có tồn tại hay không, giá trị quyền có chính xác hay không, tham số chứng chỉ, định dạng ngày, v.v. Ví dụ: "build-linux-kernel-qemu" yêu cầu xây dựng nhân Linux 6.9 từ nguồn, thêm bản in tùy chỉnh trong `start_kernel`, tạo initramfs và chạy nó trong QEMU. Tiêu chí thành công là một thông báo tùy chỉnh trong nhật ký khởi động - Agent không thể thoát khỏi đầu ra giả mạo và thực sự phải hoàn thành toàn bộ quá trình.
+
+AndroidWorld được thiết kế bằng cách sử dụng **các mẫu được tham số hóa**. Tác vụ không phải là văn bản tĩnh mà là một mẫu có thể được khởi tạo động (chẳng hạn như "Thay đổi số điện thoại của người liên hệ `[CONTACT_NAME]` thành `[NEW_PHONE]`"), với các giá trị tham số khác nhau được tạo ngẫu nhiên mỗi lần đánh giá. Có ba lợi ích:
+
+- **Ngăn ghi nhớ**: Các giá trị tham số mỗi lần khác nhau và không thể phát lại một chuỗi thao tác cố định
+- **Tăng tính đa dạng của dữ liệu**: Một mẫu có thể tạo ra các phiên bản gần như không giới hạn
+- **Hỗ trợ thí nghiệm so sánh**: cố định một số thông số nhất định và chỉ thay đổi các thông số khác, đo lường chính xác tác động của các yếu tố cụ thể
+
+Việc xác thực dựa trên trạng thái giao diện người dùng cuối cùng (chẳng hạn như liệu trường số điện thoại có chứa giá trị mong đợi hay không) thay vì trình tự thao tác.
+
+Các tác vụ của OSWorld thường không bắt đầu từ trạng thái ban đầu “sạch” mà từ trạng thái trung gian được cấu hình cẩn thận, gần với các tình huống sử dụng thực tế hơn. Mô tả nhiệm vụ cần xử lý nhiều giải pháp ("đặt nền thành màu tím" cần cung cấp mã màu cụ thể để loại bỏ sự mơ hồ, "ghép hai CSV" cần chấp nhận tất cả các cách hợp lý để giữ lại tiêu đề đơn/tiêu đề kép, v.v.) và sự không chắc chắn về môi trường (chống thu thập dữ liệu trang web, phát triển giao diện người dùng ứng dụng, cạnh tranh về thời gian - OSWorld-Verified giảm thiểu thông qua các cơ chế như ảnh chụp nhanh trang ngoại tuyến, khóa phiên bản phụ thuộc, điều kiện chờ rõ ràng, v.v.).
+
+### Thiết kế phân cấp độ phức tạp của nhiệm vụ
+
+GAIA được thiết kế với ba cấp độ khó: Cấp 1 chỉ yêu cầu các công cụ 1-2 (93,9% con người so với GPT-4 30,3%), Cấp 2 yêu cầu tư duy nhiều bước (91,8% so với 9,7%) và Cấp 3 yêu cầu sự kết hợp phức tạp (87,3% so với 0%). Giá trị chẩn đoán của thiết kế phân cấp là: Lỗi cấp độ 1 liên quan đến các vấn đề sử dụng công cụ cơ bản, Cấp độ 2 liên quan đến việc lập kế hoạch nhiều bước và tích hợp thông tin, và Cấp độ 3 liên quan đến tư duy chuỗi dài và quản lý độ phức tạp - mỗi cấp độ tương ứng với một hướng cải tiến khác nhau (kỹ thuật gợi ý, cơ chế lập kế hoạch, kiến trúc phân cấp/post-training).
+
+τ2-bench được phân lớp theo mức độ phức tạp trong kinh doanh: từ truy vấn thông tin đơn giản đến quy trình gồm nhiều bước (sửa đổi truy vấn nhu cầu chuyến bay, hiển thị thay thế, xác nhận, tính toán chênh lệch giá, thanh toán), đến chẩn đoán lỗi (kiểm tra có hệ thống nhiều nguyên nhân có thể và xác minh việc sửa chữa) và cuối cùng là phán đoán chính sách (xử lý các yêu cầu không tuân thủ chính sách).
+
+Terminal-Bench được phân tầng theo chiều kép của lĩnh vực kỹ thuật × độ phức tạp trong vận hành. Sổ đăng ký nhiệm vụ của nó bao gồm hơn 200 nhiệm vụ (các phiên bản khác nhau của bộ đánh giá cốt lõi có tỷ lệ khác nhau. Ví dụ: phiên bản 2.0 đã chọn 89 nhiệm vụ chất lượng cao từ sự đóng góp của cộng đồng), từ đăng ký mô hình mlflow đơn giản, đến bẻ khóa mật khẩu 7z trung bình, đến tích hợp đa thành phần máy chủ git + máy chủ web khó, đến phân tích mật mã vi phân FEAL khó nhất (yêu cầu kiến thức về mật mã + tối ưu hóa thuật toán để đáp ứng giới hạn thời gian 30 giây).
+
+### Đảm bảo tính xác thực và khách quan
+
+Câu trả lời của GAIA rất ngắn gọn và rõ ràng. Định dạng nghiêm ngặt cho phép hoàn thành việc xác minh bằng cách khớp chuỗi chính xác và kết quả nhị phân (khớp hoặc không khớp) đảm bảo khả năng tái tạo khách quan. Sự hiếm có của câu trả lời cũng có tác dụng ngăn chặn hành vi gian lận—các sự kiện có tính cụ thể cao ít có khả năng xuất hiện nguyên trạng trong dữ liệu huấn luyện.
+
+SWE-Bench Verified thực hiện xác minh dựa trên khả năng thực thi của mã, phân biệt FAIL_TO_PASS (không thành công trước khi sửa chữa, đạt sau khi sửa chữa, chứng minh rằng sự cố đã được giải quyết) và PASS_TO_PASS (đã vượt qua trước và sau khi sửa chữa, chứng minh rằng không có lỗi mới nào được đưa ra), đạt được xác minh kép. Phiên bản Verified cũng đảm bảo rằng bản thân các bài kiểm tra có chất lượng đáng tin cậy và không có bài kiểm tra không ổn định nào đôi khi vượt qua và đôi khi thất bại.
+
+Hệ thống xác minh của τ²-bench bao gồm kiểm tra nhiều lớp (kết quả của mỗi lớp kiểm tra vẫn được tóm tắt dưới dạng phần thưởng nhị phân ở cấp độ nhiệm vụ và chỉ đạt được thành công nếu tất cả đều vượt qua):
+
+- **Kiểm tra trạng thái cơ sở dữ liệu**: trạng thái hồ sơ đặt chỗ và liệu hồ sơ hoàn tiền có được tạo hay không
+- **Tìm kiếm từ khóa nội dung hội thoại**: Có xác nhận số tiền hoàn lại và thời gian đến với người dùng hay không
+- **Tuân thủ quy trình**: Phân tích trình tự cuộc gọi công cụ, chẳng hạn như liệu có nhận được xác nhận rõ ràng từ người dùng trước khi sửa đổi đơn hàng hay không
+
+Môi trường điều khiển kép của τ²-bench (xem bài viết trước "Môi trường đánh giá tương tác giữa người và máy tính") có thêm một chiều ở cấp độ xác minh: sau khi trình mô phỏng người dùng thực sự thay đổi trạng thái môi trường, Agent phải quan sát sự thay đổi này thông qua lệnh gọi công cụ và tiếp tục khắc phục sự cố tương ứng. Do đó, việc xác minh bao gồm "liệu Agent có thực sự đọc kết quả hoạt động từ phía người dùng hay không."
+
+OSWorld được trang bị 134 chức năng đánh giá độc lập, có toàn quyền truy cập hệ điều hành và có thể kiểm tra sâu cấu trúc hệ thống tệp, trạng thái quy trình, kết nối mạng và trạng thái nội bộ của ứng dụng. Ví dụ: trong tác vụ vận hành cơ sở dữ liệu, tập lệnh đánh giá không chỉ xác minh xem tệp báo cáo có tồn tại hay không mà còn kết nối trực tiếp với cơ sở dữ liệu để kiểm tra xem SQL có được thực thi chính xác hay không; trong tác vụ trình duyệt, nó phân tích cây DOM, kiểm tra cookie/localStorage và gửi yêu cầu xác minh đến chương trình phụ trợ để xác nhận xem biểu mẫu có thực sự hiệu quả hay không. Kiểu kiểm tra chuyên sâu này có thể phát hiện ra tình huống "hoàn thành bề mặt nhưng có lỗi thực tế" - ví dụ: Agent đã nhấp vào nút gửi nhưng bị máy chủ từ chối vì các trường được điền không chính xác.
+
+Terminal-Bench dựa trên môi trường tiêu chuẩn hóa vùng chứa Docker, kết hợp với kiểm tra trạng thái hệ thống tệp (liệu đường dẫn có tồn tại, giá trị quyền, định dạng nội dung) và xác minh chức năng thực thi chương trình (QEMU thực sự được khởi động trong build-linux-kernel-qemu và tìm kiếm thông báo printk tùy chỉnh) và GUID canary giúp theo dõi rò rỉ.
+
+### Thiết kế hệ thống phân bổ nhiệm vụ
+
+Việc phân bổ nhiệm vụ cần phải bao quát một cách có hệ thống các khía cạnh năng lực, khía cạnh khó khăn, khía cạnh kịch bản và các tình huống ranh giới. GAIA Hướng tới tính tổng quát - hầu hết các tác vụ đều yêu cầu sự kết hợp giữa lý luận, đa phương thức, duyệt và sử dụng công cụ. τ2-bench được thiết kế đặc biệt "nhiệm vụ bẫy" - ví dụ: người dùng cho rằng "dịch vụ khách hàng đã phê duyệt việc hủy" nhưng thực tế không tuân thủ chính sách, để kiểm tra xem Agent có thể duy trì phán đoán chính xác khi đối mặt với áp lực và thông tin sai lệch hay không. OSWorld dựa trên ma trận hai chiều của loại hoạt động (tệp IO/ứng dụng máy tính để bàn/ứng dụng web/quy trình ứng dụng chéo) và trường ứng dụng, trên ba hệ điều hành (nghiên cứu cho thấy rằng các khả năng của nhiều hệ điều hành có mối tương quan chặt chẽ và các khả năng đã học được trên một hệ thống có thể được chuyển sang các hệ thống khác). Terminal-Bench chứa "các tác vụ kết hợp giữa các ngăn xếp công nghệ" để kiểm tra tư duy hệ thống (chẳng hạn như xử lý dữ liệu tổng hợp + thao tác tệp + phân chia lại tác vụ cho dự án Python).
+
+### Kiểm soát chất lượng dữ liệu và cải tiến lặp lại
+
+SWE-Bench Verified là hình ảnh thu nhỏ của việc kiểm soát chất lượng. OpenAI đã chọn ngẫu nhiên 1699 nhiệm vụ từ 2294 nhiệm vụ ban đầu để đánh giá thủ công và tuyển dụng 93 nhà phát triển thành thạo Python. Người chú thích cần phải hoàn thành nhiều bước kiểm tra: liệu mô tả vấn đề có rõ ràng hay không (bạn có hiểu điều gì cần giải quyết hay không), liệu trường hợp kiểm thử đã hoàn thành chưa (bao gồm tất cả các khía cạnh và điều kiện biên), liệu kiểm thử có ổn định hay không (liệu có các kiểm thử không ổn định do môi trường hoặc do ngẫu nhiên gây ra hay không), liệu bản vá có chính xác hay không (liệu có lỗi mới được đưa ra hay không) và liệu độ khó có hợp lý hay không. Sau khi sàng lọc nghiêm ngặt, chỉ có 500 nhiệm vụ đạt (29%) – tỷ lệ loại bỏ cao này là sự đầu tư cần thiết cho chất lượng đánh giá. Họ cũng thiết lập các nguyên tắc chú thích được tiêu chuẩn hóa nhằm xác định các tiêu chí và ví dụ cụ thể cho từng kỳ thi để đảm bảo tính nhất quán giữa các người chú thích khác nhau.
+
+τ²-bench giới thiệu sự tách biệt giữa "thông tin đã biết"/"hướng dẫn nhiệm vụ" (làm cho hoạt động của trình mô phỏng trở nên thực tế hơn) và các điều kiện hoàn thành chặt chẽ hơn (chẳng hạn như "chỉ xuất sắc mới được coi là giải pháp và poor/fair/good sẽ không được chấp nhận") để ngăn chặn "sửa chữa chiếu lệ".
+
+OSWorld-Verified là một ví dụ tuyệt vời về cải tiến lặp đi lặp lại. OSWorld nhanh chóng trở thành tiêu chuẩn quan trọng để đánh giá Agent đa phương thức sau khi phát hành vào tháng 4 năm 2024, nhưng hơn 300 vấn đề đã bộc lộ trong suốt 15 tháng sử dụng rộng rãi. Những vấn đề này được chia thành bốn loại: vấn đề về môi trường (chống thu thập dữ liệu trang web/CAPTCHA/thay đổi nội dung động), vấn đề về mô tả nhiệm vụ (biểu thức không rõ ràng), vấn đề về logic xác minh (quá nghiêm ngặt hoặc quá lỏng lẻo) và vấn đề về trạng thái ban đầu (cấu hình không hoàn chỉnh). Nhóm Đại học Hồng Kông đã thành lập một nhóm khoảng 10 người và làm việc chuyên sâu với MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic, Simular, v.v. trong hai tháng để thực hiện sửa chữa hệ thống. Policy sửa chữa được xây dựng cho từng loại sự cố: sự cố môi trường được giải quyết bằng cách khóa phiên bản và sao lưu ngoại tuyến, mô tả tác vụ được loại bỏ bằng cách viết lại các biểu thức không rõ ràng, logic xác minh được cân bằng bằng cách thiết lập đường cơ sở chính xác và điều chỉnh các điều kiện theo cách thủ công, đồng thời trạng thái ban đầu được nâng cao bằng cách thêm các kiểm tra tính toàn vẹn.
+
+Cơ sở hạ tầng đánh giá cũng được di chuyển từ máy ảo cục bộ sang nền tảng đám mây AWS, sử dụng quy mô linh hoạt để đạt được khả năng tăng tốc song song gấp 50 lần (rút ngắn từ hơn 10 giờ xuống còn vài phút) và tỷ lệ khởi tạo tác vụ Google Drive thành công đã tăng từ 50% lên hơn 95%. Tất cả dữ liệu trajectory đánh giá chính thức đều được công khai trên HuggingFace, cho phép cộng đồng xem xét từng chi tiết, tái tạo kết quả và xác định vấn đề, tạo thành một chu trình cải tiến liên tục.
+
+Điều đáng nói là môi trường đánh giá và môi trường post-training thường có cùng nguồn gốc: môi trường đánh giá được thiết kế tốt có thể biến thành môi trường đào tạo với một chút sửa đổi - SWE-Gym là một ví dụ điển hình về các nhiệm vụ đào tạo được xây dựng dựa trên SWE-bench và các mẫu được tham số hóa của τ²-bench và AndroidWorld có thể tạo ra các phiên bản đào tạo lớn theo đợt. Tuy nhiên, cần phải vạch ra một ranh giới màu đỏ: thứ có thể được tái sử dụng là **cơ chế xây dựng môi trường** và các câu hỏi cụ thể trong bản thân bộ đánh giá phải được tách biệt hoàn toàn khỏi dữ liệu huấn luyện - một khi các câu hỏi đánh giá được đưa vào tập huấn luyện, trí nhớ sẽ được đo lường chứ không phải khả năng (xem Chương 8 để biết chi tiết).
+
+## Hệ thống chỉ số đánh giá
+
+Sau khi xác định “nhiệm vụ nào cần đánh giá”, bạn cũng cần trả lời “những khía cạnh nào cần đo lường”. Phần này tổng hợp các chỉ số thường được sử dụng để đánh giá Agent thành một "từ điển chỉ báo" có thể tham khảo - từ quy trình đến kết quả, từ chất lượng đến an toàn, các định nghĩa và kịch bản áp dụng được đưa ra từng cái một. Các định nghĩa chính xác về Pass@k, Pass^k và các chỉ số khác được đề cập nhiều lần trong bài viết trước (chẳng hạn như phần τ-bench) cũng được đưa ra ở đây.
+
+**Số liệu quy trình: Từ hộp đen đến hộp trắng.**
+
+Chỉ tập trung vào kết quả cuối cùng là chưa đủ, Agent quá trình đạt được điều đó cũng quan trọng không kém. **Tỷ lệ hợp pháp của hoạt động** đo lường tỷ lệ các hoạt động hợp lệ và hợp pháp - các hoạt động không hợp lệ bao gồm việc gọi các công cụ không tồn tại và truyền sai loại tham số; hoạt động trái phép đề cập đến các hành vi vượt quá phạm vi thẩm quyền. Tỷ lệ pháp lý cao cho thấy Agent có hiểu biết rõ ràng về hệ sinh thái công cụ. **Độ chính xác của lệnh gọi công cụ** còn yêu cầu các tham số phải hợp lý về mặt ngữ nghĩa: các từ truy vấn của công cụ tìm kiếm phải thể hiện chính xác yêu cầu và đường dẫn thao tác tệp phải trỏ đến đúng mục tiêu.
+
+**Hiệu quả của đường dẫn** đo lường tính kinh tế của việc hoàn thành một nhiệm vụ: số bước (số chu kỳ suy nghĩ-hành động-quan sát), hành động dư thừa (tìm kiếm lặp lại cho cùng một từ khóa, đọc lặp lại cùng một tệp), số lần quay lại (tần suất nhận ra lỗi và sửa chúng - việc quay lại không thường xuyên là bình thường, nhưng việc quay lại thường xuyên cho thấy việc lập kế hoạch chuyển tiếp không đủ). Cần phải thiết lập đường cơ sở của các chuyên gia về con người hoặc phương pháp phỏng đoán để xác định “số bước hợp lý”.
+
+**Phạm vi truy xuất** Đối với nhiệm vụ thu thập thông tin: Agent Không gian thông tin đã được khám phá đầy đủ chưa? Bạn có đi đến kết luận ngay sau khi chỉ nhìn vào trang đầu tiên của kết quả tìm kiếm không? **Chi phí và độ trễ** Chú ý đến số lượng yêu cầu, chi phí mã thông báo (cần phân biệt chi phí đầu vào/đầu ra, xem xét việc sử dụng lại KV Cache), thời gian đồng hồ treo tường (bao gồm suy luận mô hình + thực thi công cụ + độ trễ mạng) và cần theo dõi phân bổ thời gian để xác định vị trí tắc nghẽn.
+
+**Kết quả và chỉ số chất lượng.**
+
+**Tỷ lệ thành công của nhiệm vụ** là chỉ báo cứng trực tiếp nhất và có thể thiết kế các tiêu chuẩn phân cấp (phải đạt được các mục tiêu cốt lõi và các mục tiêu phụ ảnh hưởng đến điểm chất lượng). Có hai chỉ số thường bị nhầm lẫn cần được phân biệt về mặt thống kê:
+
+- **Pass@k**: Xác suất **ít nhất một** trong k lần thử thành công, trả lời "Agent có làm được không?"
+- **Đạt^k**: Xác suất **tất cả thành công** trong k lần thử, trả lời "Agent có ổn định và đáng tin cậy không?"
+- **Best@k**: Điểm **tốt nhất** trong k lần thử (không tính thành công), đo "giới hạn chất lượng sau khi tạo đủ cơ hội", chủ yếu dùng cho các nhiệm vụ mở có tính điểm liên tục
+
+Dùng một con số cụ thể để cảm nhận sự khác biệt: Giả sử tỷ lệ thành công duy nhất của Agent là 60% (tức là Pass@1 = 0,6) thì 2 chỉ số cho việc chạy 5 lần là: Pass@5 = 1 - 0,4^5 ≈ 99% (gần như chắc chắn thành công ít nhất một lần), Pass^5 = 0,6^5 ≈ 7,8% (xác suất tất cả thành công là rất thấp). Cái trước đánh giá giới hạn trên của khả năng, cái sau đánh giá sự ổn định. Trộn chúng sẽ dẫn đến đánh giá sai.
+
+
+**Chỉ số bảo mật và tuân thủ** rất quan trọng trong quá trình triển khai sản xuất: kích hoạt các hoạt động nhạy cảm (xóa dữ liệu/sửa đổi quyền/gửi thông tin liên lạc bên ngoài), rò rỉ dữ liệu (in mật khẩu trong nhật ký/gửi tài liệu riêng tư ra bên ngoài API) và nội dung bất hợp pháp đều phải tuân theo **nguyên tắc không khoan nhượng** - giống như mục từ chối ảo giác (xem "Bốn tiêu chí của Rubric" bên dưới). Một vi phạm bảo mật nghiêm trọng sẽ phủ quyết việc đánh giá tổng thể và sẽ không được miễn trừ do có thành tích xuất sắc ở các khía cạnh khác.
+
+**Độ mạnh** đo lường sự ổn định khi đối mặt với tình trạng không chắc chắn: độ nhạy hạt giống ngẫu nhiên (hiệu suất khác nhau như thế nào trong các lần khởi tạo khác nhau), khả năng thích ứng khi thay đổi trang (cập nhật giao diện người dùng trang web không gây ra lỗi hoàn toàn), khả năng chịu rung API (liệu các lỗi tạm thời, thời gian chờ, thay đổi định dạng có thể được xử lý một cách khéo léo hay không), nhiễu bộ nhớ dài hạn (liệu thông tin lỗi thời được tích lũy trong ngữ cảnh có dẫn đến các quyết định không chính xác hay không).
+
+**Phạm vi bao phủ kép của trajectory thực hiện và kết quả cuối cùng**. Một điểm khác biệt dễ bị bỏ qua khi đánh giá là: "những gì đã nói và những gì đã làm" trong quá trình thực hiện Agent (tức là trajectory được xác định trong Chương 1) và "cuối cùng hệ thống đã trở thành gì" (kết quả cuối cùng, kết quả) là hai thứ khác nhau. Agent cho biết "việc đặt vé đã hoàn tất" là thông tin cấp độ theo dõi và thực tế là đơn hàng được tạo trong cơ sở dữ liệu là xác minh cấp độ kết quả. Chỉ nhìn vào trajectory sẽ bỏ sót tình trạng “nói mà không làm”, còn chỉ nhìn vào kết quả chưa chắc đã phát hiện ra những bước trung gian đã đi chệch hướng. Anthropic từng đưa ra ví dụ: Agent đã phát hiện ra lỗ hổng trong chính sách của hãng hàng không trong quá trình thực hiện đặt chỗ chuyến bay và tìm ra giải pháp rẻ hơn cho người dùng - nếu điểm chỉ dựa trên đường dẫn thực hiện đặt trước thì thao tác đó sẽ bị đánh giá là thất bại; nhưng đánh giá từ kết quả cuối cùng, người dùng đã có được giải pháp tốt hơn. Vì vậy, cả hai loại đánh giá đều cần được đề cập để tránh những điểm mù mang tính hệ thống.
+
+**Lấy mẫu thủ công và đánh giá đối thủ.**
+
+Ngay cả khi đánh giá tự động là đáng tin cậy trong hầu hết các trường hợp, thì vẫn cần phải có sự kiểm tra đột xuất thường xuyên của con người: bao gồm các loại nhiệm vụ khác nhau, các trường hợp thành công/thất bại và các trường hợp không rõ ràng gần điểm giới hạn, không chỉ để xác minh kết quả mà còn để xem xét tính hợp lý của lý do cho điểm. Lấy mẫu thủ công có thể được hệ thống hóa hơn nữa thành **hiệu chuẩn máy đánh giá**: trước khi sử dụng LLM trong đánh giá quy mô lớn, trước tiên hãy xây dựng bộ nhãn vàng được gắn nhãn thủ công (chẳng hạn như các trường hợp 100-200 bao gồm nhiều loại nhiệm vụ và khó khăn khác nhau) và đo lường mô hình đánh giá trên đó (nghĩa là sử dụng LLM làm đánh giá, cơ chế được trình bày chi tiết trong phần tiếp theo về LLM-as-a-Judge) và tỷ lệ nhất quán của các chú thích của con người (tỷ lệ đồng ý đơn giản hoặc hệ số nhất quán như Cohen's kappa, sau này loại bỏ các thành phần đoán ngẫu nhiên), mô hình phán đoán sẽ chỉ được sử dụng để đánh giá quy mô lớn sau khi đạt đến ngưỡng đặt trước (chẳng hạn như kappa cao hơn 0,7); sau đó, bất cứ khi nào mô hình phán đoán hoặc Rubric được cập nhật, nó sẽ được hiệu chỉnh lại trên bộ nhãn vàng. Nếu không có bước này, điểm của giám khảo LLM chỉ là “ý kiến của một mô hình khác” chứ không phải là đại diện đáng tin cậy cho đánh giá của con người. **Đánh giá đối lập** Tích cực xây dựng các trường hợp thử thách thông qua Red Teaming: các câu trả lời có vẻ hoàn hảo nhưng có lỗi ẩn, các câu trả lời được bỏ qua bằng cách nhồi nhét từ khóa và các câu trả lời sử dụng những thành kiến đã biết của mô hình đánh giá để đạt được những câu trả lời không xứng đáng đạt điểm cao. **Cơ chế nhiều người đánh giá** sử dụng nhiều người đánh giá độc lập để chấm điểm riêng biệt và xác định kết quả cuối cùng thông qua kiểm tra tính nhất quán hoặc mức trung bình có trọng số - khi có sự khác biệt nghiêm trọng giữa những người đánh giá, kết quả đó sẽ được đánh dấu là cần xem xét thủ công thêm.
+
+## Phương pháp đánh giá tự động
+
+Với môi trường đánh giá, bộ dữ liệu và hệ thống chỉ số rõ ràng, câu hỏi cốt lõi tiếp theo là: chấm điểm như thế nào? Đối với các nhiệm vụ có câu trả lời chính xác rõ ràng (chẳng hạn như câu hỏi toán học, truy vấn SQL), các phán đoán nhị phân đơn giản (đúng/sai) là đủ; nhưng đối với những nhiệm vụ mở (chẳng hạn như trò chuyện về dịch vụ khách hàng, viết báo cáo) thì cần có những phương pháp đánh giá phức tạp hơn.
+
+Xác minh mã tự động chỉ bao gồm các tình huống có câu trả lời tiêu chuẩn và việc chấm điểm các nhiệm vụ mở là chủ đề của phần này. Trong số đó, thiết kế mật độ của tín hiệu phần thưởng (từ phần thưởng nhị phân đến phần thưởng xử lý đến phần thưởng tổng hợp) và phương pháp huấn luyện của mô hình phần thưởng sẽ được thảo luận về hệ thống trong phần post-training của Chương 8; Phần này trả lời một câu hỏi cơ bản hơn: cách sử dụng LLM để tự động đánh giá chất lượng đầu ra của các tác vụ đang mở.
+
+### LLM-as-a-Judge: Cốt lõi của đánh giá tự động
+
+![Hình 7-4 Quy trình LLM-as-a-Judge ](images/fig7-4.svg)
+
+Tại sao bạn cần LLM-as-a-Judge? Đối với các nhiệm vụ mở (chẳng hạn như tạo báo cáo, xử lý khiếu nại của khách hàng, nội dung sáng tạo), không có câu trả lời tiêu chuẩn nào có thể được so sánh tự động và việc đánh giá thủ công rất tốn kém và khó mở rộng quy mô. LLM-as-a-Judge cân bằng quy mô tự động hóa với chuyên môn của con người bằng cách đánh giá các mô hình ngôn ngữ dựa trên tiêu chí chấm điểm do chuyên gia xác định (Rubric). Tuy nhiên, phương pháp này cũng có những hạn chế đã biết: mô hình đánh giá có thể có những thành kiến riêng (điển hình nhất là **thành kiến về độ dài** - có xu hướng cho điểm cao hơn đối với những câu trả lời dài hơn và chi tiết hơn, ngay cả khi nội dung không chính xác hơn) và nhiều đánh giá cho cùng một thông tin đầu vào cũng có thể dao động. Sự thiên vị về chiều dài đặc biệt đáng được đề phòng cho từng cá nhân. Có ba phương pháp thường được sử dụng: xử phạt rõ ràng tính dài dòng trong Rubric và đặt giới hạn trên về độ dài của câu trả lời cho các nhiệm vụ tương tự; khi so sánh cặp đôi, kiểm soát độ dài của hai ứng viên sao cho tương đương nhau trước khi đánh giá; và thường xuyên kiểm tra mối tương quan giữa điểm số và độ dài câu trả lời - nếu điểm cao hầu như luôn đi kèm với câu trả lời dài, điều đó có nghĩa là đánh giá đã bị sai lệch về độ dài và cần phải sửa lại Rubric. Để giải quyết những thách thức này một cách có hệ thống, thiết kế Rubric phải tuân thủ các nguyên tắc sau:
+
+**Rubric (tiêu chí chấm điểm): LLM là cơ sở để đánh giá.**
+
+**Rubric Bốn quy tắc**(Scale AI, “Rubrics as Rewards”):
+
+(1) **Dựa trên hướng dẫn của chuyên gia** - phải phản ánh kiến thức về lĩnh vực đó và nắm bắt được các sự kiện cốt lõi cũng như các bước lập luận. Ví dụ: Rubric dành cho Hỏi đáp y tế cần bao gồm các tiêu chuẩn chẩn đoán và các lỗi y tế cần tránh. Rubric thiếu nền tảng chuyên môn nên chỉ nắm bắt được những đặc điểm bề ngoài như khả năng lưu loát về ngôn ngữ.
+
+(2) **Thông tin toàn diện** - bao gồm tính chính xác thực tế, tính mạch lạc hợp lý, tính đầy đủ, tính an toàn và không chỉ xác định các tiêu chuẩn tích cực mà còn xác định **cạm bẫy** - tức là các lỗi phổ biến có nguy cơ cao, chẳng hạn như đề xuất các liệu pháp chưa được chứng minh trong tư vấn y tế.
+
+(3) **Trọng lượng tầm quan trọng tiêu chuẩn** - được chia thành các vật phẩm thiết yếu (Essential), vật phẩm quan trọng, vật phẩm tùy chọn và vật phẩm bẫy. Hỗ trợ **cơ chế phủ quyết một phiếu (Phủ quyết)**: Ví dụ: trong các tình huống dịch vụ khách hàng, ảo tưởng (bịa đặt thông tin sai lệch) là một phương diện phủ quyết điển hình - cho dù hiệu suất ở các phương diện khác có xuất sắc đến đâu, miễn là thông tin sai lệch xuất hiện thì nó phải được phủ quyết. Điều này cũng giúp ngăn chặn gian lận phần thưởng nhồi nhét từ khóa.
+
+(4) **Đánh giá độc lập** - Mỗi mục đánh giá có thể hoạt động độc lập và không phụ thuộc vào kiến thức miền của người đánh giá. Tránh tiêu chí trừu tượng “câu trả lời thể hiện sự hiểu biết sâu sắc” và thay vào đó hãy sử dụng tiêu chí có thể kiểm chứng được là “trích dẫn ít nhất hai lý thuyết có thẩm quyền và giải thích chính xác cách hỗ trợ kết luận”.
+
+Thực hành chính: Xác định thang điểm có thể kiểm chứng một cách khách quan cho từng khía cạnh và cung cấp các ví dụ cụ thể cũng như các trường hợp đặc biệt để giúp phân biệt các tình huống không rõ ràng. Chúng ta phải chủ động đề phòng **Reward Hacking** - tức là Agent tìm "lối tắt" để đạt điểm cao mà không thực sự hoàn thành nhiệm vụ - trừng phạt rõ ràng những ảo tưởng, làm hài lòng người dùng, nhồi nhét từ khóa, tránh những câu hỏi khó. Rubric là một sản phẩm lặp đi lặp lại - thông qua việc thu thập thử nghiệm và sự đồng thuận của người đánh giá, nó dần dần được cải thiện và dần dần phát triển từ các nguyên tắc trừu tượng thành một bộ trường hợp chi tiết.
+
+Lấy bộ nhớ người dùng Agent làm ví dụ, Rubric hoàn chỉnh đáp ứng bốn tiêu chí sẽ được hiển thị. Câu hỏi kiểm tra: “Bác sĩ nhi khoa của con gái tôi là ai?” (Câu trả lời cần phải có sự liên quan giữa hai cuộc trò chuyện: cuộc trò chuyện đầu tiên đề cập đến "Tên con gái tôi là Lily" và cuộc trò chuyện thứ hai đề cập đến "Tôi đưa Lily đến gặp bác sĩ Chen").
+
+```yaml
+rubric:
+  dimensions:
+- Tên: đúng sự thật
+cân nặng: thiết yếu # Vật dụng cần thiết
+      scoring:
+4_Xuất sắc: "Trả lời bác sĩ Chen chính xác và liên quan đến con gái Lily"
+3_Tốt: "Bác sĩ Chen trả lời chính xác, nhưng không đề cập đến việc ông là bác sĩ của Lily"
+2_Pass: "Bác sĩ được cung cấp chính xác nhưng có thêm thông tin không chắc chắn"
+1_Không thành công: "Tên bác sĩ được đưa sai hoặc câu trả lời là "Tôi không biết"
+
+- Tên: tính toàn vẹn thông tin
+trọng lượng: quan trọng # mục quan trọng
+      scoring:
+4_Excellent: "Chủ động cung cấp các thông tin liên quan (như thời gian điều trị lần cuối, kết quả chẩn đoán)"
+3_Tốt: "Đã trả lời các câu hỏi cốt lõi và không bỏ sót"
+2_Pass: "Đã trả lời câu hỏi cốt lõi nhưng bỏ qua thông tin liên quan có thể sử dụng được"
+1_Fail: "Thiếu thông tin chính"
+
+- Tên: Nghĩ Đúng
+      weight: important
+      scoring:
+4_Xuất sắc: "Liên kết chính xác hai tin nhắn chéo phiên 'con gái=Lily' và 'Bác sĩ của Lily=Bác sĩ Chen'"
+3_Tốt: "Mối tương quan đúng nhưng lối suy nghĩ chưa đủ rõ ràng"
+2_Pass: "Một số mối tương quan là chính xác"
+1_Fail: "Liên kết sai (chẳng hạn như coi bác sĩ của chính người dùng là bác sĩ của con gái mình)"
+
+- Tên: Phát hiện ảo giác
+trọng lượng: quyền phủ quyết # Mục quyền phủ quyết: một khi được kích hoạt, tổng số điểm sẽ được đặt lại về 0
+      scoring:
+pass: "Tất cả thông tin có thể được truy tìm tới các bản ghi cuộc trò chuyện lịch sử"
+thất bại: "Thông tin bịa đặt không tồn tại trong cuộc trò chuyện (chẳng hạn như ngày điều trị y tế hư cấu, kết quả chẩn đoán)"
+
+  edge_cases:
+- "Nếu người dùng có nhiều con gái và họ gặp các bác sĩ khác nhau, họ nên hỏi đó là con gái nào."
+- "Nếu 'Bác sĩ Chen' và 'Bác sĩ Chen' đều tồn tại trong ký ức thì họ nên được công nhận là cùng một người"
+```
+
+**Rubric Tốt so với Rubric Xấu**: Mỗi hộp xếp hạng ở trên đưa ra một hành vi cụ thể có thể kiểm chứng ("Tiến sĩ Chen đã trả lời chính xác"), thay vì "thể hiện sự hiểu biết sâu sắc về trí nhớ" và các mô tả khác không thể đánh giá khách quan. Mục từ chối làm rõ điểm mấu chốt: ngay cả khi tất cả các chiều không gian khác đều là điểm đầy đủ, một khi ảo giác xảy ra, nó sẽ bị tính trực tiếp bằng 0.
+
+**Veto xác định trước khi chấm rubric:**
 
 ```python
-for trajectory in rollouts:
-    returns = discounted_returns(trajectory.rewards)
-    values = value_model(trajectory.states)
-    advantages = returns - stop_gradient(values)
-    ratio = exp(policy.log_prob(trajectory.actions)
-                - old_policy.log_prob(trajectory.actions))
-    policy_loss = -mean(min(
-        ratio * advantages,
-        clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
-    ))
-    value_loss = mean((value_model(trajectory.states) - returns) ** 2)
-update(policy, value_model, policy_loss + value_coef * value_loss)
+deterministic = verify_state_policy_and_claims(trajectory, outcome)
+if deterministic.veto:
+    return FAIL(reason = deterministic.evidence)
+
+rubric_result = judge(answer, rubric, evidence)
+return aggregate_with_confidence(rubric_result)
 ```
 
-> **Thí nghiệm 7-10 ★★: AdaptThink - Học “Khi nào không nên suy nghĩ”**
+Đưa Rubric cùng câu trả lời thực tế của Agent cho mô hình đánh giá để nhận điểm và lý do theo từng tiêu chí. Khi tổng hợp hàng chục ca rồi xem lại các trajectory có điểm thấp, ta có thể biến một nhận xét mơ hồ như “tỷ lệ thành công giảm” thành chẩn đoán cụ thể: không truy xuất được dữ kiện, nối sai quan hệ giữa các nhân vật, hay tự thêm thông tin không có căn cứ. Rubric vì thế không chỉ cho biết hệ thống đạt bao nhiêu điểm, mà còn chỉ ra nên sửa ở đâu.
+
+> **Thử nghiệm 7-3 ★★: Xây dựng hệ thống đánh giá bộ nhớ người dùng dựa trên Rubric**
 >
-> Các mô hình tư duy quy mô lớn (như OpenAI o1, DeepSeek-R1) sẽ tạo ra chuỗi tư duy dài dòng cho mọi vấn đề, gây lãng phí không cần thiết cho những vấn đề đơn giản. Thử nghiệm lần đầu tiên đã xác minh một trực giác: **Chế độ Không suy nghĩ**(bỏ qua suy nghĩ thông qua `<think></think>`) có hiệu suất tương đương hoặc thậm chí tốt hơn đối với các vấn đề đơn giản. Ưu điểm của Tư duy chỉ thể hiện rõ khi đối mặt với những vấn đề khó khăn.
+> **Điều kiện tiên quyết**: Cần phải hoàn thành Thử nghiệm bộ nhớ người dùng Chương 3 (`chapter3/user-memory-evaluation`).
 >
-> AdaptThink lựa chọn các chế độ một cách thích ứng thông qua mô hình đào tạo RL. Hai thành phần cốt lõi:
+> Thử nghiệm này yêu cầu chuyển đổi khung `chapter3/user-memory-evaluation` trong Chương 3 và nâng cấp cơ chế tính điểm hiện tại dựa trên LLM-as-a-Judge đơn giản thành hệ thống đánh giá Rubric đa chiều có cấu trúc. Hệ thống hiện tại sử dụng một lệnh gọi LLM duy nhất để trả về đạt/không đạt cùng với lý do đánh giá và thiếu khả năng chẩn đoán có cấu trúc.
 >
-> - **Mục tiêu tối ưu hóa có giới hạn**: Khuyến khích Không suy nghĩ trong khi vẫn đảm bảo rằng hiệu suất tổng thể không bị suy giảm.
-> - **Policy lấy mẫu quan trọng**: Cân bằng các mẫu Thinking/NoThinking để giải quyết vấn đề **khởi đầu nguội** do hầu như luôn chọn Suy nghĩ trong mô hình ban đầu (Cold Start, ở đây đề cập cụ thể đến vấn đề mô hình trong giai đoạn đầu đào tạo hầu như chỉ tạo ra các mẫu Suy nghĩ và có rất ít mẫu nhánh NoThinking và không thể học được; nó tương tự như bài viết trước DeepSeek-R1 sử dụng một lượng nhỏ dữ liệu trình diễn để làm "cold start" SFT" được sử dụng trong các ngữ cảnh khác nhau).
+> Thiết kế khung Rubric đa chiều thống nhất phù hợp cho tất cả các nhiệm vụ ba cấp. Các khía cạnh đánh giá bao gồm: tính chính xác về mặt thực tế (Độ chính xác - bao nhiêu thông tin được cung cấp là chính xác) để xác minh xem số/ngày/tên có nhất quán với thông tin được ghi nhớ hay không; tính đầy đủ thực tế (Nhớ lại - bao nhiêu thông tin cần cung cấp được thu hồi (tối đa) xác minh rằng tất cả thông tin liên quan đã được cung cấp và không thiếu nội dung chính; tính đúng đắn của tư duy kiểm tra xem các mối quan hệ và logic tiềm ẩn giữa thông tin có được hiểu chính xác hay không; chủ động suy nghĩ đánh giá xem các đề xuất hoặc lời nhắc rủi ro ngoài câu trả lời trực tiếp có được đưa ra khi thích hợp hay không; phát hiện ảo giác đảm bảo rằng thông tin không tồn tại trong bộ nhớ không bị giả mạo.
 >
-> "Lấy mẫu quan trọng" xuất hiện ở đây là một phương pháp thường được sử dụng trong thống kê - khi phân phối lấy mẫu thiên về một loại mẫu nhất định, phân phối sẽ được "điều chỉnh" bằng cách tính trọng số cho mẫu sao cho tín hiệu học tập có thể bao trùm tất cả các danh mục một cách công bằng. Ý tưởng này sẽ được sử dụng nhiều lần trong các thuật toán PPO, DAPO và các thuật toán RL khác được thảo luận sau trong cuốn sách này.
+> Hệ thống chấm điểm 4 cấp độ (xuất sắc/tốt/đạt/rớt), mỗi cấp độ được trang bị các tiêu chí cụ thể thay vì mô tả trừu tượng. Thứ nguyên ảo giác được đặt làm vật phẩm phủ quyết. Cung cấp các ví dụ và trường hợp đặc biệt cho từng chiều.
 >
-> Hồ sơ chuẩn cho lần huấn luyện trong quá khứ này là [báo cáo huấn luyện](../chapter7/AdaptThink/TRAINING_REPORT.md) không kèm checkpoint. Lần chạy chính công khai trên W&B [`wubbn5tj`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/wubbn5tj) sử dụng 8×NVIDIA H100 80GB. Từ step 0→300, độ chính xác MATH500 thay đổi từ 0.8100→0.8180 (+0.80 điểm phần trăm), độ dài phản hồi từ 4911.46→1576.62 (-67.90%); với GSM8K, các giá trị lần lượt là 0.796816→0.818802 (+2.20 điểm phần trăm) và 1025.24→477.33 (-53.44%); với AIME mean16, các giá trị là 0.314583→0.310417 (-0.42 điểm phần trăm) và 12119.51→6402.23 (-47.17%). Tỷ lệ NoThinking tương ứng là 83.80%, 84.15% và 56.25%. Kết quả này cho thấy tín hiệu định tuyến phù hợp với độ khó ở cấp độ tổng hợp của tập dữ liệu, nhưng không thể gọi đó là “nhận biết độ khó hoàn hảo” cho từng bài, cũng không thể tuyên bố độ chính xác tăng lên một cách phổ quát.
+> **Thử nghiệm 7-4 ★★: Đánh giá so sánh giữa Thẻ JSON nâng cao và RAG**
 >
-> Lần chạy tiếp tục sau điểm đo được chọn trong báo cáo đến step 410, tổng cộng 36.92 giờ, rồi W&B ghi trạng thái `crashed`; cấu hình 10 epochs / 3,140 steps chưa hoàn tất. Dù có một sự kiện ghi thời gian checkpoint ở step 300, checkpoint không được phân phối cùng sách và không có biên nhận độc lập chứng minh nó đã được đánh giá thành công bằng `run_eval_verl_hf.sh` hoặc đã chạy lại MMLU. Commit mã nguồn lịch sử là `9e588202…`; các lần tái lập sau này được ghim vào commit con trực tiếp `0033ad172…`. Ba tệp entry point không thay đổi, nhưng đường dẫn `-fl-` do script huấn luyện tạo ra không tương thích với đường dẫn `-fl4096` được hard-code trong script đánh giá và phải sửa thủ công.
+> **Điều kiện tiên quyết**: Cần phải hoàn thành Chương 3 Bộ nhớ người dùng và Thử nghiệm RAG (`chapter3/user-memory`, `chapter3/agentic-rag-for-user-memory`).
 >
-> Bổ sung cho quá trình chắt lọc nhanh chóng để tạo thành một “hệ thống kép nhanh-chậm”: chắt lọc giảm tỷ lệ các nhiệm vụ cần tư duy, đồng thời AdaptThink tối ưu hóa chiến lược kích hoạt các nhiệm vụ còn lại, cùng tối đa hóa hiệu quả tư duy.
+> **Mục tiêu**: So sánh công bằng phạm vi hiệu quả của bộ nhớ có cấu trúc và truy xuất phi cấu trúc trên cùng một bộ đánh giá. Tái sử dụng hai dự án ở Chương 3 và so sánh ba cấu hình trên 60 ca của `chapter3/user-memory-evaluation`: chỉ dùng Advanced JSON Cards, chỉ dùng RAG, và cấu hình kết hợp giữ các dữ kiện cốt lõi trong context còn hội thoại gốc được truy xuất khi cần.
 >
-> **Thử nghiệm 7-11 ★★: GeneralPoints - So sánh "Bộ nhớ và khái quát hóa" của RL một vòng**
+> **Chấp nhận**: Ghi lại tỷ lệ thành công, số bước trung bình, số lần gọi công cụ, độ trễ và chi phí ở ba mức độ phức tạp (thu hồi cơ bản / phân biệt nhiều phiên / liên kết ẩn giữa các phiên) và làm rõ ranh giới lỗi của từng giải pháp - điều gì bị mất trong cấu trúc, điều gì bị bỏ sót khi truy xuất và liệu có sự phối hợp thực sự trong quá trình trộn hay không. Xem kho lưu trữ hỗ trợ để biết chi tiết cấu hình và trường hợp thử nghiệm.
 >
+
+Thử nghiệm đi kèm dùng cùng 60 câu hỏi cho ba hệ thống và lưu lại 180 trajectory gọi API thực. Bảng 7-3 ghi cả số câu thành công bên cạnh tỷ lệ tổng thể để kích thước mẫu không bị che khuất.
+
+Bảng 7-3 Tỷ lệ thành công theo độ khó của ba hệ thống bộ nhớ
+
+| Hệ thống | Nhớ lại cơ bản | Phân giải nhiều phiên | Liên hệ ẩn giữa các phiên | Tổng thể |
+|---|---:|---:|---:|---:|
+| Advanced JSON Cards | 95% | 60% | 50% | 68.3% (41/60) |
+| RAG | 90% | 40% | 15% | 48.3% (29/60) |
+| Kết hợp | 80% | 70% | 50% | 66.7% (40/60) |
+
+Điểm đáng chú ý nhất là kết hợp hai cách không tự động tạo ra kết quả tốt hơn. Hệ thống kết hợp giải được 3 câu mà cả hai hệ thống đơn lẻ đều trượt, nhưng ở 8 câu khác lại kém hơn hệ thống đơn lẻ tốt nhất. So với phương án đơn lẻ tốt nhất cho từng câu, reward trung bình của nó thấp hơn 0.092. RAG gần ngang thẻ có cấu trúc ở phần nhớ lại cơ bản, nhưng chỉ đạt 15% với liên hệ giữa các phiên. Tìm được đoạn hội thoại liên quan mới là bước đầu; Agent còn phải ghép đúng người, thời gian và sự kiện.
+
+Một con số khác dễ bị bỏ qua: điều kiện phủ quyết do hallucination đã kích hoạt 28 lần trong 180 lượt chấm. Đây không phải chi tiết trang trí trong Rubric mà thực sự làm thay đổi kết quả. Khi xây hệ thống, không nên mặc định “có cấu trúc + RAG” sẽ cộng hưởng. Hãy xem từng cách thất bại ở mỗi mức độ khó rồi mới quyết định dữ kiện nào thường trú và câu hỏi nào kích hoạt truy xuất. Kết quả này đến từ ca tổng hợp và một cấu hình model/judge duy nhất; nó giúp hiểu cơ chế thành công và thất bại, chứ không tạo ra bảng xếp hạng phổ quát.
+
+Các kết luận trên còn giả định mô hình đánh giá đủ đáng tin. Nếu Agent và judge cùng một họ model, chúng có thể chia sẻ sở thích và điểm mù. Phần tiếp theo bàn về vấn đề này.
+
+**Các vấn đề về mô hình tương đồng và đánh giá đa nguồn.**
+
+Khi Agent thuộc cùng dòng với mô hình đánh giá, Agent có thể học cách khai thác các sở thích và điểm mù của mô hình đánh giá.
+
+**Đây là điều mà Định luật Goodhart nói: khi một số liệu trở thành mục tiêu tối ưu hóa, thì số liệu đó không còn là một số liệu tốt nữa.** Agent Càng rèn luyện hoặc điều chỉnh theo một hệ thống tính điểm nhất định, bạn càng có xu hướng khai thác những sơ hở của hệ thống này thay vì thực sự cải thiện khả năng của mình.
+
+Bí mật hơn, Agent cũng sẽ dần học cách tránh những loại lỗi mà mô hình đánh giá không giỏi phát hiện, khiến hệ thống tính điểm trông bình thường.
+
+Policy giảm nhẹ là **đánh giá không đồng nhất nhiều nguồn** - sử dụng nhiều LLM từ các họ mô hình khác nhau để đánh giá riêng (ví dụ: Agent sử dụng Claude và GPT-5 và Gemini được sử dụng để đánh giá). Thành kiến của các gia đình khác nhau thường trực giao, Agent khó có thể “lừa dối” tất cả giám khảo cùng một lúc. Sử dụng cùng một Rubric để đảm bảo mọi người đều đánh giá cùng một mục tiêu và tổng hợp kết quả thông qua kiểm tra tính nhất quán hoặc mức trung bình có trọng số. Giai đoạn triển khai có thể được đánh giá nhanh chóng bằng một mô hình duy nhất, nhưng việc kiểm tra chất lượng phải được thực hiện thường xuyên với sự đánh giá hoàn chỉnh từ nhiều nguồn.
+
+Đánh giá đa nguồn giải quyết vấn đề “sử dụng mô hình nào để đánh giá”; Bước tiếp theo là giải quyết vấn đề "đánh giá phương thức nào" - mở rộng khả năng của LLM-as-a-Judge từ văn bản sang giọng nói, hình ảnh và video là một khía cạnh khác của phạm vi đánh giá.
+
+**Đa phương thức LLM-as-a-Judge.**
+
+Đánh giá đa phương thức mở rộng LLM-as-a-Judge sang các lĩnh vực giọng nói, hình ảnh và video. Bốn hướng chung như sau.
+
+- **Đánh giá TTS**(TTS hay còn gọi là Text-to-Speech, chuyển văn bản thành giọng nói): đánh giá độ chính xác, độ tự nhiên, tính nhất quán về âm sắc và biểu hiện cảm xúc. Các kích thước này có thể phát hiện ra các vấn đề về ngữ điệu khó nắm bắt bằng WER (Tỷ lệ lỗi từ) truyền thống.
+- **Đánh giá ASR**(ASR là Nhận dạng giọng nói tự động, nhận dạng giọng nói): Đưa ra phán đoán tác động ngữ nghĩa - Lỗi nhận dạng "Today's fashion" là vô hại, nhưng "chuyển một nghìn" thành "mười nghìn" có thể gây ra hậu quả nghiêm trọng.
+- **Đánh giá giao diện người dùng**: Sử dụng cơ chế **Người đề xuất-Người đánh giá**(Proposer-Reviewer) để kiểm tra các vấn đề như tràn văn bản, độ tương phản màu, vị trí nút, v.v. Ở đây, người đề xuất-người đánh giá được sử dụng làm phương pháp đánh giá, khác với cách sử dụng làm thành phần hệ thống tạo trong Chương 5, nhưng cơ chế cốt lõi giống nhau - một mô hình được tạo và một mô hình khác được xem xét độc lập.
+- **Đánh giá video clip**: Xác minh điểm bắt đầu và điểm kết thúc chính xác của clip cũng như việc áp dụng các hiệu ứng đặc biệt thông qua các khung hình chính.
+
+### Quy trách nhiệm thất bại và hồi quy theo tiền tố trajectory
+
+Đánh giá end-to-end thường chỉ trả lời “đạt” hoặc “không đạt”. Để kết quả dẫn tới sửa chữa, với mỗi trajectory thất bại hãy ghi loại lỗi, bước đầu tiên không chấp nhận được, lời gọi công cụ hoặc đầu ra mô hình liên quan và bằng chứng có thể kiểm tra. Tín hiệu bad case gồm người dùng sửa trực tiếp, phản hồi tiêu cực hoặc kiểm tra trạng thái/quy tắc sau đó. LLM có thể hỗ trợ nhưng vẫn cần người đọc vì nguyên nhân thường là vấn đề sản phẩm.
+
+Với Coding Agent, các nhóm ban đầu là thiếu quy trình/quy tắc kho, lỗi công cụ/định dạng, kết thúc bất thường và lỗi logic/độ hoàn tất. Lưu bản ghi JSON/YAML có số bước, công cụ, quan sát, nguyên nhân gốc so với hậu quả, khả năng khôi phục và độ tin cậy, cùng trạng thái, phiên bản và trajectory đầy đủ.
+
+**Hồi quy end-to-end** chạy toàn bộ quy trình; **hồi quy trajectory-prefix** đóng băng ngữ cảnh, hội thoại, kết quả công cụ và trạng thái ngay trước lỗi đầu tiên rồi chỉ kiểm tra hành động quan sát được tiếp theo. Định nghĩa tập hành động được chấp nhận (đọc quy tắc, hỏi người dùng, từ chối thao tác nguy hiểm) và hành động cấm thay vì một đáp án duy nhất; tách dữ liệu đánh giá khỏi dữ liệu huấn luyện.
+
+> **Thử nghiệm 7-5 ★★: Đánh giá ranh giới trajectory-prefix với nhiều mã hóa**
 >
-> ![Hình 7-12 Kiến trúc thử nghiệm GeneralPoints (thiết kế đào tạo và thử nghiệm của hai biến thể GP-L và GP-VL) ](images/fig7-12.svg)
+> Cung cấp bộ nhớ người dùng đã biết, chỉ dẫn hiện tại, trajectory prefix, kết quả công cụ và trạng thái môi trường; mô hình chỉ trả về hành động quan sát được kế tiếp. 11 ca được mã hóa bằng JSON Cards, Markdown và Python-like rồi kiểm tra bằng quy tắc xác định. 33/33 ô hoàn tất không lỗi API, mỗi cách mã hóa đạt 6/11; đổi biểu diễn không tự sửa được chính sách sử dụng.
+
+> **Thử nghiệm 7-6 ★★: Xây dựng quy trình đánh giá chất lượng TTS hoàn toàn tự động**
 >
+> Thử nghiệm này yêu cầu thiết kế và triển khai hệ thống đánh giá chất lượng LLM-as-a-Judge TTS đa phương thức hoàn chỉnh ngay từ đầu.
 >
-> GeneralPoints là trò chơi thẻ bài tư duy số học được đề xuất bởi Chu et al. (2025, "SFT ghi nhớ, RL khái quát hóa", arXiv:2501.17161), được sử dụng đặc biệt để đánh giá khả năng khái quát hóa của mô hình. Mục tiêu của nhiệm vụ tương tự như trò chơi “24 điểm”: sử dụng các số trên bốn thẻ và sử dụng các phép tính cộng, trừ, nhân và chia, sử dụng mỗi số đúng một lần để tạo thành số mục tiêu 24. Hai biến thể của văn bản thuần túy GP-L và hình ảnh GP-VL được thiết kế trong thử nghiệm, cho phép chúng tôi kiểm tra khái quát hóa quy tắc và khái quát hóa trực quan tương ứng trong cùng một khuôn khổ.
+> Thiết kế TTS đa chiều Rubric: Chiều chính xác xác minh xem tất cả các từ có được đọc chính xác hay không (không thiếu sót/đọc sai/thêm), chiều tự nhiên đánh giá xem lời nói có mượt mà hay không (có cảm giác máy móc, ngắt quãng không tự nhiên và nhịp điệu có phù hợp với thói quen của con người hay không), chiều biểu hiện cảm xúc kiểm tra xem giọng điệu có phù hợp với màu sắc cảm xúc của văn bản hay không (giọng lên của câu nghi vấn, nhấn mạnh) về câu cảm thán, tốc độ nói chậm và âm trầm của nội dung buồn) và chiều nhất quán âm sắc đánh giá độ giống nhau của người nói khi có giọng tham chiếu (mô hình đa phương thức đồng thời nhận cả giọng tham chiếu và so sánh giọng tổng hợp).
 >
-> **Biến thể quy tắc**: J/Q/K được tính là 10 trong quá trình đào tạo và 11/12/13 được tính là 11/12/13 trong quá trình thử nghiệm. Đảm bảo rằng tập kiểm tra chứa các tổ hợp số không thấy trong quá trình huấn luyện (bao gồm các phép toán 11, 12 và 13) và đánh giá nghiêm ngặt khả năng khái quát hóa. **Biến thể trực quan**: Sử dụng bộ đồ đen để luyện tập (♠♣) và bộ đồ màu đỏ để thử nghiệm (♥♦) để đánh giá độ chắc chắn trước những thay đổi về ngoại hình. Dựa trên Llama-3.2-Vision-11B, hãy làm theo quy trình post-training tiêu chuẩn: trước tiên hãy khởi tạo SFT để có khả năng tuân theo hướng dẫn cơ bản, sau đó mở rộng đào tạo SFT và RL tương ứng trong cùng một ngân sách điện toán (phần RL sử dụng thuật toán PPO có mạng giá trị), được huấn luyện với dữ liệu quy tắc đơn (J/Q/K=10) và được đánh giá trên các bộ kiểm tra trong phân phối (ID) và ngoài phân phối (OOD).
+> Xây dựng kho ngữ liệu đa dạng về độ dài, thể loại, cảm xúc, con số, tên riêng, cách phát âm dễ nhầm và phương ngữ. Mô-đun TTS có thể kết nối OpenAI, ElevenLabs, Fish Audio, Minimax hoặc Doubao. Một judge đa phương thức nhận trực tiếp audio sẽ đánh giá đồng thời giọng tổng hợp, văn bản gốc, audio tham chiếu và Rubric. Ngoài phân tích điểm theo từng chiều, cần lưu tên model đánh giá cùng hash của audio tham chiếu và từng ứng viên để có thể kiểm tra lại kết quả.
 >
-> Kết quả bộc lộ rõ ràng những khác biệt cơ bản. **QUY TẮC OOD**: RL +3,5% trên GP-L (11,5%→15,0%), SFT **giảm** 8,1% (11,5%→3,4%); GP-VL trên RL +3,0%, SFT giảm 5,6%. **OOD trực quan**: RL **+17,6%** trên GP-VL (23,6%→41,2%), SFT giảm 9,9% (23,6%→13,7%).
->
-> Sau khi theo dõi độ chính xác của nhận dạng hình ảnh, chúng tôi nhận thấy rằng: RL cải thiện bộ mã hóa hình ảnh cơ bản thông qua tối ưu hóa hướng đến kết quả và cải tiến này liên quan nhiều đến cải thiện hiệu suất tổng thể; trong khi SFT điều chỉnh quá mức mẫu mã thông báo trong quá trình tư duy và bỏ qua việc học các mã thông báo trực quan, dẫn đến giảm độ chính xác của nhận dạng.
->
-> Thử nghiệm cũng cho thấy sự cần thiết của SFT đối với RL: theo cài đặt của thử nghiệm này (mô hình cơ bản cỡ Llama-3.2-Vision-11B, cộng với các yêu cầu đầu ra có cấu trúc nghiêm ngặt), không thể triển khai trực tiếp RL từ đầu đến cuối nếu không có SFT - thất bại hoàn toàn: mô hình cơ bản không thể tạo ra một đầu ra có cấu trúc và phần thưởng hoàn toàn không thể tính toán được. Lưu ý rằng đây là kết luận trong một cài đặt cụ thể chứ không phải là một quy tắc chung: một mô hình cơ bản đủ mạnh có thể bỏ qua SFT và trực tiếp thành công trong RL (xem phần thảo luận trước đây về DeepSeek-R1-Zero). Một phát hiện đáng chú ý khác là càng nhiều lần xác minh thì khả năng khái quát hóa càng tốt: 10 lần +5,99% so với 1 lần +0,48%, cho thấy rằng việc mở rộng tính toán khi suy nghĩ là chìa khóa cho việc khái quát hóa RL.
->
-> Tại sao hiệu suất của SFT lại giảm sút khi thay đổi phân phối, trong khi RL lại tốt hơn? SFT học cách ánh xạ "khi bạn nhìn thấy loại đầu vào này, đầu ra loại câu trả lời đó": trong quá trình đào tạo, J/Q/K đều là 10 và mô hình ghi nhớ mẫu cố định "khi gặp J/Q/K, hãy coi nó là 10"; trong quá trình thử nghiệm, J=11, mô hình vẫn tính toán là 10 và đương nhiên mắc lỗi. RL đã học được chiến lược tổng quát hơn về "quá trình tính toán nào có thể nhận được câu trả lời đúng": khi J trở thành 11, mô hình RL sẽ tính toán lại bằng cách sử dụng chiến lược tương tự thay vì áp dụng câu trả lời trong bộ nhớ. Đây là sự khác biệt cơ bản giữa "bộ nhớ" và "khái quát hóa".
->
-> Đóng góp cốt lõi của thử nghiệm này là định lượng một cách có hệ thống hiện tượng "bộ nhớ SFT, khái quát hóa RL", chứng minh rằng quy tắc này đúng ở cả phương thức ngôn ngữ thuần túy và ngôn ngữ hình ảnh, đồng thời tiết lộ mối quan hệ hiệp lực giữa SFT và RL: SFT mang lại sự ổn định về định dạng, RL trên cơ sở này vượt qua ranh giới của bộ nhớ, cả hai đều không thể thiếu. Mô hình đào tạo "hình thức trước, tinh thần sau" này - mượn thuật ngữ của hội họa Trung Quốc, trước tiên vẽ chính xác hình thức bên ngoài (dạng thức, cấu trúc), sau đó theo đuổi sự hấp dẫn bên trong (khái quát, chiến lược) - đặt nền tảng phương pháp luận cho các nhiệm vụ đa vòng, đa phương thức tiếp theo.
 
-> **Thử nghiệm 7-12 ★★★: V-IRL-VL — Điều hướng thị giác nhiều vòng**
->
-> V-IRL[^ch7-24] cho Agent điều hướng liên tục trong các cảnh phố thị thực: huấn luyện dùng các tuyến đường New York, còn kiểm thử chuyển sang những thành phố khác đồng thời thay đổi cả cách diễn đạt phương hướng lẫn diện mạo thị giác. RL vượt trội rõ rệt so với SFT trên cả OOD quy tắc lẫn OOD thị giác, cho thấy trong nhiệm vụ nhiều vòng, chính sách phải học cách lập kế hoạch lại theo quan sát hiện tại thay vì tái hiện quỹ đạo huấn luyện. Thử nghiệm dùng PPO có mạng giá trị, và quan sát thấy phản hồi theo từng bước giúp giảm nhẹ việc phân bổ tín dụng trên chuỗi dài.
+Kho đi kèm lưu một pilot nghe trực tiếp quy mô nhỏ. OpenAI và Fish Audio mỗi bên tạo bốn mẫu—số, từ dễ đọc nhầm, câu dài và giọng hào hứng—rồi Voxtral chấm cả tám audio theo bốn chiều trên. Hai bên cùng đạt 5.00 về độ chính xác và 4.00 về độ tự nhiên. Fish Audio đạt 4.00 về biểu cảm và 3.00 về độ nhất quán giọng; OpenAI lần lượt là 3.75 và 2.75. Tách các chiều giúp thấy khác biệt về giọng điệu và âm sắc ngay cả khi khả năng đọc đúng văn bản ngang nhau.
 
-> **Thử nghiệm 7-13 ★★★: SimpleVLA-RL — Khám phá mở dưới phần thưởng kết quả `[Thử nghiệm mở rộng]`**
->
-> SimpleVLA-RL chỉ dùng phần thưởng kết quả thành công/thất bại trong các nhiệm vụ robot LIBERO. Mỗi nhiệm vụ chỉ có một quỹ đạo minh hoạ để khởi động nguội bằng SFT; sau đó RL nâng tỷ lệ thành công từ 17,3% lên 91,7% và phát hiện động tác "đẩy cắt" chưa từng xuất hiện trong các minh hoạ. Nó tương phản với V-IRL: khi tín hiệu quá trình dễ định nghĩa thì nó giúp tăng tốc học; khi đường đi tối ưu chưa biết thì phần thưởng kết quả thưa thớt lại giữ được không gian khám phá lớn hơn nhiều.
+Tám mẫu chưa đủ để kết luận dịch vụ nào tốt hơn. Mỗi bên chỉ có bốn mẫu, và quan trọng hơn, audio tham chiếu cố định được tạo bởi Fish S1 nên phép so độ giống giọng vốn đã có lợi cho Fish Audio. Nếu so TTS phổ thông, không nên đưa tiêu chí “giống giọng tham chiếu Fish” vào tổng điểm. Nếu so voice cloning, mọi hệ thống phải bắt chước cùng một người nói và điểm của model cần được hiệu chỉnh bằng nghe mù của con người. **Việc chọn câu trả lời, hình ảnh hay audio tham chiếu là một phần của thiết kế đánh giá, không phải bước chuẩn bị trung tính trước thí nghiệm.**
 
-## RLHF: Từ sở thích của con người đến mô hình khen thưởng
+Rubric viết tay phù hợp để nhanh chóng tạo các chiều chẩn đoán này. Khi quy mô tăng, có thể huấn luyện **mô hình phần thưởng sinh** để tự động hóa việc chấm; Chương 8 trình bày phương pháp huấn luyện.
 
-Các thử nghiệm trước đây có một tiền đề chung: nhiệm vụ có những quyền và sai có thể kiểm chứng được - liệu phép tính có đúng và định dạng có tuân thủ hay không thì người xác thực quy tắc có thể chấm điểm. Tuy nhiên, lý do tại sao mô hình đối thoại hiện được triển khai "giống như một trợ lý tử tế và an toàn" lại dựa vào một lộ trình hoàn thiện khác trước đó: **RLHF**(Học tăng cường từ phản hồi của con người, học tăng cường dựa trên phản hồi của con người). Hiểu RLHF không chỉ để hiểu chất lượng đối thoại và sự liên kết bảo mật của các sản phẩm như ChatGPT đến từ đâu mà còn là điều kiện tiên quyết để hiểu các khái niệm như hình phạt KL và hack phần thưởng trong các thuật toán bên dưới.
+Trong việc lựa chọn mô hình thực tế, câu hỏi chúng ta thường gặp là: "Cái nào tốt hơn, A hay B?" So sánh từng cặp cung cấp một cách đánh giá không dựa vào điểm số tuyệt đối.
 
-**Hướng dẫn quy trình ba giai đoạn của GPT.** InstructGPT[^ch7-4] của OpenAI đã thiết lập quy trình tiêu chuẩn vẫn được sử dụng cho đến ngày nay:
+#### Lỗi định dạng tài liệu nhạy với phạm vi
 
-1. **SFT**: Sử dụng trình diễn "câu trả lời lệnh" theo cách thủ công để tinh chỉnh mô hình được đào tạo trước và thiết lập các khả năng tuân theo lệnh cơ bản - đó là nội dung đã được thảo luận trong phần trước "SFT (tinh chỉnh có giám sát)".
-2. **Mô hình phần thưởng đào tạo (RM)**: Để mô hình tạo ra nhiều câu trả lời cho cùng một lời nhắc và người chú thích sẽ so sánh chúng theo cặp và đánh dấu câu trả lời nào họ thích hơn. Sử dụng các cặp ưu tiên này để huấn luyện mô hình tính điểm, với mục tiêu huấn luyện dựa trên mô hình Bradley-Terry:
+Khi người dùng nói "định dạng dấu ngoặc kép sai", ta không thể biến điều đó thành một phép thay thế ký tự toàn cục. Ít nhất phải phân biệt dấu ngoặc thẳng ASCII (`"`, `'`), dấu ngoặc cong tiếng Trung (`“”`, `‘’`) và dấu backtick Markdown (`` ` ``). Cùng một ký tự đảm nhận vai trò cú pháp khác nhau trong văn xuôi tiếng Trung, nguyên bản tiếng Anh được trích, mã nội dòng, khối mã, chú thích mã, JSON và đường dẫn.
 
-   $$\mathcal{L}_{\text{RM}} = -\log \sigma\big(r(x, y_w) - r(x, y_l)\big)$$
+Dữ liệu đánh giá nên phân tích tài liệu thành các đoạn có phạm vi trước đã — ví dụ `ZH_PROSE`, `EN_PROSE`, `QUOTED_SOURCE`, `INLINE_CODE`, `CODE_BLOCK`, `CODE_COMMENT` và `JSON_OR_SCHEMA`. Mỗi đoạn lưu tập phép biến đổi được phép, các ký tự bắt buộc phải bảo vệ, và kết quả của bộ kiểm tra sau khi sửa. Ba trường hợp dưới đây không thể xử lý bằng cùng một quy tắc thay thế:
 
-Trong số đó, $y_w$ là câu trả lời được ưa thích, $y_l$ là câu trả lời bị từ chối và $\sigma$ là hàm sigmoid. Trực giác rất đơn giản: **Hãy để RM cho điểm cao hơn cho những câu trả lời ưa thích**. Lý do chúng tôi thu thập các so sánh thay vì ấn định điểm là vì con người khó có thể đưa ra điểm tuyệt đối một cách nhất quán (“Câu trả lời này có giá trị 7,3 điểm” gần như không thể gắn nhãn một cách nhất quán), nhưng các đánh giá về “A hay B nào tốt hơn” thì đáng tin cậy hơn nhiều. **Hãy nhớ vai trò của "mô hình phần thưởng" - đó là một chủ đề ẩn trong chương này**: ở đây nó là một cầu thủ ghi bàn được học từ sở thích của con người; Khi chúng ta nói về thiết kế phần thưởng trong Phần 7.10, bạn sẽ thấy nhiều biến thể khác nhau của nó (ORM chỉ xem xét kết quả cuối cùng, PRM với tính điểm từng bước, mô hình phần thưởng tổng quát sử dụng ngôn ngữ tự nhiên để giải thích lý do) và một trường hợp đặc biệt - khi đúng và sai có thể được xác định trực tiếp bằng các quy tắc, "mô hình phần thưởng" chỉ đơn giản thoái hóa thành một đoạn mã xác định (đây là điều tôi sẽ nói bên dưới) RLVR. Tất cả đều trả lời cùng một câu hỏi: **Phần thưởng đến từ đâu**.
-3. **Sử dụng điểm RM để thực hiện PPO**: Sử dụng điểm của RM làm tín hiệu khen thưởng, thực hiện đào tạo PPO trên mô hình SFT (xem phần tiếp theo để biết cơ chế của PPO) và để mô hình học cách tạo ra các câu trả lời mà RM cho rằng "con người sẽ thích hơn".
-
-**Hình phạt KL: Không đi quá xa điểm xuất phát (giải thích kỹ về sự phân kỳ của KL).** Phần thưởng cho việc tối ưu hóa thực tế mô hình trong RLHF thường không phải là điểm RM mà là phép trừ thời hạn phạt:
-
-$$r = r_{\text{RM}} - \beta \cdot \mathrm{KL}\big(\pi_\theta \,\|\, \pi_{\text{ref}}\big)$$
-
-Có ba câu hỏi mà người mới bắt đầu thường hỏi về công thức này. Hãy giải thích từng cái một.
-
-**(1) Phân kỳ KL là gì và hình phạt được thêm vào ở đâu?** Phân kỳ KL (Phân kỳ Kullback-Leibler) đo lường sự khác biệt giữa hai phân bố xác suất: hai phân phối càng giống nhau thì KL càng nhỏ và bằng 0; hai phân phối càng ít giống nhau thì KL càng lớn. Hai phân phối ở đây là **chiến lược hiện tại**$\pi_\theta$ (mô hình đang được đào tạo) và **chiến lược tham khảo**$\pi_{\text{ref}}$ (điểm bắt đầu đào tạo, thường là mô hình SFT) cho "phân phối xác suất mã thông báo tiếp theo" được đưa ra trước đó trong cùng một đoạn. $\beta$ kiểm soát cường độ trừng phạt - đó là siêu tham số `kl_coef` phổ biến trong các tập lệnh đào tạo. Trong kỹ thuật, hình phạt này được tính toán từng bit bằng mã thông báo và được thêm vào phần thưởng (per-token KL): mỗi khi mô hình tạo mã thông báo, sự khác biệt về xác suất giữa nó và mô hình tham chiếu ở vị trí này sẽ được so sánh. Độ lệch càng lớn thì phần thưởng cho bước này sẽ bị trừ càng nhiều. Nói cách khác, KL không phải là một khoản lỗ riêng biệt mà được trộn vào tín hiệu phần thưởng và sau đó bộ tính toán lợi thế PPO/GRPO được sử dụng - đây là vị trí chính xác mà nó hoạt động.
-
-**(2) Tại sao lại có hướng "chiến lược hiện tại trước, chiến lược tham khảo cuối cùng"?** Phân kỳ KL không đối xứng, $\mathrm{KL}(P\|Q)\neq\mathrm{KL}(Q\|P)$, hướng không được viết tùy tiện. Nó được viết ở đây là $\mathrm{KL}(\pi_\theta\|\pi_{\text{ref}})$ - chiến lược hiện tại là chiến lược đầu tiên - về mặt toán học được gọi là **KL đảo ngược (KL đảo ngược)**. Điều mà nó trừng phạt là tình huống "$\pi_\theta$ cho xác suất cao ở đâu đó và $\pi_{\text{ref}}$ gần như bằng 0 ở đó", tức là **phạt mô hình vì đi đến những nơi mà mô hình tham chiếu cho rằng nó không nên đến**. Đây chính xác là những gì chúng tôi muốn: mô hình tham chiếu (mô hình SFT) đại diện cho một vùng an toàn “nói ngôn ngữ con người và có định dạng bình thường”. Reverse KL đặt chiến lược hiện tại gần vùng an toàn này để ngăn nó trôi nổi xung quanh. Nếu bạn sử dụng **Forward KL**$\mathrm{KL}(\pi_{\text{ref}}\|\pi_\theta)$ ngược lại, hình phạt sẽ là mô hình "mô hình tham chiếu có nó nhưng mô hình hiện tại bỏ lỡ nó" - điều đó sẽ buộc mô hình phải bao gồm tất cả các biểu thức của mô hình tham chiếu, đây không phải là mục đích của RLHF.
-
-**(3) Tại sao lại thiết kế như thế này? --Nguồn gốc của mode-seeking.** KL đảo ngược có một ký tự chính: đó là **mode-seeking (Tìm kiếm đỉnh cao)**. Điều này đã được báo trước trong Phần 7.1 - KL đảo ngược cho phép mô hình chỉ giữ lại một số "đỉnh" có giá trị cao và loại bỏ phần còn lại của các mô hình một cách dứt khoát mà không cần phải tiếp xúc với mưa và sương như khả năng tối đa của SFT (mass-covering, loại che phủ). Đưa nó vào RLHF, đây chính xác là hiệu quả mà chúng tôi mong muốn: chọn một hoặc hai đầu ra ổn định từ các phương pháp trả lời đạt điểm cao đã được RM phê duyệt, thay vì học tất cả các câu trả lời có thể có. Điều này cũng giải thích tại sao mẫu mã sau RL lại “chắc chắn” hơn và kém đa dạng hơn. Đảo ngược mode-seeking + của KL đặt mô hình gần phân phối tham chiếu. Cả hai kết hợp với nhau là bí quyết cho sự ổn định của RLHF.
-
-**(4) Điều gì sẽ xảy ra nếu bạn không thêm nó?** Trực giác là một câu: **Đừng đi quá xa điểm xuất phát, nếu không điểm của mô hình khen thưởng sẽ không đáng tin cậy.** RM được đào tạo về phân phối đầu ra gần chiến lược tham khảo. Sau khi mô hình được tối ưu hóa theo phân phối mà RM chưa thấy, điểm RM sẽ trở thành phép ngoại suy vô căn cứ và điểm cao không còn đồng nghĩa với chất lượng cao. Do đó, hình phạt KL ngăn chặn cùng lúc hai điều: **hack phần thưởng**(mô hình khai thác sơ hở để thưởng điểm cao thay vì thực sự làm tốt nhiệm vụ, xem đoạn tiếp theo) và **sụp đổ phân phối**(đầu ra thoái hóa thành các dạng cực đoan như lặp lại và mã bị cắt xén). Ngay cả trong quá trình đào tạo RLVR với phần thưởng có thể xác minh được, bộ điều chỉnh KL thường được giữ lại để ổn định quá trình đào tạo (một số tác phẩm như DAPO, Open-Reasoner-Zero cố tình loại bỏ nó - lưu ý rằng bản thân GRPO của DeepSeek-R1-Zero vẫn chứa thuật ngữ KL một cách rõ ràng).
-
-**Mô hình phần thưởng có thể được "tối ưu hóa quá mức".** RM cuối cùng chỉ là đại diện cho sở thích của con người. Định luật Goodhart nói: Một khi một chỉ báo trở thành mục tiêu tối ưu hóa, nó không còn là một chỉ báo tốt nữa - đẩy chỉ báo proxy lên mức cực đoan và mối tương quan của nó với mục tiêu thực sẽ bị bóp méo. Nghiên cứu của OpenAI [^ch7-5] đã đo lường một cách có hệ thống hiện tượng **mô hình phần thưởng quá tối ưu hóa (mô hình phần thưởng over-optimization)** này: khi quá trình đào tạo RL tiến triển, phần thưởng đại lý (điểm RM) tăng đều đặn, trong khi chất lượng thực sự (đánh giá con người) đầu tiên tăng lên rồi giảm xuống. Điều mà mô hình dần học được không phải là "trả lời hay hơn" mà là "cho RM điểm cao hơn" - lối nói dài dòng, tâng bốc, có vẻ khắt khe trống rỗng. Đây chính xác là hình thức hack phần thưởng cụ thể trong ngữ cảnh RLHF. Hình phạt KL và dừng sớm là các phương pháp giảm nhẹ được sử dụng phổ biến nhất; vấn đề hack phần thưởng trong "Bẫy chung" ở cuối chương này cũng có nguồn gốc tương tự.
-
-**DPO: Bỏ qua mô hình phần thưởng rõ ràng.** Điểm khởi đầu của DPO (Tối ưu hóa ưu tiên trực tiếp, Tối ưu hóa ưu tiên trực tiếp) [^ch7-6] là: vì tác dụng cuối cùng của việc kết hợp "đào tạo RM + PPO" là "tăng xác suất được ưu tiên trả lời, giảm xác suất bị từ chối, đồng thời không ở quá xa mô hình tham chiếu", nên tốt hơn là bỏ qua RM rõ ràng, trực tiếp biến cặp ưu tiên thành một mất phân loại với phần thưởng ngầm - về mặt toán học có thể chứng minh rằng điều này tương đương với tối ưu hóa tùy chọn ngoại tuyến với các ràng buộc KL và mô hình phần thưởng được ẩn hoàn toàn trong chính chính sách. Đào tạo DPO đơn giản như SFT: không lấy mẫu trực tuyến, không có mạng giá trị, không cần bảo trì RM riêng. Cái giá phải trả là nó hoàn toàn ngoại tuyến - nó không thể khám phá các hành vi mới bên ngoài dữ liệu ưu tiên và mức trần hiệu suất được xác định bởi chất lượng và phạm vi bao phủ của dữ liệu ưu tiên.
-
-**Mối quan hệ giữa RLHF và RLVR.** Tóm lại, sự khác biệt giữa hai lộ trình là **phần thưởng đến từ đâu**: phần thưởng dành cho RLHF đến từ RM đã học (đằng sau là dữ liệu về sở thích của con người) và phần thưởng dành cho **RLVR**(Học tăng cường với Phần thưởng có thể xác minh, học tăng cường phần thưởng có thể kiểm chứng) đến từ trình xác thực quy tắc (kiểm tra có vượt qua hay không, câu trả lời có đúng hay không). Các nhiệm vụ Agent hầu hết có thể kiểm chứng được - đó là lý do tại sao chương này tập trung vào RLVR. Nhưng không có sự đánh đổi nào giữa hai điều này: các mô hình được triển khai thực tế được sử dụng chồng lên nhau, RLHF chịu trách nhiệm về chất lượng đối thoại và căn chỉnh bảo mật, còn RLVR chịu trách nhiệm về lý luận và các khả năng của Agent. Mô hình phần thưởng tổng quát được thảo luận trong "Sự phát triển của Mô hình phần thưởng" sau này có thể được coi là sự kết hợp của hai dòng - sử dụng mô hình phần thưởng có thể đào tạo để thực hiện các nhiệm vụ mở không thể được quy định bởi các quy tắc.
-
-## So sánh các thuật toán học tăng cường
-
-**GRPO (Group Relative Policy Optimization)** do DeepSeek đề xuất và hiện là một trong những thuật toán được dùng phổ biến nhất trong huấn luyện RL. Ý tưởng cốt lõi là ước lượng advantage tương đối bằng cách so sánh một nhóm rollout cho cùng một bài toán, không cần huấn luyện value network riêng.
-
-Thử nghiệm một vòng trước đó đã chứng minh lợi thế tổng quát hóa của RL. Phần trước cũng đã giới thiệu lộ trình tối ưu hóa ưa thích của RLHF. Tuy nhiên, các thuật toán cụ thể được sử dụng trong các tác phẩm này là khác nhau và chỉ là một phần trong nhiều lựa chọn. Trước khi bước vào các nhiệm vụ nhiều vòng phức tạp hơn, cần phải sắp xếp một cách có hệ thống các đặc điểm và kịch bản áp dụng của các thuật toán chính thống.
-
-> **Tôi xin nói điều quan trọng nhất trước tiên để người đọc không rơi vào công thức.** Phần này liệt kê nhiều tên và công thức thuật toán, nhưng hãy nhớ dòng chính thứ hai của chương này: **Trong thế giới công nghiệp, chỉ cần bạn biết cách sử dụng và chọn thuật toán RL phù hợp (PPO, GRPO, v.v.) là đủ. Điều thực sự quyết định thành công hay thất bại là dữ liệu và môi trường chứ không phải bản thân thuật toán.** Các thuật toán này từ lâu đã được gói gọn trong các khung hoàn thiện như veRL và TRL và việc gọi chúng thường chỉ yêu cầu thay đổi một vài dòng cấu hình. Vì vậy, mục tiêu của phần này không phải là để bạn biết cách suy luận mà là để bạn xây dựng bản đồ lựa chọn “sử dụng thuật toán nào trong kịch bản nào”; nếu không hiểu phần công thức (dành cho kỹ sư đào tạo) có thể bỏ qua mà không ảnh hưởng đến lần đọc tiếp theo. Phần tiếp theo sẽ giải thích rõ ràng “tại sao dữ liệu và môi trường lại quan trọng hơn thuật toán”.
-
-![Hình 7-13 Luồng thuật toán GRPO ](images/fig7-13.svg)
-
-Có những khác biệt cơ bản giữa cảnh RL của LLM Agent hiện đại và RL truyền thống - Agent. Cần phải hiểu ý định của người dùng, gọi công cụ, tạo đầu ra có cấu trúc và tiến hành tư duy chuỗi dài trong nhiều vòng đối thoại. Kiểu ra quyết định đa mục tiêu và nhiều giai đoạn này cho phép "thuật toán lựa chọn đúng" có tác động nhất định, nhưng tác động ít hơn nhiều so với dữ liệu và môi trường.
-
-Từ góc độ lộ trình triển khai, thuật toán RL được chia thành **phương pháp khám phá trực tuyến**(khám phá các chiến lược mới thông qua tương tác với môi trường) và **phương pháp tối ưu hóa ngoại tuyến**(dựa trên tối ưu hóa dữ liệu hiện có, ổn định và trực tiếp hơn). Nhân tiện, đây là một cặp điều khoản nghiêm ngặt đã được hứa hẹn trong bài viết trước: phương pháp **chiến lược đúng hướng (On-Policy)** chỉ tự cập nhật với dữ liệu mới được lấy mẫu của chính chiến lược hiện tại và phương pháp **chiến lược chệch hướng (Off-Policy)** có thể sử dụng dữ liệu được tạo bởi các chiến lược khác (hoặc chiến lược phiên bản cũ) để tìm hiểu (chẳng hạn như Q-learning trước đó). Điều này phù hợp với các phương pháp được thảo luận trong chương này: SFT là phương pháp học tập bắt chước không đúng hướng - dữ liệu đến từ giáo viên hoặc sự minh họa của con người chứ không phải từ chính mô hình; PPO, GRPO - biểu mẫu tiêu chuẩn dùng cho đào tạo LLM đang đi đúng hướng - mỗi vòng được lấy mẫu mới với bản cập nhật mô hình hiện tại (nghĩa là cho phép mô hình chạy hoàn toàn nhiệm vụ và tạo trajectory hoàn chỉnh từ đầu đến cuối); DPO là một tối ưu hóa tùy chọn ngoại tuyến, không lấy mẫu trực tuyến hay lặp lại chính sách theo nghĩa chặt chẽ.
-
-Hầu hết các thuật toán này đều dựa trên cùng một ý tưởng về Chính sách gradient: điều chỉnh các tham số chính sách $\theta$ theo hướng có thể tăng lợi nhuận kỳ vọng. Dạng cơ bản nhất của nó (REINFORCE) là:
-
-$$\nabla_\theta J(\theta) = \mathbb{E}\big[\nabla_\theta \log \pi_\theta(a \mid s)\, G\big]$$
-
-trong đó $\pi_\theta(a\mid s)$ là chiến lược (xác suất chọn hành động $a$ ở trạng thái $s$) và $G$ là phần thưởng tích lũy của trajectory này (hoặc từ bước này trở đi) - phần thưởng càng cao thì xác suất tạo ra hành động càng được tăng cường. Mặc dù việc sử dụng trực tiếp trở lại của toàn bộ trajectory $G$ làm trọng số là không thiên vị, nhưng phương sai là rất lớn; do đó, đường cơ sở $b$ được đưa ra và **lợi thế**(Advantage) $\hat{A}=G-b$ (hành động này tốt hơn nhiều so với mức trung bình) được sử dụng làm trọng số để giảm phương sai. PPO và GRPO tiếp theo về cơ bản là hai loại cải tiến được đưa ra về "cách ước tính và sử dụng ổn định lợi thế $\hat{A}$".
-
-**PPO** Sử dụng "cắt xén" để giới hạn phạm vi của mỗi bản cập nhật nhằm tránh chiến lược đi chệch hướng trong một bước:
-
-$$L^{\text{CLIP}}(\theta) = \mathbb{E}\Big[\min\big(\rho\,\hat{A},\ \operatorname{clip}(\rho,\, 1-\epsilon,\, 1+\epsilon)\,\hat{A}\big)\Big],\quad \rho = \frac{\pi_\theta(a\mid s)}{\pi_{\theta_{\text{old}}}(a\mid s)}$$
-
-Trong số đó, $\rho$ là tỷ lệ xác suất giữa chiến lược cũ và chiến lược mới và $\epsilon$ (chẳng hạn như 0,2) giới hạn phạm vi có thể được điều chỉnh trong một bước duy nhất; "Clip-Higher" sau đây nới lỏng giới hạn trên của $1+\epsilon$.
-
-**GRPO** bỏ qua mạng giá trị (mạng giá trị, mạng thần kinh phụ trợ được đào tạo bổ sung về PPO, được sử dụng để ước tính hàm giá trị riêng biệt cho từng bước trong trajectory để tính toán lợi thế chi tiết hơn) và thay vào đó sử dụng "so sánh tương đối trong nhóm" để ước tính lợi thế: lấy mẫu $N$ trajectory cho cùng một vấn đề, nhận được phần thưởng $r_1,\dots,r_N$, xác định lợi thế của từng mục như hiệu suất tương đối của nó trong nhóm:
-
-$$\hat{A}_i = \frac{r_i - \operatorname{mean}(r_1,\dots,r_N)}{\operatorname{std}(r_1,\dots,r_N)}$$
-
-Tức là "tích cực nếu nó tốt hơn mức trung bình của cùng một nhóm, tiêu cực nếu nó kém hơn", mà không cần mạng lưới giá trị - đó là lý do tại sao nó rẻ hơn. Cần lưu ý rằng công thức trên bỏ qua số hạng KL thông thường. Trong đào tạo thực tế, hình phạt per-token KL được giới thiệu ở phần trước thường được thêm vào để hạn chế chiến lược gần mô hình tham chiếu.
-
-Bảng 7-4 tóm tắt các đặc điểm cốt lõi của các phương pháp chính thống. Khi đọc, hãy chú ý phân biệt hai điều thường bị nhầm lẫn: **phần thưởng đến từ đâu**(trình xác thực quy tắc, mô hình phần thưởng đã học hoặc dữ liệu sở thích của con người) và **thuật toán nào được sử dụng để tối ưu hóa**. PPO và GRPO không kén chọn nguồn phần thưởng - chúng có thể được kết nối với trình xác thực quy tắc (RLVR) hoặc mô hình phần thưởng (RLHF); sự khác biệt thực sự của chúng nằm ở cách ước tính lợi thế (mạng giá trị so với đường cơ sở tương đối trong nhóm).
-
-Bảng 7-4 So sánh các phương pháp tối ưu hóa post-training và tối ưu hóa thời gian suy luận
-
-| Phương pháp | Loại | Ý tưởng cốt lõi | Ưu điểm | Nhược điểm | Các tình huống áp dụng |
-|------|------|---------|------|------|---------|
-|**REINFORCE**| Thuật toán RL trực tuyến | Sử dụng phần thưởng cuối cùng của toàn bộ trajectory để cập nhật chiến lược | Thực hiện đơn giản | Phương sai lớn, luyện tập không ổn định | Điểm chuẩn lý thuyết; dạng ban đầu hiếm khi được sử dụng trực tiếp, nhưng biến thể của nó với đường cơ sở (RLOO, REINFORCE++, v.v.) là một trong những dạng phổ biến hiện nay, GRPO về cơ bản là REINFORCE với đường cơ sở nội bộ nhóm |
-|**PPO**| Thuật toán RL trực tuyến | Giới hạn từng phạm vi cập nhật để tránh “sai lệch” chính sách | Ổn định, mạng giá trị cung cấp phân bổ tín dụng chi tiết hơn | Yêu cầu đào tạo và lưu trữ bổ sung mạng giá trị, siêu tham số rất nhạy cảm | Nhiều vòng Agent, phân bổ tín dụng trajectory dài |
-|**GRPO**| Thuật toán RL trực tuyến | Lấy mẫu nhiều trajectory cho cùng một câu hỏi và so sánh tương đối "cái nào tốt hơn" trong nhóm | Không cần mạng giá trị, chi phí thấp | Những lợi ích được phân bổ đều theo toàn bộ câu trả lời, và việc phân bổ tín dụng còn thô bạo; dựa vào sự khác biệt về phần thưởng trong nhóm | Nhiệm vụ trajectory một vòng/ngắn, kịch bản có sự khác biệt về phần thưởng |
-|**DPO**| Tối ưu hóa tùy chọn ngoại tuyến | Biến các cặp ưu tiên trực tiếp thành tổn thất phân loại với phần thưởng ngầm | Tối giản và hiệu quả, không cần lấy mẫu trực tuyến | Không thể khám phá các chiến lược mới, bị giới hạn bởi chất lượng và mức độ bao phủ của dữ liệu tùy chọn ngoại tuyến | Các tình huống đã tồn tại dữ liệu ưu tiên chất lượng cao |
-|**KTO**| Tối ưu hóa tùy chọn ngoại tuyến | Chỉ cần gắn nhãn một mẫu duy nhất là "tốt/xấu" | Chi phí ghi nhãn cực thấp | Tín hiệu thô | Các tình huống có nguồn lực ghi nhãn cực kỳ hạn chế |
-|**Best-of-N**| Phương pháp thời gian suy luận | Tạo N kết quả đầu ra trong quá trình suy luận, chọn kết quả tốt nhất | Không thay đổi mô hình, thực hiện đơn giản | Chi phí suy luận tăng theo cấp số nhân và khả năng không được gửi vào các tham số | Nhanh chóng cải thiện chất lượng trong giai đoạn đầu, cung cấp ước tính doanh thu giới hạn trên cho RL |
-
-Quay lại các thí nghiệm trong chương này, giải thích trung thực các thuật toán được sử dụng: GeneralPoints và V-IRL (thử nghiệm 7-11, 7-12) là từ cùng một nghiên cứu, sử dụng PPO với mạng giá trị; AdaptThink (thử nghiệm 7-10) sử dụng các mục tiêu tối ưu hóa có ràng buộc tùy chỉnh cộng với việc lấy mẫu tầm quan trọng; phần tiếp theo ReTool (thử nghiệm 7-14) sử dụng PPO dựa trên chuyển đổi veRL (dữ liệu huấn luyện được lấy từ DAPO-Math-17k, nhưng thuật toán tối ưu hóa vẫn là PPO), SimpleVLA (thử nghiệm 7-13) và RLVP (thử nghiệm 7-16) dựa trên GRPO. Vấn đề phân bổ tín dụng phức tạp hơn trong kịch bản nhiều vòng và các thuật toán khác nhau đều có những ưu điểm và nhược điểm riêng.
-
-Lộ trình lựa chọn trong thực tế: Có các tín hiệu khen thưởng và tài nguyên máy tính đáng tin cậy → GRPO (ngắn gọn) hoặc PPO (phân bổ tín dụng linh hoạt, tốt hơn cho các trajectory dài); dữ liệu ưu tiên chất lượng cao → DPO/KTO (chi phí thấp); giai đoạn khám phá ban đầu → Best-of-N để bắt đầu nhanh chóng.
-
-Sau khi đọc bảng này, bạn có thể nghĩ: "Tôi nên tinh chỉnh thuật toán nào?" Câu trả lời có thể gây ngạc nhiên: **Trong hầu hết các trường hợp, một trong hai cách sẽ hoạt động - đừng vội bận tâm đến thuật toán.** Phần tiếp theo dành riêng cho vấn đề này.
-
-## Dữ liệu và môi trường: thứ quan trọng hơn thuật toán
-
-Đây là phần tôi muốn bạn nhớ nhất trong toàn bộ chương này, đồng thời cũng là một phát biểu tích cực về dòng chính thứ hai của chương này. Tôi đã dành rất nhiều thời gian để nói về các thuật toán trước đây, nhưng trải nghiệm của những người tuyến đầu trong ngành thì hoàn toàn ngược lại: tầm quan trọng của thuật toán **kém hơn nhiều so với ba yếu tố cơ bản hơn - độ trung thực của môi trường mô phỏng, chất lượng của dữ liệu đào tạo và khả năng của mô hình cơ bản.** Chỉ cần sử dụng các thuật toán có sẵn; điều thực sự tạo nên sự khác biệt là môi trường và dữ liệu được thực hiện tốt như thế nào. Điều này cũng lặp lại kết luận của Chương 6 (môi trường đánh giá và mô phỏng là nền tảng của quá trình post-training), cũng như sự đảo ngược nhận thức của OpenAI được đề cập trong Phần 7.2 của chương này - hàng thập kỷ nghiên cứu RL đã đảo ngược các ưu tiên. Thứ tự thực sự là **prior (mô hình cơ bản) > môi trường > thuật toán**.
-
-### Môi trường: Nơi thực hành mẫu
-
-Bản chất của RL là "học thử và sai", thử và sai phải có **địa điểm dùng thử và lỗi** - đây là môi trường mô phỏng (môi trường mô phỏng). Mô hình chạy đi chạy lại các nhiệm vụ trong môi trường, nhận phản hồi và điều chỉnh chiến lược. **Độ trung thực** của môi trường (mức độ tương tự với kịch bản triển khai thực tế) trực tiếp xác định liệu chiến lược đã đào tạo có thể được sử dụng hay không:
-
-- **Môi trường bị bóp méo và chiến lược phải bị bỏ rơi.** Nếu dịch vụ khách hàng trong mô phỏng luôn phản hồi theo một quy trình cố định và các thông báo lỗi không khớp với môi trường sản xuất, thì mô hình sẽ học một bộ "chiến lược làm bài kiểm tra" chỉ hoạt động trong mô phỏng và bí mật sẽ bị lộ ngay khi lên mạng. Đây là cách lật ngược dự án RL phổ biến nhất - không phải thuật toán tệ, mà là sân tập và phòng thi không giống nhau.
-- **Xây dựng môi trường có độ trung thực cao thường tốn kém và khó khăn hơn chính việc đào tạo.** Một môi trường có thể song song trên diện rộng, có thể tái tạo và cung cấp phản hồi thực tế thường đòi hỏi đầu tư kỹ thuật nhiều hơn là điều chỉnh mô hình. Lý do khiến các thử nghiệm gọi công cụ (hộp cát MCP của AWorld, hộp cát thông dịch mã của ReTool) bỏ nhiều công sức vào việc thiết lập môi trường ở phần sau của chương này chính là vì API thực có giới hạn tốc độ, sẽ bị cấm, có tác dụng phụ và không thể sử dụng trực tiếp để đào tạo - trước tiên bạn phải tạo một "thế giới bóng tối" ổn định, có thể kiểm soát và có thể chơi lại.
-- **Nửa còn lại của môi trường là chức năng khen thưởng.** Môi trường không chỉ phải mô phỏng “thế giới thay đổi như thế nào” mà còn phải xác định được “việc đó có được thực hiện tốt hay không”. Đây là nguồn của tín hiệu khen thưởng. Thiết kế phần thưởng là một phần của kỹ thuật môi trường và sẽ được thảo luận trong phần tiếp theo.
-
-Tóm lại: **Trước khi bạn bắt đầu điều chỉnh thuật toán, hãy tự hỏi - môi trường mô phỏng của tôi có thực sự giống thế giới thực không?** Câu trả lời cho câu hỏi này quan trọng hơn nhiều so với việc chọn PPO hay GRPO.
-
-### Không xây được môi trường thì sao: để mô hình đóng vai môi trường
-
-Nhưng còn một vấn đề căn bản hơn: trong nhiều kịch bản, môi trường có độ trung thực cao không phải là "đắt" mà là **về cơ bản không thể xây được** - API thật có tác dụng phụ nên không thể gọi bừa, người dùng thật không thể dùng để thử sai, còn thế giới vật lý thì không thể tua nhanh. Nếu ngay cả một "thế giới bóng tối" khả dụng cũng không dựng nổi, liệu RL có còn làm được không? Một hướng suy nghĩ ngày càng trở thành chủ lưu là: **dùng mô hình để mô phỏng môi trường** - để một LLM đóng vai môi trường, tạo ra phản hồi cần thiết cho Agent tương tác. Lộ trình này có hai tầng.
-
-**Tầng thứ nhất: mô hình tổng hợp giá trị trả về của các lần gọi công cụ.** Lấy ZeroSearch (2025) làm ví dụ[^ch7-13]: đào tạo "mô hình biết tìm kiếm" thường không thể tách rồi công cụ tìm kiếm thật, trong khi API tìm kiếm có chi phí, có giới hạn tốc độ và kết quả trả về không kiểm soát được. ZeroSearch đơn giản dùng một LLM đóng vai công cụ tìm kiếm: mô hình học sinh đưa ra query tìm kiếm và "công cụ mô phỏng" này tạo kết quả truy xuất trả về. Tinh tế hơn, nó dùng thiết kế **theo lộ trình (curriculum)** - giai đoạn đầu đào tạo để công cụ mô phỏng trả về tài liệu chất lượng cao, liên quan mạnh; khi đào tạo tiến triển, dần trộn nhiễu vào và hạ chất lượng trả về, buộc học sinh học cách trích xuất thông tin hữu ích từ những kết quả trả về không hoàn hảo như của công cụ tìm kiếm thật. Cuối cùng, mô hình chưa từng thấy công cụ tìm kiếm thật trong suốt quá trình đào tạo vẫn hoạt động tốt khi kết nối trực tiếp với tìm kiếm thật.
-
-**Tầng thứ hai: mô hình mô phỏng động lực của toàn bộ môi trường.** Không chỉ giá trị trả về của một công cụ đơn lẻ, mà cả "thế giới sẽ biến thành gì sau khi thực hiện hành động" cũng có thể giao cho mô hình. DreamGym (2025)[^ch7-14] chưng cất động lực môi trường vào một "mô hình kinh nghiệm" có khả năng suy luận: cho trước trạng thái hiện tại và hành động của Agent, nó từng bước suy ra chuyển trạng thái và tín hiệu phản hồi, qua đó tổng hợp hàng loạt rollout cho RL trực tuyến mà không cần truy cập môi trường thật. Việc đào tạo các Agent dịch vụ khách hàng, bán hàng phổ biến dùng LLM đóng vai người dùng (bộ mô phỏng người dùng); loạt đánh giá τ-bench chính được xây dựng trên ý tưởng này - cùng một bộ mô phỏng mô hình, vừa có thể làm phòng thi, vừa có thể làm sân tập.
-
-Nhưng phải chỉ ra rủi ro của con đường này: **kiến thức thế giới của bộ mô phỏng chính là trần của quá trình đào tạo và sai lệch hệ thống của bộ mô phỏng sẽ được chiến lược tiếp thu trọn vẹn.** Nếu dịch vụ khách hàng mô phỏng kiên nhẫn hơn người dùng thật, nếu công cụ tìm kiếm mô phỏng chưa bao giờ trả về kết quả rác, thì thứ học sinh học được là một bộ chiến lược chỉ đúng trong "thế giới do mô hình đóng vai"; tệ hơn, RL sẽ chủ động tìm và lợi dụng lỗ hổng của bộ mô phỏng để hack phần thưởng. Vì vậy cách làm kỹ thuật đáng tin cậy là **kết hợp (hybrid)**: dùng mô phỏng bằng mô hình gánh phần lớn khối lượng tương tác, bổ sung tương tác với môi trường thật và định kỳ dùng tương tác môi trường thật để hiệu chỉnh sai lệch của bộ mô phỏng.
-
-### Dữ liệu: Phần quan trọng nhất và chất lượng vượt trội hơn mọi thứ khác
-
-Nếu môi trường là địa điểm thì dữ liệu là tài liệu giảng dạy và là mối liên kết quan trọng nhất trong ba yếu tố. "Dữ liệu" được đề cập ở đây, giai đoạn SFT biểu thị mẫu (cặp đầu vào-đầu ra) và giai đoạn RL đề cập đến tín hiệu phân phối nhiệm vụ và tín hiệu phần thưởng. Dù ở giai đoạn nào cũng có một nguyên tắc sắt đá:
-
-> **Chất lượng dữ liệu vượt trội các thuật toán.** Cho dù thuật toán có phức tạp đến đâu, nếu nó được cung cấp dữ liệu bẩn, dữ liệu có phạm vi bao phủ không đầy đủ và dữ liệu có sai lệch hệ thống, thì nó chỉ có thể học các chiến lược bẩn. SFT sẽ củng cố nguyên văn nhiễu và sai lệch trong dữ liệu thành các tham số; RL sẽ tối ưu hóa một cách triệt để hướng tới các phần thưởng thiên vị và ngày càng đi xa hơn theo hướng sai lầm (đây là điểm nóng của việc hack phần thưởng). **Rác vào, rác ra** Điều này thể hiện rõ nhất sau khi đào tạo.
-
-Hơn nữa, có một nhận định mà nhiều đội chưa nghĩ tới nhưng lại vô cùng tiết kiệm:
-
-> **Trong nhiều trường hợp, miễn là chất lượng dữ liệu của SFT được đảm bảo thì bạn không cần phải thực hiện RL.** RL đắt và không ổn định (thường gấp hàng chục đến hàng trăm lần SFT) nhưng mọi người thường muốn mua RL ngay khi mới lên. Nhưng nếu việc phân bổ nhiệm vụ của bạn có thể dự đoán được và bạn có thể nhận được dữ liệu trình diễn đủ đa dạng và chất lượng cao thì SFT vững chắc thường có thể đáp ứng các yêu cầu. Các kịch bản trong đó RL thực sự không thể thay thế bị hạn chế (xem Phần 7.5): phân phối triển khai sẽ trôi dạt một cách có hệ thống, bản thân phần trình diễn của chuyên gia không tối ưu hoặc chi phí chú thích quá cao để cung cấp bản trình diễn cho mọi đường dẫn. **Trước tiên, hãy chuẩn bị dữ liệu SFT, sau đó xác định xem có cần RL không** - Trình tự này có thể giúp bạn tiết kiệm rất nhiều sức mạnh tính toán và thời gian.
-
-Một ví dụ điển hình trong ngành là Anthropic. Trước năm 2025, công thức post-training của nó chủ yếu bao gồm hai phần: **sử dụng dữ liệu chất lượng cao khổng lồ để thực hiện SFT**, cộng thêm **RLAIF**("học tăng cường dựa trên phản hồi AI" trong Hiến pháp AI, Bai và cộng sự 2022, sử dụng "Hiến pháp" để hướng dẫn mô hình tự chấm điểm câu trả lời để căn chỉnh) - và **không phụ thuộc nhiều vào RLVR (Học tăng cường với Phần thưởng có thể xác minh) — thứ ngày nay đã trở thành tiêu chuẩn trong mã hóa và lý luận**. Nhưng ngay cả như vậy, chất lượng của các mô hình mã hóa của nó vào thời điểm đó đã rất xuất sắc. Lý do phần lớn không nằm ở thuật toán mà ở chỗ nó đã đạt được chất lượng dữ liệu cao nhất cho cả SFT và RLAIF - điều này khẳng định nhận định trên: **Khi dữ liệu SFT đủ tốt, một tập hợp các công thức không cầu kỳ cũng có thể đào tạo các mô hình hàng đầu và phần thưởng có thể xác minh phức tạp của RL có thể không cần thiết.** Tất nhiên, điều này không có nghĩa là RL vô dụng: kể từ năm 2025, Anthropic cũng đã tăng đáng kể khoản đầu tư vào RL - dựa trên nền tảng dữ liệu đặt ra, RL có thể tăng thêm giới hạn trên về khả năng của mình. **Dữ liệu xác định nơi bạn có thể đi, RL xác định bạn có thể đi cao hơn bao nhiêu.**
-
-Chính xác thì chất lượng dữ liệu có nghĩa là gì? Ít nhất ba chiều: **Phạm vi bao phủ**(cho dù nó bao gồm các tình huống khác nhau sẽ gặp phải trong quá trình triển khai, đặc biệt là các tình huống đuôi dài và ranh giới), **sự đa dạng**(liệu người nói, phong cách và giải pháp trong phần trình diễn có đủ phong phú hay không, nếu không mô hình sẽ thu gọn về một chế độ duy nhất, chẳng hạn như "mọi người đều có giọng giống nhau" trong thử nghiệm 7-6), **gắn nhãn chính xác**(liệu bản thân câu trả lời trình diễn có đúng hay không, đặc biệt là trong việc chắt lọc chuỗi suy nghĩ, quá trình suy nghĩ sai lầm sẽ được học sinh bắt chước - vì vậy thử nghiệm 7-9 trước tiên hãy sử dụng trình xác thực quy tắc để lọc ra các trajectory có câu trả lời sai trước). Tỷ lệ đầu tư-đầu ra của ba điểm này thường cao hơn nhiều so với việc thay đổi sang một thuật toán ưa thích hơn.
-
-Ở cấp độ thao tác, **lấy mẫu từ chối chính là động tác tiêu chuẩn để đưa "độ chính xác gắn nhãn" lên mức tối đa**, quy trình cố định: lấy mẫu k ứng viên cho mỗi lời nhắc (trong thực tế k thường lấy từ 4 đến 16) → dùng trình xác thực quy tắc, kiểm thử đơn vị hoặc câu trả lời tham khảo để phán định đúng sai (đối với nhiệm vụ không có trình xác thực tự động, có thể dùng mô hình phần thưởng hoặc mô hình mạnh để chấm điểm thay thế) → chỉ giữ lại các trajectory vượt qua sàng lọc, đồng thời loại bỏ trùng lặp, giới hạn số lượng được giữ lại cho cùng một lời nhắc, ngăn dữ liệu thu gọn về một số ít câu hỏi đơn giản → dùng dữ liệu còn lại để làm một vòng SFT. Sau khi mô hình mạnh lên, có thể lấy mẫu lại rồi sàng lọc lại, lặp đi lặp lại như vậy - đây chính là vòng lặp cốt lõi của các phương pháp tự khởi động như STaR, RFT. Nó biến khẩu hiệu "chất lượng dữ liệu vượt trội thuật toán" thành một đường ống có thể thực thi: không cần thuật toán mới, chỉ cần một trình xác thực đáng tin cậy và ngân sách lấy mẫu đủ lớn.
-
-Lấy mẫu từ chối chủ yếu sàng lọc câu trả lời cho một tập câu hỏi đã cho. Bước tiếp theo là để Agent thay đổi **chính phân phối câu hỏi**. Trong Agentic Self-Instruct của Autodata, một Agent chính điều phối bốn vai trò: challenger tạo nhiệm vụ, bộ giải yếu và bộ giải mạnh lần lượt thử giải, còn verifier đánh giá chất lượng câu trả lời và phản hồi về khâu ra đề. Hệ thống tìm các nhiệm vụ mà mô hình mạnh có thể giải, mô hình yếu vẫn gặp khó khăn và bộ đánh giá có thể phán định đáng tin cậy, qua đó chuyển chi phí suy luận thành dữ liệu huấn luyện mới ở biên năng lực hiện tại[^ch7-12].
-
-Điều này khác với **lấy mẫu động** trong một ngân hàng câu hỏi có sẵn: lấy mẫu động thay đổi cách phân bổ ngân sách, còn agentic data generation thay đổi phân phối nhiệm vụ. Tuy nhiên, cần dùng thuật ngữ “tự cải thiện” một cách thận trọng. Nếu vòng lặp chỉ huấn luyện bộ giải yếu trong khi bộ giải mạnh và cơ chế ra đề luôn cố định, nó gần với chưng cất thích nghi hơn. Chỉ khi Agent ra đề cũng được tối ưu tiếp dựa trên hiệu quả huấn luyện phía sau thì mới hình thành vòng lặp siêu cấp đầy đủ hơn. Autodata khảo sát khả năng này thông qua siêu tối ưu hóa Agent nhà khoa học dữ liệu, nhưng đây vẫn là hướng nghiên cứu tiền tuyến chứ chưa phải công thức tổng quát trưởng thành.
-
-#### Từ dữ liệu kinh doanh thực tế đến các quỹ đạo tổng hợp đã được xác minh
-
-Một Agent vận hành trong dịch vụ thực tế sẽ tích lũy nhiều dữ liệu kinh doanh, chẳng hạn như yêu cầu của người dùng, phiếu hỗ trợ, nhật ký gọi công cụ và kết quả nhiệm vụ. Phần đáng tái sử dụng nhất thường không phải nguyên văn câu nói của một người dùng hay một đơn hàng cụ thể, mà là **cấu trúc nhiệm vụ** được các dữ liệu đó bộc lộ: người dùng muốn đạt điều gì, Agent có thể thấy gì vào thời điểm đó, có thể gọi những công cụ nào, phải tuân thủ các ràng buộc kinh doanh nào, lỗi thường xảy ra ở bước nào và trạng thái hệ thống sau khi thành công phải ra sao. Vì vậy, không nên chỉ diễn đạt lại phiếu hỗ trợ và nhật ký thật rồi đưa vào huấn luyện. Cách an toàn hơn là loại bỏ thông tin nhận dạng, tổng hợp các trường hợp để rút ra **bản thiết kế nhiệm vụ**, sau đó dựng lại nhiệm vụ trong môi trường cô lập bằng con người, đơn hàng và tệp hoàn toàn hư cấu. Cách này giữ lại độ khó thực tế nhưng giảm nguy cơ mô hình ghi nhớ thông tin riêng tư, dữ liệu khách hàng hoặc thông tin xác thực nội bộ.
-
-Quy trình có thể tóm tắt như sau: **dữ liệu thực tế từ dịch vụ → xác định loại nhiệm vụ → dựng nhiệm vụ tổng hợp → chạy nhiều rollout → xác minh ở hai cấp → tạo dữ liệu huấn luyện**. Nhiều công trình năm 2026 đi đến cùng nguyên tắc này từ các hướng khác nhau: dùng hệ phân loại hoặc đồ thị kỹ năng để bao phủ có hệ thống những tổ hợp năng lực hiếm, thay vì ghép nhiệm vụ ngẫu nhiên[^ch7-18]; tổng hợp các quỹ đạo có bước chẩn đoán và phục hồi trong môi trường thực thi được[^ch7-19]; tách biệt kiểm thử, lời giải tham chiếu và quá trình giải khi có thể, đồng thời dùng phép kiểm tra fail-to-pass—kiểm thử thất bại trước thay đổi và vượt qua sau khi thực thi đúng—để loại các mẫu trông hợp lý nhưng ít giá trị huấn luyện[^ch7-20]; và xác minh riêng bản thân nhiệm vụ với quỹ đạo đã thực sự được chạy[^ch7-17]. Khi triển khai, quy trình gồm ba bước:
-
-1. **Tổng hợp nhiệm vụ trước, rồi mới lấy mẫu quỹ đạo.** Từ dữ liệu dịch vụ, hãy trích xuất ý định người dùng, trạng thái ban đầu, công cụ sẵn có, ràng buộc kinh doanh, điều kiện thành công và kiểu lỗi phổ biến; sau đó nhóm các trường hợp tương tự thành danh mục loại nhiệm vụ. Với mỗi loại, tạo tên, mã định danh, nội dung tệp và trạng thái hệ thống mới, rồi đặt chúng vào sandbox có thể đặt lại. Ví dụ, nếu nhật ký thường cho thấy một đơn hàng đã giao một phần không thể được hoàn tiền toàn bộ, bộ tổng hợp có thể tạo các đơn hàng hư cấu với số lượng mặt hàng, phương thức thanh toán và tỷ lệ đã giao khác nhau, nhưng vẫn giữ quy tắc chỉ hoàn tiền cho phần chưa giao. Mỗi **gói nhiệm vụ** tối thiểu phải chứa hướng dẫn và trạng thái ban đầu mà Agent nhìn thấy, cùng với bộ xác minh, kết quả tham chiếu và ghi chú tạo nhiệm vụ được giấu khỏi Agent. Sau đó, một hoặc nhiều mô hình giáo viên mạnh thực hiện trọn vẹn nhiệm vụ qua Agent Harness đích, ghi lại thông điệp, lệnh gọi công cụ, kết quả công cụ và trạng thái cuối. Thử mỗi nhiệm vụ nhiều lần và chỉ giữ lại quỹ đạo đã được xác minh. Nếu các lỗi thường gặp trong dịch vụ đến từ hết thời gian chờ, tham số sai hoặc tệp trung gian hỏng, có thể đưa những lỗi này vào sandbox một cách an toàn để tạo quỹ đạo thành công theo chuỗi “phát hiện → chẩn đoán → sửa chữa → kiểm tra lại”, thay vì chỉ có các trình diễn chuyên gia luôn suôn sẻ.
-2. **Tách xác minh nhiệm vụ khỏi xác minh quỹ đạo.** Xác minh nhiệm vụ trả lời “đây có phải một bài tập tốt không”: lời giải tham chiếu có hoàn thành được nhiệm vụ trong môi trường sạch không; kiểm thử có thất bại lúc đầu và vượt qua sau khi thực thi đúng không; hướng dẫn có đầy đủ nhưng không làm lộ đáp án không; độ khó có phù hợp không; và việc bỏ đi một công cụ hoặc Skill được cho là bắt buộc có làm nhiệm vụ khó hơn rõ rệt không? Xác minh quỹ đạo trả lời “đây có phải một trình diễn tốt không”: trạng thái cuối của cơ sở dữ liệu, các tệp hoặc tác động bên ngoài có tuân thủ mọi quy tắc kinh doanh bắt buộc không; quá trình có kết thúc bình thường không; lệnh gọi công cụ có hợp lệ không? Nếu mục tiêu huấn luyện bao gồm một quy trình cụ thể, còn phải kiểm tra Skill liên quan đã được đọc trước quyết định và thực sự ảnh hưởng đến hành động, chứ không chỉ được nhắc lại sau đó. Điều kiện nào có thể biểu đạt bằng unit test, assertion cơ sở dữ liệu, kiểm tra định dạng hoặc so sánh trạng thái thì nên ưu tiên mã xác định. Chỉ dùng bộ đánh giá dựa trên mô hình để bổ sung cho những mặt khó hình thức hóa, như cách giao tiếp có phù hợp hay không, và liên tục hiệu chỉnh bằng kiểm tra của con người. Tốt nhất, kiểm thử nên do một vai trò độc lập chưa thấy quỹ đạo của mô hình giáo viên xây dựng, rồi được thử ngược bằng các ví dụ biết trước là đúng, biết trước là sai và cố ý bỏ sót một ràng buộc. Nếu không, bộ xác minh rất dễ chỉ học cách nhận dạng hình thức bề mặt của đáp án tham chiếu.
-3. **Dùng cùng một tập nhiệm vụ và hạ tầng xác minh cho SFT và RL theo hai cách khác nhau.** Ở giai đoạn khởi đầu, thực hiện SFT trên các quỹ đạo thành công đầy đủ đã qua xác minh. Thông điệp hệ thống, nhiệm vụ của người dùng và kết quả công cụ vẫn là ngữ cảnh nhưng không được tính vào loss; phần giám sát tập trung vào suy luận, lệnh gọi công cụ và câu trả lời cuối do Agent tạo ra. Nhờ đó, mô hình học toàn bộ quá trình thực thi chứ không chỉ đáp án cuối. Tiếp theo, biến trực tiếp bộ tạo nhiệm vụ tổng hợp và bộ xác minh thành môi trường RLVR, để mô hình hiện tại sinh rollout mới và nhận phần thưởng theo mức độ vượt qua kiểm thử. Không dùng quỹ đạo thất bại làm ví dụ đúng để bắt chước. Chúng có thể được dùng để tạo cặp ưu tiên, tìm các loại nhiệm vụ mà chương trình huấn luyện chưa bao phủ, hoặc trở thành trình diễn phục hồi sau khi được bổ sung chẩn đoán và sửa chữa đúng. Dữ liệu huấn luyện cần được loại trùng và chia theo khách hàng, khoảng thời gian hoặc mẫu nhiệm vụ. Tập đánh giá độc lập phải đến từ mẫu kinh doanh thực tế và loại nhiệm vụ không trùng với huấn luyện. Lời giải tham chiếu, kiểm thử ẩn và phản hồi của bộ xác minh tuyệt đối không được xuất hiện trong nội dung huấn luyện mà mô hình có thể nhìn thấy.
-
-Mục tiêu không phải là tạo càng nhiều dữ liệu càng tốt, mà là **để điều kiện thực tế của dịch vụ quyết định nên tổng hợp gì và để các phép kiểm tra thực thi được quyết định nên giữ lại gì**. Chất lượng luôn quan trọng hơn số lượng: một tập nhỏ các quỹ đạo gần với nhiệm vụ thật và được xác minh nghiêm ngặt thường có giá trị huấn luyện cao hơn một lượng lớn quỹ đạo tổng hợp chưa được xác minh. Bộ tổng hợp lấp đầy khoảng trống về độ bao phủ nhiệm vụ, bộ xác minh bảo vệ chất lượng dữ liệu, SFT dạy các hành vi cơ bản và RLVR tiếp tục dùng cùng nhiệm vụ và hạ tầng xác minh để nâng tỷ lệ thành công.
-
-Chương 9 sẽ lặp lại nhận định này một lần nữa: trong nhận dạng giọng nói, mô hình luôn dao động “có nên chấp nhận lời nói hay không”. Nguyên nhân sâu xa không phải là cấu trúc mô hình mà là nhãn đào tạo được đánh dấu bằng "Quan điểm của Chúa" - thay đổi nhãn thành "chỉ sử dụng thông tin có sẵn tại thời điểm đưa ra quyết định" và vấn đề sẽ biến mất. **Nhiều khi, dữ liệu còn quan trọng hơn kiến trúc.**
-
-### Khi nào đến lượt thuật toán?
-
-Không phải thuật toán không quan trọng chút nào mà vị trí của nó là sau này. Trình tự nỗ lực hợp lý là: **Trước tiên, hãy chọn một mô hình cơ bản mạnh → sau đó đánh bóng môi trường và dữ liệu tại chỗ → cuối cùng thực hiện tối ưu hóa biên trên thuật toán và các siêu tham số.** Khi môi trường của bạn đủ thực, dữ liệu đủ tốt và mô hình cơ bản đủ mạnh, sự khác biệt giữa các thuật toán sẽ trở nên rõ ràng. Tại thời điểm này, những câu hỏi như "GRPO hoặc PPO hoặc Clip-Higher" đáng được điều tra nghiêm túc. Ngược lại, việc triển khai thuật toán trước khi môi trường và dữ liệu sẵn sàng là một điều ngược lại. Với ưu tiên này, chúng tôi chuyển sang các nhiệm vụ nhiều vòng—trong đó thiết kế phần thưởng (nơi dữ liệu và môi trường gặp nhau) trở thành sự khác biệt giữa thành công và thất bại.
-
-## Từ một vòng đến nhiều vòng: phân bổ tín dụng và thiết kế phần thưởng
-
-### Thử thách cốt lõi của nhiệm vụ nhiều vòng
-
-![Hình 7-14 So sánh giữa RL một bánh và RL nhiều bánh ](images/fig7-14.svg)
-
-![Hình 7-15 Phân bổ tín dụng trong nhiều vòng tương tác ](images/fig7-15.svg)
-
-Từ một vòng đến nhiều vòng, có một bước nhảy vọt về chất lượng về độ phức tạp. Policy không chỉ phải lựa chọn hành động tối ưu hiện tại mà còn phải xem xét giá trị trạng thái trong tương lai; không chỉ phải xử lý phản hồi ngay lập tức mà còn thực hiện **Gán tín dụng** dưới phần thưởng bị trì hoãn - xác định bước nào trong chuỗi nhiều bước đóng góp nhiều nhất vào kết quả cuối cùng. Ví dụ: đại diện dịch vụ khách hàng, Agent, đã dành 10 vòng đối thoại để giải quyết vấn đề của người dùng và cuối cùng nhận được lời khen ngợi - nhưng lời khen ngợi này nên được quy cho câu hỏi chính xác ở vòng thứ hai hay cho lời giải thích của bệnh nhân ở vòng thứ bảy?
-
-Dạng vật lý của tương tác nhiều vòng được thảo luận ở đây chính xác là chu trình ReAct được mô tả trong Chương 1 và 4 - mỗi vòng là sự lặp lại của **Suy nghĩ → Hành động → Quan sát** và độ trễ phần thưởng xuất phát từ hạn chế về cấu trúc rằng "kết quả cuối cùng chỉ có thể được đánh giá sau nhiều vòng."
-
-## Thiết kế phần thưởng: biến mục tiêu nhiệm vụ thành tín hiệu học
-
-Các kịch bản một vòng, nhiều vòng và gọi công cụ ở trên đã cho thấy *huấn luyện cái gì*; phần này trả lời *môi trường nên nói với mô hình rằng nó làm tốt hay không bằng cách nào*. Thiết kế phần thưởng trải ra theo ba chiều bổ trợ nhau: **phần thưởng đến từ đâu**, **cho khi nào** và **cần diễn đạt bao nhiêu thông tin**. Sau đó là một câu hỏi thứ tư: khi kết quả đúng, đường đi có hợp lệ không?
-
-### Phần thưởng đến từ đâu: quy tắc, sở thích con người và phán xét của mô hình
-
-Nguồn đáng tin cậy nhất là **phần thưởng kiểm chứng được (RLVR)**: phán xét kết quả trực tiếp bằng test case, khẳng định trên cơ sở dữ liệu, chênh lệch trạng thái hoặc kiểm tra định dạng. Đáp án toán, test mã nguồn và lời gọi công cụ có cấu trúc đều thích hợp để bắt đầu từ phần thưởng kết quả nhị phân. Quy tắc càng tất định thì phần thưởng càng rẻ, càng tái lập được và càng khó bị mô hình lách.
-
-**RLHF** ở đây chỉ là bối cảnh. Quy trình cơ bản của InstructGPT[^ch7-4] là: con người so sánh các câu trả lời, huấn luyện một mô hình phần thưởng, rồi dùng PPO tối ưu chính sách. Mô hình phần thưởng chỉ là đại diện cho sở thích, và tối ưu quá mức sẽ dẫn tới reward hacking[^ch7-5]; vì vậy người ta thường dùng chính quy hóa KL để neo chính sách gần mô hình SFT tham chiếu. DPO[^ch7-6] bỏ qua mô hình phần thưởng tường minh, tối ưu ngoại tuyến trực tiếp từ các cặp sở thích. Những phương pháp này không phải mạch chính của Agent RL trong chương này.
-
-Khi mục tiêu khó quy hết về quy tắc, có thể dùng phán xét của mô hình. **Mô hình phần thưởng sinh (GRM)** không chỉ xuất ra một điểm số mà còn sinh chẩn đoán "chỗ nào tốt, chỗ nào cần sửa"; nó vừa có thể làm nguồn phần thưởng, vừa có thể biến chẩn đoán thành dữ liệu chưng cất hoặc dữ liệu sở thích về sau. Ý tưởng cốt lõi của DeepSeek-GRM[^ch7-23] là để mô hình trước hết quy nạp ra nguyên tắc đánh giá cho nhiệm vụ, rồi đánh giá quỹ đạo theo các nguyên tắc đó, và cuối cùng dùng sự kiện kiểm chứng được để kiểm tra xem đánh giá có đúng không. Phản hồi thu được minh bạch hơn, nhưng vẫn cần hiệu chuẩn thủ công theo mẫu để bộ phán xét không hình thành thiên lệch mới.
-
-Cần phân biệt hai khái niệm dễ lẫn. **Reward hacking** là lách quy tắc hoặc lỗ hổng cài đặt để lấy điểm cao. **Reward seeking** là mô hình trước hết dựng trong đầu một hình dung về *bộ chấm sẽ nhìn vào cái gì*, rồi điều chỉnh hành vi theo phỏng đoán ấy. Cái sau không nhất thiết phải sửa test hay ngụy tạo kết quả, nhưng ở nhiệm vụ đường dài có thể khiến mô hình tự đặt cho mình một phép kiểm tra rất nông, vừa qua được là kết thúc sớm, và sản phẩm bàn giao vì thế chỉ thỏa mãn chỉ số đại diện chứ không thỏa mãn ý định thật[^ch7-29]. Cho nên "đã qua grader" không tự động đồng nghĩa với "nhiệm vụ đã xong": bộ chấm là đại diện của ý định, và huấn luyện càng mạnh thì mô hình càng dễ coi cái đại diện đó là mục tiêu.
-
-### Phần thưởng cho khi nào: kết quả hay quá trình
-
-**Phần thưởng kết quả (ORM)** chỉ phán xét ở cuối episode xem nhiệm vụ đã hoàn thành chưa. Đây là cách đơn giản nhất và cho chính sách quyền tự do khám phá lớn nhất; khi đường đi trung gian chưa có chuẩn mực được thừa nhận và con người chưa tìm ra lời giải tối ưu, phần thưởng thành công/thất bại thưa của SimpleVLA-RL là điểm khởi đầu phù hợp. Phản hồi thưa khiến mô hình khó xác định sai sót cụ thể trong một quỹ đạo nhiều bước, và đó cũng là một trong những lý do khiến hiệu quả mẫu của RL bị hạn chế từ lâu[^ch7-8]. Ở các nhiệm vụ coding hay cowork đường dài, việc phán định "đã xong hay chưa" còn phải giao cho test ẩn, khẳng định trạng thái hoặc hook kết thúc bên ngoài mà mô hình không viết được, chứ không thể chỉ dựa vào lời tự tuyên bố hoàn thành của mô hình.
-
-"Kết thúc quá sớm" là một ví dụ cụ thể: khi mô hình nói nhiệm vụ đã xong, harness chạy trong không gian làm việc cách ly những test nghiệm thu mà mô hình không thấy; qua thì thưởng dương, không qua thì phạt. Các test đó phải đọc tệp thật hoặc trạng thái môi trường, không được chỉ kiểm tra xem mô hình có nói "đã xong" hay không, nếu không mô hình sẽ học cách hứa suông là đã kiểm chứng mà thực ra không làm. Khi đánh giá còn phải tách tập biên gồm nhiệm vụ chưa hoàn thành khỏi tập giữ lại gồm nhiệm vụ thật sự đã xong: tập trước cho thấy tỷ lệ dừng sớm, tập sau cho thấy mô hình còn kết thúc bình thường được không, tránh huấn luyện ra một mô hình không bao giờ dám kết thúc.
-
-**Phần thưởng quá trình (PRM)** cung cấp phản hồi ở các bước trung gian, chẳng hạn kiểm tra xác thực danh tính, tham số công cụ, số test đã qua hay hành động điều hướng. Bài *Let's Verify Step by Step*[^ch7-7] của OpenAI cho thấy giá trị của kiểm chứng từng bước trong suy luận toán học. Phần thưởng quá trình làm dịu bài toán phân bổ tín dụng đường dài, nhưng có thể trói mô hình vào con đường mà người thiết kế đã hình dung sẵn, đồng thời tốn kém hơn cho việc gán nhãn và kiểm chứng. V-IRL-VL (thí nghiệm 7-12) dùng phản hồi điều hướng từng bước, còn SimpleVLA-RL (thí nghiệm 7-13) giữ lại phần thưởng ở đích; hai bên tạo thành thế đối chiếu "phản hồi dày đổi lấy tốc độ hội tụ, phản hồi thưa đổi lấy không gian khám phá".
-
-Về mặt kỹ thuật, nên trước hết dựng một đường cơ sở đáng tin bằng phần thưởng kết quả, rồi mới thêm tín hiệu quá trình cho những sự kiện trung gian thật sự kiểm chứng được. RL nhiều vòng với LLM thường đặt hệ số chiết khấu $\gamma=1$; mạng giá trị của PPO hoặc lợi thế theo lượt chịu trách nhiệm quy phản hồi ở đích về các hành động sớm hơn, còn GRPO san lợi thế mức quỹ đạo lên các token sinh ra, nên với quỹ đạo dài phải đặc biệt lưu ý hiện tượng loãng tín hiệu.
-
-### Phần thưởng cần diễn đạt bao nhiêu thông tin: vô hướng, vector, chẩn đoán sinh
-
-**Mật độ** của phần thưởng và **hình thức biểu diễn** là hai chuyện khác nhau. Vô hướng chỉ trả lời "nhìn chung tốt đến đâu"; bán vô hướng đưa lý do ngắn rồi mới cho điểm; vector chấm riêng theo các chiều như độ chính xác, độ đầy đủ, chi phí và an toàn; phần thưởng sinh thì đưa ra chẩn đoán bằng ngôn ngữ tự nhiên và có thể lấy mẫu nhiều lần rồi tổng hợp. Nguyên tắc chọn rất thẳng thắn:
-
-- Có đáp án xác định hoặc có test: ưu tiên vô hướng nhị phân;
-- Có nhiều mục tiêu chất lượng độc lập với nhau: dùng vector, hoặc gán trọng số các chiều thành một vô hướng;
-- Mở, khó liệt kê hết bằng quy tắc: dùng chẩn đoán sinh, nhưng phải kèm kiểm chứng sự kiện và rà soát thủ công theo mẫu.
-
-Đừng chồng thêm những chiều không kiểm chứng được chỉ vì muốn "phần thưởng phong phú hơn". Mỗi chiều đánh giá thêm vào là thêm một cách để chính sách lách; hãy xác nhận tín hiệu đó tạo ra khác biệt trong nhóm có ý nghĩa trên một ít rollout, rồi mới quyết định có đưa vào huấn luyện hay không.
-
-### Kết quả đúng vẫn chưa đủ: ràng buộc đường đi và RLVP
-
-Phần thưởng kết quả giải quyết "việc có xong hay không", nhưng không diễn đạt được "có làm đúng quy định hay không". Một Agent thật có thể đạt thành công bề mặt bằng cách sửa tệp test, bỏ qua xác thực hoặc chạy lệnh phá hoại. Nguyên tắc của RLVP (Reinforcement Learning with Verified Penalty)[^ch7-9] là: **thưởng kết quả, phạt đường đi**. Nó nhắm tới các **ràng buộc trung tính với kết quả**, phán định được bằng máy và không liên quan tới thành bại cuối cùng; nó không thay thế được các kiểm tra độc lập về ý định ngữ nghĩa, tính đầy đủ của sản phẩm bàn giao và hành vi dừng sớm.
-
-Môi trường thật thường là **bộ kiểm chứng bất đối xứng**: phát hiện "đã làm một hành động xấu" thì rẻ và đáng tin, còn chứng minh "bước này thật sự tiến triển có ý nghĩa về phía mục tiêu" lại rất khó. Viết tổng phần thưởng thành $R=O+\beta\Phi$: $O$ là kết quả nhiệm vụ, $\Phi$ là tín hiệu đường đi được tính theo từng hành động bằng quy tắc tất định. Trừ điểm cho các hành động vi phạm kiểm chứng được, thưởng một phần nhỏ cho các hành động hợp lệ kiểm chứng được hoặc các mục tiêu con khả đạt; chuẩn hóa hai luồng rồi mới hợp lại, tránh để tín hiệu đường đi nhấn chìm mục tiêu chính. Nó không thay đổi PPO/GRPO, chỉ thay đổi phần thưởng nhìn thấy ở mỗi bước.
-
-Ở mức cài đặt, có thể tách đầu ra của bộ kiểm chứng thành hai luồng rồi giao cho bộ tối ưu chính sách sẵn có:
-
-```python
-outcome = verify_final_state(trajectory)              # result, not self-report
-path_signal = 0
-for step in trajectory:
-    path_signal += deterministic_path_signal(step)    # penalty or reachable progress
-reward = normalize(outcome) + beta * normalize(path_signal)
+```text
+Văn xuôi tiếng Trung: gọi phương thức `reset()`.
+Nguyên bản tiếng Anh được trích: “Please restart the service.”
+# khối mã dưới đây chỉ nhằm minh họa một phạm vi được bảo vệ
+# Chú thích tiếng Trung: hiển thị "trạng thái hiện tại"
+name = "status"
 ```
 
-Hành động nào được phép, mục tiêu con nào khả đạt, test ẩn là gì và bằng chứng ghi lại thế nào đều phụ thuộc môi trường cụ thể; phần chính văn chỉ nói rõ "phần thưởng kết quả" và "ràng buộc đường đi" hợp lưu ra sao, để không nhầm quy tắc của một môi trường thành thuật toán phổ quát.
+Hồi quy theo tiền tố quỹ đạo phải yêu cầu mô hình sửa tối thiểu, đồng thời kiểm tra phong cách tài liệu tiếng Trung, tỷ lệ giữ nguyên nguyên bản tiếng Anh, cú pháp mã và JSON, cùng khoảng cách chỉnh sửa trên phần văn bản không phải mục tiêu. Khi quy tắc không xác định được phạm vi, giữ nguyên văn bản gốc và yêu cầu làm rõ phải được tính là hành động được phép, chứ không phải một sửa đổi phỏng đoán tình cờ vượt qua.
 
-Điểm mấu chốt của RLVP không phải "phần thưởng càng dày càng tốt", mà là có bù lại được khác biệt trong nhóm hay không. Phần thưởng kết quả thuần túy ở nhóm thua sạch và nhóm thắng sạch đều cho phương sai bằng không, không có gradient; hành động vi phạm thường dễ phát hiện nên hình phạt gần như luôn bù lại được khác biệt; phần thưởng tiến triển chỉ hiệu quả khi tiến triển từng phần là khả đạt. Khi thiết kế nên theo bốn điểm: chỉ phạt hành động cụ thể, không phạt "chưa đủ cố gắng"; luôn giữ phần thưởng kết quả để mô hình không học cách không làm gì cả; mỗi hình phạt tốt nhất nên đi kèm một đường hợp lệ khả đạt; quy tắc phải tất định và khó lách. Nếu chính sách nền vốn không bao giờ lấy mẫu hành động hợp lệ, hãy "gieo" con đường ấy trước bằng một ít minh họa, đợi hành vi hợp lệ ổn định rồi mới giảm dần việc định hình đường đi. Nói cách khác, hình phạt là nửa thường khả đạt, còn phần thưởng tiến triển là nửa bị chặn bởi tính khả đạt.
+#### Lỗi sao chép chính xác: từ `old_string` mismatch đến truy vết theo từng lớp
 
-> **Thí nghiệm 7-16 ★★★: RLVP — thưởng kết quả, phạt đường đi**
->
-> Thêm phần thưởng kết quả $O$ và tín hiệu đường đi $\Phi$ lên trên GRPO, so với phần thưởng kết quả thuần túy. Trên TerminalBench số lần vi phạm giảm từ 3,71 xuống 0,66 trong khi tỷ lệ thành công gần như không đổi; trên miniF2F, phần thưởng bộ phận khả đạt kéo số vòng lặp cần để đạt tỷ lệ thành công 0,9 từ 7,0 xuống 4,4. Trong sửa lỗi phần mềm, nếu mọi rollout đều không qua nổi test nào thì tín hiệu tiến triển là bất khả đạt, thêm vào cũng không có lợi. Thí nghiệm này nhắc ta: hãy đo tính khả đạt của tín hiệu trước, rồi mới quyết định có thêm chiều phần thưởng hay không.
-
-Những con số này đến từ môi trường đại diện có kiểm soát, không thể ngoại suy trực tiếp thành mức cải thiện tương đương cho Agent chạy thật; kết luận chắc chắn hơn mang tính cơ chế: chỉ cần tín hiệu đường đi phân biệt được hành vi trong cùng một nhóm rollout và quy tắc khó bị chính sách lách, nó sẽ bù đúng phần thông tin mà phần thưởng ở đích không nhìn thấy. Với triển khai thật, còn phải đưa cả kiểm chứng ẩn, giám sát quỹ đạo và điều kiện kết thúc bên ngoài vào harness.
-
-## Gọi công cụ học tập RL
-
-Trong các vòng thử nghiệm trước, không gian hành động của Agent bị giới hạn ở các hoạt động tích hợp sẵn như chuyển động và quan sát. Trên thực tế, Agent cũng cần gọi nhiều công cụ bên ngoài khác nhau - công cụ tìm kiếm, trình thông dịch mã, trình phân tích cú pháp tài liệu, v.v. - điều này mang lại những thách thức mới cho việc đào tạo RL.
-
-![Hình 7-16 Công cụ gọi chu kỳ thưởng RL ](images/fig7-16.svg)
-
-Việc sử dụng các công cụ mở rộng ranh giới khả năng của Agent từ "lý luận riêng của mô hình" đến "gọi cộng tác hệ thống bên ngoài", đây là chìa khóa để biến Agent trở nên thực tế. Từ góc độ độ dốc độ khó, quá trình đào tạo RL được công cụ này sử dụng phải đối mặt với ba cấp độ thử thách. Cấp độ đầu tiên là học cách sử dụng một công cụ duy nhất - hiểu các thông số kỹ thuật đầu vào và đầu ra, nắm vững thời gian gọi và xử lý phản hồi lỗi. Cấp độ thứ hai là đưa ra các lựa chọn trong hệ sinh thái đa công cụ - đối mặt với hàng tá công cụ, khi nào cần tìm kiếm, khi nào thực thi mã và khi nào phân tích tài liệu. Lớp thứ ba là điều phối chuỗi công cụ - khám phá sự phụ thuộc giữa các công cụ, xác định các ràng buộc loại trừ lẫn nhau và tối ưu hóa hiệu quả chi phí.
-
-Hiện tại có hai tuyến đang hoạt động xung quanh công cụ gọi Agent RL. Một là **nâng cao khả năng truy xuất**: được đại diện bởi Search-R1 (Jin và cộng sự, 2025), sử dụng mô hình đào tạo RL để quyết định độc lập thời điểm bắt đầu tìm kiếm trong quá trình suy nghĩ và sử dụng kết quả trả về để tiếp tục suy luận, thay vì áp dụng quy trình RAG cố định. Cái còn lại là **Kỹ thuật phần mềm**: Được đại diện bởi các môi trường đào tạo như SWE-Gym, thực hiện nhiều vòng RL trên cơ sở mã thực để mã hóa Agent, cho phép mô hình chỉnh sửa, chạy và sửa mã lặp đi lặp lại. Những thách thức chung của cả hai lộ trình là phân bổ tín dụng dài hạn (thành công cuối cùng là nhờ quyết định được đưa ra hàng chục bước trước) và kỹ thuật môi trường (xây dựng môi trường đào tạo song song rộng rãi, ổn định và có thể tái tạo).
-
-Có một chi tiết kỹ thuật khác không thể tránh khỏi với công cụ RL: **Chống mất mát đối với mã thông báo phản hồi môi trường**. Dấu vết lệnh gọi công cụ chứa cả mã thông báo do chính mô hình tạo ra (suy nghĩ, tham số lệnh gọi công cụ) và mã thông báo do môi trường trả về (đầu ra của trình thông dịch mã, kết quả tìm kiếm, phản hồi dịch vụ khách hàng). Cái sau không phải do chính sách tạo ra mà do môi trường đưa ra - nếu chúng cũng được bao gồm trong gradient chính sách, mô hình sẽ được đào tạo để "dự đoán hộp cát sẽ xuất ra gì", điều này không chỉ đi chệch khỏi mục tiêu tối ưu hóa mà còn làm cho quá trình đào tạo không ổn định. Cách tiếp cận tiêu chuẩn là chặn mã thông báo phản hồi môi trường khi tính toán tổn thất và chỉ trả về độ dốc cho mã thông báo do chính mô hình tạo ra. Đây là một trong những điểm kỹ thuật cốt lõi của ReTool (che chắn độ dốc của mã thông báo phản hồi trong thẻ `<interpreter>`) và đó cũng là điều Search-R1 đã nói "che chắn mã thông báo được truy xuất để ổn định quá trình đào tạo". Các khung đào tạo chính thống như verRL và AWorld đã tích hợp sẵn cơ chế này.
-
-**Mask reward cấp trajectory:**
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-> **Thử nghiệm 7-14 ★★★: ReTool - Giải bài toán nâng cao bằng trình thông dịch mã**
->
->
-> ![Hình 7-17 ReTool đan xen tư duy mã văn bản và vòng phản hồi thực thi hộp cát ](images/fig7-17.svg)
->
->
-> Tư duy văn bản thuần túy dễ mắc phải các lỗi tích lũy trong các phép tính số chính xác, các phép toán ký hiệu hoặc giải phương trình phức tạp (ví dụ: nếu bạn thực hiện mười bước nhân liên tiếp thì mỗi bước có thể được tính không chính xác), trong khi trình thông dịch mã đạt được xác minh chính xác bằng cách cung cấp giao diện thực thi. ReTool tích hợp khả năng thực thi theo thời gian thực của trình thông dịch mã vào vòng suy nghĩ RL, cho phép mô hình tự động tìm hiểu thời điểm và cách sử dụng công cụ, được hướng dẫn bởi phản hồi từ kết quả.
->
-> Đào tạo được chia thành hai giai đoạn. Quá trình khởi động SFT (khoảng 1 giờ) chuyển đổi dữ liệu suy luận văn bản thuần túy thành trajectory nâng cao mã và thiết lập các mẫu gọi công cụ cơ bản. Đào tạo RL (dựa trên PPO được sửa đổi bởi veRL, dữ liệu đào tạo được lấy từ DAPO-Math-17k, khoảng 9 ngày và 400 bước) thông qua chiến lược tối ưu hóa triển khai thực thi mã thời gian thực xen kẽ: mô hình tạo mã chứa nhãn `<code>` và kết quả được đóng gói sau khi thực thi hộp cát Phản hồi trong thẻ `<interpreter>`, mô hình tiếp tục tạo, tạo thành một chuỗi lý luận hỗn hợp gồm "văn bản 1 + mã 1 + phản hồi 1 + ... + câu trả lời". Mỗi bước đào tạo cần tạo ra 512 câu trả lời (32 câu hỏi × 16 ứng viên), với trung bình số vòng tương tác 7-9 cho mỗi câu trả lời và tổng khối lượng xử lý mã thông báo tăng từ 25 triệu ban đầu lên 40 triệu.
->
-> Bản thân ReTool sử dụng PPO tiêu chuẩn và không thay đổi thuật toán tối ưu hóa. Tuy nhiên, dữ liệu huấn luyện của nó đến từ DAPO-Math-17k của nhóm DAPO. Ở đây chúng tôi giới thiệu thuật toán **DAPO** phổ biến gần đây (Yu và cộng sự, 2025) - thuật toán này nằm trong PPO tiêu chuẩn. Bốn cải tiến đã được thực hiện dựa trên điều này. Mục tiêu cốt lõi là ngăn mô hình hội tụ sớm thành một chiến lược duy nhất (chỉ giải quyết vấn đề theo một cách):
->
-> - **Clip-Higher (giới hạn trên khám phá thoải mái)**: Thuật toán PPO tiêu chuẩn sẽ hạn chế mức độ thay đổi chính sách trong mỗi lần đào tạo - thay đổi quá nhiều có thể dễ dẫn đến việc đào tạo không ổn định. Nhưng những hạn chế quá khắt khe sẽ khiến mô hình “không dám thử những cách mới”. Clip-Higher nới lỏng hạn chế này một cách vừa phải: khi mô hình bắt gặp một con đường tốt hơn đáng kể, nó được phép điều chỉnh mạnh mẽ hơn về con đường đó, do đó khuyến khích sự khám phá.
-> - **Mất độ dốc chính sách của Token-Level (làm cho trọng số của mỗi mã thông báo bằng nhau)**: GRPO ban đầu thực hiện chuẩn hóa mức mất mát ở cấp độ mẫu - trước tiên lấy trung bình số lượng mã thông báo trong mỗi câu trả lời, sau đó lấy trung bình giữa các mẫu - điều này sẽ khiến mỗi mã thông báo trong câu trả lời dài bị pha loãng bởi `1/|o_i|`: tư duy chuỗi dài chất lượng cao sẽ không được khen thưởng đủ và việc lặp lại kéo dài sẽ không bị trừng phạt đủ. Token-Level Mất độ dốc chính sách của DAPO loại bỏ lớp lấy trung bình mẫu này và thay vào đó chuẩn hóa thống nhất tất cả các mã thông báo trong toàn bộ lô để mỗi mã thông báo có trọng số bằng nhau; hậu quả trực tiếp là câu trả lời dài nhận được sự đóng góp độ dốc tương xứng theo độ dài của nó.
-> - **Dynamic Sampling (phân bổ sức mạnh tính toán thông minh)**: Tự động điều chỉnh số lần lấy mẫu cho mỗi câu hỏi trong quá trình đào tạo - giảm lấy mẫu cho những câu hỏi đơn giản mà mô hình có thể giải quyết ổn định (không có lợi ích gì khi tiếp tục thực hành), tăng lấy mẫu cho các câu hỏi trong "khoảng thời gian có thể học được" với tỷ lệ thành công từ 20% đến 80% (đây là những khoảng thời gian mà mọi thứ có thể học được nhiều nhất) và tập trung sức mạnh tính toán vào dữ liệu có giá trị học tập cao nhất.
-> - **Định hình phần thưởng quá dài**: Áp dụng hình phạt nhẹ đối với các phản hồi quá dài. Khi mô hình tạo ra quá trình suy nghĩ lâu dài nhưng không trả lời được các câu hỏi tốt hơn, hệ thống sẽ giảm điểm thưởng để hướng dẫn mô hình học cách suy nghĩ ngắn gọn và hiệu quả hơn.
->
-> Quay lại ReTool. Trên AIME 2024, độ chính xác của quá trình đào tạo dựa trên Qwen2.5-32B-Instruct đã tăng từ khoảng 25% ban đầu lên 52% (85% đối với Best-of-30) ở điểm kiểm tra trung gian của bước 110; kết quả cuối cùng của bài viết là 67,0% sau 400 bước, trong khi đào tạo cơ bản RL văn bản thuần túy 1080 bước chỉ là 40,0%. Các số động huấn luyện trong khung thử nghiệm này đều dựa trên cài đặt mô hình 32B này.
->
-> Các khả năng nổi bật: tự sửa mã (xác định lỗi thực thi và tự động tạo các phiên bản đã sửa), lệnh gọi công cụ chuyển từ xác minh muộn sang khám phá sớm và hiệu quả tư duy được cải thiện (độ dài giảm 40%, nhưng độ chính xác không giảm mà tăng lên).
->
-> Động lực đào tạo của 110 bước đầu tiên thể hiện mô hình ba giai đoạn: ở giai đoạn đầu (bước 0-20), học nhanh cách sử dụng công cụ cơ bản, độ chính xác tăng 0,5% ở mỗi bước; ở giai đoạn giữa (bước 20-70), khám phá dao động, thời lượng phản hồi tăng từ 2500 lên mức cao nhất là 4700 mã thông báo và tính đa dạng của chiến lược tăng lên; ở giai đoạn sau (bước 70-110) Bước) Hội tụ ổn định, độ dài giảm xuống còn 4400 mã thông báo, hiệu suất tiếp tục được cải thiện nhưng biến động giảm.
->
-> Sự khác biệt về thời gian giữa SFT và RL bắt nguồn từ sự khác biệt về mật độ thông tin: SFT có tín hiệu giám sát cho từng mã thông báo, trong khi RL chỉ nhận được tín hiệu thành công hoặc thất bại cho mỗi tập. Trong quá trình đào tạo thực tế, thời gian dành cho một bước sẽ tăng lên khi độ dài của phản hồi tăng lên và một số phản hồi cực kỳ dài sẽ kéo dài đáng kể toàn bộ chu trình đào tạo.
->
-> **Thử nghiệm 7-15 ★★★: AWorld-train – Học cách sử dụng các công cụ trong hộp cát**
->
->
-> ![Hình 7-18 AWorld-train MCP sandbox đào tạo kiến trúc và hệ sinh thái công cụ ](images/fig7-18.svg)
->
->
-> GAIA là một trong những tiêu chuẩn Agent thử thách nhất. Ngay cả khi một mô hình tham số lớn được huấn luyện trên quy mô lớn thì nó cũng chỉ có thể đạt khoảng 32%, đây vẫn là một khoảng cách đáng kể so với hệ thống tính điểm cao. Thử nghiệm này sử dụng mô hình nhỏ hơn (Qwen3-4B) và mục tiêu chính là thể hiện quy trình đào tạo "vừa học vừa làm" hoàn chỉnh.
->
-> Môi trường đào tạo AWorld là sandbox máy chủ MCP, cung cấp 26 máy chủ và 126 chức năng công cụ, bao gồm tương tác Web (tìm kiếm Google, trình duyệt thông minh, Playwright), xử lý tài liệu (CSV/DOCX/PPTX/PDF), xử lý đa phương tiện (phiên âm âm thanh, OCR, tóm tắt video), thực thi mã (lệnh đầu cuối, hộp cát E2B), xử lý Excel (29 thao tác cấp doanh nghiệp), truy xuất kiến thức (Wikipedia, ArXiv, Máy quay lui). Giới hạn tốc độ, biến động dịch vụ và lệnh cấm tài khoản của API thực khiến việc đào tạo trực tiếp trong môi trường sản xuất không khả thi—xây dựng môi trường mô phỏng ổn định, có thể kiểm soát và có thể chơi lại là điều kiện tiên quyết về mặt kỹ thuật cho đào tạo RL đa công cụ.
->
-> Sự thay đổi về chất từ một công cụ sang nhiều công cụ là một công cụ duy nhất chỉ cần quyết định gọi "khi nào" và "như thế nào"; nhiều công cụ cũng cần giải quyết "gọi cái nào" và "cách kết hợp", điều này dẫn đến sự phức tạp của sự bùng nổ tổ hợp và quản lý phụ thuộc - có sự phụ thuộc trước giữa các công cụ (tìm kiếm trước khi duyệt các trang cụ thể), các ràng buộc loại trừ lẫn nhau (một số công cụ không thể được gọi cùng lúc) và chênh lệch chi phí (API khác nhau có hạn ngạch và độ trễ khác nhau). Policy này đòi hỏi phải lập kế hoạch tổng thể trong những ràng buộc này, thay vì tham lam lựa chọn mức tối ưu hiện tại.
->
-> Cần lưu ý rằng thử nghiệm này là **thử nghiệm đào tạo mở và không cung cấp kết quả cơ bản** - Qwen3-4B có quy mô lớn như vậy và rất khó đạt được điểm vượt trội trên GAIA. Giá trị của thử nghiệm này nằm ở việc chạy qua liên kết hoàn chỉnh “học từ thực tiễn” hơn là làm mới chỉ báo. Tiêu chí chấp nhận và quan sát dự kiến có thể được tham chiếu là: các vòng lặp đặt lại và tập có thể chạy ổn định trong môi trường (các lệnh gọi công cụ, phản hồi và cập nhật trạng thái không gặp sự cố); đường cong phần thưởng trung bình cho thấy xu hướng đi lên trong quá trình đào tạo; tỷ lệ thành công của lệnh gọi công cụ tăng lên khi đào tạo và mô hình dần dần học cách đưa ra các lựa chọn và kết hợp hợp lý hơn giữa nhiều công cụ.
-
-## Thăm dò biên giới để nâng cao hiệu quả lấy mẫu
-
-Các thử nghiệm nói trên đã chứng minh một cách có hệ thống giá trị cốt lõi của RL trong quá trình đào tạo Agent, nhưng tất cả đều phát sinh chi phí mẫu cao. Thời gian đào tạo của RL của ReTool gấp hơn 200 lần so với SFT (9 ngày so với 1 giờ), điều này có thể không được chấp nhận trong các trường hợp tài nguyên bị hạn chế hoặc cần lặp lại nhanh.
-
-Có nhiều lý do khiến hiệu suất mẫu của RL thấp (phương sai cao, phần thưởng thưa thớt, khó sử dụng lại dữ liệu trên trajectory, v.v.). Một trong những lý do quan trọng nằm ở tính năng model-free (không có mô hình) của phương pháp gradient chính sách chính thống - nó không mô hình hóa động lực môi trường (mô hình thế giới, "thế giới sẽ trông như thế nào sau khi thực hiện hành động") và rất khó để sử dụng trực tiếp thông tin phong phú trong một phản hồi duy nhất (hai điểm này có liên quan nhưng không tương đương). Phản hồi phong phú được trả về bởi mỗi lần tương tác với môi trường (lý do lỗi, thiếu trường, mẹo xử lý chính xác) hầu hết bị lãng phí - vấn đề này đã được phân tích chi tiết trong bài viết trước "The Dilemma of Sparse Rewards". Hãy xem xét một tình huống trong đó bạn gọi đến bộ phận dịch vụ khách hàng: bộ phận dịch vụ khách hàng thông báo rõ ràng cho bạn rằng "bốn chữ số cuối của thẻ tín dụng là cần thiết để xác minh danh tính của bạn". Tuy nhiên, model-free RL chỉ có thể học từ tín hiệu thành công hoặc thất bại cuối cùng (phần thưởng là 0 hoặc 1) và không thể trực tiếp sử dụng phản hồi rõ ràng này. Nó chỉ có thể cung cấp thông tin thẻ tín dụng một cách tình cờ thông qua hàng trăm cuộc khám phá ngẫu nhiên. Con người sẽ ghi nhớ ngay sau khi nghe phản hồi và chủ động chuẩn bị cho lần tiếp theo.
-
-Xung quanh nút thắt này, chương này thực tế đã đưa ra hai ý tưởng bổ sung cho nhau. Một là biến thông tin lãng phí trong phản hồi môi trường thành phần thưởng có thể học được - viết các tín hiệu rõ ràng, có thể xác định được bằng máy, chẳng hạn như "dịch vụ khách hàng yêu cầu xác minh danh tính trước", "lệnh này có tính chất phá hoại" và "chứng minh một bước khác" trực tiếp vào chức năng khen thưởng. Đây là RLVP được đề cập trong Phần 7.10 (đặc biệt là việc sử dụng phần thưởng một phần "tiến trình đạt phần thưởng", có thể cứu các mẫu bị lãng phí trong nhóm bị đánh bại hoàn toàn). Phương pháp còn lại là phương pháp được phát triển chính thức trong phần này - **Làm cho tín hiệu huấn luyện dày đặc hơn ở mỗi bước**: Thay vì chỉ nhận được vô hướng thành công hay thất bại khi kết thúc nhiệm vụ, tốt hơn là bạn nên nhận được hướng dẫn ở mọi vị trí của trajectory. Đây là quá trình chưng cất On-Policy.
-
-### Chưng cất On-Policy: Tận dụng tối đa cả hai thế giới SFT và RL
-
-Chưng cất On-Policy (chưng cất trên trajectory) đã được Phòng thí nghiệm Máy Tư duy đề xuất và quảng bá một cách có hệ thống vào năm 2025 [^ch7-10]. Bây giờ nó là một phương pháp rất phổ biến trong post-training và xứng đáng được giải thích riêng. Để hiểu những gì nó giải quyết được, trước tiên hãy xem xét một thiếu sót nghiêm trọng của mỗi SFT và RL - nó tình cờ kết hợp các ưu điểm của cả hai.
-
-**Nhược điểm của SFT: Learner-Sampler không khớp (người học và người lấy mẫu không khớp nhau).** Dữ liệu đào tạo của SFT được tạo bởi "bộ lấy mẫu" (mô hình giáo viên hoặc chuyên gia con người) và "người học" (mô hình được đào tạo) chỉ bắt chước một cách thụ động những **đường dẫn chính xác** này. Vấn đề là: người học chắc chắn sẽ mắc sai lầm khi xử lý dữ liệu huấn luyện và sẽ đạt đến **trạng thái sai lệch** chưa từng xuất hiện trong dữ liệu huấn luyện và chưa bao giờ thấy cách quay lại đúng hướng từ những trạng thái này, nên những lỗi nhỏ sẽ tích tụ thành lỗi lớn - giống như một học sinh chỉ ghi nhớ đáp án chuẩn, một khi tính sai một bước ở giữa thì không biết làm cách nào để lấy lại. Nguyên nhân sâu xa là “ai đi bộ” (giáo viên) trong quá trình đào tạo và “ai đi bộ” (bản thân học sinh) trong quá trình triển khai không giống nhau.
-
-**Nhược điểm của RL: Tín hiệu quá thưa.** RL cho phép học sinh tự đi bộ (trên đường), giải quyết vấn đề phân phối không khớp, nhưng chỉ nhận được một vô hướng thành công hay thất bại ở cuối mỗi đường. Làm thế nào để thay đổi từng bước ở giữa phải được suy luận từ từ qua hàng trăm lần thử và sai.
-
-**Chưng cất On-Policy kết hợp ưu điểm của cả hai: cho phép học sinh tạo trajectory của riêng mình (On-Policy, giải quyết vấn đề phân phối không khớp), đồng thời cho phép mô hình giáo viên mạnh hơn chấm điểm từng bước học sinh thực hiện từng mã thông báo (Tín hiệu dày đặc, giải quyết tình trạng thưa thớt tín hiệu).** So sánh ba phương pháp trong một câu: SFT là "tín hiệu ngoài trajectory + dày đặc" (có phân phối không khớp), RL là "trên trajectory + tín hiệu thưa thớt" (phản hồi thưa thớt), On-Policy Chưng cất là " **trên trajectory + tín hiệu dày đặc**" - cả hai khuyết điểm đều được bù đắp.
-
-Cách tính điểm cụ thể như thế nào? Giáo viên không chỉ đánh giá xem bước đi của học sinh có đúng hay không mà còn trực tiếp đưa ra cách phân phối đầy đủ "ở vị trí hiện tại, xác suất của các lựa chọn khác nhau cho mã thông báo tiếp theo là bao nhiêu". Ví dụ: khi học sinh viết "Truy vấn đầu tiên API, sau đó phân tích giá trị trả về...", giáo viên cho rằng "truy vấn" phải chiếm 80%, "gọi" 15% và 5% còn lại; Mục tiêu học tập của học sinh là làm cho phân bố dự đoán của mình ở mỗi vị trí càng gần với phân bố của giáo viên càng tốt. Về mặt kỹ thuật, điều này đạt được bằng cách giảm thiểu **KL phân kỳ** giữa hai phân bố (Phân kỳ KL đo lường sự khác biệt giữa hai phân bố xác suất, chúng càng gần thì chúng càng nhỏ và bằng 0, như được trình bày chi tiết trong Phần 7.7). So với các tín hiệu nhị phân chỉ có thành công hoặc thất bại cuối cùng, việc căn chỉnh phân phối từng mã thông báo này dày đặc hơn một bậc độ lớn.
-
-**Chưng cất on-policy:**
-
-```python
-student_trajectory = rollout(student, task)
-loss = 0
-for state in student_trajectory:
-    teacher_logits = teacher(state)
-    loss += KL(student_logits(state), teacher_logits)
-update_student(loss)
-```
-
-Hiệu quả rất vượt trội: đối với các nhiệm vụ như toán học, số bước luyện tập cần thiết để đạt được hiệu suất tương tự chỉ khoảng **1/10** của RL thuần túy. Ưu điểm của các nhiệm vụ tư duy chuỗi dài là đặc biệt rõ ràng - giáo viên hướng dẫn từng bước và học sinh nhanh chóng học cách sửa lỗi thay vì ngày càng đi sâu vào con đường sai lầm. Nó cũng làm giảm tình trạng quá khớp: đào tạo lặp đi lặp lại với cùng một lời nhắc trong RL tiêu chuẩn giúp bạn dễ dàng ghi nhớ câu trả lời cuối cùng, nhưng ở đây mỗi trajectory là khác nhau và giáo viên sẽ đưa ra phản hồi về các trajectory cụ thể. Những gì học được là một chiến lược chung chứ không phải là một câu trả lời cụ thể, do đó tỷ lệ tái sử dụng dữ liệu được cải thiện rất nhiều.
-
-Phương pháp này đặc biệt có giá trị trong **kịch bản Agent nhiều vòng**: tín hiệu thành công hay thất bại của nhiệm vụ nhiều vòng xuất hiện ở cuối, vừa thưa vừa có độ trễ. Việc phân phối giáo viên theo từng mã thông báo chỉ bù đắp cho phần hướng dẫn còn thiếu ở mỗi bước ở giữa. Nhưng nó có một tiền đề phản ánh chủ đề chính được nhấn mạnh nhiều lần trong chương này: **Phải có môi trường mô phỏng đủ thực tế để học sinh tự do khám phá** - nếu không, khi học sinh đạt đến trạng thái sai lệch mà giáo viên chưa thấy, điểm của giáo viên cũng sẽ không đáng tin cậy như nhau. Giá trị của On-Policy dựa trên "sinh viên thực sự khám phá phân phối triển khai".
-
-Quy tắc "tín hiệu dày đặc tốt hơn tín hiệu thưa thớt" đã được xác minh khá rõ ràng trong kịch bản Agent thuần túy. Khi nói về thanh trạng thái ở Chương 2, tôi đã đề cập đến “cảm giác về thời gian” của Agent—sự cấp bách, kiên trì và tỉnh táo—có thể được cài đặt cùng với hướng dẫn vận hành trong quá trình suy luận; tuy nhiên, vấn đề post-training là tách mô hình nhỏ 8B khỏi các từ gợi ý và viết trực tiếp cảm giác nhịp điệu này vào trọng số. Tác giả và các cộng tác viên của tôi đã thử DPO và bốn công thức học tăng cường theo trình tự. Mỗi chiếc trong số bốn chiếc RL đều tình cờ gặp phải một trong các chế độ thất bại được thảo luận trước đó trong chương này: phần thưởng cho việc kiểm soát cứng quá thưa thớt và hầu hết các đợt triển khai đều ghi được 0 điểm và lợi thế trong nhóm trở về 0 (độ thưa thớt); sau khi chuyển sang phần thưởng được phân loại, tín hiệu trở nên dày đặc hơn, nhưng chỉ báo proxy không tương ứng với tỷ lệ vượt qua thực tế (sai lệch mục tiêu); chỉ vòng phản hồi đầu tiên được tính điểm, buộc các câu trả lời ngắn chiếu lệ trở nên tệ hơn trong nhiều vòng đánh giá (hình dạng triển khai không khớp); cuối cùng, hình thức triển khai đã phù hợp với đánh giá và phần thưởng đào tạo đã bắt đầu tăng lên, nhưng chiến lược đã sụp đổ thành một chế độ duy nhất trong vòng vài bước, với KL mạnh hơn gấp 4 lần. Không thể kéo được mỏ neo (thu gọn quá trình đào tạo). Không có công thức nào vượt qua trần SFT. Chuyển sang Chưng cất On-Policy - sử dụng giáo viên Qwen3-32B đông lạnh để cung cấp mã thông báo phân phối mục tiêu theo mã thông báo trên trajectory nhiều vòng do chính học sinh thực hiện - quá trình đào tạo diễn ra suôn sẻ và tỷ lệ đậu theo bốn điều kiện cao hơn đồng đều từ 23 đến 47 điểm phần trăm so với đường cơ sở SFT tương đồng [^ch7-11]. Bốn tín hiệu thưa thớt lần lượt thất bại và một tín hiệu dày đặc thành công, điều này củng cố dòng chính của phần này: vấn đề sau khi đào tạo thường không phải là chức năng khen thưởng không được thiết kế đủ khéo léo mà là bản thân tín hiệu đó không đủ dày đặc.
-
-### Không có giáo viên mạnh hơn thì sao: tự chưng cất On-Policy
-
-Sức mạnh của Chưng cất On-Policy đến từ giáo viên, nhưng chính vì thế nó gánh một tiền đề cứng: **phải có một mô hình giáo viên mạnh hơn hẳn học sinh.** Điều này trong nhiều kịch bản không đúng. Nếu bạn đang đào tạo mô hình cho một lĩnh vực chuyên biệt mà khả năng của các mô hình hiện có đều còn thiếu, thì không có giáo viên nào để dùng. Không có giáo viên mạnh hơn, liệu lợi ích của tín hiệu dày đặc có còn dành cho chúng ta không?
-
-Một ý tưởng giải mã khéo léo là **On-Policy Self-Distillation (OPSD, tự chưng cất trên trajectory)**[^ch7-15]: **để cùng một mô hình đóng hai vai giáo viên và học sinh, khác biệt duy nhất nằm ở ngữ cảnh.** Phiên bản giáo viên được nhìn thấy "thông tin đặc quyền" (privileged information) - chẳng hạn đáp án chuẩn của bài toán, một lời giải đúng đã được kiểm chứng - nó không cần thực sự "giải được" bài đó, chỉ cần cầm đáp án và **hợp lý hóa** từng bước học sinh đã đi, đưa ra phân phối mục tiêu theo từng mã thông báo; phiên bản học sinh chỉ nhìn thấy đề bài và căn chỉnh theo phiên bản giáo viên trên trajectory do chính mình lấy mẫu. Trực giác phía sau là: "cầm đáp án mà giảng bài" dễ hơn nhiều so với "tự lực giải bài" - điều này đồng cấu với "bất đối xứng kiểm chứng-tạo sinh" mà RLVR dựa vào để tồn tại, chỉ khác là ở đây sự bất đối xứng được dùng để tạo ra tín hiệu giám sát dày đặc, thay vì một vô hướng thành bại thưa thớt.
-
-**Tự chưng cất on-policy:**
-
-```python
-student_trajectory = rollout(model, task_without_answer)
-loss = 0
-for state in student_trajectory:
-    privileged_state = add_verified_answer(state)
-    teacher_logits = stop_gradient(model(privileged_state))
-    loss += KL(model(state), teacher_logits)
-update(model, loss + retention_regularizer)
-```
-
-So với RLVR, OPSD có hai ưu thế cốt lõi. **Thứ nhất, không còn phụ thuộc phần thưởng có thể xác minh.** Tiền đề của RLVR là tồn tại một trình xác thực tự động, còn nguồn thông tin đặc quyền của OPSD rộng hơn nhiều: có thể là đáp án chuẩn, cũng có thể là lời nhắc hệ thống phong phú hơn, phần trình diễn của con người, tài liệu lĩnh vực - bất cứ thông tin nào "giúp mô hình nói lại hành vi đúng một cách rõ ràng sau khi đã biết" đều được. **Thứ hai, tín hiệu giám sát dày đặc hơn RL rất nhiều.** RL chỉ có một phần thưởng vô hướng cho mỗi trajectory, còn OPSD cung cấp một phân phối xác suất đầy đủ ở mọi vị trí của trajectory, hiệu quả mã thông báo vượt trội rõ rệt so với các phương pháp RL. Có thể nói, OPSD dùng "thông tin đặc quyền" thay thế "giáo viên mạnh hơn" và nhờ đó trở thành một lộ trình thực tế để giảm thiểu vấn đề hiệu quả mẫu.
-
-Dĩ nhiên, ranh giới của mô thức này cũng rất rõ, chủ yếu vì trần năng lực của giáo viên bị khóa ngay trên chính học sinh: **mức lợi ích phụ thuộc vào "thông tin đặc quyền mang lại thêm bao nhiêu năng lực".** Nếu mô hình cầm đáp án cũng không giảng nổi quá trình giải (chẳng hạn đáp án đến từ tìm kiếm vét cạn chứ không phải suy luận có thể diễn giải bằng ngôn ngữ), tự chưng cất sẽ không có nguồn tín hiệu. Nghiên cứu hiện có cũng quan sát thấy các chế độ thất bại của OPSD ngây thơ, ví dụ trong quá trình tự chưng cất mô hình dần đánh mất phong cách tư duy vốn có, cần thêm chính quy hóa để ổn định[^ch7-16]. Ý tưởng "cùng một mô hình, khác ngữ cảnh, làm thầy trò cho nhau" vẫn đang tiến hóa nhanh, nhưng nó đã mở ra một con đường cho tình thế khó khăn phổ biến "không có giáo viên mạnh hơn".
-
-## Từ bad case đến hậu huấn luyện
-
-Phần này quay lại câu hỏi của Chương 6: dữ liệu đánh giá được xây dựng từ bad case trong sản xuất được chuyển thành đầu vào hậu huấn luyện như thế nào? Nhật ký quy lỗi, bài hồi quy end-to-end, bài hồi quy theo tiền tố trajectory và điểm Rubric tương ứng với các cách dùng khác nhau khi huấn luyện.
-
-Bảng 7-4. Ánh xạ dữ liệu đánh giá Chương 6 sang cách dùng trong huấn luyện Chương 7
-
-| Dữ liệu đánh giá Chương 6 | Cách dùng trong huấn luyện Chương 7 |
-|---|---|
-| Bài hồi quy end-to-end có verifier | Nhiệm vụ rollout RL và phần thưởng kiểm chứng được (RLVR); pool lấy mẫu cho RFT |
-| Bài hồi quy theo tiền tố trajectory | Cặp ưu tiên DPO, minh họa SFT cho ranh giới quyết định và state của teacher cho On-Policy Distillation |
-| Nhật ký quy lỗi (bước sai đầu tiên và loại lỗi) | Nhãn âm cho giám sát quy trình (PRM); luật phạt đường đi RLVP |
-| Điểm Rubric đa chiều và gold set do người gán | Các chiều của phần thưởng vector; dữ liệu huấn luyện và hiệu chỉnh GRM |
-
-### Trường hợp 1: Coding Agent kết thúc quá sớm
-
-**Từ bad case đến quy lỗi.** Coding Agent có thể tuyên bố “đã xong” trước khi chạy test, kết thúc một nhiệm vụ nhiều mục tiêu sau khi mới làm xong một phần, hoặc tuyên bố nhiệm vụ bất khả thi sau vài lần thất bại. Lỗi đầu tiên là ranh giới quyết định khi Agent định kết luận mà chưa có bằng chứng; các test thất bại và lần thử lại sau đó chỉ là hệ quả. Phản hồi sửa lỗi của người dùng, phản hồi tiêu cực và audit sau sự kiện đều có thể phát hiện loại lỗi này.
-
-**Xây dựng dữ liệu.** Bài hồi quy end-to-end chạy các acceptance test ẩn khi Agent tuyên bố hoàn thành: pass nhận thưởng dương, fail nhận thưởng âm. Bài theo tiền tố biến tuyên bố sớm thành `rejected`, còn “chạy test, kiểm tra từng điều kiện nghiệm thu rồi mới kết luận” thành `chosen`. Verifier xác định lọc các ứng viên do teacher tạo; sau đó thay đổi loại nhiệm vụ, điều kiện còn thiếu và cách diễn đạt hoàn thành trước khi trộn một tỷ lệ nhỏ vào dữ liệu instruction chung để LoRA.
-
-**Đánh giá.** Boundary set của nhiệm vụ chưa hoàn thành phải được đánh giá cùng retention set của nhiệm vụ thật sự hoàn thành. Tập đầu kiểm tra model có xác minh thay vì dừng sớm hay không; tập sau kiểm tra model vẫn có thể kết thúc bình thường. Nếu thiếu tập sau, model có thể trở nên quá thận trọng và không bao giờ dừng.
-
-> **Thí nghiệm 7-17 ★★: Từ bad case kết thúc quá sớm đến DPO**
->
-> **Mục tiêu**: Chạy toàn bộ quy trình từ quy lỗi, dữ liệu hồi quy tiền tố, cặp ưu tiên DPO, huấn luyện LoRA cho model 7B đến đánh giá tách biệt boundary/retention.
->
-> **Dữ liệu**: Dự án kèm theo có 24 case thực tế thuộc bốn loại lỗi và một held-out set không giao nhau (12 boundary, 8 retention). Đây là thí nghiệm mang tính giáo dục; dữ liệu sản xuất cần nhiều họ nhiệm vụ hơn và phải dùng hidden test mà model không thể sửa hoặc chỉ nói rằng đã chạy.
-
-### Trường hợp 2: Dấu ngoặc kép tiếng Trung
-
-Yêu cầu “đổi dấu ngoặc kép thẳng trong bài viết tiếng Trung thành ngoặc cong” không phải là quy tắc thay thế toàn cục. Cùng một ký tự ASCII có thể nằm trong văn xuôi tiếng Trung, trích dẫn tiếng Anh, mã Markdown, code block, comment, JSON hoặc path. Văn xuôi và comment tiếng Trung có thể đổi; code thực thi, văn bản tiếng Anh, JSON/schema, path, identifier và vùng không rõ phải giữ nguyên.
-
-**Từ bad case đến quy lỗi.** Harness phải tách tài liệu theo scope, so sánh output với các span được phép và được bảo vệ, rồi chạy kiểm tra cú pháp Markdown, JSON và ngôn ngữ nguồn. Nếu rendering hoặc serialization thay đổi input trước, lỗi thuộc về Harness. Nếu model nhận đúng byte gốc nhưng sửa quote được bảo vệ hoặc bỏ sót quote tiếng Trung được phép sửa, khác biệt đầu tiên là lỗi chọn scope phù hợp để hậu huấn luyện.
-
-**Xây dựng dữ liệu.** Skill định nghĩa luật scope dương và âm. Mẫu ghép source với target: văn xuôi tiếng Trung, quote lồng nhau và comment tiếng Trung là chỉnh sửa dương; văn bản tiếng Anh, literal, JSON, path, inline code và code block là ví dụ âm cần bảo vệ. Train, holdout và boundary tách theo template, thể loại, tổ hợp biến và ngôn ngữ; trước SFT chạy quality gate tự động và audit thủ công theo tầng.
-
-**Đánh giá.** Báo cáo tỷ lệ đổi quote mục tiêu, tỷ lệ giữ vùng bảo vệ, thay đổi ngoài mục tiêu, tính hợp lệ cú pháp và exact match toàn văn. Trong sản xuất cũng cần retention set gồm tài liệu vốn đã đúng để phát hiện sửa quá tay.
-
-> **Thí nghiệm 7-18 ★★: SFT dấu ngoặc kép cong theo scope**
->
-> **Mục tiêu**: Kiểm tra LoRA SFT có chỉ đổi quote được phép và giữ nguyên cú pháp được bảo vệ trên các tổ hợp ngữ cảnh chưa thấy hay không.
->
-> **Cấu hình và dữ liệu**: Qwen3-8B bf16 LoRA, 2 epoch và 256 update; 16 loại fragment, 10 thể loại bài viết và 9 ngôn ngữ lập trình; 1.024 train, 256 holdout, 256 boundary. Skill được dùng làm đặc tả nhãn, quality gate và hồi quy; audit thủ công 48 mẫu theo tầng.
->
-> **Kết quả**: exact holdout tăng từ 0% ở model gốc lên 96,9%, boundary đạt 97,7% và bảo toàn vùng bảo vệ đạt 100%. Python, JavaScript, Java, Go, Rust, SQL, Shell, YAML và Markdown đạt 100%; JSON còn 68,8% và cần một tuyến dữ liệu cấu trúc riêng.
-
-### Trường hợp 3: Thường xuyên chỉnh sửa file thất bại
-
-Coding Agent thường dùng `edit_file(path, old_string, new_string)`. Tool so khớp `old_string` chính xác, nên chỉ cần đổi một byte—dấu cách, xuống dòng, backslash, tổ hợp Unicode hoặc token hiếm—là nhận “old_string not found”. Việc thử lại là triệu chứng, không nhất thiết là nguyên nhân gốc.
-
-**Từ bad case đến quy lỗi.** So sánh khác biệt đầu tiên theo chuỗi:
+Lỗi `old_string` cũng không thể quy hết cho "mô hình chép sai". Với cùng một chuỗi, hãy lưu hash byte gốc, dãy code point Unicode và dãy token ID của tokenizer, rồi tìm khác biệt đầu tiên dọc theo chuỗi sau:
 
 ```text
 byte file gốc → tool trả về → serialization của Harness → context model
 → output token → chuỗi decode → parse JSON/tool-call → tool matching
 ```
 
-Các thay đổi trước khi model sinh output thuộc về bộ đọc file, serializer hoặc Harness. Audit encode→decode của tokenizer riêng biệt. Chỉ khi model nhận đúng byte gốc và output của nó là điểm khác biệt đầu tiên, case mới được phân loại là lỗi sao chép của model để đưa vào hậu huấn luyện.
+Bộ thăm dò đánh giá tối thiểu bao phủ việc nhắc lại trực tiếp, trích xuất từ ngữ cảnh dài, đặt vào đối số của tool, chọn giữa các chuỗi tương tự, cùng với khoảng trắng, xuống dòng, dấu gạch chéo ngược, ký tự tổ hợp Unicode và token tần suất thấp. Các chỉ số gồm byte-exact match, code-point-exact match, token-exact match, vị trí khác biệt đầu tiên và tỷ lệ thành công thực tế của tool. Nếu mô hình đúng ở thăm dò trực tiếp nhưng lời gọi tool vẫn thất bại, hãy sửa tokenizer, serialization, Harness hoặc giao thức tool; chỉ khi khác biệt đầu tiên xuất hiện ở chính đầu ra của mô hình thì mới chuyển trường hợp đó thành dữ liệu huấn luyện sao chép ở Chương 8.
 
-**Xây dựng dữ liệu.** Dùng ba nhiệm vụ kiểm chứng được: sao chép nguyên văn, chọn target được đánh dấu giữa các hard negative tương tự và đặt target chính xác vào trường JSON `old_string` của tool. Randomize độ dài, tổ hợp token và context, gồm dấu cách, newline thật, escape literal, backslash, ký tự Unicode tổ hợp, chữ Trung và ký tự zero-width. Tách split theo seed, độ dài, thành phần token và wrapper context.
+### So sánh theo cặp và xếp hạng mô hình
 
-**Đánh giá.** Tách metric byte-exact, code-point-exact, token-exact, vị trí khác biệt đầu tiên và round-trip tokenizer khỏi thành công end-to-end của tool. Nếu copy trực tiếp đúng nhưng `edit_file` vẫn lỗi, hãy sửa serialization hoặc giao thức tool thay vì tiếp tục huấn luyện model.
+![Hình 7-5 Xếp hạng Elo và xếp hạng so sánh ghép đôi ](images/fig7-5.svg)
 
-> **Thí nghiệm 7-19 ★★: SFT sao chép chính xác cho chuỗi đặc biệt**
+**Xếp hạng Elo**(một hệ thống xếp hạng ban đầu được sử dụng trong cờ vua) định lượng khả năng tương đối của một mô hình thông qua một số lượng lớn các trận đấu theo cặp: chênh lệch điểm số càng lớn thì tỷ lệ thắng mong đợi của người chơi mạnh hơn càng cao. Ví dụ: nếu mô hình A đạt 1200 và mô hình B đạt 1000, hệ thống Elo sẽ dự đoán tỷ lệ thắng của A là khoảng 76%. Nếu B bất ngờ thắng, B sẽ được nhiều điểm hơn và A sẽ mất nhiều điểm hơn - kết quả ngược lại sẽ mang đến sự điều chỉnh điểm lớn hơn. Cơ chế này cho phép thứ hạng nhanh chóng hội tụ về đúng đẳng cấp. Cơ sở thống kê đằng sau nó là **mô hình Bradley-Terry**: mỗi mô hình được trừu tượng hóa thành một "điểm sức mạnh" tiềm năng. Xác suất thắng hoặc thua một cặp đấu được xác định bằng chênh lệch tỷ số giữa hai trận đấu. Elo là kỹ thuật triển khai hình thức cập nhật trực tuyến của mô hình này.
+
+Chatbot Arena sử dụng các cuộc đấu tay đôi ngẫu nhiên ẩn danh - người dùng mù quáng chọn những câu trả lời tốt hơn mà không biết danh tính của mô hình, với thứ hạng bắt nguồn từ hàng triệu phiếu bầu. Ưu điểm của phương pháp này là không cần xác định “tiêu chuẩn tuyệt đối”, chỉ cần con người phán đoán “A hay B nào tốt hơn”. Nhưng có những hạn chế: kết quả xếp hạng phụ thuộc vào câu hỏi mà người dùng hỏi - nếu một số lượng lớn người dùng tình cờ đặt câu hỏi về lập trình, một mô hình giỏi lập trình sẽ được xếp hạng cao hơn, điều này có thể không phản ánh đúng đẳng cấp của nó trong các nhiệm vụ khác.
+
+Khi LLM hoàn thành phán quyết ghép đôi thay vì con người bỏ phiếu, chúng ta cũng phải đề phòng Xu hướng vị trí - mô hình đánh giá sẽ ưu tiên một cách có hệ thống ứng cử viên xuất hiện ở một vị trí nhất định (thường là đầu tiên). Cho dù nội dung của hai ứng viên có hoàn toàn trái ngược nhau thì phán quyết cũng có thể không thay đổi. Phương pháp giảm thiểu tiêu chuẩn là trao đổi thứ tự và đánh giá từng trường hợp một lần: A được đánh giá một lần trước đó, B được đánh giá lại trước đó và lấy trung bình cộng của hai kết quả; một cách tiếp cận chặt chẽ hơn là chỉ tính khi hai phán đoán nhất quán và nếu chúng không nhất quán, nó sẽ được ghi là hòa hoặc gửi để xem xét thủ công. Chatbot Arena về cơ bản thực hiện điều tương tự—ngẫu nhiên hóa vị trí của hai phản hồi để các thành kiến về vị trí triệt tiêu lẫn nhau trên một cỡ mẫu lớn.
+
+**Từ đánh giá đến đào tạo: chuyển các tín hiệu so sánh theo cặp**. So sánh cặp không chỉ là phương pháp đánh giá mà còn là nguồn tín hiệu quan trọng cho quá trình huấn luyện sau. Thuật toán **GRPO**(Tối ưu hóa chính sách tương đối nhóm) sẽ được giới thiệu trong Chương 8, giới thiệu phương pháp đánh giá "so sánh cái nào tốt hơn" vào đào tạo mô hình - ý tưởng cốt lõi của nó là lấy mẫu nhiều câu trả lời của ứng viên cho cùng một câu hỏi và sử dụng giá trị tương đối (thay vì điểm tuyệt đối) giữa chúng để ước tính lợi thế, từ đó loại bỏ rắc rối khi đào tạo mạng giá trị bổ sung (quan trọng, dùng để ước tính đường cơ sở) trong PPO - lưu ý GRPO loại bỏ mạng giá trị thay vì chính tín hiệu phần thưởng. Nó vẫn dựa vào mô hình khen thưởng hoặc các quy tắc khen thưởng có thể kiểm chứng được để đánh giá chất lượng của từng ứng viên. Đây chỉ là một điềm báo. Việc dẫn xuất thuật toán hoàn chỉnh, so sánh với PPO/DPO và chi tiết triển khai trong quá trình post-training của Agent còn lại ở Chương 8.
+
+> **Thử nghiệm 7-7 ★★: Xây dựng thứ hạng mô hình từ dữ liệu so sánh theo cặp**
 >
-> **Mục tiêu**: Sau khi xác nhận output model là lớp đầu tiên bị sai, thử LoRA SFT trên chuỗi ngẫu nhiên chưa thấy và dùng audit tokenizer riêng để loại trừ ảo giác do tokenization.
+> Thử nghiệm này triển khai hệ thống tính toán xếp hạng Elo từ đầu để hiểu sâu hơn về cách mô hình Bradley-Terry trích xuất xếp hạng khả năng tương đối từ một số lượng lớn so sánh theo cặp. Sử dụng tập dữ liệu bỏ phiếu trong thế giới thực mã nguồn mở của Chatbot Arena gồm hàng triệu phiếu bầu của người dùng mù.
 >
-> **Cấu hình và dữ liệu**: Qwen3-8B bf16 LoRA trong 2 epoch; 1.024 train, 256 holdout, 256 boundary cho `verbatim`, `decoy_copy` và `tool_json`. Generator dùng chuỗi ngẫu nhiên tái lập được, hard negative, 10 context ngôn ngữ, 8 thể loại bài viết và các trường hợp space, escape, Unicode, chữ Trung, zero-width.
+> Triển khai thuật toán cập nhật lặp lại xếp hạng Elo: ban đầu tất cả các mô hình được xếp hạng 1000 điểm và hồ sơ biểu quyết được xử lý theo thứ tự thời gian. Đối với mỗi trận đấu, tỷ lệ thắng dự kiến được tính dựa trên chênh lệch xếp hạng hiện tại giữa hai mô hình, kết quả thực tế được so sánh với dự kiến và được điều chỉnh theo tỷ lệ học tập cố định - người thắng cộng điểm, người thua trừ điểm và phạm vi điều chỉnh tỷ lệ thuận với độ lệch dự kiến (thất bại khó chịu sẽ dẫn đến thay đổi điểm lớn hơn). Sắp xếp theo thứ tự giảm dần theo điểm cuối cùng và tính ma trận tỷ lệ thắng theo cặp. So sánh với danh sách chính thức và xác minh rằng thứ hạng nói chung là nhất quán. Không cần phải nghiêm ngặt về việc căn chỉnh từng điểm: Chatbot Arena chính thức sử dụng khả năng phù hợp tối đa của Bradley-Terry (có thể giải quyết tất cả các trò chơi cùng một lúc, bất kể thứ tự bình chọn), trong khi những gì được triển khai ở đây là Elo với các cập nhật gia tăng trực tuyến (kết quả bị ảnh hưởng bởi hệ số K tốc độ học tập và thứ tự xử lý). Hai thuật toán phải nhất quán trong bảng xếp hạng tổng thể nhưng điểm số cụ thể sẽ không hoàn toàn giống nhau.
 >
-> **Kết quả**: byte-exact holdout tăng từ 37,5% lên 78,9%, boundary đạt 80,1%, vị trí khác biệt byte đầu tiên trung bình là 54,0 và 54,2. Trên 512 probe, round-trip tokenizer Qwen3/Qwen2.5 là 80,1%, Mistral là 100%; lỗi tokenizer và Harness phải tách khỏi kết quả sao chép của model.
+> Phần thứ hai của thử nghiệm tạo ra hoạt ảnh diễn biến tiến hóa xếp hạng lịch sử: chia dữ liệu bỏ phiếu theo thời gian (hàng tuần hoặc hàng tháng) và tính toán ảnh chụp nhanh điểm Elo cho từng thời điểm. Sử dụng D3.js để triển khai hoạt ảnh thi đấu biểu đồ thanh (chiều dài thanh ngang = điểm, vị trí dọc = thứ hạng, thay đổi mượt mà theo thời gian). Bằng cách quan sát thời điểm đột phá của công nghệ hoạt hình (điểm của một mô hình nào đó đột nhiên tăng lên), sự phát triển của ngữ cảnh cạnh tranh và vòng đời của mô hình.
+>
 
-## Bức tranh hoàn chỉnh và những điểm thực tế post-training
+## Lựa chọn mô hình dựa trên đánh giá
 
-Chương này bắt đầu từ "dự đoán từ tiếp theo" được đào tạo trước và đi một chặng đường dài: SFT định dạng vững chắc, RL vượt qua khái quát hóa, nhiệm vụ nhiều vòng giới thiệu các vấn đề phân bổ tín dụng, thiết kế phần thưởng mở rộng từ phần thưởng kết quả đến tín hiệu đường dẫn của "kết quả khen thưởng, quy trình ràng buộc" và việc sử dụng công cụ mang lại sự bùng nổ tổ hợp. Những thử nghiệm này có một điểm chung - những gì mô hình học được phụ thuộc vào những gì tín hiệu huấn luyện dạy nó; và chất lượng tín hiệu chủ yếu được xác định bởi dữ liệu và môi trường chứ không phải bởi thuật toán.
+Lựa chọn mô hình không chỉ đơn giản là “chọn mô hình mạnh nhất” mà còn thực hiện sự cân bằng dựa trên đánh giá giữa nhiều chiều dựa trên các kịch bản ứng dụng.
 
-**Mô hình hợp tác**: Bài viết trước (Tóm tắt thử nghiệm điểm chung) đã tóm tắt mô hình này bằng cách sử dụng khái niệm hội họa Trung Quốc là "hình thức trước rồi đến tinh thần" - SFT kết thúc bằng "định dạng ổn định và khả năng bắt đầu hình thành" và RL định hình chiến lược trên cơ sở này. Cả hai hoạt động ở các cấp độ khác nhau: giao thức và cấu trúc hóa rắn SFT (định dạng JSON, mẫu hội thoại, giao diện công cụ), chiến lược tối ưu hóa và khái quát hóa RL (quy tắc số học, tư duy không gian, chuỗi hành động). Cân bằng quan trọng: SFT Đào tạo quá mức có thể khiến mô hình bị thu gọn về phân phối đào tạo, hạn chế không gian tối ưu hóa RL.
+### Các khía cạnh chính của việc lựa chọn
 
-**Những cạm bẫy phổ biến** sau đây đáng để bạn cảnh giác. Việc xác định những vấn đề này thường có thể tránh lãng phí tài nguyên tốt hơn là nắm vững các chi tiết kỹ thuật:
+**Thông lượng** và **Độ trễ** là hai bộ chỉ báo dễ bị nhầm lẫn. Để gỡ rối chúng, bạn chỉ cần biết rằng suy luận mô hình lớn được chia thành hai giai đoạn. **Prefill** đọc ngữ cảnh hoàn chỉnh cùng một lúc và xác định **độ trễ của từ đầu tiên** tính từ khi người dùng nhấn Enter cho đến khi xuất hiện từ đầu tiên (được đo bằng **TTFT**, Thời gian đến mã thông báo đầu tiên trong ngành) - ngữ cảnh càng dài thì việc điền trước càng chậm và TTFT càng lớn. **Giải mã** sau đó tạo mã thông báo câu trả lời theo mã thông báo, xác định tốc độ tạo từ tiếp theo (mã thông báo/giây) và cũng xác định trực tiếp thời gian suy nghĩ: mô hình 50 tokens/s tạo ra 2000 mã thông báo suy nghĩ và chỉ suy nghĩ mất 40 giây.
 
-1. **Phụ thuộc quá nhiều vào post-training để ghi nhớ dữ kiện** - RAG nên được sử dụng để quản lý kiến thức thực tế (có thể cập nhật động, truy xuất nguồn gốc và không bị quên do đào tạo) và post-training tập trung vào "cách sử dụng kiến thức".
-2. **Giới thiệu RL trước khi định dạng ổn định** - Khi mô hình không thể xuất ổn định ngay cả JSON cơ bản (tỷ lệ phân tích lỗi vượt quá 20%), quá trình đào tạo RL sẽ thất bại hoàn toàn. SFT phải được thực hiện trước.
-3. **Thiết kế chức năng phần thưởng không đúng** dẫn đến hack phần thưởng - mô hình học cách khai thác sơ hở trong phần thưởng để đạt điểm cao, thay vì thực sự hoàn thành nhiệm vụ (chẳng hạn như tạo văn bản dài và vô nghĩa chỉ nhìn vào độ dài của câu trả lời). Mục tiêu cuối cùng nên được đánh giá thay vì các số liệu trung gian.
-4. **Bỏ qua độ trung thực của mô phỏng** - Nếu mô phỏng quá đơn giản (dịch vụ khách hàng luôn phản hồi theo một mẫu cố định) hoặc phản hồi của môi trường không thực tế (thông báo lỗi không phù hợp với môi trường sản xuất), chiến lược được đào tạo sẽ hoàn toàn không hiệu quả trong các tình huống thực tế. Chi phí xây dựng môi trường mô phỏng có độ chính xác cao có thể cao hơn chi phí đào tạo.
-5. **Đào tạo quá mức dẫn đến giảm khả năng tổng quát hóa** - Khi tổn thất huấn luyện tiếp tục giảm nhưng hiệu suất của tập xác thực kém đi, mô hình đang ghi nhớ các chi tiết huấn luyện. SFT đặc biệt dễ gặp phải vấn đề này và việc dừng sớm vẫn rất quan trọng; việc tối ưu hóa quá mức RL cũng sẽ khiến chính sách phù hợp quá mức với việc phân phối nhiệm vụ hiện tại.
-6. **Sụp đổ hàm giá trị và thăm dò không đầy đủ**——Ước tính giá trị không chính xác trong PPO sẽ dẫn đến sai lệch trong tính toán lợi thế, biểu hiện dưới dạng dao động nghiêm trọng trong đường cong huấn luyện. Các tham số nhiệt độ quá thấp hoặc độ ngẫu nhiên không đủ sẽ khiến Agent rơi vào mức tối ưu cục bộ.
-7. **Đánh giá thấp chi phí tính toán của RL** - Một tác vụ hoạt động tốt trên SFT có thể yêu cầu 10-100 gấp thời gian đào tạo để chuyển sang RL. Nếu phân phối thử nghiệm có tính nhất quán cao với quá trình đào tạo thì SFT có thể là đủ.
-8. **Chất lượng dữ liệu huấn luyện thấp** - SFT sẽ trực tiếp tìm hiểu độ nhiễu và độ lệch trong dữ liệu và củng cố các lỗi thành các tham số; mặc dù RL có thể tìm ra các chiến lược tốt hơn thông qua việc khám phá, nhưng nếu mô hình phần thưởng có sai lệch hệ thống, nó sẽ tối ưu hóa sai hướng.
+Xung quanh hai giai đoạn này, các chỉ số thông lượng và độ trễ chính như sau:
 
-Nguyên tắc cốt lõi: **Sử dụng thử nghiệm quy mô nhỏ để xác minh các giả định chính trước khi đầu tư tài nguyên quy mô lớn** - kiểm tra với một lượng nhỏ dữ liệu xem SFT có thể ổn định định dạng hay không, đơn giản hóa môi trường để xác minh xem RL có thể hội tụ hay không và sử dụng một mẫu nhỏ để kiểm tra xem hàm phần thưởng có phản ánh mục tiêu thực sự hay không. Thất bại nhanh chóng còn dễ chấp nhận hơn thất bại ồ ạt.
+- **Thông lượng đầu vào/thông lượng đầu ra**: tương ứng với tốc độ Prefill và Decode tương ứng.
+- **TTFT**: Bằng thời gian xếp hàng cộng với thời gian Điền trước và là "tốc độ phản hồi" mà người dùng cảm nhận được.
+- **Độ trễ suy nghĩ**: Số lượng mã thông báo suy nghĩ được tạo ra bởi các mô hình khác nhau có thể thay đổi tới nhiều lần và độ dài suy nghĩ không nhất thiết phải tương quan thuận với hiệu quả nhiệm vụ. Bạn thực sự nên đo lường mức độ sử dụng mã thông báo tư duy và lợi ích tương ứng của từng mô hình theo khối lượng công việc của riêng bạn, thay vì chỉ suy luận từ danh sách công khai.
+- **độ trễ đuôi p95**: Độ trễ mà 95% yêu cầu sẽ không vượt quá. Nó phản ánh tốt hơn trải nghiệm người dùng thực so với mức trung bình - mức trung bình sẽ bị kéo xuống bởi một số lượng lớn yêu cầu nhanh, che đi độ trễ nghiêm trọng mà một số ít người dùng gặp phải.
 
-**Hợp tác với RAG/ICL**: Post-training đào tạo, External Learning (học bên ngoài tham số mô hình) và In-Context Learning (học trong ngữ cảnh) tạo thành ba khía cạnh về khả năng của Agent. Chúng không phải là những lựa chọn thay thế loại trừ lẫn nhau mà là ba "nút" có thể điều chỉnh lần lượt tác động lên các tham số mô hình, kiến thức bên ngoài và thông tin có điều kiện trong quá trình suy luận. Giá trị của ICL nằm ở khả năng kiểm soát tức thời "không thay đổi tham số" - hành vi có thể được định hình nhanh chóng với một vài ví dụ hoặc quy tắc rõ ràng. Đây là lựa chọn đầu tiên trong giai đoạn thăm dò, nhưng khi số lượng mẫu tăng lên thì độ trễ và chi phí sẽ tăng nhanh. Giá trị của RAG nằm ở chỗ "xuất hiện sự kiện và bằng chứng" - cung cấp kiến thức bên ngoài có thể cập nhật linh hoạt và các nguồn có thể truy nguyên mà không thay đổi thông số, loại bỏ ảo tưởng một cách tự nhiên và đáp ứng các yêu cầu tuân thủ kiểm toán. Giá trị của việc post-training nằm ở chỗ "viết hành vi và phong cách thành các tham số" - ổn định giọng điệu, định dạng và thói quen sử dụng công cụ, đồng thời cải thiện đáng kể tính nhất quán. Lưu ý đặc biệt: SFT/RL khó có thể ghi nhớ chính xác một lượng lớn kiến thức thực tế. Nếu mô hình thực sự cần nắm vững các sự kiện miền thì phải sử dụng đào tạo trước liên tục (chi phí cao hơn nhiều so với SFT và tỷ lệ dữ liệu cần được thiết kế cẩn thận), do đó bộ nhớ sự kiện phù hợp hơn với RAG.
+**Chi phí**: Giá cho mã thông báo đầu vào/đầu ra/bộ đệm. Không nên đánh giá chi phí một cách riêng biệt - một mô hình giá rẻ với tỷ lệ thành công thấp trên thực tế có thể đắt hơn do phải thử lại thường xuyên. Cần phải tính toán chi phí trung bình và tỷ lệ chi phí/hiệu suất của từng nhiệm vụ.
 
-Cách tiếp cận phổ biến và mạnh mẽ nhất là sử dụng RAG để giải quyết vấn đề về trí nhớ chính xác và khả năng diễn giải của "kiến thức thực tế", đồng thời chuyển "hành vi và cấu trúc" cho post-training để củng cố; sử dụng ICL và một mô hình có khả năng hơn để nhanh chóng lặp lại chiến lược thử nghiệm, sau đó nội hóa hành vi có hiệu ứng ổn định vào các tham số thông qua post-training. Quá trình post-training cũng có thể đạt được sự chắt lọc mô hình - chắt lọc khả năng của một mô hình lớn có công suất cao thành một mô hình nhỏ hơn, chi phí thấp hơn.
+**Hiệu suất**: Pass@1, Pass^k, Pass@k, Best@k Định nghĩa chính xác của bốn chỉ số được hiển thị trong "Hệ thống chỉ số đánh giá" được đề cập ở trên. Ở đây chúng ta chỉ nói về cách chọn trong ngữ cảnh lựa chọn - Pass@1 (tỷ lệ thành công trung bình duy nhất) được sử dụng phổ biến nhất trong các tình huống hàng ngày; Pass^k được ưu tiên trong các tình huống vận hành chính, tập trung vào tính ổn định “không bao giờ mắc lỗi”; Pass@k hoặc Best@k được ưu tiên trong các nhiệm vụ khám phá, xem xét giới hạn khả năng trên sau khi tạo đủ cơ hội; sử dụng cho các tác vụ mở Rubric Tính điểm đa chiều.
+
+**Giới hạn tốc độ và độ tin cậy**: Giới hạn RPM (yêu cầu mỗi phút) / TPM (mã thông báo mỗi phút) sẽ ảnh hưởng đến tính đồng thời và một số API sẽ tự động điều chỉnh giới hạn trong thời gian cao điểm. Về độ bền, cần chú ý đến dữ liệu ngoài phân phối, đầu vào đối nghịch và độ ổn định khi vận hành lâu dài (liệu có vấn đề như sập chế độ, mất tập trung, v.v.).
+
+**Đường cong ngân sách–năng lực**: Một điểm số đơn lẻ dưới ngân sách cố định không đủ để xác định Agent có thể đảm nhiệm nhiệm vụ dài hạn hay không. Ngoài tỷ lệ thành công, cần báo cáo hiệu năng thay đổi theo thời gian thực, số token, số lần gọi công cụ hoặc ngân sách tính toán. Đối chiếu người–máy trong RE-Bench cho thấy rõ điều này: với tổng ngân sách 2 giờ cho mỗi môi trường, Agent tốt nhất đạt điểm khoảng gấp 4 lần chuyên gia con người; nhưng con người hưởng lợi nhiều hơn khi tăng thời gian, nhỉnh hơn Agent tốt nhất ở mốc 8 giờ và đạt khoảng gấp đôi điểm số khi có tổng cộng 32 giờ qua nhiều lần thử[^re-bench-2025]. Vì vậy, ưu thế ở ngân sách ngắn không thể được ngoại suy trực tiếp thành năng lực vận hành dài; việc chọn mô hình phải so sánh nhiều mốc ngân sách gần với thời lượng nhiệm vụ thực tế.
+
+Trong thực tế, chiến lược cộng tác đa mô hình có thể được áp dụng: sử dụng các mô hình gọn nhẹ để xử lý các yêu cầu đơn giản nhằm giảm chi phí và sử dụng các mô hình mạnh mẽ để xử lý các tác vụ phức tạp nhằm đảm bảo chất lượng; hoặc sử dụng các mô hình chuyên biệt để xử lý các nhiệm vụ con cụ thể (chẳng hạn như hiểu hình ảnh, tạo mã) và cộng tác thông qua cơ chế sub-Agent. Sự kết hợp không đồng nhất này cần được xác minh thông qua đánh giá để xác nhận xem lợi ích tổng thể có lớn hơn độ phức tạp ngày càng tăng của hệ thống hay không.
+
+### Hành vi mô hình: Khi nào ngừng đọc và bắt đầu chỉnh sửa
+
+Việc chọn mô hình không chỉ so sánh liệu mô hình có hoàn thành được nhiệm vụ hay không, mà còn so sánh **hành vi mặc định của nó**. Một khác biệt dễ quan sát ở Coding Agent là ngưỡng hành động. Với cùng một nhiệm vụ lập trình, một số mô hình khám phá rộng kho mã và xác nhận kiến trúc, các điểm gọi và kiểm thử trước khi chỉnh sửa. Những mô hình khác định vị thay đổi từ ít bằng chứng hơn, chỉnh sửa sớm rồi dùng phản hồi kiểm thử để hoàn thiện hiểu biết. Nhóm đầu đánh giá chi phí của việc sửa quá sớm cao hơn; nhóm sau đánh giá chi phí cơ hội của việc đọc thêm một tệp cao hơn.
+
+Khi một xu hướng vẫn đi theo mô hình qua các Harness và thay đổi khi chỉ thay mô hình trong một Harness cố định, lời giải thích chính phải là **hành vi mô hình**. Post-training là một nguồn có khả năng cao: các quỹ đạo SFT minh họa cần đọc đến đâu trước khi hành động, phần thưởng quá trình củng cố hoặc phạt những đường đi công cụ cụ thể, còn phần thưởng kết quả củng cố toàn bộ chiến lược đã dẫn đến thành công. Do đó, mô hình không chỉ học cách viết mã mà còn học khi nào đã có đủ bằng chứng. Dataset và công thức phần thưởng chính xác thường là thông tin riêng; phép thay mô hình có kiểm soát có thể xác định hành vi nằm phía mô hình nhưng không tiết lộ công thức huấn luyện cụ thể của nhà cung cấp. Harness vẫn có thể dịch chuyển ngưỡng bằng system prompt, mô tả công cụ và ngân sách, nhưng nếu không ép buộc quy trình thì nên xem nó là yếu tố điều chỉnh, không phải nguyên nhân gốc mặc định.
+
+Thí nghiệm đi kèm so sánh `openai/gpt-5.6-sol` và `anthropic/claude-sonnet-5` trong một **Harness trung lập và cố định**. Cả hai dùng cùng endpoint OpenRouter và nhận cùng system prompt, nhiệm vụ, kho mã, tên công cụ, JSON Schema và kết quả công cụ. Harness không bắt buộc khám phá hay chỉnh sửa sớm. Ba kho mã thu nhỏ bao phủ một lỗi cục bộ, chuẩn hóa định danh xuyên mô-đun và sửa bộ nhớ đệm nhạy với hợp đồng công khai. Mỗi mô hình chạy độc lập từng nhiệm vụ ba lần, tạo 18 quỹ đạo. Trước lần chỉnh sửa đầu tiên, GPT-5.6-sol gọi công cụ trung bình 6,89 lần và đọc 4,67 tệp; Claude Sonnet 5 đạt 4,56 lần và 3,56 tệp. Chênh lệch lớn nhất ở nhiệm vụ cục bộ và gần như biến mất ở nhiệm vụ xuyên mô-đun được nêu rõ (7,00 so với 6,67 tệp). Cả hai mô hình đều đạt 100% ở bản vá đầu tiên được kiểm thử và kiểm thử cuối. Vì thế, thí nghiệm nhỏ này ủng hộ kết luận “chính sách hành động thay đổi theo mô hình”, chứ không phải “đọc nhiều hơn” hay “sửa sớm hơn” luôn tốt hơn. Thời gian tới lần chỉnh sửa đầu tiên cũng gần như bằng nhau (15,01 so với 14,48 giây), nhắc chúng ta phải tách số bước công cụ, lời gọi song song và độ trễ mô hình.
+
+> **Thí nghiệm 7-8 ★★: Đo ngưỡng hành động của mô hình trong một Coding Harness cố định**
+>
+> **Mục tiêu**: cô lập yếu tố mô hình, định lượng cách các mô hình Coding mặc định cân bằng giữa tiếp tục thu thập thông tin và bắt đầu chỉnh sửa, đồng thời đánh giá hiệu quả đường đi cùng chất lượng kết quả.
+>
+> **Phương pháp**: chạy `chapter6/model-action-threshold/experiment.py`. Theo mặc định, chương trình gọi GPT-5.6-sol và Claude Sonnet 5 qua cùng endpoint OpenRouter OpenAI-compatible, đồng thời giữ cố định system prompt, schema công cụ, kho mã nhiệm vụ, lệnh kiểm thử và giới hạn lượt. Prompt trung lập không quy định số tệp tối thiểu phải đọc hay yêu cầu chỉnh sửa nhanh. Lặp lại mỗi loại trong ba loại nhiệm vụ ít nhất ba lần và luân phiên thứ tự mô hình. Ghi số lời gọi công cụ, tệp đã đọc, lượt tìm kiếm và thời gian thực trước lần chỉnh sửa đầu tiên, cùng tỷ lệ chấp nhận bản vá đầu tiên được kiểm thử, số lần làm lại sau kiểm thử, thành công cuối, số tệp thay đổi và mức dùng Token.
+>
+> **Diễn giải nhân quả**: chiến dịch trung lập hỏi hành vi có thay đổi theo mô hình trong cùng một Harness hay không. Để đo Harness như yếu tố điều chỉnh, hãy chạy một chiến dịch riêng với `--policy explore-first`; không trộn hai policy trong cùng phép so sánh mô hình. Hành vi thay đổi khi đổi mô hình và vẫn giữ nguyên với cùng mô hình qua nhiều Harness là bằng chứng mạnh hơn cho hiệu ứng mô hình; chiều ngược lại ủng hộ hiệu ứng Harness mạnh hơn.
+>
+> **Tiêu chí nghiệm thu**: mọi unit test offline đều qua; trước tiên phải xác nhận mỗi fixture nhiệm vụ ở trạng thái ban đầu làm kiểm thử thất bại; kết quả chính thức chứa đủ các ô `mô hình × nhiệm vụ × lần lặp`, không có lỗi API, có kiểm thử cuối độc lập và quỹ đạo kiểm toán được; `manifest.json` xác minh hash của cấu hình, quan sát và bản tổng hợp. Thư mục dự án lưu một lần chạy thực tế hoàn chỉnh 18/18 ô. Người đọc nên chạy lại trên phiên bản mô hình và workload thực tế mà mình quan tâm, thay vì coi các số liệu của kho mã nhỏ này là bảng xếp hạng vĩnh viễn.
+
+### Phân tích chi phí của hệ thống Agent
+
+Chi phí là một khía cạnh dễ bị đánh giá thấp trong việc lựa chọn mô hình. Nếu Agent của bạn đã bước vào môi trường sản xuất hoặc đang chuẩn bị bước vào môi trường sản xuất thì không nên bỏ qua phần phân tích chi phí trong phần này.
+
+Phần trước liệt kê chi phí là một trong những khía cạnh chính của việc lựa chọn mô hình, nhưng chi phí trong kịch bản Agent phức tạp hơn nhiều so với việc định giá mã thông báo đơn giản—nhiều vòng lý luận, lệnh gọi công cụ và tích lũy ngữ cảnh sẽ khiến chi phí tăng phi tuyến tính. Phân tích chi phí một cách có hệ thống là một phần không thể thiếu trong hệ thống đánh giá và là điều kiện tiên quyết cần thiết để triển khai sản xuất.
+
+**Các thành phần của chi phí.**
+
+Chi phí của hệ thống Agent có thể được chia thành ba cấp độ:
+
+**Chi phí suy luận mô hình** là phần đơn giản nhất và được xác định bởi mức tiêu thụ mã thông báo đầu vào và mã thông báo đầu ra. Tuy nhiên, có hai yếu tố khuếch đại thường bị bỏ qua trong kịch bản Agent. Một là **Hiệu ứng tích lũy ngữ cảnh**: Mỗi khi Agent gọi LLM, tất cả lịch sử hội thoại trước đó và kết quả trả về của công cụ sẽ được gửi cùng nhau (để mô hình có thể hiểu được ngữ cảnh). Nếu bạn không tận dụng tốt KV Cache (nghĩa là lưu vào bộ đệm ngữ cảnh đã xử lý để tránh tính toán lặp lại), chi phí sẽ tăng rất nhanh - 1000 mã thông báo được gửi ở vòng đầu tiên, 2000 mã thông báo được gửi ở vòng thứ hai và 3000 mã thông báo được gửi ở vòng thứ ba. Tổng số tiền là 1000+2000+3000=6000 thay vì 3×1000=3000, càng nhiều vòng thì khoảng cách càng lớn. Thứ hai là **Chi phí mã thông báo tư duy**: Các mô hình hỗ trợ tư duy sẽ tạo ra số lượng lớn mã thông báo tư duy. Mặc dù những mã thông báo này không được hiển thị cho người dùng nhưng chúng cũng được bao gồm trong chi phí.
+
+**Chi phí cuộc gọi công cụ** bao gồm phí API bên ngoài (trả tiền cho mỗi lần xem của công cụ tìm kiếm, truy vấn cơ sở dữ liệu tiêu tốn tài nguyên máy tính), tài nguyên hộp cát để thực thi mã và chi phí gián tiếp dễ bị bỏ qua: phí mã thông báo được tạo sau khi công cụ trả về kết quả và đưa ngữ cảnh vào. Nội dung được tìm kiếm trên web trả về có thể chiếm mã thông báo 2000-5000 và sẽ được tính phí nhiều lần dưới dạng đầu vào trong mỗi vòng suy luận tiếp theo.
+
+**Chi phí cơ sở hạ tầng** bao gồm chi phí vận hành như cơ sở dữ liệu vectơ (để truy xuất RAG), hàng đợi tin nhắn, cơ sở dữ liệu quan hệ, lưu trữ nhật ký và theo dõi (để có thể quan sát).
+
+Để thấy chi phí thực sự phát sinh ở đâu, thí nghiệm đi kèm sử dụng một quy trình hoàn tiền cố định gồm tám lượt: tra cứu đơn hàng, vận chuyển, chính sách hoàn tiền và kho tri thức, sau đó kiểm tra rủi ro, hoàn tiền, thông báo cho khách và đóng vụ việc. Các lệnh gọi gpt-4o-mini thực được chạy với bốn tổ hợp của hai công tắc: tiền tố ổn định hoặc không ổn định, lịch sử đầy đủ hoặc đã nén. Nghiệp vụ ở bốn nhóm hoàn toàn giống nhau; chi phí trong Bảng 7-4 được tính từ lượng token và bảng giá lưu cùng lần chạy.
+
+Bảng 7-4 Chi phí đo được của quy trình Agent tám lượt
+
+| Cấu hình | Token đầu vào | Token được cache | Tổng chi phí | Tiết kiệm so với đường cơ sở |
+|---|---:|---:|---:|---:|
+| Không cache, không nén | 20,700 | 0 | $0.003776 | — |
+| Chỉ dùng tiền tố ổn định | 20,386 | 13,568 | $0.002707 | 28.3% |
+| Chỉ nén lịch sử | 16,177 | 0 | $0.003115 | 17.5% |
+| Tiền tố ổn định + nén | 16,035 | 6,144 | $0.002643 | 30.0% |
+
+Ở nhóm cơ sở, đầu vào tăng từ 1,113 token ở lượt đầu lên 3,668 token ở lượt cuối. Kết quả công cụ bị mang lặp lại vào các yêu cầu sau, chiếm tổng cộng 9,544 token đầu vào. Khi bật cả hai biện pháp, con số này giảm còn 5,248 và tổng chi phí giảm 30%.
+
+Các mức tiết kiệm không cộng tuyến tính. Tiền tố ổn định riêng lẻ tiết kiệm 28.3%, nén lịch sử riêng lẻ tiết kiệm 17.5%, nhưng kết hợp chỉ tiết kiệm 30%, không phải 45.8%. Nén lịch sử đồng thời làm ngắn phần tiền tố có thể tái sử dụng cache. Vì vậy, **khi kết hợp nhiều cách tối ưu ngữ cảnh, phải đo trên toàn bộ quy trình; không được cộng các tỷ lệ tiết kiệm riêng lẻ.** Nếu đổi mô hình, bảng giá hoặc độ dài nhiệm vụ, con số 30% cũng sẽ đổi. Điều có thể tái sử dụng là thiết kế bốn nhóm đối chứng, không phải chính tỷ lệ đó.
+
+**Policy tối ưu hóa chi phí.**
+
+Ba đòn bẩy phía đầu vào nên được thử trước là **tái sử dụng KV Cache** (giữ tiền tố ổn định), **nén ngữ cảnh** (rút gọn trajectory cũ và kết quả công cụ dài) và **định tuyến mô hình theo tầng** (giao yêu cầu đơn giản cho mô hình nhẹ, suy luận khó cho mô hình mạnh). Chương 2 đã trình bày cách triển khai. Điểm quan trọng ở góc độ vận hành là mỗi biện pháp cần có công tắc riêng, để nhóm đo được cả tác động độc lập lẫn tương tác khi kết hợp. Ngoài ra còn hai cách gắn trực tiếp với đánh giá và vận hành.
+
+**Xử lý hàng loạt không đồng bộ** Tích lũy các tác vụ không theo thời gian thực để xử lý hàng loạt và tận dụng chiết khấu giá hàng loạt của nhà cung cấp API; trong các tình huống tự triển khai, nó cũng có thể cải thiện việc sử dụng GPU trong thời kỳ khó khăn.
+
+**Giám sát chi phí và kiểm soát ngân sách.**
+
+Cần thiết lập hệ thống giám sát chi phí theo thời gian thực trong môi trường sản xuất: theo dõi mức tiêu thụ mã thông báo và chi phí API theo loại nhiệm vụ, mô hình, người dùng và các thứ nguyên khác. Đồng thời, đặt giới hạn chi phí cho từng nhiệm vụ - tự động chấm dứt khi Agent rơi vào vòng lặp hoặc khám phá quá sâu để ngăn một nhiệm vụ đơn lẻ phát sinh chi phí cao bất thường.
+
+> **Thử nghiệm 7-9 ★: Phân tích chi phí toàn diện của các nhiệm vụ Agent**
+>
+> **Mục tiêu thử nghiệm**: Tái hiện phân tích chi phí của quy trình tám lượt ở trên, sau đó kiểm tra cùng các biện pháp tối ưu trên khối lượng công việc thực tế của bạn.
+>
+> **Giải pháp kỹ thuật**: Trước hết tái hiện nhiệm vụ cố định trong kho đi kèm, rồi chọn thêm một số nhiệm vụ đại diện của riêng bạn. Dùng LangSmith hoặc hệ thống theo dõi tự xây dựng để ghi token đầu vào/đầu ra và token suy nghĩ, số lần gọi công cụ và kích thước kết quả, cùng độ trễ đầu cuối của từng lệnh gọi LLM. Tính chi phí trung bình, p50/p95/p99 và cơ cấu chi phí theo loại nhiệm vụ.
+>
+> **Tiêu chí chấp nhận**: Tạo báo cáo chi tiết và xác định các nguồn chi phí chính. Chạy đủ bốn tổ hợp công tắc, đo từng biện pháp riêng và cả hai cùng lúc. Khi đổi mô hình, phải chạy lại thay vì dùng lại tỷ lệ tiết kiệm của trajectory đã lưu.
+>
+>
+
+### Lặp lại liên tục theo định hướng đánh giá
+
+Lựa chọn mô hình không phải là quyết định một lần mà là một quá trình liên tục đòi hỏi phải điều chỉnh linh hoạt khi mô hình phát triển. Khái niệm cốt lõi về việc “có một hệ thống đánh giá có thể nhanh chóng theo kịp sự phát triển của mô hình” đã được đề xuất ở đầu chương này. Một trường hợp chuyển đổi mô hình cụ thể được sử dụng dưới đây để minh họa cách hệ thống này hoạt động trong quá trình ra quyết định thực tế.
+
+Giả sử rằng hệ thống Agent của bạn hiện được xây dựng trên Claude, hệ thống này hoạt động tốt trong việc gọi công cụ và điều phối phức tạp. Một ngày nọ, Gemini phát hành một mẫu mới và các điểm chuẩn công khai cho thấy nó vượt qua Claude ở nhiều chỉ số và được định giá thấp hơn. Câu hỏi bạn gặp phải tại thời điểm này không phải là "Gemini có tốt hơn Claude" mà là " **Gemini có tốt hơn Claude cho nhiệm vụ cụ thể của tôi không? Tốt hơn bao nhiêu? Chi phí chuyển đổi là bao nhiêu?**"
+
+Các nhóm có hệ thống đánh giá được thiết lập tốt có thể đưa ra câu trả lời trong vài giờ: chạy mô hình mới trên bộ dữ liệu đánh giá của riêng họ và so sánh tỷ lệ thành công của nhiệm vụ, độ chính xác của lệnh gọi công cụ, độ trễ và chi phí. Bạn có thể thấy rằng mô hình mới thực sự tốt hơn và rẻ hơn đối với các tác vụ đơn giản, nhưng trong các tình huống cốt lõi liên quan đến việc điều phối công cụ nhiều vòng phức tạp, tỷ lệ thành công giảm 5%. Sau khi xác nhận rằng sự khác biệt này vượt quá băng thông nhiễu (xem "Đánh giá ý nghĩa thống kê của kết quả" bên dưới), quyết định của bạn trở thành chiến lược khác biệt hóa "chuyển sang mô hình mới cho các nhiệm vụ đơn giản để giảm chi phí và giữ lại mô hình ban đầu cho các nhiệm vụ phức tạp để đảm bảo chất lượng" thay vì mù quáng chuyển đổi toàn bộ. Kiểu ra quyết định dựa trên dữ liệu tinh tế này chỉ có thể thực hiện được nếu hệ thống đánh giá được xây dựng trước.
+
+> **Thử nghiệm 7-10 ★★: Điểm chuẩn hiệu suất mô hình đa chiều**
+>
+> Tiến hành kiểm tra điểm chuẩn toàn diện trên LLM chính thống và các nhà cung cấp API khác nhau, đồng thời thiết lập cơ sở dữ liệu ra quyết định lựa chọn mô hình đa chiều.
+>
+> Chọn phạm vi thử nghiệm: các mô hình SOTA nguồn đóng như dòng GPT, dòng Claude, dòng Gemini, dòng Doubao và các mô hình nguồn mở như Qwen, Kimi, DeepSeek. Kiểm tra các nhà cung cấp API khác nhau cho cùng một kiểu máy (ví dụ: DeepSeek chính thức so với Siliconflow) và xác minh kết quả của nền tảng giám sát hiệu suất của bên thứ ba (ví dụ: Phân tích nhân tạo).
+>
+> Thiết kế khối lượng công việc kiểm tra được tiêu chuẩn hóa: kiểm tra thông lượng đầu vào sử dụng ngữ cảnh có độ dài cố định (mã thông báo 8K/32K/128K) và yêu cầu kiểm tra thông lượng đầu ra tạo ra phản hồi có độ dài cố định (mã thông báo 512/2048). Kiểm tra độ trễ bao gồm TTFT (thời gian tạo mã thông báo đầu tiên) và độ trễ từ đầu đến cuối, đồng thời thời lượng suy nghĩ và độ trễ suy nghĩ được đo riêng cho các mô hình hỗ trợ suy nghĩ. Ít nhất 100 yêu cầu cho mỗi cấu hình, tính toán độ lệch chuẩn/p50/p95/p99 - phương sai độ trễ cao có nghĩa là trải nghiệm người dùng không ổn định.
+>
+> Đánh giá tính khả dụng và độ ổn định của API: Thăm dò mỗi giờ trong một tuần và ghi lại tỷ lệ thành công, loại lỗi và thời gian lỗi. Tính toán tỷ lệ thất bại, MTTR (Thời gian trung bình để khôi phục) và thời gian khả dụng liên tục tối đa. Kiểm tra ngưỡng thực tế của giới hạn tốc độ - tìm điểm điều tiết bằng cách tăng dần độ đồng thời và ghi lại giới hạn trên RPM/TPM. Tính toán chi phí toàn diện: Thu thập thông tin về giá (đơn giá của mã thông báo đầu vào/đầu ra/bộ đệm), xem xét tác động của KV Cache và tính chi phí trung bình của các nhiệm vụ Agent nhiều vòng điển hình.
+>
+> **Thử nghiệm 7-11 ★★: Đánh giá lựa chọn toàn diện hệ thống bộ nhớ người dùng**
+>
+> **Điều kiện tiên quyết**: Bạn cần phải hoàn thành thử nghiệm RAG Truy xuất ngữ cảnh hoặc Thông minh hóa Chương 3.
+>
+> **Mục tiêu**: Tiến hành đánh giá lựa chọn liên kết đầy đủ để truy xuất bộ nhớ người dùng Agent và xem ba điểm lựa chọn của mô hình nhúng, trình sắp xếp lại và mô hình chính Agent cùng ảnh hưởng như thế nào đến chất lượng truy xuất, độ trễ và chi phí. Sử dụng lại `chapter3/contextual-retrieval-for-user-memory` hoặc `chapter3/agentic-rag-for-user-memory` và so sánh trên 60 trường hợp thử nghiệm.
+>
+> **Chấp nhận**: Quét ba điểm lựa chọn tương ứng - mô hình được nhúng (BGE-M3 / OpenAI / Beanbao, v.v., ghi lại độ chính xác, độ trễ, chi phí khi truy xuất top-5), trình xếp hạng lại (bao gồm đường cơ sở "không có trình xếp hạng lại" để định lượng giá trị cận biên của nó), mô hình chính (tỷ lệ thành công cụ thể và hiệu quả sử dụng công cụ trong cùng một cấu hình truy xuất). Điều quan trọng là đọc ra sự phối hợp giữa các thành phần: phần nhúng mạnh hơn có thể làm cho trình sắp xếp lại trở nên dư thừa và mô hình chính mạnh hơn có thể bù đắp cho việc thiếu khả năng truy xuất - lựa chọn là sự đánh đổi có hệ thống, không phải là lựa chọn từng cái một của mạnh nhất. Xem kho hỗ trợ để biết chi tiết cấu hình.
+>
+
+## Đánh giá ý nghĩa thống kê của kết quả
+
+"Quyết định chuyển đổi trong vài giờ" có một tiền đề ngầm: sự khác biệt quan sát được về điểm số là tín hiệu thực, không phải nhiễu lấy mẫu. Tiền đề cho rằng kích thước của tập đánh giá bị giới hạn và đầu ra của mô hình không chắc chắn sẽ không tự động được giữ vững.
+
+Một công cụ để ước tính đại khái băng thông nhiễu là sai số chuẩn của phân bố nhị thức (sai số chuẩn, được sử dụng để mô tả phạm vi dao động của tỷ lệ thành công do lấy mẫu ngẫu nhiên. Giá trị càng lớn thì tỷ lệ thành công càng kém tin cậy). Nếu tỷ lệ thành công p được đo trên n trường hợp thử nghiệm thì sai số chuẩn sẽ xấp xỉ √(p(1-p)/n). Để đưa ra một ví dụ cụ thể: 100 trường hợp sử dụng, tỷ lệ thành công 70%, sai số chuẩn ≈ √(0,7×0.3/100) ≈ 4,6%. Theo trực quan, khoảng tin cậy 95% (phạm vi trong đó tỷ lệ thành công thực sự chắc chắn giảm khoảng 95%) là khoảng p ± 2 sai số chuẩn, hoặc 70% ± 9 điểm phần trăm. Nghĩa là, chênh lệch 3 điểm phần trăm như "mô hình mới 73% so với mô hình cũ 70%" nằm trong phạm vi băng thông nhiễu - khi so sánh hai tỷ lệ thành công như thể chúng độc lập với nhau, sai số chuẩn của chênh lệch là khoảng hệ số √2 (ở đây là khoảng 6,5%). Nhưng cần nhấn mạnh rằng √2 này là thuật toán cho "hai phép đo độc lập với nhau". Trong chiến đấu thực tế, hai cấu hình thường chạy trên cùng một loạt nhiệm vụ và các mẫu không độc lập - giả định về tính độc lập chỉ là giới hạn trên bảo thủ, được sử dụng để nhanh chóng đánh giá rằng "sự khác biệt này không đáng để xem xét nghiêm túc". Theo cách tính bảo thủ này, chênh lệch điểm số 3% nhỏ hơn nhiều so với mức độ ồn 6,5%. Theo đó, việc chuyển đổi mô hình không khác nhiều so với việc tung đồng xu.
+
+Có thêm một lớp bất định trong đánh giá Agent: cùng mô hình và cùng tập dữ liệu vẫn có thể cho kết quả khác nhau giữa các lần chạy, do lấy mẫu, biến động của kết quả công cụ và thời điểm của môi trường. Vì vậy, một lần chạy không đủ để quyết định triển khai. Hãy **chạy lặp và lấy trung bình** — chẳng hạn 3-5 lần cho mỗi cấu hình — đồng thời báo cáo cả giá trị trung bình lẫn độ phân tán. Thử nghiệm AndroidWorld nhỏ ở phần sau chỉ có một lần chạy ghép cặp cho mỗi nhiệm vụ; nó chỉ giúp sàng lọc ý tưởng đáng thử ở quy mô lớn hơn. Quyết định triển khai vẫn cần một đợt chạy nhiều seed trên toàn bộ tập nhiệm vụ.
+
+Một nguyên tắc thực tế được rút ra từ điều này: **Khi chênh lệch điểm nhỏ hơn băng thông nhiễu, không có quyết định chuyển đổi nào được đưa ra**. Nhưng trước khi “không chuyển đổi”, trước tiên bạn nên chuyển sang phương pháp phân tích nhạy cảm và chính xác hơn. Khi so sánh hai cấu hình trên cùng một loạt nhiệm vụ, phương pháp mặc định đúng là **phân tích cặp**: so sánh kết quả của hai vấn đề theo từng câu hỏi, chỉ xem xét các trường hợp sử dụng đó với các kết quả khác nhau (một đúng và một sai) và sử dụng các ý tưởng như thử nghiệm của McNemar để xác định xem sự khác biệt có đáng kể hay không. Phân tích theo cặp loại trừ nguồn nhiễu phổ biến là "độ khó của chính câu hỏi", do đó, nó nhạy hơn nhiều so với "trừ hai tỷ lệ thành công độc lập" với cùng cỡ mẫu - ước tính √2 trước đó dựa trên giả định về tính độc lập chỉ là một sàng lọc thận trọng không yêu cầu truy cập Internet, chỉ cần tính toán bằng miệng và được sử dụng để nhanh chóng loại bỏ sự khác biệt về điểm số rõ ràng là ngoài tầm với. Nếu phân tích ghép đôi vẫn cho thấy sự khác biệt là không chắc chắn thì hãy xem xét mở rộng mẫu: sai số chuẩn giảm theo √n và băng thông nhiễu chỉ giảm một nửa khi mở rộng mẫu từ 100 lên 400. Chi phí mở rộng mẫu rất cao. Mặt khác, nếu bản thân lợi ích dự kiến của việc cải tiến chỉ là điểm phần trăm 2-3 và bộ đánh giá chỉ có vài chục trường hợp sử dụng thì bộ đánh giá này không thể cho biết liệu cải tiến đó có hiệu quả hay không - ưu tiên tại thời điểm này là mở rộng bộ đánh giá thay vì tiếp tục lặp lại Agent.
+
+Có một cạm bẫy khác dễ bị bỏ qua: **so sánh nhiều giả thuyết**. Nếu kiểm tra sáu giả thuyết độc lập với ngưỡng tin cậy 95%, xác suất xuất hiện ít nhất một kết quả dương tính giả là 1 − 0,95^6 ≈ 26%. Càng thử nhiều thay đổi, càng dễ có một thay đổi “trông như hiệu quả” chỉ do ngẫu nhiên. Có hai cách xử lý: siết ngưỡng ý nghĩa theo số phép thử, chẳng hạn hiệu chỉnh Bonferroni, hoặc chạy xác nhận độc lập và chỉ chấp nhận kết luận có thể lặp lại. Chuỗi AndroidWorld ở phần sau giảm rủi ro này bằng cách chỉ đổi một biến mỗi vòng; nếu sàng lọc nhiều hướng song song, vẫn phải hiệu chỉnh hoặc xác nhận lại độc lập.
+
+Các quyết định dựa trên đánh giá dựa trên dữ liệu chất lượng cao thu được từ việc ghi lại có hệ thống các hoạt động Agent—đây chính là giải pháp mà observability có thể giải quyết được.
+
+**So sánh theo cặp:**
+
+```python
+for task in paired_tasks:
+    for seed in fixed_seeds:
+        a = run(config_a, task, seed)
+        b = run(config_b, task, seed)
+        record_paired_delta(verifier(a), verifier(b))
+
+return paired_bootstrap_or_mcnemar(all_deltas)
+```
+
+## Observability của Agent
+
+Các quyết định dựa trên đánh giá, dù là lựa chọn mô hình hay lặp lại liên tục, đều dựa vào dữ liệu vận hành chất lượng cao. Trước tiên, chúng tôi mô tả cách thu thập dữ liệu này một cách có hệ thống (observability được), sau đó thảo luận cách chuyển kết quả đánh giá thành cải tiến hệ thống.
+
+![Hình 7-6 Ngăn xếp công nghệ quan sát ](images/fig7-6.svg)
+
+Khái niệm Observability được mượn từ lĩnh vực hệ thống phân tán: bạn không thể trực tiếp mở hệ thống để xem nó đang làm gì. Bạn chỉ có thể suy ra điều gì đang xảy ra thông qua nhật ký, chỉ báo và dữ liệu theo dõi mà nó đưa ra. Cũng giống như bác sĩ không thể nhìn trực tiếp tình trạng cơ thể bệnh nhân mà chỉ có thể chẩn đoán vấn đề thông qua các tín hiệu bên ngoài như nhiệt độ cơ thể, huyết áp, hình ảnh. Hệ thống Agent khiến việc này trở nên khó khăn hơn: cùng một đầu vào có thể tạo ra các đầu ra khác nhau, nhiều vòng lý luận và lệnh gọi công cụ khiến đường dẫn thực thi trở nên cực kỳ phức tạp và quá trình "tư duy" của mô hình hoàn toàn không rõ ràng với thế giới bên ngoài.
+
+Giá trị của observability trước tiên nằm ở **chẩn đoán vấn đề**: trajectory hoàn chỉnh cho phép các nhà phát triển phát lại toàn bộ quá trình thay vì dựa vào phỏng đoán. Thứ hai là cơ sở của **tối ưu hóa liên tục** - bạn có thể xem tác vụ nào yêu cầu lặp lại nhiều lần, công cụ nào có tỷ lệ thành công thấp nhất và truy vấn tìm kiếm nào luôn trả về kết quả trống. Trên **Quản lý chi phí**, chi phí vận hành Agent có thể thay đổi theo một hoặc hai bậc độ lớn đối với các nhiệm vụ khác nhau và việc theo dõi có thể xác định các trường hợp chi phí cao bất thường. Cuối cùng, dữ liệu trajectory tích lũy cũng cung cấp cơ sở cho việc tối ưu hóa hệ thống và cải tiến mô hình tiếp theo.
+
+Cơ sở dữ liệu của observability Agent là **Trace** và cấu trúc dữ liệu của nó tuân theo mô hình cây span của hệ thống phân tán: một lần thực thi tác vụ tương ứng với một trajectory, trong đó mỗi lệnh gọi LLM, mỗi lệnh gọi công cụ và mỗi lần truy xuất là một **span**(đơn vị thực thi ghi lại đầu vào và đầu ra, thời gian bắt đầu và kết thúc, mức tiêu thụ mã thông báo và thông tin lỗi), span Mối quan hệ cha-con giữa chúng tạo thành một cây thực thi - cho ví dụ: trong khoảng "vòng lặp chính Agent", có một số khoảng phụ "cuộc gọi LLM" và "cuộc gọi công cụ". Các giao thức được tiêu chuẩn hóa có sẵn ở lớp này: **OpenTelemetry** là một tiêu chuẩn theo dõi phân tán chung và các thông số kỹ thuật như **OpenInference** xác định các quy ước ngữ nghĩa dành riêng cho ứng dụng LLM trên đó (cách ghi lại các từ nhắc nhở, tham số mô hình, cách sử dụng mã thông báo, v.v.). Ưu điểm của việc sử dụng các giao thức chuẩn là việc thu thập và phân tích được tách rời—cùng một dữ liệu theo dõi có thể được kết nối với các chương trình phụ trợ phân tích khác nhau để tránh bị khóa vào một nền tảng duy nhất.
+
+LangSmith là một trong những nền tảng tiêu biểu trong lĩnh vực này (có vị trí tương tự như Langfuse, Arize Phoenix, v.v.), tích hợp observability, đánh giá và tối ưu hóa thành một vòng khép kín. Mỗi lần thực thi sẽ tạo ra một phiên theo dõi, trong đó các lệnh gọi mô hình, cách sử dụng công cụ và truy xuất kiến thức được ghi lại dưới dạng các đơn vị thực thi độc lập và cây thực thi được hình thành thông qua các liên kết nhân quả. Mỗi đơn vị ghi lại đầy đủ thông tin đầu vào và đầu ra, thông tin thời gian, dữ liệu chi phí và thông tin lỗi. Nền tảng sử dụng tính năng thu thập dữ liệu hàng loạt không đồng bộ để đảm bảo rằng bản thân việc theo dõi không ảnh hưởng đến độ trễ phản hồi của Agent.
+
+Nền tảng này cũng hỗ trợ thử nghiệm A/B (định tuyến một phần lưu lượng truy cập của người dùng sang phiên bản mới, tự động so sánh các chỉ báo khác nhau và hỗ trợ khôi phục nhanh hoặc mở rộng dần dần), quản lý phiên bản từ nhanh chóng (mỗi phiên bản được liên kết với dữ liệu hiệu suất thời gian chạy) và phát triển cộng tác (các thành viên trong nhóm có thể chia sẻ dữ liệu theo dõi và các trường hợp sự cố). Dữ liệu thực khổng lồ trong môi trường sản xuất là mỏ vàng để cải tiến liên tục - nó có thể phát hiện ra các tình huống không mong muốn và xác định các điểm chức năng cần tối ưu hóa nhất.
+
+Điểm đến có giá trị nhất cho dữ liệu có thể quan sát được là quay trở lại các tài sản được đánh giá. Một vòng khép kín thực tế là: lọc ra các trường hợp thất bại và đáng ngờ khỏi quá trình sản xuất → khử nhạy cảm (xóa các trường nhạy cảm như quyền riêng tư và khóa của người dùng) → đưa các trường hợp sử dụng mới và thử nghiệm hồi quy vào các bộ đánh giá. Bằng cách này, bộ đánh giá không còn là một bộ sưu tập tĩnh được xây dựng một lần nữa mà là một tài sản sống phát triển cùng với sản phẩm và tiếp tục được phân phối gần với người dùng thực - chế độ lỗi hiển thị trực tuyến hôm nay sẽ trở thành trường hợp hồi quy để duy trì điểm mấu chốt này vào ngày mai. Đây chính xác là điểm giao thoa giữa observability và luồng đánh giá chính trong chương này: observability chịu trách nhiệm "nhìn thấy" những gì đang xảy ra trong thế giới thực và đánh giá chịu trách nhiệm củng cố những quan sát này thành các tiêu chuẩn có thể được kiểm tra nhiều lần.
+
+Observability phải đối mặt với một số loại thách thức:
+
+- **Khối lượng dữ liệu và sự cân bằng quyền riêng tư**: Các hệ thống có lưu lượng truy cập cao có thể tạo ra hàng terabyte dữ liệu theo dõi mỗi ngày trong khi vẫn cần tuân thủ các quy định bảo vệ dữ liệu.
+- **Tính phức tạp của quy kết nhân quả**: Việc tự động xác định nguyên nhân gốc rễ từ trajectory vẫn yêu cầu các thuật toán phân tích thông minh hơn và nghiên cứu tiên tiến đang cố gắng suy luận nguyên nhân và phân tích phản thực tế nhưng vẫn chưa hoàn thiện.
+- **Việc truy tìm vấn đề nan giải cho nhiều hệ thống Agent**: Việc theo dõi luồng thực thi trên nhiều Agent phức tạp và có ngữ nghĩa hơn so với các lệnh gọi API giữa các vi dịch vụ.
+- **Cân bằng giữa bảo vệ thời gian thực và phân tích sau**: Các tình huống rủi ro cao cần có biện pháp bảo vệ tích cực, nhưng điều này sẽ gây thêm độ trễ và cảnh báo sai.
+
+Với công nghệ ML được tích hợp sâu vào chuỗi công cụ, các nền tảng có observability trong tương lai dự kiến sẽ tự động xác định các điểm bất thường và xác định nguyên nhân gốc rễ của chúng.
+
+Với một hệ thống đánh giá hoàn chỉnh và bộ dữ liệu sẵn có, điều quan trọng là chuyển các kết quả đánh giá thành những cải tiến hệ thống thực tế.
+
+## Từ báo cáo Điểm chuẩn đến cải tiến hệ thống
+
+Trường hợp sau lấy từ một vòng lặp AndroidWorld có thật nhưng được thu hẹp có chủ đích trong kho đi kèm. Thử nghiệm gồm bốn nhiệm vụ cài đặt Wi-Fi trên trình giả lập API 35, mỗi nhiệm vụ có một cặp chạy đối chứng–thử nghiệm. Đây không phải toàn bộ benchmark 116 nhiệm vụ và cũng không thay thế việc chạy lại trong môi trường tham chiếu API 33. Giá trị của nó nằm ở chuỗi quyết định nối từ kết quả này sang kết quả kế tiếp, không phải ở một điểm số tổng quát.
+
+![Hình 7-7 Điểm chuẩn cho vòng kín cải tiến ](images/fig7-7.svg)
+
+Từ góc độ của kỹ thuật Harness, phần này chủ yếu nói về phương pháp tối ưu hóa lặp lại Harness - xác định các liên kết yếu trong Harness bằng cách đánh giá dữ liệu (không đủ ngữ cảnh? Thiếu các ràng buộc? Xác minh không đầy đủ? Phản hồi không kịp thời?), cải tiến có mục tiêu và sau đó đánh giá lại, tạo thành một vòng khép kín trong quá trình phát triển liên tục của Harness.
+
+Trước khi bắt đầu phân tích báo cáo Điểm chuẩn, có một nguyên tắc dễ bị bỏ qua: **Khi thấy hiệu suất của Agent giảm sút, trước tiên bạn nên kiểm tra chính hệ thống đánh giá trước khi chạm vào Agent**. Một hiểu lầm phổ biến là sửa đổi ngay mã Agent khi điểm giảm xuống, đồng thời bỏ qua rằng bản thân hệ thống đánh giá có thể gặp sự cố trước tiên - hướng điều chỉnh dựa trên tín hiệu bị méo có thể sai ngay từ đầu. Các nguồn lỗi phổ biến trong hệ thống đánh giá bao gồm: không đủ tài nguyên trong môi trường đang chạy dẫn đến dừng quá trình (được hiển thị dưới dạng lỗi ngẫu nhiên), lỗi trong chính trình ghi điểm xác định câu trả lời đúng là lỗi và sự mất kết nối giữa các trường hợp thử nghiệm và kịch bản sản xuất. Những vấn đề này giống hệt về mặt số lượng với sự xuống cấp của mô hình và chỉ có thể được phân biệt bằng cách kiểm tra các trajectory hoàn chỉnh.
+
+### Hiểu báo cáo điểm chuẩn: Nghệ thuật tìm ra vấn đề
+
+Báo cáo ban đầu ghi lại một lần chạy trên mỗi nhiệm vụ trong số 116 nhiệm vụ, với tỷ lệ thành công tổng thể khoảng 88%. Lỗi không phân tán ngẫu nhiên: ba trong bốn nhiệm vụ `SystemWifiTurn*` thất bại, và trajectory cho thấy Agent liên tục đi tới lui mà không xác nhận trạng thái cuối.
+
+Điểm tổng 88% dễ che khuất cụm lỗi nhỏ nhưng nhất quán này. Tăng giới hạn bước cũng không giải quyết đúng vấn đề: nó có thể biến “Agent không nhìn thấy điều khiển” thành “Agent chưa đủ kiên trì”. Cách đọc đúng là đi từ chi tiết lên: tìm cụm theo nhiệm vụ và nhãn năng lực, phát lại trajectory, xác định lỗi nằm ở quan sát, suy luận, hành động hay xác minh, rồi mới chọn một biến để thay đổi. Nhóm nhiệm vụ Wi-Fi ở đây được dùng để chẩn đoán cơ chế với chi phí thấp, không phải để ước lượng hiệu năng toàn hệ thống.
+
+### Từ dữ liệu đến giả thuyết: Xây dựng lộ trình cải tiến
+
+Vòng đầu kiểm tra lời giải thích rẻ nhất. H1 giả định Agent thiếu kiến thức điều hướng, nên chỉ nhóm thử nghiệm nhận thêm chỉ dẫn tìm trang Wi-Fi và kiểm tra trạng thái cuối. Tỷ lệ thành công không tăng; prompt không phải nút thắt.
+
+Vòng hai kiểm tra Agent thực sự nhìn thấy gì. H5 thay nguồn accessibility không tương thích với API 35 bằng cây UIAutomator được AndroidWorld hỗ trợ. Thành công tăng mạnh, nhưng cây đầy đủ làm lượng token tăng vọt. Vì vậy H5C không thêm thông tin mới; nó chỉ loại các nút container vô hình, không có văn bản và không thể thao tác, nhằm xem có thể giữ nguyên thành công với ít nhiễu hơn hay không.
+
+Trong cả ba vòng, mô hình, tham số nhiệm vụ, seed, giới hạn bước và trình giả lập đều được giữ nguyên; thứ tự hai nhánh được luân phiên. Nhờ chỉ thay một biến mỗi vòng, tác dụng phụ còn lại của vòng trước trở thành câu hỏi duy nhất cho vòng sau.
+
+### Từ kết quả đến quyết định: Sự đánh đổi dựa trên dữ liệu
+
+Bảng 7-5 tóm tắt số đo thực tế. Mỗi nhánh chỉ có bốn nhiệm vụ, nên các số này đủ để quyết định có đáng chạy rộng hơn hay không, chứ chưa thể đại diện cho toàn bộ AndroidWorld.
+
+Bảng 7-5 Ba vòng thử nghiệm trên nhóm nhiệm vụ Wi-Fi của AndroidWorld
+
+| Thử nghiệm | Biến duy nhất thay đổi | Thành công đối chứng → thử nghiệm | Token thử nghiệm / đối chứng | Quyết định kế tiếp |
+|---|---|---:|---:|---|
+| H1 | Thêm chỉ dẫn điều hướng | 25% → 25% | 0.47× | Không tăng thành công; giữ prompt cũ |
+| H5 | Accessibility feed → UIAutomator | 25% → 100% | 2.498× | Hiệu quả rõ nhưng quá tốn; tiếp tục tối ưu |
+| H5C | Rút gọn cây UIAutomator | 100% → 100% | 0.506× | Giữ thành công, giảm một nửa token; chuyển sang chạy đầy đủ |
+
+Trình tự quan trọng hơn từng tỷ lệ riêng lẻ. Chỉ dẫn chi tiết hơn không thể bù cho thông tin mà Agent chưa từng nhận được; khi nghi ngờ lỗi quan sát, hãy kiểm tra nó trước khi kéo dài prompt. Tuy nhiên, nhiều đầu vào hơn cũng chưa chắc tốt hơn. Cây phần tử đầy đủ khắc phục vấn đề quan sát nhưng đưa quá nhiều nhiễu vào ngữ cảnh. Loại các nút không có ý nghĩa vẫn giữ bốn lượt chạy thành công và giảm lượng token khoảng một nửa. Không hề đổi mô hình: chính cách Harness biểu diễn UI trước hết quyết định nhiệm vụ có làm được hay không, rồi quyết định chi phí để làm được việc đó.
+
+### Lặp lại liên tục: từ cải tiến đầu tiên đến phát triển hệ thống
+
+H5C vượt qua bốn nhiệm vụ mới chỉ đủ điều kiện cho một phép thử lớn hơn, chưa đủ để triển khai. Cổng tiếp theo là chạy cả 116 nhiệm vụ với năm seed trên Pixel 6 / API 33 và đầy đủ ứng dụng bên thứ ba. Tỷ lệ thành công không được kém hơn, tỷ lệ token phải ≤ 0.75 và tỷ lệ độ trễ phải ≤ 1.5. Trước khi hoàn tất phép thử đó, kết quả 4/4 của nhóm nhỏ không được báo cáo thành “100% thành công toàn hệ thống”.
+
+Đó là ý nghĩa thực tế của lặp liên tục: bằng chứng ở mỗi vòng chỉ cho phép hành động tiếp theo trong đúng phạm vi mà nó hỗ trợ. H1 chặn việc tiếp tục nhồi prompt; H5 tìm ra đúng cơ chế nhưng đồng thời lộ vấn đề chi phí; H5C xử lý chi phí và đủ điều kiện bước vào phép thử rộng. Một báo cáo benchmark tốt không chỉ nêu điểm số, mà còn nói rõ kết luận áp dụng ở đâu, guardrail nào chưa đạt và bước tiếp theo phải kiểm tra điều gì.
+
+> **Thử nghiệm 7-12 ★★★: Đánh giá và cải tiến trên AndroidWorld**
+>
+> Thử nghiệm này thực hành trọn vẹn con đường từ báo cáo đánh giá đến cải tiến hệ thống. Bắt đầu bằng báo cáo lịch sử và ba cặp chạy đã lưu trong `chapter6/android-world`.
+>
+> Bước một: chẩn đoán. Phân tích chéo các bảng theo từng nhiệm vụ và ma trận nhãn khả năng để ánh xạ các lỗi bề ngoài của nhiệm vụ đến những thiếu sót về năng lực sâu bên trong. Xác định các nhãn năng lực có tỷ lệ thành công thấp hơn mong đợi và các lĩnh vực nhiệm vụ tập trung thất bại.
+>
+> Bước 2: Xây dựng giả thuyết. Hình thành giả thuyết theo ba lớp (bề mặt → trung gian → sâu); mỗi giả thuyết phải nêu mức cải thiện thành công kỳ vọng và cách xác minh.
+>
+> Bước 3: Thử nghiệm theo giai đoạn. Tái hiện H1, H5 và H5C, mỗi vòng chỉ đổi một biến. Ghi token, độ trễ và hồi quy bên cạnh tỷ lệ thành công.
+>
+> Bước 4: Ra quyết định dựa trên dữ liệu. Đưa ra quyết định triển khai dựa trên tỷ lệ chi phí-lợi ích—thay vì chỉ áp dụng tất cả các cải tiến có sẵn, bạn cần cân nhắc phạm vi, tác động về độ trễ và chi phí chung của mỗi cải tiến. Những cải tiến chi phí thấp và năng suất cao được triển khai trước tiên, còn những cải tiến chi phí cao được giới hạn trong các kịch bản chính.
+>
+> Bước 5: Lặp lại. Một thử nghiệm nhóm nhỏ đạt yêu cầu chỉ được chuyển sang chạy đầy đủ. Chỉ thảo luận triển khai sau phép thử 116×5 trong môi trường tham chiếu; trong báo cáo phải giữ rõ khác biệt môi trường, cỡ mẫu và phạm vi chưa hoàn chỉnh.
+>
+
+## Từ đánh giá bên ngoài đến đánh giá nội bộ: cơ sở hạ tầng đánh giá cho Agent cấp sản xuất
+
+Các phần trước đã thảo luận về cách đánh giá hệ thống Agent từ bên ngoài—xây dựng môi trường đánh giá, thiết kế tập dữ liệu và phân tích báo cáo Điểm chuẩn. Nhưng các sản phẩm Agent tốt nhất không chỉ trải qua đánh giá bên ngoài mà còn có cơ sở hạ tầng tích hợp để tự đánh giá liên tục. Phần sau đây lấy OpenClaw Agent phổ biến nguồn mở được giới thiệu trong Chương 5 làm ví dụ, kết hợp với phân tích kỹ thuật công khai của sản phẩm Coding Agent hàng đầu để chia sẻ với những người thực hành, nhằm chứng minh một hệ thống đánh giá nội bộ đáng học hỏi - nó nhúng một cách có hệ thống phương pháp thử nghiệm trong nghiên cứu ML vào kỹ thuật sản phẩm.
+
+### Cơ sở hạ tầng Ablation: Hiểu rõ sự đóng góp thực sự của từng tính năng
+
+Các nhà nghiên cứu ML từ lâu đã sử dụng Nghiên cứu cắt bỏ để hiểu thành phần nào của mô hình thực sự quan trọng - cái gọi là cắt bỏ là "loại bỏ" từng thành phần nhất định để xem hiệu suất tổng thể giảm bao nhiêu. OpenClaw đưa phương pháp này vào kỹ thuật sản phẩm: một công tắc chính được tích hợp vào hệ thống để vô hiệu hóa nhiều tính năng chính (chế độ suy nghĩ, nén ngữ cảnh, bộ nhớ tự động, tác vụ nền, v.v.) cùng lúc, tạo ra đường cơ sở "mô hình trần". Điều này cho phép nhóm trả lời một câu hỏi quan trọng: **Tính năng này có thực sự cải thiện trải nghiệm người dùng hay chỉ cảm thấy hữu ích?**
+
+Việc cắt bỏ thành một phương pháp thực hành kỹ thuật thông thường thay vì nghiên cứu một lần có một số ý nghĩa thực tế. Đầu tiên, các công tắc cắt bỏ phải được đưa vào từ rất sớm trong đường dẫn khởi động—trước khi bất kỳ hằng số cấp mô-đun nào nắm bắt các giá trị cấu hình—có nghĩa là cơ sở hạ tầng cắt bỏ phải được thiết kế vào kiến trúc hệ thống ngay từ đầu, thay vì được cài đặt sau đó. Thứ hai, việc chạy thử nghiệm cắt bỏ thường xuyên (chẳng hạn như trước mỗi bản phát hành chính) có thể phát hiện ra "nợ tính năng"—các tính năng đã từng hoạt động nhưng không còn cần thiết khi mô hình phát triển. Phương pháp được đề xuất cho bất kỳ nhóm nào xây dựng Agent sản xuất là: **Mọi tính năng chính phải có thể chuyển đổi độc lập và nhóm phải thường xuyên xác minh đóng góp thực tế của từng tính năng**.
+
+### Phương pháp kiểm tra AB: Phân biệt giữa cơ chế và mục tiêu
+
+Sản phẩm Agent trưởng thành sẽ tiến hành kiểm tra AB nghiêm ngặt về hành vi của chính nó (nghĩa là người dùng được chia ngẫu nhiên thành hai nhóm, một nhóm sử dụng phiên bản cũ và nhóm còn lại sử dụng phiên bản mới và dữ liệu thực tế của hai nhóm được so sánh để xác định xem các thay đổi có hiệu quả hay không). Trường hợp thử nghiệm Agent AB được thiết kế tốt thể hiện một số nguyên tắc phương pháp chính:
+
+**Đa nhánh thay vì nhị phân**. Không chỉ so sánh "có" và "không", mà còn thiết kế nhiều biến thể lũy tiến (ví dụ: khi kiểm tra các điểm mạnh khác nhau của các ràng buộc từ gợi ý, hãy thiết lập một nhóm kiểm soát và ba nhóm thử nghiệm nghiêm ngặt hơn dần dần). Thiết kế này có thể tiết lộ mối quan hệ giữa liều lượng và phản ứng và giúp tìm ra điểm tối ưu.
+
+**Phân biệt giữa chỉ báo cơ chế và chỉ báo mục tiêu**. Đây là sai lầm dễ mắc phải nhất - coi thứ bạn đang thay đổi là mục tiêu tối ưu hóa. Ví dụ: nếu bạn đang thử nghiệm "giảm độ dài tệp kế hoạch của Agent", thì độ dài kế hoạch là một chỉ số cơ chế (thứ mà bạn thay đổi trực tiếp), nhưng đó không phải là mục tiêu. Mục tiêu thực sự có thể là "giảm chi phí ở cấp độ phiên". Việc rút ngắn tài liệu kế hoạch có thể giảm chi phí nhưng cũng có thể dẫn đến nhiều chu kỳ chỉnh sửa-kiểm tra-chỉnh sửa hơn vì kế hoạch không đủ chi tiết, từ đó làm tăng sản lượng tổng thể. Hãy luôn tự hỏi bản thân: **Điều tôi đang thay đổi (cơ chế) có giống với điều tôi thực sự quan tâm (mục tiêu) không?** Nếu không, mục tiêu sẽ chiếm ưu thế.
+
+**Đặt chỉ báo guardrails**. Ngay cả khi chỉ số mục tiêu được cải thiện, thử nghiệm vẫn nên dừng nếu mức độ hài lòng của người dùng giảm, số lượng thao tác tăng hoặc tỷ lệ lỗi tăng. Chỉ báo guardrails là “điểm mấu chốt không thể tệ hơn”.
+
+**Ghi lại số liệu thống kê cơ bản**. Bao gồm kích thước mẫu, phân vị phân phối và phân tích tương quan (chẳng hạn như "tỷ lệ từ chối tăng đơn điệu với kích thước kế hoạch") để cung cấp ngữ cảnh cần thiết để diễn giải kết quả thử nghiệm. Nếu không có đường cơ sở, bạn không thể biết liệu kết quả thử nghiệm có ý nghĩa thống kê hay không.
+
+### Hệ thống chuyển mạch đặc tính hai lớp
+
+Các sản phẩm Agent cần thiết kế cơ sở hạ tầng chuyển đổi tính năng (Feature Flag) ngay từ ngày đầu tiên - cái gọi là chuyển đổi tính năng là một công tắc có thể được điều khiển từ xa để xác định xem một chức năng nào đó được bật hay tắt cho người dùng mà không cần phải triển khai lại mã. Nó phục vụ đồng thời ba mục đích: thử nghiệm, giải phóng dần dần và ngắt mạch khẩn cấp.
+
+**Chuyển đổi thời gian biên dịch** loại bỏ mã có liên quan khỏi sản phẩm một cách vật lý trong giai đoạn xây dựng. Các tính năng dành riêng cho phần bên trong không tồn tại trong bản dựng bên ngoài - ngay cả kỹ thuật đảo ngược cũng không thể phát hiện ra chức năng đã bị loại bỏ. Đây cũng là một cơ chế cắt bỏ rõ ràng: việc tắt một tính năng không bỏ qua logic khi chạy, nhưng mã tương ứng không tồn tại về mặt vật lý.
+
+Cấu hình của **chuyển đổi thời gian chạy** do máy chủ đưa ra và được lưu vào bộ nhớ đệm trên đĩa cục bộ. Thiết kế thà đọc cấu hình bộ đệm cũ hơn một chút hơn là cho phép Agent chặn khởi động do phải chờ yêu cầu mạng. Các quyết định phân nhóm cụ thể được thực hiện thông qua nền tảng thử nghiệm như GrowthBook, được sử dụng để phân bổ các nhóm thử nghiệm AB. Chi tiết thiết kế quan trọng là các sự kiện hiển thị cho từng tính năng được ghi lại nhiều nhất một lần mỗi phiên để tránh việc ghi lặp lại làm ô nhiễm dữ liệu thử nghiệm.
+
+Nguồn cảm hứng cho các nhà phát triển Agent: Công tắc tính năng không phải là công cụ gỡ lỗi mà là các thành phần kiến trúc hạng nhất.
+
+### Đánh giá độ nhạy của từ nhanh chóng
+
+Lời nhắc hệ thống là "mã" cốt lõi cho hành vi của Agent, nhưng nó thường thiếu kiểm tra hồi quy và kiểm soát phiên bản giống như mã thông thường. Những gì OpenClaw làm là cung cấp một công cụ chuyên dụng có thể trích xuất lời nhắc hệ thống được hiển thị đầy đủ trên một phiên bản git được chỉ định - văn bản cuối cùng bao gồm tất cả các phần mở rộng điều kiện động. Điều này cho phép nhóm trả lời chính xác: **Cam kết nào đã thay đổi từ gợi ý? Tác động lên bộ đánh giá là gì?**
+
+Các phương pháp được đề xuất cho bất kỳ nhóm Agent nào là: (1) Lời nhắc hệ thống phải được hiển thị một cách xác định (với cùng một đầu vào cấu hình, luôn tạo ra cùng một đầu ra); (2) Thiết lập cơ chế chụp nhanh theo phiên bản cho các lời nhắc; (3) Mọi thay đổi nhanh chóng phải chạy thử nghiệm hồi quy trên tập đánh giá - giống như các thay đổi mã cần chạy CI.
+
+### Phân tích nhận thức về quyền riêng tư làm cơ sở để đánh giá
+
+Đánh giá dựa trên dữ liệu tốt, nhưng các sản phẩm Agent thường xử lý nội dung nhạy cảm của người dùng. OpenClaw giải quyết mâu thuẫn này thông qua một hệ thống loại: giao diện phân tích chỉ chấp nhận các giá trị được bao bọc trong một loại đặc biệt và bản thân tên loại là một trajectory kiểm tra - nó có nghĩa đen là "Tôi đã xác minh rằng đây không phải là mã hoặc đường dẫn tệp". Thiết kế này biến các ràng buộc về quyền riêng tư từ các thông số kỹ thuật được ghi lại thành các kiểm tra loại được thực thi tại thời điểm biên dịch.
+
+Nguyên tắc cốt lõi là: **Thiết kế các hạn chế về quyền riêng tư vào hệ thống ngay từ đầu, thay vì thêm chúng vào sau**. Nếu hệ thống phân tích của bạn không thể thu thập dữ liệu một cách an toàn thì bạn không thể đánh giá hiệu quả. Quyền riêng tư và đánh giá không bị đối lập - thiết kế chú trọng đến quyền riêng tư buộc bạn phải suy nghĩ cẩn thận về *những gì thực sự cần đo lường*, từ đó dẫn đến các số liệu đánh giá chính xác hơn.
+
+### Từ ngoài vào trong: Sự chuyển dịch trong tư duy đánh giá
+
+Thông điệp cốt lõi của phần này là: **Các phần trước đã hướng dẫn bạn cách đánh giá Agent từ bên ngoài, phần này cho biết cách các sản phẩm Agent tốt nhất tự đánh giá từ bên trong**. Đánh giá bên ngoài cho bạn biết "Agent tốt như thế nào" và cơ sở hạ tầng đánh giá nội bộ cho bạn biết "những thay đổi nào đã làm cho nó tốt hơn". Thử nghiệm cắt bỏ khám phá những tính năng thực sự quan trọng, thử nghiệm AB định lượng tác động của từng thay đổi, chuyển đổi tính năng cung cấp cơ sở hạ tầng cho thử nghiệm và khôi phục, đánh giá độ nhạy từ nhanh chóng kết hợp lời nhắc của hệ thống vào hệ thống CI và phân tích nhận thức về quyền riêng tư đảm bảo tuân thủ việc thu thập dữ liệu. Cùng với nhau, năm thành phần này tạo nên kỹ thuật sản phẩm dựa trên đánh giá—không phải thỉnh thoảng thực hiện đánh giá mà đưa đánh giá vào mọi quyết định về sản phẩm.
+
+## Môi trường mô phỏng: cầu nối từ đánh giá đến hậu đào tạo
+
+Điểm cuối cùng của việc đánh giá không phải là điểm số mà là sự tiến bộ. Chương này đã chỉ ra hai con đường để cải tiến: điều chỉnh Harness (từ báo cáo Điểm chuẩn đến cải tiến hệ thống) và đưa đánh giá vào Kỹ thuật Sản phẩm (cơ sở hạ tầng đánh giá nội bộ). Hình thức cải thiện mạnh mẽ nhất là đào tạo - khi mục tiêu mở rộng từ "đánh giá các khả năng hiện có" sang "trau dồi các khả năng mới", đặc biệt thông qua công nghệ post-training đã thảo luận ở Chương 8, môi trường đánh giá cần phát triển thành **môi trường mô phỏng**: một sân chơi ảo cho phép Agent luyện tập nhiều lần và tự động ghi điểm. Sự khác biệt cốt lõi giữa môi trường mô phỏng và đánh giá là tần suất tương tác cao hơn nhiều (hàng triệu so với hàng nghìn), nhu cầu ngẫu nhiên hóa (để ngăn chặn việc học vẹt các cấu hình cụ thể) và nhu cầu cung cấp phản hồi ngay lập tức. Từ góc độ các lĩnh vực ứng dụng, môi trường mô phỏng được chia thành hai loại: môi trường kỹ thuật số (nhiệm vụ xử lý thông tin) và môi trường thể hiện (nhận thức và vận hành thế giới vật lý).
+
+Đây là cách nối hai đầu cầu. Tài sản tích lũy ở bên đánh giá có thể được chuyển đổi gần như liền mạch thành tín hiệu đào tạo: một tập hợp Rubric hoặc trình xác thực được xác định rõ ràng về cơ bản là chức năng khen thưởng của RLVR (Học tăng cường với Phần thưởng có thể xác minh) - tập lệnh phán xét trực tiếp là tập lệnh khen thưởng. Bài kiểm tra có đạt hay không và trạng thái có đạt tiêu chuẩn không chỉ là tiêu chí đánh giá mà còn là phần thưởng cho việc học tập củng cố. Nhưng việc đào tạo sẽ tạo ra những yêu cầu mới mà bạn không phải lo lắng trong giai đoạn đánh giá. Một là **ngữ nghĩa thiết lập lại đáng tin cậy**: quá trình đào tạo yêu cầu chạy hàng triệu tập (một tập là một vòng tương tác hoàn chỉnh từ trạng thái ban đầu đến khi kết thúc nhiệm vụ). Mỗi tập phải có khả năng đặt lại môi trường về trạng thái ban đầu nhất định và sạch sẽ, nếu không tín hiệu gradient sẽ bị ảnh hưởng bởi trạng thái dư của vòng trước. Thứ hai là thông lượng cao hơn nhiều so với đánh giá: hàng nghìn đánh giá là đủ để đưa ra kết luận, trong khi quá trình đào tạo yêu cầu cung cấp cho mô hình hàng triệu tương tác trong khoảng thời gian đồng hồ treo tường có thể chấp nhận được. Tính song song của môi trường và chi phí của một phiên bản duy nhất quyết định trực tiếp liệu việc đào tạo có khả thi hay không. Hai điểm này - trình xác thực chức năng khen thưởng, thiết lập lại và thông lượng theo định hướng đào tạo - sẽ được mở rộng trong Chương 8.
+
+![Hình 7-8 Phổ độ trung thực mô phỏng ](images/fig7-8.svg)
+
+**Về mặt môi trường kỹ thuật số**, khung AWorld đã xây dựng hộp cát máy chủ MCP có thể điều khiển cho nhiệm vụ GAIA, cung cấp 26 máy chủ MCP bao gồm 126 chức năng công cụ để tránh các lệnh cấm và tác dụng phụ không thể kiểm soát do truy cập trực tiếp vào API thực. Tất cả các lệnh gọi công cụ đều có thể phát lại và kiểm tra được. Kiến trúc phân tán của AWorld rút ngắn thời gian thực thi nối tiếp truyền thống từ 7695 giây xuống còn 525 giây (tăng tốc 14,6 lần). Thiết kế không trạng thái của môi trường làm cho mỗi phiên bản hoàn toàn độc lập và hỗ trợ tính song song hiệu quả.
+
+Về mặt **môi trường hiện thân**, RoboTwin2 xây dựng nhiệm vụ vận hành hai cánh tay dựa trên công cụ vật lý và môi trường ngẫu nhiên hóa vị trí, hướng và hình thức của các đối tượng để cải thiện khả năng khái quát hóa. Observation Space bao gồm tầm nhìn của nhiều camera và trạng thái khớp, đồng thời đạt được khả năng kiểm soát theo thời gian thực thông qua **Action Chunking** - mô hình lên kế hoạch cho nhiều hành động liên tục cùng một lúc (xem Chương 6 để biết chi tiết). OSWorld Cho phép cài đặt lại thông qua ảnh chụp nhanh máy ảo, AndroidWorld tập trung vào tự động hóa ứng dụng di động. Bất kể môi trường kỹ thuật số hay môi trường được thể hiện, môi trường mô phỏng cũng yêu cầu môi trường thực thi biệt lập và cơ chế nhận dạng ảo (cách ly VM/container, tác nhân dân cư, xác thực Human-in-the-Loop, hệ thống tệp dùng chung) được thảo luận trong Chương 4, sẽ không được lặp lại ở đây.
+
+> **Thử nghiệm 7-13 ★★: Định cấu hình Môi trường thông minh hiện thân với OpenVLA và RoboTwin2**
+>
+> Xây dựng môi trường mô phỏng hoạt động của robot. Đọc tài liệu `ch7/SimpleVLA-RL` và OpenVLA để hiểu kiến trúc của mô hình hành động-ngôn ngữ-tầm nhìn (tích hợp từ đầu đến cuối của bộ mã hóa hình ảnh + mô hình ngôn ngữ + bộ giải mã hành động, chiếu hình ảnh và văn bản vào một không gian ngữ nghĩa chung). Định cấu hình môi trường RoboTwin2 và hiểu không gian quan sát (trạng thái khớp ba chiều RGB + 14 chiều) và không gian hành động (vectơ điều khiển 14 chiều). Nghiên cứu cơ chế ngẫu nhiên hóa môi trường và logic ràng buộc không gian trong move_can_pot. Chạy đánh giá mô hình được đào tạo trước, ghi lại tỷ lệ thành công, thời gian hoàn thành và các chế độ thất bại, tập trung vào tác động của việc phân chia hành động.
+>
+>
+> ![Hình 7-9 OpenVLA và RoboTwin2 thể hiện môi trường thông minh ](images/fig7-9.svg)
+>
+>
+
+### Đánh đổi độ trung thực và ngẫu nhiên hóa tên miền
+
+Môi trường có độ chính xác cao có thể được chuyển sang thế giới thực tốt hơn nhưng lại tốn kém về mặt tính toán. Một khía cạnh khác của độ chính xác là mức độ ngẫu nhiên hóa: ngẫu nhiên hóa vừa phải có thể cải thiện việc khái quát hóa, trong khi ngẫu nhiên hóa quá mức có thể khiến nhiệm vụ trở nên quá khó khăn. **Ngẫu nhiên hóa tên miền** là công nghệ then chốt giúp thu hẹp khoảng cách giữa mô phỏng và thực tế (khoảng cách sim-to-real): giới thiệu một loạt các thay đổi ngẫu nhiên về thông số vật lý, hình thức trực quan, nhiễu cảm biến, v.v. - giống như luyện tập cầm nắm dưới nhiều ánh sáng và góc độ khác nhau, bạn sẽ không bỏ lỡ do thay đổi ánh sáng trong môi trường thực. Trong môi trường kỹ thuật số, sim-to-real thể hiện ở sự khác biệt về kết xuất giao diện, thời gian phản hồi, v.v., có thể được giảm thiểu bằng cách đưa ra sự ngẫu nhiên về độ trễ và lỗi.
+
+Tại thời điểm này, môi trường đánh giá đã hoàn thành quá trình phát triển cuối cùng của nó: từ phòng thi để đo lường khả năng thành nơi rèn luyện trau dồi khả năng. Chương 8 sẽ giới thiệu cách AWorld-train biến loại môi trường mô phỏng này thành địa điểm đào tạo, cũng như những thách thức kỹ thuật liên quan - hệ thống đánh giá và môi trường mô phỏng được thiết lập trong chương này là hai nền tảng của quá trình post-training.
+
+[^re-bench-2025]: Wijk, Hjalmar, et al. *RE-Bench: Evaluating Frontier AI R&D Capabilities of Language Model Agents against Human Experts.* arXiv:2411.15114, 2025.
 
 ## Tóm tắt chương này
 
-Bản chất của post-training mô hình là viết chiến lược tương tác thành các tham số.
+Chương này xoay quanh một câu hỏi: làm sao biết Agent thực sự đã tốt hơn? Từ môi trường thử nghiệm có thể tái hiện, tập dữ liệu chống rò rỉ, LLM làm giám khảo, cho đến việc dùng kết quả để chọn mô hình và lặp hệ thống — mắt xích nào cũng ảnh hưởng đến độ tin cậy của kết luận. Các thí nghiệm đo được trong chương bổ sung bốn cảnh báo cụ thể: ghép bộ nhớ có cấu trúc với RAG không mặc nhiên tạo ra hiệp lực; mức tiết kiệm từ cache và nén không thể cộng thẳng; lựa chọn âm thanh tham chiếu làm thay đổi ý nghĩa của điểm đa phương thức; và cách Harness biểu diễn đầu vào có thể quyết định cả thành công lẫn chi phí token. Việc chọn mô hình còn phải so sánh đường cong năng lực theo ngân sách tài nguyên, không chỉ nhìn một điểm số. Với Agent cấp sản xuất, đánh giá không phải kỳ thi thỉnh thoảng mới tổ chức mà là cơ chế xác minh liên tục trong mọi quyết định sản phẩm.
 
-SFT và RL không cạnh tranh mà tuần tự: SFT trước tiên ổn định định dạng đầu ra (nếu không, tín hiệu phần thưởng của RL hoàn toàn không thể tính được) và RL học cách khái quát hóa trên cơ sở này. "Bộ nhớ SFT, khái quát hóa RL" không phải là một khẩu hiệu, nó là một hiện tượng có thể đo lường được.
-Có hai phán đoán xuyên suốt toàn bộ chương này và đáng được ghi nhớ hơn bất kỳ thuật toán nào. Đầu tiên, **dữ liệu và môi trường quan trọng hơn thuật toán**: Bạn có thể sử dụng thuật toán RL có sẵn. Điều thực sự mở rộng khoảng cách là độ trung thực của môi trường mô phỏng và chất lượng của dữ liệu huấn luyện; khi không xây được môi trường thật, dùng mô hình để mô phỏng môi trường (tổng hợp giá trị trả về của công cụ, mô phỏng động lực môi trường) cũng là một lộ trình khả thi, nhưng hãy nhớ rằng sai lệch của bộ mô phỏng chính là trần của quá trình đào tạo; không chỉ câu trả lời có thể được sàng lọc, chính phân phối nhiệm vụ của dữ liệu huấn luyện cũng có thể trở thành đối tượng tối ưu hóa. Trong nhiều trường hợp, miễn là có chất lượng dữ liệu của SFT, bạn thậm chí không cần thực hiện RL. Thứ hai, **Nút thắt chính hiện tại của RL là hiệu quả mẫu**: On-Policy Chưng cất, khiến mỗi bước trở nên dày đặc hơn và hình phạt đường dẫn xác minh RLVP ("kết quả khen thưởng, đường dẫn phạt" và sử dụng phần thưởng một phần có thể đạt được tiến bộ để giải cứu các mẫu của nhóm bị đánh bại hoàn toàn) biến phản hồi môi trường lãng phí thành tín hiệu có thể học được hiện là hai hướng hứa hẹn nhất. Điểm chung của chúng vẫn là cùng một câu - biến thông tin đã tồn tại trong môi trường và dữ liệu nhưng bị lãng phí bởi phần thưởng kết quả thuần túy thành thứ mà mô hình có thể học được. Khi không có giáo viên mạnh hơn, hướng suy nghĩ này còn có một biến thể tự chưng cất: OPSD cho cùng một mô hình đóng hai thân phận "giáo viên nhìn đáp án" và "học sinh chỉ thấy đề bài" để giám sát lẫn nhau, đưa tín hiệu dày đặc theo từng mã thông báo đến những nhiệm vụ có phần thưởng không thể xác minh.
+Phương pháp cốt lõi: quan sát → giả thuyết → thử nghiệm → xác minh → hiểu biết mới → giả thuyết mới, khiến dự án Agent chuyển từ “giả kim thuật” dựa trên kinh nghiệm sang kỹ thuật khoa học dựa trên dữ liệu.
 
-Chương này trả lời cách cập nhật tham số để Agent có thể tiến hóa liên tục. Ở chương tiếp theo, chúng ta sẽ thấy tham số chỉ là một trong bốn vật mang quá trình tự tiến hóa của Agent: tri thức, chỉ dẫn, chương trình và tham số.
+Hệ thống đánh giá được giới thiệu trong chương này tạo thành một vòng khép kín hoàn chỉnh: **Môi trường đánh giá** cung cấp cơ sở hạ tầng kiểm thử tự động → **Bộ dữ liệu đánh giá** xác định các trường hợp kiểm thử → **Phương pháp đánh giá tự động**(LLM-as-a-Judge và Rubric) cho điểm hiệu suất Agent → **Phân tích điểm chuẩn** cho thấy hướng cải tiến → **Cải tiến hệ thống** Khắc phục sự cố → Cập nhật môi trường đánh giá và bộ dữ liệu để bắt đầu một lần lặp mới.
 
-[^ch7-1]: Schulman, John and Thinking Machines Lab, “LoRA Without Regret” , 2025.
-[^ch7-4]: Ouyang, Long et al., “Training Language Models to Follow Instructions with Human Feedback” , OpenAI, 2022.
-[^ch7-5]: Gao, Leo, John Schulman, and Jacob Hilton, “Scaling Laws for Reward Model Overoptimization” , OpenAI, 2023.
-[^ch7-6]: Rafailov, Rafael et al., “Direct Preference Optimization: Your Language Model is Secretly a Reward Model” , 2023.
-[^ch7-7]: Lightman, Hunter et al., “Let's Verify Step by Step” , OpenAI, 2023.
-[^ch7-8]: Silver, David and Richard S. Sutton, “Welcome to the Era of Experience” , 2025.
-[^ch7-9]: Để biết thiết kế hình phạt theo đường dẫn, bốn nguyên tắc và dữ liệu thử nghiệm trong phần này, hãy xem Li, Bojie và Noah Shi, "RLVP: Phạt đường đi, khen thưởng kết quả", 2026. arXiv:2607.07435.
-[^ch7-10]: Để biết các phương pháp và thí nghiệm của Chưng cất On-Policy, hãy xem Phòng thí nghiệm Máy Tư duy, "Chưng cất On-Policy", 2025.
-[^ch7-11]: So sánh post-training của bộ cảm biến thời gian Agent này - DPO và bốn chế độ lỗi tương ứng RL và bước đột phá của quá trình chưng cất On-Policy - xem Li, Bojie và Noah Shi, "Agents That Sense Physical Time: Emergency, Sự kiên trì và cảnh giác là các biện pháp kiểm soát bị thiếu đối với LLM Agents”, 2026. https://01.me/research/physical-time-agent
-[^ch7-12]: Kulikov, Ilia, et al. *Autodata: An Agentic Data Scientist to Create High Quality Synthetic Data.* arXiv:2606.25996, 2026.
-[^ch7-13]: Sun, Hao, et al. "ZeroSearch: Incentivize the Search Capability of LLMs without Searching", 2025. arXiv:2505.04588.
-[^ch7-14]: "DreamGym: Scaling Agent Learning via Experience Synthesis", 2025. arXiv:2511.01824.
-[^ch7-15]: Zhao, Siyan, et al. "Self-Distilled Reasoner: On-Policy Self-Distillation for Large Language Models", 2026. arXiv:2601.18734.
-[^ch7-16]: Shen, Ziqi, et al. "Purified OPSD: On-Policy Self-Distillation Without Losing How to Think", 2026. arXiv:2607.02234.
-[^ch7-17]: Tan, Zelin, et al. "SKT: Skill-Use Training at Scale via Verified Synthetic Data Generation", 2026. arXiv:2608.02287.
-[^ch7-18]: Wei, Yifan, et al. "Towards Compositional Generalization of LLMs via Skill Taxonomy Guided Data Synthesis", 2026. arXiv:2601.03676.
-[^ch7-19]: Zhu, Kaijie, et al. "TermiGen: High-Fidelity Environment and Robust Trajectory Synthesis for Terminal Agents", 2026. arXiv:2602.07274.
-[^ch7-20]: Hua, Zhanbo, et al. "CLI-Universe: Towards Verifiable Task Synthesis Engine for Terminal Agents", 2026. arXiv:2606.22883.
+Từ góc độ kỹ thuật Harness được giới thiệu trong Chương 1, phương pháp đánh giá trong chương này là việc triển khai có hệ thống chức năng "xác minh" trong Harness và vòng khép kín "từ báo cáo Điểm chuẩn đến cải tiến hệ thống" là cơ chế cốt lõi của tối ưu hóa lặp lại Harness - việc đánh giá không chỉ đo lường khả năng hiện tại của Agent mà còn định hướng hướng phát triển liên tục của Harness.
 
-[^ch7-23]: Liu, Zijun et al., "Inference-Time Scaling for Generalist Reward Modeling", 2025. arXiv:2504.02495. https://arxiv.org/abs/2504.02495
-
-[^ch7-29]: storm, "Long-horizon agent self-checking and early stopping: the reward-seeking phenomenon and its mitigations", Qingke Community, 6 August 2026. https://qingkeai.online/archives/Reward-Seeking
-[^ch7-24]: Yang, Jihan et al., "V-IRL: Grounding Virtual Intelligence in Real Life", 2024. arXiv:2402.03310. https://arxiv.org/abs/2402.03310
-
-Quá trình post-training giải quyết được vấn đề "làm thế nào để làm cho mô hình thông minh hơn", nhưng chu kỳ cập nhật trọng số của mô hình được tính bằng tuần. Trên thực tế, API hoạt động trực tuyến và ngoại tuyến, nhu cầu của người dùng luôn thay đổi và các quy tắc kinh doanh thay đổi diễn ra hàng ngày. Chương tiếp theo sẽ khám phá một lộ trình tiến hóa bổ sung—không cần sửa đổi trọng số mô hình nhưng cho phép Agent xây dựng độc lập thư viện công cụ và cơ sở kiến thức thông qua External Learning (học bên ngoài tham số mô hình) để đạt được khả năng mở rộng liên tục.
+Hệ thống đánh giá được thiết lập trong chương này không chỉ phục vụ việc tối ưu hóa hệ thống hiện tại mà còn cung cấp nền tảng chính cho mô hình post-training trong chương tiếp theo - môi trường đánh giá và tập dữ liệu là đầu vào quan trọng cho post-training và môi trường mô phỏng là nền tảng thực hành cho post-training. Chương tiếp theo sẽ chuyển từ đánh giá sang cải tiến ở cấp độ mô hình, đi sâu vào cách viết chiến lược tương tác vào tham số mô hình thông qua SFT và RL.
 
 ## Câu hỏi tư duy
 
-1. ★★ Sự quên lãng nghiêm trọng - một tinh chỉnh dành riêng cho nhiệm vụ phá hủy các khả năng chung ban đầu của mô hình (chẳng hạn như các lệnh gọi công cụ chung) - đặc biệt rắc rối trong kịch bản Agent. So với việc tinh chỉnh đầy đủ thông số, LoRA đóng băng trọng số cơ bản và có nguy cơ quên thấp hơn, nhưng nó không tránh khỏi. Những chiến lược nào có thể làm giảm bớt tình trạng lãng quên các khả năng do tinh chỉnh gây ra?
-2. ★★ Quá trình post-training củng cố các khả năng thành trọng lượng mô hình (“bộ nhớ cơ”), trong khi In-Context Learning (học trong ngữ cảnh) sẽ đưa kiến thức vào đầu vào tại thời điểm suy luận. Tuy nhiên, một số khả năng, chẳng hạn như kiến thức về miền, có thể được học thông qua post-training hoặc được cung cấp bởi ví dụ few-shot. Bạn sẽ sử dụng tiêu chí nào để quyết định con đường mà một năng lực nhất định nên đi?
-3. ★★ Chưng cất mô hình cho phép các mô hình nhỏ tìm hiểu hành vi của các mô hình lớn. Theo mức độ khả năng, các mô hình chắt lọc có thể được chia đại khái thành ba cấp độ - **Mô hình trò chuyện**(một vòng đối thoại, trả lời trực tiếp), **Mô hình lý luận**(chuỗi suy nghĩ dài trước khi trả lời), **Mô hình tác nhân**(nhiều vòng công cụ gọi điện, tương tác với môi trường). Sự khác biệt về khó khăn khi chắt lọc ba loại mô hình này tương ứng là gì? (Mẹo: Bắt đầu với “chính xác những gì cần được chắt lọc”—cho dù đó là phong cách đầu ra, trajectory tư duy hoàn chỉnh hay chiến lược ra quyết định để tương tác với môi trường; những mã thông báo nào trong trajectory nên được học và những mã thông báo nào do môi trường trả về không nên được học; và các tín hiệu thành công hay thất bại xuất hiện muộn và thưa thớt như thế nào.)
-4. ★★★ Trong các tương tác Agent nhiều vòng, vấn đề phân bổ phần thưởng (phân công tín dụng) nghiêm trọng hơn trong một vòng duy nhất - thành công hay thất bại cuối cùng rất khó quy cho quyết định của vòng 3 hoặc vòng 7. Bạn sẽ thiết kế chiến lược phân phối phần thưởng như thế nào?
-5. ★★★ Post-training, External Learning (học bên ngoài tham số mô hình) và In-Context Learning (học trong ngữ cảnh) tạo thành ba khía cạnh của khả năng Agent. Nếu bạn có ngân sách cố định (giả sử là 10.000 đô la) và muốn cải thiện hiệu suất của một tổng đài viên, Agent, bạn sẽ phân bổ ngân sách như thế nào giữa ba chiều này? Quyết định của bạn phụ thuộc vào những yếu tố nào?
-6. ★★★ Trong trường hợp không có chức năng khen thưởng rõ ràng và mẫu thưa thớt, việc học theo mô hình tự động được một số người coi là mục tiêu cuối cùng của quá trình post-training. Các phương pháp đào tạo RL hiện tại cách mục tiêu này bao xa? Bạn nghĩ bước đột phá tiếp theo có nhiều khả năng đến từ hướng nào?
-7. ★★ Chương này chỉ ra rằng việc tinh chỉnh LoRA không hề tốn kém. Vì vậy, liệu có thể đào tạo LoRA dành riêng cho từng người dùng (hoặc từng công ty khách hàng) và ghi bộ nhớ người dùng hoặc kiến thức doanh nghiệp vào các tham số thay vì lưu trữ nó trong cơ sở kiến thức bên ngoài như Chương 3 không? Trong trường hợp nào thì "tham số ghi vào bộ nhớ" có nhiều ưu điểm hơn "ghi nhớ tham số và lưu trữ chúng trong cơ sở tri thức"? Trong trường hợp nào nó sẽ phản tác dụng?
-8. ★★★ On-Policy Chưng cất dựa vào mô hình giáo viên mạnh mẽ hơn để giám sát học sinh. Nhưng nghiên cứu Tổng quát hóa Weak-to-Strong của OpenAI đã đưa ra một phát hiện phản trực giác: tín hiệu giám sát của một mô hình yếu đôi khi có thể kích thích các khả năng tiềm ẩn nhưng chưa được kích hoạt của chính mô hình mạnh. Nếu ý tưởng này được áp dụng vào đào tạo Agent, liệu có thể đạt được sự chắt lọc ngược của "mô hình nhỏ dạy mô hình lớn" không?
-9. ★★ Mô hình khen thưởng quá trình (PRM) đánh giá từng bước tư duy, trong khi mô hình khen thưởng kết quả (ORM) chỉ xem xét kết quả cuối cùng. Nhưng cái nào đáng được khen thưởng hơn: “quy trình đúng sẽ dẫn đến kết quả sai” hay “quy trình sai sẽ ngẫu nhiên nhận được kết quả đúng”? Bạn cân nhắc điều này như thế nào trong kịch bản gọi công cụ nhiều bước của Agent?
-10. ★★★ Các bộ dữ liệu đánh giá được thảo luận trong chương này (chẳng hạn như SWE-Bench đã được xác minh, τ²-bench, AndroidWorld) có thể được sử dụng cho cả đánh giá và post-training. Nhưng nếu tập đánh giá được sử dụng để huấn luyện thì nó không còn là tập đánh giá độc lập nữa - điều này có vi phạm nguyên tắc cơ bản là phải tách biệt tập huấn luyện và tập kiểm tra không? Việc tạo tham số động của τ²-bench và các mẫu được tham số hóa của AndroidWorld giảm bớt vấn đề này ở một mức độ nhất định, nhưng bản thân cấu trúc mẫu vẫn được sửa. Làm thế nào để tìm được sự cân bằng giữa việc khai thác triệt để giá trị đào tạo của dữ liệu đánh giá và duy trì tính độc lập trong đánh giá?
-11. ★★★ Chương này đề xuất mô hình đào tạo "hình thức trước, sau đó là tinh thần": SFT cho đến khi "thể thức ổn định và khả năng bắt đầu hình thành", sau đó chuyển sang RL. Nhưng trên thực tế, làm thế nào để nhận định SFT đã “đủ” và nên chuyển đổi?
-12. ★★★ Màn hình động huấn luyện của ReTool (xem thử nghiệm 7-14), một vài phản hồi siêu dài sẽ kéo dài đáng kể toàn bộ chu kỳ huấn luyện - hầu hết quá trình triển khai hàng loạt đã được tạo nhưng bạn phải đợi những phản hồi dài nhất kết thúc, trong thời gian đó mức sử dụng GPU của cụm rất thấp. Làm cách nào để cải thiện việc sử dụng tài nguyên của cụm đào tạo trong kịch bản phản hồi dài hạn này?
-13. ★★★ Khi dùng LLM mô phỏng môi trường (ví dụ mô phỏng công cụ tìm kiếm, mô phỏng người dùng) để đào tạo Agent, đối tượng bị Agent lách luật chuyển từ "quy tắc của môi trường thật" sang "thiên lệch và lỗ hổng của chính bộ mô phỏng". Trong loại huấn luyện này có thể xuất hiện những hành vi hack phần thưởng cụ thể nào? Và nên phòng bị thế nào?
+1. ★★ LLM-as-a-Judge Sử dụng mô hình ngôn ngữ để đánh giá đầu ra của mô hình ngôn ngữ. Có điểm mù mang tính hệ thống nào trong quá trình “tự đánh giá” này không - ví dụ: mô hình có thể luôn cho điểm cao cho một phong cách trả lời nhất định, nhưng ưu tiên này không phù hợp với phán đoán của con người? Làm thế nào có thể phát hiện và sửa chữa sự thiên vị này?
+2. ★★★ Thiết kế “chống rò rỉ” của bộ dữ liệu đánh giá là rất quan trọng. Tuy nhiên, trong hệ sinh thái nguồn mở, một khi dữ liệu điểm chuẩn được công khai, nó sẽ sớm được đưa vào dữ liệu huấn luyện. Liệu “trò chơi mèo vờn chuột” này có hồi kết? Thiết kế một phương pháp đánh giá về cơ bản có khả năng chống rò rỉ dữ liệu.
+3. ★★ Thang đo Bốn tiêu chí của AI (dựa trên hướng dẫn của chuyên gia, phạm vi bao quát toàn diện, trọng số tầm quan trọng tiêu chuẩn, đánh giá khép kín) được thiết kế để loại bỏ tính chủ quan trong đánh giá. Nhưng một số khía cạnh nhiệm vụ (chẳng hạn như “liệu câu trả lời có hữu ích hay không” và “liệu giọng điệu có phù hợp”) về bản chất là chủ quan. Làm cách nào để thiết kế Rubric đáng tin cậy cho các kích thước chủ quan này?
+4. ★★ τ-bench đánh giá Agent bằng cách mô phỏng hành vi của người dùng thực. Nhưng bản thân người dùng được mô phỏng cũng là LLM - nó có thể đánh giá thấp một cách có hệ thống các tình huống khó khăn nhất định (chẳng hạn như người dùng cảm xúc, thiếu chính xác). Làm cách nào để xác minh chất lượng của chính người dùng mô phỏng?
+5. ★★ So sánh theo cặp (mô hình Bradley-Terry) giả định rằng các ưu tiên có tính bắc cầu (nếu A > B và B > C thì A > C). Nhưng sở thích của con người thường vi phạm tính bắc cầu. Trong trường hợp nào các tùy chọn không mang tính bắc cầu có thể xuất hiện trong đánh giá Agent? Điều này ảnh hưởng thế nào đến độ tin cậy của bảng xếp hạng?
+6. ★★ Chương này phân biệt Pass@k như trần năng lực với Pass consecutive@k như thước đo độ tin cậy nghiệp vụ. Với một Agent chỉ đạt tỷ lệ thành công 60% trong một lần chạy, bạn sẽ kết hợp chi phí thất bại, chi phí thử lại và tác dụng phụ của tác vụ như thế nào để quyết định nên báo cáo chỉ số nào và lấy $k$ bằng bao nhiêu?
+7. ★★ Chương này đề xuất phương pháp khoa học “quan sát→giả thuyết→thí nghiệm→xác minh”. Nhưng trên thực tế, không gian hành vi của Agent là rất lớn và việc xác minh một giả thuyết có thể yêu cầu hàng trăm lần đánh giá. Làm cách nào để tối đa hóa lượng thông tin được đánh giá trong phạm vi ngân sách tính toán hạn chế?
+8. ★ Trong thử nghiệm AndroidWorld, cây phần tử đầy đủ nâng tỷ lệ thành công từ 25% lên 100% nhưng làm lượng token tăng lên 2.498× so với đối chứng; sau khi cắt gọn, tỷ lệ thành công vẫn là 100% còn lượng token giảm xuống 0.506×. Bạn sẽ thiết kế quy tắc cắt tỉa tự động như thế nào để loại các nút UI rỗng về ngữ nghĩa mà không làm mất thông tin cần cho khả năng truy cập, xác minh trạng thái hoặc thao tác về sau?
+9. ★★ Mô phỏng người dùng của τ-bench áp dụng "tiết lộ thông tin lũy tiến"—không cung cấp tất cả thông tin cùng một lúc mà tiết lộ dần dần dựa trên các câu hỏi do Agent đặt ra. Thiết kế này ảnh hưởng thế nào đến kết quả đánh giá? Nếu chiến lược tiết lộ thông tin của người dùng mô phỏng khác biệt đáng kể so với chiến lược của người dùng thực, liệu kết luận đánh giá có còn đáng tin cậy không?

@@ -1,499 +1,450 @@
-# Multimodalitás és valós idejű interakció
+# Az ágensek folyamatos evolúciója
 
-Az előző fejezetekben azt vizsgáltuk, hogyan működnek az ügynökök egy szövegalapú világban, kontextuson, eszközökön és kódon keresztül kommunikálva a digitális rendszerekkel. De egy ügynök világa túlmutat a szövegen és az API-kon. Amint meg kell értenie egy kimondott parancsot, meg kell találnia és kattintania kell a megfelelő gombra a képernyőn, vagy egy robotkart kell irányítania egy tárgy megragadásához, új területre lép: a "multimodális valós idejű interakció" területére. Ez az elmozdulás a tiszta szöveges bemenettől és kimenettől a "multimodális érzékelés és valós idejű válaszadás" felé az a döntő lépés, amely az ügynököt a "párbeszédablakon" túlra repíti. A "multimodális" egyszerűen azt jelenti, hogy egyszerre több információformát kezelünk — szöveget, beszédet, képeket, videót és cselekvéseket — ahelyett, hogy csak szöveggel dolgoznánk.
+A mai ágensek feltűnő képességparadoxonnal szembesülnek: képesek korábban nem látott összetett feladatokat zero-shot megoldani, mégis tízezer hasonló feladat után is megismételhetik holnap az első napon elkövetett hibáikat. "Az önálló tapasztalatból való tanulás képessége" egyre fontosabbá válik ahhoz, hogy az ágensek a „feladatok elvégzésének képességétől" a „megbízható munkavégzés képességéig" jussanak, és egyben a következő modellgeneráció központi kutatási témája is. A jelenlegi modellek azonban még messze vannak attól, hogy önállóan képesek legyenek folyamatos tanulásra.
 
-Először is határozzuk meg e fejezet hatókörét. A statikus képek és dokumentumok értelmezése — egy képernyőkép vizsgálata, egy diagram olvasása, egy PDF feldolgozása — már az előző fejezetek ügynök-munkafolyamatainak természetes részévé vált. A mai multimodális LLM-ek számára ezek az egybemenetes megértési feladatok viszonylag érettek, és nem igényelnek különleges architektúrát. Ez a fejezet egy más problémacsoporttal foglalkozik: három olyan forgatókönyvvel, ahol a **valós idejű korlátok teszik nehézzé a multimodális problémákat** — hangalapú párbeszéd, grafikus felület (GUI) kezelés és robotvezérlés. Ezekben a beállításokban a bemenet folyamatosan érkezik, a kimenetnek pedig szigorú időkeretet kell teljesítenie, ami alapvetően megváltoztatja az architektúrát. A folyamatos vizuális streamek, vagyis a videó valós idejű megértése a cikk írásakor még nyitott probléma az ügynökök számára. Visszatérünk rá, amikor a Computer Use szakasz a képkockánkénti képernyőképek korlátait vizsgálja, majd ismét a fejezet végi kérdésekben. Még egy határvonal: e könyv keretrendszerében a multimodális "generálás" (kép- vagy videógenerálás) csupán egy szokványos eszközhívás, ahogyan azt az 5. fejezet a Multimédiás Generálásról tárgyalta. Az ügynök külső eszközként használja, így nem veti fel az itt tárgyalt valós idejű interakciós kihívásokat, és a fejezet fő vonalán kívül marad.
+Egy élesben használt modell egyetlen következtetés után nem változtatja meg automatikusan a paramétereit. A 2. fejezetben tárgyalt in-context tanulás, állapotkezelés és tömörítés lehetővé teszik, hogy egy ágens "az aktuális feladaton belül" alkalmazkodjon; amint a kontextus véget ér, ezek a változások azonban nem kerülnek át természetes úton a következő feladatra. A beszélgetések memóriában tárolása nem egyenlő az új viselkedés megtanulásával. A nyers trajektóriák hosszúak lehetnek, és hatékony stratégiák mellett véletlen sikereket, hibás attribúciókat és nem megbízható bemeneteket is tartalmazhatnak.
 
-A hangalapú interakció, a Computer Use és a robotkezelés három teljesen különböző területnek tűnhet, de mindhárom rendszerében feltűnően hasonló problémákba ütközik: egyszerre több modalitást kell feldolgozniuk, és rendkívül érzékenyek a késleltetésre. Egy kétszekundumosnál hosszabb szünet a hangalapú beszélgetésben nyugtalanná teszi az embereket; ezredmásodperces kilengés a robotvezérlésben ütközést okozhat. Ezek a korlátok együtt mindhárom forgatókönyvet ugyanabba az építészeti irányba terelik: el a "soros csővezetéktől" (mint egy gyári futószalag, ahol az egyik lépésnek be kell fejeződnie, mielőtt a következő elkezdődhet) és a "végponttól végpontig tartó modell" felé (egy egységes modell, amely közvetlenül a bemenettől a kimenetig halad, kiküszöbölve a köztes átadásokat).
+Itt egy fontos megkülönböztetést könnyű szem elől téveszteni: **a tapasztalat megőrzése nem ugyanaz, mint a tapasztalatból való tanulás**. Száz trajektória elhelyezése egy hosszú kontextusban vagy vektoros adatbázisban segíthet a modellnek egy eset előhívásában, amikor szüksége van rá, de nem hasonlítja össze automatikusan az eseteket: mely lépések ismétlődnek a sikeres trajektóriákban, mely gyakorlatok működnek csak egy régebbi felülettel, vagy hogy egy siker megalapozott stratégiából fakadt-e, nem pedig környezeti véletlenből. Tanulás csak akkor történik, amikor a rendszer aktívan kiértékeli, összehasonlítja, általánosítja és validálja a bizonyítékokat – nem pedig amikor egy napló a lemezre íródik. A 3. fejezetben tárgyalt felhasználói memória elsősorban azt rögzíti, „milyen a felhasználó és a világ"; a jelen fejezet tapasztalati tanulása ennél tovább megy, rögzítve, „mit kell tenni milyen feltételek mellett". Az előbbi segít az ágensnek többet megjegyezni; az utóbbi segít neki ügyesebbé válni, nem csupán tájékozottabbá.
 
-Ez a fejezet a következő vonalak mentén bontakozik ki:
+Miért ne hagyhatnánk, hogy a modell minden egyes feladat után közvetlenül betanítsa magát? Mert az éles környezetek ritkán biztosítanak tiszta tanulási jeleket. A felhasználói elégedettség nem jelent megfelelőséget; a paraméterek helyi frissítései képességfelejtést, irányelvi sodródást vagy a biztonság romlását is okozhatják. Ha egy futó modell ellenőrizetlen visszajelzések alapján közvetlenül módosíthatja saját paramétereit, a hibás tapasztalatok és a Prompt-injekciók meggyökeresedhetnek, majd a későbbi feladatok során tovább erősödhetnek. Másfelől az alapmodellek időszakos betanítása javíthatja az általános képességeket, de nem képes időben befogadni az egyes ágensek által nap mint nap tapasztalt privát szabályokat, eszközváltozásokat és helyi tapasztalatokat.
 
-1.  Először három hangarchitektúra paradigmát használunk keretrendszerként: a kaszkádolt (VAD-ASR-LLM-TTS csővezeték), a végponttól végpontig tartó omnimodális (Omni, egyetlen modell, amely azonban továbbra is a társalgási fordulókra támaszkodik), és a teljes duplex (Moshi és GPT-Live, amelyek egyszerre hallgatnak és beszélnek). Összehasonlítjuk késleltetésüket és kompromisszumaikat aszerint, hogy az egyes paradigmák mennyire lépnek túl a VAD diszkrét fordulókról alkotott feltételezésén. A kaszkádolt szakasz a VAD + ASR lecserélését is tárgyalja streaming hangérzékelésre.
-2.  Ezután megvizsgáljuk, hogy a gondolkodási architektúra hogyan egyezteti össze a "valós idejű válaszadás" és a "mély gondolkodás" közötti konfliktust: az egyszerű gyors-lassú párhuzamosítástól a szétválasztott megközelítésig, ahol egy háttérben futó érvelő modell "stratégaként" működik (GPT-Live delegálás, Pine AI stb.), egészen a Step-Audio R1 "internalizációjáig", ahol a gondolkodás egyetlen modellbe épül, amely "gondolkodva beszél".
-3.  Majd tárgyaljuk, hogy az emberibb beszédszintézis hogyan optimalizálja a végrehajtási réteget.
-4.  Végül kiterjesztjük a perspektívát a Computer Use-re (amely lehetővé teszi a mesterséges intelligencia számára, hogy a számítógép képernyőjét úgy kezelje, mint egy ember) és a robotkezelésre, megfigyelve, hogy ugyanazok a késleltetési és multimodalitási problémák hogyan jelentkeznek ebben a két forgatókönyvben.
+Ezért amíg a modellek önállóan még nem képesek folyamatosan és megbízhatóan tanulni, a „tanulást" először a modell köré épített autonóm rendszerként kell megvalósítani: rögzíteni kell a működési bizonyítékokat, ellenőrizni az eredményeket és a folyamatokat, több trajektóriából közös mintákat kell kinyerni, majd eldönteni, hogy frissíteni kell-e a tudást, az utasításokat, a programokat vagy a modellparamétereket. Minden módosításnak először jelölt verzióvá kell válnia, és csak regressziós tesztelés és biztonsági ellenőrzések után változtathatja meg a következő működési kört. Ez nem helyettesíti a modell tanulási képességét; a jelenlegi technikai korlátok között inkább egy mérnöki út az ágensek folyamatos tanulási képességének biztosításához.
 
-Két további elméleti téma átível ezeken a forgatókönyveken, és külön figyelmet érdemel: a "gondolkodási architektúra" (hogyan működik együtt a gyors és a lassú gondolkodás) és az ebből következő "gyors-lassú interfész" (a "Latens Híd" — mit cserélhetnek egymás között a gyors és lassú modellek a szövegen túl). Bár a hang kontextusában vezetjük be ezeket, a gondolatok nem korlátozódnak arra. A Computer Use és a robotika szakaszok ugyanazzal a kérdéssel találkoznak, hogy mikor érdemes lassú stratégát bevonni, ezért tartsuk észben mindkét témát.
+Az előző fejezetek már bemutatták a rendszerhez szükséges főbb összetevőket. A 2. fejezet a feladaton belüli állapotot, a 3. fejezet a tudás-infrastruktúrát tárgyalja, az 5. fejezet az ágensek meta-képességét adja az eszközök létrehozására és rendszerek módosítására, a 7. fejezet a kiértékelést és ellenőrzést, a 8. fejezet pedig a modellparaméterek frissítését magyarázza el. A 9. fejezet feladata, hogy ezeket az összetevőket a 8-1. ábrán látható folyamatos evolúciós hurokba szervezze.
 
-## Hang: A legtermészetesebb ember-gép interfész
+![9-1. ábra: Az ágensek folyamatos evolúciójának átfogó hurka](images/fig9-1.svg)
 
-A hang nem pusztán a szöveg hanggá alakítása. A beszéd körülbelül négyszer gyorsabb a gépelésnél, és szabadon hagyja a kezet és a tekintetet, ezért természetesen illeszti az Agentet egy folyamatos, bármikor megszakítható ki- és bemeneti hurokba. A hangbevitel szöveggé alakítja a diktálást; a hangügynök közvetlen együttműködést tesz lehetővé. Mindkettő támogatja a bevezetőben említett whisper codingot.
+A folyamatos evolúciónak visszakövethető működési tapasztalatokból kell származnia, meg kell változtatnia a későbbi viselkedést, és igazoltnak kell lennie, hogy nem okoz jelentős romlást. Ez a fejezet először azt tárgyalja, hogyan határozható meg pontosan, mi ment jól vagy rosszul egy futás során; majd négy frissítési módszert és azok alkalmazási határait hasonlítja össze; végül azt vizsgálja, hogy ezek a frissítések hogyan kerülnek ellenőrzésre, kiadásra, felülvizsgálatra és visszavonásra a hosszú távú működés során.
 
-A szakasz két irányt tárgyal: a felhasználó az Agenthez beszél, illetve az Agent a felhasználó nevében a külvilághoz beszél. A hangmodell azt határozza meg, mire tud válaszolni; az interakciós architektúra azt, hogy jól hall-e, időben válaszol-e, természetesen adja-e át a szót, és hívás közben elvégzi-e a megerősítéseket és eszközhívásokat.
+## Tanulási jelek származtatása működési trajektóriákból
 
-### Interakciós időzítés: a kaszkádtól a teljes duplexig
+A folyamatos evolúció kiindulópontja nem az „összefoglalás", hanem a "kiértékelés". Ha a rendszer nem tudja, hogy egy feladat elkészült-e, vagy hogy melyik lépés okozta a sikert vagy a kudarcot, a nyelvi modell által generált reflexiók csak találgatások lehetnek. Ha egy hibás kiértékelés bekerül a hosszú távú tudásba, egy rendszer Promptba vagy a tréningadatokba, hatásai a későbbi feladatok során felerősödhetnek.
 
-Az OpenAI GPT-Live bemutatója három paradigmát különböztet meg: kaszkád, köralapú és teljes duplex[^ch9-12]. Ezek eltérő kompromisszumok a késleltetés, a költség és a megfigyelhetőség között, nem lineáris fejlődési lépések.
+Egyes feladatok kimenetele viszonylag könnyen ellenőrizhető. Egy kódoló ágens futtathat teszteket, típusellenőrzéseket és teljesítménymérőket; egy visszatérítést feldolgozó ágens lekérdezheti a rendelés állapotát és a tényleges visszatérítési összeget. Az ilyen jelek valós környezeti állapotokból származnak, és általában megbízhatóbbak, mint a modell saját viselkedéséről adott leírásai. A helyes kimenet azonban nem jelent helyes folyamatot. A hibás tesztesetek törlése is átmehetővé teheti a teszteket, míg ha azt mondjuk a felhasználónak: „Hét napon belül kiadjuk a visszatérítést; kérjük, legyen türelemmel", az átmeneti elégedettséget kelthet. A megbízható kiértékelésnek ezért mind az eredményt, mind az eléréséhez vezető utat értékelnie kell.
 
-| Paradigma | Szerkezet | Előny | Korlát |
-| --- | --- | --- | --- |
-| Kaszkád | VAD → ASR → LLM → TTS | Átlátható, cserélhető, hibakereshető modulok | Késleltetés halmozódik, a paralingvisztikai jel elveszik |
-| Végponttól végpontig Omni | Egy modell hallgat, gondolkodik és beszél | Kisebb késleltetés, jobb hangszín- és környezethang-megőrzés | Továbbra is köralapú, drága a tanítás és a hibakeresés |
-| Teljes duplex | Folyamatosan hallgat, beszél és dönt | Átfedő beszéd és természetes megszakítás | Bonyolultabb tanítás, vezérlés és értékelés |
+Sok más feladatnak nincs egyetlen helyes válasza. Az, hogy az ügyfélszolgálat türelmes-e, hogy megfelelő alternatívákat kínál-e, hogy egy kutatási jelentés azonosítja-e a kulcsfontosságú bizonyítékokat, és hogy a generált szöveg természetes és tömör-e – mind kontextuális ítéletet igényel. A 7. fejezetben bemutatott LLM-as-a-Judge itt használható, de a bíráló nem szabad, hogy csak egy homályos összpontszámot adjon. Hatékonyabb megközelítés, ha előre definiálunk egy "rubrikát", és megköveteljük az ellenőrzőtől, hogy minden tételt pontozzon, idézze a trajektóriából a bizonyítékokat, és kifejezetten jelezze a bizonytalanságot, amikor a bizonyíték nem elegendő.
 
-A közös cél az „egymás után beszélünk” feltételezés és a VAD szólójoggal kapcsolatos találgatásának meghaladása. A kaszkád és az Omni még körökre bont; a teljes duplexben a modell folyamatosan dönti el, ki beszél.
+A 9-2. ábra egy háromrétegű ellenőrzési struktúrát mutat. Az alsó rétegbeli eredmény-ellenőrző a teszteredményeket, adatbázis-állapotokat és eszköz-visszatéréseket olvassa, hogy megválaszolja: „Ténylegesen elkészült a feladat?" A középső rétegbeli folyamat-ellenőrző az üzleti szabályokat, jogosultságokat és műveleti sorrendeket ellenőrzi a kérdésre: „Megengedett módon készült el?" A felső rétegbeli minőség-ellenőrző a rubrika szerint értékeli a nyelvet és a stratégiát a kérdésre: „Megfelelően lett kezelve?" Az alsó szintű mutatóknak erősebben kell támaszkodniuk a kódra és a környezeti alapismeretekre; csak a formalizálható szempontokat szabad nyelvi modellre bízni.
 
-[^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/. A háromosztatú besorolás a ChatGPT Voice három generációjának összefoglalásából származik; az Omni a „turn-based voice models” kategóriának felel meg.
-
-**Streaming megszakítása:**
+**Háromrétegű trajektória-ellenőrzés:**
 
 ```python
-while audio_is_arriving:
-    partial = asr.push(audio_chunk)
-    if endpoint_is_probable(partial):
-        candidate = llm.start(partial)
-        if later_audio_changes_meaning(partial):
-            cancel(candidate)                 # speculative cancellation
-        else:
-            tts.enqueue_stable_segments(candidate)
+outcome = verify_environment_state(trajectory)
+process = verify_actions_and_permissions(trajectory)
+quality = judge_with_rubric(trajectory, cite_evidence = true)
 
-on_final_transcript(text):
-    commit_or_restart(text)
-```
-
-### Paradigma 1 · Kaszkádolt csővezeték
-
-A legtöbb kereskedelmi hangasszisztens soros csővezetéket használ (9-1. ábra): a VAD érzékeli a végét, az ASR szöveggé alakítja a hangot, az LLM megérti és megfogalmazza a választ, a TTS pedig kimondja. A modularitás megkönnyíti az egyes részek optimalizálását, de minden határ várakozást ad hozzá.
-
-![9-1. ábra: Soros hangügynök-csővezeték](images/fig9-1.svg)
-
-| Modul | Feladat | Tipikus szűk keresztmetszet |
-| --- | --- | --- |
-| VAD | A beszéd végének eldöntése | Csendküszöb, várakozás és hibás szegmentálás |
-| ASR | Hangból szöveg | Felismerési késleltetés és kontextusvesztés |
-| LLM | Megértés, gondolkodás és generálás | Első token késleltetése, reasoning miatti várakozás |
-| TTS | Szövegből hang | Első csomag szintézise és lejátszási puffer |
-
-Rövid válasznál is sorosan összeadódik a VAD, ASR, LLM és TTS várakozása (9-2. ábra). Éles rendszerben a sorban állás tovább növeli az üresjárati késleltetést (9-3. ábra).
-
-![9-2. ábra: Soros válasz késleltetési vízesése](images/fig9-2.svg)
-
-![9-3. ábra: Sorban állási késleltetési görbe](images/fig9-3.svg)
-
-> **9-1. kísérlet ★: Hagyományos hangügynök építése**
->
-> WebSocketen keresztül kapcsoljuk össze a mikrofont, a Silero VAD-ot, a helyi Whisper-t, a streaming LLM-et és a Fish S1 TTS-t. A megőrzött valódi egyfordulós bizonyíték a teljes lánc futását mutatja, nem párhuzamossági vagy éles terhelési benchmark. Kód és elfogadási rekord: [chapter9/live-audio](../chapter9/live-audio/).
-
-> **Kiegészítő projekt: WebRTC-hangügynök, amely „felhívja a felhasználót”**
->
-> PSTN nem szükséges: a böngészős WebRTC megnyitja a munkamenetet, bekéri a hiányzó adatokat, visszamondja azokat megerősítésre, majd strukturált eredményt ment. Külső szervezethez ugyanazt a szerződést megfelelő PSTN/SIP-szolgáltatóra cseréljük. A projekt történeti exp9-2 azonosítókat őriz, de nem foglal számozott helyet a kéziratban. Lásd [chapter9/phone-agent](../chapter9/phone-agent/).
-
-#### A sorostól a streaming észlelésig
-
-Az ASR beszéd közben ideiglenes átiratot adhat, az LLM az első felolvasható mondatot átadhatja a TTS-nek, a TTS pedig hangblokkokat küldhet. Ettől a három szakasz nem lesz teljesen párhuzamos; előreindításkor a későbbi átirat változását törléssel, újraindítással vagy visszagörgetéssel kell kezelni.
-
-A VAD + ASR front-end három gondja a csend miatti **késleltetés**, a hezitálás, érzelem és környezeti hang elvesztése, valamint az e-mail-címek és tulajdonnevek **kontextustörése**. A valódi streaminghez kauzális vagy darabolt kódoló és inkrementális dekódolás kell; a Whisper teljes hangszegmenst vár. Az LLM-alapú hallási modell szöveget és szemantikai eseményeket adhat ki.
-
-A végpont eldöntése beépíthető a streaming felismerőbe, de a címkék csak a döntéskor látható információt használhatják[^ch9-11]. A speak_start/end, interrupt, emotion, laugh, sigh és noise jelölők megőrzik a nem szöveges jeleket.
-
-[^ch9-11]: A végpontítélet felismerőbe építéséről és az utólagos címkékről lásd Li, Bojie és Noah Shi. *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR.* 2026 (megjelenés alatt).
-
-> **9-2. kísérlet ★: Streaming hangészlelés szimulációja Qwen2-Audio-val**
->
-> A Qwen2-Audio nem streaming modell. Növekvő hangprefixekkel szimuláljuk a folyamatos észlelést, és 600 ms VAD + Whisper kontrollal hasonlítjuk össze. A canonical run csak 2/6 várt viselkedést reprodukált, 8,4–11,3 másodpercig tartott, a pause mintán kihagyta a silence-t, a noise mintát cough/laughter-ként tévesztette. Ez mechanizmus- és hibamód-vizsgálat, nem 100–200 ms-os streaming ígéret. Lásd [chapter9/streaming-speech](../chapter9/streaming-speech/).
-
-### Paradigma 2 · Végponttól végpontig tartó omnimodális modellek (Omni)
-
-A kaszkád szöveges határa elveszítheti az érzelmet, intonációt és környezeti hangot. Az Omni egy modellben hallgat, válaszol és beszél, de drágább tanítani, hibakeresni és cserélni. Előnye főként a késleltetés és a nem szöveges információ, nem szükségszerűen a pontosság. Az önkaszkád akkor javíthat felismerési hibát, ha a szöveg elég; beszédsebesség vagy érzelem esetén a szöveges szűk keresztmetszet bizonyítékot veszít[^ch9-13].
-
-[^ch9-13]: A kaszkád és a végponttól végpontig tartó út pontossági előnyeinek mérését lásd Li, Bojie és Noah Shi. *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents.* 2026 (megjelenés alatt).
-
-![9-4. ábra: End-to-end omnimodális hangmodellek](images/fig9-4.svg)
-
-A valós idejű hang API-k köztes megoldások: natívan kezelik a hangot, de VAD-ra, megszakításra és aszinkron eszközhívásra támaszkodnak. A feladatfüggő hibák fontosabbak, mint a ranglista.
-
-> **9-3. kísérlet ★★: MiniCPM-o 4.5 helyi futtatása — end-to-end és önkaszkád**
->
-> Rögzítsünk egy revíziót, kapcsoljuk ki a thinking mode-ot, és hasonlítsuk össze a közvetlen hangválaszt a transzkripció utáni válasszal. Ez az audio-információ megőrzését méri, nem a későbbi „gondolkodás beszéd közben” képességét.
-> 9-1. táblázat: MiniCPM-o 4.5 helyi eredményei: end-to-end és önkaszkád (négy mechanizmus-ellenőrzés, nem benchmark)
->
->
-> | Feladat | End-to-end | Önkaskád | Megfigyelés |
-> | --- | ---: | ---: | --- |
-> | Szemantikus számtan (2) | 1/2 | 2/2 | Egy átírási hibát kijavít |
-> | Paralingvisztikai beszédtempó (2) | 2/2 | 1/2 | A szöveg eltörli a gyors/lassú különbséget |
-> | Összesen | 3/4 | 3/4 | Azonos összeg, kiegészítő hibák |
->
-> A minta kicsi; nem bizonyít általános pontossági vagy sebességi sorrendet. Teljes bizonyíték: [chapter9/end-to-end-speech](../chapter9/end-to-end-speech/).
-
-Step-Audio 2 nyers hangból szöveget és hangot állít elő; a Step-Audio R1 a következtetést is a hangmodellbe építi.
-
-### Paradigma 3 · Teljes duplex interaktív modellek
-
-Az Omni a „felhasználó beszél” és a „modell beszél” időszakára osztja a párbeszédet, de a szinkrontolmácsolás átfedést igényel. A teljes duplex folyamatosan hallgat és beszél, és eldönti, folytatja-e, szünetel-e, megszakít-e vagy eszközt hív. A Kyutai Moshi korai példa; a Thinking Machines Lab Interaction Modelnek[^ch9-14] nevezi a modellbe épített interakciót. A GPT-Live ezt termelési méretre viszi.
-
-[^ch9-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” 2026-05. https://thinkingmachines.ai/blog/interaction-models/
-
-A történet: a kaszkád csendküszöbbel tippeli a fordulót, a streaming szemantikai szintre emeli a döntést, a teljes duplex pedig folytonos döntéssé alakítja az átváltást.
-
-### Kognitív időzítés: valós idejű interakció és mély gondolkodás
-
-Az előtérmodell addig válaszol, amíg a felhasználó jelen van; a háttérmodell tovább gondolkodhat. A három terv kompromisszum:
-
-| Terv | Előtér | Háttér | Kockázat |
-| --- | --- | --- | --- |
-| Gyors válasz, lassú javítás | Azonnali válasz | Újragondolás és kiegészítés | Ellentmondás |
-| Gyors interakció, lassú tanács | Beszélgetés és megfogalmazás | Tanács vagy eszközeredmény | Korlátozott interfész |
-| Egyesített gondolkodás és kifejezés | Gondolkodás közben beszél | Közös állapot | Magas újratanítási költség |
-
-#### 1. terv: gyors gondolkodás a kitöltéshez, lassú gondolkodás a válaszhoz
-
-A gyors gondolkodás néhány száz ezredmásodperc alatt képes kitöltő választ adni, míg a lassú gondolkodás a háttérben mélyebb levezetést végez. A gond az, hogy az egyszerű kérdéseket kétszer dolgozza fel, az összetetteknél pedig ellentmondás keletkezhet: a gyors modell vásárlást javasol, a lassú utóbb felfedezi, hogy a csomagból hiányzik egy kulcsfontosságú funkció, és a felhasználó néhány másodpercen belül egymásnak ellentmondó válaszokat hall. Az alapvető ok az, hogy a két példány egymástól függetlenül gondolkodott végig egy-egy kérdést.
-
-
-![9-5. ábra: Gyors/lassú gondolkodási architektúra és a tervek összehasonlítása](images/fig9-5.svg)
-
-
-#### 2. terv: gyors gondolkodás az interakcióhoz, lassú gondolkodás a figyelmeztetéshez
-
-A második tervben a háttérmodell állapotsávon vagy dedikált interfészen keresztül ad javaslatokat az előtérmodellnek, az előtér pedig továbbra is tartja a szót, és eldönti, hogyan fogalmaz. Ez stabilabb az elsőnél, de a kommunikáció továbbra is közvetett: az előtér félreértheti a javaslatot, és nem látja a háttér köztes gondolkodását; amíg a háttér nem végez, a felhasználó rákérdezésére az előtér csak a saját képességeire támaszkodhat. Természetesen tud „eredményre várni", de valódi gondolkodás beszéd közben nem valósul meg.
-
-#### 3. terv: a gondolkodás és a kifejezés végponttól végpontig tartó egyesítése (a Step-Audio R1 példáján)
-
-A harmadik terv a gondolkodási képességet közvetlenül a végponttól végpontig tartó hangmodellbe építi be. A Step-Audio R1 két egymást kiegészítő mechanizmussal két problémát old meg: a **modalitáshoz horgonyzott gondolkodásdesztilláció (MGRD)** akusztikai jellemzők alapján gondolkodtatja a modellt, az **MPS kétagyú architektúra** pedig párhuzamosítja a fogalmazást és a kifejezést. Az előbbi a „helyes gondolkodást" biztosítja, az utóbbi az „időben történő megszólalást" oldja meg.
-
-Ideális esetben a modellnek a hangmagasságból, a ritmusból és a hanglejtésből kellene megítélnie az érzelmet, nem pusztán az átiratból. Az úgynevezett „szöveggel helyettesített gondolkodás" azt jelenti, hogy a modell a dallam és az akusztikai jellemzők elemzése helyett a dalszöveg negatív szavaira támaszkodik. Az MGRD kiszűri azokat a gondolatmeneteket, amelyek valóban akusztikai jellemzőkre hivatkoznak, ezekkel az adatokkal tanítja a modellt, és megerősítéses tanulással akadályozza meg, hogy a modell átugorja a gondolkodást és egyből tippeljen.
-
-Az MPS-ben a fogalmazó agy folyamatosan gondolatfoszlányokat termel, a kifejező agy pedig, amint megkap egy foszlányt, a már elhangzott válasszal együtt azonnal beszédet generál. A kettő futószalagszerűen párhuzamosan működik, így nem kell megvárni a teljes gondolatmenet végét ahhoz, hogy a felhasználó meghallja az első mondatot (9-6. ábra).
-
-
-![9-6. ábra: A Step-Audio R1 MGRD és MPS kétagyú architektúrája](images/fig9-6.svg)
-
-
-Az egyesített modell valósítja meg a legszorosabban a „gondolkodás beszéd közben" elvét, ára viszont az, hogy a gondolkodást és a valós idejű kifejezést együtt kell újratanítani; a szétcsatolt út esetén könnyebb kicserélni a háttéragyat, az egyesített út pedig inkább a végletekig természetes hatásra törekvő, célzott forgatókönyvekhez való. A kettő kompromisszum, nem pedig egyszerű helyettesítője egymásnak.
-
-### Emberibb beszédszintézis
-
-A túl sima, szünet nélküli TTS gépiesnek hat. Az LLM THINKING, EMO:happy és SPEED:0.8x vezérlőjeleket adhat, a TTS pedig szünetté, prozódiává, tempóvá, nevetéssé vagy sóhajjá alakíthatja. Fish Audio S1 alatt a több referenciás beállítás kapta a legjobb pontszámot három kiegyensúlyozott vakhallgatásban (4,67/5), de a jelölés nélküli csoport megelőzte az egyreferenciásat, ezért a teljes tervezett sorrend nem ismétlődött meg.
-
-> **9-4. kísérlet ★★: Vezérlőtokenes TTS Fish Audióval**
->
-> Hasonlítsuk össze a jelölés nélküli, az egyreferenciás és a több referenciás hangkönyvtárat. A 24 referencia, az A/B/C média és az elfogadási rekord itt található: [chapter9/controllable-tts](../chapter9/controllable-tts/).
-
-## Computer Use: Grafikus Felület Automatizálási Ügynökök
-
-Mire mostanra észrevehették, hogy ez a fejezet sokkal több teret szentel a hangnak, mint a következő két forgatókönyvnek. Ez szándékos. A valós idejű multimodális rendszerek közül a hangtechnológia haladt a legmesszebbre, ezért nyújtja a legjobb referenciát. Végigjárta a teljes ívet az eredeti problémától — a soros csővezetékek túlzott késleltetése — a végponti modelleken, a teljes duplex interakción és a gondolkodva beszélésen át a mai viszonylag érett tervekig. Ezért meséltük el a történetét teljes egészében. Ahogy olvassák a Computer Use és a robotika szakaszokat, hasonlítsák össze ezzel a pályával: az egyes területek milyen messzire jutottak, és hol maradtak meg?
-
-Ez a három forgatókönyv különbözőnek tűnik, de ugyanazokkal a magkihívásokkal néz szembe: valós idejű érzékelés, alacsony késleltetésű döntéshozatal és folyamatos interakció. Ezután a vizuális interakcióra, vagyis a Computer Use-re térünk, kiterjesztve a perspektívát a hallásiról a vizuális modalitásra: mi lenne, ha egy ügynök nemcsak a beszédet értené, hanem "látná" is a képernyőt, és kezelné a grafikus felületet?
-
-A Computer Use, más néven GUI automatizálás, lehetővé teszi a mesterséges intelligencia számára, hogy úgy használja a szoftvereket, mint egy ember, a képernyő megfigyelésével és az egér és billentyűzet kezelésével — például böngésző megnyitása információk kereséséhez, adatok beírása egy táblázatkezelő alkalmazásba, vagy beállítások módosítása a rendszer beállításaiban. Magja egy "Perceive-Think-Act" (Érzékel-Gondolkodj-Cselekedj) ciklus (9-6. ábra):
-
-1.  Az ügynök képernyőképet készít az aktuális képernyőről.
-2.  Egy multimodális modell megkapja a képernyőképet és a feladatutasítást, és kiad egy gondolatot és egy konkrét cselekvést.
-3.  A végrehajtási réteg végrehajtja a cselekvést a valós környezetben (egér mozgatása, kattintás, szöveg beírása stb.).
-4.  Megvárja a felület válaszát, újabb képernyőképet készít, és belép a ciklus következő iterációjába.
-
-**Computer Use biztonsági ciklus:**
-
-```python
-observation = capture_screenshot_and_accessibility_tree()
-proposal = model.decide(task, observation)
-action = validate_schema_and_coordinates(proposal)
-
-if action.is_irreversible and not user_or_policy_approval(action):
-    stop("approval required")
+if not outcome.pass or not process.pass:
+    reject_as_learning_example(outcome, process, quality)
 else:
-    execute_in_sandbox_or_scoped_session(action)
-    new_observation = capture_after_settle()
-    if not verify_goal_progress(new_observation, action):
-        rollback_if_possible_or_replan()
+    emit_structured_diagnosis(outcome, process, quality)
 ```
 
-![9-7. ábra: Computer Use ügynök Érzékel-Gondolkodj-Cselekedj ciklusa](images/fig9-7.svg)
+![9-2. ábra: Háromrétegű trajektória-ellenőrzés a környezeti eredményektől az LLM Rubrikáig](images/fig9-2.svg)
 
-Ebben a ciklusban három kulcsfontosságú tervezési dimenzió van: "Cselekvési Tér" (milyen műveleteket végezhet az ügynök), "Vizuális Helymeghatározás" (hogyan találja meg a cél elemet a képernyőképen), és "Modell Architektúra" (hogyan generálja a helyes cselekvést a képernyőképből).
+Egy ügyfélszolgálati ágens esetében egy hasznos rubrikának legalább a 9-1. táblázatban felsorolt dimenziókat kell lefednie. Az első öt elsősorban az alapkövetelményeket kényszeríti ki, míg az utolsó kettő a szolgáltatás minőségét méri. Ez a bontás diagnosztikailag hasznosabb, mint annak megkérdezése, hogy a felhasználó elégedett volt-e: a felhasználó lehet elégedett, mert az ágens nem megfelelő visszatérítést adott ki, vagy elégedetlen egy megfelelőségi korlátozás miatt. Egyetlen elégedettségi pontszám nem képes megkülönböztetni a kettőt.
 
-### Cselekvési Tér Tervezése
+9-1. táblázat: Trajektória-kiértékelési dimenziók egy ügyfélszolgálati ágenshez
 
-Az Anthropic három eszköztípust határoz meg, amelyek teljes interakciós képességet alkotnak (9-7. ábra):
+| Dimenzió | Ellenőrzési kérdés | Elsődleges bizonyíték |
+|---|---|---|
+| Feladatkimenet | Teljesült a felhasználó alapvető kérése? | Végső környezeti állapot, eszközeredmények |
+| Szabálymegfelelés | Sérültek irányelvek, jogosultságok vagy előírt eljárások? | Irányelvtár, műveleti trajektória |
+| Adatvédelmi határok | Került nyilvánosságra olyan információ, amely nem lett volna szabad? | Válasz szövege, adathozzáférési rekordok |
+| Tényszerű megbízhatóság | Az állításokat alátámasztja a tudás vagy az eszközeredmények? | Hivatkozott források, eszköz-visszatérések |
+| Ígéret–tett konzisztencia | A befejezettként állított műveletek ténylegesen megtörténtek? | Válaszok és eszköznaplók összehasonlítása |
+| Kifejezésminőség | Természetes és tömör a nyelv, ismétlés vagy sablonos megfogalmazás nélkül? | Teljes beszélgetés, nyelvi rubrika |
+| Megfelelő alternatívák | Ha az eredeti terv kivitelezhetetlen volt, talált az ágens megengedett alternatívát? | Felhasználói cél, irányelvek és későbbi műveletek |
 
-![9-8. ábra: Computer Use cselekvési tér](images/fig9-8.svg)
+Az „ígéret–tett konzisztencia” különösen alkalmas ágens-forgatókönyvekhez. A hagyományos szövegkiértékelés csak a végső választ olvassa, és könnyen értékelheti a „Benyújtottam a visszatérítését" mondatot jó szolgáltatásként. A trajektória-kiértékelés ehelyett továbbmegy, és ellenőrzi, hogy a visszatérítési eszköz ténylegesen meghívásra került-e, a hívás sikeres volt-e, és a rendelés állapota megváltozott-e. A "„megfelelő alternatívák"" nem arra ösztönzi a modellt, hogy szabadon figyelmen kívül hagyja a szabályokat; megköveteli, hogy a modell megértse a felhasználó valódi célját, és ha a visszatérítés nem elérhető, olyan jogszerű opciókat vizsgáljon, mint az átütemezés, hosszabbítás vagy részleges kompenzáció.
 
-**GUI Kezelő Eszköz** (`computer` eszköz): Egérműveletek: mozgatás (`mouse_move`), bal/jobb/középső kattintás, dupla- vagy háromszoros kattintás, húzás (`left_click_drag`), és pontosabb lenyomás/elengedés műveletek (`left_mouse_down` és `left_mouse_up`). Görgetés (`scroll`) négy irányt támogat, és kombinálható módosító billentyűkkel. Billentyűzetműveletek: karakterenkénti gépelés (`type`, 12 ms intervallummal a karakterek között a valódi gépelés szimulálására), billentyűkombinációk (`key`, pl. `Ctrl+C`), és billentyű lenyomva tartása (`hold_key`). Érzékelési műveletek: képernyőkép készítése, kurzorpozíció lekérése (`cursor_position`), várakozás (`wait`).
+Az ellenőrzési eredményeket nem szabad skalárrá tömöríteni. A trajektória-kiértékelés inkább egy strukturált diagnózishoz áll közel: a feladat részben sikerült, a szabálymegfelelés rendben volt, de volt egy nem alátámasztott állítás, egy hamis ígéret, és a válasz háromszor ismételte meg az irányelv magyarázatát. A dimenzionális jelek megőrzik minden probléma természetét és a bizonyítékok helyét. Csak így tudják a downstream modulok meghatározni, hogy egy nem alátámasztott állítás hiányzó tudást, hiányzó idézési követelményeket vagy elégtelen modellképességet tükröz-e, és hogy egy hamis ígéret Prompt-felülvizsgálatot vagy az ígéretek és az eszközállapotok közötti konzisztencia-ellenőrzést igényel a Harness-ben.
 
-**Parancsvégrehajtási Eszköz** (bash eszköz): Perzisztens bash terminál munkamenetet biztosít 120 másodperces időkorláttal. Egy őrszöveges karakterláncot használ a parancs befejeződésének érzékelésére, és megtartja a környezeti állapotot több hívás között (pl. egy könyvtárba `cd` után a következő hívás abban a könyvtárban marad).
+Az LLM-ellenőrzők kalibrálást is igényelnek. A termelési rendszerek általában egy kis, szakértők által annotált trajektóriakészletet tartanak fenn az ellenőrző konzisztenciájának ellenőrzésére minden dimenzióban; a magas kockázatú vagy alacsony megbízhatóságú eseteket egy második modellhez vagy emberi bírálóhoz irányítják; és a kalibrációs készletet újrafuttatják a modellverzió-váltások után. Az ellenőrzőnek kiértékeléseket és bizonyítékokat kell szolgáltatnia, míg egy független diagnosztikai és evolúciós modulnak kell eldöntenie, hogy az ágens melyik részét kell módosítani. Ez megakadályozza, hogy ugyanaz a modell bíróként működjön, miközben közvetlenül átírja a szabályokat.
 
-**Fájlszerkesztő Eszköz** (`str_replace_editor`): Biztonságos szerkesztést tesz lehetővé karakterlánc-illesztésen keresztül, támogatva a megtekintést, létrehozást, cserét, beszúrást és visszavonást. Pontosabb, mint a teljes fájl felülírása, és kisebb a valószínűsége, hogy véletlenül más tartalmat módosít.
-
-> **9-5. kísérlet ★: Computer Use futtatása (Anthropic referenciaútvonal vagy nyílt modell útvonala)**
+> **9-1. ★★ kísérlet: Trajektória-ellenőrző építése egy ügyfélszolgálati ágenshez**
 >
-> Az A útvonal az Anthropic Computer Use Demót használja. A konténere teljes Ubuntu asztali környezetet csomagol böngészővel, terminállal és más gyakori eszközökkel. A front-end fogadja a feladatot, a back-end elküldi az utasításokat és a képernyőképeket a Claude-nak, majd végrehajtja a modell által visszaadott egér-, billentyűzet-, terminál- vagy szerkesztési műveleteket. Ez az útvonal a natív `computer` eszközprotokoll megértésére szolgál; nem követeli meg, hogy minden olvasó hozzáférjen az Anthropic API-jához.
+> **Cél:** Egy ügyfélszolgálati trajektória átalakítása strukturált diagnózissá, amely támogatja a későbbi tanulást, és annak tesztelése, hogy a „bizonyítékokkal alátámasztott többdimenziós következtetések" jobban azonosítják-e a gyökérokokat, mint egyetlen összpontszám.
 >
-> A B útvonal a könyv [`chapter9/computer-use-open-model`](../chapter9/computer-use-open-model/) kísérőprojektjét használja. Alapértelmezésben a nyílt súlyú Qwen3-VL 32B Instruct modellel vezérli a browser-use-t, az OpenRouter hosztolt API-ján keresztül, vagy úgy, hogy az `OPEN_MODEL_BASE_URL` értékét saját üzemeltetésű vLLM/SGLang vagy más kompatibilis végpontra állítja. A végpontnak képernyőképeket kell fogadnia és natív JSON Schema-t kell támogatnia; ha csak hagyományos JSON-t támogat, a schema-in-prompt kompatibilitási mód külön engedélyezhető.
+> **Adatok és eljárás:** Készítsünk szakértők által annotált trajektóriákat, amelyek négy kategóriát fednek le: normál visszatérítések, hamis ígéretek, adatvédelmi jogsértések és túlzott elutasítások. Az első réteg a végső rendelés állapotát és az eszköznaplókat olvassa, hogy meghatározza, történt-e tényleges visszatérítés vagy átütemezés. A második minden lépést ellenőriz az üzleti irányelvek alapján, beleértve a jogosultságokat, az előírt eljárásokat, az adatvédelmet, a tények alátámasztását és az ígéret–tett konzisztenciát. A harmadik a nyelvi minőséget és a megfelelő alternatívákat értékeli a 9-1. táblázat rubrikája szerint, és minden hibához megtartja a releváns fordulók bizonyítékait. Az alapértelmezett minőségi bíró determinisztikus szabályokat használ, de elérhető egy valódi LLM bíró is. A felső réteg modelljétől függetlenül az eredmény- és szabályrétegeket nem szabad nyelvi modellre bízni.
 >
-> Mindkét útvonal ugyanazt a csak olvasható feladatot és ugyanazt az elfogadási szerződést használja: legfeljebb 25 lépés, lépésenként egyetlen művelet, továbbá a modell/végpont azonosítójának, a szolgáltató nyers válaszainak, a lépésenkénti képernyőképeknek, a műveletsornak, a végső válasznak és a leállás okának megőrzése. Az eltérő modelleket külön kísérleti ágként kell jelenteni; nyílt modell eredménye nem tüntethető fel Claude-reprodukcióként, és a „konténer sikeresen elindult” sem tekinthető a feladat teljesítésének. A műveletek közötti idő és a tervezés minősége mérési eredmény, nem előzetes 2–5 másodperces feltételezés vagy más modellekkel szembeni szükségszerű fölény.
+> **Kontrollok és mérőszámok:** A kiindulási feltétel csak egy összpontszámot ad ki; a kísérleti feltétel `pass`, `fail` vagy `uncertain` értéket ad minden dimenzióhoz, bizonyítékkal és megbízhatósággal együtt. A kalibráció során mérjük a precizitást és a visszahívást a hibák detektálásában minden dimenzióban, és jelentsük a szakértői címkékkel való pontos egyezést. Ellenőrizzük azt is, hogy a hamis ígéretekhez tartozó hibák nem üres bizonyítékot tartalmaznak, nem pedig alátámasztatlan következtetéseket.
 >
-
-### Vizuális Helymeghatározás
-
-A ciklus minden iterációjában a modellnek pontosan meg kell találnia a cél elemet a képernyőképen — "Hol van a keresőmező?" "Mik a beküldő gomb koordinátái?" Ez a vizuális helymeghatározás problémája. Jelenleg "két fő megközelítés" létezik: az egyik a lokalizációt "többválasztásos problémává" alakítja — először számokkal annotáljuk a felületi elemeket, a modellnek csak ki kell választania egyet; a másik a "tiszta koordináta előrejelzés" — hagyjuk, hogy a modell "nézze" a képernyőképet, és közvetlenül adjon meg koordinátákat, akár egy ember. A többválasztásos megközelítésnek két implementációs módja van: "tiszta vizuális annotáció" (az eredeti Set-of-Mark, egy szegmentációs modell használatával a képen lévő jelölt régiók szegmentálására) és "strukturált elemindexálás" (DOM/Accessibility Tree, a felület eredeti struktúrájának közvetlen olvasása). A többválasztásos megközelítés közös előnye, hogy a "keresd meg a gombot a képernyőképen és jelezd előre a koordinátáit" nyílt végű problémát egy "válassz egyet a már annotált elemek közül" zárt végű problémává alakítja — ahogy a többválasztásos kérdésekre könnyebb helyesen válaszolni, mint a kitöltendő kérdésekre egy vizsgán, a modellnek csak annyit kell mondania, hogy "kattints [123]-ra" ahelyett, hogy "kattints a kék gombra, körülbelül 200 pixellel a képernyő bal felső sarkától jobbra".
-
-**Set-of-Mark: Vizuális Annotációs Módszer.**
-
-Az eredeti Set-of-Mark (SoM) a Microsoft Research által 2023-ban javasolt, kezdetben a GPT-4V vizuális helymeghatározási képességeinek felszabadítására. Ez egy "tisztán vizuális" módszer: képszegmentációs modelleket (SAM, SEEM stb.) használ a képernyőképen lévő jelölt régiók automatikus szegmentálására, számozott markert helyez minden régióra, és a modell számokkal ellátott képet lát. A modellnek csak a számot kell jelentenie, a rendszer pedig átalakítja a megfelelő régió középponti koordinátáivá. A teljes folyamat nem igényel DOM-ot vagy belső felületi struktúrát, így egyaránt alkalmazható natív asztali szoftverekre és játékfelületekre — amíg a szegmentációs modell azonosítani tudja a jelölt régiókat.
-
-**Strukturált Elemindexálás: Az SoM-ötlet strukturált implementációja a weben.**
-
-Amikor a felület maga biztosít strukturált információt, az annotáció pontosabb lehet. A modern weboldalak a renderelés előtt meghatároznak egy teljes elemstruktúrát (a DOM fát) és szemantikus szerepeket, amelyek azonosítják a gombokat, beviteli mezőket és más vezérlőket. Az akadálymentesítési fák hasonló információt nyújtanak sok asztali alkalmazáshoz. Ahelyett, hogy egy szegmentációs modellt kérnénk meg, hogy pixel alapján találja ki, melyik régió egy gomb, a rendszer közvetlenül lekérdezheti a felületről a kattintható elemeket. A webes ügynökrendszerek, mint a `browser-use`, pontosan ezt teszik: felsorolják és számozzák az interaktív elemeket a DOM-ból. Ez az SoM-ötlet strukturált implementációja a web számára (9-8. ábra). A folyamat négy lépésből áll:
-
-1. A strukturált reprezentáció (DOM fa) és akadálymentesítési információk lekérése a böngésző hibakereső felületén keresztül (CDP, Chrome DevTools Protocol)
-2. Automatikusan érzékelni, hogy mely elemek interaktívak (gombok, beviteli mezők, linkek stb.)
-3. Minden interaktív elemet egyedi azonosítóval annotálni és határoló kereteket rajzolni a képernyőképen
-4. Egyidejűleg egy szöveges listát generálni, amely leírja az egyes azonosítókhoz tartozó elemet
-
-```text
-Képernyőkép: [A képen a kulcselemek [1], [2], [3], [4] azonosítókkal vannak annotálva]
-
-Elemek:
-[1] <input type="text" placeholder="Keresés" aria-label="Keresés" />
-[2] <button id="submit-btn" aria-label="Űrlap beküldése" />
-[3] <input type="text" placeholder="Adja meg a nevét" value="" />
-[4] <a href="/docs" aria-label="Dokumentáció" />
-```
-
-A modellnek csak egy azonosítót kell kiadnia, és a rendszer automatikusan rákattint a megfelelő elem középpontjára. Ez a megközelítés nem takarít meg tokeneket, mert minden annotációs adatot el kell küldeni a modellnek, de pontos, stabil lokalizációt biztosít, elkerülve a szegmentációs modellek által bevezethető kihagyásokat és téves pozitívumokat.
-
-![9-9. ábra: Set-of-Mark vs. Strukturált Elemindexálás (browser-use implementáció)](images/fig9-9.svg)
-
-**Tiszta Koordináta Előrejelzés.**
-
-A harmadik út kihagyja az annotációt, és megkéri a modellt, hogy közvetlenül adjon meg koordinátákat. Az olyan rendszerek, mint a "SeeClick" és a Claude computer use, olyan látásmodellekre támaszkodnak, amelyeket GUI képernyőképek és elempozíciók hatalmas adatkészletein tanítottak. Ezek a modellek megtanulják a természetes nyelvű leírásokat (pl. "kattints a beküldő gombra") közvetlenül pontos képernyőkoordinátákra leképezni, vizuális érzékelésre támaszkodva, mint egy emberi felhasználó.
-
-A koordináta-előrejelzési sémákban a modell koordináta-megértése nagymértékben függ a tanítás során használt felbontástól (9-9. ábra). A Claude-ot XGA (1024×768), WXGA (1280×800) és FWXGA (1366×768) felbontásokon tanították. Ha a bemeneti képernyőkép felbontása nem egyezik, a modell által előrejelzett koordináták szisztematikusan eltolódnak — mintha egy távolságot egy kis térképen mérnénk meg, majd közvetlenül egy nagy térképre alkalmaznánk. Ezért egy kétirányú koordináta-skálázó mechanizmust kell implementálni az eszköz rétegben, és a célfelbontást "a képarány alapján kell kiválasztani", hogy elkerüljük az egyenlőtlen nyújtást, amely torzítja a képet, és ezáltal torzítja a koordináta-ítéletet. Például, ha a tényleges képernyőfelbontás 2560×1440 (16:9), a Claude három támogatott opciója közül a legmegfelelőbb cél az FWXGA (1366×768), amelynek képaránya a legközelebb van a 16:9-hez. A képernyőképet arányosan 1366×768-ra skálázzák és táplálják a modellbe; miután a modell kiadja a kattintási koordinátákat (683, 384), azokat visszafejtik a valós koordinátákra (683×2560/1366, 384×1440/768) ≈ (1280, 720). Ezzel szemben, ha egy 16:9-es képet erőszakosan 4:3-as 1024×768-ra nyújtanak, a kép vízszintesen összenyomódik, ami a modell által előrejelzett koordináták szisztematikus eltolódását okozza.
-
-![9-10. ábra: Felbontás-illesztés és kétirányú koordináta-skálázás](images/fig9-10.svg)
-
-A három út közötti választás a következőképpen foglalható össze: **ha strukturált információ áll rendelkezésre, részesítsük előnyben a DOM/akadálymentesítési fa indexálást** a legpontosabb és legstabilabb lokalizáció érdekében. "Ha nem áll rendelkezésre" — natív asztali szoftverekben, például Photoshop, canvas/WebGL renderelt felületek vagy játékok esetén — **használjunk vizuális annotációt (az eredeti SoM utat) vagy koordináta előrejelzést**. A vizuális annotáció többválasztásos problémává alakítja a lokalizációt, ami barátságosabbá teszi az általános célú modellek számára specializált tanítás nélkül. A koordináta előrejelzés kiküszöböli az annotációs lépést, és közvetlenebb a kifejezetten GUI lokalizációra tanított modellek számára. Mindkét megközelítés továbbra is küzd a kis elemekkel és a sűrű felületekkel.
-
-> **9-6. kísérlet ★: A browser-use használata automatizált böngészőműveletekhez**
+> **Elfogadási kritériumok:** Az ellenőrzőnek megbízhatóan kell érzékelnie a kritikus jogsértéseket, a hamis ígéreteket és a túlzott elutasításokat. A magas összpontszám nem takarhat el adatvédelmi vagy irányelvhibát. Az alacsony megbízhatóságú és magas kockázatú eseteket egy második ellenőrzőhöz vagy emberi felülvizsgálathoz kell irányítani ahelyett, hogy automatikusan tanulási jelekké válnának.
 >
-> A Playwright böngésző-automatizálási keretrendszert multimodális modellel kombinálva természetes nyelvvel vezérelt böngészőműveleteket valósítunk meg. Engedélyezzük az SoM-vizualizációt, és minden döntés előtt elmentjük a jelölt határolókereteket tartalmazó képernyőképet. A modellinterfész nem korlátozódik az OpenAI-ra vagy az Anthropicra; a könyv API-konfigurációt ad a nyílt Qwen3-VL modellhez, és általános, OpenAI-kompatibilis base URL-t tart fenn más hosztolt szolgáltatásokhoz vagy saját üzemeltetésű következtetéshez.
->
-> Tesztfeladat: „Nyisd meg a Google-t, és keresd meg San Francisco időjárását.” Indítás után a képernyőkép a Google keresőoldalt mutatja számozott interaktív elemekkel. A modell kiválasztja a keresőmezőt, beírja a „San Francisco weather today” szöveget, elküldi a keresést, majd kinyeri a hőmérsékletet és az időjárási viszonyokat az eredményoldalról. Az átvétel során függetlenül ellenőrizni kell a választ és a műveletsort, valamint a tényleges lépésszámot és eltelt időt kell rögzíteni. Az „5 lépés, körülbelül 20 másodperc” csak egy adott futás megfigyelése lehet, végrehajtási bizonylat nélkül nem rögzített eredmény.
->
-> A könyvben megőrzött hivatalos nyíltmodelles futás az OpenRouter `qwen/qwen3-vl-32b-instruct` modelljét használta. Amikor a modell a Google-keresés 4. lépésében CAPTCHA-val találkozott, nem állította, hogy sikerrel járt, hanem átváltott a weather.com oldalra. Végül a 16. lépésben San Francisco Today oldaláról a következőket olvasta ki: 64°F, Sunny, 62°F hőérzet, 74°F maximum és 55°F minimum. Mind a 16 API-válasz a kért Qwen3-VL modellt jelezte, a 15 érvényes lépésképernyőkép és a csak olvasható műveletsor pedig átment a független, determinisztikus átvételen. Ez az eredmény bizonyítja, hogy a nyíltmodell-API útvonala működik; nem jelenti az Anthropic natív `computer` eszközét használó kísérleti ág reprodukálását.
+> A mellékelt implementáció a [`trajectory-verifier`](../chapter9/trajectory-verifier/) címen érhető el. Alapértelmezésben egy offline reprodukálható minőségi bírót használ; a `--judge llm` kapcsolóval futtatható a megvalósított valódi LLM-ellenőrző.
 
-### Egy Computer Use ügynök, aki animációkat nézhet és hangot hallhat
+## Az ágensek folyamatos evolúciójának négy módszere
 
-Eddig a Computer Use érzékelés egy implicit feltételezésen nyugodott: "a képernyő statikus" — készítsünk egy képernyőképet, gondolkodjunk a következő lépésről, kattintsunk, és készítsük a következő képernyőképet. A valódi képernyők videókat játszanak le, másodpercek alatt eltűnő értesítéseket villantanak fel, és hangot játszanak le értekezletekről. Egy ügynök, aki csak 3-5 másodpercenként nyitja ki a szemét, és nincs füle, vak és süket mindenre, ami két képkocka között történik. Képernyőfelvétel nézése, értekezlethez csatlakozás, hangutasítás követése, egy párbeszédablak elkapása, mielőtt eltűnik — a mindennapi számítógépes munka egész kategóriája gyakorlatilag elérhetetlen a mai Computer Use ügynök számára.
+A tanulási jelek jelzik, hogy az ágensnek változnia kell, de azt nem, hogy hol. A frissítési módszer kiválasztásának elsődleges alapja nem az, hogy egy tapasztalat mennyi ideje áll fenn, hanem hogy a célképesség természetesen reprezentálható-e egy adott médiummal. Tények és tapasztalatok tudásdokumentumokba illenek; nyelvileg egyértelműen kifejezhető stratégiák Promptokba vagy Skill-ekbe; pontosan végrehajtható eljárások és kényszerek kódba; a magas dimenziós képességek, mint az érzékelés, nyelvi stílus és implicit stratégiák pedig modellparaméterekbe kell hogy kerüljenek. A 9-3. ábra ezt a négy módszert és kapcsolataikat mutatja.
 
-Amit itt valóban újra kell tervezni, az nem a "cselekvési interfész", hanem az „észlelési interfész”[^ch9-9]. A magötlet az "észlelés" (folyamatos, adaptív, multimodális) leválasztása a "cselekvésről" (diszkrét), létrehozva egy perceptuális köztes réteget, amely a környezet és bármely polcról beszerezhető Computer Use modell közé ül anélkül, hogy újratanítást igényelne. Nevezzük ezt Ügynök-Számítógép Észlelési Interfésznek (AOI). Három "kapuzott" komponense van: Először is, "képkockák közötti kulcskocka rögzítés" — használjunk egy nagyon olcsó pixel-kaput a szinte változatlan képkockák kihagyására, majd egy kis modellt annak meghatározására, hogy történt-e értelmes változás, rögzítve egy képkockát csak akkor, ha van változás, ami közel nulla költséget eredményez a statikus képernyőkhöz; Másodszor, "hangerő-kapuzott beszédátírás" — csak akkor hívjuk a beszédfelismerést, ha van hang, először adva "füleket" az ügynöknek; Harmadszor, és ami a legkritikusabb, "az észlelések átalakítása perzisztens szöveges leírásokká" — kérjük meg a modellt, hogy egyetlen mondatban írja le a rögzített képkockát (pl. "A felugró ablak éppen azt mondta, hogy a kiadási dátumot április 28-ra módosították"), és **még ha az eredeti kép később el is távolításra kerül a kontextusból, ez a szöveg megmarad a memóriában**, továbbvíve a dinamikus információt szöveges formában.
+![9-3. ábra: A folyamatos evolúció négy frissítési módszere](images/fig9-3.svg)
 
-A nem intuitív megállapítás az, hogy ami igazán számít, az nem a képkocka kiválasztása, hanem a kiválasztott képkockák átalakítása perzisztens szöveggé, mert a szöveg az a modalitás, amelyet az LLM-ügynökök a legjobban kezelnek. Nyolc modellen keresztül, a 7B paraméteres modellektől a frontvonalbeli rendszerekig, ez a köztes réteg +17 és +48 százalékpont közötti nyereséget biztosított minden újratanítás nélkül, a legnagyobb különbséggel a hangfeladatoknál: az észlelési réteggel az ügynök végre el tudta végezni azokat a hangfeladatokat, amelyek korábban "hallhatók, de nem végrehajthatók" voltak. Azonban nem egy mindenre egyformán jó konfigurációról van szó — néhány újabb modellen a túl sok képkocka token beszúrása kiszorítja az érvelést, és rontja a teljesítményt. Ezért a komponenseket "modellenként kell kiválasztani", nem egyszerre bekapcsolni. Ugyanaz a lecke, mint a Set-of-Mark versus koordináta előrejelzés kompromisszuma: nincs ezüstgolyó az észlelési sémákban; konfigurálni kell őket a modell természetéhez.
+A 9-2. táblázat tömör összehasonlítást nyújt. A négy módszer nem zárja ki egymást: egy orvosi képalkotó ágens paraméterekre támaszkodik az elváltozások azonosításához, tudásbázist használ az aktuális irányelvekhez, és kódot a kockázati mutatók kiszámításához. Egy ügyfélszolgálati modell a természetes hangvételét az utóképzésből nyeri, a vállalatspecifikus irányelveket tudásból és Skill-ekből szerzi be, és szerveroldali kódra támaszkodik a kritikus megfelelőségi követelmények kikényszerítéséhez.
 
-[^ch9-9]: A három komponens — kapuzott kulcskockák, igény szerinti átírás, képkockák narrálása perzisztens szöveggé — teljes mechanizmusáért és modellenkénti ablációjáért lásd Bojie Li és Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
+9-2. táblázat: A folyamatos evolúció négy módszerének alkalmazási határai
 
-### Világmodellek a Computer Use-hoz
+| Frissítési módszer | Alkalmas tartalom | Fő előnyök | Fő korlátok |
+|---|---|---|---|
+| Tapasztalati tudásbázis | Tények, tapasztalati minták, kivételek és források | Gyors frissítés, visszakövethetőség, igény szerinti lekérés | Függ a visszakereséstől és a modell helyes alkalmazásától |
+| Prompt és Skill | Nyelvileg kifejezhető ítélkezési elvek és műveleti eljárások | Értelmezhető, szabályozható hatókör | Hajlamos a dagályra, konfliktusra vagy figyelmen kívül hagyásra |
+| Programok és Harness | Determinisztikus eljárások, eszközök és kemény kényszerek | Tesztelhető, stabil végrehajtás, alacsony költség | Magasabb fejlesztési és karbantartási költségek |
+| Modellparaméterek | Magas dimenziós érzékelés, generálási stílus és implicit stratégiák | Erős általánosítás, alacsony következtetési többletterhelés | Magas frissítési és regressziós költségek |
 
-Az előző fejezetrész megfigyelési felülete arra válaszol, hogy „mi történt a kettő között": kulcsképkockákkal, beszédátirattal és tartós szöveggel az ügynök már nem csak két, egymástól messze eső képernyőképet lát. A megfigyelési felület azonban nem szünteti meg a tervezési késleltetést. Az ügynök továbbra is a soros „képernyőkép—gondolkodás—kattintás" hurkot futtatja, és minden egyes művelet után újra megfigyel, majd végiggondolja a következő lépést. Az **OSWorld-Human** hatékonysági vizsgálata azt mutatja, hogy még ha a feladat végül sikerül is, az ügynök lépésszáma és várakozási ideje szemmel láthatóan több az emberénél; az emberi szintű pontosság elérése nem egyenlő azzal, hogy már elég használható is.
-
-Az ember számítógépezés közben nem a kattintás után kezd a következő lépésen gondolkodni, hanem előbb megjósolja a művelet következményét: ha a tényleges változás megfelel a várakozásnak, folytatja az eredeti tervet; és csak akkor áll meg újra megfigyelni és tervezni, ha az oldal állapota eltér a várttól. A világmodell lehetővé teszi, hogy az ügynök még a cselekvés előtt megjósolja, mivé válhat az asztal, és ezzel megvalósítsa ezt az emberihez hasonló „spekulatív végrehajtást", jelentősen javítva a hatékonyságot.
-
-Az asztal állapota nem csupán egy képpontokból álló kép: beletartoznak az ablakok, a fókusz, a görgetési pozíció, a beviteli mezők tartalma, a betöltési állapot, a jogosultságok és a hálózati válaszok; a műveletek pedig magukban foglalják a kattintást, a billentyűzetes bevitelt, a görgetést, a húzást és a várakozást. Egy Computer Use-hoz használható világmodellnek legalább kódolnia kell a jelenlegi állapotot, meg kell jósolnia a jelölt művelet okozta állapotváltozást, és át kell adnia ezt a jóslatot a tervezőnek, hogy az eldönthesse a következő lépést:
-
-```text
-asztal állapota + click/type/scroll/wait ──> a következő állapot reprezentációja
-```
-
-Így az ügynök még a tényleges kattintás előtt összehasonlíthatja a jelölt műveletek következményeit, az oldal betöltése alatt előkészítheti a következő lépést, és az állapotkülönbség alapján helyreállhat akkor is, ha egy felugró ablak csak egy pillanatra villant fel. Ha például a feladat az, hogy „hozz létre egy új Python fájlt a VS Code-ban, és írd bele, hogy hello world", a modell előbb megjósolhatja a fájlfa és a szerkesztő kulcsállapotát sikeres végrehajtás esetén, és csak azután választja ki a kattintás, a gépelés és a mentés műveletét; ha pedig a feladat egy fájl törlése, egy elszigetelt virtuális asztalon előre megjósolhatja, felbukkan-e visszafordíthatatlan megerősítő ablak, és szükség esetén kérheti a felhasználó jóváhagyását. A lényeg itt nem az, hogy a modell élethű jövőbeli képernyőképet állítson elő, hanem az, hogy megjósolja azokat az ellenőrizhető állapotkülönbségeket, amelyek a feladat elvégzéséhez kellenek.
-
-2026 júliusában az Induction Labs által bemutatott **Photon-1** ennek az útnak az egyik megvalósítását mutatta meg: mindössze 30 000 óra H200 GPU-idővel elvégezte egy computer use világmodell előtanítását. Minden képkockát diszkrét látens tokenekké tömörít, és önvisszatérő módon jósolja meg a művelet utáni következő állapot reprezentációját ahelyett, hogy az előtanítás szakaszában képpontonként állítana elő képernyőképeket; a hozzákapcsolt képgenerátor pedig csak a látens reprezentációk megjelenítésére szolgál, és nem szükséges alkatrésze a következtetésnek. Egy kiinduló képernyőképet és az azt követő műveleteket megadva a modell folyamatosan „elképzelheti" az asztal állapotait, majd virtuális gépeken végzett online tanítással megtanul computer-use műveleteket kiadni.[^ch9-20]
-
-[^ch9-20]: David Li and Jonathan Li, Induction Labs, „Scaling Video Pretraining with Imagination Models,” 2026-07-23. https://www.inductionlabs.com/news/scaling-video-pretraining. A szövegben szereplő Photon-1 paraméterek, adatméret, belső benchmarkok és költség-összehasonlítások mind a cég által közzétett eredmények.
-
-### Mobil: Az ökoszisztéma akadályok keményebbek, mint a technológia
-
-A Computer Use a mobileszközökre is kiterjed. A mobil és asztali rendszerek technikailag különböznek: az egérkoordináták és billentyűzetbemenet helyett a mobil cselekvési tér jellemzően a rendszer akadálymentesítési szolgáltatás API-ját (pl. Android `AccessibilityService`) használja a felületi elemek olvasására és kattintások vagy szövegbevitel kiadására. Az interakció is az egérmutatóról érintési gesztusokra vált, megváltoztatva a koordináták jelentését. Ugyanaz az `(x, y)` pozíció jelenthet érintést, hosszú lenyomást vagy egy húzás kezdőpontját, ezért a cselekvésnek meg kell adnia a gesztus típusát is. A mobil benchmarkok, mint a 6. fejezetben bemutatott AndroidWorld, ebben a cselekvési térben értékelik az ügynök képességét a valós alkalmazásokban végzett feladatok elvégzésére.
-
-Azonban ami valóban akadályozza a mobil Computer Use-t, az gyakran nem ezek a technikai különbségek, hanem az ökoszisztéma akadályok. Egyes telefon gyártók megkíséreltek MI asszisztenseket integrálni fogyasztói telefonokba, hogy az asszisztensek automatikusan kezelhessék a mindennapi alkalmazásokat, mint a WeChat, Taobao és Alipay, de gyorsan platformkorlátozásokba ütköztek.
-
-Ez felfedi a Computer Use egyedi kihívását: "ökoszisztéma akadályok". E korlátozások mögött üzleti modell konfliktus áll. A hagyományos internetes alkalmazások magjának monetizációs logikája a "forgalom és a figyelem": a felhasználók hirdetéseket látnak a hírfolyam görgetése közben, ajánló algoritmusok irányítják őket a termékek keresésekor, és impulzusvásárlásokat hajtanak végre az oldalak böngészése közben. Amikor egy ügynök a felhasználó nevében működik, ez a monetizációs lánc teljesen megkerül: a MI figyelmen kívül hagyja a hirdetéseket, nem végez impulzusvásárlásokat, egyenesen a cél felé halad, befejezi a feladatot, és távozik. Azok számára a platformok számára, amelyek a reklámból és a forgalomból élnek, minden ügynöki művelet aláássa az üzleti modell alapját.
-
-Ez azt jelenti, hogy a Computer Use nemcsak technikai ellenintézkedésekkel (mint a CAPTCHA) néz szembe, hanem egy "strukturális érdekellentéttel is". Ezt a konfliktust rövid távon nehéz lesz feloldani, és nagyobb akadályt jelent a fogyasztói elterjedésben, mint a tisztán technikai problémák.
-
-## Robot Manipuláció: Az Asztal Rendrakása XLeRobottal
-
-> **Hogyan olvassuk ezt a fejezetrészt**: elejétől a végéig egyetlen feladatot használunk——„tedd a piros poharat a tálcára, dobd a sárga papírgalacsint a szemetesbe, végül nézz rá még egyszer, és ellenőrizd az asztal állapotát”. A 9-7. és 9-9. kísérlet valódi XLeRoboton fut: kar, kalibráció, vészleállító és helyszíni felügyelő kell hozzá. A 9-8., 9-10. és 9-11. kísérlet ezek helyi GPU-n futó megfelelője. A valódi hardveren és a szimulációban kapott eredményeket külön jelentjük, de a feladat célja, a műveletek jelentése és a sikerfeltételek azonosak maradnak.
-
-A robot manipuláció jóval nehezebb munka, mint „ránézni egy képre és válaszolni egy kérdésre”. A modellnek nemcsak a jelenetet kell értenie, hanem folyamatosan cselekednie is kell a valós világban, ráadásul minden egyes művelet megváltoztatja a következő pillanat helyzetét. Az XLeRobot nagyon kézzelfoghatóvá teszi ezt a különbséget. Ugyanazt a kart távvezérelheti ember billentyűzettel, játékvezérlővel vagy VR-eszközzel; de át is adhatjuk a kamerakép megfigyelését és egy szűkre szabott műveleti eszközkészletet egy Agentnek, hogy maga hívja őket. A hardver nem változik, a feladat sem; egyedül az változik, hogy ki kezeli——az elsőben az ember folyamatosan figyel és javít, a másodikban a modellnek és a vezérlőrendszernek kell ugyanazt a munkát végigvinnie.
-
-Ez a fejezetrész öt kísérletet fűz fel az „asztal rendrakására”. Először ember távvezérli a valódi XLeRobotot, hogy megmérjük, meddig jut el ez a hardver egy kellően ügyes kezelő kezében. Ezután a szimulátorban megállapítjuk ugyanennek a feladatnak az ideális vezérlési felső korlátját. Utána egy Agent önállóan vezérli a valódi XLeRobotot, hogy lássuk, miként dönti el az eredményt az érzékelés, a tervezés és a hibából való visszatérés. Ezt követően ugyanazt az eszközszerződést átvisszük a szimulátorba, és egyszerre hasonlítunk össze három stratégiát: nyílt hurkú végrehajtás, lépésenkénti ellenőrzés és világmodell. Végül megváltoztatjuk a hátteret, a tárgyak külsejét, a megvilágítást és a vizuális zajt, hogy kiderüljön: a szimulációban tanult vizuális eljárásmód képes-e alkalmazkodni egy új környezethez.
-
-A szűk keresztmetszet itt rendszerint nem az, hogy készítsünk még egy statikus kérdés-felelet mércét, hanem az, hogy a modell zárva tudja tartani a hurkot korlátozott érzékelési és vezérlési sávszélesség mellett. Egy használható robotrendszernek legalább a következő négy kérdésre kell válaszolnia:
-
-1. Milyen feladatot akar befejezni az ember?
-2. Melyik részfeladat következik?
-3. Konkrétan milyen műveletet ad ki a jelenlegi készség?
-4. A művelet végrehajtása után a valóság még mindig illeszkedik az eredeti tervhez?
-
-Ez a fejezetrész ugyanabba az XLeRobot-vezérlőhurokba helyezi ezt a négy kérdést, és megmutatja, melyik résztvállalja a négy technika közül: a hosszú távú tervezés eldönti, hogy a pohár vagy a papír kerüljön előbb sorra; a VLA vagy a műveleti primitívek végzik a megfogást és a lehelyezést; a világmodell megbecsüli egy művelet következményeit; a szimulációból a valóságba vezető átmenet pedig magára vállalja a tanítóvideók, valamint a valódi kamera és beavatkozók közötti különbséget. Még ha a magas szintű modellnek elegendő tudása és tervezőképessége is van, elég egyetlen láncszemnek kiesnie ebből a visszacsatolási hurokból, hogy a rendszer ne tudja befejezni a feladatot.
-
-### A Hardver és az Algoritmus Munkamegosztása
-
-Az első kérdés, amelyre az XLeRobot a legalkalmasabb választ adni, ez: amikor az önálló asztalrendrakás kudarcot vall, a kar nem képes rá, vagy az algoritmus nem tudja használni a kart? Van itt egy tény, amit nem szabad felpuhítani: **még egy néhány száz dolláros kar is, amilyen az XLeRobot, távvezérléssel már képes végrehajtani egy olyan többlépéses, összefüggő asztali feladatot, mint amilyen ebben a fejezetrészben szerepel**——az ember nézi a kamera képét, megfogja a piros poharat, ráteszi a tálcára, a sárga papírt a szemetesbe dobja, végül még egyszer ellenőrzi az állapotot. Ez az eredmény nem pusztán annyit jelent, hogy „a hardver éppen csak elég”; ez világos diagnosztikai bizonyíték: **ami ezt a feladatot illeti, a szűk keresztmetszet az algoritmus oldalán van, nem magában a hardverben.**
-
-A diagnózis módszere egyenes. Rögzített kamera, kar, megfogó, asztali elrendezés és sikerfeltételek mellett először az ember veszi át a hurkot. Az ember folyamatosan pontosítja a tárgyak helyének becslését, a művelet kiválasztását és az időzítést, és azt is tudja, mit tegyen, ha a megfogás nem sikerül. Az önálló rendszer és az ember közötti távolság éppen ebben a zárt hurkú képességben mutatkozik meg. Ennek a következtetésnek a hatóköre természetesen az e fejezetrészben szereplő asztali feladat: azt mutatja, hogy a hardver átlépte az e feladathoz szükséges teherbírási, pontossági és munkatéri küszöböt, de nem azt jelenti, hogy egy néhány száz dolláros kar minden nyílt környezettel vagy nehezebb manipulációval megbirkózik.
-
-Az XLeRobot többféle távvezérlési belépési pontot támogat: billentyűzet, Xbox-kontroller, Switch Joy-Con és VR-eszközök. Az emberi kezelő természetes módon csinál sok olyat, amit egy algoritmusnak kifejezetten meg kellene valósítania: lassít, amikor a megfogó közelít a pohárhoz; kijavítja a fogáspontot, ha a pohár megcsúszik; újranéz, ha elsőre nem sikerül megcsípnie a papírt; és ellenőrzi az eredményt, amikor a tárgy a célterületre kerül. A távvezérlés ezért nem csupán a bemutató adatok gyűjtésének eszköze, hanem olyan diagnosztikai kísérlet is, amely „rögzíti a hardvert, és csak a kezelőt cseréli”.[^ch9-1]
-
-> **9-7. kísérlet ★: Az asztal rendrakása valódi XLeRobot távvezérlésével**
->
-> Helyezzen egy valódi XLeRobot munkaterébe egy piros poharat, egy tálcát, egy összegyűrt sárga papírt és egy szemetest. A kezelő az egyik kalibrált távvezérlési úton hajtja végre a rögzített feladatot: „tedd a piros poharat a tálcára, dobd a sárga papírgalacsint a szemetesbe, végül nézz rá még egyszer, és ellenőrizd az asztal állapotát”. Ismételje meg legalább néhány körben, és rögzítse a kamera képét, a kezelő bemeneteit, a kar állapotát, a műveletek időtartamát, a sikertelen megfogásokat, az újrapróbálkozások számát és a végállapotot.
->
-> Ne süllyessze az elfogadási feltételt odáig, hogy „a végén az asztal tisztának látszik”. A piros pohárnak a tálcán, a sárga papírnak a szemetesben kell lennie; a karnak vissza kell térnie biztonságos testhelyzetébe; és a folyamat során nem lehet ütközés, munkatéren kívülre lépés, sem olyan emberi beavatkozás, amely ellenőrzés nélkül fejezi be a munkát.
-
-A valódi hardveren végzett távvezérlés a legmeggyőzőbben mutatja meg a feladat felső korlátját, de nem alkalmas arra, hogy tömegesen változtassuk a tárgyak számát és helyzetét. Hogy ismételhető és statisztikailag mérhető összehasonlítást kapjunk, ugyanazt a „tegyük vissza a tárgyakat a helyükre” feladatot a következő lépésben egy kétdimenziós asztali szimulátorba visszük át, és egy ideális szabályozót használunk annak az erős kezelőnek a helyettesítésére, aki nem téveszt az érzékelésben és nem választ rosszul műveletet.
-
-> **9-8. kísérlet ★: Ugyanannak a feladatnak az ideális vezérlési felső korlátja a szimulátorban**
->
-> Egy kétdimenziós asztali szimulátorban helyezze el véletlenszerűen a piros poharat, a sárga papírt és a hozzájuk tartozó célterületeket, az ideális szabályozó pedig sorban közelítse meg a tárgyakat, fogja meg és vigye őket a helyes helyre. Nem kell képet felismernie, és nem választ rosszul műveletet, ezért azt képviseli, hogy „meddig juthat el legalább ez a feladat akkor, ha az érzékelés és a döntés is helyes”.
->
-> Nézze a feladat sikerarányát, a lépések számát és az útvonal hosszát; változtassa a tárgyak kezdeti helyzetét és a feladat léptékét is, hogy lássa, stabil marad-e ez az ideális korlát. Ugyanazokat a sikerfeltételeket használjuk, mint a 9-7. kísérletben, de amit mérünk, az beavatkozó nélküli szimuláció: ez nem jelenti azt, hogy a valódi XLeRobot megmozdult volna. A kettő két alapvonal lesz a későbbi önálló vezérléshez——a 9-7. kísérlet az ember zárt hurka valódi hardveren, a 9-8. pedig az ideális zárt hurok szimulációs környezetben.
-
-### A Robotvezérlés Alapszerkezete
-
-Egy robotrendszer általában szétválasztja a különböző időléptékű munkákat.
-
-| Réteg | Központi kérdés | Kimenet | Jellemző időlépték |
-| --- | --- | --- | --- |
-| Feladatcél | Mit akar befejezni az ember | „A pohár és a papír a helyére” | Perces nagyságrend |
-| Hosszú távú tervezés | Mi előbb, mi utóbb | Előbb a pohár, aztán a papír, végül ellenőrzés | Másodperctől percig |
-| Alapkészség | Milyen állapotváltozást érünk el most | `pick(red_cup)`, `place(red_cup, tray)` | Kb. 1—3 mp |
-| VLA / készség-eljárásmód | Konkrétan hogyan mozog ez a készség | Az XLeRobot megfogójának rövid mozdulata vagy folytonos pályája | Kb. 1—10 Hz következtetés |
-| Alacsony szintű vezérlés és biztonsági réteg | Hogyan hajtsuk végre stabilan és késleltetés nélkül | Ízületi vagy szerszámponti vezérlőjelek, sebességkorlát és vészleállítás | Kb. 50—1000 Hz |
-
-Ez egy szokásos mérnöki munkamegosztás, nem az egyetlen lehetséges modellarchitektúra. A VLA átvállalhat a magas szintű döntésekből is, a tervező pedig lehet szabályalapú program, VLM vagy optimalizáló. Bármelyik megvalósítást választjuk, a „feladat sorrendjét” érdemes elválasztani a „pillanatnyi művelettől”; különben a magas szintű modell következtetési késleltetése lehúzza az alacsony szintű vezérlést, az alacsony szint nagy frekvenciájú vezérlése pedig rengeteg lényegtelen részlet feldolgozására kényszeríti a felső modellt. Az XLeRoboton a modell ne adjon ki közvetlenül tetszőleges ízületi szögeket: csak világos határú készségeket válasszon, mint a `pick`, `place`, `verify_state` és `stop`, a kalibrált, sebességkorlátos és időtúllépéssel ellátott végrehajtó pedig ezeket alakítsa a kar valódi mozgásává.
-
-### Hosszú Távú Tervezés és Feladatfelbontás
-
-Amikor a felhasználó azt mondja, „szedd rendbe az asztalt”, a rendszer nem adhatja át ezt a mondatot változatlanul a műveleti modellnek. A tervező először felsorolja a jelenetben lévő tárgyakat és célokat, meghatározza a sorrendet, majd minden lépéshez leírja a kezdőfeltételt, a befejezési feltételt és a kockázati korlátokat. Például:
-
-```text
-Piros pohár kezelése → Sárga papír eltakarítása → Asztal ellenőrzése
-```
-
-A „piros pohár kezelése” tovább bomlik két műveletre és egy ellenőrzésre:
-
-```text
-pick(red_cup) → place(red_cup, tray) → verify_state()
-```
-
-Minden befejezett készség egy ellenőrizhető csomópontot hagy hátra. Ha a megfogás nem sikerül, csak azt a lépést kell újracsinálni. Ha valaki elmozdít egy tárgyat, vagy a felhasználó megváltoztatja a célt, elég az érintett későbbi lépéseket újratervezni, nem kell a régi tervet elölről végigcsinálni. Az ügynöknek adott eszközöknek is elég egyszerűnek kell lenniük: egy hívás egyetlen dolgot végez, a mozgástartomány rögzített, van időtúllépés, és a végrehajtás után azonnal újra megfigyelünk.
-
-> **9-9. kísérlet ★★: Hagyjuk, hogy a Gemini Robotics-ER 1.5 önállóan rakja rendbe az asztalt XLeRobottal**
->
-> Tartsa meg a 9-7. kísérlet valódi XLeRobotját, asztali elrendezését, feladatutasítását és sikerfeltételeit; egyedül az emberi kezelőt cserélje le egy Agentre. A megfigyelést és a tervezést bízza egy megtestesült következtető modellre, például a Gemini Robotics-ER 1.5-re, és egy RoboCrew-stílusú ügynökhurkon keresztül csak öt eszközt nyisson meg: `observe_scene`, `pick`, `place`, `verify_state` és `stop`.[^ch9-2]
->
-> A modell először megfigyeli az asztalt, meghatározza a kezelés sorrendjét, majd meghívja az XLeRobot kalibrált megfogó és lehelyező műveleteit. Minden befejezett készség után újra kell megfigyelnie és ellenőriznie az utófeltételt. Sikertelen megfogás esetén csak az aktuális készséget próbálhatja újra; és meg kell hívnia a `stop`-ot, ha a felhasználó megállást kér, ha egy tárgy kikerül a munkatérből, vagy ha az állapot nem ellenőrizhető. A modell nem adhat ki közvetlenül tetszőleges ízületi szögeket, és nem hagyhatja ki a valódi ellenőrzést pusztán azért, mert korábban maga mondta, hogy „kész”.
->
-> Az elfogadási feltétel pontosan ugyanaz, mint a 9-7. kísérletben: a pohár a tálcán, a papír a szemetesben, a kar visszatért biztonságos testhelyzetébe, nincs ütközés és munkatéren kívülre lépés. A különbség az, hogy az önálló kísérletben a feladat értelmének a modell saját megfigyeléséből kell származnia, a valódi műveleteknek eszközhívásokból, a végállapotot pedig új megfigyeléssel kell megerősíteni. Az ember csak indíthat, vészleállíthat és a biztonságra ügyelhet; nem fejezheti be félúton a műveletet az Agent helyett. Csak így hasonlítható össze közvetlenül a 9-7. és a 9-9. kísérlet: „azonos hardveren és azonos feladaton mi hiányzik a modell zárt hurkából az emberéhez képest”.
-
-A valódi hardveren végzett kísérletek felszínre hozzák a kalibrációs hibákat, a kamera takarásait és a megfogó kudarcait, de nem alkalmasak arra, hogy nagy számú meghibásodást biztonságosan és szabályozottan ismételjünk. A következő szimulációs kísérletek pontosan ugyanezt az öt eszközt és feladatállapotot őrzik meg, és csak a valódi beavatkozókat cserélik olyan asztali környezetre, amelybe hiba injektálható——így szétválasztható, hogy külön-külön mit tesz hozzá a nyílt hurkú végrehajtás, a lépésenkénti ellenőrzés és a műveleti előrejelzés.
-
-### Vezérlés VLA-val
-
-A VLA a Vision-Language-Action rövidítése, magyarul „látás—nyelv—cselekvés modell”. Megkapja a jelenlegi jelenetet és egyetlen készségutasítást, és kiadja azt a műveletet, amelyet a robotnak következőként végre kell hajtania:
-
-```text
-jelenlegi megfigyelés + készségutasítás → művelet
-```
-
-Az XLeRobot példájában a magas szintű tervező csak a `pick(red_cup)`-ot adja be; hogy melyik irányból közelítse meg a poharat, mikor záruljon a megfogó, és milyen pályán emelkedjen a kar, azt a VLA vagy a készség-eljárásmód dönti el a pillanatnyi jelenet alapján. Amikor a végrehajtó réteg befejezte ezt a rövid mozdulatot, újra képet készítünk az asztalról, és a tervező csak azután adhatja be a `place(red_cup, tray)`-t, hogy megerősítettük: a pohár valóban a megfogóban van. Másképp fogalmazva: az eszközhívás definiálja a kívánt állapotváltozást, a VLA pedig azt, hogy ezt az állapotváltozást hogyan valósítjuk meg folytonos művelettel.
-
-Az RT-2 és az OpenVLA diszkrét tokenekre szabdalja a folytonos műveletet, és egyesével adja ki őket, akárcsak mondatgenerálásnál. A π₀ a másik utat képviseli: közvetlenül folytonos, sima műveleti pályákat állít elő. Egyszerű fölény egyik javára sem áll fenn. A diszkrét tokeneket könnyű nyelvi modellhez illeszteni; a folytonos pályák alkalmasabbak a sima mozgás kifejezésére. A valódi döntés az, hogyan érdemes ábrázolni a műveletet, nem pusztán az, hogy mekkora a modell.[^ch9-15]
-
-Egy nagy modell rendszerint csak másodpercenként 1—10 alkalommal tud következtetni, míg egy hagyományos szabályozó másodpercenként több tíztől több ezerszer is frissülhet. Elterjedt mérnöki gyakorlat a „műveletdarabolás” (action chunking): a modell egyszerre a jövőbeli műveleteknek csak egy rövid szakaszát állítja elő, a vezérlőszál ezt a szakaszt nagy frekvenciával hajtja végre, a modell pedig a háttérben készíti elő a következőt. Így a következtetési várakozás egy része elrejthető a műveletek végrehajtási idejében. Az ára ez: minél hosszabb a szakasz, annál simább a mozgás, de annál kevesebb új jelenetet lát a modell ezalatt. Ha az XLeRobot kinyújtja a karját a pohárért, és a poharat útközben meglökik, akár folytathatja is a régi képből előállított műveletek végrehajtását. A műveletdarabolás tehát a simaság és a reakciósebesség közötti alku, nem pedig ingyen gyorsítás.
-
-A műveletdaraboláshoz rendszerint „előrejelzés—végrehajtás—megszakítás” vázra van szükség, nem pedig arra, hogy a szakaszt a végéig lejátsszuk:
+**Tapasztalat–képesség útválasztás:**
 
 ```python
-chunk = vla(current_observation, skill)
-for action in chunk:
-    low_level.execute(action)
-    if safety_event() or observation_changed_significantly():
-        low_level.stop()
-        discard_remaining(chunk)
-        reobserve_and_replan()
-        break
+if experience.is_factual and experience.has_sources:
+    target = KNOWLEDGE
+elif experience.can_be_expressed_as_contextual_language_rule:
+    target = PROMPT_OR_SKILL
+elif experience.is_deterministic or experience.is_hard_safety_constraint:
+    target = PROGRAM_OR_HARNESS
+else:
+    target = MODEL_PARAMETERS
 ```
 
-A rövid szakaszok gyorsabban reagálnak, de megsokszorozzák a modellhívásokat; a hosszúak simábbak, de hajlamosak elavult megfigyelést használni. A 9-10. kísérlet az ilyen alkukat hasonlítja össze a szimulátorban, a valódi hardver biztonsági határát pedig a 9-9. kísérlet érinti.
+### Tapasztalatok konszolidálása tudásba
 
-### A VLA Korlátai
+Az evolúció legkönnyebb formája, ha több futásból származó ismétlődő tapasztalatokat visszakereshető tudásdokumentumokba szervezünk. Az itt leírt „tapasztalati tudásbázis” a 3. fejezettel közös tárolási, indexelési és visszakeresési technológiákat használ, de eltér a tudásforrásokban és az ellenőrzési célkitűzésekben. A 3. fejezet elsősorban a „milyen a felhasználó és a világ" témát vonja ki a felhasználói beszélgetésekből, dokumentumokból és adatkészletekből; ez a fejezet a „mit kell tenni milyen feltételek mellett" témát vonja ki az ágens műveleti trajektóriáiból és eredményeiből. Például: „Ez a légitársaság megköveteli, hogy a speciális ételeket huszonnégy órával korábban lefoglalják" domain-tudás, míg: „A foglalás előtt ellenőrizd a speciális étkezés határidejét, nehogy csak a fizetés után derüljön ki, hogy a kérés nem teljesíthető" műveleti tapasztalat.
 
-A „hosszú távú tervezés + VLA” használható alapterv, de néhány könnyen elnézhető problémát hátrahagy.
+A nyers trajektóriák nem alkalmasak formális tudásegységként. Hosszúak és zajosak, nyers eszközkimeneteket, véletlenszerű kitérőket és környezeti részleteket tartalmaznak. Egy robusztusabb rendszer három adatréteget őriz meg: a naplózási célú megváltoztathatatlan trajektóriákat; a futtatásonkénti elemzéseket az eredménnyel és a lehetséges tanulságokkal; valamint több hasonló trajektória összehasonlítását, klaszterezését és indukcióját, amelyek jövőorientált Markdown tudásdokumentumokat eredményeznek. Egy formális dokumentum általában meghatározza az alkalmazható forgatókönyveket, az ajánlott stratégiákat, a tiltott gyakorlatokat, a kivételeket, a bizonyítékforrásokat és a legutóbbi ellenőrzés időpontját, ahelyett, hogy egyetlen feladat teljes lefolyását mesélné el.
 
-- **A tanítóadat korlátozott**: robotbemutatóból jóval kevesebb van, mint internetes szövegből és képből. Attól, hogy a modell látta a „pohár” szót, még nem látott mindenféle anyagú és mindenféle súrlódási körülmények közti poharat.
-- **Utánozni megtanul, a következményt nem ismeri**: a viselkedésklónozás főként azt tanulja, „mit csinált a bemutató következő lépésben”, és nem követeli meg kifejezetten a modelltől, hogy megválaszolja: „mit idéz elő ez a művelet”.
-- **Minden robot más**: eltérő szabadsági fokok, koordináta-rendszerek, megfogók és beavatkozó-késleltetések mellett semmi sem garantálja, hogy ugyanaz a művelet változatlanul átvihető egy másik gépre.
-- **A megfigyelés elavulhat**: miután egy műveletszakasz végrehajtása megkezdődött, a tárgyat elmozdíthatják, takarásba kerülhet vagy feldőlhet, a modell viszont még mindig a korábbi képkocka alapján dönt.
+Ez a kialakítás ugyanazt a kétlépcsős elvet követi, mint a 3. fejezet User-as-Code megközelítése. A User-as-Code először a beszélgetési tényeket fűzi egy megváltoztathatatlan naplóhoz, majd időszakosan újraépít egy strukturált felhasználói modellt. A tapasztalati tanulásnak hasonlóképpen először a bizonyítékokat kell megőriznie, majd a módosítható tudást offline kell generálnia. A 9-4. ábra ezt a folyamatot illusztrálja. A rögzítés és a szervezés szétválasztása megakadályozza, hogy egyetlen véletlen siker vagy hálózati hiba azonnal megváltoztassa az ágenst, miközben lehetővé teszi a rendszer számára, hogy csak több siker és kudarc megfigyelése után azonosítsa a közös mintákat.
 
-Tehát attól, hogy egy nyelvi modell ismeri a „pohár” szót, még nem tudja, hogyan változtatja meg a jövőbeli állapotot a súrlódás, az érintkezés, a folyadék lötyögése vagy egy tápkábel. A VLA főként arra válaszol, „mit kell most tenni”; ahhoz, hogy megítéljük, „mi történhet azután, hogy megtettük”, másfajta modell kell.
+![9-4. ábra: A kiértékelt trajektóriáktól a tapasztalati tudásdokumentumokig](images/fig9-4.svg)
 
-### Világmodellek
+A tapasztalati dokumentumok nem egyszerű trajektória-összefoglalók. Az átvihető tartalom az összehasonlításból származik: hogy mit csináltak az azonos típusú sikeres trajektóriák, miben hiányosak a sikertelenek, mely környezeti verziókban volt hatékony egy stratégia, és milyen előfeltételek mellett bukott meg. A 3. fejezet már bemutatta a tudáskinyerést, a klaszterezést és a visszakeresést, így ez a fejezet nem ismétli meg ezeket az algoritmusokat. Ehelyett arra összpontosít, hogy a trajektória-kiértékelés hogyan válik a kinyerés feltételévé, és hogy a kinyert tudás javítja-e a teljesítményt a későbbi feladatokon.
 
-A világmodell a műveletek következményeinek előrejelzőjeként érthető. Azt tanulja meg, hogy ha a jelenlegi állapotban végrehajtunk egy műveletet, hogyan változhat meg a következő pillanat állapota.
+Egy teljes tudásdesztillációs csővezeték öt lépésre bontható. Először őrizzük meg a megváltoztathatatlan trajektóriákat és a környezeti eredményeket. Ezután készítsünk strukturált elemzést minden futtatáshoz, felsorolva a feladattípust, a szükséges képességeket, a megfigyelt stratégiákat, a hibákat és a kivételeket. Ezután csoportosítsuk a futtatásokat feladatcsaládok szerint, és építsünk egy bizonyítéktáblát, amely megmutatja, hogy mely trajektóriák támasztják alá vagy cáfolják az egyes jelölt mintákat. Csak azok a jelöltek kerüljenek formális dokumentumokba, amelyek elérik a támogatottsági küszöböt. Végül értékeljük az átvitelt olyan új feladatokon, amelyek nem voltak részei a desztillációnak. A formális tudás elkülönítése a jelölt elemzésektől lehetővé teszi a rendszer számára, hogy újra általánosítson anélkül, hogy az eredeti bizonyítékokat módosítaná, és pontosan visszavonhasson egy következtetést, ha a környezet megváltozik.
 
-```text
-jelenlegi állapot + jelölt művelet
-    → jelezzük előre a következő állapotot vagy a jövő egy darabját
-    → hasonlítsuk össze a jelöltek eredményeit
-    → válasszunk műveletet, tervezzünk újra, vagy álljunk le biztonságosan
+A GAIA tapasztalati tanulása szemléletes példát nyújt. A GAIA[^gaia-2023] többlépéses problémákat tartalmaz, amelyek keresést, webes olvasást, fájlfeldolgozást és számítást kombinálnak, míg az AWorld[^aworld-2025] biztosítja a környezetet az ágensek futtatásához, az eszközök meghívásához és a trajektóriák rögzítéséhez: az előbbi olyan, mint a vizsga, az utóbbi a vizsgaterem és a laboratóriumi jegyzőkönyvi rendszer. Egy leegyszerűsítő megközelítés egy sikeres futtatás után azonnal generál egy stratégia-összefoglalót és vektorizálja. Egy szigorúbb implementáció először egy GAIA válasz-ellenőrzővel vagy más környezeti ellenőrzővel címkézi a futtatásokat sikeres, részben sikeres vagy sikertelen kategóriákba, majd összehasonlítja a több útvonalat ugyanazon feladatcsaládon belül. A sikeres trajektóriák jelölt stratégiákat szolgáltatnak, a sikertelenek kizárási tudást, a részben sikeresek pedig felfedik, mely szegmens működött és melyik bukott még meg. A Reflexion[^reflexion-2023] által javasolt természetes nyelvű reflexió segíthet a jelölt tanulságok generálásában, de maga a reflexió nem bizonyíték. Csak a környezeti eredményekkel konzisztens, trajektóriákon át alátámasztott és új feladatokon pozitív átvitelt mutató tartalom kerülhet a formális tapasztalati dokumentumokba.
+
+> **9-2. ★★ kísérlet: Tapasztalati tudásdokumentumok desztillálása GAIA trajektóriákból**
+>
+> **Cél:** Annak tesztelése, hogy a trajektóriákon átívelő tudásdokumentumok jobban átvihetők-e, mint egyetlen siker összefoglalása, és csökkentik-e a véletlen sikerekből és hibás tapasztalatokból származó negatív transzfert.
+>
+> **Adatok és eljárás:** A `gaia-experience` először minden futtatáshoz eltárolja a teljes trajektóriát és a külső `environment_score` értéket, majd minimális tanulási rekordokká alakítja őket, amelyek tartalmazzák a `task_family`, a szükséges `capabilities`, az `applies_when`, a megfigyelt stratégiák, a hibák, a kivételek és a forrás trajektória-azonosítók adatait. Egy eredmény-ellenőrző sikeres, részben sikeres vagy sikertelen kategóriákba sorolja a futtatásokat. A tanulási modul összehasonlítja az útvonalakat ugyanazon feladatcsaládon belül. Egy LLM javasolhat jelölt általánosításokat, de egy ajánlott stratégiát legalább két nem sikertelen trajektóriának kell alátámasztania. Az eredményül kapott Markdown dokumentum tartalmazza az alkalmazható forgatókönyveket, az ajánlott stratégiákat, a gyakori buktatókat, a kivételeket, a származást és a legutóbbi érvényesítési időpontot. Alkalmazáskor csak ezek a dokumentumok kerülnek lekérésre; a hosszú nyers trajektóriák nem kerülnek közvetlenül a kontextusba.
+>
+> **Három kontroll:** Az első feltétel nem használ történeti tapasztalatot; a második az aktuális feladathoz legjobban hasonlító egyetlen trajektória-összefoglalást kérdezi le; a harmadik egy több trajektória által alátámasztott tudásdokumentumot kérdez le. A tanulási és átviteli készleteknek diszjunktaknak kell lenniük, hogy ugyanazon GAIA kérdésre adott válaszok ne szivárogjanak be „tapasztalatként" a kiértékelésbe.
+>
+> **Mérőszámok és elfogadás:** Jelentsük az átviteli feladatok sikerarányát, az átlagosan lekérdezett karakterek vagy tokenek számát, a negatív transzfer arányát, és ellenőrizzük, hogy minden formális következtetés hivatkozik a forrás trajektóriáira. Ha a trajektóriákon átívelő dokumentumok csak a kontextust rövidítik anélkül, hogy javítanák az új feladatok teljesítményét, nem bizonyítanak tanult tapasztalatot. A kísérlet akkor is sikertelen, ha egyetlen véletlen siker közvetlenül formális tudássá léptethető elő, vagy ha egy dokumentum nem vezethető vissza az eredeti trajektóriáihoz.
+>
+> A mellékelt implementáció a [`gaia-experience`](../chapter9/gaia-experience/) címen érhető el. A `demo_documents.py` alapértelmezésben offline fut; a `--extractor llm` kapcsolóval egy valódi LLM javasolhat trajektóriákon átívelő tapasztalati jelölteket.
+
+[^reflexion-2023]: Shinn, N., et al. *Reflexion: Language Agents with Verbal Reinforcement Learning.* arXiv:2303.11366, 2023.
+
+[^gaia-2023]: Mialon, G., et al. *GAIA: a benchmark for General AI Assistants.* arXiv:2311.12983, 2023.
+
+[^aworld-2025]: Yu, C., et al. *AWorld: Orchestrating the Training Recipe for Agentic AI.* arXiv:2508.20404, 2025.
+
+### Tapasztalatok kódolása utasításokként
+
+Egy tapasztalati tudásbázis referenciát biztosít az ágens számára, míg a Promptok és Skill-ek inkább előíró jellegűek. Amikor több trajektória ismételten ugyanazt a stratégiai hibát tárja fel, és a minta természetes nyelven egyértelműen kifejezhető, a rendszer előléptetheti azt a „referenciaként szolgáló tapasztalatból” a „követendő szabály” státuszba. A szinte minden feladatra érvényes szabályok a rendszer Promptba illenek; a csak egy adott domainre, projektre vagy eszközre vonatkozó összetett eljárások jobban illenek igény szerinti Skill-ekbe vagy projekt utasításfájlokba.
+
+A Prompt-tanulás más szerepet tölt be, mint a 2. fejezetben tárgyalt Prompt engineering. A 2. fejezet elmagyarázza, hogyan kell strukturáltan, gyorsítótár-barát módon Promptokat írni; ez a szakasz azt tárgyalja, hogy milyen termelési visszajelzés elegendő egy Prompt-felülvizsgálat kiváltásához, és hogyan kell az új szabályokat a telepítés előtt érvényesíteni. A felülvizsgálat nem jelentheti a teljes rendszer Prompt újraírását. Megbízhatóbb megközelítés, ha egy minimális különbséget generálunk egy hasonló hibákból álló csoportból, meghatározzuk a szabály hatókörét, ellenőrizzük a meglévő szabályokkal való ütközéseket, és kiértékeljük mind a hibákat kiváltó határesetekre, mind egy régi feladatokból álló retenciós készletre.
+
+Egy 2025-ös hosszú posztjában Andrej Karpathy ezt a lehetséges új paradigmát ideiglenesen "System Prompt Learning"-nek nevezte[^karpathy-system-prompt-learning]. Összefoglalója szerint az előtanítás elsősorban tudást tanul, a finomhangolás pedig elsősorban a megszokott viselkedést alakítja, míg az emberi tanulás egy másik fajtája az, amikor megoldunk egy problémát, és egy explicit jegyzetet hagyunk jövőbeli énünknek: „Ha legközelebb ilyen problémával találkozom, először ezt a megközelítést próbáljam ki." Egy ilyen jegyzetfüzet nélküli LLM-et a *Memento* film főszereplőjéhez hasonlította, és megjegyezte, hogy a System Prompt Learning és a megerősítéses tanulás egyaránt javítja a viselkedést tapasztalatból, de különböző frissítési algoritmusokat használnak – az előbbi szöveget szerkeszt, míg az utóbbi gradiensereszkedéssel változtatja a paramétereket. Példája egy utasítás volt Claude akkoriban nagyjából 17 000 szavas rendszer Promptjában, amely megkövetelte a modelltől, hogy számozza és explicit módon számolja meg a szavakat, betűket vagy karaktereket a válasz előtt – pontosan a „Hány `r` van a `szamóca` szóban?" típusú kérdések kezelésére.
+
+Egy ágensrendszerben ez azt jelenti, hogy a nyelvben kifejezhető tanulságokat jelölt szabályokká alakítjuk, amelyeket a jövőbeli futtatások közvetlenül olvashatnak. A skaláris siker/kudarc eredménnyel szemben egy bizonyítékokkal alátámasztott diagnózis azonosíthatja, hogy a hiba a személyazonosság-ellenőrzésben, az eszközválasztásban vagy az eszkalációs határokban volt-e, lehetővé téve egy célzottabb jelölt változtatást. Karpathy azon megfigyelése, hogy a tudásvezérelt felülvizsgálat egy magasabb dimenziós visszacsatolási csatorna, mint a skaláris jutalom, segít megmagyarázni a módszer potenciális adathatékonyságát. A gazdagabb információ azonban nem automatikusan helyes: egy felhasználó visszajelzése csak arra az ügyfélre vagy egy elavult irányelvre vonatkozhat, így a klaszterezés, a hatókör-elemzés és a regressziós tesztelés továbbra is szükséges.
+
+Több bevált megközelítés automatizálja a Prompt-optimalizálást különböző módokon. A DSPy[^dspy-2023] a több nyelvi modell hívásból álló programot optimalizálható objektumként kezeli, és utasításokat és példákat keres egy fejlesztési készleten. Az OPRO[^opro-2023] egy nyelvi modellt kér fel új jelöltek javasolására a Promptok és pontszámok előzményeiből. A GEPA[^gepa-2025] természetes nyelvű reflexiót használ a sikertelen trajektóriák felett, hogy kiegészítő jelölt Promptokat generáljon és szelektáljon. Ezek a módszerek elsősorban kötegelt optimalizálást végeznek offline kiértékelési készleteken; a minimális termelési különbségek közelebb állnak a folyamatos karbantartáshoz, amelyet újonnan megfigyelt határesetek váltanak ki, és a visszakövethetőségre és gyors visszaállásra terveztek. A gyakorlatban az offline keresés létrehozhat egy erős kezdeti verziót, amelyet eseti javítások követnek a hosszú farok termelési szabályaihoz.
+
+Például egy légitársasági ügyfélszolgálati ágens túl korán eszkalálhat emberhez, amikor a felhasználók megkérdőjeleznek egy irányelvet. A trajektória-kiértékelés megmutatja, hogy nem sért szabályokat, de hiányzik a megfelelő rugalmasság. Egy jelölt javítás előírhatja, hogy az ágens először magyarázza el az irányelvet, azonosítsa a felhasználó valódi célját, és keressen engedélyezett alternatívákat, csak akkor eszkalálva, ha a felhasználó kifejezetten kéri, vagy a probléma valóban meghaladja az ágens hatáskörét. Ha az új szabály csökkenti a felesleges eszkalációt, de az ágens továbbra is kezeli azokat a biztonsági incidenseket, amelyeket eszkalálnia kellene, akkor megbukott a regressziós teszten. A System Prompt Learning értéke nem abban rejlik, hogy automatikusan több szöveget fűz hozzá, hanem hogy a termelési határeseteken keresztül folyamatosan tisztázza a szabályok hatókörét.
+
+A Skill-tanulás ugyanezt az elvet követi, de lokalizáltabb hatókörrel. Egy Skill felfogható egy adott munka igény szerinti használati útmutatójaként: ha több tapasztalat együtt egy teljes biztosítási kárfolyamatot alkot, a rendszer generálhatja vagy felülvizsgálhatja a megfelelő Skill-t. Egy jelölt Skill nem foglalhat össze csupán egyetlen beszélgetést; minimum meg kell adnia, hogy mikor kell betölteni, az előfeltételeket, a műveleti lépéseket, az ismert buktatókat, az érvényesítési módszereket és a forrás trajektóriákat. A rendszer először a meglévő Skill-könyvtárat keresi hasonló képességekre, előnyben részesítve a lokális javítást, ha ugyanaz a folyamat már létezik, és csak egy valóban független képességhez hoz létre új könyvtárat. Ez megakadályozza, hogy a könyvtár megteljen olyan kézikönyvekkel, amelyek névben különböznek, de tartalmilag duplikálják egymást. Az Anthropic Skill Creator[^anthropic-skill-creator] egy vázlat–teszt–kiértékelés–felülvizsgálat ciklust mutat be. Azt tárgyalja, hogyan kell létrehozni és fejleszteni egy Skill-t; a nehezebb kérdések azok, hogy milyen működési bizonyíték elegendő a létrehozás kiváltásához, hogyan kell feloldani az ütközéseket, és hogy a felülvizsgálat átmegy-e a domain-specifikus és a régi feladatok regressziós tesztjein.
+
+> **9-9. ★★ kísérlet: Visszajelzésből írási Skill**
+>
+> A `data/feedback_pairs.json` 20 before/after párját három adagban dolgozzuk fel, jelölteket nyerünk ki, egyesítjük az ismétlődéseket, ellenőrizzük a küszöbütközéseket, majd forrással és hatókörrel rendelkező `SKILL.md` készül. A determinisztikus szabályokat kód, az LLM-szabályokat 10 aranypélda kalibrálja.
+>
+> A befejezetlen feladatok és a normál szövegek külön készletén együtt mérjük a felismerést, a téves riasztást és a szabályszám növekedését. Az első valós futás 0/8 felismerést és 7/8 téves riasztást adott; külső szűrés és determinisztikus tartalékút után 8/8, 0/8 és 21 jelöltből 8 szabály lett. Megvalósítás: [`ai-style-skill`](../chapter9/ai-style-skill/).
+
+A görbe idézőjelek esete azt mutatja, hogy a Skillnek adat-szerződéssé, nem globális csere-szabállyá kell válnia: az SFT előtt a szintetikus példákat műfaj, hatókör és programnyelv szerint rétegezzük, kód/JSON/védett-rész kapukkal és kézi audittal ellenőrizzük. A pontos másolási esetben külön regressziós réteg a tokenizer encode→decode round-trip, a modell byte-exact másolása, a Harness sorosítása és az eszközillesztés.
+
+> **9-3. ★★ kísérlet: Rendszer Promptok optimalizálása sikertelen trajektóriákból**
+>
+> **Cél:** Egy légitársasági ügyfélszolgálati ágens tanítása olyan trajektóriákból, ahol túl gyorsan eszkalál, amikor egy felhasználó megkérdőjelez egy irányelvet, miközben bizonyítja, hogy az új szabály nem töri el a régebbi forgatókönyveket, amelyek valóban eszkalációt igényelnek.
+>
+> **Eljárás:** Először a régi feladatok retenciós készletét és a túlzott eszkaláció határeset-készletét futtassuk külön. A `learning_signal.py` a hibákat szabálykövetésre, feladatmegoldásra és megfelelő rugalmasságra bontja, miközben megtartja a forrás esetazonosítókat. Egy kódoló ágens ezután elolvassa a meglévő Promptot, és pontosan egy auditálható `old_str → new_str` minimális szerkesztést hoz létre: előírja az ágensnek, hogy magyarázza el az irányelvet, azonosítsa a valódi célt, és keressen megfelelő alternatívákat az eszkaláció előtt, miközben megtartja az eszkalációt, ha a felhasználó kifejezetten embert kér, vagy biztonsági incidens történik. A javítás, a származás, a célszabály és az indoklás egy jelölt manifestbe kerül.
+>
+> **Három kontroll:** Hasonlítsuk össze a kezdeti Promptot, az automatikusan generált jelölt Promptot és egy egyszeri, manuálisan optimalizált Promptot. Mindhárom ugyanazt a modellt és ugyanazt a retenciós és határeset-készletet használja. A `--quick` csak az esetek számát csökkenti; továbbra is valódi hívásokat indít a feladat ágenshez, az LLM bíróhoz és a kódoló ágenshez, és nem jelenthető offline szimulációként.
+>
+> **Kiadási kapu és mérőszámok:** Egy jelöltnek négy feltételt kell teljesítenie: nem üres javítás, visszakövethető származás, mérhető javulás a határeset-készleten, és nincs romlás a retenciós készleten. Hasonlítsuk össze a határeset-feladatok pontosságát, a retenciós feladatok pontosságát, a Prompt növekedését, a bevezetett regressziókat és a hiba felfedezésétől a jelölt generálásáig eltelt időt. A kapun való áthaladás csak `release_to_canary` eredményt ad, soha nem a stabil Prompt közvetlen felülírását; bármely feltétel megszegése `reject_candidate` eredményt ad.
+>
+> A mellékelt implementáció a [`prompt-auto-optimization`](../chapter9/prompt-auto-optimization/) címen érhető el. Az offline tesztek lefedik a diagnózist és a kiadási kapukat, míg a `--quick` valódi hívásokat indít a feladat ágenshez, az LLM bíróhoz és a kódoló ágenshez.
+
+[^dspy-2023]: Khattab, O., et al. *DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines.* arXiv:2310.03714, 2023.
+
+[^opro-2023]: Yang, C., et al. *Large Language Models as Optimizers.* arXiv:2309.03409, 2023.
+
+[^gepa-2025]: Agrawal, L., et al. *GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning.* arXiv:2507.19457, 2025.
+
+[^karpathy-system-prompt-learning]: Karpathy, A. "We're missing (at least one) major paradigm for LLM learning … system prompt learning?" X, 2025. május 11. https://x.com/karpathy/status/1921368644069765486
+
+[^anthropic-skill-creator]: Anthropic. *Skill Creator.* 2026. https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md
+
+### Tapasztalatok kódolása programokként
+
+Amikor a tapasztalat olyan műveleteket ír le, amelyek stabilak, ismétlődőek és ellenőrizhetők, pazarlás minden alkalommal újraolvastatni a modellt a dokumentációval és végigvezetni a gondolkodási folyamaton. Célszerűbb a tapasztalatot munkafolyamatokká, eszközökké vagy Harness-kóddá fordítani, az egyszeri felfedezést egy ismételten végrehajtható programmá alakítva. Az 5. fejezet elmagyarázta, hogy a kódoló ágensek hogyan olvasnak fájlokat, futtatnak teszteket és generálnak rendszereket; ez a szakasz nem az általános kódgenerálásra összpontosít, hanem arra, hogy egy ágens hogyan módosítja saját jövőbeli verzióit a saját trajektóriái alapján.
+
+A módosítható objektumok messze túlmutatnak az új eszközökön. A műveleti rétegben a böngésző-trajektóriák paraméterezett munkafolyamatokká fordíthatók, vagy adapterek generálhatók a változó API-khoz. A vezérlési rétegben az eszköz-útválasztás, újrapróbálkozások, megszakítók és kontextus-tömörítési stratégiák módosíthatók. Az érvényesítési rétegben paraméter-ellenőrzések, állapot-érvényesítők és regressziós tesztek adhatók hozzá a termelési hibák hatására. Az architektúrai rétegben egy felülvizsgáló ágens adható hozzá, vagy a tervezés és végrehajtás közötti információáramlás változtatható meg.
+
+A böngésző-munkafolyamatok jól illusztrálják a programozott tapasztalat értékét. Hasonlóak egy táblázatkezelő makró felvételéhez. Amikor először küldünk e-mailt, egy multimodális ágens megfigyelés–érvelés–cselekvés ciklust használ a levélírás, címzett, tárgy, szövegtörzs és küldés vezérlőinek megtalálásához. Egy másik e-mailhez a folyamat változatlan; csak a címzett és a tartalom különbözik, így nincs szükség a modell újbóli meghívására a teljes útvonal újrafelfedezéséhez pixelekből és DOM-ból. A rendszer az első felfedező trajektóriát egy kis programmá fordítja, amely paramétereket, állapot-ellenőrzéseket és verzióinformációkat tartalmaz.
+
+A böngésző környezetben a 8-4. ábrán bemutatott tudásdesztillációs folyamat egy konkrétabb életciklussá válik:
+
+1. **Trajektória rögzítése:** Rögzítsük a navigációt, kattintásokat, szövegbevitelt és legördülő menü kiválasztást, a műveleti paraméterekkel, az aktuális URL-lel és az elem-lokátor bizonyítékokkal (XPath, CSS, `id`, `role`, `aria-label`, `data-testid`) együtt. A lokátor bizonyítékok csak segítenek újra megtalálni egy elemet; nem bizonyítják, hogy a feladat elkészült.
+2. **Paraméterezés:** Cseréljük ki az első futtatás literáljait sablonváltozókra – például a `test@example.com`, a tárgy és a szövegtörzs helyére `{recipient}`, `{subject}` és `{content}` kerül –, miközben a stabil műveleteket változatlanul hagyjuk. A tanító implementáció reguláris kifejezéseket és sablonhelyettesítést használ; egy termelési rendszer strukturált feladatbemenetet vagy egy korlátozott kinyerő modellt használhat.
+3. **Állapot-ellenőrzések definiálása:** Adjunk hozzá ellenőrzéseket a műveletek előtt és után, például „a küldés gomb látható" és „a navigáció utáni URL a célsite-hoz tartozik". Adjunk hozzá egy végső állapot-ellenőrzést a teljes munkafolyamathoz, például „az elküldött levelek listája tartalmazza az új üzenetet" vagy „a tesztoldal állapotértéke a várt módon változott". Egy művelet sikeres végrehajtása nem egyenlő a feladat sikeres elvégzésével; a végső ellenőrzésnek a valós oldalt vagy backend-állapotot kell olvasnia.
+4. **Jelölt érvényesítése:** Az első siker csak egy `candidate`-et eredményez. A rendszernek vissza kell állítania a sandbox fiókot vagy tesztoldalt egy független kezdeti állapotba, és újra kell játszania a jelöltet teljes egészében. Csak akkor publikálható `validated` státusszal, ha minden művelet előtti, művelet utáni és végső állapot-ellenőrzés sikeres. Ha egy mellékhatással járó feladatnak (például e-mail küldése vagy rendelés leadása) nincs biztonságos visszaállítási lehetősége, a munkafolyamat auditálható jelöltként megőrizhető, de nem érvényesíthető a művelet megismétlésével egy termelési fiókban.
+5. **Egyeztetés és visszajátszás:** Amikor egy új feladat érkezik, keressük a formális képességkönyvtárban a munkafolyamatot szándék és kulcsszavak alapján, vonjuk ki az aktuális paramétereket, és hajtsuk végre közvetlenül Playwright-tel. A visszajátszás nem igényel lépésenkénti LLM-hívásokat, de továbbra is meg kell várnia, hogy az elemek elérhetővé váljanak, és el kell végeznie minden állapot-ellenőrzést.
+6. **Érvénytelenítés és újratanulás:** Ha a célelem nem található, egy állapot-ellenőrzés sikertelen, az API séma megváltozik, vagy a végső állapot hibás, azonnal állítsuk le a későbbi műveleteket, helyezzük át a régi verziót a kereshető könyvtárból az `invalid` területre, és térjünk vissza a teljes ágensre a friss felfedezéshez. Tartsuk meg a régi fájlt auditálási és összehasonlítási célból, de soha ne hagyjuk, hogy továbbra is csendben egyezzen.
+
+Egy e-mail munkafolyamat esetén a lefordított eredmény nem csupán „kattints ezekre a gombokra sorrendben", hanem egy kis program, amely a címzett, tárgy és szövegtörzs paraméterekkel rendelkezik: ellenőrzi a levélírás ablakot és mezőket a küldés előtt, ellenőrzi a sikerjelzőt a küldés után, és végül megerősíti, hogy a megfelelő üzenet megjelenik az elküldött lista részben. A PreAct[^preact] rendszerben az ilyen programok 8,5–13-szoros végpontok közötti gyorsulást értek el ismétlődő feladatokon, és nem igényeltek lépésenkénti nyelvi modell hívásokat a visszajátszás során. Ennél is fontosabb, hogy a folyamatmemóriának szüksége van **művelet előtti érvényesítésre, művelet utáni érvényesítésre és független előtárolásos érvényesítésre**. Ellenkező esetben a rendszer veszélyes illúziót kelthet: a visszajátszási lefedettség 100%, minden gombra kattintottak, de az egyik mező üres volt, és a feladat soha nem készült el ténylegesen.
+
+> **9-4. ★★★ kísérlet: Ellenőrizhető munkafolyamatok generálása böngésző-trajektóriákból**
+>
+> **Cél:** Annak meghatározása, hogy egy webes ágens egy drága felfedezést újrafelhasználható munkafolyamattá tud-e alakítani, és el tudja-e utasítani a hibás visszajátszást, ha az oldal megváltozik, ahelyett, hogy sikert jelentene, mert minden művelet lefutott.
+>
+> **Négyszakaszos forgatókönyv:** Az első szakaszban futtassuk a „küldj egy üzenetet 'Teszt e-mail' tárggyal a `test@example.com` címre" parancsot egy teszt e-mail oldalon vagy szimulált üzenetküldő oldalon. A teljes ágens felfedez, miközben egy wrapper rögzíti a műveleteket, paramétereket és oldalállapotokat, és egy `candidate`-et állít elő. A második szakaszban hívjuk meg a `validation_reset` függvényt a sandbox visszaállításához, és játsszuk le a teljes munkafolyamatot függetlenül; a jelölt csak akkor kerül be a formális képességkönyvtárba, ha minden művelet előtti, művelet utáni és végső állapot-ellenőrzés sikeres. A harmadik szakaszban végezzük el ugyanazt a feladattípust más címzettel, tárggyal és szövegtörzzsel. A rendszernek egyeztetnie kell az érvényesített munkafolyamattal, ki kell töltenie az új paramétereket, és Playwright-on keresztül vissza kell játszania anélkül, hogy belépne a lépésenkénti LLM-hurokba. A negyedik szakaszban változtassuk meg egy gomb lokátorát, az oldal szövegét vagy a végső állapotot, és ellenőrizzük, hogy a régi munkafolyamat azonnal `invalid`-dé válik, és `fallback_required=True` értéket ad vissza.
+>
+> **Kontroll kialakítás:** Egy leegyszerűsített kiindulási feltétel csak azt rögzíti, hogy a kattintások, szövegbevitel és más műveletek kivétel nélkül befejeződnek-e. A kísérleti feltétel emellett érvényesíti az oldalt minden művelet előtt, az oldalt minden művelet után és a végső feladatállapotot. Mindkét feltétel ugyanazokat a trajektóriákat és oldalváltoztatásokat használja. Hasonlítsuk össze a téves pozitív arányokat olyan esetekben, mint „a küldés gombra kattintottak, miközben egy mező üres volt" és „a Mentés gombra kattintottak, de az adatok nem maradtak meg".
+>
+> **Mérőszámok és elfogadás:** Rögzítsük a kezdeti felfedezés és a visszajátszás végpontok közötti idejét, az LLM-hívások számát, a sikerarányt, a téves sikerarányt, a munkafolyamat-egyezési arányt, az oldalváltozás-érzékelési arányt és az újratanuláshoz szükséges visszaállások számát. Visszaállítási lehetőség nélkül a munkafolyamatnak jelöltnek kell maradnia; az érvényesítést megbukott verziónak nem szabad lekérdezhetőnek lennie; a paraméterezett visszajátszás nem használhatja újra az első futtatás címzettjét vagy tartalmát; és oldalváltozás után a veszélyes későbbi műveleteknek le kell állniuk. A gyorsulás csak akkor számít, ha minden feltétel teljesül.
+>
+> A mellékelt implementáció a [`browser-use-rpa`](../chapter9/browser-use-rpa/) címen érhető el, amely egy determinisztikus állapotgép-demonstrációt és egy valódi böngésző ágenst meghívó végrehajtási útvonalat is biztosít.
+
+Az a tény, hogy egy ágens módosítja a saját kódját, nem jelenti azt, hogy a futó folyamat közvetlenül felülírja önmagát. Egy termelési rendszernek létre kell hoznia egy jelölt ágat az aktuális stabil verzióból, egy kódoló ágenssel kell generálnia egy minimális javítást, majd sorban statikus ellenőrzéseket, egységteszteket, biztonsági vizsgálatokat, sikertelen trajektóriák visszajátszását és régi feladatok regressziós tesztjeit kell futtatnia, mielőtt új verziót bocsátana ki canary telepítésre. Ez az „önmódosítást" egy auditálható szoftverkiadási folyamattá alakítja, és meghatározza a 8. és az 5. fejezet közötti határt: az 5. fejezet a rendszerek módosításának képességét biztosítja, míg ez a fejezet egy olyan módszert ad az önmódosításhoz, amelyet tapasztalat indít el és egy érvényesítési hurok korlátoz.
+
+A javítás kicsinyítése önmagában nem elegendő a megbízható attribúcióhoz. Minden módosítási kérelemnek egy "hamisítható változási szerződésnek" is kell lennie, amely rögzíti a hiba bizonyítékait, a feltételezett gyökérokot, a felelős Harness komponenst, a jelölt változtatást, a várhatóan javuló viselkedést, a meglévő viselkedést, amely romolhat, valamint a teszteket mindkettőhöz. Az Agentic Harness Engineering ezt komponens-, tapasztalat- és döntésszintű megfigyelhetőségként írja le: minden szerkeszthető komponens fájlszintű reprezentációval rendelkezik; a trajektóriák nagy gyűjteményeit egyre részletesebb szinteken vizsgálható bizonyítékokká desztillálják; és minden szerkesztés a végrehajtás előtt hatás-előrejelzést deklarál, amelyet a következő eredménykör aztán tesztel[^ahe-2026]. Egy magasabb pontszám így egy konkrét mechanizmushoz kapcsolható, ahelyett, hogy értelmezhetetlen próbálkozás maradna.
+
+A jelöltgenerátornak nem szabad csak sikertelen eseteket kapnia. A Self-Harness emellett biztosítja a megőrzendő sikeres viselkedést és a korábban elutasított módosítások rekordjait is[^self-harness-2026]. Az előbbi megmondja az ágensnek, hogy mit nem szabad eltörnie a javításnak; az utóbbi megakadályozza, hogy ugyanazt a sikertelen ötletet más szavakkal újra benyújtsa. A hiba bizonyítékai, a sikerességi kényszerek és a korábbi próbálkozások együtt egy korlátozott jelöltteret határoznak meg, és hasznosabbak, mint az összes forráskód és nyers napló válogatás nélküli betöltése a módosító ágensbe.
+
+Az eszközlétrehozás ugyanezt a protokollt követi. Az Alita[^alita-2025] egy olyan esetet mutat be, ahol egy ágensnek azonosítania kell a számot, amely közvetlenül azután hangzik el, hogy a dinoszauruszok először megjelennek egy YouTube 360 VR videóban, amelyet a *Gyűrűk Ura* Gollumának hangját adó színész narrál. Miután felismeri, hogy hiányzik a feliratolvasási képessége, az ágens megtalálja és teszteli a `youtube-transcript-api`-t, új felirat-eszközként csomagolja, és kinyeri a `100000000` választ a transzkriptumból. Egy új eszköz csak biztonsági vizsgálat, funkcionális tesztek és sikeres újrafelhasználás után kerül a képességkönyvtárba. A 4. fejezet proaktív eszközfelderítése azt kérdezi, melyik meglévő eszköz illik; az 5. fejezet azt kérdezi, hogyan kell eszközt írni; ez a fejezet azt kérdezi, hogy milyen működési bizonyítékoknak kell kiváltaniuk a létrehozást, és hogyan válik egy új eszköz érvényesített hosszú távú képességgé.
+
+> **9-5. ★★★ kísérlet: Ágens önmódosításának kiváltása sikertelen trajektóriákból**
+>
+> **Cél:** Több olyan trajektória esetén, ahol a `retryable=false` jelzésű hibákat továbbra is ismételten hívják, annak meghatározása, hogy a rendszer képes-e azonosítani a gyökérokot az újrapróbálkozási és megszakító kódban, és előállítani egy jelölt javítást anélkül, hogy eltörné a tranziens hibákból való helyreállást.
+>
+> **Eljárás:** A diagnosztikai modul először ugyanazt a hibát gyűjti össze különböző feladatokból. Csak a trajektóriákon átívelő támogatottsági küszöb elérése után hoz létre módosítási kérelmet, amely a stabil verzió `retry_policy.py` fájlját célozza. A jelöltgenerátor elolvassa a hibadiagnózist, a megőrzendő tranziens hiba-kezelési viselkedést, a korábban elutasított változtatásokat és a stabil forrást. Mielőtt kiad egy minimális kód-különbséget, előrejelzi, hogy a nem újrapróbálható hibák utáni hívásoknak csökkenniük kell, míg a tranziens időtúllépés utáni helyreállásnak nem szabad romlania. Akár determinisztikus a generátor, akár valódi LLM kódoló ágens, csak egy izolált jelölt könyvtárba írhat. Az érvényesítő Harness ezután lefordítja a jelöltet, visszajátssza az eredeti hibás trajektóriákat, ellenőrzi, hogy egy nem újrapróbálható hiba azonnal leáll és nyitja a megszakítót, és újrateszteli, hogy a tranziens időtúllépések továbbra is az eredeti küszöb szerint próbálkoznak újra.
+>
+> **Diagnosztikai kontroll és mérőszámok:** Kezeljük a „adjunk hozzá egy mondatot a Prompthoz, amely megtiltja az ágensnek a hívás megismétlését" konceptuális példaként a rossz módosítási réteg kiválasztására, demonstrálva, hogy egy determinisztikusan kikényszeríthető újrapróbálkozási kényszer miért a kódba való. A futtatható kísérlet összehasonlítja a determinisztikus és az LLM javításgenerátorokat ugyanazon kiadási kapu alatt. Rögzítsük a nem újrapróbálható hibák utáni hívások számát, a tranziens hibák helyreállási arányát, a régi feladatok regresszióit, a javítás méretét és a jelölt elfogadási arányát.
+>
+> **Elfogadási kritériumok:** Minden ellenőrzés sikeres áthaladása csak `release_to_canary` eredményt ad. Bármely statikus ellenőrzés, hibavisszajátszás vagy régi feladat regressziójának meghiúsulása `reject_candidate` eredményt ad. A `release_manifest.json` fájlnak tartalmaznia kell a hibaklasztert, a forrás trajektóriákat, a feltételezett gyökérokot, a célkomponenst és fájlt, a kód-különbséget, a várható javítást, a lehetséges regressziókat, az ellenőrzési eredményeket, a jelölt verziót és a visszaállítási verziót. Az elutasított jelölteknek meg kell őrizniük a hibák okait a következő generálási körhöz. A javítást generáló ágens nem módosíthatja a stabil kódot, az érvényesítőket, az auditnaplókat vagy a saját kiadását jóváhagyó kaput.
+>
+> A mellékelt implementáció a [`self-modifying-agent`](../chapter9/self-modifying-agent/) címen érhető el. Támogatja a determinisztikus jelöltgenerátort és a valódi LLM kódoló ágenst is, mindkét útvonal ugyanazt a kiadási kaput használja.
+
+[^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
+
+[^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
+
+A 9-8. kísérlet ugyanezt a protokollt a verifikációs rétegre alkalmazza. Csak több felhasználói javítás, negatív értékelés és audit után készül módosítási kérés a megerősítés nélküli veszélyes műveletekre; a jelölt elszigetelt könyvtárba kerül. Az eszköz neve és argumentumai alapján veszélyes törléseket és `git push --force`-t keresünk, az egyszer használatos tokent a konkrét művelethez kötjük. AST/statikus ellenőrzés, határ- és tartalékkészlet-visszajátszás után engedhető ki.
+
+> **9-8. ★★ kísérlet: Magas kockázatú műveletek megerősítési kapuja felhasználói visszajelzésből**
+>
+> A `failure_trajectories.json` három jelzést és kontrollpályákat ad. A valós `gpt-4o-mini` jelölt nem ment át a befejezetlen feladatok, normál műveletek és egyszer használatos tokenek ellenőrzésén, ezért a biztonsági kapu elutasította. A determinisztikus jelölt minden ellenőrzést teljesített és `release_to_canary` lett; rögzítjük a döntést és a stabil könyvtár hashét. Megvalósítás: [`harness-safety-gate`](../chapter9/harness-safety-gate/).
+
+### Tapasztalatok kódolása paraméterekben
+
+A tudás, az utasítások és a programok mind egy előfeltevésen alapulnak: a célképesség viszonylag teljesen kifejezhető külső szimbólumokkal. Az olyan képességek azonban, mint az orvosi képalkotás megértése, a természetes beszéd prozódia, a formális „AI-érzés" eltávolítása a szövegből és a hosszú távú tervezés, nehezen sűríthetők néhány szabályba vagy munkafolyamatba. Ezeket a képességeket paraméterekbe kell írni utóképzéssel.
+
+Azt, hogy egy képességet paraméterezni kell-e, nem csak az határozza meg, hogy a feladat hosszú távon stabil-e. Az új képalkotó berendezések által okozott domain-eltolódások továbbra is igényelhetnek LoRA-t vagy folyamatos finomhangolást; a gyorsan változó nyelvi stílusok időszakos preferencia-tanítással is kezelhetők. A stabilitás befolyásolja a frissítés gyakoriságát és költségét, de a képesség reprezentációs természete határozza meg az elsődleges médiumot. Ezzel szemben egy hosszú ideje stabil átutalás-jóváhagyási szabály nem támaszkodhat kizárólag paraméteres memóriára; a szerveroldali kódnak továbbra is determinisztikus garanciákat kell nyújtania.
+
+A 8. fejezet teljes körű tárgyalást adott az SFT-ről, a desztillációról és a megerősítéses tanulásról, így ez a szakasz nem ismétli meg azt. A folyamatos evolúció szempontjából a kulcs az, hogy a kiértékelt termelési trajektóriákat tréningadatokká alakítsuk: a kiváló minőségű demonstrációk használhatók az SFT-hez, az explicit preferenciák páros adatokat képezhetnek, és a megbízható környezeti jutalmakkal való interakciók RL-hez használhatók. A tréning előtt továbbra is el kell távolítani a privát információkat, ki kell szűrni a hibás trajektóriákat, és meg kell őrizni egy független regressziós készletet. A tréning után ellenőrizni kell, hogy nem következett-e be általános képességfelejtés vagy biztonsági irányítás eltolódása.
+
+A paraméteres tanulás általában külső módszerekkel együtt működik. Egy orvosi képalkotó modell paramétereken keresztül tanulhat vizuális reprezentációkat, a legújabb irányelveket tudásbázisból szerezheti be, és kódot használhat az elváltozások mérésére és a kockázatok kiszámítására. Egy természetes ügyfélszolgálati hangnem eloszlási szinten alakítható preferencia-tanítással, míg egy Prompt adja meg az aktuális márkaidentitást, és a felhasználói memória egyéni preferenciákhoz igazítja a kommunikációt. A folyamatos evolúció nem azt jelenti, hogy a négy módszer közül kiválasztunk egyetlen választ, hanem hogy minden képességet abba a médiumba helyezzük, amely a legalkalmasabb a kifejezésére és szabályozására.
+
+### A frissítendő artefaktumoktól a „frissítési módszer" frissítéséig
+
+Az előző négy módszer azt kérdezi, "hová íródik a tapasztalat", de a folyamatos evolúciónak van egy másik, merőleges tengelye is: a rendszer az artefaktum tartalmát optimalizálja, vagy az artefaktumok előállításának, kezelésének és érvényesítésének módszerét? Ezen a tengely mentén az optimalizálás célpontja kibővülhet **egyetlen szabálytól vagy memóriától → strukturált kontextus → munkafolyamat → Harness kód → optimalizáló kód, amely jelölt megoldásokat generál**[^weng-harness-2026]. Ezek nem öt új frissítési hordozó, hanem öt keresési skála; a tudás, a Promptok, a Skill-ek és a programok több ilyen szinten is megjelenhetnek.
+
+A legbelső szint csak az artefaktum tartalmát változtatja meg – például egy lokális szabály hozzáadása a rendszer Prompthoz egy sikertelen trajektória után, vagy egy kivétel hozzáadása egy tapasztalati dokumentumhoz. Az ilyen változtatásoknak kicsi a hatássugara, könnyebben attribuálhatók és visszaállíthatók, ezért ezeknek kell lenniük az alapértelmezettnek. Ha azonban ismételten megkérünk egy modellt egy teljes Prompt vagy memória átírására, az a romlás egy másik formáját hozza be: a tömörítésre tett egymást követő kísérletek fokozatosan kitörölhetnek ritka, de fontos részleteket, és az egymással kölcsönhatásban lévő kényszerek egy túl általános elvvé olvadhatnak össze. Az Agentic Context Engineering (ACE) a kontextust stabil azonosítókkal rendelkező bejegyzések gyűjteményeként tartja fenn. A generálási, reflexiós és kurációs modulok növekményes frissítéseket javasolnak, amelyeket determinisztikus logika egyesít és deduplikál, ahelyett, hogy minden körben egy egyre rövidebb szövegblokkot írnának át[^ace-2026]. Ez a fejezet korábbi, minimális különbségekre és megtartott származásra vonatkozó elveinek konkrét kutatási példája.
+
+A következő szinten az optimalizálás célpontja már nem csupán az, hogy mit tartalmaz a kontextus, hanem hogy hogyan épül fel a kontextus. A Meta Context Engineering (MCE) a kettőt belső és külső hurokra bontja: a belső hurok a kontextus artefaktumot optimalizálja az aktuális feladathoz egy adott kezelési módszer mellett, míg a külső hurok több végrehajtás és érvényesítés eredményeit használja a kontextus-műveletek (keresés, kiválasztás, szűrés, formázás) módosítására[^mce-2026]. A megkülönböztetés fontos. Egy visszakeresési szabály szerkesztése egy tartalomkezelési mechanizmust változtat meg; több visszakeresési és kurációs mechanizmus összehasonlítása és a jobb átvitelű megtartása a kontextuskezelés tanulása.
+
+Ugyanez az ötlet kiterjed a munkafolyamatokra és a teljes Harness-re. Az AFlow a több LLM-hívásból álló munkafolyamatokat kódgráfokként reprezentálja, és a csomópontok és vezérlési folyam kombinációit keresi végrehajtási visszajelzés segítségével[^aflow-2025]. A Meta-Harness egy kódoló ágenssel vizsgáltatja a jelölt Harness forrást, pontszámokat és trajektóriákat, hogy megtalálja azt a kódot, amely meghatározza, hogy az információ hogyan tárolódik, kerül visszakeresésre és bemutatásra[^meta-harness-2026]. Az 5. fejezet a kódot az ágensrendszer szerkezetének általános nyelveként határozta meg. A kiegészítő pont itt az, hogy a kód a kiértékelési előzményeivel együtt maga is a folyamatos keresés tárgyává válhat, nem pedig egyszeri kimenet.
+
+A magasabb szintek nem automatikusan jobbak. Egy lokális szabály kereséséhez csak néhány határesetre lehet szükség, míg egy teljes munkafolyamat vagy Harness keresése sokkal nagyobb jelöltteret, magasabb kiértékelési költséget és nehezebb attribúciót jelent. Egy egyértelmű, ismétlődő, egy komponensre lokalizált hibának először egy auditálható lokális javítást kell kapnia. Csak amikor a lokális változtatások ismételten nem képesek kezelni egy komponenseken átívelő problémát, vagy amikor az aktuális kezelési módszer maga válik szűk keresztmetszetté, érdemes kifelé mozdulni a munkafolyamatra, a Harness-re vagy az optimalizálóra. Minden szinten az értékelőknek, a jogosultsági határoknak és a kihagyott teszteknek a szerkeszthető hatókörön kívül kell maradniuk – minél nagyobb a keresési tér, annál fontosabb ez a megbízható gyökér.
+
+> **9-6. ★★★ kísérlet: Mi történik, ha Hermes megkapja ezt a könyvet? Képes frissíteni önmagát?**
+>
+> **Cél:** Annak vizsgálata, hogy egy Agent képes-e külső tudást saját képességeinek valódi frissítésévé alakítani. A kísérlet nem ad meg hibát vagy funkciólistát: Hermes megkapja mind a tíz fejezetet és saját forrását, majd magának kell megértenie az elveket, átvizsgálnia a megvalósítást és kiválasztania egy érdemi javítást.
+>
+> **Elrendezés:** A könyv és a forrás olvasható kontextus, de a stabil verzió, a független Reviewer és az elfogadási tesztek Hermes szerkeszthető hatókörén kívül maradnak. A folyamat: **olvasás → összevetés → választás → módosítás → ellenőrzés**. Az elutasított jelölt visszajelzése a következő tanulási kör bemenete; a kapu nem kerülhető meg.
+>
+> **Valós futás:** A könyv elolvasása után Hermes önállóan felismerte, hogy a mentett trajektóriákból hiányzik a későbbi tanulás számára közvetlenül használható strukturált bizonyíték. Konzervatív tanulási jeleket vezetett le a végrehajtási eredményekből, majd módosította saját kódját és teszteket adott hozzá. Az első három független review valós adatformátum-, mentésiútvonal- és számlálási eltéréseket talált; minden megállapítás visszakerült az eredeti Hermes munkamenetbe, a negyedik review pedig elfogadta a jelöltet.
+>
+> **Az állítás határa:** A futás igazolja, hogy egy Agent hosszú tudásanyagból elveket vonhat ki, azokat saját kódjára vetítheti, és külső ellenőrzés mellett önfrissítést fejezhet be. A downstream feladatok javulását nem bizonyítja; ehhez külön ablation kísérlet kell. A kísérlet ötletét Grace olvasó adta.
+
+## Hosszú távú működésre alkalmas folyamatos evolúciós zárt hurok építése
+
+A négy frissítési módszer csak akkor válik folyamatos evolúcióvá, nem pedig egyszeri optimalizálássá, ha ugyanabba az autonóm hurokba illeszkednek. A 9-5. ábra egy robusztusabb, termelési rendszerekhez tervezett kéthurkú architektúrát mutat: az online végrehajtási hurok csak feladatokat végez el és bizonyítékokat rögzít, anélkül, hogy közvetlenül átírná a termelési ágenst; az offline evolúciós hurok trajektóriákat gyűjt, gyökérokokat diagnosztizál, jelölt módosításokat generál, és új verziókat csak az érvényesítési kapukon való áthaladás után bocsát ki. A két hurkot verziózott tapasztalati tárolók és kiértékelési készletek kötik össze.
+
+![9-5. ábra: Két hurok az online végrehajtáshoz és az offline evolúcióhoz](images/fig9-5.svg)
+
+A Voyager[^voyager-2023] egy viszonylag teljes folyamatos evolúciós hurkot demonstrál. A Minecraftban az aktuális képességek alapján választ új célokat, iteratívan finomítja a programokat környezeti visszajelzéssel, a sikeresen érvényesített kódot egy skill-könyvtárban tárolja, majd a meglévő skill-eket kombinálja nehezebb feladatok megoldásához. Az automatikus tanterv, a végrehajtható skill-ek és a környezeti érvényesítés mind nélkülözhetetlen: skill-könyvtárral, de tanterv nélkül az ágens nem tudja, mit tanuljon következőnek; önreflexióval, de környezeti érvényesítés nélkül a skill-könyvtár hibákat halmoz fel; felfedezéssel, de perzisztencia nélkül minden feladatot előröl kell kezdeni. Bár a valós ágensek tudása, Promptjai, eszközei és paraméterei összetettebbek, az alapvető tanulási folyamat hasonló.
+
+Pontosabban, a Voyager három egymásba kapcsolódó mechanizmusból áll. Az "automatikus tanterv-generátor" az aktuális leltárból, környezetből és megszerzett skill-ekből javasol egy megfelelően kihívást jelentő következő célt, így a felfedezés nem válik véletlenszerű bolyongássá. A "skill-könyvtár" a sikeres programokat visszakereshető, összeállítható kódként tárolja; egy fejlett gyűjtögető skill például meghívhat alapvető mozgási és készítési skill-eket. Az "iteratív promptolási mechanizmus" a környezeti megfigyeléseket, végrehajtási hibákat és önellenőrzési eredményeket visszavezeti a kódgenerálás következő körébe, amíg a feladat ténylegesen át nem megy. A cikkben használt alapvonalakhoz képest a Voyager 3,3× több egyedi tárgyat szerzett, 2,3× messzebbre utazott, a kulcsfontosságú technológiai fa mérföldköveit akár 15,3× gyorsabban elérte, és átvitte a skill-könyvtárát új Minecraft világokba. Ezek a mérőszámok azt mérik, hogy a képesség hogyan növekszik a tapasztalattal, nem pedig azt, hogy egy befagyasztott ágens hogyan teljesít egyetlen vizsgán.
+
+### A probléma diagnózisától a tapasztalat konszolidálásáig
+
+Ugyanaz a felszíni probléma különböző módosítási formákat igényelhet. Amikor egy ügyfélszolgálati ágens kitalált tényeket hallucinál, az ok lehet hiányzó információ a tudásbázisban, vagy a Prompt nem írja elő a hivatkozásokat. Amikor egy ágens hamisan ígéri, hogy „elkészült", mielőtt befejezné a feladatot, a probléma kijavítható utasításokkal, vagy azzal, hogy a Harness kikényszeríti a konzisztenciát a válasz és az eszköz állapota között. Az evolúciós modulnak először a gyökérokot kell azonosítania, majd kiválasztania a legkisebb módosítási célt, amelyet a legkönnyebb érvényesíteni és visszaállítani. A szórványos, elégtelen bizonyítékkal rendelkező hibák nem indíthatják el azonnal a tanulást; a rendszernek továbbra is gyűjtenie kell a példákat.
+
+Ez a választás a tapasztalatok felhalmozódásával is változhat. Egy újonnan felfedezett stratégia kezdetben tapasztalati dokumentumként tárolható visszakeresésre; több eseten át tartó ismételt érvényesítés után tudássá léptethető elő. A tudás háromféleképpen fejezhető ki: a természetes nyelven egyértelműen leírható szabályok Skill-ekbe konszolidálhatók; a stabil eljárások, amelyek nem igényelnek természetes nyelvű megértést, eszközkódba fordíthatók; és a széles, implicit döntéshozatalt tükröző képességek utóképzésbe kerülhetnek.
+
+### Érvényesítés, kiadás és visszaállítás
+
+Minden módosításnak először egy jelölt képességet vagy jelölt ágenst kell eredményeznie, nem pedig közvetlenül felülírnia a termelési verziót. A tudásdokumentumokat tesztelni kell, hogy a visszakeresés javítja-e a teljesítményt új feladatokon; a Promptokat és Skill-eket ellenőrizni kell határesetekre és a korábbi feladatokon való regressziókra; a programokat sandbox-okban és visszaállított környezetekben kell tesztelni; a paraméterfrissítéseket pedig értékelni kell felejtésre, biztonságra és eloszláson kívüli teljesítményre. Még az érvényesítés után is fokozatosan kell kiadni az új verziót, és valós forgalom mellett figyelni; ha a kulcsfontosságú mutatók romlanak, a rendszernek automatikusan vissza kell állnia egy ismert biztonságos verzióra.
+
+**Ellenőrzött kiadás és visszagörgetés:**
+
+```python
+candidate = propose_minimal_update(evidence, current_version)
+
+if not verify(candidate, boundary_set): reject(candidate)
+elif not verify(candidate, retention_set): reject(candidate)
+elif not verify(candidate, safety_set): reject(candidate)
+else:
+    canary = deploy_to_small_traffic(candidate)
+    if canary.metrics_regress: rollback(current_version)
+    else: promote(candidate)
 ```
 
-Egy robotikában használható világmodellnek legalább három dolgot kell jól csinálnia:
+Az érvényesítésnek két gyakran összemosott képességet is szét kell választania. A "Harness frissítése" a trajektóriákból értékes, tartós változások előállításának képessége; a "Harness haszna" a feladat ágens azon képessége, hogy megtalálja, aktiválja és helyesen használja ezeket a változásokat később. Egy Skill önmagában helyes lehet, de egy gyengébb feladatmodell nem biztos, hogy betölti a megfelelő helyzetben, vagy nem követi egy hosszú trajektórián keresztül. Bármelyik kudarc miatt a végső pontszám úgy nézhet ki, mintha nem történt volna evolúció. A végpontok közötti teljesítmény önmagában ezért nem diagnosztizálja a frissítőt. A Lin és munkatársai által végzett modellcsere-kísérletek azt jelzik, hogy a két képesség eltérően viszonyul az alapmodell képességéhez[^harness-benefit-2026]. A pontos kapcsolat több feladaton történő érvényesítést igényel, de a kettő elkülönített értékelése széles körben hasznos.
 
-- értenie kell a jelenlegi állapotot;
-- előre kell jeleznie a különböző műveletek lehetséges eredményeit;
-- át kell adnia ezt az előrejelzést a tervezőnek vagy a szabályozónak, hogy segítse a választást.
+9-3. táblázat: A folyamatos evolúció rétegezett értékelési mérőszámai
 
-Egy VLM, amely csak videót tud leírni, vagy egy modell, amely csak képet tud előállítani, nem válik magától megbízható robotikai világmodellé. Tudnia kell, mi az a művelet, és képesnek kell lennie előre jelezni a művelet hatását a tárgyakra és a környezetre. A V-JEPA 2 azt az utat képviseli, amely belső állapotban jelzi előre a jövőt, a World-Action Model pedig kifejezetten a „művelet—jövőbeli megfigyelés” kapcsolatot tanulja. Ezek a VLA mellett használhatók, nem kell helyettesíteniük.[^ch9-16]
+| Mérőszám | Megválaszolt kérdés | Elsődleges bizonyíték |
+|---|---|---|
+| Jelölt-változtatás érvényessége | Javasol-e a frissítő hasznos változtatásokat? | Elfogadási arány és nyereség független érvényesítésben |
+| Artefaktum aktiválási arány | Betölti-e a feladat ágens az új Skill-t, memóriát vagy eszközt a megfelelő helyzetben? | Visszakeresési, útválasztási és eszközhívási nyomok |
+| Sikeres követési arány | Aktiválás után követi-e az ágens az új szabályt vagy folyamatot? | Műveleti sorozatok és folyamat-ellenőrzők |
+| Kihagyott feladat nyereség | Javul-e a teljes rendszer olyan feladatokon, amelyeket nem használtak az evolúció során? | Kihagyott feladatok sikeressége, minősége és költsége |
 
-Valódi rendszerben a világmodellnek rendszerint három haszna van:
+A diagnózishoz tartsuk fixen a jelölt Harness-t, és cseréljük csak a feladatmodellt. Ha egy erős modell profitál, míg egy gyenge modell soha nem aktiválja az új artefaktumot, a visszakeresés vagy az útválasztás a szűk keresztmetszet. Ha mindkettő aktiválja, de csak az erős modell hajtja végre helyesen, az utasításkövetés vagy a hosszú távú tervezés a szűk keresztmetszet. Ha minden modell romlik, maga a változtatás gyanúsabb. Ezzel szemben tartsuk fixen a feladatmodellt, és cseréljük a változtatásokat javasló modellt, hogy közvetlenül összehasonlítsuk a frissítők minőségét. Ez a kétirányú modellcsere hatékonyabban lokalizálja, hová kell a képességi költségvetést költeni, mint egyetlen evolúció utáni pontszám.
 
-1. **Mozgás előtt**: összehasonlítani a jelölt műveleteket——megfogás, tolás, várakozás——és előre venni a kisebb kockázatú változatot;
-2. **Végrehajtás közben**: egybevetni a valódi megfigyelést az előrejelzéssel, és eltérés esetén lerövidíteni a műveletet, megállni vagy újratervezni;
-3. **Tanítás közben**: videóból, szimulációs adatból és sikertelen pályákból megtanulni az állapotváltozásokat, csökkentve a valódi gépen végzett próbálkozást.
+Az értékelés nem egy vizsga, amelyet a tanulás befejezése után végeznek el, hanem az önfejlődés nélkülözhetetlen része. A hosszú távú értékelésnek legalább ötféle kimenetet kell egyidejűleg figyelnie:
 
-Térjünk vissza az XLeRobot asztali feladatához. Ha a sárga papírt részben eltakarja a piros pohár, a rendszer összehasonlíthatja a jelölt készségeket: „előbb vegyük fel a papírt”, „előbb toljuk el a poharat” vagy „fogjuk meg más irányból”. A világmodellnek nem kell élethű robotvideót előállítania: elég, ha előre jelzi, melyik jelölt művelet vezet nagyobb eséllyel olyan állapothoz, amelyben a papír felvehető, és melyik dönthetné fel a poharat——ennyi már segít a tervezőnek rangsorolni. A művelet végrehajtása után a valódi kamerakép marad a végső tény: az előrejelzés csak a választásban segít, az elfogadási ellenőrzést nem helyettesíti.
+- Regresszió: az új tapasztalat ütközik-e más meglévő tapasztalattal, és a korábban sikeres esetek kezdenek-e meghiúsulni;
+- Generalizáció: az új tapasztalat által a tesztkészlet által még nem lefedett forgatókönyvekben elért javulások;
+- Token-hatékonyság: a feladatok elvégzésének token költsége;
+- Biztonság: a szabályok, adatvédelmi védelem és elutasítási határok sodródnak-e az evolúció során;
+- Hosszú távú mérnöki minőség: a karbantartási komplexitás, az architekturális konzisztencia, a tulajdonjogi határok, a visszafelé kompatibilitás, valamint a jövőbeli migrációs és hibakeresési költségek romlanak-e.
 
-A világmodell nem biztos válaszokat ad, hanem összehasonlítható előrejelzéseket arról, „mi történhet, ha így teszek”. Minél távolabbra jelzünk előre, annál nagyobb általában a hiba, és egy élethűnek látszó jövőbeli kép nem feltétlenül felel meg a valódi érintkezési és súrlódási törvényeknek. Ezért egy valódi rendszernek továbbra is szüksége van rövid távú előrejelzésre, valós idejű megfigyelésre, bizonytalanságbecslésre és önálló hardveres biztonsági szabályozóra. A generatív világmodellek jól használhatók interaktív szimulációra és megjelenítésre, de nem szabad összekeverni azt, hogy „tud videót előállítani”, azzal, hogy „képes irányítani a robot műveleteit”.[^ch9-21]
+Csak az aktuálisan meghibásodott eset javítása, miközben más meglévő eseteken vagy új területeken romlik a teljesítmény, nem jelent sikeres folyamatos tanulást.
 
-> **9-10. kísérlet ★★: Három önálló asztalrendrakó hurok összehasonlítása a szimulátorban**
+### Az ellenőrizhető hurok határa: amikor a „kész" nem jelent „előrelépést"
+
+A fent leírt hurok a legtermészetesebben a kódolás, az eszközhasználat és az üzleti állapotváltozások területén működik, ahol tesztek, környezeti állapot vagy determinisztikus szabályok gyors visszajelzést biztosítanak. A nyílt végű kutatás, a stratégiai tervezés és a komplex terméktervezés más: a visszajelzés késleltetett, lehet, hogy nincs egyetlen helyes válasz, és a legfontosabb célkitűzések (kutatási ízlés, hosszú távú érték, karbantarthatóság) nehezen alakíthatók azonnali pontszámmá. Egy Harness ekkor hibátlanul végrehajthatja a folyamatot, miközben csak olyan dolgokat hoz létre, amelyek eredménynek látszanak, ahelyett, hogy előrevinnék a valódi célkitűzést.
+
+Az autonóm kutatás hasznos stresszteszt. Trehan és Chopra négy végpontok közötti kísérletet dokumentált a kutatási ötletek cikkekké alakítására. Három a megvalósítás vagy az értékelés során meghiúsult, és csak egy teljesítette a teljes csővezetéket[^llm-scientists-2026]. A kudarcok három csoportba sorolhatók. Először, "implementációs sodródás": amint a javasolt módszer nehézzé válik, az ágens visszavonul a tréning eloszlásából ismert implementáció felé, amely már nem teszteli az eredeti hipotézist. Másodszor, "episztemikus túlzott optimizmus": míg a jel még zaj lehet, a rendszer elkezdi magyarázni, javítgatja a módszert, és bejelent egy felfedezést, miközben a kudarcokat és a negatív eredményeket könnyebben figyelmen kívül hagyja. Harmadszor, "hiányzó hallgatólagos ítélőképesség": egy ágens képes lehet kísérleteket futtatni anélkül, hogy tudná, melyik alapvonal számít, melyik anomália érdemel vizsgálatot, vagy mikor kell elvetni egy hipotézist.
+
+Ezek a feladatok a bizonyíték- és felügyeleti struktúra megváltoztatását igénylik, nem csupán egy jobb cikkeket író modellt:
+
+- **Állítások elkülönítése a bizonyítékoktól:** Rögzítsük a hivatkozások, számok, módszerek és következtetések származását külön; a végső dokumentum csak a bizonyíték gráf egy renderelése. A ScientistOne Chain-of-Evidence kialakítása minden állításosztályt auditálható forrásokhoz köt[^scientistone-2026]. Ez javítja a visszakövethetőséget, de önmagában nem teszi értékessé a kutatási kérdést.
+- **Negatív eredmények megőrzése:** A sikertelen kísérleteket, elutasított jelölteket és leállítási okokat írjuk egy megváltoztathatatlan naplóba, ugyanolyan visszakeresési státusszal, mint a sikereket. Ellenkező esetben az evolúciós modul csak a túlélőket látja, újra bejárja a megcáfolt utakat, és megtanulja a kétértelmű eredményeket sikernek értelmezni.
+- **Keresési diverzitás megőrzése:** A nyílt végű keresés ne csak az aktuálisan legmagasabb pontszámú láncot tartsa meg. A jelöltkészletben érdemes megőrizni néhány alacsonyabb pontszámú, de mechanizmusban, kód-újdonságban vagy hipotézistípusban jelentősen eltérő ágat is, hogy ne minden megoldás ugyanarra a könnyen pontozható sablonra konvergáljon.
+- **Emberi részvétel felfelé mozgatása:** Az emberi input nem korlátozódik a veszélyes eszközhívások jóváhagyására. Magában foglalja a problémák meghatározását, az értékelési kritériumok felülvizsgálatát, az anomáliák értelmezését és a leállítás eldöntését. Kétértelmű visszajelzés esetén ezek a magas szintű ítéletek nehezebben automatizálhatók – és értékesebbek –, mint az egyes végrehajtási lépések átvétele.
+
+Ugyanez a korlátozás jelenik meg a hétköznapi szoftverfejlesztésben is. Az összes egységteszt sikeres áthaladása csak azt bizonyítja, hogy az aktuálisan megfigyelhető viselkedés megfelel a teszteknek; nem bizonyítja, hogy a kódbázis hónapok múlva is karbantartható marad. Ezért kezeli az előző szakasz a hosszú távú mérnöki minőséget független mérőszámként, ahelyett, hogy elvárná, hogy a jelenlegi feladatsiker fedezze a késleltetett externáliákat. A folyamatos evolúció plafonját végső soron az határozza meg, hogy a rendszer képes-e értékelni azt, ami valóban fontos számára, nem csupán a legkönnyebben mérhető proxy-t.
+
+### A folyamatos evolúció biztonsági korlátai
+
+Egy ágens önfejlődési képessége egyetlen hibát hosszú távú kockázattá változtathat. **Ha a weboldalakon, e-mailekben vagy eszközkimenetben található Prompt injekciókat tapasztalatként összegezzük**, azok munkameneteken át ismétlődően érvényesülhetnek. Ha egy automatizált kereséssel talált rosszindulatú csomagot eszközként csomagolunk, a hatása egyetlen sandbox futtatásról minden későbbi feladatra kiterjedhet. Egy hibás érvényesítő is tovább hagyhatja jóvá azokat a jelölteket, amelyek látszólag javulnak, de valójában romlanak. Egy ágens önfejlődési rendszerének ezért nemcsak azt kell kérdeznie, hogy egy jelölt erősebb-e, hanem azt is, hogy ki mit módosíthat, és milyen bizonyíték indokolja a változtatást.
+
+Az első korlát a "bizonyítékok és az utasítások szétválasztása". A nyers weboldalak és eszközkimenetek nem megbízható bizonyítékok, és nem írhatók közvetlenül egy Skill-hez vagy hasonló képességhez; egy LLM-nek először össze kell foglalnia azokat. Az írásokat verziókezelni kell, és pull requestként kell benyújtani, amelyek csak egy másik forrásból származó felülvizsgáló LLM általi áttekintés után kerülnek beolvasztásra.
+
+A második korlát a **jelölt képességek és a termelési képességek szétválasztása**. Az új tudás, Promptok, Skill-ek, programok és paraméterek először egy jelölt területre kerülnek, amely nem szolgálhat valós forgalmat. Az újonnan generált kódnak és külső függőségeknek emellett biztonsági ellenőrzéseken kell átesnie, mint a sandbox végrehajtás, jogosultsági felülvizsgálat, ellátási lánc vizsgálat és viselkedési tesztelés. Csak a biztonsági ellenőrzések és regressziós tesztek sikeres áthaladása után szolgálhat egy jelölt valós forgalmat termelési képességként.
+
+A harmadik korlát, hogy a "biztonsági mechanizmusok nem lehetnek önmódosítóak". Egy üzleti ágens módosíthatja a Promptokat, Skill-eket, a tudásbázist és az eszközöket, de nem módosíthatja azokat az érvényesítőket, teszteseteket, kiadási küszöbértékeket, auditnaplókat vagy stabil verziójú biztonsági másolatokat, amelyek jóváhagyják a saját frissítéseit. Ellenkező esetben egy ágens egyszerűen egy tesztküszöb csökkentésével vagy a hibás esetek törlésével álcázhatja a regressziót előrelépésként.
+
+### Alvó tanulás: konszolidáció, felejtés és képességkarbantartás
+
+Az „alvó tanulás" egy kognitív analógia az offline konszolidációra; nem követeli meg, hogy a folyamat szó szerint éjszaka fusson. Az online ágens elsődleges felelőssége az aktuális feladat elvégzése és a megváltoztathatatlan bizonyítékok hozzáfűzése. Egy háttértanulási folyamat az üresjárati időszakokban vagy a kapuzási feltételek teljesülésekor olvassa be az új tapasztalatok kötegét, összehasonlítja a régi és új következtetéseket, egyesíti a duplikátumokat, feloldja az ütközéseket, jelölt frissítéseket javasol, és regressziókat futtat. A gyűjtés és a szervezés szétválasztása megakadályozza, hogy egy véletlen siker, hálózati hiba vagy rosszindulatú bemenet azonnal átírja a hosszú távú képességeket, és lehetővé teszi, hogy a konszolidáció nagyobb kötegeket és olcsóbb modelleket használjon.
+
+Egy tipikus alvó tanulási ciklus öt lépésből áll:
+
+1. **Kiváltás:** Érjünk el egy küszöböt az eltelt idő, az új trajektóriák száma, a tárhelyhasználat vagy a hibagyakoriság tekintetében, miközben megerősítjük, hogy nem fut magas prioritású online feladat.
+2. **Tájékozódás:** Olvassuk el a termelési tudás, Prompt és Skill könyvtárakat és azok verzióit, hogy megértsük a meglévő képességeket és a megváltoztathatatlan határokat.
+3. **Gyűjtés és konszolidáció:** Keressünk új jeleket a nemrég kiértékelt trajektóriákban, egyesítsük a duplikátumokat, jelöljük az ütközéseket és alkalmazási feltételeket, és részesítsük előnyben a lokális javításokat.
+4. **Érvényesítés és jóváhagyás:** Értékeljük a jelölteket átviteli, retenciós és biztonsági készleteken; a magas kockázatú írások várjanak emberi jóváhagyásra.
+5. **Ritkítás és indexelés:** Frissítsük a visszakeresési indexeket, és a hosszú ideje használaton kívüli vagy új bizonyítékok által megcáfolt képességeket jelöljük lejártnak, archiváltnak vagy töröltnek, miközben megőrizzük a származást és a visszaállítási verziókat.
+
+**Alvásidős konszolidáció:**
+
+```python
+while sleep_gate_is_open():
+    batch = load_new_evaluated_trajectories()
+    proposals = consolidate(batch, current_capabilities)
+    for proposal in proposals:
+        validate_canary_and_promote_or_rollback(proposal)
+    prune_stale_entries_but_keep_provenance()
+```
+
+A felhasználói memória a legkézenfekvőbb példa, de meg kell különböztetni a műveleti tapasztalattól. A Claude Code auto memory funkciója minden projekthez fenntart egy `MEMORY.md` indexet és témaspecifikus részletes fájlokat. A munkamenet indításakor csak az index egy korlátozott előtagját tölti be, és a többi tartalmat igény szerint olvassa; amikor az index megközelíti a korlátját, az ágens utasítást kap a részletek egyesítésére vagy máshová helyezésére. Ez megmutatja, hogy még az egyszerű szöveges memória is kapacitáskorlátokat, rétegzett betöltést és aktív szervezést igényel. A jelenleg dokumentált mechanizmus elsősorban a munkamenetek során ír memóriát, és nem szabad egyszerűen egy rögzített éjszakai háttérfeladattal azonosítani[^claude-code-memory].
+
+A Hermes egy teljesebb példát ad a háttérben zajló evolúcióra. A hosszú távú információt korlátozott `MEMORY.md` és `USER.md` fájlokra, SQLite/FTS5 keresésre a korábbi munkamenetekben, igény szerinti Skill-ekre és opcionális külső memóriaszolgáltatókra (például Honcho) bontja. A munkamenet-keresés az eredeti üzeneteket adja vissza, nem pedig először LLM-mel összefoglalja őket, így a visszakeresés különbözik a generálástól és auditálható marad. Amikor egy feladat sok eszközhívást tartalmaz, hibából vagy zsákutcából áll helyre, felhasználói javítást kap, vagy egy nem nyilvánvaló munkafolyamatot fedez fel, egy háttér-felülvizsgálat létrehozhat vagy lokálisan felülvizsgálhat egy Skill-t; a memória- és Skill-írások áthaladhatnak egy jóváhagyási kapun is. Egy külön kurátor követi a Skill-használatot, az elavultságot és az archiválási státuszt, determinisztikus ritkítást végez üresjáratban, és opcionálisan meghívhat egy LLM-et a tartalom egyesítésére. Először pillanatfelvételt készít a változásokról, hogy a helytelen konszolidáció visszaállítható legyen[^hermes-memory]. Ez a „rögzítés–konszolidáció–érvényesítés–ritkítás" folyamatot metaforából működő képesség-életciklussá alakítja.
+
+A folyamatos evolúció nem jelenti azt, hogy a tudás, a Promptok és az eszközök korlátlanul növekedhetnek. A 2. fejezetben tárgyalt kontextusromlás hosszabb időskálán újra megjelenik: a tapasztalati dokumentumok ütköznek egymással, a Promptok elárasztódnak határszabályokkal, a Skill-könyvtárak duplikált képességeket halmoznak fel, és az ismételt finomhangolás katasztrofális felejtést okoz. A rendszer ezért időszakos offline konszolidációt igényel:
+
+- A duplikált tapasztalatok egyesítése a származás és verzióinformációk megtartásával;
+- A lokális szabályok áthelyezése a globális Promptból domain-specifikus Skill-ekbe a globális Prompt tisztán tartása érdekében;
+- A Promptok és Skill-ek világos strukturálása, mint egy új alkalmazottaknak szánt kézikönyv, kerülve a „99 vas szabály" jellegű felsorolásokat;
+- A hosszú ideje nem használt eszközök újraérvényesítése;
+- Az új bizonyítékok által megcáfolt tudás törlése;
+- A LoRA újratanítása az eredeti alapmodellből.
+
+> **9-7. ★★★ kísérlet: Annak értékelése, hogy egy ágens folyamatosan fejlődik-e**
 >
-> Vigye át a 9-9. kísérlet feladatát, célállapotait, sikerfeltételeit és öt eszközét az asztali szimulátorba, és egyedül a valódi XLeRobot beavatkozóit cserélje szabályozható szimulációs végrehajtóra, amely a megfogásnál időnként átmeneti, de helyrehozható hibát okoz. Így a probléma megváltoztatása nélkül hasonlítható össze a három stratégia.
+> **Cél:** Három hosszú távú viselkedés megkülönböztetése – egyetlen visszajelzés elmentése, örökké csak hozzáfűzés, és a képességek tényleges frissítése, átvitele és megtartása –, hogy az azonos feladatok ismételt futtatását ne tévesszük össze a folyamatos tanulással.
 >
-> A **nyílt hurkú végrehajtás** egyszerre állítja elő a teljes műveletsort, és útközben nem figyel meg újra. A **lépésenkénti ellenőrzés** minden `pick` és `place` után újraolvassa az állapotot, és hiba esetén csak az aktuális készséget csinálja újra. Az **előrejelző végrehajtás** ezen felül egy rövid távú világmodellt is bevon: összehasonlítja a jelölt készségek várható eredményét, mielőtt kiválasztaná a következő lépést. A kísérlet összehasonlítja a feladat sikerarányát, az eszközhívások többletköltségét és a hibából való visszatérés képességét, továbbá ellenőrzi, hogy minden végső sikert megerősít-e egy új `verify_state` megfigyelés.
+> **Négy szakaszból álló feladatfolyam:** A tanulási szakasz visszatérítési, személyazonosság-ellenőrzési és poggyász-irányelv feladatokat mutat be, amelyek rejtett mintákat osztanak meg. Az átviteli szakasz megváltoztatja a megfogalmazást, a felhasználót és a helyi környezetet, hogy tesztelje, alkalmazható-e a régi tapasztalat új feladatokra. A szabályváltoztatási szakasz a poggyászhatárt 20 kg-ról 23 kg-ra módosítja, és megköveteli a rendszertől, hogy cserélje le vagy vonja vissza az elavult tudást. A retenciós szakasz újrateszteli a változatlan képességeket és az aktuálisan érvényes szabályokat a felejtés mérésére. A külső memória csak az egyes visszajelzést tartalmazó feladatok befejezése után frissíthető; az aktuális feladat várható műveletét soha nem szabad előre kiszivárogtatni az ágens számára.
 >
-> E kísérlet célja nem annak kimutatása, hogy egy kicsi szimulációs világmodell egyenértékű a valódi gép fizikai modelljével, hanem egy alapvetőbb összefüggés igazolása: a nyílt hurkú terv egyetlen helyi hibát is elvonszol a feladat végéig; a lépésenkénti ellenőrzés lehetővé teszi a visszatérést; a műveleti előrejelzés pedig ezen felül segít rangsorolni a jelölt készségeket. Hogy valóban elkészült-e, azt továbbra is a környezet visszajelzése dönti el.
-
-### A Szimulációs Környezettől a Valódi Robotig
-
-Attól, hogy a 9-10. kísérlet stabil a szimulátorban, a 9-9. kísérlet valódi XLeRobotja még nem lesz ugyanúgy sikeres. A szimulációtól a valódi gépig eljutni nem azt jelenti, hogy még egy szabályozót lecserélünk, hanem azt, hogy magunkra vállaljuk a két környezet közötti különbséget. A tanításhoz használhatunk távvezérlési adatot, videóadatot és szimulációs interakciós adatot; de valódi üzembe helyezéskor ugyanaz a piros pohár, ugyanaz a sárga papír, ugyanaz a tálca és ugyanaz a szemetes más háttér, más megvilágítás, más kamerapozíció és más takarási viszonyok mellett jelenik meg, a kar pedig ráadásul más súrlódással, más érzékelőzajjal és más beavatkozó-késleltetéssel találkozik. Ha ezek a különbségek elég nagyok, a szimulációban megtanult mozdulatok a valóságban felmondhatják a szolgálatot.
-
-> **9-11. kísérlet ★★★: Környezetek közötti RGB-teszt ugyanazon az asztali feladaton**
+> **Kontrollcsoportok:** A `static` nem őriz meg semmilyen visszajelzést. Az `append_only` megjegyzi egy szabály első verzióját, de nem tudja feloldani az ütközéseket vagy visszavonni azt. Az `evolving` verziókat tárol és régi szabályokat cserél le új bizonyítékokra. A referencia implementáció ellenőrzi, hogy az értékelő Harness képes megkülönböztetni ezeket a viselkedéseket. Egy valódi kísérletben egy LLM ugyanazon a 14 feladatból álló rendezett folyamon mehet keresztül, de az eredményeket a modellen kívüli Harness-nek kell kiszámítania.
 >
-> A szimulációs környezetben továbbra is a „vigyük a tárgyat a megfelelő célhoz” alapproblémát használja, és tekintsen minden mintát az asztalrendrakáson belüli helyi döntésnek: az RGB-képből eldönteni, melyik irányból kell megközelíteni a tárgyat, vagy hogy megfogható-e már. Tanítson négy, azonos szerkezetű vizuális eljárásmódot: az egyik csak rögzített jeleneteket lát; a másik a hátteret változtatja; a harmadik a tárgyak külsejét; az utolsó pedig egyszerre változtatja a hátteret, a külsőt, a megvilágítást és a zajt.
+> **Mérőszámok és elfogadás:** Jelentsük a pontosságot és a tanulási görbét minden szakaszra, és számítsuk ki külön az átviteli pontosságot, az új szabály utáni helyreállításhoz szükséges feladatok számát, a régi képességek megtartását, a negatív transzfer arányát, a biztonsági rubrika áthaladási arányát, valamint a token, késleltetési és tárolási költségeket. Valós rendszereknél, amelyek Promptokat, Skill-eket vagy egy Harness-t frissítenek, rögzítsük a jelölt-változtatás érvényességét, az artefaktum aktiválási arányát és a sikeres követési arányt is, hogy a „a frissítés helyes volt, de soha nem töltődött be" ne minősüljön sikertelen frissítésnek. Még egy magas végső pontosságú ágens sem minősül folyamatosan fejlődőnek, ha továbbra is visszavont szabályokat idéz, nem biztonságos rövidítéseken keresztül ér el sikert, vagy elfelejti a meglévő képességeket egy frissítés után.
 >
-> Próbálja ki mindegyik eljárásmódot az eredeti és a megváltoztatott új környezetben is, majd hasonlítsa össze a műveleti döntés pontosságát a vizuális feltételek megváltozása előtt és után. Ez a kísérlet nem arra keresi a választ, hogy „olyan lett-e már a szimulátor, mint a valódi XLeRobot”, hanem egy szűkebb kérdésre: segít-e a jelenetek változatosságának szándékos kiterjesztése a tanítás során abban, hogy ugyanez a pohár—tálca, papír—szemetes feladat alkalmazkodjon egy új kameraképhez? Még ha az eredmény javul is, a valódi gépen való üzembe helyezéshez továbbra is valódi kamerakalibráció, beavatkozó-vizsgálatok és teljes biztonsági zárt hurok kell.[^ch9-6]
+> A mellékelt implementáció a [`self-evolution-eval`](../chapter9/self-evolution-eval/) címen érhető el. Alapértelmezésben három referencia ágenst hasonlít össze: frissíthető, csak hozzáfűző és statikus. A `--profile llm` kapcsolóval egy valódi LLM mehet keresztül ugyanazon a hosszú távú feladatfolyamon.
 
-## Fejezet Összefoglaló
+[^claude-code-memory]: Anthropic, "How Claude remembers your project", 2026. https://code.claude.com/docs/en/memory
 
-A felszínen a három forgatókönyv aligha lehetne különbözőbb, mégis a késleltetés és a multimodalitás kettős akadálya mindegyiket árnyékolja. A hangügynökök a soros csővezetékektől a végponti és teljes duplex rendszerekig, valamint a különálló gyors és lassú gondolkodástól a gondolkodva beszélésig fejlődtek. A Computer Use most megközelíti az emberi pontosságot az olyan benchmarkokon, mint az OSWorld, de sokkal több lépést igényel, mint egy ember, és minden lépés tovább tart a feladat előrehaladtával — egy hatékonysági rés, amelyre még nincs szisztematikus megoldás. A vizuálisan vezérelt manipulációs feladatokat végző robotok esetében a szűk keresztmetszet a hardverről a VLA vezérlési réteg azon képességére tevődött át, hogy általánosítson a feladatok között (a tapintási érzékelés és az ügyes kezek továbbra is megoldatlan hardverkorlátok). A következő fejezet a több ügynök közötti együttműködésre tér át — egy más dimenziójú kihívásra.
+[^hermes-memory]: Nous Research, *Hermes Agent Documentation: Persistent Memory, Skills System, and Curator*, 2026. https://hermes-agent.nousresearch.com/docs/user-guide/features/memory ; https://hermes-agent.nousresearch.com/docs/user-guide/features/skills ; https://hermes-agent.nousresearch.com/docs/user-guide/features/curator
 
-## Elgondolkodtató Kérdések
+[^voyager-2023]: Wang, G., et al. *Voyager: An Open-Ended Embodied Agent with Large Language Models.* arXiv:2305.16291, 2023.
 
-1. ★★ A hangügynökök végponti modellje egyetlen modellbe olvasztja az ASR-LLM-TTS-t, csökkentve a késleltetést, de elveszítve a modularitást. Ha a végponti modell egy adott szakaszban hibázik (pl. beszédfelismerés), a hibakeresés és javítás sokkal nehezebb, mint egy soros csővezetékben. Hogyan tervezne megfigyelhetőségi rendszert egy végponti hangügynök számára?
-2. ★ A Step-Audio R1 az MPS kétagyú architektúrán keresztül éri el a "gondolkodva beszélést". Az emberek azonban, amikor "gondolkodva beszélnek", gyakran mondanak dolgokat, mielőtt teljesen átgondolták volna, önjavítanak, vagy töltelékszavakat használnak. Egy ügynök "gondolkodva beszélésének" utánoznia kellene ezeket az emberi jellemzőket?
-3. ★★ Az SoM (Set-of-Mark) és strukturált változatai (DOM elem indexálás) a Computer Use vizuális lokalizációját nyílt végű koordináta előrejelzésről zárt halmazú azonosító kiválasztásra alakítják át, de mindegyik megköveteli a felületi elemek előzetes érzékelését és annotálását — akár egy szegmentációs modellen, akár a DOM-on keresztül. Ha a felület nem szabványos vezérlőket vagy dinamikusan változó elemeket tartalmaz, az annotációk hiányosak vagy pontatlanok lehetnek. Ilyen esetben vissza kellene térnünk a koordináta előrejelzéshez?
-4. ★★ Az olyan néhány száz dolláros robotplatformok, mint az XLeRobot, olcsóvá teszik a távirányításos adatgyűjtést. Azonban a távirányításos adatok minősége nagyban függ a kezelő képzettségétől. Hogyan befolyásolná egy képzetlen kezelő alacsony minőségű adata egy VLA modell tanítását? Hogyan lehet az alacsony minőségű adatokat automatikusan kiszűrni az adatgyűjtési fázisban?
-5. ★★★ Ez a fejezet három interakciós modalitást fed le: hang, Computer Use és robotika. Ezekben a modalitásokban közös tendencia a soros csővezetékektől a végponti modellek felé való fejlődés. Ha ez a tendencia folytatódik, hogyan nézhet ki az ügynök interakciós rétege öt év múlva?
-6. ★★ A DOM/Accessibility Tree elemindexálás jól működik a szabványos webalkalmazásokon, de egyre több szoftverfelület (Canvas/WebGL renderelés, platformokon átívelő egyedi rajzolt vezérlők) nem biztosít hozzáférhető strukturált információt, kizárólag vizuális annotációra vagy koordináta előrejelzésre támaszkodva. Ön szerint a Computer Use-nek a tisztán vizuális megközelítésre kellene fogadnia, vagy mind a strukturált, mind a vizuális utat fenn kellene tartania? Mik a költségei és előnyei mindkét út fenntartásának?
-7. ★★ A VLA modellek cselekvés darabolást használnak — a szövegben említettek szerint π₀ tipikus konfigurációja 25-50 jövőbeli cselekvést generál 50 Hz-en — az inferencia késleltetésének a végrehajtási időn belüli elrejtésére. Ha azonban a környezet hirtelen megváltozik a végrehajtás alatt (pl. egy tárgyat elmozdítanak), az előre generált cselekvési sorozat érvénytelenné válik. Hogyan lehet egyensúlyt teremteni a cselekvés darabolás hatékonysági előnye és a környezeti változásokra való reagálóképesség igénye között?
-8. ★★★ A fejezet mindhárom forgatókönyve (hang, Computer Use, robotika) szembesül az "észlelés-gondolkodás-cselekvés" ciklus késleltetési problémájával, és a párhuzamosított gyors és lassú gondolkodás felé fejlődik. A hangban ez a "javítás a félrebeszélés után"; a Computer Use-ben a "kattints először, aztán nézz"; a robotikában a "tegyél egy lépést, aztán nézz" formában nyilvánul meg. Hogyan biztosítható, hogy ezek a gyors gondolkodáson alapuló cselekvések ne vezessenek visszafordíthatatlan következményekhez?
-[^ch9-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
-[^ch9-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。
-[^ch9-1]: XLeRobot, „Teleop dokumentáció”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
-[^ch9-2]: Google DeepMind, „Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, „Vezérlés LLM Agenttel”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. Az XLeRobot forrásoldali példája bemutatja, hogyan hangolható össze a modell az eszközhívásokkal; ez a fejezetrész ugyanazt az összehangolási elvet tartja meg, de a műveleti eszközöket kalibrált asztali megfogó, lehelyező, ellenőrző és leállító primitívekre korlátozza.
-[^ch9-6]: LeRobot, „Sim2Real oktatóanyag”. https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
-[^ch9-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246
+[^weng-harness-2026]: Weng, Lilian. "Harness Engineering for Self-Improvement." *Lil'Log*, 2026. https://lilianweng.github.io/posts/2026-07-04-harness/
+
+[^ace-2026]: Zhang, Qizheng, et al. *Agentic Context Engineering: Evolving Contexts for Self-Improving Language Models.* ICLR 2026. arXiv:2510.04618.
+
+[^mce-2026]: Ye, Haoran, et al. *Meta Context Engineering via Agentic Skill Evolution.* arXiv:2601.21557, 2026.
+
+[^aflow-2025]: Zhang, Jiayi, et al. *AFlow: Automating Agentic Workflow Generation.* ICLR 2025. arXiv:2410.10762.
+
+[^meta-harness-2026]: Lee, Yoonho, et al. *Meta-Harness: End-to-End Optimization of Model Harnesses.* arXiv:2603.28052, 2026.
+
+[^ahe-2026]: Lin, Jiahang, et al. *Agentic Harness Engineering: Observability-Driven Automatic Evolution of Coding-Agent Harnesses.* arXiv:2604.25850, 2026.
+
+[^self-harness-2026]: Zhang, Hangfan, et al. *Self-Harness: Harnesses That Improve Themselves.* arXiv:2606.09498, 2026.
+
+[^harness-benefit-2026]: Lin, Minhua, et al. *Harness Updating Is Not Harness Benefit: Disentangling Evolution Capabilities in Self-Evolving LLM Agents.* arXiv:2605.30621, 2026.
+
+[^llm-scientists-2026]: Trehan, Dhruv and Paras Chopra. *Why LLMs Aren't Scientists Yet: Lessons from Four Autonomous Research Attempts.* arXiv:2601.03315, 2026.
+
+[^scientistone-2026]: Meng, et al. *ScientistOne: Towards Human-Level Autonomous Research via Chain-of-Evidence.* arXiv:2605.26340, 2026.
+
+## Fejezet összefoglaló
+
+A folyamatos tanulás az ágensek egyik legfontosabb képességévé válik, de a mai modellek még mindig nem képesek megbízhatóan önállóan végezni. A következtetés során történő kontextuális alkalmazkodás nem marad fenn automatikusan, míg az érvényesítetlen online paraméterfrissítések felerősítik a zajt, a támadásokat és a képességsodródást. A ma praktikusabb megközelítés ezért az, hogy a modell köré egy ellenőrizhető tanulási rendszert építünk.
+
+Egy ágens tanulási jeleket szerez az interakcióból és a kiértékelésből, majd frissíti a tudást, Promptokat, Skill-eket, programokat vagy modellparamétereket aszerint, hogy a képesség hogyan reprezentálható. A rendszer optimalizálhatja az artefaktumok kezelésére és generálására használt módszereket is, de előnyben kell részesítenie a visszakövethető, ellenőrizhető és visszaállítható lokális változtatásokat.
+
+A folyamatos evolúciónak el kell választania az online végrehajtást az offline tanulástól: rögzítsük a bizonyítékokat online; generáljuk és érvényesítsük a jelölt frissítéseket offline; majd fokozatosan adjuk ki, konszolidáljuk vagy vonjuk vissza azokat. Ez a hurok a legmegbízhatóbb, ha az eredmények automatikusan ellenőrizhetők. Nyílt végű, kétértelmű célkitűzésekkel és késleltetett visszajelzéssel rendelkező feladatok esetén az embereknek továbbra is részt kell venniük a probléma meghatározásában és az értékelési kritériumok tervezésében.
+
+## Elgondolkodtató kérdések
+
+1. ★★ Egy tapasztalati dokumentumot három sikeres trajektória és egy sikertelen trajektória támaszt alá. A sikertelen egy újabb API-verzióval történt. Hogyan határozza meg a rendszer, hogy a tapasztalat érvénytelenné vált, vagy az alkalmazási feltételei változtak meg?
+2. ★★ Egy ügyfélszolgálati ágens felhasználói elégedettsége nő, de a szabálysértések aránya is emelkedik. Miért nem szolgálhat az elégedettség az egyetlen tanulási jelként? Hogyan tervezne védőkorlát-mérőszámokat?
+3. ★★★ Ugyanaz a „hamis ígéret" probléma enyhíthető Prompt-pal, Harness-ellenőrzéssel vagy paramétertanítással. Milyen bizonyítékokat használna a módosítás helyének kiválasztásához?
+4. ★★★ Egy ágens módosíthat eszközöket és érvényesítőket, de nem módosíthatja a saját frissítéseit jóváhagyó megbízható gyökeret. Hogyan választaná szét e két rész jogosultsági és kódhatárait?
+5. ★★ Ahogy a tapasztalati tudásbázis növekszik, a visszakeresési hibák és a tudásütközések ellensúlyozhatják a tanulás előnyeit. Hogyan kell kialakítani a verziókezelési, frissességi és visszavonási mechanizmusokat?
+6. ★★★ A paramétertanulás hatékony a természetes nyelvi stílusra, de nehezen garantálja a szigorú üzleti szabályokat. Tervezzen egy folyamatos evolúciós sémát az orvosi ügyfélszolgálathoz, amely összehangolja a paramétereket, a tudást, a Skill-eket és a kódszintű kényszereket.
