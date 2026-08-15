@@ -498,6 +498,22 @@ Seen through the lens of Harness engineering, each chapter of this book systemat
 
 Anthropic's practice in building long-running Agents shows how Harness design can solve problems the model itself cannot. They split complex tasks between an "Initialization Agent" (setting up the environment, decomposing the task list) and an "Execution Agent" (making incremental progress each session and leaving clear handover artifacts), using a structured Harness to tackle the two failure modes of long tasks: running out of context and declaring the task done prematurely. The chapters ahead work through the Harness component by component—Chapter 2 begins with the most central one, context engineering, and Chapter 5 lays out the complete practice of Harness engineering in Coding Agents.
 
+## Design Patterns That Run Through the Book
+
+The nine chapters that follow keep reaching for the same handful of structures. They do not belong to any single chapter—they are repeated solutions under one and the same constraint—so we name them once here and give each a canonical definition. Later chapters then call them by name and only describe the local variation.
+
+**Proposer-Reviewer**: production and judgment are carried out by two roles that do not share a context, and the judge sees the artifact itself—the rendered result, the test output, the structured call arguments—rather than the producer's reasoning. The premise is that **self-review is unreliable**: a model inside a given context can neither think of what it failed to think of, nor readily tell whether it has already been injected. Chapter 3 uses it to update knowledge; Chapter 4 uses it for pre-approval and post-validation of tool calls (the Sidecar is a read-only variant); the PPT, video and log experiments of Chapter 5 are all built on it; Chapter 7 uses it to evaluate UIs; Chapter 9 uses it to review update proposals; and Chapter 10 discusses its shape in peer collaboration, and why an Agent must not review itself.
+
+**Progressive Disclosure**: rather than putting everything into the context at once, offer a searchable catalogue first and load the details on demand. It optimizes two things simultaneously—the context budget and selection accuracy. Agent Skills in Chapter 2 is the archetype (metadata resident, body loaded on demand); the layered retrieval of Chapter 3, the proactive tool discovery and paginated truncation of Chapter 4, and Agent discovery in Chapter 10 are all variants.
+
+**Append-only**: state evolves by appending, and what has been written is never revised in place. What this buys is cacheability, replayability and auditability. The KV Cache prefix stability of Chapter 2 is its performance form—the earlier a change lands, the more cache it invalidates; the event-shaped memory of Chapter 3 and Chapter 4's habit of appending a newly discovered tool schema to the end of the trajectory rather than splicing it back into the prefix follow the same discipline.
+
+**Boundary Set + Retention Set**: every change must be validated both on "the samples it is supposed to change" and on "the samples it must not affect". Testing only the former mistakes overfitting for progress; testing only the latter mistakes an ineffective change for a safe one. The regression tasks of Chapter 7, the training/evaluation isolation of Chapter 8, and the update-proposal validation of Chapter 9 all rest on this pair of sets.
+
+**Minimal Diff, Reversible**: keep each change as small as possible, carrying its provenance, and independently revertible instead of rewritten wholesale. This is what makes attribution possible—when something breaks, it can be traced to one specific change. The knowledge updates of Chapter 3, the code patches of Chapter 5, and the prompt and program updates of Chapter 9 all follow it; and the three update paths given at the start of this chapter (in-context adaptation, external-artifact updates, parameter updates) are themselves ordered from most to least reversible.
+
+These five patterns share one motif: **moving judgment from "the model decides" to "a mechanism outside the model decides"**—the reviewer sits outside the context, the catalogue outside the body text, the cache outside the change, the retention set outside the boundary set, the rollback outside the commit. The three-layer guardrails given earlier in this chapter are that motif applied to security. When these patterns reappear later, this book names them and states the local difference rather than deriving them again.
+
 ## Chapter Summary
 
 This chapter has built a practice-first framework for understanding and constructing AI Agents.
@@ -511,6 +527,8 @@ This chapter has built a practice-first framework for understanding and construc
 **Harness Is the Competitive Advantage**: Model capability is commoditizing; the real differentiator is the Harness—the constrain, verify, and correct mechanisms built around context and tools that enable reliable task completion. In production-grade Agent systems, the vast majority of Harness code goes into these safeguards, not the context and tools alone.
 
 **From Workflow to Autonomous Agent**: Prompts first, then workflows, autonomous Agents last—that ordering is the most practical way to reduce unexpected behavior. Every orchestration pattern has situations where it fits; no single pattern is best everywhere.
+
+**Five patterns run through the book**: Proposer-Reviewer, Progressive Disclosure, Append-only, Boundary Set + Retention Set, and Minimal Diff / Reversible—all sharing one motif, moving judgment from the model itself to a mechanism outside it. Later chapters call them by name instead of deriving them again.
 
 **Security Is an Architectural Issue**: Guardrails, human-in-the-loop intervention, alignment (keeping the model's behavior consistent with human intent)—security has to be designed in from the first line of code, not patched on before launch. Guardrails fall into three layers—context, execution, and data—ordered by how hard they are to bypass, and every later chapter hangs its security discussion on that skeleton.
 
