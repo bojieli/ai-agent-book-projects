@@ -61,6 +61,8 @@ Los capítulos de este libro son relativamente independientes, por lo que puedes
 
 Cada capítulo contiene una gran cantidad de **experimentos** y **preguntas de reflexión**, numerados con el formato "Experimento X-Y" (donde X es el número de capítulo e Y es el número secuencial dentro del capítulo). Los títulos de los experimentos y preguntas de reflexión utilizan estrellas para indicar la dificultad: ★ indica nivel introductorio, adecuado para todos los lectores; ★★ indica dificultad media, que requiere cierta experiencia práctica en ingeniería; ★★★ indica un desafío avanzado, que generalmente involucra preguntas abiertas o diseño de sistemas complejos. La mayoría de los experimentos vienen con código ejecutable completo, organizado en el repositorio de código abierto complementario:
 
+Las estrellas del título de un experimento expresan **dificultad**, no **lo que cuesta ejecutarlo**. Por defecto, un experimento incluye código ejecutable en este repositorio y funciona en cuanto se configuran las credenciales; tres excepciones se señalan en el título: `[Repo Externo]` indica que hay que clonar por cuenta propia un repositorio externo, como un framework de entrenamiento o un benchmark; `[Solo Diseño]` indica que el texto da la arquitectura y los criterios de aceptación, y el código ejecutable queda a cargo del lector; `[Hardware Real]` indica que hace falta un brazo robótico físico u otro equipo. El README de cada capítulo incluye además la tabla de tipos de proyecto por experimento y la lista de dependencias externas.
+
 > **Repositorio de código complementario**: [https://github.com/bojieli/ai-agent-book](https://github.com/bojieli/ai-agent-book)
 
 Puedes obtener todo el código complementario con Git:

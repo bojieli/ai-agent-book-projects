@@ -603,7 +603,7 @@ The key takeaway is not that "Agents can organize a party"—a few lines of if-e
 
 The paper reported two other measurable phenomena. The first was **relational memory**: Agents remembered earlier conversations and referred to them in later interactions. For example, an Agent who learned about another Agent's photography project might ask how it was progressing when they next met. As these interactions accumulated, the town's social network became significantly denser. The second phenomenon was **coordinated attendance**: Isabella independently recruited help with decorations, while invitees adjusted their schedules so that they could attend. Multiple Agents aligned on a time and place without a central command. These behaviors were not preprogrammed; they resulted from the Agents' autonomous reasoning based on memory, reflection, and social common sense.
 
-> **Experiment 10-5 ★: Running the Stanford AI Town**
+> **Experiment 10-5 ★ `[External Repo]`: Running the Stanford AI Town**
 >
 > **Experiment Steps**:
 > 1. Clone `https://github.com/joonspk-research/generative_agents` and follow the repository instructions to configure the environment.

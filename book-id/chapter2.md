@@ -821,7 +821,7 @@ Dari perspektif pengelolaan context, mekanisme Skills sangat ramah terhadap KV C
 > **Kriteria Penerimaan**: PowerPoint yang dihasilkan mencakup konten utama paper (halaman judul, latar belakang masalah, tinjauan metode, hasil utama, kesimpulan), menyertakan setidaknya 3 gambar yang diekstrak dari paper yang konsisten dengan deskripsi teks, dan memiliki format yang benar yang terbuka dengan baik di PowerPoint atau perangkat lunak yang kompatibel.
 >
 
-> **Eksperimen 2-7 ★★: Membuat Skill Menulis "Bebas Rasa AI" dari Contoh Tulisan Pribadi**
+> **Eksperimen 2-7 ★★ `[Hanya Desain]`: Membuat Skill Menulis "Bebas Rasa AI" dari Contoh Tulisan Pribadi**
 >
 > **Tujuan Eksperimen**: menghasilkan sebuah Skill menulis yang dapat dimuat dan diperiksa dari sedikit contoh tulisan manusia, lalu mengamati apakah Skill itu mampu mereproduksi preferensi ekspresi utama penulis pada artikel baru.
 >

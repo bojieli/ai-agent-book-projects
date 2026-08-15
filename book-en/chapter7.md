@@ -639,7 +639,7 @@ Suppose your Agent system is currently built on Claude, excelling in tool callin
 
 A team with a solid evaluation system can answer this in hours: run the new model on its own evaluation dataset and compare task success rate, tool call accuracy, latency, and cost. You might find the new model really is better and cheaper on simple tasks—but in the core scenarios involving complex multi-round tool orchestration, its success rate drops by 5%. Once you confirm the difference exceeds the estimated sampling noise (see "Statistical Significance of Evaluation Results" below), your decision becomes a differentiated strategy—migrate simple tasks to the new model to cut costs, keep the original model on complex tasks to protect quality—rather than a blind wholesale switch. Decisions this granular and data-driven are only possible with an evaluation system built in advance.
 
-> **Experiment 7-10 ★★: Multi-Dimensional Model Performance Benchmarking**
+> **Experiment 7-10 ★★ `[Design Only]`: Multi-Dimensional Model Performance Benchmarking**
 >
 > Conduct a comprehensive benchmark of mainstream LLMs and different API providers to build a multi-dimensional model selection decision database.
 >

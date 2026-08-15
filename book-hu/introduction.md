@@ -63,6 +63,8 @@ E könyv fejezetei viszonylag függetlenek. A szükségleteid alapján különb�
 
 Minden fejezet nagyszámú **kísérletet** és **gondolkodtató kérdést** tartalmaz, "X-Y. kísérlet" formátumban számozva (X a fejezet száma, Y a sorszám a fejezeten belül). A kísérletek és gondolkodtató kérdések címei csillagbesorolást hordoznak a nehézségi szintre: ★ belépő szint, minden olvasó számára alkalmas; ★★ közepes nehézség, némi mérnöki gyakorlatot igényel; ★★★ haladó kihívás, általában nyitott végű kérdéseket vagy összetett rendszertervezést foglal magában. A legtöbb kísérlet teljes futtatható kóddal érkezik, amely a kísérő nyílt forráskódú repóban található:
 
+A kísérlet címében a csillagok a **nehézséget** fejezik ki, nem azt, **mibe kerül lefuttatni**. Alapesetben a kísérlethez ebben a tárolóban futtatható kód tartozik, és a hitelesítő adatok beállítása után elindul; három kivételt a cím külön jelöl: a `[Külső tároló]` azt jelenti, hogy magadnak kell klónoznod egy külső tárolót, például tréningkeretrendszert vagy benchmarkot; a `[Csak terv]` azt, hogy a szöveg csak az architektúrát és az elfogadási feltételeket adja meg, a futtatható kódot az olvasó írja meg; a `[Valódi hardver]` pedig azt, hogy fizikai robotkar vagy hasonló eszköz kell hozzá. Az egyes fejezetek kísérő README-je kísérletenkénti projekttípus-táblázatot és külső függőséglistát is tartalmaz.
+
 > **Kísérő kódrepó**: [https://github.com/bojieli/ai-agent-book](https://github.com/bojieli/ai-agent-book)
 
 A teljes kísérő kódot letöltheted Gittel:

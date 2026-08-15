@@ -202,7 +202,7 @@ El proceso de destilación de conocimiento ilustrado en la Figura 9-4 se traduce
 
 Tomando como ejemplo el envío de correos, el resultado compilado no es simplemente "hacer clic en estos botones en orden", sino un programa pequeño con parámetros de destinatario, asunto y cuerpo: verifica la ventana de redacción y las casillas antes de enviar, comprueba el aviso de éxito tras enviar y finalmente confirma que el correo correspondiente aparece en la lista de enviados. En los experimentos de PreAct[^preact], este tipo de programas logró una aceleración de extremo a extremo de 8.5 a 13 veces en tareas repetitivas, sin necesidad de llamar progresivamente al modelo de lenguaje durante la fase de reproducción; la conclusión más relevante es que la memoria de proceso debe contar simultáneamente con **verificación previa a la acción, verificación posterior a la acción y verificación independiente previa al almacenamiento**. De lo contrario, el sistema puede caer fácilmente en una ilusión peligrosa: la cobertura de reproducción es del 100% y se ha hecho clic en cada botón, pero un campo estaba realmente vacío y la tarea nunca se completó.
 
-> **Experimento 9-4 ★★★: Generar flujos de trabajo verificables a partir de trayectorias del navegador**
+> **Experimento 9-4 ★★★ `[Solo Diseño]`: Generar flujos de trabajo verificables a partir de trayectorias del navegador**
 >
 > **Objetivo del experimento**: Verificar si un Agente web puede transformar una exploración costosa en un flujo de trabajo reutilizable y rechazar reproducciones erróneas cuando la página cambia, en lugar de reportar falsamente éxito solo porque "se ejecutaron todas las acciones".
 >
@@ -240,7 +240,7 @@ La creación de herramientas sigue el mismo protocolo. El caso presentado por Al
 
 El experimento 9-8 aplica el mismo protocolo a la capa de verificación. Solo cuando varias correcciones de usuarios, votos negativos y auditorías señalan repetidamente una operación de alto riesgo sin confirmación se crea una solicitud de cambio, escrita en un directorio aislado. Un clasificador identifica eliminaciones peligrosas y `git push --force` por nombre y argumentos de herramienta; un token de confirmación de un solo uso queda ligado a la operación concreta. El candidato debe superar comprobaciones AST/estáticas, reproducción del conjunto límite (incluidos tokens falsos o reutilizados) y del conjunto de reserva antes de publicarse en canario.
 
-> **Experimento 9-8 ★★: Puerta de confirmación para operaciones de alto riesgo activada por feedback**
+> **Experimento 9-8 ★★ `[Repo Externo]`: Puerta de confirmación para operaciones de alto riesgo activada por feedback**
 >
 > Se usan las tres señales y las trayectorias de control de `failure_trajectories.json`. El candidato real de `gpt-4o-mini` no superó la reproducción de tareas incompletas, operaciones normales y tokens de un solo uso, y fue rechazado por la puerta de seguridad. El candidato determinista superó todo y obtuvo `release_to_canary`; se registran las comprobaciones, la decisión y el hash del directorio estable. Implementación en [`harness-safety-gate`](../chapter9/harness-safety-gate/).
 

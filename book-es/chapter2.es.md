@@ -818,7 +818,7 @@ Desde la perspectiva de la gestión del contexto, el mecanismo Skills resulta mu
 > **Criterios de aceptación**: el PowerPoint generado debe cubrir el contenido principal del artículo (portada, contexto del problema, resumen del método, resultados clave y conclusiones), incluir al menos tres gráficos extraídos del artículo y coherentes con sus explicaciones textuales, tener el formato correcto y poder abrirse con normalidad en PowerPoint o en software compatible.
 >
 
-> **Experimento 2-7 ★★: creación de una Skill de escritura «sin sabor a IA» a partir de textos propios**
+> **Experimento 2-7 ★★ `[Solo Diseño]`: creación de una Skill de escritura «sin sabor a IA» a partir de textos propios**
 >
 > **Objetivo del experimento**: generar, a partir de unos pocos textos escritos por una persona, una Skill de escritura cargable e inspeccionable, y observar si es capaz de reproducir las principales preferencias expresivas del autor en artículos nuevos.
 >

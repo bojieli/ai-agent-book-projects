@@ -184,7 +184,7 @@ Aşağıdaki iki şekil sırasıyla Q-learning'in ızgara dünyasındaki keşif 
 
 Q-learning özel bir **off-policy** yöntemdir — herhangi bir policy'nin (rastgele keşif dahil) ürettiği veriyi kullanarak en iyi policy'yi öğrenebilir. On-policy / off-policy'nin kesin tanımı ve bunların LLM post-training'indeki karşılıkları için ilerideki "Pekiştirmeli Öğrenme Algoritmalarının Karşılaştırması" kesimine bakın.
 
-> **Deney 8-1 ★: Q-learning'in Hazine Avı Oyunundaki Performansı**
+> **Deney 8-1 ★ `[Yalnızca Tasarım]`: Q-learning'in Hazine Avı Oyunundaki Performansı**
 >
 > Q-learning'in özelliklerini ve sınırlarını doğrulamak için bir **hazine avı oyunu ortamı** tasarladık. Bu ortam birkaç kilit zorluk içeriyor: **gizli mekanikler**, Agent'ın anahtarlarla kapılar arasındaki eşleşmeyi, silahların etkisini ve eşya birleştirme kurallarını kendi başına keşfetmesini gerektiriyor; **çok adımlı bağımlılık**, görevin tamamlanması için doğru eylem dizisinin şart olması demek (en iyi çözüm 11 adım); **seyrek ödül** ise yalnızca kritik eylemlerin ve nihai zaferin kayda değer ödül vermesi, aradaki adımların çoğunun hiçbir geri bildirim almaması anlamına geliyor.
 >
@@ -229,7 +229,7 @@ Tool calling ve uzun zincirli düşünme için optimize edilmiş Kimi K3 gibi mo
 
 **Üçüncü aşama (2018'den bugüne), önsel bilginin uyanışı**: GPT-2/GPT-3 dil pre-training'inin muazzam gücünü gösterdi; WebGPT ve ChatGPT bu önsel bilginin kullanışlı Agent'lara dönüştürülebileceğini kanıtladı. En önemli bulgu şuydu: **önsel bilgi, RL ile hiçbir ilgisi olmayan bir yoldan da elde edilebilir**. Bu, sezgiye aykırı bir gerçek: onlarca yıl boyunca RL araştırmacılarının öncelik sıralaması tümüyle tersine dönmüş olabilir — algoritma > ortam > önsel bilgi değil, önsel bilgi > ortam > algoritma.
 
-> **Deney 8-2 ★★: Geleneksel RL ile LLM Agent'ının Karşılaştırmalı İncelenmesi**
+> **Deney 8-2 ★★ `[Yalnızca Tasarım]`: Geleneksel RL ile LLM Agent'ının Karşılaştırmalı İncelenmesi**
 >
 >
 > ![Şekil 8-7: Q-learning ile LLM Agent'ının hazine avı oyunundaki mimari karşılaştırması](images/fig8-7.svg)
@@ -298,7 +298,7 @@ SFT'ye girişmeden önce kaçınılmaz bir uygulama sorusu var: **SFT verisi ner
 >
 > İfade odaklı görevlerde SFT'nin kalıcılaştırdığı şey üslup kontrolü protokolü ve yapılandırılmış ifade alışkanlıklarıdır; olgusal bilgi ya da karmaşık düşünme değil. Belirleyici olan, eğitim verisinin çeşitliliği ve etiketleme kalitesidir. Yaygın başarısızlık örüntüleri: eğitim verisindeki konuşmacı sayısının çok az olması yüzünden herkesin aynı ağızdan konuşur gibi çıkması; işaretlerde overfitting (yani modelin eğitim örneklerinin ayrıntılarını ezberleyip yeni durumlarda daha da kötü performans göstermesi) sonucu "mekanik gülüş" üretilmesi.
 >
-> **Deney 8-7 ★★★: Çok Dilli Düşünme — Modelin İstenen Dilde Düşünmesini Sağlamak `[genişletilmiş deney]`**
+> **Deney 8-7 ★★★ `[Yalnızca Tasarım]`: Çok Dilli Düşünme — Modelin İstenen Dilde Düşünmesini Sağlamak `[genişletilmiş deney]`**
 >
 > Düşünen modellerin çoğu yalnızca İngilizce "düşünebilir": hangi dilde soru sorarsanız sorun, modelin içindeki düşünce zinciri neredeyse hep İngilizcedir, çünkü eğitim verisindeki yüksek kaliteli düşünme gösterimleri temelde İngilizce yazılmıştır. Bu deneyin hedefi çok basit: modelin belirtilen dilde düşünebilmesini sağlamak.
 >
@@ -403,7 +403,7 @@ update(policy, value_model, policy_loss + value_coef * value_loss)
 >
 > Prompt damıtma ile birbirini tamamlayarak bir "hızlı-yavaş çift sistem" oluşturuyor: damıtma, düşünme gerektiren görevlerin oranını düşürüyor; AdaptThink ise kalan görevlerde tetikleme stratejisini optimize ediyor. İkisi birlikte düşünme verimini en üst düzeye çıkarıyor.
 >
-> **Deney 8-11 ★★: GeneralPoints — Tek Turlu RL'de "Ezber ile Genelleştirme" Karşılaştırması**
+> **Deney 8-11 ★★ `[Harici Depo]`: GeneralPoints — Tek Turlu RL'de "Ezber ile Genelleştirme" Karşılaştırması**
 >
 >
 > ![Şekil 8-12: GeneralPoints deney mimarisi (GP-L ve GP-VL varyantlarının eğitim ve test tasarımı)](images/fig8-12.svg)
@@ -423,11 +423,11 @@ update(policy, value_model, policy_loss + value_coef * value_loss)
 >
 > Bu deneyin çekirdek katkısı, "SFT ezberler, RL genelleştirir" olgusunu sistemli biçimde nicelemesi, bu kuralın hem salt dil hem de görme-dil modalitelerinde geçerli olduğunu kanıtlaması ve SFT ile RL arasındaki tamamlayıcılığı ortaya koymasıdır: SFT format kararlılığını sağlar, RL bunun üzerinde ezber sınırını aşar; ikisi de vazgeçilmezdir. Bu "önce biçim, sonra ruh" eğitim paradigması — Çin resminin terimiyle, önce dış biçimi (formatı, yapıyı) doğru çizmek, sonra içsel ruhun (genelleştirmenin, stratejinin) peşine düşmek — sonraki çok turlu ve çok modlu görevler için metodolojik zemini kurmuştur.
 
-> **Deney 8-12 ★★★: V-IRL-VL — Çok Turlu Görsel Navigasyon**
+> **Deney 8-12 ★★★ `[Harici Depo]`: V-IRL-VL — Çok Turlu Görsel Navigasyon**
 >
 > V-IRL[^ch8-24], Agent'ı gerçek kent sokak sahnelerinde sürekli gezinmeye zorlar: eğitim New York güzergâhlarını kullanır, test ise farklı şehirlere taşınırken hem yön ifadelerini hem de görsel görünümü aynı anda değiştirir. RL, hem kural OOD'sinde hem görsel OOD'de SFT'yi açık biçimde geride bırakır; bu da çok turlu görevlerde politikanın eğitim yörüngelerini yeniden üretmek yerine güncel gözleme göre yeniden planlamayı öğrenmesi gerektiğini gösterir. Deney değer ağı içeren PPO kullanır ve adım adım geri bildirimin uzun ufuklu credit assignment'ı hafiflettiği gözlenir.
 
-> **Deney 8-13 ★★★: SimpleVLA-RL — Sonuç Ödülü Altında Açık Keşif `[Genişletilmiş Deney]`**
+> **Deney 8-13 ★★★ `[Harici Depo]`: SimpleVLA-RL — Sonuç Ödülü Altında Açık Keşif `[Genişletilmiş Deney]`**
 >
 > SimpleVLA-RL, LIBERO robotik görevlerinde yalnızca başarı/başarısızlık sonuç ödülü kullanır. Her görev için SFT soğuk başlangıcında tek bir gösterim yörüngesi vardır; ardından RL başarı oranını %17,3'ten %91,7'ye çıkarır ve gösterimlerde hiç görülmeyen bir "itip kesme" hareketi keşfeder. Bu, V-IRL ile karşıtlık oluşturur: süreç sinyali kolay tanımlanabildiğinde öğrenmeyi hızlandırır; en iyi yol bilinmiyorsa seyrek sonuç ödülü çok daha geniş bir keşif alanı bırakır.
 
@@ -644,7 +644,7 @@ Hangi eylemlerin serbest olduğu, hangi alt hedeflerin erişilebilir olduğu, gi
 
 RLVP'nin kilit noktası "ödül ne kadar yoğunsa o kadar iyi" değil, grup içi farkın geri kazanılıp kazanılamayacağıdır. Saf sonuç ödülü, tamamı başarısız ve tamamı başarılı gruplarda sıfır varyans ve sıfır gradyan üretir; ihlal eylemleri genellikle kolay saptandığından ceza farkı neredeyse her zaman geri kazandırır; ilerleme ödülü ise ancak kısmi ilerleme erişilebilir olduğunda işe yarar. Tasarımda dört kurala uyun: yalnızca somut eylemleri cezalandırın, "yeterince çabalamamayı" değil; sonuç ödülünü her zaman koruyun ki model hiçbir şey yapmamayı öğrenmesin; her cezayı mümkün olduğunca erişilebilir bir uyumlu yolla eşleştirin; kuralları belirlenimci ve açık vermesi zor kılın. Temel politika uyumlu eylemi hiç örneklemiyorsa, bu yolu önce birkaç gösterimle "ekin" ve uyumlu davranış kararlı hâle geldikten sonra yol şekillendirmesini kademeli olarak zayıflatın. Başka bir deyişle ceza, genellikle erişilebilir olan yarıdır; ilerleme ödülü ise erişilebilirlikle kapılanan yarıdır.
 
-> **Deney 8-16 ★★★: RLVP — sonucu ödüllendir, yolu cezalandır**
+> **Deney 8-16 ★★★ `[Harici Depo]`: RLVP — sonucu ödüllendir, yolu cezalandır**
 >
 > GRPO üzerine sonuç ödülü $O$ ile yol sinyali $\Phi$ ekleyin ve saf sonuç ödülüyle karşılaştırın. TerminalBench'te ihlal sayısı 3,71'den 0,66'ya inerken başarı oranı neredeyse değişmez; miniF2F'te erişilebilir kısmi ödül, 0,9 başarı oranına ulaşmak için gereken yinelemeyi 7,0'dan 4,4'e düşürür. Yazılım onarımında hiçbir rollout hiçbir testi geçmiyorsa ilerleme sinyali erişilemezdir ve eklemek fayda getirmez. Çıkarılacak ders: ödül boyutu eklemeye karar vermeden önce sinyalin erişilebilirliğini ölçün.
 
@@ -672,7 +672,7 @@ for token in trajectory:
         loss_mask[token] = 1
 ```
 
-> **Deney 8-14 ★★★: ReTool — Kod Yorumlayıcıyla Güçlendirilmiş Matematik Problemi Çözme**
+> **Deney 8-14 ★★★ `[Harici Depo]`: ReTool — Kod Yorumlayıcıyla Güçlendirilmiş Matematik Problemi Çözme**
 >
 >
 > ![Şekil 8-17: ReTool'un Metin-Kod Düşünmeyi İç İçe Geçiren Sandbox Yürütme Geri Bildirim Döngüsü](images/fig8-17.svg)
@@ -697,7 +697,7 @@ for token in trajectory:
 >
 > SFT ile RL arasındaki süre farkının kökeni bilgi yoğunluğunun farklı olmasıdır: SFT'de her token'ın bir denetim sinyali vardır, RL'de ise her episode yalnızca tek bir başarı/başarısızlık sinyali alır. Gerçek eğitimde tek adımın süresi yanıt uzunluğu arttıkça uzar ve az sayıdaki aşırı uzun yanıt, tüm eğitim döngüsünü belirgin biçimde geciktirir.
 >
-> **Deney 8-15 ★★★: AWorld-train — Sandbox'ta Araç Kullanmayı Öğrenmek**
+> **Deney 8-15 ★★★ `[Harici Depo]`: AWorld-train — Sandbox'ta Araç Kullanmayı Öğrenmek**
 >
 >
 > ![Şekil 8-18: AWorld-train MCP Sandbox Eğitim Mimarisi ve Araç Ekosistemi](images/fig8-18.svg)

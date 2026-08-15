@@ -214,7 +214,7 @@ Az LLM-ek kontextusában a PPO, a GRPO és a DPO a legelterjedtebb algoritmusok,
 
 > ![8-7. ábra: Q-learning- és LLM-ágensarchitektúra összehasonlítása egy kincsvadász játékban](images/fig8-7.svg)
 >
-> **8-1. kísérlet ★: Q-learning teljesítménye kincsvadász játékban**
+> **8-1. kísérlet ★ `[Csak terv]`: Q-learning teljesítménye kincsvadász játékban**
 >
 > A Q-learning jellemzőinek és korlátainak ellenőrzésére terveztünk egy "kincsvadász játékkörnyezetet". Ez a környezet több kulcsfontosságú kihívást tartalmaz: "rejtett mechanizmusok" megkövetelik, hogy az Ágens maga fedezze fel a kulcsok és ajtók, a fegyverhatások és a tárgykészítési szabályok közötti összefüggéseket; "többlépéses függőségek" miatt a feladat végrehajtásához a helyes akciók sorrendjére van szükség (optimális megoldás: 11 lépés); "ritka jutalmak" azt jelentik, hogy csak a kulcsfontosságú akciók és a végső győzelem adnak jelentős jutalmat, a legtöbb köztes lépés nem kap visszajelzést.
 >
@@ -245,7 +245,7 @@ A pre-tréning alapjainak megértése segít jobban megérteni a poszt-tréning 
 
 Mindhárom típus a következő token előrejelzésének ugyanazon az optimalizációs célján alapul, a tréning adatok, az adatmennyiség és a költségek tekintetében különböznek.
 
-> **8-2. kísérlet ★: Skálázási törvények – Hogyan hat a számítási költségvetés, az adatmennyiség és a modellméret a teljesítményre?**
+> **8-2. kísérlet ★ `[Csak terv]`: Skálázási törvények – Hogyan hat a számítási költségvetés, az adatmennyiség és a modellméret a teljesítményre?**
 >
 > A Chinchilla-skálázási törvényeket (Hoffmann et al., 2022) használva a modell teljesítménye, a modell paramétereinek száma és a tréning adatok mennyisége közötti kapcsolatot vizsgáljuk. A skálázási törvények szerint a fix számítási költségvetés optimális elosztásához a modell paramétereinek és a tréning tokenek számának együtt kell növekednie. E kísérlet célja, hogy intuitív megértést adjon arról, hogyan lehet a modell hatékonyságát maximalizálni korlátozott erőforrások mellett.
 >
@@ -314,7 +314,7 @@ Mielőtt az SFT gyakorlati alkalmazásába kezdünk, van egy gyakorlati kérdés
 >
 > Expresszív feladatokban az SFT stílusvezérlési protokollokat és strukturált kifejezési szokásokat rögzít, nem pedig tényismeretet vagy összetett érvelést. A kulcs a tréning adatok diverzitásában és annotációs minőségében rejlik. Gyakori hibamódok: túl kevés beszélő a tréning adatokban, ami miatt mindenki ugyanúgy hangzik; és token túlilleszkedés (a modell memorizálja a tréning minta részleteit, és új helyzetekben gyengébben teljesít), ami "mechanikus nevetéshez" vezet.
 >
-> **8-7. kísérlet ★★★: Többnyelvű gondolkodás – Lehetővé tenni a modell számára, hogy bármely nyelven gondolkodjon `[Kiterjesztett kísérlet]`**
+> **8-7. kísérlet ★★★ `[Csak terv]`: Többnyelvű gondolkodás – Lehetővé tenni a modell számára, hogy bármely nyelven gondolkodjon `[Kiterjesztett kísérlet]`**
 >
 > A legtöbb gondolkodó modell csak angolul "gondolkodik": függetlenül attól, hogy milyen nyelven teszed fel a kérdést, a modell belső gondolkodási lánca szinte mindig angol, mert a tréning adatokban lévő kiváló minőségű gondolkodási demonstrációk többnyire angol nyelvűek. Ennek a kísérletnek az egyszerű célja, hogy lehetővé tegye a modell számára a gondolkodást egy meghatározott nyelven.
 >
@@ -418,7 +418,7 @@ update(policy, value_model, policy_loss + value_coef * value_loss)
 >
 > A prompt desztillációval együtt az AdaptThink egy "gyors-lassú kettős rendszert" alkot: a desztilláció csökkenti a gondolkodást igénylő feladatok arányát, míg az AdaptThink optimalizálja a triggerelési stratégiát a fennmaradó feladatokhoz, közösen maximalizálva a gondolkodás hatékonyságát.
 >
-> **8-11. kísérlet ★★: GeneralPoints – "Memória és általánosítás" összehasonlítása egymenetes RL-ben**
+> **8-11. kísérlet ★★ `[Külső tároló]`: GeneralPoints – "Memória és általánosítás" összehasonlítása egymenetes RL-ben**
 >
 > ![8-12. ábra: A GeneralPoints kísérleti architektúrája (tréning- és tesztelrendezés a GP-L és GP-VL változatokhoz)](images/fig8-12.svg)
 >
@@ -436,11 +436,11 @@ update(policy, value_model, policy_loss + value_coef * value_loss)
 >
 > A kísérlet alapvető hozzájárulása az "SFT memorizál, RL általánosít" jelenség szisztematikus kvantifikálása, megmutatva, hogy ez a minta mind a szöveges, mind a vizuális-nyelvi modalitásokban érvényes. Feltárja továbbá az SFT és az RL komplementer kapcsolatát: az SFT formátumstabilitást biztosít, és az RL erre az alapra építve lép túl a memorizálás korlátain; mindkettő nélkülözhetetlen. Ez az "előbb a forma, aztán a szellem" tréning paradigma – a kínai festészetből kölcsönzött kifejezéssel, először pontosan rajzold meg a külső formát (formátum, struktúra), aztán üldözd a belső szellemet (általánosítás, stratégia) – módszertani alapot teremt a későbbi többlépéses, multimodális feladatokhoz.
 
-> **8-12. kísérlet ★★★: V-IRL-VL — Többlépéses vizuális navigáció**
+> **8-12. kísérlet ★★★ `[Külső tároló]`: V-IRL-VL — Többlépéses vizuális navigáció**
 >
 > A V-IRL[^ch8-24] arra készteti az ügynököt, hogy valós városi utcaképeken folyamatosan navigáljon: a tréning New York-i útvonalakat használ, a tesztelés viszont más városokba kerül át, és egyszerre változtatja meg az iránymegjelölések megfogalmazását és a vizuális megjelenést. Az RL mind a szabály-, mind a vizuális OOD esetén egyértelműen felülmúlja az SFT-t, ami azt mutatja, hogy többlépéses feladatokban a politikának az aktuális megfigyelés alapján kell újraterveznie, nem pedig a tréningtrajektóriákat reprodukálnia. A kísérlet értékhálózattal ellátott PPO-t használ, és megfigyelhető, hogy a lépésenkénti visszacsatolás enyhíti a hosszú távú hitelkiosztás nehézségét.
 
-> **8-13. kísérlet ★★★: SimpleVLA-RL — Nyílt felfedezés eredményjutalom mellett `[Kiterjesztett kísérlet]`**
+> **8-13. kísérlet ★★★ `[Külső tároló]`: SimpleVLA-RL — Nyílt felfedezés eredményjutalom mellett `[Kiterjesztett kísérlet]`**
 >
 > A SimpleVLA-RL a LIBERO robotikai feladatokban kizárólag sikeres/sikertelen eredményjutalmat használ. Feladatonként mindössze egyetlen demonstrációs trajektória szolgál SFT hidegindításra; ezt követően az RL 17,3%-ról 91,7%-ra emeli a sikerarányt, és felfedez egy „tolóvágás" mozdulatot, amely a demonstrációkban egyáltalán nem szerepelt. Ez ellenpontja a V-IRL-nek: ha a folyamatjel könnyen definiálható, felgyorsítja a tanulást; ha viszont az optimális út ismeretlen, a ritka eredményjutalom sokkal nagyobb teret hagy a felfedezésnek.
 
@@ -659,7 +659,7 @@ Hogy mely műveletek engedélyezettek, mely részcélok érhetők el, mik a rejt
 
 Az RLVP lényege nem az, hogy „minél sűrűbb a jutalom, annál jobb”, hanem hogy visszanyerhető-e a csoporton belüli eltérés. A tiszta eredményjutalom a csupa kudarc és a csupa siker csoportban is nulla szórást és nulla gradienst ad; a szabálysértő műveletek rendszerint könnyen észlelhetők, így a büntetés szinte mindig visszahozza az eltérést; az előrehaladási jutalom viszont csak akkor működik, ha a részleges előrehaladás valóban elérhető. A tervezésnél négy szabályt érdemes tartani: konkrét műveleteket büntessünk, ne az „elégtelen igyekezetet”; az eredményjutalmat mindig tartsuk meg, nehogy a modell megtanuljon semmit sem csinálni; minden büntetéshez lehetőleg társítsunk elérhető szabálykövető utat; a szabályok legyenek determinisztikusak és nehezen kijátszhatók. Ha az alapstratégia egyáltalán nem mintavételezné a szabálykövető műveletet, előbb néhány bemutatóval „vessük el” ezt az utat, és a szabálykövető viselkedés stabilizálódása után fokozatosan gyengítsük az útformálást. Másképp fogalmazva: a büntetés az általában elérhető fél, az előrehaladási jutalom pedig az elérhetőséggel kapuzott fél.
 
-> **8-16. kísérlet ★★★: RLVP — jutalmazd az eredményt, büntesd az utat**
+> **8-16. kísérlet ★★★ `[Külső tároló]`: RLVP — jutalmazd az eredményt, büntesd az utat**
 >
 > Adjunk a GRPO-hoz $O$ eredményjutalmat és $\Phi$ útjelet, és vessük össze a tiszta eredményjutalommal. A TerminalBenchen a szabálysértések száma 3,71-ről 0,66-ra esik, miközben a sikerarány lényegében változatlan; a miniF2F-en egy elérhető részjutalom 7,0-ről 4,4-re csökkenti a 0,9 sikerarány eléréséhez szükséges iterációk számát. Szoftverjavításnál, ahol egyetlen rollout sem megy át semmilyen teszten, az előrehaladási jel elérhetetlen, és hozzáadása nem hoz hasznot. A tanulság: előbb mérjük meg a jel elérhetőségét, és csak azután döntsünk új jutalomdimenzióról.
 
@@ -687,7 +687,7 @@ for token in trajectory:
         loss_mask[token] = 1
 ```
 
-> **8-14. kísérlet ★★★: ReTool – Kód interpretátorral fokozott matematikai probléma megoldás**
+> **8-14. kísérlet ★★★ `[Külső tároló]`: ReTool – Kód interpretátorral fokozott matematikai probléma megoldás**
 >
 > ![8-17. ábra: A ReTool szöveg-kód gondolkodási és sandbox-végrehajtási visszacsatolási ciklusa](images/fig8-17.svg)
 >
@@ -710,7 +710,7 @@ for token in trajectory:
 >
 > Az SFT és az RL közötti időbeli költség alapvető különbsége az eltérő információsűrűségből fakad: az SFT minden tokenhez felügyeleti jelet ad, míg az RL csak egy siker/kudarc jelet ad epizódonként. A gyakorlatban a lépésenkénti idő a válasz hosszával nő, és néhány rendkívül hosszú válasz jelentősen meghosszabbíthatja a teljes tréning ciklust.
 >
-> **8-15. kísérlet ★★★: AWorld-train – Eszközhasználat tanulása sandboxban**
+> **8-15. kísérlet ★★★ `[Külső tároló]`: AWorld-train – Eszközhasználat tanulása sandboxban**
 >
 > ![8-18. ábra: Az AWorld-train MCP-sandbox tréningarchitektúrája és eszköz-ökoszisztémája](images/fig8-18.svg)
 >

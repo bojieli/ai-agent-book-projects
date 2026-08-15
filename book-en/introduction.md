@@ -63,6 +63,8 @@ The chapters in this book are relatively independent. You can choose different r
 
 Each chapter contains a large number of **experiments** and **thought questions**, numbered in the format "Experiment X-Y" (X is the chapter number, Y is the sequence number within the chapter). The titles of experiments and thought questions carry star ratings for difficulty: ★ means entry-level, suitable for all readers; ★★ means medium difficulty, requiring some engineering practice; ★★★ means an advanced challenge, usually involving open-ended questions or complex system design. Most experiments come with complete runnable code, organized in the accompanying open-source repository:
 
+The stars in an experiment title express **difficulty**, not **what it takes to run**. By default an experiment ships runnable code in this repository and runs once credentials are configured; three exceptions are marked in the title: `[External Repo]` means you must clone an outside repository yourself, such as a training framework or a benchmark; `[Design Only]` means the text gives the architecture and acceptance criteria while the runnable code is yours to write; `[Real Hardware]` means a physical robot arm or similar device is required. Each chapter's companion README carries the per-experiment project-type table and the list of external dependencies.
+
 > **Companion Code Repository**: [https://github.com/bojieli/ai-agent-book](https://github.com/bojieli/ai-agent-book)
 
 You can obtain all companion code with Git:

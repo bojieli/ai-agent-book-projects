@@ -659,7 +659,7 @@ A legfontosabb tanulság nem az, hogy "az Ügynökök tudnak bulit szervezni" �
 
 A tanulmány két másik mérhető jelenségről is beszámolt. Az első a "relációs memória": az Ügynökök emlékeztek korábbi beszélgetésekre, és hivatkoztak rájuk a későbbi interakciók során. Például egy Ügynök, aki megtudta egy másik Ügynök fényképezési projektjét, megkérdezhette, hogy halad az, amikor legközelebb találkoztak. Ahogy ezek az interakciók felhalmozódtak, a város társas hálózata jelentősen sűrűbbé vált. A második jelenség a "koordinált részvétel": Isabella önállóan toborzott segítséget a dekorációhoz, míg a meghívottak módosították időbeosztásukat, hogy részt tudjanak venni. Több Ügynök összehangolódott egy időre és helyre központi parancs nélkül. Ezek a viselkedések nem voltak előre programozva; az Ügynökök autonóm érveléséből fakadtak memória, reflexió és társas józan ész alapján.
 
-> **10-5. kísérlet ★: A Stanford AI Town Futtatása**
+> **10-5. kísérlet ★ `[Külső tároló]`: A Stanford AI Town Futtatása**
 
 > **Kísérleti Lépések**:
 > 1. Klónozd a `https://github.com/joonspk-research/generative_agents` tárat, és kövesd a tároló utasításait a környezet konfigurálásához.

@@ -653,7 +653,7 @@ Cách chẩn đoán rất thẳng thắn. Giữ nguyên camera, cánh tay, kẹp
 
 XLeRobot hỗ trợ nhiều lối vào điều khiển từ xa: bàn phím, tay cầm Xbox, Joy-Con của Switch và thiết bị VR. Người vận hành làm một cách tự nhiên nhiều việc mà thuật toán buộc phải cài đặt tường minh: giảm tốc khi kẹp lại gần cốc, sửa điểm gắp khi cốc trượt, quan sát lại khi không kẹp được tờ giấy trong một lần, và xác nhận kết quả khi vật thể đã vào vùng đích. Vì vậy điều khiển từ xa không chỉ là cách thu thập dữ liệu trình diễn, mà còn là một thử nghiệm chẩn đoán "giữ nguyên phần cứng, chỉ thay người vận hành".[^ch6-1]
 
-> **Thử nghiệm 6-9 ★: Điều khiển từ xa XLeRobot thật để dọn bàn**
+> **Thử nghiệm 6-9 ★ `[Phần Cứng Thật]`: Điều khiển từ xa XLeRobot thật để dọn bàn**
 >
 > Đặt vào vùng làm việc của một chiếc XLeRobot thật: cốc đỏ, khay, tờ giấy vàng vo tròn và thùng rác. Người vận hành thực hiện nhiệm vụ cố định qua một trong các lối điều khiển từ xa đã hiệu chuẩn: "đặt cốc đỏ vào khay, bỏ tờ giấy vàng vào thùng rác, cuối cùng quan sát thêm một lần để xác nhận trạng thái mặt bàn". Lặp ít nhất vài vòng, ghi lại video camera, đầu vào của người vận hành, trạng thái cánh tay, thời lượng hành động, các lần gắp hụt, số lần thử lại và trạng thái cuối cùng.
 >
@@ -697,7 +697,7 @@ pick(red_cup) → place(red_cup, tray) → verify_state()
 
 Mỗi kỹ năng hoàn tất cho ta một nút có thể kiểm chứng. Gắp hụt thì chỉ làm lại đúng bước ấy. Nếu ai đó dời vật thể hoặc người dùng đổi mục tiêu, chỉ cần lập lại kế hoạch cho những bước phía sau bị ảnh hưởng, chứ không phải làm lại toàn bộ kế hoạch cũ. Công cụ trao cho tác nhân cũng phải đủ đơn giản: mỗi lần gọi chỉ làm một việc, phạm vi cử động cố định, có thời gian chờ tối đa, và thực thi xong thì quan sát lại ngay.
 
-> **Thử nghiệm 6-11 ★★: Để Gemini Robotics-ER 1.5 tự chủ dọn bàn bằng XLeRobot**
+> **Thử nghiệm 6-11 ★★ `[Phần Cứng Thật]`: Để Gemini Robotics-ER 1.5 tự chủ dọn bàn bằng XLeRobot**
 >
 > Giữ nguyên chiếc XLeRobot thật, cách bày bàn, chỉ dẫn nhiệm vụ và điều kiện thành công của Thử nghiệm 6-9; chỉ thay người vận hành bằng một Agent. Giao việc quan sát và lập kế hoạch cho một mô hình suy luận nhập thân như Gemini Robotics-ER 1.5, và qua vòng lặp tác nhân kiểu RoboCrew chỉ mở đúng năm công cụ: `observe_scene`, `pick`, `place`, `verify_state` và `stop`.[^ch6-2]
 >

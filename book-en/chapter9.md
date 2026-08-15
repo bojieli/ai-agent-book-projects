@@ -202,7 +202,7 @@ In the browser setting, the knowledge-distillation process shown in Figure 9-4 b
 
 For an email workflow, the compiled result is not merely “click these buttons in order,” but a small program parameterized by recipient, subject, and body: it checks the compose window and fields before sending, checks the success indicator afterward, and finally confirms that the corresponding message appears in the sent list. In PreAct[^preact], such programs delivered an 8.5–13× end-to-end speedup on repeated tasks and required no step-by-step language-model calls during replay. More importantly, process memory needs **before-action validation, after-action validation, and independent pre-storage validation**. Otherwise, the system can produce a dangerous illusion: replay coverage is 100 percent and every button was clicked, yet one field was empty and the task was never actually completed.
 
-> **Experiment 9-4 ★★★: Generating Verifiable Workflows from Browser Trajectories**
+> **Experiment 9-4 ★★★ `[Design Only]`: Generating Verifiable Workflows from Browser Trajectories**
 >
 > **Objective:** Determine whether a web Agent can turn one expensive exploration into a reusable workflow and reject an incorrect replay when the page changes, rather than reporting success merely because every action ran.
 >
@@ -240,7 +240,7 @@ Tool creation follows the same protocol. Alita[^alita-2025] presents a case in w
 
 Experiment 9-8 applies the same protocol to the verification layer. Only repeated user corrections, downvotes, and audits pointing to an unconfirmed high-risk operation create a change request; the candidate is written to an isolated directory. Classify dangerous deletions and `git push --force` from tool names and arguments, and bind a one-time confirmation token to the concrete operation. A candidate must pass AST/static checks, boundary replay (including forged and reused tokens), and holdout replay before canary release.
 
-> **Experiment 9-8 ★★: A User-Feedback-Triggered Confirmation Gate for High-Risk Operations**
+> **Experiment 9-8 ★★ `[External Repo]`: A User-Feedback-Triggered Confirmation Gate for High-Risk Operations**
 >
 > Use the three signal types and control trajectories in `failure_trajectories.json`. The real `gpt-4o-mini` candidate failed unfinished-task replay, normal-operation replay, and one-time-token checks, so the safety gate rejected it. The deterministic candidate passed all checks and received `release_to_canary`; record checks, the release decision, and the stable-directory hash. Implementation: [`harness-safety-gate`](../chapter9/harness-safety-gate/).
 

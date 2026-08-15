@@ -615,7 +615,7 @@ Mấu chốt của kết quả này không phải là "Agent có thể tổ ch�
 
 Ngoài việc phổ biến thông tin, bài báo còn báo cáo hai loại hiện tượng mới nổi khác có thể đo lường được. Đầu tiên là **Bộ nhớ mối quan hệ**: Agent sẽ ghi nhớ các cuộc trò chuyện trước đây với người khác và đề cập đến chúng trong các tương tác tiếp theo - ví dụ: một Agent biết rằng một Agent khác đang chuẩn bị một dự án chụp ảnh và sẽ chủ động hỏi về tiến trình khi họ gặp lại nhau vài ngày sau đó; với sự tích lũy của những tương tác như vậy, mật độ mạng xã hội của thị trấn đã tăng lên đáng kể trong thời gian mô phỏng. Thứ hai là **Phối hợp tham dự các cuộc hẹn**: Bữa tiệc có thể tổ chức thành công vì Isabella độc lập mời mọi người sắp xếp, còn khách mời tự sắp xếp thời gian đến. Nhiều Agent căn chỉnh thời gian và vị trí mà không cần lệnh trung tâm. Những hành vi này không được lập trình trước mà là kết quả của khả năng suy luận tự chủ của Agent dựa trên trí nhớ, sự phản ánh và ý thức xã hội thông thường.
 
-> **Thử nghiệm 10-5 ★: Chạy Thị trấn AI của Stanford**
+> **Thử nghiệm 10-5 ★ `[Kho Ngoài]`: Chạy Thị trấn AI của Stanford**
 >
 > **Các bước thử nghiệm**:
 > 1. Sao chép kho `https://github.com/joonspk-research/generative_agents` và định cấu hình môi trường

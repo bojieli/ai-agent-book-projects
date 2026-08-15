@@ -203,7 +203,7 @@ Dalam *setting* peramban, proses distilasi pengetahuan (knowledge-distillation) 
 
 Untuk alur kerja email, hasil kompilasinya bukan sekadar "klik tombol-tombol ini secara berurutan," melainkan program kecil yang diparameterisasi oleh penerima, subjek, dan *body*: program ini memeriksa jendela *compose* dan kolom-kolom sebelum mengirim, memeriksa indikator keberhasilan setelahnya, dan akhirnya mengonfirmasi bahwa pesan terkait muncul di daftar terkirim. Di PreAct[^preact], program semacam itu memberikan percepatan (speedup) ujung-ke-ujung (end-to-end) sebesar 8,5–13× pada tugas yang berulang dan tidak memerlukan panggilan model bahasa langkah-demi-langkah selama pemutaran ulang. Yang lebih penting, memori proses memerlukan **validasi sebelum-tindakan, validasi sesudah-tindakan, dan validasi prapengarsipan (pre-storage) independen**. Jika tidak, sistem dapat menghasilkan ilusi yang berbahaya: cakupan *replay* adalah 100 persen dan setiap tombol diklik, namun ada satu kolom yang kosong dan tugas tersebut sebenarnya tidak pernah selesai.
 
-> **Eksperimen 9-4 ★★★: Menghasilkan Alur Kerja yang Dapat Diverifikasi dari Trajektori Peramban**
+> **Eksperimen 9-4 ★★★ `[Hanya Desain]`: Menghasilkan Alur Kerja yang Dapat Diverifikasi dari Trajektori Peramban**
 >
 > **Tujuan (Objective):** Menentukan apakah web Agent dapat mengubah satu eksplorasi mahal menjadi alur kerja yang dapat digunakan kembali dan menolak pemutaran ulang yang salah ketika halaman berubah, alih-alih melaporkan keberhasilan hanya karena setiap tindakan berjalan.
 >
@@ -242,7 +242,7 @@ Pembuatan alat (tool creation) mengikuti protokol yang sama. Alita[^alita-2025] 
 
 Eksperimen 9-8 menerapkan protokol yang sama pada lapisan verifikasi. Permintaan perubahan dibuat hanya setelah koreksi pengguna, penilaian negatif, dan audit berulang menunjuk operasi berisiko tanpa konfirmasi; kandidat ditulis ke direktori terisolasi. Klasifikasikan penghapusan berbahaya dan `git push --force` dari nama serta argumen alat, dan ikat token sekali pakai ke operasi tertentu. Kandidat harus lulus pemeriksaan AST/statis, replay kasus batas (termasuk token palsu dan pemakaian ulang), serta replay kumpulan retensi.
 
-> **Eksperimen 9-8 ★★: Gerbang konfirmasi operasi berisiko tinggi dari umpan balik pengguna**
+> **Eksperimen 9-8 ★★ `[Repo Eksternal]`: Gerbang konfirmasi operasi berisiko tinggi dari umpan balik pengguna**
 >
 > Gunakan tiga sinyal dan trajectory kontrol dari `failure_trajectories.json`. Kandidat `gpt-4o-mini` nyata gagal pada replay tugas belum selesai, operasi normal, dan token sekali pakai sehingga ditolak gerbang keamanan. Kandidat deterministik lulus dan mendapat `release_to_canary`; catat pemeriksaan, keputusan, dan hash direktori stabil. Implementasi: [`harness-safety-gate`](../chapter9/harness-safety-gate/).
 

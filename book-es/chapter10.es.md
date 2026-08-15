@@ -609,7 +609,7 @@ La clave de este resultado no radica en que «los Agentes puedan organizar una f
 
 Además de la difusión de información, el artículo también describe otros dos tipos de fenómenos emergentes cuantificables. El primero es la **memoria relacional**: los Agentes recuerdan sus conversaciones anteriores con otras personas y hacen referencia a ellas en interacciones posteriores —por ejemplo, si un Agente descubre que otro está preparando un proyecto fotográfico, al volver a encontrarse con él unos días después le preguntará por propia iniciativa cómo avanza—; a medida que se acumulan estas interacciones, la densidad de la red social de la ciudad aumenta de forma significativa durante la simulación. El segundo es la **coordinación para acudir a una cita**: la fiesta puede celebrarse porque Isabella invita por iniciativa propia a otras personas para preparar el local y los invitados organizan de forma autónoma su tiempo para asistir, de modo que varios Agentes coordinan la hora y el lugar sin ninguna dirección central. Ninguno de estos comportamientos se programó de antemano, sino que todos surgieron como resultado del razonamiento autónomo de los Agentes a partir de su memoria, su reflexión y su sentido común social.
 
-> **Experimento 10-5 ★: ejecutar la ciudad de IA de Stanford**
+> **Experimento 10-5 ★ `[Repo Externo]`: ejecutar la ciudad de IA de Stanford**
 >
 > **Pasos del experimento**：
 > 1. Clonar el repositorio `https://github.com/joonspk-research/generative_agents` y configurar el entorno

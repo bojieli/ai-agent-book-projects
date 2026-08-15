@@ -621,7 +621,7 @@ Tegyük fel, hogy az Ügynökrendszer jelenleg Claude-ra épül, és kiváló az
 
 Egy megbízható kiértékelő rendszerrel rendelkező csapat órákon belül választ adhat: lefuttatja az új modellt a saját kiértékelési adatkészletén, majd összehasonlítja a feladatok sikerarányát, az eszközhívások pontosságát, a késleltetést és a költséget. Elképzelhető, hogy az új modell az egyszerű feladatoknál valóban jobb és olcsóbb, miközben az összetett, többfordulós eszközvezénylést igénylő alapforgatókönyvekben 5%-kal csökken a sikerarány. Ha a különbség meghaladja a becsült mintavételi zajt (lásd alább „A kiértékelési eredmények statisztikai szignifikanciája” című szakaszt), árnyalt stratégia választható: az egyszerű feladatokat az olcsóbb új modellre irányítjuk, az összetetteknél pedig a minőség megőrzése érdekében megtartjuk az eredetit. Az ilyen részletes, adatvezérelt döntéshez előre felépített kiértékelő rendszer szükséges.
 
-> **7-10. kísérlet ★★: Többdimenziós modell teljesítmény-benchmarking**
+> **7-10. kísérlet ★★ `[Csak terv]`: Többdimenziós modell teljesítmény-benchmarking**
 >
 > Végezze el a főbb LLM-ek és a különböző API-szolgáltatók átfogó összehasonlítását egy többdimenziós modellkiválasztási döntési adatbázis felépítéséhez.
 >

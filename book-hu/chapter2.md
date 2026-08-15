@@ -821,7 +821,7 @@ A kontextuskezelés szempontjából a Skills mechanizmus rendkívül KV-gyorsít
 > **Elfogadási feltételek**: A generált PowerPoint lefedi a dolgozat fő tartalmát (címoldal, probléma háttere, módszer áttekintése, legfontosabb eredmények, következtetés), tartalmaz legalább 3, a szöveges leírással összhangban lévő, a dolgozatból kivont ábrát, és megfelelő formázással rendelkezik, amely megfelelően megnyílik PowerPointban vagy kompatibilis szoftverben.
 >
 
-> **Kísérlet 2-7 ★★: „AI-íz Nélküli" Írási Készség Létrehozása Személyes Mintaszövegekből**
+> **Kísérlet 2-7 ★★ `[Csak terv]`: „AI-íz Nélküli" Írási Készség Létrehozása Személyes Mintaszövegekből**
 >
 > **Kísérlet célja**: kevés kézzel írt mintaszövegből olyan betölthető és ellenőrizhető írási készséget generálni, amely új cikkekben is képes reprodukálni a szerző fő kifejezésbeli preferenciáit.
 >

@@ -184,7 +184,7 @@ Hai hình sau đây lần lượt hiển thị quá trình khám phá Q-learning
 
 Q-learning thuộc phương pháp **chiến lược trật bánh**(Off-Policy) đặc biệt - nó có thể tìm hiểu chiến lược tối ưu bằng cách sử dụng dữ liệu được tạo bởi bất kỳ chiến lược nào (bao gồm cả khám phá ngẫu nhiên). Để biết định nghĩa chặt chẽ về chiến lược trên trajectory/ngoài trajectory và mối quan hệ tương ứng trong quá trình post-training LLM, hãy xem phần "So sánh các thuật toán học tăng cường" bên dưới.
 
-> **Thử nghiệm 8-1 ★: Hiệu suất của Q-learning trong trò chơi truy tìm kho báu**
+> **Thử nghiệm 8-1 ★ `[Chỉ Thiết Kế]`: Hiệu suất của Q-learning trong trò chơi truy tìm kho báu**
 >
 > Để xác minh các tính năng và hạn chế của Q-learning, chúng tôi đã thiết kế **môi trường trò chơi truy tìm kho báu**. Môi trường này chứa đựng một số thách thức chính: **Cơ chế ẩn** yêu cầu Agent phải tự mình khám phá sự tương ứng giữa chìa khóa và cửa, hiệu ứng vũ khí và quy tắc tổng hợp vật phẩm; **Phụ thuộc nhiều bước** có nghĩa là việc hoàn thành nhiệm vụ cần có trình tự hành động chính xác (giải pháp tối ưu 11 bước); **Phần thưởng thưa thớt** có nghĩa là chỉ những hành động quan trọng và chiến thắng cuối cùng mới có phần thưởng đáng kể và hầu hết các bước ở giữa không nhận được bất kỳ phản hồi nào.
 >
@@ -229,7 +229,7 @@ Lấy các mô hình như Kimi K3 định hướng gọi công cụ và tối ư
 
 **Giai đoạn 3 (2018 đến nay) Prior Awakening**: GPT-2/GPT-3 thể hiện sức mạnh của việc đào tạo trước ngôn ngữ. WebGPT và ChatGPT chứng minh rằng những kiến thức có sẵn này có thể được chuyển hóa thành Agent thực tế. Phát hiện quan trọng nhất là: **Có thể thu được kiến thức trước theo những cách hoàn toàn không liên quan đến RL**. Đây là một sự thật phản trực giác: các ưu tiên của các nhà nghiên cứu RL có thể đã bị đảo ngược hoàn toàn trong nhiều thập kỷ—không phải thuật toán > môi trường > prior mà là prior > môi trường > thuật toán.
 
-> **Thí nghiệm 8-2 ★★: Nghiên cứu so sánh giữa RL truyền thống và LLM Agent**
+> **Thí nghiệm 8-2 ★★ `[Chỉ Thiết Kế]`: Nghiên cứu so sánh giữa RL truyền thống và LLM Agent**
 >
 >
 > ![Hình 8-7 So sánh kiến trúc giữa Q-learning và LLM Agent trong trò chơi truy tìm kho báu ](images/fig8-7.svg)
@@ -298,7 +298,7 @@ Trước khi bắt tay vào làm SFT, có một vấn đề thực tế không t
 >
 > SFT Trong các nhiệm vụ diễn đạt, các giao thức kiểm soát phong cách và thói quen diễn đạt có cấu trúc được củng cố, thay vì kiến thức thực tế hoặc tư duy phức tạp. Chìa khóa nằm ở sự đa dạng của dữ liệu huấn luyện và chất lượng chú thích. Các dạng lỗi thường gặp: quá ít người nói trong dữ liệu huấn luyện, khiến mọi người đều có giọng giống nhau; quá khớp (nghĩa là mô hình ghi nhớ các chi tiết của mẫu đào tạo một cách học vẹt và hoạt động kém hơn khi gặp tình huống mới), dẫn đến "tiếng cười máy móc".
 >
-> **Thử nghiệm 8-7 ★★★: Tư duy bằng nhiều ngôn ngữ - để mô hình suy nghĩ bằng bất kỳ ngôn ngữ nào `[Thử nghiệm mở rộng]`**
+> **Thử nghiệm 8-7 ★★★ `[Chỉ Thiết Kế]`: Tư duy bằng nhiều ngôn ngữ - để mô hình suy nghĩ bằng bất kỳ ngôn ngữ nào `[Thử nghiệm mở rộng]`**
 >
 > Hầu hết các mô hình tư duy chỉ có thể “nghĩ” bằng tiếng Anh: Dù bạn sử dụng ngôn ngữ nào để đặt câu hỏi thì chuỗi tư duy bên trong mô hình hầu như luôn bằng tiếng Anh, vì các minh họa tư duy chất lượng cao trong dữ liệu huấn luyện về cơ bản đều được viết bằng tiếng Anh. Mục tiêu của thử nghiệm này rất đơn giản - khiến mô hình suy nghĩ bằng một ngôn ngữ cụ thể.
 >
@@ -403,7 +403,7 @@ update(policy, value_model, policy_loss + value_coef * value_loss)
 >
 > Bổ sung cho quá trình chắt lọc nhanh chóng để tạo thành một “hệ thống kép nhanh-chậm”: chắt lọc giảm tỷ lệ các nhiệm vụ cần tư duy, đồng thời AdaptThink tối ưu hóa chiến lược kích hoạt các nhiệm vụ còn lại, cùng tối đa hóa hiệu quả tư duy.
 >
-> **Thử nghiệm 8-11 ★★: GeneralPoints - So sánh "Bộ nhớ và khái quát hóa" của RL một vòng**
+> **Thử nghiệm 8-11 ★★ `[Kho Ngoài]`: GeneralPoints - So sánh "Bộ nhớ và khái quát hóa" của RL một vòng**
 >
 >
 > ![Hình 8-12 Kiến trúc thử nghiệm GeneralPoints (thiết kế đào tạo và thử nghiệm của hai biến thể GP-L và GP-VL) ](images/fig8-12.svg)
@@ -423,11 +423,11 @@ update(policy, value_model, policy_loss + value_coef * value_loss)
 >
 > Đóng góp cốt lõi của thử nghiệm này là định lượng một cách có hệ thống hiện tượng "bộ nhớ SFT, khái quát hóa RL", chứng minh rằng quy tắc này đúng ở cả phương thức ngôn ngữ thuần túy và ngôn ngữ hình ảnh, đồng thời tiết lộ mối quan hệ hiệp lực giữa SFT và RL: SFT mang lại sự ổn định về định dạng, RL trên cơ sở này vượt qua ranh giới của bộ nhớ, cả hai đều không thể thiếu. Mô hình đào tạo "hình thức trước, tinh thần sau" này - mượn thuật ngữ của hội họa Trung Quốc, trước tiên vẽ chính xác hình thức bên ngoài (dạng thức, cấu trúc), sau đó theo đuổi sự hấp dẫn bên trong (khái quát, chiến lược) - đặt nền tảng phương pháp luận cho các nhiệm vụ đa vòng, đa phương thức tiếp theo.
 
-> **Thử nghiệm 8-12 ★★★: V-IRL-VL — Điều hướng thị giác nhiều vòng**
+> **Thử nghiệm 8-12 ★★★ `[Kho Ngoài]`: V-IRL-VL — Điều hướng thị giác nhiều vòng**
 >
 > V-IRL[^ch8-24] cho Agent điều hướng liên tục trong các cảnh phố thị thực: huấn luyện dùng các tuyến đường New York, còn kiểm thử chuyển sang những thành phố khác đồng thời thay đổi cả cách diễn đạt phương hướng lẫn diện mạo thị giác. RL vượt trội rõ rệt so với SFT trên cả OOD quy tắc lẫn OOD thị giác, cho thấy trong nhiệm vụ nhiều vòng, chính sách phải học cách lập kế hoạch lại theo quan sát hiện tại thay vì tái hiện quỹ đạo huấn luyện. Thử nghiệm dùng PPO có mạng giá trị, và quan sát thấy phản hồi theo từng bước giúp giảm nhẹ việc phân bổ tín dụng trên chuỗi dài.
 
-> **Thử nghiệm 8-13 ★★★: SimpleVLA-RL — Khám phá mở dưới phần thưởng kết quả `[Thử nghiệm mở rộng]`**
+> **Thử nghiệm 8-13 ★★★ `[Kho Ngoài]`: SimpleVLA-RL — Khám phá mở dưới phần thưởng kết quả `[Thử nghiệm mở rộng]`**
 >
 > SimpleVLA-RL chỉ dùng phần thưởng kết quả thành công/thất bại trong các nhiệm vụ robot LIBERO. Mỗi nhiệm vụ chỉ có một quỹ đạo minh hoạ để khởi động nguội bằng SFT; sau đó RL nâng tỷ lệ thành công từ 17,3% lên 91,7% và phát hiện động tác "đẩy cắt" chưa từng xuất hiện trong các minh hoạ. Nó tương phản với V-IRL: khi tín hiệu quá trình dễ định nghĩa thì nó giúp tăng tốc học; khi đường đi tối ưu chưa biết thì phần thưởng kết quả thưa thớt lại giữ được không gian khám phá lớn hơn nhiều.
 
@@ -644,7 +644,7 @@ Hành động nào được phép, mục tiêu con nào khả đạt, test ẩn 
 
 Điểm mấu chốt của RLVP không phải "phần thưởng càng dày càng tốt", mà là có bù lại được khác biệt trong nhóm hay không. Phần thưởng kết quả thuần túy ở nhóm thua sạch và nhóm thắng sạch đều cho phương sai bằng không, không có gradient; hành động vi phạm thường dễ phát hiện nên hình phạt gần như luôn bù lại được khác biệt; phần thưởng tiến triển chỉ hiệu quả khi tiến triển từng phần là khả đạt. Khi thiết kế nên theo bốn điểm: chỉ phạt hành động cụ thể, không phạt "chưa đủ cố gắng"; luôn giữ phần thưởng kết quả để mô hình không học cách không làm gì cả; mỗi hình phạt tốt nhất nên đi kèm một đường hợp lệ khả đạt; quy tắc phải tất định và khó lách. Nếu chính sách nền vốn không bao giờ lấy mẫu hành động hợp lệ, hãy "gieo" con đường ấy trước bằng một ít minh họa, đợi hành vi hợp lệ ổn định rồi mới giảm dần việc định hình đường đi. Nói cách khác, hình phạt là nửa thường khả đạt, còn phần thưởng tiến triển là nửa bị chặn bởi tính khả đạt.
 
-> **Thí nghiệm 8-16 ★★★: RLVP — thưởng kết quả, phạt đường đi**
+> **Thí nghiệm 8-16 ★★★ `[Kho Ngoài]`: RLVP — thưởng kết quả, phạt đường đi**
 >
 > Thêm phần thưởng kết quả $O$ và tín hiệu đường đi $\Phi$ lên trên GRPO, so với phần thưởng kết quả thuần túy. Trên TerminalBench số lần vi phạm giảm từ 3,71 xuống 0,66 trong khi tỷ lệ thành công gần như không đổi; trên miniF2F, phần thưởng bộ phận khả đạt kéo số vòng lặp cần để đạt tỷ lệ thành công 0,9 từ 7,0 xuống 4,4. Trong sửa lỗi phần mềm, nếu mọi rollout đều không qua nổi test nào thì tín hiệu tiến triển là bất khả đạt, thêm vào cũng không có lợi. Thí nghiệm này nhắc ta: hãy đo tính khả đạt của tín hiệu trước, rồi mới quyết định có thêm chiều phần thưởng hay không.
 
@@ -672,7 +672,7 @@ for token in trajectory:
         loss_mask[token] = 1
 ```
 
-> **Thử nghiệm 8-14 ★★★: ReTool - Giải bài toán nâng cao bằng trình thông dịch mã**
+> **Thử nghiệm 8-14 ★★★ `[Kho Ngoài]`: ReTool - Giải bài toán nâng cao bằng trình thông dịch mã**
 >
 >
 > ![Hình 8-17 ReTool đan xen tư duy mã văn bản và vòng phản hồi thực thi hộp cát ](images/fig8-17.svg)
@@ -697,7 +697,7 @@ for token in trajectory:
 >
 > Sự khác biệt về thời gian giữa SFT và RL bắt nguồn từ sự khác biệt về mật độ thông tin: SFT có tín hiệu giám sát cho từng mã thông báo, trong khi RL chỉ nhận được tín hiệu thành công hoặc thất bại cho mỗi tập. Trong quá trình đào tạo thực tế, thời gian dành cho một bước sẽ tăng lên khi độ dài của phản hồi tăng lên và một số phản hồi cực kỳ dài sẽ kéo dài đáng kể toàn bộ chu trình đào tạo.
 >
-> **Thử nghiệm 8-15 ★★★: AWorld-train – Học cách sử dụng các công cụ trong hộp cát**
+> **Thử nghiệm 8-15 ★★★ `[Kho Ngoài]`: AWorld-train – Học cách sử dụng các công cụ trong hộp cát**
 >
 >
 > ![Hình 8-18 AWorld-train MCP sandbox đào tạo kiến trúc và hệ sinh thái công cụ ](images/fig8-18.svg)

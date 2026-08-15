@@ -202,7 +202,7 @@ Tarayıcı iş akışları, programlaşmış deneyimin değerini iyi gösteriyor
 
 E-posta göndermeyi ele alalım: derlemenin sonucu yalnızca "şu düğmelere sırayla tıkla" değildir; alıcı, konu ve gövde parametreleri olan küçük bir programdır. Göndermeden önce yazma penceresini ve giriş alanlarını kontrol eder, gönderdikten sonra başarı bildirimini kontrol eder, en sonunda gönderilmiş listesinde ilgili e-postanın belirdiğini doğrular. PreAct'ın[^preact] deneylerinde bu tür programlar tekrarlanan görevlerde uçtan uca 8,5–13 kat hızlanma sağladı ve yeniden oynatma aşamasında dil modelinin adım adım çağrılmasına gerek kalmadı. Daha da önemli sonuç şudur: süreç belleği aynı anda **eylem öncesi doğrulama, eylem sonrası doğrulama ve saklamadan önce bağımsız doğrulama** içermek zorundadır. Aksi hâlde sistem kolayca tehlikeli bir yanılsamaya kapılır: yeniden oynatma kapsamı yüzde 100'dür, her düğmeye tıklanmıştır, ama aslında bir alan boş kalmıştır ve görev hiçbir zaman gerçekten tamamlanmamıştır.
 
-> **Deney 9-4 ★★★: Tarayıcı Trajectory'lerinden Doğrulanabilir İş Akışı Üretmek**
+> **Deney 9-4 ★★★ `[Yalnızca Tasarım]`: Tarayıcı Trajectory'lerinden Doğrulanabilir İş Akışı Üretmek**
 >
 > **Deney Amacı**: Web Agent'ının pahalı bir keşfi yeniden kullanılabilir bir iş akışına dönüştürüp dönüştüremediğini ve sayfa değiştiğinde hatalı yeniden oynatmayı reddedip reddetmediğini, yani "eylemlerin hepsi yürütüldü" durumunu başarı diye raporlamadığını doğrulamak.
 >
@@ -240,7 +240,7 @@ Araç yaratma da aynı protokolü izler. Alita'nın[^alita-2025] verdiği örnek
 
 Deney 9-8 aynı protokolü doğrulama katmanına uygular. Kullanıcı düzeltmeleri, düşük puanlar ve denetimler onaysız yüksek riskli işlemi tekrar tekrar gösterdiğinde aday değişiklik izole dizine yazılır. Araç adı ve argümanlardan tehlikeli silmeleri ve `git push --force` çağrılarını sınıflandırın; tek kullanımlık onay tokenını somut işleme bağlayın. Aday AST/statik kontrolleri, sahte veya tekrar kullanılan tokenları içeren sınır yeniden oynatmasını ve koruma kümesini geçmelidir.
 
-> **Deney 9-8 ★★: Kullanıcı geri bildirimiyle yüksek riskli işlem onay kapısı**
+> **Deney 9-8 ★★ `[Harici Depo]`: Kullanıcı geri bildirimiyle yüksek riskli işlem onay kapısı**
 >
 > `failure_trajectories.json` içindeki üç sinyal ve kontrol trajectory'leri kullanılır. Gerçek `gpt-4o-mini` adayı eksik görev, normal işlem ve tek kullanımlık token kontrollerini geçemediği için güvenlik kapısı tarafından reddedildi. Deterministik aday bütün kontrolleri geçip `release_to_canary` oldu; kontroller, karar ve kararlı dizinin hash'i kaydedilir. Uygulama [`harness-safety-gate`](../chapter9/harness-safety-gate/) içindedir.
 

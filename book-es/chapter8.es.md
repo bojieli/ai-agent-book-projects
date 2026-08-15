@@ -185,7 +185,7 @@ Las dos figuras siguientes ilustran el proceso de exploración de Q-learning en 
 
 Q-learning es un método específico **fuera de la política (Off-Policy)**: puede aprender la política óptima a partir de datos generados por cualquier política (incluida la exploración aleatoria). Las definiciones estrictas de métodos en la política y fuera de la política, y su correspondencia en el post-entrenamiento de LLM, se abordan en la sección "Comparación de algoritmos de aprendizaje por refuerzo".
 
-> **Experimento 8-1 ★: Rendimiento de Q-learning en el Juego de Búsqueda del Tesoro**
+> **Experimento 8-1 ★ `[Solo Diseño]`: Rendimiento de Q-learning en el Juego de Búsqueda del Tesoro**
 >
 > Para verificar las características y limitaciones de Q-learning, diseñamos un **entorno de juego de búsqueda del tesoro**. Este entorno presenta varios desafíos clave: las **mecánicas ocultas** exigen que el Agente descubra por sí mismo la correspondencia entre llaves y puertas, los efectos de las armas y las reglas de combinación de objetos; las **dependencias de múltiples pasos** implican que completar la tarea requiere una secuencia correcta de acciones (con una solución óptima de 11 pasos); y las **recompensas esporádicas (sparse rewards)** significan que solo las acciones críticas y la victoria final otorgan recompensas significativas, sin retroalimentación en la mayoría de los pasos intermedios.
 >
@@ -229,7 +229,7 @@ Tomando como ejemplo modelos como Kimi K3, optimizados para la llamada a herrami
 
 **Tercera etapa (2018 al presente) El despertar de los conocimientos previos**: GPT-2 y GPT-3 demostraron el poder del pre-entrenamiento del lenguaje, y WebGPT y ChatGPT probaron que estos conocimientos previos podían transformarse en Agentes prácticos. El descubrimiento más valioso fue: **los conocimientos previos se pueden adquirir mediante métodos totalmente ajenos al RL**. Esta es una verdad contraintuitiva: las prioridades de los investigadores de RL durante décadas podrían haber estado invertidas; la jerarquía real no es algoritmo > entorno > conocimientos previos, sino conocimientos previos > entorno > algoritmo.
 
-> **Experimento 8-2 ★★: Estudio Comparativo entre RL Tradicional y Agente LLM**
+> **Experimento 8-2 ★★ `[Solo Diseño]`: Estudio Comparativo entre RL Tradicional y Agente LLM**
 >
 > ![Figura 8-7 Comparación de arquitectura entre Q-learning y Agente LLM en el juego de búsqueda del tesoro](images/fig8-7.svg)
 >
@@ -292,7 +292,7 @@ Antes de poner en práctica el SFT, surge una pregunta operativa inevitable: **�
 >
 > En tareas expresivas, el SFT consolida protocolos de control de estilo y hábitos de expresión estructurada, no conocimientos fácticos ni razonamientos complejos. La clave reside en la diversidad de los datos de entrenamiento y la calidad de la anotación. Modos de falla comunes: la falta de variedad de hablantes en los datos provoca que todos suenen igual; el sobreajuste de marcas (Overfitting, donde el modelo memoriza detalles específicos de las muestras de entrenamiento y empeora ante situaciones nuevas) produce "risas mecánicas".
 >
-> **Experimento 8-7 ★★★: Pensamiento Multilingüe: Permitir que el Modelo Piense en Cualquier Idioma `[Experimento Extendido]`**
+> **Experimento 8-7 ★★★ `[Solo Diseño]`: Pensamiento Multilingüe: Permitir que el Modelo Piense en Cualquier Idioma `[Experimento Extendido]`**
 >
 > La mayoría de los modelos de razonamiento solo piensan en inglés: sin importar en qué idioma preguntes, la cadena de pensamiento interna del modelo ocurre casi siempre en inglés, debido a que las demostraciones de pensamiento de alta calidad en los datos de entrenamiento están escritas principalmente en inglés. El objetivo de este experimento es simple: permitir que el modelo piense en el idioma especificado.
 >
@@ -396,7 +396,7 @@ update(policy, value_model, policy_loss + value_coef * value_loss)
 >
 > Se complementa con la destilación de prompts formando un sistema dual "rápido-lento": la destilación reduce la proporción de tareas que requieren pensar, y AdaptThink optimiza la estrategia de activación en las tareas restantes, maximizando la eficiencia computacional.
 >
-> **Experimento 8-11 ★★: GeneralPoints: Comparación entre Memoria y Generalización en RL de Un Solo Turno**
+> **Experimento 8-11 ★★ `[Repo Externo]`: GeneralPoints: Comparación entre Memoria y Generalización en RL de Un Solo Turno**
 >
 > ![Figura 8-12 Arquitectura del experimento GeneralPoints (variantes GP-L y GP-VL)](images/fig8-12.svg)
 >
@@ -414,11 +414,11 @@ update(policy, value_model, policy_loss + value_coef * value_loss)
 >
 > La contribución central de este experimento radica en cuantificar sistemáticamente el fenómeno de "SFT memoriza, RL generaliza", demostrando que esta regla aplica tanto en la modalidad lingüística pura como en la visual-lingüística, y revelando la relación de sinergia entre SFT y RL: el SFT aporta estabilidad de formato y el RL rompe los límites de la memoria sobre esa base, siendo ambos indispensables. Este paradigma de "primero la forma, luego el espíritu" (dibujar primero con precisión la forma externa y buscar después el espíritu interno) establece las bases metodológicas para tareas posteriores multiturno y multimodales.
 
-> **Experimento 8-12 ★★★: V-IRL-VL: navegación visual multiturno**
+> **Experimento 8-12 ★★★ `[Repo Externo]`: V-IRL-VL: navegación visual multiturno**
 >
 > V-IRL[^ch8-24] hace que el Agente navegue de forma continua por escenas urbanas reales: el entrenamiento emplea rutas de Nueva York y la evaluación se traslada a otras ciudades cambiando a la vez la formulación de las indicaciones y la apariencia visual. El RL supera con claridad al SFT tanto en OOD de reglas como visual, lo que muestra que en las tareas multiturno la política debe aprender a replanificar a partir de la observación actual en vez de reproducir las trayectorias de entrenamiento. El experimento utiliza PPO con red de valor y se observa que la realimentación paso a paso alivia la asignación de crédito a largo plazo.
 
-> **Experimento 8-13 ★★★: SimpleVLA-RL: exploración abierta bajo recompensa de resultado `[experimento ampliado]`**
+> **Experimento 8-13 ★★★ `[Repo Externo]`: SimpleVLA-RL: exploración abierta bajo recompensa de resultado `[experimento ampliado]`**
 >
 > SimpleVLA-RL solo utiliza recompensas de resultado de éxito/fracaso en las tareas robóticas de LIBERO. Cada tarea recibe una única trayectoria de demostración para el arranque en frío con SFT; después, el RL eleva la tasa de éxito del 17,3 % al 91,7 % y descubre un movimiento de «empujar y cortar» que no aparecía en las demostraciones. Forma contraste con V-IRL: cuando la señal de proceso es fácil de definir, acelera el aprendizaje; cuando se desconoce el camino óptimo, una recompensa de resultado dispersa deja mucho más espacio para la exploración.
 
@@ -637,7 +637,7 @@ Qué acciones se permiten, qué subobjetivos son alcanzables, cuáles son los te
 
 La clave de RLVP no es que «cuanto más densa la recompensa, mejor», sino si se puede recuperar la diferencia intragrupo. La recompensa de resultado pura genera varianza cero y ningún gradiente tanto en el grupo que falla entero como en el que acierta entero; las acciones de incumplimiento suelen ser fáciles de detectar, así que la penalización casi siempre recupera la diferencia; la recompensa de progreso solo funciona cuando el progreso parcial es realmente alcanzable. Al diseñar, sigue cuatro reglas: penaliza acciones concretas, nunca la «falta de esfuerzo»; conserva siempre la recompensa de resultado para que el modelo no aprenda a no hacer nada; empareja cada penalización con un camino conforme alcanzable siempre que se pueda; y haz que las reglas sean deterministas y difíciles de burlar. Si la política base nunca llegara a muestrear la acción conforme, «siembra» antes ese camino con unas pocas demostraciones y atenúa el modelado de camino cuando la conducta conforme se estabilice. Dicho de otro modo: la penalización es la mitad habitualmente alcanzable, y la recompensa de progreso es la mitad condicionada por la alcanzabilidad.
 
-> **Experimento 8-16 ★★★: RLVP — recompensar el resultado, penalizar el camino**
+> **Experimento 8-16 ★★★ `[Repo Externo]`: RLVP — recompensar el resultado, penalizar el camino**
 >
 > Añade sobre GRPO una recompensa de resultado $O$ y una señal de camino $\Phi$, y compáralo con la recompensa de resultado pura. En TerminalBench las infracciones caen de 3,71 a 0,66 mientras la tasa de éxito se mantiene prácticamente igual; en miniF2F, una recompensa parcial alcanzable reduce de 7,0 a 4,4 las iteraciones necesarias para llegar a una tasa de éxito de 0,9. En reparación de software, si ningún rollout pasa test alguno, la señal de progreso es inalcanzable y añadirla no aporta nada. La lección: mide primero la alcanzabilidad de la señal y decide después si añades una dimensión de recompensa.
 
@@ -665,7 +665,7 @@ for token in trajectory:
         loss_mask[token] = 1
 ```
 
-> **Experimento 8-14 ★★★: ReTool: Intérprete de Código para Resolver Problemas Matemáticos**
+> **Experimento 8-14 ★★★ `[Repo Externo]`: ReTool: Intérprete de Código para Resolver Problemas Matemáticos**
 >
 > ![Figura 8-17 ReTool entrelazando texto-código de pensamiento y bucle de retroalimentación de ejecución en sandbox](images/fig8-17.svg)
 >
@@ -688,7 +688,7 @@ for token in trajectory:
 >
 > La diferencia en tiempo entre SFT y RL proviene de la densidad de información: el SFT posee supervisión en cada token, mientras el RL recibe un único señal de éxito/fracaso por episodio. En el entrenamiento real, el tiempo por paso se incrementa con la longitud de la respuesta, y unas pocas respuestas excesivamente largas pueden prolongar sustancialmente el ciclo global.
 >
-> **Experimento 8-15 ★★★: AWorld-train: Aprender a Usar Herramientas en un Entorno de Pruebas**
+> **Experimento 8-15 ★★★ `[Repo Externo]`: AWorld-train: Aprender a Usar Herramientas en un Entorno de Pruebas**
 >
 > ![Figura 8-18 Arquitectura de entrenamiento en sandbox MCP de AWorld-train y ecosistema de herramientas](images/fig8-18.svg)
 >

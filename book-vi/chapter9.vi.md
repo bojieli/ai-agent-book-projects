@@ -202,7 +202,7 @@ Quy trình chắt lọc tri thức trong Hình 9-4 tương ứng với một vò
 
 Với thao tác gửi email, kết quả biên dịch không chỉ là “nhấp các nút này theo thứ tự” mà là một chương trình nhỏ có tham số người nhận, chủ đề và nội dung: trước khi gửi, kiểm tra cửa sổ soạn thư và ô nhập; sau khi gửi, kiểm tra thông báo thành công; cuối cùng xác nhận thư tương ứng xuất hiện trong mục Đã gửi. Trong thí nghiệm PreAct[^preact], các chương trình như vậy đạt tốc độ đầu-cuối nhanh hơn 8,5–13 lần trên nhiệm vụ lặp lại và giai đoạn phát lại không cần gọi mô hình ngôn ngữ theo từng bước. Quan trọng hơn, bộ nhớ quy trình phải đồng thời có **xác minh trước hành động, xác minh sau hành động và xác minh độc lập trước khi lưu**. Nếu không, hệ thống dễ tạo ra ảo giác nguy hiểm: độ phủ phát lại là 100%, mọi nút đều đã được nhấp, nhưng một trường thực ra trống và nhiệm vụ chưa bao giờ thật sự hoàn thành.
 
-> **Thí nghiệm 9-4 ★★★: Tạo quy trình công việc có thể xác minh từ quỹ đạo trình duyệt**
+> **Thí nghiệm 9-4 ★★★ `[Chỉ Thiết Kế]`: Tạo quy trình công việc có thể xác minh từ quỹ đạo trình duyệt**
 >
 > **Mục tiêu thí nghiệm**: Xác minh liệu Web Agent có thể biến một lần khám phá tốn kém thành quy trình tái sử dụng và từ chối phát lại sai khi trang web thay đổi, thay vì báo nhầm “mọi hành động đã chạy” là thành công hay không.
 >
@@ -240,7 +240,7 @@ Việc tạo công cụ cũng tuân theo cùng giao thức. Trường hợp Alit
 
 Thí nghiệm 9-8 áp dụng cùng giao thức vào lớp xác minh. Chỉ tạo yêu cầu thay đổi khi nhiều sửa chữa của người dùng, đánh giá thấp và audit cùng chỉ ra thao tác rủi ro cao không được xác nhận; ứng viên được ghi vào thư mục cô lập. Phân loại thao tác xóa nguy hiểm và `git push --force` theo tên/đối số công cụ, buộc token một lần vào thao tác cụ thể. Ứng viên phải qua kiểm tra AST/tĩnh, replay tập ranh giới (kể cả token giả/tái sử dụng) và replay tập giữ lại.
 
-> **Thí nghiệm 9-8 ★★: Cổng xác nhận thao tác rủi ro cao từ phản hồi người dùng**
+> **Thí nghiệm 9-8 ★★ `[Kho Ngoài]`: Cổng xác nhận thao tác rủi ro cao từ phản hồi người dùng**
 >
 > Dùng ba tín hiệu và trajectory đối chứng trong `failure_trajectories.json`. Ứng viên `gpt-4o-mini` thật không qua replay nhiệm vụ chưa hoàn thành, thao tác bình thường và token một lần nên bị cổng an toàn từ chối. Ứng viên xác định vượt qua và nhận `release_to_canary`; ghi lại kiểm tra, quyết định và hash thư mục ổn định. Xem [`harness-safety-gate`](../chapter9/harness-safety-gate/).
 

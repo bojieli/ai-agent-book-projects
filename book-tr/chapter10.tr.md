@@ -615,7 +615,7 @@ Bu sonucun kilit noktası "Agent'ın parti düzenleyebilmesi" değildir — birk
 
 Makale, bilgi yayılımının yanı sıra ölçülebilir iki beliriş olgusu daha raporluyor. Birincisi **ilişki belleğidir**: Agent başkalarıyla geçmişte yaptığı konuşmaları hatırlar ve sonraki etkileşimlerde bunlara atıf yapar — örneğin bir Agent, başka bir Agent'ın bir fotoğraf projesi hazırladığını öğrenirse, birkaç gün sonra tekrar karşılaştığında projenin ilerleyişini kendiliğinden sorar; bu tür etkileşimler biriktikçe kasabanın toplumsal ağının yoğunluğu simülasyon süresince gözle görülür biçimde arttı. İkincisi **randevuda buluşmanın koordinasyonudur**: partinin gerçekleşebilmesi, Isabella'nın kendi kararıyla davet edip mekânı hazırlatmasına ve davet edilenlerin kendi kararlarıyla zaman ayırıp gelmesine dayanıyordu; birden çok Agent merkezî bir komuta olmadan zaman ve mekân üzerinde hizalandı. Bu davranışların hiçbiri önceden programlanmamıştır; hepsi Agent'ların bellek, reflection ve toplumsal sağduyuya dayanarak kendi başlarına yürüttükleri akıl yürütmenin sonucudur.
 
-> **Deney 10-5 ★: Stanford AI Kasabasını Çalıştırmak**
+> **Deney 10-5 ★ `[Harici Depo]`: Stanford AI Kasabasını Çalıştırmak**
 >
 > **Deney adımları**:
 > 1. `https://github.com/joonspk-research/generative_agents` deposunu klonlayın, ortamı yapılandırın

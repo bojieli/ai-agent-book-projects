@@ -817,7 +817,7 @@ Context yönetimi açısından Skills mekanizması KV Cache ile son derece uyuml
 > **Kabul Kriterleri**: Üretilen PowerPoint, makalenin ana içeriğini kapsar (başlık sayfası, problem arka planı, yöntem genel bakışı, temel sonuçlar, sonuç), makaleden çıkarılan ve metin açıklamalarıyla tutarlı en az 3 şekil içerir ve PowerPoint veya uyumlu yazılımda düzgün açılan doğru biçimlendirmeye sahiptir.
 >
 
-> **Deney 2-7 ★★: Kişisel Örnek Metinlerden "Yapay Zekâ Kokusu Olmayan" Bir Yazma Skill'i Oluşturma**
+> **Deney 2-7 ★★ `[Yalnızca Tasarım]`: Kişisel Örnek Metinlerden "Yapay Zekâ Kokusu Olmayan" Bir Yazma Skill'i Oluşturma**
 >
 > **Deney Amacı**: az sayıda insan eliyle yazılmış örnek metinden yüklenebilir ve denetlenebilir bir yazma Skill'i üretmek ve bunun yeni yazılarda yazarın başlıca anlatım tercihlerini yeniden üretip üretemediğini gözlemlemek.
 >

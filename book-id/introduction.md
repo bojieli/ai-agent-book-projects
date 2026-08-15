@@ -63,6 +63,8 @@ Bab-bab di dalam buku ini relatif independen. Anda dapat memilih jalur bacaan ya
 
 Setiap bab berisi sejumlah besar **eksperimen** dan **pertanyaan pemikiran (thought questions)**, yang diberi nomor dalam format "Eksperimen X-Y" (X adalah nomor bab, Y adalah nomor urut di dalam bab). Judul-judul eksperimen dan pertanyaan pemikiran mengandung peringkat bintang untuk tingkat kesulitan: ★ berarti tingkat pemula (*entry-level*), cocok untuk semua pembaca; ★★ berarti tingkat kesulitan menengah, membutuhkan sejumlah praktik rekayasa; ★★★ berarti tantangan lanjutan, biasanya melibatkan pertanyaan terbuka atau desain sistem yang kompleks. Sebagian besar eksperimen dilengkapi dengan kode yang lengkap dan dapat dijalankan, yang disusun di dalam repositori *open-source* pendampingnya:
 
+Bintang pada judul eksperimen menyatakan **tingkat kesulitan**, bukan **besarnya upaya menjalankannya**. Secara bawaan, eksperimen disertai kode yang dapat dijalankan di repositori ini dan langsung jalan begitu kredensial disiapkan; tiga pengecualian ditandai pada judul: `[Repo Eksternal]` berarti Anda harus meng-clone sendiri repositori luar seperti kerangka pelatihan atau tolok ukur; `[Hanya Desain]` berarti teks hanya memberi arsitektur dan kriteria penerimaan sedangkan kode yang dapat dijalankan Anda tulis sendiri; `[Perangkat Nyata]` berarti dibutuhkan lengan robot fisik atau perangkat sejenis. README pendamping tiap bab juga memuat tabel jenis proyek per eksperimen dan daftar dependensi eksternal.
+
 > **Repositori Kode Pendamping**: [https://github.com/bojieli/ai-agent-book](https://github.com/bojieli/ai-agent-book)
 
 Anda dapat memperoleh seluruh kode pendamping dengan Git:

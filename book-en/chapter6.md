@@ -677,7 +677,7 @@ The diagnostic method is direct: keep the camera, the arm, the gripper, the desk
 
 XLeRobot supports keyboard, Xbox controller, Switch Joy-Con and VR teleoperation. A human operator naturally does many things an algorithm has to implement explicitly: slowing the gripper as it nears the cup, correcting the grasp point when the cup slides, observing again after failing to pinch the paper the first time, and checking the outcome once an object is in the target area. Teleoperation is therefore not only a way to collect demonstrations but also a "fix the hardware, swap the operator" diagnostic experiment.[^ch6-1]
 
-> **Experiment 6-9 ★: Teleoperating a real XLeRobot to tidy a desk**
+> **Experiment 6-9 ★ `[Real Hardware]`: Teleoperating a real XLeRobot to tidy a desk**
 >
 > Place a red cup, a tray, yellow scrap paper and a bin in the real XLeRobot workspace. Using one calibrated teleoperation method, the operator performs the fixed task: "put the red cup in the tray, put the yellow scrap paper in the bin, then observe again and confirm the state of the desk." Repeat for several rounds at minimum, recording the camera feed, operator input, arm state, action timing, failed grasps, retry counts and the final state.
 >
@@ -721,7 +721,7 @@ pick(red_cup) → place(red_cup, tray) → verify_state()
 
 Every completed skill yields a checkable node. If a grasp fails, only that step is retried; if someone moves an object, or the user changes the goal, only the affected later steps need replanning—the old plan does not have to be redone from scratch. The tools given to the agent should be equally simple: one call does one thing, the range of motion is fixed, there is a timeout, and observation happens again immediately after execution.
 
-> **Experiment 6-11 ★★: Driving XLeRobot to tidy a desk autonomously with Gemini Robotics-ER 1.5**
+> **Experiment 6-11 ★★ `[Real Hardware]`: Driving XLeRobot to tidy a desk autonomously with Gemini Robotics-ER 1.5**
 >
 > Keep the real XLeRobot, the desk layout, the task instruction and the success conditions of experiment 9-7 unchanged, and replace the human operator with an Agent. An embodied reasoning model such as Gemini Robotics-ER 1.5 can handle observation and planning, exposing only five tools through a RoboCrew-style agent loop: `observe_scene`, `pick`, `place`, `verify_state` and `stop`.[^ch6-2]
 >

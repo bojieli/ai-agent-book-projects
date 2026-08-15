@@ -202,7 +202,7 @@ A böngésző környezetben a 8-4. ábrán bemutatott tudásdesztillációs foly
 
 Egy e-mail munkafolyamat esetén a lefordított eredmény nem csupán „kattints ezekre a gombokra sorrendben", hanem egy kis program, amely a címzett, tárgy és szövegtörzs paraméterekkel rendelkezik: ellenőrzi a levélírás ablakot és mezőket a küldés előtt, ellenőrzi a sikerjelzőt a küldés után, és végül megerősíti, hogy a megfelelő üzenet megjelenik az elküldött lista részben. A PreAct[^preact] rendszerben az ilyen programok 8,5–13-szoros végpontok közötti gyorsulást értek el ismétlődő feladatokon, és nem igényeltek lépésenkénti nyelvi modell hívásokat a visszajátszás során. Ennél is fontosabb, hogy a folyamatmemóriának szüksége van **művelet előtti érvényesítésre, művelet utáni érvényesítésre és független előtárolásos érvényesítésre**. Ellenkező esetben a rendszer veszélyes illúziót kelthet: a visszajátszási lefedettség 100%, minden gombra kattintottak, de az egyik mező üres volt, és a feladat soha nem készült el ténylegesen.
 
-> **9-4. ★★★ kísérlet: Ellenőrizhető munkafolyamatok generálása böngésző-trajektóriákból**
+> **9-4. ★★★ `[Csak terv]` kísérlet: Ellenőrizhető munkafolyamatok generálása böngésző-trajektóriákból**
 >
 > **Cél:** Annak meghatározása, hogy egy webes ágens egy drága felfedezést újrafelhasználható munkafolyamattá tud-e alakítani, és el tudja-e utasítani a hibás visszajátszást, ha az oldal megváltozik, ahelyett, hogy sikert jelentene, mert minden művelet lefutott.
 >
@@ -240,7 +240,7 @@ Az eszközlétrehozás ugyanezt a protokollt követi. Az Alita[^alita-2025] egy 
 
 A 9-8. kísérlet ugyanezt a protokollt a verifikációs rétegre alkalmazza. Csak több felhasználói javítás, negatív értékelés és audit után készül módosítási kérés a megerősítés nélküli veszélyes műveletekre; a jelölt elszigetelt könyvtárba kerül. Az eszköz neve és argumentumai alapján veszélyes törléseket és `git push --force`-t keresünk, az egyszer használatos tokent a konkrét művelethez kötjük. AST/statikus ellenőrzés, határ- és tartalékkészlet-visszajátszás után engedhető ki.
 
-> **9-8. ★★ kísérlet: Magas kockázatú műveletek megerősítési kapuja felhasználói visszajelzésből**
+> **9-8. ★★ `[Külső tároló]` kísérlet: Magas kockázatú műveletek megerősítési kapuja felhasználói visszajelzésből**
 >
 > A `failure_trajectories.json` három jelzést és kontrollpályákat ad. A valós `gpt-4o-mini` jelölt nem ment át a befejezetlen feladatok, normál műveletek és egyszer használatos tokenek ellenőrzésén, ezért a biztonsági kapu elutasította. A determinisztikus jelölt minden ellenőrzést teljesített és `release_to_canary` lett; rögzítjük a döntést és a stabil könyvtár hashét. Megvalósítás: [`harness-safety-gate`](../chapter9/harness-safety-gate/).
 

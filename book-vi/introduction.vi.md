@@ -61,6 +61,8 @@ Mỗi chương của cuốn sách này tương đối độc lập. Bạn có th
 
 Mỗi chương chứa một số lượng lớn **thí nghiệm** và **câu hỏi tư duy** và định dạng đánh số là "Thử nghiệm X-Y" (X là số chương, Y là số sê-ri trong chương). Tiêu đề của các thí nghiệm và câu hỏi tư duy được đánh dấu sao để biểu thị độ khó: ★ biểu thị mức độ đầu vào, phù hợp với mọi độc giả; ★★ biểu thị độ khó trung bình, đòi hỏi nền tảng nhất định về thực hành kỹ thuật; ★★★ biểu thị những thách thức nâng cao, thường liên quan đến các vấn đề mở hoặc thiết kế hệ thống phức tạp. Hầu hết các thử nghiệm đều được trang bị mã có thể chạy hoàn chỉnh, được tổ chức để hỗ trợ các kho lưu trữ nguồn mở:
 
+Số sao trong tiêu đề thí nghiệm chỉ nói lên **độ khó**, không nói lên **công sức phải bỏ ra**. Mặc định, thí nghiệm đều có mã chạy được kèm theo trong kho này, cấu hình xong thông tin xác thực là chạy; ba ngoại lệ được ghi rõ ngay trên tiêu đề: `[Kho Ngoài]` nghĩa là bạn phải tự clone một kho bên ngoài như framework huấn luyện hoặc bộ đánh giá; `[Chỉ Thiết Kế]` nghĩa là phần chính chỉ đưa ra kiến trúc và tiêu chí nghiệm thu, còn mã chạy được thì bạn tự viết; `[Phần Cứng Thật]` nghĩa là phải có cánh tay robot thật hoặc thiết bị tương tự mới chạy được. README đi kèm mỗi chương còn có bảng loại dự án theo từng thí nghiệm và danh sách phụ thuộc bên ngoài.
+
 > **Kho mã hỗ trợ**: [https://github.com/bojieli/ai-agent-book](https://github.com/bojieli/ai-agent-book)
 
 Bạn có thể lấy toàn bộ mã nguồn đi kèm bằng Git:

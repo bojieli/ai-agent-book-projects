@@ -202,7 +202,7 @@ Browser workflow, programmatic experience-இன் மதிப்பை வி
 
 Email அனுப்பும் எடுத்துக்காட்டில், compile செய்யப்பட்ட முடிவு “இந்த button-களை வரிசையாக click செய்” என்பதல்ல; recipient, subject மற்றும் body parameter-களைக் கொண்ட சிறிய program. அனுப்புமுன் compose window மற்றும் input field-களைச் சோதித்து, அனுப்பிய பின் success message-ஐச் சோதித்து, இறுதியில் Sent list-இல் அதே email தோன்றியதா என உறுதிப்படுத்துகிறது. PreAct[^preact] பரிசோதனைகளில் இத்தகைய program-கள் மீளும் பணிகளில் end-to-end 8.5–13 மடங்கு வேகத்தை வழங்கின; replay கட்டத்தில் step-by-step language-model call தேவையில்லை. மேலும் முக்கியமாக, process memory ஒரே நேரத்தில் **pre-action verification, post-action verification மற்றும் save-க்கு முந்தைய independent verification** ஆகியவற்றைக் கொண்டிருக்க வேண்டும். இல்லையெனில் replay coverage 100%, எல்லா button-களும் click செய்யப்பட்டன; ஆனால் ஒரு field காலியாக இருந்ததால் பணி உண்மையில் ஒருபோதும் முடிக்கப்படவில்லை என்ற ஆபத்தான மாயை உருவாகும்.
 
-> **பரிசோதனை 9-4 ★★★: browser trajectory-இலிருந்து சரிபார்க்கக்கூடிய workflow-ஐ உருவாக்குதல்**
+> **பரிசோதனை 9-4 ★★★ `[வடிவமைப்பு மட்டும்]`: browser trajectory-இலிருந்து சரிபார்க்கக்கூடிய workflow-ஐ உருவாக்குதல்**
 >
 > **பரிசோதனை இலக்கு**: ஒரு செலவான exploration-ஐ Web Agent மறுபயன்படுத்தக்கூடிய workflow-ஆக மாற்றுகிறதா; web page மாறும்போது “எல்லா action-களும் ஓடின” என்பதை success எனத் தவறாக அறிவிக்காமல் incorrect replay-ஐ நிராகரிக்கிறதா எனச் சோதித்தல்.
 >
@@ -240,7 +240,7 @@ Tool creation-உம் இதே protocol-ஐப் பின்பற்று
 
 பரிசோதனை 9-8 இதே protocol-ஐ verification layer-க்கு பயன்படுத்துகிறது. User correction, குறைந்த மதிப்பீடு, audit ஆகியவை confirmation இல்லாத high-risk operation-ஐ மீண்டும் சுட்டினால் மட்டுமே change request உருவாக்கி candidate-ஐ தனிமைப்படுத்தப்பட்ட directory-யில் எழுதவும். Tool name/argument மூலம் ஆபத்தான delete மற்றும் `git push --force`-ஐ வகைப்படுத்தி, one-time token-ஐ குறிப்பிட்ட operation-க்கு bind செய்யவும். AST/static check, போலி/மீண்டும் பயன்படுத்திய token boundary replay, holdout replay அனைத்தையும் கடக்க வேண்டும்.
 
-> **பரிசோதனை 9-8 ★★: user feedback-இலிருந்து high-risk operation confirmation gate**
+> **பரிசோதனை 9-8 ★★ `[வெளிக் களஞ்சியம்]`: user feedback-இலிருந்து high-risk operation confirmation gate**
 >
 > `failure_trajectories.json` இன் மூன்று signal மற்றும் control trajectory-களைப் பயன்படுத்தவும். உண்மையான `gpt-4o-mini` candidate incomplete task, normal operation, one-time token check-களை கடக்காததால் security gate நிராகரித்தது. Deterministic candidate அனைத்தையும் கடந்து `release_to_canary` பெற்றது; check, decision, stable directory hash பதிவு செய்யவும். Implementation [`harness-safety-gate`](../chapter9/harness-safety-gate/) இல் உள்ளது.
 

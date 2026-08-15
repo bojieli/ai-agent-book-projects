@@ -821,7 +821,7 @@ From a context-management perspective, the Skills mechanism is highly KV Cache-f
 > **Acceptance Criteria**: The generated PowerPoint covers the paper's main content (title page, problem background, method overview, key results, conclusion), includes at least 3 figures extracted from the paper that are consistent with the text descriptions, and has correct formatting that opens properly in PowerPoint or compatible software.
 >
 
-> **Experiment 2-7 ★★: Creating a "De-AI-ified" Writing Skill from Personal Samples**
+> **Experiment 2-7 ★★ `[Design Only]`: Creating a "De-AI-ified" Writing Skill from Personal Samples**
 >
 > **Experiment Goal**: Generate a loadable, inspectable writing Skill from a small set of human-written samples, and observe whether it can reproduce the author's main stylistic preferences in new articles.
 >

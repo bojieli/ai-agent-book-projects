@@ -615,7 +615,7 @@ Pelajaran utamanya bukanlah bahwa "Agents dapat mengorganisir pesta"—beberapa 
 
 Makalah tersebut melaporkan dua fenomena terukur lainnya. Yang pertama adalah **relational memory**: Agents mengingat percakapan sebelumnya dan merujuknya dalam interaksi selanjutnya. Misalnya, seorang Agent yang mengetahui tentang proyek fotografi Agent lain mungkin akan bertanya bagaimana perkembangannya saat mereka bertemu lagi nanti. Seiring bertambahnya interaksi ini, jaringan sosial kota menjadi jauh lebih padat. Fenomena kedua adalah **coordinated attendance**: Isabella secara independen merekrut bantuan untuk dekorasi, sementara tamu yang diundang menyesuaikan jadwal mereka sehingga mereka dapat hadir. Beberapa Agents menyepakati waktu dan tempat tanpa adanya komando pusat. Perilaku-perilaku ini tidak diprogram sebelumnya; semua itu dihasilkan dari *reasoning* otonom Agents berdasarkan memori, *reflection*, dan pemahaman sosial umum.
 
-> **Eksperimen 10-5 ★: Menjalankan Stanford AI Town**
+> **Eksperimen 10-5 ★ `[Repo Eksternal]`: Menjalankan Stanford AI Town**
 >
 > **Langkah-langkah Eksperimen**:
 > 1. Kloning `https://github.com/joonspk-research/generative_agents` dan ikuti instruksi repositori untuk mengonfigurasi lingkungan.

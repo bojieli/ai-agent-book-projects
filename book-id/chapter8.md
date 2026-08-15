@@ -185,7 +185,7 @@ Dua gambar berikut menunjukkan proses eksplorasi dari Q-learning di sebuah grid 
 
 Q-learning adalah jenis khusus dari metode **off-policy**—ia dapat menggunakan data yang dihasilkan oleh policy apapun (termasuk eksplorasi acak) untuk mempelajari policy optimal. Definisi ketat dari metode on-policy dan off-policy, serta bagaimana mereka dipetakan ke post-training LLM, akan dibahas nanti di bagian "Perbandingan Algoritma Reinforcement Learning."
 
-> **Eksperimen 8-1 ★: Kinerja Q-learning dalam Game Pencarian Harta Karun**
+> **Eksperimen 8-1 ★ `[Hanya Desain]`: Kinerja Q-learning dalam Game Pencarian Harta Karun**
 >
 > Untuk memverifikasi karakteristik dan batasan dari Q-learning, kami merancang sebuah **lingkungan permainan pencarian harta karun (treasure hunt game)**. Lingkungan ini mencakup beberapa tantangan utama: **mekanisme tersembunyi (hidden mechanisms)** yang mengharuskan Agent menemukan korespondensi antara kunci dan pintu, efek senjata, dan aturan crafting item secara mandiri; **ketergantungan multi-langkah (multi-step dependencies)** yang berarti bahwa menyelesaikan tugas memerlukan urutan tindakan yang benar (solusi optimal: 11 langkah); **sparse rewards** yang berarti bahwa hanya tindakan penting dan kemenangan akhir yang menghasilkan imbalan yang signifikan, sementara sebagian besar langkah menengah tidak menerima umpan balik.
 >
@@ -230,7 +230,7 @@ Model-model seperti Kimi K3, yang dioptimalkan untuk penggunaan alat dan penalar
 
 **Fase 3 (2018-sekarang), Kebangkitan Prior:** GPT-2/GPT-3 mendemonstrasikan kekuatan dari prapelatihan bahasa; WebGPT dan ChatGPT membuktikan bahwa priors tersebut dapat diubah menjadi Agents praktis. Penemuan terpenting: **priors dapat diperoleh dengan cara yang sama sekali tidak ada hubungannya dengan RL**. Ini adalah kebenaran yang berlawanan dengan intuisi—selama beberapa dekade, para peneliti RL mungkin memiliki prioritas yang benar-benar terbalik. Urutan sebenarnya bukanlah algoritma > lingkungan > prior, melainkan prior > lingkungan > algoritma.
 
-> **Eksperimen 8-2 ★★: Studi Perbandingan RL Tradisional dan LLM Agent**
+> **Eksperimen 8-2 ★★ `[Hanya Desain]`: Studi Perbandingan RL Tradisional dan LLM Agent**
 >
 >
 > ![Gambar 8-7: Perbandingan Arsitektur Q-learning dan Agent LLM dalam Permainan Berburu Harta Karun](images/fig8-7.svg)
@@ -299,7 +299,7 @@ Sebelum terjun langsung dengan SFT, ada satu pertanyaan praktis yang tidak bisa 
 >
 > Dalam tugas ekspresif, SFT memperkuat protokol kontrol gaya dan kebiasaan berekspresi yang terstruktur, bukan pengetahuan faktual atau penalaran kompleks. Kuncinya terletak pada keragaman dan kualitas anotasi dari data pelatihan. Mode kegagalan umum termasuk terlalu sedikit pembicara dalam data pelatihan, yang menyebabkan setiap orang terdengar sama, dan token overfitting (di mana model menghafal detail sampel pelatihan dan berkinerja lebih buruk pada situasi baru), yang mengarah pada "tawa mekanis."
 >
-> **Eksperimen 8-7 ★★★: Multilingual Thinking—Memungkinkan Model untuk Berpikir dalam Bahasa Apa Pun `[Eksperimen Lanjutan]`**
+> **Eksperimen 8-7 ★★★ `[Hanya Desain]`: Multilingual Thinking—Memungkinkan Model untuk Berpikir dalam Bahasa Apa Pun `[Eksperimen Lanjutan]`**
 >
 > Sebagian besar model berpikir hanya "berpikir" dalam bahasa Inggris: terlepas dari bahasa apa yang Anda gunakan untuk mengajukan pertanyaan, chain of thought internal dari model tersebut hampir selalu dalam bahasa Inggris, karena demonstrasi berpikir berkualitas tinggi dalam data pelatihan sebagian besar ditulis dalam bahasa Inggris. Tujuan dari eksperimen ini sederhana—memungkinkan model untuk berpikir dalam bahasa yang ditentukan.
 >
@@ -403,7 +403,7 @@ update(policy, value_model, policy_loss + value_coef * value_loss)
 >
 > Bersama dengan *prompt distillation*, AdaptThink membentuk "fast-slow dual system": distilasi mengurangi proporsi tugas yang memerlukan pemikiran, sementara AdaptThink mengoptimalkan strategi pemicuan untuk tugas-tugas yang tersisa, secara bersama-sama memaksimalkan efisiensi pemikiran.
 
-> **Eksperimen 8-11 ★★: GeneralPoints—Perbandingan "Memori dan Generalisasi" dalam RL Putaran Tunggal**
+> **Eksperimen 8-11 ★★ `[Repo Eksternal]`: GeneralPoints—Perbandingan "Memori dan Generalisasi" dalam RL Putaran Tunggal**
 >
 > ![Gambar 8-12: Arsitektur Eksperimen GeneralPoints (Desain Pelatihan dan Pengujian Varian GP-L dan GP-VL)](images/fig8-12.svg)
 >
@@ -421,11 +421,11 @@ update(policy, value_model, policy_loss + value_coef * value_loss)
 >
 > Kontribusi inti dari eksperimen ini adalah kuantifikasi sistematisnya dari fenomena "SFT memorizes, RL generalizes", yang menunjukkan bahwa pola ini berlaku baik di dalam modalitas teks-saja maupun visi-bahasa. Eksperimen ini juga mengungkapkan hubungan yang saling melengkapi antara SFT dan RL: SFT memberikan stabilitas format, dan RL membangun fondasi tersebut untuk melampaui batas hafalan; keduanya sangat diperlukan. Paradigma pelatihan "bentuk dahulu, baru jiwa" (*form first, spirit second*) ini—meminjam istilah dari lukisan Tiongkok, pertama-tama gambarlah secara akurat bentuk luarnya (format, struktur), lalu kejarlah jiwa batinnya (generalisasi, strategi)—meletakkan landasan metodologis untuk tugas-tugas *multi-turn*, multimoda selanjutnya.
 
-> **Eksperimen 8-12 ★★★: V-IRL-VL — Navigasi Visual Multi-Giliran**
+> **Eksperimen 8-12 ★★★ `[Repo Eksternal]`: V-IRL-VL — Navigasi Visual Multi-Giliran**
 >
 > V-IRL[^ch8-24] membuat Agent bernavigasi secara berkelanjutan di pemandangan jalan kota yang nyata: pelatihan memakai rute New York, sedangkan pengujian dipindahkan ke kota-kota lain sekaligus mengubah cara pengungkapan arah dan tampilan visualnya. RL jelas mengungguli SFT baik pada OOD aturan maupun OOD visual, yang menunjukkan bahwa dalam tugas multi-giliran kebijakan harus belajar merencanakan ulang berdasarkan observasi saat ini, bukan mereproduksi trajektori pelatihan. Eksperimen ini menggunakan PPO dengan value network, dan teramati bahwa umpan balik langkah demi langkah meringankan credit assignment jangka panjang.
 
-> **Eksperimen 8-13 ★★★: SimpleVLA-RL — Eksplorasi Terbuka di Bawah Reward Hasil `[Eksperimen Tambahan]`**
+> **Eksperimen 8-13 ★★★ `[Repo Eksternal]`: SimpleVLA-RL — Eksplorasi Terbuka di Bawah Reward Hasil `[Eksperimen Tambahan]`**
 >
 > SimpleVLA-RL hanya menggunakan reward hasil berhasil/gagal pada tugas robotika LIBERO. Setiap tugas hanya memakai satu trajektori demonstrasi untuk cold start SFT; setelah itu RL menaikkan tingkat keberhasilan dari 17,3% menjadi 91,7% dan menemukan gerakan "pushcut" yang sama sekali tidak muncul dalam demonstrasi. Ini menjadi kontras bagi V-IRL: ketika sinyal proses mudah didefinisikan, ia mempercepat pembelajaran; ketika jalur optimal tidak diketahui, reward hasil yang jarang justru menyisakan ruang eksplorasi yang jauh lebih besar.
 
@@ -644,7 +644,7 @@ Aksi mana yang diizinkan, subtujuan mana yang terjangkau, apa saja tes tersembun
 
 Kunci RLVP bukan "makin padat imbalan makin baik", melainkan apakah perbedaan dalam kelompok bisa dipulihkan. Imbalan hasil murni menghasilkan varians nol dan tanpa gradien baik pada kelompok yang gagal semua maupun berhasil semua; aksi pelanggaran umumnya mudah dideteksi sehingga hukuman hampir selalu memulihkan perbedaan; imbalan kemajuan hanya efektif bila kemajuan parsial memang terjangkau. Dalam perancangan ikuti empat hal: hukum aksi yang konkret, bukan "kurang berusaha"; selalu pertahankan imbalan hasil agar model tidak belajar diam saja; sebisa mungkin pasangkan tiap hukuman dengan jalur patuh yang terjangkau; buat aturan yang deterministik dan sulit dicurangi. Jika kebijakan dasar sama sekali tidak pernah menyampel aksi patuh, "semai" dulu jalur itu dengan sedikit demonstrasi, lalu lemahkan pembentukan jalur secara bertahap setelah perilaku patuh stabil. Dengan kata lain, hukuman adalah separuh yang biasanya terjangkau, dan imbalan kemajuan adalah separuh yang digerbangi keterjangkauan.
 
-> **Eksperimen 8-16 ★★★: RLVP — hadiahi hasilnya, hukum jalurnya**
+> **Eksperimen 8-16 ★★★ `[Repo Eksternal]`: RLVP — hadiahi hasilnya, hukum jalurnya**
 >
 > Tambahkan imbalan hasil $O$ dan sinyal jalur $\Phi$ di atas GRPO, lalu bandingkan dengan imbalan hasil murni. Di TerminalBench jumlah pelanggaran turun dari 3,71 menjadi 0,66 sementara laju keberhasilan nyaris tak berubah; di miniF2F, imbalan parsial yang terjangkau memangkas iterasi yang dibutuhkan untuk mencapai laju keberhasilan 0,9 dari 7,0 menjadi 4,4. Pada perbaikan perangkat lunak, jika tak satu pun rollout lolos tes apa pun, sinyal kemajuan tak terjangkau dan menambahkannya tidak memberi manfaat. Pelajarannya: ukur dulu keterjangkauan sinyal, baru putuskan apakah menambah dimensi imbalan.
 
@@ -672,7 +672,7 @@ for token in trajectory:
         loss_mask[token] = 1
 ```
 
-> **Eksperimen 8-14 ★★★: ReTool—Penyelesaian Soal Matematika yang Ditingkatkan Code Interpreter**
+> **Eksperimen 8-14 ★★★ `[Repo Eksternal]`: ReTool—Penyelesaian Soal Matematika yang Ditingkatkan Code Interpreter**
 >
 >
 > ![Gambar 8-17: Loop Umpan Balik Pemikiran Teks-Kode ReTool yang Disisipkan dan Eksekusi Code Sandbox](images/fig8-17.svg)
@@ -697,7 +697,7 @@ for token in trajectory:
 >
 > Perbedaan mendasar dalam biaya waktu (time cost) antara SFT dan RL berasal dari perbedaan kepadatan informasi: SFT memberikan sinyal pengawasan (supervisory signal) untuk setiap token, sedangkan RL hanya memberikan sinyal sukses/gagal per episode. Dalam praktiknya, waktu per langkah meningkat dengan panjang respons, dan beberapa respons yang sangat panjang dapat memperpanjang seluruh siklus pelatihan secara signifikan.
 >
-> **Eksperimen 8-15 ★★★: AWorld-train—Belajar Menggunakan Tool di Code Sandbox**
+> **Eksperimen 8-15 ★★★ `[Repo Eksternal]`: AWorld-train—Belajar Menggunakan Tool di Code Sandbox**
 >
 >
 > ![Gambar 8-18: Ekosistem Tool dan Arsitektur Pelatihan Code Sandbox MCP AWorld-train](images/fig8-18.svg)

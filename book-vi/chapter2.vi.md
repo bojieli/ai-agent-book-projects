@@ -818,7 +818,7 @@ Xét về quản lý context, cơ chế Skills rất thân thiện với KV Cach
 > **Tiêu chí chấp nhận**: PowerPoint được tạo bao gồm nội dung chính của bài báo (trang tiêu đề, ngữ cảnh vấn đề, tổng quan về phương pháp, kết quả chính, kết luận), chứa ít nhất 3 hình ảnh được trích từ bài báo và phù hợp với mô tả văn bản, được định dạng chính xác và có thể mở bình thường trong PowerPoint hoặc phần mềm tương thích.
 >
 
-> **Thử nghiệm 2-7 ★★: Tạo Skill viết "khử mùi AI" từ các bài mẫu cá nhân**
+> **Thử nghiệm 2-7 ★★ `[Chỉ Thiết Kế]`: Tạo Skill viết "khử mùi AI" từ các bài mẫu cá nhân**
 >
 > **Mục tiêu thí nghiệm**: từ một số ít bài mẫu do con người viết, sinh ra một Skill viết có thể nạp và kiểm tra được, rồi quan sát xem nó có tái hiện được những sở thích diễn đạt chính của tác giả trong các bài viết mới hay không.
 >
