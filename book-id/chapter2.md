@@ -879,7 +879,7 @@ Agent Status Bar memecahkan masalah ini dengan sengaja menempatkan informasi met
 > Atensi sangat terkonsentrasi pada informasi status bar. Proses penalaran secara langsung menggunakan informasi yang sudah disuling, tidak lagi menghitung statistik dari data mentah. Untuk model kecil seperti Qwen3-0.6B, Kelompok Kontrol A sering kali melanggar batasan dan terus menelepon, sementara Kelompok Kontrol B secara konsisten mematuhi batasan tersebut.
 >
 
-Eksperimen 2-8 adalah demonstrasi kualitatif kecil yang memberi intuisi. Untuk mengukur seberapa berguna pendekatan “hitung lebih dahulu, lalu lihat langsung” ini dan di mana batasnya, penulis dan kolaborator memakai benchmark khusus[^ch2-7] (pendekatan ini bernama **Context Distillation**; Agent Status Bar adalah bentuknya yang paling umum). Kesimpulan:
+Eksperimen 2-8 adalah demonstrasi kualitatif kecil yang memberi intuisi. Untuk mengukur seberapa berguna pendekatan “hitung lebih dahulu, lalu lihat langsung” ini dan di mana batasnya, penulis dan kolaborator memakai benchmark khusus[^ch2-8] (pendekatan ini bernama **Context Distillation**; Agent Status Bar adalah bentuknya yang paling umum). Kesimpulan:
 
 - Dengan **status bar yang telah dihitung**, **model yang lemah memulihkan akurasinya**. Model-model terlemah meningkat 40 hingga 54 poin persentase, dan pada tugas ini model lokal 2B bahkan menyamai model frontier tanpa status bar.
 - **Model kuat sudah menjawab dengan benar; yang dihemat adalah efisiensi.** Status bar yang sama menurunkan penalaran, latensi, dan biaya per kueri kira-kira satu orde besaran (memangkas 80–90% atau lebih token penalaran).
@@ -894,7 +894,7 @@ Namun, prakomputasi yang dilakukan dengan benar dan salah memberikan hasil yang 
 
 **3. Pantau akurasi status bar sebagai metrik produksi utama.** Eksperimen menemukan bahwa **model hampir selalu memercayai status bar**: jika tertulis “dipanggil 3 kali”, model menerimanya sebagai tiga kali tanpa memeriksa atau menghitung ulang. Inilah alasan status bar efektif, tetapi kesalahan di dalamnya juga akan diteruskan **apa adanya** ke jawaban akhir. Karena itu, risiko **peracunan status bar** yang disebutkan sebelumnya perlu ditanggapi serius.
 
-[^ch2-7]: Li, Bojie dan Noah Shi. *Distill, Don't Retrieve: Inference-Time Context Distillation for LLM Agent Reasoning.* 2026. https://01.me/research/context-distillation
+[^ch2-8]: Li, Bojie dan Noah Shi. *Distill, Don't Retrieve: Inference-Time Context Distillation for LLM Agent Reasoning.* 2026. https://01.me/research/context-distillation
 
 ### Komposisi Agent Status Bar
 
