@@ -105,6 +105,8 @@ A valós idejű hang API-k köztes megoldások: natívan kezelik a hangot, de VA
 > **9-3. kísérlet ★★: MiniCPM-o 4.5 helyi futtatása — end-to-end és önkaszkád**
 >
 > Rögzítsünk egy revíziót, kapcsoljuk ki a thinking mode-ot, és hasonlítsuk össze a közvetlen hangválaszt a transzkripció utáni válasszal. Ez az audio-információ megőrzését méri, nem a későbbi „gondolkodás beszéd közben” képességét.
+> 9-1. táblázat: MiniCPM-o 4.5 helyi eredményei: end-to-end és önkaszkád (négy mechanizmus-ellenőrzés, nem benchmark)
+>
 >
 > | Feladat | End-to-end | Önkaskád | Megfigyelés |
 > | --- | ---: | ---: | --- |
@@ -134,7 +136,31 @@ Az előtérmodell addig válaszol, amíg a felhasználó jelen van; a háttérmo
 | Gyors interakció, lassú tanács | Beszélgetés és megfogalmazás | Tanács vagy eszközeredmény | Korlátozott interfész |
 | Egyesített gondolkodás és kifejezés | Gondolkodás közben beszél | Közös állapot | Magas újratanítási költség |
 
-Az első terv megkettőzi a munkát, a második közvetett kapcsolatot használ, a harmadik egyesíti a gondolkodást és a beszédet. A Step-Audio R1 MGRD-vel az akusztikai jellemzőkhöz köti a gondolkodást, az MPS kettős aggyal pedig párhuzamosítja a tervezést és a kifejezést (9-5 és 9-6. ábra). Az egyesített modell természetesebb, a leválasztott háttéragy könnyebben cserélhető.
+#### 1. terv: gyors gondolkodás a kitöltéshez, lassú gondolkodás a válaszhoz
+
+A gyors gondolkodás néhány száz ezredmásodperc alatt képes kitöltő választ adni, míg a lassú gondolkodás a háttérben mélyebb levezetést végez. A gond az, hogy az egyszerű kérdéseket kétszer dolgozza fel, az összetetteknél pedig ellentmondás keletkezhet: a gyors modell vásárlást javasol, a lassú utóbb felfedezi, hogy a csomagból hiányzik egy kulcsfontosságú funkció, és a felhasználó néhány másodpercen belül egymásnak ellentmondó válaszokat hall. Az alapvető ok az, hogy a két példány egymástól függetlenül gondolkodott végig egy-egy kérdést.
+
+
+![9-5. ábra: Gyors/lassú gondolkodási architektúra és a tervek összehasonlítása](images/fig9-5.svg)
+
+
+#### 2. terv: gyors gondolkodás az interakcióhoz, lassú gondolkodás a figyelmeztetéshez
+
+A második tervben a háttérmodell állapotsávon vagy dedikált interfészen keresztül ad javaslatokat az előtérmodellnek, az előtér pedig továbbra is tartja a szót, és eldönti, hogyan fogalmaz. Ez stabilabb az elsőnél, de a kommunikáció továbbra is közvetett: az előtér félreértheti a javaslatot, és nem látja a háttér köztes gondolkodását; amíg a háttér nem végez, a felhasználó rákérdezésére az előtér csak a saját képességeire támaszkodhat. Természetesen tud „eredményre várni", de valódi gondolkodás beszéd közben nem valósul meg.
+
+#### 3. terv: a gondolkodás és a kifejezés végponttól végpontig tartó egyesítése (a Step-Audio R1 példáján)
+
+A harmadik terv a gondolkodási képességet közvetlenül a végponttól végpontig tartó hangmodellbe építi be. A Step-Audio R1 két egymást kiegészítő mechanizmussal két problémát old meg: a **modalitáshoz horgonyzott gondolkodásdesztilláció (MGRD)** akusztikai jellemzők alapján gondolkodtatja a modellt, az **MPS kétagyú architektúra** pedig párhuzamosítja a fogalmazást és a kifejezést. Az előbbi a „helyes gondolkodást" biztosítja, az utóbbi az „időben történő megszólalást" oldja meg.
+
+Ideális esetben a modellnek a hangmagasságból, a ritmusból és a hanglejtésből kellene megítélnie az érzelmet, nem pusztán az átiratból. Az úgynevezett „szöveggel helyettesített gondolkodás" azt jelenti, hogy a modell a dallam és az akusztikai jellemzők elemzése helyett a dalszöveg negatív szavaira támaszkodik. Az MGRD kiszűri azokat a gondolatmeneteket, amelyek valóban akusztikai jellemzőkre hivatkoznak, ezekkel az adatokkal tanítja a modellt, és megerősítéses tanulással akadályozza meg, hogy a modell átugorja a gondolkodást és egyből tippeljen.
+
+Az MPS-ben a fogalmazó agy folyamatosan gondolatfoszlányokat termel, a kifejező agy pedig, amint megkap egy foszlányt, a már elhangzott válasszal együtt azonnal beszédet generál. A kettő futószalagszerűen párhuzamosan működik, így nem kell megvárni a teljes gondolatmenet végét ahhoz, hogy a felhasználó meghallja az első mondatot (9-6. ábra).
+
+
+![9-6. ábra: A Step-Audio R1 MGRD és MPS kétagyú architektúrája](images/fig9-6.svg)
+
+
+Az egyesített modell valósítja meg a legszorosabban a „gondolkodás beszéd közben" elvét, ára viszont az, hogy a gondolkodást és a valós idejű kifejezést együtt kell újratanítani; a szétcsatolt út esetén könnyebb kicserélni a háttéragyat, az egyesített út pedig inkább a végletekig természetes hatásra törekvő, célzott forgatókönyvekhez való. A kettő kompromisszum, nem pedig egyszerű helyettesítője egymásnak.
 
 ### Emberibb beszédszintézis
 
@@ -183,11 +209,11 @@ Az Anthropic három eszköztípust határoz meg, amelyek teljes interakciós ké
 
 ![9-8. ábra: Computer Use cselekvési tér](images/fig9-8.svg)
 
-"GUI Kezelő Eszköz" (`computer` eszköz): Egérműveletek: mozgatás (`mouse_move`), bal/jobb/középső kattintás, dupla- vagy háromszoros kattintás, húzás (`left_click_drag`), és pontosabb lenyomás/elengedés műveletek (`left_mouse_down` és `left_mouse_up`). Görgetés (`scroll`) négy irányt támogat, és kombinálható módosító billentyűkkel. Billentyűzetműveletek: karakterenkénti gépelés (`type`, 12 ms intervallummal a karakterek között a valódi gépelés szimulálására), billentyűkombinációk (`key`, pl. `Ctrl+C`), és billentyű lenyomva tartása (`hold_key`). Érzékelési műveletek: képernyőkép készítése, kurzorpozíció lekérése (`cursor_position`), várakozás (`wait`).
+**GUI Kezelő Eszköz** (`computer` eszköz): Egérműveletek: mozgatás (`mouse_move`), bal/jobb/középső kattintás, dupla- vagy háromszoros kattintás, húzás (`left_click_drag`), és pontosabb lenyomás/elengedés műveletek (`left_mouse_down` és `left_mouse_up`). Görgetés (`scroll`) négy irányt támogat, és kombinálható módosító billentyűkkel. Billentyűzetműveletek: karakterenkénti gépelés (`type`, 12 ms intervallummal a karakterek között a valódi gépelés szimulálására), billentyűkombinációk (`key`, pl. `Ctrl+C`), és billentyű lenyomva tartása (`hold_key`). Érzékelési műveletek: képernyőkép készítése, kurzorpozíció lekérése (`cursor_position`), várakozás (`wait`).
 
-"Parancsvégrehajtási Eszköz" (bash eszköz): Perzisztens bash terminál munkamenetet biztosít 120 másodperces időkorláttal. Egy őrszöveges karakterláncot használ a parancs befejeződésének érzékelésére, és megtartja a környezeti állapotot több hívás között (pl. egy könyvtárba `cd` után a következő hívás abban a könyvtárban marad).
+**Parancsvégrehajtási Eszköz** (bash eszköz): Perzisztens bash terminál munkamenetet biztosít 120 másodperces időkorláttal. Egy őrszöveges karakterláncot használ a parancs befejeződésének érzékelésére, és megtartja a környezeti állapotot több hívás között (pl. egy könyvtárba `cd` után a következő hívás abban a könyvtárban marad).
 
-"Fájlszerkesztő Eszköz" (`str_replace_editor`): Biztonságos szerkesztést tesz lehetővé karakterlánc-illesztésen keresztül, támogatva a megtekintést, létrehozást, cserét, beszúrást és visszavonást. Pontosabb, mint a teljes fájl felülírása, és kisebb a valószínűsége, hogy véletlenül más tartalmat módosít.
+**Fájlszerkesztő Eszköz** (`str_replace_editor`): Biztonságos szerkesztést tesz lehetővé karakterlánc-illesztésen keresztül, támogatva a megtekintést, létrehozást, cserét, beszúrást és visszavonást. Pontosabb, mint a teljes fájl felülírása, és kisebb a valószínűsége, hogy véletlenül más tartalmat módosít.
 
 > **9-5. kísérlet ★: Computer Use futtatása (Anthropic referenciaútvonal vagy nyílt modell útvonala)**
 >
@@ -202,7 +228,7 @@ Az Anthropic három eszköztípust határoz meg, amelyek teljes interakciós ké
 
 A ciklus minden iterációjában a modellnek pontosan meg kell találnia a cél elemet a képernyőképen — "Hol van a keresőmező?" "Mik a beküldő gomb koordinátái?" Ez a vizuális helymeghatározás problémája. Jelenleg "két fő megközelítés" létezik: az egyik a lokalizációt "többválasztásos problémává" alakítja — először számokkal annotáljuk a felületi elemeket, a modellnek csak ki kell választania egyet; a másik a "tiszta koordináta előrejelzés" — hagyjuk, hogy a modell "nézze" a képernyőképet, és közvetlenül adjon meg koordinátákat, akár egy ember. A többválasztásos megközelítésnek két implementációs módja van: "tiszta vizuális annotáció" (az eredeti Set-of-Mark, egy szegmentációs modell használatával a képen lévő jelölt régiók szegmentálására) és "strukturált elemindexálás" (DOM/Accessibility Tree, a felület eredeti struktúrájának közvetlen olvasása). A többválasztásos megközelítés közös előnye, hogy a "keresd meg a gombot a képernyőképen és jelezd előre a koordinátáit" nyílt végű problémát egy "válassz egyet a már annotált elemek közül" zárt végű problémává alakítja — ahogy a többválasztásos kérdésekre könnyebb helyesen válaszolni, mint a kitöltendő kérdésekre egy vizsgán, a modellnek csak annyit kell mondania, hogy "kattints [123]-ra" ahelyett, hogy "kattints a kék gombra, körülbelül 200 pixellel a képernyő bal felső sarkától jobbra".
 
-"Set-of-Mark: Vizuális Annotációs Módszer."
+**Set-of-Mark: Vizuális Annotációs Módszer.**
 
 Az eredeti Set-of-Mark (SoM) a Microsoft Research által 2023-ban javasolt, kezdetben a GPT-4V vizuális helymeghatározási képességeinek felszabadítására. Ez egy "tisztán vizuális" módszer: képszegmentációs modelleket (SAM, SEEM stb.) használ a képernyőképen lévő jelölt régiók automatikus szegmentálására, számozott markert helyez minden régióra, és a modell számokkal ellátott képet lát. A modellnek csak a számot kell jelentenie, a rendszer pedig átalakítja a megfelelő régió középponti koordinátáivá. A teljes folyamat nem igényel DOM-ot vagy belső felületi struktúrát, így egyaránt alkalmazható natív asztali szoftverekre és játékfelületekre — amíg a szegmentációs modell azonosítani tudja a jelölt régiókat.
 
@@ -229,7 +255,7 @@ A modellnek csak egy azonosítót kell kiadnia, és a rendszer automatikusan rá
 
 ![9-9. ábra: Set-of-Mark vs. Strukturált Elemindexálás (browser-use implementáció)](images/fig9-9.svg)
 
-"Tiszta Koordináta Előrejelzés."
+**Tiszta Koordináta Előrejelzés.**
 
 A harmadik út kihagyja az annotációt, és megkéri a modellt, hogy közvetlenül adjon meg koordinátákat. Az olyan rendszerek, mint a "SeeClick" és a Claude computer use, olyan látásmodellekre támaszkodnak, amelyeket GUI képernyőképek és elempozíciók hatalmas adatkészletein tanítottak. Ezek a modellek megtanulják a természetes nyelvű leírásokat (pl. "kattints a beküldő gombra") közvetlenül pontos képernyőkoordinátákra leképezni, vizuális érzékelésre támaszkodva, mint egy emberi felhasználó.
 

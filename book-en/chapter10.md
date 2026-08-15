@@ -34,19 +34,7 @@ To be clear, both architectures are genuine multi-agent systems because the syst
 
 By analogy: the former is a team around one table, where everyone hears everything; the latter is departments collaborating by email and documents, each with its own workspace.
 
-Readers familiar with operating systems may find a useful analogy: shared-context Agents resemble threads, while non-shared-context Agents resemble processes. Threads share an address space, which makes switching and communication inexpensive but provides little isolation; memory corruption in one thread can crash the entire process. Each process has its own address space, providing stronger isolation and safer parallelism, but communication must use explicit IPC. The criteria in Table 10-1 follow from these trade-offs.
-
-Table 10-1 summarizes the selection criteria for the two architectures from five perspectives: number of subtasks, context window, parallelism, information isolation, and cost budget. It can serve as a checklist for early architectural selection.
-
-Table 10-1 Selection Criteria for Shared vs. Non-Shared Context
-
-| Selection Criterion | Shared Context | Non-Shared Context |
-|---------------|-----------------------------------|--------------------------------------------|
-| Number of subtasks | Few (2-3 roles) | Many (parallel processing needed) |
-| Context window | Can accommodate information for all roles | Single window is insufficient |
-| Parallelism | Primarily serial (roles take turns along the same trajectory) | Can scale massively in parallel (contexts are independent, non-blocking) |
-| Information isolation | Not needed (all roles share information) | Needed (e.g., security review should not receive other Agents' internal context) |
-| Cost budget | A single trajectory relayed across stages; tokens accumulate stage by stage | Multiple Agents work independently; total tokens are typically several times to an order of magnitude higher |
+Readers familiar with operating systems may find a useful analogy: shared-context Agents resemble threads, while non-shared-context Agents resemble processes. Threads share an address space, which makes switching and communication inexpensive but provides little isolation; memory corruption in one thread can crash the entire process. Each process has its own address space, providing stronger isolation and safer parallelism, but communication must use explicit IPC.
 
 **Simple rule of thumb**: If the expected cumulative context exceeds 50% of the window (a heuristic, not an exact threshold), don't share. If zero information loss is a hard requirement for task correctness, share. Most real-world systems use different approaches at different stages: the first few Agents share context, but once the shared history becomes too large, the system switches to non-shared contexts and uses an explicit handoff in which the upstream Agent selects what to pass downstream.
 
@@ -70,9 +58,9 @@ The detailed design and applicable scenarios for each pattern will be discussed 
 
 Before diving into specific collaboration architectures, let's answer a more fundamental question: **When are multiple Agents truly needed, and when is one enough?** The answer will serve as a reference point for every engineering approach that follows. A series of recent studies converges on a clear framework—and the core criterion is a single question: **Does the collaboration provide information that a single Agent could not obtain while producing its answer?**
 
-Table 10-2 shows which collaboration modes introduce new information and helps assess whether multi-agent collaboration offers substantive value over a single Agent.
+Table 10-1 shows which collaboration modes introduce new information and helps assess whether multi-agent collaboration offers substantive value over a single Agent.
 
-Table 10-2 Information Gain Comparison of Multi-Agent Collaboration Modes
+Table 10-1 Information Gain Comparison of Multi-Agent Collaboration Modes
 
 | Collaboration Mode | Introduces New Information? | Effect |
 |---------------------------------------|---------------------|-----------------------------------|
@@ -123,9 +111,9 @@ The key architectural choice is whether role guidance is carried by a replacemen
 
 In an architecture without shared context, each Agent operates as an independent entity with its own context, trajectory, and state. Agents cannot directly access one another's internal context; collaboration relies entirely on explicit, structured data transfers through the three communication mechanisms introduced at the beginning of this chapter: tool call parameters, a shared file system, and a message bus.
 
-Earlier in this chapter, we compared the communication mechanisms to forms of inter-process communication and shared versus isolated context to threads versus processes. This analogy can be extended further (Table 10-3):
+Earlier in this chapter, we compared the communication mechanisms to forms of inter-process communication and shared versus isolated context to threads versus processes. This analogy can be extended further (Table 10-2):
 
-Table 10-3 Correspondence Between Multi-Agent Systems and Operating Systems
+Table 10-2 Correspondence Between Multi-Agent Systems and Operating Systems
 
 | Operating System | Multi-Agent System |
 |----------|----------------|
@@ -166,9 +154,9 @@ Figure 10-2 illustrates how these four area types are uniformly mounted under a 
 
 ![Figure 10-2: Mounting structure of the four area types in the Agent Virtual File System](images/fig10-2.svg)
 
-Table 10-4 compares these four area types across four dimensions—visibility, lifecycle, read/write permissions, and concurrency control—serving as a checklist for file system layout design.
+Table 10-3 compares these four area types across four dimensions—visibility, lifecycle, read/write permissions, and concurrency control—serving as a checklist for file system layout design.
 
-Table 10-4 Four area types of the Agent Virtual File System
+Table 10-3 Four area types of the Agent Virtual File System
 
 | Area | Visibility | Lifecycle | Read/Write | Concurrency Control |
 |--------------|-----------------|------------------------|---------------------|-------------------|
@@ -181,7 +169,7 @@ The value of the **"file path as a universal interface"** lies in treating a pat
 
 ### Communication and Control Between Agents
 
-While the file system solves the problem of **artifact exchange** between Agents, collaboration also requires a **control plane**. This is exactly where the lifecycle rows of Table 10-3 come into play: the tool primitives given in Chapter 4—creating (`spawn_subagent`), sending messages (`send_message_to_subagent`), canceling (`cancel_subagent`), and discovering (`list_agents`)—correspond to fork, message, kill, and ps in the process world. This section does not repeat the interface definitions but focuses on four often-overlooked capabilities essential for multi-agent collaboration.
+While the file system solves the problem of **artifact exchange** between Agents, collaboration also requires a **control plane**. This is exactly where the lifecycle rows of Table 10-2 come into play: the tool primitives given in Chapter 4—creating (`spawn_subagent`), sending messages (`send_message_to_subagent`), canceling (`cancel_subagent`), and discovering (`list_agents`)—correspond to fork, message, kill, and ps in the process world. This section does not repeat the interface definitions but focuses on four often-overlooked capabilities essential for multi-agent collaboration.
 
 **Message envelope and worker lifetime:**
 
@@ -388,7 +376,7 @@ When multiple subtasks can run in parallel, the sequential pattern becomes ineff
 
 **Lingtai: A Productized Instance of the Manager Pattern.** Lingtai is a local, file-based home for long-lived agents[^lingtai]. Its three roles map closely onto the concepts in this section. The **main agent** is the persistent hub with which the user interacts; it holds the plan and memory and spawns the other roles, occupying the position of the Manager Agent. A **daemon** is a short-lived parallel worker spawned for a noisy, bounded task and discarded afterward; only its conclusions are retained. This productizes both the principle that sub-agents return structured summaries rather than full trajectories and the parallel coordination pattern. An **avatar** is a persistent, specialized teammate with its own memory, mailbox, and responsibilities, designed for specialties worth retaining across sessions.
 
-The rest of Lingtai's design also echoes earlier sections. Knowledge lives in each agent's durable, private memory files, while skills are Markdown playbooks shared by all agents—the built-in system resources described in "The File System from an Agent's Perspective." When an agent's context window fills, it **molts**: it writes a careful summary, then starts with a fresh context while retaining that summary and its durable memory, following the context-compression approach from Chapter 2. The underlying model can be replaced without changing the agent because its identity, memory, and capabilities all live as plain files in the project directory. In this sense, the agent is its files. This productizes the first two rows of Table 10-3: both program and memory reduce to files, so the process can be rebuilt at any time.
+The rest of Lingtai's design also echoes earlier sections. Knowledge lives in each agent's durable, private memory files, while skills are Markdown playbooks shared by all agents—the built-in system resources described in "The File System from an Agent's Perspective." When an agent's context window fills, it **molts**: it writes a careful summary, then starts with a fresh context while retaining that summary and its durable memory, following the context-compression approach from Chapter 2. The underlying model can be replaced without changing the agent because its identity, memory, and capabilities all live as plain files in the project directory. In this sense, the agent is its files. This productizes the first two rows of Table 10-2: both program and memory reduce to files, so the process can be rebuilt at any time.
 
 [^lingtai]: Lingtai official tutorial: https://lingtai.ai/en/tutorial/
 
@@ -730,4 +718,4 @@ When short-lived task collaboration grows into long-running, open-ended interact
 8. ★★ Human society needs division of labor because each person's abilities are limited—the frontend developer may not know backend, and the designer may not know ops. Large models, however, are closer to "generalists." Research shows that on pure text reasoning tasks, multi-agent debate does not beat a single Agent given equal compute. So where does the real advantage of multiple Agents lie?
 9. ★★★ This chapter treats "shared context" versus "non-shared context" as a core design dimension of multi-agent systems. Shared context allows all Agents to see the same information, seemingly facilitating coordination. However, in *The Three-Body Problem*, the Trisolarans' minds are completely transparent, yet their technological development stagnates; the paperclip thought experiment also shows that when a group converges on the same goal, diversity is lost. In a multi-agent system, how can we balance efficiency and diversity?
 10. ★★★ Assign a Coding Agent a budget of 30 steps and 300 steps. How should its work strategy differ? Research shows that simply increasing the step budget does not guarantee performance improvement—Agents may prematurely "saturate" after shallow searches. Design a "budget-aware" mechanism that allows the Agent to quickly achieve core functionality under a small budget, and to add planning, testing, and review phases under a large budget, fully utilizing the additional computational resources.
-11. ★★ Table 10-3 maps multi-agent systems onto operating systems row by row. Extend the table with a few more rows: what do virtual memory and paging, file permissions, deadlock detection, and scheduling algorithms each correspond to in the Agent world? And which operating-system concepts have no counterpart in the Agent world, and why?
+11. ★★ Table 10-2 maps multi-agent systems onto operating systems row by row. Extend the table with a few more rows: what do virtual memory and paging, file permissions, deadlock detection, and scheduling algorithms each correspond to in the Agent world? And which operating-system concepts have no counterpart in the Agent world, and why?

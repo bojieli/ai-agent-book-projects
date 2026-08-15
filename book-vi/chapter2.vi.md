@@ -818,6 +818,14 @@ Xét về quản lý context, cơ chế Skills rất thân thiện với KV Cach
 > **Tiêu chí chấp nhận**: PowerPoint được tạo bao gồm nội dung chính của bài báo (trang tiêu đề, ngữ cảnh vấn đề, tổng quan về phương pháp, kết quả chính, kết luận), chứa ít nhất 3 hình ảnh được trích từ bài báo và phù hợp với mô tả văn bản, được định dạng chính xác và có thể mở bình thường trong PowerPoint hoặc phần mềm tương thích.
 >
 
+> **Thử nghiệm 2-7 ★★: Tạo Skill viết "khử mùi AI" từ các bài mẫu cá nhân**
+>
+> **Mục tiêu thí nghiệm**: từ một số ít bài mẫu do con người viết, sinh ra một Skill viết có thể nạp và kiểm tra được, rồi quan sát xem nó có tái hiện được những sở thích diễn đạt chính của tác giả trong các bài viết mới hay không.
+>
+> **Mô tả thí nghiệm**: chuẩn bị từ ba đến năm bài viết gốc, để một runtime hỗ trợ Agent Skills sinh ra bản đầu tiên của `SKILL.md`; chọn một chủ đề mới và soạn thảo bài viết, sau khi tác giả sửa tay thì so sánh before/after và ghi những quy luật ổn định trở lại vào Skill. Tiêu chí nghiệm thu chỉ yêu cầu Skill có điều kiện kích hoạt rõ ràng, từ ba đến năm nguyên tắc kèm ví dụ, phạm vi áp dụng và ngoại lệ — không biến một phán đoán chủ quan đơn lẻ thành quy tắc phổ quát.
+>
+> **Thí nghiệm này cho thấy điều gì**: giá trị của Skill nằm ở chỗ ngoại hiện kinh nghiệm cá nhân thành các chỉ dẫn được nạp theo nhu cầu. Một bản đầu tiên ngắn gọn, dễ đọc và vượt qua được kiểm nghiệm bằng nhiệm vụ thực tế là điểm khởi đầu tốt hơn cho các vòng lặp về sau so với việc liệt kê hàng chục quy tắc ngay từ đầu.
+
 ## Thanh trạng thái Agent: quản lý trajectory Agent nâng cao với thông tin meta
 
 ![Hình 2-14 Cấu trúc thanh trạng thái tác nhân ](images/fig2-14.svg)
@@ -849,7 +857,7 @@ Hơn nữa, trong các kịch bản có ngữ cảnh dài, nguồn lực chú ý
 
 Thanh trạng thái Agent giải quyết vấn đề này bằng cách thao tác phân bổ sự chú ý một cách rõ ràng. Khi chúng tôi đặt siêu thông tin quan trọng ở dạng có cấu trúc ở cuối ngữ cảnh, thông tin này sẽ gần hơn về mặt không gian với mã thông báo mới mà mô hình sắp tạo và do đó có thể nhận được trọng số chú ý cao hơn - đây là "hướng dẫn chú ý bắt buộc".
 
-> **Thử nghiệm 2-7 ★★: Xác minh tác dụng của thanh trạng thái Agent thông qua trực quan hóa sự chú ý**
+> **Thử nghiệm 2-8 ★★: Xác minh tác dụng của thanh trạng thái Agent thông qua trực quan hóa sự chú ý**
 >
 > Dựa trên dự án `attention_visualization`, chúng tôi đã thiết kế một thử nghiệm có kiểm soát về dịch vụ khách hàng Agent xử lý các yêu cầu hoàn tiền. Agent đã gọi Xfinity ba lần, xen kẽ với việc tìm kiếm trên internet. Người dùng hỏi: "Bạn có thể gọi lại cho tôi để thúc giục tôi được không?"
 >
@@ -868,7 +876,7 @@ Thanh trạng thái Agent giải quyết vấn đề này bằng cách thao tác
 > Sự chú ý tập trung cao độ vào thông tin trên thanh trạng thái và quá trình suy nghĩ trực tiếp sử dụng thông tin đã được tinh chỉnh thay vì thống kê từ dữ liệu gốc. Đối với mô hình nhỏ như Qwen3-0.6B, nhóm điều khiển A thường vi phạm các ràng buộc và tiếp tục thực hiện cuộc gọi, trong khi nhóm điều khiển B có thể tuân thủ ổn định các ràng buộc.
 >
 
-Thí nghiệm 2-7 là một minh họa định tính quy mô nhỏ nhằm cung cấp trực giác. Để định lượng mức độ hữu ích và giới hạn của cách “tính sẵn rồi nhìn trực tiếp”, tác giả và các cộng sự dùng một benchmark chuyên biệt[^ch2-7] (cách này có tên chung là **Context Distillation**; thanh trạng thái Agent là dạng thường gặp nhất). Kết luận:
+Thí nghiệm 2-8 là một minh họa định tính quy mô nhỏ nhằm cung cấp trực giác. Để định lượng mức độ hữu ích và giới hạn của cách “tính sẵn rồi nhìn trực tiếp”, tác giả và các cộng sự dùng một benchmark chuyên biệt[^ch2-7] (cách này có tên chung là **Context Distillation**; thanh trạng thái Agent là dạng thường gặp nhất). Kết luận:
 
 - Khi có **thanh trạng thái được tính sẵn**, **mô hình yếu lấy lại độ chính xác**. Các mô hình yếu nhất tăng 40–54 điểm phần trăm, và một mô hình cục bộ 2B thậm chí ngang với mô hình tiên tiến không có thanh trạng thái trên loại tác vụ này.
 - **Mô hình mạnh vốn đã trả lời đúng; phần tiết kiệm là hiệu suất.** Cùng một thanh trạng thái làm giảm lượng suy luận, độ trễ và chi phí cho mỗi truy vấn khoảng một bậc độ lớn (cắt 80–90% hoặc hơn số token suy luận).
@@ -939,7 +947,7 @@ Việc lựa chọn phụ thuộc vào độ dài trajectory, kích thước tr�
 
 Một mô hình gần đúng cho biết điểm hòa vốn. Gọi $S$ là số token trong mỗi trạng thái, $R$ là số token được thêm giữa các lần cập nhật, $N$ là số lần cập nhật dự kiến và $\alpha$ là tỷ lệ chi phí đầu vào được lưu trong bộ đệm so với đầu vào thông thường. Bỏ qua các chi phí chung của hai cách, $C_{\text{thay thế}} \approx (N-1)(1-\alpha)R$ và $C_{\text{nối thêm}} \approx \alpha S N(N-1)/2$. Vì vậy, chọn cách 2 khi $\alpha SN/2 < (1-\alpha)R$; nếu không, chọn cách 1. Ước tính này chưa tính phần ngữ cảnh bị chiếm dụng và sự mơ hồ từ các trạng thái cũ, nên quyết định cuối cùng cũng cần xét giá bộ đệm của nhà cung cấp và tỷ lệ hit đo được.
 
-> **Thử nghiệm 2-8 ★★: Một số công nghệ thanh trạng thái Agent hữu ích**
+> **Thử nghiệm 2-9 ★★: Một số công nghệ thanh trạng thái Agent hữu ích**
 >
 > Khung thử nghiệm `agent-status-bar` triển khai năm công nghệ thanh trạng thái, mỗi công nghệ có thể được bật hoặc tắt độc lập:
 >
@@ -1017,7 +1025,7 @@ Trước khi thảo luận về chiến lược nén cụ thể, cần phải gi
 
 ![Hình 2-16 So sánh chiến lược nén ngữ cảnh ](images/fig2-16.svg)
 
-> **Thử nghiệm 2-9 ★★★: So sánh các chiến lược nén ngữ cảnh**
+> **Thử nghiệm 2-10 ★★★: So sánh các chiến lược nén ngữ cảnh**
 >
 > Chúng tôi thiết kế một nhiệm vụ nghiên cứu: xác định và theo dõi tình trạng nghề nghiệp của người đồng sáng lập OpenAI. Nhiệm vụ này yêu cầu tổng hợp thông tin nhiều bước, nội dung được tìm kiếm trả về có độ dài rất khác nhau (từ hàng nghìn đến hàng trăm nghìn ký tự) và có tiêu chí thành công rõ ràng. Bằng cách sử dụng Kimi K3 (mô hình tư duy, ngữ cảnh gốc ~1 triệu mã thông báo; thử nghiệm này cố tình giới hạn ngân sách ngữ cảnh ở cửa sổ 128K để kích hoạt nén), chúng tôi đã triển khai sáu chiến lược:
 >

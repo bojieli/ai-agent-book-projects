@@ -189,6 +189,12 @@ Görüntüleri, videoyu, sesi ve PDF'leri anlayabilmek için Agent'ın çok modl
 
 Yerel işleme en yüksek yetenek tavanına sahiptir; Vision Transformer gibi kodlayıcılar farklı verileri ortak bir anlamsal uzaya eşler. Metin çıkarma, yerel desteği olmayan modeller ve metin ağırlıklı PDF'ler için daha az token kullanır, ancak düzeni, grafikleri ve görüntüleri kaybeder. Ana model çok modlu değilse `analyze_image`, `analyze_pdf` ve `analyze_audio` gibi araçlar dosyayı ve soruyu uzman bir modele aktararak bağlamda yalnızca kısa bir sonuç tutabilir.
 
+> **Deney 4-2 ★★: Çok Modlu Bilgi Çıkarımı — Üç Teknik Paradigmanın Karşılaştırmalı Analizi**
+>
+> `multimodal-agent` projesi, üç stratejiyi tek bir çerçeve içinde sistematik biçimde karşılaştırır ve değerlendirir. `demo.py` aracılığıyla aynı çok modlu dosya (örneğin grafikler içeren bir PDF rapor) ve aynı soru üç moda ayrı ayrı verilir ve davranış farkları gözlemlenir.
+>
+> Deney sonuçları üçü arasındaki ödünleşimi açıkça ortaya koyar: **yerel çok modlu mod**, görsel ve uzamsal bilgiyi derinlemesine kavradığı için grafik analizi ve belge yerleşimini anlama gibi görevlerde en iyi performansı verir. **Metne çıkarım modu**, düz metnin baskın olduğu belgelerde en yüksek maliyet etkinliğini sunar, ancak görsel bilgi gerektiren sorguları hiç karşılayamaz. **Araçlaştırılmış mod** etkileşimli senaryolarda esneklik gösterir: ön sorguların çoğunu düşük maliyetle karşılar ve yalnızca gerektiğinde araç çağrısıyla pahalı derin analize başvurur; buna karşılık tek seferde uçtan uca derin anlama gerektiren durumlarda yerel modun gerisinde kalır.
+
 ## Yürütme Araçları
 
 Güncellenen güvenlik tasarımı düşük riskli Agent'lar için süreç düzeyi izolasyonu, güvenilmeyen girdiler için container veya microVM'i ve her katmanda kaynak kotalarını kullanır. Hafif Sidecar, yapılandırılmış araç çağrısını yürütme geçidi olarak denetler; art arda retlerde devre kesici çalıştırılıp kullanıcı kararına dönülmelidir. İdempotent olmayan işlemler “ön kontrol–onay” olmak üzere iki aşamalıdır.
@@ -310,7 +316,7 @@ Bunu ele almanın temel yaklaşımı **idempotanslıktır**: aynı işlemi bir k
 
 Ama tüm işlemler idempotan hale getirilemez. **Bir e-posta göndermek, telefon araması yapmak veya para transfer etmek** gibi işlemler, her yürütüldüğünde geri alınamaz bir gerçek dünya olayı üretir. Ayrıca, sunucu genellikle kontrolünüz dışındadır, bu da benzersiz bir tanımlayıcı kullanarak tekilleştirmeyi imkânsız kılar. Bu tür idempotan olmayan işlemler için, bir **"önce kontrol et sonra onayla" iki aşamalı** yaklaşım kullanılmalıdır: birinci aşama yalnızca doğrulama ve bir kuru çalıştırma yapar (bakiyeyi kontrol etmek, alıcıyı onaylamak, gönderilecek içeriği üretmek), sonucu bir onay token'ıyla birlikte döndürür; ikinci aşama gerçekten yürütmek için token'ı kullanır ve başarısız olursa, yerinde körü körüne yeniden denemez, bunun yerine önceki kontrolü yeniden yapmak için geri yükselir. Bu, daha önce tartışılan Proposer-Reviewer ön onayıyla ve daha sonra tartışılacak asenkron araç arayüzlerinin "başlat/tamamla" ayrımıyla aynı özün parçasıdır.
 
-> **Deney 4-2 ★★: Yürütme Aracı MCP Sunucusu**
+> **Deney 4-3 ★★: Yürütme Aracı MCP Sunucusu**
 >
 > Bu deney, güvenlik mekanizmalarının pratik uygulamasına odaklanan bir dizi yürütme aracı sistemi inşa eder. Araçlar şu kategorileri kapsar:
 >
@@ -355,7 +361,7 @@ AI Agent'lar giderek güçlense de, insan müdahalesi belirli kritik karar nokta
 
 **Bir Geri Bildirim Döngüsü Kurmak.** HITL tek seferlik bir etkileşim olmamalı, bir öğrenme döngüsü oluşturmalıdır. İnsanların onayları, retleri ve bunların gerekçeleri önce kanıta dayalı geri bildirim verisi oluşturur: genellenebilir yargı ilkeleri deneyim bilgisine veya bir Skill'e eklenebilir; yüksek boyutlu, örtük tercihler ise post-training verisine dönüştürülebilir. Bölüm 8 bu trajectory'lerin nasıl değerlendirileceğini ve güncelleme taşıyıcısının nasıl seçileceğini tartışır. Hangi yöntem kullanılırsa kullanılsın, tek bir insan yargısı önce genellenmeden doğrudan evrensel bir kurala dönüştürülmemelidir.
 
-> **Deney 4-3 ★★: İş Birliği Aracı MCP Sunucusu**
+> **Deney 4-4 ★★: İş Birliği Aracı MCP Sunucusu**
 >
 > Bu deney, alt Agent yönetimini, insan yardımını ve çok kanallı bildirimleri kapsayan eksiksiz bir iş birliği aracı sistemi kümesi inşa eder.
 >
@@ -525,10 +531,10 @@ while runtime.is_alive:
     dispatch(decision)
 ```
 
-> **Deney 4-4 ★★★: Olay Güdümlü E-posta İşleme Agent'ı**
+> **Deney 4-5 ★★★: Olay Güdümlü E-posta İşleme Agent'ı**
 >
 >
-> ![Şekil 4-4: Deney 4-4 Olay Güdümlü Agent Mimarisi](images/fig4-4.svg)
+> ![Şekil 4-4: Deney 4-5 Olay Güdümlü Agent Mimarisi](images/fig4-4.svg)
 >
 >
 > Bu deney en basit olay güdümlü Agent'ı inşa eder: bir **Otomatik E-posta İşleme Asistanı**. Agent e-posta gelen kutusunu izler ve yeni bir e-posta her geldiğinde, otomatik olarak bir işleme iş akışını tetikler—sınıflandırma, özetleme, taslak yanıt ve gerekirse kullanıcıyı bilgilendirme. Bu, olay güdümlü bir Agent için en sezgisel giriş senaryosudur: bir dış olay (yeni e-posta gelişi) eksiksiz bir Agent düşünme döngüsünü tetikler.
@@ -550,11 +556,11 @@ while runtime.is_alive:
 >
 > **Doğrulama Senaryosu**: Agent'ı bir test posta kutusunu izlemek üzere yapılandırın. Üç e-posta almayı simüle edin—bir toplantı daveti, bir müşteri şikayeti ve bir pazarlama reklamı. Agent bunları sırayla işler: toplantı daveti için, takvim çakışmalarını otomatik olarak kontrol eder ve bir kabul/red yanıtı taslağı hazırlar; müşteri şikayeti için, kilit bilgiyi çıkarır, yüksek öncelikli olarak işaretler ve kullanıcıyı ele alması için bilgilendirir; pazarlama reklamı için, otomatik olarak arşivler. Tüm süreç kullanıcı müdahalesi gerektirmez.
 
-Deney 4-4, en basit olay güdümlü kalıbı gösterir—olaylar bir kuyruğa girer ve Agent bunları sırayla işler. Ancak, Agent'ın uzun süren araç yürütmeleri sırasında kesintilere yanıt vermesi veya birden fazla eş zamanlı görevi aynı anda yönetmesi gerektiğinde, basit bir olay kuyruğu yetersiz kalır. Şimdi, daha derin mühendislik zorluklarını tartışıyoruz.
+Deney 4-5, en basit olay güdümlü kalıbı gösterir—olaylar bir kuyruğa girer ve Agent bunları sırayla işler. Ancak, Agent'ın uzun süren araç yürütmeleri sırasında kesintilere yanıt vermesi veya birden fazla eş zamanlı görevi aynı anda yönetmesi gerektiğinde, basit bir olay kuyruğu yetersiz kalır. Şimdi, daha derin mühendislik zorluklarını tartışıyoruz.
 
 ### Mühendislik Uygulaması: Senkron Modellerin Asenkron Kesintileri Desteklemesi Nasıl Sağlanır
 
-Deney 4-4 yalnızca seri olayları ele alır—olaylar kuyruğa birer birer girer ve Agent bunları arka arkaya işler. Şimdi, bu bölümün başında öne sürülen "senkron eğitim / asenkron dağıtım" çelişkisine geri dönelim: bir araç henüz dönmemişken kullanıcı kesintiye uğrattığında, senkron format bunu nasıl barındırabilir? Bu bölüm, sektörün bugün kullandığı mühendislik çözümlerini ortaya koyar.
+Deney 4-5 yalnızca seri olayları ele alır—olaylar kuyruğa birer birer girer ve Agent bunları arka arkaya işler. Şimdi, bu bölümün başında öne sürülen "senkron eğitim / asenkron dağıtım" çelişkisine geri dönelim: bir araç henüz dönmemişken kullanıcı kesintiye uğrattığında, senkron format bunu nasıl barındırabilir? Bu bölüm, sektörün bugün kullandığı mühendislik çözümlerini ortaya koyar.
 
 Önce bu çelişkiyi belirli bir senaryoyla gösterelim. Agent'ın bir kullanıcının bir e-posta taslağı hazırlamasına yardım ettiğini varsayalım (tool call: iletişim bilgisini arama). Arama sonuçları dönmeden önce, kullanıcı aniden "Bekle, önce yarınki hava durumunu kontrol et" der. Senkron bir ReAct döngüsünde, Agent bir sonraki mesajı işlemeden önce aramanın dönmesini beklemelidir—çünkü API "bir tool call verildikten sonra, bir sonraki mesajın araç sonucu olması gerektiğini" gerektirir. Ama asenkron gerçek dünyada, olaylar devam eden görevleri her an kesintiye uğratabilir. "Senkron bir format" kısıtları altında "asenkron kesinti" semantiğinin nasıl ifade edileceği, tam olarak bu mühendislik çözümünün yanıtlamayı amaçladığı sorudur.
 
@@ -638,13 +644,13 @@ Ama bu araştırmanın daha kritik yarısı **eğitimle** ilgilidir ve yukarıda
 
 [^ch4-async-1]: Yaklaşık iki yüz satırlık orkestrasyonun hazır bir düşünen modeli sürekli zamanlı bir Agent'a dönüştürebileceği ve "eğitim sinyalinin sürekli düşünmenin faydalı olup olmadığını belirlediği" iddiası şuradan gelir: Li, Bojie and Noah Shi. *Never Stop Thinking: Continuous-Time Language Agents.* 2026 (yayınlanacak).
 
-> **Deney 4-5 ★★★: Paralel Yürütme ve Kesinti Yetenekleriyle Asenkron Agent**
+> **Deney 4-6 ★★★: Paralel Yürütme ve Kesinti Yetenekleriyle Asenkron Agent**
 >
 >
-> ![Şekil 4-6: Deney 4-5 Asenkron Agent Kesintisi ve Kurtarma](images/fig4-6.svg)
+> ![Şekil 4-6: Deney 4-6 Asenkron Agent Kesintisi ve Kurtarma](images/fig4-6.svg)
 >
 >
-> Deney 4-4'ün basit olay kuyruğu üzerine inşa edilen bu deney, asenkron Agent'ların zor kısımlarına geçer: **paralel araç yürütme, yürütme iptali ve durum yönetimi**. Agent artık yalnızca olayları birer birer işlemez; birden fazla eş zamanlı görevi aynı anda yönetmesi, kesintileri ve kurtarmaları ele alması ve gerçek zamanlı duruma dayanarak dinamik kararlar alması gerekir.
+> Deney 4-5'ün basit olay kuyruğu üzerine inşa edilen bu deney, asenkron Agent'ların zor kısımlarına geçer: **paralel araç yürütme, yürütme iptali ve durum yönetimi**. Agent artık yalnızca olayları birer birer işlemez; birden fazla eş zamanlı görevi aynı anda yönetmesi, kesintileri ve kurtarmaları ele alması ve gerçek zamanlı duruma dayanarak dinamik kararlar alması gerekir.
 >
 > **1. Asenkron Araç Yürütmesi**: Zaman alan araçların (en az 3-5 saniye) asenkron yürütülmesini destekler, başlatma üzerine hemen bir yer tutucu döndürür. **Doğrulama Senaryosu**: Agent uzun süren bir terminal komutu yürütür. Bu sırada, kullanıcı "Şu an saat kaç?" diye sorar. Agent hemen yanıt verir, ardından döndüğünde analiz sonucunu sunar.
 >
@@ -699,7 +705,7 @@ Kolayca yanlış anlaşılabilecek bir nokta netleştirilmeye değer: "sona ekle
 
 Açıkçası, tüm bildir-eşleştir-enjekte mekanizması çalışır, ama çok fazla mühendislik gerektirir: çevrimdışı korunacak bir embedding indeksi, yönetilecek KV Cache geçersizleşmesi, daha zayıf modeller için özel eğitim. Bunun altındaki paylaşılan öncül, her aracı modele yönelik **resmi bir tanım** olarak ele almaktır—kaydedilir, getirilir, enjekte edilir. Bir sonraki bölümdeki Skills mekanizması bu öncülü daha hafif bir şey için bırakır.
 
-> **Deney 4-6 ★★★: Proaktif Araç Keşfi**
+> **Deney 4-7 ★★★: Proaktif Araç Keşfi**
 >
 > Kontrollü bir karşılaştırma yoluyla, bu deney proaktif araç keşfinin küçük modeller için önemli değerini doğrular. Yukarıdaki Algı Araçları deneyinde inşa edilen MCP sunucusundan 120'den fazla araca erişmek için Qwen3-4B modelini kullanın.
 >
@@ -744,7 +750,7 @@ Beş araç kategorisinin her birinin ayrı tasarım vurguları vardır:
 
 Asenkron tarafta, OpenClaw'ın yerleşik otomasyon mekanizmaları (Hooks, Cron, Heartbeat) Agent'ların bir zamanlamaya göre otonom olarak hareket etmesine izin verir, ama yerleşik kanalların (e-posta, API geri çağrıları) ötesindeki üçüncü taraf olay kaynakları için anlık bir giriş yolu sunmaz. PineClaw'ın Channel mekanizması bu boşluğu doldurur, zaman güdümlüden olay güdümlüye evrimi işaretler. Üç strateji—iptal tabanlı, kuyruğa alınmış ve paralel işleme—Agent'ların farklı öncelikteki olayları ele almasına izin verir. Yine de bu mimari, günümüz büyük modellerinin senkron eğitim paradigmasıyla derin bir çelişki içindedir; şimdilik, asenkron yer tutucular gibi mühendislik çözümleri bunu yalnızca hafifletebilir. Temel düzeltme, gecikmeyi, kesintiyi ve eşzamanlılığı asenkron ortamlarda pekiştirmeli öğrenme yoluyla içselleştiren yeni nesil modelleri bekliyor (Bölüm 9'da tartışılan VLA modellerinin ruhuyla).
 
-Altı deney, temellerden mimariye ilerler: Deney 4-1'den 4-3'e üç temel araç kümesini—algı, yürütme ve iş birliğini—inşa eder; Deney 4-4, bir e-posta işleme Agent'ıyla olay güdümlü işlemeyi tanıtır; Deney 4-5, paralel yürütmeyi, kesinti kurtarmayı ve durum yönetimini uygular; Deney 4-6, kütüphane ölçeğinde proaktif araç keşfinin değerini doğrular. Bu bölümün sınırı **mevcut araçları** tanımlamak, keşfetmek ve güvenli biçimde kullanmaktır. Bölüm 8 ise Agent'ın başarısızlıklardan ve tekrarlanan işlemlerden yola çıkarak ne zaman bir aracı yaratacağına, değiştireceğine, yeniden doğrulayacağına veya kullanımdan kaldıracağına nasıl karar verdiğini tartışır.
+Yedi deney, temellerden mimariye ilerler: Deney 4-1'den 4-4'e üç temel araç kümesini—algı, yürütme ve iş birliğini—inşa eder; Deney 4-5, bir e-posta işleme Agent'ıyla olay güdümlü işlemeyi tanıtır; Deney 4-6, paralel yürütmeyi, kesinti kurtarmayı ve durum yönetimini uygular; Deney 4-7, kütüphane ölçeğinde proaktif araç keşfinin değerini doğrular. Bu bölümün sınırı **mevcut araçları** tanımlamak, keşfetmek ve güvenli biçimde kullanmaktır. Bölüm 8 ise Agent'ın başarısızlıklardan ve tekrarlanan işlemlerden yola çıkarak ne zaman bir aracı yaratacağına, değiştireceğine, yeniden doğrulayacağına veya kullanımdan kaldıracağına nasıl karar verdiğini tartışır.
 
 Bir sonraki bölüm, "bir Agent araçları nasıl kullanır"dan daha temel bir soruyu sorar: bir Agent kod yazarak araçlar **yaratabilir mi**? Bir Kodlama Agent'ı artı bir dosya sistemi, her genel amaçlı Agent'ın temel dayanağıdır ve Bölüm 8'deki kontrollü sistem öz-değişikliği tartışması için gereken yürütme yeteneğini de sağlar.
 

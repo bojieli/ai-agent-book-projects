@@ -291,14 +291,8 @@ Yalnızca nihai sonuca bakmak yeterli değildir; Agent'ın sonuca ulaşma sürec
 - **Pass^k**: k denemenin **tamamının** başarılı olma olasılığı; "Agent kararlı ve güvenilir mi" sorusunu yanıtlar
 - **Best@k**: k deneme içindeki **en iyi denemenin** puanı (başarılı olup olmadığı değil); "yeterli fırsat verildiğinde kalite tavanını" ölçer, çoğunlukla sürekli puanlaması olan açık uçlu görevlerde kullanılır
 
-Farkı somut bir sayıyla görelim: Agent'ın tek seferlik başarı oranı %60 olsun (yani Pass@1 = 0,6). Bu durumda 5 koşuda iki metrik şöyle çıkar: Pass@5 = 1 - 0,4^5 ≈ %99 (en az bir kez başarılı olması neredeyse kesin), Pass^5 = 0,6^5 ≈ %7,8 (hepsinin başarılı olma olasılığı çok düşük). İlki yetenek tavanını, ikincisi kararlılığı değerlendirir; ikisini karıştırmak yanlış yargılara götürür. Tablo 6-3 her iki metriğin kullanım alanlarını ve yanlış kullanım risklerini özetler; okuyucunun regresyon testi ile keşifsel değerlendirme arasında doğru metriği seçmesine yardımcı olur.
+Farkı somut bir sayıyla görelim: Agent'ın tek seferlik başarı oranı %60 olsun (yani Pass@1 = 0,6). Bu durumda 5 koşuda iki metrik şöyle çıkar: Pass@5 = 1 - 0,4^5 ≈ %99 (en az bir kez başarılı olması neredeyse kesin), Pass^5 = 0,6^5 ≈ %7,8 (hepsinin başarılı olma olasılığı çok düşük). İlki yetenek tavanını, ikincisi kararlılığı değerlendirir; ikisini karıştırmak yanlış yargılara götürür.
 
-Tablo 6-3 Pass@k ve Pass^k için Uygun Kullanım Senaryoları
-
-| Değerlendirme amacı | Hangi metrik kullanılmalı | Yanlış kullanımın sonucu |
-|-----------------------------|-----------------|--------------------------------------------------|
-| Kararlılığı doğrulamak (regresyon testi) | Pass^k | Pass@k kullanmak kararsızlığı gizler — beş denemede yalnızca bir kez başaran Agent bile "geçti" görünür |
-| Yetenek tavanını değerlendirmek (keşifsel görevler) | Pass@k veya Best@k | Pass^k kullanmak rastlantısal dalgalanmalar yüzünden yanlış alarm verir — her küçük değişiklik başarısız sayılır |
 
 **Güvenlik ve uyum metrikleri** üretim dağıtımında kritik önemdedir: hassas işlemlerin tetiklenmesi (veri silme / izin değiştirme / dışarıya iletişim gönderme), veri sızdırma (günlüklere parola yazdırma / özel dokümanları dış API'lere gönderme) ve kural dışı içerik — hepsi **sıfır tolerans ilkesine** tabi olmalıdır. Halüsinasyonun veto maddesiyle aynı mantık geçerlidir (bkz. ilerideki "Rubric'in Dört İlkesi"): tek bir ciddi güvenlik ihlali bütün değerlendirmeyi veto eder, diğer boyutlardaki üstün performans buna muafiyet sağlamaz.
 
@@ -410,9 +404,9 @@ Rubric ile Agent'ın yanıtını birlikte hakem modele verin; model her boyutu p
 > **Kabul ölçütü**: Üç karmaşıklık katmanında (temel hatırlama / çok oturumlu belirsizlik giderme / oturumlar arası gizli ilişkilendirme) başarı oranını, ortalama adım sayısını, tool calling sayısını, gecikmeyi ve maliyeti kaydedin; her yaklaşımın nerede çöktüğünü net biçimde anlatın — yapılandırma neyi kaybetti, retrieval neyi kaçırdı, hibrit gerçekten bir sinerji sağlıyor mu. Yapılandırma ayrıntıları ve test durumları için eşlik eden depoya bakın.
 >
 
-Eşlik eden deney, üç sistemi aynı 60 soru üzerinde çalıştırdı ve 180 gerçek API trajectory'sini sakladı. Tablo 6-4 yüzdelerin yanında başarılı vaka sayılarını da gösteriyor.
+Eşlik eden deney, üç sistemi aynı 60 soru üzerinde çalıştırdı ve 180 gerçek API trajectory'sini sakladı. Tablo 6-3 yüzdelerin yanında başarılı vaka sayılarını da gösteriyor.
 
-Tablo 6-4 Bellek Sistemine ve Görev Düzeyine Göre Başarı Oranı
+Tablo 6-3 Bellek Sistemine ve Görev Düzeyine Göre Başarı Oranı
 
 | Sistem | Temel hatırlama | Çok oturumlu belirsizlik giderme | Oturumlar arası gizli ilişkiler | Toplam |
 |---|---:|---:|---:|---:|
@@ -583,9 +577,9 @@ Bir Agent sisteminin maliyeti üç katmana ayrılabilir:
 
 **Altyapı maliyeti**, vektör veritabanı (RAG retrieval için), mesaj kuyrukları, ilişkisel veritabanları, log ve trace depolaması (observability için) gibi işletme giderlerini kapsar.
 
-Maliyetin nereden geldiğini görmek için eşlik eden deney sabit, sekiz turluk bir iade iş akışı kullandı: sipariş, kargo, iade politikası ve bilgi tabanı sorgulandı; ardından risk denetimi, iade, bildirim ve dosya kapatma tamamlandı. Gerçek gpt-4o-mini çağrıları iki anahtarın dört bileşiminde çalıştırıldı: kararlı/kararsız ön ek ve tam/sıkıştırılmış geçmiş. İş akışı her grupta aynıydı. Tablo 6-5, o çalışmada kaydedilen token sayıları ve fiyatları kullanıyor.
+Maliyetin nereden geldiğini görmek için eşlik eden deney sabit, sekiz turluk bir iade iş akışı kullandı: sipariş, kargo, iade politikası ve bilgi tabanı sorgulandı; ardından risk denetimi, iade, bildirim ve dosya kapatma tamamlandı. Gerçek gpt-4o-mini çağrıları iki anahtarın dört bileşiminde çalıştırıldı: kararlı/kararsız ön ek ve tam/sıkıştırılmış geçmiş. İş akışı her grupta aynıydı. Tablo 6-4, o çalışmada kaydedilen token sayıları ve fiyatları kullanıyor.
 
-Tablo 6-5 Sekiz Turluk Agent İş Akışının Ölçülen Maliyeti
+Tablo 6-4 Sekiz Turluk Agent İş Akışının Ölçülen Maliyeti
 
 | Yapılandırma | Girdi token | Önbellekteki token | Toplam maliyet | Temel çizgiye göre tasarruf |
 |---|---:|---:|---:|---:|
@@ -726,9 +720,9 @@ Başlangıç raporunda 116 görevin her biri bir kez çalıştırılmış ve top
 
 ### Sonuçtan Karara: Veri Güdümlü Dengeler
 
-Tablo 6-6 ölçülen sonuçları özetliyor. Kol başına yalnızca dört görev olduğundan bu sayılar daha büyük bir koşunun değerli olup olmadığına karar verebilir; AndroidWorld genelindeki başarıyı tahmin edemez.
+Tablo 6-5 ölçülen sonuçları özetliyor. Kol başına yalnızca dört görev olduğundan bu sayılar daha büyük bir koşunun değerli olup olmadığına karar verebilir; AndroidWorld genelindeki başarıyı tahmin edemez.
 
-Tablo 6-6 AndroidWorld Wi-Fi Dilimindeki Üç Tur
+Tablo 6-5 AndroidWorld Wi-Fi Dilimindeki Üç Tur
 
 | Deney | Tek değişiklik | Kontrol → deney başarısı | Deney / kontrol token | Sonraki adım |
 |---|---|---:|---:|---|

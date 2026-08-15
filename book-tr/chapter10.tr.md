@@ -36,19 +36,7 @@ Message bus doğası gereği **asenkron iletişimi** destekler — gönderen ve 
 
 Bir benzetme: ilki bir ekibin aynı masanın etrafına oturup tartışmasına, herkesin her sözü duymasına benzer; ikincisi farklı departmanların e-posta ve dokümanlarla iş birliği yapmasına, her birinin kendi çalışma alanının olmasına benzer.
 
-İşletim sistemlerine aşina okurlar bu ikilemi tanıyacaktır: paylaşılan context thread'dir, paylaşılmayan context process'tir. Thread'ler adres uzayını paylaşır, geçiş maliyeti düşüktür, iletişim kopyalama gerektirmez; bedeli izolasyonun olmamasıdır — bir thread belleği bozarsa bütün process onunla birlikte çöker. Process'lerin her birinin bağımsız adres uzayı vardır, izolasyon tamdır, güvenle paralel çalışılabilir; bedeli iletişimin açık IPC'den geçmek zorunda olmasıdır. Tablo 10-1'deki her seçim ölçütü bu ödünleşim kümesinden türetilebilir.
-
-Tablo 10-1, iki mimarinin seçim ölçütlerini alt görev sayısı, context penceresi, paralellik derecesi, bilgi izolasyonu ve maliyet bütçesi olmak üzere beş açıdan özetler; erken mimari seçimi için bir kontrol listesi olarak kullanılabilir.
-
-Tablo 10-1 Paylaşılan Context ile Paylaşılmayan Context Arasındaki Seçim Ölçütleri
-
-| Seçim Ölçütü | Paylaşılan Context | Paylaşılmayan Context |
-|----------|-------------------------------------|------------------------------------------------|
-| Alt görev sayısı | Az (2-3 rol) | Çok (paralel işleme gerekir) |
-| Context penceresi | Bütün rollerin bilgisini alacak kadar geniş | Tek pencereye sığmaz |
-| Paralellik derecesi | Ağırlıklı olarak seri (roller aynı trajectory boyunca sırayla bayrağı devralır) | Büyük ölçekte paralelleşebilir (context'ler birbirinden bağımsız, birbirini engellemez) |
-| Bilgi izolasyonu | Gerekmez (bütün roller bilgiyi paylaşır) | Gerekir (örneğin güvenlik incelemesi ham düşünme sürecini görmemeli) |
-| Maliyet bütçesi | Tek trajectory bayrak yarışı gibi devredilir, token aşamalarla birikir | Çoklu Agent'lar ayrı ayrı açılır, toplam token genellikle birkaç kat ile bir büyüklük mertebesi arasında daha yüksektir |
+İşletim sistemlerine aşina okurlar bu ikilemi tanıyacaktır: paylaşılan context thread'dir, paylaşılmayan context process'tir. Thread'ler adres uzayını paylaşır, geçiş maliyeti düşüktür, iletişim kopyalama gerektirmez; bedeli izolasyonun olmamasıdır — bir thread belleği bozarsa bütün process onunla birlikte çöker. Process'lerin her birinin bağımsız adres uzayı vardır, izolasyon tamdır, güvenle paralel çalışılabilir; bedeli iletişimin açık IPC'den geçmek zorunda olmasıdır.
 
 **Basit karar kuralı**: Beklenen birikimli context'in pencerenin %50'sini aşacağı düşünülüyorsa (bu kesin bir eşik değil, bir deneyim kuralıdır) paylaşmayın; bilginin sıfır kayıpla aktarılması görevin doğruluğu için katı bir kısıtsa paylaşın; gerçek sistemlerin çoğu "aşamalı geçiş" yaklaşımını benimser — ilk birkaç Agent context paylaşır, bilgi doygunluk noktasına gelindiğinde paylaşılmayan context artı açık handoff'a (devir; yani hangi bilginin aşağı akışa aktarılacağına yukarı akıştaki Agent'ın kendisinin karar vermesi) geçilir.
 
@@ -72,9 +60,9 @@ Her modelin ayrıntılı tasarımı ve uygun olduğu senaryolar ilerideki özel 
 
 Somut iş birliği mimarilerine geçmeden önce daha temel bir soruyu yanıtlayalım: **Ne zaman gerçekten birden fazla Agent'a ihtiyaç var, ne zaman bir Agent yeter?** Bu sorunun yanıtı, ilerideki bütün mühendislik çözümlerinin genel referans noktası olacak. Son yılların bir dizi araştırması net bir karar çerçevesi ortaya koyuyor — çekirdek ölçüt tek bir şey: **İş birliği süreci, tek bir Agent'ın üretim anında elde edemeyeceği yeni bir bilgi getiriyor mu?**
 
-Tablo 10-2, farklı iş birliği modellerinin yeni bilgi getirip getirmediğini özetler; çoklu Agent iş birliğinin tek Agent'a göre esaslı bir değer taşıyıp taşımadığını değerlendirmek için kullanılır.
+Tablo 10-1, farklı iş birliği modellerinin yeni bilgi getirip getirmediğini özetler; çoklu Agent iş birliğinin tek Agent'a göre esaslı bir değer taşıyıp taşımadığını değerlendirmek için kullanılır.
 
-Tablo 10-2 Çoklu Agent İş Birliği Modellerinin Bilgi Kazanımı Karşılaştırması
+Tablo 10-1 Çoklu Agent İş Birliği Modellerinin Bilgi Kazanımı Karşılaştırması
 
 | İş Birliği Modeli | Yeni Bilgi Getiriyor mu | Etki |
 |---|---|---|
@@ -124,9 +112,9 @@ Rol farkı bilgi, süreç veya yazım tarzıysa Skill tercih edilir. Fark izin, 
 
 Paylaşılmayan context gerçek çoklu Agent iş birliğini temsil eder. Bu mimaride her Agent bağımsız bir varlıktır; kendi context'i, trajectory'si ve durumu vardır. Agent'lar birbirinin "iç dünyasına" doğrudan erişemez; iş birliği tamamen açık ve yapılandırılmış veri aktarma mekanizmalarına, yani bu bölümün başında tanıtılan üç iletişim mekanizmasına (araç çağrısı parametreleri, paylaşılan dosya sistemi, message bus) dayanır.
 
-Bu bölümün başında iletişim mekanizmalarını süreçler arası iletişimin iki paradigmasına, paylaşılan ile paylaşılmayan context'i de thread ile process'e karşılık getirmiştik. Bu benzetme daha da ileri götürülebilir (Tablo 10-3):
+Bu bölümün başında iletişim mekanizmalarını süreçler arası iletişimin iki paradigmasına, paylaşılan ile paylaşılmayan context'i de thread ile process'e karşılık getirmiştik. Bu benzetme daha da ileri götürülebilir (Tablo 10-2):
 
-Tablo 10-3 Çoklu Agent Sistemleri ile İşletim Sistemleri Arasındaki Karşılıklar
+Tablo 10-2 Çoklu Agent Sistemleri ile İşletim Sistemleri Arasındaki Karşılıklar
 
 | İşletim Sistemi | Çoklu Agent Sistemi |
 |----------|----------------|
@@ -170,9 +158,9 @@ Bu bölümün başında "paylaşılan dosya sistemi", paylaşılmayan context'in
 ![Şekil 10-2: Agent Sanal Dosya Sisteminin Dört Bölge Türünün Bağlanma Yapısı](images/fig10-2.svg)
 
 
-Tablo 10-4, bu dört bölgeyi görünürlük, yaşam döngüsü, okuma-yazma izni ve eşzamanlılık denetimi olmak üzere dört boyutta karşılaştırır; dosya sistemi yerleşimi tasarımı için kontrol listesi olarak kullanılabilir.
+Tablo 10-3, bu dört bölgeyi görünürlük, yaşam döngüsü, okuma-yazma izni ve eşzamanlılık denetimi olmak üzere dört boyutta karşılaştırır; dosya sistemi yerleşimi tasarımı için kontrol listesi olarak kullanılabilir.
 
-Tablo 10-4 Agent Sanal Dosya Sisteminin Dört Bölge Türü
+Tablo 10-3 Agent Sanal Dosya Sisteminin Dört Bölge Türü
 
 | Bölge | Görünürlük | Yaşam Döngüsü | Okuma-Yazma | Eşzamanlılık Denetimi |
 |----------------|--------------------|-------------------|-----------------|------------------------|
@@ -185,7 +173,7 @@ Dört bölgenin aynı dizin ağacı altında birleştirilmesi, tam da "**dosya y
 
 ### Agent'lar Arası İletişim ve Kontrol
 
-Dosya sistemi Agent'lar arasındaki **ürün alışverişi** sorununu çözer; iş birliği bir de **kontrol düzlemi** gerektirir. Tablo 10-3'teki yaşam döngüsü satırları tam da burada işe yarar: oluşturma (`spawn_subagent`), mesaj gönderme (`send_message_to_subagent`), iptal etme (`cancel_subagent`) ve keşfetme (`list_agents`) — Bölüm 4'te verilen bu araç ilkelleri, process dünyasındaki fork, mesaj, kill ve ps'e karşılık gelir. Bu kısım arayüz tanımlarını tekrarlamayacak; çoklu Agent iş birliğinin dayandığı, ama sıklıkla gözden kaçan dört yeteneğe odaklanacak.
+Dosya sistemi Agent'lar arasındaki **ürün alışverişi** sorununu çözer; iş birliği bir de **kontrol düzlemi** gerektirir. Tablo 10-2'teki yaşam döngüsü satırları tam da burada işe yarar: oluşturma (`spawn_subagent`), mesaj gönderme (`send_message_to_subagent`), iptal etme (`cancel_subagent`) ve keşfetme (`list_agents`) — Bölüm 4'te verilen bu araç ilkelleri, process dünyasındaki fork, mesaj, kill ve ps'e karşılık gelir. Bu kısım arayüz tanımlarını tekrarlamayacak; çoklu Agent iş birliğinin dayandığı, ama sıklıkla gözden kaçan dört yeteneğe odaklanacak.
 
 **Mesaj zarfı ve worker yaşam döngüsü:**
 
@@ -381,7 +369,7 @@ Manager, uzman Agent'ları sırayla birbiri ardına çağırır; her Agent tamam
 
 Birden çok alt görev paralel yürütülebiliyorsa sıralı model verimsiz kalır. Paralel koordinasyon, birden çok Agent'ın aynı anda çalışmasına izin vererek iş hacmini büyük ölçüde artırır. Manager Agent yalnızca paralel görevleri planlamakla kalmaz; çalışan bütün Agent'ları gerçek zamanlı izlemeli, iletişimi koordine etmeli ve bir Agent başarılı ya da başarısız olduğunda sistem çapında karar vermelidir. Bu genellikle altyapı olarak bir **message bus** (mesaj veri yolu) gerektirir — bunu bir "kamuya açık ilan panosu" gibi düşünebilirsiniz: Agent'lar panoya mesaj asabilir (yayımlama), ilgilendikleri mesaj türlerini takibe alabilir (abonelik) ve böylece birbirini bloke etmeden asenkron iletişim kurabilir. Yaygın uygulamalar karmaşıklığa göre iki gruba ayrılır: **Redis Pub/Sub** hafiftir, mesaj gönderildiği anda teslim edilir, kullanımı basittir; kusuru kalıcılık sağlamamasıdır — alıcı o sırada çevrimiçi değilse mesaj kaybolur. **RabbitMQ** gibi mesaj kuyrukları ise mesajları diske kaydeder, böylece alıcı geçici olarak çevrimdışı olsa bile mesaj kaybolmaz. Mesaj biçimi genelde göndericinin kimliğini, hedef Agent'ı (ya da herkese yayın işaretini), mesaj türünü ve JSON biçimindeki veri içeriğini kapsar.
 
-**Lingtai: Yönetici modelinin ürünleşmiş bir örneği.** Lingtai, yerelde çalışan, dosya temelli, uzun ömürlü Agent'lara ev sahipliği yapan bir sistemdir[^lingtai]; üç rolü bu kısımdaki kavramların neredeyse eksiksiz bir karşılığıdır: **main agent** kullanıcıyla konuşan kalıcı merkezdir, planı ve belleği elinde tutar, işi diğer rollere türetir — tam olarak Manager Agent'ın konumu; **daemon**, gürültülü ama sınırları belli tek bir iş için ayrılan kısa ömürlü paralel çalışandır, iş biter bitmez atılır ve yalnızca sonucu main agent'a getirir — bu da "alt Agent tam trajectory değil yapılandırılmış özet döndürür" ilkesinin ve paralel koordinasyon biçiminin ürünleşmiş hâlidir; **avatar** ise kendi belleği, posta kutusu ve sorumlulukları olan kalıcı ve uzmanlaşmış bir takım arkadaşıdır, birden çok oturum boyunca korunmaya değer uzmanlık iş bölümleri için kullanılır. Tasarımının geri kalanı da önceki kısımlarla birebir örtüşür: bilgi, her Agent'ın kendine ait kalıcı bellek dosyalarında durur; beceriler ise bütün Agent'ların paylaştığı Markdown el kitaplarıdır ("Agent'ın Gözünden Dosya Sistemi" kısmındaki sistemin yerleşik kaynaklarına karşılık gelir). Context penceresi dolmak üzereyken Agent "kabuk değiştirir" (molt) — kendine bir özet yazar ve kalıcı belleğiyle birlikte tertemiz bir context'te çalışmayı sürdürür (Bölüm 2'deki context sıkıştırmaya karşılık gelir). Alttaki model değiştirilebilir ama Agent yerinde kalır — kimlik, bellek ve yetenekler sıradan dosyalar hâlinde proje dizininde durur, yani "Agent, kendi dosyalarından ibarettir". Bu da Tablo 10-3'ün ilk iki satırının ürünleşmiş hâlidir: hem program hem bellek dosyalara iner, süreç istendiği an yeniden kurulabilir.
+**Lingtai: Yönetici modelinin ürünleşmiş bir örneği.** Lingtai, yerelde çalışan, dosya temelli, uzun ömürlü Agent'lara ev sahipliği yapan bir sistemdir[^lingtai]; üç rolü bu kısımdaki kavramların neredeyse eksiksiz bir karşılığıdır: **main agent** kullanıcıyla konuşan kalıcı merkezdir, planı ve belleği elinde tutar, işi diğer rollere türetir — tam olarak Manager Agent'ın konumu; **daemon**, gürültülü ama sınırları belli tek bir iş için ayrılan kısa ömürlü paralel çalışandır, iş biter bitmez atılır ve yalnızca sonucu main agent'a getirir — bu da "alt Agent tam trajectory değil yapılandırılmış özet döndürür" ilkesinin ve paralel koordinasyon biçiminin ürünleşmiş hâlidir; **avatar** ise kendi belleği, posta kutusu ve sorumlulukları olan kalıcı ve uzmanlaşmış bir takım arkadaşıdır, birden çok oturum boyunca korunmaya değer uzmanlık iş bölümleri için kullanılır. Tasarımının geri kalanı da önceki kısımlarla birebir örtüşür: bilgi, her Agent'ın kendine ait kalıcı bellek dosyalarında durur; beceriler ise bütün Agent'ların paylaştığı Markdown el kitaplarıdır ("Agent'ın Gözünden Dosya Sistemi" kısmındaki sistemin yerleşik kaynaklarına karşılık gelir). Context penceresi dolmak üzereyken Agent "kabuk değiştirir" (molt) — kendine bir özet yazar ve kalıcı belleğiyle birlikte tertemiz bir context'te çalışmayı sürdürür (Bölüm 2'deki context sıkıştırmaya karşılık gelir). Alttaki model değiştirilebilir ama Agent yerinde kalır — kimlik, bellek ve yetenekler sıradan dosyalar hâlinde proje dizininde durur, yani "Agent, kendi dosyalarından ibarettir". Bu da Tablo 10-2'ün ilk iki satırının ürünleşmiş hâlidir: hem program hem bellek dosyalara iner, süreç istendiği an yeniden kurulabilir.
 
 [^lingtai]: Lingtai resmî eğitimi: https://lingtai.ai/zh/tutorial/
 
@@ -738,4 +726,4 @@ Kurt adam, bu kısımdaki üç boyuttan **stratejik oyunu** temsil eder: kural k
 8. ★★ İnsan toplumunun iş bölümüne ve iş birliğine ihtiyaç duymasının nedeni her insanın yeteneğinin sınırlı olmasıdır — frontend yapan mutlaka backend bilmez, tasarım bilen mutlaka sistem yönetimi yapamaz. Oysa büyük model daha çok bir "her işi bilen" gibidir. İlgili araştırmalar, salt metin akıl yürütme görevlerinde çoklu Agent tartışmasının eşit hesaplama kaynağı altında tek Agent'tan üstün olmadığını gösteriyor. Öyleyse tek Agent yerine birden çok Agent kullanmanın gerçek üstünlüğü tam olarak nerededir?
 9. ★★★ Bu bölüm "paylaşılan context" ile "context paylaşmamayı" çoklu Agent sistemlerinin temel tasarım boyutu olarak ele aldı. Paylaşılan context bütün Agent'ların aynı bilgiyi görmesini sağlar ve koordinasyon için daha elverişli görünür. Ama Üç Cisim Problemi romanındaki Üç Cisim uygarlığında düşünce tümüyle saydamdır, buna karşın teknolojik gelişme durgunluğa saplanır; ataç maksimizasyonu düşünce deneyi de bir topluluk tek bir hedefe yöneldiğinde çeşitliliğin yitirildiğini gösterir. Çoklu Agent sistemlerinde verim ile çeşitlilik arasındaki denge nasıl kurulur?
 10. ★★★ Bir Kodlama Agent'ına 30 adımlık ve 300 adımlık bütçe verildiğinde, çalışma stratejisi nasıl farklılaşmalıdır? Araştırmalar, adım bütçesini artırmanın tek başına performans artışını güvenceye almadığını gösteriyor — Agent sığ bir aramadan sonra erkenden "doyuma" ulaşıyor. Agent'ın küçük bütçede çekirdek işlevi hızla gerçekleştirdiği, büyük bütçede ise planlama, test ve inceleme adımlarını ekleyerek fazladan hesaplama kaynağını sonuna kadar kullandığı bir "bütçe farkındalığı" mekanizması tasarlayın.
-11. ★★ Tablo 10-3, çoklu Agent sistemlerini işletim sistemleriyle satır satır eşleştiriyor. Bu tabloyu birkaç satır daha uzatın: sanal bellek ve sayfalama, dosya izinleri, kilitlenme (deadlock) algılama, zamanlama algoritmaları — bunların Agent dünyasındaki karşılıkları nedir? Hangi işletim sistemi kavramlarının Agent dünyasında karşılığı yoktur, neden?
+11. ★★ Tablo 10-2, çoklu Agent sistemlerini işletim sistemleriyle satır satır eşleştiriyor. Bu tabloyu birkaç satır daha uzatın: sanal bellek ve sayfalama, dosya izinleri, kilitlenme (deadlock) algılama, zamanlama algoritmaları — bunların Agent dünyasındaki karşılıkları nedir? Hangi işletim sistemi kavramlarının Agent dünyasında karşılığı yoktur, neden?

@@ -20,13 +20,13 @@ Vegyünk egy tipikus feladatot: "Rendezd el az összes megmaradt TODO megjegyzé
 
 Egy alapvető Kódoló Ágensnek csak az alábbi hét mag-eszközzel kell rendelkeznie:
 
-1. "Kód Interpreter": Izolált sandboxot (biztonságos futásidejű környezetet, amely elkülönül a gazdarendszertől) biztosít, amelyben Python kód biztonságosan futhat anélkül, hogy a végrehajtási hibák érintenék a gazdagépet
-2. "Bash Shell": Parancsokat hajt végre egy terminálban, például tesztesetek futtatásához vagy speciálisan formázott fájlok feldolgozásához
-3. "Fájl Olvasás Eszköz": Kód, konfiguráció, dokumentáció, naplók stb. olvasására
-4. "Fájl Írás Eszköz": Új fájlok létrehozására vagy meglévők teljes felülírására
-5. "Fájl Szerkesztés Eszköz": Meglévő fájlok részleges módosítására, ami a kódkarbantartás és iteráció alapművelete
-6. "Fájlnév Keresés Eszköz (Glob)": Célfájlok gyors megtalálása a fájlrendszerben minták segítségével, pl. `**/*.py` használatával az összes Python fájl megtalálásához egy projektben
-7. "Fájltartalom Keresés Eszköz (Grep)": Specifikus szövegminták keresése fájltartalomban, pl. egy adott függvényt meghívó kódsorok megtalálása
+1. **Kód Interpreter**: Izolált sandboxot (biztonságos futásidejű környezetet, amely elkülönül a gazdarendszertől) biztosít, amelyben Python kód biztonságosan futhat anélkül, hogy a végrehajtási hibák érintenék a gazdagépet
+2. **Bash Shell**: Parancsokat hajt végre egy terminálban, például tesztesetek futtatásához vagy speciálisan formázott fájlok feldolgozásához
+3. **Fájl Olvasás Eszköz**: Kód, konfiguráció, dokumentáció, naplók stb. olvasására
+4. **Fájl Írás Eszköz**: Új fájlok létrehozására vagy meglévők teljes felülírására
+5. **Fájl Szerkesztés Eszköz**: Meglévő fájlok részleges módosítására, ami a kódkarbantartás és iteráció alapművelete
+6. **Fájlnév Keresés Eszköz (Glob)**: Célfájlok gyors megtalálása a fájlrendszerben minták segítségével, pl. `**/*.py` használatával az összes Python fájl megtalálásához egy projektben
+7. **Fájltartalom Keresés Eszköz (Grep)**: Specifikus szövegminták keresése fájltartalomban, pl. egy adott függvényt meghívó kódsorok megtalálása
 
 Ez a hét eszköz egy komplett, mégis minimális eszközkészletet alkot, amelyet szinte bármely Ágensrendszer alacsony költséggel integrálhat. Implementációban mindegyik szabványosított szolgáltatásként elérhetővé tehető a 4. fejezetben bemutatott MCP protokollon keresztül. Fontos megjegyezni, hogy ez az eszközkészlet egy, a Kódoló Ágensekre jellemző alapkonfiguráció, amely elkülönül a 4. fejezetben a meghívási irány és funkcionális szerep szerint osztályozott öt általános eszközkategóriától (észlelés/végrehajtás/együttműködés/eseményindítás/felhasználói kommunikáció) — a hét mag-eszköz főként az észlelési és végrehajtási kategóriákat fedi le. Mi a helyzet az együttműködéssel, az eseményindítással és a felhasználói kommunikációval? Kódoló Ágensekben ezek tipikusan a keretrendszer feladatai, nem az eszközrétegé — a szubágens delegálást például a keretrendszer orchestációs logikája kezeli, nem dedikált együttműködési eszközök.
 
@@ -61,11 +61,11 @@ Miért a Kódoló Ágens a mag és nem a másik kettő? Mert szinte minden haté
 
 Értsük meg ezt az architektúrát egy konkrét végrehajtási folyamaton keresztül. Tegyük fel, hogy a felhasználó kéri: "Segíts elemezni a múlt negyedéves értékesítési adatokat, és készíts egy összefoglaló jelentést":
 
-1. "Memória olvasása": Az Ágens elolvassa a `MEMORY.md` fájlt, és felfedezi, hogy a felhasználó a PDF formátumú jelentéseket preferálja, és az adatforrás a Google Sheets
-2. "Eszközök hívása": A Google Sheets API használati utasításainak megszerzése a webes kereső modulon keresztül, adatok letöltése kódfuttatással
-3. "Kód írása": Adatelemző szkript generálása Pythonban (pandas aggregáció, matplotlib vizualizáció)
-4. "Artefaktumok generálása": Az elemzési eredmények írása a `report.pdf` fájlba, diagramok a `charts/` könyvtárba
-5. "Memória frissítése": Rögzítés a `MEMORY.md` fájlban, hogy "A felhasználó értékesítési adatai a Google Sheets-ben vannak, ID: xxx," így legközelebb nem kell megkérdeznie
+1. **Memória olvasása**: Az Ágens elolvassa a `MEMORY.md` fájlt, és felfedezi, hogy a felhasználó a PDF formátumú jelentéseket preferálja, és az adatforrás a Google Sheets
+2. **Eszközök hívása**: A Google Sheets API használati utasításainak megszerzése a webes kereső modulon keresztül, adatok letöltése kódfuttatással
+3. **Kód írása**: Adatelemző szkript generálása Pythonban (pandas aggregáció, matplotlib vizualizáció)
+4. **Artefaktumok generálása**: Az elemzési eredmények írása a `report.pdf` fájlba, diagramok a `charts/` könyvtárba
+5. **Memória frissítése**: Rögzítés a `MEMORY.md` fájlban, hogy "A felhasználó értékesítési adatai a Google Sheets-ben vannak, ID: xxx," így legközelebb nem kell megkérdeznie
 
 A folyamat során a fájlrendszer az információáramlás központja — a memória fájlokból olvasódik, az artefaktumok fájlokba íródnak, és a tapasztalat is fájlokként kerül mentésre.
 
@@ -101,19 +101,19 @@ Ez a négy pont négyféle határként foglalható össze: adathatár, bemeneti 
 
 Ez magyarázza azt is, hogy a zárt forráskódú kereskedelmi Ágensek (mint a Claude Cowork (Anthropic általános célú Ágense tudásmunkához, amely újrahasználja a Claude Code ágensi architektúráját, képes helyi fájlok olvasására és írására, valamint több irodai alkalmazáson átívelő többlépéses feladatok elvégzésére)) miért konzervatív jogosultsági stratégiákat választottak — nem azért, mert a technológia nem elég fejlett, hanem a biztonsági kockázatok túl magasak. A prompt injekció ellen a bemeneti szűrés önmagában aligha segít. A cél nem az, hogy minden támadást felismerjünk, hanem hogy biztosítsuk, hogy egy injektált Ágens soha ne kapjon esélyt egy veszélyes akció végrehajtására. A védelmi rendszer rétegenként épült ki az előző két fejezetben: "Kontextusréteg-védelem" — külső tartalomforrások megjelölése, strukturált szerepizoláció, bemeneti tisztítás — lásd a prompt injekcióról szóló szakaszt a 2. fejezetben; "Végrehajtási Réteg Védelem" — Sidecar független felülvizsgálat, Human in the loop, legkisebb jogosultság és jogosultságszétválasztás — lásd a 4. fejezetet. Mivel egy Ágens nem tudja megbízhatóan eldönteni, hogy a saját kontextusa sérült-e, a kritikus műveleteket a kontextuson kívüli mechanizmusoknak kell felülvizsgálniuk. Ez az elv áthatja mindkét fejezetet. Ez a szakasz csak három, a Kódoló Ágensekre jellemző specifikus védelmet ad hozzá:
 
-- "Parancsok Szemantikai Elemzése" — A Shell parancsok kombinatorikus robbanása használhatatlanná teszi a kulcsszó-feketelistákat; egy parancs valós hatását szemantikai szinten kell megérteni (bővebben ebben a szakaszban);
+- **Parancsok Szemantikai Elemzése** — A Shell parancsok kombinatorikus robbanása használhatatlanná teszi a kulcsszó-feketelistákat; egy parancs valós hatását szemantikai szinten kell megérteni (bővebben ebben a szakaszban);
 - **Sandbox Izoláció és Hálózati Kimenő Forgalom Szabályozása** — A kódvégrehajtás a Kódoló Ágensekre jellemző támadási felület; az izolációs szintek és a kimenő forgalom stratégiák mérnöki döntéseit ebben a szakaszban tárgyaljuk;
-- "Kapcsolatok Közötti Védelem a Perzisztens Memóriához" — Ez a fejezet kiterjeszti a Halálos Triász elemzést a perzisztens memóriára: a hosszú távú memóriába írt tartalomnak ugyanazon a bizalmi felülvizsgálaton kell átesnie, mint a külső bemenetnek, hogy a rosszindulatú utasítások ne szunnyadhassanak a `MEMORY.md` fájlban, és később ne lépjenek életbe.
+- **Kapcsolatok Közötti Védelem a Perzisztens Memóriához** — Ez a fejezet kiterjeszti a Halálos Triász elemzést a perzisztens memóriára: a hosszú távú memóriába írt tartalomnak ugyanazon a bizalmi felülvizsgálaton kell átesnie, mint a külső bemenetnek, hogy a rosszindulatú utasítások ne szunnyadhassanak a `MEMORY.md` fájlban, és később ne lépjenek életbe.
 
 Ez a három védelem a hitelesítési, végrehajtási és adatrétegekbe tartozik, kiegészítve az előző két fejezet védelmi rendszerét. Ezek a stratégiák nem tudják teljesen megszüntetni a kockázatot, de csökkenthetik az Ágens támadási felületét.
 
 **Izoláció mint Biztonsági Háló: Mérnöki Döntések a Kódvégrehajtási Sandboxhoz.** A sandbox nem egy kapcsoló; mérnöki döntések sorozata. A 4. fejezet már elmagyarázta, miért van szükség izolációra, felvázolta az izolációs mechanizmusok háromszintű spektrumát (folyamatszintű izoláció, konténerek és mikroVM-ek), és megadta ezt a kiválasztási szabályt: folyamatszintű izoláció személyi helyi gépekhez, konténerek egy-bérlős felhő környezetekhez, és mikroVM-ek vagy gVisor több-bérlős környezetekhez vagy megbízhatatlan kódhoz. A spektrum ismétlése helyett ez a szakasz négy további szempontot tárgyal, amelyek egy Kódoló Ágens implementálásakor merülnek fel: hogyan kezeljük a hálózati kimenő forgalmat, mennyit csatlakoztassunk a fájlrendszerből, hogyan korlátozzuk az erőforrásokat, és hogyan egyeztessük össze a perzisztens kapcsolatokat az izolációval.
 
-"Hálózati Kimenő Forgalom Szabályozása." Ez a legkönnyebben figyelmen kívül hagyott és a legkritikusabb elem: alapértelmezés szerint nincs hálózat, a hozzáférés igény szerint, egy fehérlistás proxyn keresztül, korlátozott célpontokra (csomagforrások, dokumentációs oldalak, a feladat által expliciten igényelt API-k) engedélyezett. Visszatekintve a Halálos Triász 3. pontjára — "Külső Kommunikációs Képesség" — a hálózati kimenő forgalom szabályozása annak végrehajtási rétegbeli védelme: még ha egy prompt injekció sikeres is, és a rosszindulatú kód érzékeny adatokat olvas a sandboxon belül, kimenő útvonal nélkül az adatok nem továbbíthatók. Az összes injekció azonosításának megkísérléséhez képest az adatszivárgási csatorna elvágása sokkal determinisztikusabb védelmi vonal.
+**Hálózati Kimenő Forgalom Szabályozása.** Ez a legkönnyebben figyelmen kívül hagyott és a legkritikusabb elem: alapértelmezés szerint nincs hálózat, a hozzáférés igény szerint, egy fehérlistás proxyn keresztül, korlátozott célpontokra (csomagforrások, dokumentációs oldalak, a feladat által expliciten igényelt API-k) engedélyezett. Visszatekintve a Halálos Triász 3. pontjára — "Külső Kommunikációs Képesség" — a hálózati kimenő forgalom szabályozása annak végrehajtási rétegbeli védelme: még ha egy prompt injekció sikeres is, és a rosszindulatú kód érzékeny adatokat olvas a sandboxon belül, kimenő útvonal nélkül az adatok nem továbbíthatók. Az összes injekció azonosításának megkísérléséhez képest az adatszivárgási csatorna elvágása sokkal determinisztikusabb védelmi vonal.
 
-"Fájlrendszer Izolációs Terjedelem." A forráskód könyvtárat csak olvashatóként csatlakoztassuk (az Ágens szerkesztő eszközökön keresztül módosítja a kódot, és a generált javítások felülvizsgálatra kerülnek, mielőtt lemezre íródnak, vagy egy másolat kerül egy írható munkaterületre); egy külön írható munkaterület könyvtár tárolja a generált artefaktumokat és köztes fájlokat; a hitelesítő fájlok (`~/.ssh`, kulcsok, tokenek) egyáltalán ne legyenek csatlakoztatva a sandboxba — a láthatatlan adatok nem szivároghatnak ki, ami a Halálos Triász 1. pontjának felel meg.
+**Fájlrendszer Izolációs Terjedelem.** A forráskód könyvtárat csak olvashatóként csatlakoztassuk (az Ágens szerkesztő eszközökön keresztül módosítja a kódot, és a generált javítások felülvizsgálatra kerülnek, mielőtt lemezre íródnak, vagy egy másolat kerül egy írható munkaterületre); egy külön írható munkaterület könyvtár tárolja a generált artefaktumokat és köztes fájlokat; a hitelesítő fájlok (`~/.ssh`, kulcsok, tokenek) egyáltalán ne legyenek csatlakoztatva a sandboxba — a láthatatlan adatok nem szivároghatnak ki, ami a Halálos Triász 1. pontjának felel meg.
 
-"Erőforrás-korlátozások és Időtúllépések." Állítsunk be kvótákat CPU-ra, memóriára és lemezre, valamint egy teljes időtúllépést, hogy védjünk a végtelen ciklusok, fork bombák (egy olyan folyamat, amely gyorsan replikálja magát, amíg a rendszer összeomlik) és korlátlan lemezírások ellen. Egy gyakorlati részlet: az időtúllépéseket és korlátmegsértéseket strukturált hibaként adjuk vissza az Ágensnek ("A végrehajtás 120 másodperc után megszakadt, az utolsó kimenet ... volt") ahelyett, hogy csendesen megölnénk a folyamatot, így az Ágens esélyt kap a stratégia felülvizsgálatára a következő lépésben.
+**Erőforrás-korlátozások és Időtúllépések.** Állítsunk be kvótákat CPU-ra, memóriára és lemezre, valamint egy teljes időtúllépést, hogy védjünk a végtelen ciklusok, fork bombák (egy olyan folyamat, amely gyorsan replikálja magát, amíg a rendszer összeomlik) és korlátlan lemezírások ellen. Egy gyakorlati részlet: az időtúllépéseket és korlátmegsértéseket strukturált hibaként adjuk vissza az Ágensnek ("A végrehajtás 120 másodperc után megszakadt, az utolsó kimenet ... volt") ahelyett, hogy csendesen megölnénk a folyamatot, így az Ágens esélyt kap a stratégia felülvizsgálatára a következő lépésben.
 
 **A Perzisztens Kapcsolatok és az Izoláció Összeegyeztetése.** A későbbi "A parancsvégrehajtási környezet állapotának perzisztenciája" szakasz a hosszú életű terminál kapcsolatok fenntartását szorgalmazza, míg az izolációs elv az eldobható környezeteket szorgalmazza — feszültség van a kettő között. Az összeegyeztetés módja, hogy **a kapcsolatot csak a sandboxon belül tartjuk életben**: a terminál kapcsolat soha nem élheti túl a sandboxot, és a kapcsolat állapota soha nem szökhet ki a gazdagépre. A hosszú időintervallumokon átívelő helyreállítást igénylő forgatókönyvekhez (mint a korábban említett Sessionless architektúra) sandbox pillanatképekre vagy "munkaterületi fájl perzisztencia + környezet rekonstrukció szkriptekkel" támaszkodunk az állapot helyreállításához, ahelyett, hogy a sandbox élettartamát végtelenítenénk. Más szóval, ami perzisztálásra kerül, az "auditálható állapotleírás" (fájlok, szkriptek, manifestek), nem átlátszatlan futó folyamatok.
 
@@ -149,7 +149,7 @@ Az alábbiakban egy "ajánlott mérnöki munkafolyamatot" írunk le. Ez a szoftv
 
 A különböző modellek eltérően rövidítik le ezt a munkafolyamatot. Egyes Coding modellek az első szerkesztés előtt széles körben átolvassák a tároló szerkezetét, a megvalósítást, a hívási helyeket és a teszteket. Mások csak néhány, várhatóan releváns fájlt vizsgálnak meg, korán elkészítenek egy javítást, majd a fordító és a tesztek visszajelzését is a felderítés részének tekintik. Az információgyűjtés befejezésének és a cselekvés megkezdésének küszöbe a Harness cseréje után is követheti a modellt, és megváltozhat, ha ugyanabban a Harnessben csak a modellt cseréljük le. Ez tehát elsősorban **a modell által megtanult viselkedés**, nem pusztán egy Coding termék felületi stílusa. A Harness promptjai, eszközei és költségkerete erősíthetik vagy gyengíthetik ezt a hajlamot, de nem szükségszerűen ők a forrásai. A 6-8. kísérlet rögzített Harnessben méri ezt a különbséget; a 7. fejezet pedig bemutatja, hogyan írhatja a post-training az ilyen policyt a paraméterekbe.
 
-"Projekt Dokumentáció."
+**Projekt Dokumentáció.**
 
 Egy Kódoló Ágens munkája a projekt szisztematikus megértésével kezdődik. Amikor egy Ágens először találkozik egy kódrepóval, az első feladata nem a kód módosításának megkezdése, hanem a teljes projektre vonatkozó kognitív keretrendszer felépítése — akárcsak egy új mérnök, aki nem az első napon pushol kódot, hanem a terep megismerésével kezdi. Az Ágens először ellenőrzi, hogy a projekt rendelkezik-e dokumentációval — README-vel, architektúra tervezési dokumentumokkal, fejlesztői útmutatókkal.
 
@@ -159,17 +159,17 @@ A projekt dokumentációnak ma már van egy Ágensek számára specifikus formá
 
 A tudás externalizációjának elvének van egy érdekes következménye is: **Azok a csapatok, amelyek barátságosak a távoli munkához, általában barátságosak az AI Ágensekhez is.** A távoli csapatok kénytelenek aszinkron kommunikációra és dokumentációra támaszkodni — a döntések dokumentumokba kerülnek rögzítésre, a kontextus issue és PR leírásokban él, a törzsi tudás fejlesztői útmutatókban halmozódik fel, nem a szomszéd asztalnál vagy egy tárgyaló tábláján szájról szájra terjed. Ez pontosan az a tudásforma, amelyet az Ágensek fel tudnak dolgozni: egy Ágens nem tud elolvasni egy szóbeli megállapodást, de el tud olvasni egy tervezési dokumentumot. Ezzel szemben egy olyan csapat, amely a "csak kérdezd meg a mellettem ülőt" elven működik, ugyanazt a meredek beilleszkedési költséget rója az Ágensre, mint egy új távoli kollégára. Egy egyszerű mérőszám arra, hogy egy csapat mennyire "AI-kész": tud-e egy távoli újonc önállóan dolgozni, csak a kódrepóra és annak dokumentációjára támaszkodva?
 
-"Feladat Megértése és Követelménytisztázás."
+**Feladat Megértése és Követelménytisztázás.**
 
 Az egyszerű, egyértelmű határokkal és korlátozott hatással bíró követelmények esetén — mint egy ismert hiba javítása vagy egy függvény paramétereinek módosítása — az Ágens közvetlenül folytathatja a megvalósítási fázist. A szoftverfejlesztés legtöbb feladata azonban nem ilyen egyszerű.
 
 Az összetett követelményekhez az Ágensnek óvatosabbnak és módszeresebbnek kell lennie. Az összetettség több dimenzióból fakadhat: a követelmény kétértelműsége (a felhasználó tudja, mit akar, de nem tudja pontosan kifejezni), a megvalósítási utak sokfélesége (több technikai megoldás, saját kompromisszumokkal), vagy a hatás szélessége (több modul módosítását igényli, potenciálisan megtörve a meglévő funkcionalitást). Az Ágensnek felderítő kutatáson keresztül kell tisztáznia a határokat, és szükség esetén proaktívan párbeszédet kell kezdeményeznie a felhasználóval. Például amikor egy felhasználó "optimalizáld a rendszer teljesítményét" kéréssel fordul az Ágenshez, annak először meg kell határoznia a konkrét célt (válaszidő csökkentése, memóriahasználat csökkentése vagy áteresztőképesség növelése), hogy mely kompromisszumok elfogadhatóak (pl. elfogadható-e a megnövekedett kódkomplexitás), és hol van az aktuális szűk keresztmetszet. A homályos követelményekkel történő kódolás gyakran jelentős átdolgozáshoz vezet.
 
-"Tervezési Dokumentum Írása."
+**Tervezési Dokumentum Írása.**
 
 A tervezési dokumentum egy híd, amely az absztrakt követelményeket konkrét megvalósítási tervvé fordítja. Négy alapvető kérdésre kell választ adnia: mely modulokat kell módosítani és miért, mely megközelítést kell választani és milyen kompromisszumokkal jár, milyen új függőségekre van szükség, és milyen hatással várhatóak a változtatások a rendszerre. A tervezési dokumentum írása maga is mély gondolkodás — arra kényszeríti az Ágenst, hogy fogalmilag érvényesítse egy megoldás megvalósíthatóságát, mielőtt nagy erőfeszítést fektetne a kódolásba. Még fontosabb, hogy a tervezési dokumentum hatékony beavatkozási pontot biztosít az emberek számára — egy tömör tervezési dokumentum áttekintése sokkal könnyebb, mint több száz sornyi kód átnézése. A tervezési dokumentum elkészítése után az Ágensnek be kell nyújtania azt felhasználói felülvizsgálatra, és meg kell várnia a jóváhagyást a továbblépés előtt.
 
-"Kód Megvalósítás és Tesztelés."
+**Kód Megvalósítás és Tesztelés.**
 
 A tervezés jóváhagyása után az Ágens a projekt kódolási konvencióit követve végzi a megvalósítást, újrahasználja a meglévő absztrakciókat és eszközöket, és szükség esetén mérsékelt refaktorálást végez a kódbázis egészségének megőrzésére.
 
@@ -177,7 +177,7 @@ A megvalósítás után az Ágens azonnal egy tesztvezérelt minőségbiztosít�
 
 Még ha minden teszt át is megy, az Ágens munkája még nem ért véget. A következő fázis a kód áttekintés: az Ágens kritikusan megvizsgálja a saját generált kódját. Olvasható és megfelelően kommentált? Vannak-e lappangó teljesítményproblémák vagy biztonsági rések? Követi-e a projekt kódstílusát és legjobb gyakorlatait? Ez az önfelülvizsgálat történhet a kód olvasásával, lint eszközök futtatásával, vagy egy dedikált kódáttekintő szubágens meghívásával. Ha az áttekintés problémákat talál, az Ágensnek vissza kell térnie a módosítási fázishoz és ki kell javítania azokat, ahelyett, hogy hibás kódot szállítana a felhasználónak.
 
-"Dokumentáció Szinkronizálás és Leadás."
+**Dokumentáció Szinkronizálás és Leadás.**
 
 Ha a kódváltoztatások architekturális változásokkal járnak — például új modul bevezetése, modulok közötti függőségek megváltozása, vagy mag-absztrakciók szemantikájának megváltozása — az Ágensnek frissítenie kell az architektúra dokumentációt. Az elavult dokumentáció rosszabb, mint a dokumentáció hiánya, mert félrevezeti a jövőbeli fejlesztőket. Azzal, hogy az Ágens minden jelentős változtatás után automatikusan frissíti a dokumentációt, segít megőrizni a projekt tudásbázisának integritását és időszerűségét.
 
@@ -189,10 +189,10 @@ Az 1. fejezet bevezette a Harness Mérnökség koncepcióját és az **Ágens = 
 
 Az, hogy egy rendszer stabilan működik-e, gyakran kevésbé függ a modell erejétől, mint inkább az Ágens köré épített infrastruktúra robusztusságától. Az 1. fejezet a Harness-t két rétegre osztja — "Kontextus és Eszközök" (lehetővé teszik az Ágens számára a cselekvést) és "Korlátozások, Verifikáció és Korrekció" (segítenek az Ágensnek biztonságosan és helyesen cselekedni). A Kódoló Ágens forgatókönyvben ezek specifikus mérnöki komponensekké alakulnak:
 
-- "Elfogadási Alapvonal": Mi számít "kész"-nek — tesztcsomagok, CI csővezeték (Continuous Integration csővezeték, a kód beküldése után automatikusan lefutó ellenőrzések sorozata), kódáttekintési standardok
-- "Végrehajtási Határ": Mit érinthet és mit nem az Ágens — modulhatárok, függőségi szabályok, jogosultsági vezérlők
-- "Visszajelzési Jelek": Automatizált helyességítéletek — Linter (kódstílus-ellenőrző eszköz, amely automatikusan képes formázási hibákat és potenciális problémákat találni) kimenet, teszteredmények, típusellenőrzési hibák
-- "Visszaállítási Mechanizmus": Hogyan lehet helyreállni, ha valami rosszul sül el — Git verziókezelés, sandbox izoláció, pillanatkép-visszaállítás
+- **Elfogadási Alapvonal**: Mi számít "kész"-nek — tesztcsomagok, CI csővezeték (Continuous Integration csővezeték, a kód beküldése után automatikusan lefutó ellenőrzések sorozata), kódáttekintési standardok
+- **Végrehajtási Határ**: Mit érinthet és mit nem az Ágens — modulhatárok, függőségi szabályok, jogosultsági vezérlők
+- **Visszajelzési Jelek**: Automatizált helyességítéletek — Linter (kódstílus-ellenőrző eszköz, amely automatikusan képes formázási hibákat és potenciális problémákat találni) kimenet, teszteredmények, típusellenőrzési hibák
+- **Visszaállítási Mechanizmus**: Hogyan lehet helyreállni, ha valami rosszul sül el — Git verziókezelés, sandbox izoláció, pillanatkép-visszaállítás
 
 **Miért Különösen Alkalmasak a Kódoló Ágensek a Harness Mérnökségre.**
 
@@ -207,26 +207,26 @@ Két dimenzió — a cél egyértelműsége és a verifikáció automatizáltsá
 
 A kódírási feladatok természetesen az "egyértelmű cél + automatikus verifikáció" négyesben helyezkednek el — a tesztcsomagok egyértelmű elfogadási kritériumokat biztosítanak, a linterek és típusellenőrzők azonnali automatikus verifikációt kínálnak, a Git pedig tökéletes verziókezelést és visszaállítási képességeket. Ez magyarázza, hogy a Kódoló Ágensek miért a legérettebbek az összes Ágens típus közül: nem azért, mert a kódgeneráló modellek különösen erősek, hanem mert a szoftvermérnökség évtizedes infrastruktúrája természetes módon alkot egy robusztus Harness-t.
 
-"Iparági Gyakorlat."
+**Iparági Gyakorlat.**
 
 A Harness gyakorlat három esettanulmánya megerősíti a fenti elveket:
 
-- "Nagyléptékű kód migrációs eset" (egy nagy tech vállalat nyilvánosan megosztott nagyléptékű kód migrációs gyakorlatából): A kulcs nem a modell ereje volt, hanem hogy a Harness három dolgot csinált jól — a tudásnak magában a kódbázisban kell léteznie (amit az Ágens nem lát, az nem létezik), a korlátozások a linterekbe és CI-be vannak kódolva, nem dokumentációba írva, és a verifikáció és korrekció teljesen automatizált, végponttól végpontig.
-- "LangChain": Jelentősen javította a benchmark feladatok teljesítményét pusztán a Harness optimalizálásával (rendszer promptok, eszköz middleware, önellenőrző ciklusok). Különösen figyelemre méltó a "hiba trajektóriák elemzése Ágens segítségével a Harness javításához" módszertana, amely a Harness mérnökséget tapasztalatvezéreltből adatvezéreltté alakítja.
-- "Anthropic": A hosszú feladatokat két szerepre bontja — egy inicializációs Ágensre, amely a nagy feladatot feladatok listájára bontja, és egy végrehajtási Ágensre, amely lépésről lépésre halad előre, a köztes eredményeket (mint a befejezett kódfájlok és a frissített feladatlista) a következő kör számára hagyva. Ez a munkamegosztás megoldja a hosszan futó Ágensek azon problémáját, hogy "túl sokat akarnak egyszerre csinálni" vagy "idő előtt befejezettnek nyilvánítják magukat."
+- **Nagyléptékű kód migrációs eset** (egy nagy tech vállalat nyilvánosan megosztott nagyléptékű kód migrációs gyakorlatából): A kulcs nem a modell ereje volt, hanem hogy a Harness három dolgot csinált jól — a tudásnak magában a kódbázisban kell léteznie (amit az Ágens nem lát, az nem létezik), a korlátozások a linterekbe és CI-be vannak kódolva, nem dokumentációba írva, és a verifikáció és korrekció teljesen automatizált, végponttól végpontig.
+- **LangChain**: Jelentősen javította a benchmark feladatok teljesítményét pusztán a Harness optimalizálásával (rendszer promptok, eszköz middleware, önellenőrző ciklusok). Különösen figyelemre méltó a "hiba trajektóriák elemzése Ágens segítségével a Harness javításához" módszertana, amely a Harness mérnökséget tapasztalatvezéreltből adatvezéreltté alakítja.
+- **Anthropic**: A hosszú feladatokat két szerepre bontja — egy inicializációs Ágensre, amely a nagy feladatot feladatok listájára bontja, és egy végrehajtási Ágensre, amely lépésről lépésre halad előre, a köztes eredményeket (mint a befejezett kódfájlok és a frissített feladatlista) a következő kör számára hagyva. Ez a munkamegosztás megoldja a hosszan futó Ágensek azon problémáját, hogy "túl sokat akarnak egyszerre csinálni" vagy "idő előtt befejezettnek nyilvánítják magukat."
 
 **A Kódoló Ágenstől az Általános Harness Tervezési Elvekig.**
 
 A Kódoló Ágensek Harness gyakorlatai átvihető tervezési elveket biztosítanak minden Ágens rendszer számára:
 
-1. "Korlátozások az iránymutatás felett": A szabályokat, amelyek kóddal kényszeríthetők ki, kódban kell rögzíteni, nem csupán javasolni a dokumentációban. A linter szabályok, típuskorlátozások és CI ellenőrzések értéke messze meghaladja a "kérem, kövesse..." iránymutatást a rendszer promptokban — az előbbi azt jelenti, hogy "nem lehet megcsinálni," az utóbbi csupán "nem ajánlott."
-2. "Automatizáld a verifikációt": A manuális felülvizsgálat egy nem skálázható szűk keresztmetszet. A tesztcsomagokba, kódminőség-ellenőrzésekbe és viselkedésfigyelésbe fektetett erőfeszítés sokkal nagyobb hozamot ad, mint a további emberi erőfeszítés hozzáadása.
+1. **Korlátozások az iránymutatás felett**: A szabályokat, amelyek kóddal kényszeríthetők ki, kódban kell rögzíteni, nem csupán javasolni a dokumentációban. A linter szabályok, típuskorlátozások és CI ellenőrzések értéke messze meghaladja a "kérem, kövesse..." iránymutatást a rendszer promptokban — az előbbi azt jelenti, hogy "nem lehet megcsinálni," az utóbbi csupán "nem ajánlott."
+2. **Automatizáld a verifikációt**: A manuális felülvizsgálat egy nem skálázható szűk keresztmetszet. A tesztcsomagokba, kódminőség-ellenőrzésekbe és viselkedésfigyelésbe fektetett erőfeszítés sokkal nagyobb hozamot ad, mint a további emberi erőfeszítés hozzáadása.
 3. **A visszajelzés legyen olyan gyors és strukturált, amennyire csak lehetséges**: Minél részletesebb a hibaüzenet és minél közelebb van a hiba pillanatához, annál hatékonyabban tudja az Ágens kijavítani magát. A 2. fejezet Ágens állapotsáv technikái (részletes hibaüzenetek, eszközhívás számlálók) ezt az elvet testesítik meg.
-4. "A visszaállításnak megbízhatónak kell lennie": Az Ágensek csak akkor tudnak bátran kísérletezni, ha egy biztonsági hálón belül működnek. A Git branch-ek, sandbox környezetek és pillanatkép mechanizmusok biztosítják, hogy minden hiba visszafordítható legyen.
+4. **A visszaállításnak megbízhatónak kell lennie**: Az Ágensek csak akkor tudnak bátran kísérletezni, ha egy biztonsági hálón belül működnek. A Git branch-ek, sandbox környezetek és pillanatkép mechanizmusok biztosítják, hogy minden hiba visszafordítható legyen.
 
 **A korlátozások mélyebb célja: folyamatbeli hibák megelőzése.** Az elfogadási alapvonal azt szabályozza, hogy az eredmény helyes-e; a végrehajtási határ a "folyamatot" szabályozza — még a helyes eredmény sem igazolja a rossz módszert. Az adatbázis törlése és újraépítése egy adatbázis-hiba "kijavításához" valóban helyrehozza azt, de az adatok elvesznek; az összes kód törlése egy fordítási hiba javításához valóban átmegy a fordításon, de az implementáció eltűnik. Az ilyen destruktív gyorsítópályák mindig léteznek: még ha a korlátozások be is vannak írva a végső kiértékelési metrikákba, az Ágensek gyakran találnak módot a megkerülésükre — ez a reward hacking (7. fejezet) mindennapi formája az Ágens feladatokban. Egy production Harness ezért dedikált ellenőrzéseket és jóváhagyásokat helyez a veszélyes akciókra, mint az `rm -rf`, a termelési adatok törlése, vagy egy olvasatlan fájl felülírása (szemantikai elemzés e fejezet biztonsági szakaszában, Sidecar felülvizsgálat a 4. fejezetben), korlátozva az "akciókat", nem csak az eredményeket. A 7. fejezet RLVP-je (Reinforcement Learning with Verified Penalty — "jutalmazd az eredményt, büntesd az utat") ugyanerre a kérdésre ad választ a tréning oldaláról: a végső eredmény jutalmán túl a verifikálható megsértéseket bünteti az út során, internalizálva a "nincs destruktív eszköz" elvet a modell mérnöki józan eszeként. Egy meglévő modellnél a Harness korlátjai külső korlátozások; egy betanítható modellnél a folyamat büntetések internalizálják ugyanazokat a korlátozásokat. A cél ugyanaz.
 
-"Eszköz Orchesztáció: Hiba Határ Szabályozás." Az érett Kódoló Ágensek támogatják a párhuzamos eszközhívásokat. A Harness szempontjából egyedi probléma "a hibák terjedése": amikor egy eszköz meghibásodik, mely hívásokat kell megszakítani és melyeket folytatni? Az elv az, hogy a hibák csak ugyanazon párhuzamos hívás kötegén belül terjednek, nem felfelé a szülő művelethez. Amikor három fájlt olvasunk párhuzamosan, például egy hiányzó fájlnak csak azt az egy hívást szabad meghiúsítania; nem szabad törölnie a másik kettőt, sem az egész feladatot megszakítania. Ez a finom szemcséjű hiba határ szabályozás elkerüli a "egy parancs hiba az egész feladatot megszakítja" törékeny mintát. A párhuzamos hívások, streaming feldolgozás és lépcsőzetes megszakítások konkrét mechanizmusai e fejezet "Implementációs Tippek" szakaszában találhatók.
+**Eszköz Orchesztáció: Hiba Határ Szabályozás.** Az érett Kódoló Ágensek támogatják a párhuzamos eszközhívásokat. A Harness szempontjából egyedi probléma "a hibák terjedése": amikor egy eszköz meghibásodik, mely hívásokat kell megszakítani és melyeket folytatni? Az elv az, hogy a hibák csak ugyanazon párhuzamos hívás kötegén belül terjednek, nem felfelé a szülő művelethez. Amikor három fájlt olvasunk párhuzamosan, például egy hiányzó fájlnak csak azt az egy hívást szabad meghiúsítania; nem szabad törölnie a másik kettőt, sem az egész feladatot megszakítania. Ez a finom szemcséjű hiba határ szabályozás elkerüli a "egy parancs hiba az egész feladatot megszakítja" törékeny mintát. A párhuzamos hívások, streaming feldolgozás és lépcsőzetes megszakítások konkrét mechanizmusai e fejezet "Implementációs Tippek" szakaszában találhatók.
 
 ### Hibák és Hibahelyreállítás
 
@@ -234,14 +234,14 @@ Az előző szakasz a Harness mérnökség alapelveit és összetevőit mutatta b
 
 [^ch5-3]: Az ebben a szakaszban található hibatipológia és mechanizmus elemzés a production-grade Ágens implementációk, mint a Claude Code, forráskódjának kutatásán alapul. A konkrét implementációk gyorsan fejlődnek a verziók között; ez a szakasz csak a stabil mérnöki alapelveket desztillálja.
 
-"A hibák tipológiája: négy réteg." A szisztematikus válasz első lépése az osztályozás. A hibák négy rétegbe sorolhatók aszerint, hogy hol következnek be:
+**A hibák tipológiája: négy réteg.** A szisztematikus válasz első lépése az osztályozás. A hibák négy rétegbe sorolhatók aszerint, hogy hol következnek be:
 
-- "API réteg": sebességkorlátozás (HTTP 429), szolgáltatás túlterhelés, kérések időtúllépése, kapcsolat megszakadás, és a token határ miatti csonkolt kimenet. Ezek a hibák nem kapcsolódnak magához a feladathoz — infrastrukturális zajok.
-- "Eszköz réteg": hallucinált hívások (nem létező eszköz meghívása), hibás argumentumok (az eszköz bemeneti szerződésének megsértése), végrehajtási kivételek, és a legveszélyesebb fajta — egy eszköz ismételten ugyanazt a hibát adja vissza, miközben a modell változatlanul újrapróbálkozik.
-- "Kontextus réteg": kontextusablak túlcsordulás, tömörítési hiba, és sérült trajektória struktúra (mint egy eszközhívás, amelyből hiányzik a párosított eredmény üzenet).
-- "Vezérlésfolyam réteg": végtelen ciklusok (ugyanazon művelet ismétlése haladás nélkül) és halálspirálok (a hibából indított helyreállítási logika maga hívja az LLM-et, újra hibázik, és lépcsőzetesen terjed).
+- **API réteg**: sebességkorlátozás (HTTP 429), szolgáltatás túlterhelés, kérések időtúllépése, kapcsolat megszakadás, és a token határ miatti csonkolt kimenet. Ezek a hibák nem kapcsolódnak magához a feladathoz — infrastrukturális zajok.
+- **Eszköz réteg**: hallucinált hívások (nem létező eszköz meghívása), hibás argumentumok (az eszköz bemeneti szerződésének megsértése), végrehajtási kivételek, és a legveszélyesebb fajta — egy eszköz ismételten ugyanazt a hibát adja vissza, miközben a modell változatlanul újrapróbálkozik.
+- **Kontextus réteg**: kontextusablak túlcsordulás, tömörítési hiba, és sérült trajektória struktúra (mint egy eszközhívás, amelyből hiányzik a párosított eredmény üzenet).
+- **Vezérlésfolyam réteg**: végtelen ciklusok (ugyanazon művelet ismétlése haladás nélkül) és halálspirálok (a hibából indított helyreállítási logika maga hívja az LLM-et, újra hibázik, és lépcsőzetesen terjed).
 
-"Érzékelés: először osztályozz, aztán számolj." Amikor egy hiba bekövetkezik, az első kérdés nem az, hogy "Próbáljuk újra?" hanem hogy "Segítene az újrapróbálkozás?" Az újrapróbálkozható hibák (sebességkorlátozás, túlterhelés, hálózati ingadozás) megérdemlik az újrapróbálkozást; a nem újrapróbálkozható hibák (érvénytelen argumentumok, elégtelen jogosultságok, nem létező eszköz) ugyanazt az eredményt adják, akárhányszor próbáljuk újra — a bemenetnek vagy a stratégiának kell változnia. Egy production Harness fenntart egy leképezést a hibatípusokról a helyreállítási stratégiákra, nem pedig egy általános "hiba esetén próbáld újra" szabályt.
+**Érzékelés: először osztályozz, aztán számolj.** Amikor egy hiba bekövetkezik, az első kérdés nem az, hogy "Próbáljuk újra?" hanem hogy "Segítene az újrapróbálkozás?" Az újrapróbálkozható hibák (sebességkorlátozás, túlterhelés, hálózati ingadozás) megérdemlik az újrapróbálkozást; a nem újrapróbálkozható hibák (érvénytelen argumentumok, elégtelen jogosultságok, nem létező eszköz) ugyanazt az eredményt adják, akárhányszor próbáljuk újra — a bemenetnek vagy a stratégiának kell változnia. Egy production Harness fenntart egy leképezést a hibatípusokról a helyreállítási stratégiákra, nem pedig egy általános "hiba esetén próbáld újra" szabályt.
 
 Az egyedi hibákon túl érzékeljük a "mintákat". Először, ismételt hívás ujjlenyomatok: hash-eljük az "eszköznév + argumentumok" párost; ugyanazon ujjlenyomat ismétlődése egyértelmű jele a haladás nélküli ciklusnak — az 1. fejezet ablációs kísérletében az Ágens, amely ugyanazt az eszközt hívta újra és újra, pontosan ezt a mintát követte. Másodszor, egymást követő hibaszámlálók: minden helyreállítási útvonal saját számlálót tart fenn, alapot adva a később tárgyalt megszakítóknak.
 
@@ -249,9 +249,9 @@ A hibák harmadik osztálya egyáltalán nem hibaként jelenik meg, és dedikál
 
 **Helyreállítás: eszkaláció egyre láthatóbb szinteken keresztül.** A helyreállítási intézkedések osztályozása attól függően történik, hogy mennyire láthatók a felhasználó számára; ha egy alacsonyabb szint megoldja a problémát, ne eszkalálj:
 
-1. "Csendes újrapróbálkozás". Az alapértelmezett akció az újrapróbálkozható hibákra. Két részlet határozza meg, hogy az újrapróbálkozások sikeresek-e: először, használj exponenciális visszavárást véletlenszerű ingadozással, hogy megakadályozd a kliensek flottáinak szinkronizált újrapróbálkozását és a másodlagos torlódást, miközben tartsd tiszteletben a szerver által javasolt várakozási időtartamot; másodszor, különböztesd meg az előtér és a háttér hívásokat — a meghiúsult főciklus kérést újrapróbáljuk, de a segéd-háttérhívásokat (címgenerálás, beviteli javaslatok) hiba esetén eldobjuk, nehogy a háttér újrapróbálkozások kiszorítsák a főciklus kvótáját és "újrapróbálkozás erősítést" hozzanak létre.
-2. "Fokozatcsökkentés és folytatás". Amikor az újrapróbálkozások sikertelenek, magát a kérést változtassuk meg és próbáljuk újra. Vegyük a kimenet csonkítást (a generálás a hosszkorlát miatt megszakad): először csendesen küldjük újra magasabb kimeneti korláttal; ha az még mindig nem elég, fűzzünk egy meta-utasítást az üzenet végére, hogy a modell folytassa a generálást a megszakítási ponttól. Amikor az elsődleges modell tartósan túlterhelt, váltsunk vissza egy másik modellre, először eltávolítva a korábbi modell saját formázási blokkjait az előzményekből, hogy az új modell elemezni tudja azt; amikor egy magas költségű mód sebességkorlátozott, ideiglenesen váltsunk vissza a standard módra.
-3. "Megjelenítés a felhasználónak". Csak miután minden automatikus eszköz kimerült, a hiba bemutatásra kerül — a már megkísérelt helyreállítási akciókkal együtt.
+1. **Csendes újrapróbálkozás**. Az alapértelmezett akció az újrapróbálkozható hibákra. Két részlet határozza meg, hogy az újrapróbálkozások sikeresek-e: először, használj exponenciális visszavárást véletlenszerű ingadozással, hogy megakadályozd a kliensek flottáinak szinkronizált újrapróbálkozását és a másodlagos torlódást, miközben tartsd tiszteletben a szerver által javasolt várakozási időtartamot; másodszor, különböztesd meg az előtér és a háttér hívásokat — a meghiúsult főciklus kérést újrapróbáljuk, de a segéd-háttérhívásokat (címgenerálás, beviteli javaslatok) hiba esetén eldobjuk, nehogy a háttér újrapróbálkozások kiszorítsák a főciklus kvótáját és "újrapróbálkozás erősítést" hozzanak létre.
+2. **Fokozatcsökkentés és folytatás**. Amikor az újrapróbálkozások sikertelenek, magát a kérést változtassuk meg és próbáljuk újra. Vegyük a kimenet csonkítást (a generálás a hosszkorlát miatt megszakad): először csendesen küldjük újra magasabb kimeneti korláttal; ha az még mindig nem elég, fűzzünk egy meta-utasítást az üzenet végére, hogy a modell folytassa a generálást a megszakítási ponttól. Amikor az elsődleges modell tartósan túlterhelt, váltsunk vissza egy másik modellre, először eltávolítva a korábbi modell saját formázási blokkjait az előzményekből, hogy az új modell elemezni tudja azt; amikor egy magas költségű mód sebességkorlátozott, ideiglenesen váltsunk vissza a standard módra.
+3. **Megjelenítés a felhasználónak**. Csak miután minden automatikus eszköz kimerült, a hiba bemutatásra kerül — a már megkísérelt helyreállítási akciókkal együtt.
 
 Az eszközréteg hibák eltérő utat követnek: **ne szakítsuk meg a kapcsolatot; alakítsuk a hibát a modell bemenetévé**. Egy hallucinált hívás strukturált "nincs ilyen eszköz" hiba eredményt kap; egy validációs hiba a bemeneti szerződésre utaló tippekkel ellátott hibát kap; a hibás argumentumok (string, ahol objektum volt várható) programozottan javításra kerülnek a végrehajtás előtt. Ezek a hibák szokásos eszközeredményként kerülnek a kontextusba, és a modell a következő lépésben kijavítja magát — az alkalmazása a korábbi elvnek, hogy "minél strukturáltabb a visszajelzés, annál jobb": minél specifikusabb a visszajelzett hiba, annál magasabb a modell önkorrekciós aránya.
 
@@ -275,7 +275,7 @@ A modern Kódoló Ágenseknek teljes mértékben ki kell használniuk a streamin
 
 A párhuzamos végrehajtás másik oldala a hibakezelés. Minden eszközdefiníciónak deklarálnia kell, hogy támogatja-e a párhuzamos végrehajtást (alapértelmezett nem, biztonsági tartalék). Amikor egy hívás meghiúsul, egy lépcsőzetes megszakítási mechanizmus leállítja más, ugyanabban a kötegben indított hívásokat, amelyek függenek az eredményétől, de nem érinti a független hívásokat vagy a szülő műveletet — ez a "hiba határ szabályozás" elv konkrét megvalósítása a Harness mérnökség szakaszból.
 
-"Finomszemcsés Kontextuskezelés."
+**Finomszemcsés Kontextuskezelés.**
 
 A Kódoló Ágensek alapvető kihívása, hogy a kódbázisok általában nagyok, de a modell kontextusablaka korlátozott. Még ha a fejlett modellek milliós tokenszámot is ígérnek is, a teljes kódbázis a kontextusba töltése sem gazdaságos, sem szükséges. Az intelligens kontextuskezelésnek több szinten kell működnie.
 
@@ -283,18 +283,18 @@ A fájl olvasás szintjén az Ágens ne mindig olvassa a teljes fájlt. Nagy fá
 
 A parancsvégrehajtás szintjén a terminál kimenet kezelése is körültekintést igényel. A fordítás vagy tesztelés több ezer sornyi kimenetet produkálhat. Ha mindezt a kontextusba injektáljuk, a költségvetés gyorsan kimerül. A 4. fejezetben bevezetett hosszú kimenet csonkítási és perzisztencia mechanizmus széles körben alkalmazásra kerül itt: tartsuk meg a kimenet első néhány sorát (általában a hibakontextust tartalmazza) és az utolsó néhány sort (általában a hibák összefoglalását tartalmazza), cseréljük ki a középső részt egy egysoros helyettesítővel, és jegyezzük meg, hogy a teljes kimenet egy ideiglenes fájlba van mentve igény szerinti megtekintéshez.
 
-"Környezeti Információ Dinamikus Injektálása."
+**Környezeti Információ Dinamikus Injektálása.**
 
 Ez a 2. fejezet Ágens állapotsáv technikájának koncentrált megnyilvánulása a Kódoló Ágensekben. Az általános Ágensektől eltérően a Kódoló Ágensek erősen függenek a végrehajtási környezet állapotától. Minden inferencia előtt a következő kulcsfontosságú környezeti információkat kell injektálni a kontextus végére egy Ágens állapotsáv formájában:
 
-- "Aktuális munkakönyvtár": biztosítja, hogy az elérési utak helyesek legyenek
-- "Git branch": tudja, hogy a fő branch-en vagy egy feature branch-en dolgozik-e
-- "Legutóbbi commit előzmények": megérti a projekt fejlődését
-- "Stagingelt és nem stagingelt változtatások áttekintése": tudja, milyen módosítások történtek
+- **Aktuális munkakönyvtár**: biztosítja, hogy az elérési utak helyesek legyenek
+- **Git branch**: tudja, hogy a fő branch-en vagy egy feature branch-en dolgozik-e
+- **Legutóbbi commit előzmények**: megérti a projekt fejlődését
+- **Stagingelt és nem stagingelt változtatások áttekintése**: tudja, milyen módosítások történtek
 
 Ezeket az információkat nem szabad statikus rendszer promptokba kódolni — ez tönkretenné a KV Cache hatékonyságát —, hanem dinamikusan kell generálni és hozzáfűzött Ágens állapotsávként injektálni. Ily módon az Ágens "környezeti tudatosságra" tesz szert, minden döntése az aktuális állapot pontos megértésén alapul, nem pedig elavult feltételezéseken.
 
-"A Parancsvégrehajtási Környezet Állapotának Perzisztenciája."
+**A Parancsvégrehajtási Környezet Állapotának Perzisztenciája.**
 
 Amikor az Ágens kóddal dolgozik, sok művelet függ a környezet állapotától: könyvtárváltás, virtuális környezet aktiválása, környezeti változók beállítása, háttérszolgáltatások elindítása. Ha minden parancsot egy friss shell-ben hajtunk végre, ez az állapot elveszik — az Ágens éppen a `cd` paranccsal a projektkönyvtárba navigált, de a következő parancs újra a shell alapértelmezett könyvtárában indul, ami arra kényszeríti, hogy megismételje ugyanazt a beállítást. Ráadásul egyes műveletek (mint a Python virtuális környezet aktiválása) hatásai csak az aktuális shell kapcsolaton belül érvényesek, és nem vihetők át a kapcsolatok között.
 
@@ -586,21 +586,29 @@ A videószerkesztés API-hívásokká és kódgenerálássá történő átkeret
 
 Az előző szakaszokban a multimédia generálás a kódot a kimeneti formátumok szélesítésére használta; ez a szakasz a kódot fordított irányban használja — **a rendszer alkalmazkodik a külső formátumok fejlődéséhez**. A naplók elemzésétől a vizualizációig a kódgenerálás lehetővé teszi az Ágens számára, hogy a statikus eszközkészletről a dinamikus alkalmazkodásra váltson.
 
-"Log Parsing."
+**Log Parsing.**
 
 A hagyományos naplóelemzés forgatókönyvekben, amikor a naplóformátum megváltozik, a mérnököknek frissíteniük kell a szabályokat vagy a reguláris kifejezésmintákat az elemzőben. A Kódoló Ágens ezt a folyamatot automatizálhatja: ahelyett, hogy előre meghatározott elemző kódot karbantartana, az Ágens minden alkalommal új elemző kódot generál, amikor naplófájlokat dolgoz fel, a bemeneti naplók pozitív és negatív mintáira támaszkodva.
 
 Ez a képesség különösen értékes a nem strukturált naplók kezelésére, és azért, mert a naplóformátumok gyakran frissülnek. A statikus elemzők megszakítják a folyamatot, amikor a formátum változik. Ezzel szemben a kódot generáló Ágens minden alkalommal új elemzőt hoz létre, természetesen alkalmazkodva a formátum fejlődéséhez. Az elemzési logika nem meghatározott, hanem a bemeneti adatokból kód formájában van levezetve. Ez a kód mint rendszer adapter lényege: **a rendszer a generált kódon keresztül alkalmazkodik a külső szabványok változásaihoz anélkül, hogy az Ágens kódban rögzített eszközöket kellene frissíteni**.
 
-"Intelligens Napló Diagnosztikai Csővezeték."
+> **5-7. kísérlet ★★★: Adaptív naplóelemző rendszer**
+>
+> **Kísérlet célja**: Önfejlesztésre képes ügynöki naplóvizualizációs rendszer építése.
+>
+> **Műszaki megközelítés**: A kiinduló rendszer csak az alapformátumokat támogatja. A frontend észleli az elemzési hibát → jelenti az Ügynöknek → az elemzőkód generálódik → virtuális böngészőben tesztelődik → forrón telepítődik. A teljes folyamat automatizált.
+>
+> **Elfogadási kritériumok**: a rendszer önállóan észleli a hibát és elindítja a tanulást, a generált kód átmegy az automatikus teszteken, és a forró frissítés után helyesen elemzi az új formátumot.
+
+**Intelligens Napló Diagnosztikai Csővezeték.**
 
 A naplóelemzésen túl egy teljes intelligens napló diagnosztikai csővezeték építhető a kódgenerálás és a termelési technikák alapján. Az Ágens elemzi a termelési trajektóriák halmazát a rendszerarchitektúra dokumentumokkal és PRD-kkel együtt, hogy azonosítsa a problémamintákat és az érintett modulokat. Ezt követően strukturált problémajelentéseket generál, amelyek a prioritást, a modult, a leírást és az ajánlott fejlesztéseket tartalmazzák. Ezen felül regressziós teszteket generál, amelyek a trajektória ID-khoz és interakciós körökhöz vannak kötve; a tesztkeretrendszer visszajátssza ezeket az eseteket és ellenőrzi az eredményeket. Végül az Ágens GitHub issue-kat hoz létre MCP-n keresztül.
 
-> **Kísérlet 5-5 ★★: Intelligens Napló Elemzési Csővezeték**
+> **5-8. kísérlet ★★★: Termelési naplók intelligens diagnosztikai rendszere**
 >
-> "Kísérlet Célja": Ellenőrizze, hogy a Kódoló Ágens képes-e intelligens naplóelemzésre a kódgenerálás és a termelési technikák alapján.
+> **Kísérlet Célja**: Ellenőrizze, hogy a Kódoló Ágens képes-e intelligens naplóelemzésre a kódgenerálás és a termelési technikák alapján.
 >
-> "Műszaki Megközelítés": Az Ágens elemzi a termelési trajektóriák halmazát a rendszerarchitektúra dokumentumokkal és PRD-kkel együtt, hogy azonosítsa a problémamintákat és az érintett modulokat. Ezután strukturált problémajelentéseket generál, amelyek a prioritást, a modult, a leírást és az ajánlott fejlesztéseket tartalmazzák. Regressziós teszteket is generál, amelyek a trajektória ID-khoz és interakciós körökhöz vannak kötve; a tesztkeretrendszer visszajátssza ezeket az eseteket és ellenőrzi az eredményeket. Végül az Ágens GitHub issue-kat hoz létre MCP-n keresztül.
+> **Műszaki Megközelítés**: Az Ágens elemzi a termelési trajektóriák halmazát a rendszerarchitektúra dokumentumokkal és PRD-kkel együtt, hogy azonosítsa a problémamintákat és az érintett modulokat. Ezután strukturált problémajelentéseket generál, amelyek a prioritást, a modult, a leírást és az ajánlott fejlesztéseket tartalmazzák. Regressziós teszteket is generál, amelyek a trajektória ID-khoz és interakciós körökhöz vannak kötve; a tesztkeretrendszer visszajátssza ezeket az eseteket és ellenőrzi az eredményeket. Végül az Ágens GitHub issue-kat hoz létre MCP-n keresztül.
 >
 >
 > ![5-7. ábra: Intelligens termelési napló diagnosztikai folyamata](images/fig5-7.svg)
@@ -613,7 +621,7 @@ A hagyományos Ágens rendszerek főként egyszerű szöveges párbeszéden kere
 
 A kódgenerálás kiutat kínál ezekből a korlátokból: az Ágensek dinamikusan generálhatnak űrlapokat, interaktív diagramokat és akár teljes webalkalmazásokat, a statikus szöveges párbeszédet gazdag, multimodális interakcióvá alakítva. Ezt a mintát, ahol az Ágens dinamikusan generálja a felületet, "Generatív UI"-nak nevezzük.
 
-"A2UI-szerű Protokollok: A Generatív UI Szabványosítása."
+**A2UI-szerű Protokollok: A Generatív UI Szabványosítása.**
 
 Ha az Ágenseknek megengedjük, hogy HTML-t és JavaScriptet generáljanak, amelyeket a kliens közvetlenül renderel és hajt végre, az alapvető biztonsági kockázatot teremt: a generált kód rosszindulatú lehet. Például, ha valaki szándékosan elrejt egy utasítást a bemenetben, az Ágens prompt injekció által manipulálható, tudtán kívül olyan szkriptet generálva, amely észrevétlenül lopja el a felhasználó adatait. Itt az ok-okozati lánc számít: a "prompt injekció" — a rosszindulatú utasítások, amelyek az Ágens bemenetébe keverednek — az ok, míg a kapott rosszindulatú szkript böngészőben való végrehajtása és az adatok ellopása a hagyományos webes XSS-hez (Cross-Site Scripting) hasonlít; a támadást összességében nem szabad egyszerűen XSS-nek címkézni. A deklaratív felületi protokollok, mint az A2UI (Agent-to-User Interface), biztonságosabb megközelítést kínálnak. Ahelyett, hogy közvetlenül végrehajtható kódot generálna, az Ágens csak egy JSON "UI leírás manifest"-et ad ki, például "Jeleníts meg egy táblázatot három sorral és két oszloppal, 'Értékesítési Adatok' címmel." A kliens ezután a saját előre meghatározott, biztonságos komponenseit használva rendereli a felületet. Ez olyan, mint egy éttermi étlap: a vendég (Ágens) csak az étlapon szereplő ételeket (előre meghatározott komponenseket) rendelheti meg, nem léphet be a konyhába és készíthet tetszőleges ételeket (hajthat végre tetszőleges kódot). Egy gyakori összetévesztés az AG-UI (Agent-User Interaction, CopilotKit által javasolt). A hasonló név ellenére nem egy UI leíró nyelv, hanem egy "esemény- és szállítási protokoll", amely az Ágens végrehajtási állapotát — üzeneteket, eszközhívásokat és állapotjavításokat — streameli a frontend felé; UI rakományokat is hordozhat, például A2UI manifesteket. A kettő kiegészíti egymást, és nem szabad őket ugyanazon deklaratív felületi kategória példáiként csoportosítani.
 
@@ -621,13 +629,13 @@ Az ilyen protokollok központi tervezési elve a "biztonság első": a kliens fe
 
 Természetesen a deklaratív megközelítés a szabványosított interakciós forgatókönyvekhez (űrlapok, táblázatok, kártyák) alkalmas, míg a magasan testre szabott igényekhez (pl. egyedi vizualizációk, játékfelületek) a közvetlen kódgenerálás marad a rugalmasabb választás. Az alábbiakban mindkét minta konkrét alkalmazásai találhatók.
 
-"Eredmények Leadása HTML-lel: Markdown Jelentések Felváltása." A Generatív UI nem csak az interakció során használatos, hanem az Ágens végső "leadandó termékének" formáját is megváltoztatja. Hagyományosan az Ágens befejez egy feladatot és átad egy Markdown jelentést; de a lineárisan elrendezett Markdown lapozgatása nem kellemes olvasási élmény. Ahogy az Ágensek egyre jobbak a frontend kód generálásában, a gyakorlat afelé tolódik, hogy közvetlenül HTML-t állítsanak elő. A Markdown-hoz képest a HTML leadandóknak több egyértelmű előnye van. Először, az "interaktív bemutatók" lehetővé teszik a felhasználók számára, hogy interaktív formában lássák a rendszer működését, ami gyakran könnyebben érthető első ránézésre, mint a hosszadalmas szöveges leírások. Másodszor, a "jobb adatvizualizáció" lehetővé teszi a felhasználók számára, hogy diagramokon és interaktív vezérlőkön keresztül böngésszenek, szűrjenek és merüljenek el a részletekben. Harmadszor, a "folyamatosan fejleszthető leadandók" lehetővé teszik az Ágens számára, hogy a feladat során folyamatosan frissítse és bővítse a HTML weboldalt ahelyett, hogy csak a végén hozna létre egy statikus artefaktumot.
+**Eredmények Leadása HTML-lel: Markdown Jelentések Felváltása.** A Generatív UI nem csak az interakció során használatos, hanem az Ágens végső "leadandó termékének" formáját is megváltoztatja. Hagyományosan az Ágens befejez egy feladatot és átad egy Markdown jelentést; de a lineárisan elrendezett Markdown lapozgatása nem kellemes olvasási élmény. Ahogy az Ágensek egyre jobbak a frontend kód generálásában, a gyakorlat afelé tolódik, hogy közvetlenül HTML-t állítsanak elő. A Markdown-hoz képest a HTML leadandóknak több egyértelmű előnye van. Először, az "interaktív bemutatók" lehetővé teszik a felhasználók számára, hogy interaktív formában lássák a rendszer működését, ami gyakran könnyebben érthető első ránézésre, mint a hosszadalmas szöveges leírások. Másodszor, a "jobb adatvizualizáció" lehetővé teszi a felhasználók számára, hogy diagramokon és interaktív vezérlőkön keresztül böngésszenek, szűrjenek és merüljenek el a részletekben. Harmadszor, a "folyamatosan fejleszthető leadandók" lehetővé teszik az Ágens számára, hogy a feladat során folyamatosan frissítse és bővítse a HTML weboldalt ahelyett, hogy csak a végén hozna létre egy statikus artefaktumot.
 
 A szerző saját tapasztalata a kutatási cikkek írásában példaként: minden kutatási projekthez a szerző egy interaktív weboldalt[^ch5-4] tart fenn. Ez egyszerre szolgál végső leadandóként és élő dokumentumként a kutatási folyamat során — a szerző az Ágenssel folyamatosan frissítteti, ahogy a kísérletek haladnak. Ez a weboldal legalább három célt szolgál. Először, "kísérleti adatok visszakövethetősége": minden kísérlet specifikus adatai, a használt promptok és az LLM nyers válaszai egyenként ellenőrizhetők az oldalon; mindent nyíltan közzétéve könnyebb észrevenni a problémákat az adatépítésben, a formátumban és az elosztásban, valamint a szisztematikus torzításokat az LLM válaszaiban vagy a bíró pontozásában. Másodszor, "tréning metrika monitorozás": az oldal közvetlenül megjeleníti a tréning görbéket, megkönnyítve a modell "belső egészségügyi metrikáinak" figyelését és annak meghatározását, hogy a tréning folyamat egészséges-e. A kifejezés az orvostudományból kölcsönzött: ezek a tréning folyamat egészségének belső jelei — tréning és validációs veszteség, gradiens norma, tanulási ráta, a modell perplexitása tokenek kibocsátásakor (a modell "biztonságának" mérőszáma a saját kimenetében), és a megerősítéses tanulásban a jutalom, KL divergencia és politikai entrópia. Ezek eltérnek a végső eredménymutatóktól, mint a feladatpontosság: ahogy a fiziológiai értékek egy kivizsgáláson elkülönülnek egy személy külső teljesítményétől, a belső egészségügyi metrikák gyakran sokkal korábban jeleznek problémákat — nem konvergáló veszteség, robbanó gradiensek, tréning összeomlás. Harmadszor, "a rendszer működésének bemutatása": a vizualizációk feltárják, hogyan működik a teljes rendszer, lehetővé téve az olvasók számára, hogy egy pillantással megértsék az AI által épített rendszer struktúráját.
 
 [^ch5-4]: A szerző kutatási projekt weboldala a https://01.me/research/ címen található, ahol minden projekthez tartozik egy folyamatosan frissített interaktív weboldal.
 
-"Felhasználói Szándék Tisztázása."
+**Felhasználói Szándék Tisztázása.**
 
 Amikor a követelmények homályosak vagy hiányosak, az Ágensnek tisztázó kérdéseket kell feltennie a hiányzó információk összegyűjtéséhez. Az olyan termékek, mint az OpenAI Deep Research, jellemzően szöveges Kérdés-Feleleten keresztül teszik ezt, de ennek a megközelítésnek egyértelmű korlátai vannak: hatástalan, mert minden kérdés egy párbeszédkört fogyaszt, így tíz tisztázási ponthoz tíz körre lehet szükség; és rosszul fejezi ki a kérdések közötti függőségeket — például egy utazási cél korlátozza a rendelkezésre álló közlekedési módokat —, amit a puszta szöveg nehezen tud egyértelműen bemutatni.
 
@@ -638,14 +646,14 @@ Kódgeneráláson keresztül az Ágens strukturált interaktív felületeket hoz
 
 > **Kísérlet 5-9 ★★: Szándék Tisztázó Rendszer Dinamikus Űrlapokkal**
 >
-> "Kísérlet Célja": Annak ellenőrzése, hogy az Ágens képes-e tisztázni a felhasználói szándékot dinamikusan generált HTML űrlapok segítségével.
+> **Kísérlet Célja**: Annak ellenőrzése, hogy az Ágens képes-e tisztázni a felhasználói szándékot dinamikusan generált HTML űrlapok segítségével.
 >
-> "Műszaki Megközelítés": Az Ágens elemzi a felhasználó kérését, azonosítja a tisztázási pontokat, és űrlapkódot generál lépcsőzetes logikával. A frontend rendereli, a felhasználó egyszer elküldi, az Ágens elemzi a JSON adatokat, és folytatja a feladatot.
+> **Műszaki Megközelítés**: Az Ágens elemzi a felhasználó kérését, azonosítja a tisztázási pontokat, és űrlapkódot generál lépcsőzetes logikával. A frontend rendereli, a felhasználó egyszer elküldi, az Ágens elemzi a JSON adatokat, és folytatja a feladatot.
 >
-> "Elfogadási Kritérium": A felhasználó bemenete: "Pekingbe szeretnék repülőjegyet foglalni." Az Ágens egy űrlapot generál a következő mezőkkel: indulási város (szöveges bevitel), indulási dátum (dátumválasztó), út típusa (rádiógombok egy- vagy oda-vissza útra) és visszaút dátuma (csak oda-vissza út kiválasztásakor jelenik meg). A felhasználó egyszerre küldi el az összes információt.
+> **Elfogadási Kritérium**: A felhasználó bemenete: "Pekingbe szeretnék repülőjegyet foglalni." Az Ágens egy űrlapot generál a következő mezőkkel: indulási város (szöveges bevitel), indulási dátum (dátumválasztó), út típusa (rádiógombok egy- vagy oda-vissza útra) és visszaút dátuma (csak oda-vissza út kiválasztásakor jelenik meg). A felhasználó egyszerre küldi el az összes információt.
 >
 
-"SQL Lekérdezések Generálása."
+**SQL Lekérdezések Generálása.**
 
 Az adatbázis-lekérdezés egy olyan forgatókönyv, ahol a kódgenerálás jelentősen javíthatja az interakciós élményt. A hagyományos adatbázis-elérés GUI eszközökre vagy kézzel írt SQL-re támaszkodik; az előbbi nehézkesen kezelhető, az utóbbi speciális tudást igényel a felhasználótól. Egy Ágens lefordíthatja a természetes nyelvet SQL-re, de van egy kulcsfontosságú tervezési választás: az Ágens hajtsa-e végre a lekérdezést és írja le az eredményeket természetes nyelven, vagy generálja az SQL-t artefaktumként a rendszer számára a végrehajtáshoz és a frontend számára a megjelenítéshez?
 
@@ -676,7 +684,7 @@ Továbbmenve, az Ágens két artefaktumot generálhat, amelyek egy csővezetéke
 > 10. Vannak-e esetek kifizetetlen bérekre (alkalmazottak, akik egy adott hónapban alkalmazásban álltak, de nincs fizetési rekordjuk arra a hónapra)?
 >
 
-"Szoftver Dinamikus Generálása."
+**Szoftver Dinamikus Generálása.**
 
 A kódgenerálás végső alkalmazása, hogy az Ágens teljesen dinamikusan, a semmiből hozzon létre szoftvert. Az Anthropic "Imagine with Claude" szolgáltatása jelöli ki a határvonalat: a felhasználó kérést tesz, Claude valós időben generálja a frontend felületet és az interakciós logikát, a felhasználó interakcióba lép a generált szoftverrel, Claude pedig módosítja a kódot, hogy új felületet hozzon létre az eredmények megjelenítéséhez. A felhasználó egy alkalmazást lát a semmiből létrejönni és folyamatosan fejlődni.
 
@@ -684,9 +692,9 @@ A teljesen dinamikus generálás azonban költséges és lassú — inkább a le
 
 > **Kísérlet 5-11 ★★: Beszélgetéses Felület Testreszabási Rendszer**
 >
-> "Kísérlet Célja": Lehetővé tenni a felhasználók számára a szoftverfelület azonnali testreszabását természetes nyelvű párbeszéden keresztül, és kiértékelni, hogy a kódgenerálás gyors újratöltéssel hatékonyan tud-e személyre szabott felhasználói élményeket nyújtani.
+> **Kísérlet Célja**: Lehetővé tenni a felhasználók számára a szoftverfelület azonnali testreszabását természetes nyelvű párbeszéden keresztül, és kiértékelni, hogy a kódgenerálás gyors újratöltéssel hatékonyan tud-e személyre szabott felhasználói élményeket nyújtani.
 >
-> "Műszaki Megközelítés": Építs egy alap chatbot alkalmazást (React frontend és FastAPI backend), és futtasd mindkét komponenst fejlesztői módban, gyors újratöltéssel (React HMR és FastAPI reload). A felhasználók UI testreszabási követelményeket (színek, betűtípusok, elrendezés, komponenspozíciók stb.) javasolnak a beszélgetés során. Az Ágens önállóan módosítja a kódot. A gyors újratöltési mechanizmus automatikusan érzékeli a fájlváltozásokat, a frontend újrafordít és frissül, a felhasználó valós időben látja a felület változásait. A rendszer több körös iteratív testreszabást támogat.
+> **Műszaki Megközelítés**: Építs egy alap chatbot alkalmazást (React frontend és FastAPI backend), és futtasd mindkét komponenst fejlesztői módban, gyors újratöltéssel (React HMR és FastAPI reload). A felhasználók UI testreszabási követelményeket (színek, betűtípusok, elrendezés, komponenspozíciók stb.) javasolnak a beszélgetés során. Az Ágens önállóan módosítja a kódot. A gyors újratöltési mechanizmus automatikusan érzékeli a fájlváltozásokat, a frontend újrafordít és frissül, a felhasználó valós időben látja a felület változásait. A rendszer több körös iteratív testreszabást támogat.
 
 A dinamikus szoftver rugalmasságával együtt a hagyományos biztonsági feltevést is megváltoztatja. Korábban az alkalmazás üzleti kódját fejlesztették, felülvizsgálták, tesztelték és telepítették, majd viszonylag stabil maradt; ezért az engedélyezési ellenőrzések többnyire az alkalmazási rétegben helyezkedtek el. Ha egy Ágens bármikor generálhatja vagy átírhatja a felületeket, a munkafolyamatokat, sőt az adatelérési kódot is, ez a réteg többé nem stabil. Az új kód kihagyhat egy finom ellenőrzést, felfedhet egy korábban rejtett mezőt, vagy egy másik hívási útvonalon megkerülhet egy meglévő ellenőrzést. Akár egyszerű generálási hiba, akár promptinjekció után létrehozott veszélyes kód az ok, az eredmény ugyanaz: az üzleti kód által fenntartani kívánt jogosultsági határ észrevétlenül sérülhet.
 
@@ -714,13 +722,13 @@ Először is tisztázni kell ennek a szakasznak a 8. fejezettel való munkamegos
 ![5-10. ábra: Az ágens önindítási ciklusa](images/fig5-10.svg)
 
 
-"Ágens Önjavítás: OpenClaw Doctor."
+**Ágens Önjavítás: OpenClaw Doctor.**
 
 Az Ágens bootstrapping egyik kulcsfontosságú előfeltétele az önjavítás képessége. Az OpenClaw `doctor` parancsa ezt a képességet testesíti meg — automatikusan képes háromféle probléma érzékelésére:
 
-- "Konfigurációs anomáliák": Lejárt OAuth tokenek, örökölt konfigurációs formátumok, port ütközések
-- "Állapot problémák": Elavult kapcsolati zárfájlok, hiányzó plugin függőségek
-- "Szolgáltatás állapot problémák": Gateway nem fut, hiányzó sandbox képek
+- **Konfigurációs anomáliák**: Lejárt OAuth tokenek, örökölt konfigurációs formátumok, port ütközések
+- **Állapot problémák**: Elavult kapcsolati zárfájlok, hiányzó plugin függőségek
+- **Szolgáltatás állapot problémák**: Gateway nem fut, hiányzó sandbox képek
 
 Ezután automatikusan megoldja őket egy réteges javítási stratégiával: a biztonságos javítások (konfiguráció normalizálása, zárfájlok tisztítása) automatikusan végrehajtódnak; a kockázatos műveletek (szolgáltatás újraindítások, kényszerített konfiguráció felülírások) felhasználói megerősítést igényelnek.
 
@@ -730,10 +738,10 @@ Ne túlozzuk el: a gyakori problémák, mint a lejárt tokenek, elavult zárfáj
 
 Egy kiváló minőségű Ágens létrehozása sokkal nehezebb, mint hétköznapi alkalmazáskód generálása, mert az Ágens architektúra minták, legjobb gyakorlatok és gyakori buktatók mély megértését igényli. E területi szakértelem nélkül még a legerősebb kódgeneráló modellek is súlyos architekturális hibákkal rendelkező Ágenseket produkálnak. Gyakori hibák:
 
-1. "Ad hoc kontextuskezelés": A 2. fejezetben tárgyalt szabványos kontextusformátum használatának elmulasztása, a trajektóriák egyszerű szövegként való bedobása a kontextusba, a strukturált üzenetekből származó KV Cache optimalizációk figyelmen kívül hagyása, és határfeltételi hibák bevezetése az eszközhívási ciklusokban
-2. "Nem szabványos eszköztervezés": Homályos leírások, hiányzó használati határ utasítások és negatív listák, paraméterek konkrét példák nélkül
-3. "Elavult technológiai választások": Hajlam a tréning adatokból származó leggyakoribb, de elavult modellek és API-k használatára. Megoldás: Tartson fenn egy SOTA tudásbázist, vagy szerelje fel az Ágenst keresési képességgel
-4. "Elszakadás a külső ökoszisztémától": Elavult API-k, nem karbantartott könyvtárak vagy hibás minták használata
+1. **Ad hoc kontextuskezelés**: A 2. fejezetben tárgyalt szabványos kontextusformátum használatának elmulasztása, a trajektóriák egyszerű szövegként való bedobása a kontextusba, a strukturált üzenetekből származó KV Cache optimalizációk figyelmen kívül hagyása, és határfeltételi hibák bevezetése az eszközhívási ciklusokban
+2. **Nem szabványos eszköztervezés**: Homályos leírások, hiányzó használati határ utasítások és negatív listák, paraméterek konkrét példák nélkül
+3. **Elavult technológiai választások**: Hajlam a tréning adatokból származó leggyakoribb, de elavult modellek és API-k használatára. Megoldás: Tartson fenn egy SOTA tudásbázist, vagy szerelje fel az Ágenst keresési képességgel
+4. **Elszakadás a külső ökoszisztémától**: Elavult API-k, nem karbantartott könyvtárak vagy hibás minták használata
 
 A leghatékonyabb út ezeknek a problémáknak a megoldására nem az összes szabály kimerítő felsorolása a promptban, hanem **kiváló minőségű Ágens implementációk biztosítása referenciaként**, amelyek a kódgeneráló Ágenst arra irányítják, hogy ezeket módosítsa, ahelyett, hogy a semmiből kezdené.
 
@@ -743,11 +751,11 @@ Amikor egy Ágens feladatot kap egy új Ágens kifejlesztésére, először más
 
 > **Kísérlet 5-13 ★★★: Fejlessz Egy Ágenst, Amely Képes Ágenseket Létrehozni**
 >
-> "Kísérlet Célja": Építs egy Kódoló Ágenst metaprogramozási képességekkel — olyan képességgel, hogy olyan programokat írjon, amelyek más programokat generálnak vagy módosítanak —, hogy automatikusan létre tudjon hozni új Ágens rendszereket a felhasználói követelményekből, miközben betartja a legjobb gyakorlatokat.
+> **Kísérlet Célja**: Építs egy Kódoló Ágenst metaprogramozási képességekkel — olyan képességgel, hogy olyan programokat írjon, amelyek más programokat generálnak vagy módosítanak —, hogy automatikusan létre tudjon hozni új Ágens rendszereket a felhasználói követelményekből, miközben betartja a legjobb gyakorlatokat.
 >
-> "Műszaki Megközelítés": Biztosíts a Kódoló Ágens számára kiváló minőségű Ágens implementációkat referenciaként (a ch5/coding-agent projekt maga is használható). Amikor az a feladata, hogy új Ágenst hozzon létre, az Ágens először másolja le ezt a példakódot, majd végezzen célzott módosításokat a felhasználó specifikus igényei alapján.
+> **Műszaki Megközelítés**: Biztosíts a Kódoló Ágens számára kiváló minőségű Ágens implementációkat referenciaként (a ch5/coding-agent projekt maga is használható). Amikor az a feladata, hogy új Ágenst hozzon létre, az Ágens először másolja le ezt a példakódot, majd végezzen célzott módosításokat a felhasználó specifikus igényei alapján.
 >
-> "Elfogadási Kritérium": A generált Ágens sikeresen fut és alapvető feladatokat hajt végre. Ellenőrizze, hogy szabványos üzenetformátumokat és eszközhívási protokollokat, jelenleg ajánlott modelleket és API-kat, valamint helyes kontextus- és állapotkezelést használ-e több beszélgetési körön keresztül. Hasonlítsa össze a semmiből generálást a példa alapú módosítással, és erősítse meg, hogy az utóbbi javítja a minőséget és a hatékonyságot.
+> **Elfogadási Kritérium**: A generált Ágens sikeresen fut és alapvető feladatokat hajt végre. Ellenőrizze, hogy szabványos üzenetformátumokat és eszközhívási protokollokat, jelenleg ajánlott modelleket és API-kat, valamint helyes kontextus- és állapotkezelést használ-e több beszélgetési körön keresztül. Hasonlítsa össze a semmiből generálást a példa alapú módosítással, és erősítse meg, hogy az utóbbi javítja a minőséget és a hatékonyságot.
 >
 >
 > ![5-11. ábra: Ágenseket létrehozó ágens folyamata](images/fig5-11.svg)
@@ -764,12 +772,12 @@ A Harness mérnökség szakasz egy központi következtetésre jutott: a Kódol�
 
 A második rész a kódgenerálás széleskörű értékét mutatta be a programozáson túl, ami a fő szöveg hat dimenziójának felel meg:
 
-- "Gondolkodási Eszköz": Szimbolikus számítás és kényszermegoldás kihasználása a valószínűségi gondolkodás hiányosságainak kompenzálására
-- "Üzleti Szabályok Korlátozása": Üzleti szabályok egyértelmű kifejezése és determinisztikus biztonsági háló biztosítása visszafordíthatatlan műveletekhez, ahol a garancia értéke messze meghaladja a megvalósítás költségét
-- "Multimédia Generálás": Multimédiás tartalmak, például PPT-k és videók létrehozása egy Proposer-Reviewer mechanizmuson keresztül
-- "Rendszer Adapter": Formátumfejlődés automatikus követése a naplóelemzés és probléma-diagnosztika teljes automatizálásának eléréséhez
-- "Generatív UI": Űrlapok, vizualizációk és akár teljes testreszabható alkalmazások dinamikus létrehozása, a puszta szöveg korlátainak megtörése
-- "Ágens Bootstrapping": Kód használata meglévő Ágensek javítására és újak létrehozására, végső soron lehetővé téve, hogy egy Ágens más Ágenseket hozzon létre
+- **Gondolkodási Eszköz**: Szimbolikus számítás és kényszermegoldás kihasználása a valószínűségi gondolkodás hiányosságainak kompenzálására
+- **Üzleti Szabályok Korlátozása**: Üzleti szabályok egyértelmű kifejezése és determinisztikus biztonsági háló biztosítása visszafordíthatatlan műveletekhez, ahol a garancia értéke messze meghaladja a megvalósítás költségét
+- **Multimédia Generálás**: Multimédiás tartalmak, például PPT-k és videók létrehozása egy Proposer-Reviewer mechanizmuson keresztül
+- **Rendszer Adapter**: Formátumfejlődés automatikus követése a naplóelemzés és probléma-diagnosztika teljes automatizálásának eléréséhez
+- **Generatív UI**: Űrlapok, vizualizációk és akár teljes testreszabható alkalmazások dinamikus létrehozása, a puszta szöveg korlátainak megtörése
+- **Ágens Bootstrapping**: Kód használata meglévő Ágensek javítására és újak létrehozására, végső soron lehetővé téve, hogy egy Ágens más Ágenseket hozzon létre
 
 A kód értéke az Ágens számára erre redukálódik: egyszerre eszköz a feladatok elvégzésére és mechanizmus a tudás felhalmozására, eszközök létrehozására és önfejlesztésre — egy igazi "meta-képesség."
 

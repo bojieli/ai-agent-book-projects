@@ -303,14 +303,7 @@ Focusing solely on the final outcome is insufficient; the process by which the A
 - **Pass^k**: The probability that **all** k attempts succeed, answering "Is the Agent stable and reliable?"
 - **Best@k**: The score of the **best** of k attempts (rather than whether it succeeded), measuring the "quality ceiling given enough opportunities," often used for open-ended tasks with continuous scoring.
 
-A concrete number makes the difference vivid. Suppose the Agent's single-attempt success rate is 60% (Pass@1 = 0.6). Over 5 attempts: Pass@5 = 1 - 0.4^5 ≈ 99% (almost certain to succeed at least once), while Pass^5 = 0.6^5 ≈ 7.8% (all five succeeding is unlikely). The former measures the capability ceiling, the latter stability; confuse them and you will misread your Agent. Table 6-3 summarizes the applicable scenarios and risks of misuse for both, helping readers choose the correct metric between regression testing and exploratory evaluation.
-
-Table 6-3 Applicable Scenarios for Pass@k and Pass^k
-
-| Evaluation Purpose | Which Metric to Use | Consequence of Misuse |
-|----------------------------------|---------------|-----------------------------------------------|
-| Verify stability (regression testing) | Pass^k | Using Pass@k masks instability—an Agent succeeding only once in five attempts would still show as "pass" |
-| Evaluate capability ceiling (exploratory tasks) | Pass@k or Best@k | Using Pass^k would incorrectly flag failures due to occasional fluctuations—every small change would be judged a failure |
+A concrete number makes the difference vivid. Suppose the Agent's single-attempt success rate is 60% (Pass@1 = 0.6). Over 5 attempts: Pass@5 = 1 - 0.4^5 ≈ 99% (almost certain to succeed at least once), while Pass^5 = 0.6^5 ≈ 7.8% (all five succeeding is unlikely). The former measures the capability ceiling, the latter stability; confuse them and you will misread your Agent.
 
 **Safety and Compliance Metrics** are crucial in production deployment: triggering sensitive operations (deleting data / modifying permissions / sending external communications), data leakage (printing passwords in logs / sending private documents to external APIs), and prohibited content should all be subject to a **zero-tolerance principle**—similar to the hallucination veto (see the "Four Rubric Principles" later). A single serious safety violation vetoes the overall evaluation, regardless of performance in other dimensions.
 
@@ -603,9 +596,9 @@ The cost of an Agent system can be decomposed into three levels:
 
 **Infrastructure cost** covers operational overhead for vector databases (used for RAG retrieval), message queues, relational databases, and logging and tracing storage (for observability).
 
-To see where these costs actually come from, the companion experiment used a fixed eight-turn refund workflow: query the order, logistics, refund policy, and knowledge base, then perform risk checks, issue the refund, notify the user, and close the case. Real gpt-4o-mini calls were run under all four combinations of two switches: stable versus unstable prefixes, and full versus compressed history. The business workflow was identical in every arm. Table 6-5 uses the recorded token counts and prices from that run.
+To see where these costs actually come from, the companion experiment used a fixed eight-turn refund workflow: query the order, logistics, refund policy, and knowledge base, then perform risk checks, issue the refund, notify the user, and close the case. Real gpt-4o-mini calls were run under all four combinations of two switches: stable versus unstable prefixes, and full versus compressed history. The business workflow was identical in every arm. Table 6-4 uses the recorded token counts and prices from that run.
 
-Table 6-5 Measured Cost of the Eight-Turn Agent Workflow
+Table 6-4 Measured Cost of the Eight-Turn Agent Workflow
 
 | Configuration | Input Tokens | Cached Tokens | Total Cost | Savings vs. Baseline |
 |---|---:|---:|---:|---:|
@@ -746,9 +739,9 @@ Across all three rounds, the model, task parameters, seed, step limit, and emula
 
 ### From Results to Decisions: Data-Driven Trade-offs
 
-Table 6-6 summarizes the measured results. With only four tasks per arm, these numbers can decide whether a larger rerun is worthwhile; they cannot estimate success across AndroidWorld.
+Table 6-5 summarizes the measured results. With only four tasks per arm, these numbers can decide whether a larger rerun is worthwhile; they cannot estimate success across AndroidWorld.
 
-Table 6-6 Three Rounds on the AndroidWorld Wi-Fi Slice
+Table 6-5 Three Rounds on the AndroidWorld Wi-Fi Slice
 
 | Experiment | Only Change | Control → Treatment Success | Treatment / Control Tokens | Next Step |
 |---|---|---:|---:|---|

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 500" width="880" height="500" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="120" y="55" width="640" height="35" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="135" y="73" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">작업: Xfinity 요금제 변경 | 결함: 청구지 주소 누락 + 요금제 이름 오류</text>
+<rect x="37.5" y="100" width="190" height="36" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="132.5" y="118" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">스칼라</text>
+<rect x="37.5" y="146" width="190" height="210" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="47.5" y="165" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"></text>
+<text x="47.5" y="191" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  7.2점</text>
+<text x="47.5" y="217" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"></text>
+<text x="47.5" y="243" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">─────────</text>
+<text x="47.5" y="269" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">진단 능력 없음</text>
+<text x="47.5" y="295" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">무엇을 잘하고</text>
+<text x="47.5" y="321" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">못했는지 모름</text>
+<line x1="229.5" y1="250" x2="240.5" y2="250" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="242.5" y="100" width="190" height="36" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="337.5" y="118" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">준스칼라</text>
+<rect x="242.5" y="146" width="190" height="210" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="252.5" y="165" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">장점: 정확한 전화번호 확인</text>
+<text x="252.5" y="191" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">장점: 변경 완료</text>
+<text x="252.5" y="217" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">결함: 청구지 주소 누락</text>
+<text x="252.5" y="243" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">결함: 요금제 이름 오류</text>
+<text x="252.5" y="269" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">─────────</text>
+<text x="252.5" y="295" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">종합: 6.5점</text>
+<text x="252.5" y="321" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">(근거는 있지만 거친 평가)</text>
+<line x1="434.5" y1="250" x2="445.5" y2="250" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="447.5" y="100" width="190" height="36" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="542.5" y="118" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">벡터</text>
+<rect x="447.5" y="146" width="190" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="457.5" y="165" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">정보 조회 정확성 9/10</text>
+<text x="457.5" y="191" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">정보 수집 완전성 6/10</text>
+<text x="457.5" y="217" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">소통 유창성     8/10</text>
+<text x="457.5" y="243" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">소통 정확성     7/10</text>
+<text x="457.5" y="269" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">사용자 소통 정확성 10/10</text>
+<text x="457.5" y="295" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">전체 작업 완료도 8/10</text>
+<text x="457.5" y="321" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">─────────</text>
+<text x="457.5" y="343" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">약점 정확히 파악 ↑</text>
+<line x1="639.5" y1="250" x2="650.5" y2="250" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="652.5" y="100" width="190" height="36" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="747.5" y="118" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">생성형</text>
+<rect x="652.5" y="146" width="190" height="210" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="662.5" y="165" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">관점1: 정확한 도구 사용</text>
+<text x="662.5" y="191" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">관점2: 정보 수집 누락</text>
+<text x="662.5" y="217" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">관점3: 요금제명 전달</text>
+<text x="662.5" y="243" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  오류→그대로 전달 제안</text>
+<text x="662.5" y="269" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">관점4: 정보 용도 미설명</text>
+<text x="662.5" y="295" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">관점5: 상담원 신원 미확인</text>
+<text x="662.5" y="321" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">→ 6-7가지 분석 관점</text>
+<line x1="132.5" y1="368" x2="747.5" y2="368" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="440.0" y="388" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">정보량 증가 →</text>
+<rect x="60" y="405" width="760" height="55" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="80" y="420" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">DeepSeek 실험: 생성형 평가 8회에서 6-7가지 분석 관점 도출</text>
+<text x="80" y="442" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">종합적 다각도 진단 후 크게 개선(예시) — 한 번의 실패에서 개선 방향 학습</text>
+<rect x="60" y="475" width="760" height="45" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="440.0" y="498" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">생성형 보상: 풍부한 환경 피드백을 수백 번 시행착오 없이 학습 가능한 지식으로 전환</text>
+</svg>

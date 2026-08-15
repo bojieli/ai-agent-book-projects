@@ -107,6 +107,8 @@ Realtime speech API nằm giữa cascade và Omni: mô hình xử lý âm thanh 
 > **Thử nghiệm 9-3 ★★: Chạy MiniCPM-o 4.5 cục bộ — end-to-end so với self-cascade**
 >
 > Cố định một revision cục bộ, tắt chế độ suy nghĩ, rồi so sánh câu trả lời trực tiếp từ audio với self-cascade (transcribe trước, trả lời từ transcript sau). Đo khả năng giữ thông tin âm thanh, **không** đo khả năng “vừa nói vừa suy nghĩ” về sau.
+> Bảng 9-1 Kết quả chạy MiniCPM-o 4.5 cục bộ: end-to-end so với tự xếp tầng (bốn phép kiểm tra cơ chế, không phải benchmark)
+>
 >
 > | Loại nhiệm vụ | End-to-end | Self-cascade | Quan sát |
 > | --- | ---: | ---: | --- |
@@ -136,7 +138,31 @@ Mô hình tiền cảnh phải trả lời khi người dùng còn chờ; mô h�
 | Tương tác nhanh, lời khuyên chậm | Giữ mạch hội thoại và chọn cách nói | Lời khuyên hoặc kết quả công cụ | Giao diện hạn chế |
 | Hợp nhất suy nghĩ và biểu đạt | Vừa suy nghĩ vừa nói | Chia sẻ trạng thái mô hình | Chi phí huấn luyện và thay thế cao |
 
-Giải pháp đầu có thể xử lý câu hỏi hai lần và tự mâu thuẫn. Giải pháp hai ổn định hơn nhờ gửi lời khuyên qua status bar, nhưng tiền cảnh không thấy suy luận trung gian và không thực sự suy nghĩ trong khi nói. Giải pháp ba hợp nhất hai quá trình. Trong Step-Audio R1, MGRD neo suy luận vào đặc trưng âm học, còn kiến trúc hai não MPS cho phép lập kế hoạch và biểu đạt chạy song song (Hình 9-5 và 9-6). Mô hình hợp nhất tự nhiên hơn; thiết kế tách rời dễ thay “bộ não” nền hơn.
+#### Giải pháp 1: nghĩ nhanh để lấp chỗ, nghĩ chậm để trả lời
+
+Nghĩ nhanh có thể đưa ra một câu đáp lấp chỗ trong vài trăm mili giây, còn nghĩ chậm hoàn tất suy luận sâu hơn ở nền. Vấn đề của nó là câu hỏi đơn giản bị xử lý hai lần, còn câu hỏi phức tạp có thể sinh mâu thuẫn: mô hình nhanh khuyên mua, mô hình chậm sau đó phát hiện gói cước thiếu một tính năng then chốt, và chỉ trong vài giây người dùng nghe hai câu trả lời trái ngược. Nguyên nhân gốc là hai thực thể mỗi bên đã tự suy nghĩ một cách độc lập.
+
+
+![Hình 9-5: Kiến trúc nghĩ nhanh/nghĩ chậm và so sánh các giải pháp](images/fig9-5.svg)
+
+
+#### Giải pháp 2: nghĩ nhanh để tương tác, nghĩ chậm để nhắc
+
+Giải pháp hai để mô hình nền đưa gợi ý cho mô hình tiền cảnh qua thanh trạng thái hoặc một giao diện chuyên dụng, còn tiền cảnh tiếp tục giữ mạch hội thoại và quyết định cách diễn đạt. Nó ổn định hơn giải pháp một, nhưng giao tiếp vẫn gián tiếp: tiền cảnh có thể hiểu sai gợi ý và không thấy được suy luận trung gian của nền; trước khi nền hoàn tất, nếu người dùng hỏi thêm thì tiền cảnh chỉ có thể dựa vào năng lực của chính nó. Nó có thể "chờ kết quả" một cách tự nhiên, nhưng không thực sự vừa nghĩ vừa nói được.
+
+#### Giải pháp 3: hợp nhất suy nghĩ và biểu đạt end-to-end (lấy Step-Audio R1 làm ví dụ)
+
+Giải pháp ba đưa năng lực suy nghĩ vào thẳng bên trong mô hình âm thanh end-to-end. Step-Audio R1 dùng hai cơ chế bổ trợ để giải hai bài toán: **chưng cất suy nghĩ neo theo phương thức (MGRD)** khiến mô hình suy nghĩ dựa trên đặc trưng âm học, còn **kiến trúc song não MPS** cho phép hình thành ý và biểu đạt chạy song song. Cái trước bảo đảm "nghĩ đúng", cái sau giải quyết "nói kịp lúc".
+
+Lý tưởng nhất, mô hình nên đánh giá cảm xúc từ cao độ, nhịp điệu và ngữ điệu, chứ không chỉ nhìn văn bản đã chuyển tự. Cái gọi là "suy nghĩ thay thế bằng văn bản" là khi mô hình dùng những từ tiêu cực trong lời bài hát để thay cho việc phân tích giai điệu và đặc trưng âm học. MGRD lọc ra những chuỗi suy nghĩ thật sự viện dẫn đặc trưng âm học, rồi dùng dữ liệu đó huấn luyện mô hình, đồng thời dùng học tăng cường để ngăn mô hình bỏ qua suy nghĩ mà đoán thẳng đáp án.
+
+MPS khiến não hình thành ý liên tục sinh ra các mảnh suy nghĩ; não biểu đạt nhận được mảnh nào thì kết hợp ngay với phần đã trả lời để sinh tiếng nói. Hai bên chạy song song theo kiểu đường ống, nên không cần chờ toàn bộ suy nghĩ kết thúc mới cho người dùng nghe câu đầu tiên (Hình 9-6).
+
+
+![Hình 9-6: Kiến trúc song não MGRD và MPS của Step-Audio R1](images/fig9-6.svg)
+
+
+Mô hình hợp nhất hiện thực hoá "vừa nghĩ vừa nói" chặt chẽ nhất, cái giá là suy nghĩ và biểu đạt thời gian thực phải huấn luyện lại cùng nhau; hướng tách rời dễ thay não nền hơn, còn hướng hợp nhất phù hợp hơn với những kịch bản chuyên biệt theo đuổi độ tự nhiên tối đa. Hai bên là một đánh đổi, không đơn giản thay thế lẫn nhau.
 
 ### Tổng hợp giọng nói giống con người hơn
 

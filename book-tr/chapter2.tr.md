@@ -817,6 +817,14 @@ Context yönetimi açısından Skills mekanizması KV Cache ile son derece uyuml
 > **Kabul Kriterleri**: Üretilen PowerPoint, makalenin ana içeriğini kapsar (başlık sayfası, problem arka planı, yöntem genel bakışı, temel sonuçlar, sonuç), makaleden çıkarılan ve metin açıklamalarıyla tutarlı en az 3 şekil içerir ve PowerPoint veya uyumlu yazılımda düzgün açılan doğru biçimlendirmeye sahiptir.
 >
 
+> **Deney 2-7 ★★: Kişisel Örnek Metinlerden "Yapay Zekâ Kokusu Olmayan" Bir Yazma Skill'i Oluşturma**
+>
+> **Deney Amacı**: az sayıda insan eliyle yazılmış örnek metinden yüklenebilir ve denetlenebilir bir yazma Skill'i üretmek ve bunun yeni yazılarda yazarın başlıca anlatım tercihlerini yeniden üretip üretemediğini gözlemlemek.
+>
+> **Deney Açıklaması**: üç ila beş özgün yazı hazırlayın ve Agent Skills destekleyen bir çalışma ortamının `SKILL.md` dosyasının ilk sürümünü üretmesini sağlayın; yeni bir konu seçip taslak yazın, yazar elle düzelttikten sonra before/after karşılaştırması yapıp kararlı örüntüleri Skill'e geri yazın. Kabul için yalnızca Skill'in açık tetikleme koşullarına, örneklerle desteklenmiş üç ila beş ilkeye, bir kapsama ve istisnalara sahip olması aranır; tek bir öznel yargı genel kural hâline getirilmemelidir.
+>
+> **Bu Deney Neyi Gösteriyor**: Skill'in değeri, kişisel deneyimi gerektiğinde yüklenen talimatlara dışsallaştırmasındadır. Kısa, okunabilir ve gerçek bir görevde sınanabilen bir ilk sürüm, en baştan onlarca kural sıralamaktan daha iyi bir yineleme başlangıç noktasıdır.
+
 ## Agent Durum Çubuğu: Meta Bilgiyle Agent Trajectory Yönetimini Güçlendirmek
 
 ![Şekil 2-14: Agent Durum Çubuğu Mimarisi](images/fig2-14.svg)
@@ -848,7 +856,7 @@ Ayrıca, uzun context senaryolarında modelin attention kaynakları sınırlıd�
 
 Agent Durum Çubuğu, attention tahsisini açıkça manipüle ederek bu sorunu ele alır. Kilit meta bilgiyi context'in sonuna yapılandırılmış bir formatta yerleştirdiğimizde, bu bilgi modelin üretmek üzere olduğu yeni token'lara mekânsal olarak daha yakın olur, böylece daha yüksek attention ağırlıkları alır—bu bir tür "zorunlu attention yönlendirmesidir".
 
-> **Deney 2-7 ★★: Attention Görselleştirmesi Yoluyla Agent Durum Çubuğunun Etkisini Doğrulamak**
+> **Deney 2-8 ★★: Attention Görselleştirmesi Yoluyla Agent Durum Çubuğunun Etkisini Doğrulamak**
 >
 > `attention_visualization` projesine dayanarak, bir müşteri hizmetleri Agent'ının bir iade talebini ele aldığı kontrollü bir deney tasarladık. Agent, web aramalarıyla iç içe geçmiş biçimde Xfinity'yi zaten 3 kez aradı. Kullanıcı sorar: "Takip için onları tekrar arayabilir misin?"
 >
@@ -867,7 +875,7 @@ Agent Durum Çubuğu, attention tahsisini açıkça manipüle ederek bu sorunu e
 > Attention, durum çubuğu bilgisi üzerinde yoğun biçimde toplanır. Düşünme süreci, artık ham veriden istatistik çıkarmak yerine doğrudan zaten damıtılmış bilgiyi kullanır. Qwen3-0.6B gibi küçük bir model için, Kontrol Grubu A sıklıkla kısıtı ihlal edip aramaya devam ederken, Kontrol Grubu B kısıta istikrarlı biçimde uyar.
 >
 
-Deney 2-7, sezgi sağlayan küçük ölçekli nitel bir gösterimdir. “Önceden hesapla, doğrudan göz at” yaklaşımının ne kadar yararlı olduğunu ve sınırlarını ölçmek için yazar ve iş birlikçileri özel bir benchmark kullandı[^ch2-7] (bu yaklaşımın ortak adı **Context Distillation**'dır; Agent Durum Çubuğu onun en gündelik biçimidir). Sonuçlar:
+Deney 2-8, sezgi sağlayan küçük ölçekli nitel bir gösterimdir. “Önceden hesapla, doğrudan göz at” yaklaşımının ne kadar yararlı olduğunu ve sınırlarını ölçmek için yazar ve iş birlikçileri özel bir benchmark kullandı[^ch2-7] (bu yaklaşımın ortak adı **Context Distillation**'dır; Agent Durum Çubuğu onun en gündelik biçimidir). Sonuçlar:
 
 - Modele **önceden hesaplanmış bir durum çubuğu** verildiğinde, **zayıf modeller doğruluğu geri kazanır**. En zayıf modeller 40–54 yüzde puanı iyileşti; yerel bir 2B model bu görevlerde durum çubuğu olmayan öncü bir modele yetişti.
 - **Güçlü modeller zaten doğru yanıt verir; kazançları verimliliktir.** Aynı durum çubuğu sorgu başına düşünme miktarını, gecikmeyi ve maliyeti yaklaşık bir büyüklük mertebesi azaltır (düşünme token'larını %80–90 veya daha fazla düşürür).
@@ -941,7 +949,7 @@ Seçim; trajectory uzunluğuna, durumun boyutuna, güncellemeler arasında eklen
 
 Yaklaşık bir model başa baş noktasını gösterir. Her durumun $S$ token içerdiğini, güncellemeler arasında $R$ token eklendiğini, beklenen güncelleme sayısının $N$ olduğunu ve önbellekli girdi maliyetinin normal girdinin $\alpha$ katı olduğunu varsayalım. İki yöntemde ortak maliyetleri göz ardı edersek, $C_{\text{değiştirme}} \approx (N-1)(1-\alpha)R$ ve $C_{\text{ekleme}} \approx \alpha S N(N-1)/2$ olur. Bu nedenle $\alpha SN/2 < (1-\alpha)R$ olduğunda Uygulama 2, aksi durumda Uygulama 1 tercih edilir. Bu tahmin context kullanımını ve eski durumlardan kaynaklanan belirsizliği içermez; son seçimde sağlayıcının önbellek fiyatları ve ölçülen isabet oranı da dikkate alınmalıdır.
 
-> **Deney 2-8 ★★: Birkaç Yararlı Agent Durum Çubuğu Tekniği**
+> **Deney 2-9 ★★: Birkaç Yararlı Agent Durum Çubuğu Tekniği**
 >
 > `agent-status-bar` deneysel çerçevesi, her biri bağımsız olarak etkinleştirilebilen veya devre dışı bırakılabilen beş durum çubuğu tekniği uygular:
 >
@@ -1019,7 +1027,7 @@ Kilit nokta, sıkıştırmanın **zamanlamasını ve konumunu** anlamaktır. Sı
 
 ![Şekil 2-16: Context Sıkıştırma Stratejilerinin Karşılaştırması](images/fig2-16.svg)
 
-> **Deney 2-9 ★★★: Context Sıkıştırma Stratejilerinin Karşılaştırması**
+> **Deney 2-10 ★★★: Context Sıkıştırma Stratejilerinin Karşılaştırması**
 >
 > Bir araştırma görevi tasarladık: OpenAI kurucu ortaklarının istihdam durumunu belirleyip takip etmek. Bu görev çok adımlı bilgi toplama gerektirir, arama sonuçlarının uzunluğu büyük ölçüde değişir (birkaç binden yüz binin üzerine), ve net başarı kriterleri vardır. Kimi K3 kullanarak (yaklaşık 1 milyon token yerleşik context'e sahip bir reasoning modeli; bu deney sıkıştırmayı tetiklemek için context bütçesini kasıtlı olarak 128K pencereyle sınırladı), altı strateji uyguladık:
 >

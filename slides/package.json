@@ -1,0 +1,19 @@
+{
+  "name": "ai-agents-in-depth-course",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "node generate.mjs",
+    "review": "node review.mjs",
+    "dev": "slidev",
+    "build:all": "node build-all.mjs",
+    "export": "slidev export"
+  },
+  "dependencies": {
+    "@slidev/cli": "^0.49.0",
+    "@slidev/theme-seriph": "latest"
+  },
+  "devDependencies": {
+    "playwright-chromium": "^1.44.0"
+  }
+}

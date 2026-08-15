@@ -34,19 +34,7 @@ Sebagai kejelasan, kedua arsitektur tersebut merupakan sistem multi-Agent sejati
 
 Sebagai analogi: yang pertama adalah sebuah tim di sekitar satu meja, di mana setiap orang mendengar semuanya; yang kedua adalah departemen yang berkolaborasi melalui email dan dokumen, masing-masing dengan ruang kerjanya sendiri.
 
-Pembaca yang familier dengan sistem operasi mungkin menemukan analogi yang berguna: Agent dengan shared-context menyerupai thread, sedangkan Agent dengan non-shared-context menyerupai process. Thread berbagi address space, yang membuat peralihan dan komunikasi menjadi murah namun memberikan sedikit isolasi; kerusakan memori dalam satu thread dapat merusak keseluruhan process. Setiap process memiliki address space-nya sendiri, memberikan isolasi yang lebih kuat dan paralelisme yang lebih aman, namun komunikasinya harus menggunakan IPC eksplisit. Kriteria dalam Tabel 10-1 mengikuti dari trade-off ini.
-
-Tabel 10-1 merangkum kriteria pemilihan untuk kedua arsitektur dari lima perspektif: jumlah subtask, context window, paralelisme, isolasi informasi, dan anggaran biaya (cost budget). Ini dapat berfungsi sebagai daftar periksa (checklist) untuk pemilihan arsitektur di awal.
-
-Tabel 10-1 Kriteria Pemilihan Konteks Bersama vs. Konteks Terpisah
-
-| Kriteria Pemilihan | Shared Context | Non-Shared Context |
-|---------------|-----------------------------------|--------------------------------------------|
-| Jumlah subtask | Sedikit (2-3 peran) | Banyak (pemrosesan paralel diperlukan) |
-| Context window | Dapat menampung informasi untuk semua peran | Jendela tunggal tidak cukup |
-| Paralelisme | Terutama serial (peran bergiliran di sepanjang trajectory yang sama) | Dapat diskalakan secara masif dalam paralel (konteks bersifat independen, non-blocking) |
-| Isolasi informasi | Tidak diperlukan (semua peran berbagi informasi) | Diperlukan (misalnya, tinjauan keamanan tidak boleh menerima konteks internal Agent lain) |
-| Anggaran biaya | Satu trajectory diteruskan melintasi tahap; token terakumulasi tahap demi tahap | Beberapa Agent bekerja secara independen; total token biasanya beberapa kali lipat hingga satu orde magnitudo lebih tinggi |
+Pembaca yang familier dengan sistem operasi mungkin menemukan analogi yang berguna: Agent dengan shared-context menyerupai thread, sedangkan Agent dengan non-shared-context menyerupai process. Thread berbagi address space, yang membuat peralihan dan komunikasi menjadi murah namun memberikan sedikit isolasi; kerusakan memori dalam satu thread dapat merusak keseluruhan process. Setiap process memiliki address space-nya sendiri, memberikan isolasi yang lebih kuat dan paralelisme yang lebih aman, namun komunikasinya harus menggunakan IPC eksplisit.
 
 **Aturan praktis yang sederhana**: Jika prediksi akumulasi konteks melebihi 50% dari jendela (sebuah heuristik, bukan ambang batas eksak), jangan bagikan (don't share). Jika nol informasi yang hilang merupakan persyaratan mutlak untuk kebenaran tugas, bagikan (share). Sebagian besar sistem dunia nyata menggunakan pendekatan yang berbeda pada tahap yang berbeda: beberapa Agent pertama berbagi konteks, tetapi setelah riwayat yang dibagikan menjadi terlalu besar, sistem beralih ke non-shared context dan menggunakan penyerahan (handoff) eksplisit di mana Agent hulu (upstream) memilih apa yang akan diteruskan ke hilir (downstream).
 
@@ -70,9 +58,9 @@ Desain terperinci dan skenario yang berlaku untuk setiap pattern akan dibahas di
 
 Sebelum menyelami arsitektur kolaborasi tertentu, mari kita jawab pertanyaan yang lebih mendasar: **Kapan beberapa Agent benar-benar dibutuhkan, dan kapan satu sudah cukup?** Jawabannya akan berfungsi sebagai titik acuan untuk setiap pendekatan rekayasa yang mengikutinya. Serangkaian penelitian terbaru mengarah pada sebuah kerangka kerja yang jelas—dan kriteria intinya adalah satu pertanyaan: **Apakah kolaborasi tersebut memberikan informasi yang tidak dapat diperoleh oleh Agent tunggal saat menghasilkan jawabannya?**
 
-Tabel 10-2 menunjukkan mode kolaborasi mana yang memperkenalkan informasi baru dan membantu menilai apakah kolaborasi multi-Agent menawarkan nilai substantif dibandingkan dengan sebuah Agent tunggal.
+Tabel 10-1 menunjukkan mode kolaborasi mana yang memperkenalkan informasi baru dan membantu menilai apakah kolaborasi multi-Agent menawarkan nilai substantif dibandingkan dengan sebuah Agent tunggal.
 
-Tabel 10-2 Perbandingan Perolehan Informasi dari Mode Kolaborasi Multi-Agent
+Tabel 10-1 Perbandingan Perolehan Informasi dari Mode Kolaborasi Multi-Agent
 
 | Mode Kolaborasi | Memperkenalkan Informasi Baru? | Efek |
 |---------------------------------------|---------------------|-----------------------------------|
@@ -122,9 +110,9 @@ Gunakan Skill bila perbedaannya terutama pengetahuan, prosedur, atau gaya penuli
 
 Dalam arsitektur tanpa shared context, setiap Agent beroperasi sebagai entitas independen dengan context, trajectory, dan state miliknya sendiri. Agent tidak dapat secara langsung mengakses internal context satu sama lain; kolaborasi bergantung sepenuhnya pada transfer data yang eksplisit dan terstruktur melalui tiga mekanisme komunikasi yang diperkenalkan di awal bab ini: parameter tool call, shared file system, dan message bus.
 
-Sebelumnya di bab ini, kita membandingkan mekanisme komunikasi dengan bentuk inter-process communication dan shared vs. isolated context dengan thread vs. process. Analogi ini dapat diperluas lebih jauh (Tabel 10-3):
+Sebelumnya di bab ini, kita membandingkan mekanisme komunikasi dengan bentuk inter-process communication dan shared vs. isolated context dengan thread vs. process. Analogi ini dapat diperluas lebih jauh (Tabel 10-2):
 
-Tabel 10-3 Korespondensi Antara Multi-Agent System dan Operating System
+Tabel 10-2 Korespondensi Antara Multi-Agent System dan Operating System
 
 | Operating System | Multi-Agent System |
 |----------|----------------|
@@ -166,9 +154,9 @@ Gambar 10-2 mengilustrasikan bagaimana keempat tipe area ini secara seragam di-m
 
 ![Gambar 10-2: Struktur mounting dari empat tipe area dalam Agent Virtual File System](images/fig10-2.svg)
 
-Tabel 10-4 membandingkan keempat tipe area ini di empat dimensi—visibilitas, lifecycle, permission baca/tulis, dan concurrency control—yang berfungsi sebagai daftar periksa untuk desain tata letak file system.
+Tabel 10-3 membandingkan keempat tipe area ini di empat dimensi—visibilitas, lifecycle, permission baca/tulis, dan concurrency control—yang berfungsi sebagai daftar periksa untuk desain tata letak file system.
 
-Tabel 10-4 Empat tipe area dari Agent Virtual File System
+Tabel 10-3 Empat tipe area dari Agent Virtual File System
 
 | Area | Visibility | Lifecycle | Read/Write | Concurrency Control |
 |--------------|-----------------|------------------------|---------------------|-------------------|
@@ -181,7 +169,7 @@ Nilai dari **"file path sebagai antarmuka universal"** terletak pada perlakuan p
 
 ### Komunikasi dan Kontrol Antar Agent
 
-Sementara file system menyelesaikan masalah **pertukaran artifact** antar Agent, kolaborasi juga membutuhkan **control plane**. Di sinilah baris lifecycle pada Tabel 10-3 berperan: primitif tool yang diberikan pada Bab 4—membuat (`spawn_subagent`), mengirim pesan (`send_message_to_subagent`), membatalkan (`cancel_subagent`), dan menemukan (`list_agents`)—berkorespondensi dengan fork, message, kill, dan ps di dunia process. Bagian ini tidak mengulangi definisi antarmuka tersebut melainkan berfokus pada empat kemampuan yang sering terabaikan yang esensial untuk kolaborasi multi-agent.
+Sementara file system menyelesaikan masalah **pertukaran artifact** antar Agent, kolaborasi juga membutuhkan **control plane**. Di sinilah baris lifecycle pada Tabel 10-2 berperan: primitif tool yang diberikan pada Bab 4—membuat (`spawn_subagent`), mengirim pesan (`send_message_to_subagent`), membatalkan (`cancel_subagent`), dan menemukan (`list_agents`)—berkorespondensi dengan fork, message, kill, dan ps di dunia process. Bagian ini tidak mengulangi definisi antarmuka tersebut melainkan berfokus pada empat kemampuan yang sering terabaikan yang esensial untuk kolaborasi multi-agent.
 
 **Envelope pesan dan siklus hidup worker:**
 
@@ -381,7 +369,7 @@ Ketika beberapa sub-tugas (subtasks) dapat berjalan secara paralel, pola sekuens
 
 **Lingtai: Sebuah Instansiasi Produk dari Pola Manajer.** Lingtai adalah rumah berbasis file lokal untuk long-lived agents[^lingtai]. Tiga perannya sangat cocok dipetakan ke konsep di bagian ini. **Main agent** adalah hub persisten (persistent hub) yang berinteraksi dengan pengguna; ia memegang rencana (plan) dan memori dan melahirkan (spawns) peran lain, menempati posisi Manager Agent. Sebuah **daemon** adalah pekerja paralel berumur pendek (short-lived parallel worker) yang dilahirkan untuk tugas yang bising dan terbatas, lalu dibuang sesudahnya; hanya kesimpulannya yang dipertahankan. Ini merupakan perwujudan produk dari prinsip bahwa sub-agent mengembalikan ringkasan terstruktur (structured summaries) alih-alih lintasan penuh (full trajectories) dan pola koordinasi paralel (parallel coordination pattern). Sebuah **avatar** adalah rekan satu tim (teammate) khusus persisten (persistent) yang memiliki memori, kotak surat (mailbox), dan tanggung jawabnya sendiri, dirancang untuk keahlian (specialties) yang layak dipertahankan di seluruh sesi.
 
-Sisa dari desain Lingtai juga menggemakan bagian-bagian sebelumnya. Pengetahuan (knowledge) hidup di dalam file memori pribadi (private memory files) masing-masing agent yang tahan lama (durable), sementara skills adalah playbook Markdown yang dibagikan oleh semua agent—sumber daya sistem (system resources) bawaan yang dijelaskan dalam "The File System from an Agent's Perspective". Ketika context window agent penuh, ia akan melakukan **molt (ganti kulit)**: ia menulis ringkasan yang cermat, lalu memulai dengan konteks yang segar (fresh context) sambil mempertahankan ringkasan itu dan memori tahannya, mengikuti pendekatan kompresi konteks (context-compression approach) dari Bab 2. Model yang mendasarinya (underlying model) dapat diganti tanpa mengubah agent karena identitas, memori, dan kemampuannya semua hidup sebagai plain files di direktori proyek. Dalam pengertian ini, agent adalah file-filenya. Ini merupakan perwujudan produk dari dua baris pertama dari Tabel 10-3: program dan memori sama-sama direduksi menjadi file, sehingga prosesnya dapat dibangun kembali kapan saja.
+Sisa dari desain Lingtai juga menggemakan bagian-bagian sebelumnya. Pengetahuan (knowledge) hidup di dalam file memori pribadi (private memory files) masing-masing agent yang tahan lama (durable), sementara skills adalah playbook Markdown yang dibagikan oleh semua agent—sumber daya sistem (system resources) bawaan yang dijelaskan dalam "The File System from an Agent's Perspective". Ketika context window agent penuh, ia akan melakukan **molt (ganti kulit)**: ia menulis ringkasan yang cermat, lalu memulai dengan konteks yang segar (fresh context) sambil mempertahankan ringkasan itu dan memori tahannya, mengikuti pendekatan kompresi konteks (context-compression approach) dari Bab 2. Model yang mendasarinya (underlying model) dapat diganti tanpa mengubah agent karena identitas, memori, dan kemampuannya semua hidup sebagai plain files di direktori proyek. Dalam pengertian ini, agent adalah file-filenya. Ini merupakan perwujudan produk dari dua baris pertama dari Tabel 10-2: program dan memori sama-sama direduksi menjadi file, sehingga prosesnya dapat dibangun kembali kapan saja.
 
 [^lingtai]: Tutorial resmi Lingtai: https://lingtai.ai/en/tutorial/
 
@@ -737,4 +725,4 @@ Kolaborasi multi-Agent benar-benar bernilai jika menghadirkan informasi baru yan
 8. ★★ Masyarakat manusia membutuhkan pembagian kerja karena kemampuan setiap orang terbatas—developer frontend mungkin tidak tahu backend, dan desainer mungkin tidak tahu ops. Namun, large models lebih mendekati "generalists". Penelitian menunjukkan bahwa pada tugas penalaran teks murni, debat multi-agent tidak mengalahkan Agent tunggal dengan compute yang sama. Jadi di mana sebenarnya letak keuntungan dari multiple Agents?
 9. ★★★ Bab ini memperlakukan "shared context" versus "non-shared context" sebagai dimensi desain inti dari sistem multi-agent. Shared context memungkinkan semua Agent melihat informasi yang sama, tampaknya memfasilitasi koordinasi. Namun, dalam *The Three-Body Problem*, pikiran Trisolaran sepenuhnya transparan, namun perkembangan teknologi mereka mandek; eksperimen pemikiran paperclip juga menunjukkan bahwa ketika sebuah kelompok berkumpul pada tujuan yang sama, keragaman (diversity) akan hilang. Dalam sistem multi-agent, bagaimana kita dapat menyeimbangkan efisiensi dan keragaman?
 10. ★★★ Berikan budget 30 step dan 300 step kepada Coding Agent. Bagaimana strategi kerjanya harus berbeda? Penelitian menunjukkan bahwa sekadar meningkatkan step budget tidak menjamin peningkatan kinerja—Agent mungkin "jenuh" secara prematur setelah pencarian dangkal. Rancang mekanisme "budget-aware" yang memungkinkan Agent dengan cepat mencapai fungsionalitas inti di bawah budget kecil, dan menambahkan fase perencanaan (planning), pengujian (testing), dan peninjauan (review) di bawah budget besar, yang sepenuhnya memanfaatkan sumber daya komputasi tambahan.
-11. ★★ Tabel 10-3 memetakan sistem multi-agent ke operating systems baris demi baris. Perluas tabel dengan beberapa baris lagi: masing-masing apa padanan dari virtual memory dan paging, file permissions, deadlock detection, dan scheduling algorithms dalam dunia Agent? Dan konsep operating-system mana yang tidak memiliki padanan dalam dunia Agent, dan mengapa?
+11. ★★ Tabel 10-2 memetakan sistem multi-agent ke operating systems baris demi baris. Perluas tabel dengan beberapa baris lagi: masing-masing apa padanan dari virtual memory dan paging, file permissions, deadlock detection, dan scheduling algorithms dalam dunia Agent? Dan konsep operating-system mana yang tidak memiliki padanan dalam dunia Agent, dan mengapa?

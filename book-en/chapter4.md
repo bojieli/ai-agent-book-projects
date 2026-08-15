@@ -181,12 +181,6 @@ When the Agent's main model is not multimodal, **using multimodal analysis as a 
 
 Compared with native multimodal processing, tool-based analysis keeps only a short question and answer in the context, preventing images, video, and other multimodal data from consuming large numbers of tokens.
 
-> **Experiment 3-7 ★★: Multimodal Information Extraction—Comparing Three Technical Paradigms**
->
-> The `multimodal-agent` project compares and evaluates all three strategies in a common framework. Using `demo.py`, give the same multimodal file (such as a PDF report containing charts) and the same question to each mode and compare their behavior.
->
-> The results clearly expose the trade-offs. **Native multimodal mode** performs best on chart analysis and document layout because it understands visual and spatial information directly. **Extract-to-text mode** is the most cost-effective for text-heavy documents but cannot answer queries that require visual information. **Tool-based mode** is flexible in interactive settings: it handles most initial queries cheaply and invokes more expensive deep analysis as needed, though it is weaker than native mode when end-to-end deep understanding is required in a single pass.
-
 > **Experiment 4-1 ★★: Perception Tool MCP Server**
 >
 > ![Figure 4-1: MCP Protocol Interaction Sequence](images/fig4-1.svg)
@@ -200,6 +194,12 @@ Compared with native multimodal processing, tool-based analysis keeps only a sho
 > - **Public Data Sources**: Free APIs for weather, stock prices, exchange rates, Wikipedia, ArXiv papers, etc.
 > - **Private Data Sources**: Personal data requiring authorization, such as calendars and Notion
 > Most of these tools are based on free, open APIs and can be used without registration. There are already many ready-made perception tool servers available in the MCP ecosystem. Chapter 5 will demonstrate that most of these capabilities can be covered by seven core tools combined with Skill documents.
+
+> **Experiment 4-2 ★★: Multimodal Information Extraction—Comparing Three Technical Paradigms**
+>
+> The `multimodal-agent` project compares and evaluates all three strategies in a common framework. Using `demo.py`, give the same multimodal file (such as a PDF report containing charts) and the same question to each mode and compare their behavior.
+>
+> The results clearly expose the trade-offs. **Native multimodal mode** performs best on chart analysis and document layout because it understands visual and spatial information directly. **Extract-to-text mode** is the most cost-effective for text-heavy documents but cannot answer queries that require visual information. **Tool-based mode** is flexible in interactive settings: it handles most initial queries cheaply and invokes more expensive deep analysis as needed, though it is weaker than native mode when end-to-end deep understanding is required in a single pass.
 
 ## Execution Tools
 
@@ -325,7 +325,7 @@ The core approach to handling this is **idempotency**: executing the same operat
 
 But not all operations can be made idempotent. Operations like **sending an email, making a phone call, or transferring money** each produce an irreversible real-world event every time they are executed. Furthermore, the server is often outside your control, making it impossible to deduplicate using a unique identifier. For such non-idempotent operations, a **"pre-check then confirm" two-phase** approach should be used: the first phase only performs validation and a dry run (checking the balance, confirming the recipient, generating the content to be sent), returning the result along with a confirmation token; the second phase uses the token to actually execute, and if execution fails, it should not retry blindly in the same phase, but should hand control back to the upper layer to repeat the pre-check. This is of a piece with the Proposer-Reviewer pre-approval discussed earlier, and with the "initiate/complete" decoupling of asynchronous tool interfaces discussed later.
 
-> **Experiment 4-2 ★★: Execution Tool MCP Server**
+> **Experiment 4-3 ★★: Execution Tool MCP Server**
 >
 > This experiment builds a suite of execution tools, focusing on the practical application of safety mechanisms. The tools cover the following categories:
 >
@@ -370,7 +370,7 @@ Although AI Agents are becoming increasingly powerful, human intervention remain
 
 **Establishing a Feedback Loop.** HITL should not be a one-off interaction but should form a learning loop. Human approvals, rejections, and their reasons first constitute evidence-backed feedback data: generalizable principles of judgment can be incorporated into a knowledge base or a Skill, while high-dimensional and implicit preferences can form post-training data. Chapter 8 discusses how to evaluate such trajectories and select an update carrier.
 
-> **Experiment 4-3 ★★: Collaboration Tool MCP Server**
+> **Experiment 4-4 ★★: Collaboration Tool MCP Server**
 >
 > This experiment builds a complete collaboration toolset, covering sub-agent management, human assistance, and multi-channel notifications.
 >
@@ -534,10 +534,10 @@ while runtime.is_alive:
     dispatch(decision)
 ```
 
-> **Experiment 4-4 ★★★: Event-Driven Email Processing Agent**
+> **Experiment 4-5 ★★★: Event-Driven Email Processing Agent**
 >
 >
-> ![Figure 4-4: Experiment 4-4 Event-Driven Agent Architecture](images/fig4-4.svg)
+> ![Figure 4-4: Experiment 4-5 Event-Driven Agent Architecture](images/fig4-4.svg)
 >
 >
 > This experiment builds the simplest event-driven Agent: an **Automated Email Processing Assistant**. The Agent monitors the email inbox, and whenever a new email arrives, it automatically triggers a processing workflow—classification, summarization, draft reply, and notifying the user if necessary. This is the most intuitive introductory scenario for an event-driven Agent: an external event (new email arrival) triggers a complete Agent thinking cycle.
@@ -559,11 +559,11 @@ while runtime.is_alive:
 >
 > **Validation Scenario**: Configure the Agent to monitor a test mailbox. Simulate receiving three emails—a meeting invitation, a customer complaint, and a marketing advertisement. The Agent processes them sequentially: for the meeting invitation, it automatically checks for calendar conflicts and drafts an accept/decline reply; for the customer complaint, it extracts key information, marks it as high priority, and notifies the user to handle it; for the marketing advertisement, it automatically archives it. The entire process requires no user intervention.
 
-Experiment 4-4 demonstrates the simplest event-driven pattern—events enter a queue, and the Agent processes them sequentially. However, when the Agent needs to respond to interruptions during long-running tool executions, or manage multiple concurrent tasks simultaneously, a simple event queue is insufficient. Next, we discuss deeper engineering challenges.
+Experiment 4-5 demonstrates the simplest event-driven pattern—events enter a queue, and the Agent processes them sequentially. However, when the Agent needs to respond to interruptions during long-running tool executions, or manage multiple concurrent tasks simultaneously, a simple event queue is insufficient. Next, we discuss deeper engineering challenges.
 
 ### Engineering Implementation: How to Make Synchronous Models Support Asynchronous Interruptions
 
-Experiment 4-4 only handles serial events—events enter the queue one by one, and the Agent processes them one after another. Now, let's return to the "synchronous training / asynchronous deployment" contradiction raised at the beginning of this section: when the user interrupts while a tool has not yet returned, how can the synchronous format accommodate it? This section lays out the engineering workarounds the industry uses today.
+Experiment 4-5 only handles serial events—events enter the queue one by one, and the Agent processes them one after another. Now, let's return to the "synchronous training / asynchronous deployment" contradiction raised at the beginning of this section: when the user interrupts while a tool has not yet returned, how can the synchronous format accommodate it? This section lays out the engineering workarounds the industry uses today.
 
 Let's first illustrate this contradiction with a specific scenario. Suppose the Agent is helping a user draft an email (tool call: search for contact information). Before the search returns results, the user suddenly says, "Wait, first check tomorrow's weather for me." In a synchronous ReAct loop, the Agent must wait for the search to return before processing the next message—because the API requires that "after issuing a tool call, the next message must be the tool result." But in the asynchronous real world, events can interrupt ongoing tasks at any time. Expressing the semantics of "asynchronous interruption" under the constraints of a "synchronous format" is precisely the problem this engineering solution aims to solve.
 
@@ -645,13 +645,13 @@ Continuous thinking, however, need not wait for the next generation of models. A
 
 [^ch4-async-1]: The claim that about two hundred lines of orchestration can turn an off-the-shelf thinking model into a continuous-time Agent, and that "the training signal determines whether continuous thinking is useful," is from Li, Bojie and Noah Shi. *Never Stop Thinking: Continuous-Time Language Agents.* 2026 (forthcoming).
 
-> **Experiment 4-5 ★★★: Asynchronous Agent with Parallel Execution and Interruption Capabilities**
+> **Experiment 4-6 ★★★: Asynchronous Agent with Parallel Execution and Interruption Capabilities**
 >
 >
-> ![Figure 4-6: Experiment 4-5 Asynchronous Agent Interruption and Recovery](images/fig4-6.svg)
+> ![Figure 4-6: Experiment 4-6 Asynchronous Agent Interruption and Recovery](images/fig4-6.svg)
 >
 >
-> Building on the simple event queue of Experiment 4-4, this experiment moves into the hard parts of asynchronous Agents: **parallel tool execution, execution cancellation, and state management**. The Agent no longer just processes events one by one; it needs to manage multiple concurrent tasks simultaneously, handle interruptions and recoveries, and make dynamic decisions based on real-time state.
+> Building on the simple event queue of Experiment 4-5, this experiment moves into the hard parts of asynchronous Agents: **parallel tool execution, execution cancellation, and state management**. The Agent no longer just processes events one by one; it needs to manage multiple concurrent tasks simultaneously, handle interruptions and recoveries, and make dynamic decisions based on real-time state.
 >
 > **1. Asynchronous Tool Execution**: Supports asynchronous execution of time-consuming tools (at least 3-5 seconds), returning a placeholder immediately upon initiation. **Validation Scenario**: The Agent executes a long-running terminal command. During this time, the user asks, "What time is it now?" The Agent responds immediately, then presents the analysis result when the long-running command completes.
 >
@@ -706,7 +706,7 @@ Figure 4-9 shows the full picture after several rounds of dynamic discovery: the
 
 Plainly, the whole declare-match-inject machinery works, but it requires substantial engineering: an embedding index to maintain offline, KV Cache invalidation to manage, dedicated training for weaker models. The shared premise underneath it all is treating every tool as a **formal definition addressed to the model**—registered, retrieved, injected. The Skills mechanism in the next section drops that premise for something lighter.
 
-> **Experiment 4-6 ★★★: Proactive Tool Discovery**
+> **Experiment 4-7 ★★★: Proactive Tool Discovery**
 >
 > Through a controlled comparison, this experiment validates the significant value of proactive tool discovery for small models. Use the Qwen3-4B model to access 120+ tools from the MCP server built in the Perception Tools experiment above.
 >

@@ -107,6 +107,8 @@ Gerçek zamanlı konuşma API'leri kaskad ile Omni arasında durur: model sesi d
 > **Deney 9-3 ★★: MiniCPM-o 4.5'i yerel çalıştırmak — uçtan uca ve öz-kaskad**
 >
 > Tek bir yerel revizyonu sabitleyin, düşünme modunu kapatın ve sese doğrudan yanıtı aynı modelin öz-kaskadıyla (önce transkript, sonra metinden yanıt) karşılaştırın. Bu ölçüm ses bilgisinin korunmasını ölçer; daha sonraki “konuşurken düşünme” yeteneğini değil.
+> Tablo 9-1 MiniCPM-o 4.5 yerel sonuçları: uçtan uca ve öz-kademe (dört mekanizma kontrolü, bir benchmark değil)
+>
 >
 > | Görev türü | Uçtan uca | Öz-kaskad | Gözlem |
 > | --- | ---: | ---: | --- |
@@ -136,7 +138,31 @@ Gelişim çizgisi şöyledir: kaskad sessizlik eşikleriyle turları tahmin eder
 | Hızlı etkileşim, yavaş tavsiye | Sohbeti ve ifadeyi sürdürme | Tavsiye veya araç sonucu | Kısıtlı arayüz |
 | Düşünme ve ifadenin birleşmesi | Konuşurken düşünme | Model durumunu paylaşma | Yüksek eğitim/değiştirme maliyeti |
 
-İlk tasarım soruyu iki kez işleyebilir ve çelişebilir. İkincisi status bar üzerinden tavsiye verdiği için daha kararlı olsa da ön plan ara muhakemeyi göremez ve gerçekten konuşurken düşünemez. Üçüncüsü iki süreci birleştirir. Step-Audio R1'de MGRD düşünmeyi akustik özelliklere bağlar; MPS iki beyinli mimarisi planlama ile ifadeyi paralel üretir (Şekil 9-5 ve 9-6). Birleşik model daha doğaldır, ayrıştırılmış tasarım arka plan beynini değiştirmeyi kolaylaştırır; bunlar alternatif değil ödünleşimlerdir.
+#### Çözüm 1: dolgu için hızlı düşünme, yanıt için yavaş düşünme
+
+Hızlı düşünme birkaç yüz milisaniye içinde bir dolgu yanıtı verebilirken, yavaş düşünme arka planda daha derin bir çıkarımı tamamlar. Sorunu şudur: basit sorular iki kez işlenir, karmaşık sorularda ise tutarsızlık ortaya çıkabilir — hızlı model satın almayı önerir, yavaş model ardından paketin kilit bir özellikten yoksun olduğunu fark eder ve kullanıcı saniyeler içinde birbiriyle çelişen iki yanıt duyar. Kök neden, iki örneğin birbirinden bağımsız birer düşünme yapmış olmasıdır.
+
+
+![Şekil 9-5: Hızlı/yavaş düşünme mimarisi ve çözümlerin karşılaştırması](images/fig9-5.svg)
+
+
+#### Çözüm 2: etkileşim için hızlı düşünme, hatırlatma için yavaş düşünme
+
+İkinci çözümde arka plan modeli, durum çubuğu ya da özel bir arayüz üzerinden ön plan modeline öneri verir; ön plan sohbeti sürdürmeye ve nasıl ifade edeceğine karar vermeye devam eder. Bu, birinci çözümden daha kararlıdır ama iletişim yine dolaylıdır: ön plan öneriyi yanlış anlayabilir ve arka planın ara muhakemesini göremez; arka plan bitirmeden kullanıcı yeniden sorduğunda ön plan yalnızca kendi yeteneklerine dayanabilir. Doğal biçimde "sonucu bekleyebilir" ama gerçekten konuşurken düşünemez.
+
+#### Çözüm 3: düşünme ile ifadenin uçtan uca birleştirilmesi (Step-Audio R1 örneği)
+
+Üçüncü çözüm, düşünme yeteneğini doğrudan uçtan uca ses modelinin içine yerleştirir. Step-Audio R1 iki tamamlayıcı mekanizmayla iki sorunu çözer: **kipe demirlenmiş düşünme damıtması (MGRD)** modeli akustik özniteliklere dayanarak düşündürür, **MPS çift beyin mimarisi** ise tasarlama ile ifadeyi paralel yürütür. İlki "doğru düşünmeyi" güvence altına alır, ikincisi "zamanında konuşmayı" çözer.
+
+İdealde model duyguyu perde, ritim ve tonlamadan çıkarmalı, yalnızca deşifre metnine bakmamalıdır. "Metin vekilli düşünme" denen şey, modelin ezgi ve akustik öznitelik analizinin yerine şarkı sözlerindeki olumsuz kelimeleri koymasıdır. MGRD gerçekten akustik özniteliklere atıf yapan düşünme süreçlerini süzer, bu veriyle modeli eğitir ve pekiştirmeli öğrenmeyle modelin düşünmeyi atlayıp doğrudan yanıtı tahmin etmesini engeller.
+
+MPS'de tasarlayan beyin sürekli düşünce parçaları üretir; ifade eden beyin bir parçayı alır almaz, verdiği yanıtla birleştirerek hemen konuşma üretir. İkisi bir boru hattı gibi paralel çalıştığı için, kullanıcının ilk cümleyi duyması adına düşünmenin tümüyle bitmesini beklemek gerekmez (Şekil 9-6).
+
+
+![Şekil 9-6: Step-Audio R1'in MGRD ve MPS çift beyin mimarisi](images/fig9-6.svg)
+
+
+Birleşik model "konuşurken düşünmeyi" en sıkı biçimde gerçekleştirir; bedeli, düşünme ile gerçek zamanlı ifadenin birlikte yeniden eğitilmesi gerekmesidir. Ayrıştırılmış yolda arka plan beynini değiştirmek daha kolaydır; birleşik yol ise azami doğallık peşindeki özel senaryolara daha uygundur. İkisi bir ödünleşimdir, birbirinin basit ikamesi değil.
 
 ### Daha insana benzeyen konuşma sentezi
 
