@@ -499,6 +499,22 @@ Harness engineering merceğinden bakıldığında, bu kitabın her bölümü Har
 
 Anthropic'in uzun süre çalışan Agent'lar inşa etme pratiği, Harness tasarımının modelin kendisinin çözemediği sorunları nasıl çözebildiğini gösterir. Uzun görevlerin iki başarısızlık modunu—context'in tükenmesi ve görevin erken bitmiş sayılması—ele almak için yapılandırılmış bir Harness kullanarak, karmaşık görevleri bir "Başlatma Agent'ı" (ortamı kurar, görev listesini ayrıştırır) ile bir "Yürütme Agent'ı" (her oturumda artımlı ilerleme kaydeder ve net devir teslim çıktıları bırakır) arasında bölerler. İlerideki bölümler Harness'i bileşen bileşen ele alır—Bölüm 2, en merkezi olanla, context engineering ile başlar, Bölüm 5 ise Kodlama Agent'larında Harness engineering'in eksiksiz pratiğini ortaya koyar.
 
+## Kitap Boyunca Tekrarlanan Tasarım Örüntüleri
+
+Sonraki dokuz bölüm aynı avuç dolusu yapıya defalarca başvurur. Bunlar tek bir bölüme ait değildir; aynı kısıt altındaki yinelenen çözümlerdir. Bu yüzden burada bir kez adlandırıp her birine ölçünlü bir tanım veriyoruz. Sonraki bölümler onları adıyla çağırır ve yalnızca kendi varyantını anlatır.
+
+**Öneren-İnceleyen (Proposer-Reviewer)**: üretim ile yargı, bağlamı paylaşmayan iki rol tarafından ayrı ayrı üstlenilir ve yargılayan taraf üretenin akıl yürütmesini değil, ürünün kendisini görür—render edilmiş sonuç, test çıktısı, yapılandırılmış çağrı argümanları. Dayandığı önkabul, **öz-incelemenin güvenilmez olduğudur**: aynı bağlamın içindeki bir model, aklına gelmeyeni aklına getiremez; kendisine zaten enjeksiyon yapılıp yapılmadığını da güçlükle anlar. Bölüm 3 bunu bilgi güncellemede, Bölüm 4 araç çağrılarının ön onayı ve sonradan doğrulanmasında kullanır (Sidecar onun salt-okunur bir varyantıdır); Bölüm 5'teki sunum, video ve günlük deneylerinin üçü de bu örüntüyü iskelet alır; Bölüm 7 arayüz değerlendirmesinde, Bölüm 9 güncelleme önerilerinin incelenmesinde kullanır; Bölüm 10 ise onun eşler arası iş birliğindeki biçimini ve neden aynı Agent'ın kendini inceleyemeyeceğini tartışır.
+
+**Aşamalı Açıklama (Progressive Disclosure)**: tüm bilgiyi bağlama bir kerede koymak yerine önce aranabilir bir katalog verilir, ayrıntılar gerektikçe yüklenir. Aynı anda iki şeyi iyileştirir: bağlam bütçesi ve seçim isabeti. Bölüm 2'deki Agent Skills en tipik biçimidir (üstveri kalıcı, gövde talep üzerine yüklenir); Bölüm 3'ün katmanlı erişimi, Bölüm 4'ün proaktif araç keşfi ve sayfalı kırpması, Bölüm 10'un Agent keşfi hep onun varyantlarıdır.
+
+**Yalnızca Ekle (Append-only)**: durum ekleyerek ilerler, yazılmış olan geri dönülüp değiştirilmez. Karşılığında önbelleklenebilirlik, yeniden oynatılabilirlik ve denetlenebilirlik kazanılır. Bölüm 2'deki KV Cache önek kararlılığı bunun başarım biçimidir—değişiklik ne kadar öndeyse o kadar çok önbellek geçersizleşir; Bölüm 3'ün olay biçimli belleği ve Bölüm 4'ün yeni bir aracın schema'sını öneke geri sokmak yerine yörüngenin sonuna eklemesi de aynı disiplindir.
+
+**Sınır Kümesi + Koruma Kümesi (Boundary Set + Retention Set)**: her değişiklik hem "değiştirmesi gereken örnekler" hem de "etkilememesi gereken örnekler" üzerinde doğrulanmalıdır. Yalnızca ilkini ölçmek aşırı uyumu ilerleme sanmaktır; yalnızca ikincisini ölçmek etkisiz bir değişikliği güvenli sanmaktır. Bölüm 7'nin regresyon görevleri, Bölüm 8'in eğitim/değerlendirme yalıtımı ve Bölüm 9'un güncelleme önerisi doğrulaması bu küme çiftinin üzerinde durur.
+
+**En Küçük Diff + Geri Alınabilir (Minimal Diff, Reversible)**: her değişiklik olabildiğince küçük olsun, kaynağını taşısın ve tek başına geri alınabilsin; toptan yeniden yazılmasın. Atfetmeyi mümkün kılan budur—bir şey bozulduğunda hangi değişiklik olduğu saptanabilir. Bölüm 3'ün bilgi güncellemeleri, Bölüm 5'in kod yamaları, Bölüm 9'un prompt ve program güncellemeleri bunu izler; bu bölümün başında verilen üç güncelleme yolu da (bağlam içi uyarlama, dış ürün güncellemesi, parametre güncellemesi) tam olarak geri alınabilirliğe göre sıralanmıştır.
+
+Bu beş örüntü aynı ana temayı paylaşır: **yargıyı "modelin kendisi karar verir"den "modelin dışındaki bir mekanizma karar verir"e taşımak**—inceleyen bağlamın dışında, katalog gövde metnin dışında, önbellek değişikliğin dışında, koruma kümesi sınır kümesinin dışında, geri alma commit'in dışındadır. Bu bölümde daha önce verilen üç katmanlı guardrail, bu temanın güvenliğe uygulanmış hâlidir. İleride bunlarla yeniden karşılaşıldığında kitap yalnızca örüntünün adını ve o bölümdeki farkı belirtir, yeniden türetmez.
+
 ## Bölüm Özeti
 
 Bu bölüm, pratikten başlayarak AI Agent'ları anlamak ve inşa etmek için temel çerçeveyi kurdu.
@@ -512,6 +528,8 @@ Bu bölüm, pratikten başlayarak AI Agent'ları anlamak ve inşa etmek için te
 **Harness Rekabet Avantajıdır**: Model yeteneği metalaşıyor; gerçek ayırt edici faktör Harness'tir—context ve tools'un etrafında inşa edilmiş, bir Agent'ın "işi güvenilir biçimde yapmasını" sağlayan constrain, verify ve correct mekanizmalarıdır. Üretim düzeyindeki Agent sistemlerinde, Harness kodunun büyük çoğunluğu yalnızca context ve tools'a değil bu güvenlik önlemlerine gider.
 
 **Workflow'dan Autonomous Agent'a**: Önce prompt'lar, sonra workflow'lar, en son autonomous Agent'lar—bu sıralama, sürpriz riskini düşük tutmanın en pratik yoludur. Her orkestrasyon kalıbının kendi doğal alanı vardır; hiçbiri her yerde en iyisi değildir.
+
+**Beş örüntü kitap boyunca tekrarlanır**: Öneren-İnceleyen, aşamalı açıklama, yalnızca ekle, sınır kümesi + koruma kümesi ve en küçük diff / geri alınabilirlik—hepsi aynı temayı paylaşır: yargıyı modelin kendisinden modelin dışındaki bir mekanizmaya taşımak. Sonraki bölümler bunları adıyla çağırır, yeniden türetmez.
 
 **Güvenlik Mimari Bir Meseledir**: Guardrail'ler, human-in-the-loop müdahalesi, alignment (modelin davranışını insan niyetiyle tutarlı tutmak)—güvenlik, lansmandan önce yamalanacak bir şey değil, kodun ilk satırından itibaren tasarlanması gereken bir şeydir. Guardrail'ler atlatılma zorluğuna göre üç katmana ayrılır—bağlam, yürütme ve veri—ve sonraki bölümlerin güvenlik tartışmaları bu iskelete asılır.
 

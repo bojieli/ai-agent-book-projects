@@ -477,6 +477,8 @@ Thường có hai tình huống chính kích hoạt sự can thiệp thủ công
 **Vượt quá ngưỡng thất bại**
 Đặt giới hạn trên cho số lần thử lại hoặc thao tác cho Agent. Nếu Agent vượt quá các giới hạn này, thì vấn đề này sẽ được chuyển sang can thiệp thủ công.
 
+**Năm mô thức xuyên suốt cuốn sách**: Người đề xuất—Người thẩm định, tiết lộ dần, chỉ thêm không sửa, tập biên + tập giữ lại, diff tối thiểu có thể hoàn tác — tất cả chia sẻ cùng một chủ đề: dời phán quyết từ chính mô hình sang cơ chế bên ngoài nó. Các chương sau gọi theo tên thay vì diễn giải lại.
+
 **Hoạt động rủi ro cao**
 Cần kích hoạt giám sát thủ công khi liên quan đến các hoạt động nhạy cảm, không thể đảo ngược hoặc có rủi ro cao, ít nhất là cho đến khi nhóm có đủ niềm tin vào độ tin cậy của Agent. Các ví dụ điển hình bao gồm cho phép hoàn lại tiền hoặc thanh toán số tiền lớn, v.v.
 
@@ -500,6 +502,22 @@ Xem xét lại cấu trúc của cuốn sách này từ góc độ Harness Engin
 
 Hoạt động thực hành của Anthropic trong việc xây dựng Agent chạy lâu dài cho thấy cách thiết kế Harness giải quyết các vấn đề mà bản thân mô hình không thể giải quyết được. Chúng phân tách các tác vụ phức tạp thành "khởi tạo Agent" (thiết lập môi trường, phân tách danh sách tác vụ) và "thực thi Agent" (tăng dần trong mỗi phiên và để lại các tạo phẩm chuyển giao rõ ràng) đồng thời giải quyết các vấn đề Agent về "cạn kiệt ngữ cảnh" và "tuyên bố hoàn thành sớm" trong các tác vụ dài có cấu trúc thông qua Harness. Các chương tiếp theo sẽ lần lượt đi sâu vào từng thành phần của Harness - Chương 2 bắt đầu với Context Engineering (kỹ thuật ngữ cảnh) cốt lõi và Chương 5 sẽ mở rộng cụ thể về thực hành hoàn chỉnh về Harness Engineering (kỹ thuật Harness) trong Coding Agent.
 
+## Những mô thức thiết kế xuyên suốt cuốn sách
+
+Chín chương phía sau sẽ dùng đi dùng lại cùng một nhóm cấu trúc. Chúng không thuộc riêng chương nào, mà là những lời giải lặp lại dưới cùng một ràng buộc; vì vậy ở đây ta đặt tên một lần và đưa ra định nghĩa chuẩn cho từng cái. Các chương sau chỉ việc gọi theo tên và nói rõ biến thể của riêng chương đó.
+
+**Người đề xuất — Người thẩm định (Proposer-Reviewer)**: việc tạo ra và việc phán xét do hai vai không dùng chung ngữ cảnh đảm nhiệm, và bên phán xét nhìn vào chính sản phẩm — kết quả kết xuất, đầu ra kiểm thử, tham số gọi có cấu trúc — chứ không phải quá trình suy luận của bên tạo ra. Tiền đề của nó là **tự thẩm định không đáng tin**: mô hình nằm trong cùng một ngữ cảnh vừa không nghĩ ra được điều nó đã không nghĩ ra, vừa khó phán đoán bản thân đã bị tiêm nhiễm hay chưa. Chương 3 dùng nó để cập nhật tri thức; Chương 4 dùng cho phê duyệt trước và kiểm chứng sau đối với lệnh gọi công cụ (Sidecar là một biến thể chỉ đọc của nó); ba thử nghiệm ở Chương 5 — slide, video và log — đều lấy nó làm bộ khung; Chương 7 dùng nó để đánh giá giao diện; Chương 9 dùng để thẩm định đề xuất cập nhật; còn Chương 10 bàn về hình thái của nó trong cộng tác ngang hàng, và vì sao không thể để cùng một Agent tự thẩm định.
+
+**Tiết lộ dần (Progressive Disclosure)**: thay vì nhét toàn bộ thông tin vào ngữ cảnh một lần, hãy đưa trước một mục lục có thể tra cứu rồi nạp chi tiết theo nhu cầu. Nó tối ưu đồng thời hai thứ — ngân sách ngữ cảnh và độ chính xác khi lựa chọn. Agent Skills ở Chương 2 là hình thái điển hình nhất (siêu dữ liệu thường trú, phần thân nạp theo nhu cầu); truy hồi phân tầng ở Chương 3, khám phá công cụ chủ động và cắt ngắn theo trang ở Chương 4, cùng việc khám phá Agent ở Chương 10 đều là biến thể của nó.
+
+**Chỉ thêm không sửa (Append-only)**: trạng thái tiến triển bằng cách nối thêm, còn thứ đã viết ra thì không quay lại sửa. Cái đổi lại là khả năng lưu đệm, khả năng phát lại và khả năng kiểm toán. Tính ổn định của tiền tố KV Cache ở Chương 2 là hình thái hiệu năng của nó — thay đổi càng nằm phía trước thì càng nhiều bộ đệm bị vô hiệu; bộ nhớ dạng sự kiện ở Chương 3 và thói quen ở Chương 4 là nối schema công cụ mới vào cuối quỹ đạo thay vì cắm ngược lại tiền tố cũng theo cùng một kỷ luật.
+
+**Tập biên + tập giữ lại (Boundary Set + Retention Set)**: mọi thay đổi đều phải được kiểm chứng đồng thời trên "nhóm mẫu mà nó phải làm thay đổi" và "nhóm mẫu mà nó không được ảnh hưởng". Chỉ đo nhóm đầu sẽ nhầm quá khớp thành tiến bộ; chỉ đo nhóm sau sẽ nhầm một thay đổi vô hiệu thành an toàn. Các nhiệm vụ hồi quy ở Chương 7, việc cách ly huấn luyện với đánh giá ở Chương 8, và việc kiểm chứng đề xuất cập nhật ở Chương 9 đều dựng trên cặp tập hợp này.
+
+**Diff tối thiểu + có thể hoàn tác (Minimal Diff, Reversible)**: mỗi lần sửa cố gắng nhỏ nhất có thể, mang theo nguồn gốc, và hoàn tác được riêng lẻ, thay vì viết lại toàn bộ. Chính điều đó khiến việc quy trách nhiệm trở nên khả thi — khi có sự cố, có thể lần ra đúng lần sửa nào. Việc cập nhật tri thức ở Chương 3, các bản vá mã ở Chương 5, việc cập nhật Prompt và chương trình ở Chương 9 đều tuân theo điều này; và ba con đường cập nhật nêu ở đầu chương này (thích ứng trong ngữ cảnh, cập nhật sản phẩm bên ngoài, cập nhật tham số) chính là được xếp từ dễ hoàn tác nhất đến khó nhất.
+
+Năm mô thức này chia sẻ cùng một chủ đề: **dời phán quyết từ "mô hình tự quyết" sang "cơ chế bên ngoài mô hình quyết"** — người thẩm định ở ngoài ngữ cảnh, mục lục ở ngoài phần thân, bộ đệm ở ngoài thay đổi, tập giữ lại ở ngoài tập biên, việc hoàn tác ở ngoài lần commit. Ba tầng guardrail nêu ở phần trước của chương này chính là chủ đề ấy áp dụng cho an toàn. Khi gặp lại chúng ở phía sau, cuốn sách chỉ nêu tên mô thức và điểm khác biệt của chương đó, không diễn giải lại từ đầu.
+
 ## Tóm tắt chương này
 
 Chương này bắt đầu từ thực tiễn và thiết lập khuôn khổ cơ bản để hiểu và xây dựng AI Agent.
@@ -520,7 +538,7 @@ Chương tiếp theo sẽ đi sâu vào thành phần cốt lõi nhất của Ha
 
 Các câu hỏi phản ánh sau đây được thiết kế để giúp người đọc tìm hiểu sâu hơn về các khái niệm cốt lõi của chương này; không có đáp án chuẩn.
 
-### Câu hỏi tư duy
+## Câu hỏi tư duy
 
 1. ★★ Nếu bạn chỉ có thể thêm một khả năng vào hệ thống Agent—một mô hình mạnh hơn, ngữ cảnh phong phú hơn hoặc nhiều công cụ hơn—bạn sẽ chọn cái nào? Trong những điều kiện nào sự lựa chọn của bạn sẽ thay đổi?
 2. ★★★ Trong vòng lặp ReAct, tổng lượng đọc cache tăng gần theo bậc hai với số vòng. Làm thế nào để giảm mức tăng này?
