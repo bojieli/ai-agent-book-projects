@@ -571,7 +571,7 @@ Tất cả các cuộc thảo luận ở trên đều từ góc độ kỹ thu�
 
 ### Kiểu lỗi thứ tư: Nợ hiểu biết và đầu hàng nhận thức
 
-Vòng lặp cung cấp code càng nhanh thì hiểu biết của kỹ sư càng có thể tụt lại phía sau. Cuối cùng, con người có thể không còn hiểu hệ thống hoặc ngừng đánh giá độc lập. Cách khắc phục là dùng verifier dựa trên quan sát thực tế và bảo đảm con người vẫn là kỹ sư chịu trách nhiệm cho vòng lặp.
+Mọi thứ bàn đến từ đầu tới giờ đều ở góc nhìn kỹ thuật: làm sao để một nhóm Agent phối hợp hoàn thành nhiệm vụ. Mục tiếp theo **khác thể loại so với phần còn lại của cuốn sách**: chín chương rưỡi phía trước trả lời "xây thế nào", còn mục này trả lời "người ta đang thử những gì" — nó là một tổng quan về các thí nghiệm xã hội đa Agent hiện nay, đưa ra quan sát và câu hỏi mở chứ không phải phương án kỹ thuật làm theo được ngay. Sở dĩ vẫn đặt ở chương này là vì các thí nghiệm ấy đẩy đúng những thứ đã bàn ở trên — chia sẻ ngữ cảnh, tô-pô cộng tác, các dạng thất bại — tới quy mô cực đoan, và vì hai trong số đó (thị trấn AI Stanford và Ma sói bằng giọng nói) có dự án đi kèm tái lập và chạy được trong sách này. Hãy đọc nó như một bài kiểm tra chịu tải các kết luận kỹ thuật phía trước trên thang thời gian dài hơn nhiều.
 
 ## Agent Xã hội
 
@@ -713,6 +713,8 @@ Người sói hỗ trợ **trò chơi chiến lược** theo ba chiều của ph
 ## Tóm tắt chương này
 
 Hợp tác đa Agent chỉ thực sự đáng giá khi đưa vào thông tin mới mà một Agent đơn lẻ không thể có lúc sinh câu trả lời, chẳng hạn kết quả thực thi, phản hồi hình ảnh hoặc kiểm chứng bằng công cụ bên ngoài. Kiến trúc phải chọn ngữ cảnh chia sẻ hay cô lập, cùng mô hình đồng cấp, quản lý hoặc phi tập trung. Gói bàn giao có cấu trúc, ranh giới quyền hạn, kiểm chứng độc lập, ngân sách và cơ chế hủy tạo thành vòng lặp chịu lỗi cơ bản. Tương tác mở dài hạn còn có thể làm nảy sinh quan hệ xã hội, chuẩn mực, thị trường và chiến lược; cốt lõi là thiết kế luồng thông tin, phân chia năng lực và phát hiện lỗi.
+
+Đây cũng là chương cuối của phần chính. Từ Agent = LLM + ngữ cảnh + công cụ ở Chương 1, qua xây dựng, đánh giá và tiến hoá, đến cộng tác ở chương này, lộ trình kỹ thuật đã đi hết. Nhưng còn hai câu hỏi mà bản thân kỹ thuật không trả lời được: khi mô hình tiếp tục mạnh lên, Harness hôm nay còn lại bao nhiêu; và tri thức thuộc về một người dùng cụ thể, một công ty cụ thể liệu có thể bù đắp bằng cách "huấn luyện thêm một lần" hay không. Lời bạt tiếp nhận cả hai.
 
 ## Câu hỏi tư duy
 

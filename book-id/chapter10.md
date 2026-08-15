@@ -571,7 +571,7 @@ Kebalikan dari penghentian prematur adalah **loop yang tidak terkendali**. Loop 
 
 ### Mode Kegagalan Keempat: Utang Pemahaman dan Penyerahan Kognitif
 
-Semakin cepat sebuah loop menghasilkan kode, semakin jauh pemahaman engineer dapat tertinggal. Pada akhirnya manusia mungkin tidak lagi memahami sistem atau berhenti meninjaunya secara independen. Solusinya adalah verifier yang berpijak pada pengamatan nyata serta manusia yang tetap menjadi engineer yang bertanggung jawab atas loop tersebut.
+Semua yang dibahas sejauh ini bersudut pandang rekayasa: bagaimana membuat sekelompok Agent menyelesaikan tugas bersama. Bagian berikutnya **berbeda jenis dari bagian lain buku ini**: sembilan setengah bab sebelumnya menjawab "bagaimana membangunnya", sedangkan bagian ini menjawab "apa yang sedang dicoba"—ia adalah tinjauan atas eksperimen masyarakat multi-Agent saat ini, memberi pengamatan dan pertanyaan terbuka, bukan resep rekayasa yang bisa langsung ditiru. Ia tetap ditaruh di bab ini karena eksperimen-eksperimen itu justru mendorong hal-hal yang dibahas sebelumnya—berbagi konteks, topologi kolaborasi, mode kegagalan—ke skala ekstrem, dan karena dua di antaranya (Stanford AI Town dan Werewolf suara) disertai proyek pendamping yang dapat direproduksi dan dijalankan dalam buku ini. Bacalah sebagai uji tekan atas kesimpulan rekayasa sebelumnya pada skala waktu yang jauh lebih panjang.
 
 ## Masyarakat Agent
 
@@ -712,6 +712,8 @@ Werewolf menjadi jangkar bagi dimensi ketiga dari bagian ini, **strategic gamepl
 ## Ringkasan Bab
 
 Kolaborasi multi-Agent benar-benar bernilai jika menghadirkan informasi baru yang tidak dapat diperoleh satu Agent saat menghasilkan jawaban, seperti hasil eksekusi, umpan balik visual, atau verifikasi alat eksternal. Desain harus memilih konteks bersama atau terisolasi serta pola rekan, manajer, atau terdesentralisasi. Paket handoff terstruktur, batas izin, validasi independen, anggaran, dan pembatalan membentuk lingkar toleransi kesalahan dasar. Interaksi terbuka jangka panjang juga dapat memunculkan hubungan sosial, norma budaya, pasar, dan strategi; inti rekayasa multi-Agent adalah merancang aliran informasi, pembagian kemampuan, dan penemuan kesalahan.
+
+Bab ini sekaligus bab terakhir dari teks utama. Dari Agent = LLM + konteks + tool di Bab 1, melewati pembangunan, evaluasi dan evolusi, sampai kolaborasi di bab ini, jalur rekayasanya sudah dituntaskan. Namun tersisa dua pertanyaan yang tak dapat dijawab rekayasa itu sendiri: seberapa banyak Harness hari ini yang akan tersisa ketika model terus menguat, dan apakah pengetahuan milik seorang pengguna atau satu perusahaan tertentu dapat ditambal dengan "melatih sekali lagi". Epilog mengambil alih keduanya.
 
 ## Pertanyaan Pemikiran
 

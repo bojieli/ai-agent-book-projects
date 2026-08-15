@@ -565,7 +565,7 @@ El extremo opuesto a la terminación prematura es **un bucle descontrolado**. Pu
 
 ### Modo de Falla 4: Deuda de Comprensión y Rendición Cognitiva
 
-Cuanto más rápido entrega código un bucle, más puede rezagarse la comprensión del ingeniero. Con el tiempo, la persona puede dejar de entender el sistema o de revisarlo de forma independiente. El remedio consiste en verificadores basados en observaciones reales y en que la persona siga siendo la ingeniera responsable del bucle.
+Todo lo discutido hasta aquí ha sido desde una óptica de ingeniería: cómo lograr que un grupo de Agentes complete una tarea en conjunto. La sección siguiente **difiere en género del resto del libro**: los nueve capítulos y medio anteriores responden a «cómo construirlo», mientras que esta responde a «qué se está intentando». Es una panorámica de los experimentos actuales de sociedades multiagente y ofrece observaciones y preguntas abiertas, no una receta de ingeniería que se pueda seguir tal cual. Permanece en este capítulo porque esos experimentos llevan al extremo justamente lo tratado antes —compartición de contexto, topología de colaboración, modos de fallo— y porque dos de ellos (la ciudad de IA de Stanford y el Hombre Lobo por voz) cuentan con proyectos acompañantes reproducibles y ejecutables en este libro. Léala como una prueba de esfuerzo de las conclusiones de ingeniería anteriores a una escala temporal mucho mayor.
 
 ## Sociedad de Agentes
 
@@ -703,6 +703,8 @@ El juego del Hombre Lobo sustenta la dimensión de **juegos estratégicos** de e
 ## Resumen del Capítulo
 
 La colaboración multiagente solo justifica su coste cuando introduce información nueva: resultados de ejecución, capturas visuales o verificaciones externas. El diseño debe elegir entre contexto compartido o aislado y entre topologías de pares, gestor y descentralizada. Los paquetes de transferencia estructurados, los límites de permisos, la validación independiente y los presupuestos explícitos forman el circuito básico de tolerancia a fallos. Las interacciones abiertas y prolongadas también pueden hacer emerger relaciones sociales, normas culturales, mercados y estrategias; la ingeniería multiagente consiste en diseñar cómo fluye la información, cómo se dividen las capacidades y cómo se descubren los errores.
+
+Este es además el último capítulo del texto principal. Desde Agente = LLM + contexto + herramientas en el capítulo 1, pasando por la construcción, la evaluación y la evolución, hasta la colaboración de este capítulo, la ruta de ingeniería está completa. Pero quedan dos preguntas que la ingeniería no puede responder por sí sola: cuánto sobrevivirá del Harness de hoy a medida que los modelos sigan mejorando, y si el conocimiento propio de un usuario o de una empresa concretos puede cubrirse alguna vez «entrenando una vez más». El epílogo se ocupa de ambas.
 
 ## Preguntas de Reflexión
 

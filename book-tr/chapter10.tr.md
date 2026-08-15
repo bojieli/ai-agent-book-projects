@@ -571,7 +571,7 @@ Erken sonlandırmanın karşı ucunda **kontrolsüz bir döngü** bulunur. Döng
 
 ### Başarısızlık Kalıbı Dört: Anlama Borcu ve Bilişsel Teslimiyet
 
-Bir döngü kodu ne kadar hızlı teslim ederse mühendisin anlayışı uygulamanın o kadar gerisinde kalabilir. Sonunda insan sistemi anlamamaya veya bağımsız incelemeyi bırakmaya başlayabilir. Gerçek gözlemlere dayanan doğrulayıcılar ve insanın döngünün sorumlu mühendisi olarak kalması çözümü oluşturur.
+Buraya kadar tartışılan her şey mühendislik bakışıyla oldu: bir grup Agent'a bir görevi birlikte nasıl tamamlatırız. Sıradaki kısım **kitabın geri kalanından tür olarak ayrılır**: önceki dokuz buçuk bölüm "nasıl inşa edilir" sorusunu yanıtlar, bu kısım ise "şu anda ne deneniyor" sorusunu. Güncel çoklu Agent toplum deneylerine dair bir derlemedir; doğrudan uygulanabilir bir mühendislik reçetesi değil, gözlemler ve açık sorular sunar. Yine de bu bölümde durmasının nedeni, bu deneylerin tam da yukarıda tartışılanları—context paylaşımı, iş birliği topolojisi, hata modları—uç ölçeklere taşımasıdır; ayrıca ikisi (Stanford AI Town ve sesli Kurt Adam) için bu kitap yeniden üretilebilir ve çalıştırılabilir eşlik eden projeler sunar. Bu kısmı, önceki mühendislik sonuçlarının çok daha uzun bir zaman ölçeğindeki stres testi olarak okuyun.
 
 ## Agent Toplumu
 
@@ -713,6 +713,8 @@ Kurt adam, bu kısımdaki üç boyuttan **stratejik oyunu** temsil eder: kural k
 ## Bölüm Özeti
 
 Çoklu Agent işbirliği, tek bir Agent'ın üretim sırasında elde edemeyeceği yeni bilgiler (çalıştırma sonuçları, görsel geri bildirim veya harici araç doğrulaması) sağladığında değerlidir. Tasarım; paylaşılan ya da yalıtılmış bağlam ile eşler arası, yönetici veya merkezi olmayan topolojiler arasında seçim yapmalıdır. Yapılandırılmış handoff paketleri, yetki sınırları, bağımsız doğrulama, bütçe ve iptal mekanizmaları temel hata toleransı döngüsünü oluşturur. Uzun süreli açık etkileşimlerde sosyal ilişkiler, normlar, piyasalar ve stratejiler ortaya çıkabilir; öz, bilgi akışını, yeteneklerin bölünmesini ve hataların keşfini tasarlamaktır.
+
+Bu aynı zamanda ana metnin son bölümüdür. Bölüm 1'deki Agent = LLM + context + tools'tan başlayıp inşa, değerlendirme ve evrimden geçerek bu bölümdeki iş birliğine kadar mühendislik rotası tamamlandı. Ama mühendisliğin kendisinin yanıtlayamayacağı iki soru kalıyor: modeller güçlenmeye devam ettikçe bugünün Harness'ından geriye ne kalacak, ve belirli bir kullanıcıya, belirli bir şirkete ait bilgi "bir kez daha eğitmekle" kapatılabilir mi. Sonsöz ikisini de ele alıyor.
 
 ## Düşünce Soruları
 

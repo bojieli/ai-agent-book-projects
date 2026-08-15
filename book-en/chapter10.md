@@ -559,7 +559,7 @@ The opposite of premature termination is **an uncontrolled loop**. A loop can ru
 
 The faster a loop ships code, the further the engineer's understanding can fall behind. Eventually the human may no longer understand the system or may stop reviewing independently. Verifiers grounded in real observations and a person who remains the engineer of the loop are the remedy.
 
-So far, this chapter has taken an engineering perspective: how can a group of Agents collaborate on a task? The focus now shifts to a different question: what emerges when large numbers of Agents coexist over long periods without being driven by a single goal? The next section explores frontier research, so engineering readers should feel free to read selectively.
+Everything discussed so far has been from an engineering standpoint: how to get a group of Agents to finish a task together. The next section **differs in genre from the rest of the book**: the previous nine and a half chapters answer "how to build it", while this one answers "what is being tried"—it is a survey of current multi-agent social experiments, offering observations and open questions rather than an engineering recipe you can follow directly. It stays in this chapter because these experiments push exactly the things discussed above—context sharing, collaboration topology, failure modes—to an extreme scale, and because two of them (Stanford AI Town and voice Werewolf) come with reproducible and runnable companion projects in this book. Read it as a stress test of the preceding engineering conclusions over a much longer time scale.
 
 ## Agent Society
 
@@ -705,6 +705,8 @@ The central design choices are shared or isolated context, and peer, manager or 
 Multi-agent systems can also amplify errors: shared resources create concurrency and semantic conflicts, errors cascade through communication, and loops may terminate too early or expand without bound. Optimistic locking and working-copy isolation, independent cross-validation, and explicit budgets and cancellation form a basic fault-tolerance loop. People must not outsource understanding and responsibility together with execution; comprehension debt and cognitive surrender remain real risks.
 
 When short-lived task collaboration grows into long-running, open-ended interaction, social relationships, cultural norms, market competition and strategic behavior under asymmetric information may emerge. The essence of multi-agent engineering is to design how information flows, how capabilities are divided, and how errors are discovered. Only when these mechanisms are robust can collective intelligence exceed that of an individual.
+
+This is also the last chapter of the main text. From Agent = LLM + Context + Tools in chapter 1, through building, evaluation and evolution, to collaboration here, the engineering route is complete. But two questions engineering itself cannot answer remain: how much of today's Harness will survive as models keep getting stronger, and whether knowledge belonging to one specific user or one specific company can ever be filled in by "training once more". The afterword takes up both.
 
 ## Thought Questions
 

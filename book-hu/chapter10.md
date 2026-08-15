@@ -617,7 +617,7 @@ A korai leállás ellentéte az **ellenőrizetlen ciklus**. A ciklus a végtelen
 
 ### Negyedik Hibamód: Megértési Adósság és Kognitív Feladás
 
-Minél gyorsabban szállít kódot egy ciklus, annál jobban lemaradhat mögötte a mérnök megértése. Idővel az ember már nem érti a rendszert, vagy felhagy a független ellenőrzéssel. A megoldást valós megfigyeléseken alapuló ellenőrzők és az jelentik, hogy az ember továbbra is a ciklus felelős mérnöke marad.
+Minden, amiről eddig szó esett, mérnöki nézőpontból történt: hogyan vigyen véghez egy csoport Ügynök közösen egy feladatot. A következő szakasz **műfajában eltér a könyv többi részétől**: az előző kilenc és fél fejezet arra felel, „hogyan építsük meg", ez a szakasz viszont arra, „mivel kísérleteznek éppen". A jelenlegi többügynökös társadalmi kísérletek áttekintése; megfigyeléseket és nyitott kérdéseket ad, nem közvetlenül lemásolható mérnöki receptet. Azért marad mégis ebben a fejezetben, mert ezek a kísérletek éppen a fentebb tárgyaltakat – kontextusmegosztás, együttműködési topológia, hibamódok – viszik szélsőséges léptékre, és mert kettőjükhöz (a stanfordi MI-városka és a hangalapú Farkasember) a könyv reprodukálható és futtatható kísérő projektet ad. Olvasd úgy, mint a korábbi mérnöki következtetések terheléspróbáját egy jóval hosszabb időskálán.
 
 ## Ügynök Társadalom
 
@@ -757,6 +757,8 @@ A Farkasos (Werewolf) rögzíti e szakasz harmadik dimenzióját, a "stratégiai
 ## Fejezet Összefoglaló
 
 A többügynökös együttműködés akkor indokolt, ha olyan új információt hoz be, amelyet egyetlen Agent a generáláskor nem láthatott: például végrehajtási eredményt, vizuális visszajelzést vagy külső eszköz ellenőrzését. A tervezésnek a megosztott vagy elkülönített kontextus, illetve a partneri, menedzseri vagy decentralizált topológia között kell választania. A strukturált átadási csomagok, a jogosultsági határok, a független ellenőrzés, a költségkeretek és a leállítási mechanizmusok adják az alapvető hibatűrő hurkot. Hosszú, nyílt interakcióban társadalmi kapcsolatok, normák, piacok és stratégiák is kialakulhatnak; az alapfeladat az információáramlás, a képességek felosztása és a hibák felfedezésének megtervezése.
+
+Ez egyben a főszöveg utolsó fejezete is. Az 1. fejezet Ügynök = LLM + kontextus + eszközök képletétől az építésen, az értékelésen és az evolúción át e fejezet együttműködéséig a mérnöki útvonal végigjárva. Két kérdés azonban marad, amelyre maga a mérnöki munka nem tud felelni: mennyi marad a mai Harness-ből, ahogy a modellek tovább erősödnek, és pótolható-e valaha „még egy tréninggel" az a tudás, amely egy konkrét felhasználóé, egy konkrét cégé. Az utószó mindkettőt felveszi.
 
 ## Gondolatébresztő Kérdések
 
