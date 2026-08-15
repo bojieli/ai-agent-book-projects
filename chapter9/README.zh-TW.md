@@ -1,14 +1,14 @@
-# 第 9 章 · 多模態與即時互動
+# 第 8 章 · Agent 的自我進化
 
-> 從文字擴充套件到語音、GUI、物理世界：語音三典範、Computer Use、機器人
+> 不改權重也能成長：經驗學習、從工具使用者到創造者
 
-← [返回主目錄](../docs/zh-TW/README.md) · 📖 [讀本章正文](../book/chapter9.md)
+← [返回主目錄](../docs/zh-TW/README.md) · 📖 [讀本章正文](../book/chapter8.md)
 
 ## 如何閱讀實驗
 
 正文用短小的機制 skeleton 說明控制流；實驗目錄放完整的 SDK 適配、日誌、測試與驗收證據，不需要逐行讀完每個檔案。
 
-- **Starter:** 先讀目標、最小指令與驗收條件；可從 [live-audio](live-audio/);
+- **Starter:** 先讀目標、最小指令與驗收條件；可從 [trajectory-verifier](trajectory-verifier/);
 - **Builder:** 沿著入口、核心迴圈、狀態／訊息 schema、工具與驗證器閱讀。
 - **Maintainer:** 最後再看測試、證據 manifest、失敗處理、回滾路徑與 provider adapter。
 
@@ -18,18 +18,25 @@
 
 | 編號 | 專案 | 型別 | 一句話說明 |
 | :--: | --- | :--: | --- |
-| 9-1 | [live-audio](live-audio/) | ✅ | 即時語音聊天，整合 VAD + ASR（Whisper/SenseVoice）+ LLM（GPT-4o/Gemini/Doubao）+ TTS（Fish Audio），WebSocket 低延遲 |
-| Add-on | [phone-agent](phone-agent/) | 🚧 | 官方 `pine-voice` SDK 的 direct/ReAct 路徑已實作，但未提供獲授權且同意參與的 E.164 目的號碼；預檢明確記錄未撥號、無 transcript，test double 不算驗收。 |
-| 9-2 | [streaming-speech](streaming-speech/) | ✅ | 音訊按遞增長度分塊餵 ASR，每段立刻出文字降首包延遲，對比「整句到齊再識別」的高準確/高延遲 |
-| 9-3 | [end-to-end-speech](end-to-end-speech/) | ✅ | 已在單張 RTX PRO 6000 上真實本機執行固定 revision 的 MiniCPM-o 4.5；端到端與自級聯皆為 3/4，但語義與副語言錯誤互補，並保留真實 24kHz 語音輸出與完整驗收證據。 |
-| 9-4 | [controllable-tts](controllable-tts/) | 🚧 | 真實 Fish Audio S1 4×3×2 參考音庫與 A/B/C 媒體通過結構門禁；仍缺定性聽測與「接近真人客服」評估。 |
-| 9-5 | `claude-quickstarts/computer-use-demo/` | 📖 | 外部 `anthropics/claude-quickstarts` 固定於 `9bcc95e…`；正文對應容器化 Ubuntu 桌面＋Claude agent loop 的 Computer Use demo，不是整個 quickstarts。 |
-| 9-6 | `browser-use/` | 📖 | 外部 `browser-use/browser-use` 固定於 `ec9277c…`；正文用 `use_vision=True` 視覺 CLI 在 Google 查舊金山天氣並保留動作/截圖軌跡。 |
-| 9-7 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | 真機 XLeRobot 遙操作同一個整理桌面任務：把紅色杯子放入托盤、黃色廢紙放入垃圾盒，最後重新觀察並確認狀態。 |
-| 9-8 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 在模擬器中測量同一桌面任務的理想控制上限；不代表真機已經執行。 |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 使用 Gemini Robotics-ER 1.5 自主控制真機 XLeRobot 完成同一整理桌面任務。 |
-| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 在模擬器中比較同一任務的開環、逐步檢查與預測式閉環策略。 |
-| 9-11 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | 改變背景、物體外觀、光照與視覺雜訊，對同一桌面任務進行 RGB 跨環境測試。 |
+| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | 實驗 8-1：用環境結果、過程規則和語言 Rubric 形成帶證據的客服軌跡診斷 |
+| 8-2 | [gaia-experience](gaia-experience/) | ✅ | 基於 AWorld + GAIA 的「學習-應用」閉環：自動總結成功軌跡為結構化經驗，在新任務中檢索應用 |
+| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 以 tau-bench 航空客服「過度轉接」為例，Coding Agent 讀/改 prompt 檔案 → 重新評測 → 驗證閉環 |
+| 8-4 | 正文實驗 | 🚧 | 實驗 8-4：從使用者回饋進化「需求澄清 + Spec 確認」Skill，正文提供三臂 A/B 設計與發布門檻 |
+| 8-5 | [browser-use-rpa](browser-use-rpa/) | ✅ | 實驗 8-5：瀏覽器工作流錄製系統，把重複操作封裝為參數化工具，透過重置與回放驗證 |
+| 8-6 | [self-modifying-agent](self-modifying-agent/) | ✅ | 實驗 8-6：由重複故障觸發重試/熔斷程式碼補丁、迴歸、灰度與回滾 |
+| 8-7 | [harness-safety-gate](harness-safety-gate/) | ✅ | 實驗 8-7：由使用者糾正與事後審計進化高風險操作確認門禁 |
+| 8-8 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | 實驗 8-8：把整本書與原始碼交給 Hermes；它讀完後選擇一項改進、親手修改自己，並把每次 Reviewer 退回變成下一輪學習，直到通過 |
+| 8-9 | [self-evolution-eval](self-evolution-eval/) | ✅ | 實驗 8-9：三臂、3 seeds、14 任務的長期學習、遷移、規則替換與保留評估 |
+
+以上實驗都提供無需 API Key 的離線入口和單元測試；需要真實模型或瀏覽器的擴充路徑在各專案 README 中另行說明。
+
+## 補充案例
+
+| 編號 | 專案 | 關係 |
+| :--: | --- | --- |
+| 7-8 | [prompt-distillation](prompt-distillation/) | 將複雜提示的效果蒸餾進模型引數，減少推理提示長度，把上下文經驗固化為引數化知識 |
+| — | [self-evolving-tools](self-evolving-tools/) | Alita 式「最小預定義，最大自我進化」：五個通用元工具，自己上網找庫/讀文件/沙箱測試並封裝複用 |
+| — | [ai-style-skill](ai-style-skill/) | 寫作型 Skill 補充案例；正文示例已移至第二章 |
 
 ## 專案型別說明
 
@@ -37,4 +44,4 @@
 | :--: | --- | --- |
 | ✅ | **可獨立執行** | 本倉庫自帶完整程式碼，配置好 API Key 即可執行 |
 | 📖 | **復現指南** | 依賴需自行 `git clone` 的**外部倉庫**（訓練框架、評測基準等） |
-| 🚧 | **進行中** | 已有實作，但正文要求的真實執行、授權參與者、硬體或驗收證據尚未完整 |
+| 🚧 | **設計文件** | 僅包含架構與實現方案，可執行程式碼仍在完善中 |

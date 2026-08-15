@@ -1,14 +1,14 @@
-# 9. fejezet · Multimodalitás és valós idejű interakció
+# 8. fejezet · Az ágensek folyamatos evolúciója
 
-> A szövegtől a beszéd, a grafikus felületek és a fizikai világ felé bővíti az érzékelést és a cselekvést: streamelt beszéd, Computer Use és robotika.
+> Tapasztalatból fejleszti az ágenst: nyomvonalakat ellenőriz, tudást desztillál, promptokat javít, munkafolyamatokat készít, és ellenőrzött módon módosítja önmagát.
 
-← [Vissza a magyar főoldalhoz](../docs/hu/README.md) · 📖 [A fejezet olvasása](../book-hu/chapter9.md)
+← [Vissza a magyar főoldalhoz](../docs/hu/README.md) · 📖 [A fejezet olvasása](../book-hu/chapter8.md)
 
 ## Hogyan olvassuk a kísérleteket?
 
 A törzsszöveg rövid mechanizmus-skeletonokkal magyarázza a vezérlési folyamatot; a kísérleti könyvtárakban találhatók a teljes SDK-adapterek, naplók, tesztek és átvételi bizonyítékok. Nem kell minden fájlt sorról sorra elolvasni.
 
-- **Starter:** Kezdje a céllal, a minimális paranccsal és az átvételi feltételekkel; induljon innen: [live-audio](live-audio/);
+- **Starter:** Kezdje a céllal, a minimális paranccsal és az átvételi feltételekkel; induljon innen: [trajectory-verifier](trajectory-verifier/);
 - **Builder:** Kövesse a belépési pontot, a fő ciklust, az állapot-/üzenetsémát, az eszközöket és az ellenőrzőt.
 - **Maintainer:** Végül olvassa el a teszteket, a bizonyíték-manifeszteket, a hibakezelést, a visszaállítási útvonalakat és a provider-adaptereket.
 
@@ -18,23 +18,22 @@ Első olvasáskor átugorható a hitelesítő adatok betöltése, a megjelenít�
 
 | Kísérlet | Projekt | Típus | Leírás |
 | :--: | --- | :--: | --- |
-| 9-1 | [live-audio](live-audio/) | ✅ | Valós idejű hangbeszélgetési demó, amely STT-t, AI-párbeszédet és TTS-t kapcsol össze. |
-| Add-on | [phone-agent](phone-agent/) | 🚧 | A Pine Voice útvonalai elkészültek, de engedélyezett PSTN-hívás még nem futott. |
-| 9-2 | [streaming-speech](streaming-speech/) | ✅ | Bemutatja a streamelt beszédfelismerés késleltetési és pontossági kompromisszumát. |
-| 9-3 | [end-to-end-speech](end-to-end-speech/) | ✅ | A rögzített revisionű MiniCPM-o 4.5 helyben futott egy RTX PRO 6000 GPU-n; az end-to-end és self-cascade egyaránt 3/4 lett, egymást kiegészítő szemantikai/paralingvisztikai hibákkal és valódi 24kHz-es hangbizonyítékkal. |
-| 9-4 | [controllable-tts](controllable-tts/) | 🚧 | Fish Audio referencia-könyvtárat és média-összehasonlítást készít; a hallgatási értékelés még hiányos. |
-| 9-5 | `claude-quickstarts/computer-use-demo/` | 📖 | Az Anthropic hivatalos Computer Use demója konténerizált Ubuntu asztalon. |
-| 9-6 | `browser-use/` | 📖 | Vizuális böngésző-automatizálás művelet- és képernyőkép-nyomvonalakkal. |
-| 9-7 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | Valós XLeRobot távvezérlése ugyanazon asztalrendezési feladathoz: a piros csésze a tálcába, a sárga papír a hulladékgyűjtőbe kerül, majd az állapotot újra megfigyeljük és ellenőrizzük. |
-| 9-8 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Ugyanennek a feladatnak az ideális vezérlési felső határa szimulátorban; ez nem jelenti a valódi robot futtatását. |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | A Gemini Robotics-ER 1.5 önállóan vezérli a valós XLeRobotot ugyanazon asztalrendezési feladaton. |
-| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Nyílt hurkú, lépésenként ellenőrző és prediktív zárt hurkú stratégia összehasonlítása szimulátorban. |
-| 9-11 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | RGB-környezetközi teszt ugyanazon feladaton, eltérő háttérrel, tárgymegjelenéssel, megvilágítással és zajjal. |
+| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | A környezeti eredményeket, folyamatszabályokat és rubrikákat bizonyítékalapú diagnózissá egyesíti. |
+| 8-2 | [gaia-experience](gaia-experience/) | ✅ | Sikeres, részben sikeres és sikertelen nyomvonalakból tapasztalati dokumentumot készít. |
+| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Minimális promptjavítást készít, és határ- valamint megtartási készlettel vezérli a kiadást. |
+| 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | Böngészőnyomvonalakat fordít reset és visszajátszás segítségével ellenőrzött munkafolyamattá. |
+| 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | Ismételt hibák után kódjavítást indít, majd regressziót, canary kiadást és visszaállítást végez. |
+| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Hermes megkapja a teljes könyvet és saját forrását, választ egy javítást, módosítja önmagát, és minden Reviewer-elutasításból új tanulási kört indít az elfogadásig. |
+| 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | A 8-7. kísérlet hosszú távon értékeli a tanulást, átvitelt, szabályváltozást és megtartást. |
+| 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | Magas kockázatú műveletek megerősítési kapuja |
+| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | Az írási visszajelzést ellenőrizhető Skill-lé alakítja; a fejezet a görbe idézőjeles Skillt auditált szintetikus adattal és utóhangolással kapcsolja össze, a pontos másolás tokenizer/Harness hibáit pedig külön kezeli |
+
+Minden kísérlet kínál offline belépési pontot és API-kulcs nélküli egységtesztet; a valódi modellt vagy böngészőt igénylő útvonalakat az egyes projektek README-je ismerteti.
 
 ## Projekttípusok
 
 | Ikon | Típus | Jelentés |
 | :--: | --- | --- |
 | ✅ | **Önálló** | A teljes kód a repository-ban található, és az API-kulcsok beállítása után futtatható. |
-| 📖 | **Reprodukciós útmutató** | Külső repository vagy meghatározott hardver szükséges. |
-| 🚧 | **Folyamatban** | Az implementáció vagy az élő elfogadási bizonyíték még nem teljes. |
+| 📖 | **Reprodukciós útmutató** | Külső repository szükséges, amelyet külön kell `git clone` paranccsal letölteni. |
+| 🚧 | **Folyamatban** | Az implementáció vagy az elfogadási bizonyíték még nem teljes. |

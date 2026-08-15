@@ -1,14 +1,14 @@
-# Chương 9 · Đa phương thức và tương tác thời gian thực
+# Chương 8 · Tự tiến hóa của Agent
 
-> mở rộng cảm nhận và hành động từ văn bản sang giọng nói, GUI và thế giới vật lý. Ba mô thức giọng nói (pipeline nối tầng/đa phương thức đầu cuối/full-duplex), cảm nhận và tổng hợp giọng nói dạng streaming, Computer Use và thao tác robot.
+> Agent vẫn có thể trưởng thành mà không cần sửa trọng số. Ba mô thức học tập: học từ kinh nghiệm, và từ “người dùng công cụ” thành “người tạo công cụ”, giúp Agent đi từ “thông minh” tới “thành thạo”.
 
-← [Về README chính](../docs/vi/README.md) · 📖 [Đọc nội dung chương](../book-vi/chapter9.vi.md)
+← [Về README chính](../docs/vi/README.md) · 📖 [Đọc nội dung chương](../book-vi/chapter8.vi.md)
 
 ## Cách đọc các thí nghiệm
 
 Phần văn bản dùng skeleton cơ chế ngắn để giải thích luồng điều khiển; thư mục thí nghiệm chứa adapter SDK đầy đủ, log, kiểm thử và bằng chứng nghiệm thu. Không cần đọc từng tệp theo từng dòng.
 
-- **Starter:** Bắt đầu từ mục tiêu, lệnh tối thiểu và điều kiện nghiệm thu; hãy bắt đầu với [live-audio](live-audio/);
+- **Starter:** Bắt đầu từ mục tiêu, lệnh tối thiểu và điều kiện nghiệm thu; hãy bắt đầu với [trajectory-verifier](trajectory-verifier/);
 - **Builder:** Lần theo điểm vào, vòng lặp lõi, schema trạng thái/tin nhắn, công cụ và verifier.
 - **Maintainer:** Sau đó đọc test, manifest bằng chứng, xử lý lỗi, đường rollback và adapter nhà cung cấp.
 
@@ -18,18 +18,24 @@ Lần đầu có thể bỏ qua credential, lớp trình bày và tương thích
 
 | Thí nghiệm | Project | Type | Description |
 | :--: | --- | :--: | --- |
-| 9-1 | [live-audio](live-audio/) | ✅ | Demo chat giọng nói thời gian thực, tích hợp speech-to-text, hội thoại AI và text-to-speech. Hỗ trợ nhiều nhà cung cấp dịch vụ AI (OpenAI, OpenRouter, ARK, Siliconflow), cung cấp trải nghiệm hội thoại độ trễ thấp. |
-| Add-on | [phone-agent](phone-agent/) | 🚧 | Đã triển khai đường direct/ReAct của SDK `pine-voice` chính thức, nhưng chưa có đích E.164 được ủy quyền và đồng ý. Preflight ghi rõ không quay số/không transcript; test double không phải nghiệm thu. |
-| 9-2 | [streaming-speech](streaming-speech/) | ✅ | Minh họa đánh đổi cốt lõi của cảm nhận giọng nói streaming: chia âm thanh liên tục thành các khối có độ dài tăng dần đưa vào ASR; mỗi khi nhận một đoạn nhỏ thì xuất “kết quả nhận dạng phần hiện tại” để có văn bản cực sớm với độ trễ gói đầu rất thấp. Cái giá là các khối ban đầu có thể sai do thiếu ngữ cảnh nửa sau câu; khi âm thanh tích lũy, kết quả dần hội tụ, đối chiếu với cách “đợi đủ cả câu rồi nhận dạng” có độ chính xác cao nhưng độ trễ cao. |
-| 9-3 | [end-to-end-speech](end-to-end-speech/) | ✅ | MiniCPM-o 4.5 ở revision cố định đã chạy cục bộ thật trên một RTX PRO 6000; end-to-end và self-cascade cùng đạt 3/4 nhưng lỗi ngữ nghĩa/cận ngôn ngữ bổ sung cho nhau, kèm âm thanh 24kHz và bằng chứng nghiệm thu. |
-| 9-4 | [controllable-tts](controllable-tts/) | 🚧 | Thư viện Fish Audio S1 thật 4×3×2 và media A/B/C đạt cổng cấu trúc; còn thiếu nghiên cứu nghe định tính và đánh giá “gần người thật”. |
-| 9-5 | `claude-quickstarts/computer-use-demo/` | 📖 | `anthropics/claude-quickstarts` bên ngoài ghim tại `9bcc95e…`; nội dung sách dùng Computer Use demo với desktop Ubuntu＋vòng Claude agent trong container, không phải toàn bộ quickstarts. |
-| 9-6 | `browser-use/` | 📖 | `browser-use/browser-use` bên ngoài ghim tại `ec9277c…`; visual CLI (`use_vision=True`) tìm thời tiết San Francisco trên Google và lưu trajectory action/screenshot. |
-| 9-7 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | Teleoperation XLeRobot thật cho cùng một nhiệm vụ dọn bàn: đặt cốc đỏ vào khay, giấy vàng vào thùng rác, rồi quan sát lại và xác minh trạng thái. |
-| 9-8 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Đo giới hạn trên của điều khiển lý tưởng cho cùng nhiệm vụ trong simulator; không có nghĩa robot thật đã được chạy. |
-| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Gemini Robotics-ER 1.5 tự chủ điều khiển XLeRobot thật để hoàn thành cùng nhiệm vụ dọn bàn. |
-| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | So sánh open-loop, kiểm tra từng bước và closed-loop dự đoán trong simulator cho cùng nhiệm vụ. |
-| 9-11 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | Kiểm thử RGB xuyên môi trường cho cùng nhiệm vụ với nền, ngoại hình vật thể, ánh sáng và nhiễu thị giác thay đổi. |
+| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | Thí nghiệm 8-1: kết hợp kết quả môi trường, quy tắc quá trình và rubric ngôn ngữ thành chẩn đoán trajectory chăm sóc khách hàng có bằng chứng |
+| 8-2 | [gaia-experience](gaia-experience/) | ✅ | Thí nghiệm 8-2: so sánh trajectory thành công, thành công một phần và thất bại để sinh tài liệu kinh nghiệm Markdown xuyên trajectory |
+| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Thí nghiệm 8-3: sinh bản vá prompt tối thiểu từ trajectory thất bại, kiểm soát phát hành bằng tập biên và tập giữ lại |
+| 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | Thí nghiệm 8-4: biên dịch trajectory trình duyệt thành workflow có vị từ trạng thái (state predicates), được kiểm chứng bằng phát lại sau reset |
+| 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | Thí nghiệm 8-5: lỗi lặp lại kích hoạt bản vá mã retry/circuit-breaker, kiểm thử hồi quy, phát hành canary và rollback |
+| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Đưa cho Hermes toàn bộ cuốn sách và mã nguồn của chính nó; Hermes chọn một cải tiến, tự sửa mình và biến mỗi lần Reviewer từ chối thành một vòng học mới cho tới khi được chấp nhận |
+| 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | Thí nghiệm 8-7: đánh giá tiến hóa dài hạn qua bốn giai đoạn — học, chuyển giao, thay đổi quy tắc và giữ vững |
+| 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | Cổng xác nhận thao tác rủi ro cao |
+| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | Chuyển phản hồi viết thành Skill có thể kiểm chứng; chương nối Skill dấu ngoặc kép cong với dữ liệu tổng hợp đã kiểm toán và hậu huấn luyện, đồng thời tách lỗi tokenizer/Harness trong sao chép chính xác |
+
+Tất cả thí nghiệm trên đều có lối chạy offline và unit test không cần API Key; các hướng mở rộng cần model thật hoặc trình duyệt được ghi trong README của từng dự án.
+
+## Trường hợp bổ sung
+
+| Thí nghiệm | Project | Quan hệ |
+| :--: | --- | --- |
+| 7-8 | [prompt-distillation](prompt-distillation/) | Dự án xuyên chương về chưng cất prompt và học tham số hóa; phương pháp huấn luyện thuộc Chương 7 |
+| — | [self-evolving-tools](self-evolving-tools/) | Khám phá, đóng gói và tái sử dụng công cụ kiểu Alita — trường hợp bổ sung của “viết kinh nghiệm thành chương trình” |
 
 ## Phân loại dự án
 
@@ -37,4 +43,4 @@ Lần đầu có thể bỏ qua credential, lớp trình bày và tương thích
 | :--: | --- | --- |
 | ✅ | **Chạy độc lập** | Có mã đầy đủ trong kho, chạy được sau khi cấu hình API Key |
 | 📖 | **Hướng dẫn tái hiện** | Tài liệu chi tiết, cần `git clone` **kho ngoài** |
-| 🚧 | **Đang thực hiện** | Đã có triển khai, nhưng còn thiếu chạy live, ủy quyền, phần cứng hoặc bằng chứng nghiệm thu theo nội dung sách |
+| 🚧 | **Tài liệu thiết kế** | Chỉ có kiến trúc/phương án, mã chạy được đang hoàn thiện |

@@ -1,14 +1,14 @@
-# 第7章 · モデルのポストトレーニング
+# 第6章 · Agent の評価
 
-> 事前学習、SFT、RL の 3 段階を包括的に見渡す。SFT と RL のどちらを選ぶか、RLHF、アルゴリズムの比較、データと環境、そしてモデルにツール呼び出しを教えサンプル効率を高めるための最先端の探求。
+> Agent の性能を比較可能なシグナルに変える。評価環境、データセット設計、指標体系、統計的有意性、可観測性、評価駆動の選定、そしてプロダクショングレードの内部評価とシミュレーション環境を扱う。
 
-← [メイン README に戻る](../docs/ja/README.md) · 📖 [章の本文を読む](../book-ja/chapter7.ja.md)
+← [メイン README に戻る](../docs/ja/README.md) · 📖 [章の本文を読む](../book-ja/chapter6.ja.md)
 
 ## 実験の読み方
 
 本文では短い mechanism skeleton で制御フローを説明し、実験ディレクトリには完全な SDK アダプター、ログ、テスト、受け入れ証拠を置きます。すべてのファイルを一行ずつ読む必要はありません。
 
-- **Starter:** 目的・最小コマンド・受け入れ条件から始め、まず [cot-distillation](cot-distillation/);
+- **Starter:** 目的・最小コマンド・受け入れ条件から始め、まず [tau2-bench-eval](tau2-bench-eval/);
 - **Builder:** エントリポイント、中心ループ、状態／メッセージ schema、ツール、検証器を追います。
 - **Maintainer:** 最後にテスト、証拠 manifest、失敗処理、rollback 経路、provider adapter を読みます。
 
@@ -18,27 +18,27 @@
 
 | 実験 | プロジェクト | 種類 | 説明 |
 | :--: | --- | :--: | --- |
-| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | 同じ宝探し環境で Q-learning と LLM Agent を実行し、経験から学習する。 |
-| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | ✅ | 教師の例を学生 prompt に蒸留し、品質とコストを比較する。 |
-| 7-3, 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | 小型言語モデルをゼロから事前学習し、事前学習の完全なプロセスと主要技術を理解する。 |
-| 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | ドメイン固有のデータで継続事前学習を行い、対象ドメインにおけるモデルの性能を向上させる。 |
-| 7-6 | [sesame](sesame/) | ✅ | Sesame CSM 音声 SFT：LoRA で 1B TTS モデルを微調整し、`<laugh>`・`<sigh>` などのパラ言語タグで表現を制御 |
-| 7-6 | [orpheus](orpheus/) | ✅ | Orpheus 3B 音声 SFT：LoRA で TTS モデルを微調整し、参照音声の連結で文をまたいだ音色の一貫した声の複製を実現 |
-| 7-7 | [MultilingualReasoning](MultilingualReasoning/) | ✅ | 複数の言語環境におけるモデルの推論能力を訓練し、言語横断タスクの性能を向上させる。 |
-| 7-9 | [cot-distillation](cot-distillation/) | ✅ | OpenRouter 経由で Claude などの最先端モデルから CoT 軌跡を蒸留し、ルール検証器でフィルタリングして SFT データを生成する（実験 7-9 対応） |
-| 7-10 | [AdaptThink](AdaptThink/) | 📖 | 推論モデルに、問題の難易度に基づいて推論モード（Thinking と NoThinking）を適応的に選択させる。制約付き最適化と重要度サンプリングを通じて、精度を向上させながら推論コストを大幅に削減する（45〜69%）。DeepSeek-R1-Distill-Qwen モデルに基づき、DAPO アルゴリズムを用いて訓練する。 |
-| 7-11 | `SFTvsRL/` | 📖 | 教師ありファインチューニング（SFT）と強化学習（RL）が異なるタスクで持つ有効性を体系的に比較し、両手法の長所、短所、適した適用シナリオを分析する。 |
-| 7-12 | [SpatialReasoning](SpatialReasoning/) | 📖 | 位置、方向、距離などの空間関係を含む問題を処理するため、モデルの空間推論能力の訓練に焦点を当てる。 |
-| 7-13 | [SimpleVLA-RL](SimpleVLA-RL/) | 📖 | 強化学習の訓練において視覚、言語、行動を組み合わせ、モデルが視覚入力を理解して対応する行動を実行できるようにする。 |
-| 7-14 | [retool](retool/) | 📖 | 複数ターンの対話とコードサンドボックスを用いて、大規模言語モデルの数学的推論能力を強化する。SFT と RL の 2 段階の訓練プロセスを通じて、モデルはコード実行環境を用いて数学問題の解決を支援することを学ぶ。Qwen2.5-32B-Instruct に基づき、AIME 2024 データセットで DAPO アルゴリズムと SandboxFusion サンドボックスを用いて訓練する。 |
-| 7-15 | `AWorld/` · [AWorld-train](AWorld-train/) | 📖 | AWorld フレームワークに基づいて身体化された Agent を訓練し、Agent が仮想環境で複雑なタスクを実行し、経験から学習できるようにする。 |
-| 7-16 | [RLVP](RLVP/) | 📖 | 結果に報酬を与え、経路にペナルティを課す（RLVP）事後学習の研究（実験 7-16 対応）。完全な訓練・評価コードは独立した論文リポジトリ `19PINE-AI/rlvp` にあり、各自でクローンが必要 |
-| 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | GPU 上の早期完了 bad case に対する DPO 修正。 |
-| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | 監査済みスコープ依存中国語曲線引用符 SFT：10 文書ジャンル・9 プログラミング言語で train/holdout/boundary=1024/256/256、Qwen3-8B は exact 96.9%/97.7%、保護領域保持率 100%。 |
-| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | 監査済み byte-exact 特殊文字列コピー SFT：1024/256/256 件、Qwen3-8B は holdout 78.9%、boundary 80.1%、Qwen3/Qwen2.5/Mistral tokenizer 監査付き。 |
-| — | `verl/` | 📖 | verl は、大規模言語モデルの RLHF 訓練のために特別に設計された効率的な強化学習フレームワークで、PPO、GRPO、DAPO などのさまざまなアルゴリズムをサポートする。 |
-| — | [Intuitor](Intuitor/) | ✅ | モデルの直感的推論能力を訓練し、詳細な思考連鎖を必要とせずに迅速かつ合理的な判断を下せるようにする。 |
-| — | `tinker-cookbook/` | 📖 | モデル訓練のためのさまざまな実践的なコツとベストプラクティスを収集する。 |
+| 6-1 | `tau2-bench/` | 📖 | 計算、検索、データ処理などのシナリオを含め、複雑な推論のためにツールを使う Agent の能力の評価に焦点を当てる。 |
+| 6-2 | `tau2-bench/` | 📖 | τ²-bench の段階別タスクを手動で完了し、軌跡を記録する。 |
+| 6-3 | [user-memory-evaluation](../chapter3/user-memory-evaluation/) | ✅ | 4段階 Rubric を180件の構造化判定に適用し、根拠とハルシネーション拒否を記録する。 |
+| 6-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | 60ケースを3システムで実行し、コストを完全に集計する。 |
+| 6-5 | [user-memory-policy-eval](user-memory-policy-eval/) | ✅ | JSON、Markdown、Python 風のメモリ表現を対象に、実際の OpenRouter 呼び出しと決定論的なポリシーチェックで 11 件の trajectory-prefix 不良ケースを実行する。 |
+| 6-11 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | 完全な 4×3×2×60 マトリクスで 1,440/1,440 件の実軌跡をエラーや未課金利用なしに保持し、検索・タスク指標と相互作用分析を完備、独立検証にも合格。 |
+| 6-13 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | 単一 GPU の正式実験で各 action-chunk 群 256 エピソードを完了。chunk 1 は 0/256、chunk 25 は 26/256 で、512 rollout のハッシュを保存。 |
+| 6-2 | `terminal-bench/` | 📖 | Terminal-Bench は、実際のターミナル環境における AI Agent の性能をテストするためのベンチマークである。コードのコンパイルからモデルの訓練、サーバーのセットアップまで、Agent が実際のエンドツーエンドタスクをどう処理するかを評価する。約 100 タスクのデータセットと実行フレームワークを含み、さまざまな Agent 実装をサポートする。 |
+| 6-2 | `SWE-bench/` | 📖 | SWE-bench は、大規模言語モデルが実際の GitHub issue を解決する能力を評価するためのベンチマークである。コードベースと issue の説明が与えられると、モデルは問題を解決するパッチを生成しなければならない。SWE-bench、SWE-bench Lite、SWE-bench Verified、SWE-bench Multimodal という複数のバージョンを含む。 |
+| 6-2 | `GAIA/` | 📖 | GAIA は次世代の LLM（ツール拡張、効率的なプロンプティング、検索アクセスなどを備えたもの）を評価することを目的としている。さまざまな程度のツール利用と自律性を必要とし、曖昧さのない回答を持つ 450 以上の非自明な問題を含む。3 つの難易度レベルに分かれている。 |
+| 6-2 | `OSWorld/` | 📖 | ファイル管理、アプリケーション操作、システム構成を含む、完全なオペレーティングシステム環境内で複雑なタスクを実行する Agent の能力を評価する。 |
+| 6-2, 6-12 | `android_world/` | 📖 | アプリのナビゲーション、UI 操作、タスク完了能力を含む、Android モバイル環境における Agent の性能を評価する。 |
+| 6-6 | [tts-quality-eval](tts-quality-eval/) | ✅ | さまざまな TTS 構成（異なるモデル/音声/速度）を用いて同じ難易度の高いテキストセットを合成し、次にマルチモーダルの LLM-as-a-Judge を用いて Rubric に従って各次元（明瞭さ、自然さなど）を採点し、結果を再現可能な構成比較表に集約する。 |
+| 6-7 | [elo-leaderboard](elo-leaderboard/) | ✅ | ELO レーティングシステムに基づく Agent 性能リーダーボードを実装し、ペアワイズ比較を通じて異なる Agent の相対的な能力を評価する。 |
+| 6-8 | [model-action-threshold](model-action-threshold/) | ✅ | 同一の中立的な Coding Harness の下で、GPT-5.6-sol と Claude Sonnet 5 が探索から最初の編集へ移るしきい値を比較する。18/18 セルが API エラーなしで完了し、[manifest](model-action-threshold/results/exp6-7-action-threshold-20260731-v1/manifest.json) が軌跡と集計を検証可能なハッシュで結び付ける。 |
+| 6-9 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | 典型的な複数ターンの Agent タスク（カスタマーサービスの返金）に対して全チェーンのコスト内訳を行う。カスタムの軽量トレーシングシステムを用いて各 LLM 呼び出しの入力/出力/キャッシュトークン、レイテンシ、コストを記録し、集計して「どのステップが最も高価か」を特定し、次に A/B テストを用いて KV Cache に優しい設計とコンテキスト圧縮による実際の節約を定量化する。 |
+| 6-10 | [model-benchmark](model-benchmark/) | 🚧 | 複数の OpenAI 互換 LLM API プロバイダーの横断的なベンチマークを実施する。ストリーミングインターフェースを用いて Time to First Token（TTFT）を正確に測定し、並行実行下でのエンドツーエンドレイテンシのパーセンタイル（p50/p95）、スループット、成功率を算出する。単一のコマンドで多次元の比較表を生成し、モデル選定がリーダーボードを見るだけではなく多面的なトレードオフであることを示す。 |
+| 6-12 | [android-world](android-world/) | 📖 | 本書による AndroidWorld 上での T3A Agent の評価レポートと失敗分析ノート（実験 6-12 の起点。ベンチマークのソースコードではない） |
+| — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | 合成 DHIS2 スタイルの集計データに基づき、公衆衛生レポート Agent のツール呼び出し、計算精度、証拠引用、根拠のない主張を客観的に評価する。 |
+
+> バッククォート表記の外部ベンチマークは別途 clone が必要です。[`android-world/`](android-world/)（ハイフン区切り）は本リポジトリ内の **T3A 評価分析ノート**（同ディレクトリの [README](android-world/README.md) を参照）であり、外部の `android_world/` ベンチマークソースとは別パスです。
 
 ## プロジェクトの種類
 

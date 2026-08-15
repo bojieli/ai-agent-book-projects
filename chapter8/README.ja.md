@@ -1,14 +1,14 @@
-# 第8章 · Agent の自己進化
+# 第7章 · モデルのポストトレーニング
 
-> 重みを変えずに成長する。3 つの学習パラダイム、経験からの学習、そして「ツールの利用者」から「ツールの創造者」への道のりを通じて、Agent を「賢い」段階から「熟練した」段階へと進化させる。
+> 事前学習、SFT、RL の 3 段階を包括的に見渡す。SFT と RL のどちらを選ぶか、RLHF、アルゴリズムの比較、データと環境、そしてモデルにツール呼び出しを教えサンプル効率を高めるための最先端の探求。
 
-← [メイン README に戻る](../docs/ja/README.md) · 📖 [章の本文を読む](../book-ja/chapter8.ja.md)
+← [メイン README に戻る](../docs/ja/README.md) · 📖 [章の本文を読む](../book-ja/chapter7.ja.md)
 
 ## 実験の読み方
 
 本文では短い mechanism skeleton で制御フローを説明し、実験ディレクトリには完全な SDK アダプター、ログ、テスト、受け入れ証拠を置きます。すべてのファイルを一行ずつ読む必要はありません。
 
-- **Starter:** 目的・最小コマンド・受け入れ条件から始め、まず [trajectory-verifier](trajectory-verifier/);
+- **Starter:** 目的・最小コマンド・受け入れ条件から始め、まず [cot-distillation](cot-distillation/);
 - **Builder:** エントリポイント、中心ループ、状態／メッセージ schema、ツール、検証器を追います。
 - **Maintainer:** 最後にテスト、証拠 manifest、失敗処理、rollback 経路、provider adapter を読みます。
 
@@ -18,24 +18,27 @@
 
 | 実験 | プロジェクト | 種類 | 説明 |
 | :--: | --- | :--: | --- |
-| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | 実験 8-1：環境の結果・プロセスルール・言語 Rubric を組み合わせ、証拠付きのカスタマーサービス軌跡診断を形成する |
-| 8-2 | [gaia-experience](gaia-experience/) | ✅ | 実験 8-2：成功・部分成功・失敗の軌跡を比較し、軌跡横断の Markdown 経験ドキュメントを生成する |
-| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 実験 8-3：失敗軌跡から最小の Prompt パッチを生成し、境界セットと保持セットでリリースを制御する |
-| 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | 実験 8-4：ブラウザ軌跡を状態述語付きのワークフローにコンパイルし、リセット再生で検証する |
-| 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | 実験 8-5：繰り返しの障害をトリガーに、リトライ/サーキットブレーカーのコードパッチ、回帰テスト、カナリアリリースとロールバックを行う |
-| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Hermes に本書全体と自分のソースを渡す。改善を選んで自分を書き換え、Reviewer の拒否を次の学習に変えながら受理まで進む |
-| 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | 実験 8-7：学習・転移・ルール変化・保持の 4 段階で長期的な進化を評価する |
-| 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | 高リスク操作の確認ゲート |
-| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | 執筆フィードバックを検証可能な Skill に変換する。章では曲線引用符 Skill を監査済み合成データと追加学習に接続し、exact-copy の tokenizer/Harness 障害を分離する |
-
-上記の実験はすべて、API キー不要のオフライン入口とユニットテストを提供する。実モデルやブラウザが必要な拡張パスは各プロジェクトの README に記載されている。
-
-## 補足事例
-
-| 実験 | プロジェクト | 関係 |
-| :--: | --- | --- |
-| 7-8 | [prompt-distillation](prompt-distillation/) | Prompt 蒸留とパラメータ化学習の章横断プロジェクト。訓練手法は第 7 章に属する |
-| — | [self-evolving-tools](self-evolving-tools/) | Alita 式のツール発見・カプセル化・再利用。「経験をプログラムとして書き出す」ことの補足事例 |
+| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | 同じ宝探し環境で Q-learning と LLM Agent を実行し、経験から学習する。 |
+| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | ✅ | 教師の例を学生 prompt に蒸留し、品質とコストを比較する。 |
+| 7-3, 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | 小型言語モデルをゼロから事前学習し、事前学習の完全なプロセスと主要技術を理解する。 |
+| 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | ドメイン固有のデータで継続事前学習を行い、対象ドメインにおけるモデルの性能を向上させる。 |
+| 7-6 | [sesame](sesame/) | ✅ | Sesame CSM 音声 SFT：LoRA で 1B TTS モデルを微調整し、`<laugh>`・`<sigh>` などのパラ言語タグで表現を制御 |
+| 7-6 | [orpheus](orpheus/) | ✅ | Orpheus 3B 音声 SFT：LoRA で TTS モデルを微調整し、参照音声の連結で文をまたいだ音色の一貫した声の複製を実現 |
+| 7-7 | [MultilingualReasoning](MultilingualReasoning/) | ✅ | 複数の言語環境におけるモデルの推論能力を訓練し、言語横断タスクの性能を向上させる。 |
+| 7-9 | [cot-distillation](cot-distillation/) | ✅ | OpenRouter 経由で Claude などの最先端モデルから CoT 軌跡を蒸留し、ルール検証器でフィルタリングして SFT データを生成する（実験 7-9 対応） |
+| 7-10 | [AdaptThink](AdaptThink/) | 📖 | 推論モデルに、問題の難易度に基づいて推論モード（Thinking と NoThinking）を適応的に選択させる。制約付き最適化と重要度サンプリングを通じて、精度を向上させながら推論コストを大幅に削減する（45〜69%）。DeepSeek-R1-Distill-Qwen モデルに基づき、DAPO アルゴリズムを用いて訓練する。 |
+| 7-11 | `SFTvsRL/` | 📖 | 教師ありファインチューニング（SFT）と強化学習（RL）が異なるタスクで持つ有効性を体系的に比較し、両手法の長所、短所、適した適用シナリオを分析する。 |
+| 7-12 | [SpatialReasoning](SpatialReasoning/) | 📖 | 位置、方向、距離などの空間関係を含む問題を処理するため、モデルの空間推論能力の訓練に焦点を当てる。 |
+| 7-13 | [SimpleVLA-RL](SimpleVLA-RL/) | 📖 | 強化学習の訓練において視覚、言語、行動を組み合わせ、モデルが視覚入力を理解して対応する行動を実行できるようにする。 |
+| 7-14 | [retool](retool/) | 📖 | 複数ターンの対話とコードサンドボックスを用いて、大規模言語モデルの数学的推論能力を強化する。SFT と RL の 2 段階の訓練プロセスを通じて、モデルはコード実行環境を用いて数学問題の解決を支援することを学ぶ。Qwen2.5-32B-Instruct に基づき、AIME 2024 データセットで DAPO アルゴリズムと SandboxFusion サンドボックスを用いて訓練する。 |
+| 7-15 | `AWorld/` · [AWorld-train](AWorld-train/) | 📖 | AWorld フレームワークに基づいて身体化された Agent を訓練し、Agent が仮想環境で複雑なタスクを実行し、経験から学習できるようにする。 |
+| 7-16 | [RLVP](RLVP/) | 📖 | 結果に報酬を与え、経路にペナルティを課す（RLVP）事後学習の研究（実験 7-16 対応）。完全な訓練・評価コードは独立した論文リポジトリ `19PINE-AI/rlvp` にあり、各自でクローンが必要 |
+| 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | GPU 上の早期完了 bad case に対する DPO 修正。 |
+| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | 監査済みスコープ依存中国語曲線引用符 SFT：10 文書ジャンル・9 プログラミング言語で train/holdout/boundary=1024/256/256、Qwen3-8B は exact 96.9%/97.7%、保護領域保持率 100%。 |
+| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | 監査済み byte-exact 特殊文字列コピー SFT：1024/256/256 件、Qwen3-8B は holdout 78.9%、boundary 80.1%、Qwen3/Qwen2.5/Mistral tokenizer 監査付き。 |
+| — | `verl/` | 📖 | verl は、大規模言語モデルの RLHF 訓練のために特別に設計された効率的な強化学習フレームワークで、PPO、GRPO、DAPO などのさまざまなアルゴリズムをサポートする。 |
+| — | [Intuitor](Intuitor/) | ✅ | モデルの直感的推論能力を訓練し、詳細な思考連鎖を必要とせずに迅速かつ合理的な判断を下せるようにする。 |
+| — | `tinker-cookbook/` | 📖 | モデル訓練のためのさまざまな実践的なコツとベストプラクティスを収集する。 |
 
 ## プロジェクトの種類
 

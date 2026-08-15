@@ -1,14 +1,14 @@
-# Chương 7 · Hậu huấn luyện mô hình
+# Chương 6 · Đánh giá Agent
 
-> toàn cảnh ba giai đoạn tiền huấn luyện, SFT và RL. Khi nào chọn SFT, khi nào chọn RL, RLHF, so sánh thuật toán, dữ liệu và môi trường, cũng như các hướng tiên phong giúp mô hình học cách gọi công cụ và nâng cao hiệu quả mẫu.
+> biến biểu hiện của Agent thành tín hiệu có thể so sánh. Từ môi trường đánh giá, thiết kế bộ dữ liệu, hệ thống chỉ số, đến ý nghĩa thống kê, observability, chọn mô hình dựa trên đánh giá, cho tới đánh giá nội bộ và môi trường mô phỏng cấp sản xuất.
 
-← [Về README chính](../docs/vi/README.md) · 📖 [Đọc nội dung chương](../book-vi/chapter7.vi.md)
+← [Về README chính](../docs/vi/README.md) · 📖 [Đọc nội dung chương](../book-vi/chapter6.vi.md)
 
 ## Cách đọc các thí nghiệm
 
 Phần văn bản dùng skeleton cơ chế ngắn để giải thích luồng điều khiển; thư mục thí nghiệm chứa adapter SDK đầy đủ, log, kiểm thử và bằng chứng nghiệm thu. Không cần đọc từng tệp theo từng dòng.
 
-- **Starter:** Bắt đầu từ mục tiêu, lệnh tối thiểu và điều kiện nghiệm thu; hãy bắt đầu với [cot-distillation](cot-distillation/);
+- **Starter:** Bắt đầu từ mục tiêu, lệnh tối thiểu và điều kiện nghiệm thu; hãy bắt đầu với [tau2-bench-eval](tau2-bench-eval/);
 - **Builder:** Lần theo điểm vào, vòng lặp lõi, schema trạng thái/tin nhắn, công cụ và verifier.
 - **Maintainer:** Sau đó đọc test, manifest bằng chứng, xử lý lỗi, đường rollback và adapter nhà cung cấp.
 
@@ -18,27 +18,27 @@ Lần đầu có thể bỏ qua credential, lớp trình bày và tương thích
 
 | Thí nghiệm | Project | Type | Description |
 | :--: | --- | :--: | --- |
-| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | Chạy Q-learning và LLM Agent trong cùng môi trường săn kho báu để học từ kinh nghiệm. |
-| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | ✅ | Chưng cất ví dụ của giáo viên thành prompt học viên và so sánh chất lượng với chi phí. |
-| 7-3, 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | Tiền huấn luyện mô hình ngôn ngữ nhỏ từ con số 0, hiểu toàn bộ quy trình và kỹ thuật then chốt của tiền huấn luyện. |
-| 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | Tiếp tục tiền huấn luyện trên dữ liệu miền cụ thể để nâng cao biểu hiện của mô hình trong miền mục tiêu. |
-| 7-6 | [sesame](sesame/) | ✅ | Sesame CSM speech SFT: tinh chỉnh LoRA mô hình TTS 1B, điều khiển biểu cảm bằng các thẻ cận ngôn ngữ như `<laugh>`, `<sigh>` |
-| 7-6 | [orpheus](orpheus/) | ✅ | Orpheus 3B speech SFT: tinh chỉnh LoRA mô hình TTS, nhân bản giọng nói qua âm thanh tham chiếu để giữ chất giọng nhất quán xuyên câu |
-| 7-7 | [MultilingualReasoning](MultilingualReasoning/) | ✅ | Huấn luyện năng lực suy luận của mô hình trong môi trường nhiều ngôn ngữ, nâng cao biểu hiện trên các nhiệm vụ xuyên ngôn ngữ. |
-| 7-9 | [cot-distillation](cot-distillation/) | ✅ | Chưng cất quỹ đạo CoT từ các mô hình tiên phong như Claude qua OpenRouter; lọc bằng bộ kiểm chứng luật để tạo dữ liệu SFT (kèm Thí nghiệm 7-9). |
-| 7-10 | [AdaptThink](AdaptThink/) | 📖 | Cho mô hình suy luận học cách chọn chế độ suy luận thích ứng theo độ khó của câu hỏi (Thinking vs NoThinking). Thông qua tối ưu có ràng buộc và importance sampling, dự án giảm mạnh chi phí suy luận (45–69%) đồng thời nâng cao độ chính xác. Dựa trên mô hình DeepSeek-R1-Distill-Qwen, huấn luyện bằng thuật toán DAPO. |
-| 7-11 | `SFTvsRL/` | 📖 | So sánh có hệ thống hiệu quả của fine-tuning có giám sát (SFT) và học tăng cường (RL) trên các nhiệm vụ khác nhau, phân tích ưu nhược điểm và ngữ cảnh phù hợp của hai phương pháp. |
-| 7-12 | [SpatialReasoning](SpatialReasoning/) | 📖 | Tập trung huấn luyện năng lực suy luận không gian của mô hình, xử lý các vấn đề liên quan đến vị trí, phương hướng, khoảng cách và các quan hệ không gian khác. |
-| 7-13 | [SimpleVLA-RL](SimpleVLA-RL/) | 📖 | Huấn luyện học tăng cường kết hợp thị giác, ngôn ngữ và hành động, giúp mô hình hiểu đầu vào thị giác và thực hiện hành động tương ứng. |
-| 7-14 | [retool](retool/) | 📖 | Dùng hội thoại nhiều vòng và sandbox mã để nâng cao năng lực suy luận toán học của mô hình ngôn ngữ lớn. Thông qua hai giai đoạn SFT và RL, mô hình học cách dùng môi trường thực thi mã để hỗ trợ giải bài toán. Dựa trên Qwen2.5-32B-Instruct, huấn luyện trên bộ AIME 2024, dùng thuật toán DAPO và sandbox SandboxFusion. |
-| 7-15 | `AWorld/` · [AWorld-train](AWorld-train/) | 📖 | Huấn luyện Agent hiện thân dựa trên framework AWorld, giúp Agent thực thi nhiệm vụ phức tạp trong môi trường ảo và học từ kinh nghiệm. |
-| 7-16 | [RLVP](RLVP/) | 📖 | Nghiên cứu hậu huấn luyện RLVP (thưởng cho kết quả, phạt đường đi), dự án đi kèm Thí nghiệm 7-16; mã huấn luyện/đánh giá đầy đủ nằm trong kho bài báo riêng `19PINE-AI/rlvp`, cần tự clone. |
-| 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | Sửa bad case hoàn thành sớm bằng DPO trên GPU. |
-| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | SFT dấu ngoặc kép cong tiếng Trung theo phạm vi đã kiểm toán: 1024/256/256 mẫu train/holdout/biên, 10 thể loại và 9 ngôn ngữ lập trình; Qwen3-8B đạt exact 96,9%/97,7%, bảo toàn vùng bảo vệ 100%. |
-| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | SFT sao chép chuỗi đặc biệt byte-exact đã kiểm toán: 1024/256/256 mẫu; Qwen3-8B đạt holdout 78,9%, biên 80,1%, kèm kiểm toán tokenizer Qwen3/Qwen2.5/Mistral. |
-| — | `verl/` | 📖 | verl là framework học tăng cường hiệu quả được thiết kế riêng cho huấn luyện RLHF của mô hình ngôn ngữ lớn, hỗ trợ nhiều thuật toán như PPO, GRPO, DAPO. |
-| — | [Intuitor](Intuitor/) | ✅ | Huấn luyện năng lực suy luận trực giác của mô hình, giúp mô hình có thể nhanh chóng đưa ra phán đoán hợp lý mà không cần chuỗi suy nghĩ chi tiết. |
-| — | `tinker-cookbook/` | 📖 | Tập hợp nhiều kỹ thuật thực dụng và best practice cho huấn luyện mô hình. |
+| 6-1 | `tau2-bench/` | 📖 | Tập trung đánh giá năng lực Agent dùng công cụ để suy luận phức tạp, bao gồm tính toán, tìm kiếm, xử lý dữ liệu và các ngữ cảnh khác. |
+| 6-2 | `tau2-bench/` | 📖 | Hoàn thành thủ công các nhiệm vụ phân cấp của τ²-bench và ghi lại quỹ đạo. |
+| 6-3 | [user-memory-evaluation](../chapter3/user-memory-evaluation/) | ✅ | Chạy rubric bốn mức trên 180 đánh giá có cấu trúc, kèm bằng chứng và quyền phủ quyết hallucination. |
+| 6-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | Chạy 60 trường hợp trên ba hệ thống với hạch toán chi phí đầy đủ. |
+| 6-5 | [user-memory-policy-eval](user-memory-policy-eval/) | ✅ | Chạy 11 trường hợp lỗi tiền tố quỹ đạo trên các biểu diễn bộ nhớ dạng JSON, Markdown và tương tự Python bằng lời gọi OpenRouter thực cùng các kiểm tra chính sách tất định. |
+| 6-11 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | Ma trận đầy đủ 4×3×2×60 giữ lại 1.440/1.440 quỹ đạo thực, không có lỗi hay lượt dùng chưa tính giá, kèm đủ chỉ số truy hồi/tác vụ, phân tích tương tác và trình xác minh độc lập đạt. |
+| 6-13 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | Chiến dịch chính thức trên một GPU đã hoàn thành 256 episode mỗi nhánh; chunk 1 đạt 0/256, chunk 25 đạt 26/256 và lưu hash của 512 rollout. |
+| 6-2 | `terminal-bench/` | 📖 | Terminal-Bench là benchmark kiểm thử biểu hiện của AI Agent trong môi trường terminal thực. Từ biên dịch mã đến huấn luyện mô hình, thiết lập server, benchmark đánh giá cách Agent xử lý các nhiệm vụ đầu-cuối thực tế. Bao gồm bộ dữ liệu khoảng 100 nhiệm vụ và framework thực thi, hỗ trợ nhiều triển khai Agent. |
+| 6-2 | `SWE-bench/` | 📖 | SWE-bench là benchmark đánh giá khả năng của mô hình ngôn ngữ lớn trong việc giải quyết các vấn đề GitHub thật. Với một codebase và mô tả issue, mô hình cần sinh patch có thể giải quyết vấn đề. Bao gồm nhiều phiên bản: SWE-bench, SWE-bench Lite, SWE-bench Verified và SWE-bench Multimodal. |
+| 6-2 | `GAIA/` | 📖 | GAIA nhằm đánh giá thế hệ LLM tiếp theo (LLM có năng lực tăng cường bằng công cụ, prompt hiệu quả, truy cập tìm kiếm, v.v.). Bao gồm hơn 450 câu hỏi phi tầm thường cần mức độ công cụ và tự chủ khác nhau, với đáp án rõ ràng không mơ hồ. Chia thành 3 cấp độ khó. |
+| 6-2 | `OSWorld/` | 📖 | Đánh giá năng lực của Agent khi thực thi nhiệm vụ phức tạp trong môi trường hệ điều hành đầy đủ, bao gồm quản lý file, thao tác ứng dụng và cấu hình hệ thống. |
+| 6-2, 6-12 | `android_world/` | 📖 | Đánh giá biểu hiện của Agent trong môi trường di động Android, bao gồm điều hướng ứng dụng, tương tác UI và khả năng hoàn thành nhiệm vụ (repo benchmark ngoài). |
+| 6-6 | [tts-quality-eval](tts-quality-eval/) | ✅ | Dùng nhiều cấu hình TTS (model/voice/speed khác nhau) để tổng hợp cùng một nhóm văn bản thử thách, sau đó dùng LLM-as-a-Judge đa phương thức chấm điểm từng chiều theo Rubric (độ rõ/naturalness, v.v.), tổng hợp thành bảng so sánh cấu hình có thể tái hiện. |
+| 6-7 | [elo-leaderboard](elo-leaderboard/) | ✅ | Triển khai bảng xếp hạng hiệu năng Agent dựa trên hệ thống điểm ELO, đánh giá năng lực tương đối của các Agent khác nhau thông qua so sánh đối đầu. |
+| 6-8 | [model-action-threshold](model-action-threshold/) | ✅ | So sánh GPT-5.6-sol và Claude Sonnet 5 tại thời điểm chuyển từ khám phá sang lần chỉnh sửa đầu tiên dưới cùng một Coding Harness trung lập; cả 18/18 ô đều hoàn tất không có lỗi API, và [manifest](model-action-threshold/results/exp6-7-action-threshold-20260731-v1/manifest.json) liên kết trajectory cùng bản tổng hợp bằng các hash có thể kiểm chứng. |
+| 6-9 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | Phân rã toàn tuyến chi phí của nhiệm vụ Agent nhiều vòng điển hình (hoàn tiền chăm sóc khách hàng): dùng tracing nhẹ tự xây để ghi lại token input/output/cache, độ trễ và chi phí của từng lần gọi LLM; tổng hợp “bước nào đắt nhất”, rồi dùng A/B để định lượng mức tiết kiệm thực của thiết kế thân thiện KV-cache + nén ngữ cảnh. |
+| 6-10 | [model-benchmark](model-benchmark/) | 🚧 | Benchmark ngang nhiều nhà cung cấp LLM API tương thích OpenAI; dùng giao diện streaming để đo chính xác độ trễ token đầu tiên (TTFT), đo các phân vị độ trễ đầu-cuối (p50/p95), throughput và tỷ lệ thành công dưới tải đồng thời. Một lệnh tạo bảng so sánh đa chiều, cho thấy chọn mô hình là đánh đổi nhiều chiều chứ không chỉ nhìn bảng xếp hạng. |
+| 6-12 | [android-world](android-world/) | 📖 | Ghi chú phân tích báo cáo đánh giá T3A trên AndroidWorld trong repo này (điểm bắt đầu Thí nghiệm 6-12; không phải mã nguồn benchmark). |
+| — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | Sử dụng dữ liệu tổng hợp nhân tạo theo phong cách DHIS2 để đánh giá khách quan lời gọi công cụ, độ chính xác tính toán, trích dẫn bằng chứng và các tuyên bố không có căn cứ của Agent báo cáo y tế công cộng. |
+
+> 📖 Các benchmark bên ngoài (tên đặt trong dấu backtick) cần tự clone riêng. [`android-world/`](android-world/) (có gạch nối) là **ghi chú phân tích đánh giá T3A** trong repo này (xem [README](android-world/README.md) của nó), không phải cùng đường dẫn với mã nguồn benchmark `android_world/` bên ngoài.
 
 ## Phân loại dự án
 

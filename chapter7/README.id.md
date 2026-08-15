@@ -1,14 +1,14 @@
-# Bab 7 · Pasca-Pelatihan Model
+# Bab 6 · Evaluasi Agent
 
-> Membahas pre-training, SFT, dan RL: kapan menggunakan masing-masing, cara menginternalisasi tool calling, serta cara meningkatkan efisiensi sampel.
+> Mengubah performa menjadi sinyal yang dapat dibandingkan melalui lingkungan evaluasi, dataset, metrik, observabilitas, dan pemilihan berbasis evaluasi.
 
-← [Kembali ke README utama](../docs/id/README.md) · 📖 [Baca bab](../book-id/chapter7.md)
+← [Kembali ke README utama](../docs/id/README.md) · 📖 [Baca bab](../book-id/chapter6.md)
 
 ## Cara Membaca Eksperimen
 
 Teks utama memakai skeleton mekanisme singkat untuk menjelaskan alur kontrol; direktori eksperimen berisi adapter SDK lengkap, log, pengujian, dan bukti penerimaan. Anda tidak perlu membaca setiap berkas baris demi baris.
 
-- **Starter:** Mulai dari tujuan, perintah minimum, dan syarat penerimaan; awali dengan [cot-distillation](cot-distillation/);
+- **Starter:** Mulai dari tujuan, perintah minimum, dan syarat penerimaan; awali dengan [tau2-bench-eval](tau2-bench-eval/);
 - **Builder:** Telusuri titik masuk, loop inti, skema status/pesan, alat, dan verifier.
 - **Maintainer:** Terakhir, baca pengujian, manifest bukti, penanganan kegagalan, rollback, dan adapter provider.
 
@@ -18,27 +18,27 @@ Pada pembacaan pertama, lewati kredensial, presentasi, dan kompatibilitas provid
 
 | Eksperimen | Proyek | Jenis | Deskripsi |
 | :--: | --- | :--: | --- |
-| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | Membandingkan Q-learning dan LLM pada lingkungan pencarian harta karun yang sama. |
-| 7-3 | [MiniMind-pretrain](MiniMind-pretrain/) · `MiniMind-pretrain/minimind/` | 📖 | Mempelajari proses pre-training LLM kecil dari awal. |
-| 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) · `MiniMind-pretrain/minimind-v/` | 📖 | Mempelajari pre-training dan SFT vision-language model kecil. |
-| 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | Melanjutkan pre-training pada data domain tertentu. |
-| 7-6 | [sesame](sesame/) · [orpheus](orpheus/) | 🚧 | Dua jalur SFT suara untuk tag paralinguistik dan konsistensi timbre lintas kalimat. |
-| 7-7 | [MultilingualReasoning](MultilingualReasoning/) | 🚧 | Melatih kemampuan penalaran dalam beberapa bahasa. |
-| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | ✅ | Membangun data guru, melatih siswa, dan membandingkan kualitas serta biaya. |
-| 7-9 | [cot-distillation](cot-distillation/) | 🚧 | Menyaring trajectory CoT yang benar dan menyiapkannya sebagai data SFT. |
-| 7-10 | [AdaptThink](AdaptThink/) · `AdaptThink-original/` | 📖 | Mengajarkan model memilih mode Thinking atau NoThinking sesuai kesulitan. |
-| 7-11 | `SFTvsRL/` | 📖 | Membandingkan memori dan generalisasi SFT dengan RL pada anggaran yang sama. |
-| 7-12 | [SpatialReasoning](SpatialReasoning/) · `SFTvsRL/` | 📖 | Melatih serta mengevaluasi spatial reasoning ID dan OOD. |
-| 7-13 | [SimpleVLA-RL](SimpleVLA-RL/) · `SimpleVLA-RL/SimpleVLA-RL/` | 📖 | Menggabungkan visi, bahasa, dan tindakan dalam pelatihan RL. |
-| 7-14 | [retool](retool/) · `verl/` · `SandboxFusion/` | 📖 | Melatih penggunaan code interpreter dengan backend veRL dan sandbox eksekusi. |
-| 7-15 | [AWorld-train](AWorld-train/) · `AWorld/` | 📖 | Melatih Agent menggunakan tool pada lingkungan GAIA berbasis AWorld. |
-| 7-16 | [RLVP](RLVP/) · `RLVP/rlvp/` | 📖 | Mereproduksi riset RLVP: memberi reward pada hasil dan penalti pada jalur. |
-| 7-17 | [premature-completion-dpo](premature-completion-dpo/) | ✅ | Perbaikan DPO bad case penyelesaian prematur di GPU. |
-| 7-18 | [curly-quote-sft](curly-quote-sft/) | ✅ | SFT tanda kutip lengkung Tionghoa berbasis cakupan yang diaudit: 1.024/256/256 data train/holdout/batas, 10 jenis artikel dan 9 bahasa pemrograman; Qwen3-8B mencapai exact 96,9%/97,7% dan preservasi area terlindungi 100% di GPU. |
-| 7-19 | [exact-copy-sft](exact-copy-sft/) | ✅ | SFT penyalinan string khusus byte-exact yang diaudit: 1.024/256/256 data; Qwen3-8B mencapai holdout 78,9% dan batas 80,1%, dengan audit tokenizer Qwen3/Qwen2.5/Mistral. |
-| — | `verl/` | 📖 | Framework RLHF efisien untuk PPO, GRPO, DAPO, dan algoritme lain. |
-| — | [Intuitor](Intuitor/) | ✅ | Melatih penalaran intuitif tanpa chain-of-thought panjang. |
-| — | `tinker-cookbook/` | 📖 | Kumpulan resep dan praktik terbaik pelatihan model. |
+| 6-1 | `tau2-bench/` | 📖 | Menjalankan evaluasi multi-putaran dual-control τ²-bench dan membandingkannya dengan τ-bench. |
+| 6-2 | `tau2-bench/` | 📖 | Menyelesaikan sampel tugas τ²-bench secara manual dan mencatat trajectory. |
+| 6-2 | `terminal-bench/` | 📖 | Menguji tugas end-to-end pada lingkungan terminal nyata. |
+| 6-2 | `SWE-bench/` | 📖 | Mengevaluasi penyelesaian Issue GitHub nyata dengan patch yang dapat diuji. |
+| 6-2 | `GAIA/` | 📖 | Mengevaluasi pencarian, penggunaan tool, dan otonomi pada soal bertingkat. |
+| 6-2 | `OSWorld/` | 📖 | Mengevaluasi operasi file, aplikasi, dan konfigurasi pada lingkungan OS lengkap. |
+| 6-2, 6-12 | `android_world/` | 📖 | Mengevaluasi navigasi aplikasi dan interaksi UI pada Android. |
+| 6-3 | [user-memory-evaluation](../chapter3/user-memory-evaluation/) | ✅ | Menjalankan Rubric memori multi-dimensi dengan bukti untuk setiap penilaian. |
+| 6-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | Membandingkan JSON Cards, RAG, dan sistem hibrida pada kumpulan kasus yang sama. |
+| 6-5 | [user-memory-policy-eval](user-memory-policy-eval/) | ✅ | Menjalankan 11 kasus buruk awalan trajectory pada representasi memori JSON, Markdown, dan bergaya Python dengan panggilan OpenRouter nyata serta pemeriksaan kebijakan deterministik. |
+| 6-6 | [tts-quality-eval](tts-quality-eval/) | ✅ | Membandingkan konfigurasi TTS menggunakan LLM multimodal sebagai juri berbasis Rubric. |
+| 6-7 | [elo-leaderboard](elo-leaderboard/) | ✅ | Membuat papan peringkat Agent berdasarkan perbandingan berpasangan dan rating ELO. |
+| 6-8 | [model-action-threshold](model-action-threshold/) | ✅ | Membandingkan GPT-5.6-sol dan Claude Sonnet 5 saat beralih dari eksplorasi ke edit pertama di bawah Coding Harness netral yang sama; seluruh 18/18 sel selesai tanpa error API, dan [manifest](model-action-threshold/results/exp6-7-action-threshold-20260731-v1/manifest.json) mengikat trajectory serta ringkasan dengan hash yang dapat diverifikasi. |
+| 6-9 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | Mengurai biaya end-to-end dan mengukur penghematan desain ramah cache serta kompresi. |
+| 6-10 | [model-benchmark](model-benchmark/) | 🚧 | Mengukur TTFT, latensi, throughput, reliabilitas, dan biaya model; kampanye panjang belum selesai. |
+| 6-11 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | Matriks penuh 4×3×2×60 menyimpan 1.440/1.440 trajectory nyata tanpa error atau penggunaan tanpa harga, lengkap dengan metrik retrieval dan tugas, analisis interaksi, serta verifikator independen yang lulus. |
+| 6-12 | [android-world](android-world/) | 📖 | Laporan evaluasi T3A dan analisis kegagalan AndroidWorld di dalam repositori. |
+| 6-13 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | Kampanye resmi satu GPU menyelesaikan 256 episode per lengan; chunk 1 mendapat 0/256 dan chunk 25 mendapat 26/256, dengan hash untuk seluruh 512 rollout. |
+| — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | Mengevaluasi panggilan tool, kalkulasi, sitasi, dan klaim laporan kesehatan publik. |
+
+> Benchmark dengan nama berformat kode harus dikloning secara terpisah. `android-world/` adalah catatan analisis lokal, bukan sumber benchmark `android_world/`.
 
 ## Jenis Proyek
 
@@ -46,4 +46,4 @@ Pada pembacaan pertama, lewati kredensial, presentasi, dan kompatibilitas provid
 | :--: | --- | --- |
 | ✅ | **Mandiri** | Kode lengkap tersedia di repositori dan dapat dijalankan setelah API Key dikonfigurasi. |
 | 📖 | **Panduan Reproduksi** | Memerlukan repositori eksternal yang harus di-`git clone`. |
-| 🚧 | **Dalam Proses** | Implementasi, pelatihan, atau bukti penerimaan belum lengkap. |
+| 🚧 | **Dalam Proses** | Implementasi atau bukti penerimaan belum lengkap. |

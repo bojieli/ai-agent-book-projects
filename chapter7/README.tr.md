@@ -1,14 +1,14 @@
-# Bölüm 7 · Model Eğitim Sonrası
+# Bölüm 6 · Agent Değerlendirmesi
 
-> Pre-training, SFT ve RL üç aşamasının kapsamlı bir görünümü. SFT mi RL mi ne zaman seçilir, RLHF, algoritma karşılaştırması, veri ve ortamlar; modellere araç çağırma öğretme ve örnek verimliliğini artırma konusundaki sınır keşifleri.
+> Agent performansını karşılaştırılabilir sinyallere dönüştürür. Değerlendirme ortamlarını, veri kümesi tasarımını, metrik sistemlerini, istatistiksel anlamlılığı, gözlemlenebilirliği, değerlendirme odaklı seçimi ve üretim seviyesinde dahili değerlendirme ile simülasyon ortamlarını kapsar.
 
-← [Ana README'ye dön](../README.tr.md) · 📖 [Bölüm metnini oku](../book-tr/chapter7.tr.md)
+← [Ana README'ye dön](../README.tr.md) · 📖 [Bölüm metnini oku](../book-tr/chapter6.tr.md)
 
 ## Deneyler nasıl okunur
 
 Metin, kontrol akışını açıklamak için kısa mekanizma skeleton'ları kullanır; deney dizininde tam SDK adaptörleri, günlükler, testler ve kabul kanıtı bulunur. Her dosyayı satır satır okumanız gerekmez.
 
-- **Starter:** Hedef, en kısa komut ve kabul koşullarıyla başlayın; önce [cot-distillation](cot-distillation/);
+- **Starter:** Hedef, en kısa komut ve kabul koşullarıyla başlayın; önce [tau2-bench-eval](tau2-bench-eval/);
 - **Builder:** Giriş noktasını, ana döngüyü, durum/mesaj şemasını, araçları ve doğrulayıcıyı izleyin.
 - **Maintainer:** Son olarak testleri, kanıt manifestlerini, hata işlemeyi, rollback yollarını ve sağlayıcı adaptörlerini okuyun.
 
@@ -18,27 +18,27 @@ Metin, kontrol akışını açıklamak için kısa mekanizma skeleton'ları kull
 
 | Proje | Tür | Açıklama |
 | --- | :--: | --- |
-| [learning-from-experience](../chapter1/learning-from-experience/) (7-1, 7-2) | ✅ | Deneyimden öğrenmek için aynı hazine avı ortamında Q-learning ve LLM Agent çalıştırır. |
-| [prompt-distillation](../chapter8/prompt-distillation/) (7-8) | ✅ | Öğretmen örneklerini öğrenci prompt'una damıtır ve kalite ile maliyeti karşılaştırır. |
-| [AdaptThink](AdaptThink/) | 📖 | Muhakeme modellerine, problem zorluğuna göre muhakeme modunu (Thinking vs NoThinking) uyarlanabilir şekilde seçmeyi öğretir. Kısıtlı optimizasyon ve önem örneklemesi yoluyla, doğruluğu artırırken muhakeme maliyetlerini önemli ölçüde azaltır (%45-69). DeepSeek-R1-Distill-Qwen modeline dayanır, DAPO algoritmasıyla eğitilir. |
-| [retool](retool/) | 📖 | Büyük dil modellerinin matematiksel muhakeme yeteneğini artırmak için çok turlu diyalog ve bir kod sandbox'ı kullanır. SFT ve RL'den oluşan iki aşamalı bir eğitim süreciyle model, matematik problemlerini çözmeye yardımcı olmak için bir kod yürütme ortamını kullanmayı öğrenir. Qwen2.5-32B-Instruct'a dayanır, AIME 2024 veri kümesinde DAPO algoritması ve SandboxFusion sandbox'ı kullanılarak eğitilir. |
-| `AWorld/` · [AWorld-train](AWorld-train/) | 📖 | AWorld çerçevesine dayalı olarak somutlaşmış (embodied) ajanları eğitir; ajanların sanal bir ortamda karmaşık görevleri yerine getirmesini ve deneyimden öğrenmesini sağlar. |
-| `SFTvsRL/` | 📖 | Denetimli İnce Ayar (SFT) ve Pekiştirmeli Öğrenmenin (RL) farklı görevlerdeki etkinliğini sistematik olarak karşılaştırır; her iki yöntemin güçlü yanlarını, zayıf yanlarını ve uygun uygulama senaryolarını analiz eder. |
-| [premature-completion-dpo](premature-completion-dpo/) (7-17) | ✅ | GPU üzerinde erken tamamlama bad case için DPO düzeltmesi. |
-| [curly-quote-sft](curly-quote-sft/) (7-18) | ✅ | Denetimli kapsam duyarlı Çince kıvrımlı tırnak SFT'si: 10 belge türü ve 9 programlama dilinde 1024/256/256 train/holdout/sınır örneği; Qwen3-8B exact 96,9%/97,7%, korunan alan 100%. |
-| [exact-copy-sft](exact-copy-sft/) (7-19) | ✅ | Denetimli byte-exact özel dize kopyalama SFT'si: 1024/256/256 örnek; Qwen3-8B holdout 78,9%, sınır 80,1%, Qwen3/Qwen2.5/Mistral tokenizer denetimiyle. |
-| `verl/` | 📖 | verl, büyük dil modellerinin RLHF eğitimi için özel olarak tasarlanmış verimli bir pekiştirmeli öğrenme çerçevesidir; PPO, GRPO ve DAPO gibi çeşitli algoritmaları destekler. |
-| [Intuitor](Intuitor/) | ✅ | Modellerin sezgisel muhakeme yeteneğini eğitir; ayrıntılı düşünce zincirleri gerektirmeden hızlı, makul kararlar vermelerini sağlar. |
-| [MultilingualReasoning](MultilingualReasoning/) | ✅ | Modellerin çok dilli ortamlardaki muhakeme yeteneğini eğitir; diller arası görevlerdeki performansı artırır. |
-| [cot-distillation](cot-distillation/) | ✅ | Claude gibi öncü modellerden OpenRouter aracılığıyla CoT trajectory'leri damıtır, bunları kural tabanlı doğrulayıcılarla süzer ve Deney 7-9 için SFT verisi üretir. |
-| [SpatialReasoning](SpatialReasoning/) | 📖 | Konum, yön ve mesafe gibi uzamsal ilişkileri içeren problemleri ele almak için modellerin uzamsal muhakeme yeteneğini eğitmeye odaklanır. |
-| [SimpleVLA-RL](SimpleVLA-RL/) | 📖 | Görsel, dil ve eylemi pekiştirmeli öğrenme eğitiminde birleştirir; modellerin görsel girdiyi anlamasını ve karşılık gelen eylemleri yürütmesini sağlar. |
-| [RLVP](RLVP/) | 📖 | Sonucu ödüllendirip hatalı yolu cezalandıran RLVP sonradan eğitim araştırmasıdır; tam eğitim ve değerlendirme kodu harici \`19PINE-AI/rlvp\` deposundan klonlanır. |
-| [continued-pretraining](continued-pretraining/) | ✅ | Hedef alandaki model performansını artırmak için alana özgü veriler üzerinde sürekli ön eğitim yapar. |
-| [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | Tam ön eğitim sürecini ve temel teknikleri anlamak için küçük bir dil modelini sıfırdan ön eğitir. |
-| [sesame](sesame/) | ✅ | Dizi modelleme görevleri için eğitim ve değerlendirme yöntemlerine odaklanır. |
-| [orpheus](orpheus/) | ✅ | Müzik üretimi ve anlama için modeller eğitir. |
-| `tinker-cookbook/` | 📖 | Model eğitimi için çeşitli pratik ipuçları ve en iyi uygulamaları bir araya toplar. |
+| `terminal-bench/` | 📖 | Terminal-Bench, gerçek terminal ortamlarında AI Agent performansını test etmek için bir kıstastır. Kod derlemekten model eğitmeye ve sunucu kurmaya kadar, Agent'ların gerçek uçtan uca görevleri nasıl ele aldığını değerlendirir. ~100 görevlik bir veri kümesi ve çeşitli Agent uygulamalarını destekleyen bir yürütme çerçevesi içerir. |
+| `SWE-bench/` | 📖 | SWE-bench, büyük dil modellerinin gerçek GitHub issue'larını çözme yeteneğini değerlendirmek için bir kıstastır. Bir kod tabanı ve issue açıklaması verildiğinde model, sorunu çözen bir yama üretmelidir. SWE-bench, SWE-bench Lite, SWE-bench Verified ve SWE-bench Multimodal dahil birden çok sürüm içerir. |
+| `GAIA/` | 📖 | GAIA, yeni nesil LLM'leri (araç genişletmeli, verimli promptlamalı, arama erişimli vb.) değerlendirmeyi amaçlar. Farklı derecelerde araç kullanımı ve özerklik gerektiren, belirsiz olmayan yanıtlara sahip 450'den fazla önemsiz olmayan soru içerir. 3 zorluk seviyesine ayrılmıştır. |
+| `OSWorld/` | 📖 | Ajanların dosya yönetimi, uygulama işletme ve sistem yapılandırması dahil, eksiksiz bir işletim sistemi ortamı içinde karmaşık görevleri yerine getirme yeteneğini değerlendirir. |
+| `android_world/` (6-2, 6-12) | 📖 | Ajan performansını bir Android mobil ortamında değerlendirir; uygulama gezinme, UI etkileşimi ve görev tamamlama yeteneklerini kapsar. |
+| `tau2-bench/` (6-1) | 📖 | Bir ajanın hesaplama, arama ve veri işleme gibi senaryolar dahil, karmaşık muhakeme için araç kullanma yeteneğini değerlendirmeye odaklanır. |
+| `tau2-bench/` (6-2) | 📖 | Derecelendirilmiş τ²-bench görevlerini elle tamamlar ve yörüngeleri kaydeder. |
+| [user-memory-evaluation](../chapter3/user-memory-evaluation/) (6-3) | ✅ | Dört seviyeli rubric'i kanıt ve halüsinasyon vetosuyla 180 yapılandırılmış değerlendirmede çalıştırır. |
+| [user-memory-system-evaluation](user-memory-system-evaluation/) (6-4) | ✅ | Tam maliyet muhasebesiyle üç sistem üzerinde 60 vakayı çalıştırır. |
+| [user-memory-policy-eval](user-memory-policy-eval/) (6-5) | ✅ | JSON, Markdown ve Python benzeri bellek gösterimlerinde 11 hatalı yörünge öneki vakasını gerçek OpenRouter çağrıları ve belirlenimci politika kontrolleriyle çalıştırır. |
+| [user-memory-system-evaluation](user-memory-system-evaluation/) (6-11) | ✅ | Tam 4×3×2×60 matrisinde 1.440/1.440 gerçek yörüngeyi hata veya fiyatlandırılmamış kullanım olmadan korur; erişim/görev metrikleri, etkileşim analizi ve bağımsız doğrulama tamamlanmıştır. |
+| [openvla-robotwin2-eval](openvla-robotwin2-eval/) (6-13) | ✅ | Tek GPU'lu resmi çalışma kol başına 256 episode tamamladı; chunk 1 0/256, chunk 25 26/256 aldı ve 512 rollout hash'i saklandı. |
+| [elo-leaderboard](elo-leaderboard/) (6-7) | ✅ | ELO derecelendirme sistemine dayalı bir ajan performansı liderlik tablosu uygular; ikili karşılaştırmalarla farklı ajanların göreli yeteneklerini değerlendirir. |
+| [model-action-threshold](model-action-threshold/) (6-8) | ✅ | Aynı tarafsız Coding Harness altında GPT-5.6-sol ile Claude Sonnet 5'in keşiften ilk düzenlemeye geçiş eşiğini karşılaştırır; 18/18 hücre API hatası olmadan tamamlanmış, [manifest](model-action-threshold/results/exp6-7-action-threshold-20260731-v1/manifest.json) ise yürütme izleriyle özetleri doğrulanabilir hash'lerle bağlamıştır. |
+| [model-benchmark](model-benchmark/) (6-10) | 🚧 | Birden çok OpenAI uyumlu LLM API sağlayıcısının yatay bir kıstasını yapar. İlk Token Süresini (TTFT) hassas biçimde ölçmek için bir akış arayüzü kullanır, eşzamanlılık altında uçtan uca gecikme yüzdeliklerini (p50/p95), verimi ve başarı oranını hesaplar. Tek bir komut, model seçiminin yalnızca bir liderlik tablosuna bakmaktan ibaret olmadığını, çok yönlü bir ödünleşim olduğunu gösteren çok boyutlu bir karşılaştırma tablosu üretir. |
+| [agent-cost-analysis](agent-cost-analysis/) (6-9) | ✅ | Tipik çok turlu bir ajan görevi (müşteri hizmetleri iadesi) için tam zincir maliyet analizi yapar: her LLM çağrısı için girdi/çıktı/önbellek token'larını, gecikmeyi ve maliyeti kaydetmek için özel hafif bir izleme sistemi kullanır, "hangi adımın en pahalı olduğunu" belirlemek için toplar, ardından KV-cache dostu tasarım ve context sıkıştırmadan elde edilen gerçek tasarrufları nicelleştirmek için A/B testi kullanır. |
+| [tts-quality-eval](tts-quality-eval/) (6-6) | ✅ | Aynı zorlu metin kümesini çeşitli TTS yapılandırmalarıyla (farklı model/ses/hız) sentezler, ardından her boyutu (netlik, doğallık vb.) bir Rubric'e göre puanlamak için çok modlu bir LLM-as-a-Judge kullanır, sonuçları yeniden üretilebilir bir yapılandırma karşılaştırma tablosunda toplar. |
+| [android-world](android-world/) (6-12) | 📖 | AndroidWorld üzerinde T3A Agent değerlendirmesi ve başarısızlık analizi için başlangıç raporu; kıstasın kaynak kodu yerine Deney 6-12'nin uygulama notlarını içerir. |
+| [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | Sentetik DHIS2 tarzı özet veriler üzerinde bir halk sağlığı raporlama Agent'ının araç çağrılarını, hesaplama doğruluğunu, kanıt kullanımını ve dayanaksız iddialarını nesnel olarak değerlendirir. |
+
+> `chapter6/android-world/` (tire ile yazılan) kıstas kodu değil, bilakis kitabın android_world üzerindeki T3A Agent başarısızlık vakaları hakkındaki analiz notlarıdır (`t3a*.md`); referans okuma materyali olarak kullanılabilir.
 
 ## Proje Türleri
 
