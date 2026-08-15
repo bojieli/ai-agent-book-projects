@@ -518,6 +518,29 @@ Chín chương phía sau sẽ dùng đi dùng lại cùng một nhóm cấu trú
 
 Năm mô thức này chia sẻ cùng một chủ đề: **dời phán quyết từ "mô hình tự quyết" sang "cơ chế bên ngoài mô hình quyết"** — người thẩm định ở ngoài ngữ cảnh, mục lục ở ngoài phần thân, bộ đệm ở ngoài thay đổi, tập giữ lại ở ngoài tập biên, việc hoàn tác ở ngoài lần commit. Ba tầng guardrail nêu ở phần trước của chương này chính là chủ đề ấy áp dụng cho an toàn. Khi gặp lại chúng ở phía sau, cuốn sách chỉ nêu tên mô thức và điểm khác biệt của chương đó, không diễn giải lại từ đầu.
 
+## Vòng lặp khám phá: chứng cứ, đề xuất, thực nghiệm, phản hồi
+
+Năm mô thức ở mục trước là những cấu trúc cục bộ. Còn một cấu trúc lớn hơn trải qua ba chương, nhưng vì được dựng thành từng mảnh nên rất dễ bị coi là ba đường ống độc lập.
+
+Chương 7 phải định vị lỗi đầu tiên trong một quỹ đạo thất bại và phân loại nó. Chương 3 phải biến một chứng cứ mới thành thay đổi nhỏ nhất và có căn cứ nhất đối với cơ sở tri thức. Chương 9 phải phán đoán một thay đổi có thật sự làm hệ thống tốt lên hay không, rồi quyết định phát hành hay hoàn tác. Ba việc này dùng những cơ chế hoàn toàn khác nhau — quy trách nhiệm dựa vào rubric và việc định vị lỗi đầu tiên, đề xuất dựa vào Người đề xuất—Người thẩm định, kiểm chứng dựa vào tập biên và tập giữ lại cùng phát hành thăm dò và hoàn tác — nên chúng **không phải ba lần lặp lại của cùng một cơ chế**, và việc gượng ép thống nhất thuật ngữ sẽ che mất chính những khác biệt đáng kể.
+
+Cái thật sự chung là vị trí: mỗi việc chiếm một đoạn của cùng một vòng lặp.
+
+```text
+Chứng cứ (Chương 7): quỹ đạo thất bại → lỗi đầu tiên + loại lỗi
+  → Đề xuất (Chương 3): chứng cứ → một thay đổi tối thiểu, thẩm định được, hoàn tác được
+  → Thực nghiệm (Chương 9): đo trên tập biên và tập giữ lại, phát hành thăm dò
+  → Phản hồi: kết quả đo và các quỹ đạo thất bại mới quay về đoạn chứng cứ
+```
+
+Vòng lặp này gần đây được Discovery Loop — công ty do Jeff Dean cùng các cộng sự sáng lập — đặt tên và đẩy về phía tự động hoá: đề xuất một thực nghiệm, hiện thực những gì nó cần, đánh giá nó, đưa kết quả sang vòng sau, và song song hoá một quá trình vốn chạy tuần tự[^ch1-discovery-loop]. Cần nói rõ: công ty này thành lập tháng 8 năm 2026, đến nay mới chỉ công bố sứ mệnh, chưa có kết quả kỹ thuật công khai; cuốn sách trích dẫn nó vì **cách nó đặt tên cho vòng lặp**, chứ không phải coi nó là chứng cứ — đúng là sự phân biệt mà Chương 7 sẽ nhấn mạnh nhiều lần.
+
+Đặt vòng lặp của hệ thống Agent cạnh một vòng lặp nghiên cứu thuần tuý sẽ thấy cái trước có thêm hai ràng buộc, và chúng chính là những thứ mà phần lớn phần còn lại của cuốn sách xử lý. **Thứ nhất, thực nghiệm phải bám rễ vào quan sát thực.** Trong vòng lặp nghiên cứu, "thực nghiệm" có thể là một lần chạy huấn luyện; trong hệ thống Agent, nó sửa đổi một hệ thống đang phục vụ người dùng, nên phán quyết phải đến từ trạng thái thực của môi trường — kiểm thử có qua không, trạng thái cuối của cơ sở dữ liệu, công cụ trả về gì — chứ không phải từ lời mô tả của chính mô hình về hành vi của nó. **Thứ hai, mỗi thực nghiệm phải trả lời đồng thời "nó sửa được gì" và "nó làm hỏng gì".** Vòng lặp nghiên cứu thường chỉ mong chỉ số đi lên; hệ thống Agent còn phải chứng minh không phá vỡ những hành vi vốn đã đúng. Đó chính là lý do tồn tại của tập biên và tập giữ lại ở mục trước.
+
+Ba chương tiếp theo mỗi chương chỉ bàn đoạn của mình, không thuật lại toàn bộ vòng lặp: Chương 3 bàn thế nào là một đề xuất có căn cứ, Chương 7 bàn thế nào là chứng cứ đáng tin, Chương 9 bàn làm sao để thực nghiệm và phản hồi chạy được lâu dài mà không phân kỳ.
+
+[^ch1-discovery-loop]: Discovery Loop được Jeff Dean, Sanjay Ghemawat, Quoc Le và Oriol Vinyals công bố thành lập ngày 5 tháng 8 năm 2026, là một public benefit corporation với sứ mệnh tự động hoá học máy, khoa học và kỹ thuật; mô tả công khai của họ là tự động hoá trọn vẹn các vòng lặp thực nghiệm và song song hoá ở quy mô lớn những gì vốn chạy tuần tự. Xem https://techcrunch.com/2026/08/05/jeff-dean-and-other-top-ai-researchers-are-leaving-google-to-launch-their-own-startup/ . Tính đến lúc viết cuốn sách này, họ chưa công bố kết quả kỹ thuật có thể tái lập.
+
 ## Tóm tắt chương này
 
 Chương này bắt đầu từ thực tiễn và thiết lập khuôn khổ cơ bản để hiểu và xây dựng AI Agent.
@@ -531,6 +554,8 @@ Chương này bắt đầu từ thực tiễn và thiết lập khuôn khổ cơ
 **Harness là khả năng cạnh tranh**: Các khả năng của mô hình đang được thương mại hóa và sự khác biệt thực sự là ở Harness—các cơ chế ràng buộc, xác minh và hiệu chỉnh được xây dựng xung quanh ngữ cảnh và các công cụ để đảm bảo rằng Agent “thực hiện mọi việc một cách đáng tin cậy”. Trong hệ thống Agent cấp sản xuất, hầu hết mã của Harness đang triển khai các cơ chế đảm bảo này, không chỉ ngữ cảnh và công cụ.
 
 **Từ quy trình làm việc đến quyền tự chủ Agent**: Trước tiên hãy tối ưu hóa các từ nhắc nhở, sau đó xem xét quy trình làm việc và cuối cùng là giới thiệu tính tự chủ Agent - đây là trình tự thiết thực nhất để giảm nguy cơ tai nạn. Mỗi chế độ điều phối đều có các kịch bản áp dụng riêng và không có giải pháp tối ưu chung nào.
+
+**Vòng lặp khám phá trải qua ba chương**: chứng cứ (quy trách nhiệm thất bại ở Chương 7) → đề xuất (cập nhật tri thức ở Chương 3) → thực nghiệm và phản hồi (kiểm chứng và phát hành ở Chương 9). Ba đoạn dùng cơ chế vốn đã khác nhau; cái chung là vị trí chứ không phải thuật ngữ. So với vòng lặp nghiên cứu thuần tuý, vòng lặp của hệ thống Agent có thêm hai ràng buộc — thực nghiệm phải bám rễ vào quan sát thực, và mỗi vòng phải trả lời đồng thời đã sửa được gì và đã làm hỏng gì.
 
 **Bảo mật là một vấn đề kiến trúc**: rào chắn, sự can thiệp của con người, sự căn chỉnh (alignment, tức là làm cho hành vi của mô hình nhất quán với ý định của con người) - các vấn đề bảo mật cần được xem xét ngay từ dòng mã đầu tiên, thay vì vá lỗi trước khi đưa lên mạng. Guardrail chia thành ba tầng — ngữ cảnh, thực thi và dữ liệu — xếp theo mức độ khó bị vượt qua, và mọi thảo luận an toàn ở các chương sau đều treo trên bộ khung đó.
 

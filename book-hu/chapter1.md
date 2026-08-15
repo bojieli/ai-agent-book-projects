@@ -514,6 +514,29 @@ A következő kilenc fejezet újra és újra ugyanahhoz a néhány szerkezethez 
 
 Ez az öt minta egyetlen közös motívumot oszt meg: **az ítéletet „a modell dönti el"-ből „a modellen kívüli mechanizmus dönti el"-be helyezni** – az ellenőrző a kontextuson kívül, a katalógus a törzsszövegen kívül, a gyorsítótár a változáson kívül, a megtartási halmaz a határhalmazon kívül, a visszagörgetés a commiton kívül van. A fejezet korábbi részében megadott háromrétegű védőkorlát ugyanennek a motívumnak a biztonságra alkalmazott esete. Ha később újra találkozunk velük, a könyv csak a minta nevét és az adott fejezetbeli eltérést jelöli meg, nem vezeti le újra.
 
+## A felfedezési hurok: bizonyíték, javaslat, kísérlet, visszacsatolás
+
+Az előző szakasz öt mintája helyi szerkezet. Van egy nagyobb szerkezet is, amely három fejezeten ível át, de mivel darabokban épül fel, könnyen három független csővezetéknek látszik.
+
+A 7. fejezetnek egy sikertelen trajektóriában meg kell találnia az első hibát, és be kell sorolnia. A 3. fejezetnek egyetlen új bizonyítékot kell a tudásbázis lehető legkisebb, megalapozott módosításává alakítania. A 9. fejezetnek el kell döntenie, hogy egy módosítás valóban jobbá tette-e a rendszert, majd hogy kiadja vagy visszagörgeti. E három egészen más gépezetet használ – a hibaokolás rubrikákra és az első hiba lokalizálására, a javaslat a Javasló–Ellenőrző mintára, az érvényesítés a határ- és megtartási halmazokra, kanári kiadással és visszagörgetéssel –, tehát **nem ugyanannak a mechanizmusnak a háromszori ismétlései**, és szókészletük erőltetett egységesítése épp a lényegi különbségeket fedné el.
+
+Ami valóban közös bennük, az a hely: mindegyik ugyanannak a huroknak egy-egy szakaszát foglalja el.
+
+```text
+Bizonyíték (7. fejezet): sikertelen trajektória → első hiba + hibaosztály
+  → Javaslat (3. fejezet): bizonyíték → egyetlen minimális, ellenőrizhető, visszafordítható módosítás
+  → Kísérlet (9. fejezet): mérés a határ- és a megtartási halmazon, kanári kiadás
+  → Visszacsatolás: a mért eredmények és az új sikertelen trajektóriák visszatérnek a bizonyíték szakaszba
+```
+
+Ezt a hurkot nemrég nevezte el és lökte az automatizálás felé a Jeff Dean és társai által alapított Discovery Loop: javasolj egy kísérletet, valósítsd meg, ami hozzá kell, értékeld ki, vidd az eredményt a következő körbe, és párhuzamosítsd azt, ami korábban sorosan futott[^ch1-discovery-loop]. Nyíltan ki kell mondani: a cég 2026 augusztusában alakult, és eddig csak a küldetését hozta nyilvánosságra, nyilvános technikai eredmény nélkül; ez a könyv **a huroknak adott névért** hivatkozik rá, nem bizonyítékként – pontosan az a különbségtétel, amelyet a 7. fejezet újra és újra hangsúlyoz majd.
+
+Ha egy Ügynök-rendszer hurkát a tiszta kutatási hurok mellé tesszük, kiderül, hogy az előbbin két további megkötés van, és épp ezekkel foglalkozik a könyv hátralévő részének nagy hányada. **Először: a kísérletnek valós megfigyelésben kell gyökereznie.** A kutatási hurokban a „kísérlet" lehet egy tréningfutás; egy Ügynök-rendszerben viszont éppen felhasználókat kiszolgáló rendszert módosít, ezért az ítéletnek a környezet tényleges állapotából kell jönnie – átmennek-e a tesztek, mi a végső adatbázis-állapot, mit adott vissza az eszköz –, nem pedig abból, ahogy a modell elmeséli a saját viselkedését. **Másodszor: minden kísérletnek egyszerre kell megválaszolnia, hogy „mit javított" és „mit rontott el".** A kutatási hurok rendszerint csak a mutató emelkedését akarja; egy Ügynök-rendszernek azt is bizonyítania kell, hogy nem rontotta el a korábban helyes viselkedést. Az előző szakasz határ- és megtartási halmaza pontosan ezért létezik.
+
+A következő három fejezet mindegyike csak a maga szakaszát tárgyalja, és nem mondja el újra az egész hurkot: a 3. fejezet azt, mitől megalapozott egy javaslat, a 7. fejezet azt, mitől megbízható egy bizonyíték, a 9. fejezet pedig azt, mitől tud a kísérlet és a visszacsatolás hosszú távon szétszóródás nélkül járni.
+
+[^ch1-discovery-loop]: A Discovery Loop megalapítását 2026. augusztus 5-én jelentette be Jeff Dean, Sanjay Ghemawat, Quoc Le és Oriol Vinyals; public benefit corporation, amelynek küldetése a gépi tanulás, a tudomány és a mérnöki munka automatizálása. Nyilvános leírása szerint teljes kísérleti hurkokat automatizál, és nagy léptékben párhuzamosítja azt, ami korábban sorosan futott. Lásd: https://techcrunch.com/2026/08/05/jeff-dean-and-other-top-ai-researchers-are-leaving-google-to-launch-their-own-startup/ . A könyv írásakor reprodukálható technikai eredményt nem tett közzé.
+
 ## Fejezet-összefoglaló
 
 Ez a fejezet egy gyakorlatközpontú keretrendszert épített fel az AI-ügynökök megértéséhez és megalkotásához.
@@ -529,6 +552,8 @@ Ez a fejezet egy gyakorlatközpontú keretrendszert épített fel az AI-ügynök
 **A munkafolyamattól az autonóm ügynökig**: Promptok először, majd munkafolyamatok, végül autonóm ügynökök – ez a sorrend a legpraktikusabb módja a váratlan viselkedés csökkentésének. Minden összehangolási mintának vannak olyan helyzetei, ahol illeszkedik; egyetlen minta sem a legjobb mindenhol.
 
 **Öt minta vonul végig a könyvön**: Javasló–Ellenőrző, fokozatos feltárás, csak hozzáfűzés, határhalmaz + megtartási halmaz, valamint minimális visszafordítható diff – mind ugyanazt a motívumot osztják: az ítéletet magától a modelltől egy rajta kívüli mechanizmushoz helyezik át. A további fejezetek néven hivatkoznak rájuk, nem vezetik le újra.
+
+**A felfedezési hurok három fejezeten ível át**: bizonyíték (a 7. fejezet hibaokolása) → javaslat (a 3. fejezet tudásfrissítése) → kísérlet és visszacsatolás (a 9. fejezet érvényesítése és kiadása). A három szakasz valóban más gépezetet használ; ami közös bennük, az a hely, nem a szókészlet. A tiszta kutatási hurokhoz képest az Ügynök-rendszer hurkán két további megkötés van: a kísérletnek valós megfigyelésben kell gyökereznie, és minden körnek meg kell válaszolnia, mit javított és mit rontott el.
 
 **A biztonság architekturális kérdés**: Védőkorlátok, emberi közreműködés, alignment – a biztonságot az első kódsorból kezdve kell tervezni, nem a bevezetés előtt utólag hozzáfoldozni. A védőkorlátok három rétegbe rendeződnek – kontextus, végrehajtás, adat –, a megkerülés nehézsége szerint, és a további fejezetek biztonsági fejtegetései mind erre a vázra épülnek.
 

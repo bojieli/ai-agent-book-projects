@@ -514,6 +514,29 @@ The nine chapters that follow keep reaching for the same handful of structures. 
 
 These five patterns share one motif: **moving judgment from "the model decides" to "a mechanism outside the model decides"**—the reviewer sits outside the context, the catalogue outside the body text, the cache outside the change, the retention set outside the boundary set, the rollback outside the commit. The three-layer guardrails given earlier in this chapter are that motif applied to security. When these patterns reappear later, this book names them and states the local difference rather than deriving them again.
 
+## The Discovery Loop: Evidence, Proposal, Experiment, Feedback
+
+The five patterns of the previous section are local structures. One larger structure spans three chapters, but because it is built in pieces it is easily mistaken for three independent pipelines.
+
+Chapter 7 has to locate the first error in a failed trajectory and classify it. Chapter 3 has to turn a new piece of evidence into the smallest well-grounded change to the knowledge base. Chapter 9 has to decide whether a change actually made the system better, and then whether to ship or roll back. These three use completely different machinery—attribution rests on rubrics and first-error localization, proposal on Proposer-Reviewer, validation on boundary and retention sets with canary release and rollback—so they are **not three repetitions of one mechanism**, and forcibly unifying their vocabulary would hide the differences that matter.
+
+What they genuinely share is a position: each occupies one segment of the same loop.
+
+```text
+Evidence (Chapter 7): failed trajectory → first error + error class
+  → Proposal (Chapter 3): evidence → one minimal, reviewable, reversible change
+  → Experiment (Chapter 9): measure on boundary and retention sets, ship to a canary
+  → Feedback: measured results and new failed trajectories return to the evidence segment
+```
+
+This loop was recently named and pushed toward automation by Discovery Loop, founded by Jeff Dean and colleagues: propose an experiment, implement what it needs, evaluate it, take the result into the next round, and parallelize a process that used to run serially[^ch1-discovery-loop]. It should be said plainly that the company was founded in August 2026 and has so far published only its mission, with no public technical results; this book cites it for **its naming of the loop**, not as evidence—exactly the distinction Chapter 7 will keep insisting on.
+
+Setting an Agent system's version of this loop beside a pure research loop reveals two extra constraints, and they are precisely what much of the rest of this book is about. **First, the experiment must be grounded in real observation.** In a research loop the "experiment" can be a training run; in an Agent system it modifies a system that is currently serving users, so the verdict has to come from the environment's actual state—whether the tests pass, the final state of the database, what the tool returned—and not from the model's own account of what it did. **Second, every experiment must answer both "what did this fix" and "what did this break".** A research loop usually just wants the metric to go up; an Agent system must also show that behavior which was already correct still is. That is why the boundary set and retention set of the previous section exist.
+
+The three chapters that follow each cover only their own segment and do not restate the loop: Chapter 3 on what makes a proposal well-grounded, Chapter 7 on what makes evidence trustworthy, Chapter 9 on what keeps experiment and feedback running long-term without drifting.
+
+[^ch1-discovery-loop]: Discovery Loop was announced on 5 August 2026 by Jeff Dean, Sanjay Ghemawat, Quoc Le and Oriol Vinyals as a public benefit corporation whose mission is to automate machine learning, science and engineering; its public description is automating complete experimental loops and running at scale in parallel what used to run serially. See https://techcrunch.com/2026/08/05/jeff-dean-and-other-top-ai-researchers-are-leaving-google-to-launch-their-own-startup/ . As of this writing it has published no reproducible technical results.
+
 ## Chapter Summary
 
 This chapter has built a practice-first framework for understanding and constructing AI Agents.
@@ -529,6 +552,8 @@ This chapter has built a practice-first framework for understanding and construc
 **From Workflow to Autonomous Agent**: Prompts first, then workflows, autonomous Agents last—that ordering is the most practical way to reduce unexpected behavior. Every orchestration pattern has situations where it fits; no single pattern is best everywhere.
 
 **Five patterns run through the book**: Proposer-Reviewer, Progressive Disclosure, Append-only, Boundary Set + Retention Set, and Minimal Diff / Reversible—all sharing one motif, moving judgment from the model itself to a mechanism outside it. Later chapters call them by name instead of deriving them again.
+
+**The discovery loop spans three chapters**: evidence (failure attribution in Chapter 7) → proposal (knowledge updates in Chapter 3) → experiment and feedback (validation and release in Chapter 9). The three use genuinely different machinery; what they share is position, not vocabulary. Compared with a pure research loop, an Agent system's loop carries two extra constraints: the experiment must be grounded in real observation, and every round must answer both what it fixed and what it broke.
 
 **Security Is an Architectural Issue**: Guardrails, human-in-the-loop intervention, alignment (keeping the model's behavior consistent with human intent)—security has to be designed in from the first line of code, not patched on before launch. Guardrails fall into three layers—context, execution, and data—ordered by how hard they are to bypass, and every later chapter hangs its security discussion on that skeleton.
 

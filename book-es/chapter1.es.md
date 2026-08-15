@@ -496,6 +496,29 @@ Los nueve capítulos siguientes recurren una y otra vez al mismo puñado de estr
 
 Estos cinco patrones comparten un mismo motivo: **trasladar el juicio de «lo decide el modelo» a «lo decide un mecanismo externo al modelo»**: el revisor está fuera del contexto, el catálogo fuera del cuerpo del texto, la caché fuera del cambio, el conjunto de retención fuera del de frontera, la reversión fuera del commit. Las tres capas de barreras presentadas antes en este capítulo son ese mismo motivo aplicado a la seguridad. Cuando estos patrones reaparezcan, el libro los nombrará y señalará la diferencia local en vez de volver a derivarlos.
 
+## El bucle de descubrimiento: evidencia, propuesta, experimento, realimentación
+
+Los cinco patrones de la sección anterior son estructuras locales. Hay una estructura mayor que abarca tres capítulos, pero como está construida por partes se confunde fácilmente con tres tuberías independientes.
+
+El capítulo 7 tiene que localizar el primer error de una trayectoria fallida y clasificarlo. El capítulo 3 tiene que convertir una nueva evidencia en el cambio más pequeño y mejor fundamentado posible de la base de conocimiento. El capítulo 9 tiene que decidir si una modificación mejoró realmente el sistema y, después, si publicarla o revertirla. Los tres usan maquinaria completamente distinta —la atribución se apoya en rúbricas y en la localización del primer error; la propuesta, en Proponente-Revisor; la validación, en el conjunto de frontera y el de retención, con despliegue canario y reversión—, de modo que **no son tres repeticiones de un mismo mecanismo**, y unificar a la fuerza su vocabulario ocultaría precisamente las diferencias que importan.
+
+Lo que de verdad comparten es una posición: cada uno ocupa un tramo del mismo bucle.
+
+```text
+Evidencia (capítulo 7): trayectoria fallida → primer error + clase de error
+  → Propuesta (capítulo 3): evidencia → un cambio mínimo, revisable y reversible
+  → Experimento (capítulo 9): medición sobre el conjunto de frontera y el de retención, despliegue canario
+  → Realimentación: los resultados medidos y las nuevas trayectorias fallidas vuelven al tramo de evidencia
+```
+
+Este bucle acaba de ser nombrado y llevado hacia la automatización por Discovery Loop, la empresa fundada por Jeff Dean y colegas: proponer un experimento, implementar lo que necesita, evaluarlo, llevar el resultado a la ronda siguiente y paralelizar un proceso que antes era serial[^ch1-discovery-loop]. Conviene decirlo con claridad: la empresa se fundó en agosto de 2026 y hasta ahora solo ha publicado su misión, sin resultados técnicos públicos; este libro la cita por **el nombre que da al bucle**, no como evidencia—justo la distinción que el capítulo 7 subrayará una y otra vez.
+
+Poner el bucle de un sistema de Agentes junto a un bucle de investigación puro revela dos restricciones adicionales, y son precisamente aquello de lo que trata buena parte del resto del libro. **Primera: el experimento debe estar anclado en observación real.** En un bucle de investigación el «experimento» puede ser una tirada de entrenamiento; en un sistema de Agentes modifica un sistema que está atendiendo usuarios, así que el veredicto ha de venir del estado real del entorno —si pasan las pruebas, el estado final de la base de datos, lo que devolvió la herramienta— y no del relato que el modelo hace de su propia conducta. **Segunda: cada experimento debe responder a la vez «qué arregló» y «qué rompió».** Un bucle de investigación suele buscar solo que la métrica suba; un sistema de Agentes debe además demostrar que no ha estropeado el comportamiento que ya era correcto. Ésa es la razón de ser del conjunto de frontera y el de retención de la sección anterior.
+
+Los tres capítulos siguientes cubren cada uno su propio tramo y no repiten el bucle entero: el capítulo 3, qué hace que una propuesta esté bien fundamentada; el capítulo 7, qué hace que una evidencia sea fiable; el capítulo 9, qué mantiene el experimento y la realimentación funcionando a largo plazo sin dispersarse.
+
+[^ch1-discovery-loop]: Discovery Loop fue anunciada el 5 de agosto de 2026 por Jeff Dean, Sanjay Ghemawat, Quoc Le y Oriol Vinyals como una public benefit corporation cuya misión es automatizar el aprendizaje automático, la ciencia y la ingeniería; su descripción pública consiste en automatizar bucles experimentales completos y paralelizar a gran escala lo que antes se ejecutaba en serie. Véase https://techcrunch.com/2026/08/05/jeff-dean-and-other-top-ai-researchers-are-leaving-google-to-launch-their-own-startup/ . Hasta la redacción de este libro no ha publicado resultados técnicos reproducibles.
+
 ## Resumen del capítulo
 
 Este capítulo ha establecido, desde una perspectiva práctica, un marco fundamental para comprender y construir Agentes de IA.
@@ -511,6 +534,8 @@ Este capítulo ha establecido, desde una perspectiva práctica, un marco fundame
 **Del workflow al Agente autónomo**: primero hay que optimizar el prompt, después considerar un workflow y solo entonces introducir un Agente autónomo—este es el orden más práctico para reducir el riesgo de resultados inesperados. Cada patrón de orquestación tiene sus propios escenarios de aplicación; no existe una solución óptima universal.
 
 **Cinco patrones recorren el libro**: Proponente-Revisor, divulgación progresiva, solo añadir, conjunto de frontera + conjunto de retención, y diff mínimo reversible; todos comparten un mismo motivo, trasladar el juicio del propio modelo a un mecanismo externo a él. Los capítulos posteriores los invocan por su nombre en lugar de volver a derivarlos.
+
+**El bucle de descubrimiento abarca tres capítulos**: evidencia (la atribución de fallos del capítulo 7) → propuesta (la actualización de conocimiento del capítulo 3) → experimento y realimentación (la validación y publicación del capítulo 9). Los tres tramos usan maquinaria genuinamente distinta; lo que comparten es la posición, no el vocabulario. Frente a un bucle de investigación puro, el de un sistema de Agentes añade dos restricciones: el experimento debe anclarse en observación real y cada ronda debe responder tanto qué arregló como qué rompió.
 
 **La seguridad es una cuestión de arquitectura**: guardrails, intervención humana y alineación (alignment, es decir, hacer que el comportamiento del modelo sea coherente con la intención humana)—la seguridad debe tenerse en cuenta desde la primera línea de código, en lugar de abordarse mediante parches justo antes del lanzamiento. Las barreras se agrupan en tres capas —contexto, ejecución y datos— ordenadas por lo difícil que resulta esquivarlas, y todos los capítulos posteriores cuelgan de ese esqueleto sus discusiones de seguridad.
 
