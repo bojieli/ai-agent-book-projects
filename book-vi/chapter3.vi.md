@@ -772,6 +772,8 @@ Diện mạo của một khuôn mặt hay âm sắc giọng nói của một ng�
 
 Chương này xây dựng một cách có hệ thống hệ thống bộ nhớ liên tục của AI Agent từ hai thang đo: bộ nhớ người dùng cho người dùng cá nhân và cơ sở kiến thức dùng chung cho tất cả người dùng.
 
+Xét theo cấu trúc toàn sách, chương này dựng đoạn **đề xuất** trong vòng lặp khám phá của Chương 1: biến một chứng cứ thành một thay đổi tối thiểu, thẩm định được và hoàn tác được, chứ không đảm nhận việc phán đoán hệ thống nói chung có tốt lên hay không.
+
 Ở cấp độ **bộ nhớ người dùng**, chúng tôi khám phá bốn chiến lược tiến bộ từ sự kiện được nguyên tử hóa (Ghi chú đơn giản) đến quản lý kiến thức theo ngữ cảnh (Thẻ JSON nâng cao), cho thấy sự căng thẳng cơ bản giữa tính đơn giản và tính biểu cảm trong cách trình bày thông tin. Các khung như Mem0 và Memobase cung cấp các giải pháp quản lý bộ nhớ được thiết kế, trong khi các cơ chế bảo vệ quyền riêng tư đảm bảo tính bảo mật của thông tin nhạy cảm trong suốt quá trình.
 
 Ở cấp độ **thu thập kiến thức**, nhóm công nghệ cốt lõi là: phân đoạn tài liệu để phân định các đơn vị truy xuất, nhúng dày đặc để nắm bắt ngữ nghĩa, nhúng thưa thớt để khớp từ khóa, tổng hợp kết quả vào nhóm ứng viên, sắp xếp lại thần kinh để sàng lọc cuối cùng và các chỉ số như recall@k để đo lường chất lượng truy xuất.

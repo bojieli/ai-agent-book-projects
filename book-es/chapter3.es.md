@@ -775,6 +775,8 @@ El aspecto de un rostro o la voz de una persona son difíciles de describir con 
 
 Este capítulo ha construido sistemáticamente la arquitectura de memoria persistente para AI Agents a dos escalas: la memoria del usuario orientada a individuos y la base de conocimiento compartida orientada a la colectividad.
 
+En términos de la estructura del libro, este capítulo construye el tramo de **propuesta** del bucle de descubrimiento del capítulo 1: convertir una evidencia en un cambio mínimo, revisable y reversible, sin encargarse de juzgar si el sistema en conjunto mejoró.
+
 En la **memoria del usuario**, exploramos cuatro estrategias progresivas desde notas atómicas (Simple Notes) hasta la gestión contextual del conocimiento (Advanced JSON Cards), revelando la tensión fundamental entre simplicidad y expresividad. Marcos como Mem0 y Memobase aportan soluciones de ingeniería para la gestión de memoria, mientras que los mecanismos de privacidad garantizan la seguridad de los datos sensibles durante todo el flujo.
 
 En la **adquisición de conocimiento**, el canal técnico central comprende: fragmentación de documentos para delimitar unidades de búsqueda, embeddings densos para capturar semántica, embeddings dispersos para coincidencias por palabras clave, fusión de resultados para integrar candidatos y reordenamiento neuronal para la ordenación final, midiendo la calidad mediante métricas como recall@k.

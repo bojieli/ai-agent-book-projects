@@ -436,6 +436,8 @@ Tiến hóa liên tục cũng không có nghĩa là để tri thức, Prompt và
 
 Học liên tục đang trở thành một trong những năng lực quan trọng nhất của Agent, nhưng các mô hình hiện nay vẫn chưa thể tự mình thực hiện nó một cách đáng tin cậy. Thích nghi ngữ cảnh trong lúc suy luận không tự động lưu giữ lâu dài, còn cập nhật tham số trực tuyến chưa qua xác minh sẽ khuếch đại nhiễu, tấn công và trôi dạt năng lực. Vì vậy, con đường thực tế hơn hiện nay là xây dựng một hệ thống học tập có thể xác minh bao quanh mô hình.
 
+Xét theo cấu trúc toàn sách, chương này dựng đoạn **thực nghiệm và phản hồi** trong vòng lặp khám phá của Chương 1: đề xuất đã có sẵn, vấn đề chuyển thành làm sao dùng một thực nghiệm bám rễ vào quan sát thực để phán đoán nó có thật sự làm hệ thống tốt lên, và làm sao đưa kết quả trở lại vòng sau.
+
 Agent nhận tín hiệu học từ tương tác và đánh giá, rồi tùy tính chất biểu diễn của năng lực mà cập nhật tri thức, Prompt, Skill, chương trình hoặc tham số mô hình. Hệ thống cũng có thể tối ưu phương pháp quản lý và tạo ra các tạo tác này, nhưng nên ưu tiên sửa đổi cục bộ có thể quy kết, xác minh và khôi phục.
 
 Tiến hóa liên tục cần tách thực thi trực tuyến khỏi học ngoại tuyến: ghi bằng chứng trực tuyến; sinh và xác minh cập nhật ứng viên ngoại tuyến; rồi từng bước phát hành, chỉnh lý hoặc khôi phục. Vòng khép kín này đáng tin cậy nhất với nhiệm vụ có kết quả tự động xác minh được; trong nhiệm vụ mở có mục tiêu mơ hồ và phản hồi trễ, con người vẫn phải tham gia định nghĩa vấn đề và xây dựng tiêu chuẩn đánh giá.
