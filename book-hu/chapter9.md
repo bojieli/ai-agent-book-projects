@@ -392,7 +392,7 @@ A folyamatos evolúció nem jelenti azt, hogy a tudás, a Promptok és az eszkö
 - A Promptok és Skill-ek világos strukturálása, mint egy új alkalmazottaknak szánt kézikönyv, kerülve a „99 vas szabály" jellegű felsorolásokat;
 - A hosszú ideje nem használt eszközök újraérvényesítése;
 - Az új bizonyítékok által megcáfolt tudás törlése;
-- A LoRA újratanítása az eredeti alapmodellből.
+- A LoRA újratanítása az eredeti alapmodellből. Ugyanaz a logika, mint az 1. fejezet adatrétegénél: valódi garancia csak olyan rétegtől jöhet, amelyhez a módosító nem fér hozzá.
 
 > **9-7. ★★★ kísérlet: Annak értékelése, hogy egy ágens folyamatosan fejlődik-e**
 >

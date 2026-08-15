@@ -392,7 +392,7 @@ Continual evolution bukan berarti membiarkan knowledge, Prompts, dan tools tumbu
 - Menjaga Prompts dan Skills terstruktur dengan jelas, seperti buku panduan untuk karyawan baru, dan menghindari enumerasi yang menyerupai "99 aturan besi".
 - Memvalidasi ulang tools yang sudah lama tidak digunakan;
 - Menghapus knowledge yang dibatalkan oleh bukti baru;
-- Melatih ulang LoRA dari base model aslinya.
+- Melatih ulang LoRA dari base model aslinya. Alasannya sama seperti lapis data pada Bab 1: jaminan yang sesungguhnya harus datang dari lapis yang tak dapat disentuh oleh pihak yang melakukan perubahan.
 
 > **Eksperimen 9-7 ★★★: Mengevaluasi Apakah Agent Terus Berevolusi**
 >

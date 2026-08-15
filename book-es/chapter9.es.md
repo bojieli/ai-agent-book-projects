@@ -392,7 +392,7 @@ La evolución continua tampoco consiste en dejar crecer indefinidamente el conoc
 - Mantener Prompts y Skills con estructuras claras, semejantes a un libro de guía para nuevos empleados, evitando listas de reglas estilo "99 mandamientos";
 - Volver a verificar herramientas no utilizadas durante mucho tiempo;
 - Eliminar conocimiento refutado por nueva evidencia;
-- Volver a entrenar LoRA a partir del modelo base original.
+- Volver a entrenar LoRA a partir del modelo base original. El razonamiento es el mismo que para la capa de datos del capítulo 1: una garantía real debe provenir de una capa que quien modifica no puede alcanzar.
 
 > **Experimento 9-7 ★★★: Evaluar si un Agente se encuentra en evolución continua**
 >

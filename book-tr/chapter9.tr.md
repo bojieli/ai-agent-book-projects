@@ -392,7 +392,7 @@ Sürekli evrim, bilginin, Prompt'un ve araçların sınırsızca büyümesi deme
 - Prompt'u ve Skill'i yapısı net biçimde tutmak, yeni çalışanlar için yazılmış bir rehber kitap gibi olmasını sağlamak, "99 madde askerî talimat" tarzı kural sıralamalarından kaçınmak;
 - Uzun süredir kullanılmayan araçları yeniden doğrulamak;
 - Yeni kanıtlarla çürütülen bilgileri silmek;
-- LoRA'yı özgün temel modelden yeniden eğitmek.
+- LoRA'yı özgün temel modelden yeniden eğitmek. Mantık Bölüm 1'deki veri katmanıyla aynıdır: gerçek güvence, değişikliği yapanın erişemediği bir katmandan gelmelidir.
 
 > **Deney 9-7 ★★★: Agent'ın Gerçekten Sürekli Evrilip Evrilmediğini Değerlendirmek**
 >
