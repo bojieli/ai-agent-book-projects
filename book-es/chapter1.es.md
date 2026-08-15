@@ -461,11 +461,13 @@ Establece límites para los reintentos y operaciones del Agente. Si el Agente su
 **Operaciones de Alto Riesgo**
 Las operaciones sensibles, irreversibles o de alto riesgo deben activar la supervisión humana, al menos hasta que el equipo haya generado suficiente confianza en la fiabilidad del Agente. Ejemplos típicos: autorizar un reembolso elevado o procesar un pago.
 
-Con los cinco elementos de Harness en mente, el resto del libro sigue esta estructura.
+Volvamos al hilo de los cinco elementos del Harness para ver qué relación guardan con la estructura de este libro.
 
-### Este Libro como Guía Práctica de Ingeniería de Harness
+### Los cinco elementos del Harness y la parte de «construcción»
 
-Visto a través de la lente de la ingeniería de Harness, cada capítulo de este libro construye de forma sistemática un componente del Harness. La seguridad, mientras tanto, no pertenece a un solo capítulo; es una preocupación transversal de todo el libro (una preocupación transversal afecta a muchas partes de un sistema a la vez, de la misma manera que el registro de logs, en ingeniería de software, debe atravesar cada módulo). La siguiente tabla presenta las funciones de Harness, las consideraciones de seguridad y los capítulos correspondientes en una sola vista:
+**Conviene aclarar primero la relación entre las dos fórmulas, para que nadie tenga que recordar dos esqueletos.** El libro tiene un único esqueleto estructural, el que la introducción y el epílogo emplean una y otra vez: **Agente = LLM + contexto + herramientas** —los capítulos 2 a 6 construyen, los capítulos 7 a 9 evalúan y hacen evolucionar, el capítulo 10 colabora—. **Agente = Modelo + Harness** no es una partición rival puesta a su lado, sino lo mismo desplegado en su forma productiva: despliega «contexto» y «herramientas» en cinco responsabilidades —gestión del contexto, interfaz de herramientas, restricciones, verificación y corrección—. Es, por tanto, **una lente interna de la parte de «construcción»**, no un índice que cubra los diez capítulos.
+
+Dentro de ese alcance, los cinco elementos del Harness se corresponden con claridad con los capítulos 2 a 5:
 
 | Enfoque del Harness | Capítulo Correspondiente | Contenido Central | Preocupaciones de Seguridad |
 |--------------------|--------------------|-------------------------------|------------------------|
@@ -473,11 +475,10 @@ Visto a través de la lente de la ingeniería de Harness, cada capítulo de este
 | Extensión de Contexto | Capítulo 3 (Base de Conocimiento) | Memoria del usuario, RAG, indexación estructurada, RAG agentizado | Exposición de información sensible, protección de la privacidad |
 | Diseño de Herramientas y Restricciones | Capítulo 4 (Diseño de Herramientas) | Clasificación de herramientas, control de permisos, estándar MCP, arquitectura asíncrona | Operaciones erróneas, acceso no autorizado, operaciones irreversibles |
 | Verificación y Corrección de Herramientas | Capítulo 5 (Generación de Código) | Harness de Coding Agents, desarrollo guiado por pruebas, reglas codificadas | Suplantación de identidad, atribución de responsabilidad |
-| Verificación a Nivel de Sistema | Capítulo 7 (Evaluación) | Entorno de evaluación, conjuntos de datos, evaluación automatizada, observabilidad |, |
-| Corrección a Nivel de Modelo | Capítulo 8 (Posentrenamiento) | SFT (Ajuste Fino Supervisado), Aprendizaje por Refuerzo | Desalineación de objetivos, alineación y robustez |
-| Corrección a Nivel de Sistema | Capítulo 9 (Autoevolución) | Aprendizaje externalizado, creación de herramientas, acumulación de experiencia |, |
-| Contexto y Herramientas Multimodales | Capítulo 6 (Interacción Multimodal y en Tiempo Real) | Agentes de voz, uso de computadoras, operación robótica | Filtrado de seguridad de entradas multimodales, control de permisos en tiempo real |
-| Restricciones y Correcciones entre Múltiples Agentes | Capítulo 10 (Colaboración Multiagente) | Arquitectura de colaboración, modos de fallo, sociedad de Agentes | Violación de límites de confianza entre Agentes, conflictos de recursos compartidos |
+
+El capítulo 6 (interacción) no pertenece a ninguno de los cinco elementos: lo que amplía es la modalidad y el momento de los propios espacios de observación y acción. Los capítulos 7 a 9 preguntan **cómo sabemos que el Harness se construyó bien y cómo lograr que siga mejorando**. El capítulo 10 sustituye el Harness de un Agente por una estructura de colaboración entre varios. Forzar esos capítulos dentro de las cinco casillas solo hace que las casillas dejen de discriminar.
+
+La seguridad tampoco se reparte por capítulos: es una preocupación transversal (cross-cutting concern, un problema que afecta a varias partes del sistema) que recorre todo el libro y se organiza según las tres capas de barreras de la sección anterior: contexto, ejecución y datos. La columna «foco de seguridad» de la tabla indica dónde aterriza principalmente cada capítulo dentro de esas tres capas.
 
 La práctica de Anthropic en la construcción de Agentes de larga duración muestra cómo el diseño de Harness puede resolver problemas que el modelo por sí solo no puede. Dividen las tareas complejas entre un "Agente de Inicialización" (que configura el entorno y descompone la lista de tareas) y un "Agente de Ejecución" (que avanza de forma incremental en cada sesión y deja artefactos de entrega claros), utilizando un Harness estructurado para abordar los dos modos de fallo de las tareas largas: quedarse sin contexto y declarar la tarea completada prematuramente. Los capítulos siguientes analizan el Harness componente por componente: el Capítulo 2 comienza con el más central, la ingeniería de contexto, y el Capítulo 5 expone la práctica completa de la ingeniería de Harness en los Coding Agents.
 ## Patrones de diseño que recorren todo el libro

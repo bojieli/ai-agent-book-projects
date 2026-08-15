@@ -478,11 +478,13 @@ Jellemzően két fő helyzet váltja ki az emberi beavatkozást:
 **Magas kockázatú műveletek**
 Az érzékeny, visszafordíthatatlan vagy magas kockázatú műveleteknek emberi felügyeletet kell kiváltaniuk – legalább addig, amíg a csapat elegendő bizalmat nem épített az ügynök megbízhatóságában. Tipikus példák a nagy összegű visszatérítések engedélyezése és a fizetések feldolgozása.
 
-Az öt Harness-elem ismeretében a könyv további része ezt a struktúrát követi.
+Térjünk vissza az öt Harness-elem fő vonalához, és nézzük meg, hogyan viszonyul a könyv szerkezetéhez.
 
-### Ez a könyv mint gyakorlati útmutató a Harness Engineeringhez
+### Az öt Harness-elem és az „építés" rész
 
-A Harness engineering lencséjén keresztül nézve a könyv minden fejezete szisztematikusan kiépíti a Harness egy-egy összetevőjét. A biztonság eközben egyetlen fejezethez sem tartozik; a teljes könyv keresztmetszeti szempontja (a keresztmetszeti szempont egy rendszer számos részét érinti egyszerre – ahogy a naplózásnak, a szoftvermérnökségben, minden modulon át kell haladnia). Az alábbi táblázat a Harness-funkciókat, a biztonsági szempontokat és a kapcsolódó fejezeteket egyetlen nézetben mutatja be:
+**Először tisztázzuk a két képlet viszonyát, hogy senkinek se kelljen két vázat fejben tartania.** A könyvnek pontosan egy szerkezeti váza van, az, amelyet a bevezető és az utószó újra meg újra használ: **Ügynök = LLM + kontextus + eszközök** – a 2–6. fejezet épít, a 7–9. fejezet értékel és fejleszt, a 10. fejezet együttműködik. Az **Ügynök = Modell + Harness** nem egy mellé állított rivális felosztás, hanem ugyanannak a termelési formába kibontott alakja: a „kontextust" és az „eszközöket" bontja ki öt felelősséggé – kontextuskezelés, eszközinterfész, korlátok, ellenőrzés, javítás. Ezért ez **az „építés" részen belül használt lencse**, nem pedig mind a tíz fejezetet lefedő tartalomjegyzék.
+
+Ezen a körön belül az öt Harness-elem világosan megfelel a 2–5. fejezetnek:
 
 | A Harness fókuszterülete | Kapcsolódó fejezet | Alapvető tartalom | Biztonsági aggályok |
 |---------------------------|--------------------|-------------------|---------------------|
@@ -490,11 +492,10 @@ A Harness engineering lencséjén keresztül nézve a könyv minden fejezete szi
 | Kontextus bővítése (tudás perzisztálása) | 3. fejezet (Knowledge Base) | Felhasználói memória, RAG, strukturált indexelés, agentic RAG | Érzékeny információk kiszivárgása, adatvédelem |
 | Eszköztervezés és biztonsági korlátok | 4. fejezet (Tool Design) | Eszközbesorolás, engedélykezelés, MCP szabvány, aszinkron architektúra | Téves műveletek, jogosulatlan hozzáférés, visszafordíthatatlan műveletek |
 | Eszközök ellenőrzése és javítása | 5. fejezet (Code Generation) | Kódoló ügynökök Harness-e, tesztvezérelt fejlesztés, kódba foglalt szabályok | Személyazonosság-megszemélyesítés, felelősség hozzárendelése |
-| Rendszerszintű ellenőrzés | 7. fejezet (Evaluation) | Értékelési környezet, adathalmazok, automatikus kiértékelés, megfigyelhetőség | — |
-| Modellszintű javítás | 8. fejezet (Post-Training) | SFT (Supervised Fine-Tuning), Reinforcement Learning – a Harness által felhalmozott visszacsatolási jelek kódolása modellparaméterekbe, a Harness engineering kiterjesztéseként | Cél-eltolódás, alignment és robusztusság |
-| Rendszerszintű javítás | 9. fejezet (Self-Evolution) | Külső tanulás, eszközlétrehozás, tapasztalatfelhalmozás | — |
-| Multimodális kontextus és eszközök | 6. fejezet (Multimodal and Real-Time Interaction) | Hangügynök, Computer Use, robotikai műveletek | Multimodális bemenet biztonsági szűrése, engedélykezelés valós idejű interakcióban |
-| Korlátozások és javítások több ügynök között | 10. fejezet (Multi-Agent Collaboration) | Együttműködési architektúra, hibamódok, ügynöktársadalom | Bizalmi határok megsértése ügynökök között, megosztott erőforrás-konfliktusok |
+
+A 6. fejezet (interakció) egyik elemhez sem tartozik: azt terjeszti ki, hogy maga a megfigyelési és a cselekvési tér milyen modalitásban és milyen időzítéssel működik. A 7–9. fejezet azt kérdezi, **honnan tudjuk, hogy a Harness jól épült meg, és hogyan tartható folyamatosan javuló pályán**. A 10. fejezet pedig egyetlen Ügynök Harness-ét több Ügynök együttműködési szerkezetére cseréli. Ha ezeket a fejezeteket is beleerőltetnénk az öt rekeszbe, a rekeszek egyszerűen elveszítenék megkülönböztető erejüket.
+
+A biztonság szintén nem fejezetenként oszlik meg: az egész könyvön végigvonuló keresztmetsző szempont (cross-cutting concern, azaz a rendszer több részét érintő probléma), és az előző szakasz háromrétegű védőkorlátja szerint rendeződik – kontextusréteg, végrehajtási réteg, adatréteg. A fenti táblázat „biztonsági fókusz" oszlopa azt adja meg, hogy az egyes fejezetek elsősorban melyik rétegre érkeznek.
 
 Az Anthropic gyakorlata a hosszú ideig futó ügynökök építésében megmutatja, hogy a Harness-tervezés hogyan oldhat meg olyan problémákat, amelyeket maga a modell nem képes. A bonyolult feladatokat egy "Inicializáló Ügynök" (környezet beállítása, feladatlista lebontása) és egy "Végrehajtó Ügynök" (minden munkamenetben inkrementális előrelépés és tiszta átadási artefaktumok hátrahagyása) közé osztották, strukturált Harness-t használva a hosszú feladatok két hibamódjának kezelésére: a kontextus kifogyása és a feladat idő előtti befejezettnek nyilvánítása. Az előttünk álló fejezetek a Harness összetevőit veszik sorra – a 2. fejezet a legközpontibbal, a kontextusmérnökséggel kezdi, és az 5. fejezet fekteti le a Kódoló Ügynökök teljes Harness-mérnökségi gyakorlatát.
 

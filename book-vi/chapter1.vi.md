@@ -482,11 +482,13 @@ Thường có hai tình huống chính kích hoạt sự can thiệp thủ công
 **Hoạt động rủi ro cao**
 Cần kích hoạt giám sát thủ công khi liên quan đến các hoạt động nhạy cảm, không thể đảo ngược hoặc có rủi ro cao, ít nhất là cho đến khi nhóm có đủ niềm tin vào độ tin cậy của Agent. Các ví dụ điển hình bao gồm cho phép hoàn lại tiền hoặc thanh toán số tiền lớn, v.v.
 
-Quay trở lại chủ đề chính về năm yếu tố của Harness - hãy xem mỗi chương của cuốn sách này diễn ra như thế nào trong khuôn khổ này.
+Trở lại mạch chính của năm yếu tố Harness — hãy xem nó có quan hệ thế nào với cấu trúc cuốn sách.
 
-### Cuốn sách này đóng vai trò là hướng dẫn thực tế về kỹ thuật Harness
+### Năm yếu tố Harness và phần "xây dựng"
 
-Xem xét lại cấu trúc của cuốn sách này từ góc độ Harness Engineering (kỹ thuật Harness), chúng ta có thể thấy rằng mỗi chương xây dựng một cách có hệ thống một thành phần nhất định của Harness. Đồng thời, bảo mật không phải là một chủ đề độc lập trong một chương nhất định mà là mối quan tâm xuyên suốt cuốn sách (cross-cutting concern, tức là một vấn đề ảnh hưởng đến nhiều phần của hệ thống, tương tự như nhu cầu ghi nhật ký để thâm nhập vào mọi mô-đun trong công nghệ phần mềm). Bảng sau đây trình bày các chức năng Harness, các khía cạnh an toàn và các chương tương ứng một cách thống nhất:
+**Trước hết cần nói rõ quan hệ giữa hai công thức, để bạn đọc không phải nhớ hai bộ khung.** Cuốn sách chỉ có một bộ khung cấu trúc duy nhất, chính là cái mà lời mở đầu và lời bạt dùng đi dùng lại: **Agent = LLM + ngữ cảnh + công cụ** — các chương 2 đến 6 xây dựng, các chương 7 đến 9 đánh giá và tiến hoá, chương 10 cộng tác. **Agent = Model + Harness** không phải một cách phân chia song song với nó, mà là cùng một thứ được trải ra ở dạng sản xuất: nó trải "ngữ cảnh" và "công cụ" thành năm trách nhiệm — quản lý ngữ cảnh, giao diện công cụ, ràng buộc, kiểm chứng, sửa chữa. Vì thế nó là **một lăng kính bên trong phần "xây dựng"**, chứ không phải mục lục bao trùm cả mười chương.
+
+Trong phạm vi đó, năm yếu tố Harness tương ứng rõ ràng với các chương 2 đến 5:
 
 | Những điểm chính của Harness | Các chương tương ứng | Nội dung cốt lõi | Mối quan tâm về an toàn |
 |-------------|---------|---------|-----------|
@@ -494,11 +496,10 @@ Xem xét lại cấu trúc của cuốn sách này từ góc độ Harness Engin
 | Mở rộng ngữ cảnh (kiên trì kiến thức) | Chương 3 (cơ sở kiến thức) | Bộ nhớ người dùng, RAG, chỉ mục có cấu trúc, thông minh hóa RAG | Tiếp xúc thông tin nhạy cảm, bảo vệ quyền riêng tư |
 | Thiết kế công cụ và các ràng buộc bảo mật | Chương 4 (Thiết kế công cụ) | Phân loại công cụ, kiểm soát quyền, tiêu chuẩn MCP, kiến trúc không đồng bộ | Hoạt động sai, truy cập trái phép, hoạt động không thể đảo ngược |
 | Kiểm tra và hiệu chỉnh công cụ | Chương 5 (tạo mã) | Harness, test-driven development, quy tắc mã hóa của Coding Agent | Mạo danh danh tính, quy trách nhiệm |
-| Xác minh cấp hệ thống | Chương 7 (Đánh giá) | Môi trường đánh giá, bộ dữ liệu, đánh giá tự động, observability | — |
-| Chỉnh sửa ở cấp độ mô hình | Chương 8 (hậu đào tạo) | SFT (tinh chỉnh có giám sát), học tăng cường - ghi các tín hiệu phản hồi tích lũy trong Harness vào các tham số mô hình có thể được coi là một phần mở rộng của dự án Harness | Độ lệch mục tiêu, căn chỉnh và độ bền |
-| Chỉnh sửa ở cấp hệ thống | Chương 9 (Tự tiến hóa) | External Learning (học bên ngoài tham số mô hình), tạo công cụ và tích lũy kinh nghiệm | — |
-| Ngữ cảnh và công cụ đa phương thức | Chương 6 (Tương tác đa phương thức và thời gian thực) | Giọng nói Agent, Computer Use, vận hành robot | Lọc bảo mật đầu vào đa phương thức, kiểm soát quyền trong tương tác thời gian thực |
-| Các ràng buộc và hiệu chỉnh giữa nhiều Agent | Chương 10 (Hợp tác nhiều Agent) | Kiến trúc cộng tác, chế độ lỗi, xã hội Agent | Sự vi phạm lòng tin và xung đột tài nguyên được chia sẻ giữa Agent |
+
+Chương 6 (tương tác) không thuộc bất kỳ yếu tố nào trong năm yếu tố ấy; cái nó mở rộng là phương thức và thời điểm của chính không gian quan sát và không gian hành động. Các chương 7 đến 9 hỏi **làm sao biết Harness đã được xây đúng, và làm sao khiến nó liên tục tốt lên**. Chương 10 thay Harness của một Agent bằng cấu trúc cộng tác giữa nhiều Agent. Nhét những chương đó vào năm ô chỉ khiến các ô mất khả năng phân biệt.
+
+An toàn cũng không chia theo chương: nó là mối quan tâm xuyên cắt (cross-cutting concern, tức vấn đề ảnh hưởng tới nhiều phần của hệ thống) chạy suốt cuốn sách, được tổ chức theo ba tầng guardrail ở mục trước — tầng ngữ cảnh, tầng thực thi, tầng dữ liệu. Cột "trọng tâm an toàn" trong bảng cho biết mỗi chương chủ yếu rơi vào tầng nào trong ba tầng đó.
 
 Hoạt động thực hành của Anthropic trong việc xây dựng Agent chạy lâu dài cho thấy cách thiết kế Harness giải quyết các vấn đề mà bản thân mô hình không thể giải quyết được. Chúng phân tách các tác vụ phức tạp thành "khởi tạo Agent" (thiết lập môi trường, phân tách danh sách tác vụ) và "thực thi Agent" (tăng dần trong mỗi phiên và để lại các tạo phẩm chuyển giao rõ ràng) đồng thời giải quyết các vấn đề Agent về "cạn kiệt ngữ cảnh" và "tuyên bố hoàn thành sớm" trong các tác vụ dài có cấu trúc thông qua Harness. Các chương tiếp theo sẽ lần lượt đi sâu vào từng thành phần của Harness - Chương 2 bắt đầu với Context Engineering (kỹ thuật ngữ cảnh) cốt lõi và Chương 5 sẽ mở rộng cụ thể về thực hành hoàn chỉnh về Harness Engineering (kỹ thuật Harness) trong Coding Agent.
 

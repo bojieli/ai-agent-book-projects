@@ -478,11 +478,13 @@ Tetapkan batas pada percobaan ulang dan operasi Agent. Jika Agent melebihi batas
 **Operasi Berisiko Tinggi (High-Risk Operations)**
 Operasi sensitif, ireversibel, atau berisiko tinggi harus memicu pengawasan manusia—setidaknya sampai tim telah membangun kepercayaan diri yang cukup terhadap keandalan Agent. Contoh umumnya adalah mengesahkan pengembalian dana dalam jumlah besar atau memproses pembayaran.
 
-Dengan mengingat kelima elemen Harness, sisa buku ini mengikuti struktur berikut ini.
+Kembali ke alur utama lima elemen Harness—mari lihat bagaimana hubungannya dengan struktur buku ini.
 
-### Buku Ini sebagai Panduan Praktis untuk Harness Engineering
+### Lima Elemen Harness dan Bagian "Membangun"
 
-Dilihat melalui kacamata Harness engineering, setiap bab dalam buku ini secara sistematis membangun satu komponen Harness. Sementara itu, masalah keamanan (security) tidak menjadi milik satu bab saja; keamanan merupakan perhatian lintas sektoral (cross-cutting concern) di seluruh bagian buku (cross-cutting concern menyentuh banyak bagian sistem sekaligus—sebagaimana logging, dalam rekayasa perangkat lunak, harus menyatu dengan setiap modul). Tabel di bawah ini menyajikan fungsi Harness, aspek keamanan, dan bab-bab yang sesuai dalam satu tampilan tunggal:
+**Perjelas dulu hubungan kedua rumus itu, supaya pembaca tak perlu mengingat dua kerangka.** Kerangka struktural buku ini hanya satu, yaitu yang berulang kali dipakai pengantar dan epilog: **Agent = LLM + konteks + tool**—Bab 2 sampai 6 membangun, Bab 7 sampai 9 mengevaluasi dan mengembangkan, Bab 10 berkolaborasi. **Agent = Model + Harness** bukan pembagian tandingan di sampingnya, melainkan hal yang sama yang dibentangkan ke dalam bentuk produksinya: ia membentangkan "konteks" dan "tool" menjadi lima tanggung jawab—manajemen konteks, antarmuka tool, batasan, verifikasi, koreksi. Karena itu ia adalah **lensa di dalam bagian "membangun"**, bukan daftar isi yang menutupi sepuluh bab.
+
+Dalam lingkup itu, lima elemen Harness berpadanan jelas dengan Bab 2 sampai 5:
 
 | Fokus Harness | Bab Terkait | Konten Inti | Masalah Keamanan |
 |--------------------|--------------------|-------------------------------|------------------------|
@@ -490,11 +492,10 @@ Dilihat melalui kacamata Harness engineering, setiap bab dalam buku ini secara s
 | Ekstensi Context (Persistensi Knowledge) | Bab 3 (Knowledge Base) | Memori pengguna, RAG, pengindeksan terstruktur, agentic RAG | Eksposur informasi sensitif, perlindungan privasi |
 | Desain Tool dan Batasan Keamanan | Bab 4 (Tool Design) | Klasifikasi tool, kontrol permission, standar MCP, arsitektur asinkron | Misoperasi, akses tidak sah, operasi ireversibel |
 | Validasi Tool dan Koreksi | Bab 5 (Code Generation) | Harness Coding Agent, pengembangan berbasis pengujian, aturan dienkode sebagai kode | Peniruan identitas, atribusi tanggung jawab |
-| Validasi Tingkat Sistem | Bab 7 (Evaluation) | Lingkungan evaluasi, dataset, evaluasi otomatis, observabilitas | — |
-| Koreksi Tingkat Model | Bab 8 (Post-Training) | SFT (Supervised Fine-Tuning), Reinforcement Learning—mengenkode sinyal feedback yang dikumpulkan Harness ke dalam parameter model, sebagai ekstensi dari Harness engineering | Penyimpangan tujuan, penyelarasan, dan ketahanan (robustness) |
-| Koreksi Tingkat Sistem | Bab 9 (Self-Evolution) | Pembelajaran yang dieksternalisasi, pembuatan tool, akumulasi pengalaman | — |
-| Context dan Tool Multimodal | Bab 6 (Multimodal and Real-Time Interaction) | Voice Agent, Computer Use, operasi robotik | Penyaringan keamanan input multimodal, kontrol permission dalam interaksi real-time |
-| Batasan dan Koreksi Antar Banyak Agent | Bab 10 (Multi-Agent Collaboration) | Arsitektur kolaborasi, mode kegagalan, society Agent | Pelanggaran batas kepercayaan antar Agent, konflik sumber daya bersama |
+
+Bab 6 (interaksi) tidak termasuk salah satu dari lima elemen tersebut; yang diperluasnya adalah modalitas dan waktu dari ruang observasi dan ruang aksi itu sendiri. Bab 7 sampai 9 menanyakan **bagaimana kita tahu Harness sudah dibangun dengan benar, dan bagaimana membuatnya terus membaik**. Bab 10 mengganti Harness satu Agent dengan struktur kolaborasi beberapa Agent. Memaksa bab-bab itu masuk ke lima kotak hanya membuat kotaknya kehilangan daya bedanya.
+
+Keamanan pun tidak dibagi per bab: ia adalah perhatian lintas potong (cross-cutting concern, yaitu persoalan yang memengaruhi banyak bagian sistem) yang membentang di seluruh buku, ditata menurut tiga lapis guardrail pada bagian sebelumnya—lapis konteks, lapis eksekusi, lapis data. Kolom "fokus keamanan" pada tabel di atas menunjukkan di lapis mana tiap bab terutama mendarat.
 
 Praktik Anthropic dalam membangun Agent jangka-panjang (long-running Agents) menunjukkan bagaimana desain Harness dapat menyelesaikan masalah yang tidak dapat diselesaikan oleh model itu sendiri. Mereka membagi tugas kompleks antara "Initialization Agent" (menyiapkan lingkungan, memecah daftar tugas) dan "Execution Agent" (membuat kemajuan bertahap di setiap sesi dan meninggalkan artifak serah-terima yang jelas), menggunakan Harness terstruktur untuk mengatasi dua mode kegagalan dari tugas yang panjang: kehabisan context dan menyatakan tugas selesai sebelum waktunya. Bab-bab di depan akan membedah Harness komponen demi komponen—Bab 2 dimulai dengan yang paling sentral, context engineering, dan Bab 5 menjabarkan praktik lengkap dari Harness engineering pada Coding Agent.
 
