@@ -63,6 +63,8 @@ The chapters in this book are relatively independent. You can choose different r
 
 Each chapter contains a large number of **experiments** and **thought questions**, numbered in the format "Experiment X-Y" (X is the chapter number, Y is the sequence number within the chapter). The titles of experiments and thought questions carry star ratings for difficulty: ★ means entry-level, suitable for all readers; ★★ means medium difficulty, requiring some engineering practice; ★★★ means an advanced challenge, usually involving open-ended questions or complex system design. Most experiments come with complete runnable code, organized in the accompanying open-source repository:
 
+Numbers reported in the experiments come in two kinds, and deserve different degrees of confidence. **One kind has reproducible provenance**: a sample size, a run count or a confidence interval is stated, or the companion repository holds the run records and raw outputs. Most experiments in chapters 7 through 9 are of this kind. **The other kind is an illustrative observation**: it comes from a single small controlled run, shows a direction and a mechanism, and cannot support a claim about *how much* better one option is than another. Numbers of this kind are marked as such inside the experiment box. Chapter 7 explains why the distinction matters—a percentage-point gap from one run often falls within statistical noise.
+
 > **Companion Code Repository**: [https://github.com/bojieli/ai-agent-book](https://github.com/bojieli/ai-agent-book)
 
 You can obtain all companion code with Git:

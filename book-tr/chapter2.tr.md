@@ -695,6 +695,8 @@ Mekanizmanın diğer kısıtı model yeteneğidir: model, "konuşma ortasında g
 >
 > **Boyut 3: Araç Açıklamaları**—Fonksiyon imzalarını ve parametre tanımlarını korurken tüm açıklayıcı metni kaldırdık. Sonuç olarak, tool calling hata oranı %45 arttı; Agent sık sık geçersiz parametre değerleri geçirdi ve parametre anlamlarını yanlış anladı.
 >
+> Yukarıdaki üç boyutun sayıları küçük ölçekli tek bir kontrollü koşudan gelir ve **açıklayıcı gözlemlerdir**: ortaya koydukları şey bir yöndür—düzenleme yapısı ve araç açıklamaları, ton ve üsluptan çok daha ağır basar—yeniden üretilebilir bir büyüklük değil. Bölüm 7'nin ölçütüne göre tek koşuluk bir fark, "ne kadar" iddiasını taşıyabilmek için örneklem büyüklüğü ve tekrar sayısı ister. Bu deneyi kendiniz koştururken, aynı yüzde puanları yeniden üretilip üretilmediğine değil, üç boyutun göreli sıralamasının kararlı kalıp kalmadığına bakın.
+>
 >
 
 ### Prompt Injection: Context Güvenliğine Yönelik Temel Tehdit
@@ -959,7 +961,7 @@ Yaklaşık bir model başa baş noktasını gösterir. Her durumun $S$ token iç
 >
 > **TODO Listesi Yönetimi**: Manus (genel amaçlı bir AI Agent ürünü)'un "yeniden ifade yoluyla attention'ı manipüle etme" konseptinden ilham alarak, iki özel araç sağlar: `rewrite_todo_list` ve `update_todo_status`. Her TODO öğesi benzersiz bir tanımlayıcı, içerik, durum (pending/in_progress/completed/cancelled) ve bir zaman damgası içerir. Bilişsel yük teorisi perspektifinden, TODO listesi dışsal bellek görevi görür—tıpkı insanların karmaşık projeleri ele alırken kontrol listeleri yazması gibi, Agent'ın da "neyin yapıldığını ve neyin kaldığını" kaydedecek bir yere ihtiyacı vardır. Deneysel veriler şunu gösteriyor: TODO etkinleştirilmiş Agent'lar görevleri ortalama 15 yinelemede tamamlarken, olmayanlar 21 yineleme gerektiriyor ve sık sık alt görevleri kaçırıyor.
 >
-> **Ayrıntılı Hata Bilgisi**: Dört katman içerir—hata türü ve açıklaması, tam parametre JSON'u, çağrı yığını bilgisi ve hedefe yönelik düzeltme önerileri (örn. bir FileNotFoundError ile karşılaşıldığında, yolu doğrulamayı, çalışma dizinini kontrol etmeyi ve mutlak yollar kullanmayı önerir). Etkinleştirildiğinde, Agent'ın hata senaryolarında alternatif çözümler bulma başarı oranı %60'tan %95'e yükselir, kör yeniden denemelerden analitik problem çözmeye geçilir.
+> **Ayrıntılı Hata Bilgisi**: Dört katman içerir—hata türü ve açıklaması, tam parametre JSON'u, çağrı yığını bilgisi ve hedefe yönelik düzeltme önerileri (örn. bir FileNotFoundError ile karşılaşıldığında, yolu doğrulamayı, çalışma dizinini kontrol etmeyi ve mutlak yollar kullanmayı önerir). Etkinleştirildiğinde, Agent'ın hata senaryolarında alternatif çözümler bulma başarı oranı %60'tan %95'e yükselir, kör yeniden denemelerden analitik problem çözmeye geçilir (bu da küçük ölçekli tek bir koşudan gelen bir **açıklayıcı gözlemdir**: "hata bilgisini ayrıntılı yaz" yönünün işe yaradığını gösterir, bu büyüklüğün yeniden üretileceğini değil).
 >
 > **Sistem Durumu Farkındalığı**: Mevcut saat, çalışma dizini, işletim sistemi türü, shell ortamı ve Python sürümü gibi bilgileri enjekte eder. Çalışma dizinini takip etmek özellikle kritiktir—Agent bir `cd` komutu yürüttükten sonra otomatik olarak güncellenir, sonraki işlemlerin doğru bağlamda yürütülmesini sağlar. İşletim sistemi bilgisi, Agent'ın platforma özgü kararlar almasını sağlar (örn. Linux'ta `apt`, macOS'ta `brew` kullanmak).
 >

@@ -61,6 +61,8 @@ Mỗi chương của cuốn sách này tương đối độc lập. Bạn có th
 
 Mỗi chương chứa một số lượng lớn **thí nghiệm** và **câu hỏi tư duy** và định dạng đánh số là "Thử nghiệm X-Y" (X là số chương, Y là số sê-ri trong chương). Tiêu đề của các thí nghiệm và câu hỏi tư duy được đánh dấu sao để biểu thị độ khó: ★ biểu thị mức độ đầu vào, phù hợp với mọi độc giả; ★★ biểu thị độ khó trung bình, đòi hỏi nền tảng nhất định về thực hành kỹ thuật; ★★★ biểu thị những thách thức nâng cao, thường liên quan đến các vấn đề mở hoặc thiết kế hệ thống phức tạp. Hầu hết các thử nghiệm đều được trang bị mã có thể chạy hoàn chỉnh, được tổ chức để hỗ trợ các kho lưu trữ nguồn mở:
 
+Các con số xuất hiện trong thí nghiệm có hai loại, bạn đọc có thể tin ở mức độ khác nhau. **Một loại có xuất xứ tái lập được**: có nêu cỡ mẫu, số lần chạy hoặc khoảng tin cậy, hoặc kho mã đi kèm còn giữ bản ghi chạy và đầu ra gốc; phần lớn thí nghiệm ở các chương 7 đến 9 thuộc loại này. **Loại kia là quan sát minh hoạ**: đến từ một lần chạy đối chứng quy mô nhỏ, cho thấy hướng và cơ chế, và không đủ để chống đỡ kết luận về độ lớn kiểu "phương án này hơn phương án kia bao nhiêu"; những con số như vậy được ghi rõ ngay trong khung thí nghiệm. Chương 7 sẽ bàn riêng vì sao phân biệt hai loại này lại quan trọng — chênh lệch vài điểm phần trăm từ một lần chạy thường vẫn nằm trong nhiễu thống kê.
+
 > **Kho mã hỗ trợ**: [https://github.com/bojieli/ai-agent-book](https://github.com/bojieli/ai-agent-book)
 
 Bạn có thể lấy toàn bộ mã nguồn đi kèm bằng Git:

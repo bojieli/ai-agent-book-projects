@@ -696,6 +696,8 @@ Một ràng buộc khác của cơ chế này là năng lực của mô hình: m
 >
 > **Thứ nguyên thứ ba: Mô tả công cụ** - Giữ lại chữ ký hàm và định nghĩa tham số, nhưng xóa tất cả văn bản mô tả. Kết quả là tỷ lệ lỗi của các lệnh gọi công cụ đã tăng 45%. Agent thường xuyên truyền các giá trị tham số không hợp lệ và hiểu sai ý nghĩa của các tham số.
 >
+> Các con số của ba chiều ở trên đến từ một lần chạy đối chứng quy mô nhỏ và là **quan sát minh hoạ**: thứ chúng xác lập là một hướng — tổ chức cấu trúc và mô tả công cụ ảnh hưởng lớn hơn nhiều so với giọng điệu và phong cách — chứ không phải một độ lớn tái lập được. Theo chuẩn của Chương 7, chênh lệch từ một lần chạy cần có cỡ mẫu và số lần lặp mới chống đỡ được kết luận "hơn bao nhiêu". Khi bạn tự chạy thí nghiệm này, hãy chú ý thứ tự tương đối giữa ba chiều có ổn định không, chứ không phải có tái lập đúng số điểm phần trăm ấy không.
+>
 >
 
 ### Prompt injection nhở: Mối đe dọa cốt lõi đối với bảo mật theo ngữ cảnh
@@ -957,7 +959,7 @@ Một mô hình gần đúng cho biết điểm hòa vốn. Gọi $S$ là số t
 >
 > **Quản lý danh sách TODO**: Dựa trên khái niệm "thao túng sự chú ý thông qua sự lặp lại" từ Manus (một sản phẩm AI Agent chung), hai công cụ chuyên dụng `rewrite_todo_list` và `update_todo_status` được cung cấp. Mỗi mục TODO chứa một mã định danh, nội dung, trạng thái duy nhất (pending/in_progress/completed/cancelled) và dấu thời gian. Từ góc độ lý thuyết tải nhận thức, danh sách TODO đóng vai trò của bộ nhớ ngoài - giống như người ta viết danh sách khi xử lý các dự án phức tạp, Agent cũng cần một nơi để ghi lại “những gì đã làm được và những gì còn thiếu”. Dữ liệu thử nghiệm cho thấy Agent khi bật TODO có thể hoàn thành nhiệm vụ trong trung bình 15 lần lặp, trong khi khi tắt nó phải mất 21 lần và các nhiệm vụ con thường bị bỏ sót.
 >
-> **Thông tin lỗi chi tiết**: Chứa bốn lớp nội dung - loại lỗi và mô tả, JSON với các tham số đầy đủ, thông tin ngăn xếp cuộc gọi và đề xuất sửa chữa có mục tiêu (ví dụ: khi gặp FileNotFoundError, bạn nên xác minh đường dẫn, kiểm tra thư mục làm việc và sử dụng đường dẫn tuyệt đối). Sau khi được bật, tỷ lệ thành công của Agent trong việc tìm kiếm giải pháp thay thế trong các tình huống lỗi đã tăng từ 60% lên 95%, chuyển từ thử lại mù quáng sang giải quyết vấn đề bằng phân tích.
+> **Thông tin lỗi chi tiết**: Chứa bốn lớp nội dung - loại lỗi và mô tả, JSON với các tham số đầy đủ, thông tin ngăn xếp cuộc gọi và đề xuất sửa chữa có mục tiêu (ví dụ: khi gặp FileNotFoundError, bạn nên xác minh đường dẫn, kiểm tra thư mục làm việc và sử dụng đường dẫn tuyệt đối). Sau khi được bật, tỷ lệ thành công của Agent trong việc tìm kiếm giải pháp thay thế trong các tình huống lỗi đã tăng từ 60% lên 95%, chuyển từ thử lại mù quáng sang giải quyết vấn đề bằng phân tích (đây cũng là **quan sát minh hoạ** từ một lần chạy nhỏ: nó cho thấy "viết thông tin lỗi thật chi tiết" là hướng đúng, chứ không phải biên độ này tái lập được).
 >
 > **Nhận thức về trạng thái hệ thống**: Đưa vào các thông tin như thời gian hiện tại, thư mục làm việc, loại hệ điều hành, môi trường Shell và phiên bản Python. Việc theo dõi thư mục làm việc đặc biệt quan trọng - Agent sẽ được cập nhật tự động sau khi thực hiện lệnh `cd` để đảm bảo rằng các thao tác tiếp theo được thực thi trong ngữ cảnh chính xác. Thông tin hệ điều hành cho phép Agent đưa ra các quyết định dành riêng cho nền tảng (ví dụ: `apt` trên Linux, `brew` trên macOS).
 >

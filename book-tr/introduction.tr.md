@@ -61,6 +61,8 @@ Kitabın bölümleri görece bağımsızdır; kendi ihtiyacınıza göre farklı
 
 Her bölüm çok sayıda **deney** ve **düşünce sorusu** içerir; numaralandırma biçimi "Deney X-Y" şeklindedir (X bölüm numarası, Y bölüm içindeki sıra numarasıdır). Deneylerin ve düşünce sorularının başlıklarında zorluk yıldızla belirtilir: ★ giriş seviyesini gösterir ve tüm okurlara uygundur; ★★ orta zorluğu gösterir ve belli bir mühendislik pratiği birikimi gerektirir; ★★★ ise ileri düzey bir meydan okumadır ve genellikle açık uçlu sorular ya da karmaşık sistem tasarımı içerir. Deneylerin çoğu eksiksiz ve çalıştırılabilir kodla birlikte gelir; bunlar kitaba eşlik eden açık kaynak depoda düzenlenmiştir:
 
+Deneylerde geçen sayılar iki türdür ve okur onlara farklı ağırlıklarla güvenebilir. **Birinci türün yeniden üretilebilir bir kaynağı vardır**: örneklem büyüklüğü, çalıştırma sayısı ya da güven aralığı verilmiştir, veya eşlik eden depoda çalışma kayıtları ve ham çıktılar durur; Bölüm 7–9'daki deneylerin çoğu bu türdendir. **İkinci tür ise açıklayıcı gözlemdir**: küçük ölçekli tek bir kontrollü koşudan gelir, bir yönü ve bir mekanizmayı gösterir ve "bir seçenek diğerinden ne kadar iyi" türünden bir büyüklük iddiasını taşıyamaz; bu tür sayılar deney kutusunun içinde açıkça belirtilir. Bölüm 7 bu ayrımın neden önemli olduğunu ayrıca tartışır—tek bir koşudan çıkan birkaç yüzde puanlık fark çoğu zaman istatistiksel gürültünün içinde kalır.
+
 > **Eşlik eden kod deposu**: [https://github.com/bojieli/ai-agent-book](https://github.com/bojieli/ai-agent-book)
 
 Eşlik eden kodun tamamını Git ile edinebilirsiniz:

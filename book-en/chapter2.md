@@ -698,6 +698,8 @@ The mechanism's other constraint is model capability: the model must have been t
 >
 > **Dimension 3: Tool Descriptions**—We retained the function signatures and parameter definitions but removed all descriptive text. As a result, the error rate for tool calls increased by 45%, with the Agent frequently passing invalid parameter values and misunderstanding parameter meanings.
 >
+> The numbers for the three dimensions above come from a single small controlled run and are **illustrative observations**: what they establish is a direction—organization and tool descriptions matter far more than tone and style—not a reproducible magnitude. By the standard chapter 7 sets, a single-run difference needs a sample size and a repeat count before it can support a claim about "how much". When you run this experiment yourself, watch whether the relative ordering of the three dimensions holds, not whether you reproduce the same percentage points.
+>
 
 ### Prompt Injection: The Core Threat to Context Security
 
@@ -963,7 +965,7 @@ A rough model gives the break-even point. Let each status contain $S$ tokens, le
 >
 > **TODO List Management**: Inspired by Manus's concept of "manipulating attention through restatement," TODO List Management provides two dedicated tools: `rewrite_todo_list` and `update_todo_status`. Each TODO item includes a unique identifier, content, status (pending/in_progress/completed/cancelled), and a timestamp. From the perspective of cognitive load theory, the TODO list serves as external memory—just as humans write checklists when handling complex projects, the Agent also needs a place to record "what has been done and what remains." Experimental data show that Agents with TODO support complete tasks in an average of 15 iterations, while those without it require 21 iterations and often miss subtasks.
 >
-> **Detailed Error Information**: Contains four layers—error type and description, full parameter JSON, call stack information, and targeted fix suggestions (e.g., when encountering a FileNotFoundError, suggest verifying the path, checking the working directory, and using absolute paths). When enabled, this information raises the Agent's error-recovery success rate from 60% to 95%. Instead of retrying blindly, the Agent can diagnose the failure and choose an alternative.
+> **Detailed Error Information**: Contains four layers—error type and description, full parameter JSON, call stack information, and targeted fix suggestions (e.g., when encountering a FileNotFoundError, suggest verifying the path, checking the working directory, and using absolute paths). When enabled, this information raises the Agent's error-recovery success rate from 60% to 95%. Instead of retrying blindly, the Agent can diagnose the failure and choose an alternative (this is likewise an **illustrative observation** from one small run: it shows that "write detailed error information" is the right direction, not that this particular magnitude reproduces).
 >
 > **System State Awareness**: Injects information such as the current time, working directory, operating system type, shell environment, and Python version. Tracking the working directory is particularly critical—it is automatically updated after the Agent executes a `cd` command, ensuring subsequent operations are performed in the correct context. Operating system information enables the Agent to make platform-specific decisions (e.g., using `apt` on Linux, `brew` on macOS).
 >
