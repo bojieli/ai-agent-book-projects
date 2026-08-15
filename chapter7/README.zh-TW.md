@@ -1,8 +1,8 @@
-# 第 6 章 · Agent 的評估
+# 第 7 章 · Agent 的評估
 
 > 把表現變成可比較訊號：評估環境、指標、統計顯著性、評估驅動選型
 
-← [返回主目錄](../docs/zh-TW/README.md) · 📖 [讀本章正文](../book/chapter6.md)
+← [返回主目錄](../docs/zh-TW/README.md) · 📖 [讀本章正文](../book/chapter7.md)
 
 ## 如何閱讀實驗
 

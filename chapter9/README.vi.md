@@ -1,8 +1,8 @@
-# Chương 8 · Tự tiến hóa của Agent
+# Chương 9 · Tự tiến hóa của Agent
 
 > Agent vẫn có thể trưởng thành mà không cần sửa trọng số. Ba mô thức học tập: học từ kinh nghiệm, và từ “người dùng công cụ” thành “người tạo công cụ”, giúp Agent đi từ “thông minh” tới “thành thạo”.
 
-← [Về README chính](../docs/vi/README.md) · 📖 [Đọc nội dung chương](../book-vi/chapter8.vi.md)
+← [Về README chính](../docs/vi/README.md) · 📖 [Đọc nội dung chương](../book-vi/chapter9.vi.md)
 
 ## Cách đọc các thí nghiệm
 

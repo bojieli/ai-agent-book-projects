@@ -1,8 +1,8 @@
-# Chương 6 · Đánh giá Agent
+# Chương 7 · Đánh giá Agent
 
 > biến biểu hiện của Agent thành tín hiệu có thể so sánh. Từ môi trường đánh giá, thiết kế bộ dữ liệu, hệ thống chỉ số, đến ý nghĩa thống kê, observability, chọn mô hình dựa trên đánh giá, cho tới đánh giá nội bộ và môi trường mô phỏng cấp sản xuất.
 
-← [Về README chính](../docs/vi/README.md) · 📖 [Đọc nội dung chương](../book-vi/chapter6.vi.md)
+← [Về README chính](../docs/vi/README.md) · 📖 [Đọc nội dung chương](../book-vi/chapter7.vi.md)
 
 ## Cách đọc các thí nghiệm
 

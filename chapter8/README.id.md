@@ -1,8 +1,8 @@
-# Bab 7 · Pasca-Pelatihan Model
+# Bab 8 · Pasca-Pelatihan Model
 
 > Membahas pre-training, SFT, dan RL: kapan menggunakan masing-masing, cara menginternalisasi tool calling, serta cara meningkatkan efisiensi sampel.
 
-← [Kembali ke README utama](../docs/id/README.md) · 📖 [Baca bab](../book-id/chapter7.md)
+← [Kembali ke README utama](../docs/id/README.md) · 📖 [Baca bab](../book-id/chapter8.md)
 
 ## Cara Membaca Eksperimen
 

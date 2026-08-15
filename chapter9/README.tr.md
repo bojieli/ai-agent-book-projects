@@ -1,8 +1,8 @@
-# Bölüm 8 · Agent'ın Kendi Kendine Evrimi
+# Bölüm 9 · Agent'ın Kendi Kendine Evrimi
 
 > Ağırlıkları değiştirmeden büyüme. Üç öğrenme paradigması, deneyimden öğrenme ve "araç kullanıcısından" "araç yaratıcısına" giden yolculuk; Agent'ların "akıllı"dan "usta"ya ilerlemesini sağlar.
 
-← [Ana README'ye dön](../README.tr.md) · 📖 [Bölüm metnini oku](../book-tr/chapter8.tr.md)
+← [Ana README'ye dön](../README.tr.md) · 📖 [Bölüm metnini oku](../book-tr/chapter9.tr.md)
 
 ## Deneyler nasıl okunur
 

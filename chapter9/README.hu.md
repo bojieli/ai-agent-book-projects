@@ -1,8 +1,8 @@
-# 8. fejezet · Az ágensek folyamatos evolúciója
+# 9. fejezet · Az ágensek folyamatos evolúciója
 
 > Tapasztalatból fejleszti az ágenst: nyomvonalakat ellenőriz, tudást desztillál, promptokat javít, munkafolyamatokat készít, és ellenőrzött módon módosítja önmagát.
 
-← [Vissza a magyar főoldalhoz](../docs/hu/README.md) · 📖 [A fejezet olvasása](../book-hu/chapter8.md)
+← [Vissza a magyar főoldalhoz](../docs/hu/README.md) · 📖 [A fejezet olvasása](../book-hu/chapter9.md)
 
 ## Hogyan olvassuk a kísérleteket?
 
