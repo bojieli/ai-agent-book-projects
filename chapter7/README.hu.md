@@ -1,8 +1,8 @@
-# 6. fejezet · Ügynökök kiértékelése
+# 7. fejezet · Ügynökök kiértékelése
 
 > A teljesítményt összehasonlítható jellé alakítja értékelési környezetekkel, adathalmazokkal, mérőszámokkal, megfigyelhetőséggel és értékelésvezérelt kiválasztással.
 
-← [Vissza a magyar főoldalhoz](../docs/hu/README.md) · 📖 [A fejezet olvasása](../book-hu/chapter6.md)
+← [Vissza a magyar főoldalhoz](../docs/hu/README.md) · 📖 [A fejezet olvasása](../book-hu/chapter7.md)
 
 ## Hogyan olvassuk a kísérleteket?
 

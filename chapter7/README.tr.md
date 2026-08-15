@@ -1,8 +1,8 @@
-# Bölüm 6 · Agent Değerlendirmesi
+# Bölüm 7 · Agent Değerlendirmesi
 
 > Agent performansını karşılaştırılabilir sinyallere dönüştürür. Değerlendirme ortamlarını, veri kümesi tasarımını, metrik sistemlerini, istatistiksel anlamlılığı, gözlemlenebilirliği, değerlendirme odaklı seçimi ve üretim seviyesinde dahili değerlendirme ile simülasyon ortamlarını kapsar.
 
-← [Ana README'ye dön](../README.tr.md) · 📖 [Bölüm metnini oku](../book-tr/chapter6.tr.md)
+← [Ana README'ye dön](../README.tr.md) · 📖 [Bölüm metnini oku](../book-tr/chapter7.tr.md)
 
 ## Deneyler nasıl okunur
 
@@ -38,7 +38,7 @@ Metin, kontrol akışını açıklamak için kısa mekanizma skeleton'ları kull
 | [android-world](android-world/) (6-12) | 📖 | AndroidWorld üzerinde T3A Agent değerlendirmesi ve başarısızlık analizi için başlangıç raporu; kıstasın kaynak kodu yerine Deney 6-12'nin uygulama notlarını içerir. |
 | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | Sentetik DHIS2 tarzı özet veriler üzerinde bir halk sağlığı raporlama Agent'ının araç çağrılarını, hesaplama doğruluğunu, kanıt kullanımını ve dayanaksız iddialarını nesnel olarak değerlendirir. |
 
-> `chapter6/android-world/` (tire ile yazılan) kıstas kodu değil, bilakis kitabın android_world üzerindeki T3A Agent başarısızlık vakaları hakkındaki analiz notlarıdır (`t3a*.md`); referans okuma materyali olarak kullanılabilir.
+> `chapter7/android-world/` (tire ile yazılan) kıstas kodu değil, bilakis kitabın android_world üzerindeki T3A Agent başarısızlık vakaları hakkındaki analiz notlarıdır (`t3a*.md`); referans okuma materyali olarak kullanılabilir.
 
 ## Proje Türleri
 

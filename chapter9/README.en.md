@@ -1,8 +1,8 @@
-# Chapter 8 · Agent Self-Evolution
+# Chapter 9 · Agent Self-Evolution
 
 > Growth without changing weights. Three learning paradigms, learning from experience, and the journey from "tool user" to "tool creator," allowing Agents to progress from "smart" to "skilled."
 
-← [Back to main README](../docs/en/README.md) · 📖 [Read chapter text](../book-en/chapter8.md)
+← [Back to main README](../docs/en/README.md) · 📖 [Read chapter text](../book-en/chapter9.md)
 
 ## How to Read the Experiments
 

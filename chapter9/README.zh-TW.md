@@ -1,8 +1,8 @@
-# 第 8 章 · Agent 的自我進化
+# 第 9 章 · Agent 的自我進化
 
 > 不改權重也能成長：經驗學習、從工具使用者到創造者
 
-← [返回主目錄](../docs/zh-TW/README.md) · 📖 [讀本章正文](../book/chapter8.md)
+← [返回主目錄](../docs/zh-TW/README.md) · 📖 [讀本章正文](../book/chapter9.md)
 
 ## 如何閱讀實驗
 

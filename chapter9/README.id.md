@@ -1,8 +1,8 @@
-# Bab 8 · Evolusi Berkelanjutan Agent
+# Bab 9 · Evolusi Berkelanjutan Agent
 
 > Membantu Agent berkembang dari pengalaman: memverifikasi trajectory, menyuling pengetahuan, memperbaiki prompt, membuat workflow, dan memodifikasi diri secara terkendali.
 
-← [Kembali ke README utama](../docs/id/README.md) · 📖 [Baca bab](../book-id/chapter8.md)
+← [Kembali ke README utama](../docs/id/README.md) · 📖 [Baca bab](../book-id/chapter9.md)
 
 ## Cara Membaca Eksperimen
 

@@ -1,8 +1,8 @@
-# Capítulo 8 · Auto-Evolución del Agente
+# Capítulo 9 · Auto-Evolución del Agente
 
 > Crecimiento sin cambiar pesos: aprendizaje a partir de la experiencia, de usuario de herramientas a creador de herramientas
 
-← [Volver al README principal](../docs/es/README.md) · 📖 [Leer texto del capítulo](../book-es/chapter8.es.md)
+← [Volver al README principal](../docs/es/README.md) · 📖 [Leer texto del capítulo](../book-es/chapter9.es.md)
 
 ## Cómo leer los experimentos
 

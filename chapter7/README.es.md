@@ -1,8 +1,8 @@
-# Capítulo 6 · Evaluación de Agentes
+# Capítulo 7 · Evaluación de Agentes
 
 > Convertir el rendimiento en señales comparables: entornos, métricas, significación estadística, selección guiada por evaluación
 
-← [Volver al README principal](../docs/es/README.md) · 📖 [Leer texto del capítulo](../book-es/chapter6.es.md)
+← [Volver al README principal](../docs/es/README.md) · 📖 [Leer texto del capítulo](../book-es/chapter7.es.md)
 
 Los requisitos, la evidencia directa y los límites de cada experimento se detallan en el [registro de aceptación](EXPERIMENT_LEDGER.md).
 

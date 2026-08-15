@@ -1,8 +1,8 @@
-# Bab 6 · Evaluasi Agent
+# Bab 7 · Evaluasi Agent
 
 > Mengubah performa menjadi sinyal yang dapat dibandingkan melalui lingkungan evaluasi, dataset, metrik, observabilitas, dan pemilihan berbasis evaluasi.
 
-← [Kembali ke README utama](../docs/id/README.md) · 📖 [Baca bab](../book-id/chapter6.md)
+← [Kembali ke README utama](../docs/id/README.md) · 📖 [Baca bab](../book-id/chapter7.md)
 
 ## Cara Membaca Eksperimen
 

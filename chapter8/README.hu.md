@@ -1,8 +1,8 @@
-# 7. fejezet · Modell-utóképzés
+# 8. fejezet · Modell-utóképzés
 
 > Az előképzést, SFT-t és RL-t tárgyalja: mikor melyiket érdemes választani, hogyan internalizálhatók az eszközhívások, és hogyan javítható a mintahatékonyság.
 
-← [Vissza a magyar főoldalhoz](../docs/hu/README.md) · 📖 [A fejezet olvasása](../book-hu/chapter7.md)
+← [Vissza a magyar főoldalhoz](../docs/hu/README.md) · 📖 [A fejezet olvasása](../book-hu/chapter8.md)
 
 ## Hogyan olvassuk a kísérleteket?
 
