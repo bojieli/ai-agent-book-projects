@@ -1,14 +1,14 @@
-# 第6章 · Agent の評価
+# 第9章 · マルチモーダルとリアルタイムインタラクション
 
-> Agent の性能を比較可能なシグナルに変える。評価環境、データセット設計、指標体系、統計的有意性、可観測性、評価駆動の選定、そしてプロダクショングレードの内部評価とシミュレーション環境を扱う。
+> 知覚と行動をテキストから音声、GUI、そして物理世界へと拡張する。3 つの音声パラダイム（カスケード型/エンドツーエンドの全モーダル型/全二重型）、ストリーミング音声の知覚と合成、Computer Use、そしてロボット操作。
 
-← [メイン README に戻る](../docs/ja/README.md) · 📖 [章の本文を読む](../book-ja/chapter6.ja.md)
+← [メイン README に戻る](../docs/ja/README.md) · 📖 [章の本文を読む](../book-ja/chapter9.ja.md)
 
 ## 実験の読み方
 
 本文では短い mechanism skeleton で制御フローを説明し、実験ディレクトリには完全な SDK アダプター、ログ、テスト、受け入れ証拠を置きます。すべてのファイルを一行ずつ読む必要はありません。
 
-- **Starter:** 目的・最小コマンド・受け入れ条件から始め、まず [tau2-bench-eval](tau2-bench-eval/);
+- **Starter:** 目的・最小コマンド・受け入れ条件から始め、まず [live-audio](live-audio/);
 - **Builder:** エントリポイント、中心ループ、状態／メッセージ schema、ツール、検証器を追います。
 - **Maintainer:** 最後にテスト、証拠 manifest、失敗処理、rollback 経路、provider adapter を読みます。
 
@@ -18,32 +18,22 @@
 
 | 実験 | プロジェクト | 種類 | 説明 |
 | :--: | --- | :--: | --- |
-| 6-1 | `tau2-bench/` | 📖 | 計算、検索、データ処理などのシナリオを含め、複雑な推論のためにツールを使う Agent の能力の評価に焦点を当てる。 |
-| 6-2 | `tau2-bench/` | 📖 | τ²-bench の段階別タスクを手動で完了し、軌跡を記録する。 |
-| 6-3 | [user-memory-evaluation](../chapter3/user-memory-evaluation/) | ✅ | 4段階 Rubric を180件の構造化判定に適用し、根拠とハルシネーション拒否を記録する。 |
-| 6-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | 60ケースを3システムで実行し、コストを完全に集計する。 |
-| 6-5 | [user-memory-policy-eval](user-memory-policy-eval/) | ✅ | JSON、Markdown、Python 風のメモリ表現を対象に、実際の OpenRouter 呼び出しと決定論的なポリシーチェックで 11 件の trajectory-prefix 不良ケースを実行する。 |
-| 6-11 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | 完全な 4×3×2×60 マトリクスで 1,440/1,440 件の実軌跡をエラーや未課金利用なしに保持し、検索・タスク指標と相互作用分析を完備、独立検証にも合格。 |
-| 6-13 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | 単一 GPU の正式実験で各 action-chunk 群 256 エピソードを完了。chunk 1 は 0/256、chunk 25 は 26/256 で、512 rollout のハッシュを保存。 |
-| 6-2 | `terminal-bench/` | 📖 | Terminal-Bench は、実際のターミナル環境における AI Agent の性能をテストするためのベンチマークである。コードのコンパイルからモデルの訓練、サーバーのセットアップまで、Agent が実際のエンドツーエンドタスクをどう処理するかを評価する。約 100 タスクのデータセットと実行フレームワークを含み、さまざまな Agent 実装をサポートする。 |
-| 6-2 | `SWE-bench/` | 📖 | SWE-bench は、大規模言語モデルが実際の GitHub issue を解決する能力を評価するためのベンチマークである。コードベースと issue の説明が与えられると、モデルは問題を解決するパッチを生成しなければならない。SWE-bench、SWE-bench Lite、SWE-bench Verified、SWE-bench Multimodal という複数のバージョンを含む。 |
-| 6-2 | `GAIA/` | 📖 | GAIA は次世代の LLM（ツール拡張、効率的なプロンプティング、検索アクセスなどを備えたもの）を評価することを目的としている。さまざまな程度のツール利用と自律性を必要とし、曖昧さのない回答を持つ 450 以上の非自明な問題を含む。3 つの難易度レベルに分かれている。 |
-| 6-2 | `OSWorld/` | 📖 | ファイル管理、アプリケーション操作、システム構成を含む、完全なオペレーティングシステム環境内で複雑なタスクを実行する Agent の能力を評価する。 |
-| 6-2, 6-12 | `android_world/` | 📖 | アプリのナビゲーション、UI 操作、タスク完了能力を含む、Android モバイル環境における Agent の性能を評価する。 |
-| 6-6 | [tts-quality-eval](tts-quality-eval/) | ✅ | さまざまな TTS 構成（異なるモデル/音声/速度）を用いて同じ難易度の高いテキストセットを合成し、次にマルチモーダルの LLM-as-a-Judge を用いて Rubric に従って各次元（明瞭さ、自然さなど）を採点し、結果を再現可能な構成比較表に集約する。 |
-| 6-7 | [elo-leaderboard](elo-leaderboard/) | ✅ | ELO レーティングシステムに基づく Agent 性能リーダーボードを実装し、ペアワイズ比較を通じて異なる Agent の相対的な能力を評価する。 |
-| 6-8 | [model-action-threshold](model-action-threshold/) | ✅ | 同一の中立的な Coding Harness の下で、GPT-5.6-sol と Claude Sonnet 5 が探索から最初の編集へ移るしきい値を比較する。18/18 セルが API エラーなしで完了し、[manifest](model-action-threshold/results/exp6-7-action-threshold-20260731-v1/manifest.json) が軌跡と集計を検証可能なハッシュで結び付ける。 |
-| 6-9 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | 典型的な複数ターンの Agent タスク（カスタマーサービスの返金）に対して全チェーンのコスト内訳を行う。カスタムの軽量トレーシングシステムを用いて各 LLM 呼び出しの入力/出力/キャッシュトークン、レイテンシ、コストを記録し、集計して「どのステップが最も高価か」を特定し、次に A/B テストを用いて KV Cache に優しい設計とコンテキスト圧縮による実際の節約を定量化する。 |
-| 6-10 | [model-benchmark](model-benchmark/) | 🚧 | 複数の OpenAI 互換 LLM API プロバイダーの横断的なベンチマークを実施する。ストリーミングインターフェースを用いて Time to First Token（TTFT）を正確に測定し、並行実行下でのエンドツーエンドレイテンシのパーセンタイル（p50/p95）、スループット、成功率を算出する。単一のコマンドで多次元の比較表を生成し、モデル選定がリーダーボードを見るだけではなく多面的なトレードオフであることを示す。 |
-| 6-12 | [android-world](android-world/) | 📖 | 本書による AndroidWorld 上での T3A Agent の評価レポートと失敗分析ノート（実験 6-12 の起点。ベンチマークのソースコードではない） |
-| — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | 合成 DHIS2 スタイルの集計データに基づき、公衆衛生レポート Agent のツール呼び出し、計算精度、証拠引用、根拠のない主張を客観的に評価する。 |
-
-> バッククォート表記の外部ベンチマークは別途 clone が必要です。[`android-world/`](android-world/)（ハイフン区切り）は本リポジトリ内の **T3A 評価分析ノート**（同ディレクトリの [README](android-world/README.md) を参照）であり、外部の `android_world/` ベンチマークソースとは別パスです。
-
+| 9-1 | [live-audio](live-audio/) | ✅ | 音声認識、AI 対話、音声合成を統合したリアルタイム音声チャットのデモ。複数の AI サービスプロバイダー（OpenAI、OpenRouter、ARK、Siliconflow）をサポートし、低レイテンシの対話体験を提供する。 |
+| Add-on | [phone-agent](phone-agent/) | 🚧 | 公式 `pine-voice` SDK の direct/ReAct 経路は実装済みだが、同意・承認済みの E.164 宛先がない。preflight は発信なし・transcript なしを記録し、test double は受入に数えない。 |
+| 9-2 | [streaming-speech](streaming-speech/) | ✅ | ストリーミング音声知覚の中核的なトレードオフを示す。連続した音声を徐々に長さを増すセグメントに分割して ASR に供給する。受信した各セグメントは「現在の部分的な認識結果」を生成し、早期のテキスト出力のために極めて低い最初のチャンクのレイテンシを実現する。その代償として、後半の文脈を欠く早期のチャンクは誤る可能性があるが、音声が蓄積するにつれて徐々に収束する。これは「文全体を待ってから認識する」高精度/高レイテンシのアプローチと対照的である。 |
+| 9-3 | [end-to-end-speech](end-to-end-speech/) | ✅ | 固定 revision の MiniCPM-o 4.5 を 1 枚の RTX PRO 6000 で実行。end-to-end と self-cascade はともに 3/4 だが意味・副言語の失敗が相補的で、実際の 24kHz 音声出力と検証証拠を保存した。 |
+| 9-4 | [controllable-tts](controllable-tts/) | 🚧 | 実 Fish Audio S1 の 4×3×2 参照音声庫と A/B/C メディアは構造 gate を通過。定性 listening study と「人間の客服に近い」評価が残る。 |
+| 9-5 | `claude-quickstarts/computer-use-demo/` | 📖 | 外部 `anthropics/claude-quickstarts` を `9bcc95e…` に固定。本文対象はコンテナ化 Ubuntu desktop＋Claude agent loop の Computer Use demo で、quickstarts 全体ではない。 |
+| 9-6 | `browser-use/` | 📖 | 外部 `browser-use/browser-use` を `ec9277c…` に固定。本文は `use_vision=True` の visual CLI で Google の San Francisco 天気を検索し、action/screenshot 軌跡を保存する。 |
+| 9-7 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | 実機 XLeRobot を遠隔操作し、同じ机の片付け課題（赤いカップをトレーへ、黄色い紙をごみ箱へ、最後に再観察・検証）を行う。 |
+| 9-8 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 同じ机の課題について、シミュレータで理想制御の上限を測る。実機を実行したことを意味しない。 |
+| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Gemini Robotics-ER 1.5 で実機 XLeRobot を自律制御し、同じ机の片付け課題を行う。 |
+| 9-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | シミュレータで、同じ課題の開ループ、逐次確認、予測型閉ループを比較する。 |
+| 9-11 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | 背景、物体の外観、照明、視覚ノイズを変え、同じ課題を RGB 環境間で評価する。 |
 ## プロジェクトの種類
 
 | アイコン | 種類 | 意味 |
 | :--: | --- | --- |
 | ✅ | **単独実行** | このリポジトリに完全なコードがあり、API キーを設定すれば実行できる |
 | 📖 | **再現ガイド** | `git clone` が必要な**外部リポジトリ**に依存する詳細ドキュメント |
-| 🚧 | **設計ドキュメント** | アーキテクチャ/実装計画のみで、実行可能なコードは未完成 |
+| 🚧 | **進行中** | 実装はあるが、本文が求める live 実行、許可済み参加者、hardware、または受入証拠が未完了 |

@@ -1,79 +1,170 @@
-# 第 6 章 · Agent 的评估
+# 第 6 章 · 交互：观察与动作空间的扩展
 
-> 把表现变成可比较信号：评估环境、指标、统计显著性、评估驱动选型
+> 撤掉“轮流发言”前提：异步与事件驱动、语音三范式、Computer Use、机器人
 
 ← [返回主目录](../README.md) · 📖 [读本章正文](../book/chapter6.md)
 
-逐实验的正文要求、直接证据与未完成边界见 [验收台账](EXPERIMENT_LEDGER.md)。
-
 ## 如何阅读实验
 
-正文伪代码先建立 reset → run → snapshot → verifier → record 的评估闭环；实验目录再展开统计与证据：
+正文 skeleton 统一了“持续观察 → 受限动作 → 新观察 → 验收/抢占”的闭环；完整媒体、浏览器和机器人代码分层阅读：
 
-- **Starter**：从 [tau2-bench-eval](tau2-bench-eval/) 跑一个固定任务，先看环境 reset、轨迹保存和结果 verifier；
-- **Builder**：阅读 [user-memory-system-evaluation](user-memory-system-evaluation/) 的 Rubric/证据 schema，再看 [elo-leaderboard](elo-leaderboard/) 的配对统计；
-- **Maintainer**：检查 veto 规则、seed/任务配对、bootstrap 或 McNemar 实现、manifest hash 和失败样本。
-
-首次可跳过 provider 适配器、图表和长期开跑脚本；先确认“过程违规”和“最终失败”是两类独立信号。
+- **Starter**：从 [live-audio](live-audio/) 的级联入口理解 VAD → ASR → LLM → TTS；
+- **Builder**：再读 [computer-use-open-model](computer-use-open-model/) 的截图/动作/验证循环，以及 [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) 的五个有边界技能；
+- **Maintainer**：最后检查取消、不可逆动作门禁、真实观察证据、硬件急停和 sim-to-real 评估。首次可跳过前端样式、模型下载和设备驱动。
 
 ## 配套项目
 
 | 编号 | 项目 | 类型 | 一句话说明 |
 | :--: | --- | :--: | --- |
-| 6-1 | [tau2-bench-eval](tau2-bench-eval/) | ✅ | 已在固定上游提交上完成 5 个 telecom 双控任务：4/5 通过；保存原始轨迹、成本、内容哈希及错选线路导致漏做流量加油的失败分析 |
-| 6-2 | [experiment-6-2-human-benchmark](experiment-6-2-human-benchmark/) | ✅ | Codex 作为人工操作员，预注册并完成 GAIA、AndroidWorld、SWE-bench Verified、τ²-bench、Terminal-Bench、OSWorld-Verified 各简单/中等/困难一题，共 18/18 个首轮正式结果：13 通过、5 失败；逐题保留任务、轨迹、官方评估及成败解释 |
-| 6-2 | `terminal-bench/` | 📖 | Terminal-Bench 外部任务与执行框架；6-2 的三档人工操作结果与失败分析已收录于上行案例集 |
-| 6-2 | `SWE-bench/` | 📖 | SWE-bench Verified 外部代码修复基准；6-2 的三档补丁轨迹与官方 harness 结果已收录于上行案例集 |
-| 6-2 | `GAIA/` | 📖 | GAIA 外部数据集；6-2 的 Level 1/2/3 作答、核验与舍入失败边界已收录于上行案例集 |
-| 6-2 | `OSWorld/` | 📖 | OSWorld-Verified 外部桌面环境；6-2 的三档 GUI 操作轨迹与官方结果已收录于上行案例集 |
-| 6-2, 6-12 | `android_world/` | 📖 | 评估 Agent 在 Android 环境的应用导航、UI 交互与任务完成能力（外部基准仓库；6-2 的实际结果见上行） |
-| 6-3 | [user-memory-evaluation](../chapter3/user-memory-evaluation/) | ✅ | 四档多维 Rubric 已在 60 用例 × 3 系统的 180/180 条真实评判记录上完整执行；[独立验收索引](user-memory-system-evaluation/results/full_6_3_structured_rubric_evidence.json)验证逐维理由/证据或边界案例及幻觉一票否决，状态为 `complete` |
-| 6-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | 60 用例 × 3 系统共 180/180 条真实轨迹，零错误且原生币种定价完整；[验收结果](user-memory-system-evaluation/results/full_6_4_60_cases_costed.json)状态为 `complete` |
-| 6-5 | [user-memory-policy-eval](user-memory-policy-eval/) | ✅ | 已用真实 `openai/gpt-5.6-sol` 经 OpenRouter 完成 11 个 trajectory-prefix bad case × JSON/Markdown/Python-like 三种表示，共 33/33 个 API 单元、0 个 API 错误；三种表示均为 6/11 通过，结果和哈希保存在 `results/policy_prefix_live.json` 与 `results/manifest.json` |
-| 6-6 | [tts-quality-eval](tts-quality-eval/) | ✅ | [真实验收](tts-quality-eval/validation/mistral_multimodal_20260730/manifest.json)完成 OpenAI/Fish 两 provider × 四类语料的 8/8 双音频 Voxtral 四维评审；候选/参考音频逐项哈希，早期 Gemini/OpenRouter 失败证据仍保留 |
-| 6-7 | [elo-leaderboard](elo-leaderboard/) | ✅ | [正式全量验收](elo-leaderboard/validation/runs/exp6-6-arena-20260731-v1/manifest.json)处理 1,799,991 条公开 Arena 记录（1,670,250 条盲选票、129 个模型），在线 Elo 与 Bradley-Terry 排名 Spearman 0.787、Top-20 重合 12/20；胜率矩阵、17 个月度快照、三张图与 D3 动画均由同一 manifest 哈希绑定并复核通过 |
-| 6-8 | [model-action-threshold](model-action-threshold/) | ✅ | 同一中性 Coding Harness 下完成 GPT-5.6-sol / Claude Sonnet 5 × 三任务 × 三次重复的 18/18 单元实测；[manifest](model-action-threshold/results/exp6-7-action-threshold-20260731-v1/manifest.json)零 API 错误并绑定完整轨迹与汇总哈希 |
-| 6-9 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | 多轮 Agent 任务（客服退款）全链路成本拆解 + KV-cache 友好设计/上下文压缩的 A/B 节省量化 |
-| 6-10 | [model-benchmark](model-benchmark/) | 🚧 | 完整 8K/32K/128K × 512/2048、限流爬坡、Agent 成本与 168 小时可用性 campaign 已实现；现有[验收清单](model-benchmark/results/manifest.json)只有真实 smoke/readiness，不能替代完整长期实验 |
-| 6-11 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | [全矩阵验收](user-memory-system-evaluation/results/full_6_11_60_case_matrix.json)完成 60 用例 × 24 单元（4 嵌入 × 3 reranker × 2 主模型）共 1,440/1,440 条真实轨迹，零错误、零未定价用量，检索/任务指标与交互分析完整；[独立验证器](user-memory-system-evaluation/validation/verify_full_matrix_20260731.py)复核通过（ALL CHECKS PASSED），后端替代方案如实记录于 [readiness 证据](user-memory-system-evaluation/results/full_matrix_backend_readiness_20260731.json) |
-| 6-12 | [android-world](android-world/) | ✅ | [完整候选实验证据](android-world/validation/candidate_h5c_api33_local_qwen_20260804/evidence.json)保留 116 任务 × 5 轮的 580/580 条唯一 episode（包括评估失败），运行时错误为零：严格 T3A 成功 26 条（4.4828%），平均 evaluator reward 0.133621，由 77 条满分状态与 1 条 `0.5` 部分 reward 组成。实验在完成官方初始化且配齐 24/24 应用的 Pixel 6/API-33 上执行，本地 Qwen2.5-7B（revision `a09a35458c702b33eeacc393d103063234e8bc28`）通过 vLLM 0.19.0 运行于 RTX PRO 6000 Blackwell 96 GB。执行与证据已完成，但未批准部署；候选 Qwen 与配对源 Doubao 不同，因而不支持同模型提升或非劣性结论 |
-| 6-13 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | [正式单卡运行](openvla-robotwin2-eval/validation/runs/exp6-12-localgpu-20260803-v1/manifest.json)完成 chunk 1/25 各 128 IID + 128 OOD episodes，严格门禁及 512 个 rollout hash 全通过；chunk 1 为 0/256、chunk 25 为 26/256，低绝对成功率作为真实结果保留 |
-| — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | 基于合成 DHIS2 风格汇总数据，客观评估公共卫生报告 Agent 的工具调用、计算准确性、证据引用与无依据声明 |
+| 6-1 | [agent-with-event-trigger](agent-with-event-trigger/) | ✅ | FastAPI 事件驱动 Agent，原生异步集成前三组 MCP 工具，通过 HTTP API 接收 Web/IM/GitHub/定时器事件 |
+| 6-2 | [async-agent](async-agent/) | ✅ | asyncio 单线程事件驱动框架 Flux：事件队列按紧急度分派、异步工具并行、运行中打断、长任务取消与状态查询 |
+| 6-3 | [live-audio](live-audio/) | ✅ | [真实单轮证据](live-audio/backend/validation/real_pipeline_20260729_localwhisper_ark_fish/evidence.json)完成麦克风媒体 → Silero VAD → 本地 Whisper → ARK 流式 LLM → Fish S1；5 个媒体/模型 hash 当前均匹配，但证据本身没有顶层 hash manifest，且不代表并发或生产负载基准 |
+| 附加 | [phone-agent](phone-agent/) | ✅ | 原实验 9-2 改为附加 WebRTC 应用项目；[完整音频 canonical run](phone-agent/validation/runs/exp9-2-webrtc-audio-20260731-v1/manifest.json)保留原运行标识并跑通直接/ReAct 两组，代码与证据不因正文重编号而改写 |
+| 6-4 | [streaming-speech](streaming-speech/) | ✅ | [原 9-3 canonical 本地验收](streaming-speech/validation/runs/exp9-3-qwen2audio-whisper-provenance-20260730-v3/manifest.json)运行 Qwen2-Audio 递增前缀与 600ms VAD + Whisper：8/8 执行/溯源门禁通过，但预期行为只复现 2/6，实测前缀 8.4–11.3s，不能声称真流式低延迟 |
+| 6-5 | [end-to-end-speech](end-to-end-speech/) | ✅ | [原 9-4 真实本地运行](end-to-end-speech/validation/runs/exp9-4-minicpmo45-20260801-v1/evidence.json)在单张 RTX PRO 6000 上执行固定 revision 的 MiniCPM-o 4.5：端到端与自级联均为 3/4，但语义/副语言失败互补；真实 24kHz 语音输出及 [11/11 验收](end-to-end-speech/validation/runs/exp9-4-minicpmo45-20260801-v1/acceptance.json)已保留 |
+| 6-6 | [controllable-tts](controllable-tts/) | ✅ | 真实 Fish Audio S1 4×3×2=24 条参考音库与 A/B/C 媒体齐全；三次位置平衡的真实 Voxtral 音频盲评中 C 组最高且真人客服感 4.67/5，但 B>A 未复现；[验收](controllable-tts/validation/acceptance.json)将完成状态与负结果分开报告 |
+| 6-7 | [Anthropic 原生 Computer Use 记录](claude-computer-use-native/) + `claude-quickstarts/computer-use-demo/` | ✅ | [原 9-6 正式运行](claude-computer-use-native/validation/runs/exp9-6-anthropic-native-20260803-v2/acceptance.json)从固定源码本地构建镜像，用 `claude-sonnet-4-5-20250929` 完成 16 次真实响应与 15 个原生 `computer` 动作；Google reCAPTCHA 未交互，转向可见 Open-Meteo JSON 后回答 70.2°F、晴朗，全部确定性门禁通过 |
+| 6-8 | [computer-use-open-model](computer-use-open-model/) + `browser-use/` | ✅ | [正式开放模型运行](computer-use-open-model/validation/latest.json)使用 `qwen/qwen3-vl-32b-instruct`：Google CAPTCHA 后转 weather.com，16 步完成；16/16 API 响应模型一致、15 张截图、只读动作和答案 grounding 全部通过确定性验收 |
+| 6-9 | [xlerobot-teleoperation](xlerobot-teleoperation/) | ✅ | 真机遥操作 XLeRobot 整理桌面：把红色杯子放进托盘、把黄色废纸放进垃圾盒，最后重新观察并确认状态 |
+| 6-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | ✅ | 在模拟器中测量同一桌面任务的理想控制上限，不代表真机已经运行 |
+| 6-11 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | ✅ | 使用 Gemini Robotics-ER 1.5 自主驱动真实 XLeRobot 完成同一整理桌面任务 |
+| 6-12 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | ✅ | 在模拟器中比较开环、逐步检查和预测式闭环三种同任务策略 |
+| 6-13 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | ✅ | 对同一桌面任务进行 RGB 跨环境测试，检查视觉策略对背景、外观、光照和噪声变化的适应性 |
 
-> 📖 表中带反引号的外部基准需自行克隆。[`android-world/`](android-world/)（连字符）是本仓库内的 **T3A 评估分析笔记**（见该目录 [README](android-world/README.md)），与外部 `android_world/` 基准源码不是同一路径。
+## 实验 9-5 / 9-6 的供应商可移植路径
 
-## 跨章 Bad Case 回归协议
-
-正文新增的两类作用域/保真度 Bad Case 评估不把训练代码重复复制到第六章：第六章负责记录首个错误、片段作用域、逐层字符串哈希和轨迹前缀回归；第七章的 [`curly-quote-sft`](../chapter7/curly-quote-sft/) 与 [`exact-copy-sft`](../chapter7/exact-copy-sft/) 复用这些标签生成训练数据，并在独立边界集和保留集上回归。前者按中文自然语言、英文原文、代码和 JSON 作用域评分，后者按 byte/code-point/token exactness 和真实工具参数匹配评分。
-
-## 实验 6-1 / 6-2 外部复现锚点
-
-以下映射以[正文](../book/chapter6.md)为准。SHA 来自对应 checkout 的 `origin` 与 `HEAD`。6-1 已保留五任务正式运行的[验收证据](tau2-bench-eval/validation/runs/exp6-1-openrouter-gpt41mini-telecom-20260802-v1/manifest.json)；6-2 的 18 个分级人工操作案例、正式结果与兼容边界见[独立报告](experiment-6-2-human-benchmark/README.md)。下表继续保留复现来源、路径和入口。
-
-| 实验 | 上游与本地路径 | 固定提交 | 正文对应入口 |
-| :--: | --- | --- | --- |
-| 6-1；6-2 的 τ²-bench 样本 | [`sierra-research/tau2-bench`](https://github.com/sierra-research/tau2-bench) → `chapter6/tau2-bench` | `8d005b0e5b9e4af0bc055886fa7f95fc86d1710e` | 正文要求重点观察新增的双控 telecom 领域：`tau2 run --domain telecom --agent-llm <model> --user-llm <model> --num-trials 1 --num-tasks 5` |
-| 6-1 原始 τ-bench 对照（仅溯源） | [论文](https://arxiv.org/abs/2406.12045) · [`sierra-research/tau-bench`](https://github.com/sierra-research/tau-bench/tree/59a200c6d575d595120f1cb70fea53cef0632f6b)；**不承诺本地 checkout** | `59a200c6d575d595120f1cb70fea53cef0632f6b` | 该历史版本入口：`python run.py --agent-strategy tool-calling --env retail --model gpt-4o --model-provider openai --user-model gpt-4o --user-model-provider openai --user-strategy llm --max-concurrency 10` |
-| 6-2 GAIA | [`gaia-benchmark/GAIA`](https://huggingface.co/datasets/gaia-benchmark/GAIA) → `chapter6/GAIA` | `682dd723ee1e1697e00360edccf2366dc8418dd9` | 从 `2023/validation/metadata.level1.parquet`、`metadata.level2.parquet`、`metadata.level3.parquet` 各选一题人工完成并核对答案 |
-| 6-2 AndroidWorld | [`google-research/android_world`](https://github.com/google-research/android_world) → `chapter6/android_world` | `0e95d641e244504c22087cc29b013f3b2428a261` | `python minimal_task_runner.py --task=ContactsAddContact`（先按上游 README 配置 emulator） |
-| 6-2 SWE-Bench Verified | [`SWE-bench/SWE-bench`](https://github.com/SWE-bench/SWE-bench) → `chapter6/SWE-bench` | `5cd4be9fb23971679cbbafe5a0ecade27cef99be` | 安装后先用 `python -m swebench.harness.run_evaluation --predictions_path gold --max_workers 1 --instance_ids sympy__sympy-20590 --run_id validate-gold` 验证 harness，再人工处理选定 Verified issue |
-| 6-2 Terminal-Bench | [`laude-institute/terminal-bench`](https://github.com/laude-institute/terminal-bench) → `chapter6/terminal-bench` | `8384a179b1b8688f6ea5233a4d9d51218df1ac96` | 任务定义在 `tasks/`；若要核对 harness 参数，运行 `tb run --help` |
-| 6-2 OSWorld-Verified | [`xlang-ai/OSWorld`](https://github.com/xlang-ai/OSWorld) → `chapter6/OSWorld` | `8365edc975efd0477a0d62444a5beed562ab5a7b` | `python quickstart.py --provider_name vmware --path_to_vm "path/to/your/vm.vmx"`；再从 Verified 任务中抽样人工完成 |
-
-从仓库根目录取得同一版本：
+9-5 的 Anthropic Demo 是参考实现，不是读者验收的唯一合法端点。对应的
+[开放模型 companion](computer-use-open-model/)把 browser-use 的视觉 Agent 接到
+OpenAI-compatible Chat Completions：默认示例通过 OpenRouter 调用开放权重
+`qwen/qwen3-vl-32b-instruct`，也支持读者自己的 vLLM/SGLang 或其他兼容托管端点。
+“开放模型”指权重/许可证开放，API 网关本身仍可能是商业服务；实验回执必须分别记录
+requested model 与提供商实际返回的 model ID。
 
 ```bash
-git clone https://github.com/sierra-research/tau2-bench.git chapter6/tau2-bench && git -C chapter6/tau2-bench checkout --detach 8d005b0e5b9e4af0bc055886fa7f95fc86d1710e
-git clone https://huggingface.co/datasets/gaia-benchmark/GAIA chapter6/GAIA && git -C chapter6/GAIA checkout --detach 682dd723ee1e1697e00360edccf2366dc8418dd9
-git clone https://github.com/google-research/android_world.git chapter6/android_world && git -C chapter6/android_world checkout --detach 0e95d641e244504c22087cc29b013f3b2428a261
-git clone https://github.com/SWE-bench/SWE-bench.git chapter6/SWE-bench && git -C chapter6/SWE-bench checkout --detach 5cd4be9fb23971679cbbafe5a0ecade27cef99be
-git clone https://github.com/laude-institute/terminal-bench.git chapter6/terminal-bench && git -C chapter6/terminal-bench checkout --detach 8384a179b1b8688f6ea5233a4d9d51218df1ac96
-git clone https://github.com/xlang-ai/OSWorld.git chapter6/OSWorld && git -C chapter6/OSWorld checkout --detach 8365edc975efd0477a0d62444a5beed562ab5a7b
+cd chapter9/computer-use-open-model
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m playwright install chromium
+
+export OPENROUTER_API_KEY='replace-with-your-key'
+python main.py --dry-run
+python main.py \
+  --task "Open Google, search for San Francisco weather today, and report the temperature and conditions. Do not sign in or change any external data." \
+  --max-steps 25 \
+  --record-video
 ```
 
-原始 τ-bench 行只用于复核 6-1 的历史设计差异，不在本仓库的 checkout 清单中。其当前 README 已明确警告：该仓库的 airline/retail 任务版本过时，应使用后续的 [`tau2-bench`](https://github.com/sierra-research/tau2-bench)（现已继续演进为 τ³-bench）获取修订任务与新领域。因此，不应把历史 τ-bench 的 retail 命令当成当前 τ²/τ³-bench 的推荐运行入口。
+自托管时改设 `OPEN_MODEL_API_KEY=local`、`OPEN_MODEL_BASE_URL` 与
+`OPEN_MODEL_MODEL` 即可。端点必须支持图片输入和结构化 JSON 动作；不支持原生
+`json_schema` 时可设 `OPEN_MODEL_SCHEMA_MODE=prompt`，但应把这种兼容模式单列为
+不同实验配置。不同模型的结果不能合并成 Anthropic 复现结果。
 
-实验 6-2 是**操作员亲自执行并记录轨迹**，不是把六套 Agent harness 全跑一遍。本仓库的[已完成案例集](experiment-6-2-human-benchmark/)由 Codex 明确署名为人工操作员，并分别记录每个基准的简单、中等、困难任务 ID、环境版本、步骤、最终答案/状态与标准验证结果；失败案例未在评估后修改或重跑。
+## 实验 9-5 至 9-11 外部复现锚点
+
+9-5/9-6 的上游 SHA 来自 2026-07-30 工作区 checkout 的 `origin` 与 `HEAD`。9-6 的[开放模型正式运行](computer-use-open-model/validation/latest.json)已经用真实 Qwen3-VL API 与 Chromium 关闭 browser-use 路径。9-5 随后用恢复有效的 Anthropic 凭据从固定 Dockerfile 本地构建镜像；[原 9-6 运行证据](claude-computer-use-native/validation/runs/exp9-6-anthropic-native-20260803-v2/trajectory.json)在 15/25 动作内安全绕开 Google reCAPTCHA、读取可见 Open-Meteo 当前数据并以 `end_turn` 完成。历史 401 与两个未通过任务门禁的真实尝试均保留，不计入正式结果。9-7 至 9-11 的**本地 GPU 自包含验收已经完成**；XLeRobot/RoboCrew/SO100 的真实硬件运行仍需单独的设备、授权和安全证据。
+
+| 实验 | 权威上游 → 本地路径 | 固定提交 | 锁与入口 |
+| :--: | --- | --- | --- |
+| 6-7 | [`anthropics/claude-quickstarts`](https://github.com/anthropics/claude-quickstarts) → `chapter9/claude-quickstarts`；具体项目 `computer-use-demo/` | `9bcc95e316e5ef6542b4c9d0469f4078829eead5` | 从该目录的 `Dockerfile` 本地构建；固定源码中的 Dockerfile SHA-256 为 `3aa1f36a491f8f88d81a04c6a89b4cc9f9acd20ad946304c13419736da7c0ead`，但构建输入仍有可变项 |
+| 6-8 | [`browser-use/browser-use`](https://github.com/browser-use/browser-use) → `chapter9/browser-use`；本书可移植入口 `chapter9/computer-use-open-model/main.py` | `ec9277c5001f2cb78ee419c927775a3cfc227ff8` | checkout 包版本 `0.9.5`；本书入口固定 `use_vision=True`、`max_actions_per_step=1`，默认请求开放权重 Qwen3-VL 32B，并接受任意合格 OpenAI-compatible base URL。该上游提交**没有跟踪 `uv.lock`，且 `.gitignore` 明确忽略它** |
+| 6-9 | [`Vector-Wangel/XLeRobot`](https://github.com/Vector-Wangel/XLeRobot) → `chapter9/XLeRobot` | `3d14695e40c9c68229c0aacffca6053c75cd3eb6` | `software/examples/{4_xlerobot_teleop_keyboard,5_xlerobot_teleop_xbox,7_xlerobot_teleop_joycon,8_xlerobot_teleop_vr}.py`；精确 blob 与安全门禁见[复现 companion](xlerobot-teleoperation/) |
+| 6-10 | 同一 [`Vector-Wangel/XLeRobot`](https://github.com/Vector-Wangel/XLeRobot) → `chapter9/XLeRobot`；[`Grigorij-Dudnik/RoboCrew`](https://github.com/Grigorij-Dudnik/RoboCrew) → `chapter9/RoboCrew` | XLeRobot：`3d14695e40c9c68229c0aacffca6053c75cd3eb6`；RoboCrew v0.3.1：`c749148f29bd14e61347f9fc3530c343fff0d994` | XLeRobot 的 `docs/en/source/software/getting_started/LLM_agent.md` + RoboCrew planner；五个桌面操作工具、动作条件世界模型与证据门禁见[复现 companion](gemini-xlerobot-navigation/) |
+| 6-11 | [`Vector-Wangel/XLeRobot`](https://github.com/Vector-Wangel/XLeRobot) → `chapter9/XLeRobot`；[`Grigorij-Dudnik/RoboCrew`](https://github.com/Grigorij-Dudnik/RoboCrew) → `chapter9/RoboCrew` | XLeRobot：`3d14695e40c9c68229c0aacffca6053c75cd3eb6`；RoboCrew v0.3.1：`c749148f29bd14e61347f9fc3530c343fff0d994` | Gemini Robotics-ER 1.5 自主控制真机的同一整理桌面任务；工具契约与安全边界见[复现 companion](gemini-xlerobot-navigation/) |
+| 6-12 | `gemini-xlerobot-navigation` 的桌面模拟器 | — | 同一任务的开环、逐步检查和预测式闭环对照；只使用非致动模拟执行器 |
+| 6-13 | [`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real) → `chapter9/lerobot-sim2real` | `87d6c1d969f6e0ca4dc5697940804e231118a63a` | 同一整理桌面任务的 RGB 跨环境测试；阶段与安全边界见[复现 companion](rgb-sim2real-grasping/) |
+
+9-7 至 9-11 的固定源码获取命令如下；XLeRobot checkout 由 9-7 和 9-9 共用：
+
+```bash
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot
+git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6
+git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6
+test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"
+
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew
+git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994
+git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994
+test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"
+
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real
+git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a
+git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a
+test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"
+```
+
+这些命令只建立真实硬件扩展所需的固定源码起点。XLeRobot/RoboCrew/Sim2Real 的 companion 中保存过源码审计或非致动预检，但当前工作区没有这三个源码 checkout；历史预检不等于真机执行。本地 GPU 桌面模拟和 RGB 训练则由各实验目录中的自包含脚本完成，并有独立的证据门禁。
+
+从仓库根目录复现 9-5 的源码版本并本地构建：
+
+```bash
+git clone https://github.com/anthropics/claude-quickstarts.git chapter9/claude-quickstarts
+git -C chapter9/claude-quickstarts checkout --detach 9bcc95e316e5ef6542b4c9d0469f4078829eead5
+test "$(git -C chapter9/claude-quickstarts rev-parse HEAD)" = "9bcc95e316e5ef6542b4c9d0469f4078829eead5"
+cd chapter9/claude-quickstarts/computer-use-demo
+
+RECEIPT_DIR="$HOME/ai-agent-book-receipts/9-5-9bcc95e"
+mkdir -p "$RECEIPT_DIR"
+git rev-parse HEAD | tee "$RECEIPT_DIR/source-sha.txt"
+shasum -a 256 Dockerfile | tee "$RECEIPT_DIR/dockerfile-sha256.txt"
+docker version | tee "$RECEIPT_DIR/docker-version.txt"
+
+# 先解析并保存这次构建实际采用的 base-image digest，再禁止 build 重新拉取标签。
+docker pull ubuntu:22.04 | tee "$RECEIPT_DIR/base-image-pull.txt"
+docker image inspect ubuntu:22.04 --format '{{json .RepoDigests}}' | tee "$RECEIPT_DIR/base-image-repodigests.json"
+docker build --pull=false --iidfile "$RECEIPT_DIR/built-image-id.txt" . -t ai-agent-book-computer-use:9bcc95e
+docker image inspect ai-agent-book-computer-use:9bcc95e --format '{{.Id}}' | tee "$RECEIPT_DIR/built-image-id-inspect.txt"
+
+export ANTHROPIC_API_KEY='replace-with-your-api-key'
+docker run --rm -e ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" -p 5900:5900 -p 8501:8501 -p 6080:6080 -p 8080:8080 -it ai-agent-book-computer-use:9bcc95e
+```
+
+打开 `http://localhost:8080` 后再提交正文任务。除上述构建回执外，还应在同一 `RECEIPT_DIR` 保存原样任务文本、实际模型 ID、按顺序的 computer-use 动作、每步截图/观察、最终回答、停止原因和完成/失败状态；容器能启动不等于实验完成。不要用远端可变标签 `computer-use-demo-latest` 的镜像 ID 代替本地构建回执。
+
+即使保存了当次 `ubuntu:22.04` digest，该 Dockerfile 仍执行在线 `apt`/PPA 安装，并从未固定 commit 的默认分支克隆 `pyenv`；系统包仓库和若干下载输入也没有内容锁。因此上述回执只能重建“本次究竟运行了什么”的审计链，不能把该镜像声称为位级可重复。
+
+从仓库根目录复现 9-6：
+
+```bash
+git clone https://github.com/browser-use/browser-use.git chapter9/browser-use
+git -C chapter9/browser-use checkout --detach ec9277c5001f2cb78ee419c927775a3cfc227ff8
+test "$(git -C chapter9/browser-use rev-parse HEAD)" = "ec9277c5001f2cb78ee419c927775a3cfc227ff8"
+cd chapter9/browser-use
+
+RECEIPT_DIR="$HOME/ai-agent-book-receipts/9-6-ec9277c"
+mkdir -p "$RECEIPT_DIR"
+git rev-parse HEAD | tee "$RECEIPT_DIR/source-sha.txt"
+uv --version | tee "$RECEIPT_DIR/uv-version.txt"
+
+# 上游没有提交 uv.lock：先为本次解析生成并保存 lock，之后才可使用 --locked。
+uv lock
+cp uv.lock "$RECEIPT_DIR/uv.lock"
+shasum -a 256 uv.lock | tee "$RECEIPT_DIR/uv-lock-sha256.txt"
+uv sync --locked
+uv run browser-use --version | tee "$RECEIPT_DIR/browser-use-version.txt"
+uvx playwright --version | tee "$RECEIPT_DIR/playwright-version-before-install.txt"
+uv run browser-use install 2>&1 | tee "$RECEIPT_DIR/browser-install.txt"
+uvx playwright install --list | tee "$RECEIPT_DIR/playwright-browsers.txt"
+
+export OPENROUTER_API_KEY='replace-with-your-api-key'
+export BROWSER_USE_LOGGING_LEVEL=debug
+uv run python ../computer-use-open-model/main.py \
+  --task "Open Google, search for San Francisco weather today, and report the temperature and conditions. Do not sign in or change any external data." \
+  --output-dir "$RECEIPT_DIR/open-model-run" \
+  --max-steps 25 \
+  --record-video 2>&1 | tee "$RECEIPT_DIR/action-log.txt"
+
+# 将 debug 日志中实际选择的 executable_path 填到这里；不能只记录“安装过 Chromium”。
+BROWSER_PATH='/absolute/path/reported-by-LocalBrowserWatchdog'
+test -x "$BROWSER_PATH"
+printf '%s\n' "$BROWSER_PATH" | tee "$RECEIPT_DIR/chromium-path.txt"
+"$BROWSER_PATH" --version | tee "$RECEIPT_DIR/chromium-version.txt"
+shasum -a 256 "$BROWSER_PATH" | tee "$RECEIPT_DIR/chromium-sha256.txt"
+```
+
+本书入口固定 `use_vision=True`、每步最多一个动作并最多运行 25 步；开放模型默认值为 `qwen/qwen3-vl-32b-instruct`，并非 `gpt-4.1`。runner 自动保存提供商响应、逐步截图、动作序列、最终答案、失败状态和 artifact hash；仍需独立核对天气答案与轨迹，不能仅凭模型自己的 `done` 宣称完成。若改用上游 `examples/ui/command_line.py`，它仍默认 `gpt-4.1` 且不会按本书格式自动落盘完整证据。
+
+这里保存的是**本次本地生成的** `uv.lock`，不是上游锁；初次 `uv lock` 的解析仍受当时包索引影响。`browser-use install` 还会在 Linux 上调用可变的 `uvx playwright install chromium --with-deps --no-shell`，在 macOS/Windows 上调用 `uvx playwright install chromium --no-shell`，因此 Playwright/Chromium 不受项目 lock 约束。固定入口的 `BrowserSession()` 又可能优先选择已有的系统 Chrome，而不是刚下载的 Playwright Chromium；这正是必须记录实际 executable path、版本和二进制哈希的原因。只有把生成的 lock、安装器版本、浏览器二进制和轨迹回执一起归档，才能准确描述当次运行，仍不能把上游 9-6 环境称为位级固定。
 
 ## 项目类型说明
 
@@ -81,4 +172,4 @@ git clone https://github.com/xlang-ai/OSWorld.git chapter6/OSWorld && git -C cha
 | :--: | --- | --- |
 | ✅ | **可独立运行** | 本仓库自带完整代码，配置好 API Key 即可运行 |
 | 📖 | **复现指南** | 依赖需自行 `git clone` 的**外部仓库**（训练框架、评测基准等） |
-| 🚧 | **进行中** | 已有实现，但实验范围或验收证据尚未满足正文全部要求 |
+| 🚧 | **进行中** | 已有实现，但正文要求的真实运行、授权参与者、硬件或验收证据尚未完整 |
