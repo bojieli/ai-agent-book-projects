@@ -1,11 +1,5 @@
 # Model Post-Training
 
-> **2026 revision.** The revised chapter makes the scope of “SFT memorizes, RL generalizes” explicit: it is an observation from controlled GeneralPoints/V-IRL comparisons, not a universal law. It also separates model-simulated tool returns from simulated environment dynamics and treats simulator bias as a training ceiling.
->
-> Two sample-efficiency routes are highlighted: On-Policy Distillation turns one rollout’s terminal reward into token-level guidance; RLVP turns otherwise wasted path feedback into learnable signals. When no stronger teacher exists, OPSD uses privileged information with the same model in teacher and student roles.
->
-> Experiment order in this edition: 7-13 SimpleVLA-RL; 7-14 ReTool; 7-15 AWorld-train; 7-16 RLVP.
-
 The core formula of this book is Agent = LLM + Context + Tools. This chapter turns to the LLM itself—the "brain"—and examines how post-training can help the model use context and tools more effectively, thereby improving the capabilities of the entire Agent system. The end of Chapter 7 pointed out that the evaluation system and simulation environment are the two cornerstones of post-training: the evaluation environment gives training its practice ground, and the evaluation metrics give it its target. This chapter builds on those cornerstones and discusses how to actually change model weights—how to bake capability into the parameters.
 
 This chapter assumes no background in reinforcement learning or model training. We don't expect you to know gradients or policy optimization. Instead, we start from the question of how a model gets trained at all, making clear what each step is for, how it works, and what problem it solves. By the end of the chapter, you should be able to answer the following questions: At what stages are model capabilities formed? What does each stage do? How are the stages commonly combined, and when can the order differ? And where should you focus your effort in your own projects?
