@@ -184,6 +184,12 @@ Para comprender imágenes, vídeo, audio y PDF, un Agente necesita percepción m
 
 El procesamiento nativo ofrece el techo de capacidad más alto: codificadores como el Vision Transformer asignan cada tipo de dato a un espacio semántico común. La extracción de texto es una alternativa para modelos sin soporte nativo y suele ahorrar tokens en PDF dominados por texto, aunque pierde diseño, gráficos e imágenes. Cuando el modelo principal no es multimodal, herramientas como `analyze_image`, `analyze_pdf` y `analyze_audio` pueden enviar el archivo y una pregunta a un modelo especializado y devolver una descripción breve, evitando que los datos multimodales ocupen el contexto.
 
+> **Experimento 4-2 ★★: extracción de información multimodal: análisis comparativo de tres paradigmas técnicos**
+>
+> El proyecto `multimodal-agent` compara y evalúa sistemáticamente tres estrategias dentro de un marco unificado. Mediante `demo.py` se entrega el mismo archivo multimodal (por ejemplo, un informe PDF con gráficos) y la misma pregunta a los tres modos por separado, para observar las diferencias de comportamiento.
+>
+> Los resultados muestran con claridad los compromisos entre los tres: el **modo multimodal nativo**, gracias a su comprensión profunda de la información visual y espacial, obtiene el mejor rendimiento en tareas como analizar gráficos o entender la maquetación de documentos. El **modo de extracción a texto** ofrece la mejor relación coste-beneficio cuando el documento está dominado por texto plano, pero es incapaz de responder consultas que requieren información visual. El **modo instrumentado** demuestra flexibilidad en escenarios interactivos: resuelve la mayoría de las consultas preliminares a bajo coste y recurre a llamadas a herramientas para un análisis profundo y caro solo cuando hace falta, aunque rinde peor que el modo nativo cuando se necesita una comprensión profunda de extremo a extremo en una sola pasada.
+
 ## Herramientas de ejecución
 
 La revisión también distingue el aislamiento a nivel de proceso para Agentes de bajo riesgo, contenedores o microVM para entradas no confiables y cuotas de recursos en todos los niveles. Un Sidecar ligero revisa los campos estructurados de cada llamada como puerta de seguridad; tras varios rechazos debe activar un interruptor de circuito y pedir la decisión del usuario. Las operaciones no idempotentes siguen un flujo de «precomprobación y confirmación».
@@ -305,7 +311,7 @@ El núcleo para resolverlo es la **idempotencia**: que una misma operación se e
 
 Sin embargo, no todas las operaciones pueden hacerse idempotentes. Operaciones como **enviar un correo, hacer una llamada telefónica o realizar una transferencia externa** generan eventos irrevocables en el mundo real cada vez que se ejecutan, y el servidor suele estar fuera de nuestro control, impidiendo la deduplicación por identificador único. Para estas operaciones no idempotentes se debe adoptar un esquema de **dos fases "precomprobación y confirmación"**: la primera fase realiza únicamente validación y simulación (comprobar saldo, confirmar destinatario, generar contenido a enviar), devolviendo el resultado junto con un token de confirmación; la segunda fase ejecuta realmente la acción presentando el token, y si la fase de ejecución falla no se reenvía a ciegas, sino que se devuelve a la capa superior para reiniciar la precomprobación. Esto concuerda con la aprobación previa Proposer-Reviewer y con la idea de desacoplar inicio y finalización en las interfaces asíncronas.
 
-> **Experimento 4-2 ★★: Servidor MCP de Herramientas de Ejecución**
+> **Experimento 4-3 ★★: Servidor MCP de Herramientas de Ejecución**
 >
 > Este experimento construye un sistema de herramientas de ejecución enfocado en mostrar la aplicación práctica de los mecanismos de seguridad. Las herramientas cubren las siguientes categorías:
 >
@@ -350,7 +356,7 @@ A pesar de que las capacidades de los Agentes de IA son cada vez más potentes, 
 
 **Establecimiento del bucle de retroalimentación**. HITL no debe ser una interacción de una sola vez, sino formar un bucle de aprendizaje. Las aprobaciones, rechazos y motivos de los humanos constituyen en primer lugar datos de retroalimentación con evidencia: los principios de juicio generalizables pueden incorporarse al conocimiento de experiencia o a Skills, mientras que las preferencias implícitas de alta dimensión pueden formar datos de post-entrenamiento. El Capítulo 8 discutirá cómo evaluar estas trayectorias y seleccionar el soporte de actualización; independientemente del método adoptado, no se debe generalizar una decisión humana individual como una regla universal sin haber sido sintetizada.
 
-> **Experimento 4-3 ★★: Servidor MCP de Herramientas de Colaboración**
+> **Experimento 4-4 ★★: Servidor MCP de Herramientas de Colaboración**
 >
 > Este experimento construye un sistema completo de herramientas de colaboración, abarcando la gestión de subagentes, la asistencia humana y notificaciones multicanal.
 >
@@ -520,10 +526,10 @@ while runtime.is_alive:
     dispatch(decision)
 ```
 
-> **Experimento 4-4 ★★★: Agente de Procesamiento de Correos Orientado a Eventos**
+> **Experimento 4-5 ★★★: Agente de Procesamiento de Correos Orientado a Eventos**
 >
 >
-> ![Figura 4-4 Arquitectura del Agente orientado a eventos del Experimento 4-4](images/fig4-4.svg)
+> ![Figura 4-4 Arquitectura del Agente orientado a eventos del Experimento 4-5](images/fig4-4.svg)
 >
 >
 > Este experimento construye el Agente orientado a eventos más simple: **un asistente automático de procesamiento de correo**. El Agente escucha la bandeja de entrada y, cada vez que recibe un nuevo correo, activa automáticamente el flujo de procesamiento: clasificación, resumen, borrador de respuesta y notificación al usuario si es necesario. Este es el escenario de entrada más intuitivo para Agentes orientados a eventos: un evento externo (llegada de nuevo correo) activa un bucle de reflexión completo del Agente.
@@ -545,11 +551,11 @@ while runtime.is_alive:
 >
 > **Escenario de verificación**: Configurar el Agente para escuchar un buzón de prueba. Simular la recepción de tres correos: una invitación a una reunión, una queja de cliente y un anuncio publicitario. El Agente procesa secuencialmente: para la invitación a la reunión comprueba automáticamente conflictos en el calendario y redacta una respuesta de aceptación/rechazo; para la queja de cliente extrae la información clave y la marca como alta prioridad, notificando al usuario para su atención; y archiva automáticamente el anuncio publicitario. Todo el proceso ocurre sin intervención del usuario.
 
-El Experimento 4-4 muestra el modo orientado a eventos más simple: los eventos entran en la cola y el Agente los procesa secuencialmente. Sin embargo, cuando el Agente necesita responder a interrupciones durante la ejecución de herramientas de larga duración, o gestionar múltiples tareas concurrentes al mismo tiempo, una cola de eventos simple resulta insuficiente. A continuación analizaremos desafíos de ingeniería más profundos.
+El Experimento 4-5 muestra el modo orientado a eventos más simple: los eventos entran en la cola y el Agente los procesa secuencialmente. Sin embargo, cuando el Agente necesita responder a interrupciones durante la ejecución de herramientas de larga duración, o gestionar múltiples tareas concurrentes al mismo tiempo, una cola de eventos simple resulta insuficiente. A continuación analizaremos desafíos de ingeniería más profundos.
 
 ### Implementación de ingeniería: Cómo hacer que modelos síncronos admitan interrupciones asíncronas
 
-El Experimento 4-4 solo procesa eventos en serie: los eventos entran secuencialmente en la cola y el Agente los atiende uno a uno. Volvamos ahora a la contradicción entre "entrenamiento síncrono y despliegue asíncrono" planteada al inicio de esta sección: cuando una herramienta aún no ha devuelto respuesta y el usuario interrumpe repentinamente, ¿cómo puede el formato síncrono dar cabida a esta situación? Esta sección presenta la solución de ingeniería actual de la industria.
+El Experimento 4-5 solo procesa eventos en serie: los eventos entran secuencialmente en la cola y el Agente los atiende uno a uno. Volvamos ahora a la contradicción entre "entrenamiento síncrono y despliegue asíncrono" planteada al inicio de esta sección: cuando una herramienta aún no ha devuelto respuesta y el usuario interrumpe repentinamente, ¿cómo puede el formato síncrono dar cabida a esta situación? Esta sección presenta la solución de ingeniería actual de la industria.
 
 Ilustremos primero esta contradicción con un escenario concreto. Supongamos que el Agente está ayudando al usuario a redactar un correo (llamada a herramienta: buscar información de contacto), y mientras la búsqueda aún no devuelve resultados, el usuario dice repentinamente "espera un momento, consulta primero el tiempo de mañana". En el bucle ReAct síncrono, el Agente debe esperar a que la búsqueda devuelva respuesta antes de procesar el siguiente mensaje, porque la API exige que "tras emitir una llamada a herramienta, el mensaje siguiente debe ser el resultado de la herramienta". Sin embargo, en el mundo real asíncrono, los eventos pueden interrumpir la tarea en curso en cualquier momento. Cómo expresar la semántica de "interrupción asíncrona" bajo las restricciones del "formato síncrono" es la pregunta que responde este esquema de ingeniería.
 
@@ -633,13 +639,13 @@ Sin embargo, la otra mitad más crítica de esta investigación versa sobre el *
 
 [^ch4-async-1]: Sobre el uso de unas doscientas líneas de orquestación para convertir modelos de pensamiento existentes en Agentes de pensamiento continuo, y la conclusión de que "las señales de entrenamiento determinan si el pensamiento continuo es útil", véase Li, Bojie and Noah Shi. *Never Stop Thinking: Continuous-Time Language Agents.* 2026 (por publicar).
 
-> **Experimento 4-5 ★★★: Agente Asíncrono con Ejecución Paralela y Capacidad de Interrupción**
+> **Experimento 4-6 ★★★: Agente Asíncrono con Ejecución Paralela y Capacidad de Interrupción**
 >
 >
-> ![Figura 4-6 Interrupción y recuperación del Agente asíncrono del Experimento 4-5](images/fig4-6.svg)
+> ![Figura 4-6 Interrupción y recuperación del Agente asíncrono del Experimento 4-6](images/fig4-6.svg)
 >
 >
-> Sobre la base de la cola de eventos simple del Experimento 4-4, este experimento entra en las aguas profundas de los Agentes asíncronos: **ejecución paralela de herramientas, cancelación de ejecución y gestión de estado**. El Agente ya no se limita a procesar eventos uno a uno, sino que necesita gestionar múltiples tareas concurrentes simultáneamente, gestionar interrupciones y recuperaciones, y tomar decisiones dinámicas basadas en el estado en tiempo real.
+> Sobre la base de la cola de eventos simple del Experimento 4-5, este experimento entra en las aguas profundas de los Agentes asíncronos: **ejecución paralela de herramientas, cancelación de ejecución y gestión de estado**. El Agente ya no se limita a procesar eventos uno a uno, sino que necesita gestionar múltiples tareas concurrentes simultáneamente, gestionar interrupciones y recuperaciones, y tomar decisiones dinámicas basadas en el estado en tiempo real.
 >
 > **1. Ejecución asíncrona de herramientas**: Admite la ejecución asíncrona de herramientas de larga duración (al menos 3-5 segundos), devolviendo inmediatamente un marcador de posición tras el inicio. **Escenario de verificación**: El Agente ejecuta un comando de terminal largo y, mientras tanto, el usuario pregunta "¿qué hora es?", el Agente responde de inmediato y presenta los resultados del análisis una vez devueltos.
 >
@@ -693,7 +699,7 @@ La Figura 4-9 muestra la estructura completa del contexto tras múltiples rondas
 
 Se observa fácilmente que todo este mecanismo de "declaración activa -> coincidencia semántica -> inyección dinámica", aunque efectivo, resulta complejo en ingeniería: requiere mantener índices de embeddings fuera de línea, gestionar la invalidación de la Caché KV y realizar entrenamientos dedicados para modelos débiles. Todas estas premisas asumen tratar cada herramienta como una **definición formal orientada al modelo**, que debe registrarse, recuperarse e inyectarse. La siguiente sección presenta la mećanica de Skills, que adopta una idea mucho más ligera.
 
-> **Experimento 4-6 ★★★: Descubrimiento Proactivo de Herramientas**
+> **Experimento 4-7 ★★★: Descubrimiento Proactivo de Herramientas**
 >
 > Este experimento verifica mediante contraste el valor significativo del descubrimiento proactivo de herramientas para modelos con menor cantidad de parámetros. Se utiliza el modelo Qwen3-4B para acceder a más de 120 herramientas en los servidores MCP construidos en el experimento de herramientas de percepción previo.
 >
@@ -738,7 +744,7 @@ Las cinco categorías de herramientas tienen distintos enfoques de diseño:
 
 En la arquitectura asíncrona, los mecanismos de automatización integrados de OpenClaw (Hooks, Cron, Heartbeat) otorgan al Agente la capacidad de actuar de forma autónoma y programada, pero carecen de canales de acceso instantáneo para fuentes de eventos de terceros ajenas a los canales integrados (como correos o callbacks de API); PineClaw introduce el mecanismo Channel para cubrir esta deficiencia, mostrando la evolución desde lo impulsado por el tiempo hacia lo impulsado por eventos. Las tres estrategias de procesamiento por cancelación, en cola y en paralelo permiten al Agente gestionar eventos de distintas prioridades. Sin embargo, esta arquitectura presenta una profunda contradicción con el paradigma de entrenamiento síncrono de los grandes modelos actuales, pudiendo mitigarse actualmente solo mediante recursos de ingeniería como marcadores de posición asíncronos, quedando la solución fundamental a la espera de que la siguiente generación de modelos interiorice la comprensión del tiempo de espera, las interrupciones y la concurrencia mediante aprendizaje por refuerzo en entornos asíncronos (similar a los modelos VLA analizados en el Capítulo 9).
 
-Los seis experimentos avanzan gradualmente desde lo básico hacia la arquitectura: los Experimentos 4-1 a 4-3 construyen los tres conjuntos de herramientas fundamentales de percepción, ejecución y colaboración; el Experimento 4-4 introduce el enfoque orientado a eventos con un Agente de procesamiento de correo; el Experimento 4-5 implementa la ejecución en paralelo, la interrupción/recuperación y la gestión de estado; y el Experimento 4-6 verifica el valor del descubrimiento proactivo de herramientas en catálogos a gran escala. El límite de este capítulo radica en describir, descubrir y utilizar de forma segura **herramientas existentes**; mientras que el Capítulo 8 analizará cómo el Agente juzga cuándo crear, modificar, volver a verificar o descartar herramientas a partir de sus fallos y operaciones repetitivas.
+Los siete experimentos avanzan gradualmente desde lo básico hacia la arquitectura: los Experimentos 4-1 a 4-4 construyen los tres conjuntos de herramientas fundamentales de percepción, ejecución y colaboración; el Experimento 4-5 introduce el enfoque orientado a eventos con un Agente de procesamiento de correo; el Experimento 4-6 implementa la ejecución en paralelo, la interrupción/recuperación y la gestión de estado; y el Experimento 4-7 verifica el valor del descubrimiento proactivo de herramientas en catálogos a gran escala. El límite de este capítulo radica en describir, descubrir y utilizar de forma segura **herramientas existentes**; mientras que el Capítulo 8 analizará cómo el Agente juzga cuándo crear, modificar, volver a verificar o descartar herramientas a partir de sus fallos y operaciones repetitivas.
 
 El siguiente capítulo responderá a una pregunta más fundamental que "cómo usar herramientas": ¿puede el Agente **crear** herramientas escribiendo código? Un Agente programador (Coding Agent) combinado con un sistema de archivos constituye la base más nuclear de todos los Agentes generales, proporcionando además la capacidad de ejecución para la automodificación controlada del sistema que se analizará en el Capítulo 8.
 

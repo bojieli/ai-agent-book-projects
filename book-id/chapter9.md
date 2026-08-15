@@ -103,6 +103,8 @@ API suara real-time berada di tengah: audio diproses native, tetapi kontrol masi
 > **Eksperimen 9-3 ★★: Menjalankan MiniCPM-o 4.5 secara lokal, end-to-end versus self-cascade**
 >
 > Tetapkan satu revision, matikan thinking mode, lalu bandingkan jawaban langsung dari audio dengan transkripsi kemudian jawaban. Ini mengukur pelestarian informasi audio, bukan kemampuan “berpikir sambil berbicara”.
+> Tabel 9-1 Hasil MiniCPM-o 4.5 lokal: end-to-end versus self-cascade (empat pemeriksaan mekanisme, bukan benchmark)
+>
 >
 > | Tugas | End-to-end | Self-cascade | Pengamatan |
 > | --- | ---: | ---: | --- |
@@ -132,7 +134,31 @@ Model latar depan harus menjawab selama pengguna masih aktif; model latar belaka
 | Interaksi cepat, nasihat lambat | Menjaga percakapan dan memilih kata | Nasihat atau hasil alat | Antarmuka terbatas |
 | Penalaran dan ekspresi terpadu | Berpikir sambil berbicara | Berbagi keadaan model | Biaya pelatihan tinggi |
 
-Desain pertama menggandakan kerja dan dapat bertentangan; desain kedua berkomunikasi secara tidak langsung; desain ketiga menyatukan keduanya. Step-Audio R1 menggunakan MGRD untuk menambatkan penalaran pada ciri akustik dan arsitektur dua otak MPS untuk menghasilkan pikiran dan suara secara paralel (Gambar 9-5 dan 9-6). Model terpadu lebih alami tetapi harus dilatih ulang bersama; desain terpisah lebih mudah mengganti otak latar belakang.
+#### Solusi 1: berpikir cepat untuk pengisi, berpikir lambat untuk jawaban
+
+Berpikir cepat dapat memberi respons pengisi dalam beberapa ratus milidetik, sementara berpikir lambat menyelesaikan penalaran yang lebih dalam di latar belakang. Masalahnya, pertanyaan sederhana diproses dua kali, dan pertanyaan rumit bisa berujung kontradiksi: model cepat menyarankan pembelian, lalu model lambat menemukan bahwa paketnya tidak memiliki fitur kunci, sehingga dalam hitungan detik pengguna mendengar dua jawaban yang saling bertentangan. Akar penyebabnya adalah kedua instans masing-masing melakukan penalaran sendiri secara independen.
+
+
+![Gambar 9-5: Arsitektur berpikir cepat/lambat dan perbandingan solusi](images/fig9-5.svg)
+
+
+#### Solusi 2: berpikir cepat untuk interaksi, berpikir lambat untuk pengingat
+
+Solusi kedua membuat model latar belakang memberi saran kepada model latar depan melalui status bar atau antarmuka khusus, sementara latar depan tetap menjaga alur percakapan dan menentukan cara mengungkapkannya. Ini lebih stabil daripada solusi pertama, tetapi komunikasinya tetap tidak langsung: latar depan bisa salah menafsirkan saran dan tidak melihat penalaran antara dari latar belakang; sebelum latar belakang selesai, ketika pengguna bertanya lagi, latar depan hanya bisa mengandalkan kemampuannya sendiri. Ia bisa "menunggu hasil" secara wajar, tetapi tidak benar-benar berpikir sambil berbicara.
+
+#### Solusi 3: penyatuan penalaran dan ekspresi secara end-to-end (contoh Step-Audio R1)
+
+Solusi ketiga menginternalisasi kemampuan bernalar langsung ke dalam model audio end-to-end. Step-Audio R1 menyelesaikan dua masalah dengan dua mekanisme yang saling melengkapi: **distilasi penalaran berjangkar modalitas (MGRD)** membuat model bernalar berdasarkan fitur akustik, dan **arsitektur dua otak MPS** membuat perumusan dan ekspresi berjalan paralel. Yang pertama menjamin "berpikir benar", yang kedua mengatasi "berbicara tepat waktu".
+
+Idealnya, model menilai emosi dari nada, ritme, dan intonasi, bukan hanya dari teks transkripsi. Yang disebut "penalaran proksi teks" adalah ketika model mengganti analisis melodi dan fitur akustik dengan kata-kata negatif dalam lirik. MGRD menyaring proses penalaran yang benar-benar merujuk pada fitur akustik, melatih model dengan data tersebut, dan melalui reinforcement learning mencegah model melompati penalaran lalu langsung menebak jawaban.
+
+MPS membuat otak perumus terus menghasilkan fragmen penalaran, dan otak ekspresi, begitu menerima fragmen, langsung menghasilkan suara dengan menggabungkannya dengan jawaban yang sudah ada. Keduanya berjalan paralel bak jalur pipa, sehingga tidak perlu menunggu seluruh penalaran selesai sebelum pengguna mendengar kalimat pertama (Gambar 9-6).
+
+
+![Gambar 9-6: Arsitektur dua otak MGRD dan MPS pada Step-Audio R1](images/fig9-6.svg)
+
+
+Model terpadu paling erat mewujudkan "berpikir sambil berbicara", dengan biaya bahwa penalaran dan ekspresi real-time harus dilatih ulang bersama-sama; jalur terpisah lebih mudah untuk mengganti otak latar belakang, sedangkan jalur terpadu lebih cocok untuk skenario khusus yang mengejar kealamian maksimal. Keduanya adalah trade-off, bukan sekadar saling menggantikan.
 
 ### Sintesis suara yang lebih manusiawi
 

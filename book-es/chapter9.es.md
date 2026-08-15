@@ -103,6 +103,8 @@ Las API de voz en tiempo real ocupan una posición intermedia: procesan audio de
 > **Experimento 9-3 ★★: Ejecutar MiniCPM-o 4.5 localmente, extremo a extremo frente a autocascada**
 >
 > Fija una revisión local, desactiva thinking mode y compara responder directamente al audio con transcribir primero y responder después. Mide la conservación de información acústica, no la capacidad posterior de «pensar mientras habla».
+> Tabla 9-1 Resultados locales de MiniCPM-o 4.5: extremo a extremo frente a autocascada (cuatro comprobaciones de mecanismo, no un benchmark)
+>
 >
 > | Tarea | Extremo a extremo | Autocascada | Observación |
 > | --- | ---: | ---: | --- |
@@ -132,7 +134,31 @@ El modelo de primer plano responde mientras el usuario sigue conectado; el model
 | Interacción rápida, consejo lento | Mantener el hilo y elegir palabras | Consejo o resultados de herramientas | Interfaz limitada |
 | Pensamiento y expresión unidos | Pensar mientras habla | Compartir el estado | Alto coste de entrenamiento |
 
-La primera solución duplica el trabajo y puede contradecirse; la segunda comunica consejos de forma indirecta y no ve el razonamiento intermedio; la tercera integra ambos procesos. Step-Audio R1 usa MGRD para anclar el razonamiento en rasgos acústicos y una arquitectura MPS de dos cerebros para producir pensamiento y voz en paralelo. El modelo unificado es más natural, pero requiere reentrenar pensamiento y expresión juntos; el desacoplado permite cambiar el cerebro de fondo (Figuras 9-5 y 9-6).
+#### Solución 1: pensamiento rápido para rellenar, pensamiento lento para responder
+
+El pensamiento rápido puede emitir una respuesta de relleno en unos cientos de milisegundos, mientras el pensamiento lento completa en segundo plano una deducción más profunda. Su problema es que las preguntas sencillas se procesan dos veces y las complejas pueden acabar en contradicción: el modelo rápido recomienda comprar y el lento descubre después que el plan carece de una función clave, de modo que el usuario escucha respuestas contradictorias en cuestión de segundos. La causa de fondo es que cada instancia ha realizado su propio razonamiento independiente.
+
+
+![Figura 9-5: Arquitectura de pensamiento rápido/lento y comparación de soluciones](images/fig9-5.svg)
+
+
+#### Solución 2: pensamiento rápido para interactuar, pensamiento lento para avisar
+
+En la segunda solución, el modelo de fondo ofrece sugerencias al de primer plano a través de una barra de estado o de una interfaz específica, mientras el primer plano mantiene el hilo y decide cómo expresarse. Es más estable que la primera, pero la comunicación sigue siendo indirecta: el primer plano puede malinterpretar la sugerencia y no ve el razonamiento intermedio del fondo; antes de que el fondo termine, si el usuario repregunta el primer plano solo puede responder con sus propias capacidades. Puede «esperar el resultado» con naturalidad, pero no llega realmente a pensar mientras habla.
+
+#### Solución 3: unificación de extremo a extremo del pensamiento y la expresión (el caso de Step-Audio R1)
+
+La tercera solución interioriza la capacidad de razonar dentro del propio modelo de audio de extremo a extremo. Step-Audio R1 resuelve dos problemas con dos mecanismos complementarios: la **destilación de pensamiento anclada en la modalidad (MGRD)** hace que el modelo razone a partir de rasgos acústicos, y la **arquitectura de doble cerebro MPS** permite que la concepción y la expresión avancen en paralelo. La primera garantiza «pensar bien»; la segunda resuelve «hablar a tiempo».
+
+Idealmente, el modelo debería inferir la emoción del tono, el ritmo y la entonación, y no solo del texto transcrito. El llamado «pensamiento por delegación al texto» consiste en que el modelo sustituye el análisis de la melodía y de los rasgos acústicos por las palabras negativas de la letra. MGRD filtra las cadenas de razonamiento que citan realmente rasgos acústicos, entrena el modelo con esos datos y, mediante aprendizaje por refuerzo, impide que el modelo se salte el razonamiento y adivine la respuesta.
+
+MPS hace que el cerebro de concepción produzca fragmentos de pensamiento de forma continua, y el cerebro de expresión, al recibir cada fragmento, genera voz de inmediato combinándolo con lo ya respondido. Ambos funcionan en paralelo como una tubería, de modo que no hace falta esperar a que el razonamiento termine para que el usuario oiga la primera frase (Figura 9-6).
+
+
+![Figura 9-6: Arquitectura de doble cerebro MGRD y MPS de Step-Audio R1](images/fig9-6.svg)
+
+
+El modelo unificado es el que más estrechamente logra «pensar mientras habla», a costa de tener que reentrenar juntos el razonamiento y la expresión en tiempo real; la vía desacoplada facilita sustituir el cerebro de fondo, mientras que la vía unificada encaja mejor en escenarios especializados que buscan la máxima naturalidad. Son un compromiso, no un simple reemplazo mutuo.
 
 ### Síntesis de voz más humana
 

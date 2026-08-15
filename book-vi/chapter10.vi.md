@@ -36,19 +36,7 @@ Cần phải làm rõ rằng cả hai kiến trúc đều là hệ thống multi
 
 Ví dụ: trước đây giống như một nhóm ngồi quanh bàn để thảo luận và mọi người đều nghe thấy mọi thứ; cái sau giống như các bộ phận khác nhau cộng tác thông qua email và tài liệu, mỗi bộ phận có không gian làm việc riêng.
 
-Độc giả quen thuộc với hệ điều hành sẽ nhận ra cặp lựa chọn này: ngữ cảnh chia sẻ là luồng (thread), ngữ cảnh không chia sẻ là tiến trình (process). Luồng chia sẻ không gian địa chỉ, chi phí chuyển đổi nhỏ, giao tiếp không cần sao chép, cái giá là không có cách ly—một luồng ghi hỏng bộ nhớ thì cả tiến trình sụp đổ theo; tiến trình mỗi cái có không gian địa chỉ độc lập, cách ly triệt để, có thể song song an toàn, cái giá là giao tiếp phải đi qua IPC tường minh. Mỗi cơ sở lựa chọn trong Bảng 10-1 đều có thể suy ra từ cặp đánh đổi này.
-
-Bảng 10-1 tóm tắt cơ sở lựa chọn của hai kiến trúc từ năm khía cạnh: số lượng nhiệm vụ phụ, cửa sổ ngữ cảnh, tính song song, cách ly thông tin và ngân sách chi phí, có thể được sử dụng làm danh sách kiểm tra để lựa chọn kiến trúc sớm.
-
-Bảng 10-1 Cơ sở lựa chọn giữa ngữ cảnh dùng chung và ngữ cảnh không chia sẻ
-
-| Chọn theo | Chia sẻ ngữ cảnh | Đừng chia sẻ ngữ cảnh |
-|---|---|---|
-| Số lượng nhiệm vụ | Rất ít (vai trò 2-3) | Nhiều (cần xử lý song song) |
-| Cửa sổ ngữ cảnh | Đủ thông tin cho mọi vai trò | Không vừa trong một cửa sổ |
-| Song song | Sự thống trị nối tiếp (các nhân vật lần lượt tiếp quản nhau theo cùng một trajectory) | Có thể song song hóa quy mô lớn (các ngữ cảnh độc lập với nhau và không chặn nhau) |
-| Cách ly thông tin | Không bắt buộc (tất cả các vai trò đều chia sẻ thông tin) | Bắt buộc (ví dụ: xem xét bảo mật không nên xem quy trình suy nghĩ ban đầu) |
-| Ngân sách chi phí | Tiếp sức một trajectory đơn, mã thông báo tích lũy theo giai đoạn | Nhiều Agent được mở rộng riêng biệt và tổng số mã thông báo thường cao hơn vài lần theo mức độ lớn |
+Độc giả quen thuộc với hệ điều hành sẽ nhận ra cặp lựa chọn này: ngữ cảnh chia sẻ là luồng (thread), ngữ cảnh không chia sẻ là tiến trình (process). Luồng chia sẻ không gian địa chỉ, chi phí chuyển đổi nhỏ, giao tiếp không cần sao chép, cái giá là không có cách ly—một luồng ghi hỏng bộ nhớ thì cả tiến trình sụp đổ theo; tiến trình mỗi cái có không gian địa chỉ độc lập, cách ly triệt để, có thể song song an toàn, cái giá là giao tiếp phải đi qua IPC tường minh.
 
 **Đánh giá đơn giản**: Nếu ngữ cảnh tích lũy dự kiến sẽ vượt quá 50% thời lượng (đây là quy tắc kinh nghiệm, không phải ngưỡng chính xác), thì không nên chia sẻ ngữ cảnh đó; nếu không mất thông tin là một hạn chế cứng rắn đối với tính chính xác của nhiệm vụ thì thông tin đó nên được chia sẻ; hầu hết các hệ thống thực tế đều áp dụng sơ đồ "chuyển đổi giai đoạn" - một số Agent đầu tiên được chia sẻ và sau khi đạt đến điểm bão hòa thông tin, hãy chuyển sang ngữ cảnh không chia sẻ + chuyển giao rõ ràng (chuyển giao, nghĩa là Agent ngược dòng chủ động quyết định thông tin nào sẽ chuyển giao cho hạ lưu).
 
@@ -72,9 +60,9 @@ Thiết kế chi tiết và các kịch bản áp dụng của từng phương t
 
 Trước khi đi vào kiến trúc cộng tác cụ thể, hãy trả lời một câu hỏi cơ bản hơn: **Khi nào bạn thực sự cần nhiều Agent và khi nào một Agent là đủ?** Câu trả lời cho câu hỏi này sẽ trở thành tài liệu tham khảo tổng thể cho tất cả các kế hoạch dự án tiếp theo. Một loạt nghiên cứu trong những năm gần đây đã đưa ra khung đánh giá rõ ràng - chỉ có một tiêu chí cốt lõi: **Quy trình cộng tác có đưa ra thông tin mới mà khi tạo một Agent duy nhất không thể có được không?**
 
-Bảng 10-2 tóm tắt xem các chế độ cộng tác khác nhau có đưa ra thông tin mới hay không để xác định xem liệu cộng tác nhiều Agent có giá trị đáng kể so với Agent đơn lẻ hay không.
+Bảng 10-1 tóm tắt xem các chế độ cộng tác khác nhau có đưa ra thông tin mới hay không để xác định xem liệu cộng tác nhiều Agent có giá trị đáng kể so với Agent đơn lẻ hay không.
 
-Bảng 10-2 So sánh mức tăng thông tin trong nhiều chế độ cộng tác Agent
+Bảng 10-1 So sánh mức tăng thông tin trong nhiều chế độ cộng tác Agent
 
 | Chế độ cộng tác | Có nên giới thiệu thông tin mới | Hiệu ứng |
 |---|---|---|
@@ -124,9 +112,9 @@ Nếu vai trò khác nhau chủ yếu về kiến thức, quy trình hoặc văn
 
 Không có ngữ cảnh chia sẻ nào thể hiện sự cộng tác đa Agent thực sự. Theo kiến trúc này, mỗi Agent là một thực thể độc lập với ngữ cảnh, trajectory và trạng thái riêng. Agent không thể truy cập trực tiếp vào "hoạt động nội bộ" của nhau và sự cộng tác hoàn toàn dựa trên các cơ chế truyền dữ liệu có cấu trúc và rõ ràng, đó là ba cơ chế giao tiếp được giới thiệu ở đầu chương này (tham số lệnh gọi công cụ, hệ thống tệp dùng chung, bus thông báo).
 
-Ở đầu chương, ta đã đối chiếu cơ chế giao tiếp với hai mô thức lớn của giao tiếp giữa các tiến trình, và đối chiếu ngữ cảnh chia sẻ/không chia sẻ với luồng và tiến trình. Phép loại suy này còn có thể đi xa hơn (Bảng 10-3):
+Ở đầu chương, ta đã đối chiếu cơ chế giao tiếp với hai mô thức lớn của giao tiếp giữa các tiến trình, và đối chiếu ngữ cảnh chia sẻ/không chia sẻ với luồng và tiến trình. Phép loại suy này còn có thể đi xa hơn (Bảng 10-2):
 
-Bảng 10-3 Quan hệ đối ứng giữa hệ thống multi-Agent và hệ điều hành
+Bảng 10-2 Quan hệ đối ứng giữa hệ thống multi-Agent và hệ điều hành
 
 | Hệ điều hành | Hệ thống multi-Agent |
 |----------|----------------|
@@ -170,9 +158,9 @@ Hình 10-2 cho thấy cấu trúc trong đó bốn loại khu vực này đượ
 ![Hình 10-2 Bốn loại cấu trúc gắn vùng của hệ thống tệp ảo Agent ](images/fig10-2.svg)
 
 
-Bảng 10-4 so sánh bốn loại lĩnh vực này từ bốn chiều về khả năng hiển thị, vòng đời, quyền đọc và ghi và kiểm soát tương tranh, có thể được sử dụng làm danh sách kiểm tra cho thiết kế bố cục hệ thống tệp.
+Bảng 10-3 so sánh bốn loại lĩnh vực này từ bốn chiều về khả năng hiển thị, vòng đời, quyền đọc và ghi và kiểm soát tương tranh, có thể được sử dụng làm danh sách kiểm tra cho thiết kế bố cục hệ thống tệp.
 
-Bảng 10-4 Bốn loại vùng của hệ thống tệp ảo Agent
+Bảng 10-3 Bốn loại vùng của hệ thống tệp ảo Agent
 
 | Vùng | Tầm nhìn | Vòng đời | Đọc và Viết | Kiểm soát đồng thời |
 |---|---|---|---|---|
@@ -185,7 +173,7 @@ Hợp nhất bốn loại vùng vào cùng một cây thư mục là giá trị 
 
 ### Giao tiếp và điều khiển giữa Agent
 
-Hệ thống tập tin giải quyết vấn đề **trao đổi sản phẩm** giữa Agent. Việc cộng tác còn cần một **mặt phẳng điều khiển**. Đây chính là chỗ dụng võ của các dòng vòng đời trong Bảng 10-3: bộ nguyên thủy công cụ mà Chương 4 đã đưa ra—tạo (`spawn_subagent`), gửi tin nhắn (`send_message_to_subagent`), hủy (`cancel_subagent`), khám phá (`list_agents`)—tương ứng với fork, tin nhắn, kill và ps của thế giới tiến trình. Phần này không lặp lại định nghĩa giao diện mà tập trung vào bốn khả năng mà cộng tác đa Agent phụ thuộc vào nhưng thường bị bỏ qua.
+Hệ thống tập tin giải quyết vấn đề **trao đổi sản phẩm** giữa Agent. Việc cộng tác còn cần một **mặt phẳng điều khiển**. Đây chính là chỗ dụng võ của các dòng vòng đời trong Bảng 10-2: bộ nguyên thủy công cụ mà Chương 4 đã đưa ra—tạo (`spawn_subagent`), gửi tin nhắn (`send_message_to_subagent`), hủy (`cancel_subagent`), khám phá (`list_agents`)—tương ứng với fork, tin nhắn, kill và ps của thế giới tiến trình. Phần này không lặp lại định nghĩa giao diện mà tập trung vào bốn khả năng mà cộng tác đa Agent phụ thuộc vào nhưng thường bị bỏ qua.
 
 **Envelope thông điệp và vòng đời worker:**
 
@@ -381,7 +369,7 @@ Người quản lý gọi Agent đặc biệt theo trình tự. Sau khi hoàn th
 
 Chế độ tuần tự trở nên kém hiệu quả khi nhiều tác vụ con có thể được thực thi song song. Phối hợp song song cho phép nhiều Agent hoạt động đồng thời, cải thiện đáng kể thông lượng. Trình quản lý Agent không chỉ lên kế hoạch cho các nhiệm vụ song song mà còn giám sát tất cả các Agent đang chạy trong thời gian thực, xử lý việc phối hợp liên lạc và đưa ra quyết định chung khi Agent thành công hay thất bại. Điều này thường yêu cầu Message Bus làm cơ sở hạ tầng - nó có thể được hiểu là một "bảng thông báo công cộng" mà trên đó Agent có thể đăng tin nhắn (xuất bản) hoặc tập trung vào các loại tin nhắn mà nó quan tâm (đăng ký), đạt được khả năng liên lạc không đồng bộ và không bị chặn. Có hai loại giải pháp triển khai phổ biến với mức độ phức tạp ngày càng tăng: **Redis Pub/Sub** có dung lượng nhẹ, gửi và nhận tin nhắn, đơn giản và dễ sử dụng. Nhược điểm là không liên tục - người nhận lúc đó không trực tuyến và tin nhắn bị mất; hàng đợi tin nhắn như **RabbitMQ** lưu tin nhắn trên đĩa và sẽ không bị mất ngay cả khi người nhận tạm thời ngoại tuyến. Định dạng tin nhắn thường chứa ID người gửi, Agent đích (hoặc phát tới mọi người), loại tin nhắn và nội dung dữ liệu ở định dạng JSON.
 
-**Lingtai（灵台）: một hiện thân sản phẩm hóa của mô hình quản lý.** Lingtai là một "ngôi nhà" chạy cục bộ, lấy file làm gốc cho các Agent tồn tại lâu dài[^lingtai]; ba vai trò của nó gần như khớp một-một với các khái niệm trong mục này: **main agent（主器灵）** là trung tâm thường trú mà người dùng trò chuyện cùng—nó nắm giữ kế hoạch và bộ nhớ, và sinh ra các vai trò khác—đúng vị trí của Manager Agent; **daemon（分神）** là một worker song song ngắn hạn được tách ra cho một công việc ồn ào, có giới hạn, rồi bị hủy sau khi xong—bạn giữ lại kết luận của nó chứ không giữ worker—đây chính là sự sản phẩm hóa của nguyên tắc "Agent con trả về bản tóm tắt có cấu trúc thay vì toàn bộ quỹ đạo" và của hình thức phối hợp song song; **avatar（分身）** là một đồng đội chuyên môn tồn tại lâu dài với bộ nhớ, hộp thư và trách nhiệm riêng—dành cho những chuyên môn đáng giữ lại qua nhiều phiên làm việc. Phần còn lại của thiết kế cũng tương ứng với các mục trước: knowledge là các file bộ nhớ bền vững, riêng tư của từng Agent; skills là các sổ tay Markdown được chia sẻ bởi mọi Agent ("tài nguyên hệ thống tích hợp" trong mục "Hệ thống file Agent qua mắt"); khi cửa sổ ngữ cảnh đầy, Agent sẽ "molt"（凝蜕）—tự viết một bản tóm tắt cẩn thận và mang theo toàn bộ bộ nhớ bền vững sang một ngữ cảnh sạch (cơ chế nén ngữ cảnh ở Chương 2). Mô hình nền có thể thay thế mà Agent vẫn tồn tại—danh tính, bộ nhớ và năng lực đều nằm dưới dạng các file thường trong thư mục dự án: Agent chính là các file của nó—cũng chính là sự sản phẩm hóa của hai dòng đầu Bảng 10-3: chương trình và bộ nhớ đều nằm trong file, nên tiến trình bất cứ lúc nào cũng có thể được dựng lại.
+**Lingtai（灵台）: một hiện thân sản phẩm hóa của mô hình quản lý.** Lingtai là một "ngôi nhà" chạy cục bộ, lấy file làm gốc cho các Agent tồn tại lâu dài[^lingtai]; ba vai trò của nó gần như khớp một-một với các khái niệm trong mục này: **main agent（主器灵）** là trung tâm thường trú mà người dùng trò chuyện cùng—nó nắm giữ kế hoạch và bộ nhớ, và sinh ra các vai trò khác—đúng vị trí của Manager Agent; **daemon（分神）** là một worker song song ngắn hạn được tách ra cho một công việc ồn ào, có giới hạn, rồi bị hủy sau khi xong—bạn giữ lại kết luận của nó chứ không giữ worker—đây chính là sự sản phẩm hóa của nguyên tắc "Agent con trả về bản tóm tắt có cấu trúc thay vì toàn bộ quỹ đạo" và của hình thức phối hợp song song; **avatar（分身）** là một đồng đội chuyên môn tồn tại lâu dài với bộ nhớ, hộp thư và trách nhiệm riêng—dành cho những chuyên môn đáng giữ lại qua nhiều phiên làm việc. Phần còn lại của thiết kế cũng tương ứng với các mục trước: knowledge là các file bộ nhớ bền vững, riêng tư của từng Agent; skills là các sổ tay Markdown được chia sẻ bởi mọi Agent ("tài nguyên hệ thống tích hợp" trong mục "Hệ thống file Agent qua mắt"); khi cửa sổ ngữ cảnh đầy, Agent sẽ "molt"（凝蜕）—tự viết một bản tóm tắt cẩn thận và mang theo toàn bộ bộ nhớ bền vững sang một ngữ cảnh sạch (cơ chế nén ngữ cảnh ở Chương 2). Mô hình nền có thể thay thế mà Agent vẫn tồn tại—danh tính, bộ nhớ và năng lực đều nằm dưới dạng các file thường trong thư mục dự án: Agent chính là các file của nó—cũng chính là sự sản phẩm hóa của hai dòng đầu Bảng 10-2: chương trình và bộ nhớ đều nằm trong file, nên tiến trình bất cứ lúc nào cũng có thể được dựng lại.
 
 [^lingtai]: Hướng dẫn chính thức của Lingtai: https://lingtai.ai/zh/tutorial/
 
@@ -738,4 +726,4 @@ Hợp tác đa Agent chỉ thực sự đáng giá khi đưa vào thông tin m�
 8. ★★ Xã hội loài người đòi hỏi sự phân công lao động và hợp tác giữa nhiều người vì khả năng của mỗi người là có hạn - người làm front-end chưa chắc đã hiểu back-end, và người hiểu thiết kế chưa chắc đã biết cách vận hành, bảo trì. Nhưng mô hình lớn lại thiên về "toàn diện". Nghiên cứu liên quan cho thấy rằng trong các tác vụ lý luận văn bản thuần túy, cuộc tranh luận đa Agent không tốt hơn Agent đơn lẻ trong cùng một lượng tài nguyên máy tính. Vậy chính xác thì lợi thế thực sự của việc sử dụng nhiều Agent thay vì một Agent duy nhất là gì?
 9. ★★★ Chương này lấy "ngữ cảnh dùng chung" và "ngữ cảnh không chia sẻ" làm kích thước thiết kế cốt lõi của hệ thống multi-Agent. Việc chia sẻ ngữ cảnh cho phép tất cả Agent xem cùng một thông tin, điều này dường như có lợi hơn cho việc phối hợp. Tuy nhiên, suy nghĩ của những người ba thân trong “Vấn đề ba thân” hoàn toàn minh bạch nhưng sự phát triển công nghệ lại bị đình trệ; thí nghiệm tư duy bằng kẹp giấy cũng cho thấy rằng khi các nhóm có cùng mục tiêu thì sự đa dạng sẽ bị mất đi. Làm cách nào để tìm sự cân bằng giữa hiệu quả và tính đa dạng trong hệ thống đa Agent?
 10. ★★★ Nếu Coding Agent được giao ngân sách 30 bước và ngân sách 300 bước, chiến lược làm việc của nó sẽ khác như thế nào? Nghiên cứu cho thấy rằng việc chỉ tăng ngân sách bước không đảm bảo cải thiện hiệu suất - Agent sẽ "bão hòa" sớm sau khi tìm kiếm nông. Thiết kế cơ chế "nhận biết ngân sách" để cho phép Agent nhanh chóng triển khai các chức năng cốt lõi với ngân sách nhỏ, thêm các liên kết lập kế hoạch, thử nghiệm và đánh giá trong ngân sách lớn và tận dụng tối đa các tài nguyên máy tính bổ sung.
-11. ★★ Bảng 10-3 đối chiếu từng dòng hệ thống multi-Agent với hệ điều hành. Hãy kéo dài bảng này thêm vài dòng nữa: bộ nhớ ảo và phân trang, quyền truy cập tệp, phát hiện bế tắc (deadlock), thuật toán điều phối—mỗi cái tương ứng với gì trong thế giới Agent? Lại có những khái niệm hệ điều hành nào không tìm được vật đối ứng trong thế giới Agent, và vì sao?
+11. ★★ Bảng 10-2 đối chiếu từng dòng hệ thống multi-Agent với hệ điều hành. Hãy kéo dài bảng này thêm vài dòng nữa: bộ nhớ ảo và phân trang, quyền truy cập tệp, phát hiện bế tắc (deadlock), thuật toán điều phối—mỗi cái tương ứng với gì trong thế giới Agent? Lại có những khái niệm hệ điều hành nào không tìm được vật đối ứng trong thế giới Agent, và vì sao?

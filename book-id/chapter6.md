@@ -291,14 +291,8 @@ Berfokus semata-mata pada hasil akhir tidaklah cukup; proses di mana Agent menca
 - **Pass^k**: Probabilitas bahwa **semua** k percobaan berhasil, menjawab "Apakah Agent stabil dan dapat diandalkan?"
 - **Best@k**: Skor **terbaik** dari k percobaan (daripada apakah itu berhasil), mengukur "plafon kualitas jika diberikan kesempatan yang cukup," sering digunakan untuk tugas terbuka (open-ended) dengan penilaian berkelanjutan.
 
-Sebuah angka konkret membuat perbedaannya menjadi jelas. Misalkan tingkat keberhasilan upaya tunggal Agent adalah 60% (Pass@1 = 0.6). Lebih dari 5 upaya: Pass@5 = 1 - 0.4^5 ≈ 99% (hampir dipastikan berhasil setidaknya satu kali), sementara Pass^5 = 0.6^5 ≈ 7.8% (kemungkinan kelimanya berhasil sangatlah kecil). Yang pertama mengukur plafon kemampuan, yang kedua stabilitas; bingung membedakan keduanya dan Anda akan salah membaca Agent Anda. Tabel 6-3 merangkum skenario yang dapat diterapkan dan risiko penyalahgunaan untuk keduanya, membantu pembaca memilih metrik yang benar antara pengujian regresi dan evaluasi eksploratif.
+Sebuah angka konkret membuat perbedaannya menjadi jelas. Misalkan tingkat keberhasilan upaya tunggal Agent adalah 60% (Pass@1 = 0.6). Lebih dari 5 upaya: Pass@5 = 1 - 0.4^5 ≈ 99% (hampir dipastikan berhasil setidaknya satu kali), sementara Pass^5 = 0.6^5 ≈ 7.8% (kemungkinan kelimanya berhasil sangatlah kecil). Yang pertama mengukur plafon kemampuan, yang kedua stabilitas; bingung membedakan keduanya dan Anda akan salah membaca Agent Anda.
 
-Tabel 6-3 Skenario yang Berlaku untuk Pass@k dan Pass^k
-
-| Tujuan Evaluasi | Metrik Mana yang Digunakan | Konsekuensi Penyalahgunaan |
-|----------------------------------|---------------|-----------------------------------------------|
-| Memverifikasi stabilitas (pengujian regresi) | Pass^k | Menggunakan Pass@k menutupi ketidakstabilan—Agent yang berhasil hanya sekali dalam lima percobaan akan tetap ditampilkan sebagai "lulus" |
-| Mengevaluasi plafon kemampuan (tugas eksploratif) | Pass@k atau Best@k | Menggunakan Pass^k akan secara tidak benar menandai kegagalan karena fluktuasi sesekali—setiap perubahan kecil akan dinilai sebagai kegagalan |
 
 **Metrik Keselamatan dan Kepatuhan (Safety and Compliance Metrics)** sangat penting dalam penyebaran (deployment) produksi: memicu operasi sensitif (menghapus data / memodifikasi izin / mengirim komunikasi eksternal), kebocoran data (mencetak kata sandi dalam log / mengirim dokumen pribadi ke API eksternal), dan konten yang dilarang semuanya harus tunduk pada **prinsip tanpa toleransi (zero-tolerance principle)**—mirip dengan veto halusinasi (lihat "Empat Prinsip Rubric" nanti). Pelanggaran keselamatan yang serius meskipun hanya satu kali akan memveto keseluruhan evaluasi, terlepas dari performanya di dimensi lain.
 
@@ -409,9 +403,9 @@ Kirim Rubric bersama respons aktual Agent ke model penilai untuk memperoleh skor
 >
 > **Kriteria Penerimaan**: Catat tingkat keberhasilan, rata-rata langkah, jumlah pemanggilan tool (tool calls), latensi, dan biaya di tiga tingkat kompleksitas (penarikan dasar / disambiguasi multi-sesi / asosiasi tersembunyi lintas sesi). Jelaskan dengan jelas batasan kegagalan untuk setiap pendekatan—apa yang dilewatkan oleh memori terstruktur, apa yang dilewatkan oleh penarikan, dan apakah sistem hybrid benar-benar mencapai sinergi. Detail konfigurasi dan kasus uji tersedia di repositori pendamping.
 
-Eksperimen pendamping menguji ketiga sistem dengan 60 pertanyaan yang sama dan menyimpan 180 jejak pemanggilan API nyata. Tabel 6-4 mencantumkan jumlah soal yang berhasil di samping persentase keseluruhan agar ukuran sampelnya tetap terlihat.
+Eksperimen pendamping menguji ketiga sistem dengan 60 pertanyaan yang sama dan menyimpan 180 jejak pemanggilan API nyata. Tabel 6-3 mencantumkan jumlah soal yang berhasil di samping persentase keseluruhan agar ukuran sampelnya tetap terlihat.
 
-Tabel 6-4 Tingkat keberhasilan tiga sistem memori menurut tingkat kesulitan
+Tabel 6-3 Tingkat keberhasilan tiga sistem memori menurut tingkat kesulitan
 
 | Sistem | Ingatan dasar | Disambiguasi multi-sesi | Hubungan tersembunyi lintas sesi | Keseluruhan |
 |---|---:|---:|---:|---:|
@@ -580,9 +574,9 @@ Biaya sistem Agent dapat diuraikan menjadi tiga level:
 
 **Infrastructure cost** mencakup overhead operasional untuk vector databases (digunakan untuk RAG retrieval), message queues, relational databases, dan penyimpanan logging dan tracing (untuk observabilitas).
 
-Untuk melihat sumber biaya secara nyata, eksperimen pendamping menetapkan alur pengembalian dana delapan putaran: memeriksa pesanan, pengiriman, kebijakan, dan basis pengetahuan, lalu menjalankan pemeriksaan risiko, pengembalian dana, pemberitahuan, dan penutupan. Panggilan gpt-4o-mini yang sebenarnya mengaktifkan atau menonaktifkan dua opsi—awalan stabil dan kompresi riwayat—dalam desain 2×2. Keempat konfigurasi menyelesaikan pekerjaan yang sama. Biaya pada Tabel 6-5 dihitung dari pemakaian token yang tersimpan dan harga saat itu.
+Untuk melihat sumber biaya secara nyata, eksperimen pendamping menetapkan alur pengembalian dana delapan putaran: memeriksa pesanan, pengiriman, kebijakan, dan basis pengetahuan, lalu menjalankan pemeriksaan risiko, pengembalian dana, pemberitahuan, dan penutupan. Panggilan gpt-4o-mini yang sebenarnya mengaktifkan atau menonaktifkan dua opsi—awalan stabil dan kompresi riwayat—dalam desain 2×2. Keempat konfigurasi menyelesaikan pekerjaan yang sama. Biaya pada Tabel 6-4 dihitung dari pemakaian token yang tersimpan dan harga saat itu.
 
-Tabel 6-5 Biaya nyata tugas Agent delapan putaran
+Tabel 6-4 Biaya nyata tugas Agent delapan putaran
 
 | Konfigurasi | Token input | Token cache | Total biaya | Hemat dari baseline |
 |---|---:|---:|---:|---:|
@@ -722,9 +716,9 @@ Ketiga putaran mempertahankan model, parameter tugas, seed, batas langkah, dan e
 
 ### Dari Hasil ke Keputusan: Pertukaran (Trade-offs) yang Didorong Data
 
-Tabel 6-6 merangkum hasil pengukuran tiga putaran. Karena setiap kelompok hanya berisi empat tugas, angka ini hanya menentukan apakah eksperimen layak diperluas, bukan tingkat keberhasilan AndroidWorld secara keseluruhan.
+Tabel 6-5 merangkum hasil pengukuran tiga putaran. Karena setiap kelompok hanya berisi empat tugas, angka ini hanya menentukan apakah eksperimen layak diperluas, bukan tingkat keberhasilan AndroidWorld secara keseluruhan.
 
-Tabel 6-6 Tiga putaran pada subset Wi-Fi AndroidWorld
+Tabel 6-5 Tiga putaran pada subset Wi-Fi AndroidWorld
 
 | Eksperimen | Satu-satunya perubahan | Keberhasilan control→treatment | Token treatment/control | Keputusan berikutnya |
 |---|---|---:|---:|---|

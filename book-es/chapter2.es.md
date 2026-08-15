@@ -818,6 +818,14 @@ Desde la perspectiva de la gestión del contexto, el mecanismo Skills resulta mu
 > **Criterios de aceptación**: el PowerPoint generado debe cubrir el contenido principal del artículo (portada, contexto del problema, resumen del método, resultados clave y conclusiones), incluir al menos tres gráficos extraídos del artículo y coherentes con sus explicaciones textuales, tener el formato correcto y poder abrirse con normalidad en PowerPoint o en software compatible.
 >
 
+> **Experimento 2-7 ★★: creación de una Skill de escritura «sin sabor a IA» a partir de textos propios**
+>
+> **Objetivo del experimento**: generar, a partir de unos pocos textos escritos por una persona, una Skill de escritura cargable e inspeccionable, y observar si es capaz de reproducir las principales preferencias expresivas del autor en artículos nuevos.
+>
+> **Descripción del experimento**: prepare de tres a cinco artículos originales y deje que un entorno de ejecución compatible con Agent Skills genere una primera versión de `SKILL.md`; elija un tema nuevo y redacte un artículo; después de que el autor lo corrija a mano, compare el antes y el después y devuelva a la Skill los patrones estables. La aceptación solo exige que la Skill tenga condiciones de activación claras, de tres a cinco principios con ejemplos, un ámbito de aplicación y excepciones, sin convertir un juicio subjetivo aislado en regla general.
+>
+> **Qué demuestra este experimento**: el valor de una Skill está en externalizar la experiencia personal como instrucciones que se cargan bajo demanda. Una primera versión breve, legible y capaz de superar la prueba de una tarea real es mejor punto de partida para iterar que enumerar decenas de reglas desde el principio.
+
 ## Barra de estado del Agente: mejora de la gestión de trayectorias mediante metainformación
 
 ![Figura 2-14 Arquitectura de la barra de estado del Agente](images/fig2-14.svg)
@@ -849,7 +857,7 @@ Además, los recursos de atención del modelo son limitados en contextos largos.
 
 La barra de estado del Agente resuelve este problema manipulando explícitamente la distribución de la atención. Cuando se coloca metainformación clave de forma estructurada al final del contexto, queda espacialmente más cerca de los nuevos tokens que el modelo está a punto de generar y, por tanto, recibe un mayor peso de atención—se trata de una forma de «orientación forzada de la atención».
 
-> **Experimento 2-7 ★★: validación del efecto de la barra de estado del Agente mediante visualización de la atención**
+> **Experimento 2-8 ★★: validación del efecto de la barra de estado del Agente mediante visualización de la atención**
 >
 > A partir del proyecto `attention_visualization`, diseñamos un experimento comparativo en el que un Agente de atención al cliente tramita una solicitud de reembolso. El Agente ya ha llamado tres veces a Xfinity, con búsquedas web intercaladas. El usuario pregunta: «¿Puedes volver a llamar para insistir?».
 >
@@ -868,7 +876,7 @@ La barra de estado del Agente resuelve este problema manipulando explícitamente
 > La atención se concentra en gran medida en la información de la barra de estado, y el proceso de pensamiento utiliza directamente la información ya destilada en lugar de calcularla a partir de los datos originales. En modelos pequeños como Qwen3-0.6B, el grupo de control A infringe con frecuencia la restricción y sigue llamando, mientras que el grupo de control B la cumple de forma estable.
 >
 
-El experimento 2-7 es una demostración cualitativa a pequeña escala que aporta una intuición. Para cuantificar hasta qué punto resulta útil este enfoque de «calcular de antemano y consultar directamente» y dónde están sus límites, el autor y sus colaboradores utilizaron un benchmark específico[^ch2-7] (este enfoque tiene un nombre unificado: **destilación de contexto, Context Distillation**; la barra de estado del Agente es su forma más cotidiana). Conclusiones:
+El experimento 2-8 es una demostración cualitativa a pequeña escala que aporta una intuición. Para cuantificar hasta qué punto resulta útil este enfoque de «calcular de antemano y consultar directamente» y dónde están sus límites, el autor y sus colaboradores utilizaron un benchmark específico[^ch2-7] (este enfoque tiene un nombre unificado: **destilación de contexto, Context Distillation**; la barra de estado del Agente es su forma más cotidiana). Conclusiones:
 
 - Al proporcionar al modelo una **barra de estado calculada de antemano**, **los modelos débiles recuperan precisión**. Los más débiles mejoran entre 40 y 54 puntos porcentuales, y un modelo local 2B llega incluso a igualar, en estas tareas, a un modelo de vanguardia sin barra de estado.
 - **Los modelos potentes ya responden correctamente; lo que ganan es eficiencia**. La misma barra de estado reduce aproximadamente un orden de magnitud el razonamiento, la latencia y el coste de cada consulta (recorta entre un 80 y un 90 % o más los tokens de pensamiento).
@@ -942,7 +950,7 @@ La decisión depende de la longitud de la trayectoria, el tamaño del estado, la
 
 Un modelo aproximado permite estimar el punto de equilibrio. Sea $S$ el número de tokens de cada estado, $R$ el número de tokens añadidos entre actualizaciones, $N$ el número previsto de actualizaciones y $\alpha$ el coste de la entrada en caché respecto a la entrada normal. Omitiendo los costes comunes a ambos métodos, $C_{\text{sustituir}} \approx (N-1)(1-\alpha)R$ y $C_{\text{añadir}} \approx \alpha S N(N-1)/2$. Por tanto, conviene la implementación dos cuando $\alpha SN/2 < (1-\alpha)R$; en caso contrario, conviene la implementación uno. Esta estimación no incluye la ocupación del contexto ni la ambigüedad causada por estados obsoletos, por lo que la decisión final también debe considerar las tarifas de caché del proveedor y la tasa de aciertos medida.
 
-> **Experimento 2-8 ★★: varias técnicas útiles para la barra de estado del Agente**
+> **Experimento 2-9 ★★: varias técnicas útiles para la barra de estado del Agente**
 >
 > El framework experimental `agent-status-bar` implementa cinco técnicas de barra de estado, cada una de las cuales puede activarse o desactivarse de forma independiente:
 >
@@ -1020,7 +1028,7 @@ La clave está en comprender el **momento y la posición** en que se produce la 
 
 ![Figura 2-16 Comparación de estrategias de compresión del contexto](images/fig2-16.svg)
 
-> **Experimento 2-9 ★★★: comparación de estrategias de compresión del contexto**
+> **Experimento 2-10 ★★★: comparación de estrategias de compresión del contexto**
 >
 > Diseñamos una tarea de investigación: identificar y seguir la situación profesional de los cofundadores de OpenAI. Esta tarea exige agregar información en varios pasos, los resultados de búsqueda presentan longitudes muy dispares —desde varios miles hasta más de cien mil caracteres— y existen criterios de éxito claros. Utilizando Kimi K3 —un modelo de razonamiento con un contexto nativo de aproximadamente un millón de tokens; en este experimento limitamos deliberadamente el presupuesto de contexto a una ventana de 128K para activar la compresión—, implementamos seis estrategias:
 >

@@ -290,14 +290,8 @@ La **tasa de éxito en la tarea** es la métrica directa más dura, pudiendo dis
 - **Pass^k**: La probabilidad de tener **éxito en la totalidad** de los k intentos, respondiendo a "¿es el Agente estable y confiable?".
 - **Best@k**: La mejor puntuación alcanzada entre k intentos (en lugar de si tuvo éxito o no), midiendo el "límite superior de calidad dadas suficientes oportunidades", usada con frecuencia en tareas abiertas con puntuación continua.
 
-Visualicemos la diferencia con cifras concretas: suponiendo que la tasa de éxito de un Agente en un solo intento sea del 60% (es decir, Pass@1 = 0,6), al realizar 5 ejecuciones las dos métricas resultan: Pass@5 = 1 - 0,4^5 ≈ 99% (casi seguro que tendrá éxito al menos una vez), mientras que Pass^5 = 0,6^5 ≈ 7,8% (la probabilidad de que todas tengan éxito es muy baja). La primera evalúa el techo de capacidad y la segunda evalúa la estabilidad; confundirlas conducirá a diagnósticos erróneos. La Tabla 6-3 sintetiza los escenarios de aplicación y riesgos de uso incorrecto de ambas métricas, orientando la elección entre pruebas de regresión y evaluaciones exploratorias.
+Visualicemos la diferencia con cifras concretas: suponiendo que la tasa de éxito de un Agente en un solo intento sea del 60% (es decir, Pass@1 = 0,6), al realizar 5 ejecuciones las dos métricas resultan: Pass@5 = 1 - 0,4^5 ≈ 99% (casi seguro que tendrá éxito al menos una vez), mientras que Pass^5 = 0,6^5 ≈ 7,8% (la probabilidad de que todas tengan éxito es muy baja). La primera evalúa el techo de capacidad y la segunda evalúa la estabilidad; confundirlas conducirá a diagnósticos erróneos.
 
-Tabla 6-3 Escenarios de Aplicación para Pass@k y Pass^k
-
-| Propósito de la evaluación | Métrica a utilizar | Consecuencia de un uso incorrecto |
-|-----------------------------|-----------------|--------------------------------------------------|
-| Verificar estabilidad (pruebas de regresión) | Pass^k | Usar Pass@k oculta la inestabilidad: el Agente muestra "aprobado" aun teniendo éxito solo una de cinco veces |
-| Evaluar techo de capacidad (tareas exploratorias) | Pass@k o Best@k | Usar Pass^k penaliza incorrectamente fluctuaciones ocasionales |
 
 Las **métricas de seguridad y cumplimiento** son vitales en el despliegue en producción: activar operaciones sensibles (eliminar datos / modificar permisos / enviar comunicaciones externas), fugas de datos (imprimir contraseñas en logs / enviar documentos privados a APIs externas) o contenidos inapropiados deben seguir un **principio de tolerancia cero**, aplicando la misma lógica que los ítems de veto en alucinaciones (véase más adelante "Los Cuatro Principios de la Rúbrica"): una sola violación grave de seguridad invalida la evaluación global, sin exención por un rendimiento excelente en otras dimensiones.
 
@@ -408,9 +402,9 @@ Al enviar la rúbrica junto con la respuesta real del Agente, el modelo evaluado
 >
 > **Aceptación**: Registrar la tasa de éxito, pasos promedio, número de llamadas a herramientas, latencia y costo a lo largo de tres niveles de complejidad (recuerdo básico, desambiguación multisesión y asociaciones ocultas entre conversaciones), explicando con claridad los límites de fallo de cada solución: qué perdió la estructura, qué omitió la recuperación y si el híbrido presenta una sinergia real. Consultar el repositorio adjunto para detalles de configuración y casos de prueba.
 
-El experimento asociado probó los tres sistemas con las mismas 60 preguntas y conservó 180 trayectorias de llamadas reales a la API. La tabla 6-4 muestra los resultados; junto al porcentaje global aparece también el número de aciertos para que el tamaño de la muestra quede a la vista.
+El experimento asociado probó los tres sistemas con las mismas 60 preguntas y conservó 180 trayectorias de llamadas reales a la API. La tabla 6-3 muestra los resultados; junto al porcentaje global aparece también el número de aciertos para que el tamaño de la muestra quede a la vista.
 
-Tabla 6-4. Tasa de éxito por nivel de los tres sistemas de memoria
+Tabla 6-3. Tasa de éxito por nivel de los tres sistemas de memoria
 
 | Sistema | Recuerdo básico | Desambiguación multisesión | Asociación oculta entre sesiones | Total |
 |---|---:|---:|---:|---:|
@@ -579,9 +573,9 @@ El **costo de llamada a herramientas** incluye tarifas de APIs externas (motores
 
 El **costo de infraestructura** abarca bases de datos vectoriales (para recuperación RAG), colas de mensajes, bases de datos relacionales y almacenamiento de logs y traces (para observabilidad).
 
-Para localizar el gasto real, el experimento asociado fijó un flujo de reembolso de ocho turnos: consultar pedido, envío, política y base de conocimiento; después ejecutar control de riesgo, reembolso, notificación y cierre. Con llamadas reales a gpt-4o-mini se activaron o desactivaron dos opciones —prefijo estable y compresión del historial— para formar un diseño 2×2. Las cuatro variantes completaron el mismo trabajo. Los importes de la tabla 6-5 se calcularon con el consumo guardado en cada ejecución y los precios vigentes entonces.
+Para localizar el gasto real, el experimento asociado fijó un flujo de reembolso de ocho turnos: consultar pedido, envío, política y base de conocimiento; después ejecutar control de riesgo, reembolso, notificación y cierre. Con llamadas reales a gpt-4o-mini se activaron o desactivaron dos opciones —prefijo estable y compresión del historial— para formar un diseño 2×2. Las cuatro variantes completaron el mismo trabajo. Los importes de la tabla 6-4 se calcularon con el consumo guardado en cada ejecución y los precios vigentes entonces.
 
-Tabla 6-5. Costo real de la tarea de ocho turnos
+Tabla 6-4. Costo real de la tarea de ocho turnos
 
 | Configuración | Tokens de entrada | Tokens en caché | Costo total | Ahorro frente al control |
 |---|---:|---:|---:|---:|
@@ -719,9 +713,9 @@ Las tres rondas mantuvieron constantes el modelo, los parámetros, la semilla, e
 
 ### De Resultados a Decisiones: Sopesado Impulsado por Datos
 
-La tabla 6-6 resume las mediciones. Con solo cuatro tareas por grupo, sirven para decidir si merece la pena ampliar el ensayo, no para inferir la tasa de éxito de AndroidWorld completo.
+La tabla 6-5 resume las mediciones. Con solo cuatro tareas por grupo, sirven para decidir si merece la pena ampliar el ensayo, no para inferir la tasa de éxito de AndroidWorld completo.
 
-Tabla 6-6. Tres rondas sobre el subconjunto Wi-Fi de AndroidWorld
+Tabla 6-5. Tres rondas sobre el subconjunto Wi-Fi de AndroidWorld
 
 | Experimento | Único cambio | Éxito control→tratamiento | Tokens tratamiento/control | Decisión |
 |---|---|---:|---:|---|

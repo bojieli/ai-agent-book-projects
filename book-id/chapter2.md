@@ -821,6 +821,14 @@ Dari perspektif pengelolaan context, mekanisme Skills sangat ramah terhadap KV C
 > **Kriteria Penerimaan**: PowerPoint yang dihasilkan mencakup konten utama paper (halaman judul, latar belakang masalah, tinjauan metode, hasil utama, kesimpulan), menyertakan setidaknya 3 gambar yang diekstrak dari paper yang konsisten dengan deskripsi teks, dan memiliki format yang benar yang terbuka dengan baik di PowerPoint atau perangkat lunak yang kompatibel.
 >
 
+> **Eksperimen 2-7 ★★: Membuat Skill Menulis "Bebas Rasa AI" dari Contoh Tulisan Pribadi**
+>
+> **Tujuan Eksperimen**: menghasilkan sebuah Skill menulis yang dapat dimuat dan diperiksa dari sedikit contoh tulisan manusia, lalu mengamati apakah Skill itu mampu mereproduksi preferensi ekspresi utama penulis pada artikel baru.
+>
+> **Deskripsi Eksperimen**: siapkan tiga sampai lima artikel orisinal, lalu biarkan runtime yang mendukung Agent Skills menghasilkan `SKILL.md` versi pertama; pilih topik baru dan susun draf artikel, setelah penulis menyuntingnya secara manual, bandingkan sebelum/sesudah dan tuliskan kembali pola yang stabil ke dalam Skill. Kriteria penerimaan hanya menuntut Skill memiliki kondisi pemicu yang jelas, tiga sampai lima prinsip beserta contoh, cakupan, dan pengecualian — tanpa menjadikan satu penilaian subjektif sebagai aturan umum.
+>
+> **Apa yang Ditunjukkan Eksperimen Ini**: nilai sebuah Skill terletak pada mengeksternalkan pengalaman pribadi menjadi instruksi yang dimuat sesuai kebutuhan. Versi pertama yang singkat, mudah dibaca, dan lolos uji tugas nyata adalah titik awal iterasi yang lebih baik daripada mendaftar puluhan aturan sejak awal.
+
 ## Agent Status Bar: Mengelola Trajectories dengan Informasi Meta
 
 ![Gambar 2-14: Arsitektur Agent Status Bar](images/fig2-14.svg)
@@ -852,7 +860,7 @@ Dalam skenario context yang panjang, sumber daya atensi model itu terbatas. Seir
 
 Agent Status Bar memecahkan masalah ini dengan sengaja menempatkan informasi meta kunci dalam format terstruktur di bagian akhir context. Karena informasi ini dekat dengan token yang akan segera dihasilkan model, ia lebih mungkin untuk menerima atensi. Ini adalah bentuk pengendalian atensi (attention steering) melalui penempatan.
 
-> **Eksperimen 2-7 ★★: Memverifikasi Efek Agent Status Bar via Visualisasi Atensi (Attention Visualization)**
+> **Eksperimen 2-8 ★★: Memverifikasi Efek Agent Status Bar via Visualisasi Atensi (Attention Visualization)**
 >
 > Berdasarkan proyek `attention_visualization`, kami merancang eksperimen terkontrol di mana Agent customer service menangani permintaan pengembalian dana. Agent tersebut telah menelepon Xfinity sebanyak 3 kali, diselingi dengan pencarian web. Pengguna bertanya: "Bisakah kamu menelepon mereka lagi untuk menindaklanjutinya?"
 >
@@ -871,7 +879,7 @@ Agent Status Bar memecahkan masalah ini dengan sengaja menempatkan informasi met
 > Atensi sangat terkonsentrasi pada informasi status bar. Proses penalaran secara langsung menggunakan informasi yang sudah disuling, tidak lagi menghitung statistik dari data mentah. Untuk model kecil seperti Qwen3-0.6B, Kelompok Kontrol A sering kali melanggar batasan dan terus menelepon, sementara Kelompok Kontrol B secara konsisten mematuhi batasan tersebut.
 >
 
-Eksperimen 2-7 adalah demonstrasi kualitatif kecil yang memberi intuisi. Untuk mengukur seberapa berguna pendekatan “hitung lebih dahulu, lalu lihat langsung” ini dan di mana batasnya, penulis dan kolaborator memakai benchmark khusus[^ch2-7] (pendekatan ini bernama **Context Distillation**; Agent Status Bar adalah bentuknya yang paling umum). Kesimpulan:
+Eksperimen 2-8 adalah demonstrasi kualitatif kecil yang memberi intuisi. Untuk mengukur seberapa berguna pendekatan “hitung lebih dahulu, lalu lihat langsung” ini dan di mana batasnya, penulis dan kolaborator memakai benchmark khusus[^ch2-7] (pendekatan ini bernama **Context Distillation**; Agent Status Bar adalah bentuknya yang paling umum). Kesimpulan:
 
 - Dengan **status bar yang telah dihitung**, **model yang lemah memulihkan akurasinya**. Model-model terlemah meningkat 40 hingga 54 poin persentase, dan pada tugas ini model lokal 2B bahkan menyamai model frontier tanpa status bar.
 - **Model kuat sudah menjawab dengan benar; yang dihemat adalah efisiensi.** Status bar yang sama menurunkan penalaran, latensi, dan biaya per kueri kira-kira satu orde besaran (memangkas 80–90% atau lebih token penalaran).
@@ -945,7 +953,7 @@ Pilihan bergantung pada panjang trajectory, ukuran status, panjang akhiran yang 
 
 Model perkiraan dapat menunjukkan titik impas. Misalkan setiap status berisi $S$ token, sebanyak $R$ token ditambahkan di antara pembaruan, jumlah pembaruan yang diperkirakan adalah $N$, dan biaya input cache adalah $\alpha$ kali biaya input biasa. Dengan mengabaikan biaya yang sama pada kedua pendekatan, $C_{\text{ganti}} \approx (N-1)(1-\alpha)R$ dan $C_{\text{tambah}} \approx \alpha S N(N-1)/2$. Jadi, pilih Implementasi 2 ketika $\alpha SN/2 < (1-\alpha)R$; jika tidak, pilih Implementasi 1. Perkiraan ini tidak mencakup penggunaan context dan ambiguitas akibat status usang, sehingga pilihan akhir juga harus mempertimbangkan tarif cache penyedia dan tingkat hit yang terukur.
 
-> **Eksperimen 2-8 ★★: Beberapa Teknik Agent Status Bar yang Berguna**
+> **Eksperimen 2-9 ★★: Beberapa Teknik Agent Status Bar yang Berguna**
 >
 > Kerangka kerja eksperimental `agent-status-bar` mengimplementasikan lima teknik status bar, yang masing-masing dapat diaktifkan atau dinonaktifkan secara independen:
 >
@@ -1023,7 +1031,7 @@ Kuncinya adalah memahami **waktu dan lokasi** kompresi. Kompresi tidak memodifik
 
 ![Gambar 2-16: Perbandingan Strategi Kompresi Context](images/fig2-16.svg)
 
-> **Eksperimen 2-9 ★★★: Perbandingan Strategi Kompresi Context**
+> **Eksperimen 2-10 ★★★: Perbandingan Strategi Kompresi Context**
 >
 > Kami merancang tugas riset untuk mengidentifikasi dan melacak status pekerjaan para pendiri OpenAI. Tugas ini memerlukan agregasi informasi multi-langkah, panjang hasil pencariannya sangat bervariasi (dari beberapa ribu hingga lebih dari seratus ribu karakter), dan kriteria keberhasilannya jelas. Dengan Kimi K3—model penalaran yang memiliki context native sekitar satu juta token, tetapi sengaja dibatasi pada 128K token dalam eksperimen ini—kami menerapkan enam strategi:
 >

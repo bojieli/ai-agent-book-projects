@@ -291,14 +291,8 @@ Chỉ tập trung vào kết quả cuối cùng là chưa đủ, Agent quá trì
 - **Đạt^k**: Xác suất **tất cả thành công** trong k lần thử, trả lời "Agent có ổn định và đáng tin cậy không?"
 - **Best@k**: Điểm **tốt nhất** trong k lần thử (không tính thành công), đo "giới hạn chất lượng sau khi tạo đủ cơ hội", chủ yếu dùng cho các nhiệm vụ mở có tính điểm liên tục
 
-Dùng một con số cụ thể để cảm nhận sự khác biệt: Giả sử tỷ lệ thành công duy nhất của Agent là 60% (tức là Pass@1 = 0,6) thì 2 chỉ số cho việc chạy 5 lần là: Pass@5 = 1 - 0,4^5 ≈ 99% (gần như chắc chắn thành công ít nhất một lần), Pass^5 = 0,6^5 ≈ 7,8% (xác suất tất cả thành công là rất thấp). Cái trước đánh giá giới hạn trên của khả năng, cái sau đánh giá sự ổn định. Trộn chúng sẽ dẫn đến đánh giá sai. Bảng 6-3 tóm tắt các kịch bản có thể áp dụng và rủi ro sử dụng sai mục đích của cả hai, giúp người đọc lựa chọn các chỉ số chính xác giữa kiểm tra hồi quy và đánh giá thăm dò.
+Dùng một con số cụ thể để cảm nhận sự khác biệt: Giả sử tỷ lệ thành công duy nhất của Agent là 60% (tức là Pass@1 = 0,6) thì 2 chỉ số cho việc chạy 5 lần là: Pass@5 = 1 - 0,4^5 ≈ 99% (gần như chắc chắn thành công ít nhất một lần), Pass^5 = 0,6^5 ≈ 7,8% (xác suất tất cả thành công là rất thấp). Cái trước đánh giá giới hạn trên của khả năng, cái sau đánh giá sự ổn định. Trộn chúng sẽ dẫn đến đánh giá sai.
 
-Bảng 6-3 Các kịch bản áp dụng của Pass@k và Pass^k
-
-| Mục đích đánh giá | Sử dụng những chỉ số nào | Hậu quả của việc sử dụng sai |
-|---|---|---|
-| Xác minh tính ổn định (kiểm tra hồi quy) | Đạt^k | Sử dụng Pass@k sẽ che đậy sự bất ổn - Agent chỉ thành công một trong năm lần và hiển thị "đã vượt qua" |
-| Đánh giá trần năng lực (nhiệm vụ thăm dò) | Pass@k hoặc Best@k | Việc sử dụng Pass^k sẽ dẫn đến kết quả dương tính giả do thỉnh thoảng có biến động - mọi thay đổi nhỏ sẽ bị coi là thất bại |
 
 **Chỉ số bảo mật và tuân thủ** rất quan trọng trong quá trình triển khai sản xuất: kích hoạt các hoạt động nhạy cảm (xóa dữ liệu/sửa đổi quyền/gửi thông tin liên lạc bên ngoài), rò rỉ dữ liệu (in mật khẩu trong nhật ký/gửi tài liệu riêng tư ra bên ngoài API) và nội dung bất hợp pháp đều phải tuân theo **nguyên tắc không khoan nhượng** - giống như mục từ chối ảo giác (xem "Bốn tiêu chí của Rubric" bên dưới). Một vi phạm bảo mật nghiêm trọng sẽ phủ quyết việc đánh giá tổng thể và sẽ không được miễn trừ do có thành tích xuất sắc ở các khía cạnh khác.
 
@@ -410,9 +404,9 @@ return aggregate_with_confidence(rubric_result)
 > **Chấp nhận**: Ghi lại tỷ lệ thành công, số bước trung bình, số lần gọi công cụ, độ trễ và chi phí ở ba mức độ phức tạp (thu hồi cơ bản / phân biệt nhiều phiên / liên kết ẩn giữa các phiên) và làm rõ ranh giới lỗi của từng giải pháp - điều gì bị mất trong cấu trúc, điều gì bị bỏ sót khi truy xuất và liệu có sự phối hợp thực sự trong quá trình trộn hay không. Xem kho lưu trữ hỗ trợ để biết chi tiết cấu hình và trường hợp thử nghiệm.
 >
 
-Thử nghiệm đi kèm dùng cùng 60 câu hỏi cho ba hệ thống và lưu lại 180 trajectory gọi API thực. Bảng 6-4 ghi cả số câu thành công bên cạnh tỷ lệ tổng thể để kích thước mẫu không bị che khuất.
+Thử nghiệm đi kèm dùng cùng 60 câu hỏi cho ba hệ thống và lưu lại 180 trajectory gọi API thực. Bảng 6-3 ghi cả số câu thành công bên cạnh tỷ lệ tổng thể để kích thước mẫu không bị che khuất.
 
-Bảng 6-4 Tỷ lệ thành công theo độ khó của ba hệ thống bộ nhớ
+Bảng 6-3 Tỷ lệ thành công theo độ khó của ba hệ thống bộ nhớ
 
 | Hệ thống | Nhớ lại cơ bản | Phân giải nhiều phiên | Liên hệ ẩn giữa các phiên | Tổng thể |
 |---|---:|---:|---:|---:|
@@ -583,9 +577,9 @@ Chi phí của hệ thống Agent có thể được chia thành ba cấp độ:
 
 **Chi phí cơ sở hạ tầng** bao gồm chi phí vận hành như cơ sở dữ liệu vectơ (để truy xuất RAG), hàng đợi tin nhắn, cơ sở dữ liệu quan hệ, lưu trữ nhật ký và theo dõi (để có thể quan sát).
 
-Để thấy chi phí thực sự phát sinh ở đâu, thí nghiệm đi kèm sử dụng một quy trình hoàn tiền cố định gồm tám lượt: tra cứu đơn hàng, vận chuyển, chính sách hoàn tiền và kho tri thức, sau đó kiểm tra rủi ro, hoàn tiền, thông báo cho khách và đóng vụ việc. Các lệnh gọi gpt-4o-mini thực được chạy với bốn tổ hợp của hai công tắc: tiền tố ổn định hoặc không ổn định, lịch sử đầy đủ hoặc đã nén. Nghiệp vụ ở bốn nhóm hoàn toàn giống nhau; chi phí trong Bảng 6-5 được tính từ lượng token và bảng giá lưu cùng lần chạy.
+Để thấy chi phí thực sự phát sinh ở đâu, thí nghiệm đi kèm sử dụng một quy trình hoàn tiền cố định gồm tám lượt: tra cứu đơn hàng, vận chuyển, chính sách hoàn tiền và kho tri thức, sau đó kiểm tra rủi ro, hoàn tiền, thông báo cho khách và đóng vụ việc. Các lệnh gọi gpt-4o-mini thực được chạy với bốn tổ hợp của hai công tắc: tiền tố ổn định hoặc không ổn định, lịch sử đầy đủ hoặc đã nén. Nghiệp vụ ở bốn nhóm hoàn toàn giống nhau; chi phí trong Bảng 6-4 được tính từ lượng token và bảng giá lưu cùng lần chạy.
 
-Bảng 6-5 Chi phí đo được của quy trình Agent tám lượt
+Bảng 6-4 Chi phí đo được của quy trình Agent tám lượt
 
 | Cấu hình | Token đầu vào | Token được cache | Tổng chi phí | Tiết kiệm so với đường cơ sở |
 |---|---:|---:|---:|---:|
@@ -726,9 +720,9 @@ Trong cả ba vòng, mô hình, tham số nhiệm vụ, seed, giới hạn bư�
 
 ### Từ kết quả đến quyết định: Sự đánh đổi dựa trên dữ liệu
 
-Bảng 6-6 tóm tắt số đo thực tế. Mỗi nhánh chỉ có bốn nhiệm vụ, nên các số này đủ để quyết định có đáng chạy rộng hơn hay không, chứ chưa thể đại diện cho toàn bộ AndroidWorld.
+Bảng 6-5 tóm tắt số đo thực tế. Mỗi nhánh chỉ có bốn nhiệm vụ, nên các số này đủ để quyết định có đáng chạy rộng hơn hay không, chứ chưa thể đại diện cho toàn bộ AndroidWorld.
 
-Bảng 6-6 Ba vòng thử nghiệm trên nhóm nhiệm vụ Wi-Fi của AndroidWorld
+Bảng 6-5 Ba vòng thử nghiệm trên nhóm nhiệm vụ Wi-Fi của AndroidWorld
 
 | Thử nghiệm | Biến duy nhất thay đổi | Thành công đối chứng → thử nghiệm | Token thử nghiệm / đối chứng | Quyết định kế tiếp |
 |---|---|---:|---:|---|

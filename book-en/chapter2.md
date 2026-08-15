@@ -821,6 +821,14 @@ From a context-management perspective, the Skills mechanism is highly KV Cache-f
 > **Acceptance Criteria**: The generated PowerPoint covers the paper's main content (title page, problem background, method overview, key results, conclusion), includes at least 3 figures extracted from the paper that are consistent with the text descriptions, and has correct formatting that opens properly in PowerPoint or compatible software.
 >
 
+> **Experiment 2-7 ★★: Creating a "De-AI-ified" Writing Skill from Personal Samples**
+>
+> **Experiment Goal**: Generate a loadable, inspectable writing Skill from a small set of human-written samples, and observe whether it can reproduce the author's main stylistic preferences in new articles.
+>
+> **Experiment Description**: Prepare three to five original articles and let a runtime that supports Agent Skills generate a first-draft `SKILL.md`. Pick a new topic and draft an article; after the author edits it by hand, compare before/after and write the stable patterns back into the Skill. Acceptance only requires that the Skill have clear trigger conditions, three to five principles with examples, a scope, and exceptions — without treating a single subjective judgment as a universal rule.
+>
+> **What This Experiment Shows**: The value of a Skill lies in externalizing personal experience into instructions that load on demand. A short, readable first draft that survives a real task is a better starting point for later iteration than listing dozens of rules up front.
+
 ## Agent Status Bar: Managing Trajectories with Meta-Information
 
 ![Figure 2-14: Agent Status Bar Architecture](images/fig2-14.svg)
@@ -851,7 +859,7 @@ In long-context scenarios, the model's attention resources are limited. As conte
 
 The Agent Status Bar addresses this problem by deliberately placing key meta-information in a structured format at the end of the context. Because this information is close to the tokens the model is about to generate, it is more likely to receive attention. This is a form of attention steering through placement.
 
-> **Experiment 2-7 ★★: Verifying the Effect of the Agent Status Bar via Attention Visualization**
+> **Experiment 2-8 ★★: Verifying the Effect of the Agent Status Bar via Attention Visualization**
 >
 > Based on the `attention_visualization` project, we designed a controlled experiment where a customer service Agent handles a refund request. The Agent has already called Xfinity 3 times, interspersed with web searches. The user asks: "Can you call them again to follow up?"
 >
@@ -870,7 +878,7 @@ The Agent Status Bar addresses this problem by deliberately placing key meta-inf
 > Attention is highly concentrated on the status bar information. The reasoning process directly uses the already distilled information, no longer computing statistics from the raw data. For a small model like Qwen3-0.6B, Control Group A frequently violates the constraint and continues calling, while Control Group B consistently adheres to the constraint.
 >
 
-Experiment 2-7 is a small qualitative demonstration that provides intuition. To quantify the value and limits of this "precompute and access directly" approach, the author and collaborators evaluated it with a dedicated benchmark[^ch2-7]. This approach has a general name: **Context Distillation**. The Agent Status Bar is its most common form. The results:
+Experiment 2-8 is a small qualitative demonstration that provides intuition. To quantify the value and limits of this "precompute and access directly" approach, the author and collaborators evaluated it with a dedicated benchmark[^ch2-7]. This approach has a general name: **Context Distillation**. The Agent Status Bar is its most common form. The results:
 
 - **For weak models, a precomputed status bar recovers accuracy.** The weakest models saw accuracy gains of 40 to 54 percentage points, and on these tasks a local 2B model even matched a frontier model that had no status bar.
 - **For strong models that already answer correctly, it improves efficiency.** The same status bar reduces the reasoning effort, latency, and cost per query by roughly an order of magnitude (reasoning tokens are cut by 80–90% or more).
@@ -945,7 +953,7 @@ The choice depends on trajectory length, status size, the suffix added between u
 
 A rough model gives the break-even point. Let each status contain $S$ tokens, let $R$ tokens be added between updates, let $N$ be the expected number of updates, and let cached input cost $\alpha$ times regular input. Ignoring costs shared by both approaches, $C_{\text{replace}} \approx (N-1)(1-\alpha)R$ and $C_{\text{append}} \approx \alpha S N(N-1)/2$. Thus, prefer Implementation 2 when $\alpha SN/2 < (1-\alpha)R$; otherwise prefer Implementation 1. This estimate excludes context occupancy and ambiguity from stale states, so the final choice should also reflect the provider's cache pricing and measured hit rate.
 
-> **Experiment 2-8 ★★: Several Useful Agent Status Bar Techniques**
+> **Experiment 2-9 ★★: Several Useful Agent Status Bar Techniques**
 >
 > The `agent-status-bar` experimental framework implements five status bar techniques, each of which can be independently enabled or disabled:
 >
@@ -1021,7 +1029,7 @@ The key is understanding the **timing and location** of compression. Compression
 
 ![Figure 2-16: Comparison of Context Compression Strategies](images/fig2-16.svg)
 
-> **Experiment 2-9 ★★★: Comparison of Context Compression Strategies**
+> **Experiment 2-10 ★★★: Comparison of Context Compression Strategies**
 >
 > We designed a research task: identify and track the employment status of OpenAI co-founders. This task requires multi-step information aggregation, the length of search results varies greatly (from a few thousand to over a hundred thousand characters), and there are clear success criteria. Using Kimi K3 (a reasoning model with a native context of about 1 million tokens; this experiment deliberately limited the context budget to a 128K window to trigger compression), we implemented six strategies:
 >

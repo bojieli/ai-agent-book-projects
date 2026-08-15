@@ -177,6 +177,12 @@ Untuk memahami gambar, video, audio, dan PDF, Agent memerlukan persepsi multimod
 
 Pemrosesan asli memiliki batas kemampuan tertinggi; encoder seperti Vision Transformer memetakan berbagai data ke ruang semantik bersama. Ekstraksi teks cocok untuk model tanpa dukungan asli dan biasanya lebih hemat token pada PDF yang didominasi teks, tetapi kehilangan tata letak, bagan, dan gambar. Jika model utama tidak multimodal, tool seperti `analyze_image`, `analyze_pdf`, dan `analyze_audio` dapat meneruskan berkas serta pertanyaan ke model khusus dan mengembalikan ringkasan singkat, sehingga konteks tetap kecil.
 
+> **Eksperimen 4-2 ★★: Ekstraksi Informasi Multimodal — Analisis Perbandingan Tiga Paradigma Teknis**
+>
+> Proyek `multimodal-agent` membandingkan dan mengevaluasi tiga strategi secara sistematis dalam satu kerangka terpadu. Melalui `demo.py`, berkas multimodal yang sama (misalnya laporan PDF berisi diagram) dan pertanyaan yang sama diserahkan kepada ketiga mode secara terpisah untuk mengamati perbedaan kinerjanya.
+>
+> Hasil eksperimen memperlihatkan dengan jelas trade-off di antara ketiganya: **mode multimodal native**, berkat pemahaman mendalam atas informasi visual dan spasial, tampil paling baik pada tugas seperti menganalisis diagram dan memahami tata letak dokumen. **Mode ekstraksi ke teks** paling hemat biaya ketika dokumen didominasi teks murni, tetapi sama sekali tidak mampu menangani kueri yang membutuhkan informasi visual. **Mode tool** menunjukkan fleksibilitas dalam skenario interaktif: sebagian besar kueri awal dapat ditangani dengan biaya rendah dan analisis mendalam berbiaya tinggi baru dipanggil lewat tool ketika diperlukan, namun kinerjanya kalah dari mode native pada skenario yang menuntut pemahaman mendalam end-to-end dalam sekali jalan.
+
 ## Tool Eksekusi
 
 Revisi ini juga membedakan isolasi tingkat proses untuk Agent berisiko rendah, container atau microVM untuk input tak tepercaya, serta kuota sumber daya di setiap tingkat. Sidecar ringan memeriksa bidang terstruktur setiap panggilan sebagai gerbang keamanan; setelah penolakan berulang, gunakan pemutus sirkuit dan minta keputusan pengguna. Operasi yang tidak idempoten memakai alur “pra-pemeriksaan lalu konfirmasi”.
@@ -298,7 +304,7 @@ Pendekatan inti untuk menangani hal ini adalah **idempotensi**: mengeksekusi ope
 
 Namun tidak semua operasi dapat dibuat idempoten. Operasi seperti **mengirim email, menelepon, atau mentransfer uang** masing-masing menghasilkan peristiwa dunia nyata yang ireversibel setiap kali dieksekusi. Selain itu, server sering kali berada di luar kendali Anda, sehingga mustahil untuk mendeduplikasi menggunakan pengidentifikasi unik. Untuk operasi non-idempoten semacam itu, pendekatan **dua fase "pemeriksaan awal kemudian konfirmasi"** harus digunakan: fase pertama hanya melakukan validasi dan uji coba atau *dry run* (memeriksa saldo, mengonfirmasi penerima, membuat konten yang akan dikirim), mengembalikan hasil beserta token konfirmasi; fase kedua menggunakan token tersebut untuk benar-benar mengeksekusi, dan jika eksekusi gagal, ia tidak boleh mencoba mengulang secara membabi buta pada fase yang sama, melainkan harus menyerahkan kendali kembali ke lapisan atas untuk mengulang pemeriksaan awal. Hal ini sejalan dengan *pre-approval* Proposer-Reviewer yang dibahas sebelumnya, dan dengan pemisahan "memulai/menyelesaikan" dari antarmuka *tool* asinkron yang akan dibahas nanti.
 
-> **Eksperimen 4-2 ★★: Execution Tool MCP Server**
+> **Eksperimen 4-3 ★★: Execution Tool MCP Server**
 >
 > Eksperimen ini membangun serangkaian *execution tool*, berfokus pada aplikasi praktis dari mekanisme keamanan. *Tool* ini mencakup kategori berikut:
 >
@@ -343,7 +349,7 @@ Meskipun AI Agent menjadi semakin kuat, intervensi manusia tetap diperlukan pada
 
 **Membangun Loop Umpan Balik.** HITL tidak boleh menjadi interaksi sekali jalan, melainkan harus membentuk loop pembelajaran. Persetujuan, penolakan dari manusia, beserta alasannya, pertama-tama merupakan data umpan balik berbasis bukti: prinsip penilaian yang dapat digeneralisasi bisa dimasukkan ke dalam pengetahuan berbasis pengalaman atau sebuah Skill, sementara preferensi yang bersifat implisit dan berdimensi tinggi dapat membentuk data pasca-pelatihan. Bab 8 membahas bagaimana mengevaluasi trajektori tersebut dan memilih pembawa pembaruan. Metode apa pun yang digunakan, satu penilaian manusia tidak boleh langsung digeneralisasi menjadi aturan universal tanpa sintesis sebelumnya.
 
-> **Eksperimen 4-3 ★★: Server MCP Alat Kolaborasi**
+> **Eksperimen 4-4 ★★: Server MCP Alat Kolaborasi**
 >
 > Eksperimen ini membangun serangkaian alat kolaborasi yang lengkap, mencakup manajemen sub-agent, bantuan manusia, dan notifikasi multi-saluran.
 >
@@ -513,10 +519,10 @@ while runtime.is_alive:
     dispatch(decision)
 ```
 
-> **Eksperimen 4-4 ★★★: Event-Driven Email Processing Agent**
+> **Eksperimen 4-5 ★★★: Event-Driven Email Processing Agent**
 >
 >
-> ![Gambar 4-4: Arsitektur Event-Driven Agent pada Eksperimen 4-4](images/fig4-4.svg)
+> ![Gambar 4-4: Arsitektur Event-Driven Agent pada Eksperimen 4-5](images/fig4-4.svg)
 >
 >
 > Eksperimen ini membangun event-driven Agent yang paling sederhana: sebuah **Automated Email Processing Assistant** (Asisten Pemrosesan Email Otomatis). Agent memantau kotak masuk (inbox) email, dan setiap kali email baru tiba, ia secara otomatis memicu processing workflow—klasifikasi, peringkasan, draf balasan, dan memberi tahu pengguna jika perlu. Ini adalah skenario pengantar paling intuitif untuk sebuah event-driven Agent: eksternal event (kedatangan email baru) memicu siklus berpikir (thinking cycle) Agent yang utuh.
@@ -538,11 +544,11 @@ while runtime.is_alive:
 >
 > **Skenario Validasi**: Konfigurasikan Agent untuk memantau kotak surat pengujian (test mailbox). Simulasikan menerima tiga email—undangan rapat, keluhan pelanggan, dan iklan pemasaran. Agent memprosesnya secara berurutan: untuk undangan rapat, Agent secara otomatis memeriksa konflik kalender dan membuat draf balasan terima/tolak; untuk keluhan pelanggan, Agent mengekstrak informasi penting, menandainya sebagai prioritas tinggi, dan memberi tahu pengguna untuk menanganinya; untuk iklan pemasaran, Agent secara otomatis mengarsipkannya. Seluruh proses tidak memerlukan campur tangan pengguna.
 
-Eksperimen 4-4 mendemonstrasikan pola event-driven paling sederhana—event masuk ke antrean, dan Agent memprosesnya secara berurutan. Akan tetapi, ketika Agent perlu merespons terhadap interupsi selama pengeksekusian tool yang berjalan lama (long-running tool executions), atau mengelola banyak task konkuren secara bersamaan, event queue yang sederhana tidaklah cukup. Selanjutnya, kita akan membahas tantangan engineering yang lebih dalam.
+Eksperimen 4-5 mendemonstrasikan pola event-driven paling sederhana—event masuk ke antrean, dan Agent memprosesnya secara berurutan. Akan tetapi, ketika Agent perlu merespons terhadap interupsi selama pengeksekusian tool yang berjalan lama (long-running tool executions), atau mengelola banyak task konkuren secara bersamaan, event queue yang sederhana tidaklah cukup. Selanjutnya, kita akan membahas tantangan engineering yang lebih dalam.
 
 ### Implementasi Rekayasa: Membuat Model Sinkron Mendukung Interupsi Asinkron
 
-Eksperimen 4-4 hanya menangani event-event secara serial—event masuk ke antrean satu per satu, dan Agent memprosesnya satu per satu. Sekarang, mari kita kembali pada kontradiksi "synchronous training / asynchronous deployment" yang dikemukakan pada awal bagian ini: ketika pengguna menginterupsi padahal tool belum mengembalikan hasil, bagaimana synchronous format dapat mengakomodasinya? Bagian ini memaparkan solusi teknis (engineering workarounds) yang digunakan oleh industri saat ini.
+Eksperimen 4-5 hanya menangani event-event secara serial—event masuk ke antrean satu per satu, dan Agent memprosesnya satu per satu. Sekarang, mari kita kembali pada kontradiksi "synchronous training / asynchronous deployment" yang dikemukakan pada awal bagian ini: ketika pengguna menginterupsi padahal tool belum mengembalikan hasil, bagaimana synchronous format dapat mengakomodasinya? Bagian ini memaparkan solusi teknis (engineering workarounds) yang digunakan oleh industri saat ini.
 
 Mari kita ilustrasikan kontradiksi ini terlebih dahulu dengan skenario spesifik. Misalkan Agent sedang membantu pengguna menyusun draf email (pemanggilan tool: mencari informasi kontak). Sebelum pencarian mengembalikan hasil, pengguna tiba-tiba berkata, "Tunggu, periksakan cuaca besok untuk saya terlebih dahulu." Dalam loop ReAct yang sinkron (synchronous ReAct loop), Agent harus menunggu pencarian tersebut memberikan hasil sebelum memproses pesan berikutnya—karena API mengharuskan "setelah mengeluarkan tool call, pesan berikutnya haruslah tool result." Namun di dunia nyata yang bersifat asynchronous, event-event dapat menginterupsi task yang sedang berlangsung kapan saja. Mengekspresikan semantik "asynchronous interruption" di bawah batasan "synchronous format" inilah yang menjadi masalah persis dari solusi engineering ini untuk diselesaikan.
 
@@ -626,13 +632,13 @@ Namun paruh yang lebih kritis dari penelitian ini berkaitan dengan **pelatihan (
 
 [^ch4-async-1]: Klaim bahwa sekitar dua ratus baris orkestrasi dapat mengubah model pemikiran yang sudah ada di pasaran menjadi Agent waktu kontinu, dan bahwa "sinyal pelatihan menentukan apakah pemikiran berkesinambungan berguna," berasal dari Li, Bojie dan Noah Shi. *Never Stop Thinking: Continuous-Time Language Agents.* 2026 (akan terbit).
 
-> **Eksperimen 4-5 ★★★: Agent Asinkron dengan Eksekusi Paralel dan Kemampuan Interupsi**
+> **Eksperimen 4-6 ★★★: Agent Asinkron dengan Eksekusi Paralel dan Kemampuan Interupsi**
 >
 >
-> ![Gambar 4-6: Interupsi dan Pemulihan Agent Asinkron Eksperimen 4-5](images/fig4-6.svg)
+> ![Gambar 4-6: Interupsi dan Pemulihan Agent Asinkron Eksperimen 4-6](images/fig4-6.svg)
 >
 >
-> Dibangun di atas antrean event sederhana dari Eksperimen 4-4, eksperimen ini bergerak ke bagian-bagian yang sulit dari Agent asinkron: **eksekusi tool paralel, pembatalan eksekusi, dan manajemen status (state management)**. Agent tidak lagi hanya memproses event satu per satu; ia perlu mengelola beberapa tugas secara bersamaan, menangani interupsi dan pemulihan, dan membuat keputusan dinamis berdasarkan status real-time.
+> Dibangun di atas antrean event sederhana dari Eksperimen 4-5, eksperimen ini bergerak ke bagian-bagian yang sulit dari Agent asinkron: **eksekusi tool paralel, pembatalan eksekusi, dan manajemen status (state management)**. Agent tidak lagi hanya memproses event satu per satu; ia perlu mengelola beberapa tugas secara bersamaan, menangani interupsi dan pemulihan, dan membuat keputusan dinamis berdasarkan status real-time.
 >
 > **1. Eksekusi Tool Asinkron**: Mendukung eksekusi asinkron dari tool yang memakan waktu (setidaknya 3-5 detik), segera mengembalikan placeholder setelah inisiasi. **Skenario Validasi**: Agent mengeksekusi perintah terminal yang berjalan lama. Selama waktu ini, pengguna bertanya, "Jam berapa sekarang?" Agent segera merespons, lalu menyajikan hasil analisis ketika perintah yang berjalan lama selesai.
 >
@@ -687,7 +693,7 @@ Gambar 4-9 menunjukkan gambaran lengkap setelah beberapa putaran penemuan dinami
 
 Jelas, seluruh mekanisme deklarasi-pencocokan-injeksi ini berfungsi, tetapi membutuhkan rekayasa yang substansial: indeks *embedding* yang harus dipelihara secara *offline*, pembatalan KV Cache untuk dikelola, dan pelatihan khusus untuk model yang lebih lemah. Premis bersama di balik semua ini adalah memperlakukan setiap tool sebagai **definisi formal yang ditujukan kepada model**—didaftarkan, diambil, diinjeksi. Mekanisme Skills di bagian berikutnya membuang premis tersebut untuk sesuatu yang lebih ringan.
 
-> **Eksperimen 4-6 ★★★: Penemuan Tool Proaktif**
+> **Eksperimen 4-7 ★★★: Penemuan Tool Proaktif**
 >
 > Melalui perbandingan terkontrol, eksperimen ini memvalidasi nilai signifikan dari penemuan tool proaktif untuk model-model kecil. Gunakan model Qwen3-4B untuk mengakses 120+ tool dari server MCP yang dibangun dalam eksperimen Tool Persepsi di atas.
 >
@@ -732,7 +738,7 @@ Lima kategori tool masing-masing memiliki penekanan desain yang berbeda:
 
 Di sisi asinkron, mekanisme otomatisasi bawaan OpenClaw (Hooks, Cron, Heartbeat) membiarkan Agent bertindak secara otonom pada suatu jadwal, tetapi tidak memberikan jalur masuk (*ingress*) langsung untuk sumber kejadian (*event*) pihak ketiga di luar saluran bawaan, seperti email dan *callback* API. Mekanisme Channel dari PineClaw mengisi celah tersebut, menandai evolusi dari digerakkan oleh waktu (*time-driven*) menjadi digerakkan oleh kejadian (*event-driven*). Tiga strategi—berbasis pembatalan (*cancellation-based*), antrean (*queued*), dan pemrosesan paralel—memungkinkan Agent menangani kejadian dengan prioritas berbeda. Namun, arsitektur ini berada dalam kontradiksi mendalam dengan paradigma pelatihan sinkron dari model besar (*large models*) saat ini; untuk saat ini, solusi rekayasa seperti *placeholder* asinkron hanya dapat memitigasinya. Perbaikan fundamental menunggu model generasi berikutnya yang menginternalisasi latensi, interupsi, dan konkurensi melalui *reinforcement learning* di lingkungan asinkron (dalam semangat model VLA yang dibahas pada Bab 9).
 
-Enam eksperimen berkembang dari dasar hingga arsitektur: Eksperimen 4-1 hingga 4-3 membangun tiga set tool dasar—Persepsi, Eksekusi, dan Kolaborasi; Eksperimen 4-4 memperkenalkan pemrosesan berbasis kejadian (*event-driven*) dengan Agent penanganan email; Eksperimen 4-5 mengimplementasikan eksekusi paralel, pemulihan interupsi, dan manajemen status (*state management*); dan Eksperimen 4-6 memvalidasi nilai dari penemuan tool proaktif pada skala pustaka (*library scale*). Batasan bab ini adalah deskripsi, penemuan, dan penggunaan aman dari **tool yang sudah ada**. Bab 8 sebaliknya membahas bagaimana Agent menentukan dari kegagalan dan operasi berulang kapan harus membuat, memodifikasi, memvalidasi ulang, atau mempensiunkan sebuah tool.
+Tujuh eksperimen berkembang dari dasar hingga arsitektur: Eksperimen 4-1 hingga 4-4 membangun tiga set tool dasar—Persepsi, Eksekusi, dan Kolaborasi; Eksperimen 4-5 memperkenalkan pemrosesan berbasis kejadian (*event-driven*) dengan Agent penanganan email; Eksperimen 4-6 mengimplementasikan eksekusi paralel, pemulihan interupsi, dan manajemen status (*state management*); dan Eksperimen 4-7 memvalidasi nilai dari penemuan tool proaktif pada skala pustaka (*library scale*). Batasan bab ini adalah deskripsi, penemuan, dan penggunaan aman dari **tool yang sudah ada**. Bab 8 sebaliknya membahas bagaimana Agent menentukan dari kegagalan dan operasi berulang kapan harus membuat, memodifikasi, memvalidasi ulang, atau mempensiunkan sebuah tool.
 
 Bab berikutnya mengajukan pertanyaan yang lebih mendasar daripada “bagaimana cara sebuah Agent menggunakan tool?”: bisakah sebuah Agent **membuat** tool dengan menulis kode? Sebuah Coding Agent ditambah sistem berkas adalah fondasi inti dari setiap Agent bertujuan umum (*general-purpose Agent*), dan hal ini juga memberikan kemampuan eksekusi yang dibutuhkan untuk pembahasan Bab 8 tentang modifikasi mandiri sistem yang terkontrol (*controlled system self-modification*).
 

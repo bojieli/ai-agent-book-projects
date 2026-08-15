@@ -189,6 +189,12 @@ Các công cụ nhận biết thường phải đối mặt với thách thức 
 
 Xử lý gốc có trần năng lực cao nhất; các bộ mã hóa như Vision Transformer ánh xạ nhiều loại dữ liệu vào không gian ngữ nghĩa chung. Trích xuất văn bản tiết kiệm token cho mô hình không hỗ trợ gốc và PDF nhiều chữ, nhưng làm mất bố cục, biểu đồ và hình ảnh. Nếu mô hình chính không đa phương thức, các công cụ như `analyze_image`, `analyze_pdf`, `analyze_audio` có thể gửi tệp và câu hỏi tới mô hình chuyên dụng rồi chỉ giữ kết quả ngắn trong ngữ cảnh.
 
+> **Thử nghiệm 4-2 ★★: Trích xuất thông tin đa phương thức — phân tích so sánh ba mô thức kỹ thuật**
+>
+> Dự án `multimodal-agent` so sánh và đánh giá một cách hệ thống ba chiến lược trong cùng một khung thống nhất. Thông qua `demo.py`, cùng một tệp đa phương thức (chẳng hạn một báo cáo PDF có biểu đồ) và cùng một câu hỏi được đưa lần lượt cho ba chế độ để quan sát khác biệt về hiệu năng.
+>
+> Kết quả cho thấy rõ sự đánh đổi giữa ba phương án: **chế độ đa phương thức nguyên bản**, nhờ hiểu sâu thông tin thị giác và không gian, thể hiện tốt nhất ở các tác vụ như phân tích biểu đồ và nắm bắt bố cục tài liệu. **Chế độ trích xuất thành văn bản** có hiệu quả chi phí cao nhất khi tài liệu chủ yếu là văn bản thuần, nhưng hoàn toàn không xử lý được các truy vấn cần thông tin thị giác. **Chế độ công cụ hoá** thể hiện tính linh hoạt trong các tình huống tương tác: xử lý phần lớn truy vấn sơ bộ với chi phí thấp và chỉ gọi công cụ để phân tích sâu tốn kém khi thật sự cần, song lại kém chế độ nguyên bản trong những tình huống đòi hỏi hiểu sâu end-to-end trong một lần.
+
 ## Công cụ thực thi
 
 Thiết kế bảo mật được cập nhật dùng cô lập cấp tiến trình cho Agent rủi ro thấp, container hoặc microVM cho đầu vào không đáng tin cậy và hạn ngạch tài nguyên ở mọi tầng. Sidecar nhẹ kiểm tra các trường có cấu trúc của lệnh gọi như một cổng trước khi thực thi; nếu bị từ chối liên tiếp, bộ ngắt mạch sẽ chuyển sang yêu cầu người dùng quyết định. Tác vụ không idempotent dùng hai bước “kiểm tra trước–xác nhận”.
@@ -310,7 +316,7 @@ Cốt lõi của việc xử lý nó là tính lũy đẳng: cùng một thao t�
 
 Nhưng không phải tất cả các hoạt động có thể được thực hiện bình thường. **Gửi email, gọi điện thoại và chuyển khoản ra bên ngoài** các hoạt động tạo ra một sự kiện trong thế giới thực không thể hủy ngang mỗi khi chúng được thực thi và máy chủ thường không nằm dưới sự kiểm soát của chính nó và không thể dựa vào số nhận dạng duy nhất để loại bỏ sự trùng lặp. Đối với loại hoạt động không bình thường này, nên áp dụng phương pháp "xác nhận trước kiểm tra trước" hai giai đoạn: giai đoạn đầu tiên chỉ thực hiện xác minh và diễn tập (kiểm tra số dư, xác nhận người nhận thanh toán và tạo nội dung cần gửi) và trả về kết quả bằng mã thông báo xác nhận; giai đoạn thứ hai thực sự được thực thi bằng mã thông báo và nếu giai đoạn thực thi không thành công, nó sẽ không được truyền lại một cách mù quáng mà sẽ được chuyển lại cho lớp trên để kiểm tra trước một lần nữa. Điều này phù hợp với ý tưởng về sự phê duyệt trước của người đề xuất-đánh giá trong bài viết trước và việc tách "bắt đầu/hoàn thành" giao diện công cụ không đồng bộ sau này.
 
-> **Thử nghiệm 4-2 ★★: Công cụ thực thi máy chủ MCP**
+> **Thử nghiệm 4-3 ★★: Công cụ thực thi máy chủ MCP**
 >
 > Thử nghiệm này xây dựng một hệ thống công cụ thực thi và tập trung vào việc trình diễn ứng dụng thực tế của cơ chế bảo mật. Công cụ bao gồm các loại sau:
 >
@@ -355,7 +361,7 @@ Bất chấp khả năng ngày càng tăng của AI Agent, sự can thiệp củ
 
 **Thiết lập vòng phản hồi**. HITL không phải là tương tác một lần mà tạo thành một chu trình học tập. Để ghi lại các phán đoán chấp thuận/từ chối của con người và lý do của chúng, mô hình học tập được giới thiệu trong Chương 1 có thể được sử dụng một cách toàn diện (xem Chương 8 để biết chi tiết): **Post-training** xây dựng dữ liệu HITL dưới dạng bộ dữ liệu học tập có giám sát để cho phép mô hình tiếp thu mô hình ra quyết định; **External Learning (học bên ngoài tham số mô hình)** lưu trữ các trường hợp quyết định ở dạng có cấu trúc trong cơ sở kiến thức và Agent truy xuất các trường hợp tương tự để hỗ trợ phán đoán khi phải đối mặt với các quyết định mới. Ưu điểm của cái sau là khả năng diễn giải - Agent có thể trích dẫn "Dựa trên các quyết định dựa trên các tình huống tương tự (ID trường hợp 123), chúng tôi khuyến nghị rằng...".
 
-> **4-3 thử nghiệm ★★: Công cụ cộng tác Máy chủ MCP**
+> **4-4 thử nghiệm ★★: Công cụ cộng tác Máy chủ MCP**
 >
 > Thử nghiệm này xây dựng một hệ thống công cụ cộng tác hoàn chỉnh bao gồm quản lý Agent phụ, hỗ trợ con người và thông báo đa kênh.
 >
@@ -525,10 +531,10 @@ while runtime.is_alive:
     dispatch(decision)
 ```
 
-> **4-4 thử nghiệm ★★★: Xử lý email theo sự kiện Agent**
+> **4-5 thử nghiệm ★★★: Xử lý email theo sự kiện Agent**
 >
 >
-> ![Hình 4-4 Thí nghiệm 4-4 Kiến trúc Agent hướng sự kiện ](images/fig4-4.svg)
+> ![Hình 4-4 Thí nghiệm 4-5 Kiến trúc Agent hướng sự kiện ](images/fig4-4.svg)
 >
 >
 > Thử nghiệm này xây dựng Agent theo sự kiện đơn giản nhất: **Trợ lý xử lý email tự động**. Agent giám sát hộp thư đến email và tự động kích hoạt quá trình xử lý mỗi khi nhận được email mới - phân loại, tóm tắt, soạn thảo thư trả lời và thông báo cho người dùng khi cần thiết. Đây là kịch bản cấp đầu vào trực quan nhất dành cho Agent theo hướng sự kiện: một sự kiện bên ngoài (sự xuất hiện của một email mới) sẽ kích hoạt một chu trình suy nghĩ Agent hoàn chỉnh.
@@ -550,11 +556,11 @@ while runtime.is_alive:
 >
 > **Kịch bản xác minh**: Định cấu hình Agent để giám sát hộp thư kiểm tra. Mô phỏng nhận ba email - lời mời họp, khiếu nại của khách hàng và quảng cáo tiếp thị. Agent Xử lý theo trình tự: tự động kiểm tra xung đột lịch và bản nháp chấp nhận/từ chối phản hồi cho lời mời họp; trích xuất những thông tin quan trọng về khiếu nại của khách hàng và đánh dấu chúng là mức độ ưu tiên cao, thông báo cho người dùng để xử lý; tự động lưu trữ các quảng cáo tiếp thị. Toàn bộ quá trình không cần sự can thiệp của người dùng.
 
-Thử nghiệm 4-4 trình diễn mô hình hướng sự kiện đơn giản nhất - các sự kiện được đưa vào hàng đợi và Agent lần lượt xử lý chúng. Nhưng khi Agent cần phản hồi các gián đoạn trong quá trình thực thi một công cụ chạy dài hoặc quản lý nhiều tác vụ đồng thời cùng lúc thì hàng đợi sự kiện đơn giản là không đủ. Những thách thức kỹ thuật sâu hơn sẽ được thảo luận tiếp theo.
+Thử nghiệm 4-5 trình diễn mô hình hướng sự kiện đơn giản nhất - các sự kiện được đưa vào hàng đợi và Agent lần lượt xử lý chúng. Nhưng khi Agent cần phản hồi các gián đoạn trong quá trình thực thi một công cụ chạy dài hoặc quản lý nhiều tác vụ đồng thời cùng lúc thì hàng đợi sự kiện đơn giản là không đủ. Những thách thức kỹ thuật sâu hơn sẽ được thảo luận tiếp theo.
 
 ### Triển khai dự án: Làm thế nào để mô hình đồng bộ hỗ trợ gián đoạn không đồng bộ
 
-Thử nghiệm 4-4 chỉ xử lý các sự kiện nối tiếp - các sự kiện lần lượt vào hàng đợi và Agent xử lý chúng lần lượt. Bây giờ hãy quay lại mâu thuẫn “đào tạo đồng bộ/triển khai không đồng bộ” được nêu ở đầu phần này: Định dạng đồng bộ nên giải quyết sự gián đoạn đột ngột của người dùng khi công cụ chưa quay trở lại như thế nào? Phần này cung cấp các giải pháp kỹ thuật hiện tại trong ngành.
+Thử nghiệm 4-5 chỉ xử lý các sự kiện nối tiếp - các sự kiện lần lượt vào hàng đợi và Agent xử lý chúng lần lượt. Bây giờ hãy quay lại mâu thuẫn “đào tạo đồng bộ/triển khai không đồng bộ” được nêu ở đầu phần này: Định dạng đồng bộ nên giải quyết sự gián đoạn đột ngột của người dùng khi công cụ chưa quay trở lại như thế nào? Phần này cung cấp các giải pháp kỹ thuật hiện tại trong ngành.
 
 Trước tiên hãy sử dụng một kịch bản cụ thể để minh họa mâu thuẫn này. Giả sử Agent đang giúp người dùng soạn thảo một email (gọi công cụ: tìm kiếm thông tin liên hệ). Trước khi kết quả tìm kiếm được trả về, người dùng đột nhiên nói: "Đợi một chút, trước tiên hãy giúp tôi kiểm tra thời tiết ngày mai." Trong vòng lặp ReAct được đồng bộ hóa, Agent phải đợi tìm kiếm quay trở lại trước khi xử lý tin nhắn tiếp theo - vì API yêu cầu rằng "sau khi phát ra lệnh gọi công cụ, tin nhắn tiếp theo phải là kết quả của công cụ". Nhưng trong thế giới thực không đồng bộ, các sự kiện có thể làm gián đoạn các nhiệm vụ đang diễn ra bất cứ lúc nào. Làm thế nào để diễn đạt ngữ nghĩa của "ngắt không đồng bộ" dưới các ràng buộc của "định dạng đồng bộ" chính xác là câu hỏi cần được trả lời bằng kế hoạch kỹ thuật sau đây.
 
@@ -638,13 +644,13 @@ Nhưng phần quan trọng hơn của nghiên cứu này là về **đào tạo*
 
 [^ch4-async-1]: Sử dụng khoảng hai trăm dòng lập trình để biến mô hình tư duy làm sẵn thành tư duy liên tục Agent và kết luận rằng "các tín hiệu huấn luyện quyết định tư duy liên tục có hữu ích hay không", xem Li, Bojie và Noah Shi. *Không ngừng suy nghĩ: Ngôn ngữ Continuous-Time Agents.* 2026 (sẽ được xuất bản).
 
-> **Thử nghiệm 4-5 ★★★: Agent không đồng bộ với khả năng thực thi và ngắt song song**
+> **Thử nghiệm 4-6 ★★★: Agent không đồng bộ với khả năng thực thi và ngắt song song**
 >
 >
-> ![Hình 4-6 Thí nghiệm 4-5 Ngắt và phục hồi tác nhân không đồng bộ ](images/fig4-6.svg)
+> ![Hình 4-6 Thí nghiệm 4-6 Ngắt và phục hồi tác nhân không đồng bộ ](images/fig4-6.svg)
 >
 >
-> Dựa trên hàng sự kiện đơn giản của thử nghiệm 4-4, thử nghiệm này đi vào vùng nước sâu của Agent không đồng bộ: **Thực thi công cụ song song, hủy thực thi và quản lý trạng thái**. Agent không còn chỉ xử lý từng sự kiện mà cần quản lý nhiều tác vụ đồng thời cùng lúc, xử lý các gián đoạn và phục hồi cũng như đưa ra quyết định linh hoạt dựa trên trạng thái thời gian thực.
+> Dựa trên hàng sự kiện đơn giản của thử nghiệm 4-5, thử nghiệm này đi vào vùng nước sâu của Agent không đồng bộ: **Thực thi công cụ song song, hủy thực thi và quản lý trạng thái**. Agent không còn chỉ xử lý từng sự kiện mà cần quản lý nhiều tác vụ đồng thời cùng lúc, xử lý các gián đoạn và phục hồi cũng như đưa ra quyết định linh hoạt dựa trên trạng thái thời gian thực.
 >
 > **1. Thực thi công cụ không đồng bộ**: Hỗ trợ thực thi không đồng bộ các công cụ tiêu tốn thời gian (ít nhất là 3-5 giây) và trả về phần giữ chỗ ngay sau khi khởi động. **Kịch bản xác minh**: Agent thực thi một lệnh đầu cuối dài, trong đó người dùng hỏi "Bây giờ là mấy giờ?", Agent phản hồi ngay lập tức và đợi kết quả phân tích được trả về trước khi hiển thị chúng.
 >
@@ -699,7 +705,7 @@ Hình 4-9 cho thấy toàn cảnh ngữ cảnh sau nhiều vòng khám phá đ�
 
 Không khó để nhận thấy rằng mặc dù toàn bộ cơ chế "khai báo chủ động-khớp ngữ nghĩa-tiêm động" này có hiệu quả, nhưng kỹ thuật khá cồng kềnh: nó cần duy trì chỉ mục nhúng ngoại tuyến, xử lý lỗi KV Cache và đào tạo đặc biệt cho các mô hình yếu. Tiền đề chung của họ là coi mỗi công cụ như một định nghĩa hướng mô hình chính thức, đăng ký nó trước, sau đó truy xuất nó và sau đó đưa nó vào. Cơ chế Kỹ năng trong phần tiếp theo có cách tiếp cận nhẹ nhàng hơn.
 
-> **Thử nghiệm 4-6 ★★★: Khám phá công cụ chủ động**
+> **Thử nghiệm 4-7 ★★★: Khám phá công cụ chủ động**
 >
 > Thử nghiệm này đã tìm thấy giá trị đáng kể cho các mô hình tham số nhỏ thông qua việc xác minh so sánh các công cụ hoạt động. Sử dụng mô hình Qwen3-4B để truy cập hơn 120 công cụ trong máy chủ MCP được xây dựng trong thử nghiệm công cụ nhận thức ở phần trước.
 >
@@ -744,7 +750,7 @@ Mỗi loại trong số năm loại công cụ đều có trọng tâm thiết k
 
 Về kiến trúc không đồng bộ, cơ chế tự động hóa tích hợp của OpenClaw (Hooks, Cron, Heartbeat) mang lại cho Agent khả năng hoạt động tự động vào thời gian đã lên lịch, nhưng nó thiếu các kênh truy cập tức thì vào các nguồn sự kiện của bên thứ ba bên ngoài các kênh tích hợp sẵn (chẳng hạn như email, lệnh gọi lại API); PineClaw giới thiệu cơ chế Kênh để lấp đầy khoảng trống này, thể hiện sự phát triển từ theo thời gian sang theo sự kiện. Ba chiến lược hủy, xếp hàng và xử lý song song cho phép Agent xử lý các sự kiện có mức độ ưu tiên khác nhau. Tuy nhiên, có sự mâu thuẫn sâu sắc giữa kiến trúc này và mô hình đào tạo đồng bộ hiện tại của các mô hình lớn - hiện tại, vấn đề này chỉ có thể được giảm bớt bằng các phương tiện kỹ thuật như trình giữ chỗ không đồng bộ. Giải pháp cơ bản yêu cầu mô hình thế hệ tiếp theo phải nội hóa sự hiểu biết về độ trễ, gián đoạn và đồng thời thông qua học tăng cường trong môi trường không đồng bộ (tương tự như mô hình VLA đã thảo luận trong Chương 9).
 
-Sáu thử nghiệm tiến triển dần dần từ cơ bản đến kiến trúc: Thử nghiệm 4-1 đến Thử nghiệm 4-3 xây dựng ba bộ công cụ cơ bản về nhận thức, thực thi và cộng tác. Thử nghiệm 4-4 sử dụng xử lý email. Agent giới thiệu ổ sự kiện. Thử nghiệm 4-5 triển khai thực thi song song, khôi phục gián đoạn và quản lý trạng thái. Thử nghiệm 4-6 xác minh giá trị của khám phá công cụ tích cực trong thư viện công cụ quy mô lớn. Thiết kế công cụ và kiến trúc được thảo luận trong chương này—giao thức MCP, nguyên tắc thiết kế và kiến trúc không đồng bộ—là điều kiện tiên quyết cho quá trình tự phát triển của Agent trong Chương 8.
+Bảy thử nghiệm tiến triển dần dần từ cơ bản đến kiến trúc: Thử nghiệm 4-1 đến Thử nghiệm 4-4 xây dựng ba bộ công cụ cơ bản về nhận thức, thực thi và cộng tác. Thử nghiệm 4-5 sử dụng xử lý email. Agent giới thiệu ổ sự kiện. Thử nghiệm 4-6 triển khai thực thi song song, khôi phục gián đoạn và quản lý trạng thái. Thử nghiệm 4-7 xác minh giá trị của khám phá công cụ tích cực trong thư viện công cụ quy mô lớn. Thiết kế công cụ và kiến trúc được thảo luận trong chương này—giao thức MCP, nguyên tắc thiết kế và kiến trúc không đồng bộ—là điều kiện tiên quyết cho quá trình tự phát triển của Agent trong Chương 8.
 
 Chương tiếp theo sẽ trả lời một câu hỏi cơ bản hơn "cách sử dụng công cụ": Agent có thể tạo công cụ bằng cách viết mã không? Coding Agent cộng với hệ thống tệp là nền tảng cốt lõi của tất cả Agent phổ quát - và cũng là điểm khởi đầu cho khả năng tự tiến hóa của Chương 8 Agent.
 

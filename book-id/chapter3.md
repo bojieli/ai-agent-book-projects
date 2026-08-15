@@ -482,7 +482,7 @@ Mekanisme "joint attention" ini memungkinkan cross-encoder untuk menangkap asosi
 
 **How to Measure Retrieval Quality?** Menyetel pipeline multi-tahap seperti ini membutuhkan metrik yang objektif. Tiga metrik yang paling penting (semuanya dihitung pada sebuah test query set dengan jawaban yang telah dianotasi):
 
-Table 3-3 Three Core Metrics for Retrieval Quality
+Tabel 3-3 Tiga Metrik Inti untuk Kualitas Retrieval
 
 | Metric | Intuitive Explanation |
 |-------------------------------|----------------------------------------------------------------|
