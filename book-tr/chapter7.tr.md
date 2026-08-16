@@ -83,9 +83,13 @@ $$
 
 $p=0.6$, $k=5$ için Pass@5 yaklaşık %99,0 iken Pass consecutive@5 yalnızca %7,8'dir. İlki keşif tavanını, ikincisi ödeme, iade, yetki değişikliği ve üretim dağıtımı için gereken istikrarı ölçer. Rapor $k$'nın bağımsız örnekler mi yoksa ardışık üretim görevleri mi olduğunu açıklamalı; yan etkili işlemler sandbox ya da geri alınabilir ortamda, bütün başarısızlıklar sayılarak test edilmelidir.
 
-### Süreç, güvenlik ve sağlamlık metrikleri
+### Süreç metrikleri: Siyah kutudan beyaz kutuya
 
-Sonuç tek başına yetmez. Geçerli ve yetkili eylem oranı, araç argümanlarının anlamsal doğruluğu, yol verimliliği (adımlar, tekrarlar, geri dönüşler), retrieval kapsamı ve maliyet/gecikme, Agent'ın nerede bozulduğunu gösterir. Hassas işlemler, veri sızıntısı ve yasak içerik için **sıfır tolerans** uygulanır. Sağlamlık seed, arayüz değişikliği, API dalgalanması ve eski bellek girişimini kapsar; Agent'ın **trajectory**'si ile sistemin gerçek **outcome**'u birlikte doğrulanmalıdır.
+Sonuç tek başına yetmez. Geçerli ve yetkili eylem oranı, araç argümanlarının anlamsal doğruluğu, yol verimliliği (adımlar, tekrarlar, geri dönüşler), retrieval kapsamı ve maliyet/gecikme, Agent'ın nerede bozulduğunu gösterir.
+
+### Güvenlik, sağlamlık ve trajectory kapsamı
+
+Hassas işlemler, veri sızıntısı ve yasak içerik için **sıfır tolerans** uygulanır. Sağlamlık seed, arayüz değişikliği, API dalgalanması ve eski bellek girişimini kapsar; Agent'ın **trajectory**'si ile sistemin gerçek **outcome**'u birlikte doğrulanmalıdır.
 
 ### İnsan örneklemesi ve adversarial inceleme
 
@@ -440,34 +444,11 @@ Hafifletme stratejisi **çok kaynaklı ve heterojen değerlendirmedir** — fark
 - **UI değerlendirmesi**: **Proposer-Reviewer** (önerici-inceleyici) mekanizması kullanılarak metin taşması, renk kontrastı, düğme konumu gibi sorunlar denetlenir. Buradaki Proposer-Reviewer bir **değerlendirme yöntemi** olarak kullanılır; Bölüm 5'teki **üretim sistemi bileşeni** kullanımından farklıdır, ama temel mekanizma aynıdır — bir model üretir, başka bir model bağımsız olarak inceler.
 - **Video kurgu değerlendirmesi**: anahtar kareler üzerinden kesme başlangıç/bitiş noktalarının ve efekt uygulamalarının doğru olup olmadığı doğrulanır.
 
-### Hata atfı ve trajectory-prefix regresyon görevleri
+### Hata atfı: Trajectory'deki ilk hatanın yerini belirleme
 
 Uçtan uca değerlendirme çoğu zaman yalnızca “başarılı/başarısız” der. Sonucu düzeltmeye dönüştürmek için her başarısız trajectory'de kategori, kabul edilemez davranışın ilk adımı, ilgili araç çağrısı veya model çıktısı ve denetlenebilir kanıt kaydedilmelidir. Bad case'ler kullanıcı düzeltmesi, olumsuz geri bildirim veya sonradan yapılan durum/kural kontrolünden gelebilir. LLM yardımcı olur, ancak kök neden genellikle ürün sorunu da olabileceğinden insan analizi gereklidir.
 
 Coding Agent için başlangıç sınıfları süreç/depo kuralı eksikliği, araç/biçim hatası, anormal sonlanma ve tamamlama/mantık hatasıdır. Adım numarası, araç, gözlem, kök neden ve sonuç, kurtarılabilirlik ve güveni JSON/YAML olarak; ortam durumu, sürümler ve tam trajectory ile birlikte saklayın.
-
-**Uçtan uca regresyon** bütün akışı çalıştırır; **trajectory-prefix regresyonu** ilk hatadan hemen önceki bağlamı, konuşmayı, araç dönüşlerini ve durumu dondurup yalnızca sonraki gözlemlenebilir eylemi sınar. Tek bir kanonik cevap yerine izin verilen eylemler kümesini (kuralları okuma, kullanıcıya sorma, tehlikeli işlemi reddetme) ve yasakları tanımlayın. Değerlendirme ve eğitim verileri ayrılmalıdır.
-
-> **Deney 7-5 ★★: Birden çok gösterimle trajectory-prefix sınır değerlendirmesi**
->
-> Modele bilinen kullanıcı belleği, güncel talimat, trajectory prefix, araç dönüşleri ve ortam durumu verilir; yalnızca sonraki gözlemlenebilir eylem istenir. 11 vaka JSON Cards, Markdown ve Python-like biçimlerinde kodlanıp deterministik kurallarla denetlendi. 33/33 hücre API hatasız tamamlandı ve her gösterim 6/11 geçti; gösterimi değiştirmek tek başına kullanım politikasını düzeltmez.
-
-> **Deney 7-6 ★★: Tam Otomatik Bir TTS Kalite Değerlendirme Boru Hattı Kurmak**
->
-> Bu deney, eksiksiz bir çok modlu LLM-as-a-Judge TTS kalite değerlendirme sistemini sıfırdan tasarlayıp uygulamanızı ister.
->
-> Çok boyutlu bir TTS Rubric'i tasarlayın: doğruluk boyutu bütün metnin doğru okunup okunmadığını doğrular (atlama/yanlış okuma/ekleme yok); doğallık boyutu konuşmanın akıcı olup olmadığını değerlendirir (makine hissi ve doğal olmayan duraklamalar var mı, ezgi insan alışkanlıklarına uyuyor mu); duygu ifadesi boyutu tonun metnin duygusal rengine uyup uymadığını denetler (soru cümlelerinde tonun yükselmesi, ünlem cümlelerinde vurgu, hüzünlü içerikte yavaş tempo ve alçak ton); ses tınısı tutarlılığı boyutu ise elde referans bir kayıt varsa konuşmacı benzerliğini değerlendirir (çok modlu model, karşılaştırma için referans kaydı ve sentezlenen kaydı aynı anda alır).
->
-> Çeşitlilik içeren bir test derlemi oluşturun: farklı uzunluklar (tek cümle → uzun paragraf), türler (haber/öykü/diyalog), duygular (nötr/heyecanlı/hüzünlü) ve özel zorluklar (sayılar/özel adlar/çok sesletimli karakterler/ağız sözcükleri). TTS üretim modülünü yaygın servislere bağlayın (OpenAI, ElevenLabs, Fish Audio, Minimax, Doubao); sentezlenen kaydı, özgün metni, referans kaydı ve Rubric'i sesi doğrudan kabul edebilen çok modlu bir hakeme verin. Her puanın denetlenebilmesi için hakem modeliyle birlikte aday ve referans kayıtların hash'lerini de saklayın.
->
-
-Eşlik eden depoda küçük bir doğrudan dinleme çalışması saklanıyor. OpenAI ve Fish Audio; sayı, çok sesletimli Çince karakter, uzun metin ve heyecanlı anlatım içeren dörder kayıt üretti; Voxtral sekiz kaydın tamamını dört boyutta değerlendirdi. İki sistem de doğrulukta 5.00, doğallıkta 4.00 ortalama aldı. Fish Audio duygu ve ses tutarlılığında 4.00/3.00, OpenAI ise 3.75/2.75 aldı. Rubric'i boyutlara ayırmak, basit bir “doğru okudu mu?” kontrolünün göremediği farkları ortaya çıkardı.
-
-Bu puanlar bir sağlayıcı kazananı belirlemez. Her sağlayıcıdan yalnızca dört kayıt vardı; daha önemlisi, sabit referans kaydı Fish S1'den geldiği için ses benzerliği boyutu doğası gereği Fish Audio'yu kayırıyordu. Genel TTS karşılaştırmasında bu boyut kaldırılmalı ya da her adaya uygun bir hedef konuşmacı verilmelidir. Ses klonlama karşılaştırmasında ise bütün sistemler aynı konuşmacıyı taklit etmeli ve model hakemi kör insan dinleme sonuçlarıyla kalibre edilmelidir. **Referans yanıtı, görseli veya sesi seçmek değerlendirme tasarımının parçasıdır; tarafsız bir hazırlık işi değildir.**
-
-Elle yazılmış Rubric'ler bu tür teşhis boyutlarını hızla kurmayı sağlar. Ölçek büyüdüğünde değerlendirmeyi otomatikleştirmek için özel **üretken ödül modelleri** eğitilebilir; eğitim yöntemi Bölüm 8'de ele alınacaktır.
-
-Gerçek model seçimlerinde sık karşılaştığımız soru şudur: "A mı daha iyi, B mi?" İkili karşılaştırma, mutlak puanlara dayanmayan bir değerlendirme yolu sunar.
 
 #### Kapsama duyarlı belge biçimi hataları
 
@@ -495,6 +476,31 @@ original file bytes → tool return → Harness serialization → model context
 ```
 
 Asgari değerlendirme probları; doğrudan yineleme, uzun bağlamdan çıkarma, tool argümanına yerleştirme, benzer dizeler arasından seçim ile boşluk, satır sonu, ters bölü, Unicode birleştirici karakterler ve düşük frekanslı token'ları kapsar. Metrikler byte-exact match, code-point-exact match, token-exact match, ilk farkın konumu ve gerçek tool başarı oranıdır. Model doğrudan probda doğruyken tool çağrısı yine de başarısız oluyorsa tokenizer'ı, serileştirmeyi, Harness'ı veya tool protokolünü düzeltin; ilk fark yalnızca modelin kendi çıktısında belirdiğinde bu vaka 7. Bölüm'ün kopyalama eğitim verisine dönüştürülmelidir.
+
+### Uçtan uca regresyon görevleri ve trajectory-prefix regresyon görevleri
+
+**Uçtan uca regresyon** bütün akışı çalıştırır; **trajectory-prefix regresyonu** ilk hatadan hemen önceki bağlamı, konuşmayı, araç dönüşlerini ve durumu dondurup yalnızca sonraki gözlemlenebilir eylemi sınar. Tek bir kanonik cevap yerine izin verilen eylemler kümesini (kuralları okuma, kullanıcıya sorma, tehlikeli işlemi reddetme) ve yasakları tanımlayın. Değerlendirme ve eğitim verileri ayrılmalıdır.
+
+> **Deney 7-5 ★★: Birden çok gösterimle trajectory-prefix sınır değerlendirmesi**
+>
+> Modele bilinen kullanıcı belleği, güncel talimat, trajectory prefix, araç dönüşleri ve ortam durumu verilir; yalnızca sonraki gözlemlenebilir eylem istenir. 11 vaka JSON Cards, Markdown ve Python-like biçimlerinde kodlanıp deterministik kurallarla denetlendi. 33/33 hücre API hatasız tamamlandı ve her gösterim 6/11 geçti; gösterimi değiştirmek tek başına kullanım politikasını düzeltmez.
+
+> **Deney 7-6 ★★: Tam Otomatik Bir TTS Kalite Değerlendirme Boru Hattı Kurmak**
+>
+> Bu deney, eksiksiz bir çok modlu LLM-as-a-Judge TTS kalite değerlendirme sistemini sıfırdan tasarlayıp uygulamanızı ister.
+>
+> Çok boyutlu bir TTS Rubric'i tasarlayın: doğruluk boyutu bütün metnin doğru okunup okunmadığını doğrular (atlama/yanlış okuma/ekleme yok); doğallık boyutu konuşmanın akıcı olup olmadığını değerlendirir (makine hissi ve doğal olmayan duraklamalar var mı, ezgi insan alışkanlıklarına uyuyor mu); duygu ifadesi boyutu tonun metnin duygusal rengine uyup uymadığını denetler (soru cümlelerinde tonun yükselmesi, ünlem cümlelerinde vurgu, hüzünlü içerikte yavaş tempo ve alçak ton); ses tınısı tutarlılığı boyutu ise elde referans bir kayıt varsa konuşmacı benzerliğini değerlendirir (çok modlu model, karşılaştırma için referans kaydı ve sentezlenen kaydı aynı anda alır).
+>
+> Çeşitlilik içeren bir test derlemi oluşturun: farklı uzunluklar (tek cümle → uzun paragraf), türler (haber/öykü/diyalog), duygular (nötr/heyecanlı/hüzünlü) ve özel zorluklar (sayılar/özel adlar/çok sesletimli karakterler/ağız sözcükleri). TTS üretim modülünü yaygın servislere bağlayın (OpenAI, ElevenLabs, Fish Audio, Minimax, Doubao); sentezlenen kaydı, özgün metni, referans kaydı ve Rubric'i sesi doğrudan kabul edebilen çok modlu bir hakeme verin. Her puanın denetlenebilmesi için hakem modeliyle birlikte aday ve referans kayıtların hash'lerini de saklayın.
+>
+
+Eşlik eden depoda küçük bir doğrudan dinleme çalışması saklanıyor. OpenAI ve Fish Audio; sayı, çok sesletimli Çince karakter, uzun metin ve heyecanlı anlatım içeren dörder kayıt üretti; Voxtral sekiz kaydın tamamını dört boyutta değerlendirdi. İki sistem de doğrulukta 5.00, doğallıkta 4.00 ortalama aldı. Fish Audio duygu ve ses tutarlılığında 4.00/3.00, OpenAI ise 3.75/2.75 aldı. Rubric'i boyutlara ayırmak, basit bir “doğru okudu mu?” kontrolünün göremediği farkları ortaya çıkardı.
+
+Bu puanlar bir sağlayıcı kazananı belirlemez. Her sağlayıcıdan yalnızca dört kayıt vardı; daha önemlisi, sabit referans kaydı Fish S1'den geldiği için ses benzerliği boyutu doğası gereği Fish Audio'yu kayırıyordu. Genel TTS karşılaştırmasında bu boyut kaldırılmalı ya da her adaya uygun bir hedef konuşmacı verilmelidir. Ses klonlama karşılaştırmasında ise bütün sistemler aynı konuşmacıyı taklit etmeli ve model hakemi kör insan dinleme sonuçlarıyla kalibre edilmelidir. **Referans yanıtı, görseli veya sesi seçmek değerlendirme tasarımının parçasıdır; tarafsız bir hazırlık işi değildir.**
+
+Elle yazılmış Rubric'ler bu tür teşhis boyutlarını hızla kurmayı sağlar. Ölçek büyüdüğünde değerlendirmeyi otomatikleştirmek için özel **üretken ödül modelleri** eğitilebilir; eğitim yöntemi Bölüm 8'de ele alınacaktır.
+
+Gerçek model seçimlerinde sık karşılaştığımız soru şudur: "A mı daha iyi, B mi?" İkili karşılaştırma, mutlak puanlara dayanmayan bir değerlendirme yolu sunar.
 
 ### İkili Karşılaştırma ve Model Sıralaması
 

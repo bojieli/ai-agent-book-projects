@@ -294,7 +294,7 @@ def fig5_4():
         ("Diff + Apply Modeli", "dark",
          ["LLM Diff Açıklaması Üretir:",
           "- def foo(x):",
-          "    return x",
+          "-   return x",
           "+ def foo(x, y=0):",
           "+   return x + y",
           "→ Küçük Model Konumlandırır ve Uygular"],

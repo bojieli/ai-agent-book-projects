@@ -32,9 +32,11 @@ const CONF = {
   ],
 };
 
-// A stand-in for translate.js with the same API surface the script touches.
-function fakeTranslate() {
-  return {
+// A stand-in for translate.js with the same API surface the script touches,
+// including the lifecycle hooks the notice's state machine subscribes to.
+// Nothing fires on its own: each test drives the pass it wants to describe.
+function fakeTranslate({ lifecycle = true } = {}) {
+  const t = {
     to: "",
     selectLanguageTag: { show: true },
     service: { used: null, use(n) { this.used = n; } },
@@ -42,12 +44,40 @@ function fakeTranslate() {
     ignore: { tag: ["style", "script", "link", "pre", "code"], class: ["ignore"], id: [] },
     listener: { started: false, start() { this.started = true; } },
     calls: [],
-    changeLanguage(n) { this.to = n; this.calls.push(["changeLanguage", n]); },
-    execute() { this.calls.push(["execute"]); },
+    changeLanguage(n) { this.to = n; this.calls.push(["changeLanguage", n]); this.pass && this.pass.start(); },
+    execute() { this.calls.push(["execute"]); this.pass && this.pass.start(); },
   };
+  if (!lifecycle) return t;
+
+  t.lifecycle = {
+    execute: { start: [], translateNetworkAfter: [], renderFinish: [], finally: [] },
+  };
+  const fire = (name, ...args) => t.lifecycle.execute[name].forEach((f) => f(...args));
+  let uuid = 0;
+  // Mirrors what translate.js emits for one translate.execute() call.
+  t.pass = {
+    uuid: null,
+    start() { this.uuid = "uuid-" + ++uuid; fire("start", { uuid: this.uuid, to: t.to }); },
+    batch(from, result) {
+      fire("translateNetworkAfter", { uuid: this.uuid, from, to: t.to, result });
+    },
+    renderFinish() { fire("renderFinish", this.uuid, t.to); },
+    finally(state) { fire("finally", { uuid: this.uuid, to: t.to, state }); },
+  };
+  return t;
 }
 
-async function setup({ path = "/ai-agent-book/book-en/chapter1/", stored = null, urlFor = () => null } = {}) {
+const stateOf = (w) => {
+  const n = w.document.querySelector(".auto-translate-notice");
+  return n && n.getAttribute("data-state");
+};
+
+async function setup({
+  path = "/ai-agent-book/book-en/chapter1/",
+  stored = null,
+  urlFor = () => null,
+  lifecycle = true,
+} = {}) {
   const navErrors = [];
   const vc = new VirtualConsole();
   vc.on("jsdomError", (e) => navErrors.push(e.message));
@@ -78,7 +108,7 @@ async function setup({ path = "/ai-agent-book/book-en/chapter1/", stored = null,
     }
     return realAppend(node);
   };
-  w.__fakeTranslate = fakeTranslate();
+  w.__fakeTranslate = fakeTranslate({ lifecycle });
 
   const replaced = [];
   try { w.location.replace = (u) => replaced.push(u); } catch (_) {}
@@ -157,20 +187,74 @@ test("on the English edition it loads, configures and translates", async () => {
   for (const c of ["mermaid", "arithmatex", "highlight", "md-source"]) {
     assert.ok(t.ignore.class.includes(c), `${c} must be ignored`);
   }
+  // The language menu lists every edition under its own endonym; translating
+  // those is both wrong and one API request per script.
+  for (const id of ["lang-menu", "lang-selector"]) {
+    assert.ok(t.ignore.id.includes(id), `#${id} must be ignored`);
+  }
   assert.deepStrictEqual(t.calls, [["changeLanguage", "french"]]);
 });
 
-test("shows a labelled notice and marks the document locale", async () => {
+test("shows a labelled notice carrying every state's wording", async () => {
   const { w } = await setup();
   w.document.querySelector('[data-auto-lang="hebrew"]').click();
   await tick();
   const notice = w.document.querySelector(".auto-translate-notice");
   assert.ok(notice, "notice missing");
+  // All three are in the DOM so one translation pass covers them; CSS shows one.
+  assert.match(notice.textContent, /Machine-translating this page/);
   assert.match(notice.textContent, /Machine-translated from the English edition/);
   assert.match(notice.textContent, /not reviewed/);
   assert.match(notice.textContent, /Figures and code stay in English/);
+  assert.match(notice.textContent, /unavailable/);
+  assert.strictEqual(w.document.querySelectorAll(".auto-translate-notice__text").length, 3);
+});
+
+test("reports progress while the pass runs, then that it is translated", async () => {
+  const { w } = await setup();
+  w.document.querySelector('[data-auto-lang="hebrew"]').click();
+  await tick();
+
+  // Mid-flight: the text on screen is still English, so neither the "done"
+  // wording nor the Hebrew locale may be claimed yet.
+  assert.strictEqual(stateOf(w), "pending");
+  assert.strictEqual(w.document.documentElement.lang, "en");
+  assert.strictEqual(w.document.documentElement.dir, "ltr");
+
+  w.translate.pass.batch("english", 1);
+  w.translate.pass.renderFinish();
+  assert.strictEqual(stateOf(w), "ok");
   assert.strictEqual(w.document.documentElement.lang, "he");
   assert.strictEqual(w.document.documentElement.dir, "rtl");
+});
+
+test("a pass that renders without any request counts as translated", async () => {
+  // Everything came out of translate.js' local cache — no network, no failure.
+  const { w } = await setup();
+  w.document.querySelector('[data-auto-lang="french"]').click();
+  await tick();
+  w.translate.pass.renderFinish();
+  assert.strictEqual(stateOf(w), "ok");
+});
+
+test("a failed batch in another source language does not mask a translated page", async () => {
+  const { w } = await setup();
+  w.document.querySelector('[data-auto-lang="french"]').click();
+  await tick();
+  w.translate.pass.batch("english", 1); // the book's prose
+  w.translate.pass.batch("chinese_simplified", 0); // a stray string elsewhere
+  w.translate.pass.renderFinish();
+  assert.strictEqual(stateOf(w), "ok");
+});
+
+test("a failed source-language batch is reported as unavailable", async () => {
+  const { w } = await setup();
+  w.document.querySelector('[data-auto-lang="french"]').click();
+  await tick();
+  w.translate.pass.batch("english", 0);
+  w.translate.pass.renderFinish();
+  assert.strictEqual(stateOf(w), "failed");
+  assert.strictEqual(w.document.documentElement.lang, "en", "must not claim the target locale");
 });
 
 test("a stored selection is re-applied on the next page load", async () => {
@@ -219,9 +303,8 @@ test("a failed library load degrades to a visible warning", async () => {
   w.console.warn = () => {};
   w.document.querySelector('[data-auto-lang="french"]').click();
   await tick();
-  const notice = w.document.querySelector(".auto-translate-notice--failed");
-  assert.ok(notice, "failure notice missing");
-  assert.match(notice.textContent, /unavailable/);
+  assert.strictEqual(stateOf(w), "failed");
+  assert.ok(w.document.querySelector(".auto-translate-notice--failed"), "failure class missing");
 });
 
 test("corrupt storage is ignored rather than throwing", async () => {
@@ -240,32 +323,74 @@ test("starts translate.js' listener only when explicitly enabled", async () => {
   assert.strictEqual(w.translate.listener.started, true);
 });
 
-test("warns in place when the translation service never answers", async () => {
+test("warns when a pass stalls with nothing coming back", async () => {
   const { w } = await setup();
   w.document.querySelector('[data-auto-lang="french"]').click();
   await tick();
-  // Service is dead: the notice text is never rewritten.
   const notice = w.document.querySelector(".auto-translate-notice");
-  const before = notice.querySelector(".auto-translate-notice__text").textContent;
-  await new Promise((r) => setTimeout(r, 120));
-  const after = w.document.querySelector(".auto-translate-notice");
-  assert.ok(after.className.includes("auto-translate-notice--failed"), "should flag failure");
-  assert.match(after.textContent, /unavailable/);
+  await new Promise((r) => setTimeout(r, 120)); // past failureTimeoutMs
+  assert.strictEqual(stateOf(w), "failed");
   // Same node, not a replacement — an in-flight pass may hold a reference.
-  assert.strictEqual(after, notice);
-  assert.notStrictEqual(after.querySelector(".auto-translate-notice__text").textContent, before);
+  assert.strictEqual(w.document.querySelector(".auto-translate-notice"), notice);
 });
 
-test("stays silent when the service does answer", async () => {
+test("a batch coming back keeps a slow pass from being called dead", async () => {
   const { w } = await setup();
   w.document.querySelector('[data-auto-lang="french"]').click();
   await tick();
+  // The free channel retries against backup hosts, so batches can trickle in
+  // for well past one timeout window. Progress restarts the clock, not trips it.
+  for (let i = 0; i < 4; i++) {
+    await new Promise((r) => setTimeout(r, 40));
+    w.translate.pass.batch("english", 1);
+  }
+  assert.strictEqual(stateOf(w), "pending", "must not cry wolf while batches land");
+  w.translate.pass.renderFinish();
+  assert.strictEqual(stateOf(w), "ok");
+});
+
+test("a late pass corrects a notice that already gave up", async () => {
+  // The reported bug: the page ends up translated, yet the notice still says
+  // the service is unavailable because nothing ever looked again.
+  const { w } = await setup();
+  w.document.querySelector('[data-auto-lang="french"]').click();
+  await tick();
+  await new Promise((r) => setTimeout(r, 120));
+  assert.strictEqual(stateOf(w), "failed");
+
+  w.translate.pass.batch("english", 1);
+  w.translate.pass.renderFinish();
+  assert.strictEqual(stateOf(w), "ok", "a translation that lands late must clear the warning");
+  assert.strictEqual(w.document.documentElement.lang, "fr");
+});
+
+test("a page already in the target language is not a failure", async () => {
+  const { w } = await setup();
+  w.document.querySelector('[data-auto-lang="french"]').click();
+  await tick();
+  w.translate.pass.finally(5); // local language == target: no render pass follows
+  await new Promise((r) => setTimeout(r, 120));
+  assert.strictEqual(stateOf(w), "ok");
+});
+
+test("without lifecycle hooks an untouched notice still warns", async () => {
+  const { w } = await setup({ lifecycle: false });
+  w.document.querySelector('[data-auto-lang="french"]').click();
+  await tick();
+  await new Promise((r) => setTimeout(r, 120));
+  assert.strictEqual(stateOf(w), "failed");
+});
+
+test("without lifecycle hooks it falls back to watching its own text", async () => {
+  const { w } = await setup({ lifecycle: false });
+  w.document.querySelector('[data-auto-lang="french"]').click();
+  await tick();
+  assert.strictEqual(stateOf(w), "pending");
   // Simulate translate.js rewriting the page (including our notice).
-  w.document.querySelector(".auto-translate-notice__text").textContent =
+  w.document.querySelector(".auto-translate-notice__text--ok").textContent =
     "Traduit automatiquement de l'\u00e9dition anglaise";
   await new Promise((r) => setTimeout(r, 120));
-  const notice = w.document.querySelector(".auto-translate-notice");
-  assert.ok(!notice.className.includes("auto-translate-notice--failed"), "must not cry wolf");
+  assert.strictEqual(stateOf(w), "ok");
 });
 
 (async () => {
