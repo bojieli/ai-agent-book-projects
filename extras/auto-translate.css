@@ -50,8 +50,50 @@
   border-left-color: var(--md-typeset-del-color, #f5504e);
 }
 
+.auto-translate-notice--pending {
+  border-left-color: var(--fenix-ink-muted, var(--md-default-fg-color--light));
+}
+
+/* All three states' wording lives in the DOM at once so a single translation
+   pass covers them (see auto-translate.js); only the current one is shown. */
 .auto-translate-notice__text {
+  display: none;
   flex: 1 1 16rem;
+}
+
+.auto-translate-notice[data-state="pending"] .auto-translate-notice__text--pending,
+.auto-translate-notice[data-state="ok"] .auto-translate-notice__text--ok,
+.auto-translate-notice[data-state="failed"] .auto-translate-notice__text--failed {
+  display: block;
+}
+
+/* Progress: a spinner rather than a bar, because translate.js reports batches
+   finishing, not a fraction done. */
+.auto-translate-notice__text--pending::before {
+  content: "";
+  display: inline-block;
+  width: 0.72em;
+  height: 0.72em;
+  margin-inline-end: 0.45em;
+  vertical-align: -0.06em;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: auto-translate-spin 0.8s linear infinite;
+}
+
+@keyframes auto-translate-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auto-translate-notice__text--pending::before {
+    border-top-color: currentColor;
+    opacity: 0.5;
+    animation: none;
+  }
 }
 
 .auto-translate-notice__off {
