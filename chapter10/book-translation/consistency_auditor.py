@@ -289,7 +289,9 @@ class BilingualConsistencyAuditor:
             )
 
         if not source_blocks:
-            return 1.0, findings
+            # Target blocks with no source counterpart already produced a count
+            # mismatch finding above, so score them as a miss rather than a pass.
+            return 0.0 if target_blocks else 1.0, findings
 
         matches = 0
         min_blocks = min(len(source_blocks), len(target_blocks))
@@ -422,6 +424,17 @@ class BilingualConsistencyAuditor:
         tgt_targets = set(target.strip() for _, target in tgt_links)
 
         if not src_targets:
+            if tgt_targets:
+                for target in tgt_targets:
+                    findings.append(
+                        AuditFinding(
+                            category="link_targets",
+                            severity="error",
+                            message=f"Extra link target in target document: '{target}'.",
+                            details={"target": target},
+                        )
+                    )
+                return 0.0, findings
             return 1.0, findings
 
         matched = 0
