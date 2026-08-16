@@ -1072,20 +1072,6 @@ Ya hemos analizado los dos motivos de la compresión —controlar la longitud y 
 - **Relevancia para la tarea**: un mismo contenido debe producir resultados de compresión diferentes en dos tareas distintas, como «buscar la lista de fundadores» y «conocer los antecedentes personales»
 - **Comprimir es comprender**: una compresión eficaz exige una capacidad profunda de comprensión semántica—captar la esencia del contexto mediante una expresión más concisa. Además, los resultados de una compresión explícita pueden revisarse y reutilizarse entre sesiones
 
-### Implicaciones para el diseño de la arquitectura de los Agentes
-
-La investigación sobre estrategias de compresión del contexto aborda cuestiones esenciales del diseño de sistemas de Agentes. **Comprimir es comprender**—el propio módulo responsable de la compresión necesita una capacidad de comprensión lingüística próxima a la del modelo principal, lo que da lugar a una arquitectura recursiva en la que «un modelo llama a otro modelo». **La estrategia de compresión está acoplada al tipo de tarea**—las tareas de recuperación de información deben preservar la amplitud; las tareas de análisis, la profundidad; y las tareas creativas, los puntos que desencadenan la inspiración. Los Agentes del futuro deberían ser capaces de seleccionar adaptativamente una estrategia de compresión en función del tipo de tarea.
-
-Aunque la compresión requiere un coste computacional adicional —cada compresión equivale a una llamada adicional al LLM—, el retorno de la inversión es extremadamente elevado en comparación con el ahorro en tokens y la mejora de la tasa de éxito de las tareas—los experimentos muestran que la compresión consciente del contexto redujo el uso de tokens en más de un 75 %.
-
-Lo que más fácilmente se pierde con la compresión no son los detalles en sí, sino **las primeras decisiones arquitectónicas, las razones subyacentes a las restricciones y las rutas que condujeron al fracaso**—los LLM suelen eliminar primero la información que parece poder recuperarse de nuevo. En los sistemas de Agentes para producción, se recomienda definir explícitamente las prioridades de conservación durante la compresión:
-
-1. **Decisiones arquitectónicas y restricciones clave**: no deben resumirse
-2. **Lista de archivos modificados y registros de cambios clave**: deben conservarse íntegramente
-3. **Estado de verificación** (pass/fail): debe conservarse
-4. **TODO sin resolver y notas de reversión**: deben conservarse
-5. **Salidas de herramientas**: pueden eliminarse; solo deben conservarse las conclusiones pass/fail
-
 ### El aislamiento es preferible a la compresión: aislamiento del contexto de los subagentes
 
 La compresión resta información *después* de que esta ya haya entrado en el contexto. Un enfoque más directo consiste en impedir desde el principio que la información intermedia voluminosa llegue al contexto principal. Esto es el **aislamiento del contexto de los subagentes**: el Agente principal delega en un subagente independiente tareas que generan enormes cantidades de contenido intermedio, como «realizar búsquedas amplias en un repositorio de código». El subagente completa la exploración dentro de su propio contexto y solo devuelve al Agente principal un resumen conciso de unos pocos cientos de tokens.

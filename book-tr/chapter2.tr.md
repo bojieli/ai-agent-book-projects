@@ -1071,20 +1071,6 @@ Sıkıştırmanın iki motivasyonunu (uzunluğu kontrol etmek ve düşünme kali
 - **Görev İlgisi**: Aynı içerik, farklı görevler için farklı sıkıştırma sonuçları vermelidir, örneğin "kurucular listesini bul" ile "kişisel geçmişi öğren".
 - **Sıkıştırma Anlamaktır**: Etkili sıkıştırma derin semantik anlayış gerektirir—context'in özünü daha inceltilmiş bir ifadeyle yakalamak. Ayrıca, açık sıkıştırmanın sonuçları oturumlar arasında incelenebilir ve yeniden kullanılabilirdir.
 
-### Agent Mimarisi Tasarımı için Çıkarımlar
-
-Context sıkıştırma stratejileri üzerine araştırma, Agent sistem tasarımının temel meselelerine değinir. **Sıkıştırma Anlamaktır**—sıkıştırmadan sorumlu modülün kendisi ana modele yakın dil anlama yeteneklerine ihtiyaç duyar, yinelemeli bir "model modeli çağırıyor" mimarisi oluşturur. **Sıkıştırma Stratejisi Görev Türüyle Bağlantılıdır**—bilgi getirme görevleri genişliği korumalıdır, analiz görevleri derinliği korumalıdır ve yaratıcı görevler ilham tetikleyicilerini korumalıdır. Gelecekteki Agent'lar, görev türüne dayanarak sıkıştırma stratejilerini uyarlanabilir biçimde seçebilmelidir.
-
-Sıkıştırma ek hesaplama yükü gerektirse de (her sıkıştırma ekstra bir LLM çağrısıdır), tasarruf edilen token maliyetlerine ve iyileşen görev başarı oranlarına kıyasla yatırım getirisi son derece yüksektir—deneyler, bağlama duyarlı sıkıştırmanın token kullanımını %75'in üzerinde azalttığını gösteriyor.
-
-Sıkıştırmanın en kolay kaybettiği şey ayrıntıların kendisi değil, **erken mimari kararlar, kısıtların ardındaki gerekçe ve başarısız yollardır**—LLM'ler tipik olarak yeniden elde edilebilir gibi görünen bilgiyi silmeyi önceliklendirir. Üretim düzeyindeki Agent sistemlerinde, sıkıştırma sırasında koruma önceliklerini açıkça tanımlamak önerilir:
-
-1.  **Mimari Kararlar ve Kilit Kısıtlar**: Özetlenmemelidir.
-2.  **Değiştirilen Dosyaların Listesi ve Kilit Değişiklik Kayıtları**: Tamamen korunmalıdır.
-3.  **Doğrulama Durumu** (geçti/kaldı): Korunmalıdır.
-4.  **Çözülmemiş TODO'lar ve Geri Alma Notları**: Korunmalıdır.
-5.  **Araç Çıktısı**: Silinebilir, yalnızca geçti/kaldı sonucu tutulur.
-
 ### Sıkıştırma Yerine İzolasyon: Alt Agent Context İzolasyonu
 
 Sıkıştırma, bilgiyi context'e girdikten *sonra* çıkarır. Daha doğrudan bir yaklaşım, hacimli ara bilgiyi baştan itibaren ana context'in dışında tutmaktır. Bu **Alt Agent Context İzolasyonudur (Sub-Agent Context Isolation)**: ana Agent, "kod tabanında geniş bir arama yapmak" gibi büyük miktarda ara içerik üreten görevleri bağımsız bir alt Agent'a devreder. Alt Agent keşfi kendi context'i içinde tamamlar ve ana Agent'a yalnızca birkaç yüz token'lık öz bir özet döndürür.

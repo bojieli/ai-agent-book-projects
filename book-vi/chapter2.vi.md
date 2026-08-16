@@ -1069,20 +1069,6 @@ Trước đây chúng tôi đã phân tích hai động cơ nén (kiểm soát �
 - **Mức độ liên quan của nhiệm vụ**: Cùng một nội dung sẽ tạo ra các kết quả nén khác nhau với hai nhiệm vụ khác nhau: "Tìm danh sách người sáng lập" và "Tìm hiểu lý lịch cá nhân"
 - **Nén là hiểu**: Nén hiệu quả đòi hỏi sự hiểu biết sâu sắc về ngữ nghĩa—nắm bắt được bản chất của ngữ cảnh bằng cách diễn đạt tinh tế hơn. Và kết quả nén rõ ràng có thể được kiểm tra và tái sử dụng qua các phiên
 
-### Cảm hứng thiết kế kiến trúc Agent
-
-Nghiên cứu về chiến lược nén ngữ cảnh đề cập đến các vấn đề thiết yếu của thiết kế hệ thống Agent. **Nén nghĩa là hiểu** - Bản thân module chịu trách nhiệm nén cần phải gần với khả năng hiểu ngôn ngữ của model chính, tạo thành kiến trúc đệ quy của "model gọi model". **Policy nén và khớp nối loại nhiệm vụ** - Nhiệm vụ truy xuất thông tin cần giữ lại độ rộng, nhiệm vụ phân tích cần giữ được chiều sâu và nhiệm vụ sáng tạo cần giữ lại các điểm kích hoạt cảm hứng. Agent trong tương lai sẽ có khả năng lựa chọn chiến lược nén một cách thích ứng dựa trên các loại tác vụ.
-
-Mặc dù quá trình nén yêu cầu chi phí tính toán bổ sung (mỗi lần nén là một lệnh gọi LLM bổ sung), so với chi phí mã thông báo đã lưu và tỷ lệ thành công của nhiệm vụ được cải thiện, lợi tức đầu tư là cực kỳ cao - các thử nghiệm cho thấy rằng nén nhận biết ngữ cảnh giúp giảm hơn 75% mức sử dụng mã thông báo.
-
-Thứ dễ bị mất nhất trong quá trình nén không phải là bản thân các chi tiết mà là **các quyết định kiến trúc ban đầu, lý do đằng sau các ràng buộc và đường dẫn đến thất bại** - LLM thường ưu tiên xóa thông tin có vẻ như có thể truy xuất được. Trong các hệ thống Agent cấp sản xuất, bạn nên xác định rõ ràng mức độ ưu tiên lưu giữ trong quá trình nén:
-
-1. **Quyết định về kiến trúc và các ràng buộc chính**: Không cho phép tóm tắt
-2. **Danh sách tệp đã sửa đổi và bản ghi thay đổi khóa**: Giữ nguyên
-3. **Trạng thái xác minh**(pass/fail): Phải được giữ lại
-4. **Các ghi chú TODO và rollback chưa được giải quyết**: phải được giữ lại
-5. **Đầu ra công cụ**: Có thể xóa, chỉ giữ lại pass/fail. Phần kết luận
-
 ### Cách ly khi nén: cách ly ngữ cảnh phụ Agent
 
 Nén loại bỏ thông tin *sau khi* thông tin đã đi vào ngữ cảnh. Một cách trực tiếp hơn là ngay từ đầu không để lượng lớn thông tin trung gian lọt vào ngữ cảnh chính. Đây là **cách ly ngữ cảnh Agent phụ**: Agent chính giao những nhiệm vụ tạo ra nhiều nội dung trung gian, chẳng hạn như "tìm kiếm trên phạm vi rộng trong cơ sở mã", cho một Agent phụ độc lập. Agent phụ hoàn tất việc khám phá trong ngữ cảnh riêng và chỉ gửi lại cho Agent chính một bản tóm tắt ngắn gọn dài vài trăm token.

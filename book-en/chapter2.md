@@ -1073,20 +1073,6 @@ We have already analyzed the two motivations for compression—controlling lengt
 - **Task Relevance**: The same content should yield different compression results for different tasks, such as "find the list of founders" versus "learn about personal background."
 - **Compression is Understanding**: Effective compression requires deep semantic understanding—capturing the core meaning of the context with more refined expression. Moreover, the results of explicit compression are reviewable and reusable across sessions.
 
-### Implications for Agent Architecture Design
-
-Research on context compression strategies points to fundamental issues in Agent system design. **Compression is Understanding**: the module responsible for compression needs language understanding capabilities close to those of the main model, forming a recursive model-call architecture. **Compression Strategy is Coupled with Task Type**: information retrieval tasks need to preserve breadth, analysis tasks need to preserve depth, and creative tasks need to preserve inspiration triggers. Future Agents should be able to select compression strategies adaptively based on the task type.
-
-Although compression adds computational overhead because each compression requires an extra LLM call, its return on investment can be extremely high relative to the resulting token-cost savings and improvements in task success. Experiments show that context-aware compression reduces token usage by over 75%.
-
-What compression most easily loses is not the details themselves, but **early architectural decisions, the reasoning behind constraints, and failed paths**—LLMs typically prioritize deleting information that seems like it could be re-acquired. In production-grade Agent systems, it is recommended to explicitly define retention priorities during compression:
-
-1.  **Architectural Decisions and Key Constraints**: Must not be summarized.
-2.  **List of Modified Files and Key Change Records**: Preserve in full.
-3.  **Verification Status** (pass/fail): Must be retained.
-4.  **Unresolved TODOs and Rollback Notes**: Must be retained.
-5.  **Tool Output**: Can be deleted, retaining only the pass/fail conclusion.
-
 ### Isolation Over Compression: Sub-Agent Context Isolation
 
 Compression removes information *after* it has already entered the context. A more direct approach is to keep bulky intermediate information out of the main context in the first place. This is **Sub-Agent Context Isolation**: the main Agent delegates tasks that generate large amounts of intermediate content, such as "perform a broad search in the codebase," to an independent sub-agent. The sub-agent completes the exploration within its own context and returns only a concise summary of a few hundred tokens to the main Agent.
