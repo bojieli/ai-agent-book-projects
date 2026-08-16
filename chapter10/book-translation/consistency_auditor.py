@@ -289,7 +289,9 @@ class BilingualConsistencyAuditor:
             )
 
         if not source_blocks:
-            return ((0.0 if target_blocks else 1.0), findings)
+            # Target blocks with no source counterpart already produced a count
+            # mismatch finding above, so score them as a miss rather than a pass.
+            return 0.0 if target_blocks else 1.0, findings
 
         matches = 0
         min_blocks = min(len(source_blocks), len(target_blocks))
