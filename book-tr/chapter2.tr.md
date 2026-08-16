@@ -450,19 +450,19 @@ Cevap: o tek zaman damgası satırı, her istekte token dizisinin zaman damgası
 >
 > KV Cache'i açıklamadan önce, önce bir deney aracılığıyla modelin içsel attention mekanizmasına dair sezgisel bir anlayış kazanalım—bu, KV Cache'in neden etkili olduğunu ve context tasarımına neden sıkı gereksinimler getirdiğini anlamanın temelidir.
 >
-> **Attention Mekanizması Nedir?** Somut bir örnek kullanalım. Modelin "北京 的 天气 怎么样" ("Pekin'de hava durumu nasıl?") Çince cümlesini işlediğini varsayalım; kelimeleri "北京" (Pekin), "的" (iyelik parçacığı, "-in/-ın" gibi), "天气" (hava durumu) ve "怎么样" (nasıl) şeklindedir. "怎么样"ı okuduğunda model şuna karar vermelidir: önceki kelimelerden hangileri "怎么样"ı anlamak için en önemlisidir?
+> **Attention Mekanizması Nedir?** Somut bir örnek kullanalım. Modelin "Pekin'de hava durumu nasıl?" ("北京 的 天气 怎么样") cümlesini işlediğini varsayalım; kelimeleri "Pekin" ("北京", konum etiketi), "-in/-ın" ("的", iyelik parçacığı), "hava durumu" ("天气", meteoroloji içeriği) ve "nasıl" ("怎么样", query) şeklindedir. "nasıl" ("怎么样") kelimesini okuduğunda model şuna karar vermelidir: önceki kelimelerden hangileri "nasıl" ("怎么样") kelimesini anlamak için en önemlisidir?
 >
 > Attention mekanizması bu "odağı bulma" sürecini gerçekleştirmek için üç tür vektör kullanır:
 >
-> Tablo 2-1, attention mekanizmasındaki Query, Key ve Value vektörlerinin rollerini özetleyerek okuyucuların bu soyut hesaplamayı "北京的天气怎么样" ("Pekin'de hava durumu nasıl?") örnek cümlesiyle eşleştirmesine yardımcı olur.
+> Tablo 2-1, attention mekanizmasındaki Query, Key ve Value vektörlerinin rollerini özetleyerek okuyucuların bu soyut hesaplamayı "Pekin'de hava durumu nasıl?" ("北京的天气怎么样") örnek cümlesiyle eşleştirmesine yardımcı olur.
 >
 > Tablo 2-1 Attention Mekanizmasında Query, Key ve Value'nun Rolleri
 >
 > | Vektör | Anlamı | Bu örnekte |
 > |-------|-----------------------------------------|-----------------------------------------------|
-> | **Query** | Mevcut kelimenin verdiği "arama isteği" | "怎么样" (nasıl) sorar: benimle en ilgili kelime hangisi? |
-> | **Key** | Her kelimenin, aramayla eşleştirilen "etiketi" | "北京"in (Pekin) etiketi "yer adına"; "天气"in (hava durumu) etiketi "meteorolojiye" meyillidir |
-> | **Value** | Başarılı bir eşleşmede çıkarılan her kelimenin "içeriği" | "天气" (hava durumu) ile eşleştikten sonra, onun semantik bilgisi çıkarılır |
+> | **Query** | Mevcut kelimenin verdiği "arama isteği" | Query: "nasıl" ("怎么样") sorar: benimle en ilgili kelime hangisi? |
+> | **Key** | Her kelimenin, aramayla eşleştirilen "etiketi" | Key: "Pekin" ("北京") konum etiketi; "hava durumu" ("天气") meteoroloji etiketi |
+> | **Value** | Başarılı bir eşleşmede çıkarılan her kelimenin "içeriği" | Value: "hava durumu" ("天气") içeriği, başarılı eşleşmede çıkarılır |
 >
 > Basitçe ifade etmek gerekirse, her yeni kelime "benimle en ilgili önceki kelimeler hangileri?" diye sorar, puanlama yoluyla en ilgili kelimeleri bulur, ardından mevcut bağlamı anlamak için öncelikle onların bilgisine başvurur.
 >

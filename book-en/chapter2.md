@@ -453,19 +453,19 @@ That one timestamp line made the token sequence differ from the timestamp onward
 >
 > Before explaining KV Cache, we first build an intuitive understanding of the model's internal attention mechanism through an experiment—this is the foundation for understanding why KV Cache is effective and why it imposes strict requirements on context design.
 >
-> **What is the Attention Mechanism?** Consider a concrete example. Suppose the model is processing the Chinese sentence "北京 的 天气 怎么样" ("How's the weather in Beijing?"), whose words are "北京" (Beijing), "的" (a possessive particle, like "of"), "天气" (weather), and "怎么样" (how is it). When it reads "怎么样", the model needs to decide: which of the preceding words are most important for understanding "怎么样"?
+> **What is the Attention Mechanism?** Consider a concrete example. Suppose the model is processing the sentence "How is the weather in Beijing?" ("北京 的 天气 怎么样"), whose words are "Beijing" ("北京", location label), "of" ("的", possessive particle), "Weather" ("天气", meteorology content), and "How is it" ("怎么样", query). When it reads "How is it" ("怎么样"), the model needs to decide: which of the preceding words are most important for understanding "How is it" ("怎么样")?
 >
 > The attention mechanism uses three types of vectors to decide which earlier tokens are most relevant:
 >
-> Table 2-1 summarizes the roles of the Query, Key, and Value vectors in the attention mechanism, helping readers map the abstract computation onto the example sentence "北京的天气怎么样" ("How's the weather in Beijing?").
+> Table 2-1 summarizes the roles of the Query, Key, and Value vectors in the attention mechanism, helping readers map the abstract computation onto the example sentence "How is the weather in Beijing?" ("北京的天气怎么样").
 >
 > Table 2-1 Roles of Query, Key, and Value in the Attention Mechanism
 >
 > | Vector | Meaning | In this example |
 > |-------|-----------------------------------------|-----------------------------------------------|
-> | **Query** | The "search request" issued by the current word | "怎么样" (how is it) asks: which word is most relevant to me? |
-> | **Key** | The "label" of each word, used for matching the search | The label of "北京" (Beijing) leans toward "place name"; the label of "天气" (weather) leans toward "meteorology" |
-> | **Value** | The "content" of each word, extracted upon a successful match | After matching "天气" (weather), extract its semantic information |
+> | **Query** | The "search request" issued by the current word | Query: "How is it" ("怎么样") asks: which word is most relevant to me? |
+> | **Key** | The "label" of each word, used for matching the search | Key: "Beijing" ("北京") location label; "Weather" ("天气") meteorology label |
+> | **Value** | The "content" of each word, extracted upon a successful match | Value: "Weather" ("天气") content, extracted upon a successful match |
 >
 > In simplified terms, each new word scores the preceding words by relevance, then uses the most relevant information to build its current representation.
 >

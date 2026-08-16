@@ -453,19 +453,19 @@ Satu baris timestamp tersebut membuat urutan token berbeda mulai dari posisi tim
 
 > Sebelum menjelaskan tentang KV Cache, kita terlebih dahulu membangun pemahaman intuitif mengenai mekanisme attention (attention mechanism) internal model lewat sebuah eksperimen—ini adalah fondasi untuk memahami mengapa KV Cache itu sangat efektif dan mengapa ia menerapkan syarat-syarat ketat atas rancangan context.
 
-> **Apakah Mekanisme Attention Itu?** Pertimbangkan sebuah contoh konkret. Umpamakan model sedang memproses kalimat berbahasa Mandarin "北京 的 天气 怎么样" ("Bagaimana cuaca di Beijing?"), yang kosa katanya adalah "北京" (Beijing), "的" (partikel posesif, layaknya "of"), "天气" (cuaca), dan "怎么样" (bagaimanakah (keadaannya)). Saat ia membaca "怎么样", model perlu memutuskannya: manakah di antara kata-kata sebelumnya yang paling penting (most important) untuk memahami maksud "怎么样"?
-
+> **Apakah Mekanisme Attention Itu?** Pertimbangkan sebuah contoh konkret. Umpamakan model sedang memproses kalimat "Bagaimana cuaca di Beijing?" ("北京 的 天气 怎么样"), yang kosa katanya adalah "Beijing" ("北京", label lokasi), "dari/posesif" ("的", partikel posesif), "cuaca" ("天气", konten meteorologi), dan "bagaimana keadaannya" ("怎么样", query). Saat ia membaca "bagaimana keadaannya" ("怎么样"), model perlu memutuskannya: manakah di antara kata-kata sebelumnya yang paling penting (most important) untuk memahami maksud "bagaimana keadaannya" ("怎么样")?
+>
 > Mekanisme attention (perhatian/atensi) menggunakan tiga jenis vektor untuk menentukan kata-kata terdahulu mana yang paling relevan (most relevant):
-
-> Tabel 2-1 merangkum berbagai peran dari vektor Query, Key, dan Value di dalam mekanisme attention, untuk menolong pembaca memetakan perhitungan komputasi abstrak ke contoh kalimat "北京的天气怎么样" ("Bagaimana cuaca di Beijing?").
-
+>
+> Tabel 2-1 merangkum berbagai peran dari vektor Query, Key, dan Value di dalam mekanisme attention, untuk menolong pembaca memetakan perhitungan komputasi abstrak ke contoh kalimat "Bagaimana cuaca di Beijing?" ("北京的天气怎么样").
+>
 > Tabel 2-1 Peran dari Query, Key, dan Value di dalam Mekanisme Attention
-
+>
 > | Vektor | Makna | Dalam contoh ini |
 > |-------|-----------------------------------------|-----------------------------------------------|
-> | **Query** | "Permintaan pencarian" yang diterbitkan oleh kata saat ini | "怎么样" (bagaimana (keadaannya)) bertanya: kata mana yang paling relevan denganku? |
-> | **Key** | "Label" dari masing-masing kata, digunakan guna mencocokkan hasil pencarian | Label dari kata "北京" (Beijing) lebih condong ke arah "nama tempat"; label dari "天气" (cuaca) condong ke "meteorologi" |
-> | **Value** | "Konten" dari tiap kata, diekstraksi bila terjadi kecocokan (successful match) | Usai pencocokan "天气" (cuaca), ekstraksi informasi semantiknya |
+> | **Query** | "Permintaan pencarian" yang diterbitkan oleh kata saat ini | Query: "bagaimana keadaannya" ("怎么样") bertanya: kata mana yang paling relevan denganku? |
+> | **Key** | "Label" dari masing-masing kata, digunakan guna mencocokkan hasil pencarian | Key: "Beijing" ("北京") label lokasi; "cuaca" ("天气") label meteorologi |
+> | **Value** | "Konten" dari tiap kata, diekstraksi bila terjadi kecocokan (successful match) | Value: "cuaca" ("天气") konten semantik, diekstraksi bila terjadi kecocokan |
 
 > Secara sederhana, setiap kata baru memberi skor relevansi pada kata-kata sebelumnya, lalu menggunakan informasi yang paling relevan untuk membentuk representasinya sendiri.
 

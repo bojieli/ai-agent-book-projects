@@ -453,19 +453,19 @@ Ez az egy időbélyegsor minden kérésnél az időbélyeg helyétől kezdve elt
 >
 > Mielőtt elmagyaráznánk a KV Cache-t, először építsünk intuitív megértést a modell belső figyelmi mechanizmusáról egy kísérleten keresztül – ez az alapja annak, hogy megértsük, miért hatékony a KV Cache, és miért támaszt szigorú követelményeket a kontextus tervezésével szemben.
 >
-> **Mi a Figyelmi Mechanizmus?** Vegyünk egy konkrét példát. Tegyük fel, hogy a modell a "北京的天气怎么样" kínai mondatot dolgozza fel (amelynek szavai: "北京" [Peking], "的" [birtokos partikula], "天气" [időjárás] és "怎么样" [milyen]). Amikor a "怎么样" szót olvassa, a modellnek el kell döntenie: melyik korábbi szavak a legfontosabbak a "怎么样" megértéséhez?
+> **Mi a Figyelmi Mechanizmus?** Vegyünk egy konkrét példát. Tegyük fel, hogy a modell a "Milyen az időjárás Pekingben?" ("北京 的 天气 怎么样") mondatot dolgozza fel (amelynek szavai: "Peking" ["北京", helyszín címke], "birtokos rag" ["的", birtokos partikula], "időjárás" ["天气", meteorológia tartalom] és "milyen" ["怎么样", query]). Amikor a "milyen" ("怎么样") szót olvassa, a modellnek el kell döntenie: melyik korábbi szavak a legfontosabbak a "milyen" ("怎么样") megértéséhez?
 >
 > A figyelmi mechanizmus háromféle vektort használ annak eldöntésére, hogy melyik korábbi tokenek a legrelevánsabbak:
 >
-> A 2-1. táblázat összefoglalja a Lekérdezés (Query), a Kulcs (Key) és az Érték (Value) vektorok szerepét a figyelmi mechanizmusban, segítve az olvasókat az absztrakt számítás leképezésében a "北京的天气怎么样" példamondatra.
+> A 2-1. táblázat összefoglalja a Lekérdezés (Query), a Kulcs (Key) és az Érték (Value) vektorok szerepét a figyelmi mechanizmusban, segítve az olvasókat az absztrakt számítás leképezésében a "Milyen az időjárás Pekingben?" ("北京的天气怎么样") példamondatra.
 >
 > 2-1. táblázat: A Lekérdezés, Kulcs és Érték szerepe a Figyelmi Mechanizmusban
 >
 > | Vektor | Jelentés | Ebben a példában |
 > |-------|-----------------------------------------|-----------------------------------------------|
-> | "Query" | Az aktuális szó által kiadott "keresési kérelem" | "怎么样" (milyen) megkérdezi: melyik szó a legrelevánsabb számomra? |
-> | "Key" | Az egyes szavak "címkéje", a keresés párosításához | A "北京" (Peking) címkéje "helynév" felé hajlik; a "天气" (időjárás) címkéje "meteorológia" felé hajlik |
-> | "Value" | Az egyes szavak "tartalma", amelyet sikeres párosítás után kinyerünk | A "天气" (időjárás) párosítása után kivonjuk annak szemantikai információját |
+> | **Query** | Az aktuális szó által kiadott "keresési kérelem" | Query: "milyen" ("怎么样") megkérdezi: melyik szó a legrelevánsabb számomra? |
+> | **Key** | Az egyes szavak "címkéje", a keresés párosításához | Key: "Peking" ("北京") helyszín címke; "időjárás" ("天气") meteorológia címke |
+> | **Value** | Az egyes szavak "tartalma", amelyet sikeres párosítás után kinyerünk | Value: "időjárás" ("天气") tartalom, sikeres párosítás után kinyerve |
 >
 > Leegyszerűsítve: minden új szó relevancia alapján pontozza az előző szavakat, majd a legrelevánsabb információt használja fel saját reprezentációjának felépítéséhez.
 >
