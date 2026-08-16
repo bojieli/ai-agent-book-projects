@@ -294,7 +294,7 @@ def fig5_4():
         ("Diff + Apply Model", "dark",
          ["LLM Output Diff Description:",
           "- def foo(x):",
-          "    return x",
+          "-   return x",
           "+ def foo(x, y=0):",
           "+   return x + y",
           "→ Small Model Locates and Applies"],
