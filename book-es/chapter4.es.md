@@ -182,7 +182,17 @@ Las herramientas de percepción enfrentan a menudo el desafío de que la cantida
 
 Para comprender imágenes, vídeo, audio y PDF, un Agente necesita percepción multimodal. Hay tres vías: procesamiento multimodal nativo del modelo, extracción automática del contenido a texto y modelos multimodales envueltos como herramientas.
 
-El procesamiento nativo ofrece el techo de capacidad más alto: codificadores como el Vision Transformer asignan cada tipo de dato a un espacio semántico común. La extracción de texto es una alternativa para modelos sin soporte nativo y suele ahorrar tokens en PDF dominados por texto, aunque pierde diseño, gráficos e imágenes. Cuando el modelo principal no es multimodal, herramientas como `analyze_image`, `analyze_pdf` y `analyze_audio` pueden enviar el archivo y una pregunta a un modelo especializado y devolver una descripción breve, evitando que los datos multimodales ocupen el contexto.
+#### Procesamiento multimodal nativo
+
+El procesamiento nativo ofrece el techo de capacidad más alto: codificadores como el Vision Transformer asignan cada tipo de dato a un espacio semántico común.
+
+#### Extracción a texto
+
+La extracción de texto es una alternativa para modelos sin soporte nativo y suele ahorrar tokens en PDF dominados por texto, aunque pierde diseño, gráficos e imágenes.
+
+#### Análisis multimodal basado en herramientas
+
+Cuando el modelo principal no es multimodal, herramientas como `analyze_image`, `analyze_pdf` y `analyze_audio` pueden enviar el archivo y una pregunta a un modelo especializado y devolver una descripción breve, evitando que los datos multimodales ocupen el contexto.
 
 > **Experimento 4-2 ★★: extracción de información multimodal: análisis comparativo de tres paradigmas técnicos**
 >

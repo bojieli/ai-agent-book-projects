@@ -180,7 +180,17 @@ Az észlelő eszközök gyakran szembesülnek azzal a kihívással, hogy sokkal 
 
 Képek, videók, hangok és PDF-ek megértéséhez az Agentnek multimodális észlelésre van szüksége. Három út létezik: a modell natív multimodális feldolgozása, a tartalom automatikus szöveggé alakítása, valamint egy multimodális modell eszközként való becsomagolása.
 
-A natív feldolgozás adja a legmagasabb képességplafont; a Vision Transformerhez hasonló kódolók közös szemantikai térbe vetítik az adatokat. A szövegkinyerés jó megoldás nem multimodális modelleknél és szövegközpontú PDF-eknél takarékosabb, de elveszíti az elrendezést, ábrákat és képeket. Ha a fő modell nem multimodális, az `analyze_image`, `analyze_pdf` és `analyze_audio` eszközök egy szakosodott modellnek adhatják át a fájlt és a kérdést, rövid eredményt tartva a kontextusban.
+#### Natív multimodális feldolgozás
+
+A natív feldolgozás adja a legmagasabb képességplafont; a Vision Transformerhez hasonló kódolók közös szemantikai térbe vetítik az adatokat.
+
+#### Szöveggé alakítás
+
+A szövegkinyerés jó megoldás nem multimodális modelleknél és szövegközpontú PDF-eknél takarékosabb, de elveszíti az elrendezést, ábrákat és képeket.
+
+#### Eszközalapú multimodális elemzés
+
+Ha a fő modell nem multimodális, az `analyze_image`, `analyze_pdf` és `analyze_audio` eszközök egy szakosodott modellnek adhatják át a fájlt és a kérdést, rövid eredményt tartva a kontextusban.
 
 > **4-2. ★★ Kísérlet: Multimodális Információkinyerés — Három Technikai Paradigma Összehasonlító Elemzése**
 >
