@@ -86,32 +86,41 @@ def normalize_number(text: str) -> Optional[str]:
     cleaned = cleaned.replace(",", "")
 
     # Evaluate \frac{a}{b} before brace stripping (else "\frac{6}{2}" becomes "frac62").
-    frac = re.search(r'(-)?\s*\\(?:d)?frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}', cleaned)
+    frac = re.search(r'(-)?\s*\\(?:d)?frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}', cleaned)
     if frac:
         try:
             sign = -1.0 if frac.group(1) else 1.0
-            num_match = re.match(r'\s*(-?\s*\d+(?:\.\d+)?)', frac.group(2))
-            den_match = re.match(r'\s*(-?\s*\d+(?:\.\d+)?)', frac.group(3))
+            g2 = frac.group(2) if frac and len(frac.groups()) >= 2 and frac.group(2) is not None else ""
+            g3 = frac.group(3) if frac and len(frac.groups()) >= 3 and frac.group(3) is not None else ""
+            num_match = re.match(r'\s*(-?\s*\d+(?:\.\d+)?)', g2) if g2 else None
+            den_match = re.match(r'\s*(-?\s*\d+(?:\.\d+)?)', g3) if g3 else None
             if not num_match or not den_match:
                 raise ValueError("fraction component does not start with a number")
-            num = float(num_match.group(1).replace(" ", ""))
-            den = float(den_match.group(1).replace(" ", ""))
+            num_str = num_match.group(1) if num_match else None
+            den_str = den_match.group(1) if den_match else None
+            if num_str is None or den_str is None:
+                raise ValueError("fraction component match group is None")
+            num = float(num_str.replace(" ", ""))
+            den = float(den_str.replace(" ", ""))
             if den != 0:
                 return _format_normalized_number(sign * (num / den))
-        except ValueError:
+        except (ValueError, TypeError, AttributeError, ZeroDivisionError):
             pass
 
     # Plain a/b before taking the first digit run alone; allow spaces and units.
     slash = re.search(r'(-?\s*\d+(?:\.\d+)?)\s*/\s*(-?\s*\d+(?:\.\d+)?)', cleaned)
     if slash:
         try:
-            num = float(slash.group(1).replace(" ", ""))
-            den = float(slash.group(2).replace(" ", ""))
+            g1 = slash.group(1) if slash and len(slash.groups()) >= 1 and slash.group(1) is not None else None
+            g2 = slash.group(2) if slash and len(slash.groups()) >= 2 and slash.group(2) is not None else None
+            if g1 is None or g2 is None:
+                raise ValueError("slash component is None")
+            num = float(g1.replace(" ", ""))
+            den = float(g2.replace(" ", ""))
             if den != 0:
                 return _format_normalized_number(num / den)
-        except ValueError:
+        except (ValueError, TypeError, AttributeError, ZeroDivisionError):
             pass
-    
     # 去除 LaTeX 及货币符号
     text = text.replace("\\$", "")
     text = text.replace("$", "")
@@ -132,6 +141,7 @@ def normalize_number(text: str) -> Optional[str]:
             return None
     
     return None
+_normalize_number = normalize_number
 
 
 def extract_and_normalize_answer(text: str) -> Optional[str]:
