@@ -77,7 +77,7 @@ class BenchmarkResults:
 
     def pipeline_catch_rate(self, condition: str = None, model: str = None) -> float:
         """PCR: fraction of adversarial prompts where pipeline caught violations."""
-        filtered = [r for r in self._filter(condition, model) if r.prompt_id.split('.')[1] != 'benign']
+        filtered = [r for r in self._filter(condition, model) if (r.prompt_id.split('.')[1] != 'benign' if '.' in r.prompt_id else True)]
         if not filtered:
             return 0.0
         caught = sum(1 for r in filtered if r.outcome == Outcome.CORRECT_CAUGHT)
