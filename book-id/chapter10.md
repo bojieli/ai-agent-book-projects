@@ -246,8 +246,6 @@ Nilai arah ini terletak pada pemisahan kontinuitas tugas dari riwayat eksekusi y
 
 [^longhorizon-implementation]: LongHorizon-Harness, commit stabil `53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb`. Situs proyek dan jejak publik: https://lh-harness.pages.dev/#trajectories; makalah: https://arxiv.org/abs/2608.01964; kode: https://github.com/AMAP-ML/LongHorizon-Harness/tree/53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb
 
-**Paradigma Proposer-Reviewer.**
-
 #### Paradigma Proposer-Reviewer
 
 ![Gambar 10-3: Proposer-Reviewer Loop](images/fig10-3.svg)
@@ -283,7 +281,6 @@ Makalah CRITIC di ICLR 2024 memberikan eksperimen komparatif yang intuitif. CRIT
 Ini adalah prinsip desain inti dari paradigma Proposer-Reviewer. Dalam eksperimen pembuatan PPT dari Bab 5, nilai dari Reviewer Agent bukan "menggunakan model yang sama untuk melihat kode lagi," tetapi **merender PPT dan mengambil tangkapan layar**—sebuah tangkapan layar yang berisi informasi visual yang tidak dapat diperoleh Proposer Agent saat menghasilkan kode. Demikian pula, dalam skenario pembuatan kode, hasil lulus/gagal dari mengeksekusi test case adalah sinyal baru yang tidak ada saat kode ditulis—nilai independen dari Reviewer berasal tepat dari aksesnya ke umpan balik eksternal ini yang tidak tersedia bagi Proposer.
 
 Dilihat melalui lensa Loop Engineering, pola loop yang dikatalogkan oleh industri memetakan ke pola dalam buku ini. Loop tertutup (closed loop) dengan persetujuan manusia sesuai dengan pra-persetujuan (pre-approval) Bab 4, di mana manusia adalah peninjau akhir. Loop terbuka (open loop) dengan anggaran (budget) atau batasan putaran (round cap) sesuai dengan iterasi PPT multi-putaran Bab 5, yang memungkinkan paling banyak lima putaran. Sub-agent yang diorkestrasi sesuai dengan pola manajer (manager pattern) di bagian selanjutnya. Oleh karena itu, Loop Engineering tidak mendeskripsikan arsitektur baru melainkan kerangka kerja umum—loop + verifikasi + kondisi berhenti (stop conditions)—yang menyatukan pola-pola kolaborasi ini. Paradigma Proposer-Reviewer mengisi peran verifikasi dalam kerangka kerja tersebut.
-
 
 #### Pola Debat
 

@@ -250,8 +250,6 @@ The value of this direction lies in separating task continuity from an ever-grow
 
 [^longhorizon-implementation]: LongHorizon-Harness, stable commit `53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb`. Project website and public trajectories: https://lh-harness.pages.dev/#trajectories; paper: https://arxiv.org/abs/2608.01964; code: https://github.com/AMAP-ML/LongHorizon-Harness/tree/53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb
 
-**Proposer-Reviewer Paradigm.**
-
 #### Proposer-Reviewer Paradigm
 
 ![Figure 10-3: Proposer-Reviewer Loop](images/fig10-3.svg)
@@ -287,7 +285,6 @@ The CRITIC paper at ICLR 2024 provides an intuitive comparative experiment. CRIT
 This is the core design principle of the Proposer-Reviewer paradigm. In the PPT generation experiment of Chapter 5, the value of the Reviewer Agent was not "using the same model to look at the code again," but **rendering the PPT and taking a screenshot**—a screenshot containing visual information that the Proposer Agent could not obtain when generating the code. Similarly, in code generation scenarios, the pass/fail results from executing test cases are new signals that did not exist when the code was written—the independent value of the Reviewer stems precisely from its access to this external feedback unavailable to the Proposer.
 
 Viewed through the lens of Loop Engineering, the loop patterns catalogued by the industry map onto patterns in this book. A closed loop with human approval corresponds to Chapter 4's pre-approval, in which the human is the final reviewer. An open loop with a budget or round cap corresponds to Chapter 5's multi-round PPT iteration, which allows at most five rounds. Orchestrated sub-agents correspond to the manager pattern in the next section. Loop Engineering therefore describes not a new architecture but a common framework—loop + verification + stop conditions—that unifies these collaboration patterns. The Proposer-Reviewer paradigm fills the verification role within that framework.
-
 
 #### Debate Pattern
 

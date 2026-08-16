@@ -247,8 +247,6 @@ Ennek az iránynak az értéke abban áll, hogy elválasztja a feladat folytonos
 
 [^longhorizon-implementation]: LongHorizon-Harness, stabil commit: `53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb`. Projekt weboldal és nyilvános trajektóriák: https://lh-harness.pages.dev/#trajectories; cikk: https://arxiv.org/abs/2608.01964; kód: https://github.com/AMAP-ML/LongHorizon-Harness/tree/53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb
 
-**Javasló-Ellenőrző Paradigma.**
-
 #### Javasló-Felülvizsgáló (Proposer-Reviewer) paradigma
 
 ![10-3. ábra: Javasló-Ellenőrző Hurok](images/fig10-3.svg)
@@ -284,7 +282,6 @@ Az ICLR 2024-es CRITIC tanulmány egy szemléletes összehasonlító kísérlete
 Ez a Javasló-Ellenőrző paradigma core tervezési elve. Az 5. fejezet PPT generálási kísérletében az Ellenőrző Ügynök értéke nem az volt, hogy "ugyanaz a modell újra megnézte a kódot", hanem hogy **renderelte a PPT-t és készített egy képernyőképet** – egy olyan képernyőképet, amely vizuális információt tartalmazott, amelyet a Javasló Ügynök nem tudott megszerezni a kód generálásakor. Hasonlóképpen, a kódgenerálási forgatókönyvekben a tesztesetek végrehajtásából származó siker/sikertelen eredmények olyan új jelek, amelyek nem léteztek a kód megírásakor – az Ellenőrző független értéke pontosan abból a képességéből származik, hogy hozzáfér ehhez a külső visszajelzéshez, amely a Javasló számára nem elérhető.
 
 A Hurok-mérnökség lencséjén keresztül nézve az iparág által katalogizált hurokminták e könyv mintáira képeződnek le. Egy emberi jóváhagyással rendelkező zárt hurok a 4. fejezet előzetes jóváhagyásának felel meg, ahol az ember a végső felülvizsgáló. Egy kerettel vagy körkorláttal rendelkező nyitott hurok az 5. fejezet többlépcsős PPT iterációjának felel meg, amely legfeljebb öt kört engedélyez. A vezényelt al-ügynökök a következő szakasz menedzser mintájának felelnek meg. A Hurok-mérnökség tehát nem új architektúrát ír le, hanem egy közös keretrendszert – hurok + ellenőrzés + leállási feltételek –, amely egyesíti ezeket az együttműködési mintákat. A Javasló-Ellenőrző paradigma az ellenőrzési szerepet tölti be ezen a keretrendszeren belül.
-
 
 #### Vita mintázat
 

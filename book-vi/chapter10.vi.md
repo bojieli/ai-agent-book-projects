@@ -246,9 +246,6 @@ Giá trị của hướng này nằm ở chỗ tách tính liên tục của tá
 
 [^longhorizon-implementation]: LongHorizon-Harness, commit ổn định `53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb`. Trang web dự án và trajectory công khai: https://lh-harness.pages.dev/#trajectories; bài báo: https://arxiv.org/abs/2608.01964; mã nguồn: https://github.com/AMAP-ML/LongHorizon-Harness/tree/53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb
 
-**Mô hình người đề xuất-người đánh giá.**
-
-
 #### Mô thức Người đề xuất - Người đánh giá
 
 ![Hình 10-3 Chu trình người đề xuất-đánh giá ](images/fig10-3.svg)
@@ -285,8 +282,6 @@ Bài báo CRITIC của ICLR 2024 cung cấp một thử nghiệm so sánh trực
 Đây là nguyên tắc thiết kế cốt lõi của mô hình người đề xuất-đánh giá. Trong thử nghiệm tạo PPT ở Chương 5, giá trị của Người đánh giá Agent không phải là "xem lại mã với cùng một mô hình", mà là hiển thị PPT và chụp ảnh màn hình - ảnh chụp màn hình này chứa thông tin trực quan mà Người đề xuất Agent hoàn toàn không thể lấy được khi tạo mã. Tương tự, trong các kịch bản tạo mã, kết quả đạt/không đạt được tạo ra khi thực hiện các trường hợp kiểm thử cũng là những tín hiệu mới không tồn tại khi mã được viết - giá trị độc lập của Người đánh giá đến từ khả năng truy cập các phản hồi bên ngoài này mà Người đề xuất không thể có được.
 
 Nhìn từ góc độ Loop Engineering (kỹ thuật vòng lặp), mấy phong cách vòng lặp mà giới công nghiệp tổng kết đều có thể tìm thấy điểm tương ứng trong cuốn sách này: vòng khép kín cộng phê duyệt thủ công, tương ứng với phê duyệt trước ở Chương 4 (con người là người đánh giá cuối cùng); vòng hở cộng ngân sách hoặc trần số vòng, tương ứng với vòng lặp nhiều vòng của việc tạo PPT ở Chương 5 (tối đa 5 vòng); Agent con kiểu điều phối, tương ứng với chế độ người quản lý ở phần tiếp theo. Nói cách khác, thứ mà Loop Engineering mô tả không phải là một kiến trúc mới, mà là việc thống nhất các mô hình cộng tác này dưới cùng một khung "vòng lặp + xác minh + điều kiện dừng" - trong đó phần đảm nhận việc xác minh, chính là mô hình người đề xuất-người đánh giá ở đây.
-
-**Tiện ích mở rộng: Các chế độ cộng tác ngang hàng khác.**
 
 #### Mô hình tranh luận
 

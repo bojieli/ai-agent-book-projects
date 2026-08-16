@@ -241,9 +241,6 @@ El valor de esta dirección consiste en separar la continuidad de la tarea de un
 
 [^longhorizon-implementation]: LongHorizon-Harness, commit estable `53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb`. Sitio web del proyecto y trayectorias públicas: https://lh-harness.pages.dev/#trajectories; artículo: https://arxiv.org/abs/2608.01964; código: https://github.com/AMAP-ML/LongHorizon-Harness/tree/53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb
 
-**Paradigma proponente-revisor.**
-
-
 #### Paradigma Proponente-Revisor
 
 ![Figura 10-3 Bucle proponente-revisor](images/fig10-3.svg)
@@ -280,7 +277,6 @@ El artículo CRITIC de ICLR 2024 ofrece un experimento comparativo intuitivo. CR
 Este es precisamente el principio de diseño central del paradigma proponente-revisor. En el experimento de generación de PPT del capítulo 5, el valor del Reviewer Agent no consistía en «volver a mirar el código con el mismo modelo», sino en que **renderizaba el PPT y obtenía capturas de pantalla**—esas capturas contenían información visual que el Proposer Agent no podía obtener en absoluto al generar el código. De manera análoga, en los escenarios de generación de código, los resultados de aprobación o fallo producidos al ejecutar casos de prueba también constituyen señales nuevas que no existían cuando se escribió el código—el valor independiente del Reviewer procede precisamente de su acceso a este feedback externo, inaccesible para el Proposer.
 
 Desde la perspectiva de la Ingeniería de Bucles, los distintos estilos de bucle sintetizados por el sector tienen su equivalente en este libro: un bucle cerrado con aprobación humana corresponde a la aprobación previa del capítulo 4 —la persona es el revisor definitivo—; un bucle abierto con un límite de presupuesto o de rondas corresponde a las iteraciones múltiples de la generación de PPT del capítulo 5 —un máximo de cinco rondas—; y los subagentes orquestados corresponden al modelo de gestor de la siguiente sección. En otras palabras, la Ingeniería de Bucles no describe una arquitectura nueva, sino que unifica estos modelos de colaboración bajo un único framework de «bucle + verificación + condición de terminación»—y quien asume la verificación es precisamente el paradigma proponente-revisor aquí descrito.
-
 
 #### Patrón de debate
 

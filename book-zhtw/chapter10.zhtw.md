@@ -246,9 +246,6 @@ LongHorizon-Harness 將長程執行重新表述為任務狀態管理，並把自
 
 [^longhorizon-implementation]: LongHorizon-Harness，穩定提交 `53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb`。專案網站與公開軌跡：https://lh-harness.pages.dev/#trajectories；論文：https://arxiv.org/abs/2608.01964；程式碼：https://github.com/AMAP-ML/LongHorizon-Harness/tree/53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb
 
-**提議者～稽核者正規化。**
-
-
 #### 提議者-審核者範式
 
 ![圖 10-3 提議者～稽核者迴圈](images/fig10-3.svg)
@@ -285,7 +282,6 @@ ICLR 2024 的 CRITIC 論文提供了一個直觀的對比實驗。CRITIC 讓模�
 這正是提議者～稽核者正規化的核心設計原理。在第五章的 PPT 生成實驗中，Reviewer Agent 的價值不是「用同一個模型再看一遍程式碼」，而是**渲染了 PPT 並擷取了螢幕截圖**——這張截圖包含了 Proposer Agent 在生成程式碼時完全無法獲得的視覺資訊。同理，在程式碼生成場景中，執行測試用例產生的透過/失敗結果，也是編寫程式碼時並不存在的新訊號——Reviewer 的獨立價值正來源於它能接觸到 Proposer 無法獲得的這些外部回饋。
 
 從 Loop 工程的視角看，業界總結的幾種迴圈風格都能在本書找到對應：閉環加人工審批，對應第四章的事前審批（人是最終稽核者）；開環加預算或輪數上限，對應第五章 PPT 生成的多輪迭代（最多 5 輪）；編排型子 Agent，對應下一節的管理者模式。換句話說，Loop 工程描述的不是一種新架構，而是把這些協作模式統一到「迴圈 + 驗證 + 終止條件」這一個框架之下——其中承擔驗證的，正是這裡的提議者～稽核者正規化。
-
 
 #### 辯論模式
 

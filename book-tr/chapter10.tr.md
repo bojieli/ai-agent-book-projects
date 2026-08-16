@@ -246,9 +246,6 @@ Bu yönün değeri, görev sürekliliğini sürekli büyüyen bir yürütme geç
 
 [^longhorizon-implementation]: LongHorizon-Harness, kararlı commit `53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb`. Proje sitesi ve herkese açık yörüngeler: https://lh-harness.pages.dev/#trajectories; makale: https://arxiv.org/abs/2608.01964; kod: https://github.com/AMAP-ML/LongHorizon-Harness/tree/53bc678ed4170ad4d2e4309f2bfc5c3fb6caf8cb
 
-**Proposer-Reviewer paradigması.**
-
-
 #### Öneren-Denetleyen (Proposer-Reviewer) Paradigması
 
 ![Şekil 10-3: Proposer-Reviewer Döngüsü](images/fig10-3.svg)
@@ -285,7 +282,6 @@ ICLR 2024'ün CRITIC makalesi sezgisel bir karşılaştırma deneyi sunuyor. CRI
 Proposer-Reviewer paradigmasının çekirdek tasarım ilkesi tam da budur. Bölüm 5'teki PPT üretimi deneyinde Reviewer Agent'ın değeri "aynı modelle koda bir kez daha bakmak" değil, **PPT'yi render edip ekran görüntüsü almaktı** — bu görüntü, Proposer Agent'ın kodu üretirken hiçbir şekilde elde edemeyeceği görsel bilgiyi içeriyordu. Aynı şekilde kod üretimi senaryosunda, test durumlarının yürütülmesinden çıkan geçti/kaldı sonuçları da kod yazılırken var olmayan yeni sinyallerdir — Reviewer'ın bağımsız değeri, tam da Proposer'ın erişemediği bu dış geri bildirimlere ulaşabilmesinden gelir.
 
 Loop mühendisliği açısından bakıldığında, sektörün derlediği birkaç döngü tarzının hepsi bu kitapta karşılık bulur: insan onayı eklenmiş kapalı döngü, Bölüm 4'teki ön onaya karşılık gelir (nihai inceleyici insandır); bütçe veya tur sınırı eklenmiş açık döngü, Bölüm 5'teki PPT üretiminin çok turlu yinelemesine karşılık gelir (en fazla 5 tur); orkestrasyon tipi alt Agent'lar ise bir sonraki kısımdaki yönetici modeline karşılık gelir. Başka bir deyişle Loop mühendisliği yeni bir mimariyi değil, bu iş birliği modellerini "döngü + doğrulama + sonlandırma koşulu" tek çerçevesi altında birleştirmeyi anlatır — doğrulamayı üstlenen de buradaki Proposer-Reviewer paradigmasıdır.
-
 
 #### Münazara (Debate) Modeli
 
