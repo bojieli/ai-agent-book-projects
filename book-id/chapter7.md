@@ -83,9 +83,13 @@ $$
 
 Untuk $p=0.6$ dan $k=5$, Pass@5 sekitar 99,0%, sedangkan Pass consecutive@5 hanya 7,8%. Yang pertama mengukur batas eksplorasi; yang kedua mendekati keandalan pembayaran, refund, perubahan izin, dan deployment produksi. Laporan harus menjelaskan arti $k$; tindakan yang memiliki efek samping diuji di sandbox atau lingkungan yang dapat di-rollback, dan setiap kegagalan dihitung.
 
-### Metrik proses, keamanan, dan robustness
+### Metrik proses: Dari kotak hitam ke kotak putih
 
-Hasil akhir saja tidak cukup. Rasio tindakan valid dan berizin, ketepatan semantik tool call, efisiensi jalur (langkah, redundansi, dan backtracking), cakupan retrieval, serta biaya/latensi menunjukkan lokasi kegagalan Agent. Operasi sensitif, kebocoran data, dan konten terlarang menerapkan **toleransi nol**. Robustness mencakup sensitivitas seed, perubahan UI, gangguan API, dan interferensi memori usang; evaluasi harus memeriksa **trajectory** dan **outcome** sistem yang sebenarnya.
+Hasil akhir saja tidak cukup. Rasio tindakan valid dan berizin, ketepatan semantik tool call, efisiensi jalur (langkah, redundansi, dan backtracking), cakupan retrieval, serta biaya/latensi menunjukkan lokasi kegagalan Agent.
+
+### Keamanan, robustness, dan cakupan trajectory
+
+Operasi sensitif, kebocoran data, dan konten terlarang menerapkan **toleransi nol**. Robustness mencakup sensitivitas seed, perubahan UI, gangguan API, dan interferensi memori usang; evaluasi harus memeriksa **trajectory** dan **outcome** sistem yang sebenarnya.
 
 ### Pemeriksaan manusia dan tinjauan adversarial
 
@@ -439,33 +443,11 @@ Penilaian multimodal memperluas LLM-as-a-Judge ke ranah suara, gambar, dan video
 - **Evaluasi UI**: Menggunakan mekanisme **Proposer-Reviewer** untuk memeriksa masalah seperti teks meluber (text overflow), kontras warna, dan penempatan tombol. Di sini, proposer-reviewer digunakan sebagai **metode evaluasi**, berbeda dari penggunaannya sebagai **komponen sistem generasi** pada Bab 5, tetapi mekanisme intinya sama—satu model menghasilkan, model yang lain meninjau secara independen.
 - **Evaluasi Pengeditan Video**: Memverifikasi ketepatan titik awal/akhir klip dan penerapan efek melalui keyframe.
 
-### Atribusi kegagalan dan regresi trajectory prefix
+### Atribusi kegagalan: Melacak kesalahan pertama dalam trajectory
 
 Evaluasi end-to-end sering hanya memberi “lulus” atau “gagal”. Agar hasilnya memandu perbaikan, catat kategori, langkah pertama yang tidak dapat diterima, tool call atau output model terkait, dan bukti yang dapat diaudit untuk setiap trajectory gagal. Bad case biasanya datang dari koreksi eksplisit pengguna, feedback negatif, atau pemeriksaan status/aturan setelah kejadian. LLM dapat membantu, tetapi pembacaan manusia tetap penting karena akar masalah sering berada pada produk, bukan sekadar bug teknis.
 
 Untuk Coding Agent, taksonomi awal mencakup proses atau aturan yang terlewat, kesalahan tool/format, terminasi model yang abnormal, serta masalah logika atau kelengkapan. Simpan catatan JSON/YAML terstruktur berisi nomor langkah, tool, observasi, akar penyebab versus konsekuensi, kemampuan pemulihan, dan confidence bersama state, versi, dan trajectory lengkap.
-
-**Regresi end-to-end** menjalankan seluruh workflow; **regresi trajectory prefix** membekukan konteks, percakapan, hasil tool, dan state tepat sebelum kesalahan pertama lalu hanya menguji tindakan berikutnya. Definisikan himpunan tindakan yang dapat diterima—membaca aturan, bertanya kepada pengguna, atau menolak operasi berbahaya—bukan satu jawaban kanonis. Data evaluasi harus tetap terpisah dari data pelatihan.
-
-> **Eksperimen 7-5 ★★: Evaluasi batas trajectory prefix dengan beberapa encoding**
->
-> Model menerima memori yang sudah diketahui, instruksi saat ini, trajectory prefix, hasil tool, dan state lingkungan, lalu hanya menghasilkan tindakan berikutnya yang dapat diamati. Sebelas kasus dikodekan sebagai JSON Cards, Markdown, dan Python-like serta dinilai dengan aturan deterministik. Seluruh 33 sel selesai tanpa error API dan setiap encoding lulus 6/11; mengubah representasi saja tidak memperbaiki kebijakan penggunaan konteks.
-
-> **Eksperimen 7-6 ★★: Membangun Pipeline Evaluasi Kualitas TTS yang Sepenuhnya Otomatis**
->
-> Eksperimen ini mengharuskan perancangan dan implementasi sistem evaluasi kualitas TTS LLM-as-a-Judge multimodal yang lengkap dari awal.
->
-> Rancang Rubric TTS multi-dimensi: Dimensi Accuracy memverifikasi apakah semua teks dibaca dengan benar (tanpa penghilangan/salah baca/penambahan); dimensi Naturalness menilai apakah suara terdengar alami dan bukan seperti robot, tidak ada jeda yang tidak wajar, dan menggunakan prosodi alami; dimensi Emotional Expression memeriksa apakah nada cocok dengan nada emosional teks (intonasi naik untuk pertanyaan, penekanan untuk seruan, langkah lebih lambat dan nada lebih rendah untuk konten sedih); dimensi Voice Consistency mengevaluasi kemiripan pembicara ketika suara referensi tersedia (model multimodal secara bersamaan menerima suara referensi dan suara yang disintesis untuk perbandingan).
->
-> Bangun korpus yang bervariasi dalam panjang, genre, emosi, angka, nama diri, kata berpelafalan ambigu, dan dialek. Modul TTS dapat terhubung ke OpenAI, ElevenLabs, Fish Audio, Minimax, atau Doubao. Model penilai multimodal yang menerima audio menilai suara sintetis, teks asli, suara referensi, dan Rubric secara bersamaan. Selain menganalisis distribusi per dimensi, simpan nama model penilai serta hash audio referensi dan setiap kandidat agar hasil dapat diaudit.
-
-Repositori menyimpan pilot kecil dengan penilaian audio langsung. OpenAI dan Fish Audio masing-masing menghasilkan empat sampel—angka, pelafalan ambigu, kalimat panjang, dan nada bersemangat—lalu Voxtral menilai kedelapan audio pada empat dimensi di atas. Keduanya memperoleh 5.00 untuk akurasi dan 4.00 untuk kealamian. Untuk ekspresi emosi dan konsistensi suara, Fish Audio mendapat 4.00 dan 3.00, sedangkan OpenAI 3.75 dan 2.75. Memisahkan dimensi memperlihatkan perbedaan nada dan suara meskipun keduanya sama-sama membaca teks dengan benar.
-
-Delapan sampel belum cukup untuk menentukan layanan yang lebih baik. Selain hanya empat sampel per layanan, audio referensi tetap dibuat dengan Fish S1 sehingga perbandingan kemiripan suara sejak awal menguntungkan Fish Audio. Untuk membandingkan TTS umum, kemiripan dengan suara Fish tidak boleh masuk skor total. Untuk membandingkan kloning suara, semua sistem harus meniru pembicara target yang sama dan skor model perlu dikalibrasi dengan uji dengar manusia secara buta. **Pemilihan jawaban, gambar, atau audio referensi adalah bagian dari desain evaluasi, bukan persiapan netral sebelum evaluasi.**
-
-Rubric buatan manusia cocok untuk membangun dimensi diagnostik ini dengan cepat. Pada skala lebih besar, **model hadiah generatif** dapat dilatih untuk mengotomatisasi penilaian; Bab 8 membahas metode pelatihannya.
-
-Dalam pemilihan model secara praktis, kita sering menghadapi pertanyaan: "Mana yang lebih baik, A atau B?" Perbandingan berpasangan (pairwise comparison) memberikan metode evaluasi yang tidak bergantung pada skor absolut.
 
 #### Kesalahan format dokumen yang peka terhadap cakupan
 
@@ -493,6 +475,30 @@ byte file asli → balasan tool → serialisasi Harness → konteks model
 ```
 
 Serangkaian probe evaluasi minimal mencakup pengulangan langsung, ekstraksi dari konteks panjang, penempatan ke argumen tool, pemilihan di antara string serupa, serta spasi, baris baru, backslash, karakter penggabung Unicode, dan token berfrekuensi rendah. Metriknya adalah byte-exact match, code-point-exact match, token-exact match, posisi perbedaan pertama, dan tingkat keberhasilan tool yang sebenarnya. Jika model benar pada probe langsung tetapi panggilan tool tetap gagal, perbaikilah tokenizer, serialisasi, Harness, atau protokol tool; hanya ketika perbedaan pertama muncul pada keluaran model itu sendiri, kasus tersebut diubah menjadi data latih penyalinan pada Bab 8.
+
+### Tugas regresi end-to-end dan regresi trajectory prefix
+
+**Regresi end-to-end** menjalankan seluruh workflow; **regresi trajectory prefix** membekukan konteks, percakapan, hasil tool, dan state tepat sebelum kesalahan pertama lalu hanya menguji tindakan berikutnya. Definisikan himpunan tindakan yang dapat diterima—membaca aturan, bertanya kepada pengguna, atau menolak operasi berbahaya—bukan satu jawaban kanonis. Data evaluasi harus tetap terpisah dari data pelatihan.
+
+> **Eksperimen 7-5 ★★: Evaluasi batas trajectory prefix dengan beberapa encoding**
+>
+> Model menerima memori yang sudah diketahui, instruksi saat ini, trajectory prefix, hasil tool, dan state lingkungan, lalu hanya menghasilkan tindakan berikutnya yang dapat diamati. Sebelas kasus dikodekan sebagai JSON Cards, Markdown, dan Python-like serta dinilai dengan aturan deterministik. Seluruh 33 sel selesai tanpa error API dan setiap encoding lulus 6/11; mengubah representasi saja tidak memperbaiki kebijakan penggunaan konteks.
+
+> **Eksperimen 7-6 ★★: Membangun Pipeline Evaluasi Kualitas TTS yang Sepenuhnya Otomatis**
+>
+> Eksperimen ini mengharuskan perancangan dan implementasi sistem evaluasi kualitas TTS LLM-as-a-Judge multimodal yang lengkap dari awal.
+>
+> Rancang Rubric TTS multi-dimensi: Dimensi Accuracy memverifikasi apakah semua teks dibaca dengan benar (tanpa penghilangan/salah baca/penambahan); dimensi Naturalness menilai apakah suara terdengar alami dan bukan seperti robot, tidak ada jeda yang tidak wajar, dan menggunakan prosodi alami; dimensi Emotional Expression memeriksa apakah nada cocok dengan nada emosional teks (intonasi naik untuk pertanyaan, penekanan untuk seruan, langkah lebih lambat dan nada lebih rendah untuk konten sedih); dimensi Voice Consistency mengevaluasi kemiripan pembicara ketika suara referensi tersedia (model multimodal secara bersamaan menerima suara referensi dan suara yang disintesis untuk perbandingan).
+>
+> Bangun korpus yang bervariasi dalam panjang, genre, emosi, angka, nama diri, kata berpelafalan ambigu, dan dialek. Modul TTS dapat terhubung ke OpenAI, ElevenLabs, Fish Audio, Minimax, atau Doubao. Model penilai multimodal yang menerima audio menilai suara sintetis, teks asli, suara referensi, dan Rubric secara bersamaan. Selain menganalisis distribusi per dimensi, simpan nama model penilai serta hash audio referensi dan setiap kandidat agar hasil dapat diaudit.
+
+Repositori menyimpan pilot kecil dengan penilaian audio langsung. OpenAI dan Fish Audio masing-masing menghasilkan empat sampel—angka, pelafalan ambigu, kalimat panjang, dan nada bersemangat—lalu Voxtral menilai kedelapan audio pada empat dimensi di atas. Keduanya memperoleh 5.00 untuk akurasi dan 4.00 untuk kealamian. Untuk ekspresi emosi dan konsistensi suara, Fish Audio mendapat 4.00 dan 3.00, sedangkan OpenAI 3.75 dan 2.75. Memisahkan dimensi memperlihatkan perbedaan nada dan suara meskipun keduanya sama-sama membaca teks dengan benar.
+
+Delapan sampel belum cukup untuk menentukan layanan yang lebih baik. Selain hanya empat sampel per layanan, audio referensi tetap dibuat dengan Fish S1 sehingga perbandingan kemiripan suara sejak awal menguntungkan Fish Audio. Untuk membandingkan TTS umum, kemiripan dengan suara Fish tidak boleh masuk skor total. Untuk membandingkan kloning suara, semua sistem harus meniru pembicara target yang sama dan skor model perlu dikalibrasi dengan uji dengar manusia secara buta. **Pemilihan jawaban, gambar, atau audio referensi adalah bagian dari desain evaluasi, bukan persiapan netral sebelum evaluasi.**
+
+Rubric buatan manusia cocok untuk membangun dimensi diagnostik ini dengan cepat. Pada skala lebih besar, **model hadiah generatif** dapat dilatih untuk mengotomatisasi penilaian; Bab 8 membahas metode pelatihannya.
+
+Dalam pemilihan model secara praktis, kita sering menghadapi pertanyaan: "Mana yang lebih baik, A atau B?" Perbandingan berpasangan (pairwise comparison) memberikan metode evaluasi yang tidak bergantung pada skor absolut.
 
 ### Pairwise Comparison dan Peringkat Model
 

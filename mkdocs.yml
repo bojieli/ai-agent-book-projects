@@ -213,7 +213,11 @@ extra:
     # mutation. We re-translate on Material's own `document$` instead, so it
     # stays off unless you explicitly want it.
     listener: false
-    # How long to wait before telling the reader the service is not answering.
+    # How long a translation pass may go without any sign of life before the
+    # notice tells the reader the service is not answering. It is a stall
+    # window, not a deadline: every batch that comes back restarts it, and a
+    # pass that lands after it expired still clears the warning. The states in
+    # between ("translating", "translated") come from translate.lifecycle.
     failureTimeoutMs: 12000
     # Pinned version + SRI hash: this is third-party code from a public CDN,
     # so the exact bytes are fixed. Both must be updated together.

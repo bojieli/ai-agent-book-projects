@@ -187,7 +187,17 @@ Các công cụ nhận biết thường phải đối mặt với thách thức 
 
 Để hiểu hình ảnh, video, âm thanh và PDF, Agent cần khả năng nhận thức đa phương thức. Có ba cách: xử lý đa phương thức gốc của mô hình, tự động trích xuất nội dung thành văn bản, hoặc đóng gói mô hình đa phương thức thành một công cụ.
 
-Xử lý gốc có trần năng lực cao nhất; các bộ mã hóa như Vision Transformer ánh xạ nhiều loại dữ liệu vào không gian ngữ nghĩa chung. Trích xuất văn bản tiết kiệm token cho mô hình không hỗ trợ gốc và PDF nhiều chữ, nhưng làm mất bố cục, biểu đồ và hình ảnh. Nếu mô hình chính không đa phương thức, các công cụ như `analyze_image`, `analyze_pdf`, `analyze_audio` có thể gửi tệp và câu hỏi tới mô hình chuyên dụng rồi chỉ giữ kết quả ngắn trong ngữ cảnh.
+#### Xử lý đa phương tiện nguyên bản
+
+Xử lý gốc có trần năng lực cao nhất; các bộ mã hóa như Vision Transformer ánh xạ nhiều loại dữ liệu vào không gian ngữ nghĩa chung.
+
+#### Trích xuất thành văn bản
+
+Trích xuất văn bản tiết kiệm token cho mô hình không hỗ trợ gốc và PDF nhiều chữ, nhưng làm mất bố cục, biểu đồ và hình ảnh.
+
+#### Phân tích đa phương tiện dựa trên công cụ
+
+Nếu mô hình chính không đa phương thức, các công cụ như `analyze_image`, `analyze_pdf`, `analyze_audio` có thể gửi tệp và câu hỏi tới mô hình chuyên dụng rồi chỉ giữ kết quả ngắn trong ngữ cảnh.
 
 > **Thử nghiệm 4-2 ★★: Trích xuất thông tin đa phương thức — phân tích so sánh ba mô thức kỹ thuật**
 >
