@@ -279,10 +279,10 @@ class QLearningAgent:
             "num_episodes": num_episodes,
             "victories": eval_victories,
             "victory_rate": eval_victories / num_episodes if num_episodes else 0.0,
-            "avg_reward": np.mean(eval_rewards),
-            "std_reward": np.std(eval_rewards),
-            "avg_length": np.mean(eval_lengths),
-            "std_length": np.std(eval_lengths)
+            "avg_reward": sum(eval_rewards) / len(eval_rewards) if len(eval_rewards) > 0 else 0.0,
+            "std_reward": float(np.std(eval_rewards)) if len(eval_rewards) > 0 else 0.0,
+            "avg_length": sum(eval_lengths) / len(eval_lengths) if len(eval_lengths) > 0 else 0.0,
+            "std_length": float(np.std(eval_lengths)) if len(eval_lengths) > 0 else 0.0
         }
     
     def save(self, filepath: str):

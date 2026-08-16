@@ -594,8 +594,8 @@ ACTION: take red key
             "num_episodes": num_episodes,
             "victories": eval_victories,
             "victory_rate": eval_victories / num_episodes if num_episodes else 0.0,
-            "avg_reward": sum(eval_rewards) / len(eval_rewards) if eval_rewards else 0.0,
-            "avg_length": sum(eval_lengths) / len(eval_lengths) if eval_lengths else 0.0,
+            "avg_reward": sum(eval_rewards) / len(eval_rewards) if len(eval_rewards) > 0 else 0.0,
+            "avg_length": sum(eval_lengths) / len(eval_lengths) if len(eval_lengths) > 0 else 0.0,
             "total_api_calls": self.api_calls,
             "experiences_used": len(self.experiences)
         }
