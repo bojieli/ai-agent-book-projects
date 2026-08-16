@@ -38,6 +38,6 @@
 
 Agent 技術仍在飛速演進，一本書追不上所有變化。但如果這本書讓你帶走的不是某個 API 的具體用法，而是一套能在技術浪潮裡保持清醒的判斷力，那它就完成了使命。本書全部正文、配圖與配套實驗程式碼都是開源的，歡迎你去倉庫裡把實驗親手跑一遍、提 issue 和 PR。而 Agent 最迷人的地方，正在於它能透過寫程式碼創造新的能力，甚至改進自己；讀到這裡，你已經握住了「創造」的原則。接下來，去造點什麼吧。
 
-[^mimo]: 小米 MiMo-V2.5-Pro-UltraSpeed 透過 FP4 量化、DFlash 並行推測解碼與 TileRT 推理系統的模型—系統協同設計，在單個通用 8-GPU 節點上首次把 1T 引數模型的生成速度推過 1000 token/s。見小米 MiMo 官方技術部落格 「Pushing 1T-Parameter Model Generation Speed to 1000 TPS”, 2026. https://mimo.xiaomi.com/blog/mimo-tilert-1000tps
+[^mimo]: 小米 MiMo-V2.5-Pro-UltraSpeed 透過 FP4 量化、DFlash 並行推測解碼與 TileRT 推理系統的模型—系統協同設計，在單個通用 8-GPU 節點上首次把 1T 引數模型的生成速度推過 1000 token/s。見小米 MiMo 官方技術部落格 「Pushing 1T-Parameter Model Generation Speed to 1000 TPS」, 2026. https://mimo.xiaomi.com/blog/mimo-tilert-1000tps
 
 [^taalas]: Taalas HC1 將 Llama 3.1 8B 整個模型固化進 6nm 晶片，實現約 17000 token/s、響應低於 100 毫秒；代價是晶片只能執行被固化的那個模型，模型更新需重新流片。見 Karl Freund, “Taalas Launches Hardcore Chip With ‘Insane’ AI Inference Performance,” Forbes, 2026. https://www.forbes.com/sites/karlfreund/2026/02/19/taalas-launches-hardcore-chip-with-insane-ai-inference-performance/ 。

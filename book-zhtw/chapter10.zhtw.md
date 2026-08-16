@@ -77,7 +77,7 @@
 [^rlef-2025]: Gehring, J., et al. *RLEF: Grounding Code LLMs in Execution Feedback with Reinforcement Learning.* arXiv:2410.02089, 2025.
 [^webgen-agent-2025]: Lu, Z., et al. *WebGen-Agent: Enhancing Interactive Website Generation with Multi-Level Feedback and Step-Level Reinforcement Learning.* arXiv:2509.22644, 2025.
 
-這個「新資訊」框架解釋了一個看似矛盾的現象：學術研究說「單 Agent 就夠了」，但工程實踐中多 Agent 確實效果更好。矛盾的根源在於兩者討論的是不同型別的「多 Agent”——學術研究中比較的多是」多個 Agent 看著同一段文字互相討論「的模式（如辯論），而工程實踐中有效的多 Agent 系統往往包含外部回饋環路（程式碼執行、視覺渲染、工具呼叫）。前者沒有引入新資訊，後者引入了。本章後面介紹的對等協作、管理者、去中心化三種架構，凡是真正有效的用法，幾乎都能在這條判據上找到落點。
+這個「新資訊」框架解釋了一個看似矛盾的現象：學術研究說「單 Agent 就夠了」，但工程實踐中多 Agent 確實效果更好。矛盾的根源在於兩者討論的是不同型別的「多 Agent」——學術研究中比較的多是「多個 Agent 看著同一段文字互相討論」的模式（如辯論），而工程實踐中有效的多 Agent 系統往往包含外部回饋環路（程式碼執行、視覺渲染、工具呼叫）。前者沒有引入新資訊，後者引入了。本章後面介紹的對等協作、管理者、去中心化三種架構，凡是真正有效的用法，幾乎都能在這條判據上找到落點。
 
 **步驟預算與 Agent 效能。** 一個相關的研究方向是：給 Agent 分配不同的步驟預算（即允許的工具呼叫次數或迭代輪數），會如何影響其表現？直覺上，更多步驟應該帶來更好的結果——30 步預算下 Agent 只能快速實現核心功能，300 步預算下它還可以先做規劃、再實現、再測試、再改進。但 2025 年 Google 的論文《Budget-Aware Tool-Use Enables Effective Agent Scaling》發現了一個反直覺的結論：**單純增加 Agent 可用的步驟數並不能保證效能提升**。標準的 Agent 缺乏「預算意識」——即使有 300 步的預算，它們仍然傾向於執行淺層搜尋，很快就「飽和」了。要讓更多的步驟真正轉化為更好的結果，Agent 需要一種顯式的預算感知機制，根據剩餘資源動態調整策略：前期廣泛探索，後期聚焦最有希望的方向。2026 年的 BAVT（Budget-Aware Value Tree Search）進一步提出了步驟級別的價值評估，在每一步根據剩餘預算比例調整探索與利用的權重——隨著預算減少，Agent 從「廣撒網」逐漸切換到「深挖掘」。
 
