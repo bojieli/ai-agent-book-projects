@@ -240,6 +240,35 @@ Mind a Sidecar, mind a Javasló-Felülvizsgáló mechanizmus bevezet egy másodi
 
 A Sidecar minta másik tipikus alkalmazása a "kontextus gazdagítása": amíg a fő modell gondolkodik, egy sávon kívüli hívás párhuzamosan fut a felhasználói emlékek relevanciájának szűrésére, nagy eszközkimenetek összefoglalására, és engedélykövetelmények előzetes felmérésére – ezek az eredmények készen állnak, amikor a fő modellnek szüksége van rájuk, és a felhasználó nem érzékel további késleltetést.
 
+**Eszközbiztonsági ellenőrző kapu:**
+
+```python
+proposal = model.tool_call()
+call = parse_and_validate_schema(proposal)
+
+if call is INVALID:
+    return structured_error("invalid arguments")
+
+if not permission_policy.allows(actor, call):
+    return structured_error("permission denied")
+
+risk = classify_risk(call.tool, call.args)
+if risk == HIGH:
+    review = independent_reviewer(
+        trusted_policy,
+        trusted_task_summary,
+        sanitize_and_tag_untrusted_fields(call)
+    )
+    if review != ALLOW:
+        return reject_or_escalate(review)
+
+result = sandbox.execute(call, scope = least_privilege_scope(call))
+checked = verify_result(call, result, observe_environment())
+return checked
+```
+
+Itt a bemeneti elszigetelés a kulcsfontosságú határ: a Felülvizsgáló az eszköz nevét, a meglévő paramétereket és az engedély metaadatait látja, nem pedig a teljes nyomvonalat, amely prompt injection-t tartalmazhat; a továbbítandó szabad szöveget adatként kell megjelölni, nem pedig utasításként, és át kell esnie a hossz-, kódolási és tartalompolitikai ellenőrzéseken.
+
 Egy biztonsági Sidecar-nak szüksége van egy "elutasítási megszakítóra" is: amikor az osztályozó egymás után elutasítja a műveleteket, a rendszer nem próbálkozhat a végtelenségig – ez erőforrásokat pazarol, és a felhasználót egy hurokba zárhatja – hanem vissza kell esnie arra, hogy megkérje a felhasználót a kézi ítélethozatalra. Ez az 1. fejezet Harness "korrekció" funkciójának tipikus példája.
 
 **Automatizált Érvényesítés és Visszacsatolási Hurok.**
