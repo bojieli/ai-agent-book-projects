@@ -278,7 +278,7 @@ class ExperimentRunner:
         rl_victories = []
         for i in range(0, len(rl_rewards), window_size):
             window = rl_rewards[i:i+window_size]
-            victories = sum(1 for r in window if r > 50) / len(window) if len(window) > 0 else 0.0
+            victories = sum(1 for r in window if r > 50) / len(window)
             rl_victories.append(victories)
         
         ax.plot(range(0, len(rl_rewards), window_size), rl_victories, 
@@ -305,7 +305,7 @@ class ExperimentRunner:
         rl_smooth = []
         for i in range(0, len(rl_rewards), window_size):
             window = rl_rewards[i:i+window_size]
-            rl_smooth.append(sum(window) / len(window) if len(window) > 0 else 0.0)
+            rl_smooth.append(np.mean(window))
         
         ax.plot(range(0, len(rl_rewards), window_size), rl_smooth,
                 label="Q-Learning", linewidth=2)
