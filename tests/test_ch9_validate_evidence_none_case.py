@@ -3,7 +3,7 @@ import json
 import sys
 from pathlib import Path
 
-ch9_e2e = Path(__file__).resolve().parent.parent / "chapter9" / "end-to-end-speech"
+ch9_e2e = Path(__file__).resolve().parent.parent / "chapter6" / "end-to-end-speech"
 if str(ch9_e2e) not in sys.path:
     sys.path.insert(0, str(ch9_e2e))
 

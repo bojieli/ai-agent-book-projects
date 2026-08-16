@@ -83,8 +83,8 @@ saved evidence, and audit findings:
 - [Chapter 3 experiment ledger](../chapter3/EXPERIMENT_LEDGER.md)
 - [Chapter 4 experiment ledger](../chapter4/EXPERIMENT_LEDGER.md)
 - [Chapter 5 experiment ledger](../chapter5/EXPERIMENT_LEDGER.md)
-- [Chapter 6 experiment coverage ledger](../chapter6/EXPERIMENT_LEDGER.md)
 - [Chapter 7 experiment coverage ledger](../chapter7/EXPERIMENT_LEDGER.md)
+- [Chapter 8 experiment coverage ledger](../chapter8/EXPERIMENT_LEDGER.md)
 
 Update this summary whenever one of the tracked completion gates changes. Git
 history provides the status change log.

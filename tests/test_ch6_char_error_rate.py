@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent.parent
-TTS_DIR = HERE / "chapter6" / "tts-quality-eval"
+TTS_DIR = HERE / "chapter7" / "tts-quality-eval"
 if str(TTS_DIR) not in sys.path:
     sys.path.insert(0, str(TTS_DIR))
 

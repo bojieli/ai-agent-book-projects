@@ -1,7 +1,7 @@
 import sys, os
 from unittest.mock import MagicMock
 
-sys.path.insert(0, os.path.abspath("chapter7/MultilingualReasoning"))
+sys.path.insert(0, os.path.abspath("chapter8/MultilingualReasoning"))
 from gpt_oss_20b_sft import format_chat_template
 
 

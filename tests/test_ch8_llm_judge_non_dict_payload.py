@@ -4,7 +4,7 @@ import os
 import sys
 import types
 
-sys.path.insert(0, os.path.abspath("chapter8/trajectory-verifier"))
+sys.path.insert(0, os.path.abspath("chapter9/trajectory-verifier"))
 
 from llm_judge import OpenAIQualityJudge
 

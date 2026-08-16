@@ -9,7 +9,7 @@ from pathlib import Path
 import pandas as pd
 
 HERE = Path(__file__).resolve().parent.parent
-ELO_DIR = HERE / "chapter6" / "elo-leaderboard"
+ELO_DIR = HERE / "chapter7" / "elo-leaderboard"
 if str(ELO_DIR) not in sys.path:
     sys.path.insert(0, str(ELO_DIR))
 

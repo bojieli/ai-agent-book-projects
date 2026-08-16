@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent.parent
-EVAL_DIR = HERE / "chapter6" / "public-health-reporting-eval"
+EVAL_DIR = HERE / "chapter7" / "public-health-reporting-eval"
 if str(EVAL_DIR) not in sys.path:
     sys.path.insert(0, str(EVAL_DIR))
 

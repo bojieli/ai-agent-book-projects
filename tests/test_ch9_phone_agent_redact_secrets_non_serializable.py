@@ -8,7 +8,7 @@ import pytest
 
 pytest.importorskip("openai")
 _module_path = (
-    Path(__file__).resolve().parent.parent / "chapter9" / "phone-agent" / "agent.py"
+    Path(__file__).resolve().parent.parent / "chapter6" / "phone-agent" / "agent.py"
 )
 _spec = importlib.util.spec_from_file_location("phone_agent", _module_path)
 _module = importlib.util.module_from_spec(_spec)

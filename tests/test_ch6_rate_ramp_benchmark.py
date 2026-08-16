@@ -1,10 +1,10 @@
-"""Unit tests for chapter6/model-benchmark/rate_ramp_benchmark.py."""
+"""Unit tests for chapter7/model-benchmark/rate_ramp_benchmark.py."""
 
 from pathlib import Path
 import sys
 
-# Ensure chapter6/model-benchmark is in sys.path
-ch6_dir = Path(__file__).resolve().parent.parent / "chapter6" / "model-benchmark"
+# Ensure chapter7/model-benchmark is in sys.path
+ch6_dir = Path(__file__).resolve().parent.parent / "chapter7" / "model-benchmark"
 if str(ch6_dir) not in sys.path:
     sys.path.insert(0, str(ch6_dir))
 

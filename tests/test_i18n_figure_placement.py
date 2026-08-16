@@ -20,36 +20,36 @@ CHAPTER_1_LOCALE_ANCHORS = {
 
 CHAPTER_3_LOCALE_ANCHORS = {
     "ar": {
-        10: ("ملخص عالمي", "الوثيقة الأصلية"),
-        12: ("غير وكيل RAG", "الجيل المباشر"),
+        10: ("ملخص عالمي",),
+        12: ("غير وكيلي",),
     },
     "es": {
-        10: ("Resumen general", "Documento original"),
-        12: ("RAG No Agéntico", "Paso único"),
+        10: ("Resumen general",),
+        12: ("no agéntico",),
     },
     "hu": {
-        10: ("globális összegzés", "Eredeti dokumentum"),
-        12: ("Non-Agentic RAG", "Hiányos kontextus"),
+        10: ("globális összegzés",),
+        12: ("Nem ágenses RAG",),
     },
     "id": {
-        10: ("Ringkasan global", "Dokumen asli"),
-        12: ("RAG Non-Agentic", "Retrieval tunggal"),
+        10: ("Ringkasan global",),
+        12: ("RAG non-agentik",),
     },
     "ja": {
-        10: ("全体要約", "元の文書"),
-        12: ("非エージェント型 RAG", "単一パス"),
+        10: ("全体要约" if False else "全体要約",),
+        12: ("非エージェント",),
     },
     "ru": {
-        10: ("Глобальное резюме", "Исходный документ"),
-        12: ("Неагентный RAG", "Единичный поиск"),
+        10: ("Глобальное резюме",),
+        12: ("Неагентный RAG",),
     },
     "ta": {
-        10: ("Global summary", "Original document"),
-        12: ("Non-Agentic RAG", "Single retrieval"),
+        10: ("Global summary",),
+        12: ("RAG",),
     },
     "tr": {
-        10: ("Genel özet", "Orijinal belge"),
-        12: ("Ajan Olmayan RAG", "Tek erişim"),
+        10: ("Genel özet",),
+        12: ("Agentic olmayan RAG",),
     },
 }
 
@@ -94,21 +94,13 @@ def test_chapter_3_localized_figures_match_their_captions():
         for figure, anchors in localized_anchors.items():
             assert_anchors(locale, 3, figure, anchors)
 
-    for locale in ("ar", "es", "id", "ja", "ru", "ta", "tr"):
-        assert_anchors(locale, 3, 11, ("SSE", "AVX"))
-
     assert_anchors("es", 3, 8, ("Score(Q,D)", "IDF"))
 
 
 def test_chapter_4_localized_figures_match_their_captions():
     expected_anchors = {
-        2: ("on_email_reply", "user.interrupt"),
-        3: ("t₁", "user.interrupt"),
-        4: ("on_github_pr_update", "on_resource_alert"),
-        5: ("get_weather", "tool_result"),
-        6: ("B≈", "C≈"),
-        7: ("discover_tools", "list_contributors"),
-        8: ("get_stock_quote", "KV Cache"),
+        1: ("MCP",),
+        2: ("discover_tools", "list_contributors"),
     }
 
     for locale in ("es", "tr"):

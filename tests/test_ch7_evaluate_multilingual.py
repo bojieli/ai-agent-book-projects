@@ -1,11 +1,11 @@
-"""Unit tests for chapter7/MultilingualReasoning/evaluate_multilingual.py."""
+"""Unit tests for chapter8/MultilingualReasoning/evaluate_multilingual.py."""
 
 from pathlib import Path
 import sys
 import warnings
 
-# Ensure chapter7/MultilingualReasoning is in sys.path
-ch7_dir = Path(__file__).resolve().parent.parent / "chapter7" / "MultilingualReasoning"
+# Ensure chapter8/MultilingualReasoning is in sys.path
+ch7_dir = Path(__file__).resolve().parent.parent / "chapter8" / "MultilingualReasoning"
 if str(ch7_dir) not in sys.path:
     sys.path.insert(0, str(ch7_dir))
 

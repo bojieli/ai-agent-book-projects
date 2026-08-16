@@ -1,5 +1,5 @@
 """
-Tests for the SFT training-data quality auditor (chapter 7 CoT distillation).
+Tests for the SFT training-data quality auditor (chapter 8 CoT distillation).
 
 Covers valid data, format errors, length outliers, exact and near duplicates,
 label noise, tokenizer risks, boundary gaps, empty/single/all-duplicate
@@ -15,7 +15,7 @@ from pathlib import Path
 import pytest
 
 HERE = Path(__file__).resolve().parent.parent
-COT_DIR = HERE / "chapter7" / "cot-distillation"
+COT_DIR = HERE / "chapter8" / "cot-distillation"
 if str(COT_DIR) not in sys.path:
     sys.path.insert(0, str(COT_DIR))
 
