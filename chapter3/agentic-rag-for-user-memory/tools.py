@@ -221,7 +221,7 @@ class MemoryTools:
                 "conversation_id": conversation_id,
                 "test_id": test_id,
                 "total_chunks": len(conversation_chunks),
-                "total_rounds": max((c.end_round for c in conversation_chunks), default=0),
+                "total_rounds": max(c.end_round for c in conversation_chunks),
                 "metadata": conversation_chunks[0].metadata if conversation_chunks else {},
                 "chunks": []
             }
