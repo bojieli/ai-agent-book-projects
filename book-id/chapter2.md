@@ -1072,10 +1072,6 @@ Kita telah membahas alasan kompresi—membatasi panjang dan meningkatkan penalar
 - **Relevansi Tugas**: Konten yang sama butuh kompresi berbeda untuk tugas berbeda, seperti "temukan pendiri" vs "pelajari latar belakang".
 - **Kompresi adalah Pemahaman**: Kompresi butuh pemahaman semantik yang dalam. Kompresi yang baik bisa ditinjau ulang di sesi lain.
 
-### Implikasi untuk Desain Arsitektur Agent
-
-Strategi kompresi context berdampak pada desain sistem Agent. **Kompresi adalah Pemahaman**: modul kompresi butuh pemahaman bahasa setara model utama, membentuk arsitektur panggilan model rekursif. **Strategi Kompresi Terkait Tipe Tugas**: tugas pencarian harus luas, tugas analisis harus dalam, tugas kreatif harus menjaga inspirasi. Agent masa depan harus bisa memilih strategi kompresi secara adaptif.
-
 Kompresi butuh komputasi tambahan lewat panggilan LLM, namun ia menghemat biaya token dan meningkatkan keberhasilan tugas. Eksperimen menunjukkan kompresi context-aware menghemat token hingga lebih dari 75%.
 
 Yang paling rawan hilang dari kompresi adalah **keputusan arsitektur awal, alasan batas (constraints), dan jalur gagal**. LLM suka menghapus informasi yang dianggap bisa dicari lagi. Di sistem tingkat produksi, tetapkan prioritas penyimpanan:

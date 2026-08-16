@@ -1075,10 +1075,6 @@ Már elemeztük a tömörítés két motivációját – a hossz szabályozása 
 - **Feladat Relevancia**: Ugyanaz a tartalom különböző tömörítési eredményeket kell, hogy adjon különböző feladatokhoz, mint "találd meg az alapítók listáját" versus "ismerd meg a személyes hátteret."
 - **A Tömörítés Megértés**: A hatékony tömörítés mély szemantikai megértést igényel – a kontextus magjának rögzítését finomabb kifejezéssel. Ráadásul az explicit tömörítés eredményei felülvizsgálhatók és újra felhasználhatók a munkamenetek között.
 
-### Következmények az Ügynökarchitektúra Tervezéséhez
-
-A kontextustömörítési stratégiák kutatása az ügynökrendszerek tervezésének alapvető kérdéseire mutat rá. "A Tömörítés Megértés": a tömörítésért felelős modulnak a fő modellhez közeli nyelvi megértési képességekre van szüksége, ami rekurzív modellhívási architektúrát alkot. **A Tömörítési Stratégia Össze van Kapcsolva a Feladat Típussal**: az információ-visszakeresési feladatoknak meg kell őrizniük a szélességet, az elemzési feladatoknak a mélységet, a kreatív feladatoknak pedig az inspirációs triggerjeit. A jövő ügynökeinek adaptívan kell kiválasztaniuk a tömörítési stratégiákat a feladat típusa alapján.
-
 Bár a tömörítés számítási többletköltséggel jár, mert minden tömörítés egy extra LLM hívást igényel, a befektetés megtérülése rendkívül magas lehet a megtakarított token költségekhez és a feladat sikerességének javulásához képest. A kísérletek azt mutatják, hogy a kontextustudatos tömörítés több mint 75%-kal csökkenti a tokenhasználatot.
 
 Amit a tömörítés a legkönnyebben elveszít, az nem maguk a részletek, hanem **a korai architekturális döntések, a korlátok mögötti érvelés és a sikertelen utak** – az LLM-ek általában előnyben részesítik az olyan információk törlését, amelyek úgy tűnik, újra megszerezhetők. Production-szintű ügynökrendszerekben ajánlott explicit módon meghatározni a megtartási prioritásokat a tömörítés során:

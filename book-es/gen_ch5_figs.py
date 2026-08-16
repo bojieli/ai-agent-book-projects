@@ -263,7 +263,7 @@ def fig5_4():
         ("Modelo Diff + Apply", "dark",
          ["El LLM genera explicación Diff:",
           "- def foo(x):",
-          "    return x",
+          "-   return x",
           "+ def foo(x, y=0):",
           "+   return x + y",
           "→ Modelo pequeño ubica y aplica"],

@@ -20,36 +20,36 @@ CHAPTER_1_LOCALE_ANCHORS = {
 
 CHAPTER_3_LOCALE_ANCHORS = {
     "ar": {
-        10: ("ملخص عالمي",),
-        12: ("غير وكيلي",),
+        10: ("ملخص عالمي", "الوثيقة الأصلية"),
+        12: ("غير وكيلي", "ReAct"),
     },
     "es": {
-        10: ("Resumen general",),
-        12: ("no agéntico",),
+        10: ("Resumen general", "Documento original"),
+        12: ("no agéntico", "ReAct"),
     },
     "hu": {
-        10: ("globális összegzés",),
-        12: ("Nem ágenses RAG",),
+        10: ("globális összegzés", "Eredeti dokumentum"),
+        12: ("Nem ágenses RAG", "ReAct"),
     },
     "id": {
-        10: ("Ringkasan global",),
-        12: ("RAG non-agentik",),
+        10: ("Ringkasan global", "Dokumen asli"),
+        12: ("RAG non-agentik", "ReAct"),
     },
     "ja": {
-        10: ("全体要约" if False else "全体要約",),
-        12: ("非エージェント",),
+        10: ("全体要約", "元の文書"),
+        12: ("非エージェント", "ReAct"),
     },
     "ru": {
-        10: ("Глобальное резюме",),
-        12: ("Неагентный RAG",),
+        10: ("Глобальное резюме", "Исходный документ"),
+        12: ("Неагентный RAG", "ReAct"),
     },
     "ta": {
-        10: ("Global summary",),
-        12: ("RAG",),
+        10: ("Global summary", "Original document"),
+        12: ("ஏஜெண்டிக் RAG", "ReAct"),
     },
     "tr": {
-        10: ("Genel özet",),
-        12: ("Agentic olmayan RAG",),
+        10: ("Genel özet", "Orijinal belge"),
+        12: ("Agentic olmayan RAG", "ReAct"),
     },
 }
 
@@ -94,13 +94,17 @@ def test_chapter_3_localized_figures_match_their_captions():
         for figure, anchors in localized_anchors.items():
             assert_anchors(locale, 3, figure, anchors)
 
+    for locale in CHAPTER_3_LOCALE_ANCHORS:
+        assert_anchors(locale, 3, 11, ("-A", "-B"))
+
     assert_anchors("es", 3, 8, ("Score(Q,D)", "IDF"))
 
 
 def test_chapter_4_localized_figures_match_their_captions():
     expected_anchors = {
-        1: ("MCP",),
+        1: ("server/discover", "tools/list"),
         2: ("discover_tools", "list_contributors"),
+        3: ("NVDA", "50K"),
     }
 
     for locale in ("es", "tr"):
