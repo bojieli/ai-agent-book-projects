@@ -12,8 +12,10 @@
 //   * Opt-in and lazy. The third-party script is fetched only after the reader
 //     chooses one of these languages — a page view in a real edition makes no
 //     request to it. It is pinned to a version and loaded with an SRI hash.
-//   * Always labelled. An "auto-translated" notice sits above the content for
-//     as long as the tier is active, and says what it cannot translate.
+//   * Always labelled, and honest about what is on screen. A notice sits above
+//     the content for as long as the tier is active, tracking the translation
+//     through three states — translating / translated / unavailable — off
+//     translate.js' own lifecycle hooks, and says what it cannot translate.
 //   * Translated from the English edition, not the Chinese one: MT quality out
 //     of English is better for most targets, and that edition is reviewed. So
 //     selecting a tier-3 language first routes to the English page.
@@ -107,6 +109,14 @@
       "highlight", // code block wrapper (line-number table sits outside <pre>)
       "md-source", // repository name + stars/forks in the header
     ]);
+    // The language switcher lists every edition under its own endonym — 中文,
+    // 日本語, العربية, עברית … Translating those is wrong twice over: a reader
+    // looking for their language wants to see its own name, and translate.js
+    // batches by detected source language, so those labels alone cost one API
+    // request per script. That burst (a dozen requests at once) is what the
+    // free channel's "more than 2 requests in 2 seconds" guard rejects, taking
+    // the page's own batch down with it.
+    push(translate.ignore.id, ["lang-menu", "lang-selector"]);
 
     // translate.listener.start() installs a MutationObserver that re-translates
     // injected content. It is off by default: against Material's
@@ -123,72 +133,158 @@
     var conf = config();
     if (!language || !conf) return;
 
+    // The page on screen is still English until a pass lands, so say that.
+    setState("pending");
+
     loadLibrary(conf)
       .then(function (translate) {
         configure(translate, conf);
+        if (hookLifecycle(translate, conf)) armStallTimer(conf);
+        else watchNoticeText(conf);
         if (translate.to !== language.name) translate.changeLanguage(language.name);
         else translate.execute();
-        watchForFailure(language, conf);
       })
       .catch(function (error) {
         // Leave the English page readable rather than failing loudly.
         console.warn("[auto-translate]", error.message);
-        showNotice(language, true);
+        setState("failed");
       });
   }
 
+  // ── translation progress ──────────────────────────────────
+  //
   // translate.js reports a failed translation service only to the console, so
-  // a dead channel would silently leave the reader on English with a notice
-  // claiming the page was translated. The notice sits inside the translated
-  // region, so a working service always rewrites it; if it is still unchanged
-  // after the timeout, say the service is unavailable instead.
-  var failureTimer = null;
+  // the notice has to work out for itself whether the page in front of the
+  // reader is actually translated. translate.lifecycle is that signal:
+  //
+  //   execute.start                 a pass began       → "translating"
+  //   execute.translateNetworkAfter one batch came back (result 1 ok / 0 failed)
+  //   execute.renderFinish          every batch of the pass is rendered
+  //
+  // Watching them beats timing out on whether our own text changed. A pass can
+  // legitimately run for tens of seconds — the free channel retries against two
+  // backup hosts — and a fixed deadline declared those dead, then never looked
+  // again, so a translation that landed late left the reader staring at
+  // "unavailable" on a fully translated page. Here the deadline only fires when
+  // nothing has moved for a whole window, and a later renderFinish still
+  // corrects the notice.
+  var passes = {};
+  var stallTimer = null;
+  var hooked = false;
 
-  function watchForFailure(language, conf) {
-    var probe = document.querySelector(".auto-translate-notice__text");
+  function armStallTimer(conf) {
+    clearTimeout(stallTimer);
+    stallTimer = setTimeout(function () {
+      // Nothing moved for a whole window. Say so, but stay subscribed: if the
+      // pass does come back, renderFinish flips the notice to "translated".
+      if (noticeState === "pending") setState("failed");
+    }, conf.failureTimeoutMs || 12000);
+  }
+
+  function hookLifecycle(translate, conf) {
+    var cycle = translate.lifecycle && translate.lifecycle.execute;
+    if (!cycle || !cycle.start || !cycle.renderFinish) return false;
+    if (hooked) return true;
+    hooked = true;
+
+    // translate.js passes the legacy positional arguments to any handler
+    // declared with exactly two parameters, and the object form to every other
+    // arity — so `start` and `translateNetworkAfter` take one parameter here on
+    // purpose, and `renderFinish` is positional-only in the library.
+    cycle.start.push(function (data) {
+      passes[data.uuid] = { requests: 0, done: 0, sourceSeen: false, sourceDone: false };
+      setState("pending");
+      armStallTimer(conf);
+    });
+
+    cycle.translateNetworkAfter.push(function (data) {
+      var pass = passes[data.uuid];
+      if (!pass) return;
+      pass.requests++;
+      if (data.result === 1) pass.done++;
+      if (data.from === (conf.sourceLanguage || "english")) {
+        pass.sourceSeen = true;
+        if (data.result === 1) pass.sourceDone = true;
+      }
+      armStallTimer(conf); // a batch came back: the pass is alive
+    });
+
+    cycle.renderFinish.push(function (uuid) {
+      var pass = passes[uuid];
+      delete passes[uuid];
+      clearTimeout(stallTimer);
+      // No request at all means every string came out of the local cache.
+      // Where there were requests, the one that decides this is the batch out
+      // of the source language: that is the book's own prose. Other batches
+      // are stray strings in other scripts, and one of those failing says
+      // nothing about the page the reader is looking at.
+      var failed =
+        !!pass && pass.requests > 0 && (pass.sourceSeen ? !pass.sourceDone : pass.done === 0);
+      setState(failed ? "failed" : "ok");
+    });
+
+    cycle.finally.push(function (data) {
+      // 5: the page is already in the target language, so the pass returns
+      // before renderFinish. Nothing to translate is not a failure.
+      if (data.state === 5) {
+        clearTimeout(stallTimer);
+        setState("ok");
+      }
+    });
+
+    return true;
+  }
+
+  // Fallback for a translate.js without lifecycle hooks (pre-3.18). The notice
+  // sits inside the translated region, so a working service rewrites it.
+  function watchNoticeText(conf) {
+    var probe = document.querySelector(".auto-translate-notice__text--ok");
     if (!probe) return;
     var before = probe.textContent;
-    clearTimeout(failureTimer);
-    failureTimer = setTimeout(function () {
-      var node = document.querySelector(".auto-translate-notice__text");
-      if (node && node.textContent === before) showNotice(language, true);
+    clearTimeout(stallTimer);
+    stallTimer = setTimeout(function () {
+      var node = document.querySelector(".auto-translate-notice__text--ok");
+      if (node) setState(node.textContent === before ? "failed" : "ok");
     }, conf.failureTimeoutMs || 12000);
   }
 
   // ── notice ────────────────────────────────────────────────
 
+  var STATES = ["pending", "ok", "failed"];
+
   var NOTICE_TEXT = {
+    pending: "Machine-translating this page in your browser — one moment.",
     ok:
       "Machine-translated from the English edition — not reviewed. " +
       "Figures and code stay in English.",
     failed: "Machine translation is unavailable right now. Showing the English edition.",
   };
 
-  function showNotice(language, failed) {
+  var noticeState = null;
+
+  // Every state's wording is in the DOM from the start, with CSS showing one at
+  // a time. That is what lets the notice speak the reader's language: a pass
+  // translates all three at once, so switching states afterwards is a class
+  // change rather than fresh English text that nothing will ever come back for.
+  function buildNotice() {
     var host = document.querySelector(".md-content__inner");
-    if (!host) return;
+    if (!host) return null;
 
     var existing = host.querySelector(".auto-translate-notice");
-    if (existing) {
-      // Update in place: replacing the node would detach the text node that an
-      // in-flight translation pass is holding a reference to.
-      existing.className =
-        "auto-translate-notice" + (failed ? " auto-translate-notice--failed" : "");
-      var current = existing.querySelector(".auto-translate-notice__text");
-      if (current) current.textContent = failed ? NOTICE_TEXT.failed : NOTICE_TEXT.ok;
-      return;
-    }
+    if (existing) return existing;
 
     var notice = document.createElement("div");
     notice.className = "auto-translate-notice";
-    if (failed) notice.className += " auto-translate-notice--failed";
-    // Written in the source language on purpose: translate.js picks it up with
-    // the rest of the page, so the reader sees it in their own language.
     notice.setAttribute("role", "note");
 
-    var text = document.createElement("span");
-    text.className = "auto-translate-notice__text";
-    text.textContent = failed ? NOTICE_TEXT.failed : NOTICE_TEXT.ok;
+    for (var i = 0; i < STATES.length; i++) {
+      var text = document.createElement("span");
+      text.className = "auto-translate-notice__text auto-translate-notice__text--" + STATES[i];
+      // Written in the source language on purpose: translate.js picks it up
+      // with the rest of the page, so the reader sees it in their own language.
+      text.textContent = NOTICE_TEXT[STATES[i]];
+      notice.appendChild(text);
+    }
 
     var off = document.createElement("button");
     off.type = "button";
@@ -199,15 +295,38 @@
       location.reload();
     });
 
-    notice.appendChild(text);
     notice.appendChild(off);
     host.insertBefore(notice, host.firstChild);
+    return notice;
   }
 
+  function setState(state) {
+    noticeState = state;
+    // Update in place: replacing the node would detach the text nodes that an
+    // in-flight translation pass is holding references to.
+    var notice = buildNotice();
+    if (!notice) return;
+    notice.className = "auto-translate-notice auto-translate-notice--" + state;
+    notice.setAttribute("data-state", state);
+    // Only claim the reader's locale once the page is actually in it. While a
+    // pass is running, and after one failed, the text on screen is still
+    // English — and an <html lang> that disagrees with it (or an RTL flip over
+    // English prose) misleads screen readers and hyphenation both.
+    applyDocumentLocale(state === "ok" ? selected() : null);
+  }
+
+  var SOURCE_LOCALE = document.documentElement.lang || "en";
+  var SOURCE_DIR = document.documentElement.dir === "rtl" ? "rtl" : "ltr";
+
   function applyDocumentLocale(language) {
-    if (!language) return;
-    if (language.locale) document.documentElement.lang = language.locale;
-    document.documentElement.dir = language.dir === "rtl" ? "rtl" : "ltr";
+    var root = document.documentElement;
+    if (!language) {
+      root.lang = SOURCE_LOCALE;
+      root.dir = SOURCE_DIR;
+      return;
+    }
+    if (language.locale) root.lang = language.locale;
+    root.dir = language.dir === "rtl" ? "rtl" : "ltr";
   }
 
   // ── language menu ─────────────────────────────────────────
@@ -292,8 +411,6 @@
       return;
     }
 
-    applyDocumentLocale(language);
-    showNotice(language, false);
     syncMenuState(conf);
     translatePage();
   }
@@ -306,10 +423,8 @@
     buildMenuGroup(conf);
     syncMenuState(conf);
 
-    var active = selected();
-    if (!active) return;
-    applyDocumentLocale(active);
-    showNotice(active, false);
+    if (!selected()) return;
+    // translatePage() puts up the notice; it owns which state it shows.
     translatePage();
   }
 
