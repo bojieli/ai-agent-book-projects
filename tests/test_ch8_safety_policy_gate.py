@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 
 # Add module directory to path for imports
-ch8_dir = Path(__file__).resolve().parent.parent / "chapter8" / "harness-safety-gate"
+ch8_dir = Path(__file__).resolve().parent.parent / "chapter9" / "harness-safety-gate"
 if str(ch8_dir) not in sys.path:
     sys.path.insert(0, str(ch8_dir))
 

@@ -1,4 +1,4 @@
-"""Unit tests for chapter9/streaming-speech/interruption_manager.py (DuplexInterruptionManager)."""
+"""Unit tests for chapter6/streaming-speech/interruption_manager.py (DuplexInterruptionManager)."""
 
 import importlib.util
 import os
@@ -12,7 +12,7 @@ import numpy as np
 # Dynamic import for hypenated module path
 _module_path = (
     Path(__file__).resolve().parent.parent
-    / "chapter9"
+    / "chapter6"
     / "streaming-speech"
     / "interruption_manager.py"
 )

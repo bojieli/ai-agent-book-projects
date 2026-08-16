@@ -17,8 +17,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 # Directories that contain vendored third-party code or test scaffolding
 # where the book's coding standards do not apply.
 _EXCLUDED_DIRS = {
-    "chapter8/gaia-experience/AWorld",
-    "chapter8/browser-use-rpa",
+    "chapter9/gaia-experience/AWorld",
+    "chapter9/browser-use-rpa",
     ".venv",
     "__pycache__",
     ".git",

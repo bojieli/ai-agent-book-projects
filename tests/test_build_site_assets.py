@@ -1,10 +1,11 @@
 from pathlib import Path
 import subprocess
+import sys
 
 
 def run_cleanup(site: Path) -> None:
     helper = Path(__file__).parents[1] / "scripts" / "clean_site_files.py"
-    subprocess.run(["python3", str(helper), str(site)], check=True)
+    subprocess.run([sys.executable, str(helper), str(site)], check=True)
 
 
 def test_cleanup_preserves_rendered_json_links_only(tmp_path):

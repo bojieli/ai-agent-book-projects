@@ -13,7 +13,7 @@ from pathlib import Path
 import pytest
 
 HERE = Path(__file__).resolve().parent.parent
-COST_DIR = HERE / "chapter6" / "agent-cost-analysis"
+COST_DIR = HERE / "chapter7" / "agent-cost-analysis"
 if str(COST_DIR) not in sys.path:
     sys.path.insert(0, str(COST_DIR))
 

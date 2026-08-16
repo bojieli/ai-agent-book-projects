@@ -2,7 +2,7 @@ import pytest
 import sys
 import os
 
-sys.path.insert(0, os.path.abspath("chapter8/trajectory-verifier"))
+sys.path.insert(0, os.path.abspath("chapter9/trajectory-verifier"))
 
 from verifier import _assistant_text, ProcessVerifier, PASS
 

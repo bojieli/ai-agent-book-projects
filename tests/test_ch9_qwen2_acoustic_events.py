@@ -4,7 +4,7 @@ import importlib
 import sys
 from pathlib import Path
 
-ch9_streaming = Path(__file__).resolve().parent.parent / "chapter9" / "streaming-speech"
+ch9_streaming = Path(__file__).resolve().parent.parent / "chapter6" / "streaming-speech"
 if str(ch9_streaming) not in sys.path:
     sys.path.insert(0, str(ch9_streaming))
 

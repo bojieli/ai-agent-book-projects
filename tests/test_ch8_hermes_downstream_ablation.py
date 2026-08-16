@@ -1,4 +1,4 @@
-"""Unit tests for chapter8/hermes-self-evolution/run_downstream_ablation.py."""
+"""Unit tests for chapter9/hermes-self-evolution/run_downstream_ablation.py."""
 
 from pathlib import Path
 import sys
@@ -6,8 +6,8 @@ import time
 import math
 import pytest
 
-# Ensure chapter8/hermes-self-evolution is in sys.path
-ch8_dir = Path(__file__).resolve().parent.parent / "chapter8" / "hermes-self-evolution"
+# Ensure chapter9/hermes-self-evolution is in sys.path
+ch8_dir = Path(__file__).resolve().parent.parent / "chapter9" / "hermes-self-evolution"
 if str(ch8_dir) not in sys.path:
     sys.path.insert(0, str(ch8_dir))
 
