@@ -1075,6 +1075,16 @@ Már elemeztük a tömörítés két motivációját – a hossz szabályozása 
 - **Feladat Relevancia**: Ugyanaz a tartalom különböző tömörítési eredményeket kell, hogy adjon különböző feladatokhoz, mint "találd meg az alapítók listáját" versus "ismerd meg a személyes hátteret."
 - **A Tömörítés Megértés**: A hatékony tömörítés mély szemantikai megértést igényel – a kontextus magjának rögzítését finomabb kifejezéssel. Ráadásul az explicit tömörítés eredményei felülvizsgálhatók és újra felhasználhatók a munkamenetek között.
 
+Bár a tömörítés számítási többletköltséggel jár, mert minden tömörítés egy extra LLM hívást igényel, a befektetés megtérülése rendkívül magas lehet a megtakarított token költségekhez és a feladat sikerességének javulásához képest. A kísérletek azt mutatják, hogy a kontextustudatos tömörítés több mint 75%-kal csökkenti a tokenhasználatot.
+
+Amit a tömörítés a legkönnyebben elveszít, az nem maguk a részletek, hanem **a korai architekturális döntések, a korlátok mögötti érvelés és a sikertelen utak** – az LLM-ek általában előnyben részesítik az olyan információk törlését, amelyek úgy tűnik, újra megszerezhetők. Production-szintű ügynökrendszerekben ajánlott explicit módon meghatározni a megtartási prioritásokat a tömörítés során:
+
+1.  "Architekturális Döntések és Kulcsfontosságú Korlátok": Nem szabad összefoglalni.
+2.  **Módosított Fájlok Listája és Kulcsfontosságú Változtatási Rekordok**: Teljes egészében megőrizni.
+3.  "Ellenőrzési Státusz" (sikerült/megbukott): Meg kell tartani.
+4.  "Megoldatlan TODO-k és Visszaállítási Jegyzetek": Meg kell tartani.
+5.  "Eszközkimenet": Törölhető, csak a sikerült/megbukott következtetést megtartva.
+
 ### Elszigetelés a Tömörítés Helyett: Részügynök Kontextus Elszigetelés
 
 A tömörítés *utólag* távolítja el az információt, miután az már bekerült a kontextusba. Közvetlenebb megközelítés, ha a terjedelmes köztes információt eleve távol tartjuk a fő kontextustól. Ez a **Részügynök Kontextus Elszigetelés**: a fő ügynök az olyan, nagy mennyiségű köztes tartalmat előállító feladatokat, mint a „végezz széles körű keresést a kódbázisban”, egy független részügynökre bízza. A részügynök a saját kontextusában végzi el a feltárást, és csak egy tömör, néhány száz tokenes összefoglalót ad vissza a fő ügynöknek.

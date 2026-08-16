@@ -1072,6 +1072,16 @@ Kita telah membahas alasan kompresi—membatasi panjang dan meningkatkan penalar
 - **Relevansi Tugas**: Konten yang sama butuh kompresi berbeda untuk tugas berbeda, seperti "temukan pendiri" vs "pelajari latar belakang".
 - **Kompresi adalah Pemahaman**: Kompresi butuh pemahaman semantik yang dalam. Kompresi yang baik bisa ditinjau ulang di sesi lain.
 
+Kompresi butuh komputasi tambahan lewat panggilan LLM, namun ia menghemat biaya token dan meningkatkan keberhasilan tugas. Eksperimen menunjukkan kompresi context-aware menghemat token hingga lebih dari 75%.
+
+Yang paling rawan hilang dari kompresi adalah **keputusan arsitektur awal, alasan batas (constraints), dan jalur gagal**. LLM suka menghapus informasi yang dianggap bisa dicari lagi. Di sistem tingkat produksi, tetapkan prioritas penyimpanan:
+
+1.  **Keputusan Arsitektur dan Batasan Kunci**: Tidak boleh diringkas.
+2.  **Daftar File Modifikasi dan Catatan Perubahan**: Simpan penuh.
+3.  **Status Verifikasi** (lolos/gagal): Wajib disimpan.
+4.  **TODO Belum Selesai dan Catatan Rollback**: Wajib disimpan.
+5.  **Output Tool**: Boleh dihapus, sisakan status lolos/gagal.
+
 ### Isolasi Konteks Sub-Agent
 
 Kompresi membuang informasi *setelah* informasi itu masuk ke context. Pendekatan yang lebih langsung adalah mencegah informasi perantara berukuran besar masuk ke context utama sejak awal. Inilah **Isolasi Context Sub-Agent**: Agent utama menyerahkan tugas yang menghasilkan banyak konten perantara, seperti "melakukan pencarian luas di codebase", kepada sub-agent mandiri. Sub-agent menuntaskan penelusuran di context-nya sendiri dan hanya mengirimkan ringkasan singkat sepanjang beberapa ratus token kepada Agent utama.
