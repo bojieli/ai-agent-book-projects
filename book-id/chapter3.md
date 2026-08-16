@@ -304,9 +304,7 @@ results = retriever.search(query, top_k=3)
 # "The 2022 Nobel Prize in Physics was awarded to three scientists for experiments with quantum entanglement...",
 # "Bell's inequality experiments have demonstrated the non-locality of quantum entanglement..."
 # ]
-```
 
-```python
 # 3. Generation: Gunakan hasil yang di-retrieve sebagai konteks untuk LLM menghasilkan jawaban
 answer = llm.generate(
     system="Jawab pertanyaan pengguna berdasarkan materi referensi berikut. Jika materi tidak mencukupi, nyatakan dengan jelas.",
