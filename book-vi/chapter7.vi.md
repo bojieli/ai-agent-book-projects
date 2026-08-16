@@ -83,9 +83,13 @@ $$
 
 Với $p=0.6$, $k=5$, Pass@5 khoảng 99,0% nhưng Pass consecutive@5 chỉ 7,8%. Chỉ số đầu đo trần khám phá; chỉ số sau gần với độ tin cậy cần cho thanh toán, hoàn tiền, đổi quyền và triển khai sản xuất. Báo cáo phải nói rõ $k$ là mẫu độc lập hay tác vụ sản xuất liên tiếp; thao tác có tác dụng phụ phải thử trong sandbox hoặc môi trường có thể hoàn tác và tính mọi thất bại.
 
-### Chỉ số quy trình, an toàn và độ bền
+### Chỉ số quy trình: Từ hộp đen đến hộp trắng
 
-Kết quả cuối không đủ. Tỷ lệ thao tác hợp lệ/được phép, tính đúng ngữ nghĩa của lời gọi công cụ, hiệu quả đường đi (bước, thao tác thừa, quay lui), độ bao phủ truy xuất, chi phí và độ trễ cho biết Agent hỏng ở đâu. Thao tác nhạy cảm, rò rỉ dữ liệu và nội dung bị cấm tuân theo **không khoan nhượng**. Độ bền bao gồm seed, thay đổi UI, chập chờn API và nhiễu từ bộ nhớ cũ; phải kiểm tra cả **trajectory** lẫn **outcome** thực của hệ thống.
+Kết quả cuối không đủ. Tỷ lệ thao tác hợp lệ/được phép, tính đúng ngữ nghĩa của lời gọi công cụ, hiệu quả đường đi (bước, thao tác thừa, quay lui), độ bao phủ truy xuất, chi phí và độ trễ cho biết Agent hỏng ở đâu.
+
+### An toàn, độ bền và độ bao phủ trajectory
+
+Thao tác nhạy cảm, rò rỉ dữ liệu và nội dung bị cấm tuân theo **không khoan nhượng**. Độ bền bao gồm seed, thay đổi UI, chập chờn API và nhiễu từ bộ nhớ cũ; phải kiểm tra cả **trajectory** lẫn **outcome** thực của hệ thống.
 
 ### Lấy mẫu thủ công và đánh giá đối kháng
 
@@ -440,34 +444,11 @@ Policy giảm nhẹ là **đánh giá không đồng nhất nhiều nguồn** - 
 - **Đánh giá giao diện người dùng**: Sử dụng cơ chế **Người đề xuất-Người đánh giá**(Proposer-Reviewer) để kiểm tra các vấn đề như tràn văn bản, độ tương phản màu, vị trí nút, v.v. Ở đây, người đề xuất-người đánh giá được sử dụng làm phương pháp đánh giá, khác với cách sử dụng làm thành phần hệ thống tạo trong Chương 5, nhưng cơ chế cốt lõi giống nhau - một mô hình được tạo và một mô hình khác được xem xét độc lập.
 - **Đánh giá video clip**: Xác minh điểm bắt đầu và điểm kết thúc chính xác của clip cũng như việc áp dụng các hiệu ứng đặc biệt thông qua các khung hình chính.
 
-### Quy trách nhiệm thất bại và hồi quy theo tiền tố trajectory
+### Quy trách nhiệm thất bại: Định vị lỗi đầu tiên trong trajectory
 
 Đánh giá end-to-end thường chỉ trả lời “đạt” hoặc “không đạt”. Để kết quả dẫn tới sửa chữa, với mỗi trajectory thất bại hãy ghi loại lỗi, bước đầu tiên không chấp nhận được, lời gọi công cụ hoặc đầu ra mô hình liên quan và bằng chứng có thể kiểm tra. Tín hiệu bad case gồm người dùng sửa trực tiếp, phản hồi tiêu cực hoặc kiểm tra trạng thái/quy tắc sau đó. LLM có thể hỗ trợ nhưng vẫn cần người đọc vì nguyên nhân thường là vấn đề sản phẩm.
 
 Với Coding Agent, các nhóm ban đầu là thiếu quy trình/quy tắc kho, lỗi công cụ/định dạng, kết thúc bất thường và lỗi logic/độ hoàn tất. Lưu bản ghi JSON/YAML có số bước, công cụ, quan sát, nguyên nhân gốc so với hậu quả, khả năng khôi phục và độ tin cậy, cùng trạng thái, phiên bản và trajectory đầy đủ.
-
-**Hồi quy end-to-end** chạy toàn bộ quy trình; **hồi quy trajectory-prefix** đóng băng ngữ cảnh, hội thoại, kết quả công cụ và trạng thái ngay trước lỗi đầu tiên rồi chỉ kiểm tra hành động quan sát được tiếp theo. Định nghĩa tập hành động được chấp nhận (đọc quy tắc, hỏi người dùng, từ chối thao tác nguy hiểm) và hành động cấm thay vì một đáp án duy nhất; tách dữ liệu đánh giá khỏi dữ liệu huấn luyện.
-
-> **Thử nghiệm 7-5 ★★: Đánh giá ranh giới trajectory-prefix với nhiều mã hóa**
->
-> Cung cấp bộ nhớ người dùng đã biết, chỉ dẫn hiện tại, trajectory prefix, kết quả công cụ và trạng thái môi trường; mô hình chỉ trả về hành động quan sát được kế tiếp. 11 ca được mã hóa bằng JSON Cards, Markdown và Python-like rồi kiểm tra bằng quy tắc xác định. 33/33 ô hoàn tất không lỗi API, mỗi cách mã hóa đạt 6/11; đổi biểu diễn không tự sửa được chính sách sử dụng.
-
-> **Thử nghiệm 7-6 ★★: Xây dựng quy trình đánh giá chất lượng TTS hoàn toàn tự động**
->
-> Thử nghiệm này yêu cầu thiết kế và triển khai hệ thống đánh giá chất lượng LLM-as-a-Judge TTS đa phương thức hoàn chỉnh ngay từ đầu.
->
-> Thiết kế TTS đa chiều Rubric: Chiều chính xác xác minh xem tất cả các từ có được đọc chính xác hay không (không thiếu sót/đọc sai/thêm), chiều tự nhiên đánh giá xem lời nói có mượt mà hay không (có cảm giác máy móc, ngắt quãng không tự nhiên và nhịp điệu có phù hợp với thói quen của con người hay không), chiều biểu hiện cảm xúc kiểm tra xem giọng điệu có phù hợp với màu sắc cảm xúc của văn bản hay không (giọng lên của câu nghi vấn, nhấn mạnh) về câu cảm thán, tốc độ nói chậm và âm trầm của nội dung buồn) và chiều nhất quán âm sắc đánh giá độ giống nhau của người nói khi có giọng tham chiếu (mô hình đa phương thức đồng thời nhận cả giọng tham chiếu và so sánh giọng tổng hợp).
->
-> Xây dựng kho ngữ liệu đa dạng về độ dài, thể loại, cảm xúc, con số, tên riêng, cách phát âm dễ nhầm và phương ngữ. Mô-đun TTS có thể kết nối OpenAI, ElevenLabs, Fish Audio, Minimax hoặc Doubao. Một judge đa phương thức nhận trực tiếp audio sẽ đánh giá đồng thời giọng tổng hợp, văn bản gốc, audio tham chiếu và Rubric. Ngoài phân tích điểm theo từng chiều, cần lưu tên model đánh giá cùng hash của audio tham chiếu và từng ứng viên để có thể kiểm tra lại kết quả.
->
-
-Kho đi kèm lưu một pilot nghe trực tiếp quy mô nhỏ. OpenAI và Fish Audio mỗi bên tạo bốn mẫu—số, từ dễ đọc nhầm, câu dài và giọng hào hứng—rồi Voxtral chấm cả tám audio theo bốn chiều trên. Hai bên cùng đạt 5.00 về độ chính xác và 4.00 về độ tự nhiên. Fish Audio đạt 4.00 về biểu cảm và 3.00 về độ nhất quán giọng; OpenAI lần lượt là 3.75 và 2.75. Tách các chiều giúp thấy khác biệt về giọng điệu và âm sắc ngay cả khi khả năng đọc đúng văn bản ngang nhau.
-
-Tám mẫu chưa đủ để kết luận dịch vụ nào tốt hơn. Mỗi bên chỉ có bốn mẫu, và quan trọng hơn, audio tham chiếu cố định được tạo bởi Fish S1 nên phép so độ giống giọng vốn đã có lợi cho Fish Audio. Nếu so TTS phổ thông, không nên đưa tiêu chí “giống giọng tham chiếu Fish” vào tổng điểm. Nếu so voice cloning, mọi hệ thống phải bắt chước cùng một người nói và điểm của model cần được hiệu chỉnh bằng nghe mù của con người. **Việc chọn câu trả lời, hình ảnh hay audio tham chiếu là một phần của thiết kế đánh giá, không phải bước chuẩn bị trung tính trước thí nghiệm.**
-
-Rubric viết tay phù hợp để nhanh chóng tạo các chiều chẩn đoán này. Khi quy mô tăng, có thể huấn luyện **mô hình phần thưởng sinh** để tự động hóa việc chấm; Chương 8 trình bày phương pháp huấn luyện.
-
-Trong việc lựa chọn mô hình thực tế, câu hỏi chúng ta thường gặp là: "Cái nào tốt hơn, A hay B?" So sánh từng cặp cung cấp một cách đánh giá không dựa vào điểm số tuyệt đối.
 
 #### Lỗi định dạng tài liệu nhạy với phạm vi
 
@@ -495,6 +476,31 @@ byte file gốc → tool trả về → serialization của Harness → context 
 ```
 
 Bộ thăm dò đánh giá tối thiểu bao phủ việc nhắc lại trực tiếp, trích xuất từ ngữ cảnh dài, đặt vào đối số của tool, chọn giữa các chuỗi tương tự, cùng với khoảng trắng, xuống dòng, dấu gạch chéo ngược, ký tự tổ hợp Unicode và token tần suất thấp. Các chỉ số gồm byte-exact match, code-point-exact match, token-exact match, vị trí khác biệt đầu tiên và tỷ lệ thành công thực tế của tool. Nếu mô hình đúng ở thăm dò trực tiếp nhưng lời gọi tool vẫn thất bại, hãy sửa tokenizer, serialization, Harness hoặc giao thức tool; chỉ khi khác biệt đầu tiên xuất hiện ở chính đầu ra của mô hình thì mới chuyển trường hợp đó thành dữ liệu huấn luyện sao chép ở Chương 8.
+
+### Tác vụ hồi quy end-to-end và hồi quy tiền tố trajectory
+
+**Hồi quy end-to-end** chạy toàn bộ quy trình; **hồi quy trajectory-prefix** đóng băng ngữ cảnh, hội thoại, kết quả công cụ và trạng thái ngay trước lỗi đầu tiên rồi chỉ kiểm tra hành động quan sát được tiếp theo. Định nghĩa tập hành động được chấp nhận (đọc quy tắc, hỏi người dùng, từ chối thao tác nguy hiểm) và hành động cấm thay vì một đáp án duy nhất; tách dữ liệu đánh giá khỏi dữ liệu huấn luyện.
+
+> **Thử nghiệm 7-5 ★★: Đánh giá ranh giới trajectory-prefix với nhiều mã hóa**
+>
+> Cung cấp bộ nhớ người dùng đã biết, chỉ dẫn hiện tại, trajectory prefix, kết quả công cụ và trạng thái môi trường; mô hình chỉ trả về hành động quan sát được kế tiếp. 11 ca được mã hóa bằng JSON Cards, Markdown và Python-like rồi kiểm tra bằng quy tắc xác định. 33/33 ô hoàn tất không lỗi API, mỗi cách mã hóa đạt 6/11; đổi biểu diễn không tự sửa được chính sách sử dụng.
+
+> **Thử nghiệm 7-6 ★★: Xây dựng quy trình đánh giá chất lượng TTS hoàn toàn tự động**
+>
+> Thử nghiệm này yêu cầu thiết kế và triển khai hệ thống đánh giá chất lượng LLM-as-a-Judge TTS đa phương thức hoàn chỉnh ngay từ đầu.
+>
+> Thiết kế TTS đa chiều Rubric: Chiều chính xác xác minh xem tất cả các từ có được đọc chính xác hay không (không thiếu sót/đọc sai/thêm), chiều tự nhiên đánh giá xem lời nói có mượt mà hay không (có cảm giác máy móc, ngắt quãng không tự nhiên và nhịp điệu có phù hợp với thói quen của con người hay không), chiều biểu hiện cảm xúc kiểm tra xem giọng điệu có phù hợp với màu sắc cảm xúc của văn bản hay không (giọng lên của câu nghi vấn, nhấn mạnh) về câu cảm thán, tốc độ nói chậm và âm trầm của nội dung buồn) và chiều nhất quán âm sắc đánh giá độ giống nhau của người nói khi có giọng tham chiếu (mô hình đa phương thức đồng thời nhận cả giọng tham chiếu và so sánh giọng tổng hợp).
+>
+> Xây dựng kho ngữ liệu đa dạng về độ dài, thể loại, cảm xúc, con số, tên riêng, cách phát âm dễ nhầm và phương ngữ. Mô-đun TTS có thể kết nối OpenAI, ElevenLabs, Fish Audio, Minimax hoặc Doubao. Một judge đa phương thức nhận trực tiếp audio sẽ đánh giá đồng thời giọng tổng hợp, văn bản gốc, audio tham chiếu và Rubric. Ngoài phân tích điểm theo từng chiều, cần lưu tên model đánh giá cùng hash của audio tham chiếu và từng ứng viên để có thể kiểm tra lại kết quả.
+>
+
+Kho đi kèm lưu một pilot nghe trực tiếp quy mô nhỏ. OpenAI và Fish Audio mỗi bên tạo bốn mẫu—số, từ dễ đọc nhầm, câu dài và giọng hào hứng—rồi Voxtral chấm cả tám audio theo bốn chiều trên. Hai bên cùng đạt 5.00 về độ chính xác và 4.00 về độ tự nhiên. Fish Audio đạt 4.00 về biểu cảm và 3.00 về độ nhất quán giọng; OpenAI lần lượt là 3.75 và 2.75. Tách các chiều giúp thấy khác biệt về giọng điệu và âm sắc ngay cả khi khả năng đọc đúng văn bản ngang nhau.
+
+Tám mẫu chưa đủ để kết luận dịch vụ nào tốt hơn. Mỗi bên chỉ có bốn mẫu, và quan trọng hơn, audio tham chiếu cố định được tạo bởi Fish S1 nên phép so độ giống giọng vốn đã có lợi cho Fish Audio. Nếu so TTS phổ thông, không nên đưa tiêu chí “giống giọng tham chiếu Fish” vào tổng điểm. Nếu so voice cloning, mọi hệ thống phải bắt chước cùng một người nói và điểm của model cần được hiệu chỉnh bằng nghe mù của con người. **Việc chọn câu trả lời, hình ảnh hay audio tham chiếu là một phần của thiết kế đánh giá, không phải bước chuẩn bị trung tính trước thí nghiệm.**
+
+Rubric viết tay phù hợp để nhanh chóng tạo các chiều chẩn đoán này. Khi quy mô tăng, có thể huấn luyện **mô hình phần thưởng sinh** để tự động hóa việc chấm; Chương 8 trình bày phương pháp huấn luyện.
+
+Trong việc lựa chọn mô hình thực tế, câu hỏi chúng ta thường gặp là: "Cái nào tốt hơn, A hay B?" So sánh từng cặp cung cấp một cách đánh giá không dựa vào điểm số tuyệt đối.
 
 ### So sánh theo cặp và xếp hạng mô hình
 

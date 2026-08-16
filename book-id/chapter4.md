@@ -180,7 +180,17 @@ Tool persepsi sering menghadapi tantangan untuk mengembalikan jauh lebih banyak 
 
 Untuk memahami gambar, video, audio, dan PDF, Agent memerlukan persepsi multimodal. Ada tiga jalur: pemrosesan multimodal asli oleh model, ekstraksi otomatis menjadi teks, dan membungkus model multimodal sebagai tool.
 
-Pemrosesan asli memiliki batas kemampuan tertinggi; encoder seperti Vision Transformer memetakan berbagai data ke ruang semantik bersama. Ekstraksi teks cocok untuk model tanpa dukungan asli dan biasanya lebih hemat token pada PDF yang didominasi teks, tetapi kehilangan tata letak, bagan, dan gambar. Jika model utama tidak multimodal, tool seperti `analyze_image`, `analyze_pdf`, dan `analyze_audio` dapat meneruskan berkas serta pertanyaan ke model khusus dan mengembalikan ringkasan singkat, sehingga konteks tetap kecil.
+#### Pemrosesan Multimodal Native
+
+Pemrosesan asli memiliki batas kemampuan tertinggi; encoder seperti Vision Transformer memetakan berbagai data ke ruang semantik bersama.
+
+#### Ekstraksi ke Teks
+
+Ekstraksi teks cocok untuk model tanpa dukungan asli dan biasanya lebih hemat token pada PDF yang didominasi teks, tetapi kehilangan tata letak, bagan, dan gambar.
+
+#### Analisis Multimodal Berbasis Tool
+
+Jika model utama tidak multimodal, tool seperti `analyze_image`, `analyze_pdf`, dan `analyze_audio` dapat meneruskan berkas serta pertanyaan ke model khusus dan mengembalikan ringkasan singkat, sehingga konteks tetap kecil.
 
 > **Eksperimen 4-2 ★★: Ekstraksi Informasi Multimodal — Analisis Perbandingan Tiga Paradigma Teknis**
 >
