@@ -90,6 +90,7 @@ html[lang="ar"] .math {
 
 p {
   margin: 0 0 0.8em 0;
+  background-color: transparent !important;
 }
 
 /* ── 标题 ──────────────────────────────────────────────────────────────── */
